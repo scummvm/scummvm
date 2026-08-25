@@ -39,6 +39,11 @@ const uint16 kScene3110ReturnToScene3070OtherSideState = 0x0bff;
 const uint16 kScene3110ReturnToScene3070LateBranchState = 0x0c00;
 const uint16 kScene3110MachineRoomViewportXOffset = 0x0068;
 const uint32 kScene3110DefaultFrameMillis = 75;
+const uint32 kScene3110ExteriorCounterMillis = 40;
+const uint32 kScene3110ExteriorBladeFrameMillis = 125;
+const uint32 kScene3110ExteriorWingFrameMillis = 60;
+const uint32 kScene3110ExteriorPaletteStepMillis = 150;
+const uint32 kScene3110ExteriorLightningFlashMillis = 75;
 const uint32 kScene3110MemoryPalettePulseMillis = 10;
 const uint32 kScene3110MemoryPaletteBandMillis = 300;
 const uint32 kScene3110MachineRoomPollMillis = 10;
@@ -54,6 +59,10 @@ const int kScene3110MachineRoomCurtainStartY = 0xdc;
 const byte kScene3110MachineRoomInitialGateEndFrame = 10;
 const uint kScene3110MachineRoomFinalCounterLimit = 100;
 const byte kScene3110SoundCueLightning = 0x0d;
+const byte kScene3110ExteriorBladeFrameCount = 8;
+const byte kScene3110ExteriorWingStartCounter = 20;
+const byte kScene3110ExteriorStormStartCounter = 30;
+const byte kScene3110ExteriorStormTailCounter = 30;
 
 const byte kScene3110ExteriorForegroundFrameMap[] = {
 	4, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0,
@@ -84,10 +93,6 @@ const byte kScene3110Linear10FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
 
-const byte kScene3110Linear11FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-};
-
 const byte kScene3110Linear32FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
@@ -97,8 +102,8 @@ Scene3110::Scene3110(HollywoodEngine *vm) :
 		_vm(vm),
 		_memoryRandomState(0x3110),
 		_memoryPulseLevel(0),
-	_memoryPulseActive(false),
-	_skipRequested(false) {
+		_memoryPulseActive(false),
+		_skipRequested(false) {
 	_palette.resize(kPaletteSize);
 	_memoryPulseSavedPalette.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
@@ -261,29 +266,208 @@ void Scene3110::runShortBranch() {
 }
 
 void Scene3110::runExteriorLightningSequence() {
-	const SpriteTrack tracks[] = {
-		{3, 5, kScene3110ExteriorForegroundFrameMap, ARRAYSIZE(kScene3110ExteriorForegroundFrameMap), 20, 75, true, true},
-		{2, 8, kScene3110Linear11FrameMap, ARRAYSIZE(kScene3110Linear11FrameMap), 0, 60, true, false}
-	};
-	const SoundCue soundCues[] = {
-		{20, 1, 0x0c, 25, true, false},
-		{64, 1, 0, 0, false, true}
-	};
-	if (prepareScene(0, 1, 0x2e8, tracks, ARRAYSIZE(tracks)))
-		runSpriteSequence(78, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+	if (!loadFramebufferAndPalette(0, 1, 0x2e8))
+		return;
+	for (uint chunkIndex = 2; chunkIndex <= 3; ++chunkIndex) {
+		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+			return;
+	}
+
+	const Common::Array<byte> clearPalette = _palette;
+	byte bladeFrame = 0;
+	byte wingFrameIndex = 0;
+	byte highPaletteStep = 0;
+	byte lowPaletteStep = 0;
+	uint counter = 0;
+	uint tailCounter = 0;
+	uint32 bladeAccumulator = 0;
+	uint32 wingAccumulator = 0;
+	uint32 paletteAccumulator = 0;
+	bool wingActive = false;
+	bool stormActive = false;
+	bool stormFinished = false;
+
+	drawExteriorFrame(wingFrameIndex, bladeFrame);
+	presentFrame(0);
+	while (!stormFinished || tailCounter != 0) {
+		if (_skipRequested || Engine::shouldQuit() || pollEvents())
+			return;
+
+		++counter;
+		bladeAccumulator += kScene3110ExteriorCounterMillis;
+		while (bladeAccumulator >= kScene3110ExteriorBladeFrameMillis) {
+			bladeAccumulator -= kScene3110ExteriorBladeFrameMillis;
+			bladeFrame = (bladeFrame + 1) % kScene3110ExteriorBladeFrameCount;
+		}
+
+		if (counter == kScene3110ExteriorWingStartCounter) {
+			wingActive = true;
+			playSound(1, 0x0c, 25, true);
+		}
+		if (wingActive) {
+			wingAccumulator += kScene3110ExteriorCounterMillis;
+			while (wingAccumulator >= kScene3110ExteriorWingFrameMillis) {
+				wingAccumulator -= kScene3110ExteriorWingFrameMillis;
+				if (wingFrameIndex + 1 < ARRAYSIZE(kScene3110ExteriorForegroundFrameMap)) {
+					++wingFrameIndex;
+				} else {
+					wingActive = false;
+					stopSound(1);
+					break;
+				}
+			}
+		}
+
+		if (counter == kScene3110ExteriorStormStartCounter)
+			stormActive = true;
+		bool stormFinishedThisTick = false;
+		if (stormActive) {
+			paletteAccumulator += kScene3110ExteriorCounterMillis;
+			while (paletteAccumulator >= kScene3110ExteriorPaletteStepMillis) {
+				paletteAccumulator -= kScene3110ExteriorPaletteStepMillis;
+				if (highPaletteStep < 0x15) {
+					darkenExteriorPaletteRange(clearPalette, 0xa0, 0xff,
+						highPaletteStep++, true);
+				}
+				if (lowPaletteStep < 0x0b) {
+					darkenExteriorPaletteRange(clearPalette, 1, 0x9f,
+						lowPaletteStep++, false);
+				} else {
+					stormActive = false;
+					stormFinished = true;
+					stormFinishedThisTick = true;
+					tailCounter = kScene3110ExteriorStormTailCounter;
+					break;
+				}
+			}
+		}
+		if (stormFinished && !stormFinishedThisTick && tailCounter != 0)
+			--tailCounter;
+
+		drawExteriorFrame(wingFrameIndex, bladeFrame);
+		presentFrame(0);
+		if (delay(kScene3110ExteriorCounterMillis))
+			return;
+	}
+
+	stopSound(1);
+	_exteriorStormPalette = _palette;
 }
 
 void Scene3110::runExteriorStormReturnSequence() {
-	const SpriteTrack tracks[] = {
-		{3, 5, kScene3110ExteriorForegroundFrameMap, ARRAYSIZE(kScene3110ExteriorForegroundFrameMap), 0, 75, true, false},
-		{2, 8, kScene3110Linear11FrameMap, ARRAYSIZE(kScene3110Linear11FrameMap), 0, 60, true, false}
-	};
-	const SoundCue soundCues[] = {
-		{40, 2, kScene3110SoundCueLightning, 100, false, false},
-		{56, 2, kScene3110SoundCueLightning, 100, false, false}
-	};
-	if (prepareScene(0, 1, 0x2e8, tracks, ARRAYSIZE(tracks)))
-		runSpriteSequence(86, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+	if (!loadFramebufferAndPalette(0, 1, 0x2e8))
+		return;
+	for (uint chunkIndex = 2; chunkIndex <= 3; ++chunkIndex) {
+		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+			return;
+	}
+
+	const Common::Array<byte> clearPalette = _palette;
+	if (_exteriorStormPalette.size() == kPaletteSize)
+		_palette = _exteriorStormPalette;
+	const Common::Array<byte> stormReferencePalette = _palette;
+	Common::Array<byte> lightningDarkPalette = _palette;
+	byte bladeFrame = 0;
+	byte highPaletteStep = 0;
+	byte lowPaletteStep = 0;
+	uint counter = 0;
+	uint lightningFlashPhase = 0;
+	uint32 bladeAccumulator = 0;
+	uint32 paletteAccumulator = kScene3110ExteriorPaletteStepMillis;
+	uint32 lightningFlashAccumulator = 0;
+	bool stormActive = true;
+	bool lightningFlashActive = false;
+
+	drawExteriorFrame(0, bladeFrame);
+	presentFrame(0);
+	while (counter < 0x38e) {
+		if (_skipRequested || Engine::shouldQuit() || pollEvents())
+			return;
+
+		++counter;
+		bladeAccumulator += kScene3110ExteriorCounterMillis;
+		while (bladeAccumulator >= kScene3110ExteriorBladeFrameMillis) {
+			bladeAccumulator -= kScene3110ExteriorBladeFrameMillis;
+			bladeFrame = (bladeFrame + 1) % kScene3110ExteriorBladeFrameCount;
+		}
+
+		if (stormActive) {
+			paletteAccumulator += kScene3110ExteriorCounterMillis;
+			while (paletteAccumulator >= kScene3110ExteriorPaletteStepMillis) {
+				paletteAccumulator -= kScene3110ExteriorPaletteStepMillis;
+				if (highPaletteStep < 0x0b) {
+					darkenExteriorPaletteRange(stormReferencePalette, 0xa0, 0xff,
+						highPaletteStep++, true);
+				}
+				if (lowPaletteStep < 6) {
+					darkenExteriorPaletteRange(stormReferencePalette, 1, 0x9f,
+						lowPaletteStep++, false);
+				} else {
+					stormActive = false;
+					counter = 0x334;
+					break;
+				}
+			}
+		}
+
+		if (lightningFlashActive) {
+			lightningFlashAccumulator += kScene3110ExteriorCounterMillis;
+			while (lightningFlashAccumulator >= kScene3110ExteriorLightningFlashMillis) {
+				lightningFlashAccumulator -= kScene3110ExteriorLightningFlashMillis;
+				++lightningFlashPhase;
+				if (lightningFlashPhase == 1)
+					_palette = lightningDarkPalette;
+				else if (lightningFlashPhase == 2)
+					_palette = clearPalette;
+				else {
+					_palette = lightningDarkPalette;
+					lightningFlashActive = false;
+					break;
+				}
+			}
+		}
+
+		if (counter == 0x352 || counter == 0x370) {
+			playSound(2, kScene3110SoundCueLightning, 100, false);
+			lightningDarkPalette = _palette;
+			_palette = clearPalette;
+			lightningFlashPhase = 0;
+			lightningFlashAccumulator = 0;
+			lightningFlashActive = true;
+		}
+
+		drawExteriorFrame(0, bladeFrame);
+		presentFrame(0);
+		if (delay(kScene3110ExteriorCounterMillis))
+			return;
+	}
+}
+
+void Scene3110::drawExteriorFrame(byte foregroundFrameIndex, byte bladeFrame) {
+	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	const uint frameMapIndex = MIN<uint>(foregroundFrameIndex,
+		ARRAYSIZE(kScene3110ExteriorForegroundFrameMap) - 1);
+	drawOriginalSpriteFrame(_chunks[3], 5,
+		kScene3110ExteriorForegroundFrameMap[frameMapIndex], _sceneFramebuffer.surface());
+	drawOriginalSpriteFrame(_chunks[2], 8, bladeFrame, _sceneFramebuffer.surface());
+}
+
+void Scene3110::darkenExteriorPaletteRange(const Common::Array<byte> &referencePalette,
+		uint firstColor, uint lastColor, byte threshold, bool snapLowComponentsToBlack) {
+	if (_palette.size() < kPaletteSize || referencePalette.size() < kPaletteSize)
+		return;
+
+	for (uint color = firstColor; color <= lastColor; ++color) {
+		for (uint channel = 0; channel < 3; ++channel) {
+			const uint offset = color * 3 + channel;
+			if (referencePalette[offset] < threshold)
+				continue;
+			if (snapLowComponentsToBlack && _palette[offset] < 3)
+				_palette[offset] = 0;
+			else if (_palette[offset] != 0)
+				--_palette[offset];
+		}
+	}
 }
 
 void Scene3110::runMachineRoomSequence() {
