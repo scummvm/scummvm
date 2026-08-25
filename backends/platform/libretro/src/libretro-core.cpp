@@ -1025,6 +1025,9 @@ void retro_init(void) {
 	else
 		retro_log_cb = NULL;
 
+	if (retro_log_cb)
+		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
+
 	struct retro_vfs_interface_info vfs_iface;
 	vfs_iface.required_interface_version = STAT64_REQUIRED_VFS_VERSION;
 	vfs_iface.iface = nullptr;
@@ -1045,6 +1048,8 @@ void retro_init(void) {
 
 		if (environ_cb && environ_cb(RETRO_ENVIRONMENT_GET_VFS_AUTHORIZED_LOCATIONS, &locations) &&
 				locations.locations) {
+			if (retro_log_cb)
+				retro_log_cb(RETRO_LOG_DEBUG, "SAF locations count: %zu\n", locations.count);
 			for (size_t i = 0; i < locations.count; ++i) {
 				const char *path = locations.locations[i].path;
 				const char *label = locations.locations[i].label;
@@ -1057,14 +1062,11 @@ void retro_init(void) {
 		}
 	}
 
-	if (retro_log_cb)
-		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
-
 	update_variables();
 
 	if (retro_setting_get_browsing_mode_authorized() && !LibRetroFilesystemNode::hasAuthorizedLocations()) {
 		if (retro_log_cb)
-			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Browsing mode set to 'Authorized storage' but no authorized locations are available; falling back to local filesystem. Authorize folders from the frontend and restart the core.\n");
+			retro_log_cb(RETRO_LOG_WARN, "Browsing mode set to 'Authorized storage' but no authorized locations are available; falling back to local filesystem. Authorize folders from the frontend and restart the core.\n");
 		retro_osd_notification("No authorized storage available, using local filesystem.");
 	}
 
