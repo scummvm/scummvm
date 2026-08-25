@@ -745,10 +745,10 @@ protected:
 	uint8 _scriptTimersMode;
 
 	// Gui
-	virtual void gui_drawPlayField(bool refresh);
+	virtual void gui_drawPlayField(bool refresh, bool screenUpdt = true);
 	virtual void gui_setupPlayFieldHelperPages(bool keepText = false);
 	void gui_restorePlayField();
-	void gui_drawAllCharPortraitsWithStats();
+	void gui_drawAllCharPortraitsWithStats(bool screenUpdt = true);
 	void gui_drawCharPortraitWithStats(int index, bool screenUpdt = true);
 	void gui_drawFaceShape(int index);
 	void gui_drawWeaponSlot(int charIndex, int slot);

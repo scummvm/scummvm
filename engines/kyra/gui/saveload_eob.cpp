@@ -313,13 +313,13 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		_screen->fillRect(64, 121, 175, 176, 0, 2);
 
 	_screen->setCurPage(0);
-	gui_drawPlayField(false);
+	gui_drawPlayField(false, false);
 
 	if (_currentControlMode)
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 0, 5, Screen::CR_NO_P_CHECK);
 
 	_screen->setCurPage(0);
-	gui_drawAllCharPortraitsWithStats();
+	gui_drawAllCharPortraitsWithStats(false);
 	drawScene(1);
 
 	if (_updateFlags) {

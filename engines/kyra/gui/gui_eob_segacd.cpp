@@ -49,9 +49,9 @@ int EoBEngine::clickedCamp(Button *button) {
 	return button->arg;
 }
 
-void EoBEngine::gui_drawPlayField(bool refresh) {
+void EoBEngine::gui_drawPlayField(bool refresh, bool screenUpdt) {
 	if (_flags.platform != Common::kPlatformSegaCD) {
-		EoBCoreEngine::gui_drawPlayField(refresh);
+		EoBCoreEngine::gui_drawPlayField(refresh, screenUpdt);
 		return;
 	}
 
