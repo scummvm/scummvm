@@ -355,6 +355,7 @@ MODULE_OBJS += \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \
 	graphics/android/android-graphics.o \
+	midi/android.o \
 	mixer/android/android-mixer.o \
 	mutex/pthread/pthread-mutex.o \
 	networking/basic/android/jni.o \
