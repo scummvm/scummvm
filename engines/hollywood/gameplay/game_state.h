@@ -252,6 +252,8 @@ struct GameplayState {
 		scene6050GuardPresent = true;
 		scene6050GuardAllowsEntry = false;
 		scene6050DisplayCaseOpened = false;
+		scene6070SuePresent = false;
+		scene6070CellDoorOpen = false;
 		seenScene8010EntryLine = false;
 		scene8010FishermanConversationState = 0;
 		seenScene8020EntryLine = false;
@@ -985,6 +987,8 @@ struct GameplayState {
 	bool scene6050GuardPresent;
 	bool scene6050GuardAllowsEntry;
 	bool scene6050DisplayCaseOpened;
+	bool scene6070SuePresent;
+	bool scene6070CellDoorOpen;
 	bool seenScene8010EntryLine;
 	byte scene8010FishermanConversationState;
 	bool seenScene8020EntryLine;
