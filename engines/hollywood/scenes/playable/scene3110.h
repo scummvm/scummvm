@@ -91,6 +91,9 @@ private:
 	void runShortBranch();
 	void runExteriorLightningSequence();
 	void runExteriorStormReturnSequence();
+	void drawExteriorFrame(byte foregroundFrameIndex, byte bladeFrame);
+	void darkenExteriorPaletteRange(const Common::Array<byte> &referencePalette,
+		uint firstColor, uint lastColor, byte threshold, bool snapLowComponentsToBlack);
 	void runMachineRoomSequence();
 	void runMonsterTableElectricSequence();
 	void runMonsterTableFinalSequence();
@@ -140,6 +143,7 @@ private:
 	HollywoodEngine *_vm;
 	ResourceChunkTable _chunkTable;
 	Common::Array<byte> _palette;
+	Common::Array<byte> _exteriorStormPalette;
 	Common::Array<byte> _memoryPulseSavedPalette;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	IndexedSurfaceBuffer _sceneFramebuffer;
