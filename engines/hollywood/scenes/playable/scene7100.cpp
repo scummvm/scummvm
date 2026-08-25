@@ -35,6 +35,7 @@ const uint16 kScene7100DialogueEntryState = 0x1bbd;
 const uint16 kScene7100LastState = 0x1bc5;
 const uint16 kScene7100ExitState6072 = 0x17b8;
 const uint16 kScene7100ExitState6075 = 0x17bb;
+const uint16 kScene7100RescueExitState6074 = 0x17ba;
 const uint kScene7100InitialRequiredChunkCount = 21;
 const uint kScene7100ArenaFirstChunk = 5;
 const uint kScene7100ArenaLastChunk = 20;
@@ -128,6 +129,21 @@ const Scene7100DialogueSeedRecord kScene7100RonDialogueSeedRecords[] = {
 	{ 5, 1, 0, 0, 6, 6, 1, 0xff }
 };
 
+const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
+	{ 0, 1, 0, 3, 0, 1, 1, 0xff },
+	{ 1, 1, 0, 3, 1, 2, 1, 0xff },
+	{ 2, 1, 0, 3, 2, 3, 1, 0xff },
+	{ 3, 1, 0, 3, 3, 4, 1, 0xff },
+	{ 4, 1, 0, 1, 4, 5, 1, 0xff },
+	{ 5, 1, 0, 0, 5, 0xff, 1, 0xff },
+	{ 70, 1, 0, 3, 6, 7, 1, 0xff },
+	{ 71, 1, 0, 3, 8, 9, 1, 0xff },
+	{ 72, 1, 0, 3, 10, 11, 1, 0xff },
+	{ 73, 1, 0, 3, 11, 12, 1, 0xff },
+	{ 74, 0, 0, 0, 7, 8, 1, 0xff },
+	{ 75, 1, 0, 2, 9, 10, 1, 0xff }
+};
+
 static PlayableSceneConfig scene7100Config() {
 	PlayableSceneConfig config;
 	config.resourceArchiveName = "RESOURCE.G10";
@@ -151,7 +167,8 @@ Scene7100::Scene7100(HollywoodEngine *vm) :
 		_primaryFrame(0),
 		_primaryAltFrame(0),
 		_environmentState(2),
-		_environmentFrame(0) {
+		_environmentFrame(0),
+		_manualPrimaryAnimationActive(false) {
 }
 
 bool Scene7100::hasCustomPreviewState() const {
@@ -177,6 +194,7 @@ void Scene7100::initializeCustomPreviewState() {
 	_primaryAltFrame = 0;
 	_environmentState = 2;
 	_environmentFrame = 0;
+	_manualPrimaryAnimationActive = false;
 
 	if (_vm->gameState().mainFlowStateId == kScene7100DialogueEntryState) {
 		_activeActorWorldX = kScene7100DialogueEntryStartX;
@@ -198,7 +216,8 @@ bool Scene7100::hasCustomComposite() const {
 	return true;
 }
 
-void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
+		int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
@@ -224,11 +243,7 @@ bool Scene7100::hasCustomEntrySequence() const {
 
 void Scene7100::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene7100DialogueEntryState) {
-		runEntryPath(kScene7100DialogueEntryStartX, kScene7100DialogueEntryStartY,
-			kScene7100DialogueEntryFacing, kScene7100EntryX, kScene7100EntryY);
-		_primaryMode = 1;
-		beginPrimarySpeechLineWithAnimationGroup(0x61, 0, 0x314, 0x8a,
-			0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+		runRescueEntrySequence();
 	} else {
 		_activeActorWorldX = kScene7100EntryX;
 		_activeActorWorldY = kScene7100EntryY;
@@ -240,6 +255,10 @@ void Scene7100::runCustomEntrySequence() {
 	}
 }
 
+bool Scene7100::shouldPresentPreviewBeforeEntrySequence() const {
+	return _vm->gameState().mainFlowStateId != kScene7100DialogueEntryState;
+}
+
 bool Scene7100::prepareCustomGameplayLoop() {
 	_primaryTimerAccumulator = 0;
 	_environmentTimerAccumulator = 0;
@@ -249,7 +268,7 @@ bool Scene7100::prepareCustomGameplayLoop() {
 bool Scene7100::advanceCustomGameplayLoop(uint32 delta) {
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	else if (!_manualPrimaryAnimationActive)
 		advancePrimaryIdleFrame(delta);
 
 	advanceEnvironmentFrame(delta);
@@ -609,6 +628,184 @@ void Scene7100::initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord>
 		record.disableAfterUse = seed.disableAfterUse;
 		record.reserved = seed.reserved;
 	}
+}
+
+void Scene7100::runRescueEntrySequence() {
+	drawPlayableComposite();
+	if (runCurtainRevealFromBlack())
+		return;
+
+	runEntryPath(kScene7100DialogueEntryStartX, kScene7100DialogueEntryStartY,
+		kScene7100DialogueEntryFacing, kScene7100EntryX, kScene7100EntryY);
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	_primaryMode = 1;
+	beginPrimarySpeechLineWithAnimationGroup(0x61, 0, 0x314, 0x8a,
+		0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	if (runRescueDialogue()) {
+		_manualPrimaryAnimationActive = true;
+		for (byte frame = 4; frame <= 9; ++frame) {
+			_primaryMode = 1;
+			_primaryAltFrame = frame;
+			if (waitSceneMillis(kScene7100FrameMillis))
+				break;
+		}
+		_manualPrimaryAnimationActive = false;
+		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			return;
+
+		runCurtainClearToBlack();
+		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			return;
+
+		GameplayState &state = _vm->gameState();
+		state.scene6070SuePresent = false;
+		state.scene6070CellDoorOpen = true;
+		state.scene6050GuardPresent = false;
+		state.mainFlowStateId = kScene7100RescueExitState6074;
+		return;
+	}
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	walkActiveActorTo(0x19f, 0x184, 4, 0);
+	_primaryMode = 1;
+	beginPrimarySpeechLineWithAnimationGroup(0x61, 6, 0x314, 0x8a,
+		0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+	if (waitSceneMillis(4000, false))
+		return;
+
+	_primaryMode = 0;
+	_primaryFrame = 0;
+	drawPlayableComposite();
+	presentFrame();
+	beginPrimarySpeechLineWithAnimationGroup(0x28, 1, 0x310, 0x8a,
+		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+	walkActiveActorTo(0x21c, 0x171, 1, 0);
+	beginSecondarySpeechLine(0x29, 1);
+}
+
+bool Scene7100::runRescueDialogue() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeRescueDialogueRecords(records);
+	const GameplayState &state = _vm->gameState();
+	if (state.hasInventoryItem(state.currentInventoryOwnerIndex, 0x22))
+		records[74].enabled = 1;
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(0x60, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(0x60, 5);
+			return false;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			return false;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(0x60, record.playerTextRowId);
+		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
+			beginPrimarySpeechLineWithAnimationGroup(0x61, record.responseFrameIndex,
+				0x314, 0x8a, 0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+		}
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			return record.responseFrameIndex == 8;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth != 0 ? (byte)(previousDepth - 1) : 0;
+			break;
+		case 3:
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
+			break;
+		default:
+			return false;
+		}
+	}
+
+	return false;
+}
+
+void Scene7100::initializeRescueDialogueRecords(
+		Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(10 * 10 * 7);
+	for (uint i = 0; i < ARRAYSIZE(kScene7100RescueDialogueSeedRecords); ++i) {
+		const Scene7100DialogueSeedRecord &seed = kScene7100RescueDialogueSeedRecords[i];
+		DialogueChoiceRecord &record = records[seed.index];
+		record.enabled = seed.enabled;
+		record.nextNodeIndex = seed.nextNodeIndex;
+		record.transitionMode = seed.transitionMode;
+		record.playerTextRowId = seed.playerTextRowId;
+		record.responseFrameIndex = seed.responseFrameIndex;
+		record.disableAfterUse = seed.disableAfterUse;
+		record.reserved = seed.reserved;
+	}
+}
+
+bool Scene7100::runCurtainRevealFromBlack() {
+	Graphics::ManagedSurface savedScene;
+	savedScene.copyFrom(_sceneFramebuffer);
+	byte *destination = framebufferPixels(_sceneFramebuffer);
+	const byte *source = framebufferPixels(savedScene);
+	if (!destination || !source)
+		return false;
+
+	memset(destination, 0, framebufferByteCount());
+	presentFrame();
+	for (int sweep = 0x0dc; sweep >= 0 && !_vm->isSceneRestartRequested(); sweep -= 0x14) {
+		const uint bandWidth = 0x14;
+		const uint innerWidth = HollywoodEngine::kScreenWidth - 2 * sweep;
+		const uint middleInset = sweep + bandWidth;
+		const uint middleHeight = HollywoodEngine::kScreenHeight - 2 * middleInset;
+		const uint leftX = _viewportXOffset + sweep;
+		const uint rightX = leftX + innerWidth - bandWidth;
+
+		for (uint row = 0; row < bandWidth; ++row) {
+			memcpy(destination + (sweep + row) * HollywoodEngine::kSceneBufferWidth + leftX,
+				source + (sweep + row) * HollywoodEngine::kSceneBufferWidth + leftX,
+				innerWidth);
+			const uint bottomY = HollywoodEngine::kScreenHeight - bandWidth - sweep + row;
+			memcpy(destination + bottomY * HollywoodEngine::kSceneBufferWidth + leftX,
+				source + bottomY * HollywoodEngine::kSceneBufferWidth + leftX,
+				innerWidth);
+		}
+		for (uint row = 0; row < middleHeight; ++row) {
+			const uint y = middleInset + row;
+			memcpy(destination + y * HollywoodEngine::kSceneBufferWidth + leftX,
+				source + y * HollywoodEngine::kSceneBufferWidth + leftX, bandWidth);
+			memcpy(destination + y * HollywoodEngine::kSceneBufferWidth + rightX,
+				source + y * HollywoodEngine::kSceneBufferWidth + rightX, bandWidth);
+		}
+		presentFrame();
+		if (pollEvents(false))
+			return true;
+	}
+
+	_sceneFramebuffer.copyRectToSurface(savedScene.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth,
+			HollywoodEngine::kSceneBufferHeight));
+	presentFrame();
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void Scene7100::runCurtainClearToBlack() {

@@ -560,6 +560,11 @@ bool PlayableScene::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY
 	return false;
 }
 
+void PlayableScene::prepareCustomActorPathRoute(int startX, int startY) {
+	(void)startX;
+	(void)startY;
+}
+
 bool PlayableScene::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
 	(void)currentRegion;
@@ -1835,6 +1840,7 @@ bool PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) cons
 
 void PlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel) {
+	prepareCustomActorPathRoute(startX, startY);
 	const byte startRegion = paletteRegionAt(startX, startY);
 	const byte targetRegion = paletteRegionAt(targetX, targetY);
 	debugC(1, kDebugPath,
@@ -2029,6 +2035,16 @@ byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	return 0;
 }
 
+uint32 PlayableScene::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kPrimaryDialogueSpeechFrameMillis;
+}
+
+byte PlayableScene::primarySpeechVolumePercent(byte animationGroup) const {
+	(void)animationGroup;
+	return 100;
+}
+
 void PlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
 	(void)frameIndex;
@@ -2200,8 +2216,11 @@ void PlayableScene::advancePrimaryLeftSpeechFrame() {
 
 void PlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	_primaryDialogueSpeechTimerAccumulator += delta;
-	while (_primaryDialogueSpeechTimerAccumulator >= kPrimaryDialogueSpeechFrameMillis) {
-		_primaryDialogueSpeechTimerAccumulator -= kPrimaryDialogueSpeechFrameMillis;
+	const uint32 frameMillis = primarySpeechAnimationFrameMillis(_primaryDialogueSpeechGroup);
+	if (frameMillis == 0)
+		return;
+	while (_primaryDialogueSpeechTimerAccumulator >= frameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= frameMillis;
 		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
 		const byte nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(_random, baseFrame);
 		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
@@ -2335,17 +2354,19 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		wrapActorSpeechText(text, centerX, overlay.lines);
 		calculateSpeechOverlayBounds(overlay, centerX, topY, useRequestedTop, _activeActorWorldY);
 
+		const byte animationGroup = animatePrimaryDialogue ?
+			(primaryAnimationGroup == kInvalidPrimarySpeechAnimationGroup ? 0 : primaryAnimationGroup) :
+			kInvalidPrimarySpeechAnimationGroup;
+		const byte volumePercent = animationGroup == kInvalidPrimarySpeechAnimationGroup ?
+			100 : primarySpeechVolumePercent(animationGroup);
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, volumePercent);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, overlay.lines.size() * 1100);
 		if (animatePrimaryLeft) {
 			_speechController.startPrimaryLeftSpeech();
 			setPrimaryLeftSpeechFrame(0);
 		}
-		const byte animationGroup = animatePrimaryDialogue ?
-			(primaryAnimationGroup == kInvalidPrimarySpeechAnimationGroup ? 0 : primaryAnimationGroup) :
-			kInvalidPrimarySpeechAnimationGroup;
 		if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
 			const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
 			_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
