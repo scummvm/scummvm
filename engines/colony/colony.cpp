@@ -150,7 +150,8 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_widescreen = ConfMan.getBool("widescreen_mod");
 	_invertY = ConfMan.getBool("invert_y");
 
-	// Render mode: EGA (DOS wireframe default) or Macintosh (filled polygons)
+	// Render mode: EGA or Macintosh. The shipped DOS launcher passes /fill,
+	// so both platforms start with filled polygons.
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = Common::kRenderDefault;
 	else
@@ -163,7 +164,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 			_renderMode = Common::kRenderEGA;
 	}
 
-	_wireframe = !isMacRenderMode();
+	_wireframe = false;
 	_fullscreen = false;
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	_moveForward = false;

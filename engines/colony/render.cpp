@@ -43,24 +43,23 @@ const int g_indexTable[4][10] = {
 	{0, 0,  0, 1,  1,  0,  0, -1,  2, 1}
 };
 
-// DOS lsColor table from ROBOCOLR.C  maps color index to rendering attributes.
-// Fields: monochrome (MONOCHROME  Mac B&W dither pattern, matches MacPattern enum),
-//         backColor (BACKCOLOR), fillColor (FILLCOLOR), lineFillColor (LINEFILLCOLOR),
-//         lineColor (LINECOLOR), pattern (PATTERN).
+// DOS lsColor table from ROBOCOLR.C maps color index to rendering attributes.
+// Source column order: MONOCHROME, LINEFILLCOLOR, FILLCOLOR, BACKCOLOR,
+//                      LINECOLOR, PATTERN.
 // DrawPrism uses: polyfill ON → fill with fillColor/backColor/pattern, outline with lineFillColor.
 //                 polyfill OFF → outline only with lineColor.
 // Mac B&W uses: monochrome field for dither pattern (WHITE/LTGRAY/GRAY/DKGRAY/BLACK/CLEAR).
 struct DOSColorEntry {
 	uint8 monochrome;
-	uint8 backColor;
-	uint8 fillColor;
 	uint8 lineFillColor;
+	uint8 fillColor;
+	uint8 backColor;
 	uint8 lineColor;
 	uint8 pattern;
 };
 
 const DOSColorEntry g_dosColors[79] = {
-	//                     MONO BK  FILL LFIL LINE PAT
+	//                     MONO LFIL FILL BK  LINE PAT
 	/* 0  cCLEAR      */ { 5,  0,  0,  0,  0, 1},
 	/* 1  cBLACK      */ { 4,  0,  0,  0,  0, 1},
 	/* 2  cBLUE       */ { 2,  0,  1,  1,  1, 1},
@@ -179,6 +178,37 @@ const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 	case kColorRainbow4: return g_dosColors[5];  // RED
 	default: return fallback;
 	}
+}
+
+// Reproduce the DOS driver's SetFill/FILLPATTERN material setup. Patterns 3,
+// 4 and 5 are respectively 50%, 25% and 12.5% foreground coverage; pattern 1
+// is a solid FILLCOLOR fill.
+const byte *setupDOSMaterial(Renderer *gfx, const DOSColorEntry &color) {
+	const byte *stipple = nullptr;
+	switch (color.pattern) {
+	case 3:
+		stipple = kStippleGray;
+		break;
+	case 4:
+		stipple = kStippleLtGray;
+		break;
+	case 5:
+		stipple = kDOSStipplePattern5;
+		break;
+	default:
+		break;
+	}
+
+	if (stipple) {
+		gfx->setMacColors(color.fillColor, color.backColor);
+		gfx->setStippleData(stipple);
+		gfx->setWireframe(true, color.backColor);
+	} else {
+		gfx->setStippleData(nullptr);
+		gfx->setWireframe(true, color.fillColor);
+	}
+
+	return stipple;
 }
 
 // Map ObjColor → Mac B&W dither pattern (from ROBOCOLR.C MONOCHROME field).
@@ -613,17 +643,15 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 					_gfx->draw3DPolygon(px, py, pz, count, 0); // black outline
 					_gfx->setStippleData(nullptr);
 				} else {
-					// EGA: per-surface colors from DOS lsColor table.
-					// polyfill ON  → B&W fill (from MONOCHROME field), colored LINECOLOR outline.
+					// EGA: per-surface materials from the DOS lsColor table.
+					// polyfill ON  → FILLCOLOR/BACKCOLOR/PATTERN fill, LINEFILLCOLOR outline.
 					// polyfill OFF → outline only with LINECOLOR.
 					const DOSColorEntry &dc = lookupDOSColor(colorIdx, _level);
 					if (!_wireframe) {
-						// Polyfill mode: B&W fill + colored LINECOLOR outline.
-						// LINECOLOR (not LINEFILLCOLOR)  has proper contrast against B&W fills.
-						if (dc.monochrome == kPatternClear)
-							continue;
-						_gfx->setWireframe(true, 7); // all surfaces white; colored outlines provide distinction
-						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
+						const byte *stipple = setupDOSMaterial(_gfx, dc);
+						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineFillColor);
+						if (stipple)
+							_gfx->setStippleData(nullptr);
 					} else {
 						// Wireframe only: LINECOLOR outline, no fill.
 						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
@@ -945,9 +973,9 @@ void ColonyEngine::renderCorridor3D() {
 			ceilColor = wallFill;
 		}
 	} else {
-		// IBM_DISP.C: lit → BackColor(vWHITE)=15, color_wall=vwall_Light=0 (black lines on white bg)
+		// IBM_DISP.C: lit → BackColor(vWHITE)=7, color_wall=vwall_Light=0 (black lines on white bg)
 		//             dark → BackColor(vBLACK)=0, color_wall=vINTWHITE=15 (white lines on black bg)
-		wallFill = lit ? (macMode ? 255 : 15) : 0;
+		wallFill = lit ? (macMode ? 255 : 7) : 0;
 		wallLine = lit ? 0 : (macMode ? 255 : 15);
 		floorColor = macMode ? (lit ? 255 : 0) : wallFill;
 		ceilColor  = macMode ? (lit ? 255 : 0) : wallFill;
@@ -1021,9 +1049,9 @@ void ColonyEngine::renderCorridor3D() {
 	// Full depth range  objects beat walls and features at the same distance.
 	_gfx->setDepthRange(0.0f, 1.0f);
 
-	// F7 toggles object fill.
-	// EGA: default is filled (wall background); F7 = outline-only (see-through).
-	// Mac: default is per-surface fill; F7 = "Fast mode" (outline-only).
+	// F8 toggles object fill.
+	// EGA: default is filled (wall background); F8 = outline-only (see-through).
+	// Mac: default is per-surface fill; F8 = "Fast mode" (outline-only).
 	if (_wireframe) {
 		_gfx->setWireframe(true); // No fill = outline-only objects
 	}
