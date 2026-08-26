@@ -164,7 +164,9 @@ void Scene1040::runCustomEntrySequence() {
 
 	if (stateId == kScene1040CloakroomReturnState) {
 		_soundBank0.playSample(4, 100);
-		runEntryPath(0x320, 0x13d, 4, 0x284, 0x13d);
+		setActiveActorPose(0x284, 0x13d, 4);
+		drawPlayableComposite();
+		presentFrame();
 		return;
 	}
 
