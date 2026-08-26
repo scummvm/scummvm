@@ -33,12 +33,17 @@ const uint kScene6030ActorBankTableEntry = 0x0000;
 const uint kScene6030ActorPaletteTableEntry = 0x00cc;
 const uint kScene6030Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene6030SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene6030FastFrameMillis = 50;
-const uint32 kScene6030HannoverFrameMillis = 75;
+const uint32 kScene6030TaffyFrameMillis = 50;
+const uint32 kScene6030PoseFrameMillis = 75;
+const uint32 kScene6030SpeechFrameMillis = 125;
+const uint32 kScene6030ActorPathFrameMillis = 60;
 const uint kScene6030LargeLayerDescriptorCount = 0x1b;
-const uint kScene6030TaffyEntranceDescriptorCount = 0x0e;
+const uint kScene6030BathroomExitDescriptorCount = 0x0e;
 const uint kScene6030SmallLayerDescriptorCount = 3;
-const byte kScene6030TaffyEntranceChunkIndex = 7;
+const uint kScene6030TaffyArrivalDescriptorCount = 0x45;
+const uint kScene6030TaffyDepartureDescriptorCount = 0x2a;
+const uint kScene6030SaxophoneDescriptorCount = 0x0c;
+const byte kScene6030SaxophoneItemId = 0x5c;
 const byte kScene6030PrimarySpeechTextColor = 0xfb;
 const byte kScene6030DialogueStageId = 0x62;
 const byte kScene6030DialoguePrimaryRow = 99;
@@ -62,13 +67,38 @@ const byte kScene6030SmallLayerFrameMap[] = {
 	0, 1, 2
 };
 
-const byte kScene6030TaffyEntranceFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+const byte kScene6030SaxophoneFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+};
+
+enum Scene6030AnimationLayerId {
+	kScene6030HannoverLayer,
+	kScene6030BathroomExitLayer,
+	kScene6030CoffeeCupLayer,
+	kScene6030TaffyServiceLayer
+};
+
+enum Scene6030AnimationHookId {
+	kScene6030TaffyPlacesCoffeeHook = 1,
+	kScene6030HannoverRaisesCoffeeHook,
+	kScene6030HannoverLowersCoffeeHook,
+	kScene6030BathroomExitVolumeHook
+};
+
+const SceneAnimationLayerSpec kScene6030AnimationLayerSpecs[] = {
+	{ kSceneAnimationBehindActors, 6, kScene6030LargeLayerDescriptorCount,
+		kScene6030LargeLayerFrameMap, ARRAYSIZE(kScene6030LargeLayerFrameMap), true },
+	{ kSceneAnimationBehindActors, 7, kScene6030BathroomExitDescriptorCount,
+		nullptr, 0, false },
+	{ kSceneAnimationBehindActors, 8, kScene6030SmallLayerDescriptorCount,
+		kScene6030SmallLayerFrameMap, ARRAYSIZE(kScene6030SmallLayerFrameMap), true },
+	{ kSceneAnimationInFrontOfActors, 9, kScene6030TaffyArrivalDescriptorCount,
+		nullptr, 0, false }
 };
 
 static PlayableSceneConfig scene6030Config() {
 	PlayableSceneConfig config(6030,
-		SceneResourceLayout(12, 5, 11),
+		SceneResourceLayout(13, 5, 12),
 		SceneViewport(kScene6030ViewportXOffset),
 		SceneActorPose(0x1e5, 0x186, 5));
 	config.setActorResources(kScene6030ActorBankTableEntry, kScene6030ActorPaletteTableEntry);
@@ -79,24 +109,19 @@ static PlayableSceneConfig scene6030Config() {
 
 Scene6030::Scene6030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6030Config()),
-		_largeBackgroundChannel(),
-		_taffyEntranceChannel(),
-		_largeBackgroundLayer(),
-		_smallForegroundLayer(),
-		_taffyEntranceLayer(),
+		_hannoverIdleChannel(),
+		_scriptedActorPathChannel(),
+		_animationLayers(),
+		_scriptedActorPathFrameIndex(0),
 		_hannoverManualSequenceActive(false),
-		_hannoverLayerSuppressed(false),
-		_taffyEntranceSequenceActive(false) {
-	_largeBackgroundLayer.configure(6, kScene6030LargeLayerDescriptorCount,
-		kScene6030LargeLayerFrameMap, ARRAYSIZE(kScene6030LargeLayerFrameMap));
-	_smallForegroundLayer.configure(8, kScene6030SmallLayerDescriptorCount,
-		kScene6030SmallLayerFrameMap, ARRAYSIZE(kScene6030SmallLayerFrameMap));
-	_taffyEntranceLayer.configure(kScene6030TaffyEntranceChunkIndex, kScene6030TaffyEntranceDescriptorCount,
-		kScene6030TaffyEntranceFrameMap, ARRAYSIZE(kScene6030TaffyEntranceFrameMap));
+		_scriptedActorPathActive(false) {
+	_animationLayers.configure(kScene6030AnimationLayerSpecs);
 }
 
 void Scene6030::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
+	if (!hasSavedActiveActorPoseForCurrentState())
+		_vm->gameState().scene6030HannoverAbsent = false;
 	resetAnimationLayers();
 	setActiveActorPose(0x1e5, 0x186, 5);
 }
@@ -107,19 +132,27 @@ void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (!_hannoverLayerSuppressed)
-		drawResourceSpriteLayer(_largeBackgroundLayer);
-	drawResourceSpriteLayer(_taffyEntranceLayer);
-	drawResourceSpriteLayer(_smallForegroundLayer);
-	drawActionOverlayLayer();
+	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+	if (_actionOverlayPlayer.isVisible() &&
+			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors)
+		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
+	drawAnimationLayers(_animationLayers, kSceneAnimationInFrontOfActors);
+	if (_actionOverlayPlayer.isVisible() &&
+			_actionOverlayPlayer.stratum != kSceneAnimationBehindActors)
+		drawActionOverlayLayer();
 }
 
 void Scene6030::runCustomEntrySequence() {
+	_vm->gameState().scene6030HannoverAbsent = false;
+	resetAnimationLayers();
 	_soundBank0.playSample(4, 100);
-	runEntryPath(0x384, 0x1de, 5, 0x1e5, 0x186);
+	setActiveActorPose(0x384, 0x1de, 5);
+	drawPlayableComposite();
+	presentFrame();
+	startScriptedActorPath(0x1e5, 0x186, 5);
 	runEntryConversation();
 }
 
@@ -129,11 +162,11 @@ bool Scene6030::prepareCustomGameplayLoop() {
 }
 
 bool Scene6030::advanceCustomGameplayLoop(uint32 delta) {
-	if (_taffyEntranceSequenceActive)
-		advanceTaffyEntranceLayer(delta);
+	advanceScriptedActorPath(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_hannoverManualSequenceActive && !_taffyEntranceSequenceActive)
+	else if (!_hannoverManualSequenceActive &&
+			_animationLayers.layer(kScene6030HannoverLayer).visible)
 		advanceHannoverLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -153,8 +186,8 @@ bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Usar sillon de Hannover (use Hannover's armchair): Hannover may return.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 305: // Usar sillon de Hannover (use Hannover's armchair), duplicate scene action.
-		beginSecondarySpeechLine(4, 0);
+	case 305: // Coger saxofon (take the saxophone).
+		runSaxophonePickupSequence();
 		return true;
 	case 306: // Mirar saxofon (look at saxophone).
 		beginSecondarySpeechLine(5, 0);
@@ -181,10 +214,10 @@ bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	case 314: // Mirar telefono (look at telephone).
-		beginSecondarySpeechLine(13, 0);
+		beginSecondarySpeechLine(12, 0);
 		return true;
 	case 315: // Usar telefono (use telephone): no need to call.
-		beginSecondarySpeechLine(14, 0);
+		beginSecondarySpeechLine(13, 0);
 		return true;
 	case 316: // Usar telefono (use telephone), duplicate scene action.
 		beginSecondarySpeechLine(14, 0);
@@ -195,13 +228,23 @@ bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene6030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	(void)selector;
-	if (_paletteMaskOriginal.empty())
+	if (selector != 1 && selector != 0xff)
+		return true;
+	if (_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
+			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return true;
 
 	restoreBaseFramebufferFromOriginal();
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	if (_vm->gameState().scene6030SaxophoneTaken) {
+		for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
+			if (_paletteMaskOriginal[kSceneColorToItemMap + i] == 3)
+				_paletteMask[kSceneColorToItemMap + i] = 0;
+		}
+		if (_sceneChunkTable.isValidChunk(5))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
+	}
 
 	rebuildWorkingWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
@@ -218,14 +261,45 @@ byte Scene6030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	return 0;
 }
 
+uint32 Scene6030::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene6030SpeechFrameMillis;
+}
+
 void Scene6030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_largeBackgroundLayer.setFrame(frameIndex);
+	_animationLayers.setLayerFrame(kScene6030HannoverLayer, frameIndex);
+}
+
+void Scene6030::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
+	switch (hookId) {
+	case kScene6030TaffyPlacesCoffeeHook:
+	case kScene6030HannoverLowersCoffeeHook:
+		_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer, 1);
+		break;
+	case kScene6030HannoverRaisesCoffeeHook:
+		_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer, 2);
+		break;
+	case kScene6030BathroomExitVolumeHook:
+		_speech.setVolume(25);
+		break;
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		break;
+	}
 }
 
 AmbientAudioProfile Scene6030::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
+	if (_vm->gameState().scene6030CoffeeState == 2) {
+		profile.soundMode = kAmbientSoundRandomRange;
+		profile.soundFirstCueId = 0x11;
+		profile.soundCueCount = 1;
+		profile.soundVolumePercent = 50;
+		profile.soundProbabilityModulus = 60;
+	}
 	profile.musicMode = kAmbientMusicRandomRange;
 	profile.musicFirstCueId = 0x0b;
 	profile.musicCueCount = 3;
@@ -244,44 +318,95 @@ void Scene6030::rebuildWorkingWalkableMask() {
 }
 
 void Scene6030::resetAnimationLayers() {
-	_largeBackgroundChannel.reset(0, kScene6030HannoverFrameMillis);
-	_taffyEntranceChannel.reset(0, kScene6030FastFrameMillis);
-	_largeBackgroundLayer.reset(0);
-	_smallForegroundLayer.reset(0);
-	_taffyEntranceLayer.reset(0);
-	_largeBackgroundLayer.visible = true;
-	_smallForegroundLayer.visible = true;
-	_taffyEntranceLayer.visible = false;
+	_hannoverIdleChannel.reset(0, kScene6030SpeechFrameMillis);
+	_scriptedActorPathChannel.reset(0, kScene6030ActorPathFrameMillis);
+	_animationLayers.setLayerFrame(kScene6030HannoverLayer, 0);
+	_animationLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
+	_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer,
+		_vm->gameState().scene6030HannoverAbsent ? 1 : 0);
+	_animationLayers.setLayerFrame(kScene6030TaffyServiceLayer, 0);
+	_animationLayers.setLayerVisible(kScene6030HannoverLayer,
+		!_vm->gameState().scene6030HannoverAbsent);
+	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
+	_animationLayers.setLayerVisible(kScene6030CoffeeCupLayer, true);
+	_animationLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
+	_scriptedActorPathFrameIndex = 0;
 	_hannoverManualSequenceActive = false;
-	_hannoverLayerSuppressed = _vm->gameState().scene6030CoffeeState >= 2;
-	_taffyEntranceSequenceActive = false;
+	_scriptedActorPathActive = false;
+	_actorPathPlaybackActive = false;
 }
 
 void Scene6030::advanceHannoverLayer(uint32 delta) {
-	const uint frameCount = _largeBackgroundChannel.consumeFrames(delta);
+	ResourceSpriteLayer &hannoverLayer = _animationLayers.layer(kScene6030HannoverLayer);
+	const uint frameCount = _hannoverIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_largeBackgroundLayer.frameIndex == 0) {
+		if (hannoverLayer.frameIndex == 0) {
 			if (_random.getRandomNumber(14) == 0)
-				_largeBackgroundLayer.setFrame(4);
+				hannoverLayer.setFrame(4);
 		} else {
-			_largeBackgroundLayer.setFrame(0);
+			hannoverLayer.setFrame(0);
 		}
 	}
 }
 
-void Scene6030::advanceTaffyEntranceLayer(uint32 delta) {
-	if (!_taffyEntranceLayer.visible)
-		return;
-
-	const uint frameCount = _taffyEntranceChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		if (_taffyEntranceLayer.frameIndex < 0x0d) {
-			_taffyEntranceLayer.setFrame(_taffyEntranceLayer.frameIndex + 1);
+void Scene6030::startScriptedActorPath(int targetX, int targetY, byte finalFacing) {
+	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
+		targetX, targetY, finalFacing, 0);
+	_scriptedActorPathFrameIndex = 1;
+	_scriptedActorPathChannel.reset(0, kScene6030ActorPathFrameMillis);
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
+	_scriptedActorPathActive = _actorPathFrames.size() > 1;
+	_actorPathPlaybackActive = _scriptedActorPathActive;
+	if (!_scriptedActorPathActive) {
+		if (!_actorPathFrames.empty()) {
+			const ActorPathFrame &frame = _actorPathFrames.back();
+			_activeActorWorldX = frame.worldX;
+			_activeActorWorldY = frame.worldY;
+			_activeActorFacing = frame.facing;
+			_activeActorCel = frame.cel;
+			_activeActorDrawOrderMode = frame.drawOrderMode;
 		} else {
-			_taffyEntranceSequenceActive = false;
-			break;
+			setActiveActorPose(targetX, targetY, finalFacing);
 		}
 	}
+}
+
+void Scene6030::advanceScriptedActorPath(uint32 delta) {
+	if (!_scriptedActorPathActive)
+		return;
+
+	const uint frameCount = _scriptedActorPathChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount && _scriptedActorPathFrameIndex < _actorPathFrames.size(); ++i) {
+		const ActorPathFrame &frame = _actorPathFrames[_scriptedActorPathFrameIndex++];
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+	}
+	if (_scriptedActorPathFrameIndex >= _actorPathFrames.size()) {
+		_scriptedActorPathActive = false;
+		_actorPathPlaybackActive = false;
+	}
+}
+
+void Scene6030::finishScriptedActorPath() {
+	while (_scriptedActorPathActive && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10))
+			break;
+	}
+	if (_scriptedActorPathActive && !animationPlaybackShouldStop() &&
+			!_actorPathFrames.empty()) {
+		const ActorPathFrame &frame = _actorPathFrames.back();
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+	}
+	_scriptedActorPathActive = false;
+	_actorPathPlaybackActive = false;
 }
 
 void Scene6030::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
@@ -293,6 +418,7 @@ void Scene6030::runEntryConversation() {
 	GameplayState &state = _vm->gameState();
 	if (!state.scene6030HannoverInterviewCompleted) {
 		beginHannoverSpeechLine(0);
+		finishScriptedActorPath();
 		beginSecondarySpeechLine(kScene6030DialogueStageId, 0);
 		beginHannoverSpeechLine(1);
 		beginHannoverSpeechLine(3);
@@ -300,29 +426,34 @@ void Scene6030::runEntryConversation() {
 		beginHannoverSpeechLine(5, 2);
 		runHannoverFrameRangeSequence(true);
 		beginHannoverSpeechLine(6);
-		runHannoverDeskWalkSequence();
-		beginHannoverSpeechLine(8);
+		runTaffyCoffeeServiceSequence();
+		if (animationPlaybackShouldStop())
+			return;
 		runHannoverDialogueMenu();
 		state.scene6030HannoverInterviewCompleted = true;
-		returnToScene6020();
+		leaveHannoverOffice();
 		return;
 	}
 
 	beginHannoverSpeechLine(2);
+	finishScriptedActorPath();
 	beginHannoverSpeechLine(state.scene6030CoffeeState < 2 ? 3 : 4);
 	runHannoverFrameRangeSequence(false);
 	beginHannoverSpeechLine(5, 2);
 	runHannoverFrameRangeSequence(true);
 	beginHannoverSpeechLine(7);
-	runHannoverDeskWalkSequence();
-	beginHannoverSpeechLine(8);
+	runTaffyCoffeeServiceSequence();
+	if (animationPlaybackShouldStop())
+		return;
 	if (state.scene6030CoffeeState == 0) {
 		runHannoverDialogueMenu();
-		returnToScene6020();
+		leaveHannoverOffice();
 		return;
 	}
 
-	runTaffyEnteringAnimation();
+	runHannoverBathroomExitSequence();
+	if (animationPlaybackShouldStop())
+		return;
 	if (state.scene6030CoffeeState == 1)
 		state.scene6030CoffeeState = 2;
 	walkActiveActorTo(0x1e5, 0x186, 1, 0, false);
@@ -452,57 +583,142 @@ uint32 Scene6030::beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX,
 void Scene6030::runHannoverFrameRange(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis) {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	_largeBackgroundLayer.setFrame(firstFrame);
-	while (_largeBackgroundLayer.frameIndex < lastFrame &&
-			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(frameMillis))
-			break;
-		_largeBackgroundLayer.setFrame(_largeBackgroundLayer.frameIndex + 1);
-	}
-	if (!Engine::shouldQuit())
-		_largeBackgroundLayer.setFrame(finalFrame);
+	const bool completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+		AnimationFrameRange(firstFrame, lastFrame, frameMillis).unskippable());
+	if (completed)
+		_animationLayers.setLayerFrame(kScene6030HannoverLayer, finalFrame);
 	_hannoverManualSequenceActive = previousManualSequence;
 }
 
 void Scene6030::runHannoverFrameRangeSequence(bool alternatePose) {
 	runHannoverFrameRange(alternatePose ? 0x10 : 5, alternatePose ? 0x12 : 0x0a,
-		alternatePose ? 0 : 0x0b, kScene6030HannoverFrameMillis);
+		alternatePose ? 0 : 0x0b, kScene6030PoseFrameMillis);
 }
 
-void Scene6030::runHannoverDeskWalkSequence() {
-	walkActiveActorTo(0x25b, 0x17d, 4, 0, false);
-	walkActiveActorTo(0x1e5, 0x186, 5, 0, false);
+void Scene6030::runTaffyCoffeeServiceSequence() {
+	const uint deskOffset = 0x17d * HollywoodEngine::kSceneBufferWidth + 0x25b;
+	const byte deskColor = savedFramebufferPixelAt(deskOffset);
+	const bool hasDeskRegion = deskColor < _fullPaletteRegionMask.size();
+	const byte previousDeskRegion = hasDeskRegion ? _fullPaletteRegionMask[deskColor] : 0;
+	// The desk is not floor, but Ron must route onto it during this scripted walk.
+	if (hasDeskRegion)
+		_fullPaletteRegionMask[deskColor] = 1;
+
+	startScriptedActorPath(0x25b, 0x17d, 4);
+	_animationLayers.configureLayerResource(kScene6030TaffyServiceLayer, 9,
+		kScene6030TaffyArrivalDescriptorCount, nullptr, 0);
+	bool completed = playAnimationFrames(_animationLayers, kScene6030TaffyServiceLayer,
+		AnimationFrameRange(0, 0x44, kScene6030TaffyFrameMillis)
+			.unskippable().hookAt(0x42, kScene6030TaffyPlacesCoffeeHook));
+	if (completed) {
+		_animationLayers.configureLayerResource(kScene6030TaffyServiceLayer, 10,
+			kScene6030TaffyDepartureDescriptorCount, nullptr, 0);
+		completed = playAnimationFrames(_animationLayers, kScene6030TaffyServiceLayer,
+			AnimationFrameRange(0, 0x29, kScene6030TaffyFrameMillis).unskippable());
+	}
+	_animationLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
+	if (!completed) {
+		_scriptedActorPathActive = false;
+		_actorPathPlaybackActive = false;
+		if (hasDeskRegion)
+			_fullPaletteRegionMask[deskColor] = previousDeskRegion;
+		return;
+	}
+
+	finishScriptedActorPath();
+	if (animationPlaybackShouldStop()) {
+		if (hasDeskRegion)
+			_fullPaletteRegionMask[deskColor] = previousDeskRegion;
+		return;
+	}
+
+	startScriptedActorPath(0x1e5, 0x186, 5);
+	beginHannoverSpeechLine(8);
+	finishScriptedActorPath();
+	if (hasDeskRegion)
+		_fullPaletteRegionMask[deskColor] = previousDeskRegion;
+	if (animationPlaybackShouldStop())
+		return;
+
+	runHannoverCoffeeSequence();
 }
 
-void Scene6030::runTaffyEnteringAnimation() {
-	runHannoverFrameRange(0x2d, 0x3e, 0x3e, kScene6030FastFrameMillis);
+void Scene6030::runHannoverCoffeeSequence() {
+	const bool previousManualSequence = _hannoverManualSequenceActive;
+	_hannoverManualSequenceActive = true;
+	bool completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+		AnimationFrameRange(0x13, 0x16, kScene6030PoseFrameMillis)
+			.unskippable().hookAt(0x16, kScene6030HannoverRaisesCoffeeHook));
+	if (completed) {
+		completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+			AnimationFrameRange(0x17, 0x29, kScene6030PoseFrameMillis)
+				.unskippable().hookAt(0x29, kScene6030HannoverLowersCoffeeHook));
+	}
+	if (completed) {
+		playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+			AnimationFrameRange(0x2a, 0x2c, kScene6030PoseFrameMillis).unskippable());
+	}
+	_hannoverManualSequenceActive = previousManualSequence;
+}
 
-	_hannoverLayerSuppressed = true;
-	_taffyEntranceLayer.visible = true;
-	_taffyEntranceLayer.reset(0);
-	_taffyEntranceChannel.reset(0, kScene6030FastFrameMillis);
-	_taffyEntranceSequenceActive = true;
+void Scene6030::runHannoverBathroomExitSequence() {
+	const bool previousManualSequence = _hannoverManualSequenceActive;
+	_hannoverManualSequenceActive = true;
+	runHannoverFrameRange(0x2d, 0x3e, 0x3e, kScene6030PoseFrameMillis);
+	if (animationPlaybackShouldStop()) {
+		_hannoverManualSequenceActive = previousManualSequence;
+		return;
+	}
+
+	_animationLayers.setLayerVisible(kScene6030HannoverLayer, false);
+	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, true);
+	_animationLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
 
 	const uint32 speechDuration = beginStaticHannoverSpeechLine(9, 500, 100);
-	uint32 elapsed = 0;
-	bool departureVoiceVolumeAdjusted = false;
-	while (((_taffyEntranceLayer.frameIndex < 0x0d) || _speech.isPlaying() || elapsed < speechDuration) &&
+	const bool completed = playAnimationFrames(_animationLayers, kScene6030BathroomExitLayer,
+		AnimationFrameRange(0, 0x0d, kScene6030PoseFrameMillis)
+			.unskippable().hookAt(0x0d, kScene6030BathroomExitVolumeHook));
+	uint32 elapsed = kScene6030BathroomExitDescriptorCount * kScene6030PoseFrameMillis;
+	while (completed && (_speech.isPlaying() || elapsed < speechDuration) &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (waitSceneMillis(10))
 			break;
-		if (!departureVoiceVolumeAdjusted && _taffyEntranceLayer.frameIndex == 0x0d) {
-			_speech.setVolume(25);
-			departureVoiceVolumeAdjusted = true;
-		}
 		elapsed += 10;
 	}
 
-	_taffyEntranceSequenceActive = false;
-	_taffyEntranceLayer.visible = false;
+	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
 	_speech.stop();
 	_primarySpeechOverlay.visible = false;
 	_primarySpeechOverlay.lines.clear();
-	_hannoverLayerSuppressed = true;
+	if (completed && !animationPlaybackShouldStop())
+		_vm->gameState().scene6030HannoverAbsent = true;
+	_hannoverManualSequenceActive = previousManualSequence;
+}
+
+void Scene6030::runSaxophonePickupSequence() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene6030SaxophoneTaken)
+		return;
+
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(12,
+		kScene6030SaxophoneDescriptorCount, kScene6030SaxophoneFrameMap,
+		ARRAYSIZE(kScene6030SaxophoneFrameMap));
+	const bool completed = playAnimationFrames(_actionOverlayPlayer,
+		AnimationFrameRange(1, 0x0c, kScene6030PoseFrameMillis).unskippable());
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+	if (!completed)
+		return;
+
+	state.scene6030SaxophoneTaken = true;
+	applySceneStateToHotspotsAndPatches(1);
+	addInventoryItem(kScene6030SaxophoneItemId);
+	_soundBank0.playSample(1, 100);
+	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
+}
+
+void Scene6030::leaveHannoverOffice() {
+	walkActiveActorTo(0x384, 0x1de, 5, 0, false);
+	returnToScene6020();
 }
 
 void Scene6030::returnToScene6020() {
