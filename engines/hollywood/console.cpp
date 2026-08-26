@@ -37,6 +37,14 @@ const byte kFrankieSunglassesItem = 0x27;
 const byte kFrankieDiaryItem = 0x33;
 const byte kFrankieUmbrellaItem = 0x5b;
 
+const byte kKarnakTigerToothItem = 0x26;
+const byte kKarnakPapyrusItem = 0x2a;
+const byte kKarnakNileFlowerItem = 0x2c;
+const byte kKarnakPrincessHairItem = 0x2e;
+const byte kKarnakLampItem = 0x3c;
+const byte kKarnakOilItem = 0x43;
+const byte kKarnakShovelItem = 0x50;
+
 const byte kFrankieBodyAssemblyItems[] = {
 	0x30, 0x42, 0x4c
 };
@@ -62,7 +70,7 @@ Console::Console(HollywoodEngine *vm) :
 
 bool Console::cmdGet(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Usage: %s <item id|all|frankie>\n", argv[0]);
+		debugPrintf("Usage: %s <item id|all|frankie|karnak>\n", argv[0]);
 		return true;
 	}
 
@@ -122,11 +130,39 @@ bool Console::cmdGet(int argc, const char **argv) {
 		debugPrintf("Added %u inventory items needed for Frankenstein's revival\n", addedCount);
 		return true;
 	}
+	if (argument.equalsIgnoreCase("karnak") || argument.equalsIgnoreCase("karnac")) {
+		if (owner != 0) {
+			debugPrintf("Sphinx and Karnak ceremony items can only be given to Ron\n");
+			return true;
+		}
+
+		uint addedCount = 0;
+		if (state.scene2040SphinxFaceState == 0)
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakShovelItem);
+		if (state.scene2040SphinxBasePatchState == 0)
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakTigerToothItem);
+		if (!state.scene2050LabyrinthLampReady) {
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakLampItem);
+			if (!state.ronLampFueled)
+				addedCount += addInventoryItemIfMissing(state, owner, kKarnakOilItem);
+		}
+		if (!state.scene2020PrincessGone) {
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakPapyrusItem);
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakNileFlowerItem);
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakPrincessHairItem);
+		}
+
+		debugPrintf("Added %u inventory items needed for the sphinx and Karnak ceremony\n",
+			addedCount);
+		if (state.scene2040SphinxExitInterviewState < 2)
+			debugPrintf("The mummy dialogue prerequisite still needs to be completed\n");
+		return true;
+	}
 
 	uint itemId = 0;
 	if (!parseItemId(argv[1], itemId)) {
 		debugPrintf("Invalid inventory item id '%s'\n", argv[1]);
-		debugPrintf("Usage: %s <item id|all|frankie>\n", argv[0]);
+		debugPrintf("Usage: %s <item id|all|frankie|karnak>\n", argv[0]);
 		return true;
 	}
 
