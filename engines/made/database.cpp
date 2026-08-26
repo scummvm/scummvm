@@ -287,6 +287,8 @@ int ObjectV3_1::load(byte *source) {
 	_objData = source;
 	_freeData = false;
 	if (getClass() < 0x7FFE) {
+		_objSize = getSize() * 4;
+	} else if (getClass() == 0x7FFE) {
 		_objSize = getSize() * 2;
 	} else {
 		_objSize = getSize();
@@ -686,7 +688,7 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
 		if (objectOffsets[i] & 1) {
-			sourceS.seek(objectsOffs + objectOffsets[i] ^ 1);
+			sourceS.seek(objectsOffs + (objectOffsets[i] ^ 1));
 			obj->load(sourceS);
 		} else {
 			obj->load(_gameState + objectOffsets[i]);
@@ -923,7 +925,7 @@ void GameDatabaseV3_1::load(Common::SeekableReadStream &sourceS) {
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
 		if (objectOffsets[i] & 1) {
-			sourceS.seek(objectsOffs + objectOffsets[i] ^ 1);
+			sourceS.seek(objectsOffs + (objectOffsets[i] ^ 1));
 			obj->load(sourceS);
 		} else {
 			obj->load(_gameState + objectOffsets[i]);
