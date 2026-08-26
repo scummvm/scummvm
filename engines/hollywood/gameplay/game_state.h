@@ -245,6 +245,8 @@ struct GameplayState {
 		scene6020TaffyKnown = false;
 		scene6020TaffyLeft = false;
 		scene6030HannoverInterviewCompleted = false;
+		scene6030SaxophoneTaken = false;
+		scene6030HannoverAbsent = false;
 		scene6030CoffeeState = 0;
 		scene6040EntryLineSeen = false;
 		scene6040PaintCanTaken = false;
@@ -986,6 +988,8 @@ struct GameplayState {
 	bool scene6020TaffyKnown;
 	bool scene6020TaffyLeft;
 	bool scene6030HannoverInterviewCompleted;
+	bool scene6030SaxophoneTaken;
+	bool scene6030HannoverAbsent;
 	byte scene6030CoffeeState;
 	bool scene6040EntryLineSeen;
 	bool scene6040PaintCanTaken;

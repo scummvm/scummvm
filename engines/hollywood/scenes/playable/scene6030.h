@@ -44,13 +44,17 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldAnimatePrimarySpeechLine() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void rebuildWorkingWalkableMask();
 	void resetAnimationLayers();
 	void advanceHannoverLayer(uint32 delta);
-	void advanceTaffyEntranceLayer(uint32 delta);
+	void startScriptedActorPath(int targetX, int targetY, byte finalFacing);
+	void advanceScriptedActorPath(uint32 delta);
+	void finishScriptedActorPath();
 	void drawForegroundBlocks(int activeWorldX, int activeWorldY);
 	void runEntryConversation();
 	void runHannoverDialogueMenu();
@@ -62,18 +66,19 @@ private:
 	uint32 beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX, uint16 topY);
 	void runHannoverFrameRange(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis);
 	void runHannoverFrameRangeSequence(bool alternatePose);
-	void runHannoverDeskWalkSequence();
-	void runTaffyEnteringAnimation();
+	void runTaffyCoffeeServiceSequence();
+	void runHannoverCoffeeSequence();
+	void runHannoverBathroomExitSequence();
+	void runSaxophonePickupSequence();
+	void leaveHannoverOffice();
 	void returnToScene6020();
 
-	TimedAnimationChannel _largeBackgroundChannel;
-	TimedAnimationChannel _taffyEntranceChannel;
-	ResourceSpriteLayer _largeBackgroundLayer;
-	ResourceSpriteLayer _smallForegroundLayer;
-	ResourceSpriteLayer _taffyEntranceLayer;
+	TimedAnimationChannel _hannoverIdleChannel;
+	TimedAnimationChannel _scriptedActorPathChannel;
+	SceneAnimationLayers _animationLayers;
+	uint _scriptedActorPathFrameIndex;
 	bool _hannoverManualSequenceActive;
-	bool _hannoverLayerSuppressed;
-	bool _taffyEntranceSequenceActive;
+	bool _scriptedActorPathActive;
 };
 
 } // End of namespace Hollywood
