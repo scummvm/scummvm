@@ -85,6 +85,7 @@ struct GameplayState {
 		inventoryPanelDirty = false;
 		multiToolKnifeState = 0;
 		ronTapeRecorderState = 0;
+		ronTravelQuipIndex = 0;
 		ronWalletOpened = false;
 		ronEgyptianMoneyAmount = 0;
 		ronPendingMabusePillsInMagnetPillbox = false;
@@ -829,6 +830,7 @@ struct GameplayState {
 	bool inventoryPanelDirty;
 	byte multiToolKnifeState;
 	byte ronTapeRecorderState;
+	byte ronTravelQuipIndex;
 	bool ronWalletOpened;
 	uint16 ronEgyptianMoneyAmount;
 	bool ronPendingMabusePillsInMagnetPillbox;
