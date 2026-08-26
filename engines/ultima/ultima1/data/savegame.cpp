@@ -55,8 +55,8 @@ void Savegame::synchronizeBasic(Common::Serializer &s) {
 	s.syncAsSint16LE(_transportType);
 
 	s.syncAsSint16LE(_randomSeed);
-	s.syncAsSint16LE(_position.x);
-	s.syncAsSint16LE(_position.y);
+	s.syncAsSint16LE(_overworldPos.x);
+	s.syncAsSint16LE(_overworldPos.y);
 	s.syncAsByte(_soundOn);
 
 	for (int i = 0; i < QUEST_COUNT; ++i)
@@ -100,6 +100,14 @@ void Savegame::synchronize(Common::Serializer &s) {
 void Savegame::synchronizeOriginal(Common::Serializer &s) {
 	synchronizeBasic(s);
 	_mapNum = MAP_OVERWORLD;
+}
+
+int Savegame::mapTopLeftX() const {
+	return (_G(map)._currentMap == MAP_OVERWORLD) ? (_overworldPos.x - MAP_VISIBLE_CENTER_X) + 1 : 0;
+}
+
+int Savegame::mapTopLeftY() const {
+	return (_G(map)._currentMap == MAP_OVERWORLD) ? (_overworldPos.y - MAP_VISIBLE_CENTER_Y) + 1 : 0;
 }
 
 int Savegame::getEntityAt(int x, int y, int startingIndex) const {

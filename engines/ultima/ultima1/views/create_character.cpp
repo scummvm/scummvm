@@ -379,7 +379,7 @@ void CreateCharacter::confirmAndSave() {
 	p._equippedSpell = SPELL_NONE;
 	p._equippedArmor = ARMOR_LEATHER;
 	p._transportType = TRANSPORT_FOOT;
-	p._position = Common::Point(49, 40);
+	p._overworldPos = Common::Point(49, 40);
 	p._soundOn = true;
 
 	for (int i = 0; i < QUEST_COUNT; ++i)

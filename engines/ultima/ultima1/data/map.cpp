@@ -72,8 +72,6 @@ void Map::init() {
 }
 
 void Map::load(int mapNum) {
-	const auto &player = _G(savegame);
-
 	_currentMap = mapNum;
 
 	if (mapNum == MAP_OVERWORLD) {
@@ -86,9 +84,6 @@ void Map::load(int mapNum) {
 		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
 			_mapRows.push_back(Row(this, &_overworldMap[y * OVERWORLD_WIDTH]));
 
-		_mapX = player._position.x;
-		_mapY = player._position.y;
-
 	} else {
 		_mapWidth = CITY_WIDTH;
 		_mapHeight = CITY_HEIGHT;
@@ -99,9 +94,6 @@ void Map::load(int mapNum) {
 		for (int y = 0; y < CITY_HEIGHT; ++y)
 			_mapRows.push_back(Row(this, &_cityMap[mapNum - 1][y * CITY_WIDTH]));
 		_mapRows.push_back(Row(this, nullptr));
-
-		_mapX = 19;
-		_mapY = 17;
 	}
 
 	// Set up copies of the map position and player tile to use
@@ -111,49 +103,6 @@ void Map::load(int mapNum) {
 
 void Map::clearTiles() {
 	Common::fill(&_mapTilesId[0][0], &_mapTilesId[0][0] + sizeof(VisibleTiles), 0);
-}
-
-int Map::mapTopLeftX() const {
-	return (_currentMap == MAP_OVERWORLD) ? (_mapX - MAP_VISIBLE_CENTER_X) + 1 : 0;
-}
-
-int Map::mapTopLeftY() const {
-	return (_currentMap == MAP_OVERWORLD) ? (_mapY - MAP_VISIBLE_CENTER_Y) + 1 : 0;
-}
-
-bool Map::canMoveToTile(int tileNum) {
-	int tileId = tileNum & 0x7f;
-
-	if (_mapX < _mapWidth && _mapY < _mapHeight) {
-		// Within the bounds of the map
-		switch (_playerTileId) {
-		case TILE_TIME_MACHINE:
-			return true;
-		case TILE_AIRCAR:
-			// TODO
-			error("TODO: aircar");
-			break;
-		case TILE_FRIGATE1:
-			if (tileId != TILE_OCEAN)
-				return true;
-
-			goto update_xy;
-		case TILE_HORSE:
-			// TODO
-			break;
-		default:
-			// TODO
-			break;
-		}
-	} else {
-		// TODO
-	}
-
-update_xy:
-	_mapX &= 63;
-	_mapY &= 63;
-
-	return false;
 }
 
 int Map::getMapTile(int x, int y) const {

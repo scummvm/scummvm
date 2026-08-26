@@ -84,7 +84,7 @@ void OverworldLogic::move(Data::Direction dir) {
 	// Write direction traveled
 	writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
 
-	int continentNum = _G(map).getContinentAt(_G(savegame)._position);
+	int continentNum = _G(map).getContinentAt(_G(savegame)._overworldPos);
 
 	switch (dir) {
 	case Data::DIR_LEFT:
@@ -101,7 +101,7 @@ void OverworldLogic::move(Data::Direction dir) {
 		break;
 	}
 
-	if (_G(map).getContinentAt(_G(savegame)._position) != continentNum)
+	if (_G(map).getContinentAt(_G(savegame)._overworldPos) != continentNum)
 		continentChanged(continentNum);
 }
 
@@ -158,7 +158,7 @@ bool OverworldLogic::moveCheck(Data::Direction dir) {
 }
 
 int OverworldLogic::getViewportX(int xp) const {
-	int x = _G(savegame)._position.x - Data::MAP_VISIBLE_CENTER_X + xp;
+	int x = _G(savegame)._overworldPos.x - Data::MAP_VISIBLE_CENTER_X + xp;
 	if (x < 0)
 		x += Data::OVERWORLD_WIDTH;
 	else if (x >= Data::OVERWORLD_WIDTH)
@@ -168,7 +168,7 @@ int OverworldLogic::getViewportX(int xp) const {
 }
 
 int OverworldLogic::getViewportY(int yp) const {
-	int y = _G(savegame)._position.y - Data::MAP_VISIBLE_CENTER_Y + yp;
+	int y = _G(savegame)._overworldPos.y - Data::MAP_VISIBLE_CENTER_Y + yp;
 	if (y < 0)
 		y += Data::OVERWORLD_HEIGHT;
 	else if (y >= Data::OVERWORLD_HEIGHT)
@@ -193,7 +193,7 @@ void OverworldLogic::impassable(int reason) {
 
 void OverworldLogic::moveLeft() {
 	// Change overworld position
-	Common::Point &pt = _G(savegame)._position;
+	Common::Point &pt = _G(savegame)._overworldPos;
 	if (pt.x > 0) {
 		pt.x--;
 	} else {
@@ -219,7 +219,7 @@ void OverworldLogic::moveLeft() {
 
 void OverworldLogic::moveRight() {
 	// Change overworld position
-	Common::Point &pt = _G(savegame)._position;
+	Common::Point &pt = _G(savegame)._overworldPos;
 	if (pt.x != Data::OVERWORLD_WIDTH - 1) {
 		pt.x++;
 	} else {
@@ -245,7 +245,7 @@ void OverworldLogic::moveRight() {
 
 void OverworldLogic::moveUp() {
 	// Change overworld position
-	Common::Point &pt = _G(savegame)._position;
+	Common::Point &pt = _G(savegame)._overworldPos;
 	pt.y = (pt.y == 0) ? Data::OVERWORLD_HEIGHT - 1 : pt.y - 1;
 
 	// Shift the existing rows down by one, to make room for a new
@@ -266,7 +266,7 @@ void OverworldLogic::moveUp() {
 
 void OverworldLogic::moveDown() {
 	// Change overworld position
-	Common::Point &pt = _G(savegame)._position;
+	Common::Point &pt = _G(savegame)._overworldPos;
 	pt.y = (pt.y == Data::OVERWORLD_HEIGHT - 1) ? 0 : pt.y + 1;
 
 	// Shift the existing rows up by one, to make room for a new
@@ -381,8 +381,8 @@ void OverworldLogic::updateCreatures() {
 		auto &e = _G(savegame)._overworldEntities[idx];
 
 		if (e._type >= Data::TILE_FIRST_MONSTER && e._type <= Data::TILE_LAST_MONSTER) {
-			int xDiff = _G(savegame)._position.x - e._x;
-			int yDiff = _G(savegame)._position.y - e._y;
+			int xDiff = _G(savegame)._overworldPos.x - e._x;
+			int yDiff = _G(savegame)._overworldPos.y - e._y;
 
 			if (Data::OverworldEntity::getMonsterAttackDistance(e._type, xDiff, yDiff) != 0) {
 				if (attackCount < Data::CREATURES_COUNT)
@@ -401,8 +401,8 @@ void OverworldLogic::updateCreatures() {
 
 		int idx = attackIndexes[attackCount];
 		auto &e = _G(savegame)._overworldEntities[idx];
-		int xDiff = _G(savegame)._position.x - e._x;
-		int yDiff = _G(savegame)._position.y - e._y;
+		int xDiff = _G(savegame)._overworldPos.x - e._x;
+		int yDiff = _G(savegame)._overworldPos.y - e._y;
 
 		// TODO: monsterAttack(idx, xDiff, yDiff, getMonsterAttackDistance(e._type, xDiff, yDiff))
 		// - creature combat/damage resolution

@@ -123,7 +123,7 @@ public:
 	int16 _transportType = TRANSPORT_FOOT;
 
 	int16 _randomSeed = 0;
-	Common::Point _position;
+	Common::Point _overworldPos;
 	bool _soundOn = true;
 
 	// Quest completion flags, one per town/dungeon
@@ -170,6 +170,12 @@ public:
 	bool isDead() const {
 		return _hits <= 0;
 	}
+
+	/**
+	 * Return the X/Y of the map to start drawing
+	 */
+	int mapTopLeftX() const;
+	int mapTopLeftY() const;
 
 	/**
 	 * Checks the overworld map for an entity (creature or vechile) at a given position.

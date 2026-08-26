@@ -57,8 +57,6 @@ extern const char *DIRECTION_NAMES[5];
 
 struct Map {
 private:
-	int _currentMap = -1;
-
 	Common::Array<byte> _overworldMap;		// Cached overworld map data
 	Common::Array<byte> _cityMap[10];		// Cached city/castle/town maps
 
@@ -95,9 +93,8 @@ private:
 	Common::Array<Row> _mapRows;			// Used for array operator getting map contents
 
 public:
-	int _mapX = 0, _mapY = 0;
+	int _currentMap = -1;
 	byte _playerTileId = 0;
-
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
@@ -144,14 +141,6 @@ public:
 	}
 
 	void clearTiles();
-
-	/**
-	 * Return the X/Y of the map to start drawing
-	 */
-	int mapTopLeftX() const;
-	int mapTopLeftY() const;
-
-	bool canMoveToTile(int tileNum);
 
 	/**
 	 * Get a tile at a given position.
