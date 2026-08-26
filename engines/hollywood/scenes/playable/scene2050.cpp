@@ -45,6 +45,8 @@ const uint kScene2050AmbientDescriptorCount = 0x1a;
 const uint kScene2050MuralClipDescriptorCount = 8;
 const uint kScene2050SealDiscoveryDescriptorCount = 0x33;
 const uint kScene2050LabyrinthWalkDescriptorCount = 0x1f;
+const uint kScene2050MuralPaletteChunk = 5;
+const uint kScene2050MuralHitMaskChunk = 6;
 const byte kScene2050LampInventoryItem = 0x3c;
 const byte kScene2050LosaSmallRow = 6;
 const byte kScene2050SelloSmallRow = 7;
@@ -52,17 +54,26 @@ const uint kScene2050LabyrinthGoToGlobalRecord = 0x29;
 const uint kScene2050MuralSolvedTilePaletteMapChunk = 7;
 const uint kScene2050MuralTileCount = 48;
 const uint kScene2050MuralGridColumns = 6;
-const uint kScene2050MuralGridRows = 8;
 const int kScene2050MuralVisibleGridX = 0x129;
 const int kScene2050MuralSourceGridX = 0x2b9;
 const int kScene2050MuralGridY = 0x21;
 const int kScene2050MuralTileSize = 0x32;
 const int kScene2050MuralTileStep = 0x34;
 const byte kScene2050MuralHighlightColor = 0xf0;
+const byte kScene2050MuralLastHighlightColor = 0xf4;
 const byte kScene2050MuralTileSelectSound = 0x25;
 const byte kScene2050MuralTileLockedSound = 0x26;
 const byte kScene2050MuralTileSwapSound = 0x27;
 const byte kScene2050MuralTileImprovedSound = 0x28;
+const byte kScene2050SealDiscoveryLoopSound = 0x24;
+const byte kScene2050SealDiscoveryEndSound = 0x2f;
+const byte kScene2050SealDiscoveryHook = 1;
+const uint kScene2050SealDiscoveryTurnFrame = 12;
+const int kScene2050SealDiscoveryActorX = 0x189;
+const int kScene2050SealDiscoveryActorY = 0x11d;
+const int kScene2050WalkMinX = 0x0c2;
+const int kScene2050WalkMaxX = 0x29a;
+const int kScene2050WalkMaxY = 0x1df;
 
 const byte kScene2050AmbientFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -71,11 +82,11 @@ const byte kScene2050AmbientFrameMap[] = {
 };
 
 const byte kScene2050MuralClipForwardFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7
+	1, 2, 3, 4, 5, 6, 7
 };
 
 const byte kScene2050MuralClipBackwardFrameMap[] = {
-	7, 6, 5, 4, 3, 2, 1, 0
+	6, 5, 4, 3, 2, 1, 0
 };
 
 const byte kScene2050SealDiscoveryFrameMap[] = {
@@ -99,6 +110,16 @@ static_assert(ARRAYSIZE(kScene2050AmbientFrameMap) == 0x1a, "Scene 2050 ambient 
 static_assert(ARRAYSIZE(kScene2050SealDiscoveryFrameMap) == 53, "Scene 2050 seal discovery frame map size changed");
 static_assert(ARRAYSIZE(kScene2050LabyrinthWalkFrameMap) == 47, "Scene 2050 labyrinth walk frame map size changed");
 
+class Scene2050DeltaFrameTarget {
+public:
+	explicit Scene2050DeltaFrameTarget(byte &frame) : _frame(frame) {}
+
+	void setFrame(byte frame) { _frame = frame; }
+
+private:
+	byte &_frame;
+};
+
 static PlayableSceneConfig scene2050Config() {
 	PlayableSceneConfig config(2050,
 		SceneResourceLayout(15, 5, 14),
@@ -117,7 +138,15 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_ambientLayer(),
 		_muralPermutationInitialized(false),
 		_muralPermutationChunkIndex(0),
-		_muralSelectedTile(0) {
+		_muralSelectedTile(0),
+		_muralHitMask(),
+		_muralPaletteAccumulator(0),
+		_sealDiscoveryActive(false),
+		_sealDiscoveryFrame(0),
+		_sealDiscoveryActorPathFrameIndex(0),
+		_sealDiscoverySpeechStarted(false),
+		_sealDiscoverySpeechStartMillis(0),
+		_sealDiscoverySpeechDurationMillis(0) {
 	_ambientLayer.configure(10, kScene2050AmbientDescriptorCount,
 		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap));
 }
@@ -151,6 +180,8 @@ void Scene2050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (_sealDiscoveryActive)
+		drawSealDiscoveryDeltaLayer();
 }
 
 void Scene2050::runCustomEntrySequence() {
@@ -182,7 +213,7 @@ bool Scene2050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 303: // Mirar estatua (look at statue).
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Mirar/usar mural (look/use mural): open the mural puzzle view.
+	case 304: // Mirar mural (look at mural): open the puzzle without the papyrus guide.
 		runMuralSubscreenAction();
 		return true;
 	case 305: // Coger antorcha (take torch).
@@ -194,15 +225,67 @@ bool Scene2050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 307: // Ir a laberinto (go to labyrinth): requires a lit lamp.
 		runGoToLabyrinth();
 		return true;
-	case 308: // Mirar laberinto (look at labyrinth): reveals the slab as a seal clue.
-		runLookLabyrinth();
+	case 308: // Mirar laberinto (look at labyrinth): describe the dark passage.
+		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 309: // Mirar losa/sello (look at slab/seal): open mural and maybe discover the seal.
-		runLosaSealMuralAction();
+	case 309: // Mirar losa (look at slab): identify it as a seal.
+		runRevealFloorSeal();
+		return true;
+	case 310: // Usar papiro con mural (use papyrus on mural): open the guided puzzle.
+		runGuidedMuralAction();
 		return true;
 	default:
 		return false;
 	}
+}
+
+bool Scene2050::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = CLIP<int>(targetX, kScene2050WalkMinX, kScene2050WalkMaxX);
+
+	while (targetY < kScene2050WalkMaxY) {
+		++targetY;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+	}
+
+	while (targetY > 0) {
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+		--targetY;
+	}
+
+	return true;
+}
+
+bool Scene2050::customizeRouteSegment(byte currentRegion, byte nextRegion,
+		const ActorPathBuildState &state, const ScenePoint &boundary,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+	if (currentRegion != 3 || nextRegion != 1)
+		return false;
+
+	for (uint i = 0; i < 0x0c && 0x0c + i < _actorPathStepDeltas.size(); ++i)
+		_actorPathStepDeltas[0x0c + i] = kActorPathStepDeltaTableSetB4[0x24 + i];
+	requestedFacing = 1;
+	restoredStepDeltas = true;
+	return true;
+}
+
+bool Scene2050::customizeRouteFinal(byte currentRegion, byte targetRegion,
+		const ActorPathBuildState &state, int targetX, int targetY,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)targetX;
+	(void)targetY;
+	if (currentRegion != 3 || targetRegion != 3)
+		return false;
+
+	for (uint i = 0; i < 0x0c && 0x30 + i < _actorPathStepDeltas.size(); ++i)
+		_actorPathStepDeltas[0x30 + i] = kActorPathStepDeltaTableSetB4[i];
+	requestedFacing = 4;
+	restoredStepDeltas = true;
+	return true;
 }
 
 bool Scene2050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
@@ -220,7 +303,8 @@ bool Scene2050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 
-	if ((selector == 3 || selector == 0xff) && state.scene2050LabyrinthLampReady)
+	// Reloading the table restores resource movement modes too.
+	if (state.scene2050LabyrinthLampReady)
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene2050LabyrinthGoToGlobalRecord, 3);
 
 	return true;
@@ -254,8 +338,6 @@ void Scene2050::advanceAmbientLayer(uint32 delta) {
 void Scene2050::runEntryFromSphinxInterior() {
 	_vm->gameplayMusic()->playMusicCue(0x0e, 100);
 	runEntryPath(0x4b, 0x15a, 2, 0x11a, 0x17c);
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
 
 	GameplayState &state = _vm->gameState();
 	if (state.scene2050EntrySpeechState == 0) {
@@ -265,10 +347,11 @@ void Scene2050::runEntryFromSphinxInterior() {
 }
 
 void Scene2050::runEntryFromLabyrinthReturn() {
-	runEntryPath(0x2e4, 0x0ea, 4, 0x24c, 0x108);
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
+	setActiveActorPose(0x2e4, 0x0ea, 4);
+	drawPlayableComposite();
+	presentFrame();
 	beginSecondarySpeechLine(11, 0);
+	runEntryPath(0x2e4, 0x0ea, 4, 0x24c, 0x108);
 
 	GameplayState &state = _vm->gameState();
 	if (state.scene2050EntrySpeechState < 2 && state.egyptSealPuzzleProgress == 2) {
@@ -281,9 +364,13 @@ void Scene2050::runGoToLabyrinth() {
 	GameplayState &state = _vm->gameState();
 
 	if (state.scene2050LabyrinthLampReady) {
+		if (state.egyptSealPuzzleProgress == 2) {
+			state.mainFlowStateId = kScene2070SealSolvedEntryState;
+			return;
+		}
+
 		state.egyptLabyrinthPositionIndex = 0x2a;
-		state.mainFlowStateId = state.egyptSealPuzzleProgress == 2 ?
-			kScene2070SealSolvedEntryState : kScene2060EntryState;
+		state.mainFlowStateId = kScene2060EntryState;
 		return;
 	}
 
@@ -301,21 +388,20 @@ void Scene2050::runGoToLabyrinth() {
 	walkActiveActorTo(0x1b6, 0x10f, 1, 0, false);
 	runLongLabyrinthWalkClip();
 	removeInventoryItem(kScene2050LampInventoryItem);
-	state.ronLampFueled = false;
 	state.scene2050LabyrinthLampReady = true;
-	applySceneStateToHotspotsAndPatches(3);
-	beginSecondarySpeechLine(14, 0);
 	state.egyptLabyrinthPositionIndex = 0x2a;
 	state.mainFlowStateId = kScene2060EntryState;
 }
 
 void Scene2050::runLongLabyrinthWalkClip() {
-	runActorReplacement(12, kScene2050LabyrinthWalkDescriptorCount,
+	ActionOverlaySpec spec(12, kScene2050LabyrinthWalkDescriptorCount,
 		kScene2050LabyrinthWalkFrameMap, ARRAYSIZE(kScene2050LabyrinthWalkFrameMap),
 		kScene2050OverlayFrameMillis);
+	spec.startAt(1).noRedrawAtEnd();
+	runActorReplacement(spec);
 }
 
-void Scene2050::runLookLabyrinth() {
+void Scene2050::runRevealFloorSeal() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(9, 0);
 	state.scene2050SealRevealed = true;
@@ -337,7 +423,7 @@ void Scene2050::runMuralSubscreenAction() {
 	}
 }
 
-void Scene2050::runLosaSealMuralAction() {
+void Scene2050::runGuidedMuralAction() {
 	GameplayState &state = _vm->gameState();
 
 	if (state.scene2050MuralPuzzleState == 0)
@@ -367,35 +453,51 @@ void Scene2050::runLosaSealMuralAction() {
 }
 
 void Scene2050::runMuralClipForward() {
-	runActorReplacement(9, kScene2050MuralClipDescriptorCount,
+	ActionOverlaySpec spec(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipForwardFrameMap, ARRAYSIZE(kScene2050MuralClipForwardFrameMap),
 		kScene2050OverlayFrameMillis);
+	spec.noRedrawAtEnd();
+	runActorReplacement(spec);
 }
 
 void Scene2050::runMuralClipBackward() {
-	runActorReplacement(9, kScene2050MuralClipDescriptorCount,
+	ActionOverlaySpec spec(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipBackwardFrameMap, ARRAYSIZE(kScene2050MuralClipBackwardFrameMap),
 		kScene2050OverlayFrameMillis);
+	spec.noRedrawAtEnd();
+	runActorReplacement(spec);
 }
 
 void Scene2050::runMuralPuzzleSubscreen() {
 	const byte chunkIndex = (_vm->gameState().scene2050MuralPuzzleState == 1 ||
 		_vm->gameState().scene2050MuralPuzzleState == 3) ? 14 : 13;
 
-	if (!_sceneChunkTable.isValidChunk(chunkIndex))
+	if (!_sceneChunkTable.isValidChunk(chunkIndex) ||
+			_sceneChunkTable.sizes[chunkIndex] < framebufferByteCount() ||
+			_resourceChunkOffsets[chunkIndex] + framebufferByteCount() > _resourceArena.size() ||
+			!loadMuralHitMask())
 		return;
 
-	const uint16 previousViewportXOffset = _viewportXOffset;
-	_viewportXOffset = 0;
-	_muralSelectedTile = 0;
-	drawRawSceneChunk(chunkIndex);
 	if (_vm->gameState().scene2050MuralPuzzleState == 2 ||
 			_vm->gameState().scene2050MuralPuzzleState == 3) {
 		setMuralTilePermutationSolved();
 	} else if (!initializeMuralTilePermutation(chunkIndex)) {
-		_viewportXOffset = previousViewportXOffset;
 		return;
 	}
+
+	const uint16 previousViewportXOffset = _viewportXOffset;
+	const Common::Array<byte> previousPalette = _paletteCurrent;
+	_viewportXOffset = 0;
+	_muralSelectedTile = 0;
+	_muralPaletteAccumulator = 0;
+	if (_sceneChunkTable.isValidChunk(kScene2050MuralPaletteChunk)) {
+		const uint paletteBytes = MIN<uint>(_sceneChunkTable.sizes[kScene2050MuralPaletteChunk],
+			_paletteCurrent.size());
+		memcpy(_paletteCurrent.data(),
+			_resourceArena.data() + _resourceChunkOffsets[kScene2050MuralPaletteChunk], paletteBytes);
+		_displayPalette.markAllDirty();
+	}
+	drawRawSceneChunk(chunkIndex);
 	drawMuralTileGrid(chunkIndex);
 	presentFrame();
 
@@ -424,10 +526,13 @@ void Scene2050::runMuralPuzzleSubscreen() {
 				presentFrame();
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-						event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_SPACE)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					done = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_SPACE) {
+					handleMuralTileClick(muralTileAtScreenPoint(
+						_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY()), done);
+				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_vm->cursor()->updatePosition(event.mouse);
@@ -450,6 +555,12 @@ void Scene2050::runMuralPuzzleSubscreen() {
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
+		_muralPaletteAccumulator += delta;
+		while (_muralPaletteAccumulator >= kScene2050OverlayFrameMillis) {
+			_muralPaletteAccumulator -= kScene2050OverlayFrameMillis;
+			rotateMuralHighlightPalette();
+		}
+		_vm->cursor()->advance(delta);
 		updateAmbientAudioAndMusicCues(delta);
 		presentFrame();
 		g_system->delayMillis(10);
@@ -457,19 +568,104 @@ void Scene2050::runMuralPuzzleSubscreen() {
 
 	_vm->cursor()->leaveInteractiveMode();
 	_viewportXOffset = previousViewportXOffset;
+	_paletteCurrent = previousPalette;
+	_muralHitMask.clear();
+	_displayPalette.markAllDirty();
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene2050::runSealDiscoverySequence() {
-	beginSecondarySpeechLine(8, 0);
-	runSceneOverlay(11, kScene2050SealDiscoveryDescriptorCount,
-		kScene2050SealDiscoveryFrameMap, ARRAYSIZE(kScene2050SealDiscoveryFrameMap),
+	_soundBank0.playSampleLooping(kScene2050SealDiscoveryLoopSound, 50);
+	_sealDiscoveryActive = true;
+	_sealDiscoveryFrame = 0;
+	_sealDiscoveryActorPathFrameIndex = 0;
+	_sealDiscoverySpeechStarted = false;
+	_sealDiscoverySpeechStartMillis = 0;
+	_sealDiscoverySpeechDurationMillis = 0;
+
+	Scene2050DeltaFrameTarget target(_sealDiscoveryFrame);
+	AnimationFrameRange range(1, ARRAYSIZE(kScene2050SealDiscoveryFrameMap) - 1,
 		kScene2050OverlayFrameMillis);
-	beginSecondarySpeechLine(13, 0);
+	range.frameOrder = kScene2050SealDiscoveryFrameMap;
+	range.hookEveryFrame(kScene2050SealDiscoveryHook);
+	playAnimationFrames(target, range);
+
+	_actorPathPlaybackActive = false;
+	_soundBank0.playSample(kScene2050SealDiscoveryEndSound, 50);
+	if (_sealDiscoverySpeechStarted) {
+		const uint32 elapsed = g_system->getMillis() - _sealDiscoverySpeechStartMillis;
+		const uint32 remaining = elapsed < _sealDiscoverySpeechDurationMillis ?
+			_sealDiscoverySpeechDurationMillis - elapsed : 0;
+		waitForSpeechOrDelay(remaining, false);
+		_speech.stop();
+		clearSpeechOverlay();
+	}
+
+	_sealDiscoveryActive = false;
+	drawPlayableComposite();
+	presentFrame();
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
+		beginSecondarySpeechLine(6, 1);
+}
+
+void Scene2050::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId != kScene2050SealDiscoveryHook || !_sealDiscoveryActive)
+		return;
+
+	bool pathFinishedThisFrame = false;
+	if (frame == kScene2050SealDiscoveryTurnFrame) {
+		queueActorPathWithPaletteRegionRouting(kScene2050SealDiscoveryActorX,
+			kScene2050SealDiscoveryActorY, kScene2050SealDiscoveryActorX,
+			kScene2050SealDiscoveryActorY, 2, 0);
+		_sealDiscoveryActorPathFrameIndex = 1;
+		_actorPathPlaybackActive = _actorPathFrames.size() > 1;
+		if (!_actorPathPlaybackActive) {
+			setActiveActorPose(kScene2050SealDiscoveryActorX, kScene2050SealDiscoveryActorY, 2);
+			pathFinishedThisFrame = true;
+		}
+	}
+
+	if (frame >= kScene2050SealDiscoveryTurnFrame && _actorPathPlaybackActive) {
+		if (_sealDiscoveryActorPathFrameIndex < _actorPathFrames.size()) {
+			const ActorPathFrame &pathFrame = _actorPathFrames[_sealDiscoveryActorPathFrameIndex++];
+			_activeActorWorldX = pathFrame.worldX;
+			_activeActorWorldY = pathFrame.worldY;
+			_activeActorFacing = pathFrame.facing;
+			_activeActorCel = pathFrame.cel;
+			_activeActorDrawOrderMode = pathFrame.drawOrderMode;
+		}
+		if (_sealDiscoveryActorPathFrameIndex >= _actorPathFrames.size()) {
+			_actorPathPlaybackActive = false;
+			pathFinishedThisFrame = true;
+		}
+	}
+
+	if (frame <= kScene2050SealDiscoveryTurnFrame || _actorPathPlaybackActive ||
+			pathFinishedThisFrame || _sealDiscoverySpeechStarted)
+		return;
+
+	_sealDiscoverySpeechStarted = true;
+	const bool speechAudioStarted = startSecondarySpeechLine(6, 0);
+	_sealDiscoverySpeechStartMillis = g_system->getMillis();
+	_sealDiscoverySpeechDurationMillis = speechAudioStarted ?
+		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		MAX<uint32>(1200, _speechOverlay.lines.size() * 1100);
+}
+
+void Scene2050::drawSealDiscoveryDeltaLayer() {
+	const uint lastFrame = MIN<uint>(_sealDiscoveryFrame,
+		kScene2050SealDiscoveryDescriptorCount - 1);
+	// The clip patches prior frames, while this compositor rebuilds the base.
+	for (uint frame = 0; frame <= lastFrame; ++frame)
+		drawClipFrameDelta(11, kScene2050SealDiscoveryDescriptorCount, (byte)frame);
 }
 
 void Scene2050::drawRawSceneChunk(uint chunkIndex) {
 	const uint32 baseOffset = _resourceChunkOffsets[chunkIndex];
-	if (baseOffset + framebufferByteCount() > _resourceArena.size())
+	if (!_sceneChunkTable.isValidChunk(chunkIndex) ||
+			_sceneChunkTable.sizes[chunkIndex] < framebufferByteCount() ||
+			baseOffset + framebufferByteCount() > _resourceArena.size())
 		return;
 
 	byte *pixels = framebufferPixels(_sceneFramebuffer);
@@ -477,6 +673,40 @@ void Scene2050::drawRawSceneChunk(uint chunkIndex) {
 		return;
 
 	memcpy(pixels, _resourceArena.data() + baseOffset, framebufferByteCount());
+}
+
+bool Scene2050::loadMuralHitMask() {
+	_muralHitMask.clear();
+	if (!_sceneChunkTable.isValidChunk(kScene2050MuralHitMaskChunk))
+		return false;
+
+	_muralHitMask.resize(framebufferByteCount());
+	memset(_muralHitMask.data(), 0, _muralHitMask.size());
+	const uint32 chunkOffset = _resourceChunkOffsets[kScene2050MuralHitMaskChunk];
+	const uint32 chunkEnd = chunkOffset + _sceneChunkTable.sizes[kScene2050MuralHitMaskChunk];
+	if (chunkEnd < chunkOffset || chunkEnd > _resourceArena.size()) {
+		_muralHitMask.clear();
+		return false;
+	}
+	uint32 sourceOffset = chunkOffset;
+	uint destinationOffset = 0;
+	while (destinationOffset < _muralHitMask.size() && sourceOffset + 3 <= chunkEnd) {
+		const byte fill = _resourceArena[sourceOffset];
+		const uint16 runLength = readUint16LE(_resourceArena, sourceOffset + 1);
+		sourceOffset += 3;
+
+		const uint count = MIN<uint>(runLength, _muralHitMask.size() - destinationOffset);
+		if (count != 0) {
+			memset(_muralHitMask.data() + destinationOffset, fill, count);
+			destinationOffset += count;
+		}
+	}
+
+	if (destinationOffset == _muralHitMask.size())
+		return true;
+
+	_muralHitMask.clear();
+	return false;
 }
 
 bool Scene2050::initializeMuralTilePermutation(uint chunkIndex) {
@@ -557,7 +787,9 @@ void Scene2050::setMuralTilePermutationSolved() {
 
 void Scene2050::drawMuralTileGrid(uint chunkIndex) {
 	const uint32 baseOffset = _resourceChunkOffsets[chunkIndex];
-	if (baseOffset + framebufferByteCount() > _resourceArena.size())
+	if (!_sceneChunkTable.isValidChunk(chunkIndex) ||
+			_sceneChunkTable.sizes[chunkIndex] < framebufferByteCount() ||
+			baseOffset + framebufferByteCount() > _resourceArena.size())
 		return;
 
 	byte *pixels = framebufferPixels(_sceneFramebuffer);
@@ -586,34 +818,80 @@ void Scene2050::drawMuralSelectionHighlight(byte tileId) {
 	const int row = tileIndex / kScene2050MuralGridColumns;
 	const int x = kScene2050MuralVisibleGridX + column * kScene2050MuralTileStep;
 	const int y = kScene2050MuralGridY + row * kScene2050MuralTileStep;
+	byte color = kScene2050MuralHighlightColor;
 	for (int i = 0; i < kScene2050MuralTileSize; ++i) {
-		pixels[y * HollywoodEngine::kSceneBufferWidth + x + i] = kScene2050MuralHighlightColor;
-		pixels[(y + kScene2050MuralTileSize - 1) * HollywoodEngine::kSceneBufferWidth + x + i] =
-			kScene2050MuralHighlightColor;
-		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x] = kScene2050MuralHighlightColor;
-		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x + kScene2050MuralTileSize - 1] =
-			kScene2050MuralHighlightColor;
+		pixels[(y - 1) * HollywoodEngine::kSceneBufferWidth + x + i] = color;
+		color = color == kScene2050MuralLastHighlightColor ?
+			kScene2050MuralHighlightColor : color + 1;
+	}
+	color = kScene2050MuralHighlightColor;
+	for (int i = 0; i < kScene2050MuralTileSize; ++i) {
+		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x + kScene2050MuralTileSize] = color;
+		color = color == kScene2050MuralLastHighlightColor ?
+			kScene2050MuralHighlightColor : color + 1;
+	}
+	color = kScene2050MuralHighlightColor;
+	for (int i = kScene2050MuralTileSize - 1; i >= 0; --i) {
+		pixels[(y + kScene2050MuralTileSize) * HollywoodEngine::kSceneBufferWidth + x + i] = color;
+		color = color == kScene2050MuralLastHighlightColor ?
+			kScene2050MuralHighlightColor : color + 1;
+	}
+	color = kScene2050MuralHighlightColor;
+	for (int i = kScene2050MuralTileSize - 1; i >= 0; --i) {
+		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x - 1] = color;
+		color = color == kScene2050MuralLastHighlightColor ?
+			kScene2050MuralHighlightColor : color + 1;
 	}
 }
 
+void Scene2050::clearMuralSelectionHighlight(byte tileId) {
+	if (tileId == 0 || tileId > kScene2050MuralTileCount)
+		return;
+
+	byte *pixels = framebufferPixels(_sceneFramebuffer);
+	if (!pixels)
+		return;
+
+	const uint tileIndex = tileId - 1;
+	const int x = kScene2050MuralVisibleGridX +
+		(tileIndex % kScene2050MuralGridColumns) * kScene2050MuralTileStep;
+	const int y = kScene2050MuralGridY +
+		(tileIndex / kScene2050MuralGridColumns) * kScene2050MuralTileStep;
+	memset(pixels + (y - 1) * HollywoodEngine::kSceneBufferWidth + x, 0,
+		kScene2050MuralTileSize);
+	memset(pixels + (y + kScene2050MuralTileSize) * HollywoodEngine::kSceneBufferWidth + x, 0,
+		kScene2050MuralTileSize);
+	for (int i = 0; i < kScene2050MuralTileSize; ++i) {
+		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x - 1] = 0;
+		pixels[(y + i) * HollywoodEngine::kSceneBufferWidth + x + kScene2050MuralTileSize] = 0;
+	}
+}
+
+void Scene2050::rotateMuralHighlightPalette() {
+	const uint firstOffset = kScene2050MuralHighlightColor * 3;
+	const uint lastOffset = kScene2050MuralLastHighlightColor * 3;
+	if (_paletteCurrent.size() < lastOffset + 3)
+		return;
+
+	byte lastColor[3];
+	memcpy(lastColor, _paletteCurrent.data() + lastOffset, sizeof(lastColor));
+	for (int color = kScene2050MuralLastHighlightColor;
+			color > kScene2050MuralHighlightColor; --color) {
+		memcpy(_paletteCurrent.data() + color * 3,
+			_paletteCurrent.data() + (color - 1) * 3, 3);
+	}
+	memcpy(_paletteCurrent.data() + firstOffset, lastColor, sizeof(lastColor));
+	_displayPalette.markAllDirty();
+}
+
 byte Scene2050::muralTileAtScreenPoint(int16 x, int16 y) const {
-	const int sceneX = x + _viewportXOffset;
-	const int sceneY = y;
-	if (sceneX < kScene2050MuralVisibleGridX || sceneY < kScene2050MuralGridY)
+	if (x < 0 || x >= HollywoodEngine::kSceneBufferWidth ||
+			y < 0 || y >= HollywoodEngine::kSceneBufferHeight ||
+			_muralHitMask.size() != framebufferByteCount())
 		return 0;
 
-	const int localX = sceneX - kScene2050MuralVisibleGridX;
-	const int localY = sceneY - kScene2050MuralGridY;
-	const int column = localX / kScene2050MuralTileStep;
-	const int row = localY / kScene2050MuralTileStep;
-	if (column < 0 || column >= (int)kScene2050MuralGridColumns ||
-			row < 0 || row >= (int)kScene2050MuralGridRows)
-		return 0;
-	if (localX % kScene2050MuralTileStep >= kScene2050MuralTileSize ||
-			localY % kScene2050MuralTileStep >= kScene2050MuralTileSize)
-		return 0;
-
-	return (byte)(row * kScene2050MuralGridColumns + column + 1);
+	const byte tileId = _muralHitMask[y * HollywoodEngine::kSceneBufferWidth + x];
+	return tileId <= kScene2050MuralTileCount ? tileId : 0;
 }
 
 void Scene2050::handleMuralTileClick(byte tileId, bool &done) {
@@ -637,16 +915,22 @@ void Scene2050::handleMuralTileClick(byte tileId, bool &done) {
 	}
 
 	const byte firstTile = _muralSelectedTile;
+	clearMuralSelectionHighlight(firstTile);
 	_muralSelectedTile = 0;
 	if (firstTile != tileId) {
 		const uint solvedBefore = solvedMuralTileCount();
 		SWAP(permutation[firstTile], permutation[tileId]);
 		_soundBank0.playSample(kScene2050MuralTileSwapSound, 50);
 		if (solvedMuralTileCount() > solvedBefore)
-			_soundBank0.playSample(kScene2050MuralTileImprovedSound, 100);
+			_ambientSoundBank0.playSample(kScene2050MuralTileImprovedSound, 100);
 		if (isMuralPuzzleSolved()) {
-			state.scene2050MuralPuzzleState = state.scene2050MuralPuzzleState == 0 ? 2 : 3;
+			const bool redrawSolvedGrid = state.scene2050MuralPuzzleState == 0;
+			state.scene2050MuralPuzzleState = redrawSolvedGrid ? 2 : 3;
 			setMuralTilePermutationSolved();
+			if (redrawSolvedGrid) {
+				drawMuralTileGrid(13);
+				presentFrame();
+			}
 			done = true;
 			return;
 		}
