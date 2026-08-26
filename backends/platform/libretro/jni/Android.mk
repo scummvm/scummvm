@@ -4,6 +4,9 @@ TARGET_NAME := scummvm
 HAVE_OPENGLES2 := 1
 USE_IMGUI := 0
 USE_LIBRETRO_SAF := 1
+# SAF reaches Android storage through JNI, and JNI calls have to come from a
+# thread ART knows about - not from a cothread stack handed out by co_create().
+USE_LIBCO := 0
 
 # Reset flags not reset to Makefile.common
 DEFINES   :=
