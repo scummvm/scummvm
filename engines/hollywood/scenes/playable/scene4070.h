@@ -43,6 +43,7 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
@@ -66,10 +67,6 @@ private:
 	void runFlyerOnDracula();
 	void runDraculaDialogue();
 	void initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
-	void clearScriptLayer();
-	bool presentScriptFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		byte frameIndex);
-	bool waitScriptFrame(uint32 frameMillis);
 
 	ResourceSpriteLayer _randomAmbientLayer;
 	ResourceSpriteLayer _ambientLayer;

@@ -1242,6 +1242,22 @@ bool PlayableScene::playAnimationFrames(SceneAnimationLayers &layers, uint layer
 	return playAnimationFrames(layers.layer(layerId), range);
 }
 
+bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
+		uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
+		const AnimationFrameRange &range, bool clearAtEnd) {
+	layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
+	layer.visible = true;
+	const bool completed = _animationPlayer.playAndPresent(layer, range);
+	if (clearAtEnd)
+		clearResourceLayer(layer);
+	return completed;
+}
+
+void PlayableScene::clearResourceLayer(ResourceSpriteLayer &layer) {
+	layer.visible = false;
+	layer.configure(0, 0, nullptr, 0);
+}
+
 void PlayableScene::drawActionOverlayLayer() {
 	drawResourceSpriteLayer(_actionOverlayPlayer.layer);
 }
@@ -2139,6 +2155,11 @@ bool PlayableScene::waitSceneMillis(uint32 millis, bool allowSkip) {
 
 bool PlayableScene::animationPlaybackShouldStop() const {
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+void PlayableScene::presentAnimationFrame() {
+	drawPlayableComposite();
+	presentFrame();
 }
 
 bool PlayableScene::waitForAnimationFrame(uint32 millis, bool allowSkip) {
