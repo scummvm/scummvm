@@ -45,7 +45,7 @@ public:
 		uint32 frameMillis, byte frameCount);
 	void advanceSecondaryActorSpeechFrame(Common::RandomSource &random, byte frameCount);
 	byte advancePrimaryLeftSpeechFrame(Common::RandomSource &random);
-	byte advancePrimaryDialogueSpeechFrame(Common::RandomSource &random, byte baseFrame);
+	byte advancePrimaryDialogueSpeechFrame(Common::RandomSource &random, byte baseFrame, byte frameCount);
 	void startPrimaryLeftSpeech();
 	void stopPrimaryLeftSpeech();
 	void startPrimaryDialogueSpeech(byte animationGroup, byte baseFrame);

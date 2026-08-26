@@ -122,13 +122,18 @@ byte SpeechController::advancePrimaryLeftSpeechFrame(Common::RandomSource &rando
 	return nextFrame;
 }
 
-byte SpeechController::advancePrimaryDialogueSpeechFrame(Common::RandomSource &random, byte baseFrame) {
+byte SpeechController::advancePrimaryDialogueSpeechFrame(Common::RandomSource &random, byte baseFrame,
+		byte frameCount) {
+	if (frameCount == 0)
+		return baseFrame;
+
+	const byte lastFrame = baseFrame + frameCount - 1;
 	byte nextFrame = primaryDialogueSpeechLastFrame;
 	for (uint attempt = 0; attempt < 8 && nextFrame == primaryDialogueSpeechLastFrame; ++attempt)
-		nextFrame = (byte)(baseFrame + random.getRandomNumber(4));
+		nextFrame = (byte)(baseFrame + random.getRandomNumber(frameCount - 1));
 
 	if (nextFrame == primaryDialogueSpeechLastFrame)
-		nextFrame = nextFrame >= baseFrame + 4 ? baseFrame : (byte)(nextFrame + 1);
+		nextFrame = nextFrame >= lastFrame ? baseFrame : (byte)(nextFrame + 1);
 
 	primaryDialogueSpeechLastFrame = nextFrame;
 	return nextFrame;

@@ -2102,8 +2102,13 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimati
 			_soundBank0.playSample(options.soundId, options.soundVolumePercent);
 		if (options.hookId != 0 && (options.hookFrame < 0 || (int)frame == options.hookFrame))
 			handleAnimationFrameHook(options.hookId, frame);
-		if (waitSceneMillis(spec.frameMillis))
+		const bool terminalFrame = frame + 1 >= cappedEndFrame;
+		if (terminalFrame && !options.waitAfterFinalFrame) {
+			drawPlayableComposite();
+			presentFrame();
+		} else if (waitSceneMillis(spec.frameMillis)) {
 			break;
+		}
 	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 
@@ -2116,6 +2121,11 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimati
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	(void)animationGroup;
 	return 0;
+}
+
+byte PlayableScene::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	(void)animationGroup;
+	return 5;
 }
 
 uint32 PlayableScene::primarySpeechAnimationFrameMillis(byte animationGroup) const {
@@ -2318,7 +2328,9 @@ void PlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	while (_primaryDialogueSpeechTimerAccumulator >= frameMillis) {
 		_primaryDialogueSpeechTimerAccumulator -= frameMillis;
 		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
-		const byte nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(_random, baseFrame);
+		const byte frameCount = primarySpeechAnimationFrameCount(_primaryDialogueSpeechGroup);
+		const byte nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(
+			_random, baseFrame, frameCount);
 		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
 	}
 }
