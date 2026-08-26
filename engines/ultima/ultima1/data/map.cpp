@@ -96,7 +96,7 @@ void Map::load(int mapNum) {
 
 		_mapRows.clear();
 		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access
-		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
+		for (int y = 0; y < CITY_HEIGHT; ++y)
 			_mapRows.push_back(Row(this, &_cityMap[mapNum - 1][y * CITY_WIDTH]));
 		_mapRows.push_back(Row(this, nullptr));
 

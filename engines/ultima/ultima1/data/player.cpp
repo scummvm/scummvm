@@ -103,15 +103,28 @@ void Player::synchronizeOriginal(Common::Serializer &s) {
 }
 
 int Player::getEntityAt(int x, int y, int startingIndex) const {
-	int foundIndex = 0;
-	for (; startingIndex <= g_engine->_overworldEntityCount && !foundIndex; ++startingIndex) {
+	int foundIndex = -1;
+	for (; startingIndex <= g_engine->_overworldEntityCount && foundIndex == -1; ++startingIndex) {
 		const auto &e = _overworldEntities[startingIndex];
 		if (e._x == x && e._y == y)
 			foundIndex = startingIndex;
 	}
 
-	return startingIndex;
+	return foundIndex;
 }
+
+void Player::removeCreatureAt(int x, int y) {
+	int creatureNum = getEntityAt(x, y, 1);
+	if (creatureNum <= 0)
+		return;
+
+	// Shift all following entities down a slot, removing the found one
+	for (int idx = creatureNum; idx < g_engine->_overworldEntityCount; ++idx)
+		_overworldEntities[idx] = _overworldEntities[idx + 1];
+
+	--g_engine->_overworldEntityCount;
+}
+
 
 } // namespace Data
 } // namespace Ultima1

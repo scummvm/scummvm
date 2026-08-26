@@ -76,12 +76,13 @@ void OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
 		return;
 
-	int continentNum = g_engine->_map.getContinentAt(g_engine->_player._position);
 	if (g_engine->_player._transportType <= Data::TRANSPORT_CART)
 		playFX(4);
 
 	// Write direction traveled
 	writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
+
+	int continentNum = g_engine->_map.getContinentAt(g_engine->_player._position);
 
 	switch (dir) {
 	case Data::DIR_LEFT:
@@ -97,6 +98,9 @@ void OverworldLogic::move(Data::Direction dir) {
 		moveDown();
 		break;
 	}
+
+	if (g_engine->_map.getContinentAt(g_engine->_player._position) != continentNum)
+		continentChanged(continentNum);
 }
 
 bool OverworldLogic::moveCheck(Data::Direction dir) {
@@ -276,6 +280,18 @@ void OverworldLogic::moveDown() {
 		int x = getViewportX(col);
 		int y = getViewportY(Data::MAP_VISIBLE_HEIGHT - 1);
 		tiles[Data::MAP_VISIBLE_HEIGHT - 1][col] = g_engine->_map.getMapTile(x, y);
+	}
+}
+
+void OverworldLogic::continentChanged(int oldContinent) {
+	for (int index = 1; index < g_engine->_overworldEntityCount; ++index) {
+		auto &e = g_engine->_player._overworldEntities[index];
+		int continent = g_engine->_map.getContinentAt(e._x, e._y);
+
+		if (continent == oldContinent) {
+			g_engine->_player.removeCreatureAt(e._x, e._y);
+			g_engine->_creaturesCount--;
+		}
 	}
 }
 

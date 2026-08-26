@@ -86,6 +86,11 @@ private:
 	 */
 	void moveDown();
 
+	/**
+	 * Called when the player changes their current continent
+	 */
+	void continentChanged(int oldContinent);
+
 public:
 	~OverworldLogic() override {
 	}

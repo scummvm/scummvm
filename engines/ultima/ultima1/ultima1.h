@@ -69,6 +69,7 @@ public:
 	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
 	Logic::Logic *_logic = nullptr;
 	int _overworldEntityCount = 0;
+	int _creaturesCount = 0;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
