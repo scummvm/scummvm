@@ -110,7 +110,7 @@ private:
 	};
 	Common::Array<EnqueuedTrack> _enqueuedTracks;
 
-	const int _queueLen;
+	const uint8 _queueLen;
 	const bool _playerPrio;
 	const uint16 _playFlags;
 };
