@@ -390,7 +390,7 @@ void Scene3050::advanceDialogueActorLayer(uint32 delta) {
 		byte nextFrame = kScene3050DialogueBaseFrame;
 		if (_primaryDialogueSpeechActive) {
 			nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(
-				_random, kScene3050DialogueBaseFrame);
+				_random, kScene3050DialogueBaseFrame, primarySpeechAnimationFrameCount(0));
 		} else if (_dialogueActorChannel.frameIndex == kScene3050DialogueBaseFrame &&
 				_random.getRandomNumber(14) == 0) {
 			nextFrame = kScene3050DialogueBlinkFrame;

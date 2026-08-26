@@ -43,6 +43,8 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
@@ -50,9 +52,17 @@ private:
 	void resetAnimationLayers();
 	void advancePoolLayer(uint32 delta);
 	void advanceTigerLayer(uint32 delta);
+	void advanceTigerIdleFrame();
+	void advanceTigerItemSequence(uint32 delta);
 	void advancePrincessIdleLayer(uint32 delta, bool canStartLongSequence);
+	bool advancePaletteCycle(uint32 delta);
+	void rotatePoolPalette();
 	void runEntryFromExterior();
 	void runPrincessExitCutscene();
+	bool runCurtainRevealFromBlack();
+	void runCurtainClearToBlack();
+	bool waitPrincessDepartureFrame(uint32 millis, byte clipFrame);
+	void redrawPrincessDepartureFrame(byte clipFrame, bool poolChanged, bool tigerChanged);
 	void runPrincessSpeechTransition(bool opening);
 	void beginPrincessSpeechLine(byte frameIndex);
 	void runPrincessDialogue();
@@ -65,7 +75,7 @@ private:
 	void runTigerToothPickup();
 	void runSteakOnTigerSequence();
 	void runLabItemOnTigerSequence();
-	void runTigerItemOverlaySequence();
+	bool runTigerItemOverlaySequence(bool withEffect);
 	void drawPickupPatch(byte hookId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void restoreOriginalColorMapItem(byte itemId);
@@ -75,12 +85,21 @@ private:
 	TimedAnimationChannel _poolChannel;
 	TimedAnimationChannel _tigerChannel;
 	TimedAnimationChannel _princessChannel;
+	TimedAnimationChannel _paletteCycleChannel;
+	TimedAnimationChannel _tigerItemActorChannel;
+	TimedAnimationChannel _tigerItemEffectChannel;
 	ResourceSpriteLayer _poolLayer;
 	ResourceSpriteLayer _tigerLayer;
 	ResourceSpriteLayer _princessLayer;
+	ResourceSpriteLayer _tigerItemEffectLayer;
 	byte _tigerAnimationState;
 	byte _princessAnimationState;
 	bool _princessSpeechTransitionActive;
+	bool _princessLongIdleAllowed;
+	bool _tigerItemSequenceActive;
+	bool _tigerItemSequenceFinished;
+	bool _tigerItemEffectEnabled;
+	bool _tigerReactionStarted;
 };
 
 } // End of namespace Hollywood
