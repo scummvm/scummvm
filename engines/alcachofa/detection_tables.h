@@ -223,6 +223,21 @@ const AlcachofaGameDescription gameDescriptions[] = {
 		},
 		EngineVersion::V2_0
 	},
+	{
+		{
+			"secta",
+			"Агенты 008: Месть скарабея",
+			AD_ENTRY3s(
+				"Fondos/MUSEO_O.ANI", "148b89fc676589ce9a05f0915d881122", 10445,
+				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530,
+				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
+			GUIO0()
+		},
+		EngineVersion::V2_0
+	},
 
 	//
 	// Operación Moscú
@@ -290,6 +305,22 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			GUIO1(GAMEOPTION_TEXTURE_FILTER)
+		},
+		EngineVersion::V1_0
+	},
+	{
+		// Installed with music extracted manually
+		{
+			"aventuradecine",
+			"Агенты 008: Кинопрерии",
+			AD_ENTRY2s(
+				"oeste.emc", "b53b0acf8116de5fafa9a1082172d5ee", 205321591,
+				"terror.emc", "e316a6365fe424eb51c8d92da8b7892c", 185677437
+			),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
