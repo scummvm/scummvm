@@ -1961,9 +1961,11 @@ bool EoBCoreEngine::restParty_extraAbortCondition() {
 	return false;
 }
 
-void EoBCoreEngine::delay(uint32 millis, bool, bool) {
+void EoBCoreEngine::delay(uint32 millis, bool, bool isMainLoop) {
 	while (millis && !shouldQuit() && !(_allowSkip && skipFlag())) {
+		_isSaveAllowed = isMainLoop;
 		updateInput();
+		_isSaveAllowed = false;
 		uint32 step = MIN<uint32>(millis, (_tickLength / 5));
 		_system->delayMillis(step);
 		millis -= step;
