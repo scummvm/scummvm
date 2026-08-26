@@ -45,7 +45,7 @@ private:
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void initializeIdleLayer();

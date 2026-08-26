@@ -272,7 +272,7 @@ AmbientAudioProfile Scene5110::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
 }
 
-void Scene5110::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene5110::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 	switch (hookId) {
 	case kScene5110PatchUnderwear:
@@ -326,9 +326,8 @@ void Scene5110::runUnderwearPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hideActor()
 		.hookAt(6, kScene5110PatchUnderwear));
 	state.scene5110UnderwearTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
@@ -353,9 +352,8 @@ void Scene5110::runBottlePickup() {
 	}
 
 	beginSecondarySpeechLine(3, 1);
-	runActionOverlay(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hideActor()
 		.hookAt(6, kScene5110PatchBottle));
 	state.scene5110BottleState = 2;
 	applySceneStateToHotspotsAndPatches(2);
@@ -442,9 +440,8 @@ void Scene5110::runMirrorPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hideActor()
 		.hookAt(6, kScene5110PatchMirror));
 	state.scene5110MirrorTaken = true;
 	applySceneStateToHotspotsAndPatches(5);

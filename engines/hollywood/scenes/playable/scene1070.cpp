@@ -902,9 +902,8 @@ void Scene1070::runSpencerTravelUnlockEffect() {
 	if (_vm->gameState().hasTravelScreenDestination(kScene1070TravelUnlockDestinationId))
 		return;
 
-	runActionOverlay(ActionOverlaySpec(16, kScene1070TravelUnlockDescriptorCount,
-		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap), kScene1070FrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(16, kScene1070TravelUnlockDescriptorCount,
+		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap), kScene1070FrameMillis));
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().unlockTravelScreenDestination(kScene1070TravelUnlockDestinationId);
 }
@@ -954,9 +953,8 @@ void Scene1070::handleBallChainPickup() {
 
 void Scene1070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(patchFrame, patchSelector));
 }
 

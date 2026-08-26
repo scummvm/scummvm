@@ -48,7 +48,7 @@ private:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	void setPrimaryLeftSpeechFrame(byte frameIndex) override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk5AmbientOverlay();
 	void advanceChunk6IdleFrames();

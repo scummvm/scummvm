@@ -147,9 +147,8 @@ void Scene5040::runCustomEntrySequence() {
 		runMineCartEntryClip();
 		walkActiveActorTo(0x238, 0x145, 5, 0, false);
 		beginSecondarySpeechLine(8, 0);
-		runActionOverlay(ActionOverlaySpec(15, 0x0e,
+		runActorReplacement(ActionOverlaySpec(15, 0x0e,
 			kScene5040Chunk15FrameMap, ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis)
-			.hideActor()
 			.patchAt(6, 6));
 		addInventoryItem(kScene5040KarlPrizeItem);
 		_soundBank0.playSample(1, 100);
@@ -479,9 +478,8 @@ void Scene5040::runMineCartEntryClip() {
 	for (uint i = 0; i < frameMap.size(); ++i)
 		frameMap[i] = (byte)i;
 
-	runActionOverlay(ActionOverlaySpec(17, kScene5040MineCartDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(17, kScene5040MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5040MineCartFrameMillis)
-		.hideActor()
 		.soundAt(0x32, 0x16));
 }
 
@@ -575,7 +573,7 @@ void Scene5040::runMineBoxLook() {
 
 void Scene5040::runPatchedSockPickup() {
 	GameplayState &state = _vm->gameState();
-	runHiddenActorActionOverlay(10, kScene5040MineBoxPickupDescriptorCount,
+	runActorReplacement(10, kScene5040MineBoxPickupDescriptorCount,
 		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
 		kScene5040FrameMillis);
 	state.scene5040DialState = 2;
@@ -586,7 +584,7 @@ void Scene5040::runPatchedSockPickup() {
 
 void Scene5040::runMineKeyPickup() {
 	GameplayState &state = _vm->gameState();
-	runHiddenActorActionOverlay(10, kScene5040MineBoxPickupDescriptorCount,
+	runActorReplacement(10, kScene5040MineBoxPickupDescriptorCount,
 		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
 		kScene5040FrameMillis);
 	state.scene5040DialState = 4;

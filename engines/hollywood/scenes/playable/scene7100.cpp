@@ -159,11 +159,7 @@ Scene7100::Scene7100(HollywoodEngine *vm) :
 }
 
 void Scene7100::initializeCustomPreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -517,9 +513,8 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 void Scene7100::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int patchFrame, byte patchSelector, int soundFrame, byte soundId) {
 	const int statePatchFrame = patchSelector != 0xff ? patchFrame : -1;
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(statePatchFrame, patchSelector)
 		.soundAt(soundFrame, soundId));
 }
@@ -857,9 +852,8 @@ void Scene7100::handlePickupItem16() {
 		kScene7100FrameMillis, 0x1e, 2);
 	walkActiveActorTo(0x168, 0x198, 4, 0);
 
-	runActionOverlay(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
 		kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap), kScene7100FrameMillis)
-		.hideActor()
 		.soundAt(0x0e, 0x16)
 		.noRedrawAtEnd());
 

@@ -47,7 +47,7 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetForegroundLayer();
 	void configureForegroundLayerForState();

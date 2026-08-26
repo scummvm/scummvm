@@ -44,7 +44,7 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();

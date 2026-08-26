@@ -213,8 +213,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_activeActorCel = kScene7010SueEntryFinalCel;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
-	_actionOverlayVisible = false;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	GameplayState &state = _vm->gameState();
@@ -235,11 +234,11 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
 
-	if (_actionOverlayVisible) {
+	if (_actionOverlayPlayer.replacesActor()) {
 		drawAnimationLayers(_animationLayers, kSceneAnimationInFrontOfActors);
 
 		// G01 restores chunk-15's dirty rect before drawing the next action frame.
-		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawActionOverlayLayer();
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 		return;
@@ -258,7 +257,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayVisible;
+	return _speechOverlay.visible && !_actionOverlayPlayer.replacesActor();
 }
 
 void Scene7010::runCustomEntrySequence() {
@@ -939,13 +938,12 @@ void Scene7010::runChunk11ExtendedFrames() {
 }
 
 void Scene7010::runChunk13Item09PickupOverlaySequence() {
-	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
-	_actionOverlayPlayer.begin(13, kScene7010Chunk13DescriptorCount,
-		kScene7010Chunk13FrameMap, ARRAYSIZE(kScene7010Chunk13FrameMap));
-	playAnimationFrames(_actionOverlayPlayer,
-		AnimationFrameRange(1, ARRAYSIZE(kScene7010Chunk13FrameMap) - 1,
-			kScene7010Chunk8FrameMillis).hookAt(5, kScene7010BusinessCardAnimationHook));
-	_actionOverlayPlayer.finish(previousHideActiveActor);
+	runActorReplacement(ActionOverlaySpec(13, kScene7010Chunk13DescriptorCount,
+		kScene7010Chunk13FrameMap, ARRAYSIZE(kScene7010Chunk13FrameMap),
+		kScene7010Chunk8FrameMillis)
+		.startAt(1)
+		.hookAt(5, kScene7010BusinessCardAnimationHook)
+		.noRedrawAtEnd());
 	if (!hasInventoryItem(kScene7010HannoverBusinessCardItem))
 		addInventoryItem(kScene7010HannoverBusinessCardItem);
 	_soundBank0.playSample(1, 100);
@@ -962,9 +960,9 @@ void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame, bool restor
 }
 
 void Scene7010::runDoghouseDepartureSequence() {
-	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
-	_actionOverlayPlayer.begin(15, kScene7010Chunk15DescriptorCount,
-		kScene7010Chunk15FrameMap, ARRAYSIZE(kScene7010Chunk15FrameMap));
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(15,
+		kScene7010Chunk15DescriptorCount, kScene7010Chunk15FrameMap,
+		ARRAYSIZE(kScene7010Chunk15FrameMap));
 	_doghouseSpeechAnimation.configure(kScene7010DoghouseSpeechFrameMillis,
 		kScene7010DoghouseSpeechBaseFrame, kScene7010DoghouseSpeechFrameCount);
 

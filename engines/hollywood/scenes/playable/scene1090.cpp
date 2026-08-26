@@ -138,7 +138,7 @@ bool Scene1090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
-void Scene1090::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene1090::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 	if (hookId != kScene1090LightSwitchHook)
 		return;
@@ -256,9 +256,8 @@ void Scene1090::applyWrappedBrainPatch() {
 }
 
 void Scene1090::runSwitchAction() {
-	runActionOverlay(ActionOverlaySpec(8, kScene1090SwitchDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(8, kScene1090SwitchDescriptorCount,
 		kScene1090SwitchFrameMap, ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis)
-		.hideActor()
 		.hookAt(5, kScene1090LightSwitchHook));
 }
 
@@ -275,7 +274,7 @@ void Scene1090::takeWrappedBrain() {
 
 	if (state.scene1090WrappedBrainState == 0)
 		revealWrappedBrain();
-	runHiddenActorActionOverlay(13, kScene1090WrappedBrainPickupDescriptorCount,
+	runActorReplacement(13, kScene1090WrappedBrainPickupDescriptorCount,
 		kScene1090WrappedBrainPickupFrameMap, ARRAYSIZE(kScene1090WrappedBrainPickupFrameMap),
 		kScene1090FrameMillis);
 	state.scene1090WrappedBrainState = 2;

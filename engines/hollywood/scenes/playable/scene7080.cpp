@@ -61,11 +61,7 @@ Scene7080::Scene7080(HollywoodEngine *vm) :
 }
 
 void Scene7080::initializeCustomPreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -191,13 +187,12 @@ AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame) {
 	const byte hookId = statePatchFrame >= 0 ? kScene7080CrankPickupHook : 0;
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.hookAt(statePatchFrame, hookId));
 }
 
-void Scene7080::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene7080::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
 	if (hookId == kScene7080CrankPickupHook) {

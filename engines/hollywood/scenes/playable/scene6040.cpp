@@ -279,9 +279,8 @@ void Scene6040::runPaintCanPickup() {
 	}
 
 	state.scene6040PaintCanTaken = true;
-	runActionOverlay(ActionOverlaySpec(11, kScene6040PaintOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(11, kScene6040PaintOverlayDescriptorCount,
 		kScene6040PaintPickupFrameMap, ARRAYSIZE(kScene6040PaintPickupFrameMap), kScene6040FrameMillis)
-		.hideActor()
 		.patchAt(5, 1));
 	addInventoryItem(kScene6040PaintInventoryItem);
 	_soundBank0.playSample(1, 100);
@@ -289,9 +288,8 @@ void Scene6040::runPaintCanPickup() {
 }
 
 void Scene6040::runWireInspectionAnimation() {
-	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
-		kScene6040WireInspectFrameMap, ARRAYSIZE(kScene6040WireInspectFrameMap), kScene6040FrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+		kScene6040WireInspectFrameMap, ARRAYSIZE(kScene6040WireInspectFrameMap), kScene6040FrameMillis));
 	beginSecondarySpeechLine(10, 0);
 }
 
@@ -304,9 +302,8 @@ void Scene6040::runCutWireWithTool() {
 
 	beginSecondarySpeechLine(12, 0);
 	state.scene6040WireState = 2;
-	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
 		kScene6040WireCutFrameMap, ARRAYSIZE(kScene6040WireCutFrameMap), kScene6040FrameMillis)
-		.hideActor()
 		.patchAt(19, 2));
 	removeInventoryItem(kScene6040LooseWireInventoryItem);
 	addInventoryItem(kScene6040CutWireInventoryItem);
@@ -321,9 +318,8 @@ void Scene6040::runWirePickup() {
 	}
 
 	state.scene6040WireState = 1;
-	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
 		kScene6040WirePickupFrameMap, ARRAYSIZE(kScene6040WirePickupFrameMap), kScene6040FrameMillis)
-		.hideActor()
 		.patchAt(6, 2));
 	addInventoryItem(kScene6040LooseWireInventoryItem);
 	_soundBank0.playSample(1, 100);

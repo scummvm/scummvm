@@ -371,7 +371,7 @@ AmbientAudioProfile Scene1060::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene1060::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene1060::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId != kScene1060FlySlimePickupHook || frame != kScene1060FlySlimePickupStateFrame)
 		return;
 
@@ -1020,31 +1020,21 @@ void Scene1060::runPocketPaperPickupSequence() {
 	if (ARRAYSIZE(kScene1060PocketPaperActionFrameMap) != ARRAYSIZE(kScene1060PocketPaperInvisibleFrameMap))
 		return;
 
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
 	_pocketPaperPickupSequenceActive = true;
 	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
-
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = 11;
-	_actionOverlayDescriptorCount = (byte)kScene1060PocketPaperDescriptorCount;
-	_actionOverlayLayer.configure(11, (uint16)kScene1060PocketPaperDescriptorCount,
-		kScene1060PocketPaperActionFrameMap, ARRAYSIZE(kScene1060PocketPaperActionFrameMap));
-	_actionOverlayLayer.visible = true;
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(11,
+		kScene1060PocketPaperDescriptorCount, kScene1060PocketPaperActionFrameMap,
+		ARRAYSIZE(kScene1060PocketPaperActionFrameMap));
 
 	for (uint frame = 0; frame < ARRAYSIZE(kScene1060PocketPaperActionFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayLayer.setFrame((byte)frame);
-		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
+		_actionOverlayPlayer.setFrame(frame);
 		_invisibleManLayer.setFrame(kScene1060PocketPaperInvisibleFrameMap[frame]);
 		if (waitSceneMillis(kScene1060FrameMillis))
 			break;
 	}
 
-	_actionOverlayVisible = false;
-	_actionOverlayLayer.visible = false;
-	_actionOverlayFrameIndex = 0;
 	_pocketPaperPickupSequenceActive = false;
-	_hideActiveActor = previousHideActiveActor;
+	_actionOverlayPlayer.finish(previousHideActiveActor);
 }
 
 void Scene1060::handleFlySlimePickup() {
@@ -1058,9 +1048,8 @@ void Scene1060::handleFlySlimePickup() {
 	}
 
 	_flySlimePickupSequenceActive = true;
-	runActionOverlay(ActionOverlaySpec(10, kScene1060FlySlimePickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene1060FlySlimePickupDescriptorCount,
 		kScene1060FlySlimePickupFrameMap, ARRAYSIZE(kScene1060FlySlimePickupFrameMap), kScene1060FrameMillis)
-		.hideActor()
 		.hookAt(kScene1060FlySlimePickupStateFrame, kScene1060FlySlimePickupHook));
 	_flySlimePickupSequenceActive = false;
 	if (state.scene1060DrFlyState != 2) {
@@ -1086,9 +1075,8 @@ void Scene1060::handlePocketPaperLook() {
 
 void Scene1060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(patchFrame, patchSelector));
 }
 

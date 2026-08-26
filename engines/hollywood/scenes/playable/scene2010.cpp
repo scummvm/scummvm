@@ -312,7 +312,7 @@ void Scene2010::runPatchedEntrySequence() {
 	_soundBank0.playSample(0x0c, 100);
 
 	if (_sceneChunkTable.isValidChunk(10))
-		runVisibleActorActionOverlay(10, kScene2010SecondOverlayDescriptorCount,
+		runSceneOverlay(10, kScene2010SecondOverlayDescriptorCount,
 			kScene2010SecondOverlayFrameMap, ARRAYSIZE(kScene2010SecondOverlayFrameMap),
 			kScene2010OverlayFrameMillis);
 
@@ -333,23 +333,21 @@ void Scene2010::runPatchedEntrySequence() {
 
 void Scene2010::runLongSequenceToScene2100() {
 	if (_sceneChunkTable.isValidChunk(5)) {
-		runActionOverlay(ActionOverlaySpec(5, kScene2010FirstOverlayDescriptorCount,
+		runActorReplacement(ActionOverlaySpec(5, kScene2010FirstOverlayDescriptorCount,
 			kScene2010FirstOverlayFrameMap, ARRAYSIZE(kScene2010FirstOverlayFrameMap),
 			kScene2010OverlayFrameMillis)
-			.hideActor()
 			.soundAt(10, 0x0b));
 	}
 
 	if (_sceneChunkTable.isValidChunk(6)) {
-		runActionOverlay(ActionOverlaySpec(6, kScene2010SecondOverlayDescriptorCount,
+		runActorReplacement(ActionOverlaySpec(6, kScene2010SecondOverlayDescriptorCount,
 			kScene2010SecondOverlayFrameMap, ARRAYSIZE(kScene2010SecondOverlayFrameMap),
 			kScene2010OverlayFrameMillis)
-			.hideActor()
 			.soundAt(0, 0x0c));
 	}
 
 	if (_sceneChunkTable.isValidChunk(7)) {
-		runVisibleActorActionOverlay(7, kScene2010ActorOverlayDescriptorCount,
+		runSceneOverlay(7, kScene2010ActorOverlayDescriptorCount,
 			kScene2010ActorOverlayFrameMap, ARRAYSIZE(kScene2010ActorOverlayFrameMap),
 			kScene2010OverlayFrameMillis);
 	}

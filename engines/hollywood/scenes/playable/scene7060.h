@@ -50,7 +50,7 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void initializeChunk6FrameMap();
 	void applyChunk6FrameMapForInventoryState();

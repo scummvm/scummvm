@@ -344,9 +344,8 @@ void Scene3020::runPickupMace() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(9, kScene3020PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(9, kScene3020PickupDescriptorCount,
 		kScene3020PickupFrameMap, ARRAYSIZE(kScene3020PickupFrameMap), kScene3020PickupFrameMillis)
-		.hideActor()
 		.patchAt(7, 1));
 	_vm->gameState().scene3020MaceTaken = true;
 	applySceneStateToHotspotsAndPatches(1);

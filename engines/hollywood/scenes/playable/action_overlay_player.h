@@ -24,28 +24,34 @@
 
 #include "common/types.h"
 
-#include "hollywood/scenes/playable/action_overlay.h"
 #include "hollywood/scenes/playable/animation_layers.h"
 
 namespace Hollywood {
 
-// Tracks a temporary scene overlay and its active-actor visibility rule.
+// Tracks a temporary overlay at its declared scene-composition stratum.
 class ActionOverlayPlayer {
 public:
 	ActionOverlayPlayer();
 
 	void reset();
-	bool applyActorVisibility(ActionOverlayActorVisibility actorVisibility);
-	void begin(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize);
+	bool beginActorReplacement(uint newChunkIndex, uint newDescriptorCount, const byte *frameMap,
+		uint frameMapSize) {
+		return begin(newChunkIndex, newDescriptorCount, frameMap, frameMapSize,
+			kSceneAnimationActorReplacement);
+	}
 	void setFrame(uint frame);
 	void finish(bool previousHideActiveActor);
+	bool isVisible() const { return layer.visible; }
+	bool replacesActor() const { return isVisible() && stratum == kSceneAnimationActorReplacement; }
 
-	bool visible;
 	ResourceSpriteLayer layer;
-	byte chunkIndex;
-	byte descriptorCount;
-	byte frameIndex;
+	SceneAnimationStratum stratum;
 	bool hideActiveActor;
+
+private:
+	friend class PlayableScene;
+	bool begin(uint newChunkIndex, uint newDescriptorCount, const byte *frameMap, uint frameMapSize,
+		SceneAnimationStratum stratum);
 };
 
 } // End of namespace Hollywood

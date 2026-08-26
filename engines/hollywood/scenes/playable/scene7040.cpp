@@ -192,10 +192,7 @@ bool Scene7040::shouldRunExitSideEffectsAfterLoop() const {
 void Scene7040::initializeCustomPreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
+	_actionOverlayPlayer.reset();
 	_postItemIdleState = 0;
 	_preItemIdleAnimation.reset();
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
@@ -203,7 +200,6 @@ void Scene7040::initializeCustomPreviewState() {
 	configureAnimationLayers();
 	_primarySpeechLeadInTicks = 0;
 	_primarySpeechLastMouthFrameOffset = 0;
-	_hideActiveActor = false;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -224,12 +220,20 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	syncAnimationLayerFrames();
-	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-
-	drawActionOverlayLayer();
+	if (_actionOverlayPlayer.replacesActor()) {
+		drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk12Layer));
+		if (isAlternatePaletteResourceActive()) {
+			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk17Layer));
+			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk16Layer));
+		}
+		drawActionOverlayLayer();
+		if (!isAlternatePaletteResourceActive())
+			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk11Layer));
+	} else {
+		drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	}
 
 	uint blockChunk = 5;
 	if (actorDrawOrderMode == 2 || actorDrawOrderMode == 3) {
@@ -611,23 +615,20 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 
 	setChunk12OverlayVisible(true);
 	if (state.officeStatueActionProgress == 2) {
-		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.hideActor()
 			.noRedrawAtEnd()
 			.endAt(0x2d));
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
 		setChunk12OverlayVisible(true);
-		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.hideActor()
 			.noRedrawAtEnd()
 			.frameRange(0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap)));
 	} else {
-		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.hideActor()
 			.soundAt(0x2c, 0x15)
 			.noRedrawAtEnd());
 	}
@@ -663,7 +664,7 @@ void Scene7040::handleActionSlot05ExitProgressSpeech() {
 }
 
 void Scene7040::handleActionSlot06TransitionToG05() {
-	runVisibleActorActionOverlay(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
+	runActorReplacement(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
 		ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis);
 	_vm->gameState().openedOfficeClosetDoor = true;
 	_soundBank0.playSample(3, 100);
@@ -682,7 +683,7 @@ void Scene7040::handleActionSlot09PickupItem0FThenExit() {
 	}
 
 	beginSecondarySpeechLine(8, 1);
-	runVisibleActorActionOverlay(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
+	runActorReplacement(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
 		ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis);
 	addInventoryItem(0x0f);
 	_soundBank0.playSample(1, 100);

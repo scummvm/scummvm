@@ -140,9 +140,9 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceSpriteLayer(_forestIdleLayer);
 		return;
 	}
-	if (_actionOverlayVisible) {
+	if (_actionOverlayPlayer.replacesActor()) {
 		drawForegroundBlocks(activeWorldY);
-		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawResourceSpriteLayer(_windmillLayer);
 		drawActionOverlayLayer();
 		drawResourceSpriteLayer(_forestIdleLayer);
@@ -309,9 +309,8 @@ void Scene3010::runEntryFromPath() {
 }
 
 void Scene3010::runExitToScene3050() {
-	runActionOverlay(ActionOverlaySpec(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
+	runActorReplacement(ActionOverlaySpec(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
 		ARRAYSIZE(kScene3010ExitFrameMap), kScene3010ForestIdleFrameMillis)
-		.hideActor()
 		.noRedrawAtEnd());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene3050State;
@@ -448,10 +447,9 @@ void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tab
 
 void Scene3010::runWindmillClimbOverlay() {
 	_climbOverlayActive = true;
-	const bool previousHideActiveActor =
-		_actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
-	_actionOverlayPlayer.begin(kScene3010ClimbChunk, kScene3010ClimbDescriptorCount,
-		kScene3010ClimbFrameMap, ARRAYSIZE(kScene3010ClimbFrameMap));
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(kScene3010ClimbChunk,
+		kScene3010ClimbDescriptorCount, kScene3010ClimbFrameMap,
+		ARRAYSIZE(kScene3010ClimbFrameMap));
 
 	for (uint frame = 0; frame < 7 && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested(); ++frame) {

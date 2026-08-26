@@ -84,11 +84,7 @@ Scene7050::Scene7050(HollywoodEngine *vm) :
 }
 
 void Scene7050::initializeCustomPreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -373,7 +369,7 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 }
 
 void Scene7050::handleActionSlot01ReturnToG04() {
-	runHiddenActorActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
+	runActorReplacement(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
 		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis);
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene7050ReturnToG04State;
@@ -381,15 +377,14 @@ void Scene7050::handleActionSlot01ReturnToG04() {
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
-	runActionOverlay(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
 		kScene7050Chunk11PickupItem10FrameMap, ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis)
-		.hideActor()
 		.hookAt(4, kScene7050CloakroomRagPickupHook));
 	addInventoryItem(0x10);
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene7050::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene7050::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
 	if (hookId == kScene7050CloakroomRagPickupHook) {

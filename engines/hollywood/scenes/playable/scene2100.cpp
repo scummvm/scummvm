@@ -508,10 +508,9 @@ void Scene2100::runRaStaffPickup() {
 	GameplayState &state = _vm->gameState();
 	state.scene2100RaStaffTaken = true;
 
-	runActionOverlay(ActionOverlaySpec(kScene2100PickupChunk, kScene2100PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene2100PickupChunk, kScene2100PickupDescriptorCount,
 		kScene2100PickupFrameMap, ARRAYSIZE(kScene2100PickupFrameMap),
 		kScene2100FrameMillis)
-		.hideActor()
 		.patchAt(5, 1));
 
 	applySceneStateToHotspotsAndPatches(1);

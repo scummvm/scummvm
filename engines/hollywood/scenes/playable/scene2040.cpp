@@ -427,7 +427,7 @@ void Scene2040::runExitToInterior() {
 }
 
 void Scene2040::runStonePickup() {
-	runHiddenActorActionOverlay(13, kScene2040StonePickupDescriptorCount,
+	runActorReplacement(13, kScene2040StonePickupDescriptorCount,
 		kScene2040StonePickupFrameMap, ARRAYSIZE(kScene2040StonePickupFrameMap),
 		kScene2040OverlayFrameMillis);
 	_vm->gameState().scene2040SphinxItemRevealed = 0;
@@ -444,9 +444,8 @@ void Scene2040::runSphinxNoseSequence() {
 	}
 
 	if (_sceneChunkTable.isValidChunk(17)) {
-		runActionOverlay(ActionOverlaySpec(17, kScene2040SphinxNoseDescriptorCount,
+		runActorReplacement(ActionOverlaySpec(17, kScene2040SphinxNoseDescriptorCount,
 			kScene2040SphinxNoseFrameMap, ARRAYSIZE(kScene2040SphinxNoseFrameMap), kScene2040SlowOverlayFrameMillis)
-			.hideActor()
 			.soundAt(17, 0x2c, 50));
 	}
 
@@ -456,7 +455,7 @@ void Scene2040::runSphinxNoseSequence() {
 }
 
 void Scene2040::runScarabPlacementSequence() {
-	runHiddenActorActionOverlay(14, kScene2040ScarabPlacementDescriptorCount,
+	runActorReplacement(14, kScene2040ScarabPlacementDescriptorCount,
 		kScene2040ScarabPlacementFrameMap, ARRAYSIZE(kScene2040ScarabPlacementFrameMap),
 		kScene2040SlowOverlayFrameMillis);
 	removeInventoryItem(0x2b);
@@ -474,14 +473,13 @@ void Scene2040::runEyeExchangeSequence() {
 	if (state.scene2040SphinxFaceState != 2)
 		return;
 
-	runActionOverlay(ActionOverlaySpec(14, kScene2040EyeExchangeFirstDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(14, kScene2040EyeExchangeFirstDescriptorCount,
 		kScene2040EyeExchangeFirstFrameMap, ARRAYSIZE(kScene2040EyeExchangeFirstFrameMap), kScene2040SlowOverlayFrameMillis)
-		.hideActor()
 		.soundAt(8, 0x20));
 	removeInventoryItem(0x52);
 	addInventoryItem(0x1a);
 	walkActiveActorTo(0x210, 0x172, 1, 0, false);
-	runVisibleActorActionOverlay(12, kScene2040EyeExchangeSecondDescriptorCount,
+	runSceneOverlay(12, kScene2040EyeExchangeSecondDescriptorCount,
 		kScene2040EyeExchangeSecondFrameMap, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap),
 		kScene2040SlowOverlayFrameMillis);
 	beginSecondarySpeechLine(9, 1);
@@ -498,7 +496,7 @@ void Scene2040::runBaseOpeningSequence() {
 		return;
 	}
 
-	runHiddenActorActionOverlay(16, kScene2040BaseOpeningDescriptorCount,
+	runActorReplacement(16, kScene2040BaseOpeningDescriptorCount,
 		kScene2040BaseOpeningFrameMap, ARRAYSIZE(kScene2040BaseOpeningFrameMap),
 		kScene2040SlowOverlayFrameMillis);
 	removeInventoryItem(0x26);

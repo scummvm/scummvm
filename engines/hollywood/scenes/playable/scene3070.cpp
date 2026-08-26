@@ -477,7 +477,7 @@ bool Scene3070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
-void Scene3070::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene3070::handleAnimationFrameHook(byte hookId, uint frame) {
 	switch (hookId) {
 	case 1:
 		applyActionPatchChunk(21);
@@ -715,9 +715,8 @@ void Scene3070::runDoorPatchOverlay(bool open) {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap), kScene3070OverlayFrameMillis));
 	state.scene3070DrawerOpen = open;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
@@ -729,9 +728,8 @@ void Scene3070::runItemPatchPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap), kScene3070OverlayFrameMillis));
 	state.scene3070SurgicalNeedleThreadState = 2;
 	state.scene3070SurgicalNeedleThreadTaken = true;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -770,21 +768,18 @@ void Scene3070::runFrankensteinRevival() {
 		beginSecondarySpeechLine(13, 4);
 
 	_vm->gameplayMusic()->playMusicCue(0x12, 100, false);
-	runActionOverlay(ActionOverlaySpec(13, 6, kScene3070RevivalStartFrameMap,
-		ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor().hookAt(5, 2));
+	runActorReplacement(ActionOverlaySpec(13, 6, kScene3070RevivalStartFrameMap,
+		ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis).hookAt(5, 2));
 
 	if (!walkActiveActorTo(0x0e6, 0x1b5, 1, 0)) {
 		_soundBank0.stop();
 		_ambientSoundBank0.stop();
 		return;
 	}
-	runActionOverlay(ActionOverlaySpec(11, 24, kScene3070RevivalLoopFrameMap,
-		ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor().hookEveryFrame(3));
-	runActionOverlay(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
-		ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor().startAt(4));
+	runActorReplacement(ActionOverlaySpec(11, 24, kScene3070RevivalLoopFrameMap,
+		ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis).hookEveryFrame(3));
+	runActorReplacement(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
+		ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis).startAt(4));
 
 	runCurtainClearToBlack();
 	state.mainFlowStateId = kScene3110LongTransitionState;
@@ -800,8 +795,8 @@ void Scene3070::runBrainInstallation() {
 	if (!walkActiveActorTo(0x225, 0x13e, 5, 0))
 		return;
 
-	runActionOverlay(ActionOverlaySpec(20, 29, kScene3070BrainInstallationFrameMap,
-		ARRAYSIZE(kScene3070BrainInstallationFrameMap), kScene3070OverlayFrameMillis).hideActor());
+	runActorReplacement(ActionOverlaySpec(20, 29, kScene3070BrainInstallationFrameMap,
+		ARRAYSIZE(kScene3070BrainInstallationFrameMap), kScene3070OverlayFrameMillis));
 	GameplayState &state = _vm->gameState();
 	state.scene3070FrankensteinBodyState = 2;
 	applySceneStateToHotspotsAndPatches(2);
@@ -823,11 +818,10 @@ void Scene3070::runBodyAssembly() {
 		return;
 
 	beginSecondarySpeechLine(16, 2);
-	runActionOverlay(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
-		ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis)
-		.hideActor().hookAt(10, 1));
-	runActionOverlay(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
-		ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis).hideActor());
+	runActorReplacement(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
+		ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis).hookAt(10, 1));
+	runActorReplacement(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
+		ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis));
 
 	_vm->gameState().scene3070FrankensteinBodyState = 1;
 	applySceneStateToHotspotsAndPatches(2);
@@ -853,7 +847,7 @@ void Scene3070::addSerumIngredient(byte itemId, uint16 speechRow, bool speakBefo
 	const byte *frameMap = useSyringeAnimation ? kScene3070SyringeIngredientFrameMap : kScene3070IngredientFrameMap;
 	const uint frameCount = useSyringeAnimation ? ARRAYSIZE(kScene3070SyringeIngredientFrameMap) :
 		ARRAYSIZE(kScene3070IngredientFrameMap);
-	runActionOverlay(ActionOverlaySpec(10, 11, frameMap, frameCount, kScene3070OverlayFrameMillis).hideActor());
+	runActorReplacement(ActionOverlaySpec(10, 11, frameMap, frameCount, kScene3070OverlayFrameMillis));
 	state.scene3070SerumIngredientCount = MIN<byte>(5, state.scene3070SerumIngredientCount + 1);
 	if (useSyringeAnimation)
 		addInventoryItem(0x08);

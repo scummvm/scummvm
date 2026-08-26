@@ -123,10 +123,7 @@ void Scene7030::initializeCustomPreviewState() {
 	_chunk6IdlePairA.configure(0, 4, AlternatingRandomFramePair::kFirstFrame);
 	_chunk6IdlePairB.configure(8, 0x0c, AlternatingRandomFramePair::kSecondFrame);
 	_primaryLeftSpeechLastFrame = 0;
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
+	_actionOverlayPlayer.reset();
 	const bool pairASecondPhase = _random.getRandomNumber(1) != 0;
 	const bool pairBSecondPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
@@ -176,7 +173,7 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 bool Scene7030::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayVisible;
+	return _speechOverlay.visible && !_actionOverlayPlayer.replacesActor();
 }
 
 void Scene7030::runCustomEntrySequence() {
@@ -449,13 +446,12 @@ byte Scene7030::chunk5Frame() const {
 void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame) {
 	const byte hookId = statePatchFrame >= 0 ? kScene7030PunchBowlGlassPatchHook : 0;
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.hookAt(statePatchFrame, hookId));
 }
 
-void Scene7030::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene7030::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
 	if (hookId == kScene7030PunchBowlGlassPatchHook) {

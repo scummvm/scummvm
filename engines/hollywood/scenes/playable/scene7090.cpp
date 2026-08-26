@@ -71,11 +71,7 @@ Scene7090::Scene7090(HollywoodEngine *vm) :
 }
 
 void Scene7090::initializeCustomPreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -268,7 +264,7 @@ AmbientAudioProfile Scene7090::ambientAudioProfile() const {
 
 void Scene7090::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis) {
-	runHiddenActorActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
+	runActorReplacement(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
 }
 
 void Scene7090::handleBackToG07() {
@@ -298,9 +294,8 @@ void Scene7090::handleGatedAction() {
 		kScene7090GatedActionTargetFacing, 0);
 
 	_prePatchChunk7Visible = true;
-	runActionOverlay(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
 		kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap), kScene7090FrameMillis)
-		.hideActor()
 		.hookEveryFrame(kScene7090GatedActionHook)
 		.noRedrawAtEnd());
 	_prePatchChunk7Visible = false;
@@ -313,7 +308,7 @@ void Scene7090::handleGatedAction() {
 	beginSecondarySpeechLine(10, 2);
 }
 
-void Scene7090::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene7090::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene7090GatedActionHook) {
 		if (frame == 3)
 			_soundBank0.playSample(0x1b, 100);

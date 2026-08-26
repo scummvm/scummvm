@@ -83,11 +83,7 @@ Scene7070::Scene7070(HollywoodEngine *vm) :
 }
 
 void Scene7070::initializeCustomPreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
@@ -260,9 +256,8 @@ AmbientAudioProfile Scene7070::ambientAudioProfile() const {
 
 void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, int soundFrame, byte soundId) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(statePatchFrame, 2)
 		.soundAt(soundFrame, soundId));
 }
