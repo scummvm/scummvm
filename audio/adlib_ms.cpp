@@ -1738,11 +1738,11 @@ uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source,
 	// Scale by source volume.
 	invertedVolume = (invertedVolume * _sources[source].volume) / _sources[source].neutralVolume;
 	if (_userVolumeScaling) {
-		if (_userMute) {
+		if (_userMute || (_sources[source].type == SOURCE_TYPE_SFX ? _userSfxMute : _userMusicMute)) {
 			invertedVolume = 0;
 		} else {
 			// Scale by user volume.
-			uint16 userVolume = (_sources[source].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume); // Treat SOURCE_TYPE_UNDEFINED as music
+			uint16 userVolume = _sources[source].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume; // Treat SOURCE_TYPE_UNDEFINED as music
 			invertedVolume = (invertedVolume * userVolume) >> 8;
 		}
 	}

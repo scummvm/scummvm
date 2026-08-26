@@ -60,6 +60,8 @@ MidiDriver_Multisource::MidiDriver_Multisource() :
 		_userMusicVolume(192),
 		_userSfxVolume(192),
 		_userMute(false),
+		_userMusicMute(false),
+		_userSfxMute(false),
 		_timerRate(0),
 		_fadeDelay(0),
 		_timer_param(nullptr),
@@ -382,6 +384,8 @@ void MidiDriver_Multisource::syncSoundSettings() {
 	_userMusicVolume = MIN(256, ConfMan.getInt("music_volume"));
 	_userSfxVolume = MIN(256, ConfMan.getInt("sfx_volume"));
 	_userMute = ConfMan.getBool("mute");
+	_userMusicMute = ConfMan.getBool("music_mute");
+	_userSfxMute = ConfMan.getBool("sfx_mute");
 
 	// Calling applySourceVolume will apply the user volume.
 	applySourceVolume(0xFF);

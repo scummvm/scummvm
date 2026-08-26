@@ -822,7 +822,7 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		// Scale by source volume.
 		compositeVolume = compositeVolume * _sources[0].volume / _sources[0].neutralVolume;
 		if (_userVolumeScaling) {
-			if (_userMute) {
+			if (_userMute || (_sources[0].type == SOURCE_TYPE_SFX ? _userSfxMute : _userMusicMute)) {
 				compositeVolume = 0;
 			} else {
 				// Scale by user volume.

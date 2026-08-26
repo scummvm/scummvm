@@ -596,7 +596,7 @@ void MidiDriver_MT32GM::controlChange(byte outputChannel, byte controllerNumber,
 			controllerValue = (controllerValue * _sources[source].volume) / _sources[source].neutralVolume;
 		}
 		if (_userVolumeScaling) {
-			if (_userMute) {
+			if (_userMute || ((source >= 0 && _sources[source].type == SOURCE_TYPE_SFX) ? _userSfxMute : _userMusicMute)) {
 				controllerValue = 0;
 			} else {
 				// Scale to user volume

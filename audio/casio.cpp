@@ -285,11 +285,11 @@ byte MidiDriver_Casio::calculateVelocity(int8 source, byte velocity) {
 			calculatedVelocity = 0;
 	}
 	if (_userVolumeScaling) {
-		if (_userMute) {
+		if (_userMute || ((source >= 0 && _sources[source].type == SOURCE_TYPE_SFX) ? _userSfxMute : _userMusicMute)) {
 			calculatedVelocity = 0;
 		} else {
 			// Scale to user volume.
-			uint16 userVolume = _sources[source].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume;
+			uint16 userVolume = ((source >= 0 && _sources[source].type == SOURCE_TYPE_SFX) ? _userSfxVolume : _userMusicVolume);
 			if (userVolume == 0)
 				calculatedVelocity = 0;
 		}

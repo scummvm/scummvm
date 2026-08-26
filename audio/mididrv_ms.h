@@ -467,6 +467,8 @@ protected:
 	uint16 _userMusicVolume;
 	uint16 _userSfxVolume;
 	bool _userMute;
+	bool _userMusicMute;
+	bool _userSfxMute;
 
 	Common::Mutex _fadingMutex; // For operations on fades
 
