@@ -42,12 +42,14 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	void prepareCustomActorPathRoute(int startX, int startY) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void rebuildWalkableMask();
 	void resetForegroundLayer();
@@ -55,17 +57,25 @@ private:
 	void runEntryFromMarket();
 	void runEntryFromInterior();
 	void runExitToInterior();
-	void runStonePickup();
+	void runFlowerPickup();
 	void runSphinxNoseSequence();
 	void runScarabPlacementSequence();
 	void runEyeExchangeSequence();
 	void runBaseOpeningSequence();
+	void runBaseOpeningDeltaSequence();
+	void installEyeEffectPalette();
+	void restoreEyeEffectPalette();
+	void rotateEyeEffectPalette();
+	void copyStepDeltasFromB4(uint targetOffset, uint sourceOffset, uint count);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void restoreOriginalColorMapItem(byte itemId);
 	byte originalColorMapItemAt(uint paletteIndex) const;
 
 	TimedAnimationChannel _foregroundChannel;
+	ResourceSpriteLayer _behindActorLayer;
 	ResourceSpriteLayer _foregroundLayer;
+	int _routeStartX;
+	int _routeStartY;
 };
 
 } // End of namespace Hollywood
