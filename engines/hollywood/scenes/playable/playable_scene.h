@@ -41,6 +41,7 @@
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/animation_layers.h"
+#include "hollywood/scenes/playable/animation_player.h"
 #include "hollywood/scenes/playable/scene_config.h"
 #include "hollywood/scenes/playable/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
@@ -77,7 +78,8 @@ class HollywoodEngine;
  * belong in drawCustomComposite(). Entry and action hooks must leave the actor
  * pose and GameplayState ready for the next gameplay frame.
  */
-class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate, public ActorPathControllerDelegate {
+class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate,
+		public ActorPathControllerDelegate, public SceneAnimationPlayerDelegate {
 public:
 	bool play();
 
@@ -191,6 +193,8 @@ protected:
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
 	virtual AmbientAudioProfile ambientAudioProfile() const;
 	virtual void handleActionOverlayFrameHook(byte hookId, uint frame);
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
+	virtual void advanceFullscreenAnimation(uint32 delta);
 
 	// Ambient audio
 	AmbientAudioProfile createLoopingAmbientAudioProfile(byte volumePercent) const;
@@ -372,7 +376,13 @@ protected:
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawTransientLayers(const TransientLayerCompositor &compositor);
+	void drawAnimationLayers(const SceneAnimationLayers &layers, SceneAnimationStratum stratum);
 	void drawActionOverlayLayer();
+	template<class FrameTarget>
+	bool playAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
+		return _animationPlayer.play(target, range);
+	}
+	bool playAnimationFrames(SceneAnimationLayers &layers, uint layerId, const AnimationFrameRange &range);
 
 	// Resource delta clips
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
@@ -384,8 +394,13 @@ protected:
 		uint firstFrame = 0);
 	// Polls events without advancing or redrawing the scene; returns true if playback should stop.
 	bool waitDeltaClipFrameMillis(uint32 millis);
+	bool playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec);
 	bool fadePaletteFromBlack();
 	bool fadePaletteToBlack();
+
+	// SceneAnimationPlayerDelegate
+	bool animationPlaybackShouldStop() const override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
 	// Speech playback
 	// The begin*() helpers block until speech finishes. startSecondarySpeechLine() does not and
@@ -509,6 +524,7 @@ protected:
 	SoundBank0Player _soundBank0;
 	SoundBank0Player _ambientSoundBank0;
 	Common::RandomSource _random;
+	SceneAnimationPlayer _animationPlayer;
 
 	// Speech runtime state
 	SpeechController _speechController;

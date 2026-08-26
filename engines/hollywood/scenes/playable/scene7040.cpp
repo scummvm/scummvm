@@ -86,9 +86,14 @@ const byte kScene7040ActionSpeechGroupB = 4;
 const byte kScene7040FrankieSpeechGroupA = 5;
 const byte kScene7040FrankieSpeechGroupB = 6;
 const byte kScene7040PrimarySpeechFrameCount = 5;
-const uint kScene7040Chunk12Layer = 0;
-const uint kScene7040Chunk14ActionLayer = 0;
-const uint kScene7040Chunk14AltLayer = 1;
+const byte kScene7040Chunk14ActionHook = 1;
+const byte kScene7040Chunk14AltHook = 2;
+const uint kScene7040Chunk17Layer = 0;
+const uint kScene7040Chunk16Layer = 1;
+const uint kScene7040Chunk12Layer = 2;
+const uint kScene7040Chunk11Layer = 3;
+const uint kScene7040Chunk14ActionLayer = 4;
+const uint kScene7040Chunk14AltLayer = 5;
 const byte kScene7040JosephNormalSpeechBaseFrame = 7;
 const byte kScene7040JosephRevealSpeechBaseFrameA = 0x12;
 const byte kScene7040JosephRevealSpeechBaseFrameB = 0x1a;
@@ -134,6 +139,20 @@ const byte kScene7040Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
 const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
+const SceneAnimationLayerSpec kScene7040AnimationLayerSpecs[] = {
+	{ kSceneAnimationBehindActors, 17, kScene7040Chunk17DescriptorCount, nullptr, 0, false },
+	{ kSceneAnimationBehindActors, 16, kScene7040Chunk16DescriptorCount,
+		kScene7040Chunk16PostItemFrameMap,
+		ARRAYSIZE(kScene7040Chunk16PostItemFrameMap), false },
+	{ kSceneAnimationBehindActors, 12, kScene7040Chunk12DescriptorCount, nullptr, 0, false },
+	{ kSceneAnimationBehindActors, 11, kScene7040Chunk11DescriptorCount, kScene7040Chunk11FrameMap,
+		ARRAYSIZE(kScene7040Chunk11FrameMap), true },
+	{ kSceneAnimationBehindActors, 14, kScene7040Chunk14ActionDescriptorCount,
+		kScene7040Chunk14ActionFrameMap,
+		ARRAYSIZE(kScene7040Chunk14ActionFrameMap), false },
+	{ kSceneAnimationBehindActors, 14, kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
+		ARRAYSIZE(kScene7040Chunk14AltFrameMap), false }
+};
 
 static PlayableSceneConfig scene7040Config() {
 	PlayableSceneConfig config(7040,
@@ -148,8 +167,7 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_postItemIdleState(0),
 		_primarySpeechLeadInTicks(0),
 		_primarySpeechLastMouthFrameOffset(0),
-		_backTransientLayers(),
-		_frontTransientLayers() {
+		_animationLayers() {
 	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
@@ -182,7 +200,7 @@ void Scene7040::initializeCustomPreviewState() {
 	_preItemIdleAnimation.reset();
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
-	resetTransientOverlayLayers();
+	configureAnimationLayers();
 	_primarySpeechLeadInTicks = 0;
 	_primarySpeechLastMouthFrameOffset = 0;
 	_hideActiveActor = false;
@@ -205,22 +223,8 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
-
-	if (_vm->gameState().reviewedFrankensteinNote) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
-			kScene7040Chunk17DescriptorCount, _chunk17Animation.frameIndex, _sceneFramebuffer);
-		const byte frame = _postItemAnimation.frameIndex < ARRAYSIZE(kScene7040Chunk16PostItemFrameMap) ?
-			kScene7040Chunk16PostItemFrameMap[_postItemAnimation.frameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
-			kScene7040Chunk16DescriptorCount, frame, _sceneFramebuffer);
-	} else {
-		drawTransientLayers(_backTransientLayers);
-		const byte frame = _preItemIdleAnimation.channel.frameIndex < ARRAYSIZE(kScene7040Chunk11FrameMap) ?
-			kScene7040Chunk11FrameMap[_preItemIdleAnimation.channel.frameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
-			kScene7040Chunk11DescriptorCount, frame, _sceneFramebuffer);
-		drawTransientLayers(_frontTransientLayers);
-	}
+	syncAnimationLayerFrames();
+	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -307,7 +311,7 @@ bool Scene7040::shouldStopJosephGuestListGreeting() {
 }
 
 bool Scene7040::prepareCustomGameplayLoop() {
-	resetTransientOverlayLayers();
+	resetTransientAnimationLayers();
 	return true;
 }
 
@@ -459,33 +463,15 @@ void Scene7040::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	presentFrame();
 }
 
-void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
-	const uint frameCount = _preItemIdleAnimation.channel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame)
-		advanceJosephIdleAnimationTick();
+void Scene7040::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene7040Chunk14ActionHook)
+		applyChunk14ActionSideEffects((byte)(frame - 1));
+	else if (hookId == kScene7040Chunk14AltHook)
+		applyChunk14AltSideEffects((byte)(frame - 1));
 }
 
-void Scene7040::advanceJosephIdleAnimationTick() {
-	switch (_preItemIdleAnimation.state) {
-	case 0:
-		if (_random.getRandomNumber(0x31) == 0) {
-			_preItemIdleAnimation.state = 2;
-		} else if (_random.getRandomNumber(0x0e) == 0) {
-			_preItemIdleAnimation.setStateAndFrame(1, 1);
-		}
-		break;
-	case 1:
-		_preItemIdleAnimation.reset();
-		break;
-	case 2:
-		if (_preItemIdleAnimation.channel.frameIndex == 6)
-			_preItemIdleAnimation.reset();
-		else
-			_preItemIdleAnimation.setFrame(_preItemIdleAnimation.channel.frameIndex + 1);
-		break;
-	default:
-		break;
-	}
+void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
+	_preItemIdleAnimation.advance(_random, delta);
 }
 
 void Scene7040::advancePrimaryDialogueSpeechFrame(uint32 delta) {
@@ -923,32 +909,23 @@ void Scene7040::runMajorHotspotReturnPath(byte finalFacing) {
 void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
 	const byte previousPreItemIdleState = _preItemIdleAnimation.state;
 	_preItemIdleAnimation.state = 3;
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		_preItemIdleAnimation.setFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk11FrameMap) - 1));
-		if (waitSceneMillis(kScene7040Chunk11FrameMillis))
-			break;
-	}
+	playAnimationFrames(_preItemIdleAnimation,
+		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk11FrameMillis));
 	_preItemIdleAnimation.state = previousPreItemIdleState;
 }
 
 void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
 	setChunk14ActionVisible(true);
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		applyChunk14ActionSideEffects((byte)frame);
-		setChunk14ActionFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14ActionFrameMap) - 1));
-		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
-			break;
-	}
+	playAnimationFrames(_animationLayers, kScene7040Chunk14ActionLayer,
+		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
+			.hookEveryFrame(kScene7040Chunk14ActionHook));
 }
 
 void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
 	configureChunk14AltLayer(chunkIndex, true);
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		applyChunk14AltSideEffects((byte)frame);
-		setChunk14AltFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14AltFrameMap) - 1));
-		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
-			break;
-	}
+	playAnimationFrames(_animationLayers, kScene7040Chunk14AltLayer,
+		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
+			.hookEveryFrame(kScene7040Chunk14AltHook));
 }
 
 void Scene7040::applyChunk14ActionSideEffects(byte frameIndex) {
@@ -1019,50 +996,62 @@ void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
 	}
 }
 
-void Scene7040::resetTransientOverlayLayers() {
-	_backTransientLayers.clear();
-	_backTransientLayers.configureLayer(kScene7040Chunk12Layer, 12, kScene7040Chunk12DescriptorCount,
-		nullptr, 0, false);
-	_frontTransientLayers.clear();
-	_frontTransientLayers.configureLayer(kScene7040Chunk14ActionLayer, 14, kScene7040Chunk14ActionDescriptorCount,
-		kScene7040Chunk14ActionFrameMap, ARRAYSIZE(kScene7040Chunk14ActionFrameMap), false);
+void Scene7040::configureAnimationLayers() {
+	_animationLayers.configure(kScene7040AnimationLayerSpecs);
+	const bool postItemMode = _vm->gameState().reviewedFrankensteinNote;
+	_animationLayers.setLayerVisible(kScene7040Chunk17Layer, postItemMode);
+	_animationLayers.setLayerVisible(kScene7040Chunk16Layer, postItemMode);
+	_animationLayers.setLayerVisible(kScene7040Chunk11Layer, !postItemMode);
+}
+
+void Scene7040::resetTransientAnimationLayers() {
+	setChunk12OverlayVisible(false);
+	setChunk12OverlayFrame(0);
+	setChunk14ActionVisible(false);
+	setChunk14ActionFrame(0);
 	configureChunk14AltLayer(14, false);
 }
 
+void Scene7040::syncAnimationLayerFrames() {
+	_animationLayers.setLayerFrame(kScene7040Chunk17Layer, _chunk17Animation.frameIndex);
+	_animationLayers.setLayerFrame(kScene7040Chunk16Layer, _postItemAnimation.frameIndex);
+	_animationLayers.setLayerFrame(kScene7040Chunk11Layer, _preItemIdleAnimation.channel.frameIndex);
+}
+
 void Scene7040::setChunk12OverlayVisible(bool visible) {
-	_backTransientLayers.setLayerVisible(kScene7040Chunk12Layer, visible);
+	_animationLayers.setLayerVisible(kScene7040Chunk12Layer, visible);
 }
 
 void Scene7040::setChunk12OverlayFrame(byte frameIndex) {
-	_backTransientLayers.setLayerFrame(kScene7040Chunk12Layer, frameIndex);
+	_animationLayers.setLayerFrame(kScene7040Chunk12Layer, frameIndex);
 }
 
 void Scene7040::setChunk14ActionVisible(bool visible) {
-	_frontTransientLayers.setLayerVisible(kScene7040Chunk14ActionLayer, visible);
+	_animationLayers.setLayerVisible(kScene7040Chunk14ActionLayer, visible);
 }
 
 void Scene7040::setChunk14ActionFrame(byte frameIndex) {
-	_frontTransientLayers.setLayerFrame(kScene7040Chunk14ActionLayer, frameIndex);
+	_animationLayers.setLayerFrame(kScene7040Chunk14ActionLayer, frameIndex);
 }
 
 void Scene7040::configureChunk14AltLayer(uint chunkIndex, bool visible) {
-	_frontTransientLayers.configureLayer(kScene7040Chunk14AltLayer, chunkIndex,
+	_animationLayers.configureLayerResource(kScene7040Chunk14AltLayer, chunkIndex,
 		kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
 		ARRAYSIZE(kScene7040Chunk14AltFrameMap), visible);
 }
 
 void Scene7040::setChunk14AltVisible(bool visible) {
-	_frontTransientLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
+	_animationLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
 }
 
 void Scene7040::setChunk14AltFrame(byte frameIndex) {
-	_frontTransientLayers.setLayerFrame(kScene7040Chunk14AltLayer, frameIndex);
+	_animationLayers.setLayerFrame(kScene7040Chunk14AltLayer, frameIndex);
 }
 
 uint Scene7040::chunk14AltChunkIndex() const {
-	if (!_frontTransientLayers.hasLayer(kScene7040Chunk14AltLayer))
+	if (!_animationLayers.hasLayer(kScene7040Chunk14AltLayer))
 		return 14;
-	return _frontTransientLayers.layer(kScene7040Chunk14AltLayer).chunkIndex;
+	return _animationLayers.layer(kScene7040Chunk14AltLayer).chunkIndex;
 }
 
 void Scene7040::runExitSideEffectsAfterLoop() {
