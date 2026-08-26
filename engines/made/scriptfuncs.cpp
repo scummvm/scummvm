@@ -53,11 +53,8 @@ ScriptFunctions::~ScriptFunctions() {
 // An inner function for playing a sound resource, either from a resource file
 //  or loaded externally
 void ScriptFunctions::playSound(SoundResource *soundRes, bool externalFile) {
-	_vm->_autoStopSound = false;
-	stopSound();
-
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
-							soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
+		soundRes->getAudioStream(_vm->_soundRate, false), -1, _gameAudioVolume);
 	_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
 	_vm->_soundEnergyIndex = 0;
 	_soundStarted = true;

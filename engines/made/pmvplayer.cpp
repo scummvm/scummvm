@@ -113,7 +113,7 @@ enum IntroTextFrame {
 #endif
 
 PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(nullptr), _vm(vm), _mixer(mixer),
-	_audioStream(nullptr), _surface(nullptr), frameData(nullptr), soundDecoderData(nullptr) {}
+	_audioStream(nullptr), _surface(nullptr), frameDataSize(0), frameData(nullptr), soundDecoderData(nullptr) {}
 
 PmvPlayer::~PmvPlayer() {
 	// make sure to clean up any currently playing video at exit
