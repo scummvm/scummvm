@@ -52,6 +52,9 @@ const int kTravelSlotY[] = { 0x37, 0x94, 0xf1, 0x14e, 0x37, 0x94, 0xf1 };
 const byte kTravelDestinationTileSourceIds[] = { 0, 0, 1, 2, 3, 0, 4 };
 const uint16 kTravelDestinationStateIds[] = { 1000, 2000, 3000, 4000, 5000, 6000, 8000 };
 const uint16 kTravelSameAreaStateIds[] = { 0x03f4, 0x07ee, 0x0bc2, 0x0faa, 0x1392, 0x177a, 0x1f4a };
+const byte kEgyptChapterId = 2;
+const uint16 kEgyptChapterEntryState = 2000;
+const uint16 kTravelInterludeState = 9140;
 const byte kTravelScreenNormalRamp[] = {
 	0x00, 0x00, 0x00, 0x05, 0x05, 0x05, 0x0d, 0x0d, 0x0d,
 	0x15, 0x15, 0x15, 0x1e, 0x1e, 0x1e, 0x28, 0x28, 0x28,
@@ -170,8 +173,17 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 		}
 
 		if (selectRequested && isActiveSlot(requestedSlot)) {
-			const byte destinationId = _vm->gameState().travelScreenSlotIds[requestedSlot];
+			GameplayState &state = _vm->gameState();
+			const byte destinationId = state.travelScreenSlotIds[requestedSlot];
 			selectedStateId = destinationState(destinationId, currentChapterId);
+			if (currentChapterId != kEgyptChapterId &&
+					selectedStateId == kEgyptChapterEntryState &&
+					state.scene2100MummyBranchState == 1 && state.scene2110TreasureGranted) {
+				state.scene2100MummyBranchState = 2;
+				state.scene2010TravelReturnSpeechState = 1;
+				state.scene9140ReturnStateId = kEgyptChapterEntryState;
+				selectedStateId = kTravelInterludeState;
+			}
 			_vm->cursor()->leaveInteractiveMode();
 			return true;
 		}
