@@ -247,13 +247,11 @@ void Scene2110::runScriptedReturnToScene2100() {
 	_entryLayer.visible = false;
 
 	GameplayState &state = _vm->gameState();
-	state.scene2100PassageOpen = false;
 	state.mainFlowStateId = kScene2100ReturnFromTreasureState;
 }
 
 void Scene2110::runExitToScene2100() {
 	GameplayState &state = _vm->gameState();
-	state.scene2100PassageOpen = false;
 	state.mainFlowStateId = kScene2100LeftPassageState;
 }
 
