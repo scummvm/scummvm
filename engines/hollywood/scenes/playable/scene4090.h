@@ -45,6 +45,7 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldConvertSavedFramebufferFF() const override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 
@@ -53,20 +54,15 @@ private:
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void setSmallRowText(byte row, const char *text);
-	void clearScriptLayers();
-	bool presentScriptFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		byte frameIndex, bool hideActiveActor);
-	bool waitScriptFrame(uint32 frameMillis);
 	void runDoorExit();
 	void runOrganRevealSequence();
 	void runCoffinSwapSequence();
 	void runFinalCutscene();
 
 	TransientLayerCompositor _ambientLayers;
-	TransientLayerCompositor _scriptLayers;
+	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _chunk12Channel;
 	Common::Array<byte> _originalColorToItemMap;
-	bool _scriptHidesActiveActor;
 };
 
 } // End of namespace Hollywood

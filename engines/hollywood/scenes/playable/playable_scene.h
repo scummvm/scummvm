@@ -381,6 +381,26 @@ protected:
 		return _animationPlayer.play(target, range);
 	}
 	bool playAnimationFrames(SceneAnimationLayers &layers, uint layerId, const AnimationFrameRange &range);
+	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
+	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
+		const byte *frameMap, uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd = true);
+	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
+		const AnimationFrameRange &range, bool clearAtEnd = true) {
+		return playResourceLayerSequence(layer, chunkIndex, descriptorCount, nullptr, 0, range, clearAtEnd);
+	}
+	template<uint size>
+	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
+			const byte (&frameMap)[size], const AnimationFrameRange &range, bool clearAtEnd = true) {
+		return playResourceLayerSequence(layer, chunkIndex, descriptorCount,
+			frameMap, size, range, clearAtEnd);
+	}
+	template<uint size>
+	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
+			uint16 descriptorCount, const byte (&frameMap)[size], uint32 frameMillis) {
+		return playResourceLayerSequence(layer, chunkIndex, descriptorCount, frameMap,
+			AnimationFrameRange(0, size - 1, frameMillis));
+	}
+	void clearResourceLayer(ResourceSpriteLayer &layer);
 
 	// Resource delta clips
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
@@ -398,6 +418,7 @@ protected:
 
 	// SceneAnimationPlayerDelegate
 	bool animationPlaybackShouldStop() const override;
+	void presentAnimationFrame() override;
 	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
 	// Speech playback

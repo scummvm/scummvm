@@ -27,6 +27,8 @@
 
 namespace Hollywood {
 
+// Inclusive playback range. Ordered and repeated playback remap the frame sent
+// to the target while hooks continue to receive the playback frame.
 struct AnimationFrameRange {
 	AnimationFrameRange(uint newFirstFrame, uint newLastFrame, uint32 newFrameMillis) :
 			firstFrame(newFirstFrame),
@@ -35,7 +37,15 @@ struct AnimationFrameRange {
 			allowSkip(true),
 			hookFrame(-1),
 			hookOnEveryFrame(false),
-			hookId(0) {
+			hookId(0),
+			frameOrder(nullptr),
+			repeatedFrame(-1) {
+	}
+
+	template<uint size>
+	AnimationFrameRange(const byte (&newFrameOrder)[size], uint32 newFrameMillis) :
+			AnimationFrameRange(0, size - 1, newFrameMillis) {
+		frameOrder = newFrameOrder;
 	}
 
 	AnimationFrameRange &unskippable() {
@@ -56,6 +66,18 @@ struct AnimationFrameRange {
 		return *this;
 	}
 
+	AnimationFrameRange &repeatFrame(byte frame) {
+		frameOrder = nullptr;
+		repeatedFrame = frame;
+		return *this;
+	}
+
+	byte targetFrame(uint playbackFrame) const {
+		if (frameOrder != nullptr)
+			return frameOrder[playbackFrame];
+		return repeatedFrame >= 0 ? (byte)repeatedFrame : (byte)playbackFrame;
+	}
+
 	uint firstFrame;
 	uint lastFrame;
 	uint32 frameMillis;
@@ -63,6 +85,8 @@ struct AnimationFrameRange {
 	int hookFrame;
 	bool hookOnEveryFrame;
 	byte hookId;
+	const byte *frameOrder;
+	int repeatedFrame;
 };
 
 // A fullscreen base image followed by delta patches. Playback temporarily owns
@@ -96,15 +120,16 @@ struct FullscreenDeltaAnimationSpec {
  * Drives an inclusive frame range on any target exposing setFrame(byte).
  *
  * Hooks run after the target changes and before the frame wait. The delegate
- * owns event pumping, scene advancement, drawing, and presentation between
- * frames. Playback stops uniformly when the delegate reports a skip, restart,
- * or quit.
+ * owns event pumping and scene advancement; playAndPresent() also asks it to
+ * present every new frame immediately. Playback stops uniformly on a skip,
+ * restart, or quit.
  */
 class SceneAnimationPlayerDelegate {
 public:
 	virtual ~SceneAnimationPlayerDelegate() {}
 
 	virtual bool animationPlaybackShouldStop() const = 0;
+	virtual void presentAnimationFrame() = 0;
 	virtual bool waitForAnimationFrame(uint32 millis, bool allowSkip) = 0;
 	virtual void handleAnimationFrameHook(byte hookId, uint frame) {
 		(void)hookId;
@@ -120,6 +145,18 @@ public:
 
 	template<class FrameTarget>
 	bool play(FrameTarget &target, const AnimationFrameRange &range) {
+		return playInternal(target, range, false);
+	}
+
+	template<class FrameTarget>
+	bool playAndPresent(FrameTarget &target, const AnimationFrameRange &range) {
+		return playInternal(target, range, true);
+	}
+
+private:
+	template<class FrameTarget>
+	bool playInternal(FrameTarget &target, const AnimationFrameRange &range,
+			bool presentBeforeWait) {
 		if (range.firstFrame > 0xff || range.lastFrame > 0xff)
 			return false;
 
@@ -128,9 +165,14 @@ public:
 			if (_delegate.animationPlaybackShouldStop())
 				return false;
 
-			target.setFrame((byte)frame);
+			target.setFrame(range.targetFrame(frame));
 			if (range.hookId != 0 && (range.hookOnEveryFrame || frame == range.hookFrame))
 				_delegate.handleAnimationFrameHook(range.hookId, frame);
+			if (presentBeforeWait) {
+				_delegate.presentAnimationFrame();
+				if (_delegate.animationPlaybackShouldStop())
+					return false;
+			}
 			if (_delegate.waitForAnimationFrame(range.frameMillis, range.allowSkip))
 				return false;
 			if (frame == (int)range.lastFrame)
@@ -138,7 +180,6 @@ public:
 		}
 	}
 
-private:
 	SceneAnimationPlayerDelegate &_delegate;
 };
 

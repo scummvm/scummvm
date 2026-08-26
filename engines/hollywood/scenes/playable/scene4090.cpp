@@ -67,13 +67,19 @@ const uint kScene4090FinalVariantBaseChunk = 15;
 const uint kScene4090FinalVariantAlternateBaseChunk = 17;
 const uint kScene4090FinalCloseDescriptorCount = 0x0f;
 const uint kScene4090FinalOpenDescriptorCount = 0x23;
-const uint kScene4090ScriptLayer = 0;
 const byte kScene4090FinalPrimarySpeechNormalGroup = 0;
 const byte kScene4090FinalPrimarySpeechAlternateGroup = 1;
 const uint kScene4090FinalPrimarySpeechFramesPerGroup = 5;
 const uint32 kScene4090FinalRoomOverlayHoldFrames = 100;
 const int kScene4090ForegroundActorThresholdY = 0x0172;
 const char *const kScene4090WideCoffinName = " ata\xa3""d ancho";
+
+enum Scene4090AnimationHookId {
+	kScene4090OrganOverlayHook = 1,
+	kScene4090OrganBodyContinuationHook,
+	kScene4090FinalRoomOverlayHook,
+	kScene4090FinalRoomHoldHook
+};
 
 const byte kScene4090DoorExitFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5
@@ -134,10 +140,9 @@ PlayableSceneConfig scene4090Config() {
 Scene4090::Scene4090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4090Config()),
 		_ambientLayers(),
-		_scriptLayers(),
+		_scriptLayer(),
 		_chunk12Channel(),
-		_originalColorToItemMap(),
-		_scriptHidesActiveActor(false) {
+		_originalColorToItemMap() {
 }
 
 void Scene4090::initializeCustomPreviewState() {
@@ -157,15 +162,13 @@ void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	drawTransientLayers(_ambientLayers);
 
-	if (_scriptLayers.visible() && _scriptHidesActiveActor) {
-		drawTransientLayers(_scriptLayers);
+	if (_scriptLayer.visible) {
+		drawResourceSpriteLayer(_scriptLayer);
 		drawActionOverlayLayer();
 		return;
-	} else {
-		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-		drawTransientLayers(_scriptLayers);
 	}
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	drawForegroundLayers(activeWorldY);
 	drawActionOverlayLayer();
@@ -307,6 +310,38 @@ AmbientAudioProfile Scene4090::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x0f, 5, 8, 25, 0x0b, 5, 100, 50);
 }
 
+void Scene4090::handleAnimationFrameHook(byte hookId, uint frame) {
+	switch (hookId) {
+	case kScene4090OrganOverlayHook:
+		if (frame == 3)
+			_soundBank0.playSample(0x3d, 100);
+		if (frame >= 3) {
+			const byte bodyFrame = (byte)MIN<uint>(frame - 3,
+				ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1);
+			_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, bodyFrame);
+		}
+		break;
+	case kScene4090OrganBodyContinuationHook:
+		_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, (byte)(frame + 7));
+		break;
+	case kScene4090FinalRoomOverlayHook:
+		if (frame < ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
+			_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer,
+				kScene4090FinalRoomChunk13FrameMap[frame]);
+		break;
+	case kScene4090FinalRoomHoldHook: {
+		const byte bodyFrame = _ambientLayers.layerFrame(kScene4090OrganBodyLayer);
+		if (bodyFrame < 10)
+			_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, bodyFrame + 1);
+		_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 3);
+		break;
+	}
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		break;
+	}
+}
+
 byte Scene4090::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	const uint groupOffset = animationGroup == kScene4090FinalPrimarySpeechAlternateGroup ?
 		kScene4090FinalPrimarySpeechFramesPerGroup : 0;
@@ -325,14 +360,13 @@ void Scene4090::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 
 	const uint finalBaseChunk = _vm->gameState().scene4090WideCoffinVariant != 0 ?
 		kScene4090FinalVariantAlternateBaseChunk : kScene4090FinalVariantBaseChunk;
-	_scriptLayers.configureLayer(kScene4090ScriptLayer, finalBaseChunk,
-		kScene4090FinalCloseDescriptorCount, nullptr, 0);
-	_scriptLayers.setLayerFrame(kScene4090ScriptLayer, kScene4090FinalPrimarySpeechFrameMap[mappedFrameOffset]);
-	_scriptHidesActiveActor = true;
+	_scriptLayer.configure(finalBaseChunk, kScene4090FinalCloseDescriptorCount, nullptr, 0);
+	_scriptLayer.visible = true;
+	_scriptLayer.setFrame(kScene4090FinalPrimarySpeechFrameMap[mappedFrameOffset]);
 }
 
 void Scene4090::resetAnimationLayers() {
-	clearScriptLayers();
+	clearResourceLayer(_scriptLayer);
 	_ambientLayers.clear();
 	_ambientLayers.configureLayer(kScene4090AmbientRandomLayer, kScene4090AmbientRandomChunk,
 		kScene4090AmbientRandomDescriptorCount, nullptr, 0, false);
@@ -389,25 +423,6 @@ void Scene4090::setSmallRowText(byte row, const char *text) {
 	memcpy(destination, text, textSize);
 }
 
-void Scene4090::clearScriptLayers() {
-	_scriptLayers.clear();
-	_scriptHidesActiveActor = false;
-}
-
-bool Scene4090::presentScriptFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		byte frameIndex, bool hideActiveActor) {
-	_scriptLayers.configureLayer(kScene4090ScriptLayer, chunkIndex, descriptorCount, frameMap, frameMapSize);
-	_scriptLayers.setLayerFrame(kScene4090ScriptLayer, frameIndex);
-	_scriptHidesActiveActor = hideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
-	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
-}
-
-bool Scene4090::waitScriptFrame(uint32 frameMillis) {
-	return waitSceneMillis(frameMillis);
-}
-
 void Scene4090::runDoorExit() {
 	runActorReplacement(ActionOverlaySpec(kScene4090DoorExitChunk, kScene4090DoorExitDescriptorCount,
 		kScene4090DoorExitFrameMap, ARRAYSIZE(kScene4090DoorExitFrameMap), kScene4090FrameMillis)
@@ -440,32 +455,16 @@ void Scene4090::runOrganRevealSequence() {
 	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
 	_ambientLayers.setLayerVisible(kScene4090OrganBodyLayer, true);
 	_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, 0);
-	bool organStarted = false;
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090OrganOverlayFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (frame == 3) {
-			_soundBank0.playSample(0x3d, 100);
-			organStarted = true;
-		}
-		if (organStarted) {
-			const byte bodyFrame = MIN<byte>(frame - 3, ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1);
-			_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, bodyFrame);
-		}
-		if (presentScriptFrame(kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
-				kScene4090OrganOverlayFrameMap, ARRAYSIZE(kScene4090OrganOverlayFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
+	playResourceLayerSequence(_scriptLayer, kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
+		kScene4090OrganOverlayFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090OrganOverlayFrameMap) - 1,
+			kScene4090FrameMillis).hookEveryFrame(kScene4090OrganOverlayHook));
+	playResourceLayerSequence(_scriptLayer, kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
+		kScene4090OrganOverlayFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090OrganBodyFrameMap) - 8,
+			kScene4090FrameMillis).repeatFrame(ARRAYSIZE(kScene4090OrganOverlayFrameMap) - 1)
+			.hookEveryFrame(kScene4090OrganBodyContinuationHook));
 
-	for (byte frame = 7; frame < ARRAYSIZE(kScene4090OrganBodyFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, frame);
-		drawPlayableComposite();
-		presentFrame();
-		if (waitSceneMillis(kScene4090FrameMillis))
-			break;
-	}
-
-	clearScriptLayers();
 	_ambientLayers.setLayerVisible(kScene4090OrganBodyLayer, false);
 	_ambientLayers.setLayerVisible(kScene4090AmbientRandomLayer, false);
 	_ambientLayers.setLayerVisible(kScene4090AmbientFixedLayer, false);
@@ -500,55 +499,35 @@ void Scene4090::runFinalCutscene() {
 	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
 	_ambientLayers.setLayerVisible(kScene4090OrganBodyLayer, true);
 	_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, 2);
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, kScene4090FinalRoomChunk13FrameMap[frame]);
-		if (presentScriptFrame(kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
-				kScene4090FinalRoomOverlayFrameMap, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
+	playResourceLayerSequence(_scriptLayer, kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
+		kScene4090FinalRoomOverlayFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1,
+			kScene4090FrameMillis).hookEveryFrame(kScene4090FinalRoomOverlayHook));
 
 	state.currentAmbientMusicCueId = 0x10;
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
-	byte chunk8Frame = 2;
-	for (uint frame = 0; frame < kScene4090FinalRoomOverlayHoldFrames && !Engine::shouldQuit(); ++frame) {
-		if (chunk8Frame < 10) {
-			++chunk8Frame;
-			_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, chunk8Frame);
-		}
-		_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 3);
-		if (presentScriptFrame(kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
-				kScene4090FinalRoomOverlayFrameMap, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap),
-				ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
+	playResourceLayerSequence(_scriptLayer, kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
+		kScene4090FinalRoomOverlayFrameMap,
+		AnimationFrameRange(0, kScene4090FinalRoomOverlayHoldFrames - 1,
+			kScene4090FrameMillis).repeatFrame(
+				ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1)
+			.hookEveryFrame(kScene4090FinalRoomHoldHook));
+	playResourceLayerSequence(_scriptLayer, kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
+		kScene4090FinalRoomOverlayFrameMap,
+		AnimationFrameRange(ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, 1,
+			kScene4090FrameMillis).hookEveryFrame(kScene4090FinalRoomOverlayHook));
 
-	for (int frame = ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1; frame > 0 && !Engine::shouldQuit(); --frame) {
-		_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, kScene4090FinalRoomChunk13FrameMap[frame]);
-		if (presentScriptFrame(kScene4090FinalOverlayChunk, kScene4090FinalOverlayDescriptorCount,
-				kScene4090FinalRoomOverlayFrameMap, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap),
-				(byte)frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
-
-	clearScriptLayers();
 	if (!state.scene4090FinalCutsceneDialogueSeen) {
 		beginSecondarySpeechLine(8, 1);
 		beginSecondarySpeechLine(8, 2);
 	}
 	walkActiveActorTo(kScene4090ReturnEntryStartX, kScene4090ReturnEntryStartY, 1, 0, false);
-	for (; chunk8Frame + 1 < ARRAYSIZE(kScene4090OrganBodyFrameMap) && !Engine::shouldQuit();) {
-		++chunk8Frame;
-		_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, chunk8Frame);
-		drawPlayableComposite();
-		presentFrame();
-		if (waitSceneMillis(10))
-			break;
+	const uint organTailFirstFrame = _ambientLayers.layerFrame(kScene4090OrganBodyLayer) + 1;
+	if (organTailFirstFrame < ARRAYSIZE(kScene4090OrganBodyFrameMap)) {
+		playResourceLayerSequence(_ambientLayers.layer(kScene4090OrganBodyLayer),
+			kScene4090OrganBodyChunk, kScene4090OrganBodyDescriptorCount,
+			kScene4090OrganBodyFrameMap, AnimationFrameRange(organTailFirstFrame,
+				ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1, 10), false); // Keep the final ambient frame.
 	}
 	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
 	_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, 10);
@@ -557,20 +536,10 @@ void Scene4090::runFinalCutscene() {
 
 	const uint finalBaseChunk = state.scene4090WideCoffinVariant != 0 ?
 		kScene4090FinalVariantAlternateBaseChunk : kScene4090FinalVariantBaseChunk;
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalOpenFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(finalBaseChunk + 1, kScene4090FinalOpenDescriptorCount,
-				kScene4090FinalOpenFrameMap, ARRAYSIZE(kScene4090FinalOpenFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalCloseFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(finalBaseChunk, kScene4090FinalCloseDescriptorCount,
-				kScene4090FinalCloseFrameMap, ARRAYSIZE(kScene4090FinalCloseFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
+	playResourceLayerSequence(_scriptLayer, finalBaseChunk + 1, kScene4090FinalOpenDescriptorCount,
+		kScene4090FinalOpenFrameMap, kScene4090FrameMillis);
+	playResourceLayerSequence(_scriptLayer, finalBaseChunk, kScene4090FinalCloseDescriptorCount,
+		kScene4090FinalCloseFrameMap, kScene4090FrameMillis);
 
 	if (!state.scene4090FinalCutsceneDialogueSeen) {
 		beginPrimarySpeechLineWithAnimationGroup(8, 3, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
@@ -580,20 +549,10 @@ void Scene4090::runFinalCutscene() {
 		beginPrimarySpeechLineWithAnimationGroup(8, 4, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechNormalGroup);
 	}
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalCloseReverseFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(finalBaseChunk, kScene4090FinalCloseDescriptorCount,
-				kScene4090FinalCloseReverseFrameMap, ARRAYSIZE(kScene4090FinalCloseReverseFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FrameMillis))
-			break;
-	}
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalFadeFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(finalBaseChunk, kScene4090FinalCloseDescriptorCount,
-				kScene4090FinalFadeFrameMap, ARRAYSIZE(kScene4090FinalFadeFrameMap), frame, true))
-			break;
-		if (waitScriptFrame(kScene4090FastFrameMillis))
-			break;
-	}
+	playResourceLayerSequence(_scriptLayer, finalBaseChunk, kScene4090FinalCloseDescriptorCount,
+		kScene4090FinalCloseReverseFrameMap, kScene4090FrameMillis);
+	playResourceLayerSequence(_scriptLayer, finalBaseChunk, kScene4090FinalCloseDescriptorCount,
+		kScene4090FinalFadeFrameMap, kScene4090FastFrameMillis);
 	if (state.scene4090WideCoffinVariant != 0) {
 		beginPrimarySpeechLineWithAnimationGroup(8, 6, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechAlternateGroup);
@@ -602,7 +561,7 @@ void Scene4090::runFinalCutscene() {
 			kScene4090FinalPrimarySpeechNormalGroup);
 	}
 
-	clearScriptLayers();
+	clearResourceLayer(_scriptLayer);
 	_ambientLayers.setLayerVisible(kScene4090OrganBodyLayer, false);
 	_ambientLayers.setLayerVisible(kScene4090AmbientRandomLayer, false);
 	_ambientLayers.setLayerVisible(kScene4090AmbientFixedLayer, false);

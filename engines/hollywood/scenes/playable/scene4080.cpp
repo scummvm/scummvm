@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene4080.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
@@ -82,6 +80,11 @@ const byte kScene4080StakeItem = 0x31;
 const byte kScene4080OilBottleItem = 0x43;
 const byte kScene4080GominolaItem = 0x44;
 const byte kScene4080SteakItem = 0x45;
+
+enum Scene4080AnimationHookId {
+	kScene4080GominolaPickupHook = 1,
+	kScene4080StakeSequenceHook
+};
 
 const byte kScene4080PalettePatchState1FrameMap[] = {
 	0, 0, 1, 2, 3, 2, 1, 0, 1, 4, 5, 6, 7, 8, 9, 2,
@@ -481,6 +484,28 @@ AmbientAudioProfile Scene4080::ambientAudioProfile() const {
 	return profile;
 }
 
+void Scene4080::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene4080GominolaPickupHook) {
+		_vm->gameState().scene4080GominolaVisibleState = 0;
+		applySceneStateToHotspotsAndPatches(0xff);
+		return;
+	}
+
+	if (hookId == kScene4080StakeSequenceHook) {
+		GameplayState &state = _vm->gameState();
+		if (frame == 0x1d) {
+			state.scene4080GwendolynState = 0;
+			_soundBank0.playSample(0x18, 100);
+			configurePalettePatchLayerForState();
+		} else if (frame == 0x20) {
+			_soundBank0.playSample(0x19, 100);
+		}
+		return;
+	}
+
+	PlayableScene::handleAnimationFrameHook(hookId, frame);
+}
+
 byte Scene4080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	(void)animationGroup;
 	return kScene4080GwendolynBaseFrame;
@@ -508,7 +533,7 @@ void Scene4080::resetAnimationLayers() {
 	_foregroundFlickerLayer.visible = true;
 	_foregroundFlickerLayer.setFrame(0);
 	_foregroundFlickerChannel.reset(0, kScene4080FrameMillis);
-	clearScriptLayer();
+	clearResourceLayer(_scriptLayer);
 }
 
 void Scene4080::configurePalettePatchLayerForState() {
@@ -621,14 +646,8 @@ void Scene4080::beginGwendolynSpeechLine(uint16 rowIndex, byte frameIndex) {
 }
 
 void Scene4080::runCorridorExit() {
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080ExitFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(kScene4080ExitOverlayChunk, kScene4080ExitOverlayDescriptorCount,
-				kScene4080ExitFrameMap, ARRAYSIZE(kScene4080ExitFrameMap), frame))
-			break;
-		if (waitScriptFrame(kScene4080FrameMillis))
-			break;
-	}
-	clearScriptLayer();
+	playResourceLayerSequence(_scriptLayer, kScene4080ExitOverlayChunk,
+		kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap, kScene4080FrameMillis);
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene4080ExitState;
 }
@@ -645,14 +664,8 @@ void Scene4080::runSidePatchSequence() {
 	}
 
 	beginSecondarySpeechLine(4, 1);
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080SidePatchFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(kScene4080GwendolynReplyChunk, 4, kScene4080SidePatchFrameMap,
-				ARRAYSIZE(kScene4080SidePatchFrameMap), frame))
-			break;
-		if (waitScriptFrame(kScene4080FrameMillis))
-			break;
-	}
-	clearScriptLayer();
+	playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk, 4,
+		kScene4080SidePatchFrameMap, kScene4080FrameMillis);
 	state.scene4080CoffinShiftedState = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(4, 3);
@@ -681,18 +694,10 @@ void Scene4080::runGominolaPickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080GominolaPickupFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (frame == 7) {
-			_vm->gameState().scene4080GominolaVisibleState = 0;
-			applySceneStateToHotspotsAndPatches(0xff);
-		}
-		if (presentScriptFrame(kScene4080GominolaPickupChunk, kScene4080GominolaPickupDescriptorCount,
-				kScene4080GominolaPickupFrameMap, ARRAYSIZE(kScene4080GominolaPickupFrameMap), frame))
-			break;
-		if (waitScriptFrame(kScene4080FrameMillis))
-			break;
-	}
-	clearScriptLayer();
+	playResourceLayerSequence(_scriptLayer, kScene4080GominolaPickupChunk,
+		kScene4080GominolaPickupDescriptorCount, kScene4080GominolaPickupFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080GominolaPickupFrameMap) - 1,
+			kScene4080FrameMillis).hookAt(7, kScene4080GominolaPickupHook));
 	addInventoryItem(kScene4080GominolaItem);
 	_soundBank0.playSample(1, 100);
 }
@@ -717,14 +722,9 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 		return;
 	}
 
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080FoodBagFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(kScene4080FoodBagOverlayChunk, kScene4080FoodBagOverlayDescriptorCount,
-				kScene4080FoodBagFrameMap, ARRAYSIZE(kScene4080FoodBagFrameMap), frame))
-			break;
-		if (waitScriptFrame(kScene4080FrameMillis))
-			break;
-	}
-	clearScriptLayer();
+	playResourceLayerSequence(_scriptLayer, kScene4080FoodBagOverlayChunk,
+		kScene4080FoodBagOverlayDescriptorCount, kScene4080FoodBagFrameMap,
+		kScene4080FrameMillis);
 	removeInventoryItem(kScene4080MabusePillsItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4080GwendolynStateTransition = 2;
@@ -744,21 +744,15 @@ void Scene4080::runUseStakeOnGwendolyn() {
 	}
 
 	beginSecondarySpeechLine(18, 1);
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080StakeSequenceFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (frame == 0x1d) {
-			state.scene4080GwendolynState = 0;
-			_soundBank0.playSample(0x18, 100);
-			configurePalettePatchLayerForState();
-		} else if (frame == 0x20) {
-			_soundBank0.playSample(0x19, 100);
-		}
-		if (presentScriptFrame(kScene4080StakeSequenceChunk, kScene4080StakeSequenceDescriptorCount,
-				kScene4080StakeSequenceFrameMap, ARRAYSIZE(kScene4080StakeSequenceFrameMap), frame))
-			break;
-		if (waitScriptFrame(frame < 0x18 ? 60 : 40))
-			break;
+	const bool completed = playResourceLayerSequence(_scriptLayer,
+		kScene4080StakeSequenceChunk, kScene4080StakeSequenceDescriptorCount,
+		kScene4080StakeSequenceFrameMap, AnimationFrameRange(0, 0x17, 60));
+	if (completed) {
+		playResourceLayerSequence(_scriptLayer, kScene4080StakeSequenceChunk,
+			kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
+			AnimationFrameRange(0x18, ARRAYSIZE(kScene4080StakeSequenceFrameMap) - 1, 40)
+				.hookEveryFrame(kScene4080StakeSequenceHook));
 	}
-	clearScriptLayer();
 	_soundBank0.playSample(0x1b, 100);
 	state.scene4080GominolaVisibleState = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -772,14 +766,9 @@ void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
 	}
 
 	beginSecondarySpeechLine(secondaryRow, 0);
-	for (byte frame = 0; frame < ARRAYSIZE(kScene4080GwendolynReplyFrameMap) && !Engine::shouldQuit(); ++frame) {
-		if (presentScriptFrame(kScene4080GwendolynReplyChunk, kScene4080GwendolynReplyDescriptorCount,
-				kScene4080GwendolynReplyFrameMap, ARRAYSIZE(kScene4080GwendolynReplyFrameMap), frame))
-			break;
-		if (waitScriptFrame(kScene4080FrameMillis))
-			break;
-	}
-	clearScriptLayer();
+	playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk,
+		kScene4080GwendolynReplyDescriptorCount, kScene4080GwendolynReplyFrameMap,
+		kScene4080FrameMillis);
 	beginGwendolynSpeechLine(20, 1);
 }
 
@@ -876,39 +865,6 @@ void Scene4080::initializeGwendolynDialogueRecords(Common::Array<DialogueChoiceR
 		record.disableAfterUse = seed.disableAfterUse;
 		record.reserved = seed.reserved;
 	}
-}
-
-void Scene4080::clearScriptLayer() {
-	_scriptLayer.visible = false;
-	_scriptLayer.configure(0, 0, nullptr, 0);
-}
-
-bool Scene4080::presentScriptFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		byte frameIndex) {
-	_scriptLayer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
-	_scriptLayer.visible = true;
-	_scriptLayer.setFrame(frameIndex);
-	drawPlayableComposite();
-	presentFrame();
-	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
-}
-
-bool Scene4080::waitScriptFrame(uint32 frameMillis) {
-	uint32 remaining = frameMillis;
-	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		advancePalettePatchLayer(slice);
-		advanceForegroundFlickerLayer(slice);
-		drawPlayableComposite();
-		presentFrame();
-		remaining -= slice;
-	}
-
-	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 } // End of namespace Hollywood
