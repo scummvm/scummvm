@@ -941,7 +941,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 		_screen->sega_selectPalette(-1, 2, true);
 		gui_setupPlayFieldHelperPages(true);
 		snd_playLevelScore();
-		gui_drawAllCharPortraitsWithStats();
+		gui_drawAllCharPortraitsWithStats(false);
 	}
 
 	_screen->fillRect(0, 0, 175, 143, 0, 2);

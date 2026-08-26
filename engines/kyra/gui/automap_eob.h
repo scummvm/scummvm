@@ -48,11 +48,8 @@ public:
 	~Automap_EoB();
 
 	void markVisited(uint16 block);
-	bool isVisited(uint16 block) const;
 	void markSeen(uint16 block, int8 dir);
-	bool isSeen(uint16 block) const;
-
-	void draw(EoBCoreEngine *vm);
+	void draw(int level, uint16 partyBlock, int8 partyDirection);
 
 private:
 	// Geometry shared by drawing and click hit-testing.
@@ -67,15 +64,18 @@ private:
 	};
 
 	struct TranslateableStrings {
-		const char *const legendStrings[12];
+		const char *const legendStrings[14];
 		const char *const controlStrings[3];
 		const char *const levelNames[2][16];
 	};
 
 	AutomapLayout createLayout() const;
-	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
 	void createColors();
 	void redrawBackground(const AutomapLayout &l, int width, int height);
+	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
+	bool isVisited(uint16 block) const;
+	bool isSeen(uint16 block) const;
+	bool isBreakableBlockObject(uint16 block) const;
 
 	bool _visible;
 
@@ -84,6 +84,9 @@ private:
 	const uint8 *const _specialWallTypes;
 	const uint8 *_specialBlockIDs;
 	int _numSpecialBlockIDs;
+	const uint8 _wallOfForceID;
+	const uint8 *_portalParams;
+	int _portalParamsLen;
 	const bool _enabled;
 	const bool _gameSupportsBreakables;
 
@@ -116,6 +119,7 @@ private:
 		kColorGrid,
 		kColorWall,
 		kColorWallSeen,
+		kColorWoF,
 		kColorDoor,
 		kColorStair,
 		kColorTele,

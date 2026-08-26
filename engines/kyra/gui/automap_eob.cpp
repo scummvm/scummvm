@@ -24,10 +24,8 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
-#include "kyra/engine/kyra_rpg.h"
+#include "kyra/engine/eobcommon.h"
 #include "kyra/gui/automap_eob.h"
-
-#include "kyra/engine/eobcommon.h" // TODO: REMOVE
 
 
 namespace Kyra {
@@ -166,9 +164,11 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 			"Plate",
 			"Door",
 			"Illusionary Wall",
+			"Wall of Force",
 			"Switch",
 			"Interactive Object",
-			"Niche"
+			"Niche",
+			"Stone Portal"
 		},
 
 		{
@@ -240,9 +240,10 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 	}
 };
 
-Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled) : _system(system), _blockData(*blockData),
-	_wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
-		_colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)),	_gameSupportsBreakables(gameID == GI_EOB2) {
+Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled) : _system(system),
+	_blockData(*blockData), _wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
+		_colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)),	_gameSupportsBreakables(gameID == GI_EOB2), _wallOfForceID(gameID == GI_EOB1 ? 0xFF : 74),
+			_portalParamsLen(0), _portalParams(nullptr){
 	_automapBg = new Graphics::Surface();
 	_automapFrame = new Graphics::Surface();
 
@@ -272,10 +273,15 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
 	const uint8 types[] = { teleporter, illusion1, illusion2, stairsUp, stairsDown, pit, plate1, plate2 };
+	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
+	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54 };
+
 	uint8 *specialBlockIDs = new uint8[ARRAYSIZE(types)]();
 	memcpy(specialBlockIDs, types, sizeof(types));
 	_specialBlockIDs = specialBlockIDs;
 	_numSpecialBlockIDs = ARRAYSIZE(types);
+	_portalParams = gameID == GI_EOB1 ? eob1PortalParams : eob2PortalParams;
+	_portalParamsLen = (gameID == GI_EOB1 ? ARRAYSIZE(eob1PortalParams) : ARRAYSIZE(eob2PortalParams));
 
 	createColors();
 }
@@ -290,11 +296,6 @@ Automap_EoB::~Automap_EoB() {
 void Automap_EoB::markVisited(uint16 block) {
 	assert(block < 1024);
 	_blockData[block].direction |= 2;
-}
-
-bool Automap_EoB::isVisited(uint16 block) const {
-	assert(block < 1024);
-	return (_blockData[block].direction & 2) != 0;
 }
 
 void Automap_EoB::markSeen(uint16 block, int8 dir) {
@@ -350,12 +351,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 	}
 }
 
-bool Automap_EoB::isSeen(uint16 block) const {
-	assert(block < 1024);
-	return (_blockData[block].direction & 1) != 0;
-}
-
-void Automap_EoB::draw(EoBCoreEngine *vm) {
+void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 	const int ow = _system->getOverlayWidth();
 	const int oh = _system->getOverlayHeight();
 	const AutomapLayout l = createLayout();
@@ -387,26 +383,15 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			for (int d = 0; d < 4; ++d) {
 				const uint16 nb = calcNewBlockPosition(block, d);
 				uint8 w = _blockData[nb].walls[d ^ 2];
-				wall[d] = !(_wllWallFlags[w] & 9);
-
-				// Now we check for breakable block objects (like the barrels in the EOB II catacombs) which shouldn't be drawn as walls.
-				if (wall[d] && _gameSupportsBreakables && (_blockData[nb].flags & 0x800)) {
-					// Check if it is accessible/interactive from multiple sides to determine if we should treat it as a wall object (like the
-					// breakable windows on the temple ground floor in EOBII) or a block object (like the barrels in the catacombs).
-					// If it is a wall object we should draw the wall.
-					int cn = 0;
-					for (int iii = 0; iii < 4; ++iii) {
-						uint8 s = _specialWallTypes[_blockData[nb].walls[iii]];
-						if (s == 8 || s == 9)
-							++cn;
-					}
-					wall[d] = cn < 2;
-				}
+				// Check for doors or breakable block objects (like the barrels in the EOB II catacombs) which shouldn't be drawn as walls.
+				wall[d] = (!(_wllWallFlags[w] & 9) && w != _wallOfForceID && !isBreakableBlockObject(nb));
 			}
 
 			const LevelBlockProperty *bp = &_blockData[block];
 			const bool doorNS = ((_wllWallFlags[bp->walls[0]] | _wllWallFlags[bp->walls[2]]) & 8);
 			const bool doorEW = ((_wllWallFlags[bp->walls[1]] | _wllWallFlags[bp->walls[3]]) & 8);
+			const bool wof = (bp->walls[0] == _wallOfForceID || bp->walls[1] == _wallOfForceID || bp->walls[2] == _wallOfForceID || bp->walls[3] == _wallOfForceID);
+
 			if (doorNS)
 				wall[0] = wall[2] = false;
 			if (doorEW)
@@ -427,21 +412,58 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			if (wall[3])
 				surf.fillRect(Common::Rect(sx, sy, sx + wt, sy + cell), wc);
 
+			auto drawButton = [&surf, cell](int x, int y, int alignment, int len, int wdth, uint32 color) {
+				switch (alignment) {
+				case 0:
+					x = x + cell / 2 - len / 2;
+					break;
+				case 1:
+					x = x + cell - wdth;
+					y = y + cell / 2 - len / 2;
+					SWAP(len, wdth);
+					break;
+				case 2:
+					x = x + cell / 2 - len / 2;
+					y = y + cell - wdth;
+					break;
+				default:
+					y = y + cell / 2 - len / 2;
+					SWAP(len, wdth);
+					break;
+				}
+				surf.fillRect(Common::Rect(x, y, x + len, y + wdth), color);
+			};
+
+
 			if (doorNS || doorEW) {
 				// FIXME?: Doors on the map always look "closed", regardless of whether open oder close.
 				const int dt = MAX(2, wt + 1);
 				const int dm = MAX(1, cell / 5);
 				const int dcx = sx + cell / 2, dcy = sy + cell / 2;
-				if (doorNS)
+				// Draw the door and also the door button if the door has one.
+				if (doorNS) {
 					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), _colors[kColorDoor]);
-				if (doorEW)
+					if (_specialWallTypes[bp->walls[0]] == 1)
+						drawButton(sx - dm, sy + dt, 0, dm, dm, _colors[kColorLever]);	
+					if (_specialWallTypes[bp->walls[2]] == 1)
+						drawButton(sx + dm, sy - dt, 2, dm, dm, _colors[kColorLever]);
+					
+				}
+				if (doorEW) {
 					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), _colors[kColorDoor]);
+					if (_specialWallTypes[bp->walls[1]] == 1)
+						drawButton(sx - dt, sy - dm, 1, dm, dm, _colors[kColorLever]);	
+					if (_specialWallTypes[bp->walls[3]] == 1)
+						drawButton(sx + dt, sy + dm, 3, dm, dm, _colors[kColorLever]);
+					
+				}
 			}
 
 			// Interactive/clickable walls (lever, niche, banner, etc.)
 			for (int d = 0; d < 4; ++d) {
 				uint16 nb = calcNewBlockPosition(block, d);
-				const uint8 st = _specialWallTypes[_blockData[nb].walls[d ^ 2]];
+				uint8 wn = _blockData[nb].walls[d ^ 2];
+				uint8 st = _specialWallTypes[wn];
 				if (st == 0 || st == 5 || st == 6)
 					continue;
 
@@ -450,44 +472,31 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				if (st == 2 && _blockData[nb].assignedObjects == 0)
 					continue;
 
+				// If it is a door button on the door or on the door frame it has already been drawn
+				// together with the door. Skip it here...
+				if (st == 1 && (_wllWallFlags[wn] & 8))
+					continue;
+
 				// Breakable objects are also "interactive" (you can click them and you get a text message),
 				// but it makes more sense to not to draw them here, but in the middle of the block if they're
-				// block objects (like the barrels in the EOB II catacombs). If it's a wall object (like the
-				// breakable windows on the temple ground floor in EOBII) we should draw it here.
-				if (_gameSupportsBreakables && (_blockData[nb].flags & 0x800)) {
-					int cn = 0;
-					// Check if it is accessible/interactive from multiple sides.
-					for (int iii = 0; iii < 4; ++iii) {
-						uint8 s = _specialWallTypes[_blockData[nb].walls[iii]];
-						if (s == 8 || s == 9)
-							++cn;
+				// block objects (like the barrels in the EOB II catacombs). But if it is a wall object (like
+				// the breakable windows on the temple ground floor in EOBII) we should draw it here.
+				if (isBreakableBlockObject(nb))
+					continue;
+
+				// Check if it is a stone portal.
+				if (st == _portalParams[0]) {
+					for (int i = 1; i < _portalParamsLen && st != 20; i += 2) {
+						if (level == _portalParams[i] && wn == _portalParams[i + 1])
+							st = 20;
 					}
-					if (cn >= 2)
-						continue;
 				}
 
-				const uint32 pcol = _colors[(st == 10) ? kColorNiche : (st == 1 || st == 3 || st == 4) ? kColorLever : kColorInteractive];
-				const int ps = MAX(2, cell / 4);
-				int px, py;
-				switch (d) {
-				case 0:
-					px = sx + cell / 2 - ps / 2;
-					py = sy;
-					break;
-				case 1:
-					px = sx + cell - ps;
-					py = sy + cell / 2 - ps / 2;
-					break;
-				case 2:
-					px = sx + cell / 2 - ps / 2;
-					py = sy + cell - ps;
-					break;
-				default:
-					px = sx;
-					py = sy + cell / 2 - ps / 2;
-					break;
-				}
-				surf.fillRect(Common::Rect(px, py, px + ps, py + ps), pcol);
+				uint32 pcol = _colors[(st == 10) ? kColorNiche : (st == 1 || st == 3 || st == 4) ? kColorLever : (st == 20 ? kColorTele : kColorInteractive)];
+				int plen = MAX(2, cell * 2 / (st < 10 ? 8 : st == 10 ? 6 : 3));
+				int pwdth = MAX(2, cell / 4);
+
+				drawButton(sx, sy, d, plen, pwdth, pcol);				
 			}
 
 			// TODO: The icons could all be pregenerated instead of individually rendering them each time.
@@ -497,6 +506,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				const int r = MAX(2, cell / 3);
 				const int margin = r * 4 / 5;
 				const int step = (cell << 8) / 5;
+				const int step2 = ((cell - r) << 8) / 5;
 				switch (icon) {
 				case 0:
 					for (int i = 0; i < margin; ++i) {
@@ -527,22 +537,24 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				case 9:
 					surf.fillRect(Common::Rect(cx - margin, cy - margin, cx + margin, cy + margin), colTable[kColorInteractive]);
 					break;
+				case 10:
+					for (int posX = 0, g = 0; g < 3; ++g, posX += (step2 * 2)) {
+						for (int posY = 0, gg = 0; gg < 3; ++gg, posY += (step2 * 2)) {
+							surf.fillRect(Common::Rect(cx - r + (posX >> 8), cy - r + (posY >> 8), cx - r + ((posX + step2) >> 8), cy - r + ((posY + step2) >> 8)), colTable[kColorWoF]);
+							if (g < 2 && gg < 2)
+								surf.fillRect(Common::Rect(cx - r + ((posX + step2) >> 8), cy - r + ((posY + step2) >> 8), cx - r + ((posX + step2 * 2) >> 8), cy - r + ((posY + step2 * 2) >> 8)), colTable[kColorWoF]);
+						}
+					}
+					break;
 				default:
 					break;
 				}
 			};
 
-			 if (_gameSupportsBreakables && (bp->flags & 0x800)) {
-				// Breakable objects (like the barrels or the crumbling wall in the EOBII catacombs)
-				// Check if it is accessible/interactive from multiple sides.
-				int cn = 0;
-				for (int iii = 0; iii < 4; ++iii) {
-					uint8 s = _specialWallTypes[bp->walls[iii]];
-					if (s == 8 || s == 9)
-						++cn;
-				}
-				if (cn >= 2)
-					drawIcon(sx, sy, 9, _colors);
+			if (wof) {
+				drawIcon(sx, sy, 10, _colors);
+			} else if (isBreakableBlockObject(block)) {
+				drawIcon(sx, sy, 9, _colors);
 			} else {
 				// Special blocks: teleporter, illusionary wall, pressure plate, pit, stairs up/down
 				for (int i = 0; i < _numSpecialBlockIDs; ++i) {
@@ -554,14 +566,14 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 		}
 	}
 
-	const int mx = offX + (vm->_currentBlock & 0x1F) * cell;
-	const int my = offY + (vm->_currentBlock >> 5) * cell;
+	const int mx = offX + (partyBlock & 0x1F) * cell;
+	const int my = offY + (partyBlock >> 5) * cell;
 	const int cx = mx + cell / 2;
 	const int cyp = my + cell / 2;
 	const int r = MAX(2, cell / 2 - MAX(1, cell / 6));
 	const int b = MAX(2, r * 3 / 4);
 	int tipX, tipY, l1X, l1Y, l2X, l2Y;
-	switch (vm->_currentDirection) {
+	switch (partyDirection) {
 	case 1:
 		tipX = cx + r;
 		tipY = cyp;
@@ -609,8 +621,8 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 	const int mpad = MAX(8, l.mapW / 40);
 
 	if (bigFont) {
-		const uint16 cb = (vm->_currentBlock != 0xFFFF) ? vm->_currentBlock : 0;
-		const Common::String lvl = _levelNames[vm->_currentLevel - 1];
+		const uint16 cb = (partyBlock != 0xFFFF) ? partyBlock : 0;
+		const Common::String lvl = _levelNames[level - 1];
 		const Common::String crd = Common::String::format("X %d   Y %d", cb & 0x1F, cb >> 5);
 		const int pm = MAX(3, sc * 2);
 		const int innerW = l.plW - 2 * pm;
@@ -682,13 +694,8 @@ Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
 	return l;
 }
 
-uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
-	static const int16 blockPosTable[] = {-32, 1, 32, -1};
-	return (block + blockPosTable[dir & 3]) & 0x3FF;
-}
-
 void Automap_EoB::createColors() {
-	static const uint8 rgbTable[31][3] = {
+	static const uint8 rgbTable[kNumColors][3] = {
 		{ 0x54, 0x56, 0x5e },  // stone
 		{ 0x3c, 0x3e, 0x45 },  // stone dark
 		{ 0x23, 0x25, 0x2a },  // stone edge
@@ -705,6 +712,7 @@ void Automap_EoB::createColors() {
 		{ 0x8a, 0x70, 0x38 },  // grid
 		{ 0x2c, 0x1e, 0x10 },  // wall
 		{ 0x8a, 0x73, 0x4a },  // wall seen
+		{ 0x3f, 0x7a, 0x3a },  // wall of force
 		{ 0x7a, 0x4a, 0x1c },  // door
 		{ 0x3f, 0x7a, 0x3a },  // stair
 		{ 0x5f, 0x5f, 0xca },  // tele
@@ -712,7 +720,7 @@ void Automap_EoB::createColors() {
 		{ 0x6c, 0x6e, 0x80 },  // pit
 		{ 0x9a, 0x2d, 0x2d },  // lever
 		{ 0x9a, 0x4d, 0xad },  // interactive
-		{ 0x8a, 0x5a, 0x1c },  // niche
+		{ 0x95, 0x65, 0x26 },  // niche
 		{ 0xa8, 0x28, 0x1c },  // party
 		{ 0x5a, 0x14, 0x0e },  // party edge
 		{ 0x1c, 0x1a, 0x16 },  // plaque bg
@@ -784,7 +792,7 @@ void Automap_EoB::redrawBackground(const AutomapLayout &l, int width, int height
 		// TODO: Move legend out of here and redraw it with only the icons that are actually
 		// needed for the current level map (to make it less crowded, the same way it is done for LOL).
 		const int isz = MAX(6, fh * sc);
-		for (int i = 0; i < 11; ++i) {
+		for (int i = 0; i < 13; ++i) {
 			const int ix = lx, iy = cyy;
 			switch (i) {
 			case 0: // party (up)
@@ -819,15 +827,20 @@ void Automap_EoB::redrawBackground(const AutomapLayout &l, int width, int height
 					bg.drawLine(ix + sc, iy + sc + (step * g >> 8), ix + isz - sc, iy + sc + (step * g >> 8), _colors[kColorWall]);
 				}
 			} break;
-			case 8:
-				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorLever]);
+			case 8: // wall of force
+				bg.fillRect(Common::Rect(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc), _colors[kColorWoF]);
 				break;
 			case 9:
-				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorInteractive]);
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorLever]);
 				break;
 			case 10:
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorInteractive]);
+				break;
+			case 11: // niche
 				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorNiche]);
-				break; // niche
+				break;
+			case 12: // stone portal
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorTele]);
 			default:
 				break;
 			}
@@ -851,6 +864,36 @@ void Automap_EoB::redrawBackground(const AutomapLayout &l, int width, int height
 		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
 		automapDrawBigString(bg, bigFont, "Up/Down", lx, cyy + chipPad / 2, chipW, _colors[kColorGold], sc); // TODO: see above
 		automapDrawBigString(bg, bigFont, _controlStrings[1], lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2, colW - chipW - MAX(4, sc * 3), _colors[kColorPanelTxt], sc, Graphics::kTextAlignLeft);
+}
+
+uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
+	static const int16 blockPosTable[] = {-32, 1, 32, -1};
+	return (block + blockPosTable[dir & 3]) & 0x3FF;
+}
+
+bool Automap_EoB::isVisited(uint16 block) const {
+	assert(block < 1024);
+	return (_blockData[block].direction & 2) != 0;
+}
+
+bool Automap_EoB::isSeen(uint16 block) const {
+	assert(block < 1024);
+	return (_blockData[block].direction & 1) != 0;
+}
+
+bool Automap_EoB::isBreakableBlockObject(uint16 block) const {
+	LevelBlockProperty &bp = _blockData[block];
+	if (!_gameSupportsBreakables || !(bp.flags & 0x800))
+		return false;
+	// Breakable objects (like the barrels or the crumbling wall in the EOBII catacombs)
+	// Check if it is accessible/interactive from multiple sides.
+	int cn = 0;
+	for (int iii = 0; iii < 4; ++iii) {
+		uint8 s = _specialWallTypes[bp.walls[iii]];
+		if (s == 8 || s == 9)
+			++cn;
+	}
+	return (cn >= 2);
 }
 
 int EoBCoreEngine::clickedAutomap(Button *button) {
@@ -934,7 +977,7 @@ int EoBCoreEngine::clickedAutomap(Button *button) {
 		}
 
 		if (update) {
-			_automap->draw(this);
+			_automap->draw(_currentLevel, _currentBlock, _currentDirection);
 			update = false;
 		}
 
@@ -953,7 +996,7 @@ int EoBCoreEngine::clickedAutomap(Button *button) {
 		setLevelPalettes(_currentLevel);
 		_screen->sega_selectPalette(-1, 2, true);
 		gui_setupPlayFieldHelperPages(true);
-		gui_drawAllCharPortraitsWithStats();
+		gui_drawAllCharPortraitsWithStats(false);
 	}
 
 	drawScene(0);
