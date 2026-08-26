@@ -98,8 +98,8 @@ void OverworldMap::prepareMapForDrawing() {
 	auto &map = g_engine->_map;
 	int mapLeft, mapTop;
 
-	mapLeft = (map._mapX - Data::MAP_VISIBLE_CENTER_X) + 1;
-	mapTop = (map._mapY - Data::MAP_VISIBLE_CENTER_Y) + 1;
+	mapLeft = _G(map).mapTopLeftX();
+	mapTop = _G(map).mapTopLeftY();
 
 	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
 		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {

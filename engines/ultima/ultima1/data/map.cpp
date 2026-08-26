@@ -113,6 +113,14 @@ void Map::clearTiles() {
 	Common::fill(&_mapTilesId[0][0], &_mapTilesId[0][0] + sizeof(VisibleTiles), 0);
 }
 
+int Map::mapTopLeftX() const {
+	return (_currentMap == MAP_OVERWORLD) ? (_mapX - MAP_VISIBLE_CENTER_X) + 1 : 0;
+}
+
+int Map::mapTopLeftY() const {
+	return (_currentMap == MAP_OVERWORLD) ? (_mapY - MAP_VISIBLE_CENTER_Y) + 1 : 0;
+}
+
 bool Map::canMoveToTile(int tileNum) {
 	int tileId = tileNum & 0x7f;
 

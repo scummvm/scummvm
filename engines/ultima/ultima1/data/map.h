@@ -145,6 +145,12 @@ public:
 
 	void clearTiles();
 
+	/**
+	 * Return the X/Y of the map to start drawing
+	 */
+	int mapTopLeftX() const;
+	int mapTopLeftY() const;
+
 	bool canMoveToTile(int tileNum);
 
 	/**
