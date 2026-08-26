@@ -939,7 +939,7 @@ Channel *RSound3::method1(int offset, byte value) {
 }
 
 void RSound3::resetUpperChannelsTail() {
-	setFadeCheckPeriod(1);
+	setFadeOutSpeed(1);
 	_channels[4].setFadeOut(true);
 	_channels[5].setFadeOut(true);
 	_channels[6].setFadeOut(true);
@@ -965,7 +965,7 @@ int RSound3::command5() {
 
 int RSound3::command9() {
 	command1();
-	setFadeCheckPeriod((byte)_commandParam);
+	setFadeOutSpeed((byte)_commandParam);
 	return 0;
 }
 
@@ -1043,7 +1043,7 @@ int RSound3::command15() {
 		_channels[5]._fadeOutActive = true;
 		_channels[6]._fadeOutActive = true;
 		_channels[7]._fadeOutActive = true;
-		setFadeCheckPeriod(1);
+		setFadeOutSpeed(1);
 		return 0;
 	}
 
@@ -1349,7 +1349,7 @@ void RSound4::tickCallback() {
 
 int RSound4::command9() {
 	command1();
-	setFadeCheckPeriod((byte)_commandParam);
+	setFadeOutSpeed((byte)_commandParam);
 	return 0;
 }
 

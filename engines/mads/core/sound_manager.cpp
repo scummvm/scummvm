@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "mads/mads.h"
 #include "mads/core/sound_manager.h"
 
 namespace Audio {
@@ -93,8 +94,24 @@ void SoundManager::init(int sectionNumber) {
 		return;
 	}
 
-	// Set volume for newly loaded driver
-	_driver->setVolume(_masterVolume);
+	// Wait for driver to be ready to start playback
+	// (i.e. wait for MT-32 SysExes)
+	while (!isReady()) {
+		g_engine->flushKeys();
+
+		if (g_engine->shouldQuit()) {
+			if (_midiDriver != nullptr)
+				_midiDriver->clearSysExQueue();
+			return;
+		}
+	}
+}
+
+bool SoundManager::isReady() {
+	if (_midiDriver == nullptr)
+		return true;
+
+	return _midiDriver->isReady();
 }
 
 bool SoundManager::isDriverActive() {
@@ -128,11 +145,9 @@ void SoundManager::startQueuedCommands() {
 	}
 }
 
-void SoundManager::setVolume(int volume) {
-	_masterVolume = volume;
-
-	if (_driver)
-		_driver->setVolume(volume);
+void SoundManager::syncSoundSettings() {
+	if (_midiDriver != nullptr)
+		_midiDriver->syncSoundSettings();
 }
 
 int SoundManager::command(int commandId, int param) {
@@ -155,6 +170,11 @@ int SoundManager::command(int commandId, int param) {
 void SoundManager::stop() {
 	if (_driver)
 		_driver->stop();
+}
+
+void SoundManager::pause(bool pause) {
+	if (_driver != nullptr)
+		_driver->pause(pause);
 }
 
 void SoundManager::noise() {
@@ -191,7 +211,7 @@ void SoundManager::timerCallback(void *data) {
 //====================================================================
 
 SoundDriver::SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
-		int dataOffset, int dataSize) : _mixer(mixer) {
+		int dataOffset, int dataSize) : _mixer(mixer), _paused(false) {
 	// Open up the appropriate sound file
 	Common::File soundFile;
 	if (!soundFile.open(filename))
@@ -200,6 +220,16 @@ SoundDriver::SoundDriver(Audio::Mixer *mixer, const Common::Path &filename,
 	_soundData.resize(dataSize);
 	soundFile.seek(dataOffset);
 	soundFile.read(&_soundData[0], dataSize);
+}
+
+void SoundDriver::pause(bool paused) {
+	if (_paused == paused)
+		return;
+
+	_paused = paused;
+
+	if (_paused)
+		stopAllNotes();
 }
 
 } // namespace MADS

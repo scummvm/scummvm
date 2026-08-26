@@ -137,6 +137,8 @@ public:
 	void warpMouse(int x, int y);
 	void updateDisplay();
 
+	void pauseEngineIntern(bool pause) override;
+
 	const Graphics::Surface &getSavegameThumbnail() const {
 		return _savegameThumbnail;
 	}
@@ -209,6 +211,7 @@ public:
 	void playSpeech(Audio::AudioStream *stream);
 	void stopSpeech();
 	bool isSpeechPlaying() const;
+	void syncSoundSettings() override;
 
 	/**
 	 * Sets the timer function to call at 60Hz

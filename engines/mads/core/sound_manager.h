@@ -42,6 +42,7 @@ protected:
 	Audio::Mixer *_mixer;
 	Common::Array<byte> _soundData;
 	Common::Mutex _driverMutex;
+	bool _paused;
 
 	/**
 	 * Gets a stream starting at a given offset in the loaded sound data
@@ -50,7 +51,7 @@ protected:
 		return Common::MemoryReadStream(&_soundData[offset], _soundData.size() - offset);
 	}
 
-	explicit SoundDriver(Audio::Mixer *mixer) : _mixer(mixer) {}
+	explicit SoundDriver(Audio::Mixer *mixer) : _mixer(mixer), _paused(false) {}
 
 public:
 	/**
@@ -78,6 +79,11 @@ public:
 	virtual int stop() = 0;
 
 	/**
+	 * Pause or unpause sound playback
+	 */
+	virtual void pause(bool paused);
+
+	/**
 	 * Main poll method to allow sounds to progress
 	 */
 	virtual int poll() = 0;
@@ -87,10 +93,13 @@ public:
 	 */
 	virtual void noise() = 0;
 
+	// TODO Remove
+	virtual void setVolume(int volume) { };
+
 	/**
-	 * Set the volume
+	 * Stop all active notes
 	 */
-	virtual void setVolume(int volume) = 0;
+	virtual void stopAllNotes() { }
 };
 
 class SoundManager {
@@ -114,7 +123,6 @@ protected:
 	SoundDriver *_driver = nullptr;
 	bool _newSoundsPaused = false;
 	Common::Queue<QueuedCommand> _queuedCommands;
-	int _masterVolume = 255;
 
 	NativeSoundTimer _hostTimer;
 
@@ -146,6 +154,13 @@ public:
 	bool isLoaded() const {
 		return _driver != nullptr;
 	}
+
+	/**
+	 * Sound manager is ready to start sound playback.
+	 * This will return false while the MT-32 driver is sending SysEx messages
+	 * to the unit. Do not start sound playback while this returns false.
+	 */
+	bool isReady();
 
 	/**
 	 * Returns whether the current driver reports an active sound.
@@ -180,9 +195,9 @@ public:
 	virtual void startQueuedCommands();
 
 	/**
-	 * Set the master volume
+	 * Applies sound settings from the ScummVM configuration manager.
 	 */
-	void setVolume(int volume);
+	void syncSoundSettings();
 
 	//@{
 	/**
@@ -196,6 +211,11 @@ public:
 	 * Stops any currently playing sound
 	 */
 	void stop();
+
+	/**
+	 * Pauses or unpauses playback.
+	 */
+	void pause(bool pause);
 
 	/**
 	 * Noise

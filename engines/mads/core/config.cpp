@@ -64,9 +64,7 @@ void read_config_file() {
 	ConfMan.registerDefault("difficulty", -1);
 	ConfMan.registerDefault("animview_minimum_black_ticks", -1);
 
-	config_file.music_flag = !ConfMan.getBool("music_mute") && !ConfMan.getBool("mute");
-	config_file.sound_flag = !ConfMan.getBool("sfx_mute") && !ConfMan.getBool("mute");
-	config_file.speech_flag = !ConfMan.getBool("speech_mute") && !ConfMan.getBool("mute");
+	read_sound_settings();
 
 	config_file.interface_hotspots = ConfMan.getBool("interface_hotspots") ? INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
 	config_file.inventory_mode = ConfMan.getBool("inventory_mode") ? INVENTORY_SPINNING : INVENTORY_SQUAT;
@@ -86,6 +84,12 @@ void read_config_file() {
 
 	if (ConfMan.hasKey("difficulty") && !g_engine->isDemo())
 		game.difficulty = ConfMan.getInt("difficulty");
+}
+
+void read_sound_settings() {
+	config_file.music_flag = !ConfMan.getBool("music_mute") && !ConfMan.getBool("mute");
+	config_file.sound_flag = !ConfMan.getBool("sfx_mute") && !ConfMan.getBool("mute");
+	config_file.speech_flag = !ConfMan.getBool("speech_mute") && !ConfMan.getBool("mute");
 }
 
 void write_config_file() {

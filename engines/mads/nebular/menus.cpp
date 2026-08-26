@@ -1060,6 +1060,7 @@ static void game_menu_options() {
 		save_config = config_file;
 	} else {
 		write_config_file();
+		g_engine->syncSoundSettings();
 	}
 }
 

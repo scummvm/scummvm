@@ -37,8 +37,8 @@ void Channel::loadData(byte *soundData) {
 	_noteDurationOffset = 0;
 	_fadeOutActive = 0;
 	_volumeFadeSpeed = 0xFF;
-	_pitchBend = 64;
-	_panning = 64;
+	_pitchBend = 0x40;
+	_panning = 0x40;
 	_soundDataStart = soundData;
 	_pSrc = soundData;
 	_innerLoopStart = soundData;
@@ -47,7 +47,7 @@ void Channel::loadData(byte *soundData) {
 }
 
 void Channel::setFadeOut(bool fadeOut) {
-	if (_deltaCounter) {
+	if (_deltaCounter > 0) {
 		_fadeOutActive = fadeOut;
 
 		// WORKAROUND: matches the same apparent original-code quirk
@@ -72,24 +72,21 @@ void Channel::playData(byte *soundData) {
 /*-----------------------------------------------------------------------*/
 
 RSound::RSound(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common::Path &filename,
-		int dataOffset, int dataSize, int sysExOffset, RSoundFadeCheckMode fadeCheckMode) : 
+		int dataOffset, int dataSize, int sysExOffset, RSoundFadeCheckMode fadeOutCheckMode) : 
 		SoundDriver(mixer, filename, dataOffset, dataSize) {
 	_commandParam = 0;
 	_ticksSinceLastCommand = 0;
 	_ticksProcessingDisabled = false;
 	_mute = false;
-	_masterVolume = 255;
-	// FIXME RSOUND.008 initializes this to 0x005C; is the initial value different per driver?
-	_randomSeed = 1234;
+	_randomSeed = 0x005C;
 	_runningStatus = 0;
 	_pollResult = 0;
 	_resultFlag = 0;
 	_sysExOffset = sysExOffset;
 	_midiDriver = midiDriver;
-	_fadeCheckMode = fadeCheckMode;
-	_fadeCheckAlternate = false;
-	_fadeCheckCounter = 0;
-	_fadeCheckPeriod = 0;
+	_fadeOutCheckMode = fadeOutCheckMode;
+	_fadeOutSpeed = (_fadeOutCheckMode == kRSoundFadeCheckAlternating ? 2 : 0);
+	_fadeOutCounter = _fadeOutSpeed;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
 		_channels[i]._owner = this;
@@ -158,6 +155,9 @@ int RSound::stop() {
 int RSound::poll() {
 	Common::StackLock slock(_driverMutex);
 
+	if (_paused)
+		return 0;
+
 	processTick();
 
 	int result = _pollResult;
@@ -214,48 +214,45 @@ bool RSound::isSoundPlaying(byte *pData) {
 	return false;
 }
 
-int RSound::generateRandomNumber() {
-	int v = 0x9249 + (int)_randomSeed;
-	_randomSeed = ((v >> 3) | (v << 13)) & 0xFFFF;
+uint16 RSound::generateRandomNumber() {
+	uint16 newValue = 0x9249 + _randomSeed;
+	_randomSeed = ((newValue >> 3) | (newValue << 13)) & 0xFFFF;
 	return _randomSeed;
 }
 
-void RSound::setVolume(int volume) {
-	_masterVolume = CLIP(volume, 0, 255);
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		sendVolume(i + 1, _mute ? 0 : _channels[i]._volume);
+int RSound::getTicksSinceLastCommand() {
+	return _ticksSinceLastCommand;
 }
 
 /*-----------------------------------------------------------------------*/
 
-void RSound::sendNoteOn(int midiChannel, int note, int velocity) {
+void RSound::sendNoteOn(byte midiChannel, byte note, byte velocity) {
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel, note, velocity);
 }
 
-void RSound::sendProgramChange(int midiChannel, int program) {
+void RSound::sendProgramChange(byte midiChannel, byte program) {
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | midiChannel, program, 0);
 }
 
-void RSound::sendVolume(int midiChannel, int volume) {
-	const int scaledVolume = CLIP(volume, 0, 127) * _masterVolume / 255;
+void RSound::sendVolume(byte midiChannel, byte volume) {
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
-			MidiDriver::MIDI_CONTROLLER_VOLUME, scaledVolume);
+					  MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
 }
 
-void RSound::sendPitchBend(int midiChannel, int value) {
+void RSound::sendPitchBend(byte midiChannel, byte value) {
 	// LSB always 0 - only coarse (MSB) control is used
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_PITCH_BEND | midiChannel, 0, value);
 }
 
-void RSound::sendPanning(int midiChannel, int value) {
+void RSound::sendPanning(byte midiChannel, byte value) {
 	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_PANNING, value);
 }
 
-void RSound::muteChannel(int midiChannel) {
+void RSound::muteChannel(byte midiChannel) {
 	sendVolume(midiChannel, 0);
 }
 
-void RSound::unmuteChannel(int midiChannel, int volume) {
+void RSound::unmuteChannel(byte midiChannel, byte volume) {
 	sendVolume(midiChannel, volume);
 }
 
@@ -269,12 +266,7 @@ byte *RSound::sendSysExData(byte *pData, uint maxLength) {
 		return nullptr;
 	}
 
-	// FIXME This call adds the necessary delay for the MT-32 to process the
-	// SysEx message, which will make the engine unresponsive.
-	// This can be fixed using the SysEx queue (specify true as 3rd param).
-	// Driver status can then be checked from the main event loop using
-	// _midiDriver->isReady().
-	_midiDriver->sysExMT32(pData, length);
+	_midiDriver->sysExMT32(pData, length, true);
 
 	return &pData[length];
 }
@@ -315,12 +307,16 @@ void RSound::sendSysExSequence() {
 	}
 }
 
+void RSound::stopAllNotes() {
+	_midiDriver->stopAllNotes();
+}
+
 /*-----------------------------------------------------------------------*/
 
 void RSound::Channel_turnOffActiveNotes(Channel *channel) {
 	byte *channelActiveNotes = _activeNotes[channel->_midiChannel];
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < RSOUND_ACTIVE_NOTES_COUNT; ++i) {
 		if (channelActiveNotes[i] == 0xFF)
 			break;
 
@@ -330,9 +326,7 @@ void RSound::Channel_turnOffActiveNotes(Channel *channel) {
 }
 
 void RSound::Channel_processFadeOut(Channel *channel) {
-	if (!channel->_deltaCounter)
-		return;
-	if (!channel->_fadeOutActive)
+	if (channel->_deltaCounter == 0 || !channel->_fadeOutActive)
 		return;
 
 	if (channel->_volume != 0) {
@@ -352,28 +346,32 @@ void RSound::Channel_processFadeOut(Channel *channel) {
 }
 
 void RSound::processChannelFadeOuts() {
-	if (_fadeCheckMode == kRSoundFadeCheckAlternating) {
-		_fadeCheckAlternate = !_fadeCheckAlternate;
-		if (_fadeCheckAlternate)
-			return;
-	} else {
-		if (!_fadeCheckPeriod)
-			return;
-		if (--_fadeCheckCounter > 0)
-			return;
+	if (_fadeOutSpeed == 0 || --_fadeOutCounter > 0)
+		return;
 
-		_fadeCheckCounter = _fadeCheckPeriod;
-	}
+	_fadeOutCounter = _fadeOutSpeed;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
 		Channel_processFadeOut(&_channels[i]);
 }
 
-void RSound::Channel_processTick(Channel *channel) {
-	if (channel->_deltaCounter == 0)
-		return;
+void RSound::setFadeOutSpeed(int fadeOutSpeed) {
+	if (_fadeOutCheckMode == kRSoundFadeCheckProgrammable)
+		_fadeOutSpeed = fadeOutSpeed;
+}
 
-	int midiChannel = channel->_midiChannel;
+void RSound::Channel_processTick(Channel *channel) {
+	if (channel->_deltaCounter == 0) {
+		channel->_pitchSlideStepSize = 0;
+		channel->_volumeFadeStepSize = 0;
+		channel->_panningSweepStepSize = 0;
+		// Original code continues with the effects processing code after the
+		// event processing loop, but because all effects have been disabled
+		// by setting step size to 0, this does nothing.
+		return;
+	}
+
+	byte midiChannel = channel->_midiChannel;
 
 	if (channel->_noteDurationCounter > 0 && --channel->_noteDurationCounter == 0)
 		Channel_turnOffActiveNotes(channel);
@@ -383,207 +381,313 @@ void RSound::Channel_processTick(Channel *channel) {
 		while (!chordEventProcessed) {
 			byte *pSrc = channel->_pSrc;
 
-			if (*pSrc < 0x80) {
-				// Plain (note, duration) pair
+			if (pSrc[0] < 0x80) {
+				// Plain (note, delta) pair
 				byte note = pSrc[0];
-				byte duration = pSrc[1];
+				byte delta = pSrc[1];
 				channel->_note = note;
-				channel->_deltaCounter = duration;
-				channel->_pSrc = pSrc + 2;
+				channel->_deltaCounter = delta;
+				channel->_pSrc += 2;
 
-				if (!note || !duration) {
+				// Opcode 0x00: all notes off
+				// Delta 0: stop channel playback
+				if (note == 0 || delta == 0) {
 					Channel_turnOffActiveNotes(channel);
 				} else {
-					channel->_noteDurationCounter = channel->_deltaCounter - channel->_noteDurationOffset;
+					int duration = delta - channel->_noteDurationOffset;
+					if (duration < 0) {
+						// In the original code this calculation can result in underflow
+						// of the duration, which is a byte value. Not sure if this
+						// actually happens in any of the sound data.
+						warning("Calculated note duration is negative");
+						// Assignment to the noteDurationCounter byte field should
+						// result in the same behavior as the original code, i.e.
+						// duration -1 becomes counter value 0xFF.
+					}
+					channel->_noteDurationCounter = duration;
 
-					bool skipRetrigger = false;
-					if ((int8)channel->_noteDurationOffset < 0 && _activeNotes[midiChannel][0] == note)
-						skipRetrigger = true;
-
-					if (!skipRetrigger) {
+					// If the note duration offset is 0 or positive, the notes played by
+					// the previous note or chord event had a duration that was equal to
+					// or shorter than the event delta and are already turned off, so the
+					// new note should always be played. Otherwise, if this note is
+					// already the first active note on the channel, the note should
+					// remain active and will not be retriggered.
+					// Note that a chord event could also have already played the new
+					// note as the second to fourth active note; this is not checked.
+					if (channel->_noteDurationOffset >= 0 || _activeNotes[midiChannel][0] != note) {
 						Channel_turnOffActiveNotes(channel);
 						sendNoteOn(midiChannel, note, channel->_velocity);
 					}
 					_activeNotes[midiChannel][0] = note;
 				}
 
+				// An event delta has been set, so break out of the event processing loop.
 				break;
 			}
 
 			// Opcode dispatch (bytes 0xF1-0xFF)
-			int opcode = *pSrc - 0xF1;
+			byte opcode = pSrc[0];
 			switch (opcode) {
-			case 0: // 0xF1: no-op (consume and ignore)
-				channel->_pSrc = pSrc + 2;
+			case 0xF1: // No-op (consume and ignore)
+				channel->_pSrc += 2;
 				break;
 
-			case 1: { // 0xF2: self-modifying randomize (byte swap in the data stream)
-				int v1 = *++pSrc;
-				++pSrc;
-				int v2 = (v1 - 1) & generateRandomNumber();
-				int v3 = pSrc[v2];
-				int v4 = pSrc[v1];
-				pSrc[v4 + v1 + 1] = v3;
-				channel->_pSrc += v1 + 3;
+			case 0xF2: { // Randomize
+				// Event data byte 1: number of values.
+				byte numValues = pSrc[1];
+				// Event data byte 2+: values.
+				// Generate a random index to pick one of the values.
+				byte randomIndex = (numValues - 1) & generateRandomNumber();
+				byte randomValue = pSrc[2 + randomIndex];
+				// Last event data byte: data offset where the random value should be written.
+				byte dataOffset = pSrc[2 + numValues];
+				// Advance sound data pointer to after this event.
+				channel->_pSrc += numValues + 3;
+				// Write the random value at the data offset after this event.
+				channel->_pSrc[dataOffset] = randomValue;
 				break;
 			}
 
-			case 2: // 0xF3: setup pan fade
+			case 0xF3: // Start panning sweep
 				channel->_panningSweepSpeed = pSrc[1];
-				channel->_panningSweepStepSize = pSrc[2];
+				channel->_panningSweepStepSize = (int8) pSrc[2];
 				channel->_panningSweepCounter = 1;
-				channel->_pSrc = pSrc + 3;
+				channel->_pSrc += 3;
 				break;
 
-			case 3: // 0xF4: set pan directly and send
+			case 0xF4: // Panning
 				channel->_panning = pSrc[1];
 				sendPanning(midiChannel, channel->_panning);
-				channel->_pSrc = pSrc + 2;
+				channel->_pSrc += 2;
 				break;
 
-			case 4: { // 0xF5: chord note-on trigger (up to 4 simultaneous notes)
+			case 0xF5: { // Chord
+				// Event data byte 1: number of notes in the chord
 				byte noteCount = pSrc[1];
+				byte noteBytesCount = pSrc[1];
+				if (noteCount > RSOUND_ACTIVE_NOTES_COUNT) {
+					// The original code does not check the note count.
+					// It will play more than 4 notes and write them
+					// into the active note data of the next channel
+					// or out of bounds. Some tracks contain chords
+					// with more than 4 notes.
+					warning("Encountered chord event with note count %i; limiting to %i notes", noteCount, RSOUND_ACTIVE_NOTES_COUNT);
+					noteCount = RSOUND_ACTIVE_NOTES_COUNT;
+				}
+				// Event data byte 2+: note values
 				byte *notes = pSrc + 2;
-				byte *slots = _activeNotes[midiChannel];
+				byte *activeNotes = _activeNotes[midiChannel];
 
 				int i;
 				for (i = 0; i < noteCount; ++i) {
 					byte note = notes[i];
-					if (slots[i] != note) {
+					// Do not play the note again if it is already registered
+					// at this index in the active notes data. The note could
+					// also be registered at another index, but this is not
+					// checked.
+					if (activeNotes[i] != note) {
 						sendNoteOn(midiChannel, note, channel->_velocity);
-						slots[i] = note;
+						activeNotes[i] = note;
 					}
 				}
-				for (; i < 4; ++i)
-					slots[i] = 0xFF;
+				// Clear the remaining active note entries for this channel.
+				for (; i < RSOUND_ACTIVE_NOTES_COUNT; ++i)
+					activeNotes[i] = 0xFF;
 
-				byte duration = notes[noteCount];
-				channel->_deltaCounter = duration;
-				if (channel->_noteDurationOffset != 0xFF) {
-					channel->_noteDurationCounter = (duration < channel->_noteDurationOffset) ?
-						duration : duration - channel->_noteDurationOffset;
+				// Last event data byte: delta
+				byte delta = pSrc[noteBytesCount + 2];
+				channel->_deltaCounter = delta;
+				// Subtract note duration offset from the delta to get the
+				// chord duration.
+				// Note that the duration is determined here in a different
+				// way than for a note event. The offset is checked for
+				// the value -1 instead of < 0, suggesting that -1 is the
+				// minimum value. Also, a check is added to make sure the
+				// duration does not underflow.
+				byte duration;
+				if (channel->_noteDurationOffset == -1) {
+					duration = delta + 1;
 				} else {
-					channel->_noteDurationCounter = duration + 1;
+					duration = (delta < channel->_noteDurationOffset) ? delta : delta - channel->_noteDurationOffset;
 				}
+				channel->_noteDurationCounter = duration;
 
-				channel->_pSrc = pSrc + noteCount + 3;
+				channel->_pSrc += noteBytesCount + 3;
+				// An event delta has been set, so break out of the event
+				// processing loop.
 				chordEventProcessed = true;
 				break;
 			}
 
-			case 5: // 0xF6: set volume directly and send (priority-gated while pending-stop)
+			case 0xF6: // Volume
+				// If the channel is fading out to stop and the new volume
+				// value is higher than the current value, do not set
+				// the new value.
 				if (!channel->_fadeOutActive || channel->_volume >= pSrc[1]) {
 					channel->_volume = pSrc[1];
 					sendVolume(midiChannel, channel->_volume);
 				}
-				channel->_pSrc = pSrc + 2;
+				channel->_pSrc += 2;
 				break;
 
-			case 6: // 0xF7: set pitch bend directly and send
+			case 0xF7: // Pitch bend
+				// Only the pitch bend MSB is used.
 				channel->_pitchBend = pSrc[1];
 				sendPitchBend(midiChannel, channel->_pitchBend);
-				channel->_pSrc = pSrc + 2;
+				channel->_pSrc += 2;
 				break;
 
-			case 7: // 0xF8: setup volume fade (gated by pending-stop)
+			case 0xF8: // Start volume fade
+				// If the channel is already fading out to stop, do not start
+				// a volume fade.
 				if (!channel->_fadeOutActive) {
 					channel->_volumeFadeSpeed = pSrc[1];
 					channel->_volumeFadeCounter = pSrc[1];
-					channel->_volumeFadeStepSize = pSrc[2];
+					channel->_volumeFadeStepSize = (int8) pSrc[2];
 				}
-				channel->_pSrc = pSrc + 3;
+				channel->_pSrc += 3;
 				break;
 
-			case 8: // 0xF9: set velocity
+			case 0xF9: // Note velocity
+				// Velocity is not part of a note event; it is set using this
+				// event as a channel setting.
 				channel->_velocity = pSrc[1];
-				channel->_pSrc = pSrc + 2;
+				channel->_pSrc += 2;
 				break;
 
-			case 9: // 0xFA: setup pitch-bend ramp
+			case 0xFA: // Start pitch slide
 				channel->_pitchSlideSpeed = pSrc[1];
 				channel->_pitchSlideStepSize = (int8) pSrc[2];
 				channel->_pitchSlideDurationCounter = pSrc[3];
 				channel->_pitchSlideCounter = 1;
-				channel->_pSrc = pSrc + 4;
+				channel->_pSrc += 4;
 				break;
 
-			case 10: // 0xFB: set note offset
-				channel->_noteDurationOffset = pSrc[1];
-				channel->_pSrc = pSrc + 2;
+			case 0xFB: // Note duration offset
+				channel->_noteDurationOffset = (int8) pSrc[1];
+				channel->_pSrc += 2;
 				break;
 
-			case 11: // 0xFC: program change
+			case 0xFC: // Program change
 				channel->_program = pSrc[1];
 				sendProgramChange(midiChannel, channel->_program);
-				channel->_pSrc = pSrc + 2;
+				channel->_pSrc += 2;
 				break;
 
-			case 12: { // 0xFD: full reset / loop restart, preserving pending-stop
+			case 0xFD: { // Loop to start
+				// Reload data to completely reset channel state, but keep
+				// fade-out to stop state.
 				bool fadeOutActive = channel->_fadeOutActive;
 				channel->loadData(channel->_soundDataStart);
 				channel->_fadeOutActive = fadeOutActive;
 				break;
 			}
 
-			case 13: // 0xFE: outer loop
-				if (!channel->_outerLoopCounter) {
-					if (*++pSrc == 0) {
+			case 0xFE: { // Outer loop
+				byte repeats = pSrc[1];
+				if (channel->_outerLoopCounter == 0) {
+					// Outer loop is inactive. Set loop start point or start looping.
+					if (repeats == 0) {
+						// Event data byte is 0: set loop start point after this event.
+						// Also set inner loop start point to keep it contained within
+						// the outer loop.
 						channel->_pSrc += 2;
 						channel->_outerLoopStart = channel->_pSrc;
 						channel->_innerLoopStart = channel->_pSrc;
-						channel->_innerLoopCounter = 0;
 						channel->_outerLoopCounter = 0;
+						channel->_innerLoopCounter = 0;
 					} else {
-						channel->_outerLoopCounter =
-							(uint16)(int16)(int8)*pSrc;
+						// Event data byte is > 0: set number of repeats and loop back
+						// to the loop start point. Also reset the inner loop start
+						// point to the outer loop start point.
+						channel->_outerLoopCounter = repeats;
 						channel->_pSrc = channel->_outerLoopStart;
 						channel->_innerLoopStart = channel->_outerLoopStart;
 					}
-				} else if (--channel->_outerLoopCounter) {
+				} else if (--channel->_outerLoopCounter > 0) {
+					// Outer loop is active and counter is >= 1: loop back to the loop
+					// start point. Also reset the inner loop start point to the outer
+					// loop start point.
 					channel->_pSrc = channel->_outerLoopStart;
 					channel->_innerLoopStart = channel->_outerLoopStart;
 				} else {
+					// Outer loop is active and was counted down to 0. Continue playback
+					// with the first event after the loop end point.
+					// This also sets both loop start points to that event.
 					channel->_pSrc += 2;
 					channel->_outerLoopStart = channel->_pSrc;
 					channel->_innerLoopStart = channel->_pSrc;
 				}
 				break;
+			}
 
-			case 14: // 0xFF: inner loop
-				if (!channel->_innerLoopCounter) {
-					if (*++pSrc == 0) {
+			case 0xFF: { // Inner loop
+				byte repeats = pSrc[1];
+				if (channel->_innerLoopCounter == 0) {
+					// Inner loop is inactive. Set loop start point or start looping.
+					if (repeats == 0) {
+						// Event data byte is 0: set loop start point after this event.
 						channel->_pSrc += 2;
 						channel->_innerLoopStart = channel->_pSrc;
 						channel->_innerLoopCounter = 0;
 					} else {
-						channel->_innerLoopCounter =
-							(uint16)(int16)(int8)*pSrc;
+						// Event data byte is > 0: set number of repeats and loop back
+						// to the loop start point.
+						channel->_innerLoopCounter = repeats;
 						channel->_pSrc = channel->_innerLoopStart;
 					}
-				} else if (--channel->_innerLoopCounter) {
+				} else if (--channel->_innerLoopCounter > 0) {
+					// Inner loop is active and counter is >= 1: loop back to the loop
+					// start point.
 					channel->_pSrc = channel->_innerLoopStart;
 				} else {
+					// Inner loop is active and was counted down to 0. Continue playback
+					// with the first event after the loop end point.
+					// This also sets the loop start point to that event.
 					channel->_pSrc += 2;
 					channel->_innerLoopStart = channel->_pSrc;
 				}
 				break;
-
+			}
+			
 			default:
-				break;
+				// When encountering an invalid opcode, the original code would
+				// not advance the sound data pointer or break out of the event
+				// processing loop. This causes the code to hang on this opcode.
+				// Instead, playback for this channel is stopped here.
+				warning("Invalid sound opcode %02X encountered; stopping channel", opcode);
+				channel->_deltaCounter = 0;
+				return;
 			}
 		}
 	}
 
-	// Fade tail: pitch bend, volume, pan
+	// Process effects
+
+	// Volume fade
+	if (channel->_volumeFadeStepSize > 0 && --channel->_volumeFadeCounter == 0) {
+		channel->_volumeFadeCounter = channel->_volumeFadeSpeed;
+		int newVolume = channel->_volume + channel->_volumeFadeStepSize;
+		if (newVolume < 0 || newVolume > 0x7F) {
+			// Volume has reached minimum or maximum volume. Stop the fade.
+			channel->_volumeFadeStepSize = 0;
+			newVolume = CLIP(newVolume, 0, 0x7F);
+		}
+		channel->_volume = newVolume;
+		sendVolume(midiChannel, newVolume);
+	}
+
+	// Pitch slide
 	if (channel->_pitchSlideStepSize != 0) {
 		if (--channel->_pitchSlideCounter == 0) {
 			channel->_pitchSlideCounter = channel->_pitchSlideSpeed;
 			int newPitchBend = channel->_pitchBend + channel->_pitchSlideStepSize;
 			if (newPitchBend < 0 || newPitchBend > 0x7F) {
-				// Overflow will cause the driver to output invalid MIDI events.
+				// There is no bounds checking in the original code. Overflow or
+				// underflow will cause the driver to output invalid MIDI events.
 				// This actually happens in the original code, in the intro,
 				// when Rex lands his ship.
-				warning("Pitch bend overflow; terminating pitch slide");
+				warning("Pitch bend overflow or underflow; terminating pitch slide");
 				channel->_pitchSlideStepSize = 0;
 				newPitchBend = CLIP(newPitchBend, 0, 0x7F);
 			}
@@ -594,34 +698,22 @@ void RSound::Channel_processTick(Channel *channel) {
 			channel->_pitchSlideStepSize = 0;
 	}
 
-	if (channel->_volumeFadeStepSize) {
-		if (!--channel->_volumeFadeCounter) {
-			channel->_volumeFadeCounter = channel->_volumeFadeSpeed;
-			int volumeSum = (int8)channel->_volume + (int8)channel->_volumeFadeStepSize;
-			if (volumeSum < 0) {
-				channel->_volumeFadeStepSize = 0;
-				volumeSum = 0;
-			} else if (volumeSum >= 0x7F) {
-				channel->_volumeFadeStepSize = 0;
-				volumeSum = 0x7F;
-			}
-			int8 newVolume = (int8)volumeSum;
-			channel->_volume = newVolume;
-			sendVolume(midiChannel, newVolume);
+	// Panning sweep
+	if (channel->_panningSweepStepSize != 0 && --channel->_panningSweepCounter == 0) {
+		channel->_panningSweepCounter = channel->_panningSweepSpeed;
+		byte newPanning = channel->_panning + channel->_panningSweepStepSize;
+		if (newPanning > 0x7F) {
+			// This inverts overflow or underflow back into the valid range
+			// of 0x00-0x7F; f.e. -3 becomes 2 and 0x83 becomes 0x7C.
+			newPanning = (newPanning ^ 0x7F) & 0x7F;
+			// This causes the next sweep step to be executed in 256 ticks.
+			// This is accurate to the original code, but maybe the
+			// intention was to stop the sweep by setting the step size
+			// to 0?
+			channel->_panningSweepCounter = 0;
 		}
-	}
-
-	if (channel->_panningSweepStepSize) {
-		if (!--channel->_panningSweepCounter) {
-			channel->_panningSweepCounter = channel->_panningSweepSpeed;
-			byte newPan = channel->_panning + channel->_panningSweepStepSize;
-			if (newPan > 0x7F) {
-				newPan = (newPan ^ 0x7F) & 0x7F;
-				channel->_panningSweepCounter = 0;
-			}
-			channel->_panning = newPan;
-			sendPanning(midiChannel, newPan);
-		}
+		channel->_panning = newPanning;
+		sendPanning(midiChannel, newPanning);
 	}
 }
 
@@ -672,7 +764,7 @@ void RSound::resetChannelRange(int firstChannel, int lastChannel, bool includeCh
 
 void RSound::clearActiveNotes() {
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT + 1; ++i)
-		for (int j = 0; j < 4; ++j)
+		for (int j = 0; j < RSOUND_ACTIVE_NOTES_COUNT; ++j)
 			_activeNotes[i][j] = 0xFF;
 }
 
@@ -680,8 +772,12 @@ void RSound::clearActiveNotesRange(int firstChannel, int lastChannel) {
 	assert(firstChannel >= 1 && lastChannel <= RSOUND_CHANNEL_COUNT &&
 			firstChannel <= lastChannel);
 	for (int channel = firstChannel; channel <= lastChannel; ++channel)
-		for (int slot = 0; slot < 4; ++slot)
+		for (int slot = 0; slot < RSOUND_ACTIVE_NOTES_COUNT; ++slot)
 			_activeNotes[channel][slot] = 0xFF;
+}
+
+byte *RSound::loadData(int offset) {
+	return &_soundData[offset];
 }
 
 /**
@@ -710,7 +806,7 @@ void RSound::sendMidiChannelReset(int first, int last) {
 
 int RSound::command0() {
 	resetAllChannels();
-	setFadeCheckPeriod(0);
+	setFadeOutSpeed(0);
 	sendMidiChannelReset(1, RSOUND_CHANNEL_COUNT);
 
 	// Matches the tail of the original rsound_command0.
@@ -724,7 +820,7 @@ int RSound::command0() {
 }
 
 int RSound::command1() {
-	setFadeCheckPeriod(1);
+	setFadeOutSpeed(1);
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
 		_channels[i].setFadeOut(true);
 	return 0;
@@ -735,7 +831,7 @@ int RSound::command2() {
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(1, 4, true);
 	clearActiveNotes();
-	setFadeCheckPeriod(0);
+	setFadeOutSpeed(0);
 	// The original code does not reset MIDI channel 9, which is
 	// probably an oversight.
 	sendMidiChannelReset(1, 4);
@@ -745,7 +841,7 @@ int RSound::command2() {
 
 int RSound::command3() {
 	// Start fade-out to stop for channels 1-4 and 9.
-	setFadeCheckPeriod(1);
+	setFadeOutSpeed(1);
 	for (int i = 0; i < 4; ++i)
 		_channels[i].setFadeOut(true);
 	_channels[8].setFadeOut(true);
@@ -756,7 +852,7 @@ int RSound::command4() {
 	// Channels 5-8 (does NOT touch the held-notes
 	// table) plus the MIDI channel reset for those same channels.
 	resetChannelRange(5, 8);
-	setFadeCheckPeriod(0);
+	setFadeOutSpeed(0);
 	// The original code also resets MIDI channel 9, which is
 	// probably incorrect.
 	sendMidiChannelReset(5, 8);
@@ -765,7 +861,7 @@ int RSound::command4() {
 
 int RSound::command5() {
 	// Start fade-out to stop for channels 5-8.
-	setFadeCheckPeriod(1);
+	setFadeOutSpeed(1);
 	for (int i = 4; i < 8; ++i)
 		_channels[i].setFadeOut(true);
 	return 0;
@@ -793,6 +889,10 @@ int RSound::command8() {
 		result |= _channels[i]._deltaCounter;
 
 	return result;
+}
+
+int RSound::nullCommand() {
+	return 0;
 }
 
 } // namespace Sound

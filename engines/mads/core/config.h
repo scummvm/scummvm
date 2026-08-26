@@ -104,6 +104,7 @@ extern ConfigFile config_file;
 
 extern void init_config();
 extern void read_config_file();
+extern void read_sound_settings();
 extern void write_config_file();
 
 } // namespace MADS

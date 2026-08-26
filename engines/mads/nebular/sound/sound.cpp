@@ -51,6 +51,8 @@ RexSoundManager::RexSoundManager(Audio::Mixer *mixer, bool &soundFlag,
 		if (returnCode != 0)
 			error("SoundManager - Failed to open MIDI music driver - error code %d.", returnCode);
 
+		_midiDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+
 		_driverCallbackDelta = _midiDriver->getBaseTempo();
 		_midiDriver->setTimerCallback(this, &timerCallback);
 	}

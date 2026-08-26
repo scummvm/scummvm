@@ -25,7 +25,6 @@
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "mads/mads.h"
-#include "mads/mads.h"
 #include "mads/core/anim.h"
 #include "mads/core/attr.h"
 #include "mads/core/camera.h"
@@ -428,6 +427,13 @@ void MADSEngine::updateDisplay() {
 	presentScreen(0);
 }
 
+void MADSEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (_soundManager != nullptr)
+		_soundManager->pause(pause);
+}
+
 uint32 MADSEngine::getMillis() {
 	pollEvents();
 	return g_system->getMillis();
@@ -443,6 +449,14 @@ void MADSEngine::stopSpeech() {
 
 bool MADSEngine::isSpeechPlaying() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
+void MADSEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	read_sound_settings();
+
+	if (_soundManager != nullptr)
+		_soundManager->syncSoundSettings();
 }
 
 SaveStateList MADSEngine::listSaves() const {
