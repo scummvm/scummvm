@@ -34,36 +34,39 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldApplyGameplayPanelObjectPalette() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void installSceneActorBank();
 	void copyPassageTextRows();
-	void rebuildScenePaletteRemapTable();
 	void remapWallPresentationPalette();
 	byte remapScenePaletteColor(byte color, uint steps) const;
+	void updateSceneDepthThresholds(byte actorDrawOrderMode, int actorWorldX, int actorWorldY);
+	void restoreActorLightBackgroundRect(int actorWorldX, int actorWorldY);
+	void drawActorLightLayer(int actorWorldX, int actorWorldY);
 	bool prepareGuideEffectForCurrentMazePosition();
-	void playGuideEffectIfPrepared();
 	void restoreGuideBackgroundRect();
 	void drawGuideLayer();
 	bool guideCenterForFrame(byte direction, byte frameIndex, int &centerX, int &centerY) const;
 	void rebuildWalkableMask();
-	void runEntryPathAndGuide(int startX, int startY, byte startFacing, int targetX, int targetY);
-	void runEntryPathWithInitialDrawOrder(int startX, int startY, byte startFacing, byte initialDrawOrder,
+	void runEntryPathAndGuide(int startX, int startY, byte startFacing, byte initialDrawOrder,
 		int targetX, int targetY);
 	void moveThroughPassage(int delta, uint16 nextState);
 	void transitionToCurrentMazeState();
 
 	bool _sceneActorBankInstalled;
-	Common::Array<byte> _scenePaletteRemapTable;
 	bool _guideEffectPrepared;
 	bool _guideEffectActive;
 	byte _guideDirection;

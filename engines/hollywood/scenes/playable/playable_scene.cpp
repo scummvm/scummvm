@@ -181,7 +181,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_lastInventoryActionItemId(0),
 		_lastInventoryPrimaryItemId(0),
 		_skipRequested(false) {
-	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
+	_surfaceState.initialize(kPaletteSize, kScenePaletteMapByteCount, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
 		kScenePaletteRegionCount, kActorPaletteBaseBytes);
 	_speechController.initialize(kDefaultSecondarySpeechTextColor, kDefaultPrimarySpeechTextColor);
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
@@ -769,8 +769,15 @@ bool PlayableScene::load() {
 		warning("%s load failed: RESOURCE.003 stage %u rows", sceneDebugName(), sceneStageIndex());
 		return false;
 	}
-	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
-	_surfaceState.rebuildPresentationPaletteRemapTable();
+	if (shouldApplyGameplayPanelObjectPalette())
+		_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
+	if (_paletteMaskOriginal.size() >= kScenePresentationPaletteRemapMap + kScenePaletteMapPageSize) {
+		memcpy(_presentationPaletteRemapTable.data(),
+			_paletteMaskOriginal.data() + kScenePresentationPaletteRemapMap,
+			kScenePaletteMapPageSize);
+	} else {
+		_surfaceState.rebuildPresentationPaletteRemapTable();
+	}
 
 	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows)) {
 		warning("%s load failed: hotspot table", sceneDebugName());

@@ -50,12 +50,17 @@ const int kScene2060MinWalkY = 0x076;
 const int kScene2060MaxWalkY = 0x16c;
 const uint32 kScene2060ActorPathFrameMillis = 60;
 const byte kScene2060InvalidFacing = 0xff;
+const byte kScene2060AutomaticDrawOrder = 0xff;
+const uint kScene2060ActorLightChunk = 17;
+const int kScene2060ActorLightHalfSize = 0x4a;
+const uint kScene2060ActorLightSize = 0x95;
+const uint kScene2060ActorLightMaskByteCount = kScene2060ActorLightSize * kScene2060ActorLightSize;
+const uint16 kScene2060HiddenDepthThreshold = 0xffff;
 const uint kScene2060GuideChunkBase = 19;
 const uint kScene2060GuideChunkCount = 6;
 const int kScene2060GuideHalfSize = 0x22;
 const uint kScene2060GuideSize = 0x45;
 const uint kScene2060GuideMaskByteCount = kScene2060GuideSize * kScene2060GuideSize;
-const uint32 kScene2060GuideFrameMillis = 60;
 const byte kScene2060GuideSoundCue = 0x2f;
 const byte kScene2060GuideSoundVolume = 0x32;
 
@@ -114,6 +119,7 @@ static PlayableSceneConfig scene2060Config() {
 		SceneResourceLayout(32, 5, 31),
 		SceneViewport(kScene2060ViewportXOffset, kScene2060ViewportXOffset, kScene2060ViewportXOffset),
 		SceneActorPose(0x0f9, 0x0f4, 2));
+	// RESOURCE.003 has no stage 206 block; the six borrowed labels are replaced below.
 	config.stageIndex = kScene2060StageIndex;
 	config.actorPaletteTableEntry = kScene2060ActorPaletteTableEntry;
 	config.setTextResources(kScene2060Resource003RowsOffsetIndex, kScene2060SpeechCueDescriptorTableOffset);
@@ -135,7 +141,6 @@ Scene2060::Scene2060(HollywoodEngine *vm) :
 
 void Scene2060::initializeCustomPreviewState() {
 	installSceneActorBank();
-	rebuildScenePaletteRemapTable();
 	initializeDefaultPreviewState();
 
 	switch (_vm->gameState().mainFlowStateId) {
@@ -176,18 +181,29 @@ void Scene2060::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
+bool Scene2060::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene2060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
 	copyBaseFramebufferToSceneFramebuffer();
 	remapWallPresentationPalette();
+	if (drawActiveActor)
+		restoreActorLightBackgroundRect(activeWorldX, activeWorldY);
 	restoreGuideBackgroundRect();
+	updateSceneDepthThresholds(actorDrawOrderMode, activeWorldX, activeWorldY);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (drawActiveActor)
+		drawActorLightLayer(activeWorldX, activeWorldY);
 	drawGuideLayer();
 	drawActionOverlayLayer();
+}
+
+bool Scene2060::shouldApplyGameplayPanelObjectPalette() const {
+	return false;
 }
 
 void Scene2060::runCustomEntrySequence() {
@@ -196,22 +212,22 @@ void Scene2060::runCustomEntrySequence() {
 
 	switch (_vm->gameState().mainFlowStateId) {
 	case 0x080c:
-		runEntryPathAndGuide(0x17a, 0x000, 3, 0x17a, 0x076);
+		runEntryPathAndGuide(0x17a, 0x000, 3, kScene2060AutomaticDrawOrder, 0x17a, 0x076);
 		break;
 	case 0x080d:
-		runEntryPathAndGuide(0x210, 0x000, 3, 0x210, 0x076);
+		runEntryPathAndGuide(0x210, 0x000, 3, kScene2060AutomaticDrawOrder, 0x210, 0x076);
 		break;
 	case 0x080e:
-		runEntryPathAndGuide(0x064, 0x0f4, 2, 0x0f9, 0x0f4);
+		runEntryPathAndGuide(0x064, 0x0f4, 2, kScene2060AutomaticDrawOrder, 0x0f9, 0x0f4);
 		break;
 	case 0x080f:
-		runEntryPathAndGuide(0x2e3, 0x0f0, 4, 0x24d, 0x0f0);
+		runEntryPathAndGuide(0x2e3, 0x0f0, 4, kScene2060AutomaticDrawOrder, 0x24d, 0x0f0);
 		break;
 	case 0x0810:
-		runEntryPathWithInitialDrawOrder(0x152, 0x1e3, 0, 6, 0x152, 0x16c);
+		runEntryPathAndGuide(0x152, 0x1e3, 0, 6, 0x152, 0x16c);
 		break;
 	case 0x0811:
-		runEntryPathWithInitialDrawOrder(0x1e8, 0x1e3, 0, 7, 0x1e8, 0x16c);
+		runEntryPathAndGuide(0x1e8, 0x1e3, 0, 7, 0x1e8, 0x16c);
 		break;
 	default:
 		break;
@@ -222,7 +238,6 @@ void Scene2060::runCustomEntrySequence() {
 
 bool Scene2060::prepareCustomGameplayLoop() {
 	installSceneActorBank();
-	rebuildScenePaletteRemapTable();
 	return true;
 }
 
@@ -311,6 +326,15 @@ bool Scene2060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
+bool Scene2060::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene2060::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene2060::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
@@ -376,14 +400,8 @@ void Scene2060::copyPassageTextRows() {
 	}
 }
 
-void Scene2060::rebuildScenePaletteRemapTable() {
-	buildPresentationPaletteRemapTable(_paletteResource, _scenePaletteRemapTable);
-}
-
 void Scene2060::remapWallPresentationPalette() {
-	if (_scenePaletteRemapTable.size() < kScenePaletteMapPageSize)
-		rebuildScenePaletteRemapTable();
-	if (_scenePaletteRemapTable.size() < kScenePaletteMapPageSize)
+	if (_presentationPaletteRemapTable.size() < kScenePaletteMapPageSize)
 		return;
 
 	byte *pixels = framebufferPixels(_sceneFramebuffer);
@@ -402,12 +420,129 @@ void Scene2060::remapWallPresentationPalette() {
 }
 
 byte Scene2060::remapScenePaletteColor(byte color, uint steps) const {
-	if (_scenePaletteRemapTable.size() < kScenePaletteMapPageSize)
+	if (_presentationPaletteRemapTable.size() < kScenePaletteMapPageSize)
 		return color;
 
 	for (uint step = 0; step < steps; ++step)
-		color = _scenePaletteRemapTable[color];
+		color = _presentationPaletteRemapTable[color];
 	return color;
+}
+
+void Scene2060::updateSceneDepthThresholds(byte actorDrawOrderMode, int actorWorldX, int actorWorldY) {
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+	if (_drawActorDepthYThresholds.size() <= 1)
+		return;
+
+	uint16 threshold = _drawActorDepthYThresholds[1];
+	switch (actorDrawOrderMode) {
+	case 1:
+		threshold = 0;
+		break;
+	case 2:
+		threshold = actorWorldY > 0x059 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	case 3:
+		threshold = actorWorldY > 0x058 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	case 4:
+		threshold = actorWorldX > 0x0d9 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	case 5:
+		threshold = actorWorldX < 0x271 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	case 6:
+		threshold = actorWorldY < 0x187 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	case 7:
+		threshold = actorWorldY < 0x188 ? 0 : kScene2060HiddenDepthThreshold;
+		break;
+	default:
+		break;
+	}
+	_drawActorDepthYThresholds[1] = threshold;
+}
+
+void Scene2060::restoreActorLightBackgroundRect(int actorWorldX, int actorWorldY) {
+	const byte *basePixels = framebufferPixels(_baseFramebuffer);
+	byte *destinationPixels = framebufferPixels(_sceneFramebuffer);
+	if (!basePixels || !destinationPixels)
+		return;
+
+	const int left = actorWorldX - kScene2060ActorLightHalfSize;
+	const int top = actorWorldY - kScene2060ActorLightHalfSize;
+	const int firstX = MAX<int>(0, left);
+	const int lastX = MIN<int>(HollywoodEngine::kSceneBufferWidth, left + (int)kScene2060ActorLightSize);
+	const int firstY = MAX<int>(0, top);
+	const int lastY = MIN<int>(HollywoodEngine::kSceneBufferHeight, top + (int)kScene2060ActorLightSize);
+	if (firstX >= lastX || firstY >= lastY)
+		return;
+
+	for (int sceneY = firstY; sceneY < lastY; ++sceneY) {
+		const uint offset = sceneY * HollywoodEngine::kSceneBufferWidth + firstX;
+		memcpy(destinationPixels + offset, basePixels + offset, lastX - firstX);
+	}
+}
+
+void Scene2060::drawActorLightLayer(int actorWorldX, int actorWorldY) {
+	if (!_sceneChunkTable.isValidChunk(kScene2060ActorLightChunk) ||
+			_sceneChunkTable.sizes[kScene2060ActorLightChunk] < kScene2060ActorLightMaskByteCount)
+		return;
+
+	const byte *basePixels = framebufferPixels(_baseFramebuffer);
+	const byte *depthPixels = framebufferPixels(_savedFramebuffer);
+	byte *destinationPixels = framebufferPixels(_sceneFramebuffer);
+	if (!basePixels || !depthPixels || !destinationPixels)
+		return;
+
+	const byte *mask = _resourceArena.data() + _resourceChunkOffsets[kScene2060ActorLightChunk];
+	const int left = actorWorldX - kScene2060ActorLightHalfSize;
+	const int top = actorWorldY - kScene2060ActorLightHalfSize;
+
+	for (uint maskY = 0; maskY < kScene2060ActorLightSize; ++maskY) {
+		const int sceneY = top + (int)maskY;
+		if (sceneY < 0 || sceneY >= (int)HollywoodEngine::kSceneBufferHeight)
+			continue;
+
+		for (uint maskX = 0; maskX < kScene2060ActorLightSize; ++maskX) {
+			const int sceneX = left + (int)maskX;
+			if (sceneX < 0 || sceneX >= (int)HollywoodEngine::kSceneBufferWidth)
+				continue;
+
+			const uint offset = sceneY * HollywoodEngine::kSceneBufferWidth + sceneX;
+			byte depthClass = 0;
+			const byte depthPixel = depthPixels[offset];
+			if (depthPixel < _colorToActorDepthClassMap.size())
+				depthClass = _colorToActorDepthClassMap[depthPixel];
+			const uint16 depthThreshold = depthClass < _drawActorDepthYThresholds.size() ?
+				_drawActorDepthYThresholds[depthClass] : 0;
+			const bool foregroundIsBehindActor = depthThreshold < actorWorldY;
+			const byte sourceColor = basePixels[offset];
+
+			switch (mask[maskY * kScene2060ActorLightSize + maskX]) {
+			case 0x00:
+				if (!foregroundIsBehindActor)
+					destinationPixels[offset] = remapScenePaletteColor(sourceColor, 4);
+				break;
+			case 0x01:
+				destinationPixels[offset] = remapScenePaletteColor(sourceColor,
+					foregroundIsBehindActor ? 1 : 4);
+				break;
+			case 0x02:
+				destinationPixels[offset] = remapScenePaletteColor(sourceColor,
+					foregroundIsBehindActor ? 2 : 4);
+				break;
+			case 0x03:
+				destinationPixels[offset] = remapScenePaletteColor(sourceColor,
+					foregroundIsBehindActor ? 3 : 4);
+				break;
+			case 0xd0:
+				destinationPixels[offset] = remapScenePaletteColor(sourceColor, 4);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 bool Scene2060::prepareGuideEffectForCurrentMazePosition() {
@@ -437,31 +572,6 @@ bool Scene2060::prepareGuideEffectForCurrentMazePosition() {
 	}
 
 	return false;
-}
-
-void Scene2060::playGuideEffectIfPrepared() {
-	if (!_guideEffectPrepared || _skipRequested || Engine::shouldQuit())
-		return;
-
-	_guideEffectActive = true;
-	_guideFrameIndex = 0;
-	_soundBank0.playSample(kScene2060GuideSoundCue, kScene2060GuideSoundVolume);
-
-	while (_guideEffectActive && !_skipRequested && !Engine::shouldQuit()) {
-		drawPlayableComposite();
-		presentFrame();
-
-		if (waitSceneMillis(kScene2060GuideFrameMillis))
-			break;
-
-		++_guideFrameIndex;
-		if (_guideFrameIndex >= _guideFrameCount)
-			_guideEffectActive = false;
-	}
-
-	_guideEffectActive = false;
-	drawPlayableComposite();
-	presentFrame();
 }
 
 void Scene2060::restoreGuideBackgroundRect() {
@@ -532,8 +642,8 @@ void Scene2060::drawGuideLayer() {
 			const byte depthPixel = depthPixels[offset];
 			if (depthPixel < _colorToActorDepthClassMap.size())
 				depthClass = _colorToActorDepthClassMap[depthPixel];
-			const uint16 depthThreshold = depthClass < _actorDepthYThresholds.size() ?
-				_actorDepthYThresholds[depthClass] : 0;
+			const uint16 depthThreshold = depthClass < _drawActorDepthYThresholds.size() ?
+				_drawActorDepthYThresholds[depthClass] : 0;
 			const bool foregroundIsBehindGuide = depthThreshold < centerY;
 
 			byte outputColor = destinationPixels[offset];
@@ -613,37 +723,56 @@ void Scene2060::rebuildWalkableMask() {
 	}
 }
 
-void Scene2060::runEntryPathAndGuide(int startX, int startY, byte startFacing, int targetX, int targetY) {
-	runEntryPath(startX, startY, startFacing, targetX, targetY);
-	playGuideEffectIfPrepared();
-}
-
-void Scene2060::runEntryPathWithInitialDrawOrder(int startX, int startY, byte startFacing,
+void Scene2060::runEntryPathAndGuide(int startX, int startY, byte startFacing,
 		byte initialDrawOrder, int targetX, int targetY) {
 	_activeActorWorldX = startX;
 	_activeActorWorldY = startY;
 	_activeActorFacing = startFacing;
 	_activeActorCel = 0;
-	_activeActorDrawOrderMode = initialDrawOrder;
+	_activeActorDrawOrderMode = initialDrawOrder == kScene2060AutomaticDrawOrder ?
+		paletteRegionAt(startX, startY) : initialDrawOrder;
 
 	drawPlayableComposite();
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 
 	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY, kScene2060InvalidFacing, 0);
-	_actorPathPlaybackActive = true;
-	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
-		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
+	uint actorFrameIndex = 1;
+	_actorPathPlaybackActive = actorFrameIndex < _actorPathFrames.size();
+	_guideEffectActive = _guideEffectPrepared;
+	_guideFrameIndex = 0;
+
+	while ((_actorPathPlaybackActive || _guideEffectActive) && !_skipRequested && !Engine::shouldQuit()) {
+		if (_actorPathPlaybackActive) {
+			const ActorPathFrame &frame = _actorPathFrames[actorFrameIndex];
+			_activeActorWorldX = frame.worldX;
+			_activeActorWorldY = frame.worldY;
+			_activeActorFacing = frame.facing;
+			_activeActorCel = frame.cel;
+			_activeActorDrawOrderMode = frame.drawOrderMode;
+		}
+		if (_guideEffectActive && !_soundBank0.isPlaying())
+			_soundBank0.playSample(kScene2060GuideSoundCue, kScene2060GuideSoundVolume);
+
 		if (waitSceneMillis(kScene2060ActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
+			_guideEffectActive = false;
 			return;
+		}
+
+		if (_actorPathPlaybackActive) {
+			++actorFrameIndex;
+			_actorPathPlaybackActive = actorFrameIndex < _actorPathFrames.size();
+		}
+		if (_guideEffectActive) {
+			++_guideFrameIndex;
+			_guideEffectActive = _guideFrameIndex < _guideFrameCount;
 		}
 	}
 	_actorPathPlaybackActive = false;
+	_guideEffectActive = false;
+	if (_skipRequested || animationPlaybackShouldStop())
+		return;
 
 	_activeActorWorldX = targetX;
 	_activeActorWorldY = targetY;
@@ -651,7 +780,6 @@ void Scene2060::runEntryPathWithInitialDrawOrder(int startX, int startY, byte st
 	_activeActorCel = 0;
 	drawPlayableComposite();
 	presentFrame();
-	playGuideEffectIfPrepared();
 }
 
 void Scene2060::moveThroughPassage(int delta, uint16 nextState) {
@@ -665,9 +793,13 @@ void Scene2060::moveThroughPassage(int delta, uint16 nextState) {
 }
 
 void Scene2060::transitionToCurrentMazeState() {
+	const Common::Array<byte> targetPalette = _paletteCurrent;
+	if (fadePaletteToBlack())
+		return;
+	_paletteCurrent = targetPalette;
+	_displayPalette.markAllDirty();
+
 	applySceneStateToHotspotsAndPatches(0xff);
-	drawPreviewComposite();
-	presentFrame();
 	runCustomEntrySequence();
 	syncActiveActorPoseToGameState();
 }
