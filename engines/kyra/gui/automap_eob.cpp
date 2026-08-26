@@ -242,7 +242,7 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 
 Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled) : _system(system), _blockData(*blockData),
 	_wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
-		_legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)),	_gameSupportsBreakables(gameID == GI_EOB2) {
+		_colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)),	_gameSupportsBreakables(gameID == GI_EOB2) {
 	_automapBg = new Graphics::Surface();
 	_automapFrame = new Graphics::Surface();
 
@@ -276,12 +276,15 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	memcpy(specialBlockIDs, types, sizeof(types));
 	_specialBlockIDs = specialBlockIDs;
 	_numSpecialBlockIDs = ARRAYSIZE(types);
+
+	createColors();
 }
 
 Automap_EoB::~Automap_EoB() {
 	delete _automapBg;
 	delete _automapFrame;
 	delete[] _specialBlockIDs;
+	delete[] _colors;
 }
 
 void Automap_EoB::markVisited(uint16 block) {
@@ -355,172 +358,18 @@ bool Automap_EoB::isSeen(uint16 block) const {
 void Automap_EoB::draw(EoBCoreEngine *vm) {
 	const int ow = _system->getOverlayWidth();
 	const int oh = _system->getOverlayHeight();
-	const Graphics::PixelFormat fmt = _system->getOverlayFormat();
-	const AutomapLayout L = createLayout();
+	const AutomapLayout l = createLayout();
 
-	// "Stone tablet" palette: opaque grey stone + aged parchment
-	const uint32 cStone = fmt.RGBToColor(0x54, 0x56, 0x5e);
-	const uint32 cStoneDark = fmt.RGBToColor(0x3c, 0x3e, 0x45);
-	const uint32 cStoneEdge = fmt.RGBToColor(0x23, 0x25, 0x2a);
-	const uint32 cStoneHi = fmt.RGBToColor(0x6b, 0x6e, 0x78);
-	const uint32 cRivet = fmt.RGBToColor(0xc2, 0xc5, 0xcd);
-	const uint32 cPaper = fmt.RGBToColor(0xd6, 0xbf, 0x94);
-	const uint32 cPaperHi = fmt.RGBToColor(0xe2, 0xcd, 0xa4);
-	const uint32 cPaperLo = fmt.RGBToColor(0xc4, 0xab, 0x78);
-	const uint32 cPaperEdge = fmt.RGBToColor(0xa9, 0x8b, 0x56);
-	const uint32 cInk = fmt.RGBToColor(0x3a, 0x2a, 0x18);
-	const uint32 cInkSoft = fmt.RGBToColor(0x7a, 0x60, 0x38);
-	const uint32 cFloor = fmt.RGBToColor(0xbb, 0x9c, 0x5e); // a touch darker than paper
-	const uint32 cFloorSeen = fmt.RGBToColor(0xc7, 0xb1, 0x80);
-	const uint32 cGrid = fmt.RGBToColor(0x8a, 0x70, 0x38);
-	const uint32 cWall = fmt.RGBToColor(0x2c, 0x1e, 0x10);
-	const uint32 cWallSeen = fmt.RGBToColor(0x8a, 0x73, 0x4a);
-	const uint32 cDoor = fmt.RGBToColor(0x7a, 0x4a, 0x1c);
-	const uint32 cStair = fmt.RGBToColor(0x3f, 0x7a, 0x3a);
-	const uint32 cTele = fmt.RGBToColor(0x5f, 0x5f, 0xca);
-	const uint32 cPlate = fmt.RGBToColor(0x9b, 0x6c, 0x2e);
-	const uint32 cPit = fmt.RGBToColor(0x6c, 0x6e, 0x80);
-	const uint32 cLever = fmt.RGBToColor(0x9a, 0x2d, 0x2d);
-	const uint32 cInteractive = fmt.RGBToColor(0x9a, 0x4d, 0xad);
-	const uint32 cNiche = fmt.RGBToColor(0x8a, 0x5a, 0x1c);
-	const uint32 cParty = fmt.RGBToColor(0xa8, 0x28, 0x1c);
-	const uint32 cPartyEdge = fmt.RGBToColor(0x5a, 0x14, 0x0e);
-	const uint32 cPlaqueBg = fmt.RGBToColor(0x1c, 0x1a, 0x16);
-	const uint32 cPlaqueEd = fmt.RGBToColor(0x0d, 0x0c, 0x0a);
-	const uint32 cGold = fmt.RGBToColor(0xf0, 0xc8, 0x50);
-	const uint32 cGoldDim = fmt.RGBToColor(0xb8, 0x92, 0x3a);
-	const uint32 cPanelTxt = fmt.RGBToColor(0xd8, 0xc8, 0xa8);
-
-	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const int fh = bigFont ? bigFont->getFontHeight() : 8;
-	const int sc = CLIP<int>(oh / 320, 1, 3); // base side-panel text scale
-	const int mpad = MAX(8, L.mapW / 40);
-
-	// (Re)build the cached map background on an overlay resize.
-	if (_automapBg->w != ow || _automapBg->h != oh) {
-		_automapBg->free();
-		_automapBg->create(ow, oh, fmt);
-		_automapFrame->free();
-		_automapFrame->create(ow, oh, fmt);
-		Graphics::Surface &bg = *_automapBg;
-
-		bg.fillRect(Common::Rect(0, 0, ow, oh), cStone);
-		automapNoise(bg, 0, 0, ow, oh, cStoneHi, cStoneEdge, 0x9e3779b9u);
-		automapBevel(bg, Common::Rect(0, 0, ow, oh), cStoneHi, cStoneEdge);
-		automapBevel(bg, Common::Rect(2, 2, ow - 2, oh - 2), cStone, cStoneEdge);
-		const int rv = MAX(2, L.frame / 4);
-		const int ri = L.frame / 2;
-		automapRivet(bg, ri, ri, rv, cStoneEdge, cStoneHi, cRivet);
-		automapRivet(bg, ow - ri, ri, rv, cStoneEdge, cStoneHi, cRivet);
-		automapRivet(bg, ri, oh - ri, rv, cStoneEdge, cStoneHi, cRivet);
-		automapRivet(bg, ow - ri, oh - ri, rv, cStoneEdge, cStoneHi, cRivet);
-
-		const Common::Rect mr(L.mapX, L.mapY, L.mapX + L.mapW, L.mapY + L.mapH);
-		bg.fillRect(mr, cPaperEdge);
-		bg.fillRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), cPaper);
-		automapNoise(bg, mr.left + 2, mr.top + 2, L.mapW - 4, L.mapH - 4, cPaperHi, cPaperLo, 0x85ebca6bu);
-		bg.frameRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), cInkSoft);
-		bg.frameRect(Common::Rect(mr.left + 5, mr.top + 5, mr.right - 5, mr.bottom - 5), cInk);
-		bg.hLine(L.mapX + mpad, L.footY, L.mapX + L.mapW - mpad, cInkSoft);
-
-		const Common::Rect sr(L.sideX, L.sideY, L.sideX + L.sideW, L.sideY + L.sideH);
-		bg.fillRect(sr, cStoneDark);
-		automapNoise(bg, sr.left, sr.top, L.sideW, L.sideH, cStoneHi, cStoneEdge, 0xc2b2ae35u);
-		automapBevel(bg, sr, cStoneEdge, cStoneHi);
-
-		// Plaque face
-		bg.fillRect(Common::Rect(L.plX, L.plY, L.plX + L.plW, L.plY + L.plH), cPlaqueEd);
-		bg.fillRect(Common::Rect(L.plX + 2, L.plY + 2, L.plX + L.plW - 2, L.plY + L.plH - 2), cPlaqueBg);
-
-		const int lx = L.plX, colW = L.plW;
-		const int rowH = fh * sc + MAX(4, sc * 4);
-		int cyy = L.plY + L.plH + MAX(8, sc * 6);
-
-		automapDrawBigString(bg, bigFont, _legendStrings[0], lx, cyy, colW, cGoldDim, sc);
-		cyy += fh * sc + MAX(4, sc * 3);
-		bg.hLine(lx, cyy, lx + colW - 1, cStoneHi);
-		bg.hLine(lx, cyy + 1, lx + colW - 1, cStoneEdge);
-		cyy += MAX(6, sc * 4);
-
-		// TODO: Move legend out of these braces and redraw it with only the icons that are actually
-		// needed for the current level map (to make it less crowded, same way it is done for LOL).
-		const int isz = MAX(6, fh * sc);
-		for (int i = 0; i < 11; ++i) {
-			const int ix = lx, iy = cyy;
-			switch (i) {
-			case 0: // party (up)
-				automapFillTri(bg, ix + isz / 2, iy, ix + isz, iy + isz, ix, iy + isz, cParty);
-				break; 
-			case 1: // stairs up
-				automapFillTri(bg, ix, iy + isz, ix + isz, iy + isz, ix + isz / 2, iy, cStair);
-				break;
-			case 2: // stairs down
-				automapFillTri(bg, ix, iy, ix + isz, iy, ix + isz / 2, iy + isz, cStair);
-				break;
-			case 3: // teleporter
-				for (int ii = 0; ii < isz / 2 - sc; ++ii) {
-					bg.drawLine(ix + sc + ii, iy + isz / 2 - ii, ix + isz - sc - ii, iy + isz / 2 - ii, cTele);
-					bg.drawLine(ix + sc + ii, iy + isz / 2 + ii, ix + isz - sc - ii, iy + isz / 2 + ii, cTele);
-				}
-				break; 
-			case 4: // pit
-				bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, cPit, true);
-				break;
-			case 5: // plate
-				bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, cPlate, true);
-				break; 
-			case 6: // door
-				bg.fillRect(Common::Rect(ix, iy + isz / 3, ix + isz, iy + isz - isz / 3), cDoor);
-				break;
-			case 7: { // illusionary wall
-				bg.fillRect(Common::Rect(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc), cFloor);
-				int step = ((isz - 2 * sc) << 8) / 5;
-				for (int g = 0; g < 5; ++g) {
-					bg.drawLine(ix + sc + (step * g >> 8), iy + sc, ix + sc + (step * g >> 8), iy + isz - sc, cWall);
-					bg.drawLine(ix + sc, iy + sc + (step * g >> 8), ix + isz - sc, iy + sc + (step * g >> 8), cWall);
-				}
-			}	break;
-			case 8:
-				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), cLever);
-				break;
-			case 9:
-				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), cInteractive);
-				break;
-			case 10:
-				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), cNiche);
-				break; // niche
-			default:
-				break;
-			}
-			const int tx = lx + isz + MAX(4, sc * 2);
-			const int tw = colW - isz - MAX(4, sc * 2);
-			const int lsc = automapFit(bigFont, _legendStrings[i + 1], tw, sc);
-			automapDrawBigString(bg, bigFont, _legendStrings[i + 1], tx, iy + (isz - fh * lsc) / 2, tw, cPanelTxt, lsc, Graphics::kTextAlignLeft);
-			cyy += rowH;
-		}
-
-		cyy += MAX(6, sc * 5);
-		automapDrawBigString(bg, bigFont, _controlStrings[0], lx, cyy, colW, cGoldDim, sc);
-		cyy += fh * sc + MAX(4, sc * 3);
-		bg.hLine(lx, cyy, lx + colW - 1, cStoneHi);
-		bg.hLine(lx, cyy + 1, lx + colW - 1, cStoneEdge);
-		cyy += MAX(6, sc * 4);
-		const int chipPad = MAX(2, sc * 2);
-		const int chipW = (bigFont ? bigFont->getStringWidth("Up/Down") * sc : 6 * sc) + chipPad * 2;	// TODO: Use actual up/down arrow symbols. Our font doesn't have these.
-		const int chipH = fh * sc + chipPad;
-		bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), cPlaqueEd);
-		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), cPlaqueBg);
-		automapDrawBigString(bg, bigFont, "Up/Down", lx, cyy + chipPad / 2, chipW, cGold, sc);			// TODO: see above
-		automapDrawBigString(bg, bigFont, _controlStrings[1], lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2,
-							 colW - chipW - MAX(4, sc * 3), cPanelTxt, sc, Graphics::kTextAlignLeft);
-	}
+	// Redraw the map background on an overlay resize.
+	if (_automapBg->w != ow || _automapBg->h != oh)
+		redrawBackground(l, ow, oh);
 
 	Graphics::Surface &surf = *_automapFrame;
 	surf.copyRectToSurface(*_automapBg, 0, 0, Common::Rect(0, 0, ow, oh));
 
-	const int cell = L.cell;
-	const int offX = L.offX;
-	const int offY = L.offY;
+	const int cell = l.cell;
+	const int offX = l.offX;
+	const int offY = l.offY;
 	const int wt = MAX(2, cell / 5);
 
 	for (int by = 0; by < 32; ++by) {
@@ -563,12 +412,12 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			if (doorEW)
 				wall[1] = wall[3] = false;
 
-			surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + cell), visited ? cFloor : cFloorSeen);
+			surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + cell), _colors[visited ? kColorFloor : kColorFloorSeen]);
 			if (visited) {
-				surf.hLine(sx, sy, sx + cell - 1, cGrid);
-				surf.vLine(sx, sy, sy + cell - 1, cGrid);
+				surf.hLine(sx, sy, sx + cell - 1, _colors[kColorGrid]);
+				surf.vLine(sx, sy, sy + cell - 1, _colors[kColorGrid]);
 			}
-			const uint32 wc = visited ? cWall : cWallSeen;
+			const uint32 wc = _colors[visited ? kColorWall : kColorWallSeen];
 			if (wall[0])
 				surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + wt), wc);
 			if (wall[1])
@@ -584,9 +433,9 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 				const int dm = MAX(1, cell / 5);
 				const int dcx = sx + cell / 2, dcy = sy + cell / 2;
 				if (doorNS)
-					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), cDoor);
+					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), _colors[kColorDoor]);
 				if (doorEW)
-					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), cDoor);
+					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), _colors[kColorDoor]);
 			}
 
 			// Interactive/clickable walls (lever, niche, banner, etc.)
@@ -617,7 +466,7 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 						continue;
 				}
 
-				const uint32 pcol = (st == 10) ? cNiche : (st == 1 || st == 3 || st == 4) ? cLever : cInteractive;
+				const uint32 pcol = _colors[(st == 10) ? kColorNiche : (st == 1 || st == 3 || st == 4) ? kColorLever : kColorInteractive];
 				const int ps = MAX(2, cell / 4);
 				int px, py;
 				switch (d) {
@@ -642,41 +491,41 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 			}
 
 			// TODO: The icons could all be pregenerated instead of individually rendering them each time.
-			auto drawIcon = [cInteractive, cFloor, wc, cPlate, cPit, cStair, cTele](Graphics::Surface *sr, int ix, int iy, int cel, uint8 icon) {
-				const int cx = ix + cel / 2;
-				const int cy = iy + cel / 2;
-				const int r = MAX(2, cel / 3);
+			auto drawIcon = [&surf, cell](int ix, int iy, uint8 icon, const uint32 *colTable) {
+				const int cx = ix + cell / 2;
+				const int cy = iy + cell / 2;
+				const int r = MAX(2, cell / 3);
 				const int margin = r * 4 / 5;
-				const int step = (cel << 8) / 5;
+				const int step = (cell << 8) / 5;
 				switch (icon) {
 				case 0:
 					for (int i = 0; i < margin; ++i) {
-						sr->drawLine(cx - margin + i, cy - i, cx + margin - i, cy - i , cTele);
-						sr->drawLine(cx - margin + i, cy + i, cx + margin - i , cy + i, cTele);
+						surf.drawLine(cx - margin + i, cy - i, cx + margin - i, cy - i, colTable[kColorTele]);
+						surf.drawLine(cx - margin + i, cy + i, cx + margin - i , cy + i, colTable[kColorTele]);
 					}
 					break;
 				case 1:
 				case 2:
 					for (int pos = 0, g = 0; g < 5; ++g, pos += step) {
-						sr->drawLine(ix + (pos >> 8), iy, ix + (pos >> 8), iy + cel, wc);
-						sr->drawLine(ix, iy + (pos >> 8), ix + cel, iy + (pos >> 8), wc);
+						surf.drawLine(ix + (pos >> 8), iy, ix + (pos >> 8), iy + cell, colTable[kColorWall]);
+						surf.drawLine(ix, iy + (pos >> 8), ix + cell, iy + (pos >> 8), colTable[kColorWall]);
 					}
 					break;
 				case 3:
-					automapFillTri(*sr, cx - r, cy + r, cx + r, cy + r, cx, cy - r, cStair);
+					automapFillTri(surf, cx - r, cy + r, cx + r, cy + r, cx, cy - r, colTable[kColorStair]);
 					break;
 				case 4:
-					automapFillTri(*sr, cx - r, cy - r, cx + r, cy - r, cx, cy + r, cStair);
+					automapFillTri(surf, cx - r, cy - r, cx + r, cy - r, cx, cy + r, colTable[kColorStair]);
 					break;
 				case 5:
-					sr->drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, cPit, true);
+					surf.drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, colTable[kColorPit], true);
 					break;
 				case 6:
 				case 7:
-					sr->drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, cPlate, true);
+					surf.drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, colTable[kColorPlate], true);
 					break;
 				case 9:
-					sr->fillRect(Common::Rect(cx - margin, cy - margin, cx + margin, cy + margin), cInteractive);
+					surf.fillRect(Common::Rect(cx - margin, cy - margin, cx + margin, cy + margin), colTable[kColorInteractive]);
 					break;
 				default:
 					break;
@@ -693,13 +542,13 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 						++cn;
 				}
 				if (cn >= 2)
-					drawIcon(&surf, sx, sy, cell, 9);
+					drawIcon(sx, sy, 9, _colors);
 			} else {
 				// Special blocks: teleporter, illusionary wall, pressure plate, pit, stairs up/down
 				for (int i = 0; i < _numSpecialBlockIDs; ++i) {
 					uint8 s = _specialBlockIDs[i]; // order: teleporter, illusion1, illusion2, stairsUp, stairsDown, pit, plate1, plate2
 					if (bp->walls[0] == s || bp->walls[1] == s || bp->walls[2] == s || bp->walls[3] == s)
-						drawIcon(&surf, sx, sy, cell, i);
+						drawIcon(sx, sy, i, _colors);
 				}
 			}
 		}
@@ -746,43 +595,46 @@ void Automap_EoB::draw(EoBCoreEngine *vm) {
 		l2Y = cyp + b;
 		break;
 	}
-	automapFillTri(surf, tipX, tipY, l1X, l1Y, l2X, l2Y, cPartyEdge);
+	automapFillTri(surf, tipX, tipY, l1X, l1Y, l2X, l2Y, _colors[kColorPartyEdge]);
 	const int gx = (tipX + l1X + l2X) / 3, gy = (tipY + l1Y + l2Y) / 3;
 	automapFillTri(surf,
 				   tipX + (gx - tipX) / 4, tipY + (gy - tipY) / 4,
 				   l1X + (gx - l1X) / 4, l1Y + (gy - l1Y) / 4,
-				   l2X + (gx - l2X) / 4, l2Y + (gy - l2Y) / 4, cParty);
+				   l2X + (gx - l2X) / 4, l2Y + (gy - l2Y) / 4, _colors[kColorParty]);
 
+
+	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	const int fh = bigFont ? bigFont->getFontHeight() : 8;
+	const int sc = CLIP<int>(ow / 320, 1, 3);
+	const int mpad = MAX(8, l.mapW / 40);
 
 	if (bigFont) {
 		const uint16 cb = (vm->_currentBlock != 0xFFFF) ? vm->_currentBlock : 0;
 		const Common::String lvl = _levelNames[vm->_currentLevel - 1];
 		const Common::String crd = Common::String::format("X %d   Y %d", cb & 0x1F, cb >> 5);
 		const int pm = MAX(3, sc * 2);
-		const int innerW = L.plW - 2 * pm;
-		const int innerH = L.plH - 2 * pm;
+		const int innerW = l.plW - 2 * pm;
+		const int innerH = l.plH - 2 * pm;
 		const int gap = MAX(2, innerH / 12);
 		const int lvlBand = (innerH - gap) * 6 / 10; 
 		const int crdBand = (innerH - gap) - lvlBand;
 		const int lvlSc = automapFit(bigFont, lvl, innerW, MAX(1, lvlBand / fh));
 		const int crdSc = automapFit(bigFont, crd, innerW, MAX(1, crdBand / fh));
-		const int lvlY = L.plY + pm + (lvlBand - fh * lvlSc) / 2;
-		const int crdY = L.plY + pm + lvlBand + gap + (crdBand - fh * crdSc) / 2;
-		automapDrawBigString(surf, bigFont, lvl, L.plX, lvlY, L.plW, cGold, lvlSc);
-		automapDrawBigString(surf, bigFont, crd, L.plX, crdY, L.plW, cPanelTxt, crdSc);
-	}
-
-	if (bigFont) {
+		const int lvlY = l.plY + pm + (lvlBand - fh * lvlSc) / 2;
+		const int crdY = l.plY + pm + lvlBand + gap + (crdBand - fh * crdSc) / 2;
+		automapDrawBigString(surf, bigFont, lvl, l.plX, lvlY, l.plW, _colors[kColorGold], lvlSc);
+		automapDrawBigString(surf, bigFont, crd, l.plX, crdY, l.plW, _colors[kColorPanelTxt], crdSc);
+	
 		// Footer: TODO? We could write something? Or just leave it blank?
 		Common::String foot;
 		if (!foot.empty()) {
-			const int footH = (L.mapY + L.mapH) - L.footY;
+			const int footH = (l.mapY + l.mapH) - l.footY;
 			const int fpad = MAX(2, footH / 6);
 			const int maxFsc = MAX(1, (footH - 2 * fpad) / fh);
-			const int fw = L.mapW - 2 * mpad;
+			const int fw = l.mapW - 2 * mpad;
 			const int fsc = MIN(automapFit(bigFont, foot, fw, sc), maxFsc);
-			const int fy = L.footY + (footH - fh * fsc) / 2;
-			automapDrawBigString(surf, bigFont, foot, L.mapX + mpad, fy, fw, cInk, fsc, Graphics::kTextAlignLeft);
+			const int fy = l.footY + (footH - fh * fsc) / 2;
+			automapDrawBigString(surf, bigFont, foot, l.mapX + mpad, fy, fw, _colors[kColorInk], fsc, Graphics::kTextAlignLeft);
 		}
 	}
 
@@ -833,6 +685,172 @@ Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
 uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
 	static const int16 blockPosTable[] = {-32, 1, 32, -1};
 	return (block + blockPosTable[dir & 3]) & 0x3FF;
+}
+
+void Automap_EoB::createColors() {
+	static const uint8 rgbTable[31][3] = {
+		{ 0x54, 0x56, 0x5e },  // stone
+		{ 0x3c, 0x3e, 0x45 },  // stone dark
+		{ 0x23, 0x25, 0x2a },  // stone edge
+		{ 0x6b, 0x6e, 0x78 },  // stone hi
+		{ 0xc2, 0xc5, 0xcd },  // rivet
+		{ 0xd6, 0xbf, 0x94 },  // paper
+		{ 0xe2, 0xcd, 0xa4 },  // paper hi
+		{ 0xc4, 0xab, 0x78 },  // paper lo
+		{ 0xa9, 0x8b, 0x56 },  // paper edge
+		{ 0x3a, 0x2a, 0x18 },  // ink
+		{ 0x7a, 0x60, 0x38 },  // ink soft
+		{ 0xbb, 0x9c, 0x5e },  // floor
+		{ 0xc7, 0xb1, 0x80 },  // floor seen
+		{ 0x8a, 0x70, 0x38 },  // grid
+		{ 0x2c, 0x1e, 0x10 },  // wall
+		{ 0x8a, 0x73, 0x4a },  // wall seen
+		{ 0x7a, 0x4a, 0x1c },  // door
+		{ 0x3f, 0x7a, 0x3a },  // stair
+		{ 0x5f, 0x5f, 0xca },  // tele
+		{ 0x9b, 0x6c, 0x2e },  // plate
+		{ 0x6c, 0x6e, 0x80 },  // pit
+		{ 0x9a, 0x2d, 0x2d },  // lever
+		{ 0x9a, 0x4d, 0xad },  // interactive
+		{ 0x8a, 0x5a, 0x1c },  // niche
+		{ 0xa8, 0x28, 0x1c },  // party
+		{ 0x5a, 0x14, 0x0e },  // party edge
+		{ 0x1c, 0x1a, 0x16 },  // plaque bg
+		{ 0x0d, 0x0c, 0x0a },  // plaque ed
+		{ 0xf0, 0xc8, 0x50 },  // gold
+		{ 0xb8, 0x92, 0x3a },  // gold dim
+		{ 0xd8, 0xc8, 0xa8 }   // panel text
+	};
+
+	Graphics::PixelFormat fmt = _system->getOverlayFormat();
+
+	uint32 *colors = new uint32[kNumColors]();
+	for (int i = 0; i < kNumColors; ++i)
+		colors[i] = fmt.RGBToColor(rgbTable[i][0], rgbTable[i][1], rgbTable[i][2]);
+	_colors = colors;
+}
+
+void Automap_EoB::redrawBackground(const AutomapLayout &l, int width, int height) {
+	const Graphics::PixelFormat fmt = _system->getOverlayFormat();
+	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	const int fh = bigFont ? bigFont->getFontHeight() : 8;
+	const int sc = CLIP<int>(width / 320, 1, 3);
+	const int mpad = MAX(8, l.mapW / 40);
+
+	_automapBg->free();
+	_automapBg->create(width, height, fmt);
+	_automapFrame->free();
+	_automapFrame->create(width, height, fmt);
+	Graphics::Surface &bg = *_automapBg;
+
+	bg.fillRect(Common::Rect(0, 0, width, height), _colors[kColorStone]);
+	automapNoise(bg, 0, 0, width, height, _colors[kColorStoneHi], _colors[kColorStoneEdge], 0x9e3779b9u);
+		automapBevel(bg, Common::Rect(0, 0, width, height), _colors[kColorStoneHi], _colors[kColorStoneEdge]);
+		automapBevel(bg, Common::Rect(2, 2, width - 2, height - 2), _colors[kColorStone], _colors[kColorStoneEdge]);
+		const int rv = MAX(2, l.frame / 4);
+		const int ri = l.frame / 2;
+		automapRivet(bg, ri, ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
+		automapRivet(bg, width - ri, ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
+		automapRivet(bg, ri, height - ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
+		automapRivet(bg, width - ri, height - ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
+
+		const Common::Rect mr(l.mapX, l.mapY, l.mapX + l.mapW, l.mapY + l.mapH);
+		bg.fillRect(mr, _colors[kColorPaperEdge]);
+		bg.fillRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), _colors[kColorPaper]);
+		automapNoise(bg, mr.left + 2, mr.top + 2, l.mapW - 4, l.mapH - 4, _colors[kColorPaperHi], _colors[kColorPaperLo], 0x85ebca6bu);
+		bg.frameRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), _colors[kColorInkSoft]);
+		bg.frameRect(Common::Rect(mr.left + 5, mr.top + 5, mr.right - 5, mr.bottom - 5), _colors[kColorInk]);
+		bg.hLine(l.mapX + mpad, l.footY, l.mapX + l.mapW - mpad, _colors[kColorInkSoft]);
+
+		const Common::Rect sr(l.sideX, l.sideY, l.sideX + l.sideW, l.sideY + l.sideH);
+		bg.fillRect(sr, _colors[kColorStoneDark]);
+		automapNoise(bg, sr.left, sr.top, l.sideW, l.sideH, _colors[kColorStoneHi], _colors[kColorStoneEdge], 0xc2b2ae35u);
+		automapBevel(bg, sr, _colors[kColorStoneEdge], _colors[kColorStoneHi]);
+
+		// Plaque face
+		bg.fillRect(Common::Rect(l.plX, l.plY, l.plX + l.plW, l.plY + l.plH), _colors[kColorPlaqueEd]);
+		bg.fillRect(Common::Rect(l.plX + 2, l.plY + 2, l.plX + l.plW - 2, l.plY + l.plH - 2), _colors[kColorPlaqueBg]);
+
+		const int lx = l.plX, colW = l.plW;
+		const int rowH = fh * sc + MAX(4, sc * 4);
+		int cyy = l.plY + l.plH + MAX(8, sc * 6);
+
+		automapDrawBigString(bg, bigFont, _legendStrings[0], lx, cyy, colW, _colors[kColorGoldDim], sc);
+		cyy += fh * sc + MAX(4, sc * 3);
+		bg.hLine(lx, cyy, lx + colW - 1, _colors[kColorStoneHi]);
+		bg.hLine(lx, cyy + 1, lx + colW - 1, _colors[kColorStoneEdge]);
+		cyy += MAX(6, sc * 4);
+
+		// TODO: Move legend out of here and redraw it with only the icons that are actually
+		// needed for the current level map (to make it less crowded, the same way it is done for LOL).
+		const int isz = MAX(6, fh * sc);
+		for (int i = 0; i < 11; ++i) {
+			const int ix = lx, iy = cyy;
+			switch (i) {
+			case 0: // party (up)
+				automapFillTri(bg, ix + isz / 2, iy, ix + isz, iy + isz, ix, iy + isz, _colors[kColorParty]);
+				break;
+			case 1: // stairs up
+				automapFillTri(bg, ix, iy + isz, ix + isz, iy + isz, ix + isz / 2, iy, _colors[kColorStair]);
+				break;
+			case 2: // stairs down
+				automapFillTri(bg, ix, iy, ix + isz, iy, ix + isz / 2, iy + isz, _colors[kColorStair]);
+				break;
+			case 3: // teleporter
+				for (int ii = 0; ii < isz / 2 - sc; ++ii) {
+					bg.drawLine(ix + sc + ii, iy + isz / 2 - ii, ix + isz - sc - ii, iy + isz / 2 - ii, _colors[kColorTele]);
+					bg.drawLine(ix + sc + ii, iy + isz / 2 + ii, ix + isz - sc - ii, iy + isz / 2 + ii, _colors[kColorTele]);
+				}
+				break;
+			case 4: // pit
+				bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, _colors[kColorPit], true);
+				break;
+			case 5: // plate
+				bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, _colors[kColorPlate], true);
+				break;
+			case 6: // door
+				bg.fillRect(Common::Rect(ix, iy + isz / 3, ix + isz, iy + isz - isz / 3), _colors[kColorDoor]);
+				break;
+			case 7: { // illusionary wall
+				bg.fillRect(Common::Rect(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc), _colors[kColorFloor]);
+				int step = ((isz - 2 * sc) << 8) / 5;
+				for (int g = 0; g < 5; ++g) {
+					bg.drawLine(ix + sc + (step * g >> 8), iy + sc, ix + sc + (step * g >> 8), iy + isz - sc, _colors[kColorWall]);
+					bg.drawLine(ix + sc, iy + sc + (step * g >> 8), ix + isz - sc, iy + sc + (step * g >> 8), _colors[kColorWall]);
+				}
+			} break;
+			case 8:
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorLever]);
+				break;
+			case 9:
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorInteractive]);
+				break;
+			case 10:
+				bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorNiche]);
+				break; // niche
+			default:
+				break;
+			}
+			const int tx = lx + isz + MAX(4, sc * 2);
+			const int tw = colW - isz - MAX(4, sc * 2);
+			const int lsc = automapFit(bigFont, _legendStrings[i + 1], tw, sc);
+			automapDrawBigString(bg, bigFont, _legendStrings[i + 1], tx, iy + (isz - fh * lsc) / 2, tw, _colors[kColorPanelTxt], lsc, Graphics::kTextAlignLeft);
+			cyy += rowH;
+		}
+
+		cyy += MAX(6, sc * 5);
+		automapDrawBigString(bg, bigFont, _controlStrings[0], lx, cyy, colW, _colors[kColorGoldDim], sc);
+		cyy += fh * sc + MAX(4, sc * 3);
+		bg.hLine(lx, cyy, lx + colW - 1, _colors[kColorStoneHi]);
+		bg.hLine(lx, cyy + 1, lx + colW - 1, _colors[kColorStoneEdge]);
+		cyy += MAX(6, sc * 4);
+		const int chipPad = MAX(2, sc * 2);
+		const int chipW = (bigFont ? bigFont->getStringWidth("Up/Down") * sc : 6 * sc) + chipPad * 2; // TODO: Use actual up/down arrow symbols. Our font doesn't have these.
+		const int chipH = fh * sc + chipPad;
+		bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), _colors[kColorPlaqueEd]);
+		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
+		automapDrawBigString(bg, bigFont, "Up/Down", lx, cyy + chipPad / 2, chipW, _colors[kColorGold], sc); // TODO: see above
+		automapDrawBigString(bg, bigFont, _controlStrings[1], lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2, colW - chipW - MAX(4, sc * 3), _colors[kColorPanelTxt], sc, Graphics::kTextAlignLeft);
 }
 
 int EoBCoreEngine::clickedAutomap(Button *button) {

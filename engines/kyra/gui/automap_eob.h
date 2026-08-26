@@ -74,6 +74,8 @@ private:
 
 	AutomapLayout createLayout() const;
 	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
+	void createColors();
+	void redrawBackground(const AutomapLayout &l, int width, int height);
 
 	bool _visible;
 
@@ -94,6 +96,45 @@ private:
 	OSystem *_system;
 	Graphics::Surface *_automapBg;
 	Graphics::Surface *_automapFrame;
+
+private:
+	// Colors
+	enum ColorIndex {
+		kColorStone,
+		kColorStoneDark,
+		kColorStoneEdge,
+		kColorStoneHi,
+		kColorRivet,
+		kColorPaper,
+		kColorPaperHi,
+		kColorPaperLo,
+		kColorPaperEdge,
+		kColorInk,
+		kColorInkSoft,
+		kColorFloor,
+		kColorFloorSeen,
+		kColorGrid,
+		kColorWall,
+		kColorWallSeen,
+		kColorDoor,
+		kColorStair,
+		kColorTele,
+		kColorPlate,
+		kColorPit,
+		kColorLever,
+		kColorInteractive,
+		kColorNiche,
+		kColorParty,
+		kColorPartyEdge,
+		kColorPlaqueBg,
+		kColorPlaqueEd,
+		kColorGold,
+		kColorGoldDim,
+		kColorPanelTxt,
+		kNumColors
+	};
+
+	const uint32 *_colors;
 };
 
 } // End of namespace Kyra
