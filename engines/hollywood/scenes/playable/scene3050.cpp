@@ -403,7 +403,7 @@ void Scene3050::updateForegroundActorIdleSpeech(uint32 delta) {
 	if (!_foregroundActorIdleSpeechActive)
 		return;
 
-	if (_speechOverlay.visible || _actionOverlayVisible || _actorPathPlaybackActive) {
+	if (_speechOverlay.visible || _actionOverlayPlayer.isVisible() || _actorPathPlaybackActive) {
 		finishForegroundActorIdleSpeech();
 		return;
 	}
@@ -416,7 +416,7 @@ void Scene3050::updateForegroundActorIdleSpeech(uint32 delta) {
 bool Scene3050::canStartForegroundActorIdleSpeech() const {
 	return !_foregroundActorIdleSpeechActive && !_speech.isPlaying() &&
 		!_speechOverlay.visible && !_primarySpeechOverlay.visible &&
-		!_actionOverlayVisible && !_actorPathPlaybackActive &&
+		!_actionOverlayPlayer.isVisible() && !_actorPathPlaybackActive &&
 		!_foregroundActorManualSequenceActive && !_dialogueMenuActive;
 }
 

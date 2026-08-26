@@ -162,11 +162,6 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_primaryDialogueSpeechTimerAccumulator(_speechController.primaryDialogueSpeechTimerAccumulator),
 		_secondaryActorFrame(_speechController.secondaryActorFrame),
 		_actionOverlayPlayer(),
-		_actionOverlayVisible(_actionOverlayPlayer.visible),
-		_actionOverlayLayer(_actionOverlayPlayer.layer),
-		_actionOverlayChunkIndex(_actionOverlayPlayer.chunkIndex),
-		_actionOverlayDescriptorCount(_actionOverlayPlayer.descriptorCount),
-		_actionOverlayFrameIndex(_actionOverlayPlayer.frameIndex),
 		_hideActiveActor(_actionOverlayPlayer.hideActiveActor),
 		_ambientMusicTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
@@ -525,7 +520,7 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 }
 
 bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayVisible;
+	return _speechOverlay.visible && !_actionOverlayPlayer.isVisible();
 }
 
 bool PlayableScene::shouldApplyGameplayPanelObjectPalette() const {
@@ -596,11 +591,6 @@ bool PlayableScene::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(100);
-}
-
-void PlayableScene::handleActionOverlayFrameHook(byte hookId, uint frame) {
-	(void)hookId;
-	(void)frame;
 }
 
 void PlayableScene::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -1253,15 +1243,7 @@ bool PlayableScene::playAnimationFrames(SceneAnimationLayers &layers, uint layer
 }
 
 void PlayableScene::drawActionOverlayLayer() {
-	if (_actionOverlayLayer.visible) {
-		drawResourceSpriteLayer(_actionOverlayLayer);
-		return;
-	}
-
-	if (_actionOverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-	}
+	drawResourceSpriteLayer(_actionOverlayPlayer.layer);
 }
 
 void PlayableScene::drawClipFrameDeltaFromResource(const Common::Array<byte> &resource,
@@ -2063,15 +2045,28 @@ void PlayableScene::presentDialogueMenuFrame(const DialogueMenuState &state) {
 	presentFrame(nullptr, nullptr, &state);
 }
 
-void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+void PlayableScene::runActorReplacement(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis));
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis));
 }
 
-void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec) {
+void PlayableScene::runActorReplacement(const ActionOverlaySpec &spec) {
+	runActionOverlay(spec, kSceneAnimationActorReplacement);
+}
+
+void PlayableScene::runSceneOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis) {
+	runSceneOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis));
+}
+
+void PlayableScene::runSceneOverlay(const ActionOverlaySpec &spec) {
+	runActionOverlay(spec, kSceneAnimationInFrontOfActors);
+}
+
+void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum) {
 	const ActionOverlayOptions &options = spec.options;
-	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(options.actorVisibility);
-	_actionOverlayPlayer.begin(spec.chunkIndex, spec.descriptorCount, spec.frameMap, spec.frameMapSize);
+	const bool previousHideActiveActor = _actionOverlayPlayer.begin(spec.chunkIndex,
+		spec.descriptorCount, spec.frameMap, spec.frameMapSize, stratum);
 
 	const uint firstFrame = MIN<uint>(options.firstFrame, spec.frameMapSize);
 	const uint requestedEndFrame = options.endFrame == 0 ? spec.frameMapSize : options.endFrame;
@@ -2083,7 +2078,7 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec) {
 		if (options.soundFrame >= 0 && (int)frame == options.soundFrame)
 			_soundBank0.playSample(options.soundId, options.soundVolumePercent);
 		if (options.hookId != 0 && (options.hookFrame < 0 || (int)frame == options.hookFrame))
-			handleActionOverlayFrameHook(options.hookId, frame);
+			handleAnimationFrameHook(options.hookId, frame);
 		if (waitSceneMillis(spec.frameMillis))
 			break;
 	}
@@ -2093,16 +2088,6 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec) {
 		drawPlayableComposite();
 		presentFrame();
 	}
-}
-
-void PlayableScene::runHiddenActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis).hideActor());
-}
-
-void PlayableScene::runVisibleActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis).showActor());
 }
 
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {

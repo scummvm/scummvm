@@ -659,9 +659,8 @@ void Scene3060::runRedButtonSequence() {
 void Scene3060::runSecretDoorReveal() {
 	_soundBank0.playSample(0x10, 100);
 	_secretDoorRevealActive = true;
-	runActionOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
+	runSceneOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
 		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap), kScene3060SecretDoorFrameMillis)
-		.showActor()
 		.noRedrawAtEnd());
 	_secretDoorRevealActive = false;
 	_soundBank0.stop();

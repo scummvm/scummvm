@@ -286,7 +286,7 @@ AmbientAudioProfile Scene8020::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x12, 6, 50, 1, 0x0c, 1, 100, 50);
 }
 
-void Scene8020::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene8020::handleAnimationFrameHook(byte hookId, uint frame) {
 	GameplayState &state = _vm->gameState();
 	if (hookId == kScene8020OverlayHookPickup6c && frame == 3) {
 		if (_sceneChunkTable.isValidChunk(kScene8020Pickup6cPatchChunk))
@@ -427,9 +427,8 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 	_foregroundRepeatCount = 0;
 	_soundBank0.stop();
 
-	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Pickup6cFrameMap, ARRAYSIZE(kScene8020Pickup6cFrameMap), kScene8020FrameMillis)
-		.hideActor()
 		.hookAt(3, kScene8020OverlayHookPickup6c));
 
 	addInventoryItem(kScene8020InventoryItem6c);
@@ -439,9 +438,8 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 }
 
 void Scene8020::runPickupInventoryItem5dSequence() {
-	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
 		kScene8020Pickup5dFrameMap, ARRAYSIZE(kScene8020Pickup5dFrameMap), kScene8020FrameMillis)
-		.hideActor()
 		.hookAt(6, kScene8020OverlayHookPickup5d));
 
 	addInventoryItem(kScene8020InventoryItem5d);
@@ -452,9 +450,8 @@ void Scene8020::runPickupInventoryItem5dSequence() {
 }
 
 void Scene8020::runRemoveInventoryItem6cSequence() {
-	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
-		.hideActor()
 		.hookAt(4, kScene8020OverlayHookRemove6c));
 
 	removeInventoryItem(kScene8020InventoryItem6c);
@@ -468,9 +465,8 @@ void Scene8020::runForegroundTransformationSequence() {
 	beginSecondarySpeechLine(8, 1);
 	walkActiveActorTo(0x118, 0x00eb, 5, 0, false);
 
-	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
-		.hideActor()
 		.hookAt(4, kScene8020OverlayHookRemove6c));
 
 	_foregroundAnimationState = 2;

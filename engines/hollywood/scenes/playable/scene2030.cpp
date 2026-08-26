@@ -875,7 +875,7 @@ void Scene2030::runLeftMerchantPurchase(byte productRowId) {
 	if (price == 0xffff || _vm->gameState().ronEgyptianMoneyAmount < price)
 		return;
 
-	runHiddenActorActionOverlay(8, kScene2030LeftMerchantPurchaseDescriptorCount,
+	runActorReplacement(8, kScene2030LeftMerchantPurchaseDescriptorCount,
 		kScene2030LeftMerchantPurchaseFrameMap, ARRAYSIZE(kScene2030LeftMerchantPurchaseFrameMap),
 		kScene2030OverlayFrameMillis);
 
@@ -915,13 +915,13 @@ void Scene2030::runRightMerchantTalkSequence() {
 }
 
 void Scene2030::runRightStallTradeOverlay() {
-	runHiddenActorActionOverlay(7, kScene2030RightMerchantTradeDescriptorCount,
+	runActorReplacement(7, kScene2030RightMerchantTradeDescriptorCount,
 		kScene2030RightStallTradeFrameMap, ARRAYSIZE(kScene2030RightStallTradeFrameMap),
 		kScene2030OverlayFrameMillis);
 }
 
 void Scene2030::runRightMerchantBuyItemOverlay() {
-	runHiddenActorActionOverlay(7, kScene2030RightMerchantTradeDescriptorCount,
+	runActorReplacement(7, kScene2030RightMerchantTradeDescriptorCount,
 		kScene2030RightMerchantBuyFrameMap, ARRAYSIZE(kScene2030RightMerchantBuyFrameMap),
 		kScene2030OverlayFrameMillis);
 }

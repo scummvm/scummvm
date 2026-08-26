@@ -188,9 +188,8 @@ AmbientAudioProfile Scene5070::ambientAudioProfile() const {
 
 void Scene5070::runMineCartEntryClip() {
 	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5070MineCartDescriptorCount);
-	runActionOverlay(ActionOverlaySpec(9, kScene5070MineCartDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(9, kScene5070MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5070MineCartFrameMillis)
-		.hideActor()
 		.soundAt(0x23, 0x16));
 }
 
@@ -207,9 +206,8 @@ void Scene5070::runShovelPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
 		kScene5070ShovelPickupFrameMap, ARRAYSIZE(kScene5070ShovelPickupFrameMap), kScene5070FrameMillis)
-		.hideActor()
 		.patchAt(6, 0));
 	addInventoryItem(kScene5070ShovelInventoryItem);
 	_soundBank0.playSample(1, 100);
@@ -224,9 +222,8 @@ void Scene5070::runAviatorCapPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
-		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
+		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis));
 	addInventoryItem(kScene5070AviatorCapInventoryItem);
 	_soundBank0.playSample(1, 100);
 	state.scene5070AviatorCapState = kScene5070AviatorCapTakenState;

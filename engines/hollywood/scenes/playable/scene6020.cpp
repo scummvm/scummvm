@@ -573,9 +573,8 @@ void Scene6020::runEntryFromScene6030() {
 }
 
 void Scene6020::runSmallObjectAnimation() {
-	runActionOverlay(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
-		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility());
+	runActorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis));
 	beginSecondarySpeechLine(2, 0);
 }
 
@@ -588,9 +587,8 @@ void Scene6020::runPickupItem5A() {
 	if (_taffyAnimationState != 3)
 		return;
 
-	runActionOverlay(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
 		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility()
 		.patchAt(6, 2));
 	_taffyDeskMagnifierHidden = true;
 	addInventoryItem(kScene6020MagnifierInventoryItem);
@@ -605,9 +603,8 @@ void Scene6020::runPickupItem5B() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
 		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility()
 		.patchAt(4, 3));
 	addInventoryItem(0x5b);
 	applySceneStateToHotspotsAndPatches(3);
@@ -625,18 +622,16 @@ void Scene6020::runPickupItem5E() {
 	}
 
 	if (!_vm->gameState().scene6020TaffyLeft) {
-		runActionOverlay(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
-			kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap), kScene6020FrameMillis)
-			.keepActorVisibility());
+		runActorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+			kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap), kScene6020FrameMillis));
 		beginPrimarySpeechLine(12, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e);
 		beginSecondarySpeechLine(12, 1);
 		beginPrimarySpeechLine(12, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e);
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
 		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility()
 		.patchAt(6, 4));
 	addInventoryItem(0x5e);
 	applySceneStateToHotspotsAndPatches(4);
@@ -650,9 +645,8 @@ void Scene6020::runUseItem39Overlay() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
-		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility());
+	runActorReplacement(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
+		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap), kScene6020FrameMillis));
 	removeInventoryItem(0x39);
 	_vm->gameState().scene6030CoffeeState = 1;
 	_soundBank0.playSample(1, 100);
@@ -722,9 +716,8 @@ void Scene6020::runLateSceneObjectAnimation() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(16, kScene6020Chunk16DescriptorCount,
-		kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility());
+	runActorReplacement(ActionOverlaySpec(16, kScene6020Chunk16DescriptorCount,
+		kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap), kScene6020FrameMillis));
 	beginSecondarySpeechLine(18, 1);
 }
 
@@ -864,9 +857,8 @@ void Scene6020::runExitToScene6030() {
 	beginSecondarySpeechLine(0x0e, 2);
 	runTaffyFrameSequence(kScene6020TaffyExitOutroFrames, ARRAYSIZE(kScene6020TaffyExitOutroFrames));
 	walkActiveActorTo(0x0d3, 0x17b, 5, 0, false);
-	runActionOverlay(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
 		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis)
-		.keepActorVisibility()
 		.soundAt(ARRAYSIZE(kScene6020SmallObjectFrameMap) - 1, 3));
 	_vm->gameState().mainFlowStateId = kScene6030EntryState;
 }

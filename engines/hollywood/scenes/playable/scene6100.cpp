@@ -586,9 +586,8 @@ void Scene6100::takeCharlieBriefcase() {
 
 	beginSecondarySpeechLine(7, 1);
 	_charlieManualSequenceActive = true;
-	runActionOverlay(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
+	runActorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
 		ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
-		.hideActor()
 		.hookAt(7, kScene6100BriefcasePatchHook));
 	_charlieManualSequenceActive = false;
 	if (state.scene6100BriefcasePresent) {
@@ -599,7 +598,7 @@ void Scene6100::takeCharlieBriefcase() {
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene6100::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene6100::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId != kScene6100BriefcasePatchHook || frame != 7)
 		return;
 

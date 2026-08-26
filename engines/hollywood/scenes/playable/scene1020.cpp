@@ -229,10 +229,10 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	if (_actionOverlayVisible) {
-		const Graphics::Surface &background = overlayRedrawsSceneStateBlocks(_actionOverlayLayer.chunkIndex) ?
+	if (_actionOverlayPlayer.isVisible()) {
+		const Graphics::Surface &background = overlayRedrawsSceneStateBlocks(_actionOverlayPlayer.layer.chunkIndex) ?
 			_baseFramebufferOriginal.rawSurface() : _baseFramebuffer.rawSurface();
-		restoreResourceSpriteLayerBackground(_actionOverlayLayer, background);
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, background);
 	}
 	drawActionOverlayLayer();
 	drawResourceSpriteLayer(_quasimodoLayer);
@@ -347,7 +347,6 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
 		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
 		kScene1020OverlayFrameMillis)
-		.showActor()
 		.endAt(kScene1020LiftPauseFrame + 1)
 		.soundAt(kScene1020GrateSlamFrame, kScene1020GrateLiftSoundId)
 		.hookEveryFrame(kScene1020CutsceneHookId)
@@ -372,14 +371,13 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
 		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
 		kScene1020OverlayFrameMillis)
-		.showActor()
 		.startAt(kScene1020LiftPauseFrame));
 
 	if (spoken && !loadStage003SceneRows())
 		warning("%s failed to restore stage %u text", sceneDebugName(), sceneStageIndex());
 }
 
-void Scene1020::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene1020::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene1020CutsceneHookId && frame == kScene1020GrateSlamFrame)
 		runGrateLiftShake();
 }
@@ -646,7 +644,6 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
 	runOverlaySequence(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.showActor()
 		.patchAt(patchFrame, 0xff));
 }
 
@@ -656,7 +653,7 @@ void Scene1020::runOverlaySequence(const ActionOverlaySpec &spec) {
 		return;
 	}
 
-	runActionOverlay(spec);
+	runSceneOverlay(spec);
 }
 
 void Scene1020::handleSceneEventFlag0() {
@@ -715,7 +712,7 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 		} else if (state.scene1020HookPositionState == 1) {
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
 				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
-			// Commit the move before the slide: runActionOverlay presents one frame from
+			// Commit the move before the slide: overlay playback presents one frame from
 			// the base framebuffer when it ends, so patching after flashes the old position.
 			state.scene1020HookPositionState = 2;
 			applySceneStateToHotspotsAndPatches(1);

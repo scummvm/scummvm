@@ -117,8 +117,7 @@ void Scene7060::initializeCustomPreviewState() {
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = kScene7060InvalidPrimarySpeechAnimationGroup;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_hideActiveActor = false;
-	_actionOverlayVisible = false;
+	_actionOverlayPlayer.reset();
 
 	if (_vm->gameState().mainFlowStateId == kScene7060ReturnState) {
 		_activeActorWorldX = kScene7060ReturnEntryX;
@@ -144,7 +143,7 @@ void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	const byte chunk6Frame = _chunk6Animation.channel.frameIndex < _chunk6FrameMap.size() ?
 		_chunk6FrameMap[_chunk6Animation.channel.frameIndex] : 0;
-	if (_actionOverlayVisible) {
+	if (_actionOverlayPlayer.replacesActor()) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
 			kScene7060Chunk6DescriptorCount, chunk6Frame, _sceneFramebuffer);
 		drawActionOverlayLayer();
@@ -592,9 +591,8 @@ void Scene7060::beginPrimaryBrunoSpeechLine(uint16 rowIndex, byte frameIndex) {
 
 void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.soundAt(soundFrame, soundId));
 }
 
@@ -631,9 +629,8 @@ void Scene7060::handleShortExitToState7071() {
 }
 
 void Scene7060::handleChunk7PickupItem11() {
-	runActionOverlay(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
 		kScene7060Chunk7PickupItem11FrameMap, ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap), kScene7060OverlayFrameMillis)
-		.hideActor()
 		.hookAt(4, kScene7060PickupItem11Hook));
 	addInventoryItem(0x11);
 	applyChunk6KeyTakenFrameMap();
@@ -672,9 +669,8 @@ void Scene7060::handleUseItem0DOnMachine() {
 	beginPrimaryBrunoSpeechLine(0x0c, 2);
 	beginSecondarySpeechLine(12, 3);
 
-	runActionOverlay(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
+	runActorReplacement(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
 		kScene7060Chunk7UseItem0DFrameMap, ARRAYSIZE(kScene7060Chunk7UseItem0DFrameMap), kScene7060OverlayFrameMillis)
-		.hideActor()
 		.hookAt(4, kScene7060UseItem0DHook));
 
 	removeInventoryItem(0x0d);
@@ -682,7 +678,7 @@ void Scene7060::handleUseItem0DOnMachine() {
 	_chunk6RandomIdlePaused = false;
 }
 
-void Scene7060::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene7060::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
 	if (hookId == kScene7060PickupItem11Hook) {

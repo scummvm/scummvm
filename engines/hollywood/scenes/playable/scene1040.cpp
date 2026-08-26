@@ -300,7 +300,7 @@ AmbientAudioProfile Scene1040::ambientAudioProfile() const {
 		kScene1040AmbientMusicProbabilityModulus);
 }
 
-void Scene1040::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene1040::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene1040CordPickupPatchHook) {
 		if (frame == 0 && _sceneChunkTable.isValidChunk(14))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
@@ -334,9 +334,8 @@ void Scene1040::handleCordPickup() {
 	if (hasInventoryItem(0x1b))
 		return;
 
-	runActionOverlay(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
 		kScene1040CordFrameMap, ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis)
-		.hideActor()
 		.hookAt(0, kScene1040CordPickupPatchHook));
 	state.scene1040GorillaCordState = 2;
 	applySceneStateToHotspotsAndPatches(2);
@@ -367,11 +366,10 @@ void Scene1040::handleGorillaCordSetup() {
 	if (state.scene1040GorillaCordState >= 2)
 		return;
 
-	runActionOverlay(ActionOverlaySpec(kScene1040GorillaCordOverlayChunk,
+	runActorReplacement(ActionOverlaySpec(kScene1040GorillaCordOverlayChunk,
 		kScene1040GorillaCordOverlayDescriptorCount,
 		kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
 		kScene1040FrameMillis)
-		.hideActor()
 		.hookEveryFrame(kScene1040CordSetupSoundHook));
 	_soundBank0.stop();
 	beginSecondarySpeechLine(13, 0);
@@ -385,9 +383,8 @@ void Scene1040::runGorillaExitBackToBanquetRoom() {
 
 void Scene1040::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(patchFrame, patchSelector));
 }
 

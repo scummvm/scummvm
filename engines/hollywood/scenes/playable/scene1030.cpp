@@ -218,7 +218,7 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	_smallForegroundLayer.visible = _vm->gameState().scene1030TablePickupState == 1;
 	restoreResourceSpriteLayerBackground(_smallForegroundLayer, _baseFramebuffer);
 
-	if (_actionOverlayVisible) {
+	if (_actionOverlayPlayer.replacesActor()) {
 		drawLargeForegroundActor();
 		drawSmallForegroundActor();
 		drawActionOverlayLayer();
@@ -466,7 +466,7 @@ void Scene1030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		_rightEntryActorLayer.setFrame(frameIndex);
 }
 
-void Scene1030::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene1030::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 	if (hookId == 0 || hookId > 3)
 		return;
@@ -697,9 +697,8 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 
 void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, int patchFrame, byte patchState) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, kScene1030ForegroundFrameMillis)
-		.hideActor()
 		.hookAt(patchFrame, patchState));
 }
 

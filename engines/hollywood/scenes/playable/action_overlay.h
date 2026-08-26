@@ -26,19 +26,11 @@
 
 namespace Hollywood {
 
-// How a temporary overlay sequence affects the main actor while it is playing.
-enum ActionOverlayActorVisibility {
-	kActionOverlayKeepActiveActorVisibility,
-	kActionOverlayShowActiveActor,
-	kActionOverlayHideActiveActor
-};
-
 // Optional behavior for action overlays: clipping, state patches, sounds, hooks.
 struct ActionOverlayOptions {
 	ActionOverlayOptions() :
 		firstFrame(0),
 		endFrame(0),
-		actorVisibility(kActionOverlayKeepActiveActorVisibility),
 		redrawAtEnd(true),
 		statePatchFrame(-1),
 		statePatchSelector(0),
@@ -51,7 +43,6 @@ struct ActionOverlayOptions {
 
 	uint firstFrame;
 	uint endFrame;
-	ActionOverlayActorVisibility actorVisibility;
 	bool redrawAtEnd;
 	int statePatchFrame;
 	byte statePatchSelector;
@@ -69,7 +60,8 @@ struct ActionOverlayOptions {
  * between frames. The clamped frame range is [firstFrame, endFrame), with zero
  * endFrame meaning the end of frameMap. Negative patch and sound frames disable
  * those events; a nonzero hookId runs at hookFrame, or every frame when
- * hookFrame is negative. Actor visibility is restored after playback.
+ * hookFrame is negative. The playback entry point determines whether the
+ * resource replaces the actor or overlays the scene.
  */
 struct ActionOverlaySpec {
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
@@ -80,26 +72,6 @@ struct ActionOverlaySpec {
 			frameMapSize(newFrameMapSize),
 			frameMillis(newFrameMillis),
 			options() {
-	}
-
-	ActionOverlaySpec &keepActorVisibility() {
-		options.actorVisibility = kActionOverlayKeepActiveActorVisibility;
-		return *this;
-	}
-
-	ActionOverlaySpec &actorVisibility(ActionOverlayActorVisibility visibility) {
-		options.actorVisibility = visibility;
-		return *this;
-	}
-
-	ActionOverlaySpec &showActor() {
-		options.actorVisibility = kActionOverlayShowActiveActor;
-		return *this;
-	}
-
-	ActionOverlaySpec &hideActor() {
-		options.actorVisibility = kActionOverlayHideActiveActor;
-		return *this;
 	}
 
 	ActionOverlaySpec &patchAt(int frame, byte selector) {

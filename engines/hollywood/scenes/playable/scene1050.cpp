@@ -163,10 +163,10 @@ void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_largeOverlayLayer);
-	if (_actionOverlayChunkIndex == 12)
+	if (_actionOverlayPlayer.layer.chunkIndex == 12)
 		drawActionOverlayLayer();
 	drawResourceSpriteLayer(_smallOverlayLayer);
-	if (_actionOverlayChunkIndex != 12)
+	if (_actionOverlayPlayer.layer.chunkIndex != 12)
 		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -635,38 +635,27 @@ void Scene1050::runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorC
 	if (frameMapSize == 0)
 		return;
 
-	const bool previousHideActiveActor = _hideActiveActor;
 	const bool previousLargeOverlayActionLocked = _largeOverlayActionLocked;
-	_hideActiveActor = true;
 	_largeOverlayActionLocked = true;
 	_largeOverlayMode = 0;
-
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	_actionOverlayLayer.configure(chunkIndex, (uint16)descriptorCount, actionFrameMap, frameMapSize);
-	_actionOverlayLayer.visible = true;
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(chunkIndex,
+		descriptorCount, actionFrameMap, frameMapSize);
 
 	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayLayer.setFrame((byte)frame);
-		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
+		_actionOverlayPlayer.setFrame(frame);
 		_largeOverlayLayer.setFrame(largeOverlayFrameMap[frame]);
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
 
-	_actionOverlayVisible = false;
-	_actionOverlayLayer.visible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
+	_actionOverlayPlayer.finish(previousHideActiveActor);
 	_largeOverlayActionLocked = previousLargeOverlayActionLocked;
 }
 
 void Scene1050::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
-	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
 		frameMap, frameMapSize, frameMillis)
-		.hideActor()
 		.patchAt(patchFrame, 0xff));
 }
 

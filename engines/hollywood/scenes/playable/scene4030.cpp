@@ -185,9 +185,8 @@ void Scene4030::runCustomEntrySequence() {
 
 		drawPlayableComposite();
 		presentFrame();
-		runActionOverlay(ActionOverlaySpec(kScene4030EntryOverlayChunk, kScene4030EntryOverlayDescriptorCount,
-			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap), kScene4030FrameMillis)
-			.hideActor());
+		runActorReplacement(ActionOverlaySpec(kScene4030EntryOverlayChunk, kScene4030EntryOverlayDescriptorCount,
+			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap), kScene4030FrameMillis));
 
 		if (!state.scene4030InitialEntryLineSeen) {
 			_activeActorFacing = kScene4030EntrySpeechFacing;
@@ -498,9 +497,8 @@ void Scene4030::takeRope() {
 	}
 
 	state.scene4030RopeTaken = true;
-	runActionOverlay(ActionOverlaySpec(kScene4030RopePickupChunk, kScene4030RopePickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4030RopePickupChunk, kScene4030RopePickupDescriptorCount,
 		kScene4030RopePickupFrameMap, ARRAYSIZE(kScene4030RopePickupFrameMap), kScene4030FrameMillis)
-		.hideActor()
 		.patchAt(4, 4));
 	addInventoryItem(kScene4030RopeItem);
 	_soundBank0.playSample(1, 100);
@@ -511,9 +509,8 @@ void Scene4030::talkToSkeleton() {
 	if (state.scene4030LooseBoneState == 0) {
 		beginSecondarySpeechLine(20, 0);
 		state.scene4030LooseBoneState = 1;
-		runActionOverlay(ActionOverlaySpec(kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
+		runActorReplacement(ActionOverlaySpec(kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
 			kScene4030BoneRevealFrameMap, ARRAYSIZE(kScene4030BoneRevealFrameMap), kScene4030FrameMillis)
-			.hideActor()
 			.patchAt(9, 3)
 			.soundAt(2, 0x3a, 25));
 		applySceneStateToHotspotsAndPatches(3);
@@ -532,9 +529,8 @@ void Scene4030::takeBone() {
 	}
 
 	state.scene4030LooseBoneState = 2;
-	runActionOverlay(ActionOverlaySpec(kScene4030BonePickupChunk, kScene4030BonePickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4030BonePickupChunk, kScene4030BonePickupDescriptorCount,
 		kScene4030BonePickupFrameMap, ARRAYSIZE(kScene4030BonePickupFrameMap), kScene4030FrameMillis)
-		.hideActor()
 		.patchAt(7, 3));
 	addInventoryItem(kScene4030BoneItem);
 	_soundBank0.playSample(1, 100);
@@ -552,9 +548,8 @@ void Scene4030::installImprovisedLever() {
 	}
 
 	state.scene4030ImprovisedLeverInstalled = true;
-	runActionOverlay(ActionOverlaySpec(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
 		kScene4030LeverInstallFrameMap, ARRAYSIZE(kScene4030LeverInstallFrameMap), kScene4030FrameMillis)
-		.hideActor()
 		.patchAt(9, 2));
 	removeInventoryItem(kScene4030LeverItem);
 	_soundBank0.playSample(1, 100);

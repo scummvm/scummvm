@@ -45,7 +45,7 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldConvertSavedFramebufferFF() const override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runFirstEntrySequence();
 	void runAlternateEntrySequence();
