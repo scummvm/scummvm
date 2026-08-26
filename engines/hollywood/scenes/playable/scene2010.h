@@ -40,13 +40,20 @@ private:
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	byte paletteRegionAt(int x, int y) const override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
+	void resetAnimationLayers();
+	void advanceGatekeeperIdle(uint32 delta);
+	bool waitForSoundOrTimeout(uint32 timeoutMillis);
 	void rebuildWalkableMask();
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	void copyStepDeltasFromB4(uint targetFirstOffset, uint targetLastOffset, uint sourceFirstOffset);
@@ -54,6 +61,12 @@ private:
 	void runEntryFromB02();
 	void runPatchedEntrySequence();
 	void runLongSequenceToScene2100();
+
+	ResourceSpriteLayer _scriptLayer;
+	SceneAnimationStratum _scriptLayerStratum;
+	ResourceSpriteLayer _gatekeeperLayer;
+	uint32 _gatekeeperIdleAccumulator;
+	bool _gatekeeperSequenceActive;
 };
 
 } // End of namespace Hollywood

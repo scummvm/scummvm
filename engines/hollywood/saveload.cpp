@@ -140,6 +140,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.sueInventoryInitialized);
 	s.syncAsByte(state.multiToolKnifeState);
 	s.syncAsByte(state.ronTapeRecorderState);
+	s.syncAsByte(state.ronTravelQuipIndex);
 	syncStateBool(s, state.ronWalletOpened);
 	s.syncAsUint16LE(state.ronEgyptianMoneyAmount);
 	syncStateBool(s, state.ronPendingMabusePillsInMagnetPillbox);
