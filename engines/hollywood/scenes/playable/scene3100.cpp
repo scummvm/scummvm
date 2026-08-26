@@ -35,8 +35,10 @@ const uint kScene3100ActorBankTableEntry = 0x0000;
 const uint kScene3100ActorPaletteTableEntry = 0x00cc;
 const uint kScene3100Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3100SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene3100CabinFrameMillis = 125;
-const uint32 kScene3100AlternateFrameMillis = 125;
+const uint32 kScene3100CabinFrameMillis = 75;
+const uint32 kScene3100AlternateFrameMillis = 60;
+const uint32 kScene3100DialogueFrameMillis = 125;
+const uint32 kScene3100PaletteCycleMillis = 300;
 const uint32 kScene3100OverlayFrameMillis = 75;
 const uint kScene3100CabinDescriptorCount = 0x16;
 const uint kScene3100AlternateDescriptorCount = 0x10;
@@ -52,6 +54,13 @@ const byte kScene3100PrimarySpeechGreen = 0x20;
 const byte kScene3100PrimarySpeechBlue = 0x3f;
 const byte kScene3100PickupItem38 = 0x38;
 const byte kScene3100PickupItem39 = 0x39;
+const byte kScene3100PaletteCycleFirstColor = 0x90;
+const byte kScene3100PaletteCycleLastColor = 0x9f;
+
+enum Scene3100AnimationHook {
+	kScene3100ResolutionAnimationHook = 1,
+	kScene3100DaisyPickupPatchHook
+};
 
 const byte kScene3100CabinFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -78,6 +87,10 @@ const byte kScene3100ResolutionFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 
+const byte kScene3100ResolutionCabinFrameMap[] = {
+	17, 18, 19, 20, 21
+};
+
 static PlayableSceneConfig scene3100Config() {
 	PlayableSceneConfig config(3100,
 		SceneResourceLayout(13, 5, 12),
@@ -94,9 +107,13 @@ Scene3100::Scene3100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3100Config()),
 		_cabinChannel(),
 		_alternateChannel(),
+		_dialogueChannel(),
+		_paletteCycleChannel(),
 		_cabinLayer(),
 		_alternateLayer(),
-		_dialogueMenuActive(false) {
+		_alternateAnimationActive(false),
+		_conversationActive(false),
+		_resolutionSequenceActive(false) {
 	_cabinLayer.configure(6, kScene3100CabinDescriptorCount,
 		kScene3100CabinFrameMap, ARRAYSIZE(kScene3100CabinFrameMap));
 	_alternateLayer.configure(12, kScene3100AlternateDescriptorCount,
@@ -121,11 +138,15 @@ void Scene3100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceSpriteLayer(_cabinLayer);
 	else
 		drawResourceSpriteLayer(_alternateLayer);
-	drawActionOverlayLayer();
+	if (_actionOverlayPlayer.replacesActor()) {
+		drawActionOverlayLayer();
+		return;
+	}
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (_sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+	drawActionOverlayLayer();
 }
 
 void Scene3100::runCustomEntrySequence() {
@@ -148,10 +169,16 @@ bool Scene3100::prepareCustomGameplayLoop() {
 }
 
 bool Scene3100::advanceCustomGameplayLoop(uint32 delta) {
-	advanceCabinLayers(delta);
-	if (!_dialogueMenuActive)
-		updateAmbientAudioAndMusicCues(delta);
-	return true;
+	advancePaletteCycle(delta);
+	if (!_resolutionSequenceActive) {
+		if (_conversationActive) {
+			if (!_primaryDialogueSpeechActive)
+				advanceDialogueCabinLayer(delta);
+		} else {
+			advanceCabinLayers(delta);
+		}
+	}
+	return false;
 }
 
 bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
@@ -236,16 +263,61 @@ AmbientAudioProfile Scene3100::ambientAudioProfile() const {
 	return profile;
 }
 
+byte Scene3100::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return 0;
+}
+
+uint32 Scene3100::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene3100DialogueFrameMillis;
+}
+
+void Scene3100::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	(void)animationGroup;
+	_cabinLayer.setFrame(frameIndex);
+}
+
+void Scene3100::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	_dialogueChannel.frameIndex = baseFrame;
+	_cabinLayer.setFrame(baseFrame);
+}
+
+void Scene3100::handleAnimationFrameHook(byte hookId, uint frame) {
+	switch (hookId) {
+	case kScene3100ResolutionAnimationHook:
+		if (frame >= 6 && frame - 6 < ARRAYSIZE(kScene3100ResolutionCabinFrameMap)) {
+			const byte cabinFrame = kScene3100ResolutionCabinFrameMap[frame - 6];
+			_cabinChannel.frameIndex = cabinFrame;
+			_cabinLayer.setFrame(cabinFrame);
+			if (frame == 10)
+				_soundBank0.playSample(0x1a, 100);
+		}
+		break;
+	case kScene3100DaisyPickupPatchHook:
+		if (_sceneChunkTable.isValidChunk(10))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
+		break;
+	default:
+		break;
+	}
+}
+
 void Scene3100::resetAnimationLayers() {
 	const GameplayState &state = _vm->gameState();
 	const byte cabinFrame = state.scene3100GirlConversationState < 2 ? 6 : 15;
 	_cabinChannel.reset(cabinFrame, kScene3100CabinFrameMillis);
 	_alternateChannel.reset(15, kScene3100AlternateFrameMillis);
+	_dialogueChannel.reset(cabinFrame, kScene3100DialogueFrameMillis);
+	_paletteCycleChannel.reset(0, kScene3100PaletteCycleMillis);
 	_cabinLayer.visible = true;
 	_alternateLayer.visible = true;
 	_cabinLayer.reset(cabinFrame);
 	_alternateLayer.reset(15);
-	_dialogueMenuActive = false;
+	_alternateAnimationActive = false;
+	_conversationActive = false;
+	_resolutionSequenceActive = false;
 }
 
 void Scene3100::rebuildWalkableMask() {
@@ -294,14 +366,49 @@ void Scene3100::advanceCabinLayers(uint32 delta) {
 
 	const uint frameCount = _alternateChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		if (_alternateChannel.frameIndex >= 15) {
-			if (_random.getRandomNumber(19) == 0)
-				_alternateChannel.frameIndex = 0;
+		if (_alternateAnimationActive) {
+			if (_alternateChannel.frameIndex < 15)
+				++_alternateChannel.frameIndex;
+			else
+				_alternateAnimationActive = false;
 		} else {
-			++_alternateChannel.frameIndex;
+			if (_random.getRandomNumber(49) == 0) {
+				_alternateChannel.frameIndex = 0;
+				_alternateAnimationActive = true;
+			}
 		}
 		_alternateLayer.setFrame(_alternateChannel.frameIndex);
 	}
+}
+
+void Scene3100::advanceDialogueCabinLayer(uint32 delta) {
+	const uint frameCount = _dialogueChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		byte cabinFrame = 0;
+		if (_cabinLayer.frameIndex == 0 && _random.getRandomNumber(14) == 0)
+			cabinFrame = 4;
+		_dialogueChannel.frameIndex = cabinFrame;
+		_cabinLayer.setFrame(cabinFrame);
+	}
+}
+
+void Scene3100::advancePaletteCycle(uint32 delta) {
+	const uint frameCount = _paletteCycleChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame)
+		rotatePaletteCycle();
+}
+
+void Scene3100::rotatePaletteCycle() {
+	const uint lastOffset = kScene3100PaletteCycleLastColor * 3;
+	if (_paletteCurrent.size() <= lastOffset + 2)
+		return;
+
+	byte saved[3];
+	memcpy(saved, &_paletteCurrent[lastOffset], sizeof(saved));
+	for (uint color = kScene3100PaletteCycleLastColor; color > kScene3100PaletteCycleFirstColor; --color)
+		memcpy(&_paletteCurrent[color * 3], &_paletteCurrent[(color - 1) * 3], sizeof(saved));
+	memcpy(&_paletteCurrent[kScene3100PaletteCycleFirstColor * 3], saved, sizeof(saved));
+	invalidatePresentationPalette();
 }
 
 void Scene3100::runExitToScene3080() {
@@ -317,6 +424,9 @@ void Scene3100::runCabinConversation() {
 	byte nodeIndex = 0;
 	bool finished = false;
 	_vm->gameplayMusic()->stop();
+	_conversationActive = true;
+	_dialogueChannel.frameIndex = _cabinLayer.frameIndex;
+	_dialogueChannel.resetTimer();
 
 	if (state.scene3100GirlConversationState == 0) {
 		beginSecondarySpeechLine(kScene3100DialogueStageId, 0);
@@ -334,12 +444,11 @@ void Scene3100::runCabinConversation() {
 
 	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
-		_dialogueMenuActive = true;
 		const byte selectedChoice = menu.choose(kScene3100DialogueStageId, records, depthIndex, nodeIndex);
-		_dialogueMenuActive = false;
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene3100DialogueStageId, 6);
 			beginCabinPrimaryResponse(6);
+			_conversationActive = false;
 			return;
 		}
 
@@ -386,6 +495,7 @@ void Scene3100::runCabinConversation() {
 			break;
 		}
 	}
+	_conversationActive = false;
 }
 
 void Scene3100::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
@@ -429,9 +539,12 @@ void Scene3100::beginCabinPrimaryResponse(byte frameIndex) {
 void Scene3100::runConversationResolutionSequence() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(kScene3100DialogueStageId, 0x0b);
-	runSceneOverlay(ActionOverlaySpec(8, 0x0b,
+	_resolutionSequenceActive = true;
+	runActorReplacement(ActionOverlaySpec(8, 0x0b,
 		kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
-		.soundAt(5, 0x19));
+		.soundAt(5, 0x19)
+		.hookEveryFrame(kScene3100ResolutionAnimationHook));
+	_resolutionSequenceActive = false;
 	state.scene3100GirlConversationState = 2;
 	state.scene3100DaisyVisible = true;
 	_alternateChannel.frameIndex = 15;
@@ -449,8 +562,7 @@ void Scene3100::runObjectPickup() {
 
 	runActorReplacement(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
 		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
-		.patchAt(7, 1)
-		.soundAt(7, 1));
+		.hookAt(10, kScene3100DaisyPickupPatchHook));
 	state.scene3100DaisyVisible = false;
 	state.scene3100DaisyTaken = true;
 	applySceneStateToHotspotsAndPatches(1);

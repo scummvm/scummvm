@@ -43,12 +43,20 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void advanceCabinLayers(uint32 delta);
+	void advanceDialogueCabinLayer(uint32 delta);
+	void advancePaletteCycle(uint32 delta);
+	void rotatePaletteCycle();
 	void runExitToScene3080();
 	void runCabinConversation();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
@@ -62,9 +70,13 @@ private:
 
 	TimedAnimationChannel _cabinChannel;
 	TimedAnimationChannel _alternateChannel;
+	TimedAnimationChannel _dialogueChannel;
+	TimedAnimationChannel _paletteCycleChannel;
 	ResourceSpriteLayer _cabinLayer;
 	ResourceSpriteLayer _alternateLayer;
-	bool _dialogueMenuActive;
+	bool _alternateAnimationActive;
+	bool _conversationActive;
+	bool _resolutionSequenceActive;
 };
 
 } // End of namespace Hollywood
