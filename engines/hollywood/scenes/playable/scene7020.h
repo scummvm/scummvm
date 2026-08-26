@@ -68,7 +68,6 @@ private:
 	Common::Array<byte> _owner0SpeechCueDescriptors;
 	Common::Array<byte> _owner0SmallRows;
 	Common::Array<byte> _owner0LargeRows;
-	byte _chunk6FrameMapIndex;
 	byte _primaryPoseMode;
 	bool _drawChunk7OverlayInsteadOfActor;
 	uint32 _chunk7TimerAccumulator;

@@ -64,8 +64,8 @@ private:
 		byte responseFrameIndex, byte disableAfterUse) const;
 	void beginHannoverSpeechLine(byte frameIndex, byte animationGroup = 0);
 	uint32 beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX, uint16 topY);
-	void runHannoverFrameRange(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis);
-	void runHannoverFrameRangeSequence(bool alternatePose);
+	void runHannoverFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis);
+	void runHannoverPoseTransition(bool alternatePose);
 	void runTaffyCoffeeServiceSequence();
 	void runHannoverCoffeeSequence();
 	void runHannoverBathroomExitSequence();

@@ -621,7 +621,8 @@ void Scene3070::runLateCutsceneBranch() {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[23], _baseFramebuffer);
 	_lateCutsceneActive = true;
 	_lateCutsceneLayer.visible = true;
-	playLayerFrames(_lateCutsceneLayer, 0, 48, kScene3070OverlayFrameMillis);
+	playAnimationFrames(_lateCutsceneLayer,
+		AnimationFrameRange(0, 48, kScene3070OverlayFrameMillis));
 	beginPrimarySpeechLineWithAnimationGroup(0x0d, 6, 0x212, 0x09e,
 		0x20, 0x00, 0x3f, kScene3070LateSpeechGroup);
 	beginSecondarySpeechLine(0x0d, 7);
@@ -948,16 +949,6 @@ void Scene3070::drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode, 
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 	if (drawNearForeground && actorDrawOrderMode > 5 && _sceneChunkTable.isValidChunk(19))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[19], _sceneFramebuffer);
-}
-
-bool Scene3070::playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame, uint32 frameMillis) {
-	for (uint frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++frame) {
-		layer.setFrame((byte)frame);
-		if (waitSceneMillis(frameMillis))
-			return false;
-	}
-	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
 }
 
 } // End of namespace Hollywood

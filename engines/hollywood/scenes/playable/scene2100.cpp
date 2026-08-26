@@ -48,6 +48,7 @@ const byte kScene2100PickupDescriptorCount = 0x0e;
 const byte kScene2100TransitionChunk = 16;
 const byte kScene2100TransitionDescriptorCount = 0x2f;
 const byte kScene2100RaStaffItem = 0x2f;
+const byte kScene2100DoorSoundHook = 1;
 const byte kScene2100MummyDialogueStageId = 0x62;
 const byte kScene2100MummyPrimaryRow = 99;
 const uint kScene2100MummyDialogueChoiceRecordCount = 10 * 10 * 7;
@@ -479,19 +480,18 @@ void Scene2100::runStoneDoorToTreasureRoom() {
 	_transitionLayer.visible = true;
 	_transitionLayer.reset(0);
 
-	for (byte frame = 1; frame < 4; ++frame) {
-		_transitionLayer.setFrame(frame);
-		if (waitSceneMillis(kScene2100FrameMillis))
-			break;
-	}
+	playAnimationFrames(_transitionLayer, AnimationFrameRange(1, 3, kScene2100FrameMillis));
 
 	for (byte speechFrame = 0; speechFrame < 4 && !_vm->isSceneRestartRequested(); ++speechFrame) {
 		beginSecondarySpeechLine(5, speechFrame);
 		const byte targetFrame = (byte)(8 + speechFrame * 5);
-		runMappedLayerAnimation(_transitionLayer, targetFrame, kScene2100FrameMillis);
+		playAnimationFrames(_transitionLayer,
+			AnimationFrameRange(_transitionLayer.frameIndex + 1, targetFrame, kScene2100FrameMillis));
 	}
 
-	runMappedLayerAnimation(_transitionLayer, 0x34, kScene2100FrameMillis, -1, 0, 0, 0x1e, 0x10, 0x32);
+	playAnimationFrames(_transitionLayer,
+		AnimationFrameRange(_transitionLayer.frameIndex + 1, 0x34, kScene2100FrameMillis)
+			.hookEveryFrame(kScene2100DoorSoundHook));
 	_transitionLayer.visible = false;
 
 	GameplayState &state = _vm->gameState();
@@ -520,23 +520,14 @@ void Scene2100::runRaStaffPickup() {
 	dispatchGenericSceneAction(21);
 }
 
-void Scene2100::runMappedLayerAnimation(ResourceSpriteLayer &layer, byte targetFrame, uint32 frameMillis,
-		int speechTriggerFrame, uint16 speechRow, byte speechFrame,
-		int soundStartFrame, byte soundStartId, int soundStopFrame) {
-	layer.visible = true;
-	while (layer.frameIndex < targetFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		const byte nextFrame = (byte)(layer.frameIndex + 1);
-		if ((int)nextFrame == speechTriggerFrame)
-			startSecondarySpeechLine(speechRow, speechFrame);
-		if ((int)nextFrame == soundStartFrame)
-			_soundBank0.playSample(soundStartId, 100);
-		if ((int)nextFrame == soundStopFrame)
-			_soundBank0.stop();
-		layer.setFrame(nextFrame);
-		if (waitSceneMillis(frameMillis))
-			break;
-	}
+void Scene2100::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId != kScene2100DoorSoundHook)
+		return;
+
+	if (frame == 0x1e)
+		_soundBank0.playSample(0x10, 100);
+	else if (frame == 0x32)
+		_soundBank0.stop();
 }
 
 void Scene2100::removeColorMapItemFromOriginal(byte itemId) {

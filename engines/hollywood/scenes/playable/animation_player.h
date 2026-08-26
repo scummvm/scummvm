@@ -89,6 +89,35 @@ struct AnimationFrameRange {
 	int repeatedFrame;
 };
 
+/**
+ * Describes a pose transition whose terminal frame is not held.
+ *
+ * Playback installs firstFrame, waits before each following frame, and then
+ * installs finalFrame immediately after lastFrame. This preserves transitions
+ * where the last animation frame is only a bridge to a stable pose.
+ */
+struct AnimationTransition {
+	AnimationTransition(uint newFirstFrame, uint newLastFrame, byte newFinalFrame,
+			uint32 newFrameMillis) :
+			firstFrame(newFirstFrame),
+			lastFrame(newLastFrame),
+			finalFrame(newFinalFrame),
+			frameMillis(newFrameMillis),
+			allowSkip(true) {
+	}
+
+	AnimationTransition &unskippable() {
+		allowSkip = false;
+		return *this;
+	}
+
+	uint firstFrame;
+	uint lastFrame;
+	byte finalFrame;
+	uint32 frameMillis;
+	bool allowSkip;
+};
+
 // A fullscreen base image followed by delta patches. Playback temporarily owns
 // the scene framebuffer and palette, then restores the playable composite.
 struct FullscreenDeltaAnimationSpec {
@@ -153,6 +182,16 @@ public:
 		return playInternal(target, range, true);
 	}
 
+	template<class FrameTarget>
+	bool transition(FrameTarget &target, const AnimationTransition &transition) {
+		return transitionInternal(target, transition, false);
+	}
+
+	template<class FrameTarget>
+	bool transitionAndPresent(FrameTarget &target, const AnimationTransition &transition) {
+		return transitionInternal(target, transition, true);
+	}
+
 private:
 	template<class FrameTarget>
 	bool playInternal(FrameTarget &target, const AnimationFrameRange &range,
@@ -178,6 +217,38 @@ private:
 			if (frame == (int)range.lastFrame)
 				return true;
 		}
+	}
+
+	template<class FrameTarget>
+	bool transitionInternal(FrameTarget &target, const AnimationTransition &transition,
+			bool presentBoundaryFrames) {
+		if (transition.firstFrame > 0xff || transition.lastFrame > 0xff ||
+				_delegate.animationPlaybackShouldStop())
+			return false;
+
+		const int step = transition.firstFrame <= transition.lastFrame ? 1 : -1;
+		int frame = transition.firstFrame;
+		target.setFrame((byte)frame);
+		if (presentBoundaryFrames) {
+			_delegate.presentAnimationFrame();
+			if (_delegate.animationPlaybackShouldStop())
+				return false;
+		}
+
+		while (frame != (int)transition.lastFrame) {
+			if (_delegate.waitForAnimationFrame(transition.frameMillis, transition.allowSkip))
+				return false;
+			frame += step;
+			target.setFrame((byte)frame);
+		}
+
+		target.setFrame(transition.finalFrame);
+		if (presentBoundaryFrames) {
+			_delegate.presentAnimationFrame();
+			if (_delegate.animationPlaybackShouldStop())
+				return false;
+		}
+		return true;
 	}
 
 	SceneAnimationPlayerDelegate &_delegate;

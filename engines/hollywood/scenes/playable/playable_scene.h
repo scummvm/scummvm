@@ -380,7 +380,21 @@ protected:
 	bool playAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
 		return _animationPlayer.play(target, range);
 	}
+	template<class FrameTarget>
+	bool playAndPresentAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
+		return _animationPlayer.playAndPresent(target, range);
+	}
 	bool playAnimationFrames(SceneAnimationLayers &layers, uint layerId, const AnimationFrameRange &range);
+	template<class FrameTarget>
+	bool playAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
+		return _animationPlayer.transition(target, transition);
+	}
+	template<class FrameTarget>
+	bool playAndPresentAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
+		return _animationPlayer.transitionAndPresent(target, transition);
+	}
+	bool playAnimationTransition(SceneAnimationLayers &layers, uint layerId,
+		const AnimationTransition &transition);
 	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
 	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
 		const byte *frameMap, uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd = true);

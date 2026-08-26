@@ -381,20 +381,10 @@ bool Scene6090::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene6090::playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
+bool Scene6090::playLayerTransition(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
 		uint32 frameMillis) {
-	layer.setFrame(firstFrame);
-	drawPlayableComposite();
-	presentFrame();
-	for (uint frame = firstFrame; frame < lastFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++frame) {
-		if (waitSceneMillis(frameMillis, false))
-			return false;
-		layer.setFrame((byte)(frame + 1));
-	}
-	drawPlayableComposite();
-	presentFrame();
-	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
+	return playAndPresentAnimationTransition(layer,
+		AnimationTransition(firstFrame, lastFrame, lastFrame, frameMillis).unskippable());
 }
 
 bool Scene6090::runCurtainRevealFromBlack() {
@@ -441,51 +431,51 @@ bool Scene6090::runCurtainRevealFromBlack() {
 }
 
 void Scene6090::runOpeningConversation() {
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 6, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 
-	playLayerFrames(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
+	playLayerTransition(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
 	_hannoverPoseMode = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 7, 0xb4, 0x7c,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
+	playLayerTransition(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
 	_hannoverLayer.setFrame(0);
 	_hannoverPoseMode = 0;
 
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 8, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 	beginSecondarySpeechLine(15, 9);
 
-	playLayerFrames(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 10, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
 	_hannoverLayer.setFrame(0);
 	_hannoverPoseMode = 0;
 	beginSecondarySpeechLine(15, 11);
 
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerFrames(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 12, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
 	_hannoverLayer.setFrame(0);
 	_hannoverPoseMode = 0;
 
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 13, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
@@ -493,57 +483,57 @@ void Scene6090::runOpeningConversation() {
 	beginPrimarySpeechLineWithAnimationGroup(15, 15, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 
-	playLayerFrames(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
+	playLayerTransition(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
 	_hannoverPoseMode = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 16, 0xb4, 0x7c,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
+	playLayerTransition(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
 	_hannoverLayer.setFrame(0);
 	_hannoverPoseMode = 0;
 	beginSecondarySpeechLine(15, 17);
 
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_karloffLayer, 0, 6, 10);
+	playLayerTransition(_karloffLayer, 0, 6, 10);
 	_mechanismState = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 18, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
 	_karloffLayer.setFrame(0);
 	_mechanismState = 0;
 	beginSecondarySpeechLine(15, 19);
 
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerFrames(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 20, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
 	_hannoverLayer.setFrame(0);
 	_hannoverPoseMode = 0;
-	playLayerFrames(_karloffLayer, 0, 6, 10);
+	playLayerTransition(_karloffLayer, 0, 6, 10);
 	_mechanismState = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 21, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 	beginPrimarySpeechLineWithAnimationGroup(15, 22, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
 	_karloffLayer.setFrame(0);
 	_mechanismState = 0;
-	playLayerFrames(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 23, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerFrames(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerFrames(_karloffLayer, 0x2a, 0x31, kScene6090FastFrameMillis);
+	playLayerTransition(_karloffLayer, 0x2a, 0x31, kScene6090FastFrameMillis);
 	_mechanismState = 3;
 }
 

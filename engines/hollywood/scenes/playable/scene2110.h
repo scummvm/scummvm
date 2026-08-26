@@ -41,6 +41,7 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -51,8 +52,6 @@ private:
 	void runTreasureGrantAction();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel);
-	void runMappedLayerAnimation(ResourceSpriteLayer &layer, byte targetFrame, uint32 frameMillis,
-		int soundStartFrame = -1, byte soundStartId = 0);
 	void runTreasurePrimarySpeechLine(uint16 rowIndex, byte frameIndex);
 
 	TimedAnimationChannel _ambientChannel;

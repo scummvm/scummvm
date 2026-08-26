@@ -59,6 +59,7 @@ const byte kScene8020InventoryItem4f = 0x4f;
 const byte kScene8020OverlayHookPickup6c = 1;
 const byte kScene8020OverlayHookPickup5d = 2;
 const byte kScene8020OverlayHookRemove6c = 3;
+const byte kScene8020TransformationHook = 4;
 
 const byte kScene8020ForegroundFrameMap[] = {
 	0, 0, 1, 1, 2, 2, 1, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -307,6 +308,19 @@ void Scene8020::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene8020OverlayHookRemove6c && frame == 4) {
 		state.scene8020ForegroundObjectState = 0;
 		applySceneStateToHotspotsAndPatches(1);
+		return;
+	}
+
+	if (hookId == kScene8020TransformationHook) {
+		if (frame == 0x0b) {
+			_soundBank0.playSample(0x1b, 100);
+		} else if (frame == 0x12) {
+			_soundBank0.playSample(0x1c, 50);
+			if (_sceneChunkTable.isValidChunk(kScene8020TransformationPatchChunk)) {
+				drawResourceBlockList(_resourceArena,
+					_resourceChunkOffsets[kScene8020TransformationPatchChunk], _baseFramebuffer);
+			}
+		}
 	}
 }
 
@@ -481,7 +495,11 @@ void Scene8020::runForegroundTransformationSequence() {
 
 	_foregroundLayer.setFrame(7);
 	_soundBank0.playSample(0x1a, 100);
-	runForegroundFrameSequence(7, 0x17);
+	_foregroundSequenceLocked = true;
+	playAnimationFrames(_foregroundLayer,
+		AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
+			.hookEveryFrame(kScene8020TransformationHook));
+	_foregroundSequenceLocked = false;
 
 	GameplayState &state = _vm->gameState();
 	state.scene8020ForegroundObjectState = 1;
@@ -489,24 +507,6 @@ void Scene8020::runForegroundTransformationSequence() {
 	applySceneStateToHotspotsAndPatches(0xff);
 	resetForegroundLayer();
 	beginSecondarySpeechLine(8, 2);
-}
-
-void Scene8020::runForegroundFrameSequence(byte firstFrame, byte lastFrame) {
-	_foregroundSequenceLocked = true;
-	for (byte frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		_foregroundLayer.setFrame(frame);
-		if (frame == 0x0b)
-			_soundBank0.playSample(0x1b, 100);
-		if (frame == 0x12) {
-			_soundBank0.playSample(0x1c, 50);
-			if (_sceneChunkTable.isValidChunk(kScene8020TransformationPatchChunk))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene8020TransformationPatchChunk],
-					_baseFramebuffer);
-		}
-		if (waitSceneMillis(kScene8020FrameMillis))
-			break;
-	}
-	_foregroundSequenceLocked = false;
 }
 
 } // End of namespace Hollywood

@@ -67,8 +67,6 @@ private:
 	void advanceSueIdle(uint32 delta);
 	void advanceState609Prop(uint32 delta);
 	void drawNormalForeground(int actorWorldX, int actorWorldY, byte actorDrawOrderMode);
-	bool playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
-						 uint32 frameMillis);
 	void runArrivalCutscene();
 	void runState609Cutscene();
 	void runSueDialogue();

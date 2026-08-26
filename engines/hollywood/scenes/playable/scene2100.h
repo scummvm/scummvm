@@ -45,6 +45,7 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -64,9 +65,6 @@ private:
 	void runMummySpecialTransitionToScene2110();
 	void runStoneDoorToTreasureRoom();
 	void runRaStaffPickup();
-	void runMappedLayerAnimation(ResourceSpriteLayer &layer, byte targetFrame, uint32 frameMillis,
-		int speechTriggerFrame = -1, uint16 speechRow = 0, byte speechFrame = 0,
-		int soundStartFrame = -1, byte soundStartId = 0, int soundStopFrame = -1);
 	void removeColorMapItemFromOriginal(byte itemId);
 
 	ResourceSpriteLayer _foregroundLayer;

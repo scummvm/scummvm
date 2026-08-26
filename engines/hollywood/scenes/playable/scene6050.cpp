@@ -329,19 +329,15 @@ void Scene6050::advanceGuardIdleLayer(uint32 delta) {
 	}
 }
 
-void Scene6050::runGuardFrameRange(byte firstFrame, byte lastFrame, int step, byte finalFrame) {
+void Scene6050::runGuardFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame) {
 	if (!_vm->gameState().scene6050GuardPresent)
 		return;
 
 	const bool previousManual = _guardManualSequenceActive;
 	_guardManualSequenceActive = true;
-	_guardLayer.setFrame(firstFrame);
-	while (_guardLayer.frameIndex != lastFrame && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(kScene6050GuardFrameMillis))
-			break;
-		_guardLayer.setFrame((byte)((int)_guardLayer.frameIndex + step));
-	}
-	if (!Engine::shouldQuit())
+	const bool completed = playAnimationTransition(_guardLayer,
+		AnimationTransition(firstFrame, lastFrame, finalFrame, kScene6050GuardFrameMillis));
+	if (!completed && !Engine::shouldQuit())
 		_guardLayer.setFrame(finalFrame);
 	_guardManualSequenceActive = previousManual;
 }
@@ -350,7 +346,7 @@ void Scene6050::runGuardLookUpTransition() {
 	if (_guardAnimationState == 2)
 		return;
 
-	runGuardFrameRange(0x32, 0x39, 1, 0x39);
+	runGuardFrameTransition(0x32, 0x39, 0x39);
 	_guardAnimationState = 2;
 }
 
@@ -358,7 +354,7 @@ void Scene6050::runGuardLookDownTransition() {
 	if (_guardAnimationState == 0)
 		return;
 
-	runGuardFrameRange(0x39, 0x32, -1, 0);
+	runGuardFrameTransition(0x39, 0x32, 0);
 	_guardAnimationState = 0;
 }
 

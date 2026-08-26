@@ -40,6 +40,8 @@ const uint32 kScene3060SecretDoorFrameMillis = 125;
 const uint32 kScene3060RedGlobeInitialStepMillis = 30;
 const uint32 kScene3060RedGlobeAccelerationMillis = 5;
 const byte kScene3060RedGlobeRevolutionCount = 6;
+const byte kScene3060RotateGlobeForwardHook = 1;
+const byte kScene3060RotateGlobeBackwardHook = 2;
 const uint kScene3060FrontDescriptorCount = 0x13;
 const uint kScene3060GlobeDescriptorCount = 0x1e;
 const uint kScene3060ButtonDescriptorCount = 5;
@@ -560,12 +562,12 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 
 	_buttonLayer.configure(7, kScene3060ButtonDescriptorCount, frameMap, frameMapSize);
 	_buttonLayer.visible = true;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_buttonLayer.setFrame(frame);
-		if (frame == 3)
-			rotateGlobe(globeDelta);
-		if (waitSceneMillis(kScene3060ButtonFrameMillis, false))
-			break;
+	if (frameMapSize != 0) {
+		const byte hookId = globeDelta > 0 ? kScene3060RotateGlobeForwardHook :
+			kScene3060RotateGlobeBackwardHook;
+		playAnimationFrames(_buttonLayer,
+			AnimationFrameRange(0, frameMapSize - 1, kScene3060ButtonFrameMillis)
+				.unskippable().hookAt(3, hookId));
 	}
 	_buttonLayer.visible = false;
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
@@ -575,6 +577,15 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 	markGlobeButtonsDiscovered();
 	drawPlayableComposite();
 	presentFrame();
+}
+
+void Scene3060::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (frame != 3)
+		return;
+	if (hookId == kScene3060RotateGlobeForwardHook)
+		rotateGlobe(1);
+	else if (hookId == kScene3060RotateGlobeBackwardHook)
+		rotateGlobe(-1);
 }
 
 void Scene3060::runRedButtonSequence() {

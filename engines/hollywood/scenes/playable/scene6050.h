@@ -50,7 +50,7 @@ private:
 
 	void resetGuardLayer();
 	void advanceGuardIdleLayer(uint32 delta);
-	void runGuardFrameRange(byte firstFrame, byte lastFrame, int step, byte finalFrame);
+	void runGuardFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame);
 	void runGuardLookUpTransition();
 	void runGuardLookDownTransition();
 	void beginGuardSpeechLine(byte frameIndex);

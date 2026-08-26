@@ -55,7 +55,6 @@ private:
 	void runPickupInventoryItem5dSequence();
 	void runRemoveInventoryItem6cSequence();
 	void runForegroundTransformationSequence();
-	void runForegroundFrameSequence(byte firstFrame, byte lastFrame);
 
 	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _foregroundChannel;

@@ -43,6 +43,7 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool shouldPlayGameplayClickPath() const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -53,7 +54,6 @@ private:
 	void updateHiddenObjectHotspots();
 	void runExitToScene3010();
 	void runInventoryPatchAction();
-	void runForegroundActionFrames(byte firstFrame, byte lastFrame, int patchFrame = -1);
 	void applyHiddenObjectPatch();
 	byte selectedInventoryItemForPatchAction() const;
 

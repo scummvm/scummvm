@@ -69,6 +69,7 @@ const byte kScene2110TreasureFrameMap[] = {
 const byte kScene2110TreasureGrantItems[] = {
 	0x30, 0x42, 0x4c
 };
+const byte kScene2110TreasureSoundHook = 1;
 
 static_assert(ARRAYSIZE(kScene2110EntryLayerFrameMap) == 0x1f,
 	"Scene 2110 entry-layer frame map size changed");
@@ -235,12 +236,12 @@ void Scene2110::runScriptedReturnToScene2100() {
 	drawPlayableComposite();
 	presentFrame();
 
-	runMappedLayerAnimation(_entryLayer, 0x0e, kScene2110FrameMillis);
+	playAnimationFrames(_entryLayer, AnimationFrameRange(1, 0x0e, kScene2110FrameMillis));
 	walkActiveActorTo(0x263, 0x135, kScene2110InvalidFacing, 0, false);
 	beginSecondarySpeechLine(6, 0);
-	runMappedLayerAnimation(_entryLayer, 0x16, kScene2110FrameMillis);
+	playAnimationFrames(_entryLayer, AnimationFrameRange(0x0f, 0x16, kScene2110FrameMillis));
 	runTreasurePrimarySpeechLine(6, 1);
-	runMappedLayerAnimation(_entryLayer, 0x1e, kScene2110FrameMillis);
+	playAnimationFrames(_entryLayer, AnimationFrameRange(0x17, 0x1e, kScene2110FrameMillis));
 	beginSecondarySpeechLine(6, 2);
 	runTreasurePrimarySpeechLine(6, 3);
 	_entryLayer.visible = false;
@@ -260,13 +261,15 @@ void Scene2110::runTreasureGrantAction() {
 	GameplayState &state = _vm->gameState();
 	_treasureLayer.visible = true;
 	_treasureLayer.reset(0);
-	runMappedLayerAnimation(_treasureLayer, 10, kScene2110FrameMillis);
+	playAnimationFrames(_treasureLayer, AnimationFrameRange(1, 10, kScene2110FrameMillis));
 
 	if (!state.scene2110TreasureGranted &&
 			state.scene2110TreasureGrantIndex < ARRAYSIZE(kScene2110TreasureGrantItems)) {
 		const byte grantIndex = state.scene2110TreasureGrantIndex;
 		runTreasurePrimarySpeechLine(0x16, (byte)(grantIndex * 2));
-		runMappedLayerAnimation(_treasureLayer, 0x23, kScene2110FrameMillis, 0x18, 1);
+		playAnimationFrames(_treasureLayer,
+			AnimationFrameRange(11, 0x23, kScene2110FrameMillis)
+				.hookAt(0x18, kScene2110TreasureSoundHook));
 
 		const byte itemId = kScene2110TreasureGrantItems[grantIndex];
 		if (!hasInventoryItem(itemId))
@@ -277,7 +280,7 @@ void Scene2110::runTreasureGrantAction() {
 		state.scene2110TreasureGranted = true;
 	} else {
 		runTreasurePrimarySpeechLine(0x66, 0);
-		runMappedLayerAnimation(_treasureLayer, 0x23, kScene2110FrameMillis);
+		playAnimationFrames(_treasureLayer, AnimationFrameRange(11, 0x23, kScene2110FrameMillis));
 	}
 
 	_treasureLayer.visible = false;
@@ -300,18 +303,9 @@ void Scene2110::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 	presentFrame();
 }
 
-void Scene2110::runMappedLayerAnimation(ResourceSpriteLayer &layer, byte targetFrame, uint32 frameMillis,
-		int soundStartFrame, byte soundStartId) {
-	layer.visible = true;
-	while (layer.frameIndex < targetFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		const byte nextFrame = (byte)(layer.frameIndex + 1);
-		if ((int)nextFrame == soundStartFrame)
-			_soundBank0.playSample(soundStartId, 100);
-		layer.setFrame(nextFrame);
-		if (waitSceneMillis(frameMillis))
-			break;
-	}
+void Scene2110::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene2110TreasureSoundHook && frame == 0x18)
+		_soundBank0.playSample(1, 100);
 }
 
 void Scene2110::runTreasurePrimarySpeechLine(uint16 rowIndex, byte frameIndex) {
