@@ -41,8 +41,14 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetAmbientLayer();
 	void advanceAmbientLayer(uint32 delta);
@@ -50,20 +56,24 @@ private:
 	void runEntryFromLabyrinthReturn();
 	void runGoToLabyrinth();
 	void runLongLabyrinthWalkClip();
-	void runLookLabyrinth();
+	void runRevealFloorSeal();
 	void runMuralSubscreenAction();
-	void runLosaSealMuralAction();
+	void runGuidedMuralAction();
 	void runMuralClipForward();
 	void runMuralClipBackward();
 	void runMuralPuzzleSubscreen();
 	void runSealDiscoverySequence();
+	void drawSealDiscoveryDeltaLayer();
 	void drawRawSceneChunk(uint chunkIndex);
+	bool loadMuralHitMask();
 	bool initializeMuralTilePermutation(uint chunkIndex);
 	bool isSavedMuralTilePermutationValid() const;
 	void randomizeMuralTilePermutation();
 	void setMuralTilePermutationSolved();
 	void drawMuralTileGrid(uint chunkIndex);
 	void drawMuralSelectionHighlight(byte tileId);
+	void clearMuralSelectionHighlight(byte tileId);
+	void rotateMuralHighlightPalette();
 	byte muralTileAtScreenPoint(int16 x, int16 y) const;
 	void handleMuralTileClick(byte tileId, bool &done);
 	bool isMuralPuzzleSolved() const;
@@ -76,6 +86,14 @@ private:
 	bool _muralPermutationInitialized;
 	byte _muralPermutationChunkIndex;
 	byte _muralSelectedTile;
+	Common::Array<byte> _muralHitMask;
+	uint32 _muralPaletteAccumulator;
+	bool _sealDiscoveryActive;
+	byte _sealDiscoveryFrame;
+	uint _sealDiscoveryActorPathFrameIndex;
+	bool _sealDiscoverySpeechStarted;
+	uint32 _sealDiscoverySpeechStartMillis;
+	uint32 _sealDiscoverySpeechDurationMillis;
 };
 
 } // End of namespace Hollywood
