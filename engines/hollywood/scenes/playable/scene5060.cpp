@@ -161,9 +161,8 @@ AmbientAudioProfile Scene5060::ambientAudioProfile() const {
 
 void Scene5060::runMineCartEntryClip() {
 	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5060MineCartDescriptorCount);
-	runActionOverlay(ActionOverlaySpec(5, kScene5060MineCartDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(5, kScene5060MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5060MineCartFrameMillis)
-		.hideActor()
 		.soundAt(0x3c, 0x16));
 }
 
@@ -180,9 +179,8 @@ void Scene5060::runRockPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
 		kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
-		.hideActor()
 		.patchAt(6, 1));
 	addInventoryItem(kScene5060RockInventoryItem);
 	_soundBank0.playSample(1, 100);

@@ -68,7 +68,7 @@ private:
 	void handleSpeech19AfterEventFlag1();
 	void handleResourceOverlayChunk18StateChange();
 	void handleResourceOverlayChunk19EventFlag();
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	bool isFirstEntryState() const;

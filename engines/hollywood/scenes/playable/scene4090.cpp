@@ -409,9 +409,8 @@ bool Scene4090::waitScriptFrame(uint32 frameMillis) {
 }
 
 void Scene4090::runDoorExit() {
-	runActionOverlay(ActionOverlaySpec(kScene4090DoorExitChunk, kScene4090DoorExitDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4090DoorExitChunk, kScene4090DoorExitDescriptorCount,
 		kScene4090DoorExitFrameMap, ARRAYSIZE(kScene4090DoorExitFrameMap), kScene4090FrameMillis)
-		.hideActor()
 		.endAt(ARRAYSIZE(kScene4090DoorExitFrameMap)));
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene4090DoorExitState;

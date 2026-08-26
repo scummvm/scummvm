@@ -512,9 +512,8 @@ void Scene4010::runEntryFromRightSide() {
 
 void Scene4010::runEntryFromLeftSide() {
 	runEntryPath(0x01ad, 0x01ce, 4, 0x01ad, 0x01ce);
-	runActionOverlay(ActionOverlaySpec(17, kScene4010ExitOverlayDescriptorCount,
-		kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(17, kScene4010ExitOverlayDescriptorCount,
+		kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis));
 }
 
 void Scene4010::setActiveActorPose(int x, int y, byte facing) {
@@ -793,9 +792,8 @@ void Scene4010::runProgressiveExitSpeech() {
 	const byte frame = MIN<byte>(state.scene4010ProgressiveExitSpeechState, 3);
 	beginSecondarySpeechLine(6, frame);
 	if (state.scene4010ProgressiveExitSpeechState > 1) {
-		runActionOverlay(ActionOverlaySpec(16, kScene4010ExitOverlayDescriptorCount,
+		runActorReplacement(ActionOverlaySpec(16, kScene4010ExitOverlayDescriptorCount,
 			kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
-			.hideActor()
 			.soundAt(11, 0x27)
 			.noRedrawAtEnd()
 			.startAt(1));
@@ -817,9 +815,8 @@ void Scene4010::takeAnimatedItem3A() {
 
 	beginSecondarySpeechLine(12, 0);
 	state.scene4010Item3APickupState = 3;
-	runActionOverlay(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
 		kScene4010Item3AFrameMap, ARRAYSIZE(kScene4010Item3AFrameMap), kScene4010OverlayFrameMillis)
-		.hideActor()
 		.patchAt(6, 3));
 	addInventoryItem(kScene4010Item3A);
 	_soundBank0.playSample(1, 100);
@@ -857,9 +854,8 @@ void Scene4010::unlockDestinationFromRoomAction() {
 	}
 
 	beginSecondarySpeechLine(15, 1);
-	runActionOverlay(ActionOverlaySpec(15, kScene4010DestinationOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(15, kScene4010DestinationOverlayDescriptorCount,
 		kScene4010DestinationFrameMap, ARRAYSIZE(kScene4010DestinationFrameMap), kScene4010OverlayFrameMillis)
-		.hideActor()
 		.soundAt(20, 0, 0)
 		.endAt(ARRAYSIZE(kScene4010DestinationFrameMap)));
 	if (state.unlockTravelScreenDestination(kScene4010AustraliaDestinationId) ||
@@ -875,9 +871,8 @@ void Scene4010::takePillbox() {
 		return;
 
 	state.scene4010PillboxPickupState = 2;
-	runActionOverlay(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
 		kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
-		.hideActor()
 		.patchAt(6, 5));
 	addInventoryItem(kScene4010PillboxItem);
 	_soundBank0.playSample(1, 100);

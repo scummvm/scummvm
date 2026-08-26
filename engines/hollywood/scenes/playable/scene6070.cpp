@@ -495,7 +495,7 @@ void Scene6070::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	}
 }
 
-void Scene6070::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene6070::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId != kScene6070TransferFrameHook ||
 		frame >= ARRAYSIZE(kScene6070TransferSueFrameMap))
 		return;
@@ -799,9 +799,8 @@ void Scene6070::handleGiveItemToSue() {
 
 	beginSecondarySpeechLine(6, 0);
 	_manualSequenceActive = true;
-	runActionOverlay(ActionOverlaySpec(10, 0x0c, kScene6070TransferFrameMap,
+	runActorReplacement(ActionOverlaySpec(10, 0x0c, kScene6070TransferFrameMap,
 									   ARRAYSIZE(kScene6070TransferFrameMap), kScene6070OverlayFrameMillis)
-						 .hideActor()
 						 .hookEveryFrame(kScene6070TransferFrameHook));
 	_sueLayer.setFrame(14);
 	_manualSequenceActive = false;

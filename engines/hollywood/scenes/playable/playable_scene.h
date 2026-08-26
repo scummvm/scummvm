@@ -192,7 +192,6 @@ protected:
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
 	virtual AmbientAudioProfile ambientAudioProfile() const;
-	virtual void handleActionOverlayFrameHook(byte hookId, uint frame);
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	virtual void advanceFullscreenAnimation(uint32 delta);
 
@@ -338,14 +337,13 @@ protected:
 	void presentDialogueMenuFrame(const DialogueMenuState &state) override;
 
 	// Action overlays
-	// Playback is synchronous and uses waitSceneMillis() between frames.
-	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+	// Actor actions replace the regular actor; scene overlays retain it.
+	void runActorReplacement(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis);
-	void runActionOverlay(const ActionOverlaySpec &spec);
-	void runHiddenActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+	void runActorReplacement(const ActionOverlaySpec &spec);
+	void runSceneOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis);
-	void runVisibleActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis);
+	void runSceneOverlay(const ActionOverlaySpec &spec);
 
 	// Speech animation hooks
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
@@ -543,11 +541,6 @@ protected:
 
 	// Action overlay runtime state
 	ActionOverlayPlayer _actionOverlayPlayer;
-	bool &_actionOverlayVisible;
-	ResourceSpriteLayer &_actionOverlayLayer;
-	byte &_actionOverlayChunkIndex;
-	byte &_actionOverlayDescriptorCount;
-	byte &_actionOverlayFrameIndex;
 	bool &_hideActiveActor;
 
 	// Scene runtime state
@@ -571,6 +564,9 @@ protected:
 	byte _lastInventoryActionItemId;
 	byte _lastInventoryPrimaryItemId;
 	bool _skipRequested;
+
+private:
+	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum);
 };
 
 } // End of namespace Hollywood

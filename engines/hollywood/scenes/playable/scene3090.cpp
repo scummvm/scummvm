@@ -682,9 +682,8 @@ void Scene3090::runSaltShakerPickup() {
 	}
 
 	state.scene3090SaltShakerTaken = true;
-	runActionOverlay(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
+		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis));
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene3090SaltShakerItemId);
 	_soundBank0.playSample(1, 100);
@@ -699,9 +698,8 @@ void Scene3090::runDowsingRodPickup() {
 	}
 
 	state.scene3090DowsingRodTaken = true;
-	runActionOverlay(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
+		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis));
 	applySceneStateToHotspotsAndPatches(5);
 	addInventoryItem(kScene3090DowsingRodItemId);
 	_soundBank0.playSample(1, 100);
@@ -716,9 +714,8 @@ void Scene3090::runUseStrawInFireplace() {
 	}
 
 	beginSecondarySpeechLine(10, 0);
-	runActionOverlay(ActionOverlaySpec(14, kScene3090StrawDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(14, kScene3090StrawDescriptorCount,
 		kScene3090StrawFrameMap, ARRAYSIZE(kScene3090StrawFrameMap), kScene3090OverlayFrameMillis)
-		.hideActor()
 		.soundAt(7, 1));
 	removeInventoryItem(kScene3090StrawItemId);
 	waitSceneMillis(750);
@@ -747,9 +744,8 @@ void Scene3090::runSaxophoneHandoff() {
 	walkActiveActorTo(0x178, 0x171, 5, 0, false);
 	beginSecondarySpeechLine(11, 0);
 	beginBlindManResponse(1);
-	runActionOverlay(ActionOverlaySpec(15, kScene3090SaxophoneDescriptorCount,
-		kScene3090SaxophoneFrameMap, ARRAYSIZE(kScene3090SaxophoneFrameMap), kScene3090OverlayFrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(15, kScene3090SaxophoneDescriptorCount,
+		kScene3090SaxophoneFrameMap, ARRAYSIZE(kScene3090SaxophoneFrameMap), kScene3090OverlayFrameMillis));
 	removeInventoryItem(kScene3090SaxophoneItemId);
 	state.scene3090BlindManPlayingSaxophone = true;
 	state.currentAmbientMusicCueId = 0x11;

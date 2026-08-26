@@ -665,9 +665,8 @@ void Scene4080::runBottlePickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
-	runActionOverlay(ActionOverlaySpec(kScene4080BottlePickupChunk, kScene4080BottlePickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4080BottlePickupChunk, kScene4080BottlePickupDescriptorCount,
 		kScene4080BottlePickupFrameMap, ARRAYSIZE(kScene4080BottlePickupFrameMap), kScene4080FrameMillis)
-		.hideActor()
 		.endAt(ARRAYSIZE(kScene4080BottlePickupFrameMap)));
 	addInventoryItem(kScene4080OilBottleItem);
 	_soundBank0.playSample(1, 100);
@@ -705,9 +704,8 @@ void Scene4080::runSteakPickupSequence() {
 	}
 
 	beginSecondarySpeechLine(17, 0);
-	runActionOverlay(ActionOverlaySpec(kScene4080SteakPickupChunk, kScene4080SteakPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4080SteakPickupChunk, kScene4080SteakPickupDescriptorCount,
 		kScene4080SteakPickupFrameMap, ARRAYSIZE(kScene4080SteakPickupFrameMap), kScene4080FrameMillis)
-		.hideActor()
 		.endAt(ARRAYSIZE(kScene4080SteakPickupFrameMap)));
 	addInventoryItem(kScene4080SteakItem);
 	_soundBank0.playSample(1, 100);

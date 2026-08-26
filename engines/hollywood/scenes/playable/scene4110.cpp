@@ -150,14 +150,10 @@ void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		return;
 	}
 
-	if (_actionOverlayVisible) {
-		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
+	if (_actionOverlayPlayer.replacesActor()) {
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawActionOverlayLayer();
 		drawTransientLayers(_backgroundLayers);
-		if (!_hideActiveActor) {
-			drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-				drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-		}
 		return;
 	}
 
@@ -354,9 +350,8 @@ void Scene4110::takeLetter() {
 	}
 
 	beginSecondarySpeechLine(3, 0);
-	runActionOverlay(ActionOverlaySpec(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
 		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap), kScene4110FrameMillis)
-		.hideActor()
 		.frameRange(1, ARRAYSIZE(kScene4110PickupFrameMap)));
 	addInventoryItem(kScene4110LetterItem);
 	_soundBank0.playSample(1, 100);

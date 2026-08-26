@@ -310,7 +310,7 @@ void Scene2050::runGoToLabyrinth() {
 }
 
 void Scene2050::runLongLabyrinthWalkClip() {
-	runHiddenActorActionOverlay(12, kScene2050LabyrinthWalkDescriptorCount,
+	runActorReplacement(12, kScene2050LabyrinthWalkDescriptorCount,
 		kScene2050LabyrinthWalkFrameMap, ARRAYSIZE(kScene2050LabyrinthWalkFrameMap),
 		kScene2050OverlayFrameMillis);
 }
@@ -367,13 +367,13 @@ void Scene2050::runLosaSealMuralAction() {
 }
 
 void Scene2050::runMuralClipForward() {
-	runHiddenActorActionOverlay(9, kScene2050MuralClipDescriptorCount,
+	runActorReplacement(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipForwardFrameMap, ARRAYSIZE(kScene2050MuralClipForwardFrameMap),
 		kScene2050OverlayFrameMillis);
 }
 
 void Scene2050::runMuralClipBackward() {
-	runHiddenActorActionOverlay(9, kScene2050MuralClipDescriptorCount,
+	runActorReplacement(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipBackwardFrameMap, ARRAYSIZE(kScene2050MuralClipBackwardFrameMap),
 		kScene2050OverlayFrameMillis);
 }
@@ -461,7 +461,7 @@ void Scene2050::runMuralPuzzleSubscreen() {
 
 void Scene2050::runSealDiscoverySequence() {
 	beginSecondarySpeechLine(8, 0);
-	runVisibleActorActionOverlay(11, kScene2050SealDiscoveryDescriptorCount,
+	runSceneOverlay(11, kScene2050SealDiscoveryDescriptorCount,
 		kScene2050SealDiscoveryFrameMap, ARRAYSIZE(kScene2050SealDiscoveryFrameMap),
 		kScene2050OverlayFrameMillis);
 	beginSecondarySpeechLine(13, 0);

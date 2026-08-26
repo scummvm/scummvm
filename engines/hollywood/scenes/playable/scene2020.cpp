@@ -329,7 +329,7 @@ void Scene2020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		_princessLayer.setFrame(frameIndex);
 }
 
-void Scene2020::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene2020::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 	drawPickupPatch(hookId);
 }
@@ -595,9 +595,8 @@ void Scene2020::runHatPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
 		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.hideActor()
 		.hookAt(3, kScene2020HatPickupPatchHook));
 	state.scene2020HatPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -617,9 +616,8 @@ void Scene2020::runSunglassesPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
 		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.hideActor()
 		.hookAt(3, kScene2020SunglassesPickupPatchHook));
 	state.scene2020SunglassesPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -634,9 +632,8 @@ void Scene2020::runTigerToothPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
 		kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
-		.hideActor()
 		.hookAt(7, kScene2020TigerToothPickupPatchHook));
 	_vm->gameState().scene2020TigerToothState = 2;
 	applySceneStateToHotspotsAndPatches(2);
@@ -663,9 +660,8 @@ void Scene2020::runLabItemOnTigerSequence() {
 }
 
 void Scene2020::runTigerItemOverlaySequence() {
-	runActionOverlay(ActionOverlaySpec(14, kScene2020TigerItemOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(14, kScene2020TigerItemOverlayDescriptorCount,
 		kScene2020TigerItemOverlayFrameMap, ARRAYSIZE(kScene2020TigerItemOverlayFrameMap), kScene2020OverlayFrameMillis)
-		.hideActor()
 		.soundAt(8, 0x2a));
 	_tigerAnimationState = 0;
 	_tigerLayer.setFrame(0);

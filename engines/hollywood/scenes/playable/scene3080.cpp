@@ -135,7 +135,7 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_largeLayer);
-	if (_actionOverlayVisible) {
+	if (_actionOverlayPlayer.replacesActor()) {
 		drawActionOverlayLayer();
 		drawResourceSpriteLayer(_smallIdleLayer);
 		return;
@@ -333,7 +333,7 @@ AmbientAudioProfile Scene3080::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene3080::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene3080::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene3080DiaryPatchHook) {
 		if (_sceneChunkTable.isValidChunk(12))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
@@ -480,9 +480,8 @@ void Scene3080::runDiaryPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
 		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hideActor()
 		.hookAt(10, kScene3080DiaryPatchHook)
 		.noRedrawAtEnd());
 	state.scene3080FrankensteinDiaryTaken = true;
@@ -500,9 +499,8 @@ void Scene3080::runStickPickup() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
 		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hideActor()
 		.hookAt(10, kScene3080StickPatchHook)
 		.noRedrawAtEnd());
 	state.scene3080BranchTaken = true;
@@ -513,9 +511,8 @@ void Scene3080::runStickPickup() {
 }
 
 void Scene3080::runFlyerCoatingOverlay() {
-	runActionOverlay(ActionOverlaySpec(14, kScene3080FlyerOverlayDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(14, kScene3080FlyerOverlayDescriptorCount,
 		kScene3080FlyerOverlayFrameMap, ARRAYSIZE(kScene3080FlyerOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hideActor()
 		.hookEveryFrame(kScene3080FlyerSoundHook));
 	_soundBank0.stop();
 	addInventoryItem(0x34);

@@ -146,7 +146,7 @@ void Scene5020::runPickupWoodenPlank() {
 		return;
 	}
 
-	runHiddenActorActionOverlay(kScene5020PickupOverlayChunk, kScene5020PickupOverlayDescriptorCount,
+	runActorReplacement(kScene5020PickupOverlayChunk, kScene5020PickupOverlayDescriptorCount,
 		kScene5020PickupFrameMap, ARRAYSIZE(kScene5020PickupFrameMap), kScene5020OverlayFrameMillis);
 	addInventoryItem(kScene5020WoodenPlankItem);
 	_soundBank0.playSample(1, 100);

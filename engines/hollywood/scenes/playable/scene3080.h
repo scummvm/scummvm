@@ -48,7 +48,7 @@ private:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 

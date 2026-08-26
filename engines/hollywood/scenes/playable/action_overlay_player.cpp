@@ -24,52 +24,34 @@
 namespace Hollywood {
 
 ActionOverlayPlayer::ActionOverlayPlayer() :
-		visible(false),
 		layer(),
-		chunkIndex(0),
-		descriptorCount(0),
-		frameIndex(0),
+		stratum(kSceneAnimationInFrontOfActors),
 		hideActiveActor(false) {
 }
 
 void ActionOverlayPlayer::reset() {
-	visible = false;
 	layer.visible = false;
-	chunkIndex = 0;
-	descriptorCount = 0;
-	frameIndex = 0;
+	stratum = kSceneAnimationInFrontOfActors;
 	hideActiveActor = false;
 }
 
-bool ActionOverlayPlayer::applyActorVisibility(ActionOverlayActorVisibility actorVisibility) {
+bool ActionOverlayPlayer::begin(uint overlayChunkIndex, uint overlayDescriptorCount,
+		const byte *frameMap, uint frameMapSize, SceneAnimationStratum newStratum) {
 	const bool previousHideActiveActor = hideActiveActor;
-	if (actorVisibility == kActionOverlayShowActiveActor)
-		hideActiveActor = false;
-	else if (actorVisibility == kActionOverlayHideActiveActor)
-		hideActiveActor = true;
-
-	return previousHideActiveActor;
-}
-
-void ActionOverlayPlayer::begin(uint overlayChunkIndex, uint overlayDescriptorCount,
-		const byte *frameMap, uint frameMapSize) {
-	visible = true;
-	chunkIndex = (byte)overlayChunkIndex;
-	descriptorCount = (byte)overlayDescriptorCount;
-	frameIndex = 0;
+	stratum = newStratum;
 	layer.configure(overlayChunkIndex, (uint16)overlayDescriptorCount, frameMap, frameMapSize);
 	layer.visible = true;
+	hideActiveActor = replacesActor();
+	return previousHideActiveActor;
 }
 
 void ActionOverlayPlayer::setFrame(uint frame) {
 	layer.setFrame((byte)frame);
-	frameIndex = (byte)layer.descriptorIndex();
 }
 
 void ActionOverlayPlayer::finish(bool previousHideActiveActor) {
-	visible = false;
 	layer.visible = false;
-	frameIndex = 0;
+	stratum = kSceneAnimationInFrontOfActors;
 	hideActiveActor = previousHideActiveActor;
 }
 

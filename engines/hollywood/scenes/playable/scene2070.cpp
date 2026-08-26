@@ -402,7 +402,7 @@ void Scene2070::runSealMemoryEffect() {
 
 void Scene2070::runAnimatedInventoryStateChange() {
 	beginSecondarySpeechLine(10, 0);
-	runHiddenActorActionOverlay(10, kScene2070InventoryOverlayDescriptorCount,
+	runActorReplacement(10, kScene2070InventoryOverlayDescriptorCount,
 		kScene2070InventoryOverlayFrameMap, ARRAYSIZE(kScene2070InventoryOverlayFrameMap),
 		kScene2070OverlayFrameMillis);
 

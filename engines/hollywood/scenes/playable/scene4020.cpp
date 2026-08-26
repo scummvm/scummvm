@@ -190,7 +190,7 @@ bool Scene4020::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 	return restoredStepDeltas;
 }
 
-void Scene4020::handleActionOverlayFrameHook(byte hookId, uint frame) {
+void Scene4020::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId != kScene4020KeyMechanismHook)
 		return;
 
@@ -247,9 +247,8 @@ void Scene4020::runEntryFromScene4010() {
 void Scene4020::runEntryFromScene4030() {
 	setActiveActorPose(0x265, 0x117, 4);
 
-	runActionOverlay(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
-		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap), kScene4020FrameMillis)
-		.hideActor());
+	runActorReplacement(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
+		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap), kScene4020FrameMillis));
 	setActiveActorPose(0x265, 0x117, 5);
 	walkActiveActorTo(0x265, 0x117, 4, 0, false);
 }
@@ -260,9 +259,8 @@ void Scene4020::runExitToScene4030() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
 		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap), kScene4020FrameMillis)
-		.hideActor()
 		.noRedrawAtEnd()
 		.startAt(1));
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;
@@ -278,9 +276,8 @@ void Scene4020::useKeyOnGateMechanism() {
 		return;
 	}
 
-	runActionOverlay(ActionOverlaySpec(kScene4020KeyMechanismChunk, kScene4020KeyMechanismDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4020KeyMechanismChunk, kScene4020KeyMechanismDescriptorCount,
 		kScene4020KeyMechanismFrameMap, ARRAYSIZE(kScene4020KeyMechanismFrameMap), kScene4020FrameMillis)
-		.hideActor()
 		.hookEveryFrame(kScene4020KeyMechanismHook));
 	_soundBank0.stop();
 	removeInventoryItem(kScene4020KeyItem);
