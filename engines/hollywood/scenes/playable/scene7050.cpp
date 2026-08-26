@@ -352,20 +352,15 @@ void Scene7050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 
 void Scene7050::runSecondaryActorPoseIn() {
 	_cloakroomAttendantAnimation.setStateAndFrame(5, 0x20);
-	for (byte frame = 0x20; frame <= 0x24 && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantAnimation.setFrame(frame);
-		if (waitSceneMillis(kScene7050FrameMillis))
-			break;
-	}
+	playAnimationFrames(_cloakroomAttendantAnimation,
+		AnimationFrameRange(0x21, 0x24, kScene7050FrameMillis));
 	_cloakroomAttendantAnimation.setFrame(0x24);
 }
 
 void Scene7050::runSecondaryActorPoseOut() {
-	for (byte frame = 0x28; frame <= 0x2c && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantAnimation.setFrame(frame);
-		if (waitSceneMillis(kScene7050FrameMillis))
-			break;
-	}
+	_cloakroomAttendantAnimation.setFrame(0x28);
+	playAnimationFrames(_cloakroomAttendantAnimation,
+		AnimationFrameRange(0x29, 0x2c, kScene7050FrameMillis));
 	_cloakroomAttendantAnimation.reset();
 }
 
