@@ -66,7 +66,7 @@ private:
 	void drawActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
-	bool playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
+	bool playLayerTransition(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
 		uint32 frameMillis);
 	bool runCurtainRevealFromBlack();
 	void runOpeningConversation();

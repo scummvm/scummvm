@@ -46,18 +46,16 @@ private:
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetForegroundLayer(bool visible, byte frameIndex);
-	void setForegroundFrame(byte frameIndex);
 	void runEntryFromScene2080();
 	void runEntryFromScene2020();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel);
 	void runBackTransitionToScene2080();
 	void runGuardOrCurtainInteraction();
-	void runForegroundAnimationTo(byte targetFrame, uint32 frameMillis,
-		int speechTriggerFrame = -1, uint16 speechRow = 0, byte speechFrame = 0);
 	void waitForStartedSpeechAndClear(uint32 fallbackMillis);
 	void runCurtainClearToBlack();
 

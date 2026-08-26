@@ -43,6 +43,7 @@ const uint kScene3040ForegroundActorDescriptorCount = 0x14;
 const uint kScene3040LoopDescriptorCount = 8;
 const byte kScene3040HiddenObjectItemId = 3;
 const byte kScene3040HiddenObjectPatchChunk = 7;
+const byte kScene3040HiddenObjectPatchHook = 1;
 
 const byte kScene3040ForegroundFrameMap[] = {
 	0, 1, 2, 1, 4, 5, 6, 7, 8, 9,
@@ -308,13 +309,20 @@ void Scene3040::updateHiddenObjectHotspots() {
 }
 
 void Scene3040::runExitToScene3010() {
-	runForegroundActionFrames(0x0e, 0x14);
+	_foregroundActionActive = true;
+	playAnimationFrames(_foregroundActorLayer,
+		AnimationFrameRange(0x0e, 0x14, kScene3040ForegroundFrameMillis));
+	_foregroundActionActive = false;
 	_vm->gameState().mainFlowStateId = kScene3010EntryFromScene3040State;
 }
 
 void Scene3040::runInventoryPatchAction() {
 	beginSecondarySpeechLine(1, 5);
-	runForegroundActionFrames(4, 0x0e, 0x0b);
+	_foregroundActionActive = true;
+	playAnimationFrames(_foregroundActorLayer,
+		AnimationFrameRange(4, 0x0e, kScene3040ForegroundFrameMillis)
+			.hookAt(0x0b, kScene3040HiddenObjectPatchHook));
+	_foregroundActionActive = false;
 
 	const byte inventoryItem = selectedInventoryItemForPatchAction();
 	if (inventoryItem != 0)
@@ -327,19 +335,11 @@ void Scene3040::runInventoryPatchAction() {
 	presentFrame();
 }
 
-void Scene3040::runForegroundActionFrames(byte firstFrame, byte lastFrame, int patchFrame) {
-	_foregroundActionActive = true;
-	for (byte frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++frame) {
-		_foregroundActorLayer.setFrame(frame);
-		if (patchFrame >= 0 && frame == patchFrame) {
-			_vm->gameState().scene3040HiddenObjectVisible = true;
-			applySceneStateToHotspotsAndPatches(1);
-		}
-		if (waitSceneMillis(kScene3040ForegroundFrameMillis))
-			break;
+void Scene3040::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene3040HiddenObjectPatchHook && frame == 0x0b) {
+		_vm->gameState().scene3040HiddenObjectVisible = true;
+		applySceneStateToHotspotsAndPatches(1);
 	}
-	_foregroundActionActive = false;
 }
 
 void Scene3040::applyHiddenObjectPatch() {

@@ -59,6 +59,8 @@ const byte kScene4050PatchStateWindowReached = 2;
 const byte kScene4050RonIdleBlinkFrame = 4;
 const byte kScene4050RonSpeechFrameCount = 4;
 const byte kScene4050TextColor = 0xfd;
+const byte kScene4050AttachRopeSoundHook = 1;
+const byte kScene4050SwingSoundHook = 2;
 
 const byte kScene4050D09ReturnTransitionFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -347,18 +349,6 @@ void Scene4050::beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex) {
 	setRonResourceFrame(0);
 }
 
-void Scene4050::runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byte soundFrame, byte soundId) {
-	_ronManualSequenceActive = true;
-	for (byte frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit(); ++frame) {
-		setRonResourceFrame(frame);
-		if (frame == soundFrame)
-			_soundBank0.playSample(soundId, 100);
-		if (waitSceneMillis(kScene4050RonFrameMillis))
-			break;
-	}
-	_ronManualSequenceActive = false;
-}
-
 void Scene4050::runD09ReturnTransitionSequence() {
 	resetAnimationLayers();
 	_backgroundLayer.setFrame(0);
@@ -371,12 +361,8 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	GameplayState &state = _vm->gameState();
 	const byte lastFrame = state.scene4090WideCoffinVariant == 0 ? 0x2e : 0x1a;
 	_soundBank0.playSampleLooping(0x30, 100);
-	for (byte frame = 0; frame <= lastFrame && frame < ARRAYSIZE(kScene4050D09ReturnTransitionFrameMap) &&
-			!Engine::shouldQuit(); ++frame) {
-		_d09ReturnTransitionLayer.setFrame(frame);
-		if (waitSceneMillis(kScene4050RonFrameMillis))
-			break;
-	}
+	playAnimationFrames(_d09ReturnTransitionLayer,
+		AnimationFrameRange(0, lastFrame, kScene4050RonFrameMillis));
 	_soundBank0.stop();
 
 	state.mainFlowStateId = kScene4090ReturnState;
@@ -390,7 +376,12 @@ void Scene4050::useLongRopeOnLedge() {
 	}
 
 	beginRonResourceSpeechLine(8, 1);
-	runRonResourceFrameSequence(4, 0x11, 6, 0x2d);
+	_ronManualSequenceActive = true;
+	playAnimationFrames(_ronLayer,
+		AnimationFrameRange(4, 0x11, kScene4050RonFrameMillis)
+			.hookAt(6, kScene4050AttachRopeSoundHook));
+	setRonResourceFrame(_ronLayer.frameIndex);
+	_ronManualSequenceActive = false;
 	removeInventoryItem(kScene4050LongRopeItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4050RopeSwingState = kScene4050PatchStateRopeAttached;
@@ -408,9 +399,21 @@ void Scene4050::useSceneRope() {
 	beginRonResourceSpeechLine(6, 1);
 	if (_sceneChunkTable.isValidChunk(kScene4050ExitPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4050ExitPatchChunk], _baseFramebuffer);
-	runRonResourceFrameSequence(0x11, 0x1b, 0x17, 0x2e);
+	_ronManualSequenceActive = true;
+	playAnimationFrames(_ronLayer,
+		AnimationFrameRange(0x11, 0x1b, kScene4050RonFrameMillis)
+			.hookAt(0x17, kScene4050SwingSoundHook));
+	setRonResourceFrame(_ronLayer.frameIndex);
+	_ronManualSequenceActive = false;
 	state.scene4050RopeSwingState = kScene4050PatchStateWindowReached;
 	state.mainFlowStateId = kScene4060FirstState;
+}
+
+void Scene4050::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene4050AttachRopeSoundHook && frame == 6)
+		_soundBank0.playSample(0x2d, 100);
+	else if (hookId == kScene4050SwingSoundHook && frame == 0x17)
+		_soundBank0.playSample(0x2e, 100);
 }
 
 void Scene4050::applyPatchStateColorMap(byte patchState) {

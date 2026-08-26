@@ -360,22 +360,6 @@ void Scene6080::advanceGuardIdle(uint32 delta) {
 	}
 }
 
-bool Scene6080::playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame,
-		byte lastFrame, uint32 frameMillis) {
-	layer.setFrame(firstFrame);
-	drawPlayableComposite();
-	presentFrame();
-	while (layer.frameIndex < lastFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(frameMillis, false))
-			return false;
-		layer.setFrame(layer.frameIndex + 1);
-	}
-	drawPlayableComposite();
-	presentFrame();
-	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
-}
-
 void Scene6080::finishSueIdleSequence() {
 	while (_sueLongIdleActive && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested()) {
@@ -386,7 +370,8 @@ void Scene6080::finishSueIdleSequence() {
 
 void Scene6080::runReturnConversation() {
 	_guardManualSequenceActive = true;
-	if (!playLayerFrames(_guardNormalLayer, 5, 9, kScene6080GuardFrameMillis))
+	if (!playAndPresentAnimationTransition(_guardNormalLayer,
+			AnimationTransition(5, 9, 9, kScene6080GuardFrameMillis).unskippable()))
 		return;
 	_guardManualSequenceActive = false;
 
@@ -403,7 +388,8 @@ void Scene6080::runReturnConversation() {
 		0x30, 0x3f, 0, kScene6080GuardSpeechGroup);
 
 	_guardManualSequenceActive = true;
-	playLayerFrames(_guardNormalLayer, 13, 17, kScene6080GuardFrameMillis);
+	playAndPresentAnimationTransition(_guardNormalLayer,
+		AnimationTransition(13, 17, 17, kScene6080GuardFrameMillis).unskippable());
 	_guardNormalLayer.setFrame(0);
 	_guardManualSequenceActive = false;
 }

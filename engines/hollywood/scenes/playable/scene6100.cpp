@@ -389,28 +389,12 @@ void Scene6100::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	_charlieConversationChannel.resetTimer();
 }
 
-bool Scene6100::playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame,
-		byte lastFrame, uint32 frameMillis) {
-	for (uint frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++frame) {
-		layer.setFrame((byte)frame);
-		if (waitSceneMillis(frameMillis))
-			return false;
-	}
-	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
-}
-
-bool Scene6100::playCharlieFrames(byte firstFrame, byte lastFrame, uint32 frameMillis) {
-	return playLayerFrames(_charlieLayer, firstFrame, lastFrame, frameMillis);
-}
-
 void Scene6100::enterCharlieDialoguePose() {
 	_charlieManualSequenceActive = true;
-	for (uint frame = _charlieLayer.frameIndex + 1; frame <= 16 &&
-			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		_charlieLayer.setFrame((byte)frame);
-		if (waitSceneMillis(kScene6100AnimationFrameMillis))
-			break;
+	if (_charlieLayer.frameIndex < 16) {
+		playAnimationFrames(_charlieLayer,
+			AnimationFrameRange(_charlieLayer.frameIndex + 1, 16,
+				kScene6100AnimationFrameMillis));
 	}
 	_charliePose = 0;
 	_charlieManualSequenceActive = false;
@@ -418,14 +402,16 @@ void Scene6100::enterCharlieDialoguePose() {
 
 void Scene6100::switchCharlieToAlternatePose() {
 	_charlieManualSequenceActive = true;
-	playCharlieFrames(20, 24, kScene6100AnimationFrameMillis);
+	playAnimationFrames(_charlieLayer,
+		AnimationFrameRange(20, 24, kScene6100AnimationFrameMillis));
 	_charliePose = 1;
 	_charlieManualSequenceActive = false;
 }
 
 void Scene6100::returnCharlieToDialoguePose() {
 	_charlieManualSequenceActive = true;
-	playCharlieFrames(28, 32, kScene6100AnimationFrameMillis);
+	playAnimationFrames(_charlieLayer,
+		AnimationFrameRange(28, 32, kScene6100AnimationFrameMillis));
 	_charliePose = 0;
 	_charlieManualSequenceActive = false;
 }
@@ -434,12 +420,8 @@ void Scene6100::finishCharlieDialoguePose() {
 	_charlieConversationActive = false;
 	_charlieManualSequenceActive = true;
 	_charlieLayer.setFrame(16);
-	for (int frame = 15; frame >= 7 && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); --frame) {
-		_charlieLayer.setFrame((byte)frame);
-		if (waitSceneMillis(kScene6100AnimationFrameMillis))
-			break;
-	}
+	playAnimationFrames(_charlieLayer,
+		AnimationFrameRange(15, 7, kScene6100AnimationFrameMillis));
 	_charlieIdleState = 0;
 	_charlieIdleChannel.reset(_charlieLayer.frameIndex, kScene6100AnimationFrameMillis);
 	_charlieManualSequenceActive = false;
@@ -622,22 +604,27 @@ void Scene6100::giveBillyFordEnvelopeToCharlie() {
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	_letterLayer.visible = true;
-	playLayerFrames(_letterLayer, 0, 7, kScene6100AnimationFrameMillis);
-	playCharlieFrames(32, 41, kScene6100AnimationFrameMillis);
-	playLayerFrames(_letterLayer, 7, 12, kScene6100AnimationFrameMillis);
+	playAnimationFrames(_letterLayer,
+		AnimationFrameRange(0, 7, kScene6100AnimationFrameMillis));
+	playAnimationFrames(_charlieLayer,
+		AnimationFrameRange(32, 41, kScene6100AnimationFrameMillis));
+	playAnimationFrames(_letterLayer,
+		AnimationFrameRange(7, 12, kScene6100AnimationFrameMillis));
 	_letterLayer.visible = false;
 	_hideActiveActor = previousHideActiveActor;
 
 	removeInventoryItem(kScene6100BillyFordEnvelopeItem);
 	_soundBank0.playSample(1, 100);
 	beginCharlieSpeechLine(2, kScene6100LetterSpeechGroup);
-	playCharlieFrames(42, 78, kScene6100AnimationFrameMillis);
+	playAnimationFrames(_charlieLayer,
+		AnimationFrameRange(42, 78, kScene6100AnimationFrameMillis));
 	_charliePose = 2;
 	beginCharlieSpeechLine(3, kScene6100CharlieSpeechGroup);
 
 	_charlieLayer.visible = false;
 	_departureLayer.visible = true;
-	playLayerFrames(_departureLayer, 0, 22, kScene6100DepartureFrameMillis);
+	playAnimationFrames(_departureLayer,
+		AnimationFrameRange(0, 22, kScene6100DepartureFrameMillis));
 	_departureLayer.visible = false;
 	state.scene6100CharlieState = 0;
 	applySceneStateToHotspotsAndPatches(1);

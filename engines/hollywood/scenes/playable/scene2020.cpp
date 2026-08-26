@@ -429,8 +429,12 @@ void Scene2020::runPrincessExitCutscene() {
 
 	drawPlayableComposite();
 	presentFrame();
-	runPrincessFrameSequence(0, 0x19, 1);
-	runPrincessFrameSequence(0, 0x19, 1);
+	_princessSpeechTransitionActive = true;
+	playAndPresentAnimationFrames(_princessLayer,
+		AnimationFrameRange(0, 0x19, kScene2020PrincessFrameMillis));
+	playAndPresentAnimationFrames(_princessLayer,
+		AnimationFrameRange(0, 0x19, kScene2020PrincessFrameMillis));
+	_princessSpeechTransitionActive = false;
 
 	GameplayState &state = _vm->gameState();
 	state.scene2020PrincessGone = true;
@@ -443,41 +447,14 @@ void Scene2020::runPrincessExitCutscene() {
 	state.mainFlowStateId = kScene2020PrincessExitNextState;
 }
 
-void Scene2020::runPrincessFrameSequence(byte firstFrame, byte lastFrame, int step) {
-	_princessSpeechTransitionActive = true;
-	for (int frame = firstFrame; !Engine::shouldQuit() && !_vm->isSceneRestartRequested();) {
-		_princessLayer.setFrame((byte)frame);
-		drawPlayableComposite();
-		presentFrame();
-		if (waitSceneMillis(kScene2020PrincessFrameMillis))
-			break;
-		if (frame == lastFrame)
-			break;
-		frame += step;
-	}
-	_princessSpeechTransitionActive = false;
-}
-
 void Scene2020::runPrincessSpeechTransition(bool opening) {
 	if (_vm->gameState().scene2020PrincessGone)
 		return;
 
 	_princessSpeechTransitionActive = true;
-	if (opening) {
-		for (byte frame = 0x19; frame <= 0x1f && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-			_princessLayer.setFrame(frame);
-			if (waitSceneMillis(kScene2020PrincessFrameMillis))
-				break;
-		}
-	} else {
-		for (byte frame = 0x20; frame >= 0x19 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); --frame) {
-			_princessLayer.setFrame(frame);
-			if (waitSceneMillis(kScene2020PrincessFrameMillis))
-				break;
-			if (frame == 0x19)
-				break;
-		}
-	}
+	playAnimationFrames(_princessLayer,
+		AnimationFrameRange(opening ? 0x19 : 0x20, opening ? 0x1f : 0x19,
+			kScene2020PrincessFrameMillis));
 	_princessSpeechTransitionActive = false;
 }
 
