@@ -63,7 +63,7 @@ private:
 	void runEntryFromPyramid();
 	void runEntryFromSphinx();
 	void runSphinxExitTransition();
-	void runTransitionClip(uint chunkIndex);
+	void runTransitionClip(uint chunkIndex, bool includeActiveActor);
 	void drawTransitionClipFrame(uint chunkIndex, byte frameIndex, Graphics::Surface &transitionBackground);
 	void drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCount, byte frameIndex, Graphics::Surface &destination);
 	void runMerchantShopDialogue();

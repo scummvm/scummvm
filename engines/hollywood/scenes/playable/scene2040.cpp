@@ -150,14 +150,19 @@ void Scene2040::initializeCustomPreviewState() {
 void Scene2040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
 	copyBaseFramebufferToSceneFramebuffer();
+	updateSceneDepthThresholds(actorDrawOrderMode);
 	drawResourceSpriteLayer(_behindActorLayer);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
 	drawResourceSpriteLayer(_foregroundLayer);
+}
+
+void Scene2040::updateSceneDepthThresholds(byte actorDrawOrderMode) {
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+	if (_drawActorDepthYThresholds.size() > 2)
+		_drawActorDepthYThresholds[2] = actorDrawOrderMode == 3 ? 0x03e7 : 0;
 }
 
 void Scene2040::runCustomEntrySequence() {
@@ -445,7 +450,20 @@ void Scene2040::runExitToInterior() {
 		state.scene2040SphinxExitInterviewState = 3;
 	}
 
-	walkActiveActorTo(0x1a4, 0x190, 4, 0, false);
+	const uint entranceOffset = 0x190 * HollywoodEngine::kSceneBufferWidth + 0x1a4;
+	const byte entranceColor = savedFramebufferPixelAt(entranceOffset);
+	const bool hasEntranceRegion = entranceColor < _fullPaletteRegionMask.size();
+	const byte previousEntranceRegion = hasEntranceRegion ? _fullPaletteRegionMask[entranceColor] : 0;
+	// The doorway is not floor; the original routes it as region 3 for this scripted walk.
+	if (hasEntranceRegion)
+		_fullPaletteRegionMask[entranceColor] = 3;
+
+	const bool completed = walkActiveActorTo(0x1a4, 0x190, 0xff, 0xff, false);
+	if (hasEntranceRegion)
+		_fullPaletteRegionMask[entranceColor] = previousEntranceRegion;
+	if (!completed)
+		return;
+
 	state.mainFlowStateId = kScene2050EntryState;
 }
 
