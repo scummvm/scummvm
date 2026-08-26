@@ -80,7 +80,10 @@ enum ScenePaletteMapOffset {
 	kSceneColorToActorDepthClassMap = 0x200,
 	kSceneColorToActorPaletteDeltaClassMap = 0x300,
 	kSceneColorToActorPaletteAdjustmentClassMap = 0x400,
-	kScenePaletteMapPageSize = 0x100
+	kSceneColorToFootstepSoundMap = 0x500,
+	kScenePresentationPaletteRemapMap = 0x600,
+	kScenePaletteMapPageSize = 0x100,
+	kScenePaletteMapByteCount = 0x700
 };
 
 class ResourceManager {
