@@ -22,10 +22,8 @@
 #include "hollywood/scenes/playable/scene7030.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
-#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -58,6 +56,11 @@ const uint32 kScene7030AmbientMusicCheckMillis = 250;
 const uint kScene7030ColorToItemMapOffset = 0x100;
 const uint kScene7030ColorMapSize = 0x100;
 const byte kScene7030PunchBowlGlassPatchHook = 1;
+const uint kScene7030Chunk6IdleLayerA = 0;
+const uint kScene7030Chunk6IdleLayerB = 1;
+const uint kScene7030Chunk6IdleLayerC = 2;
+const uint kScene7030Chunk6IdleLayerD = 3;
+const uint kScene7030Chunk5Layer = 4;
 const byte kScene7030Chunk5FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 3, 2, 3, 4, 3, 2, 1, 0, 5, 6,
 	7, 8, 7, 6, 7, 8, 7, 6, 5
@@ -74,6 +77,19 @@ const byte kScene7030Chunk11ExchangeItem0CFrameMap[] = {
 	25, 25, 25, 25, 26, 27, 28, 29, 30, 31, 13, 12, 11, 10, 9, 8,
 	7, 6, 5, 4, 3, 2, 1, 0
 };
+const SceneAnimationLayerSpec kScene7030AnimationLayerSpecs[] = {
+	{ kSceneAnimationBehindActors,
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+	{ kSceneAnimationBehindActors,
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+	{ kSceneAnimationBehindActors,
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+	{ kSceneAnimationBehindActors,
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+	{ kSceneAnimationBehindActors,
+		5, kScene7030Chunk5DescriptorCount, kScene7030Chunk5FrameMap,
+		ARRAYSIZE(kScene7030Chunk5FrameMap), false }
+};
 const byte kScene7030Route6StepDeltas[] = {
 	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5
 };
@@ -89,47 +105,42 @@ static PlayableSceneConfig scene7030Config() {
 
 Scene7030::Scene7030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7030Config()),
-		_chunk5FrameIndex(1),
-		_chunk6IdleFrameA(0),
-		_chunk6IdleFrameB(4),
-		_chunk6IdleFrameC(8),
-		_chunk6IdleFrameD(0x0c),
-		_chunk6IdlePairAAltPhase(false),
-		_chunk6IdlePairBAltPhase(false),
-		_chunk6IdlePairATicksRemaining(10),
-		_chunk6IdlePairBTicksRemaining(16),
 		_chunk9AmbientDecisionCounter(0),
 		_chunk5FrameDirection(1),
-		_chunk5TimerAccumulator(0),
-		_chunk6TimerAccumulator(0),
-		_chunk5FrameMillis(kScene7030Chunk5FrameMillis) {
+		_chunk5Animation(),
+		_chunk6Animation(),
+		_chunk6IdlePairA(),
+		_chunk6IdlePairB(),
+		_animationLayers() {
 }
 
 void Scene7030::initializeCustomPreviewState() {
 	GameplayState &state = _vm->gameState();
 
-	_chunk5FrameIndex = 1;
+	configureAnimationLayers();
+	setChunk5Frame(1);
 	_chunk5FrameDirection = 1;
-	_chunk6IdleFrameA = 0;
-	_chunk6IdleFrameB = 4;
-	_chunk6IdleFrameC = 8;
-	_chunk6IdleFrameD = 0x0c;
+	_chunk6IdlePairA.configure(0, 4, AlternatingRandomFramePair::kFirstFrame);
+	_chunk6IdlePairB.configure(8, 0x0c, AlternatingRandomFramePair::kSecondFrame);
 	_primaryLeftSpeechLastFrame = 0;
 	_actionOverlayVisible = false;
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
 	_actionOverlayFrameIndex = 0;
-	_chunk6IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
-	_chunk6IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
+	const bool pairASecondPhase = _random.getRandomNumber(1) != 0;
+	const bool pairBSecondPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
-	_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	_chunk6IdlePairA.reset(pairASecondPhase, _chunk6IdlePairA.randomPhaseTicks(_random));
+	_chunk6IdlePairB.reset(pairBSecondPhase, _chunk6IdlePairB.randomPhaseTicks(_random));
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
 	_chunk9AmbientDecisionCounter = 0;
-	_chunk5TimerAccumulator = 0;
-	_chunk6TimerAccumulator = 0;
-	_chunk5FrameMillis = kScene7030Chunk5FrameMillis;
+	_chunk5Animation.reset(1, kScene7030Chunk5FrameMillis);
+	_chunk6Animation.reset(0, kScene7030Chunk6FrameMillis);
 	_ambientMusicTimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
@@ -147,6 +158,7 @@ void Scene7030::initializeCustomPreviewState() {
 		_sceneStateFlags[2] = 2;
 		state.punchBowlGlassPatchState = _sceneStateFlags[2];
 	}
+	_animationLayers.setLayerVisible(kScene7030Chunk5Layer, _sceneStateFlags[0] != 0);
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -154,22 +166,7 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
-
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
-		kScene7030Chunk6DescriptorCount, _chunk6IdleFrameA, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
-		kScene7030Chunk6DescriptorCount, _chunk6IdleFrameB, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
-		kScene7030Chunk6DescriptorCount, _chunk6IdleFrameC, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
-		kScene7030Chunk6DescriptorCount, _chunk6IdleFrameD, _sceneFramebuffer);
-
-	if (_sceneStateFlags[0] != 0) {
-		const byte frame = _chunk5FrameIndex < ARRAYSIZE(kScene7030Chunk5FrameMap) ?
-			kScene7030Chunk5FrameMap[_chunk5FrameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
-			kScene7030Chunk5DescriptorCount, frame, _sceneFramebuffer);
-	}
+	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
 
 	updateActorDepthThresholds(actorDrawOrderMode);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
@@ -194,17 +191,11 @@ void Scene7030::runCustomEntrySequence() {
 }
 
 bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
-	_chunk5TimerAccumulator += delta;
-	while (_chunk5TimerAccumulator >= _chunk5FrameMillis) {
-		_chunk5TimerAccumulator -= _chunk5FrameMillis;
+	for (uint frame = _chunk5Animation.consumeFrames(delta); frame != 0; --frame)
 		advanceChunk5AmbientOverlay();
-	}
 
-	_chunk6TimerAccumulator += delta;
-	while (_chunk6TimerAccumulator >= kScene7030Chunk6FrameMillis) {
-		_chunk6TimerAccumulator -= kScene7030Chunk6FrameMillis;
+	for (uint frame = _chunk6Animation.consumeFrames(delta); frame != 0; --frame)
 		advanceChunk6IdleFrames();
-	}
 
 	if (_primaryLeftSpeechActive) {
 		_primaryLeftSpeechTimerAccumulator += delta;
@@ -374,7 +365,7 @@ bool Scene7030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 void Scene7030::setPrimaryLeftSpeechFrame(byte frameIndex) {
-	_chunk5FrameIndex = 0x0b + frameIndex;
+	setChunk5Frame(0x0b + frameIndex);
 }
 
 void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
@@ -390,8 +381,8 @@ void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
 	if (state.currentAmbientMusicCueId != kScene7030AmbientMusicCueStillFrame) {
 		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
 		state.currentAmbientMusicCueId = kScene7030AmbientMusicCueStillFrame;
-		_chunk5FrameIndex = 0;
-		_chunk5FrameMillis = kScene7030Chunk5FrameMillis;
+		setChunk5Frame(0);
+		_chunk5Animation.frameMillis = kScene7030Chunk5FrameMillis;
 		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 75);
 		return;
 	}
@@ -403,19 +394,21 @@ void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
 
 	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
 	state.currentAmbientMusicCueId = nextTrack;
-	_chunk5FrameIndex = 1;
+	setChunk5Frame(1);
 	_chunk5FrameDirection = 1;
-	_chunk5FrameMillis = nextTrack == 0x0e ? kScene7030Chunk5FastFrameMillis : kScene7030Chunk5FrameMillis;
+	_chunk5Animation.frameMillis = nextTrack == 0x0e ?
+		kScene7030Chunk5FastFrameMillis : kScene7030Chunk5FrameMillis;
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 75);
 }
 
 void Scene7030::advanceChunk5AmbientOverlay() {
 	if (_vm->gameState().currentAmbientMusicCueId == kScene7030AmbientMusicCueStillFrame) {
-		if (_chunk5FrameIndex < ARRAYSIZE(kScene7030Chunk5FrameMap) && kScene7030Chunk5FrameMap[_chunk5FrameIndex] != 0) {
-			if ((_chunk5FrameIndex % 12) < 7)
-				--_chunk5FrameIndex;
+		if (chunk5Frame() < ARRAYSIZE(kScene7030Chunk5FrameMap) &&
+				kScene7030Chunk5FrameMap[chunk5Frame()] != 0) {
+			if ((chunk5Frame() % 12) < 7)
+				setChunk5Frame(chunk5Frame() - 1);
 			else
-				++_chunk5FrameIndex;
+				setChunk5Frame(chunk5Frame() + 1);
 		}
 		return;
 	}
@@ -424,50 +417,33 @@ void Scene7030::advanceChunk5AmbientOverlay() {
 		_chunk9AmbientDecisionCounter = (byte)(_random.getRandomNumber(3) + 1);
 		_chunk5FrameDirection = _random.getRandomNumber(1) == 0 ? -1 : 1;
 	}
-	_chunk5FrameIndex = (byte)((int)_chunk5FrameIndex + _chunk5FrameDirection);
-	if (_chunk5FrameIndex == 0)
-		_chunk5FrameIndex = 0x18;
-	else if (_chunk5FrameIndex == 0x19)
-		_chunk5FrameIndex = 1;
+	setChunk5Frame((byte)((int)chunk5Frame() + _chunk5FrameDirection));
+	if (chunk5Frame() == 0)
+		setChunk5Frame(0x18);
+	else if (chunk5Frame() == 0x19)
+		setChunk5Frame(1);
 	--_chunk9AmbientDecisionCounter;
 }
 
 void Scene7030::advanceChunk6IdleFrames() {
-	if (!_chunk6IdlePairAAltPhase) {
-		if (_chunk6IdlePairATicksRemaining == 0) {
-			_chunk6IdlePairAAltPhase = true;
-			_chunk6IdleFrameB = 4;
-			_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-		} else {
-			--_chunk6IdlePairATicksRemaining;
-			_chunk6IdleFrameA = (byte)_random.getRandomNumber(3);
-		}
-	} else if (_chunk6IdlePairATicksRemaining == 0) {
-		_chunk6IdlePairAAltPhase = false;
-		_chunk6IdleFrameA = 0;
-		_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	} else {
-		--_chunk6IdlePairATicksRemaining;
-		_chunk6IdleFrameB = 4 + (byte)_random.getRandomNumber(3);
-	}
+	_chunk6IdlePairA.advance(_random);
+	_chunk6IdlePairB.advance(_random);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
+	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
+}
 
-	if (!_chunk6IdlePairBAltPhase) {
-		if (_chunk6IdlePairBTicksRemaining == 0) {
-			_chunk6IdlePairBAltPhase = true;
-			_chunk6IdleFrameC = 8;
-			_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-		} else {
-			--_chunk6IdlePairBTicksRemaining;
-			_chunk6IdleFrameD = 0x0c + (byte)_random.getRandomNumber(3);
-		}
-	} else if (_chunk6IdlePairBTicksRemaining == 0) {
-		_chunk6IdlePairBAltPhase = false;
-		_chunk6IdleFrameD = 0x0c;
-		_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	} else {
-		--_chunk6IdlePairBTicksRemaining;
-		_chunk6IdleFrameC = 8 + (byte)_random.getRandomNumber(3);
-	}
+void Scene7030::configureAnimationLayers() {
+	_animationLayers.configure(kScene7030AnimationLayerSpecs);
+}
+
+void Scene7030::setChunk5Frame(byte frameIndex) {
+	_animationLayers.setLayerFrame(kScene7030Chunk5Layer, frameIndex);
+}
+
+byte Scene7030::chunk5Frame() const {
+	return _animationLayers.layerFrame(kScene7030Chunk5Layer);
 }
 
 void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,

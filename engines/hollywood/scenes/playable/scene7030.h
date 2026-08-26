@@ -52,6 +52,9 @@ private:
 	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk5AmbientOverlay();
 	void advanceChunk6IdleFrames();
+	void configureAnimationLayers();
+	void setChunk5Frame(byte frameIndex);
+	byte chunk5Frame() const;
 	void runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame = -1);
 	void handleActionSlot00TransitionToG04();
@@ -68,20 +71,13 @@ private:
 	void handleActionHandler315PickupItem0C();
 	void handleActionHandler316SecondarySpeech();
 
-	byte _chunk5FrameIndex;
-	byte _chunk6IdleFrameA;
-	byte _chunk6IdleFrameB;
-	byte _chunk6IdleFrameC;
-	byte _chunk6IdleFrameD;
-	bool _chunk6IdlePairAAltPhase;
-	bool _chunk6IdlePairBAltPhase;
-	byte _chunk6IdlePairATicksRemaining;
-	byte _chunk6IdlePairBTicksRemaining;
 	byte _chunk9AmbientDecisionCounter;
 	int _chunk5FrameDirection;
-	uint32 _chunk5TimerAccumulator;
-	uint32 _chunk6TimerAccumulator;
-	uint32 _chunk5FrameMillis;
+	TimedAnimationChannel _chunk5Animation;
+	TimedAnimationChannel _chunk6Animation;
+	AlternatingRandomFramePair _chunk6IdlePairA;
+	AlternatingRandomFramePair _chunk6IdlePairB;
+	SceneAnimationLayers _animationLayers;
 };
 
 } // End of namespace Hollywood

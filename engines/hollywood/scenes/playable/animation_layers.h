@@ -82,6 +82,116 @@ struct ResourceSpriteLayer {
 	bool hasPreviousDescriptor;
 };
 
+enum SceneAnimationStratum {
+	kSceneAnimationBehindActors,
+	kSceneAnimationInFrontOfActors,
+	kSceneAnimationActorReplacement
+};
+
+struct SceneAnimationLayerSpec {
+	SceneAnimationStratum stratum;
+	uint chunkIndex;
+	uint16 descriptorCount;
+	const byte *frameMap;
+	uint frameMapSize;
+	bool visible;
+};
+
+/**
+ * Stores resource layers with an explicit position in the scene composite.
+ *
+ * Specification order assigns layer IDs and draw order within a stratum.
+ * Visibility and frame changes remain independent.
+ */
+class SceneAnimationLayers {
+public:
+	void clear() {
+		_layers.clear();
+	}
+
+	template<uint size>
+	void configure(const SceneAnimationLayerSpec (&specs)[size]) {
+		clear();
+		for (uint i = 0; i < size; ++i)
+			configureLayer(i, specs[i]);
+	}
+
+	void configureLayer(uint id, const SceneAnimationLayerSpec &spec) {
+		if (id >= _layers.size())
+			_layers.resize(id + 1);
+
+		LayerState &state = _layers[id];
+		state.configured = true;
+		state.stratum = spec.stratum;
+		state.layer.configure(spec.chunkIndex, spec.descriptorCount,
+			spec.frameMap, spec.frameMapSize);
+		state.layer.visible = spec.visible && availableFrameCount(state.layer) != 0;
+	}
+
+	void configureLayerResource(uint id, uint chunkIndex, uint16 descriptorCount,
+			const byte *frameMap, uint frameMapSize, bool visible = true) {
+		if (!hasLayer(id))
+			return;
+
+		LayerState &state = _layers[id];
+		state.layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
+		state.layer.visible = visible && availableFrameCount(state.layer) != 0;
+	}
+
+	uint layerCount() const {
+		return _layers.size();
+	}
+
+	bool hasLayer(uint id) const {
+		return id < _layers.size() && _layers[id].configured;
+	}
+
+	bool isInStratum(uint id, SceneAnimationStratum stratum) const {
+		return hasLayer(id) && _layers[id].stratum == stratum;
+	}
+
+	ResourceSpriteLayer &layer(uint id) {
+		return _layers[id].layer;
+	}
+
+	const ResourceSpriteLayer &layer(uint id) const {
+		return _layers[id].layer;
+	}
+
+	void setLayerVisible(uint id, bool visible) {
+		if (hasLayer(id))
+			_layers[id].layer.visible = visible && availableFrameCount(_layers[id].layer) != 0;
+	}
+
+	void setLayerFrame(uint id, byte frameIndex) {
+		if (hasLayer(id))
+			_layers[id].layer.setFrame(frameIndex);
+	}
+
+	byte layerFrame(uint id) const {
+		return hasLayer(id) ? _layers[id].layer.frameIndex : 0;
+	}
+
+private:
+	struct LayerState {
+		LayerState() :
+				configured(false),
+				stratum(kSceneAnimationBehindActors),
+				layer() {
+		}
+
+		bool configured;
+		SceneAnimationStratum stratum;
+		ResourceSpriteLayer layer;
+	};
+
+	static uint availableFrameCount(const ResourceSpriteLayer &layer) {
+		return layer.frameMap != nullptr ? layer.frameMapSize : layer.descriptorCount;
+	}
+
+	Common::Array<LayerState> _layers;
+};
+
 /**
  * Stores an ordered set of transient resource-sprite layers.
  *

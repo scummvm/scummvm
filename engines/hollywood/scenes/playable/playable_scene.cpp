@@ -147,6 +147,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_actorPathFrames(_pathController.frames),
 		_actorPathStepDeltas(_pathController.stepDeltas),
 		_random(Common::String::format("scene%u", config.sceneId)),
+		_animationPlayer(*this),
 		_speechController(),
 		_speech(_speechController.player),
 		_speechOverlay(_speechController.secondaryOverlay),
@@ -600,6 +601,15 @@ AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 void PlayableScene::handleActionOverlayFrameHook(byte hookId, uint frame) {
 	(void)hookId;
 	(void)frame;
+}
+
+void PlayableScene::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)hookId;
+	(void)frame;
+}
+
+void PlayableScene::advanceFullscreenAnimation(uint32 delta) {
+	updateAmbientAudioAndMusicCues(delta);
 }
 
 AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
@@ -1227,6 +1237,21 @@ void PlayableScene::drawTransientLayers(const TransientLayerCompositor &composit
 		drawResourceSpriteLayer(compositor.layer(i));
 }
 
+void PlayableScene::drawAnimationLayers(const SceneAnimationLayers &layers,
+		SceneAnimationStratum stratum) {
+	for (uint i = 0; i < layers.layerCount(); ++i) {
+		if (layers.isInStratum(i, stratum))
+			drawResourceSpriteLayer(layers.layer(i));
+	}
+}
+
+bool PlayableScene::playAnimationFrames(SceneAnimationLayers &layers, uint layerId,
+		const AnimationFrameRange &range) {
+	if (!layers.hasLayer(layerId))
+		return false;
+	return playAnimationFrames(layers.layer(layerId), range);
+}
+
 void PlayableScene::drawActionOverlayLayer() {
 	if (_actionOverlayLayer.visible) {
 		drawResourceSpriteLayer(_actionOverlayLayer);
@@ -1289,6 +1314,77 @@ bool PlayableScene::waitDeltaClipFrameMillis(uint32 millis) {
 	}
 
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec) {
+	if (spec.palette.size() != kPaletteSize || spec.frameCount == 0 ||
+			spec.frameCount > 0x100 || spec.frameCount > spec.frames.size() / 4) {
+		warning("%s fullscreen delta animation has invalid resources", sceneDebugName());
+		return false;
+	}
+
+	Graphics::ManagedSurface savedScene;
+	savedScene.copyFrom(_sceneFramebuffer);
+	const Common::Array<byte> savedPalette = _paletteCurrent;
+	const uint16 savedViewportX = _viewportXOffset;
+	Common::Array<byte> blackPalette;
+	blackPalette.resize(kPaletteSize);
+	memset(blackPalette.data(), 0, blackPalette.size());
+
+	_paletteCurrent = blackPalette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+
+	_viewportXOffset = 0;
+	memset(framebufferPixels(_sceneFramebuffer), 0, framebufferByteCount());
+	drawResourceBlockList(spec.base, 0, _sceneFramebuffer);
+	presentFrame();
+
+	_paletteCurrent = spec.palette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+
+	bool completed = true;
+	for (uint frame = 0; frame < spec.frameCount && !animationPlaybackShouldStop(); ++frame) {
+		if (!ResourceDeltaClipPlayer::drawFrame(spec.frames, 0, spec.frames.size(),
+				spec.frameCount, (byte)frame, framebufferPixels(_sceneFramebuffer),
+				framebufferByteCount())) {
+			warning("%s failed to decode fullscreen delta frame %u", sceneDebugName(), frame);
+			completed = false;
+			break;
+		}
+		presentFrame();
+
+		uint32 remaining = spec.frameMillis;
+		while (remaining != 0 && !animationPlaybackShouldStop()) {
+			if (pollEvents(spec.allowSkip)) {
+				completed = false;
+				break;
+			}
+			const uint32 slice = MIN<uint32>(remaining, 10);
+			g_system->delayMillis(slice);
+			advanceFullscreenAnimation(slice);
+			remaining -= slice;
+		}
+		if (remaining != 0)
+			break;
+	}
+
+	_paletteCurrent = blackPalette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+
+	_sceneFramebuffer.copyRectToSurface(savedScene.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_viewportXOffset = savedViewportX;
+	presentFrame();
+	drawPlayableComposite();
+	presentFrame();
+
+	_paletteCurrent = savedPalette;
+	_displayPalette.markAllDirty();
+	presentFrame();
+	return completed && !animationPlaybackShouldStop();
 }
 
 bool PlayableScene::fadePaletteFromBlack() {
@@ -2054,6 +2150,14 @@ bool PlayableScene::waitSceneMillis(uint32 millis, bool allowSkip) {
 	}
 
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+bool PlayableScene::animationPlaybackShouldStop() const {
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+bool PlayableScene::waitForAnimationFrame(uint32 millis, bool allowSkip) {
+	return waitSceneMillis(millis, allowSkip);
 }
 
 void PlayableScene::resetViewportFromScene() {

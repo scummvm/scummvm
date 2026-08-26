@@ -71,6 +71,134 @@ struct TimedAnimationChannel {
 	uint32 frameMillis;
 };
 
+// Advances through non-repeating random frames at a fixed cadence.
+struct RandomFrameAnimation {
+	RandomFrameAnimation() :
+			channel(),
+			firstFrame(0),
+			frameCount(0),
+			lastFrame(0xff) {
+	}
+
+	void configure(uint32 frameMillis, byte first, byte count) {
+		firstFrame = first;
+		frameCount = count;
+		lastFrame = 0xff;
+		channel.reset(firstFrame, frameMillis);
+	}
+
+	void resetTimer() {
+		channel.resetTimer();
+	}
+
+	bool advance(Common::RandomSource &random, uint32 delta) {
+		const uint frames = channel.consumeFrames(delta);
+		for (uint frame = 0; frame < frames; ++frame)
+			advanceTick(random);
+		return frames != 0;
+	}
+
+	byte frame() const {
+		return channel.frameIndex;
+	}
+
+	TimedAnimationChannel channel;
+	byte firstFrame;
+	byte frameCount;
+	byte lastFrame;
+
+private:
+	void advanceTick(Common::RandomSource &random) {
+		if (frameCount == 0)
+			return;
+
+		byte nextFrame = lastFrame;
+		for (uint attempt = 0; attempt < 8 && nextFrame == lastFrame; ++attempt)
+			nextFrame = firstFrame + (byte)random.getRandomNumber(frameCount - 1);
+		if (nextFrame == lastFrame)
+			nextFrame = firstFrame + (byte)((lastFrame - firstFrame + 1) % frameCount);
+
+		lastFrame = nextFrame;
+		channel.frameIndex = nextFrame;
+	}
+};
+
+// Alternates random motion between two four-frame sprite groups. Each phase
+// lasts 10-34 ticks; the caller owns cadence and copies the resulting frames.
+struct AlternatingRandomFramePair {
+	enum FirstPhaseTarget {
+		kFirstFrame,
+		kSecondFrame
+	};
+
+	AlternatingRandomFramePair() :
+			firstFrame(0),
+			secondFrame(0),
+			_firstBaseFrame(0),
+			_secondBaseFrame(0),
+			_firstPhaseAnimatesFirst(true),
+			_secondPhase(false),
+			_ticksRemaining(0) {
+	}
+
+	void configure(byte firstBaseFrame, byte secondBaseFrame,
+			FirstPhaseTarget firstPhaseTarget) {
+		_firstBaseFrame = firstBaseFrame;
+		_secondBaseFrame = secondBaseFrame;
+		_firstPhaseAnimatesFirst = firstPhaseTarget == kFirstFrame;
+		reset(false, kMinimumTicks);
+	}
+
+	void reset(bool secondPhase, byte ticksRemaining) {
+		_secondPhase = secondPhase;
+		_ticksRemaining = ticksRemaining;
+		firstFrame = _firstBaseFrame;
+		secondFrame = _secondBaseFrame;
+	}
+
+	byte randomPhaseTicks(Common::RandomSource &random) const {
+		return kMinimumTicks + (byte)random.getRandomNumber(kAdditionalTicksMax);
+	}
+
+	void advance(Common::RandomSource &random) {
+		if (_ticksRemaining == 0) {
+			_secondPhase = !_secondPhase;
+			if (animatesFirstFrame())
+				firstFrame = _firstBaseFrame;
+			else
+				secondFrame = _secondBaseFrame;
+			_ticksRemaining = randomPhaseTicks(random);
+			return;
+		}
+
+		--_ticksRemaining;
+		if (animatesFirstFrame())
+			firstFrame = _firstBaseFrame + (byte)random.getRandomNumber(kFrameOffsetMax);
+		else
+			secondFrame = _secondBaseFrame + (byte)random.getRandomNumber(kFrameOffsetMax);
+	}
+
+	byte firstFrame;
+	byte secondFrame;
+
+private:
+	enum {
+		kFrameOffsetMax = 3,
+		kMinimumTicks = 10,
+		kAdditionalTicksMax = 0x18
+	};
+
+	bool animatesFirstFrame() const {
+		return _secondPhase ? !_firstPhaseAnimatesFirst : _firstPhaseAnimatesFirst;
+	}
+
+	byte _firstBaseFrame;
+	byte _secondBaseFrame;
+	bool _firstPhaseAnimatesFirst;
+	bool _secondPhase;
+	byte _ticksRemaining;
+};
+
 // Common idle pattern: base frame, optional short twitch, optional longer sequence.
 struct RandomIdleAnimation {
 	enum Event {
