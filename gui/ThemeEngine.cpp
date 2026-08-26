@@ -906,11 +906,15 @@ Common::Rect ThemeEngine::getDrawDataExtendedRect(DrawData type, const Common::R
 
 	Common::Rect extendedRect = r;
 	extendedRect.clip(_screen.w, _screen.h);
-	extendedRect.grow(kDirtyRectangleThreshold + drawData->_backgroundOffset);
-	if (drawData->_shadowOffset > drawData->_backgroundOffset) {
-		extendedRect.right += drawData->_shadowOffset - drawData->_backgroundOffset;
-		extendedRect.bottom += drawData->_shadowOffset - drawData->_backgroundOffset;
-	}
+
+	// A frame drawn around the widget extends on all four sides
+	extendedRect.grow(drawData->_backgroundOffset);
+
+	// The drawing primitives paint the widget's own edge one pixel past its
+	// rectangle, and shadows are cast to the right and to the bottom only
+	extendedRect.right += 1 + drawData->_shadowOffset;
+	extendedRect.bottom += 1 + drawData->_shadowOffset;
+
 	return extendedRect;
 }
 
