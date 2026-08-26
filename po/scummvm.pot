@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-08-25 20:54+0000\n"
+"POT-Creation-Date: 2026-08-26 13:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5338,11 +5338,11 @@ msgstr ""
 msgid "Select Playlist directory"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:247
+#: backends/platform/libretro/src/libretro-os-utils.cpp:245
 msgid "Libretro playlist"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:250
+#: backends/platform/libretro/src/libretro-os-utils.cpp:248
 msgid ""
 "## Libretro playlists for ScummVM core\n"
 "Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists "
@@ -5358,11 +5358,11 @@ msgid ""
 "The core also supports dedicated per game **hook** plain text files with **."
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:284
+#: backends/platform/libretro/src/libretro-os-utils.cpp:282
 msgid "Android storage"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-os-utils.cpp:287
+#: backends/platform/libretro/src/libretro-os-utils.cpp:285
 msgid ""
 "## Android storage access\n"
 "On Android modern versions apps can only access folders that have been "
