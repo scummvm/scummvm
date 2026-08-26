@@ -51,6 +51,12 @@ protected:
 	 */
 	void playFX(int num);
 
+	/**
+	 * Returns a random number
+	 */
+	int getRandomNumber(int minNumber, int maxNumber);
+	int getRandomNumber(int maxNumber);
+
 public:
 	virtual ~Logic() {
 	}

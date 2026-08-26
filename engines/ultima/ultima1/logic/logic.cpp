@@ -41,6 +41,14 @@ void Logic::playFX(int num) {
 	g_engine->playFX(num);
 }
 
+int Logic::getRandomNumber(int minNumber, int maxNumber) {
+	return g_engine->getRandomNumber(minNumber, maxNumber);
+}
+
+int Logic::getRandomNumber(int maxNumber) {
+	return g_engine->getRandomNumber(maxNumber);
+}
+
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima

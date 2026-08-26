@@ -27,7 +27,7 @@ namespace Ultima1 {
 namespace Views {
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
-	g_engine->_map.clearTiles();
+	_G(map).clearTiles();
 	delayFrames(1);
 	return UIElement::msgFocus(msg);
 }

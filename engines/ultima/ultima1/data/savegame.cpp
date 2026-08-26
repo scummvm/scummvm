@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima1/data/player.h"
+#include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/ultima1.h"
 
@@ -31,7 +31,7 @@ const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
-void Player::synchronizeBasic(Common::Serializer &s) {
+void Savegame::synchronizeBasic(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
@@ -86,25 +86,25 @@ void Player::synchronizeBasic(Common::Serializer &s) {
 		_overworldEntities[i].synchronize(s);
 }
 
-void Player::synchronizeExtra(Common::Serializer &s) {
+void Savegame::synchronizeExtra(Common::Serializer &s) {
 	s.syncAsSint16LE(_mapNum);
 	s.syncAsSint16LE(_locationPosition.x);
 	s.syncAsSint16LE(_locationPosition.y);
 }
 
-void Player::synchronize(Common::Serializer &s) {
+void Savegame::synchronize(Common::Serializer &s) {
 	synchronizeBasic(s);
 	synchronizeExtra(s);
 }
 
-void Player::synchronizeOriginal(Common::Serializer &s) {
+void Savegame::synchronizeOriginal(Common::Serializer &s) {
 	synchronizeBasic(s);
 	_mapNum = MAP_OVERWORLD;
 }
 
-int Player::getEntityAt(int x, int y, int startingIndex) const {
+int Savegame::getEntityAt(int x, int y, int startingIndex) const {
 	int foundIndex = -1;
-	for (; startingIndex <= g_engine->_overworldEntityCount && foundIndex == -1; ++startingIndex) {
+	for (; startingIndex <= _G(overworldEntityCount) && foundIndex == -1; ++startingIndex) {
 		const auto &e = _overworldEntities[startingIndex];
 		if (e._x == x && e._y == y)
 			foundIndex = startingIndex;
@@ -113,16 +113,16 @@ int Player::getEntityAt(int x, int y, int startingIndex) const {
 	return foundIndex;
 }
 
-void Player::removeCreatureAt(int x, int y) {
+void Savegame::removeCreatureAt(int x, int y) {
 	int creatureNum = getEntityAt(x, y, 1);
 	if (creatureNum <= 0)
 		return;
 
 	// Shift all following entities down a slot, removing the found one
-	for (int idx = creatureNum; idx < g_engine->_overworldEntityCount; ++idx)
+	for (int idx = creatureNum; idx < _G(overworldEntityCount); ++idx)
 		_overworldEntities[idx] = _overworldEntities[idx + 1];
 
-	--g_engine->_overworldEntityCount;
+	--_G(overworldEntityCount);
 }
 
 

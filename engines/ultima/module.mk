@@ -56,7 +56,7 @@ MODULE_OBJS += \
 	ultima1/data/entity.o \
 	ultima1/data/game.o \
 	ultima1/data/map.o \
-	ultima1/data/player.o \
+	ultima1/data/savegame.o \
 	ultima1/data/tiles.o \
 	ultima1/gfx/pic_decoder.o \
 	ultima1/gfx/text_cursor.o \

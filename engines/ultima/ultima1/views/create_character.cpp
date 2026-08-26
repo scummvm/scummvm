@@ -54,7 +54,7 @@ bool CreateCharacter::msgFocus(const FocusMessage &msg) {
 }
 
 void CreateCharacter::reset() {
-	Player &p = g_engine->_player;
+	Savegame &p = _G(savegame);
 	p._strength = p._agility = p._stamina = p._charisma = p._wisdom = p._intelligence = 10;
 
 	_pointsRemaining = STARTING_POINTS;
@@ -65,7 +65,7 @@ void CreateCharacter::reset() {
 }
 
 int16 &CreateCharacter::attribute(int index) {
-	Player &p = g_engine->_player;
+	Savegame &p = _G(savegame);
 	switch (index) {
 	case 0: return p._strength;
 	case 1: return p._agility;
@@ -139,14 +139,14 @@ void CreateCharacter::draw() {
 		drawConfirmedSex(s);
 		drawConfirmedClass(s);
 		s.setColor(COLOR_TEXT);
-		s.writeString(Common::Point(12, 4), g_engine->_player._name);
+		s.writeString(Common::Point(12, 4), _G(savegame)._name);
 		s.writeString(Common::Point(3, 22), "Use this character? (Y-N) ");
 		break;
 	}
 }
 
 void CreateCharacter::drawAttributes(Shared::Gfx::GfxSurface &s) {
-	const Player &p = g_engine->_player;
+	const Savegame &p = _G(savegame);
 	s.setColor(COLOR_TEXT);
 
 	s.writeString(Common::Point(12, 6), padLabel("Strength", 16) + Common::String::format("%2d", p._strength));
@@ -169,19 +169,19 @@ void CreateCharacter::drawHelp(Shared::Gfx::GfxSurface &s) {
 void CreateCharacter::drawConfirmedRace(Shared::Gfx::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(14, 13),
-		Common::String::format("Race: %s", RACE_NAMES[g_engine->_player._race]));
+		Common::String::format("Race: %s", RACE_NAMES[_G(savegame)._race]));
 }
 
 void CreateCharacter::drawConfirmedSex(Shared::Gfx::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(15, 14),
-		Common::String::format("Sex: %s", SEX_NAMES[g_engine->_player._sex]));
+		Common::String::format("Sex: %s", SEX_NAMES[_G(savegame)._sex]));
 }
 
 void CreateCharacter::drawConfirmedClass(Shared::Gfx::GfxSurface &s) {
 	s.setColor(COLOR_TEXT);
 	s.writeString(Common::Point(13, 15),
-		Common::String::format("Class: %s", CLASS_NAMES[g_engine->_player._class]));
+		Common::String::format("Class: %s", CLASS_NAMES[_G(savegame)._class]));
 }
 
 bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
@@ -291,7 +291,7 @@ bool CreateCharacter::msgSaveKey(const KeypressMessage &msg) {
 }
 
 void CreateCharacter::selectRace(int race) {
-	Player &p = g_engine->_player;
+	Savegame &p = _G(savegame);
 	p._race = race;
 
 	switch (race) {
@@ -318,7 +318,7 @@ void CreateCharacter::selectRace(int race) {
 }
 
 void CreateCharacter::selectSex(int sex) {
-	g_engine->_player._sex = sex;
+	_G(savegame)._sex = sex;
 
 	_state = CLASS;
 	_cursor.setPosition(Common::Point(21, 17));
@@ -326,7 +326,7 @@ void CreateCharacter::selectSex(int sex) {
 }
 
 void CreateCharacter::selectClass(int charClass) {
-	Player &p = g_engine->_player;
+	Savegame &p = _G(savegame);
 	p._class = charClass;
 
 	switch (charClass) {
@@ -354,7 +354,7 @@ void CreateCharacter::selectClass(int charClass) {
 
 bool CreateCharacter::msgGame(const GameMessage &msg) {
 	if (_state == NAME && msg._name == "INPUT" && !msg._stringValue.empty()) {
-		strcpy_s(g_engine->_player._name, msg._stringValue.c_str());
+		strcpy_s(_G(savegame)._name, msg._stringValue.c_str());
 
 		_nameInput.hide();
 		_state = SAVE;
@@ -368,7 +368,7 @@ bool CreateCharacter::msgGame(const GameMessage &msg) {
 }
 
 void CreateCharacter::confirmAndSave() {
-	Player &p = g_engine->_player;
+	Savegame &p = _G(savegame);
 
 	p._randomSeed = getRandomNumber(0x7fff) + p._wisdom + p._class;
 	p._hits = 150;

@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima1/views/commands.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -53,6 +54,16 @@ bool Commands::msgGame(const GameMessage &msg) {
 	}
 
 	return false;
+}
+
+bool Commands::msgAction(const ActionMessage &msg) {
+	g_engine->_logic->action(msg._action);
+	return true;
+}
+
+bool Commands::msgKeypress(const KeypressMessage &msg) {
+	g_engine->_logic->keypress(msg.keycode);
+	return true;
 }
 
 void Commands::writeString(const Common::String &msg) {

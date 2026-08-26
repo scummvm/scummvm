@@ -53,7 +53,7 @@ enum Direction {
 typedef Common::Array< Common::Array<byte> > MapTiles;
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 
-extern const char *DIRECTION_NAMES[4];
+extern const char *DIRECTION_NAMES[5];
 
 struct Map {
 private:
@@ -162,6 +162,18 @@ public:
 	int getContinentAt(const Common::Point &pt) const {
 		return getContinentAt(pt.x, pt.y);
 	}
+
+	/**
+	 * Returns true if a map X co-ordinate is far enough from a
+	 * continent boundary to be a valid creature spawn/move position
+	 */
+	bool mapRangeCheckX(int xp) const;
+
+	/**
+	 * Returns true if a map Y co-ordinate is far enough from a
+	 * continent boundary to be a valid creature spawn/move position
+	 */
+	bool mapRangeCheckY(int yp) const;
 };
 
 } // namespace Data

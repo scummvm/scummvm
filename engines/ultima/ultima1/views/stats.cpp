@@ -31,7 +31,7 @@ constexpr int COLOR_TEXT = 11;      // light cyan - normal values
 constexpr int COLOR_HIGHLIGHT = 12; // light red - low hits/food warning
 
 void Stats::draw() {
-	Data::Player &p = g_engine->_player;
+	Data::Savegame &p = _G(savegame);
 	auto s = getSurface();
 	s.clear();
 

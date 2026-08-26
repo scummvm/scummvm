@@ -76,7 +76,7 @@ Common::Error Ultima1Engine::run() {
 }
 
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
-	_player.synchronize(s);
+	_savegame.synchronize(s);
 
 	if (s.isLoading())
 		_game.startGame();

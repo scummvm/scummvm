@@ -38,7 +38,7 @@
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima1/data/game.h"
 #include "ultima/ultima1/data/map.h"
-#include "ultima/ultima1/data/player.h"
+#include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/logic/logic.h"
 
@@ -65,11 +65,12 @@ protected:
 public:
 	Data::Game _game;
 	Data::Map _map;
-	Data::Player _player;
+	Data::Savegame _savegame;
 	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
 	Logic::Logic *_logic = nullptr;
 	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;
+	uint32 _moveCtr = 0;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

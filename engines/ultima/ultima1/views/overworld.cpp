@@ -52,6 +52,16 @@ void Overworld::draw() {
 	drawGameDividers();
 }
 
+bool Overworld::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		_map.redraw();
+		_stats.redraw();
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace Ultima1
 } // namespace Ultima

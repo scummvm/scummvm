@@ -91,6 +91,26 @@ private:
 	 */
 	void continentChanged(int oldContinent);
 
+	/**
+	 * Called after an action is done
+	 */
+	void endOfTurn();
+
+	/**
+	 * Generate monsters for the overworld
+	 */
+	void generateCreatures();
+
+	/**
+	 * Update overworld creatures
+	 */
+	void updateCreatures();
+
+	/**
+	 * Reduce the food the player has
+	 */
+	void reduceFood();
+
 public:
 	~OverworldLogic() override {
 	}

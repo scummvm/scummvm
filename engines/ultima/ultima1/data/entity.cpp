@@ -43,9 +43,29 @@ const char *OVERWORLD_MONSTERS[] = {
 	"Wandering warlock"
 };
 
+const int OVERWORLD_MONSTERS_DAMAGE[MONSTER_TYPE_COUNT] = {
+	10, 5, 4, 3, 2, 1, 4, 6, 8, 10, 1, 2, 4, 6, 8
+};
+
+const int OVERWORLD_MONSTERS_HITS[MONSTER_TYPE_COUNT] = {
+	4, 6, 8, 10, 1, 2, 4, 6, 8, 2, 4, 6, 8, 9, 10
+};
+
+const int MONSTER_THRESHOLDS_PER_LEVEL[10] = {
+	35, 55, 75, 95, 115, 135, 155, 175, 195, 205
+};
+
 void OverworldEntity::synchronize(Common::Serializer &s) {
 	s.syncMultipleLE(_type, _data, _x, _y, _hits, _unused1, _unused2, _unused3);
 }
+
+int OverworldEntity::getMonsterAttackDistance(int tileNum, int xDiff, int yDiff) {
+	int threshold = (tileNum == 23 || tileNum == 25 || tileNum == 31 || tileNum == 47) ? 3 : 1;
+	int maxDiff = MAX(ABS(xDiff), ABS(yDiff));
+
+	return (maxDiff > threshold) ? 0 : threshold;
+}
+
 
 } // namespace Data
 } // namespace Ultima1

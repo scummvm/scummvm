@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA1_DATA_PLAYER_H
-#define ULTIMA1_DATA_PLAYER_H
+#ifndef ULTIMA1_DATA_SAVEGAME_H
+#define ULTIMA1_DATA_SAVEGAME_H
 
 #include "common/rect.h"
 #include "common/serializer.h"
@@ -33,6 +33,7 @@ namespace Data {
 constexpr int MAX_NAME_LENGTH = 14;
 constexpr int QUEST_COUNT = 9;
 constexpr int OVERWORLD_ENTITY_COUNT = 40;
+constexpr int CREATURES_COUNT = 10;
 
 extern const char *SEX_NAMES[];
 extern const char *RACE_NAMES[];
@@ -82,7 +83,7 @@ enum TransportType {
 /**
  * The player character's savegame data
  */
-struct Player {
+struct Savegame {
 private:
 	/**
 	 * Synchronizes the basic fields that the original's savegame format had.

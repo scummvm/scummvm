@@ -29,7 +29,21 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+constexpr int MONSTER_TYPE_COUNT = 15;
+
 extern const char *OVERWORLD_MONSTERS[];
+
+// Per monster-type coin/experience reward multiplier, indexed by
+// (tileNum - TILE_FIRST_MONSTER) / 2
+extern const int OVERWORLD_MONSTERS_DAMAGE[MONSTER_TYPE_COUNT];
+
+// Per monster-type base hit points value, also reused as a spawn-weighting
+// threshold when picking which monster type to generate
+extern const int OVERWORLD_MONSTERS_HITS[MONSTER_TYPE_COUNT];
+
+// Spawn-chance threshold per character level (experience / 1000), checked
+// against a 1-255 random roll each turn
+extern const int MONSTER_THRESHOLDS_PER_LEVEL[10];
 
 /**
  * Entity on the overworld map, such as vechiles or creatures
@@ -43,6 +57,12 @@ struct OverworldEntity {
 	int16 _unused1, _unused2, _unused3;
 
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Returns the attack range for a monster tile if the player is within
+	 * it, else 0 if the player is currently too far away to be attacked
+	 */
+	static int getMonsterAttackDistance(int tileNum, int xDiff, int yDiff);
 };
 
 } // namespace Data

@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-const char *DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
+const char *DIRECTION_NAMES[5] = { nullptr, "West", "East", "North", "South" };
 
 void Map::init() {
 	// Load the overworld map
@@ -72,7 +72,7 @@ void Map::init() {
 }
 
 void Map::load(int mapNum) {
-	const auto &player = g_engine->_player;
+	const auto &player = _G(savegame);
 
 	_currentMap = mapNum;
 
@@ -163,6 +163,20 @@ int Map::getMapTile(int x, int y) const {
 
 int Map::getContinentAt(int x, int y) const {
 	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);
+}
+
+bool Map::mapRangeCheckX(int xp) const {
+	if (xp > 83)
+		xp -= 84;
+
+	return !(xp >= 159 || xp <= 8);
+}
+
+bool Map::mapRangeCheckY(int yp) const {
+	if (yp > 77)
+		yp -= 78;
+
+	return !(yp >= 150 || yp <= 5);
 }
 
 } // namespace Data
