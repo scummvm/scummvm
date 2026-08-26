@@ -329,10 +329,13 @@ void Scene2100::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 }
 
 void Scene2100::runMummyDialogue() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene2040SphinxExitInterviewState == 0 && state.scene2100MummyDialogueClueStage != 0)
+		state.scene2040SphinxExitInterviewState = state.scene2100MummyDialogueClueStage;
+
 	Common::Array<DialogueChoiceRecord> records;
 	initializeMummyDialogueRecords(records);
 
-	GameplayState &state = _vm->gameState();
 	if (!state.scene2100MummyGreetingSeen) {
 		runMummyPrimarySpeechLine(0);
 		beginMummyDialogueSecondarySpeechLine(kScene2100MummyDialogueStageId, 0);
@@ -374,15 +377,16 @@ void Scene2100::runMummyDialogue() {
 				records[86].selectable = 1;
 			}
 			state.scene2100AfterlifeBranchUnlocked = true;
-		} else if (record.disableAfterUse == 3 && state.scene2100MummyDialogueClueStage == 0) {
+		} else if (record.disableAfterUse == 3 && state.scene2040SphinxExitInterviewState == 0) {
 			if (records.size() > 3) {
 				records[3].enabled = 1;
 				records[3].selectable = 1;
 			}
-			state.scene2100MummyDialogueClueStage = 1;
-			state.scene2100MarketBranchUnlocked = true;
-		} else if (record.disableAfterUse == 4 && state.scene2100MummyDialogueClueStage == 1) {
-			state.scene2100MummyDialogueClueStage = 2;
+			state.scene2040SphinxExitInterviewState = 1;
+			state.scene2030ScarabOfferState = 1;
+			state.scene2030MerchantItem2AOfferState = 1;
+		} else if (record.disableAfterUse == 4 && state.scene2040SphinxExitInterviewState == 1) {
+			state.scene2040SphinxExitInterviewState = 2;
 		} else if (record.disableAfterUse == 5) {
 			runMummySpecialTransitionToScene2110();
 			return;
@@ -419,9 +423,9 @@ void Scene2100::initializeMummyDialogueRecords(Common::Array<DialogueChoiceRecor
 	records.resize(kScene2100MummyDialogueChoiceRecordCount);
 
 	setDialogueRecord(records, 0, 1, 0, 3, 2, 3, 1, 0xff);
-	setDialogueRecord(records, 1, state.scene2100MarketBranchUnlocked ? 1 : 0, 2, 1, 3, 4, 1, 0xff);
+	setDialogueRecord(records, 1, state.scene2020PrincessConversationSeen ? 1 : 0, 2, 1, 3, 4, 1, 0xff);
 	setDialogueRecord(records, 2, 1, 1, 1, 4, 5, 1, 0xff);
-	setDialogueRecord(records, 3, state.scene2100MummyDialogueClueStage != 0 ? 1 : 0, 3, 1, 5, 6, 4, 0xff);
+	setDialogueRecord(records, 3, state.scene2040SphinxExitInterviewState != 0 ? 1 : 0, 3, 1, 5, 6, 4, 0xff);
 	setDialogueRecord(records, 4, 1, 0, 0, 7, 8, 5, 0xff);
 	setDialogueRecord(records, 5, 1, 0, 0, 8, 9, 0, 0xff);
 	setDialogueRecord(records, 70, 1, 0, 2, 9, 10, 1, 0xff);
