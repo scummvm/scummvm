@@ -61,12 +61,12 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runJosephGuestListGreeting();
 	void waitPreItemIdleSequence();
 	bool shouldStopJosephGuestListGreeting();
 	void advanceChunk11PreItemIdleAnimation(uint32 delta);
-	void advanceJosephIdleAnimationTick();
 	void advanceChunk16PostItemAnimation(uint32 delta);
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);
 	byte pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame);
@@ -91,7 +91,9 @@ private:
 	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
 	void applyChunk14ActionSideEffects(byte frameIndex);
 	void applyChunk14AltSideEffects(byte frameIndex);
-	void resetTransientOverlayLayers();
+	void configureAnimationLayers();
+	void resetTransientAnimationLayers();
+	void syncAnimationLayerFrames();
 	void setChunk12OverlayVisible(bool visible);
 	void setChunk12OverlayFrame(byte frameIndex);
 	void setChunk14ActionVisible(bool visible);
@@ -104,8 +106,7 @@ private:
 	byte _postItemIdleState;
 	byte _primarySpeechLeadInTicks;
 	byte _primarySpeechLastMouthFrameOffset;
-	TransientLayerCompositor _backTransientLayers;
-	TransientLayerCompositor _frontTransientLayers;
+	SceneAnimationLayers _animationLayers;
 	RandomIdleAnimation _preItemIdleAnimation;
 	TimedAnimationChannel _postItemAnimation;
 	TimedAnimationChannel _chunk17Animation;
