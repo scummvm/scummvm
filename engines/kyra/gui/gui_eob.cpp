@@ -841,11 +841,17 @@ void EoBCoreEngine::gui_setInventoryButtons() {
 
 	if (_flags.platform == Common::kPlatformSegaCD)
 		gui_initButton(95);
+
+	if (_configAutomap)
+		gui_initButton(99);
 }
 
 void EoBCoreEngine::gui_setStatsListButtons() {
 	gui_resetButtonList();
 	gui_initButtonsFromList(_updateFlags ? _buttonList6 : _buttonList4);
+
+	if (_configAutomap)
+		gui_initButton(99);
 }
 
 void EoBCoreEngine::gui_setSwapCharacterButtons() {
