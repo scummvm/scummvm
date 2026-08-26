@@ -43,6 +43,7 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -54,7 +55,6 @@ private:
 	void advanceRonLayer(uint32 delta);
 	void setRonResourceFrame(byte frameIndex);
 	void beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex);
-	void runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byte soundFrame, byte soundId);
 	void runD09ReturnTransitionSequence();
 	void useLongRopeOnLedge();
 	void useSceneRope();

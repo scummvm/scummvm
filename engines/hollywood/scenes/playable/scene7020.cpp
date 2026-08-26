@@ -70,7 +70,6 @@ static PlayableSceneConfig scene7020Config() {
 
 Scene7020::Scene7020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7020Config()),
-		_chunk6FrameMapIndex(0),
 		_primaryPoseMode(0),
 		_drawChunk7OverlayInsteadOfActor(false),
 		_chunk7TimerAccumulator(0),
@@ -98,7 +97,6 @@ bool Scene7020::play() {
 }
 
 void Scene7020::initializeCustomPreviewState() {
-	_chunk6FrameMapIndex = 0;
 	_primaryPoseMode = 0;
 	resetTransientOverlayLayers();
 	_drawChunk7OverlayInsteadOfActor = false;
@@ -167,7 +165,7 @@ byte Scene7020::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 		return 0x13;
 	if (_primaryPoseMode == 2)
 		return 0x20;
-	return _chunk6FrameMapIndex;
+	return _backTransientLayers.layerFrame(kScene7020Chunk6Layer);
 }
 
 void Scene7020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
@@ -381,21 +379,18 @@ void Scene7020::runOpeningSueEntryAndIdleWaits() {
 
 void Scene7020::runChunk6FrameRange(byte firstFrame, byte lastFrame, byte finalPoseMode) {
 	setChunk6Visible(true);
-	for (byte frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit(); ++frame) {
-		setChunk6Frame(frame);
-		if (waitSceneMillis(kScene7020FrameMillis))
-			break;
+	if (_backTransientLayers.hasLayer(kScene7020Chunk6Layer)) {
+		playAnimationFrames(_backTransientLayers.layer(kScene7020Chunk6Layer),
+			AnimationFrameRange(firstFrame, lastFrame, kScene7020FrameMillis));
 	}
 	_primaryPoseMode = finalPoseMode;
 }
 
 void Scene7020::runChunk7RevealFramesThenHold() {
 	setChunk7Visible(true);
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7020Chunk7RevealFrameMap) && !Engine::shouldQuit(); ++frame) {
-		setChunk7Frame(kScene7020Chunk7RevealFrameMap[frame]);
-		if (waitSceneMillis(kScene7020FrameMillis))
-			break;
-	}
+	if (_actorReplacementLayers.hasLayer(kScene7020Chunk7Layer))
+		playAnimationFrames(_actorReplacementLayers.layer(kScene7020Chunk7Layer),
+			AnimationFrameRange(kScene7020Chunk7RevealFrameMap, kScene7020FrameMillis));
 	_drawChunk7OverlayInsteadOfActor = true;
 	setChunk7Frame(8);
 }
@@ -424,7 +419,6 @@ void Scene7020::setChunk6Visible(bool visible) {
 }
 
 void Scene7020::setChunk6Frame(byte frameMapIndex) {
-	_chunk6FrameMapIndex = frameMapIndex;
 	if (_backTransientLayers.hasLayer(kScene7020Chunk6Layer))
 		_backTransientLayers.setLayerFramePreservingVisibility(kScene7020Chunk6Layer, frameMapIndex);
 }

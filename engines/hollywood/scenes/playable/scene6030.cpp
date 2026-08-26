@@ -422,9 +422,9 @@ void Scene6030::runEntryConversation() {
 		beginSecondarySpeechLine(kScene6030DialogueStageId, 0);
 		beginHannoverSpeechLine(1);
 		beginHannoverSpeechLine(3);
-		runHannoverFrameRangeSequence(false);
+		runHannoverPoseTransition(false);
 		beginHannoverSpeechLine(5, 2);
-		runHannoverFrameRangeSequence(true);
+		runHannoverPoseTransition(true);
 		beginHannoverSpeechLine(6);
 		runTaffyCoffeeServiceSequence();
 		if (animationPlaybackShouldStop())
@@ -438,9 +438,9 @@ void Scene6030::runEntryConversation() {
 	beginHannoverSpeechLine(2);
 	finishScriptedActorPath();
 	beginHannoverSpeechLine(state.scene6030CoffeeState < 2 ? 3 : 4);
-	runHannoverFrameRangeSequence(false);
+	runHannoverPoseTransition(false);
 	beginHannoverSpeechLine(5, 2);
-	runHannoverFrameRangeSequence(true);
+	runHannoverPoseTransition(true);
 	beginHannoverSpeechLine(7);
 	runTaffyCoffeeServiceSequence();
 	if (animationPlaybackShouldStop())
@@ -580,18 +580,17 @@ uint32 Scene6030::beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX,
 		MAX<uint32>(1200, MAX<byte>(1, continuationCount) * _primarySpeechOverlay.lines.size() * 1100);
 }
 
-void Scene6030::runHannoverFrameRange(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis) {
+void Scene6030::runHannoverFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame,
+		uint32 frameMillis) {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	const bool completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
-		AnimationFrameRange(firstFrame, lastFrame, frameMillis).unskippable());
-	if (completed)
-		_animationLayers.setLayerFrame(kScene6030HannoverLayer, finalFrame);
+	playAnimationTransition(_animationLayers, kScene6030HannoverLayer,
+		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis).unskippable());
 	_hannoverManualSequenceActive = previousManualSequence;
 }
 
-void Scene6030::runHannoverFrameRangeSequence(bool alternatePose) {
-	runHannoverFrameRange(alternatePose ? 0x10 : 5, alternatePose ? 0x12 : 0x0a,
+void Scene6030::runHannoverPoseTransition(bool alternatePose) {
+	runHannoverFrameTransition(alternatePose ? 0x10 : 5, alternatePose ? 0x12 : 0x0a,
 		alternatePose ? 0 : 0x0b, kScene6030PoseFrameMillis);
 }
 
@@ -664,7 +663,7 @@ void Scene6030::runHannoverCoffeeSequence() {
 void Scene6030::runHannoverBathroomExitSequence() {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	runHannoverFrameRange(0x2d, 0x3e, 0x3e, kScene6030PoseFrameMillis);
+	runHannoverFrameTransition(0x2d, 0x3e, 0x3e, kScene6030PoseFrameMillis);
 	if (animationPlaybackShouldStop()) {
 		_hannoverManualSequenceActive = previousManualSequence;
 		return;

@@ -63,9 +63,6 @@ private:
 	void advanceCharlieIdle(uint32 delta);
 	void advanceCharlieConversationIdle(uint32 delta);
 	void advanceLetterReadingSpeech(uint32 delta);
-	bool playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
-		uint32 frameMillis);
-	bool playCharlieFrames(byte firstFrame, byte lastFrame, uint32 frameMillis);
 	void enterCharlieDialoguePose();
 	void switchCharlieToAlternatePose();
 	void returnCharlieToDialoguePose();

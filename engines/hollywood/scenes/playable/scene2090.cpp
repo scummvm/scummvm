@@ -56,6 +56,7 @@ const byte kScene2090FinaleLastForegroundFrame = 0x35;
 const byte kScene2090RequiredItem2A = 0x2a;
 const byte kScene2090RequiredItem2C = 0x2c;
 const byte kScene2090RequiredItem2E = 0x2e;
+const byte kScene2090FinaleSpeechHook = 1;
 
 const byte kScene2090ForegroundFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -253,11 +254,6 @@ void Scene2090::resetForegroundLayer(bool visible, byte frameIndex) {
 	_foregroundLayer.reset(frameIndex);
 }
 
-void Scene2090::setForegroundFrame(byte frameIndex) {
-	_foregroundLayer.visible = true;
-	_foregroundLayer.setFrame(frameIndex);
-}
-
 void Scene2090::runEntryFromScene2080() {
 	resetForegroundLayer(false, 0);
 	setActiveActorPose(0x152, 0x194, 4);
@@ -286,8 +282,12 @@ void Scene2090::runEntryFromScene2020() {
 	presentFrame();
 	_soundBank0.playSample(0x0f, 100);
 
-	runForegroundAnimationTo(kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis);
-	runForegroundAnimationTo(kScene2090SpecialEntryFinalForegroundFrame, kScene2090SlowFrameMillis);
+	playAnimationFrames(_foregroundLayer,
+		AnimationFrameRange(kScene2090SpecialEntryStartForegroundFrame + 1,
+			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis));
+	playAnimationFrames(_foregroundLayer,
+		AnimationFrameRange(kScene2090SpecialEntryMidForegroundFrame + 1,
+			kScene2090SpecialEntryFinalForegroundFrame, kScene2090SlowFrameMillis));
 
 	if (hasInventoryItem(kScene2090RequiredItem2A))
 		removeInventoryItem(kScene2090RequiredItem2A);
@@ -343,12 +343,15 @@ void Scene2090::runGuardOrCurtainInteraction() {
 	beginSecondarySpeechLine(4, 6);
 
 	resetForegroundLayer(true, 0);
-	runForegroundAnimationTo(kScene2090FinaleFirstForegroundStopFrame, kScene2090FrameMillis);
+	playAnimationFrames(_foregroundLayer,
+		AnimationFrameRange(1, kScene2090FinaleFirstForegroundStopFrame, kScene2090FrameMillis));
 
 	beginSecondarySpeechLine(4, 7);
 	_soundBank0.playSample(0x0e, 100);
-	runForegroundAnimationTo(kScene2090FinaleLastForegroundFrame, kScene2090SlowFrameMillis,
-		kScene2090FinaleSpeechTriggerFrame, 4, 8);
+	playAnimationFrames(_foregroundLayer,
+		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
+			kScene2090FinaleLastForegroundFrame, kScene2090SlowFrameMillis)
+			.hookAt(kScene2090FinaleSpeechTriggerFrame, kScene2090FinaleSpeechHook));
 	waitForStartedSpeechAndClear(1200);
 
 	runCurtainClearToBlack();
@@ -356,15 +359,9 @@ void Scene2090::runGuardOrCurtainInteraction() {
 	_vm->gameState().mainFlowStateId = kScene2020ReturnState;
 }
 
-void Scene2090::runForegroundAnimationTo(byte targetFrame, uint32 frameMillis,
-		int speechTriggerFrame, uint16 speechRow, byte speechFrame) {
-	while (_foregroundLayer.frameIndex < targetFrame && !_vm->isSceneRestartRequested()) {
-		setForegroundFrame(_foregroundLayer.frameIndex + 1);
-		if ((int)_foregroundLayer.frameIndex == speechTriggerFrame)
-			startSecondarySpeechLine(speechRow, speechFrame);
-		if (waitSceneMillis(frameMillis))
-			break;
-	}
+void Scene2090::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene2090FinaleSpeechHook && frame == kScene2090FinaleSpeechTriggerFrame)
+		startSecondarySpeechLine(4, 8);
 }
 
 void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {

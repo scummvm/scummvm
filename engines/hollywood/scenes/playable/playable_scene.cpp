@@ -1242,6 +1242,13 @@ bool PlayableScene::playAnimationFrames(SceneAnimationLayers &layers, uint layer
 	return playAnimationFrames(layers.layer(layerId), range);
 }
 
+bool PlayableScene::playAnimationTransition(SceneAnimationLayers &layers, uint layerId,
+		const AnimationTransition &transition) {
+	if (!layers.hasLayer(layerId))
+		return false;
+	return playAnimationTransition(layers.layer(layerId), transition);
+}
+
 bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
 		uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
 		const AnimationFrameRange &range, bool clearAtEnd) {

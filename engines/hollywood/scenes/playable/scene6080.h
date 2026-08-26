@@ -55,8 +55,6 @@ private:
 	void resetSceneLayers();
 	void advanceSueIdle(uint32 delta);
 	void advanceGuardIdle(uint32 delta);
-	bool playLayerFrames(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
-		uint32 frameMillis);
 	void finishSueIdleSequence();
 	void runReturnConversation();
 	void runWaxBallEscapeSequence();

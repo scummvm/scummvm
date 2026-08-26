@@ -53,7 +53,6 @@ private:
 	void advancePrincessIdleLayer(uint32 delta, bool canStartLongSequence);
 	void runEntryFromExterior();
 	void runPrincessExitCutscene();
-	void runPrincessFrameSequence(byte firstFrame, byte lastFrame, int step);
 	void runPrincessSpeechTransition(bool opening);
 	void beginPrincessSpeechLine(byte frameIndex);
 	void runPrincessDialogue();
