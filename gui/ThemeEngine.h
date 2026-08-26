@@ -337,9 +337,6 @@ public:
 		kGfxAntialias  ///< Optimized AA renderer.
 	};
 
-	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
-	static const int kDirtyRectangleThreshold = 1;
-
 	struct Renderer {
 		const char *name;
 		const char *shortname;
