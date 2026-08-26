@@ -52,6 +52,7 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void rebuildWalkableMask();
+	void updateSceneDepthThresholds(byte actorDrawOrderMode);
 	void resetForegroundLayer();
 	void advanceForegroundLayer(uint32 delta);
 	void runEntryFromMarket();

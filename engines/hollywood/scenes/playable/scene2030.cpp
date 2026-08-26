@@ -48,6 +48,8 @@ const uint32 kScene2030TransitionFrameMillis = 60;
 const uint kScene2030LeftMerchantDescriptorCount = 0x1c;
 const uint kScene2030RightMerchantDescriptorCount = 0x1e;
 const uint kScene2030TransitionDescriptorCount = 0x8c;
+const uint kScene2030SphinxExitTransitionChunk = 9;
+const uint kScene2030SphinxReturnTransitionChunk = 10;
 const uint kScene2030RightMerchantTradeDescriptorCount = 0x0c;
 const uint kScene2030LeftMerchantPurchaseDescriptorCount = 0x0c;
 const byte kScene2030TransitionFinalFrame = 0x8b;
@@ -685,22 +687,26 @@ void Scene2030::runEntryFromSphinx() {
 	_activeActorWorldY = 0x130;
 	_activeActorFacing = 3;
 	_activeActorCel = 0;
-	runTransitionClip(10);
+	runTransitionClip(kScene2030SphinxReturnTransitionChunk, false);
 	runEntryPath(0x226, 0x130, 3, 0x15e, 400);
 }
 
 void Scene2030::runSphinxExitTransition() {
-	runTransitionClip(9);
+	runTransitionClip(kScene2030SphinxExitTransitionChunk, true);
 	_vm->gameState().mainFlowStateId = kScene2030SphinxExitState;
 }
 
-void Scene2030::runTransitionClip(uint chunkIndex) {
-	// RESOURCE.B03 transition frames are cumulative deltas; resetting to the
-	// base room background per frame drops unchanged actor pixels.
+void Scene2030::runTransitionClip(uint chunkIndex, bool includeActiveActor) {
+	// The forward clip inherits Ron's pose; the reverse clip supplies every actor pixel.
 	Graphics::ManagedSurface transitionBackground;
 	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
-	transitionBackground.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
+	copyBaseFramebufferToSceneFramebuffer();
+	if (includeActiveActor) {
+		drawActiveAndSecondaryActorFrames(!_hideActiveActor, _activeActorFacing, _activeActorCel,
+			_activeActorWorldX, _activeActorWorldY, false, 0, 0, 0, 0, -1);
+	}
+	transitionBackground.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 
 	uint32 frameAccumulator = 0;
