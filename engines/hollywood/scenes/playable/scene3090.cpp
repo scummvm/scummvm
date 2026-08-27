@@ -744,6 +744,7 @@ void Scene3090::runSaxophoneHandoff() {
 	walkActiveActorTo(0x178, 0x171, 5, 0, false);
 	beginSecondarySpeechLine(11, 0);
 	beginBlindManResponse(1);
+	beginSecondarySpeechLine(11, 1);
 	runActorReplacement(ActionOverlaySpec(15, kScene3090SaxophoneDescriptorCount,
 		kScene3090SaxophoneFrameMap, ARRAYSIZE(kScene3090SaxophoneFrameMap), kScene3090OverlayFrameMillis));
 	removeInventoryItem(kScene3090SaxophoneItemId);
@@ -754,6 +755,8 @@ void Scene3090::runSaxophoneHandoff() {
 	_puzzleChannel.frameIndex = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
 	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
 	applySceneStateToHotspotsAndPatches(1);
+	if (_vm->restoredContentEnabled())
+		beginSecondarySpeechLine(11, 2);
 }
 
 void Scene3090::drawForegroundBlocks(int activeWorldY) {

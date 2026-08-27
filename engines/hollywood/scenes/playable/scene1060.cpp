@@ -62,6 +62,9 @@ const uint kScene1060DialogueRecordCount = 10 * 10 * 7;
 const byte kScene1060FirstAmbientMusicCue = 0x0b;
 const byte kScene1060AmbientMusicCueCount = 5;
 const byte kScene1060AmbientMusicProbabilityModulus = 50;
+const byte kScene1060FlyDoctorDripSoundFirstCue = 0x16;
+const byte kScene1060FlyDoctorIdleSoundFirstCue = 0x19;
+const byte kScene1060FlyDoctorSoundCueCount = 3;
 const byte kScene1060FlyDoctorModeIdle = 0;
 const byte kScene1060FlyDoctorModeDripReady = 1;
 const byte kScene1060FlyDoctorModeConversation = 2;
@@ -163,6 +166,8 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_invisibleManMode(kScene1060InvisibleManModeIdle),
 		_lastInvisibleManRandomFrame(0),
 		_lastFlyDoctorIdleFrame(0),
+		_lastFlyDoctorIdleSound(0xff),
+		_lastFlyDoctorDripSound(0xff),
 		_smallTriggerMode(0),
 		_flySlimePickupSequenceActive(false),
 		_pocketPaperPickupSequenceActive(false),
@@ -409,6 +414,8 @@ void Scene1060::resetAnimationLayers() {
 	_invisibleManMode = kScene1060InvisibleManModeIdle;
 	_lastInvisibleManRandomFrame = 0;
 	_lastFlyDoctorIdleFrame = 0;
+	_lastFlyDoctorIdleSound = 0xff;
+	_lastFlyDoctorDripSound = 0xff;
 	_smallTriggerMode = 0;
 	_flySlimePickupSequenceActive = false;
 	_pocketPaperPickupSequenceActive = false;
@@ -443,6 +450,7 @@ void Scene1060::advanceLargeBackground(uint32 delta) {
 }
 
 void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
+	advanceFlyDoctorAmbientAudio();
 	if (_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
 		return;
 
@@ -452,6 +460,7 @@ void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
 			if (_flyDoctorMode == kScene1060FlyDoctorModeIdle) {
 				if (_random.getRandomNumber(9) == 0) {
 					_flyDoctorMode = kScene1060FlyDoctorModeDripReady;
+					_additionalAmbientSoundBank0Slots[1].stop();
 					_flyDoctorLayer.setFrame(0);
 					if (_random.getRandomNumber(1) == 0) {
 						_invisibleManMode = kScene1060InvisibleManModeEntering;
@@ -463,6 +472,7 @@ void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
 					!_vm->gameState().scene1060FlySlimeHotspotActive &&
 					_random.getRandomNumber(9) == 0) {
 				_flyDoctorMode = kScene1060FlyDoctorModeIdle;
+				_additionalAmbientSoundBank0Slots[1].stop();
 				if (_invisibleManMode == kScene1060InvisibleManModeTalking) {
 					_invisibleManMode = kScene1060InvisibleManModeLeaving;
 					_invisibleManLayer.setFrame(kScene1060InvisibleManLeaveFirstFrame);
@@ -513,6 +523,31 @@ void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
 			}
 		}
 	}
+}
+
+void Scene1060::advanceFlyDoctorAmbientAudio() {
+	SoundBank0Player &player = _additionalAmbientSoundBank0Slots[1];
+	if (player.isPlaying())
+		return;
+
+	byte *previous = nullptr;
+	byte firstCue = 0;
+	if (_flyDoctorMode == kScene1060FlyDoctorModeIdle) {
+		previous = &_lastFlyDoctorIdleSound;
+		firstCue = kScene1060FlyDoctorIdleSoundFirstCue;
+	} else if (_flyDoctorMode == kScene1060FlyDoctorModeDripReady) {
+		previous = &_lastFlyDoctorDripSound;
+		firstCue = kScene1060FlyDoctorDripSoundFirstCue;
+	} else {
+		return;
+	}
+
+	byte next = *previous;
+	do {
+		next = (byte)_random.getRandomNumber(kScene1060FlyDoctorSoundCueCount - 1);
+	} while (next == *previous);
+	*previous = next;
+	player.playSample((byte)(firstCue + next), 5);
 }
 
 void Scene1060::advanceA06PrimaryDialogueSpeechFrame(uint32 delta) {
@@ -696,6 +731,7 @@ byte Scene1060::pickRandomFrameExcluding(byte frameCount, byte previousFrame) {
 }
 
 void Scene1060::runInvisibleManTransition(bool entering) {
+	_additionalAmbientSoundBank0Slots[1].stop();
 	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
 	_invisibleManMode = entering ? kScene1060InvisibleManModeEntering : kScene1060InvisibleManModeLeaving;
 	_invisibleManLayer.setFrame(entering ? kScene1060InvisibleManEnterFirstFrame : kScene1060InvisibleManLeaveFirstFrame);
@@ -709,6 +745,7 @@ void Scene1060::runInvisibleManTransition(bool entering) {
 }
 
 void Scene1060::prepareDrMoscaConversation() {
+	_additionalAmbientSoundBank0Slots[1].stop();
 	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
 			_invisibleManMode == kScene1060InvisibleManModeTalking ||
 			_invisibleManMode == kScene1060InvisibleManModeLeaving)
@@ -721,6 +758,7 @@ void Scene1060::prepareDrMoscaConversation() {
 }
 
 void Scene1060::prepareInvisibleManConversation() {
+	_additionalAmbientSoundBank0Slots[1].stop();
 	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
 			_invisibleManMode == kScene1060InvisibleManModeTalking ||
 			_invisibleManMode == kScene1060InvisibleManModeLeaving)
@@ -998,6 +1036,7 @@ void Scene1060::beginInvisibleManPrimarySpeech(byte frameIndex, bool allowRandom
 }
 
 void Scene1060::finishCharacterConversation() {
+	_additionalAmbientSoundBank0Slots[1].stop();
 	_flyDoctorMode = _random.getRandomNumber(1) == 0 ?
 		kScene1060FlyDoctorModeIdle : kScene1060FlyDoctorModeDripReady;
 }
@@ -1021,6 +1060,7 @@ void Scene1060::runPocketPaperPickupSequence() {
 		return;
 
 	_pocketPaperPickupSequenceActive = true;
+	_additionalAmbientSoundBank0Slots[1].stop();
 	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(11,
 		kScene1060PocketPaperDescriptorCount, kScene1060PocketPaperActionFrameMap,

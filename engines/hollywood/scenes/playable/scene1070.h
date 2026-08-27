@@ -50,6 +50,7 @@ private:
 
 	void resetAnimationLayers();
 	void advanceBackLayer(uint32 delta);
+	void advanceCharacterAmbientAudio();
 	void advanceSpencerAmbientTrigger(uint32 delta);
 	void advanceGhostLayer(uint32 delta);
 	void advanceSpencerLayer(uint32 delta);
@@ -65,6 +66,8 @@ private:
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	void runSpencerConversation();
 	void runQuasimodoConversation();
+	void finishSpencerConversation();
+	void finishQuasimodoConversation();
 	void initializeSpencerDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void initializeQuasimodoDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
@@ -94,6 +97,8 @@ private:
 	byte _ghostMode;
 	byte _spencerMode;
 	byte _spencerAmbientState;
+	byte _lastGhostAmbientSound;
+	byte _lastSpencerAmbientSound;
 	bool _suppressRandomLayerStarts;
 };
 

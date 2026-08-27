@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE1080_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE1080_H
 
+#include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/scenes/playable/playable_scene.h"
 
 namespace Hollywood {
@@ -46,6 +47,7 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetAnimationLayers();
 	void advanceForegroundLayer(uint32 delta);
@@ -55,13 +57,22 @@ private:
 	void applyKitchenItemMap();
 	void runFrancoisConversation();
 	void handleFrancoisDistraction();
+	void runFrancoisActionSpeechLine(byte frameIndex, byte firstDescriptor, byte lastDescriptor,
+		uint16 centerX, uint16 topY);
+	void initializeFrancoisDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
 
 	TimedAnimationChannel _foregroundChannel;
-	TimedAnimationChannel _francoisChannel;
+	TimedAnimationChannel _francoisIdleChannel;
+	TimedAnimationChannel _francoisWorkChannel;
 	ResourceSpriteLayer _foregroundLayer;
 	ResourceSpriteLayer _francoisLayer;
+	ResourceSpriteLayer _francoisActionLayer;
 	byte _foregroundMode;
 	byte _francoisMode;
+	bool _francoisActionActive;
 };
 
 } // End of namespace Hollywood

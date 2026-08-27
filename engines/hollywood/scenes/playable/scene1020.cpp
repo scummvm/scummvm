@@ -76,6 +76,16 @@ const byte kScene1020GrateLiftSoundId = 0x0d;
 const uint kScene1020GrateShakeSteps = 0x14;
 const uint16 kScene1020GrateShakeOffset = 4;
 const uint32 kScene1020GrateShakeStepMillis = 4;
+const byte kScene1020LeverSoundId = 0x2d;
+const byte kScene1020JammedRailSoundId = 0x37;
+const byte kScene1020ChainMotorSoundId = 0x2f;
+const byte kScene1020AttachChainSoundId = 0x31;
+const byte kScene1020GreaseSoundId = 0x2e;
+const byte kScene1020JammedRailHookId = 2;
+const byte kScene1020ChainLoopHookId = 3;
+const byte kScene1020ChainForwardHookId = 4;
+const byte kScene1020AttachChainHookId = 5;
+const byte kScene1020GreaseHookId = 6;
 // The lift pauses on this frame for the closing exchange, then resumes from it.
 const uint kScene1020LiftPauseFrame = 8;
 // Quasimodo is a sprite layer of his own, not part of the lift frames: upright at the
@@ -117,8 +127,7 @@ const byte kScene1020Chunk15PingPongFrameMap[] = {
 
 const byte kScene1020Chunk16AlternatingFrameMap[] = {
 	0, 1, 0, 1, 0, 1, 0, 1,
-	0, 1, 0, 1, 0, 1, 0, 1,
-	0, 1, 0, 1, 0
+	0, 1, 0
 };
 
 const byte kScene1020Chunk16ForwardFrameMap[] = {
@@ -378,8 +387,65 @@ void Scene1020::runQuasimodoGrateCutscene() {
 }
 
 void Scene1020::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene1020CutsceneHookId && frame == kScene1020GrateSlamFrame)
-		runGrateLiftShake();
+	GameplayState &state = _vm->gameState();
+	switch (hookId) {
+	case kScene1020CutsceneHookId:
+		if (frame == kScene1020GrateSlamFrame)
+			runGrateLiftShake();
+		break;
+	case kScene1020JammedRailHookId:
+		if (frame == 1)
+			_soundBank0.playSample(kScene1020JammedRailSoundId, 100, true);
+		else if (frame == 10)
+			_soundBank0.stop();
+		break;
+	case kScene1020ChainLoopHookId:
+		if (frame == 1)
+			_soundBank0.playSample(kScene1020ChainMotorSoundId, 100, true);
+		else if (frame == 44)
+			_soundBank0.stop();
+		break;
+	case kScene1020ChainForwardHookId:
+		if (frame == 1)
+			_soundBank0.playSample(kScene1020ChainMotorSoundId, 100, true);
+		else if (frame == 21)
+			_soundBank0.stop();
+		break;
+	case kScene1020AttachChainHookId:
+		switch (frame) {
+		case 5:
+			beginPrimarySpeechLine(0x15, 1, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f);
+			break;
+		case 12:
+			if (hasInventoryItem(0x1e)) {
+				removeInventoryItem(0x1e);
+				_soundBank0.playSample(1, 100);
+			}
+			break;
+		case 13:
+			_soundBank0.playSample(kScene1020AttachChainSoundId, 100, true);
+			break;
+		case 34:
+			state.scene1020ChainAttachedToGrate = 1;
+			applySceneStateToHotspotsAndPatches(2);
+			break;
+		case 38:
+			_soundBank0.stop();
+			beginPrimarySpeechLine(0x15, 2, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f);
+			break;
+		default:
+			break;
+		}
+		break;
+	case kScene1020GreaseHookId:
+		if (frame == 8)
+			_soundBank0.playSample(kScene1020GreaseSoundId, 5, true);
+		else if (frame == 40)
+			_soundBank0.stop();
+		break;
+	default:
+		break;
+	}
 }
 
 bool Scene1020::prepareCustomGameplayLoop() {
@@ -429,7 +495,8 @@ bool Scene1020::dispatchCustomSceneAction(uint16 handlerId) {
 	case 311: // Mirar panel de mandos (look at control panel).
 		beginSecondarySpeechLine(0x0a, 0);
 		return true;
-	case 312: // Unused no-op action slot in the original table.
+	case 312: // Mirar palancas/torno (look at either lever or the mechanical winch).
+		beginSecondarySpeechLine(0x0b, 0);
 		return true;
 	case 313: // Usar palancas izquierda/derecha (use left/right levers): move hook.
 		handleSceneVerb7Or8DescriptorAction();
@@ -642,9 +709,20 @@ void Scene1020::copyStageSmallRow(byte sourceRow, byte destinationRow) {
 
 void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
-	runOverlaySequence(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.patchAt(patchFrame, 0xff));
+	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
+	spec.patchAt(patchFrame, 0xff);
+	if (chunkIndex == 14 && frameMap == kScene1020Chunk14ForwardFrameMap)
+		spec.soundAt(4, kScene1020LeverSoundId, 50);
+	else if (chunkIndex == 15)
+		spec.hookEveryFrame(kScene1020ChainLoopHookId);
+	else if (chunkIndex == 16)
+		spec.hookEveryFrame(kScene1020JammedRailHookId);
+	else if (chunkIndex == 17)
+		spec.hookEveryFrame(kScene1020ChainForwardHookId);
+
+	runOverlaySequence(spec);
+	if (chunkIndex >= 15 && chunkIndex <= 17)
+		_soundBank0.stop();
 }
 
 void Scene1020::runOverlaySequence(const ActionOverlaySpec &spec) {
@@ -787,13 +865,18 @@ void Scene1020::handleResourceOverlayChunk18StateChange() {
 		return;
 	}
 
-	runOverlaySequence(18, kScene1020ActionChunk18DescriptorCount, kScene1020Chunk18StateChangeFrameMap,
-		ARRAYSIZE(kScene1020Chunk18StateChangeFrameMap), kScene1020OverlayFrameMillis, 0x22);
-	removeInventoryItem(0x1e);
-	_soundBank0.playSample(1, 100);
-	state.scene1020ChainAttachedToGrate = 1;
-	applySceneStateToHotspotsAndPatches(2);
-	beginSecondarySpeechLine(0x15, 2);
+	runOverlaySequence(ActionOverlaySpec(18, kScene1020ActionChunk18DescriptorCount,
+		kScene1020Chunk18StateChangeFrameMap, ARRAYSIZE(kScene1020Chunk18StateChangeFrameMap),
+		kScene1020OverlayFrameMillis).hookEveryFrame(kScene1020AttachChainHookId));
+	_soundBank0.stop();
+	if (hasInventoryItem(0x1e)) {
+		removeInventoryItem(0x1e);
+		_soundBank0.playSample(1, 100);
+	}
+	if (!state.scene1020ChainAttachedToGrate) {
+		state.scene1020ChainAttachedToGrate = 1;
+		applySceneStateToHotspotsAndPatches(2);
+	}
 }
 
 void Scene1020::handleResourceOverlayChunk19EventFlag() {
@@ -804,8 +887,10 @@ void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	}
 
 	beginSecondarySpeechLine(0x16, 0);
-	runOverlaySequence(19, kScene1020ActionChunk19DescriptorCount, kScene1020Chunk19EventFrameMap,
-		ARRAYSIZE(kScene1020Chunk19EventFrameMap), kScene1020OverlayFrameMillis);
+	runOverlaySequence(ActionOverlaySpec(19, kScene1020ActionChunk19DescriptorCount,
+		kScene1020Chunk19EventFrameMap, ARRAYSIZE(kScene1020Chunk19EventFrameMap),
+		kScene1020OverlayFrameMillis).hookEveryFrame(kScene1020GreaseHookId));
+	_soundBank0.stop();
 	state.scene1020RustyRailGreased = true;
 }
 

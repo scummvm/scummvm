@@ -76,6 +76,7 @@ public:
 	GameplayState &gameState() { return _gameState; }
 	const GameplayState &gameState() const { return _gameState; }
 	bool subtitlesEnabled() const;
+	bool restoredContentEnabled() const;
 	void captureLastGameplayThumbnail();
 	bool copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const;
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
