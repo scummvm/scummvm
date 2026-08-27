@@ -50,6 +50,7 @@ private:
 
 	void resetAnimationLayers();
 	void advanceLargeBackground(uint32 delta);
+	void advanceFlyDoctorAmbientAudio();
 	void advanceFlyDoctorModeAndInvisibleMan(uint32 delta);
 	void advanceA06PrimaryDialogueSpeechFrame(uint32 delta);
 	void advanceFlyDoctor(uint32 delta);
@@ -101,6 +102,8 @@ private:
 	byte _invisibleManMode;
 	byte _lastInvisibleManRandomFrame;
 	byte _lastFlyDoctorIdleFrame;
+	byte _lastFlyDoctorIdleSound;
+	byte _lastFlyDoctorDripSound;
 	byte _smallTriggerMode;
 	bool _flySlimePickupSequenceActive;
 	bool _pocketPaperPickupSequenceActive;

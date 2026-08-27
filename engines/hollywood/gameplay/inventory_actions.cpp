@@ -922,6 +922,7 @@ bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *del
 	if ((sceneId == 304 && state.inventoryActionHandlerId == 89) ||
 			(sceneId == 307 &&
 				(state.inventoryActionHandlerId == 81 || state.inventoryActionHandlerId == 127)) ||
+			(sceneId == 108 && state.inventoryActionHandlerId == 178) ||
 			(vm->gameState().mainFlowStateId == 0x082a && state.inventoryActionHandlerId == 136))
 		return false;
 

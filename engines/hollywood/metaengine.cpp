@@ -22,18 +22,40 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
+#include "hollywood/detection.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_RESTORED_CONTENT,
+		{
+			_s("Enable restored content"),
+			_s("Play optional content present in the game data but unused by the original release"),
+			"restored_content",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class HollywoodMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "hollywood";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -56,6 +78,7 @@ bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("subtitles", true);
+	ConfMan.registerDefault("restored_content", true);
 }
 
 void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {

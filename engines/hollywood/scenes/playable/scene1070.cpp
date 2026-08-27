@@ -61,11 +61,11 @@ const byte kScene1070QuasimodoPrimaryDialogueRow = 99;
 const uint kScene1070DialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kScene1070DialogueNoResponseFrame = 0xff;
 const byte kScene1070TravelUnlockDestinationId = 6;
-const byte kScene1070FirstAmbientSoundCue = 0x1c;
-const byte kScene1070AmbientSoundCueCount = 6;
+const byte kScene1070GhostAmbientSoundFirstCue = 0x1c;
+const byte kScene1070SpencerAmbientSoundFirstCue = 0x1f;
+const byte kScene1070CharacterAmbientSoundCueCount = 3;
 const byte kScene1070FirstAmbientMusicCue = 0x0b;
 const byte kScene1070AmbientMusicCueCount = 5;
-const byte kScene1070AmbientSoundProbabilityModulus = 20;
 const byte kScene1070AmbientMusicProbabilityModulus = 50;
 
 const byte kScene1070BackFrameMap[] = {
@@ -135,7 +135,9 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 		_backLayerMode(0),
 		_ghostMode(0),
 		_spencerMode(0),
-		_spencerAmbientState(0),
+		_spencerAmbientState(1),
+		_lastGhostAmbientSound(0xff),
+		_lastSpencerAmbientSound(0xff),
 		_suppressRandomLayerStarts(false) {
 	_backLayer.configure(9, kScene1070BackDescriptorCount,
 		kScene1070BackFrameMap, ARRAYSIZE(kScene1070BackFrameMap));
@@ -147,6 +149,7 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 
 void Scene1070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
+	_vm->gameState().scene1070SpiritBlockingHotspot = false;
 	resetAnimationLayers();
 	if (_vm->gameState().mainFlowStateId == kScene1070FirstState) {
 		_activeActorWorldX = 0x0aa;
@@ -192,6 +195,7 @@ bool Scene1070::prepareCustomGameplayLoop() {
 
 bool Scene1070::advanceCustomGameplayLoop(uint32 delta) {
 	advanceBackLayer(delta);
+	advanceCharacterAmbientAudio();
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	else {
@@ -341,10 +345,14 @@ void Scene1070::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 }
 
 AmbientAudioProfile Scene1070::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(kScene1070FirstAmbientSoundCue,
-		kScene1070AmbientSoundCueCount, 5, kScene1070AmbientSoundProbabilityModulus,
-		kScene1070FirstAmbientMusicCue, kScene1070AmbientMusicCueCount, 100,
-		kScene1070AmbientMusicProbabilityModulus);
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = kScene1070FirstAmbientMusicCue;
+	profile.musicCueCount = kScene1070AmbientMusicCueCount;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = kScene1070AmbientMusicProbabilityModulus;
+	return profile;
 }
 
 void Scene1070::resetAnimationLayers() {
@@ -358,14 +366,16 @@ void Scene1070::resetAnimationLayers() {
 	_spencerTransitionChannel.reset(0, kScene1070SpencerTransitionFrameMillis);
 	_backLayer.reset(_vm->gameState().scene1070ChainRemoved ? 0x18 : 0);
 	_ghostLayer.reset(0);
-	_spencerLayer.reset(_vm->gameState().scene1070SpiritBlockingHotspot ? 0x16 : 0);
+	_spencerLayer.reset(0x1c);
 	_backLayer.visible = true;
 	_ghostLayer.visible = true;
 	_spencerLayer.visible = true;
 	_backLayerMode = 0;
 	_ghostMode = 0;
-	_spencerMode = _vm->gameState().scene1070SpiritBlockingHotspot ? 2 : 0;
-	_spencerAmbientState = 0;
+	_spencerMode = 5;
+	_spencerAmbientState = 1;
+	_lastGhostAmbientSound = 0xff;
+	_lastSpencerAmbientSound = 0xff;
 	_suppressRandomLayerStarts = false;
 }
 
@@ -382,6 +392,31 @@ void Scene1070::advanceBackLayer(uint32 delta) {
 	}
 }
 
+void Scene1070::advanceCharacterAmbientAudio() {
+	SoundBank0Player &player = _additionalAmbientSoundBank0Slots[1];
+	if (player.isPlaying() || _spencerAmbientState >= 2)
+		return;
+
+	byte *previous = nullptr;
+	byte firstCue = 0;
+	if (_spencerAmbientState == 0 && (_spencerMode == 0 || _spencerMode > 2)) {
+		previous = &_lastGhostAmbientSound;
+		firstCue = kScene1070GhostAmbientSoundFirstCue;
+	} else if (_spencerAmbientState == 1) {
+		previous = &_lastSpencerAmbientSound;
+		firstCue = kScene1070SpencerAmbientSoundFirstCue;
+	} else {
+		return;
+	}
+
+	byte next = *previous;
+	do {
+		next = (byte)_random.getRandomNumber(kScene1070CharacterAmbientSoundCueCount - 1);
+	} while (next == *previous);
+	*previous = next;
+	player.playSample((byte)(firstCue + next), 5);
+}
+
 void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
 	if (_suppressRandomLayerStarts)
 		return;
@@ -390,12 +425,14 @@ void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_spencerAmbientState == 2) {
 			if (_spencerMode == 0) {
+				_additionalAmbientSoundBank0Slots[1].stop();
 				_spencerAmbientState = 1;
 				_spencerMode = 4;
 				_spencerLayer.setFrame(0x17);
 			}
 		} else if (_spencerAmbientState == 3) {
 			if (_ghostMode != 4) {
+				_additionalAmbientSoundBank0Slots[1].stop();
 				_spencerAmbientState = 0;
 				_ghostMode = 1;
 				_ghostLayer.setFrame(0);
@@ -403,6 +440,7 @@ void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
 		} else if (_random.getRandomNumber(19) == 1 &&
 				((_ghostMode == 2 && _spencerMode == 0) ||
 				(_ghostMode == 0 && _spencerMode == 5))) {
+			_additionalAmbientSoundBank0Slots[1].stop();
 			if (_spencerAmbientState != 0) {
 				_spencerAmbientState = 0;
 				_ghostMode = 1;
@@ -512,6 +550,7 @@ void Scene1070::advanceSpencerLayer(uint32 delta) {
 	frameCount = _spencerLongChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_spencerMode == 2 && _random.getRandomNumber(99) == 0) {
+			_additionalAmbientSoundBank0Slots[1].stop();
 			_spencerMode = 3;
 			_spencerLayer.setFrame(1);
 			_spencerAmbientState = 0;
@@ -701,6 +740,7 @@ void Scene1070::runSpencerConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, 7);
 			beginSpencerPrimarySpeechLine(7, 0x16);
+			finishSpencerConversation();
 			return;
 		}
 
@@ -736,6 +776,7 @@ void Scene1070::runSpencerConversation() {
 			break;
 		}
 	}
+	finishSpencerConversation();
 }
 
 void Scene1070::runQuasimodoConversation() {
@@ -759,6 +800,7 @@ void Scene1070::runQuasimodoConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene1070QuasimodoDialogueStageId, 5);
 			beginQuasimodoPrimarySpeechLine(5);
+			finishQuasimodoConversation();
 			return;
 		}
 
@@ -797,6 +839,17 @@ void Scene1070::runQuasimodoConversation() {
 			break;
 		}
 	}
+	finishQuasimodoConversation();
+}
+
+void Scene1070::finishSpencerConversation() {
+	_additionalAmbientSoundBank0Slots[1].stop();
+	_spencerAmbientState = 3;
+}
+
+void Scene1070::finishQuasimodoConversation() {
+	_additionalAmbientSoundBank0Slots[1].stop();
+	_spencerAmbientState = 2;
 }
 
 void Scene1070::initializeSpencerDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {

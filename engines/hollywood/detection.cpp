@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
 
+#include "hollywood/detection.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -55,7 +56,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
 	// Spanish Windows full game, installed MONSTERS directory.
@@ -68,7 +69,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
 	// Spanish DOS CD full game, MONSTERS directory from the CD.
@@ -81,7 +82,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
 	AD_TABLE_END_MARKER
@@ -94,7 +95,7 @@ static const ADGameDescription fallbackWindowsDescription = {
 	Common::UNK_LANG,
 	Common::kPlatformWindows,
 	ADGF_UNSTABLE,
-	GUIO1(GUIO_NOMIDI)
+	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 
 static const ADGameDescription fallbackDosDescription = {
@@ -104,7 +105,7 @@ static const ADGameDescription fallbackDosDescription = {
 	Common::UNK_LANG,
 	Common::kPlatformDOS,
 	ADGF_UNSTABLE,
-	GUIO1(GUIO_NOMIDI)
+	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
