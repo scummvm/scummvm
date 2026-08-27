@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-16 12:22+0000\n"
+"PO-Revision-Date: 2026-08-27 09:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -3009,7 +3009,7 @@ msgstr "თამაშის მონაცემები ვერ ვიპ
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr "თამაშის ID მხარდაჭერილი არაა"
+msgstr "თამაშის id მხარდაჭერილი არაა"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
@@ -9315,10 +9315,8 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "საცავის ჩართვა"
+msgstr "gore-ის ჩართვა"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
@@ -9327,10 +9325,8 @@ msgid ""
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:44
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Show CD change prompts"
-msgstr "გმირის პორტრეტების ჩვენება"
+msgstr "CD-ის შეცვლის მოთხოვნების ჩვენება"
 
 #: engines/harvester/metaengine.cpp:45
 msgid ""
@@ -9555,22 +9551,16 @@ msgid "Rapid fire / secondary action"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "გასრიალება მარცხნივ"
+msgstr "მარცხნივ დამიზნება"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Stick down"
 msgid "Aim down"
-msgstr "ჩამოწევა"
+msgstr "დაბლა დამიზნება"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "მაღლა მარჯვენა"
+msgstr "მარჯვნივ დამიზნება"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
@@ -9671,28 +9661,20 @@ msgid "Show credits"
 msgstr "კრედიტების ჩვენება"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "მარცხნივ გაწევა"
+msgstr "მენიუ მარცხნივ"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "მენიუ ქვემოთ"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მენიუ მარჯვნივ"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "მენიუ"
+msgstr "მენიუ მაღლა"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -10211,16 +10193,12 @@ msgid "Select index"
 msgstr "აირჩიეთ ინდექსი"
 
 #: engines/macs2/metaengine.cpp:52
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change cursor mode"
-msgstr "რეჟიმის შეცვლა"
+msgstr "კურსორის რეჟიმის შეცვლა"
 
 #: engines/macs2/metaengine.cpp:75
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Cycle game speed"
-msgstr "უფრო ნელი თამაშის სიჩქარე"
+msgstr "თამაშის სიჩქარის ციკლი"
 
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:153
@@ -12689,22 +12667,16 @@ msgid "All levels will be available without requiring passwords"
 msgstr "სათამაშოდ ხელმისაწვდომი იქნება ყველა დონე პაროლის მოთხოვნის გარეშე"
 
 #: engines/scumm/metaengine.cpp:900 engines/scumm/metaengine.cpp:927
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "თარიღი არ შენახულა"
+msgstr "ზიანის გარეშე"
 
 #: engines/scumm/metaengine.cpp:901 engines/scumm/metaengine.cpp:928
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "შენახვის მენიუს გამორთვა"
+msgstr "მოთამაშის ზიანის გამორთვა"
 
 #: engines/scumm/metaengine.cpp:909
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Yoda mode"
-msgstr "სწრაფი რეჟიმი"
+msgstr "იოდას რეჟიმი"
 
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
@@ -12760,10 +12732,8 @@ msgid "Fire / select"
 msgstr "ცეცხლი / მონიშვნა"
 
 #: engines/scumm/metaengine.cpp:1222
-#, fuzzy
-#| msgid "Skip / menu back"
 msgid "Walk / menu back"
-msgstr "გამოტოვება / მენიუ უკან"
+msgstr "სიარული / მენიუ უკან"
 
 #: engines/scumm/metaengine.cpp:1227
 msgid "Skip / menu back"
@@ -12778,16 +12748,12 @@ msgid "Cover"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
-#, fuzzy
-#| msgid "Skip walk"
 msgid "Skip / back"
-msgstr "სიარულის გამოტოვება"
+msgstr "გამოტოვება / უკან"
 
 #: engines/scumm/metaengine.cpp:1311
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu"
-msgstr "მთავარი მენიუს გამოტოვება"
+msgstr "გამოტოვება / მენიუ"
 
 #: engines/scumm/saveload.cpp:1990
 #, c-format
@@ -14927,7 +14893,7 @@ msgstr "აუდიოს გადართვა"
 
 #: engines/ultima/nuvie/metaengine.cpp:102
 msgid "Toggle sfx"
-msgstr "SFX-ის გადართვა"
+msgstr "sfx-ის გადართვა"
 
 #. I18N: command bar is the bar of commands at the bottom of the screen
 #: engines/ultima/nuvie/metaengine.cpp:104
