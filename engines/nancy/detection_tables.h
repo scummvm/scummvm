@@ -695,6 +695,21 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy9
 	},
+	{ // MD5 by BacchusEmperor
+		{
+			"nancy9", nullptr,
+			{
+				{"ciftree.dat", 0, "aa4148aa2f443b9c73ae6a86d2d4c524", 27850353},
+				{"andyfid.avf", 0, "4e11e5237e6776e342df6262fc930142", 1171821},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy9
+	},
 	{
 		{
 			"nancy10", nullptr,
@@ -760,6 +775,21 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy10
 	},
+	{	// MD5 by BacchusEmperor
+		{
+			"nancy10", nullptr,
+			{
+				{ "ciftree.dat", 0, "67dcb5e1e4c92fc0676fd388dac54a3a", 30400802 },
+				{ "den_cal_back16.avf", 0, "ee6c779d1bc61a6483f9166aa20e4545", 324644 },
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy10
+	},
 	{
 		{
 			"nancy11", nullptr,
@@ -792,6 +822,21 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy11
 	},
+	{	// MD5 by BacchusEmperor
+		{
+			"nancy11", nullptr,
+			{
+				{ "ciftree.dat", 0, "8998deb416fc243a6dd9b19a776919dc", 57486384 },
+				{ "gre_oil_cinematic.bik", 0, "28a2b6f939f1c7795e47a99337d7343a", 21514180 },
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy11
+	},
 	{ // MD5 by bluegr
 		{
 			"nancy12", nullptr,
@@ -808,6 +853,17 @@ static const NancyGameDescription gameDescriptions[] = {
 			"nancy12", nullptr,
 			AD_ENTRY1s("ciftree.dat", "816db22b5c4d5211336b742fee8ea080", 45822011),
 			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy12
+	},
+	{ // MD5 by BacchusEmperor
+		{
+			"nancy12", nullptr,
+			AD_ENTRY1s("ciftree.dat", "e8c66d9f9569bf35bf77ca5bdfd8423f", 40988114),
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
