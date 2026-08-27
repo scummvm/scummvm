@@ -457,7 +457,7 @@ void Scene2080::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 void Scene2080::handleAnimationFrameHook(byte hookId, uint frame) {
 	if (hookId == kScene2080ForegroundExitSoundHook &&
 			(frame == 6 || frame == 12 || frame == 19 || frame == 24 || frame == 30))
-		_soundBank0.playSample(10, 100);
+		playResidentSoundEffect(10);
 }
 
 AmbientAudioProfile Scene2080::ambientAudioProfile() const {

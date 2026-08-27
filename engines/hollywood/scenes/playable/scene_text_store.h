@@ -28,13 +28,14 @@
 
 namespace Hollywood {
 
-// Owns RESOURCE.003 text rows and speech cue descriptors for one scene.
+// Owns RESOURCE.003 text rows and rejects stale entries in its padded cue table.
 class SceneTextStore {
 public:
 	SceneTextStore();
 
 	bool load(const char *archiveName, const char *sceneDebugName, uint stageIndex,
-		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset);
+		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset,
+		bool validateSequentialVoiceMap = false);
 	Common::String inventoryItemName(byte itemId) const;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const;
 	bool getStageCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId,
@@ -50,6 +51,12 @@ public:
 	Common::Array<byte> staticSpeechCueDescriptors;
 	Common::Array<byte> inventoryOwnerSmallRows;
 	Common::Array<byte> inventoryOwnerLargeRows;
+
+private:
+	uint16 findStageVoiceSampleBase(uint largeRowCount) const;
+
+	uint16 _stageVoiceSampleBase;
+	bool _validateSequentialVoiceMap;
 };
 
 } // End of namespace Hollywood

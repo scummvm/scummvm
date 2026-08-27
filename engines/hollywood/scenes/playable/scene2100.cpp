@@ -837,7 +837,7 @@ bool Scene2100::runMummyDialogue(bool playGreeting) {
 				records[3].selectable = 1;
 			}
 			state.scene2040SphinxExitInterviewState = 1;
-			state.scene2030ScarabOfferState = 1;
+			state.scene2030SeedOfferState = 1;
 			state.scene2030MerchantItem2AOfferState = 1;
 		} else if (record.disableAfterUse == 4 && state.scene2040SphinxExitInterviewState == 1) {
 			state.scene2040SphinxExitInterviewState = 2;
@@ -1048,7 +1048,7 @@ void Scene2100::runSpecialTransitionSpeech() {
 
 void Scene2100::runStoneDoorToTreasureRoom() {
 	if (!hasInventoryItem(kScene2100RaStaffItem)) {
-		beginSecondarySpeechLine(1, 1);
+		beginSecondarySpeechLine(1, 0);
 		return;
 	}
 

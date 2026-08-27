@@ -1016,8 +1016,11 @@ bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byt
 }
 
 bool PlayableScene::loadStage003SceneRows() {
-	return _textStore.load(kStage003ArchiveName, sceneDebugName(), sceneStageIndex(),
-		resource003InventoryRowsOffsetIndex(), speechCueDescriptorTableOffset());
+	const uint stageIndex = sceneStageIndex();
+	const bool validateSequentialVoiceMap = stageIndex >= 201 && stageIndex <= 211;
+	return _textStore.load(kStage003ArchiveName, sceneDebugName(), stageIndex,
+		resource003InventoryRowsOffsetIndex(), speechCueDescriptorTableOffset(),
+		validateSequentialVoiceMap);
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
@@ -1531,6 +1534,7 @@ void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int t
 	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY, kInvalidFacing, 0);
 	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	_actorPathPlaybackActive = true;
+	bool footstepPlayed = false;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
 		_activeActorWorldX = frame.worldX;
@@ -1538,6 +1542,7 @@ void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int t
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
+		handleActorPathFootstep(frameIndex + 1 == _actorPathFrames.size(), footstepPlayed);
 		if (waitSceneMillis(kActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
 			return;
@@ -1636,6 +1641,7 @@ void PlayableScene::suspendAudioForOptionsMenu() {
 	_speech.stop();
 	_soundBank0.stop();
 	_ambientSoundBank0.stop();
+	_residentSoundEffects.stop();
 }
 
 bool PlayableScene::shouldExitGameplayLoop() const {
@@ -1726,6 +1732,7 @@ void PlayableScene::installFullscreenInventoryMedia(const InventoryMediaPlayer &
 	_speech.stop();
 	_soundBank0.stop();
 	_ambientSoundBank0.stop();
+	_residentSoundEffects.stop();
 	clearAllSpeechOverlays();
 	_skipRequested = false;
 
@@ -1865,6 +1872,7 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 
 	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	_actorPathPlaybackActive = true;
+	bool footstepPlayed = false;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
 		_activeActorWorldX = frame.worldX;
@@ -1872,6 +1880,7 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
+		handleActorPathFootstep(frameIndex + 1 == _actorPathFrames.size(), footstepPlayed);
 		if (waitSceneMillis(kActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
 			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
@@ -1901,6 +1910,36 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 	drawPlayableComposite();
 	presentFrame();
 	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
+}
+
+bool PlayableScene::playResidentSoundEffect(byte soundEffectId, byte volumePercent) {
+	return _residentSoundEffects.playSample(soundEffectId, volumePercent);
+}
+
+bool PlayableScene::playActiveActorFootstep() {
+	if (_activeActorWorldX < 0 || _activeActorWorldX >= HollywoodEngine::kSceneBufferWidth ||
+			_activeActorWorldY < 0 || _activeActorWorldY >= HollywoodEngine::kSceneBufferHeight ||
+			_paletteMaskOriginal.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize)
+		return false;
+
+	const uint framebufferOffset = (uint)_activeActorWorldY * HollywoodEngine::kSceneBufferWidth +
+		(uint)_activeActorWorldX;
+	const byte floorColor = savedFramebufferPixelAt(framebufferOffset);
+	const byte soundEffectId = _paletteMaskOriginal[kSceneColorToFootstepSoundMap + floorColor];
+	return playResidentSoundEffect(soundEffectId);
+}
+
+void PlayableScene::handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed) {
+	if (_activeActorCel == 4 || _activeActorCel == 10) {
+		playActiveActorFootstep();
+		footstepPlayed = true;
+	}
+
+	if (terminalFrame) {
+		if (!footstepPlayed)
+			playActiveActorFootstep();
+		footstepPlayed = false;
+	}
 }
 
 bool PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {

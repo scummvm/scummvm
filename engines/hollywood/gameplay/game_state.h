@@ -201,7 +201,7 @@ struct GameplayState {
 		scene2020SunglassesPresent = true;
 		scene2020PrincessConversationSeen = false;
 		scene2030RightMerchantConversationSeen = false;
-		scene2030ScarabOfferState = 0;
+		scene2030SeedOfferState = 0;
 		scene2030MerchantItem2AOfferState = 0;
 		scene6010StudioEntryUnlocked = true;
 		scene6010Item59Visible = false;
@@ -956,7 +956,7 @@ struct GameplayState {
 	bool scene2020SunglassesPresent;
 	bool scene2020PrincessConversationSeen;
 	bool scene2030RightMerchantConversationSeen;
-	byte scene2030ScarabOfferState;
+	byte scene2030SeedOfferState;
 	byte scene2030MerchantItem2AOfferState;
 	bool scene6010StudioEntryUnlocked;
 	bool scene6010Item59Visible;

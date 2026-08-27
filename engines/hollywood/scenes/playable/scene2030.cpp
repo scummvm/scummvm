@@ -58,11 +58,11 @@ const byte kScene2030ShopDialogueStageId = 0x62;
 const byte kScene2030ShopPrimaryRow = 99;
 const uint kScene2030ShopDialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kScene2030MoneyItem = 0x29;
-const byte kScene2030ScarabItem = 0x2b;
+const byte kScene2030SeedsItem = 0x2b;
 const byte kScene2030MerchantItem2A = 0x2a;
 const byte kScene2030RightMerchantSaleItemA = 0x49;
 const byte kScene2030RightMerchantSaleItemB = 0x3f;
-const uint16 kScene2030ScarabPrice = 0x00fa;
+const uint16 kScene2030SeedsPrice = 0x00fa;
 const uint16 kScene2030MerchantItem2APrice = 0x0352;
 const uint16 kScene2030RightMerchantSaleValueA = 0x02bc;
 const uint16 kScene2030RightMerchantSaleValueB = 0x0190;
@@ -969,7 +969,7 @@ void Scene2030::initializeMerchantShopDialogueRecords(Common::Array<DialogueChoi
 	setMerchantShopDialogueRecord(records, 72, 1, 0, 0, 6, 3, 1, 0xff);
 
 	const GameplayState &state = _vm->gameState();
-	if (state.scene2030ScarabOfferState != 1) {
+	if (state.scene2030SeedOfferState != 1) {
 		records[0].enabled = 0;
 		records[4].enabled = 0;
 	}
@@ -996,7 +996,7 @@ void Scene2030::setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord
 uint16 Scene2030::merchantShopProductPrice(byte productRowId) const {
 	switch (productRowId) {
 	case 1:
-		return kScene2030ScarabPrice;
+		return kScene2030SeedsPrice;
 	case 2:
 		return kScene2030MerchantItem2APrice;
 	default:
@@ -1016,8 +1016,8 @@ void Scene2030::runLeftMerchantPurchase(byte productRowId) {
 
 	GameplayState &state = _vm->gameState();
 	if (productRowId == 1) {
-		addInventoryItem(kScene2030ScarabItem);
-		state.scene2030ScarabOfferState = 2;
+		addInventoryItem(kScene2030SeedsItem);
+		state.scene2030SeedOfferState = 2;
 	} else if (productRowId == 2) {
 		addInventoryItem(kScene2030MerchantItem2A);
 		state.scene2030MerchantItem2AOfferState = 2;

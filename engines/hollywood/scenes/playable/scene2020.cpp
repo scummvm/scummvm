@@ -199,7 +199,7 @@ bool Scene2020::dispatchCustomSceneAction(uint16 handlerId) {
 		runPrincessDialogue();
 		return true;
 	case 302: // Mirar princesa Amesis-Huni (look at Princess Amesis-Huni).
-		beginSecondarySpeechLine(1, 1);
+		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Coger pamela (take hat): only possible after the princess leaves it behind.
 		runHatPickup();
