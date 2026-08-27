@@ -4535,7 +4535,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		}
 	}
 
-	for (int i = 1; i <= 7; i++) {
+	for (int i = 1; i < ARRAYSIZE(kLookupTable); i++) {
 		int imgIdx = kLookupTable[i] - 1; // 0-based
 		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
@@ -4549,6 +4549,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			hasData = (!frame._data.empty() && frame._width > 0);
 		}
 
+		Script::ScriptExecutor *scriptExecutor = g_engine->_scriptExecutor;
 		bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&
 					  clickX < btnPos.x + btnW && clickY < btnPos.y + btnH &&
 					  hasData &&
@@ -4566,8 +4567,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			// Process button action
 			if (i == 3) {
 				// Toggle music, reset clickedButton, redraw
-				g_engine->_scriptExecutor->_soundSystemActive =
-					!g_engine->_scriptExecutor->_soundSystemActive;
+				scriptExecutor->_soundSystemActive = !scriptExecutor->_soundSystemActive;
 				_clickedButtonIndex = 0;
 				redraw();
 			} else if (i == 4) {
@@ -4577,27 +4577,27 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 					_saveConfirmArmed = true;
 				} else {
 					// Binary: second click arms error 0x1C and closes via button 7
-					g_engine->_scriptExecutor->setScriptError(0x1C);
+					scriptExecutor->setScriptError(0x1C);
 					_clickedButtonIndex = 7;
 				}
 			} else if (i == 6) {
 				if (!_loadConfirmArmed) {
 					_loadConfirmArmed = true;
 				} else {
-					g_engine->_scriptExecutor->setScriptError(0x1B);
+					scriptExecutor->setScriptError(0x1B);
 					_clickedButtonIndex = 7;
 				}
 			} else if (i == 7) {
 				// Binary: if music enabled AND sound active, play active music
-				if (g_engine->_scriptExecutor->_musicEnabled &&
-					g_engine->_scriptExecutor->_soundSystemActive) {
-					uint16 slot = g_engine->_scriptExecutor->_activeMusicSlot;
-					if (slot != 0 && !g_engine->_scriptExecutor->_musicSlots[slot - 1].empty() &&
-						g_engine->getMusic()->playSongData(g_engine->_scriptExecutor->_musicSlots[slot - 1])) {
+				if (scriptExecutor->_musicEnabled &&
+					scriptExecutor->_soundSystemActive) {
+					uint16 slot = scriptExecutor->_activeMusicSlot;
+					if (slot != 0 && !scriptExecutor->_musicSlots[slot - 1].empty() &&
+						g_engine->getMusic()->playSongData(scriptExecutor->_musicSlots[slot - 1])) {
 						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
 						// ScummVM layers user volume on top via scaledMusicVolume, so re-apply it.
-						g_engine->_scriptExecutor->_musicControlMode = 0;
-						g_engine->_scriptExecutor->_musicControlVolume = 0;
+						scriptExecutor->_musicControlMode = 0;
+						scriptExecutor->_musicControlVolume = 0;
 						g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(0));
 					}
 				}
