@@ -43,10 +43,10 @@ const byte kKarnakTigerToothItem = 0x26;
 const byte kKarnakParchmentItem = 0x2a;
 const byte kKarnakScarabItem = 0x2b;
 const byte kKarnakNileFlowerItem = 0x2c;
-const byte kKarnakPrincessHairItem = 0x2e;
 const byte kKarnakLampItem = 0x3c;
 const byte kKarnakOilItem = 0x43;
 const byte kKarnakShovelItem = 0x50;
+const byte kKarnakMagnifierItem = 0x5a;
 
 const byte kFrankieBodyAssemblyItems[] = {
 	0x30, 0x42, 0x4c
@@ -153,10 +153,9 @@ bool Console::cmdGet(int argc, const char **argv) {
 		}
 		addedCount += addInventoryItemIfMissing(state, owner, kKarnakPapyrusItem);
 		addedCount += addInventoryItemIfMissing(state, owner, kKarnakParchmentItem);
-		if (!state.scene2020PrincessGone) {
+		addedCount += addInventoryItemIfMissing(state, owner, kKarnakMagnifierItem);
+		if (!state.scene2020PrincessGone)
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakNileFlowerItem);
-			addedCount += addInventoryItemIfMissing(state, owner, kKarnakPrincessHairItem);
-		}
 		const bool bypassedInterview = state.scene2040SphinxExitInterviewState < 2;
 		if (bypassedInterview)
 			state.scene2040SphinxExitInterviewState = 2;
