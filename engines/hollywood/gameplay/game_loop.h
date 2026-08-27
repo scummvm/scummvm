@@ -96,6 +96,7 @@ public:
 	virtual bool optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const;
 	virtual void suspendAudioForOptionsMenu();
 	virtual bool shouldExitGameplayLoop() const;
+	virtual bool isInventoryPanelAvailable() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
 	virtual void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex);
 	virtual byte randomSharedInventorySpeechFrame(byte maxFrameIndex);
