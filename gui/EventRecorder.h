@@ -194,9 +194,11 @@ public:
 
 private:
 
-#ifdef USE_IMGUI
+	// Not guarded by USE_IMGUI: the definition is unconditional and already
+	// returns false when ImGui is absent, and four of the five call sites are
+	// unguarded too. Guarding only the declaration breaks --enable-eventrecorder
+	// in every build without ImGui.
 	bool isImGuiRecorderEnabled() const;
-#endif
 
 	bool pollEvent(Common::Event &ev) override;
 	bool notifyEvent(const Common::Event &event) override;
