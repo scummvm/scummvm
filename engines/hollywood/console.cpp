@@ -26,6 +26,7 @@
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/scene_registry.h"
 
 namespace Hollywood {
 
@@ -37,8 +38,10 @@ const byte kFrankieSunglassesItem = 0x27;
 const byte kFrankieDiaryItem = 0x33;
 const byte kFrankieUmbrellaItem = 0x5b;
 
+const byte kKarnakPapyrusItem = 0x12;
 const byte kKarnakTigerToothItem = 0x26;
-const byte kKarnakPapyrusItem = 0x2a;
+const byte kKarnakParchmentItem = 0x2a;
+const byte kKarnakScarabItem = 0x2b;
 const byte kKarnakNileFlowerItem = 0x2c;
 const byte kKarnakPrincessHairItem = 0x2e;
 const byte kKarnakLampItem = 0x3c;
@@ -65,7 +68,7 @@ Console::Console(HollywoodEngine *vm) :
 		GUI::Debugger(),
 		_vm(vm) {
 	registerCmd("get", WRAP_METHOD(Console, cmdGet));
-	registerCmd("open", WRAP_METHOD(Console, cmdOpen));
+	registerCmd("solve", WRAP_METHOD(Console, cmdSolve));
 }
 
 bool Console::cmdGet(int argc, const char **argv) {
@@ -139,6 +142,8 @@ bool Console::cmdGet(int argc, const char **argv) {
 		uint addedCount = 0;
 		if (state.scene2040SphinxFaceState == 0)
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakShovelItem);
+		if (state.scene2040SphinxFaceState < 2)
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakScarabItem);
 		if (state.scene2040SphinxBasePatchState == 0)
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakTigerToothItem);
 		if (!state.scene2050LabyrinthLampReady) {
@@ -146,16 +151,20 @@ bool Console::cmdGet(int argc, const char **argv) {
 			if (!state.ronLampFueled)
 				addedCount += addInventoryItemIfMissing(state, owner, kKarnakOilItem);
 		}
+		addedCount += addInventoryItemIfMissing(state, owner, kKarnakPapyrusItem);
+		addedCount += addInventoryItemIfMissing(state, owner, kKarnakParchmentItem);
 		if (!state.scene2020PrincessGone) {
-			addedCount += addInventoryItemIfMissing(state, owner, kKarnakPapyrusItem);
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakNileFlowerItem);
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakPrincessHairItem);
 		}
+		const bool bypassedInterview = state.scene2040SphinxExitInterviewState < 2;
+		if (bypassedInterview)
+			state.scene2040SphinxExitInterviewState = 2;
 
 		debugPrintf("Added %u inventory items needed for the sphinx and Karnak ceremony\n",
 			addedCount);
-		if (state.scene2040SphinxExitInterviewState < 2)
-			debugPrintf("The mummy dialogue prerequisite still needs to be completed\n");
+		if (bypassedInterview)
+			debugPrintf("Enabled the sphinx entrance without the prerequisite conversations\n");
 		return true;
 	}
 
@@ -191,26 +200,50 @@ bool Console::cmdGet(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdOpen(int argc, const char **argv) {
-	if (argc != 2 || !Common::String(argv[1]).equalsIgnoreCase("frankie")) {
-		debugPrintf("Usage: %s frankie\n", argv[0]);
+bool Console::cmdSolve(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene3060SecretDoorRevealState != 0) {
-		debugPrintf("The secret passage to Frankie's laboratory is already open\n");
+	const int sceneNumber = gameplaySceneNumberForState(state.mainFlowStateId);
+	switch (sceneNumber) {
+	case 2050: {
+		for (uint tile = 0; tile < GameplayState::kScene2050MuralTilePermutationSize; ++tile)
+			state.scene2050MuralTilePermutation[tile] = (byte)tile;
+		const bool guidedPuzzle = state.scene2050MuralPuzzleState == 1 ||
+			state.scene2050MuralPuzzleState == 3;
+		const bool alreadySolved = state.scene2050MuralPuzzleState >= 2 &&
+			state.egyptSealPuzzleProgress != 0;
+		state.scene2050MuralPuzzleState = guidedPuzzle ? 3 : 2;
+
+		if (alreadySolved) {
+			debugPrintf("The scene 2050 scarab mural is already solved\n");
+			return true;
+		}
+
+		debugPrintf("Solved the scene 2050 scarab mural; close the debugger to play the completion sequence\n");
 		return true;
 	}
+	case 3060:
+		if (state.scene3060SecretDoorRevealState != 0) {
+			debugPrintf("The secret passage to Frankie's laboratory is already open\n");
+			return true;
+		}
 
-	state.scene3060SecretDoorRevealState = 1;
-	if (state.mainFlowStateId / 10 == 306) {
+		state.scene3060SecretDoorRevealState = 1;
 		_vm->requestSceneRestart();
-		debugPrintf("Opened the secret passage; close the debugger to refresh the scene\n");
-	} else {
-		debugPrintf("Opened the secret passage to Frankie's laboratory\n");
+		debugPrintf("Solved the scene 3060 globe puzzle; close the debugger to refresh the scene\n");
+		return true;
+	default:
+		if (sceneNumber < 0)
+			debugPrintf("State 0x%04x does not belong to a gameplay scene\n",
+				(uint)state.mainFlowStateId);
+		else
+			debugPrintf("No puzzle solver is available for scene %d\n", sceneNumber);
+		return true;
 	}
-	return true;
 }
 
 bool Console::parseItemId(const char *argument, uint &itemId) {

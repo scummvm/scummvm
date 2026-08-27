@@ -197,6 +197,8 @@ bool Scene2050::prepareCustomGameplayLoop() {
 }
 
 bool Scene2050::advanceCustomGameplayLoop(uint32 delta) {
+	if (_vm->gameState().scene2050MuralPuzzleState == 2)
+		runSealDiscoveryIfPending();
 	advanceAmbientLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -417,10 +419,8 @@ void Scene2050::runMuralSubscreenAction() {
 		return;
 	}
 
-	if (state.scene2050MuralPuzzleState == 2 && state.egyptSealPuzzleProgress == 0) {
-		state.egyptSealPuzzleProgress = 1;
-		runSealDiscoverySequence();
-	}
+	if (state.scene2050MuralPuzzleState == 2)
+		runSealDiscoveryIfPending();
 }
 
 void Scene2050::runGuidedMuralAction() {
@@ -444,10 +444,8 @@ void Scene2050::runGuidedMuralAction() {
 		return;
 	}
 
-	if (state.scene2050MuralPuzzleState == 3 && state.egyptSealPuzzleProgress == 0) {
-		state.egyptSealPuzzleProgress = 1;
-		runSealDiscoverySequence();
-	}
+	if (state.scene2050MuralPuzzleState == 3)
+		runSealDiscoveryIfPending();
 	if (state.scene2050MuralPuzzleState == 3)
 		state.scene2050MuralPuzzleState = 2;
 }
@@ -507,6 +505,14 @@ void Scene2050::runMuralPuzzleSubscreen() {
 	bool done = false;
 	uint32 lastMillis = g_system->getMillis();
 	while (!done && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		const GameplayState &state = _vm->gameState();
+		if (state.egyptSealPuzzleProgress == 0 &&
+				state.scene2050MuralPuzzleState >= 2 && isMuralPuzzleSolved()) {
+			drawMuralTileGrid(state.scene2050MuralPuzzleState == 3 ? 14 : 13);
+			presentFrame();
+			break;
+		}
+
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -573,6 +579,15 @@ void Scene2050::runMuralPuzzleSubscreen() {
 	_displayPalette.markAllDirty();
 	drawPlayableComposite();
 	presentFrame();
+}
+
+void Scene2050::runSealDiscoveryIfPending() {
+	GameplayState &state = _vm->gameState();
+	if (state.egyptSealPuzzleProgress != 0)
+		return;
+
+	state.egyptSealPuzzleProgress = 1;
+	runSealDiscoverySequence();
 }
 
 void Scene2050::runSealDiscoverySequence() {
