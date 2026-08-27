@@ -168,13 +168,17 @@ void Scene5050::runTrophyBoxPickup() {
 		return;
 	}
 
-	const byte pickupIndex = MIN<byte>(state.scene5050PickupIndex, ARRAYSIZE(kScene5050PickupItems) - 1);
+	const byte pickupIndex = state.frankensteinPartRewardIndex();
+	if (pickupIndex >= ARRAYSIZE(kScene5050PickupItems)) {
+		beginSecondarySpeechLine(5, 0);
+		return;
+	}
 	const byte itemId = kScene5050PickupItems[pickupIndex];
 	addInventoryItem(itemId);
 	_soundBank0.playSample(1, 100);
 	walkActiveActorTo(0x2b3, 0x1ba, 3, 0, false);
 	beginSecondarySpeechLine(0x16, (byte)(pickupIndex * 2 + 1));
-	state.scene5050PickupIndex = MIN<byte>((byte)(pickupIndex + 1), ARRAYSIZE(kScene5050PickupItems));
+	state.setFrankensteinPartRewardIndex(pickupIndex + 1);
 	state.scene5050TrophyBoxTaken = true;
 }
 
