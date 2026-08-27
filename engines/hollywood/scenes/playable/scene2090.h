@@ -38,6 +38,9 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
@@ -55,11 +58,17 @@ private:
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel);
 	void runBackTransitionToScene2080();
-	void runGuardOrCurtainInteraction();
+	void runAltarCeremony();
 	void waitForStartedSpeechAndClear(uint32 fallbackMillis);
+	void setRitualPaletteCycle(bool active);
+	void rotateRitualPalette();
+	bool runCurtainRevealFromBlack();
+	void applyCurtainBand(const Graphics::Surface *source, uint sweepOffset, byte bandWidth);
 	void runCurtainClearToBlack();
 
 	ResourceSpriteLayer _foregroundLayer;
+	TimedAnimationChannel _paletteCycleChannel;
+	bool _paletteCycleActive;
 };
 
 } // End of namespace Hollywood

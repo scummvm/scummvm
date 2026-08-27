@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene2090.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -57,6 +55,11 @@ const byte kScene2090RequiredItem2A = 0x2a;
 const byte kScene2090RequiredItem2C = 0x2c;
 const byte kScene2090RequiredItem2E = 0x2e;
 const byte kScene2090FinaleSpeechHook = 1;
+const byte kScene2090PaletteCycleFirstColor = 0xa0;
+const byte kScene2090PaletteCycleLastColor = 0xaf;
+const int kScene2090CurtainStartOffset = 0xdc;
+const byte kScene2090CurtainBandWidth = 0x14;
+const uint kScene2090CurtainEndOffset = 0xf0;
 
 const byte kScene2090ForegroundFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -89,9 +92,12 @@ static PlayableSceneConfig scene2090Config() {
 
 Scene2090::Scene2090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2090Config()),
-		_foregroundLayer() {
+		_foregroundLayer(),
+		_paletteCycleChannel(),
+		_paletteCycleActive(false) {
 	_foregroundLayer.configure(kScene2090ForegroundChunk, kScene2090ForegroundDescriptorCount,
 		kScene2090ForegroundFrameMap, ARRAYSIZE(kScene2090ForegroundFrameMap));
+	_paletteCycleChannel.reset(0, kScene2090FrameMillis);
 }
 
 void Scene2090::initializeCustomPreviewState() {
@@ -121,8 +127,13 @@ void Scene2090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	const bool foregroundReplacesActor = _foregroundLayer.visible;
+	drawActiveAndSecondaryActorFrames(drawActiveActor && !foregroundReplacesActor,
+		activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor && !foregroundReplacesActor,
+		secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (foregroundReplacesActor && (drawActiveActor || drawSecondaryActor))
+		updateActorPaletteForWorldPoint(activeWorldX, activeWorldY);
 	drawResourceSpriteLayer(_foregroundLayer);
 }
 
@@ -135,29 +146,51 @@ void Scene2090::runCustomEntrySequence() {
 	}
 }
 
+bool Scene2090::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
+bool Scene2090::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff &&
+		stateId != kScene2020ReturnState && !isMainFlowStateInScene(stateId);
+}
+
+void Scene2090::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 bool Scene2090::advanceCustomGameplayLoop(uint32 delta) {
+	if (_paletteCycleActive) {
+		const uint frameCount = _paletteCycleChannel.consumeFrames(delta);
+		for (uint frame = 0; frame < frameCount; ++frame)
+			rotateRitualPalette();
+	}
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
 
 bool Scene2090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Ir a escalera (go to stairs): approach the altar steps.
+	case 136: // Usar pergamino (use parchment): start the Karnak ceremony in this room.
+	case 306: // Ceremony callback reached by the parchment's scene-local redirect.
+		runAltarCeremony();
+		return true;
+	case 301: // Ir a escalera (go to stairs): movement only.
+		return true;
+	case 302: // Mirar escalera (look at stairs): they lead up to the altar.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Mirar escalera (look at stairs): marble and gold description.
+	case 303: // Mirar altar (look at altar): describe its marble and gold.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303: // Ir atras hacia B08 (go back to B08): animated return to the sarcophagus chamber.
+	case 304: // Ir a entrada (go to entrance): animated return to the sarcophagus chamber.
 		runBackTransitionToScene2080();
 		return true;
-	case 304: // Ir a entrada (go to entrance): describes the connection to the sarcophagus chamber.
+	case 305: // Mirar entrada (look at entrance): describe the connection to the previous chamber.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Mirar entrada/altar ritual (look at entrance): checks princess hair and Nile pollen.
-		runGuardOrCurtainInteraction();
-		return true;
-	case 306: // Usar pergamino too early (use scroll early): wait for the right moment.
+	case 307: // Usar flor/pelo con altar (use flower/hair on altar): the parchment must start the ceremony.
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	default:
@@ -246,7 +279,14 @@ bool Scene2090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene2090::ambientAudioProfile() const {
-	return createLoopingAmbientAudioProfile(100);
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0e;
+	profile.musicCueCount = 3;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
 }
 
 void Scene2090::resetForegroundLayer(bool visible, byte frameIndex) {
@@ -260,7 +300,8 @@ void Scene2090::runEntryFromScene2080() {
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawClipFrameDelta(kScene2090EntryClipChunk, kScene2090EntryClipDescriptorCount, 0);
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 	playDeltaClip(kScene2090EntryClipChunk, kScene2090EntryClipDescriptorCount,
 		kScene2090EntryClipDescriptorCount, kScene2090FrameMillis, 1);
 	_soundBank0.stop();
@@ -278,16 +319,24 @@ void Scene2090::runEntryFromScene2020() {
 	setActiveActorPose(0x151, 0x0df, 1);
 
 	resetForegroundLayer(true, kScene2090SpecialEntryStartForegroundFrame);
-	drawPlayableComposite();
-	presentFrame();
 	_soundBank0.playSample(0x0f, 100);
+	drawPlayableComposite();
+	if (runCurtainRevealFromBlack())
+		return;
 
-	playAnimationFrames(_foregroundLayer,
+	setRitualPaletteCycle(true);
+	const bool firstPartComplete = playAndPresentAnimationFrames(_foregroundLayer,
 		AnimationFrameRange(kScene2090SpecialEntryStartForegroundFrame + 1,
-			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis));
-	playAnimationFrames(_foregroundLayer,
-		AnimationFrameRange(kScene2090SpecialEntryMidForegroundFrame + 1,
-			kScene2090SpecialEntryFinalForegroundFrame, kScene2090SlowFrameMillis));
+			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis).unskippable());
+	setRitualPaletteCycle(false);
+	if (!firstPartComplete)
+		return;
+	if (!playAndPresentAnimationTransition(_foregroundLayer,
+			AnimationTransition(kScene2090SpecialEntryMidForegroundFrame + 1,
+				kScene2090SpecialEntryFinalForegroundFrame,
+				kScene2090SpecialEntryFinalForegroundFrame,
+				kScene2090SlowFrameMillis).unskippable()))
+		return;
 
 	if (hasInventoryItem(kScene2090RequiredItem2A))
 		removeInventoryItem(kScene2090RequiredItem2A);
@@ -296,6 +345,9 @@ void Scene2090::runEntryFromScene2020() {
 	if (hasInventoryItem(kScene2090RequiredItem2E))
 		removeInventoryItem(kScene2090RequiredItem2E);
 
+	resetForegroundLayer(false, 0);
+	drawPlayableComposite();
+	presentFrame();
 	beginSecondarySpeechLine(4, 9);
 }
 
@@ -323,7 +375,7 @@ void Scene2090::runBackTransitionToScene2080() {
 	_vm->gameState().mainFlowStateId = kScene2080ReturnState;
 }
 
-void Scene2090::runGuardOrCurtainInteraction() {
+void Scene2090::runAltarCeremony() {
 	const bool hasItem2E = hasInventoryItem(kScene2090RequiredItem2E);
 	const bool hasItem2C = hasInventoryItem(kScene2090RequiredItem2C);
 
@@ -343,16 +395,31 @@ void Scene2090::runGuardOrCurtainInteraction() {
 	beginSecondarySpeechLine(4, 6);
 
 	resetForegroundLayer(true, 0);
-	playAnimationFrames(_foregroundLayer,
-		AnimationFrameRange(1, kScene2090FinaleFirstForegroundStopFrame, kScene2090FrameMillis));
+	if (!playAndPresentAnimationTransition(_foregroundLayer,
+			AnimationTransition(1, kScene2090FinaleFirstForegroundStopFrame,
+				kScene2090FinaleFirstForegroundStopFrame,
+				kScene2090FrameMillis).unskippable()))
+		return;
 
 	beginSecondarySpeechLine(4, 7);
 	_soundBank0.playSample(0x0e, 100);
-	playAnimationFrames(_foregroundLayer,
+	setRitualPaletteCycle(true);
+	const bool finaleComplete = playAndPresentAnimationFrames(_foregroundLayer,
 		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
-			kScene2090FinaleLastForegroundFrame, kScene2090SlowFrameMillis)
-			.hookAt(kScene2090FinaleSpeechTriggerFrame, kScene2090FinaleSpeechHook));
+			kScene2090FinaleLastForegroundFrame - 1, kScene2090SlowFrameMillis)
+			.hookAt(kScene2090FinaleSpeechTriggerFrame, kScene2090FinaleSpeechHook)
+			.unskippable());
+	if (finaleComplete) {
+		_foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
+		drawPlayableComposite();
+		presentFrame();
+	}
+	setRitualPaletteCycle(false);
+	if (!finaleComplete)
+		return;
 	waitForStartedSpeechAndClear(1200);
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 
 	runCurtainClearToBlack();
 	_soundBank0.stop();
@@ -380,23 +447,108 @@ void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {
 	presentFrame();
 }
 
-void Scene2090::runCurtainClearToBlack() {
-	byte *pixels = framebufferPixels(_sceneFramebuffer);
-	if (!pixels)
+void Scene2090::setRitualPaletteCycle(bool active) {
+	_paletteCycleActive = active;
+	_paletteCycleChannel.reset(0, kScene2090FrameMillis);
+	if (active)
+		rotateRitualPalette();
+}
+
+void Scene2090::rotateRitualPalette() {
+	const uint lastOffset = kScene2090PaletteCycleLastColor * 3;
+	if (_paletteCurrent.size() <= lastOffset + 2)
 		return;
 
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight && !_vm->isSceneRestartRequested(); y += 0x14) {
-		const uint height = MIN<uint>(0x14, HollywoodEngine::kScreenHeight - y);
-		for (uint row = 0; row < height; ++row) {
-			memset(pixels + (y + row) * HollywoodEngine::kSceneBufferWidth,
-				0, HollywoodEngine::kSceneBufferWidth);
-		}
+	byte savedColor[3];
+	memcpy(savedColor, _paletteCurrent.data() + lastOffset, sizeof(savedColor));
+	for (uint color = kScene2090PaletteCycleLastColor;
+			color > kScene2090PaletteCycleFirstColor; --color) {
+		memcpy(_paletteCurrent.data() + color * 3,
+			_paletteCurrent.data() + (color - 1) * 3, sizeof(savedColor));
+	}
+	memcpy(_paletteCurrent.data() + kScene2090PaletteCycleFirstColor * 3,
+		savedColor, sizeof(savedColor));
+	invalidatePresentationPalette();
+}
+
+bool Scene2090::runCurtainRevealFromBlack() {
+	Graphics::ManagedSurface savedScene;
+	savedScene.copyFrom(_sceneFramebuffer);
+	byte *destination = framebufferPixels(_sceneFramebuffer);
+	if (!destination || savedScene.empty())
+		return false;
+
+	memset(destination, 0, framebufferByteCount());
+	presentFrame();
+	const uint resourcePaletteBytes = MIN<uint>(_sceneChunkTable.sizes[1],
+		MIN<uint>(_paletteCurrent.size(), _paletteResource.size()));
+	memcpy(_paletteCurrent.data(), _paletteResource.data(), resourcePaletteBytes);
+	invalidatePresentationPalette();
+	for (int sweep = kScene2090CurtainStartOffset;
+			sweep >= 0 && !_vm->isSceneRestartRequested();
+			sweep -= kScene2090CurtainBandWidth) {
+		applyCurtainBand(&savedScene.rawSurface(), (uint)sweep, kScene2090CurtainBandWidth);
 		presentFrame();
-		if (pollEvents(true))
-			break;
-		g_system->delayMillis(10);
+		if (pollEvents(false))
+			return true;
+	}
+
+	_sceneFramebuffer.copyRectToSurface(savedScene.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth,
+			HollywoodEngine::kSceneBufferHeight));
+	presentFrame();
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+void Scene2090::applyCurtainBand(const Graphics::Surface *source, uint sweepOffset, byte bandWidth) {
+	const int innerWidth = HollywoodEngine::kScreenWidth - 2 * (int)sweepOffset;
+	if (innerWidth <= 0)
+		return;
+
+	const int middleInset = sweepOffset + bandWidth;
+	const int middleHeight = HollywoodEngine::kScreenHeight - 2 * middleInset;
+	const int leftX = _viewportXOffset + sweepOffset;
+	const int rightX = leftX + innerWidth - bandWidth;
+	Graphics::Surface &destination = *_sceneFramebuffer.surfacePtr();
+
+	for (uint row = 0; row < bandWidth; ++row) {
+		const int topY = sweepOffset + row;
+		const int bottomY = HollywoodEngine::kScreenHeight - bandWidth - sweepOffset + row;
+		if (source) {
+			copySurfaceRun(*source, destination, topY, leftX, innerWidth);
+			copySurfaceRun(*source, destination, bottomY, leftX, innerWidth);
+		} else {
+			clearSurfaceRun(destination, topY, leftX, innerWidth);
+			clearSurfaceRun(destination, bottomY, leftX, innerWidth);
+		}
+	}
+
+	for (int row = 0; row < middleHeight; ++row) {
+		const int y = middleInset + row;
+		if (source) {
+			copySurfaceRun(*source, destination, y, leftX, bandWidth);
+			copySurfaceRun(*source, destination, y, rightX, bandWidth);
+		} else {
+			clearSurfaceRun(destination, y, leftX, bandWidth);
+			clearSurfaceRun(destination, y, rightX, bandWidth);
+		}
+	}
+}
+
+void Scene2090::runCurtainClearToBlack() {
+	if (!framebufferPixels(_sceneFramebuffer))
+		return;
+
+	for (uint sweep = 0;
+			sweep < kScene2090CurtainEndOffset && !_vm->isSceneRestartRequested();
+			sweep += kScene2090CurtainBandWidth) {
+		applyCurtainBand(nullptr, sweep, kScene2090CurtainBandWidth);
+		presentFrame();
+		if (pollEvents(false))
+			return;
 	}
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	invalidatePresentationPalette();
 	presentFrame();
 }
 
