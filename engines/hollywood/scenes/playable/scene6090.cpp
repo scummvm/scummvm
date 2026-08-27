@@ -373,6 +373,8 @@ void Scene6090::runCustomEntrySequence() {
 	if (runCurtainRevealFromBlack())
 		return;
 
+	if (_vm->restoredContentEnabled())
+		beginSecondarySpeechLine(15, 5);
 	runOpeningConversation();
 	_manualSequenceActive = false;
 }
@@ -849,6 +851,9 @@ void Scene6090::waitForAsyncPrimarySpeech() {
 }
 
 void Scene6090::runInterruptionClips() {
+	const bool showRestoredSubtitle = _vm->restoredContentEnabled();
+	uint32 subtitleStartMillis = 0;
+	uint32 subtitleDurationMillis = 0;
 	Common::Array<byte> firstPalette;
 	Common::Array<byte> secondPalette;
 	Common::Array<byte> firstDelta;
@@ -883,12 +888,28 @@ void Scene6090::runInterruptionClips() {
 	for (uint frame = 0; frame < 0x2e && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested(); ++frame) {
 		if (frame == 4) {
-			uint16 textRecordId = 0;
-			byte continuationCount = 0;
-			uint16 voiceSampleId = 0;
-			if (getStage003Cue(15, 24, textRecordId, continuationCount, voiceSampleId) &&
-					voiceSampleId != 0)
-				_speech.playSample(voiceSampleId, 100);
+			if (showRestoredSubtitle) {
+				subtitleStartMillis = g_system->getMillis();
+				const bool started = startSecondarySpeechLine(15, 24);
+				calculateSpeechOverlayBounds(_speechOverlay, 0x140, 0x64, true,
+					_activeActorWorldY);
+				subtitleDurationMillis = started ?
+					MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+					MAX<uint32>(1200, (uint32)_speechOverlay.lines.size() * 1100);
+				setPaletteEntry6Bit(_speechOverlay.colorIndex, 0x3f, 0x3f, 0x3f);
+			} else {
+				uint16 textRecordId = 0;
+				byte continuationCount = 0;
+				uint16 voiceSampleId = 0;
+				if (getStage003Cue(15, 24, textRecordId, continuationCount, voiceSampleId) &&
+						voiceSampleId != 0)
+					_speech.playSample(voiceSampleId, 100);
+			}
+		}
+		if (showRestoredSubtitle && subtitleDurationMillis != 0 && !_speech.isPlaying() &&
+				g_system->getMillis() - subtitleStartMillis >= subtitleDurationMillis) {
+			clearSpeechOverlay();
+			subtitleDurationMillis = 0;
 		}
 		drawClipFrameDeltaFromResource(firstDelta, 0, firstDelta.size(), 0x2f, (byte)frame);
 		presentFrame();
@@ -899,6 +920,8 @@ void Scene6090::runInterruptionClips() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 	_paletteCurrent = secondPalette;
+	if (showRestoredSubtitle && _speechOverlay.visible)
+		setPaletteEntry6Bit(_speechOverlay.colorIndex, 0x3f, 0x3f, 0x3f);
 	_sceneFramebuffer.copyRectToSurface(secondBase.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	drawClipFrameDeltaFromResource(secondDelta, 0, secondDelta.size(), 0x38, 0);
@@ -906,12 +929,19 @@ void Scene6090::runInterruptionClips() {
 	if (!waitDeltaClipFrameMillis(kScene6090FrameMillis)) {
 		for (uint frame = 1; frame < 0x37 && !Engine::shouldQuit() &&
 				!_vm->isSceneRestartRequested(); ++frame) {
+			if (showRestoredSubtitle && subtitleDurationMillis != 0 && !_speech.isPlaying() &&
+					g_system->getMillis() - subtitleStartMillis >= subtitleDurationMillis) {
+				clearSpeechOverlay();
+				subtitleDurationMillis = 0;
+			}
 			drawClipFrameDeltaFromResource(secondDelta, 0, secondDelta.size(), 0x38, (byte)frame);
 			presentFrame();
 			if (frame + 1 < 0x37 && waitDeltaClipFrameMillis(kScene6090FrameMillis))
 				break;
 		}
 	}
+	if (showRestoredSubtitle)
+		clearSpeechOverlay();
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
@@ -1039,6 +1069,8 @@ void Scene6090::applyPatchChunk(uint chunkIndex) {
 }
 
 void Scene6090::runRopeRescueSequence() {
+	const bool restoreRescueLine = _vm->restoredContentEnabled();
+
 	_manualSequenceActive = true;
 	_vm->gameState().currentAmbientMusicCueId = 0x11;
 	_vm->gameplayMusic()->playMusicCue(0x11, 100);
@@ -1113,7 +1145,7 @@ void Scene6090::runRopeRescueSequence() {
 	_escapePaletteSource = _paletteCurrent;
 	_paletteFadeThreshold = 1;
 	_paletteFadeChannel.reset(0, kScene6090FrameMillis);
-	_escapePaletteActive = true;
+	_escapePaletteActive = !restoreRescueLine;
 	_paletteLockedDark = true;
 	while (_escapeAnimationActive && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested()) {
@@ -1125,6 +1157,11 @@ void Scene6090::runRopeRescueSequence() {
 
 	beginPrimarySpeechLineWithAnimationGroup(15, 35, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
+	if (restoreRescueLine) {
+		beginSecondarySpeechLine(15, 32);
+		_paletteFadeChannel.reset(0, kScene6090FrameMillis);
+		_escapePaletteActive = true;
+	}
 	beginPrimarySpeechLineWithAnimationGroup(15, 36, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
 	beginSecondarySpeechLine(15, 37);
