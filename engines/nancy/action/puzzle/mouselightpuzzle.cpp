@@ -65,6 +65,15 @@ void MouseLightPuzzle::init() {
 	}
 }
 
+void MouseLightPuzzle::updateGraphics() {
+	// The light only exists while the player holds the light source. The record stops
+	// receiving input as soon as its cursor dependency stops being satisfied, so hide
+	// it instead of leaving the last drawn circle on screen.
+	if (_state == kRun && isVisible() != _isActive) {
+		setVisible(_isActive);
+	}
+}
+
 void MouseLightPuzzle::execute() {
 	if (_state == kBegin) {
 		init();
