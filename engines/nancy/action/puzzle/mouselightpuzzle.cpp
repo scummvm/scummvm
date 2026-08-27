@@ -105,11 +105,13 @@ void MouseLightPuzzle::handleInput(NancyInput &input) {
 	Common::Rect::getBlitRect(blitDestPoint, srcRect, _drawSurface.getBounds());
 
 	// Copy over the transparency to the draw surface
+	const uint32 alphaMask = (uint32)0xFF << _drawSurface.format.aShift;
+
 	for (int y = srcRect.top; y < srcRect.bottom; ++y) {
 		uint32 *drawSurfPtr = (uint32 *)_drawSurface.getBasePtr(blitDestPoint.x, y + blitDestPoint.y - srcRect.top);
 		uint16 *circlePtr = (uint16 *)_maskCircle.getBasePtr(srcRect.left, y);
 		for (int x = srcRect.left; x < srcRect.right; ++x) {
-			*drawSurfPtr = (*drawSurfPtr & 0xFFFFFF00) | (byte)*circlePtr;
+			*drawSurfPtr = (*drawSurfPtr & ~alphaMask) | ((uint32)*circlePtr << _drawSurface.format.aShift);
 			++drawSurfPtr;
 			++circlePtr;
 		}
