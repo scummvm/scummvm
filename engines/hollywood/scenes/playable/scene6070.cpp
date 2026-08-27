@@ -752,7 +752,10 @@ void Scene6070::runSueDiscovery() {
 	}
 
 	_manualSequenceActive = true;
-	beginSecondarySpeechLine(98, 0);
+	if (_vm->restoredContentEnabled() && _random.getRandomBit())
+		beginSecondarySpeechLine(3, 0);
+	else
+		beginSecondarySpeechLine(98, 0);
 	state.scene6070SuePresent = true;
 	applySceneStateToHotspotsAndPatches(0);
 	playAnimationFrames(_sueLayer,
