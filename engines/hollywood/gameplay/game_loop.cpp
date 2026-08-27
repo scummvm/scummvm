@@ -107,6 +107,10 @@ bool GameplayLoopDelegate::shouldExitGameplayLoop() const {
 	return false;
 }
 
+bool GameplayLoopDelegate::isInventoryPanelAvailable() const {
+	return true;
+}
+
 Common::String GameplayLoopDelegate::inventoryItemName(byte owner, byte itemId) const {
 	(void)owner;
 	(void)itemId;
@@ -513,7 +517,8 @@ void GameplayLoop::closeVerbPanel() {
 }
 
 void GameplayLoop::openInventoryPanel() {
-	if (_panelState.inventoryPanelVisible || _panelState.verbPanelVisible)
+	if (!_delegate->isInventoryPanelAvailable() ||
+			_panelState.inventoryPanelVisible || _panelState.verbPanelVisible)
 		return;
 
 	_inventoryPanelOpenedFromDefault = _currentStrip == kGameplayDefaultStrip;
