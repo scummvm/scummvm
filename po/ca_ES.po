@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-08-27 09:22+0000\n"
+"PO-Revision-Date: 2026-08-27 16:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -9786,6 +9786,8 @@ msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Quan està desactivat, el reproductor de pel·lícules d'inici segueix la "
+"censura original GORE=NO."
 
 #: engines/harvester/metaengine.cpp:44
 msgid "Show CD change prompts"
@@ -9796,6 +9798,8 @@ msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Mostra la imatge d'intercanvi de CD original i espera un clic esquerre quan "
+"l'script sol·liciti els discs 2 o 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -9882,7 +9886,7 @@ msgstr "Utilitza la interfície Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Utilitza el ratolí i la barra d'eines des de la versió de Windows"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -10030,7 +10034,7 @@ msgstr "Apunta a la dreta"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Apunta amunt"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -10301,24 +10305,31 @@ msgid ""
 "- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
 "- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
+"- Elimina els errors d'arrodoniment de guany de PV\n"
+"- Corregeix el dany de l'arma del projectil (per a les regles de la 2a "
+"edició d'AD&D)\n"
+"- Els elfs obtenen +1 per colpejar amb espases i arcs (segons el manual de "
+"joc oficial)"
 
 #: engines/kyra/metaengine.cpp:175
 msgid "Fix Ileria and Beohram NPCs"
-msgstr ""
+msgstr "Corregeix els NPCs d'Ileria i Beohram"
 
 #: engines/kyra/metaengine.cpp:176
 msgid "Make Ileria a female and Beohram a paladin"
-msgstr ""
+msgstr "Tracta a Ileria com una dona i a Beohram com un paladí"
 
 #: engines/kyra/metaengine.cpp:187
 msgid "Enhanced thrown weapon reload"
-msgstr ""
+msgstr "Recàrrega millorada d'armes llançables"
 
 #: engines/kyra/metaengine.cpp:188
 msgid ""
 "Thrown weapons (daggers, darts, spears...) get replaced from belt and "
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
+"Les armes llançables (dagues, dards, llances...) es substitueixen de les "
+"ranures d'inventari del cinturó i la motxilla, només amb armes llançables"
 
 #: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
@@ -10729,7 +10740,7 @@ msgstr "Obre el menú d'opcions"
 
 #: engines/macs2/metaengine.cpp:85
 msgid "Help / map"
-msgstr ""
+msgstr "Ajuda / mapa"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -11308,6 +11319,7 @@ msgstr "Desa automàticament en els punts de progrés"
 #: engines/mtropolis/metaengine.cpp:76
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
+"Desa automàticament el joc després de completar trencaclosques i capítols."
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid "Enable short transitions"
@@ -11317,10 +11329,12 @@ msgstr "Activa transicions curtes"
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
+"Habilita que les transicions es passin a la velocitat màxima en lloc "
+"d'ometre-les."
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Habilita els subtítols per a efectes de so importants"
 
 #: engines/mtropolis/metaengine.cpp:98
 msgid ""
