@@ -496,8 +496,10 @@ void ScriptExecutor::runSceneScriptPass(bool initRun, bool repeatRun) {
 	_repeatRunFlag = repeatRun;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	setScript(Scenes::instance()._currentSceneScript);
-	if (_stream && _stream->size() > 0)
+	if (_stream && _stream->size() > 0) {
 		_stream->seek(0, SEEK_SET);
+		_scriptEndPosition = _stream->size();
+	}
 	const ExecutorState previousState = _state;
 	_state = ExecutorState::Executing;
 	step();
@@ -610,7 +612,8 @@ void ScriptExecutor::step() {
 			// Continue execution
 
 			// Check if the currently executing script is at the end
-			if (_stream->pos() >= _stream->size()) {
+			if (_stream && _stream->pos() >= effectiveScriptEnd()) {
+				syncScriptIsExecutingFlag();
 				// Binary (runScriptExecutor 1008:e3e7): if script finishes while
 				// g_wScriptSkippable is still set, treat as error 0x11 and abort.
 				if (_scriptSkippable) {
@@ -632,12 +635,23 @@ void ScriptExecutor::step() {
 				if (result == OpcodeResult::WaitForCallback) {
 					// We need to change our state as well now
 					_state = ExecutorState::WaitingForCallback;
+					syncScriptIsExecutingFlag();
 					if (!_debugPaused && !_waitingForUiClick) {
 						// Binary sets hourglass inline in executeOpcodes for blocking
 						// waits. UI waits (0x0A/0x0D/0x17) set _waitingForUiClick instead.
 						enterBlockingWaitCursor();
 					}
 					return;
+				}
+				syncScriptIsExecutingFlag();
+				if (_stream && _stream->pos() >= effectiveScriptEnd()) {
+					if (_scriptSkippable) {
+						setScriptError(0x11);
+						_scriptSkippable = false;
+						shouldContinue = false;
+						break;
+					}
+					shouldContinue = loadNextScript();
 				}
 			}
 			break;
@@ -650,10 +664,12 @@ void ScriptExecutor::step() {
 		}
 	}
 	// Rewind and reset to the scene script after we are done executing
+	_scriptIsExecuting = false;
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	setScript(Scenes::instance()._currentSceneScript);
 	if (_stream && _stream->size() > 0) {
 		_stream->seek(0, SEEK_SET);
+		_scriptEndPosition = _stream->size();
 	}
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	_state = ExecutorState::Idle;
@@ -702,6 +718,8 @@ bool ScriptExecutor::loadNextScript() {
 				}
 				_stream = candidateObject->getScriptStream();
 				_executingScriptObjectId = candidateObject->_index;
+				_scriptEndPosition = candidateObject->_script.size();
+				clampScriptEndToStream();
 				debugC(kDebugScript, "----- Switching execution to script for object: %.4x", candidateObject->_index);
 				return true;
 			}
@@ -734,6 +752,7 @@ bool ScriptExecutor::loadNextScript() {
 				return false;
 			}
 			_stream->seek(0, SEEK_SET);
+			_scriptEndPosition = _stream->size();
 			// Fresh scene-script pass (same as runSceneScriptPass): clear any prior
 			// >0x200 sentinel so the early guard above does not skip object scripts.
 			_executingScriptObjectId = 0;
@@ -1129,6 +1148,8 @@ OpcodeResult Script::ScriptExecutor::scriptMoveObject() {
 	// terminate its script (original: sets scriptEndPosition=0, scriptPosition=0)
 	if ((int)objectID == _executingScriptObjectId) {
 		_stream->seek(0, SEEK_END);
+		_scriptEndPosition = _stream->pos();
+		_scriptIsExecuting = false;
 	}
 
 	// Binary (1008:aa83): when runtime data exists, sync target/finalDest to the new
@@ -4175,12 +4196,11 @@ OpcodeResult Script::ScriptExecutor::executeOpcodes() {
 		if (hasScriptError()) {
 			break;
 		}
-		// TODO: Just for breaking out at the moment when end conditions fail to work
-		if (_stream->eos()) {
+		const uint32 scriptEnd = effectiveScriptEnd();
+		if (_stream->eos() || _stream->pos() >= scriptEnd) {
 			break;
 		}
-		// TODO: Probably only one of these is necessary
-		if (_stream->size() == 0 || _stream->pos() >= _stream->size() - 1) {
+		if (_stream->size() == 0) {
 			break;
 		}
 
@@ -4262,20 +4282,50 @@ void ScriptExecutor::run(bool firstRun) {
 		return;
 	}
 
-	const bool resumingAfterCallback = (_state == ExecutorState::WaitingForCallback) && !firstRun;
-	if (!resumingAfterCallback) {
+	// Binary runScriptExecutor (1008:e3e7): when g_wScriptIsExecuting != 0, continue
+	// from the current script pointer/position (no rewind).
+	const bool resumingMidScript = _scriptIsExecuting && !firstRun;
+	if (!resumingMidScript) {
 		clearScriptError();
-		// TODO: Not sure if this is the right place and condition to reset this
-		// variable. Context here is that we might have an object that triggers several
-		// description strings in a row, and we would disable the executing object
-		// if we always reset this object
-		// TODO: Watch out for issues caused by this
+		// Binary: g_wScriptIsExecuting == 0 resets to scene script at position 0.
+		_scriptIsExecuting = false;
 		_executingScriptObjectId = 0;
 		_repeatRunFlag = false;
 		_isSceneInitRun = firstRun;
+		_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+		setScript(Scenes::instance()._currentSceneScript);
+		if (_stream && _stream->size() > 0) {
+			_stream->seek(0, SEEK_SET);
+			_scriptEndPosition = _stream->size();
+		} else {
+			_scriptEndPosition = 0;
+		}
 	}
 	_state = ExecutorState::Executing;
 	step();
+	syncScriptIsExecutingFlag();
+}
+
+uint32 ScriptExecutor::effectiveScriptEnd() const {
+	if (!_stream || _scriptEndPosition == 0)
+		return _scriptEndPosition;
+	return MIN(_scriptEndPosition, (uint32)_stream->size());
+}
+
+void ScriptExecutor::clampScriptEndToStream() {
+	if (_stream)
+		_scriptEndPosition = MIN(_scriptEndPosition, (uint32)_stream->size());
+	else
+		_scriptEndPosition = 0;
+}
+
+void ScriptExecutor::syncScriptIsExecutingFlag() {
+	const uint32 end = effectiveScriptEnd();
+	if (!_stream || end == 0) {
+		_scriptIsExecuting = false;
+		return;
+	}
+	_scriptIsExecuting = _stream->pos() < end;
 }
 
 void ScriptExecutor::setScript(Common::MemoryReadStream *stream) {
@@ -4291,7 +4341,113 @@ void ScriptExecutor::releaseObjectStream() {
 
 void ScriptExecutor::setCurrentSceneScriptAt(uint32 offset) {
 	setScript(Scenes::instance()._currentSceneScript);
-	_stream->seek(offset, SEEK_SET);
+	if (_stream) {
+		if (_scriptEndPosition == 0)
+			_scriptEndPosition = _stream->size();
+		clampScriptEndToStream();
+		const uint32 seekPos = MIN(offset, effectiveScriptEnd());
+		_stream->seek(seekPos, SEEK_SET);
+	}
+}
+
+void ScriptExecutor::prepareScriptStateForSave() {
+	if (!_stream)
+		return;
+
+	Common::MemoryReadStream *sceneScript = Scenes::instance()._currentSceneScript;
+	const uint32 streamPos = (uint32)_stream->pos();
+
+	if (_executingScriptObjectId != 0) {
+		GameObject *obj = GameObjects::getObjectByIndex(_executingScriptObjectId);
+		const uint32 objScriptSize = obj ? obj->_script.size() : 0;
+		// Saved position/end must fit the object script blob; otherwise the stream is
+		// the scene script and the object id is stale (see mid-dialogue scene saves).
+		if (objScriptSize == 0 || streamPos >= objScriptSize || _scriptEndPosition > objScriptSize) {
+			_executingScriptObjectId = 0;
+			_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+			_executingObjectIndex = Scenes::instance()._currentSceneIndex;
+			if (sceneScript && sceneScript->size() > 0)
+				_scriptEndPosition = sceneScript->size();
+		} else {
+			_scriptEndPosition = objScriptSize;
+		}
+	} else if (sceneScript && sceneScript->size() > 0) {
+		_scriptEndPosition = sceneScript->size();
+	} else if (_stream->size() > 0) {
+		_scriptEndPosition = _stream->size();
+	}
+
+	syncScriptIsExecutingFlag();
+}
+
+void ScriptExecutor::restoreScriptExecutionAfterLoad(bool isExecuting, uint16 executingObjectId,
+													 uint16 scriptPosition, uint16 scriptEndPosition) {
+	// Binary loadGameFromFile (1008:747e / 1008:8395): if g_wScriptIsExecuting,
+	// reattach g_wScriptDataPtr from scene (objectId==0) or object runtime.
+	clearScriptError();
+	_scriptEndPosition = scriptEndPosition;
+	_scriptIsExecuting = isExecuting;
+	if (!isExecuting) {
+		setIdle();
+		_executingScriptObjectId = executingObjectId;
+		return;
+	}
+
+	uint16 resolvedObjectId = executingObjectId;
+	if (executingObjectId != 0) {
+		GameObject *execObj = GameObjects::getObjectByIndex(executingObjectId);
+		const uint32 objScriptSize = execObj ? execObj->_script.size() : 0;
+		if (objScriptSize == 0 || scriptPosition >= objScriptSize || scriptEndPosition > objScriptSize) {
+			Common::MemoryReadStream *sceneScript = Scenes::instance()._currentSceneScript;
+			const uint32 sceneSize = sceneScript ? sceneScript->size() : 0;
+			if (sceneSize == 0 || scriptPosition >= sceneSize || scriptEndPosition > sceneSize) {
+				warning("Cannot restore script execution: saved pos %u end %u does not fit object %u or scene",
+						scriptPosition, scriptEndPosition, executingObjectId);
+				_scriptIsExecuting = false;
+				setIdle();
+				_executingScriptObjectId = executingObjectId;
+				return;
+			}
+			resolvedObjectId = 0;
+		}
+	}
+
+	if (resolvedObjectId == 0) {
+		setCurrentSceneScriptAt(scriptPosition);
+		_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
+		_executingObjectIndex = Scenes::instance()._currentSceneIndex;
+	} else {
+		GameObject *execObj = GameObjects::getObjectByIndex(resolvedObjectId);
+		if (execObj == nullptr || execObj->_script.empty()) {
+			warning("Cannot restore script execution: object %u script missing after load",
+					resolvedObjectId);
+			_scriptIsExecuting = false;
+			setIdle();
+			_executingScriptObjectId = executingObjectId;
+			return;
+		}
+		if (_stream && _stream != Scenes::instance()._currentSceneScript) {
+			delete _stream;
+		}
+		Common::MemoryReadStream *objStream = execObj->getScriptStream();
+		setScript(objStream);
+		clampScriptEndToStream();
+		if (objStream) {
+			const uint32 seekPos = MIN((uint32)scriptPosition, effectiveScriptEnd());
+			objStream->seek(seekPos, SEEK_SET);
+		}
+		_scriptExecutionState = ScriptExecutionState::ExecutingOtherScripts;
+		_executingObjectIndex = resolvedObjectId;
+	}
+
+	_executingScriptObjectId = resolvedObjectId;
+	syncScriptIsExecutingFlag();
+	if (!_scriptIsExecuting) {
+		setIdle();
+		return;
+	}
+	// Binary does not call runScriptExecutor on load; next click/tick resumes.
+	_state = ExecutorState::WaitingForCallback;
 }
 
 void ScriptExecutor::tick() {
@@ -4363,7 +4519,7 @@ uint32 ScriptExecutor::getDebugOpcodePosition() const {
 }
 
 uint32 ScriptExecutor::getScriptEndPosition() const {
-	return _stream ? (uint32)_stream->size() : 0;
+	return _scriptEndPosition;
 }
 
 uint32 ScriptExecutor::getVariableValue(int index) const {

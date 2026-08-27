@@ -1740,7 +1740,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		// From handleInput (1008:f1d4): clicks during script execution are ONLY processed
 		// if cursor is not Disabled (0x1A). When cursor is Disabled (walk/wait in progress),
 		// clicks are completely ignored.
-		if (g_engine->_scriptExecutor->isExecuting() &&
+		if (g_engine->_scriptExecutor->isScriptMidExecution() &&
 			g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
 			// Binary handleInput (1008:f1d4-f225): exact sequence of unconditional checks
 			// 1. if g_wIsShowingTextBox != 0: handleTextBoxInput()

@@ -383,15 +383,37 @@ private:
 	// e.g. opcode 0x29). The binary drives the whole script-selection flow off
 	// this single value; there is no separate scene-vs-object state flag.
 	uint16 _executingScriptObjectId = 0;
+	// Binary g_wScriptEndPosition [0xf90] and g_wScriptIsExecuting [0xf88].
+	// End is the active script byte limit (scene+0x520b or object runtime+0x18b);
+	// isExecuting is (position < end), persisted in savegames.
+	uint32 _scriptEndPosition = 0;
+	bool _scriptIsExecuting = false;
+
+	uint32 effectiveScriptEnd() const;
+	void clampScriptEndToStream();
 
 public:
 	ScriptExecutor(Macs2::Macs2Engine *engine);
 	~ScriptExecutor();
 
+	void syncScriptIsExecutingFlag();
+
 	/** Strip a trailing audio extension (.wav/.ogg/...) if present. */
 	static Common::String stripAudioExtension(const Common::String &fileName);
 
 	void setIdle() { _state = ExecutorState::Idle; }
+
+	/**
+	 * Restore mid-script execution after loadGameFromFile (1008:747e).
+	 * When isExecuting, mirrors binary: reattach scene/object script at saved
+	 * position and leave the executor resumable (WaitingForCallback) so the next
+	 * runScriptExecutor continues instead of rewinding to a fresh scene pass.
+	 */
+	void restoreScriptExecutionAfterLoad(bool isExecuting, uint16 executingObjectId,
+										 uint16 scriptPosition, uint16 scriptEndPosition);
+
+	/** Align executing object id / end position with the active script stream before save. */
+	void prepareScriptStateForSave();
 
 	Common::Array<uint16> _dialogueChoiceScriptIndices;
 	Common::Array<Common::StringArray> _dialogueChoices;
@@ -538,18 +560,41 @@ public:
 		return _state != ExecutorState::Idle;
 	}
 
+	/** Binary g_wScriptIsExecuting: script VM paused mid-bytecode (incl. UI waits). */
+	bool isScriptMidExecution() const {
+		return _scriptIsExecuting;
+	}
+
 	uint32 getScriptPosition() const;
 	// Returns the position of the last executed/executing opcode (for debugger highlight)
 	uint32 getDebugOpcodePosition() const;
-	bool isWaitingForCallback() const { return _state == ExecutorState::WaitingForCallback; }
+	bool isWaitingForCallback() const {
+		return _state == ExecutorState::WaitingForCallback;
+	}
 	uint32 getScriptEndPosition() const;
-	uint16 getExecutingObjectId() const { return _executingObjectIndex; }
-	void setExecutingObjectId(uint16 id) { _executingObjectIndex = id; }
-	uint16 getFrameWaitCounter() const { return _frameWaitTicksRemaining; }
-	void setFrameWaitCounter(uint16 val) { _frameWaitTicksRemaining = val; }
-	bool isFrameWaitActive() const { return _isFrameWaitActive; }
-	bool getRepeatRunFlag() const { return _repeatRunFlag; }
-	void setRepeatRunFlag(bool val) { _repeatRunFlag = val; }
+	// Binary g_wExecutingScriptObjectId [0xf92]: 0 = scene script, 1..0x200 = object.
+	// Not _executingObjectIndex (iteration cursor / last scene index after Idle).
+	uint16 getExecutingObjectId() const {
+		return _executingScriptObjectId;
+	}
+	void setExecutingObjectId(uint16 id) {
+		_executingScriptObjectId = id;
+	}
+	uint16 getFrameWaitCounter() const {
+		return _frameWaitTicksRemaining;
+	}
+	void setFrameWaitCounter(uint16 val) {
+		_frameWaitTicksRemaining = val;
+	}
+	bool isFrameWaitActive() const {
+		return _isFrameWaitActive;
+	}
+	bool getRepeatRunFlag() const {
+		return _repeatRunFlag;
+	}
+	void setRepeatRunFlag(bool val) {
+		_repeatRunFlag = val;
+	}
 	uint32 getVariableValue(int index) const;
 
 	// Plate / walk debugging: log actor position, area, walkability, script waits.
@@ -575,9 +620,15 @@ public:
 	void saveOpenInventoryScriptContext();
 	void restoreOpenInventoryScriptContext();
 	void setScriptError(uint16 code);
-	bool hasScriptError() const { return _scriptErrorCode != 0; }
-	void clearScriptError() { _scriptErrorCode = 0; }
-	uint16 getScriptErrorCode() const { return _scriptErrorCode; }
+	bool hasScriptError() const {
+		return _scriptErrorCode != 0;
+	}
+	void clearScriptError() {
+		_scriptErrorCode = 0;
+	}
+	uint16 getScriptErrorCode() const {
+		return _scriptErrorCode;
+	}
 
 	// Debug globals PTR_LOOP_1020_06c2 / PTR_LOOP_1020_06c4 (saved on script halt).
 	uint32 _errorScriptPosition = 0;

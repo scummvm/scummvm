@@ -36,6 +36,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (view1 == nullptr)
 		return Common::kUnknownError;
 
+	bool pendingScriptRestore = false;
+	bool pendingScriptIsExecuting = false;
+	uint16 pendingExecutingObjectId = 0;
+	uint16 pendingScriptPosition = 0;
+	uint16 pendingScriptEndPosition = 0;
 	// --- Header: 12-byte magic ---
 	if (s.isSaving()) {
 		byte magic[12];
@@ -105,13 +110,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		_scriptExecutor->_soundSystemActive = soundSystemActive != 0;
 
 	// --- Script execution state ---
-	// g_wScriptIsExecuting [0xf88]: 1 byte
-	uint8 scriptIsExecuting = _scriptExecutor->isExecuting() ? 1 : 0;
-	s.syncAsByte(scriptIsExecuting);
-	if (s.isLoading()) {
-		if (scriptIsExecuting == 0)
-			_scriptExecutor->setIdle();
+	// g_wScriptIsExecuting [0xf88]: 1 byte — binary: g_wScriptPosition < g_wScriptEndPosition
+	uint8 scriptIsExecuting = 0;
+	if (s.isSaving()) {
+		_scriptExecutor->prepareScriptStateForSave();
+		scriptIsExecuting = _scriptExecutor->isScriptMidExecution() ? 1 : 0;
 	}
+	s.syncAsByte(scriptIsExecuting);
 
 	// g_wScriptPosition [0xf8a]: 2 bytes
 	uint16 scriptPosition = (uint16)_scriptExecutor->getScriptPosition();
@@ -121,35 +126,18 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	uint16 scriptEndPosition = (uint16)_scriptExecutor->getScriptEndPosition();
 	s.syncAsUint16LE(scriptEndPosition);
 
-	// g_wExecutingScriptObjectId [0xf92]: 2 bytes
+	// g_wExecutingScriptObjectId [0xf92]: 2 bytes (0 = scene script)
 	uint16 executingObjectId = _scriptExecutor->getExecutingObjectId();
 	s.syncAsUint16LE(executingObjectId);
 
 	if (s.isLoading()) {
-		// Restore script execution state matching binary loadGameFromFile (1008:747e).
-		// The original sets g_wScriptDataPtrLow/High based on executingObjectId:
-		//   objectId == 0: use scene script (sceneData+0x5207/0x5209)
-		//   objectId != 0: use object's runtime script (runtime+0x187/0x189)
-		// Then g_wScriptPosition is used by the executor to seek within that script.
-		if (scriptIsExecuting) {
-			if (executingObjectId == 0) {
-				// Scene script
-				_scriptExecutor->setCurrentSceneScriptAt(scriptPosition);
-			} else {
-				// Object script: find the object and set its script stream
-				GameObject *execObj = GameObjects::getObjectByIndex(executingObjectId);
-				if (execObj && !execObj->_script.empty()) {
-					Common::MemoryReadStream *objStream = execObj->getScriptStream();
-					_scriptExecutor->setScript(objStream);
-					if (objStream && scriptPosition < objStream->size())
-						objStream->seek(scriptPosition, SEEK_SET);
-				}
-			}
-			_scriptExecutor->setExecutingObjectId(executingObjectId);
-		} else {
-			_scriptExecutor->setIdle();
-			_scriptExecutor->setExecutingObjectId(executingObjectId);
-		}
+		// Object script bytes are restored later in the per-object loop; defer
+		// reattaching the script stream until after runtime+0x187 is loaded.
+		pendingScriptRestore = true;
+		pendingScriptIsExecuting = scriptIsExecuting != 0;
+		pendingExecutingObjectId = executingObjectId;
+		pendingScriptPosition = scriptPosition;
+		pendingScriptEndPosition = scriptEndPosition;
 	}
 
 	// g_wScriptClickFlag [0xf94]: 2 bytes
@@ -844,6 +832,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Post-load: rebuild view state ---
 	if (s.isLoading()) {
+		if (pendingScriptRestore) {
+			_scriptExecutor->restoreScriptExecutionAfterLoad(pendingScriptIsExecuting,
+															pendingExecutingObjectId,
+															pendingScriptPosition,
+															pendingScriptEndPosition);
+		}
+
 		// NOTE: Characters were already created right after changeScene (above) so
 		// the per-object loop could populate their runtime walk/draw/dirty state.
 		// Do NOT recreate them here - that would discard the loaded fields.
