@@ -33,7 +33,7 @@ bool Debug::isChannelEnabled(DebugChannel chan) {
 }
 
 void Debug::debug(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Info)) {
+	if (isChannelEnabled(channel) || isChannelEnabled(Debug::Info)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);
@@ -44,7 +44,7 @@ void Debug::debug(DebugChannel channel, const char *s, ...) {
 }
 
 void Debug::warning(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Warning)) {
+	if (isChannelEnabled(channel) || isChannelEnabled(Debug::Warning)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);
@@ -55,7 +55,7 @@ void Debug::warning(DebugChannel channel, const char *s, ...) {
 }
 
 void Debug::error(DebugChannel channel, const char *s, ...) {
-	if (isChannelEnabled(channel | Debug::Error)) {
+	if (isChannelEnabled(channel) || isChannelEnabled(Debug::Error)) {
 		va_list args;
 		va_start(args, s);
 		Common::String buf = Common::String::vformat(s, args);
