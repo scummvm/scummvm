@@ -81,6 +81,7 @@ class CifTree : public Common::Archive {
 public:
 	CifTree() : _stream(nullptr) {}
 	CifTree(Common::SeekableReadStream *stream, const Common::Path &name);
+	CifTree(const Common::ArchiveMemberPtr &member, const Common::Path &name);
 	virtual ~CifTree();
 
 	// Used for extracting additional image data for conversation cels (nancy2 and up)
@@ -107,8 +108,16 @@ public:
 	Common::Array<Common::Path> getPathsForType(CifInfo::ResType type = CifInfo::kResTypeAny) const;
 
 private:
+	// Trees backed by a plain file are opened only for as long as a read takes, since
+	// some platforms allow very few files to be open at the same time, and a game can
+	// load a lot of trees. Trees living inside another archive keep their stream, as
+	// reopening those means extracting them all over again.
+	Common::SeekableReadStream *openStream() const;
+	void closeStream(Common::SeekableReadStream *stream) const;
+
 	Common::Path _name;
 	Common::SeekableReadStream *_stream;
+	Common::ArchiveMemberPtr _member;
 	Common::HashMap<Common::Path, CifInfo, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> _fileMap;
 	Common::Array<CifInfo> _writeFileMap;
 };
