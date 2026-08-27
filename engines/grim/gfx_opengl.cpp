@@ -80,6 +80,7 @@ static char dimFragSrc[] =
 
 GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 		_smushTexIds(nullptr), _smushWidth(0), _smushHeight(0),
+		_smushScaleW(1.0f), _smushScaleH(1.0f),
 		_useDepthShader(false), _useDimShader(0),
 		_maxLights(0), _storedDisplay(nullptr),
 #ifdef GL_ARB_fragment_program
@@ -1688,12 +1689,13 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int width = frame->w;
 	byte *bitmap = (byte *)frame->getPixels();
 
-	double scaleW = _scaleW;
-	double scaleH = _scaleH;
-	// Remastered hack, don't scale full-screen videos for now.
-	if (height == 1080) {
-		_scaleW = 1.0f;
-		_scaleH = 1.0f;
+	// The HD cutscenes are authored against the resolution of the other HD assets.
+	if (height == _globalHeight) {
+		_smushScaleW = _globalScaleW;
+		_smushScaleH = _globalScaleH;
+	} else {
+		_smushScaleW = _scaleW;
+		_smushScaleH = _scaleH;
 	}
 
 	GLenum format;
@@ -1757,20 +1759,11 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	}
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	_smushWidth = (int)(width * _scaleW);
-	_smushHeight = (int)(height * _scaleH);
-	_scaleW = scaleW;
-	_scaleH = scaleH;
+	_smushWidth = (int)(width * _smushScaleW);
+	_smushHeight = (int)(height * _smushScaleH);
 }
 
 void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
-	double scaleW = _scaleW;
-	double scaleH = _scaleH;
-	// Remastered hack, don't scale full-screen videos for now.
-	if (_smushHeight == 1080) {
-		_scaleW = 1.0f;
-		_scaleH = 1.0f;
-	}
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1789,24 +1782,24 @@ void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
-	offsetX = (int)(offsetX * _scaleW);
-	offsetY = (int)(offsetY * _scaleH);
+	offsetX = (int)(offsetX * _smushScaleW);
+	offsetY = (int)(offsetY * _smushScaleH);
 
 	glScissor(offsetX, _screenHeight - (offsetY + _smushHeight), _smushWidth, _smushHeight);
 
 	int curTexIdx = 0;
-	for (int y = 0; y < _smushHeight; y += (int)(BITMAP_TEXTURE_SIZE * _scaleH)) {
-		for (int x = 0; x < _smushWidth; x += (int)(BITMAP_TEXTURE_SIZE * _scaleW)) {
+	for (int y = 0; y < _smushHeight; y += (int)(BITMAP_TEXTURE_SIZE * _smushScaleH)) {
+		for (int x = 0; x < _smushWidth; x += (int)(BITMAP_TEXTURE_SIZE * _smushScaleW)) {
 			glBindTexture(GL_TEXTURE_2D, _smushTexIds[curTexIdx]);
 			glBegin(GL_QUADS);
 			glTexCoord2f(0, 0);
 			glVertex2f(x + offsetX, y + offsetY);
 			glTexCoord2f(1.0f, 0.0f);
-			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _scaleW, y + offsetY);
+			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _smushScaleW, y + offsetY);
 			glTexCoord2f(1.0f, 1.0f);
-			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _scaleW, y + offsetY + BITMAP_TEXTURE_SIZE * _scaleH);
+			glVertex2f(x + offsetX + BITMAP_TEXTURE_SIZE * _smushScaleW, y + offsetY + BITMAP_TEXTURE_SIZE * _smushScaleH);
 			glTexCoord2f(0.0f, 1.0f);
-			glVertex2f(x + offsetX, y + offsetY + BITMAP_TEXTURE_SIZE * _scaleH);
+			glVertex2f(x + offsetX, y + offsetY + BITMAP_TEXTURE_SIZE * _smushScaleH);
 			glEnd();
 			curTexIdx++;
 		}
@@ -1817,9 +1810,6 @@ void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-
-	_scaleW = scaleW;
-	_scaleH = scaleH;
 }
 
 void GfxOpenGL::releaseMovieFrame() {

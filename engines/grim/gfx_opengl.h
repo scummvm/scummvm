@@ -136,6 +136,8 @@ private:
 	GLuint *_smushTexIds;
 	int _smushWidth;
 	int _smushHeight;
+	float _smushScaleW;
+	float _smushScaleH;
 	byte *_storedDisplay;
 	bool _useDepthShader;
 #ifdef GL_ARB_fragment_program
