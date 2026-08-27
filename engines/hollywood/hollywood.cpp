@@ -36,6 +36,7 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/random.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
@@ -47,6 +48,13 @@ const uint kOptionsMaximumLevel = 200;
 const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
 const int kMaximumTalkSpeed = 255;
 const int kTravelScreenSelectionState = 0xffff;
+
+void initializeRandomizedNewGameState(GameplayState &state) {
+	Common::RandomSource randomSource("hollywood_new_game");
+	state.scene2080DialogueBranchAIndex = (byte)randomSource.getRandomNumber(2);
+	state.scene2080DialogueBranchBIndex = (byte)randomSource.getRandomNumber(2);
+	state.scene2080DialogueTerminalIndex = (byte)randomSource.getRandomNumber(2);
+}
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
 	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9030 || sceneNumber == 9050 ||
@@ -182,6 +190,8 @@ Common::Error HollywoodEngine::run() {
 
 	const int startupLoadSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	const bool startupLoad = startupLoadSlot >= 0;
+	if (!startupLoad)
+		initializeRandomizedNewGameState(_gameState);
 	if (startupLoad) {
 		Common::Error loadError = loadGameState(startupLoadSlot);
 		if (loadError.getCode() != Common::kNoError)
