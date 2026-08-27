@@ -890,7 +890,7 @@ static void showAnimViewerWindow() {
 						}
 					}
 
-					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal, 256);
+					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 					if (texId) {
 						float scale = MIN(128.0f / (float)fi.width, 128.0f / (float)fi.height);
 						if (scale > 3.0f)
@@ -1399,7 +1399,7 @@ static void showSceneMapsWindow() {
 		}
 
 		if (surface && surface->w > 0 && surface->h > 0) {
-			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*surface->surfacePtr(), g_engine->_pal, 256);
+			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*surface->surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
 				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)kGameHeight);
@@ -1646,7 +1646,7 @@ static void showImageResourcesWindow() {
 				x += f._width;
 			}
 
-			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal, 256);
+			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal.data(), g_engine->_pal.size());
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
 				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)totalH);

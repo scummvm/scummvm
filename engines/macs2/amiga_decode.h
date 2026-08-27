@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/scummsys.h"
+#include "graphics/palette.h"
 
 namespace Macs2 {
 
@@ -130,7 +131,7 @@ enum : uint16 {
  */
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outPixels,
-									byte outPaletteRgb[768],
+									Graphics::Palette &outPalette,
 									uint &outColorCount);
 
 /**

@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "engines/enhancements.h"
+#include "graphics/palette.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/amiga_decode.h"
 #include "macs2/debugtools.h"
@@ -1241,10 +1242,10 @@ OpcodeResult Script::ScriptExecutor::scriptChangeScene() {
 	_engine->setCursorMode(MouseMode::Disabled);
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	byte savedPalette[768];
+	Graphics::Palette savedPalette(Graphics::PALETTE_COUNT);
 	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0 &&
 		!currentView->isHelpButtonDisabled()) {
-		memcpy(savedPalette, g_engine->_palVanilla, sizeof(savedPalette));
+		savedPalette = g_engine->_palVanilla;
 	}
 	g_engine->changeScene(newSceneID, false);
 	// Binary (1008:ad6e): fade old palette to black after scene load (mode 0),

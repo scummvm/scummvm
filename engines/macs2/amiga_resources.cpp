@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #include "macs2/amiga_decode.h"
 #include "macs2/detection.h"
@@ -55,7 +56,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		return false;
 
 	Common::Array<byte> pixels;
-	byte paletteRgb[768];
+	Graphics::Palette paletteRgb(Graphics::PALETTE_COUNT);
 	uint colorCount = 0;
 	if (!decodeAmigaMxmmSceneBackground(mxmm.data(), size, pixels, paletteRgb, colorCount))
 		return false;
@@ -69,15 +70,12 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 
 	// _palVanilla holds raw 6-bit VGA values (fade math subtracts from these).
 	// _pal is the 8-bit display palette - must be expanded via applyPaletteDarkening().
-	memset(_pal, 0, sizeof(_pal));
-	memset(_palVanilla, 0, sizeof(_palVanilla));
-	for (uint i = 0; i < colorCount && i < 256; i++) {
-		const byte r8 = paletteRgb[i * 3 + 0];
-		const byte g8 = paletteRgb[i * 3 + 1];
-		const byte b8 = paletteRgb[i * 3 + 2];
-		_palVanilla[i * 3 + 0] = (byte)((r8 * 63) / 255);
-		_palVanilla[i * 3 + 1] = (byte)((g8 * 63) / 255);
-		_palVanilla[i * 3 + 2] = (byte)((b8 * 63) / 255);
+	_pal = Graphics::Palette(Graphics::PALETTE_COUNT);
+	_palVanilla = Graphics::Palette(Graphics::PALETTE_COUNT);
+	for (uint i = 0; i < colorCount && i < Graphics::PALETTE_COUNT; i++) {
+		byte r8, g8, b8;
+		paletteRgb.get(i, r8, g8, b8);
+		_palVanilla.set(i, PALETTE_8BIT_TO_6BIT(r8), PALETTE_8BIT_TO_6BIT(g8), PALETTE_8BIT_TO_6BIT(b8));
 	}
 
 	// Keep Info UI chrome colors in the high VGA indices used by panel drawing.
@@ -97,9 +95,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 			const uint idx = 0xF0 + i;
 			if (idx >= 256)
 				break;
-			_palVanilla[idx * 3 + 0] = r6;
-			_palVanilla[idx * 3 + 1] = g6;
-			_palVanilla[idx * 3 + 2] = b6;
+			_palVanilla.set(idx, r6, g6, b6);
 		}
 	}
 	_amigaNativePlayfieldPalette = true;
@@ -411,9 +407,7 @@ void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
 		byte r6, g6, b6;
 		amiga12ToVga6(highSrc[i], r6, g6, b6);
 		const uint idx = 17 + i;
-		_palVanilla[idx * 3 + 0] = r6;
-		_palVanilla[idx * 3 + 1] = g6;
-		_palVanilla[idx * 3 + 2] = b6;
+		_palVanilla.set(idx, r6, g6, b6);
 	}
 }
 
@@ -438,32 +432,23 @@ void Macs2Engine::applyAmigaUiPalette() {
 	// stay a visible ramp (overwritten per-line by scene copper).
 	byte r6, g6, b6;
 	amiga12ToVga6(info.uiPaletteAmiga[0], r6, g6, b6);
-	_palVanilla[0] = 0;
-	_palVanilla[1] = 0;
-	_palVanilla[2] = 0;
+	_palVanilla.set(0, 0, 0, 0);
 	for (uint i = 1; i < 16; i++) {
 		const byte v = (byte)((i * 63) / 15);
-		_palVanilla[i * 3 + 0] = v;
-		_palVanilla[i * 3 + 1] = (byte)((v * 3) / 4);
-		_palVanilla[i * 3 + 2] = (byte)(v / 2);
+		_palVanilla.set(i, v, (byte)((v * 3) / 4), (byte)(v / 2));
 	}
 	for (uint i = 0; i < 15; i++) {
 		amiga12ToVga6(info.uiPaletteAmiga[i + 1], r6, g6, b6);
-		const uint idx = 17 + i;
-		_palVanilla[idx * 3 + 0] = r6;
-		_palVanilla[idx * 3 + 1] = g6;
-		_palVanilla[idx * 3 + 2] = b6;
+		_palVanilla.set(17 + i, r6, g6, b6);
 	}
 
 	// Amiga UI colors also live in the high indices used by panel/chrome drawing.
 	for (uint i = 0; i < 16; i++) {
 		amiga12ToVga6(info.uiPaletteAmiga[i], r6, g6, b6);
 		const uint idx = 0xF0 + i;
-		if (idx >= 256)
+		if (idx >= Graphics::PALETTE_COUNT)
 			break;
-		_palVanilla[idx * 3 + 0] = r6;
-		_palVanilla[idx * 3 + 1] = g6;
-		_palVanilla[idx * 3 + 2] = b6;
+		_palVanilla.set(idx, r6, g6, b6);
 	}
 	_amigaNativePlayfieldPalette = false;
 	installAmigaPortraitPalette(false);
@@ -484,9 +469,8 @@ void Macs2Engine::buildAmigaPanelRemapTable() {
 	// MXIN UI[0..5] = wood ramp (BBA..741). UI[6] is 0x000 - never use it for fill.
 	static const byte kUiWood[8] = {0, 1, 2, 3, 4, 5, 2, 3};
 	for (uint i = 0; i < 0x100; i++) {
-		const byte r6 = _palVanilla[i * 3 + 0];
-		const byte g6 = _palVanilla[i * 3 + 1];
-		const byte b6 = _palVanilla[i * 3 + 2];
+		byte r6, g6, b6;
+		_palVanilla.get(i, r6, g6, b6);
 		const uint r4 = (r6 * 15) / 63;
 		const uint g4 = (g6 * 15) / 63;
 		const uint b4 = (b6 * 15) / 63;

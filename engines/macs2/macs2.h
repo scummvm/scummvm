@@ -38,6 +38,7 @@
 #include "common/text-to-speech.h"
 #include "common/util.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "macs2/amiga_archive.h"
 #include "macs2/events.h"
 #include "macs2/macs2_constants.h"
@@ -371,9 +372,9 @@ public:
 	// Only scenes with shadow regions have non-zero data.
 	Graphics::ManagedSurface _shadowMap;
 
-	// TODO: use Graphics::Palette for this
-	byte _pal[256 * 3] = {0};
-	byte _palVanilla[256 * 3] = {0};
+	// _palVanilla: raw 6-bit VGA source. _pal: 8-bit display (darkened + expanded).
+	Graphics::Palette _pal{Graphics::PALETTE_COUNT};
+	Graphics::Palette _palVanilla{Graphics::PALETTE_COUNT};
 
 	Common::Array<Common::String> _debugOutput;
 	Common::Array<Common::String> _textLog;
@@ -476,7 +477,7 @@ public:
 		uint16 clipMiY = 0;
 		uint16 clipMaX = 0;
 		uint16 clipMaY = 0;
-		byte palette[0x300] = {};
+		Graphics::Palette palette{Graphics::PALETTE_COUNT};
 		bool applyPaletteOnStart = false;
 		Common::Array<DeltaFrame> frames;
 		Common::Array<DeltaSfxEvent> sfxEvents;
@@ -493,7 +494,7 @@ public:
 			clipMiX = clipMiY = 0;
 			clipMaX = (uint16)MAX(0, screenW - 1);
 			clipMaY = (uint16)MAX(0, screenH - 1);
-			memset(palette, 0, sizeof(palette));
+			palette = Graphics::Palette(Graphics::PALETTE_COUNT);
 		}
 	};
 	DeltaAnimState _deltaAnim;
@@ -598,6 +599,8 @@ public:
 	uint16 _paletteDarkenPercent;
 
 	void applyPaletteDarkening();
+	void readPalette(Common::SeekableReadStream *stream, Graphics::Palette &dest);
+	void expandPalette6To8(Graphics::Palette &pal);
 	// Palette quantization for g_wHelpButtonDisabled path (1000:103e).
 	// Histograms scene pixels, keeps 16 rarest colors (0..0xBF) plus UI range
 	// 0xC0..0xFF, remaps background + bg-anim blobs + palette via Manhattan RGB.

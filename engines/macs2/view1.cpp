@@ -28,6 +28,7 @@
 #include "engines/enhancements.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
@@ -97,7 +98,7 @@ bool buildClippedEraseRect(int32 left, int32 top, uint16 width, uint16 height,
 	return out.isValidRect() && !out.isEmpty();
 }
 
-void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
+void buildFadedPalette(Graphics::Palette &colors, const Graphics::Palette &sourcePalette, int fadeValue) {
 	// Original fadePaletteToBlack/FromBlack: subtracts fadeValue from raw 6-bit VGA
 	// palette values (0-63), clamping to 0. Then scales to 8-bit for ScummVM.
 	// Apply palette darkening if active (scenes with _scenePaletteMode != 1).
@@ -105,12 +106,21 @@ void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
 	if (darkenPercent > 100)
 		darkenPercent = 100;
 	uint16 brightnessFactor = 100 - darkenPercent;
-	for (uint i = 0; i < 256 * 3; ++i) {
-		int raw = (sourcePalette[i] * brightnessFactor) / 100; // darken first
-		int faded = raw - fadeValue;
-		if (faded < 0)
-			faded = 0;
-		colors[i] = (faded * 259 + 33) >> 6; // 6-bit to 8-bit
+	for (uint i = 0; i < Graphics::PALETTE_COUNT; ++i) {
+		byte r, g, b;
+		sourcePalette.get(i, r, g, b);
+		int fadedR = (int)(r * brightnessFactor) / 100 - fadeValue;
+		int fadedG = (int)(g * brightnessFactor) / 100 - fadeValue;
+		int fadedB = (int)(b * brightnessFactor) / 100 - fadeValue;
+		if (fadedR < 0)
+			fadedR = 0;
+		if (fadedG < 0)
+			fadedG = 0;
+		if (fadedB < 0)
+			fadedB = 0;
+		colors.set(i, (byte)((fadedR * 259 + 33) >> 6),
+				   (byte)((fadedG * 259 + 33) >> 6),
+				   (byte)((fadedB * 259 + 33) >> 6));
 	}
 }
 
@@ -209,22 +219,22 @@ View1::~View1() {
 	}
 }
 
-void View1::applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
-	byte colors[256 * 3];
+void View1::applyPaletteWithFade(const Graphics::Palette &sourcePalette, int fadeValue) {
+	Graphics::Palette colors(Graphics::PALETTE_COUNT);
 	buildFadedPalette(colors, sourcePalette, fadeValue);
 	setViewPaletteSafely(colors);
 }
 
-void View1::setViewPaletteSafely(const byte *colors) {
+void View1::setViewPaletteSafely(const Graphics::Palette &colors) {
 	const bool shouldTouchCursor = _cursorSuppressedForFade;
 	const bool cursorWasVisible = shouldTouchCursor && CursorMan.isVisible();
 	if (cursorWasVisible)
 		CursorMan.showMouse(false);
 
 	if (shouldTouchCursor)
-		updateCursor(colors);
+		updateCursor(&colors);
 
-	g_system->getPaletteManager()->setPalette(colors, 0, 256);
+	g_system->getPaletteManager()->setPalette(colors);
 
 	if (cursorWasVisible)
 		CursorMan.showMouse(true);
@@ -233,7 +243,7 @@ void View1::setViewPaletteSafely(const byte *colors) {
 void View1::restoreUiPaletteEntries() {
 	// Binary setPaletteRange(0xF0, 0x10, palette+0x30) after applyScenePaletteEffect:
 	// push VGA indices 0xF0..0xFF from palette color slots 0x10..0x1F.
-	g_system->getPaletteManager()->setPalette(g_engine->_pal + 16 * 3, 0xF0, 16);
+	g_system->getPaletteManager()->setPalette(g_engine->_pal.data() + 16 * 3, 0xF0, 16);
 }
 
 void View1::openInventory(GameObject *newInventorySource) {
@@ -437,7 +447,7 @@ void View1::buildSortedObjectList(int low, int high) const {
 		buildSortedObjectList(i, high);
 }
 
-void View1::updateCursor(const byte *palette) {
+void View1::updateCursor(const Graphics::Palette *palette) {
 	CursorMan.showMouse(true);
 
 	// Original indexes cursor array as: base + mode * 16 - 16, i.e. 0-based index = mode - 1.
@@ -477,6 +487,7 @@ void View1::updateCursor(const byte *palette) {
 	Common::Array<uint32> rgbaCursor;
 	rgbaCursor.resize(width * height);
 
+	const Graphics::Palette &activePalette = palette ? *palette : g_engine->_pal;
 	for (uint i = 0; i < rgbaCursor.size(); ++i) {
 		const byte colorIndex = cursorData[i];
 		if (colorIndex == 0) {
@@ -484,9 +495,12 @@ void View1::updateCursor(const byte *palette) {
 			continue;
 		}
 
-		const byte *activePalette = palette ? palette : g_engine->_pal;
-		const byte *paletteEntry = &activePalette[colorIndex * 3];
-		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(paletteEntry[0], paletteEntry[1], paletteEntry[2]);
+		byte r, g, b;
+		if (colorIndex < activePalette.size())
+			activePalette.get(colorIndex, r, g, b);
+		else
+			r = g = b = 0;
+		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(r, g, b);
 	}
 
 	int hotX = width >> 1;
@@ -504,8 +518,8 @@ void View1::updateCursor(const byte *palette) {
 	// baked-in palette colors, so the cursor palette content is irrelevant -
 	// it just needs to exist to prevent the backend's setPalette() from
 	// triggering blitCursor() which can corrupt the RLE-accelerated surface.
-	byte dummyPalette[256 * 3] = {};
-	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
+	Graphics::Palette dummyPalette(Graphics::PALETTE_COUNT);
+	CursorMan.replaceCursorPalette(dummyPalette.data(), 0, dummyPalette.size());
 }
 
 AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
@@ -946,12 +960,12 @@ void View1::enterMapMode() {
 	if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
 		return;
 	}
-	memcpy(_savedPalVanilla, g_engine->_palVanilla, 256 * 3);
+	_savedPalVanilla = g_engine->_palVanilla;
 	_savedDepthMap.copyFrom(g_engine->_depthMap);
 	startFadeToBlack(8);
 	Graphics::ManagedSurface mapBg = g_engine->readRLEImage(helpOffset, g_engine->_fileStream);
 	_backgroundSurface.copyFrom(mapBg);
-	g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+	g_engine->readPalette(g_engine->_fileStream, g_engine->_palVanilla);
 	g_engine->applyPaletteDarkening();
 	Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 	g_engine->_depthMap.blitFrom(mapDepth);
@@ -1149,12 +1163,10 @@ void View1::startFading(uint16 speed) {
 	startFadingWithSpeed(speed);
 }
 
-void View1::fadePaletteToBlack(uint16 speed, const byte *sourcePalette) {
+void View1::fadePaletteToBlack(uint16 speed, const Graphics::Palette &sourcePalette) {
 	// Blocking fade to black matching DOS fadePaletteToBlack (1010:00ba).
 	if (speed == 0)
 		speed = 4;
-	if (sourcePalette == nullptr)
-		sourcePalette = g_engine->_palVanilla;
 	beginFadeCursorSuppression();
 
 	// Ensure current frame is on screen before fading
@@ -1166,7 +1178,7 @@ void View1::fadePaletteToBlack(uint16 speed, const byte *sourcePalette) {
 	while (fadeValue <= 0x40 && !g_system->getEventManager()->shouldQuit()) {
 		uint32 frameStart = g_system->getMillis();
 
-		byte colors[256 * 3];
+		Graphics::Palette colors(Graphics::PALETTE_COUNT);
 		buildFadedPalette(colors, sourcePalette, fadeValue);
 		setViewPaletteSafely(colors);
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
@@ -1188,8 +1200,7 @@ void View1::fadePaletteToBlack(uint16 speed, const byte *sourcePalette) {
 	}
 
 	// Final: set all black
-	byte colors[256 * 3];
-	memset(colors, 0, sizeof(colors));
+	Graphics::Palette colors(Graphics::PALETTE_COUNT);
 	setViewPaletteSafely(colors);
 	g_system->updateScreen();
 
@@ -1205,8 +1216,7 @@ void View1::startFadeToBlack(uint16 speed) {
 void View1::instantSceneCut() {
 	// Binary scriptChangeScene mode 1 (1008:ad6e): clearScreen + setPaletteRange(0x100, 0).
 	// applyScenePaletteEffect is only used on the help-disabled path, not here.
-	byte blackPal[256 * 3];
-	memset(blackPal, 0, sizeof(blackPal));
+	Graphics::Palette blackPal(Graphics::PALETTE_COUNT);
 	setViewPaletteSafely(blackPal);
 	Graphics::ManagedSurface s = getSurface();
 	s.fillRect(Common::Rect(s.w, s.h), 0);
@@ -1233,9 +1243,8 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	beginFadeCursorSuppression();
 
 	// Set palette to black before blitting new scene pixels
-	byte blackPal[256 * 3];
-	memset(blackPal, 0, sizeof(blackPal));
-	g_system->getPaletteManager()->setPalette(blackPal, 0, 256);
+	Graphics::Palette blackPal(Graphics::PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette(blackPal);
 
 	// Draw the new scene to the screen surface (invisible because palette is black)
 	Graphics::ManagedSurface s = getSurface();
@@ -1304,13 +1313,13 @@ void View1::beginFadeCursorSuppression() {
 	_cursorSuppressedForFade = true;
 }
 
-void View1::endFadeCursorSuppression(const byte *palette) {
+void View1::endFadeCursorSuppression(const Graphics::Palette &palette) {
 	if (!_cursorSuppressedForFade) {
 		return;
 	}
 
 	_cursorSuppressedForFade = false;
-	updateCursor(palette);
+	updateCursor(&palette);
 	if (_cursorWasVisibleBeforeFade) {
 		CursorMan.showMouse(true);
 	}
@@ -1318,8 +1327,6 @@ void View1::endFadeCursorSuppression(const byte *palette) {
 }
 
 bool View1::msgFocus(const FocusMessage &msg) {
-	// Common::fill(&_pal[0], &_pal[256 * 3], 0);
-	//  _offset = 128;
 	return true;
 }
 
@@ -1669,7 +1676,7 @@ bool View1::handleHelpClick(const MouseDownMessage &msg) {
 				Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);
 				_backgroundSurface.copyFrom(preview);
 				// Read sub-scene palette
-				g_engine->_fileStream->read(g_engine->_palVanilla, 0x300);
+				g_engine->readPalette(g_engine->_fileStream, g_engine->_palVanilla);
 				g_engine->applyPaletteDarkening();
 				// Read sub-scene depth map
 				Graphics::ManagedSurface subDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
@@ -1684,7 +1691,7 @@ bool View1::handleHelpClick(const MouseDownMessage &msg) {
 			updateCursor();
 			startFadeToBlack(8);
 			_backgroundSurface.copyFrom(g_engine->_sceneBackground);
-			memcpy(g_engine->_palVanilla, _savedPalVanilla, 256 * 3);
+			g_engine->_palVanilla = _savedPalVanilla;
 			g_engine->applyPaletteDarkening();
 			g_engine->_depthMap.copyFrom(_savedDepthMap);
 			startFading(8);

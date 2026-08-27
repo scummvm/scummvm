@@ -404,15 +404,12 @@ static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array
 
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outPixels,
-									byte outPaletteRgb[768],
+									Graphics::Palette &outPalette,
 									uint &outColorCount) {
 	outPixels.clear();
 	outColorCount = 0;
-	if (outPaletteRgb) {
-		for (uint i = 0; i < 768; i++)
-			outPaletteRgb[i] = 0;
-	}
-	if (!mxmm || mxmmSize < 14 || !outPaletteRgb)
+	outPalette = Graphics::Palette(Graphics::PALETTE_COUNT);
+	if (!mxmm || mxmmSize < 14)
 		return false;
 	if (READ_BE_UINT32(mxmm) != MKTAG('M', 'X', 'M', 'M'))
 		return false;
@@ -482,23 +479,17 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 	// Reserve 0..31 for Amiga COLOR registers (sprites) and 32..63 for EHB.
 	byte staticPal[32][3];
 	buildPal32(0, staticPal);
-	for (uint i = 0; i < 32; i++) {
-		outPaletteRgb[i * 3 + 0] = staticPal[i][0];
-		outPaletteRgb[i * 3 + 1] = staticPal[i][1];
-		outPaletteRgb[i * 3 + 2] = staticPal[i][2];
-	}
-	for (uint i = 0; i < 32; i++) {
-		outPaletteRgb[(32 + i) * 3 + 0] = (byte)(staticPal[i][0] / 2);
-		outPaletteRgb[(32 + i) * 3 + 1] = (byte)(staticPal[i][1] / 2);
-		outPaletteRgb[(32 + i) * 3 + 2] = (byte)(staticPal[i][2] / 2);
-	}
+	for (uint i = 0; i < 32; i++)
+		outPalette.set(i, staticPal[i][0], staticPal[i][1], staticPal[i][2]);
+	for (uint i = 0; i < 32; i++)
+		outPalette.set(32 + i, (byte)(staticPal[i][0] / 2), (byte)(staticPal[i][1] / 2), (byte)(staticPal[i][2] / 2));
 	outColorCount = 64;
 
 	Common::HashMap<uint32, byte> colorToIndex;
 	for (uint i = 0; i < 64; i++) {
-		const uint32 key = ((uint32)outPaletteRgb[i * 3 + 0] << 16) |
-						   ((uint32)outPaletteRgb[i * 3 + 1] << 8) |
-						   outPaletteRgb[i * 3 + 2];
+		byte r, g, b;
+		outPalette.get(i, r, g, b);
+		const uint32 key = ((uint32)r << 16) | ((uint32)g << 8) | b;
 		if (!colorToIndex.contains(key))
 			colorToIndex[key] = (byte)i;
 	}
@@ -529,9 +520,7 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 			} else if (outColorCount < 256) {
 				outIdx = (byte)outColorCount;
 				colorToIndex[key] = outIdx;
-				outPaletteRgb[outIdx * 3 + 0] = r;
-				outPaletteRgb[outIdx * 3 + 1] = g;
-				outPaletteRgb[outIdx * 3 + 2] = b;
+				outPalette.set(outIdx, r, g, b);
 				outColorCount++;
 			} else {
 				outIdx = idx < 64 ? idx : (byte)(idx & 31);
