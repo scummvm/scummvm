@@ -405,6 +405,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			}
 		}
 	}
+	updateAllBackgroundAnimationDepthMaps();
 
 	// --- PCM sound: size (2 bytes) + data (variable) ---
 	uint16 pcmSoundSize = (uint16)_currentSoundData.size();

@@ -293,6 +293,9 @@ OpcodeResult ScriptExecutor::scriptChangeAnimation() {
 	// even when the jump parser settles on a command byte instead of a frame byte.
 	if (blob._blob.size() >= 4)
 		WRITE_LE_UINT16(&blob._blob[2], targetFrameIndex);
+	// Gate and similar props only change pixels on changeAnimation; depth must follow.
+	if (!_engine->isV2() && backgroundAnimationIndex <= _engine->_backgroundAnimations.size())
+		_engine->updateBackgroundAnimationDepthMap(backgroundAnimationIndex - 1);
 	// Blob state is updated immediately but the script executor often runs several
 	// more opcodes before the next game tick. Push the new frame to the screen now
 	// so door/state changes are visible before any wait opcode yields.

@@ -166,6 +166,8 @@ struct BackgroundAnimationBlob {
 	}
 	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
+	/** 1-based pixel frame index from the current sequence position (advanceAnimFrame cx). */
+	static uint16 getCurrentPixelFrameNumber(const Common::Array<uint8> &blob);
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
 	// Mirrors (horizontally flips) all frames in an animation blob in-place.
 	// Matches binary decodeAnimBlob (1010:184d) which calls the row-flip at 1010:1319.
@@ -361,6 +363,8 @@ public:
 
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
+	// Scene-load snapshot used to restore depth under background animation frame 0.
+	Graphics::ManagedSurface _sceneDepthMap;
 
 	// Shadow/shading intensity map (scene+0x301B). Per-pixel values 0-32
 	// control character sprite darkening via the shading table.
@@ -400,6 +404,9 @@ public:
 	void removePathfindingOverride(uint16 index);
 
 	uint16 getWalkabilityAt(int16 y, int16 x);
+	/** Sync depth map with the current background animation frame (v1 gate fix). */
+	void updateBackgroundAnimationDepthMap(size_t animIndex);
+	void updateAllBackgroundAnimationDepthMaps();
 	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2);
 	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX);
 	int getPathfindingNodeCount() const { return (int)_numPathfindingPoints; }

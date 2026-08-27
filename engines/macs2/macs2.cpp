@@ -991,6 +991,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	Graphics::ManagedSurface depthRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Confirmed: depth map at scene offset 0x1013
 	_depthMap.blitFrom(depthRLE);
+	_sceneDepthMap.copyFrom(_depthMap);
 
 	// Offset 2017h
 	Graphics::ManagedSurface pathfindingRLE = readRLEImage(_fileStream->pos(), _fileStream);
@@ -1030,6 +1031,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 
 	// TODO: Remove the now superfluous one
 	readBackgroundAnimations(_fileStream);
+	updateAllBackgroundAnimationDepthMaps();
 
 	// Offset 51F7h
 	_numPathfindingPoints = _fileStream->readUint16LE();
@@ -1891,6 +1893,68 @@ uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
 		return 0xFF;
 	}
 	return value;
+}
+
+void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
+	if (isV2() || _sceneDepthMap.w == 0 || animIndex >= _backgroundAnimations.size())
+		return;
+
+	BackgroundAnimation &anim = _backgroundAnimations[animIndex];
+	BackgroundAnimationBlob &blobEntry = _backgroundAnimationsBlobs[animIndex];
+	Common::Array<uint8> &blob = blobEntry.activeBlob();
+	if (blob.empty())
+		return;
+
+	const uint32 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0);
+	if (frameStart == 0 || frameStart + 10 > blob.size())
+		return;
+
+	const uint16 pixelFrameNum = BackgroundAnimationBlob::getCurrentPixelFrameNumber(blob);
+	const int16 frameOffsetX = (int16)READ_LE_UINT16(&blob[frameStart]);
+	const int16 frameOffsetY = (int16)READ_LE_UINT16(&blob[frameStart + 2]);
+	const uint16 width = READ_LE_UINT16(&blob[frameStart + 6]);
+	const uint16 height = READ_LE_UINT16(&blob[frameStart + 8]);
+	if (width == 0 || height == 0 || frameStart + 10 + (uint32)width * height > blob.size())
+		return;
+
+	const int16 baseX = (int16)anim._x + 1 + frameOffsetX;
+	const int16 baseY = (int16)anim._y + frameOffsetY;
+	const byte *pixels = &blob[frameStart + 10];
+
+	if (pixelFrameNum <= 1) {
+		// First pixel frame (closed gate): restore authored depth under opaque pixels.
+		for (uint16 yy = 0; yy < height; yy++) {
+			for (uint16 xx = 0; xx < width; xx++) {
+				if (pixels[yy * width + xx] == 0)
+					continue;
+				const int px = baseX + (int)xx;
+				const int py = baseY + (int)yy;
+				if (px >= 0 && px < _depthMap.w && py >= 0 && py < _depthMap.h)
+					_depthMap.setPixel(px, py, _sceneDepthMap.getPixel(px, py));
+			}
+		}
+		return;
+	}
+
+	// Later pixel frames (open gate): walkable tiles under opaque pixels use path height.
+	for (uint16 yy = 0; yy < height; yy++) {
+		for (uint16 xx = 0; xx < width; xx++) {
+			if (pixels[yy * width + xx] == 0)
+				continue;
+			const int px = baseX + (int)xx;
+			const int py = baseY + (int)yy;
+			if (px < 0 || px >= _depthMap.w || py < 0 || py >= _depthMap.h)
+				continue;
+			const uint16 walkVal = getWalkabilityAt((int16)py, (int16)px);
+			if (isWalkabilityWalkable(walkVal))
+				_depthMap.setPixel(px, py, (byte)walkVal);
+		}
+	}
+}
+
+void Macs2Engine::updateAllBackgroundAnimationDepthMaps() {
+	for (size_t i = 0; i < _backgroundAnimations.size(); i++)
+		updateBackgroundAnimationDepthMap(i);
 }
 
 // snapToWalkablePosition (1008:9be2)
@@ -3460,6 +3524,50 @@ uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, boo
 	}
 
 	return bp12;
+}
+
+uint16 BackgroundAnimationBlob::getCurrentPixelFrameNumber(const Common::Array<uint8> &blob) {
+	if (blob.size() < 14)
+		return 1;
+
+	Common::MemorySeekableReadWriteStream stream(const_cast<byte *>(blob.data()), blob.size());
+	stream.readUint16LE();       // unknown
+	uint16 bp6 = stream.readUint16LE(); // sequence position
+	stream.readUint16LE();       // repeat counter
+	stream.readUint16LE();       // loop start
+	stream.readUint16LE();       // delay counter
+	const uint16 bp0E = stream.readUint16LE() + 1;
+
+	if (bp6 >= bp0E)
+		bp6 = 1;
+
+	uint8 bp0C = 0;
+	while (true) {
+		if (bp6 >= bp0E)
+			bp6 = 1;
+		stream.seek(0x0B + bp6, SEEK_SET);
+		bp0C = stream.readByte();
+		if (bp0C == 0x01) {
+			bp6++;
+			stream.readByte();
+			bp6++;
+		} else if (bp0C == 0x02) {
+			bp6++;
+			stream.readByte();
+			bp6++;
+		} else if (bp0C == 0x03) {
+			bp6 = stream.readByte();
+		} else {
+			break;
+		}
+	}
+
+	uint16 cx = bp0C - 0xA;
+	stream.seek(0xB + bp0E, SEEK_SET);
+	const uint16 frameCount = stream.readUint16LE();
+	if (cx == 0 || cx > frameCount)
+		cx = 1;
+	return cx;
 }
 
 // Matches binary decodeAnimBlob (1010:184d) + mirrorAnimFrame (1010:1319).
