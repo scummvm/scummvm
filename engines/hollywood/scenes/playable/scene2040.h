@@ -60,7 +60,7 @@ private:
 	void runExitToInterior();
 	void runFlowerPickup();
 	void runSphinxNoseSequence();
-	void runScarabPlacementSequence();
+	void runSeedPlantingSequence();
 	void runEyeExchangeSequence();
 	void runBaseOpeningSequence();
 	void runBaseOpeningDeltaSequence();

@@ -41,7 +41,7 @@ const byte kFrankieUmbrellaItem = 0x5b;
 const byte kKarnakPapyrusItem = 0x12;
 const byte kKarnakTigerToothItem = 0x26;
 const byte kKarnakParchmentItem = 0x2a;
-const byte kKarnakScarabItem = 0x2b;
+const byte kKarnakSeedsItem = 0x2b;
 const byte kKarnakNileFlowerItem = 0x2c;
 const byte kKarnakLampItem = 0x3c;
 const byte kKarnakOilItem = 0x43;
@@ -143,7 +143,7 @@ bool Console::cmdGet(int argc, const char **argv) {
 		if (state.scene2040SphinxFaceState == 0)
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakShovelItem);
 		if (state.scene2040SphinxFaceState < 2)
-			addedCount += addInventoryItemIfMissing(state, owner, kKarnakScarabItem);
+			addedCount += addInventoryItemIfMissing(state, owner, kKarnakSeedsItem);
 		if (state.scene2040SphinxBasePatchState == 0)
 			addedCount += addInventoryItemIfMissing(state, owner, kKarnakTigerToothItem);
 		if (!state.scene2050LabyrinthLampReady) {

@@ -163,14 +163,14 @@ bool Scene2010::dispatchCustomSceneAction(uint16 handlerId) {
 		state.mainFlowStateId = kScene2030EntryFromPyramidState;
 		return true;
 	case 302: // Mirar mercado/rampa (look at market/ramp): warns that the pyramid ramps are slippery.
-		beginSecondarySpeechLine(1, 1);
+		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Ir a rampa (go to ramp): enter the pyramid/B02 scene through scene 2020.
 		state.scene2010B02EntranceUsed = true;
 		state.mainFlowStateId = kScene2020EntryFromPyramidExteriorState;
 		return true;
 	case 304: // Mirar anilla (look at ring/doorbell): identifies it as the doorbell.
-		beginSecondarySpeechLine(2, 1);
+		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 305: // Usar anilla (use ring/doorbell): play the doorbell/gatekeeper sequence and enter scene 2100.
 		runLongSequenceToScene2100();
@@ -381,7 +381,7 @@ void Scene2010::runEntryFromMarket() {
 
 	GameplayState &state = _vm->gameState();
 	if (!state.scene2010EntryLineSeen) {
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 		state.scene2010EntryLineSeen = true;
 	}
 }

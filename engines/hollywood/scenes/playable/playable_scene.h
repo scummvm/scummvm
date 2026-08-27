@@ -200,6 +200,8 @@ protected:
 	AmbientAudioProfile createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
 		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
 		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const;
+	bool playResidentSoundEffect(byte soundEffectId, byte volumePercent = 100);
+	bool playActiveActorFootstep();
 
 	// Actor save state
 	bool hasSavedActiveActorPoseForCurrentState() const;
@@ -558,6 +560,7 @@ protected:
 	SceneHotspotTable _hotspots;
 	SoundBank0Player _soundBank0;
 	SoundBank0Player _ambientSoundBank0;
+	ResidentSoundEffectPlayer _residentSoundEffects;
 	Common::RandomSource _random;
 	SceneAnimationPlayer _animationPlayer;
 
@@ -604,6 +607,7 @@ protected:
 
 private:
 	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum);
+	void handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed);
 };
 
 } // End of namespace Hollywood
