@@ -88,15 +88,40 @@ void ImuseSndMgr::parseSoundHeader(SoundDesc *sound, int &headerSize) {
 		sound->numJumps = 0;
 		sound->numRegions = 1;
 		sound->region[0].offset = 0;
-		data->seek(18, SEEK_CUR);
-		sound->channels = data->readByte();
-		data->readByte();
-		sound->freq = data->readUint32LE();
-		data->seek(6, SEEK_CUR);
-		sound->bits = data->readByte();
-		data->seek(5, SEEK_CUR);
-		sound->region[0].length = data->readUint32LE();
-		headerSize = 44;
+		sound->region[0].length = 0;
+		sound->channels = 0;
+		sound->freq = 0;
+		sound->bits = 0;
+
+		int32 riffStart = data->pos() - 4;
+		data->seek(8, SEEK_CUR); // the size of the form and its WAVE type
+		while (data->pos() + 8 <= data->size()) {
+			uint32 chunkTag = data->readUint32BE();
+			int32 chunkSize = data->readUint32LE();
+			int32 chunkStart = data->pos();
+			if (chunkSize < 0)
+				break;
+
+			if (chunkTag == MKTAG('d','a','t','a')) {
+				// The samples can be compressed, so the size of this chunk
+				// is not bound by the size of the stream.
+				sound->region[0].length = chunkSize;
+				headerSize = chunkStart - riffStart;
+				break;
+			}
+
+			if (chunkTag == MKTAG('f','m','t',' ')) {
+				data->seek(2, SEEK_CUR);
+				sound->channels = data->readByte();
+				data->readByte();
+				sound->freq = data->readUint32LE();
+				data->seek(6, SEEK_CUR);
+				sound->bits = data->readByte();
+			}
+
+			// Chunks are padded to an even size.
+			data->seek(chunkStart + chunkSize + (chunkSize & 1), SEEK_SET);
+		}
 	} else if (tag == MKTAG('i','M','U','S')) {
 		int32 size = 0;
 		int32 headerStart = data->pos();
