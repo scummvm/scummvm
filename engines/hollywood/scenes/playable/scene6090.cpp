@@ -363,6 +363,7 @@ bool Scene6090::shouldApplyGameplayPanelObjectPalette() const {
 }
 
 void Scene6090::runCustomEntrySequence() {
+	_vm->gameState().scene6090Visited = true;
 	_manualSequenceActive = true;
 	setActiveActorPose(0x1e2, 0x10e, 4);
 

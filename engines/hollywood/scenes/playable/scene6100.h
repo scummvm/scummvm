@@ -72,7 +72,7 @@ private:
 	void setCharlieDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
 		byte responseFrameIndex, byte disableAfterUse) const;
-	void beginCharlieSpeechLine(byte frameIndex, byte animationGroup);
+	void beginCharlieSpeechLine(uint16 rowIndex, byte frameIndex, byte animationGroup);
 	void takeCharlieBriefcase();
 	void giveBillyFordEnvelopeToCharlie();
 

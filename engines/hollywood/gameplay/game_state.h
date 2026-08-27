@@ -246,6 +246,9 @@ struct GameplayState {
 		scene2110TreasureGranted = false;
 		scene6020TaffyKnown = false;
 		scene6020TaffyLeft = false;
+		scene6020AgendaRead = false;
+		scene6020PhoneAnnouncementSeen = false;
+		scene6020PhoneCallCompleted = false;
 		scene6030HannoverInterviewCompleted = false;
 		scene6030SaxophoneTaken = false;
 		scene6030HannoverAbsent = false;
@@ -260,6 +263,7 @@ struct GameplayState {
 		scene6070SuePresent = false;
 		scene6070CellDoorOpen = false;
 		scene6080Visited = false;
+		scene6090Visited = false;
 		scene6100EntryLineSeen = false;
 		scene6100CharlieState = 1;
 		scene6100BriefcasePresent = true;
@@ -1001,6 +1005,9 @@ struct GameplayState {
 	bool scene2110TreasureGranted;
 	bool scene6020TaffyKnown;
 	bool scene6020TaffyLeft;
+	bool scene6020AgendaRead;
+	bool scene6020PhoneAnnouncementSeen;
+	bool scene6020PhoneCallCompleted;
 	bool scene6030HannoverInterviewCompleted;
 	bool scene6030SaxophoneTaken;
 	bool scene6030HannoverAbsent;
@@ -1015,6 +1022,7 @@ struct GameplayState {
 	bool scene6070SuePresent;
 	bool scene6070CellDoorOpen;
 	bool scene6080Visited;
+	bool scene6090Visited;
 	bool scene6100EntryLineSeen;
 	byte scene6100CharlieState;
 	bool scene6100BriefcasePresent;

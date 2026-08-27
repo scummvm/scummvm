@@ -44,7 +44,9 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldAnimatePrimarySpeechLine() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetTaffyLayer();
@@ -58,6 +60,10 @@ private:
 	void setTaffyDepartureFrame(uint32 baseOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void clearTaffyDepartureFrame();
 	void drawTaffyDepartureLayer();
+	bool loadPhoneResource();
+	void drawPhoneLayer();
+	void applyPhoneFramebufferPatch(uint chunkIndex);
+	void runEntryPhoneAnnouncement();
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWorkingWalkableMask();
@@ -98,6 +104,9 @@ private:
 	uint32 _taffyDepartureFrameBaseOffset;
 	uint16 _taffyDepartureFrameDescriptorCount;
 	uint16 _taffyDepartureFrameDescriptorIndex;
+	Common::Array<byte> _phoneResource;
+	ResourceSpriteLayer _phoneLayer;
+	bool _phoneAnimationActive;
 };
 
 } // End of namespace Hollywood
