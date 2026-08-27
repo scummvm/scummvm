@@ -297,6 +297,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2110TreasureGranted);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
+	syncStateBool(s, state.scene6020AgendaRead);
+	syncStateBool(s, state.scene6020PhoneAnnouncementSeen);
+	syncStateBool(s, state.scene6020PhoneCallCompleted);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
 	syncStateBool(s, state.scene6030SaxophoneTaken);
 	syncStateBool(s, state.scene6030HannoverAbsent);
@@ -311,6 +314,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6070SuePresent);
 	syncStateBool(s, state.scene6070CellDoorOpen);
 	syncStateBool(s, state.scene6080Visited);
+	syncStateBool(s, state.scene6090Visited);
 	syncStateBool(s, state.scene6100EntryLineSeen);
 	s.syncAsByte(state.scene6100CharlieState);
 	syncStateBool(s, state.scene6100BriefcasePresent);

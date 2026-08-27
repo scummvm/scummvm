@@ -46,6 +46,7 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetGuardLayer();
@@ -54,6 +55,10 @@ private:
 	void runGuardLookUpTransition();
 	void runGuardLookDownTransition();
 	void beginGuardSpeechLine(byte frameIndex);
+	void beginSceneGuardSpeechLine(uint16 rowIndex, byte frameIndex);
+	void advanceDisplayCaseSecondaryLayer(uint32 delta);
+	void applyDisplayCaseBackdropPatch();
+	void clearScriptLayers();
 	void runGuardDialogue();
 	void initializeGuardDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setGuardDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
@@ -70,9 +75,14 @@ private:
 	Common::Array<byte> _originalColorToItemMap;
 	TimedAnimationChannel _guardChannel;
 	ResourceSpriteLayer _guardLayer;
+	TimedAnimationChannel _displayCaseSecondaryChannel;
+	ResourceSpriteLayer _scriptLayer;
+	ResourceSpriteLayer _secondaryScriptLayer;
 	byte _guardAnimationState;
 	bool _guardManualSequenceActive;
 	bool _guardConversationActive;
+	bool _scriptAnimationActive;
+	bool _displayCaseSecondaryActive;
 };
 
 } // End of namespace Hollywood
