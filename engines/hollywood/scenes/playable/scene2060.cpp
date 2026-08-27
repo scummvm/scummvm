@@ -206,6 +206,10 @@ bool Scene2060::shouldApplyGameplayPanelObjectPalette() const {
 	return false;
 }
 
+bool Scene2060::isInventoryPanelAvailable() const {
+	return false;
+}
+
 void Scene2060::runCustomEntrySequence() {
 	_guideEffectPrepared = prepareGuideEffectForCurrentMazePosition();
 	_guideEffectActive = false;
@@ -287,6 +291,14 @@ bool Scene2060::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 	targetX = CLIP<int>(targetX, kScene2060MinWalkX, kScene2060MaxWalkX);
 	targetY = CLIP<int>(targetY, kScene2060MinWalkY, kScene2060MaxWalkY);
 	return true;
+}
+
+byte Scene2060::paletteRegionAt(int x, int y) const {
+	// The lower passage targets sit just below the framebuffer.
+	if (y == 0x1e3)
+		return x == 0x152 ? 6 : 7;
+
+	return PlayableScene::paletteRegionAt(x, y);
 }
 
 bool Scene2060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
