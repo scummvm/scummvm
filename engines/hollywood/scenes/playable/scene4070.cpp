@@ -508,7 +508,9 @@ void Scene4070::runTrophyBaseOpenAction() {
 
 void Scene4070::runFrankiePartGrantSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4070FrankiePartsGranted >= ARRAYSIZE(kScene4070FrankiePartItems)) {
+	const byte rewardIndex = state.frankensteinPartRewardIndex();
+	if (state.scene4070FrankiePartGranted != 0 ||
+			rewardIndex >= ARRAYSIZE(kScene4070FrankiePartItems)) {
 		beginSecondarySpeechLine(4, 4);
 		return;
 	}
@@ -524,10 +526,11 @@ void Scene4070::runFrankiePartGrantSequence() {
 			.hookAt(0x18, kScene4070FrankiePartHook));
 	_hideActiveActor = previousHideActiveActor;
 
-	addInventoryItem(kScene4070FrankiePartItems[state.scene4070FrankiePartsGranted]);
+	addInventoryItem(kScene4070FrankiePartItems[rewardIndex]);
 	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x16, (byte)(state.scene4070FrankiePartsGranted * 2 + 1));
-	++state.scene4070FrankiePartsGranted;
+	beginSecondarySpeechLine(0x16, (byte)(rewardIndex * 2 + 1));
+	state.setFrankensteinPartRewardIndex(rewardIndex + 1);
+	state.scene4070FrankiePartGranted = 1;
 }
 
 void Scene4070::runSlimmingTreatmentSequence() {

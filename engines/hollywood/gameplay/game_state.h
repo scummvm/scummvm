@@ -44,6 +44,7 @@ struct GameplayState {
 		kInventoryVisibleSlotCount = 16,
 		kTravelScreenSlotCount = 8,
 		kTravelScreenDisabledSlot = 0xff,
+		kFrankensteinPartRewardCount = 3,
 		kScene2050MuralTilePermutationSize = 49,
 		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1,
 		kInventoryItemRelationTableEntryCount = kInventoryOwnerSlotStride * kInventoryOwnerSlotStride
@@ -293,7 +294,7 @@ struct GameplayState {
 		scene4070DraculaStage = 0;
 		scene4070EntryLineSeen = false;
 		scene4070TrophyBaseOpened = false;
-		scene4070FrankiePartsGranted = 0;
+		scene4070FrankiePartGranted = 0;
 		scene4070SlimmingTreatmentApplied = false;
 		scene4080GwendolynState = 1;
 		scene4080GwendolynStateTransition = 0;
@@ -393,6 +394,17 @@ struct GameplayState {
 		voiceVolumeLevel = 200;
 		speechTextSpeedLevel = 200;
 		actorSpeechTextMode = 1;
+	}
+
+	// The original shares one reward index across all three trophy caches. These
+	// accessors keep the existing serialized fields synchronized.
+	byte frankensteinPartRewardIndex() const {
+		return MAX<byte>(scene2110TreasureGrantIndex, scene5050PickupIndex);
+	}
+
+	void setFrankensteinPartRewardIndex(byte index) {
+		scene2110TreasureGrantIndex = index;
+		scene5050PickupIndex = index;
 	}
 
 	void initializeForState7000() {
@@ -1037,7 +1049,7 @@ struct GameplayState {
 	byte scene4070DraculaStage;
 	bool scene4070EntryLineSeen;
 	bool scene4070TrophyBaseOpened;
-	byte scene4070FrankiePartsGranted;
+	byte scene4070FrankiePartGranted;
 	bool scene4070SlimmingTreatmentApplied;
 	byte scene4080GwendolynState;
 	byte scene4080GwendolynStateTransition;

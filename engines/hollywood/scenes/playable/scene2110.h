@@ -38,26 +38,45 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
 	void advanceAmbientLayer(uint32 delta);
+	void advanceEntryIdle(uint32 delta);
+	void startScriptedActorPath();
+	void advanceScriptedActorPath(uint32 delta);
+	void finishScriptedActorPath();
 	void runEntryFromScene2100();
 	void runScriptedReturnToScene2100();
+	bool runScriptedEntryOpening();
 	void runExitToScene2100();
 	void runTreasureGrantAction();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
 		int targetX, int targetY, byte finalFacing, byte finalCel);
+	void runEntrySecondarySpeechLine(byte frameIndex);
+	void runEntryPrimarySpeechLine(byte frameIndex, byte animationGroup);
 	void runTreasurePrimarySpeechLine(uint16 rowIndex, byte frameIndex);
 
 	TimedAnimationChannel _ambientChannel;
+	TimedAnimationChannel _entryIdleChannel;
+	TimedAnimationChannel _scriptedActorPathChannel;
 	ResourceSpriteLayer _entryLayer;
 	ResourceSpriteLayer _ambientLayer;
 	ResourceSpriteLayer _treasureLayer;
+	bool _entryIdleActive;
+	bool _scriptedActorPathActive;
+	uint _scriptedActorPathFrameIndex;
 };
 
 } // End of namespace Hollywood

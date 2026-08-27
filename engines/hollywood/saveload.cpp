@@ -345,7 +345,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4070DraculaStage);
 	syncStateBool(s, state.scene4070EntryLineSeen);
 	syncStateBool(s, state.scene4070TrophyBaseOpened);
-	s.syncAsByte(state.scene4070FrankiePartsGranted);
+	s.syncAsByte(state.scene4070FrankiePartGranted);
 	syncStateBool(s, state.scene4070SlimmingTreatmentApplied);
 	s.syncAsByte(state.scene4080GwendolynState);
 	s.syncAsByte(state.scene4080GwendolynStateTransition);
@@ -611,8 +611,11 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2100MummyBranchState = 0;
 	if (state.scene2100MummyDialogueClueStage > 2)
 		state.scene2100MummyDialogueClueStage = 0;
-	if (state.scene2110TreasureGrantIndex > 3)
-		state.scene2110TreasureGrantIndex = 3;
+	const byte frankensteinPartRewardIndex = MIN<byte>(
+		MAX<byte>(state.frankensteinPartRewardIndex(), state.scene4070FrankiePartGranted),
+		GameplayState::kFrankensteinPartRewardCount);
+	state.scene4070FrankiePartGranted = state.scene4070FrankiePartGranted != 0 ? 1 : 0;
+	state.setFrankensteinPartRewardIndex(frankensteinPartRewardIndex);
 	if (state.scene4010AlternateBackgroundState > 1)
 		state.scene4010AlternateBackgroundState = 0;
 	if (state.scene4010EntryPathSpeechState > 2)
@@ -633,8 +636,6 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene5040DialState = 0;
 	if (state.scene5040SpecialTransitionState > 2)
 		state.scene5040SpecialTransitionState = 0;
-	if (state.scene5050PickupIndex > 3)
-		state.scene5050PickupIndex = 3;
 	if (state.scene5070AviatorCapState > 2)
 		state.scene5070AviatorCapState = 1;
 	if (state.scene5110BottleState > 2)
@@ -674,8 +675,6 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4060SherilynSheetWon = 0;
 	if (state.scene4070DraculaStage > 4)
 		state.scene4070DraculaStage = 0;
-	if (state.scene4070FrankiePartsGranted > 3)
-		state.scene4070FrankiePartsGranted = 3;
 	if (state.scene4080GwendolynState > 2)
 		state.scene4080GwendolynState = 1;
 	if (state.scene4080GwendolynStateTransition > 2)
