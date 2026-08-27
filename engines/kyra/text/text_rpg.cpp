@@ -753,7 +753,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[sdx].color2);
 
 	// Fix border overdraw glitch
-	if (_vm->game() == GI_EOB2 && _isChinese && y + _vm->guiSettings()->buttons.height == 200)
+	if (_vm->game() == GI_EOB2 && (_isChinese || _vm->gameFlags().platform == Common::kPlatformPC98) && y + _vm->guiSettings()->buttons.height == 200)
 		_screen->drawClippedLine(x, 199, x + w - 1, 199, _vm->guiSettings()->colors.frame1);
 
 	clearCurDim();
