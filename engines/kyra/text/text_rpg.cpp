@@ -594,7 +594,12 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 	vsnprintf(_dialogueBuffer, kEoBTextBufferSize - 1, str, args);
 	va_end(args);
 
+	int cs = (_vm->gameFlags().platform == Common::kPlatformPC98 && !_vm->gameFlags().use16ColorMode && _screen->curDimIndex() == 9) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleFat) : -1;
+
 	displayText(_dialogueBuffer, textColor);
+
+	if (cs != -1)
+		_screen->setFontStyles(_screen->_currentFont, cs);
 
 	if (_vm->game() != GI_EOB1)
 		_textDimData[_screen->curDimIndex()].color1= tc;
