@@ -68,6 +68,7 @@ const byte kScene2050MuralTileImprovedSound = 0x28;
 const byte kScene2050SealDiscoveryLoopSound = 0x24;
 const byte kScene2050SealDiscoveryEndSound = 0x2f;
 const byte kScene2050SealDiscoveryHook = 1;
+const byte kScene2050LabyrinthFootstepHook = 2;
 const uint kScene2050SealDiscoveryTurnFrame = 12;
 const int kScene2050SealDiscoveryActorX = 0x189;
 const int kScene2050SealDiscoveryActorY = 0x11d;
@@ -399,7 +400,7 @@ void Scene2050::runLongLabyrinthWalkClip() {
 	ActionOverlaySpec spec(12, kScene2050LabyrinthWalkDescriptorCount,
 		kScene2050LabyrinthWalkFrameMap, ARRAYSIZE(kScene2050LabyrinthWalkFrameMap),
 		kScene2050OverlayFrameMillis);
-	spec.startAt(1).noRedrawAtEnd();
+	spec.startAt(1).hookEveryFrame(kScene2050LabyrinthFootstepHook).noRedrawAtEnd();
 	runActorReplacement(spec);
 }
 
@@ -625,6 +626,12 @@ void Scene2050::runSealDiscoverySequence() {
 }
 
 void Scene2050::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene2050LabyrinthFootstepHook) {
+		if (frame == 0x1b || frame == 0x21 || frame == 0x27 || frame == 0x2d)
+			playActiveActorFootstep();
+		return;
+	}
+
 	if (hookId != kScene2050SealDiscoveryHook || !_sealDiscoveryActive)
 		return;
 

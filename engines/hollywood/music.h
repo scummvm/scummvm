@@ -90,6 +90,27 @@ private:
 	Common::Path _archiveName;
 };
 
+// Plays the small one-based PCM effects embedded in RESOURCE.000, separately
+// from the streamed RESOURCE.Sxx cue banks.
+class ResidentSoundEffectPlayer {
+public:
+	ResidentSoundEffectPlayer();
+	~ResidentSoundEffectPlayer();
+
+	bool playSample(byte soundEffectId, byte volumePercent = 100);
+	void stop();
+
+private:
+	enum {
+		kSoundEffectCount = 16
+	};
+
+	bool readSampleSpan(byte soundEffectId, uint32 &start, uint32 &size) const;
+	void stopSample(byte soundEffectId);
+
+	Audio::SoundHandle _soundHandles[kSoundEffectCount];
+};
+
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_MUSIC_H

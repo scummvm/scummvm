@@ -252,7 +252,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2020SunglassesPresent);
 	syncStateBool(s, state.scene2020PrincessConversationSeen);
 	syncStateBool(s, state.scene2030RightMerchantConversationSeen);
-	s.syncAsByte(state.scene2030ScarabOfferState);
+	s.syncAsByte(state.scene2030SeedOfferState);
 	s.syncAsByte(state.scene2030MerchantItem2AOfferState);
 	syncStateBool(s, state.scene6010StudioEntryUnlocked);
 	syncStateBool(s, state.scene6010Item59Visible);
@@ -561,8 +561,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2010TravelReturnSpeechState = 0;
 	if (state.scene2020TigerToothState > 2)
 		state.scene2020TigerToothState = 0;
-	if (state.scene2030ScarabOfferState > 2)
-		state.scene2030ScarabOfferState = 0;
+	if (state.scene2030SeedOfferState > 2)
+		state.scene2030SeedOfferState = 0;
 	if (state.scene2030MerchantItem2AOfferState > 2)
 		state.scene2030MerchantItem2AOfferState = 0;
 	if (state.scene2040SphinxBasePatchState > 1)

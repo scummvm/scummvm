@@ -38,14 +38,18 @@ const uint kSceneTextSmallRowSize = 0x29;
 const uint kSceneTextLargeRowSize = 0x141;
 const uint kSceneTextLargeRowBaseIndex = 500;
 
-SceneTextStore::SceneTextStore() {
+SceneTextStore::SceneTextStore() :
+		_stageVoiceSampleBase(0),
+		_validateSequentialVoiceMap(false) {
 	decodeKey.resize(kSceneTextDecodeKeySize);
 	stageBlock.resize(kSceneTextDescriptorTableSize);
 	staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
 }
 
 bool SceneTextStore::load(const char *archiveName, const char *sceneDebugName, uint stageIndex,
-		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset) {
+		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset,
+		bool validateSequentialVoiceMap) {
+	_validateSequentialVoiceMap = validateSequentialVoiceMap;
 	Common::File file;
 	if (!file.open(Common::Path(archiveName))) {
 		warning("Failed to open %s for %s text", archiveName, sceneDebugName);
@@ -169,6 +173,12 @@ bool SceneTextStore::load(const char *archiveName, const char *sceneDebugName, u
 			stageLargeRows[row * kSceneTextLargeRowSize + column] -= decodeKey[column];
 	}
 
+	_stageVoiceSampleBase = _validateSequentialVoiceMap ? findStageVoiceSampleBase(largeRowCount) : 0;
+	if (_validateSequentialVoiceMap && _stageVoiceSampleBase == 0) {
+		warning("%s stage %u has no valid speech cue mapping", archiveName, stageIndex);
+		return false;
+	}
+
 	debugC(1, kDebugResources, "Loaded %s stage %u text rows: smallRows=%u largeRows=%u",
 		archiveName, stageIndex, smallRowCount, largeRowCount);
 	return true;
@@ -206,7 +216,51 @@ bool SceneTextStore::getStageCue(uint16 rowIndex, byte frameIndex, uint16 &textR
 	textRecordId = readUint16LE(stageBlock, offset);
 	continuationCount = stageBlock[offset + 2];
 	voiceSampleId = readUint16LE(stageBlock, offset + 3);
-	return textRecordId != 0;
+
+	if (textRecordId == 0)
+		return false;
+	if (!_validateSequentialVoiceMap)
+		return true;
+	if (textRecordId < kSceneTextLargeRowBaseIndex || _stageVoiceSampleBase == 0)
+		return false;
+
+	const uint localRecordId = textRecordId - kSceneTextLargeRowBaseIndex;
+	const uint largeRowCount = stageLargeRows.size() / kSceneTextLargeRowSize;
+	const uint lineCount = MAX<uint>(1, continuationCount);
+	if (localRecordId + lineCount > largeRowCount)
+		return false;
+
+	return voiceSampleId == _stageVoiceSampleBase + localRecordId;
+}
+
+uint16 SceneTextStore::findStageVoiceSampleBase(uint largeRowCount) const {
+	// Authored cues share one voice-to-text offset; stale table padding does not.
+	Common::Array<uint16> baseCounts;
+	baseCounts.resize(0x10000);
+	memset(baseCounts.data(), 0, baseCounts.size() * sizeof(baseCounts[0]));
+
+	uint16 bestBase = 0;
+	uint bestCount = 0;
+	for (uint offset = 0; offset + 5 <= stageBlock.size(); offset += 5) {
+		const uint16 textRecordId = readUint16LE(stageBlock, offset);
+		if (textRecordId < kSceneTextLargeRowBaseIndex)
+			continue;
+
+		const uint localRecordId = textRecordId - kSceneTextLargeRowBaseIndex;
+		const uint lineCount = MAX<uint>(1, stageBlock[offset + 2]);
+		const uint16 voiceSampleId = readUint16LE(stageBlock, offset + 3);
+		if (localRecordId + lineCount > largeRowCount || voiceSampleId < localRecordId)
+			continue;
+
+		const uint16 base = voiceSampleId - localRecordId;
+		const uint count = ++baseCounts[base];
+		if (count > bestCount) {
+			bestCount = count;
+			bestBase = base;
+		}
+	}
+
+	return bestBase;
 }
 
 bool SceneTextStore::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId,

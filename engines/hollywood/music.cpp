@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/substream.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "hollywood/hollywood.h"
 
@@ -42,6 +43,16 @@ const uint kSpeechCueTableSize = 0x3e80;
 const int kSpeechSampleRate = 22050;
 const uint kSoundBank0CueTableSize = 0xfa0;
 const int kSoundBank0SampleRate = 11025;
+const char *const kResidentSoundArchiveName = "RESOURCE.000";
+const uint kResource000HeaderByteCount = 1;
+const uint kResource000TableByteCount = 400;
+const int kResidentSoundSampleRate = 11025;
+
+// Original effect IDs 1-16; repeated entries are intentional buffer aliases.
+const byte kResidentSoundResourceEntries[] = {
+	0x55, 0x56, 0x57, 0x58, 0x55, 0x59, 0x55, 0x5a,
+	0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62
+};
 
 byte percentToMixerVolume(byte volumePercent) {
 	const uint volume = MIN<uint>(volumePercent, 100);
@@ -359,6 +370,101 @@ bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &si
 	}
 
 	size = end - start;
+	return size != 0;
+}
+
+ResidentSoundEffectPlayer::ResidentSoundEffectPlayer() {
+}
+
+ResidentSoundEffectPlayer::~ResidentSoundEffectPlayer() {
+	stop();
+}
+
+bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercent) {
+	uint32 start = 0;
+	uint32 size = 0;
+	if (!readSampleSpan(soundEffectId, start, size))
+		return false;
+
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(kResidentSoundArchiveName))) {
+		warning("Failed to open %s", kResidentSoundArchiveName);
+		delete file;
+		return false;
+	}
+
+	Common::SeekableReadStream *sampleStream = new Common::SeekableSubReadStream(file,
+		start, start + size, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream,
+		kResidentSoundSampleRate, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
+		DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Failed to create raw stream for %s resident effect %u",
+			kResidentSoundArchiveName, soundEffectId);
+		delete sampleStream;
+		return false;
+	}
+
+	stopSample(soundEffectId);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType,
+		&_soundHandles[soundEffectId - 1], audioStream, -1,
+		percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+
+	debugC(1, kDebugResources, "Started resident sound %s effect %u: offset=%u size=%u",
+		kResidentSoundArchiveName, soundEffectId, start, size);
+	return true;
+}
+
+void ResidentSoundEffectPlayer::stop() {
+	for (byte soundEffectId = 1; soundEffectId <= kSoundEffectCount; ++soundEffectId)
+		stopSample(soundEffectId);
+}
+
+void ResidentSoundEffectPlayer::stopSample(byte soundEffectId) {
+	if (!g_system || !g_system->getMixer() || soundEffectId == 0 ||
+			soundEffectId > kSoundEffectCount)
+		return;
+
+	Audio::SoundHandle &handle = _soundHandles[soundEffectId - 1];
+	if (g_system->getMixer()->isSoundHandleActive(handle))
+		g_system->getMixer()->stopHandle(handle);
+}
+
+bool ResidentSoundEffectPlayer::readSampleSpan(byte soundEffectId,
+		uint32 &start, uint32 &size) const {
+	if (soundEffectId == 0)
+		return false;
+	if (soundEffectId > ARRAYSIZE(kResidentSoundResourceEntries)) {
+		warning("Invalid %s resident effect id %u", kResidentSoundArchiveName, soundEffectId);
+		return false;
+	}
+
+	Common::File file;
+	if (!file.open(Common::Path(kResidentSoundArchiveName))) {
+		warning("Failed to open %s", kResidentSoundArchiveName);
+		return false;
+	}
+
+	const uint tableEntry = kResidentSoundResourceEntries[soundEffectId - 1];
+	const uint offsetPosition = kResource000HeaderByteCount + tableEntry * 4;
+	const uint sizePosition = kResource000HeaderByteCount + kResource000TableByteCount + tableEntry * 4;
+	if (sizePosition + 4 > (uint32)file.size()) {
+		warning("%s resident effect %u table entry is out of range",
+			kResidentSoundArchiveName, soundEffectId);
+		return false;
+	}
+
+	file.seek(offsetPosition);
+	start = file.readUint32LE();
+	file.seek(sizePosition);
+	size = file.readUint32LE();
+	if (start > (uint32)file.size() || size > (uint32)file.size() - start) {
+		warning("Invalid %s resident effect %u span: start=%u size=%u fileSize=%u",
+			kResidentSoundArchiveName, soundEffectId, start, size, (uint)file.size());
+		return false;
+	}
+
+	size &= ~1U;
 	return size != 0;
 }
 

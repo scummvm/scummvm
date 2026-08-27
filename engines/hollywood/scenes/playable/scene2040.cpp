@@ -41,7 +41,7 @@ const uint32 kScene2040ActionFrameMillis = 75;
 const uint kScene2040ForegroundDescriptorCount = 5;
 const uint kScene2040FlowerPickupDescriptorCount = 0x0b;
 const uint kScene2040SphinxNoseDescriptorCount = 0x61;
-const uint kScene2040ScarabPlacementDescriptorCount = 0x11;
+const uint kScene2040SeedPlantingDescriptorCount = 0x11;
 const uint kScene2040EyeExchangeFirstDescriptorCount = 0x11;
 const uint kScene2040EyeExchangeSecondDescriptorCount = 0x12;
 const uint kScene2040BaseOpeningDescriptorCount = 0x0a;
@@ -75,7 +75,7 @@ const byte kScene2040SphinxNoseFrameMap[] = {
 	95, 96
 };
 
-const byte kScene2040ScarabPlacementFrameMap[] = {
+const byte kScene2040SeedPlantingFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 13, 14, 3, 2, 1, 0, 11
 };
 
@@ -231,7 +231,7 @@ bool Scene2040::dispatchCustomSceneAction(uint16 handlerId) {
 		runEyeExchangeSequence();
 		return true;
 	case 314: // Usar semillas en montañita de arena (use seeds on sand mound): grows the Nile plant.
-		runScarabPlacementSequence();
+		runSeedPlantingSequence();
 		return true;
 	case 315: // Usar pala con pata de la esfinge derecha (use shovel on right paw): long sphinx face animation.
 		runSphinxNoseSequence();
@@ -500,10 +500,10 @@ void Scene2040::runSphinxNoseSequence() {
 	beginSecondarySpeechLine(7, 0);
 }
 
-void Scene2040::runScarabPlacementSequence() {
+void Scene2040::runSeedPlantingSequence() {
 	beginSecondarySpeechLine(10, 0);
-	runActorReplacement(14, kScene2040ScarabPlacementDescriptorCount,
-		kScene2040ScarabPlacementFrameMap, ARRAYSIZE(kScene2040ScarabPlacementFrameMap),
+	runActorReplacement(14, kScene2040SeedPlantingDescriptorCount,
+		kScene2040SeedPlantingFrameMap, ARRAYSIZE(kScene2040SeedPlantingFrameMap),
 		kScene2040ActionFrameMillis);
 	removeInventoryItem(0x2b);
 	_soundBank0.playSample(1, 100);
