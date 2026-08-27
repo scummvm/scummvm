@@ -62,11 +62,14 @@ struct RippedLetterPuzzleData : public PuzzleData {
 	Common::Array<int8> order;
 	Common::Array<byte> rotations;
 	bool playerHasTriedPuzzle;
+	// Some games (e.g. Nancy7) have multiple instances of the same puzzle in
+	// different scenes, so we need to key the puzzle data by scene ID.
+	uint16 sceneId;
 
 	// Temporary values, do not save to file
-	int8 _pickedUpPieceID = -1;
-	byte _pickedUpPieceRot = 0;
-	int _pickedUpPieceLastPos = -1;
+	int8 pickedUpPieceID = -1;
+	byte pickedUpPieceRot = 0;
+	int pickedUpPieceLastPos = -1;
 };
 
 struct TowerPuzzleData : public PuzzleData {

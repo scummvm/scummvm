@@ -22,6 +22,7 @@
 #include "engines/nancy/puzzledata.h"
 #include "engines/nancy/enginedata.h"
 #include "engines/nancy/nancy.h"
+#include "state/scene.h"
 
 namespace Nancy {
 
@@ -55,7 +56,8 @@ void SliderPuzzleData::synchronize(Common::Serializer &ser) {
 RippedLetterPuzzleData::RippedLetterPuzzleData() :
 	order(24, 0),
 	rotations(24, 0),
-	playerHasTriedPuzzle(false) {}
+	playerHasTriedPuzzle(false),
+	sceneId(0) {}
 
 void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
 	// Serialize through fixed size buffers so save or load never
@@ -73,9 +75,9 @@ void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
 
 	// A piece may still be held while saving; make sure the saved data
 	// has it back in the last place it was picked up from
-	if (ser.isSaving() && _pickedUpPieceID != -1) {
-		serializedOrder[_pickedUpPieceLastPos] = _pickedUpPieceID;
-		serializedRotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
+	if (ser.isSaving() && pickedUpPieceID != -1) {
+		serializedOrder[pickedUpPieceLastPos] = pickedUpPieceID;
+		serializedRotations[pickedUpPieceLastPos] = pickedUpPieceRot;
 	}
 
 	ser.syncArray(serializedOrder.data(), serializedOrder.size(), Common::Serializer::Byte);
@@ -84,6 +86,11 @@ void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
 	if (ser.isLoading()) {
 		Common::move(serializedOrder.begin(), serializedOrder.end(), order.begin());
 		Common::move(serializedRotations.begin(), serializedRotations.end(), rotations.begin());
+	}
+
+	if (ser.getVersion() >= 9) {
+		ser.syncAsByte(playerHasTriedPuzzle);
+		ser.syncAsUint16LE(sceneId);
 	}
 }
 
