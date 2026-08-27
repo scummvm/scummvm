@@ -436,7 +436,7 @@ public:
 	bool _pathWalkableResult = false;
 	bool _isRepeatRun = false;
 
-	// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
+	// chosen dialogue script index
 	int _chosenDialogueOption = 0;
 	uint16 _dialogueSpeakerObjectID = 0;
 
@@ -530,9 +530,8 @@ public:
 	// executeOpcodes (1008:db56): the opcode dispatch loop for the current script.
 	OpcodeResult executeOpcodes();
 
-	// Will execute the script and any object scripts until execution should be stopped
-	// TODO: Consider if we should let the executor also figure out where to get the
-	// first script from
+	// Execute the scene script and any object scripts until execution should stop.
+	// Fresh runs bind Scenes::_currentSceneScript at offset 0; mid-script resumes continue in place.
 	void run(bool firstRun = false);
 
 	void setScript(Common::MemoryReadStream *stream);
