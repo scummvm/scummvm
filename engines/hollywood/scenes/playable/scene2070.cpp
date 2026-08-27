@@ -31,6 +31,7 @@ namespace Hollywood {
 
 const uint16 kScene2050LabyrinthReturnState = 0x0803;
 const uint16 kScene2060RightPassageState = 0x080f;
+const uint16 kScene2070EntryFromRightPassageState = 0x0817;
 const uint16 kScene2080FirstState = 0x0820;
 const uint16 kScene2070ViewportXOffset = 0x0068;
 const uint16 kScene2070ViewportMaxXOffset = 0x00a8;
@@ -47,6 +48,10 @@ const uint kScene2070ForegroundDescriptorCount = 0x1a;
 const uint kScene2070MemoryDescriptorCount = 0x5a;
 const uint kScene2070InventoryOverlayDescriptorCount = 0x0d;
 const uint kScene2070ExitVerbRecordIndex = 0x29;
+const byte kScene2070SealMemoryLoopSound = 0x24;
+const byte kScene2070SealMemoryEndSound = 0x2e;
+const byte kScene2070SealMemoryEndSoundHook = 1;
+const uint kScene2070SealMemoryEndSoundFrame = 0x56;
 
 const byte kScene2070ForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
@@ -74,6 +79,16 @@ static_assert(ARRAYSIZE(kScene2070ForegroundFrameMap) == 0x1a, "Scene 2070 foreg
 static_assert(ARRAYSIZE(kScene2070SealMemoryFrameMap) == 0x62, "Scene 2070 seal memory frame map size changed");
 static_assert(ARRAYSIZE(kScene2070InventoryOverlayFrameMap) == 14, "Scene 2070 inventory overlay frame map size changed");
 
+class Scene2070DeltaFrameTarget {
+public:
+	explicit Scene2070DeltaFrameTarget(byte &frame) : _frame(frame) {}
+
+	void setFrame(byte frame) { _frame = frame; }
+
+private:
+	byte &_frame;
+};
+
 static PlayableSceneConfig scene2070Config() {
 	PlayableSceneConfig config(2070,
 		SceneResourceLayout(11, 5, 10),
@@ -89,7 +104,9 @@ static PlayableSceneConfig scene2070Config() {
 Scene2070::Scene2070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2070Config()),
 		_foregroundChannel(),
-		_foregroundLayer() {
+		_foregroundLayer(),
+		_sealMemoryActive(false),
+		_sealMemoryFrame(0) {
 	_foregroundLayer.configure(7, kScene2070ForegroundDescriptorCount,
 		kScene2070ForegroundFrameMap, ARRAYSIZE(kScene2070ForegroundFrameMap));
 }
@@ -100,24 +117,22 @@ void Scene2070::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	const GameplayState &state = _vm->gameState();
-	if (state.mainFlowStateId == 0x0817) {
-		if (state.scene2070EntryProgress < 2) {
-			_activeActorWorldX = 0x2b7;
-			_activeActorWorldY = 0x13f;
-			_activeActorFacing = 4;
-		} else {
-			_activeActorWorldX = 0x24d;
-			_activeActorWorldY = 0x130;
-			_activeActorFacing = 4;
-		}
+	if (state.mainFlowStateId == kScene2070EntryFromRightPassageState) {
+		_activeActorWorldX = 0x30e;
+		_activeActorWorldY = 0x0ee;
+		_activeActorFacing = 4;
 	} else {
-		_activeActorWorldX = 0x0ef;
-		_activeActorWorldY = 0x12c;
+		_activeActorWorldX = 0x04b;
+		_activeActorWorldY = 0x110;
 		_activeActorFacing = 2;
 	}
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+}
+
+bool Scene2070::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
 }
 
 void Scene2070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -130,18 +145,15 @@ void Scene2070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (_sealMemoryActive)
+		drawSealMemoryDeltaLayer();
 }
 
 void Scene2070::runCustomEntrySequence() {
-	if (_vm->gameState().mainFlowStateId == 0x0817)
+	if (_vm->gameState().mainFlowStateId == kScene2070EntryFromRightPassageState)
 		runEntryFromRightPassage();
 	else
 		runEntryFromLabyrinth();
-}
-
-bool Scene2070::prepareCustomGameplayLoop() {
-	resetForegroundLayer();
-	return true;
 }
 
 bool Scene2070::advanceCustomGameplayLoop(uint32 delta) {
@@ -300,6 +312,15 @@ bool Scene2070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
+bool Scene2070::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene2070::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene2070::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
@@ -331,19 +352,21 @@ void Scene2070::runEntryFromLabyrinth() {
 	setActiveActorPose(0x04b, 0x110, 2);
 	_foregroundLayer.setFrame(0);
 	drawPlayableComposite();
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 
 	GameplayState &state = _vm->gameState();
 	if (state.egyptSealPuzzleProgress == 1) {
-		runSealMemoryEffect();
+		if (!runSealMemoryEffect())
+			return;
 		state.egyptSealPuzzleProgress = 2;
 	}
 
-	beginSecondarySpeechLine(1, 1);
+	beginSecondarySpeechLine(1, 0);
 	runEntryPath(0x04b, 0x110, 2, 0x0ef, 0x12c);
 
 	if (state.scene2070EntryProgress == 0) {
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 		state.scene2070EntryProgress = 1;
 	}
 }
@@ -352,7 +375,8 @@ void Scene2070::runEntryFromRightPassage() {
 	setActiveActorPose(0x30e, 0x0ee, 4);
 	_foregroundLayer.setFrame(0);
 	drawPlayableComposite();
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 
 	GameplayState &state = _vm->gameState();
 	if (state.scene2070EntryProgress < 2) {
@@ -379,18 +403,24 @@ void Scene2070::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 	presentFrame();
 }
 
-void Scene2070::runSealMemoryEffect() {
+bool Scene2070::runSealMemoryEffect() {
 	drawPlayableComposite();
 	presentFrame();
-	_soundBank0.playSample(0x24, 50);
+	_soundBank0.playSampleLooping(kScene2070SealMemoryLoopSound, 50);
+	_sealMemoryActive = true;
+	_sealMemoryFrame = 0;
 
-	for (uint i = 0; i < ARRAYSIZE(kScene2070SealMemoryFrameMap) && !Engine::shouldQuit(); ++i) {
-		if (i == 0x56)
-			_soundBank0.playSample(0x2e, 50);
-		drawClipFrameDelta(8, kScene2070MemoryDescriptorCount, kScene2070SealMemoryFrameMap[i]);
+	Scene2070DeltaFrameTarget target(_sealMemoryFrame);
+	AnimationFrameRange range(kScene2070SealMemoryFrameMap, kScene2070MemoryFrameMillis);
+	range.unskippable().hookAt(kScene2070SealMemoryEndSoundFrame,
+		kScene2070SealMemoryEndSoundHook);
+	const bool completed = playAnimationFrames(target, range);
+	_sealMemoryActive = false;
+	if (!completed) {
+		_soundBank0.stop();
+		drawPlayableComposite();
 		presentFrame();
-		if (waitSceneMillis(kScene2070MemoryFrameMillis))
-			break;
+		return false;
 	}
 
 	GameplayState &state = _vm->gameState();
@@ -398,6 +428,20 @@ void Scene2070::runSealMemoryEffect() {
 	applySceneStateToHotspotsAndPatches(1);
 	drawPlayableComposite();
 	presentFrame();
+	return true;
+}
+
+void Scene2070::handleAnimationFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene2070SealMemoryEndSoundHook && _sealMemoryActive &&
+			frame == kScene2070SealMemoryEndSoundFrame)
+		_soundBank0.playSample(kScene2070SealMemoryEndSound, 50);
+}
+
+void Scene2070::drawSealMemoryDeltaLayer() {
+	const uint lastFrame = MIN<uint>(_sealMemoryFrame, kScene2070MemoryDescriptorCount - 1);
+	// The resource frames are cumulative patches over the rebuilt scene.
+	for (uint frame = 0; frame <= lastFrame; ++frame)
+		drawClipFrameDelta(8, kScene2070MemoryDescriptorCount, (byte)frame);
 }
 
 void Scene2070::runAnimatedInventoryStateChange() {
