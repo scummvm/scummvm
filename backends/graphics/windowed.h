@@ -278,7 +278,15 @@ protected:
 		const int targetHeight = _activeArea.height;
 
 		if (sourceWidth == 0 || sourceHeight == 0) {
-			error("convertWindowToVirtual called without a valid draw rect");
+			// No draw rect. This is headless operation (--disable-display),
+			// which keeps using this graphics manager but never sizes a window,
+			// so there is no window space to map from. Erroring out here makes
+			// --disable-display unusable for the thing it exists for, since the
+			// first replayed mouse event of an Event Recorder playback aborts
+			// the run. Clamp into the virtual area instead, which is what the
+			// caller wants when there is nothing to scale by.
+			return Common::Point(CLIP<int>(x, 0, MAX(0, targetWidth - 1)),
+								 CLIP<int>(y, 0, MAX(0, targetHeight - 1)));
 		}
 
 		x = CLIP<int>(x, sourceX, sourceMaxX);
