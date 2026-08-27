@@ -74,6 +74,54 @@ void OverworldLogic::keypress(Common::KeyCode keycode) {
 	endOfTurn();
 }
 
+void OverworldLogic::enter() {
+	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
+	if (location == 0) {
+		writeString("Enter?\n");
+		playFX(1);
+	} else {
+		// Check for tiles surrounding the location
+		_G(map)._waterCount = 0;
+		_G(map)._grassCount = 0;
+		_G(map)._woodsCount = 0;
+
+		for (int deltaY = -1; deltaY <= 1; ++deltaY) {
+			for (int deltaX = -1; deltaX <= 1; ++deltaX) {
+				int tile = getTileAt(_G(savegame)._overworldPos.x + deltaX, _G(savegame)._overworldPos.y + deltaY);
+				switch (tile) {
+				case Data::TILE_OCEAN:
+					_G(map)._waterCount++;
+					break;
+				case Data::TILE_GRASS:
+					_G(map)._grassCount++;
+					break;
+				case Data::TILE_WOODS:
+					_G(map)._woodsCount++;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		// Display the enter message
+		_G(map)._isLordBritishCastle = location == 33;
+
+		Common::String msg = "Entering...\n";
+		if (!_G(map)._isLordBritishCastle)
+			msg += "The city of ";
+		msg += Data::LOCATION_NAMES[location];
+		msg += "\n";
+		writeString(msg);
+
+		// Load the new location
+		_G(map).load(location);
+
+		// Run any logic for entering it
+		_G(logic)->enter();
+	}
+}
+
 void OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
 		return;
@@ -108,7 +156,7 @@ void OverworldLogic::move(Data::Direction dir) {
 bool OverworldLogic::moveCheck(Data::Direction dir) {
 	int xp = getViewportX(Data::MAP_VISIBLE_CENTER_X + DELTA_X[dir]);
 	int yp = getViewportY(Data::MAP_VISIBLE_CENTER_Y + DELTA_Y[dir]);
-	int tile = getTileAt(xp, yp, 1);
+	int tile = getTileAt(xp, yp);
 	int transport = _G(savegame)._transportType;
 
 	if (tile >= Data::TILE_FIRST_MONSTER && tile <= Data::TILE_LAST_MONSTER) {
@@ -137,7 +185,7 @@ bool OverworldLogic::moveCheck(Data::Direction dir) {
 			impassable(IMP_WATER);
 			return false;
 		}
-	} else if (tile == Data::TILE_WOODS && Data::TRANSPORT_AIRCAR) {
+	} else if (tile == Data::TILE_WOODS && transport == Data::TRANSPORT_AIRCAR) {
 		impassable(IMP_WOODS);
 		return false;
 
@@ -305,9 +353,9 @@ void OverworldLogic::endOfTurn() {
 	updateCreatures();
 	reduceFood();
 
-	// Signal to update the map and stats area. This isn't a full view redraw though,
-	// since we don't want to lose any text added to the Commands area
-	g_engine->send("Overworld", Shared::Messages::GameMessage("UPDATE"));
+	redrawMap();
+	redrawStats();
+	prompt();
 }
 
 void OverworldLogic::generateCreatures() {
@@ -351,7 +399,7 @@ void OverworldLogic::generateCreatures() {
 
 		x = getViewportX(xOff + Data::MAP_VISIBLE_CENTER_X);
 		y = getViewportY(yOff + Data::MAP_VISIBLE_CENTER_Y);
-		tileAtSpot = getTileAt(x, y, 1);
+		tileAtSpot = getTileAt(x, y);
 
 		rangeOk = _G(map).mapRangeCheckX(x) && _G(map).mapRangeCheckY(y);
 	} while (tileAtSpot != data && !rangeOk);

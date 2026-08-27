@@ -410,7 +410,8 @@ void CreateCharacter::confirmAndSave() {
 
 	_cursor.hide();
 
-	g_engine->_game.startGame();
+	// Load the overworld map
+	_G(map).load(MAP_OVERWORLD);
 }
 
 } // namespace Views

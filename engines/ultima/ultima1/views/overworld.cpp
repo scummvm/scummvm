@@ -54,8 +54,10 @@ void Overworld::draw() {
 
 bool Overworld::msgGame(const GameMessage &msg) {
 	if (msg._name == "UPDATE") {
-		_map.redraw();
-		_stats.redraw();
+		if (msg._stringValue == "MAP")
+			_map.redraw();
+		if (msg._stringValue == "STATS")
+			_stats.redraw();
 		return true;
 	}
 

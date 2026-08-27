@@ -79,7 +79,7 @@ Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
 	if (s.isLoading())
-		_game.startGame();
+		_G(map).load(_G(savegame)._mapNum);
 
 	return Common::kNoError;
 }

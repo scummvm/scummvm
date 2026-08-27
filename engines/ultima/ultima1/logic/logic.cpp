@@ -37,6 +37,14 @@ void Logic::prompt() {
 	g_engine->send("Commands", GameMessage("PROMPT"));
 }
 
+void Logic::redrawMap() {
+	g_engine->send("Overworld", Shared::Messages::GameMessage("UPDATE", "MAP"));
+}
+
+void Logic::redrawStats() {
+	g_engine->send("Overworld", Shared::Messages::GameMessage("UPDATE", "STATS"));
+}
+
 void Logic::playFX(int num) {
 	g_engine->playFX(num);
 }

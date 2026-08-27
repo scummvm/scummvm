@@ -36,7 +36,6 @@
 #include "graphics/screen.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
-#include "ultima/ultima1/data/game.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/tiles.h"
@@ -63,7 +62,6 @@ protected:
 	}
 
 public:
-	Data::Game _game;
 	Data::Map _map;
 	Data::Savegame _savegame;
 	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];

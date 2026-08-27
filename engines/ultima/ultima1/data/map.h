@@ -41,6 +41,8 @@ constexpr int MAP_VISIBLE_HEIGHT = 9;
 constexpr int MAP_VISIBLE_CENTER_X = 9;
 constexpr int MAP_VISIBLE_CENTER_Y = 4;
 
+constexpr int LOCATION_COUNT = 84;
+
 enum {
 	MAP_OVERWORLD = 0,
 	MAP_CITY1 = 1
@@ -54,6 +56,7 @@ typedef Common::Array< Common::Array<byte> > MapTiles;
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 
 extern const char *DIRECTION_NAMES[5];
+extern const char *LOCATION_NAMES[LOCATION_COUNT];
 
 struct Map {
 private:
@@ -99,6 +102,8 @@ public:
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
 	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
+	int _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
+	bool _isLordBritishCastle = false;
 
 public:
 	/**
@@ -156,6 +161,14 @@ public:
 	int getContinentAt(int x, int y) const;
 	int getContinentAt(const Common::Point &pt) const {
 		return getContinentAt(pt.x, pt.y);
+	}
+
+	/**
+	 * Get the location at a given position
+	 */
+	int getLocationAt(int x, int y) const;
+	int getLocationAt(const Common::Point &pt) const {
+		return getLocationAt(pt.x, pt.y);
 	}
 
 	/**

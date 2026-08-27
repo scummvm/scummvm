@@ -57,6 +57,16 @@ protected:
 	int getRandomNumber(int minNumber, int maxNumber);
 	int getRandomNumber(int maxNumber);
 
+	/**
+	 * Signal the map to redraw
+	 */
+	void redrawMap();
+
+	/**
+	 * Signal the stats to redraw
+	 */
+	void redrawStats();
+
 public:
 	virtual ~Logic() {
 	}
@@ -64,6 +74,8 @@ public:
 	virtual void action(int action) {
 	}
 	virtual void keypress(Common::KeyCode keycode) {
+	}
+	virtual void enter() {
 	}
 };
 

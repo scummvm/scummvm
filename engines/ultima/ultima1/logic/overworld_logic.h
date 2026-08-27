@@ -33,6 +33,11 @@ namespace Logic {
 class OverworldLogic : public Logic {
 private:
 	/**
+	 * Enter a location
+	 */
+	void enter();
+
+	/**
 	 * Check for movement
 	 */
 	bool moveCheck(Data::Direction dir);
@@ -57,9 +62,9 @@ private:
 	int getViewportY(int yp) const;
 
 	/**
-	 * Returns a tile or creature at a given co-ordinate
+	 * Returns a tile or creature/entity at a given co-ordinate
 	 */
-	int getTileAt(int x, int y, int creatureIndex) const;
+	int getTileAt(int x, int y, int creatureIndex = 1) const;
 
 	/**
 	 * Impassable tile

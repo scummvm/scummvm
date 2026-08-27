@@ -59,8 +59,7 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case 'B':
-		if (g_engine->loadGameDialog())
-			g_engine->_game.startGame();
+		g_engine->loadGameDialog();
 		break;
 
 	default:
