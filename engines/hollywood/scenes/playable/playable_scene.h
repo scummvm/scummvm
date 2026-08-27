@@ -99,6 +99,7 @@ protected:
 		kResource000DefaultActorBankTableEntry = 0xd0,
 		kResource000DefaultActorPaletteTableEntry = 0x108,
 		kResource000DefaultActorBankSegmentCount = 14,
+		kAmbientSoundSlotCount = 3,
 		kActorFacingCount = 6,
 		kActorCelsPerFacing = 13,
 		kActiveActorDescriptorSize = 28,
@@ -286,6 +287,8 @@ protected:
 	// Ambient runtime
 	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void resetAmbientAudioState();
+	void ensureAmbientSoundCuePlaying(byte slotIndex, uint16 cueId, byte volumePercent);
+	void stopAmbientSoundCues();
 	void updateAmbientSoundCue(const AmbientAudioProfile &profile);
 	void updateAmbientMusicCue(const AmbientAudioProfile &profile);
 
@@ -560,6 +563,7 @@ protected:
 	SceneHotspotTable _hotspots;
 	SoundBank0Player _soundBank0;
 	SoundBank0Player _ambientSoundBank0;
+	SoundBank0Player _additionalAmbientSoundBank0Slots[kAmbientSoundSlotCount - 1];
 	ResidentSoundEffectPlayer _residentSoundEffects;
 	Common::RandomSource _random;
 	SceneAnimationPlayer _animationPlayer;
