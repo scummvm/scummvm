@@ -38,10 +38,14 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
@@ -56,14 +60,17 @@ private:
 	void openMerchantForInteraction(bool rightMerchant);
 	void closeMerchantAfterInteraction(bool rightMerchant);
 	void waitForMerchantState(bool rightMerchant, byte targetState);
+	void beginSecondarySpeechLineAndOpenMerchant(uint16 rowIndex, byte frameIndex, bool rightMerchant);
+	void waitForStartedSecondarySpeech(uint32 startMillis, uint32 durationMillis);
 	void runMerchantPrimarySpeechLine(uint16 rowIndex, byte frameIndex, bool rightMerchant);
 	bool merchantSpeechGroupIsRight(byte animationGroup) const;
 	bool merchantSpeechGroupIsLeft(byte animationGroup) const;
 	void runEntryFromChapterStart();
 	void runEntryFromPyramid();
 	void runEntryFromSphinx();
+	void runEntryPathWithFade(int startX, int startY, byte startFacing, int targetX, int targetY);
 	void runSphinxExitTransition();
-	void runTransitionClip(uint chunkIndex, bool includeActiveActor);
+	void runTransitionClip(uint chunkIndex, bool includeActiveActor, bool fadeIn);
 	void drawTransitionClipFrame(uint chunkIndex, byte frameIndex, Graphics::Surface &transitionBackground);
 	void drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCount, byte frameIndex, Graphics::Surface &destination);
 	void runMerchantShopDialogue();
@@ -75,8 +82,12 @@ private:
 	void runLeftMerchantPurchase(byte productRowId);
 	void subtractEgyptianMoney(uint16 amount);
 	void runRightMerchantTalkSequence();
+	void runRightMerchantRejectedTradeSequence();
 	void runRightStallTradeOverlay();
 	void runRightMerchantBuyItemOverlay();
+	void runSynchronizedMerchantOverlay(uint chunkIndex, uint descriptorCount,
+		const byte *overlayFrameMap, const byte *merchantFrameMap, uint frameCount,
+		bool rightMerchant);
 	void runRightMerchantSaleSequence(byte soldItemId, uint16 moneyAmount, byte merchantFrameIndex, byte secondaryFrameIndex);
 	void addEgyptianMoney(uint16 amount);
 
@@ -87,6 +98,9 @@ private:
 	byte _leftMerchantState;
 	byte _rightMerchantState;
 	byte _merchantCalloutSide;
+	bool _merchantInteractionActive;
+	bool _leftMerchantSequenceLocked;
+	bool _rightMerchantSequenceLocked;
 	bool _merchantCalloutSpeechActive;
 	uint32 _merchantCalloutTimerAccumulator;
 	uint32 _merchantCalloutSpeechElapsed;
