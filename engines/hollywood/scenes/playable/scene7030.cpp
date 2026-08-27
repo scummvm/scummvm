@@ -53,6 +53,8 @@ const uint32 kScene7030Chunk5FastFrameMillis = 60;
 const uint32 kScene7030Chunk6FrameMillis = 125;
 const uint32 kScene7030SecondaryActorFrameMillis = 150;
 const uint32 kScene7030AmbientMusicCheckMillis = 250;
+const byte kScene7030BaseAmbientSoundCue = 0x0b;
+const byte kScene7030SecondaryAmbientSoundCue = 0x0c;
 const uint kScene7030ColorToItemMapOffset = 0x100;
 const uint kScene7030ColorMapSize = 0x100;
 const byte kScene7030PunchBowlGlassPatchHook = 1;
@@ -366,6 +368,9 @@ void Scene7030::setPrimaryLeftSpeechFrame(byte frameIndex) {
 }
 
 void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
+	ensureAmbientSoundCuePlaying(1, kScene7030BaseAmbientSoundCue, 75);
+	ensureAmbientSoundCuePlaying(2, kScene7030SecondaryAmbientSoundCue, 50);
+
 	_ambientMusicTimerAccumulator += delta;
 	if (_ambientMusicTimerAccumulator < kScene7030AmbientMusicCheckMillis)
 		return;

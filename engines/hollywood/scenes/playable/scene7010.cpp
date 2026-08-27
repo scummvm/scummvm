@@ -60,6 +60,9 @@ const uint kScene7010Chunk14Layer = 5;
 const uint kScene7010Chunk11Layer = 6;
 const uint kScene7010Chunk8Layer = 7;
 const uint kScene7010Chunk9Layer = 8;
+const byte kScene7010ConditionalAmbientSoundCue = 0x0d;
+const byte kScene7010BaseAmbientSoundCue = 0x0b;
+const byte kScene7010SecondaryAmbientSoundCue = 0x0c;
 const byte kScene7010AmbientMusicCueWithoutChunk9 = 0x0f;
 const byte kScene7010SueInventoryOwner = 1;
 const byte kScene7010HannoverBusinessCardItem = 9;
@@ -565,6 +568,11 @@ void Scene7010::advanceChunk8Cycle() {
 }
 
 void Scene7010::updateG01AmbientAudioAndMusicCues(uint32 delta) {
+	if (_sceneStateFlags[1] != 0)
+		ensureAmbientSoundCuePlaying(0, kScene7010ConditionalAmbientSoundCue, 50);
+	ensureAmbientSoundCuePlaying(1, kScene7010BaseAmbientSoundCue, 50);
+	ensureAmbientSoundCuePlaying(2, kScene7010SecondaryAmbientSoundCue, 100);
+
 	const byte previousCue = _vm->gameState().currentAmbientMusicCueId;
 	updateAmbientAudioAndMusicCues(delta);
 	const byte currentCue = _vm->gameState().currentAmbientMusicCueId;
@@ -579,6 +587,12 @@ void Scene7010::updateG01AmbientAudioAndMusicCues(uint32 delta) {
 
 void Scene7010::advanceFullscreenAnimation(uint32 delta) {
 	updateG01AmbientAudioAndMusicCues(delta);
+}
+
+AmbientAudioProfile Scene7010::ambientAudioProfile() const {
+	AmbientAudioProfile profile = createLoopingAmbientAudioProfile(50);
+	profile.soundMode = kAmbientSoundNone;
+	return profile;
 }
 
 void Scene7010::handleAnimationFrameHook(byte hookId, uint frame) {

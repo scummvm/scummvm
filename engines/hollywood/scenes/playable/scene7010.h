@@ -60,6 +60,7 @@ private:
 	void setPrimaryLeftSpeechFrame(byte frameIndex) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	void advanceFullscreenAnimation(uint32 delta) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 	void runSueEntryPath(int startX, int startY, int targetX, int targetY);
 	void runJuniorSpeech();
 	void advanceChunk8Cycle();

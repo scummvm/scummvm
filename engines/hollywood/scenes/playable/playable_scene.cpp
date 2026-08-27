@@ -789,6 +789,8 @@ bool PlayableScene::load() {
 	_vm->gameplayMusic()->setArchive(Common::Path(musicArchiveName()));
 	_soundBank0.setArchive(Common::Path(soundBank0ArchiveName()));
 	_ambientSoundBank0.setArchive(Common::Path(soundBank0ArchiveName()));
+	for (uint i = 0; i < ARRAYSIZE(_additionalAmbientSoundBank0Slots); ++i)
+		_additionalAmbientSoundBank0Slots[i].setArchive(Common::Path(soundBank0ArchiveName()));
 
 	debugC(1, kDebugScene, "%s loaded %s", sceneDebugName(), archiveName);
 	return true;
@@ -1640,7 +1642,7 @@ bool PlayableScene::optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const {
 void PlayableScene::suspendAudioForOptionsMenu() {
 	_speech.stop();
 	_soundBank0.stop();
-	_ambientSoundBank0.stop();
+	stopAmbientSoundCues();
 	_residentSoundEffects.stop();
 }
 
@@ -1731,7 +1733,7 @@ void PlayableScene::installFullscreenInventoryMedia(const InventoryMediaPlayer &
 	_vm->gameplayMusic()->stop();
 	_speech.stop();
 	_soundBank0.stop();
-	_ambientSoundBank0.stop();
+	stopAmbientSoundCues();
 	_residentSoundEffects.stop();
 	clearAllSpeechOverlays();
 	_skipRequested = false;
@@ -2282,6 +2284,24 @@ void PlayableScene::resetAmbientAudioState() {
 	_previousAmbientMusicTrackId = 0;
 	_currentAmbientSoundCueId = 0;
 	_previousAmbientSoundCueId = 0;
+}
+
+void PlayableScene::ensureAmbientSoundCuePlaying(byte slotIndex, uint16 cueId, byte volumePercent) {
+	SoundBank0Player *player = nullptr;
+	if (slotIndex == 0) {
+		player = &_ambientSoundBank0;
+	} else if (slotIndex < kAmbientSoundSlotCount) {
+		player = &_additionalAmbientSoundBank0Slots[slotIndex - 1];
+	}
+
+	if (player != nullptr && !player->isPlaying())
+		player->playSample(cueId, volumePercent);
+}
+
+void PlayableScene::stopAmbientSoundCues() {
+	_ambientSoundBank0.stop();
+	for (uint i = 0; i < ARRAYSIZE(_additionalAmbientSoundBank0Slots); ++i)
+		_additionalAmbientSoundBank0Slots[i].stop();
 }
 
 void PlayableScene::updateAmbientSoundCue(const AmbientAudioProfile &profile) {
