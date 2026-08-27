@@ -62,6 +62,7 @@ private:
 	void runMuralClipForward();
 	void runMuralClipBackward();
 	void runMuralPuzzleSubscreen();
+	void runSealDiscoveryIfPending();
 	void runSealDiscoverySequence();
 	void drawSealDiscoveryDeltaLayer();
 	void drawRawSceneChunk(uint chunkIndex);

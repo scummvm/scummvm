@@ -34,7 +34,7 @@ public:
 	~Console() override {}
 
 	bool cmdGet(int argc, const char **argv);
-	bool cmdOpen(int argc, const char **argv);
+	bool cmdSolve(int argc, const char **argv);
 
 private:
 	bool parseItemId(const char *argument, uint &itemId);

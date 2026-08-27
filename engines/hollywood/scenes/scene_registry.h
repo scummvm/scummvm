@@ -37,6 +37,7 @@ enum GameplaySceneResult {
 // State validation, direct boot mapping, and runtime dispatch share one scene table.
 bool isImplementedGameplayState(int stateId);
 bool isGameplayStateInScene(uint16 sceneStateId, uint16 stateId);
+int gameplaySceneNumberForState(uint16 stateId);
 int gameplayStateForBootParam(int bootParam);
 GameplaySceneResult runGameplayScene(HollywoodEngine *vm, uint16 stateId);
 

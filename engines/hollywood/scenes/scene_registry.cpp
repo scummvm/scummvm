@@ -262,6 +262,11 @@ bool isGameplayStateInScene(uint16 sceneStateId, uint16 stateId) {
 	return definition && definition == findSceneDefinition(stateId);
 }
 
+int gameplaySceneNumberForState(uint16 stateId) {
+	const SceneDefinition *definition = findSceneDefinition(stateId);
+	return definition ? definition->firstState : -1;
+}
+
 int gameplayStateForBootParam(int bootParam) {
 	for (uint i = 0; i < ARRAYSIZE(kSceneDefinitions); ++i) {
 		const SceneDefinition &definition = kSceneDefinitions[i];
