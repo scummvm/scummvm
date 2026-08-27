@@ -126,7 +126,10 @@ void Commentary::loadCommentary() {
 			c->addLine(id, str, start, end);
 		}
 
-		_comments.setVal(name, c);
+		// The scripts don't necessarily use the same case as the definition file.
+		Common::String key = name;
+		key.toLowercase();
+		_comments.setVal(key, c);
 	}
 }
 
