@@ -368,7 +368,7 @@ t3dLIGHT::t3dLIGHT(WGame &game, t3dBODY *b, WorkDirs &workDirs, Common::Seekable
 		if (hasFileExtension(name, "avi")) {
 			appo = workDirs._moviesDir + name;                                                              // altrimenti prende quello di default
 		} else {
-			appo = workDirs._mapsDir + name;;                                                            // altrimenti prende quello di default
+			appo = workDirs._mapsDir + name;                                                            // altrimenti prende quello di default
 		}
 #else
 		strcpy(Appo, WmMapsDir);

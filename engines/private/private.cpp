@@ -2461,7 +2461,7 @@ bool PrivateEngine::consumeEvents() {
 			break;
 
 		default:
-			break;;
+			break;
 		}
 	}
 

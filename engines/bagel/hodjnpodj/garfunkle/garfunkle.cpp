@@ -1200,7 +1200,7 @@ void CALLBACK GetSubOptions(CWnd* pParentWind) {
 	OptionsDlg.m_nSpeed = tempSpeed;
 
 	if (OptionsDlg.DoModal() == IDOK) {          // save values set in dialog box
-		tempPlayGame = OptionsDlg.m_bPlayGame;;          // get new time limit,
+		tempPlayGame = OptionsDlg.m_bPlayGame;          // get new time limit,
 		tempNumButtons = OptionsDlg.m_nNumButtons;           //...new rows, and cols
 		tempSpeed = OptionsDlg.m_nSpeed;
 	}

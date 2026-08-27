@@ -509,7 +509,7 @@ void onImGuiInit() {
 		0
 	};
 
-	io.FontDefault = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 16.0f, nullptr, cyrillic_ranges);;
+	io.FontDefault = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 16.0f, nullptr, cyrillic_ranges);
 
 	ImFontConfig icons_config;
 	icons_config.MergeMode = true;

@@ -132,7 +132,7 @@ enum {
 AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", domain), _enabled(true) {
 
-	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
+	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
 	_ignoreGameSafeAreaCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.IgnoreGameSafeArea", _("Ignore safe areas in-game"));
@@ -205,7 +205,7 @@ AndroidOptionsWidget::~AndroidOptionsWidget() {
 }
 
 void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
-	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);;
+	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)

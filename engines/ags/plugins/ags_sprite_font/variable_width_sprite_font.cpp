@@ -195,7 +195,7 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 	int starty = MAX(0, (-1 * desty));
 
 
-	int srca, srcr, srcg, srcb, desta, destr, destg, destb, finalr, finalg, finalb, finala, col, col_r, col_g, col_b;;
+	int srca, srcr, srcg, srcb, desta, destr, destg, destb, finalr, finalg, finalb, finala, col, col_r, col_g, col_b;
 	col_r = getr32(colour);
 	col_g = getg32(colour);
 	col_b = getb32(colour);

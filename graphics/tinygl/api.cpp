@@ -207,7 +207,7 @@ void tglColorMask(TGLboolean r, TGLboolean g, TGLboolean b, TGLboolean a) {
 	p[1].i = r == TGL_TRUE ? 1 : 0;
 	p[2].i = g == TGL_TRUE ? 1 : 0;
 	p[3].i = b == TGL_TRUE ? 1 : 0;
-	p[4].i = a == TGL_TRUE ? 1 : 0;;
+	p[4].i = a == TGL_TRUE ? 1 : 0;
 
 	c->gl_add_op(p);
 }

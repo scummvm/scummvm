@@ -169,7 +169,7 @@ bool AIAStar<Heuristic, TypeH>::findPath(Vect2i from, Heuristic *hr, Std::vector
 			//сконструировать путь
 			Vect2i vp;
 			while (parent) {
-				vp = posBy(parent);;
+				vp = posBy(parent);
 				path.push_back(vp);
 
 				if (parent->parent) {

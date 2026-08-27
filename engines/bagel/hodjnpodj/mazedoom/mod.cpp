@@ -830,7 +830,7 @@ void CMainWindow::NewGame() {
 
 	pDC = GetDC();
 
-	_time = tempTime;;                            // get new time limit,
+	_time = tempTime;                            // get new time limit,
 	_difficulty = tempDifficulty;                 //...new Difficulty
 
 	if (_playerSprite != nullptr)                      // Refresh PLAYER
@@ -1905,7 +1905,7 @@ void CALLBACK GetSubOptions(CWnd* pParentWind) {
 	OptionsDlg._difficulty = _difficulty;
 
 	if (OptionsDlg.DoModal() == IDOK) {             // save values set in dialog box
-		tempTime = OptionsDlg._time;;             // get new time limit,
+		tempTime = OptionsDlg._time;             // get new time limit,
 		tempDifficulty = OptionsDlg._difficulty;  //...new Difficulty
 	}
 

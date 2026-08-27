@@ -280,7 +280,7 @@ inline dgInt32 dgPolyhedra::GetEdgeCount() const {
 	for (iter.Begin(); iter; iter ++) {
 		edgeCount ++;
 	}
-	NEWTON_ASSERT(edgeCount == GetCount());;
+	NEWTON_ASSERT(edgeCount == GetCount());
 #endif
 	return GetCount();
 }

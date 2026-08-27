@@ -512,7 +512,7 @@ void HtmlContext::nextKeyword(uint16 destVar, uint16 destVarTagType) {
 		if (text.empty()) {
 			_currentTagType = kHtmlTagType_Error;
 		} else {
-			_htmlVariables[0] = substituteHtmlEntities(text.c_str());;
+			_htmlVariables[0] = substituteHtmlEntities(text.c_str());
 		}
 	}
 
