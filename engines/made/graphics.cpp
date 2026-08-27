@@ -21,7 +21,7 @@
 
 #include "made/graphics.h"
 
-#include <common/array.h>
+#include "common/array.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
 #include "common/debug.h"
@@ -65,8 +65,6 @@ void ValueReader::resetNibbleSwitch() {
 }
 
 static uint rleDecompress(byte *source, const byte *end, Common::Array<byte> &dest) {
-	dest.resize(0);
-
 	while (source < end) {
 		byte count = *source;
 		source++;
@@ -85,7 +83,7 @@ static uint rleDecompress(byte *source, const byte *end, Common::Array<byte> &de
 	}
 
 	if (source > end)
-		warning("graphics::rleDecompress(): input stream over-read by %d bytes!", end - source);
+		warning("graphics::rleDecompress(): input stream over-read by %d bytes!", source - end);
 
 	return dest.size();
 }
@@ -216,25 +214,26 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 
 }
 
-void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs,
-		uint16 cmdSize, uint16 pixelSize, uint16 maskSize, uint16 lineSize,
-		byte cmdFlags, byte pixelFlags, byte maskFlags) {
+void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 width, uint16 height,
+						  uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs,
+						  uint16 cmdSize, uint16 pixelSize, uint16 maskSize, uint16 lineSize,
+						  byte cmdFlags, byte pixelFlags, byte maskFlags) {
 
-	// RLE decompression buffers
-	static Common::Array<byte> cmdArray = Common::Array<byte>(4800);
-	static Common::Array<byte> pixelArray = Common::Array<byte>();
-	static Common::Array<byte> maskArray = Common::Array<byte>();
-
-	if ((maskFlags & 0b11111110) || (pixelFlags & 0b11111110) || (cmdFlags & 0b11111110))
+	if ((maskFlags & ~1) || (pixelFlags & ~1) || (cmdFlags & ~1))
 		error("decompressMovieImage() Unsupported flags: cmdFlags = %02X; maskFlags = %02X, pixelFlags = %02X", cmdFlags, maskFlags, pixelFlags);
 
-	uint16 width = surface.w;
-	uint16 height = surface.h;
+	// RLE decompression buffers
+	//  Reserved sizes for pixelArray and maskArray are guesses based on input params
+	Common::Array<byte> cmdArray;
+	Common::Array<byte> pixelArray;
+	Common::Array<byte> maskArray;
+
 	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4;
 
 	// RLE decompress the buffers as needed
 	byte *cmdBuffer;
 	if (cmdFlags & 1) {
+		cmdArray.reserve(((height + 3) / 4) * lineSize);
 		rleDecompress(source + cmdOffs, source + cmdOffs + cmdSize, cmdArray);
 		cmdBuffer = cmdArray.data();
 	} else
@@ -242,6 +241,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 
 	byte *pixelBuffer;
 	if (pixelFlags & 1) {
+		pixelArray.reserve(pixelSize);
 		rleDecompress(source + pixelOffs, source + pixelOffs + pixelSize, pixelArray);
 		pixelBuffer = pixelArray.data();
 	} else
@@ -249,6 +249,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 
 	byte *maskBuffer;
 	if (maskFlags & 1) {
+		maskArray.reserve(maskSize);
 		rleDecompress(source + maskOffs, source + maskOffs + maskSize, maskArray);
 		maskBuffer = maskArray.data();
 	} else
@@ -333,8 +334,8 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 				if (cmd != 3) {
 					uint16 blockPos = 0;
 					uint32 maxW = MIN(4, surface.w - bx);
-					uint32 maxH = (MIN(4, surface.h - by) + by) * width;
-					for (uint32 yc = by * width; yc < maxH; yc += width) {
+					uint32 maxH = (MIN(4, surface.h - by) + by) * surface.w;
+					for (uint32 yc = by * surface.w; yc < maxH; yc += surface.w) {
 						for (uint32 xc = 0; xc < maxW; xc++) {
 							destPtr[(bx + xc) + yc] = block[xc + blockPos];
 						}

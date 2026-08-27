@@ -270,9 +270,14 @@ bool PmvPlayer::decode_frame() {
 		if (!_surface) {
 			_surface = new Graphics::Surface();
 			_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		} else if (_surface->w < width || _surface->h < height) {
+			warning("Movie surface too small for current frame!  (Was: %d x %d, now: %d x %d)", _surface->w, _surface->h, width, height);
+			delete _surface;
+			_surface = new Graphics::Surface();
+			_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		}
 
-		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs,
+		decompressMovieImage(imageData, *_surface, width, height, cmdOffs, pixelOffs, maskOffs,
 							 pixelOffs - cmdOffs, maskOffs - pixelOffs, imageChunkSize - maskOffs, lineSize,
 							 cmdFlags, pixelFlags, maskFlags);
 
