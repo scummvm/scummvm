@@ -194,9 +194,7 @@ public:
 
 private:
 
-#ifdef USE_IMGUI
 	bool isImGuiRecorderEnabled() const;
-#endif
 
 	bool pollEvent(Common::Event &ev) override;
 	bool notifyEvent(const Common::Event &event) override;
