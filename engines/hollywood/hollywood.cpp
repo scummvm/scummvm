@@ -177,6 +177,10 @@ bool HollywoodEngine::subtitlesEnabled() const {
 	return _gameState.actorSpeechTextMode != 0;
 }
 
+bool HollywoodEngine::restoredContentEnabled() const {
+	return ConfMan.getBool("restored_content");
+}
+
 Common::Error HollywoodEngine::run() {
 	setDebugger(new Console(this));
 
