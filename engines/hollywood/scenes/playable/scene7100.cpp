@@ -102,6 +102,13 @@ const byte kScene7100Extended337FrameMap[] = {
 const byte kScene7100TransferFrameMap[] = {
 	0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
 };
+const byte kScene7100FirstTransferableSueItem = 0x14;
+const byte kScene7100RonInventoryOwner = 0;
+const byte kScene7100SueInventoryOwner = 1;
+const byte kScene7100RonItemBySueItem[] = {
+	0x61, 0x63, 0x64, 0x03, 0x10, 0x28, 0x2d,
+	0x37, 0x41, 0x48, 0x56, 0x5a, 0x60, 0x65
+};
 
 struct Scene7100DialogueSeedRecord {
 	uint16 index;
@@ -261,6 +268,7 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 		handlePickupItem15();
 		return true;
 	case 306: // Mirar póster (look at poster)
+		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 307: // Mirar ratonera (look at mousetrap)
 		beginSecondarySpeechLine(6, 0);
@@ -276,6 +284,12 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 311: // Usar camastro (use cot)
 		beginSecondarySpeechLine(10, 0);
+		return true;
+	case 312: // Mirar escalera (look at ladder)
+		beginSecondarySpeechLine(0x0b, 0);
+		return true;
+	case 313: // Usar escalera (use ladder)
+		beginSecondarySpeechLine(0x0c, 0);
 		return true;
 	case 314: // Mirar pulsador (look at push button)
 		beginSecondarySpeechLine(0x0d, 0);
@@ -892,10 +906,21 @@ void Scene7100::handlePickupItem14() {
 }
 
 void Scene7100::handleInventoryTransferAction() {
+	const byte sueItemId = _lastInventoryActionItemId;
+	const uint mappingIndex = sueItemId - kScene7100FirstTransferableSueItem;
+	if (mappingIndex >= ARRAYSIZE(kScene7100RonItemBySueItem)) {
+		beginSecondarySpeechLine(0x23, 0);
+		return;
+	}
+
 	beginSecondarySpeechLine(0x27, 0);
 	runOverlaySequence(15, kScene7100Chunk15DescriptorCount,
 		kScene7100TransferFrameMap, ARRAYSIZE(kScene7100TransferFrameMap),
 		kScene7100FrameMillis);
+
+	GameplayState &state = _vm->gameState();
+	state.removeInventoryItem(kScene7100SueInventoryOwner, sueItemId);
+	state.addInventoryItem(kScene7100RonInventoryOwner, kScene7100RonItemBySueItem[mappingIndex]);
 	_soundBank0.playSample(1, 100);
 }
 
