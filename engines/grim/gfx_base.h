@@ -88,6 +88,10 @@ public:
 	virtual uint getScreenWidth() { return _screenWidth; }
 	virtual uint getScreenHeight() { return _screenHeight; }
 
+	/** Scale from the 1920x1080 the HD assets are authored at to the 640x480 the game lays out in. */
+	static float getGlobalToGameScaleW() { return (float)_gameWidth / _globalWidth; }
+	static float getGlobalToGameScaleH() { return (float)_gameHeight / _globalHeight; }
+
 	virtual void setupCameraFrustum(float fov, float nclip, float fclip) = 0;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) = 0;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Matrix4 &rot) = 0;

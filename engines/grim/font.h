@@ -50,6 +50,13 @@ public:
 	virtual bool is8Bit() const = 0;
 	const Common::String &getFilename() const { return _filename; }
 
+	/**
+	 * True if this font's metrics are measured against the 1920x1080 the
+	 * Remastered HD assets are authored at, rather than the 640x480 the game
+	 * lays its text out in.
+	 */
+	virtual bool needsGameSpaceScale() const { return false; }
+
 	// for Korean Translate
 	int32 getWCharKernedWidth(byte hi, byte lo) const { return getCharKernedWidth(hi) + getCharKernedWidth(lo); }
 	bool isKoreanChar(const byte hi, const byte lo) const { return (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE); }
@@ -145,6 +152,9 @@ public:
 	int getKernedStringLength(const Common::String &text) const override;
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
 	bool is8Bit() const override { return false; }
+
+	// ResourceLoader takes the Remastered fonts, and only those, out of FontsHD.
+	bool needsGameSpaceScale() const override { return _filename.hasPrefix("FontsHD/"); }
 
 	void saveState(SaveGame *state) const;
 	void restoreState(SaveGame *state);

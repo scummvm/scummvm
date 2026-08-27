@@ -96,6 +96,8 @@ public:
 	int getBitmapHeight() const;
 	int getTextCharPosition(int pos);
 
+	int getLineWidth(int line) const;
+	int getLineHeight() const;
 	int getLineX(int line) const;
 	int getLineY(int line) const;
 
@@ -151,6 +153,8 @@ protected:
 private:
 	template <typename S>
 	void setupTextReal(S msg, Common::String (*convert)(const S &s));
+
+	bool scaleFontMetrics() const;
 };
 
 } // end of namespace Grim

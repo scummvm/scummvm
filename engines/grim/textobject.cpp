@@ -139,12 +139,30 @@ void TextObject::setDefaults(const TextObjectDefaults *defaults) {
 	_justify = defaults->getJustify();
 }
 
+bool TextObject::scaleFontMetrics() const {
+	return _coords == 0 && _font->needsGameSpaceScale();
+}
+
+int TextObject::getLineHeight() const {
+	int height = _font->getKernedHeight();
+	if (scaleFontMetrics())
+		height = (int)(height * GfxBase::getGlobalToGameScaleH());
+	return height;
+}
+
+int TextObject::getLineWidth(int line) const {
+	int width = _font->getKernedStringLength(_lines[line]);
+	if (scaleFontMetrics())
+		width = (int)(width * GfxBase::getGlobalToGameScaleW());
+	return width;
+}
+
 int TextObject::getBitmapWidth() const {
 	return _maxLineWidth;
 }
 
 int TextObject::getBitmapHeight() const {
-	return _numberLines * _font->getKernedHeight();
+	return _numberLines * getLineHeight();
 }
 
 int TextObject::getTextCharPosition(int pos) {
@@ -210,6 +228,9 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 		maxWidth = _x;
 	}
 
+	if (scaleFontMetrics())
+		maxWidth = (int)(maxWidth / GfxBase::getGlobalToGameScaleW());
+
 	// We break the message to lines not longer than maxWidth
 	S currLine;
 	_numberLines = 1;
@@ -271,9 +292,9 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 	// coordinate of the bottom of the text block (instead of the top). It means
 	// that every extra line pushes the previous lines up, instead of being
 	// printed further down the screen.
-	const int SCREEN_TOP_MARGIN = _font->getKernedHeight();
+	const int SCREEN_TOP_MARGIN = getLineHeight();
 	if (_isSpeech) {
-		_y -= _numberLines * _font->getKernedHeight();
+		_y -= _numberLines * getLineHeight();
 		if (_y < SCREEN_TOP_MARGIN) {
 			_y = SCREEN_TOP_MARGIN;
 		}
@@ -305,7 +326,7 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 			currentLineConvert = Common::convertBiDiString(currentLineConvert, Common::kWindows1255);
 
 		_lines[j] = currentLineConvert;
-		int width = _font->getKernedStringLength(currentLineConvert);
+		int width = getLineWidth(j);
 		if (width > _maxLineWidth)
 			_maxLineWidth = width;
 		for (int count = 0; count < cutLen; count++)
@@ -343,7 +364,7 @@ int TextObject::getLineX(int line) const {
 	if (line >= _numberLines)
 		return 0;
 	if (_justify == CENTER)
-		x = _x - (_font->getKernedStringLength(_lines[line]) / 2);
+		x = _x - (getLineWidth(line) / 2);
 	else if (_justify == RJUSTIFY)
 		x = _x - getBitmapWidth();
 
@@ -374,7 +395,7 @@ int TextObject::getLineY(int line) const {
 
 	if (y < 0)
 		y = 0;
-	y += _font->getKernedHeight() * line;
+	y += getLineHeight() * line;
 
 	return y;
 }
