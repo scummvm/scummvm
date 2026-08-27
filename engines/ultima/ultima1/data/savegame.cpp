@@ -31,6 +31,13 @@ const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
+void LocationEntity::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_type);
+	s.syncAsSint16LE(_position.x);
+	s.syncAsSint16LE(_position.y);
+	s.syncAsSint16LE(_hitPoints);
+}
+
 void Savegame::synchronizeBasic(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 2);
 	s.syncAsByte(_race);
@@ -90,6 +97,14 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 	s.syncAsSint16LE(_mapNum);
 	s.syncAsSint16LE(_locationPosition.x);
 	s.syncAsSint16LE(_locationPosition.y);
+
+	for (int i = 0; i < LOCATION_ENTITY_COUNT; ++i)
+		_locationEntities[i].synchronize(s);
+	s.syncAsSint16LE(_guardsHostile);
+	s.syncAsSint16LE(_hasCastleKey);
+	s.syncAsSint16LE(_freeingPrincess);
+	s.syncAsSint16LE(_castleItemAllowance);
+	s.syncAsSint16LE(_castleKeyVal);
 }
 
 void Savegame::synchronize(Common::Serializer &s) {

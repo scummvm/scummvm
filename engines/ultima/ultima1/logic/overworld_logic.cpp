@@ -49,6 +49,10 @@ static const char *IMPASSABLE_REASONS[] = {
 const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
+OverworldLogic::OverworldLogic() {
+	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
+}
+
 void OverworldLogic::action(int action) {
 	switch (action) {
 	case KEYBIND_UP:
@@ -63,7 +67,14 @@ void OverworldLogic::action(int action) {
 	case KEYBIND_RIGHT:
 		move(Data::DIR_RIGHT);
 		break;
+	case KEYBIND_ENTER:
+		enter();
+		break;
+	case KEYBIND_PASS:
+		pass();
+		break;
 	default:
+		writeString("Huh?\n");
 		break;
 	}
 
@@ -71,6 +82,7 @@ void OverworldLogic::action(int action) {
 }
 
 void OverworldLogic::keypress(Common::KeyCode keycode) {
+	writeString("Huh?\n");
 	endOfTurn();
 }
 
@@ -120,6 +132,10 @@ void OverworldLogic::enter() {
 		// Run any logic for entering it
 		_G(logic)->enter();
 	}
+}
+
+void OverworldLogic::pass() {
+	writeString("Pass\n");
 }
 
 void OverworldLogic::move(Data::Direction dir) {

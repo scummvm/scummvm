@@ -34,6 +34,7 @@ constexpr int MAX_NAME_LENGTH = 14;
 constexpr int QUEST_COUNT = 9;
 constexpr int OVERWORLD_ENTITY_COUNT = 40;
 constexpr int CREATURES_COUNT = 10;
+constexpr int LOCATION_ENTITY_COUNT = 15;
 
 extern const char *SEX_NAMES[];
 extern const char *RACE_NAMES[];
@@ -78,6 +79,18 @@ enum TransportType {
 	TRANSPORT_FOOT = 0, TRANSPORT_HORSE = 1, TRANSPORT_CART = 2, TRANSPORT_RAFT = 3,
 	TRANSPORT_FRIGATE = 4, TRANSPORT_AIRCAR = 5, TRANSPORT_SHUTTLE = 6, TRANSPORT_TIME_MACHINE = 7,
 	TRANSPORT_COUNT = 8
+};
+
+/**
+ * A single NPC/creature placement within a city or castle map - the king
+ * or princess in a castle, or a merchant/guard/bard in a city
+ */
+struct LocationEntity {
+	int16 _type;
+	Common::Point _position;
+	int16 _hitPoints;
+
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -154,6 +167,12 @@ public:
 	// Extra fields
 	int16 _mapNum = 0;
 	Common::Point _locationPosition;
+	LocationEntity _locationEntities[LOCATION_ENTITY_COUNT] = {};
+	int16 _guardsHostile = 0;
+	int16 _hasCastleKey = 0;
+	int16 _freeingPrincess = 0;
+	int16 _castleItemAllowance = 0;
+	int16 _castleKeyVal = 0;
 
 	/**
 	 * Synchronize savegame data

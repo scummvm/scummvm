@@ -1,0 +1,183 @@
+
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "ultima/ultima1/logic/city_castle_logic.h"
+#include "ultima/ultima1/metaengine.h"
+#include "ultima/ultima1/ultima1.h"
+
+namespace Ultima {
+namespace Ultima1 {
+namespace Logic {
+
+constexpr int LOCATION_STYLE_COUNT = 10;
+
+// Per map-style sets of widgets to populate a city/castle interior with,
+// indexed by Map::_mapStyle. The first two styles are castles (each has a
+// king and princess); the remaining eight are cities. Unused slots within
+// a style are padded with a _type of -1
+static const Data::LocationEntity CITY_WIDGETS[LOCATION_STYLE_COUNT][Data::LOCATION_ENTITY_COUNT] = {
+	// Style 0 - castle
+	{
+		{ 20, { 33, 4 }, 2000 }, { 22, { 35, 12 }, 1 }, { 17, { 1, 6 }, 500 },
+		{ 17, { 17, 6 }, 500 }, { 17, { 17, 11 }, 500 }, { 17, { 25, 7 }, 500 },
+		{ 17, { 25, 12 }, 500 }, { 17, { 36, 9 }, 500 }, { 19, { 35, 6 }, 1 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 1 - castle
+	{
+		{ 20, { 25, 4 }, 2000 }, { 22, { 31, 2 }, 1 }, { 17, { 28, 12 }, 500 },
+		{ 17, { 34, 12 }, 500 }, { 17, { 0, 8 }, 500 }, { 17, { 11, 3 }, 500 },
+		{ 17, { 22, 1 }, 500 }, { 17, { 28, 1 }, 500 }, { 17, { 33, 5 }, 500 },
+		{ 19, { 22, 14 }, 1 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 2 - city
+	{
+		{ 19, { 15, 5 }, 1 }, { 50, { 34, 6 }, 1 }, { 17, { 2, 9 }, 500 },
+		{ 17, { 16, 16 }, 500 }, { 17, { 18, 2 }, 500 }, { 17, { 20, 8 }, 500 },
+		{ 17, { 21, 16 }, 500 }, { 17, { 36, 8 }, 500 }, { 21, { 6, 3 }, 1 },
+		{ 21, { 6, 14 }, 1 }, { 21, { 13, 14 }, 1 }, { 21, { 25, 3 }, 1 },
+		{ 21, { 25, 12 }, 1 }, { 21, { 32, 3 }, 1 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 3 - city
+	{
+		{ 19, { 15, 9 }, 1 }, { 50, { 27, 3 }, 1 }, { 17, { 1, 10 }, 500 },
+		{ 17, { 9, 8 }, 500 }, { 17, { 16, 1 }, 500 }, { 17, { 21, 16 }, 500 },
+		{ 17, { 36, 7 }, 500 }, { 21, { 4, 16 }, 1 }, { 21, { 5, 3 }, 1 },
+		{ 21, { 12, 3 }, 1 }, { 21, { 30, 1 }, 1 }, { 21, { 34, 12 }, 1 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 4 - city
+	{
+		{ 19, { 17, 3 }, 1 }, { 50, { 21, 5 }, 1 }, { 17, { 10, 10 }, 500 },
+		{ 17, { 15, 15 }, 500 }, { 17, { 22, 15 }, 500 }, { 17, { 23, 9 }, 500 },
+		{ 21, { 3, 12 }, 1 }, { 21, { 6, 3 }, 1 }, { 21, { 19, 1 }, 1 },
+		{ 21, { 34, 1 }, 1 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 5 - city
+	{
+		{ 19, { 19, 12 }, 1 }, { 50, { 24, 3 }, 1 }, { 17, { 1, 7 }, 500 },
+		{ 17, { 1, 11 }, 500 }, { 17, { 8, 16 }, 500 }, { 17, { 14, 7 }, 500 },
+		{ 17, { 29, 16 }, 500 }, { 17, { 36, 11 }, 500 }, { 21, { 4, 1 }, 1 },
+		{ 21, { 12, 1 }, 1 }, { 21, { 17, 1 }, 1 }, { 21, { 22, 1 }, 1 },
+		{ 21, { 28, 1 }, 1 }, { 21, { 34, 1 }, 1 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 6 - city
+	{
+		{ 17, { 17, 2 }, 500 }, { 17, { 17, 15 }, 500 }, { 17, { 20, 2 }, 500 },
+		{ 17, { 20, 15 }, 500 }, { 21, { 12, 8 }, 1 }, { 21, { 25, 8 }, 1 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 7 - city
+	{
+		{ 50, { 20, 4 }, 1 }, { 17, { 1, 1 }, 500 }, { 17, { 1, 16 }, 500 },
+		{ 17, { 8, 9 }, 500 }, { 17, { 16, 15 }, 500 }, { 17, { 18, 10 }, 500 },
+		{ 17, { 21, 15 }, 500 }, { 17, { 29, 9 }, 500 }, { 17, { 36, 1 }, 500 },
+		{ 17, { 36, 16 }, 500 }, { 21, { 8, 4 }, 1 }, { 21, { 9, 13 }, 1 },
+		{ 21, { 18, 2 }, 1 }, { 21, { 28, 13 }, 1 }, { 21, { 29, 4 }, 1 }
+	},
+	// Style 8 - city
+	{
+		{ 19, { 31, 14 }, 1 }, { 50, { 27, 6 }, 1 }, { 17, { 4, 11 }, 500 },
+		{ 17, { 17, 14 }, 500 }, { 17, { 20, 14 }, 500 }, { 21, { 7, 4 }, 1 },
+		{ 21, { 18, 4 }, 1 }, { 21, { 29, 3 }, 1 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 },
+		{ -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	},
+	// Style 9 - city
+	{
+		{ 19, { 19, 10 }, 5 }, { 17, { 6, 12 }, 500 }, { 17, { 6, 15 }, 500 },
+		{ 17, { 7, 7 }, 500 }, { 17, { 9, 5 }, 500 }, { 17, { 28, 17 }, 500 },
+		{ 17, { 37, 8 }, 500 }, { 21, { 1, 13 }, 1 }, { 21, { 4, 1 }, 1 },
+		{ 21, { 16, 1 }, 1 }, { 21, { 24, 1 }, 1 }, { 21, { 33, 16 }, 1 },
+		{ 21, { 34, 1 }, 1 }, { -1, { 0, 0 }, 0 }, { -1, { 0, 0 }, 0 }
+	}
+};
+
+void CityCastleLogic::enter() {
+	loadEntities();
+}
+
+void CityCastleLogic::action(int action) {
+	// TODO
+}
+
+void CityCastleLogic::keypress(Common::KeyCode keycode) {
+	action(KEYBIND_PASS);
+}
+
+void CityCastleLogic::loadEntities() {
+	auto &map = _G(map);
+	auto &savegame = _G(savegame);
+	const Data::LocationEntity *widgets = CITY_WIDGETS[map._mapStyle];
+
+	for (int idx = 0; idx < Data::LOCATION_ENTITY_COUNT; ++idx)
+		savegame._locationEntities[idx] = widgets[idx];
+}
+
+/*-------------------------------------------------------------------*/
+
+CityLogic::CityLogic() {
+	_G(map)._tavernCtr = 0;
+	_G(map)._mapStyle = (_G(map)._currentMap - 1) % 8 + 2;
+	_G(map)._mapType = Data::MAPTYPE_CITY;
+}
+
+void CityLogic::enter() {
+	_G(savegame)._locationPosition = Common::Point(19, 17);
+	CityCastleLogic::enter();
+}
+
+/*-------------------------------------------------------------------*/
+
+CastleLogic::CastleLogic() {
+	_G(map)._castleNum = _G(map)._currentMap - 33;
+	_G(map)._mapStyle = (_G(map)._currentMap - 1) % 2;
+	_G(map)._castleNum2 = _G(map)._castleNum + 1;
+	_G(map)._mapType = Data::MAPTYPE_CASTLE;
+
+	_G(savegame)._guardsHostile = 0;
+	_G(savegame)._hasCastleKey = 0;
+	_G(savegame)._freeingPrincess = 0;
+	_G(savegame)._castleItemAllowance = 0;
+
+	// The two castle map styles are vertical mirrors of each other, so
+	// the row these two cells sit on differs between them
+	int row = (_G(map)._mapStyle == 0) ? 14 : 4;
+	_G(map)[row][35] = 11;
+	_G(map)[row][31] = 11;
+
+	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
+}
+
+void CastleLogic::enter() {
+	_G(savegame)._locationPosition = Common::Point(0, 9);
+	CityCastleLogic::enter();
+}
+
+} // namespace Logic
+} // namespace Ultima1
+} // namespace Ultima

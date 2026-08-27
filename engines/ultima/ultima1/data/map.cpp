@@ -22,8 +22,10 @@
 #include "common/file.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/tiles.h"
-#include "ultima/ultima1/logic/locations_logic.h"
+#include "ultima/ultima1/logic/city_castle_logic.h"
+#include "ultima/ultima1/logic/dungeon_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
+#include "ultima/ultima1/logic/pillar_logic.h"
 #include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {

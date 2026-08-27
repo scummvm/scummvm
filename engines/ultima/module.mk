@@ -61,8 +61,10 @@ MODULE_OBJS += \
 	ultima1/gfx/text_cursor.o \
 	ultima1/gfx/text_input.o \
 	ultima1/logic/logic.o \
-	ultima1/logic/locations_logic.o \
+	ultima1/logic/city_castle_logic.o \
+	ultima1/logic/dungeon_logic.o \
 	ultima1/logic/overworld_logic.o \
+	ultima1/logic/pillar_logic.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \

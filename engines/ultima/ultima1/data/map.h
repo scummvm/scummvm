@@ -52,6 +52,13 @@ enum Direction {
 	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
 };
 
+enum MapType {
+	MAPTYPE_OVERWORLD = 0,
+	MAPTYPE_CITY = 1,
+	MAPTYPE_CASTLE = 2,
+	MAPTYPE_DUNGEON = 3
+};
+
 typedef Common::Array< Common::Array<byte> > MapTiles;
 typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 
@@ -73,14 +80,17 @@ private:
 	class Row {
 	private:
 		Map *_owner = nullptr;
-		const byte *_data = nullptr;
+		byte *_data = nullptr;
 
 	public:
 		Row() {}
-		Row(Map *owner, const byte *data) : _owner(owner), _data(data) {}
+		Row(Map *owner, byte *data) : _owner(owner), _data(data) {}
 
-		// Give access to the byte for a column within the row
-		const byte &operator[](int x) const {
+		// Give access to the byte for a column within the row. Returns a
+		// mutable reference (even though the method is const - constness
+		// here is about the Row's own members, not the mapped bytes) so
+		// map[y][x] = value can be used to modify the map's contents
+		byte &operator[](int x) const {
 			// Handle when the Y is already outside the map, or X is outside map
 			if (!_data || (_owner->_outsideMapTile != 0xff && (x < 0 || x >= _owner->_mapWidth)))
 				return _owner->_outsideMapTile;
@@ -104,6 +114,10 @@ public:
 	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
 	int _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
 	bool _isLordBritishCastle = false;
+	int _mapStyle = 0;
+	int _mapType = MAPTYPE_OVERWORLD;
+	int _tavernCtr = 0;
+	int _castleNum = 0, _castleNum2 = 0;
 
 public:
 	/**

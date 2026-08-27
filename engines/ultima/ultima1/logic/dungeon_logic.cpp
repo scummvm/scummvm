@@ -20,62 +20,26 @@
  *
  */
 
-#ifndef ULTIMA2_LOGIC_LOCATIONS_LOGIC_H
-#define ULTIMA2_LOGIC_LOCATIONS_LOGIC_H
-
-#include "ultima/ultima1/logic/logic.h"
+#include "ultima/ultima1/logic/dungeon_logic.h"
+#include "ultima/ultima1/metaengine.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
-/**
- * Base class for gameplay handling logic used by the Commands class to respond to player actions
- * or other miscellaneous keypresses.
- */
-class LocationsLogic : public Logic {
-public:
-	~LocationsLogic() override {
-	}
+void DungeonLogic::enter() {
+	// TODO
+}
 
-	void action(int action) override;
-	void keypress(Common::KeyCode keycode) override;
-};
+void DungeonLogic::action(int action) {
+	// TODO
+}
 
-class CityLogic : public LocationsLogic {
-public:
-	~CityLogic() override {
-	}
-
-	void enter() override;
-};
-
-class CastleLogic : public LocationsLogic {
-public:
-	~CastleLogic() override {
-	}
-
-	void enter() override;
-};
-
-class PillarLogic : public LocationsLogic {
-public:
-	~PillarLogic() override {
-	}
-
-	void enter() override;
-};
-
-class DungeonLogic : public LocationsLogic {
-public:
-	~DungeonLogic() override {
-	}
-
-	void enter() override;
-};
+void DungeonLogic::keypress(Common::KeyCode keycode) {
+	action(KEYBIND_PASS);
+}
 
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima
-
-#endif

@@ -20,46 +20,27 @@
  *
  */
 
-#include "ultima/ultima1/logic/locations_logic.h"
-#include "ultima/ultima1/metaengine.h"
-#include "ultima/ultima1/ultima1.h"
+#ifndef ULTIMA2_LOGIC_DUNGEON_LOGIC_H
+#define ULTIMA2_LOGIC_DUNGEON_LOGIC_H
+
+#include "ultima/ultima1/logic/logic.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
-void LocationsLogic::action(int action) {
-	// TODO
-}
+class DungeonLogic : public Logic {
+public:
+	~DungeonLogic() override {
+	}
 
-void LocationsLogic::keypress(Common::KeyCode keycode) {
-	action(KEYBIND_PASS);
-}
-
-/*-------------------------------------------------------------------*/
-
-void CityLogic::enter() {
-	_G(savegame)._locationPosition = Common::Point(19, 17);
-}
-
-/*-------------------------------------------------------------------*/
-
-void CastleLogic::enter() {
-	_G(savegame)._locationPosition = Common::Point(0, 9);
-}
-
-/*-------------------------------------------------------------------*/
-
-void PillarLogic::enter() {
-	//_G(savegame)._locationPosition = Common::Point(0, 9);
-}
-
-/*-------------------------------------------------------------------*/
-
-void DungeonLogic::enter() {
-
-}
+	void enter() override;
+	void action(int action) override;
+	void keypress(Common::KeyCode keycode) override;
+};
 
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima
+
+#endif

@@ -38,6 +38,11 @@ private:
 	void enter();
 
 	/**
+	 * Pass a turn
+	 */
+	void pass();
+
+	/**
 	 * Check for movement
 	 */
 	bool moveCheck(Data::Direction dir);
@@ -117,6 +122,7 @@ private:
 	void reduceFood();
 
 public:
+	OverworldLogic();
 	~OverworldLogic() override {
 	}
 
