@@ -38,6 +38,8 @@ const uint32 kScene6100SpeechFrameMillis = 125;
 const uint32 kScene6100DepartureFrameMillis = 40;
 const byte kScene6100CharlieSpeechGroup = 0;
 const byte kScene6100LetterSpeechGroup = 1;
+const uint16 kScene6100CharlieDialogueRow = 99;
+const uint16 kScene6100EnvelopeRow = 9;
 const byte kScene6100BriefcasePatchHook = 1;
 const byte kScene6100BriefcaseItem = 0x65;
 const byte kScene6100BillyFordEnvelopeItem = 0x69;
@@ -427,8 +429,8 @@ void Scene6100::finishCharlieDialoguePose() {
 	_charlieManualSequenceActive = false;
 }
 
-void Scene6100::beginCharlieSpeechLine(byte frameIndex, byte animationGroup) {
-	beginPrimarySpeechLineWithAnimationGroup(99, frameIndex, 0x0fa, 0x131,
+void Scene6100::beginCharlieSpeechLine(uint16 rowIndex, byte frameIndex, byte animationGroup) {
+	beginPrimarySpeechLineWithAnimationGroup(rowIndex, frameIndex, 0x0fa, 0x131,
 		6, 0x3f, 0x2d, animationGroup);
 }
 
@@ -447,7 +449,7 @@ void Scene6100::runCharlieDialogue() {
 	beginSecondarySpeechLine(0x62, greetingFrame);
 	enterCharlieDialoguePose();
 	_charlieConversationActive = true;
-	beginCharlieSpeechLine(greetingFrame, kScene6100CharlieSpeechGroup);
+	beginCharlieSpeechLine(kScene6100CharlieDialogueRow, greetingFrame, kScene6100CharlieSpeechGroup);
 	if (state.scene6100CharlieState != 2)
 		state.scene6100CharlieState = 2;
 
@@ -456,7 +458,7 @@ void Scene6100::runCharlieDialogue() {
 		const byte selectedChoice = menu.choose(0x62, records, depthIndex, nodeIndex);
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(0x62, 6);
-			beginCharlieSpeechLine(6, kScene6100CharlieSpeechGroup);
+			beginCharlieSpeechLine(kScene6100CharlieDialogueRow, 6, kScene6100CharlieSpeechGroup);
 			break;
 		}
 
@@ -473,7 +475,8 @@ void Scene6100::runCharlieDialogue() {
 			else if (alternatePose && _charliePose == 0)
 				switchCharlieToAlternatePose();
 
-			beginCharlieSpeechLine(record.responseFrameIndex, kScene6100CharlieSpeechGroup);
+			beginCharlieSpeechLine(kScene6100CharlieDialogueRow, record.responseFrameIndex,
+				kScene6100CharlieSpeechGroup);
 			if (_charliePose != 0)
 				returnCharlieToDialoguePose();
 		}
@@ -599,7 +602,7 @@ void Scene6100::giveBillyFordEnvelopeToCharlie() {
 	_charlieManualSequenceActive = true;
 	enterCharlieDialoguePose();
 	_charlieManualSequenceActive = true;
-	beginCharlieSpeechLine(1, kScene6100CharlieSpeechGroup);
+	beginCharlieSpeechLine(kScene6100EnvelopeRow, 1, kScene6100CharlieSpeechGroup);
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
@@ -615,11 +618,11 @@ void Scene6100::giveBillyFordEnvelopeToCharlie() {
 
 	removeInventoryItem(kScene6100BillyFordEnvelopeItem);
 	_soundBank0.playSample(1, 100);
-	beginCharlieSpeechLine(2, kScene6100LetterSpeechGroup);
+	beginCharlieSpeechLine(kScene6100EnvelopeRow, 2, kScene6100LetterSpeechGroup);
 	playAnimationFrames(_charlieLayer,
 		AnimationFrameRange(42, 78, kScene6100AnimationFrameMillis));
 	_charliePose = 2;
-	beginCharlieSpeechLine(3, kScene6100CharlieSpeechGroup);
+	beginCharlieSpeechLine(kScene6100EnvelopeRow, 3, kScene6100CharlieSpeechGroup);
 
 	_charlieLayer.visible = false;
 	_departureLayer.visible = true;
