@@ -70,6 +70,11 @@ const byte kScene2100MummyDialogueStageId = 0x62;
 const byte kScene2100MummyPrimaryRow = 99;
 const uint kScene2100MummyDialogueChoiceRecordCount = 10 * 10 * 7;
 
+// These are the choices whose disabled state survives the trip through scene 2110.
+const uint16 kScene2100MummyDialogueTrackedRecordIndices[] = {
+	0, 1, 2, 3, 4, 70, 77, 84, 85, 86, 87, 91, 140, 210, 280
+};
+
 const byte kScene2100ForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 8,
 	9, 10, 11, 12, 7, 6, 5, 0
@@ -147,6 +152,17 @@ static_assert(ARRAYSIZE(kScene2100SpecialSpeechLongFrameMap) == 20,
 	"Scene 2100 long speech frame map size changed");
 static_assert(ARRAYSIZE(kScene2100SpecialExitFrameMap) == 0x1b,
 	"Scene 2100 special exit frame map size changed");
+static_assert(ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices) <= 16,
+	"Scene 2100 mummy dialogue choice mask is too small");
+
+static uint16 mummyDialogueChoiceBit(uint recordIndex) {
+	for (uint bit = 0; bit < ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices); ++bit) {
+		if (kScene2100MummyDialogueTrackedRecordIndices[bit] == recordIndex)
+			return (uint16)(1 << bit);
+	}
+
+	return 0;
+}
 
 static PlayableSceneConfig scene2100Config() {
 	PlayableSceneConfig config(2100,
@@ -767,8 +783,8 @@ void Scene2100::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 
 bool Scene2100::runMummyDialogue(bool playGreeting) {
 	GameplayState &state = _vm->gameState();
-	if (state.scene2040SphinxExitInterviewState == 0 && state.scene2100MummyDialogueClueStage != 0)
-		state.scene2040SphinxExitInterviewState = state.scene2100MummyDialogueClueStage;
+	if (playGreeting)
+		state.scene2100MummyDialogueUsedChoiceMask = 0;
 
 	Common::Array<DialogueChoiceRecord> records;
 	initializeMummyDialogueRecords(records);
@@ -807,6 +823,7 @@ bool Scene2100::runMummyDialogue(bool playGreeting) {
 		if (record.disableAfterUse != 0) {
 			record.enabled = 0;
 			record.selectable = 0;
+			state.scene2100MummyDialogueUsedChoiceMask |= mummyDialogueChoiceBit(recordIndex);
 		}
 		if (record.disableAfterUse == 2 && !state.scene2100AfterlifeBranchUnlocked) {
 			if (records.size() > 86) {
@@ -881,6 +898,15 @@ void Scene2100::initializeMummyDialogueRecords(Common::Array<DialogueChoiceRecor
 	setDialogueRecord(records, 140, 1, 0, 1, 14, 15, 1, 0xff);
 	setDialogueRecord(records, 210, 1, 0, 1, 16, 17, 1, 0xff);
 	setDialogueRecord(records, 280, 1, 0, 5, 17, 18, 1, 0xff);
+
+	for (uint bit = 0; bit < ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices); ++bit) {
+		if ((state.scene2100MummyDialogueUsedChoiceMask & (1 << bit)) == 0)
+			continue;
+
+		DialogueChoiceRecord &record = records[kScene2100MummyDialogueTrackedRecordIndices[bit]];
+		record.enabled = 0;
+		record.selectable = 0;
+	}
 }
 
 void Scene2100::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
