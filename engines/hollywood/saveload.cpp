@@ -251,6 +251,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2020HatPresent);
 	syncStateBool(s, state.scene2020SunglassesPresent);
 	syncStateBool(s, state.scene2020PrincessConversationSeen);
+	syncStateBool(s, state.scene2030RightMerchantConversationSeen);
 	s.syncAsByte(state.scene2030ScarabOfferState);
 	s.syncAsByte(state.scene2030MerchantItem2AOfferState);
 	syncStateBool(s, state.scene6010StudioEntryUnlocked);
