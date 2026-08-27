@@ -239,9 +239,8 @@ struct GameplayState {
 		scene2100PassageOpen = false;
 		scene2100MummyBranchState = 0;
 		scene2100MummyGreetingSeen = false;
-		scene2100MummyDialogueClueStage = 0;
 		scene2100AfterlifeBranchUnlocked = false;
-		scene2100MarketBranchUnlocked = false;
+		scene2100MummyDialogueUsedChoiceMask = 0;
 		scene2110EntryLineSeen = false;
 		scene2110TreasureGrantIndex = 0;
 		scene2110TreasureGranted = false;
@@ -995,9 +994,8 @@ struct GameplayState {
 	bool scene2100PassageOpen;
 	byte scene2100MummyBranchState;
 	bool scene2100MummyGreetingSeen;
-	byte scene2100MummyDialogueClueStage;
 	bool scene2100AfterlifeBranchUnlocked;
-	bool scene2100MarketBranchUnlocked;
+	uint16 scene2100MummyDialogueUsedChoiceMask;
 	bool scene2110EntryLineSeen;
 	byte scene2110TreasureGrantIndex;
 	bool scene2110TreasureGranted;

@@ -290,9 +290,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2100PassageOpen);
 	s.syncAsByte(state.scene2100MummyBranchState);
 	syncStateBool(s, state.scene2100MummyGreetingSeen);
-	s.syncAsByte(state.scene2100MummyDialogueClueStage);
 	syncStateBool(s, state.scene2100AfterlifeBranchUnlocked);
-	syncStateBool(s, state.scene2100MarketBranchUnlocked);
+	s.syncAsUint16LE(state.scene2100MummyDialogueUsedChoiceMask);
 	syncStateBool(s, state.scene2110EntryLineSeen);
 	s.syncAsByte(state.scene2110TreasureGrantIndex);
 	syncStateBool(s, state.scene2110TreasureGranted);
@@ -610,8 +609,6 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2080DialogueTerminalIndex = 0;
 	if (state.scene2100MummyBranchState > 2)
 		state.scene2100MummyBranchState = 0;
-	if (state.scene2100MummyDialogueClueStage > 2)
-		state.scene2100MummyDialogueClueStage = 0;
 	const byte frankensteinPartRewardIndex = MIN<byte>(
 		MAX<byte>(state.frankensteinPartRewardIndex(), state.scene4070FrankiePartGranted),
 		GameplayState::kFrankensteinPartRewardCount);
