@@ -921,7 +921,8 @@ bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *del
 	const uint16 sceneId = vm->gameState().mainFlowStateId / 10;
 	if ((sceneId == 304 && state.inventoryActionHandlerId == 89) ||
 			(sceneId == 307 &&
-				(state.inventoryActionHandlerId == 81 || state.inventoryActionHandlerId == 127)))
+				(state.inventoryActionHandlerId == 81 || state.inventoryActionHandlerId == 127)) ||
+			(vm->gameState().mainFlowStateId == 0x082a && state.inventoryActionHandlerId == 136))
 		return false;
 
 	return dispatchSharedInventoryAction(vm, delegate, state.inventoryActionHandlerId,
