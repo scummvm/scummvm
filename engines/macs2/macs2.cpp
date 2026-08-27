@@ -393,7 +393,7 @@ void Macs2Engine::loadResourceFileV2() {
 				}
 			}
 			const int slot = (int)mouseNr - 1;
-			if (mouseNr != 0 && slot >= 0 && slot < 33) {
+			if (mouseNr != 0 && slot >= 0 && slot < ARRAYSIZE(_cursorHotspots)) {
 				const bool empty = _imageResources[slot]._data.empty();
 				if (empty || prefer) {
 					_imageResources[slot] = prefer && gotActive ? activeFrame : frame;
