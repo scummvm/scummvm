@@ -59,6 +59,20 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
+	// Italian Windows full game, installed Monsters directory.
+	{
+		"hollywood",
+		nullptr,
+		AD_ENTRY4s("MONSTERS.EXE", "d047170b3a143eaef506dec2f18fe993", 1559552,
+			"RESOURCE.000", "b16a8300ca1af75a0322e443a8971159", 3662162,
+			"RESOURCE.003", "72475bb0eff3f4920452342537584569", 9444153,
+			"RESOURCE.004", "fb9f09029e73eb5ee708b995db9823d0", 256474138),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
+	},
+
 	// Spanish Windows full game, installed MONSTERS directory.
 	{
 		"hollywood",

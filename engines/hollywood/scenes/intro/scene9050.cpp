@@ -58,6 +58,9 @@ const byte kStage9050SixthClipSegmentId = 6;
 const byte kStage9050SixthClipLastFrameIndex = 0x29;
 const byte kStage9050SeventhClipSegmentId = 7;
 const byte kStage9050SeventhClipLastFrameIndex = 0x4b;
+const byte kI05CombinedRevealEntriesPerSegment = 5;
+const byte kI05LayeredRevealEntriesPerSegment = 6;
+const uint kI05LayeredRevealLayoutMarkerChunk = 35;
 
 const byte kStage9050InterClipRevealFrames[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 const byte kStage9050InterClipReverseFrames[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0 };
@@ -119,6 +122,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_effectSound(),
 		_random("hollywood_scene9050"),
 		_resources(),
+		_i05ClipChunkSize(0),
 		_i05ClipFrameAccumulator(0),
 		_i05InterClipAccumulator(0),
 		_i08BlinkAccumulator(0),
@@ -143,6 +147,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_i06PalettePulseStepIndex(0x18),
 		_currentMusicCue(kNoMusicCue),
 		_continuousSoundCue(kNoSoundCue),
+		_i05EntriesPerSegment(0),
 		_i06OptionalOverlayChunk5Enabled(false),
 		_i06BaseFrameDirty(false),
 		_i06PrimarySpriteDirty(false),
@@ -278,8 +283,13 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 	if (!_resources.loadChunkTable(kI05ArchiveName))
 		return false;
 
-	const uint baseIndex = ((uint)segmentId - 1) * kI05EntriesPerSegment;
-	const uint lastLocalChunkIndex = segmentId < 7 ? 5 : 3;
+	// Italian archives combine the two Spanish reveal layers into one chunk.
+	_i05EntriesPerSegment = _resources.chunkTable.isValidChunk(kI05LayeredRevealLayoutMarkerChunk) ?
+		kI05LayeredRevealEntriesPerSegment : kI05CombinedRevealEntriesPerSegment;
+	const uint baseIndex = ((uint)segmentId - 1) * _i05EntriesPerSegment;
+	const bool finalLayeredSegment = _i05EntriesPerSegment == kI05LayeredRevealEntriesPerSegment &&
+		segmentId == kStage9050SeventhClipSegmentId;
+	const uint lastLocalChunkIndex = finalLayeredSegment ? 3 : _i05EntriesPerSegment - 1;
 	if (baseIndex + lastLocalChunkIndex >= IntroResourceSet::kResourceChunkCount) {
 		warning("%s Stage 9050 segment %u exceeds the archive chunk table", kI05ArchiveName, segmentId);
 		return false;
@@ -299,6 +309,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 		return false;
 	if (!loadResourceI05Chunk(baseIndex + 1, _paletteResource, kPaletteSize))
 		return false;
+	_i05ClipChunkSize = _resources.chunkTable.sizes[baseIndex + 3];
 
 	for (uint i = 2; i <= lastLocalChunkIndex; ++i) {
 		if (!loadResourceI05ArenaChunk(baseIndex + i, i))
@@ -934,7 +945,7 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 
 void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
 	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[3],
-		_resources.chunkTable.sizes[3], lastFrameIndex, frameIndex, _sceneFramebuffer.data(),
+		_i05ClipChunkSize, lastFrameIndex, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }
 
@@ -965,6 +976,9 @@ void Scene9050::runStage9050InterClipSpriteReveal() {
 	}
 
 	runResourceI05InterClipRevealPhase(4);
+	if (_i05EntriesPerSegment < kI05LayeredRevealEntriesPerSegment)
+		return;
+
 	if (waitSceneCounterPast(1))
 		return;
 
@@ -1023,7 +1037,8 @@ void Scene9050::runResourceI05InterClipReversePhase() {
 			const bool drawFrame = frameListIndex + 1 < ARRAYSIZE(kStage9050InterClipReverseFrames);
 			const byte frameIndex = kStage9050InterClipReverseFrames[frameListIndex];
 			restoreAndDrawResourceDescriptorFrame(4, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
-			restoreAndDrawResourceDescriptorFrame(5, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
+			if (_i05EntriesPerSegment >= kI05LayeredRevealEntriesPerSegment)
+				restoreAndDrawResourceDescriptorFrame(5, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
 			presentFrame();
 			frameListIndex++;
 		}

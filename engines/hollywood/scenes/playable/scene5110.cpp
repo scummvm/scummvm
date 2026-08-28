@@ -1206,7 +1206,7 @@ void Scene5110::initializeSceneItemLabels() {
 	copyStageSmallRow(13, 17);
 	if (_vm->gameState().scene5110SalonTransformState < 2) {
 		for (byte row = 13; row <= 16; ++row)
-			setStageSmallRowLabel(row, " chica del jacuzzi");
+			copyStageSmallRow(9, row);
 	}
 	if (_vm->gameState().scene5110BottleState != 0)
 		copyStageSmallRow(17, kScene5110BottleSceneItem);
@@ -1221,16 +1221,6 @@ void Scene5110::copyStageSmallRow(byte sourceRow, byte destinationRow) {
 
 	memcpy(_stage003SmallRows.data() + destinationOffset,
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
-}
-
-void Scene5110::setStageSmallRowLabel(byte row, const char *label) {
-	const uint offset = (uint)row * kStage003SmallRowSize;
-	if (offset + kStage003SmallRowSize > _stage003SmallRows.size())
-		return;
-
-	byte *destination = _stage003SmallRows.data() + offset;
-	memset(destination, 0, kStage003SmallRowSize);
-	memcpy(destination, label, MIN<uint>((uint)strlen(label), kStage003SmallRowSize - 1));
 }
 
 void Scene5110::clearSceneItemFromColorMap(byte itemId) {
