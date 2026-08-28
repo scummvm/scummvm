@@ -36,12 +36,37 @@ const uint kScene5020ActorBankTableEntry = 0x0000;
 const uint kScene5020ActorPaletteTableEntry = 0x00cc;
 const uint32 kScene5020SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene5020OverlayFrameMillis = 75;
+const uint32 kScene5020MineCartTimerNumerator = 75;
 const byte kScene5020WoodenPlankItem = 0x47;
 const byte kScene5020TakenSceneItemId = 4;
 const byte kScene5020RenamedSmallRow = 7;
 const byte kScene5020WallClueSmallRow = 8;
+const uint kScene5020MineCartOverlayChunk = 9;
+const uint kScene5020MineCartDescriptorCount = 0x38;
+const byte kScene5020MineCartStopSoundFrame = 0x32;
 const uint kScene5020PickupOverlayChunk = 10;
 const uint kScene5020PickupOverlayDescriptorCount = 0x0d;
+const int kScene5020EntryStartX = 0x348;
+const int kScene5020EntryStartY = 0x186;
+const int kScene5020EntryTargetX = 0x27d;
+const int kScene5020EntryTargetY = 0x16c;
+const int kScene5020MinimumWalkX = 0x50;
+const int kScene5020MaximumWalkY = 0x1df;
+
+const byte kScene5020MineCartDelayBuckets[] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	2, 2, 2, 2,
+	3, 3, 3, 3,
+	4, 4, 4, 4,
+	5, 5, 5, 5,
+	6, 6, 6, 6,
+	7, 7, 7, 7,
+	8, 8, 8, 8,
+	9, 9, 9, 9,
+	10, 10, 10, 10,
+	11, 11, 11, 11,
+	12, 12, 12, 12
+};
 
 const byte kScene5020PickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
@@ -58,20 +83,56 @@ PlayableSceneConfig scene5020Config() {
 }
 
 Scene5020::Scene5020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5020Config()) {
+		PlayableScene(vm, scene5020Config()),
+		_mineCartLayer() {
+	_mineCartLayer.configure(kScene5020MineCartOverlayChunk,
+		kScene5020MineCartDescriptorCount, nullptr, 0);
 }
 
 void Scene5020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
-	applySceneStateToHotspotsAndPatches(0xff);
+	_mineCartLayer.visible = false;
+	_mineCartLayer.reset(0);
 
-	setActiveActorPose(0x27d, 0x16c, 4);
+	setActiveActorPose(kScene5020EntryStartX, kScene5020EntryStartY, 4);
+}
+
+void Scene5020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
+		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
+		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY, byte actorDrawOrderMode) {
+	copyBaseFramebufferToSceneFramebuffer();
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	drawForeground(actorDrawOrderMode, activeWorldY);
+	drawActionOverlayLayer();
+	drawResourceSpriteLayer(_mineCartLayer);
+}
+
+bool Scene5020::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
 }
 
 void Scene5020::runCustomEntrySequence() {
-	runEntryPath(0x348, 0x186, 4, 0x27d, 0x16c);
-	_activeActorFacing = 4;
-	_activeActorCel = 0;
+	runMineCartArrival();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	runEntryPath(kScene5020EntryStartX, kScene5020EntryStartY, 4,
+		kScene5020EntryTargetX, kScene5020EntryTargetY);
+}
+
+bool Scene5020::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5020::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
+bool Scene5020::advanceCustomGameplayLoop(uint32 delta) {
+	(void)delta;
+	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
+	return false;
 }
 
 bool Scene5020::dispatchCustomSceneAction(uint16 handlerId) {
@@ -107,7 +168,48 @@ bool Scene5020::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+bool Scene5020::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = MAX<int>(targetX, kScene5020MinimumWalkX);
+	if (targetY < kScene5020MaximumWalkY)
+		++targetY;
+
+	while (targetY < kScene5020MaximumWalkY && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+		--targetY;
+
+	return true;
+}
+
+bool Scene5020::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if ((currentRegion == 4 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 8)) {
+		requestedFacing = 4;
+		copySlopeStepDeltasFromSet5A(0x30);
+		restoredStepDeltas = true;
+		return true;
+	}
+	if ((currentRegion == 8 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 4)) {
+		requestedFacing = 1;
+		copySlopeStepDeltasFromSet5A(0x0c);
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	return false;
+}
+
 bool Scene5020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -116,9 +218,9 @@ bool Scene5020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	const GameplayState &state = _vm->gameState();
-	if ((selector == 0 || selector == 0xff) && state.scene5020ExplosivesCrateIdentified)
+	if (state.scene5020ExplosivesCrateIdentified)
 		copyStageSmallRow(kScene5020RenamedSmallRow, kScene5020WallClueSmallRow);
-	if ((selector == 1 || selector == 0xff) && (state.scene5020WoodenPlankTaken || hasInventoryItem(kScene5020WoodenPlankItem))) {
+	if (state.scene5020WoodenPlankTaken || hasInventoryItem(kScene5020WoodenPlankItem)) {
 		if (_sceneChunkTable.isValidChunk(8))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5020TakenSceneItemId);
@@ -126,11 +228,60 @@ bool Scene5020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (state.scene5020ExplosivesCrateIdentified)
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x3c, 0);
 	return true;
 }
 
 AmbientAudioProfile Scene5020::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x25, 3, 100, 20, 0x0b, 5, 100, 20);
+	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
+}
+
+byte Scene5020::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	if (cueId == 0x10)
+		return 2;
+	if (cueId == 0x14)
+		return 100;
+	return defaultVolumePercent;
+}
+
+void Scene5020::runMineCartArrival() {
+	if (!_sceneChunkTable.isValidChunk(kScene5020MineCartOverlayChunk))
+		return;
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
+	_mineCartLayer.visible = true;
+	_mineCartLayer.reset(0);
+	drawPlayableComposite();
+	presentFrame();
+	if (fadePaletteFromBlack()) {
+		_mineCartLayer.visible = false;
+		_hideActiveActor = previousHideActiveActor;
+		return;
+	}
+
+	_soundBank0.playSample(0x18, 100);
+	for (uint frame = 0; frame < ARRAYSIZE(kScene5020MineCartDelayBuckets) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
+		const byte delayBucket = kScene5020MineCartDelayBuckets[frame];
+		const uint32 frameMillis = kScene5020MineCartTimerNumerator /
+			MAX<uint32>(1, 13 - delayBucket);
+		if (waitSceneMillis(frameMillis, false))
+			break;
+
+		const byte nextFrame = (byte)(frame + 1);
+		_mineCartLayer.setFrame(nextFrame);
+		if (nextFrame == kScene5020MineCartStopSoundFrame)
+			_soundBank0.playSample(0x16, 100);
+		drawPlayableComposite();
+		presentFrame();
+	}
+
+	_mineCartLayer.visible = false;
+	_hideActiveActor = previousHideActiveActor;
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene5020::runExitToMineSwitches() {
@@ -152,6 +303,26 @@ void Scene5020::runPickupWoodenPlank() {
 	_soundBank0.playSample(1, 100);
 	state.scene5020WoodenPlankTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
+}
+
+void Scene5020::drawForeground(byte actorDrawOrderMode, int actorWorldY) {
+	uint chunkIndex = 0;
+	if (actorDrawOrderMode == 1 || actorDrawOrderMode == 2) {
+		chunkIndex = 5;
+	} else if (actorDrawOrderMode == 3 || actorDrawOrderMode == 4) {
+		chunkIndex = actorWorldY > 0x174 ? 7 : 6;
+	} else if (actorDrawOrderMode >= 5 && actorDrawOrderMode <= 8) {
+		chunkIndex = 7;
+	}
+
+	if (chunkIndex != 0 && _sceneChunkTable.isValidChunk(chunkIndex))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
+}
+
+void Scene5020::copySlopeStepDeltasFromSet5A(uint firstOffset) {
+	for (uint i = 0; i < 0x0c && firstOffset + i < _actorPathStepDeltas.size() &&
+			firstOffset + i < ARRAYSIZE(kActorPathStepDeltaTableSet5A); ++i)
+		_actorPathStepDeltas[firstOffset + i] = kActorPathStepDeltaTableSet5A[firstOffset + i];
 }
 
 void Scene5020::copyStageSmallRow(byte destinationRow, byte sourceRow) {

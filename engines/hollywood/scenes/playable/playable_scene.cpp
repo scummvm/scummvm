@@ -593,6 +593,11 @@ AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(100);
 }
 
+byte PlayableScene::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	(void)cueId;
+	return defaultVolumePercent;
+}
+
 void PlayableScene::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)hookId;
 	(void)frame;
@@ -2325,7 +2330,8 @@ void PlayableScene::updateAmbientSoundCue(const AmbientAudioProfile &profile) {
 		_currentAmbientSoundCueId = (byte)(profile.soundFirstCueId +
 			_random.getRandomNumber(profile.soundCueCount - 1));
 	} while (profile.soundCueCount > 1 && _currentAmbientSoundCueId == _previousAmbientSoundCueId);
-	_ambientSoundBank0.playSample(_currentAmbientSoundCueId, profile.soundVolumePercent);
+	_ambientSoundBank0.playSample(_currentAmbientSoundCueId,
+		ambientSoundCueVolume(_currentAmbientSoundCueId, profile.soundVolumePercent));
 }
 
 void PlayableScene::updateAmbientMusicCue(const AmbientAudioProfile &profile) {

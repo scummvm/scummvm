@@ -34,15 +34,31 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
+	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
 
+	void runMineCartArrival();
 	void runExitToMineSwitches();
 	void runPickupWoodenPlank();
+	void drawForeground(byte actorDrawOrderMode, int actorWorldY);
+	void copySlopeStepDeltasFromSet5A(uint firstOffset);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void clearSceneItemFromColorMap(byte itemId);
+
+	ResourceSpriteLayer _mineCartLayer;
 };
 
 } // End of namespace Hollywood
