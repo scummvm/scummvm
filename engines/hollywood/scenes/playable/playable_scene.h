@@ -193,6 +193,7 @@ protected:
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
 	virtual AmbientAudioProfile ambientAudioProfile() const;
+	virtual byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	virtual void advanceFullscreenAnimation(uint32 delta);
 
