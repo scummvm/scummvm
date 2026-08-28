@@ -36,7 +36,15 @@ namespace Hollywood {
 
 const char *const kI10ArchiveName = "RESOURCE.I10";
 const char *const kStage003ArchiveName = "RESOURCE.003";
+const char *const kScene9100SoundArchiveName = "RESOURCE.S09";
 const uint16 kScene9100MusicCueId = 0x000f;
+const byte kScene9100ClockSoundCue = 0x0b;
+const byte kScene9100TransitionEndSoundCue = 0x0c;
+const byte kScene9100TransitionMiddleSoundCue = 0x0d;
+const byte kScene9100ForegroundBeatSoundCue = 0x0e;
+const byte kScene9100DelayedSoundCue = 0x0f;
+const byte kScene9100SueEntrySoundCue = 0x10;
+const byte kScene9100AmbientSoundCue = 0x11;
 const uint16 kScene9101CompletionState = 1000;
 const uint kStage003DecodeKeySize = 0x141;
 const uint kStage003StageOffsetTableSize = 0xff4;
@@ -78,6 +86,9 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
 		_speech(),
+		_effectSound(),
+		_clockSound(),
+		_ambientSound(),
 		_random("hollywood_scene9100"),
 		_resourceArenaCursor(0),
 		_lastClockFrameMillis(0),
@@ -117,6 +128,9 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_subtitle.colorIndex = kPrimarySpeechTextColor;
 	_subtitle.centerX = 0;
 	_subtitle.topY = 0;
+	_effectSound.setArchive(Common::Path(kScene9100SoundArchiveName));
+	_clockSound.setArchive(Common::Path(kScene9100SoundArchiveName));
+	_ambientSound.setArchive(Common::Path(kScene9100SoundArchiveName));
 }
 
 bool Scene9100::play() {
@@ -142,6 +156,7 @@ bool Scene9100::play() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit()) {
+		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
 		expandFillRunsToSavedFramebuffer();
 		drawResourceBlockListToSceneFramebuffer(_resourceChunkOffsets[16]);
 		presentFrame();
@@ -179,6 +194,9 @@ bool Scene9100::playDialogueBranch() {
 		if (delay(50))
 			break;
 	}
+
+	if (!_skipRequested && !Engine::shouldQuit())
+		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
 
 	if (!_skipRequested && !Engine::shouldQuit())
 		runDialogueBranchSequence();
@@ -722,6 +740,7 @@ void Scene9100::runSueEntrySequence() {
 
 	animateForegroundFrames(27, 31);
 	_foregroundTalkBaseFrame = 32;
+	_effectSound.playSample(kScene9100SueEntrySoundCue, 100);
 	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 	if (_skipRequested || Engine::shouldQuit())
 		return;
@@ -809,14 +828,59 @@ void Scene9100::drawActorFrame(const ActorSpriteBank &bank, byte facing, byte ce
 		_sceneFramebuffer.surface(), _presentationPaletteRemapTable);
 }
 
+void Scene9100::runForegroundIdleBeat() {
+	byte beatCounter = 0;
+	while (beatCounter <= 20 && !_skipRequested && !Engine::shouldQuit()) {
+		if (_foregroundActorFrame == 1) {
+			drawForegroundActorFrame(0);
+			presentFrame();
+			if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
+				return;
+			continue;
+		}
+
+		if (beatCounter == 20)
+			break;
+		if (_random.getRandomNumber(14) == 0) {
+			drawForegroundActorFrame(1);
+			presentFrame();
+		}
+		beatCounter++;
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
+			return;
+	}
+
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	_effectSound.playSample(kScene9100ForegroundBeatSoundCue, 100);
+	animateForegroundFrames(2, 10);
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	drawForegroundActorFrame(0);
+	presentFrame();
+	delayFrame(100, kTalkingOverlayNone, 0, false, true);
+}
+
 void Scene9100::runOpeningPrelude() {
+	runForegroundIdleBeat();
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+	runForegroundIdleBeat();
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
 	animateForegroundFrames(11, 14);
+	_effectSound.playSample(kScene9100TransitionEndSoundCue, 25);
 
 	_foregroundTalkBaseFrame = 15;
 	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 
-	animateForegroundFrames(20, 22);
-	for (uint pulse = 0; pulse < 12 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
+	animateForegroundFrames(20, 20);
+	_effectSound.playSample(kScene9100TransitionMiddleSoundCue, 25);
+	animateForegroundFrames(21, 22);
+	for (uint pulse = 0; pulse < 120 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
 		if (_random.getRandomNumber(14) == 0) {
 			drawForegroundActorFrame(27);
 			presentFrame();
@@ -827,6 +891,8 @@ void Scene9100::runOpeningPrelude() {
 			drawForegroundActorFrame(23);
 			presentFrame();
 		}
+		if (pulse == 99)
+			_effectSound.playSample(kScene9100DelayedSoundCue, 100);
 	}
 
 	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true, kRonSecondarySpeech);
@@ -1285,6 +1351,7 @@ void Scene9100::advanceClockFrame() {
 	}
 	restoreClockAreaBackground();
 	drawOfficeCompositeLayers();
+	_clockSound.playSample(kScene9100ClockSoundCue, 50);
 }
 
 void Scene9100::restoreClockAreaBackground() {
@@ -1693,6 +1760,9 @@ void Scene9100::stopAudio() {
 	clearSubtitle();
 	_music.stop();
 	_speech.stop();
+	_effectSound.stop();
+	_clockSound.stop();
+	_ambientSound.stop();
 }
 
 byte Scene9100::nextTalkingFrameVariant() {
