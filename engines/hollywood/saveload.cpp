@@ -190,6 +190,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene3090BlindManConversationSeen);
 	s.syncAsByte(state.scene3090SecretDiaryPuzzleProgress);
 	syncStateBool(s, state.scene3090DialogueMentionedBlindManLaxative);
+	s.syncAsByte(state.dowsingRodKarlExchangeState);
 	syncStateBool(s, state.scene3100CabinVisited);
 	s.syncAsByte(state.scene3100GirlConversationState);
 	syncStateBool(s, state.scene3100DaisyVisible);
@@ -630,6 +631,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4010PillboxPickupState = 0;
 	if (state.scene4050RopeSwingState > 2)
 		state.scene4050RopeSwingState = 0;
+	if (state.dowsingRodKarlExchangeState > 2)
+		state.dowsingRodKarlExchangeState = 0;
 	if (state.scene5010MineTransportState > 4)
 		state.scene5010MineTransportState = 0;
 	if (state.scene5040MineGalleryState > 2)
