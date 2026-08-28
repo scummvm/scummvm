@@ -30,6 +30,7 @@
 
 namespace Hollywood {
 
+const uint16 kScene5110FirstState = 0x13f6;
 const uint16 kScene5100ReturnState = 0x13ed;
 const uint16 kScene5120FirstState = 0x1400;
 const uint16 kScene5110ViewportXOffset = 0x0068;
@@ -37,7 +38,13 @@ const uint kScene5110ActorBankTableEntry = 0x0000;
 const uint kScene5110ActorPaletteTableEntry = 0x00cc;
 const uint32 kScene5110SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene5110FrameMillis = 75;
+const uint32 kScene5110SpeechFrameMillis = 125;
+const uint32 kScene5110ElevatorFrameMillis = 125;
+const uint32 kScene5110ElevatorHoldMillis = 1000;
 const uint kScene5110PickupDescriptorCount = 0x0c;
+const uint kScene5110ElevatorDescriptorCount = 0x11;
+const uint kScene5110ReplacementFillRunsChunk = 0x1a;
+const uint kScene5110ReplacementPaletteMaskChunk = 0x1b;
 const uint kScene5110WerewolfDialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kScene5110UnderwearInventoryItem = 0x53;
 const byte kScene5110BottleInventoryItem = 0x54;
@@ -67,6 +74,23 @@ const byte kScene5110PickupFrameMap[] = {
 	11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
+const byte kScene5110FirstElevatorFrameMap[] = { 0, 1, 2, 3, 4, 5 };
+const byte kScene5110AlternateElevatorFrameMap[] = { 16, 15, 14, 13, 12, 5 };
+const byte kScene5110ElevatorCloseFrameMap[] = { 10, 9, 8, 7, 6, 5 };
+const byte kScene5110ElevatorInnerFrameMap[] = { 6, 7, 8, 9, 10, 11 };
+const byte kScene5110ElevatorUpperFrameMap[] = { 12, 13, 14, 15, 16 };
+const byte kScene5110ElevatorLowerFrameMap[] = { 5, 4, 3, 2, 1, 0 };
+
+const byte kScene5110WerewolfFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 5, 4, 3, 2, 0
+};
+const byte kScene5110CenterDetailFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0 };
+const byte kScene5110LeftSalonFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+const byte kScene5110UpperRightFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0 };
+const byte kScene5110LowerDetailFrameMap[] = { 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0 };
+
 static PlayableSceneConfig scene5110Config() {
 	PlayableSceneConfig config(5110,
 		SceneResourceLayout(5, 5, 0x19),
@@ -75,19 +99,55 @@ static PlayableSceneConfig scene5110Config() {
 	config.setActorResources(kScene5110ActorBankTableEntry, kScene5110ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5110SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
-	config.useActorDepthTest = true;
+	config.useActorDepthTest = false;
 	return config;
 }
 
 Scene5110::Scene5110(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5110Config()) {
+		PlayableScene(vm, scene5110Config()),
+		_randomDetailLayer(),
+		_centerSalonLayer(),
+		_werewolfLayer(),
+		_centerSalonDetailLayer(),
+		_leftSalonLayer(),
+		_upperRightSalonLayer(),
+		_rightSalonDetailLayer(),
+		_lowerSalonDetailLayer(),
+		_rightStaticSalonLayer(),
+		_elevatorLayer(),
+		_salonAnimationChannel(),
+		_upperRightSalonState(1),
+		_rightSalonDetailDirection(0),
+		_rightSalonDetailDwell(0),
+		_lowerSalonDetailState(1),
+		_leftSalonRepeatCount(0),
+		_werewolfState(1),
+		_centerSalonDetailRepeatCount(0),
+		_centerSalonToggleA(false),
+		_centerSalonToggleB(false),
+		_centerSalonDetailSequenceActive(false),
+		_werewolfDialogueActive(false) {
+}
+
+int Scene5110::replacementFillRunsResourceChunkIndex() const {
+	return _vm->gameState().scene5110SalonTransformState >= 2 ?
+		(int)kScene5110ReplacementFillRunsChunk : -1;
+}
+
+int Scene5110::replacementPaletteMaskResourceChunkIndex() const {
+	return _vm->gameState().scene5110SalonTransformState >= 2 ?
+		(int)kScene5110ReplacementPaletteMaskChunk : -1;
 }
 
 void Scene5110::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
+	initializeSalonLayers();
+	initializeSceneItemLabels();
 	applySceneStateToHotspotsAndPatches(0xff);
+	if (hasSavedActiveActorPoseForCurrentState() && _sceneChunkTable.isValidChunk(23))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[23], _baseFramebuffer);
 
-	setActiveActorPose(0x0b4, 0x174, 5);
+	setActiveActorPose(0x084, 0x169, 2);
 }
 
 void Scene5110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -96,32 +156,48 @@ void Scene5110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
+	if (_actionOverlayPlayer.replacesActor()) {
+		drawActionOverlayLayer();
+		drawSalonSpriteLayers();
+		return;
+	}
+	if (_elevatorLayer.visible) {
+		drawElevatorComposite(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY);
+		return;
+	}
+
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawStaticRoomLayers(activeWorldY);
+	drawNormalRoomLayers(activeWorldY);
 	drawActionOverlayLayer();
 }
 
+bool Scene5110::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene5110::runCustomEntrySequence() {
-	setActiveActorPose(0x084, 0x169, 2);
-	drawPlayableComposite();
-	presentFrame();
-
-	runEntryElevatorSequence();
-	walkActiveActorTo(0x0b4, 0x174, 0xff, 0, false);
-
 	GameplayState &state = _vm->gameState();
+	const bool alternateEntry = state.mainFlowStateId != kScene5110FirstState;
+	if (!runEntryElevatorSequence(alternateEntry))
+		return;
+
 	if (!state.scene5110IntroSeen && state.scene5110SalonTransformState < 2) {
+		walkActiveActorTo(0x197, 0x108, 0xff, 0, false);
 		beginSalonPrimarySpeechLine(0, 0);
 		beginSecondarySpeechLine(0, 1);
 		beginSalonPrimarySpeechLine(0, 2);
 		state.scene5110IntroSeen = true;
+		return;
 	}
+
+	walkActiveActorTo(0x0b4, 0x174, 0xff, 0, false);
 }
 
 bool Scene5110::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+	advanceSalonAnimations(delta);
+	return false;
 }
 
 bool Scene5110::dispatchCustomSceneAction(uint16 handlerId) {
@@ -210,8 +286,13 @@ bool Scene5110::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene5110::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
-	targetX = CLIP<int>(targetX, 0x084, 0x34f);
+	const int maximumX = _vm->gameState().scene5110SalonTransformState < 2 ? 0x197 : 0x286;
+	targetX = CLIP<int>(targetX, 0x0b4, maximumX);
+	if (targetX > 0x0c9 && targetX < 0x168)
+		targetX = targetX - 0x0c9 <= 0x168 - targetX ? 0x0c9 : 0x168;
 
+	if (targetY < 0x1df)
+		++targetY;
 	while (targetY < 0x1df && walkableMaskAt(targetX, targetY) == 0)
 		++targetY;
 	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
@@ -220,47 +301,98 @@ bool Scene5110::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 	return walkableMaskAt(targetX, targetY) != 0;
 }
 
+bool Scene5110::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+	if (currentRegion != 2 || (nextRegion != 1 && nextRegion != 3))
+		return false;
+
+	const uint destinationOffset = nextRegion == 3 ? 0x18 : 0x3c;
+	for (uint i = 0; i < 0x0c && destinationOffset + i < _actorPathStepDeltas.size() &&
+			0x18 + i < ARRAYSIZE(kActorPathStepDeltaTableSet5A); ++i)
+		_actorPathStepDeltas[destinationOffset + i] = kActorPathStepDeltaTableSet5A[0x18 + i];
+	requestedFacing = nextRegion == 3 ? 2 : 5;
+	restoredStepDeltas = true;
+	return true;
+}
+
 bool Scene5110::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
 	GameplayState &state = _vm->gameState();
-	restoreBaseFramebufferFromOriginal();
-	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
-	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	const bool applyAll = selector == 0xff;
+	if (applyAll) {
+		restoreBaseFramebufferFromOriginal();
+		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	}
 
-	if (state.scene5110UnderwearTaken || hasInventoryItem(kScene5110UnderwearInventoryItem)) {
+	if ((selector == 1 || applyAll) &&
+			(state.scene5110UnderwearTaken || hasInventoryItem(kScene5110UnderwearInventoryItem))) {
 		state.scene5110UnderwearTaken = true;
 		if (_sceneChunkTable.isValidChunk(11))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5110UnderwearSceneItem);
 	}
 
-	if (state.scene5110BottleState == 2 || hasInventoryItem(kScene5110BottleInventoryItem)) {
-		state.scene5110BottleState = 2;
-		if (_sceneChunkTable.isValidChunk(5))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
-		clearSceneItemFromColorMap(kScene5110BottleSceneItem);
+	if (selector == 2 || applyAll) {
+		if (hasInventoryItem(kScene5110BottleInventoryItem))
+			state.scene5110BottleState = 2;
+		if (state.scene5110BottleState < 2)
+			replaceColorMapItemFromOriginal(17, kScene5110BottleSceneItem);
+		if (state.scene5110BottleState != 0)
+			copyStageSmallRow(17, kScene5110BottleSceneItem);
+		if (state.scene5110BottleState == 2) {
+			if (_sceneChunkTable.isValidChunk(5))
+				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
+			replaceColorMapItemFromOriginal(17, 0);
+		}
 	}
 
-	if (state.scene5110MirrorTaken || hasInventoryItem(kScene5110MirrorInventoryItem)) {
+	if (selector == 3 || applyAll) {
+		const bool transformed = state.scene5110SalonTransformState >= 2;
+		if (!applyAll)
+			memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+		if (transformed) {
+			const byte removedItems[] = { 7, 8, 9, 13, 14, 15, 16 };
+			for (uint i = 0; i < ARRAYSIZE(removedItems); ++i)
+				replaceColorMapItemFromOriginal(removedItems[i], 0);
+		}
+
+		if (_metadata.size() > kSceneItemFacing + kScene5110MirrorSceneItem) {
+			_metadata[kSceneItemFacing + kScene5110BottleSceneItem] = transformed ? 5 : 2;
+			_metadata[kSceneItemFacing + kScene5110MirrorSceneItem] = transformed ? 5 : 2;
+		}
+		const uint bottlePointOffset = kSceneItemInteractionPoints + kScene5110BottleSceneItem * 4;
+		const uint mirrorPointOffset = kSceneItemInteractionPoints + kScene5110MirrorSceneItem * 4;
+		if (transformed && _metadata.size() >= mirrorPointOffset + 4) {
+			WRITE_LE_UINT16(&_metadata[bottlePointOffset], 0x1d6);
+			WRITE_LE_UINT16(&_metadata[bottlePointOffset + 2], 0x106);
+			WRITE_LE_UINT16(&_metadata[mirrorPointOffset], 0x20a);
+			WRITE_LE_UINT16(&_metadata[mirrorPointOffset + 2], 0x104);
+		}
+	}
+
+	if ((selector == 4 || applyAll) && state.scene5110ElevatorTransitionSeen &&
+			_metadata.size() > kSceneItemDefaultStrip + 4) {
+		_metadata[kSceneItemDefaultStrip + 2] = 5;
+		_metadata[kSceneItemDefaultStrip + 3] = 5;
+		_metadata[kSceneItemDefaultStrip + 4] = 5;
+	}
+
+	if ((selector == 5 || applyAll) &&
+			(state.scene5110MirrorTaken || hasInventoryItem(kScene5110MirrorInventoryItem))) {
 		state.scene5110MirrorTaken = true;
 		if (_sceneChunkTable.isValidChunk(13))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5110MirrorSceneItem);
 	}
 
-	if (state.scene5110SalonTransformState < 2) {
-		// The original aliases several transformed-salon labels back to
-		// "chica del jacuzzi" until the later hair-treatment state is reached.
-		replaceColorMapItemFromOriginal(14, 9);
-		replaceColorMapItemFromOriginal(15, 9);
-		replaceColorMapItemFromOriginal(16, 9);
-	}
-
 	rebuildWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	updateElevatorButtonActionTargets(false);
 	return true;
 }
 
@@ -268,8 +400,58 @@ bool Scene5110::shouldConvertSavedFramebufferFF() const {
 	return true;
 }
 
+bool Scene5110::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5110::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene5110::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.soundMode = kAmbientSoundLoop;
+	profile.soundCueId = 0x28;
+	profile.soundVolumePercent = 15;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
+}
+
+byte Scene5110::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return 6;
+}
+
+byte Scene5110::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	(void)animationGroup;
+	return 5;
+}
+
+uint32 Scene5110::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5110SpeechFrameMillis;
+}
+
+void Scene5110::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	(void)animationGroup;
+	_werewolfLayer.setFrame(frameIndex);
+}
+
+void Scene5110::primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	_werewolfLayer.setFrame(baseFrame);
+	_werewolfState = 0;
+}
+
+void Scene5110::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	_werewolfLayer.setFrame(baseFrame);
+	_werewolfState = 0;
 }
 
 void Scene5110::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -292,30 +474,118 @@ void Scene5110::handleAnimationFrameHook(byte hookId, uint frame) {
 	}
 }
 
-void Scene5110::runEntryElevatorSequence() {
-	_soundBank0.playSample(0x1d, 100);
-	waitSceneMillis(kScene5110FrameMillis * 5);
+void Scene5110::handleLeftClick(const GameplayLoopCursorState &state) {
+	updateElevatorButtonActionTargets(state.currentStrip == 5);
+	PlayableScene::handleLeftClick(state);
+}
+
+bool Scene5110::runEntryElevatorSequence(bool alternateEntry) {
+	const byte *entryFrames = alternateEntry ?
+		kScene5110AlternateElevatorFrameMap : kScene5110FirstElevatorFrameMap;
+	const uint entryFrameCount = alternateEntry ?
+		ARRAYSIZE(kScene5110AlternateElevatorFrameMap) : ARRAYSIZE(kScene5110FirstElevatorFrameMap);
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
+	_elevatorLayer.visible = _sceneChunkTable.isValidChunk(22);
+	_elevatorLayer.reset(entryFrames[0]);
+	drawPlayableComposite();
+	if (fadePaletteFromBlack()) {
+		_elevatorLayer.visible = false;
+		_hideActiveActor = previousHideActiveActor;
+		return false;
+	}
+
+	if (!playElevatorSequence(entryFrames, entryFrameCount, false)) {
+		_elevatorLayer.visible = false;
+		_hideActiveActor = previousHideActiveActor;
+		return false;
+	}
 	if (_sceneChunkTable.isValidChunk(23))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[23], _baseFramebuffer);
-	_soundBank0.playSample(0x1d, 100);
-	waitSceneMillis(kScene5110FrameMillis * 5);
+	setActiveActorPose(0x084, 0x169, 2);
+	if (!holdElevatorFrame(true)) {
+		_elevatorLayer.visible = false;
+		_hideActiveActor = previousHideActiveActor;
+		return false;
+	}
+
+	_soundBank0.playSample(0x1d, 100, true);
+	const bool completed = playElevatorSequence(kScene5110ElevatorInnerFrameMap,
+		ARRAYSIZE(kScene5110ElevatorInnerFrameMap), false);
+	_soundBank0.stop();
+	_elevatorLayer.visible = false;
+	_hideActiveActor = previousHideActiveActor;
+	drawPlayableComposite();
+	presentFrame();
+	return completed;
+}
+
+bool Scene5110::playElevatorSequence(const byte *frameMap, uint frameMapSize, bool drawActor) {
+	if (!_sceneChunkTable.isValidChunk(22) || frameMap == nullptr || frameMapSize == 0)
+		return true;
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = !drawActor;
+	_elevatorLayer.visible = true;
+	AnimationFrameRange range(0, frameMapSize - 1, kScene5110ElevatorFrameMillis);
+	range.frameOrder = frameMap;
+	const bool completed = playAndPresentAnimationFrames(_elevatorLayer,
+		range.unskippable().noFinalFrameDelay());
+	_hideActiveActor = previousHideActiveActor;
+	return completed;
+}
+
+bool Scene5110::holdElevatorFrame(bool drawActor) {
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = !drawActor;
+	drawPlayableComposite();
+	presentFrame();
+	const bool interrupted = waitSceneMillis(kScene5110ElevatorHoldMillis, false);
+	_hideActiveActor = previousHideActiveActor;
+	return !interrupted;
 }
 
 void Scene5110::runButtonExitToState(uint16 nextState) {
-	_soundBank0.playSample(0x1d, 100);
-	waitSceneMillis(kScene5110FrameMillis * 5);
+	_soundBank0.playSample(0x1d, 100, true);
+	if (!playElevatorSequence(kScene5110ElevatorCloseFrameMap,
+			ARRAYSIZE(kScene5110ElevatorCloseFrameMap), true) || !holdElevatorFrame(false)) {
+		_soundBank0.stop();
+		_elevatorLayer.visible = false;
+		return;
+	}
 	if (_sceneChunkTable.isValidChunk(24))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[24], _baseFramebuffer);
-	_soundBank0.playSample(0x1e, 100);
+	_soundBank0.playSample(0x1e, 100, true);
+	const byte *exitFrames = nextState == kScene5120FirstState ?
+		kScene5110ElevatorUpperFrameMap : kScene5110ElevatorLowerFrameMap;
+	const uint exitFrameCount = nextState == kScene5120FirstState ?
+		ARRAYSIZE(kScene5110ElevatorUpperFrameMap) : ARRAYSIZE(kScene5110ElevatorLowerFrameMap);
+	if (!playElevatorSequence(exitFrames, exitFrameCount, false)) {
+		_soundBank0.stop();
+		_elevatorLayer.visible = false;
+		return;
+	}
 	_vm->gameState().scene5110ElevatorTransitionSeen = true;
+	applySceneStateToHotspotsAndPatches(4);
 	_vm->gameState().mainFlowStateId = nextState;
 }
 
 void Scene5110::runButtonReturnSequence() {
-	_soundBank0.playSample(0x1d, 100);
-	waitSceneMillis(kScene5110FrameMillis * 5);
+	_soundBank0.playSample(0x1d, 100, true);
+	if (!playElevatorSequence(kScene5110ElevatorCloseFrameMap,
+			ARRAYSIZE(kScene5110ElevatorCloseFrameMap), true) || !holdElevatorFrame(true) ||
+			!playElevatorSequence(kScene5110ElevatorInnerFrameMap,
+				ARRAYSIZE(kScene5110ElevatorInnerFrameMap), true)) {
+		_soundBank0.stop();
+		_elevatorLayer.visible = false;
+		return;
+	}
+	_soundBank0.stop();
+	_elevatorLayer.visible = false;
 	_vm->gameState().scene5110ElevatorTransitionSeen = true;
 	applySceneStateToHotspotsAndPatches(4);
+	setActiveActorPose(0x084, 0x169, 2);
 	walkActiveActorTo(0x0b4, 0x174, 0xff, 0, false);
 }
 
@@ -328,7 +598,8 @@ void Scene5110::runUnderwearPickup() {
 
 	runActorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchUnderwear));
+		.hookAt(6, kScene5110PatchUnderwear)
+		.noFinalFrameDelay());
 	state.scene5110UnderwearTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene5110UnderwearInventoryItem);
@@ -347,14 +618,13 @@ void Scene5110::runBottlePickup() {
 	}
 	if (state.scene5110BottleState == 0) {
 		beginSecondarySpeechLine(4, 0);
-		state.scene5110BottleState = 1;
-		applySceneStateToHotspotsAndPatches(2);
 	}
 
 	beginSecondarySpeechLine(3, 1);
 	runActorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchBottle));
+		.hookAt(6, kScene5110PatchBottle)
+		.noFinalFrameDelay());
 	state.scene5110BottleState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(kScene5110BottleInventoryItem);
@@ -375,6 +645,7 @@ void Scene5110::runWerewolfDialogue() {
 		beginSalonPrimarySpeechLine(kScene5110SalonResponseRow, 1);
 	}
 
+	_werewolfDialogueActive = true;
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
@@ -383,12 +654,15 @@ void Scene5110::runWerewolfDialogue() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene5110DialogueStageId, 7);
 			beginSalonPrimarySpeechLine(kScene5110SalonResponseRow, 7);
+			_werewolfDialogueActive = false;
 			return;
 		}
 
 		const uint recordIndex = ((uint)nodeIndex + (uint)depthIndex * 10) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			_werewolfDialogueActive = false;
 			return;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(kScene5110DialogueStageId, record.playerTextRowId);
@@ -402,9 +676,12 @@ void Scene5110::runWerewolfDialogue() {
 		if (record.disableAfterUse == 2 && state.scene5110JacuzziInspectionState == 0)
 			state.scene5110JacuzziInspectionState = 1;
 
-		if (applyWerewolfDialogueTransition(record, depthIndex, nodeIndex))
+		if (applyWerewolfDialogueTransition(record, depthIndex, nodeIndex)) {
+			_werewolfDialogueActive = false;
 			return;
+		}
 	}
+	_werewolfDialogueActive = false;
 }
 
 void Scene5110::runManicureGirlTalk() {
@@ -442,7 +719,8 @@ void Scene5110::runMirrorPickup() {
 
 	runActorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchMirror));
+		.hookAt(6, kScene5110PatchMirror)
+		.noFinalFrameDelay());
 	state.scene5110MirrorTaken = true;
 	applySceneStateToHotspotsAndPatches(5);
 	addInventoryItem(kScene5110MirrorInventoryItem);
@@ -470,14 +748,46 @@ void Scene5110::runHairTreatmentTalk() {
 }
 
 void Scene5110::beginSalonPrimarySpeechLine(uint16 rowIndex, byte frameIndex) {
+	settleWerewolfForSpeech();
 	beginPrimarySpeechLine(rowIndex, frameIndex, 599, 0x00b4, 0x17, 0x33, 0x2c);
+}
+
+void Scene5110::settleWerewolfForSpeech() {
+	if (_werewolfState == 0)
+		return;
+
+	if (_werewolfState == 1) {
+		_werewolfLayer.setFrame(2);
+		_werewolfState = 2;
+	} else if (_werewolfState == 3) {
+		switch (_werewolfLayer.frameIndex) {
+		case 11:
+			_werewolfLayer.setFrame(5);
+			break;
+		case 12:
+			_werewolfLayer.setFrame(4);
+			break;
+		case 13:
+			_werewolfLayer.setFrame(3);
+			break;
+		default:
+			_werewolfLayer.setFrame(2);
+			break;
+		}
+		_werewolfState = 2;
+	}
+
+	while (_werewolfState != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(kScene5110FrameMillis, false))
+			break;
+	}
 }
 
 void Scene5110::initializeWerewolfDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
 	records.clear();
 	records.resize(kScene5110WerewolfDialogueChoiceRecordCount);
 
-	// DAT_0050a5c8: root choices for the werewolf in the spa.
+	// Root choices for the werewolf in the spa.
 	setWerewolfDialogueRecord(records, 0, 1, 0, kScene5110DialogueTransitionDown, 2, 2, 1);
 	setWerewolfDialogueRecord(records, 1, 1, 0, kScene5110DialogueTransitionStay, 3, 3, 1);
 	setWerewolfDialogueRecord(records, 2, 1, 0, kScene5110DialogueTransitionStay, 4, 4, 1);
@@ -536,43 +846,391 @@ bool Scene5110::applyWerewolfDialogueTransition(const DialogueChoiceRecord &reco
 	return false;
 }
 
-void Scene5110::drawStaticRoomLayers(int activeWorldY) {
-	const GameplayState &state = _vm->gameState();
-	drawSpriteFrame(7, 4, 0);
+void Scene5110::initializeSalonLayers() {
+	_randomDetailLayer.configure(7, 4, nullptr, 0);
+	_centerSalonLayer.configure(8, 5, nullptr, 0);
+	_werewolfLayer.configure(9, 10, kScene5110WerewolfFrameMap,
+		ARRAYSIZE(kScene5110WerewolfFrameMap));
+	_centerSalonDetailLayer.configure(10, 5, kScene5110CenterDetailFrameMap,
+		ARRAYSIZE(kScene5110CenterDetailFrameMap));
+	_leftSalonLayer.configure(15, 9, kScene5110LeftSalonFrameMap,
+		ARRAYSIZE(kScene5110LeftSalonFrameMap));
+	_upperRightSalonLayer.configure(16, 8, kScene5110UpperRightFrameMap,
+		ARRAYSIZE(kScene5110UpperRightFrameMap));
+	_rightSalonDetailLayer.configure(17, 7, nullptr, 0);
+	_lowerSalonDetailLayer.configure(18, 7, kScene5110LowerDetailFrameMap,
+		ARRAYSIZE(kScene5110LowerDetailFrameMap));
+	_rightStaticSalonLayer.configure(19, 1, nullptr, 0);
+	_elevatorLayer.configure(22, kScene5110ElevatorDescriptorCount, nullptr, 0);
 
-	if (state.scene5110SalonTransformState < 2) {
-		drawSpriteFrame(16, 8, 0);
-		drawSpriteFrame(19, 1, 0);
-		drawSpriteFrame(8, 5, 1);
-		drawSpriteFrame(17, 7, 0);
-		drawSpriteFrame(9, 10, 0);
-		drawSpriteFrame(10, 5, 0);
-		if (_sceneChunkTable.isValidChunk(20))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[20], _sceneFramebuffer);
-		if (activeWorldY > 0x109 && _sceneChunkTable.isValidChunk(21))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[21], _sceneFramebuffer);
-		drawSpriteFrame(15, 9, 0);
-		drawSpriteFrame(18, 7, 0);
+	_randomDetailLayer.visible = _sceneChunkTable.isValidChunk(7);
+	_centerSalonLayer.visible = _sceneChunkTable.isValidChunk(8);
+	_werewolfLayer.visible = _sceneChunkTable.isValidChunk(9);
+	_centerSalonDetailLayer.visible = _sceneChunkTable.isValidChunk(10);
+	_leftSalonLayer.visible = _sceneChunkTable.isValidChunk(15);
+	_upperRightSalonLayer.visible = _sceneChunkTable.isValidChunk(16);
+	_rightSalonDetailLayer.visible = _sceneChunkTable.isValidChunk(17);
+	_lowerSalonDetailLayer.visible = _sceneChunkTable.isValidChunk(18);
+	_rightStaticSalonLayer.visible = _sceneChunkTable.isValidChunk(19);
+	_elevatorLayer.visible = false;
+
+	_randomDetailLayer.reset(0);
+	_centerSalonLayer.reset(1);
+	_werewolfLayer.reset(0);
+	_centerSalonDetailLayer.reset(0);
+	_leftSalonLayer.reset(0);
+	_upperRightSalonLayer.reset(0);
+	_rightSalonDetailLayer.reset(0);
+	_lowerSalonDetailLayer.reset(0);
+	_rightStaticSalonLayer.reset(0);
+	_elevatorLayer.reset(0);
+	_salonAnimationChannel.reset(0, kScene5110FrameMillis);
+	_upperRightSalonState = 1;
+	_rightSalonDetailDirection = 0;
+	_rightSalonDetailDwell = 0;
+	_lowerSalonDetailState = 1;
+	_leftSalonRepeatCount = 0;
+	_werewolfState = 1;
+	_centerSalonDetailRepeatCount = 0;
+	_centerSalonToggleA = false;
+	_centerSalonToggleB = false;
+	_centerSalonDetailSequenceActive = false;
+	_werewolfDialogueActive = false;
+}
+
+void Scene5110::advanceSalonAnimations(uint32 delta) {
+	const uint tickCount = _salonAnimationChannel.consumeFrames(delta);
+	for (uint tick = 0; tick < tickCount; ++tick)
+		advanceSalonAnimationTick();
+}
+
+void Scene5110::advanceSalonAnimationTick() {
+	byte nextFrame = _randomDetailLayer.frameIndex;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _randomDetailLayer.frameIndex; ++attempt)
+		nextFrame = (byte)_random.getRandomNumber(3);
+	if (nextFrame == _randomDetailLayer.frameIndex)
+		nextFrame = (_randomDetailLayer.frameIndex + 1) & 3;
+	_randomDetailLayer.setFrame(nextFrame);
+
+	if (_vm->gameState().scene5110SalonTransformState >= 2)
+		return;
+
+	advanceUpperRightSalonTick();
+	advanceRightSalonDetailTick();
+	advanceLeftSalonTick();
+	advanceLowerSalonDetailTick();
+	advanceCenterSalonTick();
+	if (_primaryDialogueSpeechActive) {
+		// The shared speech controller owns the werewolf frame while he talks.
+	} else if (_werewolfDialogueActive) {
+		advanceWerewolfDialogueTick();
 	} else {
-		if (_sceneChunkTable.isValidChunk(20))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[20], _sceneFramebuffer);
-		if (_sceneChunkTable.isValidChunk(25))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[25], _sceneFramebuffer);
-		if (activeWorldY > 0x109 && _sceneChunkTable.isValidChunk(21))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[21], _sceneFramebuffer);
+		advanceWerewolfTick(!_speechOverlay.visible && !_elevatorLayer.visible);
+	}
+	advanceCenterSalonDetailTick();
+}
+
+void Scene5110::advanceUpperRightSalonTick() {
+	switch (_upperRightSalonState) {
+	case 0:
+		if (_random.getRandomNumber(19) == 0) {
+			_upperRightSalonLayer.setFrame(5);
+			_upperRightSalonState = 3;
+		}
+		break;
+	case 1:
+		if (_upperRightSalonLayer.frameIndex != 0) {
+			_upperRightSalonLayer.setFrame(0);
+		} else if (_random.getRandomNumber(14) == 0) {
+			_upperRightSalonLayer.setFrame(1);
+		} else if (_random.getRandomNumber(24) == 0) {
+			_upperRightSalonLayer.setFrame(2);
+			_upperRightSalonState = 2;
+		}
+		break;
+	case 2:
+		if (_upperRightSalonLayer.frameIndex > 3)
+			_upperRightSalonState = 0;
+		else
+			_upperRightSalonLayer.setFrame(_upperRightSalonLayer.frameIndex + 1);
+		break;
+	case 3:
+		if (_upperRightSalonLayer.frameIndex > 7) {
+			_upperRightSalonLayer.setFrame(0);
+			_upperRightSalonState = 1;
+		} else {
+			_upperRightSalonLayer.setFrame(_upperRightSalonLayer.frameIndex + 1);
+		}
+		break;
+	default:
+		_upperRightSalonState = 1;
+		_upperRightSalonLayer.setFrame(0);
+		break;
 	}
 }
 
-void Scene5110::drawSpriteFrame(uint chunkIndex, uint descriptorCount, byte frameIndex) {
-	if (!_sceneChunkTable.isValidChunk(chunkIndex))
+void Scene5110::advanceRightSalonDetailTick() {
+	if (_rightSalonDetailDirection == 2) {
+		if (_rightSalonDetailDwell != 0 && _rightSalonDetailLayer.frameIndex < 6) {
+			_rightSalonDetailLayer.setFrame(_rightSalonDetailLayer.frameIndex + 1);
+			--_rightSalonDetailDwell;
+		} else {
+			_rightSalonDetailLayer.setFrame(_rightSalonDetailLayer.frameIndex - 1);
+			_rightSalonDetailDirection = 3;
+			_rightSalonDetailDwell = (byte)(_random.getRandomNumber(5) + 1);
+		}
+		return;
+	}
+
+	if (_rightSalonDetailDwell != 0 && _rightSalonDetailLayer.frameIndex != 0) {
+		_rightSalonDetailLayer.setFrame(_rightSalonDetailLayer.frameIndex - 1);
+		--_rightSalonDetailDwell;
+	} else {
+		_rightSalonDetailLayer.setFrame(_rightSalonDetailLayer.frameIndex + 1);
+		_rightSalonDetailDirection = 2;
+		_rightSalonDetailDwell = (byte)(_random.getRandomNumber(5) + 1);
+	}
+}
+
+void Scene5110::advanceLowerSalonDetailTick() {
+	switch (_lowerSalonDetailState) {
+	case 0:
+		if (_random.getRandomNumber(24) == 0) {
+			_lowerSalonDetailLayer.setFrame(_lowerSalonDetailLayer.frameIndex + 1);
+			_lowerSalonDetailState = 3;
+		}
+		break;
+	case 1:
+		if (_random.getRandomNumber(24) == 0) {
+			_lowerSalonDetailLayer.setFrame(1);
+			_lowerSalonDetailState = 2;
+		}
+		break;
+	case 2:
+		if (_lowerSalonDetailLayer.frameIndex > 6)
+			_lowerSalonDetailState = 0;
+		else
+			_lowerSalonDetailLayer.setFrame(_lowerSalonDetailLayer.frameIndex + 1);
+		break;
+	case 3:
+		if (_lowerSalonDetailLayer.frameIndex > 11) {
+			_lowerSalonDetailLayer.setFrame(0);
+			_lowerSalonDetailState = 1;
+		} else {
+			_lowerSalonDetailLayer.setFrame(_lowerSalonDetailLayer.frameIndex + 1);
+		}
+		break;
+	default:
+		_lowerSalonDetailState = 1;
+		_lowerSalonDetailLayer.setFrame(0);
+		break;
+	}
+}
+
+void Scene5110::advanceCenterSalonTick() {
+	if (_centerSalonToggleA)
+		_centerSalonToggleA = false;
+	else if (_random.getRandomNumber(14) == 0)
+		_centerSalonToggleA = true;
+
+	if (_centerSalonToggleB)
+		_centerSalonToggleB = false;
+	else if (_random.getRandomNumber(14) == 0)
+		_centerSalonToggleB = true;
+
+	if (_centerSalonToggleA)
+		_centerSalonLayer.setFrame(_centerSalonToggleB ? 3 : 4);
+	else
+		_centerSalonLayer.setFrame(_centerSalonToggleB ? 0 : 1);
+}
+
+void Scene5110::advanceLeftSalonTick() {
+	if (_leftSalonRepeatCount != 0) {
+		if (_leftSalonLayer.frameIndex < 16) {
+			_leftSalonLayer.setFrame(_leftSalonLayer.frameIndex + 1);
+		} else {
+			--_leftSalonRepeatCount;
+			_leftSalonLayer.setFrame(_leftSalonRepeatCount != 0 ? 1 : 0);
+		}
+		return;
+	}
+
+	if (_random.getRandomNumber(49) == 0) {
+		_leftSalonLayer.setFrame(1);
+		_leftSalonRepeatCount = (byte)(_random.getRandomNumber(4) + 1);
+	}
+}
+
+void Scene5110::advanceWerewolfTick(bool allowLongGesture) {
+	switch (_werewolfState) {
+	case 0:
+		if (_werewolfLayer.frameIndex == 10) {
+			_werewolfLayer.setFrame(6);
+		} else if (_random.getRandomNumber(14) == 0) {
+			_werewolfLayer.setFrame(10);
+		} else if (allowLongGesture && _random.getRandomNumber(39) == 0) {
+			_werewolfLayer.setFrame(11);
+			_werewolfState = 3;
+		}
+		break;
+	case 1:
+		if (_werewolfLayer.frameIndex == 1) {
+			_werewolfLayer.setFrame(0);
+		} else if (_random.getRandomNumber(14) == 0) {
+			_werewolfLayer.setFrame(1);
+		} else if (_random.getRandomNumber(39) == 0) {
+			_werewolfLayer.setFrame(2);
+			_werewolfState = 2;
+		}
+		break;
+	case 2:
+		if (_werewolfLayer.frameIndex > 4) {
+			_werewolfLayer.setFrame(6);
+			_werewolfState = 0;
+		} else {
+			_werewolfLayer.setFrame(_werewolfLayer.frameIndex + 1);
+		}
+		break;
+	case 3:
+		if (_werewolfLayer.frameIndex < 15) {
+			_werewolfLayer.setFrame(_werewolfLayer.frameIndex + 1);
+		} else {
+			_werewolfLayer.setFrame(0);
+			_werewolfState = 1;
+		}
+		break;
+	default:
+		_werewolfState = 1;
+		_werewolfLayer.setFrame(0);
+		break;
+	}
+}
+
+void Scene5110::advanceWerewolfDialogueTick() {
+	_werewolfState = 0;
+	if (_werewolfLayer.frameIndex != 6)
+		_werewolfLayer.setFrame(6);
+	else if (_random.getRandomNumber(14) == 0)
+		_werewolfLayer.setFrame(10);
+}
+
+void Scene5110::advanceCenterSalonDetailTick() {
+	if (!_centerSalonDetailSequenceActive) {
+		if (_random.getRandomNumber(49) == 0) {
+			_centerSalonDetailSequenceActive = true;
+			_centerSalonDetailLayer.setFrame(1);
+			_centerSalonDetailRepeatCount = (byte)(_random.getRandomNumber(4) + 1);
+		}
+		return;
+	}
+
+	if (_centerSalonDetailLayer.frameIndex < 7) {
+		_centerSalonDetailLayer.setFrame(_centerSalonDetailLayer.frameIndex + 1);
+		return;
+	}
+
+	_centerSalonDetailLayer.setFrame(0);
+	--_centerSalonDetailRepeatCount;
+	if (_centerSalonDetailRepeatCount == 0)
+		_centerSalonDetailSequenceActive = false;
+}
+
+void Scene5110::drawNormalRoomLayers(int activeWorldY) {
+	drawResourceSpriteLayer(_randomDetailLayer);
+	if (_vm->gameState().scene5110SalonTransformState < 2) {
+		drawResourceSpriteLayer(_upperRightSalonLayer);
+		drawResourceSpriteLayer(_rightStaticSalonLayer);
+		drawResourceSpriteLayer(_centerSalonLayer);
+		if (_werewolfLayer.frameIndex >= 3 && _werewolfLayer.frameIndex <= 13) {
+			drawResourceSpriteLayer(_werewolfLayer);
+			drawResourceSpriteLayer(_rightSalonDetailLayer);
+		} else {
+			drawResourceSpriteLayer(_rightSalonDetailLayer);
+			drawResourceSpriteLayer(_werewolfLayer);
+		}
+		drawResourceSpriteLayer(_centerSalonDetailLayer);
+		if (_sceneChunkTable.isValidChunk(20))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[20], _sceneFramebuffer);
+		if (activeWorldY > 0x109 && _sceneChunkTable.isValidChunk(21))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[21], _sceneFramebuffer);
+		drawResourceSpriteLayer(_leftSalonLayer);
+		drawResourceSpriteLayer(_lowerSalonDetailLayer);
+		return;
+	}
+
+	if (_sceneChunkTable.isValidChunk(20))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[20], _sceneFramebuffer);
+	if (_sceneChunkTable.isValidChunk(25))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[25], _sceneFramebuffer);
+	if (activeWorldY > 0x109 && _sceneChunkTable.isValidChunk(21))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[21], _sceneFramebuffer);
+}
+
+void Scene5110::drawSalonSpriteLayers() {
+	drawResourceSpriteLayer(_randomDetailLayer);
+	if (_vm->gameState().scene5110SalonTransformState >= 2)
 		return;
 
-	ResourceSpriteLayer layer;
-	layer.visible = true;
-	layer.chunkIndex = chunkIndex;
-	layer.descriptorCount = descriptorCount;
-	layer.frameIndex = frameIndex;
-	drawResourceSpriteLayer(layer);
+	drawResourceSpriteLayer(_upperRightSalonLayer);
+	drawResourceSpriteLayer(_rightStaticSalonLayer);
+	drawResourceSpriteLayer(_centerSalonLayer);
+	drawResourceSpriteLayer(_rightSalonDetailLayer);
+	drawResourceSpriteLayer(_werewolfLayer);
+	drawResourceSpriteLayer(_centerSalonDetailLayer);
+	drawResourceSpriteLayer(_leftSalonLayer);
+	drawResourceSpriteLayer(_lowerSalonDetailLayer);
+}
+
+void Scene5110::drawElevatorComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
+		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
+		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY) {
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (_sceneChunkTable.isValidChunk(20))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[20], _sceneFramebuffer);
+	drawResourceSpriteLayer(_elevatorLayer);
+	drawSalonSpriteLayers();
+}
+
+void Scene5110::updateElevatorButtonActionTargets(bool useStrip) {
+	ScenePoint interactionPoint;
+	interactionPoint.x = useStrip ? 0x084 : 0x0b4;
+	interactionPoint.y = useStrip ? 0x169 : 0x174;
+	const byte facing = useStrip ? 2 : 5;
+	_hotspots.setActionInteraction(2, interactionPoint, facing);
+	_hotspots.setActionInteraction(3, interactionPoint, facing);
+	_hotspots.setActionInteraction(4, interactionPoint, facing);
+}
+
+void Scene5110::initializeSceneItemLabels() {
+	copyStageSmallRow(13, 17);
+	if (_vm->gameState().scene5110SalonTransformState < 2) {
+		for (byte row = 13; row <= 16; ++row)
+			setStageSmallRowLabel(row, " chica del jacuzzi");
+	}
+	if (_vm->gameState().scene5110BottleState != 0)
+		copyStageSmallRow(17, kScene5110BottleSceneItem);
+}
+
+void Scene5110::copyStageSmallRow(byte sourceRow, byte destinationRow) {
+	const uint sourceOffset = (uint)sourceRow * kStage003SmallRowSize;
+	const uint destinationOffset = (uint)destinationRow * kStage003SmallRowSize;
+	if (sourceOffset + kStage003SmallRowSize > _stage003SmallRows.size() ||
+			destinationOffset + kStage003SmallRowSize > _stage003SmallRows.size())
+		return;
+
+	memcpy(_stage003SmallRows.data() + destinationOffset,
+		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
+}
+
+void Scene5110::setStageSmallRowLabel(byte row, const char *label) {
+	const uint offset = (uint)row * kStage003SmallRowSize;
+	if (offset + kStage003SmallRowSize > _stage003SmallRows.size())
+		return;
+
+	byte *destination = _stage003SmallRows.data() + offset;
+	memset(destination, 0, kStage003SmallRowSize);
+	memcpy(destination, label, MIN<uint>((uint)strlen(label), kStage003SmallRowSize - 1));
 }
 
 void Scene5110::clearSceneItemFromColorMap(byte itemId) {
@@ -580,7 +1238,8 @@ void Scene5110::clearSceneItemFromColorMap(byte itemId) {
 }
 
 void Scene5110::replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem) {
-	if (_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
+	if (_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
+			_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return;
 
 	for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
@@ -591,8 +1250,10 @@ void Scene5110::replaceColorMapItemFromOriginal(byte sourceItem, byte destinatio
 
 void Scene5110::rebuildWalkableMask() {
 	memcpy(_walkablePaletteMask.data(), _fullPaletteRegionMask.data(), _walkablePaletteMask.size());
+	const bool transformed = _vm->gameState().scene5110SalonTransformState >= 2;
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
-		if (_walkablePaletteMask[i] > 20)
+		const byte region = _walkablePaletteMask[i];
+		if (region > 20 || region == 2 || region == 5 || (!transformed && region == 4))
 			_walkablePaletteMask[i] = 0;
 	}
 }
