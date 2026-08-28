@@ -49,10 +49,15 @@ const uint kResource000HeaderByteCount = 1;
 const uint kResource000TableByteCount = 400;
 const int kResidentSoundSampleRate = 11025;
 
-// Original effect IDs 1-16; repeated entries are intentional buffer aliases.
+// Resource entries for effect IDs 1-16; repeats mirror the original buffer aliases.
 const byte kResidentSoundResourceEntries[] = {
 	0x55, 0x56, 0x57, 0x58, 0x55, 0x59, 0x55, 0x5a,
 	0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62
+};
+
+const byte kSpanishDemoResidentSoundResourceEntries[] = {
+	0x5c, 0x5c, 0x5f, 0x5f, 0x5c, 0x5c, 0x5c, 0x5f,
+	0x5f, 0x60, 0x5c, 0x5f, 0x5c, 0x5c, 0x5f, 0x5f
 };
 
 byte percentToMixerVolume(byte volumePercent) {
@@ -188,11 +193,12 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 	return true;
 }
 
-SpeechPlayer::SpeechPlayer(Common::Language language) :
+SpeechPlayer::SpeechPlayer(Common::Language language, bool enabled) :
 		_sampleRate(language == Common::IT_ITA ? kItalianSpeechSampleRate : kSpanishSpeechSampleRate),
 		_rawFlags(language == Common::IT_ITA ? Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN : Audio::FLAG_UNSIGNED),
 		_bytesPerSample(language == Common::IT_ITA ? 2 : 1),
-		_lastSampleDurationMillis(0) {
+		_lastSampleDurationMillis(0),
+		_enabled(enabled) {
 }
 
 SpeechPlayer::~SpeechPlayer() {
@@ -202,6 +208,8 @@ SpeechPlayer::~SpeechPlayer() {
 bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 	stop();
 	_lastSampleDurationMillis = 0;
+	if (!_enabled)
+		return false;
 
 	uint32 start = 0;
 	uint32 size = 0;
@@ -379,7 +387,9 @@ bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &si
 	return size != 0;
 }
 
-ResidentSoundEffectPlayer::ResidentSoundEffectPlayer() {
+ResidentSoundEffectPlayer::ResidentSoundEffectPlayer(bool useSpanishDemoLayout) :
+		_resourceEntries(useSpanishDemoLayout ?
+			kSpanishDemoResidentSoundResourceEntries : kResidentSoundResourceEntries) {
 }
 
 ResidentSoundEffectPlayer::~ResidentSoundEffectPlayer() {
@@ -451,7 +461,7 @@ bool ResidentSoundEffectPlayer::readSampleSpan(byte soundEffectId,
 		return false;
 	}
 
-	const uint tableEntry = kResidentSoundResourceEntries[soundEffectId - 1];
+	const uint tableEntry = _resourceEntries[soundEffectId - 1];
 	const uint offsetPosition = kResource000HeaderByteCount + tableEntry * 4;
 	const uint sizePosition = kResource000HeaderByteCount + kResource000TableByteCount + tableEntry * 4;
 	if (sizePosition + 4 > (uint32)file.size()) {

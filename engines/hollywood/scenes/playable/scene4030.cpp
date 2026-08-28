@@ -33,6 +33,7 @@ namespace Hollywood {
 
 const uint16 kScene4030FirstState = 0x0fbe;
 const uint16 kScene4020ReturnState = 0x0fb5;
+const uint16 kScene4010DemoReturnState = 0x0fac;
 const uint16 kScene4040FirstState = 0x0fc8;
 const uint16 kScene4030ViewportXOffset = 0x0060;
 const uint16 kScene4030ViewportMinXOffset = 0x0060;
@@ -248,7 +249,8 @@ bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(10, 0);
 		return true;
 	case 313: // Usar escalera (use stairs): return toward the moat.
-		_vm->gameState().mainFlowStateId = kScene4020ReturnState;
+		_vm->gameState().mainFlowStateId = _vm->isDemo() ?
+			kScene4010DemoReturnState : kScene4020ReturnState;
 		return true;
 	case 314: // Mirar/usar/abrir puerta (look/use/open door): punishment cell warning.
 		beginSecondarySpeechLine(11, 0);

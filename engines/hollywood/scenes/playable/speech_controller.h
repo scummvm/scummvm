@@ -33,7 +33,7 @@ namespace Hollywood {
 // Owns speech playback, subtitles, and actor speech-animation state.
 class SpeechController {
 public:
-	SpeechController(Common::Language language);
+	SpeechController(Common::Language language, bool speechEnabled = true);
 
 	void initialize(byte secondaryTextColor, byte primaryTextColor);
 	void resetRuntimeState(byte invalidPrimaryGroup, byte defaultPrimaryFrame);

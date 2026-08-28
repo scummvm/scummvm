@@ -80,7 +80,7 @@ void ChapterIntroScene::initializeChapterState() {
 	GameplayState &state = _vm->gameState();
 	state.initializeRonItemResourcePages();
 	if (!state.ronInventoryInitialized)
-		state.initializeRonInventoryItems();
+		state.initializeRonInventoryItems(_vm->isDemo());
 	state.currentInventoryOwnerIndex = 0;
 	state.activeAudioChapterIndex = activeAudioChapterIndex();
 	state.currentAmbientMusicCueId = musicCueId();

@@ -34,6 +34,7 @@
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/random.h"
@@ -73,9 +74,9 @@ bool shouldRunSceneForBootParam(int bootParam, int sceneNumber, bool &bootSceneR
 	return false;
 }
 
-void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
+void prepareGameplayStateForBootParam(GameplayState &state, int bootParam, bool demo) {
 	state.initializeRonItemResourcePages();
-	state.initializeRonInventoryItems();
+	state.initializeRonInventoryItems(demo);
 
 	switch (bootParam) {
 	case 2070:
@@ -154,6 +155,19 @@ HollywoodEngine::~HollywoodEngine() {
 	_lastGameplayThumbnail.free();
 	delete _font;
 	delete _resources;
+}
+
+void HollywoodEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	if (!isDemo())
+		return;
+
+	// The demos install only their overrides and read scene archives from CD.
+	const Common::FSNode parent = gamePath.getParent();
+	SearchMan.addSubDirectoryMatching(parent, "MONSTERS", -1);
+	if (getPlatform() == Common::kPlatformDOS)
+		SearchMan.addSubDirectoriesMatching(parent, "dos/CD/*/MONSTERS", true, -1);
+	SearchMan.addSubDirectoriesMatching(parent, "*/MONSTERS", true, -2);
 }
 
 void HollywoodEngine::captureLastGameplayThumbnail() {
@@ -269,7 +283,7 @@ Common::Error HollywoodEngine::run() {
 				return Common::kReadingFailed;
 		}
 
-		if (shouldRunSceneForBootParam(bootParam, 9110, bootSceneReached)) {
+		if (!isDemo() && shouldRunSceneForBootParam(bootParam, 9110, bootSceneReached)) {
 			Scene9110 scene9110(this);
 			if (!scene9110.play())
 				return Common::kReadingFailed;
@@ -277,11 +291,22 @@ Common::Error HollywoodEngine::run() {
 	}
 
 	if (!startupLoad) {
-		if (runGameplayScene(this, 7000) != kGameplaySceneCompleted)
+		if (isDemo()) {
+			if (bootToGameplayScene) {
+				const int initialGameplayState = gameplayStateForBootParam(bootParam);
+				gameState().mainFlowStateId = (uint16)initialGameplayState;
+				prepareGameplayStateForBootParam(gameState(), bootParam, true);
+				if (runGameplayScene(this, initialGameplayState) != kGameplaySceneCompleted)
+					return Common::kReadingFailed;
+			} else if (runGameplayScene(this, 4000) != kGameplaySceneCompleted) {
+				return Common::kReadingFailed;
+			}
+		} else if (runGameplayScene(this, 7000) != kGameplaySceneCompleted) {
 			return Common::kReadingFailed;
-		if (bootToGameplayScene && bootParam != 7000) {
+		}
+		if (!isDemo() && bootToGameplayScene && bootParam != 7000) {
 			gameState().mainFlowStateId = (uint16)gameplayStateForBootParam(bootParam);
-			prepareGameplayStateForBootParam(gameState(), bootParam);
+			prepareGameplayStateForBootParam(gameState(), bootParam, false);
 		}
 	}
 
@@ -332,8 +357,8 @@ void HollywoodEngine::syncSoundSettings() {
 	const bool globalMute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
 	const bool musicMuted = ConfMan.getBool("music_mute");
 	const bool sfxMuted = ConfMan.getBool("sfx_mute");
-	const bool speechMuted = ConfMan.getBool("speech_mute");
-	bool subtitlesEnabled = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
+	const bool speechMuted = isDemo() || ConfMan.getBool("speech_mute");
+	bool subtitlesEnabled = isDemo() || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
 	if (speechMuted && !subtitlesEnabled) {
 		ConfMan.setBool("subtitles", true);
 		subtitlesEnabled = true;
@@ -379,6 +404,10 @@ Common::Language HollywoodEngine::getLanguage() const {
 
 Common::Platform HollywoodEngine::getPlatform() const {
 	return _gameDescription->platform;
+}
+
+bool HollywoodEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
 } // End of namespace Hollywood

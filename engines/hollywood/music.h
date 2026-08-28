@@ -56,7 +56,7 @@ private:
 // RESOURCE.004 keeps one cue-table layout but changes PCM encoding by release.
 class SpeechPlayer {
 public:
-	SpeechPlayer(Common::Language language);
+	SpeechPlayer(Common::Language language, bool enabled = true);
 	~SpeechPlayer();
 
 	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
@@ -73,6 +73,7 @@ private:
 	byte _rawFlags;
 	byte _bytesPerSample;
 	uint32 _lastSampleDurationMillis;
+	bool _enabled;
 };
 
 class SoundBank0Player {
@@ -99,7 +100,7 @@ private:
 // from the streamed RESOURCE.Sxx cue banks.
 class ResidentSoundEffectPlayer {
 public:
-	ResidentSoundEffectPlayer();
+	ResidentSoundEffectPlayer(bool useSpanishDemoLayout = false);
 	~ResidentSoundEffectPlayer();
 
 	bool playSample(byte soundEffectId, byte volumePercent = 100);
@@ -113,6 +114,7 @@ private:
 	bool readSampleSpan(byte soundEffectId, uint32 &start, uint32 &size) const;
 	void stopSample(byte soundEffectId);
 
+	const byte *_resourceEntries;
 	Audio::SoundHandle _soundHandles[kSoundEffectCount];
 };
 

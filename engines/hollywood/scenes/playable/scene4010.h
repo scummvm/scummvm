@@ -29,6 +29,7 @@
 namespace Hollywood {
 
 class HollywoodEngine;
+struct Scene4010ReleaseProfile;
 
 /**
  * Switches between normal and alternate background modes at runtime. The
@@ -86,7 +87,7 @@ private:
 	void takeAnimatedItem3A();
 	void handlePendingItem3A();
 	void unlockDestinationFromRoomAction();
-	void takePillbox();
+	void takeThrownItem();
 	void ensureNormalBaseFramebuffer();
 	void applyD01BackgroundForCurrentState();
 	void copySmallRow(uint sourceOffset, uint destinationOffset);
@@ -96,6 +97,7 @@ private:
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copyStepDeltas(uint firstOffset, uint lastOffset);
 
+	const Scene4010ReleaseProfile &_releaseProfile;
 	TimedAnimationChannel _roomIdleChannel;
 	ResourceSpriteLayer _roomIdleLayer;
 	Graphics::ManagedSurface _normalBaseFramebuffer;
