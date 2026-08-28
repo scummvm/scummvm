@@ -37,7 +37,7 @@ const char *const kScene9150TextArchiveName = "RESOURCE.003";
 const uint16 kScene9150NextState = 0x2382;
 const uint kScene9150DescriptorCount = 0x1f;
 const uint kScene9150FrameIntervalMillis = 30;
-const uint kScene9150StaticSpeechTableOffset = 0x5f58;
+const uint kScene9150StaticSpeechTableOffset = 0x1135;
 
 struct Scene9150ClipStep {
 	byte chunkIndex;

@@ -108,6 +108,7 @@ private:
 	void runSueEntryPath();
 	void drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
 	void drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY);
+	void runForegroundIdleBeat();
 	void runOpeningPrelude();
 	void runCinematicSequence();
 	void initializeDialogueBranchOfficeState();
@@ -200,6 +201,9 @@ private:
 	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	SpeechPlayer _speech;
+	SoundBank0Player _effectSound;
+	SoundBank0Player _clockSound;
+	SoundBank0Player _ambientSound;
 	Common::RandomSource _random;
 	ResourceChunkTable _i10ChunkTable;
 	uint32 _resourceChunkOffsets[kResourceChunkCount];

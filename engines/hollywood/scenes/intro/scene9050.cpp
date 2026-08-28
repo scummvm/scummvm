@@ -34,9 +34,15 @@ const char *const kI05ArchiveName = "RESOURCE.I05";
 const char *const kI06ArchiveName = "RESOURCE.I06";
 const char *const kI07ArchiveName = "RESOURCE.I07";
 const char *const kI08ArchiveName = "RESOURCE.I08";
+const char *const kStage9050SoundArchiveName = "RESOURCE.S09";
 const uint16 kStage9050MusicCuePrelude = 0x000b;
 const uint16 kStage9050MusicCueMain = 0x000c;
 const byte kNoMusicCue = 0xff;
+const byte kNoSoundCue = 0xff;
+const byte kStage9050ClipSoundCue = 0x12;
+const byte kStage9050I06SoundCue = 0x13;
+const byte kStage9050FinalStartSoundCue = 0x17;
+const byte kStage9050FinalEndSoundCue = 0x18;
 const uint16 kScene9120MainFlowState = 0x23a0;
 const byte kStage9050FirstClipSegmentId = 1;
 const byte kStage9050FirstClipLastFrameIndex = 0x90;
@@ -109,6 +115,8 @@ int getStage9050ResourceI06ScrollDelta(uint frameIndex) {
 Scene9050::Scene9050(HollywoodEngine *vm) :
 		IntroSceneBase(vm, "Stage 9050"),
 		_music(),
+		_continuousSound(),
+		_effectSound(),
 		_random("hollywood_scene9050"),
 		_resources(),
 		_i05ClipFrameAccumulator(0),
@@ -134,6 +142,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_i06VerticalBobDelta(1),
 		_i06PalettePulseStepIndex(0x18),
 		_currentMusicCue(kNoMusicCue),
+		_continuousSoundCue(kNoSoundCue),
 		_i06OptionalOverlayChunk5Enabled(false),
 		_i06BaseFrameDirty(false),
 		_i06PrimarySpriteDirty(false),
@@ -143,6 +152,8 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_i06SequenceFinished(false) {
 	_paletteResource.resize(kPaletteSize);
 	_clipBaseFramebuffer.resize(kFrameBufferSize);
+	_continuousSound.setArchive(Common::Path(kStage9050SoundArchiveName));
+	_effectSound.setArchive(Common::Path(kStage9050SoundArchiveName));
 }
 
 bool Scene9050::play() {
@@ -370,6 +381,7 @@ void Scene9050::runResourceI06AnimatedPresentation() {
 	while (!_i06SequenceFinished && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
+		ensureContinuousSound(kStage9050I06SoundCue, 10);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -435,6 +447,8 @@ bool Scene9050::runResourceI06SpriteInterlude() {
 }
 
 bool Scene9050::runResourceI06Interlude(bool runScriptedSpriteSequence) {
+	stopContinuousSound();
+
 	if (clearSceneFramebufferWithCurtain())
 		return true;
 
@@ -454,6 +468,7 @@ bool Scene9050::runResourceI06Interlude(bool runScriptedSpriteSequence) {
 	while (!_i06SequenceFinished && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return true;
+		ensureContinuousSound(kStage9050I06SoundCue, 10);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -846,6 +861,20 @@ void Scene9050::markResourceI06CompositeDirty() {
 	_i06CompositeForceDirty = true;
 }
 
+void Scene9050::ensureContinuousSound(byte cueId, byte volumePercent) {
+	if (_continuousSoundCue != cueId) {
+		_continuousSound.stop();
+		_continuousSoundCue = cueId;
+	}
+	if (!_continuousSound.isPlaying())
+		_continuousSound.playSample(cueId, volumePercent);
+}
+
+void Scene9050::stopContinuousSound() {
+	_continuousSound.stop();
+	_continuousSoundCue = kNoSoundCue;
+}
+
 void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback) {
 	debugC(1, kDebugScene, "Playing Stage 9050 %s segment %u to frame %u", kI05ArchiveName, segmentId, lastFrameIndex);
 
@@ -885,6 +914,7 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 	while (frameIndex < lastFrameIndex && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -916,6 +946,9 @@ bool Scene9050::waitResourceI05ClipHold() {
 }
 
 bool Scene9050::playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback) {
+	if (_continuousSoundCue == kStage9050I06SoundCue)
+		stopContinuousSound();
+
 	if (!loadResourceI05ClipSegment(segmentId))
 		return false;
 
@@ -952,6 +985,7 @@ void Scene9050::runResourceI05InterClipRevealPhase(byte localChunkIndex) {
 	while (frameListIndex < ARRAYSIZE(kStage9050InterClipRevealFrames) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -977,6 +1011,7 @@ void Scene9050::runResourceI05InterClipReversePhase() {
 	while (frameListIndex < ARRAYSIZE(kStage9050InterClipReverseFrames) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -1010,6 +1045,8 @@ void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte
 }
 
 bool Scene9050::runResourceI08BlinkSequence() {
+	stopContinuousSound();
+
 	if (!loadResourceI08BlinkAssets())
 		return false;
 
@@ -1108,6 +1145,7 @@ bool Scene9050::runResourceI07FinalAnimation() {
 			!_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return true;
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
 
 		const uint32 now = g_system->getMillis();
 		const uint32 elapsed = now - lastFrameMillis;
@@ -1117,6 +1155,10 @@ bool Scene9050::runResourceI07FinalAnimation() {
 		if (_i06PrimarySpriteAccumulator >= 75) {
 			_i06PrimarySpriteAccumulator %= 75;
 			frameMapIndex++;
+			if (frameMapIndex == 1)
+				_effectSound.playSample(kStage9050FinalStartSoundCue, 100);
+			else if (frameMapIndex == ARRAYSIZE(kStage9050ResourceI07FinalFrameMap) - 1)
+				_effectSound.playSample(kStage9050FinalEndSoundCue, 100);
 			restoreAndDrawResourceDescriptorFrame(2, kI07FinalFrameDescriptorCount,
 				kStage9050ResourceI07FinalFrameMap[frameMapIndex], true);
 			presentFrame();
@@ -1129,12 +1171,24 @@ bool Scene9050::runResourceI07FinalAnimation() {
 }
 
 bool Scene9050::waitSceneCounterPast(uint threshold) {
-	const uint32 millis = (threshold + 1) * 1000;
-	return delay(millis);
+	uint32 remaining = (threshold + 1) * 1000;
+	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return true;
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		remaining -= slice;
+	}
+
+	return _skipRequested || Engine::shouldQuit();
 }
 
 void Scene9050::stopAudio() {
 	_music.stop();
+	stopContinuousSound();
+	_effectSound.stop();
 }
 
 } // End of namespace Hollywood

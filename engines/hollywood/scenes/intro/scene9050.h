@@ -73,6 +73,8 @@ private:
 	void advanceResourceI06VerticalBob();
 	void advanceResourceI06PalettePulse();
 	void markResourceI06CompositeDirty();
+	void ensureContinuousSound(byte cueId, byte volumePercent);
+	void stopContinuousSound();
 
 	void runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback);
 	void drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex);
@@ -107,6 +109,8 @@ private:
 	};
 
 	MusicPlayer _music;
+	SoundBank0Player _continuousSound;
+	SoundBank0Player _effectSound;
 	Common::RandomSource _random;
 	IntroResourceSet _resources;
 	Common::Array<byte> _paletteResource;
@@ -134,6 +138,7 @@ private:
 	int _i06VerticalBobDelta;
 	byte _i06PalettePulseStepIndex;
 	byte _currentMusicCue;
+	byte _continuousSoundCue;
 	bool _i06OptionalOverlayChunk5Enabled;
 	bool _i06BaseFrameDirty;
 	bool _i06PrimarySpriteDirty;
