@@ -89,7 +89,9 @@ private:
 	void advanceClock(uint32 deltaMillis);
 	byte nextFrameExcluding(byte maximumFrame, byte previousFrame);
 	void beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId, byte colorIndex,
-		uint16 centerX, uint16 topY);
+		uint16 anchorX, uint16 anchorY, bool secondaryActor);
+	void calculateSubtitleBounds(SubtitleOverlay &subtitle, int anchorX, int anchorY,
+		bool secondaryActor) const;
 	void clearSubtitles();
 	void drawFrameOverlays() override;
 	void drawSubtitle(const SubtitleOverlay &subtitle);
