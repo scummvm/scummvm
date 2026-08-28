@@ -99,7 +99,7 @@ void OverworldLogic::enter() {
 
 		for (int deltaY = -1; deltaY <= 1; ++deltaY) {
 			for (int deltaX = -1; deltaX <= 1; ++deltaX) {
-				int tile = getTileAt(_G(savegame)._overworldPos.x + deltaX, _G(savegame)._overworldPos.y + deltaY);
+				int tile = _G(map).getTileAt(_G(savegame)._overworldPos.x + deltaX, _G(savegame)._overworldPos.y + deltaY);
 				switch (tile) {
 				case Data::TILE_OCEAN:
 					_G(map)._waterCount++;
@@ -172,7 +172,7 @@ void OverworldLogic::move(Data::Direction dir) {
 bool OverworldLogic::moveCheck(Data::Direction dir) {
 	int xp = getViewportX(Data::MAP_VISIBLE_CENTER_X + DELTA_X[dir]);
 	int yp = getViewportY(Data::MAP_VISIBLE_CENTER_Y + DELTA_Y[dir]);
-	int tile = getTileAt(xp, yp);
+	int tile = _G(map).getTileAt(xp, yp);
 	int transport = _G(savegame)._transportType;
 
 	if (tile >= Data::TILE_FIRST_MONSTER && tile <= Data::TILE_LAST_MONSTER) {
@@ -239,15 +239,6 @@ int OverworldLogic::getViewportY(int yp) const {
 		y -= Data::OVERWORLD_HEIGHT;
 
 	return y;
-}
-
-int OverworldLogic::getTileAt(int x, int y, int creatureIndex) const {
-	int entityIndex = _G(savegame).getEntityAt(x, y, creatureIndex);
-
-	if (entityIndex >= 0)
-		return _G(savegame)._overworldEntities[entityIndex]._type;
-
-	return _G(map).getMapTile(x, y);
 }
 
 void OverworldLogic::impassable(int reason) {
@@ -415,7 +406,7 @@ void OverworldLogic::generateCreatures() {
 
 		x = getViewportX(xOff + Data::MAP_VISIBLE_CENTER_X);
 		y = getViewportY(yOff + Data::MAP_VISIBLE_CENTER_Y);
-		tileAtSpot = getTileAt(x, y);
+		tileAtSpot = _G(map).getTileAt(x, y);
 
 		rangeOk = _G(map).mapRangeCheckX(x) && _G(map).mapRangeCheckY(y);
 	} while (tileAtSpot != data && !rangeOk);

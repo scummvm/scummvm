@@ -67,11 +67,6 @@ private:
 	int getViewportY(int yp) const;
 
 	/**
-	 * Returns a tile or creature/entity at a given co-ordinate
-	 */
-	int getTileAt(int x, int y, int creatureIndex = 1) const;
-
-	/**
 	 * Impassable tile
 	 */
 	void impassable(int reason);

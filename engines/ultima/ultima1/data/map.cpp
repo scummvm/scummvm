@@ -186,6 +186,15 @@ int Map::getMapTile(int x, int y) const {
 	return tile;
 }
 
+int Map::getTileAt(int x, int y, int creatureIndex) const {
+	int entityIndex = _G(savegame).getEntityAt(x, y, creatureIndex);
+
+	if (entityIndex >= 0)
+		return _G(savegame)._overworldEntities[entityIndex]._type;
+
+	return _G(map).getMapTile(x, y);
+}
+
 int Map::getContinentAt(int x, int y) const {
 	assert(_currentMap == MAP_OVERWORLD);
 	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);

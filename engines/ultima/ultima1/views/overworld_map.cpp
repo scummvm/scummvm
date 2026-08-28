@@ -106,7 +106,7 @@ void OverworldMap::prepareMapForDrawing() {
 			int x = mapLeft + ox;
 			int y = mapTop + oy;
 
-			map._mapTilesId[oy][ox] = map[y][x];
+			map._mapTilesId[oy][ox] = _G(map).getTileAt(x, y);
 		}
 	}
 
