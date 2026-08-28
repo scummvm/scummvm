@@ -70,9 +70,9 @@ bool SmushPlayer::loadFile(const Common::String &filename) {
 		success = _theoraDecoder->loadFile(theoraFilename);
 		_videoDecoder = _theoraDecoder;
 		_currentVideoIsTheora = true;
-#else
-		success = false;
 #endif
+		if (!success)
+			warning("Could not load the video %s", filename.c_str());
 	} else {
 		_videoDecoder = _smushDecoder;
 		_currentVideoIsTheora = false;
