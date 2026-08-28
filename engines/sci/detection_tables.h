@@ -6209,6 +6209,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
 
+	// Space Quest 4 - German DOS EGA (3.5" 720k disks)
+	{"sq4", "EGA", {
+		{"resource.map", 0, "ff439d1737393322e0e86044e32605d9", 5967},
+		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 249229},
+		{"resource.001", 0, "d415a412ba05c7f7ee0dd4da47dc6362", 353099},
+		{"resource.002", 0, "a836bd3bc9574f2371f8b6f74a082313", 680309},
+		{"resource.003", 0, "bba9d6e685809fb7e482c9b33c1cac3f", 665548},
+		{"resource.004", 0, "561fa58110dad6966467fa28e299679f", 632261},
+		{"resource.005", 0, "5b541ef2feb38b999cc331b5e4b6df8a", 614232},
+		{"resource.006", 0, "98cd75300311674e893d343ba15927f5", 528646},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
+
 	// Space Quest 4 - Italian DOS Floppy (from glorifindel, also includes english language)
 	// SCI interpreter version 1.000.200 (just a guess)
 	{"sq4", "", {
