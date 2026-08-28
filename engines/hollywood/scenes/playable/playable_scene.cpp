@@ -149,7 +149,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_panelArt(vm->getLanguage()),
 		_random(Common::String::format("scene%u", config.sceneId)),
 		_animationPlayer(*this),
-		_speechController(),
+		_speechController(vm->getLanguage()),
 		_speech(_speechController.player),
 		_speechOverlay(_speechController.secondaryOverlay),
 		_primarySpeechOverlay(_speechController.primaryOverlay),
