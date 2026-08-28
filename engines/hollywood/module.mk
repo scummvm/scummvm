@@ -3,6 +3,7 @@ MODULE := engines/hollywood
 MODULE_OBJS = \
 	console.o \
 	font.o \
+	game_strings.o \
 	gameplay/actor_renderer.o \
 	gameplay/cursor.o \
 	gameplay/dialogue_menu.o \

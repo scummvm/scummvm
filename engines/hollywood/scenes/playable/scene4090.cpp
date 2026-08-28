@@ -21,6 +21,7 @@
 
 #include "hollywood/scenes/playable/scene4090.h"
 
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
@@ -72,7 +73,6 @@ const byte kScene4090FinalPrimarySpeechAlternateGroup = 1;
 const uint kScene4090FinalPrimarySpeechFramesPerGroup = 5;
 const uint32 kScene4090FinalRoomOverlayHoldFrames = 100;
 const int kScene4090ForegroundActorThresholdY = 0x0172;
-const char *const kScene4090WideCoffinName = " ata\xa3""d ancho";
 
 enum Scene4090AnimationHookId {
 	kScene4090OrganOverlayHook = 1,
@@ -291,7 +291,7 @@ bool Scene4090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (_vm->gameState().scene4090WideCoffinVariant != 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4090AlternatePatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4090AlternatePatchChunk], _baseFramebuffer);
-		setSmallRowText(3, kScene4090WideCoffinName);
+		setSmallRowText(3, getGameStrings(_vm->getLanguage()).wideCoffinName);
 		replaceColorMapItemFromOriginal(5, 3);
 	} else {
 		replaceColorMapItemFromOriginal(5, 0);

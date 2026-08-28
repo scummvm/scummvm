@@ -23,6 +23,7 @@
 #define HOLLYWOOD_GAMEPLAY_PANEL_ART_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -40,7 +41,7 @@ struct GameplayState;
 
 class GameplayPanelArt {
 public:
-	GameplayPanelArt();
+	GameplayPanelArt(Common::Language language);
 
 	bool load();
 	bool isLoaded() const { return _loaded; }
@@ -80,6 +81,7 @@ private:
 	Common::Array<byte> _dialogueMenuPanelBuffer;
 	Common::Array<byte> _objectPaletteTriples;
 	mutable Common::Array<Common::Array<byte> > _inventoryItemTilePages;
+	Common::Language _language;
 	uint32 _inventoryItemPageBaseOffset;
 	bool _loaded;
 };

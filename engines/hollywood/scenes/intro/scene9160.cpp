@@ -38,7 +38,6 @@ const uint kScene9160PanelWidth = 640;
 const uint kScene9160PanelHeight = 0x200;
 const uint kScene9160PanelSize = kScene9160PanelWidth * kScene9160PanelHeight;
 const uint kScene9160FirstOverlayChunk = 3;
-const uint kScene9160LastOverlayChunk = 24;
 const uint kScene9160WaitMillis = 8000;
 const uint kScene9160ScrollFrameMillis = 50;
 
@@ -53,6 +52,7 @@ Scene9160::Scene9160(HollywoodEngine *vm) :
 		_paletteResource(),
 		_panelA(),
 		_panelB(),
+		_lastOverlayChunk(0),
 		_rowOffset(0) {
 	_paletteResource.resize(kPaletteSize);
 }
@@ -68,7 +68,7 @@ bool Scene9160::play() {
 	fadeInPalette();
 
 	uint currentChunk = 4;
-	while (currentChunk <= kScene9160LastOverlayChunk && !_skipRequested && !Engine::shouldQuit()) {
+	while (currentChunk <= _lastOverlayChunk && !_skipRequested && !Engine::shouldQuit()) {
 		if (waitBeforeScroll())
 			break;
 		scrollCreditsPanel();
@@ -76,7 +76,7 @@ bool Scene9160::play() {
 			break;
 
 		prepareNextPair(currentChunk);
-		if (currentChunk < kScene9160LastOverlayChunk)
+		if (currentChunk < _lastOverlayChunk)
 			++currentChunk;
 		else
 			break;
@@ -100,7 +100,16 @@ bool Scene9160::load() {
 	if (!_resources.loadChunkTable(kScene9160ArchiveName))
 		return false;
 
-	if (!_resources.validateChunkRange(kScene9160ArchiveName, _debugName, 0, kScene9160LastOverlayChunk))
+	_lastOverlayChunk = 2;
+	while (_lastOverlayChunk + 1 < IntroResourceSet::kResourceChunkCount &&
+			_resources.chunkTable.isValidChunk(_lastOverlayChunk + 1))
+		++_lastOverlayChunk;
+	if (_lastOverlayChunk < 4) {
+		warning("%s is missing the initial %s credit overlays", kScene9160ArchiveName, _debugName);
+		return false;
+	}
+
+	if (!_resources.validateChunkRange(kScene9160ArchiveName, _debugName, 0, _lastOverlayChunk))
 		return false;
 
 	if (!loadVariableChunk(0, _panelA) ||
@@ -111,8 +120,8 @@ bool Scene9160::load() {
 	sanitizePanel(_panelA);
 	sanitizePanel(_panelB);
 
-	_resources.allocateArena(_resources.totalChunkSize(kScene9160FirstOverlayChunk, kScene9160LastOverlayChunk));
-	for (uint i = kScene9160FirstOverlayChunk; i <= kScene9160LastOverlayChunk; ++i) {
+	_resources.allocateArena(_resources.totalChunkSize(kScene9160FirstOverlayChunk, _lastOverlayChunk));
+	for (uint i = kScene9160FirstOverlayChunk; i <= _lastOverlayChunk; ++i) {
 		if (!loadArenaChunk(i))
 			return false;
 	}
@@ -162,7 +171,7 @@ void Scene9160::copyPanelToFramebuffer(const Common::Array<byte> &panel, int yOf
 }
 
 void Scene9160::drawOverlayChunk(uint chunkIndex, int yOffset) {
-	if (chunkIndex < kScene9160FirstOverlayChunk || chunkIndex > kScene9160LastOverlayChunk)
+	if (chunkIndex < kScene9160FirstOverlayChunk || chunkIndex > _lastOverlayChunk)
 		return;
 
 	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
@@ -184,7 +193,7 @@ void Scene9160::prepareNextPair(uint currentChunk) {
 	drawOverlayChunk(currentChunk, 0);
 
 	const uint nextChunk = currentChunk + 1;
-	if (nextChunk <= kScene9160LastOverlayChunk) {
+	if (nextChunk <= _lastOverlayChunk) {
 		copyPanelToFramebuffer(currentIsEven ? _panelA : _panelB, kScene9160PanelHeight);
 		drawOverlayChunk(nextChunk, kScene9160PanelHeight);
 	}

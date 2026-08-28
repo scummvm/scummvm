@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
@@ -96,9 +97,6 @@ const uint16 kPanelVerbStripXOffsets[9] = {
 const uint16 kPanelVerbStripLabelCenters[9] = {
 	0, 0, 0x33, 0x8c, 0xe5, 0x13f, 0x199, 499, 0x24c
 };
-const char *const kPanelVerbStripLabels[9] = {
-	"", "", "Hablar", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar"
-};
 
 struct InventoryItemPageMapEntry {
 	byte itemId;
@@ -137,7 +135,8 @@ const InventoryItemPageMapEntry kSueInventoryItemPageMap[] = {
 	{ 0x22, 0x7b }
 };
 
-GameplayPanelArt::GameplayPanelArt() :
+GameplayPanelArt::GameplayPanelArt(Common::Language language) :
+		_language(language),
 		_inventoryItemPageBaseOffset(0),
 		_loaded(false) {
 }
@@ -562,7 +561,7 @@ void GameplayPanelArt::drawVerbStripLabels(Graphics::Surface &surface, int scree
 	font->setShadowColor(0);
 	const int textY = screenY + kPanelVerbStripTextYInBuffer;
 	for (byte stripIndex = 2; stripIndex <= 8; ++stripIndex) {
-		const Common::String text(kPanelVerbStripLabels[stripIndex]);
+		const Common::String text(getGameStrings(_language).panelVerbLabels[stripIndex]);
 		const int textWidth = font->getStringWidth(text) + 2;
 		const int x = MAX<int>(0, (int)kPanelVerbStripLabelCenters[stripIndex] - textWidth / 2);
 		font->drawString(&surface, text, x, textY, textWidth, kPanelVerbLabelColor,

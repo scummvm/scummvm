@@ -29,6 +29,7 @@
 #include "graphics/pixelformat.h"
 
 #include "hollywood/font.h"
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -765,13 +766,14 @@ byte Scene5130::actionAtCursor() const {
 }
 
 Common::String Scene5130::captionForAction(byte actionId) const {
+	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
 	switch (actionId) {
 	case kScene5130ActionChangeDrink:
-		return Common::String(" Cambiar bebida");
+		return Common::String(strings.changeDrink);
 	case kScene5130ActionOpenTap:
-		return Common::String(" Abrir grifo");
+		return Common::String(strings.openTap);
 	case kScene5130ActionExit:
-		return Common::String(" Dejar de hacer cocteles");
+		return Common::String(strings.stopMakingCocktails);
 	default:
 		return Common::String();
 	}

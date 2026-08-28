@@ -33,7 +33,11 @@ namespace Hollywood {
 
 const char *const kExecutableName = "MONSTERS.EXE";
 const char *const kResource000Name = "RESOURCE.000";
-const uint32 kOriginalCharacterMapVa = 0x00501540;
+const uint32 kKnownCharacterMapVas[] = {
+	0x00501540, // Later Spanish Windows release
+	0x004fe60c, // First Spanish Windows release
+	0x00503ff8  // Italian Windows release
+};
 const uint kCharacterMapSize = 0x100;
 const uint kResource000HeaderByteCount = 1;
 const uint kResource000OffsetTableSize = 400;
@@ -43,7 +47,7 @@ const uint kGlyphDescriptorSize = 5;
 const byte kFontSpaceGlyph = 0xfe;
 const byte kFontUnsupportedGlyph = 0xff;
 const int kOriginalSpeechLineHeight = 20;
-const byte kFallbackSpanishCharacterMap[kCharacterMapSize] = {
+const byte kFallbackCharacterMap[kCharacterMapSize] = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xfe, 0x53, 0xff, 0x59, 0xff, 0x5a, 0xff, 0xff, 0x44, 0x45, 0xff, 0x47, 0x4d, 0x46, 0x4f, 0x4b,
@@ -211,22 +215,21 @@ const HollywoodFont::GlyphDescriptor *HollywoodFont::getGlyph(uint32 chr) const 
 
 bool HollywoodFont::loadCharacterMap(const Common::Path &exeName) {
 	_characterMap.resize(kCharacterMapSize);
-	if (!readPeDataAtVa(exeName, kOriginalCharacterMapVa, _characterMap)) {
-		debugC(1, kDebugResources, "Using built-in Hollywood font character map; %s is not a PE resource source",
-			exeName.toString().c_str());
-		loadFallbackCharacterMap();
-	} else if (!isValidCharacterMap(_characterMap)) {
-		warning("Ignoring invalid Hollywood font character map in %s; using built-in map",
-			exeName.toString().c_str());
-		loadFallbackCharacterMap();
+	for (uint i = 0; i < sizeof(kKnownCharacterMapVas) / sizeof(kKnownCharacterMapVas[0]); ++i) {
+		if (readPeDataAtVa(exeName, kKnownCharacterMapVas[i], _characterMap) &&
+				isValidCharacterMap(_characterMap))
+			return true;
 	}
 
+	debugC(1, kDebugResources, "Using built-in Hollywood font character map for %s",
+		exeName.toString().c_str());
+	loadFallbackCharacterMap();
 	return true;
 }
 
 void HollywoodFont::loadFallbackCharacterMap() {
 	_characterMap.resize(kCharacterMapSize);
-	memcpy(_characterMap.data(), kFallbackSpanishCharacterMap, kCharacterMapSize);
+	memcpy(_characterMap.data(), kFallbackCharacterMap, kCharacterMapSize);
 }
 
 bool HollywoodFont::isValidCharacterMap(const Common::Array<byte> &characterMap) const {

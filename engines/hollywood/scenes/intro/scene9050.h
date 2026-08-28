@@ -93,7 +93,6 @@ private:
 	void stopAudio() override;
 
 	enum {
-		kI05EntriesPerSegment = 6,
 		kI06RequiredChunkCount = 6,
 		kI08RequiredChunkCount = 3,
 		kI07RequiredChunkCount = 3,
@@ -115,6 +114,7 @@ private:
 	IntroResourceSet _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _clipBaseFramebuffer;
+	uint32 _i05ClipChunkSize;
 	uint32 _i05ClipFrameAccumulator;
 	uint32 _i05InterClipAccumulator;
 	uint32 _i08BlinkAccumulator;
@@ -139,6 +139,7 @@ private:
 	byte _i06PalettePulseStepIndex;
 	byte _currentMusicCue;
 	byte _continuousSoundCue;
+	byte _i05EntriesPerSegment;
 	bool _i06OptionalOverlayChunk5Enabled;
 	bool _i06BaseFrameDirty;
 	bool _i06PrimarySpriteDirty;
