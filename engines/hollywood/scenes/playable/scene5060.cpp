@@ -32,16 +32,36 @@ const uint kScene5060ActorBankTableEntry = 0x0000;
 const uint kScene5060ActorPaletteTableEntry = 0x00cc;
 const uint32 kScene5060SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene5060FrameMillis = 75;
-const uint32 kScene5060MineCartFrameMillis = 50;
+const uint32 kScene5060MineCartFrameMillis = 40;
+const uint32 kScene5060GasSpeechFrameMillis = 125;
 const uint kScene5060MineCartDescriptorCount = 0x63;
+const uint kScene5060GasDescriptorCount = 0x1a;
 const uint kScene5060RockPickupDescriptorCount = 0x0e;
 const byte kScene5060RockSceneItem = 4;
 const byte kScene5060RockInventoryItem = 0x4e;
 const byte kScene5060GasSourceInventoryItem = 0x1c;
 const byte kScene5060GasFilledInventoryItem = 0x4d;
+const byte kScene5060GasSpeechBaseFrame = 6;
+const byte kScene5060GasSpeechFrameCount = 4;
+
+enum Scene5060AnimationHookId {
+	kScene5060GasSpeechHook = 1,
+	kScene5060MineCartStopRumbleHook,
+	kScene5060RockBackgroundPatchHook
+};
 
 const byte kScene5060RockPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+const byte kScene5060GasFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 25, 24, 23, 22, 21, 19,
+	18, 8, 9, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
+	17, 17, 18, 19, 20, 21, 22, 23, 24, 25, 4, 3, 2, 1, 0
+};
+
+const byte kScene5060AmbientSoundVolumes[] = {
+	10, 10, 10, 2, 10, 10, 10, 100
 };
 
 static Common::Array<byte> sequentialFrameMap(uint frameCount) {
@@ -65,7 +85,8 @@ PlayableSceneConfig scene5060Config() {
 }
 
 Scene5060::Scene5060(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5060Config()) {
+		PlayableScene(vm, scene5060Config()),
+		_mineCartRumbleActive(false) {
 }
 
 void Scene5060::initializeCustomPreviewState() {
@@ -86,12 +107,21 @@ void Scene5060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene5060::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene5060::runCustomEntrySequence() {
 	setActiveActorPose(0x2d9, 0x19b, 4);
 	drawPlayableComposite();
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 
+	ensureAmbientSoundCuePlaying(1, 0x1b, 2);
+	_mineCartRumbleActive = true;
+	_soundBank0.playSample(0x18, 100);
 	runMineCartEntryClip();
+	_mineCartRumbleActive = false;
 	walkActiveActorTo(0x1fe, 0x17c, 4, 0, false);
 
 	GameplayState &state = _vm->gameState();
@@ -102,8 +132,11 @@ void Scene5060::runCustomEntrySequence() {
 }
 
 bool Scene5060::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+	(void)delta;
+	ensureAmbientSoundCuePlaying(1, 0x1b, 2);
+	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
+		_soundBank0.playSample(0x18, 100);
+	return false;
 }
 
 bool Scene5060::dispatchCustomSceneAction(uint16 handlerId) {
@@ -135,6 +168,56 @@ bool Scene5060::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+bool Scene5060::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	if (_activeActorDrawOrderMode < 3)
+		targetX = CLIP<int>(targetX, 0x08b, 0x1c2);
+	else
+		targetX = MAX<int>(targetX, 0x0d4);
+	targetX = MIN<int>(targetX, HollywoodEngine::kSceneBufferWidth - 1);
+	targetY = CLIP<int>(targetY, 0, 0x1df);
+
+	if (targetY < 0x1df)
+		++targetY;
+	while (targetY < 0x1df && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+		--targetY;
+	return true;
+}
+
+bool Scene5060::customizeRouteSegment(byte currentRegion, byte nextRegion,
+		const ActorPathBuildState &state, const ScenePoint &boundary,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if ((currentRegion == 3 && nextRegion == 4) ||
+			(currentRegion == 4 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 8)) {
+		for (uint offset = 0; offset <= 0x0b; ++offset)
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 0;
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	if ((currentRegion == 7 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 4) ||
+			(currentRegion == 4 && nextRegion == 3) ||
+			(currentRegion == 3 && nextRegion == 1)) {
+		for (uint offset = 0x24; offset <= 0x2f; ++offset)
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 3;
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	return false;
+}
+
 bool Scene5060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (_paletteMaskOriginal.empty())
 		return true;
@@ -144,7 +227,8 @@ bool Scene5060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	const GameplayState &state = _vm->gameState();
-	if ((selector == 1 || selector == 0xff) && (state.scene5060RockTaken || hasInventoryItem(kScene5060RockInventoryItem))) {
+	if ((selector == 1 || selector == 0xff) &&
+			(state.scene5060RockTaken || hasInventoryItem(kScene5060RockInventoryItem))) {
 		if (_sceneChunkTable.isValidChunk(8))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5060RockSceneItem);
@@ -156,14 +240,31 @@ bool Scene5060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5060::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
+	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
+}
+
+byte Scene5060::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	if (cueId >= 0x0d && cueId <= 0x14)
+		return kScene5060AmbientSoundVolumes[cueId - 0x0d];
+	return defaultVolumePercent;
+}
+
+bool Scene5060::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5060::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
 }
 
 void Scene5060::runMineCartEntryClip() {
 	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5060MineCartDescriptorCount);
 	runActorReplacement(ActionOverlaySpec(5, kScene5060MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5060MineCartFrameMillis)
-		.soundAt(0x3c, 0x16));
+		.startAt(1)
+		.soundAt(0x3c, 0x16)
+		.hookAt(0x3c, kScene5060MineCartStopRumbleHook)
+		.noFinalFrameDelay());
 }
 
 void Scene5060::runExitToMineSwitches() {
@@ -181,22 +282,25 @@ void Scene5060::runRockPickup() {
 
 	runActorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
 		kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
-		.patchAt(6, 1));
-	addInventoryItem(kScene5060RockInventoryItem);
-	_soundBank0.playSample(1, 100);
+		.startAt(1)
+		.hookAt(6, kScene5060RockBackgroundPatchHook)
+		.noFinalFrameDelay());
 	state.scene5060RockTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
+	addInventoryItem(kScene5060RockInventoryItem);
+	_soundBank0.playSample(1, 100);
 }
 
 void Scene5060::runGasInventoryAction() {
 	GameplayState &state = _vm->gameState();
 	if (!state.scene5060GasSmelled) {
-		beginSecondarySpeechLine(1, 1);
+		beginSecondarySpeechLine(1, 0);
 		state.scene5060GasSmelled = true;
 	}
 
-	const byte sourceItem = _lastInventoryPrimaryItemId != 0 ? _lastInventoryPrimaryItemId : kScene5060GasSourceInventoryItem;
-	if (sourceItem == kScene5060GasFilledInventoryItem || hasInventoryItem(kScene5060GasFilledInventoryItem)) {
+	const byte sourceItem = _lastInventoryPrimaryItemId != 0 ?
+		_lastInventoryPrimaryItemId : kScene5060GasSourceInventoryItem;
+	if (sourceItem == kScene5060GasFilledInventoryItem) {
 		beginSecondarySpeechLine(4, 0);
 		return;
 	}
@@ -205,10 +309,62 @@ void Scene5060::runGasInventoryAction() {
 		return;
 	}
 
-	beginSecondarySpeechLine(3, 0);
+	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
+		kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
+		.frameRange(1, 6)
+		.hookAt(5, kScene5060GasSpeechHook)
+		.noFinalFrameDelay()
+		.noRedrawAtEnd());
+	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
+		kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
+		.startAt(10)
+		.noFinalFrameDelay());
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
 	removeInventoryItem(sourceItem);
 	addInventoryItem(kScene5060GasFilledInventoryItem);
 	_soundBank0.playSample(1, 100);
+}
+
+byte Scene5060::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5060GasSpeechBaseFrame;
+}
+
+byte Scene5060::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5060GasSpeechFrameCount;
+}
+
+uint32 Scene5060::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5060GasSpeechFrameMillis;
+}
+
+void Scene5060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	(void)animationGroup;
+	_actionOverlayPlayer.setFrame(frameIndex);
+}
+
+void Scene5060::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
+
+	switch (hookId) {
+	case kScene5060GasSpeechHook:
+		beginPrimarySpeechLine(3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f);
+		return;
+	case kScene5060MineCartStopRumbleHook:
+		_mineCartRumbleActive = false;
+		return;
+	case kScene5060RockBackgroundPatchHook:
+		if (_sceneChunkTable.isValidChunk(8))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
+		return;
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		return;
+	}
 }
 
 void Scene5060::rebuildWalkableMask() {
