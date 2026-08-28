@@ -40,27 +40,43 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();
 	void runBookPickup();
-	void runSofaOverlaySpeech();
+	void runWardrobeAttempt();
 	void runPassageSideSwitch();
 	void handleStairDoorBarrier();
 	void handleStairDoorConstruction();
+	void handleStairDoorUseOrOpen();
+	void handleStairDoorClose();
 	void handlePassageUnlock();
 	void switchActiveActorBankForCurrentSide();
 	void rebuildWalkableMaskForCurrentSide();
+	void updateSceneActorDepthAndPalette(byte facing, int worldX, int worldY);
 	void clearSceneItemFromColorMap(byte itemId);
 	void remapSceneItemInColorMap(byte fromItemId, byte toItemId);
 	void remapActorDepthClass(byte fromClass, byte toClass);
+	void copyRouteStepDeltas(uint destinationFirst, const byte *source, uint sourceSize, uint sourceFirst);
 	void copyStepDeltasForCurrentSide();
+
+	ResourceSpriteLayer _mineCartLayer;
+	bool _mineCartRumbleActive;
 };
 
 } // End of namespace Hollywood
