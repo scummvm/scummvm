@@ -1256,8 +1256,8 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	bool useOriginal = _clippingArea.contains(Common::Rect(x, y, x + w + 1, y + h + 1));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
-		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h
 		&& h > (Base::_shadowOffset + 1) * 2) {
 		if (useOriginal) {
 			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset, Base::_shadowIntensity);
