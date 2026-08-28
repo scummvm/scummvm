@@ -67,6 +67,7 @@ const int kScene9090SecondaryActorY = 0x172;
 const uint kScene9090PrimaryFrameMillis = 125;
 const uint kScene9090SecondaryFrameMillis = 150;
 const uint kScene9090TurnFrameMillis = 60;
+const int kScene9090SecondarySpeechYOffsetBias = 0xbe;
 
 const byte kScene9090TurnCelByFacing[] = { 12, 12, 12, 1, 12, 2 };
 
@@ -79,8 +80,8 @@ enum Scene9090Speaker {
 struct Scene9090SpeechStep {
 	byte frameIndex;
 	Scene9090Speaker speaker;
-	uint16 centerX;
-	uint16 topY;
+	uint16 anchorX;
+	uint16 anchorY;
 	byte colorIndex;
 	byte red;
 	byte green;
@@ -94,11 +95,14 @@ const byte kScene9090NoTurn = 0xff;
 
 const Scene9090SpeechStep kScene9090SpeechSteps[] = {
 	{ 0, kScene9090DeskSpeaker,      0x078, 0x0aa, kScene9090PrimarySpeechColor,   0x00, 0x26, 0x3f, true,  kScene9090NoTurn, 0 },
-	{ 1, kScene9090SecondarySpeaker, 0x276, 0x10c, kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
+	{ 1, kScene9090SecondarySpeaker, kScene9090SecondaryActorX, kScene9090SecondaryActorY,
+		kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
 	{ 2, kScene9090InsetSpeaker,     0x0c0, 0x0c8, kScene9090PrimarySpeechColor,   0x3f, 0x3f, 0x3f, true,  4,                  0 },
-	{ 3, kScene9090SecondarySpeaker, 0x276, 0x10c, kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
+	{ 3, kScene9090SecondarySpeaker, kScene9090SecondaryActorX, kScene9090SecondaryActorY,
+		kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
 	{ 4, kScene9090DeskSpeaker,      0x078, 0x0aa, kScene9090PrimarySpeechColor,   0x00, 0x26, 0x3f, true,  5,                  1 },
-	{ 5, kScene9090SecondarySpeaker, 0x276, 0x10c, kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
+	{ 5, kScene9090SecondarySpeaker, kScene9090SecondaryActorX, kScene9090SecondaryActorY,
+		kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
 	{ 6, kScene9090InsetSpeaker,     0x0c0, 0x0c8, kScene9090PrimarySpeechColor,   0x3f, 0x3f, 0x3f, true,  kScene9090NoTurn, 0 },
 	{ 7, kScene9090DeskSpeaker,      0x078, 0x0aa, kScene9090PrimarySpeechColor,   0x00, 0x26, 0x3f, true,  kScene9090NoTurn, 0 }
 };
@@ -611,7 +615,7 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 			SubtitleOverlay &subtitle = step.speaker == kScene9090SecondarySpeaker ?
 				_secondarySubtitle : _primarySubtitle;
 			beginSubtitle(subtitle, textRecordIds[i] + segment, step.colorIndex,
-				step.centerX, step.topY);
+				step.anchorX, step.anchorY, step.speaker == kScene9090SecondarySpeaker);
 
 			SpeechPlayer &player = step.speaker == kScene9090SecondarySpeaker ?
 				_secondarySpeech : _primarySpeech;
@@ -815,7 +819,7 @@ byte Scene9090::nextFrameExcluding(byte maximumFrame, byte previousFrame) {
 }
 
 void Scene9090::beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId,
-		byte colorIndex, uint16 centerX, uint16 topY) {
+		byte colorIndex, uint16 anchorX, uint16 anchorY, bool secondaryActor) {
 	subtitle.visible = false;
 	subtitle.lines.clear();
 	if (!_vm->subtitlesEnabled() || !_vm->font() || !_vm->font()->isLoaded())
@@ -826,10 +830,29 @@ void Scene9090::beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId,
 		return;
 
 	subtitle.colorIndex = colorIndex;
-	subtitle.centerX = centerX;
-	subtitle.topY = topY;
-	wrapSubtitleText(text, centerX, subtitle.lines);
+	wrapSubtitleText(text, anchorX, subtitle.lines);
+	calculateSubtitleBounds(subtitle, anchorX, anchorY, secondaryActor);
 	subtitle.visible = !subtitle.lines.empty();
+}
+
+void Scene9090::calculateSubtitleBounds(SubtitleOverlay &subtitle, int anchorX, int anchorY,
+		bool secondaryActor) const {
+	uint textWidth = 0;
+	for (uint i = 0; i < subtitle.lines.size(); ++i)
+		textWidth = MAX<uint>(textWidth, subtitleTextWidth(subtitle.lines[i]));
+
+	int centerX = anchorX;
+	if (((centerX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e)
+		centerX = (textWidth & 1) == 0 ? 0x27e - (textWidth >> 1) : 0x27d - (textWidth >> 1);
+	if (centerX - (int)(textWidth >> 1) < 1)
+		centerX = (textWidth >> 1) + 1;
+
+	int topY = anchorY - (int)subtitle.lines.size() * kScene9090SpeechLineHeight;
+	if (secondaryActor)
+		topY -= kScene9090SecondarySpeechYOffsetBias;
+
+	subtitle.centerX = (uint16)centerX;
+	subtitle.topY = (uint16)MAX(1, topY);
 }
 
 void Scene9090::clearSubtitles() {
