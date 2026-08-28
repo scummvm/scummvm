@@ -211,6 +211,14 @@ void SceneHotspotTable::setActionTarget(byte itemId, const ScenePoint &interacti
 	_actionTargets[itemId].approachPoint = approachPoint;
 }
 
+void SceneHotspotTable::setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing) {
+	if (itemId >= _actionTargets.size())
+		return;
+
+	_actionTargets[itemId].interactionPoint = interactionPoint;
+	_actionTargets[itemId].facing = facing;
+}
+
 void SceneHotspotTable::setVerbActionHandlerByGlobalRecordIndex(uint globalRecordIndex, uint16 actionHandlerId) {
 	if (globalRecordIndex < _verbActionRecords.size())
 		_verbActionRecords[globalRecordIndex].actionHandlerId = actionHandlerId;
