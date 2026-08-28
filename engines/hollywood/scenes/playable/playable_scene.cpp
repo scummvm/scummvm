@@ -146,6 +146,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_routeSteps(_pathController.routeSteps),
 		_actorPathFrames(_pathController.frames),
 		_actorPathStepDeltas(_pathController.stepDeltas),
+		_panelArt(vm->getLanguage()),
 		_random(Common::String::format("scene%u", config.sceneId)),
 		_animationPlayer(*this),
 		_speechController(),

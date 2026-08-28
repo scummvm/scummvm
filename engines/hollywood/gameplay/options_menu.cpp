@@ -33,6 +33,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -43,9 +44,6 @@ const char *const kOptionsExecutableName = "MONSTERS.EXE";
 const char *const kOptionsResource000Name = "RESOURCE.000";
 const char *const kOptionsPaletteResourceType = "PALETA_OBJ_INT";
 const char *const kOptionsPaletteResourceName = "obj_pal";
-const char kOptionsQuitPromptText[] = "\xa8" "Est\xa0s seguro?";
-const char kOptionsQuitYesText[] = "S";
-const char kOptionsQuitNoText[] = "N";
 const uint kOptionsResource000HeaderByteCount = 1;
 const uint kOptionsResource000OffsetTableSize = 400;
 const uint kOptionsResource000SizeTableSize = 400;
@@ -807,21 +805,22 @@ void GameplayOptionsMenu::drawGameplayPreview() {
 
 void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	GameplayState &state = _vm->gameState();
+	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
 
-	drawText(surface, "Salvar", 0x1d1, 0xd7, kOptionsTextActiveColor, true);
-	drawText(surface, "Cargar", 0x22e, 0xd7, kOptionsTextActiveColor, true);
-	drawText(surface, "Salir", 0x1d1, 0xf4, kOptionsTextActiveColor, true);
-	drawText(surface, "Jugar", 0x22e, 0xf4, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsSave, 0x1d1, 0xd7, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsLoad, 0x22e, 0xd7, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsQuit, 0x1d1, 0xf4, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsPlay, 0x22e, 0xf4, kOptionsTextActiveColor, true);
 
-	drawText(surface, state.musicEnabled ? "Musica ON" : "Musica OFF", 0x2a3, 0x20,
+	drawText(surface, state.musicEnabled ? strings.optionsMusicOn : strings.optionsMusicOff, 0x2a3, 0x20,
 		state.musicEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
-	drawText(surface, state.soundEffectsEnabled ? "SFX ON" : "SFX OFF", 0x32d, 0x20,
+	drawText(surface, state.soundEffectsEnabled ? strings.optionsSfxOn : strings.optionsSfxOff, 0x32d, 0x20,
 		state.soundEffectsEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
-	drawText(surface, state.optionsTestAudioEnabled ? "Test ON" : "Test OFF", 0x3a0, 0x20,
+	drawText(surface, state.optionsTestAudioEnabled ? strings.optionsTestOn : strings.optionsTestOff, 0x3a0, 0x20,
 		state.optionsTestAudioEnabled ? kOptionsTextTestColor : kOptionsTextDisabledColor, false);
 	drawStatusDots();
 
-	drawText(surface, "Volumen musica", 0x33f, 0x55,
+	drawText(surface, strings.optionsMusicVolume, 0x33f, 0x55,
 		state.musicEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, true);
 	drawToggleSquare(0, 0, state.musicEnabled && state.musicVolumeLevel != 0 ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
@@ -829,7 +828,7 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	drawToggleSquare(1, 0, state.musicEnabled && state.musicVolumeLevel < kOptionsMaximumLevel ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
 
-	drawText(surface, "Volumen SFX", 0x33f, 0xa8,
+	drawText(surface, strings.optionsSfxVolume, 0x33f, 0xa8,
 		state.soundEffectsEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, true);
 	drawToggleSquare(0, 1, state.soundEffectsEnabled && state.soundEffectsVolumeLevel != 0 ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
@@ -838,7 +837,7 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	drawToggleSquare(1, 1, state.soundEffectsEnabled && state.soundEffectsVolumeLevel < kOptionsMaximumLevel ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
 
-	drawText(surface, "Volumen voz", 0x33f, 0xfb,
+	drawText(surface, strings.optionsVoiceVolume, 0x33f, 0xfb,
 		state.actorSpeechTextMode < 2 ? kOptionsTextActiveColor : kOptionsTextDisabledColor, true);
 	drawToggleSquare(0, 2, state.actorSpeechTextMode < 2 && state.voiceVolumeLevel != 0 ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
@@ -847,7 +846,7 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	drawToggleSquare(1, 2, state.actorSpeechTextMode < 2 && state.voiceVolumeLevel < kOptionsMaximumLevel ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
 
-	drawText(surface, "Velocidad texto", 0x33f, 0x14e,
+	drawText(surface, strings.optionsTextSpeed, 0x33f, 0x14e,
 		state.actorSpeechTextMode == 2 ? kOptionsTextActiveColor : kOptionsTextDisabledColor, true);
 	drawToggleSquare(0, 3, state.actorSpeechTextMode == 2 && state.speechTextSpeedLevel != 0 ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
@@ -856,19 +855,20 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 	drawToggleSquare(1, 3, state.actorSpeechTextMode == 2 && state.speechTextSpeedLevel < kOptionsMaximumLevel ?
 		kOptionsTextActiveColor : kOptionsTextDisabledColor);
 
-	drawText(surface, "Texto", 0x2a3, 0x1ad,
+	drawText(surface, strings.optionsText, 0x2a3, 0x1ad,
 		state.actorSpeechTextMode == 2 ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
-	drawText(surface, "Voz", 0x31e, 0x1ad,
+	drawText(surface, strings.optionsVoice, 0x31e, 0x1ad,
 		state.actorSpeechTextMode == 0 ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
-	drawText(surface, "Ambos", 0x399, 0x1ad,
+	drawText(surface, strings.optionsBoth, 0x399, 0x1ad,
 		state.actorSpeechTextMode == 1 ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
 }
 
 void GameplayOptionsMenu::drawQuitConfirmation(Graphics::Surface &surface) {
-	drawText(surface, kOptionsQuitPromptText, 0x1ff, 0x168, kOptionsTextActiveColor, true);
+	const HollywoodGameStrings &strings = getGameStrings(_vm->getLanguage());
+	drawText(surface, strings.optionsQuitPrompt, 0x1ff, 0x168, kOptionsTextActiveColor, true);
 	drawQuitConfirmationBacking();
-	drawText(surface, kOptionsQuitYesText, 0x1f1, 0x18c, kOptionsTextActiveColor, true);
-	drawText(surface, kOptionsQuitNoText, 0x20e, 0x18c, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsQuitYes, 0x1f1, 0x18c, kOptionsTextActiveColor, true);
+	drawText(surface, strings.optionsQuitNo, 0x20e, 0x18c, kOptionsTextActiveColor, true);
 }
 
 void GameplayOptionsMenu::drawText(Graphics::Surface &surface, const Common::String &text, int globalX, int y,

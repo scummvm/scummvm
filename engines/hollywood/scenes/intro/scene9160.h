@@ -59,6 +59,7 @@ private:
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _panelA;
 	Common::Array<byte> _panelB;
+	uint _lastOverlayChunk;
 	uint _rowOffset;
 };
 

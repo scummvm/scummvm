@@ -101,7 +101,6 @@ private:
 	void updateElevatorButtonActionTargets(bool useStrip);
 	void initializeSceneItemLabels();
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
-	void setStageSmallRowLabel(byte row, const char *label);
 	void clearSceneItemFromColorMap(byte itemId);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();

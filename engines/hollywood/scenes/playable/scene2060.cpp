@@ -23,6 +23,7 @@
 
 #include "common/endian.h"
 
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -400,15 +401,15 @@ void Scene2060::installSceneActorBank() {
 }
 
 void Scene2060::copyPassageTextRows() {
-	static const char kPassageText[] = " pasadizo";
+	const char *passageText = getGameStrings(_vm->getLanguage()).passageName;
 
 	for (uint row = 1; row <= 6; ++row) {
 		const uint offset = row * kStage003SmallRowSize;
 		if (offset + kStage003SmallRowSize > _stage003SmallRows.size())
 			return;
 		memset(_stage003SmallRows.data() + offset, 0, kStage003SmallRowSize);
-		memcpy(_stage003SmallRows.data() + offset, kPassageText,
-			MIN<uint>(sizeof(kPassageText), kStage003SmallRowSize));
+		memcpy(_stage003SmallRows.data() + offset, passageText,
+			MIN<uint>((uint)strlen(passageText), kStage003SmallRowSize - 1));
 	}
 }
 
