@@ -39,9 +39,13 @@ const uint32 kScene5040MineCartFrameMillis = 40;
 const uint kScene5040KarlDescriptorCount = 0x2e;
 const uint kScene5040MineBoxPickupDescriptorCount = 0x0d;
 const uint kScene5040MineCartDescriptorCount = 0x59;
-const byte kScene5040KarlSpeechGroup = 0;
-const byte kScene5040KarlSpeechBaseFrame = 0x4c;
-const byte kScene5040KarlSpeechLastFrame = 0x4f;
+const uint kScene5040ItemSwapDescriptorCount = 0x0c;
+const byte kScene5040KarlDialogueSpeechGroup = 0;
+const byte kScene5040KarlMiningSpeechGroup = 1;
+const byte kScene5040KarlDialogueSpeechBaseFrame = 0;
+const byte kScene5040KarlMiningSpeechBaseFrame = 0x4c;
+const byte kScene5040KarlMiningSpeechLastFrame = 0x4f;
+const byte kScene5040KarlSpeechFrameCount = 4;
 const byte kScene5040KarlDialogueStageId = 0x62;
 const byte kScene5040KarlPrimaryRow = 99;
 const byte kScene5040DialogueNoResponseFrame = 0xff;
@@ -50,6 +54,15 @@ const byte kScene5040MagneticBombPillboxItem = 0x0b;
 const byte kScene5040PatchedSockItem = 0x49;
 const byte kScene5040KarlPrizeItem = 0x4a;
 const byte kScene5040KeyItem = 0x4b;
+
+const byte kScene5040AmbientSoundVolumes[] = {
+	10, 10, 10, 2, 10, 10, 10, 100
+};
+
+enum {
+	kScene5040MineCartFrameHook = 1,
+	kScene5040PrizePatchHook = 2
+};
 
 enum {
 	kScene5040DialogueTransitionEnd = 0,
@@ -87,6 +100,15 @@ const byte kScene5040Chunk15FrameMap[] = {
 	13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
+const byte kScene5040MagneticBombFrameMap[] = {
+	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11
+};
+
+const byte kScene5040DowsingRodSwapFrameMap[] = {
+	11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11
+};
+
 PlayableSceneConfig scene5040Config() {
 	PlayableSceneConfig config(5040,
 		SceneResourceLayout(5, 5, 17),
@@ -104,7 +126,11 @@ Scene5040::Scene5040(HollywoodEngine *vm) :
 		_karlLayer(),
 		_karlIdleFrame(0),
 		_karlIdleMode(kScene5040KarlIdleModeWait),
-		_karlStrikeRepeatCount(0) {
+		_karlStrikeRepeatCount(0),
+		_suspendKarlIdle(false),
+		_mineCartRumbleActive(false),
+		_lastKarlMiningSpeechFrame(kScene5040KarlMiningSpeechBaseFrame),
+		_previousKarlMiningSpeechFrame(kScene5040KarlMiningSpeechBaseFrame) {
 	_karlLayer.configure(9, kScene5040KarlDescriptorCount,
 		kScene5040KarlFrameMap, ARRAYSIZE(kScene5040KarlFrameMap));
 }
@@ -114,7 +140,13 @@ void Scene5040::initializeCustomPreviewState() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 
-	setActiveActorPose(_vm->gameState().scene5040EntryLineSeen ? 0x19e : 0x218, _vm->gameState().scene5040EntryLineSeen ? 0x172 : 0x161, _vm->gameState().scene5040EntryLineSeen ? 4 : 5);
+	const GameplayState &state = _vm->gameState();
+	if (state.scene5040SpecialTransitionState == 1)
+		setActiveActorPose(0x32d, 0x12c, 4);
+	else if (state.mainFlowStateId == kScene5040FirstState)
+		setActiveActorPose(0x32d, 0x110, 4);
+	else
+		setActiveActorPose(0x0f6, 0x0e9, 2);
 }
 
 void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -137,31 +169,38 @@ void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene5040::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene5040::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 
 	if (state.scene5040SpecialTransitionState == 1) {
+		const Common::Array<byte> savedPaletteRegionMask = _fullPaletteRegionMask;
+		memset(_fullPaletteRegionMask.data(), 1, _fullPaletteRegionMask.size());
 		setActiveActorPose(0x32d, 0x12c, 4);
-		drawPlayableComposite();
-		presentFrame();
+		_mineCartRumbleActive = true;
 		runMineCartEntryClip();
 		walkActiveActorTo(0x238, 0x145, 5, 0, false);
+		beginStaticSecondarySpeechLine(0xd0, 0);
+		walkActiveActorTo(0x238, 0x145, 1, 0, false);
 		beginSecondarySpeechLine(8, 0);
 		runActorReplacement(ActionOverlaySpec(15, 0x0e,
 			kScene5040Chunk15FrameMap, ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis)
-			.patchAt(6, 6));
+			.hookAt(6, kScene5040PrizePatchHook));
+		state.scene5040SpecialTransitionState = 2;
 		addInventoryItem(kScene5040KarlPrizeItem);
 		_soundBank0.playSample(1, 100);
-		state.scene5040SpecialTransitionState = 2;
 		walkActiveActorTo(0x208, 0x15e, 4, 0, false);
+		_fullPaletteRegionMask = savedPaletteRegionMask;
+		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 		return;
 	}
 
 	if (state.mainFlowStateId == kScene5040FirstState) {
 		setActiveActorPose(0x32d, 0x110, 4);
-		drawPlayableComposite();
-		presentFrame();
-
+		_mineCartRumbleActive = true;
 		runMineCartEntryClip();
 		if (state.scene5040EntryLineSeen) {
 			walkActiveActorTo(0x19e, 0x172, 4, 0, false);
@@ -173,21 +212,30 @@ void Scene5040::runCustomEntrySequence() {
 		return;
 	}
 
-	runEntryPath(0x0f6, 0x0e9, 2, 0x1c3, 0x15e);
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
+	setActiveActorPose(0x0f6, 0x0e9, 2);
+	drawPlayableComposite();
+	if (fadePaletteFromBlack())
+		return;
+	walkActiveActorTo(0x1c3, 0x15e, 0xff, 0, false);
 }
 
 bool Scene5040::prepareCustomGameplayLoop() {
-	resetAnimationLayers();
 	return true;
 }
 
 bool Scene5040::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
+	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
+		_soundBank0.playSample(0x18, 100);
+
+	if (_primaryDialogueSpeechActive) {
+		if (_primaryDialogueSpeechGroup == kScene5040KarlMiningSpeechGroup)
+			advanceKarlMiningSpeech(delta);
+		else
+			advancePrimaryDialogueSpeechFrame(delta);
+	} else if (!_suspendKarlIdle && !_actionOverlayPlayer.isVisible()) {
 		advanceKarlLayer(delta);
+	}
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -221,10 +269,10 @@ bool Scene5040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 309: // Mirar pico (look at pickaxe): standard miner tool.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 310: // Coger diamante (take diamond): Ron borrows Karl's diamond.
+	case 310: // Coger diamante: dormant original record; the diamond has no live hotspot.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Mirar diamante (look at diamond/caja contents): identifies what is in the box.
+	case 311: // Mirar diamante: dormant original record; the diamond has no live hotspot.
 		beginSecondarySpeechLine(10, 0);
 		return true;
 	case 312: // Mirar caja (look at box): cycles caja -> calcetín viejo -> llave -> empty.
@@ -242,8 +290,17 @@ bool Scene5040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 316: // Mirar llave (look at key): it must belong to Karl.
 		beginSecondarySpeechLine(12, 0);
 		return true;
-	case 317: // Usar pastillero bomba con imán con Karl/minero: swap it for Karl's diamond.
+	case 317: // Usar pastillero bomba con imán con pico: plant it while Karl is facing the wall.
 		runSpecialMineExitWithMagneticPillbox();
+		return true;
+	case 318: // Usar pastillero bomba sin imán con pico: it needs something to hold it in place.
+		beginSecondarySpeechLine(14, 0);
+		return true;
+	case 319: // Usar varita con varita del minero: exchange the rods while Karl is distracted.
+		runDowsingRodSwap();
+		return true;
+	case 320: // Ofrecer la varita al minero: dormant original callback retained for data variants.
+		beginSecondarySpeechLine(16, 0);
 		return true;
 	default:
 		return false;
@@ -251,6 +308,7 @@ bool Scene5040::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene5040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -259,68 +317,64 @@ bool Scene5040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	const GameplayState &state = _vm->gameState();
-	if (selector == 1 || selector == 0xff) {
-		switch (state.scene5040MineGalleryState) {
-		case 0:
-			remapSceneColors(3, 0);
-			remapSceneColors(4, 4);
-			remapSceneColors(0x0e, 4);
-			remapSceneColors(0x0f, 0);
-			remapSceneColors(0x10, 0);
-			remapSceneColors(0x11, 0);
-			break;
-		case 1:
-			remapSceneColors(3, 0);
-			remapSceneColors(4, 0);
-			remapSceneColors(0x0e, 4);
-			remapSceneColors(0x0f, 4);
-			remapSceneColors(0x10, 4);
-			remapSceneColors(0x11, 0);
-			break;
-		case 2:
-			remapSceneColors(3, 3);
-			remapSceneColors(4, 0);
-			remapSceneColors(0x0e, 0);
-			remapSceneColors(0x0f, 0);
-			remapSceneColors(0x10, 3);
-			remapSceneColors(0x11, 4);
-			if (_sceneChunkTable.isValidChunk(6))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
-			if (_sceneChunkTable.isValidChunk(8))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
-			break;
-		default:
-			break;
-		}
+	switch (state.scene5040MineGalleryState) {
+	case 0:
+		remapSceneColors(3, 0);
+		remapSceneColors(4, 4);
+		remapSceneColors(0x0e, 4);
+		remapSceneColors(0x0f, 0);
+		remapSceneColors(0x10, 0);
+		remapSceneColors(0x11, 0);
+		break;
+	case 1:
+		remapSceneColors(3, 0);
+		remapSceneColors(4, 0);
+		remapSceneColors(0x0e, 4);
+		remapSceneColors(0x0f, 4);
+		remapSceneColors(0x10, 4);
+		remapSceneColors(0x11, 0);
+		break;
+	case 2:
+		remapSceneColors(3, 3);
+		remapSceneColors(4, 0);
+		remapSceneColors(0x0e, 0);
+		remapSceneColors(0x0f, 0);
+		remapSceneColors(0x10, 3);
+		remapSceneColors(0x11, 4);
+		if (_sceneChunkTable.isValidChunk(6))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
+		if (_sceneChunkTable.isValidChunk(8))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
+		break;
+	default:
+		break;
 	}
-	if ((selector == 2 || selector == 0xff) && state.scene5040LooseObjectTaken) {
+	if (state.scene5040LooseObjectTaken) {
 		remapSceneColors(5, 0);
 		if (state.scene5040MineGalleryState != 1)
 			remapSceneColors(0x0d, 0);
 	}
-	if ((selector == 3 || selector == 0xff) && state.scene5040OldSockTaken) {
+	if (state.scene5040OldSockTaken) {
 		remapSceneColors(6, 0);
 		if (state.scene5040MineGalleryState != 1)
 			remapSceneColors(0x0b, 0);
 		remapSceneColors(0x0c, 0);
 		clearSceneItemFromColorMap(6);
 	}
-	if (selector == 4 || selector == 0xff) {
-		switch (state.scene5040DialState) {
-		case 1:
-			remapSceneColors(0x12, 9);
-			break;
-		case 3:
-			remapSceneColors(0x12, 10);
-			break;
-		default:
-			remapSceneColors(0x12, 8);
-			break;
-		}
+	switch (state.scene5040DialState) {
+	case 1:
+		remapSceneColors(0x12, 9);
+		break;
+	case 3:
+		remapSceneColors(0x12, 10);
+		break;
+	default:
+		remapSceneColors(0x12, 8);
+		break;
 	}
-	if ((selector == 5 || selector == 0xff) && state.scene5040KarlDialogueIntroSeen)
+	if (state.scene5040KarlDialogueIntroSeen)
 		copyStageSmallRow(4, 11);
-	if ((selector == 6 || selector == 0xff) && state.scene5040SpecialTransitionState == 1 &&
+	if (state.scene5040SpecialTransitionState == 1 &&
 			_sceneChunkTable.isValidChunk(13))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
 
@@ -329,52 +383,143 @@ bool Scene5040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
+bool Scene5040::customizeRouteFinal(byte currentRegion, byte targetRegion,
+		const ActorPathBuildState &state, int targetX, int targetY,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)targetRegion;
+	(void)state;
+	(void)targetX;
+	(void)targetY;
+	(void)restoredStepDeltas;
+
+	if (currentRegion == 7) {
+		requestedFacing = 5;
+		return true;
+	}
+	return false;
+}
+
+bool Scene5040::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5040::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene5040::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
+	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
 }
 
-byte Scene5040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
-	return animationGroup == kScene5040KarlSpeechGroup ? kScene5040KarlSpeechBaseFrame : 0;
+byte Scene5040::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	if (cueId >= 0x0d && cueId <= 0x14)
+		return kScene5040AmbientSoundVolumes[cueId - 0x0d];
+	return defaultVolumePercent;
 }
 
-void Scene5040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
-	if (animationGroup == kScene5040KarlSpeechGroup) {
-		if (frameIndex > kScene5040KarlSpeechLastFrame)
-			frameIndex = kScene5040KarlSpeechBaseFrame;
-		_karlLayer.setFrame(frameIndex);
+void Scene5040::handleAnimationFrameHook(byte hookId, uint frame) {
+	switch (hookId) {
+	case kScene5040MineCartFrameHook:
+		if (frame == 0) {
+			drawPlayableComposite();
+			fadePaletteFromBlack();
+		} else if (frame == 0x32) {
+			_mineCartRumbleActive = false;
+		}
+		return;
+	case kScene5040PrizePatchHook:
+		if (_sceneChunkTable.isValidChunk(14))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
+		return;
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		return;
 	}
 }
 
+byte Scene5040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	return animationGroup == kScene5040KarlMiningSpeechGroup ?
+		kScene5040KarlMiningSpeechBaseFrame : kScene5040KarlDialogueSpeechBaseFrame;
+}
+
+byte Scene5040::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5040KarlSpeechFrameCount;
+}
+
+void Scene5040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	if (animationGroup == kScene5040KarlDialogueSpeechGroup) {
+		if (frameIndex >= kScene5040KarlSpeechFrameCount)
+			frameIndex = kScene5040KarlDialogueSpeechBaseFrame;
+	} else if (animationGroup == kScene5040KarlMiningSpeechGroup) {
+		if (frameIndex < kScene5040KarlMiningSpeechBaseFrame ||
+				frameIndex > kScene5040KarlMiningSpeechLastFrame)
+			frameIndex = kScene5040KarlMiningSpeechBaseFrame;
+		_previousKarlMiningSpeechFrame = _lastKarlMiningSpeechFrame;
+		_lastKarlMiningSpeechFrame = frameIndex;
+	} else {
+		return;
+	}
+	_karlLayer.setFrame(frameIndex);
+}
+
 void Scene5040::primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) {
-	(void)baseFrame;
-	if (animationGroup == kScene5040KarlSpeechGroup)
+	if (animationGroup == kScene5040KarlDialogueSpeechGroup ||
+			animationGroup == kScene5040KarlMiningSpeechGroup) {
 		_karlLayer.visible = _vm->gameState().scene5040MineGalleryState < 2;
+		if (animationGroup == kScene5040KarlMiningSpeechGroup) {
+			_lastKarlMiningSpeechFrame = baseFrame;
+			_previousKarlMiningSpeechFrame = baseFrame;
+		}
+	}
 }
 
 void Scene5040::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
 	(void)baseFrame;
-	if (animationGroup != kScene5040KarlSpeechGroup)
+	if (animationGroup != kScene5040KarlDialogueSpeechGroup &&
+			animationGroup != kScene5040KarlMiningSpeechGroup)
 		return;
 
 	_karlLayer.visible = _vm->gameState().scene5040MineGalleryState < 2;
-	if (_karlLayer.visible)
-		_karlLayer.setFrame(_karlIdleFrame);
+	if (!_karlLayer.visible)
+		return;
+
+	if (animationGroup == kScene5040KarlDialogueSpeechGroup) {
+		_karlIdleFrame = 0;
+		_karlIdleMode = kScene5040KarlIdleModeWait;
+	} else if (_previousKarlMiningSpeechFrame == 0x4d ||
+			_previousKarlMiningSpeechFrame == 0x4f) {
+		_karlIdleFrame = 0x31;
+	} else if (_previousKarlMiningSpeechFrame == 0x4e) {
+		_karlIdleFrame = 0x32;
+	} else {
+		_karlIdleFrame = 0x30;
+	}
+	_karlLayer.setFrame(_karlIdleFrame);
 }
 
 void Scene5040::resetAnimationLayers() {
+	GameplayState &state = _vm->gameState();
+	state.scene5040LooseObjectTaken = true;
+	state.scene5040OldSockTaken = state.scene5040MineGalleryState != 1;
 	_karlIdleChannel.reset(0, kScene5040FrameMillis);
-	_karlLayer.visible = _vm->gameState().scene5040MineGalleryState < 2;
-	const bool karlPausedAtWall = _vm->gameState().scene5040MineGalleryState == 1;
+	_karlLayer.visible = state.scene5040MineGalleryState < 2;
+	const bool karlPausedAtWall = state.scene5040MineGalleryState == 1;
 	_karlLayer.reset(karlPausedAtWall ? 0x49 : 0);
 	_karlIdleFrame = _karlLayer.frameIndex;
 	_karlIdleMode = karlPausedAtWall ? kScene5040KarlIdleModePausedAtWall : kScene5040KarlIdleModeWait;
 	_karlStrikeRepeatCount = 0;
+	_suspendKarlIdle = false;
+	_mineCartRumbleActive = false;
+	_lastKarlMiningSpeechFrame = kScene5040KarlMiningSpeechBaseFrame;
+	_previousKarlMiningSpeechFrame = kScene5040KarlMiningSpeechBaseFrame;
 }
 
 void Scene5040::advanceKarlLayer(uint32 delta) {
 	if (!_karlLayer.visible)
 		return;
 
+	GameplayState &state = _vm->gameState();
 	const uint consumedFrames = _karlIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < consumedFrames; ++i) {
 		bool updateFrame = true;
@@ -403,6 +548,8 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 				++_karlIdleFrame;
 			} else {
 				_karlIdleMode = kScene5040KarlIdleModeToolExposedWait;
+				state.scene5040LooseObjectTaken = false;
+				applySceneStateToHotspotsAndPatches(2);
 				updateFrame = false;
 			}
 			break;
@@ -410,6 +557,8 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 			if (_random.getRandomNumber(149) == 0) {
 				_karlIdleFrame = 0x1f;
 				_karlIdleMode = kScene5040KarlIdleModeHideTool;
+				state.scene5040LooseObjectTaken = true;
+				applySceneStateToHotspotsAndPatches(2);
 			} else {
 				updateFrame = false;
 			}
@@ -450,6 +599,8 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 				++_karlIdleFrame;
 			} else {
 				_karlIdleMode = kScene5040KarlIdleModePausedAtWall;
+				state.scene5040OldSockTaken = false;
+				applySceneStateToHotspotsAndPatches(3);
 				updateFrame = false;
 			}
 			break;
@@ -457,6 +608,8 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 			if (_random.getRandomNumber(99) == 0) {
 				_karlIdleFrame = 0x4a;
 				_karlIdleMode = kScene5040KarlIdleModeResumeStriking;
+				state.scene5040OldSockTaken = true;
+				applySceneStateToHotspotsAndPatches(3);
 			} else {
 				updateFrame = false;
 			}
@@ -472,6 +625,67 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 	}
 }
 
+void Scene5040::advanceKarlMiningSpeech(uint32 delta) {
+	_primaryDialogueSpeechTimerAccumulator += delta;
+	while (_primaryDialogueSpeechTimerAccumulator >= kScene5040FrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kScene5040FrameMillis;
+		const byte nextFrame = _lastKarlMiningSpeechFrame < kScene5040KarlMiningSpeechLastFrame ?
+			(byte)(_lastKarlMiningSpeechFrame + 1) : kScene5040KarlMiningSpeechBaseFrame;
+		setPrimarySpeechAnimationFrame(kScene5040KarlMiningSpeechGroup, nextFrame);
+	}
+}
+
+bool Scene5040::playKarlFrames(byte firstFrame, byte lastFrame, uint32 frameMillis) {
+	const bool previousSuspendKarlIdle = _suspendKarlIdle;
+	_suspendKarlIdle = true;
+	_karlLayer.visible = true;
+	const bool completed = playAndPresentAnimationFrames(_karlLayer,
+		AnimationFrameRange(firstFrame, lastFrame, frameMillis));
+	_karlIdleFrame = _karlLayer.frameIndex;
+	_suspendKarlIdle = previousSuspendKarlIdle;
+	return completed;
+}
+
+bool Scene5040::playKarlTransition(byte firstFrame, byte lastFrame, byte finalFrame,
+		uint32 frameMillis) {
+	const bool previousSuspendKarlIdle = _suspendKarlIdle;
+	_suspendKarlIdle = true;
+	_karlLayer.visible = true;
+	const bool completed = playAndPresentAnimationTransition(_karlLayer,
+		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis));
+	_karlIdleFrame = _karlLayer.frameIndex;
+	_suspendKarlIdle = previousSuspendKarlIdle;
+	return completed;
+}
+
+void Scene5040::settleKarlForConversation() {
+	if (_karlIdleMode == kScene5040KarlIdleModeWait)
+		return;
+
+	const bool previousSuspendKarlIdle = _suspendKarlIdle;
+	_suspendKarlIdle = true;
+	if (_karlIdleMode == kScene5040KarlIdleModeToolExposedWait) {
+		_karlIdleFrame = 0x1f;
+		_karlLayer.setFrame(_karlIdleFrame);
+		_karlIdleMode = kScene5040KarlIdleModeHideTool;
+	}
+
+	if (_karlIdleMode == kScene5040KarlIdleModeShort)
+		playKarlFrames(_karlIdleFrame, 0x13, kScene5040FrameMillis);
+	else
+		playKarlFrames(_karlIdleFrame, 0x29, kScene5040FrameMillis);
+
+	_karlIdleFrame = 0;
+	_karlIdleMode = kScene5040KarlIdleModeWait;
+	_karlIdleChannel.reset(0, kScene5040FrameMillis);
+	_karlLayer.setFrame(0);
+	_vm->gameState().scene5040LooseObjectTaken = true;
+	applySceneStateToHotspotsAndPatches(2);
+	drawPlayableComposite();
+	presentFrame();
+	_suspendKarlIdle = previousSuspendKarlIdle;
+}
+
 void Scene5040::runMineCartEntryClip() {
 	Common::Array<byte> frameMap;
 	frameMap.resize(kScene5040MineCartDescriptorCount);
@@ -480,11 +694,12 @@ void Scene5040::runMineCartEntryClip() {
 
 	runActorReplacement(ActionOverlaySpec(17, kScene5040MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5040MineCartFrameMillis)
-		.soundAt(0x32, 0x16));
+		.soundAt(0x32, 0x16)
+		.hookEveryFrame(kScene5040MineCartFrameHook));
 }
 
 void Scene5040::runExitToMineSwitches() {
-	walkActiveActorTo(0x0f6, 0x0e9, 0xff, 0, false);
+	walkActiveActorTo(0x32d, 0x110, 0xff, 0, false);
 	_soundBank0.playSample(0x15, 100);
 	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
 }
@@ -509,6 +724,8 @@ void Scene5040::runKarlConversation() {
 
 	if (!state.scene5040KarlDialogueIntroSeen) {
 		beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 0);
+		settleKarlForConversation();
+		_suspendKarlIdle = true;
 		beginKarlSpeechLine(0);
 		beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 1);
 		beginKarlSpeechLine(1);
@@ -516,6 +733,8 @@ void Scene5040::runKarlConversation() {
 		applySceneStateToHotspotsAndPatches(5);
 	} else {
 		beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 0);
+		settleKarlForConversation();
+		_suspendKarlIdle = true;
 		beginKarlSpeechLine(0);
 	}
 
@@ -527,12 +746,12 @@ void Scene5040::runKarlConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 7);
 			beginKarlSpeechLine(7);
-			return;
+			break;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
 		if (recordIndex >= records.size())
-			return;
+			break;
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(kScene5040KarlDialogueStageId, record.playerTextRowId);
@@ -545,8 +764,9 @@ void Scene5040::runKarlConversation() {
 		}
 
 		if (applyKarlDialogueTransition(record, depthIndex, nodeIndex))
-			return;
+			break;
 	}
+	_suspendKarlIdle = false;
 }
 
 void Scene5040::runMineBoxLook() {
@@ -573,45 +793,97 @@ void Scene5040::runMineBoxLook() {
 
 void Scene5040::runPatchedSockPickup() {
 	GameplayState &state = _vm->gameState();
-	runActorReplacement(10, kScene5040MineBoxPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
 		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
-		kScene5040FrameMillis);
+		kScene5040FrameMillis).noRedrawAtEnd());
 	state.scene5040DialState = 2;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040PatchedSockItem);
 	_soundBank0.playSample(1, 100);
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene5040::runMineKeyPickup() {
 	GameplayState &state = _vm->gameState();
-	runActorReplacement(10, kScene5040MineBoxPickupDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
 		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
-		kScene5040FrameMillis);
+		kScene5040FrameMillis).noRedrawAtEnd());
 	state.scene5040DialState = 4;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040KeyItem);
 	_soundBank0.playSample(1, 100);
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene5040::runSpecialMineExitWithMagneticPillbox() {
 	GameplayState &state = _vm->gameState();
-	if (!hasInventoryItem(kScene5040MagneticBombPillboxItem)) {
-		beginSecondarySpeechLine(15, 2);
-		return;
-	}
-
+	walkActiveActorTo(0x1bf, 0x14f, 5, 0, false);
 	if (_karlIdleMode != kScene5040KarlIdleModePausedAtWall) {
 		walkActiveActorTo(0x1bf, 0x14f, 3, 0, false);
 		beginSecondarySpeechLine(15, 2);
 		return;
 	}
 
+	_suspendKarlIdle = true;
+	runActorReplacement(ActionOverlaySpec(12, kScene5040ItemSwapDescriptorCount,
+		kScene5040MagneticBombFrameMap, ARRAYSIZE(kScene5040MagneticBombFrameMap),
+		kScene5040FrameMillis));
 	removeInventoryItem(kScene5040MagneticBombPillboxItem);
-	beginSecondarySpeechLine(15, 0);
+	_soundBank0.playSample(1, 100);
+	walkActiveActorTo(0x230, 0x16b, 3, 0, false);
+	beginSecondarySpeechLine(13, 0);
+	walkActiveActorTo(0x32d, 0x110, 0xff, 0xff, false);
+	_soundBank0.playSample(0x15, 100);
 	state.scene5040SpecialTransitionState = 1;
 	state.scene5040MineGalleryState = 2;
 	state.scene5010MineTransportState = 4;
 	state.mainFlowStateId = kScene5010ReturnState;
+	_suspendKarlIdle = false;
+}
+
+void Scene5040::runDowsingRodSwap() {
+	GameplayState &state = _vm->gameState();
+	if (state.dowsingRodKarlExchangeState == 0) {
+		dispatchGenericSceneAction(231);
+		return;
+	}
+	if (state.dowsingRodKarlExchangeState == 2) {
+		beginSecondarySpeechLine(15, 1);
+		return;
+	}
+
+	walkActiveActorTo(0x16b, 0x133, 1, 0, false);
+	if (_karlIdleMode != kScene5040KarlIdleModeToolExposedWait) {
+		walkActiveActorTo(0x230, 0x16b, 5, 0, false);
+		beginSecondarySpeechLine(15, 2);
+		return;
+	}
+
+	state.dowsingRodKarlExchangeState = 2;
+	_suspendKarlIdle = true;
+	_karlIdleFrame = 0x1e;
+	_karlLayer.setFrame(_karlIdleFrame);
+	runActorReplacement(ActionOverlaySpec(11, kScene5040ItemSwapDescriptorCount,
+		kScene5040DowsingRodSwapFrameMap, ARRAYSIZE(kScene5040DowsingRodSwapFrameMap),
+		kScene5040MineCartFrameMillis));
+	walkActiveActorTo(0x230, 0x16b, 5, 0, false);
+	beginSecondarySpeechLine(15, 0);
+	playKarlFrames(0x1f, 0x2e, kScene5040FrameMillis);
+	beginKarlMiningSpeechLine(3);
+	playKarlTransition(_karlIdleFrame, 0x38, 0x39, kScene5040FrameMillis);
+	_karlIdleMode = kScene5040KarlIdleModeStrikeLoop;
+	_karlStrikeRepeatCount = 10;
+	_karlIdleChannel.reset(_karlIdleFrame, kScene5040FrameMillis);
+	_suspendKarlIdle = false;
+	walkActiveActorTo(_activeActorWorldX, _activeActorWorldY, 3, 0, false);
+
+	state.scene5040MineGalleryState = 1;
+	state.scene5040LooseObjectTaken = true;
+	state.scene5040OldSockTaken = true;
+	applySceneStateToHotspotsAndPatches(0xff);
+	beginSecondarySpeechLine(15, 4);
 }
 
 void Scene5040::initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
@@ -676,7 +948,12 @@ bool Scene5040::applyKarlDialogueTransition(const DialogueChoiceRecord &record, 
 
 void Scene5040::beginKarlSpeechLine(byte frameIndex) {
 	beginPrimarySpeechLineWithAnimationGroup(kScene5040KarlPrimaryRow, frameIndex,
-		0x1b7, 0x067, 0x20, 0x30, 0x3f, kScene5040KarlSpeechGroup);
+		0x1b7, 0x067, 0x20, 0x30, 0x3f, kScene5040KarlDialogueSpeechGroup);
+}
+
+void Scene5040::beginKarlMiningSpeechLine(byte frameIndex) {
+	beginPrimarySpeechLineWithAnimationGroup(15, frameIndex,
+		0x182, 0x087, 0x20, 0x30, 0x3f, kScene5040KarlMiningSpeechGroup);
 }
 
 void Scene5040::copyStageSmallRow(byte destinationRow, byte sourceRow) {

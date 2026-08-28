@@ -69,6 +69,7 @@ private:
 	void handleSwitchPanelChoice(byte choice);
 	Common::Array<byte> buildSwitchPanelAnimation(byte currentValue, byte targetValue,
 		uint &hideStaticFrame, uint &showStaticFrame) const;
+	void activateSwitchPanelAtCursor(bool &done);
 	bool pollSwitchPanelEvent(bool &done);
 
 	ResourceSpriteLayer _switchLayer;

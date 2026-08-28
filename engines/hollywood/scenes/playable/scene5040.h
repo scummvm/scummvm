@@ -37,19 +37,31 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 
 	void resetAnimationLayers();
 	void advanceKarlLayer(uint32 delta);
+	void advanceKarlMiningSpeech(uint32 delta);
+	bool playKarlFrames(byte firstFrame, byte lastFrame, uint32 frameMillis);
+	bool playKarlTransition(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis);
+	void settleKarlForConversation();
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();
 	void runExitToMineHole();
@@ -58,12 +70,14 @@ private:
 	void runPatchedSockPickup();
 	void runMineKeyPickup();
 	void runSpecialMineExitWithMagneticPillbox();
+	void runDowsingRodSwap();
 	void initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setKarlDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
 		byte responseFrameIndex, byte disableAfterUse) const;
 	bool applyKarlDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const;
 	void beginKarlSpeechLine(byte frameIndex);
+	void beginKarlMiningSpeechLine(byte frameIndex);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void remapSceneColors(byte sourceColor, byte itemId);
 	void clearSceneItemFromColorMap(byte itemId);
@@ -73,6 +87,10 @@ private:
 	byte _karlIdleFrame;
 	byte _karlIdleMode;
 	byte _karlStrikeRepeatCount;
+	bool _suspendKarlIdle;
+	bool _mineCartRumbleActive;
+	byte _lastKarlMiningSpeechFrame;
+	byte _previousKarlMiningSpeechFrame;
 };
 
 } // End of namespace Hollywood

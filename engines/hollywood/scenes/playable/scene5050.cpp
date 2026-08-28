@@ -29,14 +29,30 @@ namespace Hollywood {
 
 const uint16 kScene5050FirstState = 0x13ba;
 const uint16 kScene5010ReturnState = 0x1393;
+const uint16 kScene5040ReturnState = 0x13b1;
 const uint16 kScene5050ViewportXOffset = 0x00c8;
 const uint kScene5050ActorBankTableEntry = 0x0000;
 const uint kScene5050ActorPaletteTableEntry = 0x00cc;
 const uint32 kScene5050SpeechCueDescriptorTableOffset = 0x1135;
-const uint32 kScene5050FrameMillis = 75;
 const uint32 kScene5050SpecialFrameMillis = 40;
+const uint32 kScene5050SpecialHoldMillis = 60 * kScene5050SpecialFrameMillis;
+const uint32 kScene5050PickupFrameMillis = 125;
+const uint32 kScene5050PickupSpeechFrameMillis = 75;
 const uint kScene5050SpecialTransitionDescriptorCount = 0x1f;
 const uint kScene5050PickupOverlayDescriptorCount = 0x13;
+const byte kScene5050PickupSpeechBaseFrame = 0x0a;
+const byte kScene5050PickupSpeechFrameCount = 4;
+
+enum Scene5050AnimationHookId {
+	kScene5050SpecialHoldHook = 1,
+	kScene5050PickupSpeechHook,
+	kScene5050PickupSoundHook
+};
+
+const byte kScene5050SpecialTransitionFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+};
 
 const byte kScene5050PickupFrameMap[] = {
 	0, 1, 2, 3, 4, 8, 9, 10, 9, 8, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -47,6 +63,10 @@ const byte kScene5050PickupItems[] = {
 	0x30, 0x42, 0x4c
 };
 
+const byte kScene5050AmbientSoundVolumes[] = {
+	10, 10, 10, 2, 10, 10, 10, 100
+};
+
 PlayableSceneConfig scene5050Config() {
 	PlayableSceneConfig config(5050,
 		SceneResourceLayout(5, 5, 8),
@@ -54,12 +74,23 @@ PlayableSceneConfig scene5050Config() {
 		SceneActorPose(0x134, 0x192, 2));
 	config.setActorResources(kScene5050ActorBankTableEntry, kScene5050ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5050SpeechCueDescriptorTableOffset);
+	config.setActorPathStepDeltas(kActorPathStepDeltaTableSetB4);
 	config.walkablePaletteMaxRegion = 20;
 	return config;
 }
 
 Scene5050::Scene5050(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5050Config()) {
+		PlayableScene(vm, scene5050Config()),
+		_specialTransitionActive(false),
+		_specialExitAlreadyFaded(false) {
+}
+
+void Scene5050::initializeCustomPreviewState() {
+	initializeDefaultPreviewState();
+	for (uint color = 0; color < _walkablePaletteMask.size(); ++color) {
+		if (_fullPaletteRegionMask[color] < 6)
+			_walkablePaletteMask[color] = 0;
+	}
 }
 
 void Scene5050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -77,17 +108,20 @@ void Scene5050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene5050::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene5050::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene5050FirstState) {
-		// State 0x13ba is the mine-switch bounce-back path. The trophy room is
-		// intentionally only playable from state 0x13bb, reached through Karl's hole.
 		runSpecialTransitionToMineSwitches();
 		return;
 	}
 
-	runEntryPath(0x069, 0x157, 2, 0x134, 0x192);
-	_activeActorFacing = 2;
-	_activeActorCel = 0;
+	setActiveActorPose(0x069, 0x157, 2);
+	drawPlayableComposite();
+	fadePaletteFromBlack();
+	walkActiveActorTo(0x134, 0x192, 2, 0, false);
 
 	GameplayState &state = _vm->gameState();
 	if (!state.scene5050EntryLineSeen) {
@@ -97,16 +131,19 @@ void Scene5050::runCustomEntrySequence() {
 }
 
 bool Scene5050::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+	(void)delta;
+	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
+	if (_specialTransitionActive)
+		ensureAmbientSoundCuePlaying(2, 0x18, 100);
+	return false;
 }
 
 bool Scene5050::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Ir a boquete/salida (go to hole/exit): return to mine switches.
-		runExitToMineSwitches();
+	case 301: // Ir a boquete/salida (go to hole/exit): return to Karl's gallery.
+		runExitToKarlGallery();
 		return true;
-	case 302: // Mirar boquete (look at hole): leads to Karl's gallery.
+	case 302: // Mirar boquete (look at hole).
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Mirar vagoneta volcada (look at overturned mine cart).
@@ -129,53 +166,164 @@ bool Scene5050::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+bool Scene5050::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = MIN<int>(targetX, 0x30d);
+	targetY = CLIP<int>(targetY, 0, 0x1df);
+	if (targetY < 0x1df)
+		++targetY;
+
+	while (targetY < 0x1df && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+		--targetY;
+	return true;
+}
+
+bool Scene5050::customizeRouteSegment(byte currentRegion, byte nextRegion,
+		const ActorPathBuildState &state, const ScenePoint &boundary,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if ((currentRegion == 2 && nextRegion == 3) ||
+			(currentRegion == 3 && nextRegion == 4) ||
+			(currentRegion == 4 && nextRegion == 5)) {
+		for (uint offset = 0x18; offset <= 0x23; ++offset)
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 2;
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	if ((currentRegion == 5 && nextRegion == 4) ||
+			(currentRegion == 4 && nextRegion == 3) ||
+			(currentRegion == 3 && nextRegion == 2) ||
+			(currentRegion == 2 && nextRegion == 1)) {
+		for (uint offset = 0x3c; offset <= 0x47; ++offset)
+			_actorPathStepDeltas[offset] = kActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 5;
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	return false;
+}
+
+bool Scene5050::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5050::runExitSideEffectsAfterLoop() {
+	if (!_specialExitAlreadyFaded)
+		fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene5050::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
+	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
+}
+
+byte Scene5050::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	if (cueId >= 0x0d && cueId <= 0x14)
+		return kScene5050AmbientSoundVolumes[cueId - 0x0d];
+	return defaultVolumePercent;
+}
+
+void Scene5050::handleAnimationFrameHook(byte hookId, uint frame) {
+	switch (hookId) {
+	case kScene5050SpecialHoldHook:
+		waitSceneMillis(kScene5050SpecialHoldMillis, false);
+		return;
+	case kScene5050PickupSpeechHook: {
+		const GameplayState &state = _vm->gameState();
+		const byte pickupIndex = state.frankensteinPartRewardIndex();
+		const bool grantItem = !state.scene5050TrophyBoxTaken &&
+			pickupIndex < ARRAYSIZE(kScene5050PickupItems);
+		beginPrimarySpeechLine(grantItem ? 0x16 : 0x66,
+			grantItem ? (byte)(pickupIndex * 2) : 0,
+			0x29d, 0x128, 0x3f, 0x3f, 0x3f);
+		return;
+	}
+	case kScene5050PickupSoundHook:
+		_soundBank0.playSample(1, 100);
+		return;
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		return;
+	}
+}
+
+byte Scene5050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5050PickupSpeechBaseFrame;
+}
+
+byte Scene5050::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5050PickupSpeechFrameCount;
+}
+
+uint32 Scene5050::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	(void)animationGroup;
+	return kScene5050PickupSpeechFrameMillis;
+}
+
+void Scene5050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	(void)animationGroup;
+	_actionOverlayPlayer.setFrame(frameIndex);
 }
 
 void Scene5050::runSpecialTransitionToMineSwitches() {
 	setActiveActorPose(0x069, 0x157, 2);
 	drawPlayableComposite();
-	presentFrame();
+	fadePaletteFromBlack();
 
-	Common::Array<byte> frameMap;
-	frameMap.resize(kScene5050SpecialTransitionDescriptorCount);
-	for (uint i = 0; i < frameMap.size(); ++i)
-		frameMap[i] = (byte)i;
-
+	_specialTransitionActive = true;
 	runActorReplacement(ActionOverlaySpec(7, kScene5050SpecialTransitionDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5050SpecialFrameMillis));
+		kScene5050SpecialTransitionFrameMap, ARRAYSIZE(kScene5050SpecialTransitionFrameMap),
+		kScene5050SpecialFrameMillis)
+		.hookAt(14, kScene5050SpecialHoldHook)
+		.noFinalFrameDelay()
+		.noRedrawAtEnd());
+	_specialTransitionActive = false;
+	fadePaletteToBlack();
+	_specialExitAlreadyFaded = true;
 
 	GameplayState &state = _vm->gameState();
 	state.scene5010MineTransportState = 3;
 	state.mainFlowStateId = kScene5010ReturnState;
 }
 
-void Scene5050::runExitToMineSwitches() {
-	walkActiveActorTo(0x069, 0x157, 0xff, 0, false);
-	_soundBank0.playSample(0x15, 100);
-	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
+void Scene5050::runExitToKarlGallery() {
+	_vm->gameState().mainFlowStateId = kScene5040ReturnState;
 }
 
 void Scene5050::runTrophyBoxPickup() {
 	GameplayState &state = _vm->gameState();
-	runActorReplacement(ActionOverlaySpec(8, kScene5050PickupOverlayDescriptorCount,
-		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap), kScene5050FrameMillis)
-		.soundAt(0x18, 1));
-
-	if (state.scene5050TrophyBoxTaken) {
-		beginSecondarySpeechLine(5, 0);
-		return;
-	}
-
 	const byte pickupIndex = state.frankensteinPartRewardIndex();
-	if (pickupIndex >= ARRAYSIZE(kScene5050PickupItems)) {
-		beginSecondarySpeechLine(5, 0);
+	const bool grantItem = !state.scene5050TrophyBoxTaken &&
+		pickupIndex < ARRAYSIZE(kScene5050PickupItems);
+	runActorReplacement(ActionOverlaySpec(8, kScene5050PickupOverlayDescriptorCount,
+		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
+		kScene5050PickupFrameMillis)
+		.endAt(11)
+		.hookAt(10, kScene5050PickupSpeechHook)
+		.noFinalFrameDelay()
+		.noRedrawAtEnd());
+
+	ActionOverlaySpec closing(8, kScene5050PickupOverlayDescriptorCount,
+		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
+		kScene5050PickupFrameMillis);
+	closing.frameRange(grantItem ? 14 : 26, ARRAYSIZE(kScene5050PickupFrameMap))
+		.noFinalFrameDelay();
+	if (grantItem)
+		closing.hookAt(24, kScene5050PickupSoundHook);
+	runActorReplacement(closing);
+
+	if (!grantItem || Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
-	}
+
 	const byte itemId = kScene5050PickupItems[pickupIndex];
 	addInventoryItem(itemId);
-	_soundBank0.playSample(1, 100);
 	walkActiveActorTo(0x2b3, 0x1ba, 3, 0, false);
 	beginSecondarySpeechLine(0x16, (byte)(pickupIndex * 2 + 1));
 	state.setFrankensteinPartRewardIndex(pickupIndex + 1);

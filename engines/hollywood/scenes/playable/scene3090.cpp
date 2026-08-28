@@ -584,6 +584,8 @@ void Scene3090::runBlindManConversation() {
 
 		if (record.disableAfterUse != 0)
 			record.enabled = 0;
+		if (record.disableAfterUse == 2 && state.dowsingRodKarlExchangeState == 0)
+			state.dowsingRodKarlExchangeState = 1;
 		if (record.disableAfterUse == 3 && state.scene3090SecretDiaryPuzzleStage == 0) {
 			state.scene3090SecretDiaryPuzzleStage = 1;
 			applySceneStateToHotspotsAndPatches(1);

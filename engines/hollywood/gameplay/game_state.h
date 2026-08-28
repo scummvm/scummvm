@@ -142,6 +142,7 @@ struct GameplayState {
 		scene3090BlindManConversationSeen = false;
 		scene3090SecretDiaryPuzzleProgress = 0;
 		scene3090DialogueMentionedBlindManLaxative = false;
+		dowsingRodKarlExchangeState = 0;
 		scene3100CabinVisited = false;
 		scene3100GirlConversationState = 0;
 		scene3100DaisyVisible = false;
@@ -901,6 +902,7 @@ struct GameplayState {
 	bool scene3090BlindManConversationSeen;
 	byte scene3090SecretDiaryPuzzleProgress;
 	bool scene3090DialogueMentionedBlindManLaxative;
+	byte dowsingRodKarlExchangeState;
 	bool scene3100CabinVisited;
 	byte scene3100GirlConversationState;
 	bool scene3100DaisyVisible;
