@@ -137,7 +137,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_surface(),
 		_textStore(),
 		_speechOverlay(),
-		_speech(),
+		_speech(vm->getLanguage()),
 		_soundBank0(),
 		_animationLayers(),
 		_selectedDrinks(),

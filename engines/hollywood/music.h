@@ -23,6 +23,7 @@
 #define HOLLYWOOD_MUSIC_H
 
 #include "audio/mixer.h"
+#include "common/language.h"
 #include "common/path.h"
 
 namespace Hollywood {
@@ -52,9 +53,10 @@ private:
 	bool _hasCurrentCue;
 };
 
+// RESOURCE.004 keeps one cue-table layout but changes PCM encoding by release.
 class SpeechPlayer {
 public:
-	SpeechPlayer();
+	SpeechPlayer(Common::Language language);
 	~SpeechPlayer();
 
 	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
@@ -67,6 +69,9 @@ private:
 	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
 
 	Audio::SoundHandle _speechHandle;
+	int _sampleRate;
+	byte _rawFlags;
+	byte _bytesPerSample;
 	uint32 _lastSampleDurationMillis;
 };
 
