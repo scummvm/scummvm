@@ -55,6 +55,7 @@ public:
 	~HollywoodEngine() override;
 
 	Common::Error run() override;
+	void initializePath(const Common::FSNode &gamePath) override;
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
@@ -67,6 +68,7 @@ public:
 	const char *getGameId() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	bool isDemo() const;
 
 	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }
