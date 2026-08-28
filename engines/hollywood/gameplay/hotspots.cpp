@@ -221,6 +221,19 @@ void SceneHotspotTable::setVerbMovementModeByGlobalRecordIndex(uint globalRecord
 		_verbActionRecords[globalRecordIndex].movementMode = movementMode;
 }
 
+void SceneHotspotTable::setRelationMovementMode(byte inventoryItemId, byte sceneItemId,
+		byte relationMode, uint16 movementMode) {
+	Common::Array<SceneVerbActionRecord> *records = nullptr;
+	if (relationMode == 1)
+		records = &_relationMode1ActionRecords;
+	else if (relationMode == 2)
+		records = &_relationMode2ActionRecords;
+
+	const uint recordIndex = (uint)inventoryItemId * HollywoodEngine::kSceneItemCount + sceneItemId;
+	if (records != nullptr && recordIndex < records->size())
+		(*records)[recordIndex].movementMode = movementMode;
+}
+
 Common::String SceneHotspotTable::itemName(byte itemId) const {
 	const uint offset = (uint)itemId * kStage003SmallRowSize;
 	if (offset >= _stageSmallRows.size())

@@ -1926,13 +1926,13 @@ bool PlayableScene::playResidentSoundEffect(byte soundEffectId, byte volumePerce
 bool PlayableScene::playActiveActorFootstep() {
 	if (_activeActorWorldX < 0 || _activeActorWorldX >= HollywoodEngine::kSceneBufferWidth ||
 			_activeActorWorldY < 0 || _activeActorWorldY >= HollywoodEngine::kSceneBufferHeight ||
-			_paletteMaskOriginal.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize)
+			_paletteMask.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize)
 		return false;
 
 	const uint framebufferOffset = (uint)_activeActorWorldY * HollywoodEngine::kSceneBufferWidth +
 		(uint)_activeActorWorldX;
 	const byte floorColor = savedFramebufferPixelAt(framebufferOffset);
-	const byte soundEffectId = _paletteMaskOriginal[kSceneColorToFootstepSoundMap + floorColor];
+	const byte soundEffectId = _paletteMask[kSceneColorToFootstepSoundMap + floorColor];
 	return playResidentSoundEffect(soundEffectId);
 }
 
