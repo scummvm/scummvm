@@ -35,6 +35,7 @@ struct AnimationFrameRange {
 			lastFrame(newLastFrame),
 			frameMillis(newFrameMillis),
 			allowSkip(true),
+			waitAfterFinalFrame(true),
 			hookFrame(-1),
 			hookOnEveryFrame(false),
 			hookId(0),
@@ -50,6 +51,11 @@ struct AnimationFrameRange {
 
 	AnimationFrameRange &unskippable() {
 		allowSkip = false;
+		return *this;
+	}
+
+	AnimationFrameRange &noFinalFrameDelay() {
+		waitAfterFinalFrame = false;
 		return *this;
 	}
 
@@ -82,6 +88,7 @@ struct AnimationFrameRange {
 	uint lastFrame;
 	uint32 frameMillis;
 	bool allowSkip;
+	bool waitAfterFinalFrame;
 	int hookFrame;
 	bool hookOnEveryFrame;
 	byte hookId;
@@ -150,8 +157,9 @@ struct FullscreenDeltaAnimationSpec {
  *
  * Hooks run after the target changes and before the frame wait. The delegate
  * owns event pumping and scene advancement; playAndPresent() also asks it to
- * present every new frame immediately. Playback stops uniformly on a skip,
- * restart, or quit.
+ * present every new frame immediately. A range may present its terminal frame
+ * without holding it for another interval. Playback stops uniformly on a
+ * skip, restart, or quit.
  */
 class SceneAnimationPlayerDelegate {
 public:
@@ -212,6 +220,8 @@ private:
 				if (_delegate.animationPlaybackShouldStop())
 					return false;
 			}
+			if (frame == (int)range.lastFrame && !range.waitAfterFinalFrame)
+				return true;
 			if (_delegate.waitForAnimationFrame(range.frameMillis, range.allowSkip))
 				return false;
 			if (frame == (int)range.lastFrame)
