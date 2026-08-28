@@ -34,7 +34,7 @@ const uint kScene5070ActorBankTableEntry = 0x0000;
 const uint kScene5070ActorPaletteTableEntry = 0x00cc;
 const uint32 kScene5070SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene5070FrameMillis = 75;
-const uint32 kScene5070MineCartFrameMillis = 50;
+const uint32 kScene5070MineCartTimerNumerator = 125;
 const uint kScene5070MineCartDescriptorCount = 0x30;
 const uint kScene5070AviatorCapPickupDescriptorCount = 0x0c;
 const uint kScene5070ShovelPickupDescriptorCount = 0x0d;
@@ -48,6 +48,37 @@ const byte kScene5070ShovelInventoryItem = 0x50;
 const byte kScene5070AviatorCapNameRow = 7;
 const byte kScene5070HangingItemNameRow = 6;
 const uint kScene5070HangingItemVerbRecordIndex = 0x34;
+const int kScene5070EntryStartX = 0x3ab;
+const int kScene5070EntryStartY = 0x1df;
+const int kScene5070EntryTargetX = 0x2e3;
+const int kScene5070EntryTargetY = 0x1d6;
+const int kScene5070CentralGapLeftX = 0x0e6;
+const int kScene5070CentralGapSplitX = 0x137;
+const int kScene5070CentralGapRightX = 0x188;
+const int kScene5070MaximumWalkY = 0x1df;
+
+enum Scene5070AnimationHookId {
+	kScene5070ShovelBackgroundPatchHook = 1
+};
+
+const byte kScene5070MineCartDelayBuckets[] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 1,
+	2, 2, 2,
+	3, 3, 3, 3,
+	4, 4, 4,
+	5, 5, 5,
+	6, 6, 6, 6,
+	7, 7, 7,
+	8, 8, 8,
+	9, 9, 9, 9,
+	10, 10, 10,
+	11, 11, 11, 11,
+	12, 12, 12, 12
+};
+
+const byte kScene5070AmbientSoundVolumes[] = {
+	10, 10, 10, 2, 10, 10, 10, 100
+};
 
 const byte kScene5070AviatorCapPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
@@ -56,14 +87,6 @@ const byte kScene5070AviatorCapPickupFrameMap[] = {
 const byte kScene5070ShovelPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
-
-static Common::Array<byte> sequentialFrameMap(uint frameCount) {
-	Common::Array<byte> frameMap;
-	frameMap.resize(frameCount);
-	for (uint i = 0; i < frameMap.size(); ++i)
-		frameMap[i] = (byte)i;
-	return frameMap;
-}
 
 PlayableSceneConfig scene5070Config() {
 	PlayableSceneConfig config(5070,
@@ -76,14 +99,20 @@ PlayableSceneConfig scene5070Config() {
 }
 
 Scene5070::Scene5070(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5070Config()) {
+		PlayableScene(vm, scene5070Config()),
+		_mineCartLayer(),
+		_mineCartRumbleActive(false) {
+	_mineCartLayer.configure(9, kScene5070MineCartDescriptorCount, nullptr, 0);
 }
 
 void Scene5070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
+	_mineCartLayer.visible = false;
+	_mineCartLayer.reset(0);
+	_mineCartRumbleActive = false;
 
-	setActiveActorPose(0x2e3, 0x1d6, 5);
+	setActiveActorPose(kScene5070EntryTargetX, kScene5070EntryTargetY, 5);
 }
 
 void Scene5070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
@@ -95,23 +124,30 @@ void Scene5070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-	drawHangingItemForeground();
+	drawResourceSpriteLayer(_mineCartLayer);
+	if (_mineCartLayer.visible)
+		drawMineCartForeground();
+}
+
+bool Scene5070::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
 }
 
 void Scene5070::runCustomEntrySequence() {
-	setActiveActorPose(0x3ab, 0x1df, 4);
-	drawPlayableComposite();
-	presentFrame();
-
+	setActiveActorPose(kScene5070EntryStartX, kScene5070EntryStartY, 4);
 	runMineCartEntryClip();
-	setActiveActorPose(0x2e3, 0x1d6, 5);
-	drawPlayableComposite();
-	presentFrame();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	walkActiveActorTo(kScene5070EntryTargetX, kScene5070EntryTargetY, 5, 0, false);
 }
 
 bool Scene5070::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+	(void)delta;
+	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
+	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
+		_soundBank0.playSample(0x18, 100);
+	return false;
 }
 
 bool Scene5070::dispatchCustomSceneAction(uint16 handlerId) {
@@ -130,25 +166,74 @@ bool Scene5070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Ir a/abrir túnel o caseta (go/open tunnel or shed): Ron refuses to leave the cart.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 305: // Mirar algo colgado/caseta (look at hanging object/shed): identifies the aviator cap.
+	case 305: // Mirar algo colgado/caseta (look at hanging object/shed).
 		beginSecondarySpeechLine(2, 0);
-		if (state.scene5070AviatorCapState == kScene5070AviatorCapUnidentifiedState) {
-			state.scene5070AviatorCapState = kScene5070AviatorCapIdentifiedState;
-			applySceneStateToHotspotsAndPatches(1);
-		}
 		return true;
 	case 306: // Coger gorro de aviador (take aviator cap): grants inventory item 0x4f.
 		runAviatorCapPickup();
 		return true;
-	case 307: // Mirar gorro de aviador (look at aviator cap).
-		beginSecondarySpeechLine(3, 0);
+	case 307: // Mirar objeto colgado (look at hanging object): identifies it as an aviator cap.
+		if (state.scene5070AviatorCapState == kScene5070AviatorCapUnidentifiedState) {
+			beginSecondarySpeechLine(3, 0);
+			state.scene5070AviatorCapState = kScene5070AviatorCapIdentifiedState;
+			applySceneStateToHotspotsAndPatches(1);
+		}
 		return true;
 	default:
 		return false;
 	}
 }
 
+bool Scene5070::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	if (targetX > kScene5070CentralGapLeftX && targetX < kScene5070CentralGapRightX)
+		targetX = targetX < kScene5070CentralGapSplitX ?
+			kScene5070CentralGapLeftX : kScene5070CentralGapRightX;
+
+	if (targetY < kScene5070MaximumWalkY)
+		++targetY;
+	while (targetY < kScene5070MaximumWalkY && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
+	if (targetY == kScene5070MaximumWalkY) {
+		while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+			--targetY;
+	}
+	return true;
+}
+
+bool Scene5070::customizeRouteSegment(byte currentRegion, byte nextRegion,
+		const ActorPathBuildState &state, const ScenePoint &boundary,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+
+	if (currentRegion == 2 && nextRegion == 1) {
+		requestedFacing = 5;
+		return true;
+	}
+	if ((currentRegion == 4 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 8)) {
+		requestedFacing = 4;
+		copySlopeStepDeltasFromSet5A(0x30);
+		restoredStepDeltas = true;
+		return true;
+	}
+	if ((currentRegion == 8 && nextRegion == 7) ||
+			(currentRegion == 7 && nextRegion == 6) ||
+			(currentRegion == 6 && nextRegion == 5) ||
+			(currentRegion == 5 && nextRegion == 4)) {
+		requestedFacing = 2;
+		copySlopeStepDeltasFromSet5A(0x18);
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	return false;
+}
+
 bool Scene5070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -160,19 +245,17 @@ bool Scene5070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (state.scene5070AviatorCapState > kScene5070AviatorCapIdentifiedState)
 		state.scene5070AviatorCapState = kScene5070AviatorCapUnidentifiedState;
 
-	if ((selector == 0 || selector == 0xff) && (state.scene5070ShovelTaken || hasInventoryItem(kScene5070ShovelInventoryItem))) {
+	if (state.scene5070ShovelTaken || hasInventoryItem(kScene5070ShovelInventoryItem)) {
 		if (_sceneChunkTable.isValidChunk(6))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5070ShovelSceneItem);
 	}
-	if (selector == 1 || selector == 0xff) {
-		if (state.scene5070AviatorCapState == kScene5070AviatorCapTakenState || hasInventoryItem(kScene5070AviatorCapInventoryItem)) {
-			if (_sceneChunkTable.isValidChunk(5))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
-			clearSceneItemFromColorMap(kScene5070HangingSceneItem);
-		} else if (state.scene5070AviatorCapState == kScene5070AviatorCapIdentifiedState) {
-			copyStageSmallRow(kScene5070HangingItemNameRow, kScene5070AviatorCapNameRow);
-		}
+	if (state.scene5070AviatorCapState == kScene5070AviatorCapTakenState || hasInventoryItem(kScene5070AviatorCapInventoryItem)) {
+		if (_sceneChunkTable.isValidChunk(5))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
+		clearSceneItemFromColorMap(kScene5070HangingSceneItem);
+	} else if (state.scene5070AviatorCapState == kScene5070AviatorCapIdentifiedState) {
+		copyStageSmallRow(kScene5070HangingItemNameRow, kScene5070AviatorCapNameRow);
 	}
 
 	rebuildWalkablePaletteMask();
@@ -183,14 +266,61 @@ bool Scene5070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5070::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x0b, 5, 100, 50);
+	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
+}
+
+byte Scene5070::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	if (cueId >= 0x0d && cueId <= 0x14)
+		return kScene5070AmbientSoundVolumes[cueId - 0x0d];
+	return defaultVolumePercent;
+}
+
+bool Scene5070::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5070::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
 }
 
 void Scene5070::runMineCartEntryClip() {
-	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5070MineCartDescriptorCount);
-	runActorReplacement(ActionOverlaySpec(9, kScene5070MineCartDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5070MineCartFrameMillis)
-		.soundAt(0x23, 0x16));
+	if (!_sceneChunkTable.isValidChunk(9))
+		return;
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
+	_mineCartLayer.visible = true;
+	_mineCartLayer.reset(0);
+	drawPlayableComposite();
+	if (fadePaletteFromBlack()) {
+		_mineCartLayer.visible = false;
+		_hideActiveActor = previousHideActiveActor;
+		return;
+	}
+
+	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
+	_mineCartRumbleActive = true;
+	_soundBank0.playSample(0x18, 100);
+	for (uint frame = 0; frame < ARRAYSIZE(kScene5070MineCartDelayBuckets) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
+		const uint32 frameMillis = kScene5070MineCartTimerNumerator /
+			MAX<uint32>(1, 13 - kScene5070MineCartDelayBuckets[frame]);
+		if (waitSceneMillis(frameMillis, false))
+			break;
+
+		const byte nextFrame = (byte)(frame + 1);
+		_mineCartLayer.setFrame(nextFrame);
+		if (nextFrame == 0x23) {
+			_mineCartRumbleActive = false;
+			_soundBank0.playSample(0x16, 100);
+		}
+		drawPlayableComposite();
+		presentFrame();
+	}
+
+	_mineCartRumbleActive = false;
+	_mineCartLayer.visible = false;
+	_hideActiveActor = previousHideActiveActor;
 }
 
 void Scene5070::runExitToMineSwitches() {
@@ -208,7 +338,8 @@ void Scene5070::runShovelPickup() {
 
 	runActorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
 		kScene5070ShovelPickupFrameMap, ARRAYSIZE(kScene5070ShovelPickupFrameMap), kScene5070FrameMillis)
-		.patchAt(6, 0));
+		.hookAt(6, kScene5070ShovelBackgroundPatchHook)
+		.noFinalFrameDelay());
 	addInventoryItem(kScene5070ShovelInventoryItem);
 	_soundBank0.playSample(1, 100);
 	state.scene5070ShovelTaken = true;
@@ -223,19 +354,38 @@ void Scene5070::runAviatorCapPickup() {
 	}
 
 	runActorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
-		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis));
+		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis)
+		.noFinalFrameDelay()
+		.noRedrawAtEnd());
 	addInventoryItem(kScene5070AviatorCapInventoryItem);
 	_soundBank0.playSample(1, 100);
 	state.scene5070AviatorCapState = kScene5070AviatorCapTakenState;
 	applySceneStateToHotspotsAndPatches(1);
+	drawPlayableComposite();
+	presentFrame();
 }
 
-void Scene5070::drawHangingItemForeground() {
+void Scene5070::drawMineCartForeground() {
 	const byte state = _vm->gameState().scene5070AviatorCapState;
 	const uint chunkIndex = (state == kScene5070AviatorCapTakenState ||
 		hasInventoryItem(kScene5070AviatorCapInventoryItem)) ? 11 : 10;
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
+}
+
+void Scene5070::copySlopeStepDeltasFromSet5A(uint firstOffset) {
+	for (uint i = 0; i < 0x0c && firstOffset + i < _actorPathStepDeltas.size() &&
+			firstOffset + i < ARRAYSIZE(kActorPathStepDeltaTableSet5A); ++i)
+		_actorPathStepDeltas[firstOffset + i] = kActorPathStepDeltaTableSet5A[firstOffset + i];
+}
+
+void Scene5070::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
+	if (hookId != kScene5070ShovelBackgroundPatchHook)
+		return;
+
+	_vm->gameState().scene5070ShovelTaken = true;
+	applySceneStateToHotspotsAndPatches(0);
 }
 
 void Scene5070::copyStageSmallRow(byte destinationRow, byte sourceRow) {
