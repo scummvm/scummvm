@@ -56,7 +56,7 @@ const byte kPopupSequence[] = {
 Scene9010::Scene9010(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
-		_speech(),
+		_speech(vm->getLanguage()),
 		_skipRequested(false),
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),

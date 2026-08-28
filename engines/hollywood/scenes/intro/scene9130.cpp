@@ -63,7 +63,7 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		IntroSceneBase(vm, "Scene 9130"),
 		_resources(),
 		_music(vm->introMusic()),
-		_speech(),
+		_speech(vm->getLanguage()),
 		_text(),
 		_paletteResource(),
 		_subtitle(),

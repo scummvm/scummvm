@@ -23,7 +23,8 @@
 
 namespace Hollywood {
 
-SpeechController::SpeechController() :
+SpeechController::SpeechController(Common::Language language) :
+		player(language),
 		primaryLeftSpeechLastFrame(0),
 		primaryDialogueSpeechLastFrame(0),
 		primaryDialogueSpeechGroup(0),

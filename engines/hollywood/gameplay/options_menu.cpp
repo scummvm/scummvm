@@ -100,6 +100,7 @@ const uint kOptionsMaximumLevel = 200;
 
 GameplayOptionsMenu::GameplayOptionsMenu(HollywoodEngine *vm) :
 		_vm(vm),
+		_testSpeech(vm->getLanguage()),
 		_speechPreviewSampleId(0),
 		_loaded(false),
 		_confirmQuit(false),

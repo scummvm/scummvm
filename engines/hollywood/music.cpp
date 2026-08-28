@@ -40,7 +40,8 @@ const char *const kIntroSoundBank0ArchiveName = "RESOURCE.S09";
 const uint kMusicCueTableSize = 0x190;
 const int kMusicSampleRate = 11025;
 const uint kSpeechCueTableSize = 0x3e80;
-const int kSpeechSampleRate = 22050;
+const int kSpanishSpeechSampleRate = 22050;
+const int kItalianSpeechSampleRate = 11025;
 const uint kSoundBank0CueTableSize = 0xfa0;
 const int kSoundBank0SampleRate = 11025;
 const char *const kResidentSoundArchiveName = "RESOURCE.000";
@@ -187,7 +188,10 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 	return true;
 }
 
-SpeechPlayer::SpeechPlayer() :
+SpeechPlayer::SpeechPlayer(Common::Language language) :
+		_sampleRate(language == Common::IT_ITA ? kItalianSpeechSampleRate : kSpanishSpeechSampleRate),
+		_rawFlags(language == Common::IT_ITA ? Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN : Audio::FLAG_UNSIGNED),
+		_bytesPerSample(language == Common::IT_ITA ? 2 : 1),
 		_lastSampleDurationMillis(0) {
 }
 
@@ -212,21 +216,23 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 	}
 
 	Common::SeekableReadStream *sampleStream = new Common::SeekableSubReadStream(file, start, start + size, DisposeAfterUse::YES);
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kSpeechSampleRate,
-		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, _sampleRate,
+		_rawFlags, DisposeAfterUse::YES);
 	if (!audioStream) {
 		warning("Failed to create raw stream for %s sample %u", kSpeechArchiveName, sampleId);
 		delete sampleStream;
 		return false;
 	}
 
-	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / kSpeechSampleRate);
+	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / (_sampleRate * _bytesPerSample));
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, playbackStream,
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
-	debugC(1, kDebugResources, "Started speech %s sample %u: offset=%u size=%u duration=%u ms loop=%u",
-		kSpeechArchiveName, sampleId, start, size, _lastSampleDurationMillis, loop ? 1 : 0);
+	debugC(1, kDebugResources,
+		"Started speech %s sample %u: offset=%u size=%u format=%u-bit/%uHz duration=%u ms loop=%u",
+		kSpeechArchiveName, sampleId, start, size, _bytesPerSample * 8, _sampleRate,
+		_lastSampleDurationMillis, loop ? 1 : 0);
 	return true;
 }
 
