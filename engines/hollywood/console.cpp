@@ -235,6 +235,10 @@ bool Console::cmdSolve(int argc, const char **argv) {
 		_vm->requestSceneRestart();
 		debugPrintf("Solved the scene 3060 globe puzzle; close the debugger to refresh the scene\n");
 		return true;
+	case 6090:
+		_vm->requestDebugSceneSolve(6090);
+		debugPrintf("Scheduled the scene 6090 interruption; close the debugger to play it\n");
+		return true;
 	default:
 		if (sceneNumber < 0)
 			debugPrintf("State 0x%04x does not belong to a gameplay scene\n",

@@ -146,6 +146,7 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_lastGameplayThumbnail(),
 		_lastGameplayThumbnailValid(false),
 		_sceneRestartRequested(false),
+		_debugSceneSolveRequest(0),
 		_canSave(false) {
 }
 
@@ -179,6 +180,14 @@ bool HollywoodEngine::subtitlesEnabled() const {
 
 bool HollywoodEngine::restoredContentEnabled() const {
 	return ConfMan.getBool("restored_content");
+}
+
+bool HollywoodEngine::consumeDebugSceneSolveRequest(uint16 sceneNumber) {
+	if (_debugSceneSolveRequest != sceneNumber)
+		return false;
+
+	_debugSceneSolveRequest = 0;
+	return true;
 }
 
 Common::Error HollywoodEngine::run() {

@@ -76,6 +76,7 @@ private:
 	void advanceSueIdle(uint32 delta);
 	void advanceMechanism(uint32 delta);
 	void advanceHannoverPose();
+	void runDelayedInterruption();
 	void runInterruptionClips();
 
 	void startAsyncPrimarySpeechLine(uint16 rowIndex, byte frameIndex,
