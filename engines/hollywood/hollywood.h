@@ -82,6 +82,8 @@ public:
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
 	void requestSceneRestart() { _sceneRestartRequested = true; }
 	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
+	void requestDebugSceneSolve(uint16 sceneNumber) { _debugSceneSolveRequest = sceneNumber; }
+	bool consumeDebugSceneSolveRequest(uint16 sceneNumber);
 	bool canSave() const { return _canSave; }
 	void setCanSave(bool canSave) { _canSave = canSave; }
 
@@ -108,6 +110,7 @@ private:
 	Graphics::Surface _lastGameplayThumbnail;
 	bool _lastGameplayThumbnailValid;
 	bool _sceneRestartRequested;
+	uint16 _debugSceneSolveRequest;
 	bool _canSave;
 };
 

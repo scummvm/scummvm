@@ -553,6 +553,11 @@ bool Scene6090::prepareCustomGameplayLoop() {
 }
 
 bool Scene6090::advanceCustomGameplayLoop(uint32 delta) {
+	if (_vm->consumeDebugSceneSolveRequest(6090) && !_delayedEventDone) {
+		runDelayedInterruption();
+		return true;
+	}
+
 	advanceTiedRonIdle(delta);
 	advanceAmbientLayers(delta);
 	if (_asyncPrimaryActive)
@@ -661,12 +666,7 @@ void Scene6090::advanceMechanism(uint32 delta) {
 					_karloffLayer.setFrame(0x0c);
 					_mechanismState = 6;
 					if (_interruptionCycleCount == 8 && !_delayedEventDone) {
-						_automaticEventRunning = true;
-						runInterruptionClips();
-						_delayedEventDone = true;
-						if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
-							beginSecondarySpeechLine(15, 25);
-						_automaticEventRunning = false;
+						runDelayedInterruption();
 					} else {
 						++_interruptionCycleCount;
 					}
@@ -849,6 +849,19 @@ void Scene6090::waitForAsyncPrimarySpeech() {
 		if (waitSceneMillis(25, false))
 			break;
 	}
+}
+
+void Scene6090::runDelayedInterruption() {
+	stopAsyncPrimarySpeech();
+	_speakerMode = 0;
+	_karloffLayer.setFrame(0x0c);
+	_mechanismState = 6;
+	_automaticEventRunning = true;
+	runInterruptionClips();
+	_delayedEventDone = true;
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
+		beginSecondarySpeechLine(15, 25);
+	_automaticEventRunning = false;
 }
 
 void Scene6090::runInterruptionClips() {
