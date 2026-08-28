@@ -114,12 +114,11 @@ bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY
 	if (eyeZ >= -1.0f)
 		return false;
 
-	const float focal = (screenR.height() * 0.5f) / tanf(75.0f * (float)M_PI / 360.0f);
 	const float centerX = screenR.left + screenR.width() * 0.5f;
 	const float centerY = screenR.top + screenR.height() * 0.5f;
 
-	screenX = (int)roundf(centerX + (eyeX * focal / -eyeZ));
-	screenY = (int)roundf(centerY - (eyeY * focal / -eyeZ));
+	screenX = (int)roundf(centerX + (eyeX * kProjectionFocalLength / -eyeZ));
+	screenY = (int)roundf(centerY - (eyeY * kProjectionFocalLength / -eyeZ));
 	return true;
 }
 

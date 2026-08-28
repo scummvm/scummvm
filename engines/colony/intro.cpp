@@ -445,8 +445,10 @@ void ColonyEngine::playIntro() {
 			_sound->play(Sound::kStars1);
 			_gfx->clear(_gfx->black());
 			if (loadAnimation("logo2")) {
+				_gfx->setSquarePixelViewport(true);
 				drawAnimation();
 				_gfx->copyToScreen();
+				_gfx->setSquarePixelViewport(false);
 			}
 			qt = makeStars(_screenR, 0);
 			_gfx->clear(_gfx->black());
@@ -457,8 +459,10 @@ void ColonyEngine::playIntro() {
 			_sound->stop();
 			_sound->play(Sound::kStars2);
 			if (loadAnimation("logo1")) {
+				_gfx->setSquarePixelViewport(true);
 				drawAnimation();
 				_gfx->copyToScreen();
+				_gfx->setSquarePixelViewport(false);
 			}
 			qt = makeStars(_screenR, 0);
 			_gfx->clear(_gfx->black());

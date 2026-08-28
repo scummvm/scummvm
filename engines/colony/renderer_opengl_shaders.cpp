@@ -83,6 +83,7 @@ public:
 	void setFeatureClipX(int left, int right) override;
 	void clearFeatureClipX() override;
 	void applyScissorRect(const Common::Rect &logical);
+	void setSquarePixelViewport(bool enable) override;
 	void computeScreenViewport() override;
 
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
@@ -122,6 +123,7 @@ private:
 	Common::Rect _active3DViewport;
 	int _width = 0;
 	int _height = 0;
+	bool _squarePixelViewport = false;
 	byte _palette[256 * 3] = {};
 
 	OpenGL::Shader *_solidShader = nullptr;
@@ -630,13 +632,35 @@ void OpenGLShaderRenderer::setPalette(const byte *palette, uint start, uint coun
 	memcpy(_palette + start * 3, palette, count * 3);
 }
 
+void OpenGLShaderRenderer::setSquarePixelViewport(bool enable) {
+	if (_squarePixelViewport == enable)
+		return;
+
+	_squarePixelViewport = enable;
+	computeScreenViewport();
+}
+
 void OpenGLShaderRenderer::computeScreenViewport() {
 	const int32 screenWidth = _system->getWidth();
 	const int32 screenHeight = _system->getHeight();
 	const bool widescreen = ConfMan.getBool("widescreen_mod");
 
-	if (widescreen) {
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	if (_squarePixelViewport) {
+		// Animation bitmaps use square pixels. Fit the uncorrected logical
+		// canvas so their authored 416x264 geometry matches the Mac version.
+		const int32 vpW = MIN<int32>(screenWidth,
+			(screenHeight * _width + _height / 2) / _height);
+		const int32 vpH = MIN<int32>(screenHeight,
+			(screenWidth * _height + _width / 2) / _width);
+		_screenViewport = Common::Rect(vpW, vpH);
+		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
+	} else if (widescreen) {
+		// Widescreen is a 16:9 presentation even when fullscreen uses a
+		// taller or wider display. Keep it centered instead of stretching it.
+		const int32 vpW = MIN<int32>(screenWidth, (screenHeight * 16 + 4) / 9);
+		const int32 vpH = MIN<int32>(screenHeight, (screenWidth * 9 + 8) / 16);
+		_screenViewport = Common::Rect(vpW, vpH);
+		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
 	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		const int32 vpW = MIN<int32>(screenWidth, screenHeight * 4 / 3);
 		const int32 vpH = MIN<int32>(screenHeight, screenWidth * 3 / 4);
@@ -773,14 +797,12 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
 
-	// Perspective: 75° vertical FOV, near=1, far=10000 — matches the
-	// fixed-function path so geometry lands at the same screen positions.
-	const float aspectRatio = (float)viewport.width() / (float)viewport.height();
-	const float fov = 75.0f;
+	// Match CALCROBO.C's center + (coordinate << 8) / depth projection and
+	// the fixed-function path by using a 256-logical-pixel focal length.
 	const float nearClip = 1.0f;
 	const float farClip = 10000.0f;
-	const float ymax = nearClip * tanf(fov * (float)M_PI / 360.0f);
-	const float xmax = ymax * aspectRatio;
+	const float xmax = nearClip * viewport.width() * 0.5f / kProjectionFocalLength;
+	const float ymax = nearClip * viewport.height() * 0.5f / kProjectionFocalLength;
 
 	// Build perspective frustum directly. Math::makeFrustumMatrix exists in
 	// math/glmath.h, but its sign convention requires a final transpose to

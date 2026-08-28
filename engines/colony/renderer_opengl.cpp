@@ -117,6 +117,7 @@ public:
 	void clearFeatureClipX() override {
 		applyScissorRect(_active3DViewport);
 	}
+	void setSquarePixelViewport(bool enable) override;
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
@@ -137,6 +138,7 @@ private:
 	Common::Rect _active3DViewport;
 	int _width = 0;
 	int _height = 0;
+	bool _squarePixelViewport = false;
 	byte _palette[256 * 3] = {};
 	bool _wireframe = true;
 	int64_t _wireframeFillColor = 0; // -1 = no fill (outline only)
@@ -308,15 +310,12 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
-	// Use a proper FOV-based perspective projection (like Freescape).
-	// A fixed vertical FOV ensures the forward direction stays centered
-	// regardless of viewport dimensions (e.g. when dashboard narrows it).
-	float aspectRatio = (float)viewport.width() / (float)viewport.height();
-	float fov = 75.0f; // vertical FOV in degrees
-	float nearClip = 1.0f;
-	float farClip = 10000.0f;
-	float ymax = nearClip * tanf(fov * M_PI / 360.0f);
-	float xmax = ymax * aspectRatio;
+	// The original projection is center + (coordinate << 8) / depth, so
+	// derive the frustum from its fixed 256-logical-pixel focal length.
+	const float nearClip = 1.0f;
+	const float farClip = 10000.0f;
+	const float xmax = nearClip * viewport.width() * 0.5f / kProjectionFocalLength;
+	const float ymax = nearClip * viewport.height() * 0.5f / kProjectionFocalLength;
 	glFrustum(-xmax, xmax, -ymax, ymax, nearClip, farClip);
  
 	glMatrixMode(GL_MODELVIEW);
@@ -575,14 +574,38 @@ void OpenGLRenderer::end3D() {
 	glOrtho(0, _width, _height, 0, -1, 1);
 }
 
+void OpenGLRenderer::setSquarePixelViewport(bool enable) {
+	if (_squarePixelViewport == enable)
+		return;
+
+	_squarePixelViewport = enable;
+	computeScreenViewport();
+}
+
 void OpenGLRenderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
 
 	bool widescreen = ConfMan.getBool("widescreen_mod");
 
-	if (widescreen) {
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	if (_squarePixelViewport) {
+		// Animation bitmaps use square pixels. Fit the uncorrected logical
+		// canvas so their authored 416x264 geometry matches the Mac version.
+		const int32 viewportWidth = MIN<int32>(screenWidth,
+			(screenHeight * _width + _height / 2) / _height);
+		const int32 viewportHeight = MIN<int32>(screenHeight,
+			(screenWidth * _height + _width / 2) / _width);
+		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+		_screenViewport.translate((screenWidth - viewportWidth) / 2,
+			(screenHeight - viewportHeight) / 2);
+	} else if (widescreen) {
+		// Widescreen is a 16:9 presentation even when fullscreen uses a
+		// taller or wider display. Keep it centered instead of stretching it.
+		const int32 viewportWidth = MIN<int32>(screenWidth, (screenHeight * 16 + 4) / 9);
+		const int32 viewportHeight = MIN<int32>(screenHeight, (screenWidth * 9 + 8) / 16);
+		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+		_screenViewport.translate((screenWidth - viewportWidth) / 2,
+			(screenHeight - viewportHeight) / 2);
 	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		// Aspect ratio correction (4:3)
 		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * 4 / 3);
