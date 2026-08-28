@@ -21,6 +21,8 @@
 
 #include "hollywood/scenes/playable/scene5090.h"
 
+#include "common/system.h"
+
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -38,6 +40,15 @@ const uint kScene5090ReturnDescriptorCount = 0x13;
 const uint kScene5090WaterFillDescriptorCount = 9;
 const byte kScene5090EmptyWaterContainerItem = 0x1a;
 const byte kScene5090FilledWaterContainerItem = 0x52;
+const uint kScene5090DimmedPaletteColorCount = 0xb0;
+const byte kScene5090PaletteDimming = 8;
+const byte kScene5090WaterfallPaletteFirstColor = 0x70;
+const byte kScene5090WaterfallPaletteLastColor = 0x7f;
+const uint32 kScene5090WaterfallPaletteMillis = 300;
+const byte kScene5090LagoonPaletteFirstColor = 0x80;
+const byte kScene5090LagoonPaletteLastColor = 0x8f;
+const uint32 kScene5090LagoonPaletteMillis = 500;
+const uint kScene5090LagoonWrapDestinationBase = 0x32d;
 
 const byte kScene5090EntryFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -67,13 +78,21 @@ static PlayableSceneConfig scene5090Config() {
 }
 
 Scene5090::Scene5090(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5090Config()) {
+		PlayableScene(vm, scene5090Config()),
+		_waterfallPaletteChannel(),
+		_lagoonPaletteChannel(),
+		_lagoonPalettePhase(0),
+		_lagoonPaletteReverse(false),
+		_mineCartRumbleActive(false),
+		_routeStartRegion(0) {
 }
 
 void Scene5090::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
-	applySceneStateToHotspotsAndPatches(0xff);
-
+	applyScenePaletteDimming();
+	resetPaletteAnimations();
+	_mineCartRumbleActive = false;
+	_routeStartRegion = 0;
 	setActiveActorPose(0x0b5, 0x076, 2);
 }
 
@@ -83,17 +102,21 @@ void Scene5090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	drawActionOverlayLayer();
+}
+
+bool Scene5090::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
 }
 
 void Scene5090::runCustomEntrySequence() {
 	setActiveActorPose(0x054, 0x068, 2);
-	drawPlayableComposite();
-	presentFrame();
-
 	runEntryClip();
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
 	walkActiveActorTo(0x0b5, 0x076, 2, 0, false);
 
 	GameplayState &state = _vm->gameState();
@@ -104,26 +127,29 @@ void Scene5090::runCustomEntrySequence() {
 }
 
 bool Scene5090::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+	ensureAmbientSoundCuePlaying(0, 0x1c, 10);
+	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
+		_soundBank0.playSample(0x18, 100);
+	advancePaletteAnimations(delta);
+	return false;
 }
 
 bool Scene5090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Mirar laguna subterranea (look at underground lagoon).
-		beginSecondarySpeechLine(2, 0);
-		return true;
-	case 302: // Mirar/coger cascada (look/take waterfall): water source description.
-		beginSecondarySpeechLine(3, 0);
-		return true;
-	case 303: // Ir a vagoneta/tunel (go to cart/tunnel): return to mine switches.
+	case 301: // Usar vagoneta (use mine cart): return to the switch room.
 		runReturnToMineSwitches();
+		return true;
+	case 302: // Mirar laguna subterranea (look at underground lagoon).
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 303: // Mirar cascada (look at waterfall).
+		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 304: // Usar recipiente vacio con cascada: fills item 0x1a and grants item 0x52.
 		runFillWaterContainer();
 		return true;
 	case 305: // Usar recipiente lleno con cascada: Ron already has enough water.
-		beginSecondarySpeechLine(6, 0);
+		beginSecondarySpeechLine(4, 0);
 		return true;
 	default:
 		return false;
@@ -133,12 +159,37 @@ bool Scene5090::dispatchCustomSceneAction(uint16 handlerId) {
 bool Scene5090::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	targetX = CLIP<int>(targetX, 0x0b5, 0x1b7);
 
+	if (targetY < 0x1df)
+		++targetY;
 	while (targetY < 0x1df && walkableMaskAt(targetX, targetY) == 0)
 		++targetY;
 	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
 		--targetY;
 
 	return walkableMaskAt(targetX, targetY) != 0;
+}
+
+void Scene5090::prepareCustomActorPathRoute(int startX, int startY) {
+	_routeStartRegion = paletteRegionAt(startX, startY);
+	if (_routeStartRegion == 0)
+		_routeStartRegion = _activeActorDrawOrderMode;
+}
+
+bool Scene5090::customizeRouteFinal(byte currentRegion, byte targetRegion,
+		const ActorPathBuildState &state, int targetX, int targetY,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)targetRegion;
+	(void)state;
+	(void)targetX;
+	(void)targetY;
+	(void)restoredStepDeltas;
+
+	if (currentRegion == 1 && _routeStartRegion == 2) {
+		requestedFacing = 4;
+		return true;
+	}
+
+	return false;
 }
 
 bool Scene5090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
@@ -155,6 +206,14 @@ bool Scene5090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
+bool Scene5090::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5090::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 AmbientAudioProfile Scene5090::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
@@ -169,33 +228,144 @@ AmbientAudioProfile Scene5090::ambientAudioProfile() const {
 	return profile;
 }
 
+void Scene5090::applyScenePaletteDimming() {
+	const uint byteCount = MIN<uint>(kScene5090DimmedPaletteColorCount * 3,
+		MIN<uint>(_paletteResource.size(), _paletteCurrent.size()));
+	for (uint offset = 0; offset < byteCount; ++offset) {
+		const byte component = _paletteResource[offset];
+		const byte dimmed = component > kScene5090PaletteDimming ?
+			component - kScene5090PaletteDimming : 0;
+		_paletteResource[offset] = dimmed;
+		_paletteCurrent[offset] = dimmed;
+	}
+	invalidatePresentationPalette();
+}
+
+void Scene5090::resetPaletteAnimations() {
+	_waterfallPaletteChannel.reset(0, kScene5090WaterfallPaletteMillis);
+	_lagoonPaletteChannel.reset(0, kScene5090LagoonPaletteMillis);
+	_lagoonPalettePhase = 0;
+	_lagoonPaletteReverse = false;
+}
+
+void Scene5090::advancePaletteAnimations(uint32 delta) {
+	uint frameCount = _waterfallPaletteChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame)
+		rotateWaterfallPalette();
+
+	frameCount = _lagoonPaletteChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame)
+		advanceLagoonPalette();
+}
+
+void Scene5090::rotateWaterfallPalette() {
+	const uint firstOffset = kScene5090WaterfallPaletteFirstColor * 3;
+	const uint lastOffset = kScene5090WaterfallPaletteLastColor * 3;
+	if (_paletteCurrent.size() < lastOffset + 3)
+		return;
+
+	byte savedColor[3];
+	memcpy(savedColor, _paletteCurrent.data() + lastOffset, sizeof(savedColor));
+	for (uint color = kScene5090WaterfallPaletteLastColor;
+			color > kScene5090WaterfallPaletteFirstColor; --color) {
+		memcpy(_paletteCurrent.data() + color * 3,
+			_paletteCurrent.data() + (color - 1) * 3, sizeof(savedColor));
+	}
+	memcpy(_paletteCurrent.data() + firstOffset, savedColor, sizeof(savedColor));
+	invalidatePresentationPalette();
+}
+
+void Scene5090::advanceLagoonPalette() {
+	const uint paletteEnd = (kScene5090LagoonPaletteLastColor + 1) * 3;
+	if (_paletteResource.size() < paletteEnd || _paletteCurrent.size() < paletteEnd)
+		return;
+
+	if (_lagoonPalettePhase == 0)
+		_lagoonPalettePhase = 0x81;
+	if (_random.getRandomNumber(49) == 0)
+		_lagoonPaletteReverse = !_lagoonPaletteReverse;
+
+	if (_lagoonPaletteReverse) {
+		--_lagoonPalettePhase;
+		if (_lagoonPalettePhase < kScene5090LagoonPaletteFirstColor)
+			_lagoonPalettePhase = kScene5090LagoonPaletteLastColor;
+	} else {
+		++_lagoonPalettePhase;
+		if (_lagoonPalettePhase > kScene5090LagoonPaletteLastColor)
+			_lagoonPalettePhase = kScene5090LagoonPaletteFirstColor;
+	}
+
+	const uint phaseOffset = _lagoonPalettePhase * 3;
+	const uint firstByteCount = paletteEnd - phaseOffset;
+	memcpy(_paletteCurrent.data() + kScene5090LagoonPaletteFirstColor * 3,
+		_paletteResource.data() + phaseOffset, firstByteCount);
+
+	const uint secondByteCount = phaseOffset - kScene5090LagoonPaletteFirstColor * 3;
+	// The original wrap copy overlaps the first span's final color.
+	const uint secondDestination = kScene5090LagoonWrapDestinationBase - phaseOffset;
+	memcpy(_paletteCurrent.data() + secondDestination,
+		_paletteResource.data() + kScene5090LagoonPaletteFirstColor * 3,
+		secondByteCount);
+	invalidatePresentationPalette();
+}
+
 void Scene5090::runEntryClip() {
-	runActorReplacement(ActionOverlaySpec(5, kScene5090EntryDescriptorCount,
-		kScene5090EntryFrameMap, ARRAYSIZE(kScene5090EntryFrameMap), kScene5090FrameMillis)
-		.soundAt(1, 0x16));
+	copyBaseFramebufferToSceneFramebuffer();
+	if (fadePaletteFromBlack() || !_sceneChunkTable.isValidChunk(5))
+		return;
+
+	_mineCartRumbleActive = true;
+	ensureAmbientSoundCuePlaying(0, 0x1c, 10);
+	_soundBank0.playSample(0x18, 100);
+	// The first clip tick replaces the initial cart rumble with cue 0x16.
+	_soundBank0.playSample(0x16, 100);
+	_mineCartRumbleActive = false;
+
+	for (uint playbackFrame = 1;
+			playbackFrame < ARRAYSIZE(kScene5090EntryFrameMap) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++playbackFrame) {
+		if (playbackFrame != 1 && waitEntryClipFrameMillis(kScene5090FrameMillis))
+			break;
+		drawClipFrameDelta(5, kScene5090EntryDescriptorCount,
+			kScene5090EntryFrameMap[playbackFrame]);
+		presentFrame();
+	}
+}
+
+bool Scene5090::waitEntryClipFrameMillis(uint32 millis) {
+	uint32 remaining = millis;
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollEvents(false))
+			return true;
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		advanceGameplayLoop(slice);
+		presentFrame();
+		remaining -= slice;
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void Scene5090::runReturnToMineSwitches() {
 	walkActiveActorTo(0x054, 0x068, 0xff, 0, false);
+	_mineCartRumbleActive = true;
 	_soundBank0.playSample(0x15, 100);
 	runActorReplacement(ActionOverlaySpec(5, kScene5090ReturnDescriptorCount,
-		kScene5090ReturnFrameMap, ARRAYSIZE(kScene5090ReturnFrameMap), kScene5090FrameMillis));
+		kScene5090ReturnFrameMap, ARRAYSIZE(kScene5090ReturnFrameMap), kScene5090FrameMillis)
+		.startAt(1)
+		.noFinalFrameDelay());
+	_mineCartRumbleActive = false;
 	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
 }
 
 void Scene5090::runFillWaterContainer() {
-	if (hasInventoryItem(kScene5090FilledWaterContainerItem)) {
-		beginSecondarySpeechLine(6, 0);
-		return;
-	}
-	if (!hasInventoryItem(kScene5090EmptyWaterContainerItem)) {
-		beginSecondarySpeechLine(5, 0);
-		return;
-	}
-
 	beginSecondarySpeechLine(3, 0);
 	runActorReplacement(ActionOverlaySpec(7, kScene5090WaterFillDescriptorCount,
-		kScene5090WaterFillFrameMap, ARRAYSIZE(kScene5090WaterFillFrameMap), kScene5090FrameMillis));
+		kScene5090WaterFillFrameMap, ARRAYSIZE(kScene5090WaterFillFrameMap), kScene5090FrameMillis)
+		.startAt(1)
+		.noFinalFrameDelay());
 	removeInventoryItem(kScene5090EmptyWaterContainerItem);
 	addInventoryItem(kScene5090FilledWaterContainerItem);
 	_soundBank0.playSample(1, 100);
