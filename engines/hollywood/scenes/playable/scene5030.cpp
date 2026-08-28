@@ -40,6 +40,10 @@ const byte kScene5030MineCartSoundFrame = 0x28;
 const uint kScene5030Chunk8DescriptorCount = 0x1a;
 const uint kScene5030Chunk9DescriptorCount = 0x17;
 const uint kScene5030Chunk10DescriptorCount = 0x0d;
+const uint kScene5030DeckAnimationDescriptorCount = 0x0e;
+const uint kScene5030ConversationDescriptorCount = 0x0b;
+const uint kScene5030UnderpantsRonDescriptorCount = 8;
+const uint kScene5030UnderpantsVanessaDescriptorCount = 0x0e;
 const uint kScene5030MineCartEntryLayer = 0;
 const uint kScene5030Chunk8Layer = 1;
 const uint kScene5030Chunk9Layer = 2;
@@ -74,9 +78,20 @@ const uint16 kScene5030GladysDialogueCenterX = 0x274;
 const uint16 kScene5030GladysDialogueTopY = 0x11b;
 const byte kScene5030GladysSpeechGroup = 0;
 const byte kScene5030VanessaSpeechGroup = 1;
+const byte kScene5030RonSpeechGroup = 2;
+const byte kScene5030RonTradeSpeechGroup = 3;
 const byte kScene5030VanessaIdleFrame = 0x0f;
 const byte kScene5030GladysIdleFrame = 0x15;
 const uint kScene5030ScoutPlayingFrameCount = 8;
+const uint32 kScene5030ScoutFrameMillis = 100;
+const uint32 kScene5030ScoutSpeechFrameMillis = 125;
+const uint32 kScene5030RonSpeechFrameMillis = 150;
+const byte kScene5030ScoutStopVanessaFrame = 0x0b;
+const byte kScene5030ScoutStopGladysFrame = 0x0e;
+const byte kScene5030ScoutResumeVanessaFrame = 0x0e;
+const byte kScene5030ScoutResumeGladysFrame = 0x14;
+const byte kScene5030DeckPatchFrame = 7;
+const byte kScene5030GrantDeckHook = 1;
 
 const byte kScene5030MineCartEntryDelayBuckets[] = {
 	2, 2, 2, 2, 2, 2, 2, 2,
@@ -109,6 +124,46 @@ const byte kScene5030Chunk10FrameMap[] = {
 	11, 12
 };
 
+const byte kScene5030DeckRefusalFrameMap[] = {
+	0, 0, 1, 2, 3, 4,
+	5, 5, 5, 5, 5, 5, 5, 5,
+	4, 3, 2, 1, 0
+};
+
+const byte kScene5030DeckPickupFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+const byte kScene5030RonTurnToVanessaFrameMap[] = { 5, 5, 0 };
+const byte kScene5030RonTurnToGladysFrameMap[] = { 5, 5, 6 };
+const byte kScene5030UnderpantsPresentationFrameMap[] = { 6, 2, 1, 0, 1, 2 };
+
+const byte kScene5030UnderpantsHandoffRonFrameMap[] = {
+	2, 2, 2, 2, 2, 6,
+	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
+};
+
+const byte kScene5030UnderpantsHandoffVanessaFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 0
+};
+
+class ParallelResourceLayerFrameTarget {
+public:
+	ParallelResourceLayerFrameTarget(ResourceSpriteLayer &first, ResourceSpriteLayer &second) :
+			_first(first), _second(second) {
+	}
+
+	void setFrame(byte frame) {
+		_first.setFrame(frame);
+		_second.setFrame(frame);
+	}
+
+private:
+	ResourceSpriteLayer &_first;
+	ResourceSpriteLayer &_second;
+};
+
 PlayableSceneConfig scene5030Config() {
 	PlayableSceneConfig config(5030,
 		SceneResourceLayout(5, 5, 16),
@@ -126,7 +181,16 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		_chunk8Channel(),
 		_chunk9Channel(),
 		_chunk10Channel(),
-		_animationLayers() {
+		_ronDialogueIdleChannel(),
+		_animationLayers(),
+		_actorReplacementLayer(),
+		_alternateVanessaLayer(),
+		_scoutStopTransitionActive(false),
+		_scoutResumeTransitionActive(false),
+		_scoutsInDialoguePose(false),
+		_musicSuppressed(false),
+		_ronSpeechBaseFrame(0),
+		_ronConversationChunk(13) {
 	_animationLayers.configureLayer(kScene5030MineCartEntryLayer, 5,
 		kScene5030MineCartEntryDescriptorCount, nullptr, 0, false);
 	_animationLayers.configureLayer(kScene5030Chunk8Layer, 8, kScene5030Chunk8DescriptorCount,
@@ -159,6 +223,17 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawActionOverlayLayer();
 		return;
 	}
+	if (_actorReplacementLayer.visible) {
+		drawResourceSpriteLayer(_actorReplacementLayer);
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk10Layer));
+		if (_alternateVanessaLayer.visible)
+			drawResourceSpriteLayer(_alternateVanessaLayer);
+		else
+			drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk9Layer));
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk8Layer));
+		drawActionOverlayLayer();
+		return;
+	}
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -172,12 +247,19 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene5030::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene5030::runCustomEntrySequence() {
 	setActiveActorPose(0x061, 0x19b, 2);
 	drawPlayableComposite();
 	presentFrame();
-
+	fadePaletteFromBlack();
 	runMineCartEntryAnimation();
+	drawPlayableComposite();
+	presentFrame();
+	fadePaletteFromBlack();
 	runEntryPath(0x061, 0x19b, 2, 0x152, 0x16b);
 	_activeActorFacing = 2;
 	_activeActorCel = 0;
@@ -189,8 +271,15 @@ void Scene5030::runCustomEntrySequence() {
 	}
 }
 
+bool Scene5030::shouldRunExitSideEffectsAfterLoop() const {
+	return true;
+}
+
+void Scene5030::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 bool Scene5030::prepareCustomGameplayLoop() {
-	resetAnimationLayers();
 	return true;
 }
 
@@ -198,10 +287,26 @@ bool Scene5030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceLayer(_chunk8Channel, kScene5030Chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030VanessaSpeechGroup)
+	if (_scoutStopTransitionActive || _scoutResumeTransitionActive) {
+		advanceScoutTransitions(delta);
+		advanceRonDialogueIdle(delta);
+	} else if (!_scoutsInDialoguePose) {
 		advanceLayer(_chunk9Channel, kScene5030Chunk9Layer, kScene5030ScoutPlayingFrameCount, delta);
-	if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030GladysSpeechGroup)
 		advanceLayer(_chunk10Channel, kScene5030Chunk10Layer, kScene5030ScoutPlayingFrameCount, delta);
+	} else {
+		if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030VanessaSpeechGroup)
+			advanceDialogueIdleLayer(_chunk9Channel, kScene5030Chunk9Layer,
+				kScene5030VanessaIdleFrame, kScene5030VanessaIdleFrame + 4, delta);
+		else
+			_chunk9Channel.consumeFrames(delta);
+		if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030GladysSpeechGroup)
+			advanceDialogueIdleLayer(_chunk10Channel, kScene5030Chunk10Layer,
+				kScene5030GladysIdleFrame, kScene5030GladysIdleFrame + 4, delta);
+		else
+			_chunk10Channel.consumeFrames(delta);
+		advanceRonDialogueIdle(delta);
+	}
+	ensureAmbientSoundCuePlaying(1, 0x19, 75);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -249,7 +354,21 @@ bool Scene5030::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+bool Scene5030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = MIN<int>(targetX, 0x214);
+	if (targetY < 0x1df)
+		++targetY;
+
+	while (targetY < 0x1df && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+		--targetY;
+
+	return true;
+}
+
 bool Scene5030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -258,12 +377,12 @@ bool Scene5030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	const GameplayState &state = _vm->gameState();
-	if ((selector == 1 || selector == 0xff) && (state.scene5030DeckOfCardsState >= 2 || hasInventoryItem(kScene5030DeckOfCardsItem))) {
+	if (state.scene5030DeckOfCardsState >= 2 || hasInventoryItem(kScene5030DeckOfCardsItem)) {
 		if (_sceneChunkTable.isValidChunk(12))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
 		clearSceneItemFromColorMap(kScene5030TakenSceneItemId);
 	}
-	if ((selector == 3 || selector == 0xff) && state.scene5030MusiciansNamed) {
+	if (state.scene5030MusiciansNamed) {
 		copyStageSmallRow(kScene5030RenamedSmallRowA, kScene5030DocumentSmallRowA);
 		copyStageSmallRow(kScene5030RenamedSmallRowB, kScene5030DocumentSmallRowB);
 	}
@@ -274,13 +393,38 @@ bool Scene5030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5030::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 75, 25, 0x10, 1, 100, 50);
+	AmbientAudioProfile profile = createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x10, 1, 100, 1);
+	if (_musicSuppressed)
+		profile.musicMode = kAmbientMusicNone;
+	return profile;
+}
+
+byte Scene5030::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
+	static const byte kCueVolumes[] = { 10, 10, 10, 2, 10, 10, 10, 100 };
+	if (cueId < 0x0d || cueId >= 0x0d + ARRAYSIZE(kCueVolumes))
+		return defaultVolumePercent;
+	return kCueVolumes[cueId - 0x0d];
+}
+
+void Scene5030::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
+	if (hookId == kScene5030GrantDeckHook)
+		grantDeckOfCards();
 }
 
 void Scene5030::resetAnimationLayers() {
 	_chunk8Channel.reset(0, kScene5030FrameMillis);
-	_chunk9Channel.reset(0, kScene5030FrameMillis);
-	_chunk10Channel.reset(0, kScene5030FrameMillis);
+	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
+	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
+	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
+	clearResourceLayer(_actorReplacementLayer);
+	clearResourceLayer(_alternateVanessaLayer);
+	_scoutStopTransitionActive = false;
+	_scoutResumeTransitionActive = false;
+	_scoutsInDialoguePose = false;
+	_musicSuppressed = false;
+	_ronSpeechBaseFrame = 0;
+	_ronConversationChunk = 13;
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
 	_animationLayers.setLayerVisible(kScene5030Chunk8Layer, true);
 	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk8Layer, 0);
@@ -300,6 +444,216 @@ void Scene5030::advanceLayer(TimedAnimationChannel &channel, uint layerIndex, ui
 	}
 }
 
+void Scene5030::advanceDialogueIdleLayer(TimedAnimationChannel &channel, uint layerIndex,
+		byte baseFrame, byte accentFrame, uint32 delta) {
+	const uint consumedFrames = channel.consumeFrames(delta);
+	for (uint i = 0; i < consumedFrames; ++i) {
+		const byte frame = _animationLayers.layerFrame(layerIndex);
+		if (frame != baseFrame)
+			_animationLayers.setLayerFrame(layerIndex, baseFrame);
+		else if (_random.getRandomNumber(14) == 0)
+			_animationLayers.setLayerFrame(layerIndex, accentFrame);
+	}
+}
+
+void Scene5030::advanceRonDialogueIdle(uint32 delta) {
+	if (!_actorReplacementLayer.visible ||
+			(_ronConversationChunk != 13 && _ronConversationChunk != 14) ||
+			_actorReplacementLayer.chunkIndex != _ronConversationChunk ||
+			_actorReplacementLayer.frameMap != nullptr ||
+			(_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene5030RonSpeechGroup)) {
+		_ronDialogueIdleChannel.consumeFrames(delta);
+		return;
+	}
+
+	const uint consumedFrames = _ronDialogueIdleChannel.consumeFrames(delta);
+	for (uint i = 0; i < consumedFrames; ++i) {
+		if (_actorReplacementLayer.frameIndex != _ronSpeechBaseFrame)
+			_actorReplacementLayer.setFrame(_ronSpeechBaseFrame);
+		else if (_random.getRandomNumber(14) == 0)
+			_actorReplacementLayer.setFrame(_ronSpeechBaseFrame + 4);
+	}
+}
+
+void Scene5030::advanceScoutTransitions(uint32 delta) {
+	const uint vanessaFrames = _chunk9Channel.consumeFrames(delta);
+	for (uint i = 0; i < vanessaFrames; ++i) {
+		byte frame = _animationLayers.layerFrame(kScene5030Chunk9Layer);
+		const byte target = _scoutStopTransitionActive ?
+			kScene5030ScoutStopVanessaFrame : kScene5030ScoutResumeVanessaFrame;
+		if (frame < target)
+			_animationLayers.setLayerFrame(kScene5030Chunk9Layer, frame + 1);
+	}
+
+	const uint gladysFrames = _chunk10Channel.consumeFrames(delta);
+	for (uint i = 0; i < gladysFrames; ++i) {
+		byte frame = _animationLayers.layerFrame(kScene5030Chunk10Layer);
+		const byte target = _scoutStopTransitionActive ?
+			kScene5030ScoutStopGladysFrame : kScene5030ScoutResumeGladysFrame;
+		if (frame < target)
+			_animationLayers.setLayerFrame(kScene5030Chunk10Layer, frame + 1);
+	}
+
+	if (_scoutStopTransitionActive &&
+			_animationLayers.layerFrame(kScene5030Chunk9Layer) == kScene5030ScoutStopVanessaFrame &&
+			_animationLayers.layerFrame(kScene5030Chunk10Layer) == kScene5030ScoutStopGladysFrame)
+		finishScoutStopTransition();
+	else if (_scoutResumeTransitionActive &&
+			_animationLayers.layerFrame(kScene5030Chunk9Layer) == kScene5030ScoutResumeVanessaFrame &&
+			_animationLayers.layerFrame(kScene5030Chunk10Layer) == kScene5030ScoutResumeGladysFrame)
+		finishScoutResumeTransition();
+}
+
+void Scene5030::startScoutStopTransition() {
+	_scoutResumeTransitionActive = false;
+	_scoutStopTransitionActive = true;
+	_scoutsInDialoguePose = false;
+	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
+	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
+}
+
+void Scene5030::startScoutResumeTransition() {
+	_scoutStopTransitionActive = false;
+	_scoutResumeTransitionActive = true;
+	_scoutsInDialoguePose = true;
+	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030ScoutStopVanessaFrame);
+	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030ScoutStopGladysFrame);
+	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
+	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
+}
+
+void Scene5030::waitForScoutTransition() {
+	while ((_scoutStopTransitionActive || _scoutResumeTransitionActive) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10, false))
+			break;
+	}
+}
+
+void Scene5030::finishScoutStopTransition() {
+	_scoutStopTransitionActive = false;
+	_scoutsInDialoguePose = true;
+	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
+	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030GladysIdleFrame);
+	_chunk9Channel.reset(0, kScene5030ScoutSpeechFrameMillis);
+	_chunk10Channel.reset(0, kScene5030ScoutSpeechFrameMillis);
+	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
+}
+
+void Scene5030::finishScoutResumeTransition() {
+	_scoutResumeTransitionActive = false;
+	_scoutsInDialoguePose = false;
+	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, 0);
+	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, 0);
+	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
+	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
+	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
+	_musicSuppressed = false;
+}
+
+void Scene5030::showRonConversationLayer(uint chunkIndex, byte baseFrame) {
+	clearResourceLayer(_alternateVanessaLayer);
+	_actorReplacementLayer.configure(chunkIndex, kScene5030ConversationDescriptorCount, nullptr, 0);
+	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(chunkIndex);
+	_actorReplacementLayer.setFrame(baseFrame);
+	_ronSpeechBaseFrame = baseFrame;
+	_ronConversationChunk = chunkIndex;
+	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
+}
+
+void Scene5030::clearActorReplacementLayers() {
+	clearResourceLayer(_actorReplacementLayer);
+	clearResourceLayer(_alternateVanessaLayer);
+}
+
+void Scene5030::finishScoutConversation() {
+	clearActorReplacementLayers();
+	startScoutResumeTransition();
+	waitForScoutTransition();
+}
+
+void Scene5030::runRonPoseTransition(bool faceGladys) {
+	const byte *frameMap = faceGladys ? kScene5030RonTurnToGladysFrameMap : kScene5030RonTurnToVanessaFrameMap;
+	const uint frameCount = faceGladys ? ARRAYSIZE(kScene5030RonTurnToGladysFrameMap) :
+		ARRAYSIZE(kScene5030RonTurnToVanessaFrameMap);
+	playResourceLayerSequence(_actorReplacementLayer, _ronConversationChunk, kScene5030ConversationDescriptorCount,
+		frameMap, frameCount, AnimationFrameRange(0, frameCount - 1,
+			kScene5030FrameMillis).unskippable(), false);
+	_actorReplacementLayer.configure(_ronConversationChunk, kScene5030ConversationDescriptorCount, nullptr, 0);
+	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(_ronConversationChunk);
+	_actorReplacementLayer.setFrame(faceGladys ? 6 : 0);
+	_ronSpeechBaseFrame = faceGladys ? 6 : 0;
+	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
+}
+
+void Scene5030::runDeckRefusalSequence() {
+	startScoutStopTransition();
+	playResourceLayerSequence(_actorReplacementLayer, 11, kScene5030DeckAnimationDescriptorCount,
+		kScene5030DeckRefusalFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene5030DeckRefusalFrameMap) - 1,
+			kScene5030FrameMillis).unskippable());
+	walkActiveActorTo(0x214, 0x162, 4, 0, false);
+	waitForScoutTransition();
+
+	showRonConversationLayer(13, 0);
+	beginVanessaSpeechLine(5, 0);
+	runRonPoseTransition(true);
+	beginGladysSpeechLine(5, 1);
+	runRonPoseTransition(false);
+	finishScoutConversation();
+}
+
+void Scene5030::runDeckPickupSequence() {
+	_actorReplacementLayer.configure(11, kScene5030DeckAnimationDescriptorCount,
+		kScene5030DeckPickupFrameMap, ARRAYSIZE(kScene5030DeckPickupFrameMap));
+	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(11);
+
+	playAndPresentAnimationFrames(_actorReplacementLayer,
+		AnimationFrameRange(0, kScene5030DeckPatchFrame - 1,
+			kScene5030FrameMillis).unskippable());
+	if (_sceneChunkTable.isValidChunk(12))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
+	clearSceneItemFromColorMap(kScene5030TakenSceneItemId);
+	rebuildWalkablePaletteMask();
+	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	playAndPresentAnimationFrames(_actorReplacementLayer,
+		AnimationFrameRange(kScene5030DeckPatchFrame, ARRAYSIZE(kScene5030DeckPickupFrameMap) - 1,
+			kScene5030FrameMillis).unskippable().hookAt(14, kScene5030GrantDeckHook));
+	clearResourceLayer(_actorReplacementLayer);
+
+	walkActiveActorTo(0x214, 0x162, 4, 0, false);
+}
+
+void Scene5030::runUnderpantsPresentationAnimation() {
+	playResourceLayerSequence(_actorReplacementLayer, 15, kScene5030UnderpantsRonDescriptorCount,
+		kScene5030UnderpantsPresentationFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsPresentationFrameMap) - 1,
+			kScene5030FrameMillis).unskippable(), false);
+	_actorReplacementLayer.configure(15, kScene5030UnderpantsRonDescriptorCount, nullptr, 0);
+	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(15);
+	_actorReplacementLayer.setFrame(2);
+}
+
+void Scene5030::runUnderpantsHandoffAnimation() {
+	_actorReplacementLayer.configure(15, kScene5030UnderpantsRonDescriptorCount,
+		kScene5030UnderpantsHandoffRonFrameMap, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap));
+	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(15);
+	_alternateVanessaLayer.configure(16, kScene5030UnderpantsVanessaDescriptorCount,
+		kScene5030UnderpantsHandoffVanessaFrameMap, ARRAYSIZE(kScene5030UnderpantsHandoffVanessaFrameMap));
+	_alternateVanessaLayer.visible = _sceneChunkTable.isValidChunk(16);
+
+	ParallelResourceLayerFrameTarget target(_actorReplacementLayer, _alternateVanessaLayer);
+	playAndPresentAnimationFrames(target,
+		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap) - 1,
+			kScene5030FrameMillis).unskippable());
+	clearActorReplacementLayers();
+}
+
+void Scene5030::beginConversationMusicSuppression() {
+	_musicSuppressed = true;
+	_vm->gameplayMusic()->stop();
+}
+
 void Scene5030::runMineCartEntryAnimation() {
 	if (!_sceneChunkTable.isValidChunk(5))
 		return;
@@ -308,6 +662,8 @@ void Scene5030::runMineCartEntryAnimation() {
 	_hideActiveActor = true;
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, true);
 	_animationLayers.setLayerFramePreservingVisibility(kScene5030MineCartEntryLayer, 0);
+	drawPlayableComposite();
+	presentFrame();
 
 	for (uint frame = 0; frame < ARRAYSIZE(kScene5030MineCartEntryDelayBuckets) && !Engine::shouldQuit(); ++frame) {
 		_animationLayers.setLayerFrame(kScene5030MineCartEntryLayer, (byte)frame);
@@ -316,7 +672,7 @@ void Scene5030::runMineCartEntryAnimation() {
 
 		const byte delayBucket = kScene5030MineCartEntryDelayBuckets[frame];
 		const uint32 frameMillis = 200 / MAX<uint32>(1, 13 - delayBucket);
-		if (waitSceneMillis(frameMillis))
+		if (waitSceneMillis(frameMillis, false))
 			break;
 	}
 
@@ -332,9 +688,18 @@ byte Scene5030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 		return kScene5030VanessaIdleFrame;
 	case kScene5030GladysSpeechGroup:
 		return kScene5030GladysIdleFrame;
+	case kScene5030RonSpeechGroup:
+	case kScene5030RonTradeSpeechGroup:
+		return _ronSpeechBaseFrame;
 	default:
 		return 0;
 	}
+}
+
+uint32 Scene5030::primarySpeechAnimationFrameMillis(byte animationGroup) const {
+	if (animationGroup == kScene5030VanessaSpeechGroup || animationGroup == kScene5030GladysSpeechGroup)
+		return kScene5030ScoutSpeechFrameMillis;
+	return kScene5030RonSpeechFrameMillis;
 }
 
 void Scene5030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
@@ -344,6 +709,11 @@ void Scene5030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		break;
 	case kScene5030GladysSpeechGroup:
 		_animationLayers.setLayerFrame(kScene5030Chunk10Layer, frameIndex);
+		break;
+	case kScene5030RonSpeechGroup:
+	case kScene5030RonTradeSpeechGroup:
+		if (_actorReplacementLayer.visible)
+			_actorReplacementLayer.setFrame(frameIndex);
 		break;
 	default:
 		break;
@@ -356,7 +726,7 @@ void Scene5030::runExitToMineSwitches() {
 	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
 }
 
-void Scene5030::runDeckOfCardsAction() {
+void Scene5030::runDeckOfCardsAction(bool fromUnderpantsExchange) {
 	GameplayState &state = _vm->gameState();
 	if (state.scene5030DeckOfCardsState >= 2 || hasInventoryItem(kScene5030DeckOfCardsItem)) {
 		beginSecondarySpeechLine(6, 0);
@@ -364,12 +734,17 @@ void Scene5030::runDeckOfCardsAction() {
 	}
 
 	if (state.scene5030DeckOfCardsState == 0) {
-		beginVanessaSpeechLine(5, 0);
-		beginGladysSpeechLine(5, 1);
+		runDeckRefusalSequence();
 		return;
 	}
 
-	grantDeckOfCards();
+	runDeckPickupSequence();
+	if (fromUnderpantsExchange) {
+		runRonPoseTransition(true);
+		beginGladysSpeechLine(9, 11);
+	}
+	runRonPoseTransition(false);
+	finishScoutConversation();
 }
 
 void Scene5030::runVanessaConversation() {
@@ -378,7 +753,11 @@ void Scene5030::runVanessaConversation() {
 
 	GameplayState &state = _vm->gameState();
 	const bool firstConversation = !state.scene5030MusiciansNamed;
+	beginConversationMusicSuppression();
+	showRonConversationLayer(13, 0);
+	startScoutStopTransition();
 	beginRonDialogueLine(kScene5030VanessaDialogueStageId, firstConversation ? 0 : 1);
+	waitForScoutTransition();
 	beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, firstConversation ? 0 : 1);
 	if (firstConversation) {
 		state.scene5030MusiciansNamed = true;
@@ -394,28 +773,39 @@ void Scene5030::runVanessaConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030VanessaDialogueStageId, 6);
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, 6);
+			runRonPoseTransition(true);
 			beginGladysSpeechLine(kScene5030GladysReplyToVanessaRow, 4);
+			runRonPoseTransition(false);
+			finishScoutConversation();
 			return;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			finishScoutConversation();
 			return;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginRonDialogueLine(kScene5030VanessaDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, record.responseFrameIndex);
+			runRonPoseTransition(true);
 			beginGladysSpeechLine(kScene5030GladysReplyToVanessaRow, record.reserved);
 		}
+		runRonPoseTransition(false);
 
 		if (record.disableAfterUse != 0) {
 			record.enabled = 0;
 			record.selectable = 0;
 		}
-		if (applyDialogueTransition(record, depthIndex, nodeIndex))
+		if (applyDialogueTransition(record, depthIndex, nodeIndex)) {
+			finishScoutConversation();
 			return;
+		}
 	}
+
+	finishScoutConversation();
 }
 
 void Scene5030::runGladysConversation() {
@@ -424,7 +814,11 @@ void Scene5030::runGladysConversation() {
 
 	GameplayState &state = _vm->gameState();
 	const bool firstConversation = !state.scene5030MusiciansNamed;
+	beginConversationMusicSuppression();
+	showRonConversationLayer(14, 6);
+	startScoutStopTransition();
 	beginRonDialogueLine(kScene5030GladysDialogueStageId, firstConversation ? 0 : 1);
+	waitForScoutTransition();
 	beginGladysSpeechLine(kScene5030GladysPrimaryRow, firstConversation ? 0 : 1);
 	if (firstConversation) {
 		state.scene5030MusiciansNamed = true;
@@ -440,28 +834,39 @@ void Scene5030::runGladysConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030GladysDialogueStageId, 6);
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, 6);
+			runRonPoseTransition(false);
 			beginVanessaSpeechLine(kScene5030VanessaReplyToGladysRow, 4);
+			runRonPoseTransition(true);
+			finishScoutConversation();
 			return;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			finishScoutConversation();
 			return;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginRonDialogueLine(kScene5030GladysDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, record.responseFrameIndex);
+			runRonPoseTransition(false);
 			beginVanessaSpeechLine(kScene5030VanessaReplyToGladysRow, record.reserved);
 		}
+		runRonPoseTransition(true);
 
 		if (record.disableAfterUse != 0) {
 			record.enabled = 0;
 			record.selectable = 0;
 		}
-		if (applyDialogueTransition(record, depthIndex, nodeIndex))
+		if (applyDialogueTransition(record, depthIndex, nodeIndex)) {
+			finishScoutConversation();
 			return;
+		}
 	}
+
+	finishScoutConversation();
 }
 
 void Scene5030::runSpecialInventorySequence() {
@@ -471,26 +876,52 @@ void Scene5030::runSpecialInventorySequence() {
 		return;
 	}
 
-	if (hasInventoryItem(kScene5030UnderpantsItem))
-		removeInventoryItem(kScene5030UnderpantsItem);
-
+	beginConversationMusicSuppression();
+	showRonConversationLayer(13, 0);
+	startScoutStopTransition();
 	beginRonDialogueLine(9, 0);
+	waitForScoutTransition();
 	beginVanessaSpeechLine(9, 1);
+	runRonPoseTransition(true);
 	beginGladysSpeechLine(9, 2);
-	beginPrimarySpeechLine(9, 3, kScene5030RonTradeCenterX, kScene5030RonTradeTopY,
-		0x3f, 0x3f, 0x3f);
+	runRonPoseTransition(false);
+	clearActorReplacementLayers();
+
+	const Common::Array<byte> savedFullPaletteRegionMask = _fullPaletteRegionMask;
+	const Common::Array<byte> savedWalkablePaletteMask = _walkablePaletteMask;
+	for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i)
+		_fullPaletteRegionMask[i] = 1;
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i)
+		_walkablePaletteMask[i] = 1;
+	walkActiveActorTo(0x1fa, 0x178, 5, 0, false);
+
+	runUnderpantsPresentationAnimation();
+	_ronSpeechBaseFrame = 2;
+	beginPrimarySpeechLineWithAnimationGroup(9, 3, kScene5030RonTradeCenterX,
+		kScene5030RonTradeTopY, 0x3f, 0x3f, 0x3f, kScene5030RonTradeSpeechGroup);
 	beginVanessaSpeechLine(9, 4);
 	beginGladysSpeechLine(9, 5);
-	beginPrimarySpeechLine(9, 6, kScene5030RonTradeCenterX, kScene5030RonTradeTopY,
-		0x3f, 0x3f, 0x3f);
+	beginPrimarySpeechLineWithAnimationGroup(9, 6, kScene5030RonTradeCenterX,
+		kScene5030RonTradeTopY, 0x3f, 0x3f, 0x3f, kScene5030RonTradeSpeechGroup);
 	beginVanessaSpeechLine(9, 7);
 	beginGladysSpeechLine(9, 8);
-	beginPrimarySpeechLine(9, 9, kScene5030RonTradeCenterX, kScene5030RonTradeTopY,
-		0x3f, 0x3f, 0x3f);
-	state.scene5030DeckOfCardsState = 1;
-	grantDeckOfCards();
+	beginPrimarySpeechLineWithAnimationGroup(9, 9, kScene5030RonTradeCenterX,
+		kScene5030RonTradeTopY, 0x3f, 0x3f, 0x3f, kScene5030RonTradeSpeechGroup);
+	runUnderpantsHandoffAnimation();
+
+	if (hasInventoryItem(kScene5030UnderpantsItem))
+		removeInventoryItem(kScene5030UnderpantsItem);
+	_soundBank0.playSample(1, 100);
+	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
+	walkActiveActorTo(0x20a, 0x15e, 1, 0, false);
 	beginVanessaSpeechLine(9, 10);
-	beginGladysSpeechLine(9, 11);
+	_fullPaletteRegionMask = savedFullPaletteRegionMask;
+	_walkablePaletteMask = savedWalkablePaletteMask;
+
+	state.scene5030DeckOfCardsState = 1;
+	runDeckOfCardsAction(true);
+	startScoutResumeTransition();
+	waitForScoutTransition();
 }
 
 void Scene5030::grantDeckOfCards() {
@@ -576,8 +1007,8 @@ bool Scene5030::applyDialogueTransition(const DialogueChoiceRecord &record, byte
 }
 
 void Scene5030::beginRonDialogueLine(uint16 rowIndex, byte frameIndex) {
-	beginPrimarySpeechLine(rowIndex, frameIndex, kScene5030RonDialogueCenterX, kScene5030RonDialogueTopY,
-		0x3f, 0x3f, 0x3f);
+	beginPrimarySpeechLineWithAnimationGroup(rowIndex, frameIndex, kScene5030RonDialogueCenterX,
+		kScene5030RonDialogueTopY, 0x3f, 0x3f, 0x3f, kScene5030RonSpeechGroup);
 }
 
 void Scene5030::beginVanessaSpeechLine(uint16 rowIndex, byte frameIndex) {
