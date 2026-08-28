@@ -272,6 +272,7 @@ bool Scene5010::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 }
 
 bool Scene5010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -279,16 +280,14 @@ bool Scene5010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
-	GameplayState &state = _vm->gameState();
-	if (selector == 6 || selector == 0xff) {
-		const uint firstPatchChunk = state.scene5010MineCartDeparted ? 9 : 10;
-		const uint secondPatchChunk = state.scene5010MineCartDeparted ? 12 : 11;
-		if (_sceneChunkTable.isValidChunk(firstPatchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[firstPatchChunk], _baseFramebuffer);
-		if (_sceneChunkTable.isValidChunk(secondPatchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[secondPatchChunk], _baseFramebuffer);
-	}
-	if ((selector == 3 || selector == 0xff) && state.scene5010SwitchPanelSeen &&
+	const GameplayState &state = _vm->gameState();
+	const uint firstPatchChunk = state.scene5010MineCartDeparted ? 9 : 10;
+	const uint secondPatchChunk = state.scene5010MineCartDeparted ? 12 : 11;
+	if (_sceneChunkTable.isValidChunk(firstPatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[firstPatchChunk], _baseFramebuffer);
+	if (_sceneChunkTable.isValidChunk(secondPatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[secondPatchChunk], _baseFramebuffer);
+	if (state.scene5010SwitchPanelSeen &&
 			_metadata.size() > kSceneItemDefaultStrip + 5)
 		_metadata[kSceneItemDefaultStrip + 5] = 5;
 
@@ -546,17 +545,24 @@ void Scene5010::runSwitchPanel() {
 	_switchPanelDisplayedColumn = CLIP<byte>(state.scene5010SwitchColumn, 0, 2);
 	clearResourceLayer(_switchPanelAnimationLayer);
 	drawSwitchPanelFrame();
+	_vm->cursor()->enterInteractiveMode();
+	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	g_system->updateScreen();
 	bool done = false;
 	while (!done && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (pollSwitchPanelEvent(done)) {
+			_vm->cursor()->leaveInteractiveMode();
 			_switchPanelActive = false;
 			clearResourceLayer(_switchPanelAnimationLayer);
 			return;
 		}
+		_vm->cursor()->advance(10);
+		g_system->updateScreen();
 		updateAmbientAudioAndMusicCues(10);
 		g_system->delayMillis(10);
 	}
 
+	_vm->cursor()->leaveInteractiveMode();
 	_switchPanelActive = false;
 	clearResourceLayer(_switchPanelAnimationLayer);
 	state.scene5010SwitchPanelSeen = true;
@@ -601,13 +607,16 @@ byte Scene5010::switchPanelMaskPixelAt(uint16 screenX, uint16 screenY) const {
 
 	const uint sceneX = screenX + viewportXOffset();
 	const uint sceneY = screenY + viewportYOffset();
-	const uint offset = sceneY * HollywoodEngine::kSceneBufferWidth + sceneX;
-	const uint chunkOffset = _resourceChunkOffsets[17] + offset;
 	if (sceneX >= HollywoodEngine::kSceneBufferWidth ||
-			sceneY >= HollywoodEngine::kSceneBufferHeight ||
-			chunkOffset >= _resourceArena.size())
+			sceneY >= HollywoodEngine::kSceneBufferHeight)
 		return 0;
 
+	const uint offset = sceneY * HollywoodEngine::kSceneBufferWidth + sceneX;
+	if (offset >= _sceneChunkTable.sizes[17] ||
+			_resourceChunkOffsets[17] + offset >= _resourceArena.size())
+		return 0;
+
+	const uint chunkOffset = _resourceChunkOffsets[17] + offset;
 	return _resourceArena[chunkOffset];
 }
 
@@ -719,6 +728,25 @@ void Scene5010::handleAnimationFrameHook(byte hookId, uint frame) {
 	PlayableScene::handleAnimationFrameHook(hookId, frame);
 }
 
+void Scene5010::activateSwitchPanelAtCursor(bool &done) {
+	const byte maskPixel = switchPanelMaskPixelAt(
+		_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
+	if (maskPixel == 7) {
+		done = true;
+		return;
+	}
+	if (maskPixel == 0 || maskPixel > 6)
+		return;
+
+	_vm->cursor()->leaveInteractiveMode();
+	handleSwitchPanelChoice(maskPixel);
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		_vm->cursor()->enterInteractiveMode();
+		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+		g_system->updateScreen();
+	}
+}
+
 bool Scene5010::pollSwitchPanelEvent(bool &done) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -733,25 +761,24 @@ bool Scene5010::pollSwitchPanelEvent(bool &done) {
 				return true;
 			_displayPalette.markAllDirty();
 			drawSwitchPanelFrame();
+			_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE)
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				done = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					event.kbd.keycode == Common::KEYCODE_SPACE) {
+				activateSwitchPanelAtCursor(done);
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_vm->cursor()->updatePosition(event.mouse);
 			break;
-		case Common::EVENT_LBUTTONDOWN: {
-			_vm->cursor()->updatePosition(event.mouse);
-			const byte maskPixel = switchPanelMaskPixelAt((uint16)event.mouse.x, (uint16)event.mouse.y);
-			if (maskPixel == 7)
-				done = true;
-			else if (maskPixel > 0 && maskPixel < 7)
-				handleSwitchPanelChoice(maskPixel);
+		case Common::EVENT_LBUTTONDOWN:
+			_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+			activateSwitchPanelAtCursor(done);
 			break;
-		}
 		case Common::EVENT_RBUTTONDOWN:
 			done = true;
 			break;
