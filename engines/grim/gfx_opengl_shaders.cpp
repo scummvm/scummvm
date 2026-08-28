@@ -489,7 +489,10 @@ Math::Matrix4 GfxOpenGLS::getModelView() {
 		Math::Matrix4 modelView = invertZ * viewMatrix * camPos;
 		return modelView;
 	} else {
-		return _mvpMatrix;
+		// _viewMatrix is kept transposed, ready to be fed to the shaders.
+		Math::Matrix4 modelView = _viewMatrix;
+		modelView.transpose();
+		return modelView;
 	}
 }
 
