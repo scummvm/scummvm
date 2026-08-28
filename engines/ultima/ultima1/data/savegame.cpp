@@ -118,11 +118,11 @@ void Savegame::synchronizeOriginal(Common::Serializer &s) {
 }
 
 int Savegame::mapTopLeftX() const {
-	return (_G(map)._currentMap == MAP_OVERWORLD) ? (_overworldPos.x - MAP_VISIBLE_CENTER_X) + 1 : 0;
+	return (_G(map)._currentMap == MAP_OVERWORLD) ? _overworldPos.x - MAP_VISIBLE_CENTER_X : 0;
 }
 
 int Savegame::mapTopLeftY() const {
-	return (_G(map)._currentMap == MAP_OVERWORLD) ? (_overworldPos.y - MAP_VISIBLE_CENTER_Y) + 1 : 0;
+	return (_G(map)._currentMap == MAP_OVERWORLD) ? _overworldPos.y - MAP_VISIBLE_CENTER_Y : 0;
 }
 
 int Savegame::getEntityAt(int x, int y, int startingIndex) const {

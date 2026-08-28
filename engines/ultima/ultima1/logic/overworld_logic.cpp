@@ -170,8 +170,8 @@ void OverworldLogic::move(Data::Direction dir) {
 }
 
 bool OverworldLogic::moveCheck(Data::Direction dir) {
-	int xp = getViewportX(Data::MAP_VISIBLE_CENTER_X + DELTA_X[dir]);
-	int yp = getViewportY(Data::MAP_VISIBLE_CENTER_Y + DELTA_Y[dir]);
+	int xp = _G(savegame)._overworldPos.x + DELTA_X[dir];
+	int yp = _G(savegame)._overworldPos.y + DELTA_Y[dir];
 	int tile = _G(map).getTileAt(xp, yp);
 	int transport = _G(savegame)._transportType;
 
