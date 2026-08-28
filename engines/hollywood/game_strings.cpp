@@ -78,7 +78,7 @@ const HollywoodGameStrings kItalianGameStrings = {
 	"Volume musica",
 	"Volume SFX",
 	"Volume voce",
-	"Velocidad texto", // The Italian executable contains this Spanish label.
+	"Velocit\x85 testo",
 	"Testo",
 	"Voce",
 	"Entrambe",
