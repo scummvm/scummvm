@@ -203,8 +203,21 @@ enum ObjectType {
 enum ObjColor {
 	kColorClear = 0,
 	kColorBlack = 1,
+	kColorBlue = 2,
+	kColorGreen = 3,
+	kColorCyan = 4,
+	kColorRed = 5,
+	kColorMagenta = 6,
+	kColorBrown = 7,
+	kColorWhite = 8,
 	kColorDkGray = 9,
+	kColorLtBlue = 10,
 	kColorLtGreen = 11,
+	kColorLtCyan = 12,
+	kColorLtRed = 13,
+	kColorLtMagenta = 14,
+	kColorYellow = 15,
+	kColorIntWhite = 16,
 	kColorBath = 17,
 	kColorWater = 18,
 	kColorSilver = 19,
@@ -264,6 +277,8 @@ enum ObjColor {
 	kColorBottomSnoop = 60,
 	kColorUPyramid = 68,
 	kColorShadow = 74,
+	kColorLtGray = 75,
+	kColorGray = 76,
 	// Animated reactor/power suit colors (Mac: c_hcore1..c_hcore4, c_ccore, c_color0..c_color3)
 	kColorHCore1 = 100,
 	kColorHCore2 = 101,
@@ -696,10 +711,13 @@ private:
 	void draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool accumulateBounds = false, bool forceVisible = false);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	void draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
-		int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
-	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible = false);
+		int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor,
+		bool accumulateBounds = false, bool dosFill = true);
+	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride,
+		bool forceVisible = false, bool dosFill = true);
 	void drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
-		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook);
+		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook, bool dosFill = true);
+	void drawDOSEyeSlit3D(Thing &thing, const PrismPartDef &irisDef, bool useLook);
 	void drawBodyEye3D(Thing &obj, int eyeballColor, int pupilColor, float pull);
 	void drawEnemyEye3D(Thing &obj, Thing &eye, int eyeballColor, int irisColor, int pupilColor);
 	void pullTowardCamera(float *px, float *py, float *pz, int count) const;

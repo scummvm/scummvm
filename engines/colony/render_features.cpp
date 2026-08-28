@@ -512,7 +512,7 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	const bool macMode = isMacRenderMode();
 	const bool macColors = isMacColorMode();
 
-	// Helper lambda: draw a filled hole polygon with Mac color or B&W fallback
+	// Helper lambda: draw a filled hole polygon with the platform material.
 	auto drawHolePoly = [&](const float *u, const float *v, int cnt, int macIdx) {
 		if (macColors) {
 			uint32 fg = packMacColor(_macColors[macIdx].fg);
@@ -526,7 +526,12 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 			_gfx->setStippleData(kStippleGray);
 			wallPolygon(corners, u, v, cnt, 0);
 			_gfx->setStippleData(nullptr);
+		} else if (!_wireframe) {
+			const uint32 outline = setupDOSMaterial(_gfx, kColorLtGray, _level);
+			wallPolygon(corners, u, v, cnt, outline);
+			_gfx->setStippleData(nullptr);
 		} else {
+			_gfx->setWireframe(true);
 			wallPolygon(corners, u, v, cnt, holeColor);
 		}
 	};
@@ -554,6 +559,10 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 		if (macMode) {
 			drawHolePoly(u, v, 4, 31); // c_hotplate
+		} else if (!_wireframe) {
+			const uint32 outline = setupDOSMaterial(_gfx, kColorTele, _level);
+			wallPolygon(corners, u, v, 4, outline);
+			_gfx->setStippleData(nullptr);
 		} else {
 			// DOS non-polyfill: X pattern (two diagonals)
 			wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor);
@@ -564,6 +573,12 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	default:
 		break;
 	}
+
+	_gfx->setStippleData(nullptr);
+	const uint32 wallFill = macColors
+		? packMacColor(_macColors[8 + _level - 1].fg)
+		: (macMode ? 255u : 7u);
+	_gfx->setWireframe(true, wallFill);
 }
 
 float stairStepHeight(const float *vf, const float *vc, int d, int s) {
@@ -620,9 +635,24 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			_gfx->setStippleData(nullptr);
 	};
 
+	// DOS SuperPoly(): material fill followed by its LINEFILLCOLOR frame.
+	auto dosFillPoly = [&](const float *u, const float *v, int cnt, int colorIdx) {
+		const uint32 outline = setupDOSMaterial(_gfx, colorIdx, _level);
+		wallPolygon(corners, u, v, cnt, outline);
+		_gfx->setStippleData(nullptr);
+	};
+
+	auto dosFillRecess = [&](const float nearC[4][3], const float farC[4][3],
+			const float *u, const float *v, const float *d, int cnt, int colorIdx) {
+		const uint32 outline = setupDOSMaterial(_gfx, colorIdx, _level);
+		recessQuad(nearC, farC, u, v, d, cnt, outline);
+		_gfx->setStippleData(nullptr);
+	};
+
 	switch (map[0]) {
 	case kWallFeatureDoor: {
-		const uint32 doorColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
+		const uint32 doorColor = macColors ? (uint32)0xFF000000 :
+			(macMode ? 0u : (_wireframe ? 8u : 0u));
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
@@ -645,15 +675,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					wallPolygon(corners, uSs, vSs, 8, 0);
 				}
 			} else if (!_wireframe) {
-				if (map[1] != 0) {
-					const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
-					wallPolygon(corners, uSs, vSs, 8, 0);
-					if (stipple)
-						_gfx->setStippleData(nullptr);
-				} else {
-					_gfx->setWireframe(true, 0);
-					wallPolygon(corners, uSs, vSs, 8, 0);
-				}
+				dosFillPoly(uSs, vSs, 8, map[1] != 0 ? kColorSilver : kColorBlack);
 			} else {
 				_gfx->setWireframe(true);
 				wallPolygon(corners, uSs, vSs, 8, 8);
@@ -671,10 +693,10 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		} else {
 			const float xl = 0.25f, xr = 0.75f;
 			const float yb = 0.0f, yt = 0.875f;
+			float ud[4] = {xl, xr, xr, xl};
+			float vd[4] = {yb, yb, yt, yt};
 
 			if (macMode) {
-				float ud[4] = {xl, xr, xr, xl};
-				float vd[4] = {yb, yb, yt, yt};
 				if (map[1] != 0) {
 					if (macColors) {
 						macFillPoly(ud, vd, 4, 16); // c_door
@@ -689,6 +711,16 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					wallPolygon(corners, ud, vd, 4, 0);
 					_gfx->setWireframe(true, 255);
 				}
+			} else if (!_wireframe) {
+				dosFillPoly(ud, vd, 4, map[1] != 0 ? kColorLtRed : kColorBlack);
+				if (map[1] == 0) {
+					float farC[4][3];
+					getWallRecess3D(corners, farC);
+					const float floorU[4] = {xl, xl, xr, xr};
+					const float floorV[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+					const float floorD[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+					dosFillRecess(corners, farC, floorU, floorV, floorD, 4, kColorWhite);
+				}
 			}
 
 			wallLine(corners, xl, yb, xl, yt, doorColor);
@@ -697,21 +729,22 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			wallLine(corners, xr, yb, xl, yb, doorColor);
 
 			if (map[1] != 0) {
-				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, doorColor);
+				const uint32 detailColor = macMode ? doorColor : 8u;
+				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, detailColor);
 			}
 		}
 		break;
 	}
 	case kWallFeatureWindow: {
-		const uint32 winColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
+		const uint32 winColor = macColors ? (uint32)0xFF000000 : 0;
 		float xl = 0.25f, xr = 0.75f;
 		float yb = 0.25f, yt = 0.75f;
 		float xc = 0.5f, yc = 0.5f;
+		float uw[4] = {xl, xr, xr, xl};
+		float vw[4] = {yb, yb, yt, yt};
 
 		// Mac: fill window pane
 		if (macMode) {
-			float uw[4] = {xl, xr, xr, xl};
-			float vw[4] = {yb, yb, yt, yt};
 			if (macColors) {
 				macFillPoly(uw, vw, 4, 17); // c_window
 			} else {
@@ -719,6 +752,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, uw, vw, 4, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(uw, vw, 4, kColorSilver);
 		}
 
 		wallLine(corners, xl, yb, xl, yt, winColor);
@@ -803,6 +838,29 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
 			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
 			macFillRecess(corners, farC, ub, vb, db, 4, 19, macColors);
+		} else if (!_wireframe) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			dosFillRecess(corners, farC, uw, vw, dw, 4, kColorGray);
+
+			for (int i = 6; i >= 0; i--) {
+				const float lowV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float backD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {hgt[i], lowV, lowV, hgt[i]};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				dosFillRecess(corners, farC, uq, vRiser, dRiser, 4, kColorGray);
+
+				const float vTread[4] = {lowV, lowV, lowV, lowV};
+				const float dTread[4] = {backD, dep[i], dep[i], backD};
+				dosFillRecess(corners, farC, uq, vTread, dTread, 4, kColorLtGray);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			dosFillRecess(corners, farC, ub, vb, db, 4, kColorLtGray);
 		}
 
 		// Back landing and far mouth
@@ -907,11 +965,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		const uint32 elevColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 		float xl = 0.2f, xr = 0.8f;
 		float yb = 0.1f, yt = 0.9f;
+		float ue[4] = {xl, xr, xr, xl};
+		float ve[4] = {yb, yb, yt, yt};
 
 		// Mac: fill elevator door
 		if (macMode) {
-			float ue[4] = {xl, xr, xr, xl};
-			float ve[4] = {yb, yb, yt, yt};
 			if (macColors) {
 				macFillPoly(ue, ve, 4, 23); // c_elevator
 			} else {
@@ -919,6 +977,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, ue, ve, 4, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(ue, ve, 4, kColorGray);
 		}
 
 		wallLine(corners, xl, yb, xl, yt, elevColor);
@@ -940,8 +1000,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallPolygon(corners, uT, vT, 6, 0);
 				_gfx->setStippleData(nullptr);
 			}
+		} else if (!_wireframe) {
+			dosFillPoly(uT, vT, 6, kColorBlack);
 		} else {
-			wallPolygon(corners, uT, vT, 6, 0); // vBLACK outline
+			_gfx->setWireframe(true);
+			wallPolygon(corners, uT, vT, 6, 8); // vDKGRAY outline
 		}
 		break;
 	}
@@ -957,11 +1020,15 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 		if (map[1] == 0) {
 			// Original drawALOpen: solid black opening on both DOS and Mac.
-			if (macMode || !_wireframe)
+			if (macMode) {
 				_gfx->setWireframe(true, 0);
-			else
+				wallPolygon(corners, u, v, 8, 0);
+			} else if (!_wireframe) {
+				dosFillPoly(u, v, 8, kColorBlack);
+			} else {
 				_gfx->setWireframe(true);
-			wallPolygon(corners, u, v, 8, 0);
+				wallPolygon(corners, u, v, 8, 0);
+			}
 		} else {
 			// Mac: fill airlock when closed
 			if (macMode) {
@@ -973,10 +1040,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					_gfx->setStippleData(nullptr);
 				}
 			} else if (!_wireframe) {
-				const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
-				wallPolygon(corners, u, v, 8, 0);
-				if (stipple)
-					_gfx->setStippleData(nullptr);
+				dosFillPoly(u, v, 8, kColorLtGray);
 			}
 
 			const uint32 airlockColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
@@ -1042,12 +1106,47 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					}
 				}
 			}
+		} else if (!_wireframe) {
+			for (int i = 0; i < 4; i++) {
+				const int value = map[i + 1];
+				int material = -1;
+				if (value <= 4) {
+					switch (value) {
+					case 1: material = kColorLtRed;   break;
+					case 2: material = kColorLtBlue;  break;
+					case 3: material = kColorMagenta; break;
+					case 4: material = kColorBlue;    break;
+					default: break; // WHITE leaves the corridor background intact
+					}
+				} else {
+					const int color = (value + _displayCount / 6) % 5;
+					switch (color) {
+					case 1: material = kColorLtRed;   break;
+					case 2: material = kColorMagenta; break;
+					case 3: material = kColorRed;     break;
+					case 4: material = kColorCyan;    break;
+					default: break;
+					}
+				}
+
+				if (material >= 0) {
+					const float vb = (3 - i) / 4.0f;
+					const float vt = (4 - i) / 4.0f;
+					const float ub[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+					const float vb4[4] = {vb, vb, vt, vt};
+					dosFillPoly(ub, vb4, 4, material);
+				}
+			}
+		} else if (map[1] || map[2] || map[3] || map[4]) {
+			_gfx->setWireframe(true);
+			for (int i = 1; i <= 3; i++) {
+				const float v = (float)i / 4.0f;
+				wallLine(corners, 0.0f, v, 1.0f, v, 0);
+			}
 		}
 
-		// EGA / Mac B&W: colored lines at band boundaries.
-		// DOS non-polyfill draws 3 lines; we animate line colors for bands > 4.
-		// Mac color mode uses macFillPoly for band fills instead.
-		if (!macColors) {
+		// Preserve the Mac B&W boundary treatment after its pattern fills.
+		if (macMode && !macColors) {
 			for (int i = 1; i <= 3; i++) {
 				int val = map[i];
 				if (val > 4)

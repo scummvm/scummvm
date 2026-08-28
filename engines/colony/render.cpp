@@ -180,12 +180,11 @@ const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 	}
 }
 
-// Reproduce the DOS driver's SetFill/FILLPATTERN material setup. Patterns 3,
-// 4 and 5 are respectively 50%, 25% and 12.5% foreground coverage; pattern 1
-// is a solid FILLCOLOR fill.
-const byte *setupDOSMaterial(Renderer *gfx, const DOSColorEntry &color) {
+// Reproduce the DOS driver's SetFill/FILLPATTERN setup. Patterns 3, 4 and 5
+// are respectively 50%, 25% and 12.5% foreground coverage; pattern 1 is solid.
+void setupDOSFill(Renderer *gfx, uint32 fillColor, uint32 backColor, int pattern) {
 	const byte *stipple = nullptr;
-	switch (color.pattern) {
+	switch (pattern) {
 	case 3:
 		stipple = kStippleGray;
 		break;
@@ -200,15 +199,19 @@ const byte *setupDOSMaterial(Renderer *gfx, const DOSColorEntry &color) {
 	}
 
 	if (stipple) {
-		gfx->setMacColors(color.fillColor, color.backColor);
+		gfx->setMacColors(fillColor, backColor);
 		gfx->setStippleData(stipple);
-		gfx->setWireframe(true, color.backColor);
+		gfx->setWireframe(true, backColor);
 	} else {
 		gfx->setStippleData(nullptr);
-		gfx->setWireframe(true, color.fillColor);
+		gfx->setWireframe(true, fillColor);
 	}
+}
 
-	return stipple;
+uint32 setupDOSMaterial(Renderer *gfx, int colorIdx, int level) {
+	const DOSColorEntry &color = lookupDOSColor(colorIdx, level);
+	setupDOSFill(gfx, color.fillColor, color.backColor, color.pattern);
+	return color.lineFillColor;
 }
 
 // Map ObjColor → Mac B&W dither pattern (from ROBOCOLR.C MONOCHROME field).
@@ -648,10 +651,9 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 					// polyfill OFF → outline only with LINECOLOR.
 					const DOSColorEntry &dc = lookupDOSColor(colorIdx, _level);
 					if (!_wireframe) {
-						const byte *stipple = setupDOSMaterial(_gfx, dc);
-						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineFillColor);
-						if (stipple)
-							_gfx->setStippleData(nullptr);
+						const uint32 outlineColor = setupDOSMaterial(_gfx, colorIdx, _level);
+						_gfx->draw3DPolygon(px, py, pz, count, outlineColor);
+						_gfx->setStippleData(nullptr);
 					} else {
 						// Wireframe only: LINECOLOR outline, no fill.
 						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
@@ -731,7 +733,7 @@ void ColonyEngine::pullTowardCamera(float *px, float *py, float *pz, int count) 
 
 void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	int pt1x, int pt1y, int pt1z,
-	uint32 fillColor, uint32 outlineColor, bool accumulateBounds) {
+	uint32 fillColor, uint32 outlineColor, bool accumulateBounds, bool dosFill) {
 	// Original Colony eye/ball primitives store the bottom pole in pt0 and the
 	// sphere center in pt1. The classic renderer builds the oval from the
 	// screen-space delta between those two projected points, so the world-space
@@ -840,25 +842,30 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 		_gfx->draw3DPolygon(px, py, pz, N, line);
 		if (stipple)
 			_gfx->setStippleData(nullptr);
-	} else if (lit) {
-		if (isMacRenderMode()) {
-			int pattern = lookupMacPattern((int)fillColor, _level);
-			if (pattern == kPatternClear)
-				pattern = kPatternGray;
-			if (!_wireframe) {
-				_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
-			}
-			_gfx->setStippleData(kMacStippleData[pattern]);
-			_gfx->draw3DPolygon(px, py, pz, N, lookupDOSColor((int)outlineColor, _level).lineColor);
+	} else if (!isMacRenderMode()) {
+		// DOS eye ovals are independent of the polygon-fill toggle. FillOval()
+		// uses the selected material while FrameOval() uses the caller's pen.
+		const DOSColorEntry &fill = lookupDOSColor((int)fillColor, _level);
+		const DOSColorEntry &outline = lookupDOSColor((int)outlineColor, _level);
+		if (dosFill)
+			setupDOSFill(_gfx, fill.fillColor, fill.backColor, fill.pattern);
+		else {
 			_gfx->setStippleData(nullptr);
-		} else {
-			const DOSColorEntry &fill = lookupDOSColor((int)fillColor, _level);
-			const DOSColorEntry &outline = lookupDOSColor((int)outlineColor, _level);
-			if (!_wireframe) {
-				_gfx->setWireframe(true, fill.fillColor);
-			}
-			_gfx->draw3DPolygon(px, py, pz, N, outline.lineColor);
+			_gfx->setWireframe(true);
 		}
+		_gfx->draw3DPolygon(px, py, pz, N, outline.lineColor);
+		_gfx->setStippleData(nullptr);
+		if (_wireframe)
+			_gfx->setWireframe(true);
+	} else if (lit) {
+		int pattern = lookupMacPattern((int)fillColor, _level);
+		if (pattern == kPatternClear)
+			pattern = kPatternGray;
+		if (!_wireframe)
+			_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
+		_gfx->setStippleData(kMacStippleData[pattern]);
+		_gfx->draw3DPolygon(px, py, pz, N, lookupDOSColor((int)outlineColor, _level).lineColor);
+		_gfx->setStippleData(nullptr);
 	} else {
 		// Unlit: black fill, white outline.
 		if (!_wireframe) {

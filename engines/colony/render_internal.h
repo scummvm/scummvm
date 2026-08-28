@@ -39,6 +39,12 @@ void projectCorridorPointClamped(const Common::Rect &screenR, int look, int look
 	float worldX, float worldY, float worldZ,
 	int &screenX, int &screenY);
 
+// DOS MetaWINDOW polygon material setup. setupDOSFill() accepts EGA palette
+// indices directly; setupDOSMaterial() resolves an lsColor material and returns
+// the LINEFILLCOLOR used to frame the filled polygon.
+void setupDOSFill(Renderer *gfx, uint32 fillColor, uint32 backColor, int pattern);
+uint32 setupDOSMaterial(Renderer *gfx, int colorIdx, int level);
+
 // Mac Classic dither patterns (from colorize.c cColor[].pattern).
 // Mac Classic was a 1-bit B&W display. QuickDraw used 8x8 dither patterns
 // to simulate grayscale: WHITE, LTGRAY, GRAY, DKGRAY, BLACK, CLEAR.
@@ -122,7 +128,7 @@ static const byte *kMacStippleData[] = {
 // Helper: set up Mac color stipple rendering for a given cColor[] pattern.
 // Configures setMacColors/setStippleData/setWireframe for the pattern type.
 // Returns the stipple pointer (null for solid patterns)  caller must clear with setStippleData(nullptr).
-static const byte *setupMacPattern(Renderer *gfx, int pattern, uint32 fg, uint32 bg) {
+inline const byte *setupMacPattern(Renderer *gfx, int pattern, uint32 fg, uint32 bg) {
 	const byte *stipple = (pattern >= 1 && pattern <= 3) ? kMacStippleData[pattern] : nullptr;
 	if (stipple) {
 		gfx->setMacColors(fg, bg);
