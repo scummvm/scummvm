@@ -37,17 +37,36 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	void prepareCustomActorPathRoute(int startX, int startY) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
+	void applyScenePaletteDimming();
+	void resetPaletteAnimations();
+	void advancePaletteAnimations(uint32 delta);
+	void rotateWaterfallPalette();
+	void advanceLagoonPalette();
 	void runEntryClip();
+	bool waitEntryClipFrameMillis(uint32 millis);
 	void runReturnToMineSwitches();
 	void runFillWaterContainer();
 	void rebuildWalkableMask();
+
+	TimedAnimationChannel _waterfallPaletteChannel;
+	TimedAnimationChannel _lagoonPaletteChannel;
+	byte _lagoonPalettePhase;
+	bool _lagoonPaletteReverse;
+	bool _mineCartRumbleActive;
+	byte _routeStartRegion;
 };
 
 } // End of namespace Hollywood
