@@ -80,6 +80,9 @@ const byte kScene5030GladysSpeechGroup = 0;
 const byte kScene5030VanessaSpeechGroup = 1;
 const byte kScene5030RonSpeechGroup = 2;
 const byte kScene5030RonTradeSpeechGroup = 3;
+const byte kScene5030PrimarySpeechTextColor = 0xfb;
+const byte kScene5030InvalidSpeechGroup = 0xff;
+const byte kScene5030DefaultSpeechFrame = 7;
 const byte kScene5030VanessaIdleFrame = 0x0f;
 const byte kScene5030GladysIdleFrame = 0x15;
 const uint kScene5030ScoutPlayingFrameCount = 8;
@@ -187,8 +190,12 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		_alternateVanessaLayer(),
 		_scoutStopTransitionActive(false),
 		_scoutResumeTransitionActive(false),
+		_scoutTransitionCompletionPending(false),
 		_scoutsInDialoguePose(false),
 		_musicSuppressed(false),
+		_concurrentPrimarySpeechActive(false),
+		_concurrentPrimarySpeechElapsed(0),
+		_concurrentPrimarySpeechDuration(0),
 		_ronSpeechBaseFrame(0),
 		_ronConversationChunk(13) {
 	_animationLayers.configureLayer(kScene5030MineCartEntryLayer, 5,
@@ -254,12 +261,8 @@ bool Scene5030::shouldPresentPreviewBeforeEntrySequence() const {
 void Scene5030::runCustomEntrySequence() {
 	setActiveActorPose(0x061, 0x19b, 2);
 	drawPlayableComposite();
-	presentFrame();
 	fadePaletteFromBlack();
 	runMineCartEntryAnimation();
-	drawPlayableComposite();
-	presentFrame();
-	fadePaletteFromBlack();
 	runEntryPath(0x061, 0x19b, 2, 0x152, 0x16b);
 	_activeActorFacing = 2;
 	_activeActorCel = 0;
@@ -277,6 +280,7 @@ bool Scene5030::shouldRunExitSideEffectsAfterLoop() const {
 
 void Scene5030::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
+	_vm->gameplayMusic()->stop();
 }
 
 bool Scene5030::prepareCustomGameplayLoop() {
@@ -285,6 +289,7 @@ bool Scene5030::prepareCustomGameplayLoop() {
 
 bool Scene5030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceLayer(_chunk8Channel, kScene5030Chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
+	advanceConcurrentPrimarySpeech(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	if (_scoutStopTransitionActive || _scoutResumeTransitionActive) {
@@ -383,8 +388,8 @@ bool Scene5030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		clearSceneItemFromColorMap(kScene5030TakenSceneItemId);
 	}
 	if (state.scene5030MusiciansNamed) {
-		copyStageSmallRow(kScene5030RenamedSmallRowA, kScene5030DocumentSmallRowA);
-		copyStageSmallRow(kScene5030RenamedSmallRowB, kScene5030DocumentSmallRowB);
+		copyStageSmallRowLabel(kScene5030RenamedSmallRowA, kScene5030DocumentSmallRowA);
+		copyStageSmallRowLabel(kScene5030RenamedSmallRowB, kScene5030DocumentSmallRowB);
 	}
 
 	rebuildWalkablePaletteMask();
@@ -421,8 +426,12 @@ void Scene5030::resetAnimationLayers() {
 	clearResourceLayer(_alternateVanessaLayer);
 	_scoutStopTransitionActive = false;
 	_scoutResumeTransitionActive = false;
+	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = false;
 	_musicSuppressed = false;
+	_concurrentPrimarySpeechActive = false;
+	_concurrentPrimarySpeechElapsed = 0;
+	_concurrentPrimarySpeechDuration = 0;
 	_ronSpeechBaseFrame = 0;
 	_ronConversationChunk = 13;
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
@@ -475,7 +484,25 @@ void Scene5030::advanceRonDialogueIdle(uint32 delta) {
 	}
 }
 
+void Scene5030::advanceConcurrentPrimarySpeech(uint32 delta) {
+	if (!_concurrentPrimarySpeechActive)
+		return;
+
+	_concurrentPrimarySpeechElapsed += delta;
+	if (!_speech.isPlaying() && _concurrentPrimarySpeechElapsed >= _concurrentPrimarySpeechDuration)
+		finishConcurrentPrimarySpeech();
+}
+
 void Scene5030::advanceScoutTransitions(uint32 delta) {
+	if (_scoutTransitionCompletionPending) {
+		_scoutTransitionCompletionPending = false;
+		if (_scoutStopTransitionActive)
+			finishScoutStopTransition();
+		else if (_scoutResumeTransitionActive)
+			finishScoutResumeTransition();
+		return;
+	}
+
 	const uint vanessaFrames = _chunk9Channel.consumeFrames(delta);
 	for (uint i = 0; i < vanessaFrames; ++i) {
 		byte frame = _animationLayers.layerFrame(kScene5030Chunk9Layer);
@@ -497,16 +524,17 @@ void Scene5030::advanceScoutTransitions(uint32 delta) {
 	if (_scoutStopTransitionActive &&
 			_animationLayers.layerFrame(kScene5030Chunk9Layer) == kScene5030ScoutStopVanessaFrame &&
 			_animationLayers.layerFrame(kScene5030Chunk10Layer) == kScene5030ScoutStopGladysFrame)
-		finishScoutStopTransition();
+		_scoutTransitionCompletionPending = true;
 	else if (_scoutResumeTransitionActive &&
 			_animationLayers.layerFrame(kScene5030Chunk9Layer) == kScene5030ScoutResumeVanessaFrame &&
 			_animationLayers.layerFrame(kScene5030Chunk10Layer) == kScene5030ScoutResumeGladysFrame)
-		finishScoutResumeTransition();
+		_scoutTransitionCompletionPending = true;
 }
 
 void Scene5030::startScoutStopTransition() {
 	_scoutResumeTransitionActive = false;
 	_scoutStopTransitionActive = true;
+	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = false;
 	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
@@ -515,6 +543,7 @@ void Scene5030::startScoutStopTransition() {
 void Scene5030::startScoutResumeTransition() {
 	_scoutStopTransitionActive = false;
 	_scoutResumeTransitionActive = true;
+	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = true;
 	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030ScoutStopVanessaFrame);
 	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030ScoutStopGladysFrame);
@@ -532,6 +561,7 @@ void Scene5030::waitForScoutTransition() {
 
 void Scene5030::finishScoutStopTransition() {
 	_scoutStopTransitionActive = false;
+	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = true;
 	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
 	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030GladysIdleFrame);
@@ -542,6 +572,7 @@ void Scene5030::finishScoutStopTransition() {
 
 void Scene5030::finishScoutResumeTransition() {
 	_scoutResumeTransitionActive = false;
+	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = false;
 	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, 0);
 	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, 0);
@@ -578,7 +609,7 @@ void Scene5030::runRonPoseTransition(bool faceGladys) {
 		ARRAYSIZE(kScene5030RonTurnToVanessaFrameMap);
 	playResourceLayerSequence(_actorReplacementLayer, _ronConversationChunk, kScene5030ConversationDescriptorCount,
 		frameMap, frameCount, AnimationFrameRange(0, frameCount - 1,
-			kScene5030FrameMillis).unskippable(), false);
+			kScene5030FrameMillis).unskippable().noFinalFrameDelay(), false);
 	_actorReplacementLayer.configure(_ronConversationChunk, kScene5030ConversationDescriptorCount, nullptr, 0);
 	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(_ronConversationChunk);
 	_actorReplacementLayer.setFrame(faceGladys ? 6 : 0);
@@ -591,14 +622,19 @@ void Scene5030::runDeckRefusalSequence() {
 	playResourceLayerSequence(_actorReplacementLayer, 11, kScene5030DeckAnimationDescriptorCount,
 		kScene5030DeckRefusalFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030DeckRefusalFrameMap) - 1,
-			kScene5030FrameMillis).unskippable());
-	walkActiveActorTo(0x214, 0x162, 4, 0, false);
+			kScene5030FrameMillis).unskippable().noFinalFrameDelay());
 	waitForScoutTransition();
 
+	const bool vanessaSpeechStarted = startConcurrentPrimarySpeechLine(5, 0,
+		kScene5030VanessaDialogueCenterX, kScene5030VanessaDialogueTopY,
+		0, 0x20, 0x3f, kScene5030VanessaSpeechGroup);
+	walkActiveActorTo(0x214, 0x162, 4, 0, false);
 	showRonConversationLayer(13, 0);
-	beginVanessaSpeechLine(5, 0);
-	runRonPoseTransition(true);
-	beginGladysSpeechLine(5, 1);
+	if (vanessaSpeechStarted)
+		waitForConcurrentPrimarySpeech();
+	else
+		beginVanessaSpeechLine(5, 0);
+	runScoutSpeechLineDuringRonTurn(true, 5, 1);
 	runRonPoseTransition(false);
 	finishScoutConversation();
 }
@@ -618,7 +654,7 @@ void Scene5030::runDeckPickupSequence() {
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	playAndPresentAnimationFrames(_actorReplacementLayer,
 		AnimationFrameRange(kScene5030DeckPatchFrame, ARRAYSIZE(kScene5030DeckPickupFrameMap) - 1,
-			kScene5030FrameMillis).unskippable().hookAt(14, kScene5030GrantDeckHook));
+			kScene5030FrameMillis).unskippable().noFinalFrameDelay().hookAt(14, kScene5030GrantDeckHook));
 	clearResourceLayer(_actorReplacementLayer);
 
 	walkActiveActorTo(0x214, 0x162, 4, 0, false);
@@ -628,7 +664,7 @@ void Scene5030::runUnderpantsPresentationAnimation() {
 	playResourceLayerSequence(_actorReplacementLayer, 15, kScene5030UnderpantsRonDescriptorCount,
 		kScene5030UnderpantsPresentationFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsPresentationFrameMap) - 1,
-			kScene5030FrameMillis).unskippable(), false);
+			kScene5030FrameMillis).unskippable().noFinalFrameDelay(), false);
 	_actorReplacementLayer.configure(15, kScene5030UnderpantsRonDescriptorCount, nullptr, 0);
 	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(15);
 	_actorReplacementLayer.setFrame(2);
@@ -645,7 +681,7 @@ void Scene5030::runUnderpantsHandoffAnimation() {
 	ParallelResourceLayerFrameTarget target(_actorReplacementLayer, _alternateVanessaLayer);
 	playAndPresentAnimationFrames(target,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap) - 1,
-			kScene5030FrameMillis).unskippable());
+			kScene5030FrameMillis).unskippable().noFinalFrameDelay());
 	clearActorReplacementLayers();
 }
 
@@ -670,6 +706,12 @@ void Scene5030::runMineCartEntryAnimation() {
 		if (frame == kScene5030MineCartSoundFrame)
 			_soundBank0.playSample(0x16, 100);
 
+		if (frame + 1 == ARRAYSIZE(kScene5030MineCartEntryDelayBuckets)) {
+			drawPlayableComposite();
+			presentFrame();
+			break;
+		}
+
 		const byte delayBucket = kScene5030MineCartEntryDelayBuckets[frame];
 		const uint32 frameMillis = 200 / MAX<uint32>(1, 13 - delayBucket);
 		if (waitSceneMillis(frameMillis, false))
@@ -678,8 +720,6 @@ void Scene5030::runMineCartEntryAnimation() {
 
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
 	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
 }
 
 byte Scene5030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -694,6 +734,10 @@ byte Scene5030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	default:
 		return 0;
 	}
+}
+
+byte Scene5030::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	return animationGroup == kScene5030RonTradeSpeechGroup ? 4 : 5;
 }
 
 uint32 Scene5030::primarySpeechAnimationFrameMillis(byte animationGroup) const {
@@ -739,9 +783,10 @@ void Scene5030::runDeckOfCardsAction(bool fromUnderpantsExchange) {
 	}
 
 	runDeckPickupSequence();
+	showRonConversationLayer(13, 0);
 	if (fromUnderpantsExchange) {
-		runRonPoseTransition(true);
-		beginGladysSpeechLine(9, 11);
+		waitForConcurrentPrimarySpeech();
+		runScoutSpeechLineDuringRonTurn(true, 9, 11);
 	}
 	runRonPoseTransition(false);
 	finishScoutConversation();
@@ -773,8 +818,7 @@ void Scene5030::runVanessaConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030VanessaDialogueStageId, 6);
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, 6);
-			runRonPoseTransition(true);
-			beginGladysSpeechLine(kScene5030GladysReplyToVanessaRow, 4);
+			runScoutSpeechLineDuringRonTurn(true, kScene5030GladysReplyToVanessaRow, 4);
 			runRonPoseTransition(false);
 			finishScoutConversation();
 			return;
@@ -790,8 +834,7 @@ void Scene5030::runVanessaConversation() {
 		beginRonDialogueLine(kScene5030VanessaDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, record.responseFrameIndex);
-			runRonPoseTransition(true);
-			beginGladysSpeechLine(kScene5030GladysReplyToVanessaRow, record.reserved);
+			runScoutSpeechLineDuringRonTurn(true, kScene5030GladysReplyToVanessaRow, record.reserved);
 		}
 		runRonPoseTransition(false);
 
@@ -834,8 +877,7 @@ void Scene5030::runGladysConversation() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030GladysDialogueStageId, 6);
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, 6);
-			runRonPoseTransition(false);
-			beginVanessaSpeechLine(kScene5030VanessaReplyToGladysRow, 4);
+			runScoutSpeechLineDuringRonTurn(false, kScene5030VanessaReplyToGladysRow, 4);
 			runRonPoseTransition(true);
 			finishScoutConversation();
 			return;
@@ -851,8 +893,7 @@ void Scene5030::runGladysConversation() {
 		beginRonDialogueLine(kScene5030GladysDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, record.responseFrameIndex);
-			runRonPoseTransition(false);
-			beginVanessaSpeechLine(kScene5030VanessaReplyToGladysRow, record.reserved);
+			runScoutSpeechLineDuringRonTurn(false, kScene5030VanessaReplyToGladysRow, record.reserved);
 		}
 		runRonPoseTransition(true);
 
@@ -913,8 +954,12 @@ void Scene5030::runSpecialInventorySequence() {
 		removeInventoryItem(kScene5030UnderpantsItem);
 	_soundBank0.playSample(1, 100);
 	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
+	const bool vanessaSpeechStarted = startConcurrentPrimarySpeechLine(9, 10,
+		kScene5030VanessaDialogueCenterX, kScene5030VanessaDialogueTopY,
+		0, 0x20, 0x3f, kScene5030VanessaSpeechGroup);
 	walkActiveActorTo(0x20a, 0x15e, 1, 0, false);
-	beginVanessaSpeechLine(9, 10);
+	if (!vanessaSpeechStarted)
+		beginVanessaSpeechLine(9, 10);
 	_fullPaletteRegionMask = savedFullPaletteRegionMask;
 	_walkablePaletteMask = savedWalkablePaletteMask;
 
@@ -1021,15 +1066,128 @@ void Scene5030::beginGladysSpeechLine(uint16 rowIndex, byte frameIndex) {
 		kScene5030GladysDialogueTopY, 0x3f, 0x20, 0, kScene5030GladysSpeechGroup);
 }
 
-void Scene5030::copyStageSmallRow(byte destinationRow, byte sourceRow) {
+bool Scene5030::startConcurrentPrimarySpeechCue(uint16 textRecordId, uint16 voiceSampleId,
+		uint16 centerX, uint16 topY, byte red, byte green, byte blue, byte animationGroup) {
+	if (_concurrentPrimarySpeechActive)
+		return false;
+
+	const Common::String text = getResource003LargeTextRecord(textRecordId);
+	if (text.empty())
+		return false;
+
+	setPaletteEntry6Bit(kScene5030PrimarySpeechTextColor, red, green, blue);
+	_primarySpeechOverlay.visible = true;
+	_primarySpeechOverlay.colorIndex = kScene5030PrimarySpeechTextColor;
+	wrapActorSpeechText(text, centerX, _primarySpeechOverlay.lines);
+	calculateSpeechOverlayBounds(_primarySpeechOverlay, centerX, topY, true, _activeActorWorldY);
+
+	const bool started = voiceSampleId != 0 &&
+		_speech.playSample(voiceSampleId, primarySpeechVolumePercent(animationGroup));
+	_concurrentPrimarySpeechDuration = started ?
+		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
+	_concurrentPrimarySpeechElapsed = 0;
+	_concurrentPrimarySpeechActive = true;
+
+	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+	_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+	primarySpeechAnimationStarted(animationGroup, baseFrame);
+	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+	return true;
+}
+
+bool Scene5030::startConcurrentPrimarySpeechLine(uint16 rowIndex, byte frameIndex,
+		uint16 centerX, uint16 topY, byte red, byte green, byte blue, byte animationGroup) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId) ||
+			MAX<byte>(1, continuationCount) != 1)
+		return false;
+
+	return startConcurrentPrimarySpeechCue(textRecordId, voiceSampleId,
+		centerX, topY, red, green, blue, animationGroup);
+}
+
+bool Scene5030::waitForConcurrentPrimarySpeech() {
+	bool interrupted = false;
+	while (_concurrentPrimarySpeechActive && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10)) {
+			interrupted = true;
+			break;
+		}
+	}
+	if (_concurrentPrimarySpeechActive)
+		finishConcurrentPrimarySpeech();
+	return interrupted;
+}
+
+void Scene5030::finishConcurrentPrimarySpeech() {
+	if (!_concurrentPrimarySpeechActive)
+		return;
+
+	const byte animationGroup = _primaryDialogueSpeechGroup;
+	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+	_speechController.stopPrimaryDialogueSpeech(kScene5030InvalidSpeechGroup, kScene5030DefaultSpeechFrame);
+	_speech.stop();
+	_primarySpeechOverlay.visible = false;
+	_primarySpeechOverlay.lines.clear();
+	_concurrentPrimarySpeechActive = false;
+	_concurrentPrimarySpeechElapsed = 0;
+	_concurrentPrimarySpeechDuration = 0;
+	primarySpeechAnimationRestored(animationGroup, baseFrame);
+}
+
+void Scene5030::runScoutSpeechLineDuringRonTurn(bool gladys, uint16 rowIndex, byte frameIndex) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId)) {
+		runRonPoseTransition(gladys);
+		return;
+	}
+
+	const uint16 centerX = gladys ? kScene5030GladysDialogueCenterX : kScene5030VanessaDialogueCenterX;
+	const uint16 topY = gladys ? kScene5030GladysDialogueTopY : kScene5030VanessaDialogueTopY;
+	const byte red = gladys ? 0x3f : 0;
+	const byte green = 0x20;
+	const byte blue = gladys ? 0 : 0x3f;
+	const byte animationGroup = gladys ? kScene5030GladysSpeechGroup : kScene5030VanessaSpeechGroup;
+	if (!startConcurrentPrimarySpeechCue(textRecordId, voiceSampleId,
+			centerX, topY, red, green, blue, animationGroup)) {
+		runRonPoseTransition(gladys);
+		if (gladys)
+			beginGladysSpeechLine(rowIndex, frameIndex);
+		else
+			beginVanessaSpeechLine(rowIndex, frameIndex);
+		return;
+	}
+
+	runRonPoseTransition(gladys);
+	const bool interrupted = waitForConcurrentPrimarySpeech();
+	const byte lineCount = MAX<byte>(1, continuationCount);
+	if (!interrupted && lineCount > 1) {
+		runSpeechCue(_primarySpeechOverlay, textRecordId + 1, lineCount - 1,
+			voiceSampleId == 0 ? 0 : voiceSampleId + 1, centerX, topY,
+			kScene5030PrimarySpeechTextColor, true, false, true, animationGroup);
+	}
+}
+
+void Scene5030::copyStageSmallRowLabel(byte destinationRow, byte sourceRow) {
 	const uint destinationOffset = destinationRow * kStage003SmallRowSize;
 	const uint sourceOffset = sourceRow * kStage003SmallRowSize;
 	if (destinationOffset + kStage003SmallRowSize > _stage003SmallRows.size() ||
 			sourceOffset + kStage003SmallRowSize > _stage003SmallRows.size())
 		return;
 
-	memcpy(_stage003SmallRows.data() + destinationOffset,
-		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
+	byte *destination = _stage003SmallRows.data() + destinationOffset;
+	const byte *source = _stage003SmallRows.data() + sourceOffset;
+	uint length = 0;
+	while (length + 1 < kStage003SmallRowSize && source[length] != 0)
+		++length;
+	memcpy(destination, source, length);
+	destination[length] = 0;
 }
 
 void Scene5030::clearSceneItemFromColorMap(byte itemId) {

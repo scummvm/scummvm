@@ -99,10 +99,15 @@ Scene5010::Scene5010(HollywoodEngine *vm) :
 }
 
 void Scene5010::initializeCustomPreviewState() {
+	GameplayState &state = _vm->gameState();
+	const uint16 stateId = state.mainFlowStateId;
+	// A fresh return begins before the cart arrives; a resumed hub keeps its settled state.
+	if (stateId != kScene5010FirstState && !hasSavedActiveActorPoseForCurrentState())
+		state.scene5010MineCartDeparted = true;
+
 	initializeDefaultPreviewState();
 	initializeSwitchLayer();
 
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
 	if (stateId == kScene5010FirstState) {
 		_activeActorWorldX = 0x263;
 		_activeActorWorldY = 0x172;
@@ -405,6 +410,7 @@ void Scene5010::runMineCartArrival() {
 		frameMap.data(), frameMap.size(), kScene5010FrameMillis)
 		.soundAt(0x1e, 0x16)
 		.hookAt(0, kScene5010ReturnFadeHook)
+		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
@@ -413,7 +419,8 @@ void Scene5010::runMineCartArrival() {
 	applySceneStateToHotspotsAndPatches(6);
 	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount,
 		kScene5010TransportReturnFrameMap, ARRAYSIZE(kScene5010TransportReturnFrameMap),
-		kScene5010FrameMillis));
+		kScene5010FrameMillis)
+		.noFinalFrameDelay());
 }
 
 void Scene5010::runReturnShake() {
