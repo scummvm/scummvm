@@ -22,8 +22,10 @@
 #ifndef ULTIMA1_DATA_MAP_H
 #define ULTIMA1_DATA_MAP_H
 
-#include "common/archive.h"
+#include "common/array.h"
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
+#include "ultima/ultima1/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -104,6 +106,8 @@ private:
 	friend class Row;
 
 	Common::Array<Row> _mapRows;			// Used for array operator getting map contents
+	Graphics::ManagedSurface _overworldTiles[OVERWORLD_TILES_COUNT];
+	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
 
 public:
 	int _currentMap = -1;
@@ -118,6 +122,7 @@ public:
 	int _mapType = MAPTYPE_OVERWORLD;
 	int _tavernCtr = 0;
 	int _castleNum = 0, _castleNum2 = 0;
+	Graphics::ManagedSurface *_tiles = nullptr;
 
 public:
 	/**
@@ -143,6 +148,13 @@ public:
 	 */
 	int height() const {
 		return _mapHeight;
+	}
+
+	/**
+	 * Get the tiles
+	 */
+	const Graphics::ManagedSurface *tiles() const {
+		return _tiles;
 	}
 
 	/**

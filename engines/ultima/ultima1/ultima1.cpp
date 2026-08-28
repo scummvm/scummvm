@@ -28,7 +28,6 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
-#include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/views/views.h"
 #include "ultima/ultima1/metaengine.h"
 
@@ -65,7 +64,6 @@ Common::Error Ultima1Engine::run() {
 	setDebugger(new Console());
 
 	// Load needed data
-	Data::loadTiles(_tiles);
 	_map.init();
 
 	Views::Views views;

@@ -120,6 +120,10 @@ void Map::init() {
 				*offset = tc.readByte();
 		}
 	}
+
+	// Load tiles
+	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT);
+	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT);
 }
 
 void Map::load(int mapNum) {
@@ -129,6 +133,7 @@ void Map::load(int mapNum) {
 		_mapWidth = OVERWORLD_WIDTH;
 		_mapHeight = OVERWORLD_HEIGHT;
 		_outsideMapTile = 0xff;
+		_tiles = _overworldTiles;
 
 		_mapRows.clear();
 		_mapRows.reserve(OVERWORLD_HEIGHT);
@@ -139,6 +144,7 @@ void Map::load(int mapNum) {
 		_mapWidth = CITY_WIDTH;
 		_mapHeight = CITY_HEIGHT;
 		_outsideMapTile = 0;
+		_tiles = _cityTiles;
 
 		_mapRows.clear();
 		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access

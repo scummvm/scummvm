@@ -64,7 +64,6 @@ protected:
 public:
 	Data::Map _map;
 	Data::Savegame _savegame;
-	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
 	Logic::Logic *_logic = nullptr;
 	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;

@@ -28,11 +28,12 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-constexpr int TILE_COUNT = 52;
+constexpr int OVERWORLD_TILES_COUNT = 52;
+constexpr int CITY_TILES_COUNT = 51;
 constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 
-enum TileId {
+enum OverworldTileId {
 	TILE_OCEAN = 0,
 	TILE_GRASS = 1,
 	TILE_WOODS = 2,
@@ -61,7 +62,7 @@ enum TileId {
  * row-interleaved: each 16-pixel row is 4 planes x 2 bytes) into a
  * caller-supplied array of TILE_COUNT surfaces
  */
-void loadTiles(Graphics::ManagedSurface tiles[TILE_COUNT]);
+extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count);
 
 } // namespace Data
 } // namespace Ultima1

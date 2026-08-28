@@ -29,14 +29,14 @@ namespace Data {
 constexpr int BYTES_PER_ROW = 8;	// 4 planes x 2 bytes/plane = 16 pixels
 constexpr int BYTES_PER_TILE = BYTES_PER_ROW * TILE_HEIGHT;
 
-void loadTiles(Graphics::ManagedSurface tiles[TILE_COUNT]) {
+void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count) {
 	Common::File f;
 	if (!f.open("EgaTiles.Bin"))
 		error("Could not open EgaTiles.Bin");
 
 	byte data[BYTES_PER_TILE];
 
-	for (int tileNum = 0; tileNum < TILE_COUNT; ++tileNum) {
+	for (int tileNum = 0; tileNum < count; ++tileNum) {
 		if (f.read(data, BYTES_PER_TILE) != (uint32)BYTES_PER_TILE)
 			error("Unexpected end of EgaTiles.Bin");
 

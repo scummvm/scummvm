@@ -42,7 +42,8 @@ void OverworldMap::timeout() {
 }
 
 void OverworldMap::animateWater() {
-	Graphics::ManagedSurface &tile = g_engine->_tiles[Data::TILE_OCEAN];
+	const Graphics::ManagedSurface *tiles = _G(map).tiles();
+	const Graphics::ManagedSurface &tile = tiles[Data::TILE_OCEAN];
 	assert(tile.w == Data::TILE_WIDTH && tile.h == Data::TILE_HEIGHT);
 
 	byte lastRow[Data::TILE_WIDTH];
@@ -78,6 +79,7 @@ int OverworldMap::animatedTileId(byte tileId) const {
 
 void OverworldMap::draw() {
 	auto &map = g_engine->_map;
+	const Graphics::ManagedSurface *tiles = map.tiles();
 	auto s = getSurface();
 
 	prepareMapForDrawing();
@@ -87,7 +89,9 @@ void OverworldMap::draw() {
 		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
 			int tileId = animatedTileId(map._mapTilesId[oy][ox]);
 			if (tileId != -1) {
-				const Graphics::ManagedSurface &tileImg = g_engine->_tiles[tileId];
+				const Graphics::ManagedSurface &tileImg = tiles[
+					(_G(map)._currentMap != Data::MAP_OVERWORLD && tileId >= 50) ? 1 : tileId
+				];
 				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH, oy * Data::TILE_HEIGHT));
 			}
 		}
