@@ -156,6 +156,9 @@ protected:
 	virtual uint actorPathStepDeltaTableSize() const;
 	virtual int alternatePaletteResourceChunkIndex() const;
 	virtual bool isAlternatePaletteResourceActive() const;
+	// State-dependent room variants may replace chunks 2 and 3 before snapshots and paths are built.
+	virtual int replacementFillRunsResourceChunkIndex() const;
+	virtual int replacementPaletteMaskResourceChunkIndex() const;
 	virtual bool shouldConvertSavedFramebufferFF() const;
 	virtual bool shouldLoadArenaChunk(uint index) const;
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;

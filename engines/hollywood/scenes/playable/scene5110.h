@@ -34,20 +34,36 @@ public:
 	Scene5110(HollywoodEngine *vm);
 
 private:
+	int replacementFillRunsResourceChunkIndex() const override;
+	int replacementPaletteMaskResourceChunkIndex() const override;
 	void initializeCustomPreviewState() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldConvertSavedFramebufferFF() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
+	void handleLeftClick(const GameplayLoopCursorState &state) override;
 
-	void runEntryElevatorSequence();
+	bool runEntryElevatorSequence(bool alternateEntry);
+	bool playElevatorSequence(const byte *frameMap, uint frameMapSize, bool drawActor);
+	bool holdElevatorFrame(bool drawActor);
 	void runButtonExitToState(uint16 nextState);
 	void runButtonReturnSequence();
 	void runUnderwearPickup();
@@ -60,16 +76,58 @@ private:
 	void runJacuzziInspection();
 	void runHairTreatmentTalk();
 	void beginSalonPrimarySpeechLine(uint16 rowIndex, byte frameIndex);
+	void settleWerewolfForSpeech();
 	void initializeWerewolfDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setWerewolfDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
 		byte responseFrameIndex, byte disableAfterUse) const;
 	bool applyWerewolfDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex);
-	void drawStaticRoomLayers(int activeWorldY);
-	void drawSpriteFrame(uint chunkIndex, uint descriptorCount, byte frameIndex);
+	void initializeSalonLayers();
+	void advanceSalonAnimations(uint32 delta);
+	void advanceSalonAnimationTick();
+	void advanceUpperRightSalonTick();
+	void advanceRightSalonDetailTick();
+	void advanceLowerSalonDetailTick();
+	void advanceCenterSalonTick();
+	void advanceLeftSalonTick();
+	void advanceWerewolfTick(bool allowLongGesture);
+	void advanceWerewolfDialogueTick();
+	void advanceCenterSalonDetailTick();
+	void drawNormalRoomLayers(int activeWorldY);
+	void drawSalonSpriteLayers();
+	void drawElevatorComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
+		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
+		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
+	void updateElevatorButtonActionTargets(bool useStrip);
+	void initializeSceneItemLabels();
+	void copyStageSmallRow(byte sourceRow, byte destinationRow);
+	void setStageSmallRowLabel(byte row, const char *label);
 	void clearSceneItemFromColorMap(byte itemId);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
+
+	ResourceSpriteLayer _randomDetailLayer;
+	ResourceSpriteLayer _centerSalonLayer;
+	ResourceSpriteLayer _werewolfLayer;
+	ResourceSpriteLayer _centerSalonDetailLayer;
+	ResourceSpriteLayer _leftSalonLayer;
+	ResourceSpriteLayer _upperRightSalonLayer;
+	ResourceSpriteLayer _rightSalonDetailLayer;
+	ResourceSpriteLayer _lowerSalonDetailLayer;
+	ResourceSpriteLayer _rightStaticSalonLayer;
+	ResourceSpriteLayer _elevatorLayer;
+	TimedAnimationChannel _salonAnimationChannel;
+	byte _upperRightSalonState;
+	byte _rightSalonDetailDirection;
+	byte _rightSalonDetailDwell;
+	byte _lowerSalonDetailState;
+	byte _leftSalonRepeatCount;
+	byte _werewolfState;
+	byte _centerSalonDetailRepeatCount;
+	bool _centerSalonToggleA;
+	bool _centerSalonToggleB;
+	bool _centerSalonDetailSequenceActive;
+	bool _werewolfDialogueActive;
 };
 
 } // End of namespace Hollywood

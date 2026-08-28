@@ -463,6 +463,14 @@ bool PlayableScene::isAlternatePaletteResourceActive() const {
 	return false;
 }
 
+int PlayableScene::replacementFillRunsResourceChunkIndex() const {
+	return -1;
+}
+
+int PlayableScene::replacementPaletteMaskResourceChunkIndex() const {
+	return -1;
+}
+
 bool PlayableScene::shouldLoadInventoryActionTables() const {
 	return _config.loadInventoryActionTables;
 }
@@ -709,6 +717,21 @@ bool PlayableScene::load() {
 	}
 	if (!loadVariableChunk(4, _metadata)) {
 		warning("%s load failed: %s chunk 4 metadata", sceneDebugName(), archiveName);
+		return false;
+	}
+
+	const int replacementFillRunsChunkIndex = replacementFillRunsResourceChunkIndex();
+	if (replacementFillRunsChunkIndex >= 0 &&
+			!loadVariableChunk((uint)replacementFillRunsChunkIndex, _fillRuns)) {
+		warning("%s load failed: %s replacement fill runs chunk %d", sceneDebugName(),
+			archiveName, replacementFillRunsChunkIndex);
+		return false;
+	}
+	const int replacementPaletteMaskChunkIndex = replacementPaletteMaskResourceChunkIndex();
+	if (replacementPaletteMaskChunkIndex >= 0 &&
+			!loadVariableChunk((uint)replacementPaletteMaskChunkIndex, _paletteMask)) {
+		warning("%s load failed: %s replacement palette mask chunk %d", sceneDebugName(),
+			archiveName, replacementPaletteMaskChunkIndex);
 		return false;
 	}
 
