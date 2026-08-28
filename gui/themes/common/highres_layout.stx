@@ -413,7 +413,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'IconArea'/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+			<layout type = 'horizontal' padding = '0, 0, 4, 0' spacing = '2'>
 				<widget name = 'AddGameButton'
 						height = 'Globals.Button.Height'
 				/>
