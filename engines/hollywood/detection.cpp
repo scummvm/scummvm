@@ -45,6 +45,34 @@ const DebugChannelDef debugFlagList[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
+	// Spanish DOS demo.
+	{
+		"hollywood",
+		"Demo",
+		AD_ENTRY4s("MONSTERS.EXE", "54a1e8749448e08086a1929510ec4b6a", 1027587,
+			"RESOURCE.000", "0f86d33d0519b0dcef62de5f46754e85", 4348283,
+			"RESOURCE.M04", "396d3a7cbe11f14747cdc52f1ac038ba", 2286658,
+			"RESOURCE.S0D", "96bba558e5508affca4ffab8d546de83", 1408634),
+		Common::ES_ESP,
+		Common::kPlatformDOS,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI, GUIO_NOSPEECH)
+	},
+
+	// Italian Windows demo distributed with the Italian release.
+	{
+		"hollywood",
+		"Demo",
+		AD_ENTRY4s("MONSTERS.EXE", "fd174231edb65bafcaea04c911c2d4bb", 671232,
+			"RESOURCE.000", "b16a8300ca1af75a0322e443a8971159", 3662162,
+			"RESOURCE.003", "cd0ecdca8faaf56c905e0b52d025c8e4", 2185543,
+			"RESOURCE.S0D", "96bba558e5508affca4ffab8d546de83", 1408634),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI, GUIO_NOSPEECH)
+	},
+
 	// Spanish Windows first edition full game, installed MONSTERS directory.
 	{
 		"hollywood",

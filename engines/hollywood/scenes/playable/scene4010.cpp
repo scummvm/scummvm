@@ -34,6 +34,8 @@ const uint16 kScene4010EntryFromRightSideState = 0x0fab;
 const uint16 kScene4010EntryFromLeftSideState = 0x0fac;
 const uint16 kScene4010ExitState4020 = 0x0fb4;
 const uint16 kScene4010ExitState4110 = 0x100f;
+const uint16 kScene4010DemoExitState4030 = 0x0fbe;
+const uint16 kScene4010DemoExitState4100 = 0x1004;
 const uint16 kScene4010ViewportXOffset = 0x0068;
 const uint16 kScene4010ViewportMaxXOffset = 0x00b8;
 const uint kScene4010ActorBankTableEntry = 0x0000;
@@ -51,6 +53,7 @@ const uint kScene4010PillboxOverlayDescriptorCount = 0x0d;
 const uint kScene4010HeckerDialogueChoiceRecordCount = 700;
 const byte kScene4010Item3A = 0x3a;
 const byte kScene4010PillboxItem = 0x3b;
+const byte kScene4010DemoLeverItem = 0x35;
 const byte kScene4010AustraliaDestinationId = 4;
 const byte kScene4010HeckerSpeechGroup = 0;
 const byte kScene4010InvalidPrimarySpeechGroup = 0xff;
@@ -63,6 +66,33 @@ const uint16 kScene4010HeckerSpeechTopY = 0x00be;
 const byte kScene4010HeckerSpeechRed = 0x20;
 const byte kScene4010HeckerSpeechGreen = 0x30;
 const byte kScene4010HeckerSpeechBlue = 0x3f;
+
+struct Scene4010ReleaseProfile {
+	uint16 drawbridgeExitState;
+	uint16 moatExitState;
+	byte thrownItemId;
+	bool usesReducedFirstEntry;
+	bool usesDirectRightEntry;
+};
+
+const Scene4010ReleaseProfile kScene4010FullGameProfile = {
+	kScene4010ExitState4110, kScene4010ExitState4020, kScene4010PillboxItem, false, false
+};
+
+const Scene4010ReleaseProfile kScene4010SpanishDemoProfile = {
+	kScene4010DemoExitState4100, kScene4010DemoExitState4030, kScene4010DemoLeverItem, false, true
+};
+
+const Scene4010ReleaseProfile kScene4010ItalianDemoProfile = {
+	kScene4010DemoExitState4100, kScene4010DemoExitState4030, kScene4010DemoLeverItem, true, true
+};
+
+const Scene4010ReleaseProfile &scene4010ReleaseProfile(const HollywoodEngine *vm) {
+	if (!vm->isDemo())
+		return kScene4010FullGameProfile;
+	return vm->getLanguage() == Common::IT_ITA ?
+		kScene4010ItalianDemoProfile : kScene4010SpanishDemoProfile;
+}
 
 const byte kScene4010RoomIdleFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
@@ -107,6 +137,7 @@ static PlayableSceneConfig scene4010Config() {
 
 Scene4010::Scene4010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4010Config()),
+		_releaseProfile(scene4010ReleaseProfile(vm)),
 		_roomIdleChannel(),
 		_roomIdleLayer(),
 		_normalBaseFramebuffer(),
@@ -174,7 +205,7 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a puente levadizo (go to drawbridge), or return from the opened-bridge view.
 		if (alternateBackgroundActive())
-			_vm->gameState().mainFlowStateId = kScene4010ExitState4110;
+			_vm->gameState().mainFlowStateId = _releaseProfile.drawbridgeExitState;
 		else
 			beginSecondarySpeechLine(0, 0);
 		return true;
@@ -196,7 +227,7 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 306: // Usar/cerrar ventana (use/close window): too far to reach.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Ir a foso (go to moat): progressive exit to scene 4020.
+	case 307: // Ir a foso (go to moat): progressive exit into the castle.
 		runProgressiveExitSpeech();
 		return true;
 	case 308: // Mirar foso (look at moat): state-aware moat response.
@@ -232,11 +263,14 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 316: // Mirar postal (look postal letter): unlock Australia destination when the clue is known.
 		unlockDestinationFromRoomAction();
 		return true;
-	case 317: // Coger pastillero (take pillbox): item 0x3b.
-		takePillbox();
+	case 317: // Coger objeto arrojado (take thrown item): pillbox in full game, lever in demo.
+		takeThrownItem();
 		return true;
-	case 318: // Mirar pastillero (look pillbox): thrown out the window by the count.
+	case 318: // Mirar objeto arrojado (look at thrown item).
 		beginSecondarySpeechLine(16, 0);
+		return true;
+	case 319: // Usar coche (use car): open Ron's destination selector.
+		_vm->gameState().requestTravelScreenSelection(4);
 		return true;
 	default:
 		return false;
@@ -476,6 +510,13 @@ void Scene4010::drawForegroundBlocks(int activeWorldY) {
 void Scene4010::runFirstEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	runEntryPath(0x004c, 0x01c2, 2, 0x00c8, 0x01ae);
+	if (_releaseProfile.usesReducedFirstEntry) {
+		if (!state.scene4010FirstEntryConversationSeen) {
+			beginSecondarySpeechLine(0, 0);
+			state.scene4010FirstEntryConversationSeen = true;
+		}
+		return;
+	}
 
 	if (!state.scene4010FirstEntryConversationSeen && !alternateBackgroundActive()) {
 		setHeckerFrame(0);
@@ -500,6 +541,11 @@ void Scene4010::runFirstEntrySequence() {
 
 void Scene4010::runEntryFromRightSide() {
 	GameplayState &state = _vm->gameState();
+	if (_releaseProfile.usesDirectRightEntry) {
+		runEntryPath(0x02c4, 0x00f3, 4, 0x011d, 0x017d);
+		return;
+	}
+
 	runEntryPath(0x02c4, 0x00f3, 4, state.scene4010EntryPathSpeechState < 2 ? 0x0238 : 0x011d,
 		state.scene4010EntryPathSpeechState < 2 ? 0x0111 : 0x017d);
 	if (state.scene4010EntryPathSpeechState < 2) {
@@ -797,7 +843,7 @@ void Scene4010::runProgressiveExitSpeech() {
 			.soundAt(11, 0x27)
 			.noRedrawAtEnd()
 			.startAt(1));
-		state.mainFlowStateId = kScene4010ExitState4020;
+		state.mainFlowStateId = _releaseProfile.moatExitState;
 	}
 	if (state.scene4010ProgressiveExitSpeechState < 3)
 		++state.scene4010ProgressiveExitSpeechState;
@@ -865,16 +911,16 @@ void Scene4010::unlockDestinationFromRoomAction() {
 	}
 }
 
-void Scene4010::takePillbox() {
+void Scene4010::takeThrownItem() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4010PillboxPickupState != 1 || hasInventoryItem(kScene4010PillboxItem))
+	if (state.scene4010PillboxPickupState != 1 || hasInventoryItem(_releaseProfile.thrownItemId))
 		return;
 
 	state.scene4010PillboxPickupState = 2;
 	runActorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
 		kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
 		.patchAt(6, 5));
-	addInventoryItem(kScene4010PillboxItem);
+	addInventoryItem(_releaseProfile.thrownItemId);
 	_soundBank0.playSample(1, 100);
 	dispatchGenericSceneAction(21);
 }

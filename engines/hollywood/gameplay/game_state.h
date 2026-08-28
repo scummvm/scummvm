@@ -541,7 +541,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[0][0x6c] = 0x46;
 	}
 
-	void initializeRonInventoryItems() {
+	void initializeRonInventoryItems(bool includeDemoSuitcase = false) {
 		if (kInventoryOwnerCount == 0)
 			return;
 
@@ -557,8 +557,13 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][0x6a] = 1;
 		inventoryItemSlotByOwnerAndItemId[owner][0x09] = 2;
 		inventoryItemSlotByOwnerAndItemId[owner][0x01] = 3;
-		inventoryItemCountByOwner[owner] = 3;
-		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
+		const byte itemCount = includeDemoSuitcase ? 4 : 3;
+		if (includeDemoSuitcase) {
+			inventorySlotItemIdByOwner[owner][4] = 0x19;
+			inventoryItemSlotByOwnerAndItemId[owner][0x19] = 4;
+		}
+		inventoryItemCountByOwner[owner] = itemCount;
+		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(itemCount);
 		ronInventoryInitialized = true;
 		inventoryPanelDirty = true;
 	}

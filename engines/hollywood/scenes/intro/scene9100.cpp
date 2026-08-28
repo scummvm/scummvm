@@ -85,7 +85,7 @@ const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondary
 Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), !vm->isDemo()),
 		_effectSound(),
 		_clockSound(),
 		_ambientSound(),
@@ -211,7 +211,7 @@ bool Scene9100::playDialogueBranch() {
 	if (!Engine::shouldQuit()) {
 		GameplayState &state = _vm->gameState();
 		state.initializeRonItemResourcePages();
-		state.initializeRonInventoryItems();
+		state.initializeRonInventoryItems(_vm->isDemo());
 		state.currentInventoryOwnerIndex = 0;
 		state.activeAudioChapterIndex = 9;
 		state.inventoryPanelDirty = true;
