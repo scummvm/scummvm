@@ -37,7 +37,10 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
@@ -45,24 +48,40 @@ private:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void initializeSwitchLayer();
 	byte switchDescriptorIndex() const;
-	void copyStepDeltasFromSet87(uint firstOffset, uint lastOffset);
+	void copySlopeStepDeltasFromSet5A(uint targetFirstOffset);
 	void runFirstEntrySequence();
 	void runReturnEntrySequence();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing, int targetX, int targetY, byte finalFacing);
+	void runMineCartArrival();
+	void runReturnShake();
 	void prepareMineTransport(bool showBlinkPatch);
 	void enterMineTransport();
 	void ensureMineDestinationTable();
 	uint16 mineDestinationForCurrentSwitch() const;
 	void runSwitchPanel();
 	void drawSwitchPanelFrame();
+	void drawSwitchPanelOverlay();
 	byte switchPanelMaskPixelAt(uint16 screenX, uint16 screenY) const;
 	void handleSwitchPanelChoice(byte choice);
+	Common::Array<byte> buildSwitchPanelAnimation(byte currentValue, byte targetValue,
+		uint &hideStaticFrame, uint &showStaticFrame) const;
 	bool pollSwitchPanelEvent(bool &done);
 
 	ResourceSpriteLayer _switchLayer;
+	ResourceSpriteLayer _switchPanelAnimationLayer;
+	bool _blinkPatchVisible;
+	bool _switchPanelActive;
+	byte _switchPanelMovingSelector;
+	bool _switchPanelMovingSelectorVisible;
+	byte _switchPanelDisplayedRow;
+	byte _switchPanelDisplayedColumn;
+	byte _switchPanelTargetValue;
+	uint _switchPanelHideStaticFrame;
+	uint _switchPanelShowStaticFrame;
 };
 
 } // End of namespace Hollywood
