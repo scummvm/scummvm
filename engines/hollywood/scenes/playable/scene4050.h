@@ -38,9 +38,13 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
@@ -53,9 +57,13 @@ private:
 	void advanceFlagPalette(uint32 delta);
 	void rotateFlagPalette();
 	void advanceRonLayer(uint32 delta);
+	void updateAmbientSounds(uint32 delta);
 	void setRonResourceFrame(byte frameIndex);
 	void beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex);
 	void runD09ReturnTransitionSequence();
+	bool runCurtainRevealFromBlack();
+	void applyCurtainBand(const Graphics::Surface *source, uint sweepOffset, byte bandWidth);
+	void runCurtainClearToBlack();
 	void useLongRopeOnLedge();
 	void useSceneRope();
 	void applyPatchStateColorMap(byte patchState);
@@ -69,7 +77,11 @@ private:
 	ResourceSpriteLayer _backgroundLayer;
 	ResourceSpriteLayer _ronLayer;
 	ResourceSpriteLayer _d09ReturnTransitionLayer;
+	uint32 _ambientEffectTimerAccumulator;
+	byte _previousContinuousAmbientCue;
+	byte _previousRandomAmbientCue;
 	bool _ronManualSequenceActive;
+	bool _transitionClearedToBlack;
 };
 
 } // End of namespace Hollywood
