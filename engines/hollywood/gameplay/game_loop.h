@@ -174,7 +174,7 @@ private:
 	bool _leftButtonDown;
 	bool _rightButtonDown;
 	bool _keyboardStripMode;
-	bool _inventoryPanelOpenedFromDefault;
+	bool _restoreDefaultStripOnInventoryClose;
 	byte _relationMode;
 	byte _primaryInventoryItem;
 	GameplayPanelState _panelState;
