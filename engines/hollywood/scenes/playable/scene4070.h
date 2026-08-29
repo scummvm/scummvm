@@ -46,6 +46,9 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	byte primarySpeechVolumePercent(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 
@@ -53,19 +56,22 @@ private:
 	bool isDraculaVisible() const;
 	void setRightSidePatchActive(bool active, bool playSound);
 	void advanceAmbientLayers(uint32 delta);
+	void advanceDraculaIdle(uint32 delta);
 	void updateSidePatchForActorPosition();
 	void drawSceneLayers(int activeWorldY);
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void applyDraculaHotspotState();
 	void beginDraculaSpeechLine(uint16 rowIndex, byte frameIndex);
+	void beginDraculaIdleSpeechLine(byte frameIndex, bool alternatePose);
+	void beginTrophySpeechLine(uint16 rowIndex, byte frameIndex);
 	void runCorridorExit();
 	void runTrophyBaseOpenAction();
 	void runFrankiePartGrantSequence();
 	void runSlimmingTreatmentSequence();
-	void runPillsOnDracula();
 	void runFlyerOnDracula();
 	void runDraculaDialogue();
+	void runLaterDraculaConversation();
 	void initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 
 	ResourceSpriteLayer _randomAmbientLayer;
@@ -73,8 +79,11 @@ private:
 	ResourceSpriteLayer _draculaLayer;
 	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _ambientChannel;
+	TimedAnimationChannel _draculaIdleChannel;
+	uint32 _draculaIdleSpeechTimerAccumulator;
 	bool _rightSidePatchActive;
-	bool _draculaDialogueIntroPlayed;
+	bool _draculaIdleSequenceActive;
+	bool _draculaDialogueMenuActive;
 	SoundBank0Player _loopingSoundBank0;
 	Common::Array<byte> _originalColorToItemMap;
 };

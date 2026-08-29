@@ -368,8 +368,6 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene4070SlimmingTreatmentApplied && state.scene4010PillboxPickupState == 0)
-		state.scene4010PillboxPickupState = 1;
 
 	if (selector == 0 || selector == 0xff) {
 		if (alternateBackgroundActive()) {

@@ -175,11 +175,14 @@ void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 void Scene4090::runCustomEntrySequence() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene4080CoffinShiftedState != 0)
+		state.scene4090WideCoffinVariant = 1;
+
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
 	_soundBank0.playSample(5, 100);
 
-	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kScene4090FirstState) {
 		setActiveActorPose(kScene4090DefaultActorX, kScene4090DefaultActorY, state.scene4090InitialGreetingSeen ? kScene4090DefaultActorFacing : 1);
 		drawPlayableComposite();
@@ -198,6 +201,8 @@ void Scene4090::runCustomEntrySequence() {
 	} else {
 		beginSecondarySpeechLine(8, 8);
 		state.scene4090FinalCutsceneCompleted = 1;
+		if (state.scene4070DraculaStage == 0)
+			state.scene4070DraculaStage = 1;
 	}
 }
 

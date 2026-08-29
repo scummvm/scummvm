@@ -283,22 +283,17 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 303: // Mirar ventana (look at window): full moon.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Abrir ventana (open window): broken unless Gwendolyn branch redirects.
+	case 304: // Abrir ventana / mirar gominola remapeada (open window / look at remapped gummy sweet).
 		if (_vm->gameState().scene4080GwendolynState != 0)
-			beginSecondarySpeechLine(20, 0);
+			beginSecondarySpeechLine(16, 0);
 		else
 			beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Cerrar ventana / activar cambiazo lateral (close window / trigger side patch sequence).
-		runSidePatchSequence();
+	case 305: // Cerrar ventana / usar comida remapeada (close window / use remapped food).
+		beginSecondarySpeechLine(_vm->gameState().scene4080GwendolynState != 0 ? 10 : 3, 0);
 		return true;
-	case 306: // Coger ataud (take coffin): state-aware coffin/steak setup line.
-		if (_vm->gameState().scene4080GwendolynState != 0)
-			beginSecondarySpeechLine(4, 0);
-		else if (_vm->gameState().scene4080CoffinShiftedState != 0)
-			beginSecondarySpeechLine(4, 2);
-		else
-			beginSecondarySpeechLine(4, 1);
+	case 306: // Coger ataud (take coffin): move it after Gwendolyn is gone.
+		runSidePatchSequence();
 		return true;
 	case 307: // Mirar ataud (look at coffin): wide/narrow coffin variant.
 		beginSecondarySpeechLine(5, _vm->gameState().scene4080CoffinShiftedState == 0 ? 0 : 1);
@@ -664,9 +659,13 @@ void Scene4080::runSidePatchSequence() {
 	}
 
 	beginSecondarySpeechLine(4, 1);
-	playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk, 4,
-		kScene4080SidePatchFrameMap, kScene4080FrameMillis);
+	if (!playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk, 4,
+			kScene4080SidePatchFrameMap,
+			AnimationFrameRange(0, ARRAYSIZE(kScene4080SidePatchFrameMap) - 1,
+				kScene4080FrameMillis).unskippable()))
+		return;
 	state.scene4080CoffinShiftedState = 1;
+	state.scene4090WideCoffinVariant = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(4, 3);
 }
