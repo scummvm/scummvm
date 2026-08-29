@@ -61,6 +61,8 @@ int LocationMap::animatedTileId(byte tileId) const {
 }
 
 void LocationMap::draw() {
+	Dialog::draw();
+
 	auto &map = g_engine->_map;
 	const Graphics::ManagedSurface *tiles = map.tiles();
 	auto s = getSurface();
@@ -75,7 +77,7 @@ void LocationMap::draw() {
 				const Graphics::ManagedSurface &tileImg = tiles[
 					(_G(map)._currentMap != Data::MAP_OVERWORLD && tileId >= 50) ? 1 : tileId
 				];
-				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH, oy * Data::TILE_HEIGHT));
+				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH + 8, oy * Data::TILE_HEIGHT + 8));
 			}
 		}
 	}

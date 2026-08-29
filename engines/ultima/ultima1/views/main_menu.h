@@ -23,7 +23,7 @@
 #define ULTIMA1_VIEWS_MAIN_MENU_H
 
 #include "ultima/ultima1/gfx/text_cursor.h"
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/full_screen_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,7 +35,7 @@ using namespace Shared::Messages;
  * The game's main menu - offers generating a new character or
  * continuing a previously saved game.
  */
-class MainMenu : public Dialog {
+class MainMenu : public FullScreenDialog {
 private:
 	Gfx::TextCursor _cursor;
 

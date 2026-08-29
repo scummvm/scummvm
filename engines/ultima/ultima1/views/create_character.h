@@ -24,7 +24,7 @@
 
 #include "ultima/ultima1/gfx/text_cursor.h"
 #include "ultima/ultima1/gfx/text_input.h"
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/full_screen_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -39,7 +39,7 @@ constexpr int STARTING_POINTS = 30;
  * Character generation - attribute point-buy, then race/sex/class
  * selection, name entry, and a final save confirmation.
  */
-class CreateCharacter : public Dialog {
+class CreateCharacter : public FullScreenDialog {
 private:
 	enum State {
 		ATTRIBUTES, RACE, SEX, CLASS, NAME, SAVE

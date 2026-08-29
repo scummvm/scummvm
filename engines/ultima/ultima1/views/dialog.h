@@ -23,31 +23,34 @@
 #define ULTIMA1_VIEWS_DIALOG_H
 
 #include "ultima/shared/gfx/view.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+using namespace Shared::Messages;
+
 /**
- * Base class for views with the thick beveled-corner frame drawn around the edge of the screen
+ * Base class for views that appear on the top hand of the screen, such as the maps, dungeon, etc.
  */
 class Dialog : public Shared::Gfx::View {
-protected:
-	/**
-	 * Draws the border frame around the edge of the screen
-	 */
-	void drawFrame();
-
-	/**
-	 * Draws the dividers splitting the interior of the frame into a map
-	 * viewport (above) and a command/message log and stats panel (below).
-	 * Shared by the overworld, dungeon, and outer space views
-	 */
-	void drawGameDividers();
-
 public:
-	Dialog(const Common::String &name) : View(name) {}
+	Dialog(const Common::String &name);
 	~Dialog() override {}
+
+	/**
+	 * Draw the dialog
+	 */
+	void draw() override;
+
+	/**
+	 * Called for game frame ticks
+	 */
+	bool tick() override;
+
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

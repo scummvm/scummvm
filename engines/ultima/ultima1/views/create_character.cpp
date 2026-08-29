@@ -41,7 +41,7 @@ static Common::String padLabel(const Common::String &label, int width) {
 	return result;
 }
 
-CreateCharacter::CreateCharacter() : Dialog("CreateCharacter"),
+CreateCharacter::CreateCharacter() : FullScreenDialog("CreateCharacter"),
 		_cursor("Cursor", this), _nameInput("NameInput", this, _cursor) {
 	// Hidden until race/sex/class/save selection needs it
 	_cursor.hide();
@@ -77,10 +77,9 @@ int16 &CreateCharacter::attribute(int index) {
 }
 
 void CreateCharacter::draw() {
-	auto s = getSurface();
-	s.clear();
-	drawFrame();
+	FullScreenDialog::draw();
 
+	auto s = getSurface();
 	s.setTextPos(Point(8, 0));
 	s.writeString(Common::Point(8, 0), "\x10 Character Generation \x11");
 

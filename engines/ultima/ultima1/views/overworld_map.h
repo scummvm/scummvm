@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_OVERWORLD_MAP_H
 #define ULTIMA1_VIEWS_OVERWORLD_MAP_H
 
-#include "ultima/shared/engine/events.h"
+#include "ultima/ultima1/views/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,7 +30,7 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class OverworldMap : public Shared::UIElement {
+class OverworldMap : public Dialog {
 private:
 	int _animIndex = 0;
 
@@ -52,7 +52,7 @@ private:
 	int animatedTileId(byte tileId) const;
 
 public:
-	OverworldMap(Shared::UIElement *parent) : Shared::UIElement("OverworldMap", parent) {}
+	OverworldMap() : Dialog("OverworldMap") {}
 	~OverworldMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

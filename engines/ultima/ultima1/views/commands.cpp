@@ -56,16 +56,6 @@ bool Commands::msgGame(const GameMessage &msg) {
 	return false;
 }
 
-bool Commands::msgAction(const ActionMessage &msg) {
-	g_engine->_logic->action(msg._action);
-	return true;
-}
-
-bool Commands::msgKeypress(const KeypressMessage &msg) {
-	g_engine->_logic->keypress(msg.keycode);
-	return true;
-}
-
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
 	_surface.writeString(msg);

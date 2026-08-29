@@ -30,16 +30,15 @@ namespace Views {
 constexpr int COLOR_EDGE = 15; // white - used for the title/tagline
 constexpr int COLOR_TEXT = 11; // light cyan - used for the menu options
 
-MainMenu::MainMenu() : Dialog("MainMenu"), _cursor("Cursor", this) {
+MainMenu::MainMenu() : FullScreenDialog("MainMenu"), _cursor("Cursor", this) {
 	// Position the cursor right after "Thy choice: "
 	_cursor.setPosition(Common::Point(25, 18));
 }
 
 void MainMenu::draw() {
-	auto s = getSurface();
-	s.clear();
-	drawFrame();
+	FullScreenDialog::draw();
 
+	auto s = getSurface();
 	s.setColor(COLOR_EDGE);
 	s.writeString(Common::Point(12, 6), "*** Ultima I ***");
 	s.writeString(Common::Point(14, 9), "from darkest");

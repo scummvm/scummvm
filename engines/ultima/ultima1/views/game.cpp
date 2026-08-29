@@ -35,13 +35,10 @@ namespace Views {
 constexpr int COLOR_BORDER = 1;  // blue - thick outer band
 constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 
-Game::Game() : Dialog("Game"), _commands(this), _stats(this) {
+Game::Game() : Shared::Gfx::View("Game"), _commands(this), _stats(this) {
+	setBounds(TextRect(0, 0, 39, 24));
 	_commands.setBounds(TextRect(0, 20, 29, 24));
 	_stats.setBounds(TextRect(31, 21, 39, 24));
-}
-
-Game::~Game() {
-	delete _map;
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
@@ -56,53 +53,12 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 
 void Game::draw() {
 	auto s = getSurface();
-	s.clear();
-	drawFrame();
-
-	// Erase the frame's bottom section
-	s.fillRect(Common::Rect(0, 153, 320, 200), 0);
-
-	// Horizontal divider separating the map viewport (above) from the command/message log and stats panel
-	s.fillRect(Common::Rect(0, 153, 320, 159), COLOR_BORDER);
-	s.drawLine(7, 152, 312, 152, COLOR_EDGE);
-	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
-	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
+	Shared::UIElement::draw();
 
 	// Vertical divider between the command/message log (left) and the stats panel (right)
-	s.fillRect(Common::Rect(241, 153, 247, 200), COLOR_BORDER);
-	s.drawLine(240, 159, 240, 199, COLOR_EDGE);
-	s.drawLine(247, 159, 247, 199, COLOR_EDGE);
-}
-
-bool Game::msgGame(const GameMessage &msg) {
-	if (msg._name == "MAP") {
-		if (_map) {
-			// Remove current map view
-			_children.remove(_map);
-			delete _map;
-			_map = nullptr;
-		}
-
-		if (msg._stringValue == "OVERWORLD")
-			_map = new OverworldMap(this);
-		else if (msg._stringValue == "CITY" || msg._stringValue == "CASTLE" || msg._stringValue == "PILLAR")
-			_map = new LocationMap(this);
-		else
-			error("Invalid map type - %s", msg._stringValue.c_str());
-
-		// Set the bounds
-		_map->setBounds(TextRect(1, 1, 38, 19));
-		return true;
-
-	} else if (msg._name == "UPDATE") {
-		if (msg._stringValue == "MAP")
-			_map->redraw();
-		if (msg._stringValue == "STATS")
-			_stats.redraw();
-		return true;
-	}
-
-	return Dialog::msgGame(msg);
+	s.fillRect(Common::Rect(241, 160, 247, 200), COLOR_BORDER);
+	s.drawLine(240, 160, 240, 199, COLOR_EDGE);
+	s.drawLine(247, 160, 247, 199, COLOR_EDGE);
 }
 
 } // namespace Views

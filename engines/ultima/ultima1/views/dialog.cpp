@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,28 +32,30 @@ constexpr int COLOR_BORDER = 1;  // blue - thick outer band
 constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
-void Dialog::drawFrame() {
+Dialog::Dialog(const Common::String &name) : View(name) {
+	setBounds(TextRect(0, 0, 39, 19));
+}
+
+void Dialog::draw() {
 	auto s = getSurface();
+	s.clear();
 
 	// Thick outer border band - each edge flush against both the screen edge
 	// and the inner highlight line drawn just inside it
 	s.fillRect(Common::Rect(0, 0, 320, 7), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 7, 7, 193), COLOR_BORDER);
-	s.fillRect(Common::Rect(313, 7, 320, 193), COLOR_BORDER);
-	s.fillRect(Common::Rect(0, 193, 320, 200), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 7, 7, 159), COLOR_BORDER);
+	s.fillRect(Common::Rect(313, 7, 320, 159), COLOR_BORDER);
+	s.fillRect(Common::Rect(0, 152, 320, 160), COLOR_BORDER);
 
 	// Thin inner highlight line
-	s.drawLine(7, 7, 312, 7, COLOR_EDGE);
-	s.drawLine(7, 7, 7, 192, COLOR_EDGE);
-	s.drawLine(312, 7, 312, 192, COLOR_EDGE);
-	s.drawLine(7, 192, 312, 192, COLOR_EDGE);
+	s.frameRect(Common::Rect(7, 7, 313, 153), COLOR_EDGE);
+	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
+	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
 
 	// Diagonal-notched corners, cut as a growing staircase into each corner
 	for (int idx = 1; idx <= 4; ++idx) {
 		s.drawLine(idx, 0, 0, idx, COLOR_NOTCH);
 		s.drawLine(319 - idx, 0, 319, idx, COLOR_NOTCH);
-		s.drawLine(0, 199 - idx, idx, 199, COLOR_NOTCH);
-		s.drawLine(319, 199 - idx, 319 - idx, 199, COLOR_NOTCH);
 	}
 
 	static const Common::Point NOTCH_POINTS[] = {
@@ -63,6 +66,21 @@ void Dialog::drawFrame() {
 	};
 	for (int i = 0; i < ARRAYSIZE(NOTCH_POINTS); ++i)
 		s.drawLine(NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, COLOR_NOTCH);
+}
+
+bool Dialog::tick() {
+	g_engine->findView("Game")->tick();
+	return Shared::Gfx::View::tick();
+}
+
+bool Dialog::msgAction(const ActionMessage &msg) {
+	g_engine->_logic->action(msg._action);
+	return true;
+}
+
+bool Dialog::msgKeypress(const KeypressMessage &msg) {
+	g_engine->_logic->keypress(msg.keycode);
+	return true;
 }
 
 } // namespace Views

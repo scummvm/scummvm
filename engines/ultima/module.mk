@@ -70,6 +70,7 @@ MODULE_OBJS += \
 	ultima1/views/create_character.o \
 	ultima1/views/dead.o \
 	ultima1/views/dialog.o \
+	ultima1/views/full_screen_dialog.o \
 	ultima1/views/game.o \
 	ultima1/views/location_map.o \
 	ultima1/views/main_menu.o \

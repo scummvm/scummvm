@@ -77,7 +77,7 @@ void TextCursor::draw() {
 void TextCursor::timeout() {
 	if (_visible) {
 		_frame = (_frame + 1) % 4;
-		redraw();
+		draw();
 		delayFrames(DELAY_FRAMES);
 	}
 }

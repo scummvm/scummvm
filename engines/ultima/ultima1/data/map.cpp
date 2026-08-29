@@ -160,22 +160,25 @@ void Map::load(int mapNum) {
 	// Set up the correct logic to use
 	delete _G(logic);
 
+	// Set the outer game frame and draw it immediately
 	g_engine->replaceView("Game");
+	g_engine->focusedView()->draw();
+
 	if (mapNum >= 49) {
 		_G(logic) = new Logic::DungeonLogic();
-		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "DUNGEON"));
+		g_engine->addView("DungeonMap");
 	} else if (mapNum == MAP_OVERWORLD) {
 		_G(logic) = new Logic::OverworldLogic();
-		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "OVERWORLD"));
-	} else  if (mapNum < 33) {
-		_G(logic) = new Logic::CityLogic();
-		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "CITY"));
-	} else if (mapNum < 41) {
-		_G(logic) = new Logic::CastleLogic();
-		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "CASTLE"));
+		g_engine->addView("OverworldMap");
 	} else {
-		_G(logic) = new Logic::PillarLogic();
-		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "PILLAR"));
+		if (mapNum < 33)
+			_G(logic) = new Logic::CityLogic();
+		else if (mapNum < 41)
+			_G(logic) = new Logic::CastleLogic();
+		else
+			_G(logic) = new Logic::PillarLogic();
+
+		g_engine->addView("LocationMap");
 	}
 }
 
