@@ -56,7 +56,7 @@ private:
 	void advanceFlyDoctor(uint32 delta);
 	void advanceFlyDoctorIdle(uint32 delta);
 	void advanceFlySlimeDrip(uint32 delta);
-	void advanceFlySlimePickupFrame(uint32 delta);
+	void advanceTicketPickupFrame(uint32 delta);
 	void advanceSmallLoop(uint32 delta);
 	void advanceSmallTrigger(uint32 delta);
 	void restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame);
@@ -78,8 +78,10 @@ private:
 	void finishCharacterConversation();
 	void handlePocketPaperPickup();
 	void runPocketPaperPickupSequence();
-	void handleFlySlimePickup();
+	void handleCloakroomTicketPickup();
 	void handlePocketPaperLook();
+	void handleSkullcrackerExchange();
+	void handleFlySlimeExchange();
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0);
 
@@ -105,7 +107,7 @@ private:
 	byte _lastFlyDoctorIdleSound;
 	byte _lastFlyDoctorDripSound;
 	byte _smallTriggerMode;
-	bool _flySlimePickupSequenceActive;
+	bool _ticketPickupSequenceActive;
 	bool _pocketPaperPickupSequenceActive;
 	bool _juniorPoseSequenceActive;
 	bool _juniorConversationActive;

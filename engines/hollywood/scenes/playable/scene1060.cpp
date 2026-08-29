@@ -49,8 +49,10 @@ const uint kScene1060InvisibleManDescriptorCount = 0x16;
 const uint kScene1060FlyDoctorDescriptorCount = 0x0e;
 const uint kScene1060SmallLoopDescriptorCount = 5;
 const uint kScene1060SmallTriggerDescriptorCount = 7;
-const uint kScene1060FlySlimePickupDescriptorCount = 0x0e;
+const uint kScene1060TicketPickupDescriptorCount = 0x0e;
 const uint kScene1060PocketPaperDescriptorCount = 0x0e;
+const uint kScene1060SkullcrackerExchangeDescriptorCount = 0x0c;
+const uint kScene1060FlySlimeExchangeDescriptorCount = 8;
 const byte kScene1060DoctorSpeechGroup = 1;
 const byte kScene1060InvisibleManSpeechGroup = 2;
 const byte kScene1060JuniorSpeechGroup = 3;
@@ -75,12 +77,19 @@ const byte kScene1060InvisibleManModeLeaving = 3;
 const byte kScene1060FlyDoctorIdleFrameCount = 4;
 const byte kScene1060FlySlimeFirstFrame = 3;
 const byte kScene1060FlySlimeIdleFrame = 0;
-const byte kScene1060FlySlimeLastPickupFrame = 0x1e;
+const byte kScene1060TicketLastPickupFrame = 0x1e;
 const byte kScene1060FlySlimeLastFrame = 0x24;
-const byte kScene1060FlySlimePickupStateFrame = 4;
-const byte kScene1060FlySlimePickupHook = 1;
-const byte kScene1060FlySlimePickupAdvanceLimitFrame = 0x20;
-const byte kScene1060FlySlimePickupResetFrame = 8;
+const byte kScene1060TicketPickupStateFrame = 4;
+const byte kScene1060TicketPickupHook = 1;
+const byte kScene1060SkullcrackerExchangeHook = 2;
+const byte kScene1060TicketPickupAdvanceLimitFrame = 0x20;
+const byte kScene1060TicketPickupResetFrame = 8;
+const byte kScene1060JuniorExchangeFirstOverlayFrame = 10;
+const byte kScene1060JuniorExchangeFinalFrame = 40;
+const byte kScene1060SaltItem = 0x36;
+const byte kScene1060SkullcrackerItem = 0x20;
+const byte kScene1060PerfumeBottleItem = 0x41;
+const byte kScene1060FlySlimeItem = 0x1f;
 const byte kScene1060JuniorIdleFrame = 0;
 const byte kScene1060JuniorPartyIdleFrame = 0x29;
 const byte kScene1060JuniorPreTalkFirstFrame = 0x0b;
@@ -120,8 +129,30 @@ const byte kScene1060FlyDoctorFrameMap[] = {
 
 const byte kScene1060SmallTriggerFrameMap[] = { 0, 0, 1, 2, 3, 4, 5, 6 };
 
-const byte kScene1060FlySlimePickupFrameMap[] = {
+const byte kScene1060TicketPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+const byte kScene1060JuniorExchangeFrameMap[] = {
+	11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28
+};
+
+const byte kScene1060SkullcrackerOfferFrameMap[] = {
+	10, 9, 8, 7, 7, 7, 7, 8, 9, 10, 11
+};
+
+// The repeated final pose lets Junior finish his slower background movement.
+const byte kScene1060SkullcrackerHandoffFrameMap[] = {
+	10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1,
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 11,
+	11, 11, 11, 11, 11, 11, 11, 11, 11
+};
+
+const byte kScene1060FlySlimeExchangeFrameMap[] = {
+	6, 6, 5, 4, 3, 2, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0,
+	1, 2, 3, 4, 5, 6, 7
 };
 
 const byte kScene1060PocketPaperActionFrameMap[] = {
@@ -169,7 +200,7 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_lastFlyDoctorIdleSound(0xff),
 		_lastFlyDoctorDripSound(0xff),
 		_smallTriggerMode(0),
-		_flySlimePickupSequenceActive(false),
+		_ticketPickupSequenceActive(false),
 		_pocketPaperPickupSequenceActive(false),
 		_juniorPoseSequenceActive(false),
 		_juniorConversationActive(false) {
@@ -248,8 +279,8 @@ bool Scene1060::advanceCustomGameplayLoop(uint32 delta) {
 			advanceA06PrimaryDialogueSpeechFrame(delta);
 		else
 			advancePrimaryDialogueSpeechFrame(delta);
-	} else if (_flySlimePickupSequenceActive) {
-		advanceFlySlimePickupFrame(delta);
+	} else if (_ticketPickupSequenceActive) {
+		advanceTicketPickupFrame(delta);
 	} else {
 		advanceFlyDoctor(delta);
 	}
@@ -289,8 +320,8 @@ bool Scene1060::dispatchCustomSceneAction(uint16 handlerId) {
 	case 310: // Mirar babas de mosca (look at fly slime).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 311: // Coger babas de mosca activas (take active fly slime).
-		handleFlySlimePickup();
+	case 311: // Coger ticket del bolsillo de Dr. Mosca (take Dr. Fly's cloakroom ticket).
+		handleCloakroomTicketPickup();
 		return true;
 	case 312: // Mirar papel que asoma del bolsillo (look at paper sticking out of pocket).
 		handlePocketPaperLook();
@@ -304,6 +335,12 @@ bool Scene1060::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Coger restos de la fiesta (take party remains).
 	case 316: // Mirar restos de la fiesta (look at party remains).
 		beginSecondarySpeechLine(12, 0);
+		return true;
+	case 317: // Dar sal a Junior (give salt to Junior): receive the skullcracker.
+		handleSkullcrackerExchange();
+		return true;
+	case 318: // Usar frasco de perfume con babas de mosca (use perfume bottle with fly slime).
+		handleFlySlimeExchange();
 		return true;
 	default:
 		return false;
@@ -377,13 +414,19 @@ AmbientAudioProfile Scene1060::ambientAudioProfile() const {
 }
 
 void Scene1060::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene1060FlySlimePickupHook || frame != kScene1060FlySlimePickupStateFrame)
+	if (hookId == kScene1060TicketPickupHook && frame == kScene1060TicketPickupStateFrame) {
+		GameplayState &state = _vm->gameState();
+		state.scene1060DrFlyState = 2;
+		state.scene1060FlySlimeHotspotActive = false;
+		applySceneStateToHotspotsAndPatches(1);
 		return;
+	}
 
-	GameplayState &state = _vm->gameState();
-	state.scene1060DrFlyState = 2;
-	state.scene1060FlySlimeHotspotActive = false;
-	applySceneStateToHotspotsAndPatches(1);
+	if (hookId == kScene1060SkullcrackerExchangeHook &&
+			frame >= kScene1060JuniorExchangeFirstOverlayFrame &&
+			(frame - kScene1060JuniorExchangeFirstOverlayFrame) % 2 == 0 &&
+			_largeBackgroundLayer.frameIndex < kScene1060JuniorExchangeFinalFrame)
+		_largeBackgroundLayer.setFrame(_largeBackgroundLayer.frameIndex + 1);
 }
 
 void Scene1060::resetAnimationLayers() {
@@ -417,7 +460,7 @@ void Scene1060::resetAnimationLayers() {
 	_lastFlyDoctorIdleSound = 0xff;
 	_lastFlyDoctorDripSound = 0xff;
 	_smallTriggerMode = 0;
-	_flySlimePickupSequenceActive = false;
+	_ticketPickupSequenceActive = false;
 	_pocketPaperPickupSequenceActive = false;
 	_juniorPoseSequenceActive = false;
 	_juniorConversationActive = false;
@@ -454,7 +497,7 @@ void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
 	if (_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
 		return;
 
-	if (!_flySlimePickupSequenceActive) {
+	if (!_ticketPickupSequenceActive) {
 		const uint toggleCount = _flyDoctorModeChannel.consumeFrames(delta);
 		for (uint i = 0; i < toggleCount; ++i) {
 			if (_flyDoctorMode == kScene1060FlyDoctorModeIdle) {
@@ -617,13 +660,13 @@ void Scene1060::advanceFlySlimeDrip(uint32 delta) {
 	}
 }
 
-void Scene1060::advanceFlySlimePickupFrame(uint32 delta) {
+void Scene1060::advanceTicketPickupFrame(uint32 delta) {
 	const uint frameCount = _flySlimeDripChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_flyDoctorLayer.frameIndex < kScene1060FlySlimePickupAdvanceLimitFrame)
+		if (_flyDoctorLayer.frameIndex < kScene1060TicketPickupAdvanceLimitFrame)
 			_flyDoctorLayer.setFrame(_flyDoctorLayer.frameIndex + 1);
 		else
-			_flyDoctorLayer.setFrame(kScene1060FlySlimePickupResetFrame);
+			_flyDoctorLayer.setFrame(kScene1060TicketPickupResetFrame);
 	}
 }
 
@@ -1077,21 +1120,21 @@ void Scene1060::runPocketPaperPickupSequence() {
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 }
 
-void Scene1060::handleFlySlimePickup() {
+void Scene1060::handleCloakroomTicketPickup() {
 	GameplayState &state = _vm->gameState();
 	if (state.scene1060DrFlyState == 2 || hasInventoryItem(0x22))
 		return;
 
-	if (!state.scene1060FlySlimeHotspotActive || _flyDoctorLayer.frameIndex > kScene1060FlySlimeLastPickupFrame) {
+	if (!state.scene1060FlySlimeHotspotActive || _flyDoctorLayer.frameIndex > kScene1060TicketLastPickupFrame) {
 		beginSecondarySpeechLine(8, 1);
 		return;
 	}
 
-	_flySlimePickupSequenceActive = true;
-	runActorReplacement(ActionOverlaySpec(10, kScene1060FlySlimePickupDescriptorCount,
-		kScene1060FlySlimePickupFrameMap, ARRAYSIZE(kScene1060FlySlimePickupFrameMap), kScene1060FrameMillis)
-		.hookAt(kScene1060FlySlimePickupStateFrame, kScene1060FlySlimePickupHook));
-	_flySlimePickupSequenceActive = false;
+	_ticketPickupSequenceActive = true;
+	runActorReplacement(ActionOverlaySpec(10, kScene1060TicketPickupDescriptorCount,
+		kScene1060TicketPickupFrameMap, ARRAYSIZE(kScene1060TicketPickupFrameMap), kScene1060FrameMillis)
+		.hookAt(kScene1060TicketPickupStateFrame, kScene1060TicketPickupHook));
+	_ticketPickupSequenceActive = false;
 	if (state.scene1060DrFlyState != 2) {
 		state.scene1060DrFlyState = 2;
 		state.scene1060FlySlimeHotspotActive = false;
@@ -1100,6 +1143,48 @@ void Scene1060::handleFlySlimePickup() {
 	addInventoryItem(0x22);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(8, 0);
+}
+
+void Scene1060::handleSkullcrackerExchange() {
+	beginSecondarySpeechLine(14, 0);
+	while (_largeBackgroundMode != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10))
+			return;
+	}
+
+	_juniorPoseSequenceActive = true;
+	_largeBackgroundMode = 0;
+	_largeBackgroundIdleCounter = 0;
+	playAnimationFrames(_largeBackgroundLayer,
+		AnimationFrameRange(kScene1060JuniorExchangeFrameMap, kScene1060LargeBackgroundFrameMillis));
+	runActorReplacement(ActionOverlaySpec(12, kScene1060SkullcrackerExchangeDescriptorCount,
+		kScene1060SkullcrackerOfferFrameMap, ARRAYSIZE(kScene1060SkullcrackerOfferFrameMap),
+		kScene1060FrameMillis));
+	beginSecondarySpeechLine(14, 1);
+	runActorReplacement(ActionOverlaySpec(12, kScene1060SkullcrackerExchangeDescriptorCount,
+		kScene1060SkullcrackerHandoffFrameMap, ARRAYSIZE(kScene1060SkullcrackerHandoffFrameMap),
+		kScene1060FrameMillis).hookEveryFrame(kScene1060SkullcrackerExchangeHook));
+	_largeBackgroundLayer.setFrame(kScene1060JuniorExchangeFinalFrame);
+	_juniorPoseSequenceActive = false;
+
+	removeInventoryItem(kScene1060SaltItem);
+	addInventoryItem(kScene1060SkullcrackerItem);
+	_soundBank0.playSample(1, 100);
+	_vm->gameState().scene1060PartyRemainsState = 1;
+	applySceneStateToHotspotsAndPatches(5);
+	walkActiveActorTo(_activeActorWorldX, _activeActorWorldY, 3, 0);
+	setActiveActorPose(_activeActorWorldX, _activeActorWorldY, 3, 0);
+	beginSecondarySpeechLine(14, 2);
+}
+
+void Scene1060::handleFlySlimeExchange() {
+	beginSecondarySpeechLine(15, 0);
+	runActorReplacement(ActionOverlaySpec(13, kScene1060FlySlimeExchangeDescriptorCount,
+		kScene1060FlySlimeExchangeFrameMap, ARRAYSIZE(kScene1060FlySlimeExchangeFrameMap),
+		kScene1060FrameMillis));
+	removeInventoryItem(kScene1060PerfumeBottleItem);
+	addInventoryItem(kScene1060FlySlimeItem);
+	_soundBank0.playSample(1, 100);
 }
 
 void Scene1060::handlePocketPaperLook() {
