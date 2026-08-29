@@ -23,6 +23,7 @@
 
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -40,11 +41,17 @@ namespace Hollywood {
 
 const char *const kScene5130ArchiveName = "RESOURCE.E13";
 const char *const kScene5130SoundArchiveName = "RESOURCE.S05";
+const char *const kScene5130MusicArchiveName = "RESOURCE.M05";
+const char *const kScene5130Resource000Name = "RESOURCE.000";
 const uint kScene5130InitialRequiredChunkCount = 11;
 const uint kScene5130ArenaFirstChunk = 4;
 const uint kScene5130ArenaLastChunk = 10;
 const uint kScene5130StageIndex = 512;
 const uint32 kScene5130SpeechCueDescriptorTableOffset = 0x1135;
+const uint kScene5130Resource000HeaderSize = 1;
+const uint kScene5130ActorPaletteTableEntry = 0x00cc;
+const uint kScene5130ActorPaletteOffset = 0x270;
+const uint kScene5130ActorPaletteSize = 0x90;
 const uint kScene5130FrameBufferSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
 const uint16 kScene5130ReturnState = 0x1401;
 const byte kScene5130ActionChangeDrink = 1;
@@ -53,17 +60,26 @@ const byte kScene5130ActionExit = 3;
 const byte kScene5130InitialClipLastFrame = 0x39;
 const byte kScene5130SuccessCocktailState = 2;
 const byte kScene5130FailureCocktailState = 1;
-const byte kScene5130TextColor = 0xfb;
+const byte kScene5130SpeechColor = 0xfb;
+const byte kScene5130CaptionColor = 0xfc;
+const byte kScene5130CaptionSourceColor = 0xf2;
+const byte kScene5130WhiteColor = 0xfd;
 const byte kScene5130TapSoundCue = 0x24;
 const byte kScene5130IntroSoundCue = 0x23;
 const byte kScene5130MixLoopCue = 0x20;
 const byte kScene5130PourCue = 0x21;
 const uint32 kScene5130IntroFrameMillis = 40;
-const uint32 kScene5130ChangeFrameMillis = 20;
+const uint32 kScene5130ChangeFrameMillis = 40;
+const uint32 kScene5130DrinkStripFrameMillis = 20;
 const uint32 kScene5130TapFrameMillis = 40;
 const uint32 kScene5130MixFrameMillis = 10;
 const uint32 kScene5130PourFrameMillis = 20;
 const uint32 kScene5130LoopDelayMillis = 10;
+const uint32 kScene5130PaletteFadeStepMillis = 10;
+const uint32 kScene5130AmbientMusicCheckMillis = 250;
+const byte kScene5130AmbientMusicFirstCue = 0x0b;
+const byte kScene5130AmbientMusicCueCount = 5;
+const byte kScene5130AmbientMusicProbability = 50;
 const uint kScene5130DrinkStripX = 0x10a;
 const uint kScene5130DrinkStripY = 0x76;
 const uint kScene5130DrinkStripWidth = 0x68;
@@ -139,6 +155,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_speechOverlay(),
 		_speech(vm->getLanguage()),
 		_soundBank0(),
+		_random("hollywood_scene5130"),
 		_animationLayers(),
 		_selectedDrinks(),
 		_selectedDrinkCount(0),
@@ -151,7 +168,15 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_pourFrame(0),
 		_drinkStripRow(0),
 		_hoverActionId(0),
+		_speechTextRecordId(0),
+		_speechVoiceSampleId(0),
+		_speechPartIndex(0),
+		_speechPartCount(0),
+		_speechRemainingMillis(0),
+		_ambientMusicTimerMillis(0),
 		_pourVisible(false),
+		_speechActive(false),
+		_deferredExitRequested(false),
 		_exitRequested(false) {
 	_surface.paletteResource.resize(kPaletteSize);
 	_surface.paletteCurrent.resize(kPaletteSize);
@@ -159,7 +184,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 	_surface.screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	_speechOverlay.visible = false;
-	_speechOverlay.colorIndex = kScene5130TextColor;
+	_speechOverlay.colorIndex = kScene5130SpeechColor;
 	_speechOverlay.centerX = HollywoodEngine::kScreenWidth / 2;
 	_speechOverlay.topY = 1;
 	_soundBank0.setArchive(Common::Path(kScene5130SoundArchiveName));
@@ -178,10 +203,17 @@ bool Scene5130::play() {
 
 	if (!load())
 		return false;
+	_vm->gameplayMusic()->setArchive(Common::Path(kScene5130MusicArchiveName));
 
 	runIntroAnimation();
+	if (_deferredExitRequested)
+		_exitRequested = true;
 	if (!Engine::shouldQuit() && !_exitRequested)
 		runMixerLoop();
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		state.mainFlowStateId = kScene5130ReturnState;
+		fadePaletteToBlack();
+	}
 
 	_vm->cursor()->leaveInteractiveMode();
 	stopAudio();
@@ -204,6 +236,15 @@ bool Scene5130::load() {
 		warning("Scene 5130 load failed: fixed E13 chunks");
 		return false;
 	}
+	if (!loadInventoryOwnerPalette())
+		return false;
+
+	const uint captionSourceOffset = kScene5130CaptionSourceColor * 3;
+	const uint captionOffset = kScene5130CaptionColor * 3;
+	memcpy(_surface.paletteResource.data() + captionOffset,
+		_surface.paletteResource.data() + captionSourceOffset, 3);
+	for (uint component = 0; component < 3; ++component)
+		_surface.paletteResource[kScene5130WhiteColor * 3 + component] = 0x3f;
 
 	_surface.baseFramebufferOriginal.copyFrom(_surface.baseFramebuffer);
 	memcpy(_surface.framebufferPixels(_surface.sceneFramebuffer),
@@ -240,6 +281,38 @@ bool Scene5130::load() {
 	return true;
 }
 
+bool Scene5130::loadInventoryOwnerPalette() {
+	Common::File file;
+	if (!file.open(Common::Path(kScene5130Resource000Name))) {
+		warning("Failed to open %s actor palette for scene 5130", kScene5130Resource000Name);
+		return false;
+	}
+
+	const uint32 tableEntryOffset = kScene5130Resource000HeaderSize + kScene5130ActorPaletteTableEntry;
+	if (tableEntryOffset + 4 > (uint32)file.size()) {
+		warning("Scene 5130 actor palette table entry is out of range");
+		return false;
+	}
+
+	file.seek(tableEntryOffset);
+	const uint32 paletteOffset = file.readUint32LE();
+	if (file.err() || paletteOffset > (uint32)file.size() ||
+			kScene5130ActorPaletteSize > (uint32)file.size() - paletteOffset ||
+			kScene5130ActorPaletteOffset + kScene5130ActorPaletteSize > _surface.paletteResource.size()) {
+		warning("Scene 5130 actor palette is out of range");
+		return false;
+	}
+
+	file.seek(paletteOffset);
+	if (file.read(_surface.paletteResource.data() + kScene5130ActorPaletteOffset,
+			kScene5130ActorPaletteSize) != kScene5130ActorPaletteSize) {
+		warning("Failed to read %s actor palette for scene 5130", kScene5130Resource000Name);
+		return false;
+	}
+
+	return true;
+}
+
 void Scene5130::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
@@ -259,6 +332,12 @@ void Scene5130::expandFillRunsToSavedFramebuffer() {
 }
 
 void Scene5130::runIntroAnimation() {
+	GameplayState &state = _vm->gameState();
+	state.scene5120CocktailState = 0;
+	state.scene5120CocktailRed = 0;
+	state.scene5120CocktailGreen = 0;
+	state.scene5120CocktailBlue = 0;
+	memset(_selectedDrinks, 0, sizeof(_selectedDrinks));
 	_selectedDrinkCount = 0;
 	_currentDrinkId = 1;
 	_introFrame = 0;
@@ -275,45 +354,53 @@ void Scene5130::runIntroAnimation() {
 	setPaletteEntry6Bit(0xd0, 0, 0, 0);
 	setPaletteEntry6Bit(0xd1, 0, 0, 0);
 	_soundBank0.playSample(kScene5130IntroSoundCue, 50, true);
+	drawFrame();
+	if (fadePaletteFromBlack()) {
+		_soundBank0.stop();
+		return;
+	}
 
-	for (uint frame = 0; frame <= kScene5130InitialClipLastFrame && !Engine::shouldQuit() && !_exitRequested; ++frame) {
+	for (uint frame = 1; frame <= kScene5130InitialClipLastFrame && !Engine::shouldQuit() && !_exitRequested; ++frame) {
+		if (waitAndRender(kScene5130IntroFrameMillis))
+			break;
 		_introFrame = (byte)frame;
 		drawFrame();
 		presentFrame();
-		waitAndRender(kScene5130IntroFrameMillis);
 	}
 
 	_soundBank0.stop();
-	_introFrame = kScene5130InitialClipLastFrame;
 }
 
 void Scene5130::runMixerLoop() {
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 
-	while (!Engine::shouldQuit() && !_exitRequested) {
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested() && !_exitRequested) {
 		byte selectedAction = 0;
-		if (pollEvents(selectedAction))
+		if (pollEvents(selectedAction, true))
 			break;
 
 		if (selectedAction != 0) {
 			_vm->cursor()->leaveInteractiveMode();
 			handleMixerAction(selectedAction);
-			if (!_exitRequested && !Engine::shouldQuit())
+			if (_deferredExitRequested)
+				_exitRequested = true;
+			if (!_exitRequested && !Engine::shouldQuit() && !_vm->isSceneRestartRequested())
 				_vm->cursor()->enterInteractiveMode();
 		}
+		if (_exitRequested || Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			break;
 
 		const byte hoverAction = actionAtCursor();
 		if (hoverAction != _hoverActionId)
 			_hoverActionId = hoverAction;
 
-		_vm->cursor()->advance(kScene5130LoopDelayMillis);
 		drawFrame();
 		presentFrame();
 		g_system->delayMillis(kScene5130LoopDelayMillis);
+		advanceRuntime(kScene5130LoopDelayMillis);
 	}
 
-	_vm->gameState().mainFlowStateId = kScene5130ReturnState;
 	_vm->cursor()->leaveInteractiveMode();
 }
 
@@ -334,16 +421,41 @@ void Scene5130::handleMixerAction(byte actionId) {
 }
 
 void Scene5130::runChangeDrinkAction() {
+	_changeFrame = 0;
 	_soundBank0.playSample(kScene5130TapSoundCue, 50);
 
-	for (uint step = 0; step < 16 && !Engine::shouldQuit() && !_exitRequested; ++step) {
-		if (step < ARRAYSIZE(kScene5130ChangeFrameMap))
-			_changeFrame = (byte)step;
-		_drinkStripRow = (_drinkStripRow + 1) % kScene5130DrinkStripRows;
-		drawFrame();
-		presentFrame();
-		waitAndRender(kScene5130ChangeFrameMillis);
+	uint32 changeFrameMillis = 0;
+	uint32 drinkStripMillis = 0;
+	uint drinkStripSteps = 0;
+	while ((_changeFrame + 1 < ARRAYSIZE(kScene5130ChangeFrameMap) ||
+			drinkStripSteps < kScene5130DrinkStripHeight) &&
+			!Engine::shouldQuit() && !_exitRequested && !_vm->isSceneRestartRequested()) {
+		if (waitAndRender(kScene5130LoopDelayMillis))
+			break;
+
+		changeFrameMillis += kScene5130LoopDelayMillis;
+		drinkStripMillis += kScene5130LoopDelayMillis;
+		bool changed = false;
+		if (_changeFrame + 1 < ARRAYSIZE(kScene5130ChangeFrameMap) &&
+				changeFrameMillis >= kScene5130ChangeFrameMillis) {
+			changeFrameMillis -= kScene5130ChangeFrameMillis;
+			++_changeFrame;
+			changed = true;
+		}
+		if (drinkStripSteps < kScene5130DrinkStripHeight &&
+				drinkStripMillis >= kScene5130DrinkStripFrameMillis) {
+			drinkStripMillis -= kScene5130DrinkStripFrameMillis;
+			_drinkStripRow = (_drinkStripRow + kScene5130DrinkStripRows - 1) % kScene5130DrinkStripRows;
+			++drinkStripSteps;
+			changed = true;
+		}
+		if (changed) {
+			drawFrame();
+			presentFrame();
+		}
 	}
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
 
 	if (_currentDrinkId < 0x0f)
 		++_currentDrinkId;
@@ -355,25 +467,35 @@ void Scene5130::runOpenTapAction() {
 	if (_selectedDrinkCount >= 3)
 		return;
 
-	beginSpeechLine(4, _selectedDrinkCount);
+	startSpeechLine(4, _selectedDrinkCount);
 
 	_soundBank0.playSample(kScene5130TapSoundCue, 50);
-	const uint frameCount = MAX<uint>(ARRAYSIZE(kScene5130TapFrameMap), ARRAYSIZE(kScene5130LiquidFrameMap));
-	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_exitRequested; ++frame) {
-		_tapFrame = (byte)MIN<uint>(frame, ARRAYSIZE(kScene5130TapFrameMap) - 1);
-		_liquidFrame = (byte)MIN<uint>(frame, ARRAYSIZE(kScene5130LiquidFrameMap) - 1);
+	_tapFrame = 0;
+	_liquidFrame = 0;
+	while ((_tapFrame + 1 < ARRAYSIZE(kScene5130TapFrameMap) ||
+			_liquidFrame + 1 < ARRAYSIZE(kScene5130LiquidFrameMap)) &&
+			!Engine::shouldQuit() && !_exitRequested && !_vm->isSceneRestartRequested()) {
+		if (waitAndRender(kScene5130TapFrameMillis))
+			break;
+		if (_tapFrame + 1 < ARRAYSIZE(kScene5130TapFrameMap))
+			++_tapFrame;
+		if (_liquidFrame + 1 < ARRAYSIZE(kScene5130LiquidFrameMap))
+			++_liquidFrame;
 		drawFrame();
 		presentFrame();
-		waitAndRender(kScene5130TapFrameMillis);
 	}
+	if (Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested())
+		return;
 
 	_selectedDrinks[_selectedDrinkCount++] = _currentDrinkId;
 	if (_selectedDrinkCount != 3)
 		return;
 
-	beginSpeechLine(4, 3);
+	startSpeechLine(4, 3);
 	const bool correctRecipe = selectedRecipeIsCorrect();
 	runMixResultAction(correctRecipe);
+	if (Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested())
+		return;
 	_vm->gameState().scene5120CocktailState = correctRecipe ?
 		kScene5130SuccessCocktailState : kScene5130FailureCocktailState;
 	_exitRequested = true;
@@ -385,23 +507,40 @@ void Scene5130::runMixResultAction(bool correctRecipe) {
 	else
 		applyFailureDrinkPalette();
 
+	_mixFrame = 0;
 	_soundBank0.playSample(kScene5130MixLoopCue, 50, true);
-	for (uint frame = 0; frame < ARRAYSIZE(kScene5130MixFrameMap) && !Engine::shouldQuit() && !_exitRequested; ++frame) {
-		_mixFrame = (byte)frame;
+	drawFrame();
+	presentFrame();
+	while (_mixFrame + 1 < ARRAYSIZE(kScene5130MixFrameMap) &&
+			!Engine::shouldQuit() && !_exitRequested && !_vm->isSceneRestartRequested()) {
+		if (waitAndRender(kScene5130MixFrameMillis))
+			break;
+		++_mixFrame;
 		drawFrame();
 		presentFrame();
-		waitAndRender(kScene5130MixFrameMillis);
 	}
+	if (Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested())
+		return;
 
 	_soundBank0.playSample(kScene5130PourCue, 50);
 	_pourVisible = true;
-	for (uint frame = 0; frame <= 0x19 && !Engine::shouldQuit() && !_exitRequested; ++frame) {
-		_pourFrame = (byte)frame;
+	_pourFrame = 0;
+	drawFrame();
+	presentFrame();
+	while (_pourFrame < 0x19 && !Engine::shouldQuit() && !_exitRequested &&
+			!_vm->isSceneRestartRequested()) {
+		if (waitAndRender(kScene5130PourFrameMillis))
+			break;
+		++_pourFrame;
 		drawFrame();
 		presentFrame();
-		waitAndRender(kScene5130PourFrameMillis);
 	}
-	_pourVisible = false;
+	if (Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested())
+		return;
+
+	waitForSpeechLine();
+	if (Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested())
+		return;
 
 	if (correctRecipe) {
 		beginSpeechLine(4, 6);
@@ -585,36 +724,89 @@ void Scene5130::drawCaption() {
 	const int textWidth = font->getStringWidth(caption) + 2;
 	const int x = MAX<int>(0, (HollywoodEngine::kScreenWidth - textWidth) / 2);
 	font->drawString(_surface.screen.surfacePtr(), caption, x, 456, textWidth,
-		kScene5130TextColor, Graphics::kTextAlignLeft, 0, false, true);
+		kScene5130CaptionColor, Graphics::kTextAlignLeft, 0, false, true);
 }
 
-void Scene5130::beginSpeechLine(uint16 rowIndex, byte frameIndex) {
+void Scene5130::startSpeechLine(uint16 rowIndex, byte frameIndex) {
+	stopSpeechLine();
+
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
 	if (!_textStore.getStageCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
 		return;
 
-	const byte lineCount = MAX<byte>(1, continuationCount);
-	for (byte part = 0; part < lineCount && !Engine::shouldQuit() && !_exitRequested; ++part) {
-		const Common::String text = _textStore.largeTextRecord(textRecordId + part);
-		if (text.empty())
-			continue;
+	_speechTextRecordId = textRecordId;
+	_speechVoiceSampleId = voiceSampleId;
+	_speechPartIndex = 0;
+	_speechPartCount = MAX<byte>(1, continuationCount);
+	startSpeechPart();
+}
 
+void Scene5130::startSpeechPart() {
+	_speech.stop();
+	_speechOverlay.visible = false;
+	_speechOverlay.lines.clear();
+	_speechActive = false;
+
+	while (_speechPartIndex < _speechPartCount) {
+		const Common::String text = _textStore.largeTextRecord(_speechTextRecordId + _speechPartIndex);
+		if (text.empty()) {
+			++_speechPartIndex;
+			continue;
+		}
+
+		setPaletteEntry6Bit(kScene5130SpeechColor, 0x3f, 0x3f, 0x3f);
 		_speechOverlay.visible = _vm->subtitlesEnabled();
-		_speechOverlay.colorIndex = kScene5130TextColor;
+		_speechOverlay.colorIndex = kScene5130SpeechColor;
 		wrapSpeechText(text, HollywoodEngine::kScreenWidth / 2, _speechOverlay.lines);
 		calculateSpeechOverlayBounds(_speechOverlay, HollywoodEngine::kScreenWidth / 2, 0);
 
-		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
+		const uint16 sampleId = _speechVoiceSampleId == 0 ? 0 : _speechVoiceSampleId + _speechPartIndex;
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
-		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		_speechRemainingMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _speechOverlay.lines.size() * 1100);
-		waitAndRender(duration);
-		_speech.stop();
-		_speechOverlay.visible = false;
-		_speechOverlay.lines.clear();
+		_speechActive = true;
+		return;
 	}
+
+	stopSpeechLine();
+}
+
+void Scene5130::advanceSpeech(uint32 millis) {
+	while (_speechActive && millis >= _speechRemainingMillis) {
+		millis -= _speechRemainingMillis;
+		_speech.stop();
+		++_speechPartIndex;
+		startSpeechPart();
+	}
+	if (_speechActive)
+		_speechRemainingMillis -= millis;
+}
+
+void Scene5130::waitForSpeechLine() {
+	while (_speechActive && !Engine::shouldQuit() && !_exitRequested &&
+			!_vm->isSceneRestartRequested()) {
+		if (waitAndRender(kScene5130LoopDelayMillis))
+			break;
+	}
+}
+
+void Scene5130::stopSpeechLine() {
+	_speech.stop();
+	_speechOverlay.visible = false;
+	_speechOverlay.lines.clear();
+	_speechTextRecordId = 0;
+	_speechVoiceSampleId = 0;
+	_speechPartIndex = 0;
+	_speechPartCount = 0;
+	_speechRemainingMillis = 0;
+	_speechActive = false;
+}
+
+void Scene5130::beginSpeechLine(uint16 rowIndex, byte frameIndex) {
+	startSpeechLine(rowIndex, frameIndex);
+	waitForSpeechLine();
 }
 
 void Scene5130::wrapSpeechText(const Common::String &text, uint16 centerX, Common::Array<Common::String> &lines) const {
@@ -687,25 +879,102 @@ uint Scene5130::speechOverlayTextWidth(const SpeechOverlay &overlay) const {
 	return textWidth;
 }
 
+void Scene5130::advanceRuntime(uint32 millis) {
+	_vm->cursor()->advance(millis);
+	advanceSpeech(millis);
+	updateAmbientMusic(millis);
+}
+
+void Scene5130::updateAmbientMusic(uint32 millis) {
+	_ambientMusicTimerMillis += millis;
+	while (_ambientMusicTimerMillis >= kScene5130AmbientMusicCheckMillis) {
+		_ambientMusicTimerMillis -= kScene5130AmbientMusicCheckMillis;
+		if (_vm->gameplayMusic()->isPlaying() ||
+				_random.getRandomNumber(kScene5130AmbientMusicProbability - 1) != 0)
+			continue;
+
+		GameplayState &state = _vm->gameState();
+		const byte previousCue = state.currentAmbientMusicCueId;
+		byte nextCue = 0;
+		do {
+			nextCue = (byte)(kScene5130AmbientMusicFirstCue +
+				_random.getRandomNumber(kScene5130AmbientMusicCueCount - 1));
+		} while (nextCue == previousCue);
+		state.currentAmbientMusicCueId = nextCue;
+		_vm->gameplayMusic()->playMusicCue(nextCue, 100);
+	}
+}
+
+bool Scene5130::fadePaletteFromBlack() {
+	const Common::Array<byte> targetPalette = _surface.paletteCurrent;
+	memset(_surface.paletteCurrent.data(), 0, _surface.paletteCurrent.size());
+	presentFrame();
+
+	byte threshold = 0x3f;
+	while (!Engine::shouldQuit() && !_exitRequested && !_vm->isSceneRestartRequested()) {
+		for (uint i = 0; i < _surface.paletteCurrent.size(); ++i) {
+			if (targetPalette[i] >= threshold)
+				_surface.paletteCurrent[i] = MIN<byte>(targetPalette[i], _surface.paletteCurrent[i] + 3);
+		}
+		presentFrame();
+		if (threshold == 0)
+			return false;
+
+		threshold = threshold > 3 ? threshold - 3 : 0;
+		byte selectedAction = 0;
+		if (pollEvents(selectedAction, false))
+			return true;
+		g_system->delayMillis(kScene5130PaletteFadeStepMillis);
+		advanceRuntime(kScene5130PaletteFadeStepMillis);
+	}
+
+	return true;
+}
+
+bool Scene5130::fadePaletteToBlack() {
+	const Common::Array<byte> sourcePalette = _surface.paletteCurrent;
+	byte threshold = 0;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		for (uint i = 0; i < _surface.paletteCurrent.size(); ++i) {
+			if (sourcePalette[i] >= threshold)
+				_surface.paletteCurrent[i] = _surface.paletteCurrent[i] >= 3 ?
+					_surface.paletteCurrent[i] - 3 : 0;
+		}
+		presentFrame();
+		if (threshold >= 0x3f)
+			return false;
+
+		threshold = MIN<byte>(0x3f, threshold + 3);
+		byte selectedAction = 0;
+		if (pollEvents(selectedAction, false))
+			return true;
+		g_system->delayMillis(kScene5130PaletteFadeStepMillis);
+		advanceRuntime(kScene5130PaletteFadeStepMillis);
+	}
+
+	return true;
+}
+
 bool Scene5130::waitAndRender(uint32 millis) {
 	uint32 remaining = millis;
-	while (remaining != 0 && !Engine::shouldQuit() && !_exitRequested) {
+	while (remaining != 0 && !Engine::shouldQuit() && !_exitRequested &&
+			!_vm->isSceneRestartRequested()) {
 		byte selectedAction = 0;
-		if (pollEvents(selectedAction))
+		if (pollEvents(selectedAction, false))
 			return true;
 
 		const uint32 slice = MIN<uint32>(remaining, 10);
-		_vm->cursor()->advance(slice);
 		drawFrame();
 		presentFrame();
 		g_system->delayMillis(slice);
+		advanceRuntime(slice);
 		remaining -= slice;
 	}
 
-	return Engine::shouldQuit() || _exitRequested;
+	return Engine::shouldQuit() || _exitRequested || _vm->isSceneRestartRequested();
 }
 
-bool Scene5130::pollEvents(byte &selectedAction) {
+bool Scene5130::pollEvents(byte &selectedAction, bool allowMixerActions) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -723,20 +992,41 @@ bool Scene5130::pollEvents(byte &selectedAction) {
 			_vm->cursor()->updatePosition(event.mouse);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			selectedAction = actionAtCursor();
+			if (_speechActive)
+				stopSpeechLine();
+			else if (allowMixerActions)
+				selectedAction = actionAtCursor();
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_exitRequested = true;
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			if (_speechActive) {
+				stopSpeechLine();
+			} else if (allowMixerActions) {
 				_exitRequested = true;
 				return true;
+			} else {
+				_deferredExitRequested = true;
+			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				if (_speechActive) {
+					stopSpeechLine();
+				} else if (allowMixerActions) {
+					_exitRequested = true;
+					return true;
+				} else {
+					_deferredExitRequested = true;
+				}
+				break;
 			}
 			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-					event.kbd.keycode == Common::KEYCODE_SPACE)
-				selectedAction = actionAtCursor();
+					event.kbd.keycode == Common::KEYCODE_SPACE) {
+				if (_speechActive)
+					stopSpeechLine();
+				else if (allowMixerActions)
+					selectedAction = actionAtCursor();
+			}
 			break;
 		default:
 			break;
@@ -746,7 +1036,7 @@ bool Scene5130::pollEvents(byte &selectedAction) {
 			return true;
 	}
 
-	return Engine::shouldQuit();
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 byte Scene5130::actionAtCursor() const {
@@ -792,7 +1082,7 @@ void Scene5130::setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte 
 
 void Scene5130::stopAudio() {
 	_soundBank0.stop();
-	_speech.stop();
+	stopSpeechLine();
 }
 
 } // End of namespace Hollywood

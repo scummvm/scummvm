@@ -23,6 +23,7 @@
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE5130_H
 
 #include "common/array.h"
+#include "common/random.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -37,6 +38,8 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Runs the modal cocktail mixer reached from scene 5120 and returns its result
+// through GameplayState before handing control back to the salon.
 class Scene5130 {
 public:
 	Scene5130(HollywoodEngine *vm);
@@ -46,6 +49,7 @@ public:
 
 private:
 	bool load();
+	bool loadInventoryOwnerPalette();
 	void expandFillRunsToSavedFramebuffer();
 	void runIntroAnimation();
 	void runMixerLoop();
@@ -66,13 +70,22 @@ private:
 	void presentFrame();
 	void drawSpeechOverlay();
 	void drawCaption();
+	void startSpeechLine(uint16 rowIndex, byte frameIndex);
+	void startSpeechPart();
+	void advanceSpeech(uint32 millis);
+	void waitForSpeechLine();
+	void stopSpeechLine();
 	void beginSpeechLine(uint16 rowIndex, byte frameIndex);
 	void wrapSpeechText(const Common::String &text, uint16 centerX, Common::Array<Common::String> &lines) const;
 	void calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY) const;
 	uint speechTextWidth(const Common::String &text) const;
 	uint speechOverlayTextWidth(const SpeechOverlay &overlay) const;
+	void advanceRuntime(uint32 millis);
+	void updateAmbientMusic(uint32 millis);
+	bool fadePaletteFromBlack();
+	bool fadePaletteToBlack();
 	bool waitAndRender(uint32 millis);
-	bool pollEvents(byte &selectedAction);
+	bool pollEvents(byte &selectedAction, bool allowMixerActions);
 	byte actionAtCursor() const;
 	Common::String captionForAction(byte actionId) const;
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
@@ -85,6 +98,7 @@ private:
 	SpeechOverlay _speechOverlay;
 	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;
+	Common::RandomSource _random;
 	TransientLayerCompositor _animationLayers;
 	byte _selectedDrinks[3];
 	byte _selectedDrinkCount;
@@ -97,7 +111,15 @@ private:
 	byte _pourFrame;
 	uint _drinkStripRow;
 	byte _hoverActionId;
+	uint16 _speechTextRecordId;
+	uint16 _speechVoiceSampleId;
+	byte _speechPartIndex;
+	byte _speechPartCount;
+	uint32 _speechRemainingMillis;
+	uint32 _ambientMusicTimerMillis;
 	bool _pourVisible;
+	bool _speechActive;
+	bool _deferredExitRequested;
 	bool _exitRequested;
 };
 
