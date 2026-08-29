@@ -39,6 +39,7 @@ public:
 	TravelScreen(HollywoodEngine *vm);
 
 	bool showViewer();
+	bool showUnlockTransition(byte slotIndex);
 	bool runSelection(byte currentChapterId, uint16 &selectedStateId);
 
 private:
@@ -51,6 +52,7 @@ private:
 	byte slotAtPoint(int x, int y) const;
 	uint16 destinationState(byte destinationId, byte currentChapterId) const;
 	void present();
+	void presentBlack();
 
 	HollywoodEngine *_vm;
 	Common::Array<byte> _palette;

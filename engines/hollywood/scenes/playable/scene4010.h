@@ -51,16 +51,20 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
-	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
-		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	bool alternateBackgroundActive() const;
 	void initializeRoomIdleLayer();
+	void resetPaletteCycle();
+	void advancePaletteCycle(uint32 delta);
+	void rotatePaletteCycle();
+	void updateRoomAmbientAudio(uint32 delta);
 	void advanceHeckerIdleLayer(uint32 delta);
 	void advanceHeckerIdleTick();
 	void drawForegroundBlocks(int activeWorldY);
@@ -87,7 +91,9 @@ private:
 	void takeAnimatedItem3A();
 	void handlePendingItem3A();
 	void unlockDestinationFromRoomAction();
+	void runDestinationUnlockAnimation();
 	void takeThrownItem();
+	void applyBaseFramebufferPatch(uint chunkIndex);
 	void ensureNormalBaseFramebuffer();
 	void applyD01BackgroundForCurrentState();
 	void copySmallRow(uint sourceOffset, uint destinationOffset);
@@ -95,17 +101,24 @@ private:
 	void clearVerbActionRecord(uint recordIndex);
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
-	void copyStepDeltas(uint firstOffset, uint lastOffset);
+	void copyStepDeltas(uint targetOffset, uint sourceOffset, uint count);
 
 	const Scene4010ReleaseProfile &_releaseProfile;
 	TimedAnimationChannel _roomIdleChannel;
+	TimedAnimationChannel _paletteCycleChannel;
+	TimedAnimationChannel _secondaryAmbientChannel;
 	ResourceSpriteLayer _roomIdleLayer;
 	Graphics::ManagedSurface _normalBaseFramebuffer;
 	bool _normalBaseFramebufferInitialized;
 	byte _heckerAnimationState;
 	byte _heckerLoopCount;
+	byte _previousSecondaryAmbientCue;
 	bool _heckerAlternateSpeechPose;
 	bool _heckerManualSequenceActive;
+	bool _heckerPoseTransitionPending;
+	bool _roomAnimationPaused;
+	uint _destinationSoundStartFrame;
+	uint _destinationSoundStopFrame;
 };
 
 } // End of namespace Hollywood
