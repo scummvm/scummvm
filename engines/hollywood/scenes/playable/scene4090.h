@@ -37,7 +37,10 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
@@ -50,19 +53,44 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 
 	void resetAnimationLayers();
-	void drawForegroundLayers(int activeWorldY);
+	void drawForegroundLayers(int activeWorldY, bool includeHighLayer);
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void setSmallRowText(byte row, const char *text);
+	void advanceAmbientSound(uint32 delta);
+	void startOrganBodyAnimation(byte firstFrame, byte targetFrame, bool waitForSound);
+	void advanceOrganBodyAnimation(uint32 delta);
+	bool waitForOrganBodyAnimation();
+	void setMultiSpriteLayersVisible(bool visible);
+	void stopMultiSpriteAnimation();
 	void runDoorExit();
 	void runOrganRevealSequence();
 	void runCoffinSwapSequence();
+	bool runCoffinInsertSequence();
+	bool playCoffinDeltaClip(uint chunkIndex);
+	bool waitCoffinDeltaFrame(uint32 millis);
+	bool advanceCoffinPaletteCycle(uint32 delta);
+	void rotateCoffinPaletteCycle();
+	bool runCurtainReveal(const Graphics::ManagedSurface &source,
+		const Common::Array<byte> &palette);
+	bool runCurtainClearToBlack();
+	void applyCurtainBand(const Graphics::Surface *source, uint sweepOffset,
+		byte bandWidth);
 	void runFinalCutscene();
 
 	TransientLayerCompositor _ambientLayers;
 	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _chunk12Channel;
+	TimedAnimationChannel _organBodyChannel;
 	Common::Array<byte> _originalColorToItemMap;
+	uint32 _ambientSoundTimerAccumulator;
+	uint32 _coffinPaletteCycleAccumulator;
+	byte _previousAmbientSoundCue;
+	byte _organBodyTargetFrame;
+	bool _organBodyAnimationActive;
+	bool _organBodyWaitForSound;
+	bool _randomAmbientAnimationActive;
+	bool _multiSpriteCompositeActive;
 };
 
 } // End of namespace Hollywood
