@@ -364,6 +364,9 @@ struct GameplayState {
 		scene5110WerewolfDialogueChoiceUnlocked = false;
 		scene5120TongsTaken = false;
 		scene5120CocktailState = 0;
+		scene5120CocktailRed = 0;
+		scene5120CocktailGreen = 0;
+		scene5120CocktailBlue = 0;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -1128,6 +1131,9 @@ struct GameplayState {
 	bool scene5110WerewolfDialogueChoiceUnlocked;
 	bool scene5120TongsTaken;
 	byte scene5120CocktailState;
+	byte scene5120CocktailRed;
+	byte scene5120CocktailGreen;
+	byte scene5120CocktailBlue;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
