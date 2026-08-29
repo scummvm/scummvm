@@ -128,7 +128,7 @@ game engines will eventually be listed here.
 4.1) Prerequisites
 ------------------
  - Latest version of devkitPro, which comes with devkitARM and `libctru`
- - `citro3d` thorugh devkitPro's pacman
+ - `citro3d` through devkitPro's pacman
  - Optional: You should compile third-party libraries for the 3ds (commonly referred
    to as portlibs in the devkitPRO community). Some games requires these to operate
    properly.
