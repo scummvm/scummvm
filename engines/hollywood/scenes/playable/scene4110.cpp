@@ -56,6 +56,7 @@ const uint kScene4110BackgroundDescriptorCount = 10;
 const uint kScene4110BackgroundLayerIndex = 0;
 const uint kScene4110BridgeShakeLayerIndex = 0;
 const uint kScene4110BridgeMainLayerIndex = 0;
+const uint kScene4110CastleInteriorLookVerbRecordIndex = 0x2b;
 const byte kScene4110StrawItem = 0x46;
 const byte kScene4110BridgeShakeStartFrame = 10;
 const byte kScene4110BridgeShakeMiddleFrame = 12;
@@ -278,6 +279,9 @@ bool Scene4110::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled())
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(
+			kScene4110CastleInteriorLookVerbRecordIndex, 312);
 	patchActionMovementModes();
 	return true;
 }
