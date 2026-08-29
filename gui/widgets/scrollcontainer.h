@@ -70,13 +70,14 @@ public:
 	void lostFocusWidget() override;
 	void handleTickle() override;
 
+	void cancelTickle() override;
+
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
 	int16	getChildX() const override;
 	int16	getChildY() const override;
 	uint16	getWidth() const override;
 	uint16	getHeight() const override;
-	bool wantsFocus() override { return true; }
 
 	void draw() override;
 	void markAsDirty() override;

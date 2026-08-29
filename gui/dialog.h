@@ -77,10 +77,6 @@ public:
 
 	bool isDragging() const { return _dragWidget != nullptr; }
 
-	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
-	void unSetTickleWidget() { _tickleWidget = nullptr; }
-	Widget *getTickleWidget() { return _tickleWidget; }
-
 	void reflowLayout() override;
 	virtual void lostFocus();
 	virtual void receivedFocus(int x = -1, int y = -1) { if (x >= 0 && y >= 0) handleMouseMoved(x, y, 0); }
@@ -118,6 +114,9 @@ protected:
 	void removeWidget(Widget *widget) override;
 
 	void setDefaultFocusedWidget();
+
+	void registerTickleWidget(Widget *widget) override;
+	void unregisterTickleWidget(Widget *widget) override;
 
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }

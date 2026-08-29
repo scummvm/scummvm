@@ -544,7 +544,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_filterMatcher = GridWidgetDefaultMatcher;
 	_filterMatcherArg = nullptr;
 
-	setFlags(getFlags() | WIDGET_TRACK_MOUSE | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 }
 
 GridWidget::~GridWidget() {
@@ -561,6 +561,7 @@ GridWidget::~GridWidget() {
 	_platformIconsAlpha.clear();
 	_languageIconsAlpha.clear();
 	_extraIconsAlpha.clear();
+	unregisterTickleWidget(this);
 	delete _fluidScroller;
 }
 
@@ -1035,6 +1036,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	_fluidScroller->handleMouseWheel(direction);
+	registerTickleWidget(this);
 }
 
 void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -1056,6 +1058,7 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	_isMouseDown = false;
 	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
 	_selectionPending = false;
 
 	if (wasPending && !wasDragging && !_wasAnimating) {
@@ -1065,8 +1068,10 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 			((GridItemWidget *)w)->doSelection();
 	}
 
-	if (wasDragging)
+	if (wasDragging) {
 		_fluidScroller->startFling();
+		registerTickleWidget(this);
+	}
 	_wasAnimating = false;
 }
 
@@ -1104,22 +1109,21 @@ void GridWidget::applyScrollPos() {
 }
 
 void GridWidget::handleTickle() {
-	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
-}
-
-bool GridWidget::handleKeyDown(Common::KeyState state) {
-	return false;
-}
-
-bool GridWidget::handleKeyUp(Common::KeyState state) {
-	return false;
+	} else {
+		unregisterTickleWidget(this);
+	}
 }
 
 void GridWidget::lostFocusWidget() {
 	_isMouseDown = _isDragging = false;
 	_dragStartY = _dragLastY = 0;
 	_wasAnimating = false;
+}
+
+void GridWidget::cancelTickle() {
+	_fluidScroller->stopAnimation();
 }
 
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

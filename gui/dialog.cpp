@@ -123,7 +123,8 @@ void Dialog::lostFocus() {
 	}
 
 	if (_tickleWidget) {
-		_tickleWidget->lostFocus();
+		_tickleWidget->cancelTickle();
+		_tickleWidget = nullptr;
 	}
 }
 
@@ -269,21 +270,9 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 	Widget *w = findWidget(x, y);
 	if (!w)
 		w = _focusedWidget;
-	if (w) {
-		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
-		// Find the scrollable ancestor to set as the tickle target
-		Widget *scrollable = w;
-		while (scrollable) {
-			if (scrollable->hasVisibleScrollBar()) {
-				setTickleWidget(scrollable);
-				break;
-			}
-			if (scrollable->_boss == this)		
-				break;
 
-			scrollable = static_cast<Widget *>(scrollable->_boss);
-		}
-	}
+	if (w)
+		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
 
 	_handlingMouseWheel = false;
 }
@@ -394,12 +383,22 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 }
 
 void Dialog::handleTickle() {
+	if (_tickleWidget)
+		_tickleWidget->handleTickle();
+
 	// Focused widget receives tickle notifications
-	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
+	if (_focusedWidget &&
+	    _focusedWidget != _tickleWidget &&
+	    _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_focusedWidget->handleTickle();
 
-	if (_tickleWidget && _tickleWidget->getFlags() & WIDGET_WANT_TICKLE)
-		_tickleWidget->handleTickle();
+	// Drag widget also receives tickle notifications
+	if (_dragWidget &&
+	    _dragWidget != _tickleWidget &&
+	    _dragWidget != _focusedWidget &&
+	    _dragWidget->getFlags() & WIDGET_WANT_TICKLE)
+		_dragWidget->handleTickle();
+
 }
 
 void Dialog::handleOtherEvent(const Common::Event &evt) {
@@ -446,6 +445,19 @@ void Dialog::removeWidget(Widget *del) {
 		_dragWidget = nullptr;
 
 	GuiObject::removeWidget(del);
+}
+
+void Dialog::registerTickleWidget(Widget *widget) {
+	if (_tickleWidget && _tickleWidget != widget) {
+		_tickleWidget->cancelTickle();
+	}
+	_tickleWidget = widget;
+}
+
+void Dialog::unregisterTickleWidget(Widget *widget) {
+	if (_tickleWidget == widget) {
+		_tickleWidget = nullptr;
+	}
 }
 
 } // End of namespace GUI

@@ -103,9 +103,13 @@ public:
 	 */
 	virtual Common::Rect getClipRect() const;
 
-	virtual void handleMouseWheel(int x, int y, int direction) {};
 protected:
-	virtual void	releaseFocus() = 0;
+	virtual void handleMouseWheel(int x, int y, int direction) = 0;
+	virtual void releaseFocus() = 0;
+	virtual void registerTickleWidget(Widget *widget) = 0;
+	// As this function can be called from a widget destructor, don't make it pure virtual to avoid it
+	// being called when GuiObject destroys its widgets chain
+	virtual void unregisterTickleWidget(Widget *widget) {}
 };
 
 } // End of namespace GUI

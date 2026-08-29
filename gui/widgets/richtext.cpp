@@ -66,7 +66,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP);
 
 	_type = kRichTextWidget;
 
@@ -99,6 +99,8 @@ RichTextWidget::~RichTextWidget() {
 	if (_cachedTextSurface)
 		_cachedTextSurface->free();
 	delete _cachedTextSurface;
+
+	unregisterTickleWidget(this);
 	delete _fluidScroller;
 }
 
@@ -106,7 +108,7 @@ void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	if (!_verticalScroll->isVisible())
 		return;
 	_fluidScroller->handleMouseWheel(direction);
-	applyScrollPos();
+	registerTickleWidget(this);
 }
 
 void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -115,18 +117,13 @@ void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (_isDragging)
+	_mouseDownY = _mouseDownStartY = 0;
+	if (_isDragging) {
 		_fluidScroller->startFling();
-
-	// Allow some tiny finger slipping
-	if (ABS(_mouseDownY - _mouseDownStartY) > 5 || _isDragging) {
-		_mouseDownY = _mouseDownStartY = 0;
+		registerTickleWidget(this);
 		_isDragging = false;
-
 		return;
 	}
-
-	_mouseDownY = _mouseDownStartY = 0;
 	_isDragging = false;
 
 	if (!_txtWnd)
@@ -166,8 +163,15 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void RichTextWidget::handleTickle() {
-	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
+	} else {
+		unregisterTickleWidget(this);
+	}
+}
+
+void RichTextWidget::cancelTickle() {
+	_fluidScroller->stopAnimation();
 }
 
 void RichTextWidget::applyScrollPos() {
