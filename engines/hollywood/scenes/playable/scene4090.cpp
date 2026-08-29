@@ -31,9 +31,6 @@ namespace Hollywood {
 const uint16 kScene4090FirstState = 0x0ffa;
 const uint16 kScene4090DoorExitState = 0x1007;
 const uint16 kScene4090FinalReturnState = 0x0fd3;
-const int kScene4090InitialEntryStartX = 0x01f1;
-const int kScene4090InitialEntryStartY = 0x0077;
-const byte kScene4090InitialEntryFacing = 0;
 const int kScene4090DefaultActorX = 0x013b;
 const int kScene4090DefaultActorY = 0x0164;
 const byte kScene4090DefaultActorFacing = 2;
@@ -220,17 +217,13 @@ void Scene4090::runCustomEntrySequence() {
 
 	if (state.mainFlowStateId == kScene4090FirstState) {
 		_soundBank0.playSample(5, 100);
-		setActiveActorPose(kScene4090InitialEntryStartX, kScene4090InitialEntryStartY,
-			kScene4090InitialEntryFacing);
+		const bool playInitialGreeting = !state.scene4090InitialGreetingSeen;
+		setActiveActorPose(kScene4090DefaultActorX, kScene4090DefaultActorY,
+			playInitialGreeting ? 1 : kScene4090DefaultActorFacing);
 		drawPlayableComposite();
-		presentFrame();
-		if (!walkActiveActorTo(kScene4090DefaultActorX, kScene4090DefaultActorY,
-				kScene4090DefaultActorFacing, 0, false))
+		if (fadePaletteFromBlack())
 			return;
-		if (!state.scene4090InitialGreetingSeen) {
-			if (!walkActiveActorTo(kScene4090DefaultActorX, kScene4090DefaultActorY,
-					1, 0, false))
-				return;
+		if (playInitialGreeting) {
 			beginSecondarySpeechLine(0, 0);
 			state.scene4090InitialGreetingSeen = true;
 		}
