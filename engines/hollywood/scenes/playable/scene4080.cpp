@@ -28,9 +28,6 @@
 namespace Hollywood {
 
 const uint16 kScene4080ExitState = 0x1006;
-const int kScene4080EntryStartX = 0x0166;
-const int kScene4080EntryStartY = 0x0075;
-const byte kScene4080EntryFacing = 0;
 const int kScene4080DefaultActorX = 0x0121;
 const int kScene4080DefaultActorY = 0x012e;
 const byte kScene4080DefaultActorFacing = 2;
@@ -296,11 +293,10 @@ void Scene4080::runCustomEntrySequence() {
 	_soundBank0.playSample(5, 100);
 	_palettePatchLayer.setFrame(_vm->gameState().scene4080GwendolynState != 0 ? 1 : 0);
 	_foregroundFlickerLayer.setFrame(0);
-	setActiveActorPose(kScene4080EntryStartX, kScene4080EntryStartY, kScene4080EntryFacing);
+	setActiveActorPose(kScene4080DefaultActorX, kScene4080DefaultActorY,
+		kScene4080DefaultActorFacing);
 	drawPlayableComposite();
-	presentFrame();
-	if (!walkActiveActorTo(kScene4080DefaultActorX, kScene4080DefaultActorY,
-			kScene4080DefaultActorFacing, 0, false))
+	if (fadePaletteFromBlack())
 		return;
 
 	GameplayState &state = _vm->gameState();
