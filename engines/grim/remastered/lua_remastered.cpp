@@ -62,17 +62,14 @@ void Lua_Remastered::GetFontDimensions() {
 }
 
 void Lua_Remastered::GetTextObjectDimensions() {
+	// The second parameter repeats the coordinate space the text object was
+	// created with, which it already knows about, so it is ignored.
 	lua_Object textObj = lua_getparam(1);
-	lua_Object coordsObj = lua_getparam(2);
-	if (lua_isnumber(coordsObj)) {
-		int val = lua_getnumber(coordsObj);
-		warning("Stub function: GetTextObjectDimensions(%d)", val);
-	}
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		lua_pushnumber(textObject->getWidth()); // REMASTERED HACK
-		lua_pushnumber(textObject->getBitmapHeight()); // REMASTERED HACK
+		lua_pushnumber(textObject->getBitmapWidth());
+		lua_pushnumber(textObject->getBitmapHeight());
 		// If the line is rjustified getX does us no good
 		lua_pushnumber(textObject->getLineX(0));
 		lua_pushnumber(textObject->getY());
