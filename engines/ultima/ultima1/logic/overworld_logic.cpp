@@ -122,7 +122,7 @@ void OverworldLogic::enter() {
 		Common::String msg = "Entering...\n";
 		if (!_G(map)._isLordBritishCastle)
 			msg += "The city of ";
-		msg += Data::LOCATION_NAMES[location];
+		msg += Data::LOCATION_NAMES[location - 1];
 		msg += "\n";
 		writeString(msg);
 

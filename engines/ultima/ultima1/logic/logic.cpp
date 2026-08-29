@@ -30,19 +30,19 @@ namespace Logic {
 using namespace Shared::Messages;
 
 void Logic::writeString(const Common::String &msg) {
-	g_engine->focusedView()->send(GameMessage("TEXT", msg));
+	g_engine->findView("Commands")->send(GameMessage("TEXT", msg));
 }
 
 void Logic::prompt() {
-	g_engine->focusedView()->send(GameMessage("PROMPT"));
+	g_engine->findView("Commands")->send(GameMessage("PROMPT"));
 }
 
 void Logic::redrawMap() {
-	g_engine->focusedView()->send(GameMessage("UPDATE", "MAP"));
+	g_engine->focusedView()->redraw();
 }
 
 void Logic::redrawStats() {
-	g_engine->focusedView()->send(GameMessage("UPDATE", "STATS"));
+	g_engine->findView("Stats")->draw();
 }
 
 void Logic::playFX(int num) {

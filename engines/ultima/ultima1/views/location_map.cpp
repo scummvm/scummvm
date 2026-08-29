@@ -21,15 +21,20 @@
 
 #include "ultima/ultima1/views/location_map.h"
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/ultima1/metaengine.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
 bool LocationMap::msgFocus(const FocusMessage &msg) {
-	_G(map).clearTiles();
 	delayFrames(1);
 	return UIElement::msgFocus(msg);
+}
+
+bool LocationMap::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return Dialog::msgUnfocus(msg);
 }
 
 void LocationMap::timeout() {

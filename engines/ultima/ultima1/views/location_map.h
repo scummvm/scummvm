@@ -49,6 +49,7 @@ public:
 	~LocationMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	void timeout() override;
 };

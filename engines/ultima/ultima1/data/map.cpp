@@ -26,6 +26,7 @@
 #include "ultima/ultima1/logic/dungeon_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
 #include "ultima/ultima1/logic/pillar_logic.h"
+#include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
@@ -160,16 +161,14 @@ void Map::load(int mapNum) {
 	// Set up the correct logic to use
 	delete _G(logic);
 
-	// Set the outer game frame and draw it immediately
-	g_engine->replaceView("Game");
-	g_engine->focusedView()->draw();
-
+	// Set up logic handler for the mode and which view it'll be using
+	Common::String viewName;
 	if (mapNum >= 49) {
 		_G(logic) = new Logic::DungeonLogic();
-		g_engine->addView("DungeonMap");
+		viewName = "DungeonMap";
 	} else if (mapNum == MAP_OVERWORLD) {
 		_G(logic) = new Logic::OverworldLogic();
-		g_engine->addView("OverworldMap");
+		viewName = "OverworldMap";
 	} else {
 		if (mapNum < 33)
 			_G(logic) = new Logic::CityLogic();
@@ -178,7 +177,21 @@ void Map::load(int mapNum) {
 		else
 			_G(logic) = new Logic::PillarLogic();
 
-		g_engine->addView("LocationMap");
+		viewName = "LocationMap";
+	}
+
+	// If the focused view isn't already a dialog under the game frame, then reset to the game
+	// frame and draw it immediately
+	Views::Dialog *view = dynamic_cast<Views::Dialog *>(g_engine->focusedView());
+	if (view == nullptr) {
+		g_engine->replaceView("Game", true);
+		g_engine->focusedView()->draw();
+
+		// Now add the appropriate map view on top of it
+		g_engine->addView(viewName);
+	} else {
+		// Already showing a game dialog, so just replace the current one
+		g_engine->replaceView(viewName, false);
 	}
 }
 

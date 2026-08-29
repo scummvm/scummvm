@@ -185,6 +185,13 @@ public:
 	}
 
 	/**
+	 * Gets the view's name
+	 */
+	const Common::String &getName() const {
+		return _name;
+	}
+
+	/**
 	 * Returns a random number
 	 */
 	int getRandomNumber(int minNumber, int maxNumber);

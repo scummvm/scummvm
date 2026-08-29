@@ -21,15 +21,21 @@
 
 #include "ultima/ultima1/views/overworld_map.h"
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/ultima1/metaengine.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
-	_G(map).clearTiles();
+	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
 	delayFrames(1);
-	return UIElement::msgFocus(msg);
+	return Dialog::msgFocus(msg);
+}
+
+bool OverworldMap::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return Dialog::msgUnfocus(msg);
 }
 
 void OverworldMap::timeout() {
