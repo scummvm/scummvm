@@ -37,10 +37,10 @@ namespace Hollywood {
  * palette, and actorPaletteBase holds the actor colors before scene lighting.
  *
  * baseFramebufferOriginal is the restoration copy of the selected room image;
- * baseFramebuffer carries persistent scene patches; sceneFramebuffer is the
- * per-frame composite. savedFramebuffer is a separate resource-derived image
- * used for region, hotspot, and depth lookup and panel restoration, not a
- * save-game snapshot. screen is the cropped presentation surface.
+ * baseFramebuffer carries persistent scene patches and supplies clean visual
+ * regions; sceneFramebuffer is the per-frame composite. savedFramebuffer is a
+ * separate resource-derived image used for region, hotspot, and depth lookup,
+ * not a save-game snapshot. screen is the cropped presentation surface.
  */
 class SceneSurfaceState {
 public:

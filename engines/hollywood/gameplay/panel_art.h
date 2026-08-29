@@ -46,12 +46,12 @@ public:
 	bool load();
 	bool isLoaded() const { return _loaded; }
 
-	bool applyPalette(Common::Array<byte> &palette) const;
+	// The current actor resource owns colors 0xd0-0xff.
 	bool applyInteractiveObjectPalette(Common::Array<byte> &palette) const;
-	void drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
+	void drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &sceneBackground,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		HollywoodFont *font) const;
-	void drawDialogueInventoryPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
+	void drawDialogueInventoryPanel(Graphics::Surface &surface, const Graphics::Surface &sceneBackground,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		const GameplayState &gameState, HollywoodFont *font) const;
 	void drawDialogueMenuPanel(Graphics::Surface &surface, const DialogueMenuState &menuState,
@@ -64,10 +64,11 @@ private:
 	bool loadObjectPalette();
 	bool loadObjectPaletteFromResource000();
 	bool loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const;
-	void copySavedCaptionBand(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
+	void copySceneCaptionBand(Graphics::Surface &surface, const Graphics::Surface &sceneBackground,
 		uint16 viewportXOffset, uint16 viewportYOffset, uint16 screenY) const;
 	void copyBottomPanelRows(Graphics::Surface &surface, uint16 sourceRow, uint16 screenY,
 		uint16 rowCount) const;
+	void applyInventoryArrowState(Graphics::Surface &surface, const GameplayState &gameState) const;
 	void drawInventoryItems(Graphics::Surface &surface, const GameplayState &gameState) const;
 	void drawDialogueMenuRows(Graphics::Surface &surface, const DialogueMenuState &menuState,
 		uint16 screenY, HollywoodFont *font) const;
