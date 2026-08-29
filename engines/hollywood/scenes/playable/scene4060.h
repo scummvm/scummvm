@@ -38,13 +38,19 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	byte primarySpeechVolumePercent(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
@@ -66,13 +72,15 @@ private:
 	void runSherilynDialogueProgressReplay();
 	void runSherilynDialogueTransition();
 	void runSherilynPokerTransitionAnimation(bool finalRewardBranch);
-	bool presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, uint overlayDescriptorCount, byte overlayFrame);
+	bool presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, uint overlayDescriptorCount,
+		byte overlayFrame, bool waitAfterFrame = true);
 	void clearPokerTransitionLayers();
 	void beginSherilynSpeechLine(uint16 rowIndex, byte frameIndex, bool allowAlternatePose = true);
 	void beginTeddyBearSpeechLine(uint16 rowIndex, byte frameIndex);
 	void openSherilynSpeechPose(bool allowAlternatePose);
 	void closeSherilynSpeechPose();
 	byte sherilynSpeechBaseStep() const;
+	void updateAmbientSounds(uint32 delta);
 	void applyCardPatchStateColorMap(byte cardState);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copySmallTextRow(byte destinationRow, byte sourceRow);
@@ -83,6 +91,11 @@ private:
 	byte _foregroundScrollStep;
 	bool _foregroundLongAnimationActive;
 	byte _sherilynSpeechPoseMode;
+	uint32 _ambientEffectTimerAccumulator;
+	byte _previousRandomAmbientCue;
+	bool _pokerMidPatchVisible;
+	bool _sherilynDialogueActive;
+	bool _exitFrameVisible;
 };
 
 } // End of namespace Hollywood
