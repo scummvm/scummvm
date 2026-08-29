@@ -96,6 +96,7 @@ private:
 	uint32 _coffinPaletteCycleAccumulator;
 	byte _previousAmbientSoundCue;
 	byte _gwendolynSpeechPoseMode;
+	bool _gwendolynSleepTransitionOnEntry;
 };
 
 } // End of namespace Hollywood

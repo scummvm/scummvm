@@ -223,10 +223,18 @@ Scene4080::Scene4080(HollywoodEngine *vm) :
 		_ambientSoundTimerAccumulator(0),
 		_coffinPaletteCycleAccumulator(0),
 		_previousAmbientSoundCue(0),
-		_gwendolynSpeechPoseMode(kScene4080GwendolynBodyAnimation) {
+		_gwendolynSpeechPoseMode(kScene4080GwendolynBodyAnimation),
+		_gwendolynSleepTransitionOnEntry(false) {
 }
 
 void Scene4080::initializeCustomPreviewState() {
+	GameplayState &state = _vm->gameState();
+	_gwendolynSleepTransitionOnEntry = state.scene4080GwendolynStateTransition == 2;
+	if (_gwendolynSleepTransitionOnEntry) {
+		state.scene4080GwendolynStateTransition = 0;
+		state.scene4080GwendolynState = 2;
+	}
+
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	rememberOriginalColorMap();
@@ -305,6 +313,8 @@ void Scene4080::runCustomEntrySequence() {
 			beginSecondarySpeechLine(0, 0);
 		state.scene4080GwendolynStateTransition = 1;
 	}
+	if (_gwendolynSleepTransitionOnEntry && _vm->restoredContentEnabled())
+		beginSecondarySpeechLine(22, 0);
 }
 
 bool Scene4080::shouldRunExitSideEffectsAfterLoop() const {
@@ -450,11 +460,6 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080GwendolynStateTransition == 2) {
-		state.scene4080GwendolynStateTransition = 0;
-		state.scene4080GwendolynState = 2;
-	}
-
 	if (state.scene4080GwendolynState == 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4080PaletteState0PatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080PaletteState0PatchChunk], _baseFramebuffer);
@@ -1127,7 +1132,6 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 	_vm->gameState().scene4080GwendolynStateTransition = 2;
 	if (!walkActiveActorTo(0x00dc, 0x01cc, 3, 0, false))
 		return;
-	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(19, 0);
 }
 

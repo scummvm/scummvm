@@ -186,9 +186,11 @@ bool Scene4100::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Mirar primera puerta (look at first door): empty in the original.
-	case 303: // Mirar segunda puerta (look at second door): empty in the original.
-	case 305: // Mirar tercera puerta (look at third door): empty in the original.
+	case 301: // Mirar primera puerta (look at first door): use a restored random description.
+	case 303: // Mirar segunda puerta (look at second door): use a restored random description.
+	case 305: // Mirar tercera puerta (look at third door): use a restored random description.
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(1, _random.getRandomBit());
 		return true;
 	case 302: // Usar/abrir primera puerta (use/open first door): return to Scene 4060.
 		runDoorTransition(kScene4100FirstDoorOverlayChunk, kScene4100DoorOverlayDescriptorCount, kScene4060ReturnState);
