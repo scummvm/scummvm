@@ -70,6 +70,8 @@ MODULE_OBJS += \
 	ultima1/views/create_character.o \
 	ultima1/views/dead.o \
 	ultima1/views/dialog.o \
+	ultima1/views/location.o \
+	ultima1/views/location_map.o \
 	ultima1/views/main_menu.o \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \

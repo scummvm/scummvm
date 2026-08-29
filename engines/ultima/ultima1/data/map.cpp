@@ -162,16 +162,17 @@ void Map::load(int mapNum) {
 	if (mapNum >= 49) {
 		_G(logic) = new Logic::DungeonLogic();
 		g_engine->replaceView("Dungeon");
+	} else if (mapNum == MAP_OVERWORLD) {
+		_G(logic) = new Logic::OverworldLogic();
+		g_engine->replaceView("Overworld");
 	} else {
-		if (mapNum == MAP_OVERWORLD)
-			_G(logic) = new Logic::OverworldLogic();
-		else if (mapNum < 33)
+		if (mapNum < 33)
 			_G(logic) = new Logic::CityLogic();
 		else if (mapNum < 41)
 			_G(logic) = new Logic::CastleLogic();
 		else
 			_G(logic) = new Logic::PillarLogic();
-		g_engine->replaceView("Overworld");
+		g_engine->replaceView("Location");
 	}
 }
 

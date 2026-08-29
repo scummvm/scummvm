@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
+Commands::Commands(const Common::String &name, UIElement *parent) : Shared::UIElement(name, parent), _textCursor(name + "Cursor", this) {
 }
 
 bool Commands::msgFocus(const FocusMessage &msg) {

@@ -24,6 +24,7 @@
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima1/views/create_character.h"
+#include "ultima/ultima1/views/location.h"
 #include "ultima/ultima1/views/main_menu.h"
 #include "ultima/ultima1/views/overworld.h"
 #include "ultima/ultima1/views/startup.h"
@@ -35,6 +36,7 @@ namespace Views {
 
 struct Views : public Shared::Views {
 	CreateCharacter _createCharacter;
+	Location _location;
 	MainMenu _mainMenu;
 	Overworld _overworld;
 	Startup _startup;

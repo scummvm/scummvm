@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
-Overworld::Overworld() : Dialog("Overworld"), _map(this), _commands(this), _stats(this) {
+Overworld::Overworld() : Dialog("Overworld"), _map(this), _commands("OverworldCommands", this), _stats(this) {
 	_map.setBounds(TextRect(1, 1, 38, 19));
 	_commands.setBounds(TextRect(0, 20, 29, 24));
 	_stats.setBounds(TextRect(31, 21, 39, 24));
@@ -61,7 +61,7 @@ bool Overworld::msgGame(const GameMessage &msg) {
 		return true;
 	}
 
-	return false;
+	return Dialog::msgGame(msg);
 }
 
 } // namespace Views

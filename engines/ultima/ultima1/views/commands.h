@@ -37,7 +37,7 @@ private:
 	Gfx::TextCursor _textCursor;
 
 public:
-	Commands(UIElement *parent);
+	Commands(const Common::String &name, UIElement *parent);
 	~Commands() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
