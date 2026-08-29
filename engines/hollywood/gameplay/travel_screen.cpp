@@ -55,6 +55,7 @@ const uint16 kTravelSameAreaStateIds[] = { 0x03f4, 0x07ee, 0x0bc2, 0x0faa, 0x139
 const byte kEgyptChapterId = 2;
 const uint16 kEgyptChapterEntryState = 2000;
 const uint16 kTravelInterludeState = 9140;
+const uint32 kTravelUnlockTransitionMillis = 5000;
 const byte kTravelScreenNormalRamp[] = {
 	0x00, 0x00, 0x00, 0x05, 0x05, 0x05, 0x0d, 0x0d, 0x0d,
 	0x15, 0x15, 0x15, 0x1e, 0x1e, 0x1e, 0x28, 0x28, 0x28,
@@ -114,6 +115,44 @@ bool TravelScreen::showViewer() {
 			g_system->delayMillis(10);
 	}
 
+	return true;
+}
+
+bool TravelScreen::showUnlockTransition(byte slotIndex) {
+	if (!load(false) || !isActiveSlot(slotIndex))
+		return false;
+
+	presentBlack();
+	applySlotPalette(slotIndex, true);
+	present();
+
+	const uint32 startMillis = g_system->getMillis();
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested() &&
+			g_system->getMillis() - startMillis < kTravelUnlockTransitionMillis) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				Engine::quitGame();
+				break;
+			case Common::EVENT_MAINMENU:
+				_vm->openMainMenuDialog();
+				if (_vm->isSceneRestartRequested())
+					return true;
+				_displayPalette.markAllDirty();
+				present();
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
+			g_system->delayMillis(10);
+	}
+
+	presentBlack();
 	return true;
 }
 
@@ -360,6 +399,13 @@ uint16 TravelScreen::destinationState(byte destinationId, byte currentChapterId)
 
 void TravelScreen::present() {
 	presentIndexedFrame(_framebuffer.surface(), _palette, _screen, _displayPalette);
+}
+
+void TravelScreen::presentBlack() {
+	Common::Array<byte> palette;
+	palette.resize(kPaletteSize);
+	memset(palette.data(), 0, palette.size());
+	presentIndexedFrame(_framebuffer.surface(), palette, _screen, _displayPalette);
 }
 
 } // End of namespace Hollywood
