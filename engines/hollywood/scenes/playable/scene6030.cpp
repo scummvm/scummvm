@@ -21,6 +21,8 @@
 
 #include "hollywood/scenes/playable/scene6030.h"
 
+#include "common/system.h"
+
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -674,16 +676,13 @@ void Scene6030::runHannoverBathroomExitSequence() {
 	_animationLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
 
 	const uint32 speechDuration = beginStaticHannoverSpeechLine(9, 500, 100);
+	const uint32 speechStartMillis = g_system->getMillis();
 	const bool completed = playAnimationFrames(_animationLayers, kScene6030BathroomExitLayer,
 		AnimationFrameRange(0, 0x0d, kScene6030PoseFrameMillis)
 			.unskippable().hookAt(0x0d, kScene6030BathroomExitVolumeHook));
-	uint32 elapsed = kScene6030BathroomExitDescriptorCount * kScene6030PoseFrameMillis;
-	while (completed && (_speech.isPlaying() || elapsed < speechDuration) &&
-			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(10))
-			break;
-		elapsed += 10;
-	}
+	const uint32 elapsed = g_system->getMillis() - speechStartMillis;
+	if (completed)
+		waitForSpeechOrDelay(elapsed < speechDuration ? speechDuration - elapsed : 0, false);
 
 	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
 	_speech.stop();

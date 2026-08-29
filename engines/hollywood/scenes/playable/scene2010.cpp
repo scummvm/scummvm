@@ -21,6 +21,8 @@
 
 #include "hollywood/scenes/playable/scene2010.h"
 
+#include "common/system.h"
+
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -330,13 +332,14 @@ void Scene2010::advanceGatekeeperIdle(uint32 delta) {
 }
 
 bool Scene2010::waitForSoundOrTimeout(uint32 timeoutMillis) {
-	uint32 elapsed = 0;
-	while (_soundBank0.isPlaying() && elapsed < timeoutMillis &&
-			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+	const uint32 startMillis = g_system->getMillis();
+	while (_soundBank0.isPlaying() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (elapsed >= timeoutMillis)
+			break;
 		const uint32 slice = MIN<uint32>(10, timeoutMillis - elapsed);
 		if (waitSceneMillis(slice, false))
 			return false;
-		elapsed += slice;
 	}
 	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
 }
