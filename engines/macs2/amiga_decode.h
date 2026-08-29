@@ -70,6 +70,7 @@ struct AmigaAnimSlotInfo {
 
 bool parseAmigaMxoo(const byte *mxoo, uint32 mxooSize, AmigaMxooInfo &out);
 bool inspectAmigaAnimSlot(const byte *mxoo, uint32 mxooSize, uint32 bodyRelativeOffset, AmigaAnimSlotInfo &out);
+void amiga12ToVga6(uint16 rgb, byte &r6, byte &g6, byte &b6);
 
 /** Decode one frame of planar Amiga anim data to chunky 8bpp (color planes 0..4). */
 bool decodeAmigaPlanarFrame(const byte *planar, uint16 width, uint16 height, uint16 frameIndex,

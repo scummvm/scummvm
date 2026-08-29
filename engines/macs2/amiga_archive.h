@@ -58,15 +58,15 @@ struct AmigaInfoData {
 	uint16 sceneCount = 0;
 	uint16 volumeCount = 0;
 	uint16 mdirSize = 0;
-	/** 16x 12-bit 0x0RGB UI colors from MXIN (Ghidra DAT_002379dc). */
+	/** 16x 12-bit 0x0RGB UI colors from MXIN. */
 	uint16 uiPaletteAmiga[16] = {0};
 	/**
-	 * Panel border line/corner color indices from MXIN (Ghidra g_awPanelBorderColorIndices).
+	 * Panel border line/corner color indices from MXIN.
 	 * Demo: 18,19,20,21,22.
 	 */
 	uint16 panelBorderColorIndices[5] = {0};
 	/**
-	 * Panel darken luminance->color table (Ghidra g_awPanelDarkenColorIndices).
+	 * Panel darken luminance->color table.
 	 * Demo: 28,29,29,60,61,31,62,23. Indexed by (7 - (R4+G4+B4)/0x18).
 	 */
 	uint16 panelDarkenColorIndices[8] = {0};

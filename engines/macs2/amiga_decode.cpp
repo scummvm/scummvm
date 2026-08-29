@@ -50,7 +50,7 @@ bool parseAmigaMxoo(const byte *mxoo, uint32 mxooSize, AmigaMxooInfo &out) {
 	if (READ_BE_UINT16(body + 0x0C) != 0x0101)
 		return false;
 
-	for (uint i = 0; i < 21; i++)
+	for (uint i = 0; i < ARRAYSIZE(out.slotOffsets); i++)
 		out.slotOffsets[i] = READ_BE_UINT32(body + 0x0E + i * 4);
 	out.extraOffset = READ_BE_UINT32(body + 0x62);
 	return true;
@@ -311,8 +311,6 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 		return false;
 
 	const uint32 absExtra = 12 + bodyRelativeExtraOffset;
-	// animateDialoguePortrait @ 0022f79c: copy 14400 bytes; blit D3=D4=D6=0x50,
-	// D5=0xF0. drawSprite plane loop uses 6 separated planes -> 30*80*6=14400.
 	// Atlas is 240x80 (3x80x80 frames). Color from planes 0..4.
 	const uint16 atlasW = 240;
 	const uint16 atlasH = 80;
@@ -374,12 +372,6 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 				   atlas.data() + (uint32)y * atlasW + (uint32)f * frameW,
 				   frameW);
 		}
-		// Keep Amiga COLOR indices 0..31. Demo portraits (OO_*) use only the
-		// copper high bank COLOR17..31 (chrome / skin / navy cap) - the same
-		// registers animateDialoguePortrait blits into on hardware. Remapping
-		// into a private 0xD0 bank drifted from live copper and caused the
-		// Freunde-dialogue palette mismatch vs FS-UAE.
-		// Color 0 stays transparent (drawSprite skips 0).
 		off += frameBytes;
 	}
 	return true;
@@ -400,6 +392,24 @@ static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array
 	memcpy(out.data(), unpacked, outLen);
 	delete[] unpacked;
 	return true;
+}
+
+void amiga12ToVga6(uint16 rgb, byte &r6, byte &g6, byte &b6) {
+	const byte r4 = (rgb >> 8) & 0xF;
+	const byte g4 = (rgb >> 4) & 0xF;
+	const byte b4 = rgb & 0xF;
+	r6 = (byte)((r4 * 63) / 15);
+	g6 = (byte)((g4 * 63) / 15);
+	b6 = (byte)((b4 * 63) / 15);
+}
+
+void amiga12ToRgb8(uint16 rgb, byte &r, byte &g, byte &b) {
+	const byte r4 = (rgb >> 8) & 0xF;
+	const byte g4 = (rgb >> 4) & 0xF;
+	const byte b4 = rgb & 0xF;
+	r = (byte)(r4 * 17);
+	g = (byte)(g4 * 17);
+	b = (byte)(b4 * 17);
 }
 
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
@@ -453,19 +463,9 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 
 	const byte *copper = screen.data() + kAmigaSceneCopperOffset;
 	uint16 base16[16];
-	for (uint i = 0; i < 16; i++)
+	for (uint i = 0; i < ARRAYSIZE(base16); i++)
 		base16[i] = READ_BE_UINT16(copper + i * 2);
 	const byte *lineColors = copper + 0x20; // 200 x 16 x u16BE
-
-	auto amiga12ToRgb8 = [](uint16 rgb, byte &r, byte &g, byte &b) {
-		const byte r4 = (rgb >> 8) & 0xF;
-		const byte g4 = (rgb >> 4) & 0xF;
-		const byte b4 = rgb & 0xF;
-		r = (byte)(r4 * 17);
-		g = (byte)(g4 * 17);
-		b = (byte)(b4 * 17);
-	};
-
 	auto buildPal32 = [&](uint16 y, byte pal32[32][3]) {
 		amiga12ToRgb8(base16[0], pal32[0][0], pal32[0][1], pal32[0][2]);
 		for (uint i = 0; i < 16; i++) {

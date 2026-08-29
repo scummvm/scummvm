@@ -37,7 +37,6 @@
 
 namespace Macs2 {
 
-
 bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	if (!_amigaArchive || sceneResourceId == 0 || sceneResourceId > 0xFFFF)
 		return false;
@@ -81,20 +80,15 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	// Keep Info UI chrome colors in the high VGA indices used by panel drawing.
 	if (_amigaArchive->getInfo().loaded) {
 		const AmigaInfoData &info = _amigaArchive->getInfo();
-		auto amiga12ToVga6 = [](uint16 rgb, byte &r6, byte &g6, byte &b6) {
-			const byte r4 = (rgb >> 8) & 0xF;
-			const byte g4 = (rgb >> 4) & 0xF;
-			const byte b4 = rgb & 0xF;
-			r6 = (byte)((r4 * 63) / 15);
-			g6 = (byte)((g4 * 63) / 15);
-			b6 = (byte)((b4 * 63) / 15);
-		};
-		for (uint i = 0; i < 16; i++) {
-			byte r6, g6, b6;
-			amiga12ToVga6(info.uiPaletteAmiga[i], r6, g6, b6);
+		for (uint i = 0; i < ARRAYSIZE(info.uiPaletteAmiga); i++) {
 			const uint idx = 0xF0 + i;
 			if (idx >= 256)
 				break;
+			uint16 rgb = info.uiPaletteAmiga[i];
+			byte r6;
+			byte g6;
+			byte b6;
+			amiga12ToVga6(rgb, r6, g6, b6);
 			_palVanilla.set(idx, r6, g6, b6);
 		}
 	}
@@ -105,10 +99,11 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	buildAmigaPanelRemapTable();
 	applyPaletteDarkening();
 
-	_depthMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
-	_pathfindingMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
-	_shadowMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
-	_hotspotMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+	Common::Rect screenRect(0, 0, kScreenWidth, kGameHeight);
+	_depthMap.fillRect(screenRect, 0);
+	_pathfindingMap.fillRect(screenRect, 0);
+	_shadowMap.fillRect(screenRect, 0);
+	_hotspotMap.fillRect(screenRect, 0);
 
 	Common::Array<byte> pathMap, depthMap, shadowMap;
 	if (extractAmigaMxmmSceneMaps(mxmm.data(), size, pathMap, depthMap, shadowMap)) {
@@ -216,7 +211,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	return true;
 }
 
-// --- loadAmigaMxffFont (macs2.cpp:2807-2866) ---
 bool Macs2Engine::loadAmigaMxffFont() {
 	if (!_amigaArchive || !_amigaArchive->hasResource(kAmigaResFF, 0))
 		return false;
@@ -340,7 +334,6 @@ bool Macs2Engine::loadAmigaOverlayFont(uint8 resourceIndex) {
 	return true;
 }
 
-// --- loadAmigaCursorResource (macs2.cpp:2868-2894) ---
 bool Macs2Engine::loadAmigaCursorResource(uint16 resourceId, AnimFrame &out) {
 	out = AnimFrame();
 	if (!_amigaArchive || resourceId == 0)
@@ -369,7 +362,6 @@ bool Macs2Engine::loadAmigaCursorResource(uint16 resourceId, AnimFrame &out) {
 	return true;
 }
 
-// --- installAmigaPortraitPalette (macs2.cpp:2896-2937) ---
 void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
 	// Portraits now keep Amiga COLOR indices and share the playfield copper
 	// high bank (COLOR17..31), matching animateDialoguePortrait on hardware.
@@ -384,15 +376,6 @@ void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
 	if (_amigaNativePlayfieldPalette)
 		return;
 
-	auto amiga12ToVga6 = [](uint16 rgb, byte &r6, byte &g6, byte &b6) {
-		const byte r4 = (rgb >> 8) & 0xF;
-		const byte g4 = (rgb >> 4) & 0xF;
-		const byte b4 = rgb & 0xF;
-		r6 = (byte)((r4 * 63) / 15);
-		g6 = (byte)((g4 * 63) / 15);
-		b6 = (byte)((b4 * 63) / 15);
-	};
-
 	static const uint16 kHighBankFallback[15] = {
 		0x0BBA, 0x0EB8, 0x0C96, 0x0A74, 0x0963, 0x0741, 0x0000, 0x049E,
 		0x0C00, 0x0DDC, 0x0EEE, 0x0887, 0x0776, 0x0006, 0x0520
@@ -403,7 +386,7 @@ void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
 	if (_amigaArchive && _amigaArchive->getInfo().loaded)
 		highSrc = &_amigaArchive->getInfo().uiPaletteAmiga[1];
 
-	for (uint i = 0; i < 15; i++) {
+	for (uint i = 0; i < ARRAYSIZE(kHighBankFallback); i++) {
 		byte r6, g6, b6;
 		amiga12ToVga6(highSrc[i], r6, g6, b6);
 		const uint idx = 17 + i;
@@ -411,21 +394,11 @@ void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
 	}
 }
 
-// --- applyAmigaUiPalette (macs2.cpp:2939-2990) ---
 void Macs2Engine::applyAmigaUiPalette() {
 	if (!_amigaArchive || !_amigaArchive->getInfo().loaded)
 		return;
 
 	const AmigaInfoData &info = _amigaArchive->getInfo();
-
-	auto amiga12ToVga6 = [](uint16 rgb, byte &r6, byte &g6, byte &b6) {
-		const byte r4 = (rgb >> 8) & 0xF;
-		const byte g4 = (rgb >> 4) & 0xF;
-		const byte b4 = rgb & 0xF;
-		r6 = (byte)((r4 * 63) / 15);
-		g6 = (byte)((g4 * 63) / 15);
-		b6 = (byte)((b4 * 63) / 15);
-	};
 
 	// Provisional playfield until an MM_* copper list is loaded.
 	// Copper base16 layout: COLOR00 + COLOR17..31 = MXIN ui[0..15]. COLOR01..16
@@ -443,7 +416,7 @@ void Macs2Engine::applyAmigaUiPalette() {
 	}
 
 	// Amiga UI colors also live in the high indices used by panel/chrome drawing.
-	for (uint i = 0; i < 16; i++) {
+	for (uint i = 0; i < ARRAYSIZE(info.uiPaletteAmiga); i++) {
 		amiga12ToVga6(info.uiPaletteAmiga[i], r6, g6, b6);
 		const uint idx = 0xF0 + i;
 		if (idx >= Graphics::PALETTE_COUNT)
@@ -456,19 +429,13 @@ void Macs2Engine::applyAmigaUiPalette() {
 	applyPaletteDarkening();
 }
 
-// --- buildAmigaPanelRemapTable (macs2.cpp:2992-3018) ---
 void Macs2Engine::buildAmigaPanelRemapTable() {
-	// Ghidra fill_ui_panel_darken_remap @ 002221fe:
-	// bucket = 7 - (R4+G4+B4)/0x18, then index g_awPanelDarkenColorIndices[bucket].
-	// Those indices are playfield copper slots on Amiga. ScummVM must not paint wood
-	// RGB into those slots (breaks intro/scene art). Instead map buckets onto the
-	// private MXIN UI bank already installed at 0xF0..0xFF (opaque brown ramp).
 	if (_panelRemapTable.size() != 0x100)
 		_panelRemapTable.resize(0x100);
 
 	// MXIN UI[0..5] = wood ramp (BBA..741). UI[6] is 0x000 - never use it for fill.
 	static const byte kUiWood[8] = {0, 1, 2, 3, 4, 5, 2, 3};
-	for (uint i = 0; i < 0x100; i++) {
+	for (uint i = 0; i < 256; i++) {
 		byte r6, g6, b6;
 		_palVanilla.get(i, r6, g6, b6);
 		const uint r4 = (r6 * 15) / 63;
@@ -562,7 +529,6 @@ void Macs2Engine::readAmigaResources() {
 
 	applyAmigaUiPalette();
 
-	// Native MXFF dialogue font (Ghidra drawText @ 00224492). Prefer over DOS MCS glyphs.
 	const bool loadedMxff = loadAmigaMxffFont();
 
 	// Load every OO resource as a GameObject. Object index = resource id + 1.
@@ -700,8 +666,6 @@ void Macs2Engine::readAmigaResources() {
 		loadedObjects++;
 	}
 
-	// Protagonist object slot (OO_0000 -> object 1). Do NOT place him in the room here -
-	// the intro/scene MXMM scripts call moveObject on scene init (same as DOS).
 	GameObject *protagonist = GameObjects::instance()._objects[0];
 	if (protagonist == nullptr) {
 		protagonist = new GameObject();
@@ -715,8 +679,6 @@ void Macs2Engine::readAmigaResources() {
 
 	Scenes::instance()._currentActorIndex = 1;
 
-	// Info MXIN u32 @ offset 8 = starting MM resource id (demo: 40 -> intro MM_0040).
-	// Script-visible scene id = MM id + 1 (Ghidra load_scene_mxmm / FUN_002215fa).
 	uint16 startResourceId = _amigaArchive->getInfo().startSceneResourceId;
 	if (startResourceId == 0 || !_amigaArchive->hasResource(kAmigaResMM, startResourceId)) {
 		if (_amigaArchive->hasResource(kAmigaResMM, 40))
@@ -744,7 +706,6 @@ void Macs2Engine::readAmigaResources() {
 	_scenePaletteMode = 1;
 	_paletteDarkenPercent = 0;
 
-	// Fonts: MXFF dialogue font from DataA (standalone Amiga demo - no DOS MCS).
 	if (!loadedMxff)
 		warning("Amiga: no MXFF font FF_0000 in DataA - text may be missing");
 
