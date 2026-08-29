@@ -43,32 +43,47 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void initializeSpriteLayers();
 	void advanceBackgroundAnimations(uint32 delta);
 	void advanceLeftPropLayer(uint frameCount);
 	void advanceRightPropLayer(uint frameCount);
+	void advanceMarkerPixels(uint32 delta);
+	void drawMarkerPixels();
 	void runTowerTransitionToScene4040();
-	void drawTowerTransitionFrame(const Common::Array<byte> &clipData, byte progressIndex,
-		Graphics::ManagedSurface &transitionBackground);
-	void drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
+	bool runTowerTransitionClip(bool returningFromTower);
+	void drawTowerTransitionFrame(const Graphics::ManagedSurface &transitionBackground);
+	bool drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::ManagedSurface &destination);
 	void takeRope();
 	void talkToSkeleton();
+	void playBoneRevealAnimation();
 	void takeBone();
 	void installImprovisedLever();
 	void updateIronMaidenMechanism();
+	void playIronMaidenMechanismAnimation(byte secondaryFrameGroup);
+	void copyStageItemName(byte destinationItem, byte sourceItem);
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 
 	ResourceSpriteLayer _leftPropLayer;
 	ResourceSpriteLayer _rightPropLayer;
+	ResourceSpriteLayer _secondaryActionLayer;
+	ResourceSpriteLayer _primaryActionLayer;
 	TimedAnimationChannel _leftPropChannel;
 	TimedAnimationChannel _rightPropChannel;
+	TimedAnimationChannel _markerChannel;
+	Common::Array<byte> _originalStageSmallRows;
+	bool _markerDark[7];
 	byte _rightPropState;
 };
 
