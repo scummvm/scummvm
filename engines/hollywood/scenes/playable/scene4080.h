@@ -37,7 +37,10 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
@@ -59,8 +62,20 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void copySmallTextRow(byte destinationRow, byte sourceRow);
 	void beginGwendolynSpeechLine(uint16 rowIndex, byte frameIndex);
+	bool settleGwendolynForSpeech();
+	void advanceAmbientSound(uint32 delta);
 	void runCorridorExit();
 	void runSidePatchSequence();
+	bool runCoffinInsertSequence();
+	bool playCoffinDeltaClip(uint chunkIndex);
+	bool waitCoffinDeltaFrame(uint32 millis);
+	bool advanceCoffinPaletteCycle(uint32 delta);
+	void rotateCoffinPaletteCycle();
+	bool runCoffinCurtainReveal(const Graphics::ManagedSurface &source,
+		const Common::Array<byte> &palette);
+	bool runCoffinCurtainClear();
+	void applyCoffinCurtainBand(const Graphics::Surface *source, uint sweepOffset,
+		byte bandWidth);
 	void runBottlePickupSequence();
 	void runGominolaPickupSequence();
 	void runSteakPickupSequence();
@@ -75,7 +90,12 @@ private:
 	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _palettePatchChannel;
 	TimedAnimationChannel _foregroundFlickerChannel;
+	TimedAnimationChannel _gwendolynIdleChannel;
 	Common::Array<byte> _originalColorToItemMap;
+	uint32 _ambientSoundTimerAccumulator;
+	uint32 _coffinPaletteCycleAccumulator;
+	byte _previousAmbientSoundCue;
+	byte _gwendolynSpeechPoseMode;
 };
 
 } // End of namespace Hollywood
