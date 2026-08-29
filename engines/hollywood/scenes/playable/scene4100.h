@@ -34,20 +34,34 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
+	bool revealEntryPose(int x, int y, byte facing);
 	void applyD10PaletteDimming();
 	void resetPaletteCycle();
 	void advancePaletteCycle(uint32 delta);
 	void rotatePaletteCycle();
+	void resetAmbientSoundScheduler();
+	void advanceAmbientSound(uint32 delta);
+	void copySpecialStepDeltas(uint destinationOffset);
 	void runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState);
 
 	TimedAnimationChannel _paletteCycleChannel;
+	uint32 _ambientSoundTimerAccumulator;
+	byte _previousAmbientSoundCue;
 };
 
 } // End of namespace Hollywood
