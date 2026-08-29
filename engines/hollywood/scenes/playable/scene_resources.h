@@ -40,7 +40,8 @@ public:
 
 	void clearChunkOffsets();
 	bool loadChunkTable(const char *archiveName);
-	bool validateRequiredChunks(const char *archiveName, const char *sceneDebugName, uint requiredChunkCount) const;
+	bool validateRequiredChunks(const char *archiveName, const char *sceneDebugName,
+		uint requiredChunkCount, uint framebufferChunkIndex = 0) const;
 	void allocateArena(uint32 byteCount);
 
 	bool loadFixedChunk(const char *sceneDebugName,
