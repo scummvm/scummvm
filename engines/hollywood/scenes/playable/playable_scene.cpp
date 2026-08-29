@@ -2786,12 +2786,12 @@ void PlayableScene::drawGameplayPanel(Graphics::Surface &surface, const Gameplay
 }
 
 void PlayableScene::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
-	_panelArt.drawVerbPanel(surface, _savedFramebuffer, viewportXOffset(), 0, panelState,
+	_panelArt.drawVerbPanel(surface, _baseFramebuffer, viewportXOffset(), 0, panelState,
 		_vm->font());
 }
 
 void PlayableScene::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
-	_panelArt.drawDialogueInventoryPanel(surface, _savedFramebuffer, viewportXOffset(), 0,
+	_panelArt.drawDialogueInventoryPanel(surface, _baseFramebuffer, viewportXOffset(), 0,
 		panelState, _vm->gameState(), _vm->font());
 }
 

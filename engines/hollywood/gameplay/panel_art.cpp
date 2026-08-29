@@ -47,7 +47,7 @@ const uint kPanelResource000OffsetTableSize = 400;
 const uint kPanelResource000SizeTableSize = 400;
 const uint kPanelInventoryItemPagesResourceEntry = 0x2b;
 const uint kPanelStartupResourceEntry = 0x2c;
-const uint kPanelDialogueMenuResource000Entry = 0x2f;
+const uint kPanelDialogueMenuResource000Entry = 0x30;
 const uint kPanelObjectPaletteResource000Entry = 0x31;
 const uint kPanelStartupPrecedingBlockCount = 3;
 const uint kPanelBottomBufferWidth = 640;
@@ -62,12 +62,20 @@ const uint kPanelDialogueMenuBottomOffset = kPanelDialogueMenuLineOffset +
 	kPanelDialogueMenuLineRows * kPanelBottomBufferWidth;
 const uint kPanelDialogueMenuResourceSize = kPanelDialogueMenuBottomOffset +
 	kPanelDialogueMenuBottomRows * kPanelBottomBufferWidth;
+const uint kPanelDialogueMenuFullSourceRows = 0xc0;
+const uint kPanelDialogueMenuLineSourceRow = 0x1b;
+const uint kPanelDialogueMenuBottomSourceRow = 0xb4;
 const uint kPanelInventoryTilePageCount = 0x100;
 const uint kPanelInventoryTilePageSize = 0x1000;
 const uint16 kPanelInventoryGridLeft = 0x32;
 const uint16 kPanelInventoryGridTop = 0x152;
 const uint16 kPanelInventoryTileSize = 0x40;
 const uint16 kPanelInventoryTileStride = 0x44;
+const uint16 kPanelInventoryArrowLeft = 0x25a;
+const uint16 kPanelInventoryPreviousArrowRow = 0x55;
+const uint16 kPanelInventoryNextArrowRow = 0x72;
+const uint16 kPanelInventoryArrowWidth = 0x1e;
+const uint16 kPanelInventoryArrowHeight = 0x1b;
 const uint kPanelObjectPaletteOffset = 0x210;
 const uint kPanelObjectPaletteSize = 0xf0;
 const uint kPanelObjectPaletteObjectOnlySize = 0x60;
@@ -91,6 +99,8 @@ const byte kPanelVerbLabelColor = 0xf1;
 const byte kPanelDialogueMenuNormalColor = 0xf2;
 const byte kPanelDialogueMenuHighlightColor = 0xf9;
 const byte kPanelSelectedColorDelta = 9;
+const byte kPanelArrowEnabledColor = 0xf1;
+const byte kPanelArrowDisabledColor = 0xf0;
 const uint16 kPanelVerbStripXOffsets[9] = {
 	0xff, 0, 8, 97, 186, 276, 366, 456, 545
 };
@@ -245,36 +255,57 @@ bool GameplayPanelArt::loadDialogueMenuPanelBufferFromResource000() {
 		return false;
 	}
 
-	const uint tableOffset = kPanelResource000HeaderByteCount + kPanelDialogueMenuResource000Entry * 4;
-	if ((uint32)file.size() < tableOffset + 4) {
+	const uint offsetTableOffset = kPanelResource000HeaderByteCount +
+		kPanelDialogueMenuResource000Entry * 4;
+	const uint sizeTableOffset = kPanelResource000HeaderByteCount + kPanelResource000OffsetTableSize +
+		kPanelDialogueMenuResource000Entry * 4;
+	if ((uint32)file.size() < sizeTableOffset + 4) {
 		warning("%s is too small for Hollywood dialogue panel table entry", kPanelResource000Name);
 		return false;
 	}
 
-	file.seek(tableOffset);
+	file.seek(offsetTableOffset);
 	const uint32 panelOffset = file.readUint32LE();
-	const uint32 sourceByteCount = (kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
-		kPanelDialogueMenuBottomRows - 1) * kPanelResourceSourceStride + kPanelBottomBufferWidth;
-	if (panelOffset > (uint32)file.size() || sourceByteCount > (uint32)file.size() - panelOffset) {
+	file.seek(sizeTableOffset);
+	const uint32 panelSize = file.readUint32LE();
+	if (panelOffset > (uint32)file.size() || panelSize > (uint32)file.size() - panelOffset) {
 		warning("%s dialogue panel art has invalid bounds", kPanelResource000Name);
 		return false;
 	}
 
 	_dialogueMenuPanelBuffer.resize(kPanelDialogueMenuResourceSize);
-	file.seek(panelOffset);
-	for (uint row = 0; row < kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
-			kPanelDialogueMenuBottomRows; ++row) {
-		byte *destination = _dialogueMenuPanelBuffer.data() + row * kPanelBottomBufferWidth;
-		if (file.read(destination, kPanelBottomBufferWidth) != kPanelBottomBufferWidth) {
-			warning("Failed to read Hollywood dialogue panel row %u", row);
-			return false;
+	if (panelSize >= kPanelDialogueMenuFullSourceRows * kPanelResourceSourceStride) {
+		const uint sourceRows[] = {
+			0, kPanelDialogueMenuLineSourceRow, kPanelDialogueMenuBottomSourceRow
+		};
+		const uint rowCounts[] = {
+			kPanelDialogueMenuTopRows, kPanelDialogueMenuLineRows, kPanelDialogueMenuBottomRows
+		};
+		const uint destinationOffsets[] = {
+			kPanelDialogueMenuTopOffset, kPanelDialogueMenuLineOffset, kPanelDialogueMenuBottomOffset
+		};
+		for (uint section = 0; section < ARRAYSIZE(sourceRows); ++section) {
+			for (uint row = 0; row < rowCounts[section]; ++row) {
+				file.seek(panelOffset + (sourceRows[section] + row) * kPanelResourceSourceStride);
+				byte *destination = _dialogueMenuPanelBuffer.data() +
+					destinationOffsets[section] + row * kPanelBottomBufferWidth;
+				if (file.read(destination, kPanelBottomBufferWidth) != kPanelBottomBufferWidth) {
+					warning("Failed to read Hollywood dialogue panel section %u row %u", section, row);
+					return false;
+				}
+			}
 		}
-		if (row + 1 < kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
-				kPanelDialogueMenuBottomRows)
-			file.seek(kPanelResourceSourceStride - kPanelBottomBufferWidth, SEEK_CUR);
+		return true;
 	}
 
-	return true;
+	if (panelSize < kPanelDialogueMenuResourceSize) {
+		warning("%s dialogue panel art has unsupported size %u", kPanelResource000Name, panelSize);
+		return false;
+	}
+
+	file.seek(panelOffset);
+	return file.read(_dialogueMenuPanelBuffer.data(), _dialogueMenuPanelBuffer.size()) ==
+		_dialogueMenuPanelBuffer.size();
 }
 
 bool GameplayPanelArt::loadObjectPalette() {
@@ -349,10 +380,6 @@ bool GameplayPanelArt::loadInventoryItemTilePage(byte pageIndex, Common::Array<b
 	return true;
 }
 
-bool GameplayPanelArt::applyPalette(Common::Array<byte> &palette) const {
-	return applyInteractiveObjectPalette(palette);
-}
-
 bool GameplayPanelArt::applyInteractiveObjectPalette(Common::Array<byte> &palette) const {
 	if (_objectPaletteTriples.size() != kPanelObjectPaletteSize ||
 			palette.size() < kPanelObjectPaletteOffset + kPanelObjectPaletteObjectOnlySize)
@@ -363,13 +390,13 @@ bool GameplayPanelArt::applyInteractiveObjectPalette(Common::Array<byte> &palett
 	return true;
 }
 
-void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
+void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &sceneBackground,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		HollywoodFont *font) const {
 	if (!_loaded)
 		return;
 
-	copySavedCaptionBand(surface, savedFramebuffer, viewportXOffset, viewportYOffset, kPanelVerbCaptionY);
+	copySceneCaptionBand(surface, sceneBackground, viewportXOffset, viewportYOffset, kPanelVerbCaptionY);
 	copyBottomPanelRows(surface, 0, kPanelVerbContentY, HollywoodEngine::kScreenHeight - kPanelVerbContentY);
 	drawVerbStripLabels(surface, kPanelVerbContentY, font);
 	applySelectedVerbStrip(surface, kPanelVerbContentY, panelState.currentStrip);
@@ -377,14 +404,15 @@ void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Graphics:
 }
 
 void GameplayPanelArt::drawDialogueInventoryPanel(Graphics::Surface &surface,
-		const Graphics::Surface &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
+		const Graphics::Surface &sceneBackground, uint16 viewportXOffset, uint16 viewportYOffset,
 		const GameplayPanelState &panelState, const GameplayState &gameState, HollywoodFont *font) const {
 	if (!_loaded)
 		return;
 
-	copySavedCaptionBand(surface, savedFramebuffer, viewportXOffset, viewportYOffset, kPanelDialogueCaptionY);
+	copySceneCaptionBand(surface, sceneBackground, viewportXOffset, viewportYOffset, kPanelDialogueCaptionY);
 	copyBottomPanelRows(surface, 0, kPanelDialogueContentY,
 		HollywoodEngine::kScreenHeight - kPanelDialogueContentY);
+	applyInventoryArrowState(surface, gameState);
 	drawInventoryItems(surface, gameState);
 	drawVerbStripLabels(surface, kPanelDialogueContentY, font);
 	applySelectedVerbStrip(surface, kPanelDialogueContentY, panelState.currentStrip);
@@ -437,23 +465,57 @@ void GameplayPanelArt::drawDialogueMenuPanel(Graphics::Surface &surface,
 	drawDialogueMenuRows(surface, menuState, panelTop, font);
 }
 
-void GameplayPanelArt::copySavedCaptionBand(Graphics::Surface &surface,
-		const Graphics::Surface &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
+void GameplayPanelArt::copySceneCaptionBand(Graphics::Surface &surface,
+		const Graphics::Surface &sceneBackground, uint16 viewportXOffset, uint16 viewportYOffset,
 		uint16 screenY) const {
-	if (surface.format.bytesPerPixel != 1 || savedFramebuffer.format.bytesPerPixel != 1)
+	if (surface.format.bytesPerPixel != 1 || sceneBackground.format.bytesPerPixel != 1)
 		return;
 
 	for (uint row = 0; row < kPanelCaptionBandHeight; ++row) {
 		const uint sceneY = viewportYOffset + screenY + row;
 		if (sceneY >= HollywoodEngine::kSceneBufferHeight ||
-				sceneY >= (uint)savedFramebuffer.h ||
-				viewportXOffset + HollywoodEngine::kScreenWidth > (uint)savedFramebuffer.w ||
+				sceneY >= (uint)sceneBackground.h ||
+				viewportXOffset + HollywoodEngine::kScreenWidth > (uint)sceneBackground.w ||
 				screenY + row >= (uint)surface.h)
 			continue;
 
 		memcpy(surface.getBasePtr(0, screenY + row),
-			savedFramebuffer.getBasePtr(viewportXOffset, sceneY),
+			sceneBackground.getBasePtr(viewportXOffset, sceneY),
 			HollywoodEngine::kScreenWidth);
+	}
+}
+
+void GameplayPanelArt::applyInventoryArrowState(Graphics::Surface &surface,
+		const GameplayState &gameState) const {
+	if (surface.format.bytesPerPixel != 1 ||
+			gameState.currentInventoryOwnerIndex >= GameplayState::kInventoryOwnerCount)
+		return;
+
+	const byte owner = gameState.currentInventoryOwnerIndex;
+	byte firstVisibleSlot = gameState.inventoryFirstVisibleSlotByOwner[owner];
+	if (firstVisibleSlot == 0)
+		firstVisibleSlot = GameplayState::kInventoryFirstSlot;
+	const bool arrowEnabled[] = {
+		firstVisibleSlot > GameplayState::kInventoryFirstSlot,
+		firstVisibleSlot + GameplayState::kInventoryVisibleSlotCount - 1 <
+			gameState.inventoryItemCountByOwner[owner]
+	};
+	const uint16 sourceRows[] = {
+		kPanelInventoryPreviousArrowRow, kPanelInventoryNextArrowRow
+	};
+
+	for (uint arrow = 0; arrow < ARRAYSIZE(sourceRows); ++arrow) {
+		if (arrowEnabled[arrow])
+			continue;
+		const uint16 top = kPanelDialogueContentY + sourceRows[arrow];
+		for (uint row = 0; row < kPanelInventoryArrowHeight && top + row < (uint)surface.h; ++row) {
+			byte *pixels = (byte *)surface.getBasePtr(kPanelInventoryArrowLeft, top + row);
+			for (uint column = 0; column < kPanelInventoryArrowWidth &&
+					kPanelInventoryArrowLeft + column < (uint)surface.w; ++column) {
+				if (pixels[column] == kPanelArrowEnabledColor)
+					pixels[column] = kPanelArrowDisabledColor;
+			}
+		}
 	}
 }
 
@@ -537,7 +599,9 @@ void GameplayPanelArt::drawDialogueMenuRows(Graphics::Surface &surface,
 			kPanelDialogueMenuTextLeft;
 		const int y = screenY + lineIndex * kPanelDialogueMenuLineHeight +
 			kPanelDialogueMenuTextTopOffset;
-		font->drawString(&surface, line.text, x, y, kPanelDialogueMenuTextWidth, color,
+		Common::String text(line.firstLineOfChoice ? "@" : "");
+		text += line.text;
+		font->drawString(&surface, text, x, y, kPanelDialogueMenuTextWidth, color,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
 }
