@@ -138,7 +138,7 @@ GameplayLoop::GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate) 
 		_leftButtonDown(false),
 		_rightButtonDown(false),
 		_keyboardStripMode(false),
-		_inventoryPanelOpenedFromDefault(false),
+		_restoreDefaultStripOnInventoryClose(false),
 		_relationMode(0),
 		_primaryInventoryItem(0),
 		_panelHoverTimer(0) {
@@ -153,7 +153,7 @@ bool GameplayLoop::run() {
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 	_keyboardStripMode = false;
-	_inventoryPanelOpenedFromDefault = false;
+	_restoreDefaultStripOnInventoryClose = false;
 	_relationMode = 0;
 	_primaryInventoryItem = 0;
 	_panelState = GameplayPanelState();
@@ -326,6 +326,7 @@ void GameplayLoop::handleLeftClick() {
 
 		const byte stripIndex = inventoryPanelStripAt(cursorX, cursorY);
 		if (stripIndex != 0) {
+			_restoreDefaultStripOnInventoryClose = false;
 			selectPanelStrip(stripIndex);
 			updateInventoryPanelCaption();
 			syncPanelState();
@@ -455,6 +456,7 @@ void GameplayLoop::enterKeyboardStripMode() {
 
 	_keyboardStripMode = true;
 	openVerbPanel();
+	selectPanelStrip(kGameplayUseStrip);
 }
 
 void GameplayLoop::leaveKeyboardStripMode() {
@@ -523,9 +525,9 @@ void GameplayLoop::openInventoryPanel() {
 			_panelState.inventoryPanelVisible || _panelState.verbPanelVisible)
 		return;
 
-	_inventoryPanelOpenedFromDefault = _currentStrip == kGameplayDefaultStrip;
-	if (_inventoryPanelOpenedFromDefault) {
-		_currentStrip = 5;
+	_restoreDefaultStripOnInventoryClose = _currentStrip == kGameplayDefaultStrip;
+	if (_restoreDefaultStripOnInventoryClose) {
+		_currentStrip = kGameplayUseStrip;
 		_hoverCaption.setCurrentStrip(_currentStrip);
 	}
 	_panelState.inventoryPanelVisible = true;
@@ -541,11 +543,12 @@ void GameplayLoop::closeInventoryPanel() {
 
 	_panelState.inventoryPanelVisible = false;
 	_panelState.captionText.clear();
-	if (_inventoryPanelOpenedFromDefault && _currentStrip == 5 && _relationMode == 0) {
+	if (_restoreDefaultStripOnInventoryClose &&
+			_currentStrip == kGameplayUseStrip && _relationMode == 0) {
 		_currentStrip = kGameplayDefaultStrip;
 		_hoverCaption.setCurrentStrip(_currentStrip);
 	}
-	_inventoryPanelOpenedFromDefault = false;
+	_restoreDefaultStripOnInventoryClose = false;
 	refreshHoverCaption();
 }
 
@@ -622,6 +625,9 @@ void GameplayLoop::updatePanelFromMousePosition() {
 	const uint16 cursorY = _vm->cursor()->surfaceY();
 
 	if (_panelState.verbPanelVisible) {
+		if (_keyboardStripMode)
+			return;
+
 		const byte stripIndex = panelStripAt(cursorX, cursorY);
 		if (stripIndex != 0)
 			selectPanelStrip(stripIndex);
