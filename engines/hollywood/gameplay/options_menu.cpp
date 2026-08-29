@@ -990,12 +990,12 @@ void GameplayOptionsMenu::drawToggleSquare(int columnIndex, int rowIndex, byte c
 
 	const int left = kOptionsToggleSquareX[columnIndex];
 	const int top = kOptionsToggleSquareY[rowIndex];
+	const byte sourceColor = color == kOptionsTextDisabledColor ?
+		kOptionsTextActiveColor : kOptionsTextDisabledColor;
 	for (int row = 0; row < kOptionsToggleSquareSize; ++row) {
 		byte *pixels = (byte *)_screen.getBasePtr(left, top + row);
 		for (int column = 0; column < kOptionsToggleSquareSize; ++column) {
-			if (pixels[column] == kOptionsTextActiveColor ||
-					pixels[column] == kOptionsTextDisabledColor ||
-					pixels[column] == kOptionsBarDisabledColor)
+			if (pixels[column] == sourceColor)
 				pixels[column] = color;
 		}
 	}
