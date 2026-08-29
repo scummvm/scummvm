@@ -268,7 +268,7 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 width
 	byte *pCmdBuf = cmdBuffer;
 	byte *pPixelBuf = pixelBuffer;
 	byte *pMaskBuf = maskBuffer;
-	while (height > 0) {
+	for (int row = 0; row < height; row += 4) {
 
 		memcpy(bitBuf, pCmdBuf, lineSize);
 		pCmdBuf += lineSize;
@@ -333,8 +333,8 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 width
 
 				if (cmd != 3) {
 					uint16 blockPos = 0;
-					uint32 maxW = MIN(4, surface.w - bx);
-					uint32 maxH = (MIN(4, surface.h - by) + by) * surface.w;
+					uint32 maxW = MIN(4, width - bx);
+					uint32 maxH = (MIN(4, height - by) + by) * surface.w;
 					for (uint32 yc = by * surface.w; yc < maxH; yc += surface.w) {
 						for (uint32 xc = 0; xc < maxW; xc++) {
 							destPtr[(bx + xc) + yc] = block[xc + blockPos];
@@ -352,9 +352,6 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 width
 			}
 
 		}
-
-		height -= 4;
-
 	}
 }
 

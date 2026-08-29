@@ -127,8 +127,7 @@ bool PmvPlayer::load(const char* filename) {
 	_fd = new Common::File();
 	if (!_fd->open(Common::Path(filename, '\\'))) {
 		warning("Failed to open movie file '%s'", filename);
-		delete _fd;
-		return false;
+		goto error;
 	}
 
 	// expected IFF blocks at start of a PMV
@@ -137,15 +136,13 @@ bool PmvPlayer::load(const char* filename) {
 	readChunk(chunkType, chunkSize);	// "MOVE"
 	if (chunkType != MKTAG('M','O','V','E')) {
 		warning("Unexpected PMV video header, expected 'MOVE'");
-		delete _fd;
-		return false;
+		goto error;
 	}
 
 	readChunk(chunkType, chunkSize);	// "MHED"
 	if (chunkType != MKTAG('M','H','E','D')) {
 		warning("Unexpected PMV video header, expected 'MHED'");
-		delete _fd;
-		return false;
+		goto error;
 	}
 
 	frameDelay = _fd->readUint16LE();
@@ -192,6 +189,12 @@ bool PmvPlayer::load(const char* filename) {
 	frameNumber = 0;
 
 	return true;
+
+error:
+	delete _fd;
+	_fd = nullptr;
+
+	return false;
 }
 
 bool PmvPlayer::decode_frame() {
@@ -285,8 +288,6 @@ bool PmvPlayer::decode_frame() {
 									   (320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
 	}
 
-	frameNumber++;
-
 	return true;
 }
 
@@ -328,8 +329,8 @@ bool PmvPlayer::play(const char *filename) {
 			}
 
 			// delay until time has passed, then flip screen
-			if (frameNumber > 1) {
-				int32 delayTime = (frameNumber - 1) * frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+			if (frameNumber > 0) {
+				int32 delayTime = frameNumber * frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
 				if (delayTime < 0)
 					warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / frameDelay) + 1);
 				else
@@ -401,6 +402,8 @@ bool PmvPlayer::play(const char *filename) {
 				}
 			}
 #endif
+
+			frameNumber++;
 
 			// Check and handle events - user can press ESC to exit early
 			Common::Event event;

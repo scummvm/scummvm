@@ -78,6 +78,7 @@ void ScriptFunctions::stopSound() {
 			_vm->_res->freeResource(_soundResource);
 		_soundStarted = false;
 	}
+	_vm->_autoStopSound = false;
 }
 
 typedef Common::Functor2Mem<int16, int16*, int16, ScriptFunctions> ExternalScriptFunc;
@@ -235,10 +236,8 @@ int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
 
 	if (_vm->_screen->isScreenLocked())
 		return 0;
-	if (_vm->_autoStopSound) {
+	if (_vm->_autoStopSound)
 		stopSound();
-		_vm->_autoStopSound = false;
-	}
 	_vm->_screen->clearScreen();
 	return 0;
 }
@@ -280,7 +279,6 @@ int16 ScriptFunctions::sfSetVisualEffect(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 	int16 soundNum = argv[0];
-	_vm->_autoStopSound = false;
 	stopSound();
 	if (argc > 1) {
 		soundNum = argv[1];
@@ -743,7 +741,7 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
 	stopSound();
-	_vm->_autoStopSound = false;
+
 	return 0;
 }
 
@@ -1167,7 +1165,7 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 
 	if (_vm->_pmvPlayer->load(filename)) {
 		// set up a script interpreter for calling the sub
-		ScriptInterpreter *si = new ScriptInterpreter(_vm);
+		ScriptInterpreter si(_vm);
 		int16 playing = true;
 
 		int32 pmvStartTime = _vm->getTotalPlayTime();
@@ -1178,8 +1176,8 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 				break;
 
 			// delay until time has passed, then flip screen
-			if (_vm->_pmvPlayer->frameNumber > 1) {
-				int32 delayTime = (_vm->_pmvPlayer->frameNumber - 1) * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+			if (_vm->_pmvPlayer->frameNumber > 0) {
+				int32 delayTime = _vm->_pmvPlayer->frameNumber * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
 				if (delayTime < 0)
 					warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
 				else
@@ -1188,8 +1186,10 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 
 			// call subroutine each frame
 			//  pass the movie ID as the one arg
-			playing = si->runScript(argv[0], 1, &argv[1]);
+			playing = si.runScript(argv[0], 1, &argv[1]);
 			debug(3, "Call script return code: %04X (%d)", playing, playing);
+
+			_vm->_pmvPlayer->frameNumber++;
 		}
 
 		_vm->_pmvPlayer->close();
@@ -1206,22 +1206,22 @@ int16 ScriptFunctions::sfCursorXY(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfSoundFile(int16 argc, int16 *argv) {
 	// Loads an external sound file (i.e. not from PRJ) and plays it
+	stopSound();
 	const char *soundName = _vm->_dat->getObjectString(argv[0]);
 
 	debug(1, "Playing external sound '%s'", soundName);
 
-	Common::File *_fd = new Common::File();
-	if (!_fd->open(Common::Path(soundName, '\\'))) {
-		delete _fd;
+	Common::File _fd;
+	if (!_fd.open(Common::Path(soundName, '\\'))) {
 		warning("Failed to open sound file '%s", soundName);
 		return 0;
 	}
-	byte *srcBuf = new byte[_fd->size()];
-	_fd->read(srcBuf, _fd->size());
+	byte *srcBuf = new byte[_fd.size()];
+	_fd.read(srcBuf, _fd.size());
 
 	// wrap this in a SoundResource
 	SoundResource *soundRes = new SoundResource();
-	soundRes->load(srcBuf, _fd->size());
+	soundRes->load(srcBuf, _fd.size());
 
 	// safe to free source now
 	delete[] srcBuf;
