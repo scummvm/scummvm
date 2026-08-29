@@ -567,7 +567,7 @@ void Scene5120::runTongsPickup() {
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene5120TongsInventoryItem);
 	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(18, 1);
+	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
 }
 
 void Scene5120::runCocktailFillPillbox() {
