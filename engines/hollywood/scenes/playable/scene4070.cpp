@@ -113,7 +113,7 @@ const byte kScene4070TrophyBaseFrameMap[] = {
 	3, 2, 1, 0
 };
 
-const byte kScene4070TreatmentNearScriptFrameIndices[] = {
+const byte kScene4070TreatmentNearDescriptorIndices[] = {
 	0x0d, 0x0c, 0x0b, 0x0a, 9, 8, 7, 6, 5, 4, 3, 3, 3, 3, 2, 1,
 	0, 0, 0, 0
 };
@@ -713,8 +713,8 @@ void Scene4070::runSlimmingTreatmentSequence() {
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	const bool nearAnimationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TreatmentNearChunk,
-		kScene4070TreatmentNearDescriptorCount, kScene4070TrophyBaseFrameMap,
-		AnimationFrameRange(kScene4070TreatmentNearScriptFrameIndices,
+		kScene4070TreatmentNearDescriptorCount,
+		AnimationFrameRange(kScene4070TreatmentNearDescriptorIndices,
 			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentNearHook).unskippable());
 	_hideActiveActor = previousHideActiveActor;
 	if (!nearAnimationComplete) {
