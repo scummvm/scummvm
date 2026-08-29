@@ -35,14 +35,15 @@ const uint kScene4020ActorPaletteTableEntry = 0x00cc;
 const uint kScene4020Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4020SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4020FrameMillis = 75;
+const uint32 kScene4020AmbientCheckMillis = 250;
 const uint kScene4020IdleChunk = 5;
 const uint kScene4020IdleDescriptorCount = 0x1a;
-const uint kScene4020GateTransitionChunk = 6;
-const uint kScene4020GateTransitionDescriptorCount = 0x0d;
-const uint kScene4020KeyMechanismChunk = 7;
-const uint kScene4020KeyMechanismDescriptorCount = 0x10;
-const byte kScene4020KeyItem = 0x20;
-const byte kScene4020KeyMechanismHook = 1;
+const uint kScene4020GrateTransitionChunk = 6;
+const uint kScene4020GrateTransitionDescriptorCount = 0x0d;
+const uint kScene4020SkullcrackerChunk = 7;
+const uint kScene4020SkullcrackerDescriptorCount = 0x10;
+const byte kScene4020SkullcrackerItem = 0x20;
+const byte kScene4020SkullcrackerHook = 1;
 
 const byte kScene4020ReturnFromD03FrameMap[] = {
 	12, 11, 10, 9, 8, 7, 6, 5, 4, 3,
@@ -54,7 +55,7 @@ const byte kScene4020EnterD03FrameMap[] = {
 	9, 10, 11, 12
 };
 
-const byte kScene4020KeyMechanismFrameMap[] = {
+const byte kScene4020SkullcrackerFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 12, 13, 14, 15, 8, 9, 10,
 	11, 12, 13, 14, 15, 8, 9, 10, 11, 12,
@@ -103,6 +104,19 @@ void Scene4020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene4020::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
+bool Scene4020::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene4020::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+}
+
 void Scene4020::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene4020ReturnState)
 		runEntryFromScene4030();
@@ -134,7 +148,7 @@ bool Scene4020::dispatchCustomSceneAction(uint16 handlerId) {
 		if (_vm->gameState().scene4020GateUnlocked)
 			beginStaticSecondarySpeechLine(0x0b, 0);
 		else
-			beginStaticSecondarySpeechLine(0x13, 0);
+			beginStaticSecondarySpeechLine(0x13, (byte)_random.getRandomNumber(1));
 		return true;
 	case 305: // Mirar puerta/mecanismo (look at door/mechanism).
 		beginSecondarySpeechLine(4, 0);
@@ -145,8 +159,8 @@ bool Scene4020::dispatchCustomSceneAction(uint16 handlerId) {
 	case 307: // Salir por el foso hacia exterior del castillo (exit moat to castle exterior).
 		_vm->gameState().mainFlowStateId = kScene4010ReturnState;
 		return true;
-	case 308: // Usar llave item 0x20 con mecanismo/puerta (use key item 0x20 with mechanism/door).
-		useKeyOnGateMechanism();
+	case 308: // Usar el revienta-craneos para mantener abierta la reja (use the skullcracker to hold the grate open).
+		useSkullcrackerOnGrate();
 		return true;
 	default:
 		return false;
@@ -191,7 +205,7 @@ bool Scene4020::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 }
 
 void Scene4020::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene4020KeyMechanismHook)
+	if (hookId != kScene4020SkullcrackerHook)
 		return;
 
 	if (frame == 9)
@@ -201,7 +215,14 @@ void Scene4020::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 AmbientAudioProfile Scene4020::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0b, 3, 20, 1, 0x0b, 5, 100, 50);
+	AmbientAudioProfile profile;
+	profile.checkMillis = kScene4020AmbientCheckMillis;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicProbabilityModulus = 50;
+	profile.musicVolumePercent = 100;
+	return profile;
 }
 
 void Scene4020::initializeIdleLayer() {
@@ -235,7 +256,8 @@ void Scene4020::setActiveActorPose(int x, int y, byte facing) {
 void Scene4020::runEntryFromScene4010() {
 	setActiveActorPose(0x50, 0x173, 2);
 	drawPlayableComposite();
-	presentFrame();
+	if (fadePaletteFromBlack())
+		return;
 
 	walkActiveActorTo(0xce, 0x195, 0xff, 0, false);
 	if (!_vm->gameState().scene4020FallReactionLineSeen) {
@@ -247,8 +269,21 @@ void Scene4020::runEntryFromScene4010() {
 void Scene4020::runEntryFromScene4030() {
 	setActiveActorPose(0x265, 0x117, 4);
 
-	runActorReplacement(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
-		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap), kScene4020FrameMillis));
+	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(kScene4020GrateTransitionChunk,
+		kScene4020GrateTransitionDescriptorCount, kScene4020ReturnFromD03FrameMap,
+		ARRAYSIZE(kScene4020ReturnFromD03FrameMap));
+	_actionOverlayPlayer.setFrame(0);
+	drawPlayableComposite();
+	const bool fadeInterrupted = fadePaletteFromBlack();
+	if (!fadeInterrupted) {
+		playAnimationFrames(_actionOverlayPlayer,
+			AnimationFrameRange(1, ARRAYSIZE(kScene4020ReturnFromD03FrameMap) - 1,
+				kScene4020FrameMillis));
+	}
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+	if (fadeInterrupted || Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
 	setActiveActorPose(0x265, 0x117, 5);
 	walkActiveActorTo(0x265, 0x117, 4, 0, false);
 }
@@ -259,28 +294,28 @@ void Scene4020::runExitToScene4030() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
+	runActorReplacement(ActionOverlaySpec(kScene4020GrateTransitionChunk, kScene4020GrateTransitionDescriptorCount,
 		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap), kScene4020FrameMillis)
 		.noRedrawAtEnd()
 		.startAt(1));
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;
 }
 
-void Scene4020::useKeyOnGateMechanism() {
+void Scene4020::useSkullcrackerOnGrate() {
 	if (_vm->gameState().scene4020GateUnlocked) {
 		beginSecondarySpeechLine(6, 0);
 		return;
 	}
-	if (!hasInventoryItem(kScene4020KeyItem)) {
+	if (!hasInventoryItem(kScene4020SkullcrackerItem)) {
 		beginSecondarySpeechLine(5, 0);
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(kScene4020KeyMechanismChunk, kScene4020KeyMechanismDescriptorCount,
-		kScene4020KeyMechanismFrameMap, ARRAYSIZE(kScene4020KeyMechanismFrameMap), kScene4020FrameMillis)
-		.hookEveryFrame(kScene4020KeyMechanismHook));
+	runActorReplacement(ActionOverlaySpec(kScene4020SkullcrackerChunk, kScene4020SkullcrackerDescriptorCount,
+		kScene4020SkullcrackerFrameMap, ARRAYSIZE(kScene4020SkullcrackerFrameMap), kScene4020FrameMillis)
+		.hookEveryFrame(kScene4020SkullcrackerHook));
 	_soundBank0.stop();
-	removeInventoryItem(kScene4020KeyItem);
+	removeInventoryItem(kScene4020SkullcrackerItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4020GateUnlocked = true;
 	beginSecondarySpeechLine(6, 0);
