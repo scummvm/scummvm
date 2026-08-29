@@ -146,6 +146,7 @@ public:
 	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleOtherEvent(const Common::Event &evt) {}
+	virtual void handleTooltipUpdate(int x, int y) {}
 	virtual void handleTickle() {}
 
 	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */
