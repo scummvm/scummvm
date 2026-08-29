@@ -66,6 +66,8 @@ public:
 	void setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing);
 	void setVerbActionHandlerByGlobalRecordIndex(uint globalRecordIndex, uint16 actionHandlerId);
 	void setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode);
+	void setRelationActionHandler(byte inventoryItemId, byte sceneItemId,
+		byte relationMode, uint16 actionHandlerId);
 	void setRelationMovementMode(byte inventoryItemId, byte sceneItemId, byte relationMode, uint16 movementMode);
 	Common::String itemName(byte itemId) const;
 

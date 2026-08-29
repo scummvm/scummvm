@@ -71,12 +71,14 @@ private:
 	void runMineKeyPickup();
 	void runSpecialMineExitWithMagneticPillbox();
 	void runDowsingRodSwap();
+	void runRestoredDowsingRodOffer();
 	void initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setKarlDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
 		byte responseFrameIndex, byte disableAfterUse) const;
 	bool applyKarlDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const;
 	void beginKarlSpeechLine(byte frameIndex);
+	void beginKarlRestoredDowsingRodReply();
 	void beginKarlMiningSpeechLine(byte frameIndex);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void remapSceneColors(byte sourceColor, byte itemId);

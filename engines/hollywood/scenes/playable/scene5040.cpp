@@ -51,9 +51,11 @@ const byte kScene5040KarlPrimaryRow = 99;
 const byte kScene5040DialogueNoResponseFrame = 0xff;
 const uint kScene5040KarlDialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kScene5040MagneticBombPillboxItem = 0x0b;
+const byte kScene5040DowsingRodItem = 0x37;
 const byte kScene5040PatchedSockItem = 0x49;
 const byte kScene5040KarlPrizeItem = 0x4a;
 const byte kScene5040KeyItem = 0x4b;
+const byte kScene5040KarlSceneItem = 4;
 
 const byte kScene5040AmbientSoundVolumes[] = {
 	10, 10, 10, 2, 10, 10, 10, 100
@@ -299,8 +301,8 @@ bool Scene5040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 319: // Usar varita con varita del minero: exchange the rods while Karl is distracted.
 		runDowsingRodSwap();
 		return true;
-	case 320: // Ofrecer la varita al minero: dormant original callback retained for data variants.
-		beginSecondarySpeechLine(16, 0);
+	case 320: // Dar varita zahorí a Karl: restored offer before the swap or refusal afterward.
+		runRestoredDowsingRodOffer();
 		return true;
 	default:
 		return false;
@@ -379,7 +381,11 @@ bool Scene5040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
 
 	rebuildWalkablePaletteMask();
-	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
+		return true;
+	if (_vm->restoredContentEnabled())
+		_hotspots.setRelationActionHandler(kScene5040DowsingRodItem,
+			kScene5040KarlSceneItem, 2, 320);
 	return true;
 }
 
@@ -886,6 +892,25 @@ void Scene5040::runDowsingRodSwap() {
 	beginSecondarySpeechLine(15, 4);
 }
 
+void Scene5040::runRestoredDowsingRodOffer() {
+	if (!_vm->restoredContentEnabled()) {
+		dispatchGenericSceneAction(13);
+		return;
+	}
+
+	if (_vm->gameState().dowsingRodKarlExchangeState == 2) {
+		beginSecondarySpeechLine(16, 2);
+		return;
+	}
+
+	beginSecondarySpeechLine(16, 0);
+	settleKarlForConversation();
+	const bool previousSuspendKarlIdle = _suspendKarlIdle;
+	_suspendKarlIdle = true;
+	beginKarlRestoredDowsingRodReply();
+	_suspendKarlIdle = previousSuspendKarlIdle;
+}
+
 void Scene5040::initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
 	records.clear();
 	records.resize(kScene5040KarlDialogueChoiceRecordCount);
@@ -948,6 +973,11 @@ bool Scene5040::applyKarlDialogueTransition(const DialogueChoiceRecord &record, 
 
 void Scene5040::beginKarlSpeechLine(byte frameIndex) {
 	beginPrimarySpeechLineWithAnimationGroup(kScene5040KarlPrimaryRow, frameIndex,
+		0x1b7, 0x067, 0x20, 0x30, 0x3f, kScene5040KarlDialogueSpeechGroup);
+}
+
+void Scene5040::beginKarlRestoredDowsingRodReply() {
+	beginPrimarySpeechLineWithAnimationGroup(16, 1,
 		0x1b7, 0x067, 0x20, 0x30, 0x3f, kScene5040KarlDialogueSpeechGroup);
 }
 
