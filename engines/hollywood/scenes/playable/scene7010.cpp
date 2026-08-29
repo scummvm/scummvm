@@ -298,17 +298,19 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 		_activeActorFacing = kScene7010SueEntryFacing;
 		_activeActorCel = cels[frame];
 		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		const uint32 frameStartMillis = g_system->getMillis();
 		drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
 		presentFrame();
 
-		uint32 waited = 0;
-		while (waited < kScene7010ActorPathFrameMillis && !_skipRequested && !Engine::shouldQuit()) {
+		while (!_skipRequested && !Engine::shouldQuit()) {
 			if (pollEvents(true))
 				return;
-			const uint32 slice = MIN<uint32>(10, kScene7010ActorPathFrameMillis - waited);
+			const uint32 elapsed = g_system->getMillis() - frameStartMillis;
+			if (elapsed >= kScene7010ActorPathFrameMillis)
+				break;
+			const uint32 slice = MIN<uint32>(10, kScene7010ActorPathFrameMillis - elapsed);
 			g_system->delayMillis(slice);
-			waited += slice;
 		}
 
 		const uint32 now = g_system->getMillis();
@@ -344,16 +346,8 @@ void Scene7010::runJuniorSpeech() {
 	const uint32 speechMillis = speechStarted ?
 		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 		MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
-	uint32 elapsed = 0;
 	_secondaryActorTimerAccumulator = kScene7010SecondaryActorFrameMillis - kScene7010SpeechPollMillis;
-	drawPlayableComposite();
-	presentFrame();
-
-	while ((_speech.isPlaying() || elapsed < speechMillis) && !_skipRequested && !Engine::shouldQuit()) {
-		if (waitSceneMillis(kScene7010SpeechPollMillis))
-			break;
-		elapsed += kScene7010SpeechPollMillis;
-	}
+	waitForSpeechOrDelay(speechMillis, false);
 
 	clearSpeechOverlay();
 	_speech.stop();

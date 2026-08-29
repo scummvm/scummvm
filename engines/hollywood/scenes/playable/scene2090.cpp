@@ -432,14 +432,7 @@ void Scene2090::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {
-	uint32 elapsed = 0;
-	while (!_vm->isSceneRestartRequested() &&
-			(_speech.isPlaying() || elapsed < fallbackMillis)) {
-		const uint32 slice = _speech.isPlaying() ? 50 : MIN<uint32>(50, fallbackMillis - elapsed);
-		if (waitSceneMillis(slice))
-			break;
-		elapsed += slice;
-	}
+	waitForSpeechOrDelay(fallbackMillis, false);
 
 	_speech.stop();
 	clearSpeechOverlay();

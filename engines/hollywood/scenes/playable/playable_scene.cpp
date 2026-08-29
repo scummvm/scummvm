@@ -69,6 +69,7 @@ const uint16 kViewportScrollLeftThreshold = 0x13c;
 const uint16 kViewportScrollStep = 2;
 const uint32 kSueTapeFrameMillis = 100;
 const uint32 kPaletteFadeStepMillis = 10;
+const uint32 kBlockingSceneMaxFrameDeltaMillis = 250;
 
 // Five base shades followed by the two alternate shade sets used by actor sprites.
 const byte kActorPaletteAdjustmentSources[] = {
@@ -1858,24 +1859,30 @@ bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 row
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
-		uint32 elapsed = 0;
+		const uint32 startMillis = g_system->getMillis();
+		uint32 lastMillis = startMillis;
 		bool dismissed = false;
 		presentFrame();
 
 		while (!dismissed && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			const uint32 elapsed = g_system->getMillis() - startMillis;
 			if (!_speech.isPlaying() && elapsed >= duration)
 				break;
 			if (pollFullscreenMediaEvents(dismissed))
 				break;
 
-			const uint32 slice = 10;
-			g_system->delayMillis(slice);
-			elapsed += slice;
-			animationMillis += slice;
-			if (animationMillis >= kSueTapeFrameMillis) {
-				animationMillis %= kSueTapeFrameMillis;
+			g_system->delayMillis(10);
+			const uint32 now = g_system->getMillis();
+			animationMillis += MIN<uint32>(now - lastMillis, kBlockingSceneMaxFrameDeltaMillis);
+			lastMillis = now;
+			bool animationChanged = false;
+			while (animationMillis >= kSueTapeFrameMillis) {
+				animationMillis -= kSueTapeFrameMillis;
 				media.drawSueTapeFrame(animationFrame);
 				animationFrame = (byte)((animationFrame + 1) % InventoryMediaPlayer::kSueTapeFrameCount);
+				animationChanged = true;
+			}
+			if (animationChanged) {
 				_sceneFramebuffer.copyRectToSurface(media.framebuffer(), 0, 0,
 					Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 				presentFrame();
@@ -2232,17 +2239,32 @@ void PlayableScene::primarySpeechAnimationRestored(byte animationGroup, byte bas
 }
 
 bool PlayableScene::waitSceneMillis(uint32 millis, bool allowSkip) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+	if (millis == 0)
+		return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+
+	// Presentation may block, so blocking animation must use elapsed wall time.
+	const uint32 startMillis = g_system->getMillis();
+	uint32 lastMillis = startMillis;
+	bool framePresented = false;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (pollEvents(allowSkip))
 			return true;
 
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		advanceGameplayLoop(slice);
+		const uint32 now = g_system->getMillis();
+		const uint32 delta = now - lastMillis;
+		lastMillis = now;
+		advanceGameplayLoop(MIN<uint32>(delta, kBlockingSceneMaxFrameDeltaMillis));
+
+		if (framePresented && now - startMillis >= millis)
+			break;
+
 		drawPlayableComposite();
 		presentFrame();
-		remaining -= slice;
+		framePresented = true;
+
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (elapsed < millis)
+			g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
 	}
 
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
@@ -2707,8 +2729,9 @@ void PlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actorWor
 }
 
 bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
-	uint32 elapsed = 0;
+	const uint32 startMillis = g_system->getMillis();
 	while (!Engine::shouldQuit()) {
+		const uint32 elapsed = g_system->getMillis() - startMillis;
 		const bool speechActive = _speech.isPlaying();
 		if (!speechActive && elapsed >= fallbackMillis)
 			break;
@@ -2718,7 +2741,6 @@ bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrim
 			return true;
 		if (animatePrimaryLeft && !_primarySpeechOverlay.visible)
 			break;
-		elapsed += slice;
 	}
 
 	return Engine::shouldQuit();
