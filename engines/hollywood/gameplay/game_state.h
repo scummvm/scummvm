@@ -316,7 +316,7 @@ struct GameplayState {
 		scene4090FinalCutsceneCompleted = 0;
 		scene4090FinalCutsceneDialogueSeen = false;
 		scene4100EntryLineSeen = false;
-		scene4110LetterTaken = false;
+		scene4110StrawTaken = false;
 		scene4110BridgeOpened = false;
 		seenScene5010EntryLine = false;
 		scene5010MineTransportState = 0;
@@ -1087,7 +1087,7 @@ struct GameplayState {
 	byte scene4090FinalCutsceneCompleted;
 	bool scene4090FinalCutsceneDialogueSeen;
 	bool scene4100EntryLineSeen;
-	bool scene4110LetterTaken;
+	bool scene4110StrawTaken;
 	bool scene4110BridgeOpened;
 	bool seenScene5010EntryLine;
 	byte scene5010MineTransportState;
