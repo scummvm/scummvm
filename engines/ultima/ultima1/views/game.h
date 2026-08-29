@@ -19,11 +19,10 @@
  *
  */
 
-#ifndef ULTIMA1_VIEWS_OVERWORLD_H
-#define ULTIMA1_VIEWS_OVERWORLD_H
+#ifndef ULTIMA1_VIEWS_GAME_H
+#define ULTIMA1_VIEWS_GAME_H
 
 #include "ultima/ultima1/views/dialog.h"
-#include "ultima/ultima1/views/overworld_map.h"
 #include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/views/stats.h"
 
@@ -32,19 +31,18 @@ namespace Ultima1 {
 namespace Views {
 
 /**
- * The main in-game screen. Draws the outer frame around the map
- * viewport, and hosts the map, stats, and command/message log
- * sub-views. For now, the command/message log area is just left blank.
+ * The main in-game screen. Draws the outer frame, and contains the shared
+ * Commands area and Stats display. Only the actual map/dungeon area changes.
  */
-class Overworld : public Dialog {
+class Game : public Dialog {
 private:
-	OverworldMap _map;
 	Commands _commands;
 	Stats _stats;
+	UIElement *_map = nullptr;
 
 public:
-	Overworld();
-	~Overworld() override {}
+	Game();
+	~Game() override;
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;

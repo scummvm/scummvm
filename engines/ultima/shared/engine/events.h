@@ -26,6 +26,7 @@
 #include "common/random.h"
 #include "common/stack.h"
 #include "graphics/screen.h"
+#include "ultima/shared/engine/array.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/gfx/gfx_surface.h"
 
@@ -87,7 +88,7 @@ private:
 	int _timeoutCtr = 0;
 protected:
 	UIElement *_parent;
-	Common::Array<UIElement *> _children;
+	Array<UIElement *> _children;
 	Common::Rect _innerBounds;
 	Bounds _bounds;
 	bool _needsRedraw = true;

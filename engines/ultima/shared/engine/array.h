@@ -19,41 +19,32 @@
  *
  */
 
-#ifndef ULTIMA1_VIEWS_LOCATION_H
-#define ULTIMA1_VIEWS_LOCATION_H
+#ifndef ULTIMA_SHARED_ENGINE_ARRAY_H
+#define ULTIMA_SHARED_ENGINE_ARRAY_H
 
-#include "ultima/ultima1/views/dialog.h"
-#include "ultima/ultima1/views/location_map.h"
-#include "ultima/ultima1/views/commands.h"
-#include "ultima/ultima1/views/stats.h"
+#include "common/array.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Views {
+namespace Shared {
 
-/**
- * The main in-game screen. Draws the outer frame around the map
- * viewport, and hosts the map, stats, and command/message log
- * sub-views. For now, the command/message log area is just left blank.
- */
-class Location : public Dialog {
-private:
-	LocationMap _map;
-	Commands _commands;
-	Stats _stats;
-
+template<class T>
+class Array : public Common::Array<T> {
 public:
-	Location();
-	~Location() override {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-	void draw() override;
+	int indexOf(const T elem) const {
+		for (uint i = 0; i < this->size(); ++i) {
+			if (this->operator[](i) == elem)
+				return i;
+		}
+		return -1;
+	}
+	void remove(T elem) {
+		int idx = this->indexOf(elem);
+		if (idx != -1)
+			this->remove_at(idx);
+	}
 };
 
-} // namespace Views
-} // namespace Ultima1
+} // namespace Shared
 } // namespace Ultima
 
 #endif

@@ -159,20 +159,23 @@ void Map::load(int mapNum) {
 
 	// Set up the correct logic to use
 	delete _G(logic);
+
+	g_engine->replaceView("Game");
 	if (mapNum >= 49) {
 		_G(logic) = new Logic::DungeonLogic();
-		g_engine->replaceView("Dungeon");
+		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "DUNGEON"));
 	} else if (mapNum == MAP_OVERWORLD) {
 		_G(logic) = new Logic::OverworldLogic();
-		g_engine->replaceView("Overworld");
+		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "OVERWORLD"));
+	} else  if (mapNum < 33) {
+		_G(logic) = new Logic::CityLogic();
+		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "CITY"));
+	} else if (mapNum < 41) {
+		_G(logic) = new Logic::CastleLogic();
+		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "CASTLE"));
 	} else {
-		if (mapNum < 33)
-			_G(logic) = new Logic::CityLogic();
-		else if (mapNum < 41)
-			_G(logic) = new Logic::CastleLogic();
-		else
-			_G(logic) = new Logic::PillarLogic();
-		g_engine->replaceView("Location");
+		_G(logic) = new Logic::PillarLogic();
+		g_engine->send("Game", Shared::Messages::GameMessage("MAP", "PILLAR"));
 	}
 }
 

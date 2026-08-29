@@ -65,24 +65,6 @@ void Dialog::drawFrame() {
 		s.drawLine(NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, NOTCH_POINTS[i].x, NOTCH_POINTS[i].y, COLOR_NOTCH);
 }
 
-void Dialog::drawGameDividers() {
-	auto s = getSurface();
-
-	// Erase the frame's bottom section
-	s.fillRect(Common::Rect(0, 153, 320, 200), 0);
-
-	// Horizontal divider separating the map viewport (above) from the command/message log and stats panel
-	s.fillRect(Common::Rect(0, 153, 320, 159), COLOR_BORDER);
-	s.drawLine(7, 152, 312, 152, COLOR_EDGE);
-	s.drawLine(0, 159, 240, 159, COLOR_EDGE);
-	s.drawLine(247, 159, 319, 159, COLOR_EDGE);
-
-	// Vertical divider between the command/message log (left) and the stats panel (right)
-	s.fillRect(Common::Rect(241, 153, 247, 200), COLOR_BORDER);
-	s.drawLine(240, 159, 240, 199, COLOR_EDGE);
-	s.drawLine(247, 159, 247, 199, COLOR_EDGE);
-}
-
 } // namespace Views
 } // namespace Ultima1
 } // namespace Ultima
