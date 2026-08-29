@@ -303,7 +303,7 @@ struct GameplayState {
 		scene4070EntryLineSeen = false;
 		scene4070TrophyBaseOpened = false;
 		scene4070FrankiePartGranted = 0;
-		scene4070SlimmingTreatmentApplied = false;
+		scene4070DraculaDialogueIntroSeen = false;
 		scene4080GwendolynState = 1;
 		scene4080GwendolynStateTransition = 0;
 		scene4080CoffinShiftedState = 0;
@@ -1074,7 +1074,7 @@ struct GameplayState {
 	bool scene4070EntryLineSeen;
 	bool scene4070TrophyBaseOpened;
 	byte scene4070FrankiePartGranted;
-	bool scene4070SlimmingTreatmentApplied;
+	bool scene4070DraculaDialogueIntroSeen;
 	byte scene4080GwendolynState;
 	byte scene4080GwendolynStateTransition;
 	byte scene4080CoffinShiftedState;

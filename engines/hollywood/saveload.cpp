@@ -354,7 +354,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene4070EntryLineSeen);
 	syncStateBool(s, state.scene4070TrophyBaseOpened);
 	s.syncAsByte(state.scene4070FrankiePartGranted);
-	syncStateBool(s, state.scene4070SlimmingTreatmentApplied);
+	syncStateBool(s, state.scene4070DraculaDialogueIntroSeen);
 	s.syncAsByte(state.scene4080GwendolynState);
 	s.syncAsByte(state.scene4080GwendolynStateTransition);
 	s.syncAsByte(state.scene4080CoffinShiftedState);

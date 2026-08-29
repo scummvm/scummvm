@@ -54,6 +54,8 @@ const uint16 kTravelDestinationStateIds[] = { 1000, 2000, 3000, 4000, 5000, 6000
 const uint16 kTravelSameAreaStateIds[] = { 0x03f4, 0x07ee, 0x0bc2, 0x0faa, 0x1392, 0x177a, 0x1f4a };
 const byte kEgyptChapterId = 2;
 const uint16 kEgyptChapterEntryState = 2000;
+const byte kCastleChapterId = 4;
+const uint16 kCastleChapterEntryState = 4000;
 const uint16 kTravelInterludeState = 9140;
 const uint32 kTravelUnlockTransitionMillis = 5000;
 const byte kTravelScreenNormalRamp[] = {
@@ -215,7 +217,13 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 			GameplayState &state = _vm->gameState();
 			const byte destinationId = state.travelScreenSlotIds[requestedSlot];
 			selectedStateId = destinationState(destinationId, currentChapterId);
-			if (currentChapterId != kEgyptChapterId &&
+			if (currentChapterId != kCastleChapterId &&
+					selectedStateId == kCastleChapterEntryState &&
+					state.scene4070DraculaStage == 2) {
+				state.scene4070DraculaStage = 3;
+				state.scene9140ReturnStateId = kCastleChapterEntryState;
+				selectedStateId = kTravelInterludeState;
+			} else if (currentChapterId != kEgyptChapterId &&
 					selectedStateId == kEgyptChapterEntryState &&
 					state.scene2100MummyBranchState == 1 && state.scene2110TreasureGranted) {
 				state.scene2100MummyBranchState = 2;
