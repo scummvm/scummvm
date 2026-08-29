@@ -34,10 +34,13 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
@@ -45,13 +48,16 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	bool bridgeOpened() const;
+	bool revealEntryPose(int x, int y, byte facing);
 	void resetBackgroundLayer();
 	void advanceBackgroundLayer(uint32 delta);
 	void advanceBackgroundTick();
+	void resetAmbientSounds();
+	void advanceAmbientSounds(uint32 delta);
 	void updateAmbientLoopSound();
 	void beginConditionalSpeechLine(uint16 falseRow, byte falseFrame, uint16 trueRow, byte trueFrame);
 	void runExitToScene4010();
-	void takeLetter();
+	void takeStraw();
 	void runAlternateStateSequence();
 	void runBridgeOpeningOverlay();
 	void patchActionMovementModes();
@@ -64,8 +70,9 @@ private:
 	byte _backgroundFrameInSequence;
 	byte _backgroundRepeatCounter;
 	bool _bridgeSequenceActive;
-	SoundBank0Player _ambientLoopSound;
+	uint32 _ambientSoundTimerAccumulator;
 	byte _lastAmbientLoopCue;
+	byte _previousAmbientSoundCue;
 };
 
 } // End of namespace Hollywood

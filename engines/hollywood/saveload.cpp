@@ -367,7 +367,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4090FinalCutsceneCompleted);
 	syncStateBool(s, state.scene4090FinalCutsceneDialogueSeen);
 	syncStateBool(s, state.scene4100EntryLineSeen);
-	syncStateBool(s, state.scene4110LetterTaken);
+	syncStateBool(s, state.scene4110StrawTaken);
 	syncStateBool(s, state.scene4110BridgeOpened);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
