@@ -144,6 +144,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 }
 
 ListWidget::~ListWidget() {
+	unregisterTickleWidget(this);
 	delete _fluidScroller;
 }
 
@@ -368,7 +369,13 @@ void ListWidget::handleTickle() {
 
 	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
+	} else {
+		unregisterTickleWidget(this);
 	}
+}
+
+void ListWidget::cancelTickle() {
+	_fluidScroller->stopAnimation();
 }
 
 void ListWidget::applyScrollPos() {
@@ -399,8 +406,10 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (button == 1 || button == 2) {
-		if (_isMouseDown && button == 1 && _isDragging)
+		if (_isMouseDown && button == 1 && _isDragging) {
 			_fluidScroller->startFling();
+			registerTickleWidget(this);
+		}
 
 		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			// Perform selection
@@ -468,6 +477,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	_fluidScroller->handleMouseWheel(direction);
+	registerTickleWidget(this);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {

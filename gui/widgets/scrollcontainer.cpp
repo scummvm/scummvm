@@ -39,7 +39,7 @@ ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::Stri
 }
 
 void ScrollContainerWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
 	_type = kScrollContainerWidget;
 	_backgroundType = ThemeEngine::kWidgetBackgroundPlain;
 	_verticalScroll = new ScrollBarWidget(this, _w, 0, 16, _h);
@@ -58,6 +58,7 @@ void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	_fluidScroller->handleMouseWheel(direction);
+	registerTickleWidget(this);
 }
 
 void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -102,8 +103,15 @@ void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void ScrollContainerWidget::handleTickle() {
-	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
 		applyScrollPos();
+	} else {
+		unregisterTickleWidget(this);
+	}
+}
+
+void ScrollContainerWidget::cancelTickle() {
+	_fluidScroller->stopAnimation();
 }
 
 void ScrollContainerWidget::applyScrollPos() {
@@ -121,8 +129,10 @@ void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCou
 	Widget *child = _childUnderMouse;
 	bool isDragging = _isDragging;
 
-	if (_isMouseDown && _isDragging)
+	if (_isMouseDown && _isDragging) {
 		_fluidScroller->startFling();
+		registerTickleWidget(this);
+	}
 
 	_mouseDownY = _mouseDownStartY = 0;
 	_isMouseDown = false;
@@ -172,6 +182,7 @@ void ScrollContainerWidget::recalc() {
 
 
 ScrollContainerWidget::~ScrollContainerWidget() {
+	unregisterTickleWidget(this);
 	delete _fluidScroller;
 }
 

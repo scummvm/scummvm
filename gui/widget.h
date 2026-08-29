@@ -149,6 +149,8 @@ public:
 	virtual void handleTooltipUpdate(int x, int y) {}
 	virtual void handleTickle() {}
 
+	virtual void cancelTickle() {}
+
 	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */
 	virtual void markAsDirty();
 
@@ -161,8 +163,6 @@ public:
 
 	uint32 getType() const { return _type; }
 
-	// Check if the widget or its children contain a visible scrollbar
-	virtual bool hasVisibleScrollBar() const;
 	void setFlags(int flags);
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
@@ -198,6 +198,10 @@ protected:
 	virtual Widget *findWidget(int x, int y) { return this; }
 
 	void releaseFocus() override { assert(_boss); _boss->releaseFocus(); }
+
+	// Tickles are handled in Dialog
+	void registerTickleWidget(Widget *widget) override { assert(_boss); _boss->registerTickleWidget(widget); }
+	void unregisterTickleWidget(Widget *widget) override { assert(_boss); _boss->unregisterTickleWidget(widget); }
 
 	// By default, delegate unhandled commands to the boss
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override { assert(_boss); _boss->handleCommand(sender, cmd, data); }

@@ -180,6 +180,8 @@ public:
 	bool handleKeyUp(Common::KeyState state) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
+	void cancelTickle() override;
+
 	void reflowLayout() override;
 
 	bool wantsFocus() override { return true; }

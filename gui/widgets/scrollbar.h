@@ -71,7 +71,6 @@ public:
 	void handleMouseEntered(int button) override	{ setFlags(WIDGET_HILITED); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
 	void handleTickle() override;
-	bool wantsFocus() override { return true; }
 
 	// FIXME - this should be private, but then we also have to add accessors
 	// for _numEntries, _entriesPerPage and _currentPos. This again leads to the question:
