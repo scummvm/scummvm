@@ -151,7 +151,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random(Common::String::format("scene%u", config.sceneId)),
 		_animationPlayer(*this),
-		_speechController(vm->getLanguage(), !vm->isDemo()),
+		_speechController(vm->getLanguage(), vm->hasSpeechData()),
 		_speech(_speechController.player),
 		_speechOverlay(_speechController.secondaryOverlay),
 		_primarySpeechOverlay(_speechController.primaryOverlay),
@@ -446,6 +446,10 @@ uint PlayableScene::actorPathStepDeltaTableSize() const {
 	return _config.actorPathStepDeltaTableSize;
 }
 
+uint PlayableScene::framebufferResourceChunkIndex() const {
+	return 0;
+}
+
 byte PlayableScene::walkablePaletteMaxRegion() const {
 	return _config.walkablePaletteMaxRegion;
 }
@@ -487,8 +491,8 @@ bool PlayableScene::shouldConvertSavedFramebufferFF() const {
 }
 
 bool PlayableScene::shouldLoadArenaChunk(uint index) const {
-	(void)index;
-	return true;
+	// Demo archives omit chunks for branches disabled by their preset state.
+	return !_vm->isDemo() || _sceneChunkTable.isValidChunk(index);
 }
 
 bool PlayableScene::shouldRunExitSideEffectsAfterLoop() const {
@@ -697,13 +701,18 @@ bool PlayableScene::load() {
 		return false;
 	}
 
-	if (!_resources.validateRequiredChunks(archiveName, sceneDebugName(), sceneInitialRequiredChunkCount())) {
+	const uint framebufferChunkIndex = framebufferResourceChunkIndex();
+	const uint requiredChunkCount = _vm->isDemo() ?
+		MIN<uint>(sceneInitialRequiredChunkCount(), 5) : sceneInitialRequiredChunkCount();
+	if (!_resources.validateRequiredChunks(archiveName, sceneDebugName(),
+			requiredChunkCount, framebufferChunkIndex)) {
 		warning("%s load failed: %s required chunk validation", sceneDebugName(), archiveName);
 		return false;
 	}
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize)) {
-		warning("%s load failed: %s chunk 0 framebuffer", sceneDebugName(), archiveName);
+	if (!loadFixedChunk(framebufferChunkIndex, _baseFramebuffer, kFrameBufferSize)) {
+		warning("%s load failed: %s chunk %u framebuffer", sceneDebugName(), archiveName,
+			framebufferChunkIndex);
 		return false;
 	}
 	if (!loadFixedChunk(1, _paletteResource, kPaletteSize)) {

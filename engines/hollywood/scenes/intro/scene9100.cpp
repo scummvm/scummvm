@@ -85,7 +85,7 @@ const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondary
 Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
-		_speech(vm->getLanguage(), !vm->isDemo()),
+		_speech(vm->getLanguage(), vm->hasSpeechData()),
 		_effectSound(),
 		_clockSound(),
 		_ambientSound(),

@@ -87,6 +87,7 @@ struct Scene4010ReleaseProfile {
 	byte secondaryAmbientProbabilityModulus;
 	uint32 secondaryAmbientCheckMillis;
 	uint32 paletteCycleMillis;
+	byte framebufferChunkIndex;
 	bool usesReducedFirstEntry;
 	bool usesDirectRightEntry;
 	bool usesDemoThrownItemLayout;
@@ -94,22 +95,22 @@ struct Scene4010ReleaseProfile {
 
 const Scene4010ReleaseProfile kScene4010FullGameProfile = {
 	kScene4010ExitState4110, kScene4010ExitState4020, kScene4010PillboxItem,
-	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010PaletteCycleMillis, false, false, false
+	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010PaletteCycleMillis, 0, false, false, false
 };
 
 const Scene4010ReleaseProfile kScene4010FirstEditionProfile = {
 	kScene4010ExitState4110, kScene4010ExitState4020, kScene4010PillboxItem,
-	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010FirstEditionPaletteCycleMillis, false, false, false
+	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010FirstEditionPaletteCycleMillis, 0, false, false, false
 };
 
 const Scene4010ReleaseProfile kScene4010SpanishDemoProfile = {
 	kScene4010DemoExitState4100, kScene4010DemoExitState4030, kScene4010DemoLeverItem,
-	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010PaletteCycleMillis, false, true, true
+	0x0c, 8, 25, kScene4010AmbientCheckMillis, kScene4010PaletteCycleMillis, 5, false, true, true
 };
 
 const Scene4010ReleaseProfile kScene4010ItalianDemoProfile = {
 	kScene4010DemoExitState4100, kScene4010DemoExitState4030, kScene4010DemoLeverItem,
-	0x0f, 0x0b, 100, kScene4010DemoAmbientCheckMillis, kScene4010PaletteCycleMillis, true, true, true
+	0x0f, 0x0b, 100, kScene4010DemoAmbientCheckMillis, kScene4010PaletteCycleMillis, 0, true, true, true
 };
 
 const Scene4010ReleaseProfile &scene4010ReleaseProfile(const HollywoodEngine *vm) {
@@ -186,6 +187,10 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		Graphics::PixelFormat::createFormatCLUT8());
 }
 
+uint Scene4010::framebufferResourceChunkIndex() const {
+	return _releaseProfile.framebufferChunkIndex;
+}
+
 void Scene4010::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	initializeRoomIdleLayer();
@@ -238,7 +243,8 @@ bool Scene4010::advanceCustomGameplayLoop(uint32 delta) {
 	updateRoomAmbientAudio(delta);
 	if (!_roomAnimationPaused)
 		advancePaletteCycle(delta);
-	if (!_roomAnimationPaused && !alternateBackgroundActive() && !_primaryDialogueSpeechActive &&
+	if (!_roomAnimationPaused && !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6) &&
+			!_primaryDialogueSpeechActive &&
 			!_heckerManualSequenceActive)
 		advanceHeckerIdleLayer(delta);
 	return false;
@@ -422,7 +428,7 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-	_roomIdleLayer.visible = !alternateBackgroundActive();
+	_roomIdleLayer.visible = !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6);
 	return true;
 }
 
@@ -479,7 +485,7 @@ bool Scene4010::alternateBackgroundActive() const {
 void Scene4010::initializeRoomIdleLayer() {
 	_roomIdleLayer.configure(6, kScene4010RoomIdleDescriptorCount,
 		kScene4010RoomIdleFrameMap, ARRAYSIZE(kScene4010RoomIdleFrameMap));
-	_roomIdleLayer.visible = !alternateBackgroundActive();
+	_roomIdleLayer.visible = !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6);
 	_roomIdleChannel.reset(0, kScene4010RoomIdleFrameMillis);
 	_heckerAnimationState = 0;
 	_heckerLoopCount = 0;
