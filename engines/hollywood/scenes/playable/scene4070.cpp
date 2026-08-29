@@ -43,6 +43,11 @@ const uint kScene4070ActorPaletteTableEntry = 0x00cc;
 const uint kScene4070Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4070SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4070FrameMillis = 75;
+const uint32 kScene4070TrophyOpenFrameMillis = 100;
+const uint32 kScene4070TreatmentReturnFrameMillis = 100;
+const uint32 kScene4070PrimarySpeechFrameMillis = 125;
+const uint32 kScene4070DraculaIdleTransitionFrameMillis = 100;
+const uint32 kScene4070DraculaIdleCheckMillis = 100;
 const uint32 kScene4070ScrollFrameMillis = 10;
 const uint kScene4070ForegroundBlockChunk = 5;
 const uint kScene4070RightPatchChunk = 6;
@@ -68,12 +73,21 @@ const byte kScene4070DraculaHotspotItem = 6;
 const uint kScene4070DraculaMovementRecordIndex = 0x1e;
 const byte kScene4070DraculaIdleFrame = 0x0b;
 const byte kScene4070DraculaSpeechGroup = 0;
+const byte kScene4070TrophySpeechGroup = 1;
+const byte kScene4070DraculaIdleSpeechGroup = 2;
+const byte kScene4070DraculaAlternateIdleSpeechGroup = 3;
+const byte kScene4070TrophySpeechBaseFrame = 0x0a;
+const byte kScene4070DraculaAlternateSpeechBaseFrame = 6;
+const byte kScene4070DraculaIdleSpeechVolumePercent = 25;
 const byte kScene4070DraculaTextRed = 0x0a;
 const byte kScene4070DraculaTextGreen = 0x19;
 const byte kScene4070DraculaTextBlue = 0x3f;
 const uint16 kScene4070DraculaSpeechCenterX = 0x01c7;
 const uint16 kScene4070DraculaSpeechTopY = 0x00a7;
-const byte kScene4070MabusePillsItem = 0x0e;
+const uint16 kScene4070DraculaAlternateSpeechCenterX = 0x019c;
+const uint16 kScene4070DraculaAlternateSpeechTopY = 0x009f;
+const uint16 kScene4070TrophySpeechCenterX = 0x02dc;
+const uint16 kScene4070TrophySpeechTopY = 0x00ad;
 const byte kScene4070SlimmingTreatmentItem = 0x15;
 const byte kScene4070SlimmingFlyerItem = 0x58;
 const byte kScene4070FrankieLegsItem = 0x30;
@@ -171,8 +185,11 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_draculaLayer(),
 		_scriptLayer(),
 		_ambientChannel(),
+		_draculaIdleChannel(),
+		_draculaIdleSpeechTimerAccumulator(0),
 		_rightSidePatchActive(false),
-		_draculaDialogueIntroPlayed(false),
+		_draculaIdleSequenceActive(false),
+		_draculaDialogueMenuActive(false),
 		_loopingSoundBank0(),
 		_originalColorToItemMap() {
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
@@ -207,17 +224,17 @@ void Scene4070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 void Scene4070::runCustomEntrySequence() {
-	if (_vm->gameState().scene4070DraculaStage >= 3)
-		_vm->gameState().scene4070TrophyBaseOpened = true;
+	GameplayState &state = _vm->gameState();
+	state.scene4070TrophyBaseOpened = state.scene4070DraculaStage >= 3;
 	resetAnimationLayers();
 	_rightSidePatchActive = kScene4070EntryStartX >= kScene4070SidePatchThresholdX;
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	runEntryPath(kScene4070EntryStartX, kScene4070EntryStartY, kScene4070EntryFacing,
 		kScene4070EntryTargetX, kScene4070EntryTargetY);
-	if (!_vm->gameState().scene4070EntryLineSeen) {
+	if (!state.scene4070EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().scene4070EntryLineSeen = true;
+		state.scene4070EntryLineSeen = true;
 	}
 }
 
@@ -231,6 +248,7 @@ bool Scene4070::prepareCustomGameplayLoop() {
 
 bool Scene4070::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientLayers(delta);
+	advanceDraculaIdle(delta);
 	updateSidePatchForActorPosition();
 	if (!_loopingSoundBank0.isPlaying())
 		_loopingSoundBank0.playSampleLooping(0x33, 100);
@@ -243,7 +261,7 @@ bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {
 		runCorridorExit();
 		return true;
 	case 302: // Mirar corredor (look at corridor): it is dark/tentative.
-		beginSecondarySpeechLine(1, _rightSidePatchActive ? 1 : 0);
+		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Mirar trofeo (look at trophy): award plaque.
 		beginSecondarySpeechLine(2, 0);
@@ -270,7 +288,7 @@ bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(8, 0);
 		return true;
 	case 311: // Abrir cabeza de tigre (open tiger head): state-aware mouth response.
-		beginSecondarySpeechLine(9, _rightSidePatchActive ? 1 : 0);
+		beginSecondarySpeechLine(_rightSidePatchActive ? 8 : 9, 0);
 		return true;
 	case 312: // Mirar cabeza de leon (look at lion head): Nairobi plaque.
 		beginSecondarySpeechLine(10, 0);
@@ -281,8 +299,14 @@ bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 314: // Mirar estanteria (look at bookcase): bookcase browsing line.
 		beginSecondarySpeechLine(12, 0);
 		return true;
+	case 315: // Usar colmillo o filete con cabeza de tigre (use fang or steak on tiger head).
+		beginSecondarySpeechLine(13, 0);
+		return true;
+	case 316: // Usar paja con chimenea (use straw on fireplace): it is unnecessary.
+		beginSecondarySpeechLine(14, 0);
+		return true;
 	case 317: // Dar pildoras del Dr. Mabuse a Dracula (give Mabuse pills to Dracula).
-		runPillsOnDracula();
+		beginSecondarySpeechLine(15, 0);
 		return true;
 	case 318: // Dar tratamiento adelgazante a Dracula (give slimming treatment to Dracula).
 		runSlimmingTreatmentSequence();
@@ -296,24 +320,31 @@ bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene4070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
 	rememberOriginalColorMap();
-	restoreBaseFramebufferFromOriginal();
-	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
-	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	if (selector == 0 || selector == 0xff) {
+		restoreBaseFramebufferFromOriginal();
+		const uint patchChunk = _rightSidePatchActive ?
+			kScene4070RightPatchChunk : kScene4070LeftPatchChunk;
+		if (_sceneChunkTable.isValidChunk(patchChunk))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
+	}
 
-	const uint patchChunk = _rightSidePatchActive ? kScene4070RightPatchChunk : kScene4070LeftPatchChunk;
-	if (_sceneChunkTable.isValidChunk(patchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
-	applyDraculaHotspotState();
+	if (selector == 1 || selector == 0xff) {
+		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+		applyDraculaHotspotState();
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene4070DraculaMovementRecordIndex,
+			isDraculaVisible() ? 0 : 1);
+	}
 
-	rebuildWalkablePaletteMask();
-	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-	_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene4070DraculaMovementRecordIndex,
-		isDraculaVisible() ? 0 : 1);
+	if (selector == 0xff) {
+		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(),
+			_fullPaletteRegionMask.size());
+		rebuildWalkablePaletteMask();
+	}
 	return true;
 }
 
@@ -332,6 +363,8 @@ void Scene4070::handleAnimationFrameHook(byte hookId, uint frame) {
 	case kScene4070TrophyOpenHook:
 		if (frame == 0x11)
 			_soundBank0.playSample(0x31, 100);
+		else if (frame == 0x15 || frame == 0x18)
+			playResidentSoundEffect(4);
 		else if (frame == 0x1c)
 			_soundBank0.playSample(0x32, 100);
 		break;
@@ -353,18 +386,49 @@ void Scene4070::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 byte Scene4070::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	switch (animationGroup) {
+	case kScene4070TrophySpeechGroup:
+		return kScene4070TrophySpeechBaseFrame;
+	case kScene4070DraculaAlternateIdleSpeechGroup:
+		return kScene4070DraculaAlternateSpeechBaseFrame;
+	default:
+		return kScene4070DraculaIdleFrame;
+	}
+}
+
+byte Scene4070::primarySpeechAnimationFrameCount(byte animationGroup) const {
+	return animationGroup == kScene4070TrophySpeechGroup ? 4 : 5;
+}
+
+uint32 Scene4070::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 	(void)animationGroup;
-	return kScene4070DraculaIdleFrame;
+	return kScene4070PrimarySpeechFrameMillis;
+}
+
+byte Scene4070::primarySpeechVolumePercent(byte animationGroup) const {
+	return animationGroup == kScene4070DraculaIdleSpeechGroup ||
+		animationGroup == kScene4070DraculaAlternateIdleSpeechGroup ?
+		kScene4070DraculaIdleSpeechVolumePercent : 100;
 }
 
 void Scene4070::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
-	(void)animationGroup;
+	if (animationGroup == kScene4070TrophySpeechGroup) {
+		_scriptLayer.visible = true;
+		_scriptLayer.setFrame(frameIndex);
+		return;
+	}
+
 	_draculaLayer.visible = isDraculaVisible();
 	_draculaLayer.setFrame(frameIndex);
 }
 
 void Scene4070::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
-	(void)animationGroup;
+	if (animationGroup == kScene4070TrophySpeechGroup) {
+		_scriptLayer.visible = true;
+		_scriptLayer.setFrame(baseFrame);
+		return;
+	}
+
 	_draculaLayer.visible = isDraculaVisible();
 	_draculaLayer.setFrame(baseFrame);
 }
@@ -381,6 +445,10 @@ void Scene4070::resetAnimationLayers() {
 		kScene4070DraculaFrameMap, ARRAYSIZE(kScene4070DraculaFrameMap));
 	_draculaLayer.visible = isDraculaVisible();
 	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+	_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
+	_draculaIdleSpeechTimerAccumulator = 0;
+	_draculaIdleSequenceActive = false;
+	_draculaDialogueMenuActive = false;
 	clearResourceLayer(_scriptLayer);
 }
 
@@ -406,6 +474,49 @@ void Scene4070::advanceAmbientLayers(uint32 delta) {
 		_ambientChannel.frameIndex = nextAmbientFrame;
 		_ambientLayer.setFrame(nextAmbientFrame);
 		_randomAmbientLayer.setFrame((byte)_random.getRandomNumber(1));
+	}
+}
+
+void Scene4070::advanceDraculaIdle(uint32 delta) {
+	if (!isDraculaVisible() || _draculaIdleSequenceActive || _scriptLayer.visible ||
+			_primaryDialogueSpeechActive || _primarySpeechOverlay.visible ||
+			_actorPathPlaybackActive || _hideActiveActor)
+		return;
+
+	if (!_draculaDialogueMenuActive && !_speechOverlay.visible) {
+		_draculaIdleSpeechTimerAccumulator += delta;
+		while (_draculaIdleSpeechTimerAccumulator >= kScene4070DraculaIdleCheckMillis) {
+			_draculaIdleSpeechTimerAccumulator -= kScene4070DraculaIdleCheckMillis;
+			if (_random.getRandomNumber(49) != 0)
+				continue;
+
+			_draculaIdleSequenceActive = true;
+			if (_random.getRandomNumber(1) == 0) {
+				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(1), false);
+			} else {
+				const bool openedPose = playAndPresentAnimationFrames(_draculaLayer,
+					AnimationFrameRange(0, 2, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
+				if (openedPose) {
+					beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(2), true);
+					playAndPresentAnimationFrames(_draculaLayer,
+						AnimationFrameRange(3, 5, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
+				}
+				_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+			}
+			_draculaIdleSequenceActive = false;
+			_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
+			if (animationPlaybackShouldStop())
+				return;
+		}
+	}
+
+	const uint idleTicks = _draculaIdleChannel.consumeFrames(delta);
+	for (uint tick = 0; tick < idleTicks; ++tick) {
+		if (_draculaLayer.frameIndex == 0x0f)
+			_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+		else if (_draculaLayer.frameIndex == kScene4070DraculaIdleFrame &&
+				_random.getRandomNumber(14) == 0)
+			_draculaLayer.setFrame(0x0f);
 	}
 }
 
@@ -458,6 +569,20 @@ void Scene4070::beginDraculaSpeechLine(uint16 rowIndex, byte frameIndex) {
 		kScene4070DraculaSpeechGroup);
 }
 
+void Scene4070::beginDraculaIdleSpeechLine(byte frameIndex, bool alternatePose) {
+	beginPrimarySpeechLineWithAnimationGroup(18, frameIndex,
+		alternatePose ? kScene4070DraculaAlternateSpeechCenterX : kScene4070DraculaSpeechCenterX,
+		alternatePose ? kScene4070DraculaAlternateSpeechTopY : kScene4070DraculaSpeechTopY,
+		kScene4070DraculaTextRed, kScene4070DraculaTextGreen, kScene4070DraculaTextBlue,
+		alternatePose ? kScene4070DraculaAlternateIdleSpeechGroup : kScene4070DraculaIdleSpeechGroup);
+}
+
+void Scene4070::beginTrophySpeechLine(uint16 rowIndex, byte frameIndex) {
+	beginPrimarySpeechLineWithAnimationGroup(rowIndex, frameIndex,
+		kScene4070TrophySpeechCenterX, kScene4070TrophySpeechTopY,
+		0x3f, 0x3f, 0x3f, kScene4070TrophySpeechGroup);
+}
+
 void Scene4070::runCorridorExit() {
 	_vm->gameState().mainFlowStateId = kScene4100EntryFromScene4070State;
 }
@@ -467,25 +592,28 @@ void Scene4070::runTrophyBaseOpenAction() {
 	if (!isDraculaVisible() && state.scene4070DraculaStage == 0) {
 		const bool previousHideActiveActor = _hideActiveActor;
 		_hideActiveActor = true;
-		playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+		bool animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
 			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
-			AnimationFrameRange(0, 4, kScene4070FrameMillis));
+			AnimationFrameRange(0, 4, kScene4070FrameMillis).unskippable());
 
 		const uint scrollFrameCount = _viewportXOffset > _viewportMinXOffset ?
 			(_viewportXOffset - _viewportMinXOffset + 7) / 8 : 0;
-		if (scrollFrameCount != 0) {
-			playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+		if (animationComplete && scrollFrameCount != 0) {
+			animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
 				kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 				AnimationFrameRange(0, scrollFrameCount - 1, kScene4070ScrollFrameMillis)
-					.repeatFrame(4).hookEveryFrame(kScene4070TrophyScrollHook));
+					.repeatFrame(4).hookEveryFrame(kScene4070TrophyScrollHook).unskippable());
 		}
 		_hideActiveActor = previousHideActiveActor;
+		if (!animationComplete)
+			return;
 
 		_soundBank0.playSample(0x30, 100);
-		playResourceLayerSequence(_scriptLayer, kScene4070TrophyOpenChunk,
+		if (!playResourceLayerSequence(_scriptLayer, kScene4070TrophyOpenChunk,
 			kScene4070TrophyOpenDescriptorCount,
 			AnimationFrameRange(0, kScene4070TrophyOpenDescriptorCount - 1,
-				kScene4070FrameMillis).hookEveryFrame(kScene4070TrophyOpenHook));
+				kScene4070TrophyOpenFrameMillis).hookEveryFrame(kScene4070TrophyOpenHook).unskippable()))
+			return;
 
 		state.scene4070TrophyBaseOpened = true;
 		applySceneStateToHotspotsAndPatches(1);
@@ -503,31 +631,55 @@ void Scene4070::runTrophyBaseOpenAction() {
 		return;
 	}
 
-	runFrankiePartGrantSequence();
+	if (state.scene4070DraculaStage == 1)
+		state.scene4070DraculaStage = 2;
+	if (state.scene4070DraculaStage == 2)
+		runFrankiePartGrantSequence();
 }
 
 void Scene4070::runFrankiePartGrantSequence() {
 	GameplayState &state = _vm->gameState();
 	const byte rewardIndex = state.frankensteinPartRewardIndex();
-	if (state.scene4070FrankiePartGranted != 0 ||
-			rewardIndex >= ARRAYSIZE(kScene4070FrankiePartItems)) {
-		beginSecondarySpeechLine(4, 4);
-		return;
-	}
+	const bool grantsReward = state.scene4070FrankiePartGranted == 0 &&
+		rewardIndex < ARRAYSIZE(kScene4070FrankiePartItems);
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+	if (!playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
 		kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
-		AnimationFrameRange(0, 0x0a, kScene4070FrameMillis));
-	playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
-		kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
-		AnimationFrameRange(0x0d, 0x23, kScene4070FrameMillis)
-			.hookAt(0x18, kScene4070FrankiePartHook));
-	_hideActiveActor = previousHideActiveActor;
+		AnimationFrameRange(0, 0x0a, kScene4070FrameMillis).unskippable(), false)) {
+		clearResourceLayer(_scriptLayer);
+		_hideActiveActor = previousHideActiveActor;
+		return;
+	}
 
-	addInventoryItem(kScene4070FrankiePartItems[rewardIndex]);
-	_soundBank0.playSample(1, 100);
+	bool animationComplete;
+	if (grantsReward) {
+		beginTrophySpeechLine(0x16, (byte)(rewardIndex * 2));
+		animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+			AnimationFrameRange(0x0d, 0x23, kScene4070FrameMillis)
+				.hookAt(0x18, kScene4070FrankiePartHook).unskippable());
+	} else {
+		beginTrophySpeechLine(0x66, 0);
+		animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+			AnimationFrameRange(0x19, 0x23, kScene4070FrameMillis).unskippable());
+	}
+	_hideActiveActor = previousHideActiveActor;
+	if (!animationComplete)
+		return;
+	if (!grantsReward) {
+		drawPlayableComposite();
+		presentFrame();
+		return;
+	}
+
+	if (!hasInventoryItem(kScene4070FrankiePartItems[rewardIndex]))
+		addInventoryItem(kScene4070FrankiePartItems[rewardIndex]);
+	setActiveActorPose(0x02f1, 0x0142, 3);
+	drawPlayableComposite();
+	presentFrame();
 	beginSecondarySpeechLine(0x16, (byte)(rewardIndex * 2 + 1));
 	state.setFrankensteinPartRewardIndex(rewardIndex + 1);
 	state.scene4070FrankiePartGranted = 1;
@@ -535,7 +687,7 @@ void Scene4070::runFrankiePartGrantSequence() {
 
 void Scene4070::runSlimmingTreatmentSequence() {
 	GameplayState &state = _vm->gameState();
-	if (!hasInventoryItem(kScene4070SlimmingTreatmentItem) || state.scene4070SlimmingTreatmentApplied) {
+	if (!hasInventoryItem(kScene4070SlimmingTreatmentItem)) {
 		beginSecondarySpeechLine(16, 0);
 		return;
 	}
@@ -545,38 +697,52 @@ void Scene4070::runSlimmingTreatmentSequence() {
 	}
 
 	beginSecondarySpeechLine(16, 0);
-	walkActiveActorTo(kScene4070PostTrophyRonX, kScene4070PostTrophyRonY, 1, 0, false);
-	walkActiveActorTo(0x0185, 0x015b, 1, 0, false);
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
-	playResourceLayerSequence(_scriptLayer, kScene4070TreatmentNearChunk,
-		kScene4070TreatmentNearDescriptorCount, kScene4070TrophyBaseFrameMap,
-		AnimationFrameRange(kScene4070TreatmentNearScriptFrameIndices,
-			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentNearHook));
-	_hideActiveActor = previousHideActiveActor;
-	removeInventoryItem(kScene4070SlimmingTreatmentItem);
-	_soundBank0.playSample(1, 100);
-	walkActiveActorTo(kScene4070PostTrophyRonX, kScene4070PostTrophyRonY, 1, 0, false);
-	beginDraculaSpeechLine(16, 1);
-
-	playResourceLayerSequence(_scriptLayer, kScene4070TreatmentReturnChunk,
-		kScene4070TreatmentReturnDescriptorCount,
-		AnimationFrameRange(kScene4070TreatmentReturnFrameIndices,
-			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentReturnHook));
-	state.scene4070SlimmingTreatmentApplied = true;
-	if (state.scene4010PillboxPickupState == 0)
-		state.scene4010PillboxPickupState = 1;
-	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
-}
-
-void Scene4070::runPillsOnDracula() {
-	if (!hasInventoryItem(kScene4070MabusePillsItem)) {
-		beginSecondarySpeechLine(15, 0);
+	const Common::Array<byte> savedFullPaletteRegionMask = _fullPaletteRegionMask;
+	const Common::Array<byte> savedWalkablePaletteMask = _walkablePaletteMask;
+	for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i)
+		_fullPaletteRegionMask[i] = 1;
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i)
+		_walkablePaletteMask[i] = 1;
+	if (!walkActiveActorTo(kScene4070PostTrophyRonX, kScene4070PostTrophyRonY, 1, 0, false) ||
+			!walkActiveActorTo(0x0185, 0x015b, 1, 0, false)) {
+		_fullPaletteRegionMask = savedFullPaletteRegionMask;
+		_walkablePaletteMask = savedWalkablePaletteMask;
 		return;
 	}
-	beginSecondarySpeechLine(15, 2);
-	beginDraculaSpeechLine(15, 3);
-	beginSecondarySpeechLine(15, 4);
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
+	const bool nearAnimationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TreatmentNearChunk,
+		kScene4070TreatmentNearDescriptorCount, kScene4070TrophyBaseFrameMap,
+		AnimationFrameRange(kScene4070TreatmentNearScriptFrameIndices,
+			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentNearHook).unskippable());
+	_hideActiveActor = previousHideActiveActor;
+	if (!nearAnimationComplete) {
+		_fullPaletteRegionMask = savedFullPaletteRegionMask;
+		_walkablePaletteMask = savedWalkablePaletteMask;
+		return;
+	}
+
+	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+	removeInventoryItem(kScene4070SlimmingTreatmentItem);
+	_soundBank0.playSample(1, 100);
+	const bool returnedToStart = walkActiveActorTo(kScene4070PostTrophyRonX,
+		kScene4070PostTrophyRonY, 1, 0, false);
+	_fullPaletteRegionMask = savedFullPaletteRegionMask;
+	_walkablePaletteMask = savedWalkablePaletteMask;
+	if (!returnedToStart)
+		return;
+
+	beginDraculaSpeechLine(16, 1);
+	if (!playResourceLayerSequence(_scriptLayer, kScene4070TreatmentReturnChunk,
+			kScene4070TreatmentReturnDescriptorCount,
+			AnimationFrameRange(kScene4070TreatmentReturnFrameIndices,
+				kScene4070TreatmentReturnFrameMillis).hookEveryFrame(
+					kScene4070TreatmentReturnHook).unskippable()))
+		return;
+
+	state.scene4010PillboxPickupState = 1;
+	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
 }
 
 void Scene4070::runFlyerOnDracula() {
@@ -586,19 +752,21 @@ void Scene4070::runFlyerOnDracula() {
 	}
 	beginSecondarySpeechLine(17, 0);
 	beginDraculaSpeechLine(17, 1);
-	beginSecondarySpeechLine(17, 2);
 }
 
 void Scene4070::runDraculaDialogue() {
-	if (!isDraculaVisible()) {
-		beginSecondarySpeechLine(4, 0);
+	GameplayState &state = _vm->gameState();
+	if (state.scene4070DraculaStage >= 3) {
+		runLaterDraculaConversation();
 		return;
 	}
+	if (state.scene4070DraculaStage != 0 || !isDraculaVisible())
+		return;
 
-	if (!_draculaDialogueIntroPlayed) {
+	if (!state.scene4070DraculaDialogueIntroSeen) {
 		beginSecondarySpeechLine(98, 0);
 		beginDraculaSpeechLine(99, 0);
-		_draculaDialogueIntroPlayed = true;
+		state.scene4070DraculaDialogueIntroSeen = true;
 	} else {
 		beginSecondarySpeechLine(98, 1);
 		beginDraculaSpeechLine(99, 1);
@@ -606,6 +774,7 @@ void Scene4070::runDraculaDialogue() {
 
 	Common::Array<DialogueChoiceRecord> records;
 	initializeDraculaDialogueRecords(records);
+	_draculaDialogueMenuActive = true;
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
 	bool finished = false;
@@ -615,11 +784,14 @@ void Scene4070::runDraculaDialogue() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(98, 7);
 			beginDraculaSpeechLine(99, 7);
+			_draculaDialogueMenuActive = false;
 			return;
 		}
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			_draculaDialogueMenuActive = false;
 			return;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(98, record.playerTextRowId);
@@ -648,9 +820,27 @@ void Scene4070::runDraculaDialogue() {
 			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 			break;
 		default:
+			_draculaDialogueMenuActive = false;
 			return;
 		}
 	}
+	_draculaDialogueMenuActive = false;
+}
+
+void Scene4070::runLaterDraculaConversation() {
+	GameplayState &state = _vm->gameState();
+	beginSecondarySpeechLine(19, 0);
+	beginDraculaSpeechLine(19, 1);
+	if (!walkActiveActorTo(0x00c8, 0x01d6, 3, 0, false))
+		return;
+	beginSecondarySpeechLine(19, 2);
+	if (state.scene4070DraculaStage != 3)
+		return;
+
+	beginStaticSecondarySpeechLine(0xd4, state.ronTravelQuipIndex);
+	if (state.ronTravelQuipIndex < 0xff)
+		++state.ronTravelQuipIndex;
+	state.scene4070DraculaStage = 4;
 }
 
 void Scene4070::initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
