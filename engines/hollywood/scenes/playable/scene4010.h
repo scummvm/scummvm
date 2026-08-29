@@ -41,6 +41,7 @@ public:
 	Scene4010(HollywoodEngine *vm);
 
 private:
+	uint framebufferResourceChunkIndex() const override;
 	void initializeCustomPreviewState() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,

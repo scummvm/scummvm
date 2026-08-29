@@ -56,7 +56,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO3(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI, GUIO_NOSPEECH)
+		GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 	},
 
 	// Italian Windows demo distributed with the Italian release.

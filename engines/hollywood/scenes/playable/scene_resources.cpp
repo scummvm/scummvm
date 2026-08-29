@@ -51,10 +51,11 @@ bool SceneResources::loadChunkTable(const char *archiveName) {
 }
 
 bool SceneResources::validateRequiredChunks(const char *archiveName, const char *sceneDebugName,
-		uint requiredChunkCount) const {
+		uint requiredChunkCount, uint framebufferChunkIndex) const {
 	for (uint i = 0; i < requiredChunkCount; ++i) {
-		if (!chunkTable.isValidChunk(i)) {
-			warning("%s is missing required %s chunk %u", archiveName, sceneDebugName, i);
+		const uint chunkIndex = i == 0 ? framebufferChunkIndex : i;
+		if (!chunkTable.isValidChunk(chunkIndex)) {
+			warning("%s is missing required %s chunk %u", archiveName, sceneDebugName, chunkIndex);
 			return false;
 		}
 	}

@@ -69,6 +69,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
+	bool hasSpeechData() const;
 
 	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }

@@ -57,6 +57,13 @@ void initializeRandomizedNewGameState(GameplayState &state) {
 	state.scene2080DialogueTerminalIndex = (byte)randomSource.getRandomNumber(2);
 }
 
+void initializeDemoGameState(GameplayState &state) {
+	// The demos enter the castle after the bridge has opened and the guard has
+	// thrown the lever. The Spanish D01 archive only contains that background.
+	state.scene4010AlternateBackgroundState = 1;
+	state.scene4010PillboxPickupState = 1;
+}
+
 bool isImplementedIntroSceneNumber(int sceneNumber) {
 	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9030 || sceneNumber == 9050 ||
 		sceneNumber == 9100 || sceneNumber == 9110 || sceneNumber == 9120;
@@ -219,6 +226,8 @@ Common::Error HollywoodEngine::run() {
 	const bool startupLoad = startupLoadSlot >= 0;
 	if (!startupLoad)
 		initializeRandomizedNewGameState(_gameState);
+	if (!startupLoad && isDemo())
+		initializeDemoGameState(_gameState);
 	if (startupLoad) {
 		Common::Error loadError = loadGameState(startupLoadSlot);
 		if (loadError.getCode() != Common::kNoError)
@@ -357,8 +366,8 @@ void HollywoodEngine::syncSoundSettings() {
 	const bool globalMute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
 	const bool musicMuted = ConfMan.getBool("music_mute");
 	const bool sfxMuted = ConfMan.getBool("sfx_mute");
-	const bool speechMuted = isDemo() || ConfMan.getBool("speech_mute");
-	bool subtitlesEnabled = isDemo() || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
+	const bool speechMuted = !hasSpeechData() || ConfMan.getBool("speech_mute");
+	bool subtitlesEnabled = !hasSpeechData() || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
 	if (speechMuted && !subtitlesEnabled) {
 		ConfMan.setBool("subtitles", true);
 		subtitlesEnabled = true;
@@ -408,6 +417,11 @@ Common::Platform HollywoodEngine::getPlatform() const {
 
 bool HollywoodEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
+bool HollywoodEngine::hasSpeechData() const {
+	return !isDemo() ||
+		(getLanguage() == Common::ES_ESP && getPlatform() == Common::kPlatformDOS);
 }
 
 } // End of namespace Hollywood
