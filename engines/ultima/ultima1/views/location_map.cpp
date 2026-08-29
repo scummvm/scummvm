@@ -45,23 +45,6 @@ void LocationMap::timeout() {
 }
 
 int LocationMap::animatedTileId(byte tileId) const {
-	if (tileId == Data::TILE_CASTLE1) {
-		// Only redrawn on 2 of every 6 ticks; the other 4 ticks leave
-		// whichever frame was last drawn untouched
-		int offset = 2;
-		if ((_animIndex % 6) == 0)
-			offset = 0;
-		else if ((_animIndex % 3) == 0)
-			offset = 1;
-
-		return (offset == 2) ? -1 : Data::TILE_CASTLE1 + offset;
-	}
-
-	if (tileId == Data::TILE_CITY1) {
-		// Redrawn every tick, biased 3:1 toward the waving-flag frame
-		return Data::TILE_CITY1 + (((_animIndex % 4) == 0) ? 0 : 1);
-	}
-
 	return tileId;
 }
 
@@ -79,9 +62,7 @@ void LocationMap::draw() {
 		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
 			int tileId = animatedTileId(map._mapTilesId[oy][ox]);
 			if (tileId != -1) {
-				const Graphics::ManagedSurface &tileImg = tiles[
-					(_G(map)._currentMap != Data::MAP_OVERWORLD && tileId >= 50) ? 1 : tileId
-				];
+				const Graphics::ManagedSurface &tileImg = tiles[(tileId >= 50) ? 1 : tileId];
 				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH + 8, oy * Data::TILE_HEIGHT + 8));
 			}
 		}
