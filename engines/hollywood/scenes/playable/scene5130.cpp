@@ -429,8 +429,7 @@ bool Scene5130::selectedRecipeIsCorrect() const {
 }
 
 void Scene5130::applySuccessDrinkPalette() {
-	setPaletteEntry6Bit(0xd0, 0x18, 0x30, 0x3c);
-	setPaletteEntry6Bit(0xd1, 0x0c, 0x24, 0x30);
+	applyDrinkPalette(0x18, 0x30, 0x3c);
 }
 
 void Scene5130::applyFailureDrinkPalette() {
@@ -448,14 +447,22 @@ void Scene5130::applyFailureDrinkPalette() {
 	}
 
 	if (validCount == 0) {
-		setPaletteEntry6Bit(0xd0, 0x39, 0x39, 0x39);
-		setPaletteEntry6Bit(0xd1, 0x2d, 0x2d, 0x2d);
+		applyDrinkPalette(0x39, 0x39, 0x39);
 		return;
 	}
 
 	const byte red = (byte)(total[0] / validCount);
 	const byte green = (byte)(total[1] / validCount);
 	const byte blue = (byte)(total[2] / validCount);
+	applyDrinkPalette(red, green, blue);
+}
+
+void Scene5130::applyDrinkPalette(byte red, byte green, byte blue) {
+	GameplayState &state = _vm->gameState();
+	state.scene5120CocktailRed = red;
+	state.scene5120CocktailGreen = green;
+	state.scene5120CocktailBlue = blue;
+
 	setPaletteEntry6Bit(0xd0, red, green, blue);
 	setPaletteEntry6Bit(0xd1,
 		red < 0x0d ? 0 : (byte)(red - 0x0c),

@@ -415,6 +415,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene5110WerewolfDialogueChoiceUnlocked);
 	syncStateBool(s, state.scene5120TongsTaken);
 	s.syncAsByte(state.scene5120CocktailState);
+	s.syncAsByte(state.scene5120CocktailRed);
+	s.syncAsByte(state.scene5120CocktailGreen);
+	s.syncAsByte(state.scene5120CocktailBlue);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
