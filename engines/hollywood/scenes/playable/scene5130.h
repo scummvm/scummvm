@@ -56,6 +56,7 @@ private:
 	bool selectedRecipeIsCorrect() const;
 	void applySuccessDrinkPalette();
 	void applyFailureDrinkPalette();
+	void applyDrinkPalette(byte red, byte green, byte blue);
 	void resetAnimationLayers();
 	void updateAnimationLayerFrames();
 	void drawFrame();

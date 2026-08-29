@@ -37,6 +37,7 @@ private:
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
@@ -44,8 +45,15 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldConvertSavedFramebufferFF() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
+	void handleLeftClick(const GameplayLoopCursorState &state) override;
 
 	void runFirstEntrySequence();
 	void runAlternateEntrySequence();
@@ -58,19 +66,33 @@ private:
 	void runUseShaker();
 	void initializeTransformedRoomLayers();
 	void resetTransformedRoomLayers();
+	bool runRoomTransformationSequence();
+	void advanceRoomTransformation(uint32 delta);
+	bool roomTransformationComplete() const;
+	void applyTransformationPaletteDelta(int delta);
 	void advanceTransformedRoomLayers(uint32 delta);
 	void drawTransformedRoomLayers();
 	void drawStaticForegroundLayers(byte actorDrawOrderMode);
+	void updateElevatorButtonActionTargets(bool useStrip);
+	void applyCocktailPalette();
 	void clearSceneItemFromColorMap(byte itemId);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
 
 	TransientLayerCompositor _transformedRoomLayers;
+	ResourceSpriteLayer _elevatorLayer;
+	ResourceSpriteLayer _projectorSpeechLayer;
 	TimedAnimationChannel _movingWallChannel;
 	TimedAnimationChannel _mainProjectionChannel;
 	TimedAnimationChannel _sideLoopChannel;
 	TimedAnimationChannel _toggleChannel;
 	TimedAnimationChannel _randomDetailChannel;
+	TimedAnimationChannel _transformationOverlayChannel;
+	TimedAnimationChannel _transformationPaletteChannel;
+	bool _projectorSpeechActive;
+	bool _roomTransformationActive;
+	bool _transformationOverlayStarted;
+	int _transformationPaletteDelta;
 };
 
 } // End of namespace Hollywood
