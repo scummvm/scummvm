@@ -38,9 +38,13 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
@@ -52,6 +56,13 @@ private:
 	bool isRandomBackgroundHoldFrame(byte frameIndex) const;
 	void runReturnFromUpperExitEntry();
 	void runStairReturnToDungeon();
+	bool runStairDeltaClip(uint chunkIndex, const byte *footstepFrames,
+		uint footstepFrameCount, int paletteFrame, uint paletteChunk, bool fadeIn);
+	bool drawStairDeltaClipFrame(uint chunkIndex, byte frameIndex);
+	bool applyActorPaletteSpan(uint chunkIndex);
+	void advanceTransitionSystems(uint32 delta);
+	void updateAmbientSounds(uint32 delta);
+	bool containsFrame(const byte *frames, uint frameCount, byte frame) const;
 	void takeCandil();
 	void drawForegroundBlocks(int activeWorldY);
 	void removeColorMapItem(byte itemId);
@@ -63,6 +74,9 @@ private:
 	ResourceSpriteLayer _randomBackgroundLayer;
 	byte _randomBackgroundState;
 	byte _randomBackgroundRepeatCount;
+	uint32 _ambientEffectTimerAccumulator;
+	byte _previousContinuousAmbientCue;
+	byte _previousRandomAmbientCue;
 };
 
 } // End of namespace Hollywood
