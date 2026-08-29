@@ -22,11 +22,15 @@
 #include "hollywood/scenes/playable/scene4080.h"
 
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
 
 const uint16 kScene4080ExitState = 0x1006;
+const int kScene4080EntryStartX = 0x0166;
+const int kScene4080EntryStartY = 0x0075;
+const byte kScene4080EntryFacing = 0;
 const int kScene4080DefaultActorX = 0x0121;
 const int kScene4080DefaultActorY = 0x012e;
 const byte kScene4080DefaultActorFacing = 2;
@@ -38,6 +42,9 @@ const uint kScene4080ActorPaletteTableEntry = 0x00cc;
 const uint kScene4080Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4080SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4080FrameMillis = 75;
+const uint32 kScene4080GwendolynSpeechFrameMillis = 125;
+const uint32 kScene4080AmbientCheckMillis = 250;
+const uint32 kScene4080CoffinPaletteCycleMillis = 60;
 const uint kScene4080PalettePatchState1Chunk = 5;
 const uint kScene4080PalettePatchState1DescriptorCount = 0x12;
 const uint kScene4080PalettePatchState2Chunk = 6;
@@ -53,20 +60,34 @@ const uint kScene4080SidePatchChunk = 13;
 const uint kScene4080BaseSidePatchChunk = 14;
 const uint kScene4080BottlePickupChunk = 15;
 const uint kScene4080BottlePickupDescriptorCount = 0x0c;
-const uint kScene4080StakeSequenceChunk = 16;
-const uint kScene4080StakeSequenceDescriptorCount = 0x1b;
+const uint kScene4080SteakPickupChunk = 16;
+const uint kScene4080SteakPickupDescriptorCount = 0x0c;
 const uint kScene4080ExitOverlayChunk = 17;
 const uint kScene4080ExitOverlayDescriptorCount = 6;
 const uint kScene4080GominolaPickupChunk = 18;
 const uint kScene4080GominolaPickupDescriptorCount = 0x0e;
 const uint kScene4080VisibleGominolaPatchChunk = 19;
 const uint kScene4080HiddenGominolaPatchChunk = 20;
-const uint kScene4080SteakPickupChunk = 16;
-const uint kScene4080SteakPickupDescriptorCount = 0x0c;
 const uint kScene4080FoodBagOverlayChunk = 21;
 const uint kScene4080FoodBagOverlayDescriptorCount = 0x0c;
 const uint kScene4080GwendolynReplyChunk = 22;
 const uint kScene4080GwendolynReplyDescriptorCount = 6;
+const uint kScene4080StakeSequenceChunk = 23;
+const uint kScene4080StakeSequenceDescriptorCount = 0x1b;
+const uint kScene4080CoffinBookendChunk = 24;
+const uint kScene4080CoffinBookendDescriptorCount = 4;
+const uint kScene4080CoffinFirstClipChunk = 25;
+const uint kScene4080CoffinSecondClipChunk = 26;
+const uint kScene4080CoffinClipDescriptorCount = 0x17;
+const uint kScene4080CoffinFramebufferChunk = 27;
+const uint kScene4080CoffinPaletteChunk = 28;
+const uint kScene4080CoffinPaletteBytes = 0x210;
+const uint16 kScene4080CoffinViewportX = 0x0070;
+const byte kScene4080CoffinPaletteCycleFirstColor = 0xa8;
+const byte kScene4080CoffinPaletteCycleLastColor = 0xaf;
+const int kScene4080CurtainStartOffset = 0x00dc;
+const byte kScene4080CurtainBandWidth = 0x14;
+const uint kScene4080CurtainEndOffset = 0x00f0;
 const int kScene4080ForegroundActorThresholdY = 0x0150;
 const byte kScene4080GwendolynBaseFrame = 0x19;
 const byte kScene4080GwendolynSpeechGroup = 0;
@@ -86,6 +107,12 @@ enum Scene4080AnimationHookId {
 	kScene4080StakeSequenceHook
 };
 
+enum Scene4080GwendolynSpeechPoseMode {
+	kScene4080GwendolynBodyAnimation,
+	kScene4080GwendolynDialogueIdle,
+	kScene4080GwendolynFrozenSpeechPose
+};
+
 const byte kScene4080PalettePatchState1FrameMap[] = {
 	0, 0, 1, 2, 3, 2, 1, 0, 1, 4, 5, 6, 7, 8, 9, 2,
 	3, 2, 1, 0, 10, 11, 12, 11, 10, 13, 14, 15, 16, 17, 0, 0
@@ -100,8 +127,19 @@ const byte kScene4080ExitFrameMap[] = {
 	0, 1, 2, 3, 4, 5
 };
 
-const byte kScene4080SidePatchFrameMap[] = {
+const byte kScene4080CoffinBookendForwardFrameMap[] = {
 	0, 1, 2, 3
+};
+
+const byte kScene4080CoffinBookendReverseFrameMap[] = {
+	0, 2, 1, 0
+};
+
+const byte kScene4080CoffinClipFrameMap[] = {
+	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21,
+	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22
 };
 
 const byte kScene4080BottlePickupFrameMap[] = {
@@ -167,7 +205,7 @@ const Scene4080DialogueSeedRecord kScene4080DialogueSeedRecords[] = {
 
 PlayableSceneConfig scene4080Config() {
 	PlayableSceneConfig config(4080,
-		SceneResourceLayout(5, 5, 22),
+		SceneResourceLayout(5, 5, 26),
 		SceneViewport(kScene4080ViewportInitialX, kScene4080ViewportMinX, kScene4080ViewportMaxX),
 		SceneActorPose(kScene4080DefaultActorX, kScene4080DefaultActorY, kScene4080DefaultActorFacing));
 	config.setActorResources(kScene4080ActorBankTableEntry, kScene4080ActorPaletteTableEntry);
@@ -183,7 +221,12 @@ Scene4080::Scene4080(HollywoodEngine *vm) :
 		_scriptLayer(),
 		_palettePatchChannel(),
 		_foregroundFlickerChannel(),
-		_originalColorToItemMap() {
+		_gwendolynIdleChannel(),
+		_originalColorToItemMap(),
+		_ambientSoundTimerAccumulator(0),
+		_coffinPaletteCycleAccumulator(0),
+		_previousAmbientSoundCue(0),
+		_gwendolynSpeechPoseMode(kScene4080GwendolynBodyAnimation) {
 }
 
 void Scene4080::initializeCustomPreviewState() {
@@ -242,6 +285,10 @@ void Scene4080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActionOverlayLayer();
 }
 
+bool Scene4080::shouldPresentPreviewBeforeEntrySequence() const {
+	return false;
+}
+
 void Scene4080::runCustomEntrySequence() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -249,8 +296,12 @@ void Scene4080::runCustomEntrySequence() {
 	_soundBank0.playSample(5, 100);
 	_palettePatchLayer.setFrame(_vm->gameState().scene4080GwendolynState != 0 ? 1 : 0);
 	_foregroundFlickerLayer.setFrame(0);
+	setActiveActorPose(kScene4080EntryStartX, kScene4080EntryStartY, kScene4080EntryFacing);
 	drawPlayableComposite();
 	presentFrame();
+	if (!walkActiveActorTo(kScene4080DefaultActorX, kScene4080DefaultActorY,
+			kScene4080DefaultActorFacing, 0, false))
+		return;
 
 	GameplayState &state = _vm->gameState();
 	if (state.scene4080GwendolynStateTransition == 0) {
@@ -258,6 +309,16 @@ void Scene4080::runCustomEntrySequence() {
 			beginSecondarySpeechLine(0, 0);
 		state.scene4080GwendolynStateTransition = 1;
 	}
+}
+
+bool Scene4080::shouldRunExitSideEffectsAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
+}
+
+void Scene4080::runExitSideEffectsAfterLoop() {
+	fadePaletteToBlack();
+	stopAmbientSoundCues();
 }
 
 bool Scene4080::prepareCustomGameplayLoop() {
@@ -269,6 +330,7 @@ bool Scene4080::prepareCustomGameplayLoop() {
 bool Scene4080::advanceCustomGameplayLoop(uint32 delta) {
 	advancePalettePatchLayer(delta);
 	advanceForegroundFlickerLayer(delta);
+	advanceAmbientSound(delta);
 	return false;
 }
 
@@ -331,11 +393,8 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 316: // Coger vampiresa/Gwendolyn (take Gwendolyn): she would not allow it.
 		beginSecondarySpeechLine(12, 0);
 		return true;
-	case 317: // Mirar vampiresa/Gwendolyn (look at Gwendolyn): state-aware description/dialogue.
-		if (_vm->gameState().scene4080GwendolynState == 2)
-			beginSecondarySpeechLine(23, 0);
-		else
-			beginSecondarySpeechLine(13, 0);
+	case 317: // Mirar vampiresa/Gwendolyn (look at Gwendolyn): describe her.
+		beginSecondarySpeechLine(13, 0);
 		return true;
 	case 318: // Coger/usar bolsas de comida (take/use food bags): needs a tractor.
 		beginSecondarySpeechLine(14, 0);
@@ -373,17 +432,13 @@ bool Scene4080::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 	targetX = CLIP<int>(targetX, 0, 0x02c8);
 	targetY = CLIP<int>(targetY, 0, 0x01df);
 
-	while (targetY < 0x01df) {
-		if (walkableMaskAt(targetX, targetY) != 0)
-			return true;
+	if (targetY < 0x01df)
 		++targetY;
-	}
+	while (targetY < 0x01df && walkableMaskAt(targetX, targetY) == 0)
+		++targetY;
 
-	while (targetY > 0) {
-		if (walkableMaskAt(targetX, targetY) != 0)
-			return true;
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
 		--targetY;
-	}
 
 	return walkableMaskAt(targetX, targetY) != 0;
 }
@@ -472,10 +527,13 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene4080::ambientAudioProfile() const {
-	AmbientAudioProfile profile =
-		createRandomAmbientAudioProfile(0x0f, 8, 8, 25, 0x0b, 5, 100, 50);
-	if (_vm->gameState().scene4080GwendolynState != 0)
-		profile.soundMode = kAmbientSoundNone;
+	AmbientAudioProfile profile;
+	profile.checkMillis = kScene4080AmbientCheckMillis;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicProbabilityModulus = 50;
+	profile.musicVolumePercent = 100;
 	return profile;
 }
 
@@ -493,7 +551,8 @@ void Scene4080::handleAnimationFrameHook(byte hookId, uint frame) {
 			_soundBank0.playSample(0x18, 100);
 			configurePalettePatchLayerForState();
 		} else if (frame == 0x20) {
-			_soundBank0.playSample(0x19, 100);
+			_additionalAmbientSoundBank0Slots[0].playSample(0x19, 100);
+			_additionalAmbientSoundBank0Slots[1].playSample(0x1a, 100);
 		}
 		return;
 	}
@@ -516,32 +575,52 @@ void Scene4080::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	(void)animationGroup;
 	configurePalettePatchLayerForState();
 	_palettePatchLayer.setFrame(baseFrame);
+	if (_gwendolynSpeechPoseMode == kScene4080GwendolynDialogueIdle)
+		_gwendolynIdleChannel.resetTimer();
 }
 
 void Scene4080::resetAnimationLayers() {
+	const byte initialGwendolynFrame = _vm->gameState().scene4080GwendolynState != 0 ? 1 : 0;
 	configurePalettePatchLayerForState();
-	_palettePatchLayer.setFrame(_vm->gameState().scene4080GwendolynState != 0 ?
-		kScene4080GwendolynBaseFrame : 0);
+	_palettePatchLayer.setFrame(initialGwendolynFrame);
 	_palettePatchChannel.reset(_palettePatchLayer.frameIndex, kScene4080FrameMillis);
 	_foregroundFlickerLayer.configure(kScene4080ForegroundFlickerChunk, kScene4080ForegroundFlickerDescriptorCount,
 		nullptr, 0);
 	_foregroundFlickerLayer.visible = true;
 	_foregroundFlickerLayer.setFrame(0);
 	_foregroundFlickerChannel.reset(0, kScene4080FrameMillis);
+	_gwendolynIdleChannel.reset(kScene4080GwendolynBaseFrame,
+		kScene4080GwendolynSpeechFrameMillis);
+	_gwendolynSpeechPoseMode = kScene4080GwendolynBodyAnimation;
+	_ambientSoundTimerAccumulator = 0;
+	_previousAmbientSoundCue = 0;
+	_coffinPaletteCycleAccumulator = 0;
 	clearResourceLayer(_scriptLayer);
 }
 
 void Scene4080::configurePalettePatchLayerForState() {
 	const byte paletteMapState = _vm->gameState().scene4080GwendolynState;
 	if (paletteMapState == 1) {
-		_palettePatchLayer.configure(kScene4080PalettePatchState1Chunk, kScene4080PalettePatchState1DescriptorCount,
-			kScene4080PalettePatchState1FrameMap, ARRAYSIZE(kScene4080PalettePatchState1FrameMap));
+		if (_palettePatchLayer.chunkIndex != kScene4080PalettePatchState1Chunk ||
+				_palettePatchLayer.descriptorCount != kScene4080PalettePatchState1DescriptorCount ||
+				_palettePatchLayer.frameMap != kScene4080PalettePatchState1FrameMap) {
+			_palettePatchLayer.configure(kScene4080PalettePatchState1Chunk,
+				kScene4080PalettePatchState1DescriptorCount,
+				kScene4080PalettePatchState1FrameMap,
+				ARRAYSIZE(kScene4080PalettePatchState1FrameMap));
+		}
 		_palettePatchLayer.visible = true;
 		return;
 	}
 	if (paletteMapState == 2) {
-		_palettePatchLayer.configure(kScene4080PalettePatchState2Chunk, kScene4080PalettePatchState2DescriptorCount,
-			kScene4080PalettePatchState2FrameMap, ARRAYSIZE(kScene4080PalettePatchState2FrameMap));
+		if (_palettePatchLayer.chunkIndex != kScene4080PalettePatchState2Chunk ||
+				_palettePatchLayer.descriptorCount != kScene4080PalettePatchState2DescriptorCount ||
+				_palettePatchLayer.frameMap != kScene4080PalettePatchState2FrameMap) {
+			_palettePatchLayer.configure(kScene4080PalettePatchState2Chunk,
+				kScene4080PalettePatchState2DescriptorCount,
+				kScene4080PalettePatchState2FrameMap,
+				ARRAYSIZE(kScene4080PalettePatchState2FrameMap));
+		}
 		_palettePatchLayer.visible = true;
 		return;
 	}
@@ -552,6 +631,24 @@ void Scene4080::configurePalettePatchLayerForState() {
 void Scene4080::advancePalettePatchLayer(uint32 delta) {
 	if (_vm->gameState().scene4080GwendolynState == 0 || _primaryDialogueSpeechActive)
 		return;
+	if (_gwendolynSpeechPoseMode == kScene4080GwendolynFrozenSpeechPose)
+		return;
+	if (_gwendolynSpeechPoseMode == kScene4080GwendolynDialogueIdle) {
+		const uint frameCount = _gwendolynIdleChannel.consumeFrames(delta);
+		for (uint frame = 0; frame < frameCount; ++frame) {
+			byte nextFrame = _palettePatchLayer.frameIndex;
+			if (nextFrame == 0x1d)
+				nextFrame = kScene4080GwendolynBaseFrame;
+			else if (_random.getRandomNumber(14) == 0)
+				nextFrame = 0x1d;
+			else
+				continue;
+
+			_gwendolynIdleChannel.frameIndex = nextFrame;
+			_palettePatchLayer.setFrame(nextFrame);
+		}
+		return;
+	}
 
 	const uint frameCount = _palettePatchChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
@@ -560,18 +657,19 @@ void Scene4080::advancePalettePatchLayer(uint32 delta) {
 		if (paletteMapState == 1) {
 			if (nextFrame > 0x18)
 				nextFrame = 1;
-			else if (nextFrame == 0x12 && _random.getRandomNumber(2) != 0)
+			if (nextFrame == 0x12 && _random.getRandomNumber(2) != 0)
 				nextFrame = 1;
 			else if (nextFrame == 0x18)
 				nextFrame = 1;
 			else
 				++nextFrame;
 			if (nextFrame == 0x14)
-				_soundBank0.playSample(0x22, 100);
+				_additionalAmbientSoundBank0Slots[0].playSample(0x22, 100);
 			const uint descriptorIndex = nextFrame < ARRAYSIZE(kScene4080PalettePatchState1FrameMap) ?
 				kScene4080PalettePatchState1FrameMap[nextFrame] : 0xff;
-			if (descriptorIndex < 10 && !_soundBank0.isPlaying())
-				_soundBank0.playSample((byte)(0x1e + _random.getRandomNumber(3)), 100);
+			if (descriptorIndex < 10 && !_additionalAmbientSoundBank0Slots[0].isPlaying())
+				_additionalAmbientSoundBank0Slots[0].playSample(
+					(byte)(0x1e + _random.getRandomNumber(3)), 100);
 		} else {
 			nextFrame = nextFrame == 0x18 ? 1 : (byte)(nextFrame + 1);
 		}
@@ -640,9 +738,55 @@ void Scene4080::beginGwendolynSpeechLine(uint16 rowIndex, byte frameIndex) {
 		kScene4080GwendolynSpeechGroup);
 }
 
+bool Scene4080::settleGwendolynForSpeech() {
+	if (_vm->gameState().scene4080GwendolynState != 1)
+		return true;
+
+	while (_palettePatchLayer.descriptorIndex() > 3 && !animationPlaybackShouldStop()) {
+		if (waitSceneMillis(kScene4080FrameMillis, false))
+			return false;
+	}
+	if (animationPlaybackShouldStop())
+		return false;
+
+	_palettePatchLayer.setFrame(kScene4080GwendolynBaseFrame);
+	_palettePatchChannel.reset(kScene4080GwendolynBaseFrame, kScene4080FrameMillis);
+	_gwendolynIdleChannel.reset(kScene4080GwendolynBaseFrame,
+		kScene4080GwendolynSpeechFrameMillis);
+	_additionalAmbientSoundBank0Slots[0].stop();
+	drawPlayableComposite();
+	presentFrame();
+	return true;
+}
+
+void Scene4080::advanceAmbientSound(uint32 delta) {
+	_ambientSoundTimerAccumulator += delta;
+	while (_ambientSoundTimerAccumulator >= kScene4080AmbientCheckMillis) {
+		_ambientSoundTimerAccumulator -= kScene4080AmbientCheckMillis;
+		SoundBank0Player &player = _additionalAmbientSoundBank0Slots[1];
+		if (_vm->gameState().scene4080GwendolynState != 0 ||
+				player.isPlaying() || _random.getRandomNumber(24) != 0)
+			continue;
+
+		if (_random.getRandomNumber(9) == 0) {
+			player.playSample(0x0e, 50);
+			continue;
+		}
+
+		byte cue = 0;
+		do {
+			cue = (byte)(0x0f + _random.getRandomNumber(7));
+		} while (cue == _previousAmbientSoundCue);
+		_previousAmbientSoundCue = cue;
+		player.playSample(cue, 8);
+	}
+}
+
 void Scene4080::runCorridorExit() {
 	playResourceLayerSequence(_scriptLayer, kScene4080ExitOverlayChunk,
-		kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap, kScene4080FrameMillis);
+		kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080ExitFrameMap) - 1,
+			kScene4080FrameMillis).noFinalFrameDelay());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene4080ExitState;
 }
@@ -659,15 +803,267 @@ void Scene4080::runSidePatchSequence() {
 	}
 
 	beginSecondarySpeechLine(4, 1);
-	if (!playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk, 4,
-			kScene4080SidePatchFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4080SidePatchFrameMap) - 1,
-				kScene4080FrameMillis).unskippable()))
+	if (!runCoffinInsertSequence())
 		return;
-	state.scene4080CoffinShiftedState = 1;
-	state.scene4090WideCoffinVariant = 1;
-	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(4, 3);
+}
+
+bool Scene4080::runCoffinInsertSequence() {
+	for (uint chunk = kScene4080CoffinBookendChunk;
+			chunk <= kScene4080CoffinPaletteChunk; ++chunk) {
+		if (!_sceneChunkTable.isValidChunk(chunk)) {
+			warning("Scene 4080 coffin insert is missing RESOURCE.D08 chunk %u", chunk);
+			return false;
+		}
+	}
+
+	Graphics::ManagedSurface insertFramebuffer;
+	insertFramebuffer.create(HollywoodEngine::kSceneBufferWidth,
+		HollywoodEngine::kSceneBufferHeight, Graphics::PixelFormat::createFormatCLUT8());
+	Common::Array<byte> insertPaletteChunk;
+	insertPaletteChunk.resize(kPaletteSize);
+	if (!loadFixedChunk(kScene4080CoffinFramebufferChunk, insertFramebuffer, kFrameBufferSize) ||
+			!loadFixedChunk(kScene4080CoffinPaletteChunk, insertPaletteChunk, kPaletteSize)) {
+		warning("Scene 4080 failed to load the coffin insert framebuffer or palette");
+		return false;
+	}
+
+	const uint16 savedViewportX = _viewportXOffset;
+	const Common::Array<byte> savedPalette = _paletteCurrent;
+	Common::Array<byte> insertPalette = savedPalette;
+	const uint paletteBytes = MIN<uint>(kScene4080CoffinPaletteBytes,
+		MIN<uint>(_sceneChunkTable.sizes[kScene4080CoffinPaletteChunk], insertPalette.size()));
+	memcpy(insertPalette.data(), insertPaletteChunk.data(), paletteBytes);
+	if (insertPalette.size() >= kScene4080CoffinPaletteBytes + 3)
+		memset(insertPalette.data() + kScene4080CoffinPaletteBytes, 0, 3);
+
+	if (!playResourceLayerSequence(_scriptLayer, kScene4080CoffinBookendChunk,
+			kScene4080CoffinBookendDescriptorCount, kScene4080CoffinBookendForwardFrameMap,
+			AnimationFrameRange(0, ARRAYSIZE(kScene4080CoffinBookendForwardFrameMap) - 1,
+				kScene4080FrameMillis).unskippable().noFinalFrameDelay(), false)) {
+		clearResourceLayer(_scriptLayer);
+		return false;
+	}
+
+	bool completed = runCoffinCurtainClear();
+	if (completed) {
+		_viewportXOffset = kScene4080CoffinViewportX;
+		_sceneFramebuffer.copyRectToSurface(insertFramebuffer.rawSurface(), 0, 0,
+			Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth,
+				HollywoodEngine::kSceneBufferHeight));
+		_coffinPaletteCycleAccumulator = 0;
+		completed = runCoffinCurtainReveal(insertFramebuffer, insertPalette);
+	}
+	if (completed)
+		completed = playCoffinDeltaClip(kScene4080CoffinFirstClipChunk);
+	if (completed) {
+		if (waitCoffinDeltaFrame(kScene4080FrameMillis))
+			completed = false;
+		else
+			completed = playCoffinDeltaClip(kScene4080CoffinSecondClipChunk);
+	}
+	if (completed)
+		completed = runCoffinCurtainClear();
+
+	_viewportXOffset = savedViewportX;
+	if (completed) {
+		GameplayState &state = _vm->gameState();
+		state.scene4080CoffinShiftedState = 1;
+		state.scene4090WideCoffinVariant = 1;
+	}
+	applySceneStateToHotspotsAndPatches(0xff);
+
+	_scriptLayer.configure(kScene4080CoffinBookendChunk,
+		kScene4080CoffinBookendDescriptorCount, nullptr, 0);
+	_scriptLayer.visible = true;
+	_scriptLayer.setFrame(3);
+	drawPlayableComposite();
+	Graphics::ManagedSurface restoredRoom;
+	restoredRoom.copyFrom(_sceneFramebuffer);
+
+	if (!animationPlaybackShouldStop())
+		completed = runCoffinCurtainReveal(restoredRoom, savedPalette) && completed;
+	else {
+		_sceneFramebuffer.copyRectToSurface(restoredRoom.rawSurface(), 0, 0,
+			Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth,
+				HollywoodEngine::kSceneBufferHeight));
+		_paletteCurrent = savedPalette;
+		invalidatePresentationPalette();
+		completed = false;
+	}
+
+	if (completed) {
+		completed = playResourceLayerSequence(_scriptLayer, kScene4080CoffinBookendChunk,
+			kScene4080CoffinBookendDescriptorCount, kScene4080CoffinBookendReverseFrameMap,
+			AnimationFrameRange(0, ARRAYSIZE(kScene4080CoffinBookendReverseFrameMap) - 1,
+				kScene4080FrameMillis).unskippable().noFinalFrameDelay());
+	} else {
+		clearResourceLayer(_scriptLayer);
+	}
+
+	_paletteCurrent = savedPalette;
+	invalidatePresentationPalette();
+	return completed;
+}
+
+bool Scene4080::playCoffinDeltaClip(uint chunkIndex) {
+	for (uint frame = 0; frame < ARRAYSIZE(kScene4080CoffinClipFrameMap); ++frame) {
+		if (animationPlaybackShouldStop())
+			return false;
+
+		drawClipFrameDelta(chunkIndex, kScene4080CoffinClipDescriptorCount,
+			kScene4080CoffinClipFrameMap[frame]);
+		presentFrame();
+
+		const uint frameCounter = frame + 1;
+		if (frameCounter == 0x0b || frameCounter == 0x1b)
+			_soundBank0.playSample(4, 100);
+		if (frameCounter == 0x10 || frameCounter == 0x21)
+			_soundBank0.playSample(5, 100);
+		if (frameCounter == 0x0d || frameCounter == 0x0f || frameCounter == 0x14 ||
+				frameCounter == 0x19 || frameCounter == 0x1d)
+			playResidentSoundEffect(1);
+
+		if (frame + 1 < ARRAYSIZE(kScene4080CoffinClipFrameMap) &&
+				waitCoffinDeltaFrame(kScene4080FrameMillis))
+			return false;
+	}
+	return true;
+}
+
+bool Scene4080::waitCoffinDeltaFrame(uint32 millis) {
+	const uint32 startMillis = g_system->getMillis();
+	uint32 lastMillis = startMillis;
+	while (!animationPlaybackShouldStop()) {
+		if (pollEvents(false))
+			return true;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 delta = now - lastMillis;
+		lastMillis = now;
+		if (delta != 0) {
+			const bool paletteChanged = advanceCoffinPaletteCycle(delta);
+			advanceAmbientSound(delta);
+			PlayableScene::advanceFullscreenAnimation(delta);
+			if (paletteChanged)
+				presentFrame();
+		}
+
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (elapsed >= millis)
+			break;
+		g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
+	}
+	return animationPlaybackShouldStop();
+}
+
+bool Scene4080::advanceCoffinPaletteCycle(uint32 delta) {
+	bool changed = false;
+	_coffinPaletteCycleAccumulator += delta;
+	while (_coffinPaletteCycleAccumulator >= kScene4080CoffinPaletteCycleMillis) {
+		_coffinPaletteCycleAccumulator -= kScene4080CoffinPaletteCycleMillis;
+		rotateCoffinPaletteCycle();
+		changed = true;
+	}
+	return changed;
+}
+
+void Scene4080::rotateCoffinPaletteCycle() {
+	const uint lastOffset = kScene4080CoffinPaletteCycleLastColor * 3;
+	if (_paletteCurrent.size() <= lastOffset + 2)
+		return;
+
+	byte saved[3];
+	memcpy(saved, _paletteCurrent.data() + lastOffset, sizeof(saved));
+	for (uint color = kScene4080CoffinPaletteCycleLastColor;
+			color > kScene4080CoffinPaletteCycleFirstColor; --color) {
+		memcpy(_paletteCurrent.data() + color * 3,
+			_paletteCurrent.data() + (color - 1) * 3, sizeof(saved));
+	}
+	memcpy(_paletteCurrent.data() + kScene4080CoffinPaletteCycleFirstColor * 3,
+		saved, sizeof(saved));
+	invalidatePresentationPalette();
+}
+
+bool Scene4080::runCoffinCurtainReveal(const Graphics::ManagedSurface &source,
+		const Common::Array<byte> &palette) {
+	byte *destination = framebufferPixels(_sceneFramebuffer);
+	if (!destination || source.empty())
+		return false;
+
+	memset(destination, 0, framebufferByteCount());
+	presentFrame();
+	_paletteCurrent = palette;
+	invalidatePresentationPalette();
+	presentFrame();
+	const Graphics::Surface &sourceSurface = source.rawSurface();
+	for (int sweep = kScene4080CurtainStartOffset;
+			sweep >= 0 && !animationPlaybackShouldStop(); sweep -= kScene4080CurtainBandWidth) {
+		applyCoffinCurtainBand(&sourceSurface, (uint)sweep, kScene4080CurtainBandWidth);
+		presentFrame();
+		if (pollEvents(false))
+			return false;
+	}
+	if (animationPlaybackShouldStop())
+		return false;
+
+	_sceneFramebuffer.copyRectToSurface(source.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth,
+			HollywoodEngine::kSceneBufferHeight));
+	presentFrame();
+	return true;
+}
+
+bool Scene4080::runCoffinCurtainClear() {
+	for (uint sweep = 0;
+			sweep < kScene4080CurtainEndOffset && !animationPlaybackShouldStop();
+			sweep += kScene4080CurtainBandWidth) {
+		applyCoffinCurtainBand(nullptr, sweep, kScene4080CurtainBandWidth);
+		presentFrame();
+		if (pollEvents(false))
+			break;
+	}
+
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	invalidatePresentationPalette();
+	presentFrame();
+	return !animationPlaybackShouldStop();
+}
+
+void Scene4080::applyCoffinCurtainBand(const Graphics::Surface *source,
+		uint sweepOffset, byte bandWidth) {
+	const int innerWidth = HollywoodEngine::kScreenWidth - 2 * (int)sweepOffset;
+	if (innerWidth <= 0)
+		return;
+
+	const int middleInset = sweepOffset + bandWidth;
+	const int middleHeight = HollywoodEngine::kScreenHeight - 2 * middleInset;
+	const int leftX = _viewportXOffset + sweepOffset;
+	const int rightX = leftX + innerWidth - bandWidth;
+	Graphics::Surface &destination = *_sceneFramebuffer.surfacePtr();
+
+	for (uint row = 0; row < bandWidth; ++row) {
+		const int topY = sweepOffset + row;
+		const int bottomY = HollywoodEngine::kScreenHeight - bandWidth - sweepOffset + row;
+		if (source) {
+			copySurfaceRun(*source, destination, topY, leftX, innerWidth);
+			copySurfaceRun(*source, destination, bottomY, leftX, innerWidth);
+		} else {
+			clearSurfaceRun(destination, topY, leftX, innerWidth);
+			clearSurfaceRun(destination, bottomY, leftX, innerWidth);
+		}
+	}
+
+	for (int row = 0; row < middleHeight; ++row) {
+		const int y = middleInset + row;
+		if (source) {
+			copySurfaceRun(*source, destination, y, leftX, bandWidth);
+			copySurfaceRun(*source, destination, y, rightX, bandWidth);
+		} else {
+			clearSurfaceRun(destination, y, leftX, bandWidth);
+			clearSurfaceRun(destination, y, rightX, bandWidth);
+		}
+	}
 }
 
 void Scene4080::runBottlePickupSequence() {
@@ -677,9 +1073,10 @@ void Scene4080::runBottlePickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
-	runActorReplacement(ActionOverlaySpec(kScene4080BottlePickupChunk, kScene4080BottlePickupDescriptorCount,
-		kScene4080BottlePickupFrameMap, ARRAYSIZE(kScene4080BottlePickupFrameMap), kScene4080FrameMillis)
-		.endAt(ARRAYSIZE(kScene4080BottlePickupFrameMap)));
+	playResourceLayerSequence(_scriptLayer, kScene4080BottlePickupChunk,
+		kScene4080BottlePickupDescriptorCount, kScene4080BottlePickupFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080BottlePickupFrameMap) - 1,
+			kScene4080FrameMillis).noFinalFrameDelay());
 	addInventoryItem(kScene4080OilBottleItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4080OilBottleState = 0;
@@ -696,7 +1093,10 @@ void Scene4080::runGominolaPickupSequence() {
 	playResourceLayerSequence(_scriptLayer, kScene4080GominolaPickupChunk,
 		kScene4080GominolaPickupDescriptorCount, kScene4080GominolaPickupFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080GominolaPickupFrameMap) - 1,
-			kScene4080FrameMillis).hookAt(7, kScene4080GominolaPickupHook));
+			kScene4080FrameMillis).hookAt(7, kScene4080GominolaPickupHook)
+			.noFinalFrameDelay());
+	_vm->gameState().scene4080GominolaVisibleState = 0;
+	applySceneStateToHotspotsAndPatches(0xff);
 	addInventoryItem(kScene4080GominolaItem);
 	_soundBank0.playSample(1, 100);
 }
@@ -708,9 +1108,10 @@ void Scene4080::runSteakPickupSequence() {
 	}
 
 	beginSecondarySpeechLine(17, 0);
-	runActorReplacement(ActionOverlaySpec(kScene4080SteakPickupChunk, kScene4080SteakPickupDescriptorCount,
-		kScene4080SteakPickupFrameMap, ARRAYSIZE(kScene4080SteakPickupFrameMap), kScene4080FrameMillis)
-		.endAt(ARRAYSIZE(kScene4080SteakPickupFrameMap)));
+	playResourceLayerSequence(_scriptLayer, kScene4080SteakPickupChunk,
+		kScene4080SteakPickupDescriptorCount, kScene4080SteakPickupFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080SteakPickupFrameMap) - 1,
+			kScene4080FrameMillis).noFinalFrameDelay());
 	addInventoryItem(kScene4080SteakItem);
 	_soundBank0.playSample(1, 100);
 }
@@ -723,10 +1124,13 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 
 	playResourceLayerSequence(_scriptLayer, kScene4080FoodBagOverlayChunk,
 		kScene4080FoodBagOverlayDescriptorCount, kScene4080FoodBagFrameMap,
-		kScene4080FrameMillis);
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080FoodBagFrameMap) - 1,
+			kScene4080FrameMillis).noFinalFrameDelay());
 	removeInventoryItem(kScene4080MabusePillsItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4080GwendolynStateTransition = 2;
+	if (!walkActiveActorTo(0x00dc, 0x01cc, 3, 0, false))
+		return;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(19, 0);
 }
@@ -743,15 +1147,23 @@ void Scene4080::runUseStakeOnGwendolyn() {
 	}
 
 	beginSecondarySpeechLine(18, 1);
+	if (!_sceneChunkTable.isValidChunk(kScene4080StakeSequenceChunk)) {
+		warning("Scene 4080 stake sequence is missing RESOURCE.D08 chunk %u",
+			kScene4080StakeSequenceChunk);
+		return;
+	}
 	const bool completed = playResourceLayerSequence(_scriptLayer,
 		kScene4080StakeSequenceChunk, kScene4080StakeSequenceDescriptorCount,
-		kScene4080StakeSequenceFrameMap, AnimationFrameRange(0, 0x17, 60));
-	if (completed) {
-		playResourceLayerSequence(_scriptLayer, kScene4080StakeSequenceChunk,
+		kScene4080StakeSequenceFrameMap,
+		AnimationFrameRange(0, 0x17, 60).unskippable());
+	if (!completed)
+		return;
+	if (!playResourceLayerSequence(_scriptLayer, kScene4080StakeSequenceChunk,
 			kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
 			AnimationFrameRange(0x18, ARRAYSIZE(kScene4080StakeSequenceFrameMap) - 1, 40)
-				.hookEveryFrame(kScene4080StakeSequenceHook));
-	}
+				.unskippable().hookEveryFrame(kScene4080StakeSequenceHook)
+				.noFinalFrameDelay()))
+		return;
 	_soundBank0.playSample(0x1b, 100);
 	state.scene4080GominolaVisibleState = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -765,10 +1177,16 @@ void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
 	}
 
 	beginSecondarySpeechLine(secondaryRow, 0);
-	playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk,
+	if (!settleGwendolynForSpeech())
+		return;
+	_gwendolynSpeechPoseMode = kScene4080GwendolynFrozenSpeechPose;
+	const bool completed = playResourceLayerSequence(_scriptLayer, kScene4080GwendolynReplyChunk,
 		kScene4080GwendolynReplyDescriptorCount, kScene4080GwendolynReplyFrameMap,
-		kScene4080FrameMillis);
-	beginGwendolynSpeechLine(20, 1);
+		AnimationFrameRange(0, ARRAYSIZE(kScene4080GwendolynReplyFrameMap) - 1,
+			kScene4080FrameMillis).unskippable().noFinalFrameDelay());
+	if (completed)
+		beginGwendolynSpeechLine(20, 1);
+	_gwendolynSpeechPoseMode = kScene4080GwendolynBodyAnimation;
 }
 
 void Scene4080::runGwendolynDialogue() {
@@ -780,6 +1198,9 @@ void Scene4080::runGwendolynDialogue() {
 
 	if (state.scene4080GwendolynNameState == 0) {
 		beginSecondarySpeechLine(98, 0);
+		if (!settleGwendolynForSpeech())
+			return;
+		_gwendolynSpeechPoseMode = kScene4080GwendolynDialogueIdle;
 		beginGwendolynSpeechLine(99, 0);
 		beginSecondarySpeechLine(98, 1);
 		beginGwendolynSpeechLine(99, 1);
@@ -787,6 +1208,9 @@ void Scene4080::runGwendolynDialogue() {
 		applySceneStateToHotspotsAndPatches(0xff);
 	} else {
 		beginSecondarySpeechLine(98, 2);
+		if (!settleGwendolynForSpeech())
+			return;
+		_gwendolynSpeechPoseMode = kScene4080GwendolynDialogueIdle;
 		beginGwendolynSpeechLine(99, 2);
 	}
 
@@ -801,12 +1225,12 @@ void Scene4080::runGwendolynDialogue() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(98, 7);
 			beginGwendolynSpeechLine(99, 7);
-			return;
+			break;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
 		if (recordIndex >= records.size())
-			return;
+			break;
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(98, record.playerTextRowId);
@@ -845,9 +1269,11 @@ void Scene4080::runGwendolynDialogue() {
 			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 			break;
 		default:
-			return;
+			finished = true;
+			break;
 		}
 	}
+	_gwendolynSpeechPoseMode = kScene4080GwendolynBodyAnimation;
 }
 
 void Scene4080::initializeGwendolynDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
