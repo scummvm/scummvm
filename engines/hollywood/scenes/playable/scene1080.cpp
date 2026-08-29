@@ -21,6 +21,8 @@
 
 #include "hollywood/scenes/playable/scene1080.h"
 
+#include "common/system.h"
+
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -557,8 +559,10 @@ void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescripto
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
-		uint32 elapsed = 0;
+		const uint32 startMillis = g_system->getMillis();
+		uint32 lastMillis = startMillis;
 		while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			const uint32 elapsed = g_system->getMillis() - startMillis;
 			const bool speechFinished = !_speech.isPlaying() && elapsed >= duration;
 			if (speechFinished && (part + 1 < partCount || descriptor >= lastDescriptor))
 				break;
@@ -568,8 +572,9 @@ void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescripto
 				interrupted = true;
 				break;
 			}
-			elapsed += slice;
-			frameMillis += slice;
+			const uint32 now = g_system->getMillis();
+			frameMillis += now - lastMillis;
+			lastMillis = now;
 			while (frameMillis >= kScene1080FrancoisWorkFrameMillis && descriptor < lastDescriptor) {
 				frameMillis -= kScene1080FrancoisWorkFrameMillis;
 				_francoisActionLayer.setFrame(++descriptor);

@@ -41,6 +41,7 @@ const uint32 kScene2080SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene2080FrameMillis = 75;
 const uint32 kScene2080ClipFrameMillis = 75;
 const uint32 kScene2080DeparturePauseMillis = 2000;
+const uint32 kScene2080MaxFrameDeltaMillis = 250;
 const byte kScene2080InvalidFacing = 0xff;
 const byte kScene2080ForegroundDialogueStageId = 0x62;
 const byte kScene2080ForegroundEntryPrimaryRow = 0;
@@ -683,17 +684,31 @@ void Scene2080::beginForegroundActorEntrySpeechLine() {
 }
 
 bool Scene2080::waitForegroundDialogueMillis(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+	if (millis == 0)
+		return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+
+	const uint32 startMillis = g_system->getMillis();
+	uint32 lastMillis = startMillis;
+	bool framePresented = false;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (pollEvents(true))
 			return true;
 
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		advanceDialogueMenu(slice);
+		const uint32 now = g_system->getMillis();
+		const uint32 delta = now - lastMillis;
+		lastMillis = now;
+		advanceDialogueMenu(MIN<uint32>(delta, kScene2080MaxFrameDeltaMillis));
+
+		if (framePresented && now - startMillis >= millis)
+			break;
+
 		drawPlayableComposite();
 		presentFrame();
-		remaining -= slice;
+		framePresented = true;
+
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (elapsed < millis)
+			g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
 	}
 
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
@@ -706,8 +721,9 @@ void Scene2080::beginForegroundDialogueSecondarySpeechLine(uint16 rowIndex, byte
 
 	const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 		MAX<uint32>(1200, (uint32)_speechOverlay.lines.size() * 1100);
-	uint32 elapsed = 0;
+	const uint32 startMillis = g_system->getMillis();
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		const uint32 elapsed = g_system->getMillis() - startMillis;
 		const bool speechActive = _speech.isPlaying();
 		if (!speechActive && elapsed >= duration)
 			break;
@@ -715,7 +731,6 @@ void Scene2080::beginForegroundDialogueSecondarySpeechLine(uint16 rowIndex, byte
 		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, duration - elapsed);
 		if (waitForegroundDialogueMillis(slice))
 			break;
-		elapsed += slice;
 	}
 
 	_speech.stop();
