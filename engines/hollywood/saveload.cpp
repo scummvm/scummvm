@@ -333,10 +333,13 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene4010DestinationUnlocked);
 	syncStateBool(s, state.scene4020FallReactionLineSeen);
 	syncStateBool(s, state.scene4020GateUnlocked);
+	syncStateBool(s, state.scene4030TowerVisited);
 	syncStateBool(s, state.scene4030InitialEntryLineSeen);
 	syncStateBool(s, state.scene4030RopeTaken);
 	s.syncAsByte(state.scene4030LooseBoneState);
 	syncStateBool(s, state.scene4030ImprovisedLeverInstalled);
+	syncStateBool(s, state.scene4030IronMaidenOpen);
+	syncStateBool(s, state.scene4030MechanismRemarkSeen);
 	syncStateBool(s, state.scene4040EntryLineSeen);
 	syncStateBool(s, state.scene4040CandilTaken);
 	syncStateBool(s, state.scene4050EntryLineSeen);

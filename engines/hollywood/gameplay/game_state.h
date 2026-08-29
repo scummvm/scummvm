@@ -282,10 +282,13 @@ struct GameplayState {
 		scene4010DestinationUnlocked = false;
 		scene4020FallReactionLineSeen = false;
 		scene4020GateUnlocked = false;
+		scene4030TowerVisited = false;
 		scene4030InitialEntryLineSeen = false;
 		scene4030RopeTaken = false;
 		scene4030LooseBoneState = 0;
 		scene4030ImprovisedLeverInstalled = false;
+		scene4030IronMaidenOpen = true;
+		scene4030MechanismRemarkSeen = false;
 		scene4040EntryLineSeen = false;
 		scene4040CandilTaken = false;
 		scene4050EntryLineSeen = false;
@@ -1050,10 +1053,13 @@ struct GameplayState {
 	bool scene4010DestinationUnlocked;
 	bool scene4020FallReactionLineSeen;
 	bool scene4020GateUnlocked;
+	bool scene4030TowerVisited;
 	bool scene4030InitialEntryLineSeen;
 	bool scene4030RopeTaken;
 	byte scene4030LooseBoneState;
 	bool scene4030ImprovisedLeverInstalled;
+	bool scene4030IronMaidenOpen;
+	bool scene4030MechanismRemarkSeen;
 	bool scene4040EntryLineSeen;
 	bool scene4040CandilTaken;
 	bool scene4050EntryLineSeen;
