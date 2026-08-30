@@ -32,6 +32,7 @@ struct ActionOverlayOptions {
 		firstFrame(0),
 		endFrame(0),
 		redrawAtEnd(true),
+		allowSkip(true),
 		waitAfterFinalFrame(true),
 		statePatchFrame(-1),
 		statePatchSelector(0),
@@ -45,6 +46,7 @@ struct ActionOverlayOptions {
 	uint firstFrame;
 	uint endFrame;
 	bool redrawAtEnd;
+	bool allowSkip;
 	bool waitAfterFinalFrame;
 	int statePatchFrame;
 	byte statePatchSelector;
@@ -63,9 +65,10 @@ struct ActionOverlayOptions {
  * endFrame meaning the end of frameMap. Negative patch and sound frames disable
  * those events; a nonzero hookId runs at hookFrame, or every frame when
  * hookFrame is negative. Frames normally hold for frameMillis, including the
- * last; noFinalFrameDelay() makes the terminal frame an immediate handoff. The
- * playback entry point determines whether the resource replaces the actor or
- * overlays the scene.
+ * last; noFinalFrameDelay() makes the terminal frame an immediate handoff.
+ * unskippable() reserves input for the scene while a state-changing sequence
+ * runs. The playback entry point determines whether the resource replaces the
+ * actor or overlays the scene.
  */
 struct ActionOverlaySpec {
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
@@ -115,6 +118,11 @@ struct ActionOverlaySpec {
 
 	ActionOverlaySpec &noFinalFrameDelay() {
 		options.waitAfterFinalFrame = false;
+		return *this;
+	}
+
+	ActionOverlaySpec &unskippable() {
+		options.allowSkip = false;
 		return *this;
 	}
 

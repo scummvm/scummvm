@@ -34,6 +34,9 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
@@ -43,11 +46,12 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	AmbientAudioProfile ambientAudioProfile() const override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetForegroundLayer();
 	void advanceForegroundLayer(uint32 delta);
+	void updateSceneAmbientAudio(uint32 delta);
+	bool waitForForegroundAnimationIdle();
 	bool isWalkableAt(int x, int y) const;
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void runExitToScene8010();
@@ -58,9 +62,12 @@ private:
 
 	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _foregroundChannel;
+	TimedAnimationChannel _secondaryAmbientChannel;
 	Common::Array<byte> _originalColorToItemMap;
 	byte _foregroundAnimationState;
 	byte _foregroundRepeatCount;
+	byte _previousPrimaryAmbientCue;
+	byte _previousSecondaryAmbientCue;
 	bool _foregroundSequenceLocked;
 };
 

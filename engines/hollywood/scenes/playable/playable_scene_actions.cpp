@@ -181,6 +181,8 @@ bool PlayableScene::dispatchGenericInventoryAction(const GameplayLoopCursorState
 
 	switch (handlerId) {
 	case 310: // Usar huevo/navaja-lima con gorro de aviador (use egg/nail-file knife with aviator cap).
+		if (sceneStageIndex() == 802)
+			return false;
 		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
 		return true;
 	case 331: // Usar lupa con placa/póster/rata/etc. (use magnifying glass with cell inventory objects).
