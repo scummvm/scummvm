@@ -30,6 +30,12 @@
 
 namespace Hollywood {
 
+const uint16 kRonMoneyDescriptionAmounts[] = {
+	35, 150, 185, 250, 285,
+	400, 435, 450, 485, 700,
+	735, 850, 885, 1100, 1135
+};
+
 void GameplayLoopDelegate::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
 	(void)rowIndex;
 	(void)frameIndex;
@@ -267,7 +273,7 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 		beginRonSpeechLine(delegate, 0x60, 0);
 		return true;
 	case 105: // Mirar cinta de Sue.
-		beginRonSpeechLine(delegate, 0x61, gameState.ronTapeRecorderState == 2 ? 1 : 0);
+		beginRonSpeechLine(delegate, 0x61, gameState.ronSueTapePlayed ? 1 : 0);
 		return true;
 	case 106: // Mirar algodon empapado de grasa.
 		beginRonSpeechLine(delegate, 0x62, 0);
@@ -387,8 +393,15 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 		beginRonSpeechLine(delegate, 0x8a, 0);
 		return true;
 	case 151: // Mirar varita zahori.
-		beginRonSpeechLine(delegate, 0x8b, 2);
+	{
+		byte frameIndex = 2;
+		if (gameState.dowsingRodKarlExchangeState == 1)
+			frameIndex = 0;
+		else if (gameState.dowsingRodKarlExchangeState == 2)
+			frameIndex = 1;
+		beginRonSpeechLine(delegate, 0x8b, frameIndex);
 		return true;
+	}
 	case 152: // Mirar jeringuilla llena de savia.
 		beginRonSpeechLine(delegate, 0x8c, 0);
 		return true;
@@ -537,7 +550,8 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 		beginRonSpeechLine(delegate, 0xbc, 0);
 		return true;
 	case 203: // Mirar trocito de alambre.
-		beginRonSpeechLine(delegate, 0xbe, 0);
+		beginRonSpeechLine(delegate, 0xbe,
+			gameState.inventoryItemResourcePageByOwnerAndItemId[0][0x5f] == 0x40 ? 1 : 0);
 		return true;
 	case 204: // Mirar bote de pintura.
 		beginRonSpeechLine(delegate, 0xbf, 0);
@@ -689,8 +703,16 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0x35, 0);
 		break;
 	case 59:
-		// Usar navaja con madero: original is state-gated; generic failure until that state exists.
-		beginRonRandomSpeechLine(delegate, 0x01, 2);
+		// Usar navaja con madero: the saw configuration creates a stake.
+		if (gameState.multiToolKnifeState != 5) {
+			beginRonRandomSpeechLine(delegate, 0x01, 2);
+			break;
+		}
+		beginRonSpeechLine(delegate, 0x37, 0);
+		gameState.removeInventoryItem(owner, 0x47);
+		gameState.addInventoryItem(owner, 0x06);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x37, 1);
 		break;
 	case 60:
 		// Usar folleto pegajoso con tratamiento capilar: creates slimming treatment.
@@ -717,8 +739,16 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0x3b, 0);
 		break;
 	case 65:
-		// Usar filete con pedrusco: scene-flag gated; use original fallback until modeled.
-		beginRonRandomSpeechLine(delegate, 0xda, 1);
+		// Usar filete con pedrusco: tenderize it after the tiger rejected the first steak.
+		if (!gameState.scene2020TigerFedSteak) {
+			beginRonRandomSpeechLine(delegate, 0xda, 1);
+			break;
+		}
+		gameState.removeInventoryItem(owner, 0x4e);
+		gameState.removeInventoryItem(owner, 0x45);
+		gameState.addInventoryItem(owner, 0x11);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x3d, 0);
 		break;
 	case 68:
 		// Usar pase de Taffy con foto de Robert Feynman: creates forged pass.
@@ -730,8 +760,24 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0x40, 0);
 		break;
 	case 69:
-		// Usar navaja/sobre with poster: state-gated photo grant; fallback is generic failure.
-		beginRonRandomSpeechLine(delegate, 0x01, 2);
+		// Usar navaja con cartel: cut out the photograph with the scissors.
+		if (gameState.multiToolKnifeState == 5) {
+			beginRonSpeechLine(delegate, 0x34, 0);
+			break;
+		}
+		if (gameState.multiToolKnifeState != 3) {
+			beginRonRandomSpeechLine(delegate, 0x01, 2);
+			break;
+		}
+		if (gameState.ronPosterPhotoRemoved) {
+			beginRonRandomSpeechLine(delegate, 0xda, 1);
+			break;
+		}
+		beginRonSpeechLine(delegate, 0x41, 0);
+		gameState.addInventoryItem(owner, 0x68);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		gameState.ronPosterPhotoRemoved = true;
 		break;
 	case 85:
 		// Mirar magnetofono.
@@ -749,13 +795,14 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		if (gameState.ronTapeRecorderState < 2) {
 			beginRonSpeechLine(delegate, 0x50, 1);
 		} else {
-			const bool firstPlayback = !gameState.ronTravelScreenUnlocked;
+			const bool firstPlayback = !gameState.ronSueTapePlayed;
 			if (firstPlayback)
 				beginRonSpeechLine(delegate, 0x51, 0);
 			if (delegate->playSueTapeRecording() && !Engine::shouldQuit() &&
 					!delegate->shouldExitGameplayLoop()) {
 				if (firstPlayback)
 					beginRonSpeechLine(delegate, 0x51, 9);
+				gameState.ronSueTapePlayed = true;
 				gameState.ronTravelScreenUnlocked = true;
 			}
 		}
@@ -835,9 +882,19 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0x71, 0);
 		break;
 	case 133:
-		// Mirar dinero: original follows with a money counter; show the lead-in line for now.
+	{
+		// Mirar dinero: introduce it, then describe the exact amount carried.
 		beginRonSpeechLine(delegate, 0x7a, 0);
+		for (uint i = 0; i < ARRAYSIZE(kRonMoneyDescriptionAmounts); ++i) {
+			if (gameState.ronEgyptianMoneyAmount != kRonMoneyDescriptionAmounts[i])
+				continue;
+
+			beginRonSpeechLine(delegate, i < 10 ? 0xd1 : 0xd2,
+				i < 10 ? i : i - 10);
+			break;
+		}
 		break;
+	}
 	case 147:
 		if (delegate->showInventoryMedia(kInventoryMediaFrankensteinDiary) &&
 				!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop())
