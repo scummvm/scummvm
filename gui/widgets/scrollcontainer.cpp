@@ -27,7 +27,6 @@
 
 namespace GUI {
 
-const int ScrollContainerWidget::kDragThreshold = 5;
 ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd)
 	: Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
@@ -39,7 +38,7 @@ ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::Stri
 }
 
 void ScrollContainerWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 	_type = kScrollContainerWidget;
 	_backgroundType = ThemeEngine::kWidgetBackgroundPlain;
 	_verticalScroll = new ScrollBarWidget(this, _w, 0, 16, _h);
@@ -49,7 +48,6 @@ void ScrollContainerWidget::init() {
 	_scrollPos = 0.0f;
 	_limitH = 140;
 	_fluidScroller = new FluidScroller();
-	_wasAnimating = false;
 	recalc();
 }
 
@@ -64,21 +62,11 @@ void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
 void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_mouseDownY = _mouseDownStartY = y;
 	_isMouseDown = true;
-	_wasAnimating = _fluidScroller->isAnimating();
 	_fluidScroller->stopAnimation();
-	if (_wasAnimating)
-		return;
-
-	Widget *child = _childUnderMouse;
-	if (child) {
-		int childX = x - (child->getAbsX() - getAbsX());
-		int childY = y - (child->getAbsY() - getAbsY());
-		child->handleMouseDown(childX, childY, button, clickCount);
-	}
 }
 
 void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
-	if (!_isMouseDown || _mouseDownY == y || !_verticalScroll->isVisible())
+	if (!_isMouseDown || !_verticalScroll->isVisible())
 		return;
 
 	if (!_isDragging && ABS(y - _mouseDownStartY) > kDragThreshold)
@@ -87,7 +75,6 @@ void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
 	if (_isDragging) {
 		int deltaY = _mouseDownY - y;
 		_mouseDownY = y;
-		_childUnderMouse = nullptr;
 
 		if (deltaY != 0) {
 			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
@@ -121,9 +108,6 @@ void ScrollContainerWidget::applyScrollPos() {
 }
 
 void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	Widget *child = _childUnderMouse;
-	bool isDragging = _isDragging;
-
 	if (_isMouseDown && _isDragging) {
 		_fluidScroller->startFling();
 		registerTickleWidget(this);
@@ -132,14 +116,6 @@ void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCou
 	_mouseDownY = _mouseDownStartY = 0;
 	_isMouseDown = false;
 	_isDragging = false;
-	_childUnderMouse = nullptr;
-
-	if (!isDragging && child && !_wasAnimating) {
-		int childX = x - (child->getAbsX() - getAbsX());
-		int childY = y - (child->getAbsY() - getAbsY());
-		child->handleMouseUp(childX, childY, button, clickCount);
-	}
-	_wasAnimating = false;
 }
 
 void ScrollContainerWidget::cancelDrag() {
@@ -149,6 +125,35 @@ void ScrollContainerWidget::cancelDrag() {
 	_mouseDownY = _mouseDownStartY = 0;
 	_isMouseDown = false;
 	_isDragging = false;
+}
+
+bool ScrollContainerWidget::handleDragHook(Widget *origTarget, int state, int x, int y, int button) {
+	if (state == kDragHookStateMouseDown) {
+		bool wasAnimating = _fluidScroller->isAnimating();
+		handleMouseDown(x, y, button, 0);
+		if (wasAnimating) {
+			// If we were animating, we stop it and take over the events
+			return true;
+		}
+		// Let the button down event pass through to the underlying widget
+	} else if (state == kDragHookStateMouseUp) {
+		// We didn't catch the events: this must be a click
+		// Reset our internal state and let the event pass through
+		_isDragging = false;
+		handleMouseUp(x, y, button, 0);
+	} else if (state == kDragHookStateCancel) {
+		cancelDrag();
+	} else if (state == kDragHookStateMouseMoved) {
+		handleMouseMoved(x, y, button);
+		if (_isDragging) {
+			// We are taking over now: notify the original widget
+			// that the drag is finished for it
+			origTarget->handleMouseLeft(button);
+			origTarget->cancelDrag();
+			return true;
+		}
+	}
+	return false;
 }
 
 void ScrollContainerWidget::recalc() {
@@ -225,7 +230,6 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void ScrollContainerWidget::reflowLayout() {
-	_childUnderMouse = nullptr;
 	Widget::reflowLayout();
 
 	if (!_dialogName.empty()) {
@@ -276,17 +280,11 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
-	if (_verticalScroll->isVisible() && x >= _w) {
-		_childUnderMouse = nullptr;
+	if (_verticalScroll->isVisible() && x >= _w)
 		return _verticalScroll;
-	}
-	_childUnderMouse = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
-	if (_childUnderMouse == _verticalScroll) 
-		_childUnderMouse = nullptr;
-
-	if (_childUnderMouse && _childUnderMouse->wantsFocus())
-		return _childUnderMouse;
-
+	Widget *w = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	if (w)
+		return w;
 	return this;
 }
 
