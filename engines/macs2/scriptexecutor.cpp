@@ -616,11 +616,11 @@ void ScriptExecutor::step() {
 			// Continue execution
 
 			// Check if the currently executing script is at the end
-			if (_stream && _stream->pos() >= effectiveScriptEnd()) {
+			if (!_stream || _stream->pos() >= effectiveScriptEnd()) {
 				syncScriptIsExecutingFlag();
 				// Binary (runScriptExecutor 1008:e3e7): if script finishes while
 				// g_wScriptSkippable is still set, treat as error 0x11 and abort.
-				if (_scriptSkippable) {
+				if (_stream && _scriptSkippable) {
 					setScriptError(0x11);
 					_scriptSkippable = false;
 					shouldContinue = false;
@@ -648,7 +648,7 @@ void ScriptExecutor::step() {
 					return;
 				}
 				syncScriptIsExecutingFlag();
-				if (_stream && _stream->pos() >= effectiveScriptEnd()) {
+				if (_stream->pos() >= effectiveScriptEnd()) {
 					if (_scriptSkippable) {
 						setScriptError(0x11);
 						_scriptSkippable = false;
