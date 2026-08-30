@@ -318,12 +318,12 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 			byte color = 0;
 			const uint32 bitIndex = (uint32)x & 7;
 			const uint32 byteInRow = (uint32)x >> 3;
-			for (uint16 plane = 0; plane < 5; plane++) {
+			for (uint16 plane = 0; plane < kPlanes; plane++) {
 				const byte *planeRow = src + plane * planeBytes + (uint32)y * rowBytes;
 				if (planeRow[byteInRow] & (0x80 >> bitIndex))
 					color |= (byte)(1 << plane);
 			}
-			atlas[(uint32)y * atlasW + x] = color;
+			atlas[(uint32)y * atlasW + x] = remapAmigaCopperIndexToStableUi(color);
 		}
 	}
 
@@ -378,6 +378,27 @@ static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array
 	memcpy(out.data(), unpacked, outLen);
 	delete[] unpacked;
 	return true;
+}
+
+byte remapAmigaCopperIndexToStableUi(byte color) {
+	if (color == 0)
+		return 0;
+
+	const bool ehb = color >= kAmigaColorRegisterCount;
+	const byte base = ehb ? (byte)(color - kAmigaColorRegisterCount) : color;
+	byte ui;
+	if (base >= 17 && base <= 31)
+		ui = (byte)(0xF0 + (base - 16));
+	else if (base < 16)
+		ui = (byte)(0xF0 + base);
+	else
+		ui = base;
+
+	if (!ehb)
+		return ui;
+	if (ui < 0xF0)
+		return (byte)(kAmigaColorRegisterCount + base);
+	return (byte)(0xE0 + (ui - 0xF0));
 }
 
 void amiga12ToVga6(uint16 rgb, byte &r6, byte &g6, byte &b6) {
