@@ -2740,7 +2740,7 @@ void Macs2Engine::loadTranslation() {
 	}
 
 	uint16 version = f->readUint16LE();
-	if (version < 1 || version > 3) {
+	if (version != 1) {
 		warning("Unsupported macs2_translation.dat version %u", version);
 		delete f;
 		return;
@@ -2748,12 +2748,8 @@ void Macs2Engine::loadTranslation() {
 
 	uint16 numScenes = f->readUint16LE();
 	uint16 numObjects = f->readUint16LE();
-	uint16 numHotspotLabels = 0;
-	uint16 numUiLabels = 0;
-	if (version >= 2)
-		numHotspotLabels = f->readUint16LE();
-	if (version >= 3)
-		numUiLabels = f->readUint16LE();
+	uint16 numHotspotLabels = f->readUint16LE();
+	uint16 numUiLabels = f->readUint16LE();
 
 	// Read index tables
 	struct IndexEntry {
