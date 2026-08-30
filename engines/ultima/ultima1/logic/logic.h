@@ -67,6 +67,11 @@ protected:
 	 */
 	void redrawStats();
 
+	/**
+	 * Handles end of turn logic
+	 */
+	void endOfTurn();
+
 public:
 	virtual ~Logic() {
 	}

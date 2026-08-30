@@ -33,6 +33,7 @@ constexpr int MAP_VISIBLE_WIDTH = 38;
 constexpr int MAP_VISIBLE_HEIGHT = 18;
 
 bool LocationMap::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
 	delayFrames(1);
 	return UIElement::msgFocus(msg);
 }
@@ -78,7 +79,7 @@ void LocationMap::draw() {
 	}
 	
 	// Draw the player
-	const Graphics::ManagedSurface &tileImg = tiles[Data::LOCTILE_PLAYER];
+	const Graphics::ManagedSurface &tileImg = tiles[Data::CTILE_PLAYER];
 	s.blitFrom(tileImg, Common::Point(pos.x * TILE_WIDTH + 8, pos.y * TILE_HEIGHT + 8));
 }
 

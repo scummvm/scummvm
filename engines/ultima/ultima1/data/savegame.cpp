@@ -117,7 +117,7 @@ void Savegame::synchronizeOriginal(Common::Serializer &s) {
 	_mapNum = MAP_OVERWORLD;
 }
 
-int Savegame::getEntityAt(int x, int y, int startingIndex) const {
+int Savegame::getOverworldEntityAt(int x, int y, int startingIndex) const {
 	int foundIndex = -1;
 	for (; startingIndex <= _G(overworldEntityCount) && foundIndex == -1; ++startingIndex) {
 		const auto &e = _overworldEntities[startingIndex];
@@ -128,8 +128,8 @@ int Savegame::getEntityAt(int x, int y, int startingIndex) const {
 	return foundIndex;
 }
 
-void Savegame::removeCreatureAt(int x, int y) {
-	int creatureNum = getEntityAt(x, y, 1);
+void Savegame::removeOverworldCreatureAt(int x, int y) {
+	int creatureNum = getOverworldEntityAt(x, y, 1);
 	if (creatureNum <= 0)
 		return;
 
@@ -140,6 +140,16 @@ void Savegame::removeCreatureAt(int x, int y) {
 	--_G(overworldEntityCount);
 }
 
+int Savegame::getLocationEntityAt(int x, int y) const {
+	int foundIndex = -1;
+	for (int startingIndex = 1; startingIndex < LOCATION_ENTITY_COUNT && foundIndex == -1; ++startingIndex) {
+		const auto &e = _locationEntities[startingIndex];
+		if (e._position.x == x && e._position.y == y)
+			foundIndex = startingIndex;
+	}
+
+	return foundIndex;
+}
 
 } // namespace Data
 } // namespace Ultima1

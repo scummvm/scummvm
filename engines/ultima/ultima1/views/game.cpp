@@ -41,16 +41,6 @@ Game::Game() : Shared::Gfx::View("Game"), _commands(this), _stats(this) {
 	_stats.setBounds(TextRect(31, 21, 39, 24));
 }
 
-bool Game::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
-	return View::msgFocus(msg);
-}
-
-bool Game::msgUnfocus(const UnfocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	return View::msgUnfocus(msg);
-}
-
 void Game::draw() {
 	auto s = getSurface();
 	Shared::UIElement::draw();

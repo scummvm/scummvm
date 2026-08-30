@@ -44,8 +44,6 @@ public:
 	~Game() override {
 	}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 };
 

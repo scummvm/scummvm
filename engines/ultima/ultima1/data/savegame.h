@@ -197,12 +197,17 @@ public:
 	 * @param startingIndex		Starting index array
 	 * @return 
 	*/
-	int getEntityAt(int x, int y, int startingIndex = 1) const;
+	int getOverworldEntityAt(int x, int y, int startingIndex = 1) const;
 
 	/**
 	 * Removes a creature from a given X/Y position on the map
 	 */
-	void removeCreatureAt(int x, int y);
+	void removeOverworldCreatureAt(int x, int y);
+
+	/**
+	 * Return the index of any NPC at a gien x, y position within a location
+	 */
+	int getLocationEntityAt(int x, int y) const;
 };
 
 } // namespace Data

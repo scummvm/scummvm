@@ -113,7 +113,7 @@ static const KeysRecord MENU_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord OVERWORLD_RECORDS[] = {
+static const KeysRecord GAMEPLAY_RECORDS[] = {
 	{ "ultima0", _s("Basic keys"), MINIMAL_KEYS },
 	{ "overworld", _s("Overworld keys"), OVERWORLD_KEYS },
 	{ nullptr, nullptr, nullptr }
@@ -129,7 +129,7 @@ static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
 	MINIMAL_RECORDS,
 	MENU_RECORDS,
-	OVERWORLD_RECORDS,
+	GAMEPLAY_RECORDS,
 	DUNGEON_RECORDS,
 };
 

@@ -57,6 +57,14 @@ int Logic::getRandomNumber(int maxNumber) {
 	return g_engine->getRandomNumber(maxNumber);
 }
 
+void Logic::endOfTurn() {
+	_G(moveCtr)++;
+
+	redrawMap();
+	redrawStats();
+	prompt();
+}
+
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima

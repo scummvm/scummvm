@@ -56,8 +56,11 @@ enum OverworldTileId {
 };
 
 enum LocationTileId {
-	LOCTILE_WALL = 0,
-	LOCTILE_PLAYER = 18
+	CTILE_WALL = 0,
+	CTILE_GROUND = 1,
+	CTILE_PLAYER = 18,
+	CTILE_GUARD_MB = 51,
+	CTILE_BLANK = 63
 };
 
 /**

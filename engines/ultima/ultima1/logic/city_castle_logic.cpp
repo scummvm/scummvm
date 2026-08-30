@@ -117,16 +117,45 @@ static const Data::LocationEntity CITY_WIDGETS[LOCATION_STYLE_COUNT][Data::LOCAT
 	}
 };
 
+static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
+static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
+
+
 void CityCastleLogic::enter() {
 	loadEntities();
 }
 
 void CityCastleLogic::action(int action) {
-	// TODO
+	switch (action) {
+	case KEYBIND_UP:
+		move(Data::DIR_UP);
+		break;
+	case KEYBIND_DOWN:
+		move(Data::DIR_DOWN);
+		break;
+	case KEYBIND_LEFT:
+		move(Data::DIR_LEFT);
+		break;
+	case KEYBIND_RIGHT:
+		move(Data::DIR_RIGHT);
+		break;
+	case KEYBIND_ENTER:
+		enter();
+		break;
+	case KEYBIND_PASS:
+		pass();
+		break;
+	default:
+		writeString("Huh?\n");
+		break;
+	}
+
+	endOfTurn();
 }
 
 void CityCastleLogic::keypress(Common::KeyCode keycode) {
-	action(KEYBIND_PASS);
+	writeString("Huh?\n");
+	endOfTurn();
 }
 
 void CityCastleLogic::loadEntities() {
@@ -136,6 +165,10 @@ void CityCastleLogic::loadEntities() {
 
 	for (int idx = 0; idx < Data::LOCATION_ENTITY_COUNT; ++idx)
 		savegame._locationEntities[idx] = widgets[idx];
+}
+
+void CityCastleLogic::pass() {
+	writeString("Pass\n");
 }
 
 /*-------------------------------------------------------------------*/
@@ -150,6 +183,46 @@ void CityLogic::enter() {
 	_G(savegame)._locationPosition = Common::Point(19, 17);
 	CityCastleLogic::enter();
 }
+
+void CityLogic::move(Data::Direction dir) {
+	const int deltaX = DELTA_X[dir];
+	const int deltaY = DELTA_Y[dir];
+	const int x = _G(savegame)._locationPosition.x + deltaX;
+	const int y = _G(savegame)._locationPosition.y + deltaY;
+
+	if (x < 0 || y < 0 || x >= Data::CITY_WIDTH || y >= Data::CITY_HEIGHT) {
+		// Left the bounds of the map, returning to the overworld
+		_G(map).load(Data::MAP_OVERWORLD);
+	} else {
+		int tile = checkAt(x, y);
+
+		if (tile == -1 || tile == Data::CTILE_BLANK) {
+			// Write direction traveled
+			writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
+
+			_G(savegame)._locationPosition = Common::Point(x, y);
+			playFX(1);
+			redrawMap();
+			
+		} else {
+			// Can't move in that direction
+			writeString("Blocked!\n");
+			playFX(1);
+		}
+	}
+}
+
+int CityLogic::checkAt(int x, int y) const {
+	int tile = _G(map).getTileAt(x, y);
+	if (tile == Data::CTILE_BLANK)
+		return tile;
+
+	if (tile == Data::CTILE_GROUND || tile >= Data::CTILE_GUARD_MB)
+		return -1;
+
+	return 0;
+}
+
 
 /*-------------------------------------------------------------------*/
 

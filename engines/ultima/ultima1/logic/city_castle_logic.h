@@ -31,7 +31,20 @@ namespace Logic {
 
 class CityCastleLogic : public Logic {
 protected:
+	/**
+	 * Load the NPCs for the given location
+	 */
 	void loadEntities();
+
+	/**
+	 * Handle movement
+	 */
+	virtual void move(Data::Direction dir) = 0;
+
+	/**
+	 * Pass a turn
+	 */
+	void pass();
 
 public:
 	~CityCastleLogic() override {
@@ -43,6 +56,17 @@ public:
 };
 
 class CityLogic : public CityCastleLogic {
+protected:
+	/**
+	 * Handle movement
+	 */
+	void move(Data::Direction dir) override;
+
+	/**
+	 * Checks if the player can move to a given location
+	 */
+	int checkAt(int x, int y) const;
+
 public:
 	CityLogic();
 	~CityLogic() override {
@@ -52,6 +76,13 @@ public:
 };
 
 class CastleLogic : public CityCastleLogic {
+protected:
+	/**
+	 * Handle movement
+	 */
+	void move(Data::Direction dir) override {
+	}
+
 public:
 	CastleLogic();
 	~CastleLogic() override {

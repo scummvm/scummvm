@@ -31,7 +31,7 @@ constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
+	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
 	delayFrames(1);
 	return Dialog::msgFocus(msg);
 }

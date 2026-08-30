@@ -122,7 +122,7 @@ public:
 	}
 
 	void action(int action) override;
-	void keypress(Common::KeyCode keycode);
+	void keypress(Common::KeyCode keycode) override;
 };
 
 } // namespace Logic

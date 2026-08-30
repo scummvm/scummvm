@@ -44,7 +44,7 @@ static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
-static const KeybindingRecord OVERWORLD_KEYS[] = {
+static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP"},
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
@@ -66,7 +66,7 @@ struct KeysRecord {
 static const KeysRecord ALL_RECORDS[] = {
 	{ "Ultima1", _s("Basic keys"), MINIMAL_KEYS },
 	{ "menu", _s("Menu keys"), MENU_KEYS },
-	{ "overworld", _s("Overworld keys"), OVERWORLD_KEYS },
+	{ "gameplay", _s("Gameplay keys"), GAMEPLAY_KEYS },
 	{ "dungeon", _s("Dungeon keys"), DUNGEON_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
@@ -82,9 +82,9 @@ static const KeysRecord MENU_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord OVERWORLD_RECORDS[] = {
+static const KeysRecord GAMEPLAY_RECORDS[] = {
 	{ "Ultima1", _s("Basic keys"), MINIMAL_KEYS },
-	{ "overworld", _s("Overworld keys"), OVERWORLD_KEYS },
+	{ "gameplay", _s("Gameplay keys"), GAMEPLAY_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
@@ -98,7 +98,7 @@ static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
 	MINIMAL_RECORDS,
 	MENU_RECORDS,
-	OVERWORLD_RECORDS,
+	GAMEPLAY_RECORDS,
 	DUNGEON_RECORDS,
 };
 

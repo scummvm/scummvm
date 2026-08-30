@@ -46,8 +46,8 @@ static const char *IMPASSABLE_REASONS[] = {
 	"Rafts like water!"
 };
 
-const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
-const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
+static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
+static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
@@ -356,7 +356,7 @@ void OverworldLogic::continentChanged(int oldContinent) {
 		int continent = _G(map).getContinentAt(e._x, e._y);
 
 		if (continent == oldContinent) {
-			_G(savegame).removeCreatureAt(e._x, e._y);
+			_G(savegame).removeOverworldCreatureAt(e._x, e._y);
 			_G(creaturesCount)--;
 		}
 	}
@@ -365,14 +365,10 @@ void OverworldLogic::continentChanged(int oldContinent) {
 void OverworldLogic::endOfTurn() {
 	if (_G(creaturesCount) < Data::CREATURES_COUNT)
 		generateCreatures();
-
-	_G(moveCtr)++;
 	updateCreatures();
 	reduceFood();
 
-	redrawMap();
-	redrawStats();
-	prompt();
+	Logic::endOfTurn();
 }
 
 void OverworldLogic::generateCreatures() {

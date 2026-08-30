@@ -139,7 +139,7 @@ void Map::load(int mapNum) {
 	} else {
 		_mapWidth = CITY_WIDTH;
 		_mapHeight = CITY_HEIGHT;
-		_outsideMapTile = LOCTILE_WALL;
+		_outsideMapTile = CTILE_BLANK;
 		_tiles = _cityTiles;
 	}
 
@@ -214,10 +214,17 @@ int Map::getMapTile(int x, int y) const {
 }
 
 int Map::getTileAt(int x, int y, int creatureIndex) const {
-	int entityIndex = _G(savegame).getEntityAt(x, y, creatureIndex);
+	int entityIndex;
 
-	if (entityIndex >= 0)
-		return _G(savegame)._overworldEntities[entityIndex]._type;
+	if (_mapType == MAPTYPE_OVERWORLD) {
+		entityIndex = _G(savegame).getOverworldEntityAt(x, y, creatureIndex);
+		if (entityIndex >= 0)
+			return _G(savegame)._overworldEntities[entityIndex]._type;
+	} else {
+		entityIndex = _G(savegame).getLocationEntityAt(x, y);
+		if (entityIndex >= 0)
+			return _G(savegame)._locationEntities[entityIndex]._type;
+	}
 
 	return _G(map).getMapTile(x, y);
 }
