@@ -110,19 +110,29 @@ public:
 		// pair at slots (type * 2, type * 2 + 1). These constants are Nancy13
 		// system TYPE indices (not slot indices); resolveNancy13CursorID turns a
 		// type into the idle or hotspot slot.
-		kNancy13Normal			= 0,	// Eyeglass (kHotspot is the same type's hotspot slot)
-		kNancy13MoveUp			= 6,	// Scene-change: look/move up
-		kNancy13MoveDown		= 7,	// Scene-change: look/move down
-		kNancy13MoveLeft		= 8,	// Scene-change: move left
-		kNancy13MoveRight		= 9,	// Scene-change: move right
-		kNancy13MoveBackward	= 10,	// Scene-change: move back / exit puzzle
-		kNancy13MoveForward		= 12,	// Scene-change: move forward
-		kNancy13Arrow			= 14,	// Frame / taskbar arrow
-		kNancy13Exit			= 19,	// Exit
-		kNancy13DropHand		= 24,	// Hand shown while carrying a puzzle piece
-		kNancy13RotateCCW		= 25,	// Dial / turn cursor
-		kNancy13RotateCW		= 26,	// Dial / turn cursor
-		kNancy13PuzzleArrow		= 29	// Generic clickable puzzle hotspot
+		// Types 25-34 are the blue in-puzzle variants of the plain ones.
+		kNancy13Normal				= 0,	// Eyeglass
+		kNancy13Talk				= 5,
+		kNancy13MoveUp				= 6,
+		kNancy13MoveDown			= 7,
+		kNancy13MoveLeft			= 8,
+		kNancy13MoveRight			= 9,
+		kNancy13MoveBackward		= 10,
+		kNancy13MoveForward			= 12,
+		kNancy13Arrow				= 14,
+		kNancy13RotateRight			= 17,
+		kNancy13RotateLeft			= 18,
+		kNancy13Exit				= 19,
+		kNancy13InvertedRotateRight	= 20,
+		kNancy13InvertedRotateLeft	= 21,
+		// Empty. Selected while the cell phone's camera viewfinder is up, so
+		// only the viewfinder is seen.
+		kNancy13Blank				= 24,
+		kNancy13PuzzleRotateCW		= 25,
+		kNancy13PuzzleRotateCCW		= 26,
+		kNancy13PuzzleDragHand		= 28,
+		kNancy13PuzzleDropHand		= 29,
+		kNancy13PuzzleArrow			= 34
 	};
 
 	CursorManager();
