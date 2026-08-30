@@ -40,6 +40,20 @@ protected:
 	Common::String getRecordTypeName() const override { return "SetVolume"; }
 };
 
+// Nancy14 AR 150. Changes the volume of a movie that is already loaded,
+// addressed by its filename.
+class SetMovieVolume : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Path movieName;
+	byte volume = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SetMovieVolume"; }
+};
+
 // Nancy 11+ AR 147. Linearly ramps a channel's volume down to 0 over
 // the given time, then stops execution.
 class FadeSoundToSilence : public ActionRecord {
@@ -249,6 +263,57 @@ protected:
 
 	uint16 _tableIndex = 0;
 	int16 _lastIndexVal = -1;
+};
+
+// Nancy14 sequenced sound player (AR 143 ConcatSound / 144 MultiSound): plays a
+// list of grouped sounds one after another on a shared channel, then optionally
+// changes scene. ConcatSound keeps a set of event flags per group, MultiSound one
+// shared set.
+class ConcatMultiSound : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	struct SequencedSound {
+		Common::String name;
+		byte flag = 0;
+		int16 delay = 0;	// seconds to hold after the sound starts
+	};
+
+	struct SoundGroup {
+		Common::Array<SequencedSound> sounds;
+		Common::Array<FlagDescription> flags;	// ConcatSound only
+	};
+
+	// Flags stored per group (ConcatSound) or as one shared set (MultiSound).
+	virtual bool perGroupFlags() const = 0;
+
+	void startCurrentSound();
+
+	Common::Array<SoundGroup> _groups;
+	Common::Array<FlagDescription> _sharedFlags;	// MultiSound only
+	SoundDescription _sound;
+	int16 _exitSceneID = kNoScene;
+	byte _field35 = 0;
+
+	// Runtime state
+	uint _currentGroup = 0;
+	uint _currentSound = 0;
+	bool _soundStarted = false;
+	uint32 _delayEnd = 0;
+};
+
+class ConcatSound : public ConcatMultiSound {
+protected:
+	bool perGroupFlags() const override { return true; }
+	Common::String getRecordTypeName() const override { return "ConcatSound"; }
+};
+
+class MultiSound : public ConcatMultiSound {
+protected:
+	bool perGroupFlags() const override { return false; }
+	Common::String getRecordTypeName() const override { return "MultiSound"; }
 };
 
 } // End of namespace Action

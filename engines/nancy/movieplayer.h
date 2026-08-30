@@ -89,6 +89,13 @@ public:
 	uint16 getHeight() const;
 	void addFrameTime(uint16 timeToAdd);	// AVF only, no-op otherwise
 
+	// Sets the volume of the movie's audio track, as a percentage (0 - 100).
+	void setVolume(byte percent);
+
+	// Loaded movies are registered under their filename, so SetMovieVolume
+	// (Nancy14 AR 150) can address one that is already playing by name.
+	static MoviePlayer *findLoadedMovie(const Common::Path &name);
+
 	// Decode a frame: frameNr < 0 returns the next frame; otherwise that
 	// specific frame via the format-appropriate cached path (AVF decodeFrame;
 	// Bink decodes forward when possible and caches frames, see _frameCache).
@@ -112,10 +119,16 @@ private:
 
 	void storeCurrentFrame();
 	void freeFrameCache();
+	void unregisterMovie();
 	bool fillNextCacheFrame();	// decode one uncached frame; true when the cache is full
 
 	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 	byte _videoType = kVideoPlaytypeAVF;
+
+	// Name this movie was loaded with, and the list of all currently loaded
+	// movies; both only serve findLoadedMovie().
+	Common::Path _loadedName;
+	static Common::Array<MoviePlayer *> _loadedMovies;
 
 	// Decoded-frame cache for the Bink path (AVF caches internally). Bink seeking
 	// re-decodes from the previous keyframe, so caching keeps panorama scrubbing

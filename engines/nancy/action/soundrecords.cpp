@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
@@ -80,6 +81,20 @@ void SetVolume::readData(Common::SeekableReadStream &stream) {
 
 void SetVolume::execute() {
 	g_nancy->_sound->setVolume(channel, volume);
+	_isDone = true;
+}
+
+void SetMovieVolume::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, movieName);
+	volume = MIN<byte>(stream.readByte(), 100);
+}
+
+void SetMovieVolume::execute() {
+	MoviePlayer *movie = MoviePlayer::findLoadedMovie(movieName);
+	if (movie) {
+		movie->setVolume(volume);
+	}
+
 	_isDone = true;
 }
 
@@ -486,6 +501,133 @@ void TableIndexPlaySound::execute() {
 	}
 
 	PlaySoundCC::execute();
+}
+
+void ConcatMultiSound::readData(Common::SeekableReadStream &stream) {
+	// Sound records split into groups; each group declares its size.
+	int16 remaining = stream.readSint16LE();
+	while (remaining > 0) {
+		int16 groupSize = stream.readSint16LE();
+		if (groupSize <= 0) {
+			break;
+		}
+
+		_groups.push_back(SoundGroup());
+		SoundGroup &group = _groups.back();
+		for (int16 i = 0; i < groupSize; ++i) {
+			group.sounds.push_back(SequencedSound());
+			SequencedSound &sound = group.sounds.back();
+			readFilename(stream, sound.name);	// 33-byte field
+			sound.flag = stream.readByte();
+			sound.delay = stream.readSint16LE();
+		}
+
+		// ConcatSound: flag pairs per group.
+		if (perGroupFlags()) {
+			int16 numFlags = stream.readSint16LE();
+			for (int16 i = 0; i < numFlags; ++i) {
+				group.flags.push_back(FlagDescription());
+				group.flags.back().label = stream.readSint16LE();
+				group.flags.back().flag = (byte)stream.readSint16LE();
+			}
+		}
+
+		remaining -= groupSize;
+	}
+
+	// Shared sound descriptor.
+	_sound.channelID = stream.readUint16LE();
+	_sound.numLoops = (uint16)stream.readSint32LE();	// stored as an int32 on disk
+	_sound.volume = stream.readUint16LE();
+	_exitSceneID = stream.readSint16LE();
+	_field35 = stream.readByte();
+
+	// MultiSound: one shared set of flag pairs.
+	if (!perGroupFlags()) {
+		int16 numFlags = stream.readSint16LE();
+		for (int16 i = 0; i < numFlags; ++i) {
+			_sharedFlags.push_back(FlagDescription());
+			_sharedFlags.back().label = stream.readSint16LE();
+			_sharedFlags.back().flag = (byte)stream.readSint16LE();
+		}
+	}
+
+	_sound.name = "NO SOUND";
+}
+
+void ConcatMultiSound::startCurrentSound() {
+	SoundGroup &group = _groups[_currentGroup];
+	SequencedSound &sound = group.sounds[_currentSound];
+
+	// ConcatSound: apply the group's flags on its first sound.
+	if (perGroupFlags() && _currentSound == 0) {
+		for (const FlagDescription &flag : group.flags) {
+			NancySceneState.setEventFlag(flag);
+		}
+	}
+
+	_sound.name = sound.name;
+	if (!_sound.name.empty() && _sound.name != "NO SOUND") {
+		g_nancy->_sound->loadSound(_sound);
+		g_nancy->_sound->playSound(_sound);
+	}
+
+	_delayEnd = g_nancy->getTotalPlayTime() + (sound.delay > 0 ? (uint32)sound.delay * 1000 : 0);
+}
+
+void ConcatMultiSound::execute() {
+	switch (_state) {
+	case kBegin:
+		_currentGroup = 0;
+		_currentSound = 0;
+		_soundStarted = false;
+
+		// MultiSound: apply the shared flags up front.
+		if (!perGroupFlags()) {
+			for (const FlagDescription &flag : _sharedFlags) {
+				NancySceneState.setEventFlag(flag);
+			}
+		}
+
+		_state = kRun;
+		break;
+	case kRun:
+		if (_currentGroup >= _groups.size()) {
+			_state = kActionTrigger;
+			break;
+		}
+
+		if (_currentSound >= _groups[_currentGroup].sounds.size()) {
+			++_currentGroup;
+			_currentSound = 0;
+			_soundStarted = false;
+			break;
+		}
+
+		if (!_soundStarted) {
+			startCurrentSound();
+			_soundStarted = true;
+		} else {
+			// Advance once the sound finishes and its delay elapses.
+			bool soundDone = !g_nancy->_sound->isSoundPlaying(_sound);
+			bool delayDone = g_nancy->getTotalPlayTime() >= _delayEnd;
+			if (soundDone && delayDone) {
+				++_currentSound;
+				_soundStarted = false;
+			}
+		}
+
+		break;
+	case kActionTrigger:
+		if (_exitSceneID != kNoScene) {
+			SceneChangeDescription desc;
+			desc.sceneID = _exitSceneID;
+			NancySceneState.changeScene(desc);
+		}
+
+		finishExecution();
+		break;
+	}
 }
 
 } // End of namespace Action

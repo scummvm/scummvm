@@ -196,7 +196,9 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 	ser.skip(4);	// Two u16s (object offsets 0x8c / 0xe7); purpose not yet mapped
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
-	ser.skip(1);	// Per-movie volume byte (movie sound off since Nancy6)
+
+	ser.syncAsByte(_movieVolume);
+	_movieVolume = MIN<byte>(_movieVolume, 100);
 
 	uint16 sequenceCount = 0;
 	ser.syncAsUint16LE(sequenceCount);
@@ -278,6 +280,8 @@ bool PlaySecondaryMovie::activateRandomSequence(int index) {
 		return false;
 	}
 
+	_decoder.setVolume(_movieVolume);
+
 	resolveSentinelFrames();
 
 	_isFinished = false;
@@ -294,6 +298,8 @@ bool PlaySecondaryMovie::activateSecondaryMovie() {
 		warning("PlayRandomMovie: couldn't load recognition movie %s", _videoName.toString().c_str());
 		return false;
 	}
+
+	_decoder.setVolume(_movieVolume);
 
 	resolveSentinelFrames();
 
@@ -488,12 +494,12 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	_videoSceneChange = _sceneChange.sceneID != kNoScene ? kMovieSceneChange : kMovieNoSceneChange;
 
-	// Per-movie volume; consumed but unused (movie sound is off since Nancy6).
-	// AR 44 always carries it. AR 47 does too, but only from Nancy15 - the
-	// retail flipped the "mode" convention, and Nancy14's AR 47 omits the byte.
+	// Per-movie volume. AR 44 always carries it. AR 47 does too, but only from
+	// Nancy15 - the retail flipped the "mode" convention, and Nancy14's AR 47
+	// omits the byte.
 	if (_type == 44 || (_type == 47 && isNancy15)) {
-		byte movieVolume = 0;
-		ser.syncAsByte(movieVolume);
+		ser.syncAsByte(_movieVolume);
+		_movieVolume = MIN<byte>(_movieVolume, 100);
 	}
 
 	uint16 numFrameFlags = 0;
@@ -631,6 +637,8 @@ void PlaySecondaryMovie::init() {
 		if (!_decoder.loadFile(_videoName, _videoPlaytype)) {
 			error("Couldn't load video file %s", _videoName.toString().c_str());
 		}
+
+		_decoder.setVolume(_movieVolume);
 
 		if (!_paletteName.empty()) {
 			GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);

@@ -30,6 +30,8 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/commontypes.h"
 
+#include "audio/mixer.h"
+
 #include "engines/nancy/movieplayer.h"
 
 namespace Nancy {
@@ -45,9 +47,34 @@ private:
 	MoviePlayer &_owner;
 };
 
+Common::Array<MoviePlayer *> MoviePlayer::_loadedMovies;
+
 MoviePlayer::MoviePlayer() {}
 
-MoviePlayer::~MoviePlayer() {}
+MoviePlayer::~MoviePlayer() {
+	unregisterMovie();
+}
+
+void MoviePlayer::unregisterMovie() {
+	for (uint i = 0; i < _loadedMovies.size(); ++i) {
+		if (_loadedMovies[i] == this) {
+			_loadedMovies.remove_at(i);
+			break;
+		}
+	}
+
+	_loadedName.clear();
+}
+
+MoviePlayer *MoviePlayer::findLoadedMovie(const Common::Path &name) {
+	for (MoviePlayer *movie : _loadedMovies) {
+		if (movie->_loadedName.equalsIgnoreCase(name)) {
+			return movie;
+		}
+	}
+
+	return nullptr;
+}
 
 byte MoviePlayer::resolvePlaytype(byte videoPlaytype) {
 	if (videoPlaytype != kVideoPlaytypeAuto) {
@@ -60,6 +87,7 @@ byte MoviePlayer::resolvePlaytype(byte videoPlaytype) {
 
 bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bidirectionalCache) {
 	freeFrameCache();
+	unregisterMovie();
 
 	const Common::Path avfPath = name.append(".avf");
 	const Common::Path bikPath = name.append(".bik");
@@ -114,6 +142,9 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 		g_nancy->addDeferredLoader(_cacheLoader);
 	}
 
+	_loadedName = name;
+	_loadedMovies.push_back(this);
+
 	return true;
 }
 
@@ -124,6 +155,7 @@ bool MoviePlayer::isVideoLoaded() const {
 void MoviePlayer::close() {
 	_currentSurface = nullptr;
 	freeFrameCache();
+	unregisterMovie();
 	if (_decoder) {
 		_decoder->close();
 	}
@@ -192,6 +224,12 @@ int MoviePlayer::getFrameCount() const		{ return _decoder ? _decoder->getFrameCo
 Audio::Timestamp MoviePlayer::getDuration() const	{ return _decoder->getDuration(); }
 uint16 MoviePlayer::getWidth() const		{ return _decoder->getWidth(); }
 uint16 MoviePlayer::getHeight() const		{ return _decoder->getHeight(); }
+
+void MoviePlayer::setVolume(byte percent) {
+	if (_decoder) {
+		_decoder->setVolume(MIN<byte>(percent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
+	}
+}
 
 void MoviePlayer::addFrameTime(uint16 timeToAdd) {
 	if (_decoder && _videoType == kVideoPlaytypeAVF) {

@@ -115,6 +115,11 @@ public:
 	// unused by playback.
 	uint16 _playStyle = 1;
 
+	// Volume of the movie's audio track, as a percentage. Carried by Nancy14+
+	// AR 44/47 only; every other record plays at full volume. SetMovieVolume
+	// (AR 150) can change it later.
+	byte _movieVolume = 100;
+
 	// AR 47 "InteractiveVideo" (a PlaySecondaryMovie subclass): after the
 	// normal AR-44-style movie data it carries a name, a flag byte, and a
 	// list of named {value, flag} entries. Read but not yet acted on.

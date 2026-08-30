@@ -405,11 +405,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new SetVolume();			// Legacy SetVolume slot (used up to Nancy8)
 	case 141:	// Nancy12
 		return new MakeScreenFile();	// Moved from 148 in Nancy12
-	case 143:	// Nancy14 - ConcatSound
-	case 144:	// Nancy14 - MultiSound (dropped from the Nancy15 dispatch)
-		// Sibling sound ARs. ConcatSound plays a list of named sounds back-to-back;
-		// TODO: not yet implemented
-		return nullptr;
+	case 143:	// Nancy14
+		return new ConcatSound();
+	case 144:	// Nancy14
+		return new MultiSound();
 	case 145:	// Nancy13
 		return new PlaySound(); // Moved from 150 in Nancy13
 	case 146:	// Nancy13
@@ -437,7 +436,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return nullptr;
 	case 150:
 		if (g_nancy->getGameType() >= kGameTypeNancy14)
-			return nullptr;	// Nancy14: SetMovieVolume, TODO. PlaySound moved to 145 in Nancy13.
+			return new SetMovieVolume();	// PlaySound moved to 145 in Nancy13
 		return new PlaySound();
 	case 151:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)
