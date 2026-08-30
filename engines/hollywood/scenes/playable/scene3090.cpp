@@ -589,8 +589,8 @@ void Scene3090::runBlindManConversation() {
 		if (record.disableAfterUse == 3 && state.scene3090SecretDiaryPuzzleStage == 0) {
 			state.scene3090SecretDiaryPuzzleStage = 1;
 			applySceneStateToHotspotsAndPatches(1);
-			if (records.size() > 0x1f8)
-				records[0x1f8].enabled = 1;
+			if (records.size() > 72)
+				records[72].enabled = 1;
 		}
 		if (record.disableAfterUse == 4)
 			state.scene3090DialogueMentionedBlindManLaxative = true;
@@ -621,34 +621,36 @@ void Scene3090::runBlindManConversation() {
 }
 
 void Scene3090::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	const GameplayState &state = _vm->gameState();
 	records.clear();
 	records.resize(kScene3090DialogueChoiceRecordCount);
 
 	setDialogueRecord(records, 0, 1, 0, 3, 2, 3, 1);
 	setDialogueRecord(records, 1, 1, 0, 1, 3, 4, 1);
-	setDialogueRecord(records, 2, _vm->gameState().scene3090DialogueMentionedBlindManLaxative ? 1 : 0, 1, 1, 4, 5, 1);
+	setDialogueRecord(records, 2, state.scene3100CabinVisited ? 1 : 0, 1, 1, 4, 5, 1);
 	setDialogueRecord(records, 3, 1, 2, 1, 5, 6, 1);
-	setDialogueRecord(records, 4, _vm->gameState().scene3090SecretDiaryPuzzleStage != 0 ? 1 : 0, 3, 1, 6, 7, 1);
+	setDialogueRecord(records, 4, state.scene3050EntryLineSeen ? 1 : 0, 3, 1, 6, 7, 1);
 	setDialogueRecord(records, 5, 1, 0, 3, 22, 23, 2);
 	setDialogueRecord(records, 6, 1, 0, 0, 7, 8, 0);
 
 	setDialogueRecord(records, 70, 1, 0, 3, 8, 9, 3);
 	setDialogueRecord(records, 71, 1, 0, 3, 9, 10, 1);
-	setDialogueRecord(records, 72, 0, 0, 3, 10, 11, 1);
+	setDialogueRecord(records, 72, state.scene3090SecretDiaryPuzzleStage != 0 ? 1 : 0,
+		0, 3, 10, 11, 1);
 	setDialogueRecord(records, 73, 1, 0, 2, 11, 12, 0);
 
-	setDialogueRecord(records, 140, 1, 1, 3, 12, 13, 1);
-	setDialogueRecord(records, 141, 1, 1, 3, 13, 14, 4);
-	setDialogueRecord(records, 142, 1, 0, 2, 14, 15, 0);
+	setDialogueRecord(records, 77, 1, 1, 3, 12, 13, 1);
+	setDialogueRecord(records, 78, 1, 1, 3, 13, 14, 4);
+	setDialogueRecord(records, 79, 1, 0, 2, 14, 15, 0);
 
-	setDialogueRecord(records, 210, 1, 2, 3, 15, 16, 1);
-	setDialogueRecord(records, 211, 1, 2, 3, 16, 17, 1);
-	setDialogueRecord(records, 212, 1, 0, 2, 17, 18, 0);
+	setDialogueRecord(records, 84, 1, 2, 3, 15, 16, 1);
+	setDialogueRecord(records, 85, 1, 2, 3, 16, 17, 1);
+	setDialogueRecord(records, 86, 1, 0, 2, 17, 18, 0);
 
-	setDialogueRecord(records, 280, 1, 3, 3, 18, 19, 1);
-	setDialogueRecord(records, 281, 1, 3, 3, 19, 20, 1);
-	setDialogueRecord(records, 282, 1, 3, 3, 20, 21, 1);
-	setDialogueRecord(records, 283, 1, 0, 2, 21, 22, 0);
+	setDialogueRecord(records, 91, 1, 3, 3, 18, 19, 1);
+	setDialogueRecord(records, 92, 1, 3, 3, 19, 20, 1);
+	setDialogueRecord(records, 93, 1, 3, 3, 20, 21, 1);
+	setDialogueRecord(records, 94, 1, 0, 2, 21, 22, 0);
 }
 
 void Scene3090::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
