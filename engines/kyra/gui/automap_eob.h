@@ -49,6 +49,7 @@ public:
 
 	void markVisited(uint16 block);
 	void markSeen(uint16 block, int8 dir);
+
 	void draw(int level, uint16 partyBlock, int8 partyDirection);
 
 private:
@@ -64,7 +65,7 @@ private:
 	};
 
 	struct TranslateableStrings {
-		const char *const legendStrings[14];
+		const char *const legendStrings[15];
 		const char *const controlStrings[3];
 		const char *const levelNames[2][16];
 	};
@@ -72,10 +73,21 @@ private:
 	AutomapLayout createLayout() const;
 	void createColors();
 	void redrawBackground(const AutomapLayout &l, int width, int height);
+	void drawLegend(const AutomapLayout &l, uint flags);
 	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
 	bool isVisited(uint16 block) const;
 	bool isSeen(uint16 block) const;
-	bool isBreakableBlockObject(uint16 block) const;
+
+	enum BreakableObjectType {
+		kNoBreakableObject = 0,
+		kBreakableBlockObject,
+		kBreakableBarrierNS,
+		kBreakableBarrierEW,
+		kBrokenBarrier
+	};
+
+	int checkForBreakableObjectType(uint16 block) const;
+	bool isCenteredSwitch(uint16 block) const;
 
 	bool _visible;
 
@@ -88,7 +100,6 @@ private:
 	const uint8 *_portalParams;
 	int _portalParamsLen;
 	const bool _enabled;
-	const bool _gameSupportsBreakables;
 
 	static const TranslateableStrings _stringTable[];
 	const char *const *_legendStrings;
