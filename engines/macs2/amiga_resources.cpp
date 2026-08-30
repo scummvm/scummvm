@@ -37,6 +37,15 @@
 
 namespace Macs2 {
 
+static void blitMap(Graphics::ManagedSurface &dest, const Common::Array<byte> &src) {
+	if (src.size() != (uint)kScreenWidth * kGameHeight)
+		return;
+	for (int y = 0; y < kGameHeight; y++) {
+		for (int x = 0; x < kScreenWidth; x++)
+			dest.setPixel(x, y, src[(uint)y * kScreenWidth + x]);
+	}
+}
+
 bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	if (!_amigaArchive || sceneResourceId == 0 || sceneResourceId > 0xFFFF)
 		return false;
@@ -107,14 +116,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 
 	Common::Array<byte> pathMap, depthMap, shadowMap;
 	if (extractAmigaMxmmSceneMaps(mxmm.data(), size, pathMap, depthMap, shadowMap)) {
-		auto blitMap = [](Graphics::ManagedSurface &dest, const Common::Array<byte> &src) {
-			if (src.size() != (uint)kScreenWidth * kGameHeight)
-				return;
-			for (int y = 0; y < kGameHeight; y++) {
-				for (int x = 0; x < kScreenWidth; x++)
-					dest.setPixel(x, y, src[(uint)y * kScreenWidth + x]);
-			}
-		};
 		blitMap(_pathfindingMap, pathMap);
 		blitMap(_depthMap, depthMap);
 		blitMap(_shadowMap, shadowMap);
@@ -555,8 +556,6 @@ void Macs2Engine::readAmigaResources() {
 		gameObject->_sceneIndex = 0;
 		gameObject->_orientation = 11;
 		gameObject->_verticalOffsetScale = 0;
-		// MXOO has no DOS +0x185/+0x186 flag bytes. Defaults stay false until we
-		// infer character-style rendering below (or a script opcode sets them).
 
 		while (gameObject->_blobs.size() < 0x15)
 			gameObject->_blobs.push_back(Common::Array<uint8>());
@@ -589,7 +588,7 @@ void Macs2Engine::readAmigaResources() {
 			static const uint16 kAmigaWalkSpeeds[8] = {2, 4, 6, 4, 2, 4, 6, 4};
 			static const uint8 kMirrorOrientToSource[6][2] = {
 				{6, 4}, {7, 3}, {8, 2}, {14, 12}, {15, 11}, {16, 10}};
-			for (uint i = 0; i < 8; i++) {
+			for (uint i = 0; i < ARRAYSIZE(kAmigaWalkSpeeds); i++) {
 				if (i < gameObject->_blobWalkSpeeds.size())
 					gameObject->_blobWalkSpeeds[i] = kAmigaWalkSpeeds[i];
 			}
@@ -694,8 +693,6 @@ void Macs2Engine::readAmigaResources() {
 	if (!loadedMxff)
 		warning("Amiga: no MXFF font FF_0000 in DataA - text may be missing");
 
-	// Border chrome uses fixed slots 30/31/32. Empty/zero-size tiles make
-	// drawBorderSide spin forever (no events, frameWait appears stuck).
 	auto ensureBorderTile = [this](uint index, byte color, uint16 w, uint16 h) {
 		if (index >= _imageResources.size())
 			return;
