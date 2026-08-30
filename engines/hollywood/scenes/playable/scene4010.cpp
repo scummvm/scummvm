@@ -26,7 +26,6 @@
 
 #include "hollywood/detection.h"
 #include "hollywood/gameplay/game_state.h"
-#include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
@@ -1039,26 +1038,8 @@ void Scene4010::unlockDestinationFromRoomAction() {
 
 	beginSecondarySpeechLine(15, 1);
 	runDestinationUnlockAnimation();
-	if (state.unlockTravelScreenDestination(kScene4010AustraliaDestinationId)) {
+	if (unlockTravelDestination(kScene4010AustraliaDestinationId))
 		state.scene4010DestinationUnlocked = true;
-		_soundBank0.playSample(1, 100);
-		byte slotIndex = GameplayState::kTravelScreenDisabledSlot;
-		for (byte slot = 2; slot < 7; ++slot) {
-			if (state.travelScreenSlotIds[slot] == kScene4010AustraliaDestinationId) {
-				slotIndex = slot;
-				break;
-			}
-		}
-		if (slotIndex != GameplayState::kTravelScreenDisabledSlot) {
-			TravelScreen travelScreen(_vm);
-			travelScreen.showUnlockTransition(slotIndex);
-			if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-				invalidatePresentationPalette();
-				drawPlayableComposite();
-				presentFrame();
-			}
-		}
-	}
 }
 
 void Scene4010::runDestinationUnlockAnimation() {

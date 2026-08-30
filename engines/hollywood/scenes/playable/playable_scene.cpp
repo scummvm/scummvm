@@ -2131,6 +2131,34 @@ void PlayableScene::rebuildWalkablePaletteMask() {
 	}
 }
 
+bool PlayableScene::unlockTravelDestination(byte destinationId) {
+	GameplayState &state = _vm->gameState();
+	if (!state.unlockTravelScreenDestination(destinationId))
+		return false;
+
+	_soundBank0.playSample(1, 100);
+
+	byte slotIndex = GameplayState::kTravelScreenDisabledSlot;
+	for (byte slot = 0; slot < GameplayState::kTravelScreenSlotCount; ++slot) {
+		if (state.travelScreenSlotIds[slot] == destinationId) {
+			slotIndex = slot;
+			break;
+		}
+	}
+
+	if (slotIndex != GameplayState::kTravelScreenDisabledSlot) {
+		TravelScreen travelScreen(_vm);
+		travelScreen.showUnlockTransition(slotIndex);
+		if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			invalidatePresentationPalette();
+			drawPlayableComposite();
+			presentFrame();
+		}
+	}
+
+	return true;
+}
+
 bool PlayableScene::hasInventoryItem(byte itemId) const {
 	const byte owner = _vm->gameState().currentInventoryOwnerIndex;
 	return _vm->gameState().hasInventoryItem(owner, itemId);
