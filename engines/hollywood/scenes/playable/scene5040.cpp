@@ -735,6 +735,10 @@ void Scene5040::runKarlConversation() {
 		beginKarlSpeechLine(0);
 		beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 1);
 		beginKarlSpeechLine(1);
+		if (_vm->restoredContentEnabled()) {
+			beginSecondarySpeechLine(kScene5040KarlDialogueStageId, 2);
+			beginKarlSpeechLine(2);
+		}
 		state.scene5040KarlDialogueIntroSeen = true;
 		applySceneStateToHotspotsAndPatches(5);
 	} else {
