@@ -54,6 +54,7 @@ protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
+	Widget  *_dragHookWidget;
 	Widget 	*_tickleWidget;
 	bool	_visible;
 
