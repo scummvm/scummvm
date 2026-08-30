@@ -118,7 +118,7 @@ void Dialog::reflowLayout() {
 
 void Dialog::lostFocus() {
 	if (_dragWidget) {
-		_dragWidget->lostFocus();
+		_dragWidget->cancelDrag();
 		_dragWidget = nullptr;
 	}
 
@@ -231,15 +231,6 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	Widget *w;
 
-	if (_focusedWidget) {
-		//w = _focusedWidget;
-
-		// Lose focus on mouseup unless the widget requested to retain the focus
-		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
-			releaseFocus();
-		}
-	}
-
 	if (_dragWidget)
 		w = _dragWidget;
 	else
@@ -332,28 +323,6 @@ void Dialog::handleKeyUp(Common::KeyState state) {
 
 void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
-
-	if (_focusedWidget && !_dragWidget) {
-		w = _focusedWidget;
-		int wx = w->getAbsX() - _x;
-		int wy = w->getAbsY() - _y;
-
-		// We still send mouseEntered/Left messages to the focused item
-		// (but to no other items).
-		bool mouseInFocusedWidget = (x >= wx && x < wx + w->_w && y >= wy && y < wy + w->_h);
-		if (mouseInFocusedWidget && _mouseWidget != w) {
-			if (_mouseWidget)
-				_mouseWidget->handleMouseLeft(button);
-			_mouseWidget = w;
-			w->handleMouseEntered(button);
-		} else if (!mouseInFocusedWidget && _mouseWidget == w) {
-			_mouseWidget = nullptr;
-			w->handleMouseLeft(button);
-		}
-
-		if (w->getFlags() & WIDGET_TRACK_MOUSE)
-			w->handleMouseMoved(x - wx, y - wy, button);
-	}
 
 	// We process mouseEntered/Left events if we don't have any
 	// currently active dragged widget or if the currently dragged widget

@@ -47,17 +47,13 @@ enum {
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
 	WIDGET_TRACK_MOUSE	= 1 <<  8,
-	// Retain focus on mouse up. By default widgets lose focus on mouseup,
-	// but some widgets might want to retain it - widgets where you enter
-	// text, for instance
-	WIDGET_RETAIN_FOCUS	= 1 <<  9,
 	// Usually widgets would lock mouse input when the user pressed the
 	// left mouse button till the user releases it.
 	// The PopUpWidget for example does not want this behavior, since the
 	// mouse down will open up a new dialog which silently eats the mouse
 	// up event for its own purposes.
-	WIDGET_IGNORE_DRAG	= 1 << 10,
-	WIDGET_DYN_TOOLTIP  = 1 << 11, // Widgets updates tooltip by coordinates
+	WIDGET_IGNORE_DRAG	= 1 << 9,
+	WIDGET_DYN_TOOLTIP  = 1 << 10, // Widgets updates tooltip by coordinates
 };
 
 enum {
@@ -149,6 +145,7 @@ public:
 	virtual void handleTooltipUpdate(int x, int y) {}
 	virtual void handleTickle() {}
 
+	virtual void cancelDrag() {}
 	virtual void cancelTickle() {}
 
 	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */

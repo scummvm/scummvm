@@ -135,6 +135,14 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 		g_system->openUrl(link);
 }
 
+void RichTextWidget::cancelDrag() {
+	if (_isDragging) {
+		_fluidScroller->stopAnimation();
+	}
+	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
+}
+
 void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 	if (_txtWnd) {
 		Common::String link = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY).encode();
@@ -394,11 +402,6 @@ void RichTextWidget::markAsDirty() {
 	if (_verticalScroll->isVisible()) {
 		_verticalScroll->markAsDirty();
 	}
-}
-
-void RichTextWidget::lostFocusWidget() {
-	_mouseDownY = _mouseDownStartY = 0;
-	_isDragging = false;
 }
 
 bool RichTextWidget::containsWidget(Widget *w) const {

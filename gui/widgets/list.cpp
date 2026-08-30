@@ -46,7 +46,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -98,7 +98,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -470,6 +470,15 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 	_wasAnimating = false;
+}
+
+void ListWidget::cancelDrag() {
+	if (_isDragging) {
+		_fluidScroller->stopAnimation();
+	}
+	_dragStartY = _dragLastY = 0;
+	_isMouseDown = false;
+	_isDragging = false;
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
@@ -845,9 +854,6 @@ void ListWidget::receivedFocusWidget() {
 
 void ListWidget::lostFocusWidget() {
 	_inversion = ThemeEngine::kTextInversion;
-	_isMouseDown = _isDragging = false;
-	_dragStartY = _dragLastY = 0;
-
 	// If we lose focus, we simply forget the user changes
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
