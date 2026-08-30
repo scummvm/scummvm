@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	decoders/wma.o \
 	decoders/xa.o \
 	decoders/xan_dpcm.o \
+	mac/halestorm.o \
 	mods/universaltracker.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \

@@ -19,20 +19,18 @@
  *
  */
 
-#ifndef KYRA_SOUND_HALESTORM_H
-#define KYRA_SOUND_HALESTORM_H
+#ifndef AUDIO_MAC_HALESTORM_H
+#define AUDIO_MAC_HALESTORM_H
 
 #include "common/scummsys.h"
-
-namespace Audio {
-	class Mixer;
-}
 
 namespace Common {
 	class SeekableReadStream;
 }
 
-namespace Kyra {
+namespace Audio {
+
+class Mixer;
 
 class HSSoundSystem;
 
@@ -93,6 +91,6 @@ private:
 	HSSoundSystem *_hs;
 };
 
-} // End of namespace Kyra
+} // End of namespace Audio
 
 #endif
