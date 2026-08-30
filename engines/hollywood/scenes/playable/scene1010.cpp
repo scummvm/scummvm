@@ -64,6 +64,8 @@ const byte kScene1010FirstAmbientMusicCue = 0x0b;
 const byte kScene1010AmbientMusicCueCount = 5;
 const byte kScene1010AmbientSoundProbabilityModulus = 25;
 const byte kScene1010AmbientMusicProbabilityModulus = 50;
+const byte kScene1010CarSceneItem = 4;
+const uint kScene1010CarUseVerbRecordIndex = 0x25;
 const int kScene1010ForegroundLeftXThreshold = 500;
 const int kScene1010ForegroundLeftYThreshold = 0x1cd;
 const int kScene1010ForegroundRightXThreshold = 0x28a;
@@ -180,6 +182,10 @@ void Scene1010::runCustomEntrySequence() {
 
 bool Scene1010::prepareCustomGameplayLoop() {
 	_sceneActorBlinkTimerAccumulator = 0;
+	_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene1010CarUseVerbRecordIndex, 306);
+	_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene1010CarUseVerbRecordIndex, 0);
+	// The car is below the frame; keep its bottom-edge exit reachable above the verb panel.
+	_hotspots.addFallbackRectHotspot(kScene1010CarSceneItem, Common::Rect(666, 430, 942, 480));
 	return true;
 }
 
@@ -206,9 +212,9 @@ bool Scene1010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 305: // Mirar edificio (look at distant building): too far from here.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 306: // Usar coche (use car): open Ron destination selector once unlocked.
+	case 306: // Ir a/Usar coche (go to/use car): open Ron's destination selector once unlocked.
 		if (!_vm->gameState().ronTravelScreenUnlocked) {
-			beginSecondarySpeechLine(1, 4);
+			beginSecondarySpeechLine(4, 0);
 			return true;
 		}
 		_vm->gameState().requestTravelScreenSelection(1);
