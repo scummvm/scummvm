@@ -144,7 +144,7 @@ struct HudButton {
 	uint16 activeStep = 0;
 	uint16 hoverStep = 0;
 	uint16 buttonId = 0; // 1=Walk, 2=Look, 3=Talk, 4=Use, 0x33=Options, ...
-	uint16 menuId = 0;   // MenuMode value from assets; 7 = cursor-map entry
+	uint16 menuId = 0;
 	AnimFrame frame;
 	AnimFrame activeFrame;
 	AnimFrame hoverFrame;
@@ -518,8 +518,8 @@ public:
 	void applyDeltaFrameToBackground(const DeltaFrame &frame);
 	void playDeltaFrameSfx(uint16 displayFrame);
 	// Font glyph count (79 glyphs in the resource file's font data)
-	uint16 numGlyphs = 79;
-	uint16 maxGlyphHeight;
+	uint16 _numGlyphs = 79;
+	uint16 _maxGlyphHeight;
 
 	AnimFrame _animFrames[6];
 	// 6 flag/decoration animation frames at fixed file offset 0x6A5941, each followed by 6 padding bytes
@@ -843,8 +843,8 @@ public:
 	 */
 	int dialogLineHeight() const {
 		if (isAmiga())
-			return amigaTextLinePitch ? (int)amigaTextLinePitch : (int)maxGlyphHeight;
-		return (int)maxGlyphHeight + dialogLineGap();
+			return amigaTextLinePitch ? (int)amigaTextLinePitch : (int)_maxGlyphHeight;
+		return (int)_maxGlyphHeight + dialogLineGap();
 	}
 
 	/** Depth-map compare Y for sprite occlusion (halved on v2 full-res depth). */

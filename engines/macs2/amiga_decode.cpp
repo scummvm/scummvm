@@ -379,7 +379,7 @@ bool convertAmigaPortraitAtlasToDosBlob(const byte *mxoo, uint32 mxooSize, uint3
 
 static bool decompressPp20ToBuffer(const byte *src, uint32 srcLen, Common::Array<byte> &out) {
 	out.clear();
-	if (!src || srcLen < 12 || READ_BE_UINT32(src) != MKTAG('P', 'P', '2', '0'))
+	if (!src)
 		return false;
 
 	uint32 outLen = 0;

@@ -179,8 +179,8 @@ void ActionBar::drawUIButton(const Common::Rect &rect, bool pressed, Graphics::M
 void ActionBar::actionBarFont(const GlyphData *&font, uint16 &fontCount, int &glyphH) const {
 	const bool usePanelFont = g_engine->numPanelGlyphs > 0;
 	font = usePanelFont ? g_engine->_panelGlyphs : g_engine->_glyphs;
-	fontCount = usePanelFont ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
-	glyphH = usePanelFont ? (int)g_engine->maxPanelGlyphHeight : (int)g_engine->maxGlyphHeight;
+	fontCount = usePanelFont ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
+	glyphH = usePanelFont ? (int)g_engine->maxPanelGlyphHeight : (int)g_engine->_maxGlyphHeight;
 }
 
 void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
@@ -190,8 +190,8 @@ void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 
 	// Dialogue Font1 has German glyphs; the panel/save-load font does not.
 	const GlyphData *font = g_engine->_glyphs;
-	uint16 fontCount = g_engine->numGlyphs;
-	int glyphH = (int)g_engine->maxGlyphHeight;
+	uint16 fontCount = g_engine->_numGlyphs;
+	int glyphH = (int)g_engine->_maxGlyphHeight;
 	if (fontCount == 0)
 		actionBarFont(font, fontCount, glyphH);
 
@@ -661,7 +661,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 	const uint16 lineCount = g_engine->_hudTextLayout[3] ? g_engine->_hudTextLayout[3] : 9;
 	const uint16 linePitch = g_engine->_hudTextLayout[4] ? g_engine->_hudTextLayout[4] : 10;
 	const GlyphData *panelFont = g_engine->numPanelGlyphs ? g_engine->_panelGlyphs : g_engine->_glyphs;
-	const uint16 panelFontCount = g_engine->numPanelGlyphs ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
+	const uint16 panelFontCount = g_engine->numPanelGlyphs ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
 
 	if (menuMode == MenuMode::Main) {
 		if (_view->_inventorySource == nullptr ||
@@ -700,8 +700,8 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 			delete icon;
 		}
 
-		const GlyphData *font = g_engine->numGlyphs ? g_engine->_glyphs : panelFont;
-		const uint16 fontCount = g_engine->numGlyphs ? g_engine->numGlyphs : panelFontCount;
+		const GlyphData *font = g_engine->_numGlyphs ? g_engine->_glyphs : panelFont;
+		const uint16 fontCount = g_engine->_numGlyphs ? g_engine->_numGlyphs : panelFontCount;
 		if (fontCount != 0) {
 			Common::String sentence = buildSentenceLine();
 			if (!sentence.empty()) {
@@ -713,7 +713,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 				}
 				const int textW = _view->measureStringWithFont(sentence, font, fontCount);
 				const int textX = MAX(0, (g_engine->screenWidth() - textW) / 2);
-				const int glyphH = g_engine->maxGlyphHeight ? (int)g_engine->maxGlyphHeight : 12;
+				const int glyphH = g_engine->_maxGlyphHeight ? (int)g_engine->_maxGlyphHeight : 12;
 				const int textY = MAX(0, (int)panelTop - glyphH - 2);
 				_view->renderStringWithFontTo((uint16)textX, (uint16)textY, sentence, font, fontCount, s);
 			}

@@ -230,8 +230,8 @@ bool Macs2Engine::loadAmigaMxffFont() {
 	if (!decodeAmigaMxffFont(mxff.data(), size, glyphs) || glyphs.empty())
 		return false;
 
-	numGlyphs = 0;
-	maxGlyphHeight = 0;
+	_numGlyphs = 0;
+	_maxGlyphHeight = 0;
 	amigaTextLinePitch = 0;
 	if (size >= 0x0A) {
 		const uint16 atlasRows = READ_BE_UINT16(mxff.data() + 8);
@@ -256,20 +256,20 @@ bool Macs2Engine::loadAmigaMxffFont() {
 			else if (c < 16)
 				_glyphs[i]._data[p] = (byte)(0xF0 + c);
 		}
-		maxGlyphHeight = MAX(maxGlyphHeight, _glyphs[i]._height);
-		numGlyphs++;
+		_maxGlyphHeight = MAX(_maxGlyphHeight, _glyphs[i]._height);
+		_numGlyphs++;
 	}
-	if (amigaTextLinePitch == 0 && maxGlyphHeight > 1)
-		amigaTextLinePitch = (uint16)(maxGlyphHeight - 1);
+	if (amigaTextLinePitch == 0 && _maxGlyphHeight > 1)
+		amigaTextLinePitch = (uint16)(_maxGlyphHeight - 1);
 	// Reuse dialogue font for panel/save UI until a second MXFF exists.
-	numPanelGlyphs = numGlyphs;
-	maxPanelGlyphHeight = maxGlyphHeight;
-	for (uint i = 0; i < numGlyphs; i++)
+	numPanelGlyphs = _numGlyphs;
+	maxPanelGlyphHeight = _maxGlyphHeight;
+	for (uint i = 0; i < _numGlyphs; i++)
 		_panelGlyphs[i] = _glyphs[i];
 
 	debugC(1, kDebugFilePath, "Amiga: loaded MXFF font FF_0000 (%u glyphs, height %u, linePitch %u)",
-		   numGlyphs, maxGlyphHeight, amigaTextLinePitch);
-	return numGlyphs > 0;
+		   _numGlyphs, _maxGlyphHeight, amigaTextLinePitch);
+	return _numGlyphs > 0;
 }
 
 bool Macs2Engine::loadAmigaOverlayFontResource(uint16 ffId) {
@@ -324,12 +324,12 @@ bool Macs2Engine::loadAmigaOverlayFont(uint8 resourceIndex) {
 	}
 
 	// Fall back to the already-loaded main MXFF dialogue font.
-	if (numGlyphs == 0)
+	if (_numGlyphs == 0)
 		return false;
 
-	numOverlayGlyphs = numGlyphs;
-	maxOverlayGlyphHeight = maxGlyphHeight;
-	for (uint i = 0; i < numGlyphs; i++)
+	numOverlayGlyphs = _numGlyphs;
+	maxOverlayGlyphHeight = _maxGlyphHeight;
+	for (uint i = 0; i < _numGlyphs; i++)
 		_overlayGlyphs[i] = _glyphs[i];
 	return true;
 }

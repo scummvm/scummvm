@@ -770,7 +770,7 @@ void View1::drawOverlayTextEntries() {
 		Common::String text = entry.text;
 		// Use overlay font if loaded, otherwise fall back to main font
 		const GlyphData *font = g_engine->numOverlayGlyphs > 0 ? g_engine->_overlayGlyphs : g_engine->_glyphs;
-		uint16 fontCount = g_engine->numOverlayGlyphs > 0 ? g_engine->numOverlayGlyphs : g_engine->numGlyphs;
+		uint16 fontCount = g_engine->numOverlayGlyphs > 0 ? g_engine->numOverlayGlyphs : g_engine->_numGlyphs;
 
 		if (entry.alignment == 1) {
 			x -= measureStringWithFont(text, font, fontCount);
@@ -4474,7 +4474,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 			label = "NONE";
 		}
 		const GlyphData *font = g_engine->numPanelGlyphs > 0 ? g_engine->_panelGlyphs : g_engine->_glyphs;
-		uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
+		uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
 		label.toUppercase();
 		renderStringWithFont(panelX + 6, panelY + 6 + slot * 0xc, label, font, fontCount);
 	}

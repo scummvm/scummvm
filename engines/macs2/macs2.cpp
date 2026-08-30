@@ -235,12 +235,12 @@ void Macs2Engine::loadResourceFileV1() {
 	uint32 font1SizeField = _fileStream->readUint32LE(); // skip size field
 	(void)font1SizeField;
 	uint16 font1GlyphCount = _fileStream->readUint16LE();
-	maxGlyphHeight = 0;
+	_maxGlyphHeight = 0;
 	for (uint i = 0; i < font1GlyphCount; i++) {
 		_glyphs[i].readFromMemory(_fileStream);
-		maxGlyphHeight = MAX(_glyphs[i]._height, maxGlyphHeight);
+		_maxGlyphHeight = MAX(_glyphs[i]._height, _maxGlyphHeight);
 	}
-	numGlyphs = font1GlyphCount;
+	_numGlyphs = font1GlyphCount;
 
 	// Font 2: clean sans-serif font used by save/load panel (scene data offset 0x1044)
 	uint32 font2SizeField = _fileStream->readUint32LE();
@@ -273,7 +273,7 @@ void Macs2Engine::loadResourceFileV2() {
 	//   TalkVol + Font1 + SysFont + 0x400 map offsets
 	_shadingTable.clear();
 	_shadingTable.resize(0x800, 0);
-	numGlyphs = 0;
+	_numGlyphs = 0;
 	numPanelGlyphs = 0;
 	memset(_mapSceneOffsets, 0, sizeof(_mapSceneOffsets));
 	_imageResources.clear();
@@ -478,7 +478,7 @@ void Macs2Engine::loadResourceFileV2() {
 		_fileStream->seek(fontStart + (int64)fontSize, SEEK_SET);
 		return true;
 	};
-	if (!loadSizedFont(_glyphs, numGlyphs, maxGlyphHeight))
+	if (!loadSizedFont(_glyphs, _numGlyphs, _maxGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading Font1");
 	if (!loadSizedFont(_panelGlyphs, numPanelGlyphs, maxPanelGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading SysFont");
@@ -503,7 +503,7 @@ void Macs2Engine::loadResourceFileV2() {
 		   "readGlobalAssetsV2: panel=%u+%u megapics=%u buttons=%u cursors=%u invent=%ux%u @(%u,%u) fonts=%u/%u",
 		   _panelTopY, _panelHeight, megas, (uint)_hudButtons.size(), installed,
 		   _inventCols, _inventRows, _inventOriginX, _inventOriginY,
-		   numGlyphs, numPanelGlyphs);
+		   _numGlyphs, numPanelGlyphs);
 	_fileStream->seek(kMcsV2ActorIndexOffset, SEEK_SET);
 	bootstrapMcsActorsObjectsAndScene();
 }
@@ -1883,7 +1883,7 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 }
 
 bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
-	for (int i = 0; i < numGlyphs; i++) {
+	for (int i = 0; i < _numGlyphs; i++) {
 		if (_glyphs[i]._ascii == c) {
 			out = _glyphs[i];
 			return true;
