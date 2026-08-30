@@ -51,27 +51,36 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	bool shouldRunExitSideEffectsAfterLoop() const override;
+	void runExitSideEffectsAfterLoop() override;
 
 	void resetSceneAnimations();
 	void advanceFishermanIdle(uint32 delta);
 	void advanceBoatLoop(uint32 delta);
-	void drawTransitionClip(uint chunkIndex);
+	void updateSceneAmbientAudio(uint32 delta);
+	bool waitTransitionFrameMillis(uint32 millis);
+	void drawTransitionClip(uint chunkIndex, bool showFirstFrameImmediately);
 	void runFirstEntry();
 	void runReturnEntryTransition();
+	bool enterFishermanConversationPose();
+	void leaveFishermanConversationPose();
+	void beginFishermanSpeechLine(byte frameIndex);
 	void runFishermanConversation();
 	void runExitToScene8020();
 	void runTravelScreenAction();
 	void applyFishermanNameTextPatch();
-	void setActiveActorPose(int x, int y, byte facing);
 	void initializeFishermanQuizData(byte targetLineIndex);
 	Common::String composeFishermanQuizChoice(byte firstStage, byte firstRow, byte secondStage, byte secondRow) const;
 	void composeFishermanGeneratedPromptLines(byte promptLineIndex, Common::Array<Common::String> &lines) const;
@@ -89,13 +98,16 @@ private:
 	ResourceSpriteLayer _fishermanLayer;
 	ResourceSpriteLayer _boatLayer;
 	TimedAnimationChannel _fishermanChannel;
+	TimedAnimationChannel _fishermanSpeechIdleChannel;
 	TimedAnimationChannel _boatChannel;
+	TimedAnimationChannel _secondaryAmbientChannel;
 	FishermanQuizEntry _fishermanQuizEntries[8];
 	FishermanQuizEntry _fishermanQuizFinalEntry;
 	Common::String _fishermanQuizChoiceText[8];
 	byte _fishermanQuizChoiceEntryIndex[8];
 	byte _fishermanState;
 	byte _fishermanRepeatCount;
+	byte _previousSecondaryAmbientCue;
 	bool _fishermanQuizAlternatePattern;
 };
 
