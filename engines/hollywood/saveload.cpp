@@ -140,6 +140,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.sueInventoryInitialized);
 	s.syncAsByte(state.multiToolKnifeState);
 	s.syncAsByte(state.ronTapeRecorderState);
+	syncStateBool(s, state.ronSueTapePlayed);
 	s.syncAsByte(state.ronTravelQuipIndex);
 	syncStateBool(s, state.ronWalletOpened);
 	s.syncAsUint16LE(state.ronEgyptianMoneyAmount);
@@ -249,6 +250,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2020EntryLineSeen);
 	syncStateBool(s, state.scene2020PrincessGone);
 	s.syncAsByte(state.scene2020TigerToothState);
+	syncStateBool(s, state.scene2020TigerFedSteak);
 	syncStateBool(s, state.scene2020HatPresent);
 	syncStateBool(s, state.scene2020SunglassesPresent);
 	syncStateBool(s, state.scene2020PrincessConversationSeen);

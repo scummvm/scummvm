@@ -87,6 +87,7 @@ struct GameplayState {
 		inventoryPanelDirty = false;
 		multiToolKnifeState = 0;
 		ronTapeRecorderState = 0;
+		ronSueTapePlayed = false;
 		ronTravelQuipIndex = 0;
 		ronWalletOpened = false;
 		ronEgyptianMoneyAmount = 0;
@@ -199,6 +200,7 @@ struct GameplayState {
 		scene2020EntryLineSeen = false;
 		scene2020PrincessGone = false;
 		scene2020TigerToothState = 0;
+		scene2020TigerFedSteak = false;
 		scene2020HatPresent = true;
 		scene2020SunglassesPresent = true;
 		scene2020PrincessConversationSeen = false;
@@ -861,6 +863,7 @@ struct GameplayState {
 	bool inventoryPanelDirty;
 	byte multiToolKnifeState;
 	byte ronTapeRecorderState;
+	bool ronSueTapePlayed;
 	byte ronTravelQuipIndex;
 	bool ronWalletOpened;
 	uint16 ronEgyptianMoneyAmount;
@@ -972,6 +975,7 @@ struct GameplayState {
 	bool scene2020EntryLineSeen;
 	bool scene2020PrincessGone;
 	byte scene2020TigerToothState;
+	bool scene2020TigerFedSteak;
 	bool scene2020HatPresent;
 	bool scene2020SunglassesPresent;
 	bool scene2020PrincessConversationSeen;

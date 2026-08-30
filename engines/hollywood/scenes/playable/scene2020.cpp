@@ -888,6 +888,7 @@ void Scene2020::runSteakOnTigerSequence() {
 	beginSecondarySpeechLine(10, 0);
 	if (!runTigerItemOverlaySequence(false))
 		return;
+	_vm->gameState().scene2020TigerFedSteak = true;
 	removeInventoryItem(kScene2020SteakInventoryItem);
 	_soundBank0.playSample(1, 100);
 }
