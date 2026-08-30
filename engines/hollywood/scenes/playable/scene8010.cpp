@@ -74,6 +74,8 @@ const uint32 kScene8010GeneratedSpeechMinMillis = 1200;
 const uint32 kScene8010GeneratedSpeechLineMillis = 1100;
 const uint32 kScene8010SelectedAnswerMinMillis = 900;
 const uint32 kScene8010SelectedAnswerLineMillis = 900;
+const byte kScene8010SelectedAnswerFirstNameSpeechRow = 0x46;
+const byte kScene8010SelectedAnswerSurnameSpeechRow = 0x47;
 
 const byte kScene8010FishermanFrameMap[] = {
 	0, 23, 1, 2, 3, 4, 5, 6,
@@ -912,10 +914,15 @@ void Scene8010::runFishermanSelectedAnswerSpeech(byte selectedLine) {
 	const uint32 duration = MAX<uint32>(kScene8010SelectedAnswerMinMillis,
 		_speechOverlay.lines.size() * kScene8010SelectedAnswerLineMillis);
 	const byte entryIndex = _fishermanQuizChoiceEntryIndex[selectedLine];
-	if (entryIndex < ARRAYSIZE(_fishermanQuizEntries))
-		waitFishermanQuizFragmentVoices(_fishermanQuizEntries[entryIndex], 2, duration);
-	else
+	if (entryIndex < ARRAYSIZE(_fishermanQuizEntries)) {
+		// Ron's repeated answer has separate recordings from the fisherman's prompt.
+		FishermanQuizEntry answerVoiceEntry = _fishermanQuizEntries[entryIndex];
+		answerVoiceEntry.menuStage = kScene8010SelectedAnswerFirstNameSpeechRow;
+		answerVoiceEntry.menuSuffixStage = kScene8010SelectedAnswerSurnameSpeechRow;
+		waitFishermanQuizFragmentVoices(answerVoiceEntry, 2, duration);
+	} else {
 		waitForSpeechOrDelay(duration, false);
+	}
 
 	_speech.stop();
 	_speechOverlay.visible = false;
