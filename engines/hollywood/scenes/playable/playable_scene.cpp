@@ -2228,7 +2228,7 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimati
 		if (terminalFrame && !options.waitAfterFinalFrame) {
 			drawPlayableComposite();
 			presentFrame();
-		} else if (waitSceneMillis(spec.frameMillis)) {
+		} else if (waitSceneMillis(spec.frameMillis, options.allowSkip)) {
 			break;
 		}
 	}
