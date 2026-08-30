@@ -33,6 +33,7 @@ namespace Macs2 {
 class View1;
 class GameObject;
 struct AnimFrame;
+struct GlyphData;
 struct HudButton;
 
 /**
@@ -63,12 +64,12 @@ private:
 	static constexpr int kUITop = kGameHeight;
 	static constexpr int kSentenceY = kGameHeight;
 	static constexpr int kVerbY = kGameHeight + kSentenceH;
-	static constexpr int kVerbW = 64;
+	static constexpr int kBarPadX = 6;
+	static constexpr int kVerbW = 78;
 	static constexpr int kVerbH = 25;
 	static constexpr int kVerbCols = 2;
 	static constexpr int kVerbRows = 2;
-	static constexpr int kInvX = 128;
-	static constexpr int kInvItemW = 34;
+	static constexpr int kVerbInvGap = 4;
 	static constexpr int kInvItemH = 25;
 	static constexpr int kInvIconInset = 1;
 	static constexpr int kInvCols = 4;
@@ -84,6 +85,7 @@ private:
 	void drawScumm(Graphics::ManagedSurface &s);
 	bool handleClickScumm(const Common::Point &pos, bool scriptsRunning);
 	void handleMouseMoveScumm(const Common::Point &pos);
+	void actionBarFont(const GlyphData *&font, uint16 &fontCount, int &glyphH) const;
 	void drawSentenceLine(Graphics::ManagedSurface &s);
 	void drawVerbBar(Graphics::ManagedSurface &s);
 	void drawInventoryStrip(Graphics::ManagedSurface &s);
@@ -93,6 +95,7 @@ private:
 
 	int getScrollButtonWidth() const;
 	int getInvArrowX() const;
+	int getInvItemWidth() const;
 
 	Common::Array<GameObject *> getProtagonistItems() const;
 

@@ -46,10 +46,10 @@ Common::String uiText(const char *source) {
 } // namespace
 
 const ActionBar::VerbDef ActionBar::kVerbs[4] = {
-	{"Gehen", Script::MouseMode::Walk},
-	{"Schauen", Script::MouseMode::Look},
-	{"Benutzen", Script::MouseMode::Use},
-	{"Reden", Script::MouseMode::Talk}
+	{"Gehe", Script::MouseMode::Walk},
+	{"Schaue", Script::MouseMode::Look},
+	{"Benutze", Script::MouseMode::Use},
+	{"Rede", Script::MouseMode::Talk}
 };
 
 ActionBar::ActionBar(View1 *view)
@@ -77,15 +77,25 @@ void ActionBar::syncInventory() {
 
 void ActionBar::rebuildProtagonistItems() {
 	_protagonistItems.clear();
-
-	if (_view->isInventorySourceProtagonist()) {
-		_protagonistItems = _view->_inventoryItems;
-		return;
-	}
-
 	const uint16 invScene = Scenes::instance()._currentActorIndex + 0x400;
-	for (GameObject *obj : GameObjects::instance()._objects) {
+
+	// Keep the engine list order, then append any inventory objects it missed
+	// (pickup / moveObject can update sceneIndex before _inventoryItems).
+	for (GameObject *obj : _view->_inventoryItems) {
 		if (obj && obj->_sceneIndex == invScene)
+			_protagonistItems.push_back(obj);
+	}
+	for (GameObject *obj : GameObjects::instance()._objects) {
+		if (!obj || obj->_sceneIndex != invScene)
+			continue;
+		bool listed = false;
+		for (GameObject *listedObj : _protagonistItems) {
+			if (listedObj == obj) {
+				listed = true;
+				break;
+			}
+		}
+		if (!listed)
 			_protagonistItems.push_back(obj);
 	}
 }
@@ -166,16 +176,23 @@ void ActionBar::drawUIButton(const Common::Rect &rect, bool pressed, Graphics::M
 							   style, false, false, s);
 }
 
+void ActionBar::actionBarFont(const GlyphData *&font, uint16 &fontCount, int &glyphH) const {
+	const bool usePanelFont = g_engine->numPanelGlyphs > 0;
+	font = usePanelFont ? g_engine->_panelGlyphs : g_engine->_glyphs;
+	fontCount = usePanelFont ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
+	glyphH = usePanelFont ? (int)g_engine->maxPanelGlyphHeight : (int)g_engine->maxGlyphHeight;
+}
+
 void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 	Common::String sentence = buildSentenceLine();
 	if (sentence.empty())
 		return;
 
-	const bool usePanelFont = g_engine->numPanelGlyphs > 0;
-	const GlyphData *font = usePanelFont ? g_engine->_panelGlyphs : g_engine->_glyphs;
-	const uint16 fontCount = usePanelFont ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
-	const int glyphH = usePanelFont ? g_engine->maxPanelGlyphHeight : g_engine->maxGlyphHeight;
-	if (usePanelFont)
+	const GlyphData *font = nullptr;
+	uint16 fontCount = 0;
+	int glyphH = 0;
+	actionBarFont(font, fontCount, glyphH);
+	if (g_engine->numPanelGlyphs > 0)
 		sentence.toUppercase();
 	const int textY = kUITop + MAX(0, (kSentenceH - glyphH) / 2);
 	const int textX = MAX(0, (kScreenWidth - _view->measureStringWithFont(sentence, font, fontCount)) / 2);
@@ -183,6 +200,11 @@ void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 }
 
 void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
+	const GlyphData *font = nullptr;
+	uint16 fontCount = 0;
+	int glyphH = 0;
+	actionBarFont(font, fontCount, glyphH);
+
 	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
 		const Common::Rect r = getVerbRect(i);
 		const bool isActive = (i == _activeVerbIndex);
@@ -190,10 +212,13 @@ void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
 
 		drawUIButton(r, isActive || isHovered, s);
 
-		const Common::String label = uiText(kVerbs[i].label);
-		const int textX = r.left + (r.width() - (int)label.size() * 6) / 2;
-		const int textY = r.top + (r.height() - (int)g_engine->maxGlyphHeight) / 2;
-		_view->renderStringTo(textX, textY, label, s);
+		Common::String label = uiText(kVerbs[i].label);
+		if (g_engine->numPanelGlyphs > 0)
+			label.toUppercase();
+		const int textW = _view->measureStringWithFont(label, font, fontCount);
+		const int textX = r.left + (r.width() - textW) / 2;
+		const int textY = r.top + (r.height() - glyphH) / 2;
+		_view->renderStringWithFontTo(textX, textY, label, font, fontCount, s);
 	}
 }
 
@@ -209,7 +234,13 @@ int ActionBar::getScrollButtonWidth() const {
 }
 
 int ActionBar::getInvArrowX() const {
-	return kInvX;
+	return kBarPadX + kVerbCols * kVerbW + kVerbInvGap;
+}
+
+int ActionBar::getInvItemWidth() const {
+	const int scrollW = getScrollButtonWidth();
+	const int available = kScreenWidth - getInvArrowX() - kBarPadX - 2 * scrollW;
+	return MAX(24, available / kInvCols);
 }
 
 void ActionBar::drawScrollButton(Graphics::ManagedSurface &s, const Common::Rect &rect,
@@ -437,7 +468,7 @@ void ActionBar::clearSentenceObject() {
 Common::Rect ActionBar::getVerbRect(int index) const {
 	const int col = index % kVerbCols;
 	const int row = index / kVerbCols;
-	const int x = col * kVerbW;
+	const int x = kBarPadX + col * kVerbW;
 	const int y = kVerbY + row * kVerbH;
 	return Common::Rect(x, y, x + kVerbW, y + kVerbH);
 }
@@ -446,9 +477,10 @@ Common::Rect ActionBar::getInvItemRect(int index) const {
 	const int col = index % kInvCols;
 	const int row = index / kInvCols;
 	const int scrollW = getScrollButtonWidth();
-	const int x = getInvArrowX() + scrollW + col * kInvItemW;
+	const int itemW = getInvItemWidth();
+	const int x = getInvArrowX() + scrollW + col * itemW;
 	const int y = kVerbY + row * kInvItemH;
-	return Common::Rect(x, y, x + kInvItemW, y + kInvItemH);
+	return Common::Rect(x, y, x + itemW, y + kInvItemH);
 }
 
 Common::Rect ActionBar::getInvScrollLeftRect() const {
@@ -465,7 +497,7 @@ bool ActionBar::isPointInInventoryStrip(const Common::Point &pos) const {
 
 Common::Rect ActionBar::getInvScrollRightRect() const {
 	const int scrollW = getScrollButtonWidth();
-	const int x = getInvArrowX() + scrollW + kInvCols * kInvItemW;
+	const int x = getInvArrowX() + scrollW + kInvCols * getInvItemWidth();
 	return Common::Rect(x, kVerbY, x + scrollW, kVerbY + kVerbH * kVerbRows);
 }
 
@@ -493,7 +525,7 @@ Common::String ActionBar::translatedVerbLabel(Script::MouseMode mode) const {
 			return uiText(kVerbs[i].label);
 		}
 	}
-	return uiText("Gehen");
+	return uiText("Gehe");
 }
 
 Common::String ActionBar::currentTargetDisplayName() const {
@@ -503,6 +535,14 @@ Common::String ActionBar::currentTargetDisplayName() const {
 	const Common::Point mouse = g_system->getEventManager()->getMousePos();
 	if (isPointInUI(mouse))
 		return Common::String();
+
+	if (_view->_uiPanelState == View1::kUiPanelContainerInventory ||
+		_view->_uiPanelState == View1::kUiPanelInventory) {
+		GameObject *hovered = _view->getClickedInventoryItem(mouse);
+		if (hovered != nullptr)
+			return getObjectHotspotName(hovered->_index);
+		return Common::String();
+	}
 
 	uint16 hoverId = _view->getHitObjectID(mouse);
 	if (hoverId == 0)

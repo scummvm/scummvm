@@ -269,6 +269,7 @@ private:
 	// if pending != 0 -> uiBackgroundRestorePending=1; flip; runScriptExecutor; pending=0.
 	void runInventoryPanelScriptIfPending(bool excludeCloseButton);
 	bool handleActionBarClick(const MouseDownMessage &msg);
+	void walkToScreenPosition(const Common::Point &pos);
 
 	// Input state machine from handleInput (1008:e8bf).
 	// The original game's input handler has two major branches:

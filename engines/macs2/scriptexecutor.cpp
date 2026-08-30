@@ -1115,6 +1115,8 @@ OpcodeResult Script::ScriptExecutor::scriptMoveObject() {
 			}
 		}
 	}
+	if (currentView->_inventorySource != nullptr)
+		currentView->setInventorySource(currentView->_inventorySource);
 
 	// Check from sortObjectsByDepth (1008:0da6): if the moved object is the active
 	// inventory item cursor, clear it and reset cursor mode from UseInventory to Use.
@@ -3830,19 +3832,11 @@ OpcodeResult ScriptExecutor::scriptShowActionBar() {
 	if (currentView == nullptr)
 		return OpcodeResult::Continue;
 
-	if (_engine->hasNativeHudAssets()) {
-		// Dialect-v2: if MenuMode==0 -> MenuMode=1, restore saved cursor, redraw.
-		if (_engine->_menuMode == 0) {
-			_engine->setBottomHudVisible(true);
-			_engine->setCursorMode(_engine->_savedMenuCursorMode);
-			currentView->updateCursor();
-			currentView->redraw();
-		}
-		return OpcodeResult::Continue;
-	}
-
-	if (currentView->hasPersistentActionBar()) {
+	// v2 opcode 0x65. v1 tables end at waitForAdlib; kEnhUIUX uses the same
+	// setBottomHudVisible switch (menuMode 0 -> 1 + cursor restore).
+	if (_engine->hasNativeHudAssets() || currentView->hasPersistentActionBar()) {
 		_engine->setBottomHudVisible(true);
+		currentView->updateCursor();
 		currentView->redraw();
 		return OpcodeResult::Continue;
 	}
@@ -3858,16 +3852,8 @@ OpcodeResult ScriptExecutor::scriptHideActionBar() {
 	if (currentView == nullptr)
 		return OpcodeResult::Continue;
 
-	if (_engine->hasNativeHudAssets()) {
-		// Dialect-v2: save cursor when leaving main HUD, set MenuMode=0.
-		if (_engine->_menuMode == 1)
-			_engine->_savedMenuCursorMode = _cursorMode;
-		_engine->setBottomHudVisible(false);
-		currentView->redraw();
-		return OpcodeResult::Continue;
-	}
-
-	if (currentView->hasPersistentActionBar()) {
+	// v2 opcode 0x66. Same flag as show; classic v1 popup is a separate path.
+	if (_engine->hasNativeHudAssets() || currentView->hasPersistentActionBar()) {
 		_engine->setBottomHudVisible(false);
 		currentView->redraw();
 		return OpcodeResult::Continue;
@@ -4307,7 +4293,10 @@ void ScriptExecutor::run(bool firstRun) {
 	}
 	_state = ExecutorState::Executing;
 	step();
-	syncScriptIsExecutingFlag();
+	// step() rewinds the scene script to 0 when it goes Idle. A pos<end check
+	// would then mark g_wScriptIsExecuting again and steal every scene click.
+	if (_state != ExecutorState::Idle)
+		syncScriptIsExecutingFlag();
 }
 
 uint32 ScriptExecutor::effectiveScriptEnd() const {

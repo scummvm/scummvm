@@ -776,8 +776,9 @@ public:
 
 	/**
 	 * Bottom HUD / action-bar visibility (dialect-neutral).
-	 * Driven by showActionBar / hideActionBar; Scumm verb strip and native
-	 * HUDs both respect this flag. Native skin also maps visible <-> menuMode.
+	 * hide/show opcodes toggle menuMode (0 vs 1) and restore the cursor saved
+	 * on hide. The Scumm kEnhUIUX strip uses the same flag; cursor mode alone
+	 * never hides the bar.
 	 */
 	bool isBottomHudVisible() const { return _bottomHudVisible; }
 	void setBottomHudVisible(bool visible);

@@ -1277,6 +1277,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		if (!loadSceneGraphics(newSceneIndex))
 			error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
+		_menuMode = 1;
+		_optionsSubMode = 0;
+		_bottomHudVisible = true;
+
 		View1 *currentView = (View1 *)findView("View1");
 		if (currentView != nullptr) {
 			// Do not push _pal here: scriptChangeScene fades the previous
@@ -1399,13 +1403,12 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	if (!loadSceneGraphics(newSceneIndex))
 		error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
-	// V2 starts with the main DisplayMenu bar visible; scene
-	// scripts (e.g. world map / overview map) may hideActionBar during isSceneInit
-	if (isV2()) {
-		_menuMode = 1;
-		_optionsSubMode = 0;
-		_bottomHudVisible = true;
-	}
+	// Scene change starts with the main HUD shown. v2 scripts may hide it
+	// during init (overview map). v1 has no hide/show opcodes; kEnhUIUX uses
+	// the same flag so a scene change restores the strip.
+	_menuMode = 1;
+	_optionsSubMode = 0;
+	_bottomHudVisible = true;
 
 	// Refresh characters
 	View1 *currentView = (View1 *)findView("View1");
@@ -2306,6 +2309,7 @@ void Macs2Engine::nextCursorMode() {
 		setCursorMode(Script::MouseMode::Use);
 		break;
 	case Script::MouseMode::Use:
+	case Script::MouseMode::UseInventory:
 		setCursorMode(Script::MouseMode::Walk);
 		break;
 	default:
@@ -2315,15 +2319,22 @@ void Macs2Engine::nextCursorMode() {
 }
 
 void Macs2Engine::setBottomHudVisible(bool visible) {
-	_bottomHudVisible = visible;
+	// hide/show opcodes toggle menuMode (0 vs 1). Cursor mode alone never hides
+	// the HUD. Native skin restores the cursor saved on hide.
 	if (hasNativeHudAssets()) {
 		if (visible) {
-			if (_menuMode == 0)
+			if (_menuMode == 0) {
 				_menuMode = 1;
+				if (_scriptExecutor)
+					setCursorMode(_savedMenuCursorMode);
+			}
 		} else {
+			if (_menuMode == 1 && _scriptExecutor)
+				_savedMenuCursorMode = _scriptExecutor->_cursorMode;
 			_menuMode = 0;
 		}
 	}
+	_bottomHudVisible = visible;
 }
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {

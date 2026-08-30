@@ -171,7 +171,6 @@ void View1::ensureActionBar() {
 	if (_innerBounds.width() != sw || _innerBounds.height() != sh) {
 		_bounds = Common::Rect(0, 0, sw, sh);
 		_innerBounds = _bounds;
-		::initGraphics(sw, sh);
 	}
 }
 
@@ -194,13 +193,12 @@ bool View1::shouldShowActionBar() const {
 		return false;
 	if (_currentMode == ViewMode::VM_HELP)
 		return false;
-	if (_isShowingTextBox || _isShowingDialoguePanel)
-		return false;
-	// Keep the strip visible during container inventory so items can be taken
-	// into the protagonist inventory (Drop/Take is suppressed on that panel).
 	if (_uiPanelState == kUiPanelSaveLoad)
 		return false;
-	if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled)
+	// Scumm strip only: native HUD stays up during speech/choices (DisplayMenu
+	// is independent of AddText / TalkTo; mode 4 draws choices in the panel).
+	if (!g_engine->hasNativeHudAssets() &&
+		(_isShowingDialoguePanel || _isDialogueChoiceInputActive || _isShowingTextBox))
 		return false;
 
 	// Use the actor object table directly; Character lookup can lag behind scene changes.
@@ -259,6 +257,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	if (hasPersistentActionBar() && newInventorySource->_index == Scenes::instance()._currentActorIndex) {
 		if (_actionBar)
 			_actionBar->syncInventory();
+		redraw();
 		return;
 	}
 
@@ -363,7 +362,8 @@ void View1::refreshProtagonistInventoryAfterLoad(uint16 actorIndex) {
 }
 
 bool View1::isInventorySourceProtagonist() const {
-	return _inventorySource->_index == 1;
+	return _inventorySource &&
+		   _inventorySource->_index == Scenes::instance()._currentActorIndex;
 }
 
 void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
@@ -1124,7 +1124,7 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 		}
 	}
 
-	if (_inventorySource != nullptr && _inventorySource->_index == actorIndex) {
+	if (_inventorySource == nullptr || _inventorySource->_index == actorIndex) {
 		bool alreadyListed = false;
 		for (const GameObject *item : _inventoryItems) {
 			if (item->_index == targetObject->_index) {
@@ -1143,6 +1143,7 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 			}
 		}
 	}
+
 
 	if (_activeInventoryItem != nullptr && _activeInventoryItem->_index == targetObject->_index) {
 		_activeInventoryItem = nullptr;
@@ -1701,6 +1702,41 @@ bool View1::handleHelpClick(const MouseDownMessage &msg) {
 	return true;
 }
 
+void View1::walkToScreenPosition(const Common::Point &pos) {
+	Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
+	if (protagonist == nullptr) {
+		debugC(kDebugScript, "Ignoring walk click without active actor character in the scene");
+		return;
+	}
+
+	Common::Point target = pos;
+	Common::Point charPos = protagonist->getPosition();
+
+	int16 targetY = target.y;
+	int16 targetX = target.x;
+	g_engine->snapToWalkablePosition(&targetY, &targetX, charPos.y, charPos.x);
+	target.x = targetX;
+	target.y = targetY;
+
+	protagonist->_pathFinalDestination = target;
+	protagonist->_currentPathIndex = 0;
+	protagonist->_path.clear();
+
+	const bool directPath = g_engine->isPathWalkable(target.y, target.x, charPos.y, charPos.x);
+	if (directPath || Macs2Engine::isWalkabilityBlocking(g_engine->getWalkabilityAt(target.y, target.x))) {
+		protagonist->_targetPosition = target;
+	} else {
+		const bool found = protagonist->calculatePath(target);
+		if (!found)
+			protagonist->_targetPosition = target;
+	}
+	protagonist->_stepDeltaX = abs(protagonist->_targetPosition.x - charPos.x);
+	protagonist->_stepDeltaY = abs(protagonist->_targetPosition.y - charPos.y);
+	protagonist->_stepError = 0;
+	protagonist->_stepDirectionSet = false;
+	g_engine->_scriptExecutor->saveWalkRuntime(protagonist, protagonist->_gameObject);
+}
+
 bool View1::handleInput(const MouseDownMessage &msg) {
 	if (msg._button == MouseMessage::MB_LEFT) {
 		// Help mode (depth-based scene preview) from handleInput (1008:e8bf).
@@ -1791,89 +1827,46 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Walk) {
-			if (shouldShowActionBar() && msg._pos.y >= actionBarTopY())
-				return true;
-
-			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
-			if (protagonist == nullptr) {
-				debugC(kDebugScript, "Ignoring walk click without active actor character in the scene");
-				return true;
-			}
-
-			Common::Point target = msg._pos;
-			Common::Point charPos = protagonist->getPosition();
-
-			// Snap target to nearest walkable position (1008:9be2)
-			int16 targetY = target.y;
-			int16 targetX = target.x;
-			g_engine->snapToWalkablePosition(&targetY, &targetX, charPos.y, charPos.x);
-			target.x = targetX;
-			target.y = targetY;
-
-			// handleInput (1008:e8bf): isPathWalkable(targetY, targetX, charY, charX).
-			// calculatePath only when direct line fails AND target tile is walkable (< 0xC8).
-			protagonist->_pathFinalDestination = target;
-			protagonist->_currentPathIndex = 0;
-			protagonist->_path.clear();
-
-			const bool directPath = g_engine->isPathWalkable(target.y, target.x, charPos.y, charPos.x);
-			if (directPath || Macs2Engine::isWalkabilityBlocking(g_engine->getWalkabilityAt(target.y, target.x))) {
-				protagonist->_targetPosition = target;
-			} else {
-				const bool found = protagonist->calculatePath(target);
-				if (!found) {
-					protagonist->_targetPosition = target;
-				}
-			}
-			protagonist->_stepDeltaX = abs(protagonist->_targetPosition.x - charPos.x);
-			protagonist->_stepDeltaY = abs(protagonist->_targetPosition.y - charPos.y);
-			protagonist->_stepError = 0;
-			protagonist->_stepDirectionSet = false;
-			g_engine->_scriptExecutor->saveWalkRuntime(protagonist, protagonist->_gameObject);
-			return true;
-		}
-
-		// Check if we hit something
 		if (shouldShowActionBar() && msg._pos.y >= actionBarTopY())
 			return true;
 
-		// Original order: getHotspotAtPoint first, then drawCharactersAndHitTest overrides.
-		// Our order (objects first, fallback to background) produces the same result.
-		uint16 index = getHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
-		if (index == 0) {
-			index = g_engine->getHotspotAtPoint(msg._pos);
+		const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
+
+		// Walk never hit-tests; other verbs interact when a target is under the cursor.
+		// Empty-ground clicks walk so the persistent verb bar does not trap the player
+		// in Look/Use/Talk/UseInventory with no way to move.
+		if (mode != Script::MouseMode::Walk) {
+			uint16 index = getHitObjectID(Common::Point(msg._pos.x, msg._pos.y));
+			if (index == 0)
+				index = g_engine->getHotspotAtPoint(msg._pos);
+			if (index != 0) {
+				debugC(kDebugScript, "*** New interaction started");
+
+				Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
+				if (protagonist != nullptr) {
+					Common::Point pos = protagonist->getPosition();
+					protagonist->_targetPosition = pos;
+					protagonist->_pathFinalDestination = pos;
+					protagonist->_path.clear();
+					protagonist->_currentPathIndex = 0;
+				}
+
+				if (mode != Script::MouseMode::UseInventory) {
+					g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
+					_activeInventoryItem = nullptr;
+				}
+
+				g_engine->_scriptExecutor->_interactedObjectID = index;
+				g_engine->runScriptExecutor(false);
+				g_engine->_scriptExecutor->_interactedObjectID = 0;
+				return true;
+			}
 		}
-		if (index != 0) {
-			debugC(kDebugScript, "*** New interaction started");
 
-			// Binary (handleInput 1008:ef2d): stop character movement before interaction.
-			// Sets runtime target/finalDest to current position, clears path state.
-			Character *protagonist = getCharacterByIndex(Scenes::instance()._currentActorIndex);
-			if (protagonist != nullptr) {
-				Common::Point pos = protagonist->getPosition();
-				protagonist->_targetPosition = pos;
-				protagonist->_pathFinalDestination = pos;
-				protagonist->_path.clear();
-				protagonist->_currentPathIndex = 0;
-			}
-
-			// Binary (handleInput 1008:ef8f): if mode != 0x17, clear inventory item ID.
-			// Note: the binary does NOT touch g_wInventoryActionFlag here.
-			if (g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::UseInventory) {
-				g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
-				_activeInventoryItem = nullptr;
-			}
-
-			g_engine->_scriptExecutor->_interactedObjectID = index;
-
-			// Binary: runScriptExecutor() - internally rewinds scene script when
-			// g_wScriptIsExecuting==0 (which it is here, since we're in the
-			// "not executing" branch of handleInput).
-			g_engine->runScriptExecutor(false);
-
-			// Binary: only g_wInteractedObjectId is cleared after runScriptExecutor.
-			g_engine->_scriptExecutor->_interactedObjectID = 0;
+		if (mode == Script::MouseMode::Walk || mode == Script::MouseMode::Look ||
+			mode == Script::MouseMode::Use || mode == Script::MouseMode::Talk ||
+			mode == Script::MouseMode::UseInventory) {
+			walkToScreenPosition(msg._pos);
 		}
 		return true;
 	} else if (msg._button == MouseMessage::MB_RIGHT) {
@@ -2069,6 +2062,16 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 	if (shouldShowActionBar() && _actionBar) {
 		if (_actionBar->isPointInUI(msg._pos)) {
 			_actionBar->handleMouseMove(msg._pos);
+		} else if (_uiPanelState == kUiPanelContainerInventory || _uiPanelState == kUiPanelInventory) {
+			// Inventory popup is modal: do not punch through to scene objects
+			// or areas behind the dialog.
+			_actionBar->clearSentenceObject();
+			GameObject *hovered = getClickedInventoryItem(msg._pos);
+			if (hovered != nullptr) {
+				const Common::String name = getObjectHotspotName(hovered->_index);
+				if (!name.empty())
+					_actionBar->updateSentenceLine(name);
+			}
 		} else if (msg._pos.y < actionBarTopY()) {
 			_actionBar->clearSentenceObject();
 			uint16 index = getHitObjectID(msg._pos);
@@ -2317,19 +2320,23 @@ void View1::draw() {
 
 	if (hasPersistentActionBar()) {
 		ensureActionBar();
-		if (_actionBar && !_isShowingTextBox && !_isShowingDialoguePanel) {
+		if (_actionBar) {
 			const int sw = g_engine->screenWidth();
 			const int sh = g_engine->screenHeight();
 			Graphics::ManagedSurface fullScreen(*g_events->getScreen(), Common::Rect(0, 0, sw, sh));
 			if (shouldShowActionBar()) {
 				_actionBar->draw(fullScreen);
+				// Glyphs use setPixel and do not dirty the Screen.
+				g_events->getScreen()->addDirtyRect(Common::Rect(0, actionBarTopY(), sw, sh));
 			} else if (g_engine->hasNativeHudAssets() && g_engine->_menuMode == 0) {
-				// hideActionBar / overview map: leave playfield pixels alone so
-				// scene art (and hotspots) remain visible in the former panel band.
+				// hideActionBar / overview map: leave playfield pixels in the
+				// former panel band so scene art and hotspots stay visible.
 			} else {
 				const int top = actionBarTopY();
-				if (top >= 0 && top < sh)
+				if (top >= 0 && top < sh) {
 					fullScreen.fillRect(Common::Rect(0, top, sw, sh), 0);
+					g_events->getScreen()->addDirtyRect(Common::Rect(0, top, sw, sh));
+				}
 			}
 		}
 	}
@@ -3062,13 +3069,13 @@ void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 				if (finalX >= 0 && finalX < s.w && finalY >= 0 && finalY < s.h) {
 					if (clipToGameArea && finalY >= actionBarTopY())
 						continue;
-					// Check for depth
-					uint8 bgDepth = g_engine->_depthMap.getPixel(finalX, finalY);
-					// Depth test: draw pixel only if depth map value < character depth
-					// (verified: drawSpriteTransparent at 1010:0ed1 uses *depthMap < param_4)
-					if (!useDepth || bgDepth < depth) {
-						s.setPixel(x + actualX, y + currentY, val);
+					if (useDepth) {
+						if (finalX >= g_engine->_depthMap.w || finalY >= g_engine->_depthMap.h)
+							continue;
+						if (g_engine->_depthMap.getPixel(finalX, finalY) >= depth)
+							continue;
 					}
+					s.setPixel(x + actualX, y + currentY, val);
 				}
 			}
 		}
@@ -3400,6 +3407,8 @@ void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
 	const AnimFrame &sprite = g_engine->_imageResources[31];
+	if (sprite._width == 0 || sprite._height == 0 || sprite._data.empty())
+		return;
 
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
