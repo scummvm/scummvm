@@ -130,7 +130,6 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 		_exitScene._flag.flag  = stream.readByte();
 
 		readRect(stream, _exitHotspot);
-		// 16 trailing bytes (cursor type + unused) at offset 0x317 are ignored.
 	} else {
 		_solveExitScene.readData(stream);
 		_solveSoundDelay = stream.readUint16LE();
@@ -174,7 +173,6 @@ void RotatingLockPuzzle::execute() {
 				}
 			}
 
-			NancySceneState.setEventFlag(_solveExitScene._flag);
 			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
 			_solveState = kPlaySound;
 			// fall through
@@ -198,10 +196,13 @@ void RotatingLockPuzzle::execute() {
 		g_nancy->_sound->stopSound(_clickSound);
 		g_nancy->_sound->stopSound(_solveSound);
 
+		// The solve event flag is set here, together with the scene change, and
+		// not when the solution is first detected: a record whose own dependency
+		// tests that flag would stop being evaluated before it could trigger.
 		if (_solveState == kNotSolved)
 			_exitScene.execute();
 		else
-			NancySceneState.changeScene(_solveExitScene._sceneChange);
+			_solveExitScene.execute();
 
 		finishExecution();
 	}
