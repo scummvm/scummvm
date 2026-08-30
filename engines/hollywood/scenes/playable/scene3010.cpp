@@ -222,6 +222,9 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 311: // Usar paraguas con aspas (use umbrella with blades): climb to scene 3040.
 		runUmbrellaClimb();
 		return true;
+	case 312: // Ir al camino (go to the road): open Ron's destination selector.
+		_vm->gameState().requestTravelScreenSelection(3);
+		return true;
 	default:
 		return false;
 	}
