@@ -37,15 +37,13 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	uint32 _reflowCmd;
 	ThemeEngine::WidgetBackground _backgroundType;
 	Common::String _dialogName;
+	static const int kDragThreshold = 5;
 	int _mouseDownY = 0;
-	static const int kDragThreshold;
 	int _mouseDownStartY = 0;
 	bool _isMouseDown = false;
 	bool _isDragging = false;
-	bool _wasAnimating = false;
 	float _scrollPos = 0.0f;
 	FluidScroller *_fluidScroller = nullptr;
-	Widget *_childUnderMouse = nullptr;
 
 	void recalc();
 	void applyScrollPos();
@@ -68,6 +66,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleTickle() override;
+	bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) override;
 
 	void cancelDrag() override;
 	void cancelTickle() override;
