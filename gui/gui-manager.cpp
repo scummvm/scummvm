@@ -54,7 +54,7 @@ enum {
 
 // Constructor
 GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
-	_cursorAnimateCounter(0), _cursorAnimateTimer(0), _tooltip(nullptr) {
+	_cursorAnimateCounter(0), _cursorAnimateTimer(0), _tooltip(nullptr), _lastMouseMoveTime(0), _globalMousePosition(-1, -1) {
 	_theme = nullptr;
 	_useStdCursor = false;
 
@@ -671,38 +671,30 @@ void GuiManager::runLoop() {
 		// Handle tooltip for the widget under the mouse cursor.
 		// 1. Only try to show a tooltip if the mouse cursor was actually moved
 		//    and sufficient time (kTooltipDelay) passed since mouse cursor rested in-place.
-		//    Note, Dialog objects acquiring or losing focus lead to a _lastMousePosition update,
-		//    which may lead to a change of its time and x,y coordinate values.
-		//    See: GuiManager::giveFocusToDialog()
-		//    We avoid updating _lastMousePosition when giving focus to the Tooltip object
-		//    by having the Tooltip objects set a false value for their (inherited) member
-		//    var _mouseUpdatedOnFocus (in Tooltip::setup()).
-		//    However, when the tooltip loses focus, _lastMousePosition will be updated.
-		//    If the mouse had stayed in the same position in the meantime,
-		//    then at the time of the tooltip losing focus
-		//    the _lastMousePosition.time will be new, but the x,y cordinates
-		//    will be the same as the stored ones in _lastTooltipShown.
 		// 2. If the mouse was moved but ended on the same (tooltip enabled) widget,
 		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
 		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
 		if (!_tooltip
-		    && (_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
-		    && systemMillisNowForTooltipCheck - _lastMousePosition.time > (uint32)kTooltipDelay
+		    && (_lastTooltipShown.x != _globalMousePosition.x || _lastTooltipShown.y != _globalMousePosition.y)
+		    && systemMillisNowForTooltipCheck - _lastMouseMoveTime > (uint32)kTooltipDelay
 		    && !activeDialog->isDragging()) {
-			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
-			if (wdg && (wdg->hasTooltip() || (wdg->getFlags() & WIDGET_DYN_TOOLTIP)) && !(wdg->getFlags() & WIDGET_PRESSED)
-			    && (_lastTooltipShown.wdg != wdg || systemMillisNowForTooltipCheck - _lastTooltipShown.time > (uint32)kTooltipSameWidgetDelay)) {
+			int16 relX = _globalMousePosition.x - activeDialog->_x,
+			      relY = _globalMousePosition.y - activeDialog->_y;
+			Widget *wdg = activeDialog->findWidget(relX, relY);
+			if (wdg &&
+			    (_lastTooltipShown.wdg != wdg || systemMillisNowForTooltipCheck - _lastTooltipShown.time > (uint32)kTooltipSameWidgetDelay) &&
+			    (wdg->hasTooltip() || (wdg->getFlags() & WIDGET_DYN_TOOLTIP)) && !(wdg->getFlags() & WIDGET_PRESSED)) {
 				_lastTooltipShown.time = systemMillisNowForTooltipCheck;
 				_lastTooltipShown.wdg  = wdg;
-				_lastTooltipShown.x = _lastMousePosition.x;
-				_lastTooltipShown.y = _lastMousePosition.y;
+				_lastTooltipShown.x = _globalMousePosition.x;
+				_lastTooltipShown.y = _globalMousePosition.y;
 				if (wdg->getType() != kEditTextWidget || activeDialog->getFocusWidget() != wdg) {
 					if (wdg->getFlags() & WIDGET_DYN_TOOLTIP)
-						wdg->handleTooltipUpdate(_lastMousePosition.x + activeDialog->_x - wdg->getAbsX(), _lastMousePosition.y + activeDialog->_y - wdg->getAbsY());
+						wdg->handleTooltipUpdate(_globalMousePosition.x - wdg->getAbsX(), _globalMousePosition.y - wdg->getAbsY());
 
 					if (wdg->hasTooltip()) {
 						Tooltip *tooltip = new Tooltip();
-						tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
+						tooltip->setup(wdg, _globalMousePosition.x, _globalMousePosition.y);
 						_tooltip = tooltip;
 						_tooltip->runModal();
 						// _tooltip is reset in closeTopDialog
@@ -936,14 +928,13 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		activeDialog->handleKeyUp(event.kbd);
 		break;
 	case Common::EVENT_MOUSEMOVE:
-		_globalMousePosition.x = mouseX;
-		_globalMousePosition.y = event.mouse.y;
-		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
-
-		if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
-			setLastMousePos(mouse.x, mouse.y);
+		if (_globalMousePosition.x != mouseX || _globalMousePosition.y != event.mouse.y) {
+			_globalMousePosition.x = mouseX;
+			_globalMousePosition.y = event.mouse.y;
+			_lastMouseMoveTime = _system->getMillis(true);
 		}
 
+		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 		break;
 		// We don't distinguish between mousebuttons (for now at least)
 	case Common::EVENT_LBUTTONDOWN:
@@ -999,15 +990,6 @@ void GuiManager::giveFocusToDialog(Dialog *dialog) {
 	int16 dialogX = _globalMousePosition.x - dialog->_x;
 	int16 dialogY = _globalMousePosition.y - dialog->_y;
 	dialog->receivedFocus(dialogX, dialogY);
-	if (dialog->isMouseUpdatedOnFocus()) {
-		setLastMousePos(dialogX, dialogY);
-	}
-}
-
-void GuiManager::setLastMousePos(int16 x, int16 y) {
-	_lastMousePosition.x = x;
-	_lastMousePosition.y = y;
-	_lastMousePosition.time = _system->getMillis(true);
 }
 
 void GuiManager::setLanguageRTL() {

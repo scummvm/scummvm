@@ -33,12 +33,10 @@ Tooltip::Tooltip() :
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
 
-void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
+void Tooltip::setup(Widget *widget, int x, int y) {
 	assert(widget->hasTooltip());
 
 	_widget = widget;
-
-	setMouseUpdatedOnFocus(false);
 
 	_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
 	_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
@@ -52,8 +50,8 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_w = tooltipFont->wordWrapText(widget->getTooltip(), _maxWidth - _xpadding * 2, _wrappedLines) + _xpadding * 2;
 	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size() + _ypadding * 2;
 
-	_x = MIN<int16>(parent->_x + x + _xdelta + _xpadding, g_system->getOverlayWidth() - _w - _xpadding * 2);
-	_y = MIN<int16>(parent->_y + y + _ydelta + _ypadding, g_system->getOverlayHeight() - _h - _ypadding * 2);
+	_x = MIN<int16>(x + _xdelta + _xpadding, g_system->getOverlayWidth() - _w - _xpadding * 2);
+	_y = MIN<int16>(y + _ydelta + _ypadding, g_system->getOverlayHeight() - _h - _ypadding * 2);
 
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
