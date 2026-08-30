@@ -120,8 +120,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		blitMap(_shadowMap, shadowMap);
 	}
 
-	// Hotspot colors (trailer 0x22) + MXCC RLE map (Map2). No 4th 64000 hotspot
-	// chunk on Amiga - decodeMxccRunLengthAt expands MXCC to the DOS hotspot map.
 	_numHotspots = 0;
 	_hotspotColorTable.clear();
 	uint16 numHotspots = 0;
@@ -143,20 +141,11 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	_backgroundAnimationsBlobs.clear();
 	_mapImageFileOffset = 0;
 	_mapSubSceneTableFilePos = 0;
-	// Trailer 0x40+0x80 after walk params: native copies to 0024888c/00248954.
-	// Demo scenes are all zeros; no other xrefs in this binary - leave
-	// _sceneResourceOffsets alone (Amiga loads by archive type/id).
-	// MXAA: size word after Map2 is 0 on MM_0004/MM_0040; tickMxaaOverlayAnims
-	// has nothing to run until a scene ships a real MXAA blob.
 	if (amigaMxmmHasMxaaOverlay(mxmm.data(), size)) {
 		debugC(1, kDebugFilePath, "Amiga: MM_%04u has MXAA overlay data (not loaded yet)",
 			   (uint)sceneResourceId);
 	}
 
-	// Pathfinding graph + walk depth/speed live in the MXMM trailer (Ghidra
-	// load_scene_mxmm @ 00221d90). Without nodes, calculatePath always fails and
-	// walkAlongPath cancels with finalDest=current - waitForWalk then completes
-	// immediately while the actor is still short of the script target.
 	_pathfindingPoints.clear();
 	_numPathfindingPoints = 0;
 	uint16 numPfPoints = 0;
@@ -178,8 +167,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		}
 	}
 
-	// Walk depth/speed percent (Ghidra g_abSceneWalkPaletteParams / DOS 0x51FD..).
-	// Leaving base at 0 makes walkAlongPath clamp to 1 px/frame and cancel early.
 	uint16 walkThreshY = 0, walkScale = 0, walkBasePct = 0, palMode = 0, darken = 0;
 	if (extractAmigaMxmmSceneWalkParams(mxmm.data(), size, walkThreshY, walkScale, walkBasePct, palMode,
 										darken)) {
@@ -189,7 +176,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		_scenePaletteMode = palMode != 0 ? palMode : 1;
 		_paletteDarkenPercent = darken;
 	} else {
-		// Empty stubs (e.g. MM_0040) and DOS flat rooms use 100/100/100.
 		_walkDepthThresholdY = 100;
 		_walkDepthScaleFactor = 100;
 		_walkBaseSpeedPct = 100;
@@ -197,7 +183,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		_paletteDarkenPercent = 0;
 	}
 
-	// Scene script/strings live in the MXMM trailer (not the global scene_table stub).
 	_amigaPendingSceneScript.clear();
 	_amigaPendingSceneStrings.clear();
 	extractAmigaMxmmSceneScript(mxmm.data(), size, _amigaPendingSceneScript, _amigaPendingSceneStrings);
