@@ -23,6 +23,7 @@
 
 #include "common/debug.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/savestate.h"
 #include "gui/message.h"
 #include "macs2/detection.h"
@@ -33,22 +34,22 @@
 
 namespace Macs2 {
 
-static Common::String getObjectDisplayName(const GameObject *obj) {
-	if (!obj)
-		return Common::String();
+namespace {
 
-	const GameObjects &objects = GameObjects::instance();
-	if (obj->_index < objects._objectNames.size() && !objects._objectNames[obj->_index].empty())
-		return objects._objectNames[obj->_index];
-
-	return Common::String();
+// German source keys for macs2_translation.dat msgctxt "uilabel".
+Common::String uiText(const char *source) {
+	if (g_engine)
+		return g_engine->translateUiLabel(source);
+	return source;
 }
 
+} // namespace
+
 const ActionBar::VerbDef ActionBar::kVerbs[4] = {
-	{"Walk", Script::MouseMode::Walk},
-	{"Look", Script::MouseMode::Look},
-	{"Use", Script::MouseMode::Use},
-	{"Talk", Script::MouseMode::Talk}
+	{"Gehen", Script::MouseMode::Walk},
+	{"Schauen", Script::MouseMode::Look},
+	{"Benutzen", Script::MouseMode::Use},
+	{"Reden", Script::MouseMode::Talk}
 };
 
 ActionBar::ActionBar(View1 *view)
@@ -166,27 +167,7 @@ void ActionBar::drawUIButton(const Common::Rect &rect, bool pressed, Graphics::M
 }
 
 void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
-	Common::String sentence;
-	const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
-
-	if (mode == Script::MouseMode::UseInventory && _view->_activeInventoryItem) {
-		sentence = "Use";
-		const Common::String itemName = getObjectDisplayName(_view->_activeInventoryItem);
-		if (!itemName.empty())
-			sentence += " " + itemName;
-	} else if (_activeVerbIndex >= 0 && _activeVerbIndex < 4) {
-		sentence = kVerbs[_activeVerbIndex].label;
-	}
-	if (!_sentenceObject.empty()) {
-		if (!sentence.empty()) {
-			if (mode == Script::MouseMode::UseInventory)
-				sentence += " with ";
-			else
-				sentence += " ";
-		}
-		sentence += _sentenceObject;
-	}
-
+	Common::String sentence = buildSentenceLine();
 	if (sentence.empty())
 		return;
 
@@ -209,9 +190,10 @@ void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
 
 		drawUIButton(r, isActive || isHovered, s);
 
-		const int textX = r.left + (r.width() - (int)strlen(kVerbs[i].label) * 6) / 2;
+		const Common::String label = uiText(kVerbs[i].label);
+		const int textX = r.left + (r.width() - (int)label.size() * 6) / 2;
 		const int textY = r.top + (r.height() - (int)g_engine->maxGlyphHeight) / 2;
-		_view->renderStringTo(textX, textY, kVerbs[i].label, s);
+		_view->renderStringTo(textX, textY, label, s);
 	}
 }
 
@@ -431,6 +413,7 @@ void ActionBar::handleMouseMoveScumm(const Common::Point &pos) {
 					break;
 				if (getInvItemRect(i).contains(pos)) {
 					_hoveredItemIndex = i;
+					updateSentenceLine(getObjectHotspotName(items[itemIdx]->_index));
 					break;
 				}
 			}
@@ -497,53 +480,68 @@ void ActionBar::refreshSaveSlotNames() {
 		if (desc.getSaveSlot() != -1 && !desc.getDescription().empty())
 			g_engine->_saveSlotNames.push_back(desc.getDescription());
 		else
-			g_engine->_saveSlotNames.push_back(Common::String::format("--- Slot %d ---", slot + 1));
+			g_engine->_saveSlotNames.push_back(Common::String::format(uiText("--- Platz %d ---").c_str(), slot + 1));
 	}
 }
 
-Common::String ActionBar::buildNativeSentenceLine() const {
-	const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
-	const char *verb = "Walk";
-	if (mode == Script::MouseMode::Look)
-		verb = "Look";
-	else if (mode == Script::MouseMode::Talk)
-		verb = "Talk";
-	else if (mode == Script::MouseMode::Use || mode == Script::MouseMode::UseInventory)
-		verb = "Use";
-	else if (mode == Script::MouseMode::PanelCursor || mode == Script::MouseMode::Disabled)
+Common::String ActionBar::translatedVerbLabel(Script::MouseMode mode) const {
+	if (mode == Script::MouseMode::UseInventory) {
+		mode = Script::MouseMode::Use;
+	}
+	for (int i = 0; i < ARRAYSIZE(kVerbs); i++) {
+		if (kVerbs[i].mode == mode) {
+			return uiText(kVerbs[i].label);
+		}
+	}
+	return uiText("Gehen");
+}
+
+Common::String ActionBar::currentTargetDisplayName() const {
+	if (!_sentenceObject.empty())
+		return _sentenceObject;
+
+	const Common::Point mouse = g_system->getEventManager()->getMousePos();
+	if (isPointInUI(mouse))
 		return Common::String();
 
-	Common::String line(verb);
+	uint16 hoverId = _view->getHitObjectID(mouse);
+	if (hoverId == 0)
+		hoverId = g_engine->getHotspotAtPoint(mouse);
+	return lookupInteractionDisplayName(hoverId);
+}
+
+Common::String ActionBar::buildSentenceLine() const {
+	const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
+	if (mode == Script::MouseMode::PanelCursor || mode == Script::MouseMode::Disabled) {
+		return Common::String();
+	}
+
+	const Common::String targetName = currentTargetDisplayName();
+	Common::String itemName;
 	if (_view->_activeInventoryItem != nullptr) {
-		const Common::String itemName = getObjectDisplayName(_view->_activeInventoryItem);
-		if (!itemName.empty()) {
-			line += " ";
-			line += itemName;
-			line += " with";
+		itemName = getObjectHotspotName(_view->_activeInventoryItem->_index);
+	}
+
+	if (mode == Script::MouseMode::UseInventory && !itemName.empty()) {
+		if (!targetName.empty())
+			return Common::String::format(uiText("Benutze %s mit %s").c_str(), itemName.c_str(), targetName.c_str());
+		return Common::String::format(uiText("Benutze %s").c_str(), itemName.c_str());
+	}
+
+	if (!targetName.empty()) {
+		switch (mode) {
+		case Script::MouseMode::Look:
+			return Common::String::format(uiText("Schaue an %s").c_str(), targetName.c_str());
+		case Script::MouseMode::Talk:
+			return Common::String::format(uiText("Rede mit %s").c_str(), targetName.c_str());
+		case Script::MouseMode::Use:
+			return Common::String::format(uiText("Benutze %s").c_str(), targetName.c_str());
+		default:
+			return Common::String::format(uiText("Gehe zu %s").c_str(), targetName.c_str());
 		}
 	}
 
-	uint16 hoverId = 0;
-	const Common::Point mouse = g_system->getEventManager()->getMousePos();
-	if (!isPointInUI(mouse)) {
-		hoverId = _view->getHitObjectID(mouse);
-		if (hoverId == 0)
-			hoverId = g_engine->getHotspotAtPoint(mouse);
-	}
-	if (hoverId >= 0x400) {
-		const uint16 objIndex = hoverId - 0x400;
-		if (objIndex < GameObjects::instance()._objectNames.size() &&
-			!GameObjects::instance()._objectNames[objIndex].empty()) {
-			line += " ";
-			line += GameObjects::instance()._objectNames[objIndex];
-		}
-	} else if (_view->_hoverHotspotId != 0 &&
-			   _view->_hoverHotspotId < GameObjects::instance()._objectNames.size() &&
-			   !GameObjects::instance()._objectNames[_view->_hoverHotspotId].empty()) {
-		line += " ";
-		line += GameObjects::instance()._objectNames[_view->_hoverHotspotId];
-	}
-	return line;
+	return translatedVerbLabel(mode);
 }
 
 const HudButton *ActionBar::findHudButtonAt(const Common::Point &pos, int *outIndex) const {
@@ -664,7 +662,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 		const GlyphData *font = g_engine->numGlyphs ? g_engine->_glyphs : panelFont;
 		const uint16 fontCount = g_engine->numGlyphs ? g_engine->numGlyphs : panelFontCount;
 		if (fontCount != 0) {
-			Common::String sentence = buildNativeSentenceLine();
+			Common::String sentence = buildSentenceLine();
 			if (!sentence.empty()) {
 				const uint16 maxW = (uint16)(g_engine->screenWidth() - 16);
 				while (sentence.size() > 1) {
@@ -775,7 +773,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 			if (g_engine->_optionsSubMode == 2) {
 				g_engine->loadGameState(slot);
 			} else if (g_engine->_optionsSubMode == 1) {
-				Common::String name = Common::String::format("Save %d", slot + 1);
+				Common::String name = Common::String::format(uiText("Spielstand %d").c_str(), slot + 1);
 				if (row < g_engine->_saveSlotNames.size() &&
 					!g_engine->_saveSlotNames[row].empty() &&
 					!g_engine->_saveSlotNames[row].hasPrefix("---"))
@@ -848,9 +846,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		g_engine->softRestart();
 		return true;
 	} else if (id == 0x21) {
-		::GUI::MessageDialog quitDialog(
-			Common::U32String("Quit the game?"),
-			Common::U32String("Quit"), Common::U32String("Cancel"));
+		::GUI::MessageDialog quitDialog(_("Quit the game?"), _("Quit"), _("Cancel"));
 		if (quitDialog.runModal() == ::GUI::kMessageOK)
 			Engine::quitGame();
 	} else if (id == 0x14 || id == 0x16) {

@@ -108,7 +108,9 @@ private:
 	bool handleClickNative(const Common::Point &pos);
 	void handleMouseMoveNative(const Common::Point &pos);
 	void refreshSaveSlotNames();
-	Common::String buildNativeSentenceLine() const;
+	Common::String translatedVerbLabel(Script::MouseMode mode) const;
+	Common::String currentTargetDisplayName() const;
+	Common::String buildSentenceLine() const;
 	const HudButton *findHudButtonAt(const Common::Point &pos, int *outIndex = nullptr) const;
 
 	View1 *_view;

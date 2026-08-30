@@ -733,8 +733,11 @@ public:
 	Common::HashMap<uint32, TranslationEntry> _sceneTranslations;
 	Common::HashMap<uint32, TranslationEntry> _objectTranslations;
 	Common::HashMap<Common::String, Common::String> _hotspotLabelTranslations;
+	Common::HashMap<Common::String, Common::String> _uiLabelTranslations;
 	void loadTranslation();
 	Common::String translateHotspotLabel(const Common::String &cp850Name) const;
+	/** Action-bar / HUD chrome; German source key, same lookup rules as hotspot labels. */
+	Common::String translateUiLabel(const Common::String &source) const;
 	// Compute the sequential string index at the given byte offset in a string blob
 	int computeStringIndex(Common::MemoryReadStream *stream, int targetOffset);
 
@@ -926,6 +929,9 @@ public:
 
 extern Macs2Engine *g_engine;
 #define SHOULD_QUIT ::Macs2::g_engine->shouldQuit()
+Common::String getObjectHotspotName(uint16 objectIndex);
+/** Display name for a hit id: 0x400+object or 0x800+scene hotspot. */
+Common::String lookupInteractionDisplayName(uint16 interactionId);
 
 } // End of namespace Macs2
 

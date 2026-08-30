@@ -2074,14 +2074,9 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 			uint16 index = getHitObjectID(msg._pos);
 			if (index == 0)
 				index = g_engine->getHotspotAtPoint(msg._pos);
-			if (index != 0 && index >= 0x400) {
-				const uint16 objIndex = index - 0x400;
-				if (objIndex < GameObjects::instance()._objectNames.size()) {
-					const Common::String &name = GameObjects::instance()._objectNames[objIndex];
-					if (!name.empty())
-						_actionBar->updateSentenceLine(name);
-				}
-			}
+			const Common::String name = lookupInteractionDisplayName(index);
+			if (!name.empty())
+				_actionBar->updateSentenceLine(name);
 		}
 	}
 

@@ -225,11 +225,6 @@ public:
 
 class GameObjects : public Common::Singleton<GameObjects> {
 public:
-	// Maximum of 200h objects
-	// How to address them in the original code:
-	// mov	di,[bp+6h]
-	//	shl di, 2h;
-	// les di, [di + 77Ch]
 	Common::Array<GameObject *> _objects;
 
 	Common::Array<Common::String> _objectNames;
