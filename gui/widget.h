@@ -47,6 +47,9 @@ enum {
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
 	WIDGET_TRACK_MOUSE	= 1 <<  8,
+	/* Used by containers which need to receive
+	 * mouse events in place of their children */
+	WIDGET_HOOK_DRAG	= 1 << 9,
 	WIDGET_DYN_TOOLTIP  = 1 << 10, // Widgets updates tooltip by coordinates
 };
 
@@ -83,6 +86,13 @@ enum {
 	kPicButtonStatePressed = 3,
 
 	kPicButtonStateMax = 3
+};
+
+enum {
+	kDragHookStateCancel = -2,
+	kDragHookStateMouseUp = -1,
+	kDragHookStateMouseMoved = 0,
+	kDragHookStateMouseDown = 1,
 };
 
 /* Widget */
@@ -138,6 +148,7 @@ public:
 	virtual void handleOtherEvent(const Common::Event &evt) {}
 	virtual void handleTooltipUpdate(int x, int y) {}
 	virtual void handleTickle() {}
+	virtual bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) { return false; }
 
 	virtual void cancelDrag() {}
 	virtual void cancelTickle() {}
