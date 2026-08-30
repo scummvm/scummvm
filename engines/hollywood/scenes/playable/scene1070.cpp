@@ -955,10 +955,10 @@ void Scene1070::runSpencerTravelUnlockEffect() {
 	if (_vm->gameState().hasTravelScreenDestination(kScene1070TravelUnlockDestinationId))
 		return;
 
+	beginStaticSecondarySpeechLine(0xdb, 0);
 	runActorReplacement(ActionOverlaySpec(16, kScene1070TravelUnlockDescriptorCount,
 		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap), kScene1070FrameMillis));
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().unlockTravelScreenDestination(kScene1070TravelUnlockDestinationId);
+	unlockTravelDestination(kScene1070TravelUnlockDestinationId);
 }
 
 void Scene1070::handleMicrophonePickup() {

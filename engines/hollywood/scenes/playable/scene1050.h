@@ -53,7 +53,7 @@ private:
 	void beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternatePose);
 	void handleDialogueEffect(byte effectId);
 	void runDialogueEffectTen();
-	void runTravelUnlockEffect(byte travelSlotId);
+	void runTravelUnlockEffect(byte destinationId);
 	void handlePackageExchange();
 	void handleJackTalkLine();
 	void handleJackLookLine();

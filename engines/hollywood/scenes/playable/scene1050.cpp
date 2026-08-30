@@ -507,22 +507,16 @@ void Scene1050::handleDialogueEffect(byte effectId) {
 	GameplayState &state = _vm->gameState();
 	switch (effectId) {
 	case 2:
-		if (!state.hasTravelScreenDestination(1)) {
+		if (!state.hasTravelScreenDestination(1))
 			runTravelUnlockEffect(1);
-			state.unlockTravelScreenDestination(1);
-		}
 		break;
 	case 3:
-		if (!state.hasTravelScreenDestination(2)) {
+		if (!state.hasTravelScreenDestination(2))
 			runTravelUnlockEffect(2);
-			state.unlockTravelScreenDestination(2);
-		}
 		break;
 	case 4:
-		if (!state.hasTravelScreenDestination(3)) {
+		if (!state.hasTravelScreenDestination(3))
 			runTravelUnlockEffect(3);
-			state.unlockTravelScreenDestination(3);
-		}
 		break;
 	case 5:
 		state.scene1050CharlieBogWerewolfClueHeard = true;
@@ -551,14 +545,13 @@ void Scene1050::runDialogueEffectTen() {
 	waitSceneMillis(1000);
 }
 
-void Scene1050::runTravelUnlockEffect(byte travelSlotId) {
-	(void)travelSlotId;
+void Scene1050::runTravelUnlockEffect(byte destinationId) {
 	beginStaticSecondarySpeechLine(0xdb, 0);
 	_soundBank0.playSampleLooping(0x32, 25);
 	runOverlaySequence(13, kScene1050TravelOverlayDescriptorCount, kScene1050TravelFrameMap,
 		ARRAYSIZE(kScene1050TravelFrameMap), kScene1050FrameMillis);
 	_soundBank0.stop();
-	_soundBank0.playSample(1, 100);
+	unlockTravelDestination(destinationId);
 }
 
 void Scene1050::handlePackageExchange() {

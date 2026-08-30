@@ -335,6 +335,8 @@ protected:
 	// Selector 0xff reapplies the complete state; other values request scene-specific partial updates.
 	void applySceneStateToHotspotsAndPatches(byte selector);
 	void rebuildWalkablePaletteMask();
+	// Adds a notebook destination and presents its original unlock transition.
+	bool unlockTravelDestination(byte destinationId);
 
 	// Inventory
 	bool hasInventoryItem(byte itemId) const;
