@@ -27,6 +27,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+constexpr int TILE_WIDTH = 16;
+constexpr int TILE_HEIGHT = 16;
+
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_OVERWORLD);
 	delayFrames(1);
@@ -50,16 +53,16 @@ void OverworldMap::timeout() {
 void OverworldMap::animateWater() {
 	const Graphics::ManagedSurface *tiles = _G(map).tiles();
 	const Graphics::ManagedSurface &tile = tiles[Data::TILE_OCEAN];
-	assert(tile.w == Data::TILE_WIDTH && tile.h == Data::TILE_HEIGHT);
+	assert(tile.w == TILE_WIDTH && tile.h == TILE_HEIGHT);
 
-	byte lastRow[Data::TILE_WIDTH];
+	byte lastRow[TILE_WIDTH];
 	byte *pixels = (byte *)tile.getPixels();
 
 	// The bottom row wraps around to become the new top row, with
 	// every other row shifting down by one to make way for it
-	memcpy(lastRow, pixels + (Data::TILE_HEIGHT - 1) * Data::TILE_WIDTH, Data::TILE_WIDTH);
-	memmove(pixels + Data::TILE_WIDTH, pixels, (Data::TILE_HEIGHT - 1) * Data::TILE_WIDTH);
-	memcpy(pixels, lastRow, Data::TILE_WIDTH);
+	memcpy(lastRow, pixels + (TILE_HEIGHT - 1) * TILE_WIDTH, TILE_WIDTH);
+	memmove(pixels + TILE_WIDTH, pixels, (TILE_HEIGHT - 1) * TILE_WIDTH);
+	memcpy(pixels, lastRow, TILE_WIDTH);
 }
 
 int OverworldMap::animatedTileId(byte tileId) const {
@@ -85,12 +88,12 @@ void OverworldMap::draw() {
 	prepareMapForDrawing();
 
 	// Draw the visible map contents
-	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-			int tileId = animatedTileId(map._mapTilesId[oy][ox]);
+	for (int oy = 0; oy < Data::OVERWORLD_VISIBLE_HEIGHT; oy++) {
+		for (int ox = 0; ox < Data::OVERWORLD_VISIBLE_WIDTH; ox++) {
+			int tileId = animatedTileId(_mapTilesId[oy][ox]);
 			if (tileId != -1) {
 				const Graphics::ManagedSurface &tileImg = tiles[tileId];
-				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH + 8, oy * Data::TILE_HEIGHT + 8));
+				s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
 			}
 		}
 	}
@@ -98,29 +101,27 @@ void OverworldMap::draw() {
 
 void OverworldMap::prepareMapForDrawing() {
 	auto &map = g_engine->_map;
-	int mapLeft, mapTop;
+	int mapLeft = _G(savegame)._overworldPos.x - Data::OVERWORLD_VISIBLE_CENTER_X;
+	int mapTop = _G(savegame)._overworldPos.y - Data::OVERWORLD_VISIBLE_CENTER_Y;
 
-	mapLeft = _G(savegame).mapTopLeftX();
-	mapTop = _G(savegame).mapTopLeftY();
-
-	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
+	for (int oy = 0; oy < Data::OVERWORLD_VISIBLE_HEIGHT; oy++) {
+		for (int ox = 0; ox < Data::OVERWORLD_VISIBLE_WIDTH; ox++) {
 			int x = mapLeft + ox;
 			int y = mapTop + oy;
 
-			map._mapTilesId[oy][ox] = _G(map).getTileAt(x, y);
+			_mapTilesId[oy][ox] = _G(map).getTileAt(x, y);
 		}
 	}
 
 	// Player is at center of the viewport. Save tiles around the player
-	map._tilePlayerCenter = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerUp = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y - 1][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerDown = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y + 1][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerLeft = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X - 1];
-	map._tilePlayerRight = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X + 1];
+	map._tilePlayerCenter = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X];
+	map._tilePlayerUp = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y - 1][Data::OVERWORLD_VISIBLE_CENTER_X];
+	map._tilePlayerDown = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y + 1][Data::OVERWORLD_VISIBLE_CENTER_X];
+	map._tilePlayerLeft = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X - 1];
+	map._tilePlayerRight = _mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X + 1];
 
 	// Place the player tile at the center
-	map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X] = map._playerTileId;
+	_mapTilesId[Data::OVERWORLD_VISIBLE_CENTER_Y][Data::OVERWORLD_VISIBLE_CENTER_X] = map._playerTileId;
 }
 
 } // namespace Views

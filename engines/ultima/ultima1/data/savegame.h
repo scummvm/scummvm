@@ -191,12 +191,6 @@ public:
 	}
 
 	/**
-	 * Return the X/Y of the map to start drawing
-	 */
-	int mapTopLeftX() const;
-	int mapTopLeftY() const;
-
-	/**
 	 * Checks the overworld map for an entity (creature or vechile) at a given position.
 	 * @param x		X position
 	 * @param y		Y position

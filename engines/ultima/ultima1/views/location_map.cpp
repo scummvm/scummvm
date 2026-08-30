@@ -27,6 +27,11 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+constexpr int TILE_WIDTH = 8;
+constexpr int TILE_HEIGHT = 8;
+constexpr int MAP_VISIBLE_WIDTH = 38;
+constexpr int MAP_VISIBLE_HEIGHT = 18;
+
 bool LocationMap::msgFocus(const FocusMessage &msg) {
 	delayFrames(1);
 	return UIElement::msgFocus(msg);
@@ -44,51 +49,27 @@ void LocationMap::timeout() {
 	delayFrames(1);
 }
 
-int LocationMap::animatedTileId(byte tileId) const {
-	return tileId;
-}
-
 void LocationMap::draw() {
-	Dialog::draw();
-
 	auto &map = g_engine->_map;
 	const Graphics::ManagedSurface *tiles = map.tiles();
 	auto s = getSurface();
+	const auto &pos = _G(savegame)._locationPosition;
 
-	prepareMapForDrawing();
+	Dialog::draw();
 
 	// Draw the visible map contents
-	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-			int tileId = animatedTileId(map._mapTilesId[oy][ox]);
-			if (tileId != -1) {
-				const Graphics::ManagedSurface &tileImg = tiles[(tileId >= 50) ? 1 : tileId];
-				s.blitFrom(tileImg, Common::Point(ox * Data::TILE_WIDTH + 8, oy * Data::TILE_HEIGHT + 8));
+	for (int oy = 0; oy < MAP_VISIBLE_HEIGHT; oy++) {
+		for (int ox = 0; ox < MAP_VISIBLE_WIDTH; ox++) {
+			int tileId = (ox == pos.x && oy == pos.y) ? 10 : _G(map).getTileAt(ox, oy);
+			if (tileId >= 50)
+				tileId = 1;
+
+			if (tileId) {
+				const Graphics::ManagedSurface &tileImg = tiles[tileId - 1];
+				s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
 			}
 		}
 	}
-}
-
-void LocationMap::prepareMapForDrawing() {
-	auto &map = g_engine->_map;
-
-	// Get the map tiles. Unlike in the overworld, where the visible map is centered around the player,
-	// location maps are always on-screen in their entirety
-	for (int oy = 0; oy < Data::MAP_VISIBLE_HEIGHT; oy++) {
-		for (int ox = 0; ox < Data::MAP_VISIBLE_WIDTH; ox++) {
-			map._mapTilesId[oy][ox] = _G(map).getTileAt(ox, oy);
-		}
-	}
-
-	// Player is at center of the viewport. Save tiles around the player
-	map._tilePlayerCenter = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerUp = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y - 1][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerDown = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y + 1][Data::MAP_VISIBLE_CENTER_X];
-	map._tilePlayerLeft = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X - 1];
-	map._tilePlayerRight = map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X + 1];
-
-	// Place the player tile at the center
-	map._mapTilesId[Data::MAP_VISIBLE_CENTER_Y][Data::MAP_VISIBLE_CENTER_X] = map._playerTileId;
 }
 
 } // namespace Views

@@ -123,8 +123,8 @@ void Map::init() {
 	}
 
 	// Load tiles
-	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT);
-	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT);
+	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16);
+	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT, 8);
 }
 
 void Map::load(int mapNum) {
@@ -156,7 +156,6 @@ void Map::load(int mapNum) {
 
 	// Set up copies of the map position and player tile to use
 	_playerTileId = TILE_PLAYER;
-	clearTiles();
 
 	// Set up the correct logic to use
 	delete _G(logic);
@@ -193,10 +192,6 @@ void Map::load(int mapNum) {
 		// Already showing a game dialog, so just replace the current one
 		g_engine->replaceView(viewName, false);
 	}
-}
-
-void Map::clearTiles() {
-	Common::fill(&_mapTilesId[0][0], &_mapTilesId[0][0] + sizeof(VisibleTiles), 0);
 }
 
 int Map::getMapTile(int x, int y) const {

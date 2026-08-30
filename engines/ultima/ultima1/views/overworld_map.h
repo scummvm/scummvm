@@ -23,6 +23,7 @@
 #define ULTIMA1_VIEWS_OVERWORLD_MAP_H
 
 #include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,6 +33,8 @@ using namespace Shared::Messages;
 
 class OverworldMap : public Dialog {
 private:
+	typedef byte VisibleTiles[Data::OVERWORLD_VISIBLE_HEIGHT][Data::OVERWORLD_VISIBLE_WIDTH];
+	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
 	int _animIndex = 0;
 
 	void prepareMapForDrawing();

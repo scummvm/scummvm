@@ -31,19 +31,6 @@ namespace Views {
 using namespace Shared::Messages;
 
 class LocationMap : public Dialog {
-private:
-	int _animIndex = 0;
-
-	void prepareMapForDrawing();
-
-	/**
-	 * Returns the tile to draw for a given raw map tile, substituting
-	 * in the appropriate animation frame for the castle and city flags.
-	 * Returns -1 if the tile shouldn't be redrawn this tick (the castle
-	 * flag is only redrawn on 2 of every 6 ticks)
-	 */
-	int animatedTileId(byte tileId) const;
-
 public:
 	LocationMap() : Dialog("LocationMap") {}
 	~LocationMap() override {}

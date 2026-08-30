@@ -34,14 +34,14 @@ namespace Data {
 constexpr int OVERWORLD_WIDTH = 168;
 constexpr int OVERWORLD_HEIGHT = 156;
 constexpr int OVERWORLD_SIZE = OVERWORLD_WIDTH * OVERWORLD_HEIGHT;
+constexpr int OVERWORLD_VISIBLE_WIDTH = 19;
+constexpr int OVERWORLD_VISIBLE_HEIGHT = 9;
+constexpr int OVERWORLD_VISIBLE_CENTER_X = 9;
+constexpr int OVERWORLD_VISIBLE_CENTER_Y = 4;
+
 constexpr int CITY_WIDTH = 38;
 constexpr int CITY_HEIGHT = 18;
 constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
-
-constexpr int MAP_VISIBLE_WIDTH = 19;
-constexpr int MAP_VISIBLE_HEIGHT = 9;
-constexpr int MAP_VISIBLE_CENTER_X = 9;
-constexpr int MAP_VISIBLE_CENTER_Y = 4;
 
 constexpr int LOCATION_COUNT = 84;
 
@@ -62,7 +62,6 @@ enum MapType {
 };
 
 typedef Common::Array< Common::Array<byte> > MapTiles;
-typedef byte VisibleTiles[MAP_VISIBLE_HEIGHT][MAP_VISIBLE_WIDTH];
 
 extern const char *DIRECTION_NAMES[5];
 extern const char *LOCATION_NAMES[LOCATION_COUNT];
@@ -115,7 +114,6 @@ public:
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
 		_tilePlayerLeft = 0, _tilePlayerRight = 0;
-	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
 	int _woodsCount = 0, _grassCount = 0, _waterCount = 0;	// Tiles surrounding entered locations
 	bool _isLordBritishCastle = false;
 	int _mapStyle = 0;
@@ -170,8 +168,6 @@ public:
 			return _mapRows[_mapHeight + y];
 		return _mapRows[y % _mapHeight];
 	}
-
-	void clearTiles();
 
 	/**
 	 * Get a tile at a given position.

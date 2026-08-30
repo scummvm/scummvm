@@ -26,28 +26,28 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-constexpr int BYTES_PER_ROW = 8;	// 4 planes x 2 bytes/plane = 16 pixels
-constexpr int BYTES_PER_TILE = BYTES_PER_ROW * TILE_HEIGHT;
+void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int tileSize) {
+	const int BYTES_PER_ROW = tileSize / 2;		// 4 planes, so 2 pixels per byte
+	const int BYTES_PER_TILE = BYTES_PER_ROW * tileSize;
 
-void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count) {
 	Common::File f;
-	if (!f.open("EgaTiles.Bin"))
-		error("Could not open EgaTiles.Bin");
+	if (!f.open(filename))
+		error("Could not open %s", filename);
 
-	byte data[BYTES_PER_TILE];
+	byte *data = new byte[BYTES_PER_TILE];
 
 	for (int tileNum = 0; tileNum < count; ++tileNum) {
 		if (f.read(data, BYTES_PER_TILE) != (uint32)BYTES_PER_TILE)
-			error("Unexpected end of EgaTiles.Bin");
+			error("Unexpected end of %s", filename);
 
 		Graphics::ManagedSurface &tile = tiles[tileNum];
-		tile.create(TILE_WIDTH, TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		tile.create(tileSize, tileSize, Graphics::PixelFormat::createFormatCLUT8());
 
-		for (int y = 0; y < TILE_HEIGHT; ++y) {
+		for (int y = 0; y < tileSize; ++y) {
 			const byte *row = &data[y * BYTES_PER_ROW];
 			byte *destRow = (byte *)tile.getBasePtr(0, y);
 
-			for (int x = 0; x < TILE_WIDTH; ++x) {
+			for (int x = 0; x < tileSize; ++x) {
 				int byteIdx = x / 8;
 				int bitMask = 0x80 >> (x % 8);
 
@@ -61,6 +61,8 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count)
 			}
 		}
 	}
+
+	delete[] data;
 }
 
 } // namespace Data

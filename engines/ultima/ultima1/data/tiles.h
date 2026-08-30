@@ -30,8 +30,6 @@ namespace Data {
 
 constexpr int OVERWORLD_TILES_COUNT = 52;
 constexpr int CITY_TILES_COUNT = 51;
-constexpr int TILE_WIDTH = 16;
-constexpr int TILE_HEIGHT = 16;
 
 enum OverworldTileId {
 	TILE_OCEAN = 0,
@@ -61,8 +59,12 @@ enum OverworldTileId {
  * Loads the overworld tile sheet (52 16x16 tiles, 4-bit EGA planar,
  * row-interleaved: each 16-pixel row is 4 planes x 2 bytes) into a
  * caller-supplied array of TILE_COUNT surfaces
+ * @param filename		Filename to load
+ * @param tiles			Tiles array to load into
+ * @param count			Number of tiles
+ * @param tileSize		Width/Height of individual tiles
  */
-extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count);
+extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int size);
 
 } // namespace Data
 } // namespace Ultima1
