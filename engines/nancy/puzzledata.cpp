@@ -339,7 +339,8 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 	char nameBuf[21];
 	for (uint16 i = 0; i < numContacts; ++i) {
 		UICL::Contact &c = contacts[i];
-		ser.syncBytes(c.unknownPrefix, sizeof(c.unknownPrefix));
+		ser.syncAsUint16LE(c.visibility);
+		ser.syncBytes(c.dialPattern, sizeof(c.dialPattern));
 
 		if (ser.isSaving()) {
 			memset(nameBuf, 0, sizeof(nameBuf));
@@ -351,7 +352,15 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 			c.name = nameBuf;
 		}
 
-		ser.syncBytes(c.unknownSuffix, sizeof(c.unknownSuffix));
+		ser.syncAsUint16LE(c.sceneID);
+		ser.syncAsUint16LE(c.frameID);
+		ser.syncAsSint16LE(c.flag.label);
+
+		uint16 flagValue = c.flag.flag;
+		ser.syncAsUint16LE(flagValue);
+		if (ser.isLoading()) {
+			c.flag.flag = (byte)flagValue;
+		}
 	}
 
 	syncLinkArray(ser, emailMessages);
@@ -393,6 +402,15 @@ void CellPhonePictureData::synchronize(Common::Serializer &ser) {
 		}
 		if (numBytes) {
 			ser.syncBytes(p.pixels.data(), numBytes);
+		}
+
+		uint16 numSubjects = (uint16)p.subjects.size();
+		ser.syncAsUint16LE(numSubjects);
+		if (ser.isLoading()) {
+			p.subjects.resize(numSubjects);
+		}
+		for (uint16 j = 0; j < numSubjects; ++j) {
+			ser.syncAsSint16LE(p.subjects[j]);
 		}
 	}
 }

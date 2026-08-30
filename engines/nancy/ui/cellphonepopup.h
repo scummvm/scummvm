@@ -158,7 +158,13 @@ private:
 	void drawCameraFraming();
 	// Screen-space rect of the framing box, centred on the mouse and clamped to
 	// the viewport.
+	// Each paging arrow is only drawn and live while its side has a photo.
+	bool canPageToPreviousPicture() const;
+	bool canPageToNextPicture() const;
 	Common::Rect framingScreenRect() const;
+	// Marks the shown snapshot sent and fires the flags of every subject in it
+	// addressed to the contact on the given directory row.
+	void sendCurrentPicture(uint listRow);
 	// Blit a sub-button's idle sprite at its chunk dest (used for the visible
 	// Back buttons: subButtons[0] on the help / directory / online screens,
 	// subButtons[7] in the zoomed email / browser content view).
@@ -225,7 +231,7 @@ private:
 	void enterScreenState(ScreenState newState);
 	// With no signal the phone locks to "Old Email Only": on the welcome,
 	// dialing and online-hub screens every keypad key is dead except Menu
-	// (slot 13), which still reaches the e-mail list. Digits, *, #, Talk, Dir
+	// (the Menu key), which still reaches the e-mail list. Digits, *, #, Talk, Dir
 	// and the Help "?" go inert. The directory keeps its keys so the reachable
 	// e-mail path still works.
 	bool isDialKeyActive(uint slot) const;
@@ -253,6 +259,8 @@ private:
 	void triggerContactCallSceneChange(uint contactIndex);
 	int findContactByDialBuffer() const;
 
+	// LCD content bounds the directory list is laid out against.
+	const Common::Rect &lcdListBounds() const;
 	uint maxDirectoryRows() const;
 	uint directoryRowAt(const Common::Point &chunkMouse) const;
 	Common::Rect directoryRowRect(uint visibleIndex) const;
@@ -271,9 +279,9 @@ private:
 	Common::Rect hubEmailRect() const;
 	Common::Rect hubWebRect() const;
 	void startCallToContact(uint contactIndex);
-	// Visible (deduplicated) row -> raw contact index, or -1.
+	// Directory row -> raw contact index, or -1.
 	int contactIndexForVisibleRow(uint visibleRow) const;
-	uint deduplicatedContactCount() const;
+	uint visibleContactCount() const;
 	// Entry count for whichever list the popup is currently showing.
 	uint currentListEntryCount() const;
 	// Absolute indices into the current list's backing array that pass
@@ -307,6 +315,8 @@ private:
 	// Chrome (header.imageName) and sprite atlas (overlayImageName).
 	Graphics::ManagedSurface _overlayImage;
 	Graphics::ManagedSurface _spritesImage;
+	// Nancy 13 camera viewfinder, drawn over the scene while aiming.
+	Graphics::ManagedSurface _cameraViewImage;
 
 	bool _closeButtonHovered = false;
 	bool _scrollUpHovered = false;
@@ -351,8 +361,6 @@ private:
 	bool _inCameraFraming = false;
 	Common::Rect _savedPhoneRect;      // phone rect to restore when framing ends
 	Common::Point _framingMouse;       // last mouse pos (screen coords)
-	static const int kFramingWidth  = 220;
-	static const int kFramingHeight = 176;
 
 	// The original caps the persisted camera roll at 50 pictures.
 	static const uint kMaxPictures = 50;

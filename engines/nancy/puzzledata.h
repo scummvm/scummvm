@@ -263,6 +263,9 @@ struct CapturedPicture {
 	uint16 height = 0;
 	Common::Array<byte> pixels;   // width * height * 4, BGRA32
 	bool sent = false;            // true once the player has "sent" it
+
+	// Indices into UICL::cameraSubjects that were inside the viewfinder.
+	Common::Array<int16> subjects;
 };
 
 // Nancy 13 camera snapshots. Kept in its own lazily-created PuzzleData chunk so

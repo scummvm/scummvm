@@ -598,18 +598,25 @@ struct UICL : public EngineData {
 		Common::Rect destRect;
 	};
 
+	// One phonebook entry, 41 bytes. A person can own several, one per number
+	// they are reachable on; `visibility` picks which is listed.
 	struct Contact {
-		// Prefix layout:
-		//   [0..1]   visibility flag (10 = always, 11 = never, else =
-		//            scene event-flag index; contact hidden until set).
-		//   [2..8]   7-digit dial pattern (slot indices 0..9).
-		//   [9]      '\n' terminator.
-		//   [10..12] unused.
-		byte unknownPrefix[13];
-		Common::String name;      // 20-byte null-terminated
-		// Suffix layout: [0..1] sceneID, [2..3] frameID,
-		// [4..5] event-flag label, [6] event-flag value, [7] unused.
-		byte unknownSuffix[8];
+		static const uint kDialPatternLength = 11;
+
+		enum {
+			kAlwaysListed = 10,
+			kNeverListed = 11
+		};
+
+		// kAlwaysListed, kNeverListed, or the event flag that reveals the entry.
+		uint16 visibility = kNeverListed;
+		// Dial-pad slot indices (0..9), newline-terminated unless all 11 are used.
+		byte dialPattern[kDialPatternLength] = {};
+		Common::String name;                     // 20-byte field
+		// Calling the contact changes to this scene and fires the flag.
+		uint16 sceneID = kNoScene;
+		uint16 frameID = 0;
+		FlagDescription flag;
 	};
 
 	struct SrcDestRectPair {
@@ -618,6 +625,17 @@ struct UICL : public EngineData {
 	};
 
 	static const uint kNumDialPadSlots = 15;
+
+	// The last three are soft keys. Nancy 13 relabels them per screen (Cam or
+	// Dial, Del or Yes, Send or No); the ribbon label says which.
+	enum DialPadKey {
+		kDialKeyStar = 10,
+		kDialKeyHash = 11,
+		kDialKeyTalk = 12,
+		kDialKeyMenu = 13,
+		kDialKeyDirectory = 14
+	};
+
 	// Nancy 10-12 have 10 online sub-buttons; Nancy 13 added an 11th (the Back
 	// button, Ghidra widget 0x10) at the front of the array.
 	static const uint kNumSubButtons = 10;
@@ -708,13 +726,20 @@ struct UICL : public EngineData {
 	// Nancy 13 added a camera / pictures sub-UI to the cell phone, which
 	// reorganized the chunk body. The fields below are only populated for
 	// Nancy 13 and later.
-	struct PictureRecord {
-		uint16 id = 0;
-		Common::Rect rect;
-		byte unknown[6] = {};
+
+	// A photographable subject. Framing coords in sceneID sets captureFlag;
+	// sending that snapshot to contact recipientIndex sets sendFlag.
+	struct CameraSubject {
+		int16 sceneID = -1;
+		Common::Rect coords;
+		int16 captureFlag = -1;
+		int16 sendFlag = -1;
+		int16 recipientIndex = -1;
 	};
 
-	Common::Rect cameraViewSrcRect;           // camera viewfinder SRC on the overlay
+	// The LCD screen area: cleared through, and bounds the directory list.
+	// Earlier games keep it in screenOutSrcRect.
+	Common::Rect cameraViewSrcRect;
 	int32 cameraTextX = 0;
 	int32 cameraTextY = 0;
 	Common::Path cameraViewImageName;         // "UI_CellCamView_OVL"
@@ -723,8 +748,11 @@ struct UICL : public EngineData {
 	Common::Rect noPictureScreenRect;         // "no pictures" placeholder
 	Common::Path helpTextKey2;                // second CVTX key (phone-use help)
 	byte screenColors[9] = {};                // 3 RGB colors for the phone screen
-	Common::Array<PictureRecord> pictures;    // captured-picture slots (up to 50)
+	Common::Array<CameraSubject> cameraSubjects;  // up to 50
 };
+
+// Shared by the UICL chunk and ChangeCellPhoneInfo (AR 130).
+void readContact(Common::SeekableReadStream &stream, UICL::Contact &c);
 
 // Camera UI, added in Nancy 14. This is a standalone camera. While it is active,
 // the cursor becomes a large viewfinder rectangle that the player aims at the

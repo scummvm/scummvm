@@ -964,6 +964,22 @@ UIBW::UIBW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 }
 
+// Shared by the UICL chunk and ChangeCellPhoneInfo (AR 130).
+void readContact(Common::SeekableReadStream &stream, UICL::Contact &c) {
+	c.visibility = stream.readUint16LE();
+	stream.read(c.dialPattern, sizeof(c.dialPattern));
+
+	char nameBuf[21];
+	stream.read(nameBuf, 20);
+	nameBuf[20] = 0;
+	c.name = nameBuf;
+
+	c.sceneID = stream.readUint16LE();
+	c.frameID = stream.readUint16LE();
+	c.flag.label = stream.readSint16LE();
+	c.flag.flag = (byte)stream.readUint16LE();
+}
+
 UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readUIPopupHeader(*chunkStream, header);
 
@@ -1179,30 +1195,20 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	const uint16 entries = MIN<uint16>(contactCount, (uint16)maxEntries);
 	contacts.resize(entries);
 	for (uint i = 0; i < entries; ++i) {
-		Contact &c = contacts[i];
-
-		chunkStream->read(c.unknownPrefix, sizeof(c.unknownPrefix));
-
-		char nameBuf[21];
-		chunkStream->read(nameBuf, 20);
-		nameBuf[20] = '\0';
-		c.name = nameBuf;
-
-		chunkStream->read(c.unknownSuffix, sizeof(c.unknownSuffix));
+		readContact(*chunkStream, contacts[i]);
 	}
 
 	if (isNancy13) {
-		// Trailing captured-picture slot table, added in Nancy 13. These are the
-		// game's built-in photo slots; runtime captures are persisted separately
-		// (CellPhonePictureData), so this table is parsed but currently unused.
-		// TODO: identify PictureRecord::unknown (6 bytes, identical across slots).
-		const uint16 pictureCount = chunkStream->readUint16LE();
-		pictures.resize(pictureCount);
-		for (uint i = 0; i < pictureCount; ++i) {
-			PictureRecord &p = pictures[i];
-			p.id = chunkStream->readUint16LE();
-			readRect(*chunkStream, p.rect);
-			chunkStream->read(p.unknown, sizeof(p.unknown));
+		// Trailing table of photographable subjects, added in Nancy 13.
+		const uint16 subjectCount = chunkStream->readUint16LE();
+		cameraSubjects.resize(subjectCount);
+		for (uint i = 0; i < subjectCount; ++i) {
+			CameraSubject &s = cameraSubjects[i];
+			s.sceneID = chunkStream->readSint16LE();
+			readRect(*chunkStream, s.coords);
+			s.captureFlag = chunkStream->readSint16LE();
+			s.sendFlag = chunkStream->readSint16LE();
+			s.recipientIndex = chunkStream->readSint16LE();
 		}
 	}
 }

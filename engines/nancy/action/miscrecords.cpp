@@ -359,14 +359,7 @@ void SetCellPhoneBatteryAndSignal::execute() {
 }
 
 void ChangeCellPhoneInfo::readData(Common::SeekableReadStream &stream) {
-	stream.read(_contact.unknownPrefix, sizeof(_contact.unknownPrefix));
-
-	char nameBuf[21];
-	stream.read(nameBuf, 20);
-	nameBuf[20] = '\0';
-	_contact.name = nameBuf;
-
-	stream.read(_contact.unknownSuffix, sizeof(_contact.unknownSuffix));
+	readContact(stream, _contact);
 }
 
 void ChangeCellPhoneInfo::execute() {
