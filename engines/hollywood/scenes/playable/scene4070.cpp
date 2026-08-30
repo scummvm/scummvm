@@ -69,6 +69,8 @@ const uint kScene4070TreatmentNearChunk = 15;
 const uint kScene4070TreatmentNearDescriptorCount = 0x0e;
 const int kScene4070SidePatchThresholdX = 0x0259;
 const int kScene4070ForegroundYThreshold = 0x0186;
+const byte kScene4070CarpetHotspotItem = 4;
+const byte kScene4070CarpetHotspotColor = 0x4d;
 const byte kScene4070DraculaHotspotItem = 6;
 const uint kScene4070DraculaMovementRecordIndex = 0x1e;
 const byte kScene4070DraculaIdleFrame = 0x0b;
@@ -334,6 +336,8 @@ bool Scene4070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	if (selector == 1 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+		if (_vm->restoredContentEnabled())
+			_paletteMask[kSceneColorToItemMap + kScene4070CarpetHotspotColor] = kScene4070CarpetHotspotItem;
 		applyDraculaHotspotState();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene4070DraculaMovementRecordIndex,
