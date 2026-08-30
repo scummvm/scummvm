@@ -19,7 +19,7 @@
  *
  */
 
-#include "kyra/sound/drivers/halestorm.h"
+#include "audio/mac/halestorm.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -35,7 +35,7 @@
 
 #define ASC_DEVICE_RATE		22254
 
-namespace Kyra {
+namespace Audio {
 
 class HSLowLevelDriver;
 class HSAudioStream : public Audio::AudioStream {
@@ -757,7 +757,7 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 	return true;
 }
 
-uint32 vlqRead(const uint8 *&s) {
+static uint32 vlqRead(const uint8 *&s) {
 	uint32 res = 0;
 	do {
 		res = (res << 7) | (*s & 0x7f);
@@ -2624,7 +2624,7 @@ const uint16 HSSoundSystem::_noteFreq[58] = {
 	0x02d4, 0x02d4
 };
 
-uint32 copySndHeader(const uint8 *&src, uint8 *&dst) {
+static uint32 copySndHeader(const uint8 *&src, uint8 *&dst) {
 	uint16 type = src ? READ_BE_UINT16(src) : 0;
 	uint32 len = 0;
 	if (type == 1 || type == 2) {
@@ -2826,4 +2826,4 @@ void HalestormDriver::setSoundEffectVolume(int volume) {
 	_hs->setSoundEffectVolume(volume);
 }
 
-} // End of namespace Kyra
+} // End of namespace Audio
