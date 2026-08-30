@@ -759,7 +759,13 @@ byte GameplayLoop::currentInventoryOwner() const {
 }
 
 uint16 GameplayLoop::fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const {
-	return _vm->gameState().fixedInventoryVerbHandler(owner, itemId, stripIndex);
+	const GameplayState &gameState = _vm->gameState();
+	// Restore the fueled lamp's standalone Use callback; unfueled Use must still select oil.
+	if (_vm->restoredContentEnabled() && owner == 0 && itemId == 0x3c &&
+			stripIndex == kGameplayUseStrip && gameState.ronLampFueled)
+		return 222;
+
+	return gameState.fixedInventoryVerbHandler(owner, itemId, stripIndex);
 }
 
 uint16 GameplayLoop::dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const {

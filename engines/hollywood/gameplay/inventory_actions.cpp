@@ -578,6 +578,9 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 221: // Usar rata.
 		beginRonSpeechLine(delegate, 0xce, 0);
 		return true;
+	case 222: // Usar candil with oil: Ron does not need to light it yet.
+		beginRonSpeechLine(delegate, 0xcf, 0);
+		return true;
 	case 226: // Generic use: no need.
 		beginRonRandomSpeechLine(delegate, 0xd5, 1);
 		return true;
@@ -618,7 +621,7 @@ bool isRonInventoryAction(uint16 handlerId) {
 		return true;
 	if (handlerId >= 74 && handlerId <= 213 && handlerId != 94)
 		return true;
-	if (handlerId >= 215 && handlerId <= 221)
+	if (handlerId >= 215 && handlerId <= 222)
 		return true;
 
 	switch (handlerId) {
