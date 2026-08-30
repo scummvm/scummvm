@@ -74,11 +74,6 @@ void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickC
 		int childX = x - (child->getAbsX() - getAbsX());
 		int childY = y - (child->getAbsY() - getAbsY());
 		child->handleMouseDown(childX, childY, button, clickCount);
-
-		if (child->getFlags() & WIDGET_IGNORE_DRAG) {
-			_isMouseDown = false;
-			_isDragging = false;
-		}
 	}
 }
 

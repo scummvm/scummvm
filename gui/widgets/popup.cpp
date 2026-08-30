@@ -431,7 +431,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss) {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_IGNORE_DRAG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kPopUpWidget;
 	_cmd = cmd;
 
@@ -441,7 +441,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const Common::String &name, const Comm
 
 PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_IGNORE_DRAG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kPopUpWidget;
 	_cmd = cmd;
 

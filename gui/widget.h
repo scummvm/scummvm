@@ -47,12 +47,6 @@ enum {
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
 	WIDGET_TRACK_MOUSE	= 1 <<  8,
-	// Usually widgets would lock mouse input when the user pressed the
-	// left mouse button till the user releases it.
-	// The PopUpWidget for example does not want this behavior, since the
-	// mouse down will open up a new dialog which silently eats the mouse
-	// up event for its own purposes.
-	WIDGET_IGNORE_DRAG	= 1 << 9,
 	WIDGET_DYN_TOOLTIP  = 1 << 10, // Widgets updates tooltip by coordinates
 };
 
