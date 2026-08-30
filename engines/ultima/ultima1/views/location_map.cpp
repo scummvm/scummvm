@@ -60,16 +60,18 @@ void LocationMap::draw() {
 	// Draw the visible map contents
 	for (int oy = 0; oy < MAP_VISIBLE_HEIGHT; oy++) {
 		for (int ox = 0; ox < MAP_VISIBLE_WIDTH; ox++) {
-			int tileId = (ox == pos.x && oy == pos.y) ? 10 : _G(map).getTileAt(ox, oy);
-			if (tileId >= 50)
+			int tileId = _G(map).getTileAt(ox, oy);
+			if (tileId >= Data::CITY_TILES_COUNT)
 				tileId = 1;
 
-			if (tileId) {
-				const Graphics::ManagedSurface &tileImg = tiles[tileId - 1];
-				s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
-			}
+			const Graphics::ManagedSurface &tileImg = tiles[tileId];
+			s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
 		}
 	}
+
+	// Draw the player
+	const Graphics::ManagedSurface &tileImg = tiles[Data::LOCTILE_PLAYER];
+	s.blitFrom(tileImg, Common::Point(pos.x * TILE_WIDTH + 8, pos.y * TILE_HEIGHT + 8));
 }
 
 } // namespace Views

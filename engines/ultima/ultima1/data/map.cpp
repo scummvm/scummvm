@@ -136,22 +136,11 @@ void Map::load(int mapNum) {
 		_outsideMapTile = 0xff;
 		_tiles = _overworldTiles;
 
-		_mapRows.clear();
-		_mapRows.reserve(OVERWORLD_HEIGHT);
-		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
-			_mapRows.push_back(Row(this, &_overworldMap[y * OVERWORLD_WIDTH]));
-
 	} else {
 		_mapWidth = CITY_WIDTH;
 		_mapHeight = CITY_HEIGHT;
-		_outsideMapTile = 0;
+		_outsideMapTile = LOCTILE_WALL;
 		_tiles = _cityTiles;
-
-		_mapRows.clear();
-		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access
-		for (int y = 0; y < CITY_HEIGHT; ++y)
-			_mapRows.push_back(Row(this, &_cityMap[mapNum - 1][y * CITY_WIDTH]));
-		_mapRows.push_back(Row(this, nullptr));
 	}
 
 	// Set up copies of the map position and player tile to use
@@ -179,6 +168,19 @@ void Map::load(int mapNum) {
 		viewName = "LocationMap";
 	}
 
+	// Set up the map row pointers
+	_mapRows.clear();
+	if (_currentMap == MAP_OVERWORLD) {
+		_mapRows.reserve(OVERWORLD_HEIGHT);
+		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_overworldMap[y * OVERWORLD_WIDTH]));
+	} else {
+		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access
+		for (int y = 0; y < CITY_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_cityMap[_mapStyle][y * CITY_WIDTH]));
+		_mapRows.push_back(Row(this, nullptr));
+	}
+
 	// If the focused view isn't already a dialog under the game frame, then reset to the game
 	// frame and draw it immediately
 	Views::Dialog *view = dynamic_cast<Views::Dialog *>(g_engine->focusedView());
@@ -197,8 +199,12 @@ void Map::load(int mapNum) {
 int Map::getMapTile(int x, int y) const {
 	int tile = (*this)[y][x];
 
-	// I honestly have no idea what this does
-	if (tile > TILE_CASTLE1) {
+	// Raw overworld map data skips the castle/city flag animation frames
+	// (TILE_CASTLE2/TILE_CITY2), which are only ever substituted in at
+	// draw time and never stored in the map itself. This doesn't apply
+	// to city/castle map data, which uses a completely different,
+	// contiguous tile ID space (see the Town.bin tile table)
+	if (_currentMap == MAP_OVERWORLD && tile > TILE_CASTLE1) {
 		++tile;
 		if (tile == TILE_CITY2)
 			++tile;

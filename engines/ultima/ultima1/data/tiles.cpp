@@ -28,6 +28,7 @@ namespace Data {
 
 void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int tileSize) {
 	const int BYTES_PER_ROW = tileSize / 2;		// 4 planes, so 2 pixels per byte
+	const int BYTES_PER_PLANE_ROW = BYTES_PER_ROW / 4;	// bytes per row, within a single plane
 	const int BYTES_PER_TILE = BYTES_PER_ROW * tileSize;
 
 	Common::File f;
@@ -53,7 +54,7 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 
 				byte colorIndex = 0;
 				for (int plane = 0; plane < 4; ++plane) {
-					if (row[plane * 2 + byteIdx] & bitMask)
+					if (row[plane * BYTES_PER_PLANE_ROW + byteIdx] & bitMask)
 						colorIndex |= (1 << plane);
 				}
 

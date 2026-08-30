@@ -55,6 +55,11 @@ enum OverworldTileId {
 	TILE_LAST_MONSTER = 47
 };
 
+enum LocationTileId {
+	LOCTILE_WALL = 0,
+	LOCTILE_PLAYER = 18
+};
+
 /**
  * Loads the overworld tile sheet (52 16x16 tiles, 4-bit EGA planar,
  * row-interleaved: each 16-pixel row is 4 planes x 2 bytes) into a
