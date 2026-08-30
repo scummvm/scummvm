@@ -560,9 +560,12 @@ void GameplayPanelArt::drawInventoryItems(Graphics::Surface &surface, const Game
 			continue;
 
 		byte pageIndex = gameState.inventoryItemResourcePageByOwnerAndItemId[owner][itemId];
-		if (owner == 1 && pageIndex == 0)
-			pageIndex = sueInventoryItemPage(itemId);
-		if (pageIndex == 0)
+		if (owner == 1 && pageIndex == GameplayState::kInvalidInventoryItemResourcePage) {
+			const byte fallbackPageIndex = sueInventoryItemPage(itemId);
+			if (fallbackPageIndex != 0)
+				pageIndex = fallbackPageIndex;
+		}
+		if (pageIndex == GameplayState::kInvalidInventoryItemResourcePage)
 			continue;
 
 		Common::Array<byte> &page = _inventoryItemTilePages[pageIndex];

@@ -54,7 +54,7 @@ private:
 	void handleDialogueEffect(byte effectId);
 	void runDialogueEffectTen();
 	void runTravelUnlockEffect(byte travelSlotId);
-	void handleJacketExchange();
+	void handlePackageExchange();
 	void handleJackTalkLine();
 	void handleJackLookLine();
 	void handleSuitcasePickup();

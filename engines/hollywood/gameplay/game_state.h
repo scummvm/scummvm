@@ -42,6 +42,7 @@ struct GameplayState {
 		kInventoryFirstSlot = 1,
 		kInventoryLastSlot = kInventoryOwnerSlotStride - 1,
 		kInventoryVisibleSlotCount = 16,
+		kInvalidInventoryItemResourcePage = 0xff,
 		kTravelScreenSlotCount = 8,
 		kTravelScreenDisabledSlot = 0xff,
 		kFrankensteinPartRewardCount = 3,
@@ -74,7 +75,7 @@ struct GameplayState {
 			for (uint slot = 0; slot < kInventoryOwnerSlotStride; ++slot) {
 				inventorySlotItemIdByOwner[owner][slot] = 0;
 				inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
-				inventoryItemResourcePageByOwnerAndItemId[owner][slot] = 0;
+				inventoryItemResourcePageByOwnerAndItemId[owner][slot] = kInvalidInventoryItemResourcePage;
 			}
 		}
 		clearInventoryActionTables();
@@ -436,7 +437,7 @@ struct GameplayState {
 			return;
 
 		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
-			inventoryItemResourcePageByOwnerAndItemId[0][itemId] = 0;
+			inventoryItemResourcePageByOwnerAndItemId[0][itemId] = kInvalidInventoryItemResourcePage;
 
 		inventoryItemResourcePageByOwnerAndItemId[0][0x01] = 0x09;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x02] = 0x5c;
@@ -471,6 +472,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[0][0x1f] = 0x33;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x20] = 0x2e;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x21] = 0x04;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x22] = 0x00;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x23] = 0x4c;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x24] = 0x60;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x25] = 0x15;
@@ -618,7 +620,7 @@ struct GameplayState {
 			return;
 
 		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
-			inventoryItemResourcePageByOwnerAndItemId[1][itemId] = 0;
+			inventoryItemResourcePageByOwnerAndItemId[1][itemId] = kInvalidInventoryItemResourcePage;
 
 		inventoryItemResourcePageByOwnerAndItemId[1][0x01] = 0x6f;
 		inventoryItemResourcePageByOwnerAndItemId[1][0x02] = 0x7c;
@@ -730,7 +732,8 @@ struct GameplayState {
 
 		byte writeSlot = kInventoryFirstSlot;
 		for (byte itemId = kInventoryFirstSlot; itemId < kInventoryOwnerSlotStride; ++itemId) {
-			if (inventoryItemResourcePageByOwnerAndItemId[owner][itemId] == 0)
+			if (inventoryItemResourcePageByOwnerAndItemId[owner][itemId] ==
+					kInvalidInventoryItemResourcePage)
 				continue;
 
 			inventorySlotItemIdByOwner[owner][writeSlot] = itemId;
