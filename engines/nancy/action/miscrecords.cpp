@@ -35,6 +35,10 @@
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/random.h"
+#include "common/file.h"
+
+#include "image/png.h"
+
 #include "nancy/ui/taskbar.h"
 
 namespace Nancy {
@@ -417,6 +421,44 @@ void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
 void SaveContinueGame::execute() {
 	g_nancy->secondChance();
 	_isDone = true;
+}
+
+void MakeScreenFile::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _filename);
+
+	readRect(stream, _cropRect);
+
+	// Image format selector, unused
+	stream.skip(1);
+}
+
+void MakeScreenFile::execute() {
+	Graphics::ManagedSurface screenshot;
+	g_nancy->_graphics->screenshotScreen(screenshot);
+
+	Common::Rect cropRect = _cropRect;
+
+	if (cropRect.isValidRect()) {
+		cropRect.clip(Common::Rect(screenshot.w, screenshot.h));
+
+		if (!cropRect.isEmpty()) {
+			Common::Path outName(_filename + ".png");
+			Common::DumpFile outFile;
+
+			if (outFile.open(outName)) {
+				if (!Image::writePNG(outFile, screenshot.getSubArea(cropRect))) {
+					warning("Could not write screen file %s", outName.toString().c_str());
+				}
+
+				outFile.finalize();
+				outFile.close();
+			} else {
+				warning("Could not create screen file %s", outName.toString().c_str());
+			}
+		}
+	}
+
+	finishExecution();
 }
 
 void TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {

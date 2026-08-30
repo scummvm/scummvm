@@ -264,6 +264,26 @@ protected:
 	Common::String getRecordTypeName() const override { return "SaveContinueGame"; }
 };
 
+// Nancy9 AR 148, moved to AR 141 in Nancy12. Saves a cropped picture of the
+// current frame to a PNG file. Used as an easter egg, e.g. on the sandcastle
+// screen in Danger on Deception Island.
+class MakeScreenFile : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::String _filename;
+	Common::Rect _cropRect;
+
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Filename: %s.png, crop rect: (%d, %d, %d, %d)",
+			_filename.c_str(), _cropRect.left, _cropRect.top, _cropRect.right, _cropRect.bottom);
+	}
+
+protected:
+	Common::String getRecordTypeName() const override { return "MakeScreenFile"; }
+};
+
 // Stops the screen from rendering. Our rendering system is different from the original engine's,
 // so we have no use for this.
 class TurnOffMainRendering : public Unimplemented {
