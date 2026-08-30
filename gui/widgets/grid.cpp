@@ -1075,6 +1075,17 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_wasAnimating = false;
 }
 
+void GridWidget::cancelDrag() {
+	if (_isDragging) {
+		_fluidScroller->stopAnimation();
+	}
+	_isMouseDown = false;
+	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
+	_selectionPending = false;
+	_wasAnimating = false;
+}
+
 void GridWidget::handleMouseMoved(int x, int y, int button) {
 	if (!_isMouseDown || !_scrollBar->isVisible())
 		return;
@@ -1114,12 +1125,6 @@ void GridWidget::handleTickle() {
 	} else {
 		unregisterTickleWidget(this);
 	}
-}
-
-void GridWidget::lostFocusWidget() {
-	_isMouseDown = _isDragging = false;
-	_dragStartY = _dragLastY = 0;
-	_wasAnimating = false;
 }
 
 void GridWidget::cancelTickle() {

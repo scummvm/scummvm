@@ -147,6 +147,15 @@ void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCou
 	_wasAnimating = false;
 }
 
+void ScrollContainerWidget::cancelDrag() {
+	if (_isDragging) {
+		_fluidScroller->stopAnimation();
+	}
+	_mouseDownY = _mouseDownStartY = 0;
+	_isMouseDown = false;
+	_isDragging = false;
+}
+
 void ScrollContainerWidget::recalc() {
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
@@ -263,12 +272,6 @@ void ScrollContainerWidget::markAsDirty() {
 	if (_verticalScroll->isVisible()) {
 		_verticalScroll->markAsDirty();
 	}
-}
-
-void ScrollContainerWidget::lostFocusWidget() {
-	_isMouseDown = _isDragging = false;
-	_mouseDownY = _mouseDownStartY = 0;
-	_wasAnimating = false;
 }
 
 bool ScrollContainerWidget::containsWidget(Widget *w) const {

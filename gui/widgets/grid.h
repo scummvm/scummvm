@@ -252,7 +252,7 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
 
-	void lostFocusWidget() override;
+	void cancelDrag() override;
 	void cancelTickle() override;
 
 	void openTrayAtSelected();
