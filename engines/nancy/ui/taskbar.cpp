@@ -189,10 +189,12 @@ void Taskbar::drawMoney() {
 	Common::Rect dst = taskData->buttons[kTaskButtonCoinPurse].button.destRect;
 	dst.translate(-_screenPosition.left, -_screenPosition.top);
 
-	// Position matches the original: a small inset from the left, and a little
-	// below the button's vertical centre.
+	// A small inset from the left, and a little below the button's vertical
+	// center. That vertical coordinate is the bottom row the glyphs are aligned
+	// on, while drawString() takes the top of the line, so shift it up by the
+	// height of a line.
 	const int x = dst.left + 12;
-	const int y = dst.top + dst.height() / 2 + 10;
+	const int y = dst.top + dst.height() / 2 + 10 - font->getFontHeight() + 1;
 	font->drawString(&_drawSurface, text, x, y, dst.right - x, 0, Graphics::kTextAlignLeft);
 	_needsRedraw = true;
 }
