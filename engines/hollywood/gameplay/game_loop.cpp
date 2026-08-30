@@ -760,6 +760,11 @@ byte GameplayLoop::currentInventoryOwner() const {
 
 uint16 GameplayLoop::fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const {
 	const GameplayState &gameState = _vm->gameState();
+	// Let every item reach the restored chick refusal through Give relation mode.
+	if (_vm->restoredContentEnabled() && owner == 0 && itemId != 0 &&
+			gameState.mainFlowStateId == 8020 && stripIndex == kGameplayGiveStrip)
+		return 1;
+
 	// Restore the fueled lamp's standalone Use callback; unfueled Use must still select oil.
 	if (_vm->restoredContentEnabled() && owner == 0 && itemId == 0x3c &&
 			stripIndex == kGameplayUseStrip && gameState.ronLampFueled)
