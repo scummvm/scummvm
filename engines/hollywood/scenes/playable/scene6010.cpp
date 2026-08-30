@@ -56,6 +56,8 @@ const uint kScene6010ExitDescriptorCount = 6;
 const uint kScene6010Pickup59DescriptorCount = 0x0d;
 const uint kScene6010Pickup58DescriptorCount = 0x0a;
 const uint kScene6010PendingItem69DescriptorCount = 0x0e;
+const uint kScene6010MuseumDoorUseVerbRecordIndex = 0x15;
+const uint kScene6010MuseumDoorOpenVerbRecordIndex = 0x16;
 
 const byte kScene6010PendingItem69FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
@@ -234,7 +236,7 @@ bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {
 		else
 			beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310: // Usar/abrir buzon (use/open mailbox): locked.
+	case 310: // Restored: Usar/Abrir puerta del museo de cera (use/open wax museum door): locked.
 		beginSecondarySpeechLine(9, 0);
 		return true;
 	case 311: // Coger paquete del mensajero (take courier package): item 0x59.
@@ -344,6 +346,12 @@ bool Scene6010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildStudioWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled() && state.scene6010StudioEntryUnlocked) {
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene6010MuseumDoorUseVerbRecordIndex, 310);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene6010MuseumDoorUseVerbRecordIndex, 0);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene6010MuseumDoorOpenVerbRecordIndex, 310);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene6010MuseumDoorOpenVerbRecordIndex, 0);
+	}
 	if (state.scene6010StudioEntryUnlocked)
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x11, 0);
 	if (state.scene6010DoorActionState == 2)

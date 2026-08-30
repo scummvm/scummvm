@@ -68,6 +68,7 @@ private:
 	void runMuseumInteriorUnlockSequence();
 	void runDisplayCasePickup();
 	void runExitAuthorizationSequence();
+	void runInteriorDoorWireSequence();
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildMuseumWalkableMask();

@@ -43,7 +43,7 @@ const uint32 kScene6050GuardFrameMillis = 125;
 const uint32 kScene6050ScriptFrameMillis = 40;
 const uint32 kScene6050SecondaryScriptFrameMillis = 60;
 const uint kScene6050GuardDescriptorCount = 0x16;
-const uint kScene6050GuardedExitDescriptorCount = 0x0b;
+const uint kScene6050DoorSequenceDescriptorCount = 0x0b;
 const uint kScene6050InteriorUnlockDescriptorCount = 0x0d;
 const uint kScene6050DisplaySecondaryDescriptorCount = 0x0f;
 const uint kScene6050DisplayDescriptorCount = 0x14;
@@ -66,7 +66,7 @@ const byte kScene6050GuardFrameMap[] = {
 	4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 
-const byte kScene6050GuardedExitFrameMap[] = {
+const byte kScene6050DoorSequenceFrameMap[] = {
 	0, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0,
 	1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
@@ -270,8 +270,11 @@ bool Scene6050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Coger pase/manuscrito de la vitrina (take pass/manuscript from display).
 		runDisplayCasePickup();
 		return true;
-	case 316: // Usar pase en salida vigilada (use pass at guarded exit): authorization sequence.
+	case 316: // Usar alambre con puerta principal (use cut wire on main door): authorize exit.
 		runExitAuthorizationSequence();
+		return true;
+	case 317: // Usar alambre con puerta interior (use cut wire on inner door): rejected.
+		runInteriorDoorWireSequence();
 		return true;
 	default:
 		return false;
@@ -627,8 +630,8 @@ void Scene6050::runDisplayCasePickup() {
 void Scene6050::runExitAuthorizationSequence() {
 	GameplayState &state = _vm->gameState();
 	_scriptAnimationActive = true;
-	playResourceLayerSequence(_scriptLayer, 8, kScene6050GuardedExitDescriptorCount,
-		kScene6050GuardedExitFrameMap,
+	playResourceLayerSequence(_scriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+		kScene6050DoorSequenceFrameMap,
 		AnimationFrameRange(0, 24, kScene6050ScriptFrameMillis), false);
 
 	if (state.scene6040WireState == 2 && !state.scene6050GuardAllowsEntry) {
@@ -637,8 +640,8 @@ void Scene6050::runExitAuthorizationSequence() {
 	}
 
 	if (state.scene6050GuardAllowsEntry) {
-		playResourceLayerSequence(_scriptLayer, 8, kScene6050GuardedExitDescriptorCount,
-			kScene6050GuardedExitFrameMap,
+		playResourceLayerSequence(_scriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+			kScene6050DoorSequenceFrameMap,
 			AnimationFrameRange(25, 27, kScene6050ScriptFrameMillis));
 		_scriptAnimationActive = false;
 		_soundBank0.playSample(3, 100);
@@ -646,12 +649,23 @@ void Scene6050::runExitAuthorizationSequence() {
 		return;
 	}
 
-	playResourceLayerSequence(_scriptLayer, 8, kScene6050GuardedExitDescriptorCount,
-		kScene6050GuardedExitFrameMap,
-		AnimationFrameRange(25, ARRAYSIZE(kScene6050GuardedExitFrameMap) - 1,
+	playResourceLayerSequence(_scriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+		kScene6050DoorSequenceFrameMap,
+		AnimationFrameRange(25, ARRAYSIZE(kScene6050DoorSequenceFrameMap) - 1,
 			kScene6050ScriptFrameMillis));
 	_scriptAnimationActive = false;
 	beginSecondarySpeechLine(13, 0);
+}
+
+void Scene6050::runInteriorDoorWireSequence() {
+	_scriptAnimationActive = true;
+	playResourceLayerSequence(_scriptLayer, 9, kScene6050DoorSequenceDescriptorCount,
+		kScene6050DoorSequenceFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene6050DoorSequenceFrameMap) - 1,
+			kScene6050ScriptFrameMillis));
+	_scriptAnimationActive = false;
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
+		beginSecondarySpeechLine(13, 0);
 }
 
 void Scene6050::rememberOriginalColorMap() {
