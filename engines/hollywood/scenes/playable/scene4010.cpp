@@ -51,6 +51,7 @@ const uint32 kScene4010FirstEditionPaletteCycleMillis = 100;
 const uint32 kScene4010AmbientCheckMillis = 250;
 const uint32 kScene4010DemoAmbientCheckMillis = 10;
 const uint kScene4010VerbActionRecordSize = 4;
+const uint kScene4010HeckerUseVerbRecordIndex = 0x25;
 const uint kScene4010RoomIdleDescriptorCount = 0x14;
 const uint kScene4010ExitOverlayDescriptorCount = 0x13;
 const uint kScene4010Item3AOverlayDescriptorCount = 0x0e;
@@ -294,7 +295,7 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 311: // Mirar viejo algo trastornado / Dr. Hecker (look at disturbed old man / Dr. Hecker).
 		beginD01SpeechLine(9, 0, 1);
 		return true;
-	case 312: // Patched old-man/car response: talk suggestion outside, blocked car inside.
+	case 312: // Restored: Usar Dr. Hecker (use Dr. Hecker), including while he is trapped under the bridge.
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(8, 1);
 		else
@@ -426,6 +427,10 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled()) {
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene4010HeckerUseVerbRecordIndex, 312);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene4010HeckerUseVerbRecordIndex, 0);
+	}
 	_roomIdleLayer.visible = !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6);
 	return true;
 }
