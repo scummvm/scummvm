@@ -59,7 +59,7 @@ ActionBar::ActionBar(View1 *view)
 
 bool ActionBar::isPointInUI(const Common::Point &pos) const {
 	if (useNativeSkin()) {
-		if (g_engine->_menuMode == 0)
+		if (g_engine->_menuMode == MenuMode::Hidden)
 			return false;
 		return pos.y >= (int16)g_engine->_panelTopY;
 	}
@@ -591,10 +591,10 @@ const HudButton *ActionBar::findHudButtonAt(const Common::Point &pos, int *outIn
 	if (!isPointInUI(pos))
 		return nullptr;
 	const uint16 panelTop = g_engine->_panelTopY;
-	const uint16 menuMode = g_engine->_menuMode;
+	const MenuMode menuMode = g_engine->_menuMode;
 	for (uint i = 0; i < g_engine->_hudButtons.size(); i++) {
 		const HudButton &btn = g_engine->_hudButtons[i];
-		if (btn.menuId != menuMode || btn.frame._data.empty())
+		if (btn.menuId != (uint16)menuMode || btn.frame._data.empty())
 			continue;
 		const AnimFrame &hitFrame = btn.frame;
 		const Common::Point local(pos.x - btn.x, pos.y - (int)panelTop - btn.y);
@@ -614,11 +614,11 @@ const HudButton *ActionBar::findHudButtonAt(const Common::Point &pos, int *outIn
 void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 	if (!g_engine->hasNativeHudAssets())
 		return;
-	if (g_engine->_menuMode == 0)
+	if (g_engine->_menuMode == MenuMode::Hidden)
 		return;
 
 	const uint16 panelTop = g_engine->_panelTopY;
-	const uint16 menuMode = g_engine->_menuMode;
+	const MenuMode menuMode = g_engine->_menuMode;
 	const int megaIndex = (int)menuMode - 1;
 	if (megaIndex >= 0 && megaIndex < 6 && g_engine->_hudMegapicLoaded[megaIndex]) {
 		const Graphics::ManagedSurface &mega = g_engine->_hudMegapics[megaIndex];
@@ -628,20 +628,20 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 	}
 
 	for (const HudButton &btn : g_engine->_hudButtons) {
-		if (btn.menuId != menuMode || btn.frame._data.empty())
+		if (btn.menuId != (uint16)menuMode || btn.frame._data.empty())
 			continue;
 		const AnimFrame *frame = &btn.frame;
 		const Script::MouseMode mode = g_engine->_scriptExecutor->_cursorMode;
 		const bool selected =
-			(menuMode == 1 &&
+			(menuMode == MenuMode::Main &&
 			 ((btn.buttonId == 1 && mode == Script::MouseMode::Walk) ||
 			  (btn.buttonId == 2 && mode == Script::MouseMode::Look) ||
 			  (btn.buttonId == 3 && mode == Script::MouseMode::Talk) ||
 			  (btn.buttonId == 4 && (mode == Script::MouseMode::Use ||
 									mode == Script::MouseMode::UseInventory)))) ||
-			(menuMode == 2 &&
-			 ((btn.buttonId == 0x1e && g_engine->_optionsSubMode == 1) ||
-			  (btn.buttonId == 0x1f && g_engine->_optionsSubMode == 2)));
+			(menuMode == MenuMode::Options &&
+			 ((btn.buttonId == 0x1e && g_engine->_optionsSubMode == OptionsSubMode::Save) ||
+			  (btn.buttonId == 0x1f && g_engine->_optionsSubMode == OptionsSubMode::Load)));
 		const bool pressed = (_pressedButtonId != 0 && btn.buttonId == _pressedButtonId);
 		const bool hovered = (_hoveredButtonId != 0 && btn.buttonId == _hoveredButtonId);
 
@@ -663,7 +663,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 	const GlyphData *panelFont = g_engine->numPanelGlyphs ? g_engine->_panelGlyphs : g_engine->_glyphs;
 	const uint16 panelFontCount = g_engine->numPanelGlyphs ? g_engine->numPanelGlyphs : g_engine->numGlyphs;
 
-	if (menuMode == 1) {
+	if (menuMode == MenuMode::Main) {
 		if (_view->_inventorySource == nullptr ||
 			_view->_inventorySource->_index != Scenes::instance()._currentActorIndex)
 			_view->setInventorySource(GameObjects::instance().getProtagonistObject());
@@ -718,7 +718,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 				_view->renderStringWithFontTo((uint16)textX, (uint16)textY, sentence, font, fontCount, s);
 			}
 		}
-	} else if (menuMode == 2 && panelFontCount != 0) {
+	} else if (menuMode == MenuMode::Options && panelFontCount != 0) {
 		if (g_engine->_saveSlotNames.empty())
 			refreshSaveSlotNames();
 		for (uint i = 0; i < g_engine->_saveSlotNames.size() && i < lineCount; i++) {
@@ -731,8 +731,8 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 			_view->renderStringWithFontTo(optTextX, panelTop + optTextY + (int)i * linePitch,
 										  name, panelFont, panelFontCount, s);
 		}
-	} else if (menuMode == 4 && panelFontCount != 0 && _view->_isDialogueChoiceInputActive) {
-		// Dialogue choice list at layout[5..6]; wired when assets set menuMode 4.
+	} else if (menuMode == MenuMode::DialogueList && panelFontCount != 0 && _view->_isDialogueChoiceInputActive) {
+		// Dialogue choice list at layout[5..6]; wired when assets set DialogueList.
 		const uint16 dlgX = g_engine->_hudTextLayout[5];
 		const uint16 dlgY = g_engine->_hudTextLayout[6];
 		const uint16 pitch = g_engine->_hudTextLayout[4] ? g_engine->_hudTextLayout[4] : 10;
@@ -754,9 +754,9 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 
 	const uint16 panelTop = g_engine->_panelTopY;
 	const int localY = pos.y - (int)panelTop;
-	const uint16 menuMode = g_engine->_menuMode;
+	const MenuMode menuMode = g_engine->_menuMode;
 
-	if (menuMode == 1) {
+	if (menuMode == MenuMode::Main) {
 		const uint16 cols = g_engine->_inventCols;
 		const uint16 rows = g_engine->_inventRows;
 		const uint16 slotW = g_engine->_inventSlotW;
@@ -800,7 +800,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		}
 	}
 
-	if (menuMode == 2 && g_engine->_optionsSubMode != 0) {
+	if (menuMode == MenuMode::Options && g_engine->_optionsSubMode != OptionsSubMode::None) {
 		const uint16 textX = g_engine->_hudTextLayout[0];
 		const uint16 textY = g_engine->_hudTextLayout[1];
 		const uint16 textMaxW = g_engine->_hudTextLayout[2] ? g_engine->_hudTextLayout[2] : 212;
@@ -811,9 +811,9 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 			const uint16 row = (uint16)((localY - textY) / linePitch);
 			const uint16 start = g_engine->_saveListScroll == 0 ? 1 : g_engine->_saveListScroll;
 			const int slot = (int)start - 1 + (int)row;
-			if (g_engine->_optionsSubMode == 2) {
+			if (g_engine->_optionsSubMode == OptionsSubMode::Load) {
 				g_engine->loadGameState(slot);
-			} else if (g_engine->_optionsSubMode == 1) {
+			} else if (g_engine->_optionsSubMode == OptionsSubMode::Save) {
 				Common::String name = Common::String::format(uiText("Spielstand %d").c_str(), slot + 1);
 				if (row < g_engine->_saveSlotNames.size() &&
 					!g_engine->_saveSlotNames[row].empty() &&
@@ -827,7 +827,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		}
 	}
 
-	if (menuMode == 4 && _view->_isDialogueChoiceInputActive) {
+	if (menuMode == MenuMode::DialogueList && _view->_isDialogueChoiceInputActive) {
 		const uint16 dlgX = g_engine->_hudTextLayout[5];
 		const uint16 dlgY = g_engine->_hudTextLayout[6];
 		const uint16 pitch = g_engine->_hudTextLayout[4] ? g_engine->_hudTextLayout[4] : 10;
@@ -868,20 +868,20 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		g_engine->setCursorMode(Script::MouseMode::Use);
 	} else if (id == 0x33) {
 		g_engine->_savedMenuCursorMode = g_engine->_scriptExecutor->_cursorMode;
-		g_engine->_menuMode = 2;
-		g_engine->_optionsSubMode = 0;
+		g_engine->_menuMode = MenuMode::Options;
+		g_engine->_optionsSubMode = OptionsSubMode::None;
 		g_engine->_saveListScroll = 1;
 		refreshSaveSlotNames();
 		g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 	} else if (id == 0x32) {
-		g_engine->_menuMode = 1;
-		g_engine->_optionsSubMode = 0;
+		g_engine->_menuMode = MenuMode::Main;
+		g_engine->_optionsSubMode = OptionsSubMode::None;
 		g_engine->setCursorMode(g_engine->_savedMenuCursorMode);
 	} else if (id == 0x1e) {
-		g_engine->_optionsSubMode = 1;
+		g_engine->_optionsSubMode = OptionsSubMode::Save;
 		refreshSaveSlotNames();
 	} else if (id == 0x1f) {
-		g_engine->_optionsSubMode = 2;
+		g_engine->_optionsSubMode = OptionsSubMode::Load;
 		refreshSaveSlotNames();
 	} else if (id == 0x20) {
 		g_engine->softRestart();
@@ -942,7 +942,7 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 	} else if (id == 0x41) {
 		g_engine->_scriptExecutor->_textEnabled = false;
 	} else {
-		debugC(1, kDebugScript, "ActionBar: unhandled button id=0x%x menu=%u", id, menuMode);
+		debugC(1, kDebugScript, "ActionBar: unhandled button id=0x%x menu=%u", id, (uint)menuMode);
 	}
 	_view->updateCursor();
 	_view->redraw();

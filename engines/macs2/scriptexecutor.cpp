@@ -3833,7 +3833,7 @@ OpcodeResult ScriptExecutor::scriptShowActionBar() {
 		return OpcodeResult::Continue;
 
 	// v2 opcode 0x65. v1 tables end at waitForAdlib; kEnhUIUX uses the same
-	// setBottomHudVisible switch (menuMode 0 -> 1 + cursor restore).
+	// setBottomHudVisible switch (MenuMode Hidden -> Main + cursor restore).
 	if (_engine->hasNativeHudAssets() || currentView->hasPersistentActionBar()) {
 		_engine->setBottomHudVisible(true);
 		currentView->updateCursor();

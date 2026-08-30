@@ -290,8 +290,8 @@ void Macs2Engine::loadResourceFileV2() {
 	}
 	_panelTopY = 0;
 	_panelHeight = 0;
-	_menuMode = 1;
-	_optionsSubMode = 0;
+	_menuMode = MenuMode::Main;
+	_optionsSubMode = OptionsSubMode::None;
 	_savedMenuCursorMode = Script::MouseMode::Walk;
 	_inventScroll = 1;
 	memset(_hudTextLayout, 0, sizeof(_hudTextLayout));
@@ -673,8 +673,8 @@ void Macs2Engine::softRestart() {
 	stopSpeech();
 	clearDeltaAnim();
 	_skipSpeed = 1;
-	_menuMode = 1;
-	_optionsSubMode = 0;
+	_menuMode = MenuMode::Main;
+	_optionsSubMode = OptionsSubMode::None;
 	_inventScroll = 1;
 	_saveListScroll = 1;
 
@@ -1277,8 +1277,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		if (!loadSceneGraphics(newSceneIndex))
 			error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
 
-		_menuMode = 1;
-		_optionsSubMode = 0;
+		_menuMode = MenuMode::Main;
+		_optionsSubMode = OptionsSubMode::None;
 		_bottomHudVisible = true;
 
 		View1 *currentView = (View1 *)findView("View1");
@@ -1406,8 +1406,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Scene change starts with the main HUD shown. v2 scripts may hide it
 	// during init (overview map). v1 has no hide/show opcodes; kEnhUIUX uses
 	// the same flag so a scene change restores the strip.
-	_menuMode = 1;
-	_optionsSubMode = 0;
+	_menuMode = MenuMode::Main;
+	_optionsSubMode = OptionsSubMode::None;
 	_bottomHudVisible = true;
 
 	// Refresh characters
@@ -2319,19 +2319,19 @@ void Macs2Engine::nextCursorMode() {
 }
 
 void Macs2Engine::setBottomHudVisible(bool visible) {
-	// hide/show opcodes toggle menuMode (0 vs 1). Cursor mode alone never hides
+	// hide/show opcodes toggle Hidden vs Main. Cursor mode alone never hides
 	// the HUD. Native skin restores the cursor saved on hide.
 	if (hasNativeHudAssets()) {
 		if (visible) {
-			if (_menuMode == 0) {
-				_menuMode = 1;
+			if (_menuMode == MenuMode::Hidden) {
+				_menuMode = MenuMode::Main;
 				if (_scriptExecutor)
 					setCursorMode(_savedMenuCursorMode);
 			}
 		} else {
-			if (_menuMode == 1 && _scriptExecutor)
+			if (_menuMode == MenuMode::Main && _scriptExecutor)
 				_savedMenuCursorMode = _scriptExecutor->_cursorMode;
-			_menuMode = 0;
+			_menuMode = MenuMode::Hidden;
 		}
 	}
 	_bottomHudVisible = visible;

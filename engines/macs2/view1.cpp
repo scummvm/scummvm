@@ -181,7 +181,7 @@ bool View1::hasPersistentActionBar() const {
 int View1::actionBarTopY() const {
 	if (_actionBar && shouldShowActionBar())
 		return _actionBar->gameAreaBottomY();
-	if (g_engine->hasNativeHudAssets() && g_engine->isBottomHudVisible() && g_engine->_menuMode != 0)
+	if (g_engine->hasNativeHudAssets() && g_engine->isBottomHudVisible() && g_engine->_menuMode != MenuMode::Hidden)
 		return (int)g_engine->_panelTopY;
 	return g_engine->gameHeight();
 }
@@ -2328,7 +2328,7 @@ void View1::draw() {
 				_actionBar->draw(fullScreen);
 				// Glyphs use setPixel and do not dirty the Screen.
 				g_events->getScreen()->addDirtyRect(Common::Rect(0, actionBarTopY(), sw, sh));
-			} else if (g_engine->hasNativeHudAssets() && g_engine->_menuMode == 0) {
+			} else if (g_engine->hasNativeHudAssets() && g_engine->_menuMode == MenuMode::Hidden) {
 				// hideActionBar / overview map: leave playfield pixels in the
 				// former panel band so scene art and hotspots stay visible.
 			} else {

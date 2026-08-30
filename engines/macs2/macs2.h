@@ -123,6 +123,19 @@ struct AnimFrame : public Sprite {
 	Common::Point getBottomMiddleOffset(uint16 scale = 100) const;
 };
 
+enum class MenuMode : uint16 {
+	Hidden = 0,
+	Main = 1,
+	Options = 2,
+	DialogueList = 4
+};
+
+enum class OptionsSubMode : uint16 {
+	None = 0,
+	Save = 1,
+	Load = 2
+};
+
 /** Persistent native HUD button (megapic panel skin). */
 struct HudButton {
 	int16 x = 0;
@@ -131,7 +144,7 @@ struct HudButton {
 	uint16 activeStep = 0;
 	uint16 hoverStep = 0;
 	uint16 buttonId = 0; // 1=Walk, 2=Look, 3=Talk, 4=Use, 0x33=Options, ...
-	uint16 menuId = 0;   // 1=main bar, 2=options, ...
+	uint16 menuId = 0;   // MenuMode value from assets; 7 = cursor-map entry
 	AnimFrame frame;
 	AnimFrame activeFrame;
 	AnimFrame hoverFrame;
@@ -554,10 +567,8 @@ public:
 	/** Y where the bottom HUD starts; scene above this is interactive. */
 	uint16 _panelTopY = 0;
 	uint16 _panelHeight = 0;
-	/** 0=hidden, 1=main verbs/invent, 2=options, 4=dialogue list. */
-	uint16 _menuMode = 1;
-	/** 0=none, 1=save, 2=load (options submenu). */
-	uint16 _optionsSubMode = 0;
+	MenuMode _menuMode = MenuMode::Main;
+	OptionsSubMode _optionsSubMode = OptionsSubMode::None;
 	Script::MouseMode _savedMenuCursorMode = Script::MouseMode::Walk;
 	uint16 _inventScroll = 1;
 	uint16 _inventOriginX = 0;
@@ -776,7 +787,7 @@ public:
 
 	/**
 	 * Bottom HUD / action-bar visibility (dialect-neutral).
-	 * hide/show opcodes toggle menuMode (0 vs 1) and restore the cursor saved
+	 * hide/show opcodes toggle MenuMode Hidden vs Main and restore the cursor saved
 	 * on hide. The Scumm kEnhUIUX strip uses the same flag; cursor mode alone
 	 * never hides the bar.
 	 */
