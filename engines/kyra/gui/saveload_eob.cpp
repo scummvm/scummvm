@@ -841,6 +841,8 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 	_itemInHand = in.readSint16();
 	_hasTempDataFlags = (_flags.gameID == GI_EOB1) ? in.readUint16() : in.readUint32();
 	_partyEffectFlags = (_flags.gameID == GI_EOB1) ? in.readUint16() : in.readUint32();
+	_hasTempDataMapFlags = 0;
+
 	if (_partyEffectFlags && _flags.gameID == GI_EOB1) {
 		// Spell effect flags are completely different in EOB I. We only use EOB II style flags in ScummVM.
 		// Doesn't matter much, since these are only temporary spell effects.
@@ -890,6 +892,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
 			releaseWallOfForceTempData(_lvlTempData[i]);
+			releaseAutoMapTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 
@@ -905,6 +908,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(const Common::Path &file) {
 		l->wallsOfForce = lw;
 		uint8 *d = new uint8[4096];
 		l->wallsXorData = d;
+		l->automapExploreState = nullptr;
 
 		if (sourcePlatform == Common::kPlatformFMTowns) {
 			in.read(d, 4096);
