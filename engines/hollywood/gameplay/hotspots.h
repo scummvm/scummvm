@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/language.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -64,6 +65,8 @@ public:
 	SceneActionTarget actionTarget(byte itemId) const;
 	void setActionTarget(byte itemId, const ScenePoint &interactionPoint, const ScenePoint &approachPoint);
 	void setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing);
+	// Claims otherwise unassigned pixels without overriding resource hotspots.
+	void addFallbackRectHotspot(byte itemId, const Common::Rect &bounds);
 	void setVerbActionHandlerByGlobalRecordIndex(uint globalRecordIndex, uint16 actionHandlerId);
 	void setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode);
 	void setRelationActionHandler(byte inventoryItemId, byte sceneItemId,
@@ -72,7 +75,13 @@ public:
 	Common::String itemName(byte itemId) const;
 
 private:
+	struct FallbackRectHotspot {
+		byte itemId;
+		Common::Rect bounds;
+	};
+
 	Common::Array<byte> _colorToItemMap;
+	Common::Array<FallbackRectHotspot> _fallbackRectHotspots;
 	Common::Array<byte> _itemDefaultStrips;
 	Common::Array<SceneActionTarget> _actionTargets;
 	Common::Array<byte> _stageSmallRows;

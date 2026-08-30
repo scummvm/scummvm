@@ -180,7 +180,8 @@ bool Console::cmdGet(int argc, const char **argv) {
 		return true;
 	}
 
-	if (state.inventoryItemResourcePageByOwnerAndItemId[owner][itemId] == 0) {
+	if (state.inventoryItemResourcePageByOwnerAndItemId[owner][itemId] ==
+			GameplayState::kInvalidInventoryItemResourcePage) {
 		debugPrintf("Inventory item %u does not belong to owner %u or has no resource page\n",
 			itemId, owner);
 		return true;

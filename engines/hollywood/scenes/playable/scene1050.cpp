@@ -41,11 +41,12 @@ const uint32 kScene1050LargeOverlayFrameMillis = 75;
 const uint kScene1050SmallOverlayDescriptorCount = 5;
 const uint kScene1050LargeOverlayDescriptorCount = 0x3e;
 const uint kScene1050DoorOverlayDescriptorCount = 6;
-const uint kScene1050JacketOverlayDescriptorCount = 0x0e;
+const uint kScene1050PackageOverlayDescriptorCount = 0x0e;
 const uint kScene1050SuitcaseOverlayDescriptorCount = 0x0b;
 const uint kScene1050TravelOverlayDescriptorCount = 0x11;
 const byte kScene1050DialogueStageId = 0x62;
 const byte kScene1050DialoguePrimaryRow = 99;
+const byte kScene1050PackageSpeechRow = 6;
 const uint16 kScene1050DialoguePrimaryCenterX = 0x1d6;
 const uint16 kScene1050DialoguePrimaryTopY = 0x95;
 const uint16 kScene1050DialoguePrimaryAltCenterX = 0x1cb;
@@ -62,6 +63,7 @@ const byte kScene1050FirstAmbientMusicCue = 0x0b;
 const byte kScene1050AmbientMusicCueCount = 5;
 const byte kScene1050AmbientSoundProbabilityModulus = 25;
 const byte kScene1050AmbientMusicProbabilityModulus = 50;
+const byte kScene1050JacketHotspotItem = 3;
 
 const byte kScene1050SmallOverlayFrameMap[] = {
 	0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
@@ -90,26 +92,26 @@ const byte kScene1050TravelFrameMap[] = {
 	6, 5, 4, 3, 2, 1, 0
 };
 
-const byte kScene1050JacketFirstFrameMap[] = {
+const byte kScene1050PackageFirstFrameMap[] = {
 	0, 13, 12, 11, 10, 9, 8, 7,
 	6, 5, 5, 5, 4, 3, 2, 1,
 	0
 };
 
-const byte kScene1050JacketFirstLargeOverlayFrameMap[] = {
+const byte kScene1050PackageFirstLargeOverlayFrameMap[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 61, 62, 63, 64, 64, 64,
 	64
 };
 
-const byte kScene1050JacketSecondFrameMap[] = {
+const byte kScene1050PackageSecondFrameMap[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 1, 2, 3,
 	4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 0
 };
 
-const byte kScene1050JacketSecondLargeOverlayFrameMap[] = {
+const byte kScene1050PackageSecondLargeOverlayFrameMap[] = {
 	0, 46, 47, 48, 49, 50, 51, 52,
 	53, 54, 55, 56, 57, 57, 57, 57,
 	57, 57, 58, 59, 60, 60, 60, 60,
@@ -223,8 +225,8 @@ bool Scene1050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 307: // Mirar cortina (look at curtain).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 308: // Usar objeto especial con cortina/chaqueta.
-		handleJacketExchange();
+	case 308: // Dar ticket para recoger el paquete del Dr. Mosca (give ticket for Dr. Fly's package).
+		handlePackageExchange();
 		return true;
 	case 309: // Hablar con Jack el destripador (talk to Jack the Ripper).
 		handleJackTalkLine();
@@ -270,6 +272,9 @@ bool Scene1050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled())
+		_hotspots.addFallbackRectHotspot(kScene1050JacketHotspotItem,
+			Common::Rect(616, 150, 662, 235));
 	return true;
 }
 
@@ -556,21 +561,24 @@ void Scene1050::runTravelUnlockEffect(byte travelSlotId) {
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene1050::handleJacketExchange() {
+void Scene1050::handlePackageExchange() {
 	finishLargeOverlayIdleSequence();
-	runSynchronizedOverlaySequence(10, kScene1050JacketOverlayDescriptorCount,
-		kScene1050JacketFirstFrameMap, kScene1050JacketFirstLargeOverlayFrameMap,
-		ARRAYSIZE(kScene1050JacketFirstFrameMap), kScene1050FrameMillis);
-	beginPrimarySpeechLine(kScene1050DialoguePrimaryRow, 6, kScene1050DialoguePrimaryCenterX,
+	runSynchronizedOverlaySequence(10, kScene1050PackageOverlayDescriptorCount,
+		kScene1050PackageFirstFrameMap, kScene1050PackageFirstLargeOverlayFrameMap,
+		ARRAYSIZE(kScene1050PackageFirstFrameMap), kScene1050FrameMillis);
+	beginPrimarySpeechLine(kScene1050PackageSpeechRow, 0, kScene1050DialoguePrimaryCenterX,
 		kScene1050DialoguePrimaryTopY, kScene1050DialoguePrimaryRed,
 		kScene1050DialoguePrimaryGreen, kScene1050DialoguePrimaryBlue);
-	runSynchronizedOverlaySequence(10, kScene1050JacketOverlayDescriptorCount,
-		kScene1050JacketSecondFrameMap, kScene1050JacketSecondLargeOverlayFrameMap,
-		ARRAYSIZE(kScene1050JacketSecondFrameMap), kScene1050FrameMillis);
+	beginPrimarySpeechLine(kScene1050PackageSpeechRow, 1, kScene1050DialoguePrimaryCenterX,
+		kScene1050DialoguePrimaryTopY, kScene1050DialoguePrimaryRed,
+		kScene1050DialoguePrimaryGreen, kScene1050DialoguePrimaryBlue);
+	runSynchronizedOverlaySequence(10, kScene1050PackageOverlayDescriptorCount,
+		kScene1050PackageSecondFrameMap, kScene1050PackageSecondLargeOverlayFrameMap,
+		ARRAYSIZE(kScene1050PackageSecondFrameMap), kScene1050FrameMillis);
 	removeInventoryItem(0x22);
 	addInventoryItem(0x1d);
 	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(6, 2);
+	beginSecondarySpeechLine(kScene1050PackageSpeechRow, 2);
 	_largeOverlayLayer.setFrame(0);
 	_largeOverlayMode = 0;
 }
