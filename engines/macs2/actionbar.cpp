@@ -188,12 +188,13 @@ void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 	if (sentence.empty())
 		return;
 
-	const GlyphData *font = nullptr;
-	uint16 fontCount = 0;
-	int glyphH = 0;
-	actionBarFont(font, fontCount, glyphH);
-	if (g_engine->numPanelGlyphs > 0)
-		sentence.toUppercase();
+	// Dialogue Font1 has German glyphs; the panel/save-load font does not.
+	const GlyphData *font = g_engine->_glyphs;
+	uint16 fontCount = g_engine->numGlyphs;
+	int glyphH = (int)g_engine->maxGlyphHeight;
+	if (fontCount == 0)
+		actionBarFont(font, fontCount, glyphH);
+
 	const int textY = kUITop + MAX(0, (kSentenceH - glyphH) / 2);
 	const int textX = MAX(0, (kScreenWidth - _view->measureStringWithFont(sentence, font, fontCount)) / 2);
 	_view->renderStringWithFontTo(textX, textY, sentence, font, fontCount, s);
