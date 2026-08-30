@@ -50,6 +50,19 @@ const uint16 kScene7070Chunk7DescriptorCount = 10;
 const uint16 kScene7070Chunk8DescriptorCount = 4;
 const uint16 kScene7070Chunk12DescriptorCount = 0x24;
 const uint32 kScene7070OverlayFrameMillis = 75;
+const byte kScene7070RecordCabinetItem = 4;
+const byte kScene7070DrawerItem = 9;
+const byte kScene7070UpperDrawerItem = 11;
+const uint kScene7070UpperDrawerTakeVerbRecordIndex = 91;
+const uint kScene7070UpperDrawerLookVerbRecordIndex = 92;
+const int kScene7070UpperDrawerHotspotLeft = 0x114;
+const int kScene7070UpperDrawerHotspotTop = 0x0e6;
+const int kScene7070UpperDrawerHotspotRight = 0x148;
+const int kScene7070UpperDrawerHotspotBottom = 0x0fc;
+const int kScene7070DrawerHotspotLeft = 0x114;
+const int kScene7070DrawerHotspotTop = 0x10e;
+const int kScene7070DrawerHotspotRight = 0x148;
+const int kScene7070DrawerHotspotBottom = 0x124;
 const byte kScene7070ExitDoorFrameMap[] = {
 	0, 0, 1, 2, 3
 };
@@ -168,6 +181,8 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 305: // Mirar mueble con discos (look at record cabinet)
 		beginSecondarySpeechLine(0x17, 0);
+		if (_vm->restoredContentEnabled())
+			beginStaticSecondarySpeechLine(0x30, 0);
 		return true;
 	case 306: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(5, _vm->gameState().gramophoneRoomDoorState < 2 ? 0 : 1);
@@ -186,6 +201,14 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 311: // Mirar carbón (look at coal)
 		beginSecondarySpeechLine(10, 0);
+		return true;
+	case 312: // Restored: Mirar cajón (look at drawer)
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(0x0b, 0);
+		return true;
+	case 313: // Restored: Abrir cajón (open drawer)
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(0x0c, 0);
 		return true;
 	case 314: // Cerrar cajón/Coger manivela (close drawer/take crank)
 		beginSecondarySpeechLine(0x16, 0);
@@ -210,6 +233,9 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 321: // Usar llave con puerta (use key with door)
 		beginSecondarySpeechLine(0x12, 0);
+		return true;
+	case 322: // Restored: Mirar/Coger cajón superior (look at/take upper drawer)
+		beginSecondarySpeechLine(0x0b, 2);
 		return true;
 	default:
 		return false;
@@ -238,6 +264,34 @@ bool Scene7070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 		rebuildWalkableMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+		if (_vm->restoredContentEnabled()) {
+			const SceneActionTarget cabinetTarget = _hotspots.actionTarget(kScene7070RecordCabinetItem);
+			_hotspots.setItemName(kScene7070UpperDrawerItem,
+				_hotspots.itemName(kScene7070DrawerItem));
+			_hotspots.setItemDefaultStrip(kScene7070UpperDrawerItem, 4);
+			_hotspots.setActionTarget(kScene7070UpperDrawerItem,
+				cabinetTarget.interactionPoint, cabinetTarget.approachPoint);
+			_hotspots.setActionInteraction(kScene7070UpperDrawerItem,
+				cabinetTarget.interactionPoint, cabinetTarget.facing);
+			_hotspots.setVerbActionHandlerByGlobalRecordIndex(
+				kScene7070UpperDrawerTakeVerbRecordIndex, 322);
+			_hotspots.setVerbMovementModeByGlobalRecordIndex(
+				kScene7070UpperDrawerTakeVerbRecordIndex, 1);
+			_hotspots.setVerbActionHandlerByGlobalRecordIndex(
+				kScene7070UpperDrawerLookVerbRecordIndex, 322);
+			_hotspots.setVerbMovementModeByGlobalRecordIndex(
+				kScene7070UpperDrawerLookVerbRecordIndex, 1);
+			_hotspots.addOverrideRectHotspot(kScene7070UpperDrawerItem,
+				Common::Rect(kScene7070UpperDrawerHotspotLeft, kScene7070UpperDrawerHotspotTop,
+					kScene7070UpperDrawerHotspotRight, kScene7070UpperDrawerHotspotBottom));
+			_hotspots.setActionTarget(kScene7070DrawerItem,
+				cabinetTarget.interactionPoint, cabinetTarget.approachPoint);
+			_hotspots.setActionInteraction(kScene7070DrawerItem,
+				cabinetTarget.interactionPoint, cabinetTarget.facing);
+			_hotspots.addOverrideRectHotspot(kScene7070DrawerItem,
+				Common::Rect(kScene7070DrawerHotspotLeft, kScene7070DrawerHotspotTop,
+					kScene7070DrawerHotspotRight, kScene7070DrawerHotspotBottom));
+		}
 	}
 	return true;
 }

@@ -63,8 +63,12 @@ public:
 	SceneVerbActionRecord verbActionRecord(byte itemId, byte stripIndex) const;
 	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	SceneActionTarget actionTarget(byte itemId) const;
+	void setItemDefaultStrip(byte itemId, byte stripIndex);
+	void setItemName(byte itemId, const Common::String &name);
 	void setActionTarget(byte itemId, const ScenePoint &interactionPoint, const ScenePoint &approachPoint);
 	void setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing);
+	// Claims pixels even when the resource maps them to another item.
+	void addOverrideRectHotspot(byte itemId, const Common::Rect &bounds);
 	// Claims otherwise unassigned pixels without overriding resource hotspots.
 	void addFallbackRectHotspot(byte itemId, const Common::Rect &bounds);
 	void setVerbActionHandlerByGlobalRecordIndex(uint globalRecordIndex, uint16 actionHandlerId);
@@ -75,14 +79,16 @@ public:
 	Common::String itemName(byte itemId) const;
 
 private:
-	struct FallbackRectHotspot {
+	struct RectHotspot {
 		byte itemId;
 		Common::Rect bounds;
 	};
 
 	Common::Array<byte> _colorToItemMap;
-	Common::Array<FallbackRectHotspot> _fallbackRectHotspots;
+	Common::Array<RectHotspot> _overrideRectHotspots;
+	Common::Array<RectHotspot> _fallbackRectHotspots;
 	Common::Array<byte> _itemDefaultStrips;
+	Common::Array<Common::String> _itemNameOverrides;
 	Common::Array<SceneActionTarget> _actionTargets;
 	Common::Array<byte> _stageSmallRows;
 	Common::Array<SceneVerbActionRecord> _verbActionRecords;

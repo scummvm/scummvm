@@ -54,6 +54,7 @@ Common::String inventoryActionCaption(Common::Language language, byte stripIndex
 
 bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
 		const Common::Array<byte> &stageSmallRows) {
+	_overrideRectHotspots.clear();
 	_fallbackRectHotspots.clear();
 
 	if (paletteMapBlock.size() < kSceneChunk3ColorToItemMapOffset + kSceneColorMapSize) {
@@ -77,6 +78,8 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 
 	_itemDefaultStrips.resize(HollywoodEngine::kSceneItemCount);
 	memcpy(_itemDefaultStrips.data(), metadata.data() + kSceneItemDefaultStrip, _itemDefaultStrips.size());
+	_itemNameOverrides.clear();
+	_itemNameOverrides.resize(HollywoodEngine::kSceneItemCount);
 
 	_actionTargets.resize(HollywoodEngine::kSceneItemCount);
 	for (uint item = 0; item < _actionTargets.size(); ++item) {
@@ -133,13 +136,19 @@ byte SceneHotspotTable::resolveItemAt(const Graphics::Surface &savedFramebuffer,
 			sceneX >= (uint)savedFramebuffer.w || sceneY >= (uint)savedFramebuffer.h)
 		return 0;
 
+	for (uint i = _overrideRectHotspots.size(); i > 0; --i) {
+		const RectHotspot &hotspot = _overrideRectHotspots[i - 1];
+		if (hotspot.bounds.contains(sceneX, sceneY))
+			return hotspot.itemId;
+	}
+
 	const byte color = *(const byte *)savedFramebuffer.getBasePtr(sceneX, sceneY);
 	const byte mappedItem = _colorToItemMap[color];
 	if (mappedItem != 0)
 		return mappedItem;
 
 	for (uint i = _fallbackRectHotspots.size(); i > 0; --i) {
-		const FallbackRectHotspot &hotspot = _fallbackRectHotspots[i - 1];
+		const RectHotspot &hotspot = _fallbackRectHotspots[i - 1];
 		if (hotspot.bounds.contains(sceneX, sceneY))
 			return hotspot.itemId;
 	}
@@ -205,6 +214,16 @@ SceneActionTarget SceneHotspotTable::actionTarget(byte itemId) const {
 	return _actionTargets[itemId];
 }
 
+void SceneHotspotTable::setItemDefaultStrip(byte itemId, byte stripIndex) {
+	if (itemId < _itemDefaultStrips.size())
+		_itemDefaultStrips[itemId] = stripIndex;
+}
+
+void SceneHotspotTable::setItemName(byte itemId, const Common::String &name) {
+	if (itemId < _itemNameOverrides.size())
+		_itemNameOverrides[itemId] = name;
+}
+
 void SceneHotspotTable::setActionTarget(byte itemId, const ScenePoint &interactionPoint, const ScenePoint &approachPoint) {
 	if (itemId >= _actionTargets.size())
 		return;
@@ -221,11 +240,21 @@ void SceneHotspotTable::setActionInteraction(byte itemId, const ScenePoint &inte
 	_actionTargets[itemId].facing = facing;
 }
 
+void SceneHotspotTable::addOverrideRectHotspot(byte itemId, const Common::Rect &bounds) {
+	if (itemId == 0 || bounds.isEmpty())
+		return;
+
+	RectHotspot hotspot;
+	hotspot.itemId = itemId;
+	hotspot.bounds = bounds;
+	_overrideRectHotspots.push_back(hotspot);
+}
+
 void SceneHotspotTable::addFallbackRectHotspot(byte itemId, const Common::Rect &bounds) {
 	if (itemId == 0 || bounds.isEmpty())
 		return;
 
-	FallbackRectHotspot hotspot;
+	RectHotspot hotspot;
 	hotspot.itemId = itemId;
 	hotspot.bounds = bounds;
 	_fallbackRectHotspots.push_back(hotspot);
@@ -268,6 +297,9 @@ void SceneHotspotTable::setRelationMovementMode(byte inventoryItemId, byte scene
 }
 
 Common::String SceneHotspotTable::itemName(byte itemId) const {
+	if (itemId < _itemNameOverrides.size() && !_itemNameOverrides[itemId].empty())
+		return _itemNameOverrides[itemId];
+
 	const uint offset = (uint)itemId * kStage003SmallRowSize;
 	if (offset >= _stageSmallRows.size())
 		return Common::String();
