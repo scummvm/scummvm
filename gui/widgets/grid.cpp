@@ -544,7 +544,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_filterMatcher = GridWidgetDefaultMatcher;
 	_filterMatcherArg = nullptr;
 
-	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 }
 
 GridWidget::~GridWidget() {

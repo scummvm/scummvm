@@ -46,7 +46,8 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -98,7 +99,8 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
+	// WIDGET_HOOK_DRAG: prevent hooking by a container as we need drag for ourselves
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE | WIDGET_HOOK_DRAG);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
