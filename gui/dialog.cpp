@@ -28,15 +28,6 @@
 
 namespace GUI {
 
-/*
- * TODO list
- * - add some sense of the window being "active" (i.e. in front) or not. If it
- *   was inactive and just became active, reset certain vars (like who is focused).
- *   Maybe we should just add lostFocus and receivedFocus methods to Dialog, just
- *   like we have for class Widget?
- * ...
- */
-
 Dialog::Dialog(int x, int y, int w, int h, bool scale)
 	: GuiObject(x, y, w, h, scale),
 	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
@@ -215,7 +206,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	w = findWidget(x, y);
 
-	if (w && !(w->getFlags() & WIDGET_IGNORE_DRAG))
+	if (w)
 		_dragWidget = w;
 
 	// If the click occurred inside a widget which is not the currently
