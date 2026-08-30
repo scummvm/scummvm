@@ -69,6 +69,14 @@ void LocationMap::draw() {
 		}
 	}
 
+	// Draw any people in the location
+	for (const auto &entity : _G(savegame)._locationEntities) {
+		if (entity._type != -1) {
+			const Graphics::ManagedSurface &tileImg = tiles[entity._type];
+			s.blitFrom(tileImg, Common::Point(entity._position.x * TILE_WIDTH + 8, entity._position.y * TILE_HEIGHT + 8));
+		}
+	}
+	
 	// Draw the player
 	const Graphics::ManagedSurface &tileImg = tiles[Data::LOCTILE_PLAYER];
 	s.blitFrom(tileImg, Common::Point(pos.x * TILE_WIDTH + 8, pos.y * TILE_HEIGHT + 8));
