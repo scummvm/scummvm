@@ -305,7 +305,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 	// players walk around pointlessly just to complete the map). 
 	// First value is the relative direction to move, next is whether to reveal the block or not. We don't reveal the
 	// blocks directly to the left/right of the party (behind line of sight), even if our route passes through them.
-	// We also don't reveal behind doors or breakable block objects.
+	// We also don't reveal behind closed doors or breakable block objects.
 	static const int8 traceRoutes[5][4] = {
 		{ -1,  0,  0,  1 },
 		{  0,  0, -1,  1 },
@@ -332,7 +332,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 			b = nb;
 			if (reveal)
 				_blockData[b].direction |= 1;
-			if (_wllWallFlags[wn] & 8 || breakableFromHere)
+			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere)
 				break;
 		}
 	}
