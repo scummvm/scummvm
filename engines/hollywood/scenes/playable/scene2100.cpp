@@ -295,31 +295,31 @@ bool Scene2100::advanceCustomGameplayLoop(uint32 delta) {
 }
 
 bool Scene2100::dispatchCustomSceneAction(uint16 handlerId) {
-	const GameplayState &state = _vm->gameState();
-
 	switch (handlerId) {
 	case 301: // Mirar puerta de piedra (look at stone door): unusual carving.
+		beginSecondarySpeechLine(0, 0);
+		return true;
+	case 302: // Usar/abrir puerta de piedra (use/open stone door): it cannot be opened normally.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Usar/abrir puerta de piedra (use/open stone door): no visible response.
+	case 303: // Ir al exterior de la pirámide (go to pyramid exterior): return to scene 2010.
+		_vm->gameState().mainFlowStateId = kScene2010PatchedEntryState;
 		return true;
-	case 303: // Mirar estantería (look at bookshelf): Egypt books and one odd novel.
+	case 304: // Mirar estantería (look at bookshelf): Egypt books and one odd novel.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Mirar sillón (look at armchair): comfortable armchair.
+	case 305: // Mirar sillón (look at armchair): comfortable armchair.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Usar sillón (use armchair): Ron refuses to rest now.
+	case 306: // Usar sillón (use armchair): Ron refuses to rest now.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // Usar bastón de Rá en puerta de piedra (use Ra staff on stone door): opens treasure room.
+	case 142: // Usar bastón de Rá (use Ra staff): inventory callback redirected here in scene 2100.
+	case 307: // Usar bastón de Rá (use Ra staff): open the passage to the treasure room.
 		runStoneDoorToTreasureRoom();
 		return true;
-	case 307: // Coger bastón de Rá (take Ra staff): grants the Ra staff.
+	case 308: // Coger bastón de Rá (take Ra staff): grants the Ra staff.
 		runRaStaffPickup();
-		return true;
-	case 308: // Hablar con la Momia (talk to the Mummy): dialogue tree.
-		(void)runMummyDialogue(state.mainFlowStateId == kScene2100EntryState);
 		return true;
 	default:
 		return false;
