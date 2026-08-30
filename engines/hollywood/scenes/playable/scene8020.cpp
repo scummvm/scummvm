@@ -51,7 +51,7 @@ const uint kScene8020InventoryItem5dOverlayChunk = 11;
 const uint kScene8020InventoryItemOverlayDescriptorCount = 8;
 const uint kScene8020InventoryItem5dOverlayDescriptorCount = 0x0d;
 const byte kScene8020ForegroundObjectOriginalItem = 3;
-const byte kScene8020ForegroundObjectMovedItem = 4;
+const byte kScene8020ChickSceneItem = 4;
 const byte kScene8020SecondaryObjectItem = 5;
 const byte kScene8020InventoryItem6c = 0x6c;
 const byte kScene8020InventoryItem5d = 0x5d;
@@ -268,7 +268,7 @@ bool Scene8020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 				}
 			}
 			replaceColorMapItemFromOriginal(kScene8020ForegroundObjectOriginalItem,
-				kScene8020ForegroundObjectMovedItem);
+				kScene8020ChickSceneItem);
 		} else if (state == 2) {
 			replaceColorMapItemFromOriginal(kScene8020ForegroundObjectOriginalItem, 0);
 		}
@@ -299,6 +299,16 @@ bool Scene8020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		_hotspots.setActionTarget(4, interactionPoint, target.approachPoint);
 	}
 	_hotspots.setVerbMovementModeByGlobalRecordIndex(9, foregroundState == 2 ? 0 : 1);
+	if (_vm->restoredContentEnabled()) {
+		for (byte itemId = GameplayState::kInventoryFirstSlot;
+				itemId < GameplayState::kInventoryOwnerSlotStride; ++itemId) {
+			if (_hotspots.relationActionRecord(itemId,
+					kScene8020ChickSceneItem, 2).actionHandlerId == 0) {
+				_hotspots.setRelationActionHandler(itemId,
+					kScene8020ChickSceneItem, 2, 312);
+			}
+		}
+	}
 	return handled;
 }
 
