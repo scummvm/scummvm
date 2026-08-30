@@ -78,6 +78,7 @@ Localizer::Localizer() {
 
 	if (g_grim->isRemastered()) {
 		parseRemasteredData(Common::String(data));
+		delete[] data;
 		return;
 	}
 
