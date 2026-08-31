@@ -464,7 +464,7 @@ void Scene5120::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		return;
 	}
 
-	_transformedRoomLayers.setLayerFrame(kScene5120MainProjectionLayer, frameIndex);
+	_transformedRoomLayers.setVisibleLayerFrame(kScene5120MainProjectionLayer, frameIndex);
 }
 
 void Scene5120::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -672,14 +672,20 @@ void Scene5120::initializeTransformedRoomLayers() {
 	_elevatorLayer.configure(8, kScene5120ElevatorDescriptorCount,
 		kScene5120ElevatorOpenFrameMap, ARRAYSIZE(kScene5120ElevatorOpenFrameMap));
 	_elevatorLayer.visible = false;
-	_transformedRoomLayers.configureLayer(kScene5120MovingWallLayer, 9, 5, nullptr, 0);
-	_transformedRoomLayers.configureLayer(kScene5120MainProjectionLayer, 10, 0x0e, kScene5120MainProjectionFrameMap,
+	_transformedRoomLayers.configureLayer(kScene5120MovingWallLayer,
+		kSceneAnimationScenePlaced, 9, 5, nullptr, 0);
+	_transformedRoomLayers.configureLayer(kScene5120MainProjectionLayer,
+		kSceneAnimationScenePlaced, 10, 0x0e, kScene5120MainProjectionFrameMap,
 		ARRAYSIZE(kScene5120MainProjectionFrameMap));
-	_transformedRoomLayers.configureLayer(kScene5120SideLoopLayer, 11, 4,
+	_transformedRoomLayers.configureLayer(kScene5120SideLoopLayer,
+		kSceneAnimationScenePlaced, 11, 4,
 		kScene5120SideLoopFrameMap, ARRAYSIZE(kScene5120SideLoopFrameMap));
-	_transformedRoomLayers.configureLayer(kScene5120ToggleLayer, 12, 2, nullptr, 0);
-	_transformedRoomLayers.configureLayer(kScene5120RandomDetailLayer, 13, 6, nullptr, 0);
-	_transformedRoomLayers.configureLayer(kScene5120TransformationLayer, 19,
+	_transformedRoomLayers.configureLayer(kScene5120ToggleLayer,
+		kSceneAnimationScenePlaced, 12, 2, nullptr, 0);
+	_transformedRoomLayers.configureLayer(kScene5120RandomDetailLayer,
+		kSceneAnimationScenePlaced, 13, 6, nullptr, 0);
+	_transformedRoomLayers.configureLayer(kScene5120TransformationLayer,
+		kSceneAnimationScenePlaced, 19,
 		kScene5120TransformationDescriptorCount, nullptr, 0, false);
 	_projectorSpeechLayer.configure(16, kScene5120ProjectorSpeechDescriptorCount, nullptr, 0);
 	_projectorSpeechLayer.visible = false;
@@ -695,17 +701,17 @@ void Scene5120::resetTransformedRoomLayers() {
 	_transformationOverlayChannel.reset(0, kScene5120MovingWallFrameMillis);
 	_transformationPaletteChannel.reset(0, kScene5120MovingWallFrameMillis);
 	_transformedRoomLayers.setLayerVisible(kScene5120MovingWallLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120MovingWallLayer, 4);
+	_transformedRoomLayers.setLayerFrame(kScene5120MovingWallLayer, 4);
 	_transformedRoomLayers.setLayerVisible(kScene5120MainProjectionLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120MainProjectionLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120MainProjectionLayer, 0);
 	_transformedRoomLayers.setLayerVisible(kScene5120SideLoopLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120SideLoopLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120SideLoopLayer, 0);
 	_transformedRoomLayers.setLayerVisible(kScene5120ToggleLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120ToggleLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120ToggleLayer, 0);
 	_transformedRoomLayers.setLayerVisible(kScene5120RandomDetailLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120RandomDetailLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120RandomDetailLayer, 0);
 	_transformedRoomLayers.setLayerVisible(kScene5120TransformationLayer, false);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120TransformationLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120TransformationLayer, 0);
 	_projectorSpeechLayer.visible = false;
 	_projectorSpeechLayer.reset(0);
 	_projectorSpeechActive = false;
@@ -724,12 +730,12 @@ bool Scene5120::runRoomTransformationSequence() {
 
 	_transformedRoomLayers.setLayerVisible(kScene5120MovingWallLayer, false);
 	_transformedRoomLayers.setLayerVisible(kScene5120MainProjectionLayer, true);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120MainProjectionLayer, 5);
+	_transformedRoomLayers.setLayerFrame(kScene5120MainProjectionLayer, 5);
 	_transformedRoomLayers.setLayerVisible(kScene5120SideLoopLayer, false);
 	_transformedRoomLayers.setLayerVisible(kScene5120ToggleLayer, false);
 	_transformedRoomLayers.setLayerVisible(kScene5120RandomDetailLayer, false);
 	_transformedRoomLayers.setLayerVisible(kScene5120TransformationLayer, false);
-	_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120TransformationLayer, 0);
+	_transformedRoomLayers.setLayerFrame(kScene5120TransformationLayer, 0);
 
 	while (!roomTransformationComplete() && !animationPlaybackShouldStop()) {
 		if (waitSceneMillis(10, false))
@@ -754,13 +760,13 @@ void Scene5120::advanceRoomTransformation(uint32 delta) {
 		if (frame < 30)
 			++frame;
 		_mainProjectionChannel.frameIndex = frame;
-		_transformedRoomLayers.setLayerFrame(kScene5120MainProjectionLayer, frame);
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120MainProjectionLayer, frame);
 		if (frame == 18 && !_transformationOverlayStarted) {
 			_transformationOverlayStarted = true;
 			startedOverlay = true;
 			_soundBank0.playSample(0x1d, 100, true);
 			_transformedRoomLayers.setLayerVisible(kScene5120TransformationLayer, true);
-			_transformedRoomLayers.setLayerFramePreservingVisibility(kScene5120TransformationLayer, 0);
+			_transformedRoomLayers.setLayerFrame(kScene5120TransformationLayer, 0);
 			_transformationOverlayChannel.reset(0, kScene5120MovingWallFrameMillis);
 			_transformationPaletteChannel.reset(0, kScene5120MovingWallFrameMillis);
 		}
@@ -775,7 +781,7 @@ void Scene5120::advanceRoomTransformation(uint32 delta) {
 		if (frame < 19)
 			++frame;
 		_transformationOverlayChannel.frameIndex = frame;
-		_transformedRoomLayers.setLayerFrame(kScene5120TransformationLayer, frame);
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120TransformationLayer, frame);
 		if (frame == 19) {
 			_vm->gameState().scene5110SalonTransformState = 2;
 			_transformedRoomLayers.setLayerVisible(kScene5120MovingWallLayer, true);
@@ -831,7 +837,7 @@ void Scene5120::advanceTransformedRoomLayers(uint32 delta) {
 			--nextFrame;
 		else
 			++nextFrame;
-		_transformedRoomLayers.setLayerFrame(kScene5120MovingWallLayer, nextFrame);
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120MovingWallLayer, nextFrame);
 	}
 
 	if (!_primaryDialogueSpeechActive) {
@@ -844,18 +850,18 @@ void Scene5120::advanceTransformedRoomLayers(uint32 delta) {
 			} else {
 				nextFrame = 0;
 			}
-			_transformedRoomLayers.setLayerFrame(kScene5120MainProjectionLayer, nextFrame);
+			_transformedRoomLayers.setVisibleLayerFrame(kScene5120MainProjectionLayer, nextFrame);
 		}
 	}
 
 	const uint sideTicks = _sideLoopChannel.consumeFrames(delta);
 	for (uint i = 0; i < sideTicks; ++i)
-		_transformedRoomLayers.setLayerFrame(kScene5120SideLoopLayer,
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120SideLoopLayer,
 			(byte)((_transformedRoomLayers.layerFrame(kScene5120SideLoopLayer) + 1) % ARRAYSIZE(kScene5120SideLoopFrameMap)));
 
 	const uint toggleTicks = _toggleChannel.consumeFrames(delta);
 	for (uint i = 0; i < toggleTicks; ++i)
-		_transformedRoomLayers.setLayerFrame(kScene5120ToggleLayer,
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120ToggleLayer,
 			_transformedRoomLayers.layerFrame(kScene5120ToggleLayer) == 0 ? 1 : 0);
 
 	const uint randomTicks = _randomDetailChannel.consumeFrames(delta);
@@ -864,7 +870,7 @@ void Scene5120::advanceTransformedRoomLayers(uint32 delta) {
 		byte nextFrame = previousFrame;
 		while (nextFrame == previousFrame)
 			nextFrame = (byte)_random.getRandomNumber(5);
-		_transformedRoomLayers.setLayerFrame(kScene5120RandomDetailLayer, nextFrame);
+		_transformedRoomLayers.setVisibleLayerFrame(kScene5120RandomDetailLayer, nextFrame);
 	}
 }
 
@@ -872,7 +878,7 @@ void Scene5120::drawTransformedRoomLayers() {
 	if (_vm->gameState().scene5110SalonTransformState < 2 && !_roomTransformationActive)
 		return;
 
-	drawTransientLayers(_transformedRoomLayers);
+	drawLayerStack(_transformedRoomLayers, kSceneAnimationScenePlaced);
 }
 
 void Scene5120::drawStaticForegroundLayers(byte actorDrawOrderMode) {

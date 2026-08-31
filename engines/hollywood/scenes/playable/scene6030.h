@@ -75,7 +75,7 @@ private:
 
 	TimedAnimationChannel _hannoverIdleChannel;
 	TimedAnimationChannel _scriptedActorPathChannel;
-	SceneAnimationLayers _animationLayers;
+	SceneLayerStack _animationLayers;
 	uint _scriptedActorPathFrameIndex;
 	bool _hannoverManualSequenceActive;
 	bool _scriptedActorPathActive;

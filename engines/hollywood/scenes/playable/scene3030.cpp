@@ -109,7 +109,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_vm->gameState().windmillBladesMoving || _machineSequenceActive)
 		drawResourceSpriteLayer(_loopLayer);
 	if (_machineSequenceActive) {
-		drawTransientLayers(_machineLayers);
+		drawLayerStack(_machineLayers, kSceneAnimationScenePlaced);
 		drawForegroundBlocks();
 		return;
 	}
@@ -230,9 +230,11 @@ void Scene3030::resetAnimationLayers() {
 	_loopLayer.visible = true;
 	_loopLayer.reset(0);
 	_machineLayers.clear();
-	_machineLayers.configureLayer(kScene3030MachineEffectLayer, 9, kScene3030MachineEffectDescriptorCount,
+	_machineLayers.configureLayer(kScene3030MachineEffectLayer, kSceneAnimationScenePlaced,
+		9, kScene3030MachineEffectDescriptorCount,
 		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false);
-	_machineLayers.configureLayer(kScene3030MachineActionLayer, 10, kScene3030MachineActionDescriptorCount,
+	_machineLayers.configureLayer(kScene3030MachineActionLayer, kSceneAnimationScenePlaced,
+		10, kScene3030MachineActionDescriptorCount,
 		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false);
 	_machineSequenceActive = false;
 }
@@ -378,8 +380,8 @@ void Scene3030::runMachineActivationSequence() {
 	_machineSequenceActive = true;
 	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
 	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, true);
-	_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, 0);
-	_machineLayers.setLayerFrame(kScene3030MachineActionLayer, 0);
+	_machineLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, 0);
+	_machineLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, 0);
 
 	byte actionFrame = 0;
 	byte effectFrame = 0;
@@ -392,7 +394,7 @@ void Scene3030::runMachineActivationSequence() {
 		if (actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) &&
 				(actionFrame < 15 || actionReleased)) {
 			++actionFrame;
-			_machineLayers.setLayerFrame(kScene3030MachineActionLayer, actionFrame);
+			_machineLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, actionFrame);
 			if (actionFrame == 15) {
 				effectStarted = true;
 				if (_sceneChunkTable.isValidChunk(8))
@@ -403,7 +405,7 @@ void Scene3030::runMachineActivationSequence() {
 
 		if (effectStarted && effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
 			++effectFrame;
-			_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, effectFrame);
+			_machineLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, effectFrame);
 			if (effectFrame == 5) {
 				actionReleased = true;
 				state.scene3030MachineActivated = true;

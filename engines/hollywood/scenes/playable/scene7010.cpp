@@ -118,7 +118,7 @@ const byte kScene7010DialogueOverlayMode2FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 };
-const SceneAnimationLayerSpec kScene7010AnimationLayerSpecs[] = {
+const SceneLayerSpec kScene7010AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors,
 		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true },
 	{ kSceneAnimationBehindActors,
@@ -235,10 +235,10 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
-	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+	drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
 
 	if (_actionOverlayPlayer.replacesActor()) {
-		drawAnimationLayers(_animationLayers, kSceneAnimationInFrontOfActors);
+		drawLayerStack(_animationLayers, kSceneAnimationInFrontOfActors);
 
 		// G01 restores chunk-15's dirty rect before drawing the next action frame.
 		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
@@ -256,7 +256,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	} else {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	}
-	drawAnimationLayers(_animationLayers, kSceneAnimationInFrontOfActors);
+	drawLayerStack(_animationLayers, kSceneAnimationInFrontOfActors);
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {

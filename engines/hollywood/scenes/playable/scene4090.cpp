@@ -192,7 +192,7 @@ void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawTransientLayers(_ambientLayers);
+	drawLayerStack(_ambientLayers, kSceneAnimationScenePlaced);
 
 	if (_scriptLayer.visible) {
 		drawResourceSpriteLayer(_scriptLayer);
@@ -276,7 +276,7 @@ bool Scene4090::advanceCustomGameplayLoop(uint32 delta) {
 		for (uint i = 0; i < frameCount; ++i) {
 			const byte nextFrame = (byte)_random.getRandomNumber(9);
 			_chunk12Channel.frameIndex = nextFrame;
-			_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, nextFrame);
+			_ambientLayers.setVisibleLayerFrame(kScene4090AmbientRandomLayer, nextFrame);
 		}
 	}
 	return false;
@@ -383,7 +383,7 @@ void Scene4090::handleAnimationFrameHook(byte hookId, uint frame) {
 		break;
 	case kScene4090FinalRoomOverlayHook:
 		if (frame < ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
-			_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer,
+			_ambientLayers.setVisibleLayerFrame(kScene4090AmbientFixedLayer,
 				kScene4090FinalRoomChunk13FrameMap[frame]);
 		break;
 	default:
@@ -418,13 +418,16 @@ void Scene4090::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 void Scene4090::resetAnimationLayers() {
 	clearResourceLayer(_scriptLayer);
 	_ambientLayers.clear();
-	_ambientLayers.configureLayer(kScene4090AmbientRandomLayer, kScene4090AmbientRandomChunk,
+	_ambientLayers.configureLayer(kScene4090AmbientRandomLayer, kSceneAnimationScenePlaced,
+		kScene4090AmbientRandomChunk,
 		kScene4090AmbientRandomDescriptorCount, nullptr, 0, false);
-	_ambientLayers.setLayerFramePreservingVisibility(kScene4090AmbientRandomLayer, 10);
-	_ambientLayers.configureLayer(kScene4090AmbientFixedLayer, kScene4090AmbientFixedChunk,
+	_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, 10);
+	_ambientLayers.configureLayer(kScene4090AmbientFixedLayer, kSceneAnimationScenePlaced,
+		kScene4090AmbientFixedChunk,
 		kScene4090AmbientFixedDescriptorCount, nullptr, 0, false);
-	_ambientLayers.setLayerFramePreservingVisibility(kScene4090AmbientFixedLayer, 4);
-	_ambientLayers.configureLayer(kScene4090OrganBodyLayer, kScene4090OrganBodyChunk,
+	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
+	_ambientLayers.configureLayer(kScene4090OrganBodyLayer, kSceneAnimationScenePlaced,
+		kScene4090OrganBodyChunk,
 		kScene4090OrganBodyDescriptorCount,
 		kScene4090OrganBodyFrameMap, ARRAYSIZE(kScene4090OrganBodyFrameMap));
 	_ambientLayers.setLayerVisible(kScene4090OrganBodyLayer, false);
@@ -509,7 +512,7 @@ void Scene4090::startOrganBodyAnimation(byte firstFrame, byte targetFrame,
 	_organBodyAnimationActive = firstFrame < targetFrame;
 	_organBodyWaitForSound = waitForSound;
 	if (_ambientLayers.hasLayer(kScene4090OrganBodyLayer))
-		_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, firstFrame);
+		_ambientLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, firstFrame);
 }
 
 void Scene4090::advanceOrganBodyAnimation(uint32 delta) {
@@ -524,7 +527,7 @@ void Scene4090::advanceOrganBodyAnimation(uint32 delta) {
 
 		if (_organBodyChannel.frameIndex < _organBodyTargetFrame)
 			++_organBodyChannel.frameIndex;
-		_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer,
+		_ambientLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer,
 			_organBodyChannel.frameIndex);
 		if (_organBodyChannel.frameIndex >= _organBodyTargetFrame)
 			_organBodyAnimationActive = false;
@@ -582,9 +585,9 @@ void Scene4090::runOrganRevealSequence() {
 
 	_multiSpriteCompositeActive = true;
 	setMultiSpriteLayersVisible(true);
-	_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, 10);
-	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
-	_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, 0);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientRandomLayer, 10);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientFixedLayer, 4);
+	_ambientLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, 0);
 	_randomAmbientAnimationActive = false;
 	_organBodyAnimationActive = false;
 	const bool overlayComplete = playResourceLayerSequence(_scriptLayer,
@@ -923,9 +926,9 @@ void Scene4090::runFinalCutscene() {
 
 	_multiSpriteCompositeActive = true;
 	setMultiSpriteLayersVisible(true);
-	_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, 10);
-	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
-	_ambientLayers.setLayerFrame(kScene4090OrganBodyLayer, 0);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientRandomLayer, 10);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientFixedLayer, 4);
+	_ambientLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, 0);
 	_randomAmbientAnimationActive = false;
 	_organBodyAnimationActive = false;
 	if (!playResourceLayerSequence(_scriptLayer, kScene4090FinalOverlayChunk,
@@ -981,8 +984,8 @@ void Scene4090::runFinalCutscene() {
 			return;
 		}
 	}
-	_ambientLayers.setLayerFrame(kScene4090AmbientFixedLayer, 4);
-	_ambientLayers.setLayerFrame(kScene4090AmbientRandomLayer, 10);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientFixedLayer, 4);
+	_ambientLayers.setVisibleLayerFrame(kScene4090AmbientRandomLayer, 10);
 	drawPlayableComposite();
 	presentFrame();
 

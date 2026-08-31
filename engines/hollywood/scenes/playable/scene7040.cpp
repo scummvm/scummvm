@@ -139,7 +139,7 @@ const byte kScene7040Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
 const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
-const SceneAnimationLayerSpec kScene7040AnimationLayerSpecs[] = {
+const SceneLayerSpec kScene7040AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 17, kScene7040Chunk17DescriptorCount, nullptr, 0, false },
 	{ kSceneAnimationBehindActors, 16, kScene7040Chunk16DescriptorCount,
 		kScene7040Chunk16PostItemFrameMap,
@@ -230,7 +230,7 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		if (!isAlternatePaletteResourceActive())
 			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk11Layer));
 	} else {
-		drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+		drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}

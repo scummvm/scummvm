@@ -73,7 +73,7 @@ private:
 		uint32 frameMillis, int soundFrame = -1, byte soundId = 0);
 
 	Common::Array<byte> _originalColorToItemMap;
-	TransientLayerCompositor _temporaryOverlayLayers;
+	SceneLayerStack _temporaryOverlayLayers;
 };
 
 } // End of namespace Hollywood

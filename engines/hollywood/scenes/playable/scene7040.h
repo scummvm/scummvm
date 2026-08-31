@@ -106,7 +106,7 @@ private:
 	byte _postItemIdleState;
 	byte _primarySpeechLeadInTicks;
 	byte _primarySpeechLastMouthFrameOffset;
-	SceneAnimationLayers _animationLayers;
+	SceneLayerStack _animationLayers;
 	RandomIdleAnimation _preItemIdleAnimation;
 	TimedAnimationChannel _postItemAnimation;
 	TimedAnimationChannel _chunk17Animation;

@@ -113,12 +113,15 @@ Scene4110::Scene4110(HollywoodEngine *vm) :
 		_ambientSoundTimerAccumulator(0),
 		_lastAmbientLoopCue(0xff),
 		_previousAmbientSoundCue(0xff) {
-	_backgroundLayers.configureLayer(kScene4110BackgroundLayerIndex, kScene4110BackgroundChunk,
+	_backgroundLayers.configureLayer(kScene4110BackgroundLayerIndex, kSceneAnimationScenePlaced,
+		kScene4110BackgroundChunk,
 		kScene4110BackgroundDescriptorCount, nullptr, 0);
-	_bridgeFrontLayers.configureLayer(kScene4110BridgeMainLayerIndex, kScene4110AlternateOverlayChunk,
+	_bridgeFrontLayers.configureLayer(kScene4110BridgeMainLayerIndex, kSceneAnimationScenePlaced,
+		kScene4110AlternateOverlayChunk,
 		kScene4110AlternateOverlayDescriptorCount,
 		kScene4110AlternateFrameMap, ARRAYSIZE(kScene4110AlternateFrameMap));
-	_bridgeBackLayers.configureLayer(kScene4110BridgeShakeLayerIndex, kScene4110AlternateOverlayChunk,
+	_bridgeBackLayers.configureLayer(kScene4110BridgeShakeLayerIndex, kSceneAnimationScenePlaced,
+		kScene4110AlternateOverlayChunk,
 		kScene4110AlternateOverlayDescriptorCount, nullptr, 0);
 }
 
@@ -157,22 +160,22 @@ void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_bridgeSequenceActive) {
 		restoreResourceSpriteLayerBackground(_bridgeBackLayers.layer(kScene4110BridgeShakeLayerIndex), _baseFramebuffer);
 		restoreResourceSpriteLayerBackground(_bridgeFrontLayers.layer(kScene4110BridgeMainLayerIndex), _baseFramebuffer);
-		drawTransientLayers(_bridgeBackLayers);
-		drawTransientLayers(_backgroundLayers);
-		drawTransientLayers(_bridgeFrontLayers);
+		drawLayerStack(_bridgeBackLayers, kSceneAnimationScenePlaced);
+		drawLayerStack(_backgroundLayers, kSceneAnimationScenePlaced);
+		drawLayerStack(_bridgeFrontLayers, kSceneAnimationScenePlaced);
 		return;
 	}
 
 	if (_actionOverlayPlayer.replacesActor()) {
 		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawActionOverlayLayer();
-		drawTransientLayers(_backgroundLayers);
+		drawLayerStack(_backgroundLayers, kSceneAnimationScenePlaced);
 		return;
 	}
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawTransientLayers(_backgroundLayers);
+	drawLayerStack(_backgroundLayers, kSceneAnimationScenePlaced);
 	drawActionOverlayLayer();
 }
 
@@ -310,11 +313,11 @@ bool Scene4110::revealEntryPose(int x, int y, byte facing) {
 
 void Scene4110::resetBackgroundLayer() {
 	_backgroundLayers.setLayerVisible(kScene4110BackgroundLayerIndex, true);
-	_backgroundLayers.setLayerFramePreservingVisibility(kScene4110BackgroundLayerIndex, 0);
+	_backgroundLayers.setLayerFrame(kScene4110BackgroundLayerIndex, 0);
 	_bridgeFrontLayers.setLayerVisible(kScene4110BridgeMainLayerIndex, false);
-	_bridgeFrontLayers.setLayerFramePreservingVisibility(kScene4110BridgeMainLayerIndex, 0);
+	_bridgeFrontLayers.setLayerFrame(kScene4110BridgeMainLayerIndex, 0);
 	_bridgeBackLayers.setLayerVisible(kScene4110BridgeShakeLayerIndex, false);
-	_bridgeBackLayers.setLayerFramePreservingVisibility(kScene4110BridgeShakeLayerIndex, kScene4110BridgeShakeStartFrame);
+	_bridgeBackLayers.setLayerFrame(kScene4110BridgeShakeLayerIndex, kScene4110BridgeShakeStartFrame);
 	_bridgeSequenceActive = false;
 	_backgroundChannel.reset(0, kScene4110BackgroundFrameMillis);
 	_backgroundSequence = 0;
@@ -340,7 +343,7 @@ void Scene4110::advanceBackgroundTick() {
 			_backgroundFrameInSequence = 1;
 			_soundBank0.playSample(0x24, 25);
 		} else {
-			_backgroundLayers.setLayerFrame(kScene4110BackgroundLayerIndex, 0);
+			_backgroundLayers.setVisibleLayerFrame(kScene4110BackgroundLayerIndex, 0);
 			return;
 		}
 	} else if (_backgroundFrameInSequence >= kScene4110BackgroundSequenceLengths[_backgroundSequence]) {
@@ -350,7 +353,8 @@ void Scene4110::advanceBackgroundTick() {
 	}
 
 	const uint frameMapOffset = (uint)_backgroundSequence * 12 + _backgroundFrameInSequence;
-	_backgroundLayers.setLayerFrame(kScene4110BackgroundLayerIndex, kScene4110BackgroundFrameMap[frameMapOffset]);
+	_backgroundLayers.setVisibleLayerFrame(kScene4110BackgroundLayerIndex,
+		kScene4110BackgroundFrameMap[frameMapOffset]);
 	++_backgroundFrameInSequence;
 }
 
@@ -461,9 +465,9 @@ void Scene4110::runAlternateStateSequence() {
 void Scene4110::runBridgeOpeningOverlay() {
 	_bridgeSequenceActive = true;
 	_bridgeFrontLayers.setLayerVisible(kScene4110BridgeMainLayerIndex, true);
-	_bridgeFrontLayers.setLayerFramePreservingVisibility(kScene4110BridgeMainLayerIndex, 0);
+	_bridgeFrontLayers.setLayerFrame(kScene4110BridgeMainLayerIndex, 0);
 	_bridgeBackLayers.setLayerVisible(kScene4110BridgeShakeLayerIndex, true);
-	_bridgeBackLayers.setLayerFramePreservingVisibility(kScene4110BridgeShakeLayerIndex, kScene4110BridgeShakeStartFrame);
+	_bridgeBackLayers.setLayerFrame(kScene4110BridgeShakeLayerIndex, kScene4110BridgeShakeStartFrame);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -484,7 +488,7 @@ void Scene4110::runBridgeOpeningOverlay() {
 					mainFrame < ARRAYSIZE(kScene4110AlternateFrameMap) - 1) {
 				mainFrameAccumulator -= kScene4110FrameMillis;
 				++mainFrame;
-				_bridgeFrontLayers.setLayerFrame(kScene4110BridgeMainLayerIndex, (byte)mainFrame);
+				_bridgeFrontLayers.setVisibleLayerFrame(kScene4110BridgeMainLayerIndex, (byte)mainFrame);
 				frameChanged = true;
 				if (mainFrame == kScene4110BridgeShakeStartOverlayFrame)
 					shakeRepeatCounter = kScene4110BridgeShakeRepeatCount;
@@ -506,7 +510,7 @@ void Scene4110::runBridgeOpeningOverlay() {
 				if (shakeRepeatCounter < 7)
 					shakeFrameMillis += 7;
 			}
-			_bridgeBackLayers.setLayerFrame(kScene4110BridgeShakeLayerIndex, shakeFrame);
+			_bridgeBackLayers.setVisibleLayerFrame(kScene4110BridgeShakeLayerIndex, shakeFrame);
 			frameChanged = true;
 		}
 
