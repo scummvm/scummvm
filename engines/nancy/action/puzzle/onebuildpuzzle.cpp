@@ -36,6 +36,12 @@
 namespace Nancy {
 namespace Action {
 
+// Does `inner` sit inside `outer`, allowing `tolerance` of overhang per side?
+static bool rectFitsIn(const Common::Rect &inner, const Common::Rect &outer, int16 tolerance) {
+	return inner.left >= outer.left - tolerance && inner.top >= outer.top - tolerance &&
+			inner.right <= outer.right + tolerance && inner.bottom <= outer.bottom + tolerance;
+}
+
 void OneBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
@@ -124,10 +130,18 @@ void OneBuildPuzzle::init() {
 			// (top == bottom), which means "start scattered": the original
 			// init picks a random spot inside the home-scatter zone. Without
 			// this, such pieces get a zero-height rect and are invisible.
-			if (g_nancy->getGameType() >= kGameTypeNancy12 && p.homeRect.top == p.homeRect.bottom)
+			if (g_nancy->getGameType() >= kGameTypeNancy12 && p.homeRect.top == p.homeRect.bottom) {
 				scatterPiece(p);
-			else
+			} else {
 				p.gameRect = p.homeRect;
+
+				// A piece that already starts inside its own slot, at the
+				// rotation the slot calls for, counts as placed from the outset.
+				if (g_nancy->getGameType() >= kGameTypeNancy13 &&
+						p.defaultRotation == p.requiredRotation &&
+						rectFitsIn(p.homeRect, p.slotRect, _slotTolerance))
+					p.placed = true;
+			}
 		}
 
 		p.setVisible(true);
@@ -138,6 +152,8 @@ void OneBuildPuzzle::init() {
 
 	if (_countMode != kCountAllPieces)
 		updateCounter();
+
+	_closeupDisplay.setVisible(false);
 
 	_isInitialized = true;
 }
@@ -154,19 +170,35 @@ void OneBuildPuzzle::registerGraphics() {
 
 	if (_countMode != kCountAllPieces)
 		_counterDisplay.registerGraphics();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy13)
+		_closeupDisplay.registerGraphics();
 }
 
 // Nancy12 (AR 166) reworked OneBuildPuzzle onto the shared PuzzleBase loader:
 // a fixed 513-byte header blob, followed by six variable-length "random sound"
 // blocks, then a variable-count array of the same 66-byte piece records used by
 // the older games. The piece array is no longer a fixed 20-slot block.
+// Nancy13 shrinks the blob to 470 bytes (the exit hotspot and cancel scene move
+// into the shared hotspot block that follows), appends a seventh sound block for
+// the close-up, and grows the piece records to 99 bytes.
 void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
-	// --- PuzzleBase header blob (513 bytes) ---
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
+
+	// --- PuzzleBase header blob (513 bytes; 470 in Nancy13) ---
 	readFilename(stream, _imageName);       // 0x00
 	_freePlacement = stream.readByte();     // 0x21
 	_canRotateAll = stream.readByte();      // 0x22
-	stream.skip(6);                         // 0x23: rotation/zone config
+	stream.skip(5);                         // 0x23: rotation/grab-zone config
+	_dropMode = (DropMode)stream.readByte(); // 0x28
 	_slotTolerance = stream.readSint16LE(); // 0x29
+
+	// The plain drop mode ignores the stored tolerance and demands an exact fit.
+	if (_dropMode == kDropNormal)
+		_slotTolerance = 0;
+
+	// Only Nancy13 allows extra slop on top of the tolerance.
+	_dropSlop = isNancy13 ? kDropSlop : 0;
 
 	_placementMode = (PlacementMode)stream.readByte(); // 0x2b
 	_countMode = (CountMode)stream.readByte();         // 0x2c
@@ -187,17 +219,15 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	readRect(stream, _scatterZone);         // 0xea..0xf9
 
 	readRect(stream, _placementZone);       // 0xfa: a piece may only be released in here
-	readRect(stream, _exitHotspot);         // 0x10a
 
-	// Nancy 13 reuses this record type with a rearranged header, so the bytes
-	// read above aren't rects there. Drop one that can't be a hotspot instead of
-	// handing it to the viewport, which clips (and asserts on) what it is given.
-	if (!_exitHotspot.isValidRect())
-		_exitHotspot = Common::Rect();
+	if (!isNancy13)
+		readRect(stream, _exitHotspot);     // 0x10a
 
-	_pieceCursorType = stream.readSint16LE();     // 0x11a
-	_heldPieceCursorType = stream.readSint16LE(); // 0x11c
-	stream.skip(2);                               // 0x11e: exit cursor, always _puzzleExitCursor
+	_pieceCursorType = stream.readSint16LE();     // 0x11a (0x10a in Nancy13)
+	_heldPieceCursorType = stream.readSint16LE(); // 0x11c (0x10c in Nancy13)
+
+	if (!isNancy13)
+		stream.skip(2);                     // 0x11e: exit cursor, always _puzzleExitCursor
 
 	readFilename(stream, _extraSoundName);  // 0x120: final-animation atlas image
 	readRect(stream, _animRectA);           // 0x141
@@ -209,17 +239,45 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_hasFinalAnim = !_animRectA.isEmpty();
 	_hasCrank = !_animRectB.isEmpty();
 
-	_solveScene.readData(stream);           // 0x1cf
-	_cancelScene.readData(stream);          // 0x1e8 (ends the 513-byte blob)
+	_solveScene.readData(stream);           // 0x1cf (0x1bd in Nancy13, where it ends the blob)
 
-	// --- Random-sound blocks: pickup, rotate, drop, good, bad, completion ---
-	RandomSoundBlock blocks[kNumSounds];
-	for (uint i = 0; i < kNumSounds; ++i)
+	if (isNancy13) {
+		// Shared hotspot records; the first is the give-up hotspot, which replaces
+		// the header's cancel scene.
+		int16 numZones = stream.readSint16LE();
+		for (int16 i = 0; i < numZones; ++i) {
+			Common::Rect zone;
+			readRect(stream, zone);
+			uint16 cursorType = stream.readUint16LE();
+			uint16 sceneID = stream.readUint16LE();
+			int16 flagLabel = stream.readSint16LE();
+			byte flagValue = stream.readByte();
+
+			if (i == 0) {
+				_exitHotspot = zone;
+				_exitCursorType = cursorType;
+				_cancelScene._sceneChange.sceneID = sceneID;
+				// The field after the scene id is an event-flag label, not a frame.
+				_cancelScene._sceneChange.frameID = 0;
+				_cancelScene._sceneChange.continueSceneSound = kContinueSceneSound;
+				_cancelScene._flag.label = flagLabel;
+				_cancelScene._flag.flag = flagValue;
+			}
+		}
+	} else {
+		_cancelScene.readData(stream);      // 0x1e8 (ends the 513-byte blob)
+	}
+
+	// --- Random-sound blocks: pickup, rotate, drop, good, bad, completion, close-up ---
+	const uint numSoundBlocks = isNancy13 ? kNumSoundsNancy13 : kNumSounds;
+	RandomSoundBlock blocks[kNumSoundsNancy13];
+	for (uint i = 0; i < numSoundBlocks; ++i)
 		blocks[i].readData(stream);
 
-	SoundDescription *sounds[kNumSounds] = { &_pickupSound, &_rotateSound, &_dropSound,
-											 &_goodPlacementSound, &_badPlacementSound, &_completionSound };
-	for (uint i = 0; i < kNumSounds; ++i) {
+	SoundDescription *sounds[kNumSoundsNancy13] = { &_pickupSound, &_rotateSound, &_dropSound,
+													&_goodPlacementSound, &_badPlacementSound,
+													&_completionSound, &_closeupSound };
+	for (uint i = 0; i < numSoundBlocks; ++i) {
 		SoundDescription &s = *sounds[i];
 		s.name = blocks[i].names.empty() ? "NO SOUND" : blocks[i].names[0];
 		s.channelID = blocks[i].channel;
@@ -264,6 +322,14 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 
 		readRect(stream, p.slotRect);
 		readRect(stream, p.homeRect);
+
+		if (isNancy13) {
+			// Close-up view: the source region, and where it is drawn.
+			readRect(stream, p.closeupSrcRect);
+			readRect(stream, p.closeupDestRect);
+			p.hasCloseupSound = stream.readByte() != 0;
+		}
+
 		p.defaultRotation = stream.readByte();
 		p.requiredRotation = stream.readByte();
 		p.isPreRotated = p.requiredRotation == kPrePlacedRotation;
@@ -410,6 +476,8 @@ void OneBuildPuzzle::execute() {
 		g_nancy->_sound->loadSound(_goodPlacementSound);
 		g_nancy->_sound->loadSound(_badPlacementSound);
 		g_nancy->_sound->loadSound(_completionSound);
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			g_nancy->_sound->loadSound(_closeupSound);
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -523,13 +591,26 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 			Piece &piece = _pieces[_pickedUpPiece];
 
+			// Swap mode needs a target: released over empty space the click is
+			// ignored and the piece stays on the cursor. The target is chosen
+			// before the drop is judged, so a correct placement displaces the
+			// occupant too.
+			int16 target = -1;
+			int16 displaced = -1;
+			bool targetIsPiece = false;
+			if (_dropMode == kDropSwap) {
+				target = findDropTarget(piece.gameRect, targetIsPiece);
+				if (target == -1)
+					return;
+
+				if (targetIsPiece)
+					displaced = target;
+			}
+
 			Common::Rect slot = piece.slotRect;
 
 			// Bounding-box must fit within slot +- tolerance.
-			bool nearSlot = (piece.gameRect.left >= slot.left - _slotTolerance &&
-							 piece.gameRect.top  >= slot.top  - _slotTolerance &&
-							 piece.gameRect.right  <= slot.right  + _slotTolerance &&
-							 piece.gameRect.bottom <= slot.bottom + _slotTolerance);
+			bool nearSlot = rectFitsIn(piece.gameRect, slot, _slotTolerance + _dropSlop);
 
 			// A piece only fits at the orientation its slot calls for; a
 			// 180-degree flip keeps the same bounding box, so proximity alone
@@ -553,22 +634,59 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 			} else {
 				_correctlyPlaced = false;
 
-				// In counter mode a slot swallows whatever is dropped into it, so
-				// landing in one that isn't the piece's own costs a mistake. Once
-				// there are more mistakes than the puzzle allows it is lost.
-				if (_placementMode == kPlacementCounter && findSlotAt(piece.gameRect) != -1) {
-					piece.placed = true;
-					++_mistakes;
+				bool restorePosition = true;
 
-					if (_mistakes > _totalPieces - _requiredPieces) {
-						_isCancelled = true;
-						_state = kActionTrigger;
+				// The piece takes over the target's spot, aligned by its left and
+				// bottom edges; the occupant is handed to the cursor in exchange.
+				if (_dropMode == kDropSwap && !_freePlacement) {
+					const Common::Rect &anchor = targetIsPiece ? _pieces[target].gameRect
+															   : _pieces[target].slotRect;
+					piece.gameRect.left = anchor.left;
+					piece.gameRect.bottom = anchor.bottom;
+					piece.gameRect.right = piece.gameRect.left + _pickedUpWidth;
+					piece.gameRect.top = piece.gameRect.bottom - _pickedUpHeight;
+					restorePosition = false;
+				} else if (_placementMode == kPlacementCounter || _dropMode == kDropAnySlot) {
+					int16 slotIdx = findSlotAt(piece.gameRect);
+
+					if (slotIdx != -1) {
+						restorePosition = false;
+
+						if (_placementMode == kPlacementCounter) {
+							// A slot swallows whatever is dropped into it, so a wrong
+							// one costs a mistake; too many and the puzzle is lost.
+							piece.placed = true;
+							++_mistakes;
+
+							if (_mistakes > _totalPieces - _requiredPieces) {
+								_isCancelled = true;
+								_state = kActionTrigger;
+							}
+						} else {
+							// Otherwise it snaps into the slot it landed in, without
+							// counting as placed.
+							piece.gameRect = _pieces[slotIdx].slotRect;
+						}
 					}
-				} else if (!_freePlacement) {
-					piece.gameRect = _prevDragGameRect;
-				} else {
-					piece.curRotation = piece.defaultRotation;
-					piece.gameRect = piece.homeRect;
+				}
+
+				if (restorePosition) {
+					if (!_freePlacement) {
+						piece.gameRect = _prevDragGameRect;
+					} else {
+						piece.curRotation = piece.defaultRotation;
+						piece.gameRect = piece.homeRect;
+					}
+				}
+			}
+
+			if (displaced != -1) {
+				// The occupant has been pushed out of its spot.
+				Piece &other = _pieces[displaced];
+				if (other.placed && _placementMode == kPlacementNormal) {
+					other.placed = false;
+					if (_piecesPlaced > 0)
+						--_piecesPlaced;
 				}
 			}
 
@@ -581,9 +699,15 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 			}
 
 			updatePieceRender(_pickedUpPiece);
-			_isDragging = false;
-			_pickedUpPiece = -1;
 			playDropSound();
+
+			if (displaced != -1) {
+				// Handed to the cursor; the drop sound above covers the swap.
+				pickUpPiece(displaced, false);
+			} else {
+				_isDragging = false;
+				_pickedUpPiece = -1;
+			}
 		}
 		return;
 	}
@@ -596,6 +720,24 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			startFinalAnimation();
+		return;
+	}
+
+	// A close-up swallows the whole viewport: a click anywhere dismisses it and
+	// picks up the piece that opened it, not whatever lies under the cursor.
+	if (_closeupPiece != -1) {
+		setPieceCursor();
+
+		if (_solveState != kIdle)
+			return;
+
+		if (input.input & (NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonUp)) {
+			int16 pieceIdx = _closeupPiece;
+			bool rightClick = (input.input & NancyInput::kRightMouseButtonUp);
+			playRotateSoundAndStartTimer();
+			closeCloseup();
+			pickUpPiece(pieceIdx, rightClick);
+		}
 		return;
 	}
 
@@ -637,20 +779,13 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		bool leftClick = (input.input & NancyInput::kLeftMouseButtonUp);
 		bool rightClick = (input.input & NancyInput::kRightMouseButtonUp);
 		if ((leftClick || rightClick) && topmostUnplaced != -1) {
-			_pickedUpPiece = topmostUnplaced;
-
-			Piece &pp = _pieces[_pickedUpPiece];
-			pp.useAltSurface = false;
-
-			if (rightClick)
-				rotatePiece(_pickedUpPiece);
-
-			_isDragging = true;
-			_pickedUpWidth  = pp.rotateSurfaces[pp.curRotation].w;
-			_pickedUpHeight = pp.rotateSurfaces[pp.curRotation].h;
-			pp.setZ((uint16)(_z + (int)_pieces.size() * 2));
-			pp.registerGraphics();
 			playRotateSoundAndStartTimer();
+
+			// A piece with a close-up opens it instead of being picked up.
+			if (!_pieces[topmostUnplaced].closeupDestRect.isEmpty())
+				openCloseup(topmostUnplaced);
+			else
+				pickUpPiece(topmostUnplaced, rightClick);
 		}
 		return;
 	}
@@ -662,7 +797,10 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	// Check exit hotspot
 	Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
 	if (exitScreen.contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		if (_exitCursorType != 0)
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, true);
+		else
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_isCancelled = true;
 			_state = kActionTrigger;
@@ -698,6 +836,86 @@ void OneBuildPuzzle::setPieceCursor(bool isHeld) {
 	} else {
 		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
 	}
+}
+
+void OneBuildPuzzle::pickUpPiece(int16 pieceIdx, bool rotate) {
+	_pickedUpPiece = pieceIdx;
+
+	Piece &pp = _pieces[_pickedUpPiece];
+	pp.useAltSurface = false;
+
+	if (rotate)
+		rotatePiece(_pickedUpPiece);
+
+	_isDragging = true;
+	_pickedUpWidth  = pp.rotateSurfaces[pp.curRotation].w;
+	_pickedUpHeight = pp.rotateSurfaces[pp.curRotation].h;
+	pp.setZ((uint16)(_z + (int)_pieces.size() * 2));
+	pp.registerGraphics();
+}
+
+// Pieces at their current positions first, at the drop test's slop, then the
+// slots at the plain tolerance. The carried piece never matches itself.
+int16 OneBuildPuzzle::findDropTarget(const Common::Rect &dropRect, bool &isPiece) const {
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		if ((int16)i == _pickedUpPiece)
+			continue;
+
+		if (rectFitsIn(dropRect, _pieces[i].gameRect, _slotTolerance + _dropSlop)) {
+			isPiece = true;
+			return (int16)i;
+		}
+	}
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		if (_pieces[i].slotRect.isEmpty())
+			continue;
+
+		if (rectFitsIn(dropRect, _pieces[i].slotRect, _slotTolerance)) {
+			isPiece = false;
+			return (int16)i;
+		}
+	}
+
+	isPiece = false;
+	return -1;
+}
+
+void OneBuildPuzzle::openCloseup(int16 pieceIdx) {
+	const Piece &p = _pieces[pieceIdx];
+
+	_closeupDisplay._drawSurface.create(_image, p.closeupSrcRect);
+	_closeupDisplay.setTransparent(false);
+
+	Common::Rect dest = p.closeupDestRect;
+	const VIEW *viewData = GetEngineData(VIEW);
+	if (viewData)
+		dest.translate(viewData->screenPosition.left, viewData->screenPosition.top);
+
+	_closeupDisplay.moveTo(dest);
+	_closeupDisplay.setVisible(true);
+	_closeupPiece = pieceIdx;
+
+	// Flagged pieces also get a spoken remark, keyed by the sound name.
+	if (p.hasCloseupSound) {
+		g_nancy->_sound->playSound(_closeupSound);
+
+		Common::String text = resolveSubtitleText(_closeupSound.name, Common::String(), "AUTOTEXT");
+		if (text.empty())
+			text = resolveSubtitleText(_closeupSound.name, Common::String(), "CONVO");
+		showSubtitle(text);
+	}
+}
+
+void OneBuildPuzzle::closeCloseup() {
+	if (_closeupPiece == -1)
+		return;
+
+	if (_pieces[_closeupPiece].hasCloseupSound)
+		NancySceneState.getTextbox().clear();
+
+	_closeupDisplay.setVisible(false);
+	_closeupPiece = -1;
 }
 
 void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
@@ -835,8 +1053,7 @@ int16 OneBuildPuzzle::findSlotAt(const Common::Rect &rect) const {
 		if (slot.isEmpty())
 			continue;
 
-		if (rect.left >= slot.left - _slotTolerance && rect.top >= slot.top - _slotTolerance &&
-				rect.right <= slot.right + _slotTolerance && rect.bottom <= slot.bottom + _slotTolerance)
+		if (rectFitsIn(rect, slot, _slotTolerance))
 			return (int16)i;
 	}
 

@@ -35,7 +35,7 @@ namespace Action {
 // Otherwise it returns to its previous position (or home in free placement mode).
 class OneBuildPuzzle : public RenderActionRecord {
 public:
-	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99), _counterDisplay(99) {}
+	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99), _counterDisplay(99), _closeupDisplay(99) {}
 	virtual ~OneBuildPuzzle() {}
 
 	void init() override;
@@ -61,6 +61,16 @@ protected:
 		kPlacementCounter = 2	// A placed piece drops out of sight into its slot
 	};
 
+	// What a drop that isn't a correct placement does.
+	enum DropMode {
+		kDropNormal = 0,	// The piece goes back where it came from
+		kDropAnySlot = 2,	// The piece snaps to whichever slot it landed in
+		kDropSwap = 3		// The piece takes the target's spot and displaces it
+	};
+
+	// Extra slop allowed on top of the slot tolerance when accepting a drop.
+	static const int16 kDropSlop = 7;
+
 	// What the puzzle counts, both to decide when it is finished and to fill in
 	// the on-screen counter.
 	enum CountMode {
@@ -84,6 +94,12 @@ protected:
 		// before Nancy 12, which is why older games only accept upright pieces.
 		uint8 requiredRotation = 0;
 		bool isPreRotated = false;
+
+		// Nancy13 close-up: clicking the piece shows this region blown up over
+		// the viewport instead of picking it up.
+		Common::Rect closeupSrcRect;
+		Common::Rect closeupDestRect;
+		bool hasCloseupSound = false;
 
 		// Runtime
 		Common::Rect gameRect;      // Current viewport-space rect
@@ -112,6 +128,8 @@ protected:
 	int16 _slotTolerance = 0;      // Proximity for snapping to slot
 	bool _orderedPlacement = false; // Pieces must be placed in a specific order
 	PlacementMode _placementMode = kPlacementNormal; // Nancy 12 only, earlier games are always normal
+	DropMode _dropMode = kDropNormal;
+	int16 _dropSlop = 0;           // kDropSlop from Nancy13 on
 	Common::Array<int16> _placementOrder; // 1-indexed piece IDs in required placement order
 
 	// Counter puzzles (Nancy 12): the puzzle is solved once _requiredPieces have
@@ -161,14 +179,16 @@ protected:
 	Common::Array<Piece> _pieces;
 
 	// Nancy12 stores the puzzle's sounds as this many random-sound blocks, in
-	// this fixed on-disk order.
+	// this fixed on-disk order. Nancy13 appends a seventh for the close-up view.
 	static const uint kNumSounds = 6;
+	static const uint kNumSoundsNancy13 = 7;
 	static const uint kPickupSound = 0;
 	static const uint kRotateSound = 1;
 	static const uint kDropSound = 2;
 	static const uint kGoodSound = 3;
 	static const uint kBadSound = 4;
 	static const uint kCompletionSound = 5;
+	static const uint kCloseupSound = 6;
 
 	SoundDescription _pickupSound;
 	SoundDescription _rotateSound;
@@ -190,8 +210,13 @@ protected:
 	SoundDescription _completionSound;
 	Common::String _completionText;
 
+	SoundDescription _closeupSound;
+
 	SceneChangeWithFlag _cancelScene;
 	Common::Rect _exitHotspot;
+	// Nancy13 stores this in the exit hotspot record; earlier games use
+	// _puzzleExitCursor.
+	uint16 _exitCursorType = 0;
 
 	// --- Runtime state ---
 
@@ -226,6 +251,9 @@ protected:
 
 	RenderObject _counterDisplay;        // Digit sprites showing the running count.
 
+	RenderObject _closeupDisplay;        // Nancy13 blown-up view of a single piece.
+	int16 _closeupPiece = -1;            // Piece whose close-up is showing, -1 if none.
+
 	// Previous drag position (for freePlacement restore on wrong drop)
 	Common::Rect _prevDragGameRect;
 
@@ -246,6 +274,14 @@ protected:
 	// texts; each caption uses its key if known, else the inline text.
 	void readPlacementTexts(Common::SeekableReadStream &stream, Common::Array<Common::String> &out);
 	void setPieceCursor(bool isHeld = false);
+	// Attach a piece to the cursor; the caller plays the pickup sound.
+	void pickUpPiece(int16 pieceIdx, bool rotate);
+	// Swap-mode target: the piece under the drop point, else the slot it landed
+	// in. isPiece says which matched; -1 means neither.
+	int16 findDropTarget(const Common::Rect &dropRect, bool &isPiece) const;
+	// Show/hide the Nancy13 blown-up view of a piece
+	void openCloseup(int16 pieceIdx);
+	void closeCloseup();
 
 	void playPickupSound();
 	void playRotateSoundAndStartTimer();
