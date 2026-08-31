@@ -110,11 +110,14 @@ protected:
 
 		BlockingSequence &layerFrames(SceneLayerStack &layers, uint layerId,
 			const AnimationFrameRange &range);
+		BlockingSequence &actorReplacement(uint chunkIndex, uint descriptorCount,
+			const byte *frameMap, uint frameMapSize, uint32 frameMillis);
 		BlockingSequence &actorReplacement(const ActionOverlaySpec &spec);
 		BlockingSequence &actorPose(const SceneActorPose &pose, byte cel = 0);
 		BlockingSequence &actorPath(const SceneActorPose &target, byte cel = 0,
 			bool cancelOnSkip = false);
 		BlockingSequence &sound(uint16 cueId, byte volumePercent = 100);
+		BlockingSequence &stopSound();
 		BlockingSequence &secondarySpeech(uint16 rowIndex, byte frameIndex);
 		BlockingSequence &primarySpeech(uint16 rowIndex, byte frameIndex, uint16 centerX,
 			uint16 topY, byte red, byte green, byte blue);

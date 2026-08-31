@@ -583,13 +583,6 @@ void Scene7060::beginPrimaryBrunoSpeechLine(uint16 rowIndex, byte frameIndex) {
 		kScene7060DialoguePrimaryBlue);
 }
 
-void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int soundFrame, byte soundId) {
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.soundAt(soundFrame, soundId));
-}
-
 void Scene7060::handleSpeechRow04Variant() {
 	beginSecondarySpeechLine(4, _vm->gameState().activatedLabExitMachine ? 1 : 0);
 }
@@ -608,27 +601,31 @@ void Scene7060::handleChunk9Or10MachineAction() {
 	}
 
 	const uint chunkIndex = _activeActorWorldX < 600 ? 9 : 10;
-	runOverlaySequence(chunkIndex, kScene7060Chunk9And10DescriptorCount,
-		kScene7060Chunk9Or10MachineFrameMap, ARRAYSIZE(kScene7060Chunk9Or10MachineFrameMap),
-		kScene7060OverlayFrameMillis, 3, 0x10);
-	beginSecondarySpeechLine(5, 0);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(chunkIndex, kScene7060Chunk9And10DescriptorCount,
+			kScene7060Chunk9Or10MachineFrameMap, ARRAYSIZE(kScene7060Chunk9Or10MachineFrameMap),
+			kScene7060OverlayFrameMillis)
+			.soundAt(3, 0x10))
+		.secondarySpeech(5, 0);
 }
 
 void Scene7060::handleShortExitToState7071() {
-	runOverlaySequence(9, kScene7060Chunk9And10DescriptorCount,
-		kScene7060ShortExitFrameMap, ARRAYSIZE(kScene7060ShortExitFrameMap),
-		kScene7060OverlayFrameMillis);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7060ShortExitToG07State;
+	BlockingSequence(*this)
+		.actorReplacement(9, kScene7060Chunk9And10DescriptorCount,
+			kScene7060ShortExitFrameMap, ARRAYSIZE(kScene7060ShortExitFrameMap),
+			kScene7060OverlayFrameMillis)
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene7060ShortExitToG07State);
 }
 
 void Scene7060::handleChunk7PickupItem11() {
-	runActorReplacement(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
 		kScene7060Chunk7PickupItem11FrameMap, ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap), kScene7060OverlayFrameMillis)
 		.hookAt(4, kScene7060PickupItem11Hook));
 	addInventoryItem(0x11);
 	applyChunk6KeyTakenFrameMap();
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene7060::handleChunk9ExitToG07() {
@@ -637,19 +634,23 @@ void Scene7060::handleChunk9ExitToG07() {
 		return;
 	}
 
-	runOverlaySequence(9, kScene7060Chunk9And10DescriptorCount,
-		kScene7060Chunk9ExitFrameMap, ARRAYSIZE(kScene7060Chunk9ExitFrameMap),
-		kScene7060OverlayFrameMillis, 8, 0x11);
-	_vm->gameState().activatedLabExitMachine = true;
-	_vm->gameState().mainFlowStateId = kScene7060ExitToG07State;
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(9, kScene7060Chunk9And10DescriptorCount,
+			kScene7060Chunk9ExitFrameMap, ARRAYSIZE(kScene7060Chunk9ExitFrameMap),
+			kScene7060OverlayFrameMillis)
+			.soundAt(8, 0x11))
+		.commit(_vm->gameState().activatedLabExitMachine, true)
+		.commit(_vm->gameState().mainFlowStateId, kScene7060ExitToG07State);
 }
 
 void Scene7060::handleChunk10SpeechAction() {
-	runOverlaySequence(10, kScene7060Chunk9And10DescriptorCount,
-		kScene7060Chunk10SpeechFrameMap, ARRAYSIZE(kScene7060Chunk10SpeechFrameMap),
-		kScene7060OverlayFrameMillis, 8, 0x12);
-	_soundBank0.stop();
-	beginSecondarySpeechLine(11, 0);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(10, kScene7060Chunk9And10DescriptorCount,
+			kScene7060Chunk10SpeechFrameMap, ARRAYSIZE(kScene7060Chunk10SpeechFrameMap),
+			kScene7060OverlayFrameMillis)
+			.soundAt(8, 0x12))
+		.stopSound()
+		.secondarySpeech(11, 0);
 }
 
 void Scene7060::handleUseItem0DOnMachine() {

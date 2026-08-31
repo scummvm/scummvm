@@ -219,6 +219,13 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
+		uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis) {
+	return actorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis));
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
 		const ActionOverlaySpec &spec) {
 	if (canRun()) {
 		_scene.runActorReplacement(spec);
@@ -246,6 +253,11 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::sound(
 		uint16 cueId, byte volumePercent) {
 	if (canRun())
 		_scene._soundBank0.playSample(cueId, volumePercent);
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::stopSound() {
+	_scene._soundBank0.stop();
 	return *this;
 }
 

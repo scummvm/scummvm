@@ -44,8 +44,6 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void rebuildWalkableMask();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame = -1);
 	void handleBackToG07();
 	void handlePickupItem13();
 

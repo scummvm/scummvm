@@ -63,8 +63,6 @@ private:
 	void runDialogueMenuRow98();
 	void beginPrimaryDialogueSpeech(byte frameIndex);
 	void beginPrimaryBrunoSpeechLine(uint16 rowIndex, byte frameIndex);
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int soundFrame = -1, byte soundId = 0);
 	void handleSpeechRow04Variant();
 	void handleSpeechRow04Or06();
 	void handleChunk9Or10MachineAction();
