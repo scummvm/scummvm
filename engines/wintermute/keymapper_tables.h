@@ -63,6 +63,16 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	act->addDefaultInputMapping("JOY_X"); // extra joy
 	engineKeyMap->addAction(act);
 
+	act = new Action("PAUSE", _("Pause game anytime"));
+	act->setKeyEvent(KeyState(KEYCODE_p, 0, KBD_CTRL));
+	act->addDefaultInputMapping("C+p"); // original keyboard
+	engineKeyMap->addAction(act);
+
+	act = new Action("HIGHLIGHT", _("Highlight active items"));
+	act->setKeyEvent(KeyState(KEYCODE_p, 0, KBD_CTRL));
+	act->addDefaultInputMapping("C+TAB"); // original keyboard
+	engineKeyMap->addAction(act);
+
 	Common::KeymapArray result = Keymap::arrayOf(engineKeyMap);
 	if (gameId == "8squares" ||
 		gameId == "actualdest" ||
