@@ -35,7 +35,7 @@ namespace Action {
 
 void PaintPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);		// 0x3d
-	_field5e = stream.readSint16LE();		// 0x5e
+	_hoverCursorType = stream.readUint16LE();	// 0x5e
 	_offset.x = stream.readSint32LE();		// 0x60
 	_offset.y = stream.readSint32LE();		// 0x64
 	readRect(stream, _canvasRect);			// 0x68
@@ -197,6 +197,62 @@ void PaintPuzzle::drawRegion(uint regionIndex) {
 	}
 }
 
+// Draws the held color's brush sprite at the cursor. The cursor is blanked while a
+// color is held, so the brush is what the player sees moving.
+void PaintPuzzle::drawBrush() {
+	if (_heldColor < 0 || _heldColor >= (int)_colors.size() || _image.w == 0) {
+		return;
+	}
+
+	const Common::Rect &src = _colors[_heldColor].fillRect;
+	if (src.isEmpty()) {
+		return;
+	}
+
+	byte tr, tg, tb;
+	g_nancy->_graphics->getInputPixelFormat().colorToRGB(g_nancy->_graphics->getTransColor(), tr, tg, tb);
+
+	// The sprite is centered on the cursor, then shifted by the offset.
+	const Common::Point dest(_brushPos.x - src.width() / 2 - _offset.x,
+		_brushPos.y - src.height() / 2 - _offset.y);
+
+	for (int y = 0; y < src.height() && src.top + y < _image.h; ++y) {
+		const int dy = dest.y + y;
+		if (dy < 0 || dy >= _drawSurface.h) {
+			continue;
+		}
+
+		for (int x = 0; x < src.width() && src.left + x < _image.w; ++x) {
+			const int dx = dest.x + x;
+			if (dx < 0 || dx >= _drawSurface.w) {
+				continue;
+			}
+
+			byte a, r, g, b;
+			_image.format.colorToARGB(_image.getPixel(src.left + x, src.top + y), a, r, g, b);
+			if (a == 0 || (r == tr && g == tg && b == tb)) {
+				continue;
+			}
+
+			if (a != 255) {
+				// Composite the anti-aliased edges over the painted regions below,
+				// instead of replacing their paint with semi-transparent pixels.
+				byte da, dr, dg, db;
+				_drawSurface.format.colorToARGB(_drawSurface.getPixel(dx, dy), da, dr, dg, db);
+
+				uint destAlpha = da * (255 - a) / 255;
+				uint outAlpha = a + destAlpha;
+				r = (r * a + dr * destAlpha) / outAlpha;
+				g = (g * a + dg * destAlpha) / outAlpha;
+				b = (b * a + db * destAlpha) / outAlpha;
+				a = outAlpha;
+			}
+
+			_drawSurface.setPixel(dx, dy, _drawSurface.format.ARGBToColor(a, r, g, b));
+		}
+	}
+}
+
 void PaintPuzzle::redraw() {
 	_drawSurface.clear(0);
 
@@ -207,6 +263,8 @@ void PaintPuzzle::redraw() {
 			drawRegion(i);
 		}
 	}
+
+	drawBrush();
 
 	_needsRedraw = true;
 }
@@ -243,6 +301,20 @@ void PaintPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	// A held color turns the cursor into its brush sprite, which the puzzle draws itself.
+	if (_heldColor >= 0) {
+		Common::Rect screenPt(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1);
+		Common::Rect vpPt = NancySceneState.getViewport().convertScreenToViewport(screenPt);
+		Common::Point brushPos(vpPt.left, vpPt.top);
+
+		if (brushPos != _brushPos) {
+			_brushPos = brushPos;
+			redraw();
+		}
+
+		g_nancy->_cursor->setCursorType(CursorManager::kNancy13Blank, true, false);
+	}
+
 	// Give-up hotspot: leave the puzzle.
 	if (!_exitHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
@@ -256,18 +328,16 @@ void PaintPuzzle::handleInput(NancyInput &input) {
 
 	int color = colorSwatchAtCursor(input.mousePos);
 	if (color >= 0) {
-		// Over a color swatch: show the blue puzzle-hotspot hand and pick the
-		// color on click.
-		g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_hoverCursorType, true);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_heldColor = color;
+			redraw();
 		}
 		input.eatMouseInput();
 		return;
 	}
 
-	// Over a paintable region with a color picked: paint it on click. The
-	// cursor is left as the held paintbrush item.
+	// Over a paintable region with a color picked: paint it on click.
 	int region = regionAtCursor(input.mousePos);
 	if (region >= 0 && _heldColor >= 0) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {

@@ -79,14 +79,15 @@ protected:
 	byte shapeAlpha(const Graphics::ManagedSurface &img, int x, int y) const;
 	void paintRegion(uint regionIndex, int colorIndex);
 	void drawRegion(uint regionIndex);
+	void drawBrush();
 	void redraw();
 	bool isSolved() const;
 	void applyOutcome(const SceneOutcome &outcome);
 
 	// -- File data --
 	Common::Path _imageName;		// 0x3d
-	int16 _field5e = 0;				// 0x5e
-	Common::Point _offset;			// 0x60 (two int32)
+	uint16 _hoverCursorType = 0;	// 0x5e - raw Nancy14 cursor type, shown over a color swatch
+	Common::Point _offset;			// 0x60 (two int32) - brush sprite offset from the cursor
 	Common::Rect _canvasRect;		// 0x68
 
 	Common::Array<PaintColor> _colors;		// 0x78
@@ -107,6 +108,7 @@ protected:
 	Graphics::ManagedSurface _image;
 	Common::Array<Graphics::ManagedSurface> _regionImages;
 	int _heldColor = -1;
+	Common::Point _brushPos;
 	int _hoverRegion = -1;
 	int _hoverColor = -1;
 	bool _solved = false;
