@@ -71,8 +71,6 @@ private:
 
 	bool isFirstEntryState() const;
 	bool isSpecialOverlayEntryState() const;
-
-	ResourceSpriteLayer _quasimodoLayer;
 };
 
 } // End of namespace Hollywood

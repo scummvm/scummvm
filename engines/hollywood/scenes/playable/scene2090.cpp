@@ -313,13 +313,13 @@ void Scene2090::runEntryFromScene2020() {
 
 	setRitualPaletteCycle(true);
 	const bool firstPartComplete = playAndPresentAnimationFrames(
-		_sceneLayers.layer(kScene2090ForegroundLayer),
+		_sceneLayers, kScene2090ForegroundLayer,
 		AnimationFrameRange(kScene2090SpecialEntryStartForegroundFrame + 1,
 			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis).unskippable());
 	setRitualPaletteCycle(false);
 	if (!firstPartComplete)
 		return;
-	if (!playAndPresentAnimationTransition(_sceneLayers.layer(kScene2090ForegroundLayer),
+	if (!playAndPresentAnimationTransition(_sceneLayers, kScene2090ForegroundLayer,
 			AnimationTransition(kScene2090SpecialEntryMidForegroundFrame + 1,
 				kScene2090SpecialEntryFinalForegroundFrame,
 				kScene2090SpecialEntryFinalForegroundFrame,
@@ -383,7 +383,7 @@ void Scene2090::runAltarCeremony() {
 	beginSecondarySpeechLine(4, 6);
 
 	resetForegroundLayer(true, 0);
-	if (!playAndPresentAnimationTransition(_sceneLayers.layer(kScene2090ForegroundLayer),
+	if (!playAndPresentAnimationTransition(_sceneLayers, kScene2090ForegroundLayer,
 			AnimationTransition(1, kScene2090FinaleFirstForegroundStopFrame,
 				kScene2090FinaleFirstForegroundStopFrame,
 				kScene2090FrameMillis).unskippable()))

@@ -51,6 +51,9 @@ const byte kScene2110TreasureDescriptorCount = 0x13;
 const byte kScene2110EntrySpeechBaseFrameA = 0x0e;
 const byte kScene2110EntrySpeechBaseFrameB = 0x16;
 const byte kScene2110TreasureSpeechBaseFrame = 0x0a;
+const uint kScene2110EntryLayer = 0;
+const uint kScene2110AmbientLayer = 1;
+const uint kScene2110TreasureLayer = 2;
 
 enum Scene2110PrimarySpeechGroup {
 	kScene2110EntrySpeechGroupA = 1,
@@ -83,6 +86,18 @@ const byte kScene2110TreasureFrameMap[] = {
 	8, 4, 3, 2, 1, 0
 };
 
+const SceneLayerSpec kScene2110LayerSpecs[] = {
+	{kSceneAnimationBehindActors, kScene2110EntryLayerChunk,
+		kScene2110EntryLayerDescriptorCount, kScene2110EntryLayerFrameMap,
+		ARRAYSIZE(kScene2110EntryLayerFrameMap), false, 0},
+	{kSceneAnimationBehindActors, kScene2110AmbientChunk,
+		kScene2110AmbientDescriptorCount, kScene2110AmbientFrameMap,
+		ARRAYSIZE(kScene2110AmbientFrameMap), true, 0},
+	{kSceneAnimationActorReplacement, kScene2110TreasureChunk,
+		kScene2110TreasureDescriptorCount, kScene2110TreasureFrameMap,
+		ARRAYSIZE(kScene2110TreasureFrameMap), false, 0}
+};
+
 const byte kScene2110TreasureGrantItems[] = {
 	0x30, 0x42, 0x4c
 };
@@ -110,21 +125,13 @@ Scene2110::Scene2110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2110Config()),
 		_entryIdleChannel(),
 		_scriptedActorPathChannel(),
-		_entryLayer(),
-		_ambientLayer(),
-		_treasureLayer(),
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_entryIdleActive(false),
 		_scriptedActorPathActive(false),
 		_scriptedActorPathFrameIndex(0) {
-	_entryLayer.configure(kScene2110EntryLayerChunk, kScene2110EntryLayerDescriptorCount,
-		kScene2110EntryLayerFrameMap, ARRAYSIZE(kScene2110EntryLayerFrameMap));
-	_ambientLayer.configure(kScene2110AmbientChunk, kScene2110AmbientDescriptorCount,
-		kScene2110AmbientFrameMap, ARRAYSIZE(kScene2110AmbientFrameMap));
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_ambientLayer,
-		kScene2110FrameMillis);
-	_treasureLayer.configure(kScene2110TreasureChunk, kScene2110TreasureDescriptorCount,
-		kScene2110TreasureFrameMap, ARRAYSIZE(kScene2110TreasureFrameMap));
+	_sceneLayers.configure(kScene2110LayerSpecs);
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kScene2110AmbientLayer, kScene2110FrameMillis);
 }
 
 void Scene2110::initializeCustomPreviewState() {
@@ -143,24 +150,6 @@ void Scene2110::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-void Scene2110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_entryLayer);
-	drawResourceSpriteLayer(_ambientLayer);
-	drawActionOverlayLayer();
-
-	if (_treasureLayer.visible) {
-		drawResourceSpriteLayer(_treasureLayer);
-	} else {
-		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	}
 }
 
 void Scene2110::runCustomEntrySequence() {
@@ -252,13 +241,13 @@ uint32 Scene2110::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 
 void Scene2110::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene2110TreasureSpeechGroup) {
-		_treasureLayer.visible = true;
-		_treasureLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerVisible(kScene2110TreasureLayer, true);
+		_sceneLayers.setLayerFrame(kScene2110TreasureLayer, frameIndex);
 		return;
 	}
 
-	_entryLayer.visible = true;
-	_entryLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerVisible(kScene2110EntryLayer, true);
+	_sceneLayers.setLayerFrame(kScene2110EntryLayer, frameIndex);
 }
 
 AmbientAudioProfile Scene2110::ambientAudioProfile() const {
@@ -273,15 +262,11 @@ AmbientAudioProfile Scene2110::ambientAudioProfile() const {
 }
 
 void Scene2110::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_ambientTrack);
 	_entryIdleChannel.reset(kScene2110EntrySpeechBaseFrameA,
 		kScene2110PrimarySpeechFrameMillis);
 	_scriptedActorPathChannel.reset(0, kScene2110ActorPathFrameMillis);
-	_entryLayer.visible = false;
-	_entryLayer.reset(0);
-	_ambientLayer.visible = true;
-	_treasureLayer.visible = false;
-	_treasureLayer.reset(0);
 	_entryIdleActive = false;
 	_scriptedActorPathActive = false;
 	_scriptedActorPathFrameIndex = 0;
@@ -293,12 +278,12 @@ void Scene2110::advanceEntryIdle(uint32 delta) {
 
 	const uint frameCount = _entryIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_entryLayer.frameIndex == kScene2110EntrySpeechBaseFrameA + 4) {
-			_entryLayer.setFrame(kScene2110EntrySpeechBaseFrameA);
+		if (_sceneLayers.layerFrame(kScene2110EntryLayer) == kScene2110EntrySpeechBaseFrameA + 4) {
+			_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA);
 		} else if (_random.getRandomNumber(14) == 0) {
-			_entryLayer.setFrame(kScene2110EntrySpeechBaseFrameA + 4);
+			_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA + 4);
 		} else {
-			_entryLayer.setFrame(kScene2110EntrySpeechBaseFrameA);
+			_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA);
 		}
 	}
 }
@@ -377,20 +362,20 @@ void Scene2110::runScriptedReturnToScene2100() {
 	runEntrySecondarySpeechLine(0);
 	if (animationPlaybackShouldStop())
 		return;
-	if (!playAndPresentAnimationFrames(_entryLayer,
+	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
 			AnimationFrameRange(0x12, 0x16, kScene2110FrameMillis).unskippable()))
 		return;
 	runEntryPrimarySpeechLine(1, kScene2110EntrySpeechGroupB);
 	if (animationPlaybackShouldStop())
 		return;
-	if (!playAndPresentAnimationFrames(_entryLayer,
+	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
 			AnimationFrameRange(0x1a, 0x1e, kScene2110FrameMillis).unskippable()))
 		return;
 	runEntrySecondarySpeechLine(2);
 	if (animationPlaybackShouldStop())
 		return;
 	runEntryPrimarySpeechLine(3, kScene2110EntrySpeechGroupA);
-	_entryLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene2110EntryLayer, false);
 	if (animationPlaybackShouldStop())
 		return;
 
@@ -404,9 +389,9 @@ void Scene2110::runScriptedReturnToScene2100() {
 
 bool Scene2110::runScriptedEntryOpening() {
 	setActiveActorPose(0x320, 0x118, 4);
-	_entryLayer.visible = true;
-	_entryLayer.reset(0);
-	if (!playAndPresentAnimationFrames(_entryLayer,
+	_sceneLayers.setLayerVisible(kScene2110EntryLayer, true);
+	_sceneLayers.resetLayer(kScene2110EntryLayer, 0);
+	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
 			AnimationFrameRange(0, 0x0e, kScene2110FrameMillis)
 				.hookAt(0x0a, kScene2110EntryPathHook).unskippable()))
 		return false;
@@ -430,27 +415,27 @@ void Scene2110::runTreasureGrantAction() {
 	const bool grantsReward = !state.scene2110TreasureGranted &&
 		rewardIndex < ARRAYSIZE(kScene2110TreasureGrantItems);
 
-	_treasureLayer.visible = true;
-	_treasureLayer.reset(0);
-	if (!playAndPresentAnimationFrames(_treasureLayer,
+	_sceneLayers.setLayerVisible(kScene2110TreasureLayer, true);
+	_sceneLayers.resetLayer(kScene2110TreasureLayer, 0);
+	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
 			AnimationFrameRange(0, 0x0a, kScene2110FrameMillis).unskippable())) {
-		_treasureLayer.visible = false;
+		_sceneLayers.setLayerVisible(kScene2110TreasureLayer, false);
 		return;
 	}
 
 	bool animationComplete = false;
 	if (grantsReward) {
 		runTreasurePrimarySpeechLine(0x16, (byte)(rewardIndex * 2));
-		animationComplete = playAndPresentAnimationFrames(_treasureLayer,
+		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
 			AnimationFrameRange(0x0d, 0x23, kScene2110FrameMillis)
 				.hookAt(0x18, kScene2110TreasureSoundHook).unskippable());
 	} else {
 		runTreasurePrimarySpeechLine(0x66, 0);
-		animationComplete = playAndPresentAnimationFrames(_treasureLayer,
+		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
 			AnimationFrameRange(0x19, 0x23, kScene2110FrameMillis).unskippable());
 	}
 
-	_treasureLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene2110TreasureLayer, false);
 	if (!animationComplete)
 		return;
 	if (!grantsReward) {
@@ -495,14 +480,14 @@ void Scene2110::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene2110::runEntrySecondarySpeechLine(byte frameIndex) {
-	_entryLayer.visible = true;
-	_entryLayer.setFrame(kScene2110EntrySpeechBaseFrameA);
+	_sceneLayers.setLayerVisible(kScene2110EntryLayer, true);
+	_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA);
 	_entryIdleChannel.reset(kScene2110EntrySpeechBaseFrameA,
 		kScene2110PrimarySpeechFrameMillis);
 	_entryIdleActive = true;
 	beginSecondarySpeechLine(6, frameIndex);
 	_entryIdleActive = false;
-	_entryLayer.setFrame(kScene2110EntrySpeechBaseFrameA);
+	_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA);
 }
 
 void Scene2110::runEntryPrimarySpeechLine(byte frameIndex, byte animationGroup) {

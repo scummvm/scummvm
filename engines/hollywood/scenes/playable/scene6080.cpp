@@ -350,7 +350,7 @@ void Scene6080::finishSueIdleSequence() {
 
 void Scene6080::runReturnConversation() {
 	_guardManualSequenceActive = true;
-	if (!playAndPresentAnimationTransition(guardNormalLayer(),
+	if (!playAndPresentAnimationTransition(_sceneLayers, kGuardNormalLayer,
 			AnimationTransition(5, 9, 9, kScene6080GuardFrameMillis).unskippable()))
 		return;
 	_guardManualSequenceActive = false;
@@ -368,9 +368,9 @@ void Scene6080::runReturnConversation() {
 		0x30, 0x3f, 0, kScene6080GuardSpeechGroup);
 
 	_guardManualSequenceActive = true;
-	playAndPresentAnimationTransition(guardNormalLayer(),
+	playAndPresentAnimationTransition(_sceneLayers, kGuardNormalLayer,
 		AnimationTransition(13, 17, 17, kScene6080GuardFrameMillis).unskippable());
-	guardNormalLayer().setFrame(0);
+	_sceneLayers.setLayerFrame(kGuardNormalLayer, 0);
 	_guardManualSequenceActive = false;
 }
 

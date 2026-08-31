@@ -969,7 +969,7 @@ void Scene4090::runFinalCutscene() {
 	_randomAmbientAnimationActive = false;
 	const uint organTailFirstFrame = _organBodyChannel.frameIndex + 1;
 	if (organTailFirstFrame < ARRAYSIZE(kScene4090OrganBodyFrameMap)) {
-		if (!playResourceLayerSequence(_sceneLayers.layer(kScene4090OrganBodyLayer),
+		if (!playResourceLayerSequence(_sceneLayers, kScene4090OrganBodyLayer,
 			kScene4090OrganBodyChunk, kScene4090OrganBodyDescriptorCount,
 			kScene4090OrganBodyFrameMap, AnimationFrameRange(organTailFirstFrame,
 				ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1,

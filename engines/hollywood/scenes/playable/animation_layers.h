@@ -225,6 +225,11 @@ public:
 			_layers[id].layer.setFrame(frameIndex);
 	}
 
+	void resetLayer(uint id, byte frameIndex) {
+		if (hasLayer(id))
+			_layers[id].layer.reset(frameIndex);
+	}
+
 	void setVisibleLayerFrame(uint id, byte frameIndex) {
 		if (hasLayer(id) && _layers[id].layer.visible)
 			_layers[id].layer.setFrame(frameIndex);

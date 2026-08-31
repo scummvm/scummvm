@@ -592,10 +592,10 @@ void Scene8020::runForegroundTransformationSequence() {
 	if (!waitForForegroundAnimationIdle())
 		return;
 
-	_sceneLayers.layer(kScene8020ForegroundLayer).setFrame(7);
+	_sceneLayers.setLayerFrame(kScene8020ForegroundLayer, 7);
 	_soundBank0.playSample(0x1a, 100);
 	_foregroundSequenceLocked = true;
-	playAndPresentAnimationFrames(_sceneLayers.layer(kScene8020ForegroundLayer),
+	playAndPresentAnimationFrames(_sceneLayers, kScene8020ForegroundLayer,
 		AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
 			.hookEveryFrame(kScene8020TransformationHook)
 			.unskippable()

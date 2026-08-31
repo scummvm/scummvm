@@ -34,9 +34,6 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
@@ -69,9 +66,6 @@ private:
 
 	TimedAnimationChannel _entryIdleChannel;
 	TimedAnimationChannel _scriptedActorPathChannel;
-	ResourceSpriteLayer _entryLayer;
-	ResourceSpriteLayer _ambientLayer;
-	ResourceSpriteLayer _treasureLayer;
 	uint _ambientTrack;
 	bool _entryIdleActive;
 	bool _scriptedActorPathActive;

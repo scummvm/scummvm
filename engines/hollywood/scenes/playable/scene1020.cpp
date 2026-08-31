@@ -107,6 +107,7 @@ const uint kScene1020ActionChunk18DescriptorCount = 0x12;
 const uint kScene1020ActionChunk19DescriptorCount = 0x0b;
 const uint kScene1020ActionChunk21DescriptorCount = 0x17;
 const uint kScene1020ActionChunk22DescriptorCount = 0x0d;
+const uint kScene1020QuasimodoLayer = 0;
 
 const byte kScene1020Chunk14ForwardFrameMap[] = {
 	0, 1, 2, 3, 4, 5
@@ -176,6 +177,12 @@ const byte kScene1020Chunk22PickupFrameMap[] = {
 	7, 8, 9, 10, 11, 12
 };
 
+const SceneLayerSpec kScene1020LayerSpecs[] = {
+	{kSceneAnimationInFrontOfActors, 20, kScene1020ActionChunk20DescriptorCount,
+		kScene1020Chunk20SpeakerFrameMap, ARRAYSIZE(kScene1020Chunk20SpeakerFrameMap),
+		false, kScene1020QuasimodoHiddenFrame}
+};
+
 // Chunks 15/16/17 animate the hook and 21 lifts the grate off it, so they repaint the
 // state blocks applyResourceBlockBackground() bakes into _baseFramebuffer: clean their
 // dirty rect to the pristine background or the baked-in copy shows through as a
@@ -198,6 +205,7 @@ static PlayableSceneConfig scene1020Config() {
 
 Scene1020::Scene1020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1020Config()) {
+	_sceneLayers.configure(kScene1020LayerSpecs);
 }
 
 bool Scene1020::shouldLoadArenaChunk(uint index) const {
@@ -212,6 +220,7 @@ bool Scene1020::shouldLoadArenaChunk(uint index) const {
 
 void Scene1020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
+	_sceneLayers.reset();
 
 	if (isFirstEntryState()) {
 		_activeActorWorldX = kScene1020RightEntryTargetX;
@@ -244,7 +253,7 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, background);
 	}
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_quasimodoLayer);
+	drawSceneLayer(kScene1020QuasimodoLayer);
 }
 
 void Scene1020::runCustomEntrySequence() {
@@ -271,11 +280,11 @@ void Scene1020::runCustomEntrySequence() {
 }
 
 void Scene1020::runQuasimodoLayerTransition(byte fromFrame, byte toFrame) {
-	_quasimodoLayer.setFrame(fromFrame);
+	_sceneLayers.setLayerFrame(kScene1020QuasimodoLayer, fromFrame);
 	byte frame = fromFrame;
 	while (frame != toFrame && !Engine::shouldQuit()) {
 		frame = (byte)(toFrame > frame ? frame + 1 : frame - 1);
-		_quasimodoLayer.setFrame(frame);
+		_sceneLayers.setLayerFrame(kScene1020QuasimodoLayer, frame);
 		if (waitSceneMillis(kScene1020OverlayFrameMillis))
 			return;
 	}
@@ -306,7 +315,7 @@ byte Scene1020::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 void Scene1020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene1020QuasimodoUprightSpeechGroup ||
 			animationGroup == kScene1020QuasimodoBentSpeechGroup)
-		_quasimodoLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene1020QuasimodoLayer, frameIndex);
 }
 
 void Scene1020::runGrateLiftShake() {
@@ -337,10 +346,8 @@ void Scene1020::runQuasimodoGrateCutscene() {
 			kScene1020CutsceneStageIndex);
 	}
 
-	_quasimodoLayer.configure(20, kScene1020ActionChunk20DescriptorCount,
-		kScene1020Chunk20SpeakerFrameMap, ARRAYSIZE(kScene1020Chunk20SpeakerFrameMap));
-	_quasimodoLayer.reset(kScene1020QuasimodoHiddenFrame);
-	_quasimodoLayer.visible = true;
+	_sceneLayers.resetLayer(kScene1020QuasimodoLayer, kScene1020QuasimodoHiddenFrame);
+	_sceneLayers.setLayerVisible(kScene1020QuasimodoLayer, true);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -350,7 +357,7 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	}
 
 	// The lift frames draw Quasimodo themselves, so his layer comes down for them.
-	_quasimodoLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene1020QuasimodoLayer, false);
 
 	// noRedrawAtEnd: do not present the still-unpatched base between the halves.
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
@@ -369,12 +376,12 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	if (spoken) {
-		_quasimodoLayer.visible = true;
+		_sceneLayers.setLayerVisible(kScene1020QuasimodoLayer, true);
 		runQuasimodoSpeechLine(2, false);
 		// Frame 3 carries continuationCount 2, so it speaks both of Ron's lines.
 		beginSecondarySpeechLine(kScene1020CutsceneSpeechRow, 3);
 		runQuasimodoSpeechLine(4, true);
-		_quasimodoLayer.visible = false;
+		_sceneLayers.setLayerVisible(kScene1020QuasimodoLayer, false);
 	}
 
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,

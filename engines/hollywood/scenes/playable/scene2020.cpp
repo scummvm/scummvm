@@ -519,9 +519,9 @@ void Scene2020::runPrincessExitCutscene() {
 		return;
 
 	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(princessLayer(),
+	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
 		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
-	playAndPresentAnimationTransition(princessLayer(),
+	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
 		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
 	_princessSpeechTransitionActive = false;
 	if (animationPlaybackShouldStop())
@@ -676,7 +676,7 @@ void Scene2020::runPrincessSpeechTransition(bool opening) {
 		return;
 
 	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(princessLayer(),
+	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
 		AnimationTransition(opening ? 0x19 : 0x20, opening ? 0x1f : 0x19,
 			opening ? 0x1f : 0x19, kScene2020PrincessFrameMillis).unskippable());
 	_princessSpeechTransitionActive = false;
