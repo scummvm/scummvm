@@ -43,8 +43,9 @@ const uint32 kScene3030TransitionFrameMillis = 75;
 const uint kScene3030LoopDescriptorCount = 0x0c;
 const uint kScene3030MachineEffectDescriptorCount = 0x19;
 const uint kScene3030MachineActionDescriptorCount = 0x0c;
-const uint kScene3030MachineEffectLayer = 0;
-const uint kScene3030MachineActionLayer = 1;
+const uint kScene3030LoopLayer = 0;
+const uint kScene3030MachineEffectLayer = 1;
+const uint kScene3030MachineActionLayer = 2;
 const uint kScene3030EntryTransitionChunk = 12;
 const uint kScene3030EntryTransitionTableEntryCount = 0x20;
 const byte kScene3030EntryTransitionFinalFrame = 0x1f;
@@ -70,6 +71,15 @@ const byte kScene3030MachineActionFrameMap[] = {
 	5, 6, 7, 8, 9, 10, 11
 };
 
+const SceneLayerSpec kScene3030LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 6, kScene3030LoopDescriptorCount,
+		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap), true, 0},
+	{kSceneAnimationScenePlaced, 9, kScene3030MachineEffectDescriptorCount,
+		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false, 0},
+	{kSceneAnimationScenePlaced, 10, kScene3030MachineActionDescriptorCount,
+		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false, 0}
+};
+
 PlayableSceneConfig scene3030Config() {
 	PlayableSceneConfig config(3030,
 		SceneResourceLayout(11, 5, 10),
@@ -84,13 +94,12 @@ PlayableSceneConfig scene3030Config() {
 
 Scene3030::Scene3030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3030Config()),
-		_loopLayer(),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_machineSequenceActive(false) {
-	_loopLayer.configure(6, kScene3030LoopDescriptorCount,
-		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap));
-	_loopTrack = _realtimeAnimationTracks.addFrameMap(_loopLayer,
-		kScene3030LoopFrameMillis, _vm->gameState().windmillBladesMoving);
+	_sceneLayers.configure(kScene3030LayerSpecs);
+	_loopTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kScene3030LoopLayer, kScene3030LoopFrameMillis,
+		_vm->gameState().windmillBladesMoving);
 }
 
 void Scene3030::initializeCustomPreviewState() {
@@ -108,7 +117,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_vm->gameState().windmillBladesMoving || _machineSequenceActive)
-		drawResourceSpriteLayer(_loopLayer);
+		drawSceneLayer(kScene3030LoopLayer);
 	if (_machineSequenceActive) {
 		drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
 		drawForegroundBlocks();
@@ -223,16 +232,9 @@ AmbientAudioProfile Scene3030::ambientAudioProfile() const {
 }
 
 void Scene3030::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_loopTrack);
 	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
-	_loopLayer.visible = true;
-	_sceneLayers.clear();
-	_sceneLayers.configureLayer(kScene3030MachineEffectLayer, kSceneAnimationScenePlaced,
-		9, kScene3030MachineEffectDescriptorCount,
-		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false);
-	_sceneLayers.configureLayer(kScene3030MachineActionLayer, kSceneAnimationScenePlaced,
-		10, kScene3030MachineActionDescriptorCount,
-		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false);
 	_machineSequenceActive = false;
 }
 
@@ -340,7 +342,7 @@ void Scene3030::drawDeltaTransitionFrame(const Common::Array<byte> &clipData, ui
 	_sceneFramebuffer.copyRectToSurface(transitionBackground, 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	if (_vm->gameState().windmillBladesMoving)
-		drawResourceSpriteLayer(_loopLayer);
+		drawSceneLayer(kScene3030LoopLayer);
 	drawClipFrameDeltaToSurface(clipData, tableEntryCount, frameIndex, *_sceneFramebuffer.surfacePtr());
 	drawClipFrameDeltaToSurface(clipData, tableEntryCount, frameIndex, transitionBackground);
 }
