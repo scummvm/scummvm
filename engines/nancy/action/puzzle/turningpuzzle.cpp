@@ -170,10 +170,12 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 	_hitInset = stream.readUint16LE();			// 0x25
 	_turnFlagLabel = stream.readSint16LE();		// 0x27
 	_turnFlagValue = stream.readByte();			// 0x29
-	stream.skip(5);								// 0x2a - not yet identified
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x2a
+	_solveScene._flag.label = stream.readSint16LE();			// 0x2c
+	_solveScene._flag.flag = stream.readByte();					// 0x2e
 
-	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle); the first is
-	// the "give up" hotspot, and its scene doubles as the one shown once solved.
+	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle);
+	// the first one is the "give up" hotspot.
 	int16 numZones = stream.readSint16LE();
 	for (int16 i = 0; i < numZones; ++i) {
 		Common::Rect r;
@@ -191,7 +193,6 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 			_exitScene._sceneChange.frameID = 0;
 			_exitScene._flag.label = exitFlagLabel;
 			_exitScene._flag.flag = exitFlagValue;
-			_solveScene._sceneChange = _exitScene._sceneChange;
 		}
 	}
 
@@ -445,11 +446,21 @@ void TurningPuzzle::execute() {
 
 			return;
 		case kWaitForSound :
-			if (g_nancy->_sound->isSoundPlaying(_solveSound) || g_nancy->_sound->isSoundPlaying(_turnSound)) {
+			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
 				return;
 			}
 
-			NancySceneState.changeScene(_solveScene._sceneChange);
+			if (g_nancy->getGameType() < kGameTypeNancy13 && g_nancy->_sound->isSoundPlaying(_turnSound)) {
+				return;
+			}
+
+			if (g_nancy->getGameType() >= kGameTypeNancy13) {
+				// The solve scene and its event flag both come from the header.
+				_solveScene.execute();
+			} else {
+				NancySceneState.changeScene(_solveScene._sceneChange);
+			}
+
 			break;
 		case kNotSolved :
 			_exitScene.execute();
@@ -466,7 +477,8 @@ void TurningPuzzle::handleInput(NancyInput &input) {
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 		if (isNancy13)
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+			// Zone cursors use the idle sprite of their type, unlike the hover cursor below.
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
 		else
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
