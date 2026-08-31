@@ -798,7 +798,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
 	if (exitScreen.contains(input.mousePos)) {
 		if (_exitCursorType != 0)
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, true);
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
 		else
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {

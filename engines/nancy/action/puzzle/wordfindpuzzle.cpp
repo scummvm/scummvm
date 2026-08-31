@@ -396,7 +396,7 @@ void WordFindPuzzle::handleInput(NancyInput &input) {
 
 	if (!_exitHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

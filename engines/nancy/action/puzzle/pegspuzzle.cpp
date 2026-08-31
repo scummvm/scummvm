@@ -255,10 +255,10 @@ Common::Point PegsPuzzle::cursorToViewport(const Common::Point &mousePos) const 
 	return Common::Point(vpPt.left, vpPt.top);
 }
 
-void PegsPuzzle::setDataCursor(uint16 cursorType) const {
+void PegsPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
 	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
 	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true);
+	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
 }
 
 void PegsPuzzle::redraw() {
@@ -414,7 +414,7 @@ void PegsPuzzle::handleInput(NancyInput &input) {
 
 	if (!_exitHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+		setDataCursor(_exitCursorType, false);
 		if (click) {
 			_exitRequested = true;
 		}

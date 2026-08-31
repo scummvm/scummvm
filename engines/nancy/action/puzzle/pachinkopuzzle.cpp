@@ -304,8 +304,8 @@ SoundDescription PachinkoPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 	return desc;
 }
 
-void PachinkoPuzzle::setDataCursor(uint16 cursorType) const {
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true);
+void PachinkoPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
+	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
 }
 
 void PachinkoPuzzle::spawnBall() {
@@ -614,7 +614,7 @@ void PachinkoPuzzle::handleInput(NancyInput &input) {
 
 	if (!_launcherHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_launcherHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+		setDataCursor(_exitCursorType, false);
 		if (click) {
 			// One launcher click queues one ball.
 			_spawnPending = true;
@@ -626,7 +626,7 @@ void PachinkoPuzzle::handleInput(NancyInput &input) {
 
 	if (!_exitHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+		setDataCursor(_exitCursorType, false);
 		if (click) {
 			_exitRequested = true;
 		}

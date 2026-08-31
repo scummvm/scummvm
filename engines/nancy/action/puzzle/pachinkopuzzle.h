@@ -120,7 +120,8 @@ protected:
 	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
 	void advanceMachine(Machine &m, uint32 now);
 	SoundDescription playSoundBlock(const RandomSoundBlock &block);
-	void setDataCursor(uint16 cursorType) const;
+	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
+	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	// -- File data (167-byte header, in stream order) --
 	Common::Path _imageName;				// 0x00 - board overlay (MUS_PachinkoPUZ02_OVL)

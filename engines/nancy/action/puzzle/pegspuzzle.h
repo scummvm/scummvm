@@ -72,7 +72,8 @@ protected:
 
 	Common::Point cursorToViewport(const Common::Point &mousePos) const;
 	// The puzzle's cursors are raw Nancy13 cursor type ids stored in the AR data.
-	void setDataCursor(uint16 cursorType) const;
+	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
+	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	void redraw();
 	SoundDescription playSoundBlock(const RandomSoundBlock &block);

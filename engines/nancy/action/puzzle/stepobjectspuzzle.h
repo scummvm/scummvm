@@ -95,7 +95,8 @@ protected:
 	void drop(int row, int col);
 	void resetBoard();
 	void beginStepSound(SoundID sound, bool isDrop);
-	void setDataCursor(uint16 cursorType) const;
+	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
+	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	void redraw();
 	void drawSprite(const Common::Rect &srcRect, const Common::Point &destPos, byte alpha);

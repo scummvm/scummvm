@@ -329,10 +329,10 @@ void ScalePuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void ScalePuzzle::setDataCursor(uint16 cursorType) const {
+void ScalePuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
 	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
 	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true);
+	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
 }
 
 void ScalePuzzle::playSoundBlock(const RandomSoundBlock &block) {
@@ -446,7 +446,7 @@ void ScalePuzzle::handleInput(NancyInput &input) {
 
 	if (!_exitHotspot.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType);
+		setDataCursor(_exitCursorType, false);
 		if (click) {
 			_exitRequested = true;
 		}
