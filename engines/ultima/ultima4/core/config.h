@@ -24,7 +24,6 @@
 
 #include "ultima/shared/conf/xml_tree.h"
 #include "ultima/shared/conf/xml_node.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

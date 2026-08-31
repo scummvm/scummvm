@@ -23,7 +23,6 @@
 #define NUVIE_CORE_CURSOR_H
 
 #include "common/str.h"
-#include "ultima/shared/std/containers.h"
 
 
 namespace Ultima {

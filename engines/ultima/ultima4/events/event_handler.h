@@ -26,7 +26,6 @@
 #include "ultima/ultima4/controllers/key_handler_controller.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/shared/std/containers.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/rect.h"

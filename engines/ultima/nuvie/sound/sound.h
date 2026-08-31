@@ -24,7 +24,6 @@
 
 #include "ultima/nuvie/core/game.h"
 #include "common/str.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {

@@ -29,7 +29,6 @@
 #include "ultima/ultima4/game/script.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

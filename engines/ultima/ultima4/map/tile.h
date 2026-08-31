@@ -25,7 +25,6 @@
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

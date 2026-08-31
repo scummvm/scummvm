@@ -24,7 +24,6 @@
 
 #include "ultima/ultima4/core/types.h"
 #include "ultima/shared/conf/xml_node.h"
-#include "ultima/shared/std/containers.h"
 #include "common/file.h"
 #include "common/list.h"
 

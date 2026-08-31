@@ -23,7 +23,6 @@
 #define ULTIMA4_CORE_UTILS_H
 
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/std/containers.h"
 #include "common/savefile.h"
 #include "common/hash-str.h"
 

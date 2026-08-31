@@ -22,7 +22,6 @@
 #ifndef NUVIE_FILES_U6LIB_N_H
 #define NUVIE_FILES_U6LIB_N_H
 
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 #include "common/stream.h"
 

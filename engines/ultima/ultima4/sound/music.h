@@ -22,7 +22,6 @@
 #ifndef ULTIMA4_SOUND_MUSIC_H
 #define ULTIMA4_SOUND_MUSIC_H
 
-#include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
