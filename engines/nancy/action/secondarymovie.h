@@ -200,7 +200,9 @@ public:
 	CursorManager::CursorType getHoverCursor() const override;
 	bool cursorSetFromScript() const override { return _isRandom && _talkSceneID != kNoScene; }
 
-	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Scene %d, file %s", _sceneChange.sceneID, _videoName.baseName().c_str());
+	}
 
 protected:
 	Common::String getRecordTypeName() const override {
