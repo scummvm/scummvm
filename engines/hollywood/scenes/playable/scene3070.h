@@ -75,9 +75,6 @@ private:
 	void runCurtainClearToBlack();
 	void drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode, bool drawNearForeground);
 
-	ResourceSpriteLayer _interludeLeftLayer;
-	ResourceSpriteLayer _interludeRightLayer;
-	ResourceSpriteLayer _lateCutsceneLayer;
 	bool _interludeActive;
 	bool _interludeAlternatePose;
 	bool _lateCutsceneActive;
