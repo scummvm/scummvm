@@ -33,10 +33,12 @@ public:
 	Scene2030(HollywoodEngine *vm);
 
 private:
+	enum LayerId {
+		kRightMerchantLayer,
+		kLeftMerchantLayer
+	};
+
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
@@ -92,11 +94,11 @@ private:
 		bool rightMerchant);
 	void runRightMerchantSaleSequence(byte soldItemId, uint16 moneyAmount, byte merchantFrameIndex, byte secondaryFrameIndex);
 	void addEgyptianMoney(uint16 amount);
+	ResourceSpriteLayer &leftMerchantLayer() { return _sceneLayers.layer(kLeftMerchantLayer); }
+	ResourceSpriteLayer &rightMerchantLayer() { return _sceneLayers.layer(kRightMerchantLayer); }
 
 	TimedAnimationChannel _leftMerchantChannel;
 	TimedAnimationChannel _rightMerchantChannel;
-	ResourceSpriteLayer _leftMerchantLayer;
-	ResourceSpriteLayer _rightMerchantLayer;
 	byte _leftMerchantState;
 	byte _rightMerchantState;
 	byte _merchantCalloutSide;

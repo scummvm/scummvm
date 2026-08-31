@@ -150,6 +150,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_panelArt(vm->getLanguage()),
 		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random(Common::String::format("scene%u", config.sceneId)),
+		_sceneLayers(),
 		_realtimeAnimationTracks(),
 		_animationPlayer(*this),
 		_speechController(vm->getLanguage(), vm->hasSpeechData()),
@@ -658,9 +659,19 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
 	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
+	drawActionOverlayAtStratum(kSceneAnimationBehindActors);
+
+	if (_sceneLayers.hasVisibleLayers(kSceneAnimationActorReplacement)) {
+		drawLayerStack(_sceneLayers, kSceneAnimationActorReplacement);
+	} else {
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	}
+	drawActionOverlayAtStratum(kSceneAnimationActorReplacement);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
+	drawActionOverlayAtStratum(kSceneAnimationInFrontOfActors);
+	drawActionOverlayAtStratum(kSceneAnimationScenePlaced);
 }
 
 bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
@@ -1288,6 +1299,7 @@ void PlayableScene::initializePreviewState() {
 void PlayableScene::initializeDefaultPreviewState() {
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_actionOverlayPlayer.reset();
+	_sceneLayers.reset();
 	resetAmbientAudioState();
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -1421,6 +1433,11 @@ void PlayableScene::drawLayerStack(const SceneLayerStack &layers,
 		if (layers.isInStratum(i, stratum))
 			drawResourceSpriteLayer(layers.layer(i));
 	}
+}
+
+void PlayableScene::drawActionOverlayAtStratum(SceneAnimationStratum stratum) {
+	if (_actionOverlayPlayer.isVisible() && _actionOverlayPlayer.stratum == stratum)
+		drawActionOverlayLayer();
 }
 
 bool PlayableScene::playAnimationFrames(SceneLayerStack &layers, uint layerId,

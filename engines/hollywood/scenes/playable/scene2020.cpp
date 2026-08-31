@@ -102,6 +102,17 @@ static_assert(ARRAYSIZE(kScene2020PickupFrameMap) == 10, "Scene 2020 pickup fram
 static_assert(ARRAYSIZE(kScene2020TigerToothPickupFrameMap) == 14, "Scene 2020 tooth pickup frame map size changed");
 static_assert(ARRAYSIZE(kScene2020TigerItemOverlayFrameMap) == 11, "Scene 2020 tiger item overlay frame map size changed");
 
+const SceneLayerSpec kScene2020LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 5, kScene2020PoolDescriptorCount,
+		kScene2020PoolFrameMap, ARRAYSIZE(kScene2020PoolFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 6, kScene2020TigerDescriptorCount,
+		kScene2020TigerFrameMap, ARRAYSIZE(kScene2020TigerFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 11, kScene2020PrincessDescriptorCount,
+		kScene2020PrincessFrameMap, ARRAYSIZE(kScene2020PrincessFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 15, kScene2020TigerEffectDescriptorCount,
+		nullptr, 0, false, 0}
+};
+
 static PlayableSceneConfig scene2020Config() {
 	PlayableSceneConfig config(2020,
 		SceneResourceLayout(19, 5, 18),
@@ -122,10 +133,6 @@ Scene2020::Scene2020(HollywoodEngine *vm) :
 		_paletteCycleChannel(),
 		_tigerItemActorChannel(),
 		_tigerItemEffectChannel(),
-		_poolLayer(),
-		_tigerLayer(),
-		_princessLayer(),
-		_tigerItemEffectLayer(),
 		_tigerAnimationState(0),
 		_princessAnimationState(0),
 		_princessSpeechTransitionActive(false),
@@ -134,15 +141,9 @@ Scene2020::Scene2020(HollywoodEngine *vm) :
 		_tigerItemSequenceFinished(false),
 		_tigerItemEffectEnabled(false),
 		_tigerReactionStarted(false) {
-	_poolLayer.configure(5, kScene2020PoolDescriptorCount,
-		kScene2020PoolFrameMap, ARRAYSIZE(kScene2020PoolFrameMap));
-	_poolTrack = _realtimeAnimationTracks.addFrameMap(_poolLayer,
+	_sceneLayers.configure(kScene2020LayerSpecs);
+	_poolTrack = _realtimeAnimationTracks.addFrameMap(poolLayer(),
 		kScene2020PoolFrameMillis);
-	_tigerLayer.configure(6, kScene2020TigerDescriptorCount,
-		kScene2020TigerFrameMap, ARRAYSIZE(kScene2020TigerFrameMap));
-	_princessLayer.configure(11, kScene2020PrincessDescriptorCount,
-		kScene2020PrincessFrameMap, ARRAYSIZE(kScene2020PrincessFrameMap));
-	_tigerItemEffectLayer.configure(15, kScene2020TigerEffectDescriptorCount, nullptr, 0);
 }
 
 void Scene2020::initializeCustomPreviewState() {
@@ -150,21 +151,6 @@ void Scene2020::initializeCustomPreviewState() {
 	resetAnimationLayers();
 
 	setActiveActorPose(0x190, 0x1b1, 4);
-}
-
-void Scene2020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_poolLayer);
-	drawResourceSpriteLayer(_tigerLayer);
-	drawResourceSpriteLayer(_princessLayer);
-	drawResourceSpriteLayer(_tigerItemEffectLayer);
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 }
 
 void Scene2020::runCustomEntrySequence() {
@@ -349,7 +335,7 @@ uint32 Scene2020::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 void Scene2020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
 	if (!_vm->gameState().scene2020PrincessGone)
-		_princessLayer.setFrame(frameIndex);
+		princessLayer().setFrame(frameIndex);
 }
 
 void Scene2020::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -368,13 +354,8 @@ void Scene2020::resetAnimationLayers() {
 	_paletteCycleChannel.reset(0, kScene2020PaletteCycleMillis);
 	_tigerItemActorChannel.reset(0, kScene2020OverlayFrameMillis);
 	_tigerItemEffectChannel.reset(0, kScene2020TigerEffectFrameMillis);
-	_poolLayer.visible = true;
-	_tigerLayer.visible = true;
-	_princessLayer.visible = !_vm->gameState().scene2020PrincessGone;
-	_tigerItemEffectLayer.visible = false;
-	_tigerLayer.reset(0);
-	_princessLayer.reset(0);
-	_tigerItemEffectLayer.reset(0);
+	_sceneLayers.reset();
+	princessLayer().visible = !_vm->gameState().scene2020PrincessGone;
 	_tigerAnimationState = 0;
 	_princessAnimationState = 0;
 	_princessSpeechTransitionActive = false;
@@ -393,26 +374,26 @@ void Scene2020::advanceTigerLayer(uint32 delta) {
 
 void Scene2020::advanceTigerIdleFrame() {
 	if (_tigerAnimationState == 0) {
-		if (_tigerLayer.frameIndex < 0x0e) {
-			_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+		if (tigerLayer().frameIndex < 0x0e) {
+			tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 		} else if (_random.getRandomNumber(0x1d) == 0) {
 			_tigerAnimationState = 1;
-			_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+			tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 		} else {
-			_tigerLayer.setFrame(0);
+			tigerLayer().setFrame(0);
 		}
 	} else if (_tigerAnimationState == 1) {
-		if (_tigerLayer.frameIndex < 0x12) {
-			_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+		if (tigerLayer().frameIndex < 0x12) {
+			tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 		} else if (_random.getRandomNumber(0x31) == 0) {
 			_tigerAnimationState = 2;
-			_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+			tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 		}
-	} else if (_tigerLayer.frameIndex < 0x16) {
-		_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+	} else if (tigerLayer().frameIndex < 0x16) {
+		tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 	} else {
 		_tigerAnimationState = 0;
-		_tigerLayer.setFrame(0);
+		tigerLayer().setFrame(0);
 	}
 }
 
@@ -425,26 +406,26 @@ void Scene2020::advanceTigerItemSequence(uint32 delta) {
 		}
 
 		if (!_tigerReactionStarted) {
-			byte frame = _tigerLayer.frameIndex;
+			byte frame = tigerLayer().frameIndex;
 			if (frame < 0x0f)
 				frame = 0x17;
 			else if (frame <= 0x12)
 				frame += 9;
 			else if (frame <= 0x16)
 				frame = 0x2e - frame;
-			_tigerLayer.setFrame(frame);
+			tigerLayer().setFrame(frame);
 			_tigerReactionStarted = true;
-		} else if (_tigerLayer.frameIndex < 0x23) {
-			if (_tigerLayer.frameIndex == 0x1b)
+		} else if (tigerLayer().frameIndex < 0x23) {
+			if (tigerLayer().frameIndex == 0x1b)
 				_soundBank0.playSample(0x2a, 100);
-			_tigerLayer.setFrame(_tigerLayer.frameIndex + 1);
+			tigerLayer().setFrame(tigerLayer().frameIndex + 1);
 		}
 	}
 
 	const uint actorFrames = _tigerItemActorChannel.consumeFrames(delta);
 	for (uint i = 0; i < actorFrames; ++i) {
 		const byte frame = _tigerItemActorChannel.frameIndex;
-		if (frame < 7 || (frame == 7 && _tigerLayer.frameIndex > 0x1e) ||
+		if (frame < 7 || (frame == 7 && tigerLayer().frameIndex > 0x1e) ||
 				(frame > 7 && frame < 10)) {
 			++_tigerItemActorChannel.frameIndex;
 			_actionOverlayPlayer.setFrame(_tigerItemActorChannel.frameIndex);
@@ -454,22 +435,22 @@ void Scene2020::advanceTigerItemSequence(uint32 delta) {
 	if (_tigerItemEffectEnabled) {
 		const uint effectFrames = _tigerItemEffectChannel.consumeFrames(delta);
 		for (uint i = 0; i < effectFrames; ++i) {
-			if (_tigerLayer.frameIndex <= 0x1e)
+			if (tigerLayer().frameIndex <= 0x1e)
 				continue;
-			if (!_tigerItemEffectLayer.visible) {
-				_tigerItemEffectLayer.visible = true;
-				_tigerItemEffectLayer.setFrame(0);
-			} else if (_tigerItemEffectLayer.frameIndex < 0x19) {
-				_tigerItemEffectLayer.setFrame(_tigerItemEffectLayer.frameIndex + 1);
-				if (_tigerItemEffectLayer.frameIndex == 0x0e)
+			if (!tigerItemEffectLayer().visible) {
+				tigerItemEffectLayer().visible = true;
+				tigerItemEffectLayer().setFrame(0);
+			} else if (tigerItemEffectLayer().frameIndex < 0x19) {
+				tigerItemEffectLayer().setFrame(tigerItemEffectLayer().frameIndex + 1);
+				if (tigerItemEffectLayer().frameIndex == 0x0e)
 					_soundBank0.playSample(0x2b, 100);
 			}
 		}
 	}
 
 	_tigerItemSequenceFinished = _tigerItemActorChannel.frameIndex >= 10 &&
-		_tigerLayer.frameIndex >= 0x23 &&
-		(!_tigerItemEffectEnabled || _tigerItemEffectLayer.frameIndex >= 0x19);
+		tigerLayer().frameIndex >= 0x23 &&
+		(!_tigerItemEffectEnabled || tigerItemEffectLayer().frameIndex >= 0x19);
 }
 
 void Scene2020::advancePrincessIdleLayer(uint32 delta, bool canStartLongSequence) {
@@ -479,19 +460,19 @@ void Scene2020::advancePrincessIdleLayer(uint32 delta, bool canStartLongSequence
 	const uint frameCount = _princessChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_princessAnimationState == 0) {
-			if (_princessLayer.frameIndex < 7) {
-				_princessLayer.setFrame(_princessLayer.frameIndex + 1);
+			if (princessLayer().frameIndex < 7) {
+				princessLayer().setFrame(princessLayer().frameIndex + 1);
 			} else if (canStartLongSequence && _random.getRandomNumber(0x13) == 0) {
 				_princessAnimationState = 1;
-				_princessLayer.setFrame(_princessLayer.frameIndex + 1);
+				princessLayer().setFrame(princessLayer().frameIndex + 1);
 			} else {
-				_princessLayer.setFrame(0);
+				princessLayer().setFrame(0);
 			}
-		} else if (_princessLayer.frameIndex < 0x18) {
-			_princessLayer.setFrame(_princessLayer.frameIndex + 1);
+		} else if (princessLayer().frameIndex < 0x18) {
+			princessLayer().setFrame(princessLayer().frameIndex + 1);
 		} else {
 			_princessAnimationState = 0;
-			_princessLayer.setFrame(0);
+			princessLayer().setFrame(0);
 		}
 	}
 }
@@ -538,9 +519,9 @@ void Scene2020::runPrincessExitCutscene() {
 		return;
 
 	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(_princessLayer,
+	playAndPresentAnimationTransition(princessLayer(),
 		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
-	playAndPresentAnimationTransition(_princessLayer,
+	playAndPresentAnimationTransition(princessLayer(),
 		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
 	_princessSpeechTransitionActive = false;
 	if (animationPlaybackShouldStop())
@@ -548,12 +529,12 @@ void Scene2020::runPrincessExitCutscene() {
 
 	GameplayState &state = _vm->gameState();
 	state.scene2020PrincessGone = true;
-	_princessLayer.visible = false;
+	princessLayer().visible = false;
 	_soundBank0.playSample(0x10, 100);
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_poolLayer);
-	drawResourceSpriteLayer(_tigerLayer);
+	drawResourceSpriteLayer(poolLayer());
+	drawResourceSpriteLayer(tigerLayer());
 	drawClipFrameDelta(13, kScene2020PrincessDepartureFrameCount, 0);
 	presentFrame();
 	for (byte frame = 1; frame < kScene2020PrincessDepartureFrameCount; ++frame) {
@@ -652,14 +633,14 @@ bool Scene2020::waitPrincessDepartureFrame(uint32 millis, byte clipFrame) {
 
 		const uint32 slice = MIN<uint32>(remaining, 10);
 		g_system->delayMillis(slice);
-		const uint16 oldPoolDescriptor = _poolLayer.descriptorIndex();
-		const uint16 oldTigerDescriptor = _tigerLayer.descriptorIndex();
+		const uint16 oldPoolDescriptor = poolLayer().descriptorIndex();
+		const uint16 oldTigerDescriptor = tigerLayer().descriptorIndex();
 		_realtimeAnimationTracks.advance(_poolTrack, slice, _random);
 		advanceTigerLayer(slice);
 		const bool paletteChanged = advancePaletteCycle(slice);
 		updateAmbientAudioAndMusicCues(slice);
-		const bool poolChanged = oldPoolDescriptor != _poolLayer.descriptorIndex();
-		const bool tigerChanged = oldTigerDescriptor != _tigerLayer.descriptorIndex();
+		const bool poolChanged = oldPoolDescriptor != poolLayer().descriptorIndex();
+		const bool tigerChanged = oldTigerDescriptor != tigerLayer().descriptorIndex();
 		if (poolChanged || tigerChanged)
 			redrawPrincessDepartureFrame(clipFrame, poolChanged, tigerChanged);
 		else if (paletteChanged)
@@ -671,11 +652,11 @@ bool Scene2020::waitPrincessDepartureFrame(uint32 millis, byte clipFrame) {
 
 void Scene2020::redrawPrincessDepartureFrame(byte clipFrame, bool poolChanged, bool tigerChanged) {
 	if (poolChanged)
-		restoreResourceSpriteLayerBackground(_poolLayer, _baseFramebuffer);
+		restoreResourceSpriteLayerBackground(poolLayer(), _baseFramebuffer);
 	if (tigerChanged)
-		restoreResourceSpriteLayerBackground(_tigerLayer, _baseFramebuffer);
-	drawResourceSpriteLayer(_poolLayer);
-	drawResourceSpriteLayer(_tigerLayer);
+		restoreResourceSpriteLayerBackground(tigerLayer(), _baseFramebuffer);
+	drawResourceSpriteLayer(poolLayer());
+	drawResourceSpriteLayer(tigerLayer());
 	drawClipFrameDelta(13, kScene2020PrincessDepartureFrameCount, clipFrame);
 	presentFrame();
 }
@@ -687,7 +668,7 @@ void Scene2020::runPrincessSpeechTransition(bool opening) {
 	if (opening) {
 		const bool previousLongIdleAllowed = _princessLongIdleAllowed;
 		_princessLongIdleAllowed = false;
-		while (_princessLayer.frameIndex != 0 && !animationPlaybackShouldStop())
+		while (princessLayer().frameIndex != 0 && !animationPlaybackShouldStop())
 			waitSceneMillis(10, false);
 		_princessLongIdleAllowed = previousLongIdleAllowed;
 	}
@@ -695,7 +676,7 @@ void Scene2020::runPrincessSpeechTransition(bool opening) {
 		return;
 
 	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(_princessLayer,
+	playAndPresentAnimationTransition(princessLayer(),
 		AnimationTransition(opening ? 0x19 : 0x20, opening ? 0x1f : 0x19,
 			opening ? 0x1f : 0x19, kScene2020PrincessFrameMillis).unskippable());
 	_princessSpeechTransitionActive = false;
@@ -894,8 +875,8 @@ bool Scene2020::runTigerItemOverlaySequence(bool withEffect) {
 		ARRAYSIZE(kScene2020TigerItemOverlayFrameMap));
 	_tigerItemActorChannel.reset(0, kScene2020OverlayFrameMillis);
 	_tigerItemEffectChannel.reset(0, kScene2020TigerEffectFrameMillis);
-	_tigerItemEffectLayer.visible = false;
-	_tigerItemEffectLayer.reset(0);
+	tigerItemEffectLayer().visible = false;
+	tigerItemEffectLayer().reset(0);
 	_tigerItemEffectEnabled = withEffect;
 	_tigerReactionStarted = false;
 	_tigerItemSequenceFinished = false;
@@ -910,10 +891,10 @@ bool Scene2020::runTigerItemOverlaySequence(bool withEffect) {
 	const bool completed = _tigerItemSequenceFinished && !animationPlaybackShouldStop();
 	_tigerItemSequenceActive = false;
 	_tigerItemEffectEnabled = false;
-	_tigerItemEffectLayer.visible = false;
+	tigerItemEffectLayer().visible = false;
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 	_tigerAnimationState = 0;
-	_tigerLayer.setFrame(0);
+	tigerLayer().setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
 	return completed;

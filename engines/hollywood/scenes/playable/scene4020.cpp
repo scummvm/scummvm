@@ -45,6 +45,10 @@ const uint kScene4020SkullcrackerDescriptorCount = 0x10;
 const byte kScene4020SkullcrackerItem = 0x20;
 const byte kScene4020SkullcrackerHook = 1;
 
+enum Scene4020LayerId {
+	kScene4020IdleLayer
+};
+
 const byte kScene4020ReturnFromD03FrameMap[] = {
 	12, 11, 10, 9, 8, 7, 6, 5, 4, 3,
 	2, 1, 0
@@ -64,6 +68,11 @@ const byte kScene4020SkullcrackerFrameMap[] = {
 	4, 2, 0
 };
 
+const SceneLayerSpec kScene4020LayerSpecs[] = {
+	{kSceneAnimationBehindActors, kScene4020IdleChunk,
+		kScene4020IdleDescriptorCount, nullptr, 0, true, 0}
+};
+
 static PlayableSceneConfig scene4020Config() {
 	PlayableSceneConfig config(4020,
 		SceneResourceLayout(5, 5, 7),
@@ -78,10 +87,9 @@ static PlayableSceneConfig scene4020Config() {
 
 Scene4020::Scene4020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4020Config()),
-		_idleLayer(),
 		_idleTrack(RealtimeAnimationTracks::kInvalidTrack) {
-	_idleLayer.configure(kScene4020IdleChunk, kScene4020IdleDescriptorCount, nullptr, 0);
-	_idleTrack = _realtimeAnimationTracks.addLoop(_idleLayer,
+	_sceneLayers.configure(kScene4020LayerSpecs);
+	_idleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers.layer(kScene4020IdleLayer),
 		kScene4020FrameMillis, kScene4020IdleDescriptorCount);
 }
 
@@ -94,19 +102,6 @@ void Scene4020::initializeCustomPreviewState() {
 	else
 		setActiveActorPose(0x50, 0x173, 2);
 }
-
-void Scene4020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_idleLayer);
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
-}
-
 bool Scene4020::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
@@ -224,7 +219,6 @@ AmbientAudioProfile Scene4020::ambientAudioProfile() const {
 
 void Scene4020::resetIdleLayer() {
 	_realtimeAnimationTracks.reset(_idleTrack);
-	_idleLayer.visible = true;
 }
 
 void Scene4020::setActiveActorPose(int x, int y, byte facing) {

@@ -33,10 +33,14 @@ public:
 	Scene2020(HollywoodEngine *vm);
 
 private:
+	enum LayerId {
+		kPoolLayer,
+		kTigerLayer,
+		kPrincessLayer,
+		kTigerItemEffectLayer
+	};
+
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
@@ -79,6 +83,10 @@ private:
 	void restoreOriginalColorMapItem(byte itemId);
 	void remapOriginalColorMapItems(byte firstSourceItem, byte secondSourceItem, byte destinationItem);
 	byte originalColorMapItemAt(uint paletteIndex) const;
+	ResourceSpriteLayer &poolLayer() { return _sceneLayers.layer(kPoolLayer); }
+	ResourceSpriteLayer &tigerLayer() { return _sceneLayers.layer(kTigerLayer); }
+	ResourceSpriteLayer &princessLayer() { return _sceneLayers.layer(kPrincessLayer); }
+	ResourceSpriteLayer &tigerItemEffectLayer() { return _sceneLayers.layer(kTigerItemEffectLayer); }
 
 	uint _poolTrack;
 	TimedAnimationChannel _tigerChannel;
@@ -86,10 +94,6 @@ private:
 	TimedAnimationChannel _paletteCycleChannel;
 	TimedAnimationChannel _tigerItemActorChannel;
 	TimedAnimationChannel _tigerItemEffectChannel;
-	ResourceSpriteLayer _poolLayer;
-	ResourceSpriteLayer _tigerLayer;
-	ResourceSpriteLayer _princessLayer;
-	ResourceSpriteLayer _tigerItemEffectLayer;
 	byte _tigerAnimationState;
 	byte _princessAnimationState;
 	bool _princessSpeechTransitionActive;

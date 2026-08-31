@@ -96,6 +96,7 @@ struct SceneLayerSpec {
 	const byte *frameMap;
 	uint frameMapSize;
 	bool visible;
+	byte initialFrame;
 };
 
 /**
@@ -126,27 +127,31 @@ public:
 
 	void configureLayer(uint id, const SceneLayerSpec &spec) {
 		configureLayer(id, spec.stratum, spec.chunkIndex, spec.descriptorCount,
-			spec.frameMap, spec.frameMapSize, spec.visible);
+			spec.frameMap, spec.frameMapSize, spec.visible, spec.initialFrame);
 	}
 
 	void configureLayer(uint id, SceneAnimationStratum stratum, uint chunkIndex,
 			uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
-			bool visible = true) {
+			bool visible = true, byte initialFrame = 0) {
 		if (id >= _layers.size())
 			_layers.resize(id + 1);
 
 		LayerState &state = _layers[id];
 		state.configured = true;
 		state.stratum = stratum;
+		state.defaultVisible = visible;
+		state.initialFrame = initialFrame;
 		state.layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
+		state.layer.reset(initialFrame);
 		state.layer.visible = visible && availableFrameCount(state.layer) != 0;
 	}
 
 	uint addLayer(SceneAnimationStratum stratum, uint chunkIndex, uint16 descriptorCount,
-			const byte *frameMap, uint frameMapSize, bool visible = true) {
+			const byte *frameMap, uint frameMapSize, bool visible = true,
+			byte initialFrame = 0) {
 		const uint id = _layers.size();
 		configureLayer(id, stratum, chunkIndex, descriptorCount, frameMap,
-			frameMapSize, visible);
+			frameMapSize, visible, initialFrame);
 		return id;
 	}
 
@@ -157,7 +162,19 @@ public:
 
 		LayerState &state = _layers[id];
 		state.layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
+		state.defaultVisible = visible;
+		state.initialFrame = 0;
 		state.layer.visible = visible && availableFrameCount(state.layer) != 0;
+	}
+
+	void reset() {
+		for (uint i = 0; i < _layers.size(); ++i) {
+			LayerState &state = _layers[i];
+			if (!state.configured)
+				continue;
+			state.layer.reset(state.initialFrame);
+			state.layer.visible = state.defaultVisible && availableFrameCount(state.layer) != 0;
+		}
 	}
 
 	uint layerCount() const {
@@ -176,6 +193,16 @@ public:
 		for (uint i = 0; i < _layers.size(); ++i) {
 			if (_layers[i].configured && _layers[i].layer.visible)
 				return true;
+		}
+		return false;
+	}
+
+	bool hasVisibleLayers(SceneAnimationStratum stratum) const {
+		for (uint i = 0; i < _layers.size(); ++i) {
+			if (_layers[i].configured && _layers[i].stratum == stratum &&
+					_layers[i].layer.visible) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -243,11 +270,15 @@ private:
 		LayerState() :
 				configured(false),
 				stratum(kSceneAnimationBehindActors),
+				defaultVisible(false),
+				initialFrame(0),
 				layer() {
 		}
 
 		bool configured;
 		SceneAnimationStratum stratum;
+		bool defaultVisible;
+		byte initialFrame;
 		ResourceSpriteLayer layer;
 	};
 

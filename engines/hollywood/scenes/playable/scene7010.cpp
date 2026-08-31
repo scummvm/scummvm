@@ -120,27 +120,27 @@ const byte kScene7010DialogueOverlayMode2FrameMap[] = {
 };
 const SceneLayerSpec kScene7010AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors,
-		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true },
+		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true },
+		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true },
+		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true },
+		10, kScene7010Chunk10DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
 		12, kScene7010DialogueOverlayMode1DescriptorCount,
-		kScene7010DialogueOverlayMode1FrameMap, ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap), false },
+		kScene7010DialogueOverlayMode1FrameMap, ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap), false, 0 },
 	{ kSceneAnimationBehindActors,
 		14, kScene7010Chunk14DescriptorCount, kScene7010Chunk14FrameMap,
-		ARRAYSIZE(kScene7010Chunk14FrameMap), false },
+		ARRAYSIZE(kScene7010Chunk14FrameMap), false, 0 },
 	{ kSceneAnimationBehindActors,
 		11, kScene7010Chunk11DescriptorCount, kScene7010Chunk11FrameMap,
-		ARRAYSIZE(kScene7010Chunk11FrameMap), false },
+		ARRAYSIZE(kScene7010Chunk11FrameMap), false, 0 },
 	{ kSceneAnimationInFrontOfActors,
 		8, kScene7010Chunk8DescriptorCount, kScene7010Chunk8FrameMap,
-		ARRAYSIZE(kScene7010Chunk8FrameMap), true },
+		ARRAYSIZE(kScene7010Chunk8FrameMap), true, 0 },
 	{ kSceneAnimationInFrontOfActors,
-		9, kScene7010Chunk9DescriptorCount, nullptr, 0, true }
+		9, kScene7010Chunk9DescriptorCount, nullptr, 0, true, 0 }
 };
 const byte kScene7010Route3To2StepDeltas[] = {
 	4, 8, 10, 6, 3, 5, 5, 5, 5, 6, 2, 3
