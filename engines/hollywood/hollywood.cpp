@@ -155,6 +155,7 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_lastGameplayThumbnailValid(false),
 		_sceneRestartRequested(false),
 		_debugSceneSolveRequest(0),
+		_scene7100RescueFailureVariant(false),
 		_canSave(false) {
 }
 
