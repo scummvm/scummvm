@@ -67,6 +67,10 @@ enum {
 };
 
 enum {
+	kScene5040KarlLayer
+};
+
+enum {
 	kScene5040DialogueTransitionEnd = 0,
 	kScene5040DialogueTransitionDown = 1,
 	kScene5040DialogueTransitionUp = 2,
@@ -125,7 +129,6 @@ PlayableSceneConfig scene5040Config() {
 Scene5040::Scene5040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5040Config()),
 		_karlIdleChannel(),
-		_karlLayer(),
 		_karlIdleFrame(0),
 		_karlIdleMode(kScene5040KarlIdleModeWait),
 		_karlStrikeRepeatCount(0),
@@ -133,7 +136,8 @@ Scene5040::Scene5040(HollywoodEngine *vm) :
 		_mineCartRumbleActive(false),
 		_lastKarlMiningSpeechFrame(kScene5040KarlMiningSpeechBaseFrame),
 		_previousKarlMiningSpeechFrame(kScene5040KarlMiningSpeechBaseFrame) {
-	_karlLayer.configure(9, kScene5040KarlDescriptorCount,
+	_sceneLayers.configureLayer(kScene5040KarlLayer, kSceneAnimationBehindActors,
+		9, kScene5040KarlDescriptorCount,
 		kScene5040KarlFrameMap, ARRAYSIZE(kScene5040KarlFrameMap));
 }
 
@@ -157,8 +161,9 @@ void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (_karlLayer.visible && _vm->gameState().scene5040MineGalleryState < 2)
-		drawResourceSpriteLayer(_karlLayer);
+	if (_sceneLayers.layerVisible(kScene5040KarlLayer) &&
+			_vm->gameState().scene5040MineGalleryState < 2)
+		drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -464,13 +469,14 @@ void Scene5040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	} else {
 		return;
 	}
-	_karlLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerFrame(kScene5040KarlLayer, frameIndex);
 }
 
 void Scene5040::primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) {
 	if (animationGroup == kScene5040KarlDialogueSpeechGroup ||
 			animationGroup == kScene5040KarlMiningSpeechGroup) {
-		_karlLayer.visible = _vm->gameState().scene5040MineGalleryState < 2;
+		_sceneLayers.setLayerVisible(kScene5040KarlLayer,
+			_vm->gameState().scene5040MineGalleryState < 2);
 		if (animationGroup == kScene5040KarlMiningSpeechGroup) {
 			_lastKarlMiningSpeechFrame = baseFrame;
 			_previousKarlMiningSpeechFrame = baseFrame;
@@ -484,8 +490,9 @@ void Scene5040::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 			animationGroup != kScene5040KarlMiningSpeechGroup)
 		return;
 
-	_karlLayer.visible = _vm->gameState().scene5040MineGalleryState < 2;
-	if (!_karlLayer.visible)
+	_sceneLayers.setLayerVisible(kScene5040KarlLayer,
+		_vm->gameState().scene5040MineGalleryState < 2);
+	if (!_sceneLayers.layerVisible(kScene5040KarlLayer))
 		return;
 
 	if (animationGroup == kScene5040KarlDialogueSpeechGroup) {
@@ -499,7 +506,7 @@ void Scene5040::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	} else {
 		_karlIdleFrame = 0x30;
 	}
-	_karlLayer.setFrame(_karlIdleFrame);
+	_sceneLayers.setLayerFrame(kScene5040KarlLayer, _karlIdleFrame);
 }
 
 void Scene5040::resetAnimationLayers() {
@@ -507,10 +514,10 @@ void Scene5040::resetAnimationLayers() {
 	state.scene5040LooseObjectTaken = true;
 	state.scene5040OldSockTaken = state.scene5040MineGalleryState != 1;
 	_karlIdleChannel.reset(0, kScene5040FrameMillis);
-	_karlLayer.visible = state.scene5040MineGalleryState < 2;
 	const bool karlPausedAtWall = state.scene5040MineGalleryState == 1;
-	_karlLayer.reset(karlPausedAtWall ? 0x49 : 0);
-	_karlIdleFrame = _karlLayer.frameIndex;
+	_sceneLayers.resetLayer(kScene5040KarlLayer, karlPausedAtWall ? 0x49 : 0);
+	_sceneLayers.setLayerVisible(kScene5040KarlLayer, state.scene5040MineGalleryState < 2);
+	_karlIdleFrame = _sceneLayers.layerFrame(kScene5040KarlLayer);
 	_karlIdleMode = karlPausedAtWall ? kScene5040KarlIdleModePausedAtWall : kScene5040KarlIdleModeWait;
 	_karlStrikeRepeatCount = 0;
 	_suspendKarlIdle = false;
@@ -520,7 +527,7 @@ void Scene5040::resetAnimationLayers() {
 }
 
 void Scene5040::advanceKarlLayer(uint32 delta) {
-	if (!_karlLayer.visible)
+	if (!_sceneLayers.layerVisible(kScene5040KarlLayer))
 		return;
 
 	GameplayState &state = _vm->gameState();
@@ -625,7 +632,7 @@ void Scene5040::advanceKarlLayer(uint32 delta) {
 		}
 
 		if (updateFrame)
-			_karlLayer.setFrame(_karlIdleFrame);
+			_sceneLayers.setLayerFrame(kScene5040KarlLayer, _karlIdleFrame);
 	}
 }
 
@@ -642,10 +649,10 @@ void Scene5040::advanceKarlMiningSpeech(uint32 delta) {
 bool Scene5040::playKarlFrames(byte firstFrame, byte lastFrame, uint32 frameMillis) {
 	const bool previousSuspendKarlIdle = _suspendKarlIdle;
 	_suspendKarlIdle = true;
-	_karlLayer.visible = true;
-	const bool completed = playAndPresentAnimationFrames(_karlLayer,
+	_sceneLayers.setLayerVisible(kScene5040KarlLayer, true);
+	const bool completed = playAndPresentAnimationFrames(_sceneLayers, kScene5040KarlLayer,
 		AnimationFrameRange(firstFrame, lastFrame, frameMillis));
-	_karlIdleFrame = _karlLayer.frameIndex;
+	_karlIdleFrame = _sceneLayers.layerFrame(kScene5040KarlLayer);
 	_suspendKarlIdle = previousSuspendKarlIdle;
 	return completed;
 }
@@ -654,10 +661,10 @@ bool Scene5040::playKarlTransition(byte firstFrame, byte lastFrame, byte finalFr
 		uint32 frameMillis) {
 	const bool previousSuspendKarlIdle = _suspendKarlIdle;
 	_suspendKarlIdle = true;
-	_karlLayer.visible = true;
-	const bool completed = playAndPresentAnimationTransition(_karlLayer,
+	_sceneLayers.setLayerVisible(kScene5040KarlLayer, true);
+	const bool completed = playAndPresentAnimationTransition(_sceneLayers, kScene5040KarlLayer,
 		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis));
-	_karlIdleFrame = _karlLayer.frameIndex;
+	_karlIdleFrame = _sceneLayers.layerFrame(kScene5040KarlLayer);
 	_suspendKarlIdle = previousSuspendKarlIdle;
 	return completed;
 }
@@ -670,7 +677,7 @@ void Scene5040::settleKarlForConversation() {
 	_suspendKarlIdle = true;
 	if (_karlIdleMode == kScene5040KarlIdleModeToolExposedWait) {
 		_karlIdleFrame = 0x1f;
-		_karlLayer.setFrame(_karlIdleFrame);
+		_sceneLayers.setLayerFrame(kScene5040KarlLayer, _karlIdleFrame);
 		_karlIdleMode = kScene5040KarlIdleModeHideTool;
 	}
 
@@ -682,7 +689,7 @@ void Scene5040::settleKarlForConversation() {
 	_karlIdleFrame = 0;
 	_karlIdleMode = kScene5040KarlIdleModeWait;
 	_karlIdleChannel.reset(0, kScene5040FrameMillis);
-	_karlLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene5040KarlLayer, 0);
 	_vm->gameState().scene5040LooseObjectTaken = true;
 	applySceneStateToHotspotsAndPatches(2);
 	drawPlayableComposite();
@@ -872,7 +879,7 @@ void Scene5040::runDowsingRodSwap() {
 	state.dowsingRodKarlExchangeState = 2;
 	_suspendKarlIdle = true;
 	_karlIdleFrame = 0x1e;
-	_karlLayer.setFrame(_karlIdleFrame);
+	_sceneLayers.setLayerFrame(kScene5040KarlLayer, _karlIdleFrame);
 	runActorReplacement(ActionOverlaySpec(11, kScene5040ItemSwapDescriptorCount,
 		kScene5040DowsingRodSwapFrameMap, ARRAYSIZE(kScene5040DowsingRodSwapFrameMap),
 		kScene5040MineCartFrameMillis));

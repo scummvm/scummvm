@@ -69,8 +69,6 @@ private:
 
 	TimedAnimationChannel _smallOverlayChannel;
 	TimedAnimationChannel _largeOverlayChannel;
-	ResourceSpriteLayer _smallOverlayLayer;
-	ResourceSpriteLayer _largeOverlayLayer;
 	byte _largeOverlayMode;
 	bool _largeOverlayActionLocked;
 };
