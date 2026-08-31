@@ -39,8 +39,8 @@ private:
 		byte actorDrawOrderMode) override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advancePrimarySpeechAnimation(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;

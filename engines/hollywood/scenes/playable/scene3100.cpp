@@ -162,13 +162,12 @@ void Scene3100::runCustomEntrySequence() {
 	_vm->gameState().scene3100CabinVisited = true;
 }
 
-bool Scene3100::prepareCustomGameplayLoop() {
+void Scene3100::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene3100::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3100::advanceCustomGameplayLoop(uint32 delta) {
 	advancePaletteCycle(delta);
 	if (!_resolutionSequenceActive) {
 		if (_conversationActive) {
@@ -178,7 +177,6 @@ bool Scene3100::advanceCustomGameplayLoop(uint32 delta) {
 			advanceCabinLayers(delta);
 		}
 	}
-	return false;
 }
 
 bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {

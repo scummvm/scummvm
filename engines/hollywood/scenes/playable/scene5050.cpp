@@ -130,12 +130,11 @@ void Scene5050::runCustomEntrySequence() {
 	}
 }
 
-bool Scene5050::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5050::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	if (_specialTransitionActive)
 		ensureAmbientSoundCuePlaying(2, 0x18, 100);
-	return false;
 }
 
 bool Scene5050::dispatchCustomSceneAction(uint16 handlerId) {

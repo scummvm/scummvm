@@ -356,15 +356,13 @@ void Scene4060::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4060::prepareCustomGameplayLoop() {
+void Scene4060::prepareCustomGameplayLoop() {
 	resetForegroundLayer();
-	return true;
 }
 
-bool Scene4060::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
 	updateAmbientSounds(delta);
 	advanceForegroundLayer(delta);
-	return false;
 }
 
 bool Scene4060::dispatchCustomSceneAction(uint16 handlerId) {

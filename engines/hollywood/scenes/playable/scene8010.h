@@ -52,8 +52,8 @@ private:
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceAmbientAudio(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
@@ -68,7 +68,6 @@ private:
 
 	void resetSceneAnimations();
 	void advanceFishermanIdle(uint32 delta);
-	void updateSceneAmbientAudio(uint32 delta);
 	bool waitTransitionFrameMillis(uint32 millis);
 	void drawTransitionClip(uint chunkIndex, bool showFirstFrameImmediately);
 	void runFirstEntry();

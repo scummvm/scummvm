@@ -194,16 +194,13 @@ void Scene2050::runCustomEntrySequence() {
 		runEntryFromSphinxInterior();
 }
 
-bool Scene2050::prepareCustomGameplayLoop() {
+void Scene2050::prepareCustomGameplayLoop() {
 	resetAmbientLayer();
-	return true;
 }
 
-bool Scene2050::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2050::advanceCustomGameplayLoop(uint32 delta) {
 	if (_vm->gameState().scene2050MuralPuzzleState == 2)
 		runSealDiscoveryIfPending();
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2050::dispatchCustomSceneAction(uint16 handlerId) {

@@ -131,12 +131,11 @@ void Scene5060::runCustomEntrySequence() {
 	}
 }
 
-bool Scene5060::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5060::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
 	ensureAmbientSoundCuePlaying(1, 0x1b, 2);
 	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 100);
-	return false;
 }
 
 bool Scene5060::dispatchCustomSceneAction(uint16 handlerId) {

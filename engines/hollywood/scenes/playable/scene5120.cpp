@@ -212,14 +212,22 @@ void Scene5120::runCustomEntrySequence() {
 		runAlternateEntrySequence();
 }
 
-bool Scene5120::prepareCustomGameplayLoop() {
+void Scene5120::prepareCustomGameplayLoop() {
 	resetTransformedRoomLayers();
-	return true;
 }
 
-bool Scene5120::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5120::advanceCustomGameplayLoop(uint32 delta) {
 	advanceTransformedRoomLayers(delta);
-	return _roomTransformationActive;
+}
+
+void Scene5120::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_roomTransformationActive)
+		PlayableScene::advancePrimarySpeechAnimation(delta);
+}
+
+void Scene5120::advanceAmbientAudio(uint32 delta) {
+	if (!_roomTransformationActive)
+		PlayableScene::advanceAmbientAudio(delta);
 }
 
 bool Scene5120::dispatchCustomSceneAction(uint16 handlerId) {

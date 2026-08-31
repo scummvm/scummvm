@@ -247,18 +247,13 @@ void Scene2080::runCustomEntrySequence() {
 		runEntryFromScene2070();
 }
 
-bool Scene2080::prepareCustomGameplayLoop() {
+void Scene2080::prepareCustomGameplayLoop() {
 	normalizeLinkedPassageState();
-	return true;
 }
 
-bool Scene2080::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_foregroundActorManualSequenceActive)
+void Scene2080::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive && !_foregroundActorManualSequenceActive)
 		advanceForegroundActorIdle(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 void Scene2080::advanceDialogueMenu(uint32 delta) {

@@ -129,20 +129,15 @@ void Scene7050::runCustomEntrySequence() {
 	waitSceneMillis(kScene7050FrameMillis);
 }
 
-bool Scene7050::prepareCustomGameplayLoop() {
+void Scene7050::prepareCustomGameplayLoop() {
 	_cloakroomAttendantAnimation.channel.resetTimer();
 	if (_cloakroomAttendantAnimation.channel.frameIndex == 0)
 		_cloakroomAttendantAnimation.setFrame(1);
-	return true;
 }
 
-bool Scene7050::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+void Scene7050::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
 		advanceSecondaryActorAnimation(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene7050::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {

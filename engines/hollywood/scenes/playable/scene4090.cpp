@@ -272,19 +272,17 @@ void Scene4090::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4090::prepareCustomGameplayLoop() {
+void Scene4090::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene4090::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4090::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientSound(delta);
 	advanceOrganBodyAnimation(delta);
 	_realtimeAnimationTracks.setActive(_randomAmbientTrack,
 		_randomAmbientAnimationActive &&
 		_ambientLayers.layer(kScene4090AmbientRandomLayer).visible);
-	return false;
 }
 
 bool Scene4090::dispatchCustomSceneAction(uint16 handlerId) {

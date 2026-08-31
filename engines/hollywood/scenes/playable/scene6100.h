@@ -40,8 +40,9 @@ private:
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void prepareCustomGameplayLoop() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advancePrimarySpeechAnimation(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion,
 		const ActorPathBuildState &state, const ScenePoint &boundary,

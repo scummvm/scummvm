@@ -161,14 +161,12 @@ void Scene6010::runCustomEntrySequence() {
 	}
 }
 
-bool Scene6010::prepareCustomGameplayLoop() {
+void Scene6010::prepareCustomGameplayLoop() {
 	_temporaryOverlayLayers.clear();
-	return true;
 }
 
-bool Scene6010::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+bool Scene6010::shouldAnimatePrimarySpeechLine() const {
+	return false;
 }
 
 bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {

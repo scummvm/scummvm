@@ -131,15 +131,12 @@ void Scene3030::runCustomEntrySequence() {
 	runEntryFromScene3020();
 }
 
-bool Scene3030::prepareCustomGameplayLoop() {
+void Scene3030::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
 }
 
-bool Scene3030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3030::advanceCustomGameplayLoop(uint32 delta) {
 	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3030::dispatchCustomSceneAction(uint16 handlerId) {

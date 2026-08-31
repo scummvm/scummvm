@@ -195,21 +195,17 @@ void Scene6050::runCustomEntrySequence() {
 	}
 }
 
-bool Scene6050::prepareCustomGameplayLoop() {
+void Scene6050::prepareCustomGameplayLoop() {
 	resetGuardLayer();
-	return true;
 }
 
-bool Scene6050::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive) {
-		advancePrimaryDialogueSpeechFrame(delta);
-	} else if (!_guardManualSequenceActive && _vm->gameState().scene6050GuardPresent) {
+void Scene6050::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive && !_guardManualSequenceActive &&
+			_vm->gameState().scene6050GuardPresent) {
 		advanceGuardIdleLayer(delta);
 	}
 	if (_displayCaseSecondaryActive)
 		advanceDisplayCaseSecondaryLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6050::dispatchCustomSceneAction(uint16 handlerId) {

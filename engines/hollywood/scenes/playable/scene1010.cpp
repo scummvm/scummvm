@@ -180,19 +180,16 @@ void Scene1010::runCustomEntrySequence() {
 	}
 }
 
-bool Scene1010::prepareCustomGameplayLoop() {
+void Scene1010::prepareCustomGameplayLoop() {
 	_sceneActorBlinkTimerAccumulator = 0;
 	_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene1010CarUseVerbRecordIndex, 306);
 	_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene1010CarUseVerbRecordIndex, 0);
 	// The car is below the frame; keep its bottom-edge exit reachable above the verb panel.
 	_hotspots.addFallbackRectHotspot(kScene1010CarSceneItem, Common::Rect(666, 430, 942, 480));
-	return true;
 }
 
-bool Scene1010::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1010::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSceneActorBlinkAnimation(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1010::dispatchCustomSceneAction(uint16 handlerId) {

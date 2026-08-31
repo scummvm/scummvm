@@ -127,11 +127,6 @@ void Scene4020::runCustomEntrySequence() {
 		runEntryFromScene4010();
 }
 
-bool Scene4020::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene4020::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Mirar zona del foso/entrada (look at moat/entry area).
@@ -261,18 +256,17 @@ void Scene4020::runEntryFromScene4030() {
 		ARRAYSIZE(kScene4020ReturnFromD03FrameMap));
 	_actionOverlayPlayer.setFrame(0);
 	drawPlayableComposite();
-	const bool fadeInterrupted = fadePaletteFromBlack();
-	if (!fadeInterrupted) {
-		playAnimationFrames(_actionOverlayPlayer,
+	BlockingSequence sequence(*this);
+	sequence.paletteTransition(BlockingSequence::kFadeFromBlack)
+		.layerFrames(_actionOverlayPlayer,
 			AnimationFrameRange(1, ARRAYSIZE(kScene4020ReturnFromD03FrameMap) - 1,
 				kScene4020FrameMillis));
-	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
-	if (fadeInterrupted || Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	if (!sequence.completed())
 		return;
 
-	setActiveActorPose(0x265, 0x117, 5);
-	walkActiveActorTo(0x265, 0x117, 4, 0, false);
+	sequence.actorPose(SceneActorPose(0x265, 0x117, 5))
+		.actorPath(SceneActorPose(0x265, 0x117, 4));
 }
 
 void Scene4020::runExitToScene4030() {

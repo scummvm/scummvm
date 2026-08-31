@@ -102,11 +102,6 @@ void Scene7080::runCustomEntrySequence() {
 	}
 }
 
-bool Scene7080::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene7080::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Usar/Abrir puerta (use/open door)

@@ -162,12 +162,11 @@ void Scene5100::runCustomEntrySequence() {
 	}
 }
 
-bool Scene5100::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 100);
 	advanceElevatorDoor(delta);
-	return false;
 }
 
 bool Scene5100::dispatchCustomSceneAction(uint16 handlerId) {

@@ -176,22 +176,14 @@ void Scene2020::runCustomEntrySequence() {
 	runEntryFromExterior();
 }
 
-bool Scene2020::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene2020::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2020::advanceCustomGameplayLoop(uint32 delta) {
 	if (_tigerItemSequenceActive)
 		advanceTigerItemSequence(delta);
 	else
 		advanceTigerLayer(delta);
 	advancePaletteCycle(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	if (!_primaryDialogueSpeechActive)
 		advancePrincessIdleLayer(delta, _princessLongIdleAllowed);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2020::dispatchCustomSceneAction(uint16 handlerId) {

@@ -204,15 +204,13 @@ void Scene4110::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4110::prepareCustomGameplayLoop() {
+void Scene4110::prepareCustomGameplayLoop() {
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene4110::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4110::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientSounds(delta);
 	advanceBackgroundLayer(delta);
-	return false;
 }
 
 bool Scene4110::dispatchCustomSceneAction(uint16 handlerId) {

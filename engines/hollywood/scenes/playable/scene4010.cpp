@@ -239,7 +239,7 @@ void Scene4010::runCustomEntrySequence() {
 	}
 }
 
-bool Scene4010::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4010::advanceCustomGameplayLoop(uint32 delta) {
 	updateRoomAmbientAudio(delta);
 	if (!_roomAnimationPaused)
 		advancePaletteCycle(delta);
@@ -247,7 +247,6 @@ bool Scene4010::advanceCustomGameplayLoop(uint32 delta) {
 			!_primaryDialogueSpeechActive &&
 			!_heckerManualSequenceActive)
 		advanceHeckerIdleLayer(delta);
-	return false;
 }
 
 bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
