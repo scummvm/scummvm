@@ -72,9 +72,6 @@ private:
 	TimedAnimationChannel _flagPaletteChannel;
 	TimedAnimationChannel _ronSpeechChannel;
 	TimedAnimationChannel _ronIdleChannel;
-	ResourceSpriteLayer _backgroundLayer;
-	ResourceSpriteLayer _ronLayer;
-	ResourceSpriteLayer _d09ReturnTransitionLayer;
 	uint _backgroundTrack;
 	uint32 _ambientEffectTimerAccumulator;
 	byte _previousContinuousAmbientCue;

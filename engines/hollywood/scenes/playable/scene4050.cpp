@@ -83,6 +83,23 @@ const byte kScene4050D09ReturnTransitionAlternateFrameMap[] = {
 	0, 1, 2, 3, 4, 15, 16, 17, 18, 19, 20
 };
 
+enum Scene4050LayerId {
+	kScene4050BackgroundLayer,
+	kScene4050RonLayer,
+	kScene4050D09ReturnTransitionLayer
+};
+
+const SceneLayerSpec kScene4050LayerSpecs[] = {
+	{kSceneAnimationScenePlaced, kScene4050BackgroundChunk,
+		kScene4050BackgroundDescriptorCount, nullptr, 0, true, 0},
+	{kSceneAnimationScenePlaced, kScene4050RonChunk,
+		kScene4050RonDescriptorCount, nullptr, 0, true, 0},
+	{kSceneAnimationScenePlaced, kScene4050D09ReturnTransitionChunk,
+		kScene4050D09ReturnTransitionDescriptorCount,
+		kScene4050D09ReturnTransitionBaseFrameMap,
+		ARRAYSIZE(kScene4050D09ReturnTransitionBaseFrameMap), false, 0}
+};
+
 PlayableSceneConfig scene4050Config() {
 	PlayableSceneConfig config(4050,
 		SceneResourceLayout(5, 5, 11),
@@ -99,18 +116,15 @@ Scene4050::Scene4050(HollywoodEngine *vm) :
 		_flagPaletteChannel(),
 		_ronSpeechChannel(),
 		_ronIdleChannel(),
-		_backgroundLayer(),
-		_ronLayer(),
-		_d09ReturnTransitionLayer(),
 		_backgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_ambientEffectTimerAccumulator(0),
 		_previousContinuousAmbientCue(0),
 		_previousRandomAmbientCue(0),
 		_ronManualSequenceActive(false),
 		_transitionClearedToBlack(false) {
-	_backgroundLayer.configure(kScene4050BackgroundChunk,
-		kScene4050BackgroundDescriptorCount, nullptr, 0);
-	_backgroundTrack = _realtimeAnimationTracks.addLoop(_backgroundLayer,
+	_sceneLayers.configure(kScene4050LayerSpecs);
+	_backgroundTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene4050BackgroundLayer,
 		kScene4050BackgroundFrameMillis, kScene4050BackgroundDescriptorCount);
 }
 
@@ -152,7 +166,7 @@ void Scene4050::runCustomEntrySequence() {
 	}
 
 	setActiveActorPose(kScene4050RonWorldX, kScene4050RonWorldY, kScene4050RonFacing);
-	_backgroundLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene4050BackgroundLayer, 0);
 	setRonResourceFrame(0);
 	drawPlayableComposite();
 	presentFrame();
@@ -280,19 +294,9 @@ AmbientAudioProfile Scene4050::ambientAudioProfile() const {
 }
 
 void Scene4050::resetAnimationLayers() {
+	_sceneLayers.configure(kScene4050LayerSpecs);
 	_realtimeAnimationTracks.reset(_backgroundTrack);
-	_backgroundLayer.visible = true;
 	_flagPaletteChannel.reset(0, kScene4050FlagPaletteCycleMillis);
-
-	_ronLayer.configure(kScene4050RonChunk, kScene4050RonDescriptorCount, nullptr, 0);
-	_ronLayer.visible = true;
-	_ronLayer.setFrame(0);
-	_d09ReturnTransitionLayer.configure(kScene4050D09ReturnTransitionChunk,
-		kScene4050D09ReturnTransitionDescriptorCount,
-		kScene4050D09ReturnTransitionBaseFrameMap,
-		ARRAYSIZE(kScene4050D09ReturnTransitionBaseFrameMap));
-	_d09ReturnTransitionLayer.visible = false;
-	_d09ReturnTransitionLayer.setFrame(0);
 	_ronSpeechChannel.reset(0, kScene4050RonSpeechFrameMillis);
 	_ronIdleChannel.reset(0, kScene4050RonSpeechFrameMillis);
 	_ronManualSequenceActive = false;
@@ -312,12 +316,12 @@ void Scene4050::restoreSceneObjectPaletteRange() {
 }
 
 void Scene4050::drawSceneLayers() {
-	if (_d09ReturnTransitionLayer.visible) {
-		drawResourceSpriteLayer(_backgroundLayer);
-		drawResourceSpriteLayer(_d09ReturnTransitionLayer);
+	if (_sceneLayers.layerVisible(kScene4050D09ReturnTransitionLayer)) {
+		drawSceneLayer(kScene4050BackgroundLayer);
+		drawSceneLayer(kScene4050D09ReturnTransitionLayer);
 	} else {
-		drawResourceSpriteLayer(_ronLayer);
-		drawResourceSpriteLayer(_backgroundLayer);
+		drawSceneLayer(kScene4050RonLayer);
+		drawSceneLayer(kScene4050BackgroundLayer);
 	}
 }
 
@@ -344,15 +348,16 @@ void Scene4050::rotateFlagPalette() {
 void Scene4050::advanceRonLayer(uint32 delta) {
 	if (_ronManualSequenceActive)
 		return;
+	ResourceSpriteLayer &layer = _sceneLayers.layer(kScene4050RonLayer);
 
 	if (_speechOverlay.visible) {
 		const uint frameCount = _ronSpeechChannel.consumeFrames(delta);
 		for (uint frame = 0; frame < frameCount; ++frame) {
-			byte nextFrame = _ronLayer.frameIndex;
-			for (uint attempt = 0; attempt < 8 && nextFrame == _ronLayer.frameIndex; ++attempt)
+			byte nextFrame = layer.frameIndex;
+			for (uint attempt = 0; attempt < 8 && nextFrame == layer.frameIndex; ++attempt)
 				nextFrame = (byte)_random.getRandomNumber(kScene4050RonSpeechFrameCount - 1);
-			if (nextFrame == _ronLayer.frameIndex)
-				nextFrame = (byte)((_ronLayer.frameIndex + 1) % kScene4050RonSpeechFrameCount);
+			if (nextFrame == layer.frameIndex)
+				nextFrame = (byte)((layer.frameIndex + 1) % kScene4050RonSpeechFrameCount);
 			setRonResourceFrame(nextFrame);
 		}
 		return;
@@ -360,7 +365,7 @@ void Scene4050::advanceRonLayer(uint32 delta) {
 
 	const uint frameCount = _ronIdleChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		if (_ronLayer.frameIndex == kScene4050RonIdleBlinkFrame) {
+		if (layer.frameIndex == kScene4050RonIdleBlinkFrame) {
 			setRonResourceFrame(0);
 		} else if (_random.getRandomNumber(14) == 0) {
 			setRonResourceFrame(kScene4050RonIdleBlinkFrame);
@@ -400,7 +405,7 @@ void Scene4050::updateAmbientSounds(uint32 delta) {
 }
 
 void Scene4050::setRonResourceFrame(byte frameIndex) {
-	_ronLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerFrame(kScene4050RonLayer, frameIndex);
 	_ronSpeechChannel.frameIndex = frameIndex;
 	_ronIdleChannel.frameIndex = frameIndex;
 }
@@ -412,8 +417,9 @@ void Scene4050::beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex) {
 	int bottom = 0;
 	uint16 centerX = _activeActorWorldX;
 	uint16 topY = _activeActorWorldY;
-	if (resourceDescriptorBounds(_ronLayer.chunkIndex, _ronLayer.descriptorCount,
-			_ronLayer.descriptorIndex(), left, top, width, bottom)) {
+	const ResourceSpriteLayer &ronLayer = _sceneLayers.layer(kScene4050RonLayer);
+	if (resourceDescriptorBounds(ronLayer.chunkIndex, ronLayer.descriptorCount,
+			ronLayer.descriptorIndex(), left, top, width, bottom)) {
 		centerX = (uint16)(left + width / 2);
 		topY = (uint16)top;
 	}
@@ -425,8 +431,8 @@ void Scene4050::beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex) {
 
 void Scene4050::runD09ReturnTransitionSequence() {
 	resetAnimationLayers();
-	_backgroundLayer.setFrame(0);
-	_ronLayer.visible = false;
+	_sceneLayers.setLayerFrame(kScene4050BackgroundLayer, 0);
+	_sceneLayers.setLayerVisible(kScene4050RonLayer, false);
 
 	GameplayState &state = _vm->gameState();
 	const byte *frameMap = state.scene4090WideCoffinVariant == 0 ?
@@ -435,17 +441,17 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	const uint frameMapSize = state.scene4090WideCoffinVariant == 0 ?
 		ARRAYSIZE(kScene4050D09ReturnTransitionBaseFrameMap) :
 		ARRAYSIZE(kScene4050D09ReturnTransitionAlternateFrameMap);
-	_d09ReturnTransitionLayer.configure(kScene4050D09ReturnTransitionChunk,
+	_sceneLayers.setLayerResource(kScene4050D09ReturnTransitionLayer,
+		kScene4050D09ReturnTransitionChunk,
 		kScene4050D09ReturnTransitionDescriptorCount, frameMap, frameMapSize);
-	_d09ReturnTransitionLayer.visible = true;
-	_d09ReturnTransitionLayer.setFrame(0);
+	_sceneLayers.showLayerAtFrame(kScene4050D09ReturnTransitionLayer, 0);
 	drawPlayableComposite();
 	presentFrame();
 	if (runCurtainRevealFromBlack())
 		return;
 
 	_soundBank0.playSampleLooping(0x30, 100);
-	const bool completed = playAndPresentAnimationFrames(_d09ReturnTransitionLayer,
+	const bool completed = playAndPresentAnimationFrames(kScene4050D09ReturnTransitionLayer,
 		AnimationFrameRange(0, frameMapSize - 1, kScene4050D09FrameMillis)
 			.unskippable().noFinalFrameDelay());
 	_soundBank0.stop();
@@ -551,10 +557,10 @@ void Scene4050::useLongRopeOnLedge() {
 
 	beginRonResourceSpeechLine(8, 1);
 	_ronManualSequenceActive = true;
-	const bool completed = playAndPresentAnimationFrames(_ronLayer,
+	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
 		AnimationFrameRange(5, 0x11, kScene4050ActionFrameMillis)
 			.hookAt(6, kScene4050AttachRopeSoundHook).unskippable().noFinalFrameDelay());
-	setRonResourceFrame(_ronLayer.frameIndex);
+	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
 	if (!completed)
 		return;
@@ -576,10 +582,10 @@ void Scene4050::useSceneRope() {
 	if (_sceneChunkTable.isValidChunk(kScene4050ExitPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4050ExitPatchChunk], _baseFramebuffer);
 	_ronManualSequenceActive = true;
-	const bool completed = playAndPresentAnimationFrames(_ronLayer,
+	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
 		AnimationFrameRange(0x12, 0x1b, kScene4050ActionFrameMillis)
 			.hookAt(0x17, kScene4050SwingSoundHook).unskippable().noFinalFrameDelay());
-	setRonResourceFrame(_ronLayer.frameIndex);
+	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
 	if (!completed)
 		return;

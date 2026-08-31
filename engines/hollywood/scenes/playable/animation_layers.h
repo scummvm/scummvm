@@ -250,6 +250,14 @@ public:
 			_layers[id].layer.reset(frameIndex);
 	}
 
+	// Resets cleanup history before making a layer visible.
+	void showLayerAtFrame(uint id, byte frameIndex) {
+		if (!hasLayer(id))
+			return;
+		_layers[id].layer.reset(frameIndex);
+		_layers[id].layer.visible = availableFrameCount(_layers[id].layer) != 0;
+	}
+
 	bool advanceLayerFrame(uint id, byte lastFrame) {
 		if (!hasLayer(id) || _layers[id].layer.frameIndex >= lastFrame)
 			return false;

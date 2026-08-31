@@ -61,9 +61,6 @@ private:
 	void updateElevatorButtonActionTargets(bool useStrip);
 	void rebuildWalkableMask();
 
-	ResourceSpriteLayer _mineCartLayer;
-	ResourceSpriteLayer _elevatorDoorLayer;
-	ResourceSpriteLayer _elevatorTravelLayer;
 	TimedAnimationChannel _elevatorDoorChannel;
 	bool _mineCartRumbleActive;
 	bool _elevatorDoorClosing;
