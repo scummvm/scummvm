@@ -305,7 +305,7 @@ void OSystem_Atari::initBackend() {
 			error("graf_handle() failed");
 		}
 
-		int16 work_in[16] = {};
+		int16 work_in[16] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2 };
 		int16 work_out[57] = {};
 
 		// open a virtual screen workstation
