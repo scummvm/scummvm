@@ -77,9 +77,6 @@ private:
 	void takeCharlieBriefcase();
 	void giveBillyFordEnvelopeToCharlie();
 
-	ResourceSpriteLayer _charlieLayer;
-	ResourceSpriteLayer _letterLayer;
-	ResourceSpriteLayer _departureLayer;
 	TimedAnimationChannel _charlieIdleChannel;
 	TimedAnimationChannel _charlieConversationChannel;
 	byte _charlieIdleState;
