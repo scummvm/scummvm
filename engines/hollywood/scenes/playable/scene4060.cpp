@@ -55,6 +55,7 @@ const uint kScene4060PokerOverlayDescriptorCount = 0x0b;
 const uint kScene4060PokerRewardOverlayChunk = 17;
 const uint kScene4060PokerRewardOverlayDescriptorCount = 0x0c;
 const uint kScene4060PokerOverlayTransitionLayer = 1;
+const uint kScene4060ForegroundLayer = 2;
 const uint kScene4060EntryOverlayChunk = 19;
 const uint kScene4060EntryOverlayDescriptorCount = 4;
 const uint kScene4060ExitOverlayChunk = 15;
@@ -255,7 +256,6 @@ static void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records,
 
 Scene4060::Scene4060(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4060Config()),
-		_foregroundLayer(),
 		_foregroundChannel(),
 		_foregroundScrollStep(0),
 		_foregroundLongAnimationActive(false),
@@ -265,6 +265,11 @@ Scene4060::Scene4060(HollywoodEngine *vm) :
 		_pokerMidPatchVisible(false),
 		_sherilynDialogueActive(false),
 		_exitFrameVisible(false) {
+	_sceneLayers.configureLayer(kScene4060ForegroundLayer,
+		kSceneAnimationScenePlaced, kScene4060ForegroundState0Chunk,
+		kScene4060ForegroundState0DescriptorCount,
+		kScene4060ForegroundState0FrameMap,
+		ARRAYSIZE(kScene4060ForegroundState0FrameMap));
 }
 
 void Scene4060::initializeCustomPreviewState() {
@@ -303,11 +308,13 @@ void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		return;
 	}
 
-	if (_sceneLayers.hasVisibleLayers()) {
+	if (_sceneLayers.layerVisible(kScene4060PokerTableTransitionLayer) ||
+			_sceneLayers.layerVisible(kScene4060PokerOverlayTransitionLayer)) {
 		if (_pokerMidPatchVisible && _sceneChunkTable.isValidChunk(kScene4060ForegroundMidPatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060ForegroundMidPatchChunk],
 				_sceneFramebuffer);
-		drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
+		drawSceneLayer(kScene4060PokerTableTransitionLayer);
+		drawSceneLayer(kScene4060PokerOverlayTransitionLayer);
 		return;
 	}
 
@@ -582,11 +589,12 @@ void Scene4060::resetForegroundLayer() {
 
 void Scene4060::configureForegroundLayerForState() {
 	const bool foregroundState = _vm->gameState().scene4060SherilynSheetWon != 0;
-	_foregroundLayer.configure(foregroundState ? kScene4060ForegroundState1Chunk : kScene4060ForegroundState0Chunk,
+	_sceneLayers.setLayerResource(kScene4060ForegroundLayer,
+		foregroundState ? kScene4060ForegroundState1Chunk : kScene4060ForegroundState0Chunk,
 		foregroundState ? kScene4060ForegroundState1DescriptorCount : kScene4060ForegroundState0DescriptorCount,
 		foregroundState ? kScene4060ForegroundState1FrameMap : kScene4060ForegroundState0FrameMap,
 		foregroundState ? ARRAYSIZE(kScene4060ForegroundState1FrameMap) : ARRAYSIZE(kScene4060ForegroundState0FrameMap));
-	_foregroundLayer.visible = true;
+	_sceneLayers.setLayerVisible(kScene4060ForegroundLayer, true);
 	setForegroundScrollStep(_foregroundScrollStep);
 }
 
@@ -597,11 +605,12 @@ void Scene4060::setForegroundScrollStep(byte step) {
 		step = 0;
 	_foregroundScrollStep = step;
 	_foregroundChannel.frameIndex = step;
-	_foregroundLayer.setFrame(step);
+	_sceneLayers.setLayerFrame(kScene4060ForegroundLayer, step);
 }
 
 void Scene4060::advanceForegroundLayer(uint32 delta) {
-	if (_sceneLayers.hasVisibleLayers())
+	if (_sceneLayers.layerVisible(kScene4060PokerTableTransitionLayer) ||
+			_sceneLayers.layerVisible(kScene4060PokerOverlayTransitionLayer))
 		return;
 
 	if (_sherilynSpeechPoseMode != kScene4060SherilynSpeechPoseNone ||
@@ -634,7 +643,7 @@ void Scene4060::advanceForegroundLayer(uint32 delta) {
 }
 
 void Scene4060::drawForegroundTableLayer() {
-	drawResourceSpriteLayer(_foregroundLayer);
+	drawSceneLayer(kScene4060ForegroundLayer);
 }
 
 void Scene4060::drawSceneForegroundBlocks(int activeWorldY) {
@@ -951,7 +960,8 @@ bool Scene4060::presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, 
 
 void Scene4060::clearPokerTransitionLayers() {
 	_pokerMidPatchVisible = false;
-	_sceneLayers.clear();
+	clearSceneLayer(kScene4060PokerTableTransitionLayer);
+	clearSceneLayer(kScene4060PokerOverlayTransitionLayer);
 }
 
 void Scene4060::beginSherilynSpeechLine(uint16 rowIndex, byte frameIndex, bool allowAlternatePose) {

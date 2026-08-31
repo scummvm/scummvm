@@ -108,7 +108,6 @@ private:
 	TimedAnimationChannel _roomIdleChannel;
 	TimedAnimationChannel _paletteCycleChannel;
 	TimedAnimationChannel _secondaryAmbientChannel;
-	ResourceSpriteLayer _roomIdleLayer;
 	Graphics::ManagedSurface _normalBaseFramebuffer;
 	bool _normalBaseFramebufferInitialized;
 	byte _heckerAnimationState;

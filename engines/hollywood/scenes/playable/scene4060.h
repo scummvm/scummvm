@@ -85,7 +85,6 @@ private:
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copySmallTextRow(byte destinationRow, byte sourceRow);
 
-	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _foregroundChannel;
 	byte _foregroundScrollStep;
 	bool _foregroundLongAnimationActive;

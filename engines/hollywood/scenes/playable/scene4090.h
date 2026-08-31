@@ -78,7 +78,6 @@ private:
 		byte bandWidth);
 	void runFinalCutscene();
 
-	ResourceSpriteLayer _scriptLayer;
 	uint _randomAmbientTrack;
 	TimedAnimationChannel _organBodyChannel;
 	Common::Array<byte> _originalColorToItemMap;
