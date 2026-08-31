@@ -662,8 +662,10 @@ void PlayableScene::initializeCustomPreviewState() {
 void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
+	prepareCustomComposite(drawActiveActor || drawSecondaryActor, activeFacing,
+		activeWorldX, activeWorldY, actorDrawOrderMode);
 	copyBaseFramebufferToSceneFramebuffer();
+	drawCustomBackgroundComposite(activeWorldX, activeWorldY);
 	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActionOverlayAtStratum(kSceneAnimationBehindActors);
 
@@ -679,6 +681,26 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 	drawActionOverlayAtStratum(kSceneAnimationInFrontOfActors);
 	drawActionOverlayAtStratum(kSceneAnimationScenePlaced);
+	drawCustomForegroundComposite(activeWorldX, activeWorldY);
+}
+
+void PlayableScene::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)drawActors;
+	(void)activeFacing;
+	(void)activeWorldX;
+	(void)activeWorldY;
+	(void)actorDrawOrderMode;
+}
+
+void PlayableScene::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
+}
+
+void PlayableScene::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
 }
 
 bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {

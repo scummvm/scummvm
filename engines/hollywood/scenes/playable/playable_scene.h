@@ -231,6 +231,12 @@ protected:
 	virtual void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode);
+	// Standard composition prepares draw state before copying the base, then draws
+	// custom background and foreground content around the actor-relative strata.
+	virtual void prepareCustomComposite(bool drawActors, byte activeFacing, int activeWorldX,
+		int activeWorldY, byte actorDrawOrderMode);
+	virtual void drawCustomBackgroundComposite(int activeWorldX, int activeWorldY);
+	virtual void drawCustomForegroundComposite(int activeWorldX, int activeWorldY);
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
 	virtual bool shouldApplyGameplayPanelObjectPalette() const;
 	virtual void runCustomEntrySequence();

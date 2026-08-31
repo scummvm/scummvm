@@ -81,7 +81,7 @@ const byte kScene8020Reverse6cFrameMap[] = {
 
 const uint kScene8020ForegroundLayer = 0;
 const SceneLayerSpec kScene8020LayerSpecs[] = {
-	{kSceneAnimationBehindActors, kScene8020ForegroundChunk,
+	{kSceneAnimationScenePlaced, kScene8020ForegroundChunk,
 		kScene8020ForegroundDescriptorCount, kScene8020ForegroundFrameMap,
 		ARRAYSIZE(kScene8020ForegroundFrameMap), true, 0}
 };
@@ -133,17 +133,11 @@ void Scene8020::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-void Scene8020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
+void Scene8020::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
 	if (_vm->gameState().scene8020ForegroundObjectState != 2)
 		drawResourceSpriteLayer(_sceneLayers.layer(kScene8020ForegroundLayer));
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
 }
 
 void Scene8020::runCustomEntrySequence() {

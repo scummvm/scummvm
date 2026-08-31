@@ -117,18 +117,11 @@ void Scene5080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene5080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
+void Scene5080::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
-	if (drawActiveActor || drawSecondaryActor)
+	if (drawActors)
 		updateSceneActorDepthAndPalette(activeFacing, activeWorldX, activeWorldY);
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 }
 
 bool Scene5080::shouldPresentPreviewBeforeEntrySequence() const {
