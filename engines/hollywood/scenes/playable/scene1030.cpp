@@ -74,6 +74,13 @@ const uint kScene1030EntryPaletteByteCount = 0x210;
 const byte kScene1030EntryLeftSpeechGroup = 0;
 const byte kScene1030EntryRightSpeechGroup = 1;
 
+enum {
+	kScene1030LargeForegroundLayer,
+	kScene1030SmallForegroundLayer,
+	kScene1030LeftEntryActorLayer,
+	kScene1030RightEntryActorLayer
+};
+
 const byte kScene1030LargeForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -121,6 +128,17 @@ const byte kScene1030GreasyCottonFrameMap[] = {
 	5, 6, 7, 8, 9, 10, 11, 12
 };
 
+const SceneLayerSpec kScene1030LayerSpecs[] = {
+	{ kSceneAnimationScenePlaced, 5, kScene1030LargeForegroundDescriptorCount,
+		kScene1030LargeForegroundFrameMap, ARRAYSIZE(kScene1030LargeForegroundFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 13, kScene1030SmallForegroundDescriptorCount,
+		nullptr, 0, false, 0 },
+	{ kSceneAnimationScenePlaced, 9, kScene1030LeftEntryActorDescriptorCount,
+		kScene1030LeftEntryActorFrameMap, ARRAYSIZE(kScene1030LeftEntryActorFrameMap), false, 0 },
+	{ kSceneAnimationScenePlaced, 10, kScene1030RightEntryActorDescriptorCount,
+		kScene1030RightEntryActorFrameMap, ARRAYSIZE(kScene1030RightEntryActorFrameMap), false, 0 }
+};
+
 static PlayableSceneConfig scene1030Config() {
 	PlayableSceneConfig config(1030,
 		SceneResourceLayout(15, 5, 14),
@@ -137,10 +155,6 @@ Scene1030::Scene1030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1030Config()),
 		_largeForegroundChannel(),
 		_smallForegroundChannel(),
-		_largeForegroundLayer(),
-		_smallForegroundLayer(),
-		_leftEntryActorLayer(),
-		_rightEntryActorLayer(),
 		_largeForegroundMode(0),
 		_smallForegroundTickCount(0),
 		_entryActorPathFrameIndex(0),
@@ -148,14 +162,7 @@ Scene1030::Scene1030(HollywoodEngine *vm) :
 		_entryActorsVisible(false),
 		_entryActorsAlternatePose(false),
 		_entryActorPathActive(false) {
-	_largeForegroundLayer.configure(5, kScene1030LargeForegroundDescriptorCount,
-		kScene1030LargeForegroundFrameMap, ARRAYSIZE(kScene1030LargeForegroundFrameMap));
-	_smallForegroundLayer.configure(13, kScene1030SmallForegroundDescriptorCount, nullptr, 0);
-	_leftEntryActorLayer.configure(9, kScene1030LeftEntryActorDescriptorCount,
-		kScene1030LeftEntryActorFrameMap, ARRAYSIZE(kScene1030LeftEntryActorFrameMap));
-	_rightEntryActorLayer.configure(10, kScene1030RightEntryActorDescriptorCount,
-		kScene1030RightEntryActorFrameMap, ARRAYSIZE(kScene1030RightEntryActorFrameMap));
-	_largeForegroundLayer.visible = true;
+	_sceneLayers.configure(kScene1030LayerSpecs);
 }
 
 void Scene1030::initializeCustomPreviewState() {
@@ -163,23 +170,20 @@ void Scene1030::initializeCustomPreviewState() {
 	const bool firstEntryConversationPending = isFirstEntryState() && !state.scene1030EntryConversationSeen;
 
 	initializeDefaultPreviewState();
+	_sceneLayers.configure(kScene1030LayerSpecs);
 	_largeForegroundChannel.reset(0, kScene1030ForegroundFrameMillis);
 	_smallForegroundChannel.reset(0, kScene1030SmallForegroundTickMillis);
-	_largeForegroundLayer.reset(state.scene1030EntryConversationSeen ? 0x1c : 0);
-	_largeForegroundLayer.visible = true;
+	_sceneLayers.resetLayer(kScene1030LargeForegroundLayer,
+		state.scene1030EntryConversationSeen ? 0x1c : 0);
 	_largeForegroundMode = state.scene1030EntryConversationSeen ? 1 : 0;
-	_smallForegroundLayer.reset(0);
-	_smallForegroundLayer.visible = false;
 	_smallForegroundTickCount = 0;
 	_entryActorPathFrameIndex = 0;
 	_entryActorPathTimerAccumulator = 0;
 	_entryActorPathActive = false;
 	_entryActorsVisible = firstEntryConversationPending;
 	_entryActorsAlternatePose = false;
-	_leftEntryActorLayer.reset(0);
-	_rightEntryActorLayer.reset(0);
-	_leftEntryActorLayer.visible = firstEntryConversationPending;
-	_rightEntryActorLayer.visible = firstEntryConversationPending;
+	_sceneLayers.setLayerVisible(kScene1030LeftEntryActorLayer, firstEntryConversationPending);
+	_sceneLayers.setLayerVisible(kScene1030RightEntryActorLayer, firstEntryConversationPending);
 
 	if (isLeftEntryState()) {
 		_activeActorWorldX = kScene1030LeftEntryTargetX;
@@ -206,17 +210,18 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	applyActorDepthClipForDrawOrder(actorDrawOrderMode);
 
 	if (_entryActorsVisible) {
-		restoreResourceSpriteLayerBackground(_leftEntryActorLayer, _baseFramebuffer);
-		restoreResourceSpriteLayerBackground(_rightEntryActorLayer, _baseFramebuffer);
+		restoreSceneLayerBackground(kScene1030LeftEntryActorLayer, _baseFramebuffer);
+		restoreSceneLayerBackground(kScene1030RightEntryActorLayer, _baseFramebuffer);
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 		drawEntryActors();
 		return;
 	}
 
-	restoreResourceSpriteLayerBackground(_largeForegroundLayer, _baseFramebuffer);
-	_smallForegroundLayer.visible = _vm->gameState().scene1030TablePickupState == 1;
-	restoreResourceSpriteLayerBackground(_smallForegroundLayer, _baseFramebuffer);
+	restoreSceneLayerBackground(kScene1030LargeForegroundLayer, _baseFramebuffer);
+	_sceneLayers.setLayerVisible(kScene1030SmallForegroundLayer,
+		_vm->gameState().scene1030TablePickupState == 1);
+	restoreSceneLayerBackground(kScene1030SmallForegroundLayer, _baseFramebuffer);
 
 	if (_actionOverlayPlayer.replacesActor()) {
 		drawLargeForegroundActor();
@@ -455,9 +460,9 @@ byte Scene1030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene1030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene1030EntryLeftSpeechGroup)
-		_leftEntryActorLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer, frameIndex);
 	else if (animationGroup == kScene1030EntryRightSpeechGroup)
-		_rightEntryActorLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer, frameIndex);
 }
 
 void Scene1030::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -468,8 +473,8 @@ void Scene1030::handleAnimationFrameHook(byte hookId, uint frame) {
 	GameplayState &state = _vm->gameState();
 	state.scene1030TablePickupState = hookId;
 	if (hookId == 2) {
-		_smallForegroundLayer.reset(0);
-		_smallForegroundLayer.visible = false;
+		_sceneLayers.resetLayer(kScene1030SmallForegroundLayer, 0);
+		_sceneLayers.setLayerVisible(kScene1030SmallForegroundLayer, false);
 	}
 	applySceneStateToHotspotsAndPatches(1);
 }
@@ -509,10 +514,8 @@ void Scene1030::runFirstEntryConversation() {
 
 	_entryActorsVisible = true;
 	_entryActorsAlternatePose = false;
-	_leftEntryActorLayer.reset(0);
-	_rightEntryActorLayer.reset(0);
-	_leftEntryActorLayer.visible = true;
-	_rightEntryActorLayer.visible = true;
+	_sceneLayers.showLayerAtFrame(kScene1030LeftEntryActorLayer, 0);
+	_sceneLayers.showLayerAtFrame(kScene1030RightEntryActorLayer, 0);
 	drawPlayableComposite();
 	presentFrame();
 
@@ -535,9 +538,9 @@ void Scene1030::runFirstEntryConversation() {
 	finishFirstEntryActorPath();
 	_entryActorsVisible = false;
 	_entryActorsAlternatePose = false;
-	_leftEntryActorLayer.visible = false;
-	_rightEntryActorLayer.visible = false;
-	_largeForegroundLayer.setFrame(0x1c);
+	_sceneLayers.setLayerVisible(kScene1030LeftEntryActorLayer, false);
+	_sceneLayers.setLayerVisible(kScene1030RightEntryActorLayer, false);
+	_sceneLayers.setLayerFrame(kScene1030LargeForegroundLayer, 0x1c);
 	_largeForegroundMode = 1;
 	state.scene1030EntryConversationSeen = true;
 	drawPlayableComposite();
@@ -598,8 +601,10 @@ void Scene1030::finishFirstEntryActorPath() {
 
 void Scene1030::runEntryGestureSequence() {
 	for (uint i = 0; i < ARRAYSIZE(kScene1030EntryGestureRightFrames) && !Engine::shouldQuit(); ++i) {
-		_rightEntryActorLayer.setFrame(kScene1030EntryGestureRightFrames[i]);
-		_leftEntryActorLayer.setFrame(kScene1030EntryGestureLeftFrames[i]);
+		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
+			kScene1030EntryGestureRightFrames[i]);
+		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
+			kScene1030EntryGestureLeftFrames[i]);
 		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
 			return;
 	}
@@ -607,63 +612,67 @@ void Scene1030::runEntryGestureSequence() {
 
 void Scene1030::runEntryOpenSequence() {
 	for (uint i = 0; i <= 0x10 && !Engine::shouldQuit(); ++i) {
-		_rightEntryActorLayer.setFrame(MIN<byte>(0x20, 0x10 + i));
-		_leftEntryActorLayer.setFrame(MIN<byte>(0x1a, 0x10 + i));
+		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
+			MIN<byte>(0x20, 0x10 + i));
+		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
+			MIN<byte>(0x1a, 0x10 + i));
 		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
 			return;
 	}
 }
 
 void Scene1030::drawEntryActors() {
-	drawResourceSpriteLayer(_leftEntryActorLayer);
-	drawResourceSpriteLayer(_rightEntryActorLayer);
+	drawSceneLayer(kScene1030LeftEntryActorLayer);
+	drawSceneLayer(kScene1030RightEntryActorLayer);
 }
 
 void Scene1030::drawSmallForegroundActor() {
-	_smallForegroundLayer.visible = _vm->gameState().scene1030TablePickupState == 1;
-	drawResourceSpriteLayer(_smallForegroundLayer);
+	_sceneLayers.setLayerVisible(kScene1030SmallForegroundLayer,
+		_vm->gameState().scene1030TablePickupState == 1);
+	drawSceneLayer(kScene1030SmallForegroundLayer);
 }
 
 void Scene1030::drawLargeForegroundActor() {
-	drawResourceSpriteLayer(_largeForegroundLayer);
+	drawSceneLayer(kScene1030LargeForegroundLayer);
 }
 
 void Scene1030::advanceLargeForegroundActor(uint32 delta) {
+	ResourceSpriteLayer &largeForegroundLayer = _sceneLayers.layer(kScene1030LargeForegroundLayer);
 	const uint frameCount = _largeForegroundChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		const bool actorNearForeground = _activeActorWorldX < 0x0da && _activeActorWorldY > 0x16e;
 		if (_largeForegroundMode == 0) {
-			if (_largeForegroundLayer.frameIndex < 0x1b) {
-				_largeForegroundLayer.setFrame(_largeForegroundLayer.frameIndex + 1);
-				if (_largeForegroundLayer.frameIndex == 9 || _largeForegroundLayer.frameIndex == 0x12 ||
-						_largeForegroundLayer.frameIndex == 0x1b)
+			if (largeForegroundLayer.frameIndex < 0x1b) {
+				largeForegroundLayer.setFrame(largeForegroundLayer.frameIndex + 1);
+				if (largeForegroundLayer.frameIndex == 9 || largeForegroundLayer.frameIndex == 0x12 ||
+						largeForegroundLayer.frameIndex == 0x1b)
 					_soundBank0.playSample(0x24, 20);
 			} else if (actorNearForeground) {
-				_largeForegroundLayer.setFrame(0x25);
+				largeForegroundLayer.setFrame(0x25);
 				_largeForegroundMode = 2;
 			} else {
-				_largeForegroundLayer.setFrame(0x1c);
+				largeForegroundLayer.setFrame(0x1c);
 				_largeForegroundMode = 1;
 			}
 		} else if (_largeForegroundMode == 1) {
-			if (_largeForegroundLayer.frameIndex < 0x24) {
-				_largeForegroundLayer.setFrame(_largeForegroundLayer.frameIndex + 1);
-				if (_largeForegroundLayer.frameIndex == 0x24)
+			if (largeForegroundLayer.frameIndex < 0x24) {
+				largeForegroundLayer.setFrame(largeForegroundLayer.frameIndex + 1);
+				if (largeForegroundLayer.frameIndex == 0x24)
 					_soundBank0.playSample(0x24, 20);
 			} else if (actorNearForeground) {
-				_largeForegroundLayer.setFrame(0x25);
+				largeForegroundLayer.setFrame(0x25);
 				_largeForegroundMode = 2;
 			} else {
-				_largeForegroundLayer.setFrame(0x1c);
+				largeForegroundLayer.setFrame(0x1c);
 			}
 		} else {
-			if (_largeForegroundLayer.frameIndex < 0x48) {
-				_largeForegroundLayer.setFrame(_largeForegroundLayer.frameIndex + 1);
-				if (_largeForegroundLayer.frameIndex == 0x2e || _largeForegroundLayer.frameIndex == 0x37 ||
-						_largeForegroundLayer.frameIndex == 0x40)
+			if (largeForegroundLayer.frameIndex < 0x48) {
+				largeForegroundLayer.setFrame(largeForegroundLayer.frameIndex + 1);
+				if (largeForegroundLayer.frameIndex == 0x2e || largeForegroundLayer.frameIndex == 0x37 ||
+						largeForegroundLayer.frameIndex == 0x40)
 					_soundBank0.playSample(0x24, 20);
 			} else if (!actorNearForeground) {
-				_largeForegroundLayer.setFrame(0);
+				largeForegroundLayer.setFrame(0);
 				_largeForegroundMode = 0;
 			}
 		}
@@ -674,6 +683,7 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 	if (_vm->gameState().scene1030TablePickupState != 1)
 		return;
 
+	ResourceSpriteLayer &smallForegroundLayer = _sceneLayers.layer(kScene1030SmallForegroundLayer);
 	const uint frameCount = _smallForegroundChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_smallForegroundTickCount < 0x0f) {
@@ -681,8 +691,8 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 			continue;
 		}
 		_smallForegroundTickCount = 0;
-		_smallForegroundLayer.setFrame(_smallForegroundLayer.frameIndex == 0 ? 1 : 0);
-		if (_smallForegroundLayer.frameIndex == 1) {
+		smallForegroundLayer.setFrame(smallForegroundLayer.frameIndex == 0 ? 1 : 0);
+		if (smallForegroundLayer.frameIndex == 1) {
 			const byte soundId = (byte)(0x0f + _random.getRandomNumber(2));
 			_soundBank0.playSample(soundId, 5);
 		}

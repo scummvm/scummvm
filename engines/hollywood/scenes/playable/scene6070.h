@@ -80,11 +80,6 @@ private:
 	void rebuildSceneWalkableMask();
 
 	Common::Array<byte> _originalColorToItemMap;
-	ResourceSpriteLayer _sueLayer;
-	ResourceSpriteLayer _arrivalLayer;
-	ResourceSpriteLayer _state609SueLayer;
-	ResourceSpriteLayer _state609PropLayer;
-	ResourceSpriteLayer _state609NpcLayer;
 	TimedAnimationChannel _sueIdleChannel;
 	uint _state609PropTrack;
 	uint32 _sueSpeechTimerAccumulator;

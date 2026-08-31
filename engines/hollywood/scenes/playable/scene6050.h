@@ -75,10 +75,7 @@ private:
 
 	Common::Array<byte> _originalColorToItemMap;
 	TimedAnimationChannel _guardChannel;
-	ResourceSpriteLayer _guardLayer;
 	TimedAnimationChannel _displayCaseSecondaryChannel;
-	ResourceSpriteLayer _scriptLayer;
-	ResourceSpriteLayer _secondaryScriptLayer;
 	byte _guardAnimationState;
 	bool _guardManualSequenceActive;
 	bool _guardConversationActive;

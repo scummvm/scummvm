@@ -46,6 +46,24 @@ const byte kScene6090SueSpeechGroup = 2;
 const byte kScene6090InvalidSpeechGroup = 0xff;
 const byte kScene6090PrimarySpeechColor = 0xfb;
 
+enum {
+	kScene6090LeftAmbientLayer,
+	kScene6090RightAmbientLayer,
+	kScene6090TiedRonLayer,
+	kScene6090HannoverLayer,
+	kScene6090KarloffLayer,
+	kScene6090SueFaceLayer,
+	kScene6090ApparatusLayer,
+	kScene6090RescueRonLayer,
+	kScene6090RescueHannoverLayer,
+	kScene6090RescueKarloffLayer,
+	kScene6090RescueApparatusLayer,
+	kScene6090RescueEffectLayer,
+	kScene6090EscapeBackdropLayer,
+	kScene6090FreedSueLayer,
+	kScene6090SpecialEffectLayer
+};
+
 const byte kScene6090HannoverFrameMap[] = {
 	0, 1, 2, 3, 4, 4, 5, 6, 7, 4, 3, 2, 1, 0, 8, 9,
 	10, 11, 11, 12, 13, 14, 11, 10, 9, 8, 0, 0, 0, 0, 0, 0
@@ -101,6 +119,34 @@ const byte kScene6090FreedSueFrameMap[] = {
 
 const byte kScene6090SpecialEffectFrameMap[] = {0, 1, 2, 3, 4, 4, 3, 2, 1, 0};
 
+const SceneLayerSpec kScene6090LayerSpecs[] = {
+	{ kSceneAnimationScenePlaced, 5, 0x1a, nullptr, 0, true, 0 },
+	{ kSceneAnimationScenePlaced, 6, 0x1a, nullptr, 0, true, 0x0c },
+	{ kSceneAnimationScenePlaced, 7, 0x2a, nullptr, 0, true, 0 },
+	{ kSceneAnimationScenePlaced, 8, 0x1a, kScene6090HannoverFrameMap,
+		ARRAYSIZE(kScene6090HannoverFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 9, 0x31, kScene6090KarloffFrameMap,
+		ARRAYSIZE(kScene6090KarloffFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 10, 5, kScene6090SueIdleFrameMap,
+		ARRAYSIZE(kScene6090SueIdleFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 15, 0x17, nullptr, 0, true, 0 },
+	{ kSceneAnimationScenePlaced, 7, 0x2a, kScene6090RescueRonFrameMap,
+		ARRAYSIZE(kScene6090RescueRonFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 8, 0x1a, kScene6090RescueHannoverFrameMap,
+		ARRAYSIZE(kScene6090RescueHannoverFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 9, 0x31, kScene6090RescueKarloffFrameMap,
+		ARRAYSIZE(kScene6090RescueKarloffFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 15, 0x17, kScene6090RescueApparatusFrameMap,
+		ARRAYSIZE(kScene6090RescueApparatusFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 14, 0x0f, kScene6090RescueEffectFrameMap,
+		ARRAYSIZE(kScene6090RescueEffectFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 14, 0x0f, nullptr, 0, true, 0x0e },
+	{ kSceneAnimationScenePlaced, 18, 0x27, kScene6090FreedSueFrameMap,
+		ARRAYSIZE(kScene6090FreedSueFrameMap), true, 0 },
+	{ kSceneAnimationScenePlaced, 16, 5, kScene6090SpecialEffectFrameMap,
+		ARRAYSIZE(kScene6090SpecialEffectFrameMap), true, 0 }
+};
+
 static PlayableSceneConfig scene6090Config() {
 	PlayableSceneConfig config(6090,
 		SceneResourceLayout(25, 5, 18),
@@ -115,21 +161,6 @@ static PlayableSceneConfig scene6090Config() {
 
 Scene6090::Scene6090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6090Config()),
-		_leftAmbientLayer(),
-		_rightAmbientLayer(),
-		_tiedRonLayer(),
-		_hannoverLayer(),
-		_karloffLayer(),
-		_sueFaceLayer(),
-		_apparatusLayer(),
-		_rescueRonLayer(),
-		_rescueHannoverLayer(),
-		_rescueKarloffLayer(),
-		_rescueApparatusLayer(),
-		_rescueEffectLayer(),
-		_escapeBackdropLayer(),
-		_freedSueLayer(),
-		_specialEffectLayer(),
 		_leftAmbientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_rightAmbientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_tiedRonChannel(),
@@ -169,35 +200,13 @@ Scene6090::Scene6090(HollywoodEngine *vm) :
 		_asyncColorIndex(kScene6090PrimarySpeechColor),
 		_asyncVolumePercent(100),
 		_asyncPartRemainingMillis(0) {
-	_leftAmbientLayer.configure(5, 0x1a, nullptr, 0);
-	_rightAmbientLayer.configure(6, 0x1a, nullptr, 0);
-	_leftAmbientTrack = _realtimeAnimationTracks.addLoop(_leftAmbientLayer,
+	_sceneLayers.configure(kScene6090LayerSpecs);
+	_leftAmbientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene6090LeftAmbientLayer,
 		kScene6090FrameMillis, 0x1a);
-	_rightAmbientTrack = _realtimeAnimationTracks.addLoop(_rightAmbientLayer,
+	_rightAmbientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene6090RightAmbientLayer,
 		kScene6090FrameMillis, 0x1a);
-	_tiedRonLayer.configure(7, 0x2a, nullptr, 0);
-	_hannoverLayer.configure(8, 0x1a, kScene6090HannoverFrameMap,
-		ARRAYSIZE(kScene6090HannoverFrameMap));
-	_karloffLayer.configure(9, 0x31, kScene6090KarloffFrameMap,
-		ARRAYSIZE(kScene6090KarloffFrameMap));
-	_sueFaceLayer.configure(10, 5, kScene6090SueIdleFrameMap,
-		ARRAYSIZE(kScene6090SueIdleFrameMap));
-	_apparatusLayer.configure(15, 0x17, nullptr, 0);
-	_rescueRonLayer.configure(7, 0x2a, kScene6090RescueRonFrameMap,
-		ARRAYSIZE(kScene6090RescueRonFrameMap));
-	_rescueHannoverLayer.configure(8, 0x1a, kScene6090RescueHannoverFrameMap,
-		ARRAYSIZE(kScene6090RescueHannoverFrameMap));
-	_rescueKarloffLayer.configure(9, 0x31, kScene6090RescueKarloffFrameMap,
-		ARRAYSIZE(kScene6090RescueKarloffFrameMap));
-	_rescueApparatusLayer.configure(15, 0x17, kScene6090RescueApparatusFrameMap,
-		ARRAYSIZE(kScene6090RescueApparatusFrameMap));
-	_rescueEffectLayer.configure(14, 0x0f, kScene6090RescueEffectFrameMap,
-		ARRAYSIZE(kScene6090RescueEffectFrameMap));
-	_escapeBackdropLayer.configure(14, 0x0f, nullptr, 0);
-	_freedSueLayer.configure(18, 0x27, kScene6090FreedSueFrameMap,
-		ARRAYSIZE(kScene6090FreedSueFrameMap));
-	_specialEffectLayer.configure(16, 5, kScene6090SpecialEffectFrameMap,
-		ARRAYSIZE(kScene6090SpecialEffectFrameMap));
 	_secondaryEffectSound.setArchive(Common::Path(kScene6090SoundArchiveName));
 }
 
@@ -210,7 +219,7 @@ void Scene6090::initializeCustomPreviewState() {
 	restoreTiedSequencePalette();
 	resetSceneLayers();
 	if (resumeGameplay) {
-		_karloffLayer.setFrame(0x31);
+		_sceneLayers.setLayerFrame(kScene6090KarloffLayer, 0x31);
 		_mechanismState = 3;
 	}
 	initializeDefaultPreviewState();
@@ -235,37 +244,9 @@ void Scene6090::restoreTiedSequencePalette() {
 }
 
 void Scene6090::resetSceneLayers() {
+	_sceneLayers.configure(kScene6090LayerSpecs);
 	_realtimeAnimationTracks.resetToFrame(_leftAmbientTrack, 0);
 	_realtimeAnimationTracks.resetToFrame(_rightAmbientTrack, 0x0c);
-	_tiedRonLayer.reset(0);
-	_hannoverLayer.reset(0);
-	_karloffLayer.reset(0);
-	_sueFaceLayer.reset(0);
-	_apparatusLayer.reset(0);
-	_rescueRonLayer.reset(0);
-	_rescueHannoverLayer.reset(0);
-	_rescueKarloffLayer.reset(0);
-	_rescueApparatusLayer.reset(0);
-	_rescueEffectLayer.reset(0);
-	_escapeBackdropLayer.reset(0x0e);
-	_freedSueLayer.reset(0);
-	_specialEffectLayer.reset(0);
-
-	_leftAmbientLayer.visible = true;
-	_rightAmbientLayer.visible = true;
-	_tiedRonLayer.visible = true;
-	_hannoverLayer.visible = true;
-	_karloffLayer.visible = true;
-	_sueFaceLayer.visible = true;
-	_apparatusLayer.visible = true;
-	_rescueRonLayer.visible = true;
-	_rescueHannoverLayer.visible = true;
-	_rescueKarloffLayer.visible = true;
-	_rescueApparatusLayer.visible = true;
-	_rescueEffectLayer.visible = true;
-	_escapeBackdropLayer.visible = true;
-	_freedSueLayer.visible = true;
-	_specialEffectLayer.visible = true;
 
 	_tiedRonChannel.reset(0, kScene6090TiedRonFrameMillis);
 	_sueIdleChannel.reset(0, kScene6090FrameMillis);
@@ -325,39 +306,40 @@ void Scene6090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	switch (_compositeMode) {
 	case kIntroComposite:
-		_tiedRonLayer.setFrame(drawSecondaryActor ? secondaryFrame : _tiedRonIdleFrame);
-		drawResourceSpriteLayer(_leftAmbientLayer);
-		drawResourceSpriteLayer(_rightAmbientLayer);
-		drawResourceSpriteLayer(_tiedRonLayer);
-		drawResourceSpriteLayer(_karloffLayer);
-		drawResourceSpriteLayer(_apparatusLayer);
-		drawResourceSpriteLayer(_hannoverLayer);
-		drawResourceSpriteLayer(_sueFaceLayer);
+		_sceneLayers.setLayerFrame(kScene6090TiedRonLayer,
+			drawSecondaryActor ? secondaryFrame : _tiedRonIdleFrame);
+		drawSceneLayer(kScene6090LeftAmbientLayer);
+		drawSceneLayer(kScene6090RightAmbientLayer);
+		drawSceneLayer(kScene6090TiedRonLayer);
+		drawSceneLayer(kScene6090KarloffLayer);
+		drawSceneLayer(kScene6090ApparatusLayer);
+		drawSceneLayer(kScene6090HannoverLayer);
+		drawSceneLayer(kScene6090SueFaceLayer);
 		break;
 	case kRescueComposite:
-		drawResourceSpriteLayer(_leftAmbientLayer);
-		drawResourceSpriteLayer(_rightAmbientLayer);
-		drawResourceSpriteLayer(_rescueRonLayer);
-		drawResourceSpriteLayer(_rescueKarloffLayer);
-		drawResourceSpriteLayer(_rescueEffectLayer);
-		drawResourceSpriteLayer(_sueFaceLayer);
-		drawResourceSpriteLayer(_rescueApparatusLayer);
-		drawResourceSpriteLayer(_rescueHannoverLayer);
+		drawSceneLayer(kScene6090LeftAmbientLayer);
+		drawSceneLayer(kScene6090RightAmbientLayer);
+		drawSceneLayer(kScene6090RescueRonLayer);
+		drawSceneLayer(kScene6090RescueKarloffLayer);
+		drawSceneLayer(kScene6090RescueEffectLayer);
+		drawSceneLayer(kScene6090SueFaceLayer);
+		drawSceneLayer(kScene6090RescueApparatusLayer);
+		drawSceneLayer(kScene6090RescueHannoverLayer);
 		break;
 	case kSpecialComposite:
-		drawResourceSpriteLayer(_leftAmbientLayer);
-		drawResourceSpriteLayer(_rightAmbientLayer);
-		drawResourceSpriteLayer(_escapeBackdropLayer);
-		drawResourceSpriteLayer(_specialEffectLayer);
-		drawResourceSpriteLayer(_freedSueActive ? _freedSueLayer : _sueFaceLayer);
+		drawSceneLayer(kScene6090LeftAmbientLayer);
+		drawSceneLayer(kScene6090RightAmbientLayer);
+		drawSceneLayer(kScene6090EscapeBackdropLayer);
+		drawSceneLayer(kScene6090SpecialEffectLayer);
+		drawSceneLayer(_freedSueActive ? kScene6090FreedSueLayer : kScene6090SueFaceLayer);
 		break;
 	case kEscapeComposite:
-		drawResourceSpriteLayer(_leftAmbientLayer);
-		drawResourceSpriteLayer(_rightAmbientLayer);
-		drawResourceSpriteLayer(_escapeBackdropLayer);
+		drawSceneLayer(kScene6090LeftAmbientLayer);
+		drawSceneLayer(kScene6090RightAmbientLayer);
+		drawSceneLayer(kScene6090EscapeBackdropLayer);
 		drawActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY);
-		drawResourceSpriteLayer(_freedSueActive ? _freedSueLayer : _sueFaceLayer);
+		drawSceneLayer(_freedSueActive ? kScene6090FreedSueLayer : kScene6090SueFaceLayer);
 		break;
 	}
 }
@@ -388,9 +370,9 @@ bool Scene6090::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene6090::playLayerTransition(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
+bool Scene6090::playLayerTransition(uint layerId, byte firstFrame, byte lastFrame,
 		uint32 frameMillis) {
-	return playAndPresentAnimationTransition(layer,
+	return playAndPresentAnimationTransition(layerId,
 		AnimationTransition(firstFrame, lastFrame, lastFrame, frameMillis).unskippable());
 }
 
@@ -438,51 +420,51 @@ bool Scene6090::runCurtainRevealFromBlack() {
 }
 
 void Scene6090::runOpeningConversation() {
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 6, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 
-	playLayerTransition(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090HannoverLayer, 0, 4, kScene6090FastFrameMillis);
 	_hannoverPoseMode = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 7, 0xb4, 0x7c,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
-	_hannoverLayer.setFrame(0);
+	playLayerTransition(kScene6090HannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090HannoverLayer, 0);
 	_hannoverPoseMode = 0;
 
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 8, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 	beginSecondarySpeechLine(15, 9);
 
-	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(kScene6090HannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 10, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
-	_hannoverLayer.setFrame(0);
+	playLayerTransition(kScene6090HannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090HannoverLayer, 0);
 	_hannoverPoseMode = 0;
 	beginSecondarySpeechLine(15, 11);
 
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(kScene6090HannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 12, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
-	_hannoverLayer.setFrame(0);
+	playLayerTransition(kScene6090HannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090HannoverLayer, 0);
 	_hannoverPoseMode = 0;
 
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 13, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
@@ -490,57 +472,57 @@ void Scene6090::runOpeningConversation() {
 	beginPrimarySpeechLineWithAnimationGroup(15, 15, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 
-	playLayerTransition(_hannoverLayer, 0, 4, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090HannoverLayer, 0, 4, kScene6090FastFrameMillis);
 	_hannoverPoseMode = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 16, 0xb4, 0x7c,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_hannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
-	_hannoverLayer.setFrame(0);
+	playLayerTransition(kScene6090HannoverLayer, 9, 0x0d, kScene6090FastFrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090HannoverLayer, 0);
 	_hannoverPoseMode = 0;
 	beginSecondarySpeechLine(15, 17);
 
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_karloffLayer, 0, 6, 10);
+	playLayerTransition(kScene6090KarloffLayer, 0, 6, 10);
 	_mechanismState = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 18, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
-	_karloffLayer.setFrame(0);
+	playLayerTransition(kScene6090KarloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090KarloffLayer, 0);
 	_mechanismState = 0;
 	beginSecondarySpeechLine(15, 19);
 
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
-	playLayerTransition(_hannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
+	playLayerTransition(kScene6090HannoverLayer, 0x0d, 0x11, kScene6090FrameMillis);
 	_hannoverPoseMode = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 20, 0xbc, 0x7a,
 		0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_hannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
-	_hannoverLayer.setFrame(0);
+	playLayerTransition(kScene6090HannoverLayer, 0x16, 0x1a, kScene6090FrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090HannoverLayer, 0);
 	_hannoverPoseMode = 0;
-	playLayerTransition(_karloffLayer, 0, 6, 10);
+	playLayerTransition(kScene6090KarloffLayer, 0, 6, 10);
 	_mechanismState = 1;
 	beginPrimarySpeechLineWithAnimationGroup(15, 21, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
 	beginPrimarySpeechLineWithAnimationGroup(15, 22, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
-	_karloffLayer.setFrame(0);
+	playLayerTransition(kScene6090KarloffLayer, 0x0b, 0x11, kScene6090FastFrameMillis);
+	_sceneLayers.setLayerFrame(kScene6090KarloffLayer, 0);
 	_mechanismState = 0;
-	playLayerTransition(_karloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x11, 0x1b, kScene6090FastFrameMillis);
 	_mechanismState = 2;
 	beginPrimarySpeechLineWithAnimationGroup(15, 23, 0xd2, 0x82,
 		0x20, 0x32, 0, kScene6090KarloffSpeechGroup);
-	playLayerTransition(_karloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x20, 0x2a, kScene6090FastFrameMillis);
 	_mechanismState = 0;
-	playLayerTransition(_karloffLayer, 0x2a, 0x31, kScene6090FastFrameMillis);
+	playLayerTransition(kScene6090KarloffLayer, 0x2a, 0x31, kScene6090FastFrameMillis);
 	_mechanismState = 3;
 }
 
@@ -548,9 +530,12 @@ void Scene6090::prepareCustomGameplayLoop() {
 	_tiedRonChannel.reset(_tiedRonIdleFrame, kScene6090TiedRonFrameMillis);
 	_realtimeAnimationTracks.resetTimer(_leftAmbientTrack);
 	_realtimeAnimationTracks.resetTimer(_rightAmbientTrack);
-	_sueIdleChannel.reset(_sueFaceLayer.frameIndex, kScene6090FrameMillis);
-	_mechanismChannel.reset(_karloffLayer.frameIndex, kScene6090FrameMillis);
-	_escapeChannel.reset(_freedSueLayer.frameIndex, kScene6090FrameMillis);
+	_sueIdleChannel.reset(_sceneLayers.layerFrame(kScene6090SueFaceLayer),
+		kScene6090FrameMillis);
+	_mechanismChannel.reset(_sceneLayers.layerFrame(kScene6090KarloffLayer),
+		kScene6090FrameMillis);
+	_escapeChannel.reset(_sceneLayers.layerFrame(kScene6090FreedSueLayer),
+		kScene6090FrameMillis);
 	_paletteFadeChannel.reset(0, kScene6090FrameMillis);
 	_secondaryEffectSound.setArchive(Common::Path(kScene6090SoundArchiveName));
 	_manualSequenceActive = false;
@@ -602,33 +587,34 @@ void Scene6090::advanceTiedRonIdle(uint32 delta) {
 }
 
 void Scene6090::advanceSueIdle(uint32 delta) {
+	ResourceSpriteLayer &sueFaceLayer = _sceneLayers.layer(kScene6090SueFaceLayer);
 	const uint frameCount = _sueIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		switch (_sueIdleMode) {
 		case 0:
 			if (_random.getRandomNumber(_postRescue ? 19 : 99) == 0) {
-				_sueFaceLayer.setFrame(2);
+				sueFaceLayer.setFrame(2);
 				_sueIdleMode = 2;
 				_sueIdleRepeatCount = (byte)(_random.getRandomNumber(5) + 2);
 			} else if (_random.getRandomNumber(39) == 0) {
-				_sueFaceLayer.setFrame(1);
+				sueFaceLayer.setFrame(1);
 				_sueIdleMode = 1;
 			}
 			break;
 		case 1:
-			_sueFaceLayer.setFrame(0);
+			sueFaceLayer.setFrame(0);
 			_sueIdleMode = 0;
 			break;
 		case 2:
-			if (_sueFaceLayer.frameIndex == 7) {
+			if (sueFaceLayer.frameIndex == 7) {
 				if (--_sueIdleRepeatCount == 0) {
-					_sueFaceLayer.setFrame(0);
+					sueFaceLayer.setFrame(0);
 					_sueIdleMode = 0;
 				} else {
-					_sueFaceLayer.setFrame(2);
+					sueFaceLayer.setFrame(2);
 				}
 			} else {
-				_sueFaceLayer.setFrame(_sueFaceLayer.frameIndex + 1);
+				sueFaceLayer.setFrame(sueFaceLayer.frameIndex + 1);
 				if (_postRescue && !_asyncPrimaryActive &&
 						!_primaryDialogueSpeechActive && !_speech.isPlaying()) {
 					startAsyncPrimarySpeechLine(15, 33, 0x32, 0x78,
@@ -641,12 +627,14 @@ void Scene6090::advanceSueIdle(uint32 delta) {
 }
 
 void Scene6090::advanceMechanism(uint32 delta) {
+	ResourceSpriteLayer &karloffLayer = _sceneLayers.layer(kScene6090KarloffLayer);
+	ResourceSpriteLayer &hannoverLayer = _sceneLayers.layer(kScene6090HannoverLayer);
 	const uint frameCount = _mechanismChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount && !_automaticEventRunning; ++i) {
 		switch (_mechanismState) {
 		case 0:
 			if (_speakerMode == 1) {
-				_karloffLayer.setFrame(1);
+				karloffLayer.setFrame(1);
 				_mechanismState = 5;
 			}
 			break;
@@ -658,7 +646,7 @@ void Scene6090::advanceMechanism(uint32 delta) {
 						0x20, 0x32, 0, kScene6090KarloffSpeechGroup, 25);
 				} else {
 					_speakerMode = 0;
-					_karloffLayer.setFrame(0x0c);
+					karloffLayer.setFrame(0x0c);
 					_mechanismState = 6;
 					if (_interruptionCycleCount == 8 && !_delayedEventDone) {
 						runDelayedInterruption();
@@ -669,46 +657,46 @@ void Scene6090::advanceMechanism(uint32 delta) {
 			}
 			break;
 		case 3:
-			if (_karloffLayer.frameIndex == 0x35) {
+			if (karloffLayer.frameIndex == 0x35) {
 				if (_random.getRandomNumber(49) == 0) {
-					_karloffLayer.setFrame(0x38);
+					karloffLayer.setFrame(0x38);
 					_mechanismState = 4;
-					_hannoverLayer.setFrame(1);
+					hannoverLayer.setFrame(1);
 					_hannoverPoseMode = 3;
 				} else {
-					_karloffLayer.setFrame(0x32);
+					karloffLayer.setFrame(0x32);
 				}
 			} else {
-				_karloffLayer.setFrame(_karloffLayer.frameIndex + 1);
+				karloffLayer.setFrame(karloffLayer.frameIndex + 1);
 			}
 			break;
 		case 4:
-			if (_karloffLayer.frameIndex == 0x3e) {
-				_karloffLayer.setFrame(0);
+			if (karloffLayer.frameIndex == 0x3e) {
+				karloffLayer.setFrame(0);
 				_mechanismState = 0;
 			} else {
-				_karloffLayer.setFrame(_karloffLayer.frameIndex + 1);
+				karloffLayer.setFrame(karloffLayer.frameIndex + 1);
 			}
 			break;
 		case 5:
-			if (_karloffLayer.frameIndex == 6)
+			if (karloffLayer.frameIndex == 6)
 				_mechanismState = 1;
 			else
-				_karloffLayer.setFrame(_karloffLayer.frameIndex + 1);
+				karloffLayer.setFrame(karloffLayer.frameIndex + 1);
 			break;
 		case 6:
-			if (_karloffLayer.frameIndex == 0x11) {
-				_karloffLayer.setFrame(0x2b);
+			if (karloffLayer.frameIndex == 0x11) {
+				karloffLayer.setFrame(0x2b);
 				_mechanismState = 7;
 			} else {
-				_karloffLayer.setFrame(_karloffLayer.frameIndex + 1);
+				karloffLayer.setFrame(karloffLayer.frameIndex + 1);
 			}
 			break;
 		case 7:
-			if (_karloffLayer.frameIndex == 0x31)
+			if (karloffLayer.frameIndex == 0x31)
 				_mechanismState = 3;
 			else
-				_karloffLayer.setFrame(_karloffLayer.frameIndex + 1);
+				karloffLayer.setFrame(karloffLayer.frameIndex + 1);
 			break;
 		default:
 			break;
@@ -718,29 +706,30 @@ void Scene6090::advanceMechanism(uint32 delta) {
 }
 
 void Scene6090::advanceHannoverPose() {
+	ResourceSpriteLayer &hannoverLayer = _sceneLayers.layer(kScene6090HannoverLayer);
 	switch (_hannoverPoseMode) {
 	case 1:
 		if (_speakerMode == 2) {
-			_hannoverLayer.setFrame(10);
+			hannoverLayer.setFrame(10);
 			_hannoverPoseMode = 4;
 		}
 		break;
 	case 3:
-		if (_hannoverLayer.frameIndex == 4) {
+		if (hannoverLayer.frameIndex == 4) {
 			_hannoverPoseMode = 1;
 			_speakerMode = 1;
 			startAsyncPrimarySpeechLine(15, 26, 0xb4, 0x7c,
 				0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup, 25);
 		} else {
-			_hannoverLayer.setFrame(_hannoverLayer.frameIndex + 1);
+			hannoverLayer.setFrame(hannoverLayer.frameIndex + 1);
 		}
 		break;
 	case 4:
-		if (_hannoverLayer.frameIndex == 0x0d) {
-			_hannoverLayer.setFrame(0);
+		if (hannoverLayer.frameIndex == 0x0d) {
+			hannoverLayer.setFrame(0);
 			_hannoverPoseMode = 0;
 		} else {
-			_hannoverLayer.setFrame(_hannoverLayer.frameIndex + 1);
+			hannoverLayer.setFrame(hannoverLayer.frameIndex + 1);
 		}
 		break;
 	default:
@@ -849,7 +838,7 @@ void Scene6090::waitForAsyncPrimarySpeech() {
 void Scene6090::runDelayedInterruption() {
 	stopAsyncPrimarySpeech();
 	_speakerMode = 0;
-	_karloffLayer.setFrame(0x0c);
+	_sceneLayers.setLayerFrame(kScene6090KarloffLayer, 0x0c);
 	_mechanismState = 6;
 	_automaticEventRunning = true;
 	runInterruptionClips();
@@ -1053,13 +1042,13 @@ uint32 Scene6090::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 void Scene6090::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	switch (animationGroup) {
 	case kScene6090HannoverSpeechGroup:
-		_hannoverLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene6090HannoverLayer, frameIndex);
 		break;
 	case kScene6090KarloffSpeechGroup:
-		_karloffLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene6090KarloffLayer, frameIndex);
 		break;
 	case kScene6090SueSpeechGroup:
-		_freedSueLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene6090FreedSueLayer, frameIndex);
 		break;
 	default:
 		break;
@@ -1075,6 +1064,14 @@ void Scene6090::applyPatchChunk(uint chunkIndex) {
 		return;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _baseFramebuffer);
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
+}
+
+void Scene6090::setRescueFrame(byte frame) {
+	_sceneLayers.setLayerFrame(kScene6090RescueRonLayer, frame);
+	_sceneLayers.setLayerFrame(kScene6090RescueHannoverLayer, frame);
+	_sceneLayers.setLayerFrame(kScene6090RescueKarloffLayer, frame);
+	_sceneLayers.setLayerFrame(kScene6090RescueApparatusLayer, frame);
+	_sceneLayers.setLayerFrame(kScene6090RescueEffectLayer, frame);
 }
 
 void Scene6090::runRopeRescueSequence() {
@@ -1097,19 +1094,11 @@ void Scene6090::runRopeRescueSequence() {
 			_secondaryEffectSound.playSample(0x19, 75);
 		}
 
-		_rescueRonLayer.setFrame((byte)frame);
-		_rescueHannoverLayer.setFrame((byte)frame);
-		_rescueKarloffLayer.setFrame((byte)frame);
-		_rescueApparatusLayer.setFrame((byte)frame);
-		_rescueEffectLayer.setFrame((byte)frame);
+		setRescueFrame((byte)frame);
 		if (waitSceneMillis(kScene6090FrameMillis, false))
 			return;
 	}
-	_rescueRonLayer.setFrame(0x2e);
-	_rescueHannoverLayer.setFrame(0x2e);
-	_rescueKarloffLayer.setFrame(0x2e);
-	_rescueApparatusLayer.setFrame(0x2e);
-	_rescueEffectLayer.setFrame(0x2e);
+	setRescueFrame(0x2e);
 	drawPlayableComposite();
 	presentFrame();
 	_soundBank0.stop();
@@ -1131,11 +1120,12 @@ void Scene6090::runRopeRescueSequence() {
 			applyPatchChunk(13);
 			_secondaryEffectSound.playSample(0x17, 50);
 		}
-		_specialEffectLayer.setFrame((byte)frame);
+		_sceneLayers.setLayerFrame(kScene6090SpecialEffectLayer, (byte)frame);
 		if (waitSceneMillis(kScene6090FrameMillis, false))
 			return;
 	}
-	_specialEffectLayer.setFrame(ARRAYSIZE(kScene6090SpecialEffectFrameMap) - 1);
+	_sceneLayers.setLayerFrame(kScene6090SpecialEffectLayer,
+		ARRAYSIZE(kScene6090SpecialEffectFrameMap) - 1);
 	drawPlayableComposite();
 	presentFrame();
 	stopAsyncPrimarySpeech();
@@ -1143,7 +1133,7 @@ void Scene6090::runRopeRescueSequence() {
 	_compositeMode = kEscapeComposite;
 	_activeActorFacing = 2;
 	_activeActorCel = 0;
-	_freedSueLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene6090FreedSueLayer, 0);
 	_freedSueActive = true;
 	_escapeAnimationActive = true;
 	_escapeChannel.reset(0, kScene6090FrameMillis);
@@ -1162,7 +1152,7 @@ void Scene6090::runRopeRescueSequence() {
 			return;
 	}
 	stopAsyncPrimarySpeech();
-	_freedSueLayer.setFrame(0x4f);
+	_sceneLayers.setLayerFrame(kScene6090FreedSueLayer, 0x4f);
 
 	beginPrimarySpeechLineWithAnimationGroup(15, 35, 0xe4, 0x78,
 		0x3f, 0x28, 0x32, kScene6090SueSpeechGroup);
@@ -1186,14 +1176,15 @@ void Scene6090::runRopeRescueSequence() {
 }
 
 void Scene6090::advanceEscapeAnimation(uint32 delta) {
+	ResourceSpriteLayer &freedSueLayer = _sceneLayers.layer(kScene6090FreedSueLayer);
 	const uint frameCount = _escapeChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount && _escapeAnimationActive; ++i) {
-		if (_freedSueLayer.frameIndex >= 0x4e) {
+		if (freedSueLayer.frameIndex >= 0x4e) {
 			_escapeAnimationActive = false;
 			break;
 		}
-		_freedSueLayer.setFrame(_freedSueLayer.frameIndex + 1);
-		if (_freedSueLayer.frameIndex > 0x1a && !_muffledSpeechStarted &&
+		freedSueLayer.setFrame(freedSueLayer.frameIndex + 1);
+		if (freedSueLayer.frameIndex > 0x1a && !_muffledSpeechStarted &&
 				!_asyncPrimaryActive && !_primaryDialogueSpeechActive && !_speech.isPlaying()) {
 			_muffledSpeechStarted = true;
 			startAsyncPrimarySpeechLine(15, 33, 0xe4, 0x78,

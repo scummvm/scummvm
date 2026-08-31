@@ -67,7 +67,7 @@ private:
 	void drawActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
 		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
-	bool playLayerTransition(ResourceSpriteLayer &layer, byte firstFrame, byte lastFrame,
+	bool playLayerTransition(uint layerId, byte firstFrame, byte lastFrame,
 		uint32 frameMillis);
 	bool runCurtainRevealFromBlack();
 	void runOpeningConversation();
@@ -88,26 +88,12 @@ private:
 	void waitForAsyncPrimarySpeech();
 
 	void applyPatchChunk(uint chunkIndex);
+	void setRescueFrame(byte frame);
 	void runRopeRescueSequence();
 	void advanceEscapeAnimation(uint32 delta);
 	void advanceEscapePalette(uint32 delta);
 	void dimEscapePaletteStep();
 
-	ResourceSpriteLayer _leftAmbientLayer;
-	ResourceSpriteLayer _rightAmbientLayer;
-	ResourceSpriteLayer _tiedRonLayer;
-	ResourceSpriteLayer _hannoverLayer;
-	ResourceSpriteLayer _karloffLayer;
-	ResourceSpriteLayer _sueFaceLayer;
-	ResourceSpriteLayer _apparatusLayer;
-	ResourceSpriteLayer _rescueRonLayer;
-	ResourceSpriteLayer _rescueHannoverLayer;
-	ResourceSpriteLayer _rescueKarloffLayer;
-	ResourceSpriteLayer _rescueApparatusLayer;
-	ResourceSpriteLayer _rescueEffectLayer;
-	ResourceSpriteLayer _escapeBackdropLayer;
-	ResourceSpriteLayer _freedSueLayer;
-	ResourceSpriteLayer _specialEffectLayer;
 	uint _leftAmbientTrack;
 	uint _rightAmbientTrack;
 	TimedAnimationChannel _tiedRonChannel;
