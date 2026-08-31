@@ -60,6 +60,17 @@ const byte kScene5010TransportReturnFrameMap[] = {
 	7, 6, 5, 4, 3, 2, 1, 0
 };
 
+enum Scene5010LayerId {
+	kScene5010SwitchLayer,
+	kScene5010SwitchPanelAnimationLayer
+};
+
+const SceneLayerSpec kScene5010LayerSpecs[] = {
+	{kSceneAnimationScenePlaced, 6, kScene5010SwitchDescriptorCount,
+		nullptr, 0, true, 0},
+	{kSceneAnimationScenePlaced, 0, 0, nullptr, 0, false, 0}
+};
+
 enum {
 	kScene5010NoMovingSelector,
 	kScene5010MovingRow,
@@ -85,8 +96,6 @@ static PlayableSceneConfig scene5010Config() {
 
 Scene5010::Scene5010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5010Config()),
-		_switchLayer(),
-		_switchPanelAnimationLayer(),
 		_blinkPatchVisible(false),
 		_switchPanelActive(false),
 		_switchPanelMovingSelector(kScene5010NoMovingSelector),
@@ -96,6 +105,7 @@ Scene5010::Scene5010(HollywoodEngine *vm) :
 		_switchPanelTargetValue(0),
 		_switchPanelHideStaticFrame(0),
 		_switchPanelShowStaticFrame(0) {
+	_sceneLayers.configure(kScene5010LayerSpecs);
 }
 
 void Scene5010::initializeCustomPreviewState() {
@@ -127,18 +137,18 @@ void Scene5010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_actionOverlayPlayer.replacesActor()) {
 		drawActionOverlayLayer();
-		drawResourceSpriteLayer(_switchLayer);
+		drawSceneLayer(kScene5010SwitchLayer);
 		return;
 	}
 
-	drawResourceSpriteLayer(_switchLayer);
+	drawSceneLayer(kScene5010SwitchLayer);
 
 	if (activeWorldY < 0x16b) {
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 		if (activeWorldY < 0x14f && _sceneChunkTable.isValidChunk(7))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-		drawResourceSpriteLayer(_switchLayer);
+		drawSceneLayer(kScene5010SwitchLayer);
 	} else {
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -317,10 +327,8 @@ AmbientAudioProfile Scene5010::ambientAudioProfile() const {
 }
 
 void Scene5010::initializeSwitchLayer() {
-	_switchLayer.configure(6, kScene5010SwitchDescriptorCount, nullptr, 0);
-	_switchLayer.visible = true;
-	_switchLayer.setFrame(switchDescriptorIndex());
-	_switchLayer.hasPreviousDescriptor = false;
+	_sceneLayers.resetLayer(kScene5010SwitchLayer, switchDescriptorIndex());
+	_sceneLayers.setLayerVisible(kScene5010SwitchLayer, true);
 }
 
 byte Scene5010::switchDescriptorIndex() const {
@@ -550,7 +558,7 @@ void Scene5010::runSwitchPanel() {
 	_switchPanelMovingSelectorVisible = true;
 	_switchPanelDisplayedRow = CLIP<byte>(state.scene5010SwitchRow, 0, 2);
 	_switchPanelDisplayedColumn = CLIP<byte>(state.scene5010SwitchColumn, 0, 2);
-	clearResourceLayer(_switchPanelAnimationLayer);
+	clearSceneLayer(kScene5010SwitchPanelAnimationLayer);
 	drawSwitchPanelFrame();
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
@@ -560,7 +568,7 @@ void Scene5010::runSwitchPanel() {
 		if (pollSwitchPanelEvent(done)) {
 			_vm->cursor()->leaveInteractiveMode();
 			_switchPanelActive = false;
-			clearResourceLayer(_switchPanelAnimationLayer);
+			clearSceneLayer(kScene5010SwitchPanelAnimationLayer);
 			return;
 		}
 		_vm->cursor()->advance(10);
@@ -571,7 +579,7 @@ void Scene5010::runSwitchPanel() {
 
 	_vm->cursor()->leaveInteractiveMode();
 	_switchPanelActive = false;
-	clearResourceLayer(_switchPanelAnimationLayer);
+	clearSceneLayer(kScene5010SwitchPanelAnimationLayer);
 	state.scene5010SwitchPanelSeen = true;
 	applySceneStateToHotspotsAndPatches(3);
 	drawPlayableComposite();
@@ -605,7 +613,7 @@ void Scene5010::drawSwitchPanelOverlay() {
 	if ((_switchPanelMovingSelector != kScene5010MovingColumn || _switchPanelMovingSelectorVisible) &&
 			_sceneChunkTable.isValidChunk(columnChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[columnChunk], _sceneFramebuffer);
-	drawResourceSpriteLayer(_switchPanelAnimationLayer);
+	drawSceneLayer(kScene5010SwitchPanelAnimationLayer);
 }
 
 byte Scene5010::switchPanelMaskPixelAt(uint16 screenX, uint16 screenY) const {
@@ -655,7 +663,7 @@ void Scene5010::handleSwitchPanelChoice(byte choice) {
 	_switchPanelMovingSelectorVisible = true;
 	Common::Array<byte> frameMap = buildSwitchPanelAnimation(currentValue, targetValue,
 		_switchPanelHideStaticFrame, _switchPanelShowStaticFrame);
-	playResourceLayerSequence(_switchPanelAnimationLayer, animationChunk,
+	playResourceLayerSequence(kScene5010SwitchPanelAnimationLayer, animationChunk,
 		kScene5010SwitchAnimationDescriptorCount, frameMap.data(), frameMap.size(),
 		AnimationFrameRange(1, frameMap.size() - 1, kScene5010SwitchFrameMillis)
 			.hookEveryFrame(kScene5010SwitchAnimationHook).unskippable());
