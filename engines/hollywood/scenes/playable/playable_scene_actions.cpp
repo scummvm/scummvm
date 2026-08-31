@@ -186,29 +186,24 @@ bool PlayableScene::dispatchGenericInventoryAction(const GameplayLoopCursorState
 		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
 		return true;
 	case 331: // Usar lupa con placa/póster/rata/etc. (use magnifying glass with cell inventory objects).
-		beginSecondarySpeechLine(0x13, 0);
+		if (sceneStageIndex() != 710)
+			return false;
+		beginSecondarySpeechLine(0x1e, 0);
 		return true;
 	case 335: // Usar bisturí/navaja multiusos con placa/póster/etc. (use cutting tools with cell inventory objects).
-		beginSecondarySpeechLine(0x17, 0);
+		if (sceneStageIndex() != 710)
+			return false;
+		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
 		return true;
 	case 336: // Dar pamela a rata (give hat to rat).
-		beginSecondarySpeechLine(0x18, 0);
+		if (sceneStageIndex() != 710)
+			return false;
+		beginSecondarySpeechLine(0x23, 0);
 		return true;
 	case 337: // Usar/Dar placa/perfume/pintura/pintauñas/etc. con rata (use/give items with rat).
-		if (_vm->gameState().cellPlateRatProgress != 0) {
-			beginSecondarySpeechLine(0x19, 1);
-			return true;
-		}
-
-		beginSecondarySpeechLine(0x19, 0);
-		if (state.primaryInventoryItem == 0x14 || state.resolvedItem == 0x14) {
-			_vm->gameState().cellPlateRatProgress = 1;
-			_vm->gameState().cellPipesActive = false;
-			removeInventoryItem(0x14);
-			_soundBank0.playSample(1, 100);
-			if (sceneStageIndex() == 710)
-				applySceneStateToHotspotsAndPatches(0xff);
-		}
+		if (sceneStageIndex() != 710)
+			return false;
+		beginSecondarySpeechLine(0x24, 0);
 		return true;
 	default:
 		return false;

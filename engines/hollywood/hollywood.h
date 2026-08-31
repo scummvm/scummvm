@@ -87,6 +87,10 @@ public:
 	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
 	void requestDebugSceneSolve(uint16 sceneNumber) { _debugSceneSolveRequest = sceneNumber; }
 	bool consumeDebugSceneSolveRequest(uint16 sceneNumber);
+	byte nextScene7100RescueFailureVariant() {
+		_scene7100RescueFailureVariant = !_scene7100RescueFailureVariant;
+		return _scene7100RescueFailureVariant ? 1 : 0;
+	}
 	bool canSave() const { return _canSave; }
 	void setCanSave(bool canSave) { _canSave = canSave; }
 
@@ -114,6 +118,7 @@ private:
 	bool _lastGameplayThumbnailValid;
 	bool _sceneRestartRequested;
 	uint16 _debugSceneSolveRequest;
+	bool _scene7100RescueFailureVariant;
 	bool _canSave;
 };
 

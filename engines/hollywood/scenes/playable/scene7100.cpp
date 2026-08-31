@@ -54,6 +54,12 @@ const uint16 kScene7100Chunk20DescriptorCount = 0x18;
 const uint32 kScene7100FrameMillis = 75;
 const byte kScene7100PrimarySpeechGroupA = 0;
 const byte kScene7100PrimarySpeechGroupB = 1;
+const byte kScene7100PrimarySpeechGroupBanter = 2;
+const byte kScene7100BanterVolumePercent = 25;
+const byte kScene7100AsyncSpeechNone = 0;
+const byte kScene7100AsyncSpeechRonBanter = 1;
+const byte kScene7100AsyncSpeechSueBanter = 2;
+const byte kScene7100AsyncSpeechRonScripted = 3;
 const byte kScene7100RonEscapeResponseFrame = 4;
 const byte kScene7100PrimaryFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 6, 5
@@ -102,6 +108,14 @@ const byte kScene7100Extended337FrameMap[] = {
 const byte kScene7100TransferFrameMap[] = {
 	0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
 };
+const byte kScene7100TransferRonFrameMap[] = {
+	0, 0, 0, 0, 0, 5, 6, 7, 6, 5, 6, 5, 0
+};
+const byte kScene7100RatTrapStateHook = 1;
+const byte kScene7100RatPickupStateHook = 2;
+const byte kScene7100RatPickupEnvironmentHook = 3;
+const byte kScene7100PlateRemovalStateHook = 4;
+const byte kScene7100TransferRonFrameHook = 5;
 const byte kScene7100FirstTransferableSueItem = 0x14;
 const byte kScene7100RonInventoryOwner = 0;
 const byte kScene7100SueInventoryOwner = 1;
@@ -156,13 +170,27 @@ static PlayableSceneConfig scene7100Config() {
 Scene7100::Scene7100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7100Config()),
 		_primaryTimerAccumulator(0),
+		_banterTimerAccumulator(0),
+		_asyncSpeechElapsed(0),
+		_asyncSpeechDuration(0),
 		_environmentTimerAccumulator(0),
+		_asyncTextRecordId(0),
+		_asyncVoiceSampleId(0),
+		_asyncSpeechCenterX(0),
 		_primaryMode(0),
 		_primaryFrame(0),
 		_primaryAltFrame(0),
 		_environmentState(2),
 		_environmentFrame(0),
-		_manualPrimaryAnimationActive(false) {
+		_lastBanterFrame(0xff),
+		_banterRemarkCount(0),
+		_asyncContinuationPart(0),
+		_asyncContinuationCount(0),
+		_asyncSpeechPhase(kScene7100AsyncSpeechNone),
+		_asyncPrimaryAnimationGroup(kScene7100PrimarySpeechGroupA),
+		_manualPrimaryAnimationActive(false),
+		_dialogueMenuActive(false),
+		_specialBanterUsed(false) {
 }
 
 void Scene7100::initializeCustomPreviewState() {
@@ -173,14 +201,28 @@ void Scene7100::initializeCustomPreviewState() {
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_primaryTimerAccumulator = 0;
+	_banterTimerAccumulator = 0;
+	_asyncSpeechElapsed = 0;
+	_asyncSpeechDuration = 0;
 	_environmentTimerAccumulator = 0;
+	_asyncTextRecordId = 0;
+	_asyncVoiceSampleId = 0;
+	_asyncSpeechCenterX = 0;
 	_previousAmbientMusicTrackId = 0;
 	_primaryMode = _vm->gameState().mainFlowStateId == kScene7100DialogueEntryState ? 1 : 0;
 	_primaryFrame = 0;
 	_primaryAltFrame = 0;
 	_environmentState = 2;
 	_environmentFrame = 0;
+	_lastBanterFrame = 0xff;
+	_banterRemarkCount = 0;
+	_asyncContinuationPart = 0;
+	_asyncContinuationCount = 0;
+	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
+	_asyncPrimaryAnimationGroup = kScene7100PrimarySpeechGroupA;
 	_manualPrimaryAnimationActive = false;
+	_dialogueMenuActive = false;
+	_specialBanterUsed = false;
 
 	if (_vm->gameState().mainFlowStateId == kScene7100DialogueEntryState) {
 		_activeActorWorldX = kScene7100DialogueEntryStartX;
@@ -225,16 +267,17 @@ void Scene7100::runCustomEntrySequence() {
 	} else {
 		setActiveActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing);
 		drawPlayableComposite();
-		presentFrame();
+		runCurtainRevealFromBlack();
 	}
 }
 
 bool Scene7100::shouldPresentPreviewBeforeEntrySequence() const {
-	return _vm->gameState().mainFlowStateId != kScene7100DialogueEntryState;
+	return false;
 }
 
 void Scene7100::prepareCustomGameplayLoop() {
 	_primaryTimerAccumulator = 0;
+	_banterTimerAccumulator = 0;
 	_environmentTimerAccumulator = 0;
 }
 
@@ -242,111 +285,124 @@ void Scene7100::advanceCustomGameplayLoop(uint32 delta) {
 	if (!_primaryDialogueSpeechActive && !_manualPrimaryAnimationActive)
 		advancePrimaryIdleFrame(delta);
 
+	advanceAutonomousBanter(delta);
 	advanceEnvironmentFrame(delta);
 }
 
+void Scene7100::suspendAudioForOptionsMenu() {
+	cancelAsyncSpeech();
+	PlayableScene::suspendAudioForOptionsMenu();
+}
+
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
+	cancelAsyncSpeech();
 	switch (handlerId) {
 	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Usar/Abrir puerta (use/open door)
+	case 302: // Abrir/Cerrar puerta (open/close door)
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 303: // Hablar con Ron (talk to Ron)
 		runRonDialogue();
 		return true;
-	case 304: // Mirar Ron (look at Ron)
+	case 304: // Coger Ron (take Ron)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Coger póster (take poster)
+	case 305: // Usar póster (use poster, taking it down)
 		handlePickupItem15();
 		return true;
-	case 306: // Mirar póster (look at poster)
+	case 306: // Coger póster (take poster)
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Mirar ratonera (look at mousetrap)
+	case 307: // Coger ratonera (take mousetrap)
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Coger placa (take plate)
+	case 308: // Usar placa (use plate)
 		beginSecondarySpeechLine(7, _vm->gameState().cellPlateRatProgress == 0 ? 0 : 1);
 		return true;
-	case 309: // Mirar placa (look at plate)
+	case 309: // Coger placa (take plate)
 		beginSecondarySpeechLine(8, MIN<byte>(_vm->gameState().cellPlateRatProgress, 2));
 		return true;
-	case 310: // Mirar camastro (look at cot)
+	case 310: // Coger camastro (take cot)
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Usar camastro (use cot)
+	case 311: // Abrir camastro (open cot)
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 312: // Mirar escalera (look at ladder)
+	case 312: // Coger escalera (take ladder)
 		beginSecondarySpeechLine(0x0b, 0);
 		return true;
-	case 313: // Usar escalera (use ladder)
+	case 313: // Abrir escalera (open ladder)
 		beginSecondarySpeechLine(0x0c, 0);
 		return true;
-	case 314: // Mirar pulsador (look at push button)
+	case 314: // Coger pulsador (take push button)
 		beginSecondarySpeechLine(0x0d, 0);
 		return true;
-	case 315: // Usar pulsador (use push button)
+	case 315: // Abrir pulsador (open push button)
 		handleActionHandler315();
 		return true;
-	case 331: // Mirar/usar objetos colgados de la celda (look/use hanging cell objects).
+	case 318: // Coger gancho (take hook)
+		beginSecondarySpeechLine(0x11, 0);
+		return true;
+	case 319: // Abrir gancho (open hook)
+		beginSecondarySpeechLine(0x12, 0);
+		return true;
+	case 320: // Coger tubería (take pipe)
 		beginSecondarySpeechLine(0x13, 0);
 		return true;
-	case 332: // Usar objetos varios con tablones/cables (use misc items with boards/wires).
+	case 321: // Usar tablones (use boards)
 		beginSecondarySpeechLine(0x14, 0);
 		return true;
-	case 333: // Mirar tablones / respuesta de Ron (look at boards / Ron response).
+	case 322: // Coger tablones (take boards)
 		beginSecondarySpeechLine(0x15, 0);
 		return true;
-	case 334: // Usar objeto oxidado / idea con gancho (use rusty object / hook idea).
+	case 323: // Usar/Coger trozo de tubería (use/take pipe piece)
 		beginSecondarySpeechLine(0x16, 0);
 		return true;
-	case 335: // Mirar almohada (look at pillow).
+	case 324: // Coger almohada (take pillow)
 		beginSecondarySpeechLine(0x17, 0);
 		return true;
-	case 336: // Mirar cables (look at wires).
+	case 325: // Coger cables (take wires)
 		beginSecondarySpeechLine(0x18, 0);
 		return true;
-	case 337: // Usar rata con gancho/trozo de tubería/cables (use rat with hook/pipe piece/wires)
-		handleExtendedAction337();
+	case 326: // Usar placa con ratonera (use plate on mousetrap)
+		handlePlateOnMousetrap();
 		return true;
-	case 338: // Coger rata (take rat)
-		handlePickupItem16();
+	case 327: // Usar bote de pintura con placa (use paint pot on plate)
+		handleCaptureRat();
 		return true;
-	case 339: // Coger placa (take plate)
-		handlePickupItem14();
+	case 328: // Usar navaja-destornillador con placa (use screwdriver on plate)
+		handleRemovePlate();
 		return true;
-	case 340: // Dar objetos a Ron (give items to Ron)
+	case 329: // Usar placa con cables (use plate on wires)
 		beginSecondarySpeechLine(0x1c, 0);
 		return true;
-	case 341: // Usar objetos inadecuados con puerta (wrong items on door), random refusal.
+	case 330: // Usar objetos inadecuados con puerta (use unsuitable items on door)
 		beginSecondarySpeechLine(0x1d, (byte)_random.getRandomNumber(1));
 		return true;
-	case 342: // Coger/usar objeto ya innecesario (item no longer needed).
+	case 331: // Usar lupa en la celda (use magnifying glass in cell)
 		beginSecondarySpeechLine(0x1e, 0);
 		return true;
-	case 343: // Abrir puerta desde dentro (open door from inside): lock is outside.
+	case 332: // Usar navaja con puerta (use multi-tool on door)
 		beginSecondarySpeechLine(0x1f, 0);
 		return true;
-	case 344: // Amenazar/presionar a Ron (threaten Ron): Sue threatens if he will not help.
+	case 333: // Usar herramientas con Ron (use tools on Ron)
 		beginSecondarySpeechLine(0x20, 0);
 		return true;
-	case 345: // Usar baraja/juguete con Ron (use cards/toy with Ron): no time to play.
+	case 334: // Usar baraja con Ron (use cards on Ron)
 		beginSecondarySpeechLine(0x21, 0);
 		return true;
-	case 346: // Usar objetos delicados de Sue (use delicate Sue items), random refusal.
+	case 335: // Usar objetos que podrían estropearse (use damageable items)
 		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
 		return true;
-	case 347: // Usar objetos peligrosos con Ron (use dangerous objects with Ron): refuses harm.
+	case 336: // Usar pamela/perfume en la celda (use hat/perfume in cell)
 		beginSecondarySpeechLine(0x23, 0);
 		return true;
-	case 348: // Usar violencia contra Ron/guardia (use violence): Sue refuses.
+	case 337: // Usar rata con gancho/tubería/cables (use rat on hook/pipes/wires)
 		beginSecondarySpeechLine(0x24, 0);
 		return true;
-	case 351: // Transferencia de inventario (inventory transfer)
+	case 340: // Dar objeto a Ron (give item to Ron)
 		handleInventoryTransferAction();
 		return true;
 	default:
@@ -420,6 +476,11 @@ byte Scene7100::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	return 0;
 }
 
+byte Scene7100::primarySpeechVolumePercent(byte animationGroup) const {
+	return animationGroup == kScene7100PrimarySpeechGroupBanter ?
+		kScene7100BanterVolumePercent : PlayableScene::primarySpeechVolumePercent(animationGroup);
+}
+
 void Scene7100::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene7100PrimarySpeechGroupB) {
 		_primaryMode = 1;
@@ -429,6 +490,35 @@ void Scene7100::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 
 	_primaryMode = 0;
 	_primaryFrame = MIN<byte>(frameIndex, ARRAYSIZE(kScene7100PrimaryFrameMap) - 1);
+}
+
+void Scene7100::handleAnimationFrameHook(byte hookId, uint frame) {
+	GameplayState &state = _vm->gameState();
+	switch (hookId) {
+	case kScene7100RatTrapStateHook:
+		state.cellPlateRatProgress = 1;
+		applySceneStateToHotspotsAndPatches(2);
+		break;
+	case kScene7100RatPickupStateHook:
+		state.cellPlateRatProgress = 2;
+		applySceneStateToHotspotsAndPatches(2);
+		break;
+	case kScene7100RatPickupEnvironmentHook:
+		_environmentState = 5;
+		break;
+	case kScene7100PlateRemovalStateHook:
+		state.cellPlateRemoved = true;
+		applySceneStateToHotspotsAndPatches(4);
+		break;
+	case kScene7100TransferRonFrameHook:
+		_primaryMode = 0;
+		_primaryFrame = kScene7100TransferRonFrameMap[
+			MIN<uint>(frame, ARRAYSIZE(kScene7100TransferRonFrameMap) - 1)];
+		break;
+	default:
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
+		break;
+	}
 }
 
 void Scene7100::rebuildWalkableMask() {
@@ -454,6 +544,29 @@ void Scene7100::advancePrimaryIdleFrame(uint32 delta) {
 			frame = 4;
 		}
 	}
+}
+
+void Scene7100::advanceAutonomousBanter(uint32 delta) {
+	_banterTimerAccumulator += delta;
+	if (_banterTimerAccumulator < kScene7100FrameMillis) {
+		advanceAsyncSpeech(delta);
+		return;
+	}
+
+	_banterTimerAccumulator %= kScene7100FrameMillis;
+	if (_asyncSpeechPhase != kScene7100AsyncSpeechNone) {
+		advanceAsyncSpeech(delta);
+		return;
+	}
+
+	if (_primaryMode != 0 || _primaryDialogueSpeechActive ||
+			_manualPrimaryAnimationActive || _dialogueMenuActive || _actorPathPlaybackActive ||
+			_speechOverlay.visible || _primarySpeechOverlay.visible) {
+		return;
+	}
+
+	if (_random.getRandomNumber(99) == 0)
+		startAutonomousBanter();
 }
 
 void Scene7100::advanceEnvironmentFrame(uint32 delta) {
@@ -519,6 +632,184 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 	}
 }
 
+void Scene7100::startAutonomousBanter() {
+	byte frameIndex;
+	const byte maximumFrame = _specialBanterUsed ? 2 : 3;
+	do {
+		frameIndex = (byte)_random.getRandomNumber(maximumFrame);
+	} while (frameIndex == _lastBanterFrame);
+
+	_lastBanterFrame = frameIndex;
+	if (frameIndex == 3)
+		_specialBanterUsed = true;
+
+	byte continuationCount = 0;
+	if (!getStage003Cue(0x2a, frameIndex, _asyncTextRecordId,
+			continuationCount, _asyncVoiceSampleId)) {
+		return;
+	}
+
+	_asyncContinuationPart = 0;
+	_asyncContinuationCount = MAX<byte>(1, continuationCount);
+	_asyncSpeechPhase = kScene7100AsyncSpeechRonBanter;
+	_asyncPrimaryAnimationGroup = kScene7100PrimarySpeechGroupBanter;
+	_asyncSpeechCenterX = 0x310;
+	setPaletteEntry6Bit(_primarySpeechOverlay.colorIndex, 0x3f, 0x3f, 0x3f);
+	const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncPrimaryAnimationGroup);
+	_speechController.startPrimaryDialogueSpeech(_asyncPrimaryAnimationGroup, baseFrame);
+	primarySpeechAnimationStarted(_asyncPrimaryAnimationGroup, baseFrame);
+	setPrimarySpeechAnimationFrame(_asyncPrimaryAnimationGroup, baseFrame);
+	startAsyncPrimarySpeechPart();
+}
+
+void Scene7100::startScriptedRonSpeech(uint16 rowIndex, byte frameIndex,
+		uint16 centerX, byte red, byte green, byte blue, byte animationGroup) {
+	cancelAsyncSpeech();
+	byte continuationCount = 0;
+	if (!getStage003Cue(rowIndex, frameIndex, _asyncTextRecordId,
+			continuationCount, _asyncVoiceSampleId)) {
+		return;
+	}
+
+	_asyncContinuationPart = 0;
+	_asyncContinuationCount = MAX<byte>(1, continuationCount);
+	_asyncSpeechPhase = kScene7100AsyncSpeechRonScripted;
+	_asyncPrimaryAnimationGroup = animationGroup;
+	_asyncSpeechCenterX = centerX;
+	setPaletteEntry6Bit(_primarySpeechOverlay.colorIndex, red, green, blue);
+	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+	_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+	primarySpeechAnimationStarted(animationGroup, baseFrame);
+	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+	startAsyncPrimarySpeechPart();
+}
+
+void Scene7100::startAsyncPrimarySpeechPart() {
+	while (_asyncContinuationPart < _asyncContinuationCount) {
+		const Common::String text = getResource003LargeTextRecord(
+			_asyncTextRecordId + _asyncContinuationPart);
+		if (text.empty()) {
+			++_asyncContinuationPart;
+			continue;
+		}
+
+		_primarySpeechOverlay.visible = true;
+		wrapActorSpeechText(text, _asyncSpeechCenterX, _primarySpeechOverlay.lines);
+		calculateSpeechOverlayBounds(_primarySpeechOverlay, _asyncSpeechCenterX, 0x8a, true,
+			_activeActorWorldY);
+		const uint16 sampleId = _asyncVoiceSampleId == 0 ? 0 :
+			_asyncVoiceSampleId + _asyncContinuationPart;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId,
+			primarySpeechVolumePercent(_asyncPrimaryAnimationGroup));
+		_asyncSpeechElapsed = 0;
+		_asyncSpeechDuration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
+		return;
+	}
+
+	finishAsyncPrimarySpeech();
+}
+
+void Scene7100::advanceAsyncSpeech(uint32 delta) {
+	if (_asyncSpeechPhase == kScene7100AsyncSpeechNone)
+		return;
+
+	_asyncSpeechElapsed += delta;
+	if (_speech.isPlaying() || _asyncSpeechElapsed < _asyncSpeechDuration)
+		return;
+
+	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
+			_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted) {
+		++_asyncContinuationPart;
+		startAsyncPrimarySpeechPart();
+		return;
+	}
+
+	_speech.stop();
+	_speechController.clearSecondaryOverlay();
+	_speechController.prepareSecondaryActorSpeech();
+	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
+	_asyncSpeechElapsed = 0;
+	_asyncSpeechDuration = 0;
+}
+
+void Scene7100::finishAsyncPrimarySpeech() {
+	const byte finishedPhase = _asyncSpeechPhase;
+	const byte animationGroup = _asyncPrimaryAnimationGroup;
+	_speech.stop();
+	_speechController.clearPrimaryOverlay();
+	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+	_speechController.stopPrimaryDialogueSpeech(0xff, 7);
+	primarySpeechAnimationRestored(animationGroup, baseFrame);
+	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
+	_asyncSpeechElapsed = 0;
+	_asyncSpeechDuration = 0;
+
+	if (finishedPhase == kScene7100AsyncSpeechRonBanter &&
+			(++_banterRemarkCount >= 4 || _lastBanterFrame == 3)) {
+		_banterRemarkCount = 0;
+		startAutonomousSueReply();
+	}
+}
+
+void Scene7100::waitForScriptedRonSpeech() {
+	while (_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(50))
+			break;
+	}
+	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted)
+		cancelAsyncSpeech();
+}
+
+void Scene7100::startAutonomousSueReply() {
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	faceSueTowardRon();
+	const bool started = startSecondarySpeechLine(0x2a, 4);
+	if (!_speechOverlay.visible)
+		return;
+
+	_asyncSpeechPhase = kScene7100AsyncSpeechSueBanter;
+	_asyncSpeechElapsed = 0;
+	_asyncSpeechDuration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		MAX<uint32>(1200, _speechOverlay.lines.size() * 1100);
+}
+
+void Scene7100::cancelAsyncSpeech() {
+	if (_asyncSpeechPhase == kScene7100AsyncSpeechNone)
+		return;
+
+	_speech.stop();
+	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
+			_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted) {
+		_speechController.clearPrimaryOverlay();
+		const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncPrimaryAnimationGroup);
+		setPrimarySpeechAnimationFrame(_asyncPrimaryAnimationGroup, baseFrame);
+		_speechController.stopPrimaryDialogueSpeech(0xff, 7);
+		primarySpeechAnimationRestored(_asyncPrimaryAnimationGroup, baseFrame);
+	} else {
+		_speechController.clearSecondaryOverlay();
+		_speechController.prepareSecondaryActorSpeech();
+	}
+	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
+	_asyncSpeechElapsed = 0;
+	_asyncSpeechDuration = 0;
+}
+
+void Scene7100::faceSueTowardRon() {
+	const SceneActionTarget target = _hotspots.actionTarget(2);
+	byte facing = target.facing;
+	if (_activeActorWorldX != target.interactionPoint.x ||
+			_activeActorWorldY != target.interactionPoint.y) {
+		facing = calculateFacingTowardPoint(_activeActorWorldX, _activeActorWorldY,
+			target.approachPoint.x, target.approachPoint.y);
+	}
+	setActiveActorPose(_activeActorWorldX, _activeActorWorldY, facing);
+}
+
 void Scene7100::runRonDialogue() {
 	Common::Array<DialogueChoiceRecord> records;
 	initializeRonDialogueRecords(records);
@@ -527,6 +818,7 @@ void Scene7100::runRonDialogue() {
 	beginPrimarySpeechLineWithAnimationGroup(99, 0, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
 
+	_dialogueMenuActive = true;
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
@@ -536,12 +828,15 @@ void Scene7100::runRonDialogue() {
 			beginSecondarySpeechLine(0x62, 6);
 			beginPrimarySpeechLineWithAnimationGroup(99, 6, 0x310, 0x8a,
 				0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+			_dialogueMenuActive = false;
 			return;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			_dialogueMenuActive = false;
 			return;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(0x62, record.playerTextRowId);
@@ -559,6 +854,7 @@ void Scene7100::runRonDialogue() {
 				runCurtainClearToBlack();
 				_vm->gameState().mainFlowStateId = kScene7100ExitState6075;
 			}
+			_dialogueMenuActive = false;
 			return;
 		case 1:
 			nodeIndex = record.nextNodeIndex;
@@ -575,9 +871,11 @@ void Scene7100::runRonDialogue() {
 			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 			break;
 		default:
+			_dialogueMenuActive = false;
 			return;
 		}
 	}
+	_dialogueMenuActive = false;
 }
 
 void Scene7100::initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
@@ -601,14 +899,12 @@ void Scene7100::runRescueEntrySequence() {
 	if (runCurtainRevealFromBlack())
 		return;
 
+	_primaryMode = 1;
+	startScriptedRonSpeech(0x61, 0, 0x314, 0x30, 0x3f, 0,
+		kScene7100PrimarySpeechGroupB);
 	runEntryPath(kScene7100DialogueEntryStartX, kScene7100DialogueEntryStartY,
 		kScene7100DialogueEntryFacing, kScene7100EntryX, kScene7100EntryY);
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
-		return;
-
-	_primaryMode = 1;
-	beginPrimarySpeechLineWithAnimationGroup(0x61, 0, 0x314, 0x8a,
-		0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+	waitForScriptedRonSpeech();
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -638,10 +934,11 @@ void Scene7100::runRescueEntrySequence() {
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
-	walkActiveActorTo(0x19f, 0x184, 4, 0);
 	_primaryMode = 1;
-	beginPrimarySpeechLineWithAnimationGroup(0x61, 6, 0x314, 0x8a,
-		0x30, 0x3f, 0, kScene7100PrimarySpeechGroupB);
+	startScriptedRonSpeech(0x61, 6, 0x314, 0x30, 0x3f, 0,
+		kScene7100PrimarySpeechGroupB);
+	walkActiveActorTo(0x19f, 0x184, 4, 0);
+	waitForScriptedRonSpeech();
 	if (waitSceneMillis(4000, false))
 		return;
 
@@ -649,10 +946,12 @@ void Scene7100::runRescueEntrySequence() {
 	_primaryFrame = 0;
 	drawPlayableComposite();
 	presentFrame();
-	beginPrimarySpeechLineWithAnimationGroup(0x28, 1, 0x310, 0x8a,
-		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
+	const byte failureVariant = _vm->nextScene7100RescueFailureVariant();
+	startScriptedRonSpeech(0x28, failureVariant, 0x310, 0x3f, 0x3f, 0x3f,
+		kScene7100PrimarySpeechGroupA);
 	walkActiveActorTo(0x21c, 0x171, 1, 0);
-	beginSecondarySpeechLine(0x29, 1);
+	waitForScriptedRonSpeech();
+	beginSecondarySpeechLine(0x29, failureVariant);
 }
 
 bool Scene7100::runRescueDialogue() {
@@ -664,17 +963,21 @@ bool Scene7100::runRescueDialogue() {
 
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
+	_dialogueMenuActive = true;
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
 		const byte selectedChoice = menu.choose(0x60, records, depthIndex, nodeIndex);
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(0x60, 5);
+			_dialogueMenuActive = false;
 			return false;
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
+		if (recordIndex >= records.size()) {
+			_dialogueMenuActive = false;
 			return false;
+		}
 
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(0x60, record.playerTextRowId);
@@ -688,6 +991,7 @@ bool Scene7100::runRescueDialogue() {
 		const byte previousDepth = depthIndex;
 		switch (record.transitionMode) {
 		case 0:
+			_dialogueMenuActive = false;
 			return record.responseFrameIndex == 8;
 		case 1:
 			nodeIndex = record.nextNodeIndex;
@@ -704,10 +1008,12 @@ bool Scene7100::runRescueDialogue() {
 			depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 			break;
 		default:
+			_dialogueMenuActive = false;
 			return false;
 		}
 	}
 
+	_dialogueMenuActive = false;
 	return false;
 }
 
@@ -823,15 +1129,18 @@ void Scene7100::handleActionHandler315() {
 	beginSecondarySpeechLine(0x0e, 0);
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
-	BlockingSequence(*this)
-		.actorReplacement(ActionOverlaySpec(14, kScene7100Chunk14DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(14, kScene7100Chunk14DescriptorCount,
 			kScene7100Handler315FrameMap, ARRAYSIZE(kScene7100Handler315FrameMap),
 			kScene7100FrameMillis)
-			.soundAt(4, 0x0f))
-		.commit(_vm->gameState().mainFlowStateId, kScene7100ExitState6072);
+			.soundAt(4, 0x0f, 75))
+		.stopSound();
+	if (sequence.completed())
+		runCurtainClearToBlack();
+	sequence.commit(_vm->gameState().mainFlowStateId, kScene7100ExitState6072);
 }
 
-void Scene7100::handleExtendedAction337() {
+void Scene7100::handlePlateOnMousetrap() {
 	if (_environmentState == 3) {
 		beginSecondarySpeechLine(0x19, 1);
 		return;
@@ -839,44 +1148,53 @@ void Scene7100::handleExtendedAction337() {
 
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(0x19, 0)
-		.commit(_vm->gameState().cellPlateRatProgress, (byte)1)
 		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
 			kScene7100Extended337FrameMap, ARRAYSIZE(kScene7100Extended337FrameMap),
 			kScene7100FrameMillis)
-			.patchAt(0x17, 2));
+			.hookAt(0x18, kScene7100RatTrapStateHook));
+	if (_vm->gameState().cellPlateRatProgress != 1) {
+		_vm->gameState().cellPlateRatProgress = 1;
+		applySceneStateToHotspotsAndPatches(2);
+	}
 	removeInventoryItem(0x14);
 	sequence.sound(1)
 		.commit(_vm->gameState().cellPipesActive, false);
 }
 
-void Scene7100::handlePickupItem16() {
+void Scene7100::handleCaptureRat() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(0x1a, 0)
-		.commit(_vm->gameState().cellPlateRatProgress, (byte)2)
 		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
 			kScene7100Item16FirstFrameMap, ARRAYSIZE(kScene7100Item16FirstFrameMap),
 			kScene7100FrameMillis)
-			.patchAt(0x1e, 2))
-		.actorPath(SceneActorPose(0x168, 0x198, 4))
+			.hookAt(0x1f, kScene7100RatPickupStateHook));
+	if (_vm->gameState().cellPlateRatProgress != 2) {
+		_vm->gameState().cellPlateRatProgress = 2;
+		applySceneStateToHotspotsAndPatches(2);
+	}
+	sequence.actorPath(SceneActorPose(0x168, 0x198, 4))
 		.actorReplacement(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
 			kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap),
 			kScene7100FrameMillis)
 			.soundAt(0x0e, 0x16)
-			.noRedrawAtEnd())
-		.secondarySpeech(0x1a, 1)
+			.noRedrawAtEnd());
+	cancelAsyncSpeech();
+	sequence.secondarySpeech(0x1a, 1)
 		.commit(_environmentState, (byte)4)
 		.actorPath(SceneActorPose(0x0ad, 0x17b, 5))
 		.secondarySpeech(0x10, 0)
-		.actorReplacement(20, kScene7100Chunk20DescriptorCount,
+		.actorReplacement(ActionOverlaySpec(20, kScene7100Chunk20DescriptorCount,
 			kScene7100Item16SecondFrameMap, ARRAYSIZE(kScene7100Item16SecondFrameMap),
 			kScene7100FrameMillis)
-		.commit(_environmentState, (byte)5);
+			.hookAt(0x18, kScene7100RatPickupEnvironmentHook));
+	cancelAsyncSpeech();
+	_environmentState = 5;
 	addInventoryItem(0x16);
 	sequence.sound(1)
 		.secondarySpeech(0x0f, 0);
 }
 
-void Scene7100::handlePickupItem14() {
+void Scene7100::handleRemovePlate() {
 	if (_vm->gameState().cellPlateRatProgress != 0) {
 		dispatchGenericSceneAction(18);
 		return;
@@ -887,11 +1205,15 @@ void Scene7100::handlePickupItem14() {
 	}
 
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(18, kScene7100Chunk18DescriptorCount,
+	sequence.actorReplacement(ActionOverlaySpec(18, kScene7100Chunk18DescriptorCount,
 		kScene7100Item14FrameMap, ARRAYSIZE(kScene7100Item14FrameMap),
 		kScene7100FrameMillis)
-		.commit(_vm->gameState().cellPlateRemoved, true)
-		.framebufferPatch(4);
+		.hookAt(0x24, kScene7100PlateRemovalStateHook));
+	cancelAsyncSpeech();
+	if (!_vm->gameState().cellPlateRemoved) {
+		_vm->gameState().cellPlateRemoved = true;
+		applySceneStateToHotspotsAndPatches(4);
+	}
 	addInventoryItem(0x14);
 	sequence.sound(1)
 		.secondarySpeech(0x1b, 0);
@@ -899,18 +1221,24 @@ void Scene7100::handlePickupItem14() {
 }
 
 void Scene7100::handleInventoryTransferAction() {
-	const byte sueItemId = _lastInventoryActionItemId;
+	const byte sueItemId = _lastInventoryPrimaryItemId;
 	const uint mappingIndex = sueItemId - kScene7100FirstTransferableSueItem;
 	if (mappingIndex >= ARRAYSIZE(kScene7100RonItemBySueItem)) {
 		beginSecondarySpeechLine(0x23, 0);
 		return;
 	}
 
+	_manualPrimaryAnimationActive = true;
+	_primaryMode = 0;
+	_primaryFrame = 0;
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(0x27, 0)
-		.actorReplacement(15, kScene7100Chunk15DescriptorCount,
+		.actorReplacement(ActionOverlaySpec(15, kScene7100Chunk15DescriptorCount,
 			kScene7100TransferFrameMap, ARRAYSIZE(kScene7100TransferFrameMap),
-			kScene7100FrameMillis);
+			kScene7100FrameMillis)
+			.hookEveryFrame(kScene7100TransferRonFrameHook));
+	_manualPrimaryAnimationActive = false;
+	_primaryFrame = 0;
 
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(kScene7100SueInventoryOwner, sueItemId);
