@@ -151,10 +151,9 @@ void Scene2010::runCustomEntrySequence() {
 	}
 }
 
-bool Scene2010::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2010::advanceCustomGameplayLoop(uint32 delta) {
 	if (_gatekeeperLayer.visible && !_gatekeeperSequenceActive && !_primaryDialogueSpeechActive)
 		advanceGatekeeperIdle(delta);
-	return false;
 }
 
 bool Scene2010::dispatchCustomSceneAction(uint16 handlerId) {

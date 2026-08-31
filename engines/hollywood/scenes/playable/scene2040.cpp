@@ -172,16 +172,13 @@ void Scene2040::runCustomEntrySequence() {
 		runEntryFromMarket();
 }
 
-bool Scene2040::prepareCustomGameplayLoop() {
+void Scene2040::prepareCustomGameplayLoop() {
 	clearResourceLayer(_behindActorLayer);
 	resetForegroundLayer();
-	return true;
 }
 
-bool Scene2040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2040::advanceCustomGameplayLoop(uint32 delta) {
 	advanceForegroundLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2040::dispatchCustomSceneAction(uint16 handlerId) {

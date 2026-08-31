@@ -160,20 +160,28 @@ void Scene3050::runCustomEntrySequence() {
 		runEntryFromScene3010();
 }
 
-bool Scene3050::prepareCustomGameplayLoop() {
+void Scene3050::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	rebuildWalkableMask();
-	return true;
 }
 
-bool Scene3050::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3050::advanceCustomGameplayLoop(uint32 delta) {
 	updateForegroundActorIdleSpeech(delta);
+	if (!_primaryDialogueSpeechActive) {
+		if (_dialogueMenuActive)
+			advanceDialogueActorLayer(delta);
+		else
+			advanceForegroundActorLayer(delta);
+	}
+}
+
+void Scene3050::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
+		return;
 	if (_dialogueMenuActive)
 		advanceDialogueActorLayer(delta);
 	else
 		advanceForegroundActorLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3050::dispatchCustomSceneAction(uint16 handlerId) {

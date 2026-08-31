@@ -49,8 +49,9 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void prepareCustomGameplayLoop() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advancePrimarySpeechAnimation(uint32 delta) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
@@ -68,7 +69,6 @@ private:
 	bool shouldStopJosephGuestListGreeting();
 	void advanceChunk11PreItemIdleAnimation(uint32 delta);
 	void advanceChunk16PostItemAnimation(uint32 delta);
-	void advancePrimaryDialogueSpeechFrame(uint32 delta);
 	byte pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame);
 	void handleActionSlot00ReturnToG03();
 	void handleActionSlot01ProgressSpeech();

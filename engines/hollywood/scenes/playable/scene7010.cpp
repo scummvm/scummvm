@@ -364,7 +364,7 @@ void Scene7010::runJuniorSpeech() {
 	presentFrame();
 }
 
-bool Scene7010::prepareCustomGameplayLoop() {
+void Scene7010::prepareCustomGameplayLoop() {
 	if (_vm->gameState().mainFlowStateId == kScene7010ReturnState) {
 		_activeActorWorldX = kScene7010SueReturnTargetX;
 		_activeActorWorldY = kScene7010SueReturnTargetY;
@@ -389,13 +389,9 @@ bool Scene7010::prepareCustomGameplayLoop() {
 	_realtimeAnimationTracks.resetTimer(_hannoverSpeechTrack);
 	_realtimeAnimationTracks.resetTimer(_doghouseSpeechTrack);
 	_realtimeAnimationTracks.resetTimer(_dialogueOverlayTrack);
-	return true;
 }
 
-bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
-	if (_sceneStateFlags[0] != 0)
-		updateG01AmbientAudioAndMusicCues(delta);
-
+void Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 	if (_primaryLeftSpeechActive && _primarySpeechOverlay.visible) {
 		_primaryLeftSpeechTimerAccumulator += delta;
 		while (_primaryLeftSpeechTimerAccumulator >= kScene7010Chunk10FrameMillis) {
@@ -417,7 +413,11 @@ bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 	_realtimeAnimationTracks.setActive(_dialogueOverlayTrack,
 		_dialogueOverlayMode == 1 &&
 		!_realtimeAnimationTracks.isActive(_doghouseSpeechTrack));
-	return true;
+}
+
+void Scene7010::advanceAmbientAudio(uint32 delta) {
+	if (_sceneStateFlags[0] != 0)
+		updateG01AmbientAudioAndMusicCues(delta);
 }
 
 bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {

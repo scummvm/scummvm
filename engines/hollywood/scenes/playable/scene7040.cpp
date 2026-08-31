@@ -314,21 +314,36 @@ bool Scene7040::shouldStopJosephGuestListGreeting() {
 	return true;
 }
 
-bool Scene7040::prepareCustomGameplayLoop() {
+void Scene7040::prepareCustomGameplayLoop() {
 	resetTransientAnimationLayers();
-	return true;
 }
 
-bool Scene7040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene7040::advanceCustomGameplayLoop(uint32 delta) {
 	if (_vm->gameState().reviewedFrankensteinNote)
 		advanceChunk16PostItemAnimation(delta);
-	else if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	else if (!_primaryDialogueSpeechActive)
 		advanceChunk11PreItemIdleAnimation(delta);
+}
 
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+void Scene7040::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_primaryDialogueSpeechActive || _vm->gameState().reviewedFrankensteinNote)
+		return;
+
+	_primaryDialogueSpeechTimerAccumulator += delta;
+	while (_primaryDialogueSpeechTimerAccumulator >= kScene7040Chunk14FrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kScene7040Chunk14FrameMillis;
+		if (_primarySpeechLeadInTicks < 3) {
+			++_primarySpeechLeadInTicks;
+			continue;
+		}
+
+		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
+		const byte nextFrame = (byte)(baseFrame +
+			pickPrimarySpeechFrameExcluding(kScene7040PrimarySpeechFrameCount, _primarySpeechLastMouthFrameOffset));
+		_primarySpeechLastMouthFrameOffset = (byte)(nextFrame - baseFrame);
+		_primaryDialogueSpeechLastFrame = nextFrame;
+		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
+	}
 }
 
 bool Scene7040::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
@@ -476,24 +491,6 @@ void Scene7040::handleAnimationFrameHook(byte hookId, uint frame) {
 
 void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
 	_preItemIdleAnimation.advance(_random, delta);
-}
-
-void Scene7040::advancePrimaryDialogueSpeechFrame(uint32 delta) {
-	_primaryDialogueSpeechTimerAccumulator += delta;
-	while (_primaryDialogueSpeechTimerAccumulator >= kScene7040Chunk14FrameMillis) {
-		_primaryDialogueSpeechTimerAccumulator -= kScene7040Chunk14FrameMillis;
-		if (_primarySpeechLeadInTicks < 3) {
-			++_primarySpeechLeadInTicks;
-			continue;
-		}
-
-		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
-		const byte nextFrame = (byte)(baseFrame +
-			pickPrimarySpeechFrameExcluding(kScene7040PrimarySpeechFrameCount, _primarySpeechLastMouthFrameOffset));
-		_primarySpeechLastMouthFrameOffset = (byte)(nextFrame - baseFrame);
-		_primaryDialogueSpeechLastFrame = nextFrame;
-		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
-	}
 }
 
 byte Scene7040::pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame) {

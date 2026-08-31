@@ -263,30 +263,31 @@ void Scene1060::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene1060::prepareCustomGameplayLoop() {
+void Scene1060::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	_soundBank0.playSampleLooping(0x15, 5);
-	return true;
 }
 
-bool Scene1060::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1060::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSmallTrigger(delta);
 	advanceLargeBackground(delta);
 	if (!_pocketPaperPickupSequenceActive)
 		advanceFlyDoctorModeAndInvisibleMan(delta);
-	if (_primaryDialogueSpeechActive) {
-		if (_primaryDialogueSpeechGroup == kScene1060DoctorSpeechGroup ||
-				_primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
-			advanceA06PrimaryDialogueSpeechFrame(delta);
-		else
-			advancePrimaryDialogueSpeechFrame(delta);
-	} else if (_ticketPickupSequenceActive) {
+	if (!_primaryDialogueSpeechActive && _ticketPickupSequenceActive) {
 		advanceTicketPickupFrame(delta);
-	} else {
+	} else if (!_primaryDialogueSpeechActive) {
 		advanceFlyDoctor(delta);
 	}
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+}
+
+void Scene1060::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
+		return;
+	if (_primaryDialogueSpeechGroup == kScene1060DoctorSpeechGroup ||
+			_primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
+		advanceA06PrimaryDialogueSpeechFrame(delta);
+	else
+		PlayableScene::advancePrimarySpeechAnimation(delta);
 }
 
 bool Scene1060::dispatchCustomSceneAction(uint16 handlerId) {

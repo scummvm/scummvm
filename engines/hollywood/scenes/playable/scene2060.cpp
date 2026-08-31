@@ -241,14 +241,8 @@ void Scene2060::runCustomEntrySequence() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-bool Scene2060::prepareCustomGameplayLoop() {
+void Scene2060::prepareCustomGameplayLoop() {
 	installSceneActorBank();
-	return true;
-}
-
-bool Scene2060::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2060::dispatchCustomSceneAction(uint16 handlerId) {

@@ -164,15 +164,12 @@ void Scene3080::runCustomEntrySequence() {
 		runEntryFromForest();
 }
 
-bool Scene3080::prepareCustomGameplayLoop() {
+void Scene3080::prepareCustomGameplayLoop() {
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene3080::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSmallIdleLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3080::dispatchCustomSceneAction(uint16 handlerId) {

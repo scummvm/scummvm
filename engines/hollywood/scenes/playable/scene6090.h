@@ -48,8 +48,9 @@ private:
 	bool shouldApplyGameplayPanelObjectPalette() const override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void prepareCustomGameplayLoop() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advancePrimarySpeechAnimation(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool shouldPlayGameplayClickPath() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;

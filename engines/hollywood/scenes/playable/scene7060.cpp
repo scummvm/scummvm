@@ -180,7 +180,7 @@ void Scene7060::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene7060::prepareCustomGameplayLoop() {
+void Scene7060::prepareCustomGameplayLoop() {
 	_chunk6Animation.channel.resetTimer();
 	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
 	if (_chunk6FrameMap.empty()) {
@@ -188,19 +188,13 @@ bool Scene7060::prepareCustomGameplayLoop() {
 		applyChunk6FrameMapForInventoryState();
 	}
 	setColorMapItem8Promoted(false);
-	return true;
 }
 
-bool Scene7060::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+void Scene7060::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
 		advanceChunk6IdleAndMachineFrame(delta);
-
-	updateAmbientAudioAndMusicCues(delta);
 	if (_chunk6Animation.state == 4 && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 50);
-	return true;
 }
 
 bool Scene7060::dispatchCustomSceneAction(uint16 handlerId) {

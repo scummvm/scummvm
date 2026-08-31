@@ -245,20 +245,18 @@ void Scene4070::runCustomEntrySequence() {
 	}
 }
 
-bool Scene4070::prepareCustomGameplayLoop() {
+void Scene4070::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
 	_rightSidePatchActive = _activeActorWorldX >= kScene4070SidePatchThresholdX;
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene4070::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4070::advanceCustomGameplayLoop(uint32 delta) {
 	advanceDraculaIdle(delta);
 	updateSidePatchForActorPosition();
 	if (!_loopingSoundBank0.isPlaying())
 		_loopingSoundBank0.playSampleLooping(0x33, 100);
-	return false;
 }
 
 bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {

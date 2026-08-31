@@ -265,19 +265,14 @@ void Scene2030::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene2030::prepareCustomGameplayLoop() {
+void Scene2030::prepareCustomGameplayLoop() {
 	resetMerchantLayers();
-	return true;
 }
 
-bool Scene2030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceMerchantLayers(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
 	advanceMerchantCalloutSpeech(delta);
 	updateRandomMerchantCallouts(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {

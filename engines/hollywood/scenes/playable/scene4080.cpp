@@ -330,16 +330,14 @@ void Scene4080::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4080::prepareCustomGameplayLoop() {
+void Scene4080::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene4080::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4080::advanceCustomGameplayLoop(uint32 delta) {
 	advancePalettePatchLayer(delta);
 	advanceAmbientSound(delta);
-	return false;
 }
 
 bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {

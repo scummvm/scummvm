@@ -125,10 +125,19 @@ void Scene7020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
 
-bool Scene7020::advanceCustomGameplayLoop(uint32 delta) {
-	if (!_ambientSoundBank0.isPlaying())
-		_ambientSoundBank0.playSampleLooping(0x0c, 100);
+void Scene7020::advanceCustomGameplayLoop(uint32 delta) {
+	if (_drawChunk7OverlayInsteadOfActor) {
+		_chunk7TimerAccumulator += delta;
+		while (_chunk7TimerAccumulator >= kScene7020FrameMillis) {
+			setChunk7Frame(chunk7Frame() == 9 ? 7 : chunk7Frame() + 1);
+			_chunk7TimerAccumulator -= kScene7020FrameMillis;
+		}
+	} else {
+		_chunk7TimerAccumulator = 0;
+	}
+}
 
+void Scene7020::advancePrimarySpeechAnimation(uint32 delta) {
 	if (_primaryDialogueSpeechActive) {
 		_primaryTimerAccumulator += delta;
 		while (_primaryTimerAccumulator >= kScene7020PrimarySpeechFrameMillis) {
@@ -145,18 +154,12 @@ bool Scene7020::advanceCustomGameplayLoop(uint32 delta) {
 	} else {
 		_primaryTimerAccumulator = 0;
 	}
+}
 
-	if (_drawChunk7OverlayInsteadOfActor) {
-		_chunk7TimerAccumulator += delta;
-		while (_chunk7TimerAccumulator >= kScene7020FrameMillis) {
-			setChunk7Frame(chunk7Frame() == 9 ? 7 : chunk7Frame() + 1);
-			_chunk7TimerAccumulator -= kScene7020FrameMillis;
-		}
-	} else {
-		_chunk7TimerAccumulator = 0;
-	}
-
-	return true;
+void Scene7020::advanceAmbientAudio(uint32 delta) {
+	(void)delta;
+	if (!_ambientSoundBank0.isPlaying())
+		_ambientSoundBank0.playSampleLooping(0x0c, 100);
 }
 
 byte Scene7020::primarySpeechAnimationBaseFrame(byte animationGroup) const {

@@ -127,14 +127,8 @@ void Scene6040::runCustomEntrySequence() {
 	}
 }
 
-bool Scene6040::prepareCustomGameplayLoop() {
+void Scene6040::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
-}
-
-bool Scene6040::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6040::dispatchCustomSceneAction(uint16 handlerId) {

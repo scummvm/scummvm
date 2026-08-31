@@ -107,28 +107,24 @@ void Scene7090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 void Scene7090::runCustomEntrySequence() {
-	_soundBank0.playSample(4, 100);
+	BlockingSequence sequence(*this);
+	sequence.sound(4);
 	setActiveActorPose(kScene7090EntryX, kScene7090EntryY, kScene7090EntryFacing);
 	drawPlayableComposite();
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
 	if (!state.seenHannoverBedroomIntro) {
-		walkActiveActorTo(kScene7090EntryX, kScene7090EntryY, kScene7090IntroTurnFacing, 0);
-		const byte pathFacing = _activeActorFacing;
+		sequence.actorPath(SceneActorPose(kScene7090EntryX, kScene7090EntryY,
+			kScene7090IntroTurnFacing));
+		const SceneActorPose pathPose(_activeActorWorldX, _activeActorWorldY, _activeActorFacing);
 		const byte pathCel = _activeActorCel;
-		_activeActorFacing = kScene7090EntryFacing;
-		_activeActorCel = 0;
-		beginSecondarySpeechLine(0, 0);
-		_activeActorFacing = pathFacing;
-		_activeActorCel = pathCel;
-		state.seenHannoverBedroomIntro = true;
+		sequence.actorPose(SceneActorPose(kScene7090EntryX, kScene7090EntryY,
+			kScene7090EntryFacing))
+			.secondarySpeech(0, 0)
+			.actorPose(pathPose, pathCel)
+			.commit(state.seenHannoverBedroomIntro, true);
 	}
-}
-
-bool Scene7090::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene7090::dispatchCustomSceneAction(uint16 handlerId) {
@@ -262,17 +258,13 @@ AmbientAudioProfile Scene7090::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 
-void Scene7090::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis) {
-	runActorReplacement(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
-}
-
 void Scene7090::handleBackToG07() {
-	runOverlaySequence(9, kScene7090Chunk9DescriptorCount,
-		kScene7090BackToG07FrameMap, ARRAYSIZE(kScene7090BackToG07FrameMap),
-		kScene7090FrameMillis);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7090BackToG07State;
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(9, kScene7090Chunk9DescriptorCount,
+			kScene7090BackToG07FrameMap, ARRAYSIZE(kScene7090BackToG07FrameMap),
+			kScene7090FrameMillis))
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene7090BackToG07State);
 }
 
 void Scene7090::handleGatedAction() {
@@ -289,23 +281,23 @@ void Scene7090::handleGatedAction() {
 		return;
 	}
 
-	beginSecondarySpeechLine(10, 1);
-	walkActiveActorTo(kScene7090GatedActionTargetX, kScene7090GatedActionTargetY,
-		kScene7090GatedActionTargetFacing, 0);
-
-	_prePatchChunk7Visible = true;
-	runActorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
-		kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap), kScene7090FrameMillis)
-		.hookEveryFrame(kScene7090GatedActionHook)
-		.noRedrawAtEnd());
-	_prePatchChunk7Visible = false;
-
-	state.movedBedroomArmor = true;
-	state.hannoverCourtyardDialogueState = 2;
-	applySceneStateToHotspotsAndPatches(1);
-	walkActiveActorTo(kScene7090GatedActionReturnX, kScene7090GatedActionReturnY,
-		kScene7090GatedActionTargetFacing, 0);
-	beginSecondarySpeechLine(10, 2);
+	BlockingSequence(*this)
+		.secondarySpeech(10, 1)
+		.actorPath(SceneActorPose(kScene7090GatedActionTargetX,
+			kScene7090GatedActionTargetY, kScene7090GatedActionTargetFacing))
+		.commit(_prePatchChunk7Visible, true)
+		.actorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
+			kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap),
+			kScene7090FrameMillis)
+			.hookEveryFrame(kScene7090GatedActionHook)
+			.noRedrawAtEnd())
+		.commit(_prePatchChunk7Visible, false)
+		.commit(state.movedBedroomArmor, true)
+		.commit(state.hannoverCourtyardDialogueState, (byte)2)
+		.framebufferPatch(1)
+		.actorPath(SceneActorPose(kScene7090GatedActionReturnX,
+			kScene7090GatedActionReturnY, kScene7090GatedActionTargetFacing))
+		.secondarySpeech(10, 2);
 }
 
 void Scene7090::handleAnimationFrameHook(byte hookId, uint frame) {

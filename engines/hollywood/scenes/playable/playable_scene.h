@@ -86,6 +86,57 @@ public:
 protected:
 	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config);
 
+	// Executes blocking steps immediately; it coordinates control flow without storing a scene script.
+	// Pose, patch, and commit steps still finalize state after interrupted media.
+	class BlockingSequence {
+	public:
+		enum PaletteTransition {
+			kFadeFromBlack,
+			kFadeToBlack
+		};
+
+		explicit BlockingSequence(PlayableScene &scene);
+
+		template<class FrameTarget>
+		BlockingSequence &layerFrames(FrameTarget &target, const AnimationFrameRange &range) {
+			if (canRun()) {
+				const bool completed = _scene.playAnimationFrames(target, range);
+				if (!completed && !_scene._skipRequested)
+					_running = false;
+				refresh();
+			}
+			return *this;
+		}
+
+		BlockingSequence &layerFrames(SceneLayerStack &layers, uint layerId,
+			const AnimationFrameRange &range);
+		BlockingSequence &actorReplacement(const ActionOverlaySpec &spec);
+		BlockingSequence &actorPose(const SceneActorPose &pose, byte cel = 0);
+		BlockingSequence &actorPath(const SceneActorPose &target, byte cel = 0,
+			bool cancelOnSkip = false);
+		BlockingSequence &sound(uint16 cueId, byte volumePercent = 100);
+		BlockingSequence &secondarySpeech(uint16 rowIndex, byte frameIndex);
+		BlockingSequence &primarySpeech(uint16 rowIndex, byte frameIndex, uint16 centerX,
+			uint16 topY, byte red, byte green, byte blue);
+		BlockingSequence &framebufferPatch(byte selector);
+		BlockingSequence &paletteTransition(PaletteTransition transition);
+
+		template<class T>
+		BlockingSequence &commit(T &target, const T &value) {
+			target = value;
+			return *this;
+		}
+
+		bool completed() const { return _running; }
+
+	private:
+		bool canRun();
+		void refresh();
+
+		PlayableScene &_scene;
+		bool _running;
+	};
+
 	// Resource format constants
 	enum {
 		kFrameBufferSize = 0x78000,
@@ -178,9 +229,11 @@ protected:
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
 	virtual bool shouldApplyGameplayPanelObjectPalette() const;
 	virtual void runCustomEntrySequence();
-	virtual bool prepareCustomGameplayLoop();
-	// Returning true skips the shared primary-speech and ambient updates for this frame.
-	virtual bool advanceCustomGameplayLoop(uint32 delta);
+	virtual void prepareCustomGameplayLoop();
+	virtual void advanceCustomGameplayLoop(uint32 delta);
+	// The base loop invokes these services every frame; overrides only replace their strategy.
+	virtual void advancePrimarySpeechAnimation(uint32 delta);
+	virtual void advanceAmbientAudio(uint32 delta);
 	// Returning true suppresses generic action dispatch.
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
 	// Controls actor paths started by scene clicks, including free walk and item relations.

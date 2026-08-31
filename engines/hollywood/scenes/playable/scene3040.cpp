@@ -156,16 +156,13 @@ void Scene3040::runCustomEntrySequence() {
 	}
 }
 
-bool Scene3040::prepareCustomGameplayLoop() {
+void Scene3040::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	rebuildWalkableMask();
-	return true;
 }
 
-bool Scene3040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3040::advanceCustomGameplayLoop(uint32 delta) {
 	advanceForegroundActorLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3040::dispatchCustomSceneAction(uint16 handlerId) {
@@ -295,28 +292,30 @@ void Scene3040::updateHiddenObjectHotspots() {
 }
 
 void Scene3040::runExitToScene3010() {
-	_foregroundActionActive = true;
-	playAnimationFrames(_foregroundActorLayer,
-		AnimationFrameRange(0x0e, 0x14, kScene3040ForegroundFrameMillis));
-	_foregroundActionActive = false;
-	_vm->gameState().mainFlowStateId = kScene3010EntryFromScene3040State;
+	BlockingSequence(*this)
+		.commit(_foregroundActionActive, true)
+		.layerFrames(_foregroundActorLayer,
+			AnimationFrameRange(0x0e, 0x14, kScene3040ForegroundFrameMillis))
+		.commit(_foregroundActionActive, false)
+		.commit(_vm->gameState().mainFlowStateId, kScene3010EntryFromScene3040State);
 }
 
 void Scene3040::runInventoryPatchAction() {
-	beginSecondarySpeechLine(1, 5);
-	_foregroundActionActive = true;
-	playAnimationFrames(_foregroundActorLayer,
-		AnimationFrameRange(4, 0x0e, kScene3040ForegroundFrameMillis)
-			.hookAt(0x0b, kScene3040HiddenObjectPatchHook));
-	_foregroundActionActive = false;
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(1, 5)
+		.commit(_foregroundActionActive, true)
+		.layerFrames(_foregroundActorLayer,
+			AnimationFrameRange(4, 0x0e, kScene3040ForegroundFrameMillis)
+				.hookAt(0x0b, kScene3040HiddenObjectPatchHook))
+		.commit(_foregroundActionActive, false);
 
 	const byte inventoryItem = selectedInventoryItemForPatchAction();
 	if (inventoryItem != 0)
 		removeInventoryItem(inventoryItem);
 
-	_vm->gameState().scene3040HiddenObjectVisible = true;
-	applySceneStateToHotspotsAndPatches(1);
-	_soundBank0.playSample(1, 100);
+	sequence.commit(_vm->gameState().scene3040HiddenObjectVisible, true)
+		.framebufferPatch(1)
+		.sound(1);
 	drawPlayableComposite();
 	presentFrame();
 }

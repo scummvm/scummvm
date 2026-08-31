@@ -185,20 +185,15 @@ void Scene1050::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene1050::prepareCustomGameplayLoop() {
+void Scene1050::prepareCustomGameplayLoop() {
 	_smallOverlayChannel.reset(_smallOverlayLayer.frameIndex, kScene1050SmallOverlayFrameMillis);
 	_largeOverlayChannel.reset(_largeOverlayLayer.frameIndex, kScene1050LargeOverlayFrameMillis);
-	return true;
 }
 
-bool Scene1050::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1050::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSmallOverlay(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_largeOverlayActionLocked)
+	if (!_primaryDialogueSpeechActive && !_largeOverlayActionLocked)
 		advanceLargeOverlay(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1050::dispatchCustomSceneAction(uint16 handlerId) {

@@ -273,25 +273,19 @@ void Scene1030::runCustomEntrySequence() {
 	runFirstEntryConversation();
 }
 
-bool Scene1030::prepareCustomGameplayLoop() {
+void Scene1030::prepareCustomGameplayLoop() {
 	_largeForegroundChannel.reset(0, kScene1030ForegroundFrameMillis);
 	_smallForegroundChannel.reset(0, kScene1030SmallForegroundTickMillis);
 	_smallForegroundTickCount = 0;
-	return true;
 }
 
-bool Scene1030::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
+void Scene1030::advanceCustomGameplayLoop(uint32 delta) {
 	if (_entryActorsVisible) {
 		advanceFirstEntryActorPath(delta);
-		updateAmbientAudioAndMusicCues(delta);
-		return true;
+		return;
 	}
 	advanceLargeForegroundActor(delta);
 	advanceSmallForegroundActor(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {

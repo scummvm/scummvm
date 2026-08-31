@@ -182,18 +182,15 @@ void Scene4050::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4050::prepareCustomGameplayLoop() {
+void Scene4050::prepareCustomGameplayLoop() {
 	if (!_transitionClearedToBlack)
 		restoreSceneObjectPaletteRange();
-	return true;
 }
 
-bool Scene4050::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
 	updateAmbientSounds(delta);
-	updateAmbientAudioAndMusicCues(delta);
 	advanceFlagPalette(delta);
 	advanceRonLayer(delta);
-	return true;
 }
 
 bool Scene4050::dispatchCustomSceneAction(uint16 handlerId) {

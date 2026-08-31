@@ -275,13 +275,12 @@ void Scene2100::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene2100::prepareCustomGameplayLoop() {
+void Scene2100::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return false;
 }
 
-bool Scene2100::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2100::advanceCustomGameplayLoop(uint32 delta) {
 	advanceManualActorPath(delta);
 	if (_returnLayerAnimationActive)
 		advanceReturnLayers(delta);
@@ -291,7 +290,6 @@ bool Scene2100::advanceCustomGameplayLoop(uint32 delta) {
 		advanceSpecialSpeechAnimation(delta);
 	else
 		advanceMummyIdle(delta);
-	return false;
 }
 
 bool Scene2100::dispatchCustomSceneAction(uint16 handlerId) {

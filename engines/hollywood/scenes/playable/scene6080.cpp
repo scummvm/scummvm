@@ -161,31 +161,25 @@ bool Scene6080::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene6080::prepareCustomGameplayLoop() {
+void Scene6080::prepareCustomGameplayLoop() {
 	_sueIdleChannel.reset(_sueNormalLayer.frameIndex, kScene6080SueFrameMillis);
 	_guardIdleChannel.reset(_guardNormalLayer.frameIndex, kScene6080GuardFrameMillis);
 	_manualActorPathChannel.reset(0, kScene6080ActorPathFrameMillis);
 	_manualSequenceActive = false;
 	_manualActorPathActive = false;
-	return true;
 }
 
-bool Scene6080::advanceCustomGameplayLoop(uint32 delta) {
+void Scene6080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceManualActorPath(delta);
 
 	if (_waxBallAnimationActive)
 		advanceWaxBallAnimation(delta);
 	else if (_finalSueAnimationActive)
 		advanceFinalSueAnimation(delta);
-	else if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_manualSequenceActive) {
+	else if (!_primaryDialogueSpeechActive && !_manualSequenceActive) {
 		advanceSueIdle(delta);
 		advanceGuardIdle(delta);
 	}
-
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6080::dispatchCustomSceneAction(uint16 handlerId) {

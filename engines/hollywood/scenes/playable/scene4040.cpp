@@ -177,16 +177,13 @@ void Scene4040::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene4040::prepareCustomGameplayLoop() {
+void Scene4040::prepareCustomGameplayLoop() {
 	applyScenePaletteOverride();
-	return true;
 }
 
-bool Scene4040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4040::advanceCustomGameplayLoop(uint32 delta) {
 	updateAmbientSounds(delta);
-	updateAmbientAudioAndMusicCues(delta);
 	advanceRandomBackground(delta);
-	return true;
 }
 
 bool Scene4040::dispatchCustomSceneAction(uint16 handlerId) {

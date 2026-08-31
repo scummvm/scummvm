@@ -221,25 +221,23 @@ void Scene5040::runCustomEntrySequence() {
 	walkActiveActorTo(0x1c3, 0x15e, 0xff, 0, false);
 }
 
-bool Scene5040::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene5040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5040::advanceCustomGameplayLoop(uint32 delta) {
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 100);
 
-	if (_primaryDialogueSpeechActive) {
-		if (_primaryDialogueSpeechGroup == kScene5040KarlMiningSpeechGroup)
-			advanceKarlMiningSpeech(delta);
-		else
-			advancePrimaryDialogueSpeechFrame(delta);
-	} else if (!_suspendKarlIdle && !_actionOverlayPlayer.isVisible()) {
+	if (!_primaryDialogueSpeechActive && !_suspendKarlIdle && !_actionOverlayPlayer.isVisible()) {
 		advanceKarlLayer(delta);
 	}
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+}
+
+void Scene5040::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
+		return;
+	if (_primaryDialogueSpeechGroup == kScene5040KarlMiningSpeechGroup)
+		advanceKarlMiningSpeech(delta);
+	else
+		PlayableScene::advancePrimarySpeechAnimation(delta);
 }
 
 bool Scene5040::dispatchCustomSceneAction(uint16 handlerId) {

@@ -160,14 +160,12 @@ void Scene2090::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene2090::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2090::advanceCustomGameplayLoop(uint32 delta) {
 	if (_paletteCycleActive) {
 		const uint frameCount = _paletteCycleChannel.consumeFrames(delta);
 		for (uint frame = 0; frame < frameCount; ++frame)
 			rotateRitualPalette();
 	}
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene2090::dispatchCustomSceneAction(uint16 handlerId) {

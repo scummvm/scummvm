@@ -220,18 +220,9 @@ void Scene3070::runCustomEntrySequence() {
 		runEntryFromSecretPassage();
 }
 
-bool Scene3070::prepareCustomGameplayLoop() {
+void Scene3070::prepareCustomGameplayLoop() {
 	resetCutsceneLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
-}
-
-bool Scene3070::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	if (!_interludeActive)
-		updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
@@ -524,6 +515,11 @@ AmbientAudioProfile Scene3070::ambientAudioProfile() const {
 	profile.soundCueId = 0x18;
 	profile.soundVolumePercent = 1; // Legacy 0x78 is about -40 dB.
 	return profile;
+}
+
+void Scene3070::advanceAmbientAudio(uint32 delta) {
+	if (!_interludeActive)
+		PlayableScene::advanceAmbientAudio(delta);
 }
 
 void Scene3070::resetCutsceneLayers() {

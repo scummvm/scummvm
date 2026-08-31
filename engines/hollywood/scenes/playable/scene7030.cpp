@@ -189,7 +189,7 @@ void Scene7030::runCustomEntrySequence() {
 		kScene7030Entry7030TargetX, kScene7030Entry7030TargetY);
 }
 
-bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene7030::advanceCustomGameplayLoop(uint32 delta) {
 	for (uint frame = _chunk5Animation.consumeFrames(delta); frame != 0; --frame)
 		advanceChunk5AmbientOverlay();
 
@@ -203,9 +203,6 @@ bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
 			advancePrimaryLeftSpeechFrame();
 		}
 	}
-
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
@@ -367,7 +364,7 @@ void Scene7030::setPrimaryLeftSpeechFrame(byte frameIndex) {
 	setChunk5Frame(0x0b + frameIndex);
 }
 
-void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
+void Scene7030::advanceAmbientAudio(uint32 delta) {
 	ensureAmbientSoundCuePlaying(1, kScene7030BaseAmbientSoundCue, 75);
 	ensureAmbientSoundCuePlaying(2, kScene7030SecondaryAmbientSoundCue, 50);
 

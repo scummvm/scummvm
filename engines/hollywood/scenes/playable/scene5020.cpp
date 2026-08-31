@@ -129,10 +129,9 @@ void Scene5020::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene5020::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5020::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
-	return false;
 }
 
 bool Scene5020::dispatchCustomSceneAction(uint16 handlerId) {

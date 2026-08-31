@@ -544,7 +544,7 @@ void Scene6090::runOpeningConversation() {
 	_mechanismState = 3;
 }
 
-bool Scene6090::prepareCustomGameplayLoop() {
+void Scene6090::prepareCustomGameplayLoop() {
 	_tiedRonChannel.reset(_tiedRonIdleFrame, kScene6090TiedRonFrameMillis);
 	_realtimeAnimationTracks.resetTimer(_leftAmbientTrack);
 	_realtimeAnimationTracks.resetTimer(_rightAmbientTrack);
@@ -554,20 +554,15 @@ bool Scene6090::prepareCustomGameplayLoop() {
 	_paletteFadeChannel.reset(0, kScene6090FrameMillis);
 	_secondaryEffectSound.setArchive(Common::Path(kScene6090SoundArchiveName));
 	_manualSequenceActive = false;
-	return true;
 }
 
-bool Scene6090::advanceCustomGameplayLoop(uint32 delta) {
+void Scene6090::advanceCustomGameplayLoop(uint32 delta) {
 	if (_vm->consumeDebugSceneSolveRequest(6090) && !_delayedEventDone) {
 		runDelayedInterruption();
-		return true;
+		return;
 	}
 
 	advanceTiedRonIdle(delta);
-	if (_asyncPrimaryActive)
-		advanceAsyncPrimarySpeech(delta);
-	else if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
 
 	if (_freedSueActive) {
 		if (_escapeAnimationActive)
@@ -579,9 +574,13 @@ bool Scene6090::advanceCustomGameplayLoop(uint32 delta) {
 		advanceEscapePalette(delta);
 	if (!_manualSequenceActive && !_automaticEventRunning && _compositeMode == kIntroComposite)
 		advanceMechanism(delta);
+}
 
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+void Scene6090::advancePrimarySpeechAnimation(uint32 delta) {
+	if (_asyncPrimaryActive)
+		advanceAsyncPrimarySpeech(delta);
+	else
+		PlayableScene::advancePrimarySpeechAnimation(delta);
 }
 
 void Scene6090::advanceTiedRonIdle(uint32 delta) {

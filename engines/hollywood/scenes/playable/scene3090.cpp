@@ -171,21 +171,27 @@ void Scene3090::runCustomEntrySequence() {
 	}
 }
 
-bool Scene3090::prepareCustomGameplayLoop() {
+void Scene3090::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene3090::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3090::advanceCustomGameplayLoop(uint32 delta) {
 	if (_blindManSpeechActive)
 		advanceBlindManSpeechAnimation(delta);
 	else if (!_blindManConversationActive && !_dialogueMenuActive)
 		advanceBlindManLayer(delta);
 	advancePuzzleLayer(delta);
+}
+
+void Scene3090::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_blindManSpeechActive)
+		PlayableScene::advancePrimarySpeechAnimation(delta);
+}
+
+void Scene3090::advanceAmbientAudio(uint32 delta) {
 	if (!_blindManSpeechActive && !_blindManConversationActive && !_dialogueMenuActive)
-		updateAmbientAudioAndMusicCues(delta);
-	return true;
+		PlayableScene::advanceAmbientAudio(delta);
 }
 
 bool Scene3090::dispatchCustomSceneAction(uint16 handlerId) {

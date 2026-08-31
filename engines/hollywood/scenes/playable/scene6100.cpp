@@ -155,31 +155,31 @@ void Scene6100::runCustomEntrySequence() {
 		runCharlieDialogue();
 }
 
-bool Scene6100::prepareCustomGameplayLoop() {
+void Scene6100::prepareCustomGameplayLoop() {
 	_charlieIdleChannel.reset(_charlieLayer.frameIndex, kScene6100AnimationFrameMillis);
 	_charlieConversationChannel.reset(_charlieLayer.frameIndex, kScene6100SpeechFrameMillis);
 	_letterLayer.visible = false;
 	_departureLayer.visible = false;
 	_charlieManualSequenceActive = false;
 	_charlieConversationActive = false;
-	return true;
 }
 
-bool Scene6100::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive) {
-		if (_primaryDialogueSpeechGroup == kScene6100LetterSpeechGroup)
-			advanceLetterReadingSpeech(delta);
-		else
-			advancePrimaryDialogueSpeechFrame(delta);
-	} else if (!_charlieManualSequenceActive) {
+void Scene6100::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive && !_charlieManualSequenceActive) {
 		if (_charlieConversationActive)
 			advanceCharlieConversationIdle(delta);
 		else
 			advanceCharlieIdle(delta);
 	}
+}
 
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
+void Scene6100::advancePrimarySpeechAnimation(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
+		return;
+	if (_primaryDialogueSpeechGroup == kScene6100LetterSpeechGroup)
+		advanceLetterReadingSpeech(delta);
+	else
+		PlayableScene::advancePrimarySpeechAnimation(delta);
 }
 
 void Scene6100::advanceCharlieIdle(uint32 delta) {

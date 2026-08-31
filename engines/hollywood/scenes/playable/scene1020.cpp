@@ -448,18 +448,6 @@ void Scene1020::handleAnimationFrameHook(byte hookId, uint frame) {
 	}
 }
 
-bool Scene1020::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene1020::advanceCustomGameplayLoop(uint32 delta) {
-	// Returning true skips the base loop's speech advance, so drive Quasimodo's here.
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene1020::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a camino/jardines (go to path/gardens): return to scene 1010.

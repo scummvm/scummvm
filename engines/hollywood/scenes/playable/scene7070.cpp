@@ -160,11 +160,6 @@ void Scene7070::runCustomEntrySequence() {
 	}
 }
 
-bool Scene7070::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a pasillo (go to hallway)

@@ -170,18 +170,16 @@ void Scene4100::runExitSideEffectsAfterLoop() {
 	stopAmbientSoundCues();
 }
 
-bool Scene4100::prepareCustomGameplayLoop() {
+void Scene4100::prepareCustomGameplayLoop() {
 	applyD10PaletteDimming();
 	resetPaletteCycle();
 	resetAmbientSoundScheduler();
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene4100::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4100::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientSound(delta);
 	advancePaletteCycle(delta);
-	return false;
 }
 
 bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {

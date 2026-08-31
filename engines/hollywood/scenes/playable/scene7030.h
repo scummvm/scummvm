@@ -39,7 +39,8 @@ private:
 		byte actorDrawOrderMode) override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	void runCustomEntrySequence() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceAmbientAudio(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
@@ -49,7 +50,6 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	void setPrimaryLeftSpeechFrame(byte frameIndex) override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
-	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk5AmbientOverlay();
 	void advanceChunk6IdleFrames();
 	void configureAnimationLayers();

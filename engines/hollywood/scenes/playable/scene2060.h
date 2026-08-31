@@ -41,8 +41,7 @@ private:
 	bool shouldApplyGameplayPanelObjectPalette() const override;
 	bool isInventoryPanelAvailable() const override;
 	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
-	bool advanceCustomGameplayLoop(uint32 delta) override;
+	void prepareCustomGameplayLoop() override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	byte paletteRegionAt(int x, int y) const override;
