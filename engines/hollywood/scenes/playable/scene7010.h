@@ -65,8 +65,6 @@ private:
 	void runJuniorSpeech();
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
-	void advanceDoghouseSpeechFrame(uint32 delta);
-	void advanceDialogueOverlay(uint32 delta);
 	void handleActionSlot00TransitionToG03();
 	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02SecondarySpeech();
@@ -82,7 +80,6 @@ private:
 		byte responseFrameIndex, byte disableAfterUse) const;
 	bool applyHannoverDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const;
 	void beginHannoverPrimarySpeechLine(byte frameIndex, byte poseVariant);
-	void advanceHannoverPrimarySpeechFrame(uint32 delta);
 	void runChunk8RevealSequence();
 	void runChunk8HideSequence();
 	bool runChunk11FrameRange(byte startFrame, byte endFrame);
@@ -96,9 +93,7 @@ private:
 	void runDogCloseupSequence();
 	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
 	void updateG01AmbientAudioAndMusicCues(uint32 delta);
-	void configureAnimationLayers();
 	void setDialogueOverlayMode(byte mode, byte frameIndex);
-	void setDialogueOverlayFrame(byte frameIndex);
 	void setChunk8Frame(byte frameIndex);
 	byte chunk8Frame() const;
 	void setChunk9Frame(byte frameIndex);
@@ -106,21 +101,17 @@ private:
 	void setChunk11Visible(bool visible);
 	void setChunk11Frame(byte frameIndex);
 	void setChunk14Visible(bool visible);
-	void setChunk14Frame(byte frameIndex);
 
 	byte _dialogueOverlayMode;
-	byte _chunk11RightSpeechPoseVariant;
 	bool _chunk8SpecialSequenceActive;
-	bool _chunk11RightSpeechActive;
-	bool _doghouseSpeechActive;
 	AlternatingRandomFramePair _chunk10IdlePairA;
 	AlternatingRandomFramePair _chunk10IdlePairB;
 	TimedAnimationChannel _chunk8Animation;
 	TimedAnimationChannel _chunk10Animation;
-	TimedAnimationChannel _dialogueOverlayAnimation;
-	RandomFrameAnimation _hannoverSpeechAnimation;
-	RandomFrameAnimation _doghouseSpeechAnimation;
 	SceneLayerStack _animationLayers;
+	uint _hannoverSpeechTrack;
+	uint _doghouseSpeechTrack;
+	uint _dialogueOverlayTrack;
 };
 
 } // End of namespace Hollywood
