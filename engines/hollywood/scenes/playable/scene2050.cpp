@@ -121,6 +121,12 @@ private:
 	byte &_frame;
 };
 
+const uint kScene2050AmbientLayer = 0;
+const SceneLayerSpec kScene2050LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 10, kScene2050AmbientDescriptorCount,
+		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene2050Config() {
 	PlayableSceneConfig config(2050,
 		SceneResourceLayout(15, 5, 14),
@@ -135,7 +141,6 @@ static PlayableSceneConfig scene2050Config() {
 
 Scene2050::Scene2050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2050Config()),
-		_ambientLayer(),
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_muralPermutationInitialized(false),
 		_muralPermutationChunkIndex(0),
@@ -148,9 +153,9 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_sealDiscoverySpeechStarted(false),
 		_sealDiscoverySpeechStartMillis(0),
 		_sealDiscoverySpeechDurationMillis(0) {
-	_ambientLayer.configure(10, kScene2050AmbientDescriptorCount,
-		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap));
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_ambientLayer,
+	_sceneLayers.configure(kScene2050LayerSpecs);
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(
+		_sceneLayers.layer(kScene2050AmbientLayer),
 		kScene2050AmbientFrameMillis);
 }
 
@@ -179,7 +184,7 @@ void Scene2050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_ambientLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -323,8 +328,8 @@ AmbientAudioProfile Scene2050::ambientAudioProfile() const {
 }
 
 void Scene2050::resetAmbientLayer() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_ambientTrack);
-	_ambientLayer.visible = true;
 }
 
 void Scene2050::runEntryFromSphinxInterior() {

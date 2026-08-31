@@ -98,18 +98,21 @@ PlayableSceneConfig scene5070Config() {
 	return config;
 }
 
+const uint kScene5070MineCartLayer = 0;
+const SceneLayerSpec kScene5070LayerSpecs[] = {
+	{kSceneAnimationInFrontOfActors, 9, kScene5070MineCartDescriptorCount,
+		nullptr, 0, false, 0}
+};
+
 Scene5070::Scene5070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5070Config()),
-		_mineCartLayer(),
 		_mineCartRumbleActive(false) {
-	_mineCartLayer.configure(9, kScene5070MineCartDescriptorCount, nullptr, 0);
+	_sceneLayers.configure(kScene5070LayerSpecs);
 }
 
 void Scene5070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applySceneStateToHotspotsAndPatches(0xff);
-	_mineCartLayer.visible = false;
-	_mineCartLayer.reset(0);
 	_mineCartRumbleActive = false;
 
 	setActiveActorPose(kScene5070EntryTargetX, kScene5070EntryTargetY, 5);
@@ -124,8 +127,8 @@ void Scene5070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_mineCartLayer);
-	if (_mineCartLayer.visible)
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
+	if (_sceneLayers.layerVisible(kScene5070MineCartLayer))
 		drawMineCartForeground();
 }
 
@@ -286,13 +289,14 @@ void Scene5070::runMineCartEntryClip() {
 	if (!_sceneChunkTable.isValidChunk(9))
 		return;
 
+	ResourceSpriteLayer &mineCartLayer = _sceneLayers.layer(kScene5070MineCartLayer);
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	_mineCartLayer.visible = true;
-	_mineCartLayer.reset(0);
+	mineCartLayer.visible = true;
+	mineCartLayer.reset(0);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack()) {
-		_mineCartLayer.visible = false;
+		mineCartLayer.visible = false;
 		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
@@ -308,7 +312,7 @@ void Scene5070::runMineCartEntryClip() {
 			break;
 
 		const byte nextFrame = (byte)(frame + 1);
-		_mineCartLayer.setFrame(nextFrame);
+		mineCartLayer.setFrame(nextFrame);
 		if (nextFrame == 0x23) {
 			_mineCartRumbleActive = false;
 			_soundBank0.playSample(0x16, 100);
@@ -318,7 +322,7 @@ void Scene5070::runMineCartEntryClip() {
 	}
 
 	_mineCartRumbleActive = false;
-	_mineCartLayer.visible = false;
+	mineCartLayer.visible = false;
 	_hideActiveActor = previousHideActiveActor;
 }
 

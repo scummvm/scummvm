@@ -79,6 +79,13 @@ const byte kScene8020Reverse6cFrameMap[] = {
 	0, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
+const uint kScene8020ForegroundLayer = 0;
+const SceneLayerSpec kScene8020LayerSpecs[] = {
+	{kSceneAnimationBehindActors, kScene8020ForegroundChunk,
+		kScene8020ForegroundDescriptorCount, kScene8020ForegroundFrameMap,
+		ARRAYSIZE(kScene8020ForegroundFrameMap), true, 0}
+};
+
 PlayableSceneConfig scene8020Config() {
 	PlayableSceneConfig config(8020,
 		SceneResourceLayout(5, 5, 11),
@@ -94,7 +101,6 @@ PlayableSceneConfig scene8020Config() {
 
 Scene8020::Scene8020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene8020Config()),
-		_foregroundLayer(),
 		_foregroundChannel(),
 		_secondaryAmbientChannel(),
 		_originalColorToItemMap(),
@@ -103,6 +109,7 @@ Scene8020::Scene8020(HollywoodEngine *vm) :
 		_previousPrimaryAmbientCue(0),
 		_previousSecondaryAmbientCue(0),
 		_foregroundSequenceLocked(false) {
+	_sceneLayers.configure(kScene8020LayerSpecs);
 }
 
 void Scene8020::initializeCustomPreviewState() {
@@ -133,7 +140,7 @@ void Scene8020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_vm->gameState().scene8020ForegroundObjectState != 2)
-		drawResourceSpriteLayer(_foregroundLayer);
+		drawResourceSpriteLayer(_sceneLayers.layer(kScene8020ForegroundLayer));
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
@@ -349,19 +356,17 @@ void Scene8020::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene8020::resetForegroundLayer() {
-	_foregroundLayer.configure(kScene8020ForegroundChunk, kScene8020ForegroundDescriptorCount,
-		kScene8020ForegroundFrameMap, ARRAYSIZE(kScene8020ForegroundFrameMap));
-	_foregroundLayer.visible = true;
+	_sceneLayers.reset();
 	_foregroundChannel.reset(0, kScene8020FrameMillis);
 	_secondaryAmbientChannel.reset(0, kScene8020AmbientCheckMillis);
 	_foregroundSequenceLocked = false;
 
 	const byte state = _vm->gameState().scene8020ForegroundObjectState;
 	if (state == 1) {
-		_foregroundLayer.reset(0x17);
+		_sceneLayers.layer(kScene8020ForegroundLayer).reset(0x17);
 		_foregroundAnimationState = 3;
 	} else {
-		_foregroundLayer.reset(0);
+		_sceneLayers.layer(kScene8020ForegroundLayer).reset(0);
 		_foregroundAnimationState = 0;
 	}
 	_foregroundRepeatCount = 0;
@@ -370,6 +375,7 @@ void Scene8020::resetForegroundLayer() {
 }
 
 void Scene8020::advanceForegroundLayer(uint32 delta) {
+	ResourceSpriteLayer &foregroundLayer = _sceneLayers.layer(kScene8020ForegroundLayer);
 	const uint frameCount = _foregroundChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
 		switch (_foregroundAnimationState) {
@@ -382,8 +388,8 @@ void Scene8020::advanceForegroundLayer(uint32 delta) {
 			}
 			break;
 		case 1:
-			if (_foregroundLayer.frameIndex == 3) {
-				_foregroundLayer.setFrame(0);
+			if (foregroundLayer.frameIndex == 3) {
+				foregroundLayer.setFrame(0);
 				if (_foregroundRepeatCount == 0) {
 					_foregroundAnimationState = 0;
 					_soundBank0.stop();
@@ -393,12 +399,12 @@ void Scene8020::advanceForegroundLayer(uint32 delta) {
 						_soundBank0.playSample(0x19, 30);
 				}
 			} else {
-				_foregroundLayer.setFrame(_foregroundLayer.frameIndex + 1);
+				foregroundLayer.setFrame(foregroundLayer.frameIndex + 1);
 			}
 			break;
 		case 2:
-			if (_foregroundLayer.frameIndex == 7) {
-				_foregroundLayer.setFrame(0);
+			if (foregroundLayer.frameIndex == 7) {
+				foregroundLayer.setFrame(0);
 				if (_foregroundRepeatCount == 0) {
 					_foregroundAnimationState = 0;
 					_soundBank0.stop();
@@ -408,34 +414,34 @@ void Scene8020::advanceForegroundLayer(uint32 delta) {
 						_soundBank0.playSample(0x1a, 100);
 				}
 			} else {
-				_foregroundLayer.setFrame(_foregroundLayer.frameIndex + 1);
+				foregroundLayer.setFrame(foregroundLayer.frameIndex + 1);
 			}
 			break;
 		case 3:
 			if (_random.getRandomNumber(29) == 0) {
 				_foregroundAnimationState = 5;
 			} else if (_random.getRandomNumber(9) == 0) {
-				_foregroundLayer.setFrame(0x18);
+				foregroundLayer.setFrame(0x18);
 				_foregroundAnimationState = 4;
 			}
 			break;
 		case 4:
-			_foregroundLayer.setFrame(0x17);
+			foregroundLayer.setFrame(0x17);
 			_foregroundAnimationState = 3;
 			break;
 		case 5:
-			if (_foregroundLayer.frameIndex == 0x21) {
-				_foregroundLayer.setFrame(0x17);
+			if (foregroundLayer.frameIndex == 0x21) {
+				foregroundLayer.setFrame(0x17);
 				_foregroundAnimationState = 3;
 			} else {
-				_foregroundLayer.setFrame(_foregroundLayer.frameIndex + 1);
-				if (_foregroundLayer.frameIndex == 0x19)
+				foregroundLayer.setFrame(foregroundLayer.frameIndex + 1);
+				if (foregroundLayer.frameIndex == 0x19)
 					_soundBank0.playSample(0x18, 100);
 			}
 			break;
 		default:
 			_foregroundAnimationState = 0;
-			_foregroundLayer.setFrame(0);
+			foregroundLayer.setFrame(0);
 			break;
 		}
 	}
@@ -504,7 +510,7 @@ void Scene8020::runExitToScene8010() {
 }
 
 void Scene8020::runPickupInventoryItem6cSequence() {
-	_foregroundLayer.setFrame(0);
+	_sceneLayers.layer(kScene8020ForegroundLayer).setFrame(0);
 	_foregroundAnimationState = 0;
 	_foregroundRepeatCount = 0;
 	_soundBank0.stop();
@@ -586,10 +592,10 @@ void Scene8020::runForegroundTransformationSequence() {
 	if (!waitForForegroundAnimationIdle())
 		return;
 
-	_foregroundLayer.setFrame(7);
+	_sceneLayers.layer(kScene8020ForegroundLayer).setFrame(7);
 	_soundBank0.playSample(0x1a, 100);
 	_foregroundSequenceLocked = true;
-	playAndPresentAnimationFrames(_foregroundLayer,
+	playAndPresentAnimationFrames(_sceneLayers.layer(kScene8020ForegroundLayer),
 		AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
 			.hookEveryFrame(kScene8020TransformationHook)
 			.unskippable()

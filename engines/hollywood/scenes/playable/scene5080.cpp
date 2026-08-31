@@ -71,11 +71,16 @@ static PlayableSceneConfig scene5080Config() {
 	return config;
 }
 
+const uint kScene5080MineCartLayer = 0;
+const SceneLayerSpec kScene5080LayerSpecs[] = {
+	{kSceneAnimationInFrontOfActors, 5, kScene5080EntryDescriptorCount,
+		nullptr, 0, false, 0}
+};
+
 Scene5080::Scene5080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5080Config()),
-		_mineCartLayer(),
 		_mineCartRumbleActive(false) {
-	_mineCartLayer.configure(5, kScene5080EntryDescriptorCount, nullptr, 0);
+	_sceneLayers.configure(kScene5080LayerSpecs);
 }
 
 uint Scene5080::resource000ActorBankTableEntry() const {
@@ -96,8 +101,6 @@ uint Scene5080::actorPathStepDeltaTableSize() const {
 void Scene5080::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	copyStepDeltasForCurrentSide();
-	_mineCartLayer.visible = false;
-	_mineCartLayer.reset(0);
 	_mineCartRumbleActive = false;
 
 	if (_vm->gameState().scene5080AlternatePassageSide) {
@@ -125,7 +128,7 @@ void Scene5080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_mineCartLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 }
 
 bool Scene5080::shouldPresentPreviewBeforeEntrySequence() const {
@@ -395,13 +398,14 @@ void Scene5080::runMineCartEntryClip() {
 		return;
 	}
 
+	ResourceSpriteLayer &mineCartLayer = _sceneLayers.layer(kScene5080MineCartLayer);
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	_mineCartLayer.visible = true;
-	_mineCartLayer.reset(0);
+	mineCartLayer.visible = true;
+	mineCartLayer.reset(0);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack()) {
-		_mineCartLayer.visible = false;
+		mineCartLayer.visible = false;
 		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
@@ -409,14 +413,14 @@ void Scene5080::runMineCartEntryClip() {
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	_mineCartRumbleActive = true;
 	_soundBank0.playSample(0x18, 100);
-	playAndPresentAnimationFrames(_mineCartLayer,
+	playAndPresentAnimationFrames(mineCartLayer,
 		AnimationFrameRange(0, kScene5080EntryDescriptorCount - 1, kScene5080FrameMillis)
 			.hookAt(0x3c, kScene5080MineCartArrivalHook)
 			.unskippable()
 			.noFinalFrameDelay());
 
 	_mineCartRumbleActive = false;
-	_mineCartLayer.visible = false;
+	mineCartLayer.visible = false;
 	_hideActiveActor = previousHideActiveActor;
 }
 

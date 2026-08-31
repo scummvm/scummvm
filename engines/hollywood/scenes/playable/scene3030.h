@@ -62,7 +62,6 @@ private:
 
 	ResourceSpriteLayer _loopLayer;
 	uint _loopTrack;
-	SceneLayerStack _machineLayers;
 	bool _machineSequenceActive;
 };
 

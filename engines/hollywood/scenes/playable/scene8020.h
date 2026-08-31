@@ -59,7 +59,6 @@ private:
 	void runRemoveInventoryItem6cSequence();
 	void runForegroundTransformationSequence();
 
-	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _foregroundChannel;
 	TimedAnimationChannel _secondaryAmbientChannel;
 	Common::Array<byte> _originalColorToItemMap;

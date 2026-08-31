@@ -58,7 +58,6 @@ private:
 	void rebuildWalkableMask();
 	void setColorMapItem(byte sourceItem, byte destinationItem);
 
-	ResourceSpriteLayer _foregroundLayer;
 	uint _foregroundTrack;
 	bool _sealMemoryActive;
 	byte _sealMemoryFrame;

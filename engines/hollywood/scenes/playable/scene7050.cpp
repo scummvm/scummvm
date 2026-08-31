@@ -64,6 +64,12 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
+const uint kScene7050AttendantLayer = 0;
+const SceneLayerSpec kScene7050LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene7050Chunk7DescriptorCount,
+		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene7050Config() {
 	PlayableSceneConfig config(7050,
 		SceneResourceLayout(12, 5, 11),
@@ -74,13 +80,10 @@ static PlayableSceneConfig scene7050Config() {
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7050Config()),
-		_cloakroomAttendantRepeatCount(0),
-		_cloakroomAttendantLayer() {
+		_cloakroomAttendantRepeatCount(0) {
 	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);
 	_cloakroomAttendantAnimation.returnToIdleAfterLongSequence = false;
-	_cloakroomAttendantLayer.configure(7, kScene7050Chunk7DescriptorCount,
-		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap));
-	_cloakroomAttendantLayer.visible = true;
+	_sceneLayers.configure(kScene7050LayerSpecs);
 }
 
 void Scene7050::initializeCustomPreviewState() {
@@ -92,8 +95,7 @@ void Scene7050::initializeCustomPreviewState() {
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_cloakroomAttendantRepeatCount = 0;
 	_cloakroomAttendantAnimation.reset();
-	_cloakroomAttendantLayer.reset(_cloakroomAttendantAnimation.channel.frameIndex);
-	_cloakroomAttendantLayer.visible = true;
+	_sceneLayers.reset();
 	setActiveActorPose(kScene7050EntryX, kScene7050EntryY, kScene7050EntryFacing);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
@@ -108,8 +110,9 @@ void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 
-	_cloakroomAttendantLayer.setFrame(_cloakroomAttendantAnimation.channel.frameIndex);
-	drawResourceSpriteLayer(_cloakroomAttendantLayer);
+	_sceneLayers.setLayerFrame(kScene7050AttendantLayer,
+		_cloakroomAttendantAnimation.channel.frameIndex);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);

@@ -77,6 +77,13 @@ static_assert(ARRAYSIZE(kScene2090ForegroundFrameMap) == 0x4d,
 static_assert(kScene2090ForegroundDescriptorCount > 58,
 	"Scene 2090 foreground descriptor count is too small");
 
+const uint kScene2090ForegroundLayer = 0;
+const SceneLayerSpec kScene2090LayerSpecs[] = {
+	{kSceneAnimationActorReplacement, kScene2090ForegroundChunk,
+		kScene2090ForegroundDescriptorCount, kScene2090ForegroundFrameMap,
+		ARRAYSIZE(kScene2090ForegroundFrameMap), false, 0}
+};
+
 static PlayableSceneConfig scene2090Config() {
 	PlayableSceneConfig config(2090,
 		SceneResourceLayout(8, 5, 7),
@@ -92,11 +99,9 @@ static PlayableSceneConfig scene2090Config() {
 
 Scene2090::Scene2090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2090Config()),
-		_foregroundLayer(),
 		_paletteCycleChannel(),
 		_paletteCycleActive(false) {
-	_foregroundLayer.configure(kScene2090ForegroundChunk, kScene2090ForegroundDescriptorCount,
-		kScene2090ForegroundFrameMap, ARRAYSIZE(kScene2090ForegroundFrameMap));
+	_sceneLayers.configure(kScene2090LayerSpecs);
 	_paletteCycleChannel.reset(0, kScene2090FrameMillis);
 }
 
@@ -118,23 +123,6 @@ void Scene2090::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-void Scene2090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawActionOverlayLayer();
-	const bool foregroundReplacesActor = _foregroundLayer.visible;
-	drawActiveAndSecondaryActorFrames(drawActiveActor && !foregroundReplacesActor,
-		activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor && !foregroundReplacesActor,
-		secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	if (foregroundReplacesActor && (drawActiveActor || drawSecondaryActor))
-		updateActorPaletteForWorldPoint(activeWorldX, activeWorldY);
-	drawResourceSpriteLayer(_foregroundLayer);
 }
 
 void Scene2090::runCustomEntrySequence() {
@@ -288,8 +276,9 @@ AmbientAudioProfile Scene2090::ambientAudioProfile() const {
 }
 
 void Scene2090::resetForegroundLayer(bool visible, byte frameIndex) {
-	_foregroundLayer.visible = visible;
-	_foregroundLayer.reset(frameIndex);
+	ResourceSpriteLayer &foregroundLayer = _sceneLayers.layer(kScene2090ForegroundLayer);
+	foregroundLayer.visible = visible;
+	foregroundLayer.reset(frameIndex);
 }
 
 void Scene2090::runEntryFromScene2080() {
@@ -323,13 +312,14 @@ void Scene2090::runEntryFromScene2020() {
 		return;
 
 	setRitualPaletteCycle(true);
-	const bool firstPartComplete = playAndPresentAnimationFrames(_foregroundLayer,
+	const bool firstPartComplete = playAndPresentAnimationFrames(
+		_sceneLayers.layer(kScene2090ForegroundLayer),
 		AnimationFrameRange(kScene2090SpecialEntryStartForegroundFrame + 1,
 			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis).unskippable());
 	setRitualPaletteCycle(false);
 	if (!firstPartComplete)
 		return;
-	if (!playAndPresentAnimationTransition(_foregroundLayer,
+	if (!playAndPresentAnimationTransition(_sceneLayers.layer(kScene2090ForegroundLayer),
 			AnimationTransition(kScene2090SpecialEntryMidForegroundFrame + 1,
 				kScene2090SpecialEntryFinalForegroundFrame,
 				kScene2090SpecialEntryFinalForegroundFrame,
@@ -393,7 +383,7 @@ void Scene2090::runAltarCeremony() {
 	beginSecondarySpeechLine(4, 6);
 
 	resetForegroundLayer(true, 0);
-	if (!playAndPresentAnimationTransition(_foregroundLayer,
+	if (!playAndPresentAnimationTransition(_sceneLayers.layer(kScene2090ForegroundLayer),
 			AnimationTransition(1, kScene2090FinaleFirstForegroundStopFrame,
 				kScene2090FinaleFirstForegroundStopFrame,
 				kScene2090FrameMillis).unskippable()))
@@ -402,13 +392,14 @@ void Scene2090::runAltarCeremony() {
 	beginSecondarySpeechLine(4, 7);
 	_soundBank0.playSample(0x0e, 100);
 	setRitualPaletteCycle(true);
-	const bool finaleComplete = playAndPresentAnimationFrames(_foregroundLayer,
+	ResourceSpriteLayer &foregroundLayer = _sceneLayers.layer(kScene2090ForegroundLayer);
+	const bool finaleComplete = playAndPresentAnimationFrames(foregroundLayer,
 		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
 			kScene2090FinaleLastForegroundFrame - 1, kScene2090SlowFrameMillis)
 			.hookAt(kScene2090FinaleSpeechTriggerFrame, kScene2090FinaleSpeechHook)
 			.unskippable());
 	if (finaleComplete) {
-		_foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
+		foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
 		drawPlayableComposite();
 		presentFrame();
 	}

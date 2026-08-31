@@ -61,7 +61,6 @@ private:
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void clearSceneItemFromColorMap(byte itemId);
 
-	ResourceSpriteLayer _mineCartLayer;
 	bool _mineCartRumbleActive;
 };
 

@@ -113,11 +113,10 @@ Scene6030::Scene6030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6030Config()),
 		_hannoverIdleChannel(),
 		_scriptedActorPathChannel(),
-		_animationLayers(),
 		_scriptedActorPathFrameIndex(0),
 		_hannoverManualSequenceActive(false),
 		_scriptedActorPathActive(false) {
-	_animationLayers.configure(kScene6030AnimationLayerSpecs);
+	_sceneLayers.configure(kScene6030AnimationLayerSpecs);
 }
 
 void Scene6030::initializeCustomPreviewState() {
@@ -134,14 +133,14 @@ void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	if (_actionOverlayPlayer.isVisible() &&
 			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors)
 		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-	drawLayerStack(_animationLayers, kSceneAnimationInFrontOfActors);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 	if (_actionOverlayPlayer.isVisible() &&
 			_actionOverlayPlayer.stratum != kSceneAnimationBehindActors)
 		drawActionOverlayLayer();
@@ -165,7 +164,7 @@ void Scene6030::prepareCustomGameplayLoop() {
 void Scene6030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceScriptedActorPath(delta);
 	if (!_primaryDialogueSpeechActive && !_hannoverManualSequenceActive &&
-			_animationLayers.layer(kScene6030HannoverLayer).visible)
+			_sceneLayers.layer(kScene6030HannoverLayer).visible)
 		advanceHannoverLayer(delta);
 }
 
@@ -265,7 +264,7 @@ uint32 Scene6030::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 
 void Scene6030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_animationLayers.setLayerFrame(kScene6030HannoverLayer, frameIndex);
+	_sceneLayers.setLayerFrame(kScene6030HannoverLayer, frameIndex);
 }
 
 void Scene6030::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -273,10 +272,10 @@ void Scene6030::handleAnimationFrameHook(byte hookId, uint frame) {
 	switch (hookId) {
 	case kScene6030TaffyPlacesCoffeeHook:
 	case kScene6030HannoverLowersCoffeeHook:
-		_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer, 1);
+		_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer, 1);
 		break;
 	case kScene6030HannoverRaisesCoffeeHook:
-		_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer, 2);
+		_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer, 2);
 		break;
 	case kScene6030BathroomExitVolumeHook:
 		_speech.setVolume(25);
@@ -317,16 +316,16 @@ void Scene6030::rebuildWorkingWalkableMask() {
 void Scene6030::resetAnimationLayers() {
 	_hannoverIdleChannel.reset(0, kScene6030SpeechFrameMillis);
 	_scriptedActorPathChannel.reset(0, kScene6030ActorPathFrameMillis);
-	_animationLayers.setLayerFrame(kScene6030HannoverLayer, 0);
-	_animationLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
-	_animationLayers.setLayerFrame(kScene6030CoffeeCupLayer,
+	_sceneLayers.setLayerFrame(kScene6030HannoverLayer, 0);
+	_sceneLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
+	_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer,
 		_vm->gameState().scene6030HannoverAbsent ? 1 : 0);
-	_animationLayers.setLayerFrame(kScene6030TaffyServiceLayer, 0);
-	_animationLayers.setLayerVisible(kScene6030HannoverLayer,
+	_sceneLayers.setLayerFrame(kScene6030TaffyServiceLayer, 0);
+	_sceneLayers.setLayerVisible(kScene6030HannoverLayer,
 		!_vm->gameState().scene6030HannoverAbsent);
-	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
-	_animationLayers.setLayerVisible(kScene6030CoffeeCupLayer, true);
-	_animationLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
+	_sceneLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
+	_sceneLayers.setLayerVisible(kScene6030CoffeeCupLayer, true);
+	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
 	_scriptedActorPathFrameIndex = 0;
 	_hannoverManualSequenceActive = false;
 	_scriptedActorPathActive = false;
@@ -334,7 +333,7 @@ void Scene6030::resetAnimationLayers() {
 }
 
 void Scene6030::advanceHannoverLayer(uint32 delta) {
-	ResourceSpriteLayer &hannoverLayer = _animationLayers.layer(kScene6030HannoverLayer);
+	ResourceSpriteLayer &hannoverLayer = _sceneLayers.layer(kScene6030HannoverLayer);
 	const uint frameCount = _hannoverIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (hannoverLayer.frameIndex == 0) {
@@ -581,7 +580,7 @@ void Scene6030::runHannoverFrameTransition(byte firstFrame, byte lastFrame, byte
 		uint32 frameMillis) {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	playAnimationTransition(_animationLayers, kScene6030HannoverLayer,
+	playAnimationTransition(_sceneLayers, kScene6030HannoverLayer,
 		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis).unskippable());
 	_hannoverManualSequenceActive = previousManualSequence;
 }
@@ -601,18 +600,18 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 		_fullPaletteRegionMask[deskColor] = 1;
 
 	startScriptedActorPath(0x25b, 0x17d, 4);
-	_animationLayers.configureLayerResource(kScene6030TaffyServiceLayer, 9,
+	_sceneLayers.configureLayerResource(kScene6030TaffyServiceLayer, 9,
 		kScene6030TaffyArrivalDescriptorCount, nullptr, 0);
-	bool completed = playAnimationFrames(_animationLayers, kScene6030TaffyServiceLayer,
+	bool completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
 		AnimationFrameRange(0, 0x44, kScene6030TaffyFrameMillis)
 			.unskippable().hookAt(0x42, kScene6030TaffyPlacesCoffeeHook));
 	if (completed) {
-		_animationLayers.configureLayerResource(kScene6030TaffyServiceLayer, 10,
+		_sceneLayers.configureLayerResource(kScene6030TaffyServiceLayer, 10,
 			kScene6030TaffyDepartureDescriptorCount, nullptr, 0);
-		completed = playAnimationFrames(_animationLayers, kScene6030TaffyServiceLayer,
+		completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
 			AnimationFrameRange(0, 0x29, kScene6030TaffyFrameMillis).unskippable());
 	}
-	_animationLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
+	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
 	if (!completed) {
 		_scriptedActorPathActive = false;
 		_actorPathPlaybackActive = false;
@@ -642,16 +641,16 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 void Scene6030::runHannoverCoffeeSequence() {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	bool completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+	bool completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
 		AnimationFrameRange(0x13, 0x16, kScene6030PoseFrameMillis)
 			.unskippable().hookAt(0x16, kScene6030HannoverRaisesCoffeeHook));
 	if (completed) {
-		completed = playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+		completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
 			AnimationFrameRange(0x17, 0x29, kScene6030PoseFrameMillis)
 				.unskippable().hookAt(0x29, kScene6030HannoverLowersCoffeeHook));
 	}
 	if (completed) {
-		playAnimationFrames(_animationLayers, kScene6030HannoverLayer,
+		playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
 			AnimationFrameRange(0x2a, 0x2c, kScene6030PoseFrameMillis).unskippable());
 	}
 	_hannoverManualSequenceActive = previousManualSequence;
@@ -666,20 +665,20 @@ void Scene6030::runHannoverBathroomExitSequence() {
 		return;
 	}
 
-	_animationLayers.setLayerVisible(kScene6030HannoverLayer, false);
-	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, true);
-	_animationLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
+	_sceneLayers.setLayerVisible(kScene6030HannoverLayer, false);
+	_sceneLayers.setLayerVisible(kScene6030BathroomExitLayer, true);
+	_sceneLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
 
 	const uint32 speechDuration = beginStaticHannoverSpeechLine(9, 500, 100);
 	const uint32 speechStartMillis = g_system->getMillis();
-	const bool completed = playAnimationFrames(_animationLayers, kScene6030BathroomExitLayer,
+	const bool completed = playAnimationFrames(_sceneLayers, kScene6030BathroomExitLayer,
 		AnimationFrameRange(0, 0x0d, kScene6030PoseFrameMillis)
 			.unskippable().hookAt(0x0d, kScene6030BathroomExitVolumeHook));
 	const uint32 elapsed = g_system->getMillis() - speechStartMillis;
 	if (completed)
 		waitForSpeechOrDelay(elapsed < speechDuration ? speechDuration - elapsed : 0, false);
 
-	_animationLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
+	_sceneLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
 	_speech.stop();
 	_primarySpeechOverlay.visible = false;
 	_primarySpeechOverlay.lines.clear();

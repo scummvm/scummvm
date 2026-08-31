@@ -72,6 +72,12 @@ const byte kScene5020PickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 
+const uint kScene5020MineCartLayer = 0;
+const SceneLayerSpec kScene5020LayerSpecs[] = {
+	{kSceneAnimationInFrontOfActors, kScene5020MineCartOverlayChunk,
+		kScene5020MineCartDescriptorCount, nullptr, 0, false, 0}
+};
+
 PlayableSceneConfig scene5020Config() {
 	PlayableSceneConfig config(5020,
 		SceneResourceLayout(5, 5, 10),
@@ -83,16 +89,12 @@ PlayableSceneConfig scene5020Config() {
 }
 
 Scene5020::Scene5020(HollywoodEngine *vm) :
-		PlayableScene(vm, scene5020Config()),
-		_mineCartLayer() {
-	_mineCartLayer.configure(kScene5020MineCartOverlayChunk,
-		kScene5020MineCartDescriptorCount, nullptr, 0);
+		PlayableScene(vm, scene5020Config()) {
+	_sceneLayers.configure(kScene5020LayerSpecs);
 }
 
 void Scene5020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
-	_mineCartLayer.visible = false;
-	_mineCartLayer.reset(0);
 
 	setActiveActorPose(kScene5020EntryStartX, kScene5020EntryStartY, 4);
 }
@@ -105,7 +107,7 @@ void Scene5020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForeground(actorDrawOrderMode, activeWorldY);
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_mineCartLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 }
 
 bool Scene5020::shouldPresentPreviewBeforeEntrySequence() const {
@@ -248,14 +250,15 @@ void Scene5020::runMineCartArrival() {
 	if (!_sceneChunkTable.isValidChunk(kScene5020MineCartOverlayChunk))
 		return;
 
+	ResourceSpriteLayer &mineCartLayer = _sceneLayers.layer(kScene5020MineCartLayer);
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	_mineCartLayer.visible = true;
-	_mineCartLayer.reset(0);
+	mineCartLayer.visible = true;
+	mineCartLayer.reset(0);
 	drawPlayableComposite();
 	presentFrame();
 	if (fadePaletteFromBlack()) {
-		_mineCartLayer.visible = false;
+		mineCartLayer.visible = false;
 		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
@@ -270,14 +273,14 @@ void Scene5020::runMineCartArrival() {
 			break;
 
 		const byte nextFrame = (byte)(frame + 1);
-		_mineCartLayer.setFrame(nextFrame);
+		mineCartLayer.setFrame(nextFrame);
 		if (nextFrame == kScene5020MineCartStopSoundFrame)
 			_soundBank0.playSample(0x16, 100);
 		drawPlayableComposite();
 		presentFrame();
 	}
 
-	_mineCartLayer.visible = false;
+	mineCartLayer.visible = false;
 	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();

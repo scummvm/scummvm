@@ -87,6 +87,12 @@ const byte kScene1040GorillaCordSetupFrameMap[] = {
 	6, 7, 8, 9, 10
 };
 
+const uint kScene1040GorillaLayer = 0;
+const SceneLayerSpec kScene1040LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene1040GorillaDescriptorCount,
+		kScene1040GorillaFrameMap, ARRAYSIZE(kScene1040GorillaFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene1040Config() {
 	PlayableSceneConfig config(1040,
 		SceneResourceLayout(17, 5, 16),
@@ -101,18 +107,13 @@ static PlayableSceneConfig scene1040Config() {
 Scene1040::Scene1040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1040Config()),
 		_gorillaChannel(),
-		_gorillaLayer(),
 		_gorillaLongSequence(false) {
-	_gorillaLayer.configure(7, kScene1040GorillaDescriptorCount,
-		kScene1040GorillaFrameMap, ARRAYSIZE(kScene1040GorillaFrameMap));
-	_gorillaLayer.visible = true;
+	_sceneLayers.configure(kScene1040LayerSpecs);
 }
 
 void Scene1040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	_gorillaChannel.reset(0, kScene1040FrameMillis);
-	_gorillaLayer.reset(0);
-	_gorillaLayer.visible = true;
 	_gorillaLongSequence = false;
 
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
@@ -139,7 +140,7 @@ void Scene1040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_gorillaLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
@@ -178,7 +179,7 @@ void Scene1040::runCustomEntrySequence() {
 }
 
 void Scene1040::prepareCustomGameplayLoop() {
-	_gorillaChannel.reset(_gorillaLayer.frameIndex, kScene1040FrameMillis);
+	_gorillaChannel.reset(_sceneLayers.layerFrame(kScene1040GorillaLayer), kScene1040FrameMillis);
 }
 
 void Scene1040::advanceCustomGameplayLoop(uint32 delta) {
@@ -395,25 +396,26 @@ void Scene1040::drawForegroundBlocks(int activeWorldY) {
 }
 
 void Scene1040::advanceGorillaAnimation(uint32 delta) {
+	ResourceSpriteLayer &gorillaLayer = _sceneLayers.layer(kScene1040GorillaLayer);
 	const uint frameCount = _gorillaChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (!_gorillaLongSequence) {
-			if (_gorillaLayer.frameIndex < 0x15) {
-				if (_gorillaLayer.frameIndex == 0x0d && _random.getRandomNumber(14) == 0) {
+			if (gorillaLayer.frameIndex < 0x15) {
+				if (gorillaLayer.frameIndex == 0x0d && _random.getRandomNumber(14) == 0) {
 					_gorillaLongSequence = true;
-					_gorillaLayer.setFrame(0x16);
+					gorillaLayer.setFrame(0x16);
 				} else {
-					if (_gorillaLayer.frameIndex == 0x0d)
+					if (gorillaLayer.frameIndex == 0x0d)
 						_soundBank0.playSample((byte)(0x12 + _random.getRandomNumber(2)), 50);
-					_gorillaLayer.setFrame(_gorillaLayer.frameIndex + 1);
+					gorillaLayer.setFrame(gorillaLayer.frameIndex + 1);
 				}
 			} else {
-				_gorillaLayer.setFrame(0);
+				gorillaLayer.setFrame(0);
 			}
-		} else if (_gorillaLayer.frameIndex < 0x30) {
-			_gorillaLayer.setFrame(_gorillaLayer.frameIndex + 1);
+		} else if (gorillaLayer.frameIndex < 0x30) {
+			gorillaLayer.setFrame(gorillaLayer.frameIndex + 1);
 		} else {
-			_gorillaLayer.setFrame(6);
+			gorillaLayer.setFrame(6);
 			_gorillaLongSequence = false;
 		}
 	}

@@ -86,7 +86,6 @@ Scene3030::Scene3030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3030Config()),
 		_loopLayer(),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
-		_machineLayers(),
 		_machineSequenceActive(false) {
 	_loopLayer.configure(6, kScene3030LoopDescriptorCount,
 		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap));
@@ -111,7 +110,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_vm->gameState().windmillBladesMoving || _machineSequenceActive)
 		drawResourceSpriteLayer(_loopLayer);
 	if (_machineSequenceActive) {
-		drawLayerStack(_machineLayers, kSceneAnimationScenePlaced);
+		drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
 		drawForegroundBlocks();
 		return;
 	}
@@ -227,11 +226,11 @@ void Scene3030::resetAnimationLayers() {
 	_realtimeAnimationTracks.reset(_loopTrack);
 	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
 	_loopLayer.visible = true;
-	_machineLayers.clear();
-	_machineLayers.configureLayer(kScene3030MachineEffectLayer, kSceneAnimationScenePlaced,
+	_sceneLayers.clear();
+	_sceneLayers.configureLayer(kScene3030MachineEffectLayer, kSceneAnimationScenePlaced,
 		9, kScene3030MachineEffectDescriptorCount,
 		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false);
-	_machineLayers.configureLayer(kScene3030MachineActionLayer, kSceneAnimationScenePlaced,
+	_sceneLayers.configureLayer(kScene3030MachineActionLayer, kSceneAnimationScenePlaced,
 		10, kScene3030MachineActionDescriptorCount,
 		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false);
 	_machineSequenceActive = false;
@@ -366,10 +365,10 @@ void Scene3030::runMachineActivationSequence() {
 
 	beginSecondarySpeechLine(11, 0);
 	_machineSequenceActive = true;
-	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
-	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, true);
-	_machineLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, 0);
-	_machineLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, 0);
+	_sceneLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
+	_sceneLayers.setLayerVisible(kScene3030MachineActionLayer, true);
+	_sceneLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, 0);
+	_sceneLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, 0);
 
 	byte actionFrame = 0;
 	byte effectFrame = 0;
@@ -382,7 +381,7 @@ void Scene3030::runMachineActivationSequence() {
 		if (actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) &&
 				(actionFrame < 15 || actionReleased)) {
 			++actionFrame;
-			_machineLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, actionFrame);
+			_sceneLayers.setVisibleLayerFrame(kScene3030MachineActionLayer, actionFrame);
 			if (actionFrame == 15) {
 				effectStarted = true;
 				if (_sceneChunkTable.isValidChunk(8))
@@ -393,7 +392,7 @@ void Scene3030::runMachineActivationSequence() {
 
 		if (effectStarted && effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
 			++effectFrame;
-			_machineLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, effectFrame);
+			_sceneLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, effectFrame);
 			if (effectFrame == 5) {
 				actionReleased = true;
 				state.scene3030MachineActivated = true;
@@ -411,8 +410,8 @@ void Scene3030::runMachineActivationSequence() {
 
 	applySceneStateToHotspotsAndPatches(0);
 	_machineSequenceActive = false;
-	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
-	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, false);
+	_sceneLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
+	_sceneLayers.setLayerVisible(kScene3030MachineActionLayer, false);
 	removeInventoryItem(kScene3030RequiredInventoryItem);
 	addInventoryItem(kScene3030ResultInventoryItem);
 	_soundBank0.playSample(1, 100);

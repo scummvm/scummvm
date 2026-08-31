@@ -75,7 +75,6 @@ private:
 	void copyRouteStepDeltas(uint destinationFirst, const byte *source, uint sourceSize, uint sourceFirst);
 	void copyStepDeltasForCurrentSide();
 
-	ResourceSpriteLayer _mineCartLayer;
 	bool _mineCartRumbleActive;
 };
 

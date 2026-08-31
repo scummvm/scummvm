@@ -55,7 +55,6 @@ private:
 	void setCordActionTarget();
 
 	TimedAnimationChannel _gorillaChannel;
-	ResourceSpriteLayer _gorillaLayer;
 	bool _gorillaLongSequence;
 };
 

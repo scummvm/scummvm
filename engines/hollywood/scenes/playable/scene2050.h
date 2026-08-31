@@ -81,7 +81,6 @@ private:
 	void copyMuralTile(byte visibleTileId, byte sourceTileId, const byte *rawFrame, byte *destination);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 
-	ResourceSpriteLayer _ambientLayer;
 	uint _ambientTrack;
 	bool _muralPermutationInitialized;
 	byte _muralPermutationChunkIndex;

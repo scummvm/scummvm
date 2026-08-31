@@ -109,7 +109,6 @@ private:
 	AlternatingRandomFramePair _chunk10IdlePairB;
 	TimedAnimationChannel _chunk8Animation;
 	TimedAnimationChannel _chunk10Animation;
-	SceneLayerStack _animationLayers;
 	uint _hannoverSpeechTrack;
 	uint _doghouseSpeechTrack;
 	uint _dialogueOverlayTrack;

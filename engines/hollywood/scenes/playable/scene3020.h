@@ -56,7 +56,6 @@ private:
 	void drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex);
 	void runPickupMace();
 
-	ResourceSpriteLayer _loopLayer;
 	uint _loopTrack;
 };
 
