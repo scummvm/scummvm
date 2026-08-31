@@ -519,15 +519,6 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 	}
 }
 
-void Scene7100::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int patchFrame, byte patchSelector, int soundFrame, byte soundId) {
-	const int statePatchFrame = patchSelector != 0xff ? patchFrame : -1;
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.patchAt(statePatchFrame, patchSelector)
-		.soundAt(soundFrame, soundId));
-}
-
 void Scene7100::runRonDialogue() {
 	Common::Array<DialogueChoiceRecord> records;
 	initializeRonDialogueRecords(records);
@@ -817,24 +808,27 @@ void Scene7100::runCurtainClearToBlack() {
 }
 
 void Scene7100::handlePickupItem15() {
-	beginSecondarySpeechLine(4, 0);
-	runOverlaySequence(16, kScene7100Chunk16DescriptorCount,
-		kScene7100PickupItem15FrameMap, ARRAYSIZE(kScene7100PickupItem15FrameMap),
-		kScene7100FrameMillis);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(4, 0)
+		.actorReplacement(16, kScene7100Chunk16DescriptorCount,
+			kScene7100PickupItem15FrameMap, ARRAYSIZE(kScene7100PickupItem15FrameMap),
+			kScene7100FrameMillis);
 	addInventoryItem(0x15);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().posterOnCellWall = false;
-	applySceneStateToHotspotsAndPatches(3);
+	sequence.sound(1)
+		.commit(_vm->gameState().posterOnCellWall, false)
+		.framebufferPatch(3);
 }
 
 void Scene7100::handleActionHandler315() {
 	beginSecondarySpeechLine(0x0e, 0);
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
-	runOverlaySequence(14, kScene7100Chunk14DescriptorCount,
-		kScene7100Handler315FrameMap, ARRAYSIZE(kScene7100Handler315FrameMap),
-		kScene7100FrameMillis, -1, 0xff, 4, 0x0f);
-	_vm->gameState().mainFlowStateId = kScene7100ExitState6072;
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(14, kScene7100Chunk14DescriptorCount,
+			kScene7100Handler315FrameMap, ARRAYSIZE(kScene7100Handler315FrameMap),
+			kScene7100FrameMillis)
+			.soundAt(4, 0x0f))
+		.commit(_vm->gameState().mainFlowStateId, kScene7100ExitState6072);
 }
 
 void Scene7100::handleExtendedAction337() {
@@ -843,40 +837,43 @@ void Scene7100::handleExtendedAction337() {
 		return;
 	}
 
-	beginSecondarySpeechLine(0x19, 0);
-	_vm->gameState().cellPlateRatProgress = 1;
-	runOverlaySequence(19, kScene7100Chunk19DescriptorCount,
-		kScene7100Extended337FrameMap, ARRAYSIZE(kScene7100Extended337FrameMap),
-		kScene7100FrameMillis, 0x17, 2);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(0x19, 0)
+		.commit(_vm->gameState().cellPlateRatProgress, (byte)1)
+		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
+			kScene7100Extended337FrameMap, ARRAYSIZE(kScene7100Extended337FrameMap),
+			kScene7100FrameMillis)
+			.patchAt(0x17, 2));
 	removeInventoryItem(0x14);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().cellPipesActive = false;
+	sequence.sound(1)
+		.commit(_vm->gameState().cellPipesActive, false);
 }
 
 void Scene7100::handlePickupItem16() {
-	beginSecondarySpeechLine(0x1a, 0);
-	_vm->gameState().cellPlateRatProgress = 2;
-	runOverlaySequence(19, kScene7100Chunk19DescriptorCount,
-		kScene7100Item16FirstFrameMap, ARRAYSIZE(kScene7100Item16FirstFrameMap),
-		kScene7100FrameMillis, 0x1e, 2);
-	walkActiveActorTo(0x168, 0x198, 4, 0);
-
-	runActorReplacement(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
-		kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap), kScene7100FrameMillis)
-		.soundAt(0x0e, 0x16)
-		.noRedrawAtEnd());
-
-	beginSecondarySpeechLine(0x1a, 1);
-	_environmentState = 4;
-	walkActiveActorTo(0x0ad, 0x17b, 5, 0);
-	beginSecondarySpeechLine(0x10, 0);
-	runOverlaySequence(20, kScene7100Chunk20DescriptorCount,
-		kScene7100Item16SecondFrameMap, ARRAYSIZE(kScene7100Item16SecondFrameMap),
-		kScene7100FrameMillis);
-	_environmentState = 5;
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(0x1a, 0)
+		.commit(_vm->gameState().cellPlateRatProgress, (byte)2)
+		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
+			kScene7100Item16FirstFrameMap, ARRAYSIZE(kScene7100Item16FirstFrameMap),
+			kScene7100FrameMillis)
+			.patchAt(0x1e, 2))
+		.actorPath(SceneActorPose(0x168, 0x198, 4))
+		.actorReplacement(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
+			kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap),
+			kScene7100FrameMillis)
+			.soundAt(0x0e, 0x16)
+			.noRedrawAtEnd())
+		.secondarySpeech(0x1a, 1)
+		.commit(_environmentState, (byte)4)
+		.actorPath(SceneActorPose(0x0ad, 0x17b, 5))
+		.secondarySpeech(0x10, 0)
+		.actorReplacement(20, kScene7100Chunk20DescriptorCount,
+			kScene7100Item16SecondFrameMap, ARRAYSIZE(kScene7100Item16SecondFrameMap),
+			kScene7100FrameMillis)
+		.commit(_environmentState, (byte)5);
 	addInventoryItem(0x16);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x0f, 0);
+	sequence.sound(1)
+		.secondarySpeech(0x0f, 0);
 }
 
 void Scene7100::handlePickupItem14() {
@@ -889,14 +886,15 @@ void Scene7100::handlePickupItem14() {
 		return;
 	}
 
-	runOverlaySequence(18, kScene7100Chunk18DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(18, kScene7100Chunk18DescriptorCount,
 		kScene7100Item14FrameMap, ARRAYSIZE(kScene7100Item14FrameMap),
-		kScene7100FrameMillis);
-	_vm->gameState().cellPlateRemoved = true;
-	applySceneStateToHotspotsAndPatches(4);
+		kScene7100FrameMillis)
+		.commit(_vm->gameState().cellPlateRemoved, true)
+		.framebufferPatch(4);
 	addInventoryItem(0x14);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x1b, 0);
+	sequence.sound(1)
+		.secondarySpeech(0x1b, 0);
 	dispatchGenericSceneAction(19);
 }
 
@@ -908,15 +906,16 @@ void Scene7100::handleInventoryTransferAction() {
 		return;
 	}
 
-	beginSecondarySpeechLine(0x27, 0);
-	runOverlaySequence(15, kScene7100Chunk15DescriptorCount,
-		kScene7100TransferFrameMap, ARRAYSIZE(kScene7100TransferFrameMap),
-		kScene7100FrameMillis);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(0x27, 0)
+		.actorReplacement(15, kScene7100Chunk15DescriptorCount,
+			kScene7100TransferFrameMap, ARRAYSIZE(kScene7100TransferFrameMap),
+			kScene7100FrameMillis);
 
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(kScene7100SueInventoryOwner, sueItemId);
 	state.addInventoryItem(kScene7100RonInventoryOwner, kScene7100RonItemBySueItem[mappingIndex]);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 } // End of namespace Hollywood

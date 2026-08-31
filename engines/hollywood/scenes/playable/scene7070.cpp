@@ -303,17 +303,10 @@ AmbientAudioProfile Scene7070::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 
-void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame, int soundFrame, byte soundId) {
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.patchAt(statePatchFrame, 2)
-		.soundAt(soundFrame, soundId));
-}
-
 void Scene7070::handleBackToG06() {
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7070BackToG06State;
+	BlockingSequence(*this)
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene7070BackToG06State);
 }
 
 void Scene7070::handleExitDoorAction() {
@@ -323,42 +316,48 @@ void Scene7070::handleExitDoorAction() {
 		return;
 	}
 
-	runOverlaySequence(8, kScene7070Chunk8DescriptorCount,
-		kScene7070ExitDoorFrameMap, ARRAYSIZE(kScene7070ExitDoorFrameMap),
-		kScene7070OverlayFrameMillis);
-	_soundBank0.playSample(3, 100);
-	state.gramophoneRoomDoorState = 2;
-	state.mainFlowStateId = state.gramophoneCrankState < 3 ? kScene7070ExitToG08State : kScene7070ExitToG09State;
+	const uint16 exitState = state.gramophoneCrankState < 3 ?
+		kScene7070ExitToG08State : kScene7070ExitToG09State;
+	BlockingSequence(*this)
+		.actorReplacement(8, kScene7070Chunk8DescriptorCount,
+			kScene7070ExitDoorFrameMap, ARRAYSIZE(kScene7070ExitDoorFrameMap),
+			kScene7070OverlayFrameMillis)
+		.sound(3)
+		.commit(state.gramophoneRoomDoorState, (byte)2)
+		.commit(state.mainFlowStateId, exitState);
 }
 
 void Scene7070::handleChunk12ItemAction() {
 	GameplayState &state = _vm->gameState();
-	runOverlaySequence(12, kScene7070Chunk12DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene7070Chunk12DescriptorCount,
 		kScene7070Chunk12ItemFrameMap, ARRAYSIZE(kScene7070Chunk12ItemFrameMap),
-		kScene7070OverlayFrameMillis, -1, 6, 0x19);
+		kScene7070OverlayFrameMillis)
+		.soundAt(6, 0x19));
 
 	if (state.gramophoneCrankState == 1) {
-		beginSecondarySpeechLine(0x0e, 0);
-		state.gramophoneCrankState = 3;
-		state.hannoverCourtyardDialogueState = 1;
+		sequence.secondarySpeech(0x0e, 0)
+			.commit(state.gramophoneCrankState, (byte)3)
+			.commit(state.hannoverCourtyardDialogueState, (byte)1);
 	} else if (state.gramophoneCrankState == 2) {
-		state.gramophoneCrankState = 3;
-		state.hannoverCourtyardDialogueState = 1;
+		sequence.commit(state.gramophoneCrankState, (byte)3)
+			.commit(state.hannoverCourtyardDialogueState, (byte)1);
 	} else {
-		state.gramophoneCrankState = 2;
-		state.hannoverCourtyardDialogueState = 0;
+		sequence.commit(state.gramophoneCrankState, (byte)2)
+			.commit(state.hannoverCourtyardDialogueState, (byte)0);
 	}
-	applySceneStateToHotspotsAndPatches(2);
+	sequence.framebufferPatch(2);
 }
 
 void Scene7070::handleTradeItem10ForItem08() {
-	beginSecondarySpeechLine(0x0f, 0);
-	runOverlaySequence(7, kScene7070Chunk7DescriptorCount,
-		kScene7070TradeItemFrameMap, ARRAYSIZE(kScene7070TradeItemFrameMap),
-		kScene7070OverlayFrameMillis);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(0x0f, 0)
+		.actorReplacement(7, kScene7070Chunk7DescriptorCount,
+			kScene7070TradeItemFrameMap, ARRAYSIZE(kScene7070TradeItemFrameMap),
+			kScene7070OverlayFrameMillis);
 	removeInventoryItem(0x10);
 	addInventoryItem(0x08);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene7070::handlePrimeExitDoorAction() {
@@ -368,23 +367,26 @@ void Scene7070::handlePrimeExitDoorAction() {
 		return;
 	}
 
-	beginSecondarySpeechLine(0x10, 0);
-	runOverlaySequence(9, kScene7070Chunk7DescriptorCount,
-		kScene7070PrimeExitDoorFrameMap, ARRAYSIZE(kScene7070PrimeExitDoorFrameMap),
-		kScene7070OverlayFrameMillis);
-	state.gramophoneRoomDoorState = 1;
-	beginSecondarySpeechLine(0x10, 1);
+	BlockingSequence(*this)
+		.secondarySpeech(0x10, 0)
+		.actorReplacement(9, kScene7070Chunk7DescriptorCount,
+			kScene7070PrimeExitDoorFrameMap, ARRAYSIZE(kScene7070PrimeExitDoorFrameMap),
+			kScene7070OverlayFrameMillis)
+		.commit(state.gramophoneRoomDoorState, (byte)1)
+		.secondarySpeech(0x10, 1);
 }
 
 void Scene7070::handleUseItem13OnSceneObject() {
 	GameplayState &state = _vm->gameState();
-	state.gramophoneCrankState = 1;
-	runOverlaySequence(12, kScene7070Chunk12DescriptorCount,
-		kScene7070UseItem13FrameMap, ARRAYSIZE(kScene7070UseItem13FrameMap),
-		kScene7070OverlayFrameMillis, 0x16);
+	BlockingSequence sequence(*this);
+	sequence.commit(state.gramophoneCrankState, (byte)1)
+		.actorReplacement(ActionOverlaySpec(12, kScene7070Chunk12DescriptorCount,
+			kScene7070UseItem13FrameMap, ARRAYSIZE(kScene7070UseItem13FrameMap),
+			kScene7070OverlayFrameMillis)
+			.patchAt(0x16, 2));
 	removeInventoryItem(0x13);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x15, 0);
+	sequence.sound(1)
+		.secondarySpeech(0x15, 0);
 }
 
 } // End of namespace Hollywood

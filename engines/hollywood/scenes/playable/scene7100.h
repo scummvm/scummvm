@@ -53,9 +53,6 @@ private:
 	void drawPrimaryNpc();
 	void drawEnvironmentOverlayBeforeActor();
 	void drawEnvironmentOverlayAfterForeground();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0xff,
-		int soundFrame = -1, byte soundId = 0);
 	void runRonDialogue();
 	void initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void runRescueEntrySequence();

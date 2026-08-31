@@ -179,14 +179,6 @@ AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 
-void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame) {
-	const byte hookId = statePatchFrame >= 0 ? kScene7080CrankPickupHook : 0;
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.hookAt(statePatchFrame, hookId));
-}
-
 void Scene7080::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
@@ -197,20 +189,23 @@ void Scene7080::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene7080::handleBackToG07() {
-	runOverlaySequence(6, kScene7080Chunk6DescriptorCount,
-		kScene7080BackToG07FrameMap, ARRAYSIZE(kScene7080BackToG07FrameMap),
-		kScene7080FrameMillis);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7080BackToG07State;
+	BlockingSequence(*this)
+		.actorReplacement(6, kScene7080Chunk6DescriptorCount,
+			kScene7080BackToG07FrameMap, ARRAYSIZE(kScene7080BackToG07FrameMap),
+			kScene7080FrameMillis)
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene7080BackToG07State);
 }
 
 void Scene7080::handlePickupItem13() {
 	dispatchGenericSceneAction(19);
-	runOverlaySequence(7, kScene7080Chunk7DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene7080Chunk7DescriptorCount,
 		kScene7080PickupItem13FrameMap, ARRAYSIZE(kScene7080PickupItem13FrameMap),
-		kScene7080FrameMillis, 3);
+		kScene7080FrameMillis)
+		.hookAt(3, kScene7080CrankPickupHook));
 	addInventoryItem(0x13);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 } // End of namespace Hollywood
