@@ -46,6 +46,7 @@ public:
 
 	void writeString(const Common::String &msg);
 	void prompt();
+	void spaceToContinue();
 };
 
 } // namespace Views

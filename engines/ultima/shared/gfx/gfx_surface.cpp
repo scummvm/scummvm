@@ -62,6 +62,28 @@ void GfxSurface::writeString(const Common::String &str, Graphics::TextAlign alig
 	}
 }
 
+void GfxSurface::writeString(const Common::Point &pt, const char *str, ...) {
+	va_list alist;
+
+	// Start reading values
+	va_start(alist, str);
+	Common::String msg = Common::String::vformat(str, alist);
+	va_end(alist);
+
+	writeString(pt, msg, Graphics::kTextAlignLeft);
+}
+
+void GfxSurface::writeString(const char *str, ...) {
+	va_list alist;
+
+	// Start reading values
+	va_start(alist, str);
+	Common::String msg = Common::String::vformat(str, alist);
+	va_end(alist);
+
+	writeString(msg, Graphics::kTextAlignLeft);
+}
+
 void GfxSurface::writeChar(uint32 chr) {
 	const int fontW = _font.getMaxCharWidth();
 	const int fontH = _font.getFontHeight();

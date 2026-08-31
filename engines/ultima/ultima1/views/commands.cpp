@@ -26,6 +26,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+constexpr int COLOR_TEXT = 11;      // light cyan - normal values
+
 Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
 }
 
@@ -40,6 +42,7 @@ void Commands::draw() {
 	_surface.clear();
 	_surface.setTextPos(Common::Point(0, 4));
 	_surface.setScrollable(true);
+	_surface.setColor(COLOR_TEXT);
 
 	prompt();
 }
@@ -50,6 +53,9 @@ bool Commands::msgGame(const GameMessage &msg) {
 		return true;
 	} else if (msg._name == "PROMPT") {
 		prompt();
+		return true;
+	} else if (msg._name == "SPACE") {
+		spaceToContinue();
 		return true;
 	}
 
@@ -64,6 +70,12 @@ void Commands::writeString(const Common::String &msg) {
 void Commands::prompt() {
 	writeString("\x10");
 	_textCursor.setPosition(Common::Point(1, 24));
+	_textCursor.show();
+}
+
+void Commands::spaceToContinue() {
+	writeString("Press Space to continue:");
+	_textCursor.setPosition(Common::Point(25, 24));
 	_textCursor.show();
 }
 

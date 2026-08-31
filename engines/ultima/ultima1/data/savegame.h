@@ -39,6 +39,11 @@ constexpr int LOCATION_ENTITY_COUNT = 15;
 extern const char *SEX_NAMES[];
 extern const char *RACE_NAMES[];
 extern const char *CLASS_NAMES[];
+extern const char *ARMOR_NAMES[];
+extern const char *WEAPON_NAMES[];
+extern const char *SPELL_NAMES[];
+extern const char *TRANSPORT_NAMES[];
+extern const char *GEM_NAMES[];
 
 enum Sex {
 	SEX_MALE = 0, SEX_FEMALE = 1
@@ -188,6 +193,13 @@ public:
 	 */
 	bool isDead() const {
 		return _hits <= 0;
+	}
+
+	/**
+	 * Returns the player's current level
+	 */
+	int getCurrentLevel() const {
+		return _experience / 1000 + 1;
 	}
 
 	/**

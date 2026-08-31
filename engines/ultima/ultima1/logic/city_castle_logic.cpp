@@ -145,7 +145,11 @@ void CityCastleLogic::action(int action) {
 	case KEYBIND_PASS:
 		pass();
 		break;
-	default:
+	case KEYBIND_ZSTATS:
+		writeString("Ztats\n");
+		g_engine->addView("ZStats");
+		return;
+	return;	default:
 		writeString("Huh?\n");
 		break;
 	}

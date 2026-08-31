@@ -31,6 +31,26 @@ const char *SEX_NAMES[] = { "Male", "Female" };
 const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
 const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
 
+// Index 0 of each ("Skin"/"Hands"/"Prayer"/"Foot") is the innate/default
+// state and is never shown in the stats screen, but is included here to
+// keep these arrays indexed identically to the enums/savegame arrays above
+const char *ARMOR_NAMES[] = {
+	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
+};
+const char *WEAPON_NAMES[] = {
+	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword",
+	"Bow & Arrows", "Amulet", "Wand", "Staff", "Triangle", "Pistol",
+	"Light Sword", "Phazor", "Blaster"
+};
+const char *SPELL_NAMES[] = {
+	"Prayer", "Open", "Unlock", "Magic Missile", "Steal", "Ladder Down",
+	"Ladder Up", "Blink", "Create", "Destroy", "Kill"
+};
+const char *TRANSPORT_NAMES[] = {
+	"Foot", "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle", "Time Machine"
+};
+const char *GEM_NAMES[] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
+
 void LocationEntity::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_type);
 	s.syncAsSint16LE(_position.x);

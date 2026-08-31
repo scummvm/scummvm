@@ -50,10 +50,12 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
 	{ KEYBIND_ENTER, "ENTER", _s("Enter"), "e", nullptr },
+	{ KEYBIND_ZSTATS, "STATS", _s("Ztats"), "z", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord DUNGEON_KEYS[] = {
+	{ KEYBIND_ZSTATS, "STATS", _s("Ztats"), "z", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -124,12 +126,6 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
-			if (r->_action == KEYBIND_ENTER)
-				act->addDefaultInputMapping("x");	// x also works to eXit
-			else if (r->_action == KEYBIND_SELECT)
-				act->addDefaultInputMapping("RETURN");
-			else if (r->_action == KEYBIND_QUIT)
-				act->addDefaultInputMapping("p");	// Map "Pause" to Quit
 
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 				r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)

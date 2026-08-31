@@ -52,6 +52,8 @@ public:
 	void writeString(const Common::Point &pt, const Common::String &str,
 		Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void writeString(const Common::String &str, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	void writeString(const Common::Point &pt, const char *str, ...);
+	void writeString(const char *str, ...);
 	void writeChar(uint32 chr);
 	int getStringWidth(const Common::String &str) const;
 

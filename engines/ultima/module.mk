@@ -78,7 +78,8 @@ MODULE_OBJS += \
 	ultima1/views/overworld_map.o \
 	ultima1/views/stats.o \
 	ultima1/views/startup.o \
-	ultima1/views/title.o
+	ultima1/views/title.o \
+	ultima1/views/zstats.o
 endif
 
 ifdef ENABLE_ULTIMA2

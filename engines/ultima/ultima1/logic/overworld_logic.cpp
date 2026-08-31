@@ -73,6 +73,10 @@ void OverworldLogic::action(int action) {
 	case KEYBIND_PASS:
 		pass();
 		break;
+	case KEYBIND_ZSTATS:
+		writeString("Ztats\n");
+		g_engine->addView("ZStats");
+		return;
 	default:
 		writeString("Huh?\n");
 		break;

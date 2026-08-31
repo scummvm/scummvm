@@ -30,6 +30,7 @@
 #include "ultima/ultima1/views/overworld_map.h"
 #include "ultima/ultima1/views/startup.h"
 #include "ultima/ultima1/views/title.h"
+#include "ultima/ultima1/views/zstats.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -43,6 +44,7 @@ struct Views : public Shared::Views {
 	OverworldMap _overworldMap;
 	Startup _startup;
 	Title _title;
+	ZStats _zStats;
 };
 
 } // namespace Views
