@@ -23,6 +23,22 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dragonsphere.
    - Added support for Return of the Phantom.
    - Added support for Once Upon a Forest.
+   - Added support for Alpha Polaris.
+   - Added support for Art of Murder: FBI Confidential.
+   - Added support for Barrow Hill - The Dark Path.
+   - Added support for Dark Fall: Lost Souls.
+   - Added support for Devil In The Capital.
+   - Added support for Dirty Split.
+   - Added support for Face Noir.
+   - Added support for Ghost in the Sheet.
+   - Added support for Hamlet.
+   - Added support for The Lost Crown - A Ghost-Hunting Adventure.
+   - Added support for Murder In Tehran's Alleys 2016.
+   - Added support for Murder In Tehran's Alleys 1933.
+   - Added support for Reversion series.
+   - Added support for Rhiannon: Curse of the Four Branches.
+   - Added support for Shadows on the Vatican series.
+   - Added support for other Wintermute engine games, over 140 titles.
 
  General:
    - Optimised mixing and rate converters, for better performance.
