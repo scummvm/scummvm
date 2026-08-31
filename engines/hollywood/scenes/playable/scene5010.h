@@ -72,8 +72,6 @@ private:
 	void activateSwitchPanelAtCursor(bool &done);
 	bool pollSwitchPanelEvent(bool &done);
 
-	ResourceSpriteLayer _switchLayer;
-	ResourceSpriteLayer _switchPanelAnimationLayer;
 	bool _blinkPatchVisible;
 	bool _switchPanelActive;
 	byte _switchPanelMovingSelector;

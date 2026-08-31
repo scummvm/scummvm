@@ -105,16 +105,6 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
 
-	ResourceSpriteLayer _randomDetailLayer;
-	ResourceSpriteLayer _centerSalonLayer;
-	ResourceSpriteLayer _werewolfLayer;
-	ResourceSpriteLayer _centerSalonDetailLayer;
-	ResourceSpriteLayer _leftSalonLayer;
-	ResourceSpriteLayer _upperRightSalonLayer;
-	ResourceSpriteLayer _rightSalonDetailLayer;
-	ResourceSpriteLayer _lowerSalonDetailLayer;
-	ResourceSpriteLayer _rightStaticSalonLayer;
-	ResourceSpriteLayer _elevatorLayer;
 	TimedAnimationChannel _salonAnimationChannel;
 	byte _upperRightSalonState;
 	byte _rightSalonDetailDirection;
