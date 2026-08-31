@@ -555,6 +555,9 @@ public:
 	Common::Array<byte> _amigaPendingSceneScript;
 	Common::Array<byte> _amigaPendingSceneStrings;
 
+	/** Last string submitted to TTS; skips per-frame INTERRUPT restarts. */
+	mutable Common::String _ttsPreviousSaid;
+
 	/** Bottom HUD visible (showActionBar/hideActionBar); default shown. */
 	bool _bottomHudVisible = true;
 
@@ -913,6 +916,7 @@ public:
 	bool tick() override;
 
 	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
+	void stopTextToSpeech() const;
 
 	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
 	bool hotspotDirty() const override;

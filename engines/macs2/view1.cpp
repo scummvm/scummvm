@@ -3364,15 +3364,6 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
-	// TTS: speak the dialogue text
-	Common::String ttsText;
-	for (const Common::String &line : strings) {
-		if (!ttsText.empty())
-			ttsText += " ";
-		ttsText += line;
-	}
-	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
-
 	currentSpeechActData.speaker = getCharacterByIndex(characterIndex);
 	currentSpeechActData.strings = strings;
 	currentSpeechActData.position = position;

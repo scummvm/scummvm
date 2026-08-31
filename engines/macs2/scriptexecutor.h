@@ -229,9 +229,9 @@ public:
 	/**
 	 * Optional generated dialogue audio (kEnhAudioChanges):
 	 * scene -> SPEECH/sSS_OOOO.*, object -> SPEECH/oOOO_OOOO.*.
-	 * Missing files are ignored.
+	 * Missing files are ignored. If no voice plays, speak `lines` via TTS.
 	 */
-	void tryPlayDialogueSpeech(uint16 stringOffset);
+	void tryPlayDialogueSpeech(uint16 stringOffset, const Common::Array<Common::String> &lines);
 
 	// Dialect v2: extended opcodes 0x4F..0x6D (stubs until backends exist).
 	OpcodeResult scriptSetMainActor();

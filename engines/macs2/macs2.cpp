@@ -855,10 +855,22 @@ Macs2Engine::~Macs2Engine() {
 
 void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
 #ifdef USE_TTS
+	if (text.empty())
+		return;
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say(text, action);
+	if (ttsMan && ConfMan.getBool("tts_enabled") && _ttsPreviousSaid != text) {
+		ttsMan->say(text, action, Common::kDos850);
+		_ttsPreviousSaid = text;
 	}
+#endif
+}
+
+void Macs2Engine::stopTextToSpeech() const {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking())
+		ttsMan->stop();
+	_ttsPreviousSaid.clear();
 #endif
 }
 

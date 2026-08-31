@@ -52,6 +52,16 @@ static Common::String joinDebugStrings(const Common::StringArray &strings) {
 	return result;
 }
 
+static Common::String joinTtsLines(const Common::Array<Common::String> &lines) {
+	Common::String text;
+	for (const Common::String &line : lines) {
+		if (!text.empty())
+			text += " ";
+		text += line;
+	}
+	return text;
+}
+
 #define ScriptNoEntry debugC(kDebugScript, "Unhandled case in script handling.");
 #define STR_HELPER(x) #x
 
@@ -429,6 +439,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 		currentView->_isShowingTextBox = true;
 		currentView->currentSpeechActData.speaker = nullptr;
 		currentView->_continueScriptAfterUI = true;
+		_engine->sayText(joinTtsLines(strings), Common::TextToSpeechManager::INTERRUPT);
 		currentView->redraw();
 	}
 
@@ -1361,7 +1372,7 @@ OpcodeResult Script::ScriptExecutor::scriptShowDialogue() {
 
 	_dialogueSpeakerObjectID = objectID;
 	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
-	tryPlayDialogueSpeech((uint16)offset);
+	tryPlayDialogueSpeech((uint16)offset, strings);
 
 	_waitingForUiClick = true;
 
@@ -3307,7 +3318,7 @@ Common::Path ScriptExecutor::resolveMidiFilePath(const Common::String &fileName)
 	return Common::Path();
 }
 
-void ScriptExecutor::tryPlayDialogueSpeech(uint16 stringOffset) {
+void ScriptExecutor::tryPlayDialogueSpeech(uint16 stringOffset, const Common::Array<Common::String> &lines) {
 	Common::String speechFile;
 	if (_executingScriptObjectId == 0) {
 		speechFile = Common::String::format("s%02x_%04x",
@@ -3325,12 +3336,15 @@ void ScriptExecutor::tryPlayDialogueSpeech(uint16 stringOffset) {
 		   speechPath.toString().c_str(), enhOn ? 1 : 0, _soundEnabled ? 1 : 0,
 		   _executingScriptObjectId, Scenes::instance()._currentSceneIndex, stringOffset);
 
-	// TODO: TTS support
+	if (_soundEnabled && enhOn)
+		_engine->playAudioFile(speechPath, true);
 
-	if (!_soundEnabled || !enhOn)
+	if (_engine->isSpeechPlaying()) {
+		_engine->stopTextToSpeech();
 		return;
+	}
 
-	_engine->playAudioFile(speechPath, true);
+	_engine->sayText(joinTtsLines(lines), Common::TextToSpeechManager::INTERRUPT);
 }
 
 OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
@@ -4040,11 +4054,15 @@ OpcodeResult ScriptExecutor::scriptTalkTo() {
 	enterBlockingWaitCursor();
 
 	if (playingVoice) {
+		_engine->stopTextToSpeech();
 		_engine->getMusic()->setSmfDucked(true, _engine->_talkVol);
 		_waitForPcmSound = true;
 		endFrameWait();
 		return OpcodeResult::WaitForCallback;
 	}
+
+	if (_textEnabled)
+		_engine->sayText(joinTtsLines(strings), Common::TextToSpeechManager::INTERRUPT);
 
 	uint16 waitFrames = talkTime;
 	if (waitFrames == 0) {
