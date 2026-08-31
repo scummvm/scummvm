@@ -34,9 +34,6 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
@@ -66,7 +63,6 @@ private:
 	void applyCurtainBand(const Graphics::Surface *source, uint sweepOffset, byte bandWidth);
 	void runCurtainClearToBlack();
 
-	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _paletteCycleChannel;
 	bool _paletteCycleActive;
 };

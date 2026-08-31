@@ -663,6 +663,8 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 	drawActionOverlayAtStratum(kSceneAnimationBehindActors);
 
 	if (_sceneLayers.hasVisibleLayers(kSceneAnimationActorReplacement)) {
+		if (drawActiveActor || drawSecondaryActor)
+			updateActorPaletteForWorldPoint(activeWorldX, activeWorldY);
 		drawLayerStack(_sceneLayers, kSceneAnimationActorReplacement);
 	} else {
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,

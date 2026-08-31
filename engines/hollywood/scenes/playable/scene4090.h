@@ -78,7 +78,6 @@ private:
 		byte bandWidth);
 	void runFinalCutscene();
 
-	SceneLayerStack _ambientLayers;
 	ResourceSpriteLayer _scriptLayer;
 	uint _randomAmbientTrack;
 	TimedAnimationChannel _organBodyChannel;
