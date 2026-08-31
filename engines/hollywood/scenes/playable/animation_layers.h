@@ -138,6 +138,7 @@ public:
 
 		LayerState &state = _layers[id];
 		state.configured = true;
+		state.defaultStratum = stratum;
 		state.stratum = stratum;
 		state.defaultVisible = visible;
 		state.initialFrame = initialFrame;
@@ -172,6 +173,7 @@ public:
 			LayerState &state = _layers[i];
 			if (!state.configured)
 				continue;
+			state.stratum = state.defaultStratum;
 			state.layer.reset(state.initialFrame);
 			state.layer.visible = state.defaultVisible && availableFrameCount(state.layer) != 0;
 		}
@@ -187,6 +189,11 @@ public:
 
 	bool isInStratum(uint id, SceneAnimationStratum stratum) const {
 		return hasLayer(id) && _layers[id].stratum == stratum;
+	}
+
+	void setLayerStratum(uint id, SceneAnimationStratum stratum) {
+		if (hasLayer(id))
+			_layers[id].stratum = stratum;
 	}
 
 	bool hasVisibleLayers() const {
@@ -286,6 +293,7 @@ private:
 	struct LayerState {
 		LayerState() :
 				configured(false),
+				defaultStratum(kSceneAnimationBehindActors),
 				stratum(kSceneAnimationBehindActors),
 				defaultVisible(false),
 				initialFrame(0),
@@ -293,6 +301,7 @@ private:
 		}
 
 		bool configured;
+		SceneAnimationStratum defaultStratum;
 		SceneAnimationStratum stratum;
 		bool defaultVisible;
 		byte initialFrame;

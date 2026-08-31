@@ -95,9 +95,6 @@ private:
 	void setHotspotInteractionX(byte itemId, int16 x);
 
 	TimedAnimationChannel _foregroundActorChannel;
-	ResourceSpriteLayer _ambientLayer;
-	ResourceSpriteLayer _foregroundActorLayer;
-	ResourceSpriteLayer _forwardExitPoseLayer;
 	uint _ambientTrack;
 	Common::Array<byte> _deltaClipData;
 	byte _foregroundActorIdleState;
