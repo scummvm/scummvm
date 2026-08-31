@@ -48,6 +48,7 @@ public:
 	void updatePosition(const Common::Point &point);
 	void advance(uint32 deltaMillis);
 
+	bool isInteractiveMode() const { return _visible; }
 	uint16 surfaceX() const { return _surfaceX; }
 	uint16 surfaceY() const { return _surfaceY; }
 
