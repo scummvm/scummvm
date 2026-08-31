@@ -22,8 +22,11 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_CHANNELS_H
 #define HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_CHANNELS_H
 
+#include "common/array.h"
 #include "common/random.h"
 #include "common/types.h"
+
+#include "hollywood/scenes/playable/animation_layers.h"
 
 namespace Hollywood {
 
@@ -69,6 +72,188 @@ struct TimedAnimationChannel {
 	byte frameIndex;
 	uint32 timerAccumulator;
 	uint32 frameMillis;
+};
+
+/**
+ * Advances registered resource layers at a fixed cadence.
+ *
+ * Tracks only own timing and frame selection. Scenes still own visibility,
+ * composition, and animations with frame-specific side effects. Registered
+ * layers must remain at stable addresses and must not be reconfigured.
+ * Inactive tracks do not accumulate time; reset() restores the first frame.
+ */
+class RealtimeAnimationTracks {
+public:
+	enum {
+		kInvalidTrack = 0xffffffff
+	};
+
+	uint addLoop(ResourceSpriteLayer &layer, uint32 frameMillis, uint16 frameCount,
+			bool active = true) {
+		if (frameCount == 0 || frameCount > 0x100)
+			return kInvalidTrack;
+		return addTrack(kCycle, layer, frameMillis, 0, (byte)(frameCount - 1),
+			false, active);
+	}
+
+	uint addRange(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
+			byte lastFrame, bool active = true) {
+		if (firstFrame > lastFrame)
+			return kInvalidTrack;
+		return addTrack(kCycle, layer, frameMillis, firstFrame, lastFrame, false, active);
+	}
+
+	// Cycles the logical entries in the layer's configured frame map.
+	uint addFrameMap(ResourceSpriteLayer &layer, uint32 frameMillis, bool active = true) {
+		if (layer.frameMap == nullptr || layer.frameMapSize == 0 || layer.frameMapSize > 0x100)
+			return kInvalidTrack;
+		return addTrack(kCycle, layer, frameMillis, 0, (byte)(layer.frameMapSize - 1),
+			false, active);
+	}
+
+	uint addPingPong(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
+			byte lastFrame, bool active = true) {
+		if (firstFrame > lastFrame)
+			return kInvalidTrack;
+		return addTrack(kPingPong, layer, frameMillis, firstFrame, lastFrame, false, active);
+	}
+
+	uint addRandom(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
+			byte lastFrame, bool avoidRepeats, bool active = true) {
+		if (firstFrame > lastFrame)
+			return kInvalidTrack;
+		return addTrack(kRandom, layer, frameMillis, firstFrame, lastFrame,
+			avoidRepeats, active);
+	}
+
+	bool hasTrack(uint id) const {
+		return id < _tracks.size();
+	}
+
+	void setActive(uint id, bool active) {
+		if (hasTrack(id))
+			_tracks[id].active = active;
+	}
+
+	void reset(uint id) {
+		if (hasTrack(id))
+			_tracks[id].reset();
+	}
+
+	void resetTimer(uint id) {
+		if (hasTrack(id))
+			_tracks[id].channel.resetTimer();
+	}
+
+	void advance(uint32 delta, Common::RandomSource &random) {
+		for (uint i = 0; i < _tracks.size(); ++i)
+			advance(i, delta, random);
+	}
+
+	void advance(uint id, uint32 delta, Common::RandomSource &random) {
+		if (!hasTrack(id) || !_tracks[id].active)
+			return;
+
+		Track &track = _tracks[id];
+		const uint frames = track.channel.consumeFrames(delta);
+		for (uint frame = 0; frame < frames; ++frame)
+			track.advanceFrame(random);
+	}
+
+private:
+	enum Mode {
+		kCycle,
+		kPingPong,
+		kRandom
+	};
+
+	struct Track {
+		Track() :
+				mode(kCycle),
+				layer(nullptr),
+				channel(),
+				firstFrame(0),
+				lastFrame(0),
+				forward(true),
+				avoidRepeats(false),
+				active(false) {
+		}
+
+		void reset() {
+			forward = true;
+			channel.reset(firstFrame, channel.frameMillis);
+			layer->reset(firstFrame);
+		}
+
+		void setFrame(byte frame) {
+			channel.frameIndex = frame;
+			layer->setFrame(frame);
+		}
+
+		void advanceFrame(Common::RandomSource &random) {
+			byte frame = layer->frameIndex;
+			switch (mode) {
+			case kCycle:
+				setFrame(frame >= firstFrame && frame < lastFrame ? frame + 1 : firstFrame);
+				break;
+			case kPingPong:
+				if (firstFrame == lastFrame) {
+					setFrame(firstFrame);
+				} else if (forward) {
+					if (frame >= lastFrame) {
+						forward = false;
+						setFrame(lastFrame - 1);
+					} else {
+						setFrame(frame + 1);
+					}
+				} else if (frame <= firstFrame) {
+					forward = true;
+					setFrame(firstFrame + 1);
+				} else {
+					setFrame(frame - 1);
+				}
+				break;
+			case kRandom: {
+				const uint count = (uint)lastFrame - firstFrame + 1;
+				byte nextFrame;
+				do {
+					nextFrame = firstFrame + (byte)random.getRandomNumber(count - 1);
+				} while (avoidRepeats && count > 1 && nextFrame == frame);
+				setFrame(nextFrame);
+				break;
+			}
+			}
+		}
+
+		Mode mode;
+		ResourceSpriteLayer *layer;
+		TimedAnimationChannel channel;
+		byte firstFrame;
+		byte lastFrame;
+		bool forward;
+		bool avoidRepeats;
+		bool active;
+	};
+
+	uint addTrack(Mode mode, ResourceSpriteLayer &layer, uint32 frameMillis,
+			byte firstFrame, byte lastFrame, bool avoidRepeats, bool active) {
+		if (frameMillis == 0)
+			return kInvalidTrack;
+
+		Track track;
+		track.mode = mode;
+		track.layer = &layer;
+		track.channel.frameMillis = frameMillis;
+		track.firstFrame = firstFrame;
+		track.lastFrame = lastFrame;
+		track.avoidRepeats = avoidRepeats;
+		track.active = active;
+		track.reset();
+		_tracks.push_back(track);
+		return _tracks.size() - 1;
+	}
+
+	Common::Array<Track> _tracks;
 };
 
 // Advances through non-repeating random frames at a fixed cadence.

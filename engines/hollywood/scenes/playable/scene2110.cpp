@@ -108,12 +108,12 @@ static PlayableSceneConfig scene2110Config() {
 
 Scene2110::Scene2110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2110Config()),
-		_ambientChannel(),
 		_entryIdleChannel(),
 		_scriptedActorPathChannel(),
 		_entryLayer(),
 		_ambientLayer(),
 		_treasureLayer(),
+		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_entryIdleActive(false),
 		_scriptedActorPathActive(false),
 		_scriptedActorPathFrameIndex(0) {
@@ -121,6 +121,8 @@ Scene2110::Scene2110(HollywoodEngine *vm) :
 		kScene2110EntryLayerFrameMap, ARRAYSIZE(kScene2110EntryLayerFrameMap));
 	_ambientLayer.configure(kScene2110AmbientChunk, kScene2110AmbientDescriptorCount,
 		kScene2110AmbientFrameMap, ARRAYSIZE(kScene2110AmbientFrameMap));
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_ambientLayer,
+		kScene2110FrameMillis);
 	_treasureLayer.configure(kScene2110TreasureChunk, kScene2110TreasureDescriptorCount,
 		kScene2110TreasureFrameMap, ARRAYSIZE(kScene2110TreasureFrameMap));
 }
@@ -183,7 +185,6 @@ void Scene2110::runExitSideEffectsAfterLoop() {
 }
 
 bool Scene2110::advanceCustomGameplayLoop(uint32 delta) {
-	advanceAmbientLayer(delta);
 	advanceEntryIdle(delta);
 	advanceScriptedActorPath(delta);
 	return false;
@@ -273,29 +274,18 @@ AmbientAudioProfile Scene2110::ambientAudioProfile() const {
 }
 
 void Scene2110::resetAnimationLayers() {
-	_ambientChannel.reset(0, kScene2110FrameMillis);
+	_realtimeAnimationTracks.reset(_ambientTrack);
 	_entryIdleChannel.reset(kScene2110EntrySpeechBaseFrameA,
 		kScene2110PrimarySpeechFrameMillis);
 	_scriptedActorPathChannel.reset(0, kScene2110ActorPathFrameMillis);
 	_entryLayer.visible = false;
 	_entryLayer.reset(0);
 	_ambientLayer.visible = true;
-	_ambientLayer.reset(0);
 	_treasureLayer.visible = false;
 	_treasureLayer.reset(0);
 	_entryIdleActive = false;
 	_scriptedActorPathActive = false;
 	_scriptedActorPathFrameIndex = 0;
-}
-
-void Scene2110::advanceAmbientLayer(uint32 delta) {
-	const uint frameCount = _ambientChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		byte nextFrame = (byte)(_ambientLayer.frameIndex + 1);
-		if (nextFrame >= ARRAYSIZE(kScene2110AmbientFrameMap))
-			nextFrame = 0;
-		_ambientLayer.setFrame(nextFrame);
-	}
 }
 
 void Scene2110::advanceEntryIdle(uint32 delta) {

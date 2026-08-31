@@ -204,11 +204,14 @@ Scene4030::Scene4030(HollywoodEngine *vm) :
 		_rightPropLayer(),
 		_secondaryActionLayer(),
 		_primaryActionLayer(),
-		_leftPropChannel(),
+		_leftPropTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_rightPropChannel(),
 		_markerChannel(),
 		_originalStageSmallRows(),
 		_rightPropState(0) {
+	_leftPropLayer.configure(7, kScene4030LeftPropDescriptorCount, nullptr, 0);
+	_leftPropTrack = _realtimeAnimationTracks.addLoop(_leftPropLayer,
+		kScene4030PropFrameMillis, kScene4030LeftPropDescriptorCount);
 	memset(_markerDark, 0, sizeof(_markerDark));
 }
 
@@ -491,11 +494,8 @@ void Scene4030::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene4030::initializeSpriteLayers() {
-	_leftPropLayer.configure(7, kScene4030LeftPropDescriptorCount, nullptr, 0);
+	_realtimeAnimationTracks.reset(_leftPropTrack);
 	_leftPropLayer.visible = true;
-	_leftPropLayer.setFrame(0);
-	_leftPropLayer.hasPreviousDescriptor = false;
-	_leftPropChannel.reset(0, kScene4030PropFrameMillis);
 
 	_rightPropLayer.configure(8, kScene4030RightPropDescriptorCount,
 		kScene4030RightPropFrameRemap, ARRAYSIZE(kScene4030RightPropFrameRemap));
@@ -514,21 +514,9 @@ void Scene4030::initializeSpriteLayers() {
 void Scene4030::advanceBackgroundAnimations(uint32 delta) {
 	advanceMarkerPixels(delta);
 
-	const uint leftFrameCount = _leftPropChannel.consumeFrames(delta);
-	if (leftFrameCount != 0)
-		advanceLeftPropLayer(leftFrameCount);
-
 	const uint rightFrameCount = _rightPropChannel.consumeFrames(delta);
 	if (rightFrameCount != 0)
 		advanceRightPropLayer(rightFrameCount);
-}
-
-void Scene4030::advanceLeftPropLayer(uint frameCount) {
-	for (uint i = 0; i < frameCount; ++i) {
-		const byte nextFrame = _leftPropLayer.frameIndex == 0x19 ? 0 : _leftPropLayer.frameIndex + 1;
-		_leftPropLayer.setFrame(nextFrame);
-	}
-	_leftPropChannel.frameIndex = _leftPropLayer.frameIndex;
 }
 
 void Scene4030::advanceRightPropLayer(uint frameCount) {

@@ -48,7 +48,6 @@ private:
 
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
-	void advanceLoopingLayer(uint32 delta);
 	void drawForegroundBlocks(int activeWorldY);
 	void removeTakenItemHotspots();
 	void runEntryFromScene3010();
@@ -57,8 +56,8 @@ private:
 	void drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex);
 	void runPickupMace();
 
-	TimedAnimationChannel _loopChannel;
 	ResourceSpriteLayer _loopLayer;
+	uint _loopTrack;
 };
 
 } // End of namespace Hollywood

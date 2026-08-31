@@ -51,10 +51,6 @@ const byte kScene3040ForegroundFrameMap[] = {
 	19
 };
 
-const byte kScene3040LoopFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7
-};
-
 static PlayableSceneConfig scene3040Config() {
 	PlayableSceneConfig config(3040,
 		SceneResourceLayout(8, 5, 7),
@@ -103,16 +99,17 @@ static void drawLooseSpriteFrame(const Common::Array<byte> &resource, uint32 bas
 
 Scene3040::Scene3040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3040Config()),
-		_loopChannel(),
 		_foregroundActorChannel(),
 		_foregroundActorLayer(),
 		_loopLayer(),
+		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_foregroundActorBlinkActive(false),
 		_foregroundActionActive(false) {
 	_foregroundActorLayer.configure(5, kScene3040ForegroundActorDescriptorCount,
 		kScene3040ForegroundFrameMap, ARRAYSIZE(kScene3040ForegroundFrameMap));
-	_loopLayer.configure(6, kScene3040LoopDescriptorCount,
-		kScene3040LoopFrameMap, ARRAYSIZE(kScene3040LoopFrameMap));
+	_loopLayer.configure(6, kScene3040LoopDescriptorCount, nullptr, 0);
+	_loopTrack = _realtimeAnimationTracks.addLoop(_loopLayer,
+		kScene3040LoopFrameMillis, kScene3040LoopDescriptorCount);
 }
 
 void Scene3040::initializeCustomPreviewState() {
@@ -166,7 +163,6 @@ bool Scene3040::prepareCustomGameplayLoop() {
 }
 
 bool Scene3040::advanceCustomGameplayLoop(uint32 delta) {
-	advanceLoopingLayer(delta);
 	advanceForegroundActorLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -227,12 +223,11 @@ AmbientAudioProfile Scene3040::ambientAudioProfile() const {
 }
 
 void Scene3040::resetAnimationLayers() {
-	_loopChannel.reset(0, kScene3040LoopFrameMillis);
+	_realtimeAnimationTracks.reset(_loopTrack);
 	_foregroundActorChannel.reset(0, kScene3040ForegroundIdleFrameMillis);
 	_foregroundActorLayer.visible = true;
 	_loopLayer.visible = true;
 	_foregroundActorLayer.reset(0);
-	_loopLayer.reset(0);
 	_foregroundActorBlinkActive = false;
 	_foregroundActionActive = false;
 }
@@ -242,15 +237,6 @@ void Scene3040::rebuildWalkableMask() {
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
 		if (_walkablePaletteMask[i] > walkablePaletteMaxRegion())
 			_walkablePaletteMask[i] = 0;
-	}
-}
-
-void Scene3040::advanceLoopingLayer(uint32 delta) {
-	const uint frameCount = _loopChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_loopChannel.frameIndex = _loopChannel.frameIndex + 1 < ARRAYSIZE(kScene3040LoopFrameMap) ?
-			_loopChannel.frameIndex + 1 : 0;
-		_loopLayer.setFrame(_loopChannel.frameIndex);
 	}
 }
 

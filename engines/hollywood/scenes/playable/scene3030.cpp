@@ -84,12 +84,14 @@ PlayableSceneConfig scene3030Config() {
 
 Scene3030::Scene3030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3030Config()),
-		_loopChannel(),
 		_loopLayer(),
+		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_machineLayers(),
 		_machineSequenceActive(false) {
 	_loopLayer.configure(6, kScene3030LoopDescriptorCount,
 		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap));
+	_loopTrack = _realtimeAnimationTracks.addFrameMap(_loopLayer,
+		kScene3030LoopFrameMillis, _vm->gameState().windmillBladesMoving);
 }
 
 void Scene3030::initializeCustomPreviewState() {
@@ -135,8 +137,7 @@ bool Scene3030::prepareCustomGameplayLoop() {
 }
 
 bool Scene3030::advanceCustomGameplayLoop(uint32 delta) {
-	if (_vm->gameState().windmillBladesMoving)
-		advanceLoopingLayer(delta);
+	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -226,9 +227,9 @@ AmbientAudioProfile Scene3030::ambientAudioProfile() const {
 }
 
 void Scene3030::resetAnimationLayers() {
-	_loopChannel.reset(0, kScene3030LoopFrameMillis);
+	_realtimeAnimationTracks.reset(_loopTrack);
+	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
 	_loopLayer.visible = true;
-	_loopLayer.reset(0);
 	_machineLayers.clear();
 	_machineLayers.configureLayer(kScene3030MachineEffectLayer, kSceneAnimationScenePlaced,
 		9, kScene3030MachineEffectDescriptorCount,
@@ -237,15 +238,6 @@ void Scene3030::resetAnimationLayers() {
 		10, kScene3030MachineActionDescriptorCount,
 		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false);
 	_machineSequenceActive = false;
-}
-
-void Scene3030::advanceLoopingLayer(uint32 delta) {
-	const uint frameCount = _loopChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_loopChannel.frameIndex = _loopChannel.frameIndex + 1 < ARRAYSIZE(kScene3030LoopFrameMap) ?
-			_loopChannel.frameIndex + 1 : 0;
-		_loopLayer.setFrame(_loopChannel.frameIndex);
-	}
 }
 
 void Scene3030::drawForegroundBlocks() {
@@ -327,8 +319,7 @@ void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, by
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
 		frameAccumulator += delta;
-		if (_vm->gameState().windmillBladesMoving)
-			advanceLoopingLayer(delta);
+		_realtimeAnimationTracks.advance(_loopTrack, delta, _random);
 		updateAmbientAudioAndMusicCues(delta);
 
 		bool frameDirty = false;
@@ -410,7 +401,9 @@ void Scene3030::runMachineActivationSequence() {
 				actionReleased = true;
 				state.scene3030MachineActivated = true;
 				state.windmillBladesMoving = true;
-				advanceLoopingLayer(kScene3030LoopFrameMillis);
+				_realtimeAnimationTracks.setActive(_loopTrack, true);
+				_realtimeAnimationTracks.advance(_loopTrack,
+					kScene3030LoopFrameMillis, _random);
 			}
 		}
 

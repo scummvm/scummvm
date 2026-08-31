@@ -87,15 +87,21 @@ PlayableSceneConfig scene4040Config() {
 
 Scene4040::Scene4040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4040Config()),
-		_cyclicBackgroundChannel(),
 		_randomBackgroundChannel(),
 		_cyclicBackgroundLayer(),
 		_randomBackgroundLayer(),
+		_cyclicBackgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_randomBackgroundState(0),
 		_randomBackgroundRepeatCount(0),
 		_ambientEffectTimerAccumulator(0),
 		_previousContinuousAmbientCue(0),
 		_previousRandomAmbientCue(0) {
+	_cyclicBackgroundLayer.configure(kScene4040CyclicBackgroundChunk,
+		kScene4040BackgroundDescriptorCount, nullptr, 0);
+	_randomBackgroundLayer.configure(kScene4040RandomBackgroundChunk,
+		kScene4040BackgroundDescriptorCount, nullptr, 0);
+	_cyclicBackgroundTrack = _realtimeAnimationTracks.addLoop(_cyclicBackgroundLayer,
+		kScene4040FrameMillis, kScene4040BackgroundDescriptorCount);
 }
 
 void Scene4040::initializeCustomPreviewState() {
@@ -179,7 +185,7 @@ bool Scene4040::prepareCustomGameplayLoop() {
 bool Scene4040::advanceCustomGameplayLoop(uint32 delta) {
 	updateAmbientSounds(delta);
 	updateAmbientAudioAndMusicCues(delta);
-	advanceBackgroundLayers(delta);
+	advanceRandomBackground(delta);
 	return true;
 }
 
@@ -273,14 +279,11 @@ void Scene4040::applyScenePaletteOverride() {
 }
 
 void Scene4040::resetBackgroundLayers() {
-	_cyclicBackgroundLayer.configure(kScene4040CyclicBackgroundChunk, kScene4040BackgroundDescriptorCount, nullptr, 0);
+	_realtimeAnimationTracks.reset(_cyclicBackgroundTrack);
 	_cyclicBackgroundLayer.visible = true;
-	_cyclicBackgroundLayer.setFrame(0);
-	_cyclicBackgroundChannel.reset(0, kScene4040FrameMillis);
 
-	_randomBackgroundLayer.configure(kScene4040RandomBackgroundChunk, kScene4040BackgroundDescriptorCount, nullptr, 0);
 	_randomBackgroundLayer.visible = true;
-	_randomBackgroundLayer.setFrame(0);
+	_randomBackgroundLayer.reset(0);
 	_randomBackgroundChannel.reset(0, kScene4040FrameMillis);
 	_randomBackgroundState = 0;
 	_randomBackgroundRepeatCount = 0;
@@ -291,16 +294,7 @@ void Scene4040::drawBackgroundLayers() {
 	drawResourceSpriteLayer(_cyclicBackgroundLayer);
 }
 
-void Scene4040::advanceBackgroundLayers(uint32 delta) {
-	const uint cyclicFrameCount = _cyclicBackgroundChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < cyclicFrameCount; ++frame) {
-		if (_cyclicBackgroundChannel.frameIndex == 0x19)
-			_cyclicBackgroundChannel.frameIndex = 0;
-		else
-			++_cyclicBackgroundChannel.frameIndex;
-		_cyclicBackgroundLayer.setFrame(_cyclicBackgroundChannel.frameIndex);
-	}
-
+void Scene4040::advanceRandomBackground(uint32 delta) {
 	const uint randomFrameCount = _randomBackgroundChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < randomFrameCount; ++frame)
 		advanceRandomBackgroundTick();
@@ -490,7 +484,8 @@ bool Scene4040::applyActorPaletteSpan(uint chunkIndex) {
 void Scene4040::advanceTransitionSystems(uint32 delta) {
 	updateAmbientSounds(delta);
 	updateAmbientAudioAndMusicCues(delta);
-	advanceBackgroundLayers(delta);
+	_realtimeAnimationTracks.advance(_cyclicBackgroundTrack, delta, _random);
+	advanceRandomBackground(delta);
 }
 
 void Scene4040::updateAmbientSounds(uint32 delta) {
