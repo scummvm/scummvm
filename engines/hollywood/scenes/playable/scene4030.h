@@ -74,10 +74,6 @@ private:
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 
-	ResourceSpriteLayer _leftPropLayer;
-	ResourceSpriteLayer _rightPropLayer;
-	ResourceSpriteLayer _secondaryActionLayer;
-	ResourceSpriteLayer _primaryActionLayer;
 	uint _leftPropTrack;
 	TimedAnimationChannel _rightPropChannel;
 	TimedAnimationChannel _markerChannel;
