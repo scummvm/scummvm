@@ -67,6 +67,9 @@ const byte kScene1070CharacterAmbientSoundCueCount = 3;
 const byte kScene1070FirstAmbientMusicCue = 0x0b;
 const byte kScene1070AmbientMusicCueCount = 5;
 const byte kScene1070AmbientMusicProbabilityModulus = 50;
+const uint kScene1070BackLayer = 0;
+const uint kScene1070SpencerLayer = 1;
+const uint kScene1070GhostLayer = 2;
 
 const byte kScene1070BackFrameMap[] = {
 	0, 1, 2, 3, 2, 1, 0, 4, 5, 6, 5, 4, 0, 1, 2, 3,
@@ -108,6 +111,15 @@ const byte kScene1070TravelUnlockFrameMap[] = {
 	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
+const SceneLayerSpec kScene1070LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 9, kScene1070BackDescriptorCount,
+		kScene1070BackFrameMap, ARRAYSIZE(kScene1070BackFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 11, kScene1070SpencerDescriptorCount,
+		kScene1070SpencerFrameMap, ARRAYSIZE(kScene1070SpencerFrameMap), true, 0x1c},
+	{kSceneAnimationBehindActors, 10, kScene1070GhostDescriptorCount,
+		kScene1070GhostFrameMap, ARRAYSIZE(kScene1070GhostFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene1070Config() {
 	PlayableSceneConfig config(1070,
 		SceneResourceLayout(19, 5, 18),
@@ -129,9 +141,6 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 		_spencerIdleChannel(),
 		_spencerLongChannel(),
 		_spencerTransitionChannel(),
-		_backLayer(),
-		_ghostLayer(),
-		_spencerLayer(),
 		_backLayerMode(0),
 		_ghostMode(0),
 		_spencerMode(0),
@@ -139,12 +148,7 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 		_lastGhostAmbientSound(0xff),
 		_lastSpencerAmbientSound(0xff),
 		_suppressRandomLayerStarts(false) {
-	_backLayer.configure(9, kScene1070BackDescriptorCount,
-		kScene1070BackFrameMap, ARRAYSIZE(kScene1070BackFrameMap));
-	_ghostLayer.configure(10, kScene1070GhostDescriptorCount,
-		kScene1070GhostFrameMap, ARRAYSIZE(kScene1070GhostFrameMap));
-	_spencerLayer.configure(11, kScene1070SpencerDescriptorCount,
-		kScene1070SpencerFrameMap, ARRAYSIZE(kScene1070SpencerFrameMap));
+	_sceneLayers.configure(kScene1070LayerSpecs);
 }
 
 void Scene1070::initializeCustomPreviewState() {
@@ -170,9 +174,9 @@ void Scene1070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_backLayer);
-	drawResourceSpriteLayer(_spencerLayer);
-	drawResourceSpriteLayer(_ghostLayer);
+	drawSceneLayer(kScene1070BackLayer);
+	drawSceneLayer(kScene1070SpencerLayer);
+	drawSceneLayer(kScene1070GhostLayer);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -334,9 +338,9 @@ byte Scene1070::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene1070::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene1070SpencerSpeechGroup)
-		_spencerLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene1070SpencerLayer, frameIndex);
 	else if (animationGroup == kScene1070GhostSpeechGroup)
-		_ghostLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene1070GhostLayer, frameIndex);
 }
 
 AmbientAudioProfile Scene1070::ambientAudioProfile() const {
@@ -351,6 +355,7 @@ AmbientAudioProfile Scene1070::ambientAudioProfile() const {
 }
 
 void Scene1070::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_backLayerChannel.reset(0, kScene1070BackFrameMillis);
 	_ghostIdleChannel.reset(0, kScene1070IdleFrameMillis);
 	_ghostSequenceChannel.reset(0, kScene1070GhostSequenceFrameMillis);
@@ -359,12 +364,8 @@ void Scene1070::resetAnimationLayers() {
 	_spencerIdleChannel.reset(0, kScene1070IdleFrameMillis);
 	_spencerLongChannel.reset(0, kScene1070SpencerLongFrameMillis);
 	_spencerTransitionChannel.reset(0, kScene1070SpencerTransitionFrameMillis);
-	_backLayer.reset(_vm->gameState().scene1070ChainRemoved ? 0x18 : 0);
-	_ghostLayer.reset(0);
-	_spencerLayer.reset(0x1c);
-	_backLayer.visible = true;
-	_ghostLayer.visible = true;
-	_spencerLayer.visible = true;
+	_sceneLayers.resetLayer(kScene1070BackLayer,
+		_vm->gameState().scene1070ChainRemoved ? 0x18 : 0);
 	_backLayerMode = 0;
 	_ghostMode = 0;
 	_spencerMode = 5;
@@ -380,10 +381,8 @@ void Scene1070::advanceBackLayer(uint32 delta) {
 		const bool chainRemoved = _vm->gameState().scene1070ChainRemoved;
 		const byte startFrame = chainRemoved ? 0x18 : 0;
 		const byte endFrame = chainRemoved ? 0x22 : 0x17;
-		if (_backLayer.frameIndex < endFrame)
-			_backLayer.setFrame(_backLayer.frameIndex + 1);
-		else
-			_backLayer.setFrame(startFrame);
+		if (!_sceneLayers.advanceLayerFrame(kScene1070BackLayer, endFrame))
+			_sceneLayers.setLayerFrame(kScene1070BackLayer, startFrame);
 	}
 }
 
@@ -423,14 +422,14 @@ void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
 				_additionalAmbientSoundBank0Slots[1].stop();
 				_spencerAmbientState = 1;
 				_spencerMode = 4;
-				_spencerLayer.setFrame(0x17);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x17);
 			}
 		} else if (_spencerAmbientState == 3) {
 			if (_ghostMode != 4) {
 				_additionalAmbientSoundBank0Slots[1].stop();
 				_spencerAmbientState = 0;
 				_ghostMode = 1;
-				_ghostLayer.setFrame(0);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 			}
 		} else if (_random.getRandomNumber(19) == 1 &&
 				((_ghostMode == 2 && _spencerMode == 0) ||
@@ -439,15 +438,15 @@ void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
 			if (_spencerAmbientState != 0) {
 				_spencerAmbientState = 0;
 				_ghostMode = 1;
-				_ghostLayer.setFrame(0);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 				_spencerMode = 6;
-				_spencerLayer.setFrame(0x35);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x35);
 			} else {
 				_spencerAmbientState = 1;
 				_ghostMode = 3;
-				_ghostLayer.setFrame(10);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 10);
 				_spencerMode = 4;
-				_spencerLayer.setFrame(0x17);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x17);
 			}
 		}
 	}
@@ -459,22 +458,22 @@ void Scene1070::advanceGhostLayer(uint32 delta) {
 		if (_ghostMode != 0 && _ghostMode != 2)
 			continue;
 
-		byte nextFrame = _ghostLayer.frameIndex;
+		byte nextFrame = _sceneLayers.layerFrame(kScene1070GhostLayer);
 		if (_ghostMode == 2) {
 			do {
 				nextFrame = 5 + _random.getRandomNumber(4);
-			} while (nextFrame == _ghostLayer.frameIndex);
-			_ghostLayer.setFrame(nextFrame);
+			} while (nextFrame == _sceneLayers.layerFrame(kScene1070GhostLayer));
+			_sceneLayers.setLayerFrame(kScene1070GhostLayer, nextFrame);
 		}
 
 		if (_ghostMode == 0 && !_suppressRandomLayerStarts) {
-			if (_ghostLayer.frameIndex == 0x2f) {
-				_ghostLayer.setFrame(0);
+			if (_sceneLayers.layerFrame(kScene1070GhostLayer) == 0x2f) {
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 			} else if (_random.getRandomNumber(14) == 0) {
-				_ghostLayer.setFrame(0x2f);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0x2f);
 			} else if (_random.getRandomNumber(19) == 0) {
 				_ghostMode = 4;
-				_ghostLayer.setFrame(0x0e);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0x0e);
 			}
 		}
 	}
@@ -482,17 +481,12 @@ void Scene1070::advanceGhostLayer(uint32 delta) {
 	frameCount = _ghostSequenceChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_ghostMode == 1) {
-			if (_ghostLayer.frameIndex < 4) {
-				_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
-			} else {
+			if (!_sceneLayers.advanceLayerFrame(kScene1070GhostLayer, 4))
 				_ghostMode = 2;
-			}
 		} else if (_ghostMode == 3) {
-			if (_ghostLayer.frameIndex < 0x0e) {
-				_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
-			} else {
+			if (!_sceneLayers.advanceLayerFrame(kScene1070GhostLayer, 0x0e)) {
 				_ghostMode = 0;
-				_ghostLayer.setFrame(0);
+				_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 			}
 		}
 	}
@@ -502,9 +496,7 @@ void Scene1070::advanceGhostLayer(uint32 delta) {
 		if (_ghostMode != 4)
 			continue;
 
-		if (_ghostLayer.frameIndex < 0x2e)
-			_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
-		else
+		if (!_sceneLayers.advanceLayerFrame(kScene1070GhostLayer, 0x2e))
 			_ghostMode = 0;
 	}
 }
@@ -516,27 +508,27 @@ void Scene1070::advanceSpencerLayer(uint32 delta) {
 			continue;
 
 		if (_spencerMode == 5) {
-			byte nextFrame = _spencerLayer.frameIndex;
+			byte nextFrame = _sceneLayers.layerFrame(kScene1070SpencerLayer);
 			do {
 				nextFrame = 0x1c + _random.getRandomNumber(4);
-			} while (nextFrame == _spencerLayer.frameIndex);
-			_spencerLayer.setFrame(nextFrame);
+			} while (nextFrame == _sceneLayers.layerFrame(kScene1070SpencerLayer));
+			_sceneLayers.setLayerFrame(kScene1070SpencerLayer, nextFrame);
 		}
 
 		if (_spencerMode == 0 && !_suppressRandomLayerStarts) {
-			if (_spencerLayer.frameIndex == 0x34) {
-				_spencerLayer.setFrame(0);
+			if (_sceneLayers.layerFrame(kScene1070SpencerLayer) == 0x34) {
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0);
 			} else if (_random.getRandomNumber(14) == 0) {
-				_spencerLayer.setFrame(0x34);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x34);
 			} else if (_random.getRandomNumber(29) == 0) {
 				if (_random.getRandomBit() == 0) {
 					_spencerMode = 1;
-					_spencerLayer.setFrame(0x0c);
+					_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x0c);
 					_ghostMode = 3;
-					_ghostLayer.setFrame(10);
+					_sceneLayers.setLayerFrame(kScene1070GhostLayer, 10);
 				} else {
 					_spencerMode = 7;
-					_spencerLayer.setFrame(0x21);
+					_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x21);
 				}
 			}
 		}
@@ -547,26 +539,22 @@ void Scene1070::advanceSpencerLayer(uint32 delta) {
 		if (_spencerMode == 2 && _random.getRandomNumber(99) == 0) {
 			_additionalAmbientSoundBank0Slots[1].stop();
 			_spencerMode = 3;
-			_spencerLayer.setFrame(1);
+			_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 1);
 			_spencerAmbientState = 0;
 			_ghostMode = 1;
-			_ghostLayer.setFrame(0);
+			_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 			updateSpiritBlockingHotspot(false);
 		}
 
 		if (_spencerMode == 4) {
-			if (_spencerLayer.frameIndex < 0x1b)
-				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-			else
+			if (!_sceneLayers.advanceLayerFrame(kScene1070SpencerLayer, 0x1b))
 				_spencerMode = 5;
 		}
 
 		if (_spencerMode == 6) {
-			if (_spencerLayer.frameIndex < 0x39) {
-				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-			} else {
+			if (!_sceneLayers.advanceLayerFrame(kScene1070SpencerLayer, 0x39)) {
 				_spencerMode = 0;
-				_spencerLayer.setFrame(0);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0);
 			}
 		}
 	}
@@ -574,28 +562,22 @@ void Scene1070::advanceSpencerLayer(uint32 delta) {
 	frameCount = _spencerTransitionChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_spencerMode == 1) {
-			if (_spencerLayer.frameIndex < 0x16) {
-				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-			} else {
+			if (!_sceneLayers.advanceLayerFrame(kScene1070SpencerLayer, 0x16)) {
 				_spencerMode = 2;
 				updateSpiritBlockingHotspot(true);
 			}
 		}
 
 		if (_spencerMode == 3) {
-			if (_spencerLayer.frameIndex < 0x0b) {
-				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-			} else {
+			if (!_sceneLayers.advanceLayerFrame(kScene1070SpencerLayer, 0x0b)) {
 				_spencerMode = 0;
-				_spencerLayer.setFrame(0);
+				_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0);
 				updateSpiritBlockingHotspot(false);
 			}
 		}
 
 		if (_spencerMode == 7) {
-			if (_spencerLayer.frameIndex < 0x33)
-				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-			else
+			if (!_sceneLayers.advanceLayerFrame(kScene1070SpencerLayer, 0x33))
 				_spencerMode = 0;
 		}
 	}
@@ -620,16 +602,16 @@ void Scene1070::settleCharacterAnimations() {
 	while (hasActiveCharacterAnimation() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (_ghostMode == 2) {
 			_ghostMode = 3;
-			_ghostLayer.setFrame(9);
+			_sceneLayers.setLayerFrame(kScene1070GhostLayer, 9);
 		}
 		if (_spencerMode == 2) {
 			_spencerMode = 3;
-			_spencerLayer.setFrame(1);
+			_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 1);
 			updateSpiritBlockingHotspot(false);
 		}
 		if (_spencerMode == 5) {
 			_spencerMode = 6;
-			_spencerLayer.setFrame(0x34);
+			_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x34);
 		}
 
 		if (waitSceneMillis(10))
@@ -656,12 +638,12 @@ void Scene1070::waitForSpencerMode(byte mode) {
 void Scene1070::beginSpencerPrimarySpeechLine(byte frameIndex, byte openFrame) {
 	_suppressRandomLayerStarts = true;
 	_spencerMode = 4;
-	_spencerLayer.setFrame(openFrame);
+	_sceneLayers.setLayerFrame(kScene1070SpencerLayer, openFrame);
 	waitForSpencerMode(5);
 	beginPrimarySpeechLineWithAnimationGroup(kScene1070SpencerPrimaryDialogueRow, frameIndex,
 		0x0f1, 0x0b8, 0x3f, 0x0d, 0x0d, kScene1070SpencerSpeechGroup);
 	_spencerMode = 6;
-	_spencerLayer.setFrame(0x35);
+	_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x35);
 	waitForSpencerMode(0);
 	_suppressRandomLayerStarts = false;
 }
@@ -669,12 +651,12 @@ void Scene1070::beginSpencerPrimarySpeechLine(byte frameIndex, byte openFrame) {
 void Scene1070::beginQuasimodoPrimarySpeechLine(byte frameIndex) {
 	_suppressRandomLayerStarts = true;
 	_ghostMode = 1;
-	_ghostLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene1070GhostLayer, 0);
 	waitForGhostMode(2);
 	beginPrimarySpeechLineWithAnimationGroup(kScene1070QuasimodoPrimaryDialogueRow, frameIndex,
 		0x0a9, 0x0c8, 0x20, 0x3f, 0, kScene1070GhostSpeechGroup);
 	_ghostMode = 3;
-	_ghostLayer.setFrame(9);
+	_sceneLayers.setLayerFrame(kScene1070GhostLayer, 9);
 	waitForGhostMode(0);
 	_suppressRandomLayerStarts = false;
 }

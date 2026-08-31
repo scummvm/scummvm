@@ -67,9 +67,6 @@ private:
 	TimedAnimationChannel _foregroundChannel;
 	TimedAnimationChannel _francoisIdleChannel;
 	TimedAnimationChannel _francoisWorkChannel;
-	ResourceSpriteLayer _foregroundLayer;
-	ResourceSpriteLayer _francoisLayer;
-	ResourceSpriteLayer _francoisActionLayer;
 	byte _foregroundMode;
 	byte _francoisMode;
 	bool _francoisActionActive;
