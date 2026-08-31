@@ -117,6 +117,7 @@ protected:
 		BlockingSequence &actorPath(const SceneActorPose &target, byte cel = 0,
 			bool cancelOnSkip = false);
 		BlockingSequence &sound(uint16 cueId, byte volumePercent = 100);
+		BlockingSequence &loopingSound(uint16 cueId, byte volumePercent = 100);
 		BlockingSequence &stopSound();
 		BlockingSequence &secondarySpeech(uint16 rowIndex, byte frameIndex);
 		BlockingSequence &primarySpeech(uint16 rowIndex, byte frameIndex, uint16 centerX,

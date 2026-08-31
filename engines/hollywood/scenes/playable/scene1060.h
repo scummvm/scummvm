@@ -82,8 +82,6 @@ private:
 	void handlePocketPaperLook();
 	void handleSkullcrackerExchange();
 	void handleFlySlimeExchange();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0);
 
 	TimedAnimationChannel _largeBackgroundChannel;
 	TimedAnimationChannel _invisibleManChannel;

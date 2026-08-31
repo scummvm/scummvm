@@ -256,6 +256,13 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::sound(
 	return *this;
 }
 
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::loopingSound(
+		uint16 cueId, byte volumePercent) {
+	if (canRun())
+		_scene._soundBank0.playSampleLooping(cueId, volumePercent);
+	return *this;
+}
+
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::stopSound() {
 	_scene._soundBank0.stop();
 	return *this;

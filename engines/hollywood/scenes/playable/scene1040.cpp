@@ -316,11 +316,12 @@ void Scene1040::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene1040::runDoorToCloakroomAction() {
-	runOverlaySequence(8, kScene1040DoorOverlayDescriptorCount, kScene1040DoorFrameMap,
-		ARRAYSIZE(kScene1040DoorFrameMap), kScene1040FrameMillis);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().scene1040CloakroomDoorOpened = true;
-	_vm->gameState().mainFlowStateId = kScene1040ExitState1050;
+	BlockingSequence(*this)
+		.actorReplacement(8, kScene1040DoorOverlayDescriptorCount,
+			kScene1040DoorFrameMap, ARRAYSIZE(kScene1040DoorFrameMap), kScene1040FrameMillis)
+		.sound(3)
+		.commit(_vm->gameState().scene1040CloakroomDoorOpened, true)
+		.commit(_vm->gameState().mainFlowStateId, kScene1040ExitState1050);
 }
 
 void Scene1040::handleCordPickup() {
@@ -333,13 +334,14 @@ void Scene1040::handleCordPickup() {
 	if (hasInventoryItem(0x1b))
 		return;
 
-	runActorReplacement(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
 		kScene1040CordFrameMap, ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis)
-		.hookAt(0, kScene1040CordPickupPatchHook));
-	state.scene1040GorillaCordState = 2;
-	applySceneStateToHotspotsAndPatches(2);
+		.hookAt(0, kScene1040CordPickupPatchHook))
+		.commit(state.scene1040GorillaCordState, (byte)2)
+		.framebufferPatch(2);
 	addInventoryItem(0x1b);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 
@@ -347,12 +349,14 @@ void Scene1040::handleBalloonPickup() {
 	if (hasInventoryItem(0x1c))
 		return;
 
-	runOverlaySequence(9, kScene1040BalloonOverlayDescriptorCount, kScene1040BalloonFrameMap,
-		ARRAYSIZE(kScene1040BalloonFrameMap), kScene1040FrameMillis, 7, 3);
-	_vm->gameState().scene1040BalloonTaken = true;
-	applySceneStateToHotspotsAndPatches(3);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(9, kScene1040BalloonOverlayDescriptorCount,
+		kScene1040BalloonFrameMap, ARRAYSIZE(kScene1040BalloonFrameMap), kScene1040FrameMillis)
+		.patchAt(7, 3))
+		.commit(_vm->gameState().scene1040BalloonTaken, true)
+		.framebufferPatch(3);
 	addInventoryItem(0x1c);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 
@@ -365,26 +369,20 @@ void Scene1040::handleGorillaCordSetup() {
 	if (state.scene1040GorillaCordState >= 2)
 		return;
 
-	runActorReplacement(ActionOverlaySpec(kScene1040GorillaCordOverlayChunk,
-		kScene1040GorillaCordOverlayDescriptorCount,
-		kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
-		kScene1040FrameMillis)
-		.hookEveryFrame(kScene1040CordSetupSoundHook));
-	_soundBank0.stop();
-	beginSecondarySpeechLine(13, 0);
-	state.scene1040GorillaCordState = 1;
-	applySceneStateToHotspotsAndPatches(2);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(kScene1040GorillaCordOverlayChunk,
+			kScene1040GorillaCordOverlayDescriptorCount,
+			kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
+			kScene1040FrameMillis)
+			.hookEveryFrame(kScene1040CordSetupSoundHook))
+		.stopSound()
+		.secondarySpeech(13, 0)
+		.commit(state.scene1040GorillaCordState, (byte)1)
+		.framebufferPatch(2);
 }
 
 void Scene1040::runGorillaExitBackToBanquetRoom() {
 	_vm->gameState().mainFlowStateId = kScene1040ExitState1030LeftEntry;
-}
-
-void Scene1040::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.patchAt(patchFrame, patchSelector));
 }
 
 void Scene1040::drawForegroundBlocks(int activeWorldY) {

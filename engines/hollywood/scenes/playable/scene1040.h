@@ -50,8 +50,6 @@ private:
 	void handleBalloonPickup();
 	void handleGorillaCordSetup();
 	void runGorillaExitBackToBanquetRoom();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0xff);
 	void drawForegroundBlocks(int activeWorldY);
 	void advanceGorillaAnimation(uint32 delta);
 	void setCordActionTarget();

@@ -79,8 +79,6 @@ private:
 	void handleMicrophonePickup();
 	void handleMicStandPickup();
 	void handleBallChainPickup();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0);
 
 	TimedAnimationChannel _backLayerChannel;
 	TimedAnimationChannel _ghostIdleChannel;
