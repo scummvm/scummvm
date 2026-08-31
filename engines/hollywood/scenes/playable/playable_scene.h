@@ -477,6 +477,12 @@ protected:
 	bool playAnimationFrames(SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range);
 	bool playAndPresentAnimationFrames(SceneLayerStack &layers, uint layerId,
 		const AnimationFrameRange &range);
+	bool playAnimationFrames(uint layerId, const AnimationFrameRange &range) {
+		return playAnimationFrames(_sceneLayers, layerId, range);
+	}
+	bool playAndPresentAnimationFrames(uint layerId, const AnimationFrameRange &range) {
+		return playAndPresentAnimationFrames(_sceneLayers, layerId, range);
+	}
 	template<class FrameTarget>
 	bool playAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
 		return _animationPlayer.transition(target, transition);
@@ -489,6 +495,13 @@ protected:
 		const AnimationTransition &transition);
 	bool playAndPresentAnimationTransition(SceneLayerStack &layers, uint layerId,
 		const AnimationTransition &transition);
+	bool playAnimationTransition(uint layerId, const AnimationTransition &transition) {
+		return playAnimationTransition(_sceneLayers, layerId, transition);
+	}
+	bool playAndPresentAnimationTransition(uint layerId,
+			const AnimationTransition &transition) {
+		return playAndPresentAnimationTransition(_sceneLayers, layerId, transition);
+	}
 	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
 	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
 		const byte *frameMap, uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd = true);
