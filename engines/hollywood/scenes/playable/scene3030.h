@@ -60,7 +60,6 @@ private:
 	void runMachineActivationSequence();
 	void drawMachineSequenceFrame();
 
-	ResourceSpriteLayer _loopLayer;
 	uint _loopTrack;
 	bool _machineSequenceActive;
 };

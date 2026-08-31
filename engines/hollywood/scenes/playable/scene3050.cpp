@@ -60,6 +60,8 @@ const byte kScene3050DialogueTransitionEnd = 0;
 const byte kScene3050DialogueTransitionStay = 3;
 const uint32 kScene3050MinimumSpeechMillis = 750;
 const uint32 kScene3050FallbackSpeechMillis = 1200;
+const uint kScene3050BackgroundLayer = 0;
+const uint kScene3050ForegroundActorLayer = 1;
 
 const byte kScene3050BackgroundFrameMap[] = {
 	0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 4, 5,
@@ -80,6 +82,13 @@ const byte kScene3050ForegroundActorFrameMap[] = {
 	17, 16, 10, 11, 3
 };
 
+const SceneLayerSpec kScene3050LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene3050BackgroundDescriptorCount,
+		kScene3050BackgroundFrameMap, ARRAYSIZE(kScene3050BackgroundFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 6, kScene3050ForegroundActorDescriptorCount,
+		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene3050Config() {
 	PlayableSceneConfig config(3050,
 		SceneResourceLayout(8, 5, 7),
@@ -96,8 +105,6 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3050Config()),
 		_foregroundActorChannel(),
 		_dialogueActorChannel(),
-		_backgroundLayer(),
-		_foregroundActorLayer(),
 		_backgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_foregroundActorMode(0),
 		_foregroundActorIdleCounter(0),
@@ -107,12 +114,9 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		_dialogueMenuActive(false),
 		_foregroundActorIdleSpeechTimer(0),
 		_foregroundActorIdleSpeechDuration(0) {
-	_backgroundLayer.configure(7, kScene3050BackgroundDescriptorCount,
-		kScene3050BackgroundFrameMap, ARRAYSIZE(kScene3050BackgroundFrameMap));
-	_backgroundTrack = _realtimeAnimationTracks.addFrameMap(_backgroundLayer,
-		kScene3050BackgroundFrameMillis);
-	_foregroundActorLayer.configure(6, kScene3050ForegroundActorDescriptorCount,
-		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap));
+	_sceneLayers.configure(kScene3050LayerSpecs);
+	_backgroundTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kScene3050BackgroundLayer, kScene3050BackgroundFrameMillis);
 }
 
 void Scene3050::initializeCustomPreviewState() {
@@ -139,8 +143,8 @@ void Scene3050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_backgroundLayer);
-	drawResourceSpriteLayer(_foregroundActorLayer);
+	drawSceneLayer(kScene3050BackgroundLayer);
+	drawSceneLayer(kScene3050ForegroundActorLayer);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -259,8 +263,7 @@ byte Scene3050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 void Scene3050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
 	_dialogueActorChannel.frameIndex = frameIndex;
-	_foregroundActorChannel.frameIndex = frameIndex;
-	_foregroundActorLayer.setFrame(frameIndex);
+	setForegroundActorFrame(frameIndex);
 }
 
 AmbientAudioProfile Scene3050::ambientAudioProfile() const {
@@ -275,12 +278,10 @@ AmbientAudioProfile Scene3050::ambientAudioProfile() const {
 }
 
 void Scene3050::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_backgroundTrack);
 	_foregroundActorChannel.reset(0, kScene3050ForegroundFrameMillis);
 	_dialogueActorChannel.reset(kScene3050DialogueBaseFrame, kScene3050DialogueFrameMillis);
-	_backgroundLayer.visible = true;
-	_foregroundActorLayer.visible = true;
-	_foregroundActorLayer.reset(0);
 	_foregroundActorMode = 0;
 	_foregroundActorIdleCounter = kScene3050IgorInitialIdleCounter;
 	_foregroundActorIdleSpeechFrame = 0;
@@ -310,6 +311,11 @@ void Scene3050::copyCaptionRow(byte sourceRow, byte destinationRow) {
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
 }
 
+void Scene3050::setForegroundActorFrame(byte frameIndex) {
+	_foregroundActorChannel.frameIndex = frameIndex;
+	_sceneLayers.setLayerFrame(kScene3050ForegroundActorLayer, frameIndex);
+}
+
 void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 	if (_foregroundActorManualSequenceActive)
 		return;
@@ -317,28 +323,26 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 	const uint frameCount = _foregroundActorChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
 		if (_foregroundActorMode == 3) {
-			if (_foregroundActorChannel.frameIndex < 0x20) {
-				++_foregroundActorChannel.frameIndex;
-			} else {
+			if (_foregroundActorChannel.frameIndex < 0x20)
+				setForegroundActorFrame(_foregroundActorChannel.frameIndex + 1);
+			else {
 				_foregroundActorMode = 1;
-				_foregroundActorChannel.frameIndex = 0;
+				setForegroundActorFrame(0);
 			}
-			_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 			continue;
 		}
 
 		if (_primaryDialogueSpeechActive) {
 			_foregroundActorMode = 0;
-			_foregroundActorChannel.frameIndex = _foregroundActorChannel.frameIndex < 0x13 ?
-				_foregroundActorChannel.frameIndex + 1 : 0;
-			_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
+			setForegroundActorFrame(_foregroundActorChannel.frameIndex < 0x13 ?
+				_foregroundActorChannel.frameIndex + 1 : 0);
 			continue;
 		}
 
 		if (_foregroundActorMode == 1) {
 			if (_foregroundActorChannel.frameIndex == 2) {
 				if (_random.getRandomNumber(14) == 0) {
-					_foregroundActorChannel.frameIndex = 0x21;
+					setForegroundActorFrame(0x21);
 				} else if (_foregroundActorIdleCounter < 10) {
 					++_foregroundActorIdleCounter;
 				} else {
@@ -347,16 +351,15 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 					startForegroundActorIdleSpeech(_foregroundActorIdleSpeechFrame);
 				}
 			} else {
-				_foregroundActorChannel.frameIndex = 2;
+				setForegroundActorFrame(2);
 			}
-			_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 			continue;
 		}
 
 		if (_foregroundActorMode == 2) {
 			if (_foregroundActorChannel.frameIndex == 0x0c) {
 				if (_random.getRandomNumber(14) == 0) {
-					_foregroundActorChannel.frameIndex = 0x22;
+					setForegroundActorFrame(0x22);
 				} else if (_foregroundActorIdleCounter < 10) {
 					++_foregroundActorIdleCounter;
 				} else {
@@ -365,9 +368,8 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 					startForegroundActorIdleSpeech(_foregroundActorIdleSpeechFrame);
 				}
 			} else {
-				_foregroundActorChannel.frameIndex = 0x0c;
+				setForegroundActorFrame(0x0c);
 			}
-			_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 			continue;
 		}
 
@@ -376,10 +378,9 @@ void Scene3050::advanceForegroundActorLayer(uint32 delta) {
 		} else if (_foregroundActorChannel.frameIndex == 0x0c) {
 			_foregroundActorMode = 2;
 		} else {
-			_foregroundActorChannel.frameIndex = _foregroundActorChannel.frameIndex < 0x13 ?
-				_foregroundActorChannel.frameIndex + 1 : 0;
+			setForegroundActorFrame(_foregroundActorChannel.frameIndex < 0x13 ?
+				_foregroundActorChannel.frameIndex + 1 : 0);
 		}
-		_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 	}
 }
 
@@ -496,23 +497,20 @@ void Scene3050::runDialogueAction(bool playOpeningLine) {
 
 	runForegroundActorDialoguePose();
 	runDialogueMenuRow98();
-	_foregroundActorChannel.frameIndex = 0x1d;
+	setForegroundActorFrame(0x1d);
 	_foregroundActorMode = 3;
-	_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 }
 
 void Scene3050::runForegroundActorDialoguePose() {
-	_foregroundActorChannel.frameIndex = _foregroundActorMode == 2 ? 0x0c : 2;
+	setForegroundActorFrame(_foregroundActorMode == 2 ? 0x0c : 2);
 	_foregroundActorMode = 0;
-	_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
 	drawPlayableComposite();
 	presentFrame();
 
 	_foregroundActorManualSequenceActive = true;
 	while (_foregroundActorChannel.frameIndex < 0x17 && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested()) {
-		++_foregroundActorChannel.frameIndex;
-		_foregroundActorLayer.setFrame(_foregroundActorChannel.frameIndex);
+		setForegroundActorFrame(_foregroundActorChannel.frameIndex + 1);
 		if (waitSceneMillis(kScene3050ForegroundFrameMillis))
 			break;
 	}

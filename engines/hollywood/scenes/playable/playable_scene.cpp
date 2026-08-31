@@ -233,6 +233,11 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 	return *this;
 }
 
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
+		uint layerId, const AnimationFrameRange &range) {
+	return layerFrames(_scene._sceneLayers, layerId, range);
+}
+
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
 		uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis) {

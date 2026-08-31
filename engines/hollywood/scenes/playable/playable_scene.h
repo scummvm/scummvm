@@ -110,6 +110,7 @@ protected:
 
 		BlockingSequence &layerFrames(SceneLayerStack &layers, uint layerId,
 			const AnimationFrameRange &range);
+		BlockingSequence &layerFrames(uint layerId, const AnimationFrameRange &range);
 		BlockingSequence &actorReplacement(uint chunkIndex, uint descriptorCount,
 			const byte *frameMap, uint frameMapSize, uint32 frameMillis);
 		BlockingSequence &actorReplacement(const ActionOverlaySpec &spec);
