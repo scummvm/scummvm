@@ -85,7 +85,6 @@ private:
 	void clearSceneItemFromColorMap(byte itemId);
 
 	TimedAnimationChannel _karlIdleChannel;
-	ResourceSpriteLayer _karlLayer;
 	byte _karlIdleFrame;
 	byte _karlIdleMode;
 	byte _karlStrikeRepeatCount;
