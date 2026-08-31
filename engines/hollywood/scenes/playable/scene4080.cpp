@@ -217,14 +217,17 @@ Scene4080::Scene4080(HollywoodEngine *vm) :
 		_foregroundFlickerLayer(),
 		_scriptLayer(),
 		_palettePatchChannel(),
-		_foregroundFlickerChannel(),
 		_gwendolynIdleChannel(),
+		_foregroundFlickerTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_originalColorToItemMap(),
 		_ambientSoundTimerAccumulator(0),
 		_coffinPaletteCycleAccumulator(0),
 		_previousAmbientSoundCue(0),
 		_gwendolynSpeechPoseMode(kScene4080GwendolynBodyAnimation),
 		_gwendolynSleepTransitionOnEntry(false) {
+	_foregroundFlickerTrack = _realtimeAnimationTracks.addRandom(
+		_foregroundFlickerLayer, kScene4080FrameMillis, 0,
+		kScene4080ForegroundFlickerDescriptorCount - 1, false);
 }
 
 void Scene4080::initializeCustomPreviewState() {
@@ -335,7 +338,6 @@ bool Scene4080::prepareCustomGameplayLoop() {
 
 bool Scene4080::advanceCustomGameplayLoop(uint32 delta) {
 	advancePalettePatchLayer(delta);
-	advanceForegroundFlickerLayer(delta);
 	advanceAmbientSound(delta);
 	return false;
 }
@@ -588,8 +590,7 @@ void Scene4080::resetAnimationLayers() {
 	_foregroundFlickerLayer.configure(kScene4080ForegroundFlickerChunk, kScene4080ForegroundFlickerDescriptorCount,
 		nullptr, 0);
 	_foregroundFlickerLayer.visible = true;
-	_foregroundFlickerLayer.setFrame(0);
-	_foregroundFlickerChannel.reset(0, kScene4080FrameMillis);
+	_realtimeAnimationTracks.reset(_foregroundFlickerTrack);
 	_gwendolynIdleChannel.reset(kScene4080GwendolynBaseFrame,
 		kScene4080GwendolynSpeechFrameMillis);
 	_gwendolynSpeechPoseMode = kScene4080GwendolynBodyAnimation;
@@ -678,15 +679,6 @@ void Scene4080::advancePalettePatchLayer(uint32 delta) {
 		_palettePatchChannel.frameIndex = nextFrame;
 		configurePalettePatchLayerForState();
 		_palettePatchLayer.setFrame(nextFrame);
-	}
-}
-
-void Scene4080::advanceForegroundFlickerLayer(uint32 delta) {
-	const uint frameCount = _foregroundFlickerChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte nextFrame = (byte)_random.getRandomNumber(3);
-		_foregroundFlickerChannel.frameIndex = nextFrame;
-		_foregroundFlickerLayer.setFrame(nextFrame);
 	}
 }
 

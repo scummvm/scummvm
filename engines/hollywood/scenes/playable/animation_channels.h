@@ -79,7 +79,8 @@ struct TimedAnimationChannel {
  *
  * Tracks only own timing and frame selection. Scenes still own visibility,
  * composition, and animations with frame-specific side effects. Registered
- * layers must remain at stable addresses and must not be reconfigured.
+ * layers must remain at stable addresses. They may be reconfigured while their
+ * tracks are inactive; their registered range must be valid before activation.
  * Inactive tracks do not accumulate time; reset() restores the first frame.
  */
 class RealtimeAnimationTracks {
@@ -135,6 +136,10 @@ public:
 			_tracks[id].active = active;
 	}
 
+	bool isActive(uint id) const {
+		return hasTrack(id) && _tracks[id].active;
+	}
+
 	void reset(uint id) {
 		if (hasTrack(id))
 			_tracks[id].reset();
@@ -143,6 +148,16 @@ public:
 	void resetToFrame(uint id, byte frame) {
 		if (hasTrack(id) && frame >= _tracks[id].firstFrame && frame <= _tracks[id].lastFrame)
 			_tracks[id].reset(frame);
+	}
+
+	// Changes the bounds without resetting the timer or live layer state.
+	void setRange(uint id, byte firstFrame, byte lastFrame) {
+		if (!hasTrack(id) || firstFrame > lastFrame)
+			return;
+
+		Track &track = _tracks[id];
+		track.firstFrame = firstFrame;
+		track.lastFrame = lastFrame;
 	}
 
 	void resetTimer(uint id) {
@@ -224,10 +239,14 @@ private:
 				break;
 			case kRandom: {
 				const uint count = (uint)lastFrame - firstFrame + 1;
-				byte nextFrame;
-				do {
+				byte nextFrame = frame;
+				const uint maxAttempts = avoidRepeats && count > 1 ? 8 : 1;
+				for (uint attempt = 0; attempt < maxAttempts && nextFrame == frame; ++attempt)
 					nextFrame = firstFrame + (byte)random.getRandomNumber(count - 1);
-				} while (avoidRepeats && count > 1 && nextFrame == frame);
+				if (avoidRepeats && count > 1 && nextFrame == frame) {
+					nextFrame = frame >= firstFrame && frame <= lastFrame ?
+						firstFrame + (byte)((frame - firstFrame + 1) % count) : firstFrame;
+				}
 				setFrame(nextFrame);
 				break;
 			}
@@ -263,58 +282,6 @@ private:
 	}
 
 	Common::Array<Track> _tracks;
-};
-
-// Advances through non-repeating random frames at a fixed cadence.
-struct RandomFrameAnimation {
-	RandomFrameAnimation() :
-			channel(),
-			firstFrame(0),
-			frameCount(0),
-			lastFrame(0xff) {
-	}
-
-	void configure(uint32 frameMillis, byte first, byte count) {
-		firstFrame = first;
-		frameCount = count;
-		lastFrame = 0xff;
-		channel.reset(firstFrame, frameMillis);
-	}
-
-	void resetTimer() {
-		channel.resetTimer();
-	}
-
-	bool advance(Common::RandomSource &random, uint32 delta) {
-		const uint frames = channel.consumeFrames(delta);
-		for (uint frame = 0; frame < frames; ++frame)
-			advanceTick(random);
-		return frames != 0;
-	}
-
-	byte frame() const {
-		return channel.frameIndex;
-	}
-
-	TimedAnimationChannel channel;
-	byte firstFrame;
-	byte frameCount;
-	byte lastFrame;
-
-private:
-	void advanceTick(Common::RandomSource &random) {
-		if (frameCount == 0)
-			return;
-
-		byte nextFrame = lastFrame;
-		for (uint attempt = 0; attempt < 8 && nextFrame == lastFrame; ++attempt)
-			nextFrame = firstFrame + (byte)random.getRandomNumber(frameCount - 1);
-		if (nextFrame == lastFrame)
-			nextFrame = firstFrame + (byte)((lastFrame - firstFrame + 1) % frameCount);
-
-		lastFrame = nextFrame;
-		channel.frameIndex = nextFrame;
-	}
 };
 
 // Alternates random motion between two four-frame sprite groups. Each phase

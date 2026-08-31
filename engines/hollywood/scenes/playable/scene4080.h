@@ -56,7 +56,6 @@ private:
 	void resetAnimationLayers();
 	void configurePalettePatchLayerForState();
 	void advancePalettePatchLayer(uint32 delta);
-	void advanceForegroundFlickerLayer(uint32 delta);
 	void drawSceneLayers(int activeWorldY);
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
@@ -89,8 +88,8 @@ private:
 	ResourceSpriteLayer _foregroundFlickerLayer;
 	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _palettePatchChannel;
-	TimedAnimationChannel _foregroundFlickerChannel;
 	TimedAnimationChannel _gwendolynIdleChannel;
+	uint _foregroundFlickerTrack;
 	Common::Array<byte> _originalColorToItemMap;
 	uint32 _ambientSoundTimerAccumulator;
 	uint32 _coffinPaletteCycleAccumulator;
