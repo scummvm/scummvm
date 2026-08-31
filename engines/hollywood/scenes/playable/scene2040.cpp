@@ -54,6 +54,8 @@ const byte kScene2040FlowerPickupHook = 1;
 const byte kScene2040SphinxNoseHook = 2;
 const byte kScene2040EyeExchangeFirstHook = 3;
 const byte kScene2040EyeExchangeSecondHook = 4;
+const uint kScene2040BehindActorLayer = 0;
+const uint kScene2040ForegroundLayer = 1;
 
 const byte kScene2040ForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 3, 2, 1
@@ -101,6 +103,12 @@ const byte kScene2040BaseOpeningDeltaFrameMap[] = {
 	21, 22, 23, 24, 25, 26, 27, 28
 };
 
+const SceneLayerSpec kScene2040LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 0, 0, nullptr, 0, false, 0},
+	{kSceneAnimationInFrontOfActors, 5, kScene2040ForegroundDescriptorCount,
+		kScene2040ForegroundFrameMap, ARRAYSIZE(kScene2040ForegroundFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene2040Config() {
 	PlayableSceneConfig config(2040,
 		SceneResourceLayout(19, 5, 18),
@@ -117,12 +125,9 @@ static PlayableSceneConfig scene2040Config() {
 Scene2040::Scene2040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2040Config()),
 		_foregroundChannel(),
-		_behindActorLayer(),
-		_foregroundLayer(),
 		_routeStartX(0),
 		_routeStartY(0) {
-	_foregroundLayer.configure(5, kScene2040ForegroundDescriptorCount,
-		kScene2040ForegroundFrameMap, ARRAYSIZE(kScene2040ForegroundFrameMap));
+	_sceneLayers.configure(kScene2040LayerSpecs);
 }
 
 void Scene2040::initializeCustomPreviewState() {
@@ -152,11 +157,11 @@ void Scene2040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	updateSceneDepthThresholds(actorDrawOrderMode);
-	drawResourceSpriteLayer(_behindActorLayer);
+	drawSceneLayer(kScene2040BehindActorLayer);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawActionOverlayLayer();
-	drawResourceSpriteLayer(_foregroundLayer);
+	drawSceneLayer(kScene2040ForegroundLayer);
 }
 
 void Scene2040::updateSceneDepthThresholds(byte actorDrawOrderMode) {
@@ -173,7 +178,7 @@ void Scene2040::runCustomEntrySequence() {
 }
 
 void Scene2040::prepareCustomGameplayLoop() {
-	clearResourceLayer(_behindActorLayer);
+	clearSceneLayer(kScene2040BehindActorLayer);
 	resetForegroundLayer();
 }
 
@@ -406,8 +411,8 @@ void Scene2040::rebuildWalkableMask() {
 
 void Scene2040::resetForegroundLayer() {
 	_foregroundChannel.reset(0, kScene2040ForegroundFrameMillis);
-	_foregroundLayer.visible = true;
-	_foregroundLayer.reset(0);
+	_sceneLayers.setLayerVisible(kScene2040ForegroundLayer, true);
+	_sceneLayers.resetLayer(kScene2040ForegroundLayer, 0);
 }
 
 void Scene2040::advanceForegroundLayer(uint32 delta) {
@@ -421,7 +426,7 @@ void Scene2040::advanceForegroundLayer(uint32 delta) {
 		} else if (_random.getRandomNumber(24) == 0) {
 			_foregroundChannel.frameIndex = 1;
 		}
-		_foregroundLayer.setFrame(_foregroundChannel.frameIndex);
+		_sceneLayers.setLayerFrame(kScene2040ForegroundLayer, _foregroundChannel.frameIndex);
 	}
 }
 
@@ -531,8 +536,9 @@ void Scene2040::runEyeExchangeSequence() {
 	AnimationFrameRange secondRange(0, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap) - 1,
 		kScene2040ActionFrameMillis);
 	secondRange.hookEveryFrame(kScene2040EyeExchangeSecondHook);
-	playResourceLayerSequence(_behindActorLayer, 12, kScene2040EyeExchangeSecondDescriptorCount,
-		kScene2040EyeExchangeSecondFrameMap, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap), secondRange);
+	playResourceLayerSequence(_sceneLayers, kScene2040BehindActorLayer, 12,
+		kScene2040EyeExchangeSecondDescriptorCount, kScene2040EyeExchangeSecondFrameMap,
+		ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap), secondRange);
 	_soundBank0.stop();
 	state.scene2040SphinxFaceState = 3;
 	state.scene2040SphinxItemRevealed = 1;
@@ -573,8 +579,8 @@ void Scene2040::runBaseOpeningDeltaSequence() {
 	_soundBank0.playSample(0x2d, 100);
 	for (uint frame = 0; frame < ARRAYSIZE(kScene2040BaseOpeningDeltaFrameMap) &&
 			!animationPlaybackShouldStop(); ++frame) {
-		restoreResourceSpriteLayerBackground(_foregroundLayer, _baseFramebuffer);
-		drawResourceSpriteLayer(_foregroundLayer);
+		restoreSceneLayerBackground(kScene2040ForegroundLayer, _baseFramebuffer);
+		drawSceneLayer(kScene2040ForegroundLayer);
 		drawClipFrameDelta(kScene2040BaseOpeningDeltaChunk,
 			kScene2040BaseOpeningDeltaTableEntryCount,
 			kScene2040BaseOpeningDeltaFrameMap[frame]);

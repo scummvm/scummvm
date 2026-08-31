@@ -73,8 +73,6 @@ private:
 	byte originalColorMapItemAt(uint paletteIndex) const;
 
 	TimedAnimationChannel _foregroundChannel;
-	ResourceSpriteLayer _behindActorLayer;
-	ResourceSpriteLayer _foregroundLayer;
 	int _routeStartX;
 	int _routeStartY;
 };

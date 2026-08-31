@@ -1460,11 +1460,25 @@ bool PlayableScene::playAnimationFrames(SceneLayerStack &layers, uint layerId,
 	return playAnimationFrames(layers.layer(layerId), range);
 }
 
+bool PlayableScene::playAndPresentAnimationFrames(SceneLayerStack &layers, uint layerId,
+		const AnimationFrameRange &range) {
+	if (!layers.hasLayer(layerId))
+		return false;
+	return playAndPresentAnimationFrames(layers.layer(layerId), range);
+}
+
 bool PlayableScene::playAnimationTransition(SceneLayerStack &layers, uint layerId,
 		const AnimationTransition &transition) {
 	if (!layers.hasLayer(layerId))
 		return false;
 	return playAnimationTransition(layers.layer(layerId), transition);
+}
+
+bool PlayableScene::playAndPresentAnimationTransition(SceneLayerStack &layers, uint layerId,
+		const AnimationTransition &transition) {
+	if (!layers.hasLayer(layerId))
+		return false;
+	return playAndPresentAnimationTransition(layers.layer(layerId), transition);
 }
 
 bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
@@ -1478,9 +1492,23 @@ bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint c
 	return completed;
 }
 
+bool PlayableScene::playResourceLayerSequence(SceneLayerStack &layers, uint layerId,
+		uint chunkIndex, uint16 descriptorCount, const byte *frameMap,
+		uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd) {
+	if (!layers.hasLayer(layerId))
+		return false;
+	return playResourceLayerSequence(layers.layer(layerId), chunkIndex, descriptorCount,
+		frameMap, frameMapSize, range, clearAtEnd);
+}
+
 void PlayableScene::clearResourceLayer(ResourceSpriteLayer &layer) {
 	layer.visible = false;
 	layer.configure(0, 0, nullptr, 0);
+}
+
+void PlayableScene::clearSceneLayer(uint layerId) {
+	if (_sceneLayers.hasLayer(layerId))
+		clearResourceLayer(_sceneLayers.layer(layerId));
 }
 
 void PlayableScene::drawActionOverlayLayer() {

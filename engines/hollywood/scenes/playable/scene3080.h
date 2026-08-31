@@ -67,8 +67,6 @@ private:
 	void drawForegroundBlocks();
 
 	TimedAnimationChannel _smallIdleChannel;
-	ResourceSpriteLayer _largeLayer;
-	ResourceSpriteLayer _smallIdleLayer;
 	uint _largeTrack;
 	byte _smallIdleMode;
 };
