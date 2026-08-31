@@ -1494,12 +1494,12 @@ int EoBInfProcessor::oeob_identifyItems(int8 *data) {
 
 int EoBInfProcessor::oeob_sequence(int8 *data) {
 	int8 *pos = data;
+	int cmd = *pos++;
 	_vm->_npcSequenceSub = -1;
 	_vm->txt()->setWaitButtonMode(0);
 	_vm->gui_updateControls();
-	_vm->drawScene(1);
+	_vm->drawScene(cmd != -1 ? 1 : 0);
 
-	int cmd = *pos++;
 
 	if (_vm->game() == GI_EOB1) {
 		if (cmd == 10)
