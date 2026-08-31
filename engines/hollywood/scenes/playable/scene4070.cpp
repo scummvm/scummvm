@@ -104,6 +104,13 @@ enum Scene4070AnimationHookId {
 	kScene4070TreatmentReturnHook
 };
 
+enum {
+	kScene4070RandomAmbientLayer,
+	kScene4070AmbientLayer,
+	kScene4070DraculaLayer,
+	kScene4070ScriptLayer
+};
+
 const byte kScene4070DraculaFrameMap[] = {
 	1, 2, 3, 3, 2, 1, 3, 4, 5, 6, 11, 1, 7, 8, 9, 10,
 	12, 13, 14, 15, 16, 17, 18, 19, 1, 0, 0, 0, 0, 0, 0, 0
@@ -128,6 +135,17 @@ const byte kScene4070TreatmentNearDraculaFrameIndices[] = {
 const byte kScene4070TreatmentReturnFrameIndices[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
 	15, 16, 17, 18, 0
+};
+
+const SceneLayerSpec kScene4070LayerSpecs[] = {
+	{ kSceneAnimationBehindActors, kScene4070RandomAmbientChunk,
+		kScene4070RandomAmbientDescriptorCount, nullptr, 0, true, 0 },
+	{ kSceneAnimationBehindActors, kScene4070AmbientChunk,
+		kScene4070AmbientDescriptorCount, nullptr, 0, true, 0 },
+	{ kSceneAnimationBehindActors, kScene4070DraculaChunk,
+		kScene4070DraculaDescriptorCount, kScene4070DraculaFrameMap,
+		ARRAYSIZE(kScene4070DraculaFrameMap), false, kScene4070DraculaIdleFrame },
+	{ kSceneAnimationBehindActors, 0, 0, nullptr, 0, false, 0 }
 };
 
 const byte kScene4070FrankiePartItems[] = {
@@ -182,10 +200,6 @@ PlayableSceneConfig scene4070Config() {
 
 Scene4070::Scene4070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4070Config()),
-		_randomAmbientLayer(),
-		_ambientLayer(),
-		_draculaLayer(),
-		_scriptLayer(),
 		_draculaIdleChannel(),
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_randomAmbientTrack(RealtimeAnimationTracks::kInvalidTrack),
@@ -196,9 +210,10 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_loopingSoundBank0(),
 		_originalColorToItemMap() {
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
-	_ambientTrack = _realtimeAnimationTracks.addLoop(_ambientLayer,
+	_sceneLayers.configure(kScene4070LayerSpecs);
+	_ambientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene4070AmbientLayer,
 		kScene4070FrameMillis, kScene4070AmbientDescriptorCount);
-	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(_randomAmbientLayer,
+	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(_sceneLayers, kScene4070RandomAmbientLayer,
 		kScene4070FrameMillis, 0, kScene4070RandomAmbientDescriptorCount - 1, false);
 }
 
@@ -220,7 +235,7 @@ void Scene4070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (drawActiveActor)
 		setRightSidePatchActive(activeWorldX >= kScene4070SidePatchThresholdX, false);
 	copyBaseFramebufferToSceneFramebuffer();
-	drawSceneLayers(activeWorldY);
+	drawSceneLayers();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (activeWorldY < kScene4070ForegroundYThreshold && !_rightSidePatchActive &&
@@ -379,11 +394,13 @@ void Scene4070::handleAnimationFrameHook(byte hookId, uint frame) {
 		break;
 	case kScene4070TreatmentNearHook:
 		if (frame < ARRAYSIZE(kScene4070TreatmentNearDraculaFrameIndices))
-			_draculaLayer.setFrame(kScene4070TreatmentNearDraculaFrameIndices[frame]);
+			_sceneLayers.setLayerFrame(kScene4070DraculaLayer,
+				kScene4070TreatmentNearDraculaFrameIndices[frame]);
 		break;
 	case kScene4070TreatmentReturnHook:
 		if (frame < ARRAYSIZE(kScene4070TreatmentReturnFrameIndices))
-			_draculaLayer.setFrame(kScene4070TreatmentReturnFrameIndices[frame]);
+			_sceneLayers.setLayerFrame(kScene4070DraculaLayer,
+				kScene4070TreatmentReturnFrameIndices[frame]);
 		break;
 	default:
 		PlayableScene::handleAnimationFrameHook(hookId, frame);
@@ -419,42 +436,35 @@ byte Scene4070::primarySpeechVolumePercent(byte animationGroup) const {
 
 void Scene4070::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene4070TrophySpeechGroup) {
-		_scriptLayer.visible = true;
-		_scriptLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerVisible(kScene4070ScriptLayer, true);
+		_sceneLayers.setLayerFrame(kScene4070ScriptLayer, frameIndex);
 		return;
 	}
 
-	_draculaLayer.visible = isDraculaVisible();
-	_draculaLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, frameIndex);
 }
 
 void Scene4070::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
 	if (animationGroup == kScene4070TrophySpeechGroup) {
-		_scriptLayer.visible = true;
-		_scriptLayer.setFrame(baseFrame);
+		_sceneLayers.setLayerVisible(kScene4070ScriptLayer, true);
+		_sceneLayers.setLayerFrame(kScene4070ScriptLayer, baseFrame);
 		return;
 	}
 
-	_draculaLayer.visible = isDraculaVisible();
-	_draculaLayer.setFrame(baseFrame);
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, baseFrame);
 }
 
 void Scene4070::resetAnimationLayers() {
-	_randomAmbientLayer.configure(kScene4070RandomAmbientChunk, kScene4070RandomAmbientDescriptorCount, nullptr, 0);
-	_randomAmbientLayer.visible = true;
+	_sceneLayers.configure(kScene4070LayerSpecs);
 	_realtimeAnimationTracks.reset(_randomAmbientTrack);
-	_ambientLayer.configure(kScene4070AmbientChunk, kScene4070AmbientDescriptorCount, nullptr, 0);
-	_ambientLayer.visible = true;
 	_realtimeAnimationTracks.reset(_ambientTrack);
-	_draculaLayer.configure(kScene4070DraculaChunk, kScene4070DraculaDescriptorCount,
-		kScene4070DraculaFrameMap, ARRAYSIZE(kScene4070DraculaFrameMap));
-	_draculaLayer.visible = isDraculaVisible();
-	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
 	_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
 	_draculaIdleSpeechTimerAccumulator = 0;
 	_draculaIdleSequenceActive = false;
 	_draculaDialogueMenuActive = false;
-	clearResourceLayer(_scriptLayer);
 }
 
 bool Scene4070::isDraculaVisible() const {
@@ -473,7 +483,9 @@ void Scene4070::setRightSidePatchActive(bool active, bool playSound) {
 }
 
 void Scene4070::advanceDraculaIdle(uint32 delta) {
-	if (!isDraculaVisible() || _draculaIdleSequenceActive || _scriptLayer.visible ||
+	ResourceSpriteLayer &draculaLayer = _sceneLayers.layer(kScene4070DraculaLayer);
+	if (!isDraculaVisible() || _draculaIdleSequenceActive ||
+			_sceneLayers.layerVisible(kScene4070ScriptLayer) ||
 			_primaryDialogueSpeechActive || _primarySpeechOverlay.visible ||
 			_actorPathPlaybackActive || _hideActiveActor)
 		return;
@@ -489,14 +501,14 @@ void Scene4070::advanceDraculaIdle(uint32 delta) {
 			if (_random.getRandomNumber(1) == 0) {
 				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(1), false);
 			} else {
-				const bool openedPose = playAndPresentAnimationFrames(_draculaLayer,
+				const bool openedPose = playAndPresentAnimationFrames(kScene4070DraculaLayer,
 					AnimationFrameRange(0, 2, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
 				if (openedPose) {
 					beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(2), true);
-					playAndPresentAnimationFrames(_draculaLayer,
+					playAndPresentAnimationFrames(kScene4070DraculaLayer,
 						AnimationFrameRange(3, 5, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
 				}
-				_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+				draculaLayer.setFrame(kScene4070DraculaIdleFrame);
 			}
 			_draculaIdleSequenceActive = false;
 			_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
@@ -507,11 +519,11 @@ void Scene4070::advanceDraculaIdle(uint32 delta) {
 
 	const uint idleTicks = _draculaIdleChannel.consumeFrames(delta);
 	for (uint tick = 0; tick < idleTicks; ++tick) {
-		if (_draculaLayer.frameIndex == 0x0f)
-			_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
-		else if (_draculaLayer.frameIndex == kScene4070DraculaIdleFrame &&
+		if (draculaLayer.frameIndex == 0x0f)
+			draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+		else if (draculaLayer.frameIndex == kScene4070DraculaIdleFrame &&
 				_random.getRandomNumber(14) == 0)
-			_draculaLayer.setFrame(0x0f);
+			draculaLayer.setFrame(0x0f);
 	}
 }
 
@@ -519,15 +531,9 @@ void Scene4070::updateSidePatchForActorPosition() {
 	setRightSidePatchActive(_activeActorWorldX >= kScene4070SidePatchThresholdX, true);
 }
 
-void Scene4070::drawSceneLayers(int activeWorldY) {
-	(void)activeWorldY;
-	drawResourceSpriteLayer(_randomAmbientLayer);
-	drawResourceSpriteLayer(_ambientLayer);
-	if (isDraculaVisible()) {
-		_draculaLayer.visible = true;
-		drawResourceSpriteLayer(_draculaLayer);
-	}
-	drawResourceSpriteLayer(_scriptLayer);
+void Scene4070::drawSceneLayers() {
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActionOverlayLayer();
 }
 
@@ -587,14 +593,16 @@ void Scene4070::runTrophyBaseOpenAction() {
 	if (!isDraculaVisible() && state.scene4070DraculaStage == 0) {
 		const bool previousHideActiveActor = _hideActiveActor;
 		_hideActiveActor = true;
-		bool animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+		bool animationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
+			kScene4070TrophyBaseChunk,
 			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 			AnimationFrameRange(0, 4, kScene4070FrameMillis).unskippable());
 
 		const uint scrollFrameCount = _viewportXOffset > _viewportMinXOffset ?
 			(_viewportXOffset - _viewportMinXOffset + 7) / 8 : 0;
 		if (animationComplete && scrollFrameCount != 0) {
-			animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+			animationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
+				kScene4070TrophyBaseChunk,
 				kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 				AnimationFrameRange(0, scrollFrameCount - 1, kScene4070ScrollFrameMillis)
 					.repeatFrame(4).hookEveryFrame(kScene4070TrophyScrollHook).unskippable());
@@ -604,7 +612,7 @@ void Scene4070::runTrophyBaseOpenAction() {
 			return;
 
 		_soundBank0.playSample(0x30, 100);
-		if (!playResourceLayerSequence(_scriptLayer, kScene4070TrophyOpenChunk,
+		if (!playResourceLayerSequence(kScene4070ScriptLayer, kScene4070TrophyOpenChunk,
 			kScene4070TrophyOpenDescriptorCount,
 			AnimationFrameRange(0, kScene4070TrophyOpenDescriptorCount - 1,
 				kScene4070TrophyOpenFrameMillis).hookEveryFrame(kScene4070TrophyOpenHook).unskippable()))
@@ -612,8 +620,7 @@ void Scene4070::runTrophyBaseOpenAction() {
 
 		state.scene4070TrophyBaseOpened = true;
 		applySceneStateToHotspotsAndPatches(1);
-		_draculaLayer.visible = true;
-		_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+		_sceneLayers.showLayerAtFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
 		beginDraculaSpeechLine(4, 1);
 		walkActiveActorTo(0x02f1, 0x0142, 1, 0, false);
 		walkActiveActorTo(kScene4070PostTrophyRonX, kScene4070PostTrophyRonY, 1, 0, false);
@@ -640,10 +647,10 @@ void Scene4070::runFrankiePartGrantSequence() {
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	if (!playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+	if (!playResourceLayerSequence(kScene4070ScriptLayer, kScene4070TrophyBaseChunk,
 		kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 		AnimationFrameRange(0, 0x0a, kScene4070FrameMillis).unskippable(), false)) {
-		clearResourceLayer(_scriptLayer);
+		clearSceneLayer(kScene4070ScriptLayer);
 		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
@@ -651,13 +658,15 @@ void Scene4070::runFrankiePartGrantSequence() {
 	bool animationComplete;
 	if (grantsReward) {
 		beginTrophySpeechLine(0x16, (byte)(rewardIndex * 2));
-		animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+		animationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
+			kScene4070TrophyBaseChunk,
 			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 			AnimationFrameRange(0x0d, 0x23, kScene4070FrameMillis)
 				.hookAt(0x18, kScene4070FrankiePartHook).unskippable());
 	} else {
 		beginTrophySpeechLine(0x66, 0);
-		animationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TrophyBaseChunk,
+		animationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
+			kScene4070TrophyBaseChunk,
 			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 			AnimationFrameRange(0x19, 0x23, kScene4070FrameMillis).unskippable());
 	}
@@ -707,7 +716,8 @@ void Scene4070::runSlimmingTreatmentSequence() {
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	const bool nearAnimationComplete = playResourceLayerSequence(_scriptLayer, kScene4070TreatmentNearChunk,
+	const bool nearAnimationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
+		kScene4070TreatmentNearChunk,
 		kScene4070TreatmentNearDescriptorCount,
 		AnimationFrameRange(kScene4070TreatmentNearDescriptorIndices,
 			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentNearHook).unskippable());
@@ -718,7 +728,7 @@ void Scene4070::runSlimmingTreatmentSequence() {
 		return;
 	}
 
-	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
 	removeInventoryItem(kScene4070SlimmingTreatmentItem);
 	_soundBank0.playSample(1, 100);
 	const bool returnedToStart = walkActiveActorTo(kScene4070PostTrophyRonX,
@@ -729,7 +739,7 @@ void Scene4070::runSlimmingTreatmentSequence() {
 		return;
 
 	beginDraculaSpeechLine(16, 1);
-	if (!playResourceLayerSequence(_scriptLayer, kScene4070TreatmentReturnChunk,
+	if (!playResourceLayerSequence(kScene4070ScriptLayer, kScene4070TreatmentReturnChunk,
 			kScene4070TreatmentReturnDescriptorCount,
 			AnimationFrameRange(kScene4070TreatmentReturnFrameIndices,
 				kScene4070TreatmentReturnFrameMillis).hookEveryFrame(
@@ -737,7 +747,7 @@ void Scene4070::runSlimmingTreatmentSequence() {
 		return;
 
 	state.scene4010PillboxPickupState = 1;
-	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
 }
 
 void Scene4070::runFlyerOnDracula() {
