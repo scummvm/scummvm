@@ -38,6 +38,15 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"harvester",
+		nullptr,
+		AD_ENTRY1s("harvest.exe", "787e43b868ebfaca614010af3ab66b6d", 1180151),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GAMEOPTION_GORE, GAMEOPTION_SHOW_CD_CHANGE_PROMPTS)
+	},
+	{
+		"harvester",
 		"Demo",
 		AD_ENTRY1s("harvest.exe", "787e43b868ebfaca614010af3ab66b6d", 1167247),
 		Common::EN_ANY,
