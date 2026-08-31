@@ -81,6 +81,7 @@ private:
 	void handleRemovePlate();
 	void handleInventoryTransferAction();
 
+	SpeechPlayer _asyncSpeechPlayer;
 	uint32 _primaryTimerAccumulator;
 	uint32 _banterTimerAccumulator;
 	uint32 _asyncSpeechElapsed;

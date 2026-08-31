@@ -185,26 +185,6 @@ bool PlayableScene::dispatchGenericInventoryAction(const GameplayLoopCursorState
 			return false;
 		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
 		return true;
-	case 331: // Usar lupa con placa/póster/rata/etc. (use magnifying glass with cell inventory objects).
-		if (sceneStageIndex() != 710)
-			return false;
-		beginSecondarySpeechLine(0x1e, 0);
-		return true;
-	case 335: // Usar bisturí/navaja multiusos con placa/póster/etc. (use cutting tools with cell inventory objects).
-		if (sceneStageIndex() != 710)
-			return false;
-		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
-		return true;
-	case 336: // Dar pamela a rata (give hat to rat).
-		if (sceneStageIndex() != 710)
-			return false;
-		beginSecondarySpeechLine(0x23, 0);
-		return true;
-	case 337: // Usar/Dar placa/perfume/pintura/pintauñas/etc. con rata (use/give items with rat).
-		if (sceneStageIndex() != 710)
-			return false;
-		beginSecondarySpeechLine(0x24, 0);
-		return true;
 	default:
 		return false;
 	}
