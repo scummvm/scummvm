@@ -160,15 +160,14 @@ void drawAmigaUiPanel(const Common::Point &pos, const Common::Point &size, Graph
 	drawAmigaPanelBevel(s, x, y, w, h);
 }
 
-byte remapAmigaPlayfieldIndex(byte val, int y) {
-	if (val >= kAmigaEhbPaletteCount)
-		return val;
-	const Common::Array<byte> &map = g_engine->_amigaLineCopperPal;
-	if (map.size() < (uint)kAmigaSceneHeight * kAmigaEhbPaletteCount)
-		return val;
-	if (y < 0 || y >= (int)kAmigaSceneHeight)
-		return val;
-	return map[(uint)y * kAmigaEhbPaletteCount + val];
+void setPixel(Graphics::ManagedSurface &s, int x, int y, byte color) {
+	if (g_engine->isAmiga() && color < kAmigaEhbPaletteCount &&
+		y >= 0 && y < (int)kAmigaSceneHeight) {
+		const Common::Array<byte> &map = g_engine->_amigaLineCopperPal;
+		if (map.size() >= (uint)kAmigaSceneHeight * kAmigaEhbPaletteCount)
+			color = map[(uint)y * kAmigaEhbPaletteCount + color];
+	}
+	s.setPixel(x, y, color);
 }
 
 // Build a screen-clipped erase rect from the previous frame's sprite bounds.
@@ -3183,9 +3182,7 @@ void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 						if (g_engine->_depthMap.getPixel(finalX, finalY) >= depth)
 							continue;
 					}
-					if (g_engine->isAmiga())
-						val = remapAmigaPlayfieldIndex(val, finalY);
-					s.setPixel(finalX, finalY, val);
+					setPixel(s, finalX, finalY, val);
 				}
 			}
 		}
@@ -3207,11 +3204,8 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			if (val != 0) {
 				const int px = x + currentX;
 				const int py = y + currentY;
-				if (clippingRect.contains(px, py) && px < s.w && py < s.h) {
-					if (g_engine->isAmiga())
-						val = remapAmigaPlayfieldIndex(val, py);
-					s.setPixel(px, py, val);
-				}
+				if (clippingRect.contains(px, py) && px < s.w && py < s.h)
+					setPixel(s, px, py, val);
 			}
 		}
 	}
@@ -3259,7 +3253,7 @@ void View1::drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, G
 			if (px < inner.left || px >= inner.right || px < 0 || px >= s.w || py < 0 || py >= s.h)
 				continue;
 
-			s.setPixel(px, py, g_engine->isAmiga() ? remapAmigaPlayfieldIndex(val, py) : val);
+			setPixel(s, px, py, val);
 		}
 	}
 }
@@ -3312,10 +3306,7 @@ void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16
 						const uint8 color = srcPixels[srcRow + srcX];
 						if (color != 0) {
 							const byte bg = s.getPixel(screenX, screenY);
-							byte drawn = applyShadingTable(color, shadingTableOffset, bg, useMaskedShading);
-							if (g_engine->isAmiga())
-								drawn = remapAmigaPlayfieldIndex(drawn, screenY);
-							s.setPixel(screenX, screenY, drawn);
+							setPixel(s, screenX, screenY, applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
 						}
 					}
 				}
@@ -3350,10 +3341,7 @@ void View1::drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, 
 				if (color != 0 && screenX >= 0 && screenX < s.w &&
 					g_engine->_depthMap.getPixel(screenX, screenY) < depthThreshold) {
 					const byte bg = s.getPixel(screenX, screenY);
-					byte drawn = applyShadingTable(color, shadingTableOffset, bg, useMaskedShading);
-					if (g_engine->isAmiga())
-						drawn = remapAmigaPlayfieldIndex(drawn, screenY);
-					s.setPixel(screenX, screenY, drawn);
+					setPixel(s, screenX, screenY, applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
 				}
 
 				screenX++;
