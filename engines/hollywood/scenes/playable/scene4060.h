@@ -86,7 +86,7 @@ private:
 	void copySmallTextRow(byte destinationRow, byte sourceRow);
 
 	ResourceSpriteLayer _foregroundLayer;
-	TransientLayerCompositor _pokerTransitionLayers;
+	SceneLayerStack _pokerTransitionLayers;
 	TimedAnimationChannel _foregroundChannel;
 	byte _foregroundScrollStep;
 	bool _foregroundLongAnimationActive;

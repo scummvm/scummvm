@@ -63,7 +63,7 @@ private:
 
 	TimedAnimationChannel _loopChannel;
 	ResourceSpriteLayer _loopLayer;
-	TransientLayerCompositor _machineLayers;
+	SceneLayerStack _machineLayers;
 	bool _machineSequenceActive;
 };
 

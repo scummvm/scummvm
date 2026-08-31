@@ -79,7 +79,7 @@ const byte kScene7030Chunk11ExchangeItem0CFrameMap[] = {
 	25, 25, 25, 25, 26, 27, 28, 29, 30, 31, 13, 12, 11, 10, 9, 8,
 	7, 6, 5, 4, 3, 2, 1, 0
 };
-const SceneAnimationLayerSpec kScene7030AnimationLayerSpecs[] = {
+const SceneLayerSpec kScene7030AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors,
 		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
 	{ kSceneAnimationBehindActors,
@@ -165,7 +165,7 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
-	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+	drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
 
 	updateActorDepthThresholds(actorDrawOrderMode);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,

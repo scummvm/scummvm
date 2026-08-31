@@ -388,8 +388,7 @@ protected:
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
-	void drawTransientLayers(const TransientLayerCompositor &compositor);
-	void drawAnimationLayers(const SceneAnimationLayers &layers, SceneAnimationStratum stratum);
+	void drawLayerStack(const SceneLayerStack &layers, SceneAnimationStratum stratum);
 	void drawActionOverlayLayer();
 	template<class FrameTarget>
 	bool playAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
@@ -399,7 +398,7 @@ protected:
 	bool playAndPresentAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
 		return _animationPlayer.playAndPresent(target, range);
 	}
-	bool playAnimationFrames(SceneAnimationLayers &layers, uint layerId, const AnimationFrameRange &range);
+	bool playAnimationFrames(SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range);
 	template<class FrameTarget>
 	bool playAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
 		return _animationPlayer.transition(target, transition);
@@ -408,7 +407,7 @@ protected:
 	bool playAndPresentAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
 		return _animationPlayer.transitionAndPresent(target, transition);
 	}
-	bool playAnimationTransition(SceneAnimationLayers &layers, uint layerId,
+	bool playAnimationTransition(SceneLayerStack &layers, uint layerId,
 		const AnimationTransition &transition);
 	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
 	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,

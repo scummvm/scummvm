@@ -198,13 +198,16 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		_concurrentPrimarySpeechDuration(0),
 		_ronSpeechBaseFrame(0),
 		_ronConversationChunk(13) {
-	_animationLayers.configureLayer(kScene5030MineCartEntryLayer, 5,
+	_animationLayers.configureLayer(kScene5030MineCartEntryLayer, kSceneAnimationScenePlaced, 5,
 		kScene5030MineCartEntryDescriptorCount, nullptr, 0, false);
-	_animationLayers.configureLayer(kScene5030Chunk8Layer, 8, kScene5030Chunk8DescriptorCount,
+	_animationLayers.configureLayer(kScene5030Chunk8Layer, kSceneAnimationScenePlaced,
+		8, kScene5030Chunk8DescriptorCount,
 		kScene5030Chunk8FrameMap, ARRAYSIZE(kScene5030Chunk8FrameMap));
-	_animationLayers.configureLayer(kScene5030Chunk9Layer, 9, kScene5030Chunk9DescriptorCount,
+	_animationLayers.configureLayer(kScene5030Chunk9Layer, kSceneAnimationScenePlaced,
+		9, kScene5030Chunk9DescriptorCount,
 		kScene5030Chunk9FrameMap, ARRAYSIZE(kScene5030Chunk9FrameMap));
-	_animationLayers.configureLayer(kScene5030Chunk10Layer, 10, kScene5030Chunk10DescriptorCount,
+	_animationLayers.configureLayer(kScene5030Chunk10Layer, kSceneAnimationScenePlaced,
+		10, kScene5030Chunk10DescriptorCount,
 		kScene5030Chunk10FrameMap, ARRAYSIZE(kScene5030Chunk10FrameMap));
 }
 
@@ -436,11 +439,11 @@ void Scene5030::resetAnimationLayers() {
 	_ronConversationChunk = 13;
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
 	_animationLayers.setLayerVisible(kScene5030Chunk8Layer, true);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk8Layer, 0);
+	_animationLayers.setLayerFrame(kScene5030Chunk8Layer, 0);
 	_animationLayers.setLayerVisible(kScene5030Chunk9Layer, true);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk9Layer, 0);
+	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, 0);
 	_animationLayers.setLayerVisible(kScene5030Chunk10Layer, true);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk10Layer, 0);
+	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, 0);
 }
 
 void Scene5030::advanceLayer(TimedAnimationChannel &channel, uint layerIndex, uint frameCount, uint32 delta) {
@@ -449,7 +452,7 @@ void Scene5030::advanceLayer(TimedAnimationChannel &channel, uint layerIndex, ui
 		byte nextFrame = (byte)(_animationLayers.layerFrame(layerIndex) + 1);
 		if (nextFrame >= frameCount)
 			nextFrame = 0;
-		_animationLayers.setLayerFrame(layerIndex, nextFrame);
+		_animationLayers.setVisibleLayerFrame(layerIndex, nextFrame);
 	}
 }
 
@@ -459,9 +462,9 @@ void Scene5030::advanceDialogueIdleLayer(TimedAnimationChannel &channel, uint la
 	for (uint i = 0; i < consumedFrames; ++i) {
 		const byte frame = _animationLayers.layerFrame(layerIndex);
 		if (frame != baseFrame)
-			_animationLayers.setLayerFrame(layerIndex, baseFrame);
+			_animationLayers.setVisibleLayerFrame(layerIndex, baseFrame);
 		else if (_random.getRandomNumber(14) == 0)
-			_animationLayers.setLayerFrame(layerIndex, accentFrame);
+			_animationLayers.setVisibleLayerFrame(layerIndex, accentFrame);
 	}
 }
 
@@ -509,7 +512,7 @@ void Scene5030::advanceScoutTransitions(uint32 delta) {
 		const byte target = _scoutStopTransitionActive ?
 			kScene5030ScoutStopVanessaFrame : kScene5030ScoutResumeVanessaFrame;
 		if (frame < target)
-			_animationLayers.setLayerFrame(kScene5030Chunk9Layer, frame + 1);
+			_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, frame + 1);
 	}
 
 	const uint gladysFrames = _chunk10Channel.consumeFrames(delta);
@@ -518,7 +521,7 @@ void Scene5030::advanceScoutTransitions(uint32 delta) {
 		const byte target = _scoutStopTransitionActive ?
 			kScene5030ScoutStopGladysFrame : kScene5030ScoutResumeGladysFrame;
 		if (frame < target)
-			_animationLayers.setLayerFrame(kScene5030Chunk10Layer, frame + 1);
+			_animationLayers.setVisibleLayerFrame(kScene5030Chunk10Layer, frame + 1);
 	}
 
 	if (_scoutStopTransitionActive &&
@@ -545,8 +548,8 @@ void Scene5030::startScoutResumeTransition() {
 	_scoutResumeTransitionActive = true;
 	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = true;
-	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030ScoutStopVanessaFrame);
-	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030ScoutStopGladysFrame);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, kScene5030ScoutStopVanessaFrame);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk10Layer, kScene5030ScoutStopGladysFrame);
 	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
 }
@@ -563,8 +566,8 @@ void Scene5030::finishScoutStopTransition() {
 	_scoutStopTransitionActive = false;
 	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = true;
-	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
-	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, kScene5030GladysIdleFrame);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk10Layer, kScene5030GladysIdleFrame);
 	_chunk9Channel.reset(0, kScene5030ScoutSpeechFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutSpeechFrameMillis);
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
@@ -574,8 +577,8 @@ void Scene5030::finishScoutResumeTransition() {
 	_scoutResumeTransitionActive = false;
 	_scoutTransitionCompletionPending = false;
 	_scoutsInDialoguePose = false;
-	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, 0);
-	_animationLayers.setLayerFrame(kScene5030Chunk10Layer, 0);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, 0);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk10Layer, 0);
 	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
@@ -697,12 +700,12 @@ void Scene5030::runMineCartEntryAnimation() {
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, true);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5030MineCartEntryLayer, 0);
+	_animationLayers.setLayerFrame(kScene5030MineCartEntryLayer, 0);
 	drawPlayableComposite();
 	presentFrame();
 
 	for (uint frame = 0; frame < ARRAYSIZE(kScene5030MineCartEntryDelayBuckets) && !Engine::shouldQuit(); ++frame) {
-		_animationLayers.setLayerFrame(kScene5030MineCartEntryLayer, (byte)frame);
+		_animationLayers.setVisibleLayerFrame(kScene5030MineCartEntryLayer, (byte)frame);
 		if (frame == kScene5030MineCartSoundFrame)
 			_soundBank0.playSample(0x16, 100);
 
@@ -749,10 +752,10 @@ uint32 Scene5030::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 void Scene5030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	switch (animationGroup) {
 	case kScene5030VanessaSpeechGroup:
-		_animationLayers.setLayerFrame(kScene5030Chunk9Layer, frameIndex);
+		_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, frameIndex);
 		break;
 	case kScene5030GladysSpeechGroup:
-		_animationLayers.setLayerFrame(kScene5030Chunk10Layer, frameIndex);
+		_animationLayers.setVisibleLayerFrame(kScene5030Chunk10Layer, frameIndex);
 		break;
 	case kScene5030RonSpeechGroup:
 	case kScene5030RonTradeSpeechGroup:
@@ -953,7 +956,7 @@ void Scene5030::runSpecialInventorySequence() {
 	if (hasInventoryItem(kScene5030UnderpantsItem))
 		removeInventoryItem(kScene5030UnderpantsItem);
 	_soundBank0.playSample(1, 100);
-	_animationLayers.setLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
+	_animationLayers.setVisibleLayerFrame(kScene5030Chunk9Layer, kScene5030VanessaIdleFrame);
 	const bool vanessaSpeechStarted = startConcurrentPrimarySpeechLine(9, 10,
 		kScene5030VanessaDialogueCenterX, kScene5030VanessaDialogueTopY,
 		0, 0x20, 0x3f, kScene5030VanessaSpeechGroup);

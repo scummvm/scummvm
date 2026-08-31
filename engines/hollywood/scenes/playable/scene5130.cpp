@@ -611,40 +611,48 @@ void Scene5130::applyDrinkPalette(byte red, byte green, byte blue) {
 
 void Scene5130::resetAnimationLayers() {
 	_animationLayers.clear();
-	_animationLayers.configureLayer(kScene5130IntroLayer, kScene5130IntroChunk,
+	_animationLayers.configureLayer(kScene5130IntroLayer, kSceneAnimationScenePlaced,
+		kScene5130IntroChunk,
 		kScene5130IntroDescriptorCount, nullptr, 0);
-	_animationLayers.configureLayer(kScene5130TapLayer, kScene5130TapChunk,
+	_animationLayers.configureLayer(kScene5130TapLayer, kSceneAnimationScenePlaced,
+		kScene5130TapChunk,
 		kScene5130TapDescriptorCount, kScene5130TapFrameMap, ARRAYSIZE(kScene5130TapFrameMap));
-	_animationLayers.configureLayer(kScene5130ChangeLayer, kScene5130ChangeChunk,
+	_animationLayers.configureLayer(kScene5130ChangeLayer, kSceneAnimationScenePlaced,
+		kScene5130ChangeChunk,
 		kScene5130ChangeDescriptorCount, kScene5130ChangeFrameMap, ARRAYSIZE(kScene5130ChangeFrameMap));
-	_animationLayers.configureLayer(kScene5130LiquidLayer, kScene5130LiquidChunk,
+	_animationLayers.configureLayer(kScene5130LiquidLayer, kSceneAnimationScenePlaced,
+		kScene5130LiquidChunk,
 		kScene5130LiquidDescriptorCount, kScene5130LiquidFrameMap, ARRAYSIZE(kScene5130LiquidFrameMap));
-	_animationLayers.configureLayer(kScene5130MixLayer, kScene5130MixChunk,
+	_animationLayers.configureLayer(kScene5130MixLayer, kSceneAnimationScenePlaced,
+		kScene5130MixChunk,
 		kScene5130MixDescriptorCount, kScene5130MixFrameMap, ARRAYSIZE(kScene5130MixFrameMap));
-	_animationLayers.configureLayer(kScene5130PourLayer, kScene5130PourChunk,
+	_animationLayers.configureLayer(kScene5130PourLayer, kSceneAnimationScenePlaced,
+		kScene5130PourChunk,
 		kScene5130PourDescriptorCount, nullptr, 0, false);
 }
 
 void Scene5130::updateAnimationLayerFrames() {
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130IntroLayer, _introFrame);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130TapLayer, _tapFrame);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130ChangeLayer, _changeFrame);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130LiquidLayer, _liquidFrame);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130MixLayer, _mixFrame);
+	_animationLayers.setLayerFrame(kScene5130IntroLayer, _introFrame);
+	_animationLayers.setLayerFrame(kScene5130TapLayer, _tapFrame);
+	_animationLayers.setLayerFrame(kScene5130ChangeLayer, _changeFrame);
+	_animationLayers.setLayerFrame(kScene5130LiquidLayer, _liquidFrame);
+	_animationLayers.setLayerFrame(kScene5130MixLayer, _mixFrame);
 	_animationLayers.setLayerVisible(kScene5130PourLayer, _pourVisible);
-	_animationLayers.setLayerFramePreservingVisibility(kScene5130PourLayer, _pourFrame);
+	_animationLayers.setLayerFrame(kScene5130PourLayer, _pourFrame);
 }
 
 void Scene5130::drawFrame() {
 	_surface.copyBaseFramebufferToSceneFramebuffer();
 	updateAnimationLayerFrames();
-	drawTransientLayers(_animationLayers);
+	drawLayerStack(_animationLayers);
 	drawDrinkStrip();
 }
 
-void Scene5130::drawTransientLayers(const TransientLayerCompositor &compositor) {
-	for (uint i = 0; i < compositor.layerCount(); ++i)
-		drawSpriteLayer(compositor.layer(i));
+void Scene5130::drawLayerStack(const SceneLayerStack &layers) {
+	for (uint i = 0; i < layers.layerCount(); ++i) {
+		if (layers.isInStratum(i, kSceneAnimationScenePlaced))
+			drawSpriteLayer(layers.layer(i));
+	}
 }
 
 void Scene5130::drawSpriteLayer(const ResourceSpriteLayer &layer) {

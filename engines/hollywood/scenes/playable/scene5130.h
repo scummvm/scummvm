@@ -64,7 +64,7 @@ private:
 	void resetAnimationLayers();
 	void updateAnimationLayerFrames();
 	void drawFrame();
-	void drawTransientLayers(const TransientLayerCompositor &compositor);
+	void drawLayerStack(const SceneLayerStack &layers);
 	void drawSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawDrinkStrip();
 	void presentFrame();
@@ -99,7 +99,7 @@ private:
 	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
-	TransientLayerCompositor _animationLayers;
+	SceneLayerStack _animationLayers;
 	byte _selectedDrinks[3];
 	byte _selectedDrinkCount;
 	byte _currentDrinkId;

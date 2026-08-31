@@ -87,7 +87,7 @@ enum Scene6030AnimationHookId {
 	kScene6030BathroomExitVolumeHook
 };
 
-const SceneAnimationLayerSpec kScene6030AnimationLayerSpecs[] = {
+const SceneLayerSpec kScene6030AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 6, kScene6030LargeLayerDescriptorCount,
 		kScene6030LargeLayerFrameMap, ARRAYSIZE(kScene6030LargeLayerFrameMap), true },
 	{ kSceneAnimationBehindActors, 7, kScene6030BathroomExitDescriptorCount,
@@ -134,14 +134,14 @@ void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawAnimationLayers(_animationLayers, kSceneAnimationBehindActors);
+	drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
 	if (_actionOverlayPlayer.isVisible() &&
 			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors)
 		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-	drawAnimationLayers(_animationLayers, kSceneAnimationInFrontOfActors);
+	drawLayerStack(_animationLayers, kSceneAnimationInFrontOfActors);
 	if (_actionOverlayPlayer.isVisible() &&
 			_actionOverlayPlayer.stratum != kSceneAnimationBehindActors)
 		drawActionOverlayLayer();

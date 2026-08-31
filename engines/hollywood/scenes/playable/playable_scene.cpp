@@ -1274,12 +1274,7 @@ void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
 }
 
-void PlayableScene::drawTransientLayers(const TransientLayerCompositor &compositor) {
-	for (uint i = 0; i < compositor.layerCount(); ++i)
-		drawResourceSpriteLayer(compositor.layer(i));
-}
-
-void PlayableScene::drawAnimationLayers(const SceneAnimationLayers &layers,
+void PlayableScene::drawLayerStack(const SceneLayerStack &layers,
 		SceneAnimationStratum stratum) {
 	for (uint i = 0; i < layers.layerCount(); ++i) {
 		if (layers.isInStratum(i, stratum))
@@ -1287,14 +1282,14 @@ void PlayableScene::drawAnimationLayers(const SceneAnimationLayers &layers,
 	}
 }
 
-bool PlayableScene::playAnimationFrames(SceneAnimationLayers &layers, uint layerId,
+bool PlayableScene::playAnimationFrames(SceneLayerStack &layers, uint layerId,
 		const AnimationFrameRange &range) {
 	if (!layers.hasLayer(layerId))
 		return false;
 	return playAnimationFrames(layers.layer(layerId), range);
 }
 
-bool PlayableScene::playAnimationTransition(SceneAnimationLayers &layers, uint layerId,
+bool PlayableScene::playAnimationTransition(SceneLayerStack &layers, uint layerId,
 		const AnimationTransition &transition) {
 	if (!layers.hasLayer(layerId))
 		return false;

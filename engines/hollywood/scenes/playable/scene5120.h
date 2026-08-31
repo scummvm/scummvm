@@ -79,7 +79,7 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
 
-	TransientLayerCompositor _transformedRoomLayers;
+	SceneLayerStack _transformedRoomLayers;
 	ResourceSpriteLayer _elevatorLayer;
 	ResourceSpriteLayer _projectorSpeechLayer;
 	TimedAnimationChannel _movingWallChannel;

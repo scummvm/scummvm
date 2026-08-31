@@ -304,11 +304,11 @@ void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		return;
 	}
 
-	if (_pokerTransitionLayers.visible()) {
+	if (_pokerTransitionLayers.hasVisibleLayers()) {
 		if (_pokerMidPatchVisible && _sceneChunkTable.isValidChunk(kScene4060ForegroundMidPatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060ForegroundMidPatchChunk],
 				_sceneFramebuffer);
-		drawTransientLayers(_pokerTransitionLayers);
+		drawLayerStack(_pokerTransitionLayers, kSceneAnimationScenePlaced);
 		return;
 	}
 
@@ -604,7 +604,7 @@ void Scene4060::setForegroundScrollStep(byte step) {
 }
 
 void Scene4060::advanceForegroundLayer(uint32 delta) {
-	if (_pokerTransitionLayers.visible())
+	if (_pokerTransitionLayers.hasVisibleLayers())
 		return;
 
 	if (_sherilynSpeechPoseMode != kScene4060SherilynSpeechPoseNone ||
@@ -939,11 +939,13 @@ void Scene4060::runSherilynPokerTransitionAnimation(bool finalRewardBranch) {
 bool Scene4060::presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, uint overlayDescriptorCount,
 		byte overlayFrame, bool waitAfterFrame) {
 	_pokerTransitionLayers.configureLayer(kScene4060PokerTableTransitionLayer,
+		kSceneAnimationScenePlaced,
 		kScene4060PokerTableTransitionChunk, kScene4060PokerTableTransitionDescriptorCount, nullptr, 0);
-	_pokerTransitionLayers.setLayerFrame(kScene4060PokerTableTransitionLayer, tableFrame);
-	_pokerTransitionLayers.configureLayer(kScene4060PokerOverlayTransitionLayer, overlayChunk,
+	_pokerTransitionLayers.setVisibleLayerFrame(kScene4060PokerTableTransitionLayer, tableFrame);
+	_pokerTransitionLayers.configureLayer(kScene4060PokerOverlayTransitionLayer,
+		kSceneAnimationScenePlaced, overlayChunk,
 		(uint16)overlayDescriptorCount, nullptr, 0);
-	_pokerTransitionLayers.setLayerFrame(kScene4060PokerOverlayTransitionLayer, overlayFrame);
+	_pokerTransitionLayers.setVisibleLayerFrame(kScene4060PokerOverlayTransitionLayer, overlayFrame);
 
 	drawPlayableComposite();
 	presentFrame();
