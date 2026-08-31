@@ -22,8 +22,7 @@
 #ifndef NUVIE_MISC_ACTOR_LIST_H
 #define NUVIE_MISC_ACTOR_LIST_H
 
-// include this if using ActorList
-#include "ultima/shared/std/containers.h"
+#include "common/array.h"
 
 namespace Ultima {
 namespace Nuvie {

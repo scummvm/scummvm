@@ -22,7 +22,7 @@
 #ifndef NUVIE_ACTORS_ACTOR_H
 #define NUVIE_ACTORS_ACTOR_H
 
-#include "ultima/shared/std/containers.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 #include "ultima/nuvie/misc/actor_list.h"
 #include "ultima/nuvie/core/map.h"

@@ -25,7 +25,6 @@
 #include "common/random.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {

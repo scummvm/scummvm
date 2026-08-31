@@ -22,9 +22,6 @@
 #ifndef NUVIE_CORE_MAP_WINDOW_H
 #define NUVIE_CORE_MAP_WINDOW_H
 
-#include "ultima/shared/std/containers.h"
-
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"

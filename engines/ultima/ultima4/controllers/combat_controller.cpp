@@ -46,7 +46,6 @@
 #include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima4/ultima4.h"
 #include "common/system.h"
 

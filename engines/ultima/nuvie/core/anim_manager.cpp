@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/fonts/font.h"

@@ -23,7 +23,6 @@
 #define NUVIE_CONF_CONFIGURATION_H
 
 #include "common/str.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/detection.h"
 
 namespace Ultima {

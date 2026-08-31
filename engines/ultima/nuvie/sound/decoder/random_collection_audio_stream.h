@@ -22,8 +22,8 @@
 #ifndef NUVIE_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
 #define NUVIE_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
 
-#include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
+#include "common/array.h"
 
 namespace Ultima {
 namespace Nuvie {

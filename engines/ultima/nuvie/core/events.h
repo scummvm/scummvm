@@ -22,7 +22,6 @@
 #ifndef NUVIE_CORE_EVENT_H
 #define NUVIE_CORE_EVENT_H
 
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/keybinding/keys_enum.h"

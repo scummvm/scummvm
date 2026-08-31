@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/pathfinder/dir_finder.h"
 #include "ultima/nuvie/pathfinder/astar_path.h"

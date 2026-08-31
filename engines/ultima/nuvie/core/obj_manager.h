@@ -22,7 +22,6 @@
 #ifndef NUVIE_CORE_OBJ_MANAGER_H
 #define NUVIE_CORE_OBJ_MANAGER_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/misc/iavl_tree.h"
 #include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/misc/u6_llist.h"

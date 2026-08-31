@@ -24,7 +24,6 @@
 
 #include "ultima/nuvie/keybinding/keys_enum.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
 #include "common/events.h"
 #include "common/hash-str.h"
