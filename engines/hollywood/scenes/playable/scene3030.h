@@ -47,7 +47,6 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void advanceLoopingLayer(uint32 delta);
 	void drawForegroundBlocks();
 	void promoteMachineHotspots();
 	void runEntryFromScene3020();
@@ -61,8 +60,8 @@ private:
 	void runMachineActivationSequence();
 	void drawMachineSequenceFrame();
 
-	TimedAnimationChannel _loopChannel;
 	ResourceSpriteLayer _loopLayer;
+	uint _loopTrack;
 	SceneLayerStack _machineLayers;
 	bool _machineSequenceActive;
 };

@@ -52,7 +52,6 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void advanceAmbientLayer(uint32 delta);
 	void advanceEntryIdle(uint32 delta);
 	void startScriptedActorPath();
 	void advanceScriptedActorPath(uint32 delta);
@@ -68,12 +67,12 @@ private:
 	void runEntryPrimarySpeechLine(byte frameIndex, byte animationGroup);
 	void runTreasurePrimarySpeechLine(uint16 rowIndex, byte frameIndex);
 
-	TimedAnimationChannel _ambientChannel;
 	TimedAnimationChannel _entryIdleChannel;
 	TimedAnimationChannel _scriptedActorPathChannel;
 	ResourceSpriteLayer _entryLayer;
 	ResourceSpriteLayer _ambientLayer;
 	ResourceSpriteLayer _treasureLayer;
+	uint _ambientTrack;
 	bool _entryIdleActive;
 	bool _scriptedActorPathActive;
 	uint _scriptedActorPathFrameIndex;

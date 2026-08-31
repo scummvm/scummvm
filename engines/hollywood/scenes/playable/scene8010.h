@@ -68,7 +68,6 @@ private:
 
 	void resetSceneAnimations();
 	void advanceFishermanIdle(uint32 delta);
-	void advanceBoatLoop(uint32 delta);
 	void updateSceneAmbientAudio(uint32 delta);
 	bool waitTransitionFrameMillis(uint32 millis);
 	void drawTransitionClip(uint chunkIndex, bool showFirstFrameImmediately);
@@ -97,9 +96,9 @@ private:
 
 	ResourceSpriteLayer _fishermanLayer;
 	ResourceSpriteLayer _boatLayer;
+	uint _boatTrack;
 	TimedAnimationChannel _fishermanChannel;
 	TimedAnimationChannel _fishermanSpeechIdleChannel;
-	TimedAnimationChannel _boatChannel;
 	TimedAnimationChannel _secondaryAmbientChannel;
 	FishermanQuizEntry _fishermanQuizEntries[8];
 	FishermanQuizEntry _fishermanQuizFinalEntry;

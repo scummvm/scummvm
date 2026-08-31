@@ -573,6 +573,7 @@ protected:
 	SoundBank0Player _additionalAmbientSoundBank0Slots[kAmbientSoundSlotCount - 1];
 	ResidentSoundEffectPlayer _residentSoundEffects;
 	Common::RandomSource _random;
+	RealtimeAnimationTracks _realtimeAnimationTracks;
 	SceneAnimationPlayer _animationPlayer;
 
 	// Speech runtime state

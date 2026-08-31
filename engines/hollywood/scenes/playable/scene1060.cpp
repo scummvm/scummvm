@@ -184,13 +184,13 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_flyDoctorModeChannel(),
 		_flyDoctorIdleChannel(),
 		_flySlimeDripChannel(),
-		_smallLoopChannel(),
 		_smallTriggerChannel(),
 		_largeBackgroundLayer(),
 		_invisibleManLayer(),
 		_flyDoctorLayer(),
 		_smallLoopLayer(),
 		_smallTriggerLayer(),
+		_smallLoopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_largeBackgroundMode(0),
 		_largeBackgroundIdleCounter(0),
 		_flyDoctorMode(kScene1060FlyDoctorModeIdle),
@@ -211,6 +211,8 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 	_flyDoctorLayer.configure(6, kScene1060FlyDoctorDescriptorCount,
 		kScene1060FlyDoctorFrameMap, ARRAYSIZE(kScene1060FlyDoctorFrameMap));
 	_smallLoopLayer.configure(8, kScene1060SmallLoopDescriptorCount, nullptr, 0);
+	_smallLoopTrack = _realtimeAnimationTracks.addLoop(_smallLoopLayer,
+		kScene1060FrameMillis, 5);
 	_smallTriggerLayer.configure(7, kScene1060SmallTriggerDescriptorCount,
 		kScene1060SmallTriggerFrameMap, ARRAYSIZE(kScene1060SmallTriggerFrameMap));
 }
@@ -268,7 +270,6 @@ bool Scene1060::prepareCustomGameplayLoop() {
 }
 
 bool Scene1060::advanceCustomGameplayLoop(uint32 delta) {
-	advanceSmallLoop(delta);
 	advanceSmallTrigger(delta);
 	advanceLargeBackground(delta);
 	if (!_pocketPaperPickupSequenceActive)
@@ -437,14 +438,13 @@ void Scene1060::resetAnimationLayers() {
 	_flyDoctorModeChannel.reset(0, kScene1060FlyDoctorModeMillis);
 	_flyDoctorIdleChannel.reset(0, kScene1060SlowFrameMillis);
 	_flySlimeDripChannel.reset(0, kScene1060FlySlimeDripFrameMillis);
-	_smallLoopChannel.reset(0, kScene1060FrameMillis);
+	_realtimeAnimationTracks.reset(_smallLoopTrack);
 	_smallTriggerChannel.reset(0, kScene1060SmallTriggerFrameMillis);
 
 	_largeBackgroundLayer.reset(juniorIdleFrame());
 	_invisibleManLayer.reset(0);
 	_flyDoctorLayer.reset(0);
 	_flyDoctorLayer.chunkIndex = state.scene1060DrFlyState == 2 ? 14 : 6;
-	_smallLoopLayer.reset(0);
 	_smallTriggerLayer.reset(0);
 	_largeBackgroundLayer.visible = true;
 	_invisibleManLayer.visible = true;
@@ -668,12 +668,6 @@ void Scene1060::advanceTicketPickupFrame(uint32 delta) {
 		else
 			_flyDoctorLayer.setFrame(kScene1060TicketPickupResetFrame);
 	}
-}
-
-void Scene1060::advanceSmallLoop(uint32 delta) {
-	const uint frameCount = _smallLoopChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i)
-		_smallLoopLayer.setFrame(_smallLoopLayer.frameIndex < 4 ? _smallLoopLayer.frameIndex + 1 : 0);
 }
 
 void Scene1060::advanceSmallTrigger(uint32 delta) {

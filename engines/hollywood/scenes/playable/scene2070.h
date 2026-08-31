@@ -49,7 +49,6 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetForegroundLayer();
-	void advanceForegroundLayer(uint32 delta);
 	void runEntryFromLabyrinth();
 	void runEntryFromRightPassage();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
@@ -60,8 +59,8 @@ private:
 	void rebuildWalkableMask();
 	void setColorMapItem(byte sourceItem, byte destinationItem);
 
-	TimedAnimationChannel _foregroundChannel;
 	ResourceSpriteLayer _foregroundLayer;
+	uint _foregroundTrack;
 	bool _sealMemoryActive;
 	byte _sealMemoryFrame;
 };

@@ -51,8 +51,7 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void initializeIdleLayer();
-	void advanceIdleLayer(uint32 delta);
+	void resetIdleLayer();
 	void setActiveActorPose(int x, int y, byte facing);
 	void runEntryFromScene4010();
 	void runEntryFromScene4030();
@@ -61,7 +60,7 @@ private:
 	void copyStepDeltas(uint firstOffset, uint lastOffset);
 
 	ResourceSpriteLayer _idleLayer;
-	TimedAnimationChannel _idleChannel;
+	uint _idleTrack;
 };
 
 } // End of namespace Hollywood

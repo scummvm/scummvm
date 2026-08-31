@@ -55,7 +55,6 @@ private:
 
 	void initializeSpriteLayers();
 	void advanceBackgroundAnimations(uint32 delta);
-	void advanceLeftPropLayer(uint frameCount);
 	void advanceRightPropLayer(uint frameCount);
 	void advanceMarkerPixels(uint32 delta);
 	void drawMarkerPixels();
@@ -79,7 +78,7 @@ private:
 	ResourceSpriteLayer _rightPropLayer;
 	ResourceSpriteLayer _secondaryActionLayer;
 	ResourceSpriteLayer _primaryActionLayer;
-	TimedAnimationChannel _leftPropChannel;
+	uint _leftPropTrack;
 	TimedAnimationChannel _rightPropChannel;
 	TimedAnimationChannel _markerChannel;
 	Common::Array<byte> _originalStageSmallRows;

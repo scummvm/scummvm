@@ -73,10 +73,12 @@ PlayableSceneConfig scene3020Config() {
 
 Scene3020::Scene3020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3020Config()),
-		_loopChannel(),
-		_loopLayer() {
+		_loopLayer(),
+		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_loopLayer.configure(7, kScene3020LoopDescriptorCount,
 		kScene3020LoopFrameMap, ARRAYSIZE(kScene3020LoopFrameMap));
+	_loopTrack = _realtimeAnimationTracks.addFrameMap(_loopLayer,
+		kScene3020LoopFrameMillis, _vm->gameState().windmillBladesMoving);
 }
 
 void Scene3020::initializeCustomPreviewState() {
@@ -130,8 +132,7 @@ bool Scene3020::prepareCustomGameplayLoop() {
 }
 
 bool Scene3020::advanceCustomGameplayLoop(uint32 delta) {
-	if (_vm->gameState().windmillBladesMoving)
-		advanceLoopingLayer(delta);
+	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -240,9 +241,9 @@ AmbientAudioProfile Scene3020::ambientAudioProfile() const {
 }
 
 void Scene3020::resetAnimationLayers() {
-	_loopChannel.reset(0, kScene3020LoopFrameMillis);
+	_realtimeAnimationTracks.reset(_loopTrack);
+	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
 	_loopLayer.visible = true;
-	_loopLayer.reset(0);
 }
 
 void Scene3020::rebuildWalkableMask() {
@@ -250,15 +251,6 @@ void Scene3020::rebuildWalkableMask() {
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
 		if (_walkablePaletteMask[i] > 1 && _walkablePaletteMask[i] < 4)
 			_walkablePaletteMask[i] = 0;
-	}
-}
-
-void Scene3020::advanceLoopingLayer(uint32 delta) {
-	const uint frameCount = _loopChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_loopChannel.frameIndex = _loopChannel.frameIndex + 1 < ARRAYSIZE(kScene3020LoopFrameMap) ?
-			_loopChannel.frameIndex + 1 : 0;
-		_loopLayer.setFrame(_loopChannel.frameIndex);
 	}
 }
 
@@ -311,8 +303,7 @@ void Scene3020::runDescriptorTransitionClip(uint chunkIndex, uint descriptorCoun
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
 		frameAccumulator += delta;
-		if (_vm->gameState().windmillBladesMoving)
-			advanceLoopingLayer(delta);
+		_realtimeAnimationTracks.advance(_loopTrack, delta, _random);
 		updateAmbientAudioAndMusicCues(delta);
 
 		bool frameDirty = false;

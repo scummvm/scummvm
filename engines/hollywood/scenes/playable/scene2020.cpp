@@ -116,7 +116,7 @@ static PlayableSceneConfig scene2020Config() {
 
 Scene2020::Scene2020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2020Config()),
-		_poolChannel(),
+		_poolTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_tigerChannel(),
 		_princessChannel(),
 		_paletteCycleChannel(),
@@ -136,6 +136,8 @@ Scene2020::Scene2020(HollywoodEngine *vm) :
 		_tigerReactionStarted(false) {
 	_poolLayer.configure(5, kScene2020PoolDescriptorCount,
 		kScene2020PoolFrameMap, ARRAYSIZE(kScene2020PoolFrameMap));
+	_poolTrack = _realtimeAnimationTracks.addFrameMap(_poolLayer,
+		kScene2020PoolFrameMillis);
 	_tigerLayer.configure(6, kScene2020TigerDescriptorCount,
 		kScene2020TigerFrameMap, ARRAYSIZE(kScene2020TigerFrameMap));
 	_princessLayer.configure(11, kScene2020PrincessDescriptorCount,
@@ -179,7 +181,6 @@ bool Scene2020::prepareCustomGameplayLoop() {
 }
 
 bool Scene2020::advanceCustomGameplayLoop(uint32 delta) {
-	advancePoolLayer(delta);
 	if (_tigerItemSequenceActive)
 		advanceTigerItemSequence(delta);
 	else
@@ -369,7 +370,7 @@ AmbientAudioProfile Scene2020::ambientAudioProfile() const {
 }
 
 void Scene2020::resetAnimationLayers() {
-	_poolChannel.reset(0, kScene2020PoolFrameMillis);
+	_realtimeAnimationTracks.reset(_poolTrack);
 	_tigerChannel.reset(0, kScene2020TigerFrameMillis);
 	_princessChannel.reset(0, kScene2020PrincessFrameMillis);
 	_paletteCycleChannel.reset(0, kScene2020PaletteCycleMillis);
@@ -379,7 +380,6 @@ void Scene2020::resetAnimationLayers() {
 	_tigerLayer.visible = true;
 	_princessLayer.visible = !_vm->gameState().scene2020PrincessGone;
 	_tigerItemEffectLayer.visible = false;
-	_poolLayer.reset(0);
 	_tigerLayer.reset(0);
 	_princessLayer.reset(0);
 	_tigerItemEffectLayer.reset(0);
@@ -391,14 +391,6 @@ void Scene2020::resetAnimationLayers() {
 	_tigerItemSequenceFinished = false;
 	_tigerItemEffectEnabled = false;
 	_tigerReactionStarted = false;
-}
-
-void Scene2020::advancePoolLayer(uint32 delta) {
-	const uint frameCount = _poolChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		_poolChannel.frameIndex = _poolChannel.frameIndex < 3 ? _poolChannel.frameIndex + 1 : 0;
-		_poolLayer.setFrame(_poolChannel.frameIndex);
-	}
 }
 
 void Scene2020::advanceTigerLayer(uint32 delta) {
@@ -670,7 +662,7 @@ bool Scene2020::waitPrincessDepartureFrame(uint32 millis, byte clipFrame) {
 		g_system->delayMillis(slice);
 		const uint16 oldPoolDescriptor = _poolLayer.descriptorIndex();
 		const uint16 oldTigerDescriptor = _tigerLayer.descriptorIndex();
-		advancePoolLayer(slice);
+		_realtimeAnimationTracks.advance(_poolTrack, slice, _random);
 		advanceTigerLayer(slice);
 		const bool paletteChanged = advancePaletteCycle(slice);
 		updateAmbientAudioAndMusicCues(slice);

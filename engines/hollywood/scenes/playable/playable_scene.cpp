@@ -150,6 +150,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_panelArt(vm->getLanguage()),
 		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random(Common::String::format("scene%u", config.sceneId)),
+		_realtimeAnimationTracks(),
 		_animationPlayer(*this),
 		_speechController(vm->getLanguage(), vm->hasSpeechData()),
 		_speech(_speechController.player),
@@ -1632,7 +1633,10 @@ void PlayableScene::prepareGameplayLoop() {
 void PlayableScene::advanceGameplayLoop(uint32 delta) {
 	advanceSecondaryActorSpeechAnimation(delta);
 
-	if (advanceCustomGameplayLoop(delta)) {
+	const bool customLoopAdvanced = advanceCustomGameplayLoop(delta);
+	_realtimeAnimationTracks.advance(delta, _random);
+
+	if (customLoopAdvanced) {
 		advanceViewportScroll(delta);
 		syncActiveActorPoseToGameState();
 		return;

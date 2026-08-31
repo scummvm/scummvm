@@ -48,7 +48,6 @@ private:
 
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
-	void advanceLoopingLayer(uint32 delta);
 	void advanceForegroundActorLayer(uint32 delta);
 	void drawLooseResourceSpriteLayer(const ResourceSpriteLayer &layer);
 	void updateHiddenObjectHotspots();
@@ -57,10 +56,10 @@ private:
 	void applyHiddenObjectPatch();
 	byte selectedInventoryItemForPatchAction() const;
 
-	TimedAnimationChannel _loopChannel;
 	TimedAnimationChannel _foregroundActorChannel;
 	ResourceSpriteLayer _foregroundActorLayer;
 	ResourceSpriteLayer _loopLayer;
+	uint _loopTrack;
 	bool _foregroundActorBlinkActive;
 	bool _foregroundActionActive;
 };

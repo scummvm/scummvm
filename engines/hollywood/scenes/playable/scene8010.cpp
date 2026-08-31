@@ -123,14 +123,18 @@ Scene8010::Scene8010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene8010Config()),
 		_fishermanLayer(),
 		_boatLayer(),
+		_boatTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_fishermanChannel(),
 		_fishermanSpeechIdleChannel(),
-		_boatChannel(),
 		_secondaryAmbientChannel(),
 		_fishermanState(0),
 		_fishermanRepeatCount(0),
 		_previousSecondaryAmbientCue(0),
 		_fishermanQuizAlternatePattern(_random.getRandomBit() != 0) {
+	_boatLayer.configure(6, kScene8010BoatDescriptorCount,
+		kScene8010BoatFrameMap, ARRAYSIZE(kScene8010BoatFrameMap));
+	_boatTrack = _realtimeAnimationTracks.addLoop(_boatLayer,
+		kScene8010BoatFrameMillis, kScene8010BoatDescriptorCount);
 }
 
 void Scene8010::initializeCustomPreviewState() {
@@ -182,7 +186,6 @@ bool Scene8010::advanceCustomGameplayLoop(uint32 delta) {
 		advancePrimaryDialogueSpeechFrame(delta);
 	else
 		advanceFishermanIdle(delta);
-	advanceBoatLoop(delta);
 	updateSceneAmbientAudio(delta);
 	return true;
 }
@@ -322,15 +325,12 @@ void Scene8010::runExitSideEffectsAfterLoop() {
 void Scene8010::resetSceneAnimations() {
 	_fishermanLayer.configure(5, kScene8010FishermanDescriptorCount,
 		kScene8010FishermanFrameMap, ARRAYSIZE(kScene8010FishermanFrameMap));
-	_boatLayer.configure(6, kScene8010BoatDescriptorCount,
-		kScene8010BoatFrameMap, ARRAYSIZE(kScene8010BoatFrameMap));
 	_fishermanLayer.visible = true;
 	_boatLayer.visible = true;
 	_fishermanLayer.reset(0);
-	_boatLayer.reset(0);
+	_realtimeAnimationTracks.reset(_boatTrack);
 	_fishermanChannel.reset(0, kScene8010FishermanFrameMillis);
 	_fishermanSpeechIdleChannel.reset(0, kScene8010FishermanSpeechFrameMillis);
-	_boatChannel.reset(0, kScene8010BoatFrameMillis);
 	_secondaryAmbientChannel.reset(0, kScene8010AmbientCheckMillis);
 	_fishermanState = 0;
 	_fishermanRepeatCount = 0;
@@ -445,14 +445,6 @@ void Scene8010::advanceFishermanIdle(uint32 delta) {
 	}
 }
 
-void Scene8010::advanceBoatLoop(uint32 delta) {
-	const uint frameCount = _boatChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte nextFrame = _boatLayer.frameIndex == 7 ? 0 : (byte)(_boatLayer.frameIndex + 1);
-		_boatLayer.setFrame(nextFrame);
-	}
-}
-
 void Scene8010::updateSceneAmbientAudio(uint32 delta) {
 	if (!_ambientSoundBank0.isPlaying()) {
 		_previousAmbientSoundCueId = _currentAmbientSoundCueId;
@@ -492,7 +484,7 @@ bool Scene8010::waitTransitionFrameMillis(uint32 millis) {
 		const uint16 previousFishermanDescriptor = _fishermanLayer.descriptorIndex();
 		const uint16 previousBoatDescriptor = _boatLayer.descriptorIndex();
 		advanceFishermanIdle(slice);
-		advanceBoatLoop(slice);
+		_realtimeAnimationTracks.advance(_boatTrack, slice, _random);
 		updateSceneAmbientAudio(slice);
 
 		const bool fishermanDirty = previousFishermanDescriptor != _fishermanLayer.descriptorIndex();

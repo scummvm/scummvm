@@ -57,7 +57,6 @@ private:
 	void advanceFlyDoctorIdle(uint32 delta);
 	void advanceFlySlimeDrip(uint32 delta);
 	void advanceTicketPickupFrame(uint32 delta);
-	void advanceSmallLoop(uint32 delta);
 	void advanceSmallTrigger(uint32 delta);
 	void restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame);
 	byte juniorIdleFrame() const;
@@ -91,13 +90,13 @@ private:
 	TimedAnimationChannel _flyDoctorModeChannel;
 	TimedAnimationChannel _flyDoctorIdleChannel;
 	TimedAnimationChannel _flySlimeDripChannel;
-	TimedAnimationChannel _smallLoopChannel;
 	TimedAnimationChannel _smallTriggerChannel;
 	ResourceSpriteLayer _largeBackgroundLayer;
 	ResourceSpriteLayer _invisibleManLayer;
 	ResourceSpriteLayer _flyDoctorLayer;
 	ResourceSpriteLayer _smallLoopLayer;
 	ResourceSpriteLayer _smallTriggerLayer;
+	uint _smallLoopTrack;
 	byte _largeBackgroundMode;
 	uint16 _largeBackgroundIdleCounter;
 	byte _flyDoctorMode;

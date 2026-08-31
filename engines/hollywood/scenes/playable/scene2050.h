@@ -51,7 +51,6 @@ private:
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetAmbientLayer();
-	void advanceAmbientLayer(uint32 delta);
 	void runEntryFromSphinxInterior();
 	void runEntryFromLabyrinthReturn();
 	void runGoToLabyrinth();
@@ -82,8 +81,8 @@ private:
 	void copyMuralTile(byte visibleTileId, byte sourceTileId, const byte *rawFrame, byte *destination);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 
-	TimedAnimationChannel _ambientChannel;
 	ResourceSpriteLayer _ambientLayer;
+	uint _ambientTrack;
 	bool _muralPermutationInitialized;
 	byte _muralPermutationChunkIndex;
 	byte _muralSelectedTile;

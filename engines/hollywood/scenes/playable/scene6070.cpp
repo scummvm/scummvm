@@ -141,14 +141,13 @@ Scene6070::Scene6070(HollywoodEngine *vm) :
 		_state609PropLayer(),
 		_state609NpcLayer(),
 		_sueIdleChannel(),
-		_state609PropChannel(),
+		_state609PropTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_sueSpeechTimerAccumulator(0),
 		_sueMode(0),
 		_completedSueSpeechCount(0),
 		_lastSueIdleSpeechFrame(0xff),
 		_manualSequenceActive(false),
 		_pendingRonRetort(false),
-		_state609PropContinuous(false),
 		_state609PropAlternatePose(false) {
 	_sueLayer.configure(8, 25, nullptr, 0);
 	_arrivalLayer.configure(9, 0x34, kScene6070ArrivalFrameMap,
@@ -158,6 +157,8 @@ Scene6070::Scene6070(HollywoodEngine *vm) :
 								 ARRAYSIZE(kScene6070State609PropFrameMap));
 	_state609NpcLayer.configure(11, 0x0d, kScene6070State609NpcFrameMap,
 								ARRAYSIZE(kScene6070State609NpcFrameMap));
+	_state609PropTrack = _realtimeAnimationTracks.addRange(_state609PropLayer,
+		kScene6070State609SlowFrameMillis, 17, 24, false);
 }
 
 int Scene6070::alternatePaletteResourceChunkIndex() const {
@@ -273,8 +274,7 @@ bool Scene6070::shouldPresentPreviewBeforeEntrySequence() const {
 
 bool Scene6070::prepareCustomGameplayLoop() {
 	_sueIdleChannel.reset(_sueLayer.frameIndex, kScene6070SueFrameMillis);
-	_state609PropChannel.reset(_state609PropLayer.frameIndex,
-							   kScene6070State609SlowFrameMillis);
+	_realtimeAnimationTracks.resetTimer(_state609PropTrack);
 	_sueSpeechTimerAccumulator = 0;
 	return true;
 }
@@ -283,9 +283,7 @@ bool Scene6070::advanceCustomGameplayLoop(uint32 delta) {
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 
-	if (isScene6070AlternateCutscene(_vm))
-		advanceState609Prop(delta);
-	else
+	if (!isScene6070AlternateCutscene(_vm))
 		advanceSueIdle(delta);
 
 	updateAmbientAudioAndMusicCues(delta);
@@ -543,14 +541,14 @@ void Scene6070::resetSceneLayers() {
 	_state609PropLayer.visible = alternate;
 	_state609NpcLayer.visible = alternate;
 	_sueIdleChannel.reset(14, kScene6070SueFrameMillis);
-	_state609PropChannel.reset(0, kScene6070State609SlowFrameMillis);
+	_realtimeAnimationTracks.setActive(_state609PropTrack, false);
+	_realtimeAnimationTracks.resetTimer(_state609PropTrack);
 	_sueSpeechTimerAccumulator = 0;
 	_sueMode = alternate ? 2 : 0;
 	_completedSueSpeechCount = 0;
 	_lastSueIdleSpeechFrame = 0xff;
 	_manualSequenceActive = false;
 	_pendingRonRetort = false;
-	_state609PropContinuous = false;
 	_state609PropAlternatePose = false;
 }
 
@@ -596,17 +594,6 @@ void Scene6070::advanceSueIdle(uint32 delta) {
 			continue;
 		}
 
-	}
-}
-
-void Scene6070::advanceState609Prop(uint32 delta) {
-	if (!_state609PropContinuous)
-		return;
-
-	const uint ticks = _state609PropChannel.consumeFrames(delta);
-	for (uint tick = 0; tick < ticks; ++tick) {
-		const byte frame = _state609PropLayer.frameIndex;
-		_state609PropLayer.setFrame(frame == 24 ? 17 : (byte)(frame + 1));
 	}
 }
 
@@ -658,9 +645,8 @@ void Scene6070::runState609Cutscene() {
 	_state609PropLayer.setFrame(0);
 	_state609PropAlternatePose = false;
 
-	_state609PropLayer.setFrame(17);
-	_state609PropChannel.reset(17, kScene6070State609SlowFrameMillis);
-	_state609PropContinuous = true;
+	_realtimeAnimationTracks.reset(_state609PropTrack);
+	_realtimeAnimationTracks.setActive(_state609PropTrack, true);
 	playAnimationFrames(_state609NpcLayer,
 		AnimationFrameRange(1, 4, kScene6070State609FastFrameMillis));
 	beginPrimarySpeechLineWithAnimationGroup(15, 1, 0x1c8, 0x096,
@@ -672,7 +658,7 @@ void Scene6070::runState609Cutscene() {
 	beginSecondarySpeechLine(15, 2);
 	beginPrimarySpeechLineWithAnimationGroup(15, 3, 0x102, 0x096,
 											 0x3f, 0x28, 0x32, kScene6070State609SueSpeechGroup);
-	_state609PropContinuous = false;
+	_realtimeAnimationTracks.setActive(_state609PropTrack, false);
 	_state609PropLayer.setFrame(0);
 	beginPrimarySpeechLineWithAnimationGroup(15, 4, 0x186, 0x096,
 											 0x20, 0x32, 0, kScene6070State609PropSpeechGroup);

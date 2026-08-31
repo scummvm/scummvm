@@ -50,7 +50,6 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void advancePoolLayer(uint32 delta);
 	void advanceTigerLayer(uint32 delta);
 	void advanceTigerIdleFrame();
 	void advanceTigerItemSequence(uint32 delta);
@@ -82,7 +81,7 @@ private:
 	void remapOriginalColorMapItems(byte firstSourceItem, byte secondSourceItem, byte destinationItem);
 	byte originalColorMapItemAt(uint paletteIndex) const;
 
-	TimedAnimationChannel _poolChannel;
+	uint _poolTrack;
 	TimedAnimationChannel _tigerChannel;
 	TimedAnimationChannel _princessChannel;
 	TimedAnimationChannel _paletteCycleChannel;
