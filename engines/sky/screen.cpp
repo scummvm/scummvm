@@ -117,6 +117,10 @@ void Screen::setProximityIcon(int idx, int x, int y, float alpha, int frame) {
 	if (idx < 0 || idx >= NUM_PROXIMITY_ICONS)
 		return;
 
+	if (SkyEngine::isIbass()) {
+		x = (x * 3) / 2;
+		y = (y * 8) / 5;
+	}
 	_proximityIcon[idx].set(x, y, alpha);
 	_proximityIcon[idx]._animating = true;
 	_proximityIcon[idx]._curFrame = frame;
