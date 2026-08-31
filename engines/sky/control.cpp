@@ -1136,8 +1136,8 @@ void Control::initHelpPanel() {
 	}
 	Graphics::Surface *converted = surface->convertTo(_skyScreen->_screen32.format);
 
-	float scaleX = (float)GAME_SCREEN_WIDTH / converted->w;
-	float scaleY = (float)FULL_SCREEN_HEIGHT / converted->h;
+	float scaleX = (float)_skyScreen->_screen32.w / converted->w;
+	float scaleY = (float)_skyScreen->_screen32.h / converted->h;
 	float scaleFactor = MIN(scaleX, scaleY);
 
 	int16 newW = (int16)(converted->w * scaleFactor);
@@ -1147,8 +1147,8 @@ void Control::initHelpPanel() {
 	converted->free();
 	delete converted;
 
-	int destX = (GAME_SCREEN_WIDTH - newW) / 2;
-	int destY = (FULL_SCREEN_HEIGHT - newH) / 2;
+	int destX = (_skyScreen->_screen32.w - newW) / 2;
+	int destY = (_skyScreen->_screen32.h - newH) / 2;
 	Graphics::Font *font = nullptr;
 #ifdef USE_FREETYPE2
 	font = Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 12);
