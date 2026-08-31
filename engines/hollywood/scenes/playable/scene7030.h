@@ -77,7 +77,6 @@ private:
 	TimedAnimationChannel _chunk6Animation;
 	AlternatingRandomFramePair _chunk6IdlePairA;
 	AlternatingRandomFramePair _chunk6IdlePairB;
-	SceneLayerStack _animationLayers;
 };
 
 } // End of namespace Hollywood

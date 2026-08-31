@@ -166,8 +166,7 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7040Config()),
 		_postItemIdleState(0),
 		_primarySpeechLeadInTicks(0),
-		_primarySpeechLastMouthFrameOffset(0),
-		_animationLayers() {
+		_primarySpeechLastMouthFrameOffset(0) {
 	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
@@ -221,16 +220,16 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	syncAnimationLayerFrames();
 	if (_actionOverlayPlayer.replacesActor()) {
-		drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk12Layer));
+		drawResourceSpriteLayer(_sceneLayers.layer(kScene7040Chunk12Layer));
 		if (isAlternatePaletteResourceActive()) {
-			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk17Layer));
-			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk16Layer));
+			drawResourceSpriteLayer(_sceneLayers.layer(kScene7040Chunk17Layer));
+			drawResourceSpriteLayer(_sceneLayers.layer(kScene7040Chunk16Layer));
 		}
 		drawActionOverlayLayer();
 		if (!isAlternatePaletteResourceActive())
-			drawResourceSpriteLayer(_animationLayers.layer(kScene7040Chunk11Layer));
+			drawResourceSpriteLayer(_sceneLayers.layer(kScene7040Chunk11Layer));
 	} else {
-		drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
+		drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}
@@ -914,14 +913,14 @@ void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
 
 void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
 	setChunk14ActionVisible(true);
-	playAnimationFrames(_animationLayers, kScene7040Chunk14ActionLayer,
+	playAnimationFrames(_sceneLayers, kScene7040Chunk14ActionLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
 			.hookEveryFrame(kScene7040Chunk14ActionHook));
 }
 
 void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
 	configureChunk14AltLayer(chunkIndex, true);
-	playAnimationFrames(_animationLayers, kScene7040Chunk14AltLayer,
+	playAnimationFrames(_sceneLayers, kScene7040Chunk14AltLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
 			.hookEveryFrame(kScene7040Chunk14AltHook));
 }
@@ -995,11 +994,11 @@ void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
 }
 
 void Scene7040::configureAnimationLayers() {
-	_animationLayers.configure(kScene7040AnimationLayerSpecs);
+	_sceneLayers.configure(kScene7040AnimationLayerSpecs);
 	const bool postItemMode = _vm->gameState().reviewedFrankensteinNote;
-	_animationLayers.setLayerVisible(kScene7040Chunk17Layer, postItemMode);
-	_animationLayers.setLayerVisible(kScene7040Chunk16Layer, postItemMode);
-	_animationLayers.setLayerVisible(kScene7040Chunk11Layer, !postItemMode);
+	_sceneLayers.setLayerVisible(kScene7040Chunk17Layer, postItemMode);
+	_sceneLayers.setLayerVisible(kScene7040Chunk16Layer, postItemMode);
+	_sceneLayers.setLayerVisible(kScene7040Chunk11Layer, !postItemMode);
 }
 
 void Scene7040::resetTransientAnimationLayers() {
@@ -1011,45 +1010,45 @@ void Scene7040::resetTransientAnimationLayers() {
 }
 
 void Scene7040::syncAnimationLayerFrames() {
-	_animationLayers.setLayerFrame(kScene7040Chunk17Layer, _chunk17Animation.frameIndex);
-	_animationLayers.setLayerFrame(kScene7040Chunk16Layer, _postItemAnimation.frameIndex);
-	_animationLayers.setLayerFrame(kScene7040Chunk11Layer, _preItemIdleAnimation.channel.frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk17Layer, _chunk17Animation.frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk16Layer, _postItemAnimation.frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk11Layer, _preItemIdleAnimation.channel.frameIndex);
 }
 
 void Scene7040::setChunk12OverlayVisible(bool visible) {
-	_animationLayers.setLayerVisible(kScene7040Chunk12Layer, visible);
+	_sceneLayers.setLayerVisible(kScene7040Chunk12Layer, visible);
 }
 
 void Scene7040::setChunk12OverlayFrame(byte frameIndex) {
-	_animationLayers.setLayerFrame(kScene7040Chunk12Layer, frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk12Layer, frameIndex);
 }
 
 void Scene7040::setChunk14ActionVisible(bool visible) {
-	_animationLayers.setLayerVisible(kScene7040Chunk14ActionLayer, visible);
+	_sceneLayers.setLayerVisible(kScene7040Chunk14ActionLayer, visible);
 }
 
 void Scene7040::setChunk14ActionFrame(byte frameIndex) {
-	_animationLayers.setLayerFrame(kScene7040Chunk14ActionLayer, frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk14ActionLayer, frameIndex);
 }
 
 void Scene7040::configureChunk14AltLayer(uint chunkIndex, bool visible) {
-	_animationLayers.configureLayerResource(kScene7040Chunk14AltLayer, chunkIndex,
+	_sceneLayers.configureLayerResource(kScene7040Chunk14AltLayer, chunkIndex,
 		kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
 		ARRAYSIZE(kScene7040Chunk14AltFrameMap), visible);
 }
 
 void Scene7040::setChunk14AltVisible(bool visible) {
-	_animationLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
+	_sceneLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
 }
 
 void Scene7040::setChunk14AltFrame(byte frameIndex) {
-	_animationLayers.setLayerFrame(kScene7040Chunk14AltLayer, frameIndex);
+	_sceneLayers.setLayerFrame(kScene7040Chunk14AltLayer, frameIndex);
 }
 
 uint Scene7040::chunk14AltChunkIndex() const {
-	if (!_animationLayers.hasLayer(kScene7040Chunk14AltLayer))
+	if (!_sceneLayers.hasLayer(kScene7040Chunk14AltLayer))
 		return 14;
-	return _animationLayers.layer(kScene7040Chunk14AltLayer).chunkIndex;
+	return _sceneLayers.layer(kScene7040Chunk14AltLayer).chunkIndex;
 }
 
 void Scene7040::runExitSideEffectsAfterLoop() {

@@ -94,14 +94,20 @@ static PlayableSceneConfig scene2070Config() {
 	return config;
 }
 
+const uint kScene2070ForegroundLayer = 0;
+const SceneLayerSpec kScene2070LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene2070ForegroundDescriptorCount,
+		nullptr, 0, true, 0}
+};
+
 Scene2070::Scene2070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2070Config()),
-		_foregroundLayer(),
 		_foregroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_sealMemoryActive(false),
 		_sealMemoryFrame(0) {
-	_foregroundLayer.configure(7, kScene2070ForegroundDescriptorCount, nullptr, 0);
-	_foregroundTrack = _realtimeAnimationTracks.addLoop(_foregroundLayer,
+	_sceneLayers.configure(kScene2070LayerSpecs);
+	_foregroundTrack = _realtimeAnimationTracks.addLoop(
+		_sceneLayers.layer(kScene2070ForegroundLayer),
 		kScene2070ForegroundFrameMillis, kScene2070ForegroundDescriptorCount);
 }
 
@@ -135,7 +141,7 @@ void Scene2070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_foregroundLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -321,13 +327,13 @@ AmbientAudioProfile Scene2070::ambientAudioProfile() const {
 }
 
 void Scene2070::resetForegroundLayer() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_foregroundTrack);
-	_foregroundLayer.visible = true;
 }
 
 void Scene2070::runEntryFromLabyrinth() {
 	setActiveActorPose(0x04b, 0x110, 2);
-	_foregroundLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene2070ForegroundLayer, 0);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack())
 		return;
@@ -350,7 +356,7 @@ void Scene2070::runEntryFromLabyrinth() {
 
 void Scene2070::runEntryFromRightPassage() {
 	setActiveActorPose(0x30e, 0x0ee, 4);
-	_foregroundLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene2070ForegroundLayer, 0);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack())
 		return;

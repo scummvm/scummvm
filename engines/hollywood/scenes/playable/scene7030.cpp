@@ -112,8 +112,7 @@ Scene7030::Scene7030(HollywoodEngine *vm) :
 		_chunk5Animation(),
 		_chunk6Animation(),
 		_chunk6IdlePairA(),
-		_chunk6IdlePairB(),
-		_animationLayers() {
+		_chunk6IdlePairB() {
 }
 
 void Scene7030::initializeCustomPreviewState() {
@@ -133,10 +132,10 @@ void Scene7030::initializeCustomPreviewState() {
 	_primaryDialogueSpeechGroup = 0xff;
 	_chunk6IdlePairA.reset(pairASecondPhase, _chunk6IdlePairA.randomPhaseTicks(_random));
 	_chunk6IdlePairB.reset(pairBSecondPhase, _chunk6IdlePairB.randomPhaseTicks(_random));
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
 	_chunk9AmbientDecisionCounter = 0;
 	_chunk5Animation.reset(1, kScene7030Chunk5FrameMillis);
 	_chunk6Animation.reset(0, kScene7030Chunk6FrameMillis);
@@ -157,7 +156,7 @@ void Scene7030::initializeCustomPreviewState() {
 		_sceneStateFlags[2] = 2;
 		state.punchBowlGlassPatchState = _sceneStateFlags[2];
 	}
-	_animationLayers.setLayerVisible(kScene7030Chunk5Layer, _sceneStateFlags[0] != 0);
+	_sceneLayers.setLayerVisible(kScene7030Chunk5Layer, _sceneStateFlags[0] != 0);
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -165,7 +164,7 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_animationLayers, kSceneAnimationBehindActors);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 
 	updateActorDepthThresholds(actorDrawOrderMode);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
@@ -427,22 +426,22 @@ void Scene7030::advanceChunk5AmbientOverlay() {
 void Scene7030::advanceChunk6IdleFrames() {
 	_chunk6IdlePairA.advance(_random);
 	_chunk6IdlePairB.advance(_random);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
-	_animationLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerA, _chunk6IdlePairA.firstFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerB, _chunk6IdlePairA.secondFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerC, _chunk6IdlePairB.firstFrame);
+	_sceneLayers.setLayerFrame(kScene7030Chunk6IdleLayerD, _chunk6IdlePairB.secondFrame);
 }
 
 void Scene7030::configureAnimationLayers() {
-	_animationLayers.configure(kScene7030AnimationLayerSpecs);
+	_sceneLayers.configure(kScene7030AnimationLayerSpecs);
 }
 
 void Scene7030::setChunk5Frame(byte frameIndex) {
-	_animationLayers.setLayerFrame(kScene7030Chunk5Layer, frameIndex);
+	_sceneLayers.setLayerFrame(kScene7030Chunk5Layer, frameIndex);
 }
 
 byte Scene7030::chunk5Frame() const {
-	return _animationLayers.layerFrame(kScene7030Chunk5Layer);
+	return _sceneLayers.layerFrame(kScene7030Chunk5Layer);
 }
 
 void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,

@@ -58,7 +58,6 @@ private:
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void clearSceneItemFromColorMap(byte itemId);
 
-	ResourceSpriteLayer _mineCartLayer;
 };
 
 } // End of namespace Hollywood

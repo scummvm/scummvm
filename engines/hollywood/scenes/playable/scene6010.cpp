@@ -101,8 +101,7 @@ static PlayableSceneConfig scene6010Config() {
 
 Scene6010::Scene6010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6010Config()),
-		_originalColorToItemMap(),
-		_temporaryOverlayLayers() {
+		_originalColorToItemMap() {
 }
 
 void Scene6010::initializeCustomPreviewState() {
@@ -134,7 +133,7 @@ void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	updateSceneDepthThresholds(actorDrawOrderMode, activeWorldX, activeWorldY);
-	drawLayerStack(_temporaryOverlayLayers, kSceneAnimationScenePlaced);
+	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -162,7 +161,7 @@ void Scene6010::runCustomEntrySequence() {
 }
 
 void Scene6010::prepareCustomGameplayLoop() {
-	_temporaryOverlayLayers.clear();
+	_sceneLayers.clear();
 }
 
 bool Scene6010::shouldAnimatePrimarySpeechLine() const {
@@ -615,34 +614,34 @@ void Scene6010::runLayeredOverlay(uint primaryChunkIndex, uint primaryDescriptor
 		uint secondaryChunkIndex, uint secondaryDescriptorCount,
 		const byte *secondaryFrameMap, uint secondaryFrameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
-	_temporaryOverlayLayers.clear();
+	_sceneLayers.clear();
 	uint secondaryLayer = SceneLayerStack::kInvalidLayer;
 	if (secondaryFrameMap != nullptr && secondaryFrameMapSize != 0) {
-		secondaryLayer = _temporaryOverlayLayers.addLayer(kSceneAnimationScenePlaced,
+		secondaryLayer = _sceneLayers.addLayer(kSceneAnimationScenePlaced,
 			secondaryChunkIndex,
 			(uint16)secondaryDescriptorCount, secondaryFrameMap, secondaryFrameMapSize);
 	}
 	const uint primaryLayer = primaryFrameMap != nullptr && primaryFrameMapSize != 0 ?
-		_temporaryOverlayLayers.addLayer(kSceneAnimationScenePlaced,
+		_sceneLayers.addLayer(kSceneAnimationScenePlaced,
 			primaryChunkIndex, (uint16)primaryDescriptorCount,
 			primaryFrameMap, primaryFrameMapSize) :
 		SceneLayerStack::kInvalidLayer;
 
-	const uint frameCount = _temporaryOverlayLayers.maximumVisibleFrameCount();
+	const uint frameCount = _sceneLayers.maximumVisibleFrameCount();
 	const bool previousHideActor = _hideActiveActor;
 	_hideActiveActor = true;
 	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
 		if (primaryLayer != SceneLayerStack::kInvalidLayer)
-			_temporaryOverlayLayers.setVisibleLayerFrameClamped(primaryLayer, frame);
+			_sceneLayers.setVisibleLayerFrameClamped(primaryLayer, frame);
 		if (secondaryLayer != SceneLayerStack::kInvalidLayer)
-			_temporaryOverlayLayers.setVisibleLayerFrameClamped(secondaryLayer, frame);
+			_sceneLayers.setVisibleLayerFrameClamped(secondaryLayer, frame);
 		if (soundFrame >= 0 && (int)frame == soundFrame)
 			_soundBank0.playSample(soundId, 80);
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
 	_hideActiveActor = previousHideActor;
-	_temporaryOverlayLayers.clear();
+	_sceneLayers.clear();
 	drawPlayableComposite();
 	presentFrame();
 }

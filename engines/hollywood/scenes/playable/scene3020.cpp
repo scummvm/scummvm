@@ -59,6 +59,12 @@ const byte kScene3020PickupFrameMap[] = {
 	7, 8, 9, 10, 11, 12, 13
 };
 
+const uint kScene3020LoopLayer = 0;
+const SceneLayerSpec kScene3020LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene3020LoopDescriptorCount,
+		kScene3020LoopFrameMap, ARRAYSIZE(kScene3020LoopFrameMap), true, 0}
+};
+
 PlayableSceneConfig scene3020Config() {
 	PlayableSceneConfig config(3020,
 		SceneResourceLayout(11, 5, 10),
@@ -73,11 +79,10 @@ PlayableSceneConfig scene3020Config() {
 
 Scene3020::Scene3020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3020Config()),
-		_loopLayer(),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
-	_loopLayer.configure(7, kScene3020LoopDescriptorCount,
-		kScene3020LoopFrameMap, ARRAYSIZE(kScene3020LoopFrameMap));
-	_loopTrack = _realtimeAnimationTracks.addFrameMap(_loopLayer,
+	_sceneLayers.configure(kScene3020LayerSpecs);
+	_loopTrack = _realtimeAnimationTracks.addFrameMap(
+		_sceneLayers.layer(kScene3020LoopLayer),
 		kScene3020LoopFrameMillis, _vm->gameState().windmillBladesMoving);
 }
 
@@ -105,7 +110,7 @@ void Scene3020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_loopLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -238,9 +243,9 @@ AmbientAudioProfile Scene3020::ambientAudioProfile() const {
 }
 
 void Scene3020::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_loopTrack);
 	_realtimeAnimationTracks.setActive(_loopTrack, _vm->gameState().windmillBladesMoving);
-	_loopLayer.visible = true;
 }
 
 void Scene3020::rebuildWalkableMask() {
@@ -321,7 +326,7 @@ void Scene3020::runDescriptorTransitionClip(uint chunkIndex, uint descriptorCoun
 
 void Scene3020::drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex) {
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_loopLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	// The continuation descriptors contain Ron and their own occlusion.
 	drawStripSpriteFrame(clipData, 0, 0, descriptorCount, frameIndex, _sceneFramebuffer);
 }
