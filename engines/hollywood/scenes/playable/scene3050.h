@@ -49,7 +49,6 @@ private:
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
 	void copyCaptionRow(byte sourceRow, byte destinationRow);
-	void advanceBackgroundLayer(uint32 delta);
 	void advanceForegroundActorLayer(uint32 delta);
 	void advanceDialogueActorLayer(uint32 delta);
 	void updateForegroundActorIdleSpeech(uint32 delta);
@@ -68,11 +67,11 @@ private:
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void beginDialogueResponse(byte frameIndex);
 
-	TimedAnimationChannel _backgroundChannel;
 	TimedAnimationChannel _foregroundActorChannel;
 	TimedAnimationChannel _dialogueActorChannel;
 	ResourceSpriteLayer _backgroundLayer;
 	ResourceSpriteLayer _foregroundActorLayer;
+	uint _backgroundTrack;
 	byte _foregroundActorMode;
 	byte _foregroundActorIdleCounter;
 	byte _foregroundActorIdleSpeechFrame;

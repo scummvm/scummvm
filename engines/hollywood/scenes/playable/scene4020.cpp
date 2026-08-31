@@ -79,12 +79,15 @@ static PlayableSceneConfig scene4020Config() {
 Scene4020::Scene4020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4020Config()),
 		_idleLayer(),
-		_idleChannel() {
+		_idleTrack(RealtimeAnimationTracks::kInvalidTrack) {
+	_idleLayer.configure(kScene4020IdleChunk, kScene4020IdleDescriptorCount, nullptr, 0);
+	_idleTrack = _realtimeAnimationTracks.addLoop(_idleLayer,
+		kScene4020FrameMillis, kScene4020IdleDescriptorCount);
 }
 
 void Scene4020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
-	initializeIdleLayer();
+	resetIdleLayer();
 
 	if (_vm->gameState().mainFlowStateId == kScene4020ReturnState)
 		setActiveActorPose(0x265, 0x117, 4);
@@ -125,7 +128,6 @@ void Scene4020::runCustomEntrySequence() {
 }
 
 bool Scene4020::advanceCustomGameplayLoop(uint32 delta) {
-	advanceIdleLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -225,24 +227,9 @@ AmbientAudioProfile Scene4020::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene4020::initializeIdleLayer() {
-	_idleLayer.configure(kScene4020IdleChunk, kScene4020IdleDescriptorCount, nullptr, 0);
+void Scene4020::resetIdleLayer() {
+	_realtimeAnimationTracks.reset(_idleTrack);
 	_idleLayer.visible = true;
-	_idleLayer.setFrame(0);
-	_idleLayer.hasPreviousDescriptor = false;
-	_idleChannel.reset(0, kScene4020FrameMillis);
-}
-
-void Scene4020::advanceIdleLayer(uint32 delta) {
-	const uint frameCount = _idleChannel.consumeFrames(delta);
-	if (frameCount == 0)
-		return;
-
-	for (uint i = 0; i < frameCount; ++i) {
-		const byte nextFrame = _idleLayer.frameIndex == 0x19 ? 0 : _idleLayer.frameIndex + 1;
-		_idleLayer.setFrame(nextFrame);
-	}
-	_idleChannel.frameIndex = _idleLayer.frameIndex;
 }
 
 void Scene4020::setActiveActorPose(int x, int y, byte facing) {

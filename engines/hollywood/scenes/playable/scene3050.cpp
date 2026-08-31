@@ -94,11 +94,11 @@ static PlayableSceneConfig scene3050Config() {
 
 Scene3050::Scene3050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3050Config()),
-		_backgroundChannel(),
 		_foregroundActorChannel(),
 		_dialogueActorChannel(),
 		_backgroundLayer(),
 		_foregroundActorLayer(),
+		_backgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_foregroundActorMode(0),
 		_foregroundActorIdleCounter(0),
 		_foregroundActorIdleSpeechFrame(0),
@@ -109,6 +109,8 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		_foregroundActorIdleSpeechDuration(0) {
 	_backgroundLayer.configure(7, kScene3050BackgroundDescriptorCount,
 		kScene3050BackgroundFrameMap, ARRAYSIZE(kScene3050BackgroundFrameMap));
+	_backgroundTrack = _realtimeAnimationTracks.addFrameMap(_backgroundLayer,
+		kScene3050BackgroundFrameMillis);
 	_foregroundActorLayer.configure(6, kScene3050ForegroundActorDescriptorCount,
 		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap));
 }
@@ -165,7 +167,6 @@ bool Scene3050::prepareCustomGameplayLoop() {
 }
 
 bool Scene3050::advanceCustomGameplayLoop(uint32 delta) {
-	advanceBackgroundLayer(delta);
 	updateForegroundActorIdleSpeech(delta);
 	if (_dialogueMenuActive)
 		advanceDialogueActorLayer(delta);
@@ -266,12 +267,11 @@ AmbientAudioProfile Scene3050::ambientAudioProfile() const {
 }
 
 void Scene3050::resetAnimationLayers() {
-	_backgroundChannel.reset(0, kScene3050BackgroundFrameMillis);
+	_realtimeAnimationTracks.reset(_backgroundTrack);
 	_foregroundActorChannel.reset(0, kScene3050ForegroundFrameMillis);
 	_dialogueActorChannel.reset(kScene3050DialogueBaseFrame, kScene3050DialogueFrameMillis);
 	_backgroundLayer.visible = true;
 	_foregroundActorLayer.visible = true;
-	_backgroundLayer.reset(0);
 	_foregroundActorLayer.reset(0);
 	_foregroundActorMode = 0;
 	_foregroundActorIdleCounter = kScene3050IgorInitialIdleCounter;
@@ -300,15 +300,6 @@ void Scene3050::copyCaptionRow(byte sourceRow, byte destinationRow) {
 
 	memcpy(_stage003SmallRows.data() + destinationOffset,
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
-}
-
-void Scene3050::advanceBackgroundLayer(uint32 delta) {
-	const uint frameCount = _backgroundChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_backgroundChannel.frameIndex = _backgroundChannel.frameIndex + 1 < ARRAYSIZE(kScene3050BackgroundFrameMap) ?
-			_backgroundChannel.frameIndex + 1 : 0;
-		_backgroundLayer.setFrame(_backgroundChannel.frameIndex);
-	}
 }
 
 void Scene3050::advanceForegroundActorLayer(uint32 delta) {

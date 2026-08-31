@@ -135,8 +135,8 @@ static PlayableSceneConfig scene2050Config() {
 
 Scene2050::Scene2050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2050Config()),
-		_ambientChannel(),
 		_ambientLayer(),
+		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_muralPermutationInitialized(false),
 		_muralPermutationChunkIndex(0),
 		_muralSelectedTile(0),
@@ -150,6 +150,8 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_sealDiscoverySpeechDurationMillis(0) {
 	_ambientLayer.configure(10, kScene2050AmbientDescriptorCount,
 		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap));
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_ambientLayer,
+		kScene2050AmbientFrameMillis);
 }
 
 void Scene2050::initializeCustomPreviewState() {
@@ -200,7 +202,6 @@ bool Scene2050::prepareCustomGameplayLoop() {
 bool Scene2050::advanceCustomGameplayLoop(uint32 delta) {
 	if (_vm->gameState().scene2050MuralPuzzleState == 2)
 		runSealDiscoveryIfPending();
-	advanceAmbientLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -325,17 +326,8 @@ AmbientAudioProfile Scene2050::ambientAudioProfile() const {
 }
 
 void Scene2050::resetAmbientLayer() {
-	_ambientChannel.reset(0, kScene2050AmbientFrameMillis);
+	_realtimeAnimationTracks.reset(_ambientTrack);
 	_ambientLayer.visible = true;
-	_ambientLayer.reset(0);
-}
-
-void Scene2050::advanceAmbientLayer(uint32 delta) {
-	const uint frameCount = _ambientChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_ambientChannel.frameIndex = (_ambientChannel.frameIndex + 1) % ARRAYSIZE(kScene2050AmbientFrameMap);
-		_ambientLayer.setFrame(_ambientChannel.frameIndex);
-	}
 }
 
 void Scene2050::runEntryFromSphinxInterior() {

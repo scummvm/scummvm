@@ -46,8 +46,6 @@ const byte kScene6040PaintInventoryItem = 0x60;
 const byte kScene6040LooseWireInventoryItem = 0x61;
 const byte kScene6040CutWireInventoryItem = 0x5f;
 
-const byte kScene6040ToggleFrameMap[] = { 0, 1 };
-
 const byte kScene6040PaintPickupFrameMap[] = {
 	9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
@@ -80,14 +78,16 @@ static PlayableSceneConfig scene6040Config() {
 Scene6040::Scene6040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6040Config()),
 		_originalColorToItemMap(),
-		_leftToggleChannel(),
-		_rightToggleChannel(),
 		_leftToggleLayer(),
-		_rightToggleLayer() {
-	_leftToggleLayer.configure(12, kScene6040ToggleDescriptorCount,
-		kScene6040ToggleFrameMap, ARRAYSIZE(kScene6040ToggleFrameMap));
-	_rightToggleLayer.configure(13, kScene6040ToggleDescriptorCount,
-		kScene6040ToggleFrameMap, ARRAYSIZE(kScene6040ToggleFrameMap));
+		_rightToggleLayer(),
+		_leftToggleTrack(RealtimeAnimationTracks::kInvalidTrack),
+		_rightToggleTrack(RealtimeAnimationTracks::kInvalidTrack) {
+	_leftToggleLayer.configure(12, kScene6040ToggleDescriptorCount, nullptr, 0);
+	_rightToggleLayer.configure(13, kScene6040ToggleDescriptorCount, nullptr, 0);
+	_leftToggleTrack = _realtimeAnimationTracks.addLoop(_leftToggleLayer,
+		kScene6040LeftToggleMillis, kScene6040ToggleDescriptorCount);
+	_rightToggleTrack = _realtimeAnimationTracks.addLoop(_rightToggleLayer,
+		kScene6040RightToggleMillis, kScene6040ToggleDescriptorCount);
 }
 
 void Scene6040::initializeCustomPreviewState() {
@@ -133,8 +133,6 @@ bool Scene6040::prepareCustomGameplayLoop() {
 }
 
 bool Scene6040::advanceCustomGameplayLoop(uint32 delta) {
-	advanceToggleLayer(_leftToggleChannel, _leftToggleLayer, delta);
-	advanceToggleLayer(_rightToggleChannel, _rightToggleLayer, delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -250,18 +248,10 @@ AmbientAudioProfile Scene6040::ambientAudioProfile() const {
 }
 
 void Scene6040::resetAnimationLayers() {
-	_leftToggleChannel.reset(0, kScene6040LeftToggleMillis);
-	_rightToggleChannel.reset(0, kScene6040RightToggleMillis);
-	_leftToggleLayer.reset(0);
-	_rightToggleLayer.reset(0);
+	_realtimeAnimationTracks.reset(_leftToggleTrack);
+	_realtimeAnimationTracks.reset(_rightToggleTrack);
 	_leftToggleLayer.visible = true;
 	_rightToggleLayer.visible = true;
-}
-
-void Scene6040::advanceToggleLayer(TimedAnimationChannel &channel, ResourceSpriteLayer &layer, uint32 delta) {
-	const uint frameCount = channel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i)
-		layer.setFrame(layer.frameIndex == 0 ? 1 : 0);
 }
 
 void Scene6040::drawForegroundBlocks(int activeWorldY) {

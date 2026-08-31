@@ -84,11 +84,11 @@ private:
 	ResourceSpriteLayer _projectorSpeechLayer;
 	TimedAnimationChannel _movingWallChannel;
 	TimedAnimationChannel _mainProjectionChannel;
-	TimedAnimationChannel _sideLoopChannel;
-	TimedAnimationChannel _toggleChannel;
-	TimedAnimationChannel _randomDetailChannel;
 	TimedAnimationChannel _transformationOverlayChannel;
 	TimedAnimationChannel _transformationPaletteChannel;
+	uint _sideLoopTrack;
+	uint _toggleTrack;
+	uint _randomDetailTrack;
 	bool _projectorSpeechActive;
 	bool _roomTransformationActive;
 	bool _transformationOverlayStarted;
