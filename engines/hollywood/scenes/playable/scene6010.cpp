@@ -134,7 +134,7 @@ void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	updateSceneDepthThresholds(actorDrawOrderMode, activeWorldX, activeWorldY);
-	drawTransientLayers(_temporaryOverlayLayers);
+	drawLayerStack(_temporaryOverlayLayers, kSceneAnimationScenePlaced);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -618,24 +618,26 @@ void Scene6010::runLayeredOverlay(uint primaryChunkIndex, uint primaryDescriptor
 		const byte *secondaryFrameMap, uint secondaryFrameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
 	_temporaryOverlayLayers.clear();
-	uint secondaryLayer = TransientLayerCompositor::kInvalidLayer;
+	uint secondaryLayer = SceneLayerStack::kInvalidLayer;
 	if (secondaryFrameMap != nullptr && secondaryFrameMapSize != 0) {
-		secondaryLayer = _temporaryOverlayLayers.addLayer(secondaryChunkIndex,
+		secondaryLayer = _temporaryOverlayLayers.addLayer(kSceneAnimationScenePlaced,
+			secondaryChunkIndex,
 			(uint16)secondaryDescriptorCount, secondaryFrameMap, secondaryFrameMapSize);
 	}
 	const uint primaryLayer = primaryFrameMap != nullptr && primaryFrameMapSize != 0 ?
-		_temporaryOverlayLayers.addLayer(primaryChunkIndex, (uint16)primaryDescriptorCount,
+		_temporaryOverlayLayers.addLayer(kSceneAnimationScenePlaced,
+			primaryChunkIndex, (uint16)primaryDescriptorCount,
 			primaryFrameMap, primaryFrameMapSize) :
-		TransientLayerCompositor::kInvalidLayer;
+		SceneLayerStack::kInvalidLayer;
 
-	const uint frameCount = _temporaryOverlayLayers.frameCount();
+	const uint frameCount = _temporaryOverlayLayers.maximumVisibleFrameCount();
 	const bool previousHideActor = _hideActiveActor;
 	_hideActiveActor = true;
 	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		if (primaryLayer != TransientLayerCompositor::kInvalidLayer)
-			_temporaryOverlayLayers.setLayerFrameClamped(primaryLayer, frame);
-		if (secondaryLayer != TransientLayerCompositor::kInvalidLayer)
-			_temporaryOverlayLayers.setLayerFrameClamped(secondaryLayer, frame);
+		if (primaryLayer != SceneLayerStack::kInvalidLayer)
+			_temporaryOverlayLayers.setVisibleLayerFrameClamped(primaryLayer, frame);
+		if (secondaryLayer != SceneLayerStack::kInvalidLayer)
+			_temporaryOverlayLayers.setVisibleLayerFrameClamped(secondaryLayer, frame);
 		if (soundFrame >= 0 && (int)frame == soundFrame)
 			_soundBank0.playSample(soundId, 80);
 		if (waitSceneMillis(frameMillis))

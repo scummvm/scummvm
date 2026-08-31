@@ -78,7 +78,7 @@ private:
 		byte bandWidth);
 	void runFinalCutscene();
 
-	TransientLayerCompositor _ambientLayers;
+	SceneLayerStack _ambientLayers;
 	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _chunk12Channel;
 	TimedAnimationChannel _organBodyChannel;

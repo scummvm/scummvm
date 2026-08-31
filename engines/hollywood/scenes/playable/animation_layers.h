@@ -85,10 +85,11 @@ struct ResourceSpriteLayer {
 enum SceneAnimationStratum {
 	kSceneAnimationBehindActors,
 	kSceneAnimationInFrontOfActors,
-	kSceneAnimationActorReplacement
+	kSceneAnimationActorReplacement,
+	kSceneAnimationScenePlaced
 };
 
-struct SceneAnimationLayerSpec {
+struct SceneLayerSpec {
 	SceneAnimationStratum stratum;
 	uint chunkIndex;
 	uint16 descriptorCount;
@@ -98,34 +99,53 @@ struct SceneAnimationLayerSpec {
 };
 
 /**
- * Stores resource layers with an explicit position in the scene composite.
+ * Stores ordered resource-layer state for a scene composite.
  *
- * Specification order assigns layer IDs and draw order within a stratum.
- * Visibility and frame changes remain independent.
+ * Specification order assigns layer IDs and draw order within a stratum. Most
+ * layers have a fixed actor-relative stratum; scene-placed layers are drawn by
+ * custom composites at the point required by the current scene mode.
  */
-class SceneAnimationLayers {
+class SceneLayerStack {
 public:
+	enum {
+		kInvalidLayer = 0xffffffff
+	};
+
 	void clear() {
 		_layers.clear();
 	}
 
 	template<uint size>
-	void configure(const SceneAnimationLayerSpec (&specs)[size]) {
+	void configure(const SceneLayerSpec (&specs)[size]) {
 		clear();
 		for (uint i = 0; i < size; ++i)
 			configureLayer(i, specs[i]);
 	}
 
-	void configureLayer(uint id, const SceneAnimationLayerSpec &spec) {
+	void configureLayer(uint id, const SceneLayerSpec &spec) {
+		configureLayer(id, spec.stratum, spec.chunkIndex, spec.descriptorCount,
+			spec.frameMap, spec.frameMapSize, spec.visible);
+	}
+
+	void configureLayer(uint id, SceneAnimationStratum stratum, uint chunkIndex,
+			uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
+			bool visible = true) {
 		if (id >= _layers.size())
 			_layers.resize(id + 1);
 
 		LayerState &state = _layers[id];
 		state.configured = true;
-		state.stratum = spec.stratum;
-		state.layer.configure(spec.chunkIndex, spec.descriptorCount,
-			spec.frameMap, spec.frameMapSize);
-		state.layer.visible = spec.visible && availableFrameCount(state.layer) != 0;
+		state.stratum = stratum;
+		state.layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
+		state.layer.visible = visible && availableFrameCount(state.layer) != 0;
+	}
+
+	uint addLayer(SceneAnimationStratum stratum, uint chunkIndex, uint16 descriptorCount,
+			const byte *frameMap, uint frameMapSize, bool visible = true) {
+		const uint id = _layers.size();
+		configureLayer(id, stratum, chunkIndex, descriptorCount, frameMap,
+			frameMapSize, visible);
+		return id;
 	}
 
 	void configureLayerResource(uint id, uint chunkIndex, uint16 descriptorCount,
@@ -150,6 +170,14 @@ public:
 		return hasLayer(id) && _layers[id].stratum == stratum;
 	}
 
+	bool hasVisibleLayers() const {
+		for (uint i = 0; i < _layers.size(); ++i) {
+			if (_layers[i].configured && _layers[i].layer.visible)
+				return true;
+		}
+		return false;
+	}
+
 	ResourceSpriteLayer &layer(uint id) {
 		return _layers[id].layer;
 	}
@@ -168,8 +196,44 @@ public:
 			_layers[id].layer.setFrame(frameIndex);
 	}
 
+	void setVisibleLayerFrame(uint id, byte frameIndex) {
+		if (hasLayer(id) && _layers[id].layer.visible)
+			_layers[id].layer.setFrame(frameIndex);
+	}
+
+	void setVisibleLayerFrameClamped(uint id, uint frameIndex) {
+		if (!hasLayer(id) || !_layers[id].layer.visible)
+			return;
+
+		const uint count = availableFrameCount(_layers[id].layer);
+		if (count == 0)
+			return;
+
+		if (frameIndex >= count)
+			frameIndex = count - 1;
+		if (frameIndex > 0xff)
+			frameIndex = 0xff;
+		_layers[id].layer.setFrame((byte)frameIndex);
+	}
+
 	byte layerFrame(uint id) const {
 		return hasLayer(id) ? _layers[id].layer.frameIndex : 0;
+	}
+
+	bool layerVisible(uint id) const {
+		return hasLayer(id) && _layers[id].layer.visible;
+	}
+
+	uint maximumVisibleFrameCount() const {
+		uint result = 0;
+		for (uint i = 0; i < _layers.size(); ++i) {
+			if (!_layers[i].configured || !_layers[i].layer.visible)
+				continue;
+			const uint count = availableFrameCount(_layers[i].layer);
+			if (count > result)
+				result = count;
+		}
+		return result;
 	}
 
 private:
@@ -190,133 +254,6 @@ private:
 	}
 
 	Common::Array<LayerState> _layers;
-};
-
-/**
- * Stores an ordered set of transient resource-sprite layers.
- *
- * It owns layer state and order only; the scene chooses the draw stratum by
- * calling drawTransientLayers() at the appropriate point in its composite.
- */
-class TransientLayerCompositor {
-public:
-	enum {
-		kInvalidLayer = 0xffffffff
-	};
-
-	TransientLayerCompositor() :
-			_layers() {
-	}
-
-	void clear() {
-		_layers.clear();
-	}
-
-	bool visible() const {
-		for (uint i = 0; i < _layers.size(); ++i) {
-			if (_layers[i].visible)
-				return true;
-		}
-		return false;
-	}
-
-	uint layerCount() const {
-		return _layers.size();
-	}
-
-	bool hasLayer(uint index) const {
-		return index < _layers.size();
-	}
-
-	const ResourceSpriteLayer &layer(uint index) const {
-		return _layers[index];
-	}
-
-	ResourceSpriteLayer &layer(uint index) {
-		return _layers[index];
-	}
-
-	byte layerFrame(uint index) const {
-		if (index >= _layers.size())
-			return 0;
-		return _layers[index].frameIndex;
-	}
-
-	bool layerVisible(uint index) const {
-		return index < _layers.size() && _layers[index].visible;
-	}
-
-	uint addLayer(uint chunkIndex, uint16 descriptorCount, const byte *frameMap,
-			uint frameMapSize, bool visible = true) {
-		const uint index = _layers.size();
-		configureLayer(index, chunkIndex, descriptorCount, frameMap, frameMapSize, visible);
-		return index;
-	}
-
-	void configureLayer(uint index, uint chunkIndex, uint16 descriptorCount, const byte *frameMap,
-			uint frameMapSize, bool visible = true) {
-		if (index >= _layers.size())
-			_layers.resize(index + 1);
-
-		ResourceSpriteLayer &target = _layers[index];
-		target.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
-		target.visible = visible && availableFrameCount(target) != 0;
-	}
-
-	void setLayerVisible(uint index, bool visible) {
-		if (index < _layers.size())
-			_layers[index].visible = visible && availableFrameCount(_layers[index]) != 0;
-	}
-
-	void setLayerFrame(uint index, byte frameIndex) {
-		if (index < _layers.size() && _layers[index].visible)
-			_layers[index].setFrame(frameIndex);
-	}
-
-	void setLayerFramePreservingVisibility(uint index, byte frameIndex) {
-		if (index < _layers.size())
-			_layers[index].setFrame(frameIndex);
-	}
-
-	void setLayerFrameClamped(uint index, uint frameIndex) {
-		if (index >= _layers.size() || !_layers[index].visible)
-			return;
-
-		const uint count = availableFrameCount(_layers[index]);
-		if (count == 0)
-			return;
-
-		if (frameIndex >= count)
-			frameIndex = count - 1;
-		if (frameIndex > 0xff)
-			frameIndex = 0xff;
-		_layers[index].setFrame((byte)frameIndex);
-	}
-
-	uint frameCount() const {
-		uint result = 0;
-		for (uint i = 0; i < _layers.size(); ++i) {
-			const uint count = layerFrameCount(_layers[i]);
-			if (count > result)
-				result = count;
-		}
-		return result;
-	}
-
-private:
-	uint layerFrameCount(const ResourceSpriteLayer &target) const {
-		if (!target.visible)
-			return 0;
-		return availableFrameCount(target);
-	}
-
-	uint availableFrameCount(const ResourceSpriteLayer &target) const {
-		if (target.frameMap != nullptr)
-			return target.frameMapSize;
-		return target.descriptorCount;
-	}
-
-	Common::Array<ResourceSpriteLayer> _layers;
 };
 
 } // End of namespace Hollywood

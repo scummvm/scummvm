@@ -120,7 +120,7 @@ private:
 	TimedAnimationChannel _dialogueOverlayAnimation;
 	RandomFrameAnimation _hannoverSpeechAnimation;
 	RandomFrameAnimation _doghouseSpeechAnimation;
-	SceneAnimationLayers _animationLayers;
+	SceneLayerStack _animationLayers;
 };
 
 } // End of namespace Hollywood
