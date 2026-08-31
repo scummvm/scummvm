@@ -238,6 +238,7 @@ protected:
 	// The base loop invokes these services every frame; overrides only replace their strategy.
 	virtual void advancePrimarySpeechAnimation(uint32 delta);
 	virtual void advanceAmbientAudio(uint32 delta);
+	virtual void realtimeSpeechFinished(byte speechId);
 	// Returning true suppresses generic action dispatch.
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
 	// Controls actor paths started by scene clicks, including free walk and item relations.
@@ -360,6 +361,19 @@ protected:
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);
+	// Realtime speech advances inside the gameplay loop, leaving panels and scene input responsive.
+	bool startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX,
+		uint16 topY, byte red, byte green, byte blue, byte animationGroup, byte speechId);
+	bool startRealtimeSecondarySpeechLine(uint16 rowIndex, byte frameIndex, byte speechId);
+	void advanceRealtimeSpeech(uint32 delta);
+	void stopRealtimeSpeech();
+	bool isRealtimeSpeechActive() const { return _realtimeSpeechActive; }
+	bool isRealtimeSecondarySpeechActive() const {
+		return _realtimeSpeechActive && !_realtimeSpeechPrimary;
+	}
+	byte realtimeSpeechId() const { return _realtimeSpeechId; }
+	void startRealtimeSpeechPart();
+	void finishRealtimeSpeech(bool notifyScene);
 
 	// Scene action dispatch
 	void processSceneActionClick(const GameplayLoopCursorState &state);
@@ -635,6 +649,7 @@ protected:
 
 	// Speech runtime state
 	SpeechController _speechController;
+	SpeechPlayer _realtimeSpeechPlayer;
 	SpeechPlayer &_speech;
 	SpeechOverlay &_speechOverlay;
 	SpeechOverlay &_primarySpeechOverlay;
@@ -647,6 +662,19 @@ protected:
 	uint32 &_primaryLeftSpeechTimerAccumulator;
 	uint32 &_primaryDialogueSpeechTimerAccumulator;
 	byte &_secondaryActorFrame;
+	uint32 _realtimeSpeechElapsed;
+	uint32 _realtimeSpeechDuration;
+	uint16 _realtimeSpeechTextRecordId;
+	uint16 _realtimeSpeechVoiceSampleId;
+	uint16 _realtimeSpeechCenterX;
+	uint16 _realtimeSpeechTopY;
+	byte _realtimeSpeechContinuationPart;
+	byte _realtimeSpeechContinuationCount;
+	byte _realtimeSpeechAnimationGroup;
+	byte _realtimeSpeechId;
+	byte _realtimeSpeechVolumePercent;
+	bool _realtimeSpeechActive;
+	bool _realtimeSpeechPrimary;
 
 	// Action overlay runtime state
 	ActionOverlayPlayer _actionOverlayPlayer;

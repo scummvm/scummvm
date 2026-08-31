@@ -35,6 +35,8 @@ const byte kActionInvalidCel = 0xff;
 
 void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
+	if (isRealtimeSecondarySpeechActive())
+		stopRealtimeSpeech();
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
@@ -46,6 +48,8 @@ void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 
 void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
+	if (isRealtimeSecondarySpeechActive())
+		stopRealtimeSpeech();
 	_lastInventoryActionItemId = state.resolvedItem;
 	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
 	_vm->cursor()->leaveInteractiveMode();
