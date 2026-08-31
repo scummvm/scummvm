@@ -60,6 +60,7 @@ private:
 	void updateGlobeButtonDefaultStrips();
 	void patchSecretDoorMovementModes();
 	void updateSceneDepthThresholds(byte actorDrawOrderMode);
+	void setFrontFrame(byte frameIndex);
 	void advanceFrontLayer(uint32 delta);
 	void runEntryFromScene3050();
 	void runEntryFromSecretPassage();
@@ -73,9 +74,6 @@ private:
 	void runSecretDoorReveal();
 
 	TimedAnimationChannel _frontChannel;
-	ResourceSpriteLayer _frontLayer;
-	ResourceSpriteLayer _globeLayer;
-	ResourceSpriteLayer _buttonLayer;
 	byte _frontLayerMode;
 	bool _secretDoorRevealActive;
 };
