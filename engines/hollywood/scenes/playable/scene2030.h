@@ -43,9 +43,11 @@ private:
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	void realtimeSpeechEnded(byte speechId, bool completed) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
+	byte primarySpeechVolumePercent(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
@@ -55,8 +57,8 @@ private:
 	void advanceRightMerchantTick();
 	void updateRandomMerchantCallouts(uint32 delta);
 	bool startMerchantCalloutSpeech(bool rightMerchant);
-	void advanceMerchantCalloutSpeech(uint32 delta);
 	void stopMerchantCalloutSpeech();
+	void resetMerchantCalloutState();
 	void openMerchantForInteraction(bool rightMerchant);
 	void closeMerchantAfterInteraction(bool rightMerchant);
 	void waitForMerchantState(bool rightMerchant, byte targetState);
@@ -101,10 +103,7 @@ private:
 	bool _merchantInteractionActive;
 	bool _leftMerchantSequenceLocked;
 	bool _rightMerchantSequenceLocked;
-	bool _merchantCalloutSpeechActive;
 	uint32 _merchantCalloutTimerAccumulator;
-	uint32 _merchantCalloutSpeechElapsed;
-	uint32 _merchantCalloutSpeechDuration;
 };
 
 } // End of namespace Hollywood

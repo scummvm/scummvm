@@ -692,8 +692,9 @@ void PlayableScene::advanceAmbientAudio(uint32 delta) {
 	updateAmbientAudioAndMusicCues(delta);
 }
 
-void PlayableScene::realtimeSpeechFinished(byte speechId) {
+void PlayableScene::realtimeSpeechEnded(byte speechId, bool completed) {
 	(void)speechId;
+	(void)completed;
 }
 
 bool PlayableScene::dispatchCustomSceneAction(uint16 handlerId) {
@@ -2721,7 +2722,7 @@ void PlayableScene::stopRealtimeSpeech() {
 	finishRealtimeSpeech(false);
 }
 
-void PlayableScene::finishRealtimeSpeech(bool notifyScene) {
+void PlayableScene::finishRealtimeSpeech(bool completed) {
 	_realtimeSpeechPlayer.stop();
 	if (!_realtimeSpeechActive)
 		return;
@@ -2740,15 +2741,14 @@ void PlayableScene::finishRealtimeSpeech(bool notifyScene) {
 		const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
 		setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
 		_speechController.stopPrimaryDialogueSpeech(kInvalidPrimarySpeechAnimationGroup, 7);
-		if (notifyScene)
+		if (completed)
 			primarySpeechAnimationRestored(animationGroup, baseFrame);
 	} else {
 		_speechController.clearSecondaryOverlay();
 		_speechController.prepareSecondaryActorSpeech();
 	}
 
-	if (notifyScene)
-		realtimeSpeechFinished(speechId);
+	realtimeSpeechEnded(speechId, completed);
 }
 
 void PlayableScene::clearSpeechOverlay() {

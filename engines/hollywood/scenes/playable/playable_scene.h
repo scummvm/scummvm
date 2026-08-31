@@ -238,7 +238,8 @@ protected:
 	// The base loop invokes these services every frame; overrides only replace their strategy.
 	virtual void advancePrimarySpeechAnimation(uint32 delta);
 	virtual void advanceAmbientAudio(uint32 delta);
-	virtual void realtimeSpeechFinished(byte speechId);
+	// Lets scene-owned animation state distinguish natural completion from cancellation.
+	virtual void realtimeSpeechEnded(byte speechId, bool completed);
 	// Returning true suppresses generic action dispatch.
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
 	// Controls actor paths started by scene clicks, including free walk and item relations.
@@ -373,7 +374,7 @@ protected:
 	}
 	byte realtimeSpeechId() const { return _realtimeSpeechId; }
 	void startRealtimeSpeechPart();
-	void finishRealtimeSpeech(bool notifyScene);
+	void finishRealtimeSpeech(bool completed);
 
 	// Scene action dispatch
 	void processSceneActionClick(const GameplayLoopCursorState &state);
