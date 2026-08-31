@@ -43,8 +43,6 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void rebuildWalkableMask();
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame = -1, int soundFrame = -1, byte soundId = 0);
 	void handleBackToG06();
 	void handleExitDoorAction();
 	void handleChunk12ItemAction();
