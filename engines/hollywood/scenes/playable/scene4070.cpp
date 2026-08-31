@@ -186,8 +186,9 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_ambientLayer(),
 		_draculaLayer(),
 		_scriptLayer(),
-		_ambientChannel(),
 		_draculaIdleChannel(),
+		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
+		_randomAmbientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_draculaIdleSpeechTimerAccumulator(0),
 		_rightSidePatchActive(false),
 		_draculaIdleSequenceActive(false),
@@ -195,6 +196,10 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_loopingSoundBank0(),
 		_originalColorToItemMap() {
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
+	_ambientTrack = _realtimeAnimationTracks.addLoop(_ambientLayer,
+		kScene4070FrameMillis, kScene4070AmbientDescriptorCount);
+	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(_randomAmbientLayer,
+		kScene4070FrameMillis, 0, kScene4070RandomAmbientDescriptorCount - 1, false);
 }
 
 void Scene4070::initializeCustomPreviewState() {
@@ -249,7 +254,6 @@ bool Scene4070::prepareCustomGameplayLoop() {
 }
 
 bool Scene4070::advanceCustomGameplayLoop(uint32 delta) {
-	advanceAmbientLayers(delta);
 	advanceDraculaIdle(delta);
 	updateSidePatchForActorPosition();
 	if (!_loopingSoundBank0.isPlaying())
@@ -440,11 +444,10 @@ void Scene4070::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 void Scene4070::resetAnimationLayers() {
 	_randomAmbientLayer.configure(kScene4070RandomAmbientChunk, kScene4070RandomAmbientDescriptorCount, nullptr, 0);
 	_randomAmbientLayer.visible = true;
-	_randomAmbientLayer.setFrame(0);
+	_realtimeAnimationTracks.reset(_randomAmbientTrack);
 	_ambientLayer.configure(kScene4070AmbientChunk, kScene4070AmbientDescriptorCount, nullptr, 0);
 	_ambientLayer.visible = true;
-	_ambientLayer.setFrame(0);
-	_ambientChannel.reset(0, kScene4070FrameMillis);
+	_realtimeAnimationTracks.reset(_ambientTrack);
 	_draculaLayer.configure(kScene4070DraculaChunk, kScene4070DraculaDescriptorCount,
 		kScene4070DraculaFrameMap, ARRAYSIZE(kScene4070DraculaFrameMap));
 	_draculaLayer.visible = isDraculaVisible();
@@ -469,16 +472,6 @@ void Scene4070::setRightSidePatchActive(bool active, bool playSound) {
 	applySceneStateToHotspotsAndPatches(0);
 	if (playSound)
 		_soundBank0.playSample(0x3c, 50);
-}
-
-void Scene4070::advanceAmbientLayers(uint32 delta) {
-	const uint frameCount = _ambientChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte nextAmbientFrame = _ambientLayer.frameIndex == 0x19 ? 0 : (byte)(_ambientLayer.frameIndex + 1);
-		_ambientChannel.frameIndex = nextAmbientFrame;
-		_ambientLayer.setFrame(nextAmbientFrame);
-		_randomAmbientLayer.setFrame((byte)_random.getRandomNumber(1));
-	}
 }
 
 void Scene4070::advanceDraculaIdle(uint32 delta) {

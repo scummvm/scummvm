@@ -55,7 +55,6 @@ private:
 	void resetAnimationLayers();
 	bool isDraculaVisible() const;
 	void setRightSidePatchActive(bool active, bool playSound);
-	void advanceAmbientLayers(uint32 delta);
 	void advanceDraculaIdle(uint32 delta);
 	void updateSidePatchForActorPosition();
 	void drawSceneLayers(int activeWorldY);
@@ -78,8 +77,9 @@ private:
 	ResourceSpriteLayer _ambientLayer;
 	ResourceSpriteLayer _draculaLayer;
 	ResourceSpriteLayer _scriptLayer;
-	TimedAnimationChannel _ambientChannel;
 	TimedAnimationChannel _draculaIdleChannel;
+	uint _ambientTrack;
+	uint _randomAmbientTrack;
 	uint32 _draculaIdleSpeechTimerAccumulator;
 	bool _rightSidePatchActive;
 	bool _draculaIdleSequenceActive;

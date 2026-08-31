@@ -117,7 +117,9 @@ public:
 
 	template<uint size>
 	void configure(const SceneLayerSpec (&specs)[size]) {
-		clear();
+		// Reuse storage so same-sized reconfiguration keeps registered layers stable.
+		if (_layers.size() != size)
+			_layers.resize(size);
 		for (uint i = 0; i < size; ++i)
 			configureLayer(i, specs[i]);
 	}

@@ -56,7 +56,6 @@ private:
 	void rebuildWalkableMask();
 	void removeColorMapItem(byte itemId);
 	void restoreOrRemoveDiaryHotspot();
-	void advanceLargeLayer(uint32 delta);
 	void advanceSmallIdleLayer(uint32 delta);
 	void runEntryFromForest();
 	void runEntryFromCabin();
@@ -67,10 +66,10 @@ private:
 	void runFlyerCoatingOverlay();
 	void drawForegroundBlocks();
 
-	TimedAnimationChannel _largeChannel;
 	TimedAnimationChannel _smallIdleChannel;
 	ResourceSpriteLayer _largeLayer;
 	ResourceSpriteLayer _smallIdleLayer;
+	uint _largeTrack;
 	byte _smallIdleMode;
 };
 

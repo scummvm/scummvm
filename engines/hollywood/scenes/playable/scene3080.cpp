@@ -90,13 +90,15 @@ static PlayableSceneConfig scene3080Config() {
 
 Scene3080::Scene3080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3080Config()),
-		_largeChannel(),
 		_smallIdleChannel(),
 		_largeLayer(),
 		_smallIdleLayer(),
+		_largeTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_smallIdleMode(0) {
 	_largeLayer.configure(17, kScene3080LargeLayerDescriptorCount,
 		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap));
+	_largeTrack = _realtimeAnimationTracks.addRange(_largeLayer,
+		kScene3080LargeFrameMillis, 0, 7);
 	_smallIdleLayer.configure(7, kScene3080SmallIdleDescriptorCount,
 		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap));
 }
@@ -168,7 +170,6 @@ bool Scene3080::prepareCustomGameplayLoop() {
 }
 
 bool Scene3080::advanceCustomGameplayLoop(uint32 delta) {
-	advanceLargeLayer(delta);
 	advanceSmallIdleLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -365,12 +366,13 @@ void Scene3080::runExitSideEffectsAfterLoop() {
 }
 
 void Scene3080::resetAnimationLayers() {
-	const byte largeFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 8 : 0;
-	_largeChannel.reset(largeFrame, kScene3080LargeFrameMillis);
+	const bool alternateSmoke = _vm->gameState().scene3080ChimneySmokeAnimationChanged;
+	_realtimeAnimationTracks.setRange(_largeTrack,
+		alternateSmoke ? 8 : 0, alternateSmoke ? 15 : 7);
+	_realtimeAnimationTracks.reset(_largeTrack);
 	_smallIdleChannel.reset(0, kScene3080SmallIdleFrameMillis);
 	_largeLayer.visible = true;
 	_smallIdleLayer.visible = true;
-	_largeLayer.reset(largeFrame);
 	_smallIdleLayer.reset(0);
 	_smallIdleMode = 0;
 }
@@ -403,19 +405,6 @@ void Scene3080::restoreOrRemoveDiaryHotspot() {
 		if (_sceneChunkTable.isValidChunk(12))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
 		removeColorMapItem(5);
-	}
-}
-
-void Scene3080::advanceLargeLayer(uint32 delta) {
-	const uint frameCount = _largeChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte firstFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 8 : 0;
-		const byte lastFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 15 : 7;
-		if (_largeChannel.frameIndex < firstFrame || _largeChannel.frameIndex >= lastFrame)
-			_largeChannel.frameIndex = firstFrame;
-		else
-			++_largeChannel.frameIndex;
-		_largeLayer.setFrame(_largeChannel.frameIndex);
 	}
 }
 
