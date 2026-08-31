@@ -76,9 +76,6 @@ private:
 
 	TimedAnimationChannel _blindManChannel;
 	TimedAnimationChannel _puzzleChannel;
-	ResourceSpriteLayer _frontLayer;
-	ResourceSpriteLayer _blindManLayer;
-	ResourceSpriteLayer _puzzleLayer;
 	uint _frontTrack;
 	bool _puzzleLayerTriggered;
 	bool _dialogueMenuActive;

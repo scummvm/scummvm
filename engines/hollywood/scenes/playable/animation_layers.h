@@ -220,6 +220,11 @@ public:
 			_layers[id].layer.visible = visible && availableFrameCount(_layers[id].layer) != 0;
 	}
 
+	void setLayerChunk(uint id, uint chunkIndex) {
+		if (hasLayer(id))
+			_layers[id].layer.chunkIndex = chunkIndex;
+	}
+
 	void setLayerFrame(uint id, byte frameIndex) {
 		if (hasLayer(id))
 			_layers[id].layer.setFrame(frameIndex);
@@ -228,6 +233,13 @@ public:
 	void resetLayer(uint id, byte frameIndex) {
 		if (hasLayer(id))
 			_layers[id].layer.reset(frameIndex);
+	}
+
+	bool advanceLayerFrame(uint id, byte lastFrame) {
+		if (!hasLayer(id) || _layers[id].layer.frameIndex >= lastFrame)
+			return false;
+		_layers[id].layer.setFrame(_layers[id].layer.frameIndex + 1);
+		return true;
 	}
 
 	void setVisibleLayerFrame(uint id, byte frameIndex) {

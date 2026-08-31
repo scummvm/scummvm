@@ -65,6 +65,9 @@ const byte kScene3090BlindManSpeechSaxophoneBaseFrame = 0x24;
 const byte kScene3090BlindManPostConversationNormalFrame = 4;
 const byte kScene3090BlindManPostConversationSaxophoneFrame = 0x28;
 const byte kScene3090BlindManNoPreviousSpeechFrame = 0xff;
+const uint kScene3090FrontLayer = 0;
+const uint kScene3090PuzzleLayer = 1;
+const uint kScene3090BlindManLayer = 2;
 
 const byte kScene3090FrontFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -102,6 +105,15 @@ const byte kScene3090SaxophoneFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
 };
 
+const SceneLayerSpec kScene3090LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 9, kScene3090FrontDescriptorCount,
+		kScene3090FrontFrameMap, ARRAYSIZE(kScene3090FrontFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 12, kScene3090PuzzleDescriptorCount,
+		kScene3090PuzzleFrameMap, ARRAYSIZE(kScene3090PuzzleFrameMap), true, 0},
+	{kSceneAnimationBehindActors, 11, kScene3090BlindManDescriptorCount,
+		kScene3090BlindManFrameMap, ARRAYSIZE(kScene3090BlindManFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene3090Config() {
 	PlayableSceneConfig config(3090,
 		SceneResourceLayout(20, 5, 19),
@@ -118,9 +130,6 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3090Config()),
 		_blindManChannel(),
 		_puzzleChannel(),
-		_frontLayer(),
-		_blindManLayer(),
-		_puzzleLayer(),
 		_frontTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_puzzleLayerTriggered(false),
 		_dialogueMenuActive(false),
@@ -128,14 +137,9 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		_blindManSpeechActive(false),
 		_blindManSpeechLastRandomFrame(kScene3090BlindManNoPreviousSpeechFrame),
 		_blindManSpeechTimerAccumulator(0) {
-	_frontLayer.configure(9, kScene3090FrontDescriptorCount,
-		kScene3090FrontFrameMap, ARRAYSIZE(kScene3090FrontFrameMap));
-	_frontTrack = _realtimeAnimationTracks.addFrameMap(_frontLayer,
-		kScene3090FrontFrameMillis);
-	_blindManLayer.configure(11, kScene3090BlindManDescriptorCount,
-		kScene3090BlindManFrameMap, ARRAYSIZE(kScene3090BlindManFrameMap));
-	_puzzleLayer.configure(12, kScene3090PuzzleDescriptorCount,
-		kScene3090PuzzleFrameMap, ARRAYSIZE(kScene3090PuzzleFrameMap));
+	_sceneLayers.configure(kScene3090LayerSpecs);
+	_frontTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kScene3090FrontLayer, kScene3090FrontFrameMillis);
 }
 
 void Scene3090::initializeCustomPreviewState() {
@@ -152,11 +156,11 @@ void Scene3090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	_frontLayer.chunkIndex = _vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10;
-	drawResourceSpriteLayer(_frontLayer);
-	if (_puzzleLayer.visible)
-		drawResourceSpriteLayer(_puzzleLayer);
-	drawResourceSpriteLayer(_blindManLayer);
+	_sceneLayers.setLayerChunk(kScene3090FrontLayer,
+		_vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10);
+	drawSceneLayer(kScene3090FrontLayer);
+	drawSceneLayer(kScene3090PuzzleLayer);
+	drawSceneLayer(kScene3090BlindManLayer);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -346,16 +350,16 @@ AmbientAudioProfile Scene3090::ambientAudioProfile() const {
 
 void Scene3090::resetAnimationLayers() {
 	GameplayState &state = _vm->gameState();
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_frontTrack);
 	const byte blindManFrame = state.scene3090BlindManPlayingSaxophone ? 0x2b : 7;
 	_blindManChannel.reset(blindManFrame, kScene3090BlindManFrameMillis);
 	const byte puzzleFrame = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
 	_puzzleChannel.reset(puzzleFrame, kScene3090PuzzleFrameMillis);
-	_frontLayer.visible = true;
-	_blindManLayer.visible = true;
-	_puzzleLayer.visible = state.scene3090SecretDiaryPuzzleStage < 2;
-	_blindManLayer.reset(blindManFrame);
-	_puzzleLayer.reset(puzzleFrame);
+	_sceneLayers.setLayerVisible(kScene3090PuzzleLayer,
+		state.scene3090SecretDiaryPuzzleStage < 2);
+	_sceneLayers.resetLayer(kScene3090BlindManLayer, blindManFrame);
+	_sceneLayers.resetLayer(kScene3090PuzzleLayer, puzzleFrame);
 	_puzzleLayerTriggered = false;
 	_dialogueMenuActive = false;
 	_blindManConversationActive = false;
@@ -432,7 +436,7 @@ void Scene3090::advanceBlindManLayer(uint32 delta) {
 			if (_blindManChannel.frameIndex == 0x2f)
 				triggerPuzzleLayer();
 		}
-		_blindManLayer.setFrame(_blindManChannel.frameIndex);
+		_sceneLayers.setLayerFrame(kScene3090BlindManLayer, _blindManChannel.frameIndex);
 	}
 }
 
@@ -443,7 +447,7 @@ void Scene3090::beginBlindManSpeechAnimation() {
 
 	const byte frame = blindManSpeechBaseFrame();
 	_blindManChannel.frameIndex = frame;
-	_blindManLayer.setFrame(frame);
+	_sceneLayers.setLayerFrame(kScene3090BlindManLayer, frame);
 }
 
 void Scene3090::advanceBlindManSpeechAnimation(uint32 delta) {
@@ -459,7 +463,7 @@ void Scene3090::advanceBlindManSpeechAnimation(uint32 delta) {
 
 		_blindManSpeechLastRandomFrame = randomFrame;
 		_blindManChannel.frameIndex = (byte)(blindManSpeechBaseFrame() + randomFrame);
-		_blindManLayer.setFrame(_blindManChannel.frameIndex);
+		_sceneLayers.setLayerFrame(kScene3090BlindManLayer, _blindManChannel.frameIndex);
 	}
 }
 
@@ -470,7 +474,7 @@ void Scene3090::endBlindManSpeechAnimation() {
 
 	const byte frame = blindManSpeechBaseFrame();
 	_blindManChannel.frameIndex = frame;
-	_blindManLayer.setFrame(frame);
+	_sceneLayers.setLayerFrame(kScene3090BlindManLayer, frame);
 }
 
 byte Scene3090::blindManSpeechBaseFrame() const {
@@ -482,11 +486,11 @@ void Scene3090::setBlindManPostConversationFrame() {
 	const byte frame = _vm->gameState().scene3090BlindManPlayingSaxophone ?
 		kScene3090BlindManPostConversationSaxophoneFrame : kScene3090BlindManPostConversationNormalFrame;
 	_blindManChannel.frameIndex = frame;
-	_blindManLayer.setFrame(frame);
+	_sceneLayers.setLayerFrame(kScene3090BlindManLayer, frame);
 }
 
 void Scene3090::advancePuzzleLayer(uint32 delta) {
-	if (!_puzzleLayer.visible || !_puzzleLayerTriggered)
+	if (!_sceneLayers.layerVisible(kScene3090PuzzleLayer) || !_puzzleLayerTriggered)
 		return;
 
 	const uint frameCount = _puzzleChannel.consumeFrames(delta);
@@ -521,15 +525,16 @@ void Scene3090::advancePuzzleLayer(uint32 delta) {
 				applySceneStateToHotspotsAndPatches(1);
 			}
 		}
-		_puzzleLayer.visible = state.scene3090SecretDiaryPuzzleStage < 2;
-		_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
+		_sceneLayers.setLayerVisible(kScene3090PuzzleLayer,
+			state.scene3090SecretDiaryPuzzleStage < 2);
+		_sceneLayers.setLayerFrame(kScene3090PuzzleLayer, _puzzleChannel.frameIndex);
 	}
 }
 
 void Scene3090::triggerPuzzleLayer() {
 	if (_vm->gameState().scene3090SecretDiaryPuzzleStage < 2) {
 		_puzzleLayerTriggered = true;
-		_puzzleLayer.visible = true;
+		_sceneLayers.setLayerVisible(kScene3090PuzzleLayer, true);
 	}
 	_soundBank0.playSample(0x16, 0x14);
 }
@@ -729,7 +734,7 @@ void Scene3090::runUseStrawInFireplace() {
 	state.scene3080ChimneySmokeAnimationChanged = true;
 	state.scene3090WindowOpenSequenceState = 1;
 	_puzzleChannel.frameIndex = 0x1b;
-	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
+	_sceneLayers.setLayerFrame(kScene3090PuzzleLayer, _puzzleChannel.frameIndex);
 	_puzzleLayerTriggered = true;
 	applySceneStateToHotspotsAndPatches(2);
 	setBlindManPostConversationFrame();
@@ -752,9 +757,9 @@ void Scene3090::runSaxophoneHandoff() {
 	state.scene3090BlindManPlayingSaxophone = true;
 	state.currentAmbientMusicCueId = 0x11;
 	_blindManChannel.frameIndex = 0x2b;
-	_blindManLayer.setFrame(_blindManChannel.frameIndex);
+	_sceneLayers.setLayerFrame(kScene3090BlindManLayer, _blindManChannel.frameIndex);
 	_puzzleChannel.frameIndex = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
-	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
+	_sceneLayers.setLayerFrame(kScene3090PuzzleLayer, _puzzleChannel.frameIndex);
 	applySceneStateToHotspotsAndPatches(1);
 	if (_vm->restoredContentEnabled())
 		beginSecondarySpeechLine(11, 2);
