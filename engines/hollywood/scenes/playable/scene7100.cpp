@@ -169,6 +169,7 @@ static PlayableSceneConfig scene7100Config() {
 
 Scene7100::Scene7100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7100Config()),
+		_asyncSpeechPlayer(vm->getLanguage(), vm->hasSpeechData()),
 		_primaryTimerAccumulator(0),
 		_banterTimerAccumulator(0),
 		_asyncSpeechElapsed(0),
@@ -251,14 +252,25 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	drawPrimaryNpc();
 	drawEnvironmentOverlayBeforeActor();
+	if (_actionOverlayPlayer.isVisible() &&
+			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors) {
+		drawActionOverlayLayer();
+	}
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-
-	drawActionOverlayLayer();
+	if (_actionOverlayPlayer.isVisible() &&
+			(_actionOverlayPlayer.stratum == kSceneAnimationActorReplacement ||
+			 _actionOverlayPlayer.stratum == kSceneAnimationScenePlaced)) {
+		drawActionOverlayLayer();
+	}
 
 	const uint foregroundChunk = activeWorldX < 0x156 ? 5 : 6;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[foregroundChunk], _sceneFramebuffer);
 	drawEnvironmentOverlayAfterForeground();
+	if (_actionOverlayPlayer.isVisible() &&
+			_actionOverlayPlayer.stratum == kSceneAnimationInFrontOfActors) {
+		drawActionOverlayLayer();
+	}
 }
 
 void Scene7100::runCustomEntrySequence() {
@@ -295,7 +307,6 @@ void Scene7100::suspendAudioForOptionsMenu() {
 }
 
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
-	cancelAsyncSpeech();
 	switch (handlerId) {
 	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
@@ -699,10 +710,10 @@ void Scene7100::startAsyncPrimarySpeechPart() {
 			_activeActorWorldY);
 		const uint16 sampleId = _asyncVoiceSampleId == 0 ? 0 :
 			_asyncVoiceSampleId + _asyncContinuationPart;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId,
+		const bool started = sampleId != 0 && _asyncSpeechPlayer.playSample(sampleId,
 			primarySpeechVolumePercent(_asyncPrimaryAnimationGroup));
 		_asyncSpeechElapsed = 0;
-		_asyncSpeechDuration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		_asyncSpeechDuration = started ? MAX<uint32>(_asyncSpeechPlayer.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
 		return;
 	}
@@ -715,7 +726,9 @@ void Scene7100::advanceAsyncSpeech(uint32 delta) {
 		return;
 
 	_asyncSpeechElapsed += delta;
-	if (_speech.isPlaying() || _asyncSpeechElapsed < _asyncSpeechDuration)
+	const bool speechPlaying = _asyncSpeechPhase == kScene7100AsyncSpeechSueBanter ?
+		_speech.isPlaying() : _asyncSpeechPlayer.isPlaying();
+	if (speechPlaying || _asyncSpeechElapsed < _asyncSpeechDuration)
 		return;
 
 	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
@@ -736,7 +749,7 @@ void Scene7100::advanceAsyncSpeech(uint32 delta) {
 void Scene7100::finishAsyncPrimarySpeech() {
 	const byte finishedPhase = _asyncSpeechPhase;
 	const byte animationGroup = _asyncPrimaryAnimationGroup;
-	_speech.stop();
+	_asyncSpeechPlayer.stop();
 	_speechController.clearPrimaryOverlay();
 	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
 	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
@@ -749,7 +762,10 @@ void Scene7100::finishAsyncPrimarySpeech() {
 	if (finishedPhase == kScene7100AsyncSpeechRonBanter &&
 			(++_banterRemarkCount >= 4 || _lastBanterFrame == 3)) {
 		_banterRemarkCount = 0;
-		startAutonomousSueReply();
+		if (!_actorPathPlaybackActive && !_speechOverlay.visible &&
+				_vm->cursor()->isInteractiveMode()) {
+			startAutonomousSueReply();
+		}
 	}
 }
 
@@ -782,15 +798,16 @@ void Scene7100::cancelAsyncSpeech() {
 	if (_asyncSpeechPhase == kScene7100AsyncSpeechNone)
 		return;
 
-	_speech.stop();
 	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
 			_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted) {
+		_asyncSpeechPlayer.stop();
 		_speechController.clearPrimaryOverlay();
 		const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncPrimaryAnimationGroup);
 		setPrimarySpeechAnimationFrame(_asyncPrimaryAnimationGroup, baseFrame);
 		_speechController.stopPrimaryDialogueSpeech(0xff, 7);
 		primarySpeechAnimationRestored(_asyncPrimaryAnimationGroup, baseFrame);
 	} else {
+		_speech.stop();
 		_speechController.clearSecondaryOverlay();
 		_speechController.prepareSecondaryActorSpeech();
 	}
@@ -811,6 +828,7 @@ void Scene7100::faceSueTowardRon() {
 }
 
 void Scene7100::runRonDialogue() {
+	cancelAsyncSpeech();
 	Common::Array<DialogueChoiceRecord> records;
 	initializeRonDialogueRecords(records);
 
@@ -1126,6 +1144,7 @@ void Scene7100::handlePickupItem15() {
 }
 
 void Scene7100::handleActionHandler315() {
+	cancelAsyncSpeech();
 	beginSecondarySpeechLine(0x0e, 0);
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
@@ -1172,13 +1191,14 @@ void Scene7100::handleCaptureRat() {
 		_vm->gameState().cellPlateRatProgress = 2;
 		applySceneStateToHotspotsAndPatches(2);
 	}
-	sequence.actorPath(SceneActorPose(0x168, 0x198, 4))
-		.actorReplacement(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
+	sequence.actorPath(SceneActorPose(0x168, 0x198, 4));
+	if (sequence.completed()) {
+		runSceneOverlay(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
 			kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap),
 			kScene7100FrameMillis)
 			.soundAt(0x0e, 0x16)
 			.noRedrawAtEnd());
-	cancelAsyncSpeech();
+	}
 	sequence.secondarySpeech(0x1a, 1)
 		.commit(_environmentState, (byte)4)
 		.actorPath(SceneActorPose(0x0ad, 0x17b, 5))
@@ -1187,7 +1207,6 @@ void Scene7100::handleCaptureRat() {
 			kScene7100Item16SecondFrameMap, ARRAYSIZE(kScene7100Item16SecondFrameMap),
 			kScene7100FrameMillis)
 			.hookAt(0x18, kScene7100RatPickupEnvironmentHook));
-	cancelAsyncSpeech();
 	_environmentState = 5;
 	addInventoryItem(0x16);
 	sequence.sound(1)
@@ -1209,7 +1228,6 @@ void Scene7100::handleRemovePlate() {
 		kScene7100Item14FrameMap, ARRAYSIZE(kScene7100Item14FrameMap),
 		kScene7100FrameMillis)
 		.hookAt(0x24, kScene7100PlateRemovalStateHook));
-	cancelAsyncSpeech();
 	if (!_vm->gameState().cellPlateRemoved) {
 		_vm->gameState().cellPlateRemoved = true;
 		applySceneStateToHotspotsAndPatches(4);
@@ -1221,6 +1239,7 @@ void Scene7100::handleRemovePlate() {
 }
 
 void Scene7100::handleInventoryTransferAction() {
+	cancelAsyncSpeech();
 	const byte sueItemId = _lastInventoryPrimaryItemId;
 	const uint mappingIndex = sueItemId - kScene7100FirstTransferableSueItem;
 	if (mappingIndex >= ARRAYSIZE(kScene7100RonItemBySueItem)) {
