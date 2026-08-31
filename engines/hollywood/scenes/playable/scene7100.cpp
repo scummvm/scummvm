@@ -636,8 +636,8 @@ void Scene7100::startScriptedRonSpeech(uint16 rowIndex, byte frameIndex,
 		red, green, blue, animationGroup, kScene7100RealtimeSpeechRonScripted);
 }
 
-void Scene7100::realtimeSpeechFinished(byte speechId) {
-	if (speechId == kScene7100RealtimeSpeechRonBanter &&
+void Scene7100::realtimeSpeechEnded(byte speechId, bool completed) {
+	if (completed && speechId == kScene7100RealtimeSpeechRonBanter &&
 			(++_banterRemarkCount >= 4 || _lastBanterFrame == 3)) {
 		_banterRemarkCount = 0;
 		if (!_actorPathPlaybackActive && !_speechOverlay.visible &&
