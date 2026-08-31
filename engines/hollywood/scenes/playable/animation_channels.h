@@ -140,6 +140,11 @@ public:
 			_tracks[id].reset();
 	}
 
+	void resetToFrame(uint id, byte frame) {
+		if (hasTrack(id) && frame >= _tracks[id].firstFrame && frame <= _tracks[id].lastFrame)
+			_tracks[id].reset(frame);
+	}
+
 	void resetTimer(uint id) {
 		if (hasTrack(id))
 			_tracks[id].channel.resetTimer();
@@ -180,9 +185,13 @@ private:
 		}
 
 		void reset() {
+			reset(firstFrame);
+		}
+
+		void reset(byte frame) {
 			forward = true;
-			channel.reset(firstFrame, channel.frameMillis);
-			layer->reset(firstFrame);
+			channel.reset(frame, channel.frameMillis);
+			layer->reset(frame);
 		}
 
 		void setFrame(byte frame) {

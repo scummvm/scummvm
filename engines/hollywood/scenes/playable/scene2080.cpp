@@ -148,11 +148,11 @@ static PlayableSceneConfig scene2080Config() {
 
 Scene2080::Scene2080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2080Config()),
-		_ambientChannel(),
 		_foregroundActorChannel(),
 		_ambientLayer(),
 		_foregroundActorLayer(),
 		_forwardExitPoseLayer(),
+		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_deltaClipData(),
 		_foregroundActorIdleState(0),
 		_foregroundActorIdleDelay(0),
@@ -161,6 +161,8 @@ Scene2080::Scene2080(HollywoodEngine *vm) :
 		_foregroundActorManualSequenceActive(false) {
 	_ambientLayer.configure(kScene2080AmbientChunk, kScene2080AmbientDescriptorCount,
 		kScene2080AmbientFrameMap, ARRAYSIZE(kScene2080AmbientFrameMap));
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_ambientLayer,
+		kScene2080FrameMillis);
 	_foregroundActorLayer.configure(kScene2080ForegroundActorChunk, kScene2080ForegroundActorDescriptorCount,
 		kScene2080ForegroundActorFrameMap, ARRAYSIZE(kScene2080ForegroundActorFrameMap));
 	_forwardExitPoseLayer.configure(kScene2080ForwardExitOverlayChunk,
@@ -251,7 +253,6 @@ bool Scene2080::prepareCustomGameplayLoop() {
 }
 
 bool Scene2080::advanceCustomGameplayLoop(uint32 delta) {
-	advanceAmbientLayer(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	else if (!_foregroundActorManualSequenceActive)
@@ -266,7 +267,7 @@ void Scene2080::advanceDialogueMenu(uint32 delta) {
 		advancePrimaryDialogueSpeechFrame(delta);
 	else
 		advanceForegroundActorDialoguePose(delta);
-	advanceAmbientLayer(delta);
+	_realtimeAnimationTracks.advance(_ambientTrack, delta, _random);
 	updateAmbientAudioAndMusicCues(delta);
 	advanceViewportScroll(delta);
 }
@@ -473,10 +474,9 @@ AmbientAudioProfile Scene2080::ambientAudioProfile() const {
 }
 
 void Scene2080::resetAnimationLayers() {
-	_ambientChannel.reset(0, kScene2080FrameMillis);
+	_realtimeAnimationTracks.reset(_ambientTrack);
 	_foregroundActorChannel.reset(0, kScene2080FrameMillis);
 	_ambientLayer.visible = true;
-	_ambientLayer.reset(0);
 	_foregroundActorLayer.visible = _vm->gameState().scene2080ForegroundState != 0;
 	_foregroundActorLayer.reset(1);
 	_foregroundActorIdleState = 0;
@@ -486,16 +486,6 @@ void Scene2080::resetAnimationLayers() {
 	_deltaClipMode = kScene2080DeltaClipNone;
 	_deltaClipFrame = 0;
 	_foregroundActorManualSequenceActive = false;
-}
-
-void Scene2080::advanceAmbientLayer(uint32 delta) {
-	const uint frameCount = _ambientChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		byte nextFrame = (byte)(_ambientLayer.frameIndex + 1);
-		if (nextFrame >= ARRAYSIZE(kScene2080AmbientFrameMap))
-			nextFrame = 0;
-		_ambientLayer.setFrame(nextFrame);
-	}
 }
 
 void Scene2080::advanceForegroundActorIdle(uint32 delta) {
