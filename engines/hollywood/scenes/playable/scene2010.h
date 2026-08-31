@@ -62,9 +62,6 @@ private:
 	void runPatchedEntrySequence();
 	void runLongSequenceToScene2100();
 
-	ResourceSpriteLayer _scriptLayer;
-	SceneAnimationStratum _scriptLayerStratum;
-	ResourceSpriteLayer _gatekeeperLayer;
 	uint32 _gatekeeperIdleAccumulator;
 	bool _gatekeeperSequenceActive;
 };
