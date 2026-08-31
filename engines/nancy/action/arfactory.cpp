@@ -230,7 +230,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 52:
 		return new PlaySecondaryVideo();
 	case 53:
-		return new PlaySecondaryMovie();
+		if (g_nancy->getGameType() >= kGameTypeNancy14)
+			return new RolloverOverlay();
+		else
+			return new PlaySecondaryMovie();
 	case 54:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new Overlay(false); // PlayStaticBitmapAnimation

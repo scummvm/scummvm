@@ -156,6 +156,52 @@ protected:
 	int16 _tableIndex = 0;
 };
 
+// Nancy14 AR 53. A rollover label: an image that is only drawn while the mouse
+// is inside its hotspot. Entering the hotspot plays a sound and sets an event
+// flag, and clicking it plays a second sound before changing the scene.
+class RolloverOverlay : public RenderActionRecord {
+public:
+	RolloverOverlay() : RenderActionRecord(7) {}
+	virtual ~RolloverOverlay() { _fullSurface.free(); }
+
+	void init() override;
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+	void handleInput(NancyInput &input) override;
+
+	bool isViewportRelative() const override { return true; }
+	bool canHaveHotspot() const override { return true; }
+	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_hoverCursor; }
+	bool cursorSetFromScript() const override { return true; }
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
+protected:
+	Common::String getRecordTypeName() const override { return "RolloverOverlay"; }
+
+	void playSoundBlock(const RandomSoundBlock &block);
+
+	Common::Path _imageName;
+	uint16 _transparency = kPlayOverlayPlain;
+	uint16 _hoverCursor = 0;
+	Common::Rect _hotspotRect;
+	Common::Rect _srcRect;
+	Common::Rect _destRect;
+	// Set every time the mouse enters the hotspot
+	FlagDescription _flagOnHover;
+	// When nonzero the hover sound is only played the first time; otherwise it
+	// plays on every hover
+	uint16 _hoverSoundOnce = 0;
+	RandomSoundBlock _hoverSound;
+	SceneChangeDescription _sceneChange;
+	RandomSoundBlock _clickSound;
+
+	bool _isHovered = false;
+	bool _hoverSoundPlayed = false;
+	bool _clickSoundStarted = false;
+
+	Graphics::ManagedSurface _fullSurface;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

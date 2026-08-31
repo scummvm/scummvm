@@ -31,6 +31,7 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/random.h"
 #include "common/serializer.h"
 
 #include "graphics/font.h"
@@ -556,6 +557,126 @@ void TextLineOverlay::execute() {
 	registerGraphics();
 
 	_isDone = true;
+}
+
+void RolloverOverlay::init() {
+	g_nancy->_resource->loadImage(_imageName, _fullSurface);
+
+	RenderObject::init();
+}
+
+void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_transparency = stream.readUint16LE();
+	_z = stream.readUint16LE();
+	_hoverCursor = stream.readUint16LE();
+
+	readRect(stream, _hotspotRect);
+	readRect(stream, _srcRect);
+	readRect(stream, _destRect);
+
+	_flagOnHover.label = stream.readSint16LE();
+	_flagOnHover.flag = stream.readByte();
+	stream.skip(1);
+
+	_hoverSound.readData(stream);
+	_hoverSoundOnce = stream.readUint16LE();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.frameID = stream.readUint16LE();
+	int16 verticalOffset = stream.readSint16LE();
+	_sceneChange.verticalOffset = verticalOffset >= 0 ? verticalOffset : 0;
+
+	_sceneChange.continueSceneSound = stream.readByte();
+
+	_clickSound.readData(stream);
+}
+
+void RolloverOverlay::playSoundBlock(const RandomSoundBlock &block) {
+	if (block.names.empty()) {
+		return;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return;
+	}
+
+	SoundDescription desc;
+	desc.name = name;
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+}
+
+void RolloverOverlay::handleInput(NancyInput &input) {
+	if (_state != kRun) {
+		return;
+	}
+
+	bool hovered = NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos);
+	if (hovered == _isHovered) {
+		return;
+	}
+
+	_isHovered = hovered;
+	setVisible(hovered);
+
+	if (!hovered) {
+		return;
+	}
+
+	if (_hoverSoundOnce == 0 || !_hoverSoundPlayed) {
+		playSoundBlock(_hoverSound);
+		_hoverSoundPlayed = true;
+	}
+
+	NancySceneState.setEventFlag(_flagOnHover);
+}
+
+void RolloverOverlay::execute() {
+	switch (_state) {
+	case kBegin:
+		init();
+
+		_drawSurface.create(_fullSurface, _srcRect);
+		setTransparent(_transparency >= kPlayOverlayTransparent);
+		moveTo(_destRect);
+		setVisible(false);
+		registerGraphics();
+
+		_hotspot = _hotspotRect;
+		_hasHotspot = true;
+
+		_state = kRun;
+		break;
+	case kRun:
+		// Visibility follows the mouse, see handleInput()
+		break;
+	case kActionTrigger:
+		if (!_clickSoundStarted) {
+			playSoundBlock(_clickSound);
+			_clickSoundStarted = true;
+		}
+
+		if (!_clickSound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_clickSound.channel)) {
+			return;
+		}
+
+		setVisible(false);
+		_hasHotspot = false;
+
+		if (_sceneChange.sceneID != kNoScene) {
+			NancySceneState.changeScene(_sceneChange);
+		}
+
+		finishExecution();
+		break;
+	}
 }
 
 } // End of namespace Action
