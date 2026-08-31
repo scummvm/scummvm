@@ -288,27 +288,24 @@ void Screen::setMainPalette(const byte *data) {
 
 void Screen::setupPalette(byte *buffer, int start, int count) {
 	// Check parameters
-	if (start < 0 || start > 256)
+	if (start < 0 || start >= 256)
 		error("[Screen::setupPalette] Invalid start parameter (was: %d, valid: [0 ; 255])", start);
 
-	if ((count + start) > 256)
-		error("[Screen::setupPalette] Parameters go past the palette buffer (start: %d, count: %d with sum > 256)", start, count);
+	if (count < 0 || count > 256 - start)
+		error("[Screen::setupPalette] Invalid count parameter (start: %d, count: %d, valid: [0 ; %d])", start, count, 256 - start);
 
 	// TODO: Update transparent palette if needed
 
 	// Setup our main palette
-	if (count > 0) {
-		byte *palette = (byte *)_mainPalette;
-		palette += start;
+	const int32 end = start + count;
+	for (int32 paletteIndex = start; paletteIndex < end; paletteIndex++) {
+		byte *palette = &_mainPalette[3 * paletteIndex];
 
-		for (int32 i = 0; i < count; i++) {
-			palette[0] = (byte)(buffer[0] * 4);
-			palette[1] = (byte)(buffer[1] * 4);
-			palette[2] = (byte)(buffer[2] * 4);
+		palette[0] = (byte)(buffer[0] * 4);
+		palette[1] = (byte)(buffer[1] * 4);
+		palette[2] = (byte)(buffer[2] * 4);
 
-			buffer  += 3;
-			palette += 3;
-		}
+		buffer += 3;
 	}
 
 	// Change the system palette
