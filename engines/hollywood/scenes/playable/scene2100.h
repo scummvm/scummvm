@@ -33,6 +33,12 @@ public:
 	Scene2100(HollywoodEngine *vm);
 
 private:
+	enum LayerId {
+		kMummyLayer,
+		kAuxLayer,
+		kFrontLayer
+	};
+
 	void initializeCustomPreviewState() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -77,24 +83,22 @@ private:
 		byte responseFrameIndex, byte disableAfterUse, byte reserved) const;
 	void runMummyPrimarySpeechLine(byte frameIndex);
 	void runPrincessArrivalPrimarySpeechLine(byte frameIndex);
-	void runMummyFrameSetTransition(ResourceSpriteLayer &layer, bool opening, byte closingFinalFrame);
+	void runMummyFrameSetTransition(uint layerId, bool opening, byte closingFinalFrame);
 	void beginMummyDialogueSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void runTreasureIntroductionSequence();
 	void runSpecialTransitionSpeech();
 	void runStoneDoorToTreasureRoom();
 	void runRaStaffPickup();
 	void removeColorMapItemFromOriginal(byte itemId);
+	ResourceSpriteLayer &mummyLayer() { return _sceneLayers.layer(kMummyLayer); }
+	ResourceSpriteLayer &frontLayer() { return _sceneLayers.layer(kFrontLayer); }
 
 	TimedAnimationChannel _foregroundChannel;
 	TimedAnimationChannel _auxChannel;
 	TimedAnimationChannel _manualActorPathChannel;
-	ResourceSpriteLayer _mummyLayer;
-	ResourceSpriteLayer _frontLayer;
-	ResourceSpriteLayer _auxLayer;
 	bool _foregroundAlternateFrameSet;
 	bool _mummySpeechUsesFrontLayer;
 	bool _suppressMummySpeechAnimation;
-	bool _auxLayerInFront;
 	bool _returnLayerAnimationActive;
 	bool _mummyIdleEnabled;
 	bool _doorCeremonyAnimationActive;

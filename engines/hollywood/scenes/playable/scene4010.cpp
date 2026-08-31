@@ -77,6 +77,7 @@ const byte kScene4010PaletteCycleLastColor = 0x9f;
 const byte kScene4010CameoPatchHook = 1;
 const byte kScene4010ThrownItemPatchHook = 2;
 const byte kScene4010DestinationSoundHook = 3;
+const uint kScene4010RoomIdleLayer = 0;
 
 struct Scene4010ReleaseProfile {
 	uint16 drawbridgeExitState;
@@ -132,6 +133,11 @@ const byte kScene4010RoomIdleFrameMap[] = {
 	2, 1, 0, 0
 };
 
+const SceneLayerSpec kScene4010LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 6, kScene4010RoomIdleDescriptorCount,
+		kScene4010RoomIdleFrameMap, ARRAYSIZE(kScene4010RoomIdleFrameMap), true, 0}
+};
+
 const byte kScene4010ExitOverlayFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 12, 13, 14, 15, 16, 17, 18
@@ -171,7 +177,6 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_roomIdleChannel(),
 		_paletteCycleChannel(),
 		_secondaryAmbientChannel(),
-		_roomIdleLayer(),
 		_normalBaseFramebuffer(),
 		_normalBaseFramebufferInitialized(false),
 		_heckerAnimationState(0),
@@ -183,6 +188,7 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_roomAnimationPaused(false),
 		_destinationSoundStartFrame(0),
 		_destinationSoundStopFrame(0) {
+	_sceneLayers.configure(kScene4010LayerSpecs);
 	_normalBaseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 }
@@ -217,8 +223,7 @@ void Scene4010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (!alternateBackgroundActive())
-		drawResourceSpriteLayer(_roomIdleLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
@@ -429,7 +434,8 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene4010HeckerUseVerbRecordIndex, 312);
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene4010HeckerUseVerbRecordIndex, 0);
 	}
-	_roomIdleLayer.visible = !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6);
+	_sceneLayers.setLayerVisible(kScene4010RoomIdleLayer,
+		!alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6));
 	return true;
 }
 
@@ -484,9 +490,9 @@ bool Scene4010::alternateBackgroundActive() const {
 }
 
 void Scene4010::initializeRoomIdleLayer() {
-	_roomIdleLayer.configure(6, kScene4010RoomIdleDescriptorCount,
-		kScene4010RoomIdleFrameMap, ARRAYSIZE(kScene4010RoomIdleFrameMap));
-	_roomIdleLayer.visible = !alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6);
+	_sceneLayers.reset();
+	_sceneLayers.setLayerVisible(kScene4010RoomIdleLayer,
+		!alternateBackgroundActive() && _sceneChunkTable.isValidChunk(6));
 	_roomIdleChannel.reset(0, kScene4010RoomIdleFrameMillis);
 	_heckerAnimationState = 0;
 	_heckerLoopCount = 0;
@@ -699,7 +705,7 @@ void Scene4010::setActiveActorPose(int x, int y, byte facing) {
 
 void Scene4010::setHeckerFrame(byte frameIndex) {
 	_roomIdleChannel.frameIndex = frameIndex;
-	_roomIdleLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerFrame(kScene4010RoomIdleLayer, frameIndex);
 }
 
 void Scene4010::runHeckerFrameSequence(const byte *frames, uint frameCount) {

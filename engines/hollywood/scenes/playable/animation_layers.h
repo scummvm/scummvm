@@ -232,6 +232,14 @@ public:
 			_layers[id].layer.chunkIndex = chunkIndex;
 	}
 
+	// Changes the logical frame mapping without resetting the current frame.
+	void setLayerFrameMap(uint id, const byte *frameMap, uint frameMapSize) {
+		if (!hasLayer(id))
+			return;
+		_layers[id].layer.frameMap = frameMap;
+		_layers[id].layer.frameMapSize = frameMapSize;
+	}
+
 	void setLayerFrame(uint id, byte frameIndex) {
 		if (hasLayer(id))
 			_layers[id].layer.setFrame(frameIndex);
