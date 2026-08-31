@@ -66,7 +66,7 @@ private:
 
 	struct TranslateableStrings {
 		const char *const legendStrings[15];
-		const char *const controlStrings[3];
+		const char *const controlStrings[6];
 		const char *const levelNames[2][16];
 	};
 

@@ -173,9 +173,9 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 		},
 
 		{
-			"- KEYS -",
-			"Select Level",
-			"Exit"
+			"- KEYS -",		"",
+			"Up/Down",		"Select Level",
+			"Esc/Tab",		"Exit"
 		},
 
 		// Area names for the plaque. The games have no level names in their data and the file
@@ -274,7 +274,7 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	const uint8 stairsDown = 24;
 	const uint8 types[] = { teleporter, illusion1, illusion2, stairsUp, stairsDown, pit, plate1, plate2 };
 	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
-	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54 };
+	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54, 14, 69 };
 
 	uint8 *specialBlockIDs = new uint8[ARRAYSIZE(types)]();
 	memcpy(specialBlockIDs, types, sizeof(types));
@@ -327,12 +327,12 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 			bool breakableFromHere = ((breakAbleObject == kBreakableBlockObject && (_specialWallTypes[wn] == 8 || _specialWallTypes[wn] == 9)) ||
 				(!(d & 1) && breakAbleObject == kBreakableBarrierNS) || ((d & 1) && breakAbleObject == kBreakableBarrierEW));
 
-			if ((!(_wllWallFlags[wn] & 9) && breakAbleObject == kNoBreakableObject) || _blockData[b].flags & 7)
+			if ((!(_wllWallFlags[wn] & 9) && breakAbleObject == kNoBreakableObject && wn != _wallOfForceID) || _blockData[b].flags & 7)
 				break;
 			b = nb;
 			if (reveal)
 				_blockData[b].direction |= 1;
-			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere)
+			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere || wn == _wallOfForceID)
 				break;
 		}
 	}
@@ -897,12 +897,20 @@ void Automap_EoB::drawLegend(const AutomapLayout &l, uint flags) {
 	bg.hLine(lx, cyy + 1, lx + colW - 1, _colors[kColorStoneEdge]);
 	cyy += MAX(6, sc * 4);
 	const int chipPad = MAX(2, sc * 2);
-	const int chipW = (bigFont ? bigFont->getStringWidth("Up/Down") * sc : 6 * sc) + chipPad * 2; // TODO: Use actual up/down arrow symbols. Our font doesn't have these.
 	const int chipH = fh * sc + chipPad;
-	bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), _colors[kColorPlaqueEd]);
-	bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
-	automapDrawBigString(bg, bigFont, "Up/Down", lx, cyy + chipPad / 2, chipW, _colors[kColorGold], sc); // TODO: see above
-	automapDrawBigString(bg, bigFont, _controlStrings[1], lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2, colW - chipW - MAX(4, sc * 3), _colors[kColorPanelTxt], sc, Graphics::kTextAlignLeft);
+
+	int maxW = 0;
+	for (int i = 2; i < ARRAYSIZE(_stringTable[0].controlStrings); i += 2)
+		maxW = MAX<int>(maxW, (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * sc : 6 * sc) + chipPad * 2);
+
+	for (int i = 2; i < ARRAYSIZE(_stringTable[0].controlStrings); i += 2) {
+		int chipW = (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * sc : 6 * sc) + chipPad * 2;
+		bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), _colors[kColorPlaqueEd]);
+		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
+		automapDrawBigString(bg, bigFont, _controlStrings[i], lx, cyy + chipPad / 2, chipW, _colors[kColorGold], sc);
+		automapDrawBigString(bg, bigFont, _controlStrings[i + 1], lx + maxW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2, colW - maxW - MAX(4, sc * 3), _colors[kColorPanelTxt], sc, Graphics::kTextAlignLeft);
+		cyy += fh * sc + MAX(4, sc * 3);
+	}
 }
 
 uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
