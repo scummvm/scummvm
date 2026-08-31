@@ -174,15 +174,15 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_dialogueOverlayTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene7010AnimationLayerSpecs);
 	_hannoverSpeechTrack = _realtimeAnimationTracks.addRandom(
-		_sceneLayers.layer(kScene7010Chunk11Layer),
-		kScene7010Chunk11SpeechFrameMillis, 0x0e, 0x12, true, false);
+		_sceneLayers, kScene7010Chunk11Layer, kScene7010Chunk11SpeechFrameMillis,
+		0x0e, 0x12, true, false);
 	_doghouseSpeechTrack = _realtimeAnimationTracks.addRandom(
 		_actionOverlayPlayer.layer, kScene7010DoghouseSpeechFrameMillis,
 		kScene7010DoghouseSpeechBaseFrame,
 		kScene7010DoghouseSpeechBaseFrame + kScene7010DoghouseSpeechFrameCount - 1,
 		true, false);
 	_dialogueOverlayTrack = _realtimeAnimationTracks.addFrameMap(
-		_sceneLayers.layer(kScene7010DialogueOverlayLayer),
+		_sceneLayers, kScene7010DialogueOverlayLayer,
 		kScene7010DialogueOverlayFrameMillis, false);
 }
 

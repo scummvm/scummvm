@@ -53,6 +53,8 @@ const uint kScene4040DarkActorPaletteChunk = 11;
 const uint kScene4040LightActorPaletteChunk = 12;
 const uint kScene4040StairClipFrameCount = 0x3e;
 const uint kScene4040BackgroundDescriptorCount = 0x1a;
+const uint kScene4040RandomBackgroundLayer = 0;
+const uint kScene4040CyclicBackgroundLayer = 1;
 const uint kScene4040CandilOverlayChunk = 14;
 const uint kScene4040CandilOverlayDescriptorCount = 9;
 const byte kScene4040CandilItem = 0x3c;
@@ -74,6 +76,13 @@ const byte kScene4040CandilFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8
 };
 
+const SceneLayerSpec kScene4040LayerSpecs[] = {
+	{kSceneAnimationBehindActors, kScene4040RandomBackgroundChunk,
+		kScene4040BackgroundDescriptorCount, nullptr, 0, true, 0},
+	{kSceneAnimationBehindActors, kScene4040CyclicBackgroundChunk,
+		kScene4040BackgroundDescriptorCount, nullptr, 0, true, 0}
+};
+
 PlayableSceneConfig scene4040Config() {
 	PlayableSceneConfig config(4040,
 		SceneResourceLayout(5, 5, 15),
@@ -88,20 +97,16 @@ PlayableSceneConfig scene4040Config() {
 Scene4040::Scene4040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4040Config()),
 		_randomBackgroundChannel(),
-		_cyclicBackgroundLayer(),
-		_randomBackgroundLayer(),
 		_cyclicBackgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_randomBackgroundState(0),
 		_randomBackgroundRepeatCount(0),
 		_ambientEffectTimerAccumulator(0),
 		_previousContinuousAmbientCue(0),
 		_previousRandomAmbientCue(0) {
-	_cyclicBackgroundLayer.configure(kScene4040CyclicBackgroundChunk,
-		kScene4040BackgroundDescriptorCount, nullptr, 0);
-	_randomBackgroundLayer.configure(kScene4040RandomBackgroundChunk,
-		kScene4040BackgroundDescriptorCount, nullptr, 0);
-	_cyclicBackgroundTrack = _realtimeAnimationTracks.addLoop(_cyclicBackgroundLayer,
-		kScene4040FrameMillis, kScene4040BackgroundDescriptorCount);
+	_sceneLayers.configure(kScene4040LayerSpecs);
+	_cyclicBackgroundTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene4040CyclicBackgroundLayer, kScene4040FrameMillis,
+		kScene4040BackgroundDescriptorCount);
 }
 
 void Scene4040::initializeCustomPreviewState() {
@@ -276,19 +281,15 @@ void Scene4040::applyScenePaletteOverride() {
 }
 
 void Scene4040::resetBackgroundLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_cyclicBackgroundTrack);
-	_cyclicBackgroundLayer.visible = true;
-
-	_randomBackgroundLayer.visible = true;
-	_randomBackgroundLayer.reset(0);
 	_randomBackgroundChannel.reset(0, kScene4040FrameMillis);
 	_randomBackgroundState = 0;
 	_randomBackgroundRepeatCount = 0;
 }
 
 void Scene4040::drawBackgroundLayers() {
-	drawResourceSpriteLayer(_randomBackgroundLayer);
-	drawResourceSpriteLayer(_cyclicBackgroundLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 }
 
 void Scene4040::advanceRandomBackground(uint32 delta) {
@@ -369,7 +370,7 @@ void Scene4040::advanceRandomBackgroundTick() {
 	}
 
 	_randomBackgroundChannel.frameIndex = frameIndex;
-	_randomBackgroundLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerFrame(kScene4040RandomBackgroundLayer, frameIndex);
 }
 
 bool Scene4040::isRandomBackgroundHoldFrame(byte frameIndex) const {

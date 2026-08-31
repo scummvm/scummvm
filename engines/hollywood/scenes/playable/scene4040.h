@@ -69,8 +69,6 @@ private:
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 
 	TimedAnimationChannel _randomBackgroundChannel;
-	ResourceSpriteLayer _cyclicBackgroundLayer;
-	ResourceSpriteLayer _randomBackgroundLayer;
 	uint _cyclicBackgroundTrack;
 	byte _randomBackgroundState;
 	byte _randomBackgroundRepeatCount;
