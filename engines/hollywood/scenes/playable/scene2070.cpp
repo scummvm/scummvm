@@ -107,8 +107,8 @@ Scene2070::Scene2070(HollywoodEngine *vm) :
 		_sealMemoryFrame(0) {
 	_sceneLayers.configure(kScene2070LayerSpecs);
 	_foregroundTrack = _realtimeAnimationTracks.addLoop(
-		_sceneLayers.layer(kScene2070ForegroundLayer),
-		kScene2070ForegroundFrameMillis, kScene2070ForegroundDescriptorCount);
+		_sceneLayers, kScene2070ForegroundLayer, kScene2070ForegroundFrameMillis,
+		kScene2070ForegroundDescriptorCount);
 }
 
 void Scene2070::initializeCustomPreviewState() {

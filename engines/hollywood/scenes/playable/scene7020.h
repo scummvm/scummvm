@@ -74,8 +74,6 @@ private:
 	bool _drawChunk7OverlayInsteadOfActor;
 	uint32 _chunk7TimerAccumulator;
 	uint32 _primaryTimerAccumulator;
-	SceneLayerStack _backTransientLayers;
-	SceneLayerStack _actorReplacementLayers;
 };
 
 } // End of namespace Hollywood

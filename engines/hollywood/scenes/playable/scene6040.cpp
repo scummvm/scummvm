@@ -40,6 +40,8 @@ const uint32 kScene6040FrameMillis = 75;
 const uint32 kScene6040LeftToggleMillis = 500;
 const uint32 kScene6040RightToggleMillis = 625;
 const uint kScene6040ToggleDescriptorCount = 2;
+const uint kScene6040LeftToggleLayer = 0;
+const uint kScene6040RightToggleLayer = 1;
 const uint kScene6040WireOverlayDescriptorCount = 12;
 const uint kScene6040PaintOverlayDescriptorCount = 10;
 const byte kScene6040PaintInventoryItem = 0x60;
@@ -64,6 +66,13 @@ const byte kScene6040WirePickupFrameMap[] = {
 	0x0b, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0x0b
 };
 
+const SceneLayerSpec kScene6040LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 12, kScene6040ToggleDescriptorCount,
+		nullptr, 0, true, 0},
+	{kSceneAnimationBehindActors, 13, kScene6040ToggleDescriptorCount,
+		nullptr, 0, true, 0}
+};
+
 static PlayableSceneConfig scene6040Config() {
 	PlayableSceneConfig config(6040,
 		SceneResourceLayout(14, 5, 13),
@@ -78,16 +87,15 @@ static PlayableSceneConfig scene6040Config() {
 Scene6040::Scene6040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6040Config()),
 		_originalColorToItemMap(),
-		_leftToggleLayer(),
-		_rightToggleLayer(),
 		_leftToggleTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_rightToggleTrack(RealtimeAnimationTracks::kInvalidTrack) {
-	_leftToggleLayer.configure(12, kScene6040ToggleDescriptorCount, nullptr, 0);
-	_rightToggleLayer.configure(13, kScene6040ToggleDescriptorCount, nullptr, 0);
-	_leftToggleTrack = _realtimeAnimationTracks.addLoop(_leftToggleLayer,
-		kScene6040LeftToggleMillis, kScene6040ToggleDescriptorCount);
-	_rightToggleTrack = _realtimeAnimationTracks.addLoop(_rightToggleLayer,
-		kScene6040RightToggleMillis, kScene6040ToggleDescriptorCount);
+	_sceneLayers.configure(kScene6040LayerSpecs);
+	_leftToggleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene6040LeftToggleLayer, kScene6040LeftToggleMillis,
+		kScene6040ToggleDescriptorCount);
+	_rightToggleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene6040RightToggleLayer, kScene6040RightToggleMillis,
+		kScene6040ToggleDescriptorCount);
 }
 
 void Scene6040::initializeCustomPreviewState() {
@@ -102,8 +110,8 @@ void Scene6040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_leftToggleLayer);
-	drawResourceSpriteLayer(_rightToggleLayer);
+	drawSceneLayer(kScene6040LeftToggleLayer);
+	drawSceneLayer(kScene6040RightToggleLayer);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -242,10 +250,9 @@ AmbientAudioProfile Scene6040::ambientAudioProfile() const {
 }
 
 void Scene6040::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_leftToggleTrack);
 	_realtimeAnimationTracks.reset(_rightToggleTrack);
-	_leftToggleLayer.visible = true;
-	_rightToggleLayer.visible = true;
 }
 
 void Scene6040::drawForegroundBlocks(int activeWorldY) {

@@ -62,9 +62,6 @@ private:
 	void runBridgeOpeningOverlay();
 	void patchActionMovementModes();
 
-	SceneLayerStack _backgroundLayers;
-	SceneLayerStack _bridgeBackLayers;
-	SceneLayerStack _bridgeFrontLayers;
 	TimedAnimationChannel _backgroundChannel;
 	byte _backgroundSequence;
 	byte _backgroundFrameInSequence;

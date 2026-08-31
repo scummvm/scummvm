@@ -82,8 +82,8 @@ Scene3020::Scene3020(HollywoodEngine *vm) :
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene3020LayerSpecs);
 	_loopTrack = _realtimeAnimationTracks.addFrameMap(
-		_sceneLayers.layer(kScene3020LoopLayer),
-		kScene3020LoopFrameMillis, _vm->gameState().windmillBladesMoving);
+		_sceneLayers, kScene3020LoopLayer, kScene3020LoopFrameMillis,
+		_vm->gameState().windmillBladesMoving);
 }
 
 void Scene3020::initializeCustomPreviewState() {

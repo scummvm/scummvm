@@ -155,8 +155,7 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_sealDiscoverySpeechDurationMillis(0) {
 	_sceneLayers.configure(kScene2050LayerSpecs);
 	_ambientTrack = _realtimeAnimationTracks.addFrameMap(
-		_sceneLayers.layer(kScene2050AmbientLayer),
-		kScene2050AmbientFrameMillis);
+		_sceneLayers, kScene2050AmbientLayer, kScene2050AmbientFrameMillis);
 }
 
 void Scene2050::initializeCustomPreviewState() {
