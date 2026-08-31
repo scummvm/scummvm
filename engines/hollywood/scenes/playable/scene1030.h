@@ -84,10 +84,6 @@ private:
 
 	TimedAnimationChannel _largeForegroundChannel;
 	TimedAnimationChannel _smallForegroundChannel;
-	ResourceSpriteLayer _largeForegroundLayer;
-	ResourceSpriteLayer _smallForegroundLayer;
-	ResourceSpriteLayer _leftEntryActorLayer;
-	ResourceSpriteLayer _rightEntryActorLayer;
 	byte _largeForegroundMode;
 	byte _smallForegroundTickCount;
 	uint _entryActorPathFrameIndex;
