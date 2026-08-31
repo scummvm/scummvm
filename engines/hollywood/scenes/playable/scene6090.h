@@ -72,7 +72,6 @@ private:
 	void runOpeningConversation();
 
 	void advanceTiedRonIdle(uint32 delta);
-	void advanceAmbientLayers(uint32 delta);
 	void advanceSueIdle(uint32 delta);
 	void advanceMechanism(uint32 delta);
 	void advanceHannoverPose();
@@ -108,8 +107,9 @@ private:
 	ResourceSpriteLayer _escapeBackdropLayer;
 	ResourceSpriteLayer _freedSueLayer;
 	ResourceSpriteLayer _specialEffectLayer;
+	uint _leftAmbientTrack;
+	uint _rightAmbientTrack;
 	TimedAnimationChannel _tiedRonChannel;
-	TimedAnimationChannel _ambientLayerChannel;
 	TimedAnimationChannel _sueIdleChannel;
 	TimedAnimationChannel _mechanismChannel;
 	TimedAnimationChannel _escapeChannel;

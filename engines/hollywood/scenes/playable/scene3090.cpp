@@ -116,12 +116,12 @@ static PlayableSceneConfig scene3090Config() {
 
 Scene3090::Scene3090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3090Config()),
-		_frontChannel(),
 		_blindManChannel(),
 		_puzzleChannel(),
 		_frontLayer(),
 		_blindManLayer(),
 		_puzzleLayer(),
+		_frontTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_puzzleLayerTriggered(false),
 		_dialogueMenuActive(false),
 		_blindManConversationActive(false),
@@ -130,6 +130,8 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		_blindManSpeechTimerAccumulator(0) {
 	_frontLayer.configure(9, kScene3090FrontDescriptorCount,
 		kScene3090FrontFrameMap, ARRAYSIZE(kScene3090FrontFrameMap));
+	_frontTrack = _realtimeAnimationTracks.addFrameMap(_frontLayer,
+		kScene3090FrontFrameMillis);
 	_blindManLayer.configure(11, kScene3090BlindManDescriptorCount,
 		kScene3090BlindManFrameMap, ARRAYSIZE(kScene3090BlindManFrameMap));
 	_puzzleLayer.configure(12, kScene3090PuzzleDescriptorCount,
@@ -176,7 +178,6 @@ bool Scene3090::prepareCustomGameplayLoop() {
 }
 
 bool Scene3090::advanceCustomGameplayLoop(uint32 delta) {
-	advanceFrontLayer(delta);
 	if (_blindManSpeechActive)
 		advanceBlindManSpeechAnimation(delta);
 	else if (!_blindManConversationActive && !_dialogueMenuActive)
@@ -339,7 +340,7 @@ AmbientAudioProfile Scene3090::ambientAudioProfile() const {
 
 void Scene3090::resetAnimationLayers() {
 	GameplayState &state = _vm->gameState();
-	_frontChannel.reset(0, kScene3090FrontFrameMillis);
+	_realtimeAnimationTracks.reset(_frontTrack);
 	const byte blindManFrame = state.scene3090BlindManPlayingSaxophone ? 0x2b : 7;
 	_blindManChannel.reset(blindManFrame, kScene3090BlindManFrameMillis);
 	const byte puzzleFrame = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
@@ -347,7 +348,6 @@ void Scene3090::resetAnimationLayers() {
 	_frontLayer.visible = true;
 	_blindManLayer.visible = true;
 	_puzzleLayer.visible = state.scene3090SecretDiaryPuzzleStage < 2;
-	_frontLayer.reset(0);
 	_blindManLayer.reset(blindManFrame);
 	_puzzleLayer.reset(puzzleFrame);
 	_puzzleLayerTriggered = false;
@@ -408,15 +408,6 @@ void Scene3090::copySmallTextRow(byte sourceRow, byte destinationRow) {
 
 	memcpy(_stage003SmallRows.data() + destinationOffset,
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
-}
-
-void Scene3090::advanceFrontLayer(uint32 delta) {
-	const uint frameCount = _frontChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_frontChannel.frameIndex = _frontChannel.frameIndex == 25 ? 0 : _frontChannel.frameIndex + 1;
-		_frontLayer.chunkIndex = _vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10;
-		_frontLayer.setFrame(_frontChannel.frameIndex);
-	}
 }
 
 void Scene3090::advanceBlindManLayer(uint32 delta) {

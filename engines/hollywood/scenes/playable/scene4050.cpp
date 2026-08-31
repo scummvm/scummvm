@@ -96,18 +96,22 @@ PlayableSceneConfig scene4050Config() {
 
 Scene4050::Scene4050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4050Config()),
-		_backgroundChannel(),
 		_flagPaletteChannel(),
 		_ronSpeechChannel(),
 		_ronIdleChannel(),
 		_backgroundLayer(),
 		_ronLayer(),
 		_d09ReturnTransitionLayer(),
+		_backgroundTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_ambientEffectTimerAccumulator(0),
 		_previousContinuousAmbientCue(0),
 		_previousRandomAmbientCue(0),
 		_ronManualSequenceActive(false),
 		_transitionClearedToBlack(false) {
+	_backgroundLayer.configure(kScene4050BackgroundChunk,
+		kScene4050BackgroundDescriptorCount, nullptr, 0);
+	_backgroundTrack = _realtimeAnimationTracks.addLoop(_backgroundLayer,
+		kScene4050BackgroundFrameMillis, kScene4050BackgroundDescriptorCount);
 }
 
 void Scene4050::initializeCustomPreviewState() {
@@ -187,7 +191,6 @@ bool Scene4050::prepareCustomGameplayLoop() {
 bool Scene4050::advanceCustomGameplayLoop(uint32 delta) {
 	updateAmbientSounds(delta);
 	updateAmbientAudioAndMusicCues(delta);
-	advanceBackgroundLayer(delta);
 	advanceFlagPalette(delta);
 	advanceRonLayer(delta);
 	return true;
@@ -280,10 +283,8 @@ AmbientAudioProfile Scene4050::ambientAudioProfile() const {
 }
 
 void Scene4050::resetAnimationLayers() {
-	_backgroundLayer.configure(kScene4050BackgroundChunk, kScene4050BackgroundDescriptorCount, nullptr, 0);
+	_realtimeAnimationTracks.reset(_backgroundTrack);
 	_backgroundLayer.visible = true;
-	_backgroundLayer.setFrame(0);
-	_backgroundChannel.reset(0, kScene4050BackgroundFrameMillis);
 	_flagPaletteChannel.reset(0, kScene4050FlagPaletteCycleMillis);
 
 	_ronLayer.configure(kScene4050RonChunk, kScene4050RonDescriptorCount, nullptr, 0);
@@ -320,15 +321,6 @@ void Scene4050::drawSceneLayers() {
 	} else {
 		drawResourceSpriteLayer(_ronLayer);
 		drawResourceSpriteLayer(_backgroundLayer);
-	}
-}
-
-void Scene4050::advanceBackgroundLayer(uint32 delta) {
-	const uint frameCount = _backgroundChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte nextFrame = _backgroundLayer.frameIndex == 7 ? 0 : (byte)(_backgroundLayer.frameIndex + 1);
-		_backgroundChannel.frameIndex = nextFrame;
-		_backgroundLayer.setFrame(nextFrame);
 	}
 }
 

@@ -85,16 +85,18 @@ static PlayableSceneConfig scene3010Config() {
 
 Scene3010::Scene3010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3010Config()),
-		_windmillChannel(),
 		_forestIdleChannel(),
 		_windmillLayer(),
 		_forestIdleLayer(),
+		_windmillTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_forestIdleState(0),
 		_climbOverlayActive(false) {
 	_windmillLayer.configure(7, kScene3010WindmillDescriptorCount,
 		kScene3010WindmillFrameMap, ARRAYSIZE(kScene3010WindmillFrameMap));
 	_forestIdleLayer.configure(9, kScene3010ForestIdleDescriptorCount,
 		kScene3010ForestIdleFrameMap, ARRAYSIZE(kScene3010ForestIdleFrameMap));
+	_windmillTrack = _realtimeAnimationTracks.addFrameMap(_windmillLayer,
+		kScene3010WindmillFrameMillis, false);
 }
 
 bool Scene3010::shouldLoadArenaChunk(uint index) const {
@@ -180,8 +182,8 @@ bool Scene3010::prepareCustomGameplayLoop() {
 }
 
 bool Scene3010::advanceCustomGameplayLoop(uint32 delta) {
-	if (_vm->gameState().windmillBladesMoving)
-		advanceWindmillLayer(delta);
+	_realtimeAnimationTracks.setActive(_windmillTrack,
+		_vm->gameState().windmillBladesMoving);
 	advanceForestIdleLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -242,22 +244,14 @@ AmbientAudioProfile Scene3010::ambientAudioProfile() const {
 }
 
 void Scene3010::resetAnimationLayers() {
-	_windmillChannel.reset(kScene3010InitialWindmillFrame, kScene3010WindmillFrameMillis);
+	_realtimeAnimationTracks.resetToFrame(_windmillTrack, kScene3010InitialWindmillFrame);
+	_realtimeAnimationTracks.setActive(_windmillTrack,
+		_vm->gameState().windmillBladesMoving);
 	_forestIdleChannel.reset(0, kScene3010ForestIdleFrameMillis);
 	_forestIdleState = 0;
 	_windmillLayer.visible = true;
 	_forestIdleLayer.visible = true;
-	_windmillLayer.reset(kScene3010InitialWindmillFrame);
 	_forestIdleLayer.reset(0);
-}
-
-void Scene3010::advanceWindmillLayer(uint32 delta) {
-	const uint frameCount = _windmillChannel.consumeFrames(delta);
-	for (uint frame = 0; frame < frameCount; ++frame) {
-		_windmillChannel.frameIndex = _windmillChannel.frameIndex + 1 < ARRAYSIZE(kScene3010WindmillFrameMap) ?
-			_windmillChannel.frameIndex + 1 : 0;
-		_windmillLayer.setFrame(_windmillChannel.frameIndex);
-	}
 }
 
 void Scene3010::advanceForestIdleLayer(uint32 delta) {
@@ -414,8 +408,9 @@ bool Scene3010::waitDepartureFrame(uint32 millis, const Common::Array<byte> &cli
 
 		const uint32 slice = MIN<uint32>(remaining, 10);
 		g_system->delayMillis(slice);
-		if (_vm->gameState().windmillBladesMoving)
-			advanceWindmillLayer(slice);
+		_realtimeAnimationTracks.setActive(_windmillTrack,
+			_vm->gameState().windmillBladesMoving);
+		_realtimeAnimationTracks.advance(_windmillTrack, slice, _random);
 		advanceForestIdleLayer(slice);
 		remaining -= slice;
 		redrawAccumulator += slice;
@@ -468,7 +463,7 @@ void Scene3010::runWindmillClimbOverlay() {
 		drawPlayableComposite();
 		presentFrame();
 		while (_vm->gameState().windmillBladesMoving &&
-				_windmillChannel.frameIndex != 9 && _windmillChannel.frameIndex != 24 &&
+				_windmillLayer.frameIndex != 9 && _windmillLayer.frameIndex != 24 &&
 				!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 			if (waitSceneMillis(10, false))
 				break;
