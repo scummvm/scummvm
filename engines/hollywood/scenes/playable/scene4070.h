@@ -57,7 +57,7 @@ private:
 	void setRightSidePatchActive(bool active, bool playSound);
 	void advanceDraculaIdle(uint32 delta);
 	void updateSidePatchForActorPosition();
-	void drawSceneLayers(int activeWorldY);
+	void drawSceneLayers();
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void applyDraculaHotspotState();
@@ -73,10 +73,6 @@ private:
 	void runLaterDraculaConversation();
 	void initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 
-	ResourceSpriteLayer _randomAmbientLayer;
-	ResourceSpriteLayer _ambientLayer;
-	ResourceSpriteLayer _draculaLayer;
-	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _draculaIdleChannel;
 	uint _ambientTrack;
 	uint _randomAmbientTrack;

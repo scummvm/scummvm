@@ -85,6 +85,13 @@ const uint32 kScene4030MarkerFrameMillis = 125;
 const byte kScene4030MarkerColor = 0xb3;
 const byte kScene4030InstallPatchHook = 1;
 
+enum {
+	kScene4030LeftPropLayer,
+	kScene4030RightPropLayer,
+	kScene4030SecondaryActionLayer,
+	kScene4030PrimaryActionLayer
+};
+
 struct Scene4030MarkerPoint {
 	uint16 x;
 	uint16 y;
@@ -152,6 +159,15 @@ const byte kScene4030RightPropFrameRemap[] = {
 	17, 18, 19, 20, 21, 22, 23
 };
 
+const SceneLayerSpec kScene4030LayerSpecs[] = {
+	{ kSceneAnimationBehindActors, 7, kScene4030LeftPropDescriptorCount,
+		nullptr, 0, true, 0 },
+	{ kSceneAnimationInFrontOfActors, 8, kScene4030RightPropDescriptorCount,
+		kScene4030RightPropFrameRemap, ARRAYSIZE(kScene4030RightPropFrameRemap), true, 0 },
+	{ kSceneAnimationInFrontOfActors, 0, 0, nullptr, 0, false, 0 },
+	{ kSceneAnimationInFrontOfActors, 0, 0, nullptr, 0, false, 0 }
+};
+
 const byte kScene4030TowerExitFootstepFrames[] = {
 	3, 9, 15, 21, 27, 31, 37, 43, 49, 55,
 	61, 67, 70, 76, 82, 88, 94, 100, 106, 112,
@@ -200,17 +216,13 @@ PlayableSceneConfig scene4030Config() {
 
 Scene4030::Scene4030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4030Config()),
-		_leftPropLayer(),
-		_rightPropLayer(),
-		_secondaryActionLayer(),
-		_primaryActionLayer(),
 		_leftPropTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_rightPropChannel(),
 		_markerChannel(),
 		_originalStageSmallRows(),
 		_rightPropState(0) {
-	_leftPropLayer.configure(7, kScene4030LeftPropDescriptorCount, nullptr, 0);
-	_leftPropTrack = _realtimeAnimationTracks.addLoop(_leftPropLayer,
+	_sceneLayers.configure(kScene4030LayerSpecs);
+	_leftPropTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene4030LeftPropLayer,
 		kScene4030PropFrameMillis, kScene4030LeftPropDescriptorCount);
 	memset(_markerDark, 0, sizeof(_markerDark));
 }
@@ -242,12 +254,10 @@ void Scene4030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawMarkerPixels();
-	drawResourceSpriteLayer(_leftPropLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawResourceSpriteLayer(_rightPropLayer);
-	drawResourceSpriteLayer(_secondaryActionLayer);
-	drawResourceSpriteLayer(_primaryActionLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 	drawActionOverlayLayer();
 }
 
@@ -492,19 +502,11 @@ void Scene4030::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene4030::initializeSpriteLayers() {
+	_sceneLayers.configure(kScene4030LayerSpecs);
 	_realtimeAnimationTracks.reset(_leftPropTrack);
-	_leftPropLayer.visible = true;
-
-	_rightPropLayer.configure(8, kScene4030RightPropDescriptorCount,
-		kScene4030RightPropFrameRemap, ARRAYSIZE(kScene4030RightPropFrameRemap));
-	_rightPropLayer.visible = true;
-	_rightPropLayer.setFrame(0);
-	_rightPropLayer.hasPreviousDescriptor = false;
 	_rightPropChannel.reset(0, kScene4030PropFrameMillis);
 	_rightPropState = 0;
 
-	clearResourceLayer(_secondaryActionLayer);
-	clearResourceLayer(_primaryActionLayer);
 	_markerChannel.reset(0, kScene4030MarkerFrameMillis);
 	memset(_markerDark, 0, sizeof(_markerDark));
 }
@@ -518,11 +520,12 @@ void Scene4030::advanceBackgroundAnimations(uint32 delta) {
 }
 
 void Scene4030::advanceRightPropLayer(uint frameCount) {
+	ResourceSpriteLayer &rightPropLayer = _sceneLayers.layer(kScene4030RightPropLayer);
 	for (uint i = 0; i < frameCount; ++i) {
 		switch (_rightPropState) {
 		case 0:
-			if (_rightPropLayer.frameIndex < 10)
-				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			if (rightPropLayer.frameIndex < 10)
+				rightPropLayer.setFrame(rightPropLayer.frameIndex + 1);
 			else
 				_rightPropState = 1;
 			break;
@@ -530,37 +533,37 @@ void Scene4030::advanceRightPropLayer(uint frameCount) {
 			if (_random.getRandomNumber(0x18) == 0) {
 				_rightPropState = 2;
 			} else if (_random.getRandomNumber(0x27) == 0) {
-				_rightPropLayer.setFrame(0x0d);
+				rightPropLayer.setFrame(0x0d);
 				_rightPropState = 3;
 			}
 			break;
 		case 2:
-			if (_rightPropLayer.frameIndex < 0x0c) {
-				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			if (rightPropLayer.frameIndex < 0x0c) {
+				rightPropLayer.setFrame(rightPropLayer.frameIndex + 1);
 			} else {
-				_rightPropLayer.setFrame(10);
+				rightPropLayer.setFrame(10);
 				_rightPropState = 1;
 			}
 			break;
 		case 3:
-			if (_rightPropLayer.frameIndex < 0x1a)
-				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			if (rightPropLayer.frameIndex < 0x1a)
+				rightPropLayer.setFrame(rightPropLayer.frameIndex + 1);
 			else
 				_rightPropState = 4;
 			break;
 		case 4:
 			if (_random.getRandomNumber(0x27) == 0) {
-				_rightPropLayer.setFrame(0);
+				rightPropLayer.setFrame(0);
 				_rightPropState = 0;
 			}
 			break;
 		default:
-			_rightPropLayer.setFrame(0);
+			rightPropLayer.setFrame(0);
 			_rightPropState = 0;
 			break;
 		}
 	}
-	_rightPropChannel.frameIndex = _rightPropLayer.frameIndex;
+	_rightPropChannel.frameIndex = rightPropLayer.frameIndex;
 }
 
 void Scene4030::advanceMarkerPixels(uint32 delta) {
@@ -650,8 +653,8 @@ void Scene4030::drawTowerTransitionFrame(const Graphics::ManagedSurface &transit
 	_sceneFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	drawMarkerPixels();
-	drawResourceSpriteLayer(_leftPropLayer);
-	drawResourceSpriteLayer(_rightPropLayer);
+	drawResourceSpriteLayer(_sceneLayers.layer(kScene4030LeftPropLayer));
+	drawResourceSpriteLayer(_sceneLayers.layer(kScene4030RightPropLayer));
 }
 
 bool Scene4030::drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
@@ -690,26 +693,27 @@ void Scene4030::talkToSkeleton() {
 }
 
 void Scene4030::playBoneRevealAnimation() {
-	_primaryActionLayer.configure(kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
+	_sceneLayers.setLayerResource(kScene4030PrimaryActionLayer,
+		kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
 		kScene4030BoneRevealFrameMap, ARRAYSIZE(kScene4030BoneRevealFrameMap));
-	_primaryActionLayer.visible = true;
-	_secondaryActionLayer.configure(kScene4030BoneRevealSecondaryChunk,
+	_sceneLayers.showLayerAtFrame(kScene4030PrimaryActionLayer, 0);
+	_sceneLayers.setLayerResource(kScene4030SecondaryActionLayer, kScene4030BoneRevealSecondaryChunk,
 		kScene4030BoneRevealSecondaryDescriptorCount, kScene4030BoneRevealSecondaryFrameMap,
 		ARRAYSIZE(kScene4030BoneRevealSecondaryFrameMap));
-	_secondaryActionLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene4030SecondaryActionLayer, false);
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	bool stateApplied = false;
 	for (uint frame = 0; frame <= 34 && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested(); ++frame) {
-		_primaryActionLayer.setFrame((byte)MIN<uint>(frame,
+		_sceneLayers.setLayerFrame(kScene4030PrimaryActionLayer, (byte)MIN<uint>(frame,
 			ARRAYSIZE(kScene4030BoneRevealFrameMap) - 1));
 		if (frame >= 22) {
 			const byte secondaryFrame = (byte)MIN<uint>(frame - 21,
 				ARRAYSIZE(kScene4030BoneRevealSecondaryFrameMap) - 1);
-			_secondaryActionLayer.visible = true;
-			_secondaryActionLayer.setFrame(secondaryFrame);
+			_sceneLayers.setLayerVisible(kScene4030SecondaryActionLayer, true);
+			_sceneLayers.setLayerFrame(kScene4030SecondaryActionLayer, secondaryFrame);
 			if (secondaryFrame == 2)
 				_soundBank0.playSample(0x3a, 25);
 			if (secondaryFrame == 13) {
@@ -726,8 +730,8 @@ void Scene4030::playBoneRevealAnimation() {
 		_vm->gameState().scene4030LooseBoneState = 1;
 		applySceneStateToHotspotsAndPatches(3);
 	}
-	clearResourceLayer(_secondaryActionLayer);
-	clearResourceLayer(_primaryActionLayer);
+	clearSceneLayer(kScene4030SecondaryActionLayer);
+	clearSceneLayer(kScene4030PrimaryActionLayer);
 	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();
@@ -789,23 +793,25 @@ void Scene4030::updateIronMaidenMechanism() {
 }
 
 void Scene4030::playIronMaidenMechanismAnimation(byte secondaryFrameGroup) {
-	_primaryActionLayer.configure(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
+	_sceneLayers.setLayerResource(kScene4030PrimaryActionLayer,
+		kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
 		kScene4030MechanismPrimaryFrameMap, ARRAYSIZE(kScene4030MechanismPrimaryFrameMap));
-	_primaryActionLayer.visible = true;
-	_secondaryActionLayer.configure(kScene4030MechanismSecondaryChunk,
+	_sceneLayers.showLayerAtFrame(kScene4030PrimaryActionLayer, 0);
+	_sceneLayers.setLayerResource(kScene4030SecondaryActionLayer, kScene4030MechanismSecondaryChunk,
 		kScene4030MechanismSecondaryDescriptorCount,
 		kScene4030MechanismSecondaryFrameGroups[secondaryFrameGroup],
 		ARRAYSIZE(kScene4030MechanismSecondaryFrameGroups[secondaryFrameGroup]));
-	_secondaryActionLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene4030SecondaryActionLayer, false);
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	for (uint frame = 0; frame < ARRAYSIZE(kScene4030MechanismPrimaryFrameMap) &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		_primaryActionLayer.setFrame((byte)frame);
+		_sceneLayers.setLayerFrame(kScene4030PrimaryActionLayer, (byte)frame);
 		if (frame >= 6) {
-			_secondaryActionLayer.visible = true;
-			_secondaryActionLayer.setFrame((byte)MIN<uint>(frame - 6, 2));
+			_sceneLayers.setLayerVisible(kScene4030SecondaryActionLayer, true);
+			_sceneLayers.setLayerFrame(kScene4030SecondaryActionLayer,
+				(byte)MIN<uint>(frame - 6, 2));
 			if (frame == 6)
 				_soundBank0.playSample(0x2b, 100);
 		}
@@ -813,8 +819,8 @@ void Scene4030::playIronMaidenMechanismAnimation(byte secondaryFrameGroup) {
 			break;
 	}
 
-	clearResourceLayer(_secondaryActionLayer);
-	clearResourceLayer(_primaryActionLayer);
+	clearSceneLayer(kScene4030SecondaryActionLayer);
+	clearSceneLayer(kScene4030PrimaryActionLayer);
 	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();
