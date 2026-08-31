@@ -21,6 +21,7 @@
 
 #include "ultima/ultima1/views/commands.h"
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/shared/gfx/rect.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -68,7 +69,8 @@ void Commands::writeString(const Common::String &msg) {
 }
 
 void Commands::prompt() {
-	writeString("\x10");
+	_surface.fillRect(TextRect(0, 4, 29, 4), 0);	// Clear entire bottom row
+	_surface.writeString(Point(0, 4), "\x10");
 	_textCursor.setPosition(Common::Point(1, 24));
 	_textCursor.show();
 }

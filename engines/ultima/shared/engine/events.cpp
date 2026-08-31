@@ -148,9 +148,12 @@ void Events::popView() {
 	priorView->msgUnfocus(UnfocusMessage());
 	_views.pop();
 
-	for (int i = 0; i < (int)_views.size() - 1; ++i) {
-		_views[i]->redraw();
-		_views[i]->draw();
+	// If the prior view was smaller than the view just closed, then we need to redraw everything
+	if (!_views.empty() && !_views[_views.size() - 1]->_bounds.contains(priorView->_bounds)) {
+		for (int i = 0; i < (int)_views.size() - 1; ++i) {
+			_views[i]->redraw();
+			_views[i]->draw();
+		}
 	}
 
 	if (!_views.empty()) {
