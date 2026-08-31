@@ -483,14 +483,14 @@ bool Scene8010::waitTransitionFrameMillis(uint32 millis) {
 		const bool boatDirty = previousBoatDescriptor != _boatLayer.descriptorIndex();
 		if (fishermanDirty) {
 			restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[5], 0,
-				kScene8010FishermanDescriptorCount, _fishermanLayer.descriptorIndex(),
-				_savedFramebuffer.rawSurface(), *_sceneFramebuffer.surfacePtr());
+				kScene8010FishermanDescriptorCount, previousFishermanDescriptor,
+				_baseFramebuffer.rawSurface(), *_sceneFramebuffer.surfacePtr());
 			drawResourceSpriteLayer(_fishermanLayer);
 		}
 		if (boatDirty) {
 			restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[6], 0,
-				kScene8010BoatDescriptorCount, _boatLayer.descriptorIndex(),
-				_savedFramebuffer.rawSurface(), *_sceneFramebuffer.surfacePtr());
+				kScene8010BoatDescriptorCount, previousBoatDescriptor,
+				_baseFramebuffer.rawSurface(), *_sceneFramebuffer.surfacePtr());
 			drawResourceSpriteLayer(_boatLayer);
 		}
 		if (fishermanDirty || boatDirty)
