@@ -50,7 +50,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "AdjustPuzzle"; }
 
-	// One adjustable element. rects[0]/rects[2] are the decrement/increment
+	// One adjustable element. rects[1]/rects[3] are the decrement/increment
 	// hotspots; subRects are the per-state display frames (blitted at boundRect).
 	struct Piece {
 		Common::Rect rects[4];
@@ -82,7 +82,7 @@ protected:
 
 	// -- File data --
 	Common::Path _imageName;			// 0x1c0
-	int16 _field3d = 0;					// 0x3d
+	uint16 _testCursorType = 0;			// 0x3d - raw Nancy14 cursor type, shown over the test control
 	Common::Array<Piece> _pieces;		// 0x3f
 
 	Common::Rect _rectA5;				// 0xa5
@@ -96,7 +96,7 @@ protected:
 	Common::Rect _adjustRect;			// 0x11f
 	RandomSoundBlock _adjustSound;		// 0x12f (present only when _adjustName is set)
 
-	int16 _field18a = 0;						// 0x18a
+	uint16 _animCursorType = 0;					// 0x18a - cursor for the plotter animation, unused here
 	Common::Array<Common::Path> _overlayNames;	// 0x18c, result overlays
 	Common::Array<MatrixRow> _matrix;			// 0x1b0
 

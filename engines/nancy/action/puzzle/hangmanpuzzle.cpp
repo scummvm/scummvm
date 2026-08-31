@@ -39,7 +39,7 @@ namespace Action {
 void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _puzzleImageName);		// 0x3d
 	readFilename(stream, _lettersImageName);	// 0x41
-	_field45 = stream.readSint16LE();			// 0x45
+	_hoverCursorType = stream.readUint16LE();	// 0x45
 
 	int16 numWords = stream.readSint16LE();
 	_words.resize(numWords);
@@ -305,8 +305,7 @@ void HangmanPuzzle::handleInput(NancyInput &input) {
 
 	int tile = tileAtCursor(input.mousePos);
 	if (tile >= 0 && !_letters[tile].used) {
-		// Clickable-hotspot cursor for puzzles (the blue pointing hand).
-		g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_hoverCursorType, true);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			commitGuess((uint)tile);
 		}

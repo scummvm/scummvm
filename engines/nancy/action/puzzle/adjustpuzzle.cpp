@@ -37,7 +37,7 @@ namespace Action {
 
 void AdjustPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);		// 0x1c0
-	_field3d = stream.readSint16LE();		// 0x3d
+	_testCursorType = stream.readUint16LE();	// 0x3d
 
 	int16 numPieces = stream.readSint16LE();
 	_pieces.resize(numPieces);				// 0x3f
@@ -66,7 +66,7 @@ void AdjustPuzzle::readData(Common::SeekableReadStream &stream) {
 		_adjustSound.readData(stream);		// 0x12f
 	}
 
-	_field18a = stream.readSint16LE();		// 0x18a
+	_animCursorType = stream.readUint16LE();	// 0x18a
 
 	int16 numOverlays = stream.readSint16LE();
 	_overlayNames.resize(numOverlays);		// 0x18c
@@ -273,7 +273,7 @@ void AdjustPuzzle::handleInput(NancyInput &input) {
 	// The "test" control: evaluate the current settings.
 	if (!_rectB5.isEmpty() &&
 			NancySceneState.getViewport().convertViewportToScreen(_rectB5).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_testCursorType, true);
 		if (click) {
 			runTest();
 		}

@@ -86,7 +86,7 @@ protected:
 	// -- File data --
 	Common::Path _puzzleImageName;		// 0x3d
 	Common::Path _lettersImageName;		// 0x41
-	int16 _field45 = 0;					// 0x45
+	uint16 _hoverCursorType = 0;		// 0x45 - raw Nancy14 cursor type, shown over a letter tile
 
 	Common::Array<Common::String> _words;			// candidate word bank
 	Common::Array<Common::Rect> _hangPieceRects;	// 0x57, hang-stage pieces
