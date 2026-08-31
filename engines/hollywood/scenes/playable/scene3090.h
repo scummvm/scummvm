@@ -51,7 +51,6 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void replaceActorPaletteClassFromOriginal(byte sourceClass, byte destinationClass);
 	void copySmallTextRow(byte sourceRow, byte destinationRow);
-	void advanceFrontLayer(uint32 delta);
 	void advanceBlindManLayer(uint32 delta);
 	void beginBlindManSpeechAnimation();
 	void advanceBlindManSpeechAnimation(uint32 delta);
@@ -73,12 +72,12 @@ private:
 	void runSaxophoneHandoff();
 	void drawForegroundBlocks(int activeWorldY);
 
-	TimedAnimationChannel _frontChannel;
 	TimedAnimationChannel _blindManChannel;
 	TimedAnimationChannel _puzzleChannel;
 	ResourceSpriteLayer _frontLayer;
 	ResourceSpriteLayer _blindManLayer;
 	ResourceSpriteLayer _puzzleLayer;
+	uint _frontTrack;
 	bool _puzzleLayerTriggered;
 	bool _dialogueMenuActive;
 	bool _blindManConversationActive;

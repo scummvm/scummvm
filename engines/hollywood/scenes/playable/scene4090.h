@@ -80,7 +80,7 @@ private:
 
 	SceneLayerStack _ambientLayers;
 	ResourceSpriteLayer _scriptLayer;
-	TimedAnimationChannel _chunk12Channel;
+	uint _randomAmbientTrack;
 	TimedAnimationChannel _organBodyChannel;
 	Common::Array<byte> _originalColorToItemMap;
 	uint32 _ambientSoundTimerAccumulator;

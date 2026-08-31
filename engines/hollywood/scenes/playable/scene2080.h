@@ -64,7 +64,6 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void advanceAmbientLayer(uint32 delta);
 	void advanceForegroundActorIdle(uint32 delta);
 	void advanceForegroundActorDialoguePose(uint32 delta);
 	void drawCumulativeDeltaClip();
@@ -95,11 +94,11 @@ private:
 	void setHotspotInteractionY(byte itemId, int16 y);
 	void setHotspotInteractionX(byte itemId, int16 x);
 
-	TimedAnimationChannel _ambientChannel;
 	TimedAnimationChannel _foregroundActorChannel;
 	ResourceSpriteLayer _ambientLayer;
 	ResourceSpriteLayer _foregroundActorLayer;
 	ResourceSpriteLayer _forwardExitPoseLayer;
+	uint _ambientTrack;
 	Common::Array<byte> _deltaClipData;
 	byte _foregroundActorIdleState;
 	byte _foregroundActorIdleDelay;
