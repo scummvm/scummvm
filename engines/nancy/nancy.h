@@ -66,6 +66,7 @@ class GraphicsManager;
 class CursorManager;
 class NancyConsole;
 class DeferredLoader;
+class MoviePlayer;
 
 namespace State {
 class State;
@@ -121,6 +122,9 @@ public:
 	SoundManager *_sound;
 
 	Common::RandomSource *_randomSource;
+
+	// All loaded movies, for MoviePlayer::findLoadedMovie().
+	Common::Array<MoviePlayer *> _loadedMovies;
 
 	// Used to check whether we need to show the SaveDialog
 	bool _hasJustSaved;

@@ -47,8 +47,6 @@ private:
 	MoviePlayer &_owner;
 };
 
-Common::Array<MoviePlayer *> MoviePlayer::_loadedMovies;
-
 MoviePlayer::MoviePlayer() {}
 
 MoviePlayer::~MoviePlayer() {
@@ -56,9 +54,9 @@ MoviePlayer::~MoviePlayer() {
 }
 
 void MoviePlayer::unregisterMovie() {
-	for (uint i = 0; i < _loadedMovies.size(); ++i) {
-		if (_loadedMovies[i] == this) {
-			_loadedMovies.remove_at(i);
+	for (uint i = 0; i < g_nancy->_loadedMovies.size(); ++i) {
+		if (g_nancy->_loadedMovies[i] == this) {
+			g_nancy->_loadedMovies.remove_at(i);
 			break;
 		}
 	}
@@ -67,7 +65,7 @@ void MoviePlayer::unregisterMovie() {
 }
 
 MoviePlayer *MoviePlayer::findLoadedMovie(const Common::Path &name) {
-	for (MoviePlayer *movie : _loadedMovies) {
+	for (MoviePlayer *movie : g_nancy->_loadedMovies) {
 		if (movie->_loadedName.equalsIgnoreCase(name)) {
 			return movie;
 		}
@@ -143,7 +141,7 @@ bool MoviePlayer::loadFile(const Common::Path &name, byte videoPlaytype, bool bi
 	}
 
 	_loadedName = name;
-	_loadedMovies.push_back(this);
+	g_nancy->_loadedMovies.push_back(this);
 
 	return true;
 }

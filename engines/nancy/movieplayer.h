@@ -125,10 +125,8 @@ private:
 	Common::ScopedPtr<Video::VideoDecoder> _decoder;
 	byte _videoType = kVideoPlaytypeAVF;
 
-	// Name this movie was loaded with, and the list of all currently loaded
-	// movies; both only serve findLoadedMovie().
+	// Name this movie was loaded with; used by findLoadedMovie().
 	Common::Path _loadedName;
-	static Common::Array<MoviePlayer *> _loadedMovies;
 
 	// Decoded-frame cache for the Bink path (AVF caches internally). Bink seeking
 	// re-decodes from the previous keyframe, so caching keeps panorama scrubbing
