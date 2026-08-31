@@ -672,6 +672,12 @@ void PlaySecondaryMovie::onPause(bool pause) {
 void PlaySecondaryMovie::execute() {
 	switch (_state) {
 	case kBegin:
+		// WORKAROUND: Skip playing a known broken overlay animation in Nancy14
+		if (g_nancy->getGameType() == kGameTypeNancy14 && _videoName.baseName().equalsIgnoreCase("OFF0007_Water_OVLANIM")) {
+			_isDone = true;
+			return;
+		}
+
 		init();
 		registerGraphics();
 		g_nancy->_sound->loadSound(_sound);
