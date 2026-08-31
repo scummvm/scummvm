@@ -216,18 +216,13 @@ void Scene6020::runCustomEntrySequence() {
 		runEntryFromScene6010();
 }
 
-bool Scene6020::prepareCustomGameplayLoop() {
+void Scene6020::prepareCustomGameplayLoop() {
 	resetTaffyLayer();
-	return true;
 }
 
-bool Scene6020::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+void Scene6020::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
 		advanceTaffyLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6020::dispatchCustomSceneAction(uint16 handlerId) {

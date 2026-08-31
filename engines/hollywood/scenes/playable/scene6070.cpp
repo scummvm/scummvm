@@ -272,22 +272,15 @@ bool Scene6070::shouldPresentPreviewBeforeEntrySequence() const {
 	return stateId < kScene6070ArrivalCutsceneState || stateId > kScene6070ReturnFromDialogueState;
 }
 
-bool Scene6070::prepareCustomGameplayLoop() {
+void Scene6070::prepareCustomGameplayLoop() {
 	_sueIdleChannel.reset(_sueLayer.frameIndex, kScene6070SueFrameMillis);
 	_realtimeAnimationTracks.resetTimer(_state609PropTrack);
 	_sueSpeechTimerAccumulator = 0;
-	return true;
 }
 
-bool Scene6070::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-
+void Scene6070::advanceCustomGameplayLoop(uint32 delta) {
 	if (!isScene6070AlternateCutscene(_vm))
 		advanceSueIdle(delta);
-
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6070::dispatchCustomSceneAction(uint16 handlerId) {

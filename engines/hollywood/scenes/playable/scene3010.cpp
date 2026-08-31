@@ -176,17 +176,14 @@ void Scene3010::runCustomEntrySequence() {
 	}
 }
 
-bool Scene3010::prepareCustomGameplayLoop() {
+void Scene3010::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
 }
 
-bool Scene3010::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3010::advanceCustomGameplayLoop(uint32 delta) {
 	_realtimeAnimationTracks.setActive(_windmillTrack,
 		_vm->gameState().windmillBladesMoving);
 	advanceForestIdleLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {

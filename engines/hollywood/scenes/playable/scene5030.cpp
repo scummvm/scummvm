@@ -286,15 +286,9 @@ void Scene5030::runExitSideEffectsAfterLoop() {
 	_vm->gameplayMusic()->stop();
 }
 
-bool Scene5030::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene5030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceLayer(_chunk8Channel, kScene5030Chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
 	advanceConcurrentPrimarySpeech(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
 	if (_scoutStopTransitionActive || _scoutResumeTransitionActive) {
 		advanceScoutTransitions(delta);
 		advanceRonDialogueIdle(delta);
@@ -315,8 +309,6 @@ bool Scene5030::advanceCustomGameplayLoop(uint32 delta) {
 		advanceRonDialogueIdle(delta);
 	}
 	ensureAmbientSoundCuePlaying(1, 0x19, 75);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene5030::dispatchCustomSceneAction(uint16 handlerId) {

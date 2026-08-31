@@ -195,9 +195,8 @@ void Scene5110::runCustomEntrySequence() {
 	walkActiveActorTo(0x0b4, 0x174, 0xff, 0, false);
 }
 
-bool Scene5110::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5110::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSalonAnimations(delta);
-	return false;
 }
 
 bool Scene5110::dispatchCustomSceneAction(uint16 handlerId) {

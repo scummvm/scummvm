@@ -85,15 +85,6 @@ void Scene1090::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene1090::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene1090::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene1090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a cocina (go to kitchen).

@@ -184,10 +184,9 @@ void Scene2110::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene2110::advanceCustomGameplayLoop(uint32 delta) {
+void Scene2110::advanceCustomGameplayLoop(uint32 delta) {
 	advanceEntryIdle(delta);
 	advanceScriptedActorPath(delta);
-	return false;
 }
 
 bool Scene2110::dispatchCustomSceneAction(uint16 handlerId) {

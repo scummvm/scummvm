@@ -177,15 +177,12 @@ void Scene1040::runCustomEntrySequence() {
 	}
 }
 
-bool Scene1040::prepareCustomGameplayLoop() {
+void Scene1040::prepareCustomGameplayLoop() {
 	_gorillaChannel.reset(_gorillaLayer.frameIndex, kScene1040FrameMillis);
-	return true;
 }
 
-bool Scene1040::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1040::advanceCustomGameplayLoop(uint32 delta) {
 	advanceGorillaAnimation(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1040::dispatchCustomSceneAction(uint16 handlerId) {

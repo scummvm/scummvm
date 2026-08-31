@@ -150,11 +150,6 @@ void Scene2070::runCustomEntrySequence() {
 		runEntryFromLabyrinth();
 }
 
-bool Scene2070::advanceCustomGameplayLoop(uint32 delta) {
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
-}
-
 bool Scene2070::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 

@@ -158,20 +158,15 @@ void Scene6030::runCustomEntrySequence() {
 	runEntryConversation();
 }
 
-bool Scene6030::prepareCustomGameplayLoop() {
+void Scene6030::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
 }
 
-bool Scene6030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene6030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceScriptedActorPath(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_hannoverManualSequenceActive &&
+	if (!_primaryDialogueSpeechActive && !_hannoverManualSequenceActive &&
 			_animationLayers.layer(kScene6030HannoverLayer).visible)
 		advanceHannoverLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {

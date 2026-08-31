@@ -233,21 +233,16 @@ bool Scene7100::shouldPresentPreviewBeforeEntrySequence() const {
 	return _vm->gameState().mainFlowStateId != kScene7100DialogueEntryState;
 }
 
-bool Scene7100::prepareCustomGameplayLoop() {
+void Scene7100::prepareCustomGameplayLoop() {
 	_primaryTimerAccumulator = 0;
 	_environmentTimerAccumulator = 0;
-	return true;
 }
 
-bool Scene7100::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (!_manualPrimaryAnimationActive)
+void Scene7100::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive && !_manualPrimaryAnimationActive)
 		advancePrimaryIdleFrame(delta);
 
 	advanceEnvironmentFrame(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {

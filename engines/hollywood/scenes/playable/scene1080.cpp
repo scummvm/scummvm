@@ -153,19 +153,15 @@ void Scene1080::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene1080::prepareCustomGameplayLoop() {
+void Scene1080::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
 }
 
-bool Scene1080::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceForegroundLayer(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (_vm->gameState().scene1080FrancoisProgressState < 2 && !_francoisActionActive)
+	if (!_primaryDialogueSpeechActive &&
+			_vm->gameState().scene1080FrancoisProgressState < 2 && !_francoisActionActive)
 		advanceFrancoisLayer(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {

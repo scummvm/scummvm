@@ -201,6 +201,100 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
 
+PlayableScene::BlockingSequence::BlockingSequence(PlayableScene &scene) :
+		_scene(scene),
+		_running(true) {
+	refresh();
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
+		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
+	if (canRun()) {
+		const bool completed = _scene.playAnimationFrames(layers, layerId, range);
+		if (!completed && !_scene._skipRequested)
+			_running = false;
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
+		const ActionOverlaySpec &spec) {
+	if (canRun()) {
+		_scene.runActorReplacement(spec);
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorPose(
+		const SceneActorPose &pose, byte cel) {
+	_scene.setActiveActorPose(pose.x, pose.y, pose.facing, cel);
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorPath(
+		const SceneActorPose &target, byte cel, bool cancelOnSkip) {
+	if (canRun()) {
+		_running = _scene.walkActiveActorTo(target.x, target.y, target.facing, cel, cancelOnSkip);
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::sound(
+		uint16 cueId, byte volumePercent) {
+	if (canRun())
+		_scene._soundBank0.playSample(cueId, volumePercent);
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::secondarySpeech(
+		uint16 rowIndex, byte frameIndex) {
+	if (canRun()) {
+		_scene.beginSecondarySpeechLine(rowIndex, frameIndex);
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::primarySpeech(
+		uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue) {
+	if (canRun()) {
+		_scene.beginPrimarySpeechLine(rowIndex, frameIndex, centerX, topY, red, green, blue);
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::framebufferPatch(byte selector) {
+	_scene.applySceneStateToHotspotsAndPatches(selector);
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::paletteTransition(
+		PaletteTransition transition) {
+	if (canRun()) {
+		if (transition == kFadeFromBlack)
+			_scene.fadePaletteFromBlack();
+		else
+			_scene.fadePaletteToBlack();
+		refresh();
+	}
+	return *this;
+}
+
+bool PlayableScene::BlockingSequence::canRun() {
+	refresh();
+	return _running;
+}
+
+void PlayableScene::BlockingSequence::refresh() {
+	if (_scene.animationPlaybackShouldStop())
+		_running = false;
+}
+
 PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResourceLayout &resourceLayout,
 		const SceneViewport &sceneViewport, const SceneActorPose &actorPose) :
 		sceneId(sceneNumber),
@@ -548,13 +642,20 @@ void PlayableScene::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool PlayableScene::prepareCustomGameplayLoop() {
-	return false;
+void PlayableScene::prepareCustomGameplayLoop() {
 }
 
-bool PlayableScene::advanceCustomGameplayLoop(uint32 delta) {
+void PlayableScene::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
-	return false;
+}
+
+void PlayableScene::advancePrimarySpeechAnimation(uint32 delta) {
+	if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
+}
+
+void PlayableScene::advanceAmbientAudio(uint32 delta) {
+	updateAmbientAudioAndMusicCues(delta);
 }
 
 bool PlayableScene::dispatchCustomSceneAction(uint16 handlerId) {
@@ -1632,20 +1733,10 @@ void PlayableScene::prepareGameplayLoop() {
 
 void PlayableScene::advanceGameplayLoop(uint32 delta) {
 	advanceSecondaryActorSpeechAnimation(delta);
-
-	const bool customLoopAdvanced = advanceCustomGameplayLoop(delta);
+	advanceCustomGameplayLoop(delta);
 	_realtimeAnimationTracks.advance(delta, _random);
-
-	if (customLoopAdvanced) {
-		advanceViewportScroll(delta);
-		syncActiveActorPoseToGameState();
-		return;
-	}
-
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-
-	updateAmbientAudioAndMusicCues(delta);
+	advancePrimarySpeechAnimation(delta);
+	advanceAmbientAudio(delta);
 	advanceViewportScroll(delta);
 	syncActiveActorPoseToGameState();
 }

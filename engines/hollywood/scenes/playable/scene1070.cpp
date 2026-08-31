@@ -188,23 +188,18 @@ void Scene1070::runCustomEntrySequence() {
 	presentFrame();
 }
 
-bool Scene1070::prepareCustomGameplayLoop() {
+void Scene1070::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	return true;
 }
 
-bool Scene1070::advanceCustomGameplayLoop(uint32 delta) {
+void Scene1070::advanceCustomGameplayLoop(uint32 delta) {
 	advanceBackLayer(delta);
 	advanceCharacterAmbientAudio();
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else {
+	if (!_primaryDialogueSpeechActive) {
 		advanceSpencerAmbientTrigger(delta);
 		advanceGhostLayer(delta);
 		advanceSpencerLayer(delta);
 	}
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene1070::dispatchCustomSceneAction(uint16 handlerId) {

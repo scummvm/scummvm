@@ -144,18 +144,14 @@ void Scene3060::runCustomEntrySequence() {
 		runEntryFromScene3050();
 }
 
-bool Scene3060::prepareCustomGameplayLoop() {
+void Scene3060::prepareCustomGameplayLoop() {
 	applySceneStateToHotspotsAndPatches(0xff);
-	return true;
 }
 
-bool Scene3060::advanceCustomGameplayLoop(uint32 delta) {
+void Scene3060::advanceCustomGameplayLoop(uint32 delta) {
 	if (_secretDoorRevealActive)
-		return true;
-
-	updateAmbientAudioAndMusicCues(delta);
+		return;
 	advanceFrontLayer(delta);
-	return true;
 }
 
 bool Scene3060::dispatchCustomSceneAction(uint16 handlerId) {

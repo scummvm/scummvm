@@ -177,17 +177,9 @@ bool Scene8010::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene8010::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene8010::advanceCustomGameplayLoop(uint32 delta) {
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
+void Scene8010::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_primaryDialogueSpeechActive)
 		advanceFishermanIdle(delta);
-	updateSceneAmbientAudio(delta);
-	return true;
 }
 
 bool Scene8010::dispatchCustomSceneAction(uint16 handlerId) {
@@ -445,7 +437,7 @@ void Scene8010::advanceFishermanIdle(uint32 delta) {
 	}
 }
 
-void Scene8010::updateSceneAmbientAudio(uint32 delta) {
+void Scene8010::advanceAmbientAudio(uint32 delta) {
 	if (!_ambientSoundBank0.isPlaying()) {
 		_previousAmbientSoundCueId = _currentAmbientSoundCueId;
 		do {
@@ -485,7 +477,7 @@ bool Scene8010::waitTransitionFrameMillis(uint32 millis) {
 		const uint16 previousBoatDescriptor = _boatLayer.descriptorIndex();
 		advanceFishermanIdle(slice);
 		_realtimeAnimationTracks.advance(_boatTrack, slice, _random);
-		updateSceneAmbientAudio(slice);
+		advanceAmbientAudio(slice);
 
 		const bool fishermanDirty = previousFishermanDescriptor != _fishermanLayer.descriptorIndex();
 		const bool boatDirty = previousBoatDescriptor != _boatLayer.descriptorIndex();

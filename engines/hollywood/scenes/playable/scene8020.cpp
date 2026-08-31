@@ -155,15 +155,9 @@ void Scene8020::runCustomEntrySequence() {
 	}
 }
 
-bool Scene8020::prepareCustomGameplayLoop() {
-	return true;
-}
-
-bool Scene8020::advanceCustomGameplayLoop(uint32 delta) {
+void Scene8020::advanceCustomGameplayLoop(uint32 delta) {
 	if (!_foregroundSequenceLocked && _vm->gameState().scene8020ForegroundObjectState != 2)
 		advanceForegroundLayer(delta);
-	updateSceneAmbientAudio(delta);
-	return true;
 }
 
 bool Scene8020::dispatchCustomSceneAction(uint16 handlerId) {
@@ -447,7 +441,7 @@ void Scene8020::advanceForegroundLayer(uint32 delta) {
 	}
 }
 
-void Scene8020::updateSceneAmbientAudio(uint32 delta) {
+void Scene8020::advanceAmbientAudio(uint32 delta) {
 	if (!_ambientSoundBank0.isPlaying()) {
 		byte cue = 0;
 		do {

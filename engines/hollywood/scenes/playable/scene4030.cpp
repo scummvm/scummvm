@@ -304,10 +304,8 @@ void Scene4030::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-bool Scene4030::advanceCustomGameplayLoop(uint32 delta) {
+void Scene4030::advanceCustomGameplayLoop(uint32 delta) {
 	advanceBackgroundAnimations(delta);
-	updateAmbientAudioAndMusicCues(delta);
-	return true;
 }
 
 bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {

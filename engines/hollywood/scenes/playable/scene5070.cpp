@@ -142,12 +142,11 @@ void Scene5070::runCustomEntrySequence() {
 	walkActiveActorTo(kScene5070EntryTargetX, kScene5070EntryTargetY, 5, 0, false);
 }
 
-bool Scene5070::advanceCustomGameplayLoop(uint32 delta) {
+void Scene5070::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	if (_mineCartRumbleActive && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 100);
-	return false;
 }
 
 bool Scene5070::dispatchCustomSceneAction(uint16 handlerId) {
