@@ -474,6 +474,8 @@ protected:
 		return _animationPlayer.playAndPresent(target, range);
 	}
 	bool playAnimationFrames(SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range);
+	bool playAndPresentAnimationFrames(SceneLayerStack &layers, uint layerId,
+		const AnimationFrameRange &range);
 	template<class FrameTarget>
 	bool playAnimationTransition(FrameTarget &target, const AnimationTransition &transition) {
 		return _animationPlayer.transition(target, transition);
@@ -483,6 +485,8 @@ protected:
 		return _animationPlayer.transitionAndPresent(target, transition);
 	}
 	bool playAnimationTransition(SceneLayerStack &layers, uint layerId,
+		const AnimationTransition &transition);
+	bool playAndPresentAnimationTransition(SceneLayerStack &layers, uint layerId,
 		const AnimationTransition &transition);
 	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
 	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
@@ -503,7 +507,23 @@ protected:
 		return playResourceLayerSequence(layer, chunkIndex, descriptorCount, frameMap,
 			AnimationFrameRange(0, size - 1, frameMillis));
 	}
+	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
+		uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
+		const AnimationFrameRange &range, bool clearAtEnd = true);
+	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
+		uint16 descriptorCount, const AnimationFrameRange &range, bool clearAtEnd = true) {
+		return playResourceLayerSequence(layers, layerId, chunkIndex, descriptorCount,
+			nullptr, 0, range, clearAtEnd);
+	}
+	template<uint size>
+	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
+			uint16 descriptorCount, const byte (&frameMap)[size],
+			const AnimationFrameRange &range, bool clearAtEnd = true) {
+		return playResourceLayerSequence(layers, layerId, chunkIndex, descriptorCount,
+			frameMap, size, range, clearAtEnd);
+	}
 	void clearResourceLayer(ResourceSpriteLayer &layer);
+	void clearSceneLayer(uint layerId);
 
 	// Resource delta clips
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,

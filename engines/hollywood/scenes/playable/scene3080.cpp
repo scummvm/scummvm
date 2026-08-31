@@ -50,6 +50,8 @@ const uint kScene3080FlyerOverlayDescriptorCount = 9;
 const byte kScene3080DiaryPatchHook = 1;
 const byte kScene3080StickPatchHook = 2;
 const byte kScene3080FlyerSoundHook = 3;
+const uint kScene3080LargeLayer = 0;
+const uint kScene3080SmallIdleLayer = 1;
 
 const byte kScene3080LargeLayerFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7,
@@ -76,6 +78,13 @@ const byte kScene3080FlyerOverlayFrameMap[] = {
 	4, 5, 6, 7, 8
 };
 
+const SceneLayerSpec kScene3080LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 17, kScene3080LargeLayerDescriptorCount,
+		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap), true, 0},
+	{kSceneAnimationInFrontOfActors, 7, kScene3080SmallIdleDescriptorCount,
+		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene3080Config() {
 	PlayableSceneConfig config(3080,
 		SceneResourceLayout(18, 5, 17),
@@ -91,16 +100,11 @@ static PlayableSceneConfig scene3080Config() {
 Scene3080::Scene3080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3080Config()),
 		_smallIdleChannel(),
-		_largeLayer(),
-		_smallIdleLayer(),
 		_largeTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_smallIdleMode(0) {
-	_largeLayer.configure(17, kScene3080LargeLayerDescriptorCount,
-		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap));
-	_largeTrack = _realtimeAnimationTracks.addRange(_largeLayer,
-		kScene3080LargeFrameMillis, 0, 7);
-	_smallIdleLayer.configure(7, kScene3080SmallIdleDescriptorCount,
-		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap));
+	_sceneLayers.configure(kScene3080LayerSpecs);
+	_largeTrack = _realtimeAnimationTracks.addRange(_sceneLayers,
+		kScene3080LargeLayer, kScene3080LargeFrameMillis, 0, 7);
 }
 
 void Scene3080::initializeCustomPreviewState() {
@@ -136,10 +140,10 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_largeLayer);
+	drawSceneLayer(kScene3080LargeLayer);
 	if (_actionOverlayPlayer.replacesActor()) {
 		drawActionOverlayLayer();
-		drawResourceSpriteLayer(_smallIdleLayer);
+		drawSceneLayer(kScene3080SmallIdleLayer);
 		return;
 	}
 
@@ -151,7 +155,7 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		if (_sceneChunkTable.isValidChunk(chunkIndex))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 	}
-	drawResourceSpriteLayer(_smallIdleLayer);
+	drawSceneLayer(kScene3080SmallIdleLayer);
 }
 
 void Scene3080::runCustomEntrySequence() {
@@ -363,14 +367,12 @@ void Scene3080::runExitSideEffectsAfterLoop() {
 }
 
 void Scene3080::resetAnimationLayers() {
+	_sceneLayers.reset();
 	const bool alternateSmoke = _vm->gameState().scene3080ChimneySmokeAnimationChanged;
 	_realtimeAnimationTracks.setRange(_largeTrack,
 		alternateSmoke ? 8 : 0, alternateSmoke ? 15 : 7);
 	_realtimeAnimationTracks.reset(_largeTrack);
 	_smallIdleChannel.reset(0, kScene3080SmallIdleFrameMillis);
-	_largeLayer.visible = true;
-	_smallIdleLayer.visible = true;
-	_smallIdleLayer.reset(0);
 	_smallIdleMode = 0;
 }
 
@@ -429,7 +431,7 @@ void Scene3080::advanceSmallIdleLayer(uint32 delta) {
 			_smallIdleMode = 0;
 			_smallIdleChannel.frameIndex = 0;
 		}
-		_smallIdleLayer.setFrame(_smallIdleChannel.frameIndex);
+		_sceneLayers.setLayerFrame(kScene3080SmallIdleLayer, _smallIdleChannel.frameIndex);
 	}
 }
 

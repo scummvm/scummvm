@@ -72,8 +72,6 @@ private:
 	TimedAnimationChannel _alternateChannel;
 	TimedAnimationChannel _dialogueChannel;
 	TimedAnimationChannel _paletteCycleChannel;
-	ResourceSpriteLayer _cabinLayer;
-	ResourceSpriteLayer _alternateLayer;
 	bool _alternateAnimationActive;
 	bool _conversationActive;
 	bool _resolutionSequenceActive;
