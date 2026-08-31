@@ -117,7 +117,7 @@ bool decodeAmigaPlanarFrame(const byte *planar, uint16 width, uint16 height, uin
 			byte color = 0;
 			const uint32 bitIndex = (uint32)x & 7;
 			const uint32 byteInRow = (uint32)x >> 3;
-			for (uint16 plane = 0; plane < 5; plane++) {
+			for (uint16 plane = 0; plane < kPlanes; plane++) {
 				const byte *planeRow = frameBase + plane * planeBytes + (uint32)y * rowBytes;
 				if (planeRow[byteInRow] & (0x80 >> bitIndex))
 					color |= (byte)(1 << plane);
@@ -422,8 +422,10 @@ void amiga12ToRgb8(uint16 rgb, byte &r, byte &g, byte &b) {
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outPixels,
 									Graphics::Palette &outPalette,
-									uint &outColorCount) {
+									uint &outColorCount,
+									Common::Array<byte> &outLineCopperPal) {
 	outPixels.clear();
+	outLineCopperPal.clear();
 	outColorCount = 0;
 	outPalette = Graphics::Palette(Graphics::PALETTE_COUNT);
 	if (!mxmm || mxmmSize < kAmigaMxmmMinSize)
@@ -524,7 +526,7 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 			byte outIdx;
 			if (colorToIndex.contains(key)) {
 				outIdx = colorToIndex[key];
-			} else if (outColorCount < 256) {
+			} else if (outColorCount < 0xE0) {
 				outIdx = (byte)outColorCount;
 				colorToIndex[key] = outIdx;
 				outPalette.set(outIdx, r, g, b);
@@ -533,6 +535,33 @@ bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 				outIdx = idx < kAmigaEhbPaletteCount ? idx : (byte)(idx & (kAmigaColorRegisterCount - 1));
 			}
 			outPixels[(uint32)y * kAmigaSceneWidth + x] = outIdx;
+		}
+	}
+
+	auto internRgb = [&](byte r, byte g, byte b, byte fallback) -> byte {
+		const uint32 key = ((uint32)r << 16) | ((uint32)g << 8) | b;
+		if (colorToIndex.contains(key))
+			return colorToIndex[key];
+		if (outColorCount < 0xE0) {
+			const byte outIdx = (byte)outColorCount;
+			colorToIndex[key] = outIdx;
+			outPalette.set(outIdx, r, g, b);
+			outColorCount++;
+			return outIdx;
+		}
+		return fallback;
+	};
+
+	outLineCopperPal.resize((uint)kAmigaSceneHeight * kAmigaEhbPaletteCount);
+	for (uint16 y = 0; y < kAmigaSceneHeight; y++) {
+		byte pal32[kAmigaColorRegisterCount][3];
+		buildPal32(y, pal32);
+		for (uint c = 0; c < kAmigaColorRegisterCount; c++) {
+			outLineCopperPal[(uint32)y * kAmigaEhbPaletteCount + c] =
+				internRgb(pal32[c][0], pal32[c][1], pal32[c][2], (byte)c);
+			outLineCopperPal[(uint32)y * kAmigaEhbPaletteCount + kAmigaColorRegisterCount + c] =
+				internRgb((byte)(pal32[c][0] / 2), (byte)(pal32[c][1] / 2), (byte)(pal32[c][2] / 2),
+						  (byte)(kAmigaColorRegisterCount + c));
 		}
 	}
 

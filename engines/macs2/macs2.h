@@ -548,6 +548,7 @@ public:
 	uint16 amigaTextLinePitch = 0;
 	/** True after loadAmigaSceneBackground installed copper colors in 0..31. */
 	bool _amigaNativePlayfieldPalette = false;
+	Common::Array<byte> _amigaLineCopperPal;
 	/** Amiga DataA/Mdir archive (owned). Null on DOS. */
 	Macs2AmigaArchive *_amigaArchive = nullptr;
 	/** Filled by loadAmigaSceneBackground; consumed by Amiga changeScene. */

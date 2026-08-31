@@ -33,6 +33,7 @@
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
+#include "macs2/amiga_decode.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/actionbar.h"
@@ -64,6 +65,110 @@ void logRenderedText(const char *kind, int x, int y, const Common::String &text)
 void resetObjectDrawBounds(GameObject *obj) {
 	if (obj != nullptr)
 		obj->resetDrawBounds();
+}
+
+void plotAmigaUiPixel(Graphics::ManagedSurface &s, int x, int y, byte color) {
+	if (x < 0 || y < 0 || x >= s.w || y >= s.h)
+		return;
+	s.setPixel(x, y, color);
+}
+
+void drawAmigaUiLine(Graphics::ManagedSurface &s, int x0, int y0, int x1, int y1, byte color) {
+	int dx = ABS(x1 - x0);
+	int sx = x0 < x1 ? 1 : -1;
+	int dy = -ABS(y1 - y0);
+	int sy = y0 < y1 ? 1 : -1;
+	int err = dx + dy;
+	for (;;) {
+		plotAmigaUiPixel(s, x0, y0, color);
+		if (x0 == x1 && y0 == y1)
+			break;
+		const int e2 = 2 * err;
+		if (e2 >= dy) {
+			err += dy;
+			x0 += sx;
+		}
+		if (e2 <= dx) {
+			err += dx;
+			y0 += sy;
+		}
+	}
+}
+
+byte amigaPanelBorderColor(int tableIndex) {
+	uint16 copper = (uint16)(18 + tableIndex);
+	if (g_engine->_amigaArchive && g_engine->_amigaArchive->getInfo().loaded) {
+		const uint16 *idx = g_engine->_amigaArchive->getInfo().panelBorderColorIndices;
+		if (tableIndex >= 0 && tableIndex < 5 && idx[tableIndex] != 0)
+			copper = idx[tableIndex];
+	}
+	return remapAmigaCopperIndexToStableUi((byte)copper);
+}
+
+void fillAmigaPanelInterior(Graphics::ManagedSurface &s, int x, int y, int w, int h) {
+	// UAE SOLID panels are opaque dark wood, not scene-through SHADE (that
+	// would be sky-blue at the top of the screen). Pattern sheet BSS is zero;
+	// COLOR21/22 (963/741) EHB matches the emulator interior (~78,51,21).
+	const byte a = remapAmigaCopperIndexToStableUi(21);
+	const byte bCol = remapAmigaCopperIndexToStableUi(22);
+	byte ehbA = a;
+	byte ehbB = bCol;
+	if (a >= 0xF0)
+		ehbA = (byte)(0xE0 + (a - 0xF0));
+	if (bCol >= 0xF0)
+		ehbB = (byte)(0xE0 + (bCol - 0xF0));
+	for (int oy = 0; oy < h; oy++) {
+		for (int ox = 0; ox < w; ox++)
+			plotAmigaUiPixel(s, x + ox, y + oy, ((ox ^ oy) & 1) ? ehbA : ehbB);
+	}
+}
+
+void drawAmigaPanelBevel(Graphics::ManagedSurface &s, int x, int y, int w, int h) {
+	const byte c0 = amigaPanelBorderColor(0);
+	const byte c1 = amigaPanelBorderColor(1);
+	const byte c2 = amigaPanelBorderColor(2);
+	const byte c3 = amigaPanelBorderColor(3);
+	const byte c4 = amigaPanelBorderColor(4);
+	const int midX = x + (w >> 1);
+	const int midY = y + (h >> 1);
+
+	drawAmigaUiLine(s, x, y, midX, y, c0);
+	drawAmigaUiLine(s, x, y + h, midX, y + h, c3);
+	drawAmigaUiLine(s, midX, y, x + w, y, c1);
+	drawAmigaUiLine(s, midX, y + h, x + w, y + h, c4);
+	drawAmigaUiLine(s, x, y, x, midY, c0);
+	drawAmigaUiLine(s, x + w, y, x + w, midY, c3);
+	drawAmigaUiLine(s, x, midY, x, y + h, c1);
+	drawAmigaUiLine(s, x + w, midY, x + w, y + h + 1, c4);
+
+	plotAmigaUiPixel(s, x + w, y, c2);
+	plotAmigaUiPixel(s, x, y + h, c2);
+	plotAmigaUiPixel(s, midX + 2, y, c0);
+	plotAmigaUiPixel(s, midX + 2, y + h, c3);
+	plotAmigaUiPixel(s, x, midY + 2, c0);
+	plotAmigaUiPixel(s, x + w, midY + 2, c3);
+}
+
+void drawAmigaUiPanel(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	const int x = pos.x;
+	const int y = pos.y;
+	const int w = size.x - 1;
+	const int h = size.y - 1;
+	if (w < 1 || h < 1)
+		return;
+	fillAmigaPanelInterior(s, x, y, w, h);
+	drawAmigaPanelBevel(s, x, y, w, h);
+}
+
+byte remapAmigaPlayfieldIndex(byte val, int y) {
+	if (val >= kAmigaEhbPaletteCount)
+		return val;
+	const Common::Array<byte> &map = g_engine->_amigaLineCopperPal;
+	if (map.size() < (uint)kAmigaSceneHeight * kAmigaEhbPaletteCount)
+		return val;
+	if (y < 0 || y >= (int)kAmigaSceneHeight)
+		return val;
+	return map[(uint)y * kAmigaEhbPaletteCount + val];
 }
 
 // Build a screen-clipped erase rect from the previous frame's sprite bounds.
@@ -628,17 +733,20 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false, 0);
 	AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true, 0);
 
-	// See l0037_B462: for the calculations below
-	// Draw the border
-	const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
-	const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
-	const int borderPad = g_engine->portraitBorderPad();
-	const int contentInset = g_engine->portraitContentInset();
-	const Common::Point borderSize(portraitWidth + borderPad, portraitHeight + borderPad);
-	drawBorder(currentSpeechActData.position, borderSize, s);
-
-	// Draw the portrait over the border
-	Common::Point pos = currentSpeechActData.position + Common::Point(contentInset, contentInset);
+	Common::Point pos = currentSpeechActData.position;
+	if (g_engine->isAmiga()) {
+		drawAmigaUiPanel(currentSpeechActData.position,
+						 Common::Point(frame->_width + 2, frame->_height + 2), s);
+		pos += Common::Point(1, 1);
+	} else {
+		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
+		const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
+		const int borderPad = g_engine->portraitBorderPad();
+		const int contentInset = g_engine->portraitContentInset();
+		const Common::Point borderSize(portraitWidth + borderPad, portraitHeight + borderPad);
+		drawBorder(currentSpeechActData.position, borderSize, s);
+		pos += Common::Point(contentInset, contentInset);
+	}
 	drawSprite(pos, frame->_width, frame->_height, frame->_data.data(), s, false);
 	delete frame;
 	delete leftPortrait;
@@ -3075,7 +3183,9 @@ void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 						if (g_engine->_depthMap.getPixel(finalX, finalY) >= depth)
 							continue;
 					}
-					s.setPixel(x + actualX, y + currentY, val);
+					if (g_engine->isAmiga())
+						val = remapAmigaPlayfieldIndex(val, finalY);
+					s.setPixel(finalX, finalY, val);
 				}
 			}
 		}
@@ -3097,8 +3207,11 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			if (val != 0) {
 				const int px = x + currentX;
 				const int py = y + currentY;
-				if (clippingRect.contains(px, py) && px < s.w && py < s.h)
+				if (clippingRect.contains(px, py) && px < s.w && py < s.h) {
+					if (g_engine->isAmiga())
+						val = remapAmigaPlayfieldIndex(val, py);
 					s.setPixel(px, py, val);
+				}
 			}
 		}
 	}
@@ -3146,7 +3259,7 @@ void View1::drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, G
 			if (px < inner.left || px >= inner.right || px < 0 || px >= s.w || py < 0 || py >= s.h)
 				continue;
 
-			s.setPixel(px, py, val);
+			s.setPixel(px, py, g_engine->isAmiga() ? remapAmigaPlayfieldIndex(val, py) : val);
 		}
 	}
 }
@@ -3199,8 +3312,10 @@ void View1::drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16
 						const uint8 color = srcPixels[srcRow + srcX];
 						if (color != 0) {
 							const byte bg = s.getPixel(screenX, screenY);
-							s.setPixel(screenX, screenY,
-									   applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
+							byte drawn = applyShadingTable(color, shadingTableOffset, bg, useMaskedShading);
+							if (g_engine->isAmiga())
+								drawn = remapAmigaPlayfieldIndex(drawn, screenY);
+							s.setPixel(screenX, screenY, drawn);
 						}
 					}
 				}
@@ -3235,8 +3350,10 @@ void View1::drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, 
 				if (color != 0 && screenX >= 0 && screenX < s.w &&
 					g_engine->_depthMap.getPixel(screenX, screenY) < depthThreshold) {
 					const byte bg = s.getPixel(screenX, screenY);
-					s.setPixel(screenX, screenY,
-							   applyShadingTable(color, shadingTableOffset, bg, useMaskedShading));
+					byte drawn = applyShadingTable(color, shadingTableOffset, bg, useMaskedShading);
+					if (g_engine->isAmiga())
+						drawn = remapAmigaPlayfieldIndex(drawn, screenY);
+					s.setPixel(screenX, screenY, drawn);
 				}
 
 				screenX++;
@@ -3375,9 +3492,14 @@ void View1::drawNinePatchBorder(const Common::Point &pos, const Common::Point &s
 
 void View1::drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// fn0037_A65D proc
-	constexpr uint16 border = 6;
 	debugC(kDebugScript, "Render border: pos=(%d,%d) size=(%d,%d)", pos.x, pos.y, size.x, size.y);
 
+	if (g_engine->isAmiga()) {
+		drawAmigaUiPanel(pos, size, s);
+		return;
+	}
+
+	constexpr uint16 border = 6;
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 
 	// Four textured border sides

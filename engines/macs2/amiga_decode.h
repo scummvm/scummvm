@@ -121,7 +121,8 @@ enum : uint32 {
 bool decodeAmigaMxmmSceneBackground(const byte *mxmm, uint32 mxmmSize,
 									Common::Array<byte> &outPixels,
 									Graphics::Palette &outPalette,
-									uint &outColorCount);
+									uint &outColorCount,
+									Common::Array<byte> &outLineCopperPal);
 
 bool extractAmigaMxmmSceneScript(const byte *mxmm, uint32 mxmmSize,
 								 Common::Array<byte> &outScript,

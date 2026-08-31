@@ -3697,9 +3697,15 @@ void Macs2Engine::applyPaletteDarkening() {
 	for (uint i = 0; i < Graphics::PALETTE_COUNT; i++) {
 		byte r, g, b;
 		_palVanilla.get(i, r, g, b);
-		_pal.set(i, (byte)((r * brightnessFactor / 100 * 259 + 33) >> 6),
-				 (byte)((g * brightnessFactor / 100 * 259 + 33) >> 6),
-				 (byte)((b * brightnessFactor / 100 * 259 + 33) >> 6));
+		if (isAmiga()) {
+			_pal.set(i, (byte)((r * brightnessFactor / 100 * 255) / 63),
+					 (byte)((g * brightnessFactor / 100 * 255) / 63),
+					 (byte)((b * brightnessFactor / 100 * 255) / 63));
+		} else {
+			_pal.set(i, (byte)((r * brightnessFactor / 100 * 259 + 33) >> 6),
+					 (byte)((g * brightnessFactor / 100 * 259 + 33) >> 6),
+					 (byte)((b * brightnessFactor / 100 * 259 + 33) >> 6));
+		}
 	}
 }
 

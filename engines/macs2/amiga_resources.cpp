@@ -66,7 +66,8 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 	Common::Array<byte> pixels;
 	Graphics::Palette paletteRgb(Graphics::PALETTE_COUNT);
 	uint colorCount = 0;
-	if (!decodeAmigaMxmmSceneBackground(mxmm.data(), size, pixels, paletteRgb, colorCount))
+	Common::Array<byte> lineCopperPal;
+	if (!decodeAmigaMxmmSceneBackground(mxmm.data(), size, pixels, paletteRgb, colorCount, lineCopperPal))
 		return false;
 	if (pixels.size() != (uint)kScreenWidth * kGameHeight || colorCount == 0)
 		return false;
@@ -102,6 +103,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		}
 	}
 	_amigaNativePlayfieldPalette = true;
+	_amigaLineCopperPal = Common::move(lineCopperPal);
 	// Portraits share playfield COLOR17..31 (copper high bank). Native copper
 	// already filled those slots; installAmigaPortraitPalette is a no-op here.
 	installAmigaPortraitPalette(true);
@@ -349,34 +351,28 @@ bool Macs2Engine::loadAmigaCursorResource(uint16 resourceId, AnimFrame &out) {
 }
 
 void Macs2Engine::installAmigaPortraitPalette(bool copyFromPlayfield) {
-	// Portraits now keep Amiga COLOR indices and share the playfield copper
-	// high bank (COLOR17..31), matching animateDialoguePortrait on hardware.
-	// Demo OO_* atlases never touch COLOR01..16.
-	//
-	// When native copper is not resident (pre-scene), seed
-	// COLOR17..31 from MXIN chrome so portraits are not left on the provisional
-	// ramp from applyAmigaUiPalette. copyFromPlayfield is ignored - live copper
-	// already owns those slots after loadAmigaSceneBackground.
-	(void)copyFromPlayfield;
-
-	if (_amigaNativePlayfieldPalette)
-		return;
-
 	static const uint16 kHighBankFallback[15] = {
 		0x0BBA, 0x0EB8, 0x0C96, 0x0A74, 0x0963, 0x0741, 0x0000, 0x049E,
 		0x0C00, 0x0DDC, 0x0EEE, 0x0887, 0x0776, 0x0006, 0x0520
 	};
 
-	// Copper base16: COLOR00 + COLOR17..31 == MXIN ui[0..15].
 	const uint16 *highSrc = kHighBankFallback;
 	if (_amigaArchive && _amigaArchive->getInfo().loaded)
 		highSrc = &_amigaArchive->getInfo().uiPaletteAmiga[1];
 
-	for (uint i = 0; i < ARRAYSIZE(kHighBankFallback); i++) {
+	if (!_amigaNativePlayfieldPalette) {
+		// Copper base16: COLOR00 + COLOR17..31 == MXIN ui[0..15].
+		for (uint i = 0; i < ARRAYSIZE(kHighBankFallback); i++) {
+			byte r6, g6, b6;
+			amiga12ToVga6(highSrc[i], r6, g6, b6);
+			_palVanilla.set(17 + i, r6, g6, b6);
+		}
+	}
+
+	for (uint i = 0; i < 16; i++) {
 		byte r6, g6, b6;
-		amiga12ToVga6(highSrc[i], r6, g6, b6);
-		const uint idx = 17 + i;
-		_palVanilla.set(idx, r6, g6, b6);
+		_palVanilla.get(0xF0 + i, r6, g6, b6);
+		_palVanilla.set(0xE0 + i, (byte)(r6 / 2), (byte)(g6 / 2), (byte)(b6 / 2));
 	}
 }
 
@@ -386,9 +382,6 @@ void Macs2Engine::applyAmigaUiPalette() {
 
 	const AmigaInfoData &info = _amigaArchive->getInfo();
 
-	// Provisional playfield until an MM_* copper list is loaded.
-	// Copper base16 layout: COLOR00 + COLOR17..31 = MXIN ui[0..15]. COLOR01..16
-	// stay a visible ramp (overwritten per-line by scene copper).
 	byte r6, g6, b6;
 	amiga12ToVga6(info.uiPaletteAmiga[0], r6, g6, b6);
 	_palVanilla.set(0, 0, 0, 0);
@@ -410,6 +403,7 @@ void Macs2Engine::applyAmigaUiPalette() {
 		_palVanilla.set(idx, r6, g6, b6);
 	}
 	_amigaNativePlayfieldPalette = false;
+	_amigaLineCopperPal.clear();
 	installAmigaPortraitPalette(false);
 	buildAmigaPanelRemapTable();
 	applyPaletteDarkening();
