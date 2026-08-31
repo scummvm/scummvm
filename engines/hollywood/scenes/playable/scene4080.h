@@ -84,9 +84,6 @@ private:
 	void runGwendolynDialogue();
 	void initializeGwendolynDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 
-	ResourceSpriteLayer _palettePatchLayer;
-	ResourceSpriteLayer _foregroundFlickerLayer;
-	ResourceSpriteLayer _scriptLayer;
 	TimedAnimationChannel _palettePatchChannel;
 	TimedAnimationChannel _gwendolynIdleChannel;
 	uint _foregroundFlickerTrack;
