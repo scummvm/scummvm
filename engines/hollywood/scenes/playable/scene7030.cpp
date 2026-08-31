@@ -81,16 +81,16 @@ const byte kScene7030Chunk11ExchangeItem0CFrameMap[] = {
 };
 const SceneLayerSpec kScene7030AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors,
-		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
-		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true },
+		6, kScene7030Chunk6DescriptorCount, nullptr, 0, true, 0 },
 	{ kSceneAnimationBehindActors,
 		5, kScene7030Chunk5DescriptorCount, kScene7030Chunk5FrameMap,
-		ARRAYSIZE(kScene7030Chunk5FrameMap), false }
+		ARRAYSIZE(kScene7030Chunk5FrameMap), false, 0 }
 };
 const byte kScene7030Route6StepDeltas[] = {
 	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5

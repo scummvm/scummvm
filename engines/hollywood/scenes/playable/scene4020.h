@@ -35,9 +35,6 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
@@ -58,7 +55,6 @@ private:
 	void useSkullcrackerOnGrate();
 	void copyStepDeltas(uint firstOffset, uint lastOffset);
 
-	ResourceSpriteLayer _idleLayer;
 	uint _idleTrack;
 };
 

@@ -71,6 +71,19 @@ const byte kScene6080WaxBallFrameMap[] = {
 	19, 35, 19, 36, 37, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
 	0};
 
+const SceneLayerSpec kScene6080LayerSpecs[] = {
+	{kSceneAnimationInFrontOfActors, 5, 0x0b,
+		kScene6080SueNormalFrameMap, ARRAYSIZE(kScene6080SueNormalFrameMap), true, 0},
+	{kSceneAnimationInFrontOfActors, 9, 0x5c,
+		kScene6080SueAlternateFrameMap, ARRAYSIZE(kScene6080SueAlternateFrameMap), false, 0},
+	{kSceneAnimationInFrontOfActors, 8, 0x26,
+		kScene6080WaxBallFrameMap, ARRAYSIZE(kScene6080WaxBallFrameMap), false, 0},
+	{kSceneAnimationInFrontOfActors, 6, 0x0a,
+		kScene6080GuardNormalFrameMap, ARRAYSIZE(kScene6080GuardNormalFrameMap), true, 0},
+	{kSceneAnimationInFrontOfActors, 7, 9,
+		kScene6080GuardAlternateFrameMap, ARRAYSIZE(kScene6080GuardAlternateFrameMap), false, 0}
+};
+
 static PlayableSceneConfig scene6080Config() {
 	PlayableSceneConfig config(6080,
 		SceneResourceLayout(10, 5, 9),
@@ -85,11 +98,6 @@ static PlayableSceneConfig scene6080Config() {
 
 Scene6080::Scene6080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6080Config()),
-		_sueNormalLayer(),
-		_sueAlternateLayer(),
-		_guardNormalLayer(),
-		_guardAlternateLayer(),
-		_waxBallLayer(),
 		_sueIdleChannel(),
 		_guardIdleChannel(),
 		_waxBallChannel(),
@@ -105,16 +113,7 @@ Scene6080::Scene6080(HollywoodEngine *vm) :
 		_escapeLayersSwitched(false),
 		_manualActorPathActive(false),
 		_finalSueAnimationActive(false) {
-	_sueNormalLayer.configure(5, 0x0b, kScene6080SueNormalFrameMap,
-		ARRAYSIZE(kScene6080SueNormalFrameMap));
-	_sueAlternateLayer.configure(9, 0x5c, kScene6080SueAlternateFrameMap,
-		ARRAYSIZE(kScene6080SueAlternateFrameMap));
-	_guardNormalLayer.configure(6, 0x0a, kScene6080GuardNormalFrameMap,
-		ARRAYSIZE(kScene6080GuardNormalFrameMap));
-	_guardAlternateLayer.configure(7, 9, kScene6080GuardAlternateFrameMap,
-		ARRAYSIZE(kScene6080GuardAlternateFrameMap));
-	_waxBallLayer.configure(8, 0x26, kScene6080WaxBallFrameMap,
-		ARRAYSIZE(kScene6080WaxBallFrameMap));
+	_sceneLayers.configure(kScene6080LayerSpecs);
 }
 
 void Scene6080::initializeCustomPreviewState() {
@@ -134,11 +133,7 @@ void Scene6080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
 		activeWorldX, activeWorldY, drawActiveActor && drawSecondaryActor, secondaryFacing,
 		secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawResourceSpriteLayer(_sueNormalLayer);
-	drawResourceSpriteLayer(_sueAlternateLayer);
-	drawResourceSpriteLayer(_waxBallLayer);
-	drawResourceSpriteLayer(_guardNormalLayer);
-	drawResourceSpriteLayer(_guardAlternateLayer);
+	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 }
 
 void Scene6080::runCustomEntrySequence() {
@@ -162,8 +157,8 @@ bool Scene6080::shouldPresentPreviewBeforeEntrySequence() const {
 }
 
 void Scene6080::prepareCustomGameplayLoop() {
-	_sueIdleChannel.reset(_sueNormalLayer.frameIndex, kScene6080SueFrameMillis);
-	_guardIdleChannel.reset(_guardNormalLayer.frameIndex, kScene6080GuardFrameMillis);
+	_sueIdleChannel.reset(sueNormalLayer().frameIndex, kScene6080SueFrameMillis);
+	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080GuardFrameMillis);
 	_manualActorPathChannel.reset(0, kScene6080ActorPathFrameMillis);
 	_manualSequenceActive = false;
 	_manualActorPathActive = false;
@@ -240,7 +235,7 @@ bool Scene6080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 byte Scene6080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	if (animationGroup == kScene6080GuardSpeechGroup)
 		return 9;
-	return _sueAlternateLayer.visible ? 20 : 0;
+	return sueAlternateLayer().visible ? 20 : 0;
 }
 
 uint32 Scene6080::primarySpeechAnimationFrameMillis(byte animationGroup) const {
@@ -250,17 +245,17 @@ uint32 Scene6080::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 
 void Scene6080::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene6080GuardSpeechGroup) {
-		if (_guardAlternateLayer.visible)
-			_guardAlternateLayer.setFrame(frameIndex);
+		if (guardAlternateLayer().visible)
+			guardAlternateLayer().setFrame(frameIndex);
 		else
-			_guardNormalLayer.setFrame(frameIndex);
+			guardNormalLayer().setFrame(frameIndex);
 		return;
 	}
 
-	if (_sueAlternateLayer.visible)
-		_sueAlternateLayer.setFrame(frameIndex);
+	if (sueAlternateLayer().visible)
+		sueAlternateLayer().setFrame(frameIndex);
 	else
-		_sueNormalLayer.setFrame(frameIndex);
+		sueNormalLayer().setFrame(frameIndex);
 }
 
 void Scene6080::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
@@ -287,16 +282,7 @@ AmbientAudioProfile Scene6080::ambientAudioProfile() const {
 }
 
 void Scene6080::resetSceneLayers() {
-	_sueNormalLayer.reset(0);
-	_sueNormalLayer.visible = true;
-	_sueAlternateLayer.reset(0);
-	_sueAlternateLayer.visible = false;
-	_guardNormalLayer.reset(0);
-	_guardNormalLayer.visible = true;
-	_guardAlternateLayer.reset(0);
-	_guardAlternateLayer.visible = false;
-	_waxBallLayer.reset(0);
-	_waxBallLayer.visible = false;
+	_sceneLayers.reset();
 	_sueIdleChannel.reset(0, kScene6080SueFrameMillis);
 	_guardIdleChannel.reset(0, kScene6080GuardFrameMillis);
 	_waxBallChannel.reset(0, kScene6080WaxBallFrameMillis);
@@ -315,42 +301,42 @@ void Scene6080::resetSceneLayers() {
 }
 
 void Scene6080::advanceSueIdle(uint32 delta) {
-	if (!_sueNormalLayer.visible)
+	if (!sueNormalLayer().visible)
 		return;
 
 	const uint frameCount = _sueIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_sueLongIdleActive) {
-			if (_sueNormalLayer.frameIndex >= 20) {
-				_sueNormalLayer.setFrame(0);
+			if (sueNormalLayer().frameIndex >= 20) {
+				sueNormalLayer().setFrame(0);
 				_sueLongIdleActive = false;
 			} else {
-				_sueNormalLayer.setFrame(_sueNormalLayer.frameIndex + 1);
+				sueNormalLayer().setFrame(sueNormalLayer().frameIndex + 1);
 			}
 			continue;
 		}
 
 		if (_random.getRandomNumber(199) == 0) {
-			_sueNormalLayer.setFrame(5);
+			sueNormalLayer().setFrame(5);
 			_sueLongIdleActive = true;
-		} else if (_sueNormalLayer.frameIndex == 4) {
-			_sueNormalLayer.setFrame(0);
+		} else if (sueNormalLayer().frameIndex == 4) {
+			sueNormalLayer().setFrame(0);
 		} else if (_random.getRandomNumber(19) == 0) {
-			_sueNormalLayer.setFrame(4);
+			sueNormalLayer().setFrame(4);
 		}
 	}
 }
 
 void Scene6080::advanceGuardIdle(uint32 delta) {
-	if (!_guardNormalLayer.visible || _guardManualSequenceActive)
+	if (!guardNormalLayer().visible || _guardManualSequenceActive)
 		return;
 
 	const uint frameCount = _guardIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_guardNormalLayer.frameIndex >= 5)
-			_guardNormalLayer.setFrame(0);
+		if (guardNormalLayer().frameIndex >= 5)
+			guardNormalLayer().setFrame(0);
 		else
-			_guardNormalLayer.setFrame(_guardNormalLayer.frameIndex + 1);
+			guardNormalLayer().setFrame(guardNormalLayer().frameIndex + 1);
 	}
 }
 
@@ -364,7 +350,7 @@ void Scene6080::finishSueIdleSequence() {
 
 void Scene6080::runReturnConversation() {
 	_guardManualSequenceActive = true;
-	if (!playAndPresentAnimationTransition(_guardNormalLayer,
+	if (!playAndPresentAnimationTransition(guardNormalLayer(),
 			AnimationTransition(5, 9, 9, kScene6080GuardFrameMillis).unskippable()))
 		return;
 	_guardManualSequenceActive = false;
@@ -382,17 +368,17 @@ void Scene6080::runReturnConversation() {
 		0x30, 0x3f, 0, kScene6080GuardSpeechGroup);
 
 	_guardManualSequenceActive = true;
-	playAndPresentAnimationTransition(_guardNormalLayer,
+	playAndPresentAnimationTransition(guardNormalLayer(),
 		AnimationTransition(13, 17, 17, kScene6080GuardFrameMillis).unskippable());
-	_guardNormalLayer.setFrame(0);
+	guardNormalLayer().setFrame(0);
 	_guardManualSequenceActive = false;
 }
 
 void Scene6080::runWaxBallEscapeSequence() {
 	_manualSequenceActive = true;
 	_hideActiveActor = true;
-	_waxBallLayer.visible = true;
-	_waxBallLayer.setFrame(0);
+	waxBallLayer().visible = true;
+	waxBallLayer().setFrame(0);
 	startWaxBallAnimation();
 	beginSecondarySpeechLine(6, 0);
 	while (_waxBallAnimationActive && !Engine::shouldQuit() &&
@@ -404,8 +390,8 @@ void Scene6080::runWaxBallEscapeSequence() {
 		return;
 
 	_waxBallAnimationActive = false;
-	_guardIdleChannel.reset(_guardNormalLayer.frameIndex, kScene6080GuardFrameMillis);
-	_waxBallLayer.visible = false;
+	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080GuardFrameMillis);
+	waxBallLayer().visible = false;
 	_hideActiveActor = false;
 	drawPlayableComposite();
 	presentFrame();
@@ -432,50 +418,50 @@ void Scene6080::startWaxBallAnimation() {
 	_waxBallChannel.reset(0, kScene6080WaxBallFrameMillis);
 	_escapeSueChannel.reset(0, kScene6080SueFrameMillis);
 	_escapeGuardChannel.reset(0, kScene6080EscapeGuardFrameMillis);
-	_guardIdleChannel.reset(_guardNormalLayer.frameIndex, kScene6080EscapeGuardFrameMillis);
+	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080EscapeGuardFrameMillis);
 	_escapeLayersSwitched = false;
 	_waxBallAnimationActive = true;
 }
 
 void Scene6080::advanceWaxBallAnimation(uint32 delta) {
 	if (!_escapeLayersSwitched) {
-		if (_sueNormalLayer.frameIndex != 0)
+		if (sueNormalLayer().frameIndex != 0)
 			advanceSueIdle(delta);
 		advanceGuardIdle(delta);
 	}
 
 	const uint waxBallFrames = _waxBallChannel.consumeFrames(delta);
 	for (uint i = 0; i < waxBallFrames; ++i) {
-		if (_waxBallLayer.frameIndex == 120 && !_escapeLayersSwitched) {
-			_sueNormalLayer.visible = false;
-			_sueAlternateLayer.visible = true;
-			_sueAlternateLayer.setFrame(0);
-			_guardNormalLayer.visible = false;
-			_guardAlternateLayer.visible = true;
-			_guardAlternateLayer.setFrame(0);
+		if (waxBallLayer().frameIndex == 120 && !_escapeLayersSwitched) {
+			sueNormalLayer().visible = false;
+			sueAlternateLayer().visible = true;
+			sueAlternateLayer().setFrame(0);
+			guardNormalLayer().visible = false;
+			guardAlternateLayer().visible = true;
+			guardAlternateLayer().setFrame(0);
 			_soundBank0.playSample(0x12, 100);
 			_escapeLayersSwitched = true;
 		}
-		if (_waxBallLayer.frameIndex < 128)
-			_waxBallLayer.setFrame(_waxBallLayer.frameIndex + 1);
+		if (waxBallLayer().frameIndex < 128)
+			waxBallLayer().setFrame(waxBallLayer().frameIndex + 1);
 	}
 
 	if (!_escapeLayersSwitched)
 		return;
 
 	const uint sueFrames = _escapeSueChannel.consumeFrames(delta);
-	for (uint i = 0; i < sueFrames && _sueAlternateLayer.frameIndex < 20; ++i)
-		_sueAlternateLayer.setFrame(_sueAlternateLayer.frameIndex + 1);
+	for (uint i = 0; i < sueFrames && sueAlternateLayer().frameIndex < 20; ++i)
+		sueAlternateLayer().setFrame(sueAlternateLayer().frameIndex + 1);
 
 	const uint guardFrames = _escapeGuardChannel.consumeFrames(delta);
-	for (uint i = 0; i < guardFrames && _guardAlternateLayer.frameIndex < 9; ++i) {
-		_guardAlternateLayer.setFrame(_guardAlternateLayer.frameIndex + 1);
-		if (_guardAlternateLayer.frameIndex == 9)
+	for (uint i = 0; i < guardFrames && guardAlternateLayer().frameIndex < 9; ++i) {
+		guardAlternateLayer().setFrame(guardAlternateLayer().frameIndex + 1);
+		if (guardAlternateLayer().frameIndex == 9)
 			_soundBank0.playSample(0x13, 100);
 	}
 
-	if (_waxBallLayer.frameIndex >= 128 && _sueAlternateLayer.frameIndex >= 20 &&
-			_guardAlternateLayer.frameIndex >= 9)
+	if (waxBallLayer().frameIndex >= 128 && sueAlternateLayer().frameIndex >= 20 &&
+			guardAlternateLayer().frameIndex >= 9)
 		_waxBallAnimationActive = false;
 }
 
@@ -517,7 +503,7 @@ void Scene6080::advanceManualActorPath(uint32 delta) {
 }
 
 void Scene6080::runFinalSueAnimation() {
-	_sueAlternateLayer.setFrame(24);
+	sueAlternateLayer().setFrame(24);
 	_finalSueChannel.reset(24, kScene6080SueFrameMillis);
 	_finalSueAnimationActive = true;
 	while (_finalSueAnimationActive && !Engine::shouldQuit() &&
@@ -531,14 +517,14 @@ void Scene6080::runFinalSueAnimation() {
 
 void Scene6080::advanceFinalSueAnimation(uint32 delta) {
 	const uint frameCount = _finalSueChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount && _sueAlternateLayer.frameIndex < 93; ++i) {
-		if (_sueAlternateLayer.frameIndex == 60 || _sueAlternateLayer.frameIndex == 80)
+	for (uint i = 0; i < frameCount && sueAlternateLayer().frameIndex < 93; ++i) {
+		if (sueAlternateLayer().frameIndex == 60 || sueAlternateLayer().frameIndex == 80)
 			dimEscapePalette();
-		if (_sueAlternateLayer.frameIndex == 86)
+		if (sueAlternateLayer().frameIndex == 86)
 			startManualActorPath(0x305, 0x14d, 1);
-		_sueAlternateLayer.setFrame(_sueAlternateLayer.frameIndex + 1);
+		sueAlternateLayer().setFrame(sueAlternateLayer().frameIndex + 1);
 	}
-	if (_sueAlternateLayer.frameIndex >= 93)
+	if (sueAlternateLayer().frameIndex >= 93)
 		_finalSueAnimationActive = false;
 }
 
