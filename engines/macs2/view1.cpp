@@ -67,20 +67,20 @@ void resetObjectDrawBounds(GameObject *obj) {
 		obj->resetDrawBounds();
 }
 
-void plotAmigaUiPixel(Graphics::ManagedSurface &s, int x, int y, byte color) {
+void setPixelClipped(Graphics::ManagedSurface &s, int x, int y, byte color) {
 	if (x < 0 || y < 0 || x >= s.w || y >= s.h)
 		return;
 	s.setPixel(x, y, color);
 }
 
-void drawAmigaUiLine(Graphics::ManagedSurface &s, int x0, int y0, int x1, int y1, byte color) {
+void drawLine(Graphics::ManagedSurface &s, int x0, int y0, int x1, int y1, byte color) {
 	int dx = ABS(x1 - x0);
 	int sx = x0 < x1 ? 1 : -1;
 	int dy = -ABS(y1 - y0);
 	int sy = y0 < y1 ? 1 : -1;
 	int err = dx + dy;
 	for (;;) {
-		plotAmigaUiPixel(s, x0, y0, color);
+		setPixelClipped(s, x0, y0, color);
 		if (x0 == x1 && y0 == y1)
 			break;
 		const int e2 = 2 * err;
@@ -105,10 +105,17 @@ byte amigaPanelBorderColor(int tableIndex) {
 	return remapAmigaCopperIndexToStableUi((byte)copper);
 }
 
-void fillAmigaPanelInterior(Graphics::ManagedSurface &s, int x, int y, int w, int h) {
-	// UAE SOLID panels are opaque dark wood, not scene-through SHADE (that
-	// would be sky-blue at the top of the screen). Pattern sheet BSS is zero;
-	// COLOR21/22 (963/741) EHB matches the emulator interior (~78,51,21).
+void drawAmigaUiPanel(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
+	const int x = pos.x;
+	const int y = pos.y;
+	const int w = size.x - 1;
+	const int h = size.y - 1;
+	if (w < 1 || h < 1) {
+		return;
+	}
+
+	// background
+	// TODO: the pattern is wrong
 	const byte a = remapAmigaCopperIndexToStableUi(21);
 	const byte bCol = remapAmigaCopperIndexToStableUi(22);
 	byte ehbA = a;
@@ -118,46 +125,27 @@ void fillAmigaPanelInterior(Graphics::ManagedSurface &s, int x, int y, int w, in
 	if (bCol >= 0xF0)
 		ehbB = (byte)(0xE0 + (bCol - 0xF0));
 	for (int oy = 0; oy < h; oy++) {
-		for (int ox = 0; ox < w; ox++)
-			plotAmigaUiPixel(s, x + ox, y + oy, ((ox ^ oy) & 1) ? ehbA : ehbB);
+		for (int ox = 0; ox < w; ox++) {
+			setPixelClipped(s, x + ox, y + oy, ((ox ^ oy) & 1) ? ehbA : ehbB);
+		}
 	}
-}
 
-void drawAmigaPanelBevel(Graphics::ManagedSurface &s, int x, int y, int w, int h) {
+	// borders
 	const byte c0 = amigaPanelBorderColor(0);
 	const byte c1 = amigaPanelBorderColor(1);
-	const byte c2 = amigaPanelBorderColor(2);
-	const byte c3 = amigaPanelBorderColor(3);
-	const byte c4 = amigaPanelBorderColor(4);
+	const byte c2 = amigaPanelBorderColor(3);
+	const byte c3 = amigaPanelBorderColor(4);
 	const int midX = x + (w >> 1);
 	const int midY = y + (h >> 1);
 
-	drawAmigaUiLine(s, x, y, midX, y, c0);
-	drawAmigaUiLine(s, x, y + h, midX, y + h, c3);
-	drawAmigaUiLine(s, midX, y, x + w, y, c1);
-	drawAmigaUiLine(s, midX, y + h, x + w, y + h, c4);
-	drawAmigaUiLine(s, x, y, x, midY, c0);
-	drawAmigaUiLine(s, x + w, y, x + w, midY, c3);
-	drawAmigaUiLine(s, x, midY, x, y + h, c1);
-	drawAmigaUiLine(s, x + w, midY, x + w, y + h + 1, c4);
-
-	plotAmigaUiPixel(s, x + w, y, c2);
-	plotAmigaUiPixel(s, x, y + h, c2);
-	plotAmigaUiPixel(s, midX + 2, y, c0);
-	plotAmigaUiPixel(s, midX + 2, y + h, c3);
-	plotAmigaUiPixel(s, x, midY + 2, c0);
-	plotAmigaUiPixel(s, x + w, midY + 2, c3);
-}
-
-void drawAmigaUiPanel(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	const int x = pos.x;
-	const int y = pos.y;
-	const int w = size.x - 1;
-	const int h = size.y - 1;
-	if (w < 1 || h < 1)
-		return;
-	fillAmigaPanelInterior(s, x, y, w, h);
-	drawAmigaPanelBevel(s, x, y, w, h);
+	drawLine(s, x, y, midX, y, c0);
+	drawLine(s, x, y + h, midX, y + h, c2);
+	drawLine(s, midX, y, x + w, y, c1);
+	drawLine(s, midX, y + h, x + w, y + h, c3);
+	drawLine(s, x, y, x, midY, c0);
+	drawLine(s, x + w, y, x + w, midY, c2);
+	drawLine(s, x, midY, x, y + h, c1);
+	drawLine(s, x + w, midY, x + w, y + h, c3);
 }
 
 void setPixel(Graphics::ManagedSurface &s, int x, int y, byte color) {
@@ -177,8 +165,6 @@ bool buildClippedEraseRect(int32 left, int32 top, uint16 width, uint16 height,
 	if (width == 0 && height == 0)
 		return false;
 
-	// drawAllCharacters @ 1008:90a2: dirty right/bottom are inclusive (+1 padding),
-	// Common::Rect uses exclusive right/bottom (+1 more).
 	const int32 exclRight = left + (int32)width + 2;
 	const int32 exclBottom = top + (int32)height + 2;
 	if (exclRight <= 0 || exclBottom <= 0 || left >= screenW || top >= screenH)
@@ -194,7 +180,6 @@ bool buildClippedEraseRect(int32 left, int32 top, uint16 width, uint16 height,
 	if (clipLeft < -32768 || clipTop < -32768 || clipRight > 32767 || clipBottom > 32767)
 		return false;
 
-	// Avoid Common::Rect(x1,y1,x2,y2) constructor (asserts on invalid input).
 	out.left = (int16)clipLeft;
 	out.top = (int16)clipTop;
 	out.right = (int16)clipRight;
@@ -355,7 +340,7 @@ void View1::openInventory(GameObject *newInventorySource) {
 	}
 
 	setInventorySource(newInventorySource);
-	_pendingPanelRequest = kPanelRequestNone; // Binary: g_wPendingPanelRequest = 0
+	_pendingPanelRequest = kPanelRequestNone;
 
 	// SCUMM verb UI: protagonist inventory is always visible in the strip.
 	if (hasPersistentActionBar() && newInventorySource->_index == Scenes::instance()._currentActorIndex) {
@@ -373,7 +358,6 @@ void View1::openInventory(GameObject *newInventorySource) {
 	_activeInventoryItem = nullptr;
 	g_engine->_scriptExecutor->_inventoryActionFlag = false;
 	g_engine->_scriptExecutor->_inventoryCombineFlag = false;
-	// Binary drawProtagonistInventoryPanel (1008:45aa): unconditionally calls setCursorMode(0x15)
 	g_engine->setCursorMode(Script::MouseMode::Use);
 	updateCursor();
 	redraw();
@@ -651,7 +635,6 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 }
 
 void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
-	// drawAnimFrameScaled @ 1010:1399: remap each background pixel through per-scene 256-byte table
 	Graphics::ManagedSurface s = getSurface();
 	for (uint16 xOffset = 0; xOffset < width; xOffset++) {
 		for (uint16 yOffset = 0; yOffset < height; yOffset++) {
@@ -733,11 +716,7 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true, 0);
 
 	Common::Point pos = currentSpeechActData.position;
-	if (g_engine->isAmiga()) {
-		drawAmigaUiPanel(currentSpeechActData.position,
-						 Common::Point(frame->_width + 2, frame->_height + 2), s);
-		pos += Common::Point(1, 1);
-	} else {
+	if (!g_engine->isAmiga()) {
 		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 		const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
 		const int borderPad = g_engine->portraitBorderPad();
@@ -894,9 +873,6 @@ void View1::drawOverlayTextEntries() {
 }
 
 void View1::showStringBox(const Common::StringArray &sa) {
-	// This calculation can be found at l0037_B368:
-	// int borderWidth = 10;
-	// int padding = 3;
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
 	const int textInset = g_engine->dialogTextInset();
@@ -910,7 +886,6 @@ void View1::showStringBox(const Common::StringArray &sa) {
 
 	Graphics::ManagedSurface s = getSurface();
 	drawBorder(_stringBoxPosition, Common::Point(totalWidth, totalHeight), s);
-	// TODO range based
 	int lineOffset = _stringBoxPosition.y + textInset;
 	for (auto iter = sa.begin(); iter < sa.end(); iter++) {
 		logRenderedText("TextBox", _stringBoxPosition.x + textInset, lineOffset, *iter);
