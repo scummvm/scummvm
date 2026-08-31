@@ -399,23 +399,24 @@ void ScalePuzzle::handleInput(NancyInput &input) {
 
 	// -- Carrying a coin: it follows the cursor; drop it on an empty slot. --
 	if (_carriedCoin != kNoCoin) {
-		setDataCursor(_dragCursorType);
+		SlotRegion region;
+		uint idx;
+		const bool overSlot = slotAtCursor(input.mousePos, true, region, idx);
+
+		// The drag cursor only takes its hotspot sprite while over a slot that can take the coin.
+		setDataCursor(_dragCursorType, overSlot);
 
 		Common::Rect screenPt(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1);
 		Common::Rect vpPt = NancySceneState.getViewport().convertScreenToViewport(screenPt);
 		_dragPos = Common::Point(vpPt.left, vpPt.top);
 		redraw();
 
-		if (click) {
-			SlotRegion region;
-			uint idx;
-			if (slotAtCursor(input.mousePos, true, region, idx)) {
-				group(region).coins[idx] = _carriedCoin;
-				_carriedCoin = kNoCoin;
-				playSoundBlock(region == kSourceTray ? _dropTraySound : _dropPanSound);
-				recomputeBalance();
-				redraw();
-			}
+		if (click && overSlot) {
+			group(region).coins[idx] = _carriedCoin;
+			_carriedCoin = kNoCoin;
+			playSoundBlock(region == kSourceTray ? _dropTraySound : _dropPanSound);
+			recomputeBalance();
+			redraw();
 		}
 
 		input.eatMouseInput();
