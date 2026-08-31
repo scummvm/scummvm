@@ -89,13 +89,13 @@ enum Scene6030AnimationHookId {
 
 const SceneLayerSpec kScene6030AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 6, kScene6030LargeLayerDescriptorCount,
-		kScene6030LargeLayerFrameMap, ARRAYSIZE(kScene6030LargeLayerFrameMap), true },
+		kScene6030LargeLayerFrameMap, ARRAYSIZE(kScene6030LargeLayerFrameMap), true, 0 },
 	{ kSceneAnimationBehindActors, 7, kScene6030BathroomExitDescriptorCount,
-		nullptr, 0, false },
+		nullptr, 0, false, 0 },
 	{ kSceneAnimationBehindActors, 8, kScene6030SmallLayerDescriptorCount,
-		kScene6030SmallLayerFrameMap, ARRAYSIZE(kScene6030SmallLayerFrameMap), true },
+		kScene6030SmallLayerFrameMap, ARRAYSIZE(kScene6030SmallLayerFrameMap), true, 0 },
 	{ kSceneAnimationInFrontOfActors, 9, kScene6030TaffyArrivalDescriptorCount,
-		nullptr, 0, false }
+		nullptr, 0, false, 0 }
 };
 
 static PlayableSceneConfig scene6030Config() {

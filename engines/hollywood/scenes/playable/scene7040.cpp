@@ -140,18 +140,18 @@ const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
 const SceneLayerSpec kScene7040AnimationLayerSpecs[] = {
-	{ kSceneAnimationBehindActors, 17, kScene7040Chunk17DescriptorCount, nullptr, 0, false },
+	{ kSceneAnimationBehindActors, 17, kScene7040Chunk17DescriptorCount, nullptr, 0, false, 0 },
 	{ kSceneAnimationBehindActors, 16, kScene7040Chunk16DescriptorCount,
 		kScene7040Chunk16PostItemFrameMap,
-		ARRAYSIZE(kScene7040Chunk16PostItemFrameMap), false },
-	{ kSceneAnimationBehindActors, 12, kScene7040Chunk12DescriptorCount, nullptr, 0, false },
+		ARRAYSIZE(kScene7040Chunk16PostItemFrameMap), false, 0 },
+	{ kSceneAnimationBehindActors, 12, kScene7040Chunk12DescriptorCount, nullptr, 0, false, 0 },
 	{ kSceneAnimationBehindActors, 11, kScene7040Chunk11DescriptorCount, kScene7040Chunk11FrameMap,
-		ARRAYSIZE(kScene7040Chunk11FrameMap), true },
+		ARRAYSIZE(kScene7040Chunk11FrameMap), true, 0 },
 	{ kSceneAnimationBehindActors, 14, kScene7040Chunk14ActionDescriptorCount,
 		kScene7040Chunk14ActionFrameMap,
-		ARRAYSIZE(kScene7040Chunk14ActionFrameMap), false },
+		ARRAYSIZE(kScene7040Chunk14ActionFrameMap), false, 0 },
 	{ kSceneAnimationBehindActors, 14, kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
-		ARRAYSIZE(kScene7040Chunk14AltFrameMap), false }
+		ARRAYSIZE(kScene7040Chunk14AltFrameMap), false, 0 }
 };
 
 static PlayableSceneConfig scene7040Config() {

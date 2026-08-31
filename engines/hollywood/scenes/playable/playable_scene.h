@@ -461,6 +461,7 @@ protected:
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawLayerStack(const SceneLayerStack &layers, SceneAnimationStratum stratum);
+	void drawActionOverlayAtStratum(SceneAnimationStratum stratum);
 	void drawActionOverlayLayer();
 	template<class FrameTarget>
 	bool playAnimationFrames(FrameTarget &target, const AnimationFrameRange &range) {
@@ -645,6 +646,7 @@ protected:
 	SoundBank0Player _additionalAmbientSoundBank0Slots[kAmbientSoundSlotCount - 1];
 	ResidentSoundEffectPlayer _residentSoundEffects;
 	Common::RandomSource _random;
+	SceneLayerStack _sceneLayers;
 	RealtimeAnimationTracks _realtimeAnimationTracks;
 	SceneAnimationPlayer _animationPlayer;
 

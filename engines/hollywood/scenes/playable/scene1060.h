@@ -33,10 +33,15 @@ public:
 	Scene1060(HollywoodEngine *vm);
 
 private:
+	enum LayerId {
+		kLargeBackgroundLayer,
+		kInvisibleManLayer,
+		kFlyDoctorLayer,
+		kSmallLoopLayer,
+		kSmallTriggerLayer
+	};
+
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
@@ -82,6 +87,11 @@ private:
 	void handlePocketPaperLook();
 	void handleSkullcrackerExchange();
 	void handleFlySlimeExchange();
+	ResourceSpriteLayer &largeBackgroundLayer() { return _sceneLayers.layer(kLargeBackgroundLayer); }
+	ResourceSpriteLayer &invisibleManLayer() { return _sceneLayers.layer(kInvisibleManLayer); }
+	ResourceSpriteLayer &flyDoctorLayer() { return _sceneLayers.layer(kFlyDoctorLayer); }
+	ResourceSpriteLayer &smallLoopLayer() { return _sceneLayers.layer(kSmallLoopLayer); }
+	ResourceSpriteLayer &smallTriggerLayer() { return _sceneLayers.layer(kSmallTriggerLayer); }
 
 	TimedAnimationChannel _largeBackgroundChannel;
 	TimedAnimationChannel _invisibleManChannel;
@@ -90,11 +100,6 @@ private:
 	TimedAnimationChannel _flyDoctorIdleChannel;
 	TimedAnimationChannel _flySlimeDripChannel;
 	TimedAnimationChannel _smallTriggerChannel;
-	ResourceSpriteLayer _largeBackgroundLayer;
-	ResourceSpriteLayer _invisibleManLayer;
-	ResourceSpriteLayer _flyDoctorLayer;
-	ResourceSpriteLayer _smallLoopLayer;
-	ResourceSpriteLayer _smallTriggerLayer;
 	uint _smallLoopTrack;
 	byte _largeBackgroundMode;
 	uint16 _largeBackgroundIdleCounter;
