@@ -771,9 +771,9 @@ void PlaySecondaryMovie::execute() {
 					_hotspot = _screenPosition;
 					_hasHotspot = true;
 				}
-			} else if (_isRandom) {
-				// Random movies aren't gated on hotspot/viewport-frame
-				// matches the way regular PSMs are: play full viewport.
+			} else if (_isRandom && _videoDescs.empty()) {
+				// A random movie with no descriptors isn't tied to a specific
+				// background frame: play it across the full viewport.
 				_screenPosition = NancySceneState.getViewport().getBounds();
 				setVisible(true);
 				_hasHotspot = false;
@@ -804,7 +804,7 @@ void PlaySecondaryMovie::execute() {
 			(_decoder.needsUpdate() ? _decoder.decodeNextFrame() : nullptr);
 
 		if (decodedFrame) {
-			uint descID = 0;
+			int descID = -1;
 
 			for (uint i = 0; i < _videoDescs.size(); ++i) {
 				if (_videoDescs[i].frameID == _curViewportFrame) {
@@ -815,12 +815,12 @@ void PlaySecondaryMovie::execute() {
 			GraphicsManager::copyToManaged(*decodedFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
 
 			// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
-			Common::Rect srcRect = _videoDescs[descID].srcRect;
+			Common::Rect srcRect = descID != -1 ? _videoDescs[descID].srcRect : Common::Rect();
 			if (srcRect.isEmpty()) {
 				srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
 			}
 
-			Common::Rect destRect = _videoDescs[descID].destRect;
+			Common::Rect destRect = descID != -1 ? _videoDescs[descID].destRect : _screenPosition;
 
 			// The videoDesc's size might be larger than the decoded video (for example, nancy10's
 			// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
