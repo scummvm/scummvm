@@ -69,6 +69,7 @@ class ViewportOrnaments;
 class TextboxOrnaments;
 class InventoryBoxOrnaments;
 class Clock;
+class Camera;
 }
 
 namespace State {
@@ -211,6 +212,7 @@ public:
 	UI::CellPhonePopup &getCellPhonePopup() { return _cellPhonePopup; }
 	UI::ConversationPopup &getConversationPopup() { return _conversationPopup; }
 	UI::Clock *getClock();
+	UI::Camera *getCamera() { return _camera; }
 	UI::Taskbar *getTaskbar() { return _taskbar; }
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
@@ -346,6 +348,8 @@ private:
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	RenderObject *_clock;
+
+	UI::Camera *_camera;	// Nancy14 only
 
 	Common::Rect _mapHotspot;
 

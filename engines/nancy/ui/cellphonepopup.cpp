@@ -1379,44 +1379,12 @@ void CellPhonePopup::captureViewport(const Common::Rect &screenRegion) {
 		return;
 	}
 
-	const Viewport &viewport = NancySceneState.getViewport();
-	const Graphics::ManagedSurface &vp = viewport.getBackground();
-	if (vp.w == 0 || vp.h == 0) {
-		return;
-	}
-
-	// Translate the framed screen region into the (scrolled) viewport background.
-	const Common::Rect vpScreen = viewport.getScreenPosition();
-	const int scrollY = (int)viewport.getCurVerticalScroll();
-	Common::Rect grab;
-	if (screenRegion.isEmpty()) {
-		grab = Common::Rect(0, scrollY, vpScreen.width(), scrollY + vpScreen.height());
-	} else {
-		grab = screenRegion;
-		grab.translate(-vpScreen.left, -vpScreen.top + scrollY);
-	}
-	grab.clip(Common::Rect(vp.w, vp.h));
-	if (grab.isEmpty()) {
-		return;
-	}
-
-	// Copy the sub-area, converted to BGRA32 so it can be re-displayed and saved.
-	Graphics::Surface sub = vp.rawSurface().getSubArea(grab);
-	Graphics::Surface *conv = sub.convertTo(g_nancy->_graphics->getScreenPixelFormat());
-	if (!conv) {
-		return;
-	}
+	const Common::Rect grab = viewportScreenToBackground(screenRegion);
 
 	CapturedPicture pic;
-	pic.width = (uint16)conv->w;
-	pic.height = (uint16)conv->h;
-	pic.pixels.resize((uint)pic.width * (uint)pic.height * 4);
-	for (int y = 0; y < conv->h; ++y) {
-		memcpy(pic.pixels.data() + (uint)y * (uint)pic.width * 4,
-				conv->getBasePtr(0, y), (uint)pic.width * 4);
+	if (!captureViewportPicture(grab, pic)) {
+		return;
 	}
-	conv->free();
-	delete conv;
 
 	// Every subject wholly inside the framed area is captured.
 	const uint16 sceneID = NancySceneState.getSceneInfo().sceneID;

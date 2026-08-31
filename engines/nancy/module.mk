@@ -6,6 +6,7 @@ MODULE_OBJS = \
   action/actionzone.o \
   action/arfactory.o \
   action/autotext.o \
+  action/cameraaction.o \
   action/datarecords.o \
   action/inventoryrecords.o \
   action/navigationrecords.o \
@@ -81,6 +82,7 @@ MODULE_OBJS = \
   ui/animatedbutton.o \
   ui/button.o \
   ui/clock.o \
+  ui/camera.o \
   ui/cellphonepopup.o \
   ui/conversationpopup.o \
   ui/inventorybox.o \

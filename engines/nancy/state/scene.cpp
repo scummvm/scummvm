@@ -41,6 +41,7 @@
 
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
+#include "engines/nancy/ui/camera.h"
 #include "engines/nancy/ui/clock.h"
 #include "engines/nancy/ui/taskbar.h"
 
@@ -131,6 +132,7 @@ Scene::Scene() :
 		_textboxOrnaments(nullptr),
 		_inventoryBoxOrnaments(nullptr),
 		_clock(nullptr),
+		_camera(nullptr),
 		_actionManager(),
 		_difficulty(0),
 		_activeMovie(nullptr),
@@ -148,6 +150,7 @@ Scene::~Scene() {
 	delete _textboxOrnaments;
 	delete _inventoryBoxOrnaments;
 	delete _clock;
+	delete _camera;
 	delete _lightning;
 
 	clearPuzzleData();
@@ -857,6 +860,10 @@ void Scene::registerGraphics() {
 
 	if (_clock) {
 		_clock->registerGraphics();
+	}
+
+	if (_camera) {
+		_camera->registerGraphics();
 	}
 }
 
@@ -1615,9 +1622,20 @@ void Scene::handleInput() {
 		_inventoryBox.handleInput(input);
 	}
 
+	// While the viewfinder is up the scene's own hotspots and its panning are both
+	// suppressed; a click in the viewport only takes the shot.
+	const bool cameraActive = _camera && _camera->isActive();
+	if (cameraActive) {
+		_camera->handleInput(input);
+	}
+
 	// Handle invisible map button
 	// We do this before the viewport since TVD's map button overlaps the viewport's right hotspot
 	for (uint16 id : g_nancy->getStaticData().mapAccessSceneIDs) {
+		if (cameraActive) {
+			break;
+		}
+
 		if ((int)_sceneState.currentScene.sceneID == id) {
 			if (_mapHotspot.contains(input.mousePos)) {
 				g_nancy->_cursor->setCursorType(g_nancy->getGameType() == kGameTypeVampire ? CursorManager::kHotspot : CursorManager::kHotspotArrow);
@@ -1638,11 +1656,13 @@ void Scene::handleInput() {
 	}
 
 	// Handle clock before viewport since it overlaps the left hotspot in TVD
-	if (getClock()) {
+	if (getClock() && !cameraActive) {
 		getClock()->handleInput(input);
 	}
 
-	_viewport.handleInput(input);
+	if (!cameraActive) {
+		_viewport.handleInput(input);
+	}
 
 	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
 
@@ -1651,7 +1671,9 @@ void Scene::handleInput() {
 		g_nancy->_sound->recalculateSoundEffects();
 	}
 
-	_actionManager.handleInput(input);
+	if (!cameraActive) {
+		_actionManager.handleInput(input);
+	}
 
 	// The whole Nancy 10+ taskbar (inventory / notebook / cell phone / MENU /
 	// HELP) stays usable even while a SecondaryMovie is playing; only the
@@ -1842,6 +1864,13 @@ void Scene::initStaticData() {
 			// In nancy7 the clock is entirely disabled
 			_clock = nullptr;
 		}
+	}
+
+	// The Nancy14 standalone camera; its photo album switches the viewfinder on.
+	auto *uicm = GetEngineData(UICM);
+	if (uicm) {
+		_camera = new UI::Camera();
+		_camera->init();
 	}
 
 	_state = kLoad;

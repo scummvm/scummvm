@@ -26,6 +26,7 @@
 #include "engines/nancy/action/miscrecords.h"
 
 #include "engines/nancy/action/autotext.h"
+#include "engines/nancy/action/cameraaction.h"
 #include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/interactivevideo.h"
 #include "engines/nancy/action/overlay.h"
@@ -389,10 +390,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new AddSearchLink();
 	case 132:	// Nancy12
 		return new ResourceUse();
-	case 133:	// Nancy14 - CameraAction
-		// Cell-phone camera action (introduced alongside the UICM camera UI).
-		// TODO: not yet implemented
-		return nullptr;
+	case 133:	// Nancy14
+		return new CameraAction();
 	case 134:	// Nancy15 - PlayCharAR
 		// Switches the active player character (Nancy / Frank / Joe), the
 		// dual-protagonist mechanic new to The Creature of Kapu Cave.

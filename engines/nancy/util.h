@@ -31,6 +31,8 @@
 
 namespace Nancy {
 
+struct CapturedPicture;
+
 void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
 void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum = 0);
@@ -75,6 +77,14 @@ Common::String readSubtitleText(Common::SeekableReadStream &stream);
 // `forceRedraw` is true, the textbox is redrawn immediately instead of on the next
 // render pass.
 void showSubtitle(const Common::String &text, bool forceRedraw = false, int overrideFontID = -1);
+
+// Maps a screen-space rect onto the live viewport's (scrolled) background, clipped
+// to it. An empty rect means the whole visible viewport.
+Common::Rect viewportScreenToBackground(const Common::Rect &screenRegion);
+
+// Grabs a background-space region of the live viewport into `picture`, converted to
+// BGRA32 so it can be redisplayed and saved. Used by both cameras.
+bool captureViewportPicture(const Common::Rect &backgroundRegion, CapturedPicture &picture);
 
 void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst);
 void readUISlider(Common::SeekableReadStream &stream, UISliderRecord &dst);

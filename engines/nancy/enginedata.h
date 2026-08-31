@@ -754,21 +754,17 @@ struct UICL : public EngineData {
 // Shared by the UICL chunk and ChangeCellPhoneInfo (AR 130).
 void readContact(Common::SeekableReadStream &stream, UICL::Contact &c);
 
-// Camera UI, added in Nancy 14. This is a standalone camera. While it is active,
-// the cursor becomes a large viewfinder rectangle that the player aims at the
-// scene; clicking photographs every subject whose region falls inside the framed
-// area.
+// Standalone camera UI, added in Nancy14. While it is active a viewfinder sits at
+// the centre of the viewport and the scene's own hotspots are suppressed.
 struct UICM : public EngineData {
 	UICM(Common::SeekableReadStream *chunkStream);
 
-	// One photographable region. When a picture is taken, every subject whose
-	// frameID matches the current scene view and whose coords lie within the
-	// viewfinder rectangle is captured: its subjectID is recorded in the picture
-	// and its flag (if any) is set.
+	// A photographable region. Taking a picture captures every subject in the
+	// current scene lying wholly inside the viewfinder.
 	struct CameraSubject {
-		HotspotDescription hotspot;   // frameID + region that can be photographed
-		int16 subjectID = -1;         // identifies what was photographed
-		FlagDescription flag;         // event flag set on capture (often unset)
+		HotspotDescription hotspot;   // sceneID + region that can be photographed
+		int16 subjectID = -1;         // event flag raised while photographed
+		FlagDescription flag;         // second event flag (unset in every record)
 	};
 
 	Common::Path overlayImageName;            // "PHO_CameraView"
