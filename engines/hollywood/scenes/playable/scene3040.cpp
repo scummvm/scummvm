@@ -41,6 +41,8 @@ const uint32 kScene3040ForegroundFrameMillis = 75;
 const uint32 kScene3040ForegroundIdleFrameMillis = 150;
 const uint kScene3040ForegroundActorDescriptorCount = 0x14;
 const uint kScene3040LoopDescriptorCount = 8;
+const uint kScene3040ForegroundActorLayer = 0;
+const uint kScene3040LoopLayer = 1;
 const byte kScene3040HiddenObjectItemId = 3;
 const byte kScene3040HiddenObjectPatchChunk = 7;
 const byte kScene3040HiddenObjectPatchHook = 1;
@@ -49,6 +51,13 @@ const byte kScene3040ForegroundFrameMap[] = {
 	0, 1, 2, 1, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 0, 14, 15, 16, 17, 18,
 	19
+};
+
+const SceneLayerSpec kScene3040LayerSpecs[] = {
+	{kSceneAnimationActorReplacement, 5, kScene3040ForegroundActorDescriptorCount,
+		kScene3040ForegroundFrameMap, ARRAYSIZE(kScene3040ForegroundFrameMap), true, 0},
+	{kSceneAnimationScenePlaced, 6, kScene3040LoopDescriptorCount,
+		nullptr, 0, true, 0}
 };
 
 static PlayableSceneConfig scene3040Config() {
@@ -100,16 +109,12 @@ static void drawLooseSpriteFrame(const Common::Array<byte> &resource, uint32 bas
 Scene3040::Scene3040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3040Config()),
 		_foregroundActorChannel(),
-		_foregroundActorLayer(),
-		_loopLayer(),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_foregroundActorBlinkActive(false),
 		_foregroundActionActive(false) {
-	_foregroundActorLayer.configure(5, kScene3040ForegroundActorDescriptorCount,
-		kScene3040ForegroundFrameMap, ARRAYSIZE(kScene3040ForegroundFrameMap));
-	_loopLayer.configure(6, kScene3040LoopDescriptorCount, nullptr, 0);
-	_loopTrack = _realtimeAnimationTracks.addLoop(_loopLayer,
-		kScene3040LoopFrameMillis, kScene3040LoopDescriptorCount);
+	_sceneLayers.configure(kScene3040LayerSpecs);
+	_loopTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kScene3040LoopLayer, kScene3040LoopFrameMillis, kScene3040LoopDescriptorCount);
 }
 
 void Scene3040::initializeCustomPreviewState() {
@@ -135,8 +140,8 @@ void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawLooseResourceSpriteLayer(_foregroundActorLayer);
-	drawLooseResourceSpriteLayer(_loopLayer);
+	drawLooseSceneLayer(kScene3040ForegroundActorLayer);
+	drawLooseSceneLayer(kScene3040LoopLayer);
 }
 
 void Scene3040::runCustomEntrySequence() {
@@ -220,11 +225,9 @@ AmbientAudioProfile Scene3040::ambientAudioProfile() const {
 }
 
 void Scene3040::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_loopTrack);
 	_foregroundActorChannel.reset(0, kScene3040ForegroundIdleFrameMillis);
-	_foregroundActorLayer.visible = true;
-	_loopLayer.visible = true;
-	_foregroundActorLayer.reset(0);
 	_foregroundActorBlinkActive = false;
 	_foregroundActionActive = false;
 }
@@ -247,26 +250,30 @@ void Scene3040::advanceForegroundActorLayer(uint32 delta) {
 			byte nextFrame;
 			do {
 				nextFrame = (byte)_random.getRandomNumber(4);
-			} while (nextFrame == _foregroundActorLayer.frameIndex);
-			_foregroundActorLayer.setFrame(nextFrame);
+			} while (nextFrame == _sceneLayers.layerFrame(kScene3040ForegroundActorLayer));
+			_sceneLayers.setLayerFrame(kScene3040ForegroundActorLayer, nextFrame);
 			_foregroundActorBlinkActive = false;
 			continue;
 		}
 
-		if (_foregroundActorLayer.frameIndex != 0) {
-			_foregroundActorLayer.setFrame(0);
+		if (_sceneLayers.layerFrame(kScene3040ForegroundActorLayer) != 0) {
+			_sceneLayers.setLayerFrame(kScene3040ForegroundActorLayer, 0);
 			_foregroundActorBlinkActive = false;
 			continue;
 		}
 
 		if (!_foregroundActorBlinkActive && _random.getRandomNumber(14) == 0) {
-			_foregroundActorLayer.setFrame(4);
+			_sceneLayers.setLayerFrame(kScene3040ForegroundActorLayer, 4);
 			_foregroundActorBlinkActive = true;
 		}
 	}
 }
 
-void Scene3040::drawLooseResourceSpriteLayer(const ResourceSpriteLayer &layer) {
+void Scene3040::drawLooseSceneLayer(uint layerId) {
+	if (!_sceneLayers.hasLayer(layerId))
+		return;
+
+	const ResourceSpriteLayer &layer = _sceneLayers.layer(layerId);
 	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount ||
 			!_sceneChunkTable.isValidChunk(layer.chunkIndex))
 		return;
@@ -294,7 +301,7 @@ void Scene3040::updateHiddenObjectHotspots() {
 void Scene3040::runExitToScene3010() {
 	BlockingSequence(*this)
 		.commit(_foregroundActionActive, true)
-		.layerFrames(_foregroundActorLayer,
+		.layerFrames(kScene3040ForegroundActorLayer,
 			AnimationFrameRange(0x0e, 0x14, kScene3040ForegroundFrameMillis))
 		.commit(_foregroundActionActive, false)
 		.commit(_vm->gameState().mainFlowStateId, kScene3010EntryFromScene3040State);
@@ -304,7 +311,7 @@ void Scene3040::runInventoryPatchAction() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(1, 5)
 		.commit(_foregroundActionActive, true)
-		.layerFrames(_foregroundActorLayer,
+		.layerFrames(kScene3040ForegroundActorLayer,
 			AnimationFrameRange(4, 0x0e, kScene3040ForegroundFrameMillis)
 				.hookAt(0x0b, kScene3040HiddenObjectPatchHook))
 		.commit(_foregroundActionActive, false);
