@@ -155,15 +155,15 @@ public:
 		return id;
 	}
 
-	void configureLayerResource(uint id, uint chunkIndex, uint16 descriptorCount,
-			const byte *frameMap, uint frameMapSize, bool visible = true) {
+	// Rebinds the active resource without changing default visibility or initial frame.
+	void setLayerResource(uint id, uint chunkIndex, uint16 descriptorCount,
+			const byte *frameMap, uint frameMapSize) {
 		if (!hasLayer(id))
 			return;
 
 		LayerState &state = _layers[id];
+		const bool visible = state.layer.visible;
 		state.layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
-		state.defaultVisible = visible;
-		state.initialFrame = 0;
 		state.layer.visible = visible && availableFrameCount(state.layer) != 0;
 	}
 

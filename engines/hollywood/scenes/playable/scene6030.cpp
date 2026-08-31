@@ -600,14 +600,16 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 		_fullPaletteRegionMask[deskColor] = 1;
 
 	startScriptedActorPath(0x25b, 0x17d, 4);
-	_sceneLayers.configureLayerResource(kScene6030TaffyServiceLayer, 9,
+	_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 9,
 		kScene6030TaffyArrivalDescriptorCount, nullptr, 0);
+	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
 	bool completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
 		AnimationFrameRange(0, 0x44, kScene6030TaffyFrameMillis)
 			.unskippable().hookAt(0x42, kScene6030TaffyPlacesCoffeeHook));
 	if (completed) {
-		_sceneLayers.configureLayerResource(kScene6030TaffyServiceLayer, 10,
+		_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 10,
 			kScene6030TaffyDepartureDescriptorCount, nullptr, 0);
+		_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
 		completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
 			AnimationFrameRange(0, 0x29, kScene6030TaffyFrameMillis).unskippable());
 	}

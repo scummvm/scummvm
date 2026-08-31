@@ -1032,9 +1032,10 @@ void Scene7040::setChunk14ActionFrame(byte frameIndex) {
 }
 
 void Scene7040::configureChunk14AltLayer(uint chunkIndex, bool visible) {
-	_sceneLayers.configureLayerResource(kScene7040Chunk14AltLayer, chunkIndex,
+	_sceneLayers.setLayerResource(kScene7040Chunk14AltLayer, chunkIndex,
 		kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
-		ARRAYSIZE(kScene7040Chunk14AltFrameMap), visible);
+		ARRAYSIZE(kScene7040Chunk14AltFrameMap));
+	_sceneLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
 }
 
 void Scene7040::setChunk14AltVisible(bool visible) {

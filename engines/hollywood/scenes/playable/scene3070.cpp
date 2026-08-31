@@ -43,6 +43,12 @@ const uint kScene3070Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene3070SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene3070OverlayFrameMillis = 75;
 const uint kScene3070PatchOverlayDescriptorCount = 9;
+const uint kScene3070InterludeLeftDescriptorCount = 26;
+const uint kScene3070InterludeRightDescriptorCount = 32;
+const uint kScene3070LateCutsceneDescriptorCount = 21;
+const uint kScene3070InterludeLeftLayer = 0;
+const uint kScene3070InterludeRightLayer = 1;
+const uint kScene3070LateCutsceneLayer = 2;
 const byte kScene3070InterludePrimaryRowLeft = 0x21;
 const byte kScene3070InterludePrimaryRowRight = 0x22;
 const byte kScene3070InterludeLeftSpeechGroup = 0;
@@ -76,6 +82,15 @@ const byte kScene3070LateCutsceneFrameMap[] = {
 	18, 17, 16, 15, 16, 17, 18, 19, 18, 17, 16, 15, 16, 17, 18, 19,
 	18, 17, 16, 15, 16, 17, 18, 19, 18, 17, 16, 15, 14, 13, 12, 8,
 	8, 9, 10, 11, 20
+};
+
+const SceneLayerSpec kScene3070LayerSpecs[] = {
+	{kSceneAnimationScenePlaced, 36, kScene3070InterludeLeftDescriptorCount,
+		kScene3070InterludeLeftFrameMap, ARRAYSIZE(kScene3070InterludeLeftFrameMap), false, 0},
+	{kSceneAnimationScenePlaced, 35, kScene3070InterludeRightDescriptorCount,
+		kScene3070InterludeRightFrameMap, ARRAYSIZE(kScene3070InterludeRightFrameMap), false, 0},
+	{kSceneAnimationBehindActors, 22, kScene3070LateCutsceneDescriptorCount,
+		kScene3070LateCutsceneFrameMap, ARRAYSIZE(kScene3070LateCutsceneFrameMap), false, 0}
 };
 
 const byte kScene3070PatchOverlayFrameMap[] = {
@@ -154,18 +169,10 @@ static PlayableSceneConfig scene3070Config() {
 
 Scene3070::Scene3070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3070Config()),
-		_interludeLeftLayer(),
-		_interludeRightLayer(),
-		_lateCutsceneLayer(),
 		_interludeActive(false),
 		_interludeAlternatePose(false),
 		_lateCutsceneActive(false) {
-	_interludeLeftLayer.configure(36, 26,
-		kScene3070InterludeLeftFrameMap, ARRAYSIZE(kScene3070InterludeLeftFrameMap));
-	_interludeRightLayer.configure(35, 32,
-		kScene3070InterludeRightFrameMap, ARRAYSIZE(kScene3070InterludeRightFrameMap));
-	_lateCutsceneLayer.configure(22, 21,
-		kScene3070LateCutsceneFrameMap, ARRAYSIZE(kScene3070LateCutsceneFrameMap));
+	_sceneLayers.configure(kScene3070LayerSpecs);
 }
 
 bool Scene3070::shouldLoadArenaChunk(uint index) const {
@@ -196,13 +203,13 @@ void Scene3070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_interludeActive) {
-		drawResourceSpriteLayer(_interludeLeftLayer);
-		drawResourceSpriteLayer(_interludeRightLayer);
+		drawSceneLayer(kScene3070InterludeLeftLayer);
+		drawSceneLayer(kScene3070InterludeRightLayer);
 		return;
 	}
 
 	if (_lateCutsceneActive)
-		drawResourceSpriteLayer(_lateCutsceneLayer);
+		drawSceneLayer(kScene3070LateCutsceneLayer);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -501,11 +508,11 @@ byte Scene3070::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene3070::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene3070InterludeLeftSpeechGroup)
-		_interludeLeftLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene3070InterludeLeftLayer, frameIndex);
 	else if (animationGroup == kScene3070InterludeRightSpeechGroup)
-		_interludeRightLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene3070InterludeRightLayer, frameIndex);
 	else if (animationGroup == kScene3070LateSpeechGroup)
-		_lateCutsceneLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene3070LateCutsceneLayer, frameIndex);
 }
 
 AmbientAudioProfile Scene3070::ambientAudioProfile() const {
@@ -523,12 +530,7 @@ void Scene3070::advanceAmbientAudio(uint32 delta) {
 }
 
 void Scene3070::resetCutsceneLayers() {
-	_interludeLeftLayer.reset(0);
-	_interludeRightLayer.reset(0);
-	_lateCutsceneLayer.reset(0);
-	_interludeLeftLayer.visible = false;
-	_interludeRightLayer.visible = false;
-	_lateCutsceneLayer.visible = false;
+	_sceneLayers.reset();
 	_interludeActive = false;
 	_interludeAlternatePose = false;
 	_lateCutsceneActive = false;
@@ -616,8 +618,8 @@ void Scene3070::runLateCutsceneBranch() {
 	if (_sceneChunkTable.isValidChunk(23))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[23], _baseFramebuffer);
 	_lateCutsceneActive = true;
-	_lateCutsceneLayer.visible = true;
-	playAnimationFrames(_lateCutsceneLayer,
+	_sceneLayers.setLayerVisible(kScene3070LateCutsceneLayer, true);
+	playAnimationFrames(_sceneLayers, kScene3070LateCutsceneLayer,
 		AnimationFrameRange(0, 48, kScene3070OverlayFrameMillis));
 	beginPrimarySpeechLineWithAnimationGroup(0x0d, 6, 0x212, 0x09e,
 		0x20, 0x00, 0x3f, kScene3070LateSpeechGroup);
@@ -658,10 +660,10 @@ void Scene3070::runInterludeCutscene() {
 
 	_viewportXOffset = 0x10;
 	_interludeActive = true;
-	_interludeLeftLayer.visible = true;
-	_interludeRightLayer.visible = true;
-	_interludeLeftLayer.setFrame(0);
-	_interludeRightLayer.setFrame(0);
+	_sceneLayers.setLayerVisible(kScene3070InterludeLeftLayer, true);
+	_sceneLayers.setLayerVisible(kScene3070InterludeRightLayer, true);
+	_sceneLayers.setLayerFrame(kScene3070InterludeLeftLayer, 0);
+	_sceneLayers.setLayerFrame(kScene3070InterludeRightLayer, 0);
 	drawPlayableComposite();
 	presentFrame();
 	fadePaletteFromBlack();
@@ -672,8 +674,10 @@ void Scene3070::runInterludeCutscene() {
 		0x079, 0x086, 0x0a, 0x3f, 0x00, kScene3070InterludeRightSpeechGroup);
 
 	for (uint frame = 0; frame < ARRAYSIZE(kScene3070InterludeLeftTransition); ++frame) {
-		_interludeLeftLayer.setFrame(kScene3070InterludeLeftTransition[frame]);
-		_interludeRightLayer.setFrame(kScene3070InterludeRightTransition[frame]);
+		_sceneLayers.setLayerFrame(kScene3070InterludeLeftLayer,
+			kScene3070InterludeLeftTransition[frame]);
+		_sceneLayers.setLayerFrame(kScene3070InterludeRightLayer,
+			kScene3070InterludeRightTransition[frame]);
 		if (waitSceneMillis(kScene3070OverlayFrameMillis))
 			break;
 	}
@@ -686,8 +690,8 @@ void Scene3070::runInterludeCutscene() {
 
 	for (byte frame = 16; frame < ARRAYSIZE(kScene3070InterludeRightFrameMap); ++frame) {
 		if (frame < ARRAYSIZE(kScene3070InterludeLeftFrameMap))
-			_interludeLeftLayer.setFrame(frame);
-		_interludeRightLayer.setFrame(frame);
+			_sceneLayers.setLayerFrame(kScene3070InterludeLeftLayer, frame);
+		_sceneLayers.setLayerFrame(kScene3070InterludeRightLayer, frame);
 		if (waitSceneMillis(kScene3070OverlayFrameMillis))
 			break;
 	}
@@ -695,8 +699,8 @@ void Scene3070::runInterludeCutscene() {
 	fadePaletteToBlack();
 	_interludeActive = false;
 	_interludeAlternatePose = false;
-	_interludeLeftLayer.visible = false;
-	_interludeRightLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene3070InterludeLeftLayer, false);
+	_sceneLayers.setLayerVisible(kScene3070InterludeRightLayer, false);
 	applySceneStateToHotspotsAndPatches(0xff);
 	_paletteCurrent = savedPalette;
 	_viewportXOffset = savedViewportX;

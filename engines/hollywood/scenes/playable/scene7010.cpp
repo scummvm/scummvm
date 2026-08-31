@@ -1029,9 +1029,10 @@ void Scene7010::setDialogueOverlayMode(byte mode, byte frameIndex) {
 	_dialogueOverlayMode = mode;
 
 	if (mode == 1) {
-		_sceneLayers.configureLayerResource(kScene7010DialogueOverlayLayer, 12,
+		_sceneLayers.setLayerResource(kScene7010DialogueOverlayLayer, 12,
 			kScene7010DialogueOverlayMode1DescriptorCount, kScene7010DialogueOverlayMode1FrameMap,
 			ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap));
+		_sceneLayers.setLayerVisible(kScene7010DialogueOverlayLayer, true);
 		_realtimeAnimationTracks.resetToFrame(_dialogueOverlayTrack, frameIndex);
 		_realtimeAnimationTracks.setActive(_dialogueOverlayTrack,
 			!_realtimeAnimationTracks.isActive(_doghouseSpeechTrack));
@@ -1040,9 +1041,10 @@ void Scene7010::setDialogueOverlayMode(byte mode, byte frameIndex) {
 
 	_realtimeAnimationTracks.setActive(_dialogueOverlayTrack, false);
 	if (mode == 2) {
-		_sceneLayers.configureLayerResource(kScene7010DialogueOverlayLayer, 16,
+		_sceneLayers.setLayerResource(kScene7010DialogueOverlayLayer, 16,
 			kScene7010DialogueOverlayMode2DescriptorCount, kScene7010DialogueOverlayMode2FrameMap,
 			ARRAYSIZE(kScene7010DialogueOverlayMode2FrameMap));
+		_sceneLayers.setLayerVisible(kScene7010DialogueOverlayLayer, true);
 		_sceneLayers.setLayerFrame(kScene7010DialogueOverlayLayer, frameIndex);
 		return;
 	}
