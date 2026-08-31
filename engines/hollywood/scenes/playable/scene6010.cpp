@@ -128,15 +128,11 @@ void Scene6010::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	copyBaseFramebufferToSceneFramebuffer();
+void Scene6010::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)drawActors;
+	(void)activeFacing;
 	updateSceneDepthThresholds(actorDrawOrderMode, activeWorldX, activeWorldY);
-	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 }
 
 void Scene6010::runCustomEntrySequence() {
@@ -617,12 +613,12 @@ void Scene6010::runLayeredOverlay(uint primaryChunkIndex, uint primaryDescriptor
 	_sceneLayers.clear();
 	uint secondaryLayer = SceneLayerStack::kInvalidLayer;
 	if (secondaryFrameMap != nullptr && secondaryFrameMapSize != 0) {
-		secondaryLayer = _sceneLayers.addLayer(kSceneAnimationScenePlaced,
+		secondaryLayer = _sceneLayers.addLayer(kSceneAnimationBehindActors,
 			secondaryChunkIndex,
 			(uint16)secondaryDescriptorCount, secondaryFrameMap, secondaryFrameMapSize);
 	}
 	const uint primaryLayer = primaryFrameMap != nullptr && primaryFrameMapSize != 0 ?
-		_sceneLayers.addLayer(kSceneAnimationScenePlaced,
+		_sceneLayers.addLayer(kSceneAnimationBehindActors,
 			primaryChunkIndex, (uint16)primaryDescriptorCount,
 			primaryFrameMap, primaryFrameMapSize) :
 		SceneLayerStack::kInvalidLayer;
