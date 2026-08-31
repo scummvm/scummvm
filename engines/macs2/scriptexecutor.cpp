@@ -482,7 +482,7 @@ void ScriptExecutor::clearScriptUiWaitState() {
 void ScriptExecutor::recordScriptErrorPosition() {
 	if (!hasScriptError() || !_stream)
 		return;
-	// Binary LAB_1008_e3bd: save position and scene/object context on halt.
+	// save position and scene/object context on halt.
 	_errorScriptPosition = (uint32)_stream->pos();
 	if (_executingScriptObjectId == 0) {
 		_errorScriptContext = Scenes::instance()._currentSceneIndex;
@@ -618,8 +618,6 @@ void ScriptExecutor::step() {
 			// Check if the currently executing script is at the end
 			if (!_stream || _stream->pos() >= effectiveScriptEnd()) {
 				syncScriptIsExecutingFlag();
-				// Binary (runScriptExecutor 1008:e3e7): if script finishes while
-				// g_wScriptSkippable is still set, treat as error 0x11 and abort.
 				if (_stream && _scriptSkippable) {
 					setScriptError(0x11);
 					_scriptSkippable = false;
@@ -947,7 +945,6 @@ OpcodeResult Script::ScriptExecutor::scriptNop09() {
 }
 
 OpcodeResult Script::ScriptExecutor::scriptPrintStringLeft() {
-	// l0037_DDE8:
 	debugC(kDebugScript, "SCRIPT::printStringLeft()");
 	scriptPrintString();
 	// Ends execution (confirmed: jumps to e3bd in disassembly).
@@ -1364,7 +1361,7 @@ OpcodeResult Script::ScriptExecutor::scriptShowDialogue() {
 
 	_dialogueSpeakerObjectID = objectID;
 	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
-	tryPlayGeneratedDialogueSpeech((uint16)offset);
+	tryPlayDialogueSpeech((uint16)offset);
 
 	_waitingForUiClick = true;
 
@@ -3310,28 +3307,30 @@ Common::Path ScriptExecutor::resolveMidiFilePath(const Common::String &fileName)
 	return Common::Path();
 }
 
-void ScriptExecutor::tryPlayGeneratedDialogueSpeech(uint16 stringOffset) {
-	const bool enhOn = _engine->enhancementEnabled(kEnhAudioChanges);
-	Common::String baseName;
+void ScriptExecutor::tryPlayDialogueSpeech(uint16 stringOffset) {
+	Common::String speechFile;
 	if (_executingScriptObjectId == 0) {
-		baseName = Common::String::format("s%02x_%04x",
+		speechFile = Common::String::format("s%02x_%04x",
 										  Scenes::instance()._currentSceneIndex, stringOffset);
 	} else {
-		baseName = Common::String::format("o%03x_%04x",
+		speechFile = Common::String::format("o%03x_%04x",
 										  _executingScriptObjectId, stringOffset);
 	}
-	const Common::Path basename = Common::Path("SPEECH").join(baseName);
+	const Common::Path &speechPath = Common::Path("SPEECH").join(speechFile);
 
+	const bool enhOn = _engine->enhancementEnabled(kEnhAudioChanges);
 	debugC(kDebugScript,
 		   "tryPlayGeneratedDialogueSpeech: looking for '%s'.* (enhAudio=%d soundEnabled=%d "
 		   "scriptObject=%u scene=%u offset=%u)",
-		   basename.toString().c_str(), enhOn ? 1 : 0, _soundEnabled ? 1 : 0,
+		   speechPath.toString().c_str(), enhOn ? 1 : 0, _soundEnabled ? 1 : 0,
 		   _executingScriptObjectId, Scenes::instance()._currentSceneIndex, stringOffset);
+
+	// TODO: TTS support
 
 	if (!_soundEnabled || !enhOn)
 		return;
 
-	_engine->playDigitalAudioFile(basename, true);
+	_engine->playAudioFile(speechPath, true);
 }
 
 OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
@@ -3354,7 +3353,7 @@ OpcodeResult ScriptExecutor::scriptPlaySfx() {
 		return OpcodeResult::Continue;
 	}
 	const bool speechBus = path.toString('/').hasPrefixIgnoreCase("SPEECH/");
-	_engine->playDigitalAudioFile(path, speechBus);
+	_engine->playAudioFile(path, speechBus);
 	return OpcodeResult::Continue;
 }
 
@@ -4029,7 +4028,7 @@ OpcodeResult ScriptExecutor::scriptTalkTo() {
 	if (_soundEnabled && !voiceFile.empty()) {
 		const Common::Path path = resolveAudioFilePath(voiceFile, true);
 		if (!path.empty()) {
-			_engine->playDigitalAudioFile(path, true);
+			_engine->playAudioFile(path, true);
 			playingVoice = _engine->isSpeechPlaying();
 		} else {
 			warning("talkTo: missing voice %s (looked in SPEECH/SOUNDFX)", voiceFile.c_str());

@@ -662,7 +662,7 @@ public:
 	 * via SeekableAudioStream::openStreamFile (codec #ifdefs live in audio/).
 	 * SPEECH paths use the speech mixer handle; others use the SFX handle.
 	 */
-	void playDigitalAudioFile(const Common::Path &basename, bool speechBus);
+	void playAudioFile(const Common::Path &basename, bool speechBus);
 	void stopSpeech();
 	bool isSpeechPlaying() const;
 

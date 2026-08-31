@@ -1798,7 +1798,7 @@ void Macs2Engine::playDeltaFrameSfx(uint16 displayFrame) {
 		if (ev.duckMusic)
 			getMusic()->setSmfDucked(true, _talkVol);
 		const Common::String base = Script::ScriptExecutor::stripAudioExtension(ev.fileName);
-		playDigitalAudioFile(Common::Path("SOUNDFX").join(base), false);
+		playAudioFile(Common::Path("SOUNDFX").join(base), false);
 	}
 }
 
@@ -3230,7 +3230,7 @@ bool Macs2Engine::isSpeechPlaying() const {
 	return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
 }
 
-void Macs2Engine::playDigitalAudioFile(const Common::Path &basename, bool speechBus) {
+void Macs2Engine::playAudioFile(const Common::Path &basename, bool speech) {
 	Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(basename);
 	if (stream == nullptr) {
 		debugC(kDebugScript, "playDigitalAudioFile: no audio for %s",
@@ -3238,7 +3238,7 @@ void Macs2Engine::playDigitalAudioFile(const Common::Path &basename, bool speech
 		return;
 	}
 
-	if (speechBus) {
+	if (speech) {
 		stopSpeech();
 		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, stream);
 	} else {

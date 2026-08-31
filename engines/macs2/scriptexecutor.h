@@ -231,7 +231,7 @@ public:
 	 * scene -> SPEECH/sSS_OOOO.*, object -> SPEECH/oOOO_OOOO.*.
 	 * Missing files are ignored.
 	 */
-	void tryPlayGeneratedDialogueSpeech(uint16 stringOffset);
+	void tryPlayDialogueSpeech(uint16 stringOffset);
 
 	// Dialect v2: extended opcodes 0x4F..0x6D (stubs until backends exist).
 	OpcodeResult scriptSetMainActor();
