@@ -1429,6 +1429,17 @@ void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
 }
 
+void PlayableScene::restoreSceneLayerBackground(uint layerId,
+		const Graphics::Surface &background) {
+	if (_sceneLayers.hasLayer(layerId))
+		restoreResourceSpriteLayerBackground(_sceneLayers.layer(layerId), background);
+}
+
+void PlayableScene::drawSceneLayer(uint layerId) {
+	if (_sceneLayers.hasLayer(layerId))
+		drawResourceSpriteLayer(_sceneLayers.layer(layerId));
+}
+
 void PlayableScene::drawLayerStack(const SceneLayerStack &layers,
 		SceneAnimationStratum stratum) {
 	for (uint i = 0; i < layers.layerCount(); ++i) {

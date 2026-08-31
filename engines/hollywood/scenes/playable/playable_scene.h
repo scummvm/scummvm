@@ -460,6 +460,8 @@ protected:
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
+	void restoreSceneLayerBackground(uint layerId, const Graphics::Surface &background);
+	void drawSceneLayer(uint layerId);
 	void drawLayerStack(const SceneLayerStack &layers, SceneAnimationStratum stratum);
 	void drawActionOverlayAtStratum(SceneAnimationStratum stratum);
 	void drawActionOverlayLayer();

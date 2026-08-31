@@ -53,6 +53,8 @@ const uint32 kScene3010DeparturePauseMillis = 2000;
 const uint kScene3010ClimbChunk = 13;
 const uint kScene3010ClimbDescriptorCount = 0x12;
 const byte kScene3010InitialWindmillFrame = 4;
+const uint kScene3010WindmillLayer = 0;
+const uint kScene3010ForestIdleLayer = 1;
 
 const byte kScene3010WindmillFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -72,6 +74,14 @@ const byte kScene3010ClimbFrameMap[] = {
 	9, 10, 11, 12, 13, 14, 15, 16, 17
 };
 
+const SceneLayerSpec kScene3010LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 7, kScene3010WindmillDescriptorCount,
+		kScene3010WindmillFrameMap, ARRAYSIZE(kScene3010WindmillFrameMap), true,
+		kScene3010InitialWindmillFrame},
+	{kSceneAnimationInFrontOfActors, 9, kScene3010ForestIdleDescriptorCount,
+		kScene3010ForestIdleFrameMap, ARRAYSIZE(kScene3010ForestIdleFrameMap), true, 0}
+};
+
 static PlayableSceneConfig scene3010Config() {
 	PlayableSceneConfig config(3010,
 		SceneResourceLayout(14, 5, 13),
@@ -86,17 +96,12 @@ static PlayableSceneConfig scene3010Config() {
 Scene3010::Scene3010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3010Config()),
 		_forestIdleChannel(),
-		_windmillLayer(),
-		_forestIdleLayer(),
 		_windmillTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_forestIdleState(0),
 		_climbOverlayActive(false) {
-	_windmillLayer.configure(7, kScene3010WindmillDescriptorCount,
-		kScene3010WindmillFrameMap, ARRAYSIZE(kScene3010WindmillFrameMap));
-	_forestIdleLayer.configure(9, kScene3010ForestIdleDescriptorCount,
-		kScene3010ForestIdleFrameMap, ARRAYSIZE(kScene3010ForestIdleFrameMap));
-	_windmillTrack = _realtimeAnimationTracks.addFrameMap(_windmillLayer,
-		kScene3010WindmillFrameMillis, false);
+	_sceneLayers.configure(kScene3010LayerSpecs);
+	_windmillTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kScene3010WindmillLayer, kScene3010WindmillFrameMillis, false);
 }
 
 bool Scene3010::shouldLoadArenaChunk(uint index) const {
@@ -137,25 +142,25 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_climbOverlayActive) {
-		drawResourceSpriteLayer(_windmillLayer);
+		drawSceneLayer(kScene3010WindmillLayer);
 		drawActionOverlayLayer();
-		drawResourceSpriteLayer(_forestIdleLayer);
+		drawSceneLayer(kScene3010ForestIdleLayer);
 		return;
 	}
 	if (_actionOverlayPlayer.replacesActor()) {
 		drawForegroundBlocks(activeWorldY);
 		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
-		drawResourceSpriteLayer(_windmillLayer);
+		drawSceneLayer(kScene3010WindmillLayer);
 		drawActionOverlayLayer();
-		drawResourceSpriteLayer(_forestIdleLayer);
+		drawSceneLayer(kScene3010ForestIdleLayer);
 		return;
 	}
 
-	drawResourceSpriteLayer(_windmillLayer);
+	drawSceneLayer(kScene3010WindmillLayer);
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
-	drawResourceSpriteLayer(_forestIdleLayer);
+	drawSceneLayer(kScene3010ForestIdleLayer);
 }
 
 void Scene3010::runCustomEntrySequence() {
@@ -241,14 +246,12 @@ AmbientAudioProfile Scene3010::ambientAudioProfile() const {
 }
 
 void Scene3010::resetAnimationLayers() {
+	_sceneLayers.reset();
 	_realtimeAnimationTracks.resetToFrame(_windmillTrack, kScene3010InitialWindmillFrame);
 	_realtimeAnimationTracks.setActive(_windmillTrack,
 		_vm->gameState().windmillBladesMoving);
 	_forestIdleChannel.reset(0, kScene3010ForestIdleFrameMillis);
 	_forestIdleState = 0;
-	_windmillLayer.visible = true;
-	_forestIdleLayer.visible = true;
-	_forestIdleLayer.reset(0);
 }
 
 void Scene3010::advanceForestIdleLayer(uint32 delta) {
@@ -275,7 +278,7 @@ void Scene3010::advanceForestIdleLayer(uint32 delta) {
 				_forestIdleChannel.frameIndex = 0;
 			}
 		}
-		_forestIdleLayer.setFrame(_forestIdleChannel.frameIndex);
+		_sceneLayers.setLayerFrame(kScene3010ForestIdleLayer, _forestIdleChannel.frameIndex);
 	}
 }
 
@@ -431,8 +434,8 @@ void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tab
 
 	_sceneFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
-	drawResourceSpriteLayer(_windmillLayer);
-	drawResourceSpriteLayer(_forestIdleLayer);
+	drawSceneLayer(kScene3010WindmillLayer);
+	drawSceneLayer(kScene3010ForestIdleLayer);
 	ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
 		frameIndex, (byte *)_sceneFramebuffer.getPixels(), _sceneFramebuffer.w,
 		_sceneFramebuffer.h, _sceneFramebuffer.pitch,
@@ -460,7 +463,8 @@ void Scene3010::runWindmillClimbOverlay() {
 		drawPlayableComposite();
 		presentFrame();
 		while (_vm->gameState().windmillBladesMoving &&
-				_windmillLayer.frameIndex != 9 && _windmillLayer.frameIndex != 24 &&
+				_sceneLayers.layerFrame(kScene3010WindmillLayer) != 9 &&
+				_sceneLayers.layerFrame(kScene3010WindmillLayer) != 24 &&
 				!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 			if (waitSceneMillis(10, false))
 				break;

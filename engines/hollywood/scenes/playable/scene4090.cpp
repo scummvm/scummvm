@@ -185,7 +185,7 @@ Scene4090::Scene4090(HollywoodEngine *vm) :
 		kScene4090OrganBodyDescriptorCount,
 		kScene4090OrganBodyFrameMap, ARRAYSIZE(kScene4090OrganBodyFrameMap), false);
 	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(
-		_sceneLayers.layer(kScene4090AmbientRandomLayer), 150, 0, 9, false, false);
+		_sceneLayers, kScene4090AmbientRandomLayer, 150, 0, 9, false, false);
 }
 
 void Scene4090::initializeCustomPreviewState() {

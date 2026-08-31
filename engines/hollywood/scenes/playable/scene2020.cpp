@@ -142,8 +142,8 @@ Scene2020::Scene2020(HollywoodEngine *vm) :
 		_tigerItemEffectEnabled(false),
 		_tigerReactionStarted(false) {
 	_sceneLayers.configure(kScene2020LayerSpecs);
-	_poolTrack = _realtimeAnimationTracks.addFrameMap(poolLayer(),
-		kScene2020PoolFrameMillis);
+	_poolTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
+		kPoolLayer, kScene2020PoolFrameMillis);
 }
 
 void Scene2020::initializeCustomPreviewState() {

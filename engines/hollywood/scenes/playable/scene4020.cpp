@@ -89,7 +89,7 @@ Scene4020::Scene4020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4020Config()),
 		_idleTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene4020LayerSpecs);
-	_idleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers.layer(kScene4020IdleLayer),
+	_idleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene4020IdleLayer,
 		kScene4020FrameMillis, kScene4020IdleDescriptorCount);
 }
 

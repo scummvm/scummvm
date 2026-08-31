@@ -54,8 +54,6 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 
 	Common::Array<byte> _originalColorToItemMap;
-	ResourceSpriteLayer _leftToggleLayer;
-	ResourceSpriteLayer _rightToggleLayer;
 	uint _leftToggleTrack;
 	uint _rightToggleTrack;
 };

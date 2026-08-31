@@ -64,8 +64,6 @@ private:
 	void runWindmillClimbOverlay();
 
 	TimedAnimationChannel _forestIdleChannel;
-	ResourceSpriteLayer _windmillLayer;
-	ResourceSpriteLayer _forestIdleLayer;
 	uint _windmillTrack;
 	byte _forestIdleState;
 	bool _climbOverlayActive;
