@@ -74,18 +74,9 @@ void Scene7080::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void Scene7080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-
-	drawActionOverlayLayer();
-
+void Scene7080::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
 

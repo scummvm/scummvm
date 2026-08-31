@@ -198,18 +198,15 @@ void Scene6020::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene6020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
+void Scene6020::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
 	drawResourceSpriteLayer(_sceneLayers.layer(kScene6020TaffyLayer));
 	drawTaffyForegroundBlock();
 	drawTaffyDepartureLayer();
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+}
+
+void Scene6020::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
 	drawForegroundBlocks(activeWorldX, activeWorldY);
 	drawPhoneLayer();
 }
