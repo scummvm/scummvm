@@ -25,6 +25,7 @@
 
 enum Offsets {
 	data_initialVdpRegisters = 0x010123,
+	data_MainMenuTiles = 0x1155a,
 	data_MainMenuBackgroundTilemap = 0x0165B8,
 	data_AcclaimLogoBgTilemap = 0x0219C0,
 	data_AcclaimLogoFgTilemap = 0x021B40,

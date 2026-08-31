@@ -398,7 +398,7 @@ void ScoobyEngine::mainMenu() {
 	   Height - 256 pixels (32 cells) */
 	_vdp->control_port_w(0x9000);
 
-	uint32 size = _file->decompressBytes(0x1155a, buf, sizeof(buf));
+	uint32 size = _file->decompressBytes(data_MainMenuTiles, buf, sizeof(buf));
 	_vdp->writeVRAM(0, buf, size);
 
 	byte src[0x132];
