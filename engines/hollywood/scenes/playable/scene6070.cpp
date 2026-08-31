@@ -63,6 +63,8 @@ const byte kScene6070State609PropSpeechGroup = 1;
 const byte kScene6070State609NpcSpeechGroup = 2;
 const byte kScene6070State609SueSpeechGroup = 3;
 const byte kScene6070SueIdleSpeechGroup = 4;
+const byte kScene6070SueIdleSpeechId = 1;
+const byte kScene6070RonRetortSpeechId = 2;
 const byte kScene6070TransferFrameHook = 1;
 const uint kScene6070FixedGiveHandlerIndex = 0x110;
 const uint16 kScene6070FixedGiveHandlerDefault = 0x79;
@@ -561,10 +563,9 @@ void Scene6070::advanceSueIdle(uint32 delta) {
 			speechFrame = (byte)_random.getRandomNumber(4);
 		} while (speechFrame == _lastSueIdleSpeechFrame);
 		_lastSueIdleSpeechFrame = speechFrame;
-		_manualSequenceActive = true;
-		beginPrimarySpeechLineWithAnimationGroup(9, speechFrame, 0x0e2, 0x08c,
-			0x3f, 0x28, 0x32, kScene6070SueIdleSpeechGroup);
-		_manualSequenceActive = false;
+		startRealtimePrimarySpeechLine(9, speechFrame, 0x0e2, 0x08c,
+			0x3f, 0x28, 0x32, kScene6070SueIdleSpeechGroup,
+			kScene6070SueIdleSpeechId);
 	}
 
 	const uint ticks = _sueIdleChannel.consumeFrames(delta);
@@ -577,13 +578,11 @@ void Scene6070::advanceSueIdle(uint32 delta) {
 		if (_pendingRonRetort && !_primaryDialogueSpeechActive &&
 			!_speechOverlay.visible && !_actorPathPlaybackActive) {
 			_pendingRonRetort = false;
-			_manualSequenceActive = true;
 			const ScenePoint point = _hotspots.actionTarget(4).approachPoint;
 			_activeActorFacing = calculateFacingTowardPoint(_activeActorWorldX,
-															_activeActorWorldY, point.x, point.y);
+				_activeActorWorldY, point.x, point.y);
 			_activeActorCel = 0;
-			beginSecondarySpeechLine(9, 5);
-			_manualSequenceActive = false;
+			startRealtimeSecondarySpeechLine(9, 5, kScene6070RonRetortSpeechId);
 			continue;
 		}
 
@@ -662,6 +661,7 @@ void Scene6070::runState609Cutscene() {
 }
 
 void Scene6070::runSueDialogue() {
+	stopRealtimeSpeech();
 	Common::Array<DialogueChoiceRecord> records;
 	initializeSueDialogueRecords(records);
 	_sueMode = 1;

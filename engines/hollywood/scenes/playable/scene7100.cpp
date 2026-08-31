@@ -56,10 +56,9 @@ const byte kScene7100PrimarySpeechGroupA = 0;
 const byte kScene7100PrimarySpeechGroupB = 1;
 const byte kScene7100PrimarySpeechGroupBanter = 2;
 const byte kScene7100BanterVolumePercent = 25;
-const byte kScene7100AsyncSpeechNone = 0;
-const byte kScene7100AsyncSpeechRonBanter = 1;
-const byte kScene7100AsyncSpeechSueBanter = 2;
-const byte kScene7100AsyncSpeechRonScripted = 3;
+const byte kScene7100RealtimeSpeechRonBanter = 1;
+const byte kScene7100RealtimeSpeechSueBanter = 2;
+const byte kScene7100RealtimeSpeechRonScripted = 3;
 const byte kScene7100RonEscapeResponseFrame = 4;
 const byte kScene7100PrimaryFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 6, 5
@@ -169,15 +168,9 @@ static PlayableSceneConfig scene7100Config() {
 
 Scene7100::Scene7100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7100Config()),
-		_asyncSpeechPlayer(vm->getLanguage(), vm->hasSpeechData()),
 		_primaryTimerAccumulator(0),
 		_banterTimerAccumulator(0),
-		_asyncSpeechElapsed(0),
-		_asyncSpeechDuration(0),
 		_environmentTimerAccumulator(0),
-		_asyncTextRecordId(0),
-		_asyncVoiceSampleId(0),
-		_asyncSpeechCenterX(0),
 		_primaryMode(0),
 		_primaryFrame(0),
 		_primaryAltFrame(0),
@@ -185,10 +178,6 @@ Scene7100::Scene7100(HollywoodEngine *vm) :
 		_environmentFrame(0),
 		_lastBanterFrame(0xff),
 		_banterRemarkCount(0),
-		_asyncContinuationPart(0),
-		_asyncContinuationCount(0),
-		_asyncSpeechPhase(kScene7100AsyncSpeechNone),
-		_asyncPrimaryAnimationGroup(kScene7100PrimarySpeechGroupA),
 		_manualPrimaryAnimationActive(false),
 		_dialogueMenuActive(false),
 		_specialBanterUsed(false) {
@@ -203,12 +192,7 @@ void Scene7100::initializeCustomPreviewState() {
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_primaryTimerAccumulator = 0;
 	_banterTimerAccumulator = 0;
-	_asyncSpeechElapsed = 0;
-	_asyncSpeechDuration = 0;
 	_environmentTimerAccumulator = 0;
-	_asyncTextRecordId = 0;
-	_asyncVoiceSampleId = 0;
-	_asyncSpeechCenterX = 0;
 	_previousAmbientMusicTrackId = 0;
 	_primaryMode = _vm->gameState().mainFlowStateId == kScene7100DialogueEntryState ? 1 : 0;
 	_primaryFrame = 0;
@@ -217,10 +201,6 @@ void Scene7100::initializeCustomPreviewState() {
 	_environmentFrame = 0;
 	_lastBanterFrame = 0xff;
 	_banterRemarkCount = 0;
-	_asyncContinuationPart = 0;
-	_asyncContinuationCount = 0;
-	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
-	_asyncPrimaryAnimationGroup = kScene7100PrimarySpeechGroupA;
 	_manualPrimaryAnimationActive = false;
 	_dialogueMenuActive = false;
 	_specialBanterUsed = false;
@@ -299,11 +279,6 @@ void Scene7100::advanceCustomGameplayLoop(uint32 delta) {
 
 	advanceAutonomousBanter(delta);
 	advanceEnvironmentFrame(delta);
-}
-
-void Scene7100::suspendAudioForOptionsMenu() {
-	cancelAsyncSpeech();
-	PlayableScene::suspendAudioForOptionsMenu();
 }
 
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
@@ -559,16 +534,12 @@ void Scene7100::advancePrimaryIdleFrame(uint32 delta) {
 
 void Scene7100::advanceAutonomousBanter(uint32 delta) {
 	_banterTimerAccumulator += delta;
-	if (_banterTimerAccumulator < kScene7100FrameMillis) {
-		advanceAsyncSpeech(delta);
+	if (_banterTimerAccumulator < kScene7100FrameMillis)
 		return;
-	}
 
 	_banterTimerAccumulator %= kScene7100FrameMillis;
-	if (_asyncSpeechPhase != kScene7100AsyncSpeechNone) {
-		advanceAsyncSpeech(delta);
+	if (isRealtimeSpeechActive())
 		return;
-	}
 
 	if (_primaryMode != 0 || _primaryDialogueSpeechActive ||
 			_manualPrimaryAnimationActive || _dialogueMenuActive || _actorPathPlaybackActive ||
@@ -654,112 +625,19 @@ void Scene7100::startAutonomousBanter() {
 	if (frameIndex == 3)
 		_specialBanterUsed = true;
 
-	byte continuationCount = 0;
-	if (!getStage003Cue(0x2a, frameIndex, _asyncTextRecordId,
-			continuationCount, _asyncVoiceSampleId)) {
-		return;
-	}
-
-	_asyncContinuationPart = 0;
-	_asyncContinuationCount = MAX<byte>(1, continuationCount);
-	_asyncSpeechPhase = kScene7100AsyncSpeechRonBanter;
-	_asyncPrimaryAnimationGroup = kScene7100PrimarySpeechGroupBanter;
-	_asyncSpeechCenterX = 0x310;
-	setPaletteEntry6Bit(_primarySpeechOverlay.colorIndex, 0x3f, 0x3f, 0x3f);
-	const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncPrimaryAnimationGroup);
-	_speechController.startPrimaryDialogueSpeech(_asyncPrimaryAnimationGroup, baseFrame);
-	primarySpeechAnimationStarted(_asyncPrimaryAnimationGroup, baseFrame);
-	setPrimarySpeechAnimationFrame(_asyncPrimaryAnimationGroup, baseFrame);
-	startAsyncPrimarySpeechPart();
+	startRealtimePrimarySpeechLine(0x2a, frameIndex, 0x310, 0x8a,
+		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupBanter,
+		kScene7100RealtimeSpeechRonBanter);
 }
 
 void Scene7100::startScriptedRonSpeech(uint16 rowIndex, byte frameIndex,
 		uint16 centerX, byte red, byte green, byte blue, byte animationGroup) {
-	cancelAsyncSpeech();
-	byte continuationCount = 0;
-	if (!getStage003Cue(rowIndex, frameIndex, _asyncTextRecordId,
-			continuationCount, _asyncVoiceSampleId)) {
-		return;
-	}
-
-	_asyncContinuationPart = 0;
-	_asyncContinuationCount = MAX<byte>(1, continuationCount);
-	_asyncSpeechPhase = kScene7100AsyncSpeechRonScripted;
-	_asyncPrimaryAnimationGroup = animationGroup;
-	_asyncSpeechCenterX = centerX;
-	setPaletteEntry6Bit(_primarySpeechOverlay.colorIndex, red, green, blue);
-	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-	_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
-	primarySpeechAnimationStarted(animationGroup, baseFrame);
-	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
-	startAsyncPrimarySpeechPart();
+	startRealtimePrimarySpeechLine(rowIndex, frameIndex, centerX, 0x8a,
+		red, green, blue, animationGroup, kScene7100RealtimeSpeechRonScripted);
 }
 
-void Scene7100::startAsyncPrimarySpeechPart() {
-	while (_asyncContinuationPart < _asyncContinuationCount) {
-		const Common::String text = getResource003LargeTextRecord(
-			_asyncTextRecordId + _asyncContinuationPart);
-		if (text.empty()) {
-			++_asyncContinuationPart;
-			continue;
-		}
-
-		_primarySpeechOverlay.visible = true;
-		wrapActorSpeechText(text, _asyncSpeechCenterX, _primarySpeechOverlay.lines);
-		calculateSpeechOverlayBounds(_primarySpeechOverlay, _asyncSpeechCenterX, 0x8a, true,
-			_activeActorWorldY);
-		const uint16 sampleId = _asyncVoiceSampleId == 0 ? 0 :
-			_asyncVoiceSampleId + _asyncContinuationPart;
-		const bool started = sampleId != 0 && _asyncSpeechPlayer.playSample(sampleId,
-			primarySpeechVolumePercent(_asyncPrimaryAnimationGroup));
-		_asyncSpeechElapsed = 0;
-		_asyncSpeechDuration = started ? MAX<uint32>(_asyncSpeechPlayer.lastSampleDurationMillis(), 750) :
-			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
-		return;
-	}
-
-	finishAsyncPrimarySpeech();
-}
-
-void Scene7100::advanceAsyncSpeech(uint32 delta) {
-	if (_asyncSpeechPhase == kScene7100AsyncSpeechNone)
-		return;
-
-	_asyncSpeechElapsed += delta;
-	const bool speechPlaying = _asyncSpeechPhase == kScene7100AsyncSpeechSueBanter ?
-		_speech.isPlaying() : _asyncSpeechPlayer.isPlaying();
-	if (speechPlaying || _asyncSpeechElapsed < _asyncSpeechDuration)
-		return;
-
-	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
-			_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted) {
-		++_asyncContinuationPart;
-		startAsyncPrimarySpeechPart();
-		return;
-	}
-
-	_speech.stop();
-	_speechController.clearSecondaryOverlay();
-	_speechController.prepareSecondaryActorSpeech();
-	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
-	_asyncSpeechElapsed = 0;
-	_asyncSpeechDuration = 0;
-}
-
-void Scene7100::finishAsyncPrimarySpeech() {
-	const byte finishedPhase = _asyncSpeechPhase;
-	const byte animationGroup = _asyncPrimaryAnimationGroup;
-	_asyncSpeechPlayer.stop();
-	_speechController.clearPrimaryOverlay();
-	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
-	_speechController.stopPrimaryDialogueSpeech(0xff, 7);
-	primarySpeechAnimationRestored(animationGroup, baseFrame);
-	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
-	_asyncSpeechElapsed = 0;
-	_asyncSpeechDuration = 0;
-
-	if (finishedPhase == kScene7100AsyncSpeechRonBanter &&
+void Scene7100::realtimeSpeechFinished(byte speechId) {
+	if (speechId == kScene7100RealtimeSpeechRonBanter &&
 			(++_banterRemarkCount >= 4 || _lastBanterFrame == 3)) {
 		_banterRemarkCount = 0;
 		if (!_actorPathPlaybackActive && !_speechOverlay.visible &&
@@ -770,13 +648,13 @@ void Scene7100::finishAsyncPrimarySpeech() {
 }
 
 void Scene7100::waitForScriptedRonSpeech() {
-	while (_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted &&
+	while (realtimeSpeechId() == kScene7100RealtimeSpeechRonScripted &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (waitSceneMillis(50))
 			break;
 	}
-	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted)
-		cancelAsyncSpeech();
+	if (realtimeSpeechId() == kScene7100RealtimeSpeechRonScripted)
+		stopRealtimeSpeech();
 }
 
 void Scene7100::startAutonomousSueReply() {
@@ -784,36 +662,7 @@ void Scene7100::startAutonomousSueReply() {
 		return;
 
 	faceSueTowardRon();
-	const bool started = startSecondarySpeechLine(0x2a, 4);
-	if (!_speechOverlay.visible)
-		return;
-
-	_asyncSpeechPhase = kScene7100AsyncSpeechSueBanter;
-	_asyncSpeechElapsed = 0;
-	_asyncSpeechDuration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(1200, _speechOverlay.lines.size() * 1100);
-}
-
-void Scene7100::cancelAsyncSpeech() {
-	if (_asyncSpeechPhase == kScene7100AsyncSpeechNone)
-		return;
-
-	if (_asyncSpeechPhase == kScene7100AsyncSpeechRonBanter ||
-			_asyncSpeechPhase == kScene7100AsyncSpeechRonScripted) {
-		_asyncSpeechPlayer.stop();
-		_speechController.clearPrimaryOverlay();
-		const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncPrimaryAnimationGroup);
-		setPrimarySpeechAnimationFrame(_asyncPrimaryAnimationGroup, baseFrame);
-		_speechController.stopPrimaryDialogueSpeech(0xff, 7);
-		primarySpeechAnimationRestored(_asyncPrimaryAnimationGroup, baseFrame);
-	} else {
-		_speech.stop();
-		_speechController.clearSecondaryOverlay();
-		_speechController.prepareSecondaryActorSpeech();
-	}
-	_asyncSpeechPhase = kScene7100AsyncSpeechNone;
-	_asyncSpeechElapsed = 0;
-	_asyncSpeechDuration = 0;
+	startRealtimeSecondarySpeechLine(0x2a, 4, kScene7100RealtimeSpeechSueBanter);
 }
 
 void Scene7100::faceSueTowardRon() {
@@ -828,7 +677,7 @@ void Scene7100::faceSueTowardRon() {
 }
 
 void Scene7100::runRonDialogue() {
-	cancelAsyncSpeech();
+	stopRealtimeSpeech();
 	Common::Array<DialogueChoiceRecord> records;
 	initializeRonDialogueRecords(records);
 
@@ -1144,7 +993,7 @@ void Scene7100::handlePickupItem15() {
 }
 
 void Scene7100::handleActionHandler315() {
-	cancelAsyncSpeech();
+	stopRealtimeSpeech();
 	beginSecondarySpeechLine(0x0e, 0);
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x310, 0x8a,
 		0x3f, 0x3f, 0x3f, kScene7100PrimarySpeechGroupA);
@@ -1239,7 +1088,7 @@ void Scene7100::handleRemovePlate() {
 }
 
 void Scene7100::handleInventoryTransferAction() {
-	cancelAsyncSpeech();
+	stopRealtimeSpeech();
 	const byte sueItemId = _lastInventoryPrimaryItemId;
 	const uint mappingIndex = sueItemId - kScene7100FirstTransferableSueItem;
 	if (mappingIndex >= ARRAYSIZE(kScene7100RonItemBySueItem)) {

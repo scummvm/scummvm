@@ -41,7 +41,7 @@ private:
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
-	void suspendAudioForOptionsMenu() override;
+	void realtimeSpeechFinished(byte speechId) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
@@ -60,12 +60,8 @@ private:
 	void startAutonomousBanter();
 	void startScriptedRonSpeech(uint16 rowIndex, byte frameIndex, uint16 centerX,
 		byte red, byte green, byte blue, byte animationGroup);
-	void startAsyncPrimarySpeechPart();
-	void advanceAsyncSpeech(uint32 delta);
-	void finishAsyncPrimarySpeech();
 	void waitForScriptedRonSpeech();
 	void startAutonomousSueReply();
-	void cancelAsyncSpeech();
 	void faceSueTowardRon();
 	void runRonDialogue();
 	void initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
@@ -81,15 +77,9 @@ private:
 	void handleRemovePlate();
 	void handleInventoryTransferAction();
 
-	SpeechPlayer _asyncSpeechPlayer;
 	uint32 _primaryTimerAccumulator;
 	uint32 _banterTimerAccumulator;
-	uint32 _asyncSpeechElapsed;
-	uint32 _asyncSpeechDuration;
 	uint32 _environmentTimerAccumulator;
-	uint16 _asyncTextRecordId;
-	uint16 _asyncVoiceSampleId;
-	uint16 _asyncSpeechCenterX;
 	byte _primaryMode;
 	byte _primaryFrame;
 	byte _primaryAltFrame;
@@ -97,10 +87,6 @@ private:
 	byte _environmentFrame;
 	byte _lastBanterFrame;
 	byte _banterRemarkCount;
-	byte _asyncContinuationPart;
-	byte _asyncContinuationCount;
-	byte _asyncSpeechPhase;
-	byte _asyncPrimaryAnimationGroup;
 	bool _manualPrimaryAnimationActive;
 	bool _dialogueMenuActive;
 	bool _specialBanterUsed;
