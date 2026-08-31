@@ -104,8 +104,6 @@ private:
 	TimedAnimationChannel _chunk9Channel;
 	TimedAnimationChannel _chunk10Channel;
 	TimedAnimationChannel _ronDialogueIdleChannel;
-	ResourceSpriteLayer _actorReplacementLayer;
-	ResourceSpriteLayer _alternateVanessaLayer;
 	bool _scoutStopTransitionActive;
 	bool _scoutResumeTransitionActive;
 	bool _scoutTransitionCompletionPending;

@@ -81,8 +81,6 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
 
-	ResourceSpriteLayer _elevatorLayer;
-	ResourceSpriteLayer _projectorSpeechLayer;
 	TimedAnimationChannel _movingWallChannel;
 	TimedAnimationChannel _mainProjectionChannel;
 	TimedAnimationChannel _transformationOverlayChannel;

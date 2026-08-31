@@ -93,8 +93,6 @@ private:
 	byte randomUnusedRow(byte firstRow, byte rowCount, bool *usedRows, uint usedRowCount);
 	bool runFishermanQuiz();
 
-	ResourceSpriteLayer _fishermanLayer;
-	ResourceSpriteLayer _boatLayer;
 	uint _boatTrack;
 	TimedAnimationChannel _fishermanChannel;
 	TimedAnimationChannel _fishermanSpeechIdleChannel;

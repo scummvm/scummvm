@@ -48,6 +48,8 @@ const uint kScene5030MineCartEntryLayer = 0;
 const uint kScene5030Chunk8Layer = 1;
 const uint kScene5030Chunk9Layer = 2;
 const uint kScene5030Chunk10Layer = 3;
+const uint kScene5030ActorReplacementLayer = 4;
+const uint kScene5030AlternateVanessaLayer = 5;
 const byte kScene5030DeckOfCardsItem = 0x48;
 const byte kScene5030UnderpantsItem = 0x53;
 const byte kScene5030TakenSceneItemId = 6;
@@ -185,8 +187,6 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		_chunk9Channel(),
 		_chunk10Channel(),
 		_ronDialogueIdleChannel(),
-		_actorReplacementLayer(),
-		_alternateVanessaLayer(),
 		_scoutStopTransitionActive(false),
 		_scoutResumeTransitionActive(false),
 		_scoutTransitionCompletionPending(false),
@@ -208,6 +208,10 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 	_sceneLayers.configureLayer(kScene5030Chunk10Layer, kSceneAnimationScenePlaced,
 		10, kScene5030Chunk10DescriptorCount,
 		kScene5030Chunk10FrameMap, ARRAYSIZE(kScene5030Chunk10FrameMap));
+	_sceneLayers.configureLayer(kScene5030ActorReplacementLayer,
+		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
+	_sceneLayers.configureLayer(kScene5030AlternateVanessaLayer,
+		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
 }
 
 void Scene5030::initializeCustomPreviewState() {
@@ -232,11 +236,11 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawActionOverlayLayer();
 		return;
 	}
-	if (_actorReplacementLayer.visible) {
-		drawResourceSpriteLayer(_actorReplacementLayer);
+	if (_sceneLayers.layerVisible(kScene5030ActorReplacementLayer)) {
+		drawResourceSpriteLayer(_sceneLayers.layer(kScene5030ActorReplacementLayer));
 		drawResourceSpriteLayer(_sceneLayers.layer(kScene5030Chunk10Layer));
-		if (_alternateVanessaLayer.visible)
-			drawResourceSpriteLayer(_alternateVanessaLayer);
+		if (_sceneLayers.layerVisible(kScene5030AlternateVanessaLayer))
+			drawResourceSpriteLayer(_sceneLayers.layer(kScene5030AlternateVanessaLayer));
 		else
 			drawResourceSpriteLayer(_sceneLayers.layer(kScene5030Chunk9Layer));
 		drawResourceSpriteLayer(_sceneLayers.layer(kScene5030Chunk8Layer));
@@ -416,8 +420,8 @@ void Scene5030::resetAnimationLayers() {
 	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
-	clearResourceLayer(_actorReplacementLayer);
-	clearResourceLayer(_alternateVanessaLayer);
+	clearSceneLayer(kScene5030ActorReplacementLayer);
+	clearSceneLayer(kScene5030AlternateVanessaLayer);
 	_scoutStopTransitionActive = false;
 	_scoutResumeTransitionActive = false;
 	_scoutTransitionCompletionPending = false;
@@ -460,10 +464,11 @@ void Scene5030::advanceDialogueIdleLayer(TimedAnimationChannel &channel, uint la
 }
 
 void Scene5030::advanceRonDialogueIdle(uint32 delta) {
-	if (!_actorReplacementLayer.visible ||
+	ResourceSpriteLayer &actorReplacementLayer = _sceneLayers.layer(kScene5030ActorReplacementLayer);
+	if (!actorReplacementLayer.visible ||
 			(_ronConversationChunk != 13 && _ronConversationChunk != 14) ||
-			_actorReplacementLayer.chunkIndex != _ronConversationChunk ||
-			_actorReplacementLayer.frameMap != nullptr ||
+			actorReplacementLayer.chunkIndex != _ronConversationChunk ||
+			actorReplacementLayer.frameMap != nullptr ||
 			(_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene5030RonSpeechGroup)) {
 		_ronDialogueIdleChannel.consumeFrames(delta);
 		return;
@@ -471,10 +476,10 @@ void Scene5030::advanceRonDialogueIdle(uint32 delta) {
 
 	const uint consumedFrames = _ronDialogueIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < consumedFrames; ++i) {
-		if (_actorReplacementLayer.frameIndex != _ronSpeechBaseFrame)
-			_actorReplacementLayer.setFrame(_ronSpeechBaseFrame);
+		if (actorReplacementLayer.frameIndex != _ronSpeechBaseFrame)
+			actorReplacementLayer.setFrame(_ronSpeechBaseFrame);
 		else if (_random.getRandomNumber(14) == 0)
-			_actorReplacementLayer.setFrame(_ronSpeechBaseFrame + 4);
+			actorReplacementLayer.setFrame(_ronSpeechBaseFrame + 4);
 	}
 }
 
@@ -577,18 +582,21 @@ void Scene5030::finishScoutResumeTransition() {
 }
 
 void Scene5030::showRonConversationLayer(uint chunkIndex, byte baseFrame) {
-	clearResourceLayer(_alternateVanessaLayer);
-	_actorReplacementLayer.configure(chunkIndex, kScene5030ConversationDescriptorCount, nullptr, 0);
-	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(chunkIndex);
-	_actorReplacementLayer.setFrame(baseFrame);
+	clearSceneLayer(kScene5030AlternateVanessaLayer);
+	_sceneLayers.setLayerResource(kScene5030ActorReplacementLayer,
+		chunkIndex, kScene5030ConversationDescriptorCount, nullptr, 0);
+	if (_sceneChunkTable.isValidChunk(chunkIndex))
+		_sceneLayers.showLayerAtFrame(kScene5030ActorReplacementLayer, baseFrame);
+	else
+		_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, false);
 	_ronSpeechBaseFrame = baseFrame;
 	_ronConversationChunk = chunkIndex;
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
 }
 
 void Scene5030::clearActorReplacementLayers() {
-	clearResourceLayer(_actorReplacementLayer);
-	clearResourceLayer(_alternateVanessaLayer);
+	clearSceneLayer(kScene5030ActorReplacementLayer);
+	clearSceneLayer(kScene5030AlternateVanessaLayer);
 }
 
 void Scene5030::finishScoutConversation() {
@@ -601,19 +609,24 @@ void Scene5030::runRonPoseTransition(bool faceGladys) {
 	const byte *frameMap = faceGladys ? kScene5030RonTurnToGladysFrameMap : kScene5030RonTurnToVanessaFrameMap;
 	const uint frameCount = faceGladys ? ARRAYSIZE(kScene5030RonTurnToGladysFrameMap) :
 		ARRAYSIZE(kScene5030RonTurnToVanessaFrameMap);
-	playResourceLayerSequence(_actorReplacementLayer, _ronConversationChunk, kScene5030ConversationDescriptorCount,
+	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+		_ronConversationChunk, kScene5030ConversationDescriptorCount,
 		frameMap, frameCount, AnimationFrameRange(0, frameCount - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay(), false);
-	_actorReplacementLayer.configure(_ronConversationChunk, kScene5030ConversationDescriptorCount, nullptr, 0);
-	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(_ronConversationChunk);
-	_actorReplacementLayer.setFrame(faceGladys ? 6 : 0);
+	_sceneLayers.setLayerResource(kScene5030ActorReplacementLayer,
+		_ronConversationChunk, kScene5030ConversationDescriptorCount, nullptr, 0);
+	if (_sceneChunkTable.isValidChunk(_ronConversationChunk))
+		_sceneLayers.showLayerAtFrame(kScene5030ActorReplacementLayer, faceGladys ? 6 : 0);
+	else
+		_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, false);
 	_ronSpeechBaseFrame = faceGladys ? 6 : 0;
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
 }
 
 void Scene5030::runDeckRefusalSequence() {
 	startScoutStopTransition();
-	playResourceLayerSequence(_actorReplacementLayer, 11, kScene5030DeckAnimationDescriptorCount,
+	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+		11, kScene5030DeckAnimationDescriptorCount,
 		kScene5030DeckRefusalFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030DeckRefusalFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay());
@@ -634,11 +647,12 @@ void Scene5030::runDeckRefusalSequence() {
 }
 
 void Scene5030::runDeckPickupSequence() {
-	_actorReplacementLayer.configure(11, kScene5030DeckAnimationDescriptorCount,
+	_sceneLayers.setLayerResource(kScene5030ActorReplacementLayer,
+		11, kScene5030DeckAnimationDescriptorCount,
 		kScene5030DeckPickupFrameMap, ARRAYSIZE(kScene5030DeckPickupFrameMap));
-	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(11);
+	_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, _sceneChunkTable.isValidChunk(11));
 
-	playAndPresentAnimationFrames(_actorReplacementLayer,
+	playAndPresentAnimationFrames(_sceneLayers, kScene5030ActorReplacementLayer,
 		AnimationFrameRange(0, kScene5030DeckPatchFrame - 1,
 			kScene5030FrameMillis).unskippable());
 	if (_sceneChunkTable.isValidChunk(12))
@@ -646,33 +660,41 @@ void Scene5030::runDeckPickupSequence() {
 	clearSceneItemFromColorMap(kScene5030TakenSceneItemId);
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-	playAndPresentAnimationFrames(_actorReplacementLayer,
+	playAndPresentAnimationFrames(_sceneLayers, kScene5030ActorReplacementLayer,
 		AnimationFrameRange(kScene5030DeckPatchFrame, ARRAYSIZE(kScene5030DeckPickupFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay().hookAt(14, kScene5030GrantDeckHook));
-	clearResourceLayer(_actorReplacementLayer);
+	clearSceneLayer(kScene5030ActorReplacementLayer);
 
 	walkActiveActorTo(0x214, 0x162, 4, 0, false);
 }
 
 void Scene5030::runUnderpantsPresentationAnimation() {
-	playResourceLayerSequence(_actorReplacementLayer, 15, kScene5030UnderpantsRonDescriptorCount,
+	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+		15, kScene5030UnderpantsRonDescriptorCount,
 		kScene5030UnderpantsPresentationFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsPresentationFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay(), false);
-	_actorReplacementLayer.configure(15, kScene5030UnderpantsRonDescriptorCount, nullptr, 0);
-	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(15);
-	_actorReplacementLayer.setFrame(2);
+	_sceneLayers.setLayerResource(kScene5030ActorReplacementLayer,
+		15, kScene5030UnderpantsRonDescriptorCount, nullptr, 0);
+	if (_sceneChunkTable.isValidChunk(15))
+		_sceneLayers.showLayerAtFrame(kScene5030ActorReplacementLayer, 2);
+	else
+		_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, false);
 }
 
 void Scene5030::runUnderpantsHandoffAnimation() {
-	_actorReplacementLayer.configure(15, kScene5030UnderpantsRonDescriptorCount,
+	_sceneLayers.setLayerResource(kScene5030ActorReplacementLayer,
+		15, kScene5030UnderpantsRonDescriptorCount,
 		kScene5030UnderpantsHandoffRonFrameMap, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap));
-	_actorReplacementLayer.visible = _sceneChunkTable.isValidChunk(15);
-	_alternateVanessaLayer.configure(16, kScene5030UnderpantsVanessaDescriptorCount,
+	_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, _sceneChunkTable.isValidChunk(15));
+	_sceneLayers.setLayerResource(kScene5030AlternateVanessaLayer,
+		16, kScene5030UnderpantsVanessaDescriptorCount,
 		kScene5030UnderpantsHandoffVanessaFrameMap, ARRAYSIZE(kScene5030UnderpantsHandoffVanessaFrameMap));
-	_alternateVanessaLayer.visible = _sceneChunkTable.isValidChunk(16);
+	_sceneLayers.setLayerVisible(kScene5030AlternateVanessaLayer, _sceneChunkTable.isValidChunk(16));
 
-	ParallelResourceLayerFrameTarget target(_actorReplacementLayer, _alternateVanessaLayer);
+	ParallelResourceLayerFrameTarget target(
+		_sceneLayers.layer(kScene5030ActorReplacementLayer),
+		_sceneLayers.layer(kScene5030AlternateVanessaLayer));
 	playAndPresentAnimationFrames(target,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay());
@@ -750,8 +772,7 @@ void Scene5030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		break;
 	case kScene5030RonSpeechGroup:
 	case kScene5030RonTradeSpeechGroup:
-		if (_actorReplacementLayer.visible)
-			_actorReplacementLayer.setFrame(frameIndex);
+		_sceneLayers.setVisibleLayerFrame(kScene5030ActorReplacementLayer, frameIndex);
 		break;
 	default:
 		break;

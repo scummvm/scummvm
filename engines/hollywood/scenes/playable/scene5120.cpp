@@ -72,6 +72,8 @@ const uint kScene5120SideLoopLayer = 2;
 const uint kScene5120ToggleLayer = 3;
 const uint kScene5120RandomDetailLayer = 4;
 const uint kScene5120TransformationLayer = 5;
+const uint kScene5120ElevatorLayer = 6;
+const uint kScene5120ProjectorSpeechLayer = 7;
 
 const byte kScene5120WerewolfSpeechGroup = 0;
 const byte kScene5120ProjectorSpeechGroup = 1;
@@ -128,8 +130,6 @@ static PlayableSceneConfig scene5120Config() {
 
 Scene5120::Scene5120(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5120Config()),
-		_elevatorLayer(),
-		_projectorSpeechLayer(),
 		_sideLoopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_toggleTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_randomDetailTrack(RealtimeAnimationTracks::kInvalidTrack),
@@ -170,7 +170,7 @@ void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	if (_projectorSpeechActive) {
 		copyBaseFramebufferToSceneFramebuffer();
-		drawResourceSpriteLayer(_projectorSpeechLayer);
+		drawResourceSpriteLayer(_sceneLayers.layer(kScene5120ProjectorSpeechLayer));
 		return;
 	}
 
@@ -197,7 +197,7 @@ void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawTransformedRoomLayers();
 	if (actionVisible && !actionBehindActors && !actionReplacesActor)
 		drawActionOverlayLayer();
-	drawResourceSpriteLayer(_elevatorLayer);
+	drawResourceSpriteLayer(_sceneLayers.layer(kScene5120ElevatorLayer));
 }
 
 bool Scene5120::shouldPresentPreviewBeforeEntrySequence() const {
@@ -466,7 +466,7 @@ uint32 Scene5120::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 
 void Scene5120::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene5120ProjectorSpeechGroup) {
-		_projectorSpeechLayer.setFrame(frameIndex);
+		_sceneLayers.setLayerFrame(kScene5120ProjectorSpeechLayer, frameIndex);
 		return;
 	}
 
@@ -489,11 +489,10 @@ void Scene5120::handleLeftClick(const GameplayLoopCursorState &state) {
 
 void Scene5120::runFirstEntrySequence() {
 	setActiveActorPose(0x08e, 0x0f5, 2);
-	_elevatorLayer.visible = true;
-	_elevatorLayer.reset(0);
+	_sceneLayers.showLayerAtFrame(kScene5120ElevatorLayer, 0);
 	drawPlayableComposite();
 	if (fadePaletteFromBlack()) {
-		_elevatorLayer.visible = false;
+		_sceneLayers.setLayerVisible(kScene5120ElevatorLayer, false);
 		return;
 	}
 
@@ -533,13 +532,13 @@ void Scene5120::runAlternateEntrySequence() {
 }
 
 void Scene5120::runElevatorDoorClip(bool opening) {
-	_elevatorLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene5120ElevatorLayer, false);
 	ActionOverlaySpec spec(8, kScene5120ElevatorDescriptorCount,
 		opening ? kScene5120ElevatorOpenFrameMap : kScene5120ElevatorCloseFrameMap,
 		ARRAYSIZE(kScene5120ElevatorOpenFrameMap), kScene5120ElevatorFrameMillis);
 	runSceneOverlay(spec.noRedrawAtEnd());
-	_elevatorLayer.visible = true;
-	_elevatorLayer.setFrame(opening ? kScene5120ElevatorDescriptorCount - 1 : 0);
+	_sceneLayers.showLayerAtFrame(kScene5120ElevatorLayer,
+		opening ? kScene5120ElevatorDescriptorCount - 1 : 0);
 }
 
 void Scene5120::runElevatorReturnSequence() {
@@ -639,12 +638,11 @@ void Scene5120::runFilmProjectorSequence() {
 	_soundBank0.stop();
 
 	_projectorSpeechActive = true;
-	_projectorSpeechLayer.visible = true;
-	_projectorSpeechLayer.reset(0);
+	_sceneLayers.showLayerAtFrame(kScene5120ProjectorSpeechLayer, 0);
 	beginPrimarySpeechLineWithAnimationGroup(26, 1, 0x10b, 0x0047,
 		0x17, 0x33, 0x2c, kScene5120ProjectorSpeechGroup);
 	_projectorSpeechActive = false;
-	_projectorSpeechLayer.visible = false;
+	_sceneLayers.setLayerVisible(kScene5120ProjectorSpeechLayer, false);
 
 	runActorReplacement(ActionOverlaySpec(17, kScene5120ProjectorDescriptorCount,
 		kScene5120ProjectorSecondFrameMap, ARRAYSIZE(kScene5120ProjectorSecondFrameMap),
@@ -675,9 +673,6 @@ void Scene5120::runUseShaker() {
 
 void Scene5120::initializeTransformedRoomLayers() {
 	_sceneLayers.clear();
-	_elevatorLayer.configure(8, kScene5120ElevatorDescriptorCount,
-		kScene5120ElevatorOpenFrameMap, ARRAYSIZE(kScene5120ElevatorOpenFrameMap));
-	_elevatorLayer.visible = false;
 	_sceneLayers.configureLayer(kScene5120MovingWallLayer,
 		kSceneAnimationScenePlaced, 9, 5, nullptr, 0);
 	_sceneLayers.configureLayer(kScene5120MainProjectionLayer,
@@ -692,8 +687,12 @@ void Scene5120::initializeTransformedRoomLayers() {
 	_sceneLayers.configureLayer(kScene5120TransformationLayer,
 		kSceneAnimationScenePlaced, 19,
 		kScene5120TransformationDescriptorCount, nullptr, 0, false);
-	_projectorSpeechLayer.configure(16, kScene5120ProjectorSpeechDescriptorCount, nullptr, 0);
-	_projectorSpeechLayer.visible = false;
+	_sceneLayers.configureLayer(kScene5120ElevatorLayer,
+		kSceneAnimationScenePlaced, 8, kScene5120ElevatorDescriptorCount,
+		kScene5120ElevatorOpenFrameMap, ARRAYSIZE(kScene5120ElevatorOpenFrameMap), false);
+	_sceneLayers.configureLayer(kScene5120ProjectorSpeechLayer,
+		kSceneAnimationScenePlaced, 16, kScene5120ProjectorSpeechDescriptorCount,
+		nullptr, 0, false);
 	_sideLoopTrack = _realtimeAnimationTracks.addPingPong(
 		_sceneLayers, kScene5120SideLoopLayer, kScene5120SideLoopFrameMillis,
 		0, 3, false);
@@ -726,8 +725,8 @@ void Scene5120::resetTransformedRoomLayers() {
 	_sceneLayers.setLayerVisible(kScene5120RandomDetailLayer, true);
 	_sceneLayers.setLayerVisible(kScene5120TransformationLayer, false);
 	_sceneLayers.setLayerFrame(kScene5120TransformationLayer, 0);
-	_projectorSpeechLayer.visible = false;
-	_projectorSpeechLayer.reset(0);
+	_sceneLayers.resetLayer(kScene5120ProjectorSpeechLayer, 0);
+	_sceneLayers.setLayerVisible(kScene5120ProjectorSpeechLayer, false);
 	_projectorSpeechActive = false;
 	_roomTransformationActive = false;
 	_transformationOverlayStarted = false;

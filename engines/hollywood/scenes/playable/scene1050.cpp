@@ -65,6 +65,11 @@ const byte kScene1050AmbientSoundProbabilityModulus = 25;
 const byte kScene1050AmbientMusicProbabilityModulus = 50;
 const byte kScene1050JacketHotspotItem = 3;
 
+enum {
+	kScene1050LargeOverlayLayer,
+	kScene1050SmallOverlayLayer
+};
+
 const byte kScene1050SmallOverlayFrameMap[] = {
 	0, 0, 1, 1, 2, 2, 3, 3, 4, 4,
 	4, 4, 4, 4, 4, 4, 3, 2, 1, 0,
@@ -133,26 +138,21 @@ Scene1050::Scene1050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1050Config()),
 		_smallOverlayChannel(),
 		_largeOverlayChannel(),
-		_smallOverlayLayer(),
-		_largeOverlayLayer(),
 		_largeOverlayMode(0),
 		_largeOverlayActionLocked(false) {
-	_smallOverlayLayer.configure(7, kScene1050SmallOverlayDescriptorCount,
-		kScene1050SmallOverlayFrameMap, ARRAYSIZE(kScene1050SmallOverlayFrameMap));
-	_largeOverlayLayer.configure(8, kScene1050LargeOverlayDescriptorCount,
+	_sceneLayers.configureLayer(kScene1050LargeOverlayLayer, kSceneAnimationScenePlaced,
+		8, kScene1050LargeOverlayDescriptorCount,
 		kScene1050LargeOverlayFrameMap, ARRAYSIZE(kScene1050LargeOverlayFrameMap));
-	_smallOverlayLayer.visible = true;
-	_largeOverlayLayer.visible = true;
+	_sceneLayers.configureLayer(kScene1050SmallOverlayLayer, kSceneAnimationScenePlaced,
+		7, kScene1050SmallOverlayDescriptorCount,
+		kScene1050SmallOverlayFrameMap, ARRAYSIZE(kScene1050SmallOverlayFrameMap));
 }
 
 void Scene1050::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	_smallOverlayChannel.reset(0, kScene1050SmallOverlayFrameMillis);
 	_largeOverlayChannel.reset(0, kScene1050LargeOverlayFrameMillis);
-	_smallOverlayLayer.reset(0);
-	_largeOverlayLayer.reset(0);
-	_smallOverlayLayer.visible = true;
-	_largeOverlayLayer.visible = true;
+	_sceneLayers.reset();
 	_largeOverlayMode = 0;
 	_largeOverlayActionLocked = false;
 	setActiveActorPose(0x07f, 0x174, 2);
@@ -164,10 +164,10 @@ void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	drawResourceSpriteLayer(_largeOverlayLayer);
+	drawResourceSpriteLayer(_sceneLayers.layer(kScene1050LargeOverlayLayer));
 	if (_actionOverlayPlayer.layer.chunkIndex == 12)
 		drawActionOverlayLayer();
-	drawResourceSpriteLayer(_smallOverlayLayer);
+	drawResourceSpriteLayer(_sceneLayers.layer(kScene1050SmallOverlayLayer));
 	if (_actionOverlayPlayer.layer.chunkIndex != 12)
 		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
@@ -186,8 +186,10 @@ void Scene1050::runCustomEntrySequence() {
 }
 
 void Scene1050::prepareCustomGameplayLoop() {
-	_smallOverlayChannel.reset(_smallOverlayLayer.frameIndex, kScene1050SmallOverlayFrameMillis);
-	_largeOverlayChannel.reset(_largeOverlayLayer.frameIndex, kScene1050LargeOverlayFrameMillis);
+	_smallOverlayChannel.reset(_sceneLayers.layerFrame(kScene1050SmallOverlayLayer),
+		kScene1050SmallOverlayFrameMillis);
+	_largeOverlayChannel.reset(_sceneLayers.layerFrame(kScene1050LargeOverlayLayer),
+		kScene1050LargeOverlayFrameMillis);
 }
 
 void Scene1050::advanceCustomGameplayLoop(uint32 delta) {
@@ -285,7 +287,7 @@ byte Scene1050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene1050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_largeOverlayLayer.setFrame(frameIndex);
+	_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, frameIndex);
 }
 
 AmbientAudioProfile Scene1050::ambientAudioProfile() const {
@@ -494,7 +496,7 @@ void Scene1050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 	if (alternatePose)
 		runLargeOverlayPoseTransition(2, 0x0e);
 	else {
-		_largeOverlayLayer.setFrame(0);
+		_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, 0);
 		_largeOverlayMode = 0;
 	}
 }
@@ -527,7 +529,7 @@ void Scene1050::handleDialogueEffect(byte effectId) {
 
 void Scene1050::runDialogueEffectTen() {
 	_largeOverlayMode = 6;
-	_largeOverlayLayer.setFrame(0x41);
+	_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, 0x41);
 	_largeOverlayChannel.resetTimer();
 	_soundBank0.playSample(0x0b, 100);
 
@@ -537,7 +539,7 @@ void Scene1050::runDialogueEffectTen() {
 	}
 
 	_largeOverlayMode = 0;
-	_largeOverlayLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, 0);
 	waitSceneMillis(1000);
 }
 
@@ -569,7 +571,7 @@ void Scene1050::handlePackageExchange() {
 	addInventoryItem(0x1d);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(kScene1050PackageSpeechRow, 2);
-	_largeOverlayLayer.setFrame(0);
+	_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, 0);
 	_largeOverlayMode = 0;
 }
 
@@ -601,7 +603,7 @@ void Scene1050::handleSuitcasePickup() {
 
 void Scene1050::runLargeOverlayPoseTransition(byte mode, byte startFrame) {
 	_largeOverlayMode = mode;
-	_largeOverlayLayer.setFrame(startFrame);
+	_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, startFrame);
 	_largeOverlayChannel.resetTimer();
 
 	while (_largeOverlayMode == mode && !Engine::shouldQuit()) {
@@ -610,7 +612,7 @@ void Scene1050::runLargeOverlayPoseTransition(byte mode, byte startFrame) {
 	}
 
 	if (_largeOverlayMode == mode) {
-		_largeOverlayLayer.setFrame(mode == 1 ? 9 : 0);
+		_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, mode == 1 ? 9 : 0);
 		_largeOverlayMode = 0;
 	}
 }
@@ -642,7 +644,7 @@ void Scene1050::runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorC
 
 	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
-		_largeOverlayLayer.setFrame(largeOverlayFrameMap[frame]);
+		_sceneLayers.setLayerFrame(kScene1050LargeOverlayLayer, largeOverlayFrameMap[frame]);
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
@@ -652,14 +654,15 @@ void Scene1050::runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorC
 }
 
 void Scene1050::advanceSmallOverlay(uint32 delta) {
+	ResourceSpriteLayer &smallOverlayLayer = _sceneLayers.layer(kScene1050SmallOverlayLayer);
 	const uint frameCount = _smallOverlayChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_smallOverlayLayer.frameIndex < 0x18) {
-			if (_smallOverlayLayer.frameIndex == 0x0f)
+		if (smallOverlayLayer.frameIndex < 0x18) {
+			if (smallOverlayLayer.frameIndex == 0x0f)
 				_soundBank0.playSample((byte)(0x0f + _random.getRandomNumber(2)), 30);
-			_smallOverlayLayer.setFrame(_smallOverlayLayer.frameIndex + 1);
+			smallOverlayLayer.setFrame(smallOverlayLayer.frameIndex + 1);
 		} else {
-			_smallOverlayLayer.setFrame(0);
+			smallOverlayLayer.setFrame(0);
 		}
 	}
 }
@@ -669,63 +672,64 @@ void Scene1050::advanceLargeOverlay(uint32 delta) {
 }
 
 void Scene1050::advanceLargeOverlay(uint32 delta, bool forceFinish) {
+	ResourceSpriteLayer &largeOverlayLayer = _sceneLayers.layer(kScene1050LargeOverlayLayer);
 	const uint frameCount = _largeOverlayChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_largeOverlayMode == 0) {
-			if (_largeOverlayLayer.frameIndex == 0) {
+			if (largeOverlayLayer.frameIndex == 0) {
 				if (_random.getRandomNumber(14) == 0) {
-					_largeOverlayLayer.setFrame(4);
+					largeOverlayLayer.setFrame(4);
 				} else if (_random.getRandomNumber(19) == 0) {
 					_largeOverlayMode = 3;
-					_largeOverlayLayer.setFrame(0x11);
+					largeOverlayLayer.setFrame(0x11);
 				}
 			} else {
-				_largeOverlayLayer.setFrame(0);
+				largeOverlayLayer.setFrame(0);
 			}
 		} else if (_largeOverlayMode == 3) {
-			if (_largeOverlayLayer.frameIndex < 0x1a) {
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			if (largeOverlayLayer.frameIndex < 0x1a) {
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			} else {
 				_largeOverlayMode = 4;
 			}
 		} else if (_largeOverlayMode == 4) {
-			if (_largeOverlayLayer.frameIndex < 0x23) {
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			if (largeOverlayLayer.frameIndex < 0x23) {
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			} else if (forceFinish || _random.getRandomNumber(5) == 0) {
-				_largeOverlayLayer.setFrame(0x24);
+				largeOverlayLayer.setFrame(0x24);
 				_largeOverlayMode = 5;
 			} else {
-				_largeOverlayLayer.setFrame(0x1d);
+				largeOverlayLayer.setFrame(0x1d);
 			}
 		} else if (_largeOverlayMode == 5) {
-			if (_largeOverlayLayer.frameIndex <= 0x2c) {
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			if (largeOverlayLayer.frameIndex <= 0x2c) {
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			} else {
-				_largeOverlayLayer.setFrame(0);
+				largeOverlayLayer.setFrame(0);
 				_largeOverlayMode = 0;
 			}
 		} else if (_largeOverlayMode == 1) {
-			if (_largeOverlayLayer.frameIndex < 8 && !_primaryDialogueSpeechActive) {
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			if (largeOverlayLayer.frameIndex < 8 && !_primaryDialogueSpeechActive) {
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			} else {
-				_largeOverlayLayer.setFrame(9);
+				largeOverlayLayer.setFrame(9);
 				_largeOverlayMode = 0;
 			}
 		} else if (_largeOverlayMode == 2) {
-			if (_largeOverlayLayer.frameIndex > 0x10 || _primaryDialogueSpeechActive) {
-				_largeOverlayLayer.setFrame(0);
+			if (largeOverlayLayer.frameIndex > 0x10 || _primaryDialogueSpeechActive) {
+				largeOverlayLayer.setFrame(0);
 				_largeOverlayMode = 0;
 			} else {
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			}
 		} else if (_largeOverlayMode == 6) {
-			if (_largeOverlayLayer.frameIndex > 100) {
-				_largeOverlayLayer.setFrame(0);
+			if (largeOverlayLayer.frameIndex > 100) {
+				largeOverlayLayer.setFrame(0);
 				_largeOverlayMode = 0;
 			} else {
-				if (_largeOverlayLayer.frameIndex == 0x59)
+				if (largeOverlayLayer.frameIndex == 0x59)
 					_soundBank0.playSample(0x0e, 100);
-				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			}
 		}
 	}

@@ -92,7 +92,6 @@ private:
 
 	Common::Array<byte> _originalColorToItemMap;
 	TimedAnimationChannel _taffyChannel;
-	ResourceSpriteLayer _taffyLayer;
 	byte _taffyAnimationState;
 	byte _taffyHoldCounter;
 	bool _taffyDeskMagnifierHidden;
@@ -105,7 +104,6 @@ private:
 	uint16 _taffyDepartureFrameDescriptorCount;
 	uint16 _taffyDepartureFrameDescriptorIndex;
 	Common::Array<byte> _phoneResource;
-	ResourceSpriteLayer _phoneLayer;
 	bool _phoneAnimationActive;
 };
 
