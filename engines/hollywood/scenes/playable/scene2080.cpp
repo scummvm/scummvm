@@ -639,23 +639,25 @@ bool Scene2080::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 }
 
 void Scene2080::openForegroundActorForSpeech() {
-	_foregroundActorManualSequenceActive = true;
 	_sceneLayers.setLayerVisible(kScene2080ForegroundActorLayer, true);
-	playAndPresentAnimationTransition(_sceneLayers, kScene2080ForegroundActorLayer,
-		AnimationTransition(_sceneLayers.layerFrame(kScene2080ForegroundActorLayer),
-			kScene2080ForegroundActorOpenFrame, kScene2080ForegroundActorOpenFrame,
-			kScene2080FrameMillis));
-	_foregroundActorManualSequenceActive = false;
+	BlockingSequence(*this)
+		.commit(_foregroundActorManualSequenceActive, true)
+		.presentedLayerTransition(kScene2080ForegroundActorLayer,
+			AnimationTransition(_sceneLayers.layerFrame(kScene2080ForegroundActorLayer),
+				kScene2080ForegroundActorOpenFrame, kScene2080ForegroundActorOpenFrame,
+				kScene2080FrameMillis))
+		.commit(_foregroundActorManualSequenceActive, false);
 }
 
 void Scene2080::closeForegroundActorAfterSpeech() {
-	_foregroundActorManualSequenceActive = true;
-	playAndPresentAnimationTransition(_sceneLayers, kScene2080ForegroundActorLayer,
-		AnimationTransition(_sceneLayers.layerFrame(kScene2080ForegroundActorLayer),
-			kScene2080ForegroundActorRestFrame, kScene2080ForegroundActorRestFrame,
-			kScene2080FrameMillis));
-	_foregroundActorManualSequenceActive = false;
-	_foregroundActorIdleState = 2;
+	BlockingSequence(*this)
+		.commit(_foregroundActorManualSequenceActive, true)
+		.presentedLayerTransition(kScene2080ForegroundActorLayer,
+			AnimationTransition(_sceneLayers.layerFrame(kScene2080ForegroundActorLayer),
+				kScene2080ForegroundActorRestFrame, kScene2080ForegroundActorRestFrame,
+				kScene2080FrameMillis))
+		.commit(_foregroundActorManualSequenceActive, false)
+		.commit(_foregroundActorIdleState, (byte)2);
 	_foregroundActorIdleDelay = (byte)_random.getRandomNumber(0x13);
 }
 
@@ -976,14 +978,15 @@ void Scene2080::runDepartureShake() {
 }
 
 void Scene2080::runForwardExitToScene2090() {
-	runActorReplacement(ActionOverlaySpec(kScene2080ForwardExitOverlayChunk, kScene2080ForwardExitOverlayDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(kScene2080ForwardExitOverlayChunk, kScene2080ForwardExitOverlayDescriptorCount,
 		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap), kScene2080FrameMillis)
 		.soundAt(6, 0x11)
 		.startAt(1)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 
-	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested() &&
+	if (sequence.completed() &&
 			loadVariableChunk(kScene2080ForwardExitClipChunk, _deltaClipData)) {
 		_sceneLayers.setLayerVisible(kScene2080ForwardExitPoseLayer, true);
 		_sceneLayers.resetLayer(kScene2080ForwardExitPoseLayer,
@@ -996,7 +999,7 @@ void Scene2080::runForwardExitToScene2090() {
 		_deltaClipData.clear();
 		_sceneLayers.setLayerVisible(kScene2080ForwardExitPoseLayer, false);
 	}
-	_vm->gameState().mainFlowStateId = kScene2090FirstState;
+	sequence.commit(_vm->gameState().mainFlowStateId, kScene2090FirstState);
 }
 
 void Scene2080::runCentralSarcophagusHairSearch() {
@@ -1010,22 +1013,23 @@ void Scene2080::runCentralSarcophagusHairSearch() {
 		return;
 	}
 
-	beginSecondarySpeechLine(11, 1);
-	runActorReplacement(ActionOverlaySpec(kScene2080PrincessHairSearchFirstChunk, kScene2080PrincessHairSearchFirstDescriptorCount,
-		kScene2080PrincessHairSearchFirstFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap), kScene2080FrameMillis)
-		.startAt(1)
-		.noFinalFrameDelay());
-	beginSecondarySpeechLine(11, 2);
-	runActorReplacement(ActionOverlaySpec(kScene2080PrincessHairSearchSecondChunk, kScene2080PrincessHairSearchSecondDescriptorCount,
-		kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap), kScene2080FrameMillis)
-		.startAt(1)
-		.noFinalFrameDelay());
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(11, 1)
+		.actorReplacement(ActionOverlaySpec(kScene2080PrincessHairSearchFirstChunk,
+			kScene2080PrincessHairSearchFirstDescriptorCount,
+			kScene2080PrincessHairSearchFirstFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap),
+			kScene2080FrameMillis).startAt(1).noFinalFrameDelay())
+		.secondarySpeech(11, 2)
+		.actorReplacement(ActionOverlaySpec(kScene2080PrincessHairSearchSecondChunk,
+			kScene2080PrincessHairSearchSecondDescriptorCount,
+			kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap),
+			kScene2080FrameMillis).startAt(1).noFinalFrameDelay());
 
 	if (!hasInventoryItem(kScene2080PrincessHairInventoryItem))
 		addInventoryItem(kScene2080PrincessHairInventoryItem);
-	_soundBank0.playSample(1, 100);
-	state.scene2080PrincessHairSearchState = 2;
-	beginSecondarySpeechLine(11, 3);
+	sequence.sound(1)
+		.commit(state.scene2080PrincessHairSearchState, (byte)2)
+		.secondarySpeech(11, 3);
 }
 
 void Scene2080::copySmallRow(uint sourceOffset, uint destinationOffset) {
