@@ -62,8 +62,7 @@ enum Scene2110PrimarySpeechGroup {
 };
 
 enum Scene2110AnimationHook {
-	kScene2110EntryPathHook = 1,
-	kScene2110TreasureSoundHook
+	kScene2110EntryPathHook = 1
 };
 
 const byte kScene2110EntryLayerFrameMap[] = {
@@ -428,7 +427,7 @@ void Scene2110::runTreasureGrantAction() {
 		runTreasurePrimarySpeechLine(0x16, (byte)(rewardIndex * 2));
 		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
 			AnimationFrameRange(0x0d, 0x23, kScene2110FrameMillis)
-				.hookAt(0x18, kScene2110TreasureSoundHook).unskippable());
+				.soundAt(0x18, 1).unskippable());
 	} else {
 		runTreasurePrimarySpeechLine(0x66, 0);
 		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
@@ -472,11 +471,8 @@ void Scene2110::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 }
 
 void Scene2110::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene2110EntryPathHook && frame == 0x0a) {
+	if (hookId == kScene2110EntryPathHook && frame == 0x0a)
 		startScriptedActorPath();
-	} else if (hookId == kScene2110TreasureSoundHook && frame == 0x18) {
-		_soundBank0.playSample(1, 100);
-	}
 }
 
 void Scene2110::runEntrySecondarySpeechLine(byte frameIndex) {

@@ -62,8 +62,7 @@ const byte kScene5040AmbientSoundVolumes[] = {
 };
 
 enum {
-	kScene5040MineCartFrameHook = 1,
-	kScene5040PrizePatchHook = 2
+	kScene5040MineCartFrameHook = 1
 };
 
 enum {
@@ -195,7 +194,7 @@ void Scene5040::runCustomEntrySequence() {
 		beginSecondarySpeechLine(8, 0);
 		runActorReplacement(ActionOverlaySpec(15, 0x0e,
 			kScene5040Chunk15FrameMap, ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis)
-			.hookAt(6, kScene5040PrizePatchHook));
+			.resourcePatchAt(6, 14));
 		state.scene5040SpecialTransitionState = 2;
 		addInventoryItem(kScene5040KarlPrizeItem);
 		_soundBank0.playSample(1, 100);
@@ -435,10 +434,6 @@ void Scene5040::handleAnimationFrameHook(byte hookId, uint frame) {
 		} else if (frame == 0x32) {
 			_mineCartRumbleActive = false;
 		}
-		return;
-	case kScene5040PrizePatchHook:
-		if (_sceneChunkTable.isValidChunk(14))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
 		return;
 	default:
 		PlayableScene::handleAnimationFrameHook(hookId, frame);

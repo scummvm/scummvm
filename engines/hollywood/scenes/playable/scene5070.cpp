@@ -57,10 +57,6 @@ const int kScene5070CentralGapSplitX = 0x137;
 const int kScene5070CentralGapRightX = 0x188;
 const int kScene5070MaximumWalkY = 0x1df;
 
-enum Scene5070AnimationHookId {
-	kScene5070ShovelBackgroundPatchHook = 1
-};
-
 const byte kScene5070MineCartDelayBuckets[] = {
 	1, 1, 1, 1, 1, 1, 1, 1, 1,
 	2, 2, 2,
@@ -334,7 +330,8 @@ void Scene5070::runShovelPickup() {
 
 	runActorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
 		kScene5070ShovelPickupFrameMap, ARRAYSIZE(kScene5070ShovelPickupFrameMap), kScene5070FrameMillis)
-		.hookAt(6, kScene5070ShovelBackgroundPatchHook)
+		.commitAt(6, state.scene5070ShovelTaken, true)
+		.patchAt(6, 0)
 		.noFinalFrameDelay());
 	addInventoryItem(kScene5070ShovelInventoryItem);
 	_soundBank0.playSample(1, 100);
@@ -373,15 +370,6 @@ void Scene5070::copySlopeStepDeltasFromSet5A(uint firstOffset) {
 	for (uint i = 0; i < 0x0c && firstOffset + i < _actorPathStepDeltas.size() &&
 			firstOffset + i < ARRAYSIZE(kActorPathStepDeltaTableSet5A); ++i)
 		_actorPathStepDeltas[firstOffset + i] = kActorPathStepDeltaTableSet5A[firstOffset + i];
-}
-
-void Scene5070::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId != kScene5070ShovelBackgroundPatchHook)
-		return;
-
-	_vm->gameState().scene5070ShovelTaken = true;
-	applySceneStateToHotspotsAndPatches(0);
 }
 
 void Scene5070::copyStageSmallRow(byte destinationRow, byte sourceRow) {

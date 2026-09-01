@@ -24,23 +24,18 @@
 
 #include "common/types.h"
 
+#include "hollywood/scenes/playable/animation_events.h"
+
 namespace Hollywood {
 
-// Optional behavior for action overlays: clipping, state patches, sounds, hooks.
+// Playback bounds and interruption behavior for action overlays.
 struct ActionOverlayOptions {
 	ActionOverlayOptions() :
 		firstFrame(0),
 		endFrame(0),
 		redrawAtEnd(true),
 		allowSkip(true),
-		waitAfterFinalFrame(true),
-		statePatchFrame(-1),
-		statePatchSelector(0),
-		soundFrame(-1),
-		soundId(0),
-		soundVolumePercent(100),
-		hookFrame(-1),
-		hookId(0) {
+		waitAfterFinalFrame(true) {
 	}
 
 	uint firstFrame;
@@ -48,13 +43,6 @@ struct ActionOverlayOptions {
 	bool redrawAtEnd;
 	bool allowSkip;
 	bool waitAfterFinalFrame;
-	int statePatchFrame;
-	byte statePatchSelector;
-	int soundFrame;
-	byte soundId;
-	byte soundVolumePercent;
-	int hookFrame;
-	byte hookId;
 };
 
 /**
@@ -62,10 +50,10 @@ struct ActionOverlayOptions {
  *
  * Playback blocks its caller while scene events, animation, and drawing continue
  * between frames. The clamped frame range is [firstFrame, endFrame), with zero
- * endFrame meaning the end of frameMap. Negative patch and sound frames disable
- * those events; a nonzero hookId runs at hookFrame, or every frame when
- * hookFrame is negative. Frames normally hold for frameMillis, including the
- * last; noFinalFrameDelay() makes the terminal frame an immediate handoff.
+ * endFrame meaning the end of frameMap. Frame events run in declaration order
+ * after their frame is installed. Frames normally hold for frameMillis,
+ * including the last; noFinalFrameDelay() makes the terminal frame an
+ * immediate handoff.
  * unskippable() reserves input for the scene while a state-changing sequence
  * runs. The playback entry point determines whether the resource replaces the
  * actor or overlays the scene.
@@ -82,27 +70,58 @@ struct ActionOverlaySpec {
 	}
 
 	ActionOverlaySpec &patchAt(int frame, byte selector) {
-		options.statePatchFrame = frame;
-		options.statePatchSelector = selector;
+		events.addFramebufferPatch(frame, selector);
 		return *this;
 	}
 
-	ActionOverlaySpec &soundAt(int frame, byte soundId, byte volumePercent = 100) {
-		options.soundFrame = frame;
-		options.soundId = soundId;
-		options.soundVolumePercent = volumePercent;
+	ActionOverlaySpec &resourcePatchAt(int frame, uint resourceChunkIndex) {
+		events.addResourcePatch(frame, resourceChunkIndex);
+		return *this;
+	}
+
+	ActionOverlaySpec &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, false);
+		return *this;
+	}
+
+	ActionOverlaySpec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, true);
+		return *this;
+	}
+
+	ActionOverlaySpec &stopSoundAt(int frame) {
+		events.addStopSound(frame);
+		return *this;
+	}
+
+	ActionOverlaySpec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex, byte speechId = 0) {
+		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
+		return *this;
+	}
+
+	ActionOverlaySpec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerFrame(frame, layerId, layerFrame);
+		return *this;
+	}
+
+	template<class T, class V>
+	ActionOverlaySpec &commitAt(int frame, T &target, const V &value) {
+		events.addStateCommit(frame, target, value);
+		return *this;
+	}
+
+	ActionOverlaySpec &invalidatePaletteAt(int frame) {
+		events.addPaletteInvalidation(frame);
 		return *this;
 	}
 
 	ActionOverlaySpec &hookAt(int frame, byte hookId) {
-		options.hookFrame = frame;
-		options.hookId = hookId;
+		events.addCustomHook(frame, hookId);
 		return *this;
 	}
 
 	ActionOverlaySpec &hookEveryFrame(byte hookId) {
-		options.hookFrame = -1;
-		options.hookId = hookId;
+		events.addCustomHook(-1, hookId, true);
 		return *this;
 	}
 
@@ -148,6 +167,7 @@ struct ActionOverlaySpec {
 	uint frameMapSize;
 	uint32 frameMillis;
 	ActionOverlayOptions options;
+	AnimationFrameEvents events;
 };
 
 } // End of namespace Hollywood

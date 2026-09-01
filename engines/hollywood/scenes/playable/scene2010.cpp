@@ -46,8 +46,6 @@ const uint kScene2010SecondOverlayDescriptorCount = 0x10;
 const uint kScene2010GatekeeperDescriptorCount = 0x1c;
 const byte kScene2010GatekeeperSpeechBaseFrame = 0x15;
 const byte kScene2010GatekeeperBlinkFrame = 0x19;
-const byte kScene2010RingSoundHook = 1;
-const byte kScene2010GateSoundHook = 2;
 const uint kScene2010ScriptLayer = 0;
 const uint kScene2010GatekeeperLayer = 1;
 
@@ -298,22 +296,6 @@ void Scene2010::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	_sceneLayers.setLayerFrame(kScene2010GatekeeperLayer, frameIndex);
 }
 
-void Scene2010::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-
-	switch (hookId) {
-	case kScene2010RingSoundHook:
-		_soundBank0.playSample(0x0b, 100);
-		break;
-	case kScene2010GateSoundHook:
-		_soundBank0.playSample(0x0c, 100);
-		break;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		break;
-	}
-}
-
 AmbientAudioProfile Scene2010::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x0d, 1, 20, 50, 0x0b, 3, 100, 50);
 }
@@ -442,7 +424,7 @@ void Scene2010::runLongSequenceToScene2100() {
 			AnimationFrameRange(0, ARRAYSIZE(kScene2010FirstOverlayFrameMap) - 1,
 				kScene2010OverlayFrameMillis)
 				.unskippable()
-				.hookAt(9, kScene2010RingSoundHook), false);
+				.soundAt(9, 0x0b), false);
 	}
 	if (!waitForSoundOrTimeout(kScene2010SoundWaitMillis))
 		return;
@@ -453,7 +435,7 @@ void Scene2010::runLongSequenceToScene2100() {
 			kScene2010SecondOverlayDescriptorCount,
 			AnimationFrameRange(0, 0x0f, kScene2010OverlayFrameMillis)
 				.unskippable()
-				.hookAt(0, kScene2010GateSoundHook), false);
+				.soundAt(0, 0x0c), false);
 	}
 	if (!waitForSoundOrTimeout(kScene2010SoundWaitMillis))
 		return;

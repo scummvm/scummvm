@@ -40,7 +40,6 @@ const uint16 kScene7080Chunk7DescriptorCount = 0x0b;
 const uint32 kScene7080FrameMillis = 75;
 const byte kScene7080TableItemColorId = 6;
 const byte kScene7080PostPickupTableItemId = 4;
-const byte kScene7080CrankPickupHook = 1;
 const byte kScene7080BackToG07FrameMap[] = {
 	0, 1, 2, 3
 };
@@ -170,15 +169,6 @@ AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 
-void Scene7080::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-
-	if (hookId == kScene7080CrankPickupHook) {
-		_vm->gameState().crankOnHannoverDesk = false;
-		applySceneStateToHotspotsAndPatches(1);
-	}
-}
-
 void Scene7080::handleBackToG07() {
 	BlockingSequence(*this)
 		.actorReplacement(6, kScene7080Chunk6DescriptorCount,
@@ -190,11 +180,13 @@ void Scene7080::handleBackToG07() {
 
 void Scene7080::handlePickupItem13() {
 	dispatchGenericSceneAction(19);
+	GameplayState &state = _vm->gameState();
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(7, kScene7080Chunk7DescriptorCount,
 		kScene7080PickupItem13FrameMap, ARRAYSIZE(kScene7080PickupItem13FrameMap),
 		kScene7080FrameMillis)
-		.hookAt(3, kScene7080CrankPickupHook));
+		.commitAt(3, state.crankOnHannoverDesk, false)
+		.patchAt(3, 1));
 	addInventoryItem(0x13);
 	sequence.sound(1);
 }

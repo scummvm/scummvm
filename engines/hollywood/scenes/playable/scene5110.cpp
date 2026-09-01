@@ -78,12 +78,6 @@ enum {
 	kScene5110DialogueTransitionUpTwo = 4
 };
 
-enum {
-	kScene5110PatchUnderwear = 1,
-	kScene5110PatchBottle = 2,
-	kScene5110PatchMirror = 3
-};
-
 const byte kScene5110PickupFrameMap[] = {
 	11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
@@ -483,26 +477,6 @@ void Scene5110::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	_werewolfState = 0;
 }
 
-void Scene5110::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	switch (hookId) {
-	case kScene5110PatchUnderwear:
-		if (_sceneChunkTable.isValidChunk(11))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
-		break;
-	case kScene5110PatchBottle:
-		if (_sceneChunkTable.isValidChunk(5))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
-		break;
-	case kScene5110PatchMirror:
-		if (_sceneChunkTable.isValidChunk(13))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
-		break;
-	default:
-		break;
-	}
-}
-
 void Scene5110::handleLeftClick(const GameplayLoopCursorState &state) {
 	updateElevatorButtonActionTargets(state.currentStrip == 5);
 	PlayableScene::handleLeftClick(state);
@@ -628,7 +602,7 @@ void Scene5110::runUnderwearPickup() {
 
 	runActorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchUnderwear)
+		.resourcePatchAt(6, 11)
 		.noFinalFrameDelay());
 	state.scene5110UnderwearTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
@@ -653,7 +627,7 @@ void Scene5110::runBottlePickup() {
 	beginSecondarySpeechLine(3, 1);
 	runActorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchBottle)
+		.resourcePatchAt(6, 5)
 		.noFinalFrameDelay());
 	state.scene5110BottleState = 2;
 	applySceneStateToHotspotsAndPatches(2);
@@ -749,7 +723,7 @@ void Scene5110::runMirrorPickup() {
 
 	runActorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
 		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.hookAt(6, kScene5110PatchMirror)
+		.resourcePatchAt(6, 13)
 		.noFinalFrameDelay());
 	state.scene5110MirrorTaken = true;
 	applySceneStateToHotspotsAndPatches(5);

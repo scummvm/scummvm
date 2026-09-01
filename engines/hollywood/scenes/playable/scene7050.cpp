@@ -53,7 +53,6 @@ const byte kScene7050PrimarySpeechAltGroup = 8;
 const uint kScene7050DialogueChoiceRecordCount = 10 * 10 * 7;
 const uint kScene7050ColorToItemMapOffset = 0x100;
 const uint kScene7050ColorMapSize = 0x100;
-const byte kScene7050CloakroomRagPickupHook = 1;
 const byte kScene7050Chunk7FrameMap[] = {
 	0, 0, 1, 2, 3, 25, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
@@ -372,20 +371,13 @@ void Scene7050::handleActionSlot01ReturnToG04() {
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
+	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
 		kScene7050Chunk11PickupItem10FrameMap, ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis)
-		.hookAt(4, kScene7050CloakroomRagPickupHook));
+		.commitAt(4, state.cloakroomRagVisible, 0)
+		.patchAt(4, 1));
 	addInventoryItem(0x10);
 	_soundBank0.playSample(1, 100);
-}
-
-void Scene7050::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-
-	if (hookId == kScene7050CloakroomRagPickupHook) {
-		_vm->gameState().cloakroomRagVisible = 0;
-		applySceneStateToHotspotsAndPatches(1);
-	}
 }
 
 void Scene7050::advanceSecondaryActorAnimation(uint32 delta) {
