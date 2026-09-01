@@ -245,19 +245,10 @@ void Scene4030::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene4030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
+void Scene4030::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
 	(void)activeWorldY;
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
 	drawMarkerPixels();
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
-	drawActionOverlayLayer();
 }
 
 void Scene4030::runCustomEntrySequence() {
@@ -268,7 +259,8 @@ void Scene4030::runCustomEntrySequence() {
 
 		const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(
 			kScene4030EntryOverlayChunk, kScene4030EntryOverlayDescriptorCount,
-			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap));
+			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap),
+			kSceneAnimationScenePlaced);
 		_actionOverlayPlayer.setFrame(0);
 		drawPlayableComposite();
 		presentFrame();
@@ -276,7 +268,8 @@ void Scene4030::runCustomEntrySequence() {
 		_actionOverlayPlayer.finish(previousHideActiveActor);
 		runActorReplacement(ActionOverlaySpec(kScene4030EntryOverlayChunk, kScene4030EntryOverlayDescriptorCount,
 			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap), kScene4030FrameMillis)
-			.startAt(1));
+			.startAt(1)
+			.drawAt(kSceneAnimationScenePlaced));
 
 		if (!state.scene4030InitialEntryLineSeen) {
 			_activeActorFacing = kScene4030EntrySpeechFacing;

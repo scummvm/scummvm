@@ -1653,6 +1653,9 @@ void PlayableScene::clearSceneLayer(uint layerId) {
 }
 
 void PlayableScene::drawActionOverlayLayer() {
+	if (_actionOverlayPlayer.isVisible() &&
+			_actionOverlayPlayer.restoreBackgroundBeforeDraw)
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 	drawResourceSpriteLayer(_actionOverlayPlayer.layer);
 }
 
@@ -2529,7 +2532,9 @@ void PlayableScene::runActorReplacement(uint chunkIndex, uint descriptorCount, c
 }
 
 void PlayableScene::runActorReplacement(const ActionOverlaySpec &spec) {
-	runActionOverlay(spec, kSceneAnimationActorReplacement);
+	const SceneAnimationStratum stratum = spec.hasDrawStratum ?
+		spec.drawStratum : kSceneAnimationActorReplacement;
+	runActionOverlay(spec, stratum, true);
 }
 
 void PlayableScene::runSceneOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
@@ -2538,13 +2543,17 @@ void PlayableScene::runSceneOverlay(uint chunkIndex, uint descriptorCount, const
 }
 
 void PlayableScene::runSceneOverlay(const ActionOverlaySpec &spec) {
-	runActionOverlay(spec, kSceneAnimationInFrontOfActors);
+	const SceneAnimationStratum stratum = spec.hasDrawStratum ?
+		spec.drawStratum : kSceneAnimationInFrontOfActors;
+	runActionOverlay(spec, stratum, false);
 }
 
-void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum) {
+void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
+		SceneAnimationStratum stratum, bool hideActiveActor) {
 	const ActionOverlayOptions &options = spec.options;
 	const bool previousHideActiveActor = _actionOverlayPlayer.begin(spec.chunkIndex,
-		spec.descriptorCount, spec.frameMap, spec.frameMapSize, stratum);
+		spec.descriptorCount, spec.frameMap, spec.frameMapSize, stratum,
+		hideActiveActor, spec.restoreBackgroundBeforeDraw);
 
 	const uint firstFrame = MIN<uint>(options.firstFrame, spec.frameMapSize);
 	const uint requestedEndFrame = options.endFrame == 0 ? spec.frameMapSize : options.endFrame;

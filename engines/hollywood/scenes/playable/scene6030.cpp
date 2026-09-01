@@ -124,23 +124,10 @@ void Scene6030::initializeCustomPreviewState() {
 	setActiveActorPose(0x1e5, 0x186, 5);
 }
 
-void Scene6030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene6030::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors)
-		drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
-	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum != kSceneAnimationBehindActors)
-		drawActionOverlayLayer();
 }
 
 void Scene6030::runCustomEntrySequence() {
@@ -686,7 +673,7 @@ void Scene6030::runSaxophonePickupSequence() {
 
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(12,
 		kScene6030SaxophoneDescriptorCount, kScene6030SaxophoneFrameMap,
-		ARRAYSIZE(kScene6030SaxophoneFrameMap));
+		ARRAYSIZE(kScene6030SaxophoneFrameMap), kSceneAnimationScenePlaced);
 	const bool completed = playAnimationFrames(_actionOverlayPlayer,
 		AnimationFrameRange(1, 0x0c, kScene6030PoseFrameMillis).unskippable());
 	_actionOverlayPlayer.finish(previousHideActiveActor);

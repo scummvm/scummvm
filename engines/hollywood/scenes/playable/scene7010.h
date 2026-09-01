@@ -29,22 +29,16 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-/**
- * Uses separate transient-layer stacks behind and in front of the actors.
- *
- * Its custom tick advances primary speech, ambient audio, idle animation, and
- * the dialogue overlay. The base still advances secondary speech, viewport
- * scrolling, and actor-pose persistence.
- */
+// Coordinates Sue, Hannover, the doghouse, and the persistent note overlay.
 class Scene7010 : public PlayableScene {
 public:
 	Scene7010(HollywoodEngine *vm);
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+	void drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) override;
+	void drawCustomForegroundComposite(int activeWorldX, int activeWorldY) override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	void runCustomEntrySequence() override;
 	void prepareCustomGameplayLoop() override;

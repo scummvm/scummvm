@@ -803,7 +803,8 @@ protected:
 	bool _skipRequested;
 
 private:
-	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum);
+	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum,
+		bool hideActiveActor);
 	void handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed);
 };
 

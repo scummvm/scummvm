@@ -26,22 +26,26 @@ namespace Hollywood {
 ActionOverlayPlayer::ActionOverlayPlayer() :
 		layer(),
 		stratum(kSceneAnimationInFrontOfActors),
-		hideActiveActor(false) {
+		hideActiveActor(false),
+		restoreBackgroundBeforeDraw(false) {
 }
 
 void ActionOverlayPlayer::reset() {
 	layer.visible = false;
 	stratum = kSceneAnimationInFrontOfActors;
 	hideActiveActor = false;
+	restoreBackgroundBeforeDraw = false;
 }
 
 bool ActionOverlayPlayer::begin(uint overlayChunkIndex, uint overlayDescriptorCount,
-		const byte *frameMap, uint frameMapSize, SceneAnimationStratum newStratum) {
+		const byte *frameMap, uint frameMapSize, SceneAnimationStratum newStratum,
+		bool newHideActiveActor, bool restoreBackground) {
 	const bool previousHideActiveActor = hideActiveActor;
 	stratum = newStratum;
 	layer.configure(overlayChunkIndex, (uint16)overlayDescriptorCount, frameMap, frameMapSize);
 	layer.visible = true;
-	hideActiveActor = replacesActor();
+	hideActiveActor = newHideActiveActor;
+	restoreBackgroundBeforeDraw = restoreBackground;
 	return previousHideActiveActor;
 }
 
@@ -53,6 +57,7 @@ void ActionOverlayPlayer::finish(bool previousHideActiveActor) {
 	layer.visible = false;
 	stratum = kSceneAnimationInFrontOfActors;
 	hideActiveActor = previousHideActiveActor;
+	restoreBackgroundBeforeDraw = false;
 }
 
 } // End of namespace Hollywood

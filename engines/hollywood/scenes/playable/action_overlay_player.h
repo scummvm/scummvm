@@ -28,30 +28,34 @@
 
 namespace Hollywood {
 
-// Tracks a temporary overlay at its declared scene-composition stratum.
+// Tracks overlay visibility independently from its scene-composition stratum.
 class ActionOverlayPlayer {
 public:
 	ActionOverlayPlayer();
 
 	void reset();
-	bool beginActorReplacement(uint newChunkIndex, uint newDescriptorCount, const byte *frameMap,
-		uint frameMapSize) {
+	bool beginActorReplacement(uint newChunkIndex, uint newDescriptorCount,
+		const byte *frameMap, uint frameMapSize,
+		SceneAnimationStratum drawStratum = kSceneAnimationActorReplacement,
+		bool restoreBackground = false) {
 		return begin(newChunkIndex, newDescriptorCount, frameMap, frameMapSize,
-			kSceneAnimationActorReplacement);
+			drawStratum, true, restoreBackground);
 	}
 	void setFrame(uint frame);
 	void finish(bool previousHideActiveActor);
 	bool isVisible() const { return layer.visible; }
-	bool replacesActor() const { return isVisible() && stratum == kSceneAnimationActorReplacement; }
+	bool replacesActor() const { return isVisible() && hideActiveActor; }
 
 	ResourceSpriteLayer layer;
 	SceneAnimationStratum stratum;
 	bool hideActiveActor;
+	bool restoreBackgroundBeforeDraw;
 
 private:
 	friend class PlayableScene;
-	bool begin(uint newChunkIndex, uint newDescriptorCount, const byte *frameMap, uint frameMapSize,
-		SceneAnimationStratum stratum);
+	bool begin(uint newChunkIndex, uint newDescriptorCount, const byte *frameMap,
+		uint frameMapSize, SceneAnimationStratum stratum, bool hideActiveActor,
+		bool restoreBackground);
 };
 
 } // End of namespace Hollywood

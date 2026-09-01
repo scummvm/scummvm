@@ -164,7 +164,6 @@ void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 
 	if (_actionOverlayPlayer.replacesActor()) {
-		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawActionOverlayLayer();
 		drawSceneLayer(kScene4110BackgroundLayerIndex);
 		return;
@@ -417,6 +416,7 @@ void Scene4110::takeStraw() {
 	beginSecondarySpeechLine(3, 0);
 	runActorReplacement(ActionOverlaySpec(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
 		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap), kScene4110FrameMillis)
+		.restoreBaseBackground()
 		.frameRange(1, ARRAYSIZE(kScene4110PickupFrameMap)));
 	addInventoryItem(kScene4110StrawItem);
 	_soundBank0.playSample(1, 100);
