@@ -27,6 +27,9 @@
 
 namespace Harvester {
 
+void wrapCftTextByCharacterCount(const Graphics::Font &font, const Common::String &text,
+	int width, Common::Array<Common::String> &lines);
+
 class HarvesterCftFont : public Graphics::Font {
 public:
 	explicit HarvesterCftFont(const CftFontResource &resource);

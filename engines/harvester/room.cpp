@@ -476,9 +476,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
 		uint nextCombatEffectId = 0;
 		ResolvedText inspectText;
-		Common::String inspectPromptText;
+		Common::String currentInteractionPromptText;
 		bool showingInspectText = false;
 		bool inspectCanDismiss = false;
+		auto beginInspectText = [&](const ObjectRecord &object, const ResolvedText &text) {
+			inspectText = text;
+			showingInspectText = true;
+			inspectCanDismiss = false;
+			debugC(2, kDebugRoom,
+				"Harvester: showing IDENT object='%s' prompt='%s' box='%s' text='%s'",
+				object.objectName.c_str(), currentInteractionPromptText.c_str(),
+				inspectText.boxName.c_str(), inspectText.value.c_str());
+		};
 		ResolvedText combatLoadoutStatusText;
 		uint32 combatLoadoutStatusHideTick = 0;
 		bool closeInventoryAfterCombatLoadoutStatus = false;
@@ -3635,6 +3644,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			} else {
 				promptText = hoverState.promptText;
 			}
+			if (!showingInspectText)
+				currentInteractionPromptText = promptText;
 			if (Entity *cursor = entityManager ? entityManager->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
@@ -3665,8 +3676,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			if (showingInspectText) {
 				drawRoomInspectText(*activeScreen, *art, *inspectFont, inspectText, useNativeInspectFont);
-				if (!inspectPromptText.empty())
-					drawRoomPrompt(*activeScreen, *promptFont, inspectPromptText, useNativePromptFont);
+				if (!currentInteractionPromptText.empty())
+					drawRoomPrompt(*activeScreen, *promptFont,
+						currentInteractionPromptText, useNativePromptFont);
 			} else if (!combatLoadoutStatusText.value.empty()) {
 				drawRoomInspectText(*activeScreen, *art, *inspectFont, combatLoadoutStatusText,
 					useNativeInspectFont);
@@ -3874,7 +3886,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						showingInspectText = false;
 						inspectCanDismiss = false;
 						inspectText = ResolvedText();
-						inspectPromptText.clear();
 						needsRedraw = true;
 					}
 					break;
@@ -4095,10 +4106,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					clickedObject->identShown = true;
 					_engine.getScript()->markObjectIdentShown(*clickedObject);
 					if (canShowInspectText) {
-						inspectText = resolvedInspectText;
-						inspectPromptText = clickHoverState.promptText;
-						showingInspectText = true;
-						inspectCanDismiss = false;
+						beginInspectText(*clickedObject, resolvedInspectText);
 					} else if (hasInspectText) {
 						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
 							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
@@ -4135,10 +4143,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!_engine.getScript()->resolveObjectInteraction(
 						*clickedObject, interaction, scene.state.roomName)) {
 					if (canShowInspectText) {
-						inspectText = resolvedInspectText;
-						inspectPromptText = clickHoverState.promptText;
-						showingInspectText = true;
-						inspectCanDismiss = false;
+						beginInspectText(*clickedObject, resolvedInspectText);
 					} else if (hasInspectText) {
 						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
 							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
@@ -4164,7 +4169,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						showingInspectText = false;
 						inspectCanDismiss = false;
 						inspectText = ResolvedText();
-						inspectPromptText.clear();
 						needsRedraw = true;
 					}
 					break;

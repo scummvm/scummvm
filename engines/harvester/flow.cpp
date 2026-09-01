@@ -649,9 +649,12 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 }
 
 static void drawWrappedText(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, int lineSpacing) {
+		int x, int y, int width, byte color, int lineSpacing, bool useCftCharacterWrapping = false) {
 	Common::Array<Common::String> lines;
-	font.wordWrapText(text, width, lines);
+	if (useCftCharacterWrapping)
+		wrapCftTextByCharacterCount(font, text, width, lines);
+	else
+		font.wordWrapText(text, width, lines);
 
 	const int lineHeight = font.getFontHeight() + lineSpacing;
 	for (uint i = 0; i < lines.size(); ++i)
@@ -1031,7 +1034,8 @@ void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphic
 			kIdentTextboxY + kIdentTextboxTextInsetY,
 			MAX<int>(0, (int)textbox->width - 2),
 			0,
-			kNativeIdentTextLineSpacing);
+			kNativeIdentTextLineSpacing,
+			true);
 		return;
 	}
 

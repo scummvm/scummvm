@@ -354,55 +354,7 @@ static void wrapDialogueTextLikeNative(const Graphics::Font &font, bool usesCft,
 		return;
 	}
 
-	Common::String wrappedText;
-	for (uint i = 0; i < text.size(); ++i) {
-		const char c = text[i];
-		if (c != '\r')
-			wrappedText += c;
-	}
-
-	const int wrapCharsPerLine = width / MAX<int>(1, font.getCharWidth(' ') - 1);
-	if (wrapCharsPerLine <= 0) {
-		lines.push_back(Common::move(wrappedText));
-		return;
-	}
-
-	uint lineStart = 0;
-	while (lineStart < wrappedText.size()) {
-		uint lineEnd = lineStart;
-		while (lineEnd < wrappedText.size() && wrappedText[lineEnd] != '\n')
-			++lineEnd;
-
-		if (lineEnd - lineStart > (uint)wrapCharsPerLine) {
-			uint breakPos = MIN<uint>(lineStart + (uint)wrapCharsPerLine, lineEnd - 1);
-			while (breakPos > lineStart && wrappedText[breakPos] != ' ')
-				--breakPos;
-
-			if (breakPos > lineStart && wrappedText[breakPos] == ' ') {
-				wrappedText.setChar('\n', breakPos);
-				while (breakPos + 1 < wrappedText.size() && wrappedText[breakPos + 1] == ' ')
-					wrappedText.deleteChar(breakPos + 1);
-				lineStart = breakPos + 1;
-				continue;
-			}
-		}
-
-		lineStart = lineEnd + 1;
-	}
-
-	Common::String line;
-	for (uint i = 0; i < wrappedText.size(); ++i) {
-		if (wrappedText[i] == '\n') {
-			lines.push_back(Common::move(line));
-			line.clear();
-			continue;
-		}
-
-		line += wrappedText[i];
-	}
-
-	if (!line.empty() || lines.empty())
-		lines.push_back(Common::move(line));
+	wrapCftTextByCharacterCount(font, text, width, lines);
 }
 
 static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
