@@ -312,7 +312,7 @@ Common::Path MidiDriver_FluidSynth::getSoundFontPath(bool *exists) {
 	// Finally look for it with SearchMan
 	Common::ArchiveMemberDetailsList files;
 	SearchMan.listMatchingMembers(files, path);
-	for (Common::ArchiveMemberDetails file : files) {
+	for (const auto &file : files) {
 		Common::FSDirectory* dir = dynamic_cast<Common::FSDirectory*>(SearchMan.getArchive(file.arcName));
 		if (!dir)
 			continue;
