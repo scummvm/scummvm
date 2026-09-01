@@ -117,28 +117,6 @@ void Scene6100::resetSceneLayers() {
 	_charlieConversationActive = false;
 }
 
-void Scene6100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
-		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
-		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-	copyBaseFramebufferToSceneFramebuffer();
-
-	if (_sceneLayers.layerVisible(kScene6100DepartureLayer)) {
-		drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
-			activeWorldX, activeWorldY, drawSecondaryActor, secondaryFacing,
-			secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-		return;
-	}
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
-		activeWorldX, activeWorldY, drawSecondaryActor, secondaryFacing,
-		secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
-	drawActionOverlayLayer();
-}
-
 void Scene6100::runCustomEntrySequence() {
 	runEntryPath(0x308, 0x1df, 4, 0x26c, 0x177);
 
@@ -579,6 +557,7 @@ void Scene6100::takeCharlieBriefcase() {
 		.commit(_charlieManualSequenceActive, true)
 		.actorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
 			ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
+			.drawAt(kSceneAnimationInFrontOfActors)
 			.commitAt(7, state.scene6100BriefcasePresent, false)
 			.patchAt(7, 2))
 		.commit(_charlieManualSequenceActive, false);
