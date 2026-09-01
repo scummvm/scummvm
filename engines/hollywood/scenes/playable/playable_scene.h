@@ -429,8 +429,9 @@ protected:
 	// Pathfinding
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
 	void startConcurrentActorPath(int targetX, int targetY, byte finalFacing, byte finalCel,
-		uint32 frameMillis);
-	void finishConcurrentActorPath();
+		uint32 frameMillis, bool snapToTargetIfNoPath = false);
+	void finishConcurrentActorPath(bool allowSkip = false);
+	void cancelConcurrentActorPath();
 	bool concurrentActorPathActive() const { return _concurrentActorPathActive; }
 	bool adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
@@ -813,7 +814,6 @@ private:
 	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum,
 		bool hideActiveActor);
 	void advanceConcurrentActorPath(uint32 delta);
-	void resetConcurrentActorPath();
 	void handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed);
 };
 

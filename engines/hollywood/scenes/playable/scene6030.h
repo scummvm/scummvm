@@ -51,9 +51,6 @@ private:
 	void rebuildWorkingWalkableMask();
 	void resetAnimationLayers();
 	void advanceHannoverLayer(uint32 delta);
-	void startScriptedActorPath(int targetX, int targetY, byte finalFacing);
-	void advanceScriptedActorPath(uint32 delta);
-	void finishScriptedActorPath();
 	void drawForegroundBlocks(int activeWorldX, int activeWorldY);
 	void runEntryConversation();
 	void runHannoverDialogueMenu();
@@ -73,10 +70,7 @@ private:
 	void returnToScene6020();
 
 	TimedAnimationChannel _hannoverIdleChannel;
-	TimedAnimationChannel _scriptedActorPathChannel;
-	uint _scriptedActorPathFrameIndex;
 	bool _hannoverManualSequenceActive;
-	bool _scriptedActorPathActive;
 };
 
 } // End of namespace Hollywood

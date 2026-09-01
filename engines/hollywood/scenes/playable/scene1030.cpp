@@ -157,11 +157,8 @@ Scene1030::Scene1030(HollywoodEngine *vm) :
 		_smallForegroundChannel(),
 		_largeForegroundMode(0),
 		_smallForegroundTickCount(0),
-		_entryActorPathFrameIndex(0),
-		_entryActorPathTimerAccumulator(0),
 		_entryActorsVisible(false),
-		_entryActorsAlternatePose(false),
-		_entryActorPathActive(false) {
+		_entryActorsAlternatePose(false) {
 	_sceneLayers.configure(kScene1030LayerSpecs);
 }
 
@@ -177,9 +174,6 @@ void Scene1030::initializeCustomPreviewState() {
 		state.scene1030EntryConversationSeen ? 0x1c : 0);
 	_largeForegroundMode = state.scene1030EntryConversationSeen ? 1 : 0;
 	_smallForegroundTickCount = 0;
-	_entryActorPathFrameIndex = 0;
-	_entryActorPathTimerAccumulator = 0;
-	_entryActorPathActive = false;
 	_entryActorsVisible = firstEntryConversationPending;
 	_entryActorsAlternatePose = false;
 	_sceneLayers.setLayerVisible(kScene1030LeftEntryActorLayer, firstEntryConversationPending);
@@ -274,7 +268,10 @@ void Scene1030::runCustomEntrySequence() {
 	}
 
 	applyFirstEntryPalette();
-	startFirstEntryActorPath();
+	setActiveActorPose(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY,
+		kScene1030FirstEntryFacing);
+	startConcurrentActorPath(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY,
+		kScene1030InvalidActorFacing, 0, kScene1030ForegroundFrameMillis);
 	runFirstEntryConversation();
 }
 
@@ -285,10 +282,8 @@ void Scene1030::prepareCustomGameplayLoop() {
 }
 
 void Scene1030::advanceCustomGameplayLoop(uint32 delta) {
-	if (_entryActorsVisible) {
-		advanceFirstEntryActorPath(delta);
+	if (_entryActorsVisible)
 		return;
-	}
 	advanceLargeForegroundActor(delta);
 	advanceSmallForegroundActor(delta);
 }
@@ -521,7 +516,11 @@ void Scene1030::runFirstEntryConversation() {
 	runEntryOpenSequence();
 
 	restoreNormalPalette();
-	finishFirstEntryActorPath();
+	finishConcurrentActorPath();
+	if (_actorPathFrames.size() <= 1) {
+		setActiveActorPose(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY,
+			kScene1030FirstEntryFacing);
+	}
 	_entryActorsVisible = false;
 	_entryActorsAlternatePose = false;
 	_sceneLayers.setLayerVisible(kScene1030LeftEntryActorLayer, false);
@@ -532,57 +531,6 @@ void Scene1030::runFirstEntryConversation() {
 	drawPlayableComposite();
 	presentFrame();
 	beginSecondarySpeechLine(0, 0);
-}
-
-void Scene1030::startFirstEntryActorPath() {
-	setActiveActorPose(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY, kScene1030FirstEntryFacing);
-
-	queueActorPathWithPaletteRegionRouting(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY,
-		kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY, kScene1030InvalidActorFacing, 0);
-	_entryActorPathFrameIndex = _actorPathFrames.size() > 1 ? 1 : 0;
-	_entryActorPathTimerAccumulator = 0;
-	_entryActorPathActive = _actorPathFrames.size() > 1;
-	_actorPathPlaybackActive = _entryActorPathActive;
-}
-
-void Scene1030::advanceFirstEntryActorPath(uint32 delta) {
-	if (!_entryActorPathActive)
-		return;
-
-	_entryActorPathTimerAccumulator += delta;
-	while (_entryActorPathTimerAccumulator >= kScene1030ForegroundFrameMillis && _entryActorPathActive) {
-		_entryActorPathTimerAccumulator -= kScene1030ForegroundFrameMillis;
-
-		const ActorPathFrame &frame = _actorPathFrames[_entryActorPathFrameIndex++];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-
-		if (_entryActorPathFrameIndex >= _actorPathFrames.size()) {
-			_entryActorPathActive = false;
-			_actorPathPlaybackActive = false;
-		}
-	}
-}
-
-void Scene1030::finishFirstEntryActorPath() {
-	if (_actorPathFrames.size() > 1) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	} else {
-		setActiveActorPose(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY, kScene1030FirstEntryFacing);
-	}
-
-	_entryActorPathFrameIndex = 0;
-	_entryActorPathTimerAccumulator = 0;
-	_entryActorPathActive = false;
-	_actorPathPlaybackActive = false;
 }
 
 void Scene1030::runEntryGestureSequence() {

@@ -103,15 +103,12 @@ Scene6080::Scene6080(HollywoodEngine *vm) :
 		_waxBallChannel(),
 		_escapeSueChannel(),
 		_escapeGuardChannel(),
-		_manualActorPathChannel(),
 		_finalSueChannel(),
-		_manualActorPathFrameIndex(0),
 		_sueLongIdleActive(false),
 		_guardManualSequenceActive(false),
 		_manualSequenceActive(false),
 		_waxBallAnimationActive(false),
 		_escapeLayersSwitched(false),
-		_manualActorPathActive(false),
 		_finalSueAnimationActive(false) {
 	_sceneLayers.configure(kScene6080LayerSpecs);
 }
@@ -151,14 +148,10 @@ bool Scene6080::shouldPresentPreviewBeforeEntrySequence() const {
 void Scene6080::prepareCustomGameplayLoop() {
 	_sueIdleChannel.reset(sueNormalLayer().frameIndex, kScene6080SueFrameMillis);
 	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080GuardFrameMillis);
-	_manualActorPathChannel.reset(0, kScene6080ActorPathFrameMillis);
 	_manualSequenceActive = false;
-	_manualActorPathActive = false;
 }
 
 void Scene6080::advanceCustomGameplayLoop(uint32 delta) {
-	advanceManualActorPath(delta);
-
 	if (_waxBallAnimationActive)
 		advanceWaxBallAnimation(delta);
 	else if (_finalSueAnimationActive)
@@ -280,15 +273,12 @@ void Scene6080::resetSceneLayers() {
 	_waxBallChannel.reset(0, kScene6080WaxBallFrameMillis);
 	_escapeSueChannel.reset(0, kScene6080SueFrameMillis);
 	_escapeGuardChannel.reset(0, kScene6080EscapeGuardFrameMillis);
-	_manualActorPathChannel.reset(0, kScene6080ActorPathFrameMillis);
 	_finalSueChannel.reset(0, kScene6080SueFrameMillis);
-	_manualActorPathFrameIndex = 0;
 	_sueLongIdleActive = false;
 	_guardManualSequenceActive = false;
 	_manualSequenceActive = false;
 	_waxBallAnimationActive = false;
 	_escapeLayersSwitched = false;
-	_manualActorPathActive = false;
 	_finalSueAnimationActive = false;
 }
 
@@ -391,17 +381,15 @@ void Scene6080::runWaxBallEscapeSequence() {
 	presentFrame();
 
 	beginSecondarySpeechLine(6, 1);
-	startManualActorPath(0x276, 0x15c, 4);
+	startConcurrentActorPath(0x276, 0x15c, 4, 0, kScene6080ActorPathFrameMillis);
 	beginPrimarySpeechLineWithAnimationGroup(6, 2, 0x16e, 0xbe,
 		0x3f, 0x28, 0x32, kScene6080SueSpeechGroup);
 	beginSecondarySpeechLine(6, 3);
 	beginPrimarySpeechLineWithAnimationGroup(6, 4, 0x16e, 0xbe,
 		0x3f, 0x28, 0x32, kScene6080SueSpeechGroup);
-	while (_manualActorPathActive && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(10, false))
-			return;
-	}
+	finishConcurrentActorPath();
+	if (animationPlaybackShouldStop())
+		return;
 
 	runFinalSueAnimation();
 	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
@@ -459,43 +447,6 @@ void Scene6080::advanceWaxBallAnimation(uint32 delta) {
 		_waxBallAnimationActive = false;
 }
 
-void Scene6080::startManualActorPath(int targetX, int targetY, byte finalFacing) {
-	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
-		targetX, targetY, finalFacing, 0);
-	_manualActorPathFrameIndex = 1;
-	_manualActorPathChannel.reset(0, kScene6080ActorPathFrameMillis);
-	_lastViewportScrollActorWorldX = _activeActorWorldX;
-	_manualActorPathActive = _actorPathFrames.size() > 1;
-	_actorPathPlaybackActive = _manualActorPathActive;
-	if (!_manualActorPathActive && !_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-}
-
-void Scene6080::advanceManualActorPath(uint32 delta) {
-	if (!_manualActorPathActive)
-		return;
-
-	const uint frameCount = _manualActorPathChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount && _manualActorPathFrameIndex < _actorPathFrames.size(); ++i) {
-		const ActorPathFrame &frame = _actorPathFrames[_manualActorPathFrameIndex++];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	if (_manualActorPathFrameIndex >= _actorPathFrames.size()) {
-		_manualActorPathActive = false;
-		_actorPathPlaybackActive = false;
-	}
-}
-
 void Scene6080::runFinalSueAnimation() {
 	sueAlternateLayer().setFrame(24);
 	_finalSueChannel.reset(24, kScene6080SueFrameMillis);
@@ -505,8 +456,7 @@ void Scene6080::runFinalSueAnimation() {
 		if (waitSceneMillis(10, false))
 			break;
 	}
-	_manualActorPathActive = false;
-	_actorPathPlaybackActive = false;
+	cancelConcurrentActorPath();
 }
 
 void Scene6080::advanceFinalSueAnimation(uint32 delta) {
@@ -515,7 +465,8 @@ void Scene6080::advanceFinalSueAnimation(uint32 delta) {
 		if (sueAlternateLayer().frameIndex == 60 || sueAlternateLayer().frameIndex == 80)
 			dimEscapePalette();
 		if (sueAlternateLayer().frameIndex == 86)
-			startManualActorPath(0x305, 0x14d, 1);
+			startConcurrentActorPath(0x305, 0x14d, 1, 0,
+				kScene6080ActorPathFrameMillis);
 		sueAlternateLayer().setFrame(sueAlternateLayer().frameIndex + 1);
 	}
 	if (sueAlternateLayer().frameIndex >= 93)
