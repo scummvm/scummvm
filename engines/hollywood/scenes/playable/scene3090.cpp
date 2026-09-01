@@ -150,20 +150,10 @@ void Scene3090::initializeCustomPreviewState() {
 	setActiveActorPose(600, 0x145, 4);
 }
 
-void Scene3090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene3090::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
+	(void)activeWorldX;
 	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	_sceneLayers.setLayerChunk(kScene3090FrontLayer,
-		_vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10);
-	drawSceneLayer(kScene3090FrontLayer);
-	drawSceneLayer(kScene3090PuzzleLayer);
-	drawSceneLayer(kScene3090BlindManLayer);
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
 }
 
@@ -288,6 +278,8 @@ bool Scene3090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 		const GameplayState &state = _vm->gameState();
+		_sceneLayers.setLayerChunk(kScene3090FrontLayer,
+			state.scene3090WindowOpenSequenceState == 0 ? 9 : 10);
 		if (state.scene3090SecretDiaryPuzzleStage < 2) {
 			if (!state.scene3090BlindManPlayingSaxophone) {
 				removeColorMapItem(8);
@@ -689,7 +681,8 @@ void Scene3090::runSaltShakerPickup() {
 
 	state.scene3090SaltShakerTaken = true;
 	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis));
+		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
+		.drawAt(kSceneAnimationBehindActors));
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene3090SaltShakerItemId);
 	_soundBank0.playSample(1, 100);
@@ -705,7 +698,8 @@ void Scene3090::runDowsingRodPickup() {
 
 	state.scene3090DowsingRodTaken = true;
 	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis));
+		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
+		.drawAt(kSceneAnimationBehindActors));
 	applySceneStateToHotspotsAndPatches(5);
 	addInventoryItem(kScene3090DowsingRodItemId);
 	_soundBank0.playSample(1, 100);
@@ -722,6 +716,7 @@ void Scene3090::runUseStrawInFireplace() {
 	beginSecondarySpeechLine(10, 0);
 	runActorReplacement(ActionOverlaySpec(14, kScene3090StrawDescriptorCount,
 		kScene3090StrawFrameMap, ARRAYSIZE(kScene3090StrawFrameMap), kScene3090OverlayFrameMillis)
+		.drawAt(kSceneAnimationBehindActors)
 		.soundAt(7, 1));
 	removeInventoryItem(kScene3090StrawItemId);
 	waitSceneMillis(750);
@@ -752,7 +747,8 @@ void Scene3090::runSaxophoneHandoff() {
 	beginBlindManResponse(1);
 	beginSecondarySpeechLine(11, 1);
 	runActorReplacement(ActionOverlaySpec(15, kScene3090SaxophoneDescriptorCount,
-		kScene3090SaxophoneFrameMap, ARRAYSIZE(kScene3090SaxophoneFrameMap), kScene3090OverlayFrameMillis));
+		kScene3090SaxophoneFrameMap, ARRAYSIZE(kScene3090SaxophoneFrameMap), kScene3090OverlayFrameMillis)
+		.drawAt(kSceneAnimationBehindActors));
 	removeInventoryItem(kScene3090SaxophoneItemId);
 	state.scene3090BlindManPlayingSaxophone = true;
 	state.currentAmbientMusicCueId = 0x11;
