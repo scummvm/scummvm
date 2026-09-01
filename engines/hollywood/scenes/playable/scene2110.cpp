@@ -121,8 +121,7 @@ Scene2110::Scene2110(HollywoodEngine *vm) :
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_entryIdleActive(false) {
 	_sceneLayers.configure(kScene2110LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
-		kScene2110AmbientLayer, kScene2110FrameMillis);
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(kScene2110AmbientLayer, kScene2110FrameMillis);
 }
 
 void Scene2110::initializeCustomPreviewState() {

@@ -167,8 +167,7 @@ Scene2080::Scene2080(HollywoodEngine *vm) :
 		_deltaClipFrame(0),
 		_foregroundActorManualSequenceActive(false) {
 	_sceneLayers.configure(kScene2080LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
-		kScene2080AmbientLayer, kScene2080FrameMillis);
+	_ambientTrack = _realtimeAnimationTracks.addFrameMap(kScene2080AmbientLayer, kScene2080FrameMillis);
 }
 
 void Scene2080::initializeCustomPreviewState() {

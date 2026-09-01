@@ -138,8 +138,7 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		_blindManSpeechLastRandomFrame(kScene3090BlindManNoPreviousSpeechFrame),
 		_blindManSpeechTimerAccumulator(0) {
 	_sceneLayers.configure(kScene3090LayerSpecs);
-	_frontTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
-		kScene3090FrontLayer, kScene3090FrontFrameMillis);
+	_frontTrack = _realtimeAnimationTracks.addFrameMap(kScene3090FrontLayer, kScene3090FrontFrameMillis);
 }
 
 void Scene3090::initializeCustomPreviewState() {

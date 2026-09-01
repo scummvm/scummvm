@@ -221,7 +221,7 @@ Scene4030::Scene4030(HollywoodEngine *vm) :
 		_originalStageSmallRows(),
 		_rightPropState(0) {
 	_sceneLayers.configure(kScene4030LayerSpecs);
-	_leftPropTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene4030LeftPropLayer,
+	_leftPropTrack = _realtimeAnimationTracks.addLoop(kScene4030LeftPropLayer,
 		kScene4030PropFrameMillis, kScene4030LeftPropDescriptorCount);
 	memset(_markerDark, 0, sizeof(_markerDark));
 }

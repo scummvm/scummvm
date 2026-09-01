@@ -104,8 +104,7 @@ Scene4040::Scene4040(HollywoodEngine *vm) :
 		_previousContinuousAmbientCue(0),
 		_previousRandomAmbientCue(0) {
 	_sceneLayers.configure(kScene4040LayerSpecs);
-	_cyclicBackgroundTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene4040CyclicBackgroundLayer, kScene4040FrameMillis,
+	_cyclicBackgroundTrack = _realtimeAnimationTracks.addLoop(kScene4040CyclicBackgroundLayer, kScene4040FrameMillis,
 		kScene4040BackgroundDescriptorCount);
 }
 

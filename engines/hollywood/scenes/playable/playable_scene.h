@@ -578,46 +578,9 @@ protected:
 			return false;
 		return playAndPresentAnimationTransition(_sceneLayers.layer(layerId), transition);
 	}
-	// Plays a caller-owned layer without choosing its draw stratum; clears it by default.
-	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
-		const byte *frameMap, uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd = true);
-	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
-		const AnimationFrameRange &range, bool clearAtEnd = true) {
-		return playResourceLayerSequence(layer, chunkIndex, descriptorCount, nullptr, 0, range, clearAtEnd);
-	}
-	template<uint size>
-	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex, uint16 descriptorCount,
-			const byte (&frameMap)[size], const AnimationFrameRange &range, bool clearAtEnd = true) {
-		return playResourceLayerSequence(layer, chunkIndex, descriptorCount,
-			frameMap, size, range, clearAtEnd);
-	}
-	template<uint size>
-	bool playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
-			uint16 descriptorCount, const byte (&frameMap)[size], uint32 frameMillis) {
-		return playResourceLayerSequence(layer, chunkIndex, descriptorCount, frameMap,
-			AnimationFrameRange(0, size - 1, frameMillis));
-	}
-	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
-		uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
-		const AnimationFrameRange &range, bool clearAtEnd = true);
-	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
-		uint16 descriptorCount, const AnimationFrameRange &range, bool clearAtEnd = true) {
-		return playResourceLayerSequence(layers, layerId, chunkIndex, descriptorCount,
-			nullptr, 0, range, clearAtEnd);
-	}
-	template<uint size>
-	bool playResourceLayerSequence(SceneLayerStack &layers, uint layerId, uint chunkIndex,
-			uint16 descriptorCount, const byte (&frameMap)[size],
-			const AnimationFrameRange &range, bool clearAtEnd = true) {
-		return playResourceLayerSequence(layers, layerId, chunkIndex, descriptorCount,
-			frameMap, size, range, clearAtEnd);
-	}
 	bool playResourceLayerSequence(uint layerId, uint chunkIndex, uint16 descriptorCount,
 			const byte *frameMap, uint frameMapSize, const AnimationFrameRange &range,
-			bool clearAtEnd = true) {
-		return playResourceLayerSequence(_sceneLayers, layerId, chunkIndex,
-			descriptorCount, frameMap, frameMapSize, range, clearAtEnd);
-	}
+			bool clearAtEnd = true);
 	bool playResourceLayerSequence(uint layerId, uint chunkIndex, uint16 descriptorCount,
 			const AnimationFrameRange &range, bool clearAtEnd = true) {
 		return playResourceLayerSequence(layerId, chunkIndex, descriptorCount,
@@ -630,7 +593,6 @@ protected:
 		return playResourceLayerSequence(layerId, chunkIndex, descriptorCount,
 			frameMap, size, range, clearAtEnd);
 	}
-	void clearResourceLayer(ResourceSpriteLayer &layer);
 	void clearSceneLayer(uint layerId);
 
 	// Resource delta clips

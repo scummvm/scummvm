@@ -212,8 +212,7 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5030AlternateVanessaLayer,
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
-	_chunk8Track = _realtimeAnimationTracks.addFrameMap(
-		_sceneLayers, kScene5030Chunk8Layer, kScene5030FrameMillis);
+	_chunk8Track = _realtimeAnimationTracks.addFrameMap(kScene5030Chunk8Layer, kScene5030FrameMillis);
 }
 
 void Scene5030::initializeCustomPreviewState() {
