@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9100.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -60,6 +59,9 @@ const uint kI10SueActorDescriptorChunk = 26;
 const byte kI10SceneActorFacing = 5;
 const uint kI10SceneActorDescriptorBase = kI10SceneActorFacing * kActorCelsPerFacing;
 const uint kActorEntryFrameDelayMillis = 90;
+const uint32 kClockFrameIntervalMillis = 1000;
+const uint32 kTalkingFrameIntervalMillis = 125;
+const uint32 kEntryPathFrameIntervalMillis = 60;
 const uint32 kRonEntryPathDurationMillis = 4200;
 const uint32 kSueEntryPathDurationMillis = 3600;
 
@@ -85,8 +87,8 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_clockSound(),
 		_ambientSound(),
 		_random("hollywood_scene9100"),
-		_lastClockFrameMillis(0),
-		_lastTalkingFrameMillis(0),
+		_clockFrameAccumulator(kClockFrameIntervalMillis),
+		_talkingFrameAccumulator(0),
 		_foregroundActorFrame(0),
 		_foregroundTalkBaseFrame(15),
 		_clockChunk7Frame(0x2c),
@@ -383,9 +385,10 @@ void Scene9100::runRonEntryConversation() {
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
 	uint32 pathElapsed = 0;
-	uint32 lastPathFrameMillis = g_system->getMillis();
+	uint32 pathFrameAccumulator = 0;
 	byte foregroundFrame = _foregroundTalkBaseFrame;
 	bool pathPresented = false;
+	_talkingFrameAccumulator = kTalkingFrameIntervalMillis;
 
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
@@ -407,29 +410,23 @@ void Scene9100::runRonEntryConversation() {
 			if (!speechActive && elapsed >= fallbackMillis)
 				break;
 
-			if (pollEvents())
-				return;
-
 			const uint32 slice = 10;
-			g_system->delayMillis(slice);
+			if (delay(slice))
+				return;
 			elapsed += slice;
 
-			const uint32 now = g_system->getMillis();
-			bool dirty = false;
-			bool clockDirty = false;
-			if (now - _lastClockFrameMillis >= 1000) {
-				_lastClockFrameMillis = now;
-				clockDirty = true;
-				dirty = true;
-			}
-			if (now - _lastTalkingFrameMillis >= 125) {
-				_lastTalkingFrameMillis = now;
+			const bool clockDirty = advanceClockTimer(slice);
+			bool dirty = clockDirty;
+			if (advanceTalkingTimer(slice)) {
 				foregroundFrame = (byte)(_foregroundTalkBaseFrame + nextTalkingFrameVariant());
 				dirty = true;
 			}
-			if (pathElapsed < kRonEntryPathDurationMillis && now - lastPathFrameMillis >= 60) {
-				pathElapsed = MIN<uint32>(kRonEntryPathDurationMillis, pathElapsed + (now - lastPathFrameMillis));
-				lastPathFrameMillis = now;
+			if (pathElapsed < kRonEntryPathDurationMillis)
+				pathFrameAccumulator += slice;
+			if (pathFrameAccumulator >= kEntryPathFrameIntervalMillis) {
+				pathElapsed = MIN<uint32>(kRonEntryPathDurationMillis,
+					pathElapsed + pathFrameAccumulator);
+				pathFrameAccumulator = 0;
 				dirty = true;
 			}
 
@@ -479,7 +476,8 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
-	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
+	const byte cel = finalFrame ? 0 :
+		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
 	drawActorFrame(_actorBankI10Ron, facing, cel, x, y);
 }
 
@@ -520,24 +518,21 @@ void Scene9100::runSueEntryPath() {
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
 	uint32 pathElapsed = 0;
-	uint32 lastPathFrameMillis = g_system->getMillis();
+	uint32 pathFrameAccumulator = 0;
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 	drawSueEntryPathFrame(0, kSueEntryPathDurationMillis);
 	presentFrame();
 
-	while (pathElapsed < kSueEntryPathDurationMillis && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		g_system->delayMillis(10);
-
-		const uint32 now = g_system->getMillis();
-		if (now - lastPathFrameMillis < 60)
+	TimedPresentationLoop loop(*this, kSueEntryPathDurationMillis);
+	while (loop.beginFrame()) {
+		pathFrameAccumulator += loop.finishFrame();
+		if (pathFrameAccumulator < kEntryPathFrameIntervalMillis)
 			continue;
 
-		pathElapsed = MIN<uint32>(kSueEntryPathDurationMillis, pathElapsed + (now - lastPathFrameMillis));
-		lastPathFrameMillis = now;
+		pathElapsed = MIN<uint32>(kSueEntryPathDurationMillis,
+			pathElapsed + pathFrameAccumulator);
+		pathFrameAccumulator = 0;
 		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 		drawSueEntryPathFrame(pathElapsed, kSueEntryPathDurationMillis);
 		presentFrame();
@@ -571,7 +566,8 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
-	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
+	const byte cel = finalFrame ? 0 :
+		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
 	drawActorFrame(_actorBankI10Sue, facing, cel, x, y);
 }
 
@@ -800,7 +796,7 @@ void Scene9100::runEndingWipe() {
 
 void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor, byte insetTalkBaseFrame) {
 	_talkingFrame = 0;
-	_lastTalkingFrameMillis = g_system->getMillis();
+	_talkingFrameAccumulator = 0;
 	const SceneSpeechCue popup = _text.stageCue(textBankIndex, descriptorIndex);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
@@ -1152,25 +1148,23 @@ void Scene9100::copyDefaultPalette() {
 bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
 	TimedPresentationLoop loop(*this, millis);
 	while (loop.beginFrame()) {
-		loop.finishFrame();
-		const uint32 now = g_system->getMillis();
+		const uint32 slice = loop.finishFrame();
 		bool dirty = false;
-		if (animateClock && now - _lastClockFrameMillis >= 1000) {
-			_lastClockFrameMillis = now;
+		if (animateClock && advanceClockTimer(slice)) {
 			advanceClockFrame();
 			dirty = true;
 		}
-		if (talkingOverlayBase != kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
-			_lastTalkingFrameMillis = now;
+		const bool animateTalkingActor = talkingOverlayBase != kTalkingOverlayNone ||
+			animateInsetActor || animateForegroundActor;
+		const bool talkingFrameDue = animateTalkingActor && advanceTalkingTimer(slice);
+		if (talkingOverlayBase != kTalkingOverlayNone && talkingFrameDue) {
 			drawTalkingOverlay(talkingOverlayBase, nextTalkingFrameVariant(), talkingOverlayVariant);
 			dirty = true;
 		}
-		if (animateInsetActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
-			_lastTalkingFrameMillis = now;
+		if (animateInsetActor && talkingOverlayBase == kTalkingOverlayNone && talkingFrameDue) {
 			drawPersistentDeskActors();
 			dirty = true;
-		} else if (animateForegroundActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
-			_lastTalkingFrameMillis = now;
+		} else if (animateForegroundActor && talkingOverlayBase == kTalkingOverlayNone && talkingFrameDue) {
 			drawForegroundActorFrame((byte)(_foregroundTalkBaseFrame + nextTalkingFrameVariant()));
 			dirty = true;
 		}
@@ -1179,6 +1173,24 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 	}
 
 	return _skipRequested || Engine::shouldQuit();
+}
+
+bool Scene9100::advanceClockTimer(uint32 millis) {
+	_clockFrameAccumulator += millis;
+	if (_clockFrameAccumulator < kClockFrameIntervalMillis)
+		return false;
+
+	_clockFrameAccumulator %= kClockFrameIntervalMillis;
+	return true;
+}
+
+bool Scene9100::advanceTalkingTimer(uint32 millis) {
+	_talkingFrameAccumulator += millis;
+	if (_talkingFrameAccumulator < kTalkingFrameIntervalMillis)
+		return false;
+
+	_talkingFrameAccumulator %= kTalkingFrameIntervalMillis;
+	return true;
 }
 
 void Scene9100::stopAudio() {
