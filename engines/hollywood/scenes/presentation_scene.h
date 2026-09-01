@@ -34,7 +34,7 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Owns the display and skip lifecycle shared by non-interactive full-screen scenes.
+// Owns display, resources, timing, and skip plumbing shared by full-screen scenes.
 class PresentationScene : public SceneAnimationPlayerDelegate {
 protected:
 	// Keeps fixed-duration cutscenes responsive while leaving frame updates to the scene.
@@ -98,7 +98,7 @@ protected:
 
 	void presentFrame();
 	void presentFrame(uint rowOffset, uint xOffset);
-	bool pollEvents(bool allowSkip = true);
+	virtual bool pollEvents(bool allowSkip = true);
 	bool delay(uint32 millis, bool allowSkip = true);
 
 	bool revealSavedFramebufferWithCurtain(byte bandWidth = 0x14);
