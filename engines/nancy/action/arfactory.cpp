@@ -213,41 +213,39 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new LightningOn(); // Only used in TVD
 		else
 			return new SpecialEffect();
-	case 41:	// Nancy14
-	case 44:	// Nancy14 (adds a trailing volume byte)
-		return new PlaySecondaryMovie();
+	case 41:	// Nancy13
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kSecondaryMovieTerse);
 	case 42:	// Nancy14
 	case 43:	// Nancy14
 	case 45:	// Nancy11
-		return new PlaySecondaryMovie(true);
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kRandomMovie);
+	case 44:	// Nancy14 (adds a trailing volume byte)
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kMovieWithVolume);
 	case 46:	// Nancy11
 		return new PlayRandomMovieControl();
 	case 47:	// Nancy14
-		// A PlaySecondaryMovie subclass that appends a named {value, flag} list.
-		// Handled inside PlaySecondaryMovie via _type == 47.
-		return new PlaySecondaryMovie();
+		// A PlaySecondaryMovie subclass that appends a named {value, flag} list
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kInteractiveMovie);
 	case 50:
 		return new ConversationVideo(); // PlayPrimaryVideoChan0
 	case 51:
 	case 52:
 		return new PlaySecondaryVideo();
 	case 53:
-		if (g_nancy->getGameType() >= kGameTypeNancy14)
-			return new RolloverOverlay();
+		if (g_nancy->getGameType() <= kGameTypeNancy13)
+			return new PlaySecondaryMovie(PlaySecondaryMovie::kSecondaryMovie);
 		else
-			return new PlaySecondaryMovie();
+			return new RolloverOverlay();
 	case 54:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
-			return new Overlay(false); // PlayStaticBitmapAnimation
+			return new Overlay(Overlay::kStaticAnimation); // PlayStaticBitmapAnimation
 		else
-			return new Overlay(true);
+			return new Overlay(Overlay::kInterruptibleAnimation);
 	case 55:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
-			return new Overlay(true); // PlayIntStaticBitmapAnimation
-		else if (g_nancy->getGameType() >= kGameTypeNancy7)
-			return new OverlayStaticTerse();
+			return new Overlay(Overlay::kInterruptibleAnimation); // PlayIntStaticBitmapAnimation
 		else
-			return nullptr;
+			return new OverlayStaticTerse();
 	case 56:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new ConversationVideo();
@@ -281,19 +279,19 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 66:
 		return new TableIndexPlaySound();
 	case 67:
-		if (g_nancy->getGameType() >= kGameTypeNancy10)
-			return new Autotext();		// Moved from 61 in Nancy 10
-		else
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new TableIndexSetValueHS();
-	case 68:
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return new TextLineOverlay();
 		else
-			return new TextScroll(false);
+			return new Autotext();		// Moved from 61 in Nancy 10
+	case 68:
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
+			return new TextScroll(TextScroll::kTextScroll);
+		else
+			return new TextLineOverlay();
 	case 69:	// Nancy11
 		return new TimerControl();
 	case 70:
-		return new TextScroll(true); // AutotextEntryList
+		return new TextScroll(TextScroll::kAutotextEntryList);
 	case 71:
 		return new ModifyListEntry(ModifyListEntry::kAdd);
 	case 72:
@@ -301,11 +299,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
 	case 74:	// Nancy10 only: writes the full, taskbar-covering box
-		return new FrameTextBox(true);
+		return new FrameTextBox(FrameTextBox::kFullBox);
 	case 75:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
-			return new TextBoxWrite();
-		return new FrameTextBox(false);
+			return new TextBoxWrite(TextBoxWrite::kTextBoxWrite);
+		else
+			return new FrameTextBox(FrameTextBox::kNormalBox);
 	case 76:
 		return new TextboxClear();
 	case 77:
@@ -315,19 +314,19 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 79:
 		return new ValueTest();
 	case 81:	// Nancy11
-		return new TextBoxWrite(true);
+		return new TextBoxWrite(TextBoxWrite::kAutotextWrite);
 	case 94:	// Nancy12
-		return new EventFlagsMultiHS(false);	// moved from 106
+		return new EventFlagsMultiHS(EventFlagsMultiHS::kMultiHS);	// moved from 106
 	case 95:	// Nancy12
-		return new EventFlags();	// moved from 107
+		return new EventFlags(EventFlags::kEventFlags);	// moved from 107
 	case 96:	// Nancy11
 		return new RandomizeEventFlags();
 	case 97:
-		return new EventFlags(true);
+		return new EventFlags(EventFlags::kEventFlagsTerse);
 	case 98:
-		return new EventFlagsMultiHS(true, true);
+		return new EventFlagsMultiHS(EventFlagsMultiHS::kHSTerse);
 	case 99:
-		return new EventFlagsMultiHS(true);
+		return new EventFlagsMultiHS(EventFlagsMultiHS::kCursorHS);
 	case 100:
 		return new BumpPlayerClock();
 	case 101:
@@ -341,9 +340,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 105:
 		return new StopTimer();
 	case 106:
-		return new EventFlagsMultiHS(false);
+		return new EventFlagsMultiHS(EventFlagsMultiHS::kMultiHS);
 	case 107:
-		return new EventFlags();
+		return new EventFlags(EventFlags::kEventFlags);
 	case 108:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
@@ -364,7 +363,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 115:
 		return new LeverPuzzle();
 	case 116:
-		return new Telephone(false);
+		return new Telephone(Telephone::kTelephone);
 	case 117:
 		return new SliderPuzzle();
 	case 118:
@@ -403,10 +402,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: not yet implemented (depends on the PCUI/LDSN player-char UI)
 		return nullptr;
 	case 140:
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return new SetPlayerClock();	// Moved from 170 in Nancy12
-		else
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new SetVolume();			// Legacy SetVolume slot (used up to Nancy8)
+		else
+			return new SetPlayerClock();	// Moved from 170 in Nancy12
 	case 141:	// Nancy12
 		return new MakeScreenFile();	// Moved from 148 in Nancy12
 	case 143:	// Nancy14
@@ -418,30 +417,29 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 146:	// Nancy13
 		return new FadeSoundToSilence(); // Moved from 147 in Nancy13
 	case 147:	// Nancy11
-		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new SetVolume();			// Moved from 148 in Nancy13
-		return new FadeSoundToSilence();	// Nancy11
-	case 148:
-		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new StopSound();	// Nancy13: StopSound moved here (was 154)
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return new SetVolume();	// Moved from 149 in Nancy12
-		if (g_nancy->getGameType() >= kGameTypeNancy9)
-			return new MakeScreenFile();	// Moved to 141 in Nancy12
-		return nullptr;
-	case 149:
-		if (g_nancy->getGameType() >= kGameTypeNancy13)
-			return new StopSound();	// Nancy13: StopAndUnloadSound moved here (was 155)
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return new PlaySoundEventFlagTerse();	// Moved from 161 in Nancy12
-		else if (g_nancy->getGameType() >= kGameTypeNancy9)
-			return new SetVolume();	// Moved from 140 in Nancy9, then to 148 in Nancy12
+		if (g_nancy->getGameType() <= kGameTypeNancy12)
+			return new FadeSoundToSilence();
 		else
-			return nullptr;
+			return new SetVolume();				// Moved from 148 in Nancy13
+	case 148:	// Nancy11
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
+			return new MakeScreenFile();	// Moved to 141 in Nancy12
+		else if (g_nancy->getGameType() <= kGameTypeNancy12)
+			return new SetVolume();			// Moved from 149 in Nancy12
+		else
+			return new StopSound();			// Nancy13: StopSound moved here (was 154)
+	case 149:	// Nancy11
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
+			return new SetVolume();					// Moved from 140 in Nancy9, then to 148 in Nancy12
+		else if (g_nancy->getGameType() <= kGameTypeNancy12)
+			return new PlaySoundEventFlagTerse();	// Moved from 161 in Nancy12
+		else
+			return new StopSound();					// Nancy13: StopAndUnloadSound moved here (was 155)
 	case 150:
-		if (g_nancy->getGameType() >= kGameTypeNancy14)
-			return new SetMovieVolume();	// PlaySound moved to 145 in Nancy13
-		return new PlaySound();
+		if (g_nancy->getGameType() <= kGameTypeNancy13)
+			return new PlaySound();			// Moved to 145 in Nancy13
+		else
+			return new SetMovieVolume();
 	case 151:
 		if (g_nancy->getGameType() <= kGameTypeNancy6)
 			return new PlaySound(); // PlayStreamSound
@@ -461,17 +459,20 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 158:
 		return new PlayRandomSound();
 	case 159:
-		if (g_nancy->getGameType() >= kGameTypeNancy14)
-			return new GridMapPuzzle();	// moved from 244
-		return new PlaySoundTerse();
+		if (g_nancy->getGameType() <= kGameTypeNancy13)
+			return new PlaySoundTerse();
+		else
+			return new GridMapPuzzle();	// Moved from 244 in Nancy14
 	case 160:
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
+			return new HintSystem();
+		else
 			return new DrivingPuzzle(DrivingPuzzle::kDriving);
-		return new HintSystem();
 	case 161:
-		if (g_nancy->getGameType() >= kGameTypeNancy12)
+		if (g_nancy->getGameType() <= kGameTypeNancy11)
+			return new PlaySoundEventFlagTerse();
+		else
 			return new MinigolfPuzzle();
-		return new PlaySoundEventFlagTerse();
 	// -- Nancy 12 new puzzles/action records --
 	case 162:
 		return new SewingMachinePuzzle();
@@ -491,9 +492,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 169:
 		return new StepObjectsPuzzle();
 	case 170:
-		if (g_nancy->getGameType() >= kGameTypeNancy13)
+		if (g_nancy->getGameType() <= kGameTypeNancy12)
+			return new SetPlayerClock();	// Moved to 140 in Nancy12
+		else
 			return new WordFindPuzzle();
-		return new SetPlayerClock();	// moved to 140 in Nancy12
 	case 171:
 		return new TurningPuzzle();	// moved from 209 in Nancy13
 	case 172:
@@ -590,7 +592,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 229:
 		return new ArcadePuzzle();
 	case 230:
-		return new Telephone(true);
+		return new Telephone(Telephone::kNewPhone);
 	case 231:
 		return new QuizPuzzle();
 	case 232:

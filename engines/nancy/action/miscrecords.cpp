@@ -141,7 +141,7 @@ static void readTextboxText(Common::SeekableReadStream &stream, Common::String &
 }
 
 void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
-	if (_isAutotext) {
+	if (_writeType == kAutotextWrite) {
 		// AR 81 prefixes the body with a wait header (runtime state at 0x00 is
 		// always 0 in the data, so skip it)
 		stream.skip(2);
@@ -152,7 +152,7 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 
 	readTextboxText(stream, _text);
 
-	if (_isAutotext) {
+	if (_writeType == kAutotextWrite) {
 		// The original terminates the body with the "<e>" end-of-line hypertext tag
 		_text += "<e>";
 	}
@@ -167,7 +167,7 @@ void TextBoxWrite::execute() {
 		}
 		tb.setVisible(true);
 
-		if (!_isAutotext) {
+		if (_writeType == kTextBoxWrite) {
 			// Plain TextBoxWrite completes immediately
 			finishExecution();
 			return;
@@ -230,7 +230,7 @@ void FrameTextBox::execute() {
 	if (!_text.empty())
 		tb.addTextLine(_text);
 
-	tb.setFullMode(_fullMode);
+	tb.setFullMode(_boxMode == kFullBox);
 	finishExecution();
 }
 

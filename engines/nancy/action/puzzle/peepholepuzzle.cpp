@@ -350,7 +350,7 @@ void TextScroll::readExtraData(Common::SeekableReadStream &stream) {
 
 	_pixelsToScroll = stream.readByte();
 
-	if (!_isEntryList) {
+	if (_scrollType == kTextScroll) {
 		Autotext::readExtraData(stream);
 	}
 }

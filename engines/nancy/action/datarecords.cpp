@@ -323,7 +323,7 @@ void ValueTest::execute() {
 }
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {
-	if (!_isTerse) {
+	if (_flagsType == kEventFlags) {
 		_flags.readData(stream);
 	} else {
 		// Terse version only has 2 flags
@@ -342,7 +342,7 @@ void EventFlags::execute() {
 void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	EventFlags::readData(stream);
 
-	if (_isCursor) {
+	if (_hotspotType != kMultiHS) {
 		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
 	}
 
@@ -359,7 +359,7 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 bool EventFlagsMultiHS::cursorSetFromScript() const {
 	if (g_nancy->getGameType() >= kGameTypeNancy10 && NancySceneState.getHeldItem() >= 0)
 		return false;
-	return _isCursor;
+	return _hotspotType != kMultiHS;
 }
 
 CursorManager::CursorType EventFlagsMultiHS::getHoverCursor() const {

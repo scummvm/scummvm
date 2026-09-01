@@ -44,8 +44,9 @@ public:
 	};
 
 	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kPreCall, kCall, kHangUp };
+	enum PhoneType { kTelephone, kNewPhone };
 
-	Telephone(bool isNewPhone) :
+	Telephone(PhoneType phoneType) :
 		RenderActionRecord(7),
 		_callState(kWaiting),
 		_buttonLastPushed(-1),
@@ -53,7 +54,7 @@ public:
 		_checkNumbers(false),
 		_font(nullptr),
 		_animIsStopped(false),
-		_isNewPhone(isNewPhone) {}
+		_phoneType(phoneType) {}
 	virtual ~Telephone() {}
 
 	void init() override;
@@ -65,7 +66,7 @@ public:
 	bool isViewportRelative() const override { return true; }
 
 protected:
-	Common::String getRecordTypeName() const override { return _isNewPhone ? "NewPhone" : "Telephone"; }
+	Common::String getRecordTypeName() const override { return _phoneType == kNewPhone ? "NewPhone" : "Telephone"; }
 
 	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
@@ -122,7 +123,7 @@ protected:
 
 	const Font *_font;
 
-	bool _isNewPhone;
+	PhoneType _phoneType;
 };
 
 } // End of namespace Action

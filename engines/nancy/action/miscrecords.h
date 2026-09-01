@@ -95,8 +95,9 @@ protected:
 class TextBoxWrite : public ActionRecord {
 public:
 	enum WaitMode { kWaitNone = 0, kWaitForSound = 1, kWaitForTimer = 2 };
+	enum WriteType { kTextBoxWrite, kAutotextWrite };
 
-	TextBoxWrite(bool isAutotext = false) : _isAutotext(isAutotext) {}
+	TextBoxWrite(WriteType writeType) : _writeType(writeType) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -104,13 +105,13 @@ public:
 	Common::String _text;
 
 	// Nancy 11+ AR 81 only
-	bool _isAutotext;
+	WriteType _writeType;
 	int16 _waitMode = 0;
 	uint16 _soundChannel = 0;
 	uint32 _waitTimeMs = 0;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isAutotext ? "AutotextTextBoxWrite" : "TextBoxWrite"; }
+	Common::String getRecordTypeName() const override { return _writeType == kAutotextWrite ? "AutotextTextBoxWrite" : "TextBoxWrite"; }
 
 private:
 	uint32 _endTime = 0;
@@ -130,12 +131,14 @@ protected:
 // text into the new (UICO-driven) textbox
 class FrameTextBox : public ActionRecord {
 public:
-	FrameTextBox(bool fullMode) : _fullMode(fullMode) {}
+	enum BoxMode { kNormalBox, kFullBox };
+
+	FrameTextBox(BoxMode boxMode) : _boxMode(boxMode) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	bool _fullMode;
+	BoxMode _boxMode;
 	Common::String _text;
 
 protected:

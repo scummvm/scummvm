@@ -111,23 +111,28 @@ protected:
 // Sets up to 10 flags at once.
 class EventFlags : public ActionRecord {
 public:
-	EventFlags(bool terse = false) : _isTerse(terse) {}
+	enum FlagsType { kEventFlags, kEventFlagsTerse };
+
+	EventFlags(FlagsType flagsType) : _flagsType(flagsType) {}
 	virtual ~EventFlags() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	MultiEventFlagDescription _flags;
-	bool _isTerse;
+	FlagsType _flagsType;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isTerse ? "EventFlagsTerse" : "EventFlags"; }
+	Common::String getRecordTypeName() const override { return _flagsType == kEventFlagsTerse ? "EventFlagsTerse" : "EventFlags"; }
 };
 
 // Sets up to 10 flags when clicked. Hotspot can move alongside background frame.
 class EventFlagsMultiHS : public EventFlags {
 public:
-	EventFlagsMultiHS(bool isCursor, bool terse = false) : EventFlags(terse), _isCursor(isCursor) {}
+	enum HotspotType { kMultiHS, kCursorHS, kHSTerse };
+
+	EventFlagsMultiHS(HotspotType hotspotType) :
+		EventFlags(hotspotType == kHSTerse ? kEventFlagsTerse : kEventFlags), _hotspotType(hotspotType) {}
 	virtual ~EventFlagsMultiHS() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -139,12 +144,21 @@ public:
 	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
 	Common::Array<HotspotDescription> _hotspots;
 
-	bool _isCursor;
+	HotspotType _hotspotType;
 
 	bool canHaveHotspot() const override { return true; }
 
 protected:
-	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
+	Common::String getRecordTypeName() const override {
+		switch (_hotspotType) {
+		case kCursorHS:
+			return "EventFlagsCursorHS";
+		case kHSTerse:
+			return "EventFlagsHSTerse";
+		default:
+			return "EventFlagsMultiHS";
+		}
+	}
 };
 
 // Nancy 11+ AR 96. Sets each of a list of event flags to a random boolean value.

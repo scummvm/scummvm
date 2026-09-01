@@ -43,7 +43,9 @@ namespace Action {
 // that was also when static mode got introduced.
 class Overlay : public RenderActionRecord {
 public:
-	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible), _usesAutotext(false) {}
+	enum AnimationType { kStaticAnimation, kInterruptibleAnimation };
+
+	Overlay(AnimationType animationType) : RenderActionRecord(7), _animationType(animationType), _usesAutotext(false) {}
 	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
@@ -80,7 +82,7 @@ public:
 	int16 _currentFrame = -1;
 	int16 _currentViewportFrame = -1;
 	uint32 _nextFrameTime = 0;
-	bool _isInterruptible;
+	AnimationType _animationType;
 	bool _usesAutotext;
 
 	bool canHaveHotspot() const override { return true; }
@@ -97,7 +99,7 @@ protected:
 // Short version of a static overlay; assumes scene background doesn't move
 class OverlayStaticTerse : public Overlay {
 public:
-	OverlayStaticTerse() : Overlay(true) {}
+	OverlayStaticTerse() : Overlay(kInterruptibleAnimation) {}
 	virtual ~OverlayStaticTerse() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -109,7 +111,7 @@ protected:
 // Short version of an animated overlay; assumes scene background doesn't move
 class OverlayAnimTerse : public Overlay {
 public:
-	OverlayAnimTerse() : Overlay(true) {}
+	OverlayAnimTerse() : Overlay(kInterruptibleAnimation) {}
 	virtual ~OverlayAnimTerse() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -120,7 +122,7 @@ protected:
 
 class TableIndexOverlay : public Overlay {
 public:
-	TableIndexOverlay() : Overlay(true) {}
+	TableIndexOverlay() : Overlay(kInterruptibleAnimation) {}
 	virtual ~TableIndexOverlay() {}
 
 	void readData(Common::SeekableReadStream &stream) override;

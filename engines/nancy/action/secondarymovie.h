@@ -80,7 +80,16 @@ public:
 		Common::Array<NextSequenceRef> nextSequences;
 	};
 
-	PlaySecondaryMovie(bool isRandom = false);
+	// Which of the action record types sharing this class is being played.
+	enum MovieType {
+		kSecondaryMovie,		// AR 53, up to Nancy13
+		kSecondaryMovieTerse,	// AR 41, Nancy13 and up
+		kRandomMovie,			// ARs 42, 43, 45
+		kMovieWithVolume,		// AR 44
+		kInteractiveMovie		// AR 47
+	};
+
+	PlaySecondaryMovie(MovieType movieType);
 	virtual ~PlaySecondaryMovie();
 
 	void init() override;
@@ -147,8 +156,11 @@ public:
 
 	MoviePlayer _decoder;
 
-	// Random-movie state (only populated when _isRandom).
-	bool _isRandom = false;
+	MovieType _movieType;
+
+	bool isRandom() const { return _movieType == kRandomMovie; }
+
+	// Random-movie state (only populated for kRandomMovie).
 	// "RandomMovie" picks any sequence; otherwise it names the starting one.
 	Common::String _startingSequenceName;
 	uint16 _randomPlayerCursorAllowed = kPlayerCursorAllowed;
@@ -209,7 +221,7 @@ public:
 	// hovering plays the recognition ("turn around") movie.
 	void handleInput(NancyInput &input) override;
 	CursorManager::CursorType getHoverCursor() const override;
-	bool cursorSetFromScript() const override { return _isRandom && _talkSceneID != kNoScene; }
+	bool cursorSetFromScript() const override { return isRandom() && _talkSceneID != kNoScene; }
 
 	Common::String getRecordExtraInfo() const override {
 		return Common::String::format("Scene %d, file %s", _sceneChange.sceneID, _videoName.baseName().c_str());
@@ -217,7 +229,7 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override {
-		return _isRandom ? "PlayRandomMovie" : "PlaySecondaryMovie";
+		return isRandom() ? "PlayRandomMovie" : "PlaySecondaryMovie";
 	}
 
 	// `ser` and `stream` must wrap the same input; `stream` is only
@@ -258,7 +270,7 @@ protected:
 
 	// A Nancy13 talkable character: has a conversation scene and a recognition
 	// movie to swap to on hover.
-	bool isTalkable() const { return _isRandom && _talkSceneID != kNoScene && !_secondaryMovie.name.empty(); }
+	bool isTalkable() const { return isRandom() && _talkSceneID != kNoScene && !_secondaryMovie.name.empty(); }
 
 	// Pick the next sequence (or "stay") per the weighted random rules.
 	// Returns -1 if "stay" was picked (and sets up the pause state),

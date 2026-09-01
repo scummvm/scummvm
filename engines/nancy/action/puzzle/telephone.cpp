@@ -45,7 +45,7 @@ void Telephone::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	g_nancy->_resource->loadImage(_displayAnimName, _animImage);
 
-	if (_isNewPhone) {
+	if (_phoneType == kNewPhone) {
 		_font = g_nancy->_graphics->getFont(_displayFont);
 	}
 
@@ -61,9 +61,9 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
 	uint16 numButtons = 12;
-	uint16 maxNumButtons = _isNewPhone ? 20 : 12;
+	uint16 maxNumButtons = _phoneType == kNewPhone ? 20 : 12;
 
-	if (_isNewPhone) {
+	if (_phoneType == kNewPhone) {
 		_hasDisplay = stream.readByte();
 		_displayFont = stream.readUint16LE();
 		readFilename(stream, _displayAnimName);
@@ -79,7 +79,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _srcRects, numButtons, maxNumButtons);
 	readRectArray(stream, _destRects, numButtons, maxNumButtons);
 
-	if (_isNewPhone) {
+	if (_phoneType == kNewPhone) {
 		readRect(stream, _dirHighlightSrc);
 		readRect(stream, _dialHighlightSrc);
 
@@ -91,7 +91,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, _displayDialingSrc);
 	}
 
-	if (!_isNewPhone) {
+	if (_phoneType == kTelephone) {
 		_genericDialogueSound.readNormal(stream);
 		_genericButtonSound.readNormal(stream);
 		_ringSound.readNormal(stream);
@@ -110,7 +110,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	stream.skip(33 * (maxNumButtons - numButtons));
 
 	char textBuf[200];
-	if (!_isNewPhone) {
+	if (_phoneType == kTelephone) {
 		stream.read(textBuf, 200);
 		textBuf[199] = '\0';
 		_addressBookString = textBuf;
@@ -134,7 +134,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < numCalls; ++i) {
 		PhoneCall &call = _calls[i];
 
-		if (_isNewPhone) {
+		if (_phoneType == kNewPhone) {
 			call.directoryDisplayCondition = stream.readSint16LE();
 		}
 
@@ -143,7 +143,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 			call.phoneNumber[j] = stream.readByte();
 		}
 
-		if (!_isNewPhone) {
+		if (_phoneType == kTelephone) {
 			readFilename(stream, call.soundName);
 			stream.read(textBuf, 200);
 			textBuf[199] = '\0';
@@ -171,7 +171,7 @@ void Telephone::execute() {
 	case kRun:
 		switch (_callState) {
 		case kWaiting:
-			if (_isNewPhone && !_animIsStopped) {
+			if (_phoneType == kNewPhone && !_animIsStopped) {
 				if (g_nancy->getTotalPlayTime() > _displayAnimEnd) {
 					if (_displayAnimEnd == 0) {
 						_displayAnimEnd = g_nancy->getTotalPlayTime() + _displayAnimFrameTime;
@@ -506,14 +506,14 @@ void Telephone::handleInput(NancyInput &input) {
 
 					if (_hasDisplay) {
 						_drawSurface.fillRect(_displayDest, _drawSurface.getTransparentColor());
-					} else if (_isNewPhone) {
+					} else if (_phoneType == kNewPhone) {
 						NancySceneState.getTextbox().clear();
 					}
 
 					_checkNumbers = false;
 				}
 
-				if (_isNewPhone && _calledNumber.size()) {
+				if (_phoneType == kNewPhone && _calledNumber.size()) {
 					Common::String numberString;
 					for (uint j = 0; j < _calledNumber.size(); ++j) {
 						numberString += '0' + _calledNumber[j];

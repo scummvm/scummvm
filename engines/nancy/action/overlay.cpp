@@ -151,7 +151,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
 
-	if (_isInterruptible) {
+	if (_animationType == kInterruptibleAnimation) {
 			ser.syncAsSint16LE(_interruptCondition.label);
 			ser.syncAsUint16LE(_interruptCondition.flag);
 		} else {
@@ -413,7 +413,7 @@ void Overlay::execute() {
 
 Common::String Overlay::getRecordTypeName() const {
 	if (g_nancy->getGameType() <= kGameTypeNancy1) {
-		if (_isInterruptible) {
+		if (_animationType == kInterruptibleAnimation) {
 			return "PlayIntStaticBitmapAnimation";
 		} else {
 			return "PlayStaticBitmapAnimation";

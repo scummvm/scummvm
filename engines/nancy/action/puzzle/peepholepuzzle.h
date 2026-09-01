@@ -82,7 +82,9 @@ protected:
 // on the fly and replaces the TextScroll/AutotextEntryList
 class TextScroll : public Autotext, public PeepholePuzzle {
 public:
-	TextScroll(bool isEntryList) : _isEntryList(isEntryList) { _selfDisplay = false; _hasPlacementDescriptor = false; }
+	enum ScrollType { kTextScroll, kAutotextEntryList };
+
+	TextScroll(ScrollType scrollType) : _scrollType(scrollType) { _selfDisplay = false; _hasPlacementDescriptor = false; }
 
 	void init() override;
 	void execute() override { PeepholePuzzle::execute(); }
@@ -91,10 +93,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 
 protected:
-	Common::String getRecordTypeName() const override { return _isEntryList ? "AutotextEntryList" : "TextScroll"; }
+	Common::String getRecordTypeName() const override { return _scrollType == kAutotextEntryList ? "AutotextEntryList" : "TextScroll"; }
 	void readExtraData(Common::SeekableReadStream &stream) override;
 
-	bool _isEntryList;
+	ScrollType _scrollType;
 };
 
 } // End of namespace Action

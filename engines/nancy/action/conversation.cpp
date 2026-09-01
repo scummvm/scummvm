@@ -438,7 +438,7 @@ void ConversationSound::execute() {
 
 					// Nancy 11+: play a fresh random sequence as the character's response anim.
 					if (PlaySecondaryMovie *active = NancySceneState.getActiveMovie()) {
-						if (active->_isRandom) {
+						if (active->isRandom()) {
 							active->playRandomSequence();
 						}
 					}
