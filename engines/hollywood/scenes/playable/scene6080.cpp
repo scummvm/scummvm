@@ -99,7 +99,7 @@ static PlayableSceneConfig scene6080Config() {
 Scene6080::Scene6080(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6080Config()),
 		_sueIdleChannel(),
-		_guardIdleChannel(),
+		_guardIdleTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_waxBallChannel(),
 		_escapeSueChannel(),
 		_escapeGuardChannel(),
@@ -111,6 +111,8 @@ Scene6080::Scene6080(HollywoodEngine *vm) :
 		_escapeLayersSwitched(false),
 		_finalSueAnimationActive(false) {
 	_sceneLayers.configure(kScene6080LayerSpecs);
+	_guardIdleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
+		kGuardNormalLayer, kScene6080GuardFrameMillis, 6);
 }
 
 void Scene6080::initializeCustomPreviewState() {
@@ -147,19 +149,25 @@ bool Scene6080::shouldPresentPreviewBeforeEntrySequence() const {
 
 void Scene6080::prepareCustomGameplayLoop() {
 	_sueIdleChannel.reset(sueNormalLayer().frameIndex, kScene6080SueFrameMillis);
-	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.resetTimer(_guardIdleTrack, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.setActive(_guardIdleTrack, guardNormalLayer().visible);
 	_manualSequenceActive = false;
 }
 
 void Scene6080::advanceCustomGameplayLoop(uint32 delta) {
-	if (_waxBallAnimationActive)
+	bool guardLoopActive = false;
+	if (_waxBallAnimationActive) {
 		advanceWaxBallAnimation(delta);
-	else if (_finalSueAnimationActive)
+		guardLoopActive = !_escapeLayersSwitched;
+	} else if (_finalSueAnimationActive) {
 		advanceFinalSueAnimation(delta);
-	else if (!_primaryDialogueSpeechActive && !_manualSequenceActive) {
+	} else if (!_primaryDialogueSpeechActive && !_manualSequenceActive) {
 		advanceSueIdle(delta);
-		advanceGuardIdle(delta);
+		guardLoopActive = true;
 	}
+
+	_realtimeAnimationTracks.setActive(_guardIdleTrack,
+		guardLoopActive && guardNormalLayer().visible && !_guardManualSequenceActive);
 }
 
 bool Scene6080::dispatchCustomSceneAction(uint16 handlerId) {
@@ -269,7 +277,9 @@ AmbientAudioProfile Scene6080::ambientAudioProfile() const {
 void Scene6080::resetSceneLayers() {
 	_sceneLayers.reset();
 	_sueIdleChannel.reset(0, kScene6080SueFrameMillis);
-	_guardIdleChannel.reset(0, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.reset(_guardIdleTrack);
+	_realtimeAnimationTracks.resetTimer(_guardIdleTrack, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.setActive(_guardIdleTrack, true);
 	_waxBallChannel.reset(0, kScene6080WaxBallFrameMillis);
 	_escapeSueChannel.reset(0, kScene6080SueFrameMillis);
 	_escapeGuardChannel.reset(0, kScene6080EscapeGuardFrameMillis);
@@ -306,19 +316,6 @@ void Scene6080::advanceSueIdle(uint32 delta) {
 		} else if (_random.getRandomNumber(19) == 0) {
 			sueNormalLayer().setFrame(4);
 		}
-	}
-}
-
-void Scene6080::advanceGuardIdle(uint32 delta) {
-	if (!guardNormalLayer().visible || _guardManualSequenceActive)
-		return;
-
-	const uint frameCount = _guardIdleChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		if (guardNormalLayer().frameIndex >= 5)
-			guardNormalLayer().setFrame(0);
-		else
-			guardNormalLayer().setFrame(guardNormalLayer().frameIndex + 1);
 	}
 }
 
@@ -374,7 +371,8 @@ void Scene6080::runWaxBallEscapeSequence() {
 		return;
 
 	_waxBallAnimationActive = false;
-	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.resetTimer(_guardIdleTrack, kScene6080GuardFrameMillis);
+	_realtimeAnimationTracks.setActive(_guardIdleTrack, false);
 	waxBallLayer().visible = false;
 	_hideActiveActor = false;
 	drawPlayableComposite();
@@ -400,7 +398,8 @@ void Scene6080::startWaxBallAnimation() {
 	_waxBallChannel.reset(0, kScene6080WaxBallFrameMillis);
 	_escapeSueChannel.reset(0, kScene6080SueFrameMillis);
 	_escapeGuardChannel.reset(0, kScene6080EscapeGuardFrameMillis);
-	_guardIdleChannel.reset(guardNormalLayer().frameIndex, kScene6080EscapeGuardFrameMillis);
+	_realtimeAnimationTracks.resetTimer(_guardIdleTrack, kScene6080EscapeGuardFrameMillis);
+	_realtimeAnimationTracks.setActive(_guardIdleTrack, true);
 	_escapeLayersSwitched = false;
 	_waxBallAnimationActive = true;
 }
@@ -409,7 +408,6 @@ void Scene6080::advanceWaxBallAnimation(uint32 delta) {
 	if (!_escapeLayersSwitched) {
 		if (sueNormalLayer().frameIndex != 0)
 			advanceSueIdle(delta);
-		advanceGuardIdle(delta);
 	}
 
 	const uint waxBallFrames = _waxBallChannel.consumeFrames(delta);
