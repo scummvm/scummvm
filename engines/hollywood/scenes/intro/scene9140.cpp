@@ -287,15 +287,13 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 }
 
 void Scene9140::animateRightPose(byte firstFrame, byte lastFrame) {
-	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		if (pollEvents())
-			return;
-		_rightBodyFrame = frame;
-		drawComposite();
-		presentFrame();
-		if (delay(kScene9140PoseFrameMillis))
-			return;
-	}
+	AnimationFrameRange range(firstFrame, lastFrame, kScene9140PoseFrameMillis);
+	_animationPlayer.playAndPresent(_rightBodyFrame, range);
+}
+
+void Scene9140::presentAnimationFrame() {
+	drawComposite();
+	presentFrame();
 }
 
 void Scene9140::drawComposite() {

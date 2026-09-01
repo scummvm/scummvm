@@ -73,7 +73,6 @@ private:
 	bool advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode);
 	void drawCompositeToFramebuffer();
 	void presentComposite();
-	void drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex);
 	byte nextMouthFrameVariant();
 
 	void beginSubtitle(const SceneSpeechCue &popup, const SpeechTextStyle &speechTextStyle);
@@ -88,6 +87,13 @@ private:
 		kStage911Index = 911
 	};
 
+	enum {
+		kChunk3Layer = 0,
+		kMouthLayer,
+		kIdleLayer,
+		kCycleLayer
+	};
+
 	MusicPlayer *_music;
 	SpeechPlayer _speech;
 	SceneTextStore _text;
@@ -95,14 +101,10 @@ private:
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	uint32 _mouthAccumulator;
-	uint32 _chunk3Accumulator;
 	uint32 _idleAccumulator;
 	uint32 _cycleAccumulator;
 	uint32 _musicFadeAccumulator;
-	byte _chunk2MouthFrame;
-	byte _chunk2IdleFrame;
-	byte _chunk2CycleFrame;
-	byte _chunk3Frame;
+	uint _chunk3Track;
 	byte _chunk2CycleDirection;
 	byte _lastMouthVariant;
 };

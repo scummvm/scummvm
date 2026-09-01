@@ -21,13 +21,9 @@
 
 #include "hollywood/scenes/intro/scene9150.h"
 
-#include "common/debug.h"
-#include "common/path.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
-#include "hollywood/resource.h"
 
 namespace Hollywood {
 
@@ -55,7 +51,8 @@ Scene9150::Scene9150(HollywoodEngine *vm) :
 		_speech(vm->getLanguage()),
 		_text(),
 		_paletteResource(),
-		_clipResource() {
+		_clipResource(),
+		_clipFrameIndex(0) {
 	_paletteResource.resize(kPaletteSize);
 }
 
@@ -82,54 +79,37 @@ bool Scene9150::play() {
 }
 
 bool Scene9150::load() {
-	return loadPalette() &&
-		_text.loadStaticSpeechCues(kScene9150TextArchiveName, _debugName, kScene9150StaticSpeechTableOffset);
-}
-
-bool Scene9150::loadPalette() {
-	ChunkArchive archive;
-	if (!archive.open(Common::Path(kScene9150ArchiveName))) {
-		warning("Failed to read %s header", kScene9150ArchiveName);
-		return false;
-	}
-
-	if (!archive.readFixedChunk(0, _paletteResource, kPaletteSize, _debugName))
+	if (!_resources.loadChunkTable(kScene9150ArchiveName) ||
+			!_resources.validateChunkRange(kScene9150ArchiveName, _debugName, 0, 4) ||
+			!loadFixedChunk(0, _paletteResource, kPaletteSize))
 		return false;
 
-	return true;
+	return _text.loadStaticSpeechCues(kScene9150TextArchiveName, _debugName,
+		kScene9150StaticSpeechTableOffset);
 }
 
 bool Scene9150::loadClipChunk(uint chunkIndex) {
-	ChunkArchive archive;
-	if (!archive.open(Common::Path(kScene9150ArchiveName))) {
-		warning("Failed to read %s header", kScene9150ArchiveName);
-		return false;
-	}
-
-	if (!archive.readVariableChunk(chunkIndex, _clipResource)) {
-		warning("Failed to read %s clip chunk %u", kScene9150ArchiveName, chunkIndex);
-		return false;
-	}
-
-	return true;
+	return loadVariableChunk(chunkIndex, _clipResource);
 }
 
 void Scene9150::runClip(byte staticSpeechRowIndex) {
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
 
-	for (byte frame = 0; frame < kScene9150DescriptorCount && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		if (pollEvents())
-			return;
-
-		drawClipFrame(frame);
-		presentFrame();
-		if (delay(kScene9150FrameIntervalMillis))
-			return;
-	}
+	_clipFrameIndex = 0;
+	AnimationFrameRange range(0, kScene9150DescriptorCount - 1,
+		kScene9150FrameIntervalMillis);
+	_animationPlayer.playAndPresent(_clipFrameIndex, range);
+	if (animationPlaybackShouldStop())
+		return;
 
 	playStaticSpeechPair(staticSpeechRowIndex);
 	fadeOutPalette();
+}
+
+void Scene9150::presentAnimationFrame() {
+	drawClipFrame(_clipFrameIndex);
+	presentFrame();
 }
 
 void Scene9150::drawClipFrame(byte frameIndex) {
@@ -166,6 +146,10 @@ void Scene9150::fadeOutPalette() {
 		if (delay(10))
 			return;
 	}
+}
+
+void Scene9150::stopAudio() {
+	_speech.stop();
 }
 
 } // End of namespace Hollywood

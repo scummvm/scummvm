@@ -218,23 +218,32 @@ public:
 		_tracks[id].channel.resetTimer();
 	}
 
-	void advance(uint32 delta, Common::RandomSource &random) {
-		for (uint i = 0; i < _tracks.size(); ++i)
-			advance(i, delta, random);
+	// Makes the track advance on its next update, even if that update has no delta.
+	void prime(uint id) {
+		if (hasTrack(id))
+			_tracks[id].channel.timerAccumulator = _tracks[id].channel.frameMillis;
 	}
 
-	void advance(uint id, uint32 delta, Common::RandomSource &random) {
+	bool advance(uint32 delta, Common::RandomSource &random) {
+		bool changed = false;
+		for (uint i = 0; i < _tracks.size(); ++i)
+			changed = advance(i, delta, random) || changed;
+		return changed;
+	}
+
+	bool advance(uint id, uint32 delta, Common::RandomSource &random) {
 		if (!hasTrack(id) || !_tracks[id].active)
-			return;
+			return false;
 
 		Track &track = _tracks[id];
 		if (track.targetLayer() == nullptr) {
 			track.channel.resetTimer();
-			return;
+			return false;
 		}
 		const uint frames = track.channel.consumeFrames(delta);
 		for (uint frame = 0; frame < frames; ++frame)
 			track.advanceFrame(random);
+		return frames != 0;
 	}
 
 private:

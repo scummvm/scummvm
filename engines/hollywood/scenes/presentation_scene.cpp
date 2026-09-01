@@ -30,18 +30,19 @@
 namespace Hollywood {
 
 PresentationScene::TimedPresentationLoop::TimedPresentationLoop(PresentationScene &scene,
-		uint32 durationMillis, uint32 maximumSliceMillis) :
+		uint32 durationMillis, uint32 maximumSliceMillis, bool allowSkip) :
 		_scene(scene),
 		_durationMillis(durationMillis),
 		_maximumSliceMillis(MAX<uint32>(maximumSliceMillis, 1)),
 		_elapsedMillis(0),
-		_sliceMillis(0) {
+		_sliceMillis(0),
+		_allowSkip(allowSkip) {
 }
 
 bool PresentationScene::TimedPresentationLoop::beginFrame() {
 	if (_elapsedMillis >= _durationMillis || _scene._skipRequested || Engine::shouldQuit())
 		return false;
-	if (_scene.pollEvents())
+	if (_scene.pollEvents(_allowSkip))
 		return false;
 
 	_sliceMillis = MIN<uint32>(_durationMillis - _elapsedMillis, _maximumSliceMillis);
@@ -59,6 +60,9 @@ PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		_vm(vm),
 		_debugName(debugName),
 		_resources(),
+		_sceneLayers(),
+		_realtimeAnimationTracks(),
+		_animationPlayer(*this),
 		_skipRequested(false) {
 	_paletteCurrent.resize(kPaletteSize);
 	_sceneFramebuffer.resize(sceneFramebufferSize);
@@ -83,6 +87,18 @@ int PresentationScene::subtitleViewportXOffset() const {
 
 int PresentationScene::subtitleViewportYOffset() const {
 	return 0;
+}
+
+bool PresentationScene::animationPlaybackShouldStop() const {
+	return _skipRequested || Engine::shouldQuit();
+}
+
+void PresentationScene::presentAnimationFrame() {
+	presentFrame();
+}
+
+bool PresentationScene::waitForAnimationFrame(uint32 millis, bool allowSkip) {
+	return delay(millis, allowSkip);
 }
 
 bool PresentationScene::showAnchoredSubtitle(const Common::String &text,
@@ -170,6 +186,22 @@ bool PresentationScene::loadArenaChunkAlias(uint sourceIndex, uint aliasIndex,
 		targetIndex);
 }
 
+void PresentationScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
+	if (!layer.visible || layer.chunkIndex >= SceneResources::kResourceChunkCount)
+		return;
+
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[layer.chunkIndex], 0,
+		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer.surface());
+}
+
+void PresentationScene::drawLayerStack(const SceneLayerStack &layers,
+		SceneAnimationStratum stratum) {
+	for (uint i = 0; i < layers.layerCount(); ++i) {
+		if (layers.isInStratum(i, stratum))
+			drawResourceSpriteLayer(layers.layer(i));
+	}
+}
+
 void PresentationScene::drawFrameOverlays() {
 	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr(),
 		subtitleViewportXOffset(), subtitleViewportYOffset());
@@ -202,7 +234,7 @@ void PresentationScene::presentFrame(uint rowOffset, uint xOffset) {
 	g_system->updateScreen();
 }
 
-bool PresentationScene::pollEvents() {
+bool PresentationScene::pollEvents(bool allowSkip) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -212,9 +244,9 @@ bool PresentationScene::pollEvents() {
 			stopAudio();
 			return true;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+			if (allowSkip && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
 					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
+					event.kbd.keycode == Common::KEYCODE_SPACE)) {
 				_skipRequested = true;
 				stopAudio();
 				return true;
@@ -228,8 +260,8 @@ bool PresentationScene::pollEvents() {
 	return false;
 }
 
-bool PresentationScene::delay(uint32 millis) {
-	TimedPresentationLoop loop(*this, millis);
+bool PresentationScene::delay(uint32 millis, bool allowSkip) {
+	TimedPresentationLoop loop(*this, millis, 10, allowSkip);
 	while (loop.beginFrame())
 		loop.finishFrame();
 
