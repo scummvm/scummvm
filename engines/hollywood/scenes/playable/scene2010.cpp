@@ -362,17 +362,20 @@ void Scene2010::runPatchedEntrySequence() {
 	setActiveActorPose(0x130, 0x105, 2, 0);
 	drawPlayableComposite();
 	presentFrame();
-	_soundBank0.playSample(0x0c, 100);
-	if (!walkActiveActorTo(0x21c, 0x126, 0xff, 0, false))
+	BlockingSequence sequence(*this);
+	sequence.sound(0x0c)
+		.actorPath(SceneActorPose(0x21c, 0x126, 0xff));
+	if (!sequence.completed())
 		return;
 
 	_sceneLayers.setLayerStratum(kScene2010ScriptLayer, kSceneAnimationBehindActors);
 	if (_sceneChunkTable.isValidChunk(10)) {
-		if (!playResourceLayerSequence(kScene2010ScriptLayer, 10,
-				kScene2010SecondOverlayDescriptorCount,
-				AnimationFrameRange(0, 0x0f, kScene2010OverlayFrameMillis).unskippable()))
-			return;
+		sequence.resourceLayerFrames(kScene2010ScriptLayer, 10,
+			kScene2010SecondOverlayDescriptorCount,
+			AnimationFrameRange(0, 0x0f, kScene2010OverlayFrameMillis).unskippable());
 	}
+	if (!sequence.completed())
+		return;
 
 	if (_sceneChunkTable.isValidChunk(9)) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
@@ -390,9 +393,10 @@ void Scene2010::runPatchedEntrySequence() {
 }
 
 void Scene2010::runLongSequenceToScene2100() {
+	BlockingSequence sequence(*this);
 	_sceneLayers.setLayerStratum(kScene2010ScriptLayer, kSceneAnimationActorReplacement);
 	if (_sceneChunkTable.isValidChunk(5)) {
-		playResourceLayerSequence(kScene2010ScriptLayer, 5,
+		sequence.resourceLayerFrames(kScene2010ScriptLayer, 5,
 			kScene2010FirstOverlayDescriptorCount,
 			kScene2010FirstOverlayFrameMap,
 			AnimationFrameRange(0, ARRAYSIZE(kScene2010FirstOverlayFrameMap) - 1,
@@ -400,18 +404,18 @@ void Scene2010::runLongSequenceToScene2100() {
 				.unskippable()
 				.soundAt(9, 0x0b), false);
 	}
-	if (!waitForSoundOrTimeout(kScene2010SoundWaitMillis))
+	if (!sequence.completed() || !waitForSoundOrTimeout(kScene2010SoundWaitMillis))
 		return;
 
 	_sceneLayers.setLayerStratum(kScene2010ScriptLayer, kSceneAnimationBehindActors);
 	if (_sceneChunkTable.isValidChunk(6)) {
-		playResourceLayerSequence(kScene2010ScriptLayer, 6,
+		sequence.resourceLayerFrames(kScene2010ScriptLayer, 6,
 			kScene2010SecondOverlayDescriptorCount,
 			AnimationFrameRange(0, 0x0f, kScene2010OverlayFrameMillis)
 				.unskippable()
 				.soundAt(0, 0x0c), false);
 	}
-	if (!waitForSoundOrTimeout(kScene2010SoundWaitMillis))
+	if (!sequence.completed() || !waitForSoundOrTimeout(kScene2010SoundWaitMillis))
 		return;
 	clearSceneLayer(kScene2010ScriptLayer);
 
@@ -420,33 +424,29 @@ void Scene2010::runLongSequenceToScene2100() {
 
 	_gatekeeperSequenceActive = true;
 	if (_sceneChunkTable.isValidChunk(7)) {
-		playResourceLayerSequence(kScene2010GatekeeperLayer, 7,
+		sequence.resourceLayerFrames(kScene2010GatekeeperLayer, 7,
 			kScene2010GatekeeperDescriptorCount,
 			kScene2010GatekeeperFrameMap,
 			AnimationFrameRange(0, kScene2010GatekeeperSpeechBaseFrame,
 				kScene2010OverlayFrameMillis).unskippable(), false);
 	}
 	_gatekeeperSequenceActive = false;
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	if (!sequence.completed())
 		return;
 
-	beginPrimarySpeechLine(3, 0, 0x1c2, 0x78, 0, 0x3f, 0x3f);
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	sequence.primarySpeech(3, 0, 0x1c2, 0x78, 0, 0x3f, 0x3f);
+	if (!sequence.completed())
 		return;
 
 	GameplayState &state = _vm->gameState();
 	const byte replyFrame = state.scene2010LongSequenceFirstSpeechSeen ? 2 : 1;
 	state.scene2010LongSequenceFirstSpeechSeen = true;
-	beginSecondarySpeechLine(3, replyFrame);
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	sequence.secondarySpeech(3, replyFrame)
+		.primarySpeech(3, state.scene2100MummyBranchState == 1 ? 4 : 3,
+			0x1c2, 0x78, 0, 0x3f, 0x3f);
+	if (!sequence.completed())
 		return;
 
-	beginPrimarySpeechLine(3, state.scene2100MummyBranchState == 1 ? 4 : 3,
-		0x1c2, 0x78, 0, 0x3f, 0x3f);
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
-		return;
-
-	BlockingSequence sequence(*this);
 	sequence.commit(_gatekeeperSequenceActive, true)
 		.presentedLayerFrames(kScene2010GatekeeperLayer,
 			AnimationFrameRange(0x1a, 0x1f, kScene2010OverlayFrameMillis).unskippable())

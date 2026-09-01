@@ -261,6 +261,16 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayer
 	return presentedLayerTransition(_scene._sceneLayers, layerId, transition);
 }
 
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::resourceLayerFrames(
+		uint layerId, uint chunkIndex, uint16 descriptorCount, const byte *frameMap,
+		uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd) {
+	if (canRun()) {
+		finishMediaStep(_scene.playResourceLayerSequence(layerId, chunkIndex,
+			descriptorCount, frameMap, frameMapSize, range, clearAtEnd));
+	}
+	return *this;
+}
+
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
 		uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis) {

@@ -120,15 +120,22 @@ protected:
 		}
 
 		// Configures an existing stack layer, presents the range, and optionally clears it.
+		BlockingSequence &resourceLayerFrames(uint layerId, uint chunkIndex,
+			uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
+			const AnimationFrameRange &range, bool clearAtEnd = true);
+		BlockingSequence &resourceLayerFrames(uint layerId, uint chunkIndex,
+				uint16 descriptorCount, const AnimationFrameRange &range,
+				bool clearAtEnd = true) {
+			return resourceLayerFrames(layerId, chunkIndex, descriptorCount,
+				nullptr, 0, range, clearAtEnd);
+		}
+
 		template<uint size>
 		BlockingSequence &resourceLayerFrames(uint layerId, uint chunkIndex,
 				uint16 descriptorCount, const byte (&frameMap)[size],
 				const AnimationFrameRange &range, bool clearAtEnd = true) {
-			if (canRun()) {
-				finishMediaStep(_scene.playResourceLayerSequence(layerId, chunkIndex,
-					descriptorCount, frameMap, range, clearAtEnd));
-			}
-			return *this;
+			return resourceLayerFrames(layerId, chunkIndex, descriptorCount,
+				frameMap, size, range, clearAtEnd);
 		}
 
 		BlockingSequence &layerFrames(SceneLayerStack &layers, uint layerId,
