@@ -60,7 +60,7 @@ const Scene9130SpeechStyle kScene9130SpeechStyles[] = {
 };
 
 Scene9130::Scene9130(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9130"),
+		PresentationScene(vm, "Scene 9130"),
 		_resources(),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),

@@ -43,7 +43,7 @@ const byte kScene9030CurtainBandWidth = 0x14;
 
 Scene9030::Scene9030(HollywoodEngine *vm, const IndexedSurfaceBuffer *previousFramebuffer,
 		const Common::Array<byte> *previousPalette) :
-		IntroSceneBase(vm, "Scene 9030", kScene9030FramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9030", kScene9030FramebufferSize, kFrameBufferSize),
 		_previousFramebuffer(previousFramebuffer),
 		_previousPalette(previousPalette),
 		_rowOffset(0) {

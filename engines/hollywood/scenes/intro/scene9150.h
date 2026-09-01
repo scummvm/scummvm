@@ -23,14 +23,14 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9150_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_scene.h"
+#include "hollywood/scenes/presentation_scene.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9150 : public IntroSceneBase {
+class Scene9150 : public PresentationScene {
 public:
 	Scene9150(HollywoodEngine *vm);
 

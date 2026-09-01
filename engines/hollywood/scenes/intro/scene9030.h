@@ -24,13 +24,13 @@
 
 #include "common/array.h"
 
-#include "hollywood/scenes/intro/intro_scene.h"
+#include "hollywood/scenes/presentation_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9030 : public IntroSceneBase {
+class Scene9030 : public PresentationScene {
 public:
 	Scene9030(HollywoodEngine *vm, const IndexedSurfaceBuffer *previousFramebuffer = nullptr,
 		const Common::Array<byte> *previousPalette = nullptr);

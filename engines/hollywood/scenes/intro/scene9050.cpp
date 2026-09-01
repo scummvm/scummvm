@@ -116,7 +116,7 @@ int getStage9050ResourceI06ScrollDelta(uint frameIndex) {
 }
 
 Scene9050::Scene9050(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Stage 9050"),
+		PresentationScene(vm, "Stage 9050"),
 		_music(),
 		_continuousSound(),
 		_effectSound(),

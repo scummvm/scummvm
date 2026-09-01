@@ -21,10 +21,10 @@ MODULE_OBJS = \
 	resource.o \
 	saveload.o \
 	scenes/chapter_intro_scene.o \
+	scenes/presentation_scene.o \
 	scenes/resource_delta_clip_player.o \
 	scenes/scene_resources.o \
 	scenes/scene_registry.o \
-	scenes/intro/intro_scene.o \
 	scenes/intro/intro_text.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \

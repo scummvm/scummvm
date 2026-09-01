@@ -21,10 +21,6 @@
 
 #include "hollywood/scenes/chapter_intro_scene.h"
 
-#include "common/debug.h"
-#include "common/events.h"
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 #include "hollywood/scenes/resource_delta_clip_player.h"
@@ -32,17 +28,13 @@
 namespace Hollywood {
 
 ChapterIntroScene::ChapterIntroScene(HollywoodEngine *vm, const char *debugName) :
-		_vm(vm),
+		PresentationScene(vm, debugName, kFrameBufferSize, 0),
+		_resources(),
 		_music(),
-		_resourceArenaCursor(0),
-		_debugName(debugName),
-		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+		_paletteResource(),
+		_baseFramebuffer() {
 	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool ChapterIntroScene::play() {
@@ -76,6 +68,14 @@ uint16 ChapterIntroScene::sceneViewportXOffset() const {
 	return 0;
 }
 
+uint ChapterIntroScene::presentXOffset() const {
+	return sceneViewportXOffset();
+}
+
+void ChapterIntroScene::stopAudio() {
+	_music.stop();
+}
+
 void ChapterIntroScene::initializeChapterState() {
 	GameplayState &state = _vm->gameState();
 	state.initializeRonItemResourcePages();
@@ -93,110 +93,27 @@ void ChapterIntroScene::drawInitialFrame() {
 }
 
 bool ChapterIntroScene::load() {
-	if (!_vm->resources()->readChunkTable(Common::Path(resourceArchiveName()), _chunkTable)) {
-		warning("Failed to read %s header", resourceArchiveName());
-		return false;
-	}
-
-	for (uint i = 0; i <= sceneArenaLastChunk(); ++i) {
-		if (!_chunkTable.isValidChunk(i)) {
-			warning("%s is missing %s chunk %u", resourceArchiveName(), _debugName, i);
-			return false;
-		}
-	}
-
-	if (!loadChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
+	if (!_resources.loadChunkTable(resourceArchiveName()))
 		return false;
 
-	uint32 resourceArenaSize = 0;
-	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i)
-		resourceArenaSize += _chunkTable.sizes[i];
+	if (!_resources.validateChunkRange(resourceArchiveName(), _debugName, 0,
+			sceneArenaLastChunk()))
+		return false;
 
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
+	if (!_resources.loadFixedChunk(_debugName, 0, _baseFramebuffer, kFrameBufferSize) ||
+			!_resources.loadFixedChunk(_debugName, 1, _paletteResource, kPaletteSize))
+		return false;
+
+	_resources.allocateArena(_resources.totalChunkSize(sceneArenaFirstChunk(),
+		sceneArenaLastChunk()));
 	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
-		if (!loadArenaChunk(i))
+		if (!_resources.loadArenaChunk(_debugName, i))
 			return false;
 	}
 
 	adjustPaletteAfterLoad();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	return true;
-}
-
-bool ChapterIntroScene::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(resourceArchiveName()), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit %s destination", resourceArchiveName(), index, _debugName);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		resourceArchiveName(), index, (uint)stream->size());
-	return true;
-}
-
-bool ChapterIntroScene::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(resourceArchiveName()), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit %s destination", resourceArchiveName(), index, _debugName);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		resourceArchiveName(), index, (uint)stream->size());
-	return true;
-}
-
-bool ChapterIntroScene::loadArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(resourceArchiveName()), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the %s resource arena", resourceArchiveName(), index, _debugName);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", resourceArchiveName(), index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		resourceArchiveName(), index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
 	return true;
 }
 
@@ -232,10 +149,6 @@ void ChapterIntroScene::fadeOutPalette() {
 	}
 }
 
-void ChapterIntroScene::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette, 0, sceneViewportXOffset());
-}
-
 void ChapterIntroScene::rotatePaletteRange(uint firstIndex, uint lastIndex) {
 	if (firstIndex >= lastIndex || lastIndex >= _paletteCurrent.size() / 3)
 		return;
@@ -250,51 +163,12 @@ void ChapterIntroScene::rotatePaletteRange(uint firstIndex, uint lastIndex) {
 	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 }
 
-bool ChapterIntroScene::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
-}
-
-bool ChapterIntroScene::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			_music.stop();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
 void ChapterIntroScene::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex) {
-	if (!_chunkTable.isValidChunk(chunkIndex))
+	if (!_resources.chunkTable.isValidChunk(chunkIndex))
 		return;
 
-	ResourceDeltaClipPlayer::drawFrame(_resourceArena, _resourceChunkOffsets[chunkIndex],
-		_chunkTable.sizes[chunkIndex], tableEntryCount, frameIndex, _sceneFramebuffer.data(),
+	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[chunkIndex],
+		_resources.chunkTable.sizes[chunkIndex], tableEntryCount, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }
 

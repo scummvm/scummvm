@@ -33,7 +33,7 @@ const uint16 kScene9120MusicCueId = 0x000c;
 const uint16 kScene9120OverlaySoundId = 0x001a;
 
 Scene9120::Scene9120(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9120", kScene9120FramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9120", kScene9120FramebufferSize, kFrameBufferSize),
 		_music(vm->introMusic()),
 		_soundBank0(),
 		_random("hollywood_scene9120"),

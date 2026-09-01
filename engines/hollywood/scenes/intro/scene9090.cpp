@@ -118,7 +118,7 @@ const byte kScene9090InsetFrameMap[] = {
 };
 
 Scene9090::Scene9090(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9090"),
+		PresentationScene(vm, "Scene 9090"),
 		_resources(),
 		_music(vm->introMusic()),
 		_primarySpeech(vm->getLanguage()),

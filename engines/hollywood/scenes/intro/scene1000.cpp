@@ -146,7 +146,7 @@ void Scene1000::runPresentation() {
 			phaseAccumulator -= kTitlePhaseMillis;
 			++phase;
 			if (phase == kTitlePatchPhase) {
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2],
+				drawResourceBlockList(_resources.arena, _resources.chunkOffsets[2],
 					_sceneFramebuffer.managedSurface());
 				_blinkDirty = true;
 			}
@@ -219,20 +219,20 @@ void Scene1000::renderOverlayFrame(bool forceDirty) {
 	const byte blinkDescriptor = kTitleBlinkDescriptorFrameMap[blinkMapIndex];
 
 	if (_blinkDirty) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[3], 0,
 			kBlinkDescriptorCount, blinkDescriptor, _baseFramebuffer.surface(),
 			_sceneFramebuffer.surface());
 	}
 	if (_secondaryDirty && _secondaryVisible) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[4], 0,
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[4], 0,
 			kSecondaryDescriptorCount, _secondaryFrameIndex, _baseFramebuffer.surface(),
 			_sceneFramebuffer.surface());
 	}
 
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
 		kBlinkDescriptorCount, blinkDescriptor, _sceneFramebuffer.surface());
 	if (_secondaryVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[4], 0,
+		drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[4], 0,
 			kSecondaryDescriptorCount, _secondaryFrameIndex, _sceneFramebuffer.surface());
 	}
 

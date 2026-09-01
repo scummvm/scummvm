@@ -44,7 +44,7 @@ const uint kScene9110Chunk3Interval = 75;
 const uint kScene9110MusicFadeInterval = 50;
 
 Scene9110::Scene9110(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9110"),
+		PresentationScene(vm, "Scene 9110"),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
 		_random("hollywood_scene9110"),
