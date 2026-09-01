@@ -240,7 +240,7 @@ void Scene4020::runEntryFromScene4030() {
 	_actionOverlayPlayer.setFrame(0);
 	drawPlayableComposite();
 	BlockingSequence sequence(*this);
-	sequence.paletteTransition(BlockingSequence::kFadeFromBlack)
+	sequence.fadeFromBlack()
 		.layerFrames(_actionOverlayPlayer,
 			AnimationFrameRange(1, ARRAYSIZE(kScene4020ReturnFromD03FrameMap) - 1,
 				kScene4020FrameMillis));

@@ -68,7 +68,6 @@ public:
 	Common::String inventoryItemName(byte itemId) const;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const;
 	SceneSpeechCue stageCue(uint16 rowIndex, byte frameIndex) const;
-	SceneSpeechCue staticSpeechCue(uint16 rowIndex, byte frameIndex) const;
 	bool getStageCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId,
 		byte &continuationCount, uint16 &voiceSampleId) const;
 	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId,
@@ -84,6 +83,8 @@ public:
 	Common::Array<byte> inventoryOwnerLargeRows;
 
 private:
+	SceneSpeechCue staticSpeechCue(uint16 rowIndex, byte frameIndex) const;
+
 	bool readDecodeKey(Common::SeekableReadStream &stream, const char *archiveName);
 	bool readStage(Common::SeekableReadStream &stream, const char *archiveName,
 		uint stageIndex);

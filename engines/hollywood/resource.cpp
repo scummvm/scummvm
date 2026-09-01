@@ -58,17 +58,7 @@ bool ResourceChunkTable::isValidChunk(uint index) const {
 	return index < HollywoodEngine::kResourceChunkCount && sizes[index] != 0;
 }
 
-bool ResourceManager::readChunkTable(const Common::Path &fileName, ResourceChunkTable &table) const {
-	Common::File file;
-	if (!file.open(fileName)) {
-		table.clear();
-		return false;
-	}
-
-	return table.load(file);
-}
-
-Common::SeekableReadStream *ResourceManager::createChunkReadStream(const Common::Path &fileName, uint index) const {
+Common::SeekableReadStream *createResourceChunkReadStream(const Common::Path &fileName, uint index) {
 	if (index >= HollywoodEngine::kResourceChunkCount)
 		return nullptr;
 

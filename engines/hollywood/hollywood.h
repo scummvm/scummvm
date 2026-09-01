@@ -46,7 +46,6 @@ enum HollywoodDebugChannels {
 	kDebugPath
 };
 
-class ResourceManager;
 class HollywoodFont;
 
 class HollywoodEngine : public Engine {
@@ -71,7 +70,6 @@ public:
 	bool isDemo() const;
 	bool hasSpeechData() const;
 
-	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }
 	HollywoodCursor *cursor() { return &_cursor; }
 	MusicPlayer *introMusic() { return &_introMusic; }
@@ -108,7 +106,6 @@ private:
 	void normalizeLoadedGameState();
 
 	const ADGameDescription *_gameDescription;
-	ResourceManager *_resources;
 	HollywoodFont *_font;
 	HollywoodCursor _cursor;
 	MusicPlayer _introMusic;
