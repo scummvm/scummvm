@@ -40,6 +40,15 @@ public:
 	bool play();
 
 private:
+	enum BlockingAnimationMode {
+		kNoBlockingAnimation,
+		kResourceI05ClipAnimation,
+		kInterClipRevealAnimation,
+		kInterClipReverseAnimation,
+		kResourceI08BlinkAnimation,
+		kResourceI07FinalAnimation
+	};
+
 	bool loadResourceI06Assets();
 	bool loadResourceI05ClipSegment(byte segmentId);
 	bool loadResourceI08BlinkAssets();
@@ -64,6 +73,7 @@ private:
 	void advanceResourceI06VerticalBob();
 	void advanceResourceI06PalettePulse();
 	void markResourceI06CompositeDirty();
+	bool runResourceI06AnimationLoop(bool interlude, bool runScriptedSpriteSequence);
 	void ensureContinuousSound(byte cueId, byte volumePercent);
 	void stopContinuousSound();
 
@@ -80,6 +90,11 @@ private:
 	bool waitResourceI08BlinkLoop(uint32 millis);
 	bool runResourceI07FinalAnimation();
 	bool waitSceneCounterPast(uint threshold);
+	bool playBlockingAnimation(BlockingAnimationMode mode, byte firstFrame,
+		byte lastFrame, uint32 frameMillis, byte chunkIndex = 0,
+		bool waitAfterFinalFrame = false);
+	void presentAnimationFrame() override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
 	void stopAudio() override;
 
@@ -105,9 +120,7 @@ private:
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _clipBaseFramebuffer;
 	uint32 _i05ClipChunkSize;
-	uint32 _i05ClipFrameAccumulator;
-	uint32 _i05InterClipAccumulator;
-	uint32 _i08BlinkAccumulator;
+	byte _i05ClipFrameCount;
 	uint32 _i06ScrollAccumulator;
 	uint32 _i06PrimarySpriteAccumulator;
 	uint32 _i06SecondarySpriteAccumulator;
@@ -130,6 +143,9 @@ private:
 	byte _currentMusicCue;
 	byte _continuousSoundCue;
 	byte _i05EntriesPerSegment;
+	BlockingAnimationMode _blockingAnimationMode;
+	byte _blockingAnimationFrame;
+	byte _blockingAnimationChunk;
 	bool _i06OptionalOverlayChunk5Enabled;
 	bool _i06BaseFrameDirty;
 	bool _i06PrimarySpriteDirty;
