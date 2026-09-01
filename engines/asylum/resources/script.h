@@ -333,6 +333,8 @@ private:
 	Script           *_currentScript;
 	ScriptQueueEntry *_currentQueueEntry;
 
+	void patchScriptData();
+
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectTransparency type);
 	void setActionFlag(ScriptEntry *cmd, ActionType flag); //|

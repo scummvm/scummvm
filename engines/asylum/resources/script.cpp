@@ -261,6 +261,10 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 		_scripts.push_back(script);
 	}
 
+	patchScriptData();
+}
+
+void ScriptManager::patchScriptData() {
 	// Patch for Chapter 2 Lockout bug
 	if (_vm->checkGameVersion("Unpatched") && getWorld()->chapter == kChapter2) {
 		_scripts[ 3].commands[ 2].param1 = 1506;
@@ -273,11 +277,27 @@ void ScriptManager::load(Common::SeekableReadStream *stream) {
 		_scripts[1].commands[6].param2 = 151;
 		_scripts[1].commands[6].param3 = 332;
 	}
+
+	// Script 13 cancels a pending wagon exit fade by setting flag 480. The
+	// shipped command tests flag 479, which remains set until that fade ends.
+	if (getWorld()->chapter == kChapter4) {
+		ScriptEntry &wagonEnter = _scripts[13].commands[0];
+
+		if (wagonEnter.opcode == kOpcodeJumpIfGameFlag
+		 && wagonEnter.param1 == 479
+		 && wagonEnter.param2 == 0
+		 && wagonEnter.param3 == 4) {
+			wagonEnter.param1 = 480;
+		}
+	}
 }
 
 void ScriptManager::saveLoadWithSerializer(Common::Serializer &s) {
 	for (uint i = 0; i < _scripts.size(); i++)
 		_scripts[i].saveLoadWithSerializer(s);
+
+	if (s.isLoading())
+		patchScriptData();
 }
 
 // Save the script queue (in the original, it is part of the shared data)
