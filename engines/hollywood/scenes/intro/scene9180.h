@@ -25,7 +25,7 @@
 #include "common/random.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
@@ -73,7 +73,7 @@ private:
 		Common::Array<Common::String> &lines) const;
 	uint subtitleTextWidth(const Common::String &text) const;
 
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	SpeechPlayer _speech;
 	SoundBank0Player _loopSound;
 	SoundBank0Player _effectSound;

@@ -22,8 +22,8 @@ MODULE_OBJS = \
 	saveload.o \
 	scenes/chapter_intro_scene.o \
 	scenes/resource_delta_clip_player.o \
+	scenes/scene_resources.o \
 	scenes/scene_registry.o \
-	scenes/intro/intro_resource_set.o \
 	scenes/intro/intro_scene.o \
 	scenes/intro/intro_text.o \
 	scenes/intro/scene1000.o \
@@ -127,7 +127,6 @@ MODULE_OBJS = \
 	scenes/playable/scene8000.o \
 	scenes/playable/scene8010.o \
 	scenes/playable/scene8020.o \
-	scenes/playable/scene_resources.o \
 	scenes/playable/scene_surface_state.o \
 	scenes/playable/scene_text_store.o \
 	scenes/playable/speech_controller.o \

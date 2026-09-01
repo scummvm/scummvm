@@ -27,7 +27,7 @@
 #include "common/str.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
@@ -127,7 +127,7 @@ private:
 	MusicPlayer *_music;
 	SpeechPlayer _speech;
 	Common::RandomSource _random;
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	Common::Array<byte> _stage003DecodeKey;

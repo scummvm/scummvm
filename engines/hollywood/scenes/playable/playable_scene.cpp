@@ -1015,7 +1015,6 @@ bool PlayableScene::load() {
 		return false;
 	}
 	if (!_resources.loadChunkTable(archiveName)) {
-		warning("Failed to read %s header", archiveName);
 		warning("%s load failed: %s chunk table", sceneDebugName(), archiveName);
 		return false;
 	}

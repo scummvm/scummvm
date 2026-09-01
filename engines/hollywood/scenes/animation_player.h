@@ -19,13 +19,13 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_PLAYER_H
-#define HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_PLAYER_H
+#ifndef HOLLYWOOD_SCENES_ANIMATION_PLAYER_H
+#define HOLLYWOOD_SCENES_ANIMATION_PLAYER_H
 
 #include "common/array.h"
 #include "common/types.h"
 
-#include "hollywood/scenes/playable/animation_events.h"
+#include "hollywood/scenes/animation_events.h"
 
 namespace Hollywood {
 
@@ -256,4 +256,4 @@ private:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_PLAYER_H
+#endif // HOLLYWOOD_SCENES_ANIMATION_PLAYER_H

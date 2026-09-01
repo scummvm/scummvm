@@ -23,7 +23,7 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9140_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
@@ -81,7 +81,7 @@ private:
 	uint subtitleTextWidth(const Common::String &text) const;
 	void fadeOutPalette();
 
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	SpeechPlayer _speech;
 	IntroTextStore _text;
 	Common::Array<byte> _paletteResource;
