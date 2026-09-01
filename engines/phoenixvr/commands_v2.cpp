@@ -347,6 +347,8 @@ struct Set_Jump_Key : public Command {
 			key = 0;
 		else if (keyName == "_KEY_RIGHT_CLIC")
 			key = 12;
+		else if (keyName == "_KEY_Q" || keyName == "_KEY_SPACE")
+			warning("unhandled key name: %s", keyName.c_str());
 		else
 			error("unhandled key name: %s", keyName.c_str());
 	}
