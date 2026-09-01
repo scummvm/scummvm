@@ -149,8 +149,8 @@ Scene5110::Scene5110(HollywoodEngine *vm) :
 		_centerSalonDetailSequenceActive(false),
 		_werewolfDialogueActive(false) {
 	_sceneLayers.configure(kScene5110LayerSpecs);
-	_randomDetailTrack = _realtimeAnimationTracks.addRandom(_sceneLayers,
-		kScene5110RandomDetailLayer, kScene5110FrameMillis, 0, 3, true);
+	_randomDetailTrack = _realtimeAnimationTracks.addRandom(kScene5110RandomDetailLayer,
+		kScene5110FrameMillis, 0, 3, true);
 }
 
 int Scene5110::replacementFillRunsResourceChunkIndex() const {

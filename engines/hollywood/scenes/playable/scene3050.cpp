@@ -115,8 +115,7 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		_foregroundActorIdleSpeechTimer(0),
 		_foregroundActorIdleSpeechDuration(0) {
 	_sceneLayers.configure(kScene3050LayerSpecs);
-	_backgroundTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
-		kScene3050BackgroundLayer, kScene3050BackgroundFrameMillis);
+	_backgroundTrack = _realtimeAnimationTracks.addFrameMap(kScene3050BackgroundLayer, kScene3050BackgroundFrameMillis);
 }
 
 void Scene3050::initializeCustomPreviewState() {

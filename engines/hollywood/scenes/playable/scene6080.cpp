@@ -111,8 +111,7 @@ Scene6080::Scene6080(HollywoodEngine *vm) :
 		_escapeLayersSwitched(false),
 		_finalSueAnimationActive(false) {
 	_sceneLayers.configure(kScene6080LayerSpecs);
-	_guardIdleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kGuardNormalLayer, kScene6080GuardFrameMillis, 6);
+	_guardIdleTrack = _realtimeAnimationTracks.addLoop(kGuardNormalLayer, kScene6080GuardFrameMillis, 6);
 }
 
 void Scene6080::initializeCustomPreviewState() {

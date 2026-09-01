@@ -79,8 +79,8 @@ Scene3040::Scene3040(HollywoodEngine *vm) :
 		_foregroundActorBlinkActive(false),
 		_foregroundActionActive(false) {
 	_sceneLayers.configure(kScene3040LayerSpecs);
-	_loopTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene3040LoopLayer, kScene3040LoopFrameMillis, kScene3040LoopDescriptorCount);
+	_loopTrack = _realtimeAnimationTracks.addLoop(kScene3040LoopLayer,
+		kScene3040LoopFrameMillis, kScene3040LoopDescriptorCount);
 }
 
 void Scene3040::initializeCustomPreviewState() {

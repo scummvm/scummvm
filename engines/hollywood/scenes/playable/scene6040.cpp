@@ -90,11 +90,9 @@ Scene6040::Scene6040(HollywoodEngine *vm) :
 		_leftToggleTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_rightToggleTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene6040LayerSpecs);
-	_leftToggleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene6040LeftToggleLayer, kScene6040LeftToggleMillis,
+	_leftToggleTrack = _realtimeAnimationTracks.addLoop(kScene6040LeftToggleLayer, kScene6040LeftToggleMillis,
 		kScene6040ToggleDescriptorCount);
-	_rightToggleTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene6040RightToggleLayer, kScene6040RightToggleMillis,
+	_rightToggleTrack = _realtimeAnimationTracks.addLoop(kScene6040RightToggleLayer, kScene6040RightToggleMillis,
 		kScene6040ToggleDescriptorCount);
 }
 

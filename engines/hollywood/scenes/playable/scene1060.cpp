@@ -215,8 +215,7 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_juniorPoseSequenceActive(false),
 		_juniorConversationActive(false) {
 	_sceneLayers.configure(kScene1060LayerSpecs);
-	_smallLoopTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kSmallLoopLayer, kScene1060FrameMillis, 5);
+	_smallLoopTrack = _realtimeAnimationTracks.addLoop(kSmallLoopLayer, kScene1060FrameMillis, 5);
 }
 
 void Scene1060::initializeCustomPreviewState() {
