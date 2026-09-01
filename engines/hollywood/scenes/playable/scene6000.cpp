@@ -21,9 +21,6 @@
 
 #include "hollywood/scenes/playable/scene6000.h"
 
-#include "common/events.h"
-#include "common/system.h"
-
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -96,17 +93,12 @@ void Scene6000::runPresentation() {
 	uint tick = 0;
 	uint32 frameAccumulator = 0;
 	uint32 spriteAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
 	bool spriteVisible = false;
 	bool spriteDirty = false;
+	TimedPresentationLoop loop(*this, TimedPresentationLoop::kUntilStopped);
 
-	while (tick < kScene6000EndTick && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (tick < kScene6000EndTick && loop.beginFrame()) {
 		frameAccumulator += delta;
 		if (spriteVisible)
 			spriteAccumulator += delta;
@@ -138,7 +130,7 @@ void Scene6000::runPresentation() {
 			drawAnimatedSpriteFrame(spriteVisible);
 			spriteDirty = false;
 		}
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 }
 

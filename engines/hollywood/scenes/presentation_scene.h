@@ -41,7 +41,13 @@ protected:
 	// Each successful beginFrame() must be followed by finishFrame().
 	class TimedPresentationLoop {
 	public:
+		enum DurationMode {
+			kUntilStopped
+		};
+
 		TimedPresentationLoop(PresentationScene &scene, uint32 durationMillis,
+			uint32 maximumSliceMillis = 10, bool allowSkip = true);
+		TimedPresentationLoop(PresentationScene &scene, DurationMode,
 			uint32 maximumSliceMillis = 10, bool allowSkip = true);
 
 		bool beginFrame();
@@ -54,6 +60,7 @@ protected:
 		uint32 _elapsedMillis;
 		uint32 _sliceMillis;
 		bool _allowSkip;
+		bool _durationLimited;
 	};
 
 	PresentationScene(HollywoodEngine *vm, const char *debugName,

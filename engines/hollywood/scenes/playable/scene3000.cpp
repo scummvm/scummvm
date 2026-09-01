@@ -21,9 +21,6 @@
 
 #include "hollywood/scenes/playable/scene3000.h"
 
-#include "common/events.h"
-#include "common/system.h"
-
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -98,17 +95,12 @@ void Scene3000::runPresentation() {
 	uint32 largeAccumulator = 0;
 	uint32 smallAccumulator = 0;
 	uint32 clipAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
 	bool largeDirty = false;
 	bool smallDirty = false;
+	TimedPresentationLoop loop(*this, TimedPresentationLoop::kUntilStopped);
 
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (loop.beginFrame()) {
 		largePaletteAccumulator += delta;
 		smallPaletteAccumulator += delta;
 		largeAccumulator += delta;
@@ -166,7 +158,7 @@ void Scene3000::runPresentation() {
 		if (_clipFrame >= kScene3000ClipFinalFrame)
 			return;
 
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 }
 

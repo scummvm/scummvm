@@ -36,22 +36,38 @@ PresentationScene::TimedPresentationLoop::TimedPresentationLoop(PresentationScen
 		_maximumSliceMillis(MAX<uint32>(maximumSliceMillis, 1)),
 		_elapsedMillis(0),
 		_sliceMillis(0),
-		_allowSkip(allowSkip) {
+		_allowSkip(allowSkip),
+		_durationLimited(true) {
+}
+
+PresentationScene::TimedPresentationLoop::TimedPresentationLoop(PresentationScene &scene,
+		DurationMode, uint32 maximumSliceMillis, bool allowSkip) :
+		_scene(scene),
+		_durationMillis(0),
+		_maximumSliceMillis(MAX<uint32>(maximumSliceMillis, 1)),
+		_elapsedMillis(0),
+		_sliceMillis(0),
+		_allowSkip(allowSkip),
+		_durationLimited(false) {
 }
 
 bool PresentationScene::TimedPresentationLoop::beginFrame() {
-	if (_elapsedMillis >= _durationMillis || _scene._skipRequested || Engine::shouldQuit())
+	if ((_durationLimited && _elapsedMillis >= _durationMillis) ||
+			_scene._skipRequested || Engine::shouldQuit())
 		return false;
 	if (_scene.pollEvents(_allowSkip))
 		return false;
 
-	_sliceMillis = MIN<uint32>(_durationMillis - _elapsedMillis, _maximumSliceMillis);
+	_sliceMillis = _durationLimited ?
+		MIN<uint32>(_durationMillis - _elapsedMillis, _maximumSliceMillis) :
+		_maximumSliceMillis;
 	return true;
 }
 
 uint32 PresentationScene::TimedPresentationLoop::finishFrame() {
 	g_system->delayMillis(_sliceMillis);
-	_elapsedMillis += _sliceMillis;
+	if (_durationLimited)
+		_elapsedMillis += _sliceMillis;
 	return _sliceMillis;
 }
 

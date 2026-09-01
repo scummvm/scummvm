@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene8000.h"
 
-#include "common/system.h"
-
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
@@ -119,17 +117,12 @@ void Scene8000::runPresentation() {
 	uint32 paletteAccumulator = 0;
 	uint32 mainAccumulator = 0;
 	uint32 secondaryAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
 	bool mainDirty = false;
 	bool secondaryDirty = false;
+	TimedPresentationLoop loop(*this, TimedPresentationLoop::kUntilStopped);
 
-	while (_tick < kScene8000EndTick && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (_tick < kScene8000EndTick && loop.beginFrame()) {
 		secondAccumulator += delta;
 		paletteAccumulator += delta;
 		mainAccumulator += delta;
@@ -179,7 +172,7 @@ void Scene8000::runPresentation() {
 			secondaryDirty = false;
 		}
 
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 
 	_backgroundSound.stop();

@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene5000.h"
 
-#include "common/system.h"
-
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -108,16 +106,11 @@ void Scene5000::runPresentation() {
 	uint32 phaseAccumulator = 0;
 	uint32 spriteAccumulator = kScene5000SpriteFrameMillis;
 	uint32 clipAccumulator = kScene5000ClipFrameMillis;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
 	bool spriteDirty = false;
+	TimedPresentationLoop loop(*this, TimedPresentationLoop::kUntilStopped);
 
-	while (tick < kScene5000EndTick && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (tick < kScene5000EndTick && loop.beginFrame()) {
 		phaseAccumulator += delta;
 		spriteAccumulator += delta;
 		clipAccumulator += delta;
@@ -156,7 +149,7 @@ void Scene5000::runPresentation() {
 			spriteDirty = false;
 		}
 
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 
 	_ambientSound.stop();
