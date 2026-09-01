@@ -567,16 +567,6 @@ void Scene4060::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	closeSherilynSpeechPose();
 }
 
-void Scene4060::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId == 1 && _sceneChunkTable.isValidChunk(kScene4060FirstCardPatchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060FirstCardPatchChunk], _baseFramebuffer);
-	else if (hookId == 2 && _sceneChunkTable.isValidChunk(kScene4060SecondCardPatchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060SecondCardPatchChunk], _baseFramebuffer);
-	else if (hookId == 3 && _sceneChunkTable.isValidChunk(kScene4060MirrorInstalledPatchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060MirrorInstalledPatchChunk], _baseFramebuffer);
-}
-
 void Scene4060::resetForegroundLayer() {
 	_foregroundChannel.reset(0, kScene4060FrameMillis);
 	_foregroundScrollStep = 0;
@@ -708,7 +698,7 @@ void Scene4060::runFirstCardStage() {
 
 	runActorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
 		kScene4060FirstCardFrameMap, ARRAYSIZE(kScene4060FirstCardFrameMap), kScene4060FrameMillis)
-		.hookAt(6, 1).noFinalFrameDelay().noRedrawAtEnd());
+		.resourcePatchAt(6, kScene4060FirstCardPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
 	state.scene4060PictureCardStage = kScene4060CardStateFirstWon;
 	applySceneStateToHotspotsAndPatches(0);
 	addInventoryItem(kScene4060FirstWonCardItem);
@@ -723,7 +713,7 @@ void Scene4060::runSecondCardStage() {
 
 	runActorReplacement(ActionOverlaySpec(kScene4060SecondCardOverlayChunk, kScene4060SecondCardOverlayDescriptorCount,
 		kScene4060SecondCardFrameMap, ARRAYSIZE(kScene4060SecondCardFrameMap), kScene4060FrameMillis)
-		.hookAt(5, 2).noFinalFrameDelay().noRedrawAtEnd());
+		.resourcePatchAt(5, kScene4060SecondCardPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
 	state.scene4060PerfumeBottleCardStage = kScene4060SecondCardStateWon;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene4060SecondWonCardItem);
@@ -741,7 +731,7 @@ void Scene4060::runInstallMirrorStage() {
 	beginSecondarySpeechLine(0x11, 1);
 	runActorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
 		kScene4060InstallMirrorFrameMap, ARRAYSIZE(kScene4060InstallMirrorFrameMap), kScene4060FrameMillis)
-		.hookAt(7, 3).noFinalFrameDelay().noRedrawAtEnd());
+		.resourcePatchAt(7, kScene4060MirrorInstalledPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
 	state.scene4060PictureCardStage = kScene4060CardStateMirrorInstalled;
 	applySceneStateToHotspotsAndPatches(0);
 	removeInventoryItem(kScene4060MirrorItem);

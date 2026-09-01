@@ -40,7 +40,6 @@ const byte kScene6100CharlieSpeechGroup = 0;
 const byte kScene6100LetterSpeechGroup = 1;
 const uint16 kScene6100CharlieDialogueRow = 99;
 const uint16 kScene6100EnvelopeRow = 9;
-const byte kScene6100BriefcasePatchHook = 1;
 const byte kScene6100BriefcaseItem = 0x65;
 const byte kScene6100BillyFordEnvelopeItem = 0x69;
 
@@ -579,7 +578,8 @@ void Scene6100::takeCharlieBriefcase() {
 	_charlieManualSequenceActive = true;
 	runActorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
 		ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
-		.hookAt(7, kScene6100BriefcasePatchHook));
+		.commitAt(7, state.scene6100BriefcasePresent, false)
+		.patchAt(7, 2));
 	_charlieManualSequenceActive = false;
 	if (state.scene6100BriefcasePresent) {
 		state.scene6100BriefcasePresent = false;
@@ -587,15 +587,6 @@ void Scene6100::takeCharlieBriefcase() {
 	}
 	addInventoryItem(kScene6100BriefcaseItem);
 	_soundBank0.playSample(1, 100);
-}
-
-void Scene6100::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene6100BriefcasePatchHook || frame != 7)
-		return;
-
-	GameplayState &state = _vm->gameState();
-	state.scene6100BriefcasePresent = false;
-	applySceneStateToHotspotsAndPatches(2);
 }
 
 void Scene6100::giveBillyFordEnvelopeToCharlie() {

@@ -61,12 +61,6 @@ const byte kScene2020TigerToothInventoryItem = 0x26;
 const byte kScene2020SteakInventoryItem = 0x45;
 const byte kScene2020LabInventoryItem = 0x11;
 
-enum Scene2020OverlayHook {
-	kScene2020HatPickupPatchHook = 1,
-	kScene2020SunglassesPickupPatchHook = 2,
-	kScene2020TigerToothPickupPatchHook = 3
-};
-
 const byte kScene2020PoolFrameMap[] = {
 	0, 1, 0, 2
 };
@@ -336,11 +330,6 @@ void Scene2020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	(void)animationGroup;
 	if (!_vm->gameState().scene2020PrincessGone)
 		princessLayer().setFrame(frameIndex);
-}
-
-void Scene2020::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	drawPickupPatch(hookId);
 }
 
 AmbientAudioProfile Scene2020::ambientAudioProfile() const {
@@ -798,7 +787,7 @@ void Scene2020::runHatPickup() {
 
 	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
 		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.hookAt(4, kScene2020HatPickupPatchHook)
+		.resourcePatchAt(4, state.scene2020SunglassesPresent ? 9 : 10)
 		.noFinalFrameDelay());
 	state.scene2020HatPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -820,7 +809,7 @@ void Scene2020::runSunglassesPickup() {
 
 	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
 		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.hookAt(4, kScene2020SunglassesPickupPatchHook)
+		.resourcePatchAt(4, state.scene2020HatPresent ? 8 : 10)
 		.noFinalFrameDelay());
 	state.scene2020SunglassesPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -839,7 +828,7 @@ void Scene2020::runTigerToothPickup() {
 	_princessLongIdleAllowed = false;
 	runActorReplacement(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
 		kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
-		.hookAt(7, kScene2020TigerToothPickupPatchHook)
+		.resourcePatchAt(7, 17)
 		.noFinalFrameDelay());
 	_princessLongIdleAllowed = previousLongIdleAllowed;
 	_vm->gameState().scene2020TigerToothState = 2;
@@ -898,27 +887,6 @@ bool Scene2020::runTigerItemOverlaySequence(bool withEffect) {
 	drawPlayableComposite();
 	presentFrame();
 	return completed;
-}
-
-void Scene2020::drawPickupPatch(byte hookId) {
-	uint patchChunk = 0;
-	const GameplayState &state = _vm->gameState();
-	switch (hookId) {
-	case kScene2020HatPickupPatchHook:
-		patchChunk = state.scene2020SunglassesPresent ? 9 : 10;
-		break;
-	case kScene2020SunglassesPickupPatchHook:
-		patchChunk = state.scene2020HatPresent ? 8 : 10;
-		break;
-	case kScene2020TigerToothPickupPatchHook:
-		patchChunk = 17;
-		break;
-	default:
-		return;
-	}
-
-	if (_sceneChunkTable.isValidChunk(patchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
 }
 
 void Scene2020::replaceColorMapItem(byte sourceItem, byte destinationItem) {

@@ -55,7 +55,6 @@ const byte kScene1080PrimarySpeechTextColor = 0xfb;
 const byte kScene1080FrancoisWorkSoundFirstCue = 0x34;
 const byte kScene1080FrancoisWorkSoundCueCount = 3;
 const byte kScene1080BalloonSoundCue = 0x33;
-const byte kScene1080BalloonSoundHook = 1;
 const byte kScene1080FirstAmbientMusicCue = 0x0b;
 const byte kScene1080AmbientMusicCueCount = 5;
 const uint kScene1080FrancoisLayer = 0;
@@ -270,16 +269,6 @@ AmbientAudioProfile Scene1080::ambientAudioProfile() const {
 	profile.musicVolumePercent = 100;
 	profile.musicProbabilityModulus = 50;
 	return profile;
-}
-
-void Scene1080::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene1080BalloonSoundHook)
-		return;
-
-	if (frame == 8)
-		_soundBank0.playSample(kScene1080BalloonSoundCue, 30, true);
-	else if (frame == 47)
-		_soundBank0.stop();
 }
 
 void Scene1080::resetAnimationLayers() {
@@ -501,7 +490,9 @@ void Scene1080::handleFrancoisDistraction() {
 		return;
 	runActorReplacement(ActionOverlaySpec(10, kScene1080BalloonDescriptorCount,
 		kScene1080BalloonFrameMap, ARRAYSIZE(kScene1080BalloonFrameMap),
-		kScene1080FrameMillis).hookEveryFrame(kScene1080BalloonSoundHook));
+		kScene1080FrameMillis)
+		.loopingSoundAt(8, kScene1080BalloonSoundCue, 30)
+		.stopSoundAt(47));
 	_soundBank0.stop();
 
 	if (hasInventoryItem(0x4d))

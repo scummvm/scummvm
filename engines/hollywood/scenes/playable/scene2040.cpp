@@ -50,7 +50,6 @@ const uint kScene2040EyePaletteChunk = 15;
 const uint kScene2040BaseOpeningDeltaChunk = 18;
 const byte kScene2040EyePaletteFirstColor = 0xf2;
 const byte kScene2040EyePaletteLastColor = 0xf9;
-const byte kScene2040FlowerPickupHook = 1;
 const byte kScene2040SphinxNoseHook = 2;
 const byte kScene2040EyeExchangeFirstHook = 3;
 const byte kScene2040EyeExchangeSecondHook = 4;
@@ -470,7 +469,7 @@ void Scene2040::runFlowerPickup() {
 	runActorReplacement(ActionOverlaySpec(13, kScene2040FlowerPickupDescriptorCount,
 		kScene2040FlowerPickupFrameMap, ARRAYSIZE(kScene2040FlowerPickupFrameMap),
 		kScene2040ActionFrameMillis)
-		.hookAt(6, kScene2040FlowerPickupHook));
+		.resourcePatchAt(6, 10));
 	_vm->gameState().scene2040SphinxItemRevealed = 0;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(0x2c);
@@ -592,10 +591,6 @@ void Scene2040::runBaseOpeningDeltaSequence() {
 
 void Scene2040::handleAnimationFrameHook(byte hookId, uint frame) {
 	switch (hookId) {
-	case kScene2040FlowerPickupHook:
-		if (_sceneChunkTable.isValidChunk(10))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
-		break;
 	case kScene2040SphinxNoseHook:
 		if (frame < ARRAYSIZE(kScene2040SphinxNoseFrameMap)) {
 			const byte descriptor = kScene2040SphinxNoseFrameMap[frame];

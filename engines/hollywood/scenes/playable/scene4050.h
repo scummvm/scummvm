@@ -47,7 +47,6 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();

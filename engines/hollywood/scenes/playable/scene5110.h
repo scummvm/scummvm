@@ -58,7 +58,6 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 
 	bool runEntryElevatorSequence(bool alternateEntry);

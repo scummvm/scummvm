@@ -25,10 +25,12 @@
 #include "common/array.h"
 #include "common/types.h"
 
+#include "hollywood/scenes/playable/animation_events.h"
+
 namespace Hollywood {
 
 // Inclusive playback range. Ordered and repeated playback remap the frame sent
-// to the target while hooks continue to receive the playback frame.
+// to the target while events continue to receive the playback frame.
 struct AnimationFrameRange {
 	AnimationFrameRange(uint newFirstFrame, uint newLastFrame, uint32 newFrameMillis) :
 			firstFrame(newFirstFrame),
@@ -36,9 +38,6 @@ struct AnimationFrameRange {
 			frameMillis(newFrameMillis),
 			allowSkip(true),
 			waitAfterFinalFrame(true),
-			hookFrame(-1),
-			hookOnEveryFrame(false),
-			hookId(0),
 			frameOrder(nullptr),
 			repeatedFrame(-1) {
 	}
@@ -60,15 +59,58 @@ struct AnimationFrameRange {
 	}
 
 	AnimationFrameRange &hookAt(int frame, byte id) {
-		hookFrame = frame;
-		hookOnEveryFrame = false;
-		hookId = id;
+		events.addCustomHook(frame, id);
 		return *this;
 	}
 
 	AnimationFrameRange &hookEveryFrame(byte id) {
-		hookOnEveryFrame = true;
-		hookId = id;
+		events.addCustomHook(-1, id, true);
+		return *this;
+	}
+
+	AnimationFrameRange &patchAt(int frame, byte selector) {
+		events.addFramebufferPatch(frame, selector);
+		return *this;
+	}
+
+	AnimationFrameRange &resourcePatchAt(int frame, uint chunkIndex) {
+		events.addResourcePatch(frame, chunkIndex);
+		return *this;
+	}
+
+	AnimationFrameRange &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, false);
+		return *this;
+	}
+
+	AnimationFrameRange &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, true);
+		return *this;
+	}
+
+	AnimationFrameRange &stopSoundAt(int frame) {
+		events.addStopSound(frame);
+		return *this;
+	}
+
+	AnimationFrameRange &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex, byte speechId = 0) {
+		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
+		return *this;
+	}
+
+	AnimationFrameRange &layerFrameAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerFrame(frame, layerId, layerFrame);
+		return *this;
+	}
+
+	template<class T, class V>
+	AnimationFrameRange &commitAt(int frame, T &target, const V &value) {
+		events.addStateCommit(frame, target, value);
+		return *this;
+	}
+
+	AnimationFrameRange &invalidatePaletteAt(int frame) {
+		events.addPaletteInvalidation(frame);
 		return *this;
 	}
 
@@ -89,11 +131,9 @@ struct AnimationFrameRange {
 	uint32 frameMillis;
 	bool allowSkip;
 	bool waitAfterFinalFrame;
-	int hookFrame;
-	bool hookOnEveryFrame;
-	byte hookId;
 	const byte *frameOrder;
 	int repeatedFrame;
+	AnimationFrameEvents events;
 };
 
 /**
@@ -155,7 +195,7 @@ struct FullscreenDeltaAnimationSpec {
 /**
  * Drives an inclusive frame range on any target exposing setFrame(byte).
  *
- * Hooks run after the target changes and before the frame wait. The delegate
+ * Events run after the target changes and before the frame wait. The delegate
  * owns event pumping and scene advancement; playAndPresent() also asks it to
  * present every new frame immediately. A range may present its terminal frame
  * without holding it for another interval. Playback stops uniformly on a
@@ -168,6 +208,10 @@ public:
 	virtual bool animationPlaybackShouldStop() const = 0;
 	virtual void presentAnimationFrame() = 0;
 	virtual bool waitForAnimationFrame(uint32 millis, bool allowSkip) = 0;
+	virtual void handleAnimationFrameEvent(const AnimationFrameEvent &event, uint frame) {
+		if (event.type == AnimationFrameEvent::kCustomHook)
+			handleAnimationFrameHook(event.hookId, frame);
+	}
 	virtual void handleAnimationFrameHook(byte hookId, uint frame) {
 		(void)hookId;
 		(void)frame;
@@ -213,8 +257,11 @@ private:
 				return false;
 
 			target.setFrame(range.targetFrame(frame));
-			if (range.hookId != 0 && (range.hookOnEveryFrame || frame == range.hookFrame))
-				_delegate.handleAnimationFrameHook(range.hookId, frame);
+			const Common::Array<AnimationFrameEvent> &events = range.events.entries();
+			for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
+				if (events[eventIndex].matches(frame))
+					_delegate.handleAnimationFrameEvent(events[eventIndex], frame);
+			}
 			if (presentBeforeWait) {
 				_delegate.presentAnimationFrame();
 				if (_delegate.animationPlaybackShouldStop())

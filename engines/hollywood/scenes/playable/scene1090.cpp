@@ -39,7 +39,6 @@ const uint32 kScene1090SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene1090FrameMillis = 75;
 const uint kScene1090SwitchDescriptorCount = 6;
 const uint kScene1090WrappedBrainPickupDescriptorCount = 0x0e;
-const byte kScene1090LightSwitchHook = 1;
 
 const byte kScene1090SwitchFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0, 5 };
 const byte kScene1090WrappedBrainPickupFrameMap[] = {
@@ -116,16 +115,6 @@ bool Scene1090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	rebuildPantryWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	return true;
-}
-
-void Scene1090::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId != kScene1090LightSwitchHook)
-		return;
-
-	_vm->gameState().scene1090LightsOn = !_vm->gameState().scene1090LightsOn;
-	applySceneStateToHotspotsAndPatches(1);
-	invalidatePresentationPalette();
 }
 
 AmbientAudioProfile Scene1090::ambientAudioProfile() const {
@@ -236,9 +225,12 @@ void Scene1090::applyWrappedBrainPatch() {
 }
 
 void Scene1090::runSwitchAction() {
+	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(8, kScene1090SwitchDescriptorCount,
 		kScene1090SwitchFrameMap, ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis)
-		.hookAt(5, kScene1090LightSwitchHook));
+		.commitAt(5, state.scene1090LightsOn, !state.scene1090LightsOn)
+		.patchAt(5, 1)
+		.invalidatePaletteAt(5));
 }
 
 void Scene1090::revealWrappedBrain() {

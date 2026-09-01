@@ -799,6 +799,43 @@ void PlayableScene::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 }
 
+void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, uint frame) {
+	switch (event.type) {
+	case AnimationFrameEvent::kFramebufferPatch:
+		applySceneStateToHotspotsAndPatches(event.selector);
+		break;
+	case AnimationFrameEvent::kResourcePatch:
+		if (_sceneChunkTable.isValidChunk(event.resourceChunk))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[event.resourceChunk], _baseFramebuffer);
+		break;
+	case AnimationFrameEvent::kSound:
+		_soundBank0.playSample(event.soundId, event.soundVolumePercent);
+		break;
+	case AnimationFrameEvent::kLoopingSound:
+		_soundBank0.playSampleLooping(event.soundId, event.soundVolumePercent);
+		break;
+	case AnimationFrameEvent::kStopSound:
+		_soundBank0.stop();
+		break;
+	case AnimationFrameEvent::kSecondarySpeech:
+		startRealtimeSecondarySpeechLine(event.speechRow, event.speechFrame, event.speechId);
+		break;
+	case AnimationFrameEvent::kLayerFrame:
+		_sceneLayers.setLayerFrame(event.layerId, event.layerFrame);
+		break;
+	case AnimationFrameEvent::kStateCommit:
+		if (event.commitFunction != nullptr)
+			event.commitFunction(event.commitTarget, event.commitValue);
+		break;
+	case AnimationFrameEvent::kInvalidatePalette:
+		invalidatePresentationPalette();
+		break;
+	case AnimationFrameEvent::kCustomHook:
+		handleAnimationFrameHook(event.hookId, frame);
+		break;
+	}
+}
+
 void PlayableScene::advanceFullscreenAnimation(uint32 delta) {
 	updateAmbientAudioAndMusicCues(delta);
 }
@@ -2437,12 +2474,11 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec, SceneAnimati
 	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, spec.frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
-		if (options.statePatchFrame >= 0 && (int)frame == options.statePatchFrame)
-			applySceneStateToHotspotsAndPatches(options.statePatchSelector);
-		if (options.soundFrame >= 0 && (int)frame == options.soundFrame)
-			_soundBank0.playSample(options.soundId, options.soundVolumePercent);
-		if (options.hookId != 0 && (options.hookFrame < 0 || (int)frame == options.hookFrame))
-			handleAnimationFrameHook(options.hookId, frame);
+		const Common::Array<AnimationFrameEvent> &events = spec.events.entries();
+		for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
+			if (events[eventIndex].matches(frame))
+				handleAnimationFrameEvent(events[eventIndex], frame);
+		}
 		const bool terminalFrame = frame + 1 >= cappedEndFrame;
 		if (terminalFrame && !options.waitAfterFinalFrame) {
 			drawPlayableComposite();

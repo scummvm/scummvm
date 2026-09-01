@@ -83,7 +83,6 @@ const byte kScene4030BoneSceneItem = 11;
 const byte kScene4030LeverSceneItem = 12;
 const uint32 kScene4030MarkerFrameMillis = 125;
 const byte kScene4030MarkerColor = 0xb3;
-const byte kScene4030InstallPatchHook = 1;
 
 enum {
 	kScene4030LeftPropLayer,
@@ -492,15 +491,6 @@ AmbientAudioProfile Scene4030::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene4030::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId == kScene4030InstallPatchHook && _sceneChunkTable.isValidChunk(16)) {
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[16], _baseFramebuffer);
-		return;
-	}
-	PlayableScene::handleAnimationFrameHook(hookId, frame);
-}
-
 void Scene4030::initializeSpriteLayers() {
 	_sceneLayers.configure(kScene4030LayerSpecs);
 	_realtimeAnimationTracks.reset(_leftPropTrack);
@@ -766,7 +756,7 @@ void Scene4030::installImprovisedLever() {
 
 	runActorReplacement(ActionOverlaySpec(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
 		kScene4030LeverInstallFrameMap, ARRAYSIZE(kScene4030LeverInstallFrameMap), kScene4030FrameMillis)
-		.hookAt(9, kScene4030InstallPatchHook));
+		.resourcePatchAt(9, 16));
 	state.scene4030ImprovisedLeverInstalled = true;
 	applySceneStateToHotspotsAndPatches(2);
 	removeInventoryItem(kScene4030LeverItem);

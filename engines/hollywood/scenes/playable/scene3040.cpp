@@ -45,7 +45,6 @@ const uint kScene3040ForegroundActorLayer = 0;
 const uint kScene3040LoopLayer = 1;
 const byte kScene3040HiddenObjectItemId = 3;
 const byte kScene3040HiddenObjectPatchChunk = 7;
-const byte kScene3040HiddenObjectPatchHook = 1;
 
 const byte kScene3040ForegroundFrameMap[] = {
 	0, 1, 2, 1, 4, 5, 6, 7, 8, 9,
@@ -308,30 +307,25 @@ void Scene3040::runExitToScene3010() {
 }
 
 void Scene3040::runInventoryPatchAction() {
+	GameplayState &state = _vm->gameState();
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(1, 5)
 		.commit(_foregroundActionActive, true)
 		.layerFrames(kScene3040ForegroundActorLayer,
 			AnimationFrameRange(4, 0x0e, kScene3040ForegroundFrameMillis)
-				.hookAt(0x0b, kScene3040HiddenObjectPatchHook))
+				.commitAt(0x0b, state.scene3040HiddenObjectVisible, true)
+				.patchAt(0x0b, 1))
 		.commit(_foregroundActionActive, false);
 
 	const byte inventoryItem = selectedInventoryItemForPatchAction();
 	if (inventoryItem != 0)
 		removeInventoryItem(inventoryItem);
 
-	sequence.commit(_vm->gameState().scene3040HiddenObjectVisible, true)
+	sequence.commit(state.scene3040HiddenObjectVisible, true)
 		.framebufferPatch(1)
 		.sound(1);
 	drawPlayableComposite();
 	presentFrame();
-}
-
-void Scene3040::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene3040HiddenObjectPatchHook && frame == 0x0b) {
-		_vm->gameState().scene3040HiddenObjectVisible = true;
-		applySceneStateToHotspotsAndPatches(1);
-	}
 }
 
 void Scene3040::applyHiddenObjectPatch() {
