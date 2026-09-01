@@ -59,6 +59,7 @@
 #include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
+#include "engines/nancy/action/puzzle/meterpuzzle.h"
 #include "engines/nancy/action/puzzle/mindpuzzle.h"
 #include "engines/nancy/action/puzzle/minigolfpuzzle.h"
 #include "engines/nancy/action/puzzle/mirrorlightpuzzle.h"
@@ -510,9 +511,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new HangmanPuzzle();
 	case 178:
 		return new AdjustPuzzle();
-	case 179:	// MeterPuzzle
-		// TODO: not yet implemented
-		return nullptr;
+	case 179:
+		return new MeterPuzzle();
 	case 180:	// BlockingPuzzle
 		// TODO: not yet implemented
 		return nullptr;
