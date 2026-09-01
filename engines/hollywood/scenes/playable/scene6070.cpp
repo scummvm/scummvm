@@ -96,13 +96,13 @@ const byte kScene6070State609NpcFrameMap[] = {
 	0, 5, 6, 7, 8, 9, 10, 11, 12, 7, 6, 5, 0};
 
 const SceneLayerSpec kScene6070LayerSpecs[] = {
-	{ kSceneAnimationScenePlaced, 8, 25, nullptr, 0, false, 14 },
-	{ kSceneAnimationScenePlaced, 9, 0x34, kScene6070ArrivalFrameMap,
+	{ kSceneAnimationBehindActors, 8, 25, nullptr, 0, false, 14 },
+	{ kSceneAnimationBehindActors, 9, 0x34, kScene6070ArrivalFrameMap,
 		ARRAYSIZE(kScene6070ArrivalFrameMap), false, 0 },
-	{ kSceneAnimationScenePlaced, 13, 5, nullptr, 0, false, 0 },
-	{ kSceneAnimationScenePlaced, 12, 0x14, kScene6070State609PropFrameMap,
+	{ kSceneAnimationInFrontOfActors, 13, 5, nullptr, 0, false, 0 },
+	{ kSceneAnimationInFrontOfActors, 12, 0x14, kScene6070State609PropFrameMap,
 		ARRAYSIZE(kScene6070State609PropFrameMap), false, 0 },
-	{ kSceneAnimationScenePlaced, 11, 0x0d, kScene6070State609NpcFrameMap,
+	{ kSceneAnimationInFrontOfActors, 11, 0x0d, kScene6070State609NpcFrameMap,
 		ARRAYSIZE(kScene6070State609NpcFrameMap), false, 0 }
 };
 
@@ -220,33 +220,9 @@ void Scene6070::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 }
 
-void Scene6070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
-									int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
-									byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-									byte actorDrawOrderMode) {
-	copyBaseFramebufferToSceneFramebuffer();
-
-	if (isScene6070AlternateCutscene(_vm)) {
-		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
-										  activeWorldX, activeWorldY, drawSecondaryActor, secondaryFacing,
-										  secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-		drawSceneLayer(kScene6070State609SueLayer);
-		drawSceneLayer(kScene6070State609PropLayer);
-		drawSceneLayer(kScene6070State609NpcLayer);
-		return;
-	}
-
-	drawSceneLayer(kScene6070SueLayer);
-	drawSceneLayer(kScene6070ArrivalLayer);
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
-									  activeWorldX, activeWorldY, drawSecondaryActor, secondaryFacing,
-									  secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
-
-	const int orderX = drawActiveActor ? activeWorldX : _activeActorWorldX;
-	const int orderY = drawActiveActor ? activeWorldY : _activeActorWorldY;
-	const byte orderMode = drawActiveActor ? actorDrawOrderMode : _activeActorDrawOrderMode;
-	drawNormalForeground(orderX, orderY, orderMode);
+void Scene6070::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
+	if (!isScene6070AlternateCutscene(_vm))
+		drawNormalForeground(activeWorldX, activeWorldY, _activeActorDrawOrderMode);
 }
 
 void Scene6070::runCustomEntrySequence() {

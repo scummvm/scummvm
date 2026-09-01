@@ -36,10 +36,7 @@ private:
 	bool isAlternatePaletteResourceActive() const override;
 	bool shouldLoadArenaChunk(uint index) const override;
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
-							 int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
-							 byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-							 byte actorDrawOrderMode) override;
+	void drawCustomForegroundComposite(int activeWorldX, int activeWorldY) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void prepareCustomGameplayLoop() override;
