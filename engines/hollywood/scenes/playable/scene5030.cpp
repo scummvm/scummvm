@@ -183,7 +183,7 @@ PlayableSceneConfig scene5030Config() {
 
 Scene5030::Scene5030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5030Config()),
-		_chunk8Channel(),
+		_chunk8Track(RealtimeAnimationTracks::kInvalidTrack),
 		_chunk9Channel(),
 		_chunk10Channel(),
 		_ronDialogueIdleChannel(),
@@ -212,6 +212,8 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5030AlternateVanessaLayer,
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
+	_chunk8Track = _realtimeAnimationTracks.addFrameMap(
+		_sceneLayers, kScene5030Chunk8Layer, kScene5030FrameMillis);
 }
 
 void Scene5030::initializeCustomPreviewState() {
@@ -290,7 +292,6 @@ void Scene5030::runExitSideEffectsAfterLoop() {
 }
 
 void Scene5030::advanceCustomGameplayLoop(uint32 delta) {
-	advanceLayer(_chunk8Channel, kScene5030Chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
 	advanceConcurrentPrimarySpeech(delta);
 	if (_scoutStopTransitionActive || _scoutResumeTransitionActive) {
 		advanceScoutTransitions(delta);
@@ -416,7 +417,7 @@ void Scene5030::handleAnimationFrameHook(byte hookId, uint frame) {
 }
 
 void Scene5030::resetAnimationLayers() {
-	_chunk8Channel.reset(0, kScene5030FrameMillis);
+	_realtimeAnimationTracks.reset(_chunk8Track);
 	_chunk9Channel.reset(0, kScene5030ScoutFrameMillis);
 	_chunk10Channel.reset(0, kScene5030ScoutFrameMillis);
 	_ronDialogueIdleChannel.reset(0, kScene5030RonSpeechFrameMillis);
@@ -434,7 +435,6 @@ void Scene5030::resetAnimationLayers() {
 	_ronConversationChunk = 13;
 	_sceneLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
 	_sceneLayers.setLayerVisible(kScene5030Chunk8Layer, true);
-	_sceneLayers.setLayerFrame(kScene5030Chunk8Layer, 0);
 	_sceneLayers.setLayerVisible(kScene5030Chunk9Layer, true);
 	_sceneLayers.setLayerFrame(kScene5030Chunk9Layer, 0);
 	_sceneLayers.setLayerVisible(kScene5030Chunk10Layer, true);

@@ -100,7 +100,7 @@ private:
 	void copyStageSmallRowLabel(byte destinationRow, byte sourceRow);
 	void clearSceneItemFromColorMap(byte itemId);
 
-	TimedAnimationChannel _chunk8Channel;
+	uint _chunk8Track;
 	TimedAnimationChannel _chunk9Channel;
 	TimedAnimationChannel _chunk10Channel;
 	TimedAnimationChannel _ronDialogueIdleChannel;

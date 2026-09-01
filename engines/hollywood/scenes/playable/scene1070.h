@@ -86,7 +86,7 @@ private:
 	TimedAnimationChannel _spencerIdleChannel;
 	TimedAnimationChannel _spencerLongChannel;
 	TimedAnimationChannel _spencerTransitionChannel;
-	byte _backLayerMode;
+	byte _backLayerResumeFrame;
 	byte _ghostMode;
 	byte _spencerMode;
 	byte _spencerAmbientState;

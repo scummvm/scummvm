@@ -141,7 +141,7 @@ Scene1070::Scene1070(HollywoodEngine *vm) :
 		_spencerIdleChannel(),
 		_spencerLongChannel(),
 		_spencerTransitionChannel(),
-		_backLayerMode(0),
+		_backLayerResumeFrame(0xff),
 		_ghostMode(0),
 		_spencerMode(0),
 		_spencerAmbientState(1),
@@ -355,7 +355,7 @@ void Scene1070::resetAnimationLayers() {
 	_spencerTransitionChannel.reset(0, kScene1070SpencerTransitionFrameMillis);
 	_sceneLayers.resetLayer(kScene1070BackLayer,
 		_vm->gameState().scene1070ChainRemoved ? 0x18 : 0);
-	_backLayerMode = 0;
+	_backLayerResumeFrame = 0xff;
 	_ghostMode = 0;
 	_spencerMode = 5;
 	_spencerAmbientState = 1;
@@ -367,11 +367,28 @@ void Scene1070::resetAnimationLayers() {
 void Scene1070::advanceBackLayer(uint32 delta) {
 	const uint frameCount = _backLayerChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		const bool chainRemoved = _vm->gameState().scene1070ChainRemoved;
-		const byte startFrame = chainRemoved ? 0x18 : 0;
-		const byte endFrame = chainRemoved ? 0x22 : 0x17;
-		if (!_sceneLayers.advanceLayerFrame(kScene1070BackLayer, endFrame))
-			_sceneLayers.setLayerFrame(kScene1070BackLayer, startFrame);
+		ResourceSpriteLayer &layer = _sceneLayers.layer(kScene1070BackLayer);
+		const byte frame = layer.frameIndex;
+		byte nextFrame;
+
+		if (!_vm->gameState().scene1070ChainRemoved) {
+			nextFrame = frame < 0x17 ? frame + 1 : 0;
+		} else if (_backLayerResumeFrame != 0xff) {
+			// Frames 0x18..0x22 are a one-shot flourish that resumes its trigger frame.
+			if (frame < 0x22) {
+				nextFrame = frame + 1;
+			} else {
+				nextFrame = _backLayerResumeFrame;
+				_backLayerResumeFrame = 0xff;
+			}
+		} else if ((frame == 3 || frame == 0x0f) && _random.getRandomNumber(4) == 0) {
+			_backLayerResumeFrame = frame;
+			nextFrame = 0x18;
+		} else {
+			nextFrame = frame < 0x17 ? frame + 1 : 0;
+		}
+
+		layer.setFrame(nextFrame);
 	}
 }
 

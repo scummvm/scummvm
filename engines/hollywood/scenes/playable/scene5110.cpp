@@ -141,6 +141,7 @@ static PlayableSceneConfig scene5110Config() {
 
 Scene5110::Scene5110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene5110Config()),
+		_randomDetailTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_salonAnimationChannel(),
 		_upperRightSalonState(1),
 		_rightSalonDetailDirection(0),
@@ -154,6 +155,8 @@ Scene5110::Scene5110(HollywoodEngine *vm) :
 		_centerSalonDetailSequenceActive(false),
 		_werewolfDialogueActive(false) {
 	_sceneLayers.configure(kScene5110LayerSpecs);
+	_randomDetailTrack = _realtimeAnimationTracks.addRandom(_sceneLayers,
+		kScene5110RandomDetailLayer, kScene5110FrameMillis, 0, 3, true);
 }
 
 int Scene5110::replacementFillRunsResourceChunkIndex() const {
@@ -876,6 +879,7 @@ bool Scene5110::applyWerewolfDialogueTransition(const DialogueChoiceRecord &reco
 
 void Scene5110::initializeSalonLayers() {
 	_sceneLayers.configure(kScene5110LayerSpecs);
+	_realtimeAnimationTracks.reset(_randomDetailTrack);
 	for (uint layerId = kScene5110RandomDetailLayer;
 			layerId < kScene5110ElevatorLayer; ++layerId) {
 		_sceneLayers.setLayerVisible(layerId,
@@ -902,14 +906,6 @@ void Scene5110::advanceSalonAnimations(uint32 delta) {
 }
 
 void Scene5110::advanceSalonAnimationTick() {
-	ResourceSpriteLayer &randomDetailLayer = _sceneLayers.layer(kScene5110RandomDetailLayer);
-	byte nextFrame = randomDetailLayer.frameIndex;
-	for (uint attempt = 0; attempt < 8 && nextFrame == randomDetailLayer.frameIndex; ++attempt)
-		nextFrame = (byte)_random.getRandomNumber(3);
-	if (nextFrame == randomDetailLayer.frameIndex)
-		nextFrame = (randomDetailLayer.frameIndex + 1) & 3;
-	randomDetailLayer.setFrame(nextFrame);
-
 	if (_vm->gameState().scene5110SalonTransformState >= 2)
 		return;
 
