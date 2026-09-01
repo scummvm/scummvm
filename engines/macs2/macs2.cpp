@@ -67,13 +67,13 @@ Common::U32String hotspotLabelToU32(const Common::String &name) {
 bool isMapModeActive() {
 	if (g_events == nullptr)
 		return false;
-	View1 *view = (View1 *)g_events->findView("View1");
+	const View1 *view = (View1 *)g_events->findView("View1");
 	return view != nullptr && view->_currentMode == ViewMode::VM_HELP;
 }
 
 Common::Point getSceneObjectHotspotPosition(View1 *view, GameObject *obj) {
 	if (view != nullptr) {
-		Character *character = view->getCharacterByIndex(obj->_index);
+		const Character *character = view->getCharacterByIndex(obj->_index);
 		if (character != nullptr && !character->_markedForDeletion)
 			return character->getPosition();
 	}
@@ -83,9 +83,10 @@ Common::Point getSceneObjectHotspotPosition(View1 *view, GameObject *obj) {
 } // namespace
 
 void resetCharacterWalkPath(Character *character) {
-	if (character == nullptr || character->_gameObject == nullptr)
+	if (character == nullptr || character->_gameObject == nullptr) {
 		return;
-	const Common::Point pos = character->_gameObject->_position;
+	}
+	const Common::Point &pos = character->_gameObject->_position;
 	character->_path.clear();
 	character->_currentPathIndex = 0;
 	character->_targetPosition = pos;
@@ -144,8 +145,9 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::SeekableR
 }
 
 Macs2Engine::McsFileVersion Macs2Engine::detectMcsFileVersion(Common::SeekableReadStream &stream) const {
-	if (stream.size() < (int64)kMcsMagicSize)
+	if (stream.size() < (int64)kMcsMagicSize) {
 		return McsFileVersion::Unknown;
+	}
 
 	const int64 pos = stream.pos();
 	byte magic[kMcsMagicSize];
@@ -156,10 +158,12 @@ Macs2Engine::McsFileVersion Macs2Engine::detectMcsFileVersion(Common::SeekableRe
 	}
 	stream.seek(pos, SEEK_SET);
 
-	if (memcmp(magic, kMcsMagicV1, kMcsMagicSize) == 0)
+	if (memcmp(magic, kMcsMagicV1, kMcsMagicSize) == 0) {
 		return McsFileVersion::V1;
-	if (memcmp(magic, kMcsMagicV2, kMcsMagicSize) == 0)
+	}
+	if (memcmp(magic, kMcsMagicV2, kMcsMagicSize) == 0) {
 		return McsFileVersion::V2;
+	}
 	return McsFileVersion::Unknown;
 }
 

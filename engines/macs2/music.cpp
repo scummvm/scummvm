@@ -70,9 +70,6 @@ void Music::deinit() {
 
 void Music::onTimer() {
 	if (_parser) {
-		// Binary adlibISRHandler (1000:1a9f): g_bAdlibPlaybackReady is set when the
-		// song stream loops back to the start (0xF0/0x2F meta or timer expiry), not on
-		// the first timer tick after playMusicSlot clears the flag.
 		const uint32 tickBefore = _parser->getTick();
 		_parser->onTimer();
 		if (_playing && !_adlibPlaybackReady && _parser->getTick() < tickBefore)
@@ -232,10 +229,10 @@ void Music::setVolume(uint16 volume) {
 // --- MidiDriver_BASE interface ---
 
 void Music::send(uint32 b) {
-	byte cmd = b & 0xF0;
-	byte channel = b & 0x0F;
-	byte param1 = (b >> 8) & 0xFF;
-	byte param2 = (b >> 16) & 0xFF;
+	const byte cmd = b & 0xF0;
+	const byte channel = b & 0x0F;
+	const byte param1 = (b >> 8) & 0xFF;
+	const byte param2 = (b >> 16) & 0xFF;
 
 	switch (cmd) {
 	case 0x90:
@@ -266,8 +263,6 @@ void Music::metaEvent(byte type, const byte *data, uint16 length) {
 		_adlibPlaybackReady = true;
 	}
 }
-
-// --- Music playback logic (matching original macs2 behavior) ---
 
 void Music::noteOn(byte channel, byte note, byte velocity) {
 	if (_numOplChannels == 9 || channel < 0x0B) {
@@ -310,8 +305,8 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 		_voiceNote[voice] = note;
 
 		// Volume calculation matching original
-		uint8 velAtten = (uint8)((0x3F - ((velocity & 0x7F) >> 1)) >> 1) >> 1;
-		uint16 instBase = (uint16)_channelPrograms[channel] << 4;
+		const uint8 velAtten = (uint8)((0x3F - ((velocity & 0x7F) >> 1)) >> 1) >> 1;
+		const uint16 instBase = (uint16)_channelPrograms[channel] << 4;
 
 		uint8 op2Base = 0;
 		uint8 op1Base = 0;
@@ -330,22 +325,22 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 
 		// Key off, set volumes, then key on
 		writeReg(voice + 0xB0, 0);
-		byte reg2 = readReg(_opMap2[voice] + 0x40);
+		const byte reg2 = readReg(_opMap2[voice] + 0x40);
 		writeReg(_opMap2[voice] + 0x40, (reg2 & 0xC0) + vol1);
-		byte reg1 = readReg(_opMap1[voice] + 0x40);
+		const byte reg1 = readReg(_opMap1[voice] + 0x40);
 		writeReg(_opMap1[voice] + 0x40, (reg1 & 0xC0) + vol2);
 
 		_channelPitchBend[channel] = 0;
 		setFrequency(voice, note, 0);
 	} else {
 		// Percussion note-on
-		uint16 instBase = (uint16)_channelPrograms[channel] << 4;
-		uint8 percIdx = channel - 0x0B;
+		const uint16 instBase = (uint16)_channelPrograms[channel] << 4;
+		const uint8 percIdx = channel - 0x0B;
 
 		if (percIdx >= _percOpMap.size())
 			return;
 
-		uint8 opIdx = _percOpMap[percIdx];
+		const uint8 opIdx = _percOpMap[percIdx];
 
 		if (channel == 0x0B) {
 			// Bass drum: load full instrument
@@ -362,21 +357,21 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 		// Percussion volume
 		uint8 vol = _masterVolume;
 		if ((uint32)(_instrumentDataOffset + instBase + 3) < _songData.size()) {
-			byte volByte = _songData[_instrumentDataOffset + instBase + 3];
-			uint8 volIdx = ((volByte & 0x3F) >> 4) * 8 + (velocity >> 4);
+			const byte volByte = _songData[_instrumentDataOffset + instBase + 3];
+			const uint8 volIdx = ((volByte & 0x3F) >> 4) * 8 + (velocity >> 4);
 			if (volIdx < _percVolTable.size())
 				vol = _percVolTable[volIdx] + _masterVolume;
 		}
 		if (vol > 0x3F)
 			vol = 0x3F;
 
-		uint8 freqChan = _percFreqChannel[percIdx];
+		const uint8 freqChan = _percFreqChannel[percIdx];
 		writeReg(freqChan + 0xB0, 0);
-		byte regVal = readReg(opIdx + 0x40);
+		const byte regVal = readReg(opIdx + 0x40);
 		writeReg(opIdx + 0x40, vol + (regVal & 0xC0));
 		setFrequency(freqChan, note, 0);
 
-		byte bdVal = readReg(0xBD);
+		const byte bdVal = readReg(0xBD);
 		writeReg(0xBD, bdVal | (1 << (0xF - channel)));
 	}
 }
@@ -392,7 +387,7 @@ void Music::noteOff(byte channel, byte note) {
 		for (uint8 v = 0; v < _numOplChannels; v++) {
 			if (_voiceAge[v] == 0 && _voiceMidiChannel[v] == channel && _voiceNote[v] == note) {
 				// Write frequency without key-on
-				uint16 freq = ((uint16)_freqTableHi[note] << 8) | _freqTableLo[note];
+				const uint16 freq = ((uint16)_freqTableHi[note] << 8) | _freqTableLo[note];
 				writeReg(v + 0xA0, freq & 0xFF);
 				writeReg(v + 0xB0, (freq >> 8) & 0xDF); // clear key-on bit
 				_voiceAge[v] = 1;
@@ -401,7 +396,7 @@ void Music::noteOff(byte channel, byte note) {
 		}
 	} else {
 		// Percussion note-off
-		byte bdVal = readReg(0xBD);
+		const byte bdVal = readReg(0xBD);
 		writeReg(0xBD, bdVal & ~(1 << (0xF - channel)));
 	}
 }
@@ -444,13 +439,13 @@ void Music::controlChange(byte channel, byte control, byte value) {
 }
 
 void Music::loadInstrument(uint8 voice, uint8 program) {
-	uint16 instBase = (uint16)program << 4;
+	const uint16 instBase = (uint16)program << 4;
 	if ((uint32)_instrumentDataOffset + instBase + 11 > _songData.size())
 		return;
 
 	const byte *inst = _songData.data() + _instrumentDataOffset + instBase;
-	uint8 op1 = _opMap1[voice];
-	uint8 op2 = _opMap2[voice];
+	const uint8 op1 = _opMap1[voice];
+	const uint8 op2 = _opMap2[voice];
 
 	writeReg(op1 + 0x20, inst[0]);
 	writeReg(op2 + 0x20, inst[1]);
@@ -473,12 +468,12 @@ void Music::setFrequency(uint8 voice, uint8 note, uint8 pitchBend) {
 
 	if (pitchBend != 0) {
 		if (pitchBend < 0x80) {
-			uint8 nextNote = (note < 0x7F) ? note + 1 : 0x7F;
-			uint16 nextFreq = ((uint16)_freqTableHi[nextNote] << 8) | _freqTableLo[nextNote];
+			const uint8 nextNote = (note < 0x7F) ? note + 1 : 0x7F;
+			const uint16 nextFreq = ((uint16)_freqTableHi[nextNote] << 8) | _freqTableLo[nextNote];
 			freq += (uint16)((uint64)pitchBend * (nextFreq - freq) >> 7);
 		} else {
-			uint8 prevNote = (note > 0) ? note - 1 : 0;
-			uint16 prevFreq = ((uint16)_freqTableHi[prevNote] << 8) | _freqTableLo[prevNote];
+			const uint8 prevNote = (note > 0) ? note - 1 : 0;
+			const uint16 prevFreq = ((uint16)_freqTableHi[prevNote] << 8) | _freqTableLo[prevNote];
 			freq -= (uint16)((uint64)pitchBend * (freq - prevFreq) >> 7);
 		}
 	}

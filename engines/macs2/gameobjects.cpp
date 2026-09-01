@@ -458,12 +458,13 @@ bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
 		return blob != nullptr && !blob->empty();
 	}
 	const uint16 maxOrient = g_engine->maxOrientations();
-	if (orient < 1 || orient > maxOrient)
+	if (orient < 1 || orient > maxOrient) {
 		return false;
+	}
 	const uint slot = orient - 1;
-	if (slot < _blobs.size() && !_blobs[slot].empty())
+	if (slot < _blobs.size() && !_blobs[slot].empty()) {
 		return true;
-	// Binary drawAllCharacters (1008:90a2): bSlotLoaded at slot+0x33; file speeds often 0x010x.
+	}
 	if (slot < _blobWalkSpeeds.size() && (_blobWalkSpeeds[slot] & 0xFF00) != 0)
 		return true;
 	return false;
@@ -482,37 +483,28 @@ Macs2::AnimationReader::~AnimationReader() {
 }
 
 uint16 Macs2::AnimationReader::readNumAnimations() {
-	// Read the header
-
 	_readStream->seek(0, SEEK_SET);
 
-	// bp-22h
+	// Read the header
 	_readStream->readUint16();
-	// bp-6h
 	_readStream->readUint16();
-	// bp-8h
 	_readStream->readUint16();
-	// bp-0Ah
 	_readStream->readUint16();
-	// bp-10h
 	_readStream->readUint16();
-	// Offset 0xA: number of command bytes in the control section (bp-0Eh in advanceAnimFrame)
-	uint16 commandSectionLength = _readStream->readUint16() + 1;
+	// Offset 0xA: number of command bytes in the control section
+	const uint16 commandSectionLength = _readStream->readUint16() + 1;
 
-	// Frame count (bp-24h) is stored right after the header + command section
+	// Frame count is stored right after the header + command section
 	_readStream->seek(0x0B + commandSectionLength);
 
 	// bp-24h
-	uint16 result = _readStream->readUint16();
+	const uint16 result = _readStream->readUint16();
 	return result;
 }
 
 void Macs2::AnimationReader::seekToAnimation(uint16 index) {
-	// Read bp-0Eh directly
 	_readStream->seek(0xA, SEEK_SET);
-	// Offset 0xA: command section length (bp-0Eh in advanceAnimFrame)
-	uint16 commandSectionLength = _readStream->readUint16() + 1;
-	// Skip reading bp-24h
+	const uint16 commandSectionLength = _readStream->readUint16() + 1;
 	_readStream->seek(0x0B + commandSectionLength + 0x2, SEEK_SET);
 	for (int i = 0; i < index; i++) {
 		skipCurrentAnimationFrame();
@@ -520,10 +512,10 @@ void Macs2::AnimationReader::seekToAnimation(uint16 index) {
 }
 
 void Macs2::AnimationReader::skipCurrentAnimationFrame() {
-	_readStream->readUint16(); // value1
-	_readStream->readUint16(); // value2
+	_readStream->readUint16();
+	_readStream->readUint16();
 	_readStream->seek(2, SEEK_CUR);
-	uint16 width = _readStream->readUint16();
-	uint16 height = _readStream->readUint16();
+	const uint16 width = _readStream->readUint16();
+	const uint16 height = _readStream->readUint16();
 	_readStream->seek(width * height, SEEK_CUR);
 }
