@@ -1815,14 +1815,10 @@ void View1::walkToScreenPosition(const Common::Point &pos) {
 		return;
 	}
 
-	Common::Point target = pos;
-	Common::Point charPos = protagonist->getPosition();
+	const Common::Point &charPos = protagonist->getPosition();
 
-	int16 targetY = target.y;
-	int16 targetX = target.x;
-	g_engine->snapToWalkablePosition(&targetY, &targetX, charPos.y, charPos.x);
-	target.x = targetX;
-	target.y = targetY;
+	Common::Point target = pos;
+	g_engine->snapToWalkablePosition(&target.y, &target.x, charPos.y, charPos.x);
 
 	protagonist->_pathFinalDestination = target;
 	protagonist->_currentPathIndex = 0;
@@ -3182,7 +3178,7 @@ void View1::drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::Managed
 	drawSprite(x, y, sprite._width, sprite._height, const_cast<byte *>(sprite._data.data()), s, mirrored, useDepth, depth, clipToGameArea);
 }
 
-void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
+void View1::drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
 			uint8 val = data[currentY * width + currentX];
@@ -3196,7 +3192,7 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 	}
 }
 
-void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
+void View1::drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
 	drawSpriteClipped(x, y, clippingRect, sprite._width, sprite._height, sprite._data.data(), s);
 }
 
@@ -3485,17 +3481,15 @@ void View1::drawBorder(const Common::Point &pos, const Common::Point &size, Grap
 	drawVerticalBorderHighlight(pos + Common::Point(size.x - border, border), size.y - 0xB, 0x1012, s);
 }
 
-// drawBorderSide (1008:39b5)
 void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	// Clipping region: (x+1, y+1) to (x+width, y+height) per disassembly
-	Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
-	// Texture: border sprite from cursor image array at offset 0x1f0 (mode 1)
+	const AnimFrame &sprite = g_engine->_imageResources[31];
+	if (sprite._width == 0 || sprite._height == 0 || sprite._data.empty()) {
+		return;
+	}
+
+	const Common::Rect clippingRect(pos + Common::Point(1, 1), pos + size);
 	uint16 currentX = clippingRect.left;
 	uint16 currentY = clippingRect.top;
-	const AnimFrame &sprite = g_engine->_imageResources[31];
-	if (sprite._width == 0 || sprite._height == 0 || sprite._data.empty())
-		return;
-
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
 			drawSpriteClipped(currentX, currentY, clippingRect, sprite._width, sprite._height, sprite._data.data(), s);
@@ -3520,16 +3514,14 @@ Macs2::AnimFrame *View1::getUISprite(uint32 offset) {
 }
 
 void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s) {
-	// drawHorizontalBorderHighlight (1008:3737)
-	// Sets clipping region to 1px tall horizontal strip, tiles the highlight/shadow sprite.
-	Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
-	uint16 currentX = clippingRect.left;
-	uint16 currentY = clippingRect.top;
-
 	const AnimFrame *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
+	const Common::Rect clippingRect(pos, pos + Common::Point(width, 1));
+	const uint16 currentY = clippingRect.top;
+
+	uint16 currentX = clippingRect.left;
 	while (currentX < clippingRect.right) {
 		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data.data(), s);
 		currentX += sprite->_width;
@@ -3537,17 +3529,14 @@ void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 }
 
 void View1::drawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s) {
-	// drawVerticalBorderHighlight (1008:3876)
-	// Sets clipping region to 1px wide vertical strip, tiles the highlight/shadow sprite.
-	Common::Rect clippingRect(pos, pos + Common::Point(1, height));
-	uint16 currentX = clippingRect.left;
-	uint16 currentY = clippingRect.top;
-
 	const AnimFrame *sprite = getUISprite(spriteAddress);
 	if (sprite == nullptr) {
 		return;
 	}
 
+	const Common::Rect clippingRect(pos, pos + Common::Point(1, height));
+	const uint16 currentX = clippingRect.left;
+	uint16 currentY = clippingRect.top;
 	while (currentY < clippingRect.bottom) {
 		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data.data(), s);
 		currentY += sprite->_height;
@@ -3572,7 +3561,7 @@ void View1::drawImageResources(Graphics::ManagedSurface &s) {
 
 void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Common::StringArray> &choices, const Common::Point &position, bool onRightSide) {
 	Common::StringArray joinedLines;
-	for (auto &currentLines : choices) {
+	for (const Common::Array<Common::String> &currentLines : choices) {
 		for (auto &currentLine : currentLines) {
 			joinedLines.push_back(currentLine);
 		}
@@ -3581,8 +3570,9 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 	// TTS: speak the dialogue choices
 	Common::String ttsText;
 	for (uint i = 0; i < choices.size(); i++) {
-		if (!ttsText.empty())
+		if (!ttsText.empty()) {
 			ttsText += ". ";
+		}
 		ttsText += Common::String::format("%u: ", i + 1);
 		for (const Common::String &line : choices[i]) {
 			ttsText += line + " ";
@@ -3594,7 +3584,7 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 	_isDialogueChoiceInputActive = true;
 	_dialogueChoiceCount = choices.size();
 	_dialogueChoiceLineCounts.clear();
-	for (const auto &c : choices) {
+	for (const Common::Array<Common::String> &c : choices) {
 		_dialogueChoiceLineCounts.push_back(c.size());
 	}
 }
@@ -3605,9 +3595,6 @@ void View1::triggerDialogueChoice(uint8 index) {
 		return;
 	}
 
-	// Binary handleTimerClick (1008:d53b): stores the script-provided index value
-	// from the choice entry (scene+0x5351+choice*6), NOT the 1-based array position.
-	// It does NOT resume the script - that happens in handleInput after setting click state.
 	uint16 scriptIndex = index;
 	if ((uint)(index - 1) < g_engine->_scriptExecutor->_dialogueChoiceScriptIndices.size()) {
 		scriptIndex = g_engine->_scriptExecutor->_dialogueChoiceScriptIndices[index - 1];
@@ -3650,7 +3637,7 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 	return 0;
 }
 
-bool Character::HandleWalkability(Character *c) {
+bool Character::handleWalkability(Character *c) {
 	// Wall-sliding obstacle avoidance from walkAlongPath (1008:1b8f).
 	// When the character steps into a non-walkable pixel (walkability >= 200),
 	// the original code samples walkability at +/-1 and +/-2 pixels in each
@@ -3877,7 +3864,7 @@ void Character::floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCo
 	}
 }
 
-Common::Point Character::getPosition() const {
+const Common::Point &Character::getPosition() const {
 	return _gameObject->_position;
 }
 
@@ -3960,8 +3947,9 @@ bool Character::fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &
 	_shouldMirrorCurrentAnimation = false;
 
 	Common::Array<uint8> *blobPtr = _gameObject->getAnimSlotBlob(animSlot);
-	if (blobPtr == nullptr || blobPtr->empty())
+	if (blobPtr == nullptr || blobPtr->empty()) {
 		return false;
+	}
 
 	Common::Array<uint8> &blob = *blobPtr;
 	const uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, true, advanceMode);
@@ -4075,10 +4063,6 @@ bool Character::shouldStepVerticalMotion() const {
 }
 
 void Character::update() {
-	// Binary drawAllCharacters (1008:90a2): calls walkAlongPath for every character
-	// every frame, gated ONLY by: frozen flag and orientation != 0x11.
-
-	// Binary: pickup animation handled separately (orientation == 0x11)
 	if (_gameObject->_orientation == 0x11) {
 		if (_pickedUpObject != nullptr) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");

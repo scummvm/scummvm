@@ -78,7 +78,7 @@ public:
 private:
 	// Handle when the character has moved into a non-walkable area, push them out if
 	// they did and return true, return false otherwise
-	bool HandleWalkability(Character *c);
+	bool handleWalkability(Character *c);
 
 	// fn0037_0E8C proc
 	uint16 lookupWalkability(const Common::Point &p) const;
@@ -112,7 +112,7 @@ public:
 	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 	void startPickup(Macs2::GameObject *object);
 
-	Common::Point getPosition() const;
+	const Common::Point &getPosition() const;
 	void setPosition(const Common::Point &newPosition);
 	Macs2::GameObject *_gameObject = nullptr;
 
@@ -327,8 +327,8 @@ private:
 	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 
-	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
-	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
+	void drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
+	void drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
 	void drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, Graphics::ManagedSurface &s, uint16 inset = 6);
 
 	// Binary sortObjectListByY (1008:8cf2) + buildSortedObjectList (1008:8c5a):
@@ -374,21 +374,10 @@ public:
 	AnimFrame *getInventoryIcon(GameObject *gameObject);
 
 	bool _paletteDirty = true;
-
-	// Background animation timing from gameTick (1008:e556).
-	// The original game increments a tick counter each frame (~70Hz DOS timer)
-	// and advances background animations when the counter exceeds a threshold:
-	// Background animation timing from gameTick (1008:e556).
-	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
-	// Background animation tick counter (mode 2: threshold 0x27, mode 3: threshold 1)
-	static constexpr uint32 kGameFrameRate = 20;
-
-	// Binary g_wIsShowingTextBox (1020:0ff6): set by scriptPrintString, cleared by handleTextBoxInput
 	bool _isShowingTextBox = false;
-	// Binary g_wIsShowingDialoguePanel (1020:1008): set by scriptShowDialogue, cleared by dismissDialoguePanel
 	bool _isShowingDialoguePanel = false;
-	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
+	Common::StringArray _drawnStringBox;
 	uint16 _dialogueChoiceCount = 0;
 	Common::Array<uint16> _dialogueChoiceLineCounts;
 	SpeechActData currentSpeechActData;
@@ -428,9 +417,6 @@ public:
 
 	void finishPanelCloseAfterRelease(UiPanelState closedFromState);
 
-	// Binary scene+0x53B9: dialogue choice input mode active (waiting for player to pick an answer)
-	bool _isDialogueChoiceInputActive = false;
-
 	// Binary g_wPendingPanelRequest (1020:1034): deferred panel open request.
 	// Set while action bar is active; processed by gameTick when _uiPanelState returns to kUiPanelNone.
 	// Values: 0=none, 1=protagonist inventory, 2=container inventory, 3=save/load
@@ -443,10 +429,8 @@ public:
 	};
 	PendingPanelRequest _pendingPanelRequest = kPanelRequestNone;
 
-	// Binary g_wUiBackgroundRestorePending: set when panel was open and background needs redraw
 	bool _uiBackgroundRestorePending = false;
-
-	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
+	bool _isDialogueChoiceInputActive = false;
 	Script::MouseMode _savedCursorMode = Script::MouseMode::Walk;
 
 	enum class InventoryButtonIndex {
@@ -523,7 +507,6 @@ public:
 	void closeScriptActionBar(Script::MouseMode &outSavedCursorMode);
 	void enterMapMode();
 
-	// Binary openActionBarAtPosition
 	void layoutActionBarButtons();
 	void drawMainMenu(Graphics::ManagedSurface &s);
 	void drawSceneUpdate();
