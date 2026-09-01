@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9140.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -275,13 +274,10 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _subtitle.lines.size() * 1100);
-		uint32 elapsed = 0;
 		uint32 animationElapsed = 0;
 		_speechAnimationStep = 0;
-		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents())
-				return;
-
+		TimedPresentationLoop loop(*this, duration);
+		while (loop.beginFrame()) {
 			if (animationElapsed >= kScene9140SpeechFrameMillis) {
 				animationElapsed %= kScene9140SpeechFrameMillis;
 				++_speechAnimationStep;
@@ -298,11 +294,10 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 
 			drawComposite();
 			presentFrame();
-			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
-			g_system->delayMillis(slice);
-			elapsed += slice;
-			animationElapsed += slice;
+			animationElapsed += loop.finishFrame();
 		}
+		if (_skipRequested || Engine::shouldQuit())
+			return;
 
 		_mouthFrame = 0;
 		if (leftSpeaker && _leftLoopEnabled)

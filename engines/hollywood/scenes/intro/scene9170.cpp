@@ -429,13 +429,10 @@ void Scene9170::scrollTo(uint targetRowOffset, int step) {
 
 void Scene9170::waitWithAnimations(uint32 millis, byte speakerGroup, bool animateAmbient,
 		bool presentChanges) {
-	uint32 elapsed = 0;
 	uint32 speakerElapsed = 0;
 	uint32 effectElapsed = 0;
-	while (elapsed < millis && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
+	TimedPresentationLoop loop(*this, millis);
+	while (loop.beginFrame()) {
 		bool dirty = false;
 		if (speakerElapsed >= kScene9170SpeechFrameMillis) {
 			speakerElapsed %= kScene9170SpeechFrameMillis;
@@ -454,9 +451,7 @@ void Scene9170::waitWithAnimations(uint32 millis, byte speakerGroup, bool animat
 				presentFrame();
 		}
 
-		const uint32 slice = MIN<uint32>(millis - elapsed, 10);
-		g_system->delayMillis(slice);
-		elapsed += slice;
+		const uint32 slice = loop.finishFrame();
 		speakerElapsed += slice;
 		effectElapsed += slice;
 	}
@@ -537,15 +532,12 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _subtitle.lines.size() * 1100);
-		uint32 elapsed = 0;
 		uint32 speechElapsed = 0;
 		uint32 effectElapsed = 0;
 		composeFrame();
 		presentFrame();
-		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents())
-				return;
-
+		TimedPresentationLoop loop(*this, duration);
+		while (loop.beginFrame()) {
 			bool dirty = false;
 			if (speechElapsed >= kScene9170SpeechFrameMillis) {
 				speechElapsed %= kScene9170SpeechFrameMillis;
@@ -563,12 +555,12 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 				presentFrame();
 			}
 
-			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
-			g_system->delayMillis(slice);
-			elapsed += slice;
+			const uint32 slice = loop.finishFrame();
 			speechElapsed += slice;
 			effectElapsed += slice;
 		}
+		if (_skipRequested || Engine::shouldQuit())
+			return;
 
 		_speech.stop();
 		resetSpeakerFrame(speakerGroup);

@@ -23,7 +23,6 @@
 
 #include "common/debug.h"
 #include "common/path.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -152,14 +151,8 @@ void Scene9150::playStaticSpeechPair(byte rowIndex) {
 
 		const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
-		uint32 elapsed = 0;
-		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents())
-				return;
-			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
-			g_system->delayMillis(slice);
-			elapsed += slice;
-		}
+		if (delay(duration))
+			return;
 	}
 }
 
