@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene3110.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
@@ -96,6 +94,10 @@ const byte kScene3110Linear32FrameMap[] = {
 
 Scene3110::Scene3110(HollywoodEngine *vm) :
 		PresentationScene(vm, "scene 3110"),
+		_spriteSequenceTracks(nullptr),
+		_spriteSequenceTrackCount(0),
+		_spriteSequenceViewportX(0),
+		_spriteSequenceTick(0),
 		_memoryRandomState(0x3110),
 		_memoryPulseLevel(0),
 		_memoryPulseActive(false) {
@@ -186,18 +188,18 @@ void Scene3110::runLongBranch() {
 
 void Scene3110::runShortBranch() {
 	const SpriteTrack initialTracks[] = {
-		{24, 8, kScene3110ShortInitialFrameMap, ARRAYSIZE(kScene3110ShortInitialFrameMap), 30, 75, true, true}
+		{24, 8, kScene3110ShortInitialFrameMap, ARRAYSIZE(kScene3110ShortInitialFrameMap), 30, true}
 	};
 	if (prepareScene(22, 23, kPaletteSize, initialTracks, ARRAYSIZE(initialTracks))) {
-		runSpriteSequence(80, kScene3110DefaultFrameMillis, 0,
+		runSpriteSequence(AnimationFrameRange(0, 79, kScene3110DefaultFrameMillis), 0,
 			initialTracks, ARRAYSIZE(initialTracks));
 	}
 
 	const SpriteTrack finalTracks[] = {
-		{21, 5, kScene3110ShortFinalFrameMap, ARRAYSIZE(kScene3110ShortFinalFrameMap), 30, 75, true, true}
+		{21, 5, kScene3110ShortFinalFrameMap, ARRAYSIZE(kScene3110ShortFinalFrameMap), 30, true}
 	};
 	if (prepareScene(19, 20, 0x168, finalTracks, ARRAYSIZE(finalTracks))) {
-		runSpriteSequence(80, kScene3110DefaultFrameMillis, 0,
+		runSpriteSequence(AnimationFrameRange(0, 79, kScene3110DefaultFrameMillis), 0,
 			finalTracks, ARRAYSIZE(finalTracks));
 	}
 }
@@ -474,15 +476,11 @@ void Scene3110::restoreOriginalSpriteFrameBackground(const Common::Array<byte> &
 }
 
 void Scene3110::runMachineRoomInitialPhase(MachineRoomState &state) {
-	uint32 lastMillis = g_system->getMillis();
+	uint32 elapsedMillis = 0;
 	while ((state.finalOverlayFrame < kScene3110MachineRoomInitialGateEndFrame || state.initialGateDirty) &&
 			!_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
-
-		const uint32 nowMillis = g_system->getMillis();
-		const uint32 elapsedMillis = nowMillis - lastMillis;
-		lastMillis = nowMillis;
 
 		advanceMachineRoomState(state, elapsedMillis, false);
 		composeMachineRoomFrame(state, false);
@@ -491,6 +489,7 @@ void Scene3110::runMachineRoomInitialPhase(MachineRoomState &state) {
 
 		if (delay(kScene3110MachineRoomPollMillis))
 			return;
+		elapsedMillis = kScene3110MachineRoomPollMillis;
 	}
 }
 
@@ -504,15 +503,11 @@ void Scene3110::runMachineRoomFinalPhase(MachineRoomState &state) {
 	composeMachineRoomFrame(state, true);
 	presentFrame(0, kScene3110MachineRoomViewportXOffset);
 
-	uint32 lastMillis = g_system->getMillis();
+	uint32 elapsedMillis = 0;
 	while (state.finalCounter < kScene3110MachineRoomFinalCounterLimit &&
 			!_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
-
-		const uint32 nowMillis = g_system->getMillis();
-		const uint32 elapsedMillis = nowMillis - lastMillis;
-		lastMillis = nowMillis;
 
 		advanceMachineRoomState(state, elapsedMillis, true);
 		composeMachineRoomFrame(state, true);
@@ -521,6 +516,7 @@ void Scene3110::runMachineRoomFinalPhase(MachineRoomState &state) {
 
 		if (delay(kScene3110MachineRoomPollMillis))
 			return;
+		elapsedMillis = kScene3110MachineRoomPollMillis;
 	}
 }
 
@@ -652,40 +648,37 @@ void Scene3110::advanceMachineRoomPalette(MachineRoomState &state, uint32 elapse
 
 void Scene3110::runMonsterTableElectricSequence() {
 	const SpriteTrack tracks[] = {
-		{6, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 30, 75, true, true},
-		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, 75, true, false},
-		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, 75, true, false}
+		{6, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 30, true},
+		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false},
+		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false}
 	};
-	const SoundCue soundCues[] = {
-		{30, 2, 0x15, 75, true, false},
-		{68, 2, 0x1e, 100, false, false}
-	};
+	AnimationFrameRange range(0, 85, kScene3110DefaultFrameMillis);
+	range.loopingSoundAt(30, 0x15, 75, 2)
+		.soundAt(68, 0x1e, 100, 2);
 	if (prepareScene(4, 5, kPaletteSize, tracks, ARRAYSIZE(tracks)))
-		runSpriteSequence(86, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+		runSpriteSequence(range, 0, tracks, ARRAYSIZE(tracks));
 }
 
 void Scene3110::runMonsterTableFinalSequence() {
 	const SpriteTrack tracks[] = {
-		{9, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 0, 75, true, true},
-		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, 75, true, false},
-		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, 75, true, false}
+		{9, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 0, true},
+		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false},
+		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false}
 	};
-	const SoundCue soundCues[] = {
-		{0, 2, 0x15, 75, true, false}
-	};
+	AnimationFrameRange range(0, 89, kScene3110DefaultFrameMillis);
+	range.loopingSoundAt(0, 0x15, 75, 2);
 	if (prepareScene(4, 5, kPaletteSize, tracks, ARRAYSIZE(tracks)))
-		runSpriteSequence(90, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+		runSpriteSequence(range, 0, tracks, ARRAYSIZE(tracks));
 	stopSound(2);
 }
 
 void Scene3110::runBlackFlashSequence() {
 	const SpriteTrack tracks[] = {
-		{26, 4, kScene3110BlackFlashFrameMap, ARRAYSIZE(kScene3110BlackFlashFrameMap), 30, 75, true, false}
+		{26, 4, kScene3110BlackFlashFrameMap, ARRAYSIZE(kScene3110BlackFlashFrameMap), 30, false}
 	};
-	const SoundCue soundCues[] = {
-		{30, 2, kScene3110SoundCueLightning, 100, false, false},
-		{80, 2, kScene3110SoundCueLightning, 100, false, false}
-	};
+	AnimationFrameRange range(0, 109, kScene3110DefaultFrameMillis);
+	range.soundAt(30, kScene3110SoundCueLightning, 100, 2)
+		.soundAt(80, kScene3110SoundCueLightning, 100, 2);
 	if (!_resources.loadFixedChunk("scene 3110 palette", 25,
 			_paletteCurrent, kPaletteSize))
 		return;
@@ -695,34 +688,28 @@ void Scene3110::runBlackFlashSequence() {
 
 	_baseFramebuffer.clear(0);
 	_sceneFramebuffer.clear(0);
-	runSpriteSequence(110, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+	runSpriteSequence(range, 0, tracks, ARRAYSIZE(tracks));
 }
 
 void Scene3110::runCloseupFlashSequence() {
 	const SpriteTrack tracks[] = {
-		{29, 3, kScene3110CloseupFrameMap, ARRAYSIZE(kScene3110CloseupFrameMap), 0, 75, true, false}
+		{29, 3, kScene3110CloseupFrameMap, ARRAYSIZE(kScene3110CloseupFrameMap), 0, false}
 	};
-	const SoundCue soundCues[] = {
-		{30, 2, kScene3110SoundCueLightning, 100, false, false},
-		{50, 2, kScene3110SoundCueLightning, 100, false, false}
-	};
+	AnimationFrameRange range(0, 79, kScene3110DefaultFrameMillis);
+	range.soundAt(30, kScene3110SoundCueLightning, 100, 2)
+		.soundAt(50, kScene3110SoundCueLightning, 100, 2);
 	if (prepareScene(27, 28, kPaletteSize, tracks, ARRAYSIZE(tracks)))
-		runSpriteSequence(80, kScene3110DefaultFrameMillis, 0, tracks, ARRAYSIZE(tracks), soundCues, ARRAYSIZE(soundCues));
+		runSpriteSequence(range, 0, tracks, ARRAYSIZE(tracks));
 }
 
-void Scene3110::runSpriteSequence(uint frameCount, uint frameMillis, uint16 viewportX,
-		const SpriteTrack *tracks, uint trackCount,
-		const SoundCue *soundCues, uint soundCueCount) {
-	for (uint tick = 0; tick < frameCount && !_skipRequested && !Engine::shouldQuit(); ++tick) {
-		if (pollEvents())
-			return;
-
-		applySoundCues(tick, soundCues, soundCueCount);
-		drawSpriteSequenceFrame(tick, tracks, trackCount);
-		presentFrame(0, viewportX);
-		if (delay(frameMillis))
-			return;
-	}
+void Scene3110::runSpriteSequence(const AnimationFrameRange &range,
+		uint16 viewportX, const SpriteTrack *tracks, uint trackCount) {
+	_spriteSequenceTracks = tracks;
+	_spriteSequenceTrackCount = trackCount;
+	_spriteSequenceViewportX = viewportX;
+	_animationPlayer.playAndPresent(_spriteSequenceTick, range);
+	_spriteSequenceTracks = nullptr;
+	_spriteSequenceTrackCount = 0;
 }
 
 void Scene3110::drawSpriteSequenceFrame(uint tick, const SpriteTrack *tracks, uint trackCount) {
@@ -730,9 +717,6 @@ void Scene3110::drawSpriteSequenceFrame(uint tick, const SpriteTrack *tracks, ui
 
 	for (uint i = 0; i < trackCount; ++i) {
 		const SpriteTrack &track = tracks[i];
-		if (!track.visibleBeforeStart && tick < track.firstTick)
-			continue;
-
 		drawStripSpriteFrame(_chunks[track.chunkIndex], 0, 0, track.descriptorCount,
 			frameForTrack(track, tick), _sceneFramebuffer.surface());
 	}
@@ -745,7 +729,7 @@ uint Scene3110::frameForTrack(const SpriteTrack &track, uint tick) const {
 	if (tick < track.firstTick)
 		return track.frameMap[0];
 
-	const uint frameStep = (tick - track.firstTick) * kScene3110DefaultFrameMillis / MAX<uint>(1, track.frameMillis);
+	const uint frameStep = tick - track.firstTick;
 	const uint frameIndex = track.holdLastFrame ?
 		MIN<uint>(frameStep, track.frameMapSize - 1) :
 		frameStep % track.frameMapSize;
@@ -845,19 +829,6 @@ uint16 Scene3110::nextMemoryRandom15Bit() {
 	return (_memoryRandomState >> 16) & 0x7fff;
 }
 
-void Scene3110::applySoundCues(uint tick, const SoundCue *soundCues, uint soundCueCount) {
-	for (uint i = 0; i < soundCueCount; ++i) {
-		const SoundCue &cue = soundCues[i];
-		if (cue.tick != tick)
-			continue;
-
-		if (cue.stop)
-			stopSound(cue.slot);
-		else
-			playSound(cue.slot, cue.cueId, cue.volumePercent, cue.loop);
-	}
-}
-
 void Scene3110::playSound(uint slot, uint16 cueId, byte volumePercent, bool loop) {
 	SoundBank0Player *player = nullptr;
 	switch (slot) {
@@ -900,6 +871,31 @@ void Scene3110::stopSounds() {
 	_sound0.stop();
 	_sound1.stop();
 	_sound2.stop();
+}
+
+void Scene3110::handleAnimationFrameEvent(const AnimationFrameEvent &event,
+		uint frame) {
+	if (event.type == AnimationFrameEvent::kSound ||
+			event.type == AnimationFrameEvent::kLoopingSound) {
+		const uint slot = event.soundSlot == AnimationFrameEvent::kMainSoundSlot ?
+			0 : event.soundSlot;
+		playSound(slot, event.soundId, event.soundVolumePercent,
+			event.type == AnimationFrameEvent::kLoopingSound);
+		return;
+	}
+
+	PresentationScene::handleAnimationFrameEvent(event, frame);
+}
+
+void Scene3110::presentAnimationFrame() {
+	if (_spriteSequenceTracks == nullptr) {
+		PresentationScene::presentAnimationFrame();
+		return;
+	}
+
+	drawSpriteSequenceFrame(_spriteSequenceTick, _spriteSequenceTracks,
+		_spriteSequenceTrackCount);
+	presentFrame(0, _spriteSequenceViewportX);
 }
 
 void Scene3110::stopAudio() {
