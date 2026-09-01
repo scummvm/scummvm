@@ -236,24 +236,12 @@ void Scene7010::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene7010::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
-	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-
-	if (_actionOverlayPlayer.replacesActor()) {
-		drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
-
-		// G01 restores chunk-15's dirty rect before drawing the next action frame.
-		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
-		drawActionOverlayLayer();
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
+	(void)activeWorldX;
+	(void)activeWorldY;
+	if (_actionOverlayPlayer.replacesActor())
 		return;
-	}
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	if (actorDrawOrderMode == 1) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
@@ -261,7 +249,13 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	} else {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	}
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
+}
+
+void Scene7010::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
+	(void)activeWorldX;
+	(void)activeWorldY;
+	if (_actionOverlayPlayer.replacesActor())
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
@@ -909,6 +903,8 @@ void Scene7010::runChunk13Item09PickupOverlaySequence() {
 		kScene7010Chunk8FrameMillis)
 		.startAt(1)
 		.layerFrameAt(5, kScene7010Chunk11Layer, 0x38)
+		.drawAt(kSceneAnimationScenePlaced)
+		.restoreBaseBackground()
 		.noRedrawAtEnd());
 	if (!hasInventoryItem(kScene7010HannoverBusinessCardItem))
 		addInventoryItem(kScene7010HannoverBusinessCardItem);
@@ -926,9 +922,11 @@ void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame, bool restor
 }
 
 void Scene7010::runDoghouseDepartureSequence() {
+	const bool restoreBackgroundBeforeDraw = true;
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(15,
 		kScene7010Chunk15DescriptorCount, kScene7010Chunk15FrameMap,
-		ARRAYSIZE(kScene7010Chunk15FrameMap));
+		ARRAYSIZE(kScene7010Chunk15FrameMap), kSceneAnimationScenePlaced,
+		restoreBackgroundBeforeDraw);
 
 	bool completed = playAnimationFrames(_actionOverlayPlayer,
 		AnimationFrameRange(1, 10, kScene7010Chunk8FrameMillis).unskippable());

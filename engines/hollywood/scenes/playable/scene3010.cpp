@@ -149,7 +149,6 @@ void Scene3010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 	if (_actionOverlayPlayer.replacesActor()) {
 		drawForegroundBlocks(activeWorldY);
-		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
 		drawSceneLayer(kScene3010WindmillLayer);
 		drawActionOverlayLayer();
 		drawSceneLayer(kScene3010ForestIdleLayer);
@@ -308,6 +307,7 @@ void Scene3010::runEntryFromPath() {
 void Scene3010::runExitToScene3050() {
 	runActorReplacement(ActionOverlaySpec(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
 		ARRAYSIZE(kScene3010ExitFrameMap), kScene3010ForestIdleFrameMillis)
+		.restoreBaseBackground()
 		.noRedrawAtEnd());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene3050State;
