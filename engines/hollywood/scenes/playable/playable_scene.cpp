@@ -238,6 +238,38 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 	return layerFrames(_scene._sceneLayers, layerId, range);
 }
 
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerFrames(
+		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
+	if (canRun()) {
+		const bool completed = _scene.playAndPresentAnimationFrames(layers, layerId, range);
+		if (!completed && !_scene._skipRequested)
+			_running = false;
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerFrames(
+		uint layerId, const AnimationFrameRange &range) {
+	return presentedLayerFrames(_scene._sceneLayers, layerId, range);
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerTransition(
+		SceneLayerStack &layers, uint layerId, const AnimationTransition &transition) {
+	if (canRun()) {
+		const bool completed = _scene.playAndPresentAnimationTransition(layers, layerId, transition);
+		if (!completed && !_scene._skipRequested)
+			_running = false;
+		refresh();
+	}
+	return *this;
+}
+
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerTransition(
+		uint layerId, const AnimationTransition &transition) {
+	return presentedLayerTransition(_scene._sceneLayers, layerId, transition);
+}
+
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplacement(
 		uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis) {
@@ -315,10 +347,10 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::framebufferPat
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::paletteTransition(
 		PaletteTransition transition) {
 	if (canRun()) {
-		if (transition == kFadeFromBlack)
-			_scene.fadePaletteFromBlack();
-		else
-			_scene.fadePaletteToBlack();
+		const bool interrupted = transition == kFadeFromBlack ?
+			_scene.fadePaletteFromBlack() : _scene.fadePaletteToBlack();
+		if (interrupted)
+			_running = false;
 		refresh();
 	}
 	return *this;

@@ -382,7 +382,9 @@ void Scene5080::runMineCartEntryClip() {
 	mineCartLayer.visible = true;
 	mineCartLayer.reset(0);
 	drawPlayableComposite();
-	if (fadePaletteFromBlack()) {
+	BlockingSequence sequence(*this);
+	sequence.paletteTransition(BlockingSequence::kFadeFromBlack);
+	if (!sequence.completed()) {
 		mineCartLayer.visible = false;
 		_hideActiveActor = previousHideActiveActor;
 		return;
@@ -390,13 +392,13 @@ void Scene5080::runMineCartEntryClip() {
 
 	ensureAmbientSoundCuePlaying(1, 0x0c, 10);
 	_mineCartRumbleActive = true;
-	_soundBank0.playSample(0x18, 100);
-	playAndPresentAnimationFrames(mineCartLayer,
-		AnimationFrameRange(0, kScene5080EntryDescriptorCount - 1, kScene5080FrameMillis)
-			.commitAt(0x3c, _mineCartRumbleActive, false)
-			.soundAt(0x3c, 0x16)
-			.unskippable()
-			.noFinalFrameDelay());
+	sequence.sound(0x18)
+		.presentedLayerFrames(mineCartLayer,
+			AnimationFrameRange(0, kScene5080EntryDescriptorCount - 1, kScene5080FrameMillis)
+				.commitAt(0x3c, _mineCartRumbleActive, false)
+				.soundAt(0x3c, 0x16)
+				.unskippable()
+				.noFinalFrameDelay());
 
 	_mineCartRumbleActive = false;
 	mineCartLayer.visible = false;
@@ -404,9 +406,10 @@ void Scene5080::runMineCartEntryClip() {
 }
 
 void Scene5080::runExitToMineSwitches() {
-	walkActiveActorTo(0x348, 0x15e, 0xff, 0, false);
-	_soundBank0.playSample(0x15, 100);
-	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
+	BlockingSequence(*this)
+		.actorPath(SceneActorPose(0x348, 0x15e, 0xff))
+		.sound(0x15)
+		.commit(_vm->gameState().mainFlowStateId, kScene5010ReturnState);
 }
 
 void Scene5080::runBookPickup() {
@@ -415,23 +418,25 @@ void Scene5080::runBookPickup() {
 		return;
 
 	beginStaticSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
-	runActorReplacement(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount,
 		kScene5080BookPickupFrameMap, ARRAYSIZE(kScene5080BookPickupFrameMap), kScene5080FrameMillis)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	addInventoryItem(kScene5080BookInventoryItem);
-	_soundBank0.playSample(1, 100);
-	state.scene5080BookTaken = true;
-	applySceneStateToHotspotsAndPatches(3);
+	sequence.sound(1)
+		.commit(state.scene5080BookTaken, true)
+		.framebufferPatch(3);
 	drawPlayableComposite();
 	presentFrame();
 }
 
 void Scene5080::runWardrobeAttempt() {
-	runActorReplacement(ActionOverlaySpec(8, kScene5080WardrobeDescriptorCount,
-		kScene5080WardrobeFrameMap, ARRAYSIZE(kScene5080WardrobeFrameMap), kScene5080FrameMillis)
-		.noFinalFrameDelay());
-	beginSecondarySpeechLine(3, 0);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(8, kScene5080WardrobeDescriptorCount,
+			kScene5080WardrobeFrameMap, ARRAYSIZE(kScene5080WardrobeFrameMap), kScene5080FrameMillis)
+			.noFinalFrameDelay())
+		.secondarySpeech(3, 0);
 }
 
 void Scene5080::runPassageSideSwitch() {

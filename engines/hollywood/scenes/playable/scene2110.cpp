@@ -358,44 +358,44 @@ void Scene2110::runScriptedReturnToScene2100() {
 	if (!runScriptedEntryOpening())
 		return;
 
+	BlockingSequence sequence(*this);
 	runEntrySecondarySpeechLine(0);
-	if (animationPlaybackShouldStop())
-		return;
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
-			AnimationFrameRange(0x12, 0x16, kScene2110FrameMillis).unskippable()))
+	sequence.presentedLayerFrames(kScene2110EntryLayer,
+		AnimationFrameRange(0x12, 0x16, kScene2110FrameMillis).unskippable());
+	if (!sequence.completed())
 		return;
 	runEntryPrimarySpeechLine(1, kScene2110EntrySpeechGroupB);
-	if (animationPlaybackShouldStop())
-		return;
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
-			AnimationFrameRange(0x1a, 0x1e, kScene2110FrameMillis).unskippable()))
+	sequence.presentedLayerFrames(kScene2110EntryLayer,
+		AnimationFrameRange(0x1a, 0x1e, kScene2110FrameMillis).unskippable());
+	if (!sequence.completed())
 		return;
 	runEntrySecondarySpeechLine(2);
-	if (animationPlaybackShouldStop())
+	if (!sequence.completed())
 		return;
 	runEntryPrimarySpeechLine(3, kScene2110EntrySpeechGroupA);
 	_sceneLayers.setLayerVisible(kScene2110EntryLayer, false);
-	if (animationPlaybackShouldStop())
+	if (!sequence.completed())
 		return;
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	invalidatePresentationPalette();
 	presentFrame();
 
-	GameplayState &state = _vm->gameState();
-	state.mainFlowStateId = kScene2100ReturnFromTreasureState;
+	sequence.commit(_vm->gameState().mainFlowStateId, kScene2100ReturnFromTreasureState);
 }
 
 bool Scene2110::runScriptedEntryOpening() {
 	setActiveActorPose(0x320, 0x118, 4);
 	_sceneLayers.setLayerVisible(kScene2110EntryLayer, true);
 	_sceneLayers.resetLayer(kScene2110EntryLayer, 0);
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110EntryLayer,
-			AnimationFrameRange(0, 0x0e, kScene2110FrameMillis)
-				.hookAt(0x0a, kScene2110EntryPathHook).unskippable()))
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene2110EntryLayer,
+		AnimationFrameRange(0, 0x0e, kScene2110FrameMillis)
+			.hookAt(0x0a, kScene2110EntryPathHook).unskippable());
+	if (!sequence.completed())
 		return false;
 	finishScriptedActorPath();
-	if (animationPlaybackShouldStop())
+	if (!sequence.completed())
 		return false;
 
 	drawPlayableComposite();
@@ -416,26 +416,27 @@ void Scene2110::runTreasureGrantAction() {
 
 	_sceneLayers.setLayerVisible(kScene2110TreasureLayer, true);
 	_sceneLayers.resetLayer(kScene2110TreasureLayer, 0);
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
-			AnimationFrameRange(0, 0x0a, kScene2110FrameMillis).unskippable())) {
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene2110TreasureLayer,
+		AnimationFrameRange(0, 0x0a, kScene2110FrameMillis).unskippable());
+	if (!sequence.completed()) {
 		_sceneLayers.setLayerVisible(kScene2110TreasureLayer, false);
 		return;
 	}
 
-	bool animationComplete = false;
 	if (grantsReward) {
 		runTreasurePrimarySpeechLine(0x16, (byte)(rewardIndex * 2));
-		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
+		sequence.presentedLayerFrames(kScene2110TreasureLayer,
 			AnimationFrameRange(0x0d, 0x23, kScene2110FrameMillis)
 				.soundAt(0x18, 1).unskippable());
 	} else {
 		runTreasurePrimarySpeechLine(0x66, 0);
-		animationComplete = playAndPresentAnimationFrames(_sceneLayers, kScene2110TreasureLayer,
+		sequence.presentedLayerFrames(kScene2110TreasureLayer,
 			AnimationFrameRange(0x19, 0x23, kScene2110FrameMillis).unskippable());
 	}
 
 	_sceneLayers.setLayerVisible(kScene2110TreasureLayer, false);
-	if (!animationComplete)
+	if (!sequence.completed())
 		return;
 	if (!grantsReward) {
 		drawPlayableComposite();
@@ -446,10 +447,10 @@ void Scene2110::runTreasureGrantAction() {
 	const byte itemId = kScene2110TreasureGrantItems[rewardIndex];
 	if (!hasInventoryItem(itemId))
 		addInventoryItem(itemId);
-	setActiveActorPose(0x194, 0x155, 3);
+	sequence.actorPose(SceneActorPose(0x194, 0x155, 3));
 	drawPlayableComposite();
 	presentFrame();
-	beginSecondarySpeechLine(0x16, (byte)(rewardIndex * 2 + 1));
+	sequence.secondarySpeech(0x16, (byte)(rewardIndex * 2 + 1));
 	state.setFrankensteinPartRewardIndex(rewardIndex + 1);
 	state.scene2110TreasureGranted = true;
 }

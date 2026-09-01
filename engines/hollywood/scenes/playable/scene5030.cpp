@@ -652,7 +652,8 @@ void Scene5030::runDeckPickupSequence() {
 		kScene5030DeckPickupFrameMap, ARRAYSIZE(kScene5030DeckPickupFrameMap));
 	_sceneLayers.setLayerVisible(kScene5030ActorReplacementLayer, _sceneChunkTable.isValidChunk(11));
 
-	playAndPresentAnimationFrames(_sceneLayers, kScene5030ActorReplacementLayer,
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene5030ActorReplacementLayer,
 		AnimationFrameRange(0, kScene5030DeckPatchFrame - 1,
 			kScene5030FrameMillis).unskippable());
 	if (_sceneChunkTable.isValidChunk(12))
@@ -660,12 +661,12 @@ void Scene5030::runDeckPickupSequence() {
 	clearSceneItemFromColorMap(kScene5030TakenSceneItemId);
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-	playAndPresentAnimationFrames(_sceneLayers, kScene5030ActorReplacementLayer,
+	sequence.presentedLayerFrames(kScene5030ActorReplacementLayer,
 		AnimationFrameRange(kScene5030DeckPatchFrame, ARRAYSIZE(kScene5030DeckPickupFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay().hookAt(14, kScene5030GrantDeckHook));
 	clearSceneLayer(kScene5030ActorReplacementLayer);
 
-	walkActiveActorTo(0x214, 0x162, 4, 0, false);
+	sequence.actorPath(SceneActorPose(0x214, 0x162, 4));
 }
 
 void Scene5030::runUnderpantsPresentationAnimation() {
@@ -695,7 +696,7 @@ void Scene5030::runUnderpantsHandoffAnimation() {
 	ParallelResourceLayerFrameTarget target(
 		_sceneLayers.layer(kScene5030ActorReplacementLayer),
 		_sceneLayers.layer(kScene5030AlternateVanessaLayer));
-	playAndPresentAnimationFrames(target,
+	BlockingSequence(*this).presentedLayerFrames(target,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsHandoffRonFrameMap) - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay());
 	clearActorReplacementLayers();

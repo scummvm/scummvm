@@ -262,15 +262,16 @@ void Scene5060::runRockPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
-		kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
-		.startAt(1)
-		.resourcePatchAt(6, 8)
-		.noFinalFrameDelay());
-	state.scene5060RockTaken = true;
-	applySceneStateToHotspotsAndPatches(1);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
+			kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
+			.startAt(1)
+			.resourcePatchAt(6, 8)
+			.noFinalFrameDelay())
+		.commit(state.scene5060RockTaken, true)
+		.framebufferPatch(1);
 	addInventoryItem(kScene5060RockInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene5060::runGasInventoryAction() {
@@ -291,22 +292,23 @@ void Scene5060::runGasInventoryAction() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
-		kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
-		.frameRange(1, 6)
-		.primarySpeechAt(5, 3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f)
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
-	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
-		kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
-		.startAt(10)
-		.noFinalFrameDelay());
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
+			kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
+			.frameRange(1, 6)
+			.primarySpeechAt(5, 3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f)
+			.noFinalFrameDelay()
+			.noRedrawAtEnd())
+		.actorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
+			kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
+			.startAt(10)
+			.noFinalFrameDelay());
+	if (!sequence.completed())
 		return;
 
 	removeInventoryItem(sourceItem);
 	addInventoryItem(kScene5060GasFilledInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 byte Scene5060::primarySpeechAnimationBaseFrame(byte animationGroup) const {

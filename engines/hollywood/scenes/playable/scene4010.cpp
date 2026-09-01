@@ -956,14 +956,15 @@ void Scene4010::setHeckerDialogueRecord(Common::Array<DialogueChoiceRecord> &rec
 void Scene4010::runProgressiveExitSpeech() {
 	GameplayState &state = _vm->gameState();
 	const byte frame = MIN<byte>(state.scene4010ProgressiveExitSpeechState, 3);
-	beginSecondarySpeechLine(6, frame);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(6, frame);
 	if (state.scene4010ProgressiveExitSpeechState > 1) {
-		runActorReplacement(ActionOverlaySpec(16, kScene4010ExitOverlayDescriptorCount,
-			kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
-			.soundAt(11, 0x27)
-			.noRedrawAtEnd()
-			.startAt(1));
-		state.mainFlowStateId = _releaseProfile.moatExitState;
+		sequence.actorReplacement(ActionOverlaySpec(16, kScene4010ExitOverlayDescriptorCount,
+				kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
+				.soundAt(11, 0x27)
+				.noRedrawAtEnd()
+				.startAt(1))
+			.commit(state.mainFlowStateId, _releaseProfile.moatExitState);
 	}
 	if (state.scene4010ProgressiveExitSpeechState < 3)
 		++state.scene4010ProgressiveExitSpeechState;
@@ -975,21 +976,21 @@ void Scene4010::takeAnimatedItem3A() {
 			hasInventoryItem(kScene4010Item3A))
 		return;
 
-	if (state.scene4010Item3APickupState == 1) {
-		beginSecondarySpeechLine(13, 0);
-	}
+	BlockingSequence sequence(*this);
+	if (state.scene4010Item3APickupState == 1)
+		sequence.secondarySpeech(13, 0);
 
-	beginSecondarySpeechLine(12, 0);
-	_roomAnimationPaused = true;
-	runActorReplacement(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
-		kScene4010Item3AFrameMap, ARRAYSIZE(kScene4010Item3AFrameMap), kScene4010OverlayFrameMillis)
-		.startAt(1)
-		.resourcePatchAt(7, 8));
-	_roomAnimationPaused = false;
-	state.scene4010Item3APickupState = 3;
-	applySceneStateToHotspotsAndPatches(3);
+	sequence.secondarySpeech(12, 0)
+		.commit(_roomAnimationPaused, true)
+		.actorReplacement(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
+			kScene4010Item3AFrameMap, ARRAYSIZE(kScene4010Item3AFrameMap), kScene4010OverlayFrameMillis)
+			.startAt(1)
+			.resourcePatchAt(7, 8))
+		.commit(_roomAnimationPaused, false)
+		.commit(state.scene4010Item3APickupState, (byte)3)
+		.framebufferPatch(3);
 	addInventoryItem(kScene4010Item3A);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene4010::handlePendingItem3A() {
@@ -1053,13 +1054,14 @@ void Scene4010::runDestinationUnlockAnimation() {
 		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
 	}
 
-	_roomAnimationPaused = true;
-	runActorReplacement(ActionOverlaySpec(15, kScene4010DestinationOverlayDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene4010OverlayFrameMillis)
-		.loopingSoundAt(soundStartFrame, 0x38, 25)
-		.stopSoundAt(soundStopFrame));
-	_roomAnimationPaused = false;
-	_soundBank0.stop();
+	BlockingSequence(*this)
+		.commit(_roomAnimationPaused, true)
+		.actorReplacement(ActionOverlaySpec(15, kScene4010DestinationOverlayDescriptorCount,
+			frameMap.data(), frameMap.size(), kScene4010OverlayFrameMillis)
+			.loopingSoundAt(soundStartFrame, 0x38, 25)
+			.stopSoundAt(soundStopFrame))
+		.commit(_roomAnimationPaused, false)
+		.stopSound();
 }
 
 void Scene4010::takeThrownItem() {
@@ -1067,17 +1069,18 @@ void Scene4010::takeThrownItem() {
 	if (state.scene4010PillboxPickupState != 1 || hasInventoryItem(_releaseProfile.thrownItemId))
 		return;
 
-	_roomAnimationPaused = true;
-	runActorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
-		kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
-		.startAt(1)
-		.resourcePatchAt(7, 11));
-	_roomAnimationPaused = false;
+	BlockingSequence sequence(*this);
+	sequence.commit(_roomAnimationPaused, true)
+		.actorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
+			kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
+			.startAt(1)
+			.resourcePatchAt(7, 11))
+		.commit(_roomAnimationPaused, false);
 	applyBaseFramebufferPatch(11);
-	state.scene4010PillboxPickupState = 2;
-	applySceneStateToHotspotsAndPatches(5);
+	sequence.commit(state.scene4010PillboxPickupState, (byte)2)
+		.framebufferPatch(5);
 	addInventoryItem(_releaseProfile.thrownItemId);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 

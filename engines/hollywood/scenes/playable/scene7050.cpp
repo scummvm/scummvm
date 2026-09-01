@@ -363,21 +363,23 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 }
 
 void Scene7050::handleActionSlot01ReturnToG04() {
-	runActorReplacement(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
-		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7050ReturnToG04State;
+	BlockingSequence(*this)
+		.actorReplacement(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
+			ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis)
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene7050ReturnToG04State);
 }
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
 	GameplayState &state = _vm->gameState();
-	runActorReplacement(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
 		kScene7050Chunk11PickupItem10FrameMap, ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis)
 		.commitAt(4, state.cloakroomRagVisible, 0)
 		.patchAt(4, 1));
 	addInventoryItem(0x10);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene7050::advanceSecondaryActorAnimation(uint32 delta) {

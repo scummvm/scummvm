@@ -600,14 +600,15 @@ void Scene5110::runUnderwearPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.resourcePatchAt(6, 11)
-		.noFinalFrameDelay());
-	state.scene5110UnderwearTaken = true;
-	applySceneStateToHotspotsAndPatches(1);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
+			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+			.resourcePatchAt(6, 11)
+			.noFinalFrameDelay())
+		.commit(state.scene5110UnderwearTaken, true)
+		.framebufferPatch(1);
 	addInventoryItem(kScene5110UnderwearInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene5110::runBottlePickup() {
@@ -624,15 +625,16 @@ void Scene5110::runBottlePickup() {
 		beginSecondarySpeechLine(4, 0);
 	}
 
-	beginSecondarySpeechLine(3, 1);
-	runActorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.resourcePatchAt(6, 5)
-		.noFinalFrameDelay());
-	state.scene5110BottleState = 2;
-	applySceneStateToHotspotsAndPatches(2);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(3, 1)
+		.actorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
+			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+			.resourcePatchAt(6, 5)
+			.noFinalFrameDelay())
+		.commit(state.scene5110BottleState, (byte)2)
+		.framebufferPatch(2);
 	addInventoryItem(kScene5110BottleInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene5110::runWerewolfDialogue() {
@@ -721,14 +723,15 @@ void Scene5110::runMirrorPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
-		.resourcePatchAt(6, 13)
-		.noFinalFrameDelay());
-	state.scene5110MirrorTaken = true;
-	applySceneStateToHotspotsAndPatches(5);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
+			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+			.resourcePatchAt(6, 13)
+			.noFinalFrameDelay())
+		.commit(state.scene5110MirrorTaken, true)
+		.framebufferPatch(5);
 	addInventoryItem(kScene5110MirrorInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene5110::runJacuzziInspection() {

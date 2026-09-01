@@ -448,12 +448,13 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	if (runCurtainRevealFromBlack())
 		return;
 
-	_soundBank0.playSampleLooping(0x30, 100);
-	const bool completed = playAndPresentAnimationFrames(kScene4050D09ReturnTransitionLayer,
-		AnimationFrameRange(0, frameMapSize - 1, kScene4050D09FrameMillis)
-			.unskippable().noFinalFrameDelay());
-	_soundBank0.stop();
-	if (!completed)
+	BlockingSequence sequence(*this);
+	sequence.loopingSound(0x30)
+		.presentedLayerFrames(kScene4050D09ReturnTransitionLayer,
+			AnimationFrameRange(0, frameMapSize - 1, kScene4050D09FrameMillis)
+				.unskippable().noFinalFrameDelay())
+		.stopSound();
+	if (!sequence.completed())
 		return;
 
 	runCurtainClearToBlack();
@@ -461,9 +462,9 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
-	_transitionClearedToBlack = true;
-	state.mainFlowStateId = kScene4090ReturnState;
-	state.activeActorPoseValid = false;
+	sequence.commit(_transitionClearedToBlack, true)
+		.commit(state.mainFlowStateId, kScene4090ReturnState)
+		.commit(state.activeActorPoseValid, false);
 }
 
 bool Scene4050::runCurtainRevealFromBlack() {
@@ -555,18 +556,20 @@ void Scene4050::useLongRopeOnLedge() {
 
 	beginRonResourceSpeechLine(8, 1);
 	_ronManualSequenceActive = true;
-	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene4050RonLayer,
 		AnimationFrameRange(5, 0x11, kScene4050ActionFrameMillis)
 			.soundAt(6, 0x2d).unskippable().noFinalFrameDelay());
 	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
-	if (!completed)
+	if (!sequence.completed())
 		return;
 	removeInventoryItem(kScene4050LongRopeItem);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4050RopeSwingState = kScene4050PatchStateRopeAttached;
-	applySceneStateToHotspotsAndPatches(1);
-	beginRonResourceSpeechLine(8, 2);
+	sequence.sound(1)
+		.commit(_vm->gameState().scene4050RopeSwingState, kScene4050PatchStateRopeAttached)
+		.framebufferPatch(1);
+	if (sequence.completed())
+		beginRonResourceSpeechLine(8, 2);
 }
 
 void Scene4050::useSceneRope() {
@@ -580,15 +583,16 @@ void Scene4050::useSceneRope() {
 	if (_sceneChunkTable.isValidChunk(kScene4050ExitPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4050ExitPatchChunk], _baseFramebuffer);
 	_ronManualSequenceActive = true;
-	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene4050RonLayer,
 		AnimationFrameRange(0x12, 0x1b, kScene4050ActionFrameMillis)
 			.soundAt(0x17, 0x2e).unskippable().noFinalFrameDelay());
 	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
-	if (!completed)
+	if (!sequence.completed())
 		return;
-	state.scene4050RopeSwingState = kScene4050PatchStateWindowReached;
-	state.mainFlowStateId = kScene4060FirstState;
+	sequence.commit(state.scene4050RopeSwingState, kScene4050PatchStateWindowReached)
+		.commit(state.mainFlowStateId, kScene4060FirstState);
 }
 
 void Scene4050::applyPatchStateColorMap(byte patchState) {

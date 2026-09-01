@@ -246,14 +246,16 @@ void Scene1090::takeWrappedBrain() {
 
 	if (state.scene1090WrappedBrainState == 0)
 		revealWrappedBrain();
-	runActorReplacement(13, kScene1090WrappedBrainPickupDescriptorCount,
-		kScene1090WrappedBrainPickupFrameMap, ARRAYSIZE(kScene1090WrappedBrainPickupFrameMap),
-		kScene1090FrameMillis);
-	state.scene1090WrappedBrainState = 2;
-	applySceneStateToHotspotsAndPatches(2);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(13, kScene1090WrappedBrainPickupDescriptorCount,
+			kScene1090WrappedBrainPickupFrameMap, ARRAYSIZE(kScene1090WrappedBrainPickupFrameMap),
+			kScene1090FrameMillis)
+		.commit(state.scene1090WrappedBrainState, (byte)2)
+		.framebufferPatch(2);
 	addInventoryItem(0x25);
-	_soundBank0.playSample(1, 100);
-	beginStaticSecondarySpeechLine(0x73, 0);
+	sequence.sound(1);
+	if (sequence.completed())
+		beginStaticSecondarySpeechLine(0x73, 0);
 }
 
 } // End of namespace Hollywood

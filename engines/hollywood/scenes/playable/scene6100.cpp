@@ -574,19 +574,20 @@ void Scene6100::takeCharlieBriefcase() {
 	if (!state.scene6100BriefcasePresent)
 		return;
 
-	beginSecondarySpeechLine(7, 1);
-	_charlieManualSequenceActive = true;
-	runActorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
-		ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
-		.commitAt(7, state.scene6100BriefcasePresent, false)
-		.patchAt(7, 2));
-	_charlieManualSequenceActive = false;
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(7, 1)
+		.commit(_charlieManualSequenceActive, true)
+		.actorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
+			ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
+			.commitAt(7, state.scene6100BriefcasePresent, false)
+			.patchAt(7, 2))
+		.commit(_charlieManualSequenceActive, false);
 	if (state.scene6100BriefcasePresent) {
-		state.scene6100BriefcasePresent = false;
-		applySceneStateToHotspotsAndPatches(2);
+		sequence.commit(state.scene6100BriefcasePresent, false)
+			.framebufferPatch(2);
 	}
 	addInventoryItem(kScene6100BriefcaseItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene6100::giveBillyFordEnvelopeToCharlie() {
@@ -595,43 +596,43 @@ void Scene6100::giveBillyFordEnvelopeToCharlie() {
 			!hasInventoryItem(kScene6100BillyFordEnvelopeItem))
 		return;
 
-	beginSecondarySpeechLine(9, 0);
-	_charlieManualSequenceActive = true;
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(9, 0)
+		.commit(_charlieManualSequenceActive, true);
 	enterCharlieDialoguePose();
-	_charlieManualSequenceActive = true;
+	sequence.commit(_charlieManualSequenceActive, true);
 	beginCharlieSpeechLine(kScene6100EnvelopeRow, 1, kScene6100CharlieSpeechGroup);
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	_sceneLayers.showLayerAtFrame(kScene6100LetterLayer, 0);
-	playAnimationFrames(kScene6100LetterLayer,
-		AnimationFrameRange(0, 7, kScene6100AnimationFrameMillis));
-	playAnimationFrames(kScene6100CharlieLayer,
-		AnimationFrameRange(32, 41, kScene6100AnimationFrameMillis));
-	playAnimationFrames(kScene6100LetterLayer,
-		AnimationFrameRange(7, 12, kScene6100AnimationFrameMillis));
+	sequence.layerFrames(kScene6100LetterLayer,
+			AnimationFrameRange(0, 7, kScene6100AnimationFrameMillis))
+		.layerFrames(kScene6100CharlieLayer,
+			AnimationFrameRange(32, 41, kScene6100AnimationFrameMillis))
+		.layerFrames(kScene6100LetterLayer,
+			AnimationFrameRange(7, 12, kScene6100AnimationFrameMillis));
 	_sceneLayers.setLayerVisible(kScene6100LetterLayer, false);
 	_hideActiveActor = previousHideActiveActor;
 
 	removeInventoryItem(kScene6100BillyFordEnvelopeItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	beginCharlieSpeechLine(kScene6100EnvelopeRow, 2, kScene6100LetterSpeechGroup);
-	playAnimationFrames(kScene6100CharlieLayer,
-		AnimationFrameRange(42, 78, kScene6100AnimationFrameMillis));
-	_charliePose = 2;
+	sequence.layerFrames(kScene6100CharlieLayer,
+			AnimationFrameRange(42, 78, kScene6100AnimationFrameMillis))
+		.commit(_charliePose, (byte)2);
 	beginCharlieSpeechLine(kScene6100EnvelopeRow, 3, kScene6100CharlieSpeechGroup);
 
 	_sceneLayers.setLayerVisible(kScene6100CharlieLayer, false);
 	_sceneLayers.showLayerAtFrame(kScene6100DepartureLayer, 0);
-	playAnimationFrames(kScene6100DepartureLayer,
+	sequence.layerFrames(kScene6100DepartureLayer,
 		AnimationFrameRange(0, 22, kScene6100DepartureFrameMillis));
 	_sceneLayers.setLayerVisible(kScene6100DepartureLayer, false);
-	state.scene6100CharlieState = 0;
-	applySceneStateToHotspotsAndPatches(1);
-	_charlieManualSequenceActive = false;
-
-	walkActiveActorTo(0x14f, 0x1df, 1, 0, false);
-	beginSecondarySpeechLine(9, 4);
+	sequence.commit(state.scene6100CharlieState, (byte)0)
+		.framebufferPatch(1)
+		.commit(_charlieManualSequenceActive, false)
+		.actorPath(SceneActorPose(0x14f, 0x1df, 1))
+		.secondarySpeech(9, 4);
 }
 
 bool Scene6100::shouldRunExitSideEffectsAfterLoop() const {

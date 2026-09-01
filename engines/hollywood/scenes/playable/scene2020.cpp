@@ -785,14 +785,15 @@ void Scene2020::runHatPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
-		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.resourcePatchAt(4, state.scene2020SunglassesPresent ? 9 : 10)
-		.noFinalFrameDelay());
-	state.scene2020HatPresent = false;
-	applySceneStateToHotspotsAndPatches(0xff);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+			kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+			.resourcePatchAt(4, state.scene2020SunglassesPresent ? 9 : 10)
+			.noFinalFrameDelay())
+		.commit(state.scene2020HatPresent, false)
+		.framebufferPatch(0xff);
 	addInventoryItem(kScene2020HatInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 
@@ -807,14 +808,15 @@ void Scene2020::runSunglassesPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
-		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
-		.resourcePatchAt(4, state.scene2020HatPresent ? 8 : 10)
-		.noFinalFrameDelay());
-	state.scene2020SunglassesPresent = false;
-	applySceneStateToHotspotsAndPatches(0xff);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+			kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+			.resourcePatchAt(4, state.scene2020HatPresent ? 8 : 10)
+			.noFinalFrameDelay())
+		.commit(state.scene2020SunglassesPresent, false)
+		.framebufferPatch(0xff);
 	addInventoryItem(kScene2020SunglassesInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 
@@ -826,15 +828,16 @@ void Scene2020::runTigerToothPickup() {
 
 	const bool previousLongIdleAllowed = _princessLongIdleAllowed;
 	_princessLongIdleAllowed = false;
-	runActorReplacement(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
-		kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
-		.resourcePatchAt(7, 17)
-		.noFinalFrameDelay());
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
+			kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
+			.resourcePatchAt(7, 17)
+			.noFinalFrameDelay());
 	_princessLongIdleAllowed = previousLongIdleAllowed;
-	_vm->gameState().scene2020TigerToothState = 2;
-	applySceneStateToHotspotsAndPatches(2);
+	sequence.commit(_vm->gameState().scene2020TigerToothState, (byte)2)
+		.framebufferPatch(2);
 	addInventoryItem(kScene2020TigerToothInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	dispatchGenericSceneAction(21);
 }
 

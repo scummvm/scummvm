@@ -311,18 +311,19 @@ void Scene2090::runEntryFromScene2020() {
 		return;
 
 	setRitualPaletteCycle(true);
-	const bool firstPartComplete = playAndPresentAnimationFrames(
-		_sceneLayers, kScene2090ForegroundLayer,
+	BlockingSequence sequence(*this);
+	sequence.presentedLayerFrames(kScene2090ForegroundLayer,
 		AnimationFrameRange(kScene2090SpecialEntryStartForegroundFrame + 1,
 			kScene2090SpecialEntryMidForegroundFrame, kScene2090SlowFrameMillis).unskippable());
 	setRitualPaletteCycle(false);
-	if (!firstPartComplete)
+	if (!sequence.completed())
 		return;
-	if (!playAndPresentAnimationTransition(_sceneLayers, kScene2090ForegroundLayer,
-			AnimationTransition(kScene2090SpecialEntryMidForegroundFrame + 1,
-				kScene2090SpecialEntryFinalForegroundFrame,
-				kScene2090SpecialEntryFinalForegroundFrame,
-				kScene2090SlowFrameMillis).unskippable()))
+	sequence.presentedLayerTransition(kScene2090ForegroundLayer,
+		AnimationTransition(kScene2090SpecialEntryMidForegroundFrame + 1,
+			kScene2090SpecialEntryFinalForegroundFrame,
+			kScene2090SpecialEntryFinalForegroundFrame,
+			kScene2090SlowFrameMillis).unskippable());
+	if (!sequence.completed())
 		return;
 
 	if (hasInventoryItem(kScene2090RequiredItem2A))
@@ -335,7 +336,7 @@ void Scene2090::runEntryFromScene2020() {
 	resetForegroundLayer(false, 0);
 	drawPlayableComposite();
 	presentFrame();
-	beginSecondarySpeechLine(4, 9);
+	sequence.secondarySpeech(4, 9);
 }
 
 void Scene2090::runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
@@ -375,43 +376,45 @@ void Scene2090::runAltarCeremony() {
 		return;
 	}
 
-	walkActiveActorTo(0x151, 0x0df, 1, 0, false);
-	beginSecondarySpeechLine(4, 3);
-	beginSecondarySpeechLine(4, 4);
-	beginSecondarySpeechLine(4, 5);
-	beginSecondarySpeechLine(4, 6);
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x151, 0x0df, 1))
+		.secondarySpeech(4, 3)
+		.secondarySpeech(4, 4)
+		.secondarySpeech(4, 5)
+		.secondarySpeech(4, 6);
 
 	resetForegroundLayer(true, 0);
-	if (!playAndPresentAnimationTransition(_sceneLayers, kScene2090ForegroundLayer,
-			AnimationTransition(1, kScene2090FinaleFirstForegroundStopFrame,
-				kScene2090FinaleFirstForegroundStopFrame,
-				kScene2090FrameMillis).unskippable()))
+	sequence.presentedLayerTransition(kScene2090ForegroundLayer,
+		AnimationTransition(1, kScene2090FinaleFirstForegroundStopFrame,
+			kScene2090FinaleFirstForegroundStopFrame,
+			kScene2090FrameMillis).unskippable());
+	if (!sequence.completed())
 		return;
 
-	beginSecondarySpeechLine(4, 7);
-	_soundBank0.playSample(0x0e, 100);
+	sequence.secondarySpeech(4, 7)
+		.sound(0x0e);
 	setRitualPaletteCycle(true);
 	ResourceSpriteLayer &foregroundLayer = _sceneLayers.layer(kScene2090ForegroundLayer);
-	const bool finaleComplete = playAndPresentAnimationFrames(foregroundLayer,
+	sequence.presentedLayerFrames(foregroundLayer,
 		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
 			kScene2090FinaleLastForegroundFrame - 1, kScene2090SlowFrameMillis)
 			.startSecondarySpeechAt(kScene2090FinaleSpeechTriggerFrame, 4, 8)
 			.unskippable());
-	if (finaleComplete) {
+	if (sequence.completed()) {
 		foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
 		drawPlayableComposite();
 		presentFrame();
 	}
 	setRitualPaletteCycle(false);
-	if (!finaleComplete)
+	if (!sequence.completed())
 		return;
 	waitForStartedSpeechAndClear(1200);
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
 	runCurtainClearToBlack();
-	_soundBank0.stop();
-	_vm->gameState().mainFlowStateId = kScene2020ReturnState;
+	sequence.stopSound()
+		.commit(_vm->gameState().mainFlowStateId, kScene2020ReturnState);
 }
 
 void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {

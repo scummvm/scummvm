@@ -552,13 +552,14 @@ void Scene5120::runTongsPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(20, kScene5120TongsPickupDescriptorCount,
-		kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap), kScene5120ActionFrameMillis)
-		.resourcePatchAt(10, 6));
-	state.scene5120TongsTaken = true;
-	applySceneStateToHotspotsAndPatches(1);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(20, kScene5120TongsPickupDescriptorCount,
+			kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap), kScene5120ActionFrameMillis)
+			.resourcePatchAt(10, 6))
+		.commit(state.scene5120TongsTaken, true)
+		.framebufferPatch(1);
 	addInventoryItem(kScene5120TongsInventoryItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
 }
 
@@ -580,16 +581,17 @@ void Scene5120::runCocktailFillPillbox() {
 		return;
 	}
 
-	beginSecondarySpeechLine(25, 0);
-	runActorReplacement(ActionOverlaySpec(21, kScene5120PillboxFillDescriptorCount,
-		kScene5120PillboxFillFrameMap, ARRAYSIZE(kScene5120PillboxFillFrameMap), kScene5120ActionFrameMillis));
-	state.scene5120CocktailState = 3;
-	applySceneStateToHotspotsAndPatches(2);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(25, 0)
+		.actorReplacement(ActionOverlaySpec(21, kScene5120PillboxFillDescriptorCount,
+			kScene5120PillboxFillFrameMap, ARRAYSIZE(kScene5120PillboxFillFrameMap), kScene5120ActionFrameMillis))
+		.commit(state.scene5120CocktailState, (byte)3)
+		.framebufferPatch(2);
 	removeInventoryItem(pillboxItem);
 	addInventoryItem(pillboxItem == kScene5120MagnetPillboxInventoryItem ?
 		kScene5120BombMagnetPillboxInventoryItem : kScene5120BombPillboxInventoryItem);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(25, 1);
+	sequence.sound(1)
+		.secondarySpeech(25, 1);
 }
 
 void Scene5120::runFilmProjectorSequence() {

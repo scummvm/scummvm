@@ -653,20 +653,19 @@ void Scene4060::runFirstEntrySequence() {
 	drawPlayableComposite();
 	presentFrame();
 
-	const bool fadeInterrupted = fadePaletteFromBlack();
-	if (!fadeInterrupted) {
-		_soundBank0.playSample(0x31, 100);
-		playAndPresentAnimationFrames(_actionOverlayPlayer.layer,
+	BlockingSequence sequence(*this);
+	sequence.paletteTransition(BlockingSequence::kFadeFromBlack)
+		.sound(0x31)
+		.presentedLayerFrames(_actionOverlayPlayer.layer,
 			AnimationFrameRange(1, ARRAYSIZE(kScene4060EntryOverlayFrameMap) - 1,
 				kScene4060FrameMillis).noFinalFrameDelay());
-	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
-	if (fadeInterrupted || Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	if (!sequence.completed())
 		return;
 
 	if (!_vm->gameState().scene4060EntryLineSeen) {
-		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().scene4060EntryLineSeen = true;
+		sequence.secondarySpeech(0, 0)
+			.commit(_vm->gameState().scene4060EntryLineSeen, true);
 	}
 }
 
@@ -681,12 +680,14 @@ void Scene4060::runReturnEntrySequence() {
 void Scene4060::runExitToNextRoom() {
 	drawPlayableComposite();
 	presentFrame();
-	runActorReplacement(ActionOverlaySpec(kScene4060ExitOverlayChunk, kScene4060ExitOverlayDescriptorCount,
-		kScene4060ExitOverlayFrameMap, ARRAYSIZE(kScene4060ExitOverlayFrameMap), kScene4060FrameMillis)
-		.noFinalFrameDelay().noRedrawAtEnd());
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(kScene4060ExitOverlayChunk,
+			kScene4060ExitOverlayDescriptorCount, kScene4060ExitOverlayFrameMap,
+			ARRAYSIZE(kScene4060ExitOverlayFrameMap), kScene4060FrameMillis)
+			.noFinalFrameDelay().noRedrawAtEnd());
 	_exitFrameVisible = true;
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene4100EntryFromScene4060State;
+	sequence.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene4100EntryFromScene4060State);
 }
 
 void Scene4060::runFirstCardStage() {
@@ -696,14 +697,18 @@ void Scene4060::runFirstCardStage() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
-		kScene4060FirstCardFrameMap, ARRAYSIZE(kScene4060FirstCardFrameMap), kScene4060FrameMillis)
-		.resourcePatchAt(6, kScene4060FirstCardPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
-	state.scene4060PictureCardStage = kScene4060CardStateFirstWon;
-	applySceneStateToHotspotsAndPatches(0);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk,
+			kScene4060FirstCardOverlayDescriptorCount, kScene4060FirstCardFrameMap,
+			ARRAYSIZE(kScene4060FirstCardFrameMap), kScene4060FrameMillis)
+			.resourcePatchAt(6, kScene4060FirstCardPatchChunk)
+			.noFinalFrameDelay().noRedrawAtEnd())
+		.commit(state.scene4060PictureCardStage, kScene4060CardStateFirstWon)
+		.framebufferPatch(0);
 	addInventoryItem(kScene4060FirstWonCardItem);
-	_soundBank0.playSample(1, 100);
-	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
+	sequence.sound(1);
+	if (sequence.completed())
+		beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
 }
 
 void Scene4060::runSecondCardStage() {
@@ -711,14 +716,18 @@ void Scene4060::runSecondCardStage() {
 	if (state.scene4060PerfumeBottleCardStage == 0)
 		beginSecondarySpeechLine(9, 0);
 
-	runActorReplacement(ActionOverlaySpec(kScene4060SecondCardOverlayChunk, kScene4060SecondCardOverlayDescriptorCount,
-		kScene4060SecondCardFrameMap, ARRAYSIZE(kScene4060SecondCardFrameMap), kScene4060FrameMillis)
-		.resourcePatchAt(5, kScene4060SecondCardPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
-	state.scene4060PerfumeBottleCardStage = kScene4060SecondCardStateWon;
-	applySceneStateToHotspotsAndPatches(1);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(kScene4060SecondCardOverlayChunk,
+			kScene4060SecondCardOverlayDescriptorCount, kScene4060SecondCardFrameMap,
+			ARRAYSIZE(kScene4060SecondCardFrameMap), kScene4060FrameMillis)
+			.resourcePatchAt(5, kScene4060SecondCardPatchChunk)
+			.noFinalFrameDelay().noRedrawAtEnd())
+		.commit(state.scene4060PerfumeBottleCardStage, kScene4060SecondCardStateWon)
+		.framebufferPatch(1);
 	addInventoryItem(kScene4060SecondWonCardItem);
-	_soundBank0.playSample(1, 100);
-	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
+	sequence.sound(1);
+	if (sequence.completed())
+		beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
 }
 
 void Scene4060::runInstallMirrorStage() {
@@ -728,15 +737,18 @@ void Scene4060::runInstallMirrorStage() {
 		return;
 	}
 
-	beginSecondarySpeechLine(0x11, 1);
-	runActorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
-		kScene4060InstallMirrorFrameMap, ARRAYSIZE(kScene4060InstallMirrorFrameMap), kScene4060FrameMillis)
-		.resourcePatchAt(7, kScene4060MirrorInstalledPatchChunk).noFinalFrameDelay().noRedrawAtEnd());
-	state.scene4060PictureCardStage = kScene4060CardStateMirrorInstalled;
-	applySceneStateToHotspotsAndPatches(0);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(0x11, 1)
+		.actorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk,
+			kScene4060FirstCardOverlayDescriptorCount, kScene4060InstallMirrorFrameMap,
+			ARRAYSIZE(kScene4060InstallMirrorFrameMap), kScene4060FrameMillis)
+			.resourcePatchAt(7, kScene4060MirrorInstalledPatchChunk)
+			.noFinalFrameDelay().noRedrawAtEnd())
+		.commit(state.scene4060PictureCardStage, kScene4060CardStateMirrorInstalled)
+		.framebufferPatch(0);
 	removeInventoryItem(kScene4060MirrorItem);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x11, 2);
+	sequence.sound(1)
+		.secondarySpeech(0x11, 2);
 }
 
 void Scene4060::runSherilynCardDialogue() {

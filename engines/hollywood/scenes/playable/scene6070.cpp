@@ -767,19 +767,20 @@ void Scene6070::handleGiveItemToSue() {
 		return;
 	}
 
-	beginSecondarySpeechLine(6, 0);
-	_manualSequenceActive = true;
-	runActorReplacement(ActionOverlaySpec(10, 0x0c, kScene6070TransferFrameMap,
-		ARRAYSIZE(kScene6070TransferFrameMap), kScene6070OverlayFrameMillis)
-		.mappedLayerFrames(kScene6070SueLayer, kScene6070TransferSueFrameMap,
-			ARRAYSIZE(kScene6070TransferSueFrameMap)));
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(6, 0)
+		.commit(_manualSequenceActive, true)
+		.actorReplacement(ActionOverlaySpec(10, 0x0c, kScene6070TransferFrameMap,
+			ARRAYSIZE(kScene6070TransferFrameMap), kScene6070OverlayFrameMillis)
+			.mappedLayerFrames(kScene6070SueLayer, kScene6070TransferSueFrameMap,
+				ARRAYSIZE(kScene6070TransferSueFrameMap)))
+		.commit(_manualSequenceActive, false);
 	_sceneLayers.setLayerFrame(kScene6070SueLayer, 14);
-	_manualSequenceActive = false;
 
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(0, ronItem);
 	state.addInventoryItem(1, sueItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 byte Scene6070::sueInventoryItemForRonItem(byte itemId) const {
