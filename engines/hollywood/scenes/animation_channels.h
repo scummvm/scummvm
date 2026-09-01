@@ -78,12 +78,12 @@ struct TimedAnimationChannel {
  * Advances registered resource layers at a fixed cadence.
  *
  * Tracks only own timing and frame selection. Scenes still own visibility,
- * composition, and animations with frame-specific side effects. Directly
- * registered layers must remain at stable addresses. Stack layers are
- * bound by ID and may survive stack storage changes. Layers may be reconfigured
- * while their tracks are inactive; their registered range must be valid before
- * activation. Inactive tracks do not accumulate time; reset() restores the
- * first frame.
+ * composition, and animations with frame-specific side effects. Stack layers
+ * are bound by ID and may survive stack storage changes.
+ * addStableRandom() is reserved for fixed-address layers owned outside a stack.
+ * Layers may be reconfigured while their tracks are inactive; their registered
+ * range must be valid before activation. Inactive tracks do not accumulate
+ * time; reset() restores the first frame.
  */
 class RealtimeAnimationTracks {
 public:
@@ -91,27 +91,12 @@ public:
 		kInvalidTrack = 0xffffffff
 	};
 
-	uint addLoop(ResourceSpriteLayer &layer, uint32 frameMillis, uint16 frameCount,
-			bool active = true) {
-		if (frameCount == 0 || frameCount > 0x100)
-			return kInvalidTrack;
-		return addTrack(kCycle, layer, frameMillis, 0, (byte)(frameCount - 1),
-			false, active);
-	}
-
 	uint addLoop(SceneLayerStack &layers, uint layerId, uint32 frameMillis,
 			uint16 frameCount, bool active = true) {
 		if (!layers.hasLayer(layerId) || frameCount == 0 || frameCount > 0x100)
 			return kInvalidTrack;
 		return addTrack(kCycle, layers, layerId, frameMillis, 0,
 			(byte)(frameCount - 1), false, active);
-	}
-
-	uint addRange(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
-			byte lastFrame, bool active = true) {
-		if (firstFrame > lastFrame)
-			return kInvalidTrack;
-		return addTrack(kCycle, layer, frameMillis, firstFrame, lastFrame, false, active);
 	}
 
 	uint addRange(SceneLayerStack &layers, uint layerId, uint32 frameMillis,
@@ -123,13 +108,6 @@ public:
 	}
 
 	// Cycles the logical entries in the layer's configured frame map.
-	uint addFrameMap(ResourceSpriteLayer &layer, uint32 frameMillis, bool active = true) {
-		if (layer.frameMap == nullptr || layer.frameMapSize == 0 || layer.frameMapSize > 0x100)
-			return kInvalidTrack;
-		return addTrack(kCycle, layer, frameMillis, 0, (byte)(layer.frameMapSize - 1),
-			false, active);
-	}
-
 	uint addFrameMap(SceneLayerStack &layers, uint layerId, uint32 frameMillis,
 			bool active = true) {
 		if (!layers.hasLayer(layerId))
@@ -141,13 +119,6 @@ public:
 			(byte)(layer.frameMapSize - 1), false, active);
 	}
 
-	uint addPingPong(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
-			byte lastFrame, bool active = true) {
-		if (firstFrame > lastFrame)
-			return kInvalidTrack;
-		return addTrack(kPingPong, layer, frameMillis, firstFrame, lastFrame, false, active);
-	}
-
 	uint addPingPong(SceneLayerStack &layers, uint layerId, uint32 frameMillis,
 			byte firstFrame, byte lastFrame, bool active = true) {
 		if (!layers.hasLayer(layerId) || firstFrame > lastFrame)
@@ -156,7 +127,7 @@ public:
 			lastFrame, false, active);
 	}
 
-	uint addRandom(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
+	uint addStableRandom(ResourceSpriteLayer &layer, uint32 frameMillis, byte firstFrame,
 			byte lastFrame, bool avoidRepeats, bool active = true) {
 		if (firstFrame > lastFrame)
 			return kInvalidTrack;
