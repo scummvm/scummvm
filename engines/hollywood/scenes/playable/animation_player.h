@@ -31,7 +31,7 @@ namespace Hollywood {
 
 // Inclusive playback range. Ordered and repeated playback remap the frame sent
 // to the target while events continue to receive the playback frame.
-struct AnimationFrameRange {
+struct AnimationFrameRange : AnimationEventSpec<AnimationFrameRange> {
 	AnimationFrameRange(uint newFirstFrame, uint newLastFrame, uint32 newFrameMillis) :
 			firstFrame(newFirstFrame),
 			lastFrame(newLastFrame),
@@ -58,113 +58,6 @@ struct AnimationFrameRange {
 		return *this;
 	}
 
-	AnimationFrameRange &hookAt(int frame, byte id) {
-		events.addCustomHook(frame, id);
-		return *this;
-	}
-
-	AnimationFrameRange &hookEveryFrame(byte id) {
-		events.addCustomHook(-1, id, true);
-		return *this;
-	}
-
-	AnimationFrameRange &patchAt(int frame, byte selector) {
-		events.addFramebufferPatch(frame, selector);
-		return *this;
-	}
-
-	AnimationFrameRange &resourcePatchAt(int frame, uint chunkIndex) {
-		events.addResourcePatch(frame, chunkIndex);
-		return *this;
-	}
-
-	AnimationFrameRange &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, false);
-		return *this;
-	}
-
-	AnimationFrameRange &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, true);
-		return *this;
-	}
-
-	AnimationFrameRange &stopSoundAt(int frame) {
-		events.addStopSound(frame);
-		return *this;
-	}
-
-	AnimationFrameRange &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
-		events.addResidentSound(frame, soundId, volumePercent);
-		return *this;
-	}
-
-	AnimationFrameRange &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			byte speechId = 0) {
-		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
-		return *this;
-	}
-
-	AnimationFrameRange &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
-		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
-		return *this;
-	}
-
-	AnimationFrameRange &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
-		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
-		return *this;
-	}
-
-	AnimationFrameRange &layerFrameAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerFrame(frame, layerId, layerFrame);
-		return *this;
-	}
-
-	AnimationFrameRange &mappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, false);
-		return *this;
-	}
-
-	AnimationFrameRange &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, true);
-		return *this;
-	}
-
-	AnimationFrameRange &layerVisibleAt(int frame, uint layerId, bool visible) {
-		events.addLayerVisibility(frame, layerId, visible);
-		return *this;
-	}
-
-	AnimationFrameRange &layerResetAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerReset(frame, layerId, layerFrame);
-		return *this;
-	}
-
-	template<class T, class V>
-	AnimationFrameRange &commitAt(int frame, T &target, const V &value) {
-		events.addStateCommit(frame, target, value);
-		return *this;
-	}
-
-	AnimationFrameRange &invalidatePaletteAt(int frame) {
-		events.addPaletteInvalidation(frame);
-		return *this;
-	}
-
-	AnimationFrameRange &fadeFromBlackAt(int frame) {
-		events.addPaletteFade(frame, true);
-		return *this;
-	}
-
-	AnimationFrameRange &fadeToBlackAt(int frame) {
-		events.addPaletteFade(frame, false);
-		return *this;
-	}
-
 	AnimationFrameRange &repeatFrame(byte frame) {
 		frameOrder = nullptr;
 		repeatedFrame = frame;
@@ -184,7 +77,6 @@ struct AnimationFrameRange {
 	bool waitAfterFinalFrame;
 	const byte *frameOrder;
 	int repeatedFrame;
-	AnimationFrameEvents events;
 };
 
 /**

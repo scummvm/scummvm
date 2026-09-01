@@ -60,7 +60,7 @@ struct ActionOverlayOptions {
  * changes composition order. restoreBaseBackground() clears the sprite bounds
  * from the base framebuffer before each draw.
  */
-struct ActionOverlaySpec {
+struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
 			const byte *newFrameMap, uint newFrameMapSize, uint32 newFrameMillis) :
 			chunkIndex(newChunkIndex),
@@ -72,113 +72,6 @@ struct ActionOverlaySpec {
 			drawStratum(kSceneAnimationInFrontOfActors),
 			restoreBackgroundBeforeDraw(false),
 			options() {
-	}
-
-	ActionOverlaySpec &patchAt(int frame, byte selector) {
-		events.addFramebufferPatch(frame, selector);
-		return *this;
-	}
-
-	ActionOverlaySpec &resourcePatchAt(int frame, uint resourceChunkIndex) {
-		events.addResourcePatch(frame, resourceChunkIndex);
-		return *this;
-	}
-
-	ActionOverlaySpec &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, false);
-		return *this;
-	}
-
-	ActionOverlaySpec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, true);
-		return *this;
-	}
-
-	ActionOverlaySpec &stopSoundAt(int frame) {
-		events.addStopSound(frame);
-		return *this;
-	}
-
-	ActionOverlaySpec &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
-		events.addResidentSound(frame, soundId, volumePercent);
-		return *this;
-	}
-
-	ActionOverlaySpec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			byte speechId = 0) {
-		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
-		return *this;
-	}
-
-	ActionOverlaySpec &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
-		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
-		return *this;
-	}
-
-	ActionOverlaySpec &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
-		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
-		return *this;
-	}
-
-	ActionOverlaySpec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerFrame(frame, layerId, layerFrame);
-		return *this;
-	}
-
-	ActionOverlaySpec &mappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, false);
-		return *this;
-	}
-
-	ActionOverlaySpec &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, true);
-		return *this;
-	}
-
-	ActionOverlaySpec &layerVisibleAt(int frame, uint layerId, bool visible) {
-		events.addLayerVisibility(frame, layerId, visible);
-		return *this;
-	}
-
-	ActionOverlaySpec &layerResetAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerReset(frame, layerId, layerFrame);
-		return *this;
-	}
-
-	template<class T, class V>
-	ActionOverlaySpec &commitAt(int frame, T &target, const V &value) {
-		events.addStateCommit(frame, target, value);
-		return *this;
-	}
-
-	ActionOverlaySpec &invalidatePaletteAt(int frame) {
-		events.addPaletteInvalidation(frame);
-		return *this;
-	}
-
-	ActionOverlaySpec &fadeFromBlackAt(int frame) {
-		events.addPaletteFade(frame, true);
-		return *this;
-	}
-
-	ActionOverlaySpec &fadeToBlackAt(int frame) {
-		events.addPaletteFade(frame, false);
-		return *this;
-	}
-
-	ActionOverlaySpec &hookAt(int frame, byte hookId) {
-		events.addCustomHook(frame, hookId);
-		return *this;
-	}
-
-	ActionOverlaySpec &hookEveryFrame(byte hookId) {
-		events.addCustomHook(-1, hookId, true);
-		return *this;
 	}
 
 	ActionOverlaySpec &drawAt(SceneAnimationStratum stratum) {
@@ -237,7 +130,6 @@ struct ActionOverlaySpec {
 	SceneAnimationStratum drawStratum;
 	bool restoreBackgroundBeforeDraw;
 	ActionOverlayOptions options;
-	AnimationFrameEvents events;
 };
 
 } // End of namespace Hollywood

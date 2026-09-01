@@ -40,6 +40,8 @@ struct AnimationFrameEvent {
 		kSecondarySpeech,
 		kStartedSecondarySpeech,
 		kPrimarySpeech,
+		kActorPose,
+		kActorPath,
 		kLayerFrame,
 		kLayerFrameMap,
 		kLayerReset,
@@ -69,6 +71,11 @@ struct AnimationFrameEvent {
 			speechRed(0),
 			speechGreen(0),
 			speechBlue(0),
+			actorX(0),
+			actorY(0),
+			actorFacing(0),
+			actorCel(0),
+			actorPathFrameMillis(0),
 			layerId(0),
 			layerFrame(0),
 			layerFrameMap(nullptr),
@@ -101,6 +108,11 @@ struct AnimationFrameEvent {
 	byte speechRed;
 	byte speechGreen;
 	byte speechBlue;
+	int actorX;
+	int actorY;
+	byte actorFacing;
+	byte actorCel;
+	uint32 actorPathFrameMillis;
 	uint layerId;
 	byte layerFrame;
 	const byte *layerFrameMap;
@@ -171,6 +183,26 @@ public:
 		event.speechRed = red;
 		event.speechGreen = green;
 		event.speechBlue = blue;
+		_events.push_back(event);
+	}
+
+	void addActorPose(int frame, int x, int y, byte facing, byte cel) {
+		AnimationFrameEvent event(frame, AnimationFrameEvent::kActorPose);
+		event.actorX = x;
+		event.actorY = y;
+		event.actorFacing = facing;
+		event.actorCel = cel;
+		_events.push_back(event);
+	}
+
+	void addActorPath(int frame, int targetX, int targetY, byte finalFacing,
+			byte finalCel, uint32 frameMillis) {
+		AnimationFrameEvent event(frame, AnimationFrameEvent::kActorPath);
+		event.actorX = targetX;
+		event.actorY = targetY;
+		event.actorFacing = finalFacing;
+		event.actorCel = finalCel;
+		event.actorPathFrameMillis = frameMillis;
 		_events.push_back(event);
 	}
 
@@ -246,6 +278,137 @@ private:
 	}
 
 	Common::Array<AnimationFrameEvent> _events;
+};
+
+// Fluent frame events shared by resource overlays and layer-frame ranges.
+template<class Spec>
+class AnimationEventSpec {
+public:
+	Spec &patchAt(int frame, byte selector) {
+		events.addFramebufferPatch(frame, selector);
+		return self();
+	}
+
+	Spec &resourcePatchAt(int frame, uint resourceChunkIndex) {
+		events.addResourcePatch(frame, resourceChunkIndex);
+		return self();
+	}
+
+	Spec &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, false);
+		return self();
+	}
+
+	Spec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
+		events.addSound(frame, soundId, volumePercent, true);
+		return self();
+	}
+
+	Spec &stopSoundAt(int frame) {
+		events.addStopSound(frame);
+		return self();
+	}
+
+	Spec &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
+		events.addResidentSound(frame, soundId, volumePercent);
+		return self();
+	}
+
+	Spec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			byte speechId = 0) {
+		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
+		return self();
+	}
+
+	Spec &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
+		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
+		return self();
+	}
+
+	Spec &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
+		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
+		return self();
+	}
+
+	Spec &actorPoseAt(int frame, int x, int y, byte facing, byte cel = 0) {
+		events.addActorPose(frame, x, y, facing, cel);
+		return self();
+	}
+
+	// Starts a path that advances alongside the blocking animation.
+	Spec &actorPathAt(int frame, int targetX, int targetY, byte finalFacing,
+			byte finalCel, uint32 frameMillis) {
+		events.addActorPath(frame, targetX, targetY, finalFacing, finalCel, frameMillis);
+		return self();
+	}
+
+	Spec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerFrame(frame, layerId, layerFrame);
+		return self();
+	}
+
+	Spec &mappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, false);
+		return self();
+	}
+
+	Spec &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, true);
+		return self();
+	}
+
+	Spec &layerVisibleAt(int frame, uint layerId, bool visible) {
+		events.addLayerVisibility(frame, layerId, visible);
+		return self();
+	}
+
+	Spec &layerResetAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerReset(frame, layerId, layerFrame);
+		return self();
+	}
+
+	template<class T, class V>
+	Spec &commitAt(int frame, T &target, const V &value) {
+		events.addStateCommit(frame, target, value);
+		return self();
+	}
+
+	Spec &invalidatePaletteAt(int frame) {
+		events.addPaletteInvalidation(frame);
+		return self();
+	}
+
+	Spec &fadeFromBlackAt(int frame) {
+		events.addPaletteFade(frame, true);
+		return self();
+	}
+
+	Spec &fadeToBlackAt(int frame) {
+		events.addPaletteFade(frame, false);
+		return self();
+	}
+
+	Spec &hookAt(int frame, byte hookId) {
+		events.addCustomHook(frame, hookId);
+		return self();
+	}
+
+	Spec &hookEveryFrame(byte hookId) {
+		events.addCustomHook(-1, hookId, true);
+		return self();
+	}
+
+	AnimationFrameEvents events;
+
+private:
+	Spec &self() {
+		return static_cast<Spec &>(*this);
+	}
 };
 
 } // End of namespace Hollywood

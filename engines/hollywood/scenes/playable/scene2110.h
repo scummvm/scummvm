@@ -45,14 +45,10 @@ private:
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
 	void advanceEntryIdle(uint32 delta);
-	void startScriptedActorPath();
-	void advanceScriptedActorPath(uint32 delta);
-	void finishScriptedActorPath();
 	void runEntryFromScene2100();
 	void runScriptedReturnToScene2100();
 	bool runScriptedEntryOpening();
@@ -65,11 +61,8 @@ private:
 	void runTreasurePrimarySpeechLine(uint16 rowIndex, byte frameIndex);
 
 	TimedAnimationChannel _entryIdleChannel;
-	TimedAnimationChannel _scriptedActorPathChannel;
 	uint _ambientTrack;
 	bool _entryIdleActive;
-	bool _scriptedActorPathActive;
-	uint _scriptedActorPathFrameIndex;
 };
 
 } // End of namespace Hollywood
