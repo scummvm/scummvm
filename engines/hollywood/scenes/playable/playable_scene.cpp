@@ -227,12 +227,8 @@ PlayableScene::BlockingSequence::BlockingSequence(PlayableScene &scene) :
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
-	if (canRun()) {
-		const bool completed = _scene.playAnimationFrames(layers, layerId, range);
-		if (!completed && !_scene._skipRequested)
-			_running = false;
-		refresh();
-	}
+	if (canRun())
+		finishMediaStep(_scene.playAnimationFrames(layers, layerId, range));
 	return *this;
 }
 
@@ -243,12 +239,8 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerFrames(
 		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
-	if (canRun()) {
-		const bool completed = _scene.playAndPresentAnimationFrames(layers, layerId, range);
-		if (!completed && !_scene._skipRequested)
-			_running = false;
-		refresh();
-	}
+	if (canRun())
+		finishMediaStep(_scene.playAndPresentAnimationFrames(layers, layerId, range));
 	return *this;
 }
 
@@ -259,12 +251,8 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayer
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerTransition(
 		SceneLayerStack &layers, uint layerId, const AnimationTransition &transition) {
-	if (canRun()) {
-		const bool completed = _scene.playAndPresentAnimationTransition(layers, layerId, transition);
-		if (!completed && !_scene._skipRequested)
-			_running = false;
-		refresh();
-	}
+	if (canRun())
+		finishMediaStep(_scene.playAndPresentAnimationTransition(layers, layerId, transition));
 	return *this;
 }
 
@@ -362,6 +350,12 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::paletteTransit
 bool PlayableScene::BlockingSequence::canRun() {
 	refresh();
 	return _running;
+}
+
+void PlayableScene::BlockingSequence::finishMediaStep(bool completed) {
+	if (!completed && !_scene._skipRequested)
+		_running = false;
+	refresh();
 }
 
 void PlayableScene::BlockingSequence::refresh() {
