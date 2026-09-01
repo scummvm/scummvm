@@ -22,8 +22,6 @@
 #include "hollywood/scenes/intro/scene9000.h"
 
 #include "common/debug.h"
-#include "common/events.h"
-#include "common/system.h"
 
 #include "hollywood/hollywood.h"
 
@@ -37,14 +35,10 @@ const byte kIntroAnimationDescriptorSequence[] = {
 };
 
 Scene9000::Scene9000(HollywoodEngine *vm) :
-		_vm(vm),
-		_music(),
-		_skipRequested(false) {
+		PresentationScene(vm, "intro scene 9000", kFrameBufferSize, 0),
+		_music() {
 	_paletteSource.resize(0x300);
-	_paletteCurrent.resize(0x300);
 	_frameDecodeBuffer.resize(HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight);
-	_sceneFramebuffer.resize(HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool Scene9000::play() {
@@ -198,52 +192,14 @@ bool Scene9000::runChunk() {
 	return true;
 }
 
-bool Scene9000::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
-bool Scene9000::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
+void Scene9000::stopAudio() {
+	_music.stop();
 }
 
 void Scene9000::resetChunkState() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	memset(_frameDecodeBuffer.data(), 0, _frameDecodeBuffer.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
-}
-
-void Scene9000::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
 }
 
 void Scene9000::restoreSpriteBackground(uint16 descriptorIndex) {

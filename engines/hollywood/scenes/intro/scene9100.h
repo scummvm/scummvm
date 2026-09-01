@@ -28,15 +28,15 @@
 #include "common/str.h"
 
 #include "hollywood/gameplay/actor_renderer.h"
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
+#include "hollywood/scenes/presentation_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9100 {
+class Scene9100 : public PresentationScene {
 public:
 	Scene9100(HollywoodEngine *vm);
 
@@ -160,16 +160,9 @@ private:
 	void applyBackgroundMode(const CinematicStep &step);
 	void copyPaletteSegment(byte segmentIndex);
 	void copyDefaultPalette();
-	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth);
-	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
-	void copySavedFramebufferRun(int y, int x, int width);
-	void clearSceneFramebufferRun(int y, int x, int width);
-	void presentFrame();
-
-	bool pollEvents();
-	bool delay(uint32 millis);
+	void drawFrameOverlays() override;
 	bool delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
-	void stopAudio();
+	void stopAudio() override;
 
 	byte nextTalkingFrameVariant();
 	uint32 getSegmentOffset(byte segmentIndex) const;
@@ -198,7 +191,6 @@ private:
 		kScratchPrimaryPayloadBase = 640000
 	};
 
-	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	SpeechPlayer _speech;
 	SoundBank0Player _effectSound;
@@ -208,18 +200,13 @@ private:
 	ResourceChunkTable _i10ChunkTable;
 	uint32 _resourceChunkOffsets[kResourceChunkCount];
 	Common::Array<byte> _paletteDefault;
-	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _sceneFillRuns;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _resourceScratchArena;
 	Common::Array<byte> _secondaryScratchBuffer;
 	Common::Array<byte> _presentationPaletteRemapTable;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	IndexedSurfaceBuffer _savedFramebuffer;
 	IndexedSurfaceBuffer _cleanOfficeBaseFramebuffer;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
@@ -244,7 +231,6 @@ private:
 	bool _deskPrimaryActorVisible;
 	bool _deskSecondaryActorVisible;
 	bool _dialogueBranch;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood

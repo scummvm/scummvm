@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9010.h"
 
 #include "common/debug.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 
@@ -54,10 +53,9 @@ const byte kPopupSequence[] = {
 };
 
 Scene9010::Scene9010(HollywoodEngine *vm) :
-		_vm(vm),
+		PresentationScene(vm, "intro scene 9010", kSceneFramebufferSize, 0),
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
-		_skipRequested(false),
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
@@ -67,10 +65,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_scene9010FadeComplete(false),
 		_scene9010FadeAccumulator(0) {
 	_paletteSource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
-	_sceneFramebuffer.resize(kSceneFramebufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003LargeRowSize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_subtitle.visible = false;
@@ -771,27 +766,8 @@ bool Scene9010::fadeOutPalette(uint32 stepMillis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void Scene9010::presentFrame(uint rowOffset, uint xOffset) {
-	_displayPalette.uploadFrom6Bit(_paletteCurrent);
-
-	if (_screen.empty())
-		_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
-
-	const Graphics::Surface &framebuffer = _sceneFramebuffer.surface();
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		byte *destination = (byte *)_screen.getBasePtr(0, y);
-		const uint sourceY = y + rowOffset;
-		if (sourceY < (uint)framebuffer.h && xOffset + HollywoodEngine::kScreenWidth <= (uint)framebuffer.w) {
-			memcpy(destination, framebuffer.getBasePtr(xOffset, sourceY), HollywoodEngine::kScreenWidth);
-		} else {
-			memset(destination, 0, HollywoodEngine::kScreenWidth);
-		}
-	}
-
+void Scene9010::drawFrameOverlays() {
 	drawSubtitleOverlay();
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
 }
 
 void Scene9010::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex) {
@@ -953,46 +929,6 @@ Scene9010::SpeechTextStyle Scene9010::getCurrentSpeechTextStyle() const {
 		return SpeechTextStyle{0x0e0, 0x108, kScene9010SpeechTextColor, 0x20, 0x3f, 0x3f};
 
 	return SpeechTextStyle{0x0c8, 0x106, kScene9010SpeechTextColor, 0x20, 0x3f, 0x3f};
-}
-
-bool Scene9010::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			stopAudio();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				stopAudio();
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
-bool Scene9010::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
 }
 
 bool Scene9010::delayScene9010(uint32 millis) {
