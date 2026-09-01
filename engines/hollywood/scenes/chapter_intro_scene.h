@@ -24,17 +24,17 @@
 
 #include "common/array.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class ChapterIntroScene {
+class ChapterIntroScene : public PresentationScene {
 public:
-	virtual ~ChapterIntroScene() {}
+	~ChapterIntroScene() override {}
 
 	bool play();
 
@@ -53,38 +53,19 @@ protected:
 	virtual void adjustPaletteAfterLoad();
 	virtual void drawInitialFrame();
 	virtual void runPresentation() = 0;
+	void stopAudio() override;
+	uint presentXOffset() const override;
 
 	bool load();
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	void fadeInPalette();
 	void fadeOutPalette();
-	void presentFrame();
 	void rotatePaletteRange(uint firstIndex, uint lastIndex);
-	bool delay(uint32 millis);
-	bool pollEvents();
 	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
 
-	enum {
-		kResourceChunkCount = 40,
-		kFrameBufferSize = 0x78000
-	};
-
-	HollywoodEngine *_vm;
+	SceneResources _resources;
 	MusicPlayer _music;
-	ResourceChunkTable _chunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
-	uint32 _resourceArenaCursor;
 	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	Common::Array<byte> _resourceArena;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
-	const char *_debugName;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood

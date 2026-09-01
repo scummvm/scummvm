@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_INTRO_INTRO_SCENE_H
-#define HOLLYWOOD_SCENES_INTRO_INTRO_SCENE_H
+#ifndef HOLLYWOOD_SCENES_PRESENTATION_SCENE_H
+#define HOLLYWOOD_SCENES_PRESENTATION_SCENE_H
 
 #include "common/array.h"
 
@@ -30,13 +30,13 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-// Shared presentation state for full-screen intro scenes.
-class IntroSceneBase {
+// Owns the display and skip lifecycle shared by non-interactive full-screen scenes.
+class PresentationScene {
 protected:
-	IntroSceneBase(HollywoodEngine *vm, const char *debugName,
+	PresentationScene(HollywoodEngine *vm, const char *debugName,
 		uint32 sceneFramebufferSize = kFrameBufferSize,
 		uint32 savedFramebufferSize = kFrameBufferSize);
-	virtual ~IntroSceneBase() {}
+	virtual ~PresentationScene() {}
 
 	virtual void stopAudio() {}
 	virtual void drawFrameOverlays() {}
@@ -70,4 +70,4 @@ protected:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_INTRO_INTRO_SCENE_H
+#endif // HOLLYWOOD_SCENES_PRESENTATION_SCENE_H

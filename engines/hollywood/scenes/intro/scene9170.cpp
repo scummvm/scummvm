@@ -83,7 +83,7 @@ const byte kScene9170ScrollUpB[] = {
 };
 
 Scene9170::Scene9170(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
 		_resources(),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
