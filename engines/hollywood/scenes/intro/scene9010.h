@@ -88,12 +88,9 @@ private:
 	void drawI02FramePayload(const Common::Array<byte> &payload);
 	void drawRawI02ScreenRows(const Common::Array<byte> &payload);
 	void drawRawI02SceneRows(const Common::Array<byte> &payload);
-	void drawResourceBlockList(const Common::Array<byte> &blockList);
 	byte nextTalkingFrameVariant();
 
 	void drawCharacterFrame(byte frameIndex);
-	void restoreSpriteBackground(uint16 descriptorIndex);
-	void drawStripSpriteFrame(uint16 descriptorIndex);
 
 	void updateScene9010PaletteFade();
 	bool fadeInPalette(uint32 stepMillis);
@@ -121,8 +118,7 @@ private:
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
-		kCharacterFrameDescriptorCount = 17,
-		kFrameDescriptorSize = 14
+		kCharacterFrameDescriptorCount = 17
 	};
 
 	MusicPlayer _music;

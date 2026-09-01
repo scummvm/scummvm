@@ -45,17 +45,11 @@ private:
 	void stopAudio() override;
 
 	void resetChunkState();
-
-	void drawStripSpriteFrame(uint16 descriptorIndex);
-	void restoreSpriteBackground(uint16 descriptorIndex);
-
-	uint16 readUint16(uint offset) const;
-	uint32 readUint32(uint offset) const;
+	void drawAnimationFrame(uint16 descriptorIndex);
 
 	enum {
 		kIntroChunkCount = 4,
 		kIntroFrameDescriptorCount = 21,
-		kIntroFrameDescriptorSize = 14,
 		kAnimatedPaletteByteCount = 0xff * 3,
 		kFrameStepMillis = 50,
 		kPaletteStepMillis = 50,
