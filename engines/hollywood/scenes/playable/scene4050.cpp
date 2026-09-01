@@ -53,8 +53,8 @@ const uint kScene4050PatchState2Chunk = 9;
 const uint kScene4050ExitPatchChunk = 10;
 const uint kScene4050D09ReturnTransitionChunk = 11;
 const uint kScene4050D09ReturnTransitionDescriptorCount = 0x15;
-const uint kScene4050SceneObjectPaletteFirstColor = 0xb0;
-const uint kScene4050SceneObjectPaletteLastColor = 0xcf;
+const uint kScene4050ResourceLayerPaletteFirstColor = 0xb0;
+const uint kScene4050ResourceLayerPaletteLastColor = 0xff;
 const byte kScene4050LongRopeItem = 0x6b;
 const byte kScene4050PatchStateBase = 0;
 const byte kScene4050PatchStateRopeAttached = 1;
@@ -129,7 +129,7 @@ Scene4050::Scene4050(HollywoodEngine *vm) :
 
 void Scene4050::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
-	restoreSceneObjectPaletteRange();
+	restoreResourceLayerPalette();
 	resetAnimationLayers();
 	_ambientEffectTimerAccumulator = 0;
 	_previousContinuousAmbientCue = 0;
@@ -177,7 +177,7 @@ void Scene4050::runExitSideEffectsAfterLoop() {
 
 void Scene4050::prepareCustomGameplayLoop() {
 	if (!_transitionClearedToBlack)
-		restoreSceneObjectPaletteRange();
+		restoreResourceLayerPalette();
 }
 
 void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
@@ -281,10 +281,11 @@ void Scene4050::resetAnimationLayers() {
 	_ronManualSequenceActive = false;
 }
 
-void Scene4050::restoreSceneObjectPaletteRange() {
-	const uint firstOffset = kScene4050SceneObjectPaletteFirstColor * 3;
-	const uint byteCount = (kScene4050SceneObjectPaletteLastColor -
-		kScene4050SceneObjectPaletteFirstColor + 1) * 3;
+void Scene4050::restoreResourceLayerPalette() {
+	// D05 supplies the colors for both resource-rendered Ron and the flag.
+	const uint firstOffset = kScene4050ResourceLayerPaletteFirstColor * 3;
+	const uint byteCount = (kScene4050ResourceLayerPaletteLastColor -
+		kScene4050ResourceLayerPaletteFirstColor + 1) * 3;
 	if (_paletteResource.size() < firstOffset + byteCount ||
 			_paletteCurrent.size() < firstOffset + byteCount)
 		return;

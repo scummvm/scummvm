@@ -47,7 +47,7 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void restoreSceneObjectPaletteRange();
+	void restoreResourceLayerPalette();
 	void advanceFlagPalette(uint32 delta);
 	void rotateFlagPalette();
 	void advanceRonLayer(uint32 delta);
