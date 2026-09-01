@@ -45,6 +45,7 @@ private:
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceTransitionAnimation(uint32 delta) override;
 	void realtimeSpeechEnded(byte speechId, bool completed) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;

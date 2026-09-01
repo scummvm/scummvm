@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene3020.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -76,7 +74,6 @@ PlayableSceneConfig scene3020Config() {
 	config.walkablePaletteMaxRegion = 20;
 	return config;
 }
-
 Scene3020::Scene3020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3020Config()),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
@@ -282,38 +279,9 @@ void Scene3020::runDescriptorTransitionClip(uint chunkIndex, uint descriptorCoun
 	if (!loadVariableChunk(chunkIndex, clipData))
 		return;
 
-	uint32 frameAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
-	byte frameIndex = 0;
-
-	drawDescriptorTransitionFrame(clipData, descriptorCount, frameIndex);
-	presentFrame();
-
-	while (frameIndex < finalFrameIndex && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		frameAccumulator += delta;
-		_realtimeAnimationTracks.advance(_loopTrack, delta, _random);
-		updateAmbientAudioAndMusicCues(delta);
-
-		bool frameDirty = false;
-		while (frameAccumulator >= kScene3020TransitionFrameMillis && frameIndex < finalFrameIndex) {
-			frameAccumulator -= kScene3020TransitionFrameMillis;
-			++frameIndex;
-			frameDirty = true;
-		}
-
-		if (frameDirty) {
-			drawDescriptorTransitionFrame(clipData, descriptorCount, frameIndex);
-			presentFrame();
-		}
-
-		g_system->delayMillis(10);
-	}
+	playTransitionFrames([this, &clipData, descriptorCount](byte frame) {
+		drawDescriptorTransitionFrame(clipData, descriptorCount, frame);
+	}, 0, finalFrameIndex, kScene3020TransitionFrameMillis, kIndependentTransitionFrames);
 }
 
 void Scene3020::drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex) {

@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene3030.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -91,7 +89,6 @@ PlayableSceneConfig scene3030Config() {
 	config.walkablePaletteMaxRegion = 20;
 	return config;
 }
-
 Scene3030::Scene3030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3030Config()),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
@@ -302,39 +299,10 @@ void Scene3030::runDeltaTransitionClip(uint chunkIndex, uint tableEntryCount, by
 	transitionBackground.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 
-	uint32 frameAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
-	byte frameIndex = 0;
-
-	drawDeltaTransitionFrame(clipData, tableEntryCount, frameIndex, *transitionBackground.surfacePtr());
-	presentFrame();
-
-	while (frameIndex < finalFrameIndex && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		frameAccumulator += delta;
-		_realtimeAnimationTracks.advance(_loopTrack, delta, _random);
-		updateAmbientAudioAndMusicCues(delta);
-
-		bool frameDirty = false;
-		// Each frame patches the previous result, so catch-up must apply every delta.
-		while (frameAccumulator >= kScene3030TransitionFrameMillis && frameIndex < finalFrameIndex) {
-			frameAccumulator -= kScene3030TransitionFrameMillis;
-			++frameIndex;
-			drawDeltaTransitionFrame(clipData, tableEntryCount, frameIndex,
-				*transitionBackground.surfacePtr());
-			frameDirty = true;
-		}
-
-		if (frameDirty)
-			presentFrame();
-
-		g_system->delayMillis(10);
-	}
+	Graphics::Surface &background = *transitionBackground.surfacePtr();
+	playTransitionFrames([this, &clipData, tableEntryCount, &background](byte frame) {
+		drawDeltaTransitionFrame(clipData, tableEntryCount, frame, background);
+	}, 0, finalFrameIndex, kScene3030TransitionFrameMillis, kCumulativeTransitionFrames);
 }
 
 void Scene3030::drawDeltaTransitionFrame(const Common::Array<byte> &clipData, uint tableEntryCount,
