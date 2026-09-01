@@ -121,7 +121,6 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_continuousSound(),
 		_effectSound(),
 		_random("hollywood_scene9050"),
-		_resources(),
 		_i05ClipChunkSize(0),
 		_i05ClipFrameAccumulator(0),
 		_i05InterClipAccumulator(0),
@@ -232,18 +231,6 @@ bool Scene9050::play() {
 	return result;
 }
 
-bool Scene9050::loadResourceChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9050::loadResourceChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9050::loadResourceArenaChunk(uint archiveIndex, uint localChunkIndex) {
-	return _resources.loadArenaChunk(_debugName, archiveIndex, localChunkIndex);
-}
-
 bool Scene9050::loadResourceI06Assets() {
 	if (!_resources.loadChunkTable(kI06ArchiveName))
 		return false;
@@ -255,23 +242,15 @@ bool Scene9050::loadResourceI06Assets() {
 
 	_resources.allocateArena(_resources.totalChunkSize(1, kI06RequiredChunkCount - 1));
 
-	if (!loadResourceI06Chunk(0, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _paletteResource, kPaletteSize))
 		return false;
 
 	for (uint i = 1; i < kI06RequiredChunkCount; ++i) {
-		if (!loadResourceI06ArenaChunk(i))
+		if (!loadArenaChunk(i))
 			return false;
 	}
 
 	return true;
-}
-
-bool Scene9050::loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return loadResourceChunk(index, destination, fixedSize);
-}
-
-bool Scene9050::loadResourceI06ArenaChunk(uint index) {
-	return loadResourceArenaChunk(index, index);
 }
 
 bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
@@ -305,30 +284,18 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 		resourceArenaSize += _resources.chunkTable.sizes[baseIndex + i];
 	_resources.allocateArena(resourceArenaSize);
 
-	if (!loadResourceI05Chunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceI05Chunk(baseIndex + 1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(baseIndex + 1, _paletteResource, kPaletteSize))
 		return false;
 	_i05ClipChunkSize = _resources.chunkTable.sizes[baseIndex + 3];
 
 	for (uint i = 2; i <= lastLocalChunkIndex; ++i) {
-		if (!loadResourceI05ArenaChunk(baseIndex + i, i))
+		if (!loadArenaChunk(baseIndex + i, i))
 			return false;
 	}
 
 	return true;
-}
-
-bool Scene9050::loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return loadResourceChunk(index, destination, fixedSize);
-}
-
-bool Scene9050::loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return loadResourceChunk(index, destination, fixedSize);
-}
-
-bool Scene9050::loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex) {
-	return loadResourceArenaChunk(archiveIndex, localChunkIndex);
 }
 
 bool Scene9050::loadResourceI08BlinkAssets() {
@@ -342,11 +309,11 @@ bool Scene9050::loadResourceI08BlinkAssets() {
 
 	_resources.allocateArena(_resources.chunkTable.sizes[2]);
 
-	if (!loadResourceChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceChunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
-	if (!loadResourceArenaChunk(2, 2))
+	if (!loadArenaChunk(2))
 		return false;
 
 	return true;
@@ -363,11 +330,11 @@ bool Scene9050::loadResourceI07FinalAssets() {
 
 	_resources.allocateArena(_resources.chunkTable.sizes[2]);
 
-	if (!loadResourceChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceChunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
-	if (!loadResourceArenaChunk(2, 2))
+	if (!loadArenaChunk(2))
 		return false;
 
 	return true;

@@ -47,7 +47,6 @@ const byte kScene9160ScrollDeltaByStep[] = {
 
 Scene9160::Scene9160(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9160", kScene9160TallFramebufferSize, kFrameBufferSize),
-		_resources(),
 		_music(vm->introMusic()),
 		_paletteResource(),
 		_panelA(),
@@ -114,7 +113,7 @@ bool Scene9160::load() {
 
 	if (!loadVariableChunk(0, _panelA) ||
 			!loadVariableChunk(1, _panelB) ||
-			!loadChunk(2, _paletteResource, kPaletteSize))
+			!loadFixedChunk(2, _paletteResource, kPaletteSize))
 		return false;
 
 	sanitizePanel(_panelA);
@@ -140,14 +139,6 @@ bool Scene9160::loadVariableChunk(uint index, Common::Array<byte> &destination) 
 	}
 
 	return true;
-}
-
-bool Scene9160::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9160::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9160::sanitizePanel(Common::Array<byte> &panel) {

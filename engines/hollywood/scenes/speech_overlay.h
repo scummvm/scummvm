@@ -36,6 +36,8 @@ class HollywoodFont;
 
 // Wrapped subtitle text and its resolved scene position.
 struct SpeechOverlay {
+	SpeechOverlay() : visible(false), colorIndex(0), centerX(0), topY(0) {}
+
 	bool visible;
 	byte colorIndex;
 	uint16 centerX;

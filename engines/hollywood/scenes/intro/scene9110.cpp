@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9110.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -47,8 +46,8 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9110"),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
+		_text(),
 		_random("hollywood_scene9110"),
-		_resources(),
 		_mouthAccumulator(0),
 		_chunk3Accumulator(0),
 		_idleAccumulator(0),
@@ -62,12 +61,6 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_lastMouthVariant(0xff) {
 	_paletteResource.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_stage003DecodeKey.resize(kStage003DecodeKeySize);
-	_stage003Descriptors.resize(kStage003DescriptorTableSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = kPrimarySpeechTextColor;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 }
 
 bool Scene9110::play() {
@@ -108,7 +101,8 @@ bool Scene9110::play() {
 }
 
 bool Scene9110::load() {
-	return loadResourceI11Assets() && loadStage003Descriptors();
+	return loadResourceI11Assets() &&
+		_text.loadStage(kStage003ArchiveName, _debugName, kStage911Index);
 }
 
 bool Scene9110::loadResourceI11Assets() {
@@ -120,8 +114,8 @@ bool Scene9110::loadResourceI11Assets() {
 			return false;
 	}
 
-	if (!loadResourceI11Chunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadResourceI11Chunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	uint32 resourceArenaSize = 0;
@@ -131,88 +125,13 @@ bool Scene9110::loadResourceI11Assets() {
 	_resources.allocateArena(resourceArenaSize);
 
 	for (uint i = 2; i < kI11RequiredChunkCount; ++i) {
-		if (!loadResourceI11ArenaChunk(i))
+		if (!loadArenaChunk(i))
 			return false;
 	}
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 	memset(_savedFramebuffer.data(), 0, _savedFramebuffer.size());
-	return true;
-}
-
-bool Scene9110::loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9110::loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9110::loadResourceI11ArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
-}
-
-bool Scene9110::loadStage003Descriptors() {
-	Common::File file;
-	if (!file.open(Common::Path(kStage003ArchiveName))) {
-		warning("Failed to open %s", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
-		warning("Failed to read %s row decode key", kStage003ArchiveName);
-		return false;
-	}
-
-	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kStage911Index * 4);
-	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			stageOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s has no stage 911 offset entry", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffsetEntry);
-	const uint32 stageOffset = file.readUint32LE();
-	if (stageOffset + kStage003DescriptorTableSize > (uint32)file.size()) {
-		warning("%s stage 911 descriptor table is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffset);
-	if (file.read(_stage003Descriptors.data(), _stage003Descriptors.size()) != _stage003Descriptors.size()) {
-		warning("Failed to read %s stage 911 descriptor table", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.pos() + 3 > file.size()) {
-		warning("%s stage 911 text-row header is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	const byte smallRowCount = file.readByte();
-	const uint16 largeRowCount = file.readUint16LE();
-	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
-	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
-	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
-		warning("%s stage 911 text rows are out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(file.pos() + smallRowBytes);
-	_stage003LargeRows.resize(largeRowBytes);
-	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
-		warning("Failed to read %s stage 911 large text rows", kStage003ArchiveName);
-		return false;
-	}
-
-	for (uint row = 0; row < largeRowCount; ++row) {
-		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	debugC(1, kDebugResources, "Loaded %s stage 911 descriptors/text at offset=%u largeRowBase=%u largeRows=%u",
-		kStage003ArchiveName, stageOffset, kStage003LargeRowBaseIndex, largeRowCount);
 	return true;
 }
 
@@ -247,7 +166,7 @@ void Scene9110::runSpeechSequence() {
 }
 
 void Scene9110::runSpeechStep(const SpeechStep &step) {
-	const PopupDescriptor popup = getStage003PopupDescriptor(step.rowIndex, step.frameIndex);
+	const SceneSpeechCue popup = _text.stageCue(step.rowIndex, step.frameIndex);
 	const uint16 sampleId = popup.voiceSampleId;
 
 	beginSubtitle(popup, step.speechTextStyle);
@@ -375,25 +294,18 @@ byte Scene9110::nextMouthFrameVariant() {
 	return nextFrame;
 }
 
-void Scene9110::beginSubtitle(const PopupDescriptor &popup, const SpeechTextStyle &speechTextStyle) {
+void Scene9110::beginSubtitle(const SceneSpeechCue &popup, const SpeechTextStyle &speechTextStyle) {
 	clearSubtitle();
-	if (!_vm->subtitlesEnabled())
-		return;
-	if (!_vm->font() || !_vm->font()->isLoaded()) {
-		debugC(1, kDebugScene, "Skipping subtitle for text record %u: Hollywood font is not loaded",
-			popup.textRecordId);
-		return;
-	}
 
-	const Common::String text = getStage003LargeTextRecord(popup.textRecordId);
+	const Common::String text = _text.largeTextRecord(popup.textRecordId);
 	if (text.empty()) {
 		debugC(2, kDebugScene, "Skipping empty subtitle text record %u",
 			popup.textRecordId);
 		return;
 	}
 
-	wrapSpeechOverlayText(text, speechTextStyle.centerX, _subtitle.lines);
-	if (_subtitle.lines.empty())
+	if (!showAnchoredSubtitle(text, speechTextStyle.colorIndex,
+			speechTextStyle.centerX, speechTextStyle.topY))
 		return;
 
 	if (speechTextStyle.updatePalette) {
@@ -402,53 +314,12 @@ void Scene9110::beginSubtitle(const PopupDescriptor &popup, const SpeechTextStyl
 		_paletteCurrent[speechTextStyle.colorIndex * 3 + 2] = speechTextStyle.blue;
 	}
 
-	_subtitle.visible = true;
-	_subtitle.colorIndex = speechTextStyle.colorIndex;
-	layoutSpeechOverlay(_subtitle, _vm->font(), speechTextStyle.centerX, speechTextStyle.topY);
-}
-
-void Scene9110::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-Common::String Scene9110::getStage003LargeTextRecord(uint16 recordId) const {
-	if (recordId < kStage003LargeRowBaseIndex)
-		return Common::String();
-
-	const uint localRecordId = recordId - kStage003LargeRowBaseIndex;
-	const uint offset = localRecordId * kStage003LargeRowSize;
-	if (offset >= _stage003LargeRows.size())
-		return Common::String();
-
-	const byte *row = _stage003LargeRows.data() + offset;
-	uint length = 0;
-	while (length < kStage003LargeRowSize && row[length] != 0)
-		++length;
-
-	return Common::String((const char *)row, length);
-}
-
-void Scene9110::drawFrameOverlays() {
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 void Scene9110::stopAudio() {
 	clearSubtitle();
 	_speech.stop();
 	_music->stop();
-}
-
-Scene9110::PopupDescriptor Scene9110::getStage003PopupDescriptor(uint16 rowIndex, byte frameIndex) const {
-	const uint recordOffset = ((uint)rowIndex * 100 + frameIndex) * 5;
-	if (recordOffset + 5 > _stage003Descriptors.size())
-		return PopupDescriptor{0, 0, 0};
-
-	return PopupDescriptor{
-		readUint16LE(_stage003Descriptors, recordOffset),
-		_stage003Descriptors[recordOffset + 2],
-		readUint16LE(_stage003Descriptors, recordOffset + 3)
-	};
 }
 
 } // End of namespace Hollywood

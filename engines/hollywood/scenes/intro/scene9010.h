@@ -29,7 +29,7 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -45,12 +45,6 @@ public:
 	const Common::Array<byte> &transitionPalette() const { return _paletteCurrent; }
 
 private:
-	struct PopupDescriptor {
-		uint16 textRecordId;
-		byte continuationCount;
-		uint16 voiceSampleId;
-	};
-
 	struct SpeechTextStyle {
 		uint16 centerX;
 		uint16 topY;
@@ -70,10 +64,7 @@ private:
 	bool playScene9010();
 
 	bool loadScene9010Resources();
-	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadI02StillFrameResource();
-	bool loadStage003Descriptors();
 	bool validateI02AnimationResources();
 
 	bool runPoseTransition(bool targetAlternatePose);
@@ -95,11 +86,7 @@ private:
 	void updateScene9010PaletteFade();
 	bool fadeInPalette(uint32 stepMillis);
 	bool fadeOutPalette(uint32 stepMillis);
-	void drawFrameOverlays() override;
-	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex);
-	void clearSubtitle();
-	Common::String getStage003LargeTextRecord(uint16 recordId) const;
-	PopupDescriptor getStage003PopupDescriptor(byte descriptorIndex) const;
+	void beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex);
 	SpeechTextStyle getCurrentSpeechTextStyle() const;
 
 	bool delayScene9010(uint32 millis);
@@ -114,27 +101,19 @@ private:
 		kPaletteSize = 0x300,
 		kRawScreenFrameSize = HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight,
 		kRawSceneFrameSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight,
-		kStage003DescriptorTableSize = 0x186a0,
-		kStage003SmallRowSize = 0x29,
-		kStage003LargeRowSize = 0x141,
-		kStage003LargeRowBaseIndex = 500,
 		kCharacterFrameDescriptorCount = 17
 	};
 
 	MusicPlayer _music;
 	SpeechPlayer _speech;
-	ResourceChunkTable _i01ChunkTable;
+	SceneTextStore _text;
 	Common::Array<byte> _paletteSource;
-	Common::Array<byte> _resourceArena;
+	Common::Array<byte> _characterSpriteResource;
 	Common::Array<byte> _i02PaletteTable;
 	Common::Array<byte> _i02FramePayload;
 	I02FramePayloadFormat _i02FramePayloadFormat;
 	bool _i02SingleFrameOnly;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
-	Common::Array<byte> _stage003DecodeKey;
-	Common::Array<byte> _stage003Descriptors;
-	Common::Array<byte> _stage003LargeRows;
-	SpeechOverlay _subtitle;
 	bool _alternatePoseActive;
 	byte _characterFrameIndex;
 	byte _lastTalkingFrameVariant;
