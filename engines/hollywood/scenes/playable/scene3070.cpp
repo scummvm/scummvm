@@ -711,10 +711,12 @@ void Scene3070::runDoorPatchOverlay(bool open) {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap), kScene3070OverlayFrameMillis));
-	state.scene3070DrawerOpen = open;
-	applySceneStateToHotspotsAndPatches(0xff);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+			kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap),
+			kScene3070OverlayFrameMillis))
+		.commit(state.scene3070DrawerOpen, open)
+		.framebufferPatch(0xff);
 }
 
 void Scene3070::runItemPatchPickup() {
@@ -724,13 +726,15 @@ void Scene3070::runItemPatchPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap), kScene3070OverlayFrameMillis));
-	state.scene3070SurgicalNeedleThreadState = 2;
-	state.scene3070SurgicalNeedleThreadTaken = true;
-	applySceneStateToHotspotsAndPatches(0xff);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+			kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap),
+			kScene3070OverlayFrameMillis))
+		.commit(state.scene3070SurgicalNeedleThreadState, (byte)2)
+		.commit(state.scene3070SurgicalNeedleThreadTaken, true)
+		.framebufferPatch(0xff);
 	addInventoryItem(0x32);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene3070::runFrankensteinRevival() {
@@ -764,24 +768,25 @@ void Scene3070::runFrankensteinRevival() {
 		beginSecondarySpeechLine(13, 4);
 
 	_vm->gameplayMusic()->playMusicCue(0x12, 100, false);
-	runActorReplacement(ActionOverlaySpec(13, 6, kScene3070RevivalStartFrameMap,
-		ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis).hookAt(5, 2));
-
-	if (!walkActiveActorTo(0x0e6, 0x1b5, 1, 0)) {
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(13, 6, kScene3070RevivalStartFrameMap,
+			ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis).hookAt(5, 2))
+		.actorPath(SceneActorPose(0x0e6, 0x1b5, 1));
+	if (!sequence.completed()) {
 		_soundBank0.stop();
 		_ambientSoundBank0.stop();
 		return;
 	}
-	runActorReplacement(ActionOverlaySpec(11, 24, kScene3070RevivalLoopFrameMap,
-		ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis)
-		.loopingSoundAt(20, 0x0c, 25)
-		.stopSoundAt(60));
-	runActorReplacement(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
-		ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis).startAt(4));
+	sequence.actorReplacement(ActionOverlaySpec(11, 24, kScene3070RevivalLoopFrameMap,
+			ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis)
+			.loopingSoundAt(20, 0x0c, 25)
+			.stopSoundAt(60))
+		.actorReplacement(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
+			ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis).startAt(4));
 
 	runCurtainClearToBlack();
-	state.mainFlowStateId = kScene3110LongTransitionState;
-	_soundBank0.stop();
+	sequence.commit(state.mainFlowStateId, kScene3110LongTransitionState)
+		.stopSound();
 	_ambientSoundBank0.stop();
 }
 
@@ -790,17 +795,19 @@ void Scene3070::runBrainInstallation() {
 		dispatchGenericSceneAction(231);
 		return;
 	}
-	if (!walkActiveActorTo(0x225, 0x13e, 5, 0))
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x225, 0x13e, 5));
+	if (!sequence.completed())
 		return;
 
-	runActorReplacement(ActionOverlaySpec(20, 29, kScene3070BrainInstallationFrameMap,
-		ARRAYSIZE(kScene3070BrainInstallationFrameMap), kScene3070OverlayFrameMillis));
 	GameplayState &state = _vm->gameState();
-	state.scene3070FrankensteinBodyState = 2;
-	applySceneStateToHotspotsAndPatches(2);
+	sequence.actorReplacement(ActionOverlaySpec(20, 29, kScene3070BrainInstallationFrameMap,
+			ARRAYSIZE(kScene3070BrainInstallationFrameMap), kScene3070OverlayFrameMillis))
+		.commit(state.scene3070FrankensteinBodyState, (byte)2)
+		.framebufferPatch(2);
 	removeInventoryItem(0x25);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(15, 0);
+	sequence.sound(1)
+		.secondarySpeech(15, 0);
 }
 
 void Scene3070::runBodyAssembly() {
@@ -812,21 +819,22 @@ void Scene3070::runBodyAssembly() {
 		beginSecondarySpeechLine(16, 1);
 		return;
 	}
-	if (!walkActiveActorTo(0x24a, 0x13d, 5, 0))
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x24a, 0x13d, 5));
+	if (!sequence.completed())
 		return;
 
-	beginSecondarySpeechLine(16, 2);
-	runActorReplacement(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
-		ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis).hookAt(10, 1));
-	runActorReplacement(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
-		ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis));
-
-	_vm->gameState().scene3070FrankensteinBodyState = 1;
-	applySceneStateToHotspotsAndPatches(2);
+	sequence.secondarySpeech(16, 2)
+		.actorReplacement(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
+			ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis).hookAt(10, 1))
+		.actorReplacement(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
+			ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis))
+		.commit(_vm->gameState().scene3070FrankensteinBodyState, (byte)1)
+		.framebufferPatch(2);
 	removeInventoryItem(0x30);
 	removeInventoryItem(0x42);
 	removeInventoryItem(0x4c);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene3070::addSerumIngredient(byte itemId, uint16 speechRow, bool speakBefore, bool useSyringeAnimation) {
@@ -840,19 +848,22 @@ void Scene3070::addSerumIngredient(byte itemId, uint16 speechRow, bool speakBefo
 		return;
 	}
 
+	BlockingSequence sequence(*this);
 	if (speakBefore)
-		beginSecondarySpeechLine(speechRow, 0);
+		sequence.secondarySpeech(speechRow, 0);
 	const byte *frameMap = useSyringeAnimation ? kScene3070SyringeIngredientFrameMap : kScene3070IngredientFrameMap;
 	const uint frameCount = useSyringeAnimation ? ARRAYSIZE(kScene3070SyringeIngredientFrameMap) :
 		ARRAYSIZE(kScene3070IngredientFrameMap);
-	runActorReplacement(ActionOverlaySpec(10, 11, frameMap, frameCount, kScene3070OverlayFrameMillis));
-	state.scene3070SerumIngredientCount = MIN<byte>(5, state.scene3070SerumIngredientCount + 1);
+	sequence.actorReplacement(ActionOverlaySpec(10, 11, frameMap, frameCount,
+			kScene3070OverlayFrameMillis))
+		.commit(state.scene3070SerumIngredientCount,
+			MIN<byte>(5, state.scene3070SerumIngredientCount + 1));
 	if (useSyringeAnimation)
 		addInventoryItem(0x08);
 	removeInventoryItem(itemId);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 	if (!speakBefore)
-		beginSecondarySpeechLine(speechRow, 0);
+		sequence.secondarySpeech(speechRow, 0);
 }
 
 void Scene3070::applyActionPatchChunk(uint chunkIndex) {

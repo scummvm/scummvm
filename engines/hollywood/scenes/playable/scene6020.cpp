@@ -669,9 +669,11 @@ void Scene6020::runEntryFromScene6030() {
 }
 
 void Scene6020::runSmallObjectAnimation() {
-	runActorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
-		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis));
-	beginSecondarySpeechLine(2, 0);
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+			kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap),
+			kScene6020FrameMillis))
+		.secondarySpeech(2, 0);
 }
 
 void Scene6020::runPickupItem5A() {
@@ -683,14 +685,15 @@ void Scene6020::runPickupItem5A() {
 	if (_taffyAnimationState != 3)
 		return;
 
-	runActorReplacement(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.patchAt(6, 2));
-	_taffyDeskMagnifierHidden = true;
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
+			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
+			kScene6020FrameMillis).patchAt(6, 2))
+		.commit(_taffyDeskMagnifierHidden, true);
 	addInventoryItem(kScene6020MagnifierInventoryItem);
-	applySceneStateToHotspotsAndPatches(2);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(8, 0);
+	sequence.framebufferPatch(2)
+		.sound(1)
+		.secondarySpeech(8, 0);
 }
 
 void Scene6020::runPickupItem5B() {
@@ -699,16 +702,17 @@ void Scene6020::runPickupItem5B() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.patchAt(4, 3));
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
+			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
+			kScene6020FrameMillis).patchAt(4, 3));
 	addInventoryItem(0x5b);
-	applySceneStateToHotspotsAndPatches(3);
-	_soundBank0.playSample(1, 100);
-	beginPrimarySpeechLine(10, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e);
-	beginSecondarySpeechLine(10, 1);
-	beginPrimarySpeechLine(10, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e);
-	beginSecondarySpeechLine(10, 3);
+	sequence.framebufferPatch(3)
+		.sound(1)
+		.primarySpeech(10, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e)
+		.secondarySpeech(10, 1)
+		.primarySpeech(10, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e)
+		.secondarySpeech(10, 3);
 }
 
 void Scene6020::runPickupItem5E() {
@@ -718,21 +722,24 @@ void Scene6020::runPickupItem5E() {
 	}
 
 	if (!_vm->gameState().scene6020TaffyLeft) {
-		runActorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
-			kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap), kScene6020FrameMillis));
-		beginPrimarySpeechLine(12, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e);
-		beginSecondarySpeechLine(12, 1);
-		beginPrimarySpeechLine(12, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e);
+		BlockingSequence(*this)
+			.actorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+				kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap),
+				kScene6020FrameMillis))
+			.primarySpeech(12, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e)
+			.secondarySpeech(12, 1)
+			.primarySpeech(12, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e);
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
-		.patchAt(6, 4));
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
+			kScene6020FrameMillis).patchAt(6, 4));
 	addInventoryItem(0x5e);
-	applySceneStateToHotspotsAndPatches(4);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(12, 3);
+	sequence.framebufferPatch(4)
+		.sound(1)
+		.secondarySpeech(12, 3);
 }
 
 void Scene6020::runUseItem39Overlay() {
@@ -743,12 +750,14 @@ void Scene6020::runUseItem39Overlay() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
-		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap), kScene6020FrameMillis));
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
+		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap),
+		kScene6020FrameMillis));
 	removeInventoryItem(0x39);
-	state.scene6030CoffeeState = 1;
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(15, 0);
+	sequence.commit(state.scene6030CoffeeState, (byte)1)
+		.sound(1)
+		.secondarySpeech(15, 0);
 }
 
 void Scene6020::runUseItem64Overlay() {
@@ -815,10 +824,12 @@ void Scene6020::runLateSceneObjectAnimation() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(16, kScene6020Chunk16DescriptorCount,
-		kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap), kScene6020FrameMillis));
-	beginSecondarySpeechLine(18, 1);
-	state.scene6020AgendaRead = true;
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(16, kScene6020Chunk16DescriptorCount,
+			kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap),
+			kScene6020FrameMillis))
+		.secondarySpeech(18, 1)
+		.commit(state.scene6020AgendaRead, true);
 }
 
 void Scene6020::runFinalSceneObjectAnimation() {
@@ -1005,10 +1016,12 @@ void Scene6020::runExitToScene6030() {
 	beginSecondarySpeechLine(0x0e, 2);
 	runTaffyFrameSequence(kScene6020TaffyExitOutroFrames, ARRAYSIZE(kScene6020TaffyExitOutroFrames));
 	walkActiveActorTo(0x0d3, 0x17b, 5, 0, false);
-	runActorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
-		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis)
-		.soundAt(ARRAYSIZE(kScene6020SmallObjectFrameMap) - 1, 3));
-	_vm->gameState().mainFlowStateId = kScene6030EntryState;
+	BlockingSequence(*this)
+		.actorReplacement(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+			kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap),
+			kScene6020FrameMillis)
+			.soundAt(ARRAYSIZE(kScene6020SmallObjectFrameMap) - 1, 3))
+		.commit(_vm->gameState().mainFlowStateId, kScene6030EntryState);
 }
 
 } // End of namespace Hollywood

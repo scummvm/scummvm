@@ -507,13 +507,14 @@ void Scene2020::runPrincessExitCutscene() {
 	if (runCurtainRevealFromBlack())
 		return;
 
-	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
-		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
-	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
-		AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable());
-	_princessSpeechTransitionActive = false;
-	if (animationPlaybackShouldStop())
+	BlockingSequence sequence(*this);
+	sequence.commit(_princessSpeechTransitionActive, true)
+		.presentedLayerTransition(kPrincessLayer,
+			AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable())
+		.presentedLayerTransition(kPrincessLayer,
+			AnimationTransition(0, 0x19, 0x19, kScene2020PrincessFrameMillis).unskippable())
+		.commit(_princessSpeechTransitionActive, false);
+	if (!sequence.completed())
 		return;
 
 	GameplayState &state = _vm->gameState();
@@ -664,11 +665,12 @@ void Scene2020::runPrincessSpeechTransition(bool opening) {
 	if (animationPlaybackShouldStop())
 		return;
 
-	_princessSpeechTransitionActive = true;
-	playAndPresentAnimationTransition(_sceneLayers, kPrincessLayer,
-		AnimationTransition(opening ? 0x19 : 0x20, opening ? 0x1f : 0x19,
-			opening ? 0x1f : 0x19, kScene2020PrincessFrameMillis).unskippable());
-	_princessSpeechTransitionActive = false;
+	BlockingSequence(*this)
+		.commit(_princessSpeechTransitionActive, true)
+		.presentedLayerTransition(kPrincessLayer,
+			AnimationTransition(opening ? 0x19 : 0x20, opening ? 0x1f : 0x19,
+				opening ? 0x1f : 0x19, kScene2020PrincessFrameMillis).unskippable())
+		.commit(_princessSpeechTransitionActive, false);
 }
 
 void Scene2020::beginPrincessSpeechLine(byte frameIndex) {
