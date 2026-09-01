@@ -414,15 +414,16 @@ void Scene2070::drawSealMemoryDeltaLayer() {
 }
 
 void Scene2070::runAnimatedInventoryStateChange() {
-	beginSecondarySpeechLine(10, 0);
-	runActorReplacement(10, kScene2070InventoryOverlayDescriptorCount,
-		kScene2070InventoryOverlayFrameMap, ARRAYSIZE(kScene2070InventoryOverlayFrameMap),
-		kScene2070OverlayFrameMillis);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(10, 0)
+		.actorReplacement(10, kScene2070InventoryOverlayDescriptorCount,
+			kScene2070InventoryOverlayFrameMap, ARRAYSIZE(kScene2070InventoryOverlayFrameMap),
+			kScene2070OverlayFrameMillis);
 
 	addInventoryItem(0x2d);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene2070HiddenItemPatchState = 0;
-	applySceneStateToHotspotsAndPatches(3);
+	sequence.sound(1)
+		.commit(_vm->gameState().scene2070HiddenItemPatchState, (byte)0)
+		.framebufferPatch(3);
 }
 
 void Scene2070::rebuildWalkableMask() {

@@ -514,21 +514,22 @@ void Scene3100::beginCabinPrimaryResponse(byte frameIndex) {
 
 void Scene3100::runConversationResolutionSequence() {
 	GameplayState &state = _vm->gameState();
-	beginSecondarySpeechLine(kScene3100DialogueStageId, 0x0b);
-	_resolutionSequenceActive = true;
-	runActorReplacement(ActionOverlaySpec(8, 0x0b,
-		kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
-		.soundAt(5, 0x19)
-		.mappedLayerFrames(kScene3100CabinLayer, kScene3100ResolutionCabinFrameMap,
-			ARRAYSIZE(kScene3100ResolutionCabinFrameMap), 6)
-		.soundAt(10, 0x1a));
-	_resolutionSequenceActive = false;
-	state.scene3100GirlConversationState = 2;
-	state.scene3100DaisyVisible = true;
-	_alternateChannel.frameIndex = 15;
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(kScene3100DialogueStageId, 0x0b)
+		.commit(_resolutionSequenceActive, true)
+		.actorReplacement(ActionOverlaySpec(8, 0x0b,
+			kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
+			.soundAt(5, 0x19)
+			.mappedLayerFrames(kScene3100CabinLayer, kScene3100ResolutionCabinFrameMap,
+				ARRAYSIZE(kScene3100ResolutionCabinFrameMap), 6)
+			.soundAt(10, 0x1a))
+		.commit(_resolutionSequenceActive, false)
+		.commit(state.scene3100GirlConversationState, (byte)2)
+		.commit(state.scene3100DaisyVisible, true)
+		.commit(_alternateChannel.frameIndex, (byte)15);
 	_sceneLayers.setLayerFrame(kScene3100AlternateLayer, 15);
-	applySceneStateToHotspotsAndPatches(0xff);
-	beginSecondarySpeechLine(kScene3100DialogueStageId, 0x0c);
+	sequence.framebufferPatch(0xff)
+		.secondarySpeech(kScene3100DialogueStageId, 0x0c);
 }
 
 void Scene3100::runObjectPickup() {
@@ -538,15 +539,16 @@ void Scene3100::runObjectPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
-		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
-		.resourcePatchAt(10, 10));
-	state.scene3100DaisyVisible = false;
-	state.scene3100DaisyTaken = true;
-	applySceneStateToHotspotsAndPatches(1);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
+			kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
+			.resourcePatchAt(10, 10))
+		.commit(state.scene3100DaisyVisible, false)
+		.commit(state.scene3100DaisyTaken, true)
+		.framebufferPatch(1);
 	addInventoryItem(kScene3100PickupItem39);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(3, 0);
+	sequence.sound(1)
+		.secondarySpeech(3, 0);
 }
 
 void Scene3100::runExchangePickup() {
@@ -556,14 +558,15 @@ void Scene3100::runExchangePickup() {
 		return;
 	}
 
-	beginSecondarySpeechLine(7, 0);
-	runActorReplacement(ActionOverlaySpec(7, kScene3100ExchangeOverlayDescriptorCount,
-		kScene3100ExchangePickupFrameMap, ARRAYSIZE(kScene3100ExchangePickupFrameMap), kScene3100OverlayFrameMillis));
-	state.scene3100SapSyringeTaken = true;
-	applySceneStateToHotspotsAndPatches(8);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(7, 0)
+		.actorReplacement(ActionOverlaySpec(7, kScene3100ExchangeOverlayDescriptorCount,
+			kScene3100ExchangePickupFrameMap, ARRAYSIZE(kScene3100ExchangePickupFrameMap), kScene3100OverlayFrameMillis))
+		.commit(state.scene3100SapSyringeTaken, true)
+		.framebufferPatch(8);
 	addInventoryItem(kScene3100PickupItem38);
 	removeInventoryItem(8);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 } // End of namespace Hollywood

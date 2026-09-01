@@ -362,11 +362,12 @@ bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(10, 0);
 		return true;
 	case 313: // Usar escalera (use stairs): return toward the moat.
-		runActorReplacement(ActionOverlaySpec(kScene4030EntryOverlayChunk,
-			kScene4030EntryOverlayDescriptorCount, kScene4030StairExitFrameMap,
-			ARRAYSIZE(kScene4030StairExitFrameMap), kScene4030FrameMillis));
-		_vm->gameState().mainFlowStateId = _vm->isDemo() ?
-			kScene4010DemoReturnState : kScene4020ReturnState;
+		BlockingSequence(*this)
+			.actorReplacement(ActionOverlaySpec(kScene4030EntryOverlayChunk,
+				kScene4030EntryOverlayDescriptorCount, kScene4030StairExitFrameMap,
+				ARRAYSIZE(kScene4030StairExitFrameMap), kScene4030FrameMillis))
+			.commit(_vm->gameState().mainFlowStateId, _vm->isDemo() ?
+				kScene4010DemoReturnState : kScene4020ReturnState);
 		return true;
 	case 314: // Mirar/usar/abrir puerta (look/use/open door): punishment cell warning.
 		beginSecondarySpeechLine(11, 0);
@@ -662,12 +663,14 @@ void Scene4030::takeRope() {
 	}
 
 	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
-	state.scene4030RopeTaken = true;
-	runActorReplacement(ActionOverlaySpec(kScene4030RopePickupChunk, kScene4030RopePickupDescriptorCount,
-		kScene4030RopePickupFrameMap, ARRAYSIZE(kScene4030RopePickupFrameMap), kScene4030FrameMillis)
-		.patchAt(4, 4));
+	BlockingSequence sequence(*this);
+	sequence.commit(state.scene4030RopeTaken, true)
+		.actorReplacement(ActionOverlaySpec(kScene4030RopePickupChunk,
+			kScene4030RopePickupDescriptorCount, kScene4030RopePickupFrameMap,
+			ARRAYSIZE(kScene4030RopePickupFrameMap), kScene4030FrameMillis)
+			.patchAt(4, 4));
 	addInventoryItem(kScene4030RopeItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene4030::talkToSkeleton() {
@@ -734,13 +737,16 @@ void Scene4030::takeBone() {
 		return;
 	}
 
-	state.scene4030LooseBoneState = 2;
-	runActorReplacement(ActionOverlaySpec(kScene4030BonePickupChunk, kScene4030BonePickupDescriptorCount,
-		kScene4030BonePickupFrameMap, ARRAYSIZE(kScene4030BonePickupFrameMap), kScene4030FrameMillis)
-		.patchAt(7, 3));
+	BlockingSequence sequence(*this);
+	sequence.commit(state.scene4030LooseBoneState, (byte)2)
+		.actorReplacement(ActionOverlaySpec(kScene4030BonePickupChunk,
+			kScene4030BonePickupDescriptorCount, kScene4030BonePickupFrameMap,
+			ARRAYSIZE(kScene4030BonePickupFrameMap), kScene4030FrameMillis)
+			.patchAt(7, 3));
 	addInventoryItem(kScene4030BoneItem);
-	_soundBank0.playSample(1, 100);
-	beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
+	sequence.sound(1);
+	if (sequence.completed())
+		beginSharedInventorySpeechLine(0x14, randomSharedInventorySpeechFrame(4));
 }
 
 void Scene4030::installImprovisedLever() {
@@ -754,14 +760,16 @@ void Scene4030::installImprovisedLever() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
-		kScene4030LeverInstallFrameMap, ARRAYSIZE(kScene4030LeverInstallFrameMap), kScene4030FrameMillis)
-		.resourcePatchAt(9, 16));
-	state.scene4030ImprovisedLeverInstalled = true;
-	applySceneStateToHotspotsAndPatches(2);
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(kScene4030LeverInstallChunk,
+			kScene4030LeverInstallDescriptorCount, kScene4030LeverInstallFrameMap,
+			ARRAYSIZE(kScene4030LeverInstallFrameMap), kScene4030FrameMillis)
+			.resourcePatchAt(9, 16))
+		.commit(state.scene4030ImprovisedLeverInstalled, true)
+		.framebufferPatch(2);
 	removeInventoryItem(kScene4030LeverItem);
-	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(22, 0);
+	sequence.sound(1)
+		.secondarySpeech(22, 0);
 }
 
 void Scene4030::updateIronMaidenMechanism() {

@@ -651,11 +651,13 @@ void Scene7040::handleActionSlot05ExitProgressSpeech() {
 }
 
 void Scene7040::handleActionSlot06TransitionToG05() {
-	runActorReplacement(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
-		ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis);
-	_vm->gameState().openedOfficeClosetDoor = true;
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene7040ExitState7050;
+	GameplayState &state = _vm->gameState();
+	BlockingSequence(*this)
+		.actorReplacement(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
+			ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis)
+		.commit(state.openedOfficeClosetDoor, true)
+		.sound(3)
+		.commit(state.mainFlowStateId, kScene7040ExitState7050);
 }
 
 void Scene7040::handleActionSlot09PickupItem0FThenExit() {
@@ -669,14 +671,16 @@ void Scene7040::handleActionSlot09PickupItem0FThenExit() {
 		return;
 	}
 
-	beginSecondarySpeechLine(8, 1);
-	runActorReplacement(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
-		ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis);
+	BlockingSequence sequence(*this);
+	sequence.secondarySpeech(8, 1)
+		.actorReplacement(18, kScene7040Chunk18DescriptorCount,
+			kScene7040Chunk18PickupItem0FFrameMap,
+			ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis);
 	addInventoryItem(0x0f);
-	_soundBank0.playSample(1, 100);
-	state.officeNotePickupState = 2;
-	beginSecondarySpeechLine(8, 2);
-	walkActiveActorTo(600, 0x132, kScene7040InvalidFacing, 0);
+	sequence.sound(1)
+		.commit(state.officeNotePickupState, (byte)2)
+		.secondarySpeech(8, 2)
+		.actorPath(SceneActorPose(600, 0x132, kScene7040InvalidFacing));
 	handleActionSlot06TransitionToG05();
 }
 

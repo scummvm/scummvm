@@ -486,21 +486,23 @@ void Scene1080::handleFrancoisDistraction() {
 		return;
 	}
 
-	if (!walkActiveActorTo(0x0317, 0x01b3, 1, 0, false))
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x0317, 0x01b3, 1))
+		.actorReplacement(ActionOverlaySpec(10, kScene1080BalloonDescriptorCount,
+			kScene1080BalloonFrameMap, ARRAYSIZE(kScene1080BalloonFrameMap),
+			kScene1080FrameMillis)
+			.loopingSoundAt(8, kScene1080BalloonSoundCue, 30)
+			.stopSoundAt(47))
+		.stopSound();
+	if (!sequence.completed())
 		return;
-	runActorReplacement(ActionOverlaySpec(10, kScene1080BalloonDescriptorCount,
-		kScene1080BalloonFrameMap, ARRAYSIZE(kScene1080BalloonFrameMap),
-		kScene1080FrameMillis)
-		.loopingSoundAt(8, kScene1080BalloonSoundCue, 30)
-		.stopSoundAt(47));
-	_soundBank0.stop();
 
 	if (hasInventoryItem(0x4d))
 		removeInventoryItem(0x4d);
 	if (!hasInventoryItem(0x1c))
 		addInventoryItem(0x1c);
-	_soundBank0.playSample(1, 100);
-	setActiveActorPose(_activeActorWorldX, _activeActorWorldY, 5);
+	sequence.sound(1)
+		.actorPose(SceneActorPose(_activeActorWorldX, _activeActorWorldY, 5));
 
 	_additionalAmbientSoundBank0Slots[0].stop();
 	_francoisMode = 5;
@@ -511,10 +513,10 @@ void Scene1080::handleFrancoisDistraction() {
 	_francoisActionActive = false;
 	_sceneLayers.setLayerVisible(kScene1080FrancoisActionLayer, false);
 
-	state.scene1080FrancoisProgressState = 2;
 	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer, false);
-	applySceneStateToHotspotsAndPatches(1);
-	beginSecondarySpeechLine(12, 1);
+	sequence.commit(state.scene1080FrancoisProgressState, (byte)2)
+		.framebufferPatch(1)
+		.secondarySpeech(12, 1);
 }
 
 void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescriptor,

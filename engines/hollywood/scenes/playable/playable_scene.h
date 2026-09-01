@@ -108,9 +108,39 @@ protected:
 			return *this;
 		}
 
+		template<class FrameTarget>
+		BlockingSequence &presentedLayerFrames(FrameTarget &target, const AnimationFrameRange &range) {
+			if (canRun()) {
+				const bool completed = _scene.playAndPresentAnimationFrames(target, range);
+				if (!completed && !_scene._skipRequested)
+					_running = false;
+				refresh();
+			}
+			return *this;
+		}
+
+		template<class FrameTarget>
+		BlockingSequence &presentedLayerTransition(FrameTarget &target,
+				const AnimationTransition &transition) {
+			if (canRun()) {
+				const bool completed = _scene.playAndPresentAnimationTransition(target, transition);
+				if (!completed && !_scene._skipRequested)
+					_running = false;
+				refresh();
+			}
+			return *this;
+		}
+
 		BlockingSequence &layerFrames(SceneLayerStack &layers, uint layerId,
 			const AnimationFrameRange &range);
 		BlockingSequence &layerFrames(uint layerId, const AnimationFrameRange &range);
+		BlockingSequence &presentedLayerFrames(SceneLayerStack &layers, uint layerId,
+			const AnimationFrameRange &range);
+		BlockingSequence &presentedLayerFrames(uint layerId, const AnimationFrameRange &range);
+		BlockingSequence &presentedLayerTransition(SceneLayerStack &layers, uint layerId,
+			const AnimationTransition &transition);
+		BlockingSequence &presentedLayerTransition(uint layerId,
+			const AnimationTransition &transition);
 		BlockingSequence &actorReplacement(uint chunkIndex, uint descriptorCount,
 			const byte *frameMap, uint frameMapSize, uint32 frameMillis);
 		BlockingSequence &actorReplacement(const ActionOverlaySpec &spec);
@@ -132,7 +162,10 @@ protected:
 			return *this;
 		}
 
-		bool completed() const { return _running; }
+		bool completed() {
+			refresh();
+			return _running;
+		}
 
 	private:
 		bool canRun();

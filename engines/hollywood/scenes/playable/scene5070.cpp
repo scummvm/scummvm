@@ -316,9 +316,10 @@ void Scene5070::runMineCartEntryClip() {
 }
 
 void Scene5070::runExitToMineSwitches() {
-	walkActiveActorTo(0x3ab, 0x1df, 0xff, 0, false);
-	_soundBank0.playSample(0x15, 100);
-	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
+	BlockingSequence(*this)
+		.actorPath(SceneActorPose(0x3ab, 0x1df, 0xff))
+		.sound(0x15)
+		.commit(_vm->gameState().mainFlowStateId, kScene5010ReturnState);
 }
 
 void Scene5070::runShovelPickup() {
@@ -328,15 +329,18 @@ void Scene5070::runShovelPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
 		kScene5070ShovelPickupFrameMap, ARRAYSIZE(kScene5070ShovelPickupFrameMap), kScene5070FrameMillis)
 		.commitAt(6, state.scene5070ShovelTaken, true)
 		.patchAt(6, 0)
 		.noFinalFrameDelay());
 	addInventoryItem(kScene5070ShovelInventoryItem);
-	_soundBank0.playSample(1, 100);
-	state.scene5070ShovelTaken = true;
-	applySceneStateToHotspotsAndPatches(0);
+	sequence.sound(1);
+	if (!state.scene5070ShovelTaken) {
+		sequence.commit(state.scene5070ShovelTaken, true)
+			.framebufferPatch(0);
+	}
 }
 
 void Scene5070::runAviatorCapPickup() {
@@ -346,14 +350,15 @@ void Scene5070::runAviatorCapPickup() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
 		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	addInventoryItem(kScene5070AviatorCapInventoryItem);
-	_soundBank0.playSample(1, 100);
-	state.scene5070AviatorCapState = kScene5070AviatorCapTakenState;
-	applySceneStateToHotspotsAndPatches(1);
+	sequence.sound(1)
+		.commit(state.scene5070AviatorCapState, kScene5070AviatorCapTakenState)
+		.framebufferPatch(1);
 	drawPlayableComposite();
 	presentFrame();
 }
