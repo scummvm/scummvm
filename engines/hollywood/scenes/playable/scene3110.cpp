@@ -21,14 +21,10 @@
 
 #include "hollywood/scenes/playable/scene3110.h"
 
-#include "common/debug.h"
-#include "common/events.h"
 #include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
-
-#include "graphics/pixelformat.h"
 
 namespace Hollywood {
 
@@ -99,17 +95,13 @@ const byte kScene3110Linear32FrameMap[] = {
 };
 
 Scene3110::Scene3110(HollywoodEngine *vm) :
-		_vm(vm),
+		PresentationScene(vm, "scene 3110"),
+		_resources(),
 		_memoryRandomState(0x3110),
 		_memoryPulseLevel(0),
-		_memoryPulseActive(false),
-		_skipRequested(false) {
-	_palette.resize(kPaletteSize);
+		_memoryPulseActive(false) {
 	_memoryPulseSavedPalette.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_savedFramebuffer.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_sound0.setArchive(Common::Path(kScene3110SoundArchiveName));
 	_sound1.setArchive(Common::Path(kScene3110SoundArchiveName));
 	_sound2.setArchive(Common::Path(kScene3110SoundArchiveName));
@@ -120,10 +112,8 @@ Scene3110::~Scene3110() {
 }
 
 bool Scene3110::play() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kScene3110ArchiveName), _chunkTable)) {
-		warning("Failed to read %s header", kScene3110ArchiveName);
+	if (!_resources.loadChunkTable(kScene3110ArchiveName))
 		return false;
-	}
 
 	GameplayState &state = _vm->gameState();
 	state.activeAudioChapterIndex = 3;
@@ -144,66 +134,14 @@ bool Scene3110::play() {
 	return true;
 }
 
-bool Scene3110::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kScene3110ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	const uint chunkSize = (uint)stream->size();
-	const uint destinationSize = fixedSize != 0 ? fixedSize : chunkSize;
-	if (chunkSize > destinationSize) {
-		warning("%s chunk %u does not fit scene 3110 destination", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	destination.resize(destinationSize);
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), chunkSize) != chunkSize) {
-		warning("Failed to read %s chunk %u", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kScene3110ArchiveName, index, chunkSize);
-	return true;
-}
-
-bool Scene3110::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kScene3110ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	const uint chunkSize = (uint)stream->size();
-	if (chunkSize > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit scene 3110 framebuffer", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), chunkSize) != chunkSize) {
-		warning("Failed to read %s chunk %u", kScene3110ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s framebuffer chunk %u: size=%u", kScene3110ArchiveName, index, chunkSize);
-	return true;
-}
-
 bool Scene3110::loadFramebufferAndPalette(uint framebufferChunk, uint paletteChunk, uint paletteReadSize) {
-	if (!loadChunk(framebufferChunk, _baseFramebuffer, kFrameBufferSize))
+	if (!_resources.loadFixedChunk("scene 3110 framebuffer", framebufferChunk,
+			_baseFramebuffer, kFrameBufferSize))
 		return false;
 
-	Common::Array<byte> paletteChunkData;
-	if (!loadChunk(paletteChunk, paletteChunkData, paletteReadSize))
+	if (!_resources.loadFixedChunk("scene 3110 palette", paletteChunk,
+			_paletteCurrent, paletteReadSize))
 		return false;
-	_palette.resize(kPaletteSize);
-	memset(_palette.data(), 0, _palette.size());
-	memcpy(_palette.data(), paletteChunkData.data(), MIN<uint>(paletteChunkData.size(), _palette.size()));
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 	return true;
@@ -216,7 +154,7 @@ bool Scene3110::prepareScene(uint framebufferChunk, uint paletteChunk, uint pale
 
 	for (uint i = 0; i < trackCount; ++i) {
 		const uint chunkIndex = tracks[i].chunkIndex;
-		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+		if (_chunks[chunkIndex].empty() && !_resources.loadVariableChunk(chunkIndex, _chunks[chunkIndex]))
 			return false;
 	}
 
@@ -269,11 +207,11 @@ void Scene3110::runExteriorLightningSequence() {
 	if (!loadFramebufferAndPalette(0, 1, 0x2e8))
 		return;
 	for (uint chunkIndex = 2; chunkIndex <= 3; ++chunkIndex) {
-		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+		if (_chunks[chunkIndex].empty() && !_resources.loadVariableChunk(chunkIndex, _chunks[chunkIndex]))
 			return;
 	}
 
-	const Common::Array<byte> clearPalette = _palette;
+	const Common::Array<byte> clearPalette = _paletteCurrent;
 	byte bladeFrame = 0;
 	byte wingFrameIndex = 0;
 	byte highPaletteStep = 0;
@@ -288,7 +226,7 @@ void Scene3110::runExteriorLightningSequence() {
 	bool stormFinished = false;
 
 	drawExteriorFrame(wingFrameIndex, bladeFrame);
-	presentFrame(0);
+	presentFrame();
 	while (!stormFinished || tailCounter != 0) {
 		if (_skipRequested || Engine::shouldQuit() || pollEvents())
 			return;
@@ -345,28 +283,28 @@ void Scene3110::runExteriorLightningSequence() {
 			--tailCounter;
 
 		drawExteriorFrame(wingFrameIndex, bladeFrame);
-		presentFrame(0);
+		presentFrame();
 		if (delay(kScene3110ExteriorCounterMillis))
 			return;
 	}
 
 	stopSound(1);
-	_exteriorStormPalette = _palette;
+	_exteriorStormPalette = _paletteCurrent;
 }
 
 void Scene3110::runExteriorStormReturnSequence() {
 	if (!loadFramebufferAndPalette(0, 1, 0x2e8))
 		return;
 	for (uint chunkIndex = 2; chunkIndex <= 3; ++chunkIndex) {
-		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+		if (_chunks[chunkIndex].empty() && !_resources.loadVariableChunk(chunkIndex, _chunks[chunkIndex]))
 			return;
 	}
 
-	const Common::Array<byte> clearPalette = _palette;
+	const Common::Array<byte> clearPalette = _paletteCurrent;
 	if (_exteriorStormPalette.size() == kPaletteSize)
-		_palette = _exteriorStormPalette;
-	const Common::Array<byte> stormReferencePalette = _palette;
-	Common::Array<byte> lightningDarkPalette = _palette;
+		_paletteCurrent = _exteriorStormPalette;
+	const Common::Array<byte> stormReferencePalette = _paletteCurrent;
+	Common::Array<byte> lightningDarkPalette = _paletteCurrent;
 	byte bladeFrame = 0;
 	byte highPaletteStep = 0;
 	byte lowPaletteStep = 0;
@@ -379,7 +317,7 @@ void Scene3110::runExteriorStormReturnSequence() {
 	bool lightningFlashActive = false;
 
 	drawExteriorFrame(0, bladeFrame);
-	presentFrame(0);
+	presentFrame();
 	while (counter < 0x38e) {
 		if (_skipRequested || Engine::shouldQuit() || pollEvents())
 			return;
@@ -416,11 +354,11 @@ void Scene3110::runExteriorStormReturnSequence() {
 				lightningFlashAccumulator -= kScene3110ExteriorLightningFlashMillis;
 				++lightningFlashPhase;
 				if (lightningFlashPhase == 1)
-					_palette = lightningDarkPalette;
+					_paletteCurrent = lightningDarkPalette;
 				else if (lightningFlashPhase == 2)
-					_palette = clearPalette;
+					_paletteCurrent = clearPalette;
 				else {
-					_palette = lightningDarkPalette;
+					_paletteCurrent = lightningDarkPalette;
 					lightningFlashActive = false;
 					break;
 				}
@@ -429,15 +367,15 @@ void Scene3110::runExteriorStormReturnSequence() {
 
 		if (counter == 0x352 || counter == 0x370) {
 			playSound(2, kScene3110SoundCueLightning, 100, false);
-			lightningDarkPalette = _palette;
-			_palette = clearPalette;
+			lightningDarkPalette = _paletteCurrent;
+			_paletteCurrent = clearPalette;
 			lightningFlashPhase = 0;
 			lightningFlashAccumulator = 0;
 			lightningFlashActive = true;
 		}
 
 		drawExteriorFrame(0, bladeFrame);
-		presentFrame(0);
+		presentFrame();
 		if (delay(kScene3110ExteriorCounterMillis))
 			return;
 	}
@@ -447,14 +385,14 @@ void Scene3110::drawExteriorFrame(byte foregroundFrameIndex, byte bladeFrame) {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 	const uint frameMapIndex = MIN<uint>(foregroundFrameIndex,
 		ARRAYSIZE(kScene3110ExteriorForegroundFrameMap) - 1);
-	drawOriginalSpriteFrame(_chunks[3], 5,
+	drawStripSpriteFrame(_chunks[3], 0, 0, 5,
 		kScene3110ExteriorForegroundFrameMap[frameMapIndex], _sceneFramebuffer.surface());
-	drawOriginalSpriteFrame(_chunks[2], 8, bladeFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[2], 0, 0, 8, bladeFrame, _sceneFramebuffer.surface());
 }
 
 void Scene3110::darkenExteriorPaletteRange(const Common::Array<byte> &referencePalette,
 		uint firstColor, uint lastColor, byte threshold, bool snapLowComponentsToBlack) {
-	if (_palette.size() < kPaletteSize || referencePalette.size() < kPaletteSize)
+	if (_paletteCurrent.size() < kPaletteSize || referencePalette.size() < kPaletteSize)
 		return;
 
 	for (uint color = firstColor; color <= lastColor; ++color) {
@@ -462,10 +400,10 @@ void Scene3110::darkenExteriorPaletteRange(const Common::Array<byte> &referenceP
 			const uint offset = color * 3 + channel;
 			if (referencePalette[offset] < threshold)
 				continue;
-			if (snapLowComponentsToBlack && _palette[offset] < 3)
-				_palette[offset] = 0;
-			else if (_palette[offset] != 0)
-				--_palette[offset];
+			if (snapLowComponentsToBlack && _paletteCurrent[offset] < 3)
+				_paletteCurrent[offset] = 0;
+			else if (_paletteCurrent[offset] != 0)
+				--_paletteCurrent[offset];
 		}
 	}
 }
@@ -475,7 +413,7 @@ void Scene3110::runMachineRoomSequence() {
 		return;
 
 	for (uint chunkIndex = 12; chunkIndex <= 18; ++chunkIndex) {
-		if (_chunks[chunkIndex].empty() && !loadChunk(chunkIndex, _chunks[chunkIndex]))
+		if (_chunks[chunkIndex].empty() && !_resources.loadVariableChunk(chunkIndex, _chunks[chunkIndex]))
 			return;
 	}
 
@@ -486,21 +424,22 @@ void Scene3110::runMachineRoomSequence() {
 	composeMachineRoomFrame(state, false);
 	memcpy(_savedFramebuffer.data(), _sceneFramebuffer.data(), _sceneFramebuffer.size());
 	_sceneFramebuffer.clear(0);
-	presentFrame(kScene3110MachineRoomViewportXOffset);
+	presentFrame(0, kScene3110MachineRoomViewportXOffset);
 
 	for (int sweepOffset = kScene3110MachineRoomCurtainStartY;
 			sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit();
 			sweepOffset -= kScene3110MachineRoomCurtainBandHeight) {
 		if (pollEvents())
 			return;
-		revealSavedFramebufferBand((uint)sweepOffset, kScene3110MachineRoomCurtainBandHeight);
-		presentFrame(kScene3110MachineRoomViewportXOffset);
+		revealSavedFramebufferBand((uint)sweepOffset, kScene3110MachineRoomCurtainBandHeight,
+			kScene3110MachineRoomViewportXOffset);
+		presentFrame(0, kScene3110MachineRoomViewportXOffset);
 		if (delay(kScene3110MachineRoomRevealMillis))
 			return;
 	}
 
 	memcpy(_sceneFramebuffer.data(), _savedFramebuffer.data(), _sceneFramebuffer.size());
-	presentFrame(kScene3110MachineRoomViewportXOffset);
+	presentFrame(0, kScene3110MachineRoomViewportXOffset);
 
 	runMachineRoomInitialPhase(state);
 	runMachineRoomFinalPhase(state);
@@ -521,13 +460,13 @@ void Scene3110::composeMachineRoomFrame(const MachineRoomState &state, bool fina
 	if (finalPhase)
 		restoreOriginalSpriteFrameBackground(_chunks[13], 10, state.finalOverlayFrame, _sceneFramebuffer.surface());
 
-	drawOriginalSpriteFrame(_chunks[18], 9, state.fixedOverlayFrame, _sceneFramebuffer.surface());
-	drawOriginalSpriteFrame(_chunks[16], 10, state.leftMemoryActorFrame, _sceneFramebuffer.surface());
-	drawOriginalSpriteFrame(_chunks[17], 10, state.rightMemoryActorFrame, _sceneFramebuffer.surface());
-	drawOriginalSpriteFrame(_chunks[14], 0x1f, state.leftArcFrame, _sceneFramebuffer.surface());
-	drawOriginalSpriteFrame(_chunks[15], 0x1f, state.rightArcFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[18], 0, 0, 9, state.fixedOverlayFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[16], 0, 0, 10, state.leftMemoryActorFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[17], 0, 0, 10, state.rightMemoryActorFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[14], 0, 0, 0x1f, state.leftArcFrame, _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_chunks[15], 0, 0, 0x1f, state.rightArcFrame, _sceneFramebuffer.surface());
 	if (finalPhase)
-		drawOriginalSpriteFrame(_chunks[13], 10, state.finalOverlayFrame, _sceneFramebuffer.surface());
+		drawStripSpriteFrame(_chunks[13], 0, 0, 10, state.finalOverlayFrame, _sceneFramebuffer.surface());
 }
 
 void Scene3110::restoreOriginalSpriteFrameBackground(const Common::Array<byte> &resource, uint descriptorCount,
@@ -548,7 +487,7 @@ void Scene3110::runMachineRoomInitialPhase(MachineRoomState &state) {
 
 		advanceMachineRoomState(state, elapsedMillis, false);
 		composeMachineRoomFrame(state, false);
-		presentFrame(kScene3110MachineRoomViewportXOffset);
+		presentFrame(0, kScene3110MachineRoomViewportXOffset);
 		state.initialGateDirty = false;
 
 		if (delay(kScene3110MachineRoomPollMillis))
@@ -564,7 +503,7 @@ void Scene3110::runMachineRoomFinalPhase(MachineRoomState &state) {
 	state.finalOverlayDirty = true;
 
 	composeMachineRoomFrame(state, true);
-	presentFrame(kScene3110MachineRoomViewportXOffset);
+	presentFrame(0, kScene3110MachineRoomViewportXOffset);
 
 	uint32 lastMillis = g_system->getMillis();
 	while (state.finalCounter < kScene3110MachineRoomFinalCounterLimit &&
@@ -578,7 +517,7 @@ void Scene3110::runMachineRoomFinalPhase(MachineRoomState &state) {
 
 		advanceMachineRoomState(state, elapsedMillis, true);
 		composeMachineRoomFrame(state, true);
-		presentFrame(kScene3110MachineRoomViewportXOffset);
+		presentFrame(0, kScene3110MachineRoomViewportXOffset);
 		state.finalOverlayDirty = false;
 
 		if (delay(kScene3110MachineRoomPollMillis))
@@ -712,31 +651,6 @@ void Scene3110::advanceMachineRoomPalette(MachineRoomState &state, uint32 elapse
 	}
 }
 
-void Scene3110::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = kScene3110MachineRoomViewportXOffset + sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
-		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(),
-			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleRightX = kScene3110MachineRoomViewportXOffset + sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = combinedInset + row;
-			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, leftInset, bandWidth);
-			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, middleRightX, bandWidth);
-		}
-	}
-}
-
 void Scene3110::runMonsterTableElectricSequence() {
 	const SpriteTrack tracks[] = {
 		{6, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 30, 75, true, true},
@@ -773,14 +687,11 @@ void Scene3110::runBlackFlashSequence() {
 		{30, 2, kScene3110SoundCueLightning, 100, false, false},
 		{80, 2, kScene3110SoundCueLightning, 100, false, false}
 	};
-	Common::Array<byte> paletteChunkData;
-	if (!loadChunk(25, paletteChunkData, kPaletteSize))
+	if (!_resources.loadFixedChunk("scene 3110 palette", 25,
+			_paletteCurrent, kPaletteSize))
 		return;
-	_palette.resize(kPaletteSize);
-	memset(_palette.data(), 0, _palette.size());
-	memcpy(_palette.data(), paletteChunkData.data(), MIN<uint>(paletteChunkData.size(), _palette.size()));
 
-	if (_chunks[26].empty() && !loadChunk(26, _chunks[26]))
+	if (_chunks[26].empty() && !_resources.loadVariableChunk(26, _chunks[26]))
 		return;
 
 	_baseFramebuffer.clear(0);
@@ -809,7 +720,7 @@ void Scene3110::runSpriteSequence(uint frameCount, uint frameMillis, uint16 view
 
 		applySoundCues(tick, soundCues, soundCueCount);
 		drawSpriteSequenceFrame(tick, tracks, trackCount);
-		presentFrame(viewportX);
+		presentFrame(0, viewportX);
 		if (delay(frameMillis))
 			return;
 	}
@@ -823,42 +734,8 @@ void Scene3110::drawSpriteSequenceFrame(uint tick, const SpriteTrack *tracks, ui
 		if (!track.visibleBeforeStart && tick < track.firstTick)
 			continue;
 
-		drawOriginalSpriteFrame(_chunks[track.chunkIndex], track.descriptorCount,
+		drawStripSpriteFrame(_chunks[track.chunkIndex], 0, 0, track.descriptorCount,
 			frameForTrack(track, tick), _sceneFramebuffer.surface());
-	}
-}
-
-void Scene3110::drawOriginalSpriteFrame(const Common::Array<byte> &resource, uint descriptorCount,
-		uint descriptorIndex, Graphics::Surface &destination) const {
-	const uint entryOffset = descriptorIndex * kFrameDescriptorSize;
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
-	uint cursor = descriptorCount * kFrameDescriptorSize + readUint32LE(resource, entryOffset);
-	if (cursor > resource.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > resource.size())
-			return;
-
-		const uint32 packedDestination = readUint32LE(resource, cursor);
-		const int dataLength = resource[cursor + 4];
-		cursor += 5;
-
-		if (cursor + dataLength > resource.size())
-			return;
-
-		const int x = packedDestination & 0xffff;
-		const int y = (packedDestination >> 16) & 0xffff;
-		if (y >= 0 && y < destination.h && x >= 0 && x < destination.w) {
-			const int drawWidth = MIN<int>(dataLength, destination.w - x);
-			if (drawWidth > 0)
-				destination.copyRectToSurface(resource.data() + cursor, dataLength, x, y, drawWidth, 1);
-		}
-
-		cursor += dataLength;
 	}
 }
 
@@ -880,18 +757,18 @@ void Scene3110::initializeMemoryEffectPalette() {
 	_memoryPulseActive = false;
 	_memoryPulseLevel = 0;
 	_memoryRandomState = 0x31103110;
-	memcpy(_memoryPulseSavedPalette.data(), _palette.data(), MIN<uint>(_memoryPulseSavedPalette.size(), _palette.size()));
+	memcpy(_memoryPulseSavedPalette.data(), _paletteCurrent.data(), MIN<uint>(_memoryPulseSavedPalette.size(), _paletteCurrent.size()));
 }
 
 void Scene3110::applyMemoryPaletteBand(uint tick) {
 	(void)tick;
 	byte savedColor90[3];
-	memcpy(savedColor90, _palette.data() + 0x90 * 3, sizeof(savedColor90));
+	memcpy(savedColor90, _paletteCurrent.data() + 0x90 * 3, sizeof(savedColor90));
 	for (uint color = 0x9f; color > 0x90; --color) {
 		const uint offset = color * 3;
-		memcpy(_palette.data() + offset, _palette.data() + offset - 3, 3);
+		memcpy(_paletteCurrent.data() + offset, _paletteCurrent.data() + offset - 3, 3);
 	}
-	memcpy(_palette.data() + 0x90 * 3, savedColor90, sizeof(savedColor90));
+	memcpy(_paletteCurrent.data() + 0x90 * 3, savedColor90, sizeof(savedColor90));
 }
 
 void Scene3110::processMemoryPalettePulseStep() {
@@ -899,8 +776,8 @@ void Scene3110::processMemoryPalettePulseStep() {
 		if (nextMemoryRandom15Bit() % 100 == 0) {
 			_memoryPulseActive = true;
 			_memoryPulseLevel = 0;
-			memcpy(_memoryPulseSavedPalette.data(), _palette.data(),
-				MIN<uint>(_memoryPulseSavedPalette.size(), _palette.size()));
+			memcpy(_memoryPulseSavedPalette.data(), _paletteCurrent.data(),
+				MIN<uint>(_memoryPulseSavedPalette.size(), _paletteCurrent.size()));
 		}
 		return;
 	}
@@ -928,40 +805,40 @@ void Scene3110::adjustMemoryPalettePulseRanges(int delta) {
 	for (uint color = 1; color < 0x8f; ++color) {
 		const uint offset = color * 3;
 		if (delta > 0) {
-			if (_palette[offset] < 0x3f && _palette[offset + 1] < 0x3f && _palette[offset + 2] < 0x3f) {
-				++_palette[offset];
-				++_palette[offset + 1];
-				++_palette[offset + 2];
+			if (_paletteCurrent[offset] < 0x3f && _paletteCurrent[offset + 1] < 0x3f && _paletteCurrent[offset + 2] < 0x3f) {
+				++_paletteCurrent[offset];
+				++_paletteCurrent[offset + 1];
+				++_paletteCurrent[offset + 2];
 			}
-		} else if (_palette[offset] != 0 && _palette[offset + 1] != 0 && _palette[offset + 2] != 0) {
-			--_palette[offset];
-			--_palette[offset + 1];
-			--_palette[offset + 2];
+		} else if (_paletteCurrent[offset] != 0 && _paletteCurrent[offset + 1] != 0 && _paletteCurrent[offset + 2] != 0) {
+			--_paletteCurrent[offset];
+			--_paletteCurrent[offset + 1];
+			--_paletteCurrent[offset + 2];
 		}
 	}
 
 	for (uint color = 0xa0; color < 0xff; ++color) {
 		const uint offset = color * 3;
 		if (delta > 0) {
-			if (_palette[offset] < 0x3f && _palette[offset + 1] < 0x3f && _palette[offset + 2] < 0x3f) {
-				++_palette[offset];
-				++_palette[offset + 1];
-				++_palette[offset + 2];
+			if (_paletteCurrent[offset] < 0x3f && _paletteCurrent[offset + 1] < 0x3f && _paletteCurrent[offset + 2] < 0x3f) {
+				++_paletteCurrent[offset];
+				++_paletteCurrent[offset + 1];
+				++_paletteCurrent[offset + 2];
 			}
-		} else if (_palette[offset] != 0 && _palette[offset + 1] != 0 && _palette[offset + 2] != 0) {
-			--_palette[offset];
-			--_palette[offset + 1];
-			--_palette[offset + 2];
+		} else if (_paletteCurrent[offset] != 0 && _paletteCurrent[offset + 1] != 0 && _paletteCurrent[offset + 2] != 0) {
+			--_paletteCurrent[offset];
+			--_paletteCurrent[offset + 1];
+			--_paletteCurrent[offset + 2];
 		}
 	}
 }
 
 void Scene3110::restoreMemoryPalettePulseRanges() {
-	if (_memoryPulseSavedPalette.size() < kPaletteSize || _palette.size() < kPaletteSize)
+	if (_memoryPulseSavedPalette.size() < kPaletteSize || _paletteCurrent.size() < kPaletteSize)
 		return;
 
-	memcpy(_palette.data(), _memoryPulseSavedPalette.data(), 0x1b0);
-	memcpy(_palette.data() + 0x1e0, _memoryPulseSavedPalette.data() + 0x1e0, kPaletteSize - 0x1e0);
+	memcpy(_paletteCurrent.data(), _memoryPulseSavedPalette.data(), 0x1b0);
+	memcpy(_paletteCurrent.data() + 0x1e0, _memoryPulseSavedPalette.data() + 0x1e0, kPaletteSize - 0x1e0);
 }
 
 uint16 Scene3110::nextMemoryRandom15Bit() {
@@ -1026,47 +903,8 @@ void Scene3110::stopSounds() {
 	_sound2.stop();
 }
 
-void Scene3110::presentFrame(uint16 viewportX) {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _palette, _screen, _displayPalette, 0, viewportX);
-}
-
-bool Scene3110::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
-}
-
-bool Scene3110::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			stopSounds();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
+void Scene3110::stopAudio() {
+	stopSounds();
 }
 
 } // End of namespace Hollywood

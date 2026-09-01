@@ -51,14 +51,16 @@ uint PresentationScene::presentXOffset() const {
 }
 
 void PresentationScene::presentFrame() {
+	presentFrame(presentRowOffset(), presentXOffset());
+}
+
+void PresentationScene::presentFrame(uint rowOffset, uint xOffset) {
 	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 
 	if (_screen.empty())
 		_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	const Graphics::Surface &framebuffer = _sceneFramebuffer.surface();
-	const uint rowOffset = presentRowOffset();
-	const uint xOffset = presentXOffset();
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
 		byte *destination = (byte *)_screen.getBasePtr(0, y);
 		const uint sourceY = y + rowOffset;
@@ -137,14 +139,14 @@ bool PresentationScene::clearSceneFramebufferWithCurtain(byte bandWidth) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void PresentationScene::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
+void PresentationScene::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth, uint xOffset) {
 	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
 	if (innerWidth <= 0)
 		return;
 
 	const int combinedInset = sweepOffset + bandWidth;
 	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
+	const int leftInset = xOffset + sweepOffset;
 
 	for (uint row = 0; row < bandWidth; ++row) {
 		copySavedFramebufferRun(sweepOffset + row, leftInset, innerWidth);
@@ -153,7 +155,7 @@ void PresentationScene::revealSavedFramebufferBand(uint sweepOffset, byte bandWi
 	}
 
 	if (middleHeight > 0) {
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
+		const int middleRightX = xOffset + sweepOffset + innerWidth - bandWidth;
 		for (int row = 0; row < middleHeight; ++row) {
 			const int y = combinedInset + row;
 			copySavedFramebufferRun(y, leftInset, bandWidth);
