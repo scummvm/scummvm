@@ -1735,6 +1735,28 @@ bool PlayableScene::waitDeltaClipFrameMillis(uint32 millis) {
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
+bool PlayableScene::waitFullscreenAnimationFrame(uint32 millis, bool allowSkip) {
+	const uint32 startMillis = g_system->getMillis();
+	uint32 lastMillis = startMillis;
+	while (!animationPlaybackShouldStop()) {
+		if (pollEvents(allowSkip))
+			return true;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 delta = now - lastMillis;
+		lastMillis = now;
+		if (delta != 0)
+			advanceFullscreenAnimation(MIN<uint32>(delta, kBlockingSceneMaxFrameDeltaMillis));
+
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (elapsed >= millis)
+			break;
+		g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
+	}
+
+	return animationPlaybackShouldStop();
+}
+
 bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec) {
 	if (spec.palette.size() != kPaletteSize || spec.frameCount == 0 ||
 			spec.frameCount > 0x100 || spec.frameCount > spec.frames.size() / 4) {
@@ -1774,19 +1796,10 @@ bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationS
 		}
 		presentFrame();
 
-		uint32 remaining = spec.frameMillis;
-		while (remaining != 0 && !animationPlaybackShouldStop()) {
-			if (pollEvents(spec.allowSkip)) {
-				completed = false;
-				break;
-			}
-			const uint32 slice = MIN<uint32>(remaining, 10);
-			g_system->delayMillis(slice);
-			advanceFullscreenAnimation(slice);
-			remaining -= slice;
-		}
-		if (remaining != 0)
+		if (waitFullscreenAnimationFrame(spec.frameMillis, spec.allowSkip)) {
+			completed = false;
 			break;
+		}
 	}
 
 	_paletteCurrent = blackPalette;

@@ -621,6 +621,8 @@ protected:
 		uint firstFrame = 0);
 	// Polls events without advancing or redrawing the scene; returns true if playback should stop.
 	bool waitDeltaClipFrameMillis(uint32 millis);
+	// Advances full-screen scene hooks without redrawing the ordinary scene composite.
+	bool waitFullscreenAnimationFrame(uint32 millis, bool allowSkip);
 	bool playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec);
 	bool fadePaletteFromBlack();
 	bool fadePaletteToBlack();

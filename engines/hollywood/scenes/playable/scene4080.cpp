@@ -348,6 +348,14 @@ void Scene4080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientSound(delta);
 }
 
+void Scene4080::advanceFullscreenAnimation(uint32 delta) {
+	const bool paletteChanged = advanceCoffinPaletteCycle(delta);
+	advanceAmbientSound(delta);
+	PlayableScene::advanceFullscreenAnimation(delta);
+	if (paletteChanged)
+		presentFrame();
+}
+
 bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Mirar puerta (look at door): corridor line.
@@ -838,7 +846,7 @@ bool Scene4080::runCoffinInsertSequence() {
 	if (completed)
 		completed = playCoffinDeltaClip(kScene4080CoffinFirstClipChunk);
 	if (completed) {
-		if (waitCoffinDeltaFrame(kScene4080FrameMillis))
+		if (waitFullscreenAnimationFrame(kScene4080FrameMillis, false))
 			completed = false;
 		else
 			completed = playCoffinDeltaClip(kScene4080CoffinSecondClipChunk);
@@ -905,36 +913,10 @@ bool Scene4080::playCoffinDeltaClip(uint chunkIndex) {
 			playResidentSoundEffect(1);
 
 		if (frame + 1 < ARRAYSIZE(kScene4080CoffinClipFrameMap) &&
-				waitCoffinDeltaFrame(kScene4080FrameMillis))
+				waitFullscreenAnimationFrame(kScene4080FrameMillis, false))
 			return false;
 	}
 	return true;
-}
-
-bool Scene4080::waitCoffinDeltaFrame(uint32 millis) {
-	const uint32 startMillis = g_system->getMillis();
-	uint32 lastMillis = startMillis;
-	while (!animationPlaybackShouldStop()) {
-		if (pollEvents(false))
-			return true;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		if (delta != 0) {
-			const bool paletteChanged = advanceCoffinPaletteCycle(delta);
-			advanceAmbientSound(delta);
-			PlayableScene::advanceFullscreenAnimation(delta);
-			if (paletteChanged)
-				presentFrame();
-		}
-
-		const uint32 elapsed = g_system->getMillis() - startMillis;
-		if (elapsed >= millis)
-			break;
-		g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
-	}
-	return animationPlaybackShouldStop();
 }
 
 bool Scene4080::advanceCoffinPaletteCycle(uint32 delta) {

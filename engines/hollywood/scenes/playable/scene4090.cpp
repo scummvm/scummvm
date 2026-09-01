@@ -283,6 +283,14 @@ void Scene4090::advanceCustomGameplayLoop(uint32 delta) {
 		_sceneLayers.layer(kScene4090AmbientRandomLayer).visible);
 }
 
+void Scene4090::advanceFullscreenAnimation(uint32 delta) {
+	const bool paletteChanged = advanceCoffinPaletteCycle(delta);
+	advanceAmbientSound(delta);
+	PlayableScene::advanceFullscreenAnimation(delta);
+	if (paletteChanged)
+		presentFrame();
+}
+
 bool Scene4090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Mirar puerta (look at door): corridor exit description.
@@ -668,11 +676,11 @@ bool Scene4090::runCoffinInsertSequence() {
 		completed = runCurtainReveal(insertFramebuffer, insertPalette);
 	}
 	if (completed)
-		completed = !waitCoffinDeltaFrame(1000);
+		completed = !waitFullscreenAnimationFrame(1000, false);
 	if (completed)
 		completed = playCoffinDeltaClip(kScene4090CoffinFirstClipChunk);
 	if (completed)
-		completed = !waitCoffinDeltaFrame(1000);
+		completed = !waitFullscreenAnimationFrame(1000, false);
 	if (completed)
 		completed = playCoffinDeltaClip(kScene4090CoffinSecondClipChunk);
 	if (completed)
@@ -740,36 +748,10 @@ bool Scene4090::playCoffinDeltaClip(uint chunkIndex) {
 			playResidentSoundEffect(1);
 
 		if (frame + 1 < ARRAYSIZE(kScene4090CoffinClipFrameMap) &&
-				waitCoffinDeltaFrame(kScene4090FrameMillis))
+				waitFullscreenAnimationFrame(kScene4090FrameMillis, false))
 			return false;
 	}
 	return true;
-}
-
-bool Scene4090::waitCoffinDeltaFrame(uint32 millis) {
-	const uint32 startMillis = g_system->getMillis();
-	uint32 lastMillis = startMillis;
-	while (!animationPlaybackShouldStop()) {
-		if (pollEvents(false))
-			return true;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		if (delta != 0) {
-			const bool paletteChanged = advanceCoffinPaletteCycle(delta);
-			advanceAmbientSound(delta);
-			PlayableScene::advanceFullscreenAnimation(delta);
-			if (paletteChanged)
-				presentFrame();
-		}
-
-		const uint32 elapsed = g_system->getMillis() - startMillis;
-		if (elapsed >= millis)
-			break;
-		g_system->delayMillis(MIN<uint32>(millis - elapsed, 10));
-	}
-	return animationPlaybackShouldStop();
 }
 
 bool Scene4090::advanceCoffinPaletteCycle(uint32 delta) {

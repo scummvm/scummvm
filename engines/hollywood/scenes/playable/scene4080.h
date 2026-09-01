@@ -43,6 +43,7 @@ private:
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	void advanceFullscreenAnimation(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
@@ -66,7 +67,6 @@ private:
 	void runSidePatchSequence();
 	bool runCoffinInsertSequence();
 	bool playCoffinDeltaClip(uint chunkIndex);
-	bool waitCoffinDeltaFrame(uint32 millis);
 	bool advanceCoffinPaletteCycle(uint32 delta);
 	void rotateCoffinPaletteCycle();
 	bool runCoffinCurtainReveal(const Graphics::ManagedSurface &source,
