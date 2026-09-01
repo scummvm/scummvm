@@ -3717,13 +3717,12 @@ Character::Character() : _pathfindingOverlay(g_engine->screenWidth() * g_engine-
 bool Character::calculatePath(Common::Point target) {
 	// Binary calculatePath (1008:1966). Params: charY, charX, finalDestY, finalDestX, actorIndex.
 	// The binary operates on the runtime struct directly; we store equivalent state in _path etc.
-	constexpr int MAX_NODES = 16;
 	const Common::Point &charPos = _gameObject->_position;
 	const int nodeCount = g_engine->getPathfindingNodeCount();
 
 	// Step 1: Mark reachability anchored on FINAL DESTINATION (not character)
 	// scene[i + 0x50C2] = isPathWalkable(finalDest, node[i])
-	bool reachable[MAX_NODES + 1] = {};
+	bool reachable[kPathNodeSlots + 1] = {};
 	for (int i = 1; i <= nodeCount; i++) {
 		const Common::Point &nodePos = g_engine->_pathfindingPoints[i - 1]._position;
 		reachable[i] = g_engine->isPathWalkable(target.y, target.x, nodePos.y, nodePos.x);
@@ -3784,7 +3783,7 @@ bool Character::calculatePath(Common::Point target) {
 		}
 		currentNode = nextNode;
 		_path.push_back(currentNode);
-		if (_path.size() > MAX_NODES)
+		if (_path.size() > kPathNodeSlots)
 			break; // safety
 	}
 
@@ -3828,7 +3827,7 @@ bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Poi
 		return false;
 
 	// Flood-fill connected nodes
-	bool visited[17] = {};
+	bool visited[kPathNodeSlots + 1] = {};
 	floodFillConnectedNodes(nodeIndex, visited, nodeCount);
 
 	// Check both conditions

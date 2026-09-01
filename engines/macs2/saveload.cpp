@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/endian.h"
 #include "common/util.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
@@ -26,7 +27,49 @@
 
 namespace Macs2 {
 
+static void packPathBlock(const Character *chr, byte pathBlock[32], uint16 &pathIndex, uint16 &pathLength) {
+	memset(pathBlock, 0, 32);
+	pathIndex = 0;
+	pathLength = 0;
+	if (chr == nullptr)
+		return;
+
+	pathLength = (uint16)MIN<uint>(chr->_path.size(), kPathNodeSlots);
+	for (uint16 i = 0; i < pathLength; i++)
+		WRITE_LE_UINT16(&pathBlock[i * 2], chr->_path[i]);
+
+	if (pathLength == 0)
+		pathIndex = (uint16)chr->_currentPathIndex;
+	else
+		pathIndex = (uint16)(chr->_currentPathIndex + 1);
+}
+
+static void unpackPathBlock(Character *chr, const byte pathBlock[32], uint16 pathIndex, uint16 pathLength) {
+	chr->_path.clear();
+	if (pathLength > kPathNodeSlots)
+		pathLength = kPathNodeSlots;
+	for (uint16 i = 0; i < pathLength; i++)
+		chr->_path.push_back(READ_LE_UINT16(&pathBlock[i * 2]));
+
+	if (pathLength == 0)
+		chr->_currentPathIndex = (int16)pathIndex;
+	else
+		chr->_currentPathIndex = (int16)pathIndex - 1;
+}
+
 Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
+	if (isV2()) {
+		return syncGameV2(s);
+	}
+	return syncGameV1(s);
+}
+
+Common::Error Macs2Engine::syncGameV2(Common::Serializer &s) {
+	// TODO: not yet implemented
+	return Common::kUnknownError;
+}
+
+Common::Error Macs2Engine::syncGameV1(Common::Serializer &s) {
 	const byte SAVE_MAGIC[12] = {'A', 'H', 'F', 'F', 'M', 'S', 'G', 'M', '0', '1', '0', '0'};
 	View1 *view1 = (View1 *)findView("View1");
 	if (view1 == nullptr)
@@ -41,10 +84,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	if (s.isSaving()) {
 		byte magic[12];
 		memcpy(magic, SAVE_MAGIC, sizeof(SAVE_MAGIC));
-		s.syncBytes(magic, 12);
+		s.syncBytes(magic, sizeof(magic));
 	} else {
 		byte magic[12];
-		s.syncBytes(magic, 12);
+		s.syncBytes(magic, sizeof(magic));
 		if (memcmp(magic, SAVE_MAGIC, sizeof(SAVE_MAGIC)) != 0)
 			return Common::kReadingFailed;
 	}
@@ -55,7 +98,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		slotName[0] = 20;
 		memcpy(slotName + 1, defName, sizeof(defName));
 	}
-	s.syncBytes(slotName, 21);
+	s.syncBytes(slotName, sizeof(slotName));
 
 	uint16 actorIndex = (uint16)Scenes::instance()._currentActorIndex;
 	uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
@@ -471,23 +514,15 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 
 		byte pathBlock[32] = {0};
-		if (s.isSaving() && chr)
-			memcpy(pathBlock, chr->_pathBlockRaw, 32);
+		uint16 pathIndex = 0;
+		uint16 pathLength = 0;
+		if (s.isSaving())
+			packPathBlock(chr, pathBlock, pathIndex, pathLength);
 		s.syncBytes(pathBlock, 32);
-
-		uint16 pathIndex = chr ? (uint16)chr->_currentPathIndex : 0;
 		s.syncAsUint16LE(pathIndex);
-
-		uint16 pathLength = chr ? (uint16)chr->_path.size() : 0;
 		s.syncAsUint16LE(pathLength);
-
-		if (s.isLoading()) {
-			memcpy(chr->_pathBlockRaw, pathBlock, 32);
-			chr->_path.clear();
-			for (uint16 pi = 0; pi < pathLength && pi < 32; pi++)
-				chr->_path.push_back(pathBlock[pi]);
-			chr->_currentPathIndex = (int)pathIndex;
-		}
+		if (s.isLoading() && chr)
+			unpackPathBlock(chr, pathBlock, pathIndex, pathLength);
 
 		uint16 stepAccum = chr ? (uint16)chr->_stepError : 0;
 		s.syncAsUint16LE(stepAccum);

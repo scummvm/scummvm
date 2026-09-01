@@ -91,11 +91,6 @@ public:
 
 	Common::Array<uint16> _path;
 	int16 _currentPathIndex = 0;
-	// Raw 32-byte runtime path block at object runtime +0x0C. The original game
-	// stores opaque per-waypoint data here (not just node indices). We preserve
-	// it verbatim across save/load so DOS saves round-trip byte-for-byte; our own
-	// pathfinding uses _path. Saved/restored by syncGame.
-	uint8 _pathBlockRaw[32] = {0};
 	Common::Point _pathFinalDestination;
 	Common::Array<uint8> _pathfindingOverlay;
 
