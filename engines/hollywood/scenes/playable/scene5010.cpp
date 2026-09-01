@@ -666,7 +666,7 @@ void Scene5010::handleSwitchPanelChoice(byte choice) {
 		range.commitAt(showStaticFrame, _switchPanelDisplayedColumn, targetValue);
 	range.commitAt(showStaticFrame, _switchPanelMovingSelectorVisible, true)
 		.unskippable();
-	playResourceLayerSequence(kScene5010SwitchPanelAnimationLayer, animationChunk,
+	BlockingSequence(*this).resourceLayerFrames(kScene5010SwitchPanelAnimationLayer, animationChunk,
 		kScene5010SwitchAnimationDescriptorCount, frameMap.data(), frameMap.size(),
 		range);
 

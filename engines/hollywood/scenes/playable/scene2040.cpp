@@ -537,14 +537,15 @@ void Scene2040::runEyeExchangeSequence() {
 	AnimationFrameRange secondRange(0, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap) - 1,
 		kScene2040ActionFrameMillis);
 	secondRange.soundAt(1, 0x1f).stopSoundAt(0x12);
-	playResourceLayerSequence(_sceneLayers, kScene2040BehindActorLayer, 12,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene2040BehindActorLayer, 12,
 		kScene2040EyeExchangeSecondDescriptorCount, kScene2040EyeExchangeSecondFrameMap,
-		ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap), secondRange);
-	_soundBank0.stop();
-	state.scene2040SphinxFaceState = 3;
-	state.scene2040SphinxItemRevealed = 1;
-	applySceneStateToHotspotsAndPatches(0xff);
-	beginSecondarySpeechLine(9, 1);
+		secondRange)
+		.stopSound()
+		.commit(state.scene2040SphinxFaceState, (byte)3)
+		.commit(state.scene2040SphinxItemRevealed, (byte)1)
+		.framebufferPatch(0xff)
+		.secondarySpeech(9, 1);
 }
 
 void Scene2040::runBaseOpeningSequence() {

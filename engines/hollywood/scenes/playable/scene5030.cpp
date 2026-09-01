@@ -609,7 +609,7 @@ void Scene5030::runRonPoseTransition(bool faceGladys) {
 	const byte *frameMap = faceGladys ? kScene5030RonTurnToGladysFrameMap : kScene5030RonTurnToVanessaFrameMap;
 	const uint frameCount = faceGladys ? ARRAYSIZE(kScene5030RonTurnToGladysFrameMap) :
 		ARRAYSIZE(kScene5030RonTurnToVanessaFrameMap);
-	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+	BlockingSequence(*this).resourceLayerFrames(kScene5030ActorReplacementLayer,
 		_ronConversationChunk, kScene5030ConversationDescriptorCount,
 		frameMap, frameCount, AnimationFrameRange(0, frameCount - 1,
 			kScene5030FrameMillis).unskippable().noFinalFrameDelay(), false);
@@ -625,7 +625,7 @@ void Scene5030::runRonPoseTransition(bool faceGladys) {
 
 void Scene5030::runDeckRefusalSequence() {
 	startScoutStopTransition();
-	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+	BlockingSequence(*this).resourceLayerFrames(kScene5030ActorReplacementLayer,
 		11, kScene5030DeckAnimationDescriptorCount,
 		kScene5030DeckRefusalFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030DeckRefusalFrameMap) - 1,
@@ -670,7 +670,7 @@ void Scene5030::runDeckPickupSequence() {
 }
 
 void Scene5030::runUnderpantsPresentationAnimation() {
-	playResourceLayerSequence(_sceneLayers, kScene5030ActorReplacementLayer,
+	BlockingSequence(*this).resourceLayerFrames(kScene5030ActorReplacementLayer,
 		15, kScene5030UnderpantsRonDescriptorCount,
 		kScene5030UnderpantsPresentationFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene5030UnderpantsPresentationFrameMap) - 1,
