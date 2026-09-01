@@ -1271,11 +1271,11 @@ Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &pat
 	if (dec->hasPalette())
 		s->setPalette(dec->getPalette().data(), 0, dec->getPalette().size());
 	// TODO: Skip conversion for surfaces with palettes?
-	if (version() == 1) {
+	if (s->format.aBits() == 0) {
 		s->convertToInPlace(_pixelFormat);
 		s->setTransparentColor(s->format.RGBToColor(0, 0, 0));
-	} else {
-		s->convertToInPlace(Graphics::BlendBlit::getSupportedPixelFormat());
+	} else if (_pixelFormat.aBits() >= s->format.aBits()) {
+		s->convertToInPlace(_pixelFormat);
 	}
 	return s;
 }
@@ -1539,6 +1539,7 @@ void PhoenixVREngine::renderLensflare() {
 		const int dstX = static_cast<int>(sourceX + (_screenCenter.x - sourceX) * lens.scale);
 		const int dstY = static_cast<int>(sourceY + (_screenCenter.y - sourceY) * lens.scale);
 
+		// TODO: Could ManagedSurface routines be used here?
 		for (int y = 0; y != src.h; ++y) {
 			const int screenY = dstY + y;
 			if (screenY < 0 || screenY >= _screen->h)
@@ -1903,8 +1904,8 @@ void PhoenixVREngine::tick(float dt) {
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
-		if (cursor->surface->format.aBits() != 0)
-			_screen->blendBlitFrom(*cursor->surface, _mousePos - cursor->offset);
+		if (!cursor->surface->hasTransparentColor())
+			_screen->simpleBlitFrom(*cursor->surface, _mousePos - cursor->offset, Graphics::FLIP_NONE, true);
 		else
 			_screen->simpleBlitFrom(*cursor->surface, _mousePos - cursor->offset);
 	}
@@ -1927,8 +1928,7 @@ Common::Error PhoenixVREngine::run() {
 		formats.push_back(_rgb565);
 		initGraphics(640, 480, formats);
 	} else {
-		_pixelFormat = Graphics::BlendBlit::getSupportedPixelFormat();
-		initGraphics(640, 480, &_pixelFormat);
+		initGraphics(640, 480, nullptr);
 	}
 
 	_pixelFormat = g_system->getScreenFormat();
