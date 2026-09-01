@@ -590,9 +590,10 @@ void View1::updateCursor(const Graphics::Palette *palette) {
 		return;
 	}
 
-	const uint16 width = g_engine->_imageResources[mode]._width;
-	const uint16 height = g_engine->_imageResources[mode]._height;
-	const byte *cursorData = g_engine->_imageResources[mode]._data.data();
+	const AnimFrame &cursorSprite = g_engine->_imageResources[mode];
+	const uint16 width = cursorSprite._width;
+	const uint16 height = cursorSprite._height;
+	const byte *cursorData = cursorSprite._data.data();
 	const Graphics::PixelFormat rgbaCursorFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Common::Array<uint32> rgbaCursor;
 	rgbaCursor.resize(width * height);

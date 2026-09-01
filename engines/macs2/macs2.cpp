@@ -2599,9 +2599,8 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 }
 
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
-	uint16 result = 0;
 	if (p.x < 0 || p.x >= screenWidth() || p.y < 0 || p.y >= gameHeight() || _hotspotMap.w == 0) {
-		return result;
+		return 0;
 	}
 
 	uint8 firstLookup = _hotspotMap.getPixel(p.x, p.y);
@@ -2609,7 +2608,7 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 
 	uint8 i = 1;
 	if (i > numHotspots) {
-		return result;
+		return 0;
 	}
 
 	Common::Array<uint16> a = _hotspotColorTable;
