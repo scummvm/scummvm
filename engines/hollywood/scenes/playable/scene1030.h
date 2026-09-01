@@ -55,9 +55,6 @@ private:
 	void applyFirstEntryPalette();
 	void restoreNormalPalette();
 	void runFirstEntryConversation();
-	void startFirstEntryActorPath();
-	void advanceFirstEntryActorPath(uint32 delta);
-	void finishFirstEntryActorPath();
 	void runEntryGestureSequence();
 	void runEntryOpenSequence();
 	void applyActorDepthClipForDrawOrder(byte actorDrawOrderMode);
@@ -85,11 +82,8 @@ private:
 	TimedAnimationChannel _smallForegroundChannel;
 	byte _largeForegroundMode;
 	byte _smallForegroundTickCount;
-	uint _entryActorPathFrameIndex;
-	uint32 _entryActorPathTimerAccumulator;
 	bool _entryActorsVisible;
 	bool _entryActorsAlternatePose;
-	bool _entryActorPathActive;
 };
 
 } // End of namespace Hollywood

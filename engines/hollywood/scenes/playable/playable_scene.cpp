@@ -1454,7 +1454,7 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_actionOverlayPlayer.reset();
 	_sceneLayers.reset();
-	resetConcurrentActorPath();
+	cancelConcurrentActorPath();
 	resetAmbientAudioState();
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -1973,7 +1973,7 @@ uint16 PlayableScene::viewportYOffset() const {
 
 void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
-	resetConcurrentActorPath();
+	cancelConcurrentActorPath();
 	stopRealtimeSpeech();
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -2258,7 +2258,7 @@ bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 row
 }
 
 void PlayableScene::startConcurrentActorPath(int targetX, int targetY, byte finalFacing,
-		byte finalCel, uint32 frameMillis) {
+		byte finalCel, uint32 frameMillis, bool snapToTargetIfNoPath) {
 	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
 		targetX, targetY, finalFacing, finalCel);
 	_concurrentActorPathFrameIndex = 1;
@@ -2273,6 +2273,8 @@ void PlayableScene::startConcurrentActorPath(int targetX, int targetY, byte fina
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
+	} else if (!_concurrentActorPathActive && snapToTargetIfNoPath) {
+		setActiveActorPose(targetX, targetY, finalFacing, finalCel);
 	}
 }
 
@@ -2296,9 +2298,9 @@ void PlayableScene::advanceConcurrentActorPath(uint32 delta) {
 	}
 }
 
-void PlayableScene::finishConcurrentActorPath() {
+void PlayableScene::finishConcurrentActorPath(bool allowSkip) {
 	while (_concurrentActorPathActive && !animationPlaybackShouldStop()) {
-		if (waitSceneMillis(10, false))
+		if (waitSceneMillis(10, allowSkip))
 			break;
 	}
 
@@ -2314,7 +2316,7 @@ void PlayableScene::finishConcurrentActorPath() {
 	_actorPathPlaybackActive = false;
 }
 
-void PlayableScene::resetConcurrentActorPath() {
+void PlayableScene::cancelConcurrentActorPath() {
 	_concurrentActorPathChannel.reset(0, 0);
 	_concurrentActorPathFrameIndex = 0;
 	_concurrentActorPathActive = false;

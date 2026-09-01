@@ -65,8 +65,6 @@ private:
 	void runWaxBallEscapeSequence();
 	void startWaxBallAnimation();
 	void advanceWaxBallAnimation(uint32 delta);
-	void startManualActorPath(int targetX, int targetY, byte finalFacing);
-	void advanceManualActorPath(uint32 delta);
 	void runFinalSueAnimation();
 	void advanceFinalSueAnimation(uint32 delta);
 	void dimEscapePalette();
@@ -82,15 +80,12 @@ private:
 	TimedAnimationChannel _waxBallChannel;
 	TimedAnimationChannel _escapeSueChannel;
 	TimedAnimationChannel _escapeGuardChannel;
-	TimedAnimationChannel _manualActorPathChannel;
 	TimedAnimationChannel _finalSueChannel;
-	uint _manualActorPathFrameIndex;
 	bool _sueLongIdleActive;
 	bool _guardManualSequenceActive;
 	bool _manualSequenceActive;
 	bool _waxBallAnimationActive;
 	bool _escapeLayersSwitched;
-	bool _manualActorPathActive;
 	bool _finalSueAnimationActive;
 };
 

@@ -109,10 +109,7 @@ static PlayableSceneConfig scene6030Config() {
 Scene6030::Scene6030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6030Config()),
 		_hannoverIdleChannel(),
-		_scriptedActorPathChannel(),
-		_scriptedActorPathFrameIndex(0),
-		_hannoverManualSequenceActive(false),
-		_scriptedActorPathActive(false) {
+		_hannoverManualSequenceActive(false) {
 	_sceneLayers.configure(kScene6030AnimationLayerSpecs);
 }
 
@@ -137,7 +134,8 @@ void Scene6030::runCustomEntrySequence() {
 	setActiveActorPose(0x384, 0x1de, 5);
 	drawPlayableComposite();
 	presentFrame();
-	startScriptedActorPath(0x1e5, 0x186, 5);
+	startConcurrentActorPath(0x1e5, 0x186, 5, 0,
+		kScene6030ActorPathFrameMillis, true);
 	runEntryConversation();
 }
 
@@ -146,7 +144,6 @@ void Scene6030::prepareCustomGameplayLoop() {
 }
 
 void Scene6030::advanceCustomGameplayLoop(uint32 delta) {
-	advanceScriptedActorPath(delta);
 	if (!_primaryDialogueSpeechActive && !_hannoverManualSequenceActive &&
 			_sceneLayers.layer(kScene6030HannoverLayer).visible)
 		advanceHannoverLayer(delta);
@@ -292,7 +289,6 @@ void Scene6030::rebuildWorkingWalkableMask() {
 
 void Scene6030::resetAnimationLayers() {
 	_hannoverIdleChannel.reset(0, kScene6030SpeechFrameMillis);
-	_scriptedActorPathChannel.reset(0, kScene6030ActorPathFrameMillis);
 	_sceneLayers.setLayerFrame(kScene6030HannoverLayer, 0);
 	_sceneLayers.setLayerFrame(kScene6030BathroomExitLayer, 0);
 	_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer,
@@ -303,10 +299,7 @@ void Scene6030::resetAnimationLayers() {
 	_sceneLayers.setLayerVisible(kScene6030BathroomExitLayer, false);
 	_sceneLayers.setLayerVisible(kScene6030CoffeeCupLayer, true);
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
-	_scriptedActorPathFrameIndex = 0;
 	_hannoverManualSequenceActive = false;
-	_scriptedActorPathActive = false;
-	_actorPathPlaybackActive = false;
 }
 
 void Scene6030::advanceHannoverLayer(uint32 delta) {
@@ -322,66 +315,6 @@ void Scene6030::advanceHannoverLayer(uint32 delta) {
 	}
 }
 
-void Scene6030::startScriptedActorPath(int targetX, int targetY, byte finalFacing) {
-	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
-		targetX, targetY, finalFacing, 0);
-	_scriptedActorPathFrameIndex = 1;
-	_scriptedActorPathChannel.reset(0, kScene6030ActorPathFrameMillis);
-	_lastViewportScrollActorWorldX = _activeActorWorldX;
-	_scriptedActorPathActive = _actorPathFrames.size() > 1;
-	_actorPathPlaybackActive = _scriptedActorPathActive;
-	if (!_scriptedActorPathActive) {
-		if (!_actorPathFrames.empty()) {
-			const ActorPathFrame &frame = _actorPathFrames.back();
-			_activeActorWorldX = frame.worldX;
-			_activeActorWorldY = frame.worldY;
-			_activeActorFacing = frame.facing;
-			_activeActorCel = frame.cel;
-			_activeActorDrawOrderMode = frame.drawOrderMode;
-		} else {
-			setActiveActorPose(targetX, targetY, finalFacing);
-		}
-	}
-}
-
-void Scene6030::advanceScriptedActorPath(uint32 delta) {
-	if (!_scriptedActorPathActive)
-		return;
-
-	const uint frameCount = _scriptedActorPathChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount && _scriptedActorPathFrameIndex < _actorPathFrames.size(); ++i) {
-		const ActorPathFrame &frame = _actorPathFrames[_scriptedActorPathFrameIndex++];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	if (_scriptedActorPathFrameIndex >= _actorPathFrames.size()) {
-		_scriptedActorPathActive = false;
-		_actorPathPlaybackActive = false;
-	}
-}
-
-void Scene6030::finishScriptedActorPath() {
-	while (_scriptedActorPathActive && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(10))
-			break;
-	}
-	if (_scriptedActorPathActive && !animationPlaybackShouldStop() &&
-			!_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	_scriptedActorPathActive = false;
-	_actorPathPlaybackActive = false;
-}
-
 void Scene6030::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
 	if (activeWorldY < 0x184 && activeWorldX > 0x200 && _sceneChunkTable.isValidChunk(11))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _sceneFramebuffer);
@@ -391,7 +324,7 @@ void Scene6030::runEntryConversation() {
 	GameplayState &state = _vm->gameState();
 	if (!state.scene6030HannoverInterviewCompleted) {
 		beginHannoverSpeechLine(0);
-		finishScriptedActorPath();
+		finishConcurrentActorPath(true);
 		beginSecondarySpeechLine(kScene6030DialogueStageId, 0);
 		beginHannoverSpeechLine(1);
 		beginHannoverSpeechLine(3);
@@ -409,7 +342,7 @@ void Scene6030::runEntryConversation() {
 	}
 
 	beginHannoverSpeechLine(2);
-	finishScriptedActorPath();
+	finishConcurrentActorPath(true);
 	beginHannoverSpeechLine(state.scene6030CoffeeState < 2 ? 3 : 4);
 	runHannoverPoseTransition(false);
 	beginHannoverSpeechLine(5, 2);
@@ -576,7 +509,8 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 	if (hasDeskRegion)
 		_fullPaletteRegionMask[deskColor] = 1;
 
-	startScriptedActorPath(0x25b, 0x17d, 4);
+	startConcurrentActorPath(0x25b, 0x17d, 4, 0,
+		kScene6030ActorPathFrameMillis, true);
 	_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 9,
 		kScene6030TaffyArrivalDescriptorCount, nullptr, 0);
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
@@ -592,23 +526,23 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 	}
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
 	if (!completed) {
-		_scriptedActorPathActive = false;
-		_actorPathPlaybackActive = false;
+		cancelConcurrentActorPath();
 		if (hasDeskRegion)
 			_fullPaletteRegionMask[deskColor] = previousDeskRegion;
 		return;
 	}
 
-	finishScriptedActorPath();
+	finishConcurrentActorPath(true);
 	if (animationPlaybackShouldStop()) {
 		if (hasDeskRegion)
 			_fullPaletteRegionMask[deskColor] = previousDeskRegion;
 		return;
 	}
 
-	startScriptedActorPath(0x1e5, 0x186, 5);
+	startConcurrentActorPath(0x1e5, 0x186, 5, 0,
+		kScene6030ActorPathFrameMillis, true);
 	beginHannoverSpeechLine(8);
-	finishScriptedActorPath();
+	finishConcurrentActorPath(true);
 	if (hasDeskRegion)
 		_fullPaletteRegionMask[deskColor] = previousDeskRegion;
 	if (animationPlaybackShouldStop())
