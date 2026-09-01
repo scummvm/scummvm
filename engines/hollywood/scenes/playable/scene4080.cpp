@@ -763,12 +763,13 @@ void Scene4080::advanceAmbientSound(uint32 delta) {
 }
 
 void Scene4080::runCorridorExit() {
-	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080ExitOverlayChunk,
-		kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4080ExitFrameMap) - 1,
-			kScene4080FrameMillis).noFinalFrameDelay());
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene4080ExitState;
+	BlockingSequence(*this)
+		.resourceLayerFrames(kScene4080ScriptLayer, kScene4080ExitOverlayChunk,
+			kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap,
+			AnimationFrameRange(0, ARRAYSIZE(kScene4080ExitFrameMap) - 1,
+				kScene4080FrameMillis).noFinalFrameDelay())
+		.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene4080ExitState);
 }
 
 void Scene4080::runSidePatchSequence() {
@@ -1052,14 +1053,15 @@ void Scene4080::runBottlePickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
-	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080BottlePickupChunk,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080BottlePickupChunk,
 		kScene4080BottlePickupDescriptorCount, kScene4080BottlePickupFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080BottlePickupFrameMap) - 1,
 			kScene4080FrameMillis).noFinalFrameDelay());
 	addInventoryItem(kScene4080OilBottleItem);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4080OilBottleState = 0;
-	applySceneStateToHotspotsAndPatches(0xff);
+	sequence.sound(1)
+		.commit(_vm->gameState().scene4080OilBottleState, (byte)0)
+		.framebufferPatch(0xff);
 }
 
 void Scene4080::runGominolaPickupSequence() {
@@ -1070,17 +1072,18 @@ void Scene4080::runGominolaPickupSequence() {
 
 	dispatchGenericSceneAction(21);
 	GameplayState &state = _vm->gameState();
-	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080GominolaPickupChunk,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080GominolaPickupChunk,
 		kScene4080GominolaPickupDescriptorCount, kScene4080GominolaPickupFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080GominolaPickupFrameMap) - 1,
 			kScene4080FrameMillis)
 			.commitAt(7, state.scene4080GominolaVisibleState, (byte)0)
 			.patchAt(7, 0xff)
-			.noFinalFrameDelay());
-	state.scene4080GominolaVisibleState = 0;
-	applySceneStateToHotspotsAndPatches(0xff);
+			.noFinalFrameDelay())
+		.commit(state.scene4080GominolaVisibleState, (byte)0)
+		.framebufferPatch(0xff);
 	addInventoryItem(kScene4080GominolaItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene4080::runSteakPickupSequence() {
@@ -1090,12 +1093,13 @@ void Scene4080::runSteakPickupSequence() {
 	}
 
 	beginSecondarySpeechLine(17, 0);
-	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080SteakPickupChunk,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080SteakPickupChunk,
 		kScene4080SteakPickupDescriptorCount, kScene4080SteakPickupFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080SteakPickupFrameMap) - 1,
 			kScene4080FrameMillis).noFinalFrameDelay());
 	addInventoryItem(kScene4080SteakItem);
-	_soundBank0.playSample(1, 100);
+	sequence.sound(1);
 }
 
 void Scene4080::runUseMabusePillsOnFoodBags() {
@@ -1104,16 +1108,16 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 		return;
 	}
 
-	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080FoodBagOverlayChunk,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080FoodBagOverlayChunk,
 		kScene4080FoodBagOverlayDescriptorCount, kScene4080FoodBagFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080FoodBagFrameMap) - 1,
 			kScene4080FrameMillis).noFinalFrameDelay());
 	removeInventoryItem(kScene4080MabusePillsItem);
-	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4080GwendolynStateTransition = 2;
-	if (!walkActiveActorTo(0x00dc, 0x01cc, 3, 0, false))
-		return;
-	beginSecondarySpeechLine(19, 0);
+	sequence.sound(1)
+		.commit(_vm->gameState().scene4080GwendolynStateTransition, (byte)2)
+		.actorPath(SceneActorPose(0x00dc, 0x01cc, 3))
+		.secondarySpeech(19, 0);
 }
 
 void Scene4080::runUseStakeOnGwendolyn() {
@@ -1133,27 +1137,28 @@ void Scene4080::runUseStakeOnGwendolyn() {
 			kScene4080StakeSequenceChunk);
 		return;
 	}
-	const bool completed = playResourceLayerSequence(kScene4080ScriptLayer,
-		kScene4080StakeSequenceChunk, kScene4080StakeSequenceDescriptorCount,
-		kScene4080StakeSequenceFrameMap,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080StakeSequenceChunk,
+		kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
 		AnimationFrameRange(0, 0x17, 60).unskippable());
-	if (!completed)
+	if (!sequence.completed())
 		return;
-	if (!playResourceLayerSequence(kScene4080ScriptLayer, kScene4080StakeSequenceChunk,
-			kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
-			AnimationFrameRange(0x18, ARRAYSIZE(kScene4080StakeSequenceFrameMap) - 1, 40)
-				.unskippable()
-				.commitAt(0x1d, state.scene4080GwendolynState, (byte)0)
-				.soundAt(0x1d, 0x18)
-				.layerVisibleAt(0x1d, kScene4080PalettePatchLayer, false)
-				.ambientSoundAt(0x20, 0x19, 100, 1)
-				.ambientSoundAt(0x20, 0x1a, 100, 2)
-				.noFinalFrameDelay()))
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080StakeSequenceChunk,
+		kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
+		AnimationFrameRange(0x18, ARRAYSIZE(kScene4080StakeSequenceFrameMap) - 1, 40)
+			.unskippable()
+			.commitAt(0x1d, state.scene4080GwendolynState, (byte)0)
+			.soundAt(0x1d, 0x18)
+			.layerVisibleAt(0x1d, kScene4080PalettePatchLayer, false)
+			.ambientSoundAt(0x20, 0x19, 100, 1)
+			.ambientSoundAt(0x20, 0x1a, 100, 2)
+			.noFinalFrameDelay());
+	if (!sequence.completed())
 		return;
-	_soundBank0.playSample(0x1b, 100);
-	state.scene4080GominolaVisibleState = 1;
-	applySceneStateToHotspotsAndPatches(0xff);
-	beginSecondarySpeechLine(18, 2);
+	sequence.sound(0x1b)
+		.commit(state.scene4080GominolaVisibleState, (byte)1)
+		.framebufferPatch(0xff)
+		.secondarySpeech(18, 2);
 }
 
 void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
@@ -1166,11 +1171,12 @@ void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
 	if (!settleGwendolynForSpeech())
 		return;
 	_gwendolynSpeechPoseMode = kScene4080GwendolynFrozenSpeechPose;
-	const bool completed = playResourceLayerSequence(kScene4080ScriptLayer, kScene4080GwendolynReplyChunk,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080GwendolynReplyChunk,
 		kScene4080GwendolynReplyDescriptorCount, kScene4080GwendolynReplyFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080GwendolynReplyFrameMap) - 1,
 			kScene4080FrameMillis).unskippable().noFinalFrameDelay());
-	if (completed)
+	if (sequence.completed())
 		beginGwendolynSpeechLine(20, 1);
 	_gwendolynSpeechPoseMode = kScene4080GwendolynBodyAnimation;
 }
