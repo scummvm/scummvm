@@ -102,6 +102,7 @@ public:
 
 	// Debug state for ImGui visualization
 	static constexpr int kDebugRingSize = 512;
+	static constexpr int kChannels = 9;
 	struct VoiceDebugState {
 		uint8 note = 0xFF;
 		uint8 channel = 0xFF;
@@ -109,13 +110,13 @@ public:
 		bool active = false;
 	};
 	struct DebugState {
-		VoiceDebugState voices[9];
+		VoiceDebugState voices[kChannels];
 		uint8 masterVolume = 0;
 		uint16 activeMusicSlot = 0;
 		uint8 statusFlags = 0;
 		uint32 nextEventTimer = 0;
 		uint16 numOplChannels = 0;
-		float regHistory[9][kDebugRingSize] = {};
+		float regHistory[kChannels][kDebugRingSize] = {};
 		int ringPos = 0;
 	};
 	DebugState _debug;
@@ -146,10 +147,10 @@ private:
 	uint8 _numOplChannels;
 
 	// Voice allocation (age-based, matching original)
-	uint8 _voiceAge[9];
-	uint8 _voiceMidiChannel[9];
-	uint8 _voiceInstrument[9];
-	uint8 _voiceNote[9];
+	uint8 _voiceAge[kChannels];
+	uint8 _voiceMidiChannel[kChannels];
+	uint8 _voiceInstrument[kChannels];
+	uint8 _voiceNote[kChannels];
 
 	// Channel state
 	uint8 _channelPrograms[16];

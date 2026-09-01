@@ -357,6 +357,10 @@ public:
 	// Assumes that the stream is at the start of the right section
 	void readImageResources(Common::SeekableReadStream *stream);
 
+	// visited stack (matches binary's stack-frame approach, max 16 nodes)
+	int _visitedStack[17] {};
+	int _visitedCount = 0;
+
 public:
 	Macs2Engine(OSystem *osystem, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
@@ -401,7 +405,7 @@ public:
 	Common::Array<PathfindingPoint> _pathfindingPoints;
 	Common::Array<Common::Point> _path;
 
-	bool getPathfindingOverride(uint16 index, uint16 &result);
+	bool getPathfindingOverride(uint16 index, uint16 &result) const;
 	void setPathfindingOverride(uint16 index, uint16 overrideValue);
 
 	// Walkability threshold 0xC8 uses signed 16-bit comparison in the binary (JL/JGE).
@@ -414,7 +418,7 @@ public:
 	}
 
 	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
-	uint16 getPathfindingOverride2(uint16 index);
+	uint16 getPathfindingOverride2(uint16 index) const;
 	void removePathfindingOverride(uint16 index);
 
 	uint16 getWalkabilityAt(int16 y, int16 x);
@@ -683,7 +687,7 @@ public:
 	// full backbuffer each frame via ManagedSurface. Kept only for save/load compatibility.
 	bool _clipRectDirty = false;
 
-	uint16 getHotspotAtPoint(const Common::Point &p);
+	uint16 getHotspotAtPoint(const Common::Point &p) const;
 
 	Common::Array<uint16> inventoryIconIndices;
 	Common::Array<uint16> containerInventoryIconIndices;

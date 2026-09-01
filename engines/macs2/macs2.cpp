@@ -1047,8 +1047,6 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	const uint32 newSceneIndex = sceneIndex;
 
 	// Background image
-	// [0752h] is pointing to 3000h bytes data starting at Ch + 4h in the file
-	// Addressing the background image starts at l0037_25A9
 	_fileStream->seek(0xC + 0x4 + 0xC * newSceneIndex - 0xC, SEEK_SET);
 	uint32 bgImageOffset = _fileStream->readUint32LE();
 	uint32 sceneTableEntry2 = _fileStream->readUint32LE();
@@ -1056,8 +1054,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	(void)sceneTableEntry3; // strings offset, not used here
 	_mapSubSceneTableFilePos = 0;
 	_mapImageFileOffset = 0;
-	// The map image file offset is stored in the scene data block at offset +0x3C0.
-	// (sceneDataOffset2 + 0x3C0 = resource_offsets(0x80) + 0x340 of additional data).
+	// The map image file offset is stored in the scene data block
 	if (sceneTableEntry2 != 0 && sceneTableEntry2 < (uint32)_fileStream->size()) {
 		_fileStream->seek(sceneTableEntry2 + 0x3C0, SEEK_SET);
 		uint32 mapOffset = _fileStream->readUint32LE();
@@ -1119,22 +1116,20 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	_fileStream->readByte(); // unknownByte2
 	_fileStream->readByte(); // unknownByte3
 
-	// Offset 1013h
 	Graphics::ManagedSurface depthRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Confirmed: depth map at scene offset 0x1013
 	_depthMap.blitFrom(depthRLE);
 	_sceneDepthMap.copyFrom(_depthMap);
 
-	// Offset 2017h
 	Graphics::ManagedSurface pathfindingRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Walkability/pathfinding map at scene offset 0x2017
 	_pathfindingMap.blitFrom(pathfindingRLE);
 
-	// Offset 301Bh - Shadow/shading intensity map for character rendering
+	// Shadow/shading intensity map for character rendering
 	Graphics::ManagedSurface shadowRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	_shadowMap.blitFrom(shadowRLE);
 
-	// Offset 401Fh - Hotspot/interaction map (320x200, pixel value = hotspot color index)
+	// Hotspot/interaction map (320x200, pixel value = hotspot color index)
 	Graphics::ManagedSurface bgMap = readRLEImage(_fileStream->pos(), _fileStream);
 	_hotspotMap.copyFrom(bgMap);
 
@@ -1165,7 +1160,6 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	readBackgroundAnimations(_fileStream);
 	updateAllBackgroundAnimationDepthMaps();
 
-	// Offset 51F7h
 	_numPathfindingPoints = _fileStream->readUint16LE();
 
 	// Offset 51F9h
@@ -1174,7 +1168,6 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	// Offset 51FBh
 	_fileStream->readUint16LE();
 
-	// Offset 51FDh - 5201h
 	_walkDepthThresholdY = _fileStream->readUint16LE();
 	_walkDepthScaleFactor = _fileStream->readUint16LE();
 	_walkBaseSpeedPct = _fileStream->readUint16LE();
@@ -1278,7 +1271,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		current._position.x = (int16)(stream->readUint16LE() << 1);
 		current._position.y = (int16)(stream->readUint16LE() << 1);
 		uint8 adj[8];
-		stream->read(adj, 8);
+		stream->read(adj, sizeof(adj));
 		stream->skip(8);
 		const uint16 numConnections = stream->readUint16LE();
 		current._adjacentPoints.clear();
@@ -1286,7 +1279,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 			current._adjacentPoints.push_back(adj[j]);
 		_pathfindingPoints.push_back(current);
 	}
-	stream->skip(0x2c0 - 0x160);
+	stream->skip(352);
 
 	_numHotspots = stream->readUint16LE();
 	_hotspotColorTable.clear();
@@ -1759,7 +1752,7 @@ bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObj
 	_fileStream->seek(address, SEEK_SET);
 	const uint32 size = _fileStream->readUint32LE();
 	char magic[8];
-	if (_fileStream->read(magic, 8) != 8 || memcmp(magic, "AHFFDLTA", 8) != 0) {
+	if (_fileStream->read(magic, sizeof(magic)) != sizeof(magic) || memcmp(magic, "AHFFDLTA", sizeof(magic)) != 0) {
 		_fileStream->seek(oldPos, SEEK_SET);
 		return false;
 	}
@@ -2090,7 +2083,6 @@ void Macs2Engine::updateAllBackgroundAnimationDepthMaps() {
 		updateBackgroundAnimationDepthMap(i);
 }
 
-// snapToWalkablePosition (1008:9be2)
 // Params: (pTargetY, pTargetX, charY, charX)
 // Modifies *pTargetY and *pTargetX in place.
 void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
@@ -2215,8 +2207,8 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	}
 }
 
-bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) {
-	for (auto current : _pathfindingOverrides) {
+bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) const {
+	for (const PathfindingAreaOverride &current : _pathfindingOverrides) {
 		if (current._index == index && current._active) {
 			result = current._overrideValue;
 			return true;
@@ -2233,7 +2225,7 @@ void Macs2Engine::setPathfindingOverride(uint16 index, uint16 overrideValue) {
 	_pathfindingOverrides.push_back(override);
 }
 
-uint16 Macs2Engine::getPathfindingOverride2(uint16 index) {
+uint16 Macs2Engine::getPathfindingOverride2(uint16 index) const {
 	if (index < AREA_OVERRIDE_MIN || index > AREA_OVERRIDE_MAX) {
 		return 0;
 	}
@@ -2250,7 +2242,6 @@ void Macs2Engine::removePathfindingOverride(uint16 index) {
 	}
 };
 
-// isPathWalkable (1008:1196)
 // Params: (param_1=y1, param_2=x1, param_3=y2, param_4=x2)
 // Traces from (x2,y2) toward (x1,y1). Checks walkability only on major-axis steps.
 // Uses unsigned 16-bit error accumulator with wrapping arithmetic.
@@ -2294,7 +2285,7 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	return result;
 }
 
-// Binary euclideanDistance (1008:1390): integer Euclidean distance approximation.
+// integer Euclidean distance approximation.
 // Iterates i from 0 until i^2 >= dx^2 + dy^2. Capped at 0x500.
 int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &b) {
 	int32 dx = abs((int)(b.x - a.x));
@@ -2306,7 +2297,7 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 	return i;
 }
 
-// Binary walkableDistance (1008:1293): distance between two nodes IF walkable, else 0x500.
+// distance between two nodes IF walkable, else 0x500.
 // Uses binary search on precomputed squared-distance table (scene+0x61DC) for O(log n) sqrt.
 int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	const Common::Point &a = _pathfindingPoints[nodeA - 1]._position;
@@ -2330,18 +2321,14 @@ int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	return result;
 }
 
-// Binary buildPathFromNodes (1008:15a8): recursive DFS cost to reach a reachable node.
+// recursive DFS cost to reach a reachable node.
 // Full recursive DFS with visited-stack cycle detection matching binary exactly.
 // Terminal: returns walkableDistance(node, finalDest) when node is reachable.
 // Recursive: min(computeMinCostToReachable(adj)) + walkableDistance(bestAdj, current).
 int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest) {
-	// Static visited stack (matches binary's stack-frame approach, max 16 nodes)
-	static int visitedStack[17];
-	static int visitedCount = 0;
-
 	// Push current node to visited stack
-	visitedCount++;
-	visitedStack[visitedCount] = nodeIndex;
+	_visitedCount++;
+	_visitedStack[_visitedCount] = nodeIndex;
 
 	int result;
 	const Common::Point &nodePos = _pathfindingPoints[nodeIndex - 1]._position;
@@ -2367,7 +2354,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 			} while (step > 1);
 			result = dist;
 		}
-		visitedCount--;
+		_visitedCount--;
 		return result;
 	}
 
@@ -2384,8 +2371,8 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 
 			// Check visited stack
 			bool alreadyVisited = false;
-			for (int j = 1; j < visitedCount; j++) {
-				if (visitedStack[j] == adj) {
+			for (int j = 1; j < _visitedCount; j++) {
+				if (_visitedStack[j] == adj) {
 					alreadyVisited = true;
 					break;
 				}
@@ -2410,7 +2397,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	}
 
 	// Pop visited stack
-	visitedCount--;
+	_visitedCount--;
 	return result;
 }
 
@@ -2452,7 +2439,7 @@ void Macs2Engine::setBottomHudVisible(bool visible) {
 }
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
-	// setCursorMode (1008:3ea5): when the cursor image changes, keep the hotspot
+	// when the cursor image changes, keep the hotspot
 	// fixed on screen by compensating for the old/new image half-extents, clamp,
 	// refresh the cursor graphic, and flag the clip rect dirty.
 	const Script::MouseMode oldMode = _scriptExecutor->_cursorMode;
@@ -2520,7 +2507,7 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 																								  : "Unknown");
 }
 
-uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
+uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 	uint16 result = 0;
 	if (p.x < 0 || p.x >= screenWidth() || p.y < 0 || p.y >= gameHeight() || _hotspotMap.w == 0) {
 		return result;
@@ -2693,7 +2680,7 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 		const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
 		const Common::String name = lookupSceneHotspotName(sceneIndex, entry.index);
 		const Graphics::HotspotType type = lookupSceneHotspotType(sceneIndex, entry.index);
-		hotspots.push_back(Graphics::HotspotInfo(center, hotspotLabelToU32(name), type));
+		hotspots.emplace_back(Graphics::HotspotInfo(center, hotspotLabelToU32(name), type));
 	}
 
 	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
@@ -2713,7 +2700,7 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			hotspotType = Graphics::kHotspotNPC;
 
 		const Common::String &name = getObjectHotspotName(entry.index);
-		hotspots.push_back(Graphics::HotspotInfo(screenPos, hotspotLabelToU32(name), hotspotType));
+		hotspots.emplace_back(Graphics::HotspotInfo(screenPos, hotspotLabelToU32(name), hotspotType));
 	}
 }
 
@@ -2801,17 +2788,16 @@ uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
 int Macs2Engine::measureString(const Common::String &s) {
 	int sum = 0;
 	GlyphData currentGlyph;
-	bool found = false;
 	uint16 widestGlyph = 0;
 	for (auto current = s.begin(); current != s.end(); current++) {
-		found = findGlyph(*current, currentGlyph);
+		bool found = findGlyph(*current, currentGlyph);
 		if (found) {
 			widestGlyph = MAX(widestGlyph, currentGlyph._width);
 		}
 	}
 
 	for (auto current = s.begin(); current != s.end(); current++) {
-		found = findGlyph(*current, currentGlyph);
+		bool found = findGlyph(*current, currentGlyph);
 		if (!found) {
 			sum += widestGlyph;
 		} else {
@@ -2822,7 +2808,6 @@ int Macs2Engine::measureString(const Common::String &s) {
 }
 
 int Macs2Engine::measureStringsVertically(const Common::StringArray &sa) {
-	// DOS l0037_B318: maxGlyphHeight + 2. Amiga uses absolute MXFF line pitch.
 	return (int)sa.size() * dialogLineHeight();
 }
 

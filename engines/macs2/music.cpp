@@ -89,8 +89,8 @@ void Music::writeReg(byte reg, byte value) {
 }
 
 void Music::silenceAll() {
-	// Key-off all 9 channels
-	for (int i = 0; i <= 8; i++) {
+	// Key-off all channels
+	for (int i = 0; i < kChannels; i++) {
 		writeReg(i + 0xB0, readReg(i + 0xB0) & 0xDF);
 	}
 	// Silence all operator volumes
@@ -116,7 +116,7 @@ bool Music::playSongData(const Common::Array<uint8> &data) {
 	// Enable waveform select
 	writeReg(0x01, 0x20);
 	writeReg(0xBD, 0);
-	_numOplChannels = 9;
+	_numOplChannels = kChannels;
 
 	// Reset state
 	memset(_voiceAge, 1, sizeof(_voiceAge));
