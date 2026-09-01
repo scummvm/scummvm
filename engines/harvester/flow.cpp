@@ -73,13 +73,6 @@ static const char *const kTownMapBitmapPaths[] = {
 	"1:/GRAPHIC/TOWN/HARVMAP4.BM"
 };
 
-static const int kQuickTipsOverlayX = 167;
-static const int kQuickTipsOverlayY = 200;
-
-static const int kQuickTipTextX = 180;
-static const int kQuickTipTextY = 228;
-static const int kQuickTipTextWidth = 280;
-
 static const int kCursorSequence7 = 7;
 static const int kIdentTextboxX = 177;
 static const int kIdentTextboxY = 85;
@@ -112,9 +105,7 @@ static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
 
 static const byte kIdentTextColor = 0xd3;
-static const byte kTextColorNormal = 255;
 static const byte kShadowColor = 0;
-static const byte kQuickTipActionColor = 0xc3;
 static const byte kTownMapLabelColor = 0x28;
 static const int kRoomDebugLabelPaddingX = 3;
 static const int kRoomDebugLabelPaddingY = 2;
@@ -599,18 +590,6 @@ void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, 
 		palette[3], palette[4], palette[5],
 		palette[127 * 3], palette[127 * 3 + 1], palette[127 * 3 + 2],
 		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
-}
-
-static Common::Rect quickTipsExitRect() {
-	return Common::Rect(180, 280, 238, 291);
-}
-
-static Common::Rect quickTipsNextRect() {
-	return Common::Rect(420, 280, 492, 291);
-}
-
-static Common::Rect quickTipsToggleRect() {
-	return Common::Rect(258, 280, 366, 291);
 }
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -1397,29 +1376,14 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scen
 }
 
 static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResources &scene,
-		const Common::Point &mousePos, const Common::String &tipText) {
+		const MenuTextConfig &config, const QuickTipsLayout &layout,
+		const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getArt();
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Script *script = engine.getScript();
-	if (!screen || !art || !font || !script)
+	if (!screen)
 		return;
 
 	drawRoomScene(engine, *screen, scene, scene.targetPaletteBrightness);
-	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
-
-	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth, kTextColorNormal);
-	const Common::Rect exitRect = quickTipsExitRect();
-	const Common::Rect nextRect = quickTipsNextRect();
-	const Common::Rect toggleRect = quickTipsToggleRect();
-	const Common::String toggleLabel = script->resolveTextValue(
-		script->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
-	drawShadowedString(*screen, *font, "Exit", exitRect.left, exitRect.top, exitRect.width(),
-		kQuickTipActionColor);
-	drawShadowedString(*screen, *font, "Next", nextRect.left, nextRect.top, nextRect.width(),
-		kQuickTipActionColor);
-	drawShadowedString(*screen, *font, toggleLabel,
-		toggleRect.left, toggleRect.top, toggleRect.width(), kQuickTipActionColor);
+	drawQuickTipsPanel(engine, config, layout, tipText);
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -1433,6 +1397,7 @@ Flow::Flow(HarvesterEngine &engine)
 }
 
 bool Flow::load() {
+	(void)loadMenuTextConfig(_engine, _menuTextConfig);
 	return loadQuickTips() && loadMenuItems();
 }
 
@@ -1609,10 +1574,16 @@ Common::Error Flow::runQuickTips() {
 
 	resetCursorAnimationSequence();
 
+	QuickTipsLayout quickTipsLayout;
+	if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
+		return Common::kReadingFailed;
+	const Common::String &toggleLabel = _engine.getScript()->isQuickTipsEnabled()
+		? _menuTextConfig.quickTipsOnLabel : _menuTextConfig.quickTipsOffLabel;
 	debugC(1, kDebugGeneral,
-		"Harvester: quick tips labels exit='Exit' next='Next' toggle='%s'",
-		_engine.getScript()->resolveTextValue(
-			_engine.getScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF").c_str());
+		"Harvester: quick tips panel='%s' header='%s' exit='%s' next='%s' toggle='%s'",
+		_menuTextConfig.hasQuickTipsHeader() ? "TEXTBOX6.BM" : "TIPS.BM",
+		_menuTextConfig.quickTipsHeader.c_str(), _menuTextConfig.quickTipsExitLabel.c_str(),
+		_menuTextConfig.quickTipsNextLabel.c_str(), toggleLabel.c_str());
 
 	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
 	bool needsRedraw = true;
@@ -1620,7 +1591,7 @@ Common::Error Flow::runQuickTips() {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderQuickTipsScreen(_engine, scene, _mousePos, _quickTips[tipIndex]);
+			renderQuickTipsScreen(_engine, scene, _menuTextConfig, quickTipsLayout, _quickTips[tipIndex]);
 			needsRedraw = false;
 		}
 
@@ -1635,14 +1606,16 @@ Common::Error Flow::runQuickTips() {
 				needsRedraw = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (quickTipsExitRect().contains(_mousePos))
+				if (quickTipsLayout.exitRect.contains(_mousePos))
 					return Common::kNoError;
 
-				if (quickTipsNextRect().contains(_mousePos)) {
+				if (quickTipsLayout.nextRect.contains(_mousePos)) {
 					tipIndex = (tipIndex + 1) % _quickTips.size();
 					needsRedraw = true;
-				} else if (quickTipsToggleRect().contains(_mousePos)) {
+				} else if (quickTipsLayout.toggleRect.contains(_mousePos)) {
 					_engine.getScript()->setQuickTipsEnabled(!_engine.getScript()->isQuickTipsEnabled());
+					if (!resolveQuickTipsLayout(_engine, _menuTextConfig, quickTipsLayout))
+						return Common::kReadingFailed;
 					needsRedraw = true;
 				}
 				break;

@@ -261,8 +261,8 @@ bool MediaManager::loadText() {
 	return true;
 }
 
-bool MediaManager::loadQuickTipsResources() {
-	return _art && _art->loadQuickTipsResources(_resources);
+bool MediaManager::loadQuickTipsResources(bool useTextboxPanel) {
+	return _art && _art->loadQuickTipsResources(_resources, useTextboxPanel);
 }
 
 void MediaManager::drawWaitFrame() const {

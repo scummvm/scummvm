@@ -37,6 +37,34 @@ namespace Harvester {
 class HarvesterEngine;
 class Flow;
 
+struct MenuTextConfig {
+	Common::Array<Common::String> optionItems;
+	Common::String yesLabel = "YES";
+	Common::String noLabel = "NO";
+	Common::String clickLabel = "CLICK";
+	Common::String newGamePrompt = "NEW GAME";
+	Common::String quitGamePrompt = "QUIT GAME";
+	Common::String quickTipsExitLabel = "Exit";
+	Common::String quickTipsNextLabel = "Next";
+	Common::String quickTipsOnLabel = "Show Tips ON";
+	Common::String quickTipsOffLabel = "Show Tips OFF";
+	Common::String quickTipsHeader;
+
+	bool hasQuickTipsHeader() const { return !quickTipsHeader.empty(); }
+};
+
+struct QuickTipsLayout {
+	Common::Rect exitRect;
+	Common::Rect nextRect;
+	Common::Rect toggleRect;
+};
+
+bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config);
+bool resolveQuickTipsLayout(HarvesterEngine &engine, const MenuTextConfig &config,
+	QuickTipsLayout &layout);
+void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,
+	const QuickTipsLayout &layout, const Common::String &tipText);
+
 class MenuSystem {
 public:
 	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,

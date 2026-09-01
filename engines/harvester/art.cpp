@@ -73,6 +73,7 @@ static void logPaletteSummary(const char *label, const Common::String &path, con
 static const int kWaitX = 250;
 static const int kWaitY = 160;
 static const byte kTransparentPaletteIndex = 0;
+static const uint kQuickTipsTextboxIndex = 5;
 
 static const char *const kTextboxPaths[] = {
 	"1:/GRAPHIC/OTHER/TEXTBOX1.BM",
@@ -108,7 +109,7 @@ bool Art::load(ResourceManager &resources) {
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/HARVLOGO.BM", _logoBitmap);
 }
 
-bool Art::loadQuickTipsResources(ResourceManager &resources) {
+bool Art::loadQuickTipsResources(ResourceManager &resources, bool useTextboxPanel) {
 	_textboxes.resize(ARRAYSIZE(kTextboxPaths));
 	for (uint i = 0; i < _textboxes.size(); ++i) {
 		if (!loadBitmap(resources, kTextboxPaths[i], _textboxes[i]))
@@ -121,7 +122,19 @@ bool Art::loadQuickTipsResources(ResourceManager &resources) {
 			return false;
 	}
 
+	if (useTextboxPanel) {
+		_tipsBitmap = IndexedBitmap();
+		debugC(2, kDebugResources, "Harvester: quick tips panel '%s'", kTextboxPaths[kQuickTipsTextboxIndex]);
+		const IndexedBitmap *textbox = getQuickTipsTextboxBitmap();
+		return textbox && textbox->isValid();
+	}
+
+	debugC(2, kDebugResources, "Harvester: quick tips panel '1:/GRAPHIC/OTHER/TIPS.BM'");
 	return loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
+}
+
+const IndexedBitmap *Art::getQuickTipsTextboxBitmap() const {
+	return getTextboxBitmap(kQuickTipsTextboxIndex);
 }
 
 void Art::drawWaitFrame(Graphics::Screen &screen) const {

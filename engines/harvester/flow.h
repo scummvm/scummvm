@@ -117,6 +117,7 @@ private:
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
+	MenuTextConfig _menuTextConfig;
 	Common::Point _mousePos;
 	DialogueSystem _dialogue;
 	InventorySystem _inventory;
