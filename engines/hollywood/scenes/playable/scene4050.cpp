@@ -62,8 +62,6 @@ const byte kScene4050PatchStateWindowReached = 2;
 const byte kScene4050RonIdleBlinkFrame = 4;
 const byte kScene4050RonSpeechFrameCount = 4;
 const byte kScene4050TextColor = 0xfd;
-const byte kScene4050AttachRopeSoundHook = 1;
-const byte kScene4050SwingSoundHook = 2;
 const int kScene4050CurtainStartOffset = 0xdc;
 const byte kScene4050CurtainBandWidth = 0x14;
 const uint kScene4050CurtainEndOffset = 0xf0;
@@ -559,7 +557,7 @@ void Scene4050::useLongRopeOnLedge() {
 	_ronManualSequenceActive = true;
 	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
 		AnimationFrameRange(5, 0x11, kScene4050ActionFrameMillis)
-			.hookAt(6, kScene4050AttachRopeSoundHook).unskippable().noFinalFrameDelay());
+			.soundAt(6, 0x2d).unskippable().noFinalFrameDelay());
 	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
 	if (!completed)
@@ -584,20 +582,13 @@ void Scene4050::useSceneRope() {
 	_ronManualSequenceActive = true;
 	const bool completed = playAndPresentAnimationFrames(kScene4050RonLayer,
 		AnimationFrameRange(0x12, 0x1b, kScene4050ActionFrameMillis)
-			.hookAt(0x17, kScene4050SwingSoundHook).unskippable().noFinalFrameDelay());
+			.soundAt(0x17, 0x2e).unskippable().noFinalFrameDelay());
 	setRonResourceFrame(_sceneLayers.layerFrame(kScene4050RonLayer));
 	_ronManualSequenceActive = false;
 	if (!completed)
 		return;
 	state.scene4050RopeSwingState = kScene4050PatchStateWindowReached;
 	state.mainFlowStateId = kScene4060FirstState;
-}
-
-void Scene4050::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene4050AttachRopeSoundHook && frame == 6)
-		_soundBank0.playSample(0x2d, 100);
-	else if (hookId == kScene4050SwingSoundHook && frame == 0x17)
-		_soundBank0.playSample(0x2e, 100);
 }
 
 void Scene4050::applyPatchStateColorMap(byte patchState) {

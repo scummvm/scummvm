@@ -60,8 +60,7 @@ const uint kScene3100CabinLayer = 0;
 const uint kScene3100AlternateLayer = 1;
 
 enum Scene3100AnimationHook {
-	kScene3100ResolutionAnimationHook = 1,
-	kScene3100DaisyPickupPatchHook
+	kScene3100ResolutionAnimationHook = 1
 };
 
 const byte kScene3100CabinFrameMap[] = {
@@ -296,10 +295,6 @@ void Scene3100::handleAnimationFrameHook(byte hookId, uint frame) {
 			if (frame == 10)
 				_soundBank0.playSample(0x1a, 100);
 		}
-		break;
-	case kScene3100DaisyPickupPatchHook:
-		if (_sceneChunkTable.isValidChunk(10))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 		break;
 	default:
 		break;
@@ -563,7 +558,7 @@ void Scene3100::runObjectPickup() {
 
 	runActorReplacement(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
 		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
-		.hookAt(10, kScene3100DaisyPickupPatchHook));
+		.resourcePatchAt(10, 10));
 	state.scene3100DaisyVisible = false;
 	state.scene3100DaisyTaken = true;
 	applySceneStateToHotspotsAndPatches(1);

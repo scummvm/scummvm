@@ -50,7 +50,6 @@ const uint kScene2070InventoryOverlayDescriptorCount = 0x0d;
 const uint kScene2070ExitVerbRecordIndex = 0x29;
 const byte kScene2070SealMemoryLoopSound = 0x24;
 const byte kScene2070SealMemoryEndSound = 0x2e;
-const byte kScene2070SealMemoryEndSoundHook = 1;
 const uint kScene2070SealMemoryEndSoundFrame = 0x56;
 
 const byte kScene2070SealMemoryFrameMap[] = {
@@ -388,8 +387,8 @@ bool Scene2070::runSealMemoryEffect() {
 
 	Scene2070DeltaFrameTarget target(_sealMemoryFrame);
 	AnimationFrameRange range(kScene2070SealMemoryFrameMap, kScene2070MemoryFrameMillis);
-	range.unskippable().hookAt(kScene2070SealMemoryEndSoundFrame,
-		kScene2070SealMemoryEndSoundHook);
+	range.unskippable().soundAt(kScene2070SealMemoryEndSoundFrame,
+		kScene2070SealMemoryEndSound, 50);
 	const bool completed = playAnimationFrames(target, range);
 	_sealMemoryActive = false;
 	if (!completed) {
@@ -405,12 +404,6 @@ bool Scene2070::runSealMemoryEffect() {
 	drawPlayableComposite();
 	presentFrame();
 	return true;
-}
-
-void Scene2070::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene2070SealMemoryEndSoundHook && _sealMemoryActive &&
-			frame == kScene2070SealMemoryEndSoundFrame)
-		_soundBank0.playSample(kScene2070SealMemoryEndSound, 50);
 }
 
 void Scene2070::drawSealMemoryDeltaLayer() {

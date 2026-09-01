@@ -48,7 +48,6 @@ private:
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();

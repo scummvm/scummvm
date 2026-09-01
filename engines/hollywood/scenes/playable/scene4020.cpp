@@ -43,7 +43,6 @@ const uint kScene4020GrateTransitionDescriptorCount = 0x0d;
 const uint kScene4020SkullcrackerChunk = 7;
 const uint kScene4020SkullcrackerDescriptorCount = 0x10;
 const byte kScene4020SkullcrackerItem = 0x20;
-const byte kScene4020SkullcrackerHook = 1;
 
 enum Scene4020LayerId {
 	kScene4020IdleLayer
@@ -196,16 +195,6 @@ bool Scene4020::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 	return restoredStepDeltas;
 }
 
-void Scene4020::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene4020SkullcrackerHook)
-		return;
-
-	if (frame == 9)
-		_soundBank0.playSampleLooping(0x39, 50);
-	else if (frame == 0x31)
-		_soundBank0.stop();
-}
-
 AmbientAudioProfile Scene4020::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = kScene4020AmbientCheckMillis;
@@ -288,7 +277,8 @@ void Scene4020::useSkullcrackerOnGrate() {
 
 	runActorReplacement(ActionOverlaySpec(kScene4020SkullcrackerChunk, kScene4020SkullcrackerDescriptorCount,
 		kScene4020SkullcrackerFrameMap, ARRAYSIZE(kScene4020SkullcrackerFrameMap), kScene4020FrameMillis)
-		.hookEveryFrame(kScene4020SkullcrackerHook));
+		.loopingSoundAt(9, 0x39, 50)
+		.stopSoundAt(0x31));
 	_soundBank0.stop();
 	removeInventoryItem(kScene4020SkullcrackerItem);
 	_soundBank0.playSample(1, 100);

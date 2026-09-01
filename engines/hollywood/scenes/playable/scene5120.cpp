@@ -62,10 +62,6 @@ const byte kScene5120BombMagnetPillboxInventoryItem = 0x0b;
 const byte kScene5120BombPillboxInventoryItem = 0x0c;
 const byte kScene5120CocktailPaletteIndex = 0xa0;
 
-enum {
-	kScene5120PatchTongs = 1
-};
-
 const uint kScene5120MovingWallLayer = 0;
 const uint kScene5120MainProjectionLayer = 1;
 const uint kScene5120SideLoopLayer = 2;
@@ -473,15 +469,6 @@ void Scene5120::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	_sceneLayers.setVisibleLayerFrame(kScene5120MainProjectionLayer, frameIndex);
 }
 
-void Scene5120::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId != kScene5120PatchTongs)
-		return;
-
-	if (_sceneChunkTable.isValidChunk(6))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
-}
-
 void Scene5120::handleLeftClick(const GameplayLoopCursorState &state) {
 	updateElevatorButtonActionTargets(state.currentStrip == 5);
 	PlayableScene::handleLeftClick(state);
@@ -567,7 +554,7 @@ void Scene5120::runTongsPickup() {
 
 	runActorReplacement(ActionOverlaySpec(20, kScene5120TongsPickupDescriptorCount,
 		kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap), kScene5120ActionFrameMillis)
-		.hookAt(10, kScene5120PatchTongs));
+		.resourcePatchAt(10, 6));
 	state.scene5120TongsTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene5120TongsInventoryItem);

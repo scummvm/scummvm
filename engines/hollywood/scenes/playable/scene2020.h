@@ -49,7 +49,6 @@ private:
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -78,7 +77,6 @@ private:
 	void runSteakOnTigerSequence();
 	void runLabItemOnTigerSequence();
 	bool runTigerItemOverlaySequence(bool withEffect);
-	void drawPickupPatch(byte hookId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void restoreOriginalColorMapItem(byte itemId);
 	void remapOriginalColorMapItems(byte firstSourceItem, byte secondSourceItem, byte destinationItem);
