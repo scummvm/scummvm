@@ -1085,7 +1085,7 @@ static int resolveRoomObjectCursorSequence(const ObjectRecord &object, Script &s
 }
 
 static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &script,
-		int cursorSequence) {
+		int cursorSequence, const MenuTextConfig &menuTextConfig) {
 	// Native room prompts come from explicit interaction metadata. Neutral scene sprites
 	// should not surface synthetic "Examine <object id>" prompts or steal hover/click focus.
 	if (cursorSequence == kCursorSequenceNeutral)
@@ -1098,19 +1098,20 @@ static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &
 	if (cursorSequence == kCursorSequenceOperate) {
 		if (usesBareOperatePrompt(object))
 			return label;
-		return Common::String::format("Operate the %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.operateVerb.c_str(), label.c_str());
 	}
 	if (cursorSequence == kCursorSequencePickup)
-		return Common::String::format("Pick up the %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.pickUpVerb.c_str(), label.c_str());
 	if (cursorSequence == kCursorSequenceTalk)
-		return Common::String::format("Talk to %s", label.c_str());
+		return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
 	if (cursorSequence == kCursorSequenceTransition)
 		return Common::String::format("Go to %s", label.c_str());
 
-	return Common::String::format("Examine %s", label.c_str());
+	return Common::String::format("%s %s", menuTextConfig.examineTheVerb.c_str(), label.c_str());
 }
 
-static Common::String buildRoomNpcPrompt(const NpcRecord &npc) {
+static Common::String buildRoomNpcPrompt(const NpcRecord &npc,
+		const MenuTextConfig &menuTextConfig) {
 	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
 	for (uint i = 0; i < label.size(); ++i) {
 		if (label[i] == '_')
@@ -1119,7 +1120,7 @@ static Common::String buildRoomNpcPrompt(const NpcRecord &npc) {
 
 	if (label.empty())
 		return Common::String();
-	return Common::String::format("Talk to %s", label.c_str());
+	return Common::String::format("%s %s", menuTextConfig.talkToVerb.c_str(), label.c_str());
 }
 
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region) {
@@ -1151,7 +1152,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<NpcRecord> &sceneNpcs,
 		const Common::Array<RegionRecord> &sceneRegions, const Common::Point &mousePos,
-		const DialogueSystem *dialogue) {
+		const MenuTextConfig &menuTextConfig, const DialogueSystem *dialogue) {
 	RoomHoverState hoverState;
 	EntityManager *entityManager = engine.getRuntimeEntities();
 	if (const Entity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
@@ -1162,7 +1163,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	if (const NpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos, dialogue)) {
 		hoverState.npc = npc;
 		hoverState.cursorSequence = kCursorSequenceTalk;
-		hoverState.promptText = buildRoomNpcPrompt(*npc);
+		hoverState.promptText = buildRoomNpcPrompt(*npc, menuTextConfig);
 		return hoverState;
 	}
 
@@ -1181,7 +1182,8 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 	}
 	if (hoverState.object) {
 		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *script);
-		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *script, hoverState.cursorSequence);
+		hoverState.promptText = buildRoomObjectPrompt(
+			*hoverState.object, *script, hoverState.cursorSequence, menuTextConfig);
 		if (hoverState.cursorSequence != kCursorSequenceNeutral || !hoverState.promptText.empty())
 			return hoverState;
 		hoverState.object = nullptr;
@@ -1241,7 +1243,8 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 }
 
 void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
-		const Common::String &entranceName, Common::Point &mousePos) {
+		const Common::String &entranceName, Common::Point &mousePos,
+		const MenuTextConfig &menuTextConfig) {
 	EntityManager *entityManager = engine.getRuntimeEntities();
 	Script *script = engine.getScript();
 	if (!entityManager || !script)
@@ -1288,7 +1291,8 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 		const Common::String objectLabel = script->resolveObjectLabel(*hoveredObject);
 		ResolvedText inspectText;
 		const RoomHoverState hoverState = resolveRoomHoverState(
-			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, probePoint);
+			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+			probePoint, menuTextConfig);
 		const bool hasInteraction = script->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = script->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugRoom,
@@ -1305,7 +1309,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 				for (int x = 48; x < 592; x += 16) {
 					const RoomHoverState candidateHover = resolveRoomHoverState(
 						engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
-						Common::Point(x, y));
+						Common::Point(x, y), menuTextConfig);
 					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
 						floorProbe = Common::Point(x, y);
 						foundFloorProbe = true;
@@ -1316,7 +1320,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scen
 
 			const RoomHoverState floorHover = foundFloorProbe
 				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-					scene.sceneRegions, floorProbe)
+					scene.sceneRegions, floorProbe, menuTextConfig)
 				: RoomHoverState();
 			debugC(1, kDebugRoom,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",

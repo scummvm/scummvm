@@ -29,6 +29,7 @@
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/menu.h"
 #include "harvester/player.h"
 #include "harvester/resources.h"
 #include "harvester/art.h"
@@ -146,15 +147,6 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 	byte *dst = (byte *)screen.getBasePtr(destX, destY);
 	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
-}
-
-static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
-	if (itemLabel.empty())
-		return Common::String();
-	if (targetLabel.empty())
-		return Common::String::format("Use %s on ...", itemLabel.c_str());
-
-	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
 }
 
 static Common::Rect getHotspotBounds(const ObjectRecord &object) {
@@ -436,8 +428,9 @@ Common::String InventorySystem::resolveSelectedLabel() const {
 	return normalizeHarvesterResourcePath(_selectedItemName);
 }
 
-Common::String InventorySystem::buildSelectedPrompt(const Common::String &targetLabel) const {
-	return buildUseItemPrompt(resolveSelectedLabel(), targetLabel);
+Common::String InventorySystem::buildSelectedPrompt(const Common::String &targetLabel,
+		const MenuTextConfig &menuTextConfig) const {
+	return buildUseItemPrompt(menuTextConfig, resolveSelectedLabel(), targetLabel);
 }
 
 void InventorySystem::selectItem(const Common::String &objectName) {

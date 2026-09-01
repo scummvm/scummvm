@@ -44,6 +44,13 @@ struct MenuTextConfig {
 	Common::String clickLabel = "CLICK";
 	Common::String newGamePrompt = "NEW GAME";
 	Common::String quitGamePrompt = "QUIT GAME";
+	Common::String talkToVerb = "Talk to";
+	Common::String examineVerb = "Examine";
+	Common::String examineTheVerb = "Examine the";
+	Common::String operateVerb = "Operate the";
+	Common::String pickUpVerb = "Pick up the";
+	Common::String useVerb = "Use";
+	Common::String useOnPreposition = "on";
 	Common::String quickTipsExitLabel = "Exit";
 	Common::String quickTipsNextLabel = "Next";
 	Common::String quickTipsOnLabel = "Show Tips ON";
@@ -60,6 +67,8 @@ struct QuickTipsLayout {
 };
 
 bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config);
+Common::String buildUseItemPrompt(const MenuTextConfig &config,
+	const Common::String &itemLabel, const Common::String &targetLabel);
 bool resolveQuickTipsLayout(HarvesterEngine &engine, const MenuTextConfig &config,
 	QuickTipsLayout &layout);
 void drawQuickTipsPanel(HarvesterEngine &engine, const MenuTextConfig &config,

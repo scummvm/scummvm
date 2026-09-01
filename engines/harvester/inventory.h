@@ -37,6 +37,7 @@ class Screen;
 namespace Harvester {
 
 class HarvesterEngine;
+struct MenuTextConfig;
 
 struct InventoryVisual {
 	ObjectRecord object;
@@ -63,7 +64,8 @@ public:
 	bool hasSelection() const;
 	const Common::String &getSelectedItemName() const;
 	Common::String resolveSelectedLabel() const;
-	Common::String buildSelectedPrompt(const Common::String &targetLabel) const;
+	Common::String buildSelectedPrompt(const Common::String &targetLabel,
+		const MenuTextConfig &menuTextConfig) const;
 	void selectItem(const Common::String &objectName);
 	bool toggleCombatLoadout(const ObjectRecord &object, int currentLoadout, bool &changed);
 	bool resolveSecondaryAction(const ObjectRecord &object, InventorySecondaryAction &action) const;

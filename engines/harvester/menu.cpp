@@ -240,7 +240,7 @@ static bool loadRawMenuValue(const Common::Array<byte> &data, const char *key, C
 	return false;
 }
 
-static void loadQuickTipsMenuValue(Common::INIFile &menu, const char *key, Common::String &dest) {
+static void loadMenuDisplayValue(Common::INIFile &menu, const char *key, Common::String &dest) {
 	Common::String value;
 	if (!menu.getKey(key, kMenuSectionName, value) || value.empty())
 		return;
@@ -306,13 +306,32 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 		config.newGamePrompt = Common::move(value);
 	if (loadRawMenuValue(data, "quitgame", value) && !value.empty())
 		config.quitGamePrompt = Common::move(value);
-	loadQuickTipsMenuValue(menu, "Exit", config.quickTipsExitLabel);
-	loadQuickTipsMenuValue(menu, "next", config.quickTipsNextLabel);
-	loadQuickTipsMenuValue(menu, "show_tips_on", config.quickTipsOnLabel);
-	loadQuickTipsMenuValue(menu, "show_tips_off", config.quickTipsOffLabel);
-	loadQuickTipsMenuValue(menu, "quick_tips_header", config.quickTipsHeader);
+	loadMenuDisplayValue(menu, "talk_to", config.talkToVerb);
+	loadMenuDisplayValue(menu, "examine", config.examineVerb);
+	loadMenuDisplayValue(menu, "examine_the", config.examineTheVerb);
+	loadMenuDisplayValue(menu, "operate", config.operateVerb);
+	loadMenuDisplayValue(menu, "pick_up", config.pickUpVerb);
+	loadMenuDisplayValue(menu, "use", config.useVerb);
+	loadMenuDisplayValue(menu, "use_on", config.useOnPreposition);
+	loadMenuDisplayValue(menu, "Exit", config.quickTipsExitLabel);
+	loadMenuDisplayValue(menu, "next", config.quickTipsNextLabel);
+	loadMenuDisplayValue(menu, "show_tips_on", config.quickTipsOnLabel);
+	loadMenuDisplayValue(menu, "show_tips_off", config.quickTipsOffLabel);
+	loadMenuDisplayValue(menu, "quick_tips_header", config.quickTipsHeader);
 
 	return true;
+}
+
+Common::String buildUseItemPrompt(const MenuTextConfig &config,
+		const Common::String &itemLabel, const Common::String &targetLabel) {
+	if (itemLabel.empty())
+		return Common::String();
+	if (targetLabel.empty())
+		return Common::String::format("%s %s %s",
+			config.useVerb.c_str(), itemLabel.c_str(), config.useOnPreposition.c_str());
+
+	return Common::String::format("%s %s %s %s", config.useVerb.c_str(), itemLabel.c_str(),
+		config.useOnPreposition.c_str(), targetLabel.c_str());
 }
 
 namespace {
