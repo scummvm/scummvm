@@ -1427,15 +1427,9 @@ void Scene9100::drawFrameOverlays() {
 }
 
 bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-
+	TimedPresentationLoop loop(*this, millis);
+	while (loop.beginFrame()) {
+		loop.finishFrame();
 		const uint32 now = g_system->getMillis();
 		bool dirty = false;
 		if (animateClock && now - _lastClockFrameMillis >= 1000) {

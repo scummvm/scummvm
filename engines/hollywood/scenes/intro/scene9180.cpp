@@ -202,21 +202,16 @@ void Scene9180::animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapInde
 }
 
 void Scene9180::waitWithEffects(uint32 millis) {
-	uint32 elapsed = 0;
 	uint32 flickerElapsed = 0;
-	while (elapsed < millis && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
+	TimedPresentationLoop loop(*this, millis);
+	while (loop.beginFrame()) {
 		if (flickerElapsed >= kScene9180FlickerIntervalMillis) {
 			flickerElapsed %= kScene9180FlickerIntervalMillis;
 			updateFlickerPalette();
 		}
 		drawComposite();
 		presentFrame();
-		const uint32 slice = MIN<uint32>(millis - elapsed, 10);
-		g_system->delayMillis(slice);
-		elapsed += slice;
-		flickerElapsed += slice;
+		flickerElapsed += loop.finishFrame();
 	}
 }
 
@@ -250,14 +245,11 @@ void Scene9180::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, _subtitle.lines.size() * 1100);
-		uint32 elapsed = 0;
 		uint32 speechElapsed = 0;
 		uint32 flickerElapsed = 0;
 		byte talkFrame = 0;
-		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents())
-				return;
-
+		TimedPresentationLoop loop(*this, duration);
+		while (loop.beginFrame()) {
 			if (speechElapsed >= kScene9180SpeechFrameMillis) {
 				speechElapsed %= kScene9180SpeechFrameMillis;
 				_frameMapIndex = 0x35 + (talkFrame % 5);
@@ -270,12 +262,12 @@ void Scene9180::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 
 			drawComposite();
 			presentFrame();
-			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
-			g_system->delayMillis(slice);
-			elapsed += slice;
+			const uint32 slice = loop.finishFrame();
 			speechElapsed += slice;
 			flickerElapsed += slice;
 		}
+		if (_skipRequested || Engine::shouldQuit())
+			return;
 		_frameMapIndex = 0x35;
 		clearSubtitle();
 		drawComposite();

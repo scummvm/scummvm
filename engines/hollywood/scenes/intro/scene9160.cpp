@@ -242,14 +242,10 @@ void Scene9160::fadeOutPalette() {
 }
 
 bool Scene9160::waitBeforeScroll() {
-	uint32 elapsed = 0;
-	while (elapsed < kScene9160WaitMillis && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
+	TimedPresentationLoop loop(*this, kScene9160WaitMillis, 50);
+	while (loop.beginFrame()) {
 		presentFrame();
-		const uint32 slice = MIN<uint32>(kScene9160WaitMillis - elapsed, 50);
-		g_system->delayMillis(slice);
-		elapsed += slice;
+		loop.finishFrame();
 	}
 
 	return _skipRequested || Engine::shouldQuit();

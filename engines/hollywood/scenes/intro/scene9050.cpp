@@ -1186,15 +1186,10 @@ bool Scene9050::runResourceI07FinalAnimation() {
 }
 
 bool Scene9050::waitSceneCounterPast(uint threshold) {
-	uint32 remaining = (threshold + 1) * 1000;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
+	TimedPresentationLoop loop(*this, (threshold + 1) * 1000);
+	while (loop.beginFrame()) {
 		ensureContinuousSound(kStage9050ClipSoundCue, 100);
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
+		loop.finishFrame();
 	}
 
 	return _skipRequested || Engine::shouldQuit();

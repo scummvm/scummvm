@@ -761,15 +761,9 @@ Scene9010::SpeechTextStyle Scene9010::getCurrentSpeechTextStyle() const {
 }
 
 bool Scene9010::delayScene9010(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-
+	TimedPresentationLoop loop(*this, millis);
+	while (loop.beginFrame()) {
+		const uint32 slice = loop.finishFrame();
 		_scene9010FadeAccumulator += slice;
 		while (_scene9010FadeAccumulator >= 150) {
 			_scene9010FadeAccumulator -= 150;
