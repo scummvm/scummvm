@@ -34,8 +34,6 @@ const char *const kI01ArchiveName = "RESOURCE.I01";
 const char *const kI02ArchiveName = "RESOURCE.I02";
 const char *const kStage003ArchiveName = "RESOURCE.003";
 const uint16 kPostIntroMusicCueId = 0x000e;
-const uint kStage003DecodeKeySize = 0x141;
-const uint kStage003StageOffsetTableSize = 0xff4;
 const uint kStage901Index = 901;
 const uint16 kScene9010SpeechRowIndex = 1;
 const byte kScene9010SpeechTextColor = 0x7a;
@@ -56,6 +54,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		PresentationScene(vm, "intro scene 9010", kSceneFramebufferSize, 0),
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
+		_text(),
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
@@ -66,12 +65,6 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_scene9010FadeAccumulator(0) {
 	_paletteSource.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
-	_stage003DecodeKey.resize(kStage003LargeRowSize);
-	_stage003Descriptors.resize(kStage003DescriptorTableSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = kScene9010SpeechTextColor;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 }
 
 bool Scene9010::play() {
@@ -115,33 +108,33 @@ bool Scene9010::playScene9010() {
 }
 
 bool Scene9010::loadScene9010Resources() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kI01ArchiveName), _i01ChunkTable)) {
-		warning("Failed to read %s header", kI01ArchiveName);
+	if (!_resources.loadChunkTable(kI01ArchiveName))
 		return false;
-	}
 
-	if (!_i01ChunkTable.isValidChunk(0) || !_i01ChunkTable.isValidChunk(1) || !_i01ChunkTable.isValidChunk(2) ||
-			((_i01ChunkTable.isValidChunk(3) || _i01ChunkTable.isValidChunk(4)) &&
-			(!_i01ChunkTable.isValidChunk(3) || !_i01ChunkTable.isValidChunk(4)))) {
+	if (!_resources.validateChunkRange(kI01ArchiveName, _debugName, 0, 2) ||
+			((_resources.chunkTable.isValidChunk(3) ||
+			_resources.chunkTable.isValidChunk(4)) &&
+			(!_resources.chunkTable.isValidChunk(3) ||
+			!_resources.chunkTable.isValidChunk(4)))) {
 		warning("%s is missing required post-intro chunks", kI01ArchiveName);
 		return false;
 	}
 
 	_i02SingleFrameOnly = false;
-	if (!loadI01Chunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
-			!loadI01Chunk(1, _paletteSource, kPaletteSize) ||
-			!loadI01Chunk(2, _resourceArena, 0))
+	if (!loadFixedChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
+			!loadFixedChunk(1, _paletteSource, kPaletteSize) ||
+			!loadVariableChunk(2, _characterSpriteResource))
 		return false;
 
-	if (_i01ChunkTable.isValidChunk(3)) {
-		if (!loadI01Chunk(3, _i02PaletteTable, 0) ||
-				!loadI01Chunk(4, _i02FramePayload, 0))
+	if (_resources.chunkTable.isValidChunk(3)) {
+		if (!loadVariableChunk(3, _i02PaletteTable) ||
+				!loadVariableChunk(4, _i02FramePayload))
 			return false;
 	} else if (!loadI02StillFrameResource()) {
 		return false;
 	}
 
-	if (!loadStage003Descriptors())
+	if (!_text.loadStage(kStage003ArchiveName, _debugName, kStage901Index))
 		return false;
 
 	if (!validateI02AnimationResources()) {
@@ -203,116 +196,6 @@ bool Scene9010::loadI02StillFrameResource() {
 	return true;
 }
 
-bool Scene9010::loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI01ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI01ArchiveName, index);
-		return false;
-	}
-
-	if (fixedSize != 0) {
-		if (stream->size() > fixedSize || destination.size() < fixedSize) {
-			warning("%s chunk %u does not fit its fixed destination", kI01ArchiveName, index);
-			return false;
-		}
-	} else {
-		destination.resize(stream->size());
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI01ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI01ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene9010::loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI01ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI01ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI01ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI01ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI01ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene9010::loadStage003Descriptors() {
-	Common::File file;
-	if (!file.open(Common::Path(kStage003ArchiveName))) {
-		warning("Failed to open %s", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
-		warning("Failed to read %s row decode key", kStage003ArchiveName);
-		return false;
-	}
-
-	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kStage901Index * 4);
-	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			stageOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s has no stage 901 offset entry", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffsetEntry);
-	const uint32 stageOffset = file.readUint32LE();
-	if (stageOffset + kStage003DescriptorTableSize > (uint32)file.size()) {
-		warning("%s stage 901 descriptor table is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffset);
-	if (file.read(_stage003Descriptors.data(), _stage003Descriptors.size()) != _stage003Descriptors.size()) {
-		warning("Failed to read %s stage 901 descriptor table", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.pos() + 3 > file.size()) {
-		warning("%s stage 901 text-row header is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	const byte smallRowCount = file.readByte();
-	const uint16 largeRowCount = file.readUint16LE();
-	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
-	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
-	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
-		warning("%s stage 901 text rows are out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(file.pos() + smallRowBytes);
-	_stage003LargeRows.resize(largeRowBytes);
-	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
-		warning("Failed to read %s stage 901 large text rows", kStage003ArchiveName);
-		return false;
-	}
-
-	for (uint row = 0; row < largeRowCount; ++row) {
-		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	debugC(1, kDebugResources, "Loaded %s stage 901 descriptors at offset=%u", kStage003ArchiveName, stageOffset);
-	return true;
-}
-
 bool Scene9010::runPoseTransition(bool targetAlternatePose) {
 	if (targetAlternatePose == _alternatePoseActive)
 		return !delayScene9010(2000);
@@ -351,7 +234,7 @@ bool Scene9010::runPoseTransition(bool targetAlternatePose) {
 }
 
 bool Scene9010::playSpeechExchange(byte descriptorIndex) {
-	const PopupDescriptor popup = getStage003PopupDescriptor(descriptorIndex);
+	const SceneSpeechCue popup = _text.stageCue(kScene9010SpeechRowIndex, descriptorIndex);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
@@ -608,9 +491,9 @@ void Scene9010::drawCharacterFrame(byte frameIndex) {
 		frameIndex = 0;
 
 	const byte descriptorIndex = kCharacterDescriptorSequence[frameIndex];
-	restoreSpriteBackground(_resourceArena, 0, 0, kCharacterFrameDescriptorCount,
+	restoreSpriteBackground(_characterSpriteResource, 0, 0, kCharacterFrameDescriptorCount,
 		descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
-	drawStripSpriteFrame(_resourceArena, 0, 0, kCharacterFrameDescriptorCount,
+	drawStripSpriteFrame(_characterSpriteResource, 0, 0, kCharacterFrameDescriptorCount,
 		descriptorIndex, _sceneFramebuffer.surface());
 }
 
@@ -681,21 +564,10 @@ bool Scene9010::fadeOutPalette(uint32 stepMillis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void Scene9010::drawFrameOverlays() {
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
-}
-
-void Scene9010::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex) {
+void Scene9010::beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex) {
 	clearSubtitle();
-	if (!_vm->subtitlesEnabled())
-		return;
-	if (!_vm->font() || !_vm->font()->isLoaded()) {
-		debugC(1, kDebugScene, "Skipping scene 9010 subtitle text record %u: Hollywood font is not loaded",
-			popup.textRecordId + segmentIndex);
-		return;
-	}
 
-	const Common::String text = getStage003LargeTextRecord(popup.textRecordId + segmentIndex);
+	const Common::String text = _text.largeTextRecord(popup.textRecordId + segmentIndex);
 	if (text.empty()) {
 		debugC(2, kDebugScene, "Skipping empty scene 9010 subtitle text record %u",
 			popup.textRecordId + segmentIndex);
@@ -703,8 +575,8 @@ void Scene9010::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex) {
 	}
 
 	const SpeechTextStyle speechTextStyle = getCurrentSpeechTextStyle();
-	wrapSpeechOverlayText(text, speechTextStyle.centerX, _subtitle.lines);
-	if (_subtitle.lines.empty())
+	if (!showAnchoredSubtitle(text, speechTextStyle.colorIndex,
+			speechTextStyle.centerX, speechTextStyle.topY))
 		return;
 
 	_paletteSource[speechTextStyle.colorIndex * 3] = speechTextStyle.red;
@@ -714,43 +586,6 @@ void Scene9010::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex) {
 	_paletteCurrent[speechTextStyle.colorIndex * 3 + 1] = speechTextStyle.green;
 	_paletteCurrent[speechTextStyle.colorIndex * 3 + 2] = speechTextStyle.blue;
 
-	_subtitle.visible = true;
-	_subtitle.colorIndex = speechTextStyle.colorIndex;
-	layoutSpeechOverlay(_subtitle, _vm->font(), speechTextStyle.centerX, speechTextStyle.topY);
-}
-
-void Scene9010::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-Common::String Scene9010::getStage003LargeTextRecord(uint16 recordId) const {
-	if (recordId < kStage003LargeRowBaseIndex)
-		return Common::String();
-
-	const uint localRecordId = recordId - kStage003LargeRowBaseIndex;
-	const uint offset = localRecordId * kStage003LargeRowSize;
-	if (offset >= _stage003LargeRows.size())
-		return Common::String();
-
-	const byte *row = _stage003LargeRows.data() + offset;
-	uint length = 0;
-	while (length < kStage003LargeRowSize && row[length] != 0)
-		++length;
-
-	return Common::String((const char *)row, length);
-}
-
-Scene9010::PopupDescriptor Scene9010::getStage003PopupDescriptor(byte descriptorIndex) const {
-	const uint recordOffset = ((uint)kScene9010SpeechRowIndex * 100 + descriptorIndex) * 5;
-	if (recordOffset + 5 > _stage003Descriptors.size())
-		return PopupDescriptor{0, 0, 0};
-
-	return PopupDescriptor{
-		readUint16(_stage003Descriptors, recordOffset),
-		_stage003Descriptors[recordOffset + 2],
-		readUint16(_stage003Descriptors, recordOffset + 3)
-	};
 }
 
 Scene9010::SpeechTextStyle Scene9010::getCurrentSpeechTextStyle() const {

@@ -23,7 +23,6 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9100_H
 
 #include "common/array.h"
-#include "common/file.h"
 #include "common/random.h"
 #include "common/str.h"
 
@@ -31,7 +30,7 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -73,21 +72,7 @@ private:
 		SpeechTextStyle speechTextStyle;
 	};
 
-	struct PopupDescriptor {
-		uint16 textRecordId;
-		byte continuationCount;
-		uint16 voiceSampleId;
-	};
-
 	bool load(bool dialogueBranch);
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
-	bool loadArenaChunk(uint index);
-	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
-	bool loadScratchChunk(uint index, uint32 destinationOffset);
-	bool loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
-	bool loadStage003Descriptors();
 	bool loadActorResources();
 	bool loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorSpriteBank &bank);
 
@@ -114,9 +99,7 @@ private:
 	void runEndingWipe();
 	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
-	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle);
-	void clearSubtitle();
-	Common::String getStage003LargeTextRecord(uint16 recordId) const;
+	void beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle);
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
@@ -148,13 +131,11 @@ private:
 	void applyBackgroundMode(const CinematicStep &step);
 	void copyPaletteSegment(byte segmentIndex);
 	void copyDefaultPalette();
-	void drawFrameOverlays() override;
 	bool delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void stopAudio() override;
 
 	byte nextTalkingFrameVariant();
 	uint32 getSegmentOffset(byte segmentIndex) const;
-	PopupDescriptor getStage003PopupDescriptor(uint16 textBankIndex, byte descriptorIndex) const;
 	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
 	int16 readSint16(const Common::Array<byte> &source, uint offset) const;
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
@@ -162,15 +143,11 @@ private:
 	enum {
 		kFrameDecodeBufferSize = 0x78000,
 		kPaletteSize = 0x300,
-		kResourceChunkCount = 40,
 		kI10ForegroundDescriptorCount = 0x24,
 		kI10DeskPrimaryStaticDescriptorCount = 3,
 		kI10DeskSecondaryStaticDescriptorCount = 6,
 		kI10ClockDescriptorCount = 0x3c,
 		kI10TalkingOverlayDescriptorCount = 10,
-		kStage003DescriptorTableSize = 0x186a0,
-		kStage003SmallRowSize = 0x29,
-		kStage003LargeRowSize = 0x141,
 		kSecondaryScratchBufferSize = 96000,
 		kDeskPrimaryStaticBase = 0,
 		kDeskSecondaryStaticBase = 48000,
@@ -180,28 +157,20 @@ private:
 
 	MusicPlayer _music;
 	SpeechPlayer _speech;
+	SceneTextStore _text;
 	SoundBank0Player _effectSound;
 	SoundBank0Player _clockSound;
 	SoundBank0Player _ambientSound;
 	Common::RandomSource _random;
-	ResourceChunkTable _i10ChunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
 	Common::Array<byte> _paletteDefault;
 	Common::Array<byte> _sceneFillRuns;
-	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _resourceScratchArena;
 	Common::Array<byte> _secondaryScratchBuffer;
 	Common::Array<byte> _presentationPaletteRemapTable;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 	IndexedSurfaceBuffer _cleanOfficeBaseFramebuffer;
-	Common::Array<byte> _stage003DecodeKey;
-	Common::Array<byte> _stage003Descriptors;
-	Common::Array<byte> _stage003LargeRows;
-	uint16 _stage003LargeRowBaseIndex;
 	ActorSpriteBank _actorBankI10Ron;
 	ActorSpriteBank _actorBankI10Sue;
-	SpeechOverlay _subtitle;
-	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;
 	uint32 _lastTalkingFrameMillis;
 	byte _foregroundActorFrame;

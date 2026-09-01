@@ -118,7 +118,6 @@ const byte kScene9090InsetFrameMap[] = {
 
 Scene9090::Scene9090(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9090"),
-		_resources(),
 		_music(vm->introMusic()),
 		_primarySpeech(vm->getLanguage()),
 		_secondarySpeech(vm->getLanguage()),
@@ -150,14 +149,6 @@ Scene9090::Scene9090(HollywoodEngine *vm) :
 	_paletteResource.resize(kPaletteSize);
 	_presentationPaletteRemapTable.resize(256);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_primarySubtitle.visible = false;
-	_primarySubtitle.colorIndex = kScene9090PrimarySpeechColor;
-	_primarySubtitle.centerX = 0;
-	_primarySubtitle.topY = 0;
-	_secondarySubtitle.visible = false;
-	_secondarySubtitle.colorIndex = kScene9090SecondarySpeechColor;
-	_secondarySubtitle.centerX = 0;
-	_secondarySubtitle.topY = 0;
 	_clockFrames[0] = 10;
 	_clockFrames[1] = 7;
 	_clockFrames[2] = 3;
@@ -206,8 +197,8 @@ bool Scene9090::load() {
 	if (!_resources.validateChunkRange(kScene9090ArchiveName, _debugName, 0, 12))
 		return false;
 
-	if (!loadChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	_resources.allocateArena(_resources.totalChunkSize(5, 12));
@@ -225,18 +216,6 @@ bool Scene9090::load() {
 	_paletteResource[kScene9090SecondarySpeechColor * 3 + 2] = 0x32;
 	buildPresentationPaletteRemapTable(_paletteResource, _presentationPaletteRemapTable);
 	return true;
-}
-
-bool Scene9090::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9090::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9090::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 bool Scene9090::loadActorResources() {
@@ -682,13 +661,11 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 			if (!activeStep[i])
 				continue;
 			if (kScene9090SpeechSteps[stepIndices[i]].speaker == kScene9090SecondarySpeaker) {
-				_secondarySubtitle.visible = false;
-				_secondarySubtitle.lines.clear();
+				clearSubtitle(_secondarySubtitle);
 				_secondarySpeechFrame = 0;
 				_secondarySpeechVisible = false;
 			} else {
-				_primarySubtitle.visible = false;
-				_primarySubtitle.lines.clear();
+				clearSubtitle(_primarySubtitle);
 				if (kScene9090SpeechSteps[stepIndices[i]].speaker == kScene9090InsetSpeaker)
 					_insetFrame = _insetVariant == 2 ? 7 : 0;
 				else if (_deskFacingMode == 3)
@@ -819,27 +796,15 @@ byte Scene9090::nextFrameExcluding(byte maximumFrame, byte previousFrame) {
 
 void Scene9090::beginSubtitle(SpeechOverlay &subtitle, uint16 textRecordId,
 		byte colorIndex, uint16 anchorX, uint16 anchorY, bool secondaryActor) {
-	subtitle.visible = false;
-	subtitle.lines.clear();
-	if (!_vm->subtitlesEnabled() || !_vm->font() || !_vm->font()->isLoaded())
-		return;
-
 	const Common::String text = _text.largeTextRecord(textRecordId);
-	if (text.empty())
-		return;
-
-	subtitle.colorIndex = colorIndex;
-	wrapSpeechOverlayText(text, anchorX, subtitle.lines, kSpeechOverlayFixedEdgeWrap);
-	layoutSpeechOverlay(subtitle, _vm->font(), anchorX,
-		anchorY - (secondaryActor ? kScene9090SecondarySpeechYOffsetBias : 0));
-	subtitle.visible = !subtitle.lines.empty();
+	showAnchoredSubtitle(subtitle, text, colorIndex, anchorX,
+		anchorY - (secondaryActor ? kScene9090SecondarySpeechYOffsetBias : 0),
+		kSpeechOverlayFixedEdgeWrap);
 }
 
 void Scene9090::clearSubtitles() {
-	_primarySubtitle.visible = false;
-	_primarySubtitle.lines.clear();
-	_secondarySubtitle.visible = false;
-	_secondarySubtitle.lines.clear();
+	clearSubtitle(_primarySubtitle);
+	clearSubtitle(_secondarySubtitle);
 }
 
 void Scene9090::drawFrameOverlays() {

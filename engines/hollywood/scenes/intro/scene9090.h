@@ -29,7 +29,7 @@
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
 #include "hollywood/scenes/speech_overlay.h"
-#include "hollywood/scenes/intro/intro_text.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -56,9 +56,6 @@ private:
 	};
 
 	bool load();
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	bool loadActorResources();
 	void initializeOfficeState();
 	void composeFrame();
@@ -87,13 +84,12 @@ private:
 	void drawFrameOverlays() override;
 	void stopAudio() override;
 
-	SceneResources _resources;
 	MusicPlayer *_music;
 	SpeechPlayer _primarySpeech;
 	SpeechPlayer _secondarySpeech;
 	SoundBank0Player _clockSound;
 	SoundBank0Player _ambientSound;
-	IntroTextStore _text;
+	SceneTextStore _text;
 	Common::RandomSource _random;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _presentationPaletteRemapTable;

@@ -29,7 +29,6 @@ namespace Hollywood {
 
 ChapterIntroScene::ChapterIntroScene(HollywoodEngine *vm, const char *debugName) :
 		PresentationScene(vm, debugName, kFrameBufferSize, 0),
-		_resources(),
 		_music(),
 		_paletteResource(),
 		_baseFramebuffer() {

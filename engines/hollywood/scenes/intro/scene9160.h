@@ -39,8 +39,6 @@ public:
 private:
 	bool load();
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	void sanitizePanel(Common::Array<byte> &panel);
 	void copyPanelToFramebuffer(const Common::Array<byte> &panel, int yOffset);
 	void drawOverlayChunk(uint chunkIndex, int yOffset);
@@ -54,7 +52,6 @@ private:
 	uint presentRowOffset() const override;
 	void stopAudio() override;
 
-	SceneResources _resources;
 	MusicPlayer *_music;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _panelA;

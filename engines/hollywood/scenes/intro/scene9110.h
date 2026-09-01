@@ -27,9 +27,9 @@
 #include "common/str.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
+#include "hollywood/scenes/scene_resources.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -64,19 +64,8 @@ private:
 		SpeechWaitMode waitMode;
 	};
 
-	struct PopupDescriptor {
-		uint16 textRecordId;
-		byte continuationCount;
-		uint16 voiceSampleId;
-	};
-
 	bool load();
 	bool loadResourceI11Assets();
-	bool loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadResourceI11ArenaChunk(uint index);
-	bool loadStage003Descriptors();
-
 	void initializeCompositeState();
 	void runSpeechSequence();
 	void runSpeechStep(const SpeechStep &step);
@@ -87,40 +76,24 @@ private:
 	void drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex);
 	byte nextMouthFrameVariant();
 
-	void beginSubtitle(const PopupDescriptor &popup, const SpeechTextStyle &speechTextStyle);
-	void clearSubtitle();
-	Common::String getStage003LargeTextRecord(uint16 recordId) const;
-
-	void drawFrameOverlays() override;
+	void beginSubtitle(const SceneSpeechCue &popup, const SpeechTextStyle &speechTextStyle);
 
 	void stopAudio() override;
-
-	PopupDescriptor getStage003PopupDescriptor(uint16 rowIndex, byte frameIndex) const;
 
 	enum {
 		kFrameBufferSize = 0x78000,
 		kI11RequiredChunkCount = 4,
 		kI11Chunk2DescriptorCount = 15,
 		kI11Chunk3DescriptorCount = 8,
-		kStage003DecodeKeySize = 0x141,
-		kStage003StageOffsetTableSize = 0xff4,
-		kStage003DescriptorTableSize = 0x186a0,
-		kStage003SmallRowSize = 0x29,
-		kStage003LargeRowSize = 0x141,
-		kStage003LargeRowBaseIndex = 500,
 		kStage911Index = 911
 	};
 
 	MusicPlayer *_music;
 	SpeechPlayer _speech;
+	SceneTextStore _text;
 	Common::RandomSource _random;
-	SceneResources _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	Common::Array<byte> _stage003DecodeKey;
-	Common::Array<byte> _stage003Descriptors;
-	Common::Array<byte> _stage003LargeRows;
-	SpeechOverlay _subtitle;
 	uint32 _mouthAccumulator;
 	uint32 _chunk3Accumulator;
 	uint32 _idleAccumulator;

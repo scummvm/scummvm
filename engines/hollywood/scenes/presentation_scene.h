@@ -25,6 +25,8 @@
 #include "common/array.h"
 
 #include "hollywood/graphics.h"
+#include "hollywood/scenes/scene_resources.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -57,9 +59,34 @@ protected:
 	virtual ~PresentationScene() {}
 
 	virtual void stopAudio() {}
-	virtual void drawFrameOverlays() {}
+	virtual void drawFrameOverlays();
 	virtual uint presentRowOffset() const;
 	virtual uint presentXOffset() const;
+	virtual int subtitleViewportXOffset() const;
+	virtual int subtitleViewportYOffset() const;
+
+	bool showAnchoredSubtitle(const Common::String &text, byte colorIndex,
+		int centerX, int anchorBottomY,
+		SpeechOverlayWrapStyle wrapStyle = kSpeechOverlayAdaptiveWrap);
+	bool showAnchoredSubtitle(SpeechOverlay &overlay, const Common::String &text,
+		byte colorIndex, int centerX, int anchorBottomY,
+		SpeechOverlayWrapStyle wrapStyle = kSpeechOverlayAdaptiveWrap);
+	bool showPositionedSubtitle(const Common::String &text, byte colorIndex,
+		int centerX, int topY,
+		SpeechOverlayWrapStyle wrapStyle = kSpeechOverlayAdaptiveWrap);
+	bool showPositionedSubtitle(SpeechOverlay &overlay, const Common::String &text,
+		byte colorIndex, int centerX, int topY,
+		SpeechOverlayWrapStyle wrapStyle = kSpeechOverlayAdaptiveWrap);
+	void clearSubtitle();
+	void clearSubtitle(SpeechOverlay &overlay);
+	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadFixedChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
+	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
+	bool loadChunkTo(uint index, Common::Array<byte> &destination,
+		uint32 destinationOffset);
+	bool loadArenaChunk(uint index);
+	bool loadArenaChunk(uint archiveIndex, uint localChunkIndex);
+	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
 
 	void presentFrame();
 	void presentFrame(uint rowOffset, uint xOffset);
@@ -79,11 +106,13 @@ protected:
 
 	HollywoodEngine *_vm;
 	const char *_debugName;
+	SceneResources _resources;
 	Common::Array<byte> _paletteCurrent;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	IndexedSurfaceBuffer _savedFramebuffer;
 	Graphics::ManagedSurface _screen;
 	Palette6Bit _displayPalette;
+	SpeechOverlay _subtitle;
 	bool _skipRequested;
 };
 

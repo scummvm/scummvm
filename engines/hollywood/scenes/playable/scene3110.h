@@ -129,7 +129,6 @@ private:
 	void stopSounds();
 	void stopAudio() override;
 
-	SceneResources _resources;
 	Common::Array<byte> _exteriorStormPalette;
 	Common::Array<byte> _memoryPulseSavedPalette;
 	IndexedSurfaceBuffer _baseFramebuffer;
