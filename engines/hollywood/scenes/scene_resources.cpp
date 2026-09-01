@@ -112,6 +112,18 @@ bool SceneResources::loadVariableChunk(uint index, Common::Array<byte> &destinat
 	return _archive.readVariableChunk(index, destination);
 }
 
+bool SceneResources::loadChunkTo(const char *sceneDebugName, uint index,
+		Common::Array<byte> &destination, uint32 destinationOffset) {
+	if (!_archive.readChunkTo(index, destination, destinationOffset))
+		return false;
+
+	const Common::String archiveName = _archive.fileName().toString();
+	debugC(1, kDebugResources, "Loaded %s chunk %u at %s buffer offset %u: size=%u",
+		archiveName.c_str(), index, sceneDebugName,
+		destinationOffset, (uint)_archive.chunkSize(index));
+	return true;
+}
+
 bool SceneResources::loadArenaChunk(const char *sceneDebugName, uint index) {
 	return loadArenaChunk(sceneDebugName, index, index);
 }

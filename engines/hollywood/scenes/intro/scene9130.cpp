@@ -59,12 +59,10 @@ const Scene9130SpeechStyle kScene9130SpeechStyles[] = {
 
 Scene9130::Scene9130(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9130"),
-		_resources(),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
 		_text(),
 		_paletteResource(),
-		_subtitle(),
 		_activeTextRecordId(0),
 		_activeVoiceSampleId(0),
 		_activeContinuationCount(0),
@@ -73,10 +71,6 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		_activeSpeechCue(false),
 		_nextSpeechFrameIndex(0) {
 	_paletteResource.resize(kPaletteSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = 0xfb;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 }
 
 bool Scene9130::play() {
@@ -120,8 +114,8 @@ bool Scene9130::load() {
 			return false;
 	}
 
-	if (!loadChunk(0, _savedFramebuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _savedFramebuffer, kFrameBufferSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	_resources.allocateArena(_resources.chunkTable.sizes[kScene9130ClipChunk]);
@@ -133,18 +127,6 @@ bool Scene9130::load() {
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	return true;
-}
-
-bool Scene9130::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9130::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9130::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9130::runClipAndDialogue() {
@@ -236,14 +218,8 @@ bool Scene9130::startCurrentSpeechSegment() {
 	_paletteCurrent[style.colorIndex * 3 + 2] = style.blue;
 
 	const Common::String text = _text.largeTextRecord(_activeTextRecordId + _activeContinuationIndex);
-	if (!text.empty()) {
-		_subtitle.visible = true;
-		_subtitle.colorIndex = style.colorIndex;
-		_subtitle.centerX = style.centerX;
-		_subtitle.topY = style.topY;
-		wrapSpeechOverlayText(text, style.centerX, _subtitle.lines,
-			kSpeechOverlayFixedEdgeWrap);
-	}
+	showPositionedSubtitle(text, style.colorIndex, style.centerX, style.topY,
+		kSpeechOverlayFixedEdgeWrap);
 
 	const uint16 sampleId = _activeVoiceSampleId == 0 ? 0 : _activeVoiceSampleId + _activeContinuationIndex;
 	++_activeContinuationIndex;
@@ -251,15 +227,6 @@ bool Scene9130::startCurrentSpeechSegment() {
 	if (sampleId != 0)
 		_speech.playSample(sampleId, 100);
 	return true;
-}
-
-void Scene9130::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-void Scene9130::drawFrameOverlays() {
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 void Scene9130::stopAudio() {

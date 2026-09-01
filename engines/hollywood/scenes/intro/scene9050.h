@@ -40,17 +40,8 @@ public:
 	bool play();
 
 private:
-	bool loadResourceChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadResourceArenaChunk(uint archiveIndex, uint localChunkIndex);
-
 	bool loadResourceI06Assets();
-	bool loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceI06ArenaChunk(uint index);
 	bool loadResourceI05ClipSegment(byte segmentId);
-	bool loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex);
 	bool loadResourceI08BlinkAssets();
 	bool loadResourceI07FinalAssets();
 
@@ -111,7 +102,6 @@ private:
 	SoundBank0Player _continuousSound;
 	SoundBank0Player _effectSound;
 	Common::RandomSource _random;
-	SceneResources _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _clipBaseFramebuffer;
 	uint32 _i05ClipChunkSize;

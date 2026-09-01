@@ -25,10 +25,9 @@
 #include "common/random.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
-#include "hollywood/scenes/intro/intro_text.h"
+#include "hollywood/scenes/scene_resources.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -42,9 +41,6 @@ public:
 
 private:
 	bool load();
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	void runSequence();
 	void drawComposite();
 	void drawFrameIndex(byte frameMapIndex);
@@ -60,20 +56,16 @@ private:
 	void fillBlackPixelsForMemoryFlash();
 	void waitForFinalInput();
 	void stopAudio() override;
-	void clearSubtitle();
-	void drawFrameOverlays() override;
 
-	SceneResources _resources;
 	SpeechPlayer _speech;
 	SoundBank0Player _loopSound;
 	SoundBank0Player _effectSound;
-	IntroTextStore _text;
+	SceneTextStore _text;
 	Common::RandomSource _random;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _normalPalette;
 	Common::Array<byte> _brightPalette;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	SpeechOverlay _subtitle;
 	byte _frameMapIndex;
 	byte _flickerModulus;
 	bool _brightPaletteActive;

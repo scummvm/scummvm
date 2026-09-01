@@ -23,10 +23,9 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9130_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
-#include "hollywood/scenes/intro/intro_text.h"
+#include "hollywood/scenes/scene_resources.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -40,24 +39,17 @@ public:
 
 private:
 	bool load();
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	void runClipAndDialogue();
 	void drawClipFrame(byte frameIndex);
 	void maybeStartNextSpeechLine();
 	bool prepareSpeechLine(byte frameIndex);
 	bool startCurrentSpeechSegment();
-	void clearSubtitle();
-	void drawFrameOverlays() override;
 	void stopAudio() override;
 
-	SceneResources _resources;
 	MusicPlayer *_music;
 	SpeechPlayer _speech;
-	IntroTextStore _text;
+	SceneTextStore _text;
 	Common::Array<byte> _paletteResource;
-	SpeechOverlay _subtitle;
 	uint16 _activeTextRecordId;
 	uint16 _activeVoiceSampleId;
 	byte _activeContinuationCount;

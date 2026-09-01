@@ -53,6 +53,8 @@ public:
 	bool loadFixedChunk(const char *sceneDebugName,
 		uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
+	bool loadChunkTo(const char *sceneDebugName, uint index,
+		Common::Array<byte> &destination, uint32 destinationOffset);
 	bool loadArenaChunk(const char *sceneDebugName, uint index);
 	bool loadArenaChunk(const char *sceneDebugName, uint archiveIndex,
 		uint localChunkIndex);

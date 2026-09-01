@@ -24,7 +24,7 @@
 
 #include "hollywood/music.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/intro/intro_text.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -46,7 +46,7 @@ private:
 	void fadeOutPalette();
 
 	SpeechPlayer _speech;
-	IntroTextStore _text;
+	SceneTextStore _text;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _clipResource;
 };

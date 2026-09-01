@@ -96,7 +96,6 @@ const byte kScene3110Linear32FrameMap[] = {
 
 Scene3110::Scene3110(HollywoodEngine *vm) :
 		PresentationScene(vm, "scene 3110"),
-		_resources(),
 		_memoryRandomState(0x3110),
 		_memoryPulseLevel(0),
 		_memoryPulseActive(false) {

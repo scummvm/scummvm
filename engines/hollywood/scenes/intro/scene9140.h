@@ -23,10 +23,9 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9140_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/speech_overlay.h"
-#include "hollywood/scenes/intro/intro_text.h"
+#include "hollywood/scenes/scene_resources.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 
@@ -56,9 +55,6 @@ public:
 
 private:
 	bool load();
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
 	void runVariantSequence(byte variantIndex);
 	void runStep(const SequenceStep &step);
 	void runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -67,16 +63,12 @@ private:
 		uint16 centerX, uint16 topY, bool leftSpeaker);
 	void animateRightPose(byte firstFrame, byte lastFrame);
 	void drawComposite();
-	void clearSubtitle();
-	void drawFrameOverlays() override;
 	void fadeOutPalette();
 
-	SceneResources _resources;
 	SpeechPlayer _speech;
-	IntroTextStore _text;
+	SceneTextStore _text;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	SpeechOverlay _subtitle;
 	byte _rightBodyFrame;
 	byte _mouthFrame;
 	bool _leftLoopEnabled;

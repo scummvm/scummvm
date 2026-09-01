@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9100.h"
 
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -45,10 +44,7 @@ const byte kScene9100DelayedSoundCue = 0x0f;
 const byte kScene9100SueEntrySoundCue = 0x10;
 const byte kScene9100AmbientSoundCue = 0x11;
 const uint16 kScene9101CompletionState = 1000;
-const uint kStage003DecodeKeySize = 0x141;
-const uint kStage003StageOffsetTableSize = 0xff4;
 const uint kStage910Index = 910;
-const uint16 kStage910LargeRowBaseIndex = 500;
 const byte kPrimarySpeechTextColor = 0xfb;
 const byte kSecondarySpeechTextColor = 0xfd;
 const uint kActorFacingCount = 6;
@@ -84,11 +80,11 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		PresentationScene(vm, "intro scene 9100"),
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
+		_text(),
 		_effectSound(),
 		_clockSound(),
 		_ambientSound(),
 		_random("hollywood_scene9100"),
-		_resourceArenaCursor(0),
 		_lastClockFrameMillis(0),
 		_lastTalkingFrameMillis(0),
 		_foregroundActorFrame(0),
@@ -104,23 +100,14 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_clockVisible(false),
 		_deskPrimaryActorVisible(false),
 		_deskSecondaryActorVisible(false),
-		_dialogueBranch(false),
-		_subtitle() {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+		_dialogueBranch(false) {
 	_paletteDefault.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
 	_cleanOfficeBaseFramebuffer.resize(kFrameDecodeBufferSize);
 	_presentationPaletteRemapTable.resize(kPresentationPaletteRemapTableSize);
 	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
 		_presentationPaletteRemapTable[i] = 0;
-	_stage003DecodeKey.resize(kStage003DecodeKeySize);
-	_stage003Descriptors.resize(kStage003DescriptorTableSize);
-	_stage003LargeRowBaseIndex = kStage910LargeRowBaseIndex;
 	_secondaryScratchBuffer.resize(kSecondaryScratchBufferSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = kPrimarySpeechTextColor;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 	_effectSound.setArchive(Common::Path(kScene9100SoundArchiveName));
 	_clockSound.setArchive(Common::Path(kScene9100SoundArchiveName));
 	_ambientSound.setArchive(Common::Path(kScene9100SoundArchiveName));
@@ -151,7 +138,7 @@ bool Scene9100::play() {
 	if (!_skipRequested && !Engine::shouldQuit()) {
 		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
 		expandFillRunsToSavedFramebuffer();
-		drawResourceBlockListToSceneFramebuffer(_resourceChunkOffsets[16]);
+		drawResourceBlockListToSceneFramebuffer(_resources.chunkOffsets[16]);
 		presentFrame();
 		runOpeningPrelude();
 	}
@@ -216,47 +203,25 @@ bool Scene9100::playDialogueBranch() {
 
 bool Scene9100::load(bool dialogueBranch) {
 	_dialogueBranch = dialogueBranch;
-	if (!_vm->resources()->readChunkTable(Common::Path(kI10ArchiveName), _i10ChunkTable)) {
-		warning("Failed to read %s header", kI10ArchiveName);
+	if (!_resources.loadChunkTable(kI10ArchiveName))
 		return false;
-	}
 
-	for (uint i = 0; i <= 16; ++i) {
-		if (!_i10ChunkTable.isValidChunk(i)) {
-			warning("%s is missing scene 9100 chunk %u", kI10ArchiveName, i);
-			return false;
-		}
-	}
-	if (dialogueBranch && !_i10ChunkTable.isValidChunk(17)) {
-		warning("%s is missing scene 9101 branch chunk 17", kI10ArchiveName);
+	if (!_resources.validateChunkRange(kI10ArchiveName, _debugName, 0, 16) ||
+			(dialogueBranch &&
+			!_resources.validateChunk(kI10ArchiveName, _debugName, 17)) ||
+			!_resources.validateChunkRange(kI10ArchiveName, _debugName, 18, 26))
 		return false;
-	}
-	if (!_i10ChunkTable.isValidChunk(18) || !_i10ChunkTable.isValidChunk(19) ||
-			!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) ||
-			!_i10ChunkTable.isValidChunk(22) || !_i10ChunkTable.isValidChunk(23) ||
-			!_i10ChunkTable.isValidChunk(24) || !_i10ChunkTable.isValidChunk(25) ||
-			!_i10ChunkTable.isValidChunk(26)) {
-		warning("%s is missing required scene 9100 scratch chunks", kI10ArchiveName);
-		return false;
-	}
 
-	if (!loadChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
-			!loadChunk(1, _paletteDefault, kPaletteSize) ||
+	if (!loadFixedChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
+			!loadFixedChunk(1, _paletteDefault, kPaletteSize) ||
 			!loadVariableChunk(2, _sceneFillRuns) ||
-			!loadStage003Descriptors())
+			!_text.loadStage(kStage003ArchiveName, _debugName, kStage910Index))
 		return false;
 	memcpy(_cleanOfficeBaseFramebuffer.data(), _frameDecodeBuffer.data(), _cleanOfficeBaseFramebuffer.size());
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 
-	uint32 resourceArenaSize = 0;
-	for (uint i = 5; i <= 16; ++i)
-		resourceArenaSize += _i10ChunkTable.sizes[i];
-
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-
-	_resourceArenaCursor = 0;
+	_resources.allocateArena(_resources.totalChunkSize(5, 16));
 	for (uint i = 5; i <= 16; ++i) {
 		if (!loadArenaChunk(i))
 			return false;
@@ -265,227 +230,21 @@ bool Scene9100::load(bool dialogueBranch) {
 		return false;
 
 	const uint32 scratchSize = MAX<uint32>(
-		kScratchPrimaryPayloadBase + _i10ChunkTable.sizes[22],
-		MAX<uint32>(_i10ChunkTable.sizes[20], kScratchChunk21Base + _i10ChunkTable.sizes[21]));
+		kScratchPrimaryPayloadBase + _resources.chunkTable.sizes[22],
+		MAX<uint32>(_resources.chunkTable.sizes[20],
+			kScratchChunk21Base + _resources.chunkTable.sizes[21]));
 	_resourceScratchArena.resize(scratchSize);
 	memset(_resourceScratchArena.data(), 0, _resourceScratchArena.size());
 	memset(_secondaryScratchBuffer.data(), 0, _secondaryScratchBuffer.size());
 
-	if (!loadScratchChunk(20, 0) ||
-			!loadScratchChunk(21, kScratchChunk21Base) ||
-			!loadScratchChunk(22, kScratchPrimaryPayloadBase) ||
-			!loadScratchChunkTo(18, _secondaryScratchBuffer, kDeskPrimaryStaticBase) ||
-			!loadScratchChunkTo(19, _secondaryScratchBuffer, kDeskSecondaryStaticBase))
+	if (!loadChunkTo(20, _resourceScratchArena, 0) ||
+			!loadChunkTo(21, _resourceScratchArena, kScratchChunk21Base) ||
+			!loadChunkTo(22, _resourceScratchArena, kScratchPrimaryPayloadBase) ||
+			!loadChunkTo(18, _secondaryScratchBuffer, kDeskPrimaryStaticBase) ||
+			!loadChunkTo(19, _secondaryScratchBuffer, kDeskSecondaryStaticBase))
 		return false;
 
 	return loadActorResources();
-}
-
-bool Scene9100::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI10ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI10ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene9100::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI10ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI10ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene9100::loadVariableChunk(uint index, Common::Array<byte> &destination) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	destination.resize(stream->size());
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s variable chunk %u: size=%u", kI10ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene9100::loadArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the scene 9100 resource arena", kI10ArchiveName, index);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kI10ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
-}
-
-bool Scene9100::loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex) {
-	if (aliasIndex >= kResourceChunkCount || targetIndex >= kResourceChunkCount) {
-		warning("%s chunk %u cannot be aliased to invalid chunk slot %u/%u",
-			kI10ArchiveName, sourceIndex, aliasIndex, targetIndex);
-		return false;
-	}
-
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), sourceIndex));
-	if (!stream) {
-		warning("Failed to open %s branch chunk %u", kI10ArchiveName, sourceIndex);
-		return false;
-	}
-
-	const uint32 destinationOffset = _resourceChunkOffsets[targetIndex];
-	const uint32 requiredSize = destinationOffset + stream->size();
-	if (requiredSize > _resourceArena.size()) {
-		const uint oldSize = _resourceArena.size();
-		_resourceArena.resize(requiredSize);
-		memset(_resourceArena.data() + oldSize, 0, _resourceArena.size() - oldSize);
-	}
-
-	if (stream->read(_resourceArena.data() + destinationOffset, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s branch chunk %u", kI10ArchiveName, sourceIndex);
-		return false;
-	}
-
-	_resourceChunkOffsets[aliasIndex] = destinationOffset;
-	debugC(1, kDebugResources, "Loaded %s branch chunk %u as arena chunk %u: offset=%u size=%u",
-		kI10ArchiveName, sourceIndex, aliasIndex, destinationOffset, (uint)stream->size());
-	return true;
-}
-
-bool Scene9100::loadScratchChunk(uint index, uint32 destinationOffset) {
-	return loadScratchChunkTo(index, _resourceScratchArena, destinationOffset);
-}
-
-bool Scene9100::loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s scratch chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	if (destinationOffset + stream->size() > destination.size()) {
-		warning("%s scratch chunk %u does not fit the scene 9100 scratch arena", kI10ArchiveName, index);
-		return false;
-	}
-
-	if (stream->read(destination.data() + destinationOffset, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s scratch chunk %u", kI10ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s scratch chunk %u: offset=%u size=%u",
-		kI10ArchiveName, index, destinationOffset, (uint)stream->size());
-	return true;
-}
-
-bool Scene9100::loadStage003Descriptors() {
-	Common::File file;
-	if (!file.open(Common::Path(kStage003ArchiveName))) {
-		warning("Failed to open %s", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
-		warning("Failed to read %s row decode key", kStage003ArchiveName);
-		return false;
-	}
-
-	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kStage910Index * 4);
-	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			stageOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s has no stage 910 offset entry", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffsetEntry);
-	const uint32 stageOffset = file.readUint32LE();
-	if (stageOffset + kStage003DescriptorTableSize > (uint32)file.size()) {
-		warning("%s stage 910 descriptor table is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(stageOffset);
-	if (file.read(_stage003Descriptors.data(), _stage003Descriptors.size()) != _stage003Descriptors.size()) {
-		warning("Failed to read %s stage 910 descriptor table", kStage003ArchiveName);
-		return false;
-	}
-
-	if (file.pos() + 3 > file.size()) {
-		warning("%s stage 910 text-row header is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	const byte smallRowCount = file.readByte();
-	const uint16 largeRowCount = file.readUint16LE();
-	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
-	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
-	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
-		warning("%s stage 910 text rows are out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(file.pos() + smallRowBytes);
-	_stage003LargeRows.resize(largeRowBytes);
-	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
-		warning("Failed to read %s stage 910 large text rows", kStage003ArchiveName);
-		return false;
-	}
-
-	for (uint row = 0; row < largeRowCount; ++row) {
-		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	debugC(1, kDebugResources, "Loaded %s stage 910 descriptors/text at offset=%u largeRowBase=%u largeRows=%u",
-		kStage003ArchiveName, stageOffset, _stage003LargeRowBaseIndex, largeRowCount);
-	return true;
 }
 
 bool Scene9100::loadActorResources() {
@@ -616,7 +375,7 @@ void Scene9100::playEntryActorAnimation(const ActorSpriteBank &bank, int worldX,
 }
 
 void Scene9100::runRonEntryConversation() {
-	const PopupDescriptor popup = getStage003PopupDescriptor(0, 2);
+	const SceneSpeechCue popup = _text.stageCue(0, 2);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 
 	IndexedSurfaceBuffer baseFramebuffer;
@@ -996,7 +755,7 @@ void Scene9100::runDialogueBranchSequence() {
 
 void Scene9100::prepareDialogueBranchOfficePatch() {
 	expandFillRunsToSavedFramebuffer();
-	drawResourceBlockListToSceneFramebuffer(_resourceChunkOffsets[17]);
+	drawResourceBlockListToSceneFramebuffer(_resources.chunkOffsets[17]);
 	drawOfficeCompositeLayers();
 	presentFrame();
 }
@@ -1042,7 +801,7 @@ void Scene9100::runEndingWipe() {
 void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor, byte insetTalkBaseFrame) {
 	_talkingFrame = 0;
 	_lastTalkingFrameMillis = g_system->getMillis();
-	const PopupDescriptor popup = getStage003PopupDescriptor(textBankIndex, descriptorIndex);
+	const SceneSpeechCue popup = _text.stageCue(textBankIndex, descriptorIndex);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
@@ -1083,25 +842,18 @@ void Scene9100::waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase t
 	}
 }
 
-void Scene9100::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle) {
+void Scene9100::beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle) {
 	clearSubtitle();
-	if (!_vm->subtitlesEnabled())
-		return;
-	if (!_vm->font() || !_vm->font()->isLoaded()) {
-		debugC(1, kDebugScene, "Skipping subtitle for text record %u: Hollywood font is not loaded",
-			popup.textRecordId + segmentIndex);
-		return;
-	}
 
-	const Common::String text = getStage003LargeTextRecord(popup.textRecordId + segmentIndex);
+	const Common::String text = _text.largeTextRecord(popup.textRecordId + segmentIndex);
 	if (text.empty()) {
 		debugC(2, kDebugScene, "Skipping empty subtitle text record %u",
 			popup.textRecordId + segmentIndex);
 		return;
 	}
 
-	wrapSpeechOverlayText(text, speechTextStyle.centerX, _subtitle.lines);
-	if (_subtitle.lines.empty())
+	if (!showAnchoredSubtitle(text, speechTextStyle.colorIndex,
+			speechTextStyle.centerX, speechTextStyle.topY))
 		return;
 
 	if (speechTextStyle.updatePalette) {
@@ -1110,31 +862,6 @@ void Scene9100::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, c
 		_paletteCurrent[speechTextStyle.colorIndex * 3 + 2] = speechTextStyle.blue;
 	}
 
-	_subtitle.visible = true;
-	_subtitle.colorIndex = speechTextStyle.colorIndex;
-	layoutSpeechOverlay(_subtitle, _vm->font(), speechTextStyle.centerX, speechTextStyle.topY);
-}
-
-void Scene9100::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-Common::String Scene9100::getStage003LargeTextRecord(uint16 recordId) const {
-	if (recordId < _stage003LargeRowBaseIndex)
-		return Common::String();
-
-	const uint localRecordId = recordId - _stage003LargeRowBaseIndex;
-	const uint offset = localRecordId * kStage003LargeRowSize;
-	if (offset >= _stage003LargeRows.size())
-		return Common::String();
-
-	const byte *row = _stage003LargeRows.data() + offset;
-	uint length = 0;
-	while (length < kStage003LargeRowSize && row[length] != 0)
-		++length;
-
-	return Common::String((const char *)row, length);
 }
 
 void Scene9100::drawInitialForegroundFrame() {
@@ -1155,7 +882,7 @@ void Scene9100::restoreForegroundActorLayer() {
 		return;
 
 	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+	restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
 void Scene9100::drawForegroundActorLayer() {
@@ -1163,7 +890,7 @@ void Scene9100::drawForegroundActorLayer() {
 		return;
 
 	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
 void Scene9100::drawDeskActorLayer(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground) {
@@ -1264,9 +991,9 @@ void Scene9100::advanceClockFrame() {
 
 void Scene9100::restoreClockAreaBackground() {
 	for (byte frame = 0; frame < kI10ClockDescriptorCount; ++frame) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, frame);
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, frame);
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[7], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[8], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[9], 0, kI10ClockDescriptorCount, frame);
 	}
 }
 
@@ -1276,9 +1003,9 @@ void Scene9100::drawClockLayers(bool restoreBackground) {
 
 	if (restoreBackground)
 		restoreClockAreaBackground();
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
 }
 
 void Scene9100::drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant) {
@@ -1304,31 +1031,31 @@ void Scene9100::restoreSpriteBackground(const Common::Array<byte> &resource, uin
 }
 
 void Scene9100::applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset) {
-	Hollywood::drawResourceBlockList(_resourceArena, baseOffset, _frameDecodeBuffer.surface());
+	Hollywood::drawResourceBlockList(_resources.arena, baseOffset, _frameDecodeBuffer.surface());
 }
 
 void Scene9100::drawResourceBlockListToSceneFramebuffer(uint32 baseOffset) {
-	Hollywood::drawResourceBlockList(_resourceArena, baseOffset, _sceneFramebuffer.surface());
+	Hollywood::drawResourceBlockList(_resources.arena, baseOffset, _sceneFramebuffer.surface());
 }
 
 void Scene9100::restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination) {
-	if (baseOffset + 2 > _resourceArena.size())
+	if (baseOffset + 2 > _resources.arena.size())
 		return;
 
-	const uint16 blockCount = readUint16(_resourceArena, baseOffset);
+	const uint16 blockCount = readUint16(_resources.arena, baseOffset);
 	uint cursor = baseOffset + 2;
 	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resourceArena.size())
+		if (cursor + 6 > _resources.arena.size())
 			return;
 
-		const uint32 packedDestination = readUint32(_resourceArena, cursor);
-		const uint16 size = readUint16(_resourceArena, cursor + 4);
+		const uint32 packedDestination = readUint32(_resources.arena, cursor);
+		const uint16 size = readUint16(_resources.arena, cursor + 4);
 		cursor += 6;
 
 		const uint x = packedDestination & 0xffff;
 		const uint y = (packedDestination >> 16) & 0xffff;
 		const uint targetOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + size > _resourceArena.size() ||
+		if (cursor + size > _resources.arena.size() ||
 				targetOffset + size > destination.size() ||
 				targetOffset + size > _cleanOfficeBaseFramebuffer.size())
 			return;
@@ -1342,7 +1069,7 @@ void Scene9100::removeInitialOfficeTitlePatch(IndexedSurfaceBuffer &destination)
 	if (_dialogueBranch)
 		return;
 
-	restoreResourceBlockListFromCleanOfficeBase(_resourceChunkOffsets[16], destination);
+	restoreResourceBlockListFromCleanOfficeBase(_resources.chunkOffsets[16], destination);
 }
 
 void Scene9100::expandFillRunsToSavedFramebuffer() {
@@ -1410,20 +1137,16 @@ void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 
 void Scene9100::copyPaletteSegment(byte segmentIndex) {
 	const uint32 sourceOffset = getSegmentOffset(segmentIndex);
-	if (sourceOffset + kPaletteSize > _resourceArena.size())
+	if (sourceOffset + kPaletteSize > _resources.arena.size())
 		return;
 
-	memcpy(_paletteCurrent.data(), _resourceArena.data() + sourceOffset, kPaletteSize);
+	memcpy(_paletteCurrent.data(), _resources.arena.data() + sourceOffset, kPaletteSize);
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
 void Scene9100::copyDefaultPalette() {
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
-}
-
-void Scene9100::drawFrameOverlays() {
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
@@ -1479,22 +1202,10 @@ byte Scene9100::nextTalkingFrameVariant() {
 
 uint32 Scene9100::getSegmentOffset(byte segmentIndex) const {
 	const uint chunkIndex = 5 + segmentIndex;
-	if (chunkIndex >= ARRAYSIZE(_resourceChunkOffsets))
+	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return 0;
 
-	return _resourceChunkOffsets[chunkIndex];
-}
-
-Scene9100::PopupDescriptor Scene9100::getStage003PopupDescriptor(uint16 textBankIndex, byte descriptorIndex) const {
-	const uint recordOffset = (textBankIndex * 500) + (descriptorIndex * 5);
-	if (recordOffset + 5 > _stage003Descriptors.size())
-		return PopupDescriptor{0, 0, 0};
-
-	return PopupDescriptor{
-		readUint16(_stage003Descriptors, recordOffset),
-		_stage003Descriptors[recordOffset + 2],
-		readUint16(_stage003Descriptors, recordOffset + 3)
-	};
+	return _resources.chunkOffsets[chunkIndex];
 }
 
 uint16 Scene9100::readUint16(const Common::Array<byte> &source, uint offset) const {

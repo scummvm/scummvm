@@ -32,7 +32,7 @@
 #include "hollywood/scenes/animation_player.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
-#include "hollywood/scenes/playable/scene_text_store.h"
+#include "hollywood/scenes/scene_text_store.h"
 #include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {

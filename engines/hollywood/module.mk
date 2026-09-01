@@ -25,8 +25,8 @@ MODULE_OBJS = \
 	scenes/resource_delta_clip_player.o \
 	scenes/scene_resources.o \
 	scenes/scene_registry.o \
+	scenes/scene_text_store.o \
 	scenes/speech_overlay.o \
-	scenes/intro/intro_text.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
@@ -129,7 +129,6 @@ MODULE_OBJS = \
 	scenes/playable/scene8010.o \
 	scenes/playable/scene8020.o \
 	scenes/playable/scene_surface_state.o \
-	scenes/playable/scene_text_store.o \
 	scenes/playable/speech_controller.o \
 	scenes/playable/playable_scene.o \
 	scenes/playable/playable_scene_actions.o

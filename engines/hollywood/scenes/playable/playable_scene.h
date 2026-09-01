@@ -45,7 +45,7 @@
 #include "hollywood/scenes/playable/scene_config.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
-#include "hollywood/scenes/playable/scene_text_store.h"
+#include "hollywood/scenes/scene_text_store.h"
 #include "hollywood/scenes/playable/speech_controller.h"
 #include "hollywood/scenes/speech_overlay.h"
 

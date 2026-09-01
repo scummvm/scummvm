@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "hollywood/font.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -57,6 +58,7 @@ PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		uint32 sceneFramebufferSize, uint32 savedFramebufferSize) :
 		_vm(vm),
 		_debugName(debugName),
+		_resources(),
 		_skipRequested(false) {
 	_paletteCurrent.resize(kPaletteSize);
 	_sceneFramebuffer.resize(sceneFramebufferSize);
@@ -73,6 +75,104 @@ uint PresentationScene::presentRowOffset() const {
 
 uint PresentationScene::presentXOffset() const {
 	return 0;
+}
+
+int PresentationScene::subtitleViewportXOffset() const {
+	return 0;
+}
+
+int PresentationScene::subtitleViewportYOffset() const {
+	return 0;
+}
+
+bool PresentationScene::showAnchoredSubtitle(const Common::String &text,
+		byte colorIndex, int centerX, int anchorBottomY,
+		SpeechOverlayWrapStyle wrapStyle) {
+	return showAnchoredSubtitle(_subtitle, text, colorIndex, centerX,
+		anchorBottomY, wrapStyle);
+}
+
+bool PresentationScene::showAnchoredSubtitle(SpeechOverlay &overlay,
+		const Common::String &text, byte colorIndex, int centerX,
+		int anchorBottomY, SpeechOverlayWrapStyle wrapStyle) {
+	if (!showPositionedSubtitle(overlay, text, colorIndex, centerX, 0, wrapStyle))
+		return false;
+
+	layoutSpeechOverlay(overlay, _vm->font(), centerX, anchorBottomY,
+		subtitleViewportXOffset());
+	return true;
+}
+
+bool PresentationScene::showPositionedSubtitle(const Common::String &text,
+		byte colorIndex, int centerX, int topY,
+		SpeechOverlayWrapStyle wrapStyle) {
+	return showPositionedSubtitle(_subtitle, text, colorIndex, centerX, topY,
+		wrapStyle);
+}
+
+bool PresentationScene::showPositionedSubtitle(SpeechOverlay &overlay,
+		const Common::String &text, byte colorIndex, int centerX, int topY,
+		SpeechOverlayWrapStyle wrapStyle) {
+	clearSubtitle(overlay);
+	if (!_vm->subtitlesEnabled() || text.empty() || !_vm->font() ||
+			!_vm->font()->isLoaded())
+		return false;
+
+	overlay.colorIndex = colorIndex;
+	overlay.centerX = centerX;
+	overlay.topY = topY;
+	wrapSpeechOverlayText(text, centerX - subtitleViewportXOffset(), overlay.lines,
+		wrapStyle);
+	overlay.visible = !overlay.lines.empty();
+	return overlay.visible;
+}
+
+void PresentationScene::clearSubtitle() {
+	clearSubtitle(_subtitle);
+}
+
+void PresentationScene::clearSubtitle(SpeechOverlay &overlay) {
+	overlay.visible = false;
+	overlay.lines.clear();
+}
+
+bool PresentationScene::loadFixedChunk(uint index, Common::Array<byte> &destination,
+		uint fixedSize) {
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
+}
+
+bool PresentationScene::loadFixedChunk(uint index, IndexedSurfaceBuffer &destination,
+		uint fixedSize) {
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
+}
+
+bool PresentationScene::loadVariableChunk(uint index,
+		Common::Array<byte> &destination) {
+	return _resources.loadVariableChunk(index, destination);
+}
+
+bool PresentationScene::loadChunkTo(uint index, Common::Array<byte> &destination,
+		uint32 destinationOffset) {
+	return _resources.loadChunkTo(_debugName, index, destination, destinationOffset);
+}
+
+bool PresentationScene::loadArenaChunk(uint index) {
+	return _resources.loadArenaChunk(_debugName, index);
+}
+
+bool PresentationScene::loadArenaChunk(uint archiveIndex, uint localChunkIndex) {
+	return _resources.loadArenaChunk(_debugName, archiveIndex, localChunkIndex);
+}
+
+bool PresentationScene::loadArenaChunkAlias(uint sourceIndex, uint aliasIndex,
+		uint targetIndex) {
+	return _resources.loadArenaChunkAlias(_debugName, sourceIndex, aliasIndex,
+		targetIndex);
+}
+
+void PresentationScene::drawFrameOverlays() {
+	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr(),
+		subtitleViewportXOffset(), subtitleViewportYOffset());
 }
 
 void PresentationScene::presentFrame() {

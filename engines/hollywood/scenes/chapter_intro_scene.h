@@ -62,7 +62,6 @@ protected:
 	void rotatePaletteRange(uint firstIndex, uint lastIndex);
 	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
 
-	SceneResources _resources;
 	MusicPlayer _music;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;

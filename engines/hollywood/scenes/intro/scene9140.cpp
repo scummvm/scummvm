@@ -113,22 +113,16 @@ const uint kScene9140VariantStepCounts[] = {
 
 Scene9140::Scene9140(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9140"),
-		_resources(),
 		_speech(vm->getLanguage()),
 		_text(),
 		_paletteResource(),
 		_baseFramebuffer(),
-		_subtitle(),
 		_rightBodyFrame(0),
 		_mouthFrame(0),
 		_leftLoopEnabled(false),
 		_speechAnimationStep(0) {
 	_paletteResource.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = kScene9140SpeechColor;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 }
 
 bool Scene9140::play() {
@@ -172,8 +166,8 @@ bool Scene9140::load() {
 	if (!_resources.validateChunkRange(kScene9140ArchiveName, _debugName, 0, 4))
 		return false;
 
-	if (!loadChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	_resources.allocateArena(_resources.totalChunkSize(2, 4));
@@ -187,18 +181,6 @@ bool Scene9140::load() {
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	return true;
-}
-
-bool Scene9140::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9140::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9140::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9140::runVariantSequence(byte variantIndex) {
@@ -261,14 +243,8 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !_skipRequested && !Engine::shouldQuit(); ++part) {
 		const Common::String text = _text.largeTextRecord(textRecordId + part);
-		if (!text.empty()) {
-			_subtitle.visible = true;
-			_subtitle.colorIndex = kScene9140SpeechColor;
-			_subtitle.centerX = centerX;
-			_subtitle.topY = topY;
-			wrapSpeechOverlayText(text, centerX, _subtitle.lines,
-				kSpeechOverlayFixedEdgeWrap);
-		}
+		showPositionedSubtitle(text, kScene9140SpeechColor, centerX, topY,
+			kSpeechOverlayFixedEdgeWrap);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
@@ -334,15 +310,6 @@ void Scene9140::drawComposite() {
 		kScene9140MouthFrameMap[_mouthFrame] : 0;
 	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
 		kScene9140MouthDescriptorCount, mouthFrame, _sceneFramebuffer.surface());
-}
-
-void Scene9140::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-void Scene9140::drawFrameOverlays() {
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 void Scene9140::fadeOutPalette() {

@@ -41,9 +41,6 @@ public:
 
 private:
 	bool loadResourceI12Assets();
-	bool loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadResourceI12ArenaChunk(uint index);
 
 	void runTimedOverlayPhase();
 	void runHoldScrollAndIdlePhase();
@@ -82,7 +79,6 @@ private:
 	MusicPlayer *_music;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
-	SceneResources _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _descriptorBackground;
 	uint32 _overlayAccumulator;

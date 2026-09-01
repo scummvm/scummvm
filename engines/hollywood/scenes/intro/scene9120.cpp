@@ -37,7 +37,6 @@ Scene9120::Scene9120(HollywoodEngine *vm) :
 		_music(vm->introMusic()),
 		_soundBank0(),
 		_random("hollywood_scene9120"),
-		_resources(),
 		_overlayAccumulator(0),
 		_scrollAccumulator(0),
 		_actorBobAccumulator(0),
@@ -121,8 +120,8 @@ bool Scene9120::loadResourceI12Assets() {
 			return false;
 	}
 
-	if (!loadResourceI12Chunk(0, _sceneFramebuffer, kScene9120FramebufferSize) ||
-			!loadResourceI12Chunk(1, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _sceneFramebuffer, kScene9120FramebufferSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	uint32 resourceArenaSize = 0;
@@ -132,7 +131,7 @@ bool Scene9120::loadResourceI12Assets() {
 	_resources.allocateArena(resourceArenaSize);
 
 	for (uint i = 2; i < kI12RequiredChunkCount; ++i) {
-		if (!loadResourceI12ArenaChunk(i))
+		if (!loadArenaChunk(i))
 			return false;
 	}
 
@@ -145,18 +144,6 @@ bool Scene9120::loadResourceI12Assets() {
 	_smallAnimFrame = 0;
 	_viewportDirty = false;
 	return true;
-}
-
-bool Scene9120::loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9120::loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9120::loadResourceI12ArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9120::runTimedOverlayPhase() {

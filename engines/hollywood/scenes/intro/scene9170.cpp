@@ -82,7 +82,6 @@ const byte kScene9170ScrollUpB[] = {
 
 Scene9170::Scene9170(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
-		_resources(),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
 		_ambientSpeech(vm->getLanguage()),
@@ -93,7 +92,6 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 		_paletteResource(),
 		_baseFramebuffer(),
 		_staticFramebuffer(),
-		_subtitle(),
 		_rowOffset(0),
 		_upperActorsEnabled(false),
 		_lowerActorsEnabled(false),
@@ -112,10 +110,6 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 	_paletteResource.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_staticFramebuffer.resize(kScene9170TallFramebufferSize);
-	_subtitle.visible = false;
-	_subtitle.colorIndex = kScene9170BlueSpeechColor;
-	_subtitle.centerX = 0;
-	_subtitle.topY = 0;
 	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
 	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = false;
 }
@@ -148,7 +142,7 @@ bool Scene9170::load() {
 	if (!_resources.validateChunkRange(kScene9170ArchiveName, _debugName, 0, 8))
 		return false;
 
-	if (!loadChunk(0, _paletteResource, kPaletteSize))
+	if (!loadFixedChunk(0, _paletteResource, kPaletteSize))
 		return false;
 
 	_resources.allocateArena(_resources.totalChunkSize(1, 8));
@@ -162,14 +156,6 @@ bool Scene9170::load() {
 
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	return true;
-}
-
-bool Scene9170::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
-}
-
-bool Scene9170::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9170::runSequence() {
@@ -521,12 +507,7 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !_skipRequested && !Engine::shouldQuit(); ++part) {
 		const Common::String text = _text.largeTextRecord(textRecordId + part);
-		if (!text.empty()) {
-			_subtitle.visible = true;
-			_subtitle.colorIndex = kScene9170BlueSpeechColor;
-			wrapSpeechOverlayText(text, centerX, _subtitle.lines);
-			layoutSpeechOverlay(_subtitle, _vm->font(), centerX, topY);
-		}
+		showAnchoredSubtitle(text, kScene9170BlueSpeechColor, centerX, topY);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
@@ -710,22 +691,16 @@ uint Scene9170::presentRowOffset() const {
 	return _rowOffset + (_shakeActive ? _shakeRowOffset : 0);
 }
 
+int Scene9170::subtitleViewportYOffset() const {
+	return _rowOffset == 0x0a0 || _rowOffset == 0x140 ? _rowOffset : 0;
+}
+
 void Scene9170::stopAudio() {
 	_speech.stop();
 	_ambientSpeech.stop();
 	_sound.stop();
 	_ambientSound.stop();
 	_music->stop();
-}
-
-void Scene9170::clearSubtitle() {
-	_subtitle.visible = false;
-	_subtitle.lines.clear();
-}
-
-void Scene9170::drawFrameOverlays() {
-	const int viewportYOffset = _rowOffset == 0x0a0 || _rowOffset == 0x140 ? _rowOffset : 0;
-	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr(), 0, viewportYOffset);
 }
 
 } // End of namespace Hollywood
