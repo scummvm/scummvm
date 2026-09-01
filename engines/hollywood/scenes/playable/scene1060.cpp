@@ -80,7 +80,6 @@ const byte kScene1060FlySlimeIdleFrame = 0;
 const byte kScene1060TicketLastPickupFrame = 0x1e;
 const byte kScene1060FlySlimeLastFrame = 0x24;
 const byte kScene1060TicketPickupStateFrame = 4;
-const byte kScene1060SkullcrackerExchangeHook = 2;
 const byte kScene1060TicketPickupAdvanceLimitFrame = 0x20;
 const byte kScene1060TicketPickupResetFrame = 8;
 const byte kScene1060JuniorExchangeFirstOverlayFrame = 10;
@@ -145,6 +144,11 @@ const byte kScene1060SkullcrackerHandoffFrameMap[] = {
 	10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1,
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 11,
 	11, 11, 11, 11, 11, 11, 11, 11, 11
+};
+
+const byte kScene1060JuniorHandoffFrameMap[] = {
+	29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34,
+	35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 40
 };
 
 const byte kScene1060FlySlimeExchangeFrameMap[] = {
@@ -395,14 +399,6 @@ AmbientAudioProfile Scene1060::ambientAudioProfile() const {
 	profile.musicProbabilityModulus = kScene1060AmbientMusicProbabilityModulus;
 	profile.musicVolumePercent = 100;
 	return profile;
-}
-
-void Scene1060::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene1060SkullcrackerExchangeHook &&
-			frame >= kScene1060JuniorExchangeFirstOverlayFrame &&
-			(frame - kScene1060JuniorExchangeFirstOverlayFrame) % 2 == 0 &&
-			largeBackgroundLayer().frameIndex < kScene1060JuniorExchangeFinalFrame)
-		largeBackgroundLayer().setFrame(largeBackgroundLayer().frameIndex + 1);
 }
 
 void Scene1060::resetAnimationLayers() {
@@ -1129,7 +1125,10 @@ void Scene1060::handleSkullcrackerExchange() {
 		.secondarySpeech(14, 1)
 		.actorReplacement(ActionOverlaySpec(12, kScene1060SkullcrackerExchangeDescriptorCount,
 			kScene1060SkullcrackerHandoffFrameMap, ARRAYSIZE(kScene1060SkullcrackerHandoffFrameMap),
-			kScene1060FrameMillis).hookEveryFrame(kScene1060SkullcrackerExchangeHook));
+			kScene1060FrameMillis)
+			.mappedLayerFrames(kLargeBackgroundLayer, kScene1060JuniorHandoffFrameMap,
+				ARRAYSIZE(kScene1060JuniorHandoffFrameMap),
+				kScene1060JuniorExchangeFirstOverlayFrame));
 	largeBackgroundLayer().setFrame(kScene1060JuniorExchangeFinalFrame);
 	_juniorPoseSequenceActive = false;
 

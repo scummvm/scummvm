@@ -65,7 +65,6 @@ const byte kScene6070State609SueSpeechGroup = 3;
 const byte kScene6070SueIdleSpeechGroup = 4;
 const byte kScene6070SueIdleSpeechId = 1;
 const byte kScene6070RonRetortSpeechId = 2;
-const byte kScene6070TransferFrameHook = 1;
 const uint kScene6070FixedGiveHandlerIndex = 0x110;
 const uint16 kScene6070FixedGiveHandlerDefault = 0x79;
 
@@ -498,14 +497,6 @@ void Scene6070::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	}
 }
 
-void Scene6070::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId != kScene6070TransferFrameHook ||
-		frame >= ARRAYSIZE(kScene6070TransferSueFrameMap))
-		return;
-	_sceneLayers.setLayerFrame(kScene6070SueLayer,
-		kScene6070TransferSueFrameMap[frame]);
-}
-
 bool Scene6070::shouldRunExitSideEffectsAfterLoop() const {
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
 	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
@@ -779,8 +770,9 @@ void Scene6070::handleGiveItemToSue() {
 	beginSecondarySpeechLine(6, 0);
 	_manualSequenceActive = true;
 	runActorReplacement(ActionOverlaySpec(10, 0x0c, kScene6070TransferFrameMap,
-									   ARRAYSIZE(kScene6070TransferFrameMap), kScene6070OverlayFrameMillis)
-						 .hookEveryFrame(kScene6070TransferFrameHook));
+		ARRAYSIZE(kScene6070TransferFrameMap), kScene6070OverlayFrameMillis)
+		.mappedLayerFrames(kScene6070SueLayer, kScene6070TransferSueFrameMap,
+			ARRAYSIZE(kScene6070TransferSueFrameMap)));
 	_sceneLayers.setLayerFrame(kScene6070SueLayer, 14);
 	_manualSequenceActive = false;
 

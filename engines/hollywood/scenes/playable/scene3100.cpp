@@ -59,10 +59,6 @@ const byte kScene3100PaletteCycleLastColor = 0x9f;
 const uint kScene3100CabinLayer = 0;
 const uint kScene3100AlternateLayer = 1;
 
-enum Scene3100AnimationHook {
-	kScene3100ResolutionAnimationHook = 1
-};
-
 const byte kScene3100CabinFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
@@ -283,22 +279,6 @@ void Scene3100::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	(void)animationGroup;
 	_dialogueChannel.frameIndex = baseFrame;
 	_sceneLayers.setLayerFrame(kScene3100CabinLayer, baseFrame);
-}
-
-void Scene3100::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene3100ResolutionAnimationHook:
-		if (frame >= 6 && frame - 6 < ARRAYSIZE(kScene3100ResolutionCabinFrameMap)) {
-			const byte cabinFrame = kScene3100ResolutionCabinFrameMap[frame - 6];
-			_cabinChannel.frameIndex = cabinFrame;
-			_sceneLayers.setLayerFrame(kScene3100CabinLayer, cabinFrame);
-			if (frame == 10)
-				_soundBank0.playSample(0x1a, 100);
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 void Scene3100::resetAnimationLayers() {
@@ -539,7 +519,9 @@ void Scene3100::runConversationResolutionSequence() {
 	runActorReplacement(ActionOverlaySpec(8, 0x0b,
 		kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
 		.soundAt(5, 0x19)
-		.hookEveryFrame(kScene3100ResolutionAnimationHook));
+		.mappedLayerFrames(kScene3100CabinLayer, kScene3100ResolutionCabinFrameMap,
+			ARRAYSIZE(kScene3100ResolutionCabinFrameMap), 6)
+		.soundAt(10, 0x1a));
 	_resolutionSequenceActive = false;
 	state.scene3100GirlConversationState = 2;
 	state.scene3100DaisyVisible = true;

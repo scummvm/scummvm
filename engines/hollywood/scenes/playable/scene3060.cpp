@@ -580,8 +580,7 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 }
 
 void Scene3060::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (frame != 3)
-		return;
+	(void)frame;
 	if (hookId == kScene3060RotateGlobeForwardHook)
 		rotateGlobe(1);
 	else if (hookId == kScene3060RotateGlobeBackwardHook)

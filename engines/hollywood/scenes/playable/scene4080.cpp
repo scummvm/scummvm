@@ -100,7 +100,8 @@ const byte kScene4080GominolaItem = 0x44;
 const byte kScene4080SteakItem = 0x45;
 
 enum Scene4080AnimationHookId {
-	kScene4080StakeSequenceHook = 1
+	kScene4080StakePaletteHook = 1,
+	kScene4080StakeImpactSoundsHook
 };
 
 enum Scene4080GwendolynSpeechPoseMode {
@@ -551,20 +552,14 @@ AmbientAudioProfile Scene4080::ambientAudioProfile() const {
 }
 
 void Scene4080::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene4080StakeSequenceHook) {
-		GameplayState &state = _vm->gameState();
-		if (frame == 0x1d) {
-			state.scene4080GwendolynState = 0;
-			_soundBank0.playSample(0x18, 100);
-			configurePalettePatchLayerForState();
-		} else if (frame == 0x20) {
-			_additionalAmbientSoundBank0Slots[0].playSample(0x19, 100);
-			_additionalAmbientSoundBank0Slots[1].playSample(0x1a, 100);
-		}
-		return;
-	}
-
-	PlayableScene::handleAnimationFrameHook(hookId, frame);
+	(void)frame;
+	if (hookId == kScene4080StakePaletteHook)
+		configurePalettePatchLayerForState();
+	else if (hookId == kScene4080StakeImpactSoundsHook) {
+		_additionalAmbientSoundBank0Slots[0].playSample(0x19, 100);
+		_additionalAmbientSoundBank0Slots[1].playSample(0x1a, 100);
+	} else
+		PlayableScene::handleAnimationFrameHook(hookId, frame);
 }
 
 byte Scene4080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -1163,7 +1158,11 @@ void Scene4080::runUseStakeOnGwendolyn() {
 	if (!playResourceLayerSequence(kScene4080ScriptLayer, kScene4080StakeSequenceChunk,
 			kScene4080StakeSequenceDescriptorCount, kScene4080StakeSequenceFrameMap,
 			AnimationFrameRange(0x18, ARRAYSIZE(kScene4080StakeSequenceFrameMap) - 1, 40)
-				.unskippable().hookEveryFrame(kScene4080StakeSequenceHook)
+				.unskippable()
+				.commitAt(0x1d, state.scene4080GwendolynState, (byte)0)
+				.soundAt(0x1d, 0x18)
+				.hookAt(0x1d, kScene4080StakePaletteHook)
+				.hookAt(0x20, kScene4080StakeImpactSoundsHook)
 				.noFinalFrameDelay()))
 		return;
 	_soundBank0.playSample(0x1b, 100);
