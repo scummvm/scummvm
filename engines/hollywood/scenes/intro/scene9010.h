@@ -26,15 +26,15 @@
 #include "common/file.h"
 #include "common/str.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
+#include "hollywood/scenes/presentation_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9010 {
+class Scene9010 : public PresentationScene {
 public:
 	Scene9010(HollywoodEngine *vm);
 
@@ -105,7 +105,7 @@ private:
 	void updateScene9010PaletteFade();
 	bool fadeInPalette(uint32 stepMillis);
 	bool fadeOutPalette(uint32 stepMillis);
-	void presentFrame(uint rowOffset = 0, uint xOffset = 0);
+	void drawFrameOverlays() override;
 	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex);
 	void clearSubtitle();
 	void drawSubtitleOverlay();
@@ -117,10 +117,8 @@ private:
 	PopupDescriptor getStage003PopupDescriptor(byte descriptorIndex) const;
 	SpeechTextStyle getCurrentSpeechTextStyle() const;
 
-	bool pollEvents();
-	bool delay(uint32 millis);
 	bool delayScene9010(uint32 millis);
-	void stopAudio();
+	void stopAudio() override;
 
 	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
@@ -140,26 +138,20 @@ private:
 		kOriginalSpeechLineHeight = 20
 	};
 
-	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	SpeechPlayer _speech;
 	ResourceChunkTable _i01ChunkTable;
 	Common::Array<byte> _paletteSource;
-	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _i02PaletteTable;
 	Common::Array<byte> _i02FramePayload;
 	I02FramePayloadFormat _i02FramePayloadFormat;
 	bool _i02SingleFrameOnly;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
 	SubtitleOverlay _subtitle;
-	bool _skipRequested;
 	bool _alternatePoseActive;
 	byte _characterFrameIndex;
 	byte _lastTalkingFrameVariant;

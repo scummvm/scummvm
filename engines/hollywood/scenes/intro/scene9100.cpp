@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9100.h"
 
 #include "common/debug.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
@@ -83,7 +82,7 @@ const Scene9100::SpeechTextStyle kRonSecondarySpeech = { 0x276, 0x10c, kSecondar
 const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
 
 Scene9100::Scene9100(HollywoodEngine *vm) :
-		_vm(vm),
+		PresentationScene(vm, "intro scene 9100"),
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
 		_effectSound(),
@@ -107,19 +106,14 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_deskPrimaryActorVisible(false),
 		_deskSecondaryActorVisible(false),
 		_dialogueBranch(false),
-		_subtitle(),
-		_skipRequested(false) {
+		_subtitle() {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteDefault.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
-	_sceneFramebuffer.resize(kFrameDecodeBufferSize);
-	_savedFramebuffer.resize(kFrameDecodeBufferSize);
 	_cleanOfficeBaseFramebuffer.resize(kFrameDecodeBufferSize);
 	_presentationPaletteRemapTable.resize(kPresentationPaletteRemapTableSize);
 	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
 		_presentationPaletteRemapTable[i] = 0;
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_stage003LargeRowBaseIndex = kStage910LargeRowBaseIndex;
@@ -1589,133 +1583,8 @@ void Scene9100::copyDefaultPalette() {
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
-void Scene9100::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		copySavedFramebufferRun(sweepOffset + row, leftInset, innerWidth);
-		copySavedFramebufferRun((HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleLeftX = leftInset;
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = combinedInset + row;
-			copySavedFramebufferRun(y, middleLeftX, bandWidth);
-			copySavedFramebufferRun(y, middleRightX, bandWidth);
-		}
-	}
-}
-
-void Scene9100::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		clearSceneFramebufferRun(sweepOffset + row, leftInset, innerWidth);
-		clearSceneFramebufferRun((HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleLeftX = leftInset;
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = combinedInset + row;
-			clearSceneFramebufferRun(y, middleLeftX, bandWidth);
-			clearSceneFramebufferRun(y, middleRightX, bandWidth);
-		}
-	}
-}
-
-void Scene9100::copySavedFramebufferRun(int y, int x, int width) {
-	if (width <= 0 || y < 0 || x < 0)
-		return;
-
-	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
-	if (offset + width > _sceneFramebuffer.size() || offset + width > _savedFramebuffer.size())
-		return;
-
-	memcpy(_sceneFramebuffer.data() + offset, _savedFramebuffer.data() + offset, width);
-}
-
-void Scene9100::clearSceneFramebufferRun(int y, int x, int width) {
-	if (width <= 0 || y < 0 || x < 0)
-		return;
-
-	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
-	if (offset + width > _sceneFramebuffer.size())
-		return;
-
-	memset(_sceneFramebuffer.data() + offset, 0, width);
-}
-
-void Scene9100::presentFrame() {
-	_displayPalette.uploadFrom6Bit(_paletteCurrent);
-
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.getBasePtr(0, y),
-			_sceneFramebuffer.data() + sourceOffset,
-			HollywoodEngine::kScreenWidth);
-	}
-
+void Scene9100::drawFrameOverlays() {
 	drawSubtitleOverlay();
-
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
-}
-
-bool Scene9100::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			stopAudio();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				stopAudio();
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
-bool Scene9100::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
 }
 
 bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
