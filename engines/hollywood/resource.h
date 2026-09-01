@@ -52,13 +52,6 @@ struct ScenePoint {
 	int16 y;
 };
 
-struct SceneItemMetadata {
-	byte defaultStrip;
-	byte facing;
-	ScenePoint interactionPoint;
-	ScenePoint approachPoint;
-};
-
 enum SceneMetadataOffset {
 	kActorDepthThresholds = 0x0000,
 	kPaletteDeltaTable = 0x002a,
@@ -86,11 +79,7 @@ enum ScenePaletteMapOffset {
 	kScenePaletteMapByteCount = 0x700
 };
 
-class ResourceManager {
-public:
-	bool readChunkTable(const Common::Path &fileName, ResourceChunkTable &table) const;
-	Common::SeekableReadStream *createChunkReadStream(const Common::Path &fileName, uint index) const;
-};
+Common::SeekableReadStream *createResourceChunkReadStream(const Common::Path &fileName, uint index);
 
 // Keeps a RESOURCE.* archive open and reads chunks through its parsed table.
 class ChunkArchive {
@@ -99,7 +88,6 @@ public:
 
 	bool open(const Common::Path &fileName);
 	void close();
-	bool isOpen() const { return _open; }
 
 	const Common::Path &fileName() const { return _fileName; }
 	const ResourceChunkTable &chunkTable() const { return _chunkTable; }

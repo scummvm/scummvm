@@ -654,7 +654,7 @@ void Scene4060::runFirstEntrySequence() {
 	presentFrame();
 
 	BlockingSequence sequence(*this);
-	sequence.paletteTransition(BlockingSequence::kFadeFromBlack)
+	sequence.fadeFromBlack()
 		.sound(0x31)
 		.presentedLayerFrames(_actionOverlayPlayer.layer,
 			AnimationFrameRange(1, ARRAYSIZE(kScene4060EntryOverlayFrameMap) - 1,

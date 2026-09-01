@@ -255,7 +255,8 @@ bool Scene9100::loadActorResources() {
 }
 
 bool Scene9100::loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorSpriteBank &bank) {
-	Common::ScopedPtr<Common::SeekableReadStream> runStream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), runStreamChunkIndex));
+	Common::ScopedPtr<Common::SeekableReadStream> runStream(
+		createResourceChunkReadStream(Common::Path(kI10ArchiveName), runStreamChunkIndex));
 	if (!runStream) {
 		warning("Failed to open %s actor run chunk %u", kI10ArchiveName, runStreamChunkIndex);
 		return false;
@@ -285,7 +286,8 @@ bool Scene9100::loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkI
 		return false;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> descriptorStream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), descriptorChunkIndex));
+	Common::ScopedPtr<Common::SeekableReadStream> descriptorStream(
+		createResourceChunkReadStream(Common::Path(kI10ArchiveName), descriptorChunkIndex));
 	if (!descriptorStream) {
 		warning("Failed to open %s actor descriptor chunk %u", kI10ArchiveName, descriptorChunkIndex);
 		return false;
@@ -338,17 +340,6 @@ void Scene9100::runEntryActorAnimations() {
 
 	applyActorHighlightColor(0x3f, 0x3f, 0x3f);
 	playEntryActorAnimation(_actorBankI10Ron, 0x307, 0x1d4, baseFramebuffer);
-
-	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-}
-
-void Scene9100::showSueEntryActor() {
-	IndexedSurfaceBuffer baseFramebuffer;
-	baseFramebuffer.resize(_sceneFramebuffer.size());
-	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
-
-	applyActorHighlightColor(0x3f, 0x28, 0x32);
-	playEntryActorAnimation(_actorBankI10Sue, 0x130, 0x172, baseFramebuffer);
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }

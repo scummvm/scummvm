@@ -196,14 +196,6 @@ public:
 			_layers[id].stratum = stratum;
 	}
 
-	bool hasVisibleLayers() const {
-		for (uint i = 0; i < _layers.size(); ++i) {
-			if (_layers[i].configured && _layers[i].layer.visible)
-				return true;
-		}
-		return false;
-	}
-
 	bool hasVisibleLayers(SceneAnimationStratum stratum) const {
 		for (uint i = 0; i < _layers.size(); ++i) {
 			if (_layers[i].configured && _layers[i].stratum == stratum &&

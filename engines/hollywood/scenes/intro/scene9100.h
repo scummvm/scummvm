@@ -78,7 +78,6 @@ private:
 
 	void applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
-	void showSueEntryActor();
 	void playEntryActorAnimation(const ActorSpriteBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer);
 	void runRonEntryConversation();
 	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);

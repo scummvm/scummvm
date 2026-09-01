@@ -108,33 +108,6 @@ struct AnimationTransition {
 	bool allowSkip;
 };
 
-// A fullscreen base image followed by delta patches. Playback temporarily owns
-// the scene framebuffer and palette, then restores the playable composite.
-struct FullscreenDeltaAnimationSpec {
-	FullscreenDeltaAnimationSpec(const Common::Array<byte> &newBase,
-			const Common::Array<byte> &newPalette, const Common::Array<byte> &newFrames,
-			uint newFrameCount, uint32 newFrameMillis) :
-			base(newBase),
-			palette(newPalette),
-			frames(newFrames),
-			frameCount(newFrameCount),
-			frameMillis(newFrameMillis),
-			allowSkip(false) {
-	}
-
-	FullscreenDeltaAnimationSpec &skippable() {
-		allowSkip = true;
-		return *this;
-	}
-
-	const Common::Array<byte> &base;
-	const Common::Array<byte> &palette;
-	const Common::Array<byte> &frames;
-	uint frameCount;
-	uint32 frameMillis;
-	bool allowSkip;
-};
-
 /**
  * Drives an inclusive frame range on any target exposing setFrame(byte).
  *
@@ -177,19 +150,9 @@ public:
 			_delegate(delegate) {
 	}
 
-	bool play(byte &targetFrame, const AnimationFrameRange &range) {
-		FrameValueTarget target(targetFrame);
-		return playInternal(target, range, false);
-	}
-
 	bool playAndPresent(byte &targetFrame, const AnimationFrameRange &range) {
 		FrameValueTarget target(targetFrame);
 		return playInternal(target, range, true);
-	}
-
-	bool transition(byte &targetFrame, const AnimationTransition &transition) {
-		FrameValueTarget target(targetFrame);
-		return transitionInternal(target, transition, false);
 	}
 
 	bool transitionAndPresent(byte &targetFrame, const AnimationTransition &transition) {
@@ -230,7 +193,7 @@ private:
 				return false;
 
 			target.setFrame(range.targetFrame(frame));
-			const Common::Array<AnimationFrameEvent> &events = range.events.entries();
+			const Common::Array<AnimationFrameEvent> &events = range.events;
 			for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 				if (events[eventIndex].matches(frame))
 					_delegate.handleAnimationFrameEvent(events[eventIndex], frame);

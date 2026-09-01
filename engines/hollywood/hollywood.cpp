@@ -146,7 +146,6 @@ int optionsLevelToConfigTalkSpeed(byte level) {
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
-		_resources(new ResourceManager()),
 		_font(new HollywoodFont()),
 		_introMusic(),
 		_gameplayMusic(),
@@ -162,7 +161,6 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 HollywoodEngine::~HollywoodEngine() {
 	_lastGameplayThumbnail.free();
 	delete _font;
-	delete _resources;
 }
 
 void HollywoodEngine::initializePath(const Common::FSNode &gamePath) {

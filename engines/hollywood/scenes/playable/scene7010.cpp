@@ -980,8 +980,8 @@ void Scene7010::runDogCloseupSequence() {
 		warning("Scene 7010 failed to load the dog close-up clip");
 		return;
 	}
-	playFullscreenDeltaAnimation(FullscreenDeltaAnimationSpec(base, palette, frames,
-		kScene7010EmbeddedClipFrameCount, kScene7010EmbeddedClipFrameMillis));
+	playFullscreenDeltaAnimation(base, palette, frames, kScene7010EmbeddedClipFrameCount,
+		kScene7010EmbeddedClipFrameMillis);
 }
 
 void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {

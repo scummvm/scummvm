@@ -383,7 +383,7 @@ void Scene5080::runMineCartEntryClip() {
 	mineCartLayer.reset(0);
 	drawPlayableComposite();
 	BlockingSequence sequence(*this);
-	sequence.paletteTransition(BlockingSequence::kFadeFromBlack);
+	sequence.fadeFromBlack();
 	if (!sequence.completed()) {
 		mineCartLayer.visible = false;
 		_hideActiveActor = previousHideActiveActor;

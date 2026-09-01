@@ -39,7 +39,6 @@ struct AnimationFrameEvent {
 		kStopSound,
 		kSecondarySpeech,
 		kPrimarySpeech,
-		kActorPose,
 		kActorPath,
 		kLayerFrame,
 		kLayerFrameMap,
@@ -48,7 +47,6 @@ struct AnimationFrameEvent {
 		kStateCommit,
 		kInvalidatePalette,
 		kFadeFromBlack,
-		kFadeToBlack,
 		kCustomHook
 	};
 	// Sound events target the main effect player unless an ambient slot is selected.
@@ -131,49 +129,72 @@ struct AnimationFrameEvent {
 	byte hookId;
 };
 
-class AnimationFrameEvents {
+// Fluent frame events shared by resource overlays and layer-frame ranges.
+template<class Spec>
+class AnimationEventSpec {
 public:
-	void addFramebufferPatch(int frame, byte selector) {
+	Spec &patchAt(int frame, byte selector) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kFramebufferPatch);
 		event.selector = selector;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
 	}
 
-	void addResourcePatch(int frame, uint chunkIndex) {
+	Spec &resourcePatchAt(int frame, uint resourceChunkIndex) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kResourcePatch);
-		event.resourceChunk = chunkIndex;
-		_events.push_back(event);
+		event.resourceChunk = resourceChunkIndex;
+		events.push_back(event);
+		return self();
 	}
 
-	void addSound(int frame, uint16 soundId, byte volumePercent, bool looping,
+	Spec &soundAt(int frame, uint16 soundId, byte volumePercent = 100,
 			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
-		AnimationFrameEvent event(frame, looping ? AnimationFrameEvent::kLoopingSound : AnimationFrameEvent::kSound);
-		event.soundId = soundId;
-		event.soundVolumePercent = volumePercent;
-		event.soundSlot = slotIndex;
-		_events.push_back(event);
+		addSound(frame, soundId, volumePercent, false, slotIndex);
+		return self();
 	}
 
-	void addStopSound(int frame) {
-		_events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kStopSound));
+	Spec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
+		addSound(frame, soundId, volumePercent, true, slotIndex);
+		return self();
 	}
 
-	void addResidentSound(int frame, byte soundId, byte volumePercent) {
+	Spec &stopSoundAt(int frame) {
+		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kStopSound));
+		return self();
+	}
+
+	Spec &ambientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = 0) {
+		addSound(frame, soundId, volumePercent, false, slotIndex);
+		return self();
+	}
+
+	Spec &loopingAmbientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = 0) {
+		addSound(frame, soundId, volumePercent, true, slotIndex);
+		return self();
+	}
+
+	Spec &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kResidentSound);
 		event.soundId = soundId;
 		event.soundVolumePercent = volumePercent;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
 	}
 
-	void addSecondarySpeech(int frame, uint16 rowIndex, byte frameIndex, byte speechId) {
+	Spec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			byte speechId = 0) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kSecondarySpeech);
 		event.speechRow = rowIndex;
 		event.speechFrame = frameIndex;
 		event.speechId = speechId;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
 	}
 
-	void addPrimarySpeech(int frame, uint16 rowIndex, byte frameIndex,
+	Spec &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
 			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kPrimarySpeech);
 		event.speechRow = rowIndex;
@@ -183,19 +204,12 @@ public:
 		event.speechRed = red;
 		event.speechGreen = green;
 		event.speechBlue = blue;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
 	}
 
-	void addActorPose(int frame, int x, int y, byte facing, byte cel) {
-		AnimationFrameEvent event(frame, AnimationFrameEvent::kActorPose);
-		event.actorX = x;
-		event.actorY = y;
-		event.actorFacing = facing;
-		event.actorCel = cel;
-		_events.push_back(event);
-	}
-
-	void addActorPath(int frame, int targetX, int targetY, byte finalFacing,
+	// Starts a path that advances alongside the blocking animation.
+	Spec &actorPathAt(int frame, int targetX, int targetY, byte finalFacing,
 			byte finalCel, uint32 frameMillis) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kActorPath);
 		event.actorX = targetX;
@@ -203,14 +217,88 @@ public:
 		event.actorFacing = finalFacing;
 		event.actorCel = finalCel;
 		event.actorPathFrameMillis = frameMillis;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
 	}
 
-	void addLayerFrame(int frame, uint layerId, byte layerFrame) {
+	Spec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerFrame);
 		event.layerId = layerId;
 		event.layerFrame = layerFrame;
-		_events.push_back(event);
+		events.push_back(event);
+		return self();
+	}
+
+	Spec &mappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		addLayerFrameMap(layerId, mappedFrames, mappedFrameCount, firstPlaybackFrame, false);
+		return self();
+	}
+
+	Spec &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		addLayerFrameMap(layerId, mappedFrames, mappedFrameCount, firstPlaybackFrame, true);
+		return self();
+	}
+
+	Spec &layerVisibleAt(int frame, uint layerId, bool visible) {
+		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerVisibility);
+		event.layerId = layerId;
+		event.layerVisible = visible;
+		events.push_back(event);
+		return self();
+	}
+
+	Spec &layerResetAt(int frame, uint layerId, byte layerFrame) {
+		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerReset);
+		event.layerId = layerId;
+		event.layerFrame = layerFrame;
+		events.push_back(event);
+		return self();
+	}
+
+	template<class T, class V>
+	Spec &commitAt(int frame, T &target, const V &value) {
+		static_assert(sizeof(T) <= sizeof(uint32), "Animation frame state value is too large");
+		AnimationFrameEvent event(frame, AnimationFrameEvent::kStateCommit);
+		event.commitTarget = &target;
+		event.commitValue = static_cast<uint32>(static_cast<T>(value));
+		event.commitFunction = &commit<T>;
+		events.push_back(event);
+		return self();
+	}
+
+	Spec &invalidatePaletteAt(int frame) {
+		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kInvalidatePalette));
+		return self();
+	}
+
+	Spec &fadeFromBlackAt(int frame) {
+		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kFadeFromBlack));
+		return self();
+	}
+
+	Spec &hookAt(int frame, byte hookId) {
+		addCustomHook(frame, hookId, false);
+		return self();
+	}
+
+	Spec &hookEveryFrame(byte hookId) {
+		addCustomHook(-1, hookId, true);
+		return self();
+	}
+
+	Common::Array<AnimationFrameEvent> events;
+
+private:
+	void addSound(int frame, uint16 soundId, byte volumePercent, bool looping,
+			byte slotIndex) {
+		AnimationFrameEvent event(frame, looping ?
+			AnimationFrameEvent::kLoopingSound : AnimationFrameEvent::kSound);
+		event.soundId = soundId;
+		event.soundVolumePercent = volumePercent;
+		event.soundSlot = slotIndex;
+		events.push_back(event);
 	}
 
 	void addLayerFrameMap(uint layerId, const byte *mappedFrames, uint mappedFrameCount,
@@ -222,199 +310,23 @@ public:
 		event.layerFrameMapSize = mappedFrameCount;
 		event.layerFrameMapFirstFrame = firstPlaybackFrame;
 		event.showMappedLayer = showLayer;
-		_events.push_back(event);
+		events.push_back(event);
 	}
 
-	void addLayerVisibility(int frame, uint layerId, bool visible) {
-		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerVisibility);
-		event.layerId = layerId;
-		event.layerVisible = visible;
-		_events.push_back(event);
-	}
-
-	void addLayerReset(int frame, uint layerId, byte layerFrame) {
-		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerReset);
-		event.layerId = layerId;
-		event.layerFrame = layerFrame;
-		_events.push_back(event);
-	}
-
-	template<class T, class V>
-	void addStateCommit(int frame, T &target, const V &value) {
-		static_assert(sizeof(T) <= sizeof(uint32), "Animation frame state value is too large");
-		AnimationFrameEvent event(frame, AnimationFrameEvent::kStateCommit);
-		event.commitTarget = &target;
-		event.commitValue = static_cast<uint32>(static_cast<T>(value));
-		event.commitFunction = &commit<T>;
-		_events.push_back(event);
-	}
-
-	void addPaletteInvalidation(int frame) {
-		_events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kInvalidatePalette));
-	}
-
-	void addPaletteFade(int frame, bool fromBlack) {
-		_events.push_back(AnimationFrameEvent(frame, fromBlack ?
-			AnimationFrameEvent::kFadeFromBlack : AnimationFrameEvent::kFadeToBlack));
-	}
-
-	void addCustomHook(int frame, byte hookId, bool everyFrame = false) {
+	void addCustomHook(int frame, byte hookId, bool everyFrame) {
 		if (hookId == 0)
 			return;
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kCustomHook);
 		event.everyFrame = everyFrame;
 		event.hookId = hookId;
-		_events.push_back(event);
+		events.push_back(event);
 	}
 
-	const Common::Array<AnimationFrameEvent> &entries() const {
-		return _events;
-	}
-
-private:
 	template<class T>
 	static void commit(void *target, uint32 value) {
 		*static_cast<T *>(target) = static_cast<T>(value);
 	}
 
-	Common::Array<AnimationFrameEvent> _events;
-};
-
-// Fluent frame events shared by resource overlays and layer-frame ranges.
-template<class Spec>
-class AnimationEventSpec {
-public:
-	Spec &patchAt(int frame, byte selector) {
-		events.addFramebufferPatch(frame, selector);
-		return self();
-	}
-
-	Spec &resourcePatchAt(int frame, uint resourceChunkIndex) {
-		events.addResourcePatch(frame, resourceChunkIndex);
-		return self();
-	}
-
-	Spec &soundAt(int frame, uint16 soundId, byte volumePercent = 100,
-			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
-		events.addSound(frame, soundId, volumePercent, false, slotIndex);
-		return self();
-	}
-
-	Spec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
-			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
-		events.addSound(frame, soundId, volumePercent, true, slotIndex);
-		return self();
-	}
-
-	Spec &stopSoundAt(int frame) {
-		events.addStopSound(frame);
-		return self();
-	}
-
-	Spec &ambientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
-			byte slotIndex = 0) {
-		events.addSound(frame, soundId, volumePercent, false, slotIndex);
-		return self();
-	}
-
-	Spec &loopingAmbientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
-			byte slotIndex = 0) {
-		events.addSound(frame, soundId, volumePercent, true, slotIndex);
-		return self();
-	}
-
-	Spec &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
-		events.addResidentSound(frame, soundId, volumePercent);
-		return self();
-	}
-
-	Spec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			byte speechId = 0) {
-		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
-		return self();
-	}
-
-	Spec &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
-			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
-		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
-		return self();
-	}
-
-	Spec &actorPoseAt(int frame, int x, int y, byte facing, byte cel = 0) {
-		events.addActorPose(frame, x, y, facing, cel);
-		return self();
-	}
-
-	// Starts a path that advances alongside the blocking animation.
-	Spec &actorPathAt(int frame, int targetX, int targetY, byte finalFacing,
-			byte finalCel, uint32 frameMillis) {
-		events.addActorPath(frame, targetX, targetY, finalFacing, finalCel, frameMillis);
-		return self();
-	}
-
-	Spec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerFrame(frame, layerId, layerFrame);
-		return self();
-	}
-
-	Spec &mappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, false);
-		return self();
-	}
-
-	Spec &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
-			uint mappedFrameCount, int firstPlaybackFrame = 0) {
-		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
-			firstPlaybackFrame, true);
-		return self();
-	}
-
-	Spec &layerVisibleAt(int frame, uint layerId, bool visible) {
-		events.addLayerVisibility(frame, layerId, visible);
-		return self();
-	}
-
-	Spec &layerResetAt(int frame, uint layerId, byte layerFrame) {
-		events.addLayerReset(frame, layerId, layerFrame);
-		return self();
-	}
-
-	template<class T, class V>
-	Spec &commitAt(int frame, T &target, const V &value) {
-		events.addStateCommit(frame, target, value);
-		return self();
-	}
-
-	Spec &invalidatePaletteAt(int frame) {
-		events.addPaletteInvalidation(frame);
-		return self();
-	}
-
-	Spec &fadeFromBlackAt(int frame) {
-		events.addPaletteFade(frame, true);
-		return self();
-	}
-
-	Spec &fadeToBlackAt(int frame) {
-		events.addPaletteFade(frame, false);
-		return self();
-	}
-
-	Spec &hookAt(int frame, byte hookId) {
-		events.addCustomHook(frame, hookId);
-		return self();
-	}
-
-	Spec &hookEveryFrame(byte hookId) {
-		events.addCustomHook(-1, hookId, true);
-		return self();
-	}
-
-	AnimationFrameEvents events;
-
-private:
 	Spec &self() {
 		return static_cast<Spec &>(*this);
 	}

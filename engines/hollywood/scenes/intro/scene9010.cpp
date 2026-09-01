@@ -360,7 +360,7 @@ uint Scene9010::detectI02ChunkedFrameCount(ResourceChunkTable &chunkTable) const
 
 bool Scene9010::loadI02ChunkedFrame(uint frameIndex) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kI02ArchiveName), frameIndex));
+		createResourceChunkReadStream(Common::Path(kI02ArchiveName), frameIndex));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kI02ArchiveName, frameIndex);
 		return false;
@@ -515,52 +515,6 @@ void Scene9010::updateScene9010PaletteFade() {
 		_scene9010FadeComplete = true;
 	else
 		_scene9010FadeCountdown--;
-}
-
-bool Scene9010::fadeInPalette(uint32 stepMillis) {
-	byte fadeThreshold = 63;
-	bool fadeInComplete = false;
-
-	while (!fadeInComplete && !_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteSource.size(); ++i) {
-			if (_paletteSource[i] >= fadeThreshold)
-				_paletteCurrent[i] = MIN<byte>(_paletteSource[i], _paletteCurrent[i] + 3);
-		}
-
-		if (fadeThreshold == 0)
-			fadeInComplete = true;
-		else
-			fadeThreshold = fadeThreshold > 3 ? fadeThreshold - 3 : 0;
-
-		presentFrame();
-		if (delay(stepMillis))
-			return true;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
-}
-
-bool Scene9010::fadeOutPalette(uint32 stepMillis) {
-	byte fadeThreshold = 0;
-	bool fadeOutComplete = false;
-
-	while (!fadeOutComplete && !_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteSource.size(); ++i) {
-			if (_paletteSource[i] >= fadeThreshold)
-				_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
-		}
-
-		if (fadeThreshold == 63)
-			fadeOutComplete = true;
-		else
-			fadeThreshold = MIN<byte>(63, fadeThreshold + 3);
-
-		presentFrame();
-		if (delay(stepMillis))
-			return true;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
 }
 
 void Scene9010::beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex) {

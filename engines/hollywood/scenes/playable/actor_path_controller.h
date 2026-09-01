@@ -80,6 +80,14 @@ public:
 		byte finalFacing, byte finalCel, byte invalidFacing, byte invalidCel,
 		const byte *baseStepDeltas, uint baseStepDeltaCount);
 
+	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
+
+	Common::Array<ScenePoint> routeBoundaryPoints;
+	Common::Array<byte> routeSteps;
+	Common::Array<ActorPathFrame> frames;
+	Common::Array<byte> stepDeltas;
+
+private:
 	void buildFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing, byte invalidFacing, byte invalidCel);
 	void appendFrame(const ActorPathBuildState &state);
@@ -90,14 +98,7 @@ public:
 	uint calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const;
 	byte nextCel(byte cel) const;
 	uint stepDelta(byte facing, byte cel) const;
-	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 
-	Common::Array<ScenePoint> routeBoundaryPoints;
-	Common::Array<byte> routeSteps;
-	Common::Array<ActorPathFrame> frames;
-	Common::Array<byte> stepDeltas;
-
-private:
 	uint _paletteRegionCount;
 	uint _boundaryCandidateCount;
 	uint _routeStepCountPerRegionPair;

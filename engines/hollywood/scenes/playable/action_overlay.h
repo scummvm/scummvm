@@ -90,11 +90,6 @@ struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
 		return *this;
 	}
 
-	ActionOverlaySpec &redrawAtEnd(bool redraw) {
-		options.redrawAtEnd = redraw;
-		return *this;
-	}
-
 	ActionOverlaySpec &noFinalFrameDelay() {
 		options.waitAfterFinalFrame = false;
 		return *this;

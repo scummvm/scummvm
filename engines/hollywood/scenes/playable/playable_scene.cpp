@@ -112,7 +112,6 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_resources(),
 		_sceneChunkTable(_resources.chunkTable),
 		_resourceChunkOffsets(_resources.chunkOffsets),
-		_resourceArenaCursor(_resources.arenaCursor),
 		_resourceArena(_resources.arena),
 		_metadata(_resources.metadata),
 		_surfaceState(),
@@ -136,12 +135,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_displayPalette(_surfaceState.displayPalette),
 		_textStore(),
 		_stage003DecodeKey(_textStore.decodeKey),
-		_stage003StageBlock(_textStore.stageBlock),
 		_stage003SmallRows(_textStore.stageSmallRows),
-		_stage003LargeRows(_textStore.stageLargeRows),
-		_staticSpeechCueDescriptors(_textStore.staticSpeechCueDescriptors),
-		_inventoryOwnerSmallRows(_textStore.inventoryOwnerSmallRows),
-		_inventoryOwnerLargeRows(_textStore.inventoryOwnerLargeRows),
 		_pathController(),
 		_routeBoundaryPoints(_pathController.routeBoundaryPoints),
 		_routeSteps(_pathController.routeSteps),
@@ -330,12 +324,9 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::framebufferPat
 	return *this;
 }
 
-PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::paletteTransition(
-		PaletteTransition transition) {
+PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::fadeFromBlack() {
 	if (canRun()) {
-		const bool interrupted = transition == kFadeFromBlack ?
-			_scene.fadePaletteFromBlack() : _scene.fadePaletteToBlack();
-		if (interrupted)
+		if (_scene.fadePaletteFromBlack())
 			_running = false;
 		refresh();
 	}
@@ -870,9 +861,6 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 			event.speechCenterX, event.speechTopY,
 			event.speechRed, event.speechGreen, event.speechBlue);
 		break;
-	case AnimationFrameEvent::kActorPose:
-		setActiveActorPose(event.actorX, event.actorY, event.actorFacing, event.actorCel);
-		break;
 	case AnimationFrameEvent::kActorPath:
 		startConcurrentActorPath(event.actorX, event.actorY, event.actorFacing,
 			event.actorCel, event.actorPathFrameMillis);
@@ -908,10 +896,6 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 	case AnimationFrameEvent::kFadeFromBlack:
 		drawPlayableComposite();
 		fadePaletteFromBlack();
-		break;
-	case AnimationFrameEvent::kFadeToBlack:
-		drawPlayableComposite();
-		fadePaletteToBlack();
 		break;
 	case AnimationFrameEvent::kCustomHook:
 		handleAnimationFrameHook(event.hookId, frame);
@@ -1652,19 +1636,6 @@ void PlayableScene::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, by
 		_sceneChunkTable.sizes[chunkIndex], tableEntryCount, frameIndex);
 }
 
-void PlayableScene::playDeltaClipFromResource(const Common::Array<byte> &resource,
-		uint32 frameTableOffset, uint32 chunkSize, uint tableEntryCount, uint frameCount,
-		uint32 frameMillis, uint firstFrame) {
-	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++frame) {
-		drawClipFrameDeltaFromResource(resource, frameTableOffset, chunkSize, tableEntryCount,
-			(byte)frame);
-		presentFrame();
-		if (waitDeltaClipFrameMillis(frameMillis))
-			break;
-	}
-}
-
 void PlayableScene::playDeltaClip(uint chunkIndex, uint tableEntryCount, uint frameCount,
 		uint32 frameMillis, uint firstFrame) {
 	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
@@ -1755,9 +1726,11 @@ bool PlayableScene::waitFullscreenAnimationFrame(uint32 millis, bool allowSkip) 
 	return animationPlaybackShouldStop();
 }
 
-bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec) {
-	if (spec.palette.size() != kPaletteSize || spec.frameCount == 0 ||
-			spec.frameCount > 0x100 || spec.frameCount > spec.frames.size() / 4) {
+bool PlayableScene::playFullscreenDeltaAnimation(const Common::Array<byte> &base,
+		const Common::Array<byte> &palette, const Common::Array<byte> &frames,
+		uint frameCount, uint32 frameMillis) {
+	if (palette.size() != kPaletteSize || frameCount == 0 ||
+			frameCount > 0x100 || frameCount > frames.size() / 4) {
 		warning("%s fullscreen delta animation has invalid resources", sceneDebugName());
 		return false;
 	}
@@ -1776,17 +1749,17 @@ bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationS
 
 	_viewportXOffset = 0;
 	memset(framebufferPixels(_sceneFramebuffer), 0, framebufferByteCount());
-	drawResourceBlockList(spec.base, 0, _sceneFramebuffer);
+	drawResourceBlockList(base, 0, _sceneFramebuffer);
 	presentFrame();
 
-	_paletteCurrent = spec.palette;
+	_paletteCurrent = palette;
 	_displayPalette.markAllDirty();
 	presentFrame();
 
 	bool completed = true;
-	for (uint frame = 0; frame < spec.frameCount && !animationPlaybackShouldStop(); ++frame) {
-		if (!ResourceDeltaClipPlayer::drawFrame(spec.frames, 0, spec.frames.size(),
-				spec.frameCount, (byte)frame, framebufferPixels(_sceneFramebuffer),
+	for (uint frame = 0; frame < frameCount && !animationPlaybackShouldStop(); ++frame) {
+		if (!ResourceDeltaClipPlayer::drawFrame(frames, 0, frames.size(),
+				frameCount, (byte)frame, framebufferPixels(_sceneFramebuffer),
 				framebufferByteCount())) {
 			warning("%s failed to decode fullscreen delta frame %u", sceneDebugName(), frame);
 			completed = false;
@@ -1794,7 +1767,7 @@ bool PlayableScene::playFullscreenDeltaAnimation(const FullscreenDeltaAnimationS
 		}
 		presentFrame();
 
-		if (waitFullscreenAnimationFrame(spec.frameMillis, spec.allowSkip)) {
+		if (waitFullscreenAnimationFrame(frameMillis, false)) {
 			completed = false;
 			break;
 		}
@@ -2094,7 +2067,7 @@ void PlayableScene::showTravelScreenViewer() {
 }
 
 bool PlayableScene::showInventoryMedia(InventoryMediaId mediaId) {
-	InventoryMediaPlayer media(_vm);
+	InventoryMediaPlayer media;
 	if (!media.loadStill(mediaId))
 		return false;
 
@@ -2109,7 +2082,7 @@ bool PlayableScene::showInventoryMedia(InventoryMediaId mediaId) {
 }
 
 bool PlayableScene::playSueTapeRecording() {
-	InventoryMediaPlayer media(_vm);
+	InventoryMediaPlayer media;
 	if (!media.loadSueTape())
 		return false;
 
@@ -2476,26 +2449,6 @@ void PlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int start
 		lastFrame.worldY, lastFrame.facing, lastFrame.cel, lastFrame.drawOrderMode);
 }
 
-void PlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
-		byte finalFacing, byte finalCel, int requestedFacing) {
-	_pathController.buildFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel,
-		requestedFacing, kInvalidFacing, kInvalidCel);
-}
-
-void PlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
-	_pathController.appendFrame(state);
-}
-
-ScenePoint PlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
-	return _pathController.nearestPaletteRouteBoundaryPoint(startX, startY, currentRegion, nextRegion);
-}
-
-ScenePoint PlayableScene::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
-		byte currentRegion, byte targetRegion) const {
-	return _pathController.bestPaletteRouteBoundaryPoint(startX, startY, targetX, targetY,
-		currentRegion, targetRegion);
-}
-
 byte PlayableScene::paletteRegionAt(int x, int y) const {
 	if (x < 0 || y < 0 || x >= HollywoodEngine::kSceneBufferWidth || y >= HollywoodEngine::kSceneBufferHeight ||
 			_fullPaletteRegionMask.empty())
@@ -2519,22 +2472,6 @@ byte PlayableScene::walkableMaskAt(int x, int y) const {
 
 	const byte pixel = savedFramebufferPixelAt(offset);
 	return pixel < _walkablePaletteMask.size() ? _walkablePaletteMask[pixel] : 0;
-}
-
-byte PlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
-	return _pathController.calculateMovementFacingForPath(fromX, fromY, toX, toY, requestedFacing);
-}
-
-uint PlayableScene::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
-	return _pathController.calculateWalkStepCountForAxisDelta(startAxis, targetAxis, facing, cel);
-}
-
-byte PlayableScene::nextActorPathCel(byte cel) const {
-	return _pathController.nextCel(cel);
-}
-
-uint PlayableScene::actorPathStepDelta(byte facing, byte cel) const {
-	return _pathController.stepDelta(facing, cel);
 }
 
 void PlayableScene::resetActorPathStepDeltas() {
@@ -2662,7 +2599,7 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, spec.frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
-		const Common::Array<AnimationFrameEvent> &events = spec.events.entries();
+		const Common::Array<AnimationFrameEvent> &events = spec.events;
 		for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 			if (events[eventIndex].matches(frame))
 				handleAnimationFrameEvent(events[eventIndex], frame);
