@@ -1043,7 +1043,7 @@ void ColonyEngine::drawColonyCoder(int animOx, int animOy) {
 	const int contentW = 172;
 	const char *instrText = (_animationName == "security")
 		? "Press the symbols as shown on the display to determine the correct value."
-		: "Press the symbols from the desk in reverse order to determine the correct value.";
+		: "Enter the appropriate symbol sequence to determine this reactor's code.";
 	Common::Array<Common::U32String> instrLines;
 	instrFont->wordWrapText(Common::U32String(instrText), contentW - 16, instrLines);
 	const int instrLineH = instrFont->getFontHeight() + 1;
