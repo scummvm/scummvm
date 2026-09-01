@@ -903,7 +903,7 @@ void Inter_v7::o7_setActiveCD() {
 	SearchMan.listMatchingMembers(files, Common::Path(str0, '\\'));
 	Common::Path savedCDpath = _currentCDPath;
 
-	for (Common::ArchiveMemberDetails file : files) {
+	for (const auto &file : files) {
 		if (setCurrentCDPath(file.arcName)) {
 			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.toString().c_str(),  _currentCDPath.toString().c_str());
 			storeValue(1);
