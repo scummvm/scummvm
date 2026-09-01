@@ -195,7 +195,7 @@ void buildFadedPalette(Graphics::Palette &colors, const Graphics::Palette &sourc
 	uint16 darkenPercent = (g_engine->_scenePaletteMode == 1) ? 0 : g_engine->_paletteDarkenPercent;
 	if (darkenPercent > 100)
 		darkenPercent = 100;
-	uint16 brightnessFactor = 100 - darkenPercent;
+	const uint16 brightnessFactor = 100 - darkenPercent;
 	for (uint i = 0; i < Graphics::PALETTE_COUNT; ++i) {
 		byte r, g, b;
 		sourcePalette.get(i, r, g, b);
@@ -446,7 +446,7 @@ void View1::refreshProtagonistInventoryAfterLoad(uint16 actorIndex) {
 		}
 
 		bool found = false;
-		for (GameObject *listed : validated) {
+		for (const GameObject *listed : validated) {
 			if (listed == obj) {
 				found = true;
 				break;
@@ -647,13 +647,12 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	Common::Array<uint8> &blob = gameObject->_blobs[index];
 
 	// Original calls getAnimFrameWidth(1, ...) with mode=1 to reset to frame 1
-	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(blob, true, 1);
+	const uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(blob, true, 1);
 	// offset points to per-frame: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
-	offset += 6;
-	result->_width = READ_LE_UINT16(&blob[offset]);
-	result->_height = READ_LE_UINT16(&blob[offset + 2]);
+	result->_width = READ_LE_UINT16(&blob[offset + 6]);
+	result->_height = READ_LE_UINT16(&blob[offset + 8]);
 	result->_data.resize(result->_width * result->_height);
-	memcpy(result->_data.data(), &blob[offset + 4], result->_width * result->_height);
+	memcpy(result->_data.data(), &blob[offset + 10], result->_width * result->_height);
 	// TODO: Think about proper memory management
 	return result;
 }
@@ -4367,7 +4366,7 @@ void View1::openOriginalSaveLoadPanel() {
 		const int imgIdx = kLookupTable[i] - 1; // convert to 0-based
 		if (imgIdx >= (int)g_engine->_imageResources.size())
 			continue;
-		AnimFrame &frame = g_engine->_imageResources[imgIdx];
+		const AnimFrame &frame = g_engine->_imageResources[imgIdx];
 		if (frame._data.empty() && frame._width == 0) {
 			// Binary: if no data, sets width/height fields to 0
 			continue;
@@ -4382,10 +4381,10 @@ void View1::openOriginalSaveLoadPanel() {
 	// g_wUiPanelWidth = (g_wActionBarButtonWidth + 10) * 7 + 4
 	uint16 panelWidth = (maxW + 10) * 7 + 4;
 	// if (g_wUiPanelWidth < 0xD4) g_wUiPanelWidth = 0xD4
-	if (panelWidth < 0xD4)
-		panelWidth = 0xD4;
+	if (panelWidth < 212)
+		panelWidth = 212;
 	// g_wUiPanelHeight = g_wActionBarButtonHeight + 0x8A
-	const uint16 panelHeight = maxH + 0x8A;
+	const uint16 panelHeight = maxH + 138;
 	// g_wUiPanelX = (g_wScreenWidth >> 1) - (g_wUiPanelWidth >> 1)
 	const int panelX = 160 - (panelWidth >> 1);
 	// g_wUiPanelY = (g_wScreenHeight >> 1) - (g_wUiPanelHeight >> 1)
@@ -4404,7 +4403,7 @@ void View1::openOriginalSaveLoadPanel() {
 	const int buttonRowY = (panelY + panelHeight - 4) - _saveLoadButtonHeight;
 
 	// Second loop: store button positions and draw them
-	for (int i = 1; i <= 7; i++) {
+	for (int i = 1; i <= ARRAYSIZE(_saveLoadButtonRects); i++) {
 		// Store position into button rect (binary stores into cursor array entry x/y fields)
 		_saveLoadButtonRects[i - 1] = Common::Rect(
 			buttonRowX, buttonRowY,
@@ -4415,7 +4414,7 @@ void View1::openOriginalSaveLoadPanel() {
 	// Load save slot names (ScummVM equivalent of binary's file reading loop)
 	// Convert UTF-8 descriptions to DOS CP850 since the glyph table uses DOS encoding
 	for (int idx = 0; idx < ARRAYSIZE(_saveSlotNames); idx++) {
-		SaveStateDescriptor desc = g_engine->getMetaEngine()->querySaveMetaInfos(
+		const SaveStateDescriptor &desc = g_engine->getMetaEngine()->querySaveMetaInfos(
 			g_engine->getGameId().c_str(), idx);
 		if (desc.getSaveSlot() != -1) {
 			const Common::String &utf8Name = desc.getDescription();
@@ -4460,7 +4459,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 	uint16 subMode = (uint16)_saveLoadSubMode;
 
-	for (int i = 1; i <= 7; i++) {
+	for (int i = 1; i <= ARRAYSIZE(_saveLoadButtonRects); i++) {
 		int imgIdx = kLookupTable[i] - 1; // 0-based
 		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
@@ -4514,24 +4513,24 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 	// Slot loop: local_4 = 0..9
 	for (int slot = 0; slot <= 9; slot++) {
 		// drawPanelSlot(0xc, g_wUiPanelWidth - 8, g_wUiPanelY + 4 + slot * 0xc, g_wUiPanelX + 4)
-		int slotX = panelX + 4;
-		int slotY = panelY + 4 + slot * 0xc;
-		int slotW = panelW - 8;
-		int slotH = 0xc;
+		const int slotX = panelX + 4;
+		const int slotY = panelY + 4 + slot * 12;
+		const int slotW = panelW - 8;
+		const int slotH = 12;
 		drawNinePatchBorder(Common::Point(slotX, slotY), Common::Point(slotW, slotH), kBorderPressed, false, false, s);
 
 		// drawText at (g_wUiPanelX + 6, g_wUiPanelY + 6 + slot * 0xc)
-		int idx = _saveLoadPageIndex * 10 + slot;
+		const int idx = _saveLoadPageIndex * 10 + slot;
 		Common::String label;
-		if (idx < 30 && !_saveSlotNames[idx].empty()) {
+		if (idx < ARRAYSIZE(_saveSlotNames) && !_saveSlotNames[idx].empty()) {
 			label = _saveSlotNames[idx];
+			label.toUppercase();
 		} else {
 			label = "NONE";
 		}
 		const GlyphData *font = g_engine->numPanelGlyphs > 0 ? g_engine->_panelGlyphs : g_engine->_glyphs;
-		uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
-		label.toUppercase();
-		renderStringWithFont(panelX + 6, panelY + 6 + slot * 0xc, label, font, fontCount);
+		const uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
+		renderStringWithFont(panelX + 6, panelY + 6 + slot * 12, label, font, fontCount);
 	}
 }
 
@@ -4567,12 +4566,12 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// Slot hit test for sub-mode 2 (save): editSaveSlotName
 		if (_saveLoadSubMode == SaveLoadSubMode::Save &&
 			(int)(panelX + 6) <= clickX &&
-			clickX <= (int)(panelX + panelW - 0xc) &&
-			(int)(panelY + 6 + slot * 0xc) <= clickY &&
-			clickY <= (int)(panelY + slot * 0xc + 0x10)) {
+			clickX <= (int)(panelX + panelW - 12) &&
+			(int)(panelY + 6 + slot * 12) <= clickY &&
+			clickY <= (int)(panelY + slot * 12 + 16)) {
 			// editSaveSlotName(slot) - ScummVM: save to slot
-			int idx = _saveLoadPageIndex * 10 + slot;
-			Common::String name = Common::String::format("Save %d", idx + 1);
+			const int idx = _saveLoadPageIndex * 10 + slot;
+			const Common::String &name = Common::String::format("Save %d", idx + 1);
 			g_engine->saveGameState(idx, name);
 			_saveSlotNames[idx] = name;
 			redraw();
@@ -4582,11 +4581,11 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// Slot hit test for sub-mode 1 (load): loadGameFromFile
 		if (_saveLoadSubMode == SaveLoadSubMode::Load &&
 			(int)(panelX + 6) <= clickX &&
-			clickX <= (int)(panelX + panelW - 0xc) &&
-			(int)(panelY + 6 + slot * 0xc) <= clickY &&
-			clickY <= (int)(panelY + slot * 0xc + 0x10)) {
+			clickX <= (int)(panelX + panelW - 12) &&
+			(int)(panelY + 6 + slot * 12) <= clickY &&
+			clickY <= (int)(panelY + slot * 12 + 16)) {
 			int idx = _saveLoadPageIndex * 10 + slot;
-			if (idx < 30 && !_saveSlotNames[idx].empty()) {
+			if (idx < ARRAYSIZE(_saveSlotNames) && !_saveSlotNames[idx].empty()) {
 				// Binary: loadGameFromFile then:
 				// g_wUiPanelState = 4; g_wClickedButtonIndex = 0;
 				// g_wPendingPanelRequest = 4; g_wSaveLoadSubMode = 0
@@ -4602,8 +4601,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 	}
 
 	for (int i = 1; i < ARRAYSIZE(kLookupTable); i++) {
-		int imgIdx = kLookupTable[i] - 1; // 0-based
-		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
+		const int imgIdx = kLookupTable[i] - 1; // 0-based
+		const Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
 		// Hit test: clickX > btnPos.x && clickY > btnPos.y &&
 		//           clickX < btnPos.x + btnW && clickY < btnPos.y + btnH
@@ -4616,7 +4615,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		}
 
 		Script::ScriptExecutor *scriptExecutor = g_engine->_scriptExecutor;
-		bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&
+		const bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&
 					  clickX < btnPos.x + btnW && clickY < btnPos.y + btnH &&
 					  hasData &&
 					  (!_helpButtonDisabled || i > 2));
@@ -4657,7 +4656,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				// Binary: if music enabled AND sound active, play active music
 				if (scriptExecutor->_musicEnabled &&
 					scriptExecutor->_soundSystemActive) {
-					uint16 slot = scriptExecutor->_activeMusicSlot;
+					const uint16 slot = scriptExecutor->_activeMusicSlot;
 					if (slot != 0 && !scriptExecutor->_musicSlots[slot - 1].empty() &&
 						g_engine->getMusic()->playSongData(scriptExecutor->_musicSlots[slot - 1])) {
 						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
@@ -4698,8 +4697,9 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 	// Binary: if (bPageScroll && ++g_wMapPanelPageIndex == 3) g_wMapPanelPageIndex = 0
 	if (bPageScroll) {
 		_saveLoadPageIndex++;
-		if (_saveLoadPageIndex == 3)
+		if (_saveLoadPageIndex == 3) {
 			_saveLoadPageIndex = 0;
+		}
 	}
 
 	// Reset for next click
