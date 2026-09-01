@@ -200,7 +200,7 @@ public:
 protected:
 	char *_gameText;
 	uint32 _gameStateOffs;
-	virtual void load(Common::SeekableReadStream &sourceS) override;
+	void load(Common::SeekableReadStream &sourceS) override;
 	void reloadFromStream(Common::SeekableReadStream &sourceS) override;
 };
 
@@ -208,8 +208,6 @@ class GameDatabaseV3_1 : public GameDatabaseV3 {
 public:
 	GameDatabaseV3_1(MadeEngine *vm) : GameDatabaseV3(vm) {}
 	int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) override;
-protected:
-	void load(Common::SeekableReadStream &sourceS) override;
 };
 
 } // End of namespace Made

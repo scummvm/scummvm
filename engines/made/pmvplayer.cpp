@@ -127,7 +127,9 @@ bool PmvPlayer::load(const char* filename) {
 	_fd = new Common::File();
 	if (!_fd->open(Common::Path(filename, '\\'))) {
 		warning("Failed to open movie file '%s'", filename);
-		goto error;
+		delete _fd;
+		_fd = nullptr;
+		return false;
 	}
 
 	// expected IFF blocks at start of a PMV
@@ -136,35 +138,38 @@ bool PmvPlayer::load(const char* filename) {
 	readChunk(chunkType, chunkSize);	// "MOVE"
 	if (chunkType != MKTAG('M','O','V','E')) {
 		warning("Unexpected PMV video header, expected 'MOVE'");
-		goto error;
+		delete _fd;
+		_fd = nullptr;
+		return false;
 	}
 
 	readChunk(chunkType, chunkSize);	// "MHED"
 	if (chunkType != MKTAG('M','H','E','D')) {
 		warning("Unexpected PMV video header, expected 'MHED'");
-		goto error;
+		delete _fd;
+		_fd = nullptr;
+		return false;
 	}
 
-	frameDelay = _fd->readUint16LE();
+	uint16 unknownMHED = _fd->readUint16LE(); // always 98 + streamCount (below)
 	_fd->skip(4);	// always 0?
-	frameCount = _fd->readUint16LE();
-	_fd->skip(4);	// always 0?
+	frameCount = _fd->readUint32LE();
+	_fd->skip(2);	// "low speed frameskip" indicator - if set,
+					// seems to allow player to skip blit here on slow systems
+					// see ScriptFuncs::sfIsSlowSystem, potentially related
 
 	soundFreq = _fd->readUint16LE();
-	// Note: There seem to be weird sound frequencies in PMV videos.
-	// Not sure why, but leaving those original frequencies intact
-	// results to sound being choppy. Therefore, we set them to more
-	// "common" values here (11025 instead of 11127 and 22050 instead
-	// of 22254)
-	if (soundFreq == 11127)
-		soundFreq = 11025;
+	// Sound freq is 11127 or 22254hz, these are common Mac (Plus) rates...
 
-	if (soundFreq == 22254)
-		soundFreq = 22050;
+	frameDelay = 1000 / _fd->readUint16LE(); // FPS, which we turn into ms-per-frame
+	uint16 streamCount = _fd->readUint16LE(); // number of streams (video + audio, video + audio + palette, etc)
 
-	for (int i = 0; i < 22; i++) {
-		int unk = _fd->readUint16LE();
-		debug(2, "%i ", unk);
+	debug(2, "PMV load(%s): %d frames, %d ms-per-frame, %d hz, %d streams, unk=%d",
+		filename, frameCount, frameDelay, soundFreq, streamCount, unknownMHED);
+
+	for (int i = 0; i < 20; i++) {
+		int streamType = _fd->readUint16LE();
+		debug(2, "%i ", streamType);
 	}
 
 	// Read and set initial palette
@@ -189,12 +194,6 @@ bool PmvPlayer::load(const char* filename) {
 	frameNumber = 0;
 
 	return true;
-
-error:
-	delete _fd;
-	_fd = nullptr;
-
-	return false;
 }
 
 bool PmvPlayer::decode_frame() {
@@ -316,6 +315,25 @@ void PmvPlayer::close() {
 	_fd = nullptr;
 }
 
+static bool handleEvents(Made::MadeEngine *_vm) {
+	bool aborted = false;
+	// Check and handle events - user can press ESC to exit early
+	Common::Event event;
+	while (_vm->_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				aborted = true;
+				_vm->stopTextToSpeech();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	return aborted;
+}
+
 bool PmvPlayer::play(const char *filename) {
 	bool aborted = false;
 
@@ -405,20 +423,7 @@ bool PmvPlayer::play(const char *filename) {
 
 			frameNumber++;
 
-			// Check and handle events - user can press ESC to exit early
-			Common::Event event;
-			while (_vm->_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						aborted = true;
-						_vm->stopTextToSpeech();
-					}
-					break;
-				default:
-					break;
-				}
-			}
+			aborted = handleEvents(_vm);
 		}
 
 		close();

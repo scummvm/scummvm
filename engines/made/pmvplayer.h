@@ -57,7 +57,8 @@ public:
 	// currently open file
 	Common::File *_fd;
 	// info about currently playing movie
-	uint16 frameDelay, frameCount, frameNumber, soundFreq;
+	uint32 frameCount, frameNumber;
+	uint16 frameDelay, soundFreq;
 
 protected:
 	// ptrs to caller objects

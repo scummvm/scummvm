@@ -657,6 +657,11 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 
 	uint16 version = sourceS.readUint16LE();
 	uint16 subVersion = sourceS.readUint16LE();
+
+	// V3.00 databases are 209, V3.10 is 210
+	if (version != 209 && version != 210)
+		warning("Unknown database version, known versions are 209 and 210");
+
 	char dbName[19] = "";
 	sourceS.read(dbName, 18);
 	debug(2, "databaseVersion = %d, databaseSubVersion = %d, databaseName = %s", version, subVersion, dbName);
@@ -683,7 +688,11 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 		objectOffsets.push_back(sourceS.readUint32LE());
 
 	for (uint32 i = 0; i < objectCount; i++) {
-		Object *obj = new ObjectV3();
+		Object *obj;
+		if (version == 210)
+			obj = new ObjectV3_1();
+		else
+			obj = new ObjectV3();
 		// The LSB indicates if it's a constant or variable object.
 		// Constant objects are loaded from disk, while variable objects exist
 		// in the _gameState buffer.
@@ -884,54 +893,6 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 const char *GameDatabaseV3::getString(uint16 offset) {
 	// Not used in version 3 games
 	return nullptr;
-}
-
-void GameDatabaseV3_1::load(Common::SeekableReadStream &sourceS) {
-	char header[6];
-	sourceS.read(header, 6);
-	if (strncmp(header, "ADVSYS", 6))
-		warning("Unexpected database header, expected ADVSYS");
-
-	uint16 version = sourceS.readUint16LE();
-	uint16 subVersion = sourceS.readUint16LE();
-	char dbName[19] = "";
-	sourceS.read(dbName, 18);
-	debug(2, "databaseVersion = %d, databaseSubVersion = %d, databaseName = %s", version, subVersion, dbName);
-
-	sourceS.readUint16LE(); // unknown, always 1?
-
-	uint32 objectIndexOffs = sourceS.readUint32LE();
-	uint16 objectCount = sourceS.readUint16LE();
-	_gameStateOffs = sourceS.readUint32LE();
-	_gameStateSize = sourceS.readUint32LE();
-	uint32 objectsOffs = sourceS.readUint32LE();
-	uint32 objectsSize = sourceS.readUint32LE();
-	_mainCodeObjectIndex = sourceS.readUint16LE();
-
-	debug(2, "objectIndexOffs = %08X; objectCount = %d; gameStateOffs = %08X; gameStateSize = %d; objectsOffs = %08X; objectsSize = %d; _mainCodeObjectIndex = %04X\n", objectIndexOffs, objectCount, _gameStateOffs, _gameStateSize, objectsOffs, objectsSize, _mainCodeObjectIndex);
-
-	_gameState = new byte[_gameStateSize];
-	sourceS.seek(_gameStateOffs);
-	sourceS.read(_gameState, _gameStateSize);
-
-	Common::Array<uint32> objectOffsets;
-	sourceS.seek(objectIndexOffs);
-	for (uint32 i = 0; i < objectCount; i++)
-		objectOffsets.push_back(sourceS.readUint32LE());
-
-	for (uint32 i = 0; i < objectCount; i++) {
-		Object *obj = new ObjectV3_1();
-		// The LSB indicates if it's a constant or variable object.
-		// Constant objects are loaded from disk, while variable objects exist
-		// in the _gameState buffer.
-		if (objectOffsets[i] & 1) {
-			sourceS.seek(objectsOffs + (objectOffsets[i] ^ 1));
-			obj->load(sourceS);
-		} else {
-			obj->load(_gameState + objectOffsets[i]);
-		}
-		_objects.push_back(obj);
-	}
 }
 
 int16 *GameDatabaseV3_1::findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {

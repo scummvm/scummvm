@@ -1171,25 +1171,30 @@ int16 ScriptFunctions::sfMovieCall(int16 argc, int16* argv) {
 		int32 pmvStartTime = _vm->getTotalPlayTime();
 
 		while (!_vm->shouldQuit() && !_vm->_pmvPlayer->_fd->eos() && _vm->_pmvPlayer->frameNumber < _vm->_pmvPlayer->frameCount && playing) {
-			// Decode and stage the next audio / video frame
-			if (!_vm->_pmvPlayer->decode_frame())
-				break;
-
-			// delay until time has passed, then flip screen
-			if (_vm->_pmvPlayer->frameNumber > 0) {
-				int32 delayTime = _vm->_pmvPlayer->frameNumber * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
-				if (delayTime < 0)
-					warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
-				else
-					g_system->delayMillis(delayTime);
-			}
 
 			// call subroutine each frame
-			//  pass the movie ID as the one arg
-			playing = si.runScript(argv[0], 1, &argv[1]);
+			//  pass the frame number as sole arg
+			int16 frameNumber = _vm->_pmvPlayer->frameNumber;
+			playing = si.runScript(argv[0], 1, &frameNumber);
 			debug(3, "Call script return code: %04X (%d)", playing, playing);
 
-			_vm->_pmvPlayer->frameNumber++;
+			if (playing) {
+				// Decode and stage the next audio / video frame
+				if (!_vm->_pmvPlayer->decode_frame())
+					break;
+
+				// delay until time has passed, then flip screen
+				if (_vm->_pmvPlayer->frameNumber > 0) {
+					int32 delayTime = _vm->_pmvPlayer->frameNumber * _vm->_pmvPlayer->frameDelay - (_vm->getTotalPlayTime() - pmvStartTime);
+					if (delayTime < 0)
+						warning("Video A/V sync broken - running behind %d ms (%d frames)!", -delayTime, (-delayTime / _vm->_pmvPlayer->frameDelay) + 1);
+					else
+						g_system->delayMillis(delayTime);
+				}
+
+				// _vm->_system->updateScreen(); // this is already triggered by the script callback
+				_vm->_pmvPlayer->frameNumber++;
+			}
 		}
 
 		_vm->_pmvPlayer->close();

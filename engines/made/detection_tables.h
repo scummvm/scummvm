@@ -548,7 +548,7 @@ static const MadeGameDescription gameDescriptions[] = {
 		{
 			"lgop2",
 			"",
-			AD_ENTRY1("lgop2.dat", "8137996db200ff67e8f172ff106f2e48"),
+			AD_ENTRY1s("lgop2.dat", "8137996db200ff67e8f172ff106f2e48", 280280),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
