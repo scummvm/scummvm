@@ -941,6 +941,12 @@ void PlayableScene::advanceFullscreenAnimation(uint32 delta) {
 	updateAmbientAudioAndMusicCues(delta);
 }
 
+void PlayableScene::advanceTransitionAnimation(uint32 delta) {
+	advanceCustomGameplayLoop(delta);
+	_realtimeAnimationTracks.advance(delta, _random);
+	advanceAmbientAudio(delta);
+}
+
 AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = kAmbientMusicCheckMillis;
@@ -1719,6 +1725,49 @@ void PlayableScene::playDeltaClip(uint chunkIndex, uint tableEntryCount, uint fr
 		if (waitDeltaClipFrameMillis(frameMillis))
 			break;
 	}
+}
+
+bool PlayableScene::playTransitionFrames(TransitionFrameRenderer &renderer, byte firstFrame,
+		byte lastFrame, uint32 frameMillis, TransitionFrameMode mode, bool allowSkip) {
+	if (firstFrame > lastFrame || frameMillis == 0)
+		return false;
+
+	uint frameIndex = firstFrame;
+	uint32 frameAccumulator = 0;
+	uint32 lastMillis = g_system->getMillis();
+	renderer.drawFrame((byte)frameIndex);
+	presentFrame();
+
+	while (frameIndex < lastFrame && !animationPlaybackShouldStop()) {
+		if (pollEvents(allowSkip))
+			return false;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 delta = now - lastMillis;
+		lastMillis = now;
+		frameAccumulator += delta;
+		if (delta != 0)
+			advanceTransitionAnimation(MIN<uint32>(delta, kBlockingSceneMaxFrameDeltaMillis));
+
+		const uint previousFrame = frameIndex;
+		while (frameAccumulator >= frameMillis && frameIndex < lastFrame) {
+			frameAccumulator -= frameMillis;
+			++frameIndex;
+			if (mode == kCumulativeTransitionFrames)
+				renderer.drawFrame((byte)frameIndex);
+		}
+
+		if (frameIndex != previousFrame) {
+			if (mode == kIndependentTransitionFrames)
+				renderer.drawFrame((byte)frameIndex);
+			presentFrame();
+		}
+
+		if (frameIndex < lastFrame && frameAccumulator < frameMillis)
+			g_system->delayMillis(MIN<uint32>(frameMillis - frameAccumulator, 10));
+	}
+
+	return frameIndex == lastFrame && !animationPlaybackShouldStop();
 }
 
 bool PlayableScene::waitDeltaClipFrameMillis(uint32 millis) {

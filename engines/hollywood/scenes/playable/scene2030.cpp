@@ -264,6 +264,11 @@ void Scene2030::advanceCustomGameplayLoop(uint32 delta) {
 	updateRandomMerchantCallouts(delta);
 }
 
+void Scene2030::advanceTransitionAnimation(uint32 delta) {
+	advanceMerchantLayers(delta);
+	updateAmbientAudioAndMusicCues(delta);
+}
+
 void Scene2030::realtimeSpeechEnded(byte speechId, bool completed) {
 	if (!completed) {
 		resetMerchantCalloutState();
@@ -782,42 +787,16 @@ void Scene2030::runTransitionClip(uint chunkIndex, bool includeActiveActor, bool
 	transitionBackground.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 
-	uint32 frameAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
-	byte frameIndex = 0;
-
-	drawTransitionClipFrame(chunkIndex, frameIndex, *transitionBackground.surfacePtr());
-	if (fadeIn) {
-		if (fadePaletteFromBlack())
-			return;
-	} else {
-		presentFrame();
-	}
-
-	while (frameIndex < kScene2030TransitionFinalFrame && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		frameAccumulator += delta;
-		advanceMerchantLayers(delta);
-		updateAmbientAudioAndMusicCues(delta);
-
-		bool frameDirty = false;
-		while (frameAccumulator >= kScene2030TransitionFrameMillis && frameIndex < kScene2030TransitionFinalFrame) {
-			frameAccumulator -= kScene2030TransitionFrameMillis;
-			++frameIndex;
-			drawTransitionClipFrame(chunkIndex, frameIndex, *transitionBackground.surfacePtr());
-			frameDirty = true;
+	Graphics::Surface &background = *transitionBackground.surfacePtr();
+	bool fadePending = fadeIn;
+	playTransitionFrames([this, chunkIndex, &background, &fadePending](byte frame) {
+		drawTransitionClipFrame(chunkIndex, frame, background);
+		if (fadePending) {
+			fadePending = false;
+			fadePaletteFromBlack();
 		}
-
-		if (frameDirty)
-			presentFrame();
-
-		g_system->delayMillis(10);
-	}
+	}, 0, kScene2030TransitionFinalFrame, kScene2030TransitionFrameMillis,
+		kCumulativeTransitionFrames);
 }
 
 void Scene2030::drawTransitionClipFrame(uint chunkIndex, byte frameIndex, Graphics::Surface &transitionBackground) {
