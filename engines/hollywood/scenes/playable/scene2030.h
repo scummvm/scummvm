@@ -66,7 +66,6 @@ private:
 	void closeMerchantAfterInteraction(bool rightMerchant);
 	void waitForMerchantState(bool rightMerchant, byte targetState);
 	void beginSecondarySpeechLineAndOpenMerchant(uint16 rowIndex, byte frameIndex, bool rightMerchant);
-	void waitForStartedSecondarySpeech(uint32 startMillis, uint32 durationMillis);
 	void runMerchantPrimarySpeechLine(uint16 rowIndex, byte frameIndex, bool rightMerchant);
 	bool merchantSpeechGroupIsRight(byte animationGroup) const;
 	bool merchantSpeechGroupIsLeft(byte animationGroup) const;
