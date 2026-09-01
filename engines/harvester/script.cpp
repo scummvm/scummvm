@@ -548,10 +548,24 @@ static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Com
 		if (line[i] == '"') {
 			++i;
 			Common::String token;
-			while (i < line.size() && line[i] != '"')
+			bool hasEmbeddedQuote = false;
+			while (i < line.size()) {
+				const bool isClosingQuote = line[i] == '"' &&
+					(i + 1 == line.size() || line[i + 1] == ' ' || line[i + 1] == '\t');
+				if (isClosingQuote)
+					break;
+
+				// French TEXT records contain quotes inside underscore-separated values.
+				// The native word reader keeps them and strips only the outer quote pair.
+				if (line[i] == '"')
+					hasEmbeddedQuote = true;
 				token += line[i++];
+			}
 			if (i < line.size() && line[i] == '"')
 				++i;
+			if (hasEmbeddedQuote)
+				debugC(3, kDebugGeneral, "Harvester: TownScript token contains embedded quote value='%s'",
+					token.c_str());
 			tokens.push_back(Common::move(token));
 			continue;
 		}
