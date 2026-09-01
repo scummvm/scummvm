@@ -915,7 +915,10 @@ public:
 
 	bool tick() override;
 
-	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
+	void sayText(const Common::String &text,
+				 Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT,
+				 uint16 speakerObjectId = 0) const;
+	void setTTSVoice(uint16 speakerObjectId) const;
 	void stopTextToSpeech() const;
 
 	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;

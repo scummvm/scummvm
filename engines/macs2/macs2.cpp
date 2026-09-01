@@ -853,12 +853,114 @@ Macs2Engine::~Macs2Engine() {
 	Scenes::instance()._currentSceneStrings = nullptr;
 }
 
-void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+#ifdef USE_TTS
+// Object indices and names match GameObjects::init / isNpcIndex.
+// voiceId is reused for the same person (Tramp, Winnetou).
+struct TTSSpeakerVoice {
+	uint16 objectIndex;
+	bool male;
+	uint8 voiceId;
+};
+
+static const TTSSpeakerVoice kTTSSpeakerVoices[] = {
+	{ 0x01, true,  1 },  // Old Firehand
+	{ 0x02, true,  2 },  // Kapitän
+	{ 0x04, true,  3 },  // Bootsjunge
+	{ 0x06, true,  4 },  // Tramp
+	{ 0x07, false, 5 },  // Mädchen
+	{ 0x09, true,  6 },  // Panther
+	{ 0x0C, true,  7 },  // Droll (nickname Tante Droll)
+	{ 0x0D, true,  8 },  // Patterson
+	{ 0x0F, true,  9 },  // Cornel
+	{ 0x12, true,  10 }, // Wachposten
+	{ 0x13, true,  4 },  // Tramp
+	{ 0x16, false, 11 }, // Passagierin
+	{ 0x21, true,  12 }, // Matrose
+	{ 0x27, true,  13 }, // Branshky
+	{ 0x35, true,  14 }, // Dieb
+	{ 0x45, true,  15 }, // Rafter
+	{ 0x4D, true,  4 },  // Tramp
+	{ 0x69, true,  16 }, // Wirt
+	{ 0x6E, false, 17 }, // Mrs. Butler
+	{ 0x90, true,  18 }, // Bandit
+	{ 0x91, true,  19 }, // Bandit
+	{ 0x92, true,  20 }, // Bandit
+	{ 0x93, true,  21 }, // Winnetou
+	{ 0x95, true,  22 }, // Grosser Bär
+	{ 0xA7, true,  21 }, // Winnetou
+	{ 0xA8, true,  23 }, // Kleiner Bär
+	{ 0xB5, true,  21 }  // Winnetou
+};
+
+static void lookupTtsSpeakerVoice(uint16 objectIndex, bool &male, uint8 &voiceId) {
+	if (objectIndex == 0) {
+		male = true;
+		voiceId = 0;
+		return;
+	}
+	for (uint i = 0; i < ARRAYSIZE(kTTSSpeakerVoices); i++) {
+		if (kTTSSpeakerVoices[i].objectIndex == objectIndex) {
+			male = kTTSSpeakerVoices[i].male;
+			voiceId = kTTSSpeakerVoices[i].voiceId;
+			return;
+		}
+	}
+	male = true;
+	voiceId = (uint8)(objectIndex & 0x7F);
+}
+#endif
+
+void Macs2Engine::setTTSVoice(uint16 speakerObjectId) const {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		Common::Array<int> voices;
+		int pitch = 0;
+		Common::TTSVoice::Gender gender;
+
+		bool male = true;
+		uint8 voiceId = 0;
+		lookupTtsSpeakerVoice(speakerObjectId, male, voiceId);
+
+		if (male) {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
+			gender = Common::TTSVoice::MALE;
+		} else {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+			gender = Common::TTSVoice::FEMALE;
+		}
+
+		// If no voice is available for the necessary gender, set the voice to default
+		if (voices.empty()) {
+			ttsMan->setVoice(0);
+		} else {
+			int voiceIndex = voiceId % voices.size();
+			ttsMan->setVoice(voices[voiceIndex]);
+		}
+
+		// If no voices are available for this gender, alter the pitch to mimic a voice
+		// of the other gender
+		if (ttsMan->getVoice().getGender() != gender) {
+			if (gender == Common::TTSVoice::MALE) {
+				pitch -= 50;
+			} else {
+				pitch += 50;
+			}
+		}
+
+		ttsMan->setPitch(pitch);
+	}
+#endif
+}
+
+void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action,
+						 uint16 speakerObjectId) const {
 #ifdef USE_TTS
 	if (text.empty())
 		return;
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan && ConfMan.getBool("tts_enabled") && _ttsPreviousSaid != text) {
+		setTTSVoice(speakerObjectId);
 		ttsMan->say(text, action, Common::kDos850);
 		_ttsPreviousSaid = text;
 	}

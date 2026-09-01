@@ -3344,7 +3344,7 @@ void ScriptExecutor::tryPlayDialogueSpeech(uint16 stringOffset, const Common::Ar
 		return;
 	}
 
-	_engine->sayText(joinTtsLines(lines), Common::TextToSpeechManager::INTERRUPT);
+	_engine->sayText(joinTtsLines(lines), Common::TextToSpeechManager::INTERRUPT, _dialogueSpeakerObjectID);
 }
 
 OpcodeResult ScriptExecutor::scriptNopSkipRemainder() {
@@ -4062,7 +4062,7 @@ OpcodeResult ScriptExecutor::scriptTalkTo() {
 	}
 
 	if (_textEnabled)
-		_engine->sayText(joinTtsLines(strings), Common::TextToSpeechManager::INTERRUPT);
+		_engine->sayText(joinTtsLines(strings), Common::TextToSpeechManager::INTERRUPT, (uint16)actorIndex);
 
 	uint16 waitFrames = talkTime;
 	if (waitFrames == 0) {

@@ -3578,7 +3578,7 @@ void View1::showDialogueChoice(uint16 speakerObjectID, const Common::Array<Commo
 			ttsText += line + " ";
 		}
 	}
-	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT);
+	g_engine->sayText(ttsText, Common::TextToSpeechManager::INTERRUPT, speakerObjectID);
 
 	showSpeechAct(speakerObjectID, joinedLines, position, onRightSide);
 	_isDialogueChoiceInputActive = true;

@@ -523,7 +523,7 @@ public:
 	void closeScriptActionBar(Script::MouseMode &outSavedCursorMode);
 	void enterMapMode();
 
-	// Binary openActionBarAtPosition (1008:3fba): stores button hit rects at panel+4+col*(btnW+4).
+	// Binary openActionBarAtPosition
 	void layoutActionBarButtons();
 	void drawMainMenu(Graphics::ManagedSurface &s);
 	void drawSceneUpdate();
@@ -559,9 +559,7 @@ public:
 
 	Macs2::AnimFrame *getUISprite(uint32 offset);
 
-	// fn0037_3737 proc
 	void drawHorizontalBorderHighlight(const Common::Point &pos, int16 width, uint32 spriteAddress, Graphics::ManagedSurface &s);
-	// 0037h:3876h
 	void drawVerticalBorderHighlight(const Common::Point &pos, int16 height, uint32 spriteAddress, Graphics::ManagedSurface &s);
 
 	void drawImageResources(Graphics::ManagedSurface &s);
