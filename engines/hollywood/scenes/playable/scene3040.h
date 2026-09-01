@@ -34,9 +34,7 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
+	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	void runCustomEntrySequence() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
@@ -48,7 +46,6 @@ private:
 	void resetAnimationLayers();
 	void rebuildWalkableMask();
 	void advanceForegroundActorLayer(uint32 delta);
-	void drawLooseSceneLayer(uint layerId);
 	void updateHiddenObjectHotspots();
 	void runExitToScene3010();
 	void runInventoryPatchAction();
