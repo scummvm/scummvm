@@ -78,8 +78,7 @@ Scene3020::Scene3020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3020Config()),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene3020LayerSpecs);
-	_loopTrack = _realtimeAnimationTracks.addFrameMap(
-		_sceneLayers, kScene3020LoopLayer, kScene3020LoopFrameMillis,
+	_loopTrack = _realtimeAnimationTracks.addFrameMap(kScene3020LoopLayer, kScene3020LoopFrameMillis,
 		_vm->gameState().windmillBladesMoving);
 }
 

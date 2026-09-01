@@ -100,8 +100,7 @@ Scene3010::Scene3010(HollywoodEngine *vm) :
 		_forestIdleState(0),
 		_climbOverlayActive(false) {
 	_sceneLayers.configure(kScene3010LayerSpecs);
-	_windmillTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
-		kScene3010WindmillLayer, kScene3010WindmillFrameMillis, false);
+	_windmillTrack = _realtimeAnimationTracks.addFrameMap(kScene3010WindmillLayer, kScene3010WindmillFrameMillis, false);
 }
 
 bool Scene3010::shouldLoadArenaChunk(uint index) const {

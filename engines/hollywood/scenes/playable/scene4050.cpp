@@ -122,8 +122,7 @@ Scene4050::Scene4050(HollywoodEngine *vm) :
 		_ronManualSequenceActive(false),
 		_transitionClearedToBlack(false) {
 	_sceneLayers.configure(kScene4050LayerSpecs);
-	_backgroundTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene4050BackgroundLayer,
+	_backgroundTrack = _realtimeAnimationTracks.addLoop(kScene4050BackgroundLayer,
 		kScene4050BackgroundFrameMillis, kScene4050BackgroundDescriptorCount);
 }
 

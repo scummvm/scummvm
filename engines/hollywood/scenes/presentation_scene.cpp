@@ -77,7 +77,7 @@ PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		_debugName(debugName),
 		_resources(),
 		_sceneLayers(),
-		_realtimeAnimationTracks(),
+		_realtimeAnimationTracks(_sceneLayers),
 		_animationPlayer(*this),
 		_skipRequested(false) {
 	_paletteCurrent.resize(kPaletteSize);

@@ -682,13 +682,10 @@ void Scene5120::initializeTransformedRoomLayers() {
 	_sceneLayers.configureLayer(kScene5120ProjectorSpeechLayer,
 		kSceneAnimationScenePlaced, 16, kScene5120ProjectorSpeechDescriptorCount,
 		nullptr, 0, false);
-	_sideLoopTrack = _realtimeAnimationTracks.addPingPong(
-		_sceneLayers, kScene5120SideLoopLayer, kScene5120SideLoopFrameMillis,
+	_sideLoopTrack = _realtimeAnimationTracks.addPingPong(kScene5120SideLoopLayer, kScene5120SideLoopFrameMillis,
 		0, 3, false);
-	_toggleTrack = _realtimeAnimationTracks.addLoop(
-		_sceneLayers, kScene5120ToggleLayer, kScene5120ToggleFrameMillis, 2, false);
-	_randomDetailTrack = _realtimeAnimationTracks.addRandom(
-		_sceneLayers, kScene5120RandomDetailLayer,
+	_toggleTrack = _realtimeAnimationTracks.addLoop(kScene5120ToggleLayer, kScene5120ToggleFrameMillis, 2, false);
+	_randomDetailTrack = _realtimeAnimationTracks.addRandom(kScene5120RandomDetailLayer,
 		kScene5120RandomDetailFrameMillis, 0, 5, true, false);
 	resetTransformedRoomLayers();
 }

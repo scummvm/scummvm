@@ -165,8 +165,7 @@ Scene6070::Scene6070(HollywoodEngine *vm) :
 		_pendingRonRetort(false),
 		_state609PropAlternatePose(false) {
 	_sceneLayers.configure(kScene6070LayerSpecs);
-	_state609PropTrack = _realtimeAnimationTracks.addRange(_sceneLayers,
-		kScene6070State609PropLayer,
+	_state609PropTrack = _realtimeAnimationTracks.addRange(kScene6070State609PropLayer,
 		kScene6070State609SlowFrameMillis, 17, 24, false);
 }
 

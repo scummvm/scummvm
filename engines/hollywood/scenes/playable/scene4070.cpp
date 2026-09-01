@@ -207,9 +207,9 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_originalColorToItemMap() {
 	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
 	_sceneLayers.configure(kScene4070LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene4070AmbientLayer,
+	_ambientTrack = _realtimeAnimationTracks.addLoop(kScene4070AmbientLayer,
 		kScene4070FrameMillis, kScene4070AmbientDescriptorCount);
-	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(_sceneLayers, kScene4070RandomAmbientLayer,
+	_randomAmbientTrack = _realtimeAnimationTracks.addRandom(kScene4070RandomAmbientLayer,
 		kScene4070FrameMillis, 0, kScene4070RandomAmbientDescriptorCount - 1, false);
 }
 

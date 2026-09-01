@@ -142,7 +142,7 @@ Scene8010::Scene8010(HollywoodEngine *vm) :
 		_previousSecondaryAmbientCue(0),
 		_fishermanQuizAlternatePattern(_random.getRandomBit() != 0) {
 	_sceneLayers.configure(kScene8010LayerSpecs);
-	_boatTrack = _realtimeAnimationTracks.addLoop(_sceneLayers, kScene8010BoatLayer,
+	_boatTrack = _realtimeAnimationTracks.addLoop(kScene8010BoatLayer,
 		kScene8010BoatFrameMillis, kScene8010BoatDescriptorCount);
 }
 

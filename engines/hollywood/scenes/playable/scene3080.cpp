@@ -100,8 +100,7 @@ Scene3080::Scene3080(HollywoodEngine *vm) :
 		_largeTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_smallIdleMode(0) {
 	_sceneLayers.configure(kScene3080LayerSpecs);
-	_largeTrack = _realtimeAnimationTracks.addRange(_sceneLayers,
-		kScene3080LargeLayer, kScene3080LargeFrameMillis, 0, 7);
+	_largeTrack = _realtimeAnimationTracks.addRange(kScene3080LargeLayer, kScene3080LargeFrameMillis, 0, 7);
 }
 
 void Scene3080::initializeCustomPreviewState() {

@@ -63,7 +63,7 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		{ kSceneAnimationScenePlaced, 2, kI11Chunk2DescriptorCount, nullptr, 0, true, 6 }
 	};
 	_sceneLayers.configure(layerSpecs);
-	_chunk3Track = _realtimeAnimationTracks.addRandom(_sceneLayers, kChunk3Layer,
+	_chunk3Track = _realtimeAnimationTracks.addRandom(kChunk3Layer,
 		kScene9110Chunk3Interval, 0, 7, false);
 }
 

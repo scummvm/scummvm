@@ -201,11 +201,9 @@ Scene6090::Scene6090(HollywoodEngine *vm) :
 		_asyncVolumePercent(100),
 		_asyncPartRemainingMillis(0) {
 	_sceneLayers.configure(kScene6090LayerSpecs);
-	_leftAmbientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene6090LeftAmbientLayer,
+	_leftAmbientTrack = _realtimeAnimationTracks.addLoop(kScene6090LeftAmbientLayer,
 		kScene6090FrameMillis, 0x1a);
-	_rightAmbientTrack = _realtimeAnimationTracks.addLoop(_sceneLayers,
-		kScene6090RightAmbientLayer,
+	_rightAmbientTrack = _realtimeAnimationTracks.addLoop(kScene6090RightAmbientLayer,
 		kScene6090FrameMillis, 0x1a);
 	_secondaryEffectSound.setArchive(Common::Path(kScene6090SoundArchiveName));
 }

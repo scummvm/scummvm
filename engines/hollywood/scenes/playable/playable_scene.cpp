@@ -151,7 +151,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random(Common::String::format("scene%u", config.sceneId)),
 		_sceneLayers(),
-		_realtimeAnimationTracks(),
+		_realtimeAnimationTracks(_sceneLayers),
 		_animationPlayer(*this),
 		_concurrentActorPathChannel(),
 		_speechController(vm->getLanguage(), vm->hasSpeechData()),
@@ -1605,34 +1605,30 @@ void PlayableScene::drawActionOverlayAtStratum(SceneAnimationStratum stratum) {
 		drawActionOverlayLayer();
 }
 
-bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,
+bool PlayableScene::playResourceLayerSequence(uint layerId, uint chunkIndex,
 		uint16 descriptorCount, const byte *frameMap, uint frameMapSize,
 		const AnimationFrameRange &range, bool clearAtEnd) {
+	if (!_sceneLayers.hasLayer(layerId))
+		return false;
+
+	ResourceSpriteLayer &layer = _sceneLayers.layer(layerId);
 	layer.configure(chunkIndex, descriptorCount, frameMap, frameMapSize);
 	layer.visible = true;
 	const bool completed = _animationPlayer.playAndPresent(layer, range);
-	if (clearAtEnd)
-		clearResourceLayer(layer);
+	if (clearAtEnd) {
+		layer.visible = false;
+		layer.configure(0, 0, nullptr, 0);
+	}
 	return completed;
 }
 
-bool PlayableScene::playResourceLayerSequence(SceneLayerStack &layers, uint layerId,
-		uint chunkIndex, uint16 descriptorCount, const byte *frameMap,
-		uint frameMapSize, const AnimationFrameRange &range, bool clearAtEnd) {
-	if (!layers.hasLayer(layerId))
-		return false;
-	return playResourceLayerSequence(layers.layer(layerId), chunkIndex, descriptorCount,
-		frameMap, frameMapSize, range, clearAtEnd);
-}
+void PlayableScene::clearSceneLayer(uint layerId) {
+	if (!_sceneLayers.hasLayer(layerId))
+		return;
 
-void PlayableScene::clearResourceLayer(ResourceSpriteLayer &layer) {
+	ResourceSpriteLayer &layer = _sceneLayers.layer(layerId);
 	layer.visible = false;
 	layer.configure(0, 0, nullptr, 0);
-}
-
-void PlayableScene::clearSceneLayer(uint layerId) {
-	if (_sceneLayers.hasLayer(layerId))
-		clearResourceLayer(_sceneLayers.layer(layerId));
 }
 
 void PlayableScene::drawActionOverlayLayer() {

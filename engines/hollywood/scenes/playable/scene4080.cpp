@@ -232,7 +232,7 @@ Scene4080::Scene4080(HollywoodEngine *vm) :
 		_gwendolynSleepTransitionOnEntry(false) {
 	_sceneLayers.configure(kScene4080LayerSpecs);
 	_foregroundFlickerTrack = _realtimeAnimationTracks.addRandom(
-		_sceneLayers, kScene4080ForegroundFlickerLayer, kScene4080FrameMillis, 0,
+		kScene4080ForegroundFlickerLayer, kScene4080FrameMillis, 0,
 		kScene4080ForegroundFlickerDescriptorCount - 1, false);
 }
 
