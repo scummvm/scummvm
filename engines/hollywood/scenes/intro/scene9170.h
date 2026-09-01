@@ -27,6 +27,7 @@
 #include "hollywood/music.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/speech_overlay.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
 namespace Hollywood {
@@ -42,14 +43,6 @@ public:
 	bool play();
 
 private:
-	struct SubtitleOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
-	};
-
 	bool load();
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadArenaChunk(uint index);
@@ -87,10 +80,6 @@ private:
 	void stopAudio() override;
 	void clearSubtitle();
 	void drawFrameOverlays() override;
-	void wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
-		Common::Array<Common::String> &lines) const;
-	void calculateSubtitleBounds(uint16 anchorCenterX, uint16 anchorTopY);
-	uint subtitleTextWidth(const Common::String &text) const;
 
 	SceneResources _resources;
 	MusicPlayer *_music;
@@ -103,7 +92,7 @@ private:
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _baseFramebuffer;
 	IndexedSurfaceBuffer _staticFramebuffer;
-	SubtitleOverlay _subtitle;
+	SpeechOverlay _subtitle;
 	uint _rowOffset;
 	bool _upperActorsEnabled;
 	bool _lowerActorsEnabled;

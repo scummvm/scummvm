@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hollywood/font.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -37,7 +36,6 @@ const uint kScene9140StageIndex = 913;
 const byte kScene9140SpeechColor = 0xf8;
 const uint kScene9140SpeechFrameMillis = 125;
 const uint kScene9140PoseFrameMillis = 125;
-const int kScene9140SpeechLineHeight = 20;
 const uint kScene9140RightBodyDescriptorCount = 0x14;
 const uint kScene9140MouthDescriptorCount = 4;
 
@@ -269,7 +267,8 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			_subtitle.colorIndex = kScene9140SpeechColor;
 			_subtitle.centerX = centerX;
 			_subtitle.topY = topY;
-			wrapSubtitleText(text, centerX, _subtitle.lines);
+			wrapSpeechOverlayText(text, centerX, _subtitle.lines,
+				kSpeechOverlayFixedEdgeWrap);
 		}
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
@@ -348,59 +347,7 @@ void Scene9140::clearSubtitle() {
 }
 
 void Scene9140::drawFrameOverlays() {
-	if (!_subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
-		return;
-
-	HollywoodFont *font = _vm->font();
-	font->setShadowColor(0);
-	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
-		const Common::String &line = _subtitle.lines[lineIndex];
-		const int lineWidth = subtitleTextWidth(line);
-		int x = (int)_subtitle.centerX - (lineWidth >> 1);
-		if (x < 0)
-			x = 0;
-		if (x + lineWidth > HollywoodEngine::kScreenWidth)
-			x = MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth);
-		const int y = (int)_subtitle.topY + lineIndex * kScene9140SpeechLineHeight;
-		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
-			Graphics::kTextAlignLeft, 0, false, true);
-	}
-}
-
-void Scene9140::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
-		Common::Array<Common::String> &lines) const {
-	lines.clear();
-	if (text.empty())
-		return;
-
-	uint maxChars = anchorSceneX < 0xa0 || HollywoodEngine::kScreenWidth - anchorSceneX < 0xa0 ? 0x24 : 0x32;
-	const char *source = text.c_str();
-	const uint textLength = text.size();
-	uint cursor = 0;
-	while (cursor < textLength && lines.size() < 10) {
-		uint end = textLength;
-		if (cursor + maxChars < textLength) {
-			end = cursor + maxChars;
-			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
-				--end;
-			while (end > cursor && (byte)source[end - 1] == 0x20)
-				--end;
-			if (end == cursor)
-				end = MIN<uint>(textLength, cursor + maxChars);
-		}
-		lines.push_back(Common::String(source + cursor, end - cursor));
-		cursor = end;
-		while (cursor < textLength && (byte)source[cursor] == 0x20)
-			++cursor;
-		maxChars = maxChars > 2 ? maxChars - 2 : 1;
-	}
-}
-
-uint Scene9140::subtitleTextWidth(const Common::String &text) const {
-	if (!_vm->font() || !_vm->font()->isLoaded())
-		return 0;
-
-	return _vm->font()->getStringWidth(text) + 2;
+	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 void Scene9140::fadeOutPalette() {
