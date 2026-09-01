@@ -101,7 +101,7 @@ protected:
 	bool loadArenaChunk(uint archiveIndex, uint localChunkIndex);
 	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
-	void drawLayerStack(const SceneLayerStack &layers, SceneAnimationStratum stratum);
+	void drawLayerStack(SceneAnimationStratum stratum);
 
 	void presentFrame();
 	void presentFrame(uint rowOffset, uint xOffset);

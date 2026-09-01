@@ -490,7 +490,7 @@ void Scene6030::runHannoverFrameTransition(byte firstFrame, byte lastFrame, byte
 		uint32 frameMillis) {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	playAnimationTransition(_sceneLayers, kScene6030HannoverLayer,
+	playAnimationTransition(kScene6030HannoverLayer,
 		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis).unskippable());
 	_hannoverManualSequenceActive = previousManualSequence;
 }
@@ -514,14 +514,14 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 	_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 9,
 		kScene6030TaffyArrivalDescriptorCount, nullptr, 0);
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
-	bool completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
+	bool completed = playAnimationFrames(kScene6030TaffyServiceLayer,
 		AnimationFrameRange(0, 0x44, kScene6030TaffyFrameMillis)
 			.unskippable().layerFrameAt(0x42, kScene6030CoffeeCupLayer, 1));
 	if (completed) {
 		_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 10,
 			kScene6030TaffyDepartureDescriptorCount, nullptr, 0);
 		_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
-		completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
+		completed = playAnimationFrames(kScene6030TaffyServiceLayer,
 			AnimationFrameRange(0, 0x29, kScene6030TaffyFrameMillis).unskippable());
 	}
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, false);
@@ -554,16 +554,16 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 void Scene6030::runHannoverCoffeeSequence() {
 	const bool previousManualSequence = _hannoverManualSequenceActive;
 	_hannoverManualSequenceActive = true;
-	bool completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
+	bool completed = playAnimationFrames(kScene6030HannoverLayer,
 		AnimationFrameRange(0x13, 0x16, kScene6030PoseFrameMillis)
 			.unskippable().layerFrameAt(0x16, kScene6030CoffeeCupLayer, 2));
 	if (completed) {
-		completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
+		completed = playAnimationFrames(kScene6030HannoverLayer,
 			AnimationFrameRange(0x17, 0x29, kScene6030PoseFrameMillis)
 				.unskippable().layerFrameAt(0x29, kScene6030CoffeeCupLayer, 1));
 	}
 	if (completed) {
-		playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
+		playAnimationFrames(kScene6030HannoverLayer,
 			AnimationFrameRange(0x2a, 0x2c, kScene6030PoseFrameMillis).unskippable());
 	}
 	_hannoverManualSequenceActive = previousManualSequence;
@@ -584,7 +584,7 @@ void Scene6030::runHannoverBathroomExitSequence() {
 
 	const uint32 speechDuration = beginStaticHannoverSpeechLine(9, 500, 100);
 	const uint32 speechStartMillis = g_system->getMillis();
-	const bool completed = playAnimationFrames(_sceneLayers, kScene6030BathroomExitLayer,
+	const bool completed = playAnimationFrames(kScene6030BathroomExitLayer,
 		AnimationFrameRange(0, 0x0d, kScene6030PoseFrameMillis)
 			.unskippable().hookAt(0x0d, kScene6030BathroomExitVolumeHook));
 	const uint32 elapsed = g_system->getMillis() - speechStartMillis;

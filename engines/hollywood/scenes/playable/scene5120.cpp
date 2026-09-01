@@ -865,7 +865,7 @@ void Scene5120::drawTransformedRoomLayers() {
 	if (_vm->gameState().scene5110SalonTransformState < 2 && !_roomTransformationActive)
 		return;
 
-	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
+	drawLayerStack(kSceneAnimationScenePlaced);
 }
 
 void Scene5120::drawStaticForegroundLayers(byte actorDrawOrderMode) {

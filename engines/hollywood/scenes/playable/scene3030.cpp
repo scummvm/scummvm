@@ -116,7 +116,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_vm->gameState().windmillBladesMoving || _machineSequenceActive)
 		drawSceneLayer(kScene3030LoopLayer);
 	if (_machineSequenceActive) {
-		drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
+		drawLayerStack(kSceneAnimationScenePlaced);
 		drawForegroundBlocks();
 		return;
 	}

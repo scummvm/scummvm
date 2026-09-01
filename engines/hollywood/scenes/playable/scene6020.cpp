@@ -595,7 +595,7 @@ void Scene6020::runEntryPhoneAnnouncement() {
 	}
 	if (!interrupted) {
 		beginPrimarySpeechLineWithAnimationGroup(21, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e, 3);
-		interrupted = !playAndPresentAnimationFrames(_sceneLayers, kScene6020TaffyLayer,
+		interrupted = !playAndPresentAnimationFrames(kScene6020TaffyLayer,
 			AnimationFrameRange(0x62, 0x70, kScene6020TaffyFrameMillis)
 				.resourcePatchAt(0x67, 17)
 				.soundAt(0x67, 0x10));
@@ -850,7 +850,7 @@ void Scene6020::runFinalSceneObjectAnimation() {
 	firstPart.frameOrder = kScene6020PhoneFrameMap;
 	firstPart.resourcePatchAt(10, 18)
 		.soundAt(10, 0x10);
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene6020PhoneLayer, firstPart)) {
+	if (!playAndPresentAnimationFrames(kScene6020PhoneLayer, firstPart)) {
 		applyPhoneFramebufferPatch(17);
 		_sceneLayers.setLayerVisible(kScene6020PhoneLayer, false);
 		_phoneAnimationActive = false;
@@ -872,7 +872,7 @@ void Scene6020::runFinalSceneObjectAnimation() {
 		secondPart.frameOrder = kScene6020PhoneFrameMap;
 		secondPart.resourcePatchAt(61, 17)
 			.soundAt(61, 0x10);
-		playAndPresentAnimationFrames(_sceneLayers, kScene6020PhoneLayer, secondPart);
+		playAndPresentAnimationFrames(kScene6020PhoneLayer, secondPart);
 	}
 	applyPhoneFramebufferPatch(17);
 	_sceneLayers.setLayerVisible(kScene6020PhoneLayer, false);

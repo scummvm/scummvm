@@ -593,7 +593,7 @@ void Scene5130::applyDrinkPalette(byte red, byte green, byte blue) {
 
 void Scene5130::drawFrame() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
+	drawLayerStack(kSceneAnimationScenePlaced);
 	drawDrinkStrip();
 }
 

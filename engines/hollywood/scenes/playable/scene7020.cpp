@@ -378,14 +378,14 @@ void Scene7020::runOpeningSueEntryAndIdleWaits() {
 
 void Scene7020::runChunk6FrameRange(byte firstFrame, byte lastFrame, byte finalPoseMode) {
 	setChunk6Visible(true);
-	playAnimationFrames(_sceneLayers, kScene7020Chunk6Layer,
+	playAnimationFrames(kScene7020Chunk6Layer,
 		AnimationFrameRange(firstFrame, lastFrame, kScene7020FrameMillis));
 	_primaryPoseMode = finalPoseMode;
 }
 
 void Scene7020::runChunk7RevealFramesThenHold() {
 	setChunk7Visible(true);
-	playAnimationFrames(_sceneLayers, kScene7020Chunk7Layer,
+	playAnimationFrames(kScene7020Chunk7Layer,
 		AnimationFrameRange(kScene7020Chunk7RevealFrameMap, kScene7020FrameMillis));
 	_drawChunk7OverlayInsteadOfActor = true;
 	setChunk7Frame(8);

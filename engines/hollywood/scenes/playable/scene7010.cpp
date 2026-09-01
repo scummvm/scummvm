@@ -856,12 +856,12 @@ void Scene7010::beginHannoverPrimarySpeechLine(byte frameIndex, byte poseVariant
 void Scene7010::runChunk8RevealSequence() {
 	_chunk8SpecialSequenceActive = true;
 	updateChunk9Visibility();
-	playAnimationFrames(_sceneLayers, kScene7010Chunk8Layer,
+	playAnimationFrames(kScene7010Chunk8Layer,
 		AnimationFrameRange(7, 0x0b, kScene7010Chunk8FrameMillis));
 }
 
 void Scene7010::runChunk8HideSequence() {
-	playAnimationFrames(_sceneLayers, kScene7010Chunk8Layer,
+	playAnimationFrames(kScene7010Chunk8Layer,
 		AnimationFrameRange(0x0f, 0x13, kScene7010Chunk8FrameMillis));
 	setChunk8Frame(_vm->gameState().currentAmbientMusicCueId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0);
 	_chunk8SpecialSequenceActive = false;
@@ -870,7 +870,7 @@ void Scene7010::runChunk8HideSequence() {
 
 bool Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {
 	setChunk11Visible(true);
-	return playAnimationFrames(_sceneLayers, kScene7010Chunk11Layer,
+	return playAnimationFrames(kScene7010Chunk11Layer,
 		AnimationFrameRange(startFrame, endFrame, kScene7010Chunk8FrameMillis));
 }
 
@@ -914,7 +914,7 @@ void Scene7010::runChunk13Item09PickupOverlaySequence() {
 void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame, bool restoreChunk11AtEnd) {
 	setChunk14Visible(true);
 	setChunk11Visible(false);
-	playAnimationFrames(_sceneLayers, kScene7010Chunk14Layer,
+	playAnimationFrames(kScene7010Chunk14Layer,
 		AnimationFrameRange(startFrame, endFrame, kScene7010Chunk14WindowFrameMillis));
 	setChunk14Visible(false);
 	if (restoreChunk11AtEnd)
@@ -993,7 +993,7 @@ void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte fi
 	_vm->gameState().frankensteinNoteOverlayMode = 2;
 	setDialogueOverlayMode(2, startFrame);
 	if (startFrame < endFrame) {
-		playAnimationFrames(_sceneLayers, kScene7010DialogueOverlayLayer,
+		playAnimationFrames(kScene7010DialogueOverlayLayer,
 			AnimationFrameRange(startFrame + 1, endFrame,
 				kScene7010DialogueOverlayFrameMillis)
 				.soundAt(0x0e, 0x13, 80)

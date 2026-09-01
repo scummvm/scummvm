@@ -286,7 +286,7 @@ void Scene3020::runDescriptorTransitionClip(uint chunkIndex, uint descriptorCoun
 
 void Scene3020::drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex) {
 	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
+	drawLayerStack(kSceneAnimationBehindActors);
 	// The continuation descriptors contain Ron and their own occlusion.
 	drawStripSpriteFrame(clipData, 0, 0, descriptorCount, frameIndex, _sceneFramebuffer);
 }

@@ -212,11 +212,10 @@ void PresentationScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer.surface());
 }
 
-void PresentationScene::drawLayerStack(const SceneLayerStack &layers,
-		SceneAnimationStratum stratum) {
-	for (uint i = 0; i < layers.layerCount(); ++i) {
-		if (layers.isInStratum(i, stratum))
-			drawResourceSpriteLayer(layers.layer(i));
+void PresentationScene::drawLayerStack(SceneAnimationStratum stratum) {
+	for (uint i = 0; i < _sceneLayers.layerCount(); ++i) {
+		if (_sceneLayers.isInStratum(i, stratum))
+			drawResourceSpriteLayer(_sceneLayers.layer(i));
 	}
 }
 
