@@ -475,22 +475,6 @@ bool Scene3070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
-void Scene3070::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	switch (hookId) {
-	case 1:
-		applyActionPatchChunk(21);
-		break;
-	case 2:
-		_soundBank0.playSample(0x14, 100);
-		_ambientSoundBank0.playSample(0x11, 50, true);
-		applyActionPatchChunk(12);
-		break;
-	default:
-		break;
-	}
-}
-
 bool Scene3070::shouldAnimatePrimarySpeechLine() const {
 	return _interludeActive || _lateCutsceneActive;
 }
@@ -770,7 +754,10 @@ void Scene3070::runFrankensteinRevival() {
 	_vm->gameplayMusic()->playMusicCue(0x12, 100, false);
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(13, 6, kScene3070RevivalStartFrameMap,
-			ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis).hookAt(5, 2))
+			ARRAYSIZE(kScene3070RevivalStartFrameMap), kScene3070OverlayFrameMillis)
+			.soundAt(5, 0x14)
+			.loopingAmbientSoundAt(5, 0x11, 50)
+			.resourcePatchAt(5, 12))
 		.actorPath(SceneActorPose(0x0e6, 0x1b5, 1));
 	if (!sequence.completed()) {
 		_soundBank0.stop();
@@ -826,7 +813,8 @@ void Scene3070::runBodyAssembly() {
 
 	sequence.secondarySpeech(16, 2)
 		.actorReplacement(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
-			ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis).hookAt(10, 1))
+			ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis)
+			.resourcePatchAt(10, 21))
 		.actorReplacement(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
 			ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis))
 		.commit(_vm->gameState().scene3070FrankensteinBodyState, (byte)1)
@@ -864,14 +852,6 @@ void Scene3070::addSerumIngredient(byte itemId, uint16 speechRow, bool speakBefo
 	sequence.sound(1);
 	if (!speakBefore)
 		sequence.secondarySpeech(speechRow, 0);
-}
-
-void Scene3070::applyActionPatchChunk(uint chunkIndex) {
-	if (!_sceneChunkTable.isValidChunk(chunkIndex))
-		return;
-
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _baseFramebuffer);
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 }
 
 bool Scene3070::runCurtainRevealFromBlack() {

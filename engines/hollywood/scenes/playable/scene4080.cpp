@@ -99,11 +99,6 @@ const byte kScene4080OilBottleItem = 0x43;
 const byte kScene4080GominolaItem = 0x44;
 const byte kScene4080SteakItem = 0x45;
 
-enum Scene4080AnimationHookId {
-	kScene4080StakePaletteHook = 1,
-	kScene4080StakeImpactSoundsHook
-};
-
 enum Scene4080GwendolynSpeechPoseMode {
 	kScene4080GwendolynBodyAnimation,
 	kScene4080GwendolynDialogueIdle,
@@ -549,17 +544,6 @@ AmbientAudioProfile Scene4080::ambientAudioProfile() const {
 	profile.musicProbabilityModulus = 50;
 	profile.musicVolumePercent = 100;
 	return profile;
-}
-
-void Scene4080::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId == kScene4080StakePaletteHook)
-		configurePalettePatchLayerForState();
-	else if (hookId == kScene4080StakeImpactSoundsHook) {
-		_additionalAmbientSoundBank0Slots[0].playSample(0x19, 100);
-		_additionalAmbientSoundBank0Slots[1].playSample(0x1a, 100);
-	} else
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
 }
 
 byte Scene4080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -1161,8 +1145,9 @@ void Scene4080::runUseStakeOnGwendolyn() {
 				.unskippable()
 				.commitAt(0x1d, state.scene4080GwendolynState, (byte)0)
 				.soundAt(0x1d, 0x18)
-				.hookAt(0x1d, kScene4080StakePaletteHook)
-				.hookAt(0x20, kScene4080StakeImpactSoundsHook)
+				.layerVisibleAt(0x1d, kScene4080PalettePatchLayer, false)
+				.ambientSoundAt(0x20, 0x19, 100, 1)
+				.ambientSoundAt(0x20, 0x1a, 100, 2)
 				.noFinalFrameDelay()))
 		return;
 	_soundBank0.playSample(0x1b, 100);
