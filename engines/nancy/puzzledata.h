@@ -399,6 +399,20 @@ struct HangmanData : public PuzzleData {
 	Common::Array<Common::String> usedWords;
 };
 
+// Nancy14+ DecoderPuzzle (AR 182). The decoded line typed so far, plus the scene
+// it belongs to. A scene's two records (with and without the substitution table)
+// hand the line to each other through here; other scenes start empty.
+struct DecoderData : public PuzzleData {
+	DecoderData() {}
+	virtual ~DecoderData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('D', 'C', 'D', 'R'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	uint16 sceneID = kNoScene;
+	Common::String text;
+};
+
 // Nancy12 DrivingPuzzle (AR 160). The car's position, heading and tire state persist
 // across visits to the driving map (driving into a location, then coming back), matching
 // the original's retainState mechanism, which saves the car to globals every frame and

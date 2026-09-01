@@ -514,6 +514,11 @@ void HangmanData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void DecoderData::synchronize(Common::Serializer &ser) {
+	ser.syncAsUint16LE(sceneID);
+	ser.syncString(text);
+}
+
 void DrivingData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(valid);
 	ser.syncAsSint32LE(carX);
@@ -534,6 +539,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new WordFindPuzzleData();
 	case HangmanData::getTag():
 		return new HangmanData();
+	case DecoderData::getTag():
+		return new DecoderData();
 	case SliderPuzzleData::getTag():
 		return new SliderPuzzleData();
 	case RippedLetterPuzzleData::getTag():
