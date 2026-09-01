@@ -653,6 +653,17 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
+	{"pharaoncurse",
+		"Demo",
+		AD_ENTRY2s(
+			"script.lst", "5a80c5ba5d3223dd14553964e96f1613", 45038,
+			"L0P01R01S00.vr", "e20f37ea406b2ad7baac42f45d1bd6af", 16245
+		),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO | PHOENIXVR_V2 | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

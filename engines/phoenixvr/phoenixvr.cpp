@@ -319,9 +319,10 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		setNextLevel();
 	} else if (gameIdMatches("pharaoncurse")) {
 		Common::INIFile file;
-		Common::ScopedPtr<Common::SeekableReadStream> stream(open("pharaohs.wbm"));
+		Common::String filename((_gameDescription->flags & ADGF_DEMO) ? "demo.wbm" : "pharaohs.wbm");
+		Common::ScopedPtr<Common::SeekableReadStream> stream(open(filename));
 		if (!stream || !file.loadFromStream(*stream))
-			error("can't open install/pharaohs.wbm");
+			error("can't open %s", filename.c_str());
 		Common::String strNumLevels;
 		if (!file.getKey("LEVELS", "GAME", strNumLevels))
 			error("can't find levels number");
@@ -336,7 +337,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 				error("no path in level section");
 			if (!file.getKey("NAME", Common::String::format("LEVEL_%d", i), name))
 				error("no name in level section");
-			if (media == "HD")
+			if (media == "HD" && !(_gameDescription->flags & ADGF_DEMO))
 				path = "install\\" + path;
 			debug("adding level %s %s", path.c_str(), name.c_str());
 			_levels.push_back(Level{path, name});
