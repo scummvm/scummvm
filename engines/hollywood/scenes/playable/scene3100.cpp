@@ -127,25 +127,16 @@ void Scene3100::initializeCustomPreviewState() {
 	setActiveActorPose(0x276, 0x1c2, 5);
 }
 
-void Scene3100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene3100::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
+	(void)activeWorldX;
+	(void)activeWorldY;
 	(void)actorDrawOrderMode;
 
-	copyBaseFramebufferToSceneFramebuffer();
-	if (_vm->gameState().scene3100GirlConversationState < 2)
-		drawSceneLayer(kScene3100CabinLayer);
-	else
-		drawSceneLayer(kScene3100AlternateLayer);
-	if (_actionOverlayPlayer.replacesActor()) {
-		drawActionOverlayLayer();
+	if (_actionOverlayPlayer.replacesActor())
 		return;
-	}
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (_sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
-	drawActionOverlayLayer();
 }
 
 void Scene3100::runCustomEntrySequence() {
@@ -291,6 +282,8 @@ void Scene3100::resetAnimationLayers() {
 	_paletteCycleChannel.reset(0, kScene3100PaletteCycleMillis);
 	_sceneLayers.resetLayer(kScene3100CabinLayer, cabinFrame);
 	_sceneLayers.resetLayer(kScene3100AlternateLayer, 15);
+	_sceneLayers.setLayerVisible(kScene3100CabinLayer, state.scene3100GirlConversationState < 2);
+	_sceneLayers.setLayerVisible(kScene3100AlternateLayer, state.scene3100GirlConversationState >= 2);
 	_alternateAnimationActive = false;
 	_conversationActive = false;
 	_resolutionSequenceActive = false;
@@ -527,6 +520,8 @@ void Scene3100::runConversationResolutionSequence() {
 		.commit(state.scene3100GirlConversationState, (byte)2)
 		.commit(state.scene3100DaisyVisible, true)
 		.commit(_alternateChannel.frameIndex, (byte)15);
+	_sceneLayers.setLayerVisible(kScene3100CabinLayer, false);
+	_sceneLayers.setLayerVisible(kScene3100AlternateLayer, true);
 	_sceneLayers.setLayerFrame(kScene3100AlternateLayer, 15);
 	sequence.framebufferPatch(0xff)
 		.secondarySpeech(kScene3100DialogueStageId, 0x0c);

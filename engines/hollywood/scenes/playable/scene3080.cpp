@@ -131,28 +131,18 @@ void Scene3080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene3080::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
+	(void)activeWorldX;
 	(void)actorDrawOrderMode;
 
-	copyBaseFramebufferToSceneFramebuffer();
-	drawSceneLayer(kScene3080LargeLayer);
-	if (_actionOverlayPlayer.replacesActor()) {
-		drawActionOverlayLayer();
-		drawSceneLayer(kScene3080SmallIdleLayer);
+	if (_actionOverlayPlayer.replacesActor() || activeWorldY > 0x165)
 		return;
-	}
 
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	if (activeWorldY <= 0x165) {
-		drawForegroundBlocks();
-		const uint chunkIndex = _vm->gameState().scene3080WindowOpened ? 16 : 6;
-		if (_sceneChunkTable.isValidChunk(chunkIndex))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
-	}
-	drawSceneLayer(kScene3080SmallIdleLayer);
+	drawForegroundBlocks();
+	const uint chunkIndex = _vm->gameState().scene3080WindowOpened ? 16 : 6;
+	if (_sceneChunkTable.isValidChunk(chunkIndex))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 }
 
 void Scene3080::runCustomEntrySequence() {
