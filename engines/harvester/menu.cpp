@@ -365,10 +365,19 @@ Common::String buildUseItemPrompt(const MenuTextConfig &config,
 
 namespace {
 
+enum MainMenuItem {
+	kMainMenuItemNewGame = 0,
+	kMainMenuItemSaveGame,
+	kMainMenuItemLoadGame,
+	kMainMenuItemOptions,
+	kMainMenuItemHelp,
+	kMainMenuItemQuitGame
+};
+
+static const char *const kBlankMenuSlot = " ";
+
 static void buildDisplayMainMenuItems(const Common::Array<Common::String> &source,
 		bool canSaveGame, bool canLoadGame, Common::Array<Common::String> &dest) {
-	static const char *const kBlankMenuSlot = " ";
-
 	dest = source;
 	if (dest.size() > 1 && !canSaveGame)
 		dest[1] = kBlankMenuSlot;
@@ -852,8 +861,12 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 		const Common::String &item = mainMenuItems[selectedItem];
 		const byte *menuPalette = _hasMainMenuBackdrop ? _mainMenuBackdropPalette : art->getWaitPalette();
 		statusMessage.clear();
+		if (item.empty() || item == kBlankMenuSlot)
+			return Common::kNoError;
+		debugC(2, kDebugGeneral, "Harvester: main menu selected index=%d label='%s'",
+			selectedItem, item.c_str());
 
-		if (item.equalsIgnoreCase("NEW GAME")) {
+		if (selectedItem == kMainMenuItemNewGame) {
 			const MenuTextConfig &config = flow._menuTextConfig;
 
 			IndexedBitmap menuBackdrop;
@@ -873,7 +886,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 			return runSelectedRoomLoop("START");
 		}
 
-		if (item.equalsIgnoreCase("LOAD GAME")) {
+		if (selectedItem == kMainMenuItemLoadGame) {
 			bool loadedGame = false;
 			Common::Error loadError = runLoadGameMenu(menuPalette, 1.0f, flow, loadedGame);
 			if (loadError.getCode() != Common::kNoError)
@@ -893,7 +906,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 			return runSelectedRoomLoop(targetName);
 		}
 
-		if (item.equalsIgnoreCase("SAVE GAME")) {
+		if (selectedItem == kMainMenuItemSaveGame) {
 			bool savedGame = false;
 			Common::Error saveError = runSaveGameMenu(menuPalette, 1.0f, flow, savedGame);
 			(void)savedGame;
@@ -901,7 +914,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 			return saveError;
 		}
 
-		if (item.equalsIgnoreCase("OPTIONS")) {
+		if (selectedItem == kMainMenuItemOptions) {
 			IndexedBitmap menuBackdrop;
 			if (!captureMenuBackdrop(menuBackdrop))
 				return Common::kReadingFailed;
@@ -910,13 +923,13 @@ Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 			return optionsError;
 		}
 
-		if (item.equalsIgnoreCase("HELP")) {
+		if (selectedItem == kMainMenuItemHelp) {
 			Common::Error helpError = runHelpScreen(menuPalette, 1.0f, flow);
 			needsRedraw = true;
 			return helpError;
 		}
 
-		if (item.equalsIgnoreCase("QUIT GAME")) {
+		if (selectedItem == kMainMenuItemQuitGame) {
 			IndexedBitmap menuBackdrop;
 			if (!captureMenuBackdrop(menuBackdrop))
 				return Common::kReadingFailed;
@@ -1097,7 +1110,12 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 
 		const Common::String &item = roomMenuItems[selectedItem];
-		if (item.equalsIgnoreCase("NEW GAME")) {
+		if (item.empty() || item == kBlankMenuSlot)
+			return RoomMenuActivationResult(Common::kNoError, false);
+		debugC(2, kDebugGeneral, "Harvester: room menu selected index=%d label='%s'",
+			selectedItem, item.c_str());
+
+		if (selectedItem == kMainMenuItemNewGame) {
 			const MenuTextConfig &config = flow._menuTextConfig;
 
 			bool confirmed = false;
@@ -1113,7 +1131,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
-		if (item.equalsIgnoreCase("LOAD GAME")) {
+		if (selectedItem == kMainMenuItemLoadGame) {
 			bool loadedGame = false;
 			Common::Error loadError = runLoadGameMenu(palette, paletteBrightness, flow, loadedGame);
 			if (loadError.getCode() != Common::kNoError)
@@ -1122,7 +1140,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, loadedGame);
 		}
 
-		if (item.equalsIgnoreCase("OPTIONS")) {
+		if (selectedItem == kMainMenuItemOptions) {
 			Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, flow);
 			if (optionsError.getCode() != Common::kNoError)
 				return RoomMenuActivationResult(optionsError, false);
@@ -1130,7 +1148,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
-		if (item.equalsIgnoreCase("HELP")) {
+		if (selectedItem == kMainMenuItemHelp) {
 			Common::Error helpError = runHelpScreen(palette, paletteBrightness, flow);
 			if (helpError.getCode() != Common::kNoError)
 				return RoomMenuActivationResult(helpError, false);
@@ -1138,7 +1156,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
-		if (item.equalsIgnoreCase("SAVE GAME")) {
+		if (selectedItem == kMainMenuItemSaveGame) {
 			bool savedGame = false;
 			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, flow, savedGame);
 			if (saveError.getCode() != Common::kNoError)
@@ -1155,7 +1173,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
-		if (item.equalsIgnoreCase("QUIT GAME")) {
+		if (selectedItem == kMainMenuItemQuitGame) {
 			Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, flow);
 			if (quitError.getCode() != Common::kNoError)
 				return RoomMenuActivationResult(quitError, false);
@@ -1163,7 +1181,9 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
-		debug(1, "Harvester: room menu item '%s' selected but not implemented", item.c_str());
+		debugC(1, kDebugGeneral,
+			"Harvester: room menu index=%d label='%s' selected but not implemented",
+			selectedItem, item.c_str());
 		return RoomMenuActivationResult(Common::kNoError, false);
 	};
 
