@@ -150,25 +150,27 @@ void Scene5040::initializeCustomPreviewState() {
 		setActiveActorPose(0x0f6, 0x0e9, 2);
 }
 
-void Scene5040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
+void Scene5040::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)drawActors;
+	(void)activeFacing;
+	(void)activeWorldX;
+	(void)activeWorldY;
 	(void)actorDrawOrderMode;
+	if (_vm->gameState().scene5040MineGalleryState >= 2)
+		_sceneLayers.setLayerVisible(kScene5040KarlLayer, false);
+}
 
-	copyBaseFramebufferToSceneFramebuffer();
-	if (_sceneLayers.layerVisible(kScene5040KarlLayer) &&
-			_vm->gameState().scene5040MineGalleryState < 2)
-		drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+void Scene5040::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode) {
+	(void)activeWorldX;
+	(void)actorDrawOrderMode;
 	if (activeWorldY < 0x138 && _sceneChunkTable.isValidChunk(7))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(16))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[16], _sceneFramebuffer);
-	drawActionOverlayLayer();
 }
 
 bool Scene5040::shouldPresentPreviewBeforeEntrySequence() const {

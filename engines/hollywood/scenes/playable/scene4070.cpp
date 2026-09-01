@@ -223,17 +223,20 @@ void Scene4070::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void Scene4070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
+void Scene4070::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)activeFacing;
+	(void)activeWorldY;
 	(void)actorDrawOrderMode;
-
-	if (drawActiveActor)
+	if (drawActors)
 		setRightSidePatchActive(activeWorldX >= kScene4070SidePatchThresholdX, false);
-	copyBaseFramebufferToSceneFramebuffer();
-	drawSceneLayers();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
+}
+
+void Scene4070::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode) {
+	(void)activeWorldX;
+	(void)actorDrawOrderMode;
 	if (activeWorldY < kScene4070ForegroundYThreshold && !_rightSidePatchActive &&
 			_sceneChunkTable.isValidChunk(kScene4070ForegroundHighChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4070ForegroundHighChunk], _sceneFramebuffer);
@@ -505,12 +508,6 @@ void Scene4070::advanceDraculaIdle(uint32 delta) {
 
 void Scene4070::updateSidePatchForActorPosition() {
 	setRightSidePatchActive(_activeActorWorldX >= kScene4070SidePatchThresholdX, true);
-}
-
-void Scene4070::drawSceneLayers() {
-	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
-	drawActionOverlayLayer();
 }
 
 void Scene4070::rememberOriginalColorMap() {
