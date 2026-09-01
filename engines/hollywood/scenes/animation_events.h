@@ -302,13 +302,15 @@ public:
 		return self();
 	}
 
-	Spec &soundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, false);
+	Spec &soundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
+		events.addSound(frame, soundId, volumePercent, false, slotIndex);
 		return self();
 	}
 
-	Spec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100) {
-		events.addSound(frame, soundId, volumePercent, true);
+	Spec &loopingSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
+		events.addSound(frame, soundId, volumePercent, true, slotIndex);
 		return self();
 	}
 

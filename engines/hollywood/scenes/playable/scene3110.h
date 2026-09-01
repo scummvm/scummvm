@@ -47,18 +47,7 @@ private:
 		const byte *frameMap;
 		uint frameMapSize;
 		uint firstTick;
-		uint frameMillis;
-		bool visibleBeforeStart;
 		bool holdLastFrame;
-	};
-
-	struct SoundCue {
-		uint tick;
-		uint slot;
-		uint16 cueId;
-		byte volumePercent;
-		bool loop;
-		bool stop;
 	};
 
 	struct MachineRoomState {
@@ -112,9 +101,8 @@ private:
 	void advanceLeftElectricalArc(MachineRoomState &state);
 	void advanceRightElectricalArc(MachineRoomState &state);
 	void advanceMachineRoomPalette(MachineRoomState &state, uint32 elapsedMillis);
-	void runSpriteSequence(uint frameCount, uint frameMillis, uint16 viewportX,
-		const SpriteTrack *tracks, uint trackCount,
-		const SoundCue *soundCues = nullptr, uint soundCueCount = 0);
+	void runSpriteSequence(const AnimationFrameRange &range, uint16 viewportX,
+		const SpriteTrack *tracks, uint trackCount);
 	void drawSpriteSequenceFrame(uint tick, const SpriteTrack *tracks, uint trackCount);
 	uint frameForTrack(const SpriteTrack &track, uint tick) const;
 	void initializeMemoryEffectPalette();
@@ -123,10 +111,11 @@ private:
 	void adjustMemoryPalettePulseRanges(int delta);
 	void restoreMemoryPalettePulseRanges();
 	uint16 nextMemoryRandom15Bit();
-	void applySoundCues(uint tick, const SoundCue *soundCues, uint soundCueCount);
 	void playSound(uint slot, uint16 cueId, byte volumePercent, bool loop);
 	void stopSound(uint slot);
 	void stopSounds();
+	void handleAnimationFrameEvent(const AnimationFrameEvent &event, uint frame) override;
+	void presentAnimationFrame() override;
 	void stopAudio() override;
 
 	Common::Array<byte> _exteriorStormPalette;
@@ -136,6 +125,10 @@ private:
 	SoundBank0Player _sound0;
 	SoundBank0Player _sound1;
 	SoundBank0Player _sound2;
+	const SpriteTrack *_spriteSequenceTracks;
+	uint _spriteSequenceTrackCount;
+	uint16 _spriteSequenceViewportX;
+	byte _spriteSequenceTick;
 	uint32 _memoryRandomState;
 	byte _memoryPulseLevel;
 	bool _memoryPulseActive;
