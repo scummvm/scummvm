@@ -57,7 +57,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 	// for the moment it's happening with Director version < 4
 	if (!cast->_lingodec)
 		return nullptr;
-	for (auto p : cast->_lingodec->scripts) {
+	for (const auto &p : cast->_lingodec->scripts) {
 		if (cast->getCastIdByScriptId(p.first) != id.member)
 			continue;
 
