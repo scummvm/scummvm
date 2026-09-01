@@ -598,7 +598,7 @@ void Scene3070::runLateCutsceneBranch() {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[23], _baseFramebuffer);
 	_lateCutsceneActive = true;
 	_sceneLayers.setLayerVisible(kScene3070LateCutsceneLayer, true);
-	playAnimationFrames(_sceneLayers, kScene3070LateCutsceneLayer,
+	playAnimationFrames(kScene3070LateCutsceneLayer,
 		AnimationFrameRange(0, 48, kScene3070OverlayFrameMillis));
 	beginPrimarySpeechLineWithAnimationGroup(0x0d, 6, 0x212, 0x09e,
 		0x20, 0x00, 0x3f, kScene3070LateSpeechGroup);

@@ -263,7 +263,7 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 
 void Scene9110::drawCompositeToFramebuffer() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
+	drawLayerStack(kSceneAnimationScenePlaced);
 }
 
 void Scene9110::presentComposite() {

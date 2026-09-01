@@ -227,7 +227,7 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		if (!isAlternatePaletteResourceActive())
 			drawResourceSpriteLayer(_sceneLayers.layer(kScene7040Chunk11Layer));
 	} else {
-		drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
+		drawLayerStack(kSceneAnimationBehindActors);
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}
@@ -908,7 +908,7 @@ void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
 
 void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
 	setChunk14ActionVisible(true);
-	playAnimationFrames(_sceneLayers, kScene7040Chunk14ActionLayer,
+	playAnimationFrames(kScene7040Chunk14ActionLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
 			.soundAt(1, 3)
 			.layerVisibleAt(1, kScene7040Chunk12Layer, true)
@@ -928,7 +928,7 @@ void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
 void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
 	configureChunk14AltLayer(chunkIndex, true);
 	GameplayState &state = _vm->gameState();
-	playAnimationFrames(_sceneLayers, kScene7040Chunk14AltLayer,
+	playAnimationFrames(kScene7040Chunk14AltLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
 			.soundAt(0x2c, 0x17, 50)
 			.commitAt(0x2c, state.officeNotePickupState, (byte)0)
