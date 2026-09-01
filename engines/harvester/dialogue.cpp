@@ -111,6 +111,10 @@ public:
 	static void requestMainMenuReturn(Flow &flow) {
 		flow.requestMainMenuReturn();
 	}
+
+	static const MenuTextConfig &getMenuTextConfig(const Flow &flow) {
+		return flow._menuTextConfig;
+	}
 };
 
 namespace {
@@ -135,9 +139,11 @@ static const int kDialogueTopicStartX = 168;
 static const int kDialogueTopicEndX = 482;
 static const int kDialogueOtherStartY = 170;
 static const int kDialogueOtherEndY = 193;
+static const int kDialogueKeywordTitleYOffset = 4;
 static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
+static const char *const kDialogueLocalizedKeywordBitmapPath = "GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
 static const char *const kDialogueGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
 static const char *const kDialogueGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
@@ -492,7 +498,8 @@ public:
 	RoomNpcDialogueSession(HarvesterEngine &engine, Common::Point &mousePos, Flow &flow,
 			const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness,
 			const NpcRecord &npc)
-		: _engine(engine), _mousePos(mousePos), _flow(flow), _backdrop(backdrop),
+		: _engine(engine), _mousePos(mousePos), _flow(flow),
+		  _menuTextConfig(DialogueFlowAccess::getMenuTextConfig(flow)), _backdrop(backdrop),
 		  _palette(palette), _paletteBrightness(paletteBrightness), _npc(npc),
 		  _script(engine.getScript()), _text(engine.getText()), _art(engine.getArt()),
 		  _entityManager(engine.getRuntimeEntities()),
@@ -529,8 +536,15 @@ public:
 		_menuFontUsesCft = _menuCftFont.get() != nullptr;
 		_highlightFontUsesCft = _subtitleFontUsesCft;
 
-		if (!loadBitmapResource(*resources, kDialogueKeywordBitmapPath, _keywordBitmap))
+		const char *keywordBitmapPath = _menuTextConfig.hasDialogueKeywordLabel()
+			? kDialogueLocalizedKeywordBitmapPath : kDialogueKeywordBitmapPath;
+		if (!loadBitmapResource(*resources, keywordBitmapPath, _keywordBitmap))
 			return;
+		debugC(2, kDebugDialogue,
+			"Harvester: dialogue keyword panel='%s' title='%s' other='%s' responses='%s'",
+			keywordBitmapPath, _menuTextConfig.dialogueKeywordLabel.c_str(),
+			_menuTextConfig.dialogueOtherLabel.c_str(),
+			_menuTextConfig.dialogueResponsesLabel.c_str());
 
 		_genericByeTopic = _text->getDialogueResponseLine(kDialogueGenericByeResponseIndex);
 		if (_genericByeTopic.empty())
@@ -1144,6 +1158,16 @@ private:
 		}
 
 		if (topics) {
+			if (_menuTextConfig.hasDialogueKeywordLabel()) {
+				const Common::String &title = _menuTextConfig.dialogueKeywordLabel;
+				const int titleWidth = _highlightFont->getStringWidth(title);
+				const int titleX = kDialogueOverlayX +
+					MAX<int>(0, ((int)_keywordBitmap.width - titleWidth) / 2);
+				drawFontString(*_highlightFont, _highlightFontUsesCft, title, titleX,
+					kDialogueOverlayY + kDialogueKeywordTitleYOffset, titleWidth,
+					kTextColorNormal);
+			}
+
 			const int lineHeight = getDialogueTextLineHeight(*_menuFont);
 			for (uint i = 0; i < topics->size(); ++i) {
 				const bool highlighted = (int)i == hoveredTopicIndex;
@@ -1156,7 +1180,8 @@ private:
 
 			const Graphics::Font &otherFont = hoverOther ? *_highlightFont : *_menuFont;
 			const bool otherUsesCft = hoverOther ? _highlightFontUsesCft : _menuFontUsesCft;
-			drawFontString(otherFont, otherUsesCft, "Other", kDialogueOtherX, kDialogueOtherY,
+			drawFontString(otherFont, otherUsesCft, _menuTextConfig.dialogueOtherLabel,
+				kDialogueOtherX, kDialogueOtherY,
 				kDialogueOtherWidth, hoverOther ? kTextColorNormal : kTextColorHover);
 		}
 
@@ -1285,7 +1310,7 @@ private:
 		if (textboxBitmap && textboxBitmap->isValid())
 			blitTransparentBitmap(*activeScreen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
 
-		const Common::String title = "Responses";
+		const Common::String &title = _menuTextConfig.dialogueResponsesLabel;
 		const Graphics::Font &titleFont = *_highlightFont;
 		const bool titleUsesCft = _highlightFontUsesCft;
 		const int titleWidth = titleFont.getStringWidth(title);
@@ -1414,6 +1439,7 @@ private:
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	Flow &_flow;
+	const MenuTextConfig &_menuTextConfig;
 	const IndexedBitmap &_backdrop;
 	const byte *_palette;
 	const float _paletteBrightness;

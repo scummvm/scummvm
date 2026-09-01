@@ -313,6 +313,9 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 	loadMenuDisplayValue(menu, "pick_up", config.pickUpVerb);
 	loadMenuDisplayValue(menu, "use", config.useVerb);
 	loadMenuDisplayValue(menu, "use_on", config.useOnPreposition);
+	loadMenuDisplayValue(menu, "other", config.dialogueOtherLabel);
+	loadMenuDisplayValue(menu, "responses", config.dialogueResponsesLabel);
+	loadMenuDisplayValue(menu, "keyword", config.dialogueKeywordLabel);
 	loadMenuDisplayValue(menu, "Exit", config.quickTipsExitLabel);
 	loadMenuDisplayValue(menu, "next", config.quickTipsNextLabel);
 	loadMenuDisplayValue(menu, "show_tips_on", config.quickTipsOnLabel);

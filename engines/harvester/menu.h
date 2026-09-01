@@ -51,12 +51,16 @@ struct MenuTextConfig {
 	Common::String pickUpVerb = "Pick up the";
 	Common::String useVerb = "Use";
 	Common::String useOnPreposition = "on";
+	Common::String dialogueOtherLabel = "Other";
+	Common::String dialogueResponsesLabel = "Responses";
+	Common::String dialogueKeywordLabel;
 	Common::String quickTipsExitLabel = "Exit";
 	Common::String quickTipsNextLabel = "Next";
 	Common::String quickTipsOnLabel = "Show Tips ON";
 	Common::String quickTipsOffLabel = "Show Tips OFF";
 	Common::String quickTipsHeader;
 
+	bool hasDialogueKeywordLabel() const { return !dialogueKeywordLabel.empty(); }
 	bool hasQuickTipsHeader() const { return !quickTipsHeader.empty(); }
 };
 
