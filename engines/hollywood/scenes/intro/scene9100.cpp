@@ -51,7 +51,6 @@ const uint kStage910Index = 910;
 const uint16 kStage910LargeRowBaseIndex = 500;
 const byte kPrimarySpeechTextColor = 0xfb;
 const byte kSecondarySpeechTextColor = 0xfd;
-const int kOriginalSpeechLineHeight = 20;
 const uint kActorFacingCount = 6;
 const uint kActorCelsPerFacing = 13;
 const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
@@ -1101,7 +1100,7 @@ void Scene9100::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, c
 		return;
 	}
 
-	wrapActorSpeechText(text, speechTextStyle.centerX, _subtitle.lines);
+	wrapSpeechOverlayText(text, speechTextStyle.centerX, _subtitle.lines);
 	if (_subtitle.lines.empty())
 		return;
 
@@ -1113,68 +1112,12 @@ void Scene9100::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, c
 
 	_subtitle.visible = true;
 	_subtitle.colorIndex = speechTextStyle.colorIndex;
-	calculatePrimarySubtitleBounds(_subtitle.lines, speechTextStyle, _subtitle.centerX, _subtitle.topY);
+	layoutSpeechOverlay(_subtitle, _vm->font(), speechTextStyle.centerX, speechTextStyle.topY);
 }
 
 void Scene9100::clearSubtitle() {
 	_subtitle.visible = false;
 	_subtitle.lines.clear();
-}
-
-void Scene9100::drawSubtitleOverlay() {
-	if (!_subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
-		return;
-
-	HollywoodFont *font = _vm->font();
-	font->setShadowColor(0);
-
-	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
-		const Common::String &line = _subtitle.lines[lineIndex];
-		const int lineWidth = actorSpeechTextWidth(line);
-		const int x = (int)_subtitle.centerX - (lineWidth >> 1);
-		const int y = (int)_subtitle.topY + lineIndex * kOriginalSpeechLineHeight;
-		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
-			Graphics::kTextAlignLeft, 0, false, true);
-	}
-}
-
-void Scene9100::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
-	lines.clear();
-	if (text.empty())
-		return;
-
-	uint maxChars = 0x32;
-	const int anchorX = anchorSceneX;
-	if (anchorX < 0xa0)
-		maxChars = (anchorX * 0x32) / 0xa0;
-	else if (HollywoodEngine::kScreenWidth - anchorX < 0xa0)
-		maxChars = ((HollywoodEngine::kScreenWidth - anchorX) * 0x32) / 0xa0;
-	maxChars = MAX<uint>(maxChars, 0x18);
-
-	const uint lineShrink = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
-	const char *source = text.c_str();
-	const uint textLength = text.size();
-	uint cursor = 0;
-	while (cursor < textLength && lines.size() < 10) {
-		uint end = textLength;
-		if (cursor + maxChars < textLength) {
-			end = cursor + maxChars;
-			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
-				--end;
-			while (end > cursor && (byte)source[end - 1] == 0x20)
-				--end;
-			if (end == cursor)
-				end = MIN<uint>(textLength, cursor + maxChars);
-		}
-
-		lines.push_back(Common::String(source + cursor, end - cursor));
-
-		cursor = end;
-		while (cursor < textLength && (byte)source[cursor] == 0x20)
-			++cursor;
-
-		maxChars = maxChars > lineShrink ? maxChars - lineShrink : 1;
-	}
 }
 
 Common::String Scene9100::getStage003LargeTextRecord(uint16 recordId) const {
@@ -1192,35 +1135,6 @@ Common::String Scene9100::getStage003LargeTextRecord(uint16 recordId) const {
 		++length;
 
 	return Common::String((const char *)row, length);
-}
-
-uint Scene9100::actorSpeechTextWidth(const Common::String &text) const {
-	if (!_vm->font() || !_vm->font()->isLoaded())
-		return 0;
-
-	return _vm->font()->getStringWidth(text) + 2;
-}
-
-void Scene9100::calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines, const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const {
-	uint textWidth = 0;
-	for (uint i = 0; i < lines.size(); ++i)
-		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(lines[i]));
-
-	int adjustedCenterX = speechTextStyle.centerX;
-	if (((adjustedCenterX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e) {
-		adjustedCenterX = 0x27d - (int)(textWidth >> 1);
-		if ((textWidth & 1) == 0)
-			adjustedCenterX = 0x27e - (int)(textWidth >> 1);
-	}
-	if (adjustedCenterX - (int)(textWidth >> 1) < 1)
-		adjustedCenterX = (textWidth >> 1) + 1;
-
-	int adjustedTopY = speechTextStyle.topY - (int)lines.size() * kOriginalSpeechLineHeight;
-	if (adjustedTopY < 1)
-		adjustedTopY = 1;
-
-	centerX = (uint16)MAX<int>(0, MIN<int>(adjustedCenterX, HollywoodEngine::kScreenWidth - 1));
-	topY = (uint16)MAX<int>(0, MIN<int>(adjustedTopY, HollywoodEngine::kScreenHeight - 1));
 }
 
 void Scene9100::drawInitialForegroundFrame() {
@@ -1584,7 +1498,7 @@ void Scene9100::copyDefaultPalette() {
 }
 
 void Scene9100::drawFrameOverlays() {
-	drawSubtitleOverlay();
+	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {

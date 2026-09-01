@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	scenes/resource_delta_clip_player.o \
 	scenes/scene_resources.o \
 	scenes/scene_registry.o \
+	scenes/speech_overlay.o \
 	scenes/intro/intro_text.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \

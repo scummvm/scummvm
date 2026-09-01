@@ -29,6 +29,7 @@
 #include "hollywood/music.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -69,14 +70,6 @@ private:
 		uint16 voiceSampleId;
 	};
 
-	struct SubtitleOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
-	};
-
 	bool load();
 	bool loadResourceI11Assets();
 	bool loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
@@ -96,12 +89,7 @@ private:
 
 	void beginSubtitle(const PopupDescriptor &popup, const SpeechTextStyle &speechTextStyle);
 	void clearSubtitle();
-	void drawSubtitleOverlay();
-	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getStage003LargeTextRecord(uint16 recordId) const;
-	uint actorSpeechTextWidth(const Common::String &text) const;
-	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines,
-		const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 
 	void drawFrameOverlays() override;
 
@@ -120,8 +108,7 @@ private:
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
-		kStage911Index = 911,
-		kOriginalSpeechLineHeight = 20
+		kStage911Index = 911
 	};
 
 	MusicPlayer *_music;
@@ -133,7 +120,7 @@ private:
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
-	SubtitleOverlay _subtitle;
+	SpeechOverlay _subtitle;
 	uint32 _mouthAccumulator;
 	uint32 _chunk3Accumulator;
 	uint32 _idleAccumulator;

@@ -29,10 +29,11 @@
 
 #include "hollywood/music.h"
 #include "hollywood/scenes/animation_layers.h"
+#include "hollywood/scenes/animation_player.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/scene_text_store.h"
-#include "hollywood/scenes/playable/speech_overlay.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -40,10 +41,10 @@ class HollywoodEngine;
 
 // Runs the modal cocktail mixer reached from scene 5120 and returns its result
 // through GameplayState before handing control back to the salon.
-class Scene5130 {
+class Scene5130 : public SceneAnimationPlayerDelegate {
 public:
 	Scene5130(HollywoodEngine *vm);
-	~Scene5130();
+	~Scene5130() override;
 
 	bool play();
 
@@ -62,13 +63,11 @@ private:
 	void applyFailureDrinkPalette();
 	void applyDrinkPalette(byte red, byte green, byte blue);
 	void resetAnimationLayers();
-	void updateAnimationLayerFrames();
 	void drawFrame();
 	void drawLayerStack(const SceneLayerStack &layers);
 	void drawSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawDrinkStrip();
 	void presentFrame();
-	void drawSpeechOverlay();
 	void drawCaption();
 	void startSpeechLine(uint16 rowIndex, byte frameIndex);
 	void startSpeechPart();
@@ -76,10 +75,6 @@ private:
 	void waitForSpeechLine();
 	void stopSpeechLine();
 	void beginSpeechLine(uint16 rowIndex, byte frameIndex);
-	void wrapSpeechText(const Common::String &text, uint16 centerX, Common::Array<Common::String> &lines) const;
-	void calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY) const;
-	uint speechTextWidth(const Common::String &text) const;
-	uint speechOverlayTextWidth(const SpeechOverlay &overlay) const;
 	void advanceRuntime(uint32 millis);
 	void updateAmbientMusic(uint32 millis);
 	bool fadePaletteFromBlack();
@@ -90,6 +85,9 @@ private:
 	Common::String captionForAction(byte actionId) const;
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
 	void stopAudio();
+	bool animationPlaybackShouldStop() const override;
+	void presentAnimationFrame() override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
 	HollywoodEngine *_vm;
 	SceneResources _resources;
@@ -100,15 +98,10 @@ private:
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
 	SceneLayerStack _animationLayers;
+	SceneAnimationPlayer _animationPlayer;
 	byte _selectedDrinks[3];
 	byte _selectedDrinkCount;
 	byte _currentDrinkId;
-	byte _introFrame;
-	byte _tapFrame;
-	byte _changeFrame;
-	byte _liquidFrame;
-	byte _mixFrame;
-	byte _pourFrame;
 	uint _drinkStripRow;
 	byte _hoverActionId;
 	uint16 _speechTextRecordId;
@@ -117,7 +110,6 @@ private:
 	byte _speechPartCount;
 	uint32 _speechRemainingMillis;
 	uint32 _ambientMusicTimerMillis;
-	bool _pourVisible;
 	bool _speechActive;
 	bool _deferredExitRequested;
 	bool _exitRequested;

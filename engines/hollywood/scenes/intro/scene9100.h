@@ -31,6 +31,7 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -78,14 +79,6 @@ private:
 		uint16 voiceSampleId;
 	};
 
-	struct SubtitleOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
-	};
-
 	bool load(bool dialogueBranch);
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
@@ -123,11 +116,7 @@ private:
 	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle);
 	void clearSubtitle();
-	void drawSubtitleOverlay();
-	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getStage003LargeTextRecord(uint16 recordId) const;
-	uint actorSpeechTextWidth(const Common::String &text) const;
-	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines, const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
@@ -213,7 +202,7 @@ private:
 	uint16 _stage003LargeRowBaseIndex;
 	ActorSpriteBank _actorBankI10Ron;
 	ActorSpriteBank _actorBankI10Sue;
-	SubtitleOverlay _subtitle;
+	SpeechOverlay _subtitle;
 	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;
 	uint32 _lastTalkingFrameMillis;
