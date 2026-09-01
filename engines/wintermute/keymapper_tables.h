@@ -69,7 +69,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	engineKeyMap->addAction(act);
 
 	act = new Action("HIGHLIGHT", _("Highlight active items"));
-	act->setKeyEvent(KeyState(KEYCODE_p, 0, KBD_CTRL));
+	act->setKeyEvent(KeyState(KEYCODE_TAB, 0, KBD_CTRL));
 	act->addDefaultInputMapping("C+TAB"); // original keyboard
 	engineKeyMap->addAction(act);
 
