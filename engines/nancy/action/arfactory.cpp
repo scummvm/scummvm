@@ -47,6 +47,7 @@
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
+#include "engines/nancy/action/puzzle/decoderpuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
@@ -517,9 +518,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return nullptr;
 	case 181:
 		return new PaintPuzzle();
-	case 182:	// DecoderPuzzle
-		// TODO: not yet implemented
-		return nullptr;
+	case 182:
+		return new DecoderPuzzle();
 	// -- Nancy15 new puzzles (types 183-185) --
 	case 183:	// MagicBoxPuzzle
 		// TODO: not yet implemented
