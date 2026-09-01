@@ -210,6 +210,14 @@ public:
 			_tracks[id].channel.resetTimer();
 	}
 
+	// Switches cadence and clears accumulated time without changing the layer.
+	void resetTimer(uint id, uint32 frameMillis) {
+		if (!hasTrack(id) || frameMillis == 0)
+			return;
+		_tracks[id].channel.frameMillis = frameMillis;
+		_tracks[id].channel.resetTimer();
+	}
+
 	void advance(uint32 delta, Common::RandomSource &random) {
 		for (uint i = 0; i < _tracks.size(); ++i)
 			advance(i, delta, random);

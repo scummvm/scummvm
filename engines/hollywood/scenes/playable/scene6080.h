@@ -59,7 +59,6 @@ private:
 
 	void resetSceneLayers();
 	void advanceSueIdle(uint32 delta);
-	void advanceGuardIdle(uint32 delta);
 	void finishSueIdleSequence();
 	void runReturnConversation();
 	void runWaxBallEscapeSequence();
@@ -76,7 +75,7 @@ private:
 	ResourceSpriteLayer &guardAlternateLayer() { return _sceneLayers.layer(kGuardAlternateLayer); }
 
 	TimedAnimationChannel _sueIdleChannel;
-	TimedAnimationChannel _guardIdleChannel;
+	uint _guardIdleTrack;
 	TimedAnimationChannel _waxBallChannel;
 	TimedAnimationChannel _escapeSueChannel;
 	TimedAnimationChannel _escapeGuardChannel;
