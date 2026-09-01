@@ -31,11 +31,9 @@ DECLARE_SINGLETON(Macs2::Scenes);
 } // namespace Common
 
 Common::MemoryReadStream *Macs2::Scenes::readSceneScript(uint16 sceneIndex, Common::SeekableReadStream *fileStream) {
-	// Directory entry for sceneIndex: absolute seek uses
-	//   directoryOffset + sceneIndex * 0xC - 8  (second dword of entry sceneIndex-1).
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
 	fileStream->seek(directoryOffset + sceneIndex * 0xC - 0x8);
-	uint32 sceneDataOffset2 = fileStream->readUint32LE();
+	const uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
 
 	if (g_engine->isV2()) {
@@ -46,7 +44,7 @@ Common::MemoryReadStream *Macs2::Scenes::readSceneScript(uint16 sceneIndex, Comm
 		// V1: skip 0x80 resource offsets, then script size + bytecode.
 		fileStream->seek(0x80, SEEK_CUR);
 	}
-	uint16 scriptSize = fileStream->readUint16LE();
+	const uint16 scriptSize = fileStream->readUint16LE();
 	if (scriptSize == 0) {
 		warning("Macs2::Scenes::ReadSceneScript: scene %u has empty script", sceneIndex);
 		return new Common::MemoryReadStream(nullptr, 0);
@@ -62,9 +60,8 @@ Common::Array<uint32> Macs2::Scenes::readSpecialAnimsOffsets(uint16 sceneIndex, 
 
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
 	fileStream->seek(directoryOffset + sceneIndex * 0xC - 0x8);
-	uint32 sceneDataOffset2 = fileStream->readUint32LE();
+	const uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
-
 	fileStream->read(result.data(), 0x80);
 
 	return result;
@@ -72,13 +69,10 @@ Common::Array<uint32> Macs2::Scenes::readSpecialAnimsOffsets(uint16 sceneIndex, 
 
 Common::MemoryReadStream *Macs2::Scenes::readSceneStrings(uint16 sceneIndex, Common::SeekableReadStream *fileStream) {
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
-	// Third dword of entry (sceneIndex-1) / strings blob - DOS formula directory+scene*0xC-4.
 	fileStream->seek(directoryOffset + sceneIndex * 0xC - 0x4);
-	uint32 sceneDataOffset2 = fileStream->readUint32LE();
+	const uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
-
-	uint16 size = fileStream->readUint16LE();
-
+	const uint16 size = fileStream->readUint16LE();
 	byte *stringData = (byte *)malloc(size);
 	fileStream->read(stringData, size);
 	return new Common::MemoryReadStream(stringData, size, DisposeAfterUse::YES);
@@ -90,13 +84,13 @@ Common::Array<uint8> Macs2::Scenes::readSpecialAnimBlob(uint16 index, Common::Se
 				index, _currentSceneSpecialAnimOffsets.size());
 		return Common::Array<uint8>();
 	}
-	uint32 offset = _currentSceneSpecialAnimOffsets[index - 1];
+	const uint32 offset = _currentSceneSpecialAnimOffsets[index - 1];
 	if (offset == 0 || fileStream == nullptr) {
 		warning("readSpecialAnimBlob: null offset for index %u", index);
 		return Common::Array<uint8>();
 	}
 	fileStream->seek(offset, SEEK_SET);
-	uint32 length = fileStream->readUint32LE();
+	const uint32 length = fileStream->readUint32LE();
 	// Skip a string - note the original code adds 0x4 for the previously read size since
 	// it does not use the stream position
 	fileStream->seek(0xC, SEEK_CUR);
@@ -107,6 +101,9 @@ Common::Array<uint8> Macs2::Scenes::readSpecialAnimBlob(uint16 index, Common::Se
 
 void Macs2::GameObjects::init() {
 	_objectNames.resize(0xFF);
+	if (!g_engine->isV1()) {
+		return;
+	}
 	// Object names from game string dumps. Index matches the object ID used in scripts.
 	if (g_engine->isDemo()) {
 		_objectNames[0x02] = "Laib Brot";      // sliced
@@ -353,8 +350,13 @@ void Macs2::GameObjects::init() {
 }
 
 bool Macs2::GameObjects::isNpcIndex(uint16 objectIndex) {
-	if (objectIndex == 0)
+	if (objectIndex == 0) {
 		return false;
+	}
+
+	if (!g_engine->isV1()) {
+		return false;
+	}
 
 	if (g_engine->isDemo()) {
 		static const uint16 kDemoNpcIndices[] = {
@@ -394,22 +396,23 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 	// Amiga: strings live on the GameObject itself (plaintext, u16BE lengths).
 	if (g_engine->isAmiga()) {
 		GameObject *obj = getObjectByIndex(index);
-		if (obj == nullptr)
+		if (obj == nullptr) {
 			return new Common::MemoryReadStream(nullptr, 0);
+		}
 		byte *copy = (byte *)malloc(obj->_stringData.size());
-		if (!obj->_stringData.empty())
+		if (!obj->_stringData.empty()) {
 			memcpy(copy, obj->_stringData.data(), obj->_stringData.size());
+		}
 		return new Common::MemoryReadStream(copy, obj->_stringData.size(), DisposeAfterUse::YES);
 	}
 
 	const uint32 directoryOffset = g_engine->getMcsDirectoryOffset();
 	// Object string table pointer at directory + index*0xC + 0x17FC.
 	fileStream->seek(directoryOffset + index * 0xC + 0x17FC);
-	uint32 sceneDataOffset2 = fileStream->readUint32LE();
+	const uint32 sceneDataOffset2 = fileStream->readUint32LE();
 	fileStream->seek(sceneDataOffset2, SEEK_SET);
 
-	uint16 size = fileStream->readUint16LE();
-
+	const uint16 size = fileStream->readUint16LE();
 	byte *stringData = (byte *)malloc(size);
 	fileStream->read(stringData, size);
 	return new Common::MemoryReadStream(stringData, size, DisposeAfterUse::YES);
@@ -418,17 +421,20 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) {
 	const uint16 maxSlots = g_engine->maxAnimSlots();
 	const uint16 overloadSlot = g_engine->overloadAnimSlot();
-	if (slot < 1 || slot > maxSlots)
+	if (slot < 1 || slot > maxSlots) {
 		return nullptr;
+	}
 	if (slot == overloadSlot) {
 		const uint overloadIndex = overloadSlot - 1;
-		if (_blobs.size() > overloadIndex && !_blobs[overloadIndex].empty())
+		if (_blobs.size() > overloadIndex && !_blobs[overloadIndex].empty()) {
 			return &_blobs[overloadIndex];
+		}
 		return &_overloadAnimation;
 	}
 	const uint index = slot - 1;
-	if (index >= _blobs.size())
+	if (index >= _blobs.size()) {
 		return nullptr;
+	}
 	return &_blobs[index];
 }
 
@@ -465,8 +471,9 @@ bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
 	if (slot < _blobs.size() && !_blobs[slot].empty()) {
 		return true;
 	}
-	if (slot < _blobWalkSpeeds.size() && (_blobWalkSpeeds[slot] & 0xFF00) != 0)
+	if (slot < _blobWalkSpeeds.size() && (_blobWalkSpeeds[slot] & 0xFF00) != 0) {
 		return true;
+	}
 	return false;
 }
 
@@ -497,9 +504,7 @@ uint16 Macs2::AnimationReader::readNumAnimations() {
 	// Frame count is stored right after the header + command section
 	_readStream->seek(0x0B + commandSectionLength);
 
-	// bp-24h
-	const uint16 result = _readStream->readUint16();
-	return result;
+	return _readStream->readUint16();
 }
 
 void Macs2::AnimationReader::seekToAnimation(uint16 index) {

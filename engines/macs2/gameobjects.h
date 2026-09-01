@@ -71,7 +71,6 @@ class AnimationReader {
 public:
 	Common::MemoryReadStreamEndian *_readStream;
 
-	// TODO: Can the init list also go into the cpp file?
 	AnimationReader(const Common::Array<uint8> &blob);
 	~AnimationReader();
 
@@ -82,6 +81,27 @@ public:
 	// Expects us to be pointed at the header of an animation frame,
 	// will seek to the start of the next header
 	void skipCurrentAnimationFrame();
+};
+
+enum ObjectOrientation : uint16 {
+	OrientationNone = 0,
+	OrientationNorth = 1,
+	OrientationNorthEast = 2,
+	OrientationEast = 3,
+	OrientationSouthEast = 4,
+	OrientationSouth = 5,
+	OrientationSouthWest = 6,
+	OrientationWest = 7,
+	OrientationNorthWest = 8,
+	OrientationStandingNorth = 9,
+	OrientationStandingNorthEast = 10,
+	OrientationStandingEast = 11,
+	OrientationStandingSouthEast = 12,
+	OrientationStandingSouth = 13,
+	OrientationStandingSouthWest = 14,
+	OrientationStandingWest = 15,
+	OrientationStandingNorthWest = 16,
+	OrientationPickup = 17
 };
 
 class GameObject {
@@ -105,22 +125,10 @@ public:
 	// These are the values read by the code around l0037_082D:
 	Common::Point _position;
 	uint16 _sceneIndex = 0;
-	// 8-directional movement system from walkAlongPath (1008:1b8f).
-	// Direction codes 1-8 are walking directions, 9-16 are standing (idle) variants.
 	// The direction is chosen based on the angle between current and target position:
-	//   1 = North (up)         - deltaY dominates, target above
-	//   2 = NorthEast          - diagonal (deltaX/4 < deltaY < deltaX*2)
-	//   3 = East (right)       - deltaX dominates, target to the right
-	//   4 = SouthEast          - diagonal
-	//   5 = South (down)       - deltaY dominates, target below
-	//   6 = SouthWest          - diagonal
-	//   7 = West (left)        - deltaX dominates, target to the left
-	//   8 = NorthWest          - diagonal
-	//   9-16 = Standing idle variants (walking direction + 8)
-	//   17 (0x11) = Pickup animation
 	// Each direction has a validity flag at runtime offset +0x43 + (dir-1)*0x20
 	// that indicates whether the object has animation data for that direction.
-	uint16 _orientation = 0;
+	ObjectOrientation _orientation = OrientationNone;
 	// Per-object percentage multiplier for ground-elevation vertical offset.
 	// Walkability map values < 0xC8 represent ground height at each pixel;
 	// this factor scales how much that height displaces the object upward
@@ -197,12 +205,12 @@ public:
 	// survives scene change / off-scene script opcodes). Restored on Character create.
 	struct StoredWalkRuntime {
 		bool valid = false;
+		bool stepDirectionSet = false;
 		Common::Point targetPosition;
 		Common::Point pathFinalDestination;
 		int16 stepDeltaX = 0;
 		int16 stepDeltaY = 0;
 		int16 stepError = 0;
-		bool stepDirectionSet = false;
 		int16 currentPathIndex = 0;
 		Common::Array<uint16> path;
 		uint16 motionTargetVerticalOffset = 0;
@@ -226,7 +234,6 @@ public:
 class GameObjects : public Common::Singleton<GameObjects> {
 public:
 	Common::Array<GameObject *> _objects;
-
 	Common::Array<Common::String> _objectNames;
 
 	void init();

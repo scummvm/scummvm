@@ -777,7 +777,7 @@ public:
 
 	bool isDemo() const { return getFeatures() & ADGF_DEMO; }
 
-	/** AHFFMACS0200 dialect (directory at 0x212) vs AHFFMACS0100 (0x10). */
+	bool isV1() const { return _mcsFileVersion == McsFileVersion::V1; }
 	bool isV2() const { return _mcsFileVersion == McsFileVersion::V2; }
 
 	/** MCS directory base. */
@@ -825,15 +825,15 @@ public:
 	uint16 ticksPerGameFrame() const { return isV2() ? 1 : 2; }
 
 	/** ReadyObject anim slots (1-based inclusive max). */
-	uint16 maxAnimSlots() const { return isV2() ? 0x26 : 0x15; }
+	uint16 maxAnimSlots() const { return isV2() ? 38 : 21; }
 	/** Orientations that map to anim slots 1..N (inclusive). */
-	uint16 maxOrientations() const { return isV2() ? 0x25 : 0x14; }
+	uint16 maxOrientations() const { return maxAnimSlots() - 1; }
 	/** Overload / special-anim slot index. */
 	uint16 overloadAnimSlot() const { return maxAnimSlots(); }
 	static uint16 specialAnimSlotToAnimSlot(uint16 specialSlot);
 	/** Scene hotspot override table entries (1-based inclusive max). */
 	/** Hotspot remap table indices (1-based). DOS scene+0x5BD1: 16; V2 ActModule+0x6161: 32. */
-	uint16 maxHotspots() const { return isV2() ? 0x20 : 0x10; }
+	uint16 maxHotspots() const { return isV2() ? 32 : 16; }
 	/** Per-object resource offset table entries. */
 	uint maxObjectResources() const { return 32; }
 	/** Anim slot used for the current orientation (overload-direction rule). */

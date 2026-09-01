@@ -23,6 +23,7 @@
 #define MACS2_VIEW1_H
 
 #include "macs2/events.h"
+#include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
 
 namespace Macs2 {
@@ -73,7 +74,7 @@ public:
 	bool _pickupItemTransferred = false;
 	bool _markedForDeletion = false;
 
-	uint8 _previousOrientation = 0;
+	ObjectOrientation _previousOrientation = OrientationNone;
 
 private:
 	// Handle when the character has moved into a non-walkable area, push them out if

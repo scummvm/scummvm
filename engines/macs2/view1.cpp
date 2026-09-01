@@ -2502,12 +2502,12 @@ bool View1::tick() {
 		_bgAnimTickCounter = 0;
 		g_engine->updateBackgroundAnimationPalette();
 	}
-	if (_bgAnimTickCounter > 0x27 && g_engine->_scenePaletteMode == 2) {
+	if (_bgAnimTickCounter > 39 && g_engine->_scenePaletteMode == 2) {
 		_bgAnimTickCounter = 0;
 		g_engine->updateBackgroundAnimationPalette();
 	}
 
-	// Advance portrait animation once per tick (matching handleDialogueInput 1008:b4bd)
+	// Advance portrait animation once per tick
 	if (_isShowingDialoguePanel && currentSpeechActData.speaker != nullptr && currentSpeechActData.mouthAnimActive) {
 		Character *speaker = currentSpeechActData.speaker;
 		if (currentSpeechActData.mouthAnimCounter < 1) {
@@ -2531,7 +2531,7 @@ bool View1::tick() {
 		}
 	}
 
-	// Binary gameTick (1008:e556): process pending panel requests when state is idle.
+	// process pending panel requests when state is idle
 	if (_uiPanelState == kUiPanelNone && _pendingPanelRequest != kPanelRequestNone) {
 		switch (_pendingPanelRequest) {
 		case kPanelRequestInventory:
@@ -2615,11 +2615,11 @@ bool View1::tick() {
 							executor->debugLogActorWalkState("waitForWalk complete");
 							executor->_walkTargetObjectIndex = 0;
 							g_engine->runScriptExecutor();
-						} else if (c != nullptr && c->_gameObject->_orientation != 0x11) {
+						} else if (c != nullptr && c->_gameObject->_orientation != OrientationPickup) {
 							// Binary: pickup in progress, trigger pickup animation.
 							// Save current orientation so it can be restored after pickup.
 							c->_previousOrientation = c->_gameObject->_orientation;
-							c->_gameObject->_orientation = 0x11;
+							c->_gameObject->_orientation = OrientationPickup;
 						}
 					}
 				}
@@ -2649,13 +2649,14 @@ bool View1::tick() {
 			} else if (executor->_waitForObjectAnimStep) {
 				drawSceneUpdate();
 				bool animStepReached = false;
-				GameObject *waitObject = GameObjects::getObjectByIndex(executor->_waitObjectAnimObjectId);
+				const GameObject *waitObject = GameObjects::getObjectByIndex(executor->_waitObjectAnimObjectId);
 				if (waitObject != nullptr && waitObject->_dataOffset != 0) {
 					const Common::Array<uint8> *blob = waitObject->getAnimSlotBlob(executor->_waitObjectAnimSlot);
 					if (blob != nullptr && !blob->empty()) {
 						AnimBlobView view(*blob);
-						if (view.isValid())
+						if (view.isValid()) {
 							animStepReached = view.sequencePosition() >= executor->_waitObjectAnimTargetStep;
+						}
 					}
 				}
 				if (animStepReached) {
@@ -2716,8 +2717,6 @@ bool View1::tick() {
 				g_engine->runScriptExecutor();
 			}
 		}
-
-		// Binary gameTick (1008:e556): drawScene(1) when not executing is handled by redraw().
 	}
 
 	redraw();
@@ -2740,7 +2739,6 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 	const uint16 sortedCount = _sortedObjectCount;
 	Script::ScriptExecutor *executor = g_engine->_scriptExecutor;
 
-	// --- Pass 1 (1008:90a2): erase previous sprite rects, walkAlongPath, pickup ---
 	if (fullUpdate && sortedCount > 0) {
 		for (uint16 local_c = 1; local_c <= sortedCount; local_c++) {
 			const uint16 objectIndex = _sortedObjectIndices[local_c];
@@ -2748,7 +2746,6 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			if (obj == nullptr || obj->_index != objectIndex)
 				continue;
 
-			// Binary pass 1: runtime+0x20D..+0x213 from object runtime+0x225..+0x22B.
 			const int32 eraseLeft = obj->_lastDrawX;
 			const int32 eraseTop = obj->_lastDrawY;
 			const int32 eraseRight = eraseLeft + (int32)obj->_lastDrawWidth + 1;
@@ -2777,37 +2774,36 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 				(current->_markedForDeletion || current->_gameObject != obj))
 				current = nullptr;
 
-			// walkAlongPath(objectIndex) when orientation != 0x11; pickup at 0x11.
 			if (current != nullptr) {
-				if (obj->_orientation != 0x11)
-					current->update();
-				else if (executor->_pickupInProgress)
+				if (obj->_orientation != OrientationPickup || executor->_pickupInProgress)
 					current->update();
 			}
 		}
 		flushPendingCharacterDeletes();
 	}
 
-	// --- Background animations (1008:929c, before LAB_1008_92d4) ---
-	if (surface != nullptr && _currentMode != ViewMode::VM_HELP)
+	if (surface != nullptr && _currentMode != ViewMode::VM_HELP) {
 		drawBackgroundAnimations(*surface);
+	}
 
-	// --- Pass 2 (LAB_1008_92d4): draw sorted scene objects back -> front ---
+	// draw sorted scene objects back -> front
 	if (surface != nullptr && !executor->hasScriptError() && sortedCount > 0) {
 		const uint16 animAdvanceMode = (fullUpdate && _uiPanelState == kUiPanelNone) ? 2 : 0;
 
 		for (uint16 local_c = 1; local_c <= sortedCount; local_c++) {
 			const uint16 objectIndex = _sortedObjectIndices[local_c];
 			GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
-			if (obj == nullptr || obj->_index != objectIndex)
+			if (obj == nullptr || obj->_index != objectIndex) {
 				continue;
+			}
 			Character *current = _characterByObjectIndex[objectIndex];
 			if (current != nullptr &&
-				(current->_markedForDeletion || current->_gameObject != obj))
+				(current->_markedForDeletion || current->_gameObject != obj)) {
 				current = nullptr;
+			}
 
 			if (obj->_hasBoundsAttachment) {
-				GameObject *parent = GameObjects::getObjectByIndex(obj->_boundsAttachmentObjectID);
+				const GameObject *parent = GameObjects::getObjectByIndex(obj->_boundsAttachmentObjectID);
 				if (parent != nullptr) {
 					obj->_position.x = parent->_position.x + (int16)obj->_boundsAttachmentValue1;
 					obj->_position.y = parent->_position.y + (int16)obj->_boundsAttachmentValue2;
@@ -2822,7 +2818,6 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			}
 
 			const uint16 animSlot = g_engine->resolveAnimSlotIndex(obj);
-
 			if (!obj->isAnimSlotLoaded(animSlot)) {
 				executor->setScriptError(10);
 				return;
@@ -2847,7 +2842,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 					return;
 				}
 			} else {
-				uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(*blob, true, animAdvanceMode);
+				const uint16 frameStart = BackgroundAnimationBlob::advanceAnimFrame(*blob, true, animAdvanceMode);
 				frame._offsetX = (int16)READ_LE_UINT16(&(*blob)[frameStart]);
 				frame._offsetY = (int16)READ_LE_UINT16(&(*blob)[frameStart + 2]);
 				const uint16 offset = frameStart + 6;
@@ -2861,7 +2856,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			const int16 charY = obj->_position.y;
 
 			// drawAllCharacters @ 1008:93f8-9440 (inlined; not a separate EXE function)
-			int32 depthOffset = ((int32)charY - (int32)g_engine->_walkDepthThresholdY) *
+			const int32 depthOffset = ((int32)charY - (int32)g_engine->_walkDepthThresholdY) *
 								(int32)g_engine->_walkDepthScaleFactor / 100;
 			uint16 scalingFactor = (uint16)((int32)g_engine->_walkBaseSpeedPct + depthOffset);
 			if (obj->_hasDoubleResAnim)
@@ -2934,17 +2929,15 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 						   const_cast<byte *>(pixelData), *surface, false, false, 0, clipGameArea);
 			}
 
-			// drawAllCharacters @ 1008:9759: wLastDrawX/Y exclude per-frame offsetX/offsetY
-			// (offsets applied inside drawAnimFrameDepth @ 1010:1753-1759 only)
 			obj->_lastDrawX = charX - (frameWidth >> 1);
 			obj->_lastDrawY = (charY - frameHeight) - walkabilityOffset;
 			obj->_lastDrawWidth = frameWidth;
 			obj->_lastDrawHeight = frameHeight;
 
-			int16 newLeft = obj->_lastDrawX - 1;
-			int16 newTop = obj->_lastDrawY - 1;
-			int16 newRight = obj->_lastDrawX + 2 * (frameWidth >> 1) + 1;
-			int16 newBottom = obj->_lastDrawY + frameHeight + 1;
+			const int16 newLeft = obj->_lastDrawX - 1;
+			const int16 newTop = obj->_lastDrawY - 1;
+			const int16 newRight = obj->_lastDrawX + 2 * (frameWidth >> 1) + 1;
+			const int16 newBottom = obj->_lastDrawY + frameHeight + 1;
 
 			if (newLeft < obj->_dirtyLeft)
 				obj->_dirtyLeft = newLeft;
@@ -2956,16 +2949,17 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 				obj->_dirtyBottom = newBottom;
 
 			if (obj->_dirtyTop < 0)
-				obj->_dirtyLeft = 0;
+				obj->_dirtyLeft = 0; // TODO: check this is in disassembly
 			if (obj->_dirtyBottom < 0)
 				obj->_dirtyBottom = 0;
 
 			if (current != nullptr && DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
-				Common::String number = Common::String::format("%u", obj->_orientation);
+				const Common::String &number = Common::String::format("%u", obj->_orientation);
 				renderString(current->getPosition(), number.c_str());
-				Common::Rect screenRect(0, 0, g_engine->screenWidth(), g_engine->gameHeight());
-				if (screenRect.contains(current->getPosition()))
+				const Common::Rect screenRect(0, 0, g_engine->screenWidth(), g_engine->gameHeight());
+				if (screenRect.contains(current->getPosition())) {
 					surface->setPixel(current->getPosition().x, current->getPosition().y, 0xFF);
+				}
 			}
 		}
 	}
@@ -4107,15 +4101,17 @@ void Character::update() {
 	// pwVar7[orientation * 8 + 0x18] = word at runtime + orientation*16 + 0x30
 	// = AnimSlot.wAnimSpeed (slot+0x0C). Stored in _blobWalkSpeeds.
 	uint16 animSpeed = 2; // default fallback
-	uint8 orient = _gameObject->_orientation;
-	if (orient >= 1 && orient <= g_engine->maxAnimSlots() && (uint)(orient - 1) < _gameObject->_blobWalkSpeeds.size()) {
+	ObjectOrientation orient = _gameObject->_orientation;
+	if (orient >= OrientationNorth && orient <= g_engine->maxAnimSlots() && (uint)(orient - 1) < _gameObject->_blobWalkSpeeds.size()) {
 		animSpeed = _gameObject->_blobWalkSpeeds[orient - 1];
-		if (animSpeed == 0)
+		if (animSpeed == 0) {
 			animSpeed = 2;
+		}
 	}
 	int walkSpeed = ((int)animSpeed * ((int)g_engine->_walkBaseSpeedPct + (int)depthOffset)) / 100;
-	if (walkSpeed < 1)
+	if (walkSpeed < 1) {
 		walkSpeed = 1;
+	}
 
 	// Proximity arrival check from walkAlongPath (1008:1b8f):
 	// Binary checks if character is within walkSpeed pixels of target in both axes.
@@ -4127,7 +4123,7 @@ void Character::update() {
 	}
 	if (arrived) {
 		// Binary (22cd): check if target == finalDest (at final destination)
-		bool atFinalDest = (_targetPosition.x == _pathFinalDestination.x &&
+		const bool atFinalDest = (_targetPosition.x == _pathFinalDestination.x &&
 							_targetPosition.y == _pathFinalDestination.y);
 
 		if (!atFinalDest && !_path.empty()) {
@@ -4156,21 +4152,10 @@ void Character::update() {
 		}
 		// Walk arrival: orientation changes to standing (walking dir + 8).
 		// Script resumption is handled by position polling in View1::tick().
-		bool wasWalking = (_gameObject->_orientation < 9);
+		const bool wasWalking = (_gameObject->_orientation < OrientationStandingNorth);
 		if (wasWalking) {
-			_gameObject->_orientation += 8;
-			// Binary walkAlongPath (1008:1b8f): sets g_bMovementFinishedFlag=1
-			// when orientation < 9 at final arrival. This triggers the scene script
-			// to check getAreaAtPoint (case 0x27) for scene transitions.
+			_gameObject->_orientation = (ObjectOrientation)(_gameObject->_orientation + OrientationNorthWest);
 			g_engine->_movementFinishedFlag = true;
-		}
-		if (_pickedUpObject != nullptr) {
-			// Binary: walk completion does NOT set orientation to 0x11 here.
-			// gameTick checks position==finalDest each frame, and when matched
-			// (with verticalOk), THEN it sets orientation to 0x11.
-			// The _pickupFrameCounter and _previousOrientation are already set
-			// in startPickup(). View1::tick() handles the orientation trigger.
-			return;
 		}
 		return;
 	}
@@ -4187,38 +4172,38 @@ void Character::update() {
 		// Binary returns after setting direction (1-frame turn delay).
 		uint16 absDx = abs(pos.x - _targetPosition.x);
 		uint16 absDy = abs(pos.y - _targetPosition.y);
-		uint8 dir = _gameObject->_orientation;
-		if (dir > 8 && dir < 17)
-			dir -= 8;
-		if (dir > 16)
-			dir = 1;
+		ObjectOrientation dir = _gameObject->_orientation;
+		if (dir >= OrientationStandingNorth && dir <= OrientationStandingNorthWest)
+			dir = (ObjectOrientation)(dir - OrientationNorthWest);
+		if (dir > OrientationStandingNorthWest)
+			dir = OrientationNorth;
 		// Cardinal directions (only if animation available for that direction)
 		if (_targetPosition.y < pos.y && absDx <= absDy &&
 			_gameObject->_blobs.size() > 0 && !_gameObject->_blobs[0].empty())
-			dir = 1; // North
+			dir = OrientationNorth;
 		if (pos.x < _targetPosition.x && absDy <= absDx &&
 			_gameObject->_blobs.size() > 2 && !_gameObject->_blobs[2].empty())
-			dir = 3; // East
+			dir = OrientationEast;
 		if (pos.y < _targetPosition.y && absDx <= absDy &&
 			_gameObject->_blobs.size() > 4 && !_gameObject->_blobs[4].empty())
-			dir = 5; // South
+			dir = OrientationSouth;
 		if (_targetPosition.x < pos.x && absDy <= absDx &&
 			_gameObject->_blobs.size() > 6 && !_gameObject->_blobs[6].empty())
-			dir = 7; // West
+			dir = OrientationWest;
 		// Diagonals: absDx/4 < absDy AND absDy/2 < absDx
 		if ((absDx >> 2) < absDy && (absDy >> 1) < absDx) {
 			if (_targetPosition.y < pos.y && pos.x < _targetPosition.x &&
 				_gameObject->_blobs.size() > 1 && !_gameObject->_blobs[1].empty())
-				dir = 2; // NE
+				dir = OrientationNorthEast;
 			if (pos.x < _targetPosition.x && pos.y < _targetPosition.y &&
 				_gameObject->_blobs.size() > 3 && !_gameObject->_blobs[3].empty())
-				dir = 4; // SE
+				dir = OrientationSouthEast;
 			if (pos.y < _targetPosition.y && _targetPosition.x < pos.x &&
 				_gameObject->_blobs.size() > 5 && !_gameObject->_blobs[5].empty())
-				dir = 6; // SW
+				dir = OrientationSouthWest;
 			if (_targetPosition.x < pos.x && _targetPosition.y < pos.y &&
 				_gameObject->_blobs.size() > 7 && !_gameObject->_blobs[7].empty())
-				dir = 8; // NW
+				dir = OrientationNorthWest;
 		}
 		_gameObject->_orientation = dir;
 		_stepDeltaX = absDx;
@@ -4363,10 +4348,6 @@ void View1::openOriginalSaveLoadPanel() {
 
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 
-	// g_wActionBarButtonWidth = 0; g_wActionBarButtonHeight = 0
-	uint16 maxW = 0;
-	uint16 maxH = 0;
-
 	// g_wSaveConfirmArmed = 0; g_wLoadConfirmArmed = 0
 	_saveConfirmArmed = false;
 	_loadConfirmArmed = false;
@@ -4377,9 +4358,13 @@ void View1::openOriginalSaveLoadPanel() {
 		g_engine->getMusic()->stopMusic();
 	}
 
+	// g_wActionBarButtonWidth = 0; g_wActionBarButtonHeight = 0
+	uint16 maxW = 0;
+	uint16 maxH = 0;
+
 	// First loop: calculate max icon width/height from the 7 button images
-	for (int i = 1; i <= 7; i++) {
-		int imgIdx = kLookupTable[i] - 1; // convert to 0-based
+	for (int i = 1; i < ARRAYSIZE(kLookupTable); i++) {
+		const int imgIdx = kLookupTable[i] - 1; // convert to 0-based
 		if (imgIdx >= (int)g_engine->_imageResources.size())
 			continue;
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
@@ -4400,11 +4385,11 @@ void View1::openOriginalSaveLoadPanel() {
 	if (panelWidth < 0xD4)
 		panelWidth = 0xD4;
 	// g_wUiPanelHeight = g_wActionBarButtonHeight + 0x8A
-	uint16 panelHeight = maxH + 0x8A;
+	const uint16 panelHeight = maxH + 0x8A;
 	// g_wUiPanelX = (g_wScreenWidth >> 1) - (g_wUiPanelWidth >> 1)
-	int panelX = 160 - (panelWidth >> 1);
+	const int panelX = 160 - (panelWidth >> 1);
 	// g_wUiPanelY = (g_wScreenHeight >> 1) - (g_wUiPanelHeight >> 1)
-	int panelY = 100 - (panelHeight >> 1);
+	const int panelY = 100 - (panelHeight >> 1);
 
 	// g_wActionBarButtonWidth = g_wActionBarButtonWidth + 6
 	_saveLoadButtonWidth = maxW + 6;
@@ -4416,7 +4401,7 @@ void View1::openOriginalSaveLoadPanel() {
 	// local_6 = ((g_wScreenWidth >> 1) - (g_wActionBarButtonWidth + 4) * 7 / 2) + 2
 	int buttonRowX = (160 - (int)((_saveLoadButtonWidth + 4) * 7) / 2) + 2;
 	// local_8 = (g_wUiPanelY + g_wUiPanelHeight - 4) - g_wActionBarButtonHeight
-	int buttonRowY = (panelY + panelHeight - 4) - _saveLoadButtonHeight;
+	const int buttonRowY = (panelY + panelHeight - 4) - _saveLoadButtonHeight;
 
 	// Second loop: store button positions and draw them
 	for (int i = 1; i <= 7; i++) {
@@ -4429,12 +4414,12 @@ void View1::openOriginalSaveLoadPanel() {
 
 	// Load save slot names (ScummVM equivalent of binary's file reading loop)
 	// Convert UTF-8 descriptions to DOS CP850 since the glyph table uses DOS encoding
-	for (int idx = 0; idx < 30; idx++) {
+	for (int idx = 0; idx < ARRAYSIZE(_saveSlotNames); idx++) {
 		SaveStateDescriptor desc = g_engine->getMetaEngine()->querySaveMetaInfos(
 			g_engine->getGameId().c_str(), idx);
 		if (desc.getSaveSlot() != -1) {
-			Common::String utf8Name = desc.getDescription();
-			Common::U32String u32Name = utf8Name.decode(Common::kUtf8);
+			const Common::String &utf8Name = desc.getDescription();
+			const Common::U32String &u32Name = utf8Name.decode(Common::kUtf8);
 			_saveSlotNames[idx] = Common::String(u32Name, Common::kDos850);
 		} else {
 			_saveSlotNames[idx] = "";

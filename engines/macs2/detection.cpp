@@ -28,7 +28,6 @@ const DebugChannelDef Macs2MetaEngineDetection::debugFlagList[] = {
 	{Macs2::kDebugPath, "Path", "Pathfinding debug level"},
 	{Macs2::kDebugFilePath, "FilePath", "File path debug level"},
 	{Macs2::kDebugInput, "Input", "Input debug level"},
-	{Macs2::kDebugScan, "Scan", "Scan for unrecognised games"},
 	{Macs2::kDebugScript, "Script", "Enable debug script dump"},
 	DEBUG_CHANNEL_END};
 

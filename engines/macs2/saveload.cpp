@@ -567,10 +567,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			chr->_pickupFrameCounter = pickupFrameCounter;
 		s.syncAsUint16LE(obj->_pickupFrameStart);
 		s.syncAsUint16LE(obj->_pickupFrameEnd);
-		uint16 prevOrientation = chr ? chr->_previousOrientation : 0;
+		uint16 prevOrientation = chr ? chr->_previousOrientation : OrientationNone;
 		s.syncAsUint16LE(prevOrientation);
 		if (s.isLoading())
-			chr->_previousOrientation = (uint8)prevOrientation;
+			chr->_previousOrientation = (ObjectOrientation)prevOrientation;
 
 		s.syncAsUint16LE(obj->_overloadAnimTriggerDirection);
 

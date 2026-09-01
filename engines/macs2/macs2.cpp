@@ -515,7 +515,7 @@ void Macs2Engine::loadResourceFileV2() {
 void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 	Scenes &scenes = Scenes::instance();
 	scenes._currentActorIndex = _fileStream->readUint16LE();
-	uint16 firstSceneIndex = _fileStream->readUint16LE();
+	const uint16 firstSceneIndex = _fileStream->readUint16LE();
 	scenes._currentSceneIndex = firstSceneIndex;
 	scenes._currentSceneScript = scenes.readSceneScript(firstSceneIndex, _fileStream);
 	scenes._currentSceneStrings = scenes.readSceneStrings(firstSceneIndex, _fileStream);
@@ -527,7 +527,6 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 	const uint32 dir = getMcsDirectoryOffset();
 	GameObjects::instance()._objects.resize(0x200, nullptr);
 	for (int i = 1; i <= 0x200; i++) {
-		// Directory object DATA dword: file+kMcsV1DirectoryOffset+kMcsV1ObjectDataPtrRel+i*12
 		const uint32 addressOffset = dir + kMcsV1ObjectDataPtrRel + (uint32)i * 0xC;
 		_fileStream->seek(addressOffset, SEEK_SET);
 		uint32 objectOffset = _fileStream->readUint32LE();
@@ -549,7 +548,8 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 		}
 		gameObject->_position = Common::Point(x, y);
 		gameObject->_sceneIndex = _fileStream->readUint16LE();
-		gameObject->_orientation = _fileStream->readUint16LE();
+		const uint16 orientation = _fileStream->readUint16LE();
+		gameObject->_orientation = (ObjectOrientation)orientation;
 		gameObject->_verticalOffsetScale = _fileStream->readUint16LE();
 
 		const uint16 animSlotCount = maxAnimSlots();
@@ -559,9 +559,10 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 			for (int j = 0; j < (int)animSlotCount; j++) {
 				_fileStream->readUint16LE(); // animID
 				_fileStream->readUint16LE(); // sourceKey
-				uint32 dataSize = _fileStream->readUint32LE();
-				if (dataSize > 0)
+				const uint32 dataSize = _fileStream->readUint32LE();
+				if (dataSize > 0) {
 					_fileStream->skip(dataSize);
+				}
 				_fileStream->readUint16LE(); // speed
 				_fileStream->readByte();     // mirror
 				_fileStream->readByte();     // pad
@@ -577,20 +578,21 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 		} else {
 			for (int j = 1; j <= (int)animSlotCount; j++) {
 				_fileStream->readUint16LE(); // animID
-				uint16 blobSourceKey = _fileStream->readUint16LE();
-				uint32 dataSize = _fileStream->readUint32LE();
+				const uint16 blobSourceKey = _fileStream->readUint16LE();
+				const uint32 dataSize = _fileStream->readUint32LE();
 				uint8 *data = new uint8[dataSize];
 				_fileStream->read(data, dataSize);
 				gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
 				delete[] data;
 				gameObject->_blobSourceKeys.push_back(blobSourceKey);
-				uint16 blobSpeed = _fileStream->readUint16LE();
+				const uint16 blobSpeed = _fileStream->readUint16LE();
 				gameObject->_blobWalkSpeeds.push_back(blobSpeed);
-				uint16 blobMirrorFlag = _fileStream->readByte();
+				const uint16 blobMirrorFlag = _fileStream->readByte();
 				_fileStream->readByte();
 				gameObject->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
-				if (blobMirrorFlag != 0 && dataSize > 0)
+				if (blobMirrorFlag != 0 && dataSize > 0) {
 					BackgroundAnimationBlob::mirrorAnimBlob(gameObject->_blobs.back());
+				}
 			}
 			_fileStream->readByte();
 			gameObject->_hasShading = _fileStream->readByte() != 0;
@@ -601,14 +603,6 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 		_fileStream->seek(scriptPtrOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
-		// Binary loadResourceFile prunes an object slot ONLY when its DATA offset
-		// (scene table +0x17F4) is zero (handled by the `continue` above). A zero
-		// SCRIPT offset (+0x17F8) does NOT remove the object - it simply has no
-		// script/resource table. The original keeps the slot non-null so that the
-		// object set (used implicitly by save/load record ordering) stays correct.
-		// Previously this did `break`, which leaked this object, left it null, and
-		// aborted loading every higher-index object - corrupting the object set
-		// and shifting the save-file object section.
 		if (objectOffset == 0) {
 			GameObjects::instance()._objects[i - 1] = gameObject;
 			continue;

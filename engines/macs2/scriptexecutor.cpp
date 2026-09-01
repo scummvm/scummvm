@@ -2061,12 +2061,12 @@ OpcodeResult Script::ScriptExecutor::scriptSetOrientation() {
 		setScriptError(0x19);
 		return OpcodeResult::Continue;
 	}
-	if (animIndex < 9 || animIndex > 0x10) {
+	if (animIndex < OrientationStandingNorth || animIndex > OrientationStandingNorthWest) {
 		setScriptError(0x14);
 		return OpcodeResult::Continue;
 	}
 
-	object->_orientation = animIndex;
+	object->_orientation = (ObjectOrientation)animIndex;
 	return OpcodeResult::Continue;
 }
 

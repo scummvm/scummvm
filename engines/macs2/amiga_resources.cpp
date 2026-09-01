@@ -548,7 +548,7 @@ void Macs2Engine::readAmigaResources() {
 		gameObject->_dataOffset = 1;
 		gameObject->_position = Common::Point(0, 0);
 		gameObject->_sceneIndex = 0;
-		gameObject->_orientation = 11;
+		gameObject->_orientation = OrientationStandingEast;
 		gameObject->_verticalOffsetScale = 0;
 
 		while (gameObject->_blobs.size() < 0x15)
@@ -653,7 +653,7 @@ void Macs2Engine::readAmigaResources() {
 	}
 	protagonist->_sceneIndex = 0;
 	protagonist->_position = Common::Point(0, 0);
-	protagonist->_orientation = 11;
+	protagonist->_orientation = OrientationStandingEast;
 
 	Scenes::instance()._currentActorIndex = 1;
 

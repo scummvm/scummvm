@@ -987,7 +987,8 @@ static void showCharactersWindow() {
 						// --- Editable GameObject fields ---
 						int orient = (int)c->_gameObject->_orientation;
 						if (ImGui::InputInt("Orientation", &orient)) {
-							c->_gameObject->_orientation = (uint8)CLIP(orient, 0, 255);
+							// TODO: add a combo box for orientation instead of raw int input including speaking names
+							c->_gameObject->_orientation = (ObjectOrientation)CLIP((uint16)orient, (uint16)OrientationNone, (uint16)OrientationPickup);
 						}
 
 						int animIdx = (int)c->_animationIndex;
@@ -1898,7 +1899,6 @@ static void showDebugToolbarWindow() {
 			} channels[] = {
 				{kDebugGraphics, "Graphics"},
 				{kDebugPath, "Path"},
-				{kDebugScan, "Scan"},
 				{kDebugFilePath, "FilePath"},
 				{kDebugInput, "Input"},
 				{kDebugImGui, "ImGui"},
