@@ -19,7 +19,7 @@
  *
  */
 
-#include "hollywood/scenes/intro/intro_scene.h"
+#include "hollywood/scenes/presentation_scene.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -28,7 +28,7 @@
 
 namespace Hollywood {
 
-IntroSceneBase::IntroSceneBase(HollywoodEngine *vm, const char *debugName,
+PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		uint32 sceneFramebufferSize, uint32 savedFramebufferSize) :
 		_vm(vm),
 		_debugName(debugName),
@@ -38,19 +38,19 @@ IntroSceneBase::IntroSceneBase(HollywoodEngine *vm, const char *debugName,
 	_savedFramebuffer.resize(savedFramebufferSize);
 	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
-	memset(_savedFramebuffer.data(), 0, _savedFramebuffer.size());
+	_sceneFramebuffer.clear();
+	_savedFramebuffer.clear();
 }
 
-uint IntroSceneBase::presentRowOffset() const {
+uint PresentationScene::presentRowOffset() const {
 	return 0;
 }
 
-uint IntroSceneBase::presentXOffset() const {
+uint PresentationScene::presentXOffset() const {
 	return 0;
 }
 
-void IntroSceneBase::presentFrame() {
+void PresentationScene::presentFrame() {
 	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 
 	if (_screen.empty())
@@ -75,7 +75,7 @@ void IntroSceneBase::presentFrame() {
 	g_system->updateScreen();
 }
 
-bool IntroSceneBase::pollEvents() {
+bool PresentationScene::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -101,7 +101,7 @@ bool IntroSceneBase::pollEvents() {
 	return false;
 }
 
-bool IntroSceneBase::delay(uint32 millis) {
+bool PresentationScene::delay(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -115,7 +115,7 @@ bool IntroSceneBase::delay(uint32 millis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-bool IntroSceneBase::revealSavedFramebufferWithCurtain(byte bandWidth) {
+bool PresentationScene::revealSavedFramebufferWithCurtain(byte bandWidth) {
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= bandWidth) {
 		if (pollEvents())
 			return true;
@@ -126,7 +126,7 @@ bool IntroSceneBase::revealSavedFramebufferWithCurtain(byte bandWidth) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-bool IntroSceneBase::clearSceneFramebufferWithCurtain(byte bandWidth) {
+bool PresentationScene::clearSceneFramebufferWithCurtain(byte bandWidth) {
 	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += bandWidth) {
 		if (pollEvents())
 			return true;
@@ -137,7 +137,7 @@ bool IntroSceneBase::clearSceneFramebufferWithCurtain(byte bandWidth) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void IntroSceneBase::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
+void PresentationScene::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
 	if (innerWidth <= 0)
 		return;
@@ -162,7 +162,7 @@ void IntroSceneBase::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth
 	}
 }
 
-void IntroSceneBase::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
+void PresentationScene::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
 	if (innerWidth <= 0)
 		return;
@@ -187,11 +187,11 @@ void IntroSceneBase::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth)
 	}
 }
 
-void IntroSceneBase::copySavedFramebufferRun(int y, int x, int width) {
+void PresentationScene::copySavedFramebufferRun(int y, int x, int width) {
 	copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, x, width);
 }
 
-void IntroSceneBase::clearSceneFramebufferRun(int y, int x, int width) {
+void PresentationScene::clearSceneFramebufferRun(int y, int x, int width) {
 	clearSurfaceRun(_sceneFramebuffer.surface(), y, x, width);
 }
 

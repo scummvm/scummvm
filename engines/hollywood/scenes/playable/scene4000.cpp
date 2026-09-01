@@ -158,7 +158,7 @@ void Scene4000::runPresentation() {
 			phaseAccumulator -= kScene4000PhaseMillis;
 			++phase;
 			if (phase == kScene4000PatchPhase) {
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2],
+				drawResourceBlockList(_resources.arena, _resources.chunkOffsets[2],
 					_sceneFramebuffer.managedSurface());
 				presentFrame();
 			}

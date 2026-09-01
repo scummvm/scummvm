@@ -26,7 +26,7 @@
 
 #include "hollywood/music.h"
 #include "hollywood/scenes/scene_resources.h"
-#include "hollywood/scenes/intro/intro_scene.h"
+#include "hollywood/scenes/presentation_scene.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
 namespace Hollywood {
@@ -35,7 +35,7 @@ class HollywoodEngine;
 
 // Renders the ending as a viewport over a tall canvas whose animated channels
 // restore clean rectangles before redrawing.
-class Scene9170 : public IntroSceneBase {
+class Scene9170 : public PresentationScene {
 public:
 	Scene9170(HollywoodEngine *vm);
 

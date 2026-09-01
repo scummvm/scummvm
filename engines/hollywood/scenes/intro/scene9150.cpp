@@ -52,7 +52,7 @@ const Scene9150ClipStep kScene9150ClipSteps[] = {
 };
 
 Scene9150::Scene9150(HollywoodEngine *vm) :
-		IntroSceneBase(vm, "Scene 9150"),
+		PresentationScene(vm, "Scene 9150"),
 		_speech(vm->getLanguage()),
 		_text(),
 		_paletteResource(),

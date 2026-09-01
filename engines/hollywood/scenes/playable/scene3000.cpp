@@ -145,7 +145,7 @@ void Scene3000::runPresentation() {
 			if (delayedClipTick < kScene3000ClipDelayTicks) {
 				++delayedClipTick;
 				if (delayedClipTick == kScene3000PatchTick) {
-					drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
+					drawResourceBlockList(_resources.arena, _resources.chunkOffsets[2], _sceneFramebuffer.managedSurface());
 				}
 				continue;
 			}
@@ -172,19 +172,19 @@ void Scene3000::runPresentation() {
 
 void Scene3000::drawPresentationFrame(bool largeDirty, bool smallDirty, int previousClipFrame) {
 	if (largeDirty) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[3], 0,
 			kScene3000LargeDescriptorCount, _largeFrame,
 			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
 	}
 	const uint smallChunkIndex = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 5 : 4;
 	if (smallDirty) {
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[smallChunkIndex], 0,
+		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[smallChunkIndex], 0,
 			kScene3000SmallDescriptorCount, _smallFrame,
 			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
 	}
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
 		kScene3000LargeDescriptorCount, _largeFrame, _sceneFramebuffer.managedSurface());
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[smallChunkIndex], 0,
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[smallChunkIndex], 0,
 		kScene3000SmallDescriptorCount, _smallFrame, _sceneFramebuffer.managedSurface());
 	for (int clipFrame = previousClipFrame + 1; clipFrame <= _clipFrame; ++clipFrame)
 		drawClipFrameDelta(6, kScene3000ClipDescriptorCount, clipFrame);

@@ -158,7 +158,7 @@ void Scene2000::runPresentation() {
 			++tick;
 
 			if (tick == kScene2000PatchTick) {
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[3],
+				drawResourceBlockList(_resources.arena, _resources.chunkOffsets[3],
 					_sceneFramebuffer.managedSurface());
 			}
 
@@ -207,13 +207,13 @@ void Scene2000::advanceSmallSprites() {
 }
 
 void Scene2000::drawPresentationFrame(byte previousClipMapIndex) {
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[2], 0,
+	restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[2], 0,
 		kScene2000SmallSpriteDescriptorCount, 0, _baseFramebuffer.surface(),
 		_sceneFramebuffer.surface());
 
 	for (uint i = 0; i < ARRAYSIZE(_spriteStates); ++i) {
 		const byte descriptor = (byte)(_spriteStates[i] + i * 5);
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[2], 0,
+		drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[2], 0,
 			kScene2000SmallSpriteDescriptorCount, descriptor, _sceneFramebuffer.managedSurface());
 	}
 	for (uint clipMapIndex = previousClipMapIndex + 1; clipMapIndex <= _clipMapIndex; ++clipMapIndex) {
