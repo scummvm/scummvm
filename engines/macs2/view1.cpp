@@ -2437,8 +2437,6 @@ void View1::drawSceneUpdate() {
 }
 
 bool View1::tick() {
-	// TODO: Check if this pattern works or it would be better different
-	// TODO: Check if loading also works with this pattern
 	if (!_started) {
 		g_engine->changeScene(Scenes::instance()._currentSceneIndex);
 		_started = true;
@@ -2449,8 +2447,6 @@ bool View1::tick() {
 		redraw();
 		return true;
 	}
-	// Cycle the palette
-	++_offset;
 
 	// Music fade tick from gameTick (1008:e556).
 	// Processes volume fade in/out each frame when active.
@@ -2459,7 +2455,7 @@ bool View1::tick() {
 		const uint16 musicStep = MAX<uint16>(se->_musicControlStep, 1);
 		if (se->_musicControlMode == 1) {
 			// Fade out: volume -= step
-			int vol = (int)se->_musicControlVolume - (int)musicStep;
+			const int vol = (int)se->_musicControlVolume - (int)musicStep;
 			if (vol < 1) {
 				se->_musicControlMode = 0;
 				se->_musicControlVolume = 0;
@@ -2469,7 +2465,7 @@ bool View1::tick() {
 			g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
-			int vol = (int)se->_musicControlVolume + (int)musicStep;
+			const int vol = (int)se->_musicControlVolume + (int)musicStep;
 			if (vol >= 0x3F) {
 				se->_musicControlMode = 0;
 				se->_activeMusicSlot = 0;
@@ -2481,11 +2477,6 @@ bool View1::tick() {
 		}
 	}
 
-	// Below is redundant since we're only cycling the palette, but it demonstrates
-	// how to trigger the view to do further draws after the first time, since views
-	// don't automatically keep redrawing unless you tell it to
-	// if ((_offset % 256) == 0)
-	//	redraw();
 
 	// Background animation sequencing happens in drawBackgroundAnimations via
 	// drawAnimFrame(2, ...) semantics (1008:929c). Do not advance here - a

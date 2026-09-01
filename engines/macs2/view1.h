@@ -156,7 +156,6 @@ private:
 	// Saved scene visuals for help screen restore (avoids changeScene on exit)
 	Graphics::Palette _savedPalVanilla{Graphics::PALETTE_COUNT};
 	Graphics::ManagedSurface _savedDepthMap;
-	int _offset = 0; // TODO: palette cycling?
 
 	// Tick counter gating the mode-dependent palette brighten effect
 	// (updateBackgroundAnimationPalette). Matches g_wBgAnimTickCounter in the
