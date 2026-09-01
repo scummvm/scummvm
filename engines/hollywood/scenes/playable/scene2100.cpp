@@ -65,7 +65,7 @@ const byte kScene2100DoorChunk = 16;
 const byte kScene2100DoorDescriptorCount = 0x2f;
 const byte kScene2100RaStaffItem = 0x2f;
 const byte kScene2100PrincessArrivalPathHook = 2;
-const byte kScene2100SpecialExitHook = 3;
+const byte kScene2100SpecialExitPathHook = 3;
 const byte kScene2100MummyDialogueStageId = 0x62;
 const byte kScene2100MummyPrimaryRow = 99;
 const uint kScene2100MummyDialogueChoiceRecordCount = 10 * 10 * 7;
@@ -998,7 +998,9 @@ void Scene2100::runTreasureIntroductionSequence() {
 	if (!playAnimationFrames(_sceneLayers, kFrontLayer,
 		AnimationFrameRange(0, 25, kScene2100ForegroundFrameMillis)
 			.unskippable()
-			.hookEveryFrame(kScene2100SpecialExitHook))) {
+			.soundAt(3, 0x10)
+			.stopSoundAt(14)
+			.hookAt(14, kScene2100SpecialExitPathHook))) {
 		_soundBank0.stop();
 		return;
 	}
@@ -1124,19 +1126,14 @@ void Scene2100::runRaStaffPickup() {
 }
 
 void Scene2100::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
 	switch (hookId) {
 	case kScene2100PrincessArrivalPathHook:
-		if (frame == 25)
-			startManualActorPath(0x281, 0x191, 2, 0);
+		startManualActorPath(0x281, 0x191, 2, 0);
 		break;
-	case kScene2100SpecialExitHook:
-		if (frame == 3) {
-			_soundBank0.playSample(0x10, 100);
-		} else if (frame == 14) {
-			_soundBank0.stop();
-			startManualActorPath(0x1b5, 0x151,
-				kScene2100InvalidFacing, kScene2100InvalidCel);
-		}
+	case kScene2100SpecialExitPathHook:
+		startManualActorPath(0x1b5, 0x151,
+			kScene2100InvalidFacing, kScene2100InvalidCel);
 		break;
 	default:
 		break;

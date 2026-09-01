@@ -93,10 +93,7 @@ const byte kScene4090CurtainBandWidth = 0x14;
 const uint kScene4090CurtainEndOffset = 0x00f0;
 const int kScene4090ForegroundActorThresholdY = 0x0172;
 
-enum Scene4090AnimationHookId {
-	kScene4090OrganOverlayHook = 1,
-	kScene4090FinalRoomOverlayHook
-};
+const byte kScene4090OrganOverlayHook = 1;
 
 const byte kScene4090DoorExitFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5
@@ -378,22 +375,9 @@ AmbientAudioProfile Scene4090::ambientAudioProfile() const {
 }
 
 void Scene4090::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene4090OrganOverlayHook:
-		if (frame == 3) {
-			_soundBank0.playSample(0x3d, 100);
-			startOrganBodyAnimation(0, ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1, true);
-		}
-		break;
-	case kScene4090FinalRoomOverlayHook:
-		if (frame < ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
-			_sceneLayers.setVisibleLayerFrame(kScene4090AmbientFixedLayer,
-				kScene4090FinalRoomChunk13FrameMap[frame]);
-		break;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		break;
-	}
+	(void)frame;
+	if (hookId == kScene4090OrganOverlayHook)
+		startOrganBodyAnimation(0, ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1, true);
 }
 
 byte Scene4090::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -593,7 +577,10 @@ void Scene4090::runOrganRevealSequence() {
 		kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
 		kScene4090OrganOverlayFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4090OrganOverlayFrameMap) - 1,
-			kScene4090FrameMillis).hookEveryFrame(kScene4090OrganOverlayHook).unskippable());
+			kScene4090FrameMillis)
+			.soundAt(3, 0x3d)
+			.hookAt(3, kScene4090OrganOverlayHook)
+			.unskippable());
 	const bool walkComplete = overlayComplete &&
 		walkActiveActorTo(0x0294, 0x0175, 5, 0, false);
 	const bool bodyComplete = walkComplete && waitForOrganBodyAnimation();
@@ -935,8 +922,11 @@ void Scene4090::runFinalCutscene() {
 		kScene4090FinalOverlayDescriptorCount,
 		kScene4090FinalRoomOverlayFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1,
-			kScene4090FrameMillis).hookEveryFrame(
-				kScene4090FinalRoomOverlayHook).unskippable())) {
+			kScene4090FrameMillis)
+			.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
+				kScene4090FinalRoomChunk13FrameMap,
+				ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
+			.unskippable())) {
 		stopMultiSpriteAnimation();
 		return;
 	}
@@ -955,8 +945,11 @@ void Scene4090::runFinalCutscene() {
 				kScene4090FinalOverlayDescriptorCount,
 		kScene4090FinalRoomOverlayFrameMap,
 		AnimationFrameRange(ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, 0,
-			kScene4090FrameMillis).hookEveryFrame(
-				kScene4090FinalRoomOverlayHook).unskippable())) {
+			kScene4090FrameMillis)
+			.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
+				kScene4090FinalRoomChunk13FrameMap,
+				ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
+			.unskippable())) {
 		stopMultiSpriteAnimation();
 		return;
 	}

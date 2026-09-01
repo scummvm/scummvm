@@ -94,6 +94,11 @@ struct ActionOverlaySpec {
 		return *this;
 	}
 
+	ActionOverlaySpec &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
+		events.addResidentSound(frame, soundId, volumePercent);
+		return *this;
+	}
+
 	ActionOverlaySpec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
 			byte speechId = 0) {
 		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
@@ -116,8 +121,27 @@ struct ActionOverlaySpec {
 		return *this;
 	}
 
+	ActionOverlaySpec &mappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, false);
+		return *this;
+	}
+
+	ActionOverlaySpec &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, true);
+		return *this;
+	}
+
 	ActionOverlaySpec &layerVisibleAt(int frame, uint layerId, bool visible) {
 		events.addLayerVisibility(frame, layerId, visible);
+		return *this;
+	}
+
+	ActionOverlaySpec &layerResetAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerReset(frame, layerId, layerFrame);
 		return *this;
 	}
 

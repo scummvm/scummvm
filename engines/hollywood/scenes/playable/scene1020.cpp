@@ -81,11 +81,7 @@ const byte kScene1020JammedRailSoundId = 0x37;
 const byte kScene1020ChainMotorSoundId = 0x2f;
 const byte kScene1020AttachChainSoundId = 0x31;
 const byte kScene1020GreaseSoundId = 0x2e;
-const byte kScene1020JammedRailHookId = 2;
-const byte kScene1020ChainLoopHookId = 3;
-const byte kScene1020ChainForwardHookId = 4;
-const byte kScene1020AttachChainHookId = 5;
-const byte kScene1020GreaseHookId = 6;
+const byte kScene1020RemoveChainHookId = 2;
 // The lift pauses on this frame for the closing exchange, then resumes from it.
 const uint kScene1020LiftPauseFrame = 8;
 // Quasimodo is a sprite layer of his own, not part of the lift frames: upright at the
@@ -365,7 +361,7 @@ void Scene1020::runQuasimodoGrateCutscene() {
 		kScene1020OverlayFrameMillis)
 		.endAt(kScene1020LiftPauseFrame + 1)
 		.soundAt(kScene1020GrateSlamFrame, kScene1020GrateLiftSoundId)
-		.hookEveryFrame(kScene1020CutsceneHookId)
+		.hookAt(kScene1020GrateSlamFrame, kScene1020CutsceneHookId)
 		.noRedrawAtEnd());
 
 	state.scene1020GrateRaised = true;
@@ -394,61 +390,16 @@ void Scene1020::runQuasimodoGrateCutscene() {
 }
 
 void Scene1020::handleAnimationFrameHook(byte hookId, uint frame) {
-	GameplayState &state = _vm->gameState();
+	(void)frame;
 	switch (hookId) {
 	case kScene1020CutsceneHookId:
-		if (frame == kScene1020GrateSlamFrame)
-			runGrateLiftShake();
+		runGrateLiftShake();
 		break;
-	case kScene1020JammedRailHookId:
-		if (frame == 1)
-			_soundBank0.playSample(kScene1020JammedRailSoundId, 100, true);
-		else if (frame == 10)
-			_soundBank0.stop();
-		break;
-	case kScene1020ChainLoopHookId:
-		if (frame == 1)
-			_soundBank0.playSample(kScene1020ChainMotorSoundId, 100, true);
-		else if (frame == 44)
-			_soundBank0.stop();
-		break;
-	case kScene1020ChainForwardHookId:
-		if (frame == 1)
-			_soundBank0.playSample(kScene1020ChainMotorSoundId, 100, true);
-		else if (frame == 21)
-			_soundBank0.stop();
-		break;
-	case kScene1020AttachChainHookId:
-		switch (frame) {
-		case 5:
-			beginPrimarySpeechLine(0x15, 1, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f);
-			break;
-		case 12:
-			if (hasInventoryItem(0x1e)) {
-				removeInventoryItem(0x1e);
-				_soundBank0.playSample(1, 100);
-			}
-			break;
-		case 13:
-			_soundBank0.playSample(kScene1020AttachChainSoundId, 100, true);
-			break;
-		case 34:
-			state.scene1020ChainAttachedToGrate = 1;
-			applySceneStateToHotspotsAndPatches(2);
-			break;
-		case 38:
-			_soundBank0.stop();
-			beginPrimarySpeechLine(0x15, 2, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f);
-			break;
-		default:
-			break;
+	case kScene1020RemoveChainHookId:
+		if (hasInventoryItem(0x1e)) {
+			removeInventoryItem(0x1e);
+			_soundBank0.playSample(1, 100);
 		}
-		break;
-	case kScene1020GreaseHookId:
-		if (frame == 8)
-			_soundBank0.playSample(kScene1020GreaseSoundId, 5, true);
-		else if (frame == 40)
-			_soundBank0.stop();
 		break;
 	default:
 		break;
@@ -709,11 +660,11 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	if (chunkIndex == 14 && frameMap == kScene1020Chunk14ForwardFrameMap)
 		spec.soundAt(4, kScene1020LeverSoundId, 50);
 	else if (chunkIndex == 15)
-		spec.hookEveryFrame(kScene1020ChainLoopHookId);
+		spec.loopingSoundAt(1, kScene1020ChainMotorSoundId).stopSoundAt(44);
 	else if (chunkIndex == 16)
-		spec.hookEveryFrame(kScene1020JammedRailHookId);
+		spec.loopingSoundAt(1, kScene1020JammedRailSoundId).stopSoundAt(10);
 	else if (chunkIndex == 17)
-		spec.hookEveryFrame(kScene1020ChainForwardHookId);
+		spec.loopingSoundAt(1, kScene1020ChainMotorSoundId).stopSoundAt(21);
 
 	runOverlaySequence(spec);
 	if (chunkIndex >= 15 && chunkIndex <= 17)
@@ -862,7 +813,14 @@ void Scene1020::handleResourceOverlayChunk18StateChange() {
 
 	runOverlaySequence(ActionOverlaySpec(18, kScene1020ActionChunk18DescriptorCount,
 		kScene1020Chunk18StateChangeFrameMap, ARRAYSIZE(kScene1020Chunk18StateChangeFrameMap),
-		kScene1020OverlayFrameMillis).hookEveryFrame(kScene1020AttachChainHookId));
+		kScene1020OverlayFrameMillis)
+		.primarySpeechAt(5, 0x15, 1, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f)
+		.hookAt(12, kScene1020RemoveChainHookId)
+		.loopingSoundAt(13, kScene1020AttachChainSoundId)
+		.commitAt(34, state.scene1020ChainAttachedToGrate, (byte)1)
+		.patchAt(34, 2)
+		.stopSoundAt(38)
+		.primarySpeechAt(38, 0x15, 2, 0x00aa, 0x00f5, 0x3f, 0x3f, 0x3f));
 	_soundBank0.stop();
 	if (hasInventoryItem(0x1e)) {
 		removeInventoryItem(0x1e);
@@ -884,7 +842,9 @@ void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	beginSecondarySpeechLine(0x16, 0);
 	runOverlaySequence(ActionOverlaySpec(19, kScene1020ActionChunk19DescriptorCount,
 		kScene1020Chunk19EventFrameMap, ARRAYSIZE(kScene1020Chunk19EventFrameMap),
-		kScene1020OverlayFrameMillis).hookEveryFrame(kScene1020GreaseHookId));
+		kScene1020OverlayFrameMillis)
+		.loopingSoundAt(8, kScene1020GreaseSoundId, 5)
+		.stopSoundAt(40));
 	_soundBank0.stop();
 	state.scene1020RustyRailGreased = true;
 }

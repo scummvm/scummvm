@@ -340,23 +340,10 @@ void Scene6050::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 }
 
 void Scene6050::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene6050DisplayCaseHook:
-		if (frame >= 16 && frame <= 30) {
-			_sceneLayers.setLayerVisible(kScene6050SecondaryScriptLayer, true);
-			_sceneLayers.setLayerFrame(kScene6050SecondaryScriptLayer,
-				kScene6050DisplaySecondaryFrameMap[frame - 16]);
-		}
-		if (frame == 30) {
-			_displayCaseSecondaryChannel.reset(7, kScene6050SecondaryScriptFrameMillis);
-			_displayCaseSecondaryActive = true;
-		}
-		if (frame == 31)
-			applyDisplayCaseBackdropPatch();
-		break;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		break;
+	(void)frame;
+	if (hookId == kScene6050DisplayCaseHook) {
+		_displayCaseSecondaryChannel.reset(7, kScene6050SecondaryScriptFrameMillis);
+		_displayCaseSecondaryActive = true;
 	}
 }
 
@@ -604,7 +591,12 @@ void Scene6050::runDisplayCasePickup() {
 		playResourceLayerSequence(kScene6050ScriptLayer, 14, kScene6050DisplayDescriptorCount,
 			kScene6050DisplayFrameMap,
 			AnimationFrameRange(0, ARRAYSIZE(kScene6050DisplayFrameMap) - 1,
-				kScene6050ScriptFrameMillis).hookEveryFrame(kScene6050DisplayCaseHook));
+				kScene6050ScriptFrameMillis)
+				.visibleMappedLayerFrames(kScene6050SecondaryScriptLayer,
+					kScene6050DisplaySecondaryFrameMap,
+					ARRAYSIZE(kScene6050DisplaySecondaryFrameMap), 16)
+				.hookAt(30, kScene6050DisplayCaseHook)
+				.resourcePatchAt(31, 11));
 		clearScriptLayers();
 		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 			return;

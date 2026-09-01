@@ -80,10 +80,6 @@ const uint kScene2080AmbientLayer = 0;
 const uint kScene2080ForegroundActorLayer = 1;
 const uint kScene2080ForwardExitPoseLayer = 2;
 
-enum Scene2080OverlayHook {
-	kScene2080ForegroundExitSoundHook = 1
-};
-
 enum Scene2080DeltaClipMode {
 	kScene2080DeltaClipNone = 0,
 	kScene2080DeltaClipReturnEntry,
@@ -454,12 +450,6 @@ void Scene2080::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 		_sceneLayers.setLayerVisible(kScene2080ForegroundActorLayer, true);
 		_sceneLayers.setLayerFrame(kScene2080ForegroundActorLayer, baseFrame);
 	}
-}
-
-void Scene2080::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene2080ForegroundExitSoundHook &&
-			(frame == 6 || frame == 12 || frame == 19 || frame == 24 || frame == 30))
-		playResidentSoundEffect(10);
 }
 
 AmbientAudioProfile Scene2080::ambientAudioProfile() const {
@@ -941,7 +931,11 @@ void Scene2080::runForegroundActorExitOverlay() {
 	runSceneOverlay(ActionOverlaySpec(kScene2080ForegroundExitChunk, kScene2080ForegroundExitDescriptorCount,
 		kScene2080ForegroundExitFrameMap, ARRAYSIZE(kScene2080ForegroundExitFrameMap),
 		kScene2080FrameMillis)
-		.hookEveryFrame(kScene2080ForegroundExitSoundHook)
+		.residentSoundAt(6, 10)
+		.residentSoundAt(12, 10)
+		.residentSoundAt(19, 10)
+		.residentSoundAt(24, 10)
+		.residentSoundAt(30, 10)
 		.noFinalFrameDelay());
 
 	GameplayState &state = _vm->gameState();

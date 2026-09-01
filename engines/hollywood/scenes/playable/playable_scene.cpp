@@ -814,6 +814,9 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 	case AnimationFrameEvent::kLoopingSound:
 		_soundBank0.playSampleLooping(event.soundId, event.soundVolumePercent);
 		break;
+	case AnimationFrameEvent::kResidentSound:
+		playResidentSoundEffect((byte)event.soundId, event.soundVolumePercent);
+		break;
 	case AnimationFrameEvent::kStopSound:
 		_soundBank0.stop();
 		break;
@@ -830,6 +833,21 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 		break;
 	case AnimationFrameEvent::kLayerFrame:
 		_sceneLayers.setLayerFrame(event.layerId, event.layerFrame);
+		break;
+	case AnimationFrameEvent::kLayerFrameMap: {
+		const int mapIndex = (int)frame - event.layerFrameMapFirstFrame;
+		if (event.layerFrameMap != nullptr && mapIndex >= 0 &&
+				(uint)mapIndex < event.layerFrameMapSize) {
+			const byte mappedFrame = event.layerFrameMap[mapIndex];
+			if (event.showMappedLayer)
+				_sceneLayers.setVisibleLayerFrame(event.layerId, mappedFrame);
+			else
+				_sceneLayers.setLayerFrame(event.layerId, mappedFrame);
+		}
+		break;
+	}
+	case AnimationFrameEvent::kLayerReset:
+		_sceneLayers.resetLayer(event.layerId, event.layerFrame);
 		break;
 	case AnimationFrameEvent::kLayerVisibility:
 		_sceneLayers.setLayerVisible(event.layerId, event.layerVisible);
