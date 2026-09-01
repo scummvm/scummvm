@@ -25,7 +25,6 @@
 #include "common/array.h"
 
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
 
 namespace Hollywood {
@@ -58,9 +57,8 @@ private:
 	};
 
 	MusicPlayer _music;
-	ResourceChunkTable _chunkTable;
 	Common::Array<byte> _paletteSource;
-	Common::Array<byte> _resourceArena;
+	Common::Array<byte> _spriteResource;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 };
 

@@ -71,6 +71,10 @@ private:
 	void animateDeskFrames(byte firstFrame, byte lastFrame);
 	void setInsetVariant(byte variant);
 	void animateSecondaryTurn(byte facing);
+	bool playClockedCompositeRange(byte &targetFrame, byte firstFrame,
+		byte lastFrame, uint32 frameMillis);
+	void presentAnimationFrame() override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 	void runSpeechLine(byte stepIndex);
 	void runConcurrentSpeechLines(byte firstStepIndex, byte secondStepIndex);
 	void runSpeechSteps(const byte *stepIndices, uint stepCount);
@@ -113,6 +117,7 @@ private:
 	uint32 _secondaryFrameAccumulator;
 	uint32 _clockAccumulator;
 	bool _secondarySpeechVisible;
+	bool _advanceClockDuringAnimation;
 };
 
 } // End of namespace Hollywood

@@ -25,6 +25,8 @@
 #include "common/array.h"
 
 #include "hollywood/graphics.h"
+#include "hollywood/scenes/animation_channels.h"
+#include "hollywood/scenes/animation_player.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/speech_overlay.h"
 
@@ -33,14 +35,14 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Owns the display and skip lifecycle shared by non-interactive full-screen scenes.
-class PresentationScene {
+class PresentationScene : public SceneAnimationPlayerDelegate {
 protected:
 	// Keeps fixed-duration cutscenes responsive while leaving frame updates to the scene.
 	// Each successful beginFrame() must be followed by finishFrame().
 	class TimedPresentationLoop {
 	public:
 		TimedPresentationLoop(PresentationScene &scene, uint32 durationMillis,
-			uint32 maximumSliceMillis = 10);
+			uint32 maximumSliceMillis = 10, bool allowSkip = true);
 
 		bool beginFrame();
 		uint32 finishFrame();
@@ -51,6 +53,7 @@ protected:
 		uint32 _maximumSliceMillis;
 		uint32 _elapsedMillis;
 		uint32 _sliceMillis;
+		bool _allowSkip;
 	};
 
 	PresentationScene(HollywoodEngine *vm, const char *debugName,
@@ -64,6 +67,9 @@ protected:
 	virtual uint presentXOffset() const;
 	virtual int subtitleViewportXOffset() const;
 	virtual int subtitleViewportYOffset() const;
+	bool animationPlaybackShouldStop() const override;
+	void presentAnimationFrame() override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
 	bool showAnchoredSubtitle(const Common::String &text, byte colorIndex,
 		int centerX, int anchorBottomY,
@@ -87,11 +93,13 @@ protected:
 	bool loadArenaChunk(uint index);
 	bool loadArenaChunk(uint archiveIndex, uint localChunkIndex);
 	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
+	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
+	void drawLayerStack(const SceneLayerStack &layers, SceneAnimationStratum stratum);
 
 	void presentFrame();
 	void presentFrame(uint rowOffset, uint xOffset);
-	bool pollEvents();
-	bool delay(uint32 millis);
+	bool pollEvents(bool allowSkip = true);
+	bool delay(uint32 millis, bool allowSkip = true);
 
 	bool revealSavedFramebufferWithCurtain(byte bandWidth = 0x14);
 	bool clearSceneFramebufferWithCurtain(byte bandWidth = 0x14);
@@ -107,6 +115,9 @@ protected:
 	HollywoodEngine *_vm;
 	const char *_debugName;
 	SceneResources _resources;
+	SceneLayerStack _sceneLayers;
+	RealtimeAnimationTracks _realtimeAnimationTracks;
+	SceneAnimationPlayer _animationPlayer;
 	Common::Array<byte> _paletteCurrent;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	IndexedSurfaceBuffer _savedFramebuffer;

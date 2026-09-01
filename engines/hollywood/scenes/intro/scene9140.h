@@ -62,6 +62,7 @@ private:
 	void runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
 		uint16 centerX, uint16 topY, bool leftSpeaker);
 	void animateRightPose(byte firstFrame, byte lastFrame);
+	void presentAnimationFrame() override;
 	void drawComposite();
 	void fadeOutPalette();
 

@@ -38,17 +38,19 @@ public:
 
 private:
 	bool load();
-	bool loadPalette();
 	bool loadClipChunk(uint chunkIndex);
 	void runClip(byte staticSpeechRowIndex);
 	void drawClipFrame(byte frameIndex);
 	void playStaticSpeechPair(byte rowIndex);
 	void fadeOutPalette();
+	void presentAnimationFrame() override;
+	void stopAudio() override;
 
 	SpeechPlayer _speech;
 	SceneTextStore _text;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _clipResource;
+	byte _clipFrameIndex;
 };
 
 } // End of namespace Hollywood

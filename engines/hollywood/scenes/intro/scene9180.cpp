@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9180.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -127,12 +126,12 @@ void Scene9180::runSequence() {
 
 	waitWithEffects(3000);
 	_flickerModulus = 3;
-	animateFrameRange(0, 0x34, 1);
+	animateFrameRange(0, 0x34);
 	runSpeechLine(0);
-	animateFrameRange(0x58, 0x3a, -1);
+	animateFrameRange(0x58, 0x3a);
 	_frameMapIndex = 0x35;
 	runSpeechLine(1);
-	animateFrameRange(0x3a, 0x58, 1);
+	animateFrameRange(0x3a, 0x58);
 	_frameMapIndex = 0x35;
 	runSpeechLine(2);
 
@@ -163,24 +162,16 @@ void Scene9180::drawFrameIndex(byte frameMapIndex) {
 		_sceneFramebuffer.surface());
 }
 
-void Scene9180::animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapIndex, int step) {
-	if (step == 0)
-		return;
+void Scene9180::animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapIndex) {
+	AnimationFrameRange range(firstFrameMapIndex, lastFrameMapIndex,
+		kScene9180AnimationFrameMillis);
+	_animationPlayer.playAndPresent(_frameMapIndex, range);
+}
 
-	int frame = firstFrameMapIndex;
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-		updateFlickerPalette();
-		_frameMapIndex = (byte)frame;
-		drawComposite();
-		presentFrame();
-		if (delay(kScene9180AnimationFrameMillis))
-			return;
-		if (frame == lastFrameMapIndex)
-			break;
-		frame += step;
-	}
+void Scene9180::presentAnimationFrame() {
+	updateFlickerPalette();
+	drawComposite();
+	presentFrame();
 }
 
 void Scene9180::waitWithEffects(uint32 millis) {
@@ -342,10 +333,9 @@ void Scene9180::fillBlackPixelsForMemoryFlash() {
 
 void Scene9180::waitForFinalInput() {
 	while (!_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
 		presentFrame();
-		g_system->delayMillis(10);
+		if (delay(10))
+			return;
 	}
 }
 
