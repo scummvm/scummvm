@@ -22,7 +22,7 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4020_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE4020_H
 
-#include "hollywood/scenes/playable/animation_channels.h"
+#include "hollywood/scenes/animation_channels.h"
 #include "hollywood/scenes/playable/playable_scene.h"
 
 namespace Hollywood {

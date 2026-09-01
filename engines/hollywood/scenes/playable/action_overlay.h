@@ -24,8 +24,8 @@
 
 #include "common/types.h"
 
-#include "hollywood/scenes/playable/animation_events.h"
-#include "hollywood/scenes/playable/animation_layers.h"
+#include "hollywood/scenes/animation_events.h"
+#include "hollywood/scenes/animation_layers.h"
 
 namespace Hollywood {
 

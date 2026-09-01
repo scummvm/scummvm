@@ -23,7 +23,7 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9160_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
@@ -54,7 +54,7 @@ private:
 	uint presentRowOffset() const override;
 	void stopAudio() override;
 
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	MusicPlayer *_music;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _panelA;

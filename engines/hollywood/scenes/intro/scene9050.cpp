@@ -290,7 +290,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 	const bool finalLayeredSegment = _i05EntriesPerSegment == kI05LayeredRevealEntriesPerSegment &&
 		segmentId == kStage9050SeventhClipSegmentId;
 	const uint lastLocalChunkIndex = finalLayeredSegment ? 3 : _i05EntriesPerSegment - 1;
-	if (baseIndex + lastLocalChunkIndex >= IntroResourceSet::kResourceChunkCount) {
+	if (baseIndex + lastLocalChunkIndex >= SceneResources::kResourceChunkCount) {
 		warning("%s Stage 9050 segment %u exceeds the archive chunk table", kI05ArchiveName, segmentId);
 		return false;
 	}
@@ -566,7 +566,7 @@ void Scene9050::presentResourceI06AnimatedFrame() {
 }
 
 void Scene9050::drawResourceI06AnimatedFrame(byte chunkIndex, byte frameIndex) {
-	if (chunkIndex >= IntroResourceSet::kResourceChunkCount)
+	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
 	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
@@ -1049,7 +1049,7 @@ void Scene9050::runResourceI05InterClipReversePhase() {
 
 void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex,
 		bool drawFrame) {
-	if (localChunkIndex >= IntroResourceSet::kResourceChunkCount)
+	if (localChunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
 	const uint32 baseOffset = _resources.chunkOffsets[localChunkIndex];

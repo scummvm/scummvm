@@ -279,7 +279,7 @@ void Scene9120::advanceSmallAnimation() {
 
 void Scene9120::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex,
 		bool drawFrame) {
-	if (localChunkIndex >= IntroResourceSet::kResourceChunkCount)
+	if (localChunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
 	const uint32 baseOffset = _resources.chunkOffsets[localChunkIndex];

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_EVENTS_H
-#define HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_EVENTS_H
+#ifndef HOLLYWOOD_SCENES_ANIMATION_EVENTS_H
+#define HOLLYWOOD_SCENES_ANIMATION_EVENTS_H
 
 #include "common/array.h"
 #include "common/types.h"
@@ -433,4 +433,4 @@ private:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_EVENTS_H
+#endif // HOLLYWOOD_SCENES_ANIMATION_EVENTS_H

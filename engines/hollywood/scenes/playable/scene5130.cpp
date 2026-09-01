@@ -221,10 +221,8 @@ bool Scene5130::play() {
 }
 
 bool Scene5130::load() {
-	if (!_resources.loadChunkTable(kScene5130ArchiveName)) {
-		warning("Failed to read %s header", kScene5130ArchiveName);
+	if (!_resources.loadChunkTable(kScene5130ArchiveName))
 		return false;
-	}
 
 	if (!_resources.validateRequiredChunks(kScene5130ArchiveName, "scene 5130", kScene5130InitialRequiredChunkCount))
 		return false;

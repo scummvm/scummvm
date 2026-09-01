@@ -101,7 +101,7 @@ bool Scene9160::load() {
 		return false;
 
 	_lastOverlayChunk = 2;
-	while (_lastOverlayChunk + 1 < IntroResourceSet::kResourceChunkCount &&
+	while (_lastOverlayChunk + 1 < SceneResources::kResourceChunkCount &&
 			_resources.chunkTable.isValidChunk(_lastOverlayChunk + 1))
 		++_lastOverlayChunk;
 	if (_lastOverlayChunk < 4) {

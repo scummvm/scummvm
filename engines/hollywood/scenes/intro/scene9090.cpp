@@ -419,7 +419,7 @@ void Scene9090::composeFrame() {
 }
 
 void Scene9090::drawOfficePatch(uint chunkIndex) {
-	if (chunkIndex >= IntroResourceSet::kResourceChunkCount)
+	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
 		_sceneFramebuffer.surface());

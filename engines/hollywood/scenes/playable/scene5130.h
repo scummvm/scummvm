@@ -28,8 +28,8 @@
 #include "common/types.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/playable/animation_layers.h"
-#include "hollywood/scenes/playable/scene_resources.h"
+#include "hollywood/scenes/animation_layers.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/scene_text_store.h"
 #include "hollywood/scenes/playable/speech_overlay.h"

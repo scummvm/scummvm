@@ -358,7 +358,7 @@ void Scene9110::presentComposite() {
 }
 
 void Scene9110::drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex) {
-	if (localChunkIndex >= IntroResourceSet::kResourceChunkCount)
+	if (localChunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
 	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[localChunkIndex], 0,

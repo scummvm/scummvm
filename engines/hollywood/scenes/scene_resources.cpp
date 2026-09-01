@@ -19,25 +19,26 @@
  *
  */
 
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 
 #include "common/debug.h"
 #include "common/path.h"
+#include "graphics/managed_surface.h"
 
 namespace Hollywood {
 
-IntroResourceSet::IntroResourceSet() :
+SceneResources::SceneResources() :
 		arenaCursor(0),
 		_archive() {
 	chunkTable.clear();
 	clearChunkOffsets();
 }
 
-void IntroResourceSet::clearChunkOffsets() {
+void SceneResources::clearChunkOffsets() {
 	memset(chunkOffsets, 0, sizeof(chunkOffsets));
 }
 
-bool IntroResourceSet::loadChunkTable(const char *archiveName) {
+bool SceneResources::loadChunkTable(const char *archiveName) {
 	if (!_archive.open(Common::Path(archiveName))) {
 		warning("Failed to read %s header", archiveName);
 		chunkTable.clear();
@@ -48,55 +49,79 @@ bool IntroResourceSet::loadChunkTable(const char *archiveName) {
 	return true;
 }
 
-bool IntroResourceSet::validateChunk(const char *archiveName, const char *debugName, uint index) const {
+bool SceneResources::validateChunk(const char *archiveName, const char *sceneDebugName,
+		uint index) const {
 	if (!chunkTable.isValidChunk(index)) {
-		warning("%s is missing %s chunk %u", archiveName, debugName, index);
+		warning("%s is missing %s chunk %u", archiveName, sceneDebugName, index);
 		return false;
 	}
 
 	return true;
 }
 
-bool IntroResourceSet::validateChunkRange(const char *archiveName, const char *debugName,
+bool SceneResources::validateChunkRange(const char *archiveName, const char *sceneDebugName,
 		uint firstChunk, uint lastChunk) const {
-	for (uint i = firstChunk; i <= lastChunk; ++i) {
-		if (!validateChunk(archiveName, debugName, i))
+	for (uint index = firstChunk; index <= lastChunk; ++index) {
+		if (!validateChunk(archiveName, sceneDebugName, index))
 			return false;
 	}
 
 	return true;
 }
 
-uint32 IntroResourceSet::totalChunkSize(uint firstChunk, uint lastChunk) const {
+bool SceneResources::validateRequiredChunks(const char *archiveName, const char *sceneDebugName,
+		uint requiredChunkCount, uint framebufferChunkIndex) const {
+	for (uint i = 0; i < requiredChunkCount; ++i) {
+		const uint chunkIndex = i == 0 ? framebufferChunkIndex : i;
+		if (!chunkTable.isValidChunk(chunkIndex)) {
+			warning("%s is missing required %s chunk %u", archiveName, sceneDebugName, chunkIndex);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+uint32 SceneResources::totalChunkSize(uint firstChunk, uint lastChunk) const {
 	return _archive.totalChunkSize(firstChunk, lastChunk);
 }
 
-void IntroResourceSet::allocateArena(uint32 byteCount) {
+void SceneResources::allocateArena(uint32 byteCount) {
 	arena.resize(byteCount);
 	memset(arena.data(), 0, arena.size());
 	arenaCursor = 0;
 	clearChunkOffsets();
 }
 
-bool IntroResourceSet::loadFixedChunk(const char *debugName,
+bool SceneResources::loadFixedChunk(const char *sceneDebugName,
 		uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _archive.readFixedChunk(index, destination, fixedSize, debugName);
+	return _archive.readFixedChunk(index, destination, fixedSize, sceneDebugName);
 }
 
-bool IntroResourceSet::loadFixedChunk(const char *debugName,
+bool SceneResources::loadFixedChunk(const char *sceneDebugName,
+		uint index, Graphics::ManagedSurface &destination, uint fixedSize) {
+	return _archive.readFixedChunk(index, destination, fixedSize, sceneDebugName);
+}
+
+bool SceneResources::loadFixedChunk(const char *sceneDebugName,
 		uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _archive.readFixedChunk(index, destination, fixedSize, debugName);
+	return _archive.readFixedChunk(index, destination, fixedSize, sceneDebugName);
 }
 
-bool IntroResourceSet::loadVariableChunk(uint index, Common::Array<byte> &destination) {
+bool SceneResources::loadVariableChunk(uint index, Common::Array<byte> &destination) {
 	return _archive.readVariableChunk(index, destination);
 }
 
-bool IntroResourceSet::loadArenaChunk(const char *debugName, uint archiveIndex, uint localChunkIndex) {
+bool SceneResources::loadArenaChunk(const char *sceneDebugName, uint index) {
+	return loadArenaChunk(sceneDebugName, index, index);
+}
+
+bool SceneResources::loadArenaChunk(const char *sceneDebugName, uint archiveIndex,
+		uint localChunkIndex) {
 	const Common::String archiveName = _archive.fileName().toString();
 	if (localChunkIndex >= kResourceChunkCount) {
 		warning("%s chunk %u cannot be loaded into invalid %s local slot %u",
-			archiveName.c_str(), archiveIndex, debugName, localChunkIndex);
+			archiveName.c_str(), archiveIndex, sceneDebugName, localChunkIndex);
 		return false;
 	}
 
@@ -107,7 +132,7 @@ bool IntroResourceSet::loadArenaChunk(const char *debugName, uint archiveIndex, 
 
 	const uint32 chunkSize = _archive.chunkSize(archiveIndex);
 	if (arenaCursor > arena.size() || chunkSize > arena.size() - arenaCursor) {
-		warning("%s chunk %u does not fit the %s resource arena", archiveName.c_str(), archiveIndex, debugName);
+		warning("%s chunk %u does not fit the %s resource arena", archiveName.c_str(), archiveIndex, sceneDebugName);
 		return false;
 	}
 
@@ -121,11 +146,12 @@ bool IntroResourceSet::loadArenaChunk(const char *debugName, uint archiveIndex, 
 	return true;
 }
 
-bool IntroResourceSet::loadArenaChunkAlias(const char *debugName, uint sourceIndex, uint aliasIndex, uint targetIndex) {
+bool SceneResources::loadArenaChunkAlias(const char *sceneDebugName, uint sourceIndex,
+		uint aliasIndex, uint targetIndex) {
 	const Common::String archiveName = _archive.fileName().toString();
 	if (aliasIndex >= kResourceChunkCount || targetIndex >= kResourceChunkCount) {
 		warning("%s chunk %u cannot be aliased to invalid %s slot %u/%u",
-			archiveName.c_str(), sourceIndex, debugName, aliasIndex, targetIndex);
+			archiveName.c_str(), sourceIndex, sceneDebugName, aliasIndex, targetIndex);
 		return false;
 	}
 

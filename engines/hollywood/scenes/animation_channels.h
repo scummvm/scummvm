@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_CHANNELS_H
-#define HOLLYWOOD_SCENES_PLAYABLE_ANIMATION_CHANNELS_H
+#ifndef HOLLYWOOD_SCENES_ANIMATION_CHANNELS_H
+#define HOLLYWOOD_SCENES_ANIMATION_CHANNELS_H
 
 #include "common/array.h"
 #include "common/random.h"
 #include "common/types.h"
 
-#include "hollywood/scenes/playable/animation_layers.h"
+#include "hollywood/scenes/animation_layers.h"
 
 namespace Hollywood {
 
