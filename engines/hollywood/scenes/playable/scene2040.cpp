@@ -50,9 +50,7 @@ const uint kScene2040EyePaletteChunk = 15;
 const uint kScene2040BaseOpeningDeltaChunk = 18;
 const byte kScene2040EyePaletteFirstColor = 0xf2;
 const byte kScene2040EyePaletteLastColor = 0xf9;
-const byte kScene2040SphinxNoseHook = 2;
-const byte kScene2040EyeExchangeFirstHook = 3;
-const byte kScene2040EyeExchangeSecondHook = 4;
+const byte kScene2040EyePaletteHook = 2;
 const uint kScene2040BehindActorLayer = 0;
 const uint kScene2040ForegroundLayer = 1;
 
@@ -490,7 +488,12 @@ void Scene2040::runSphinxNoseSequence() {
 	if (_sceneChunkTable.isValidChunk(17)) {
 		runActorReplacement(ActionOverlaySpec(17, kScene2040SphinxNoseDescriptorCount,
 			kScene2040SphinxNoseFrameMap, ARRAYSIZE(kScene2040SphinxNoseFrameMap), kScene2040ActionFrameMillis)
-			.hookEveryFrame(kScene2040SphinxNoseHook));
+			.soundAt(18, 0x2c, 50)
+			.soundAt(30, 0x2c, 50)
+			.soundAt(42, 0x2c, 50)
+			.soundAt(54, 0x2c, 50)
+			.soundAt(66, 0x2c, 50)
+			.soundAt(78, 0x2c, 50));
 	}
 
 	state.scene2040SphinxFaceState = 1;
@@ -522,7 +525,9 @@ void Scene2040::runEyeExchangeSequence() {
 	installEyeEffectPalette();
 	runActorReplacement(ActionOverlaySpec(14, kScene2040EyeExchangeFirstDescriptorCount,
 		kScene2040EyeExchangeFirstFrameMap, ARRAYSIZE(kScene2040EyeExchangeFirstFrameMap), kScene2040ActionFrameMillis)
-		.hookEveryFrame(kScene2040EyeExchangeFirstHook));
+		.soundAt(8, 0x20)
+		.stopSoundAt(0x17)
+		.hookEveryFrame(kScene2040EyePaletteHook));
 	_soundBank0.stop();
 	restoreEyeEffectPalette();
 	removeInventoryItem(0x52);
@@ -531,7 +536,7 @@ void Scene2040::runEyeExchangeSequence() {
 	walkActiveActorTo(0x210, 0x172, 1, 0, false);
 	AnimationFrameRange secondRange(0, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap) - 1,
 		kScene2040ActionFrameMillis);
-	secondRange.hookEveryFrame(kScene2040EyeExchangeSecondHook);
+	secondRange.soundAt(1, 0x1f).stopSoundAt(0x12);
 	playResourceLayerSequence(_sceneLayers, kScene2040BehindActorLayer, 12,
 		kScene2040EyeExchangeSecondDescriptorCount, kScene2040EyeExchangeSecondFrameMap,
 		ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap), secondRange);
@@ -590,32 +595,11 @@ void Scene2040::runBaseOpeningDeltaSequence() {
 }
 
 void Scene2040::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene2040SphinxNoseHook:
-		if (frame < ARRAYSIZE(kScene2040SphinxNoseFrameMap)) {
-			const byte descriptor = kScene2040SphinxNoseFrameMap[frame];
-			if (descriptor == 0x11 || descriptor == 0x1d || descriptor == 0x29 ||
-					descriptor == 0x35 || descriptor == 0x41 || descriptor == 0x4d)
-				_soundBank0.playSample(0x2c, 50);
-		}
-		break;
-	case kScene2040EyeExchangeFirstHook:
-		if (frame == 8)
-			_soundBank0.playSample(0x20, 100);
-		else if (frame == 0x17)
-			_soundBank0.stop();
+	if (hookId == kScene2040EyePaletteHook) {
 		if (frame != 0 && frame % 4 == 0)
 			rotateEyeEffectPalette();
-		break;
-	case kScene2040EyeExchangeSecondHook:
-		if (frame == 1)
-			_soundBank0.playSample(0x1f, 100);
-		else if (frame == 0x12)
-			_soundBank0.stop();
-		break;
-	default:
+	} else {
 		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		break;
 	}
 }
 

@@ -93,6 +93,11 @@ struct AnimationFrameRange {
 		return *this;
 	}
 
+	AnimationFrameRange &residentSoundAt(int frame, byte soundId, byte volumePercent = 100) {
+		events.addResidentSound(frame, soundId, volumePercent);
+		return *this;
+	}
+
 	AnimationFrameRange &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
 			byte speechId = 0) {
 		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
@@ -115,8 +120,27 @@ struct AnimationFrameRange {
 		return *this;
 	}
 
+	AnimationFrameRange &mappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, false);
+		return *this;
+	}
+
+	AnimationFrameRange &visibleMappedLayerFrames(uint layerId, const byte *mappedFrames,
+			uint mappedFrameCount, int firstPlaybackFrame = 0) {
+		events.addLayerFrameMap(layerId, mappedFrames, mappedFrameCount,
+			firstPlaybackFrame, true);
+		return *this;
+	}
+
 	AnimationFrameRange &layerVisibleAt(int frame, uint layerId, bool visible) {
 		events.addLayerVisibility(frame, layerId, visible);
+		return *this;
+	}
+
+	AnimationFrameRange &layerResetAt(int frame, uint layerId, byte layerFrame) {
+		events.addLayerReset(frame, layerId, layerFrame);
 		return *this;
 	}
 

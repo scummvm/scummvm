@@ -465,20 +465,6 @@ void Scene1030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer, frameIndex);
 }
 
-void Scene1030::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId == 0 || hookId > 3)
-		return;
-
-	GameplayState &state = _vm->gameState();
-	state.scene1030TablePickupState = hookId;
-	if (hookId == 2) {
-		_sceneLayers.resetLayer(kScene1030SmallForegroundLayer, 0);
-		_sceneLayers.setLayerVisible(kScene1030SmallForegroundLayer, false);
-	}
-	applySceneStateToHotspotsAndPatches(1);
-}
-
 AmbientAudioProfile Scene1030::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(kScene1030FirstAmbientSoundCue,
 		kScene1030AmbientSoundCueCount, 15, kScene1030AmbientSoundProbabilityModulus,
@@ -701,9 +687,17 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 
 void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, int patchFrame, byte patchState) {
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, kScene1030ForegroundFrameMillis)
-		.hookAt(patchFrame, patchState));
+	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize,
+		kScene1030ForegroundFrameMillis);
+	if (patchFrame >= 0) {
+		spec.commitAt(patchFrame, _vm->gameState().scene1030TablePickupState, patchState);
+		if (patchState == 2) {
+			spec.layerResetAt(patchFrame, kScene1030SmallForegroundLayer, 0)
+				.layerVisibleAt(patchFrame, kScene1030SmallForegroundLayer, false);
+		}
+		spec.patchAt(patchFrame, 1);
+	}
+	runActorReplacement(spec);
 }
 
 void Scene1030::handleSceneEventFlag0() {

@@ -97,11 +97,7 @@ const byte kScene4070FrankieTorsoItem = 0x42;
 const byte kScene4070FrankieHeadItem = 0x4c;
 
 enum Scene4070AnimationHookId {
-	kScene4070TrophyScrollHook = 1,
-	kScene4070TrophyOpenHook,
-	kScene4070FrankiePartHook,
-	kScene4070TreatmentNearHook,
-	kScene4070TreatmentReturnHook
+	kScene4070TrophyScrollHook = 1
 };
 
 enum {
@@ -381,27 +377,6 @@ void Scene4070::handleAnimationFrameHook(byte hookId, uint frame) {
 		else
 			_viewportXOffset = _viewportMinXOffset;
 		break;
-	case kScene4070TrophyOpenHook:
-		if (frame == 0x11)
-			_soundBank0.playSample(0x31, 100);
-		else if (frame == 0x15 || frame == 0x18)
-			playResidentSoundEffect(4);
-		else if (frame == 0x1c)
-			_soundBank0.playSample(0x32, 100);
-		break;
-	case kScene4070FrankiePartHook:
-		_soundBank0.playSample(1, 100);
-		break;
-	case kScene4070TreatmentNearHook:
-		if (frame < ARRAYSIZE(kScene4070TreatmentNearDraculaFrameIndices))
-			_sceneLayers.setLayerFrame(kScene4070DraculaLayer,
-				kScene4070TreatmentNearDraculaFrameIndices[frame]);
-		break;
-	case kScene4070TreatmentReturnHook:
-		if (frame < ARRAYSIZE(kScene4070TreatmentReturnFrameIndices))
-			_sceneLayers.setLayerFrame(kScene4070DraculaLayer,
-				kScene4070TreatmentReturnFrameIndices[frame]);
-		break;
 	default:
 		PlayableScene::handleAnimationFrameHook(hookId, frame);
 		break;
@@ -615,7 +590,12 @@ void Scene4070::runTrophyBaseOpenAction() {
 		if (!playResourceLayerSequence(kScene4070ScriptLayer, kScene4070TrophyOpenChunk,
 			kScene4070TrophyOpenDescriptorCount,
 			AnimationFrameRange(0, kScene4070TrophyOpenDescriptorCount - 1,
-				kScene4070TrophyOpenFrameMillis).hookEveryFrame(kScene4070TrophyOpenHook).unskippable()))
+				kScene4070TrophyOpenFrameMillis)
+				.soundAt(0x11, 0x31)
+				.residentSoundAt(0x15, 4)
+				.residentSoundAt(0x18, 4)
+				.soundAt(0x1c, 0x32)
+				.unskippable()))
 			return;
 
 		state.scene4070TrophyBaseOpened = true;
@@ -662,7 +642,7 @@ void Scene4070::runFrankiePartGrantSequence() {
 			kScene4070TrophyBaseChunk,
 			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
 			AnimationFrameRange(0x0d, 0x23, kScene4070FrameMillis)
-				.hookAt(0x18, kScene4070FrankiePartHook).unskippable());
+				.soundAt(0x18, 1).unskippable());
 	} else {
 		beginTrophySpeechLine(0x66, 0);
 		animationComplete = playResourceLayerSequence(kScene4070ScriptLayer,
@@ -720,7 +700,11 @@ void Scene4070::runSlimmingTreatmentSequence() {
 		kScene4070TreatmentNearChunk,
 		kScene4070TreatmentNearDescriptorCount,
 		AnimationFrameRange(kScene4070TreatmentNearDescriptorIndices,
-			kScene4070FrameMillis).hookEveryFrame(kScene4070TreatmentNearHook).unskippable());
+			kScene4070FrameMillis)
+			.mappedLayerFrames(kScene4070DraculaLayer,
+				kScene4070TreatmentNearDraculaFrameIndices,
+				ARRAYSIZE(kScene4070TreatmentNearDraculaFrameIndices))
+			.unskippable());
 	_hideActiveActor = previousHideActiveActor;
 	if (!nearAnimationComplete) {
 		_fullPaletteRegionMask = savedFullPaletteRegionMask;
@@ -742,8 +726,11 @@ void Scene4070::runSlimmingTreatmentSequence() {
 	if (!playResourceLayerSequence(kScene4070ScriptLayer, kScene4070TreatmentReturnChunk,
 			kScene4070TreatmentReturnDescriptorCount,
 			AnimationFrameRange(kScene4070TreatmentReturnFrameIndices,
-				kScene4070TreatmentReturnFrameMillis).hookEveryFrame(
-					kScene4070TreatmentReturnHook).unskippable()))
+				kScene4070TreatmentReturnFrameMillis)
+				.mappedLayerFrames(kScene4070DraculaLayer,
+					kScene4070TreatmentReturnFrameIndices,
+					ARRAYSIZE(kScene4070TreatmentReturnFrameIndices))
+				.unskippable()))
 		return;
 
 	state.scene4010PillboxPickupState = 1;

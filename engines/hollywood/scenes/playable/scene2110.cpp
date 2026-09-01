@@ -471,7 +471,8 @@ void Scene2110::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 }
 
 void Scene2110::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene2110EntryPathHook && frame == 0x0a)
+	(void)frame;
+	if (hookId == kScene2110EntryPathHook)
 		startScriptedActorPath();
 }
 
