@@ -3943,15 +3943,6 @@ bool Character::fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &
 	return true;
 }
 
-Macs2::AnimFrame *Character::getCurrentAnimationFrame(uint16 advanceMode) {
-	AnimFrame *result = new AnimFrame();
-	if (!fillCurrentAnimationFrame(advanceMode, *result)) {
-		delete result;
-		return nullptr;
-	}
-	return result;
-}
-
 Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIndex) {
 	if (_gameObject->_blobs.size() <= 17) {
 		return nullptr;

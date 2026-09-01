@@ -68,6 +68,14 @@ private:
 	bool handleWalkability(Character *c);
 
 	uint16 lookupWalkability(const Common::Point &p) const;
+	bool shouldStepVerticalMotion() const;
+	bool isAnimationMirrored() const;
+	void floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount);
+	// Returns false if we are at the end of the path already or the path is not valid
+	bool walkAlongPath();
+	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
+	bool isWalkable(const Common::Point &p) const;
+	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
 
 public:
 	Character();
@@ -101,13 +109,7 @@ public:
 	uint16 _motionProgress = 0;
 	uint16 _motionStartVerticalOffset = 0;
 
-	bool isWalkable(const Common::Point &p) const;
 	bool calculatePath(Common::Point target);
-	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
-	void floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount);
-	// Returns false if we are at the end of the path already or the path is not valid
-	bool walkAlongPath();
-	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 	void startPickup(Macs2::GameObject *object);
 
 	const Common::Point &getPosition() const;
@@ -115,10 +117,7 @@ public:
 
 	uint16 getVerticalOffset() const;
 	bool hasPendingVerticalMotion() const;
-	bool shouldStepVerticalMotion() const;
-	bool isAnimationMirrored() const;
 	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out) const;
-	Macs2::AnimFrame *getCurrentAnimationFrame(uint16 advanceMode);
 	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 0);
 
 	void update();
