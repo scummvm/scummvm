@@ -102,6 +102,8 @@ struct PlayableSceneConfig {
 	uint16 viewportMinXOffset;
 	uint16 viewportMaxXOffset;
 	SceneActorPose defaultActorPose;
+	// False when scene resource layers render the protagonist.
+	bool drawDefaultActor;
 	byte inventoryOwnerIndex;
 	byte activeAudioChapterIndex;
 	uint actorBankTableEntry;

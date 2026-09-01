@@ -55,7 +55,7 @@ const byte kScene3040ForegroundFrameMap[] = {
 const SceneLayerSpec kScene3040LayerSpecs[] = {
 	{kSceneAnimationActorReplacement, 5, kScene3040ForegroundActorDescriptorCount,
 		kScene3040ForegroundFrameMap, ARRAYSIZE(kScene3040ForegroundFrameMap), true, 0},
-	{kSceneAnimationScenePlaced, 6, kScene3040LoopDescriptorCount,
+	{kSceneAnimationInFrontOfActors, 6, kScene3040LoopDescriptorCount,
 		nullptr, 0, true, 0}
 };
 
@@ -68,41 +68,8 @@ static PlayableSceneConfig scene3040Config() {
 	config.setTextResources(kScene3040Resource003RowsOffsetIndex, kScene3040SpeechCueDescriptorTableOffset);
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 20;
+	config.drawDefaultActor = false;
 	return config;
-}
-
-static void drawLooseSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset,
-		uint16 descriptorCount, uint16 descriptorIndex, Graphics::ManagedSurface &destination) {
-	const uint entryOffset = baseOffset + kFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
-	uint cursor = baseOffset + kFrameDescriptorSize * descriptorCount + readUint32LE(resource, entryOffset);
-	if (cursor > resource.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > resource.size())
-			return;
-
-		const uint32 packedDestination = readUint32LE(resource, cursor);
-		const int dataLength = resource[cursor + 4];
-		cursor += 5;
-
-		if (cursor + dataLength > resource.size())
-			return;
-
-		const int x = packedDestination & 0xffff;
-		const int y = (int)((packedDestination >> 16) & 0xffff);
-		if (y >= 0 && y < destination.h && x >= 0 && x < destination.w) {
-			const int drawWidth = MIN<int>(dataLength, destination.w - x);
-			if (drawWidth > 0)
-				destination.copyRectToSurface(resource.data() + cursor, dataLength, x, y, drawWidth, 1);
-		}
-
-		cursor += dataLength;
-	}
 }
 
 Scene3040::Scene3040(HollywoodEngine *vm) :
@@ -123,24 +90,8 @@ void Scene3040::initializeCustomPreviewState() {
 	setActiveActorPose(0x210, 0x139, 2);
 }
 
-void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)drawActiveActor;
-	(void)activeFacing;
-	(void)activeCel;
-	(void)activeWorldX;
-	(void)activeWorldY;
-	(void)drawSecondaryActor;
-	(void)secondaryFacing;
-	(void)secondaryFrame;
-	(void)secondaryWorldX;
-	(void)secondaryWorldY;
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawLooseSceneLayer(kScene3040ForegroundActorLayer);
-	drawLooseSceneLayer(kScene3040LoopLayer);
+bool Scene3040::shouldDrawSecondaryActorInPlayableComposite() const {
+	return false;
 }
 
 void Scene3040::runCustomEntrySequence() {
@@ -266,19 +217,6 @@ void Scene3040::advanceForegroundActorLayer(uint32 delta) {
 			_foregroundActorBlinkActive = true;
 		}
 	}
-}
-
-void Scene3040::drawLooseSceneLayer(uint layerId) {
-	if (!_sceneLayers.hasLayer(layerId))
-		return;
-
-	const ResourceSpriteLayer &layer = _sceneLayers.layer(layerId);
-	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount ||
-			!_sceneChunkTable.isValidChunk(layer.chunkIndex))
-		return;
-
-	drawLooseSpriteFrame(_resourceArena, _resourceChunkOffsets[layer.chunkIndex],
-		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
 }
 
 void Scene3040::updateHiddenObjectHotspots() {

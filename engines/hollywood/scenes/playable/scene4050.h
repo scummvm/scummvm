@@ -34,9 +34,6 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
@@ -51,7 +48,6 @@ private:
 
 	void resetAnimationLayers();
 	void restoreSceneObjectPaletteRange();
-	void drawSceneLayers();
 	void advanceFlagPalette(uint32 delta);
 	void rotateFlagPalette();
 	void advanceRonLayer(uint32 delta);
