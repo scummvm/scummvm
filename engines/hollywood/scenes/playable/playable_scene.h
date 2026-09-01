@@ -183,6 +183,30 @@ protected:
 		bool _running;
 	};
 
+	enum TransitionFrameMode {
+		kIndependentTransitionFrames,
+		kCumulativeTransitionFrames
+	};
+
+	class TransitionFrameRenderer {
+	public:
+		virtual ~TransitionFrameRenderer() {}
+		virtual void drawFrame(byte frame) = 0;
+	};
+
+	template<class Callback>
+	class TransitionFrameCallbackRenderer : public TransitionFrameRenderer {
+	public:
+		explicit TransitionFrameCallbackRenderer(const Callback &callback) :
+				_callback(callback) {
+		}
+
+		void drawFrame(byte frame) override { _callback(frame); }
+
+	private:
+		const Callback &_callback;
+	};
+
 	// Resource format constants
 	enum {
 		kFrameBufferSize = 0x78000,
@@ -310,6 +334,8 @@ protected:
 	virtual AmbientAudioProfile ambientAudioProfile() const;
 	virtual byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
+	// Advances scene services while a transition renderer owns the framebuffer.
+	virtual void advanceTransitionAnimation(uint32 delta);
 	virtual void advanceFullscreenAnimation(uint32 delta);
 
 	// Ambient audio
@@ -619,6 +645,16 @@ protected:
 		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis, uint firstFrame = 0);
 	void playDeltaClip(uint chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
 		uint firstFrame = 0);
+	// Cumulative transitions apply every elapsed delta; independent transitions draw only the newest frame.
+	bool playTransitionFrames(TransitionFrameRenderer &renderer, byte firstFrame,
+		byte lastFrame, uint32 frameMillis, TransitionFrameMode mode, bool allowSkip = true);
+	template<class Callback>
+	bool playTransitionFrames(const Callback &drawFrame, byte firstFrame, byte lastFrame,
+			uint32 frameMillis, TransitionFrameMode mode, bool allowSkip = true) {
+		TransitionFrameCallbackRenderer<Callback> renderer(drawFrame);
+		return playTransitionFrames(static_cast<TransitionFrameRenderer &>(renderer),
+			firstFrame, lastFrame, frameMillis, mode, allowSkip);
+	}
 	// Polls events without advancing or redrawing the scene; returns true if playback should stop.
 	bool waitDeltaClipFrameMillis(uint32 millis);
 	// Advances full-screen scene hooks without redrawing the ordinary scene composite.
