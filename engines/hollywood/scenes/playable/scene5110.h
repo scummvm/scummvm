@@ -105,6 +105,7 @@ private:
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void rebuildWalkableMask();
 
+	uint _randomDetailTrack;
 	TimedAnimationChannel _salonAnimationChannel;
 	byte _upperRightSalonState;
 	byte _rightSalonDetailDirection;
