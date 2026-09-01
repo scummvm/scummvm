@@ -64,8 +64,6 @@ const byte kScene2100SpecialExitDescriptorCount = 0x1b;
 const byte kScene2100DoorChunk = 16;
 const byte kScene2100DoorDescriptorCount = 0x2f;
 const byte kScene2100RaStaffItem = 0x2f;
-const byte kScene2100PrincessArrivalPathHook = 2;
-const byte kScene2100SpecialExitPathHook = 3;
 const byte kScene2100MummyDialogueStageId = 0x62;
 const byte kScene2100MummyPrimaryRow = 99;
 const uint kScene2100MummyDialogueChoiceRecordCount = 10 * 10 * 7;
@@ -189,7 +187,6 @@ Scene2100::Scene2100(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2100Config()),
 		_foregroundChannel(),
 		_auxChannel(),
-		_manualActorPathChannel(),
 		_foregroundAlternateFrameSet(false),
 		_mummySpeechUsesFrontLayer(false),
 		_suppressMummySpeechAnimation(false),
@@ -200,9 +197,7 @@ Scene2100::Scene2100(HollywoodEngine *vm) :
 		_doorCeremonyState(0),
 		_specialSpeechAnimationActive(false),
 		_specialSpeechFinishing(false),
-		_specialSpeechVariant(0),
-		_manualActorPathActive(false),
-		_manualActorPathFrameIndex(0) {
+		_specialSpeechVariant(0) {
 	_sceneLayers.configure(kScene2100LayerSpecs);
 }
 
@@ -264,7 +259,6 @@ void Scene2100::prepareCustomGameplayLoop() {
 }
 
 void Scene2100::advanceCustomGameplayLoop(uint32 delta) {
-	advanceManualActorPath(delta);
 	if (_returnLayerAnimationActive)
 		advanceReturnLayers(delta);
 	else if (_doorCeremonyAnimationActive)
@@ -401,7 +395,6 @@ void Scene2100::resetAnimationLayers() {
 		_vm->gameState().scene2100MummyBranchState != 1);
 	_foregroundChannel.reset(0, kScene2100PrimarySpeechFrameMillis);
 	_auxChannel.reset(0, kScene2100AuxFrameMillis);
-	_manualActorPathChannel.reset(0, kScene2100ActorPathFrameMillis);
 	_foregroundAlternateFrameSet = false;
 	_mummySpeechUsesFrontLayer = false;
 	_suppressMummySpeechAnimation = false;
@@ -414,9 +407,6 @@ void Scene2100::resetAnimationLayers() {
 	_specialSpeechAnimationActive = false;
 	_specialSpeechFinishing = false;
 	_specialSpeechVariant = 0;
-	_manualActorPathActive = false;
-	_manualActorPathFrameIndex = 0;
-	_actorPathPlaybackActive = false;
 }
 
 void Scene2100::advanceReturnLayers(uint32 delta) {
@@ -429,7 +419,7 @@ void Scene2100::advanceReturnLayers(uint32 delta) {
 		_sceneLayers.advanceLayerFrame(kAuxLayer, 9);
 
 	if (_sceneLayers.layerFrame(kFrontLayer) >= 6 &&
-			_sceneLayers.layerFrame(kAuxLayer) >= 9 && !_manualActorPathActive)
+			_sceneLayers.layerFrame(kAuxLayer) >= 9 && !concurrentActorPathActive())
 		_returnLayerAnimationActive = false;
 }
 
@@ -526,62 +516,6 @@ void Scene2100::advanceSpecialSpeechAnimation(uint32 delta) {
 	}
 }
 
-void Scene2100::startManualActorPath(int targetX, int targetY, byte finalFacing, byte finalCel) {
-	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
-		targetX, targetY, finalFacing, finalCel);
-	_manualActorPathFrameIndex = 1;
-	_manualActorPathChannel.reset(0, kScene2100ActorPathFrameMillis);
-	_lastViewportScrollActorWorldX = _activeActorWorldX;
-	_manualActorPathActive = _actorPathFrames.size() > 1;
-	_actorPathPlaybackActive = _manualActorPathActive;
-	if (!_manualActorPathActive && !_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-}
-
-void Scene2100::advanceManualActorPath(uint32 delta) {
-	if (!_manualActorPathActive)
-		return;
-
-	const uint frameCount = _manualActorPathChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount && _manualActorPathFrameIndex < _actorPathFrames.size(); ++i) {
-		const ActorPathFrame &frame = _actorPathFrames[_manualActorPathFrameIndex++];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	if (_manualActorPathFrameIndex >= _actorPathFrames.size()) {
-		_manualActorPathActive = false;
-		_actorPathPlaybackActive = false;
-	}
-}
-
-void Scene2100::finishManualActorPath() {
-	while (_manualActorPathActive && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(10, false))
-			break;
-	}
-
-	if (_manualActorPathActive && !_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	_manualActorPathActive = false;
-	_actorPathPlaybackActive = false;
-}
-
 bool Scene2100::isRaStaffAvailable() const {
 	const GameplayState &state = _vm->gameState();
 	return state.scene2020PrincessGone && !state.scene2100RaStaffTaken;
@@ -650,7 +584,7 @@ void Scene2100::runEntryFromScene2110() {
 	_sceneLayers.setLayerStratum(kAuxLayer, kSceneAnimationBehindActors);
 	_foregroundChannel.reset(0, kScene2100ForegroundFrameMillis);
 	_auxChannel.reset(0, kScene2100AuxFrameMillis);
-	startManualActorPath(0x277, 0x168, 1, 0);
+	startConcurrentActorPath(0x277, 0x168, 1, 0, kScene2100ActorPathFrameMillis);
 	_returnLayerAnimationActive = true;
 
 	drawPlayableComposite();
@@ -660,7 +594,7 @@ void Scene2100::runEntryFromScene2110() {
 		if (waitSceneMillis(10, false))
 			return;
 	}
-	finishManualActorPath();
+	finishConcurrentActorPath();
 	_sceneLayers.setLayerVisible(kFrontLayer, false);
 	_sceneLayers.setLayerVisible(kAuxLayer, false);
 	_sceneLayers.setLayerVisible(kMummyLayer, true);
@@ -711,7 +645,8 @@ void Scene2100::runPrincessArrivalSequence() {
 	sequence.layerFrames(kFrontLayer,
 		AnimationFrameRange(19, 31, kScene2100ForegroundFrameMillis)
 			.unskippable()
-			.hookAt(25, kScene2100PrincessArrivalPathHook));
+			.actorPathAt(25, 0x281, 0x191, 2, 0,
+				kScene2100ActorPathFrameMillis));
 	if (!sequence.completed())
 		return;
 	_sceneLayers.setLayerFrame(kFrontLayer, 32);
@@ -721,7 +656,7 @@ void Scene2100::runPrincessArrivalSequence() {
 	sequence.commit(state.scene2100MummyBranchState, (byte)1);
 	_sceneLayers.setLayerVisible(kFrontLayer, false);
 	_mummySpeechUsesFrontLayer = false;
-	finishManualActorPath();
+	finishConcurrentActorPath();
 	beginSecondarySpeechLine(7, 1);
 	_mummyIdleEnabled = false;
 	_sceneLayers.setLayerVisible(kMummyLayer, false);
@@ -965,7 +900,7 @@ void Scene2100::runTreasureIntroductionSequence() {
 		kScene2100SpecialIntroFrameMap,
 		ARRAYSIZE(kScene2100SpecialIntroFrameMap));
 	_sceneLayers.setLayerVisible(kFrontLayer, true);
-	startManualActorPath(0x277, 0x168, 2, 0);
+	startConcurrentActorPath(0x277, 0x168, 2, 0, kScene2100ActorPathFrameMillis);
 	BlockingSequence sequence(*this);
 	sequence.presentedLayerTransition(kFrontLayer,
 		AnimationTransition(0, ARRAYSIZE(kScene2100SpecialIntroFrameMap) - 1,
@@ -973,7 +908,7 @@ void Scene2100::runTreasureIntroductionSequence() {
 			kScene2100ForegroundFrameMillis).unskippable());
 	if (!sequence.completed())
 		return;
-	finishManualActorPath();
+	finishConcurrentActorPath();
 	if (!sequence.completed())
 		return;
 
@@ -991,7 +926,9 @@ void Scene2100::runTreasureIntroductionSequence() {
 			.unskippable()
 			.soundAt(3, 0x10)
 			.stopSoundAt(14)
-			.hookAt(14, kScene2100SpecialExitPathHook));
+			.actorPathAt(14, 0x1b5, 0x151,
+				kScene2100InvalidFacing, kScene2100InvalidCel,
+				kScene2100ActorPathFrameMillis));
 	if (!sequence.completed()) {
 		_soundBank0.stop();
 		return;
@@ -999,7 +936,7 @@ void Scene2100::runTreasureIntroductionSequence() {
 	_sceneLayers.setLayerFrame(kFrontLayer, 26);
 	drawPlayableComposite();
 	presentFrame();
-	finishManualActorPath();
+	finishConcurrentActorPath();
 	_sceneLayers.setLayerVisible(kFrontLayer, false);
 }
 
@@ -1116,21 +1053,6 @@ void Scene2100::runRaStaffPickup() {
 		addInventoryItem(kScene2100RaStaffItem);
 	sequence.sound(1);
 	dispatchGenericSceneAction(21);
-}
-
-void Scene2100::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	switch (hookId) {
-	case kScene2100PrincessArrivalPathHook:
-		startManualActorPath(0x281, 0x191, 2, 0);
-		break;
-	case kScene2100SpecialExitPathHook:
-		startManualActorPath(0x1b5, 0x151,
-			kScene2100InvalidFacing, kScene2100InvalidCel);
-		break;
-	default:
-		break;
-	}
 }
 
 void Scene2100::removeColorMapItemFromOriginal(byte itemId) {

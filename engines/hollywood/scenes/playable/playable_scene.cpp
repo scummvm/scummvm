@@ -153,6 +153,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_sceneLayers(),
 		_realtimeAnimationTracks(),
 		_animationPlayer(*this),
+		_concurrentActorPathChannel(),
 		_speechController(vm->getLanguage(), vm->hasSpeechData()),
 		_realtimeSpeechPlayer(vm->getLanguage(), vm->hasSpeechData()),
 		_speech(_speechController.player),
@@ -190,6 +191,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_viewportMinXOffset(0),
 		_viewportMaxXOffset(0),
 		_lastViewportScrollActorWorldX(config.defaultActorPose.x),
+		_concurrentActorPathFrameIndex(0),
+		_concurrentActorPathActive(false),
 		_actorPathPlaybackActive(false),
 		_activeActorWorldX(config.defaultActorPose.x),
 		_activeActorWorldY(config.defaultActorPose.y),
@@ -872,6 +875,13 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 			event.speechCenterX, event.speechTopY,
 			event.speechRed, event.speechGreen, event.speechBlue);
 		break;
+	case AnimationFrameEvent::kActorPose:
+		setActiveActorPose(event.actorX, event.actorY, event.actorFacing, event.actorCel);
+		break;
+	case AnimationFrameEvent::kActorPath:
+		startConcurrentActorPath(event.actorX, event.actorY, event.actorFacing,
+			event.actorCel, event.actorPathFrameMillis);
+		break;
 	case AnimationFrameEvent::kLayerFrame:
 		_sceneLayers.setLayerFrame(event.layerId, event.layerFrame);
 		break;
@@ -1444,6 +1454,7 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_actionOverlayPlayer.reset();
 	_sceneLayers.reset();
+	resetConcurrentActorPath();
 	resetAmbientAudioState();
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -1962,7 +1973,7 @@ uint16 PlayableScene::viewportYOffset() const {
 
 void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
-	_actorPathPlaybackActive = false;
+	resetConcurrentActorPath();
 	stopRealtimeSpeech();
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -1976,6 +1987,7 @@ void PlayableScene::prepareGameplayLoop() {
 
 void PlayableScene::advanceGameplayLoop(uint32 delta) {
 	advanceSecondaryActorSpeechAnimation(delta);
+	advanceConcurrentActorPath(delta);
 	advanceCustomGameplayLoop(delta);
 	advanceRealtimeSpeech(delta);
 	_realtimeAnimationTracks.advance(delta, _random);
@@ -2243,6 +2255,70 @@ bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 row
 	}
 
 	return false;
+}
+
+void PlayableScene::startConcurrentActorPath(int targetX, int targetY, byte finalFacing,
+		byte finalCel, uint32 frameMillis) {
+	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
+		targetX, targetY, finalFacing, finalCel);
+	_concurrentActorPathFrameIndex = 1;
+	_concurrentActorPathChannel.reset(0, frameMillis);
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
+	_concurrentActorPathActive = _actorPathFrames.size() > 1;
+	_actorPathPlaybackActive = _concurrentActorPathActive;
+	if (!_concurrentActorPathActive && !_actorPathFrames.empty()) {
+		const ActorPathFrame &frame = _actorPathFrames.back();
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+	}
+}
+
+void PlayableScene::advanceConcurrentActorPath(uint32 delta) {
+	if (!_concurrentActorPathActive)
+		return;
+
+	const uint frameCount = _concurrentActorPathChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount &&
+			_concurrentActorPathFrameIndex < _actorPathFrames.size(); ++i) {
+		const ActorPathFrame &frame = _actorPathFrames[_concurrentActorPathFrameIndex++];
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+	}
+	if (_concurrentActorPathFrameIndex >= _actorPathFrames.size()) {
+		_concurrentActorPathActive = false;
+		_actorPathPlaybackActive = false;
+	}
+}
+
+void PlayableScene::finishConcurrentActorPath() {
+	while (_concurrentActorPathActive && !animationPlaybackShouldStop()) {
+		if (waitSceneMillis(10, false))
+			break;
+	}
+
+	if (_concurrentActorPathActive && !_actorPathFrames.empty()) {
+		const ActorPathFrame &frame = _actorPathFrames.back();
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+	}
+	_concurrentActorPathActive = false;
+	_actorPathPlaybackActive = false;
+}
+
+void PlayableScene::resetConcurrentActorPath() {
+	_concurrentActorPathChannel.reset(0, 0);
+	_concurrentActorPathFrameIndex = 0;
+	_concurrentActorPathActive = false;
+	_actorPathPlaybackActive = false;
 }
 
 bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {

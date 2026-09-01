@@ -53,7 +53,6 @@ private:
 	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
@@ -61,9 +60,6 @@ private:
 	void advanceMummyIdle(uint32 delta);
 	void advanceDoorCeremony(uint32 delta);
 	void advanceSpecialSpeechAnimation(uint32 delta);
-	void startManualActorPath(int targetX, int targetY, byte finalFacing, byte finalCel);
-	void advanceManualActorPath(uint32 delta);
-	void finishManualActorPath();
 	bool isRaStaffAvailable() const;
 	void runEntryFromScene2010();
 	void runEntryFromScene2110();
@@ -92,7 +88,6 @@ private:
 
 	TimedAnimationChannel _foregroundChannel;
 	TimedAnimationChannel _auxChannel;
-	TimedAnimationChannel _manualActorPathChannel;
 	bool _foregroundAlternateFrameSet;
 	bool _mummySpeechUsesFrontLayer;
 	bool _suppressMummySpeechAnimation;
@@ -104,8 +99,6 @@ private:
 	bool _specialSpeechAnimationActive;
 	bool _specialSpeechFinishing;
 	byte _specialSpeechVariant;
-	bool _manualActorPathActive;
-	uint _manualActorPathFrameIndex;
 };
 
 } // End of namespace Hollywood

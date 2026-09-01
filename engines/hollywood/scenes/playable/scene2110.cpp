@@ -40,7 +40,6 @@ const uint32 kScene2110SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene2110FrameMillis = 75;
 const uint32 kScene2110ActorPathFrameMillis = 60;
 const uint32 kScene2110PrimarySpeechFrameMillis = 125;
-const uint32 kScene2110WaitSliceMillis = 10;
 const byte kScene2110InvalidFacing = 0xff;
 const byte kScene2110EntryLayerChunk = 5;
 const byte kScene2110EntryLayerDescriptorCount = 0x1a;
@@ -59,10 +58,6 @@ enum Scene2110PrimarySpeechGroup {
 	kScene2110EntrySpeechGroupA = 1,
 	kScene2110EntrySpeechGroupB,
 	kScene2110TreasureSpeechGroup
-};
-
-enum Scene2110AnimationHook {
-	kScene2110EntryPathHook = 1
 };
 
 const byte kScene2110EntryLayerFrameMap[] = {
@@ -123,11 +118,8 @@ static PlayableSceneConfig scene2110Config() {
 Scene2110::Scene2110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene2110Config()),
 		_entryIdleChannel(),
-		_scriptedActorPathChannel(),
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
-		_entryIdleActive(false),
-		_scriptedActorPathActive(false),
-		_scriptedActorPathFrameIndex(0) {
+		_entryIdleActive(false) {
 	_sceneLayers.configure(kScene2110LayerSpecs);
 	_ambientTrack = _realtimeAnimationTracks.addFrameMap(_sceneLayers,
 		kScene2110AmbientLayer, kScene2110FrameMillis);
@@ -174,7 +166,6 @@ void Scene2110::runExitSideEffectsAfterLoop() {
 
 void Scene2110::advanceCustomGameplayLoop(uint32 delta) {
 	advanceEntryIdle(delta);
-	advanceScriptedActorPath(delta);
 }
 
 bool Scene2110::dispatchCustomSceneAction(uint16 handlerId) {
@@ -265,10 +256,7 @@ void Scene2110::resetAnimationLayers() {
 	_realtimeAnimationTracks.reset(_ambientTrack);
 	_entryIdleChannel.reset(kScene2110EntrySpeechBaseFrameA,
 		kScene2110PrimarySpeechFrameMillis);
-	_scriptedActorPathChannel.reset(0, kScene2110ActorPathFrameMillis);
 	_entryIdleActive = false;
-	_scriptedActorPathActive = false;
-	_scriptedActorPathFrameIndex = 0;
 }
 
 void Scene2110::advanceEntryIdle(uint32 delta) {
@@ -285,61 +273,6 @@ void Scene2110::advanceEntryIdle(uint32 delta) {
 			_sceneLayers.setLayerFrame(kScene2110EntryLayer, kScene2110EntrySpeechBaseFrameA);
 		}
 	}
-}
-
-void Scene2110::startScriptedActorPath() {
-	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
-		0x263, 0x135, kScene2110InvalidFacing, 0);
-	_scriptedActorPathFrameIndex = 1;
-	_scriptedActorPathChannel.reset(0, kScene2110ActorPathFrameMillis);
-	_lastViewportScrollActorWorldX = _activeActorWorldX;
-	_scriptedActorPathActive = _actorPathFrames.size() > 1;
-	_actorPathPlaybackActive = _scriptedActorPathActive;
-	if (!_scriptedActorPathActive && !_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-}
-
-void Scene2110::advanceScriptedActorPath(uint32 delta) {
-	if (!_scriptedActorPathActive)
-		return;
-
-	const uint frameCount = _scriptedActorPathChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount && _scriptedActorPathFrameIndex < _actorPathFrames.size(); ++i) {
-		const ActorPathFrame &frame = _actorPathFrames[_scriptedActorPathFrameIndex++];
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	if (_scriptedActorPathFrameIndex >= _actorPathFrames.size()) {
-		_scriptedActorPathActive = false;
-		_actorPathPlaybackActive = false;
-	}
-}
-
-void Scene2110::finishScriptedActorPath() {
-	while (_scriptedActorPathActive && !animationPlaybackShouldStop()) {
-		if (waitSceneMillis(kScene2110WaitSliceMillis, false))
-			break;
-	}
-
-	if (_scriptedActorPathActive && !_actorPathFrames.empty()) {
-		const ActorPathFrame &frame = _actorPathFrames.back();
-		_activeActorWorldX = frame.worldX;
-		_activeActorWorldY = frame.worldY;
-		_activeActorFacing = frame.facing;
-		_activeActorCel = frame.cel;
-		_activeActorDrawOrderMode = frame.drawOrderMode;
-	}
-	_scriptedActorPathActive = false;
-	_actorPathPlaybackActive = false;
 }
 
 void Scene2110::runEntryFromScene2100() {
@@ -391,10 +324,12 @@ bool Scene2110::runScriptedEntryOpening() {
 	BlockingSequence sequence(*this);
 	sequence.presentedLayerFrames(kScene2110EntryLayer,
 		AnimationFrameRange(0, 0x0e, kScene2110FrameMillis)
-			.hookAt(0x0a, kScene2110EntryPathHook).unskippable());
+			.actorPathAt(0x0a, 0x263, 0x135, kScene2110InvalidFacing, 0,
+				kScene2110ActorPathFrameMillis)
+			.unskippable());
 	if (!sequence.completed())
 		return false;
-	finishScriptedActorPath();
+	finishConcurrentActorPath();
 	if (!sequence.completed())
 		return false;
 
@@ -469,12 +404,6 @@ void Scene2110::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	drawPlayableComposite();
 	presentFrame();
-}
-
-void Scene2110::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId == kScene2110EntryPathHook)
-		startScriptedActorPath();
 }
 
 void Scene2110::runEntrySecondarySpeechLine(byte frameIndex) {
