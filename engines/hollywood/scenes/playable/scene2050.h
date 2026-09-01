@@ -89,8 +89,6 @@ private:
 	byte _sealDiscoveryFrame;
 	uint _sealDiscoveryActorPathFrameIndex;
 	bool _sealDiscoverySpeechStarted;
-	uint32 _sealDiscoverySpeechStartMillis;
-	uint32 _sealDiscoverySpeechDurationMillis;
 };
 
 } // End of namespace Hollywood

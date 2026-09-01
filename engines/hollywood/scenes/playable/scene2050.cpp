@@ -150,9 +150,7 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_sealDiscoveryActive(false),
 		_sealDiscoveryFrame(0),
 		_sealDiscoveryActorPathFrameIndex(0),
-		_sealDiscoverySpeechStarted(false),
-		_sealDiscoverySpeechStartMillis(0),
-		_sealDiscoverySpeechDurationMillis(0) {
+		_sealDiscoverySpeechStarted(false) {
 	_sceneLayers.configure(kScene2050LayerSpecs);
 	_ambientTrack = _realtimeAnimationTracks.addFrameMap(
 		_sceneLayers, kScene2050AmbientLayer, kScene2050AmbientFrameMillis);
@@ -583,8 +581,6 @@ void Scene2050::runSealDiscoverySequence() {
 	_sealDiscoveryFrame = 0;
 	_sealDiscoveryActorPathFrameIndex = 0;
 	_sealDiscoverySpeechStarted = false;
-	_sealDiscoverySpeechStartMillis = 0;
-	_sealDiscoverySpeechDurationMillis = 0;
 
 	Scene2050DeltaFrameTarget target(_sealDiscoveryFrame);
 	AnimationFrameRange range(1, ARRAYSIZE(kScene2050SealDiscoveryFrameMap) - 1,
@@ -595,14 +591,8 @@ void Scene2050::runSealDiscoverySequence() {
 
 	_actorPathPlaybackActive = false;
 	_soundBank0.playSample(kScene2050SealDiscoveryEndSound, 50);
-	if (_sealDiscoverySpeechStarted) {
-		const uint32 elapsed = g_system->getMillis() - _sealDiscoverySpeechStartMillis;
-		const uint32 remaining = elapsed < _sealDiscoverySpeechDurationMillis ?
-			_sealDiscoverySpeechDurationMillis - elapsed : 0;
-		waitForSpeechOrDelay(remaining, false);
-		_speech.stop();
-		clearSpeechOverlay();
-	}
+	if (_sealDiscoverySpeechStarted)
+		waitForRealtimeSpeech();
 
 	_sealDiscoveryActive = false;
 	drawPlayableComposite();
@@ -654,11 +644,7 @@ void Scene2050::handleAnimationFrameHook(byte hookId, uint frame) {
 		return;
 
 	_sealDiscoverySpeechStarted = true;
-	const bool speechAudioStarted = startSecondarySpeechLine(6, 0);
-	_sealDiscoverySpeechStartMillis = g_system->getMillis();
-	_sealDiscoverySpeechDurationMillis = speechAudioStarted ?
-		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(1200, _speechOverlay.lines.size() * 1100);
+	startRealtimeSecondarySpeechLine(6, 0, 0);
 }
 
 void Scene2050::drawSealDiscoveryDeltaLayer() {

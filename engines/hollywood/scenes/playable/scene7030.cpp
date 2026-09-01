@@ -495,14 +495,12 @@ void Scene7030::handleActionSlot10CommonSpeech() {
 }
 
 void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
-	const bool speechStarted = startSecondarySpeechLine(10, 0);
+	const bool speechStarted = startRealtimeSecondarySpeechLine(10, 0, 0);
 	runPunchBowlPatchOverlay(11, kScene7030Chunk11DescriptorCount,
 		kScene7030Chunk11ExchangeItem0CFrameMap, ARRAYSIZE(kScene7030Chunk11ExchangeItem0CFrameMap),
 		kScene7030Chunk5FrameMillis);
 	if (speechStarted)
-		waitForSpeechOrDelay(0, false);
-	clearSpeechOverlay();
-	_speech.stop();
+		waitForRealtimeSpeech();
 	removeInventoryItem(0x0c);
 	addInventoryItem(0x0d);
 	_vm->gameState().inventoryPanelDirty = true;
@@ -532,11 +530,8 @@ void Scene7030::handleActionHandler314PickupBone() {
 }
 
 void Scene7030::handleActionHandler315PickupItem0C() {
-	if (_sceneStateFlags[2] == 1) {
+	if (_sceneStateFlags[2] == 1)
 		handleActionSlot08CommonSpeech();
-		clearSpeechOverlay();
-		_speech.stop();
-	}
 
 	runPunchBowlPatchOverlay(10, kScene7030Chunk10DescriptorCount,
 		kScene7030Chunk10PickupItem0CFrameMap, ARRAYSIZE(kScene7030Chunk10PickupItem0CFrameMap),

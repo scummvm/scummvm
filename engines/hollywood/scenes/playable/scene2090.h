@@ -55,7 +55,6 @@ private:
 		int targetX, int targetY, byte finalFacing, byte finalCel);
 	void runBackTransitionToScene2080();
 	void runAltarCeremony();
-	void waitForStartedSpeechAndClear(uint32 fallbackMillis);
 	void setRitualPaletteCycle(bool active);
 	void rotateRitualPalette();
 	bool runCurtainRevealFromBlack();

@@ -38,7 +38,6 @@ struct AnimationFrameEvent {
 		kResidentSound,
 		kStopSound,
 		kSecondarySpeech,
-		kStartedSecondarySpeech,
 		kPrimarySpeech,
 		kActorPose,
 		kActorPath,
@@ -171,13 +170,6 @@ public:
 		event.speechRow = rowIndex;
 		event.speechFrame = frameIndex;
 		event.speechId = speechId;
-		_events.push_back(event);
-	}
-
-	void addStartedSecondarySpeech(int frame, uint16 rowIndex, byte frameIndex) {
-		AnimationFrameEvent event(frame, AnimationFrameEvent::kStartedSecondarySpeech);
-		event.speechRow = rowIndex;
-		event.speechFrame = frameIndex;
 		_events.push_back(event);
 	}
 
@@ -339,11 +331,6 @@ public:
 	Spec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
 			byte speechId = 0) {
 		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
-		return self();
-	}
-
-	Spec &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
-		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
 		return self();
 	}
 
