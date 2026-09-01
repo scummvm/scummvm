@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/path.h"
-#include "common/system.h"
 
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
@@ -145,7 +144,8 @@ Scene9090::Scene9090(HollywoodEngine *vm) :
 		_insetFrameAccumulator(0),
 		_secondaryFrameAccumulator(0),
 		_clockAccumulator(0),
-		_secondarySpeechVisible(false) {
+		_secondarySpeechVisible(false),
+		_advanceClockDuringAnimation(false) {
 	_paletteResource.resize(kPaletteSize);
 	_presentationPaletteRemapTable.resize(256);
 	_baseFramebuffer.resize(kFrameBufferSize);
@@ -383,6 +383,7 @@ void Scene9090::initializeOfficeState() {
 	_insetFrameAccumulator = 0;
 	_secondaryFrameAccumulator = 0;
 	_clockAccumulator = 0;
+	_advanceClockDuringAnimation = false;
 	clearSubtitles();
 }
 
@@ -501,14 +502,8 @@ void Scene9090::returnDeskActorToForward() {
 }
 
 void Scene9090::animateDeskFrames(byte firstFrame, byte lastFrame) {
-	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		_deskFrame = frame;
-		composeFrame();
-		presentFrame();
-		if (delay(kScene9090PrimaryFrameMillis))
-			return;
-		advanceClock(kScene9090PrimaryFrameMillis);
-	}
+	playClockedCompositeRange(_deskFrame, firstFrame, lastFrame,
+		kScene9090PrimaryFrameMillis);
 }
 
 void Scene9090::setInsetVariant(byte variant) {
@@ -517,14 +512,9 @@ void Scene9090::setInsetVariant(byte variant) {
 
 	const byte firstFrame = variant == 2 ? 4 : 0x0b;
 	const byte lastFrame = variant == 2 ? 6 : 0x0d;
-	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		_insetFrame = frame;
-		composeFrame();
-		presentFrame();
-		if (delay(kScene9090PrimaryFrameMillis))
-			return;
-		advanceClock(kScene9090PrimaryFrameMillis);
-	}
+	if (!playClockedCompositeRange(_insetFrame, firstFrame, lastFrame,
+			kScene9090PrimaryFrameMillis))
+		return;
 	_insetVariant = variant;
 	_insetFrame = variant == 2 ? 7 : 0;
 }
@@ -538,14 +528,30 @@ void Scene9090::animateSecondaryTurn(byte facing) {
 	_secondarySpeechVisible = false;
 	_secondarySpeechFrame = 0;
 	_secondaryCel = kScene9090TurnCelByFacing[facing];
-	composeFrame();
-	presentFrame();
-	if (delay(kScene9090TurnFrameMillis))
-		return;
+	AnimationTransition transition(_secondaryCel, _secondaryCel, 0,
+		kScene9090TurnFrameMillis);
+	_animationPlayer.transitionAndPresent(_secondaryCel, transition);
+}
 
-	_secondaryCel = 0;
+bool Scene9090::playClockedCompositeRange(byte &targetFrame, byte firstFrame,
+		byte lastFrame, uint32 frameMillis) {
+	_advanceClockDuringAnimation = true;
+	AnimationFrameRange range(firstFrame, lastFrame, frameMillis);
+	const bool completed = _animationPlayer.playAndPresent(targetFrame, range);
+	_advanceClockDuringAnimation = false;
+	return completed;
+}
+
+void Scene9090::presentAnimationFrame() {
 	composeFrame();
 	presentFrame();
+}
+
+bool Scene9090::waitForAnimationFrame(uint32 millis, bool allowSkip) {
+	const bool stopped = PresentationScene::waitForAnimationFrame(millis, allowSkip);
+	if (!stopped && _advanceClockDuringAnimation)
+		advanceClock(millis);
+	return stopped;
 }
 
 void Scene9090::runSpeechLine(byte stepIndex) {
@@ -611,7 +617,7 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 
 		composeFrame();
 		presentFrame();
-		const uint32 startMillis = g_system->getMillis();
+		uint32 elapsed = 0;
 		if (segment == 0) {
 			for (uint i = 0; i < stepCount && !_skipRequested && !Engine::shouldQuit(); ++i) {
 				const Scene9090SpeechStep &step = kScene9090SpeechSteps[stepIndices[i]];
@@ -623,7 +629,6 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 		}
 
 		while (!_skipRequested && !Engine::shouldQuit()) {
-			const uint32 elapsed = g_system->getMillis() - startMillis;
 			bool deskSpeaking = false;
 			bool secondarySpeaking = false;
 			bool insetSpeaking = false;
@@ -651,9 +656,9 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 			}
 			if (!anyActive)
 				break;
-			if (pollEvents())
+			if (delay(10))
 				return;
-			g_system->delayMillis(10);
+			elapsed += 10;
 			advanceDialogueAnimations(10, deskSpeaking, secondarySpeaking, insetSpeaking);
 		}
 

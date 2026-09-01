@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/intro/scene9000.h"
 
-#include "common/debug.h"
-
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -70,51 +68,19 @@ bool Scene9000::play() {
 }
 
 bool Scene9000::load() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kIntroArchiveName), _chunkTable)) {
-		warning("Failed to read %s header", kIntroArchiveName);
-		return false;
-	}
-
-	for (uint i = 0; i < kIntroChunkCount * 2; ++i) {
-		if (!_chunkTable.isValidChunk(i)) {
-			warning("%s is missing intro chunk %u", kIntroArchiveName, i);
-			return false;
-		}
-	}
-
-	return true;
+	return _resources.loadChunkTable(kIntroArchiveName) &&
+		_resources.validateChunkRange(kIntroArchiveName, _debugName,
+			0, kIntroChunkCount * 2 - 1);
 }
 
 bool Scene9000::loadChunk(uint chunkIndex) {
 	const uint paletteChunk = chunkIndex * 2;
 	const uint spriteChunk = paletteChunk + 1;
 
-	Common::ScopedPtr<Common::SeekableReadStream> paletteStream(_vm->resources()->createChunkReadStream(Common::Path(kIntroArchiveName), paletteChunk));
-	if (!paletteStream || paletteStream->size() > _paletteSource.size()) {
-		warning("Failed to open %s palette chunk %u", kIntroArchiveName, paletteChunk);
+	if (!loadFixedChunk(paletteChunk, _paletteSource, kPaletteSize) ||
+			!loadVariableChunk(spriteChunk, _spriteResource))
 		return false;
-	}
 
-	memset(_paletteSource.data(), 0, _paletteSource.size());
-	if (paletteStream->read(_paletteSource.data(), paletteStream->size()) != (uint32)paletteStream->size()) {
-		warning("Failed to read %s palette chunk %u", kIntroArchiveName, paletteChunk);
-		return false;
-	}
-
-	Common::ScopedPtr<Common::SeekableReadStream> spriteStream(_vm->resources()->createChunkReadStream(Common::Path(kIntroArchiveName), spriteChunk));
-	if (!spriteStream) {
-		warning("Failed to open %s sprite chunk %u", kIntroArchiveName, spriteChunk);
-		return false;
-	}
-
-	_resourceArena.resize(spriteStream->size());
-	if (spriteStream->read(_resourceArena.data(), _resourceArena.size()) != _resourceArena.size()) {
-		warning("Failed to read %s sprite chunk %u", kIntroArchiveName, spriteChunk);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded intro chunk %u: palette=%u bytes sprite=%u bytes",
-		chunkIndex, (uint)paletteStream->size(), (uint)_resourceArena.size());
 	resetChunkState();
 	return true;
 }
@@ -201,9 +167,9 @@ void Scene9000::resetChunkState() {
 }
 
 void Scene9000::drawAnimationFrame(uint16 descriptorIndex) {
-	restoreSpriteBackground(_resourceArena, 0, 0, kIntroFrameDescriptorCount,
+	restoreSpriteBackground(_spriteResource, 0, 0, kIntroFrameDescriptorCount,
 		descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
-	drawStripSpriteFrame(_resourceArena, 0, 0, kIntroFrameDescriptorCount,
+	drawStripSpriteFrame(_spriteResource, 0, 0, kIntroFrameDescriptorCount,
 		descriptorIndex, _sceneFramebuffer.surface());
 }
 

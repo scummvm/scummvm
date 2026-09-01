@@ -44,7 +44,8 @@ private:
 	void runSequence();
 	void drawComposite();
 	void drawFrameIndex(byte frameMapIndex);
-	void animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapIndex, int step);
+	void animateFrameRange(byte firstFrameMapIndex, byte lastFrameMapIndex);
+	void presentAnimationFrame() override;
 	void waitWithEffects(uint32 millis);
 	void runSpeechLine(byte frameIndex);
 	void runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId);

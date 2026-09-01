@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9160.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -244,10 +243,9 @@ bool Scene9160::waitBeforeScroll() {
 
 bool Scene9160::waitForMusicEnd() {
 	while (_music->isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
 		presentFrame();
-		g_system->delayMillis(50);
+		if (delay(50))
+			return true;
 	}
 
 	return _skipRequested || Engine::shouldQuit();

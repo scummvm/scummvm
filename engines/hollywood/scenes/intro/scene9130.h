@@ -44,6 +44,8 @@ private:
 	void maybeStartNextSpeechLine();
 	bool prepareSpeechLine(byte frameIndex);
 	bool startCurrentSpeechSegment();
+	void presentAnimationFrame() override;
+	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 	void stopAudio() override;
 
 	MusicPlayer *_music;
@@ -57,6 +59,7 @@ private:
 	byte _activeSpeechStyleIndex;
 	bool _activeSpeechCue;
 	byte _nextSpeechFrameIndex;
+	byte _clipFrameIndex;
 };
 
 } // End of namespace Hollywood

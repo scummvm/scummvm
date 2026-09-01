@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/intro/scene1000.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
@@ -106,15 +104,10 @@ void Scene1000::runPresentation() {
 	uint32 paletteAccumulator = 0;
 	uint32 blinkAccumulator = 0;
 	uint32 secondaryAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
+	TimedPresentationLoop loop(*this, kTitleEndPhase * kTitlePhaseMillis);
 
-	while (phase < kTitleEndPhase && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (phase < kTitleEndPhase && loop.beginFrame()) {
 		phaseAccumulator += delta;
 		paletteAccumulator += delta;
 		blinkAccumulator += delta;
@@ -164,7 +157,7 @@ void Scene1000::runPresentation() {
 		}
 
 		renderOverlayFrame(false);
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 }
 

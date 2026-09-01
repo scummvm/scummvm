@@ -162,9 +162,39 @@ public:
 };
 
 class SceneAnimationPlayer {
+private:
+	class FrameValueTarget {
+	public:
+		explicit FrameValueTarget(byte &frame) : _frame(frame) {}
+		void setFrame(byte frame) { _frame = frame; }
+
+	private:
+		byte &_frame;
+	};
+
 public:
 	explicit SceneAnimationPlayer(SceneAnimationPlayerDelegate &delegate) :
 			_delegate(delegate) {
+	}
+
+	bool play(byte &targetFrame, const AnimationFrameRange &range) {
+		FrameValueTarget target(targetFrame);
+		return playInternal(target, range, false);
+	}
+
+	bool playAndPresent(byte &targetFrame, const AnimationFrameRange &range) {
+		FrameValueTarget target(targetFrame);
+		return playInternal(target, range, true);
+	}
+
+	bool transition(byte &targetFrame, const AnimationTransition &transition) {
+		FrameValueTarget target(targetFrame);
+		return transitionInternal(target, transition, false);
+	}
+
+	bool transitionAndPresent(byte &targetFrame, const AnimationTransition &transition) {
+		FrameValueTarget target(targetFrame);
+		return transitionInternal(target, transition, true);
 	}
 
 	template<class FrameTarget>

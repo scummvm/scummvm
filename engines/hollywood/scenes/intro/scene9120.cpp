@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/intro/scene9120.h"
 
-#include "common/system.h"
-
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
@@ -149,15 +147,9 @@ bool Scene9120::loadResourceI12Assets() {
 void Scene9120::runTimedOverlayPhase() {
 	_overlayAccumulator = kScene9120OverlayInterval;
 	uint16 tickIndex = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
 	while (tickIndex < kScene9120TimedOverlayTicks && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		_overlayAccumulator += elapsed;
 
 		if (_overlayAccumulator >= kScene9120OverlayInterval) {
 			_overlayAccumulator %= kScene9120OverlayInterval;
@@ -170,7 +162,9 @@ void Scene9120::runTimedOverlayPhase() {
 			}
 		}
 
-		g_system->delayMillis(1);
+		if (tickIndex < kScene9120TimedOverlayTicks && delay(10))
+			return;
+		_overlayAccumulator += 10;
 	}
 }
 
@@ -180,17 +174,10 @@ void Scene9120::runHoldScrollAndIdlePhase() {
 	_smallAnimAccumulator = kScene9120SmallAnimInterval;
 
 	uint32 elapsedTotal = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
 	while (elapsedTotal < kScene9120HoldMillis && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return;
 
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		elapsedTotal += elapsed;
-
-		_scrollAccumulator += elapsed;
 		if (_scrollAccumulator >= kScene9120ScrollInterval) {
 			_scrollAccumulator %= kScene9120ScrollInterval;
 			if (_yOffset != 0) {
@@ -199,13 +186,11 @@ void Scene9120::runHoldScrollAndIdlePhase() {
 			}
 		}
 
-		_actorBobAccumulator += elapsed;
 		if (_actorBobAccumulator >= kScene9120ActorBobInterval) {
 			_actorBobAccumulator %= kScene9120ActorBobInterval;
 			advanceActorBob();
 		}
 
-		_smallAnimAccumulator += elapsed;
 		if (_smallAnimAccumulator >= kScene9120SmallAnimInterval) {
 			_smallAnimAccumulator %= kScene9120SmallAnimInterval;
 			advanceSmallAnimation();
@@ -216,7 +201,13 @@ void Scene9120::runHoldScrollAndIdlePhase() {
 			_viewportDirty = false;
 		}
 
-		g_system->delayMillis(1);
+		const uint32 slice = MIN<uint32>(10, kScene9120HoldMillis - elapsedTotal);
+		if (delay(slice))
+			return;
+		elapsedTotal += slice;
+		_scrollAccumulator += slice;
+		_actorBobAccumulator += slice;
+		_smallAnimAccumulator += slice;
 	}
 }
 

@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9130.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -69,7 +68,8 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		_activeContinuationIndex(0),
 		_activeSpeechStyleIndex(0),
 		_activeSpeechCue(false),
-		_nextSpeechFrameIndex(0) {
+		_nextSpeechFrameIndex(0),
+		_clipFrameIndex(0) {
 	_paletteResource.resize(kPaletteSize);
 }
 
@@ -131,34 +131,37 @@ bool Scene9130::load() {
 
 void Scene9130::runClipAndDialogue() {
 	_nextSpeechFrameIndex = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
-	byte frameIndex = 1;
+	_clipFrameIndex = 1;
+	if (waitForAnimationFrame(kScene9130ClipFrameIntervalMillis, true))
+		return;
 
-	while (frameIndex < kScene9130ClipFrameCount && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-
-		maybeStartNextSpeechLine();
-
-		const uint32 now = g_system->getMillis();
-		if (now - lastFrameMillis >= kScene9130ClipFrameIntervalMillis) {
-			lastFrameMillis = now;
-			if ((frameIndex - 1) % 12 == 0)
-				_speech.setVolume(85);
-			drawClipFrame(frameIndex);
-			presentFrame();
-			++frameIndex;
-		}
-
-		g_system->delayMillis(5);
-	}
+	AnimationFrameRange range(1, kScene9130ClipFrameCount - 1,
+		kScene9130ClipFrameIntervalMillis);
+	range.noFinalFrameDelay();
+	_animationPlayer.playAndPresent(_clipFrameIndex, range);
 
 	while (_speech.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
 		presentFrame();
-		g_system->delayMillis(10);
+		if (delay(10))
+			return;
 	}
+}
+
+void Scene9130::presentAnimationFrame() {
+	if ((_clipFrameIndex - 1) % 12 == 0)
+		_speech.setVolume(85);
+	drawClipFrame(_clipFrameIndex);
+	presentFrame();
+}
+
+bool Scene9130::waitForAnimationFrame(uint32 millis, bool allowSkip) {
+	TimedPresentationLoop loop(*this, millis, 5, allowSkip);
+	while (loop.beginFrame()) {
+		maybeStartNextSpeechLine();
+		loop.finishFrame();
+	}
+
+	return animationPlaybackShouldStop();
 }
 
 void Scene9130::drawClipFrame(byte frameIndex) {

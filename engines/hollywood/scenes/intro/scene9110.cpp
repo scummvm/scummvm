@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9110.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -49,18 +48,23 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_text(),
 		_random("hollywood_scene9110"),
 		_mouthAccumulator(0),
-		_chunk3Accumulator(0),
 		_idleAccumulator(0),
 		_cycleAccumulator(0),
 		_musicFadeAccumulator(0),
-		_chunk2MouthFrame(2),
-		_chunk2IdleFrame(0),
-		_chunk2CycleFrame(6),
-		_chunk3Frame(0),
+		_chunk3Track(RealtimeAnimationTracks::kInvalidTrack),
 		_chunk2CycleDirection(0),
 		_lastMouthVariant(0xff) {
 	_paletteResource.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
+	const SceneLayerSpec layerSpecs[] = {
+		{ kSceneAnimationScenePlaced, 3, kI11Chunk3DescriptorCount, nullptr, 0, true, 0 },
+		{ kSceneAnimationScenePlaced, 2, kI11Chunk2DescriptorCount, nullptr, 0, true, 2 },
+		{ kSceneAnimationScenePlaced, 2, kI11Chunk2DescriptorCount, nullptr, 0, true, 0 },
+		{ kSceneAnimationScenePlaced, 2, kI11Chunk2DescriptorCount, nullptr, 0, true, 6 }
+	};
+	_sceneLayers.configure(layerSpecs);
+	_chunk3Track = _realtimeAnimationTracks.addRandom(_sceneLayers, kChunk3Layer,
+		kScene9110Chunk3Interval, 0, 7, false);
 }
 
 bool Scene9110::play() {
@@ -137,14 +141,12 @@ bool Scene9110::loadResourceI11Assets() {
 
 void Scene9110::initializeCompositeState() {
 	_mouthAccumulator = kScene9110MouthInterval;
-	_chunk3Accumulator = kScene9110Chunk3Interval;
 	_idleAccumulator = kScene9110IdleInterval;
 	_cycleAccumulator = kScene9110CycleInterval;
 	_musicFadeAccumulator = kScene9110MusicFadeInterval;
-	_chunk2MouthFrame = 2;
-	_chunk2IdleFrame = 0;
-	_chunk2CycleFrame = 6;
-	_chunk3Frame = 0;
+	_sceneLayers.reset();
+	_realtimeAnimationTracks.reset(_chunk3Track);
+	_realtimeAnimationTracks.prime(_chunk3Track);
 	_chunk2CycleDirection = 0;
 	_lastMouthVariant = 0xff;
 	clearSubtitle();
@@ -178,7 +180,7 @@ void Scene9110::runSpeechStep(const SpeechStep &step) {
 	_speech.stop();
 
 	if (step.waitMode == kWaitChunk2MouthMotion)
-		_chunk2MouthFrame = 2;
+		_sceneLayers.setLayerFrame(kMouthLayer, 2);
 
 	clearSubtitle();
 	if (!_skipRequested && !Engine::shouldQuit())
@@ -187,24 +189,21 @@ void Scene9110::runSpeechStep(const SpeechStep &step) {
 
 void Scene9110::waitForSpeechOrDelay(uint32 fallbackMillis, SpeechWaitMode waitMode) {
 	uint32 elapsedTotal = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
+	if (advanceAnimationTimers(0, waitMode))
+		presentComposite();
+
 	while (!_skipRequested && !Engine::shouldQuit()) {
 		const bool speechActive = _speech.isPlaying();
 		if (!speechActive && elapsedTotal >= fallbackMillis)
 			break;
 
-		if (pollEvents())
+		const uint32 slice = elapsedTotal < fallbackMillis ?
+			MIN<uint32>(10, fallbackMillis - elapsedTotal) : 10;
+		if (delay(slice))
 			return;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		elapsedTotal += elapsed;
-
-		if (advanceAnimationTimers(elapsed, waitMode))
+		elapsedTotal += slice;
+		if (advanceAnimationTimers(slice, waitMode))
 			presentComposite();
-
-		g_system->delayMillis(1);
 	}
 }
 
@@ -215,21 +214,17 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 	if (_musicFadeAccumulator >= kScene9110MusicFadeInterval)
 		_musicFadeAccumulator %= kScene9110MusicFadeInterval;
 
-	_chunk3Accumulator += millis;
-	if (_chunk3Accumulator >= kScene9110Chunk3Interval) {
-		_chunk3Accumulator %= kScene9110Chunk3Interval;
-		_chunk3Frame = (byte)_random.getRandomNumber(7);
+	if (_realtimeAnimationTracks.advance(_chunk3Track, millis, _random))
 		dirty = true;
-	}
 
 	_idleAccumulator += millis;
 	if (_idleAccumulator >= kScene9110IdleInterval) {
 		_idleAccumulator %= kScene9110IdleInterval;
-		if (_chunk2IdleFrame == 1) {
-			_chunk2IdleFrame = 0;
+		if (_sceneLayers.layerFrame(kIdleLayer) == 1) {
+			_sceneLayers.setLayerFrame(kIdleLayer, 0);
 			dirty = true;
 		} else if (_random.getRandomNumber(14) == 0) {
-			_chunk2IdleFrame = 1;
+			_sceneLayers.setLayerFrame(kIdleLayer, 1);
 			dirty = true;
 		}
 	}
@@ -237,16 +232,18 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 	_cycleAccumulator += millis;
 	if (_cycleAccumulator >= kScene9110CycleInterval) {
 		_cycleAccumulator %= kScene9110CycleInterval;
+		byte cycleFrame = _sceneLayers.layerFrame(kCycleLayer);
 		if (_chunk2CycleDirection == 0) {
-			if (_chunk2CycleFrame < 14)
-				_chunk2CycleFrame++;
+			if (cycleFrame < 14)
+				++cycleFrame;
 			else
-				_chunk2CycleFrame = 6;
-		} else if (_chunk2CycleFrame < 7) {
-			_chunk2CycleFrame = 14;
+				cycleFrame = 6;
+		} else if (cycleFrame < 7) {
+			cycleFrame = 14;
 		} else {
-			_chunk2CycleFrame--;
+			--cycleFrame;
 		}
+		_sceneLayers.setLayerFrame(kCycleLayer, cycleFrame);
 		_chunk2CycleDirection = (byte)_random.getRandomNumber(1);
 		dirty = true;
 	}
@@ -255,7 +252,8 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 		_mouthAccumulator += millis;
 		if (_mouthAccumulator >= kScene9110MouthInterval) {
 			_mouthAccumulator %= kScene9110MouthInterval;
-			_chunk2MouthFrame = (byte)(nextMouthFrameVariant() + 2);
+			_sceneLayers.setLayerFrame(kMouthLayer,
+				(byte)(nextMouthFrameVariant() + 2));
 			dirty = true;
 		}
 	}
@@ -265,23 +263,12 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 
 void Scene9110::drawCompositeToFramebuffer() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	drawDescriptorFrame(3, kI11Chunk3DescriptorCount, _chunk3Frame);
-	drawDescriptorFrame(2, kI11Chunk2DescriptorCount, _chunk2MouthFrame);
-	drawDescriptorFrame(2, kI11Chunk2DescriptorCount, _chunk2IdleFrame);
-	drawDescriptorFrame(2, kI11Chunk2DescriptorCount, _chunk2CycleFrame);
+	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
 }
 
 void Scene9110::presentComposite() {
 	drawCompositeToFramebuffer();
 	presentFrame();
-}
-
-void Scene9110::drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex) {
-	if (localChunkIndex >= SceneResources::kResourceChunkCount)
-		return;
-
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[localChunkIndex], 0,
-		descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 byte Scene9110::nextMouthFrameVariant() {
