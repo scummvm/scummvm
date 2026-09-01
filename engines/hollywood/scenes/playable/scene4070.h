@@ -34,8 +34,9 @@ public:
 
 private:
 	void initializeCustomPreviewState() override;
-	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+	void prepareCustomComposite(bool drawActors, byte activeFacing, int activeWorldX,
+		int activeWorldY, byte actorDrawOrderMode) override;
+	void drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
 	void prepareCustomGameplayLoop() override;
@@ -57,7 +58,6 @@ private:
 	void setRightSidePatchActive(bool active, bool playSound);
 	void advanceDraculaIdle(uint32 delta);
 	void updateSidePatchForActorPosition();
-	void drawSceneLayers();
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void applyDraculaHotspotState();

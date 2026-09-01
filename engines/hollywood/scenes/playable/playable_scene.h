@@ -269,6 +269,9 @@ protected:
 	virtual void prepareCustomComposite(bool drawActors, byte activeFacing, int activeWorldX,
 		int activeWorldY, byte actorDrawOrderMode);
 	virtual void drawCustomBackgroundComposite(int activeWorldX, int activeWorldY);
+	// Draws scene occlusion immediately above the actor slot and below front layers.
+	virtual void drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode);
 	virtual void drawCustomForegroundComposite(int activeWorldX, int activeWorldY);
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
 	virtual bool shouldApplyGameplayPanelObjectPalette() const;
