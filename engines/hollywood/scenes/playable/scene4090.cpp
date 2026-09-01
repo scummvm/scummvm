@@ -542,13 +542,15 @@ void Scene4090::stopMultiSpriteAnimation() {
 }
 
 void Scene4090::runDoorExit() {
-	if (!playResourceLayerSequence(kScene4090ScriptLayer, kScene4090DoorExitChunk,
-			kScene4090DoorExitDescriptorCount, kScene4090DoorExitFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4090DoorExitFrameMap) - 1,
-				kScene4090FrameMillis).unskippable().noFinalFrameDelay()))
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090DoorExitChunk,
+		kScene4090DoorExitDescriptorCount, kScene4090DoorExitFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090DoorExitFrameMap) - 1,
+			kScene4090FrameMillis).unskippable().noFinalFrameDelay());
+	if (!sequence.completed())
 		return;
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene4090DoorExitState;
+	sequence.sound(3)
+		.commit(_vm->gameState().mainFlowStateId, kScene4090DoorExitState);
 }
 
 void Scene4090::runOrganRevealSequence() {
@@ -573,17 +575,17 @@ void Scene4090::runOrganRevealSequence() {
 	_sceneLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, 0);
 	_randomAmbientAnimationActive = false;
 	_organBodyAnimationActive = false;
-	const bool overlayComplete = playResourceLayerSequence(kScene4090ScriptLayer,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene4090ScriptLayer,
 		kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
 		kScene4090OrganOverlayFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4090OrganOverlayFrameMap) - 1,
 			kScene4090FrameMillis)
 			.soundAt(3, 0x3d)
 			.hookAt(3, kScene4090OrganOverlayHook)
-			.unskippable());
-	const bool walkComplete = overlayComplete &&
-		walkActiveActorTo(0x0294, 0x0175, 5, 0, false);
-	const bool bodyComplete = walkComplete && waitForOrganBodyAnimation();
+			.unskippable())
+		.actorPath(SceneActorPose(0x0294, 0x0175, 5));
+	const bool bodyComplete = sequence.completed() && waitForOrganBodyAnimation();
 
 	stopMultiSpriteAnimation();
 	if (!bodyComplete)
@@ -905,7 +907,9 @@ void Scene4090::runFinalCutscene() {
 		}
 	}
 
-	if (!walkActiveActorTo(0x0166, 0x0171, 1, 0, false))
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x0166, 0x0171, 1));
+	if (!sequence.completed())
 		return;
 	const bool firstDialogue = !state.scene4090FinalCutsceneDialogueSeen;
 	if (firstDialogue)
@@ -918,7 +922,7 @@ void Scene4090::runFinalCutscene() {
 	_sceneLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, 0);
 	_randomAmbientAnimationActive = false;
 	_organBodyAnimationActive = false;
-	if (!playResourceLayerSequence(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
 		kScene4090FinalOverlayDescriptorCount,
 		kScene4090FinalRoomOverlayFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1,
@@ -926,7 +930,8 @@ void Scene4090::runFinalCutscene() {
 			.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
 				kScene4090FinalRoomChunk13FrameMap,
 				ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
-			.unskippable())) {
+			.unskippable());
+	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
 		return;
 	}
@@ -935,21 +940,21 @@ void Scene4090::runFinalCutscene() {
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 	startOrganBodyAnimation(2, 10, false);
 	_randomAmbientAnimationActive = true;
-	if (!playResourceLayerSequence(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
 		kScene4090FinalOverlayDescriptorCount,
 		kScene4090FinalRoomOverlayFrameMap,
 		AnimationFrameRange(0, kScene4090FinalRoomOverlayHoldFrames - 1,
 			kScene4090FrameMillis).repeatFrame(
-				ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1).unskippable()) ||
-			!playResourceLayerSequence(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
-				kScene4090FinalOverlayDescriptorCount,
-		kScene4090FinalRoomOverlayFrameMap,
-		AnimationFrameRange(ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, 0,
-			kScene4090FrameMillis)
-			.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
-				kScene4090FinalRoomChunk13FrameMap,
-				ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
-			.unskippable())) {
+				ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1).unskippable())
+		.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
+			kScene4090FinalOverlayDescriptorCount, kScene4090FinalRoomOverlayFrameMap,
+			AnimationFrameRange(ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, 0,
+				kScene4090FrameMillis)
+				.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
+					kScene4090FinalRoomChunk13FrameMap,
+					ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
+				.unskippable());
+	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
 		return;
 	}
@@ -957,8 +962,9 @@ void Scene4090::runFinalCutscene() {
 	if (firstDialogue)
 		beginSecondarySpeechLine(8, 1);
 	beginSecondarySpeechLine(8, 2);
-	if (!walkActiveActorTo(kScene4090ReturnEntryStartX,
-			kScene4090ReturnEntryStartY, 1, 0, false)) {
+	sequence.actorPath(SceneActorPose(kScene4090ReturnEntryStartX,
+		kScene4090ReturnEntryStartY, 1));
+	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
 		return;
 	}
@@ -967,12 +973,14 @@ void Scene4090::runFinalCutscene() {
 	_randomAmbientAnimationActive = false;
 	const uint organTailFirstFrame = _organBodyChannel.frameIndex + 1;
 	if (organTailFirstFrame < ARRAYSIZE(kScene4090OrganBodyFrameMap)) {
-		if (!playResourceLayerSequence(_sceneLayers, kScene4090OrganBodyLayer,
+		sequence.resourceLayerFrames(kScene4090OrganBodyLayer,
 			kScene4090OrganBodyChunk, kScene4090OrganBodyDescriptorCount,
-			kScene4090OrganBodyFrameMap, AnimationFrameRange(organTailFirstFrame,
+			kScene4090OrganBodyFrameMap,
+			AnimationFrameRange(organTailFirstFrame,
 				ARRAYSIZE(kScene4090OrganBodyFrameMap) - 1,
 				kScene4090OrganBodyFrameMillis).unskippable().noFinalFrameDelay(),
-			false)) {
+			false);
+		if (!sequence.completed()) {
 			stopMultiSpriteAnimation();
 			return;
 		}
@@ -982,14 +990,15 @@ void Scene4090::runFinalCutscene() {
 	drawPlayableComposite();
 	presentFrame();
 
-	if (!playResourceLayerSequence(kScene4090ScriptLayer, finalBaseChunk + 1,
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk + 1,
 			kScene4090FinalOpenDescriptorCount, kScene4090FinalOpenFrameMap,
 			AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalOpenFrameMap) - 1,
-				kScene4090FrameMillis).unskippable().noFinalFrameDelay()) ||
-			!playResourceLayerSequence(kScene4090ScriptLayer, finalBaseChunk,
-				kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseFrameMap,
-				AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseFrameMap) - 1,
-					kScene4090FrameMillis).unskippable().noFinalFrameDelay())) {
+				kScene4090FrameMillis).unskippable().noFinalFrameDelay())
+		.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk,
+			kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseFrameMap,
+			AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseFrameMap) - 1,
+				kScene4090FrameMillis).unskippable().noFinalFrameDelay());
+	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
 		return;
 	}
@@ -1002,15 +1011,19 @@ void Scene4090::runFinalCutscene() {
 		beginPrimarySpeechLineWithAnimationGroup(8, 4, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechNormalGroup);
 	}
-	if (!playResourceLayerSequence(kScene4090ScriptLayer, finalBaseChunk,
-			kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseReverseFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseReverseFrameMap) - 1,
-				kScene4090FrameMillis).unskippable().noFinalFrameDelay(), false) ||
-			waitSceneMillis(kScene4090FastFrameMillis, false) ||
-			!playResourceLayerSequence(kScene4090ScriptLayer, finalBaseChunk,
-				kScene4090FinalCloseDescriptorCount, kScene4090FinalFadeFrameMap,
-				AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalFadeFrameMap) - 1,
-					kScene4090FastFrameMillis).unskippable().noFinalFrameDelay())) {
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk,
+		kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseReverseFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseReverseFrameMap) - 1,
+			kScene4090FrameMillis).unskippable().noFinalFrameDelay(), false);
+	if (!sequence.completed() || waitSceneMillis(kScene4090FastFrameMillis, false)) {
+		stopMultiSpriteAnimation();
+		return;
+	}
+	sequence.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk,
+		kScene4090FinalCloseDescriptorCount, kScene4090FinalFadeFrameMap,
+		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalFadeFrameMap) - 1,
+			kScene4090FastFrameMillis).unskippable().noFinalFrameDelay());
+	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
 		return;
 	}

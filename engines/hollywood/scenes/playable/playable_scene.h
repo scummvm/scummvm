@@ -99,34 +99,34 @@ protected:
 
 		template<class FrameTarget>
 		BlockingSequence &layerFrames(FrameTarget &target, const AnimationFrameRange &range) {
-			if (canRun()) {
-				const bool completed = _scene.playAnimationFrames(target, range);
-				if (!completed && !_scene._skipRequested)
-					_running = false;
-				refresh();
-			}
+			if (canRun())
+				finishMediaStep(_scene.playAnimationFrames(target, range));
 			return *this;
 		}
 
 		template<class FrameTarget>
 		BlockingSequence &presentedLayerFrames(FrameTarget &target, const AnimationFrameRange &range) {
-			if (canRun()) {
-				const bool completed = _scene.playAndPresentAnimationFrames(target, range);
-				if (!completed && !_scene._skipRequested)
-					_running = false;
-				refresh();
-			}
+			if (canRun())
+				finishMediaStep(_scene.playAndPresentAnimationFrames(target, range));
 			return *this;
 		}
 
 		template<class FrameTarget>
 		BlockingSequence &presentedLayerTransition(FrameTarget &target,
 				const AnimationTransition &transition) {
+			if (canRun())
+				finishMediaStep(_scene.playAndPresentAnimationTransition(target, transition));
+			return *this;
+		}
+
+		// Configures an existing stack layer, presents the range, and optionally clears it.
+		template<uint size>
+		BlockingSequence &resourceLayerFrames(uint layerId, uint chunkIndex,
+				uint16 descriptorCount, const byte (&frameMap)[size],
+				const AnimationFrameRange &range, bool clearAtEnd = true) {
 			if (canRun()) {
-				const bool completed = _scene.playAndPresentAnimationTransition(target, transition);
-				if (!completed && !_scene._skipRequested)
-					_running = false;
-				refresh();
+				finishMediaStep(_scene.playResourceLayerSequence(layerId, chunkIndex,
+					descriptorCount, frameMap, range, clearAtEnd));
 			}
 			return *this;
 		}
@@ -169,6 +169,7 @@ protected:
 
 	private:
 		bool canRun();
+		void finishMediaStep(bool completed);
 		void refresh();
 
 		PlayableScene &_scene;

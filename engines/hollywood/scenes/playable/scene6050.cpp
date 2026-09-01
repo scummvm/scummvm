@@ -554,16 +554,20 @@ void Scene6050::runMuseumInteriorUnlockSequence() {
 	beginSecondarySpeechLine(11, 5);
 	runGuardLookUpTransition();
 	_scriptAnimationActive = true;
-	playResourceLayerSequence(kScene6050ScriptLayer, 10, kScene6050InteriorUnlockDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene6050ScriptLayer, 10,
+		kScene6050InteriorUnlockDescriptorCount,
 		kScene6050InteriorUnlockFrameMap,
 		AnimationFrameRange(0, 12, kScene6050ScriptFrameMillis), false);
-	beginSceneGuardSpeechLine(11, 0);
-	playResourceLayerSequence(kScene6050ScriptLayer, 10, kScene6050InteriorUnlockDescriptorCount,
+	if (sequence.completed())
+		beginSceneGuardSpeechLine(11, 0);
+	sequence.resourceLayerFrames(kScene6050ScriptLayer, 10,
+		kScene6050InteriorUnlockDescriptorCount,
 		kScene6050InteriorUnlockFrameMap,
 		AnimationFrameRange(13, ARRAYSIZE(kScene6050InteriorUnlockFrameMap) - 1,
 			kScene6050ScriptFrameMillis));
 	_scriptAnimationActive = false;
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	if (!sequence.completed())
 		return;
 
 	beginSecondarySpeechLine(11, 1);
@@ -588,7 +592,9 @@ void Scene6050::runDisplayCasePickup() {
 		_sceneLayers.setLayerResource(kScene6050SecondaryScriptLayer, 13,
 			kScene6050DisplaySecondaryDescriptorCount, nullptr, 0);
 		_sceneLayers.setLayerVisible(kScene6050SecondaryScriptLayer, false);
-		playResourceLayerSequence(kScene6050ScriptLayer, 14, kScene6050DisplayDescriptorCount,
+		BlockingSequence sequence(*this);
+		sequence.resourceLayerFrames(kScene6050ScriptLayer, 14,
+			kScene6050DisplayDescriptorCount,
 			kScene6050DisplayFrameMap,
 			AnimationFrameRange(0, ARRAYSIZE(kScene6050DisplayFrameMap) - 1,
 				kScene6050ScriptFrameMillis)
@@ -598,29 +604,33 @@ void Scene6050::runDisplayCasePickup() {
 				.hookAt(30, kScene6050DisplayCaseHook)
 				.resourcePatchAt(31, 11));
 		clearScriptLayers();
-		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		if (!sequence.completed())
 			return;
 
-		walkActiveActorTo(0x1a6, 0x15e, 3, 0, false);
-		beginSecondarySpeechLine(12, 0);
-		walkActiveActorTo(0x1d0, 0x143, 1, 0, false);
+		sequence.actorPath(SceneActorPose(0x1a6, 0x15e, 3))
+			.secondarySpeech(12, 0)
+			.actorPath(SceneActorPose(0x1d0, 0x143, 1));
+		if (!sequence.completed())
+			return;
 
 		_scriptAnimationActive = true;
-		playResourceLayerSequence(kScene6050ScriptLayer, 15, kScene6050DisplayPickupDescriptorCount,
+		sequence.resourceLayerFrames(kScene6050ScriptLayer, 15,
+			kScene6050DisplayPickupDescriptorCount,
 			kScene6050DisplayPickupFrameMap,
-			AnimationFrameRange(0, 5, kScene6050ScriptFrameMillis), false);
-		state.scene6050DisplayCaseOpened = true;
-		applySceneStateToHotspotsAndPatches(3);
-		playResourceLayerSequence(kScene6050ScriptLayer, 15, kScene6050DisplayPickupDescriptorCount,
-			kScene6050DisplayPickupFrameMap,
-			AnimationFrameRange(6, ARRAYSIZE(kScene6050DisplayPickupFrameMap) - 1,
-				kScene6050ScriptFrameMillis));
+			AnimationFrameRange(0, 5, kScene6050ScriptFrameMillis), false)
+			.commit(state.scene6050DisplayCaseOpened, true)
+			.framebufferPatch(3)
+			.resourceLayerFrames(kScene6050ScriptLayer, 15,
+				kScene6050DisplayPickupDescriptorCount,
+				kScene6050DisplayPickupFrameMap,
+				AnimationFrameRange(6, ARRAYSIZE(kScene6050DisplayPickupFrameMap) - 1,
+					kScene6050ScriptFrameMillis));
 		_scriptAnimationActive = false;
 
 		addInventoryItem(kScene6050GuardPassInventoryItem);
-		_soundBank0.playSample(1, 100);
-		walkActiveActorTo(0x1a6, 0x15e, 3, 0, false);
-		beginSecondarySpeechLine(12, 1);
+		sequence.sound(1)
+			.actorPath(SceneActorPose(0x1a6, 0x15e, 3))
+			.secondarySpeech(12, 1);
 		return;
 	}
 
@@ -630,7 +640,9 @@ void Scene6050::runDisplayCasePickup() {
 void Scene6050::runExitAuthorizationSequence() {
 	GameplayState &state = _vm->gameState();
 	_scriptAnimationActive = true;
-	playResourceLayerSequence(kScene6050ScriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene6050ScriptLayer, 8,
+		kScene6050DoorSequenceDescriptorCount,
 		kScene6050DoorSequenceFrameMap,
 		AnimationFrameRange(0, 24, kScene6050ScriptFrameMillis), false);
 
@@ -640,32 +652,35 @@ void Scene6050::runExitAuthorizationSequence() {
 	}
 
 	if (state.scene6050GuardAllowsEntry) {
-		playResourceLayerSequence(kScene6050ScriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+		sequence.resourceLayerFrames(kScene6050ScriptLayer, 8,
+			kScene6050DoorSequenceDescriptorCount,
 			kScene6050DoorSequenceFrameMap,
 			AnimationFrameRange(25, 27, kScene6050ScriptFrameMillis));
 		_scriptAnimationActive = false;
-		_soundBank0.playSample(3, 100);
-		state.mainFlowStateId = kScene6070EntryState;
+		sequence.sound(3)
+			.commit(state.mainFlowStateId, kScene6070EntryState);
 		return;
 	}
 
-	playResourceLayerSequence(kScene6050ScriptLayer, 8, kScene6050DoorSequenceDescriptorCount,
+	sequence.resourceLayerFrames(kScene6050ScriptLayer, 8,
+		kScene6050DoorSequenceDescriptorCount,
 		kScene6050DoorSequenceFrameMap,
 		AnimationFrameRange(25, ARRAYSIZE(kScene6050DoorSequenceFrameMap) - 1,
 			kScene6050ScriptFrameMillis));
 	_scriptAnimationActive = false;
-	beginSecondarySpeechLine(13, 0);
+	sequence.secondarySpeech(13, 0);
 }
 
 void Scene6050::runInteriorDoorWireSequence() {
 	_scriptAnimationActive = true;
-	playResourceLayerSequence(kScene6050ScriptLayer, 9, kScene6050DoorSequenceDescriptorCount,
+	BlockingSequence sequence(*this);
+	sequence.resourceLayerFrames(kScene6050ScriptLayer, 9,
+		kScene6050DoorSequenceDescriptorCount,
 		kScene6050DoorSequenceFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene6050DoorSequenceFrameMap) - 1,
 			kScene6050ScriptFrameMillis));
 	_scriptAnimationActive = false;
-	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
-		beginSecondarySpeechLine(13, 0);
+	sequence.secondarySpeech(13, 0);
 }
 
 void Scene6050::rememberOriginalColorMap() {
