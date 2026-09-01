@@ -86,7 +86,7 @@ void resetCharacterWalkPath(Character *character) {
 	if (character == nullptr || character->_gameObject == nullptr) {
 		return;
 	}
-	const Common::Point &pos = character->_gameObject->_position;
+	const Common::Point &pos = character->getPosition();
 	character->_path.clear();
 	character->_currentPathIndex = 0;
 	character->_targetPosition = pos;
@@ -2320,8 +2320,8 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	uint16 error = 0;
 	int16 curX = x2;
 	int16 curY = y2;
-	uint16 absDx = (uint16)abs((int)(x2 - x1));
-	uint16 absDy = (uint16)abs((int)(y2 - y1));
+	uint16 absDx = (uint16)ABS((int)(x2 - x1));
+	uint16 absDy = (uint16)ABS((int)(y2 - y1));
 	bool result = true;
 
 	do {
@@ -2364,8 +2364,8 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 // integer Euclidean distance approximation.
 // Iterates i from 0 until i^2 >= dx^2 + dy^2. Capped at 0x500.
 int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &b) {
-	int32 dx = abs((int)(b.x - a.x));
-	int32 dy = abs((int)(b.y - a.y));
+	int32 dx = ABS((int)(b.x - a.x));
+	int32 dy = ABS((int)(b.y - a.y));
 	int32 distSq = dx * dx + dy * dy;
 	int i = 0;
 	while (i < 0x500 && (int32)i * i < distSq) {
@@ -2383,8 +2383,8 @@ int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 		return 0x500;
 	}
 	// Binary search for integer sqrt(dx^2 + dy^2), matching binary at 1008:1293
-	int32 dx = abs((int)(b.x - a.x));
-	int32 dy = abs((int)(b.y - a.y));
+	int32 dx = ABS((int)(b.x - a.x));
+	int32 dy = ABS((int)(b.y - a.y));
 	int32 distSq = dx * dx + dy * dy;
 	int result = 0x280;
 	int step = 0x280;
@@ -2417,11 +2417,11 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 		if (!isPathWalkable(nodePos.y, nodePos.x, finalDest.y, finalDest.x)) {
 			result = 0x500;
 		} else {
-			int32 dx = abs((int)(finalDest.x - nodePos.x));
-			int32 dy = abs((int)(finalDest.y - nodePos.y));
+			int32 dx = ABS((int)(finalDest.x - nodePos.x));
+			int32 dy = ABS((int)(finalDest.y - nodePos.y));
 			int32 distSq = dx * dx + dy * dy;
-			int dist = 0x280;
-			int step = 0x280;
+			int dist = 640;
+			int step = 320;
 			do {
 				step = step >> 1;
 				if ((int32)dist * dist >= distSq) {
@@ -2443,7 +2443,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 
 	if (adjCount > 0) {
 		for (int i = 0; i < adjCount; i++) {
-			int adj = pt._adjacentPoints[i];
+			const int adj = pt._adjacentPoints[i];
 			if (adj == prevNode) {
 				continue;
 			}
@@ -2461,7 +2461,7 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 			}
 
 			// Recursive call
-			int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
+			const int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
 			if (cost < bestCost) {
 				bestAdj = adj;
 				bestCost = cost;

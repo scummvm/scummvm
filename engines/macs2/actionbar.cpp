@@ -640,8 +640,8 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 			  (btn.buttonId == 4 && (mode == Script::MouseMode::Use ||
 									mode == Script::MouseMode::UseInventory)))) ||
 			(menuMode == MenuMode::Options &&
-			 ((btn.buttonId == 0x1e && g_engine->_optionsSubMode == OptionsSubMode::Save) ||
-			  (btn.buttonId == 0x1f && g_engine->_optionsSubMode == OptionsSubMode::Load)));
+			 ((btn.buttonId == 30 && g_engine->_optionsSubMode == OptionsSubMode::Save) ||
+			  (btn.buttonId == 31 && g_engine->_optionsSubMode == OptionsSubMode::Load)));
 		const bool pressed = (_pressedButtonId != 0 && btn.buttonId == _pressedButtonId);
 		const bool hovered = (_hoveredButtonId != 0 && btn.buttonId == _hoveredButtonId);
 
@@ -832,8 +832,9 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		const uint16 dlgY = g_engine->_hudTextLayout[6];
 		const uint16 pitch = g_engine->_hudTextLayout[4] ? g_engine->_hudTextLayout[4] : 10;
 		uint totalLines = 0;
-		for (uint n : _view->_dialogueChoiceLineCounts)
+		for (uint n : _view->_dialogueChoiceLineCounts) {
 			totalLines += n;
+		}
 		if (totalLines > 0 && pos.x >= (int)dlgX &&
 			localY >= (int)dlgY && localY < (int)(dlgY + totalLines * pitch)) {
 			const int clickedLine = (localY - (int)dlgY) / (int)pitch;
@@ -851,8 +852,9 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 	}
 
 	const HudButton *btn = findHudButtonAt(pos);
-	if (btn == nullptr)
+	if (btn == nullptr) {
 		return true;
+	}
 
 	_pressedButtonId = btn->buttonId;
 	const uint16 id = btn->buttonId;
@@ -866,38 +868,38 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		g_engine->setCursorMode(Script::MouseMode::Talk);
 	} else if (id == 4) {
 		g_engine->setCursorMode(Script::MouseMode::Use);
-	} else if (id == 0x33) {
+	} else if (id == 51) {
 		g_engine->_savedMenuCursorMode = g_engine->_scriptExecutor->_cursorMode;
 		g_engine->_menuMode = MenuMode::Options;
 		g_engine->_optionsSubMode = OptionsSubMode::None;
 		g_engine->_saveListScroll = 1;
 		refreshSaveSlotNames();
 		g_engine->setCursorMode(Script::MouseMode::PanelCursor);
-	} else if (id == 0x32) {
+	} else if (id == 50) {
 		g_engine->_menuMode = MenuMode::Main;
 		g_engine->_optionsSubMode = OptionsSubMode::None;
 		g_engine->setCursorMode(g_engine->_savedMenuCursorMode);
-	} else if (id == 0x1e) {
+	} else if (id == 30) {
 		g_engine->_optionsSubMode = OptionsSubMode::Save;
 		refreshSaveSlotNames();
-	} else if (id == 0x1f) {
+	} else if (id == 31) {
 		g_engine->_optionsSubMode = OptionsSubMode::Load;
 		refreshSaveSlotNames();
-	} else if (id == 0x20) {
+	} else if (id == 32) {
 		g_engine->softRestart();
 		return true;
-	} else if (id == 0x21) {
+	} else if (id == 33) {
 		::GUI::MessageDialog quitDialog(_("Quit the game?"), _("Quit"), _("Cancel"));
 		if (quitDialog.runModal() == ::GUI::kMessageOK)
 			Engine::quitGame();
-	} else if (id == 0x14 || id == 0x16) {
-		const uint16 page = (id == 0x14) ? 1 : (g_engine->_inventCols * g_engine->_inventRows);
+	} else if (id == 20 || id == 22) {
+		const uint16 page = (id == 20) ? 1 : (g_engine->_inventCols * g_engine->_inventRows);
 		if (g_engine->_inventScroll > page)
 			g_engine->_inventScroll = (uint16)(g_engine->_inventScroll - page);
 		else
 			g_engine->_inventScroll = 1;
-	} else if (id == 0x15 || id == 0x17) {
-		const uint16 page = (id == 0x15) ? 1 : (g_engine->_inventCols * g_engine->_inventRows);
+	} else if (id == 21 || id == 23) {
+		const uint16 page = (id == 21) ? 1 : (g_engine->_inventCols * g_engine->_inventRows);
 		const uint16 maxStart = _view->_inventoryItems.empty() ? 1
 			: (uint16)((_view->_inventoryItems.size() > page) ? (_view->_inventoryItems.size() - page + 1) : 1);
 		uint16 next = (uint16)(g_engine->_inventScroll + page);
@@ -906,40 +908,40 @@ bool ActionBar::handleClickNative(const Common::Point &pos) {
 		if (next < 1)
 			next = 1;
 		g_engine->_inventScroll = next;
-	} else if (id == 0x2a) {
+	} else if (id == 42) {
 		const uint16 page = g_engine->_hudTextLayout[3] ? g_engine->_hudTextLayout[3] : 9;
 		if (g_engine->_saveListScroll > page)
 			g_engine->_saveListScroll = (uint16)(g_engine->_saveListScroll - page);
 		else
 			g_engine->_saveListScroll = 1;
 		refreshSaveSlotNames();
-	} else if (id == 0x2b) {
+	} else if (id == 43) {
 		const uint16 page = g_engine->_hudTextLayout[3] ? g_engine->_hudTextLayout[3] : 9;
 		g_engine->_saveListScroll = (uint16)(g_engine->_saveListScroll + page);
 		if (g_engine->_saveListScroll > 100)
 			g_engine->_saveListScroll = 100;
 		refreshSaveSlotNames();
-	} else if (id == 0x42) {
+	} else if (id == 66) {
 		g_engine->_skipSpeed = 1;
-	} else if (id == 0x43) {
+	} else if (id == 67) {
 		g_engine->_skipSpeed = 2;
-	} else if (id == 0x44) {
+	} else if (id == 68) {
 		g_engine->_skipSpeed = 3;
-	} else if (id == 0x45) {
+	} else if (id == 69) {
 		g_engine->_skipSpeed = 4;
-	} else if (id == 0x3c) {
+	} else if (id == 60) {
 		g_engine->_scriptExecutor->_musicEnabled = true;
-	} else if (id == 0x3d) {
+	} else if (id == 61) {
 		g_engine->_scriptExecutor->_musicEnabled = false;
 		g_engine->getMusic()->stopMusic();
-	} else if (id == 0x3e) {
+	} else if (id == 62) {
 		g_engine->_scriptExecutor->_soundEnabled = true;
-	} else if (id == 0x3f) {
+	} else if (id == 63) {
 		g_engine->_scriptExecutor->_soundEnabled = false;
 		g_engine->stopSample();
-	} else if (id == 0x40) {
+	} else if (id == 64) {
 		g_engine->_scriptExecutor->_textEnabled = true;
-	} else if (id == 0x41) {
+	} else if (id == 65) {
 		g_engine->_scriptExecutor->_textEnabled = false;
 	} else {
 		debugC(1, kDebugScript, "ActionBar: unhandled button id=0x%x menu=%u", id, (uint)menuMode);

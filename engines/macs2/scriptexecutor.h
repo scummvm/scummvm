@@ -509,10 +509,6 @@ public:
 	uint16 _pickupActorObjectID = 0;
 	uint16 _pickupTargetObjectID = 0;
 
-	bool _isRunningScript = false;
-	// Mutex indicating if the A3D2 function is active
-	bool _isSkipping = false;
-
 	Macs2::Macs2Engine *_engine;
 
 	// Button 8 skip from handleInput (1008:e8bf)

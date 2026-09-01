@@ -152,7 +152,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint16LE(activeInventoryItemId);
 	if (s.isLoading()) {
 		if (activeInventoryItemId >= 0x401 && activeInventoryItemId <= 0x600) {
-			uint16 idx = activeInventoryItemId - 0x400;
+			const uint16 idx = activeInventoryItemId - 0x400;
 			if (idx <= GameObjects::instance()._objects.size()) {
 				GameObject *obj = GameObjects::instance()._objects[idx - 1];
 				view1->_activeInventoryItem = obj;
@@ -259,9 +259,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 	}
 
-	// --- Scene data: pathfinding overrides [+0x528D]: 200 bytes ---
-	// 40 entries x 5 bytes each (1 byte active + 2 bytes value + 2 bytes remap)
-	// indexed by pathfinding value 0xC8..0xEF
+	// Scene data: pathfinding overrides [+0x528D]: 200 bytes ---
 	if (s.isLoading())
 		_pathfindingOverrides.clear();
 	for (int i = 0; i < ARRAYSIZE(_areaOverrides); i++) {
@@ -294,7 +292,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		}
 	}
 
-	// --- Scene data: hotspot overrides
+	// Scene data: hotspot overrides
 	if (s.isLoading()) {
 		_hotspotOverrides.clear();
 		_hotspotOverrides.resize(17, 0xFFFF);
@@ -316,20 +314,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint32LE(_sceneTimerParams[i]);
 	}
 
-	// --- Animation blob sequence positions (one uint16 per background anim) ---
-	//
-	// Binary save (1008:6859): for each bg anim (1..count) writes
-	//   getAnimBlobSequencePos(blob) = blob[+2] = the blob header's current sequence
-	//   position word.
-	// Binary load (1008:747e): reads the value V, then calls
-	//   advanceAnimFrame(save=1, mode=V+100, blob), i.e. jumps the blob to
-	//   sequence position V (mode 100+N). This both restores the saved position
-	//   AND re-parses the sequence so the blob header is fully consistent -
-	//   exactly what scriptChangeAnimation does.
-	//
-	// The count is iStack_199 = sceneData+0x50F5, which equals
-	// _backgroundAnimationsBlobs.size() after changeScene() above.
-	uint16 numSpecialAnims = (uint16)_backgroundAnimationsBlobs.size();
+	const uint16 numSpecialAnims = (uint16)_backgroundAnimationsBlobs.size();
 	for (uint16 i = 0; i < numSpecialAnims; i++) {
 		BackgroundAnimationBlob &blob = _backgroundAnimationsBlobs[i];
 		uint16 seqPos = 0;
@@ -347,8 +332,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				// command byte). Force it back to exactly V so the field round-trips
 				// losslessly and byte-matches what the original wrote (the original
 				// stores its live running position, not a re-derived one).
-				if (blob._blob.size() >= 4)
+				if (blob._blob.size() >= 4) {
 					WRITE_LE_UINT16(&blob._blob[2], seqPos);
+				}
 			}
 		}
 	}
@@ -369,7 +355,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint16LE(_scriptExecutor->_activeMusicSlot);
 
 	// --- Music slot buffers (slots 1-2): size (2 bytes) + data each ---
-	for (int slot = 0; slot < 2; slot++) {
+	for (int slot = 0; slot < ARRAYSIZE(_scriptExecutor->_musicSlots); slot++) {
 		uint16 musicSize = 0;
 		if (s.isSaving())
 			musicSize = (uint16)_scriptExecutor->_musicSlots[slot].size();
@@ -447,8 +433,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// Find the Character for this object (exists after changeScene on load too)
 		Character *chr = nullptr;
 		for (uint ci = 0; ci < view1->_characters.size(); ci++) {
-			if (view1->_characters[ci] && view1->_characters[ci]->_gameObject == obj) {
-				chr = view1->_characters[ci];
+			Character *c = view1->_characters[ci];
+			if (c && c->_gameObject == obj) {
+				chr = c;
 				break;
 			}
 		}

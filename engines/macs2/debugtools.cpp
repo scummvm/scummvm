@@ -991,11 +991,6 @@ static void showCharactersWindow() {
 							c->_gameObject->_orientation = (ObjectOrientation)CLIP((uint16)orient, (uint16)OrientationNone, (uint16)OrientationPickup);
 						}
 
-						int animIdx = (int)c->_animationIndex;
-						if (ImGui::InputInt("Animation Index", &animIdx)) {
-							c->_animationIndex = (uint8)CLIP(animIdx, 0, 255);
-						}
-
 						ImGui::Text("Vertical Offset: %u", c->getVerticalOffset());
 
 						bool hasShading = c->_gameObject->_hasShading;
@@ -1025,9 +1020,6 @@ static void showCharactersWindow() {
 							if (ImGui::InputInt("Progress", &motionProg))
 								c->_motionProgress = (uint16)CLIP(motionProg, 0, 65535);
 							ImGui::Text("Pending VOffset Motion: %s", c->hasPendingVerticalMotion() ? "Y" : "N");
-							bool shouldMirror = c->_shouldMirrorCurrentAnimation;
-							if (ImGui::Checkbox("Mirror Animation", &shouldMirror))
-								c->_shouldMirrorCurrentAnimation = shouldMirror;
 							ImGui::TreePop();
 						}
 
@@ -1141,7 +1133,6 @@ static void showCharactersWindow() {
 								df.writeString(Common::String::format("  \"character\": {\n"));
 								df.writeString(Common::String::format("    \"positionX\": %d,\n", c->getPosition().x));
 								df.writeString(Common::String::format("    \"positionY\": %d,\n", c->getPosition().y));
-								df.writeString(Common::String::format("    \"shouldMirror\": %s,\n", c->_shouldMirrorCurrentAnimation ? "true" : "false"));
 								df.writeString(Common::String::format("    \"verticalOffset\": %u\n", c->getVerticalOffset()));
 								df.writeString("  }\n");
 								df.writeString("}\n");

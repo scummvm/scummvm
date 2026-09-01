@@ -60,32 +60,27 @@ private:
 	uint32 _startTime = 0;
 	uint32 _duration = 0;
 
-	bool _lerpIgnoresObstacles = false;
-
 	// If this is set, a lerp to a location becomes picking up
 	Macs2::GameObject *_pickedUpObject = nullptr;
+
+	// Handle when the character has moved into a non-walkable area, push them out if
+	// they did and return true, return false otherwise
+	bool handleWalkability(Character *c);
+
+	uint16 lookupWalkability(const Common::Point &p) const;
+
+public:
+	Character();
 
 	// Frame counter for pickup animation (runtime+0x215).
 	// Increments each frame while orientation == 0x11.
 	// At _pickupFrameStart: item is transferred to inventory.
 	// At _pickupFrameEnd: animation ends, orientation restored.
-public:
 	uint16 _pickupFrameCounter = 0;
 	bool _pickupItemTransferred = false;
 	bool _markedForDeletion = false;
 
 	ObjectOrientation _previousOrientation = OrientationNone;
-
-private:
-	// Handle when the character has moved into a non-walkable area, push them out if
-	// they did and return true, return false otherwise
-	bool handleWalkability(Character *c);
-
-	// fn0037_0E8C proc
-	uint16 lookupWalkability(const Common::Point &p) const;
-
-public:
-	Character();
 
 	// Walk state from walkAlongPath (1008:1b8f) - runtime offsets +0x00..+0x0A, +0x18, +0x33
 	Common::Point _targetPosition;  // runtime[+0x00, +0x02]: next waypoint
@@ -104,6 +99,13 @@ public:
 	Common::Point _pathFinalDestination;
 	Common::Array<uint8> _pathfindingOverlay;
 
+	Macs2::GameObject *_gameObject = nullptr;
+	uint16 _motionTargetVerticalOffset = 0;
+	uint16 _motionVerticalOffsetDelta = 0;
+	uint16 _motionDistanceUnits = 0;
+	uint16 _motionProgress = 0;
+	uint16 _motionStartVerticalOffset = 0;
+
 	bool isWalkable(const Common::Point &p) const;
 	bool calculatePath(Common::Point target);
 	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
@@ -115,70 +117,32 @@ public:
 
 	const Common::Point &getPosition() const;
 	void setPosition(const Common::Point &newPosition);
-	Macs2::GameObject *_gameObject = nullptr;
 
 	uint16 getVerticalOffset() const;
-
-	uint8 _animationIndex = 1;
-	uint16 _motionTargetVerticalOffset = 0;
-	uint16 _motionVerticalOffsetDelta = 0;
-	uint16 _motionDistanceUnits = 0;
-	uint16 _motionProgress = 0;
-	uint16 _motionStartVerticalOffset = 0;
-	bool _shouldMirrorCurrentAnimation = false;
-
-	// Binary walkAlongPath (1008:1b8f): no separate motion flag; active when
-	// runtime+0x21D >= 0 and differs from object vertical offset (+0x08).
 	bool hasPendingVerticalMotion() const;
 	bool shouldStepVerticalMotion() const;
-
 	bool isAnimationMirrored() const;
-	uint8 getMirroredAnimation(uint8 original) const;
-
-	// advanceMode matches drawAnimFrame/advanceAnimFrame (1010:16e7): 0=current frame,
-	// 2=advance sequence after returning current frame. Hit testing uses 0; drawing uses 2.
-	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out);
+	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out) const;
 	Macs2::AnimFrame *getCurrentAnimationFrame(uint16 advanceMode);
 	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 0);
 
 	void update();
 };
 
-// Binary scriptMoveObject (1008:aa83): copies object x/y into runtime position and target.
 void resetCharacterWalkPath(Character *character);
-
-// cf https://stackoverflow.com/a/51497820
-template<typename T, T V>
-struct is_in_list_value {};
-
-template<typename T, T V>
-constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>) {
-	return t == V;
-}
-
-template<typename T, T V, T W, T... Rest>
-constexpr bool is_in_list_helper(T const &t, is_in_list_value<T, V>, is_in_list_value<T, W>, is_in_list_value<T, Rest>...) {
-	return (t == V) || is_in_list_helper(t, is_in_list_value<T, W>(), is_in_list_value<T, Rest>()...);
-}
-
-template<typename T, T... ts>
-constexpr bool is_in_list(T const &t) {
-	return is_in_list_helper(t, is_in_list_value<T, ts>()...);
-}
-
 
 struct SpeechActData {
 	Character *speaker = nullptr;
 	Common::Array<Common::String> strings;
 	Common::Point position;
 	bool onRightSide = false;
+	bool mouthAnimActive = false;
 	// Mouth animation counter from handleTimerCallback (1008:d38b).
 	// Decremented each frame. Controls which portrait frame is drawn:
 	// >1: draw frame 2 from primary portrait blob (+0x14C)
 	// ==0: draw frame 1 from alternate portrait blob (+0x15C) (mouth open)
 	// <0: draw frame 2 from alternate portrait blob (+0x15C) (mouth closed)
 	int16 mouthAnimCounter = 0;
-	bool mouthAnimActive = false;
 };
 
 struct ScalingValues {
@@ -190,15 +154,6 @@ class View1 : public UIElement {
 	friend class ActionBar;
 
 private:
-	// drawSpriteTransparent @ 1010:0ed1 (drawAnimFrameDepth @ 1010:172c)
-	void drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, uint16 scalingFactor,
-							   int16 drawX, int16 drawY, uint16 srcWidth, uint16 srcHeight,
-							   const byte *srcPixels, Graphics::ManagedSurface &s, bool useMaskedShading = false);
-	// drawSpriteScaled @ 1010:102b (drawAnimFrameShaded @ 1010:1785)
-	void drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16 drawX, int16 drawY,
-						  uint16 srcWidth, uint16 srcHeight, const byte *srcPixels,
-						  Graphics::ManagedSurface &s, bool useMaskedShading = false);
-
 	// Set by action bar map button on press; enterMapMode() runs on panel release.
 	bool _pendingMapOpen = false;
 
@@ -241,21 +196,33 @@ private:
 	uint16 _clickedButtonIndex = 0;    // g_wClickedButtonIndex: last clicked button (0=none)
 	Common::String _saveSlotNames[30]; // 3 pages x 10 slots
 
+	int _currentFadeValue = -1;
+	FadeMode _fadeMode = FadeMode::None;
+	bool _cursorSuppressedForFade = false;
+	bool _cursorWasVisibleBeforeFade = false;
+
 	// Save/Load panel geometry (binary globals: g_wUiPanelX/Y/Width/Height, g_wActionBarButtonWidth/Height)
 	Common::Rect _saveLoadPanelRect;
 	Common::Rect _saveLoadButtonRects[7];
 	uint16 _saveLoadButtonWidth = 0;  // g_wActionBarButtonWidth (after +6)
 	uint16 _saveLoadButtonHeight = 0; // g_wActionBarButtonHeight (after +6)
 
+	Common::Array<Common::Rect> _mainMenuButtonLocations;
+	Common::Rect _mainMenuRect;
+	Common::Point _inventoryGridUpperLeft;
+	Common::Point _inventorySlotSize;
+	Common::Array<Common::Rect> _inventoryButtonLocations;
+	uint16 _inventoryScrollOffset = 0;
+
+	static const uint16 kMaxSceneObjects = 0x200;
+	mutable uint16 _sortedObjectCount = 0;
+	mutable uint16 _sortedObjectIndices[kMaxSceneObjects + 1];
+	mutable Character *_characterByObjectIndex[kMaxSceneObjects + 1] = {};
+
 	void openOriginalSaveLoadPanel();
 	void drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s);
 	void handleOriginalSaveLoadClick(const Common::Point &pos);
 	void closeOriginalSaveLoadPanel();
-
-	int _currentFadeValue = -1;
-	FadeMode _fadeMode = FadeMode::None;
-	bool _cursorSuppressedForFade = false;
-	bool _cursorWasVisibleBeforeFade = false;
 
 	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
 	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
@@ -266,8 +233,7 @@ private:
 
 	bool handleInventoryClick(const MouseDownMessage &msg);
 	bool handleContainerInventoryClick(const MouseDownMessage &msg);
-	// Binary handleInventoryClick / handleContainerInventoryClick epilogue:
-	// if pending != 0 -> uiBackgroundRestorePending=1; flip; runScriptExecutor; pending=0.
+	// Binary handleInven uiBackgroundRestorePending=1; flip; runScriptExecutor; pending=0.
 	void runInventoryPanelScriptIfPending(bool excludeCloseButton);
 	bool handleActionBarClick(const MouseDownMessage &msg);
 	void walkToScreenPosition(const Common::Point &pos);
@@ -302,27 +268,24 @@ private:
 	//   6 = close inventory/dialogue panels
 	//   7 = close map panel
 	bool handleInput(const MouseDownMessage &msg);
-	// Binary handleInput (1008:e8bf): panel close on mouse release when
-	// g_wClickedButtonIndex != 0 and buttonFlags != 1.
 	bool handlePanelRelease(const MouseUpMessage &msg);
 	bool handleHelpClick(const MouseDownMessage &msg);
 
 	void showStringBox(const Common::StringArray &sa);
 
 	void renderString(uint16 x, uint16 y, const Common::String &s);
-	void renderString(const Common::Point pos, const Common::String &s);
+	void renderString(const Common::Point &pos, const Common::String &s);
 	void renderStringTo(uint16 x, uint16 y, const Common::String &s, Graphics::ManagedSurface &surf);
 	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
 	void renderStringWithFontTo(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs,
 								uint16 numGlyphs, Graphics::ManagedSurface &surf);
 	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
-
-	Common::Array<Common::Rect> _mainMenuButtonLocations;
-	Common::Rect _mainMenuRect;
-	Common::Point _inventoryGridUpperLeft;
-	Common::Point _inventorySlotSize;
-	Common::Array<Common::Rect> _inventoryButtonLocations;
-	uint16 _inventoryScrollOffset = 0;
+	void drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, uint16 scalingFactor,
+							   int16 drawX, int16 drawY, uint16 srcWidth, uint16 srcHeight,
+							   const byte *srcPixels, Graphics::ManagedSurface &s, bool useMaskedShading = false);
+	void drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16 drawX, int16 drawY,
+						  uint16 srcWidth, uint16 srcHeight, const byte *srcPixels,
+						  Graphics::ManagedSurface &s, bool useMaskedShading = false);
 
 	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
@@ -332,17 +295,9 @@ private:
 	void drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
 	void drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, Graphics::ManagedSurface &s, uint16 inset = 6);
 
-	// Binary sortObjectListByY (1008:8cf2) + buildSortedObjectList (1008:8c5a):
-	// scan 512 objects, collect current-scene indices at 0xFAC, quicksort by Y.
-	// Table is 1-indexed: slots 1..g_wSortedObjectCount hold object indices.
-	static const uint16 kMaxSceneObjects = 0x200;
 	void sortObjectListByY() const;
 	void buildSortedObjectList(int low, int high) const;
-	mutable uint16 _sortedObjectCount = 0;
-	mutable uint16 _sortedObjectIndices[kMaxSceneObjects + 1];
-	mutable Character *_characterByObjectIndex[kMaxSceneObjects + 1] = {};
 
-	// drawAllCharacters @ 1008:90a2 - param_1: 0=draw only, 1=walk+draw (fullUpdate).
 	void drawAllCharacters(Graphics::ManagedSurface *surface = nullptr, bool fullUpdate = true);
 
 	int findInventoryItem(const GameObject *item);
@@ -353,27 +308,8 @@ public:
 	View1();
 	virtual ~View1();
 
-	bool hasPersistentActionBar() const;
-	bool shouldShowActionBar() const;
-	void ensureActionBar();
-	/** Top Y of the persistent action bar (game area ends here when shown). */
-	int actionBarTopY() const;
-
-	// g_wHelpButtonDisabled (1020:23B4): when non-zero, help/map button is disabled
-	// and script scene changes use applyScenePaletteEffect instead of palette fades.
-	// Map overlay mode is scene+0x61db (_currentMode == VM_HELP), not this flag.
-	bool isHelpButtonDisabled() const { return _helpButtonDisabled; }
-
-	void restoreUiPaletteEntries();
-
-	void clearClickedButtonIndex() { _clickedButtonIndex = 0; }
-
 	ScalingValues _scalingValues;
-
 	ViewMode _currentMode = ViewMode::VM_GAME;
-
-	AnimFrame *getInventoryIcon(GameObject *gameObject);
-
 	bool _paletteDirty = true;
 	bool _isShowingTextBox = false;
 	bool _isShowingDialoguePanel = false;
@@ -390,9 +326,7 @@ public:
 
 	Common::Array<Character *> _characters;
 	Common::Array<Character *> _pendingCharacterDeletes;
-	void flushPendingCharacterDeletes();
-	// Binary drawAllCharacters (1008:90a2) pickup frame: sceneIndex + inventory sync.
-	void transferPickupTarget(GameObject *targetObject);
+
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
 	GameObject *_inventorySource = nullptr;
@@ -415,8 +349,6 @@ public:
 		kUiPanelSaveLoad = 4
 	};
 	UiPanelState _uiPanelState = kUiPanelNone;
-
-	void finishPanelCloseAfterRelease(UiPanelState closedFromState);
 
 	// Binary g_wPendingPanelRequest (1020:1034): deferred panel open request.
 	// Set while action bar is active; processed by gameTick when _uiPanelState returns to kUiPanelNone.
@@ -462,6 +394,43 @@ public:
 	// Debug: last hovered area/hotspot (updated every mouse move for ImGui)
 	uint16 _hoverAreaId = 0;
 	uint16 _hoverHotspotId = 0;
+
+	struct BorderStyle {
+		uint32 outerEdge;   // sprite for outer frame (0x1010 = black)
+		uint32 topLeft;     // sprite for top/left edge
+		uint32 bottomRight; // sprite for bottom/right edge
+	};
+	static const BorderStyle kBorderRaised;
+	static const BorderStyle kBorderPressed;
+
+	struct OverlayTextEntry {
+		Common::Point position;
+		uint8 alignment = 0;
+		Common::String text;
+	};
+
+	Common::Array<OverlayTextEntry> _overlayTextEntries;
+
+	bool hasPersistentActionBar() const;
+	bool shouldShowActionBar() const;
+	void ensureActionBar();
+	/** Top Y of the persistent action bar (game area ends here when shown). */
+	int actionBarTopY() const;
+
+	// g_wHelpButtonDisabled (1020:23B4): when non-zero, help/map button is disabled
+	// and script scene changes use applyScenePaletteEffect instead of palette fades.
+	// Map overlay mode is scene+0x61db (_currentMode == VM_HELP), not this flag.
+	bool isHelpButtonDisabled() const { return _helpButtonDisabled; }
+
+	void restoreUiPaletteEntries();
+
+	void clearClickedButtonIndex() { _clickedButtonIndex = 0; }
+
+	AnimFrame *getInventoryIcon(GameObject *gameObject);
+
+	void flushPendingCharacterDeletes();
+	void transferPickupTarget(GameObject *targetObject);
+	void finishPanelCloseAfterRelease(UiPanelState closedFromState);
 
 	// debug tools
 	void drawPathfindingPoints(Graphics::ManagedSurface &s);
@@ -527,14 +496,6 @@ public:
 
 	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 
-	struct BorderStyle {
-		uint32 outerEdge;   // sprite for outer frame (0x1010 = black)
-		uint32 topLeft;     // sprite for top/left edge
-		uint32 bottomRight; // sprite for bottom/right edge
-	};
-	static const BorderStyle kBorderRaised;
-	static const BorderStyle kBorderPressed;
-
 	void drawNinePatchBorder(const Common::Point &pos, const Common::Point &size,
 							 const BorderStyle &style, bool fillCenter, bool fillSides,
 							 Graphics::ManagedSurface &s);
@@ -552,17 +513,9 @@ public:
 
 	void triggerDialogueChoice(uint8 index);
 
-	struct OverlayTextEntry {
-		Common::Point position;
-		uint8 alignment = 0;
-		Common::String text;
-	};
-
 	void addOverlayTextEntry(const OverlayTextEntry &entry);
 	void clearOverlayTextEntries();
 	void drawOverlayTextEntries();
-
-	Common::Array<OverlayTextEntry> _overlayTextEntries;
 
 	uint16 getHitObjectID(const Common::Point &pos) const;
 };

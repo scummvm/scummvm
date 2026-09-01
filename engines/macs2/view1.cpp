@@ -58,32 +58,35 @@ Common::String joinDebugStrings(const Common::StringArray &strings) {
 }
 
 void logRenderedText(const char *kind, int x, int y, const Common::String &text) {
-	Common::U32String u32text(text.c_str(), Common::kDos850);
-	Common::String utf8text(u32text);
-	g_engine->_textLog.push_back(Common::String::format("%s text at (%d,%d): ", kind, x, y) + utf8text);
+	const Common::U32String u32text(text.c_str(), Common::kDos850);
+	const Common::String utf8text(u32text);
+	g_engine->_textLog.emplace_back(Common::String::format("%s text at (%d,%d): %s", kind, x, y, utf8text.c_str()));
 }
 
 void resetObjectDrawBounds(GameObject *obj) {
-	if (obj != nullptr)
+	if (obj != nullptr) {
 		obj->resetDrawBounds();
+	}
 }
 
 void setPixelClipped(Graphics::ManagedSurface &s, int x, int y, byte color) {
-	if (x < 0 || y < 0 || x >= s.w || y >= s.h)
+	if (x < 0 || y < 0 || x >= s.w || y >= s.h) {
 		return;
+	}
 	s.setPixel(x, y, color);
 }
 
 void drawLine(Graphics::ManagedSurface &s, int x0, int y0, int x1, int y1, byte color) {
-	int dx = ABS(x1 - x0);
-	int sx = x0 < x1 ? 1 : -1;
-	int dy = -ABS(y1 - y0);
-	int sy = y0 < y1 ? 1 : -1;
+	const int dx = ABS(x1 - x0);
+	const int sx = x0 < x1 ? 1 : -1;
+	const int dy = -ABS(y1 - y0);
+	const int sy = y0 < y1 ? 1 : -1;
 	int err = dx + dy;
 	for (;;) {
 		setPixelClipped(s, x0, y0, color);
-		if (x0 == x1 && y0 == y1)
+		if (x0 == x1 && y0 == y1) {
 			break;
+		}
 		const int e2 = 2 * err;
 		if (e2 >= dy) {
 			err += dy;
@@ -116,7 +119,6 @@ void drawAmigaUiPanel(const Common::Point &pos, const Common::Point &size, Graph
 	}
 
 	// background
-	// TODO: the pattern is wrong
 	const byte a = remapAmigaCopperIndexToStableUi(21);
 	const byte bCol = remapAmigaCopperIndexToStableUi(22);
 	byte ehbA = a;
@@ -339,7 +341,7 @@ void View1::setViewPaletteSafely(const Graphics::Palette &colors) {
 }
 
 void View1::restoreUiPaletteEntries() {
-	g_system->getPaletteManager()->setPalette(g_engine->_pal.data() + 16 * 3, 0xF0, 16);
+	g_system->getPaletteManager()->setPalette(g_engine->_pal.data() + 16 * 3, 240, 16);
 }
 
 void View1::openInventory(GameObject *newInventorySource) {
@@ -465,16 +467,16 @@ void View1::refreshProtagonistInventoryAfterLoad(uint16 actorIndex) {
 }
 
 bool View1::isInventorySourceProtagonist() const {
-	return _inventorySource &&
-		   _inventorySource->_index == Scenes::instance()._currentActorIndex;
+	return _inventorySource && _inventorySource->_index == Scenes::instance()._currentActorIndex;
 }
 
 void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer) {
 	const int index = findInventoryItem(item);
 	_inventoryItems.remove_at(index);
 	item->_sceneIndex = targetContainer->_index + 0x400;
-	if (hasPersistentActionBar() && _actionBar)
+	if (hasPersistentActionBar() && _actionBar) {
 		_actionBar->syncInventory();
+	}
 }
 
 int View1::findInventoryItem(const GameObject *item) {
@@ -778,7 +780,7 @@ void View1::renderString(uint16 x, uint16 y, const Common::String &s) {
 	}
 }
 
-void View1::renderString(const Common::Point pos, const Common::String &s) {
+void View1::renderString(const Common::Point &pos, const Common::String &s) {
 	renderString(pos.x, pos.y, s);
 }
 
@@ -1832,8 +1834,8 @@ void View1::walkToScreenPosition(const Common::Point &pos) {
 			protagonist->_targetPosition = target;
 		}
 	}
-	protagonist->_stepDeltaX = abs(protagonist->_targetPosition.x - charPos.x);
-	protagonist->_stepDeltaY = abs(protagonist->_targetPosition.y - charPos.y);
+	protagonist->_stepDeltaX = (int16)ABS(protagonist->_targetPosition.x - charPos.x);
+	protagonist->_stepDeltaY = (int16)ABS(protagonist->_targetPosition.y - charPos.y);
 	protagonist->_stepError = 0;
 	protagonist->_stepDirectionSet = false;
 	g_engine->_scriptExecutor->saveWalkRuntime(protagonist, protagonist->_gameObject);
@@ -3817,7 +3819,6 @@ bool Character::calculatePath(Common::Point target) {
 }
 
 bool Character::canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount) {
-	// Binary findShortestPath (1008:14d4).
 	// Checks if node can connect source (charPos) to target:
 	// 1. Node must be able to see the target
 	// 2. Flood-fill connected component from node
@@ -3872,9 +3873,8 @@ uint16 Character::getVerticalOffset() const {
 	}
 
 	if (_gameObject->_verticalOffsetScale != 0) {
-		// drawAllCharacters @ 1008:9549: scalingFactor * verticalOffsetScale / 100
 		const int16 charY = getPosition().y;
-		int32 depthOffset = ((int32)charY - (int32)g_engine->_walkDepthThresholdY) *
+		const int32 depthOffset = ((int32)charY - (int32)g_engine->_walkDepthThresholdY) *
 							(int32)g_engine->_walkDepthScaleFactor / 100;
 		const uint16 scalingFactor = (uint16)((int32)g_engine->_walkBaseSpeedPct + depthOffset);
 		result = (scalingFactor * _gameObject->_verticalOffsetScale) / 100;
@@ -3884,9 +3884,6 @@ uint16 Character::getVerticalOffset() const {
 }
 
 bool Character::walkAlongPath() {
-	// Binary walkAlongPath (1008:1b8f) path node advancement:
-	// When arrived at current waypoint, snap position to node coords, then advance.
-	// Binary: if (pathNodeIndex != 0) posX/Y = nodeCoords[pathNodes[pathNodeIndex]]
 	if (_currentPathIndex >= 0 && _currentPathIndex < (int16)_path.size()) {
 		const uint16 snapIdx = _path[_currentPathIndex];
 		const Common::Point &snapPos = g_engine->_pathfindingPoints[snapIdx - 1]._position;
@@ -3896,8 +3893,8 @@ bool Character::walkAlongPath() {
 	if (_currentPathIndex >= (int16)_path.size()) {
 		// Past end of path - walk to final destination, then stop
 		_targetPosition = _pathFinalDestination;
-		_stepDeltaX = abs(_targetPosition.x - _gameObject->_position.x);
-		_stepDeltaY = abs(_targetPosition.y - _gameObject->_position.y);
+		_stepDeltaX = (int16)ABS(_targetPosition.x - _gameObject->_position.x);
+		_stepDeltaY = (int16)ABS(_targetPosition.y - _gameObject->_position.y);
 		_stepError = 0;
 		_stepDirectionSet = false;
 		return false; // No more path segments after this
@@ -3905,39 +3902,30 @@ bool Character::walkAlongPath() {
 	const uint16 nodeIdx = _path[_currentPathIndex];
 	const Common::Point &nodePos = g_engine->_pathfindingPoints[nodeIdx - 1]._position;
 	_targetPosition = nodePos;
-	_stepDeltaX = abs(_targetPosition.x - _gameObject->_position.x);
-	_stepDeltaY = abs(_targetPosition.y - _gameObject->_position.y);
+	_stepDeltaX = (int16)ABS(_targetPosition.x - _gameObject->_position.x);
+	_stepDeltaY = (int16)ABS(_targetPosition.y - _gameObject->_position.y);
 	_stepError = 0;
 	_stepDirectionSet = false;
 	return true;
 }
 
 bool Character::isAnimationMirrored() const {
-	return is_in_list<uint16, 6, 7, 8, 14, 15, 16>(_gameObject->_orientation);
-}
-
-uint8 Character::getMirroredAnimation(uint8 original) const {
-	switch (original) {
-	case 6:
-		return 4;
-	case 7:
-		return 3;
-	case 8:
-		return 2;
-	case 14:
-		return 12;
-	case 15:
-		return 11;
-	case 16:
-		return 10;
+	switch (_gameObject->_orientation) {
+	case OrientationSouthWest:
+	case OrientationWest:
+	case OrientationNorthWest:
+	case OrientationStandingSouthWest:
+	case OrientationStandingWest:
+	case OrientationStandingNorthWest:
+		return true;
+	default:
+		break;
 	}
-	return original;
+	return false;
 }
 
-bool Character::fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out) {
+bool Character::fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out) const {
 	const uint16 animSlot = g_engine->resolveAnimSlotIndex(_gameObject);
-
-	_shouldMirrorCurrentAnimation = false;
 
 	Common::Array<uint8> *blobPtr = _gameObject->getAnimSlotBlob(animSlot);
 	if (blobPtr == nullptr || blobPtr->empty()) {
@@ -3993,44 +3981,41 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 	return result;
 }
 
-// NOTE: The original game (walkAlongPath at 1008:1b8f) does NOT use time-based
-// lerping. Instead it uses pixel-by-pixel Bresenham stepping each frame, with
-// speed scaled by depth (perspective). The walk click flow is:
-//   1. snapToWalkablePosition() adjusts target to nearest walkable pixel
-//   2. isPathWalkable() checks if direct line is clear
-//   3. If not: calculatePath() does A* pathfinding through waypoints
-//   4. walkAlongPath() steps 1 pixel per axis per frame, scaled by depth
-// The current lerp-based approach is a simplification that should eventually
-// be replaced with the original pixel-stepping for accurate movement speed.
+// Leftover lerp-era entry point. Duration and ignoreObstacles are unused.
+// Binary walkAlongPath (1008:1b8f) has no time lerp: Phase 0 sets 8-way
+// orientation and returns (1-frame delay); Phase 1 loops stepCounter 1..walkSpeed
+// with one-pixel Bresenham (error >= deltaX -> step Y else step X).
+// walkSpeed = animSpeed * (scene[0x5201] + depth) / 100, min 1;
+// depth = (posY - scene[0x51FD]) * scene[0x51FF] / 100.
+// Character::update() implements that. C++ walkAlongPath() is only the inlined
+// waypoint advance. Path setup is walkToScreenPosition / scriptWalkToPosition.
 void Character::startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles) {
 	_startPosition = getPosition();
 	_targetPosition = target;
 	_startTime = g_events->currentMillis;
 	_duration = duration;
-	_lerpIgnoresObstacles = ignoreObstacles;
 
 	// Reset Bresenham state - direction will be calculated on first Update()
 	_stepDirectionSet = false;
-	_stepDeltaX = abs(_targetPosition.x - _startPosition.x);
-	_stepDeltaY = abs(_targetPosition.y - _startPosition.y);
+	_stepDeltaX = (int16)ABS(_targetPosition.x - _startPosition.x);
+	_stepDeltaY = (int16)ABS(_targetPosition.y - _startPosition.y);
 	_stepError = 0;
 }
 
 void Character::startPickup(Macs2::GameObject *object) {
 	_pickedUpObject = object;
-	// Binary (1008:c475): walk target is the pickup object's effective position.
 	_pathFinalDestination = getObjectEffectivePosition(object);
 	_pickupFrameCounter = 0;
 	_pickupItemTransferred = false;
 
-	Common::Point current = getPosition();
-	int16 destX = _pathFinalDestination.x;
-	int16 destY = _pathFinalDestination.y;
+	const Common::Point &current = getPosition();
+	const int16 destX = _pathFinalDestination.x;
+	const int16 destY = _pathFinalDestination.y;
 
 	_currentPathIndex = 0;
 	_path.clear();
 
-	bool directPath = g_engine->isPathWalkable(destY, destX, current.y, current.x);
+	const bool directPath = g_engine->isPathWalkable(destY, destX, current.y, current.x);
 	if (!directPath && Macs2Engine::isWalkabilityWalkable(g_engine->getWalkabilityAt(destY, destX))) {
 		calculatePath(Common::Point(destX, destY));
 	}
@@ -4039,8 +4024,8 @@ void Character::startPickup(Macs2::GameObject *object) {
 		_targetPosition = _pathFinalDestination;
 	}
 
-	_stepDeltaX = abs(_targetPosition.x - current.x);
-	_stepDeltaY = abs(_targetPosition.y - current.y);
+	_stepDeltaX = (int16)ABS(_targetPosition.x - current.x);
+	_stepDeltaY = (int16)ABS(_targetPosition.y - current.y);
 	_stepError = 0;
 	_stepDirectionSet = false;
 }
@@ -4056,7 +4041,8 @@ bool Character::shouldStepVerticalMotion() const {
 }
 
 void Character::update() {
-	if (_gameObject->_orientation == 0x11) {
+	Script::ScriptExecutor *script = g_engine->_scriptExecutor;
+	if (_gameObject->_orientation == OrientationPickup) {
 		if (_pickedUpObject != nullptr) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
 
@@ -4067,17 +4053,17 @@ void Character::update() {
 
 			if (_pickupFrameCounter == _gameObject->_pickupFrameEnd) {
 				_gameObject->_orientation = _previousOrientation;
-				if (g_engine->_scriptExecutor->_pickupInProgress) {
-					g_engine->_scriptExecutor->_pickupInProgress = false;
-					g_engine->_scriptExecutor->_pickupActorObjectID = 0;
-					g_engine->_scriptExecutor->_pickupTargetObjectID = 0;
-					g_engine->setCursorMode(g_engine->_scriptExecutor->_cursorModeBeforeWait);
+				if (script->_pickupInProgress) {
+					script->_pickupInProgress = false;
+					script->_pickupActorObjectID = 0;
+					script->_pickupTargetObjectID = 0;
+					g_engine->setCursorMode(script->_cursorModeBeforeWait);
 					currentView->updateCursor();
 				}
-				g_engine->_scriptExecutor->_walkTargetObjectIndex = 0;
+				script->_walkTargetObjectIndex = 0;
 				_pickedUpObject = nullptr;
-				g_engine->_scriptExecutor->_interactedObjectID = 0x0000;
-				g_engine->_scriptExecutor->_interactedInventoryItemId = 0x0000;
+				script->_interactedObjectID = 0x0000;
+				script->_interactedInventoryItemId = 0x0000;
 				g_engine->_movementFinishedFlag = true;
 				return;
 			}
@@ -4087,18 +4073,11 @@ void Character::update() {
 		return;
 	}
 
-	// Binary walkAlongPath (1008:1b8f): runs unconditionally every frame.
-	// No _isLerping gate exists in the binary.
 	Common::Point pos = getPosition();
-	// Walk speed formula from walkAlongPath (1008:1b8f):
-	//   depth = (posY - scene[0x51FD]) * scene[0x51FF] / 100
-	//   walkSpeed = animSpeed * (scene[0x5201] + depth) / 100
-	int32 depthOffset = ((int32)pos.y - (int32)g_engine->_walkDepthThresholdY) *
-						(int32)g_engine->_walkDepthScaleFactor / 100;
-	// Per-animation speed from blob data (runtime+orientation*16+0x30)
-	// Walk speed from binary walkAlongPath (1008:1b8f):
-	// pwVar7[orientation * 8 + 0x18] = word at runtime + orientation*16 + 0x30
-	// = AnimSlot.wAnimSpeed (slot+0x0C). Stored in _blobWalkSpeeds.
+	const int32 depthOffset = ((int32)pos.y - (int32)g_engine->_walkDepthThresholdY) *
+							(int32)g_engine->_walkDepthScaleFactor / 100;
+	// Per-animation speed from blob data
+	// Walk speed from binary walkAlongPath
 	uint16 animSpeed = 2; // default fallback
 	ObjectOrientation orient = _gameObject->_orientation;
 	if (orient >= OrientationNorth && orient <= g_engine->maxAnimSlots() && (uint)(orient - 1) < _gameObject->_blobWalkSpeeds.size()) {
@@ -4112,16 +4091,13 @@ void Character::update() {
 		walkSpeed = 1;
 	}
 
-	// Proximity arrival check from walkAlongPath (1008:1b8f):
-	// Binary checks if character is within walkSpeed pixels of target in both axes.
-	bool arrived = (abs(pos.x - _targetPosition.x) <= walkSpeed) &&
-				   (abs(pos.y - _targetPosition.y) <= walkSpeed);
-	// Binary: arrival also requires vertical offset interpolation to be complete
+	// Proximity arrival check from walkAlongPath
+	bool arrived = (ABS(pos.x - _targetPosition.x) <= walkSpeed) &&
+				   (ABS(pos.y - _targetPosition.y) <= walkSpeed);
 	if (arrived && hasPendingVerticalMotion()) {
 		arrived = false;
 	}
 	if (arrived) {
-		// Binary (22cd): check if target == finalDest (at final destination)
 		const bool atFinalDest = (_targetPosition.x == _pathFinalDestination.x &&
 							_targetPosition.y == _pathFinalDestination.y);
 
@@ -4134,9 +4110,8 @@ void Character::update() {
 
 		// Final destination arrival (or direct walk arrival)
 		if (_gameObject->_snapToTarget) {
-			pos = _targetPosition;
-			setPosition(pos);
-			_pathFinalDestination = pos;
+			setPosition(_targetPosition);
+			_pathFinalDestination = _targetPosition;
 		} else {
 			_targetPosition = pos;
 			_pathFinalDestination = pos;
@@ -4169,8 +4144,8 @@ void Character::update() {
 		_stepDirectionSet = true;
 		// Phase 0 from walkAlongPath (1008:1b8f): direction calculation.
 		// Binary returns after setting direction (1-frame turn delay).
-		uint16 absDx = abs(pos.x - _targetPosition.x);
-		uint16 absDy = abs(pos.y - _targetPosition.y);
+		const uint16 absDx = (uint16)ABS(pos.x - _targetPosition.x);
+		const uint16 absDy = (uint16)ABS(pos.y - _targetPosition.y);
 		ObjectOrientation dir = _gameObject->_orientation;
 		if (dir >= OrientationStandingNorth && dir <= OrientationStandingNorthWest)
 			dir = (ObjectOrientation)(dir - OrientationNorthWest);
@@ -4205,8 +4180,8 @@ void Character::update() {
 				dir = OrientationNorthWest;
 		}
 		_gameObject->_orientation = dir;
-		_stepDeltaX = absDx;
-		_stepDeltaY = absDy;
+		_stepDeltaX = (int16)absDx;
+		_stepDeltaY = (int16)absDy;
 		_stepError = 0;
 		// 1-frame turn delay: return after setting direction (binary Phase 0)
 		return;
@@ -4252,7 +4227,7 @@ void Character::update() {
 		}
 		// Walkability check - binary uses getWalkabilityAt(posY, posX) >= 0xC8
 		if (!isWalkable(pos)) {
-			const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
+			const uint16 tileArea = script->getAreaAtPoint(pos.x, pos.y);
 			if (tileArea >= 210 && tileArea <= 215) {
 				debugC(kDebugPath,
 						"walk blocked on plate area %u at (%d,%d) walk=%u int16=%d target=(%d,%d)",
@@ -4310,9 +4285,8 @@ void Character::update() {
 		// Binary: loop continues unconditionally until stepCounter == walkSpeed
 	}
 
-	// Binary (2280): if pixelsMoved != walkSpeed -> revert and cancel
 	if (pixelsMoved != walkSpeed) {
-		const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
+		const uint16 tileArea = script->getAreaAtPoint(pos.x, pos.y);
 		if (tileArea >= 210 && tileArea <= 215) {
 			debugC(kDebugPath,
 				   "walk cancelled pixelsMoved=%d walkSpeed=%d at (%d,%d) area=%u walk=%u finalDest=(%d,%d)",
@@ -4340,18 +4314,15 @@ void Button::render(Graphics::ManagedSurface &s) {
 }
 
 void View1::openOriginalSaveLoadPanel() {
-	// Exact translation of initSaveLoadPanel (1008:6184)
-	_pendingPanelRequest = kPanelRequestNone; // Binary: g_wPendingPanelRequest = 0
-	_uiPanelState = kUiPanelSaveLoad;         // Binary: g_wUiPanelState = 4
-	_uiBackgroundRestorePending = true;       // Binary: g_wUiBackgroundRestorePending = 1
+	_pendingPanelRequest = kPanelRequestNone;
+	_uiPanelState = kUiPanelSaveLoad;
+	_uiBackgroundRestorePending = true;
 
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 
-	// g_wSaveConfirmArmed = 0; g_wLoadConfirmArmed = 0
 	_saveConfirmArmed = false;
 	_loadConfirmArmed = false;
 
-	// if (g_wMusicEnabled && sceneData[g_wActiveMusicSlot] != 0) adlibStopMusic()
 	if (g_engine->_scriptExecutor->_musicEnabled &&
 		g_engine->_scriptExecutor->_activeMusicSlot != 0) {
 		g_engine->getMusic()->stopMusic();
@@ -4364,25 +4335,28 @@ void View1::openOriginalSaveLoadPanel() {
 	// First loop: calculate max icon width/height from the 7 button images
 	for (int i = 1; i < ARRAYSIZE(kLookupTable); i++) {
 		const int imgIdx = kLookupTable[i] - 1; // convert to 0-based
-		if (imgIdx >= (int)g_engine->_imageResources.size())
+		if (imgIdx >= (int)g_engine->_imageResources.size()) {
 			continue;
+		}
 		const AnimFrame &frame = g_engine->_imageResources[imgIdx];
 		if (frame._data.empty() && frame._width == 0) {
 			// Binary: if no data, sets width/height fields to 0
 			continue;
 		}
-		// Binary: getFrameWidth/getFrameHeight then updates max
-		if (frame._width > maxW)
+		if (frame._width > maxW) {
 			maxW = frame._width;
-		if (frame._height > maxH)
+		}
+		if (frame._height > maxH) {
 			maxH = frame._height;
+		}
 	}
 
 	// g_wUiPanelWidth = (g_wActionBarButtonWidth + 10) * 7 + 4
 	uint16 panelWidth = (maxW + 10) * 7 + 4;
 	// if (g_wUiPanelWidth < 0xD4) g_wUiPanelWidth = 0xD4
-	if (panelWidth < 212)
+	if (panelWidth < 212) {
 		panelWidth = 212;
+	}
 	// g_wUiPanelHeight = g_wActionBarButtonHeight + 0x8A
 	const uint16 panelHeight = maxH + 138;
 	// g_wUiPanelX = (g_wScreenWidth >> 1) - (g_wUiPanelWidth >> 1)
@@ -4460,8 +4434,8 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 	uint16 subMode = (uint16)_saveLoadSubMode;
 
 	for (int i = 1; i <= ARRAYSIZE(_saveLoadButtonRects); i++) {
-		int imgIdx = kLookupTable[i] - 1; // 0-based
-		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
+		const int imgIdx = kLookupTable[i] - 1; // 0-based
+		const Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
 		// Binary: if (local_4 < 0 || local_4 != g_wSaveLoadSubMode) -> normal border
 		// else -> pressed border
@@ -4472,18 +4446,18 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		if (imgIdx >= (int)g_engine->_imageResources.size()) {
 			continue;
 		}
-		AnimFrame &frame = g_engine->_imageResources[imgIdx];
+		const AnimFrame &frame = g_engine->_imageResources[imgIdx];
 		if (frame._data.empty() || frame._width == 0) {
 			continue;
 		}
 
 		// Determine which icon to draw
-		AnimFrame *iconFrame = &frame;
+		const AnimFrame *iconFrame = &frame;
 
 		// Button 3 with sound off: use alternate icon at index 0x1B0/0x10 = 27
 		if (i == 3 && !g_engine->_scriptExecutor->_soundSystemActive) {
 			if (kAltMusicIconIdx < (int)g_engine->_imageResources.size()) {
-				AnimFrame &altFrame = g_engine->_imageResources[kAltMusicIconIdx];
+				const AnimFrame &altFrame = g_engine->_imageResources[kAltMusicIconIdx];
 				if (!altFrame._data.empty() && altFrame._width > 0) {
 					iconFrame = &altFrame;
 				}
@@ -4498,8 +4472,8 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 		// Pressed: +1 offset
 		if (pressed) {
-			iconX++;
-			iconY++;
+			++iconX;
+			++iconY;
 		}
 
 		drawSprite(iconX, iconY, *iconFrame, s, false);
@@ -4535,12 +4509,6 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 }
 
 void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
-	// Exact translation of handleSaveLoadPanelClick (1008:86a4)
-	// Binary takes (clickY, clickX) - note reversed parameter order
-	int clickX = pos.x;
-	int clickY = pos.y;
-
-	// if (g_wClickedButtonIndex == 0) { ... entire function body }
 	if (_clickedButtonIndex != 0) {
 		return;
 	}
@@ -4561,6 +4529,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// TODO: drawSaveLoadScrollArrows
 	}
 
+	int clickX = pos.x;
+	int clickY = pos.y;
 	// Slot loop: local_4 = 0..9
 	for (int slot = 0; slot <= 9; slot++) {
 		// Slot hit test for sub-mode 2 (save): editSaveSlotName
@@ -4584,11 +4554,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			clickX <= (int)(panelX + panelW - 12) &&
 			(int)(panelY + 6 + slot * 12) <= clickY &&
 			clickY <= (int)(panelY + slot * 12 + 16)) {
-			int idx = _saveLoadPageIndex * 10 + slot;
+			const int idx = _saveLoadPageIndex * 10 + slot;
 			if (idx < ARRAYSIZE(_saveSlotNames) && !_saveSlotNames[idx].empty()) {
-				// Binary: loadGameFromFile then:
-				// g_wUiPanelState = 4; g_wClickedButtonIndex = 0;
-				// g_wPendingPanelRequest = 4; g_wSaveLoadSubMode = 0
 				g_engine->loadGameState(idx);
 				_uiPanelState = kUiPanelSaveLoad;
 				_clickedButtonIndex = 0;
@@ -4610,7 +4577,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// AND (mapDisabledFlag == 0 || i > 2)
 		bool hasData = false;
 		if (imgIdx < (int)g_engine->_imageResources.size()) {
-			AnimFrame &frame = g_engine->_imageResources[imgIdx];
+			const AnimFrame &frame = g_engine->_imageResources[imgIdx];
 			hasData = (!frame._data.empty() && frame._width > 0);
 		}
 
@@ -4676,25 +4643,19 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		}
 	}
 
-	// After button loop: set subMode based on clickedButtonIndex
-	// Binary: if (g_wClickedButtonIndex < 3) g_wSaveLoadSubMode = g_wClickedButtonIndex
-	//         else g_wSaveLoadSubMode = 0
 	if (_clickedButtonIndex < 3) {
 		_saveLoadSubMode = (SaveLoadSubMode)_clickedButtonIndex;
 	} else {
 		_saveLoadSubMode = SaveLoadSubMode::None;
 	}
 
-	// Binary: if (g_wClickedButtonIndex == 7) g_wPendingPanelRequest = 0 (close)
-	//         else g_wPendingPanelRequest = 4 (stay open)
 	if (_clickedButtonIndex == 7) {
 		_pendingPanelRequest = kPanelRequestNone;
 		return;
-	} else {
-		_pendingPanelRequest = kPanelRequestSaveLoadActive;
 	}
 
-	// Binary: if (bPageScroll && ++g_wMapPanelPageIndex == 3) g_wMapPanelPageIndex = 0
+	_pendingPanelRequest = kPanelRequestSaveLoadActive;
+
 	if (bPageScroll) {
 		_saveLoadPageIndex++;
 		if (_saveLoadPageIndex == 3) {

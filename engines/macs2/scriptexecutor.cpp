@@ -101,7 +101,6 @@ Common::String ScriptExecutor::identifyHelperOpcode(uint8 opcode, uint16 value) 
 inline void ScriptExecutor::scriptSkipBlock() {
 	_lastOpcodeTriggeredSkip = true;
 
-	_isSkipping = true;
 	if (_expectedEndLocation != _stream->pos()) {
 		warning("Macs2::ScriptExecutor::scriptSkipBlock resyncing stream from %u to %u",
 				(uint32)_expectedEndLocation, (uint32)_stream->pos());
@@ -137,11 +136,9 @@ inline void ScriptExecutor::scriptSkipBlock() {
 
 	// Fix up the expected location after skipping
 	_expectedEndLocation = _stream->pos();
-	_isSkipping = false;
 }
 
 void ScriptExecutor::scriptSkipAlternate() {
-	_isSkipping = true;
 	if (_expectedEndLocation != _stream->pos()) {
 		warning("Macs2::ScriptExecutor::scriptSkipAlternate resyncing stream from %u to %u",
 				(uint32)_expectedEndLocation, (uint32)_stream->pos());
@@ -174,7 +171,6 @@ void ScriptExecutor::scriptSkipAlternate() {
 
 	// Fix up the expected location after skipping
 	_expectedEndLocation = _stream->pos();
-	_isSkipping = false;
 }
 
 bool ScriptExecutor::skipToEndOfSkippableSection() {
@@ -1980,7 +1976,6 @@ void Script::ScriptExecutor::restoreOpenInventoryScriptContext() {
 	_scriptClickY = _savedScriptClickY;
 	_scriptClickResult = _savedScriptClickResult;
 	_state = ExecutorState::Executing;
-	_isRunningScript = true;
 }
 
 OpcodeResult Script::ScriptExecutor::scriptSetYOffset() {
@@ -4196,7 +4191,6 @@ const uint ScriptExecutor::kV2OpcodeTableSize = ARRAYSIZE(ScriptExecutor::kV2Opc
 
 OpcodeResult Script::ScriptExecutor::executeOpcodes() {
 	debugC(kDebugScript, "----- Scripting function entered - scene: %.2x 1014: %.2x 1012: %.2x", Scenes::instance()._currentSceneIndex, _isSceneInitRun, _repeatRunFlag);
-	_isRunningScript = true;
 	// Confirmed: no interrupt mechanism exists. Wait states (frameWait, walkTarget,
 	// pcmSound, musicControl, adlibReady) are resolved by gameTick externally.
 
@@ -4270,7 +4264,6 @@ OpcodeResult Script::ScriptExecutor::executeOpcodes() {
 		if (opcodeResult == OpcodeResult::FinishScript)
 			break;
 	}
-	_isRunningScript = false;
 	if (hasScriptError())
 		recordScriptErrorPosition();
 	debugC(kDebugScript, "----- Scripting function left");
