@@ -48,20 +48,28 @@ static uint speechOverlayWidth(const SpeechOverlay &overlay, const HollywoodFont
 }
 
 void wrapSpeechOverlayText(const Common::String &text, int anchorX,
-		Common::Array<Common::String> &lines) {
+		Common::Array<Common::String> &lines, SpeechOverlayWrapStyle style) {
 	lines.clear();
 	if (text.empty())
 		return;
 
-	uint maxChars = kSpeechMaximumLineCharacters;
-	if (anchorX < kSpeechEdgeWidth)
-		maxChars = MAX<int>(0, anchorX) * kSpeechMaximumLineCharacters / kSpeechEdgeWidth;
-	else if (HollywoodEngine::kScreenWidth - anchorX < kSpeechEdgeWidth)
-		maxChars = MAX<int>(0, HollywoodEngine::kScreenWidth - anchorX) *
-			kSpeechMaximumLineCharacters / kSpeechEdgeWidth;
-	maxChars = MAX<uint>(maxChars, kSpeechMinimumLineCharacters);
+	uint maxChars;
+	uint lineShrink;
+	if (style == kSpeechOverlayFixedEdgeWrap) {
+		maxChars = anchorX < kSpeechEdgeWidth ||
+				HollywoodEngine::kScreenWidth - anchorX < kSpeechEdgeWidth ? 0x24 : 0x32;
+		lineShrink = 2;
+	} else {
+		maxChars = kSpeechMaximumLineCharacters;
+		if (anchorX < kSpeechEdgeWidth)
+			maxChars = MAX<int>(0, anchorX) * kSpeechMaximumLineCharacters / kSpeechEdgeWidth;
+		else if (HollywoodEngine::kScreenWidth - anchorX < kSpeechEdgeWidth)
+			maxChars = MAX<int>(0, HollywoodEngine::kScreenWidth - anchorX) *
+				kSpeechMaximumLineCharacters / kSpeechEdgeWidth;
+		maxChars = MAX<uint>(maxChars, kSpeechMinimumLineCharacters);
+		lineShrink = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
+	}
 
-	const uint lineShrink = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
 	const char *source = text.c_str();
 	const uint textLength = text.size();
 	uint cursor = 0;
@@ -103,7 +111,7 @@ void layoutSpeechOverlay(SpeechOverlay &overlay, const HollywoodFont *font,
 }
 
 void drawSpeechOverlayText(const SpeechOverlay &overlay, HollywoodFont *font,
-		Graphics::Surface &surface, int viewportXOffset) {
+		Graphics::Surface &surface, int viewportXOffset, int viewportYOffset) {
 	if (!overlay.visible || font == nullptr || !font->isLoaded())
 		return;
 
@@ -111,8 +119,9 @@ void drawSpeechOverlayText(const SpeechOverlay &overlay, HollywoodFont *font,
 	for (uint lineIndex = 0; lineIndex < overlay.lines.size(); ++lineIndex) {
 		const Common::String &line = overlay.lines[lineIndex];
 		const int lineWidth = speechLineWidth(font, line);
-		const int x = (int)overlay.centerX - (lineWidth >> 1) - viewportXOffset;
-		const int y = (int)overlay.topY + lineIndex * kSpeechLineHeight;
+		int x = (int)overlay.centerX - (lineWidth >> 1) - viewportXOffset;
+		x = CLIP<int>(x, 0, MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth));
+		const int y = (int)overlay.topY + lineIndex * kSpeechLineHeight - viewportYOffset;
 		font->drawString(&surface, line, x, y, lineWidth, overlay.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
