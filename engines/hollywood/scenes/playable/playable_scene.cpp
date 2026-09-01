@@ -880,9 +880,6 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 	case AnimationFrameEvent::kSecondarySpeech:
 		startRealtimeSecondarySpeechLine(event.speechRow, event.speechFrame, event.speechId);
 		break;
-	case AnimationFrameEvent::kStartedSecondarySpeech:
-		startSecondarySpeechLine(event.speechRow, event.speechFrame);
-		break;
 	case AnimationFrameEvent::kPrimarySpeech:
 		beginPrimarySpeechLine(event.speechRow, event.speechFrame,
 			event.speechCenterX, event.speechTopY,
