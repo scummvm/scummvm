@@ -44,7 +44,6 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void resetForegroundLayer();
 	void advanceForegroundLayer(uint32 delta);

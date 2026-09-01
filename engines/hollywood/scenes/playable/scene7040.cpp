@@ -86,8 +86,6 @@ const byte kScene7040ActionSpeechGroupB = 4;
 const byte kScene7040FrankieSpeechGroupA = 5;
 const byte kScene7040FrankieSpeechGroupB = 6;
 const byte kScene7040PrimarySpeechFrameCount = 5;
-const byte kScene7040Chunk14ActionHook = 1;
-const byte kScene7040Chunk14AltHook = 2;
 const uint kScene7040Chunk17Layer = 0;
 const uint kScene7040Chunk16Layer = 1;
 const uint kScene7040Chunk12Layer = 2;
@@ -479,13 +477,6 @@ void Scene7040::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 
 	drawPlayableComposite();
 	presentFrame();
-}
-
-void Scene7040::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene7040Chunk14ActionHook)
-		applyChunk14ActionSideEffects((byte)(frame - 1));
-	else if (hookId == kScene7040Chunk14AltHook)
-		applyChunk14AltSideEffects((byte)(frame - 1));
 }
 
 void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
@@ -915,82 +906,41 @@ void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
 	setChunk14ActionVisible(true);
 	playAnimationFrames(_sceneLayers, kScene7040Chunk14ActionLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
-			.hookEveryFrame(kScene7040Chunk14ActionHook));
+			.soundAt(1, 3)
+			.layerVisibleAt(1, kScene7040Chunk12Layer, true)
+			.layerFrameAt(1, kScene7040Chunk12Layer, 1)
+			.layerVisibleAt(2, kScene7040Chunk12Layer, true)
+			.layerFrameAt(2, kScene7040Chunk12Layer, 2)
+			.layerVisibleAt(9, kScene7040Chunk12Layer, true)
+			.layerFrameAt(9, kScene7040Chunk12Layer, 1)
+			.soundAt(0x0a, 4)
+			.layerVisibleAt(0x0a, kScene7040Chunk12Layer, true)
+			.layerFrameAt(0x0a, kScene7040Chunk12Layer, 0)
+			.layerVisibleAt(0x0b, kScene7040Chunk12Layer, false)
+			.soundAt(0x23, 0x16, 50)
+			.stopSoundAt(0x6b));
 }
 
 void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
 	configureChunk14AltLayer(chunkIndex, true);
+	GameplayState &state = _vm->gameState();
 	playAnimationFrames(_sceneLayers, kScene7040Chunk14AltLayer,
 		AnimationFrameRange(firstFrame + 1, endFrame, kScene7040Chunk14FrameMillis)
-			.hookEveryFrame(kScene7040Chunk14AltHook));
-}
-
-void Scene7040::applyChunk14ActionSideEffects(byte frameIndex) {
-	switch (frameIndex) {
-	case 0:
-		_soundBank0.playSample(3, 100);
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(1);
-		break;
-	case 1:
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(2);
-		break;
-	case 8:
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(1);
-		break;
-	case 9:
-		_soundBank0.playSample(4, 100);
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(0);
-		break;
-	case 0x0a:
-		setChunk12OverlayVisible(false);
-		break;
-	case 0x22:
-		_soundBank0.playSample(0x16, 50);
-		break;
-	case 0x6a:
-		_soundBank0.stop();
-		break;
-	default:
-		break;
-	}
-}
-
-void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
-	switch (frameIndex) {
-	case 0x2b:
-		_soundBank0.playSample(0x17, 50);
-		_vm->gameState().officeNotePickupState = 0;
-		applySceneStateToHotspotsAndPatches(3);
-		break;
-	case 0x37:
-		_soundBank0.playSample(3, 100);
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(1);
-		break;
-	case 0x38:
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(2);
-		break;
-	case 0x3d:
-		_soundBank0.playSample(3, 100);
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(1);
-		break;
-	case 0x3e:
-		_soundBank0.playSample(4, 100);
-		setChunk12OverlayVisible(true);
-		setChunk12OverlayFrame(0);
-		break;
-	case 0x3f:
-		setChunk12OverlayVisible(false);
-		break;
-	default:
-		break;
-	}
+			.soundAt(0x2c, 0x17, 50)
+			.commitAt(0x2c, state.officeNotePickupState, (byte)0)
+			.patchAt(0x2c, 3)
+			.soundAt(0x38, 3)
+			.layerVisibleAt(0x38, kScene7040Chunk12Layer, true)
+			.layerFrameAt(0x38, kScene7040Chunk12Layer, 1)
+			.layerVisibleAt(0x39, kScene7040Chunk12Layer, true)
+			.layerFrameAt(0x39, kScene7040Chunk12Layer, 2)
+			.soundAt(0x3e, 3)
+			.layerVisibleAt(0x3e, kScene7040Chunk12Layer, true)
+			.layerFrameAt(0x3e, kScene7040Chunk12Layer, 1)
+			.soundAt(0x3f, 4)
+			.layerVisibleAt(0x3f, kScene7040Chunk12Layer, true)
+			.layerFrameAt(0x3f, kScene7040Chunk12Layer, 0)
+			.layerVisibleAt(0x40, kScene7040Chunk12Layer, false));
 }
 
 void Scene7040::configureAnimationLayers() {

@@ -80,7 +80,6 @@ const byte kScene1060FlySlimeIdleFrame = 0;
 const byte kScene1060TicketLastPickupFrame = 0x1e;
 const byte kScene1060FlySlimeLastFrame = 0x24;
 const byte kScene1060TicketPickupStateFrame = 4;
-const byte kScene1060TicketPickupHook = 1;
 const byte kScene1060SkullcrackerExchangeHook = 2;
 const byte kScene1060TicketPickupAdvanceLimitFrame = 0x20;
 const byte kScene1060TicketPickupResetFrame = 8;
@@ -399,14 +398,6 @@ AmbientAudioProfile Scene1060::ambientAudioProfile() const {
 }
 
 void Scene1060::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene1060TicketPickupHook && frame == kScene1060TicketPickupStateFrame) {
-		GameplayState &state = _vm->gameState();
-		state.scene1060DrFlyState = 2;
-		state.scene1060FlySlimeHotspotActive = false;
-		applySceneStateToHotspotsAndPatches(1);
-		return;
-	}
-
 	if (hookId == kScene1060SkullcrackerExchangeHook &&
 			frame >= kScene1060JuniorExchangeFirstOverlayFrame &&
 			(frame - kScene1060JuniorExchangeFirstOverlayFrame) % 2 == 0 &&
@@ -1105,7 +1096,9 @@ void Scene1060::handleCloakroomTicketPickup() {
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(10, kScene1060TicketPickupDescriptorCount,
 		kScene1060TicketPickupFrameMap, ARRAYSIZE(kScene1060TicketPickupFrameMap), kScene1060FrameMillis)
-		.hookAt(kScene1060TicketPickupStateFrame, kScene1060TicketPickupHook));
+		.commitAt(kScene1060TicketPickupStateFrame, state.scene1060DrFlyState, (byte)2)
+		.commitAt(kScene1060TicketPickupStateFrame, state.scene1060FlySlimeHotspotActive, false)
+		.patchAt(kScene1060TicketPickupStateFrame, 1));
 	_ticketPickupSequenceActive = false;
 	if (state.scene1060DrFlyState != 2) {
 		sequence.commit(state.scene1060DrFlyState, (byte)2)

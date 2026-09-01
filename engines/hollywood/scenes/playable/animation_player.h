@@ -93,13 +93,30 @@ struct AnimationFrameRange {
 		return *this;
 	}
 
-	AnimationFrameRange &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex, byte speechId = 0) {
+	AnimationFrameRange &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			byte speechId = 0) {
 		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
+		return *this;
+	}
+
+	AnimationFrameRange &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
+		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
+		return *this;
+	}
+
+	AnimationFrameRange &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
+		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
 		return *this;
 	}
 
 	AnimationFrameRange &layerFrameAt(int frame, uint layerId, byte layerFrame) {
 		events.addLayerFrame(frame, layerId, layerFrame);
+		return *this;
+	}
+
+	AnimationFrameRange &layerVisibleAt(int frame, uint layerId, bool visible) {
+		events.addLayerVisibility(frame, layerId, visible);
 		return *this;
 	}
 
@@ -111,6 +128,16 @@ struct AnimationFrameRange {
 
 	AnimationFrameRange &invalidatePaletteAt(int frame) {
 		events.addPaletteInvalidation(frame);
+		return *this;
+	}
+
+	AnimationFrameRange &fadeFromBlackAt(int frame) {
+		events.addPaletteFade(frame, true);
+		return *this;
+	}
+
+	AnimationFrameRange &fadeToBlackAt(int frame) {
+		events.addPaletteFade(frame, false);
 		return *this;
 	}
 

@@ -48,7 +48,6 @@ const int kScene7090GatedActionTargetY = 0x11b;
 const byte kScene7090GatedActionTargetFacing = 5;
 const int kScene7090GatedActionReturnX = 0x281;
 const int kScene7090GatedActionReturnY = 0x10d;
-const byte kScene7090GatedActionHook = 1;
 const byte kScene7090BackToG07FrameMap[] = {
 	0, 1, 2, 3
 };
@@ -283,7 +282,8 @@ void Scene7090::handleGatedAction() {
 		.actorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
 			kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap),
 			kScene7090FrameMillis)
-			.hookEveryFrame(kScene7090GatedActionHook)
+			.soundAt(3, 0x1b)
+			.stopSoundAt(0x12)
 			.noRedrawAtEnd())
 		.commit(_prePatchChunk7Visible, false)
 		.commit(state.movedBedroomArmor, true)
@@ -292,15 +292,6 @@ void Scene7090::handleGatedAction() {
 		.actorPath(SceneActorPose(kScene7090GatedActionReturnX,
 			kScene7090GatedActionReturnY, kScene7090GatedActionTargetFacing))
 		.secondarySpeech(10, 2);
-}
-
-void Scene7090::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene7090GatedActionHook) {
-		if (frame == 3)
-			_soundBank0.playSample(0x1b, 100);
-		else if (frame == 0x12)
-			_soundBank0.stop();
-	}
 }
 
 } // End of namespace Hollywood

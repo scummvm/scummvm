@@ -56,12 +56,6 @@ const byte kScene8020SecondaryObjectItem = 5;
 const byte kScene8020InventoryItem6c = 0x6c;
 const byte kScene8020InventoryItem5d = 0x5d;
 const byte kScene8020InventoryItem4f = 0x4f;
-const byte kScene8020OverlayHookPickup6c = 1;
-const byte kScene8020OverlayHookPickup5d = 2;
-const byte kScene8020OverlayHookRemove6c = 3;
-const byte kScene8020TransformationHook = 4;
-const byte kScene8020OverlayHookTransformationReverse = 5;
-
 const byte kScene8020ForegroundFrameMap[] = {
 	0, 0, 1, 1, 2, 2, 1, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 13, 18, 17, 18, 13, 14, 15
@@ -307,48 +301,6 @@ bool Scene8020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return handled;
 }
 
-void Scene8020::handleAnimationFrameHook(byte hookId, uint frame) {
-	GameplayState &state = _vm->gameState();
-	if (hookId == kScene8020OverlayHookPickup6c && frame == 4) {
-		if (_sceneChunkTable.isValidChunk(kScene8020Pickup6cPatchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene8020Pickup6cPatchChunk],
-				_baseFramebuffer);
-		state.scene8020ForegroundObjectState = 2;
-		return;
-	}
-
-	if (hookId == kScene8020OverlayHookPickup5d && frame == 7) {
-		if (_sceneChunkTable.isValidChunk(kScene8020Pickup5dPatchChunk))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene8020Pickup5dPatchChunk],
-				_baseFramebuffer);
-		return;
-	}
-
-	if (hookId == kScene8020OverlayHookRemove6c && frame == 5) {
-		state.scene8020ForegroundObjectState = 0;
-		return;
-	}
-
-	if (hookId == kScene8020OverlayHookTransformationReverse && frame == 5) {
-		state.scene8020ForegroundObjectState = 0;
-		_foregroundAnimationState = 2;
-		_foregroundRepeatCount = 100;
-		return;
-	}
-
-	if (hookId == kScene8020TransformationHook) {
-		if (frame == 0x0c) {
-			_soundBank0.playSample(0x1b, 100);
-		} else if (frame == 0x13) {
-			_soundBank0.playSample(0x1c, 50);
-			if (_sceneChunkTable.isValidChunk(kScene8020SecondaryPatchChunk)) {
-				drawResourceBlockList(_resourceArena,
-					_resourceChunkOffsets[kScene8020SecondaryPatchChunk], _baseFramebuffer);
-			}
-		}
-	}
-}
-
 void Scene8020::resetForegroundLayer() {
 	_sceneLayers.reset();
 	_foregroundChannel.reset(0, kScene8020FrameMillis);
@@ -511,7 +463,8 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 
 	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Pickup6cFrameMap, ARRAYSIZE(kScene8020Pickup6cFrameMap), kScene8020FrameMillis)
-		.hookAt(4, kScene8020OverlayHookPickup6c)
+		.resourcePatchAt(4, kScene8020Pickup6cPatchChunk)
+		.commitAt(4, _vm->gameState().scene8020ForegroundObjectState, (byte)2)
 		.unskippable()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
@@ -527,7 +480,7 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 void Scene8020::runPickupInventoryItem5dSequence() {
 	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
 		kScene8020Pickup5dFrameMap, ARRAYSIZE(kScene8020Pickup5dFrameMap), kScene8020FrameMillis)
-		.hookAt(7, kScene8020OverlayHookPickup5d)
+		.resourcePatchAt(7, kScene8020Pickup5dPatchChunk)
 		.unskippable()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
@@ -544,7 +497,7 @@ void Scene8020::runPickupInventoryItem5dSequence() {
 void Scene8020::runRemoveInventoryItem6cSequence() {
 	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
-		.hookAt(5, kScene8020OverlayHookRemove6c)
+		.commitAt(5, _vm->gameState().scene8020ForegroundObjectState, (byte)0)
 		.unskippable()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
@@ -565,7 +518,9 @@ void Scene8020::runForegroundTransformationSequence() {
 
 	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
 		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
-		.hookAt(5, kScene8020OverlayHookTransformationReverse)
+		.commitAt(5, _vm->gameState().scene8020ForegroundObjectState, (byte)0)
+		.commitAt(5, _foregroundAnimationState, (byte)2)
+		.commitAt(5, _foregroundRepeatCount, (byte)100)
 		.unskippable()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
@@ -591,7 +546,9 @@ void Scene8020::runForegroundTransformationSequence() {
 	_foregroundSequenceLocked = true;
 	playAndPresentAnimationFrames(_sceneLayers, kScene8020ForegroundLayer,
 		AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
-			.hookEveryFrame(kScene8020TransformationHook)
+			.soundAt(0x0c, 0x1b)
+			.soundAt(0x13, 0x1c, 50)
+			.resourcePatchAt(0x13, kScene8020SecondaryPatchChunk)
 			.unskippable()
 			.noFinalFrameDelay());
 	_foregroundSequenceLocked = false;

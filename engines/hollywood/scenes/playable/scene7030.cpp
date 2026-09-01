@@ -57,7 +57,6 @@ const byte kScene7030BaseAmbientSoundCue = 0x0b;
 const byte kScene7030SecondaryAmbientSoundCue = 0x0c;
 const uint kScene7030ColorToItemMapOffset = 0x100;
 const uint kScene7030ColorMapSize = 0x100;
-const byte kScene7030PunchBowlGlassPatchHook = 1;
 const uint kScene7030Chunk6IdleLayerA = 0;
 const uint kScene7030Chunk6IdleLayerB = 1;
 const uint kScene7030Chunk6IdleLayerC = 2;
@@ -442,19 +441,11 @@ byte Scene7030::chunk5Frame() const {
 
 void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame) {
-	const byte hookId = statePatchFrame >= 0 ? kScene7030PunchBowlGlassPatchHook : 0;
-	runActorReplacement(ActionOverlaySpec(chunkIndex, descriptorCount,
-		frameMap, frameMapSize, frameMillis)
-		.hookAt(statePatchFrame, hookId));
-}
-
-void Scene7030::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-
-	if (hookId == kScene7030PunchBowlGlassPatchHook) {
-		_sceneStateFlags[2] = 0;
-		applySceneStateToHotspotsAndPatches(2);
-	}
+	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
+	if (statePatchFrame >= 0)
+		spec.commitAt(statePatchFrame, _sceneStateFlags[2], (byte)0)
+			.patchAt(statePatchFrame, 2);
+	runActorReplacement(spec);
 }
 
 void Scene7030::handleActionSlot00TransitionToG04() {

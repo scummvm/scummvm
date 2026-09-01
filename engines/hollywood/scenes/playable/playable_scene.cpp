@@ -820,8 +820,19 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 	case AnimationFrameEvent::kSecondarySpeech:
 		startRealtimeSecondarySpeechLine(event.speechRow, event.speechFrame, event.speechId);
 		break;
+	case AnimationFrameEvent::kStartedSecondarySpeech:
+		startSecondarySpeechLine(event.speechRow, event.speechFrame);
+		break;
+	case AnimationFrameEvent::kPrimarySpeech:
+		beginPrimarySpeechLine(event.speechRow, event.speechFrame,
+			event.speechCenterX, event.speechTopY,
+			event.speechRed, event.speechGreen, event.speechBlue);
+		break;
 	case AnimationFrameEvent::kLayerFrame:
 		_sceneLayers.setLayerFrame(event.layerId, event.layerFrame);
+		break;
+	case AnimationFrameEvent::kLayerVisibility:
+		_sceneLayers.setLayerVisible(event.layerId, event.layerVisible);
 		break;
 	case AnimationFrameEvent::kStateCommit:
 		if (event.commitFunction != nullptr)
@@ -829,6 +840,14 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 		break;
 	case AnimationFrameEvent::kInvalidatePalette:
 		invalidatePresentationPalette();
+		break;
+	case AnimationFrameEvent::kFadeFromBlack:
+		drawPlayableComposite();
+		fadePaletteFromBlack();
+		break;
+	case AnimationFrameEvent::kFadeToBlack:
+		drawPlayableComposite();
+		fadePaletteToBlack();
 		break;
 	case AnimationFrameEvent::kCustomHook:
 		handleAnimationFrameHook(event.hookId, frame);

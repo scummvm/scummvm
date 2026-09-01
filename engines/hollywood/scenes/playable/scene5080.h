@@ -53,7 +53,6 @@ private:
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();

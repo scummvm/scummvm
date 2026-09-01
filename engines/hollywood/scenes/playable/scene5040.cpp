@@ -62,10 +62,6 @@ const byte kScene5040AmbientSoundVolumes[] = {
 };
 
 enum {
-	kScene5040MineCartFrameHook = 1
-};
-
-enum {
 	kScene5040KarlLayer
 };
 
@@ -425,22 +421,6 @@ byte Scene5040::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) con
 	return defaultVolumePercent;
 }
 
-void Scene5040::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene5040MineCartFrameHook:
-		if (frame == 0) {
-			drawPlayableComposite();
-			fadePaletteFromBlack();
-		} else if (frame == 0x32) {
-			_mineCartRumbleActive = false;
-		}
-		return;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		return;
-	}
-}
-
 byte Scene5040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	return animationGroup == kScene5040KarlMiningSpeechGroup ?
 		kScene5040KarlMiningSpeechBaseFrame : kScene5040KarlDialogueSpeechBaseFrame;
@@ -700,8 +680,9 @@ void Scene5040::runMineCartEntryClip() {
 
 	runActorReplacement(ActionOverlaySpec(17, kScene5040MineCartDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5040MineCartFrameMillis)
-		.soundAt(0x32, 0x16)
-		.hookEveryFrame(kScene5040MineCartFrameHook));
+		.fadeFromBlackAt(0)
+		.commitAt(0x32, _mineCartRumbleActive, false)
+		.soundAt(0x32, 0x16));
 }
 
 void Scene5040::runExitToMineSwitches() {

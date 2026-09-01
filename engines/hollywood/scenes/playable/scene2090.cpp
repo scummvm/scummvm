@@ -54,7 +54,6 @@ const byte kScene2090FinaleLastForegroundFrame = 0x35;
 const byte kScene2090RequiredItem2A = 0x2a;
 const byte kScene2090RequiredItem2C = 0x2c;
 const byte kScene2090RequiredItem2E = 0x2e;
-const byte kScene2090FinaleSpeechHook = 1;
 const byte kScene2090PaletteCycleFirstColor = 0xa0;
 const byte kScene2090PaletteCycleLastColor = 0xaf;
 const int kScene2090CurtainStartOffset = 0xdc;
@@ -396,7 +395,7 @@ void Scene2090::runAltarCeremony() {
 	const bool finaleComplete = playAndPresentAnimationFrames(foregroundLayer,
 		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
 			kScene2090FinaleLastForegroundFrame - 1, kScene2090SlowFrameMillis)
-			.hookAt(kScene2090FinaleSpeechTriggerFrame, kScene2090FinaleSpeechHook)
+			.startSecondarySpeechAt(kScene2090FinaleSpeechTriggerFrame, 4, 8)
 			.unskippable());
 	if (finaleComplete) {
 		foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
@@ -413,11 +412,6 @@ void Scene2090::runAltarCeremony() {
 	runCurtainClearToBlack();
 	_soundBank0.stop();
 	_vm->gameState().mainFlowStateId = kScene2020ReturnState;
-}
-
-void Scene2090::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene2090FinaleSpeechHook && frame == kScene2090FinaleSpeechTriggerFrame)
-		startSecondarySpeechLine(4, 8);
 }
 
 void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {

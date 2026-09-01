@@ -110,11 +110,7 @@ const byte kScene7100TransferFrameMap[] = {
 const byte kScene7100TransferRonFrameMap[] = {
 	0, 0, 0, 0, 0, 5, 6, 7, 6, 5, 6, 5, 0
 };
-const byte kScene7100RatTrapStateHook = 1;
-const byte kScene7100RatPickupStateHook = 2;
-const byte kScene7100RatPickupEnvironmentHook = 3;
-const byte kScene7100PlateRemovalStateHook = 4;
-const byte kScene7100TransferRonFrameHook = 5;
+const byte kScene7100TransferRonFrameHook = 1;
 const byte kScene7100FirstTransferableSueItem = 0x14;
 const byte kScene7100RonInventoryOwner = 0;
 const byte kScene7100SueInventoryOwner = 1;
@@ -479,23 +475,7 @@ void Scene7100::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 }
 
 void Scene7100::handleAnimationFrameHook(byte hookId, uint frame) {
-	GameplayState &state = _vm->gameState();
 	switch (hookId) {
-	case kScene7100RatTrapStateHook:
-		state.cellPlateRatProgress = 1;
-		applySceneStateToHotspotsAndPatches(2);
-		break;
-	case kScene7100RatPickupStateHook:
-		state.cellPlateRatProgress = 2;
-		applySceneStateToHotspotsAndPatches(2);
-		break;
-	case kScene7100RatPickupEnvironmentHook:
-		_environmentState = 5;
-		break;
-	case kScene7100PlateRemovalStateHook:
-		state.cellPlateRemoved = true;
-		applySceneStateToHotspotsAndPatches(4);
-		break;
 	case kScene7100TransferRonFrameHook:
 		_primaryMode = 0;
 		_primaryFrame = kScene7100TransferRonFrameMap[
@@ -1019,7 +999,8 @@ void Scene7100::handlePlateOnMousetrap() {
 		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
 			kScene7100Extended337FrameMap, ARRAYSIZE(kScene7100Extended337FrameMap),
 			kScene7100FrameMillis)
-			.hookAt(0x18, kScene7100RatTrapStateHook));
+			.commitAt(0x18, _vm->gameState().cellPlateRatProgress, (byte)1)
+			.patchAt(0x18, 2));
 	if (_vm->gameState().cellPlateRatProgress != 1) {
 		_vm->gameState().cellPlateRatProgress = 1;
 		applySceneStateToHotspotsAndPatches(2);
@@ -1035,7 +1016,8 @@ void Scene7100::handleCaptureRat() {
 		.actorReplacement(ActionOverlaySpec(19, kScene7100Chunk19DescriptorCount,
 			kScene7100Item16FirstFrameMap, ARRAYSIZE(kScene7100Item16FirstFrameMap),
 			kScene7100FrameMillis)
-			.hookAt(0x1f, kScene7100RatPickupStateHook));
+			.commitAt(0x1f, _vm->gameState().cellPlateRatProgress, (byte)2)
+			.patchAt(0x1f, 2));
 	if (_vm->gameState().cellPlateRatProgress != 2) {
 		_vm->gameState().cellPlateRatProgress = 2;
 		applySceneStateToHotspotsAndPatches(2);
@@ -1055,7 +1037,7 @@ void Scene7100::handleCaptureRat() {
 		.actorReplacement(ActionOverlaySpec(20, kScene7100Chunk20DescriptorCount,
 			kScene7100Item16SecondFrameMap, ARRAYSIZE(kScene7100Item16SecondFrameMap),
 			kScene7100FrameMillis)
-			.hookAt(0x18, kScene7100RatPickupEnvironmentHook));
+			.commitAt(0x18, _environmentState, (byte)5));
 	_environmentState = 5;
 	addInventoryItem(0x16);
 	sequence.sound(1)
@@ -1076,7 +1058,8 @@ void Scene7100::handleRemovePlate() {
 	sequence.actorReplacement(ActionOverlaySpec(18, kScene7100Chunk18DescriptorCount,
 		kScene7100Item14FrameMap, ARRAYSIZE(kScene7100Item14FrameMap),
 		kScene7100FrameMillis)
-		.hookAt(0x24, kScene7100PlateRemovalStateHook));
+		.commitAt(0x24, _vm->gameState().cellPlateRemoved, true)
+		.patchAt(0x24, 4));
 	if (!_vm->gameState().cellPlateRemoved) {
 		_vm->gameState().cellPlateRemoved = true;
 		applySceneStateToHotspotsAndPatches(4);
