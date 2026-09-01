@@ -26,7 +26,7 @@
 
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
@@ -99,7 +99,7 @@ private:
 	uint subtitleTextWidth(const Common::String &text) const;
 	void stopAudio() override;
 
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	MusicPlayer *_music;
 	SpeechPlayer _primarySpeech;
 	SpeechPlayer _secondarySpeech;

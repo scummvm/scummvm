@@ -19,36 +19,45 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_INTRO_INTRO_RESOURCE_SET_H
-#define HOLLYWOOD_SCENES_INTRO_INTRO_RESOURCE_SET_H
+#ifndef HOLLYWOOD_SCENES_SCENE_RESOURCES_H
+#define HOLLYWOOD_SCENES_SCENE_RESOURCES_H
 
 #include "common/array.h"
+#include "common/types.h"
 
 #include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {
 
-// Owns the currently loaded intro archive table and decode arena.
-class IntroResourceSet {
+// Owns scene archive chunks and generic chunk loading helpers.
+class SceneResources {
 public:
-	IntroResourceSet();
+	SceneResources();
 
 	void clearChunkOffsets();
 	bool loadChunkTable(const char *archiveName);
-	bool validateChunk(const char *archiveName, const char *debugName, uint index) const;
-	bool validateChunkRange(const char *archiveName, const char *debugName, uint firstChunk, uint lastChunk) const;
+	bool validateChunk(const char *archiveName, const char *sceneDebugName,
+		uint index) const;
+	bool validateChunkRange(const char *archiveName, const char *sceneDebugName,
+		uint firstChunk, uint lastChunk) const;
+	bool validateRequiredChunks(const char *archiveName, const char *sceneDebugName,
+		uint requiredChunkCount, uint framebufferChunkIndex = 0) const;
 	uint32 totalChunkSize(uint firstChunk, uint lastChunk) const;
 	void allocateArena(uint32 byteCount);
 
-	bool loadFixedChunk(const char *debugName,
+	bool loadFixedChunk(const char *sceneDebugName,
 		uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadFixedChunk(const char *debugName,
+	bool loadFixedChunk(const char *sceneDebugName,
+		uint index, Graphics::ManagedSurface &destination, uint fixedSize);
+	bool loadFixedChunk(const char *sceneDebugName,
 		uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
-	bool loadArenaChunk(const char *debugName, uint archiveIndex, uint localChunkIndex);
-	bool loadArenaChunkAlias(const char *debugName,
-		uint sourceIndex, uint aliasIndex, uint targetIndex);
+	bool loadArenaChunk(const char *sceneDebugName, uint index);
+	bool loadArenaChunk(const char *sceneDebugName, uint archiveIndex,
+		uint localChunkIndex);
+	bool loadArenaChunkAlias(const char *sceneDebugName, uint sourceIndex,
+		uint aliasIndex, uint targetIndex);
 
 	enum {
 		kResourceChunkCount = 40
@@ -56,8 +65,9 @@ public:
 
 	ResourceChunkTable chunkTable;
 	uint32 chunkOffsets[kResourceChunkCount];
-	Common::Array<byte> arena;
 	uint32 arenaCursor;
+	Common::Array<byte> arena;
+	Common::Array<byte> metadata;
 
 private:
 	ChunkArchive _archive;
@@ -65,4 +75,4 @@ private:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_INTRO_INTRO_RESOURCE_SET_H
+#endif // HOLLYWOOD_SCENES_SCENE_RESOURCES_H

@@ -26,7 +26,7 @@
 #include "common/random.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
@@ -82,7 +82,7 @@ private:
 	MusicPlayer *_music;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
-	IntroResourceSet _resources;
+	SceneResources _resources;
 	Common::Array<byte> _paletteResource;
 	IndexedSurfaceBuffer _descriptorBackground;
 	uint32 _overlayAccumulator;
