@@ -1437,6 +1437,9 @@ bool Flow::loadDialogueSaveStateBlob(const Common::Array<byte> &blob, uint32 sav
 Common::Error Flow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
+	Common::Error passwordError = _menu.validateParentalPassword(*this);
+	if (passwordError.getCode() != Common::kNoError || _engine.shouldQuit())
+		return passwordError;
 
 	clearPendingMainMenuReturn();
 	clearPendingGameOverReturn();

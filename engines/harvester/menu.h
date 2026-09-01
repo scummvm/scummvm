@@ -42,6 +42,9 @@ struct MenuTextConfig {
 	Common::String yesLabel = "YES";
 	Common::String noLabel = "NO";
 	Common::String clickLabel = "CLICK";
+	Common::String onLabel = "On";
+	Common::String offLabel = "Off";
+	Common::String enterPasswordLabel = "ENTER PASSWORD";
 	Common::String newGamePrompt = "NEW GAME";
 	Common::String quitGamePrompt = "QUIT GAME";
 	Common::String talkToVerb = "Talk to";
@@ -87,6 +90,7 @@ public:
 	Common::Error runMainMenuStub(Flow &flow);
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow, bool canSaveGame);
+	Common::Error validateParentalPassword(Flow &flow);
 
 private:
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
@@ -103,6 +107,9 @@ private:
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &flow);
+	Common::Error runPasswordPrompt(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &flow, bool drawLogo, Common::String &password,
+		bool &accepted) const;
 	Common::Error showGameOverBackdrop(Flow &flow);
 	void clearMainMenuBackdrop();
 	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
