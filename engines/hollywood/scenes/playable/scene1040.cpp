@@ -48,8 +48,6 @@ const uint kScene1040CordOverlayDescriptorCount = 0x19;
 const uint kScene1040GorillaCordOverlayChunk = 0x10;
 const uint kScene1040GorillaCordOverlayDescriptorCount = 0x0b;
 const int kScene1040ForegroundYThreshold = 0x15f;
-const byte kScene1040CordSetupSoundHook = 1;
-const byte kScene1040CordPickupPatchHook = 2;
 const byte kScene1040FirstAmbientSoundCue = 0x25;
 const byte kScene1040AmbientSoundCueCount = 7;
 const byte kScene1040FirstAmbientMusicCue = 0x0b;
@@ -292,22 +290,6 @@ AmbientAudioProfile Scene1040::ambientAudioProfile() const {
 		kScene1040AmbientMusicProbabilityModulus);
 }
 
-void Scene1040::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene1040CordPickupPatchHook) {
-		if (frame == 0 && _sceneChunkTable.isValidChunk(14))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
-		return;
-	}
-
-	if (hookId != kScene1040CordSetupSoundHook)
-		return;
-
-	if (frame == 8)
-		_soundBank0.playSampleLooping(0x23, 75);
-	else if (frame == 28)
-		_soundBank0.stop();
-}
-
 void Scene1040::runDoorToCloakroomAction() {
 	BlockingSequence(*this)
 		.actorReplacement(8, kScene1040DoorOverlayDescriptorCount,
@@ -330,7 +312,7 @@ void Scene1040::handleCordPickup() {
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
 		kScene1040CordFrameMap, ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis)
-		.hookAt(0, kScene1040CordPickupPatchHook))
+		.resourcePatchAt(0, 14))
 		.commit(state.scene1040GorillaCordState, (byte)2)
 		.framebufferPatch(2);
 	addInventoryItem(0x1b);
@@ -367,7 +349,8 @@ void Scene1040::handleGorillaCordSetup() {
 			kScene1040GorillaCordOverlayDescriptorCount,
 			kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
 			kScene1040FrameMillis)
-			.hookEveryFrame(kScene1040CordSetupSoundHook))
+			.loopingSoundAt(8, 0x23, 75)
+			.stopSoundAt(28))
 		.stopSound()
 		.secondarySpeech(13, 0)
 		.commit(state.scene1040GorillaCordState, (byte)1)

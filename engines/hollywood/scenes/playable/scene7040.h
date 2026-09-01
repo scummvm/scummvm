@@ -62,7 +62,6 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runJosephGuestListGreeting();
 	void waitPreItemIdleSequence();
@@ -89,8 +88,6 @@ private:
 	void runChunk11Range(byte firstFrame, byte endFrame);
 	void runChunk14ActionRange(byte firstFrame, byte endFrame);
 	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
-	void applyChunk14ActionSideEffects(byte frameIndex);
-	void applyChunk14AltSideEffects(byte frameIndex);
 	void configureAnimationLayers();
 	void resetTransientAnimationLayers();
 	void syncAnimationLayerFrames();

@@ -44,9 +44,7 @@ const byte kScene5050PickupSpeechBaseFrame = 0x0a;
 const byte kScene5050PickupSpeechFrameCount = 4;
 
 enum Scene5050AnimationHookId {
-	kScene5050SpecialHoldHook = 1,
-	kScene5050PickupSpeechHook,
-	kScene5050PickupSoundHook
+	kScene5050SpecialHoldHook = 1
 };
 
 const byte kScene5050SpecialTransitionFrameMap[] = {
@@ -232,19 +230,6 @@ void Scene5050::handleAnimationFrameHook(byte hookId, uint frame) {
 	case kScene5050SpecialHoldHook:
 		waitSceneMillis(kScene5050SpecialHoldMillis, false);
 		return;
-	case kScene5050PickupSpeechHook: {
-		const GameplayState &state = _vm->gameState();
-		const byte pickupIndex = state.frankensteinPartRewardIndex();
-		const bool grantItem = !state.scene5050TrophyBoxTaken &&
-			pickupIndex < ARRAYSIZE(kScene5050PickupItems);
-		beginPrimarySpeechLine(grantItem ? 0x16 : 0x66,
-			grantItem ? (byte)(pickupIndex * 2) : 0,
-			0x29d, 0x128, 0x3f, 0x3f, 0x3f);
-		return;
-	}
-	case kScene5050PickupSoundHook:
-		_soundBank0.playSample(1, 100);
-		return;
 	default:
 		PlayableScene::handleAnimationFrameHook(hookId, frame);
 		return;
@@ -305,7 +290,9 @@ void Scene5050::runTrophyBoxPickup() {
 		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
 		kScene5050PickupFrameMillis)
 		.endAt(11)
-		.hookAt(10, kScene5050PickupSpeechHook)
+		.primarySpeechAt(10, grantItem ? 0x16 : 0x66,
+			grantItem ? (byte)(pickupIndex * 2) : 0,
+			0x29d, 0x128, 0x3f, 0x3f, 0x3f)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 
@@ -315,7 +302,7 @@ void Scene5050::runTrophyBoxPickup() {
 	closing.frameRange(grantItem ? 14 : 26, ARRAYSIZE(kScene5050PickupFrameMap))
 		.noFinalFrameDelay();
 	if (grantItem)
-		closing.hookAt(24, kScene5050PickupSoundHook);
+		closing.soundAt(24, 1);
 	runActorReplacement(closing);
 
 	if (!grantItem || Engine::shouldQuit() || _vm->isSceneRestartRequested())

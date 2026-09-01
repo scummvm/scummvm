@@ -44,12 +44,6 @@ const byte kScene5060GasFilledInventoryItem = 0x4d;
 const byte kScene5060GasSpeechBaseFrame = 6;
 const byte kScene5060GasSpeechFrameCount = 4;
 
-enum Scene5060AnimationHookId {
-	kScene5060GasSpeechHook = 1,
-	kScene5060MineCartStopRumbleHook,
-	kScene5060RockBackgroundPatchHook
-};
-
 const byte kScene5060RockPickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
@@ -251,7 +245,7 @@ void Scene5060::runMineCartEntryClip() {
 		frameMap.data(), frameMap.size(), kScene5060MineCartFrameMillis)
 		.startAt(1)
 		.soundAt(0x3c, 0x16)
-		.hookAt(0x3c, kScene5060MineCartStopRumbleHook)
+		.commitAt(0x3c, _mineCartRumbleActive, false)
 		.noFinalFrameDelay());
 }
 
@@ -271,7 +265,7 @@ void Scene5060::runRockPickup() {
 	runActorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
 		kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
 		.startAt(1)
-		.hookAt(6, kScene5060RockBackgroundPatchHook)
+		.resourcePatchAt(6, 8)
 		.noFinalFrameDelay());
 	state.scene5060RockTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
@@ -300,7 +294,7 @@ void Scene5060::runGasInventoryAction() {
 	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
 		kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
 		.frameRange(1, 6)
-		.hookAt(5, kScene5060GasSpeechHook)
+		.primarySpeechAt(5, 3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	runActorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
@@ -333,26 +327,6 @@ uint32 Scene5060::primarySpeechAnimationFrameMillis(byte animationGroup) const {
 void Scene5060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
 	_actionOverlayPlayer.setFrame(frameIndex);
-}
-
-void Scene5060::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-
-	switch (hookId) {
-	case kScene5060GasSpeechHook:
-		beginPrimarySpeechLine(3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f);
-		return;
-	case kScene5060MineCartStopRumbleHook:
-		_mineCartRumbleActive = false;
-		return;
-	case kScene5060RockBackgroundPatchHook:
-		if (_sceneChunkTable.isValidChunk(8))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
-		return;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		return;
-	}
 }
 
 void Scene5060::rebuildWalkableMask() {

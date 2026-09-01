@@ -74,9 +74,6 @@ const byte kScene4010HeckerSpeechGreen = 0x30;
 const byte kScene4010HeckerSpeechBlue = 0x3f;
 const byte kScene4010PaletteCycleFirstColor = 0x80;
 const byte kScene4010PaletteCycleLastColor = 0x9f;
-const byte kScene4010CameoPatchHook = 1;
-const byte kScene4010ThrownItemPatchHook = 2;
-const byte kScene4010DestinationSoundHook = 3;
 const uint kScene4010RoomIdleLayer = 0;
 
 struct Scene4010ReleaseProfile {
@@ -185,9 +182,7 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_heckerAlternateSpeechPose(false),
 		_heckerManualSequenceActive(false),
 		_heckerPoseTransitionPending(false),
-		_roomAnimationPaused(false),
-		_destinationSoundStartFrame(0),
-		_destinationSoundStopFrame(0) {
+		_roomAnimationPaused(false) {
 	_sceneLayers.configure(kScene4010LayerSpecs);
 	_normalBaseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -470,19 +465,6 @@ void Scene4010::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 void Scene4010::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
 	(void)animationGroup;
 	setHeckerFrame(baseFrame);
-}
-
-void Scene4010::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene4010CameoPatchHook) {
-		applyBaseFramebufferPatch(8);
-	} else if (hookId == kScene4010ThrownItemPatchHook) {
-		applyBaseFramebufferPatch(11);
-	} else if (hookId == kScene4010DestinationSoundHook) {
-		if (frame == _destinationSoundStartFrame)
-			_soundBank0.playSample(0x38, 25, true);
-		else if (frame == _destinationSoundStopFrame)
-			_soundBank0.stop();
-	}
 }
 
 bool Scene4010::alternateBackgroundActive() const {
@@ -1002,7 +984,7 @@ void Scene4010::takeAnimatedItem3A() {
 	runActorReplacement(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
 		kScene4010Item3AFrameMap, ARRAYSIZE(kScene4010Item3AFrameMap), kScene4010OverlayFrameMillis)
 		.startAt(1)
-		.hookAt(7, kScene4010CameoPatchHook));
+		.resourcePatchAt(7, 8));
 	_roomAnimationPaused = false;
 	state.scene4010Item3APickupState = 3;
 	applySceneStateToHotspotsAndPatches(3);
@@ -1053,7 +1035,7 @@ void Scene4010::runDestinationUnlockAnimation() {
 		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
 
 	byte logicalFrame = 0x0d;
-	_destinationSoundStartFrame = frameMap.size();
+	const uint soundStartFrame = frameMap.size();
 	for (uint hold = 0; hold < 25; ++hold) {
 		byte nextFrame = logicalFrame;
 		do {
@@ -1063,10 +1045,10 @@ void Scene4010::runDestinationUnlockAnimation() {
 		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
 	}
 
-	_destinationSoundStopFrame = 0;
+	uint soundStopFrame = 0;
 	while (logicalFrame < 0x1e) {
 		if (logicalFrame == 0x14)
-			_destinationSoundStopFrame = frameMap.size();
+			soundStopFrame = frameMap.size();
 		++logicalFrame;
 		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
 	}
@@ -1074,7 +1056,8 @@ void Scene4010::runDestinationUnlockAnimation() {
 	_roomAnimationPaused = true;
 	runActorReplacement(ActionOverlaySpec(15, kScene4010DestinationOverlayDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene4010OverlayFrameMillis)
-		.hookEveryFrame(kScene4010DestinationSoundHook));
+		.loopingSoundAt(soundStartFrame, 0x38, 25)
+		.stopSoundAt(soundStopFrame));
 	_roomAnimationPaused = false;
 	_soundBank0.stop();
 }
@@ -1088,7 +1071,7 @@ void Scene4010::takeThrownItem() {
 	runActorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
 		kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
 		.startAt(1)
-		.hookAt(7, kScene4010ThrownItemPatchHook));
+		.resourcePatchAt(7, 11));
 	_roomAnimationPaused = false;
 	applyBaseFramebufferPatch(11);
 	state.scene4010PillboxPickupState = 2;
