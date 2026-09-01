@@ -28,12 +28,8 @@
 #include "common/types.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/animation_layers.h"
-#include "hollywood/scenes/animation_player.h"
-#include "hollywood/scenes/scene_resources.h"
-#include "hollywood/scenes/playable/scene_surface_state.h"
+#include "hollywood/scenes/presentation_scene.h"
 #include "hollywood/scenes/scene_text_store.h"
-#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -41,7 +37,7 @@ class HollywoodEngine;
 
 // Runs the modal cocktail mixer reached from scene 5120 and returns its result
 // through GameplayState before handing control back to the salon.
-class Scene5130 : public SceneAnimationPlayerDelegate {
+class Scene5130 : public PresentationScene {
 public:
 	Scene5130(HollywoodEngine *vm);
 	~Scene5130() override;
@@ -62,12 +58,9 @@ private:
 	void applySuccessDrinkPalette();
 	void applyFailureDrinkPalette();
 	void applyDrinkPalette(byte red, byte green, byte blue);
-	void resetAnimationLayers();
 	void drawFrame();
-	void drawLayerStack(const SceneLayerStack &layers);
-	void drawSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawDrinkStrip();
-	void presentFrame();
+	void drawFrameOverlays() override;
 	void drawCaption();
 	void startSpeechLine(uint16 rowIndex, byte frameIndex);
 	void startSpeechPart();
@@ -80,29 +73,28 @@ private:
 	bool fadePaletteFromBlack();
 	bool fadePaletteToBlack();
 	bool waitAndRender(uint32 millis);
-	bool pollEvents(byte &selectedAction, bool allowMixerActions);
+	bool waitForRuntime(uint32 millis);
+	bool pollEvents(bool allowSkip) override;
 	byte actionAtCursor() const;
 	Common::String captionForAction(byte actionId) const;
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
-	void stopAudio();
+	void stopAudio() override;
 	bool animationPlaybackShouldStop() const override;
 	void presentAnimationFrame() override;
 	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
 
-	HollywoodEngine *_vm;
-	SceneResources _resources;
-	SceneSurfaceState _surface;
+	IndexedSurfaceBuffer _baseFramebuffer;
+	Common::Array<byte> _fillRuns;
+	Common::Array<byte> _paletteMask;
 	SceneTextStore _textStore;
-	SpeechOverlay _speechOverlay;
 	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
-	SceneLayerStack _animationLayers;
-	SceneAnimationPlayer _animationPlayer;
 	byte _selectedDrinks[3];
 	byte _selectedDrinkCount;
 	byte _currentDrinkId;
 	uint _drinkStripRow;
+	byte _pendingActionId;
 	byte _hoverActionId;
 	uint16 _speechTextRecordId;
 	uint16 _speechVoiceSampleId;
@@ -111,6 +103,7 @@ private:
 	uint32 _speechRemainingMillis;
 	uint32 _ambientMusicTimerMillis;
 	bool _speechActive;
+	bool _mixerActionsEnabled;
 	bool _deferredExitRequested;
 	bool _exitRequested;
 };
