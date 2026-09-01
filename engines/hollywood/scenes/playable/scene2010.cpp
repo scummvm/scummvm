@@ -472,18 +472,14 @@ void Scene2010::runLongSequenceToScene2100() {
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
-	_gatekeeperSequenceActive = true;
-	if (!playAndPresentAnimationFrames(_sceneLayers, kScene2010GatekeeperLayer,
-			AnimationFrameRange(0x1a, 0x1f, kScene2010OverlayFrameMillis).unskippable())) {
-		_gatekeeperSequenceActive = false;
-		return;
-	}
-	if (!walkActiveActorTo(0x130, 0x105, 0xff, 0, false)) {
-		_gatekeeperSequenceActive = false;
-		return;
-	}
-	_gatekeeperSequenceActive = false;
-	state.mainFlowStateId = kScene2100EntryState;
+	BlockingSequence sequence(*this);
+	sequence.commit(_gatekeeperSequenceActive, true)
+		.presentedLayerFrames(kScene2010GatekeeperLayer,
+			AnimationFrameRange(0x1a, 0x1f, kScene2010OverlayFrameMillis).unskippable())
+		.actorPath(SceneActorPose(0x130, 0x105, 0xff))
+		.commit(_gatekeeperSequenceActive, false);
+	if (sequence.completed())
+		sequence.commit(state.mainFlowStateId, kScene2100EntryState);
 }
 
 } // End of namespace Hollywood

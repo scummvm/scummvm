@@ -472,22 +472,23 @@ void Scene4070::advanceDraculaIdle(uint32 delta) {
 			if (_random.getRandomNumber(49) != 0)
 				continue;
 
-			_draculaIdleSequenceActive = true;
+			BlockingSequence sequence(*this);
+			sequence.commit(_draculaIdleSequenceActive, true);
 			if (_random.getRandomNumber(1) == 0) {
 				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(1), false);
 			} else {
-				const bool openedPose = playAndPresentAnimationFrames(kScene4070DraculaLayer,
+				sequence.presentedLayerFrames(kScene4070DraculaLayer,
 					AnimationFrameRange(0, 2, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
-				if (openedPose) {
+				if (sequence.completed()) {
 					beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(2), true);
-					playAndPresentAnimationFrames(kScene4070DraculaLayer,
+					sequence.presentedLayerFrames(kScene4070DraculaLayer,
 						AnimationFrameRange(3, 5, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
 				}
 				draculaLayer.setFrame(kScene4070DraculaIdleFrame);
 			}
-			_draculaIdleSequenceActive = false;
+			sequence.commit(_draculaIdleSequenceActive, false);
 			_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
-			if (animationPlaybackShouldStop())
+			if (!sequence.completed())
 				return;
 		}
 	}
