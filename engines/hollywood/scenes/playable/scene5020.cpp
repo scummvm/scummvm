@@ -99,15 +99,10 @@ void Scene5020::initializeCustomPreviewState() {
 	setActiveActorPose(kScene5020EntryStartX, kScene5020EntryStartY, 4);
 }
 
-void Scene5020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
-		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
-		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY, byte actorDrawOrderMode) {
-	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+void Scene5020::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode) {
+	(void)activeWorldX;
 	drawForeground(actorDrawOrderMode, activeWorldY);
-	drawActionOverlayLayer();
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 }
 
 bool Scene5020::shouldPresentPreviewBeforeEntrySequence() const {

@@ -113,20 +113,10 @@ void Scene7020::initializeCustomPreviewState() {
 	clearAllSpeechOverlays();
 }
 
-void Scene7020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene7020::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
-	copyBaseFramebufferToSceneFramebuffer();
-
-	drawSceneLayer(kScene7020Chunk6Layer);
-
-	if (_sceneLayers.layerVisible(kScene7020Chunk7Layer)) {
-		drawSceneLayer(kScene7020Chunk7Layer);
-	} else {
-		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	}
-
+	(void)activeWorldX;
+	(void)activeWorldY;
 	if (actorDrawOrderMode != 2)
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }

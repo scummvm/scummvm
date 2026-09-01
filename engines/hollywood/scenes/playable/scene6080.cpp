@@ -124,16 +124,8 @@ void Scene6080::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 }
 
-void Scene6080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel,
-		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing,
-		byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-	copyBaseFramebufferToSceneFramebuffer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel,
-		activeWorldX, activeWorldY, drawActiveActor && drawSecondaryActor, secondaryFacing,
-		secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
+bool Scene6080::shouldDrawSecondaryActorInPlayableComposite() const {
+	return !_hideActiveActor && PlayableScene::shouldDrawSecondaryActorInPlayableComposite();
 }
 
 void Scene6080::runCustomEntrySequence() {

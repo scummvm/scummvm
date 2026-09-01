@@ -117,32 +117,6 @@ void Scene2010::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene2010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	if (_sceneLayers.layerVisible(kScene2010ScriptLayer) &&
-			_sceneLayers.isInStratum(kScene2010ScriptLayer, kSceneAnimationBehindActors))
-		drawSceneLayer(kScene2010ScriptLayer);
-	drawSceneLayer(kScene2010GatekeeperLayer);
-	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors)
-		drawActionOverlayLayer();
-	const bool scriptReplacesActor = _sceneLayers.layerVisible(kScene2010ScriptLayer) &&
-		_sceneLayers.isInStratum(kScene2010ScriptLayer, kSceneAnimationActorReplacement);
-	drawActiveAndSecondaryActorFrames(drawActiveActor && !scriptReplacesActor,
-		activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	if (_sceneLayers.layerVisible(kScene2010ScriptLayer) &&
-			!_sceneLayers.isInStratum(kScene2010ScriptLayer, kSceneAnimationBehindActors))
-		drawSceneLayer(kScene2010ScriptLayer);
-	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum != kSceneAnimationBehindActors)
-		drawActionOverlayLayer();
-}
-
 void Scene2010::runCustomEntrySequence() {
 	switch (_vm->gameState().mainFlowStateId) {
 	case kScene2010EntryFromB02State:

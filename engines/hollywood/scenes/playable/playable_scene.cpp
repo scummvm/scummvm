@@ -709,6 +709,7 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}
+	drawCustomActorForegroundComposite(activeWorldX, activeWorldY, actorDrawOrderMode);
 	drawActionOverlayAtStratum(kSceneAnimationActorReplacement);
 	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
 	drawActionOverlayAtStratum(kSceneAnimationInFrontOfActors);
@@ -728,6 +729,13 @@ void PlayableScene::prepareCustomComposite(bool drawActors, byte activeFacing,
 void PlayableScene::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY) {
 	(void)activeWorldX;
 	(void)activeWorldY;
+}
+
+void PlayableScene::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode) {
+	(void)activeWorldX;
+	(void)activeWorldY;
+	(void)actorDrawOrderMode;
 }
 
 void PlayableScene::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
