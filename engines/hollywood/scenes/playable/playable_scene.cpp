@@ -3078,6 +3078,19 @@ void PlayableScene::advanceRealtimeSpeech(uint32 delta) {
 	startRealtimeSpeechPart();
 }
 
+bool PlayableScene::waitForRealtimeSpeech(bool allowSkip) {
+	while (isRealtimeSpeechActive() && !animationPlaybackShouldStop()) {
+		if (waitSceneMillis(50, allowSkip)) {
+			stopRealtimeSpeech();
+			return true;
+		}
+	}
+
+	if (isRealtimeSpeechActive())
+		stopRealtimeSpeech();
+	return animationPlaybackShouldStop();
+}
+
 void PlayableScene::stopRealtimeSpeech() {
 	finishRealtimeSpeech(false);
 }

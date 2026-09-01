@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene2030.h"
 
-#include "common/system.h"
-
 #include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -93,7 +91,8 @@ enum Scene2030MerchantSpeechGroup {
 
 enum Scene2030RealtimeSpeechId {
 	kScene2030RightMerchantCalloutSpeech = 1,
-	kScene2030LeftMerchantCalloutSpeech = 2
+	kScene2030LeftMerchantCalloutSpeech = 2,
+	kScene2030MerchantInteractionSpeech = 3
 };
 
 const byte kScene2030LeftMerchantFrameMap[] = {
@@ -270,6 +269,10 @@ void Scene2030::advanceTransitionAnimation(uint32 delta) {
 }
 
 void Scene2030::realtimeSpeechEnded(byte speechId, bool completed) {
+	if (speechId != kScene2030RightMerchantCalloutSpeech &&
+			speechId != kScene2030LeftMerchantCalloutSpeech)
+		return;
+
 	if (!completed) {
 		resetMerchantCalloutState();
 		return;
@@ -597,10 +600,14 @@ bool Scene2030::startMerchantCalloutSpeech(bool rightMerchant) {
 }
 
 void Scene2030::stopMerchantCalloutSpeech() {
-	if (isRealtimeSpeechActive())
-		stopRealtimeSpeech();
-	else
+	if (!isRealtimeSpeechActive()) {
 		resetMerchantCalloutState();
+		return;
+	}
+
+	if (realtimeSpeechId() == kScene2030RightMerchantCalloutSpeech ||
+			realtimeSpeechId() == kScene2030LeftMerchantCalloutSpeech)
+		stopRealtimeSpeech();
 }
 
 void Scene2030::resetMerchantCalloutState() {
@@ -663,23 +670,12 @@ void Scene2030::closeMerchantAfterInteraction(bool rightMerchant) {
 }
 
 void Scene2030::waitForMerchantState(bool rightMerchant, byte targetState) {
-	uint32 lastMillis = g_system->getMillis();
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			break;
-
 		const byte state = rightMerchant ? _rightMerchantState : _leftMerchantState;
 		if (state == targetState)
 			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		advanceMerchantLayers(delta);
-		updateAmbientAudioAndMusicCues(delta);
-		drawPlayableComposite();
-		presentFrame();
-		g_system->delayMillis(10);
+		if (waitSceneMillis(10))
+			break;
 	}
 }
 
@@ -697,31 +693,11 @@ void Scene2030::beginSecondarySpeechLineAndOpenMerchant(uint16 rowIndex, byte fr
 		return;
 	}
 
-	const uint32 startMillis = g_system->getMillis();
-	const bool started = startSecondarySpeechLine(rowIndex, frameIndex);
-	const bool hasSubtitle = !_speechOverlay.lines.empty();
-	const uint32 durationMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(1200, (uint32)_speechOverlay.lines.size() * 1100);
-
+	const bool started = startRealtimeSecondarySpeechLine(rowIndex, frameIndex,
+		kScene2030MerchantInteractionSpeech);
 	openMerchantForInteraction(rightMerchant);
-	if (started || hasSubtitle)
-		waitForStartedSecondarySpeech(startMillis, durationMillis);
-}
-
-void Scene2030::waitForStartedSecondarySpeech(uint32 startMillis, uint32 durationMillis) {
-	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		const bool speechActive = _speech.isPlaying();
-		const uint32 elapsed = g_system->getMillis() - startMillis;
-		if (!speechActive && elapsed >= durationMillis)
-			break;
-
-		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, durationMillis - elapsed);
-		if (waitSceneMillis(slice))
-			break;
-	}
-
-	_speech.stop();
-	clearSpeechOverlay();
+	if (started)
+		waitForRealtimeSpeech();
 }
 
 void Scene2030::runMerchantPrimarySpeechLine(uint16 rowIndex, byte frameIndex, bool rightMerchant) {

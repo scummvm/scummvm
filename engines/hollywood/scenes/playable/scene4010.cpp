@@ -21,7 +21,6 @@
 
 #include "hollywood/scenes/playable/scene4010.h"
 
-#include "common/system.h"
 #include "graphics/pixelformat.h"
 
 #include "hollywood/detection.h"
@@ -768,26 +767,10 @@ void Scene4010::beginD01SpeechLine(uint16 rowIndex, byte normalFrame, byte alter
 }
 
 void Scene4010::beginSecondarySpeechLineAndEnterHeckerPose(uint16 rowIndex, byte frameIndex) {
-	const uint32 startMillis = g_system->getMillis();
-	const bool started = startSecondarySpeechLine(rowIndex, frameIndex);
-	const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(1200, (uint32)_speechOverlay.lines.size() * 1100);
-
+	const bool started = startRealtimeSecondarySpeechLine(rowIndex, frameIndex, 0);
 	runHeckerDialoguePoseStart();
-
-	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		const bool speechActive = _speech.isPlaying();
-		const uint32 elapsed = g_system->getMillis() - startMillis;
-		if (!speechActive && elapsed >= duration)
-			break;
-
-		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, duration - elapsed);
-		if (waitSceneMillis(slice))
-			break;
-	}
-
-	_speech.stop();
-	clearSpeechOverlay();
+	if (started)
+		waitForRealtimeSpeech();
 }
 
 void Scene4010::beginHeckerSpeechLine(byte frameIndex) {

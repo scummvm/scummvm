@@ -443,6 +443,7 @@ protected:
 	bool startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX,
 		uint16 topY, byte red, byte green, byte blue, byte animationGroup, byte speechId);
 	bool startRealtimeSecondarySpeechLine(uint16 rowIndex, byte frameIndex, byte speechId);
+	bool waitForRealtimeSpeech(bool allowSkip = true);
 	void advanceRealtimeSpeech(uint32 delta);
 	void stopRealtimeSpeech();
 	bool isRealtimeSpeechActive() const { return _realtimeSpeechActive; }
