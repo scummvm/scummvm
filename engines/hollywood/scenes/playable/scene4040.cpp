@@ -126,21 +126,12 @@ void Scene4040::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene4040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene4040::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
+	(void)activeWorldX;
 	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawBackgroundLayers();
-	if (_actionOverlayPlayer.replacesActor()) {
-		drawActionOverlayLayer();
-		return;
-	}
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawForegroundBlocks(activeWorldY);
-	drawActionOverlayLayer();
+	if (!_actionOverlayPlayer.replacesActor())
+		drawForegroundBlocks(activeWorldY);
 }
 
 void Scene4040::runCustomEntrySequence() {
