@@ -44,12 +44,13 @@ protected:
 	virtual uint presentXOffset() const;
 
 	void presentFrame();
+	void presentFrame(uint rowOffset, uint xOffset);
 	bool pollEvents();
 	bool delay(uint32 millis);
 
 	bool revealSavedFramebufferWithCurtain(byte bandWidth = 0x14);
 	bool clearSceneFramebufferWithCurtain(byte bandWidth = 0x14);
-	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth);
+	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth, uint xOffset = 0);
 	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
 	void copySavedFramebufferRun(int y, int x, int width);
 	void clearSceneFramebufferRun(int y, int x, int width);
