@@ -47,7 +47,7 @@
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/scene_text_store.h"
 #include "hollywood/scenes/playable/speech_controller.h"
-#include "hollywood/scenes/playable/speech_overlay.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Graphics {
 struct Surface;
@@ -510,7 +510,6 @@ protected:
 	void clearSpeechOverlay();
 	void clearAllSpeechOverlays();
 	void drawSpeechOverlay();
-	void drawSpeechOverlay(const SpeechOverlay &overlay);
 
 	// Resource sprite layers
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
@@ -655,8 +654,6 @@ protected:
 		uint16 &voiceSampleId) const;
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getResource003LargeTextRecord(uint16 recordId) const;
-	uint actorSpeechTextWidth(const Common::String &text) const;
-	uint speechOverlayTextWidth(const SpeechOverlay &overlay) const;
 	void calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY, bool useRequestedTop,
 		int actorWorldY);
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);

@@ -26,7 +26,7 @@
 #include "common/types.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/playable/speech_overlay.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 

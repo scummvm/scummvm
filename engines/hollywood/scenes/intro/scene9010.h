@@ -29,6 +29,7 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 
@@ -57,14 +58,6 @@ private:
 		byte red;
 		byte green;
 		byte blue;
-	};
-
-	struct SubtitleOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
 	};
 
 	enum I02FramePayloadFormat {
@@ -108,12 +101,7 @@ private:
 	void drawFrameOverlays() override;
 	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex);
 	void clearSubtitle();
-	void drawSubtitleOverlay();
-	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getStage003LargeTextRecord(uint16 recordId) const;
-	uint actorSpeechTextWidth(const Common::String &text) const;
-	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines,
-		const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 	PopupDescriptor getStage003PopupDescriptor(byte descriptorIndex) const;
 	SpeechTextStyle getCurrentSpeechTextStyle() const;
 
@@ -134,8 +122,7 @@ private:
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
 		kCharacterFrameDescriptorCount = 17,
-		kFrameDescriptorSize = 14,
-		kOriginalSpeechLineHeight = 20
+		kFrameDescriptorSize = 14
 	};
 
 	MusicPlayer _music;
@@ -151,7 +138,7 @@ private:
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
-	SubtitleOverlay _subtitle;
+	SpeechOverlay _subtitle;
 	bool _alternatePoseActive;
 	byte _characterFrameIndex;
 	byte _lastTalkingFrameVariant;
