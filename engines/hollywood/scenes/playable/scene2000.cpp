@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/playable/scene2000.h"
 
-#include "common/system.h"
-
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -125,18 +123,13 @@ void Scene2000::runPresentation() {
 	uint32 paletteAccumulator = 0;
 	uint32 spriteAccumulator = 0;
 	uint32 clipAccumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	uint32 delta = 0;
 	bool spriteDirty = false;
+	TimedPresentationLoop loop(*this, TimedPresentationLoop::kUntilStopped);
 
 	_presentationSound.playSample(0x29, 30);
 
-	while (tick < kScene2000EndTick && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			break;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
+	while (tick < kScene2000EndTick && loop.beginFrame()) {
 		phaseAccumulator += delta;
 		paletteAccumulator += delta;
 		spriteAccumulator += delta;
@@ -190,7 +183,7 @@ void Scene2000::runPresentation() {
 			spriteDirty = false;
 		}
 
-		g_system->delayMillis(10);
+		delta = loop.finishFrame();
 	}
 
 	_presentationSound.stop();
