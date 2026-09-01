@@ -349,11 +349,13 @@ void Scene6080::finishSueIdleSequence() {
 }
 
 void Scene6080::runReturnConversation() {
-	_guardManualSequenceActive = true;
-	if (!playAndPresentAnimationTransition(_sceneLayers, kGuardNormalLayer,
-			AnimationTransition(5, 9, 9, kScene6080GuardFrameMillis).unskippable()))
+	BlockingSequence sequence(*this);
+	sequence.commit(_guardManualSequenceActive, true)
+		.presentedLayerTransition(kGuardNormalLayer,
+			AnimationTransition(5, 9, 9, kScene6080GuardFrameMillis).unskippable())
+		.commit(_guardManualSequenceActive, false);
+	if (!sequence.completed())
 		return;
-	_guardManualSequenceActive = false;
 
 	beginPrimarySpeechLineWithAnimationGroup(7, 0, 0x1b4, 0xfa,
 		0x30, 0x3f, 0, kScene6080GuardSpeechGroup);
@@ -367,11 +369,11 @@ void Scene6080::runReturnConversation() {
 	beginPrimarySpeechLineWithAnimationGroup(7, 4, 0x1b4, 0xfa,
 		0x30, 0x3f, 0, kScene6080GuardSpeechGroup);
 
-	_guardManualSequenceActive = true;
-	playAndPresentAnimationTransition(_sceneLayers, kGuardNormalLayer,
-		AnimationTransition(13, 17, 17, kScene6080GuardFrameMillis).unskippable());
+	sequence.commit(_guardManualSequenceActive, true)
+		.presentedLayerTransition(kGuardNormalLayer,
+			AnimationTransition(13, 17, 17, kScene6080GuardFrameMillis).unskippable());
 	_sceneLayers.setLayerFrame(kGuardNormalLayer, 0);
-	_guardManualSequenceActive = false;
+	sequence.commit(_guardManualSequenceActive, false);
 }
 
 void Scene6080::runWaxBallEscapeSequence() {

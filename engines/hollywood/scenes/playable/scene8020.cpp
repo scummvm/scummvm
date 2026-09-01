@@ -543,23 +543,24 @@ void Scene8020::runForegroundTransformationSequence() {
 
 	_sceneLayers.setLayerFrame(kScene8020ForegroundLayer, 7);
 	_soundBank0.playSample(0x1a, 100);
-	_foregroundSequenceLocked = true;
-	playAndPresentAnimationFrames(_sceneLayers, kScene8020ForegroundLayer,
-		AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
-			.soundAt(0x0c, 0x1b)
-			.soundAt(0x13, 0x1c, 50)
-			.resourcePatchAt(0x13, kScene8020SecondaryPatchChunk)
-			.unskippable()
-			.noFinalFrameDelay());
-	_foregroundSequenceLocked = false;
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	BlockingSequence sequence(*this);
+	sequence.commit(_foregroundSequenceLocked, true)
+		.presentedLayerFrames(kScene8020ForegroundLayer,
+			AnimationFrameRange(7, 0x17, kScene8020FrameMillis)
+				.soundAt(0x0c, 0x1b)
+				.soundAt(0x13, 0x1c, 50)
+				.resourcePatchAt(0x13, kScene8020SecondaryPatchChunk)
+				.unskippable()
+				.noFinalFrameDelay())
+		.commit(_foregroundSequenceLocked, false);
+	if (!sequence.completed())
 		return;
 
 	GameplayState &state = _vm->gameState();
-	state.scene8020ForegroundObjectState = 1;
-	state.scene8020SecondaryObjectVisible = true;
-	applySceneStateToHotspotsAndPatches(1);
-	applySceneStateToHotspotsAndPatches(2);
+	sequence.commit(state.scene8020ForegroundObjectState, (byte)1)
+		.commit(state.scene8020SecondaryObjectVisible, true)
+		.framebufferPatch(1)
+		.framebufferPatch(2);
 	resetForegroundLayer();
 	beginSecondarySpeechLine(8, 2);
 }
