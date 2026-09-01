@@ -428,6 +428,10 @@ protected:
 
 	// Pathfinding
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
+	void startConcurrentActorPath(int targetX, int targetY, byte finalFacing, byte finalCel,
+		uint32 frameMillis);
+	void finishConcurrentActorPath();
+	bool concurrentActorPathActive() const { return _concurrentActorPathActive; }
 	bool adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel);
@@ -746,6 +750,7 @@ protected:
 	SceneLayerStack _sceneLayers;
 	RealtimeAnimationTracks _realtimeAnimationTracks;
 	SceneAnimationPlayer _animationPlayer;
+	TimedAnimationChannel _concurrentActorPathChannel;
 
 	// Speech runtime state
 	SpeechController _speechController;
@@ -791,6 +796,8 @@ protected:
 	uint16 _viewportMinXOffset;
 	uint16 _viewportMaxXOffset;
 	int _lastViewportScrollActorWorldX;
+	uint _concurrentActorPathFrameIndex;
+	bool _concurrentActorPathActive;
 	bool _actorPathPlaybackActive;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
@@ -805,6 +812,8 @@ protected:
 private:
 	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum,
 		bool hideActiveActor);
+	void advanceConcurrentActorPath(uint32 delta);
+	void resetConcurrentActorPath();
 	void handleActorPathFootstep(bool terminalFrame, bool &footstepPlayed);
 };
 
