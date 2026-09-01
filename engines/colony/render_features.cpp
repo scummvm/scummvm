@@ -889,45 +889,106 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		// wallftrs.c draw_dn_stairs(): the same well, dropping away.
+		// A full storey drop over one cell projects through the corridor floor
+		// when viewed from above. Use a shallower render-only drop so the same
+		// tread/riser construction as the up stairs remains visible in the well.
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
 		float farC[4][3];
 		getWallRecess3D(corners, farC);
 		clipToWallFace(corners);
 
 		float dep[7];
-		for (int i = 0; i < 7; i++)
+		float hgt[7];
+		for (int i = 0; i < 7; i++) {
 			dep[i] = (float)(i + 1) / 8.0f;
+			hgt[i] = -(float)(i + 1) / 32.0f;
+		}
+
+		// Fill the shaft sides without framing each panel, so their shared edges
+		// form one continuous wall rather than a row of transparent-looking bars.
+		if (isMacRenderMode() || !_wireframe) {
+			_gfx->setStippleData(nullptr);
+			_gfx->setWireframe(false);
+			for (int i = 1; i <= 7; i++) {
+				const float nearD = dep[i - 1];
+				const float farD = (i < 7) ? dep[i] : 1.0f;
+				const float bottomV = hgt[i - 1];
+				const float sideV[4] = {0.0f, bottomV, bottomV, 0.0f};
+				const float sideD[4] = {nearD, nearD, farD, farD};
+				const float leftU[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+				const float rightU[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+				recessQuad(corners, farC, leftU, sideV, sideD, 4, wallFeatureFill);
+				recessQuad(corners, farC, rightU, sideV, sideD, 4, wallFeatureFill);
+			}
+		}
 
 		if (isMacRenderMode()) {
 			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vw[4] = {hgt[6], hgt[6], 1.0f, 1.0f};
 			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 			macFillRecess(corners, farC, uw, vw, dw, 4, 21, macColors); // c_dnstairs
 
-			// Well floor
-			const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-			const float vFloor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-			const float dFloor[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-			macFillRecess(corners, farC, uq, vFloor, dFloor, 4, 21, macColors);
+			// Match the up-stair materials: dark risers and lighter treads.
+			for (int i = 6; i >= 0; i--) {
+				const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {nearV, hgt[i], hgt[i], nearV};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				macFillRecess(corners, farC, uq, vRiser, dRiser, 4, 20, macColors);
+
+				const float vTread[4] = {nearV, nearV, nearV, nearV};
+				const float dTread[4] = {nearD, dep[i], dep[i], nearD};
+				macFillRecess(corners, farC, uq, vTread, dTread, 4, 19, macColors);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			macFillRecess(corners, farC, ub, vb, db, 4, 19, macColors);
+		} else if (!_wireframe) {
+			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			const float vw[4] = {hgt[6], hgt[6], 1.0f, 1.0f};
+			const float dw[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			dosFillRecess(corners, farC, uw, vw, dw, 4, kColorGray);
+
+			for (int i = 6; i >= 0; i--) {
+				const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+				const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+				const float uq[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float vRiser[4] = {nearV, hgt[i], hgt[i], nearV};
+				const float dRiser[4] = {dep[i], dep[i], dep[i], dep[i]};
+				dosFillRecess(corners, farC, uq, vRiser, dRiser, 4, kColorGray);
+
+				const float vTread[4] = {nearV, nearV, nearV, nearV};
+				const float dTread[4] = {nearD, dep[i], dep[i], nearD};
+				dosFillRecess(corners, farC, uq, vTread, dTread, 4, kColorLtGray);
+			}
+
+			const float ub[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			const float vb[4] = {hgt[6], hgt[6], hgt[6], hgt[6]};
+			const float db[4] = {dep[6], 1.0f, 1.0f, dep[6]};
+			dosFillRecess(corners, farC, ub, vb, db, 4, kColorLtGray);
 		}
 
-		// Ceiling, then the slant to the far mouth
-		recessLine(corners, farC, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, dep[3], col);
-		recessLine(corners, farC, 0.0f, 1.0f, dep[3], 1.0f, 1.0f, dep[3], col);
-		recessLine(corners, farC, 1.0f, 1.0f, dep[3], 1.0f, 1.0f, 0.0f, col);
-		recessLine(corners, farC, 0.0f, 1.0f, dep[3], 0.0f, 0.5f, 1.0f, col);
-		recessLine(corners, farC, 0.0f, 0.5f, 1.0f, 1.0f, 0.5f, 1.0f, col);
-		recessLine(corners, farC, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f, dep[3], col);
+		// Lower landing and closed far mouth.
+		recessLine(corners, farC, 0.0f, hgt[6], dep[6], 0.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 1.0f, hgt[6], 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, hgt[6], dep[6], col);
+		recessLine(corners, farC, 0.0f, hgt[6], 1.0f, 0.0f, 1.0f, 1.0f, col);
+		recessLine(corners, farC, 1.0f, hgt[6], 1.0f, 1.0f, 1.0f, 1.0f, col);
 
-		// Side walls down to the well floor
-		recessLine(corners, farC, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, col);
-		recessLine(corners, farC, 1.0f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f, col);
-		recessLine(corners, farC, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, col);
-		recessLine(corners, farC, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, col);
-
-		// First step
-		recessLine(corners, farC, 0.0f, 0.0f, dep[0], 1.0f, 0.0f, dep[0], col);
+		// Treads and risers.
+		for (int i = 6; i >= 0; i--) {
+			const float nearV = (i > 0) ? hgt[i - 1] : 0.0f;
+			const float nearD = (i > 0) ? dep[i - 1] : 0.0f;
+			recessLine(corners, farC, 0.0f, nearV, nearD, 0.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 1.0f, nearV, nearD, 1.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 0.0f, nearV, dep[i], 1.0f, nearV, dep[i], col);
+			recessLine(corners, farC, 0.0f, nearV, dep[i], 0.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 1.0f, nearV, dep[i], 1.0f, hgt[i], dep[i], col);
+			recessLine(corners, farC, 0.0f, hgt[i], dep[i], 1.0f, hgt[i], dep[i], col);
+		}
 
 		// Handrails
 		recessLine(corners, farC, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, dep[3], col);
