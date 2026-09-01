@@ -25,6 +25,7 @@
 #include "common/types.h"
 
 #include "hollywood/scenes/playable/animation_events.h"
+#include "hollywood/scenes/playable/animation_layers.h"
 
 namespace Hollywood {
 
@@ -55,8 +56,9 @@ struct ActionOverlayOptions {
  * including the last; noFinalFrameDelay() makes the terminal frame an
  * immediate handoff.
  * unskippable() reserves input for the scene while a state-changing sequence
- * runs. The playback entry point determines whether the resource replaces the
- * actor or overlays the scene.
+ * runs. The playback entry point controls actor visibility; drawAt() only
+ * changes composition order. restoreBaseBackground() clears the sprite bounds
+ * from the base framebuffer before each draw.
  */
 struct ActionOverlaySpec {
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
@@ -66,6 +68,9 @@ struct ActionOverlaySpec {
 			frameMap(newFrameMap),
 			frameMapSize(newFrameMapSize),
 			frameMillis(newFrameMillis),
+			hasDrawStratum(false),
+			drawStratum(kSceneAnimationInFrontOfActors),
+			restoreBackgroundBeforeDraw(false),
 			options() {
 	}
 
@@ -176,6 +181,17 @@ struct ActionOverlaySpec {
 		return *this;
 	}
 
+	ActionOverlaySpec &drawAt(SceneAnimationStratum stratum) {
+		hasDrawStratum = true;
+		drawStratum = stratum;
+		return *this;
+	}
+
+	ActionOverlaySpec &restoreBaseBackground() {
+		restoreBackgroundBeforeDraw = true;
+		return *this;
+	}
+
 	ActionOverlaySpec &noRedrawAtEnd() {
 		options.redrawAtEnd = false;
 		return *this;
@@ -217,6 +233,9 @@ struct ActionOverlaySpec {
 	const byte *frameMap;
 	uint frameMapSize;
 	uint32 frameMillis;
+	bool hasDrawStratum;
+	SceneAnimationStratum drawStratum;
+	bool restoreBackgroundBeforeDraw;
 	ActionOverlayOptions options;
 	AnimationFrameEvents events;
 };
