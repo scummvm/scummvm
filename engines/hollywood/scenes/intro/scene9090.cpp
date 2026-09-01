@@ -45,7 +45,6 @@ const uint16 kScene9090NextState = 0x23aa;
 const uint kScene9090SpeechRow = 4;
 const byte kScene9090PrimarySpeechColor = 0xfb;
 const byte kScene9090SecondarySpeechColor = 0xfd;
-const int kScene9090SpeechLineHeight = 20;
 const uint kScene9090Resource000TableSize = 400;
 const uint kScene9090SecondaryActorBankEntry = 0x00d0;
 const uint kScene9090SecondaryActorPaletteEntry = 0x0108;
@@ -612,7 +611,7 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 				_paletteCurrent[step.colorIndex * 3 + 2] = step.blue;
 			}
 
-			SubtitleOverlay &subtitle = step.speaker == kScene9090SecondarySpeaker ?
+			SpeechOverlay &subtitle = step.speaker == kScene9090SecondarySpeaker ?
 				_secondarySubtitle : _primarySubtitle;
 			beginSubtitle(subtitle, textRecordIds[i] + segment, step.colorIndex,
 				step.anchorX, step.anchorY, step.speaker == kScene9090SecondarySpeaker);
@@ -818,7 +817,7 @@ byte Scene9090::nextFrameExcluding(byte maximumFrame, byte previousFrame) {
 	return frame;
 }
 
-void Scene9090::beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId,
+void Scene9090::beginSubtitle(SpeechOverlay &subtitle, uint16 textRecordId,
 		byte colorIndex, uint16 anchorX, uint16 anchorY, bool secondaryActor) {
 	subtitle.visible = false;
 	subtitle.lines.clear();
@@ -830,29 +829,10 @@ void Scene9090::beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId,
 		return;
 
 	subtitle.colorIndex = colorIndex;
-	wrapSubtitleText(text, anchorX, subtitle.lines);
-	calculateSubtitleBounds(subtitle, anchorX, anchorY, secondaryActor);
+	wrapSpeechOverlayText(text, anchorX, subtitle.lines, kSpeechOverlayFixedEdgeWrap);
+	layoutSpeechOverlay(subtitle, _vm->font(), anchorX,
+		anchorY - (secondaryActor ? kScene9090SecondarySpeechYOffsetBias : 0));
 	subtitle.visible = !subtitle.lines.empty();
-}
-
-void Scene9090::calculateSubtitleBounds(SubtitleOverlay &subtitle, int anchorX, int anchorY,
-		bool secondaryActor) const {
-	uint textWidth = 0;
-	for (uint i = 0; i < subtitle.lines.size(); ++i)
-		textWidth = MAX<uint>(textWidth, subtitleTextWidth(subtitle.lines[i]));
-
-	int centerX = anchorX;
-	if (((centerX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e)
-		centerX = (textWidth & 1) == 0 ? 0x27e - (textWidth >> 1) : 0x27d - (textWidth >> 1);
-	if (centerX - (int)(textWidth >> 1) < 1)
-		centerX = (textWidth >> 1) + 1;
-
-	int topY = anchorY - (int)subtitle.lines.size() * kScene9090SpeechLineHeight;
-	if (secondaryActor)
-		topY -= kScene9090SecondarySpeechYOffsetBias;
-
-	subtitle.centerX = (uint16)centerX;
-	subtitle.topY = (uint16)MAX(1, topY);
 }
 
 void Scene9090::clearSubtitles() {
@@ -863,60 +843,8 @@ void Scene9090::clearSubtitles() {
 }
 
 void Scene9090::drawFrameOverlays() {
-	drawSubtitle(_primarySubtitle);
-	drawSubtitle(_secondarySubtitle);
-}
-
-void Scene9090::drawSubtitle(const SubtitleOverlay &subtitle) {
-	if (!subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
-		return;
-
-	HollywoodFont *font = _vm->font();
-	font->setShadowColor(0);
-	for (uint lineIndex = 0; lineIndex < subtitle.lines.size(); ++lineIndex) {
-		const Common::String &line = subtitle.lines[lineIndex];
-		const int lineWidth = subtitleTextWidth(line);
-		int x = (int)subtitle.centerX - (lineWidth >> 1);
-		x = CLIP<int>(x, 0, MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth));
-		const int y = (int)subtitle.topY + lineIndex * kScene9090SpeechLineHeight;
-		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, subtitle.colorIndex,
-			Graphics::kTextAlignLeft, 0, false, true);
-	}
-}
-
-void Scene9090::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
-		Common::Array<Common::String> &lines) const {
-	lines.clear();
-	if (text.empty())
-		return;
-
-	uint maxChars = anchorSceneX < 0xa0 || HollywoodEngine::kScreenWidth - anchorSceneX < 0xa0 ? 0x24 : 0x32;
-	const char *source = text.c_str();
-	const uint textLength = text.size();
-	uint cursor = 0;
-	while (cursor < textLength && lines.size() < 10) {
-		uint end = textLength;
-		if (cursor + maxChars < textLength) {
-			end = cursor + maxChars;
-			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
-				--end;
-			while (end > cursor && (byte)source[end - 1] == 0x20)
-				--end;
-			if (end == cursor)
-				end = MIN<uint>(textLength, cursor + maxChars);
-		}
-		lines.push_back(Common::String(source + cursor, end - cursor));
-		cursor = end;
-		while (cursor < textLength && (byte)source[cursor] == 0x20)
-			++cursor;
-		maxChars = maxChars > 2 ? maxChars - 2 : 1;
-	}
-}
-
-uint Scene9090::subtitleTextWidth(const Common::String &text) const {
-	if (!_vm->font() || !_vm->font()->isLoaded())
-		return 0;
-	return _vm->font()->getStringWidth(text) + 2;
+	drawSpeechOverlayText(_primarySubtitle, _vm->font(), *_screen.surfacePtr());
+	drawSpeechOverlayText(_secondarySubtitle, _vm->font(), *_screen.surfacePtr());
 }
 
 void Scene9090::stopAudio() {

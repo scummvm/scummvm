@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "hollywood/font.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -42,7 +41,6 @@ const byte kScene9170BlueSpeechColor = 0xfb;
 const uint kScene9170SpeechFrameMillis = 125;
 const uint kScene9170ScrollFrameMillis = 50;
 const uint kScene9170EffectFrameMillis = 60;
-const int kScene9170SpeechLineHeight = 20;
 
 const byte kScene9170UpperFrameMaps[3][5] = {
 	{ 0, 1, 2, 3, 4 },
@@ -531,8 +529,8 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 		if (!text.empty()) {
 			_subtitle.visible = true;
 			_subtitle.colorIndex = kScene9170BlueSpeechColor;
-			wrapSubtitleText(text, centerX, _subtitle.lines);
-			calculateSubtitleBounds(centerX, topY);
+			wrapSpeechOverlayText(text, centerX, _subtitle.lines);
+			layoutSpeechOverlay(_subtitle, _vm->font(), centerX, topY);
 		}
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
@@ -734,85 +732,8 @@ void Scene9170::clearSubtitle() {
 }
 
 void Scene9170::drawFrameOverlays() {
-	if (!_subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
-		return;
-
-	HollywoodFont *font = _vm->font();
-	font->setShadowColor(0);
-	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
-		const Common::String &line = _subtitle.lines[lineIndex];
-		const int lineWidth = subtitleTextWidth(line);
-		int x = (int)_subtitle.centerX - (lineWidth >> 1);
-		if (x < 0)
-			x = 0;
-		if (x + lineWidth > HollywoodEngine::kScreenWidth)
-			x = MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth);
-		int y = (int)_subtitle.topY + lineIndex * kScene9170SpeechLineHeight;
-		if (_rowOffset == 0x0a0 || _rowOffset == 0x140)
-			y -= (int)_rowOffset;
-		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
-			Graphics::kTextAlignLeft, 0, false, true);
-	}
-}
-
-void Scene9170::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
-		Common::Array<Common::String> &lines) const {
-	lines.clear();
-	if (text.empty())
-		return;
-
-	const int anchorX = CLIP<int>(anchorSceneX, 10, HollywoodEngine::kScreenWidth - 10);
-	const int edgeDistance = MIN<int>(anchorX, HollywoodEngine::kScreenWidth - anchorX);
-	uint maxChars = edgeDistance < 0xa0 ? edgeDistance * 0x32 / 0xa0 : 0x32;
-	maxChars = MAX<uint>(maxChars, 0x18);
-	const uint lineWidthReduction = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
-	const char *source = text.c_str();
-	const uint textLength = text.size();
-	uint cursor = 0;
-	while (cursor < textLength && lines.size() < 10) {
-		uint end = textLength;
-		if (cursor + maxChars < textLength) {
-			end = cursor + maxChars;
-			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
-				--end;
-			while (end > cursor && (byte)source[end - 1] == 0x20)
-				--end;
-			if (end == cursor)
-				end = MIN<uint>(textLength, cursor + maxChars);
-		}
-		lines.push_back(Common::String(source + cursor, end - cursor));
-		cursor = end;
-		while (cursor < textLength && (byte)source[cursor] == 0x20)
-			++cursor;
-		maxChars = maxChars > lineWidthReduction ? maxChars - lineWidthReduction : 1;
-	}
-}
-
-void Scene9170::calculateSubtitleBounds(uint16 anchorCenterX, uint16 anchorTopY) {
-	uint maxWidth = 0;
-	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex)
-		maxWidth = MAX<uint>(maxWidth, subtitleTextWidth(_subtitle.lines[lineIndex]));
-
-	const int width = (int)maxWidth;
-	const int halfWidth = width >> 1;
-	int centerX = anchorCenterX;
-	if (centerX - halfWidth - 1 + width > 0x27e) {
-		centerX = 0x27d - halfWidth;
-		if ((maxWidth & 1) == 0)
-			centerX = 0x27e - halfWidth;
-	}
-	if (centerX - halfWidth < 1)
-		centerX = halfWidth + 1;
-
-	_subtitle.centerX = centerX;
-	_subtitle.topY = MAX<int>(1, (int)anchorTopY - _subtitle.lines.size() * kScene9170SpeechLineHeight);
-}
-
-uint Scene9170::subtitleTextWidth(const Common::String &text) const {
-	if (!_vm->font() || !_vm->font()->isLoaded())
-		return 0;
-
-	return _vm->font()->getStringWidth(text) + 2;
+	const int viewportYOffset = _rowOffset == 0x0a0 || _rowOffset == 0x140 ? _rowOffset : 0;
+	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr(), 0, viewportYOffset);
 }
 
 } // End of namespace Hollywood

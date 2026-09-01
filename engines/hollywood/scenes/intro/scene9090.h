@@ -28,6 +28,7 @@
 #include "hollywood/music.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/speech_overlay.h"
 #include "hollywood/scenes/intro/intro_text.h"
 
 namespace Hollywood {
@@ -52,14 +53,6 @@ private:
 	struct ActorSpeechBank {
 		Common::Array<byte> runStreams;
 		Common::Array<ActorSpeechDescriptor> descriptors;
-	};
-
-	struct SubtitleOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
 	};
 
 	bool load();
@@ -88,15 +81,10 @@ private:
 		bool secondarySpeaking, bool insetSpeaking);
 	void advanceClock(uint32 deltaMillis);
 	byte nextFrameExcluding(byte maximumFrame, byte previousFrame);
-	void beginSubtitle(SubtitleOverlay &subtitle, uint16 textRecordId, byte colorIndex,
+	void beginSubtitle(SpeechOverlay &subtitle, uint16 textRecordId, byte colorIndex,
 		uint16 anchorX, uint16 anchorY, bool secondaryActor);
-	void calculateSubtitleBounds(SubtitleOverlay &subtitle, int anchorX, int anchorY,
-		bool secondaryActor) const;
 	void clearSubtitles();
 	void drawFrameOverlays() override;
-	void drawSubtitle(const SubtitleOverlay &subtitle);
-	void wrapSubtitleText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
-	uint subtitleTextWidth(const Common::String &text) const;
 	void stopAudio() override;
 
 	SceneResources _resources;
@@ -112,8 +100,8 @@ private:
 	IndexedSurfaceBuffer _baseFramebuffer;
 	ActorSpriteBank _secondaryActorBank;
 	ActorSpeechBank _secondarySpeechBank;
-	SubtitleOverlay _primarySubtitle;
-	SubtitleOverlay _secondarySubtitle;
+	SpeechOverlay _primarySubtitle;
+	SpeechOverlay _secondarySubtitle;
 	byte _deskFrame;
 	byte _deskFacingMode;
 	byte _insetFrame;

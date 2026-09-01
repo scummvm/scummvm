@@ -43,12 +43,18 @@ struct SpeechOverlay {
 	Common::Array<Common::String> lines;
 };
 
+enum SpeechOverlayWrapStyle {
+	kSpeechOverlayAdaptiveWrap,
+	kSpeechOverlayFixedEdgeWrap
+};
+
 void wrapSpeechOverlayText(const Common::String &text, int anchorX,
-	Common::Array<Common::String> &lines);
+	Common::Array<Common::String> &lines,
+	SpeechOverlayWrapStyle style = kSpeechOverlayAdaptiveWrap);
 void layoutSpeechOverlay(SpeechOverlay &overlay, const HollywoodFont *font,
 	int centerX, int anchorBottomY, int viewportXOffset = 0);
 void drawSpeechOverlayText(const SpeechOverlay &overlay, HollywoodFont *font,
-	Graphics::Surface &surface, int viewportXOffset = 0);
+	Graphics::Surface &surface, int viewportXOffset = 0, int viewportYOffset = 0);
 
 } // End of namespace Hollywood
 
