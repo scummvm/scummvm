@@ -48,7 +48,6 @@ private:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void initializeSwitchLayer();
 	byte switchDescriptorIndex() const;
@@ -78,9 +77,6 @@ private:
 	bool _switchPanelMovingSelectorVisible;
 	byte _switchPanelDisplayedRow;
 	byte _switchPanelDisplayedColumn;
-	byte _switchPanelTargetValue;
-	uint _switchPanelHideStaticFrame;
-	uint _switchPanelShowStaticFrame;
 };
 
 } // End of namespace Hollywood

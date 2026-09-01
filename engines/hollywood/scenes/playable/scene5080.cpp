@@ -42,10 +42,6 @@ const byte kScene5080BookInventoryItem = 0x51;
 const byte kScene5080BookSourceItem = 10;
 const byte kScene5080StairDoorSceneItem = 8;
 
-enum {
-	kScene5080MineCartArrivalHook = 1
-};
-
 const byte kScene5080AmbientSoundVolumes[] = {
 	10, 10, 10, 2, 10, 10, 10, 100
 };
@@ -373,17 +369,6 @@ void Scene5080::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }
 
-void Scene5080::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	if (hookId != kScene5080MineCartArrivalHook) {
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		return;
-	}
-
-	_mineCartRumbleActive = false;
-	_soundBank0.playSample(0x16, 100);
-}
-
 void Scene5080::runMineCartEntryClip() {
 	if (!_sceneChunkTable.isValidChunk(5)) {
 		drawPlayableComposite();
@@ -408,7 +393,8 @@ void Scene5080::runMineCartEntryClip() {
 	_soundBank0.playSample(0x18, 100);
 	playAndPresentAnimationFrames(mineCartLayer,
 		AnimationFrameRange(0, kScene5080EntryDescriptorCount - 1, kScene5080FrameMillis)
-			.hookAt(0x3c, kScene5080MineCartArrivalHook)
+			.commitAt(0x3c, _mineCartRumbleActive, false)
+			.soundAt(0x3c, 0x16)
 			.unskippable()
 			.noFinalFrameDelay());
 

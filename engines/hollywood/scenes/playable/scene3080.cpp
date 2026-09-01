@@ -47,9 +47,6 @@ const uint kScene3080SmallIdleDescriptorCount = 0x16;
 const uint kScene3080DiaryOverlayDescriptorCount = 0x0e;
 const uint kScene3080StickOverlayDescriptorCount = 0x0d;
 const uint kScene3080FlyerOverlayDescriptorCount = 9;
-const byte kScene3080DiaryPatchHook = 1;
-const byte kScene3080StickPatchHook = 2;
-const byte kScene3080FlyerSoundHook = 3;
 const uint kScene3080LargeLayer = 0;
 const uint kScene3080SmallIdleLayer = 1;
 
@@ -335,26 +332,6 @@ AmbientAudioProfile Scene3080::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene3080::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene3080DiaryPatchHook) {
-		if (_sceneChunkTable.isValidChunk(12))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
-		return;
-	}
-	if (hookId == kScene3080StickPatchHook) {
-		if (_sceneChunkTable.isValidChunk(8))
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
-		return;
-	}
-	if (hookId != kScene3080FlyerSoundHook)
-		return;
-
-	if (frame == 8)
-		_soundBank0.playSampleLooping(0x1b, 75);
-	else if (frame == 28)
-		_soundBank0.stop();
-}
-
 bool Scene3080::shouldRunExitSideEffectsAfterLoop() const {
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
 	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
@@ -470,7 +447,7 @@ void Scene3080::runDiaryPickup() {
 
 	runActorReplacement(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
 		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hookAt(10, kScene3080DiaryPatchHook)
+		.resourcePatchAt(10, 12)
 		.noRedrawAtEnd());
 	state.scene3080FrankensteinDiaryTaken = true;
 	state.scene3080FrankensteinDiaryRevealed = false;
@@ -489,7 +466,7 @@ void Scene3080::runStickPickup() {
 
 	runActorReplacement(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
 		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hookAt(10, kScene3080StickPatchHook)
+		.resourcePatchAt(10, 8)
 		.noRedrawAtEnd());
 	state.scene3080BranchTaken = true;
 	applySceneStateToHotspotsAndPatches(4);
@@ -501,7 +478,8 @@ void Scene3080::runStickPickup() {
 void Scene3080::runFlyerCoatingOverlay() {
 	runActorReplacement(ActionOverlaySpec(14, kScene3080FlyerOverlayDescriptorCount,
 		kScene3080FlyerOverlayFrameMap, ARRAYSIZE(kScene3080FlyerOverlayFrameMap), kScene3080OverlayFrameMillis)
-		.hookEveryFrame(kScene3080FlyerSoundHook));
+		.loopingSoundAt(8, 0x1b, 75)
+		.stopSoundAt(28));
 	_soundBank0.stop();
 	addInventoryItem(0x34);
 	removeInventoryItem(0x58);

@@ -88,8 +88,6 @@ const uint32 kScene7010DoghouseSpeechFrameMillis = 150;
 const uint32 kScene7010SpeechPollMillis = 10;
 const byte kScene7010DoghouseSpeechBaseFrame = 10;
 const byte kScene7010DoghouseSpeechFrameCount = 5;
-const byte kScene7010BusinessCardAnimationHook = 1;
-const byte kScene7010DialogueOverlaySoundHook = 2;
 const byte kScene7010Chunk8FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 5, 7, 8, 9, 10, 11, 12, 13, 21,
 	9, 8, 7, 0, 14, 15, 16, 17, 18, 19, 20
@@ -591,22 +589,6 @@ AmbientAudioProfile Scene7010::ambientAudioProfile() const {
 	return profile;
 }
 
-void Scene7010::handleAnimationFrameHook(byte hookId, uint frame) {
-	switch (hookId) {
-	case kScene7010BusinessCardAnimationHook:
-		// Hannover changes pose while handing Sue his business card.
-		setChunk11Frame(0x38);
-		break;
-	case kScene7010DialogueOverlaySoundHook:
-		// The note transition has three synchronized mechanical impacts.
-		if (frame == 0x0e || frame == 0x15 || frame == 0x1b)
-			_soundBank0.playSample(0x13, 80);
-		break;
-	default:
-		break;
-	}
-}
-
 void Scene7010::advanceChunk10IdleFrames() {
 	_chunk10IdlePairA.advance(_random);
 	_chunk10IdlePairB.advance(_random);
@@ -926,7 +908,7 @@ void Scene7010::runChunk13Item09PickupOverlaySequence() {
 		kScene7010Chunk13FrameMap, ARRAYSIZE(kScene7010Chunk13FrameMap),
 		kScene7010Chunk8FrameMillis)
 		.startAt(1)
-		.hookAt(5, kScene7010BusinessCardAnimationHook)
+		.layerFrameAt(5, kScene7010Chunk11Layer, 0x38)
 		.noRedrawAtEnd());
 	if (!hasInventoryItem(kScene7010HannoverBusinessCardItem))
 		addInventoryItem(kScene7010HannoverBusinessCardItem);
@@ -1015,8 +997,11 @@ void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte fi
 	if (startFrame < endFrame) {
 		playAnimationFrames(_sceneLayers, kScene7010DialogueOverlayLayer,
 			AnimationFrameRange(startFrame + 1, endFrame,
-				kScene7010DialogueOverlayFrameMillis).unskippable().hookEveryFrame(
-					kScene7010DialogueOverlaySoundHook));
+				kScene7010DialogueOverlayFrameMillis)
+				.soundAt(0x0e, 0x13, 80)
+				.soundAt(0x15, 0x13, 80)
+				.soundAt(0x1b, 0x13, 80)
+				.unskippable());
 	}
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;

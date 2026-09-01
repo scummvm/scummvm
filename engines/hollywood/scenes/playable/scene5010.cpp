@@ -77,11 +77,6 @@ enum {
 	kScene5010MovingColumn
 };
 
-enum {
-	kScene5010ReturnFadeHook = 1,
-	kScene5010SwitchAnimationHook
-};
-
 static PlayableSceneConfig scene5010Config() {
 	PlayableSceneConfig config(5010,
 		SceneResourceLayout(5, 5, 27),
@@ -101,10 +96,7 @@ Scene5010::Scene5010(HollywoodEngine *vm) :
 		_switchPanelMovingSelector(kScene5010NoMovingSelector),
 		_switchPanelMovingSelectorVisible(true),
 		_switchPanelDisplayedRow(0),
-		_switchPanelDisplayedColumn(0),
-		_switchPanelTargetValue(0),
-		_switchPanelHideStaticFrame(0),
-		_switchPanelShowStaticFrame(0) {
+		_switchPanelDisplayedColumn(0) {
 	_sceneLayers.configure(kScene5010LayerSpecs);
 }
 
@@ -417,7 +409,7 @@ void Scene5010::runMineCartArrival() {
 	runActorReplacement(ActionOverlaySpec(15, kScene5010TransportArrivalDescriptorCount,
 		frameMap.data(), frameMap.size(), kScene5010FrameMillis)
 		.soundAt(0x1e, 0x16)
-		.hookAt(0, kScene5010ReturnFadeHook)
+		.fadeFromBlackAt(0)
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
@@ -659,14 +651,24 @@ void Scene5010::handleSwitchPanelChoice(byte choice) {
 		animationChunk = 19;
 	}
 
-	_switchPanelTargetValue = targetValue;
 	_switchPanelMovingSelectorVisible = true;
+	uint hideStaticFrame = 0;
+	uint showStaticFrame = 0;
 	Common::Array<byte> frameMap = buildSwitchPanelAnimation(currentValue, targetValue,
-		_switchPanelHideStaticFrame, _switchPanelShowStaticFrame);
+		hideStaticFrame, showStaticFrame);
+	AnimationFrameRange range(1, frameMap.size() - 1, kScene5010SwitchFrameMillis);
+	range.soundAt(hideStaticFrame, 0x24, 15)
+		.commitAt(hideStaticFrame, _switchPanelMovingSelectorVisible, false)
+		.soundAt(showStaticFrame, 0x24, 15);
+	if (_switchPanelMovingSelector == kScene5010MovingRow)
+		range.commitAt(showStaticFrame, _switchPanelDisplayedRow, targetValue);
+	else
+		range.commitAt(showStaticFrame, _switchPanelDisplayedColumn, targetValue);
+	range.commitAt(showStaticFrame, _switchPanelMovingSelectorVisible, true)
+		.unskippable();
 	playResourceLayerSequence(kScene5010SwitchPanelAnimationLayer, animationChunk,
 		kScene5010SwitchAnimationDescriptorCount, frameMap.data(), frameMap.size(),
-		AnimationFrameRange(1, frameMap.size() - 1, kScene5010SwitchFrameMillis)
-			.hookEveryFrame(kScene5010SwitchAnimationHook).unskippable());
+		range);
 
 	if (_switchPanelMovingSelector == kScene5010MovingRow)
 		state.scene5010SwitchRow = targetValue;
@@ -718,29 +720,6 @@ Common::Array<byte> Scene5010::buildSwitchPanelAnimation(byte currentValue, byte
 	for (uint frame = tailFrames[targetValue]; frame <= 0x22; ++frame)
 		frameMap.push_back((byte)frame);
 	return frameMap;
-}
-
-void Scene5010::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene5010ReturnFadeHook) {
-		drawPlayableComposite();
-		fadePaletteFromBlack();
-		return;
-	}
-	if (hookId == kScene5010SwitchAnimationHook) {
-		if (frame == _switchPanelHideStaticFrame) {
-			_soundBank0.playSample(0x24, 15);
-			_switchPanelMovingSelectorVisible = false;
-		} else if (frame == _switchPanelShowStaticFrame) {
-			_soundBank0.playSample(0x24, 15);
-			if (_switchPanelMovingSelector == kScene5010MovingRow)
-				_switchPanelDisplayedRow = _switchPanelTargetValue;
-			else
-				_switchPanelDisplayedColumn = _switchPanelTargetValue;
-			_switchPanelMovingSelectorVisible = true;
-		}
-		return;
-	}
-	PlayableScene::handleAnimationFrameHook(hookId, frame);
 }
 
 void Scene5010::activateSwitchPanelAtCursor(bool &done) {

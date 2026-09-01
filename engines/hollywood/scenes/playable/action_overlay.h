@@ -94,13 +94,30 @@ struct ActionOverlaySpec {
 		return *this;
 	}
 
-	ActionOverlaySpec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex, byte speechId = 0) {
+	ActionOverlaySpec &secondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			byte speechId = 0) {
 		events.addSecondarySpeech(frame, rowIndex, frameIndex, speechId);
+		return *this;
+	}
+
+	ActionOverlaySpec &startSecondarySpeechAt(int frame, uint16 rowIndex, byte frameIndex) {
+		events.addStartedSecondarySpeech(frame, rowIndex, frameIndex);
+		return *this;
+	}
+
+	ActionOverlaySpec &primarySpeechAt(int frame, uint16 rowIndex, byte frameIndex,
+			uint16 centerX, uint16 topY, byte red, byte green, byte blue) {
+		events.addPrimarySpeech(frame, rowIndex, frameIndex, centerX, topY, red, green, blue);
 		return *this;
 	}
 
 	ActionOverlaySpec &layerFrameAt(int frame, uint layerId, byte layerFrame) {
 		events.addLayerFrame(frame, layerId, layerFrame);
+		return *this;
+	}
+
+	ActionOverlaySpec &layerVisibleAt(int frame, uint layerId, bool visible) {
+		events.addLayerVisibility(frame, layerId, visible);
 		return *this;
 	}
 
@@ -112,6 +129,16 @@ struct ActionOverlaySpec {
 
 	ActionOverlaySpec &invalidatePaletteAt(int frame) {
 		events.addPaletteInvalidation(frame);
+		return *this;
+	}
+
+	ActionOverlaySpec &fadeFromBlackAt(int frame) {
+		events.addPaletteFade(frame, true);
+		return *this;
+	}
+
+	ActionOverlaySpec &fadeToBlackAt(int frame) {
+		events.addPaletteFade(frame, false);
 		return *this;
 	}
 

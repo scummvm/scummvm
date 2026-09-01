@@ -59,7 +59,6 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldAnimatePrimarySpeechLine() const override;
 	void setPrimaryLeftSpeechFrame(byte frameIndex) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	void advanceFullscreenAnimation(uint32 delta) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	void runSueEntryPath(int startX, int startY, int targetX, int targetY);

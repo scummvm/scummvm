@@ -100,8 +100,7 @@ const byte kScene4080GominolaItem = 0x44;
 const byte kScene4080SteakItem = 0x45;
 
 enum Scene4080AnimationHookId {
-	kScene4080GominolaPickupHook = 1,
-	kScene4080StakeSequenceHook
+	kScene4080StakeSequenceHook = 1
 };
 
 enum Scene4080GwendolynSpeechPoseMode {
@@ -552,12 +551,6 @@ AmbientAudioProfile Scene4080::ambientAudioProfile() const {
 }
 
 void Scene4080::handleAnimationFrameHook(byte hookId, uint frame) {
-	if (hookId == kScene4080GominolaPickupHook) {
-		_vm->gameState().scene4080GominolaVisibleState = 0;
-		applySceneStateToHotspotsAndPatches(0xff);
-		return;
-	}
-
 	if (hookId == kScene4080StakeSequenceHook) {
 		GameplayState &state = _vm->gameState();
 		if (frame == 0x1d) {
@@ -1097,12 +1090,15 @@ void Scene4080::runGominolaPickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
+	GameplayState &state = _vm->gameState();
 	playResourceLayerSequence(kScene4080ScriptLayer, kScene4080GominolaPickupChunk,
 		kScene4080GominolaPickupDescriptorCount, kScene4080GominolaPickupFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4080GominolaPickupFrameMap) - 1,
-			kScene4080FrameMillis).hookAt(7, kScene4080GominolaPickupHook)
+			kScene4080FrameMillis)
+			.commitAt(7, state.scene4080GominolaVisibleState, (byte)0)
+			.patchAt(7, 0xff)
 			.noFinalFrameDelay());
-	_vm->gameState().scene4080GominolaVisibleState = 0;
+	state.scene4080GominolaVisibleState = 0;
 	applySceneStateToHotspotsAndPatches(0xff);
 	addInventoryItem(kScene4080GominolaItem);
 	_soundBank0.playSample(1, 100);

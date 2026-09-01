@@ -72,10 +72,6 @@ const byte kScene6020DialogueTransitionUp = 2;
 const byte kScene6020DialogueTransitionStay = 3;
 const byte kScene6020DialogueTransitionUpTwo = 4;
 const byte kScene6020DialogueNoResponseFrame = 0xff;
-const byte kScene6020EntryPhoneHook = 1;
-const byte kScene6020PhonePickupHook = 2;
-const byte kScene6020PhoneHangupHook = 3;
-
 enum {
 	kScene6020TaffyLayer,
 	kScene6020PhoneLayer
@@ -365,24 +361,6 @@ void Scene6020::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	_sceneLayers.setLayerFrame(kScene6020TaffyLayer, frameIndex);
 }
 
-void Scene6020::handleAnimationFrameHook(byte hookId, uint frame) {
-	(void)frame;
-	switch (hookId) {
-	case kScene6020EntryPhoneHook:
-	case kScene6020PhoneHangupHook:
-		applyPhoneFramebufferPatch(17);
-		_soundBank0.playSample(0x10, 100);
-		break;
-	case kScene6020PhonePickupHook:
-		applyPhoneFramebufferPatch(18);
-		_soundBank0.playSample(0x10, 100);
-		break;
-	default:
-		PlayableScene::handleAnimationFrameHook(hookId, frame);
-		break;
-	}
-}
-
 AmbientAudioProfile Scene6020::ambientAudioProfile() const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = 250;
@@ -619,7 +597,8 @@ void Scene6020::runEntryPhoneAnnouncement() {
 		beginPrimarySpeechLineWithAnimationGroup(21, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e, 3);
 		interrupted = !playAndPresentAnimationFrames(_sceneLayers, kScene6020TaffyLayer,
 			AnimationFrameRange(0x62, 0x70, kScene6020TaffyFrameMillis)
-				.hookAt(0x67, kScene6020EntryPhoneHook));
+				.resourcePatchAt(0x67, 17)
+				.soundAt(0x67, 0x10));
 	}
 
 	applyPhoneFramebufferPatch(17);
@@ -858,7 +837,8 @@ void Scene6020::runFinalSceneObjectAnimation() {
 	_sceneLayers.setLayerVisible(kScene6020PhoneLayer, true);
 	AnimationFrameRange firstPart(0, 59, kScene6020FrameMillis);
 	firstPart.frameOrder = kScene6020PhoneFrameMap;
-	firstPart.hookAt(10, kScene6020PhonePickupHook);
+	firstPart.resourcePatchAt(10, 18)
+		.soundAt(10, 0x10);
 	if (!playAndPresentAnimationFrames(_sceneLayers, kScene6020PhoneLayer, firstPart)) {
 		applyPhoneFramebufferPatch(17);
 		_sceneLayers.setLayerVisible(kScene6020PhoneLayer, false);
@@ -879,7 +859,8 @@ void Scene6020::runFinalSceneObjectAnimation() {
 		AnimationFrameRange secondPart(60, ARRAYSIZE(kScene6020PhoneFrameMap) - 1,
 			kScene6020FrameMillis);
 		secondPart.frameOrder = kScene6020PhoneFrameMap;
-		secondPart.hookAt(61, kScene6020PhoneHangupHook);
+		secondPart.resourcePatchAt(61, 17)
+			.soundAt(61, 0x10);
 		playAndPresentAnimationFrames(_sceneLayers, kScene6020PhoneLayer, secondPart);
 	}
 	applyPhoneFramebufferPatch(17);

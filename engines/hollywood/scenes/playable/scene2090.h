@@ -46,7 +46,6 @@ private:
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetForegroundLayer(bool visible, byte frameIndex);

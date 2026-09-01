@@ -476,6 +476,7 @@ bool Scene3070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 void Scene3070::handleAnimationFrameHook(byte hookId, uint frame) {
+	(void)frame;
 	switch (hookId) {
 	case 1:
 		applyActionPatchChunk(21);
@@ -484,12 +485,6 @@ void Scene3070::handleAnimationFrameHook(byte hookId, uint frame) {
 		_soundBank0.playSample(0x14, 100);
 		_ambientSoundBank0.playSample(0x11, 50, true);
 		applyActionPatchChunk(12);
-		break;
-	case 3:
-		if (frame == 20)
-			_soundBank0.playSample(0x0c, 25, true);
-		else if (frame == 60)
-			_soundBank0.stop();
 		break;
 	default:
 		break;
@@ -778,7 +773,9 @@ void Scene3070::runFrankensteinRevival() {
 		return;
 	}
 	runActorReplacement(ActionOverlaySpec(11, 24, kScene3070RevivalLoopFrameMap,
-		ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis).hookEveryFrame(3));
+		ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis)
+		.loopingSoundAt(20, 0x0c, 25)
+		.stopSoundAt(60));
 	runActorReplacement(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
 		ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis).startAt(4));
 

@@ -45,7 +45,6 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetTaffyLayer();

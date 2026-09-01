@@ -51,7 +51,6 @@ private:
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	uint32 primarySpeechAnimationFrameMillis(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();

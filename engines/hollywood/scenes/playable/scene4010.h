@@ -58,7 +58,6 @@ private:
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	bool alternateBackgroundActive() const;
 	void initializeRoomIdleLayer();
@@ -117,8 +116,6 @@ private:
 	bool _heckerManualSequenceActive;
 	bool _heckerPoseTransitionPending;
 	bool _roomAnimationPaused;
-	uint _destinationSoundStartFrame;
-	uint _destinationSoundStopFrame;
 };
 
 } // End of namespace Hollywood

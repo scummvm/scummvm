@@ -81,10 +81,7 @@ enum Scene6030AnimationLayerId {
 };
 
 enum Scene6030AnimationHookId {
-	kScene6030TaffyPlacesCoffeeHook = 1,
-	kScene6030HannoverRaisesCoffeeHook,
-	kScene6030HannoverLowersCoffeeHook,
-	kScene6030BathroomExitVolumeHook
+	kScene6030BathroomExitVolumeHook = 1
 };
 
 const SceneLayerSpec kScene6030AnimationLayerSpecs[] = {
@@ -270,13 +267,6 @@ void Scene6030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 void Scene6030::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)frame;
 	switch (hookId) {
-	case kScene6030TaffyPlacesCoffeeHook:
-	case kScene6030HannoverLowersCoffeeHook:
-		_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer, 1);
-		break;
-	case kScene6030HannoverRaisesCoffeeHook:
-		_sceneLayers.setLayerFrame(kScene6030CoffeeCupLayer, 2);
-		break;
 	case kScene6030BathroomExitVolumeHook:
 		_speech.setVolume(25);
 		break;
@@ -605,7 +595,7 @@ void Scene6030::runTaffyCoffeeServiceSequence() {
 	_sceneLayers.setLayerVisible(kScene6030TaffyServiceLayer, true);
 	bool completed = playAnimationFrames(_sceneLayers, kScene6030TaffyServiceLayer,
 		AnimationFrameRange(0, 0x44, kScene6030TaffyFrameMillis)
-			.unskippable().hookAt(0x42, kScene6030TaffyPlacesCoffeeHook));
+			.unskippable().layerFrameAt(0x42, kScene6030CoffeeCupLayer, 1));
 	if (completed) {
 		_sceneLayers.setLayerResource(kScene6030TaffyServiceLayer, 10,
 			kScene6030TaffyDepartureDescriptorCount, nullptr, 0);
@@ -645,11 +635,11 @@ void Scene6030::runHannoverCoffeeSequence() {
 	_hannoverManualSequenceActive = true;
 	bool completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
 		AnimationFrameRange(0x13, 0x16, kScene6030PoseFrameMillis)
-			.unskippable().hookAt(0x16, kScene6030HannoverRaisesCoffeeHook));
+			.unskippable().layerFrameAt(0x16, kScene6030CoffeeCupLayer, 2));
 	if (completed) {
 		completed = playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,
 			AnimationFrameRange(0x17, 0x29, kScene6030PoseFrameMillis)
-				.unskippable().hookAt(0x29, kScene6030HannoverLowersCoffeeHook));
+				.unskippable().layerFrameAt(0x29, kScene6030CoffeeCupLayer, 1));
 	}
 	if (completed) {
 		playAnimationFrames(_sceneLayers, kScene6030HannoverLayer,

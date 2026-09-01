@@ -41,7 +41,6 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	void runDoorToCloakroomAction();
 	void handleCordPickup();
