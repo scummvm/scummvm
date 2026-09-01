@@ -171,13 +171,13 @@ Scene4090::Scene4090(HollywoodEngine *vm) :
 		_organBodyWaitForSound(false),
 		_randomAmbientAnimationActive(false),
 		_multiSpriteCompositeActive(false) {
-	_sceneLayers.configureLayer(kScene4090AmbientRandomLayer, kSceneAnimationScenePlaced,
+	_sceneLayers.configureLayer(kScene4090AmbientRandomLayer, kSceneAnimationBehindActors,
 		kScene4090AmbientRandomChunk,
 		kScene4090AmbientRandomDescriptorCount, nullptr, 0, false);
-	_sceneLayers.configureLayer(kScene4090AmbientFixedLayer, kSceneAnimationScenePlaced,
+	_sceneLayers.configureLayer(kScene4090AmbientFixedLayer, kSceneAnimationBehindActors,
 		kScene4090AmbientFixedChunk,
 		kScene4090AmbientFixedDescriptorCount, nullptr, 0, false);
-	_sceneLayers.configureLayer(kScene4090OrganBodyLayer, kSceneAnimationScenePlaced,
+	_sceneLayers.configureLayer(kScene4090OrganBodyLayer, kSceneAnimationBehindActors,
 		kScene4090OrganBodyChunk,
 		kScene4090OrganBodyDescriptorCount,
 		kScene4090OrganBodyFrameMap, ARRAYSIZE(kScene4090OrganBodyFrameMap), false);
@@ -196,24 +196,15 @@ void Scene4090::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void Scene4090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene4090::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
+	(void)activeWorldX;
 	(void)actorDrawOrderMode;
 
-	copyBaseFramebufferToSceneFramebuffer();
-	drawLayerStack(_sceneLayers, kSceneAnimationScenePlaced);
-
-	if (_sceneLayers.layerVisible(kScene4090ScriptLayer)) {
-		drawSceneLayer(kScene4090ScriptLayer);
-		drawActionOverlayLayer();
+	if (_sceneLayers.layerVisible(kScene4090ScriptLayer))
 		return;
-	}
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	drawForegroundLayers(activeWorldY, !_multiSpriteCompositeActive);
-	drawActionOverlayLayer();
 }
 
 bool Scene4090::shouldPresentPreviewBeforeEntrySequence() const {

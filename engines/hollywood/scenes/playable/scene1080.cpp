@@ -125,21 +125,11 @@ void Scene1080::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
-void Scene1080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+void Scene1080::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
 
-	copyBaseFramebufferToSceneFramebuffer();
-	if (_vm->gameState().scene1080FrancoisProgressState < 2 && !_francoisActionActive)
-		drawSceneLayer(kScene1080FrancoisLayer);
-	drawActionOverlayLayer();
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldX, activeWorldY);
-	drawSceneLayer(kScene1080ForegroundLayer);
-	if (_francoisActionActive)
-		drawSceneLayer(kScene1080FrancoisActionLayer);
 }
 
 void Scene1080::runCustomEntrySequence() {
@@ -491,6 +481,7 @@ void Scene1080::handleFrancoisDistraction() {
 		.actorReplacement(ActionOverlaySpec(10, kScene1080BalloonDescriptorCount,
 			kScene1080BalloonFrameMap, ARRAYSIZE(kScene1080BalloonFrameMap),
 			kScene1080FrameMillis)
+			.drawAt(kSceneAnimationBehindActors)
 			.loopingSoundAt(8, kScene1080BalloonSoundCue, 30)
 			.stopSoundAt(47))
 		.stopSound();
@@ -529,6 +520,7 @@ void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescripto
 
 	setPaletteEntry6Bit(kScene1080PrimarySpeechTextColor, 0x0d, 0x32, 0x3a);
 	_francoisActionActive = true;
+	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer, false);
 	_sceneLayers.setLayerVisible(kScene1080FrancoisActionLayer, true);
 	_sceneLayers.setLayerFrame(kScene1080FrancoisActionLayer, firstDescriptor);
 	byte descriptor = firstDescriptor;
