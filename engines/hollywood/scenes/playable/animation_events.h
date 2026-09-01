@@ -52,6 +52,10 @@ struct AnimationFrameEvent {
 		kFadeToBlack,
 		kCustomHook
 	};
+	// Sound events target the main effect player unless an ambient slot is selected.
+	enum {
+		kMainSoundSlot = 0xff
+	};
 
 	typedef void (*CommitFunction)(void *target, uint32 value);
 
@@ -63,6 +67,7 @@ struct AnimationFrameEvent {
 			resourceChunk(0),
 			soundId(0),
 			soundVolumePercent(100),
+			soundSlot(kMainSoundSlot),
 			speechRow(0),
 			speechFrame(0),
 			speechId(0),
@@ -100,6 +105,7 @@ struct AnimationFrameEvent {
 	uint resourceChunk;
 	uint16 soundId;
 	byte soundVolumePercent;
+	byte soundSlot;
 	uint16 speechRow;
 	byte speechFrame;
 	byte speechId;
@@ -140,10 +146,12 @@ public:
 		_events.push_back(event);
 	}
 
-	void addSound(int frame, uint16 soundId, byte volumePercent, bool looping) {
+	void addSound(int frame, uint16 soundId, byte volumePercent, bool looping,
+			byte slotIndex = AnimationFrameEvent::kMainSoundSlot) {
 		AnimationFrameEvent event(frame, looping ? AnimationFrameEvent::kLoopingSound : AnimationFrameEvent::kSound);
 		event.soundId = soundId;
 		event.soundVolumePercent = volumePercent;
+		event.soundSlot = slotIndex;
 		_events.push_back(event);
 	}
 
@@ -306,6 +314,18 @@ public:
 
 	Spec &stopSoundAt(int frame) {
 		events.addStopSound(frame);
+		return self();
+	}
+
+	Spec &ambientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = 0) {
+		events.addSound(frame, soundId, volumePercent, false, slotIndex);
+		return self();
+	}
+
+	Spec &loopingAmbientSoundAt(int frame, uint16 soundId, byte volumePercent = 100,
+			byte slotIndex = 0) {
+		events.addSound(frame, soundId, volumePercent, true, slotIndex);
 		return self();
 	}
 

@@ -853,11 +853,20 @@ void PlayableScene::handleAnimationFrameEvent(const AnimationFrameEvent &event, 
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[event.resourceChunk], _baseFramebuffer);
 		break;
 	case AnimationFrameEvent::kSound:
-		_soundBank0.playSample(event.soundId, event.soundVolumePercent);
+	case AnimationFrameEvent::kLoopingSound: {
+		SoundBank0Player *player = &_soundBank0;
+		if (event.soundSlot != AnimationFrameEvent::kMainSoundSlot) {
+			if (event.soundSlot >= kAmbientSoundSlotCount)
+				break;
+			player = event.soundSlot == 0 ?
+				&_ambientSoundBank0 : &_additionalAmbientSoundBank0Slots[event.soundSlot - 1];
+		}
+		if (event.type == AnimationFrameEvent::kLoopingSound)
+			player->playSampleLooping(event.soundId, event.soundVolumePercent);
+		else
+			player->playSample(event.soundId, event.soundVolumePercent);
 		break;
-	case AnimationFrameEvent::kLoopingSound:
-		_soundBank0.playSampleLooping(event.soundId, event.soundVolumePercent);
-		break;
+	}
 	case AnimationFrameEvent::kResidentSound:
 		playResidentSoundEffect((byte)event.soundId, event.soundVolumePercent);
 		break;
