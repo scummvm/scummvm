@@ -22,6 +22,8 @@
 #ifndef MACS2_CONSTANTS_H
 #define MACS2_CONSTANTS_H
 
+#include "common/scummsys.h"
+
 namespace Macs2 {
 
 // V1 (AHFFMACS0100) viewport - default engine dimensions.

@@ -491,8 +491,9 @@ void ScriptExecutor::clearScriptUiWaitState() {
 }
 
 void ScriptExecutor::recordScriptErrorPosition() {
-	if (!hasScriptError() || !_stream)
+	if (!hasScriptError() || !_stream) {
 		return;
+	}
 	// save position and scene/object context on halt.
 	_errorScriptPosition = (uint32)_stream->pos();
 	if (_executingScriptObjectId == 0) {
@@ -518,8 +519,9 @@ void ScriptExecutor::runSceneScriptPass(bool initRun, bool repeatRun) {
 	const ExecutorState previousState = _state;
 	_state = ExecutorState::Executing;
 	step();
-	if (_state != ExecutorState::WaitingForCallback)
+	if (_state != ExecutorState::WaitingForCallback) {
 		_state = previousState;
+	}
 }
 
 void ScriptExecutor::beginSceneEntryInitPass() {
@@ -535,13 +537,15 @@ void ScriptExecutor::beginSceneEntryInitPass() {
 }
 
 void ScriptExecutor::finishSceneEntryRepeatPass(bool terminateOuterScript) {
-	if (!_initPassComplete || hasScriptError())
+	if (!_initPassComplete || hasScriptError()) {
 		return;
+	}
 	// Binary scriptChangeScene / loadResourceFile: set script position to end and
 	// executingObjectId=0x201 to stop outer object iteration, then repeat pass.
 	if (terminateOuterScript) {
-		if (_stream)
+		if (_stream) {
 			_stream->seek(_stream->size(), SEEK_SET);
+		}
 		_executingScriptObjectId = 0x201;
 		_terminateOuterScriptBeforeRepeat = false;
 	}
@@ -1860,7 +1864,7 @@ Character *Script::ScriptExecutor::getOrCreateCharacter(uint16 objectID) {
 	return c;
 }
 
-void Script::ScriptExecutor::saveWalkRuntime(const Character *c, GameObject *o) {
+void Script::ScriptExecutor::saveWalkRuntime(const Character *c, GameObject *o) const {
 	if (c == nullptr || o == nullptr)
 		return;
 	GameObject::StoredWalkRuntime &s = o->_storedWalkRuntime;

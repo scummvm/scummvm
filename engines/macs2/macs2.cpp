@@ -1495,20 +1495,23 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
 		_pathfindingOverrides.clear();
-		for (uint i = 0; i < _hotspotOverrides.size(); i++)
+		for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 			_hotspotOverrides[i] = 0xFFFF;
+		}
 
 		// Match DOS changeScene: when View1 is not up yet (first call from
 		// readAmigaResources), only load scene data. Entry init/repeat - including
 		// intro frameWait/changeScene - must run from View1::tick so waits can
 		// complete in the game loop.
-		if (executeScript && currentView != nullptr)
+		if (executeScript && currentView != nullptr) {
 			_scriptExecutor->runSceneEntryScriptPasses();
+		}
 		return;
 	}
 
-	if (!loadSceneGraphics(newSceneIndex))
+	if (!loadSceneGraphics(newSceneIndex)) {
 		error("changeScene(): Failed to load scene graphics for scene %u", newSceneIndex);
+	}
 
 	// Scene change starts with the main HUD shown. v2 scripts may hide it
 	// during init (overview map). v1 has no hide/show opcodes; kEnhUIUX uses
@@ -1543,9 +1546,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_scriptExecutor->_inventoryActionFlag = false;
 	_scriptExecutor->_inventoryCombineFlag = false;
 
-	for (auto currentCharacter : currentView->_characters) {
-		if (currentCharacter->_gameObject != nullptr)
+	for (Character *currentCharacter : currentView->_characters) {
+		if (currentCharacter->_gameObject != nullptr) {
 			_scriptExecutor->saveWalkRuntime(currentCharacter, currentCharacter->_gameObject);
+		}
 		delete currentCharacter;
 	}
 	currentView->_characters.clear();
@@ -1553,8 +1557,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Binary changeScene (1008:2574): loadObjectData for scene objects except current actor.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
-		if (isV2())
+		if (isV2()) {
 			loadObjectData(actorObject);
+		}
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);
@@ -1562,9 +1567,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		resetCharacterWalkPath(actorChar);
 		_scriptExecutor->saveWalkRuntime(actorChar, actorObject);
 	}
-	for (auto currentObject : GameObjects::instance()._objects) {
-		if (currentObject == nullptr)
+	for (GameObject *currentObject : GameObjects::instance()._objects) {
+		if (currentObject == nullptr) {
 			continue;
+		}
 		if (currentObject->_sceneIndex == newSceneIndex &&
 			currentObject->_index != Scenes::instance()._currentActorIndex &&
 			currentObject->_dataOffset != 0 &&
@@ -1609,19 +1615,23 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 bool Macs2Engine::resolveResourceFileOffset(uint8 resourceIndex, uint16 executingObjectId, uint32 &outOffset) const {
 	outOffset = 0;
-	if (resourceIndex == 0 || _fileStream == nullptr)
+	if (resourceIndex == 0 || _fileStream == nullptr) {
 		return false;
+	}
 
 	if (executingObjectId == 0) {
-		if (resourceIndex > _sceneResourceOffsets.size())
+		if (resourceIndex > _sceneResourceOffsets.size()) {
 			return false;
+		}
 		outOffset = _sceneResourceOffsets[resourceIndex - 1];
 	} else {
 		GameObject *object = GameObjects::getObjectByIndex(executingObjectId);
-		if (object == nullptr || object->_dataOffset == 0)
+		if (object == nullptr || object->_dataOffset == 0) {
 			return false;
-		if ((uint)(resourceIndex - 1) >= maxObjectResources())
+		}
+		if ((uint)(resourceIndex - 1) >= maxObjectResources()) {
 			return false;
+		}
 		outOffset = object->_resourceOffsets[resourceIndex - 1];
 	}
 	return outOffset != 0 && outOffset < (uint32)_fileStream->size();
@@ -1631,8 +1641,9 @@ bool Macs2Engine::loadSizedResourcePayload(uint8 resourceIndex, uint16 executing
 										   Common::Array<uint8> &outPayload) {
 	outPayload.clear();
 	uint32 address = 0;
-	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address)) {
 		return false;
+	}
 
 	const int64 oldPos = _fileStream->pos();
 	_fileStream->seek(address, SEEK_SET);
@@ -1654,21 +1665,25 @@ bool Macs2Engine::loadSizedResourcePayload(uint8 resourceIndex, uint16 executing
 bool Macs2Engine::loadAhffAnimResource(uint8 resourceIndex, uint16 executingObjectId,
 									   Common::Array<uint8> &outBlob) {
 	Common::Array<uint8> payload;
-	if (!loadSizedResourcePayload(resourceIndex, executingObjectId, payload))
+	if (!loadSizedResourcePayload(resourceIndex, executingObjectId, payload)) {
 		return false;
-	if (payload.size() < 12 || memcmp(payload.data(), "AHFFANIM0100", 12) != 0)
+	}
+	if (payload.size() < 12 || memcmp(payload.data(), "AHFFANIM0100", 12) != 0) {
 		return false;
+	}
 	outBlob.clear();
 	outBlob.resize(payload.size() - 12);
-	if (!outBlob.empty())
+	if (!outBlob.empty()) {
 		memcpy(outBlob.data(), payload.data() + 12, outBlob.size());
+	}
 	return !outBlob.empty();
 }
 
 bool Macs2Engine::readMegaPicImage(Common::SeekableReadStream *stream, int width, int height,
 								   Graphics::ManagedSurface &out) {
-	if (stream == nullptr || width <= 0 || height <= 0)
+	if (stream == nullptr || width <= 0 || height <= 0) {
 		return false;
+	}
 
 	out.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Array<byte> rowBuf;
@@ -1676,10 +1691,12 @@ bool Macs2Engine::readMegaPicImage(Common::SeekableReadStream *stream, int width
 
 	for (int y = 0; y < height; y++) {
 		uint16 packedLen = stream->readUint16LE();
-		if (packedLen == 0 || packedLen > 2999)
+		if (packedLen == 0 || packedLen > 2999) {
 			return false;
-		if (stream->read(rowBuf.data(), packedLen) != packedLen)
+		}
+		if (stream->read(rowBuf.data(), packedLen) != packedLen) {
 			return false;
+		}
 
 		int x = 0;
 		uint i = 0;
@@ -1688,17 +1705,20 @@ bool Macs2Engine::readMegaPicImage(Common::SeekableReadStream *stream, int width
 			if (code < 0x80) {
 				const uint run = code;
 				for (uint n = 0; n < run && x < width; n++) {
-					if (i >= packedLen)
+					if (i >= packedLen) {
 						return false;
+					}
 					out.setPixel(x++, y, rowBuf[i++]);
 				}
 			} else {
-				if (i >= packedLen)
+				if (i >= packedLen) {
 					return false;
+				}
 				const byte value = rowBuf[i++];
 				const uint run = code & 0x7F;
-				for (uint n = 0; n < run && x < width; n++)
+				for (uint n = 0; n < run && x < width; n++) {
 					out.setPixel(x++, y, value);
+				}
 			}
 		}
 	}
@@ -1709,8 +1729,9 @@ bool Macs2Engine::loadMaskFromResource(uint8 resourceIndex, uint16 executingObje
 									   Graphics::ManagedSurface &dest, int megapicW, int megapicH,
 									   bool upscaleHalfRes) {
 	uint32 address = 0;
-	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address)) {
 		return false;
+	}
 
 	const int64 oldPos = _fileStream->pos();
 	_fileStream->seek(address, SEEK_SET);
@@ -1745,8 +1766,9 @@ void Macs2Engine::clearDeltaAnim() {
 
 bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObjectId, bool forceSkipSpeed1) {
 	uint32 address = 0;
-	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address))
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectId, address)) {
 		return false;
+	}
 
 	const int64 oldPos = _fileStream->pos();
 	_fileStream->seek(address, SEEK_SET);
@@ -1770,8 +1792,9 @@ bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObj
 	}
 
 	uint16 skipSpeed = (_skipSpeed >= 1 && _skipSpeed <= 4) ? _skipSpeed : 1;
-	if (forceSkipSpeed1)
+	if (forceSkipSpeed1) {
 		skipSpeed = 1;
+	}
 	Common::Array<uint32> relOffsets;
 	relOffsets.resize(512);
 	// FBlockRead(0x1000): 512 uint32 offsets (0x800) plus 0x800 trailing bytes.
@@ -1788,14 +1811,16 @@ bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObj
 		readOffsetTable1000();
 		_fileStream->skip(0x1000);
 		frameCount = (uint16)(((uint32)frameCount + 1) >> 1);
-		if (frameCount > 0)
+		if (frameCount > 0) {
 			frameCount--;
+		}
 	} else {
 		_fileStream->skip(0x2000);
 		readOffsetTable1000();
 		frameCount = (uint16)(((uint32)frameCount + 1) / 3);
-		if (frameCount > 0)
+		if (frameCount > 0) {
 			frameCount--;
+		}
 	}
 	if (frameCount == 0 || frameCount > 512) {
 		_fileStream->seek(oldPos, SEEK_SET);
@@ -1815,20 +1840,23 @@ bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObj
 	const uint32 base = address + 4;
 	for (uint16 fi = 0; fi < numFrames; fi++) {
 		const uint32 absOff = relOffsets[fi] + base;
-		if (absOff >= (uint32)_fileStream->size())
+		if (absOff >= (uint32)_fileStream->size()) {
 			continue;
+		}
 		_fileStream->seek(absOff, SEEK_SET);
 		const uint16 stripCount = _fileStream->readUint16LE();
 		DeltaFrame &frame = _deltaAnim.frames[fi];
 		frame.strips.clear();
-		if (stripCount == 0 || stripCount > 400)
+		if (stripCount == 0 || stripCount > 400) {
 			continue;
+		}
 		frame.strips.resize(stripCount);
 		for (uint16 si = 0; si < stripCount; si++) {
 			frame.strips[si].y = _fileStream->readUint16LE();
 			const uint16 rleSize = _fileStream->readUint16LE();
-			if (rleSize == 0 || rleSize > 0x8000)
+			if (rleSize == 0 || rleSize > 0x8000) {
 				break;
+			}
 			frame.strips[si].rle.resize(rleSize);
 			if (_fileStream->read(frame.strips[si].rle.data(), rleSize) != rleSize) {
 				frame.strips[si].rle.clear();
@@ -1843,17 +1871,21 @@ bool Macs2Engine::loadDeltaAnimResource(uint8 resourceIndex, uint16 executingObj
 }
 
 void Macs2Engine::applyDeltaFrameToBackground(const DeltaFrame &frame) {
-	if (_sceneBackground.w <= 0 || _sceneBackground.h <= 0)
+	if (_sceneBackground.w <= 0 || _sceneBackground.h <= 0) {
 		return;
+	}
 
 	for (const DeltaStrip &strip : frame.strips) {
 		const int y = (int)strip.y;
-		if (y < (int)_deltaAnim.clipMiY || y > (int)_deltaAnim.clipMaY)
+		if (y < (int)_deltaAnim.clipMiY || y > (int)_deltaAnim.clipMaY) {
 			continue;
-		if (y < 0 || y >= _sceneBackground.h)
+		}
+		if (y < 0 || y >= _sceneBackground.h) {
 			continue;
-		if (strip.rle.empty())
+		}
+		if (strip.rle.empty()) {
 			continue;
+		}
 
 		const uint8 *p = strip.rle.data();
 		const uint8 *end = p + strip.rle.size();
@@ -1864,32 +1896,38 @@ void Macs2Engine::applyDeltaFrameToBackground(const DeltaFrame &frame) {
 			uint16 runLen = READ_LE_UINT16(p);
 			p += 2;
 			x += skip;
-			if (runLen == 0)
+			if (runLen == 0) {
 				break;
+			}
 			while (runLen != 0 && p < end) {
 				uint8 code = *p++;
 				if (code < 0x80) {
 					uint16 n = code;
-					if (n > runLen)
+					if (n > runLen) {
 						n = runLen;
+					}
 					for (uint16 i = 0; i < n && p < end; i++, x++) {
 						if (x >= (int)_deltaAnim.clipMiX && x <= (int)_deltaAnim.clipMaX &&
-							x >= 0 && x < _sceneBackground.w)
+							x >= 0 && x < _sceneBackground.w) {
 							_sceneBackground.setPixel(x, y, *p);
+						}
 						p++;
 					}
 					runLen = (uint16)(runLen - n);
 				} else {
 					uint16 n = (uint16)(code - 0x80);
-					if (n > runLen)
+					if (n > runLen) {
 						n = runLen;
-					if (p >= end)
+					}
+					if (p >= end) {
 						break;
+					}
 					const uint8 val = *p++;
 					for (uint16 i = 0; i < n; i++, x++) {
 						if (x >= (int)_deltaAnim.clipMiX && x <= (int)_deltaAnim.clipMaX &&
-							x >= 0 && x < _sceneBackground.w)
+							x >= 0 && x < _sceneBackground.w) {
 							_sceneBackground.setPixel(x, y, val);
+						}
 					}
 					runLen = (uint16)(runLen - n);
 				}
@@ -1900,24 +1938,29 @@ void Macs2Engine::applyDeltaFrameToBackground(const DeltaFrame &frame) {
 
 void Macs2Engine::playDeltaFrameSfx(uint16 displayFrame) {
 	for (const DeltaSfxEvent &ev : _deltaAnim.sfxEvents) {
-		if (ev.frameIndex != displayFrame || ev.fileName.empty())
+		if (ev.frameIndex != displayFrame || ev.fileName.empty()) {
 			continue;
-		if (ev.duckMusic)
+		}
+		if (ev.duckMusic) {
 			getMusic()->setSmfDucked(true, _talkVol);
+		}
 		const Common::String base = Script::ScriptExecutor::stripAudioExtension(ev.fileName);
 		playAudioFile(Common::Path("SOUNDFX").join(base), false);
 	}
 }
 
 bool Macs2Engine::startDeltaPlayback(uint16 startFrame, uint16 endFrame, uint16 speedTicks, bool applyPalette) {
-	if (!_deltaAnim.loaded || _deltaAnim.frameCount == 0)
+	if (!_deltaAnim.loaded || _deltaAnim.frameCount == 0) {
 		return false;
+	}
 	uint16 start = startFrame ? startFrame : 1;
 	uint16 end = endFrame;
-	if (end == 0 || end > _deltaAnim.frameCount)
+	if (end == 0 || end > _deltaAnim.frameCount) {
 		end = _deltaAnim.frameCount;
-	if (start > end)
+	}
+	if (start > end) {
 		start = end;
+	}
 	_deltaAnim.startFrame = (uint16)(start - 1);
 	_deltaAnim.endFrame = (uint16)(end - 1);
 	_deltaAnim.currentFrame = _deltaAnim.startFrame;
@@ -1933,26 +1976,31 @@ bool Macs2Engine::startDeltaPlayback(uint16 startFrame, uint16 endFrame, uint16 
 	}
 	const uint16 displayFrame = _deltaAnim.currentFrame;
 	playDeltaFrameSfx(displayFrame);
-	if (displayFrame < _deltaAnim.frames.size())
+	if (displayFrame < _deltaAnim.frames.size()) {
 		applyDeltaFrameToBackground(_deltaAnim.frames[displayFrame]);
+	}
 	_deltaAnim.currentFrame++;
-	if (_deltaAnim.currentFrame > _deltaAnim.endFrame)
+	if (_deltaAnim.currentFrame > _deltaAnim.endFrame) {
 		_deltaAnim.playing = false;
+	}
 	return true;
 }
 
 bool Macs2Engine::tickDeltaPlayback() {
-	if (!_deltaAnim.playing)
+	if (!_deltaAnim.playing) {
 		return false;
+	}
 	_deltaAnim.tickCounter++;
-	if (_deltaAnim.tickCounter < _deltaAnim.speedTicks)
+	if (_deltaAnim.tickCounter < _deltaAnim.speedTicks) {
 		return true;
+	}
 	_deltaAnim.tickCounter = 0;
 
 	const uint16 displayFrame = _deltaAnim.currentFrame;
 	playDeltaFrameSfx(displayFrame);
-	if (displayFrame < _deltaAnim.frames.size())
+	if (displayFrame < _deltaAnim.frames.size()) {
 		applyDeltaFrameToBackground(_deltaAnim.frames[displayFrame]);
+	}
 	_deltaAnim.currentFrame++;
 	if (_deltaAnim.currentFrame > _deltaAnim.endFrame) {
 		_deltaAnim.playing = false;
@@ -1963,13 +2011,15 @@ bool Macs2Engine::tickDeltaPlayback() {
 }
 
 bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID) {
-	if (isAmiga())
+	if (isAmiga()) {
 		return loadAmigaOverlayFont(resourceIndex);
+	}
 
 	// Original (1008:d749): resource table offset, then seek address+0x10 and loadFontData.
 	uint32 address = 0;
-	if (!resolveResourceFileOffset(resourceIndex, executingObjectID, address))
+	if (!resolveResourceFileOffset(resourceIndex, executingObjectID, address)) {
 		return false;
+	}
 
 	const int64 oldPos = _fileStream->pos();
 	_fileStream->seek(address + 0x10, SEEK_SET);
@@ -2022,26 +2072,30 @@ uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
 }
 
 void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
-	if (isV2() || _sceneDepthMap.w == 0 || animIndex >= _backgroundAnimations.size())
+	if (isV2() || _sceneDepthMap.w == 0 || animIndex >= _backgroundAnimations.size()) {
 		return;
+	}
 
 	BackgroundAnimation &anim = _backgroundAnimations[animIndex];
 	BackgroundAnimationBlob &blobEntry = _backgroundAnimationsBlobs[animIndex];
 	Common::Array<uint8> &blob = blobEntry.activeBlob();
-	if (blob.empty())
+	if (blob.empty()) {
 		return;
+	}
 
 	const uint32 frameStart = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0);
-	if (frameStart == 0 || frameStart + 10 > blob.size())
+	if (frameStart == 0 || frameStart + 10 > blob.size()) {
 		return;
+	}
 
 	const uint16 pixelFrameNum = BackgroundAnimationBlob::getCurrentPixelFrameNumber(blob);
 	const int16 frameOffsetX = (int16)READ_LE_UINT16(&blob[frameStart]);
 	const int16 frameOffsetY = (int16)READ_LE_UINT16(&blob[frameStart + 2]);
 	const uint16 width = READ_LE_UINT16(&blob[frameStart + 6]);
 	const uint16 height = READ_LE_UINT16(&blob[frameStart + 8]);
-	if (width == 0 || height == 0 || frameStart + 10 + (uint32)width * height > blob.size())
+	if (width == 0 || height == 0 || frameStart + 10 + (uint32)width * height > blob.size()) {
 		return;
+	}
 
 	const int16 baseX = (int16)anim._x + 1 + frameOffsetX;
 	const int16 baseY = (int16)anim._y + frameOffsetY;
@@ -2051,12 +2105,14 @@ void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
 		// First pixel frame (closed gate): restore authored depth under opaque pixels.
 		for (uint16 yy = 0; yy < height; yy++) {
 			for (uint16 xx = 0; xx < width; xx++) {
-				if (pixels[yy * width + xx] == 0)
+				if (pixels[yy * width + xx] == 0) {
 					continue;
+				}
 				const int px = baseX + (int)xx;
 				const int py = baseY + (int)yy;
-				if (px >= 0 && px < _depthMap.w && py >= 0 && py < _depthMap.h)
+				if (px >= 0 && px < _depthMap.w && py >= 0 && py < _depthMap.h) {
 					_depthMap.setPixel(px, py, _sceneDepthMap.getPixel(px, py));
+				}
 			}
 		}
 		return;
@@ -2065,22 +2121,26 @@ void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
 	// Later pixel frames (open gate): walkable tiles under opaque pixels use path height.
 	for (uint16 yy = 0; yy < height; yy++) {
 		for (uint16 xx = 0; xx < width; xx++) {
-			if (pixels[yy * width + xx] == 0)
+			if (pixels[yy * width + xx] == 0) {
 				continue;
+			}
 			const int px = baseX + (int)xx;
 			const int py = baseY + (int)yy;
-			if (px < 0 || px >= _depthMap.w || py < 0 || py >= _depthMap.h)
+			if (px < 0 || px >= _depthMap.w || py < 0 || py >= _depthMap.h) {
 				continue;
+			}
 			const uint16 walkVal = getWalkabilityAt((int16)py, (int16)px);
-			if (isWalkabilityWalkable(walkVal))
+			if (isWalkabilityWalkable(walkVal)) {
 				_depthMap.setPixel(px, py, (byte)walkVal);
+			}
 		}
 	}
 }
 
 void Macs2Engine::updateAllBackgroundAnimationDepthMaps() {
-	for (size_t i = 0; i < _backgroundAnimations.size(); i++)
+	for (size_t i = 0; i < _backgroundAnimations.size(); i++) {
 		updateBackgroundAnimationDepthMap(i);
+	}
 }
 
 // Params: (pTargetY, pTargetX, charY, charX)
@@ -2135,19 +2195,23 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 		if (charX < *pTargetX) {
 			while (true) {
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (isWalkabilityWalkable(w2))
+				if (isWalkabilityWalkable(w2)) {
 					break;
-				if (*pTargetX <= 0)
+				}
+				if (*pTargetX <= 0) {
 					break;
+				}
 				*pTargetX = *pTargetX - 1;
 			}
 		} else {
 			while (true) {
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (isWalkabilityWalkable(w2))
+				if (isWalkabilityWalkable(w2)) {
 					break;
-				if (*pTargetX >= maxX)
+				}
+				if (*pTargetX >= maxX) {
 					break;
+				}
 				*pTargetX = *pTargetX + 1;
 			}
 		}
@@ -2162,22 +2226,30 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	// Phase 6: Gradient-based wall push
 	int16 pushX = 0;
 	int16 pushY = 0;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 1)))
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 1))) {
 		pushX--;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 1)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 1))) {
 		pushX++;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 1, *pTargetX)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 1, *pTargetX))) {
 		pushY--;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 1, *pTargetX)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 1, *pTargetX))) {
 		pushY++;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 2)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 2))) {
 		pushX--;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 2)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 2))) {
 		pushX++;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 2, *pTargetX)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 2, *pTargetX))) {
 		pushY--;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 2, *pTargetX)))
+	}
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 2, *pTargetX))) {
 		pushY++;
+	}
 
 	while (pushX != 0 || pushY != 0) {
 		if (pushX < 0) {
@@ -2257,28 +2329,34 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 	do {
 		bool steppedX;
 		if (error >= absDx) {
-			if (y1 < y2)
+			if (y1 < y2) {
 				curY--;
-			if (y2 < y1)
+			}
+			if (y2 < y1) {
 				curY++;
+			}
 			error -= absDx;
 			steppedX = false;
 		} else {
-			if (x1 < x2)
+			if (x1 < x2) {
 				curX--;
-			if (x2 < x1)
+			}
+			if (x2 < x1) {
 				curX++;
+			}
 			error += absDy;
 			steppedX = true;
 		}
 
 		if (absDx > absDy && steppedX) {
-			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX)))
+			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX))) {
 				result = false;
+			}
 		}
 		if (absDx <= absDy && !steppedX) {
-			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX)))
+			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX))) {
 				result = false;
+			}
 		}
 	} while (curX != x1 || curY != y1);
 
@@ -2292,8 +2370,9 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 	int32 dy = abs((int)(b.y - a.y));
 	int32 distSq = dx * dx + dy * dy;
 	int i = 0;
-	while (i < 0x500 && (int32)i * i < distSq)
+	while (i < 0x500 && (int32)i * i < distSq) {
 		i++;
+	}
 	return i;
 }
 
@@ -2302,8 +2381,9 @@ int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &
 int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
 	const Common::Point &a = _pathfindingPoints[nodeA - 1]._position;
 	const Common::Point &b = _pathfindingPoints[nodeB - 1]._position;
-	if (!isPathWalkable(a.y, a.x, b.y, b.x))
+	if (!isPathWalkable(a.y, a.x, b.y, b.x)) {
 		return 0x500;
+	}
 	// Binary search for integer sqrt(dx^2 + dy^2), matching binary at 1008:1293
 	int32 dx = abs((int)(b.x - a.x));
 	int32 dy = abs((int)(b.y - a.y));
@@ -2366,8 +2446,9 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	if (adjCount > 0) {
 		for (int i = 0; i < adjCount; i++) {
 			int adj = pt._adjacentPoints[i];
-			if (adj == prevNode)
+			if (adj == prevNode) {
 				continue;
+			}
 
 			// Check visited stack
 			bool alreadyVisited = false;
@@ -2377,8 +2458,9 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 					break;
 				}
 			}
-			if (alreadyVisited)
+			if (alreadyVisited) {
 				continue;
+			}
 
 			// Recursive call
 			int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
@@ -2426,12 +2508,14 @@ void Macs2Engine::setBottomHudVisible(bool visible) {
 		if (visible) {
 			if (_menuMode == MenuMode::Hidden) {
 				_menuMode = MenuMode::Main;
-				if (_scriptExecutor)
+				if (_scriptExecutor) {
 					setCursorMode(_savedMenuCursorMode);
+				}
 			}
 		} else {
-			if (_menuMode == MenuMode::Main && _scriptExecutor)
+			if (_menuMode == MenuMode::Main && _scriptExecutor) {
 				_savedMenuCursorMode = _scriptExecutor->_cursorMode;
+			}
 			_menuMode = MenuMode::Hidden;
 		}
 	}
@@ -2448,8 +2532,9 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	auto cursorHalfSize = [this](Script::MouseMode mode, uint16 &halfW, uint16 &halfH) {
 		halfW = halfH = 0;
 		const int index = (int)mode - 1;
-		if (index < 0 || index >= (int)_imageResources.size())
+		if (index < 0 || index >= (int)_imageResources.size()) {
 			return;
+		}
 		halfW = _imageResources[index]._width / 2;
 		halfH = _imageResources[index]._height / 2;
 	};
@@ -2490,11 +2575,13 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 
 	_clipRectDirty = true;
 
-	if (view)
+	if (view) {
 		view->updateCursor();
+	}
 
-	if (cursorVisible)
+	if (cursorVisible) {
 		_needsRedraw = true;
+	}
 
 	debugC(kDebugInput, "Cursor mode set to %i (%s)", (int)newMode,
 		   newMode == Script::MouseMode::Talk ? "Talk" : newMode == Script::MouseMode::Look       ? "Look"
@@ -2524,8 +2611,9 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 	Common::Array<uint16> a = _hotspotColorTable;
 
 	do {
-		if ((uint)(i - 1) >= a.size())
+		if ((uint)(i - 1) >= a.size()) {
 			break;
+		}
 		// Binary compares only the low byte: *(char*)(scene + i*2 + 0x50D3)
 		uint8 lookup = (uint8)a[i - 1];
 		if (lookup == firstLookup) {
@@ -2542,18 +2630,21 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 Common::String getObjectHotspotName(uint16 objectIndex) {
 	const GameObjects &objects = GameObjects::instance();
 	if (objectIndex > 0 && objectIndex < objects._objectNames.size() && !objects._objectNames[objectIndex].empty()) {
-		if (g_engine != nullptr)
+		if (g_engine != nullptr) {
 			return g_engine->translateHotspotLabel(objects._objectNames[objectIndex]);
+		}
 		return objects._objectNames[objectIndex];
 	}
 	return Common::String();
 }
 
 Common::String lookupInteractionDisplayName(uint16 interactionId) {
-	if (interactionId >= 0x800)
+	if (interactionId >= 0x800) {
 		return lookupSceneHotspotName((uint16)Scenes::instance()._currentSceneIndex, (uint16)(interactionId - 0x800));
-	if (interactionId >= 0x400)
+	}
+	if (interactionId >= 0x400) {
 		return getObjectHotspotName((uint16)(interactionId - 0x400));
+	}
 	return Common::String();
 }
 
@@ -2574,8 +2665,9 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 		for (int y = 0; y < _hotspotMap.h; ++y) {
 			for (int x = 0; x < _hotspotMap.w; ++x) {
 				const uint8 pixel = _hotspotMap.getPixel(x, y);
-				if (pixel == 0)
+				if (pixel == 0) {
 					continue;
+				}
 
 				for (uint16 i = 0; i < _numHotspots; ++i) {
 					if ((uint8)_hotspotColorTable[i] == pixel) {
@@ -2589,13 +2681,15 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 		}
 
 		for (uint16 i = 0; i < _numHotspots; ++i) {
-			if (count[i] == 0)
+			if (count[i] == 0) {
 				continue;
+			}
 
 			HotspotSnapshot::SceneHotspotEntry entry;
 			entry.index = i + 1;
-			if ((uint)(i + 1) < _hotspotOverrides.size() && _hotspotOverrides[i + 1] != 0xFFFF)
+			if ((uint)(i + 1) < _hotspotOverrides.size() && _hotspotOverrides[i + 1] != 0xFFFF) {
 				entry.index = _hotspotOverrides[i + 1];
+			}
 			entry.center = Common::Point(sumX[i] / count[i], sumY[i] / count[i]);
 			_hotspotSnapshot.sceneHotspots.push_back(entry);
 		}
@@ -2605,10 +2699,12 @@ void Macs2Engine::rebuildHotspotSnapshot() const {
 	const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
 	for (uint16 objectIndex = 1; objectIndex <= kMaxSceneObjects; ++objectIndex) {
 		GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
-		if (obj == nullptr || obj->_dataOffset == 0)
+		if (obj == nullptr || obj->_dataOffset == 0) {
 			continue;
-		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex)
+		}
+		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex) {
 			continue;
+		}
 
 		HotspotSnapshot::SceneObjectEntry entry;
 		entry.index = objectIndex;
@@ -2630,18 +2726,21 @@ bool Macs2Engine::hotspotDirty() const {
 		return true;
 	}
 
-	if (mapMode)
+	if (mapMode) {
 		return false;
+	}
 
 	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
 	const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
 	uint snapshotIdx = 0;
 	for (uint16 objectIndex = 1; objectIndex <= kMaxSceneObjects; ++objectIndex) {
 		GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
-		if (obj == nullptr || obj->_dataOffset == 0)
+		if (obj == nullptr || obj->_dataOffset == 0) {
 			continue;
-		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex)
+		}
+		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex) {
 			continue;
+		}
 
 		const Common::Point pos = getSceneObjectHotspotPosition(view, obj);
 		if (snapshotIdx >= _hotspotSnapshot.sceneObjects.size()) {
@@ -2666,16 +2765,19 @@ bool Macs2Engine::hotspotDirty() const {
 }
 
 void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
-	if (isMapModeActive())
+	if (isMapModeActive()) {
 		return;
+	}
 
 	for (const HotspotSnapshot::SceneHotspotEntry &entry : _hotspotSnapshot.sceneHotspots) {
-		if (entry.index == 0)
+		if (entry.index == 0) {
 			continue;
+		}
 
 		const Common::Point &center = entry.center;
-		if (center.x < 0 || center.x >= screenWidth() || center.y < 0 || center.y >= gameHeight())
+		if (center.x < 0 || center.x >= screenWidth() || center.y < 0 || center.y >= gameHeight()) {
 			continue;
+		}
 
 		const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
 		const Common::String name = lookupSceneHotspotName(sceneIndex, entry.index);
@@ -2686,18 +2788,21 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
 	const uint16 currentActorIndex = (uint16)Scenes::instance()._currentActorIndex;
 	for (const HotspotSnapshot::SceneObjectEntry &entry : _hotspotSnapshot.sceneObjects) {
-		if (entry.index == currentActorIndex)
+		if (entry.index == currentActorIndex) {
 			continue;
+		}
 
 		const Common::Point &screenPos = entry.position;
-		if (screenPos.x < 0 || screenPos.x >= screenWidth() || screenPos.y < 0 || screenPos.y >= gameHeight())
+		if (screenPos.x < 0 || screenPos.x >= screenWidth() || screenPos.y < 0 || screenPos.y >= gameHeight()) {
 			continue;
+		}
 
 		Character *character = view ? view->getCharacterByIndex(entry.index) : nullptr;
 		const bool isCharacter = character != nullptr && !character->_markedForDeletion;
 		Graphics::HotspotType hotspotType = Graphics::kHotspotObject;
-		if (isCharacter && GameObjects::isNpcIndex(entry.index))
+		if (isCharacter && GameObjects::isNpcIndex(entry.index)) {
 			hotspotType = Graphics::kHotspotNPC;
+		}
 
 		const Common::String &name = getObjectHotspotName(entry.index);
 		hotspots.emplace_back(Graphics::HotspotInfo(screenPos, hotspotLabelToU32(name), hotspotType));
@@ -2765,17 +2870,20 @@ void Macs2Engine::recordInputFrame(uint16 mouseX, uint16 mouseY, uint16 buttons)
 }
 
 bool Macs2Engine::readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons) {
-	if (!_inputPlaybackStream || _inputPlaybackStream->eos())
+	if (!_inputPlaybackStream || _inputPlaybackStream->eos()) {
 		return false;
+	}
 	// Format: each record is [frameCounter(2), mouseX(2), mouseY(2), buttons(2)]
 	// Playback waits until current frame >= next record's frame counter
-	if (_inputFrameCounter < _inputPlaybackEndFrame)
+	if (_inputFrameCounter < _inputPlaybackEndFrame) {
 		return false;
+	}
 	mouseX = _inputPlaybackStream->readUint16LE();
 	mouseY = _inputPlaybackStream->readUint16LE();
 	buttons = _inputPlaybackStream->readUint16LE();
-	if (_inputPlaybackStream->eos())
+	if (_inputPlaybackStream->eos()) {
 		return false;
+	}
 	// Read next record's frame counter (or detect end)
 	_inputPlaybackEndFrame = _inputPlaybackStream->readUint16LE();
 	return !_inputPlaybackStream->eos();
@@ -2825,8 +2933,9 @@ int Macs2Engine::computeStringIndex(Common::MemoryReadStream *stream, int target
 	while (stream->pos() < targetOffset && !stream->eos()) {
 		// DOS: u16LE + XOR ciphertext. Amiga: u16BE + plaintext.
 		const uint16 len = isAmiga() ? stream->readUint16BE() : stream->readUint16LE();
-		if (len == 0)
+		if (len == 0) {
 			break;
+		}
 		stream->skip(len);
 		index++;
 	}
@@ -2891,8 +3000,9 @@ void Macs2Engine::loadTranslation() {
 		for (uint16 j = 0; j < sceneIndex[i].numStrings; j++) {
 			uint16 len = f->readUint16LE();
 			Common::String s;
-			for (uint16 k = 0; k < len; k++)
+			for (uint16 k = 0; k < len; k++) {
 				s += (char)f->readByte();
+			}
 			entry.strings.push_back(s);
 		}
 		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
@@ -2906,8 +3016,9 @@ void Macs2Engine::loadTranslation() {
 		for (uint16 j = 0; j < objectIndex[i].numStrings; j++) {
 			uint16 len = f->readUint16LE();
 			Common::String s;
-			for (uint16 k = 0; k < len; k++)
+			for (uint16 k = 0; k < len; k++) {
 				s += (char)f->readByte();
+			}
 			entry.strings.push_back(s);
 		}
 		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
@@ -2918,21 +3029,25 @@ void Macs2Engine::loadTranslation() {
 		for (uint16 i = 0; i < count; i++) {
 			uint16 keyLen = f->readUint16LE();
 			Common::String key;
-			for (uint16 k = 0; k < keyLen; k++)
+			for (uint16 k = 0; k < keyLen; k++) {
 				key += (char)f->readByte();
+			}
 			uint16 valLen = f->readUint16LE();
 			Common::String val;
-			for (uint16 k = 0; k < valLen; k++)
+			for (uint16 k = 0; k < valLen; k++) {
 				val += (char)f->readByte();
-			if (!key.empty() && !val.empty())
+			}
+			if (!key.empty() && !val.empty()) {
 				out[key] = val;
+			}
 		}
 	};
 
 	_hotspotLabelTranslations.clear();
 	_uiLabelTranslations.clear();
-	if (numHotspotLabels > 0 || numUiLabels > 0)
+	if (numHotspotLabels > 0 || numUiLabels > 0) {
 		f->seek(stringDataEnd);
+	}
 	readLabelMap(numHotspotLabels, _hotspotLabelTranslations);
 	readLabelMap(numUiLabels, _uiLabelTranslations);
 
@@ -2942,20 +3057,24 @@ void Macs2Engine::loadTranslation() {
 }
 
 Common::String Macs2Engine::translateHotspotLabel(const Common::String &cp850Name) const {
-	if (cp850Name.empty() || !(getFeatures() & GF_TRANSLATED))
+	if (cp850Name.empty() || !(getFeatures() & GF_TRANSLATED)) {
 		return cp850Name;
+	}
 	auto it = _hotspotLabelTranslations.find(cp850Name);
-	if (it != _hotspotLabelTranslations.end())
+	if (it != _hotspotLabelTranslations.end()) {
 		return it->_value;
+	}
 	return cp850Name;
 }
 
 Common::String Macs2Engine::translateUiLabel(const Common::String &source) const {
-	if (source.empty() || !(getFeatures() & GF_TRANSLATED))
+	if (source.empty() || !(getFeatures() & GF_TRANSLATED)) {
 		return source;
+	}
 	auto it = _uiLabelTranslations.find(source);
-	if (it != _uiLabelTranslations.end())
+	if (it != _uiLabelTranslations.end()) {
 		return it->_value;
+	}
 	return source;
 }
 
@@ -2968,8 +3087,9 @@ Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream,
 		for (int i = 0; i < numStrings; i++) {
 			Common::String currentLine;
 			const uint16 length = stream->readUint16BE();
-			for (uint16 index = 0; index < length; index++)
+			for (uint16 index = 0; index < length; index++) {
 				currentLine += (char)stream->readByte();
+			}
 			result[i] = currentLine;
 		}
 	} else {
@@ -3049,17 +3169,21 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 
 	const uint16 minSlots = maxAnimSlots();
 	const uint16 overloadSlot = overloadAnimSlot();
-	while (go->_blobs.size() < minSlots)
+	while (go->_blobs.size() < minSlots) {
 		go->_blobs.push_back(Common::Array<uint8>());
-	while (go->_blobSourceKeys.size() < minSlots)
+	}
+	while (go->_blobSourceKeys.size() < minSlots) {
 		go->_blobSourceKeys.push_back(0);
-	while (go->_blobMirrorFlags.size() < minSlots)
+	}
+	while (go->_blobMirrorFlags.size() < minSlots) {
 		go->_blobMirrorFlags.push_back(false);
+	}
 
 	Common::Array<uint8> *targetBlob = nullptr;
 	if (slotIndex == overloadSlot) {
-		while (go->_blobs.size() <= (uint)(overloadSlot - 1))
+		while (go->_blobs.size() <= (uint)(overloadSlot - 1)) {
 			go->_blobs.push_back(Common::Array<uint8>());
+		}
 		targetBlob = &go->_blobs[overloadSlot - 1];
 		go->_overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
 		go->_overloadAnimationMirrored = shouldMirror;
@@ -3072,8 +3196,9 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 
 	// Binary: memFree old blob if bSlotLoaded, then alloc + read; sets slot+0x33 = 1.
 	*targetBlob = data;
-	if (slotIndex == overloadSlot)
+	if (slotIndex == overloadSlot) {
 		go->_overloadAnimation = data;
+	}
 	if (shouldMirror) {
 		BackgroundAnimationBlob::mirrorAnimBlob(*targetBlob);
 	}
@@ -3081,12 +3206,14 @@ bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 }
 
 void Macs2Engine::sortObjectsByDepth(uint16 objectIndex) {
-	if (objectIndex < 1 || objectIndex > 0x200)
+	if (objectIndex < 1 || objectIndex > 0x200) {
 		return;
+	}
 
 	GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
-	if (obj == nullptr || obj->_dataOffset == 0)
+	if (obj == nullptr || obj->_dataOffset == 0) {
 		return;
+	}
 
 	View1 *currentView = (View1 *)findView("View1");
 	if (currentView != nullptr && currentView->_activeInventoryItem != nullptr &&
@@ -3165,8 +3292,9 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	};
 
 	const uint16 animSlotCount = maxAnimSlots();
-	if (isV2())
+	if (isV2()) {
 		_fileStream->readUint16LE(); // ReadyObject lead word before anim slots
+	}
 	for (int j = 0; j < (int)animSlotCount; j++) {
 		_fileStream->readUint16LE(); // animID (editor metadata, unused at runtime)
 		uint16 blobSourceKey = _fileStream->readUint16LE();
@@ -3229,10 +3357,11 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	_fileStream->readByte(); // runtime+0x184 hasInventoryIcon (derived from slot 0x13 in C++)
 	obj->_hasShading = _fileStream->readByte() != 0;
 	obj->_hasScaling = _fileStream->readByte() != 0;
-	if (isV2())
+	if (isV2()) {
 		obj->_hasDoubleResAnim = _fileStream->readByte() != 0;
-	else
+	} else {
 		obj->_hasDoubleResAnim = false;
+	}
 
 	if (obj->_blobs.size() > 0x11 && !obj->_blobs[0x11].empty()) {
 		const uint16 frameCount = BackgroundAnimationBlob::getAnimFrameCount(obj->_blobs[0x11]);
@@ -3244,8 +3373,9 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	}
 
 	obj->_overloadAnimTriggerDirection = 0x7FFF;
-	for (uint i = 0; i < ARRAYSIZE(obj->_specialAnimTriggers); i++)
+	for (uint i = 0; i < ARRAYSIZE(obj->_specialAnimTriggers); i++) {
 		obj->_specialAnimTriggers[i] = 0x7FFF;
+	}
 	obj->_useOverloadAnimation = false;
 	obj->_overloadAnimation.clear();
 	obj->_snapToTarget = false;
@@ -3254,7 +3384,6 @@ bool Macs2Engine::loadObjectData(GameObject *obj) {
 	obj->_boundsAttachmentValue1 = 0;
 	obj->_boundsAttachmentValue2 = 0;
 	obj->_boundsAttachmentValue3 = 0;
-	// Binary loadObjectData (1008:08ec): runtime+0x21D = object vertical offset.
 	obj->_storedWalkRuntime.motionTargetVerticalOffset = obj->_verticalOffsetScale;
 
 	const uint32 scriptTableOffset = getMcsDirectoryOffset() + kMcsV1ObjectScriptPtrRel + obj->_index * 0xC;
