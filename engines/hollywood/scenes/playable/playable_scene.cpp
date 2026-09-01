@@ -226,39 +226,24 @@ PlayableScene::BlockingSequence::BlockingSequence(PlayableScene &scene) :
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
-		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
-	if (canRun())
-		finishMediaStep(_scene.playAnimationFrames(layers, layerId, range));
-	return *this;
-}
-
-PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::layerFrames(
 		uint layerId, const AnimationFrameRange &range) {
-	return layerFrames(_scene._sceneLayers, layerId, range);
-}
-
-PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerFrames(
-		SceneLayerStack &layers, uint layerId, const AnimationFrameRange &range) {
 	if (canRun())
-		finishMediaStep(_scene.playAndPresentAnimationFrames(layers, layerId, range));
+		finishMediaStep(_scene.playAnimationFrames(layerId, range));
 	return *this;
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerFrames(
 		uint layerId, const AnimationFrameRange &range) {
-	return presentedLayerFrames(_scene._sceneLayers, layerId, range);
-}
-
-PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerTransition(
-		SceneLayerStack &layers, uint layerId, const AnimationTransition &transition) {
 	if (canRun())
-		finishMediaStep(_scene.playAndPresentAnimationTransition(layers, layerId, transition));
+		finishMediaStep(_scene.playAndPresentAnimationFrames(layerId, range));
 	return *this;
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::presentedLayerTransition(
 		uint layerId, const AnimationTransition &transition) {
-	return presentedLayerTransition(_scene._sceneLayers, layerId, transition);
+	if (canRun())
+		finishMediaStep(_scene.playAndPresentAnimationTransition(layerId, transition));
+	return *this;
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::resourceLayerFrames(
@@ -706,20 +691,20 @@ void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing,
 		activeWorldX, activeWorldY, actorDrawOrderMode);
 	copyBaseFramebufferToSceneFramebuffer();
 	drawCustomBackgroundComposite(activeWorldX, activeWorldY);
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
+	drawLayerStack(kSceneAnimationBehindActors);
 	drawActionOverlayAtStratum(kSceneAnimationBehindActors);
 
 	if (_sceneLayers.hasVisibleLayers(kSceneAnimationActorReplacement)) {
 		if (drawActiveActor || drawSecondaryActor)
 			updateActorPaletteForWorldPoint(activeWorldX, activeWorldY);
-		drawLayerStack(_sceneLayers, kSceneAnimationActorReplacement);
+		drawLayerStack(kSceneAnimationActorReplacement);
 	} else {
 		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	}
 	drawCustomActorForegroundComposite(activeWorldX, activeWorldY, actorDrawOrderMode);
 	drawActionOverlayAtStratum(kSceneAnimationActorReplacement);
-	drawLayerStack(_sceneLayers, kSceneAnimationInFrontOfActors);
+	drawLayerStack(kSceneAnimationInFrontOfActors);
 	drawActionOverlayAtStratum(kSceneAnimationInFrontOfActors);
 	drawActionOverlayAtStratum(kSceneAnimationScenePlaced);
 	drawCustomForegroundComposite(activeWorldX, activeWorldY);
@@ -1608,45 +1593,16 @@ void PlayableScene::drawSceneLayer(uint layerId) {
 		drawResourceSpriteLayer(_sceneLayers.layer(layerId));
 }
 
-void PlayableScene::drawLayerStack(const SceneLayerStack &layers,
-		SceneAnimationStratum stratum) {
-	for (uint i = 0; i < layers.layerCount(); ++i) {
-		if (layers.isInStratum(i, stratum))
-			drawResourceSpriteLayer(layers.layer(i));
+void PlayableScene::drawLayerStack(SceneAnimationStratum stratum) {
+	for (uint i = 0; i < _sceneLayers.layerCount(); ++i) {
+		if (_sceneLayers.isInStratum(i, stratum))
+			drawResourceSpriteLayer(_sceneLayers.layer(i));
 	}
 }
 
 void PlayableScene::drawActionOverlayAtStratum(SceneAnimationStratum stratum) {
 	if (_actionOverlayPlayer.isVisible() && _actionOverlayPlayer.stratum == stratum)
 		drawActionOverlayLayer();
-}
-
-bool PlayableScene::playAnimationFrames(SceneLayerStack &layers, uint layerId,
-		const AnimationFrameRange &range) {
-	if (!layers.hasLayer(layerId))
-		return false;
-	return playAnimationFrames(layers.layer(layerId), range);
-}
-
-bool PlayableScene::playAndPresentAnimationFrames(SceneLayerStack &layers, uint layerId,
-		const AnimationFrameRange &range) {
-	if (!layers.hasLayer(layerId))
-		return false;
-	return playAndPresentAnimationFrames(layers.layer(layerId), range);
-}
-
-bool PlayableScene::playAnimationTransition(SceneLayerStack &layers, uint layerId,
-		const AnimationTransition &transition) {
-	if (!layers.hasLayer(layerId))
-		return false;
-	return playAnimationTransition(layers.layer(layerId), transition);
-}
-
-bool PlayableScene::playAndPresentAnimationTransition(SceneLayerStack &layers, uint layerId,
-		const AnimationTransition &transition) {
-	if (!layers.hasLayer(layerId))
-		return false;
-	return playAndPresentAnimationTransition(layers.layer(layerId), transition);
 }
 
 bool PlayableScene::playResourceLayerSequence(ResourceSpriteLayer &layer, uint chunkIndex,

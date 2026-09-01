@@ -565,7 +565,7 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 	if (frameMapSize != 0) {
 		const byte hookId = globeDelta > 0 ? kScene3060RotateGlobeForwardHook :
 			kScene3060RotateGlobeBackwardHook;
-		playAnimationFrames(_sceneLayers, kScene3060ButtonLayer,
+		playAnimationFrames(kScene3060ButtonLayer,
 			AnimationFrameRange(0, frameMapSize - 1, kScene3060ButtonFrameMillis)
 				.unskippable().hookAt(3, hookId));
 	}

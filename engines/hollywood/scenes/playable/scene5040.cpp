@@ -627,7 +627,7 @@ bool Scene5040::playKarlFrames(byte firstFrame, byte lastFrame, uint32 frameMill
 	const bool previousSuspendKarlIdle = _suspendKarlIdle;
 	_suspendKarlIdle = true;
 	_sceneLayers.setLayerVisible(kScene5040KarlLayer, true);
-	const bool completed = playAndPresentAnimationFrames(_sceneLayers, kScene5040KarlLayer,
+	const bool completed = playAndPresentAnimationFrames(kScene5040KarlLayer,
 		AnimationFrameRange(firstFrame, lastFrame, frameMillis));
 	_karlIdleFrame = _sceneLayers.layerFrame(kScene5040KarlLayer);
 	_suspendKarlIdle = previousSuspendKarlIdle;
@@ -639,7 +639,7 @@ bool Scene5040::playKarlTransition(byte firstFrame, byte lastFrame, byte finalFr
 	const bool previousSuspendKarlIdle = _suspendKarlIdle;
 	_suspendKarlIdle = true;
 	_sceneLayers.setLayerVisible(kScene5040KarlLayer, true);
-	const bool completed = playAndPresentAnimationTransition(_sceneLayers, kScene5040KarlLayer,
+	const bool completed = playAndPresentAnimationTransition(kScene5040KarlLayer,
 		AnimationTransition(firstFrame, lastFrame, finalFrame, frameMillis));
 	_karlIdleFrame = _sceneLayers.layerFrame(kScene5040KarlLayer);
 	_suspendKarlIdle = previousSuspendKarlIdle;

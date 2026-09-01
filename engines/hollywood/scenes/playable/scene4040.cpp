@@ -280,7 +280,7 @@ void Scene4040::resetBackgroundLayers() {
 }
 
 void Scene4040::drawBackgroundLayers() {
-	drawLayerStack(_sceneLayers, kSceneAnimationBehindActors);
+	drawLayerStack(kSceneAnimationBehindActors);
 }
 
 void Scene4040::advanceRandomBackground(uint32 delta) {
