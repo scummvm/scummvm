@@ -71,7 +71,7 @@ public:
 	bool resolveSecondaryAction(const ObjectRecord &object, InventorySecondaryAction &action) const;
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
-	Common::String resolveWeekdayLabel() const;
+	Common::String resolveWeekdayLabel(const MenuTextConfig &menuTextConfig) const;
 	const InventoryVisual *findItemAtPoint(const Common::Point &point) const;
 	Common::Rect getPanelBounds() const;
 	void drawOverlay(Graphics::Screen &screen) const;

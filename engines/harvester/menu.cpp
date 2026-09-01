@@ -34,6 +34,7 @@
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
 #include "harvester/cft_font.h"
+#include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
@@ -65,6 +66,21 @@ static const byte kQuickTipActionColor = 0xc3;
 
 static const char *const kMenuPath = "MENU.INI";
 static const char *const kMenuSectionName = "menu";
+
+struct MenuWeekdayEntry {
+	const char *key;
+	const char *englishFallback;
+};
+
+static const MenuWeekdayEntry kMenuWeekdays[] = {
+	{ "monday", "Monday" },
+	{ "tuesday", "Tuesday" },
+	{ "wednesday", "Wednesday" },
+	{ "thursday", "Thursday" },
+	{ "friday", "Friday" },
+	{ "saturday", "Saturday" }
+};
+
 static const char *const kOptionsVolumeBitmapPath = "1:/GRAPHIC/OTHER/VOLUME.BM";
 static const char *const kOptionsIndicatorBitmapPath = "1:/GRAPHIC/OTHER/INDICATR.BM";
 static const char *const kOptionsPreviewSoundPath = "1:/SOUND/EFFECTS/WHIP2.WAV";
@@ -269,6 +285,9 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 	config.optionItems[4] = "GORE";
 	config.optionItems[5] = "QUICK TIPS";
 	config.optionItems[6] = "PASSWORD";
+	config.weekdayLabels.resize(ARRAYSIZE(kMenuWeekdays));
+	for (uint i = 0; i < config.weekdayLabels.size(); ++i)
+		config.weekdayLabels[i] = kMenuWeekdays[i].englishFallback;
 
 	ResourceManager *resources = engine.getResources();
 	if (!resources)
@@ -316,6 +335,13 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 	loadMenuDisplayValue(menu, "other", config.dialogueOtherLabel);
 	loadMenuDisplayValue(menu, "responses", config.dialogueResponsesLabel);
 	loadMenuDisplayValue(menu, "keyword", config.dialogueKeywordLabel);
+	for (uint i = 0; i < config.weekdayLabels.size(); ++i)
+		loadMenuDisplayValue(menu, kMenuWeekdays[i].key, config.weekdayLabels[i]);
+	debugC(2, kDebugGeneral,
+		"Harvester: inventory weekdays monday='%s' tuesday='%s' wednesday='%s' thursday='%s' friday='%s' saturday='%s'",
+		config.weekdayLabels[0].c_str(), config.weekdayLabels[1].c_str(),
+		config.weekdayLabels[2].c_str(), config.weekdayLabels[3].c_str(),
+		config.weekdayLabels[4].c_str(), config.weekdayLabels[5].c_str());
 	loadMenuDisplayValue(menu, "Exit", config.quickTipsExitLabel);
 	loadMenuDisplayValue(menu, "next", config.quickTipsNextLabel);
 	loadMenuDisplayValue(menu, "show_tips_on", config.quickTipsOnLabel);

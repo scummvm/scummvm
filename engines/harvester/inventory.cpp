@@ -229,25 +229,6 @@ static bool usesObjectActionForInventorySecondaryClick(const Common::String &obj
 	return false;
 }
 
-static Common::String resolveInventoryWeekdayLabel(int storyDayIndex) {
-	switch (storyDayIndex) {
-	case 1:
-		return "Monday";
-	case 2:
-		return "Tuesday";
-	case 3:
-		return "Wednesday";
-	case 4:
-		return "Thursday";
-	case 5:
-		return "Friday";
-	case 6:
-		return "Saturday";
-	default:
-		return Common::String();
-	}
-}
-
 static void debugLogInventoryVisual(const InventoryVisual &visual, const Common::String &spritePath) {
 	debugC(1, kDebugInventory,
 		"Harvester: inventory visual object='%s' sprite='%s' alt='%s' chosen='%s' bounds=(%d,%d)-(%d,%d) action='%s' owner='%s' text='%s'",
@@ -502,12 +483,16 @@ const Common::String &InventorySystem::getPromptText() const {
 	return _promptText;
 }
 
-Common::String InventorySystem::resolveWeekdayLabel() const {
+Common::String InventorySystem::resolveWeekdayLabel(const MenuTextConfig &menuTextConfig) const {
 	Script *script = _engine.getScript();
 	if (!script || script->isObjectInInventory(kHarvestBladeObjectName))
 		return Common::String();
 
-	return resolveInventoryWeekdayLabel(script->getCurrentStoryDayIndex());
+	const int storyDayIndex = script->getCurrentStoryDayIndex();
+	if (storyDayIndex < 1 || storyDayIndex > (int)menuTextConfig.weekdayLabels.size())
+		return Common::String();
+
+	return menuTextConfig.weekdayLabels[storyDayIndex - 1];
 }
 
 const InventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {

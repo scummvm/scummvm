@@ -54,6 +54,7 @@ struct MenuTextConfig {
 	Common::String dialogueOtherLabel = "Other";
 	Common::String dialogueResponsesLabel = "Responses";
 	Common::String dialogueKeywordLabel;
+	Common::Array<Common::String> weekdayLabels;
 	Common::String quickTipsExitLabel = "Exit";
 	Common::String quickTipsNextLabel = "Next";
 	Common::String quickTipsOnLabel = "Show Tips ON";

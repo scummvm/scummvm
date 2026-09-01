@@ -3652,7 +3652,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			}
 			if (_inventory.isOpen()) {
 				_inventory.drawOverlay(*activeScreen);
-				drawInventoryWeekday(*activeScreen, *inventoryTooltipFont, _inventory.resolveWeekdayLabel());
+				drawInventoryWeekday(*activeScreen, *inventoryTooltipFont,
+					_inventory.resolveWeekdayLabel(flow._menuTextConfig));
 			}
 			if (inventorySelectionActive) {
 				_inventory.drawSelectedDragItem(*activeScreen, _mousePos);
