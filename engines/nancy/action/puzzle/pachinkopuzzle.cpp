@@ -40,17 +40,13 @@ static const double kGravity = 50.0;			// downward accel (px/s^2)
 static const double kRestitution = 0.85;		// bounce energy retained
 static const double kTwoPi = 6.283185307179586;
 static const double kDeg2Rad = 0.017453292519943295;
-// Launch-param jitter: progress*0.95 + (rand%100)*0.002; launch-Y jitter: (rand%100)*0.01.
 static const double kSpawnParamMax = 0.95;
 static const double kSpawnParamJitter = 0.002;
 static const double kSpawnYJitter = 0.01;
-// Per-ball deceleration is not in the chunk (it lives in a runtime-built physics body), so
-// a small constant drag is used here as an approximation.
 static const double kDrag = 12.0;				// px/s per second
 
-// Collision geometry. Pins are stored as 1x1 points on a staggered ~30px grid; on screen
-// they are small round bumpers, so the hit distance matches the drawn pin + ball radii (a
-// ball may still thread the wider gaps, which is fine - the stagger catches it a row later).
+// Pins are stored as 1x1 points on a staggered ~30px grid but drawn as small round bumpers,
+// so they collide as circles at the drawn pin + ball radii.
 static const double kPinRadius = 4.0;
 static const double kBallRadius = 5.0;
 static const int kPhysicsSubsteps = 4;			// per frame, to avoid tunnelling the pins
@@ -58,8 +54,7 @@ static const int kPhysicsSubsteps = 4;			// per frame, to avoid tunnelling the p
 static const uint32 kHoleLitMs = 400;			// how long a hole stays lit after a catch
 
 // A climber reaches the pot once its accumulated steps hit this goal. moverSpeed per catch
-// is 2 (Miner) / 3 (Yeti), so the Yeti climbs faster - matching the game's "the Yeti
-// usually wins". The exact goal is not recovered from the chunk; this is a tuned value.
+// is 2 (Miner) / 3 (Yeti), so the Yeti climbs faster.
 static const int kClimbGoal = 30;
 
 static double wrapAngle(double a) {
@@ -73,9 +68,8 @@ static double wrapAngle(double a) {
 }
 
 void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
-	readFilename(stream, _imageName);			// 0x00 - board overlay
+	readFilename(stream, _imageName);			// board overlay
 
-	// 167-byte header blob.
 	readRect(stream, _ballSrc);					// ball sprite source
 	readRect(stream, _ballEntry);				// top-right entry chute
 	_velMin = stream.readSint32LE();			// launch-speed floor
@@ -110,12 +104,10 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	// The polymorphic Nancy13 ActionZone array (bumpers / walls / overlays). The shared
-	// ActionZone reader handles the Nancy13 layout when told to.
+	// The bumpers / walls / overlays, in the Nancy13 zone layout.
 	readActionZoneArray(stream, _zones, true);
 
-	// The base trailer: a count-prefixed array of 23-byte hotspot records. The sample
-	// carries the single "give up / exit" hotspot.
+	// The base trailer's hotspot records; the first is the give-up exit.
 	int16 numExit = stream.readSint16LE();
 	for (int16 i = 0; i < numExit; ++i) {
 		Common::Rect r;
@@ -129,7 +121,6 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 			_exitHotspot = r;
 			_exitCursorType = cursorType;
 			_exitScene.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
 			_exitScene.frameID = 0;
 			_exitFlag.label = exitFlagLabel;
 			_exitFlag.flag = exitFlagValue;
@@ -138,10 +129,9 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m) {
-	readFilename(stream, m.imageName);			// the ANIM_OVL sprite strip
+	readFilename(stream, m.imageName);			// the sprite strip
 	m.animRate = stream.readSint32LE();			// frames per second
 
-	// Sprite-strip source rects (an embedded "sprite container": int16 count + rects).
 	int16 numFrames = stream.readSint16LE();
 	if (numFrames > 0) {
 		m.frames.resize(numFrames);
@@ -150,27 +140,30 @@ void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m)
 		}
 	}
 
-	// The slide "mover": a start rect, an end/catch rect, and a speed.
 	readRect(stream, m.moverStart);
 	readRect(stream, m.moverEnd);
 	m.moverSpeed = stream.readSint32LE();
 
-	m.winchSound.readData(stream);				// snd1 - the winch-up cue
+	m.winchSound.readData(stream);				// the winch-up cue
 
-	stream.skip(1);								// per-machine flag byte
+	stream.skip(1);
 
-	// The 55-byte blob: a filename[33] (the result movie - MUS_PachinkoWinANIM /
-	// MUS_PachinkoLoseANIM), then its 16-byte destination rect, then int32 + int16.
+	// The result movie, then the scene and event flag the puzzle exits through when this
+	// climber is the one that wins.
 	readFilename(stream, m.movieName);
 	readRect(stream, m.movieDest);
-	stream.skip(6);
+	stream.skip(1);
+	m.resultScene.sceneID = stream.readUint16LE();
+	m.resultScene.frameID = 0;
+	m.resultFlag.label = stream.readSint16LE();
+	m.resultFlag.flag = stream.readByte();
 
-	m.resultSound.readData(stream);				// snd2 - the win/lose voice cue
+	m.resultSound.readData(stream);				// the win/lose voice cue
 
-	stream.skip(1);								// byte (unused here)
-	stream.skip(4);								// int32 (unused here)
+	stream.skip(1);
+	stream.skip(4);
 
-	m.fastSound.readData(stream);				// snd3 - the fast-winch cue
+	m.fastSound.readData(stream);				// the fast-winch cue
 }
 
 void PachinkoPuzzle::loadMachineImage(Machine &m) {
@@ -340,8 +333,7 @@ void PachinkoPuzzle::spawnBall() {
 	playSoundBlock(_plinkSounds);
 }
 
-// Reflect the ball off any pin it now overlaps (pins collide as circles). Returns true if a
-// bounce happened.
+// Reflect the ball off any pin it now overlaps. Returns true if a bounce happened.
 bool PachinkoPuzzle::collidePins(Ball &ball) const {
 	const double hitDist = kPinRadius + kBallRadius;
 	for (const Common::Rect &pin : _pins) {
@@ -354,8 +346,7 @@ bool PachinkoPuzzle::collidePins(Ball &ball) const {
 			continue;
 		}
 
-		// Reflect the velocity about the surface normal (pin centre -> ball) and push the
-		// ball back out to the contact distance.
+		// Reflect about the surface normal and push the ball back out to contact distance.
 		double d = sqrt(d2);
 		double nxn = dx / d;
 		double nyn = dy / d;
@@ -398,8 +389,7 @@ void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
 		ball.speed = 0.0;
 	}
 
-	// Advance in small sub-steps so the ball cannot tunnel between the pins, bouncing off a
-	// pin or a side wall on the way.
+	// Advance in sub-steps so the ball cannot tunnel between the pins.
 	double subDt = dt / kPhysicsSubsteps;
 	for (int s = 0; s < kPhysicsSubsteps; ++s) {
 		ball.x += cos(ball.angle) * ball.speed * subDt;
@@ -409,8 +399,8 @@ void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
 			continue;
 		}
 
-		// Side walls of the panel keep the ball in play; the ball enters from the right of
-		// the right wall, so that wall only reflects once the ball is inside.
+		// The side walls keep the ball in play; the ball enters from the right of the right
+		// wall, so that wall only reflects once the ball is inside.
 		double vx2 = cos(ball.angle) * ball.speed;
 		double vy2 = -sin(ball.angle) * ball.speed;
 		bool reflected = false;
@@ -543,11 +533,9 @@ void PachinkoPuzzle::execute() {
 
 			// The first climber to reach the pot ends the game (Gold Digger = win, Yeti = lose).
 			if (_winMachine.climbSteps >= kClimbGoal) {
-				_solved = true;
 				_activeMachine = &_winMachine;
 				_pzState = kPlayResult;
 			} else if (_loseMachine.climbSteps >= kClimbGoal) {
-				_solved = false;
 				_activeMachine = &_loseMachine;
 				_pzState = kPlayResult;
 			}
@@ -596,10 +584,15 @@ void PachinkoPuzzle::execute() {
 		break;
 	}
 	case kActionTrigger:
-		// The give-up hotspot and the completion path both route to the exit scene; the
-		// win/lose branch is driven downstream by the solved flag and the puzzle event flag.
-		NancySceneState.setEventFlag(_exitFlag);
-		NancySceneState.changeScene(_exitScene);
+		// Each climber carries its own exit scene and event flag, so the winner decides where
+		// the puzzle leaves off; only giving up uses the trailer's exit.
+		if (_activeMachine) {
+			NancySceneState.setEventFlag(_activeMachine->resultFlag);
+			NancySceneState.changeScene(_activeMachine->resultScene);
+		} else {
+			NancySceneState.setEventFlag(_exitFlag);
+			NancySceneState.changeScene(_exitScene);
+		}
 		finishExecution();
 		break;
 	}
@@ -608,6 +601,18 @@ void PachinkoPuzzle::execute() {
 void PachinkoPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun || _pzState != kRunning) {
 		return;
+	}
+
+	// Cheat: Ctrl+Shift+P pushes the prospector one catch further up the mountain, gaining
+	// ground on the Yeti.
+	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
+		const Common::KeyState &key = input.otherKbdInput[i];
+		if ((key.flags & Common::KBD_CTRL) && (key.flags & Common::KBD_SHIFT) &&
+				key.keycode == Common::KEYCODE_p) {
+			_winMachine.climbSteps += _winMachine.moverSpeed > 0 ? _winMachine.moverSpeed : 1;
+			playSoundBlock(_winMachine.winchSound);
+			debug("Pachinko cheat: prospector pushed up to %d/%d", _winMachine.climbSteps, kClimbGoal);
+		}
 	}
 
 	const bool click = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
