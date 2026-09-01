@@ -133,7 +133,7 @@ void GameState::UpdateViewports() {
 	}
 	if (vp_changed != SIZE_MAX)
 		detect_roomviewport_overlaps(vp_changed);
-	for (auto cam : _roomCameras) {
+	for (const auto &cam : _roomCameras) {
 		if (cam->HasChangedSize() || cam->HasChangedPosition()) {
 			on_roomcamera_changed(cam.get());
 			cam->ClearChangedFlags();
