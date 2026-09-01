@@ -64,7 +64,7 @@ static inline void alphaBlitLogic(byte *dst, const byte *src, const byte *mask, 
 						const int srcInc, const int dstInc, const int maskInc,
 						const uint32 key, const byte flip, const byte aMod) {
 	const uint32 alphaMask = srcFmt.ARGBToColor(255, 0, 0, 0);
-	const bool convert = hasMap ? false : ((SrcSize != DstSize) ? true : srcFmt == dstFmt);
+	const bool convert = hasMap ? false : ((SrcSize != DstSize) ? true : srcFmt != dstFmt);
 
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
