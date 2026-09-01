@@ -398,7 +398,7 @@ void Scene2090::runAltarCeremony() {
 	sequence.presentedLayerFrames(foregroundLayer,
 		AnimationFrameRange(kScene2090FinaleFirstForegroundStopFrame + 1,
 			kScene2090FinaleLastForegroundFrame - 1, kScene2090SlowFrameMillis)
-			.startSecondarySpeechAt(kScene2090FinaleSpeechTriggerFrame, 4, 8)
+			.secondarySpeechAt(kScene2090FinaleSpeechTriggerFrame, 4, 8)
 			.unskippable());
 	if (sequence.completed()) {
 		foregroundLayer.setFrame(kScene2090FinaleLastForegroundFrame);
@@ -408,22 +408,13 @@ void Scene2090::runAltarCeremony() {
 	setRitualPaletteCycle(false);
 	if (!sequence.completed())
 		return;
-	waitForStartedSpeechAndClear(1200);
+	waitForRealtimeSpeech();
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
 	runCurtainClearToBlack();
 	sequence.stopSound()
 		.commit(_vm->gameState().mainFlowStateId, kScene2020ReturnState);
-}
-
-void Scene2090::waitForStartedSpeechAndClear(uint32 fallbackMillis) {
-	waitForSpeechOrDelay(fallbackMillis, false);
-
-	_speech.stop();
-	clearSpeechOverlay();
-	drawPlayableComposite();
-	presentFrame();
 }
 
 void Scene2090::setRitualPaletteCycle(bool active) {
