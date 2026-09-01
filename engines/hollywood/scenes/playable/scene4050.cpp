@@ -88,11 +88,11 @@ enum Scene4050LayerId {
 };
 
 const SceneLayerSpec kScene4050LayerSpecs[] = {
-	{kSceneAnimationScenePlaced, kScene4050BackgroundChunk,
+	{kSceneAnimationInFrontOfActors, kScene4050BackgroundChunk,
 		kScene4050BackgroundDescriptorCount, nullptr, 0, true, 0},
-	{kSceneAnimationScenePlaced, kScene4050RonChunk,
+	{kSceneAnimationActorReplacement, kScene4050RonChunk,
 		kScene4050RonDescriptorCount, nullptr, 0, true, 0},
-	{kSceneAnimationScenePlaced, kScene4050D09ReturnTransitionChunk,
+	{kSceneAnimationInFrontOfActors, kScene4050D09ReturnTransitionChunk,
 		kScene4050D09ReturnTransitionDescriptorCount,
 		kScene4050D09ReturnTransitionBaseFrameMap,
 		ARRAYSIZE(kScene4050D09ReturnTransitionBaseFrameMap), false, 0}
@@ -106,6 +106,7 @@ PlayableSceneConfig scene4050Config() {
 	config.setActorResources(kScene4050ActorBankTableEntry, kScene4050ActorPaletteTableEntry);
 	config.setTextResources(kScene4050Resource003RowsOffsetIndex, kScene4050SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.drawDefaultActor = false;
 	return config;
 }
 
@@ -135,26 +136,6 @@ void Scene4050::initializeCustomPreviewState() {
 	_previousRandomAmbientCue = 0;
 	_transitionClearedToBlack = false;
 	setActiveActorPose(kScene4050RonWorldX, kScene4050RonWorldY, kScene4050RonFacing);
-}
-
-void Scene4050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
-		byte actorDrawOrderMode) {
-	(void)drawActiveActor;
-	(void)activeFacing;
-	(void)activeCel;
-	(void)activeWorldX;
-	(void)activeWorldY;
-	(void)drawSecondaryActor;
-	(void)secondaryFacing;
-	(void)secondaryFrame;
-	(void)secondaryWorldX;
-	(void)secondaryWorldY;
-	(void)actorDrawOrderMode;
-
-	copyBaseFramebufferToSceneFramebuffer();
-	drawSceneLayers();
-	drawActionOverlayLayer();
 }
 
 void Scene4050::runCustomEntrySequence() {
@@ -311,16 +292,6 @@ void Scene4050::restoreSceneObjectPaletteRange() {
 	memcpy(_paletteCurrent.data() + firstOffset, _paletteResource.data() + firstOffset, byteCount);
 	_surfaceState.rebuildPresentationPaletteRemapTable();
 	invalidatePresentationPalette();
-}
-
-void Scene4050::drawSceneLayers() {
-	if (_sceneLayers.layerVisible(kScene4050D09ReturnTransitionLayer)) {
-		drawSceneLayer(kScene4050BackgroundLayer);
-		drawSceneLayer(kScene4050D09ReturnTransitionLayer);
-	} else {
-		drawSceneLayer(kScene4050RonLayer);
-		drawSceneLayer(kScene4050BackgroundLayer);
-	}
 }
 
 void Scene4050::advanceFlagPalette(uint32 delta) {

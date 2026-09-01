@@ -380,6 +380,7 @@ PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResource
 		viewportMinXOffset(sceneViewport.minXOffset),
 		viewportMaxXOffset(sceneViewport.maxXOffset),
 		defaultActorPose(actorPose),
+		drawDefaultActor(true),
 		inventoryOwnerIndex(sceneNumber / 1000 == 7 ? 1 : 0),
 		activeAudioChapterIndex(sceneNumber / 1000 == 7 ? kSceneConfigNoAudioChapter : sceneNumber / 1000),
 		actorBankTableEntry(0xd0),
@@ -1467,7 +1468,7 @@ void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacin
 }
 
 void PlayableScene::drawPlayableComposite() {
-	const bool drawActiveActor = !_hideActiveActor;
+	const bool drawActiveActor = _config.drawDefaultActor && !_hideActiveActor;
 	const bool drawSecondaryActor = shouldDrawSecondaryActorInPlayableComposite();
 	drawCutsceneComposite(drawActiveActor, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY,
