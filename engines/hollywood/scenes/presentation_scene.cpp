@@ -28,6 +28,31 @@
 
 namespace Hollywood {
 
+PresentationScene::TimedPresentationLoop::TimedPresentationLoop(PresentationScene &scene,
+		uint32 durationMillis, uint32 maximumSliceMillis) :
+		_scene(scene),
+		_durationMillis(durationMillis),
+		_maximumSliceMillis(MAX<uint32>(maximumSliceMillis, 1)),
+		_elapsedMillis(0),
+		_sliceMillis(0) {
+}
+
+bool PresentationScene::TimedPresentationLoop::beginFrame() {
+	if (_elapsedMillis >= _durationMillis || _scene._skipRequested || Engine::shouldQuit())
+		return false;
+	if (_scene.pollEvents())
+		return false;
+
+	_sliceMillis = MIN<uint32>(_durationMillis - _elapsedMillis, _maximumSliceMillis);
+	return true;
+}
+
+uint32 PresentationScene::TimedPresentationLoop::finishFrame() {
+	g_system->delayMillis(_sliceMillis);
+	_elapsedMillis += _sliceMillis;
+	return _sliceMillis;
+}
+
 PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		uint32 sceneFramebufferSize, uint32 savedFramebufferSize) :
 		_vm(vm),
@@ -104,15 +129,9 @@ bool PresentationScene::pollEvents() {
 }
 
 bool PresentationScene::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
+	TimedPresentationLoop loop(*this, millis);
+	while (loop.beginFrame())
+		loop.finishFrame();
 
 	return _skipRequested || Engine::shouldQuit();
 }

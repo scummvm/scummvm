@@ -33,6 +33,24 @@ class HollywoodEngine;
 // Owns the display and skip lifecycle shared by non-interactive full-screen scenes.
 class PresentationScene {
 protected:
+	// Keeps fixed-duration cutscenes responsive while leaving frame updates to the scene.
+	// Each successful beginFrame() must be followed by finishFrame().
+	class TimedPresentationLoop {
+	public:
+		TimedPresentationLoop(PresentationScene &scene, uint32 durationMillis,
+			uint32 maximumSliceMillis = 10);
+
+		bool beginFrame();
+		uint32 finishFrame();
+
+	private:
+		PresentationScene &_scene;
+		uint32 _durationMillis;
+		uint32 _maximumSliceMillis;
+		uint32 _elapsedMillis;
+		uint32 _sliceMillis;
+	};
+
 	PresentationScene(HollywoodEngine *vm, const char *debugName,
 		uint32 sceneFramebufferSize = kFrameBufferSize,
 		uint32 savedFramebufferSize = kFrameBufferSize);
