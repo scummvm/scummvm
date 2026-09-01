@@ -231,29 +231,18 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 width
 	uint16 bx = 0, by = 0, bw = ((width + 3) / 4) * 4;
 
 	// RLE decompress the buffers as needed
-	byte *cmdBuffer;
-	if (cmdFlags & 1) {
-		cmdArray.reserve(((height + 3) / 4) * lineSize);
-		rleDecompress(source + cmdOffs, source + cmdOffs + cmdSize, cmdArray);
-		cmdBuffer = cmdArray.data();
-	} else
-		cmdBuffer = source + cmdOffs;
+#define GET_BUFFER(name, reserveSize)                                                      \
+	byte *name##Buffer;                                                                    \
+	if (name##Flags & 1) {                                                                 \
+		name##Array.reserve(reserveSize);                                                  \
+		rleDecompress(source + name##Offs, source + name##Offs + name##Size, name##Array); \
+		name##Buffer = name##Array.data();                                                 \
+	} else                                                                                 \
+		name##Buffer = source + name##Offs;
 
-	byte *pixelBuffer;
-	if (pixelFlags & 1) {
-		pixelArray.reserve(pixelSize);
-		rleDecompress(source + pixelOffs, source + pixelOffs + pixelSize, pixelArray);
-		pixelBuffer = pixelArray.data();
-	} else
-		pixelBuffer = source + pixelOffs;
-
-	byte *maskBuffer;
-	if (maskFlags & 1) {
-		maskArray.reserve(maskSize);
-		rleDecompress(source + maskOffs, source + maskOffs + maskSize, maskArray);
-		maskBuffer = maskArray.data();
-	} else
-		maskBuffer = source + maskOffs;
+	GET_BUFFER(cmd, ((height + 3) / 4) * lineSize)
+	GET_BUFFER(pixel, pixelSize)
+	GET_BUFFER(mask, maskSize)
 
 	//
 	byte *destPtr = (byte *)surface.getPixels();
