@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9170.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
