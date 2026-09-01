@@ -90,11 +90,6 @@ protected:
 	// Pose, patch, and commit steps still finalize state after interrupted media.
 	class BlockingSequence {
 	public:
-		enum PaletteTransition {
-			kFadeFromBlack,
-			kFadeToBlack
-		};
-
 		explicit BlockingSequence(PlayableScene &scene);
 
 		template<class FrameTarget>
@@ -155,7 +150,7 @@ protected:
 		BlockingSequence &primarySpeech(uint16 rowIndex, byte frameIndex, uint16 centerX,
 			uint16 topY, byte red, byte green, byte blue);
 		BlockingSequence &framebufferPatch(byte selector);
-		BlockingSequence &paletteTransition(PaletteTransition transition);
+		BlockingSequence &fadeFromBlack();
 
 		template<class T>
 		BlockingSequence &commit(T &target, const T &value) {
@@ -211,9 +206,6 @@ protected:
 		kSceneRouteBoundaryPointCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionBoundaryCandidateCount,
 		kSceneRouteStepCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionRouteStepCount,
 		kResource000TableByteCount = 400,
-		kResource000DefaultActorBankTableEntry = 0xd0,
-		kResource000DefaultActorPaletteTableEntry = 0x108,
-		kResource000DefaultActorBankSegmentCount = 14,
 		kAmbientSoundSlotCount = 3,
 		kActorFacingCount = 6,
 		kActorCelsPerFacing = 13,
@@ -228,10 +220,6 @@ protected:
 		kActorPaletteAdjustmentClassCount = (kRouteBoundaryPoints - kPaletteAdjustTable) / 2,
 		kActorPaletteBytes = 0x90,
 		kStage003DecodeKeySize = 0x141,
-		kStage003StageOffsetTableSize = 0xff4,
-		kStage003DescriptorTableSize = 0x186a0,
-		kDefaultResource003InventoryRowsOffsetIndex = 0x32,
-		kDefaultSpeechCueDescriptorTableOffset = 0x5f58,
 		kSpeechCueDescriptorTableSize = 20000,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
@@ -465,18 +453,8 @@ protected:
 	bool adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel);
-	void buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
-		byte finalFacing, byte finalCel, int requestedFacing);
-	void appendActorPathFrame(const ActorPathBuildState &state);
-	ScenePoint nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const;
-	ScenePoint bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
-		byte currentRegion, byte targetRegion) const;
 	byte paletteRegionAt(int x, int y) const override;
 	byte walkableMaskAt(int x, int y) const;
-	byte calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const;
-	uint calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const;
-	byte nextActorPathCel(byte cel) const;
-	uint actorPathStepDelta(byte facing, byte cel) const;
 	void resetActorPathStepDeltas();
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 
@@ -599,8 +577,6 @@ protected:
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
 	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
-	void playDeltaClipFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis, uint firstFrame = 0);
 	void playDeltaClip(uint chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
 		uint firstFrame = 0);
 	// Cumulative transitions apply every elapsed delta; independent transitions draw only the newest frame.
@@ -617,7 +593,10 @@ protected:
 	bool waitDeltaClipFrameMillis(uint32 millis);
 	// Advances full-screen scene hooks without redrawing the ordinary scene composite.
 	bool waitFullscreenAnimationFrame(uint32 millis, bool allowSkip);
-	bool playFullscreenDeltaAnimation(const FullscreenDeltaAnimationSpec &spec);
+	// Temporarily owns the framebuffer and palette, then restores the playable composite.
+	bool playFullscreenDeltaAnimation(const Common::Array<byte> &base,
+		const Common::Array<byte> &palette, const Common::Array<byte> &frames,
+		uint frameCount, uint32 frameMillis);
 	bool fadePaletteFromBlack();
 	bool fadePaletteToBlack();
 
@@ -691,7 +670,6 @@ protected:
 	SceneResources _resources;
 	ResourceChunkTable &_sceneChunkTable;
 	uint32 (&_resourceChunkOffsets)[HollywoodEngine::kResourceChunkCount];
-	uint32 &_resourceArenaCursor;
 	Common::Array<byte> &_resourceArena;
 	Common::Array<byte> &_metadata;
 
@@ -727,12 +705,7 @@ protected:
 	// Scene text store
 	SceneTextStore _textStore;
 	Common::Array<byte> &_stage003DecodeKey;
-	Common::Array<byte> &_stage003StageBlock;
 	Common::Array<byte> &_stage003SmallRows;
-	Common::Array<byte> &_stage003LargeRows;
-	Common::Array<byte> &_staticSpeechCueDescriptors;
-	Common::Array<byte> &_inventoryOwnerSmallRows;
-	Common::Array<byte> &_inventoryOwnerLargeRows;
 
 	// Pathfinding state
 	ActorPathController _pathController;

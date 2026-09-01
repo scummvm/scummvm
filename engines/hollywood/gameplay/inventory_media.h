@@ -33,8 +33,6 @@ struct Surface;
 
 namespace Hollywood {
 
-class HollywoodEngine;
-
 enum InventoryMediaId {
 	kInventoryMediaPoster,
 	kInventoryMediaPosterWithoutPhoto,
@@ -56,7 +54,7 @@ public:
 		kSueTapeFrameCount = 10
 	};
 
-	InventoryMediaPlayer(HollywoodEngine *vm);
+	InventoryMediaPlayer();
 
 	bool loadStill(InventoryMediaId mediaId);
 	bool loadSueTape();
@@ -68,7 +66,6 @@ public:
 private:
 	bool readChunk(uint index, Common::Array<byte> &destination, uint expectedSize = 0);
 
-	HollywoodEngine *_vm;
 	Common::Array<byte> _palette;
 	Common::Array<byte> _tapeResource;
 	uint32 _tapeDescriptorTableOffset;

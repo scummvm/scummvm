@@ -35,7 +35,6 @@ class SceneResources {
 public:
 	SceneResources();
 
-	void clearChunkOffsets();
 	bool loadChunkTable(const char *archiveName);
 	bool validateChunk(const char *archiveName, const char *sceneDebugName,
 		uint index) const;
@@ -72,6 +71,8 @@ public:
 	Common::Array<byte> metadata;
 
 private:
+	void clearChunkOffsets();
+
 	ChunkArchive _archive;
 };
 

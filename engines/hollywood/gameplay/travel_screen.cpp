@@ -290,7 +290,7 @@ bool TravelScreen::load(bool loadSelectionMask) {
 
 bool TravelScreen::readChunk(uint index, Common::Array<byte> &destination, uint expectedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kTravelScreenArchiveName), index));
+		createResourceChunkReadStream(Common::Path(kTravelScreenArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kTravelScreenArchiveName, index);
 		return false;

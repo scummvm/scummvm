@@ -42,8 +42,7 @@ const uint kFrankensteinDiaryPaletteChunk = 15;
 const uint kTaffyPassPaletteChunk = 17;
 const uint kForgedPassPaletteChunk = 19;
 
-InventoryMediaPlayer::InventoryMediaPlayer(HollywoodEngine *vm) :
-		_vm(vm),
+InventoryMediaPlayer::InventoryMediaPlayer() :
 		_palette(),
 		_tapeResource(),
 		_tapeDescriptorTableOffset(0),
@@ -113,7 +112,7 @@ void InventoryMediaPlayer::drawSueTapeFrame(byte frameIndex) {
 
 bool InventoryMediaPlayer::readChunk(uint index, Common::Array<byte> &destination, uint expectedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kInventoryMediaArchiveName), index));
+		createResourceChunkReadStream(Common::Path(kInventoryMediaArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kInventoryMediaArchiveName, index);
 		return false;

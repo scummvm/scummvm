@@ -84,8 +84,6 @@ private:
 	void drawCharacterFrame(byte frameIndex);
 
 	void updateScene9010PaletteFade();
-	bool fadeInPalette(uint32 stepMillis);
-	bool fadeOutPalette(uint32 stepMillis);
 	void beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex);
 	SpeechTextStyle getCurrentSpeechTextStyle() const;
 
