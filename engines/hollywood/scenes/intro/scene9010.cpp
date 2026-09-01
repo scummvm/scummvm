@@ -564,7 +564,7 @@ void Scene9010::drawI02FramePayload(const Common::Array<byte> &payload) {
 
 	switch (format) {
 	case kI02FramePayloadBlockList:
-		drawResourceBlockList(payload);
+		drawResourceBlockList(payload, 0, _sceneFramebuffer.surface());
 		break;
 	case kI02FramePayloadScreenRows:
 		drawRawI02ScreenRows(payload);
@@ -598,31 +598,6 @@ void Scene9010::drawRawI02SceneRows(const Common::Array<byte> &payload) {
 	memcpy(_sceneFramebuffer.data(), payload.data(), kRawSceneFrameSize);
 }
 
-void Scene9010::drawResourceBlockList(const Common::Array<byte> &blockList) {
-	if (blockList.size() < 2)
-		return;
-
-	const uint16 blockCount = readUint16(blockList, 0);
-	uint cursor = 2;
-	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > blockList.size())
-			return;
-
-		const uint32 destination = readUint32(blockList, cursor);
-		const uint16 size = readUint16(blockList, cursor + 4);
-		cursor += 6;
-
-		const uint x = destination & 0xffff;
-		const uint y = (destination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + size > blockList.size() || destinationOffset + size > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, blockList.data() + cursor, size);
-		cursor += size;
-	}
-}
-
 byte Scene9010::nextTalkingFrameVariant() {
 	_lastTalkingFrameVariant = (byte)((_lastTalkingFrameVariant + 1) % 5);
 	return _lastTalkingFrameVariant;
@@ -633,70 +608,10 @@ void Scene9010::drawCharacterFrame(byte frameIndex) {
 		frameIndex = 0;
 
 	const byte descriptorIndex = kCharacterDescriptorSequence[frameIndex];
-	restoreSpriteBackground(descriptorIndex);
-	drawStripSpriteFrame(descriptorIndex);
-}
-
-void Scene9010::restoreSpriteBackground(uint16 descriptorIndex) {
-	if (descriptorIndex >= kCharacterFrameDescriptorCount)
-		return;
-
-	const uint entryOffset = kFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint32 packedWidth = readUint32(_resourceArena, entryOffset + 4);
-	const uint32 packedRows = readUint32(_resourceArena, entryOffset + 8);
-	const uint copyWidth = (packedWidth >> 16) & 0xffff;
-	const uint x = packedWidth & 0xffff;
-	const uint firstRow = packedRows & 0xffff;
-	const uint lastRow = (packedRows >> 16) & 0xffff;
-
-	if (firstRow > lastRow || copyWidth == 0)
-		return;
-
-	for (uint row = firstRow; row <= lastRow; ++row) {
-		const uint destinationOffset = x + row * HollywoodEngine::kSceneBufferWidth;
-		if (destinationOffset + copyWidth > _sceneFramebuffer.size() ||
-				destinationOffset + copyWidth > _frameDecodeBuffer.size())
-			break;
-
-		memcpy(&_sceneFramebuffer[destinationOffset], &_frameDecodeBuffer[destinationOffset], copyWidth);
-	}
-}
-
-void Scene9010::drawStripSpriteFrame(uint16 descriptorIndex) {
-	if (descriptorIndex >= kCharacterFrameDescriptorCount)
-		return;
-
-	const uint entryOffset = kFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint16 spanCount = readUint16(_resourceArena, entryOffset + 12);
-	uint cursor = kFrameDescriptorSize * kCharacterFrameDescriptorCount + readUint32(_resourceArena, entryOffset);
-	if (cursor > _resourceArena.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > _resourceArena.size())
-			return;
-
-		const uint32 destination = readUint32(_resourceArena, cursor);
-		const uint dataLength = _resourceArena[cursor + 4];
-		cursor += 5;
-
-		const uint x = destination & 0xffff;
-		const uint y = (destination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-
-		if (cursor + dataLength > _resourceArena.size() ||
-				destinationOffset + dataLength > _sceneFramebuffer.size())
-			return;
-
-		memcpy(&_sceneFramebuffer[destinationOffset], &_resourceArena[cursor], dataLength);
-		cursor += dataLength;
-	}
+	restoreSpriteBackground(_resourceArena, 0, 0, kCharacterFrameDescriptorCount,
+		descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_resourceArena, 0, 0, kCharacterFrameDescriptorCount,
+		descriptorIndex, _sceneFramebuffer.surface());
 }
 
 void Scene9010::updateScene9010PaletteFade() {
