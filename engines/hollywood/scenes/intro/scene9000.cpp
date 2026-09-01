@@ -134,8 +134,7 @@ bool Scene9000::runChunk() {
 		if (frameIndex < 0x15) {
 			frameIndex++;
 			const byte descriptorIndex = kIntroAnimationDescriptorSequence[frameIndex];
-			restoreSpriteBackground(descriptorIndex);
-			drawStripSpriteFrame(descriptorIndex);
+			drawAnimationFrame(descriptorIndex);
 		}
 
 		if (!fadeInComplete) {
@@ -168,8 +167,7 @@ bool Scene9000::runChunk() {
 		if (frameIndex > 1) {
 			frameIndex--;
 			const byte descriptorIndex = kIntroAnimationDescriptorSequence[frameIndex];
-			restoreSpriteBackground(descriptorIndex);
-			drawStripSpriteFrame(descriptorIndex);
+			drawAnimationFrame(descriptorIndex);
 		}
 
 		if (!fadeOutComplete) {
@@ -202,83 +200,11 @@ void Scene9000::resetChunkState() {
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 }
 
-void Scene9000::restoreSpriteBackground(uint16 descriptorIndex) {
-	if (descriptorIndex >= kIntroFrameDescriptorCount)
-		return;
-
-	const uint entryOffset = kIntroFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kIntroFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint32 packedWidth = readUint32(entryOffset + 4);
-	const uint32 packedRows = readUint32(entryOffset + 8);
-	const uint copyWidth = (packedWidth >> 16) & 0xffff;
-	const uint x = packedWidth & 0xffff;
-	const uint firstRow = packedRows & 0xffff;
-	const uint lastRow = (packedRows >> 16) & 0xffff;
-
-	if (firstRow > lastRow || copyWidth == 0)
-		return;
-
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
-		const uint destinationOffset = x + row * HollywoodEngine::kSceneBufferWidth;
-		if (destinationOffset + copyWidth > _sceneFramebuffer.size() ||
-				destinationOffset + copyWidth > _frameDecodeBuffer.size())
-			break;
-
-		memcpy(&_sceneFramebuffer[destinationOffset], &_frameDecodeBuffer[destinationOffset], copyWidth);
-	}
-}
-
-void Scene9000::drawStripSpriteFrame(uint16 descriptorIndex) {
-	if (descriptorIndex >= kIntroFrameDescriptorCount)
-		return;
-
-	const uint entryOffset = kIntroFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kIntroFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint16 spanCount = readUint16(entryOffset + 12);
-	uint cursor = kIntroFrameDescriptorSize * kIntroFrameDescriptorCount + readUint32(entryOffset);
-	if (cursor > _resourceArena.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > _resourceArena.size())
-			return;
-
-		const uint32 destination = readUint32(cursor);
-		const uint dataLength = _resourceArena[cursor + 4];
-		cursor += 5;
-
-		const uint x = destination & 0xffff;
-		const uint y = (destination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-
-		if (cursor + dataLength > _resourceArena.size() ||
-				destinationOffset + dataLength > _sceneFramebuffer.size())
-			return;
-
-		memcpy(&_sceneFramebuffer[destinationOffset], &_resourceArena[cursor], dataLength);
-		cursor += dataLength;
-	}
-}
-
-uint16 Scene9000::readUint16(uint offset) const {
-	if (offset + 2 > _resourceArena.size())
-		return 0;
-
-	return _resourceArena[offset] | (_resourceArena[offset + 1] << 8);
-}
-
-uint32 Scene9000::readUint32(uint offset) const {
-	if (offset + 4 > _resourceArena.size())
-		return 0;
-
-	return _resourceArena[offset] |
-		(_resourceArena[offset + 1] << 8) |
-		(_resourceArena[offset + 2] << 16) |
-		(_resourceArena[offset + 3] << 24);
+void Scene9000::drawAnimationFrame(uint16 descriptorIndex) {
+	restoreSpriteBackground(_resourceArena, 0, 0, kIntroFrameDescriptorCount,
+		descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_resourceArena, 0, 0, kIntroFrameDescriptorCount,
+		descriptorIndex, _sceneFramebuffer.surface());
 }
 
 } // End of namespace Hollywood

@@ -1294,96 +1294,21 @@ void Scene9100::drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte f
 }
 
 void Scene9100::drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint16 spanCount = readUint16(resource, entryOffset + 12);
-	uint cursor = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorCount) + readUint32(resource, entryOffset);
-	if (cursor > resource.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > resource.size())
-			return;
-
-		const uint32 destination = readUint32(resource, cursor);
-		const uint dataLength = resource[cursor + 4];
-		cursor += 5;
-
-		const uint x = destination & 0xffff;
-		const uint y = (destination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + dataLength > resource.size() ||
-				destinationOffset + dataLength > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, resource.data() + cursor, dataLength);
-		cursor += dataLength;
-	}
+	Hollywood::drawStripSpriteFrame(resource, baseOffset, descriptorTableOffset,
+		descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 void Scene9100::restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint32 packedWidth = readUint32(resource, entryOffset + 4);
-	const uint32 packedRows = readUint32(resource, entryOffset + 8);
-	const uint copyWidth = (packedWidth >> 16) & 0xffff;
-	const uint x = packedWidth & 0xffff;
-	const uint firstRow = packedRows & 0xffff;
-	const uint lastRow = (packedRows >> 16) & 0xffff;
-	if (copyWidth == 0 || firstRow > lastRow)
-		return;
-
-	for (uint row = firstRow; row <= lastRow; ++row) {
-		const uint destinationOffset = x + row * HollywoodEngine::kSceneBufferWidth;
-		if (destinationOffset + copyWidth > _frameDecodeBuffer.size() ||
-				destinationOffset + copyWidth > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, _frameDecodeBuffer.data() + destinationOffset, copyWidth);
-	}
+	Hollywood::restoreSpriteBackground(resource, baseOffset, descriptorTableOffset,
+		descriptorCount, descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
 }
 
 void Scene9100::applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset) {
-	drawResourceBlockListToBuffer(baseOffset, _frameDecodeBuffer);
+	Hollywood::drawResourceBlockList(_resourceArena, baseOffset, _frameDecodeBuffer.surface());
 }
 
 void Scene9100::drawResourceBlockListToSceneFramebuffer(uint32 baseOffset) {
-	drawResourceBlockListToBuffer(baseOffset, _sceneFramebuffer);
-}
-
-void Scene9100::drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceBuffer &destination) {
-	if (baseOffset + 2 > _resourceArena.size())
-		return;
-
-	const uint16 blockCount = readUint16(_resourceArena, baseOffset);
-	uint cursor = baseOffset + 2;
-	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resourceArena.size())
-			return;
-
-		const uint32 packedDestination = readUint32(_resourceArena, cursor);
-		const uint16 size = readUint16(_resourceArena, cursor + 4);
-		cursor += 6;
-
-		const uint x = packedDestination & 0xffff;
-		const uint y = (packedDestination >> 16) & 0xffff;
-		const uint targetOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + size > _resourceArena.size() || targetOffset + size > destination.size())
-			return;
-
-		memcpy(destination.data() + targetOffset, _resourceArena.data() + cursor, size);
-		cursor += size;
-	}
+	Hollywood::drawResourceBlockList(_resourceArena, baseOffset, _sceneFramebuffer.surface());
 }
 
 void Scene9100::restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination) {

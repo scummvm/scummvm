@@ -141,7 +141,6 @@ private:
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset);
 	void drawResourceBlockListToSceneFramebuffer(uint32 baseOffset);
-	void drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceBuffer &destination);
 	void restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination);
 	void removeInitialOfficeTitlePatch(IndexedSurfaceBuffer &destination);
 	void expandFillRunsToSavedFramebuffer();
@@ -169,7 +168,6 @@ private:
 		kI10DeskSecondaryStaticDescriptorCount = 6,
 		kI10ClockDescriptorCount = 0x3c,
 		kI10TalkingOverlayDescriptorCount = 10,
-		kFrameDescriptorSize = 14,
 		kStage003DescriptorTableSize = 0x186a0,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
