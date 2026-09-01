@@ -537,6 +537,247 @@ const SceneHotspotNameEntry kSceneHotspotNamesDemo[] = {
 	{ 38, 15, Graphics::kHotspotObject, "Holzt" "\x81" "r" },
 };
 
+
+struct ObjectNameEntry {
+	uint16 objectIndex;
+	const char *name;
+};
+
+// Object labels keyed by object index (interaction 0x400 + index).
+// Distinct from kSceneHotspotNames (interaction 0x800 + hotspotIndex).
+const ObjectNameEntry kObjectNames[] = {
+	{ 0x01, "Old Firehand" },
+	{ 0x02, "Kapit" "\x84" "n" },
+	{ 0x04, "Bootsjunge" },
+	{ 0x06, "Tramp" },
+	{ 0x07, "M" "\x84" "dchen" },
+	{ 0x08, "Brett" },
+	{ 0x09, "Panther" },
+	{ 0x0C, "Droll" },
+	{ 0x0D, "Patterson" },
+	{ 0x0E, "Eimer" },
+	{ 0x0F, "Cornel" },
+	{ 0x10, "Holzfass" },
+	{ 0x11, "Bowiemesser" },
+	{ 0x12, "Wachposten" },
+	{ 0x13, "Tramp" },
+	{ 0x14, "Eimer" },
+	{ 0x16, "Passagierin" },
+	{ 0x17, "Hutschachtel" },
+	{ 0x18, "Damenhut" },
+	{ 0x19, "Hutschachtel" },
+	{ 0x1A, "Metalleimer" },
+	{ 0x1B, "Feuerhaken" },
+	{ 0x1C, "Topflappen" },
+	{ 0x1D, "Brett" },
+	{ 0x1E, "Kohlenschaufel" },
+	{ 0x20, "Kakerlake" },
+	{ 0x21, "Matrose" },
+	{ 0x22, "Tasse" },
+	{ 0x23, "Tasse" },
+	{ 0x24, "Axt" },
+	{ 0x25, "Axtklinge" },
+	{ 0x26, "Reservestiel" },
+	{ 0x27, "Branshky" },
+	{ 0x28, "Brief" },
+	{ 0x29, "Brot" },
+	{ 0x2A, "Brot" },
+	{ 0x2B, "Kuvert" },
+	{ 0x2C, "Kuvert" },
+	{ 0x2D, "Waschb\x84rm\x81tze" },
+	{ 0x2E, "Whiskyglas" },
+	{ 0x2F, "Lederg\x81rtel" },
+	{ 0x30, "Sch\x81rhaken" },
+	{ 0x31, "Wachhund" },
+	{ 0x34, "Brett" },
+	{ 0x35, "Dieb" },
+	{ 0x36, "Vogelk\x84" "fig" },
+	{ 0x37, "Vogelk\x84" "fig" },
+	{ 0x38, "Vogelk\x84" "fig" },
+	{ 0x39, "Vogelk\x84" "fig" },
+	{ 0x3A, "Landkarte" },
+	{ 0x3B, "Kerze" },
+	{ 0x3C, "Kieselsteine" },
+	{ 0x3D, "Koffer" },
+	{ 0x3E, "Kleider" },
+	{ 0x3F, "Lederbeutel" },
+	{ 0x40, "Knallfr\x94sche" },
+	{ 0x41, "Knallfr\x94sche" },
+	{ 0x42, "Koffer" },
+	{ 0x43, "Koffer" },
+	{ 0x44, "Papier" },
+	{ 0x45, "Rafter" },
+	{ 0x47, "Messer" },
+	{ 0x48, "Kartonschachtel" },
+	{ 0x49, "Kartonschachtel" },
+	{ 0x4A, "Schal" },
+	{ 0x4B, "Schilfrohr" },
+	{ 0x4C, "Schilfrohr" },
+	{ 0x4D, "Tramp" },
+	{ 0x4F, "Schnapsflasche" },
+	{ 0x51, "Stoffbeutel" },
+	{ 0x52, "Stoffbeutel" },
+	{ 0x53, "Blasebalg" },
+	{ 0x54, "Brennholz" },
+	{ 0x55, "Laib Brot" },
+	{ 0x56, "Brotmesser" },
+	{ 0x57, "Laib Brot" },
+	{ 0x58, "B\x81" "cher" },
+	{ 0x59, "Clownpuppe" },
+	{ 0x5A, "Blechdose" },
+	{ 0x5B, "Blechdose" },
+	{ 0x5C, "Papierdrachen" },
+	{ 0x5D, "Papierdrachen" },
+	{ 0x5E, "Blecheimer" },
+	{ 0x5F, "Blecheimer" },
+	{ 0x60, "Schnapsflasche" },
+	{ 0x61, "Schnapsflasche" },
+	{ 0x62, "Spitzhacke" },
+	{ 0x63, "Hackenspitze" },
+	{ 0x64, "Kartoffeln" },
+	{ 0x65, "Kerze" },
+	{ 0x66, "Kerze" },
+	{ 0x67, "Kerzen" },
+	{ 0x69, "Wirt" },
+	{ 0x6A, "Holzkohle" },
+	{ 0x6B, "Korkenzieher" },
+	{ 0x6C, "Lampe" },
+	{ 0x6D, "Lampe" },
+	{ 0x6E, "Mrs. Butler" },
+	{ 0x6F, "Murmeln" },
+	{ 0x70, "Musketen" },
+	{ 0x71, "Holzpfahl" },
+	{ 0x72, "Wagenrad" },
+	{ 0x73, "Salpeterpulver" },
+	{ 0x74, "Schaufel" },
+	{ 0x75, "Schaufelspitze" },
+	{ 0x76, "Lampenschirm" },
+	{ 0x77, "Lampenschirme" },
+	{ 0x78, "Messingschl\x81ssel" },
+	{ 0x7C, "Schwarzpulver" },
+	{ 0x7D, "Sch\x81ssel" },
+	{ 0x7E, "Schwarzpulver" },
+	{ 0x7F, "Schwefel" },
+	{ 0x80, "Hanfseil" },
+	{ 0x81, "Hanfschnur" },
+	{ 0x82, "Hanfseile" },
+	{ 0x83, "Socken" },
+	{ 0x84, "Spachtel" },
+	{ 0x85, "Holzente" },
+	{ 0x86, "Streichholz" },
+	{ 0x87, "Tasse" },
+	{ 0x88, "Tasse" },
+	{ 0x89, "Teig" },
+	{ 0x8A, "Topflappen" },
+	{ 0x8B, "Windlicht" },
+	{ 0x8C, "Wolle" },
+	{ 0x8D, "Wolle" },
+	{ 0x8E, "Holzw\x81rfel" },
+	{ 0x8F, "Brief" },
+	{ 0x90, "Bandit" },
+	{ 0x91, "Bandit" },
+	{ 0x92, "Bandit" },
+	{ 0x93, "Winnetou" },
+	{ 0x94, "Lore" },
+	{ 0x95, "Grosser B" "\x84" "r" },
+	{ 0x96, "Lederbeutel" },
+	{ 0x97, "Lederbeutel" },
+	{ 0x98, "Bohlen" },
+	{ 0x99, "Brecheisen" },
+	{ 0x9A, "Sand" },
+	{ 0x9B, "Dynamit" },
+	{ 0x9C, "Fackel" },
+	{ 0x9D, "Fackel" },
+	{ 0x9E, "Holzfigur" },
+	{ 0x9F, "Figur" },
+	{ 0xA0, "Holzfigur" },
+	{ 0xA1, "Flaschenzug" },
+	{ 0xA2, "Haken" },
+	{ 0xA3, "Haken und Seil" },
+	{ 0xA4, "Kacheln" },
+	{ 0xA6, "Nase" },
+	{ 0xA7, "Winnetou" },
+	{ 0xA8, "Kleiner B" "\x84" "r" },
+	{ 0xAB, "Quarzsand" },
+	{ 0xAC, "Quarzsand" },
+	{ 0xAD, "Griff" },
+	{ 0xAE, "Hanfseil" },
+	{ 0xAF, "Sicheln" },
+	{ 0xB0, "Eisen" },
+	{ 0xB1, "Eisen" },
+	{ 0xB2, "Schraubenzieher" },
+	{ 0xB3, "Eisenstange" },
+	{ 0xB4, "Tomahawk" },
+	{ 0xB5, "Winnetou" },
+};
+
+const ObjectNameEntry kObjectNamesDemo[] = {
+	{ 0x02, "Laib Brot" },
+	{ 0x03, "Laib Brot" },
+	{ 0x04, "Schnapsflasche" },
+	{ 0x05, "Schnapsflasche" },
+	{ 0x06, "Tramp" },
+	{ 0x07, "Spitzhacke" },
+	{ 0x08, "Hackenspitze" },
+	{ 0x09, "Kerze" },
+	{ 0x0A, "Kerze" },
+	{ 0x0B, "Kerzen" },
+	{ 0x0C, "Droll" },
+	{ 0x0D, "Korkenzieher" },
+	{ 0x0E, "Lampe" },
+	{ 0x0F, "Cornel" },
+	{ 0x10, "Lampe" },
+	{ 0x11, "Holzpfahl" },
+	{ 0x12, "Wagenrad" },
+	{ 0x13, "Tramp" },
+	{ 0x14, "Salpeterpulver" },
+	{ 0x15, "Schaufelspitze" },
+	{ 0x16, "Lampenschirm" },
+	{ 0x17, "Lampenschirme" },
+	{ 0x18, "Messingschl\x81ssel" },
+	{ 0x19, "Schwarzpulver" },
+	{ 0x1A, "Hanfseile" },
+	{ 0x1B, "Streichholz" },
+	{ 0x1C, "Topflappen" },
+	{ 0x1D, "Windlicht" },
+	{ 0x1E, "Wolle" },
+	{ 0x45, "Rafter" },
+	{ 0x4D, "Tramp" },
+	{ 0x51, "Stoffbeutel" },
+	{ 0x52, "Stoffbeutel" },
+	{ 0x53, "Blasebalg" },
+	{ 0x54, "Brennholz" },
+	{ 0x56, "Brotmesser" },
+	{ 0x58, "B\x81" "cher" },
+	{ 0x59, "Clownpuppe" },
+	{ 0x5A, "Blechdose" },
+	{ 0x5B, "Blechdose" },
+	{ 0x5C, "Papierdrachen" },
+	{ 0x5D, "Papierdrachen" },
+	{ 0x5E, "Blecheimer" },
+	{ 0x5F, "Blecheimer" },
+	{ 0x64, "Kartoffeln" },
+	{ 0x69, "Wirt" },
+	{ 0x6E, "Mrs. Butler" },
+	{ 0x6F, "Murmeln" },
+	{ 0x70, "Musketen" },
+	{ 0x74, "Schaufel" },
+	{ 0x7C, "Schwarzpulver" },
+	{ 0x7D, "Sch\x81ssel" },
+	{ 0x7F, "Schwefel" },
+	{ 0x80, "Hanfseil" },
+	{ 0x81, "Hanfschnur" },
+	{ 0x83, "Socken" },
+	{ 0x84, "Spachtel" },
+	{ 0x85, "Holzente" },
+	{ 0x87, "Tasse" },
+	{ 0x88, "Tasse" },
+	{ 0x89, "Teig" },
+	{ 0x8C, "Wolle" },
+	{ 0x8E, "Holzw\x81rfel" },
+	{ 0x8F, "Brief" },
+};
+
 static void activeHotspotTable(const SceneHotspotNameEntry *&table, uint &count) {
 	if (g_engine && g_engine->isDemo()) {
 		table = kSceneHotspotNamesDemo;
@@ -545,6 +786,35 @@ static void activeHotspotTable(const SceneHotspotNameEntry *&table, uint &count)
 		table = kSceneHotspotNames;
 		count = ARRAYSIZE(kSceneHotspotNames);
 	}
+}
+
+static void activeObjectNameTable(const ObjectNameEntry *&table, uint &count) {
+	if (g_engine && g_engine->isDemo()) {
+		table = kObjectNamesDemo;
+		count = ARRAYSIZE(kObjectNamesDemo);
+	} else {
+		table = kObjectNames;
+		count = ARRAYSIZE(kObjectNames);
+	}
+}
+
+Common::String lookupObjectHotspotName(uint16 objectIndex) {
+	if (objectIndex == 0)
+		return Common::String();
+	if (g_engine && !g_engine->isV1())
+		return Common::String();
+
+	const ObjectNameEntry *table;
+	uint tableCount;
+	activeObjectNameTable(table, tableCount);
+	for (uint i = 0; i < tableCount; ++i) {
+		if (table[i].objectIndex == objectIndex) {
+			if (g_engine)
+				return g_engine->translateHotspotLabel(table[i].name);
+			return table[i].name;
+		}
+	}
+	return Common::String();
 }
 
 Common::String lookupSceneHotspotName(uint16 sceneIndex, uint16 hotspotIndex) {

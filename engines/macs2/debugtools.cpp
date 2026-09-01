@@ -1199,9 +1199,9 @@ static void showInventoryWindow() {
 			if (ImGui::CollapsingHeader("Current Inventory", ImGuiTreeNodeFlags_DefaultOpen)) {
 				for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 					GameObject *obj = view->_inventoryItems[i];
-					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-													 ? GameObjects::instance()._objectNames[obj->_index]
-													 : "???";
+					Common::String name = getObjectHotspotName(obj->_index);
+					if (name.empty())
+						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					ImGui::PushID(obj->_index);
 					if (ImGui::Button("Remove")) {
@@ -1223,9 +1223,9 @@ static void showInventoryWindow() {
 						continue;
 					if (obj->_blobs.size() <= 0x13 || obj->_blobs[0x13].empty())
 						continue;
-					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-													 ? GameObjects::instance()._objectNames[obj->_index]
-													 : "???";
+					Common::String name = getObjectHotspotName(obj->_index);
+					if (name.empty())
+						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					if (filterBuf[0] != '\0' && !utf8Name.contains(filterBuf))
 						continue;

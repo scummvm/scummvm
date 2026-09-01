@@ -852,7 +852,7 @@ Macs2Engine::~Macs2Engine() {
 }
 
 #ifdef USE_TTS
-// Object indices and names match GameObjects::init / isNpcIndex.
+// Object indices and names match lookupObjectHotspotName / isNpcIndex.
 // voiceId is reused for the same person (Tramp, Winnetou).
 struct TTSSpeakerVoice {
 	uint16 objectIndex;
@@ -2625,14 +2625,7 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 }
 
 Common::String getObjectHotspotName(uint16 objectIndex) {
-	const GameObjects &objects = GameObjects::instance();
-	if (objectIndex > 0 && objectIndex < objects._objectNames.size() && !objects._objectNames[objectIndex].empty()) {
-		if (g_engine != nullptr) {
-			return g_engine->translateHotspotLabel(objects._objectNames[objectIndex]);
-		}
-		return objects._objectNames[objectIndex];
-	}
-	return Common::String();
+	return lookupObjectHotspotName(objectIndex);
 }
 
 Common::String lookupInteractionDisplayName(uint16 interactionId) {
@@ -3507,7 +3500,6 @@ void Macs2Engine::setGameSpeedMode(uint16 mode) {
 }
 
 Common::Error Macs2Engine::run() {
-	GameObjects::instance().init();
 	setGameSpeedMode(ConfMan.getInt(kGameSpeedModeConfigKey));
 	loadBootstrapResources();
 	readExecutable();

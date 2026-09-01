@@ -234,9 +234,6 @@ public:
 class GameObjects : public Common::Singleton<GameObjects> {
 public:
 	Common::Array<GameObject *> _objects;
-	Common::Array<Common::String> _objectNames;
-
-	void init();
 
 	/** True for character/NPC object indices (not inventory items). */
 	static bool isNpcIndex(uint16 objectIndex);

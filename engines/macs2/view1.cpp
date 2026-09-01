@@ -2385,7 +2385,7 @@ void View1::draw() {
 
 		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
-			Common::String name = GameObjects::instance()._objectNames[hoveredObject->_index];
+			Common::String name = getObjectHotspotName(hoveredObject->_index);
 			if (!name.empty()) {
 				renderString(mousePos.x + 20, mousePos.y + 20, name);
 			} else {
