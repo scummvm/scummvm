@@ -131,6 +131,8 @@ private:
 	void applyBackgroundMode(const CinematicStep &step);
 	void copyPaletteSegment(byte segmentIndex);
 	void copyDefaultPalette();
+	bool advanceClockTimer(uint32 millis);
+	bool advanceTalkingTimer(uint32 millis);
 	bool delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void stopAudio() override;
 
@@ -171,8 +173,8 @@ private:
 	IndexedSurfaceBuffer _cleanOfficeBaseFramebuffer;
 	ActorSpriteBank _actorBankI10Ron;
 	ActorSpriteBank _actorBankI10Sue;
-	uint32 _lastClockFrameMillis;
-	uint32 _lastTalkingFrameMillis;
+	uint32 _clockFrameAccumulator;
+	uint32 _talkingFrameAccumulator;
 	byte _foregroundActorFrame;
 	byte _foregroundTalkBaseFrame;
 	byte _clockChunk7Frame;

@@ -22,7 +22,6 @@
 #include "hollywood/scenes/intro/scene9050.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -122,9 +121,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_effectSound(),
 		_random("hollywood_scene9050"),
 		_i05ClipChunkSize(0),
-		_i05ClipFrameAccumulator(0),
-		_i05InterClipAccumulator(0),
-		_i08BlinkAccumulator(0),
+		_i05ClipFrameCount(0),
 		_i06ScrollAccumulator(0),
 		_i06PrimarySpriteAccumulator(0),
 		_i06SecondarySpriteAccumulator(0),
@@ -147,6 +144,9 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_currentMusicCue(kNoMusicCue),
 		_continuousSoundCue(kNoSoundCue),
 		_i05EntriesPerSegment(0),
+		_blockingAnimationMode(kNoBlockingAnimation),
+		_blockingAnimationFrame(0),
+		_blockingAnimationChunk(0),
 		_i06OptionalOverlayChunk5Enabled(false),
 		_i06BaseFrameDirty(false),
 		_i06PrimarySpriteDirty(false),
@@ -350,24 +350,8 @@ void Scene9050::runResourceI06AnimatedPresentation() {
 		presentFrame();
 	}
 
-	_i06ScrollAccumulator = 60;
-	_i06SecondarySpriteAccumulator = 75;
-	_i06PrimarySpriteAccumulator = 75;
-	_i06VerticalBobAccumulator = 100;
-	_i06PalettePulseAccumulator = 50;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (!_i06SequenceFinished && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-		ensureContinuousSound(kStage9050I06SoundCue, 10);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		advanceResourceI06Timers(elapsed);
-		presentResourceI06AnimatedFrame();
-		g_system->delayMillis(1);
-	}
+	if (runResourceI06AnimationLoop(false, false))
+		return;
 
 	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
 		if (pollEvents())
@@ -437,24 +421,8 @@ bool Scene9050::runResourceI06Interlude(bool runScriptedSpriteSequence) {
 	if (revealSavedFramebufferWithCurtain())
 		return true;
 
-	_i06ScrollAccumulator = 60;
-	_i06SecondarySpriteAccumulator = 75;
-	_i06PrimarySpriteAccumulator = 75;
-	_i06VerticalBobAccumulator = 100;
-	_i06PalettePulseAccumulator = 50;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (!_i06SequenceFinished && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-		ensureContinuousSound(kStage9050I06SoundCue, 10);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		advanceResourceI06InterludeTimers(elapsed, runScriptedSpriteSequence);
-		presentResourceI06AnimatedFrame();
-		g_system->delayMillis(1);
-	}
+	if (runResourceI06AnimationLoop(true, runScriptedSpriteSequence))
+		return true;
 
 	clearSceneFramebufferWithCurtain();
 	return true;
@@ -839,6 +807,35 @@ void Scene9050::markResourceI06CompositeDirty() {
 	_i06CompositeForceDirty = true;
 }
 
+bool Scene9050::runResourceI06AnimationLoop(bool interlude,
+		bool runScriptedSpriteSequence) {
+	if (pollEvents())
+		return true;
+
+	_i06ScrollAccumulator = 60;
+	_i06SecondarySpriteAccumulator = 75;
+	_i06PrimarySpriteAccumulator = 75;
+	_i06VerticalBobAccumulator = 100;
+	_i06PalettePulseAccumulator = 50;
+
+	uint32 elapsed = 0;
+	while (!_i06SequenceFinished && !_skipRequested && !Engine::shouldQuit()) {
+		ensureContinuousSound(kStage9050I06SoundCue, 10);
+		if (interlude)
+			advanceResourceI06InterludeTimers(elapsed, runScriptedSpriteSequence);
+		else
+			advanceResourceI06Timers(elapsed);
+		presentResourceI06AnimatedFrame();
+		if (_i06SequenceFinished)
+			break;
+		if (delay(10))
+			return true;
+		elapsed = 10;
+	}
+
+	return _skipRequested || Engine::shouldQuit();
+}
+
 void Scene9050::ensureContinuousSound(byte cueId, byte volumePercent) {
 	if (_continuousSoundCue != cueId) {
 		_continuousSound.stop();
@@ -886,28 +883,11 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 	if (waitResourceI05ClipHold())
 		return;
 
-	byte frameIndex = 0;
-	_i05ClipFrameAccumulator = 50;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (frameIndex < lastFrameIndex && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-		ensureContinuousSound(kStage9050ClipSoundCue, 100);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		_i05ClipFrameAccumulator += elapsed;
-
-		if (_i05ClipFrameAccumulator >= 50) {
-			_i05ClipFrameAccumulator %= 50;
-			drawResourceI05ClipFrameDelta(lastFrameIndex, frameIndex);
-			frameIndex++;
-			presentFrame();
-		}
-
-		g_system->delayMillis(1);
-	}
+	if (lastFrameIndex == 0)
+		return;
+	_i05ClipFrameCount = lastFrameIndex;
+	playBlockingAnimation(kResourceI05ClipAnimation, 0,
+		lastFrameIndex - 1, 50);
 }
 
 void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
@@ -960,58 +940,13 @@ void Scene9050::advanceStage9050Cutscene() {
 }
 
 void Scene9050::runResourceI05InterClipRevealPhase(byte localChunkIndex) {
-	_i05InterClipAccumulator = 60;
-	uint frameListIndex = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (frameListIndex < ARRAYSIZE(kStage9050InterClipRevealFrames) && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-		ensureContinuousSound(kStage9050ClipSoundCue, 100);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		_i05InterClipAccumulator += elapsed;
-
-		if (_i05InterClipAccumulator >= 60) {
-			_i05InterClipAccumulator %= 60;
-			restoreAndDrawResourceDescriptorFrame(localChunkIndex, kI05InterClipFrameDescriptorCount,
-				kStage9050InterClipRevealFrames[frameListIndex], true);
-			presentFrame();
-			frameListIndex++;
-		}
-
-		g_system->delayMillis(1);
-	}
+	playBlockingAnimation(kInterClipRevealAnimation, 0,
+		ARRAYSIZE(kStage9050InterClipRevealFrames) - 1, 60, localChunkIndex);
 }
 
 void Scene9050::runResourceI05InterClipReversePhase() {
-	_i05InterClipAccumulator = 60;
-	uint frameListIndex = 0;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (frameListIndex < ARRAYSIZE(kStage9050InterClipReverseFrames) && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return;
-		ensureContinuousSound(kStage9050ClipSoundCue, 100);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		_i05InterClipAccumulator += elapsed;
-
-		if (_i05InterClipAccumulator >= 60) {
-			_i05InterClipAccumulator %= 60;
-			const bool drawFrame = frameListIndex + 1 < ARRAYSIZE(kStage9050InterClipReverseFrames);
-			const byte frameIndex = kStage9050InterClipReverseFrames[frameListIndex];
-			restoreAndDrawResourceDescriptorFrame(4, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
-			if (_i05EntriesPerSegment >= kI05LayeredRevealEntriesPerSegment)
-				restoreAndDrawResourceDescriptorFrame(5, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
-			presentFrame();
-			frameListIndex++;
-		}
-
-		g_system->delayMillis(1);
-	}
+	playBlockingAnimation(kInterClipReverseAnimation, 0,
+		ARRAYSIZE(kStage9050InterClipReverseFrames) - 1, 60);
 }
 
 void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex,
@@ -1071,31 +1006,14 @@ bool Scene9050::runResourceI08BlinkSequence() {
 }
 
 bool Scene9050::waitResourceI08BlinkLoop(uint32 millis) {
-	byte blinkFrame = 0;
-	uint32 elapsedTotal = 0;
-	_i08BlinkAccumulator = 50;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (elapsedTotal < millis && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
+	const uint32 frameCount = (millis + 49) / 50;
+	if (frameCount == 0)
+		return false;
+	if (frameCount > 0x100)
+		return true;
 
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		elapsedTotal += elapsed;
-		_i08BlinkAccumulator += elapsed;
-
-		if (_i08BlinkAccumulator >= 50) {
-			_i08BlinkAccumulator %= 50;
-			blinkFrame = blinkFrame == 0 ? 1 : 0;
-			restoreAndDrawResourceDescriptorFrame(2, kI08BlinkFrameDescriptorCount, blinkFrame, true);
-			presentFrame();
-		}
-
-		g_system->delayMillis(1);
-	}
-
-	return _skipRequested || Engine::shouldQuit();
+	return !playBlockingAnimation(kResourceI08BlinkAnimation, 0,
+		(byte)(frameCount - 1), 50, 0, true);
 }
 
 bool Scene9050::runResourceI07FinalAnimation() {
@@ -1120,36 +1038,95 @@ bool Scene9050::runResourceI07FinalAnimation() {
 	if (revealSavedFramebufferWithCurtain())
 		return true;
 
-	uint frameMapIndex = 0;
-	_i06PrimarySpriteAccumulator = 75;
-	uint32 lastFrameMillis = g_system->getMillis();
-	while (frameMapIndex < ARRAYSIZE(kStage9050ResourceI07FinalFrameMap) - 1 &&
-			!_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-		ensureContinuousSound(kStage9050ClipSoundCue, 100);
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastFrameMillis;
-		lastFrameMillis = now;
-		_i06PrimarySpriteAccumulator += elapsed;
-
-		if (_i06PrimarySpriteAccumulator >= 75) {
-			_i06PrimarySpriteAccumulator %= 75;
-			frameMapIndex++;
-			if (frameMapIndex == 1)
-				_effectSound.playSample(kStage9050FinalStartSoundCue, 100);
-			else if (frameMapIndex == ARRAYSIZE(kStage9050ResourceI07FinalFrameMap) - 1)
-				_effectSound.playSample(kStage9050FinalEndSoundCue, 100);
-			restoreAndDrawResourceDescriptorFrame(2, kI07FinalFrameDescriptorCount,
-				kStage9050ResourceI07FinalFrameMap[frameMapIndex], true);
-			presentFrame();
-		}
-
-		g_system->delayMillis(1);
-	}
+	playBlockingAnimation(kResourceI07FinalAnimation, 1,
+		ARRAYSIZE(kStage9050ResourceI07FinalFrameMap) - 1, 75);
 
 	return true;
+}
+
+bool Scene9050::playBlockingAnimation(BlockingAnimationMode mode,
+		byte firstFrame, byte lastFrame, uint32 frameMillis, byte chunkIndex,
+		bool waitAfterFinalFrame) {
+	_blockingAnimationMode = mode;
+	_blockingAnimationFrame = firstFrame;
+	_blockingAnimationChunk = chunkIndex;
+
+	AnimationFrameRange range(firstFrame, lastFrame, frameMillis);
+	if (!waitAfterFinalFrame)
+		range.noFinalFrameDelay();
+	const bool completed = _animationPlayer.playAndPresent(_blockingAnimationFrame, range);
+	_blockingAnimationMode = kNoBlockingAnimation;
+	return completed;
+}
+
+void Scene9050::presentAnimationFrame() {
+	const bool continuousSound = _blockingAnimationMode == kResourceI05ClipAnimation ||
+		_blockingAnimationMode == kInterClipRevealAnimation ||
+		_blockingAnimationMode == kInterClipReverseAnimation ||
+		_blockingAnimationMode == kResourceI07FinalAnimation;
+	if (continuousSound)
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
+
+	switch (_blockingAnimationMode) {
+	case kResourceI05ClipAnimation:
+		drawResourceI05ClipFrameDelta(_i05ClipFrameCount, _blockingAnimationFrame);
+		break;
+	case kInterClipRevealAnimation:
+		restoreAndDrawResourceDescriptorFrame(_blockingAnimationChunk,
+			kI05InterClipFrameDescriptorCount,
+			kStage9050InterClipRevealFrames[_blockingAnimationFrame], true);
+		break;
+	case kInterClipReverseAnimation: {
+		const bool drawFrame = _blockingAnimationFrame + 1 <
+			ARRAYSIZE(kStage9050InterClipReverseFrames);
+		const byte frame = kStage9050InterClipReverseFrames[_blockingAnimationFrame];
+		restoreAndDrawResourceDescriptorFrame(4, kI05InterClipFrameDescriptorCount,
+			frame, drawFrame);
+		if (_i05EntriesPerSegment >= kI05LayeredRevealEntriesPerSegment) {
+			restoreAndDrawResourceDescriptorFrame(5, kI05InterClipFrameDescriptorCount,
+				frame, drawFrame);
+		}
+		break;
+	}
+	case kResourceI08BlinkAnimation: {
+		const byte frame = (_blockingAnimationFrame & 1) == 0 ? 1 : 0;
+		restoreAndDrawResourceDescriptorFrame(2, kI08BlinkFrameDescriptorCount,
+			frame, true);
+		break;
+	}
+	case kResourceI07FinalAnimation:
+		if (_blockingAnimationFrame == 1)
+			_effectSound.playSample(kStage9050FinalStartSoundCue, 100);
+		else if (_blockingAnimationFrame == ARRAYSIZE(kStage9050ResourceI07FinalFrameMap) - 1)
+			_effectSound.playSample(kStage9050FinalEndSoundCue, 100);
+		restoreAndDrawResourceDescriptorFrame(2, kI07FinalFrameDescriptorCount,
+			kStage9050ResourceI07FinalFrameMap[_blockingAnimationFrame], true);
+		break;
+	case kNoBlockingAnimation:
+		break;
+	}
+
+	presentFrame();
+}
+
+bool Scene9050::waitForAnimationFrame(uint32 millis, bool allowSkip) {
+	const bool continuousSound = _blockingAnimationMode == kResourceI05ClipAnimation ||
+		_blockingAnimationMode == kInterClipRevealAnimation ||
+		_blockingAnimationMode == kInterClipReverseAnimation ||
+		_blockingAnimationMode == kResourceI07FinalAnimation;
+	if (!continuousSound)
+		return PresentationScene::waitForAnimationFrame(millis, allowSkip);
+
+	uint32 remaining = millis;
+	while (remaining != 0 && !animationPlaybackShouldStop()) {
+		ensureContinuousSound(kStage9050ClipSoundCue, 100);
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		if (delay(slice, allowSkip))
+			return true;
+		remaining -= slice;
+	}
+
+	return animationPlaybackShouldStop();
 }
 
 bool Scene9050::waitSceneCounterPast(uint threshold) {
