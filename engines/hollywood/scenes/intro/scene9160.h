@@ -23,8 +23,8 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9160_H
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {
 

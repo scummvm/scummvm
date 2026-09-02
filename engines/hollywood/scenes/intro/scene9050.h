@@ -26,8 +26,8 @@
 #include "common/random.h"
 
 #include "hollywood/music.h"
-#include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/presentation_scene.h"
+#include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {
 
