@@ -25,10 +25,15 @@
 #include "common/array.h"
 #include "common/types.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Hollywood {
+
+class IndexedSurfaceBuffer;
 
 /**
  * Owns an open scene archive and storage for its loaded chunks.
@@ -64,10 +69,6 @@ public:
 		uint localChunkIndex);
 	bool loadArenaChunkAlias(const char *sceneDebugName, uint sourceIndex,
 		uint aliasIndex, uint targetIndex);
-
-	enum {
-		kResourceChunkCount = 40
-	};
 
 	ResourceChunkTable _chunkTable;
 	uint32 _chunkOffsets[kResourceChunkCount];

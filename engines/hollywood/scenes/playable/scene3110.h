@@ -26,8 +26,8 @@
 
 #include "hollywood/graphics.h"
 #include "hollywood/music.h"
+#include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
-#include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {
 
@@ -121,7 +121,7 @@ private:
 	Common::Array<byte> _exteriorStormPalette;
 	Common::Array<byte> _memoryPulseSavedPalette;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	Common::Array<byte> _chunks[SceneResources::kResourceChunkCount];
+	Common::Array<byte> _chunks[kResourceChunkCount];
 	SoundBank0Player _sound0;
 	SoundBank0Player _sound1;
 	SoundBank0Player _sound2;

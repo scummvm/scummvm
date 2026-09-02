@@ -45,6 +45,7 @@
 #include "hollywood/scenes/playable/scene_config.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/speech_controller.h"
+#include "hollywood/scenes/scene_data.h"
 #include "hollywood/scenes/scene_resources.h"
 #include "hollywood/scenes/scene_text_store.h"
 #include "hollywood/scenes/speech_overlay.h"
@@ -56,6 +57,7 @@ struct Surface;
 namespace Hollywood {
 
 class HollywoodEngine;
+class InventoryMediaPlayer;
 
 /**
  * Common runtime for rooms managed by the shared point-and-click gameplay loop.
@@ -673,7 +675,7 @@ protected:
 	// Scene resource state
 	SceneResources _resources;
 	ResourceChunkTable &_sceneChunkTable;
-	uint32 (&_resourceChunkOffsets)[HollywoodEngine::kResourceChunkCount];
+	uint32 (&_resourceChunkOffsets)[kResourceChunkCount];
 	Common::Array<byte> &_resourceArena;
 	Common::Array<byte> &_metadata;
 

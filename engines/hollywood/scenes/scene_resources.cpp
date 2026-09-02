@@ -23,6 +23,8 @@
 #include "common/path.h"
 #include "graphics/managed_surface.h"
 
+#include "hollywood/hollywood.h"
+#include "hollywood/graphics.h"
 #include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {

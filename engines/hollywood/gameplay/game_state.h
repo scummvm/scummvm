@@ -413,7 +413,8 @@ struct GameplayState {
 	// The original shares one reward index across all three trophy caches. These
 	// accessors keep the existing serialized fields synchronized.
 	byte frankensteinPartRewardIndex() const {
-		return MAX<byte>(scene2110TreasureGrantIndex, scene5050PickupIndex);
+		return scene2110TreasureGrantIndex > scene5050PickupIndex ?
+			scene2110TreasureGrantIndex : scene5050PickupIndex;
 	}
 
 	void setFrankensteinPartRewardIndex(byte index) {
@@ -693,7 +694,8 @@ struct GameplayState {
 		if (owner >= kInventoryOwnerCount || itemId == 0 || itemId >= kInventoryOwnerSlotStride)
 			return 0;
 
-		const byte itemCount = MIN<byte>(inventoryItemCountByOwner[owner], kInventoryLastSlot);
+		const byte itemCount = inventoryItemCountByOwner[owner] < kInventoryLastSlot ?
+			inventoryItemCountByOwner[owner] : kInventoryLastSlot;
 		for (byte slot = kInventoryFirstSlot; slot <= itemCount; ++slot) {
 			if (inventorySlotItemIdByOwner[owner][slot] == itemId)
 				return slot;

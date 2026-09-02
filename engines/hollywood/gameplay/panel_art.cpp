@@ -30,6 +30,8 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/game_strings.h"
+#include "hollywood/gameplay/dialogue_menu.h"
+#include "hollywood/gameplay/game_loop.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/gameplay/panel_art.h"
 
