@@ -28,7 +28,7 @@ const DebugChannelDef HarvesterMetaEngineDetection::debugFlagList[] = {
 	{ Harvester::kDebugGeneral, "general", "General debug level" },
 	{ Harvester::kDebugCursor, "cursor", "Cursor animation, hover, and placement debug" },
 	{ Harvester::kDebugRoom, "room", "Room setup, scene population, and interaction debug" },
-	{ Harvester::kDebugPlayer, "player", "Player animation, movement, and spawn debug" },
+	{ Harvester::kDebugPlayer, "player", "Player and NPC animation, movement, and spawn debug" },
 	{ Harvester::kDebugPathfinding, "pathfinding", "Player pathfinding target, blocker, and movement-band debug" },
 	{ Harvester::kDebugCombat, "combat", "Room combat pursuit, attack, and damage debug" },
 	{ Harvester::kDebugResources, "resources", "Resource loading" },

@@ -855,15 +855,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!entityManager || !shouldSpawnNpc)
 				return nullptr;
 
-			const int initialFrame = preservedCorpse ? npc.runtimeState : 0;
 			Entity *entity = entityManager->spawnSceneActorEntity(
-				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, initialFrame);
+				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
 			if (!entity)
 				return nullptr;
 
 			entity->setClassId(kRuntimeEntityClassNpc);
 			entity->setZExtent(kNativeNpcMonsterZExtent);
 			entity->setHitTestMode(preservedCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
+			entity->setVisible(true);
+			if (!applyRoomNpcPlacement(*entity, npc)) {
+				removeSceneEntityByName(npc.npcName);
+				return nullptr;
+			}
 			if (preservedCorpse) {
 				const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
 				entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
@@ -873,11 +877,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			} else {
 				entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
 				entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
-			}
-			entity->setVisible(true);
-			if (!applyRoomNpcPlacement(*entity, npc)) {
-				removeSceneEntityByName(npc.npcName);
-				return nullptr;
 			}
 			entityManager->reinsertSceneEntity(entity);
 			return entity;
@@ -1458,12 +1457,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!entityManager)
 				return;
 
-			for (const NpcRecord &npc : scene.state.roomNpcs) {
-				Entity *entity = entityManager->findSceneEntityByName(npc.npcName);
-				if (!entity)
-					continue;
-				(void)applyRoomNpcPlacement(*entity, npc);
-			}
+			// Class-4 NPCs retain their spawn base through ambient and death animation banks.
 			for (const MonsterRecord &monster : scene.state.roomMonsters) {
 				Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
 				if (!entity)

@@ -2271,6 +2271,12 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			npc.deathDamageType != 0 &&
 			npc.runtimeState >= 0;
 		entity->setHitTestMode(isCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
+		// Native spawn positions frame 0 before selecting ambient or corpse frame banks.
+		if (!applyRoomActorPlacementInternal(state, *entity,
+				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
+			debug(1, "Harvester: unable to apply room npc placement for '%s'",
+				npc.npcName.c_str());
+		}
 		if (isCorpse) {
 			const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
 			entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
@@ -2282,12 +2288,6 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
 			if (npc.frameDelay > 0)
 				entity->setAnimationRate(npc.frameDelay);
-		}
-		// Native room NPCs come from spawn_abm_entity_base, which leaves the depth-scale flag cleared.
-		if (!applyRoomActorPlacementInternal(state, *entity,
-				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
-			debug(1, "Harvester: unable to apply room npc placement for '%s'",
-				npc.npcName.c_str());
 		}
 		entityManager->reinsertSceneEntity(entity);
 		debugC(1, kDebugRoom,
