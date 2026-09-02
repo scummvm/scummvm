@@ -433,7 +433,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 		currentView->_stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 		currentView->_drawnStringBox = strings;
 		currentView->_isShowingTextBox = true;
-		currentView->currentSpeechActData.speaker = nullptr;
+		currentView->_currentSpeechActData.speaker = nullptr;
 		currentView->_continueScriptAfterUI = true;
 		_engine->sayText(joinTtsLines(strings), Common::TextToSpeechManager::INTERRUPT);
 		currentView->redraw();

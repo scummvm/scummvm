@@ -43,17 +43,6 @@ enum class FadeMode {
 	ToBlack
 };
 
-class Button {
-public:
-	Common::Point _position;
-	Common::Point _size;
-	Common::String _caption;
-
-	bool isPointInside(const Common::Point &p) const;
-
-	void render(Graphics::ManagedSurface &s);
-};
-
 struct SpeechActData {
 	Character *speaker = nullptr;
 	Common::Array<Common::String> strings;
@@ -239,7 +228,7 @@ public:
 	Common::StringArray _drawnStringBox;
 	uint16 _dialogueChoiceCount = 0;
 	Common::Array<uint16> _dialogueChoiceLineCounts;
-	SpeechActData currentSpeechActData;
+	SpeechActData _currentSpeechActData;
 	Graphics::ManagedSurface _backgroundSurface;
 
 	bool _started = false;

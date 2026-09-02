@@ -685,7 +685,7 @@ void Macs2Engine::softRestart() {
 		currentView->_isShowingDialoguePanel = false;
 		currentView->_isDialogueChoiceInputActive = false;
 		currentView->_isShowingTextBox = false;
-		currentView->currentSpeechActData = SpeechActData();
+		currentView->_currentSpeechActData = SpeechActData();
 	}
 
 	for (uint i = 0; i < GameObjects::instance()._objects.size(); i++)
@@ -1521,7 +1521,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->handleTextBoxInput();
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
-	currentView->currentSpeechActData = SpeechActData();
+	currentView->_currentSpeechActData = SpeechActData();
 	currentView->_pendingPanelRequest = View1::kPanelRequestNone;
 	currentView->_activeInventoryItem = nullptr;
 	currentView->_uiPanelState = View1::kUiPanelNone;

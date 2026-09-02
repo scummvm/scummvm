@@ -224,7 +224,7 @@ const View1::BorderStyle View1::kBorderPressed = {0x1010, 0x1011, 0x1012};
 
 View1::View1() : UIElement("View1") {
 	_backgroundSurface.copyFrom(g_engine->_sceneBackground);
-	currentSpeechActData.onRightSide = false;
+	_currentSpeechActData.onRightSide = false;
 	updateCursor();
 	setViewPaletteSafely(g_engine->_pal);
 	_paletteDirty = false;
@@ -723,29 +723,29 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	// Cycles between frame 1 (mouth open) and frame 2 (mouth closed)
 	// based on a decrementing counter, creating a talking animation.
 	bool useAlternateBlob = false;
-	if (currentSpeechActData.mouthAnimActive) {
-		if (currentSpeechActData.mouthAnimCounter <= 0) {
+	if (_currentSpeechActData.mouthAnimActive) {
+		if (_currentSpeechActData.mouthAnimCounter <= 0) {
 			useAlternateBlob = true;
 		}
 	}
 
 	// Select portrait blob: primary (Blobs[17]) during countdown, alternate (Blobs[18]) after
 	// Mode 0: render current frame without advancing (advance happens in tick())
-	Common::ScopedPtr<AnimFrame> frame(currentSpeechActData.speaker->getCurrentPortrait(useAlternateBlob, 0));
+	Common::ScopedPtr<AnimFrame> frame(_currentSpeechActData.speaker->getCurrentPortrait(useAlternateBlob, 0));
 	if (!frame) {
 		return;
 	}
-	Common::ScopedPtr<AnimFrame> leftPortrait(currentSpeechActData.speaker->getCurrentPortrait(false, 0));
-	Common::ScopedPtr<AnimFrame> rightPortrait(currentSpeechActData.speaker->getCurrentPortrait(true, 0));
+	Common::ScopedPtr<AnimFrame> leftPortrait(_currentSpeechActData.speaker->getCurrentPortrait(false, 0));
+	Common::ScopedPtr<AnimFrame> rightPortrait(_currentSpeechActData.speaker->getCurrentPortrait(true, 0));
 
-	Common::Point pos = currentSpeechActData.position;
+	Common::Point pos = _currentSpeechActData.position;
 	if (!g_engine->isAmiga()) {
 		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 		const int portraitHeight = MAX<int>(leftPortrait ? leftPortrait->_height : 0, rightPortrait ? rightPortrait->_height : 0);
 		const int borderPad = g_engine->portraitBorderPad();
 		const int contentInset = g_engine->portraitContentInset();
 		const Common::Point borderSize(portraitWidth + borderPad, portraitHeight + borderPad);
-		drawBorder(currentSpeechActData.position, borderSize, s);
+		drawBorder(_currentSpeechActData.position, borderSize, s);
 		pos += Common::Point(contentInset, contentInset);
 	}
 	drawSprite(pos, frame->_width, frame->_height, frame->_data.data(), s, false);
@@ -2317,7 +2317,7 @@ void View1::draw() {
 				}
 			}
 		}
-		if (currentSpeechActData.speaker != nullptr) {
+		if (_currentSpeechActData.speaker != nullptr) {
 			drawCurrentSpeaker(s);
 		}
 	}
@@ -2478,16 +2478,16 @@ bool View1::tick() {
 	}
 
 	// Advance portrait animation once per tick
-	if (_isShowingDialoguePanel && currentSpeechActData.speaker != nullptr && currentSpeechActData.mouthAnimActive) {
-		Character *speaker = currentSpeechActData.speaker;
-		if (currentSpeechActData.mouthAnimCounter < 1) {
+	if (_isShowingDialoguePanel && _currentSpeechActData.speaker != nullptr && _currentSpeechActData.mouthAnimActive) {
+		Character *speaker = _currentSpeechActData.speaker;
+		if (_currentSpeechActData.mouthAnimCounter < 1) {
 			// counter < 1: advance alternate blob (Blobs[18]) with mode 2
 			if (speaker->_gameObject->_blobs.size() > 18 && !speaker->_gameObject->_blobs[18].empty()) {
 				BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[18], true, 2);
 			}
 		} else {
-			currentSpeechActData.mouthAnimCounter--;
-			if (currentSpeechActData.mouthAnimCounter < 1) {
+			_currentSpeechActData.mouthAnimCounter--;
+			if (_currentSpeechActData.mouthAnimCounter < 1) {
 				// just hit 0: reset alternate blob (Blobs[18]) with mode 1
 				if (speaker->_gameObject->_blobs.size() > 18 && !speaker->_gameObject->_blobs[18].empty()) {
 					BackgroundAnimationBlob::advanceAnimFrame(speaker->_gameObject->_blobs[18], true, 1);
@@ -3330,10 +3330,10 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	_dialogueChoiceCount = 0;
 	_continueScriptAfterUI = true;
 
-	currentSpeechActData.speaker = getCharacterByIndex(characterIndex);
-	currentSpeechActData.strings = strings;
-	currentSpeechActData.position = position;
-	currentSpeechActData.onRightSide = onRightSide;
+	_currentSpeechActData.speaker = getCharacterByIndex(characterIndex);
+	_currentSpeechActData.strings = strings;
+	_currentSpeechActData.position = position;
+	_currentSpeechActData.onRightSide = onRightSide;
 
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
@@ -3344,9 +3344,9 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	int stringBoxY = position.y;
 	Common::Point portraitBoxPosition = position;
 
-	if (currentSpeechActData.speaker != nullptr) {
-		AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false);
-		AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true);
+	if (_currentSpeechActData.speaker != nullptr) {
+		AnimFrame *leftPortrait = _currentSpeechActData.speaker->getCurrentPortrait(false);
+		AnimFrame *rightPortrait = _currentSpeechActData.speaker->getCurrentPortrait(true);
 		const int portraitWidth = MAX<int>(leftPortrait ? leftPortrait->_width : 0, rightPortrait ? rightPortrait->_width : 0);
 		if (portraitWidth > 0) {
 			if (onRightSide) {
@@ -3360,19 +3360,19 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 		delete rightPortrait;
 	}
 
-	currentSpeechActData.position = portraitBoxPosition;
+	_currentSpeechActData.position = portraitBoxPosition;
 	// Activate mouth animation (handleTimerCallback 1008:d38b)
-	currentSpeechActData.mouthAnimActive = (currentSpeechActData.speaker != nullptr);
+	_currentSpeechActData.mouthAnimActive = (_currentSpeechActData.speaker != nullptr);
 	// Original: PTR_LOOP_1020_1004 = sum of all line lengths (total character count)
 	int16 totalChars = 0;
 	for (const Common::String &line : strings) {
 		totalChars += line.size();
 	}
-	currentSpeechActData.mouthAnimCounter = (totalChars > 0) ? totalChars : 1;
+	_currentSpeechActData.mouthAnimCounter = (totalChars > 0) ? totalChars : 1;
 	_stringBoxPosition = Common::Point(stringBoxX, stringBoxY);
 	debugC(kDebugScript, "Layout speech act: speaker=%u rawPos=(%d,%d) rightSide=%u portraitBorderPos=(%d,%d) textBorderPos=(%d,%d) textBorderSize=(%d,%d) text=\"%s\"",
 		   characterIndex, position.x, position.y, onRightSide ? 1 : 0,
-		   currentSpeechActData.position.x, currentSpeechActData.position.y,
+		   _currentSpeechActData.position.x, _currentSpeechActData.position.y,
 		   _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight, joinDebugStrings(strings).c_str());
 
 	if (_autoclickActive) {
@@ -3595,13 +3595,6 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 		return (uint16)(0x0400 + objectIndex);
 	}
 	return 0;
-}
-
-bool Button::isPointInside(const Common::Point &p) const {
-	return false;
-}
-
-void Button::render(Graphics::ManagedSurface &s) {
 }
 
 void View1::openOriginalSaveLoadPanel() {
