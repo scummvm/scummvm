@@ -47,7 +47,6 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	bool shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 
 	void updateSceneDepthThresholds(byte actorDrawOrderMode, int activeWorldX, int activeWorldY);

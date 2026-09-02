@@ -321,12 +321,10 @@ AmbientAudioProfile Scene3080::ambientAudioProfile() const {
 	return profile;
 }
 
-bool Scene3080::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene3080::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 	if (_vm->gameState().mainFlowStateId != kScene3090State)
 		_vm->gameplayMusic()->stop();

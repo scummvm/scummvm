@@ -153,13 +153,11 @@ bool Scene2110::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene2110::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff &&
-		stateId != kScene2100ReturnFromTreasureState && !isMainFlowStateInScene(stateId);
-}
-
 void Scene2110::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop() ||
+		_vm->gameState().mainFlowStateId == kScene2100ReturnFromTreasureState)
+		return;
+
 	fadePaletteToBlack();
 }
 

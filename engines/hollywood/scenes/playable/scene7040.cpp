@@ -182,10 +182,6 @@ bool Scene7040::shouldConvertSavedFramebufferFF() const {
 	return true;
 }
 
-bool Scene7040::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene7040::initializeCustomPreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;

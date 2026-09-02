@@ -249,12 +249,10 @@ void Scene4090::runCustomEntrySequence() {
 	}
 }
 
-bool Scene4090::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene4090::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	if (_vm->gameState().mainFlowStateId != kScene4090FinalReturnState)
 		fadePaletteToBlack();
 	stopAmbientSoundCues();

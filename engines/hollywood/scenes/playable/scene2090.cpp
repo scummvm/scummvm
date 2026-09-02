@@ -137,13 +137,11 @@ bool Scene2090::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene2090::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff &&
-		stateId != kScene2020ReturnState && !isMainFlowStateInScene(stateId);
-}
-
 void Scene2090::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop() ||
+		_vm->gameState().mainFlowStateId == kScene2020ReturnState)
+		return;
+
 	fadePaletteToBlack();
 }
 

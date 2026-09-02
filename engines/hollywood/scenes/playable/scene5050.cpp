@@ -202,10 +202,6 @@ bool Scene5050::customizeRouteSegment(byte currentRegion, byte nextRegion,
 	return false;
 }
 
-bool Scene5050::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5050::runExitSideEffectsAfterLoop() {
 	if (!_specialExitAlreadyFaded)
 		fadePaletteToBlack();

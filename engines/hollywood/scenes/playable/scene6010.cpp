@@ -373,12 +373,10 @@ bool Scene6010::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const 
 	return PlayableScene::shouldUseActorDepthTest(actorWorldX, actorWorldY);
 }
 
-bool Scene6010::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene6010::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 }
 
