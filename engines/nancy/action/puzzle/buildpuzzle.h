@@ -87,7 +87,6 @@ protected:
 	struct HoldSlot : RenderObject {
 		HoldSlot() : RenderObject(0) {}
 
-		void setZ(uint16 z) { _z = z; _needsRedraw = true; }
 		bool isViewportRelative() const override { return true; }
 
 		Common::Rect srcRect;			// empty
@@ -100,7 +99,6 @@ protected:
 	struct Piece : RenderObject {
 		Piece() : RenderObject(0) {}
 
-		void setZ(uint16 z) { _z = z; _needsRedraw = true; }
 		bool isViewportRelative() const override { return true; }
 
 		Common::Rect srcRect;			// art while the piece sits at home
@@ -196,7 +194,6 @@ protected:
 	bool _isInitialized = false;
 
 	void setPieceCursor(bool isHeld);
-	void setPieceZ(int16 pieceIdx, uint16 z);
 	// Draw the carried art at the cursor, or hide it when nothing is carried
 	void updateCursorItem(const Common::Point &mouseVP);
 	// The scoop a piece is dropped with, 1 when it is carried by hand

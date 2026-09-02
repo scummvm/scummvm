@@ -63,7 +63,7 @@ void TangramPuzzle::init() {
 	curTile->setTransparent(true);
 	curTile->setVisible(true);
 	drawToBuffer(*curTile);
-	curTile->setZ(_z + 1);
+	curTile->setZOrder(_z + 1);
 
 	// Then, add the actual tiles
 	for (uint i = 0; i < _tileSrcs.size(); ++i) {
@@ -74,7 +74,7 @@ void TangramPuzzle::init() {
 		curTile->moveTo(_tileDests[i]);
 		curTile->setTransparent(true);
 		curTile->setVisible(true);
-		curTile->setZ(_z + curTile->_id + 1);
+		curTile->setZOrder(_z + curTile->_id + 1);
 		curTile->drawMask();
 		drawToBuffer(*curTile);
 
@@ -366,13 +366,11 @@ void TangramPuzzle::moveToTop(uint id) {
 	for (uint i = 1; i < _tiles.size(); ++i) {
 		Tile &tile = _tiles[i];
 		if (tile.getZOrder() > _tiles[id].getZOrder()) {
-			tile.setZ(tile.getZOrder() - 1);
-			tile.registerGraphics();
+			tile.setZOrder(tile.getZOrder() - 1);
 		}
 	}
 
-	_tiles[id].setZ(_z + _tiles.size());
-	_tiles[id].registerGraphics();
+	_tiles[id].setZOrder(_z + _tiles.size());
 }
 
 void TangramPuzzle::redrawBuffer(const Common::Rect &rect) {

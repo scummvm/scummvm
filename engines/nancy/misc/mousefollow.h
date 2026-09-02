@@ -49,7 +49,6 @@ public:
 	virtual void pickUp() { _isPickedUp = true; }
 	virtual void putDown() { _isPickedUp = false; }
 
-	void setZ(uint16 z) { _z = z; _needsRedraw = true; }
 	void handleInput(NancyInput &input);
 	bool isViewportRelative() const override { return true; }
 

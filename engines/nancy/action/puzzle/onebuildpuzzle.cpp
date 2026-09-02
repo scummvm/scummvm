@@ -146,7 +146,7 @@ void OneBuildPuzzle::init() {
 
 		p.setVisible(true);
 		p.setTransparent(true);
-		p.setZ(_z + (uint16)i + 1);
+		p.setZOrder(_z + (uint16)i + 1);
 		updatePieceRender(i);
 	}
 
@@ -832,7 +832,7 @@ void OneBuildPuzzle::pickUpPiece(int16 pieceIdx, bool rotate) {
 	_isDragging = true;
 	_pickedUpWidth  = pp.rotateSurfaces[pp.curRotation].w;
 	_pickedUpHeight = pp.rotateSurfaces[pp.curRotation].h;
-	pp.setZ((uint16)(_z + (int)_pieces.size() * 2));
+	pp.setZOrder((uint16)(_z + (int)_pieces.size() * 2));
 	pp.registerGraphics();
 }
 

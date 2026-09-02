@@ -192,6 +192,20 @@ void GraphicsManager::addObject(RenderObject *object) {
 	_objects.insert(object);
 }
 
+void GraphicsManager::reorderObject(RenderObject *object) {
+	// The array is kept sorted as objects are inserted, so an object that has
+	// changed its z depth has to be taken out and put back to move. One that is
+	// not in the list yet has nothing to reorder; it will be sorted when it is
+	// added.
+	for (auto &r : _objects) {
+		if (r == object) {
+			_objects.erase(&r);
+			_objects.insert(object);
+			return;
+		}
+	}
+}
+
 void GraphicsManager::removeObject(RenderObject *object) {
 	for (auto &r : _objects) {
 		if (r == object) {

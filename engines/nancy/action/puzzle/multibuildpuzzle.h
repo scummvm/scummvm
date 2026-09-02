@@ -78,8 +78,6 @@ protected:
 		Graphics::ManagedSurface rotateSurfaces[4];
 		bool hasSurface[4] = {};
 
-		void setZ(uint16 z) { _z = z; _needsRedraw = true; }
-
 		bool isViewportRelative() const override { return true; }
 	};
 

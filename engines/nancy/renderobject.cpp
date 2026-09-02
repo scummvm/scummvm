@@ -39,6 +39,16 @@ RenderObject::RenderObject(uint16 zOrder, Graphics::ManagedSurface &surface, con
 	_screenPosition = destBounds;
 }
 
+void RenderObject::setZOrder(uint16 z) {
+	if (_z == z) {
+		return;
+	}
+
+	_z = z;
+	_needsRedraw = true;
+	g_nancy->_graphics->reorderObject(this);
+}
+
 void RenderObject::init() {
 	_previousScreenPosition = _screenPosition;
 }

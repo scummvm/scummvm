@@ -86,7 +86,7 @@ void MultiBuildPuzzle::init() {
 		updatePieceRender(i);
 		p.setVisible(true);
 		p.setTransparent(true);
-		p.setZ((uint16)(_z + i + 1));
+		p.setZOrder((uint16)(_z + i + 1));
 	}
 
 	_isInitialized = true;
@@ -407,7 +407,7 @@ void MultiBuildPuzzle::spawnCounterPiece(int srcIdx) {
 	updatePieceRender(newIdx);
 	_pieces[newIdx].setVisible(true);
 	_pieces[newIdx].setTransparent(true);
-	_pieces[newIdx].setZ((uint16)(_z + newIdx + 1));
+	_pieces[newIdx].setZOrder((uint16)(_z + newIdx + 1));
 	_pieces[newIdx].registerGraphics();
 }
 
@@ -663,7 +663,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			pp.curRotation = (pp.curRotation + 1) % 4;
 			if (!pp.hasSurface[pp.curRotation])
 				pp.curRotation = 0;
-			pp.setZ((uint16)(_z + (int)_pieces.size() * 2));
+			pp.setZOrder((uint16)(_z + (int)_pieces.size() * 2));
 			pp.registerGraphics();
 			_isDragging = true;
 			_pickedUpPiece = topmostRot;
@@ -682,7 +682,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			Piece &pp = _pieces[topmost];
 			pp.isPlaced = false;
 			pp.curRotation = 0;
-			pp.setZ((uint16)(_z + (int)_pieces.size() * 2));
+			pp.setZOrder((uint16)(_z + (int)_pieces.size() * 2));
 			pp.registerGraphics();
 
 			if (_hasCloseupImage && !pp.cuSrcRect.isEmpty()) {

@@ -113,8 +113,6 @@ protected:
 		Graphics::ManagedSurface altSurface;
 		bool useAltSurface = false;
 
-		void setZ(uint16 z) { _z = z; _needsRedraw = true; }
-
 		bool isViewportRelative() const override { return true; }
 	};
 

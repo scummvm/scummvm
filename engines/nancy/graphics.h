@@ -44,6 +44,8 @@ public:
 
 	void addObject(RenderObject *object);
 	void removeObject(RenderObject *object);
+	// Move an already-added object to its new place in the draw order
+	void reorderObject(RenderObject *object);
 	void clearObjects();
 
 	void redrawAll();

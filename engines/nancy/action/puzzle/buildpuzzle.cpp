@@ -239,7 +239,7 @@ void BuildPuzzle::init() {
 		piece.inUse = (i < _numDefined);
 		piece.sourceID = (int16)i;
 		piece.liveRect = piece.destRect;
-		piece.setZ(_z + (uint16)i + 1);
+		piece.setZOrder(_z + (uint16)i + 1);
 		updatePieceRender((int16)i);
 	}
 
@@ -252,7 +252,7 @@ void BuildPuzzle::init() {
 		hold._drawSurface.create(_altImage, hold.srcRect);
 		hold.setTransparent(true);
 		hold.moveTo(hold.destRect);
-		hold.setZ(_z + (uint16)i + 1);
+		hold.setZOrder(_z + (uint16)i + 1);
 		hold.setVisible(true);
 	}
 
@@ -278,8 +278,6 @@ void BuildPuzzle::registerGraphics() {
 	_cursorItem.registerGraphics();
 }
 
-// The graphics manager keeps its object list sorted as objects are inserted, so
-// a new z only takes effect once the piece is registered again.
 byte BuildPuzzle::carriedAmount() const {
 	return _activeHold != -1 ? MAX<byte>(_holds[_activeHold].amount, 1) : 1;
 }
@@ -318,12 +316,6 @@ void BuildPuzzle::updateCursorItem(const Common::Point &mouseVP) {
 	_cursorItem.setTransparent(true);
 	_cursorItem.moveTo(dest);
 	_cursorItem.setVisible(true);
-	_cursorItem.registerGraphics();
-}
-
-void BuildPuzzle::setPieceZ(int16 pieceIdx, uint16 z) {
-	_pieces[pieceIdx].setZ(z);
-	_pieces[pieceIdx].registerGraphics();
 }
 
 void BuildPuzzle::updatePieceRender(int16 pieceIdx) {
@@ -482,7 +474,7 @@ void BuildPuzzle::openCloseup(int16 pieceIdx) {
 	piece.setTransparent(true);
 	piece.moveTo(dest);
 	piece.setVisible(true);
-	setPieceZ(pieceIdx, (uint16)(_z + _pieces.size() + 2));
+	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 2));
 }
 
 void BuildPuzzle::closeCloseup() {
@@ -492,7 +484,7 @@ void BuildPuzzle::closeCloseup() {
 
 	int16 pieceIdx = _closeupPiece;
 	_closeupPiece = -1;
-	setPieceZ(pieceIdx, (uint16)(_z + pieceIdx + 1));
+	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
 	updatePieceRender(pieceIdx);
 }
 
@@ -513,7 +505,7 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 	}
 
 	_heldPiece = pieceIdx;
-	setPieceZ(pieceIdx, (uint16)(_z + _pieces.size() + 1));
+	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 1));
 
 	g_nancy->_sound->loadSound(_pickupSound);
 	g_nancy->_sound->playSound(_pickupSound);
@@ -525,7 +517,7 @@ void BuildPuzzle::returnPiece(int16 pieceIdx) {
 	piece.liveRect = piece.destRect;
 	piece.assignedZone = -1;
 	_heldPiece = -1;
-	setPieceZ(pieceIdx, (uint16)(_z + pieceIdx + 1));
+	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
 	updatePieceRender(pieceIdx);
 }
 
@@ -583,7 +575,7 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 	g_nancy->_sound->playSound(_dropSound);
 
 	_heldPiece = -1;
-	setPieceZ(placedIdx, (uint16)(_z + placedIdx + 1));
+	_pieces[placedIdx].setZOrder((uint16)(_z + placedIdx + 1));
 	updatePieceRender(placedIdx);
 
 	bool solved = checkSolved();
@@ -692,7 +684,6 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 				// The scoop is emptied by the drop and goes back to its place.
 				if (_activeHold != -1) {
 					_holds[_activeHold].setVisible(true);
-					_holds[_activeHold].registerGraphics();
 					_activeHold = -1;
 				}
 			} else {
@@ -755,12 +746,10 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		if (clicked) {
 			if (_activeHold == (int16)i) {
 				_holds[i].setVisible(true);
-				_holds[i].registerGraphics();
 				_activeHold = -1;
 			} else {
 				if (_activeHold != -1) {
 					_holds[_activeHold].setVisible(true);
-					_holds[_activeHold].registerGraphics();
 				}
 
 				_activeHold = (int16)i;

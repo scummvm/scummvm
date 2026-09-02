@@ -44,7 +44,7 @@ void AssemblyPuzzle::init() {
 		piece.setVisible(true);
 		piece.setTransparent(true);
 		piece.moveTo(piece.placed ? piece.destRects[piece.curRotation] : piece.startRect);
-		piece.setZ(_z + i + _pieces.size());
+		piece.setZOrder(_z + i + _pieces.size());
 	}
 
 	rotateBase(true);
@@ -222,13 +222,11 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 					for (uint j = 1; j < _pieces.size(); ++j) {
 						Piece &piece = _pieces[j];
 						if (!piece.placed && piece.getZOrder() > _pieces[i].getZOrder()) {
-							piece.setZ(piece.getZOrder() - 1);
-							piece.registerGraphics();
+							piece.setZOrder(piece.getZOrder() - 1);
 						}
 					}
 
-					_pieces[i].setZ(_z + _pieces.size() * 2);
-					_pieces[i].registerGraphics();
+					_pieces[i].setZOrder(_z + _pieces.size() * 2);
 				} else {
 					// Clicked the dest of the picked up piece, or an already placed one; simply put it down
 					_pickedUpPiece = -1;
@@ -319,8 +317,7 @@ void AssemblyPuzzle::rotateBase(bool ccw) {
 				base = 1;
 			}
 
-			piece.setZ(_z + base + 4 * (piece.layer - 1));
-			piece.registerGraphics();
+			piece.setZOrder(_z + base + 4 * (piece.layer - 1));
 
 			piece.moveTo(piece.destRects[piece.curRotation]);
 			piece._drawSurface.create(_image, piece.srcRects[piece.curRotation]);

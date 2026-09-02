@@ -76,7 +76,9 @@ public:
 
 	Common::Rect getBounds() const { return Common::Rect(_screenPosition.width(), _screenPosition.height()); }
 	uint16 getZOrder() const { return _z; }
-	void setZOrder(uint16 z) { _z = z; }
+	// Also moves the object in the draw order, so changing the z of a registered
+	// object takes effect without re-registering it
+	void setZOrder(uint16 z);
 
 	Graphics::ManagedSurface _drawSurface;
 
