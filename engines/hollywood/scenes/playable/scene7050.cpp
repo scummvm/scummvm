@@ -318,20 +318,17 @@ void Scene7050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[0].playerTextRowId = 2;
 	records[0].responseFrameIndex = 2;
 	records[0].disableAfterUse = 1;
-	records[0].reserved = 0xff;
 
 	records[1].enabled = 1;
 	records[1].transitionMode = 3;
 	records[1].playerTextRowId = 3;
 	records[1].responseFrameIndex = 3;
 	records[1].disableAfterUse = 1;
-	records[1].reserved = 0xff;
 
 	records[2].enabled = 1;
 	records[2].transitionMode = 0;
 	records[2].playerTextRowId = 4;
 	records[2].responseFrameIndex = 4;
-	records[2].reserved = 0xff;
 }
 
 void Scene7050::runSecondaryActorPoseIn() {

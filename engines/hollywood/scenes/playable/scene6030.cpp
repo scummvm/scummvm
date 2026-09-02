@@ -446,7 +446,6 @@ void Scene6030::setHannoverDialogueRecord(Common::Array<DialogueChoiceRecord> &r
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 }
 
 void Scene6030::beginHannoverSpeechLine(byte frameIndex, byte animationGroup) {

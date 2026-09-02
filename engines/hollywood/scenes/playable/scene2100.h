@@ -71,7 +71,7 @@ private:
 	void initializeMummyDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const;
+		byte responseFrameIndex, byte disableAfterUse) const;
 	void runMummyPrimarySpeechLine(byte frameIndex);
 	void runPrincessArrivalPrimarySpeechLine(byte frameIndex);
 	void runMummyFrameSetTransition(uint layerId, bool opening, byte closingFinalFrame);

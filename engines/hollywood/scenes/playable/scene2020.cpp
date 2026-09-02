@@ -729,22 +729,22 @@ void Scene2020::runPrincessDialogue() {
 
 void Scene2020::initializePrincessDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
 	records.resize(kScene2020PrincessDialogueChoiceRecordCount);
-	setDialogueRecord(records, 0, 1, 0, 1, 4, 4, 1, 0xff);
-	setDialogueRecord(records, 1, 1, 0, 3, 5, 5, 1, 0xff);
-	setDialogueRecord(records, 2, 1, 0, 3, 6, 6, 1, 0xff);
-	setDialogueRecord(records, 3, 1, 0, 0, 7, 7, 0, 0xff);
-	setDialogueRecord(records, 70, 1, 0, 1, 8, 8, 1, 0xff);
-	setDialogueRecord(records, 71, 1, 0, 3, 9, 9, 1, 0xff);
-	setDialogueRecord(records, 72, 1, 0, 3, 10, 10, 1, 0xff);
-	setDialogueRecord(records, 73, 1, 0, 2, 11, 11, 0, 0xff);
-	setDialogueRecord(records, 140, 1, 0, 3, 12, 12, 1, 0xff);
-	setDialogueRecord(records, 141, 1, 0, 3, 13, 13, 1, 0xff);
-	setDialogueRecord(records, 142, 1, 0, 2, 11, 11, 0, 0xff);
+	setDialogueRecord(records, 0, 1, 0, 1, 4, 4, 1);
+	setDialogueRecord(records, 1, 1, 0, 3, 5, 5, 1);
+	setDialogueRecord(records, 2, 1, 0, 3, 6, 6, 1);
+	setDialogueRecord(records, 3, 1, 0, 0, 7, 7, 0);
+	setDialogueRecord(records, 70, 1, 0, 1, 8, 8, 1);
+	setDialogueRecord(records, 71, 1, 0, 3, 9, 9, 1);
+	setDialogueRecord(records, 72, 1, 0, 3, 10, 10, 1);
+	setDialogueRecord(records, 73, 1, 0, 2, 11, 11, 0);
+	setDialogueRecord(records, 140, 1, 0, 3, 12, 12, 1);
+	setDialogueRecord(records, 141, 1, 0, 3, 13, 13, 1);
+	setDialogueRecord(records, 142, 1, 0, 2, 11, 11, 0);
 }
 
 void Scene2020::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const {
+		byte responseFrameIndex, byte disableAfterUse) const {
 	if (index >= records.size())
 		return;
 
@@ -755,7 +755,6 @@ void Scene2020::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = reserved;
 	record.selectable = enabled != 0;
 }
 

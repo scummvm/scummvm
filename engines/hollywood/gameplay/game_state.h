@@ -173,8 +173,8 @@ struct GameplayState {
 		scene1050JackLookedAt = false;
 		scene1050CharlieBogWerewolfClueHeard = false;
 		scene1060EntryLineSeen = false;
-		scene1060DrFlyState = 0;
-		scene1060DrFlyConversationSeen = false;
+		scene1060DrMoscaState = 0;
+		scene1060DrMoscaConversationSeen = false;
 		scene1060PocketPaperTaken = false;
 		scene1060InvisibleManConversationSeen = false;
 		scene1060PartyRemainsState = 0;
@@ -949,8 +949,8 @@ struct GameplayState {
 	bool scene1050JackLookedAt;
 	bool scene1050CharlieBogWerewolfClueHeard;
 	bool scene1060EntryLineSeen;
-	byte scene1060DrFlyState;
-	bool scene1060DrFlyConversationSeen;
+	byte scene1060DrMoscaState;
+	bool scene1060DrMoscaConversationSeen;
 	bool scene1060PocketPaperTaken;
 	bool scene1060InvisibleManConversationSeen;
 	byte scene1060PartyRemainsState;

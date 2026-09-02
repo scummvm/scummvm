@@ -786,8 +786,8 @@ void Scene5030::runDeckOfCardsAction(bool fromUnderpantsExchange) {
 }
 
 void Scene5030::runVanessaConversation() {
-	Common::Array<DialogueChoiceRecord> records;
-	initializeVanessaDialogueRecords(records);
+	ScoutDialogueRecords dialogue;
+	initializeVanessaDialogueRecords(dialogue);
 
 	GameplayState &state = _vm->gameState();
 	const bool firstConversation = !state.scene5030MusiciansNamed;
@@ -807,7 +807,7 @@ void Scene5030::runVanessaConversation() {
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
 		const byte selectedChoice = menu.choose(kScene5030VanessaDialogueStageId,
-			records, depthIndex, nodeIndex);
+			dialogue.choices, depthIndex, nodeIndex);
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030VanessaDialogueStageId, 6);
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, 6);
@@ -818,16 +818,17 @@ void Scene5030::runVanessaConversation() {
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size()) {
+		if (recordIndex >= dialogue.choices.size()) {
 			finishScoutConversation();
 			return;
 		}
 
-		DialogueChoiceRecord &record = records[recordIndex];
+		DialogueChoiceRecord &record = dialogue.choices[recordIndex];
 		beginRonDialogueLine(kScene5030VanessaDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginVanessaSpeechLine(kScene5030VanessaPrimaryRow, record.responseFrameIndex);
-			runScoutSpeechLineDuringRonTurn(true, kScene5030GladysReplyToVanessaRow, record.reserved);
+			runScoutSpeechLineDuringRonTurn(true, kScene5030GladysReplyToVanessaRow,
+				dialogue.companionReplyFrameIndices[recordIndex]);
 		}
 		runRonPoseTransition(false);
 
@@ -845,8 +846,8 @@ void Scene5030::runVanessaConversation() {
 }
 
 void Scene5030::runGladysConversation() {
-	Common::Array<DialogueChoiceRecord> records;
-	initializeGladysDialogueRecords(records);
+	ScoutDialogueRecords dialogue;
+	initializeGladysDialogueRecords(dialogue);
 
 	GameplayState &state = _vm->gameState();
 	const bool firstConversation = !state.scene5030MusiciansNamed;
@@ -866,7 +867,7 @@ void Scene5030::runGladysConversation() {
 	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
 		const byte selectedChoice = menu.choose(kScene5030GladysDialogueStageId,
-			records, depthIndex, nodeIndex);
+			dialogue.choices, depthIndex, nodeIndex);
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginRonDialogueLine(kScene5030GladysDialogueStageId, 6);
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, 6);
@@ -877,16 +878,17 @@ void Scene5030::runGladysConversation() {
 		}
 
 		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size()) {
+		if (recordIndex >= dialogue.choices.size()) {
 			finishScoutConversation();
 			return;
 		}
 
-		DialogueChoiceRecord &record = records[recordIndex];
+		DialogueChoiceRecord &record = dialogue.choices[recordIndex];
 		beginRonDialogueLine(kScene5030GladysDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene5030DialogueNoResponseFrame) {
 			beginGladysSpeechLine(kScene5030GladysPrimaryRow, record.responseFrameIndex);
-			runScoutSpeechLineDuringRonTurn(false, kScene5030VanessaReplyToGladysRow, record.reserved);
+			runScoutSpeechLineDuringRonTurn(false, kScene5030VanessaReplyToGladysRow,
+				dialogue.companionReplyFrameIndices[recordIndex]);
 		}
 		runRonPoseTransition(true);
 
@@ -971,52 +973,52 @@ void Scene5030::grantDeckOfCards() {
 	applySceneStateToHotspotsAndPatches(1);
 }
 
-void Scene5030::initializeVanessaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
-	records.clear();
-	records.resize(kScene5030DialogueChoiceRecordCount);
+void Scene5030::initializeVanessaDialogueRecords(ScoutDialogueRecords &dialogue) const {
+	dialogue.choices.resize(kScene5030DialogueChoiceRecordCount);
+	dialogue.companionReplyFrameIndices.resize(kScene5030DialogueChoiceRecordCount);
 
 	// Vanessa's root choices followed by the nested werewolf branch.
-	setDialogueRecord(records, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
-	setDialogueRecord(records, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
-	setDialogueRecord(records, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
-	setDialogueRecord(records, 3, 0, kScene5030DialogueTransitionStay, 5, 5, 1, 3);
-	setDialogueRecord(records, 4, 0, kScene5030DialogueTransitionEnd, 6, 6, 0, 4);
-	setDialogueRecord(records, 70, 0, kScene5030DialogueTransitionStay, 7, 7, 1, 5);
-	setDialogueRecord(records, 71, 0, kScene5030DialogueTransitionStay, 8, 8, 1, 6);
-	setDialogueRecord(records, 72, 0, kScene5030DialogueTransitionStay, 9, 9, 1, 7);
-	setDialogueRecord(records, 73, 0, kScene5030DialogueTransitionUp, 10, 10, 0, 8);
+	setDialogueRecord(dialogue, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
+	setDialogueRecord(dialogue, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
+	setDialogueRecord(dialogue, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
+	setDialogueRecord(dialogue, 3, 0, kScene5030DialogueTransitionStay, 5, 5, 1, 3);
+	setDialogueRecord(dialogue, 4, 0, kScene5030DialogueTransitionEnd, 6, 6, 0, 4);
+	setDialogueRecord(dialogue, 70, 0, kScene5030DialogueTransitionStay, 7, 7, 1, 5);
+	setDialogueRecord(dialogue, 71, 0, kScene5030DialogueTransitionStay, 8, 8, 1, 6);
+	setDialogueRecord(dialogue, 72, 0, kScene5030DialogueTransitionStay, 9, 9, 1, 7);
+	setDialogueRecord(dialogue, 73, 0, kScene5030DialogueTransitionUp, 10, 10, 0, 8);
 }
 
-void Scene5030::initializeGladysDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
-	records.clear();
-	records.resize(kScene5030DialogueChoiceRecordCount);
+void Scene5030::initializeGladysDialogueRecords(ScoutDialogueRecords &dialogue) const {
+	dialogue.choices.resize(kScene5030DialogueChoiceRecordCount);
+	dialogue.companionReplyFrameIndices.resize(kScene5030DialogueChoiceRecordCount);
 
 	// Gladys's root choices followed by the nested werewolf branch.
-	setDialogueRecord(records, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
-	setDialogueRecord(records, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
-	setDialogueRecord(records, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
-	setDialogueRecord(records, 3, 0, kScene5030DialogueTransitionStay, 5, 5, 1, 3);
-	setDialogueRecord(records, 4, 0, kScene5030DialogueTransitionEnd, 6, 6, 0, 4);
-	setDialogueRecord(records, 70, 0, kScene5030DialogueTransitionStay, 7, 7, 1, 5);
-	setDialogueRecord(records, 71, 0, kScene5030DialogueTransitionStay, 8, 8, 1, 6);
-	setDialogueRecord(records, 72, 0, kScene5030DialogueTransitionUp, 9, 9, 0, 7);
+	setDialogueRecord(dialogue, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
+	setDialogueRecord(dialogue, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
+	setDialogueRecord(dialogue, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
+	setDialogueRecord(dialogue, 3, 0, kScene5030DialogueTransitionStay, 5, 5, 1, 3);
+	setDialogueRecord(dialogue, 4, 0, kScene5030DialogueTransitionEnd, 6, 6, 0, 4);
+	setDialogueRecord(dialogue, 70, 0, kScene5030DialogueTransitionStay, 7, 7, 1, 5);
+	setDialogueRecord(dialogue, 71, 0, kScene5030DialogueTransitionStay, 8, 8, 1, 6);
+	setDialogueRecord(dialogue, 72, 0, kScene5030DialogueTransitionUp, 9, 9, 0, 7);
 }
 
-void Scene5030::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+void Scene5030::setDialogueRecord(ScoutDialogueRecords &dialogue, uint index,
 		byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte otherScoutFrameIndex) const {
-	if (index >= records.size())
+		byte responseFrameIndex, byte disableAfterUse, byte companionReplyFrameIndex) const {
+	if (index >= dialogue.choices.size())
 		return;
 
-	DialogueChoiceRecord &record = records[index];
+	DialogueChoiceRecord &record = dialogue.choices[index];
 	record.enabled = 1;
 	record.nextNodeIndex = nextNodeIndex;
 	record.transitionMode = transitionMode;
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = otherScoutFrameIndex;
 	record.selectable = 1;
+	dialogue.companionReplyFrameIndices[index] = companionReplyFrameIndex;
 }
 
 bool Scene5030::applyDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const {
