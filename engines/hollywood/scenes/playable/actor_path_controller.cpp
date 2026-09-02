@@ -22,7 +22,7 @@
 #include "common/debug.h"
 #include "common/util.h"
 
-#include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/actor_path_controller.h"
 

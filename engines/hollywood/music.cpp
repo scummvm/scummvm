@@ -27,7 +27,7 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/music.h"
 
 namespace Hollywood {
