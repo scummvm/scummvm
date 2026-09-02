@@ -85,6 +85,13 @@ const char *LOCATION_NAMES[LOCATION_COUNT] = {
 	"The Dead Cat's Life II", "The Hole to Hades"
 };
 
+const char *CONTINENT_NAMES[4] = {
+	"of Lord British",
+	"of the Feudal Lords",
+	"of the Dark Unknown",
+	"of Danger and Despair"
+};
+
 void Map::init() {
 	// Load the overworld map
 	Common::File ow;
@@ -227,12 +234,10 @@ int Map::getTileAt(int x, int y, int creatureIndex) const {
 }
 
 int Map::getContinentAt(int x, int y) const {
-	assert(_currentMap == MAP_OVERWORLD);
 	return (y > 77 ? 2 : 0) + (x > 83 ? 1 : 0);
 }
 
 int Map::getLocationAt(int x, int y) const {
-	assert(_currentMap == MAP_OVERWORLD);
 	for (int i = 0; i < LOCATION_COUNT; ++i) {
 		if (x == LOCATION_POS_X[i] && y == LOCATION_POS_Y[i])
 			return i + 1;

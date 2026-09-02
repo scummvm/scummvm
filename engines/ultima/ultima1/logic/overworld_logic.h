@@ -84,7 +84,7 @@ private:
 	/**
 	 * Called after an action is done
 	 */
-	void endOfTurn();
+	void endOfTurn() override;
 
 	/**
 	 * Generate monsters for the overworld

@@ -40,6 +40,7 @@ protected:
 	 * Dispatches some text to be shown in the Commands window
 	 */
 	void writeString(const Common::String &msg);
+	void writeString(const char *format, ...);
 
 	/**
 	 * Triggers a prompt display in the Commands window
@@ -70,7 +71,7 @@ protected:
 	/**
 	 * Handles end of turn logic
 	 */
-	void endOfTurn();
+	virtual void endOfTurn();
 
 	/*--- Fallback player action handlers ---*/
 
@@ -80,6 +81,9 @@ protected:
 	virtual void enter();
 	virtual void fire();
 	virtual void get();
+	virtual void hyperjump();
+	virtual void inform();
+	virtual void zstats();
 	virtual void move(Data::Direction dir) = 0;
 	virtual void pass();
 

@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/logic/logic.h"
+#include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
 
@@ -32,6 +33,17 @@ using namespace Shared::Messages;
 
 void Logic::writeString(const Common::String &msg) {
 	g_engine->findView("Commands")->send(GameMessage("TEXT", msg));
+}
+
+void Logic::writeString(const char *format, ...) {
+	va_list alist;
+
+	// Start reading values
+	va_start(alist, format);
+	Common::String msg = Common::String::vformat(format, alist);
+	va_end(alist);
+
+	writeString(msg);
 }
 
 void Logic::prompt() {
@@ -88,12 +100,23 @@ void Logic::action(int action) {
 	case KEYBIND_ENTER:
 		enter();
 		break;
+	case KEYBIND_FIRE:
+		fire();
+		break;
+	case KEYBIND_GET:
+		get();
+		break;
+	case KEYBIND_HYPERJUMP:
+		hyperjump();
+		break;
+	case KEYBIND_INFORM:
+		inform();
+		break;
 	case KEYBIND_PASS:
 		pass();
 		break;
 	case KEYBIND_STATS:
-		writeString("Ztats\n");
-		g_engine->addView("ZStats");
+		zstats();
 		return;
 	default:
 		writeString("Huh?\n");
@@ -136,6 +159,43 @@ void Logic::fire() {
 void Logic::get() {
 	writeString("Get?\n");
 	playFX(1);
+}
+
+void Logic::hyperjump() {
+	writeString("HyperJump?\n");
+	playFX(1);
+}
+
+void Logic::inform() {
+	writeString("Inform and search\n");
+	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
+	int continent = _G(map).getContinentAt(_G(savegame)._overworldPos);
+
+	if (location) {
+		if (location < 33)
+			writeString("the city of ");
+
+		writeString("%s\n", Data::LOCATION_NAMES[location - 1]);
+
+	} else {
+		switch (_G(map).getMapTile(_G(savegame)._overworldPos.x, _G(savegame)._overworldPos.y)) {
+		case Data::TILE_OCEAN:
+			writeString("You are at sea\n");
+			break;
+		case Data::TILE_WOODS:
+			writeString("You are in the woods\n");
+			break;
+		default:
+			writeString("You are in the lands\n");
+			writeString("%s\n", Data::CONTINENT_NAMES[continent]);
+			break;
+		}
+	} 
+}
+
+void Logic::zstats() {
+	writeString("Ztats\n");
+	g_engine->addView("ZStats");
 }
 
 void Logic::pass() {
