@@ -22,9 +22,13 @@
 #ifndef HOLLYWOOD_GAMEPLAY_INVENTORY_ACTIONS_H
 #define HOLLYWOOD_GAMEPLAY_INVENTORY_ACTIONS_H
 
-#include "hollywood/gameplay/game_loop.h"
+#include "common/types.h"
 
 namespace Hollywood {
+
+class GameplayLoopDelegate;
+class HollywoodEngine;
+struct GameplayLoopCursorState;
 
 bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 	const GameplayLoopCursorState &state);

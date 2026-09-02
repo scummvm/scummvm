@@ -98,7 +98,6 @@ public:
 		kScreenHeight = 480,
 		kSceneBufferWidth = 1024,
 		kSceneBufferHeight = 480,
-		kResourceChunkCount = 40,
 		kSceneItemCount = 21
 	};
 

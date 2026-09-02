@@ -25,8 +25,8 @@
 #include "common/array.h"
 #include "common/types.h"
 
-#include "hollywood/resource.h"
 #include "hollywood/scenes/playable/actor_types.h"
+#include "hollywood/scenes/scene_data.h"
 
 namespace Hollywood {
 

@@ -25,10 +25,7 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/path.h"
-#include "common/stream.h"
 #include "common/types.h"
-
-#include "hollywood/hollywood.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -38,45 +35,17 @@ namespace Hollywood {
 
 class IndexedSurfaceBuffer;
 
+enum {
+	kResourceChunkCount = 40
+};
+
 struct ResourceChunkTable {
-	uint32 offsets[HollywoodEngine::kResourceChunkCount];
-	uint32 sizes[HollywoodEngine::kResourceChunkCount];
+	uint32 offsets[kResourceChunkCount];
+	uint32 sizes[kResourceChunkCount];
 
 	void clear();
 	bool load(Common::SeekableReadStream &stream);
 	bool isValidChunk(uint index) const;
-};
-
-struct ScenePoint {
-	int16 x;
-	int16 y;
-};
-
-enum SceneMetadataOffset {
-	kActorDepthThresholds = 0x0000,
-	kPaletteDeltaTable = 0x002a,
-	kPaletteAdjustTable = 0x003f,
-	kRouteBoundaryPoints = 0x007d,
-	kRouteBoundarySteps = 0x1529,
-	kSceneItemDefaultStrip = 0x35e4,
-	kSceneItemInteractionPoints = 0x35f9,
-	kSceneItemApproachPoints = 0x364d,
-	kSceneItemFacing = 0x36a1,
-	kSceneVerbActionRecords = 0x36b6,
-	kSceneRelationRecords = 0x3956,
-	kSceneMode2RelationOverlay = 0x610a
-};
-
-enum ScenePaletteMapOffset {
-	kScenePaletteRegionMap = 0x000,
-	kSceneColorToItemMap = 0x100,
-	kSceneColorToActorDepthClassMap = 0x200,
-	kSceneColorToActorPaletteDeltaClassMap = 0x300,
-	kSceneColorToActorPaletteAdjustmentClassMap = 0x400,
-	kSceneColorToFootstepSoundMap = 0x500,
-	kScenePresentationPaletteRemapMap = 0x600,
-	kScenePaletteMapPageSize = 0x100,
-	kScenePaletteMapByteCount = 0x700
 };
 
 Common::SeekableReadStream *createResourceChunkReadStream(const Common::Path &fileName, uint index);

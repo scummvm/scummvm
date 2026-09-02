@@ -358,7 +358,7 @@ uint Scene9010::detectI02ChunkedFrameCount(ResourceChunkTable &chunkTable) const
 
 	uint frameCount = 0;
 	const uint32 fileSize = (uint32)file.size();
-	for (uint index = 0; index < HollywoodEngine::kResourceChunkCount; ++index) {
+	for (uint index = 0; index < kResourceChunkCount; ++index) {
 		const uint32 offset = chunkTable.offsets[index];
 		const uint32 size = chunkTable.sizes[index];
 		if (size == 0)

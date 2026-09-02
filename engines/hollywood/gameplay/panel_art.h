@@ -27,9 +27,6 @@
 #include "common/str.h"
 #include "common/types.h"
 
-#include "hollywood/gameplay/dialogue_menu.h"
-#include "hollywood/gameplay/game_loop.h"
-
 namespace Graphics {
 struct Surface;
 }
@@ -37,6 +34,8 @@ struct Surface;
 namespace Hollywood {
 
 class HollywoodFont;
+struct DialogueMenuState;
+struct GameplayPanelState;
 struct GameplayState;
 
 class GameplayPanelArt {

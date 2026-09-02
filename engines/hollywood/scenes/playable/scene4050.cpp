@@ -590,7 +590,7 @@ void Scene4050::applyPatchStateColorMap(byte patchState) {
 
 bool Scene4050::resourceDescriptorBounds(uint chunkIndex, uint16 descriptorCount, uint16 descriptorIndex,
 		int &left, int &top, int &width, int &bottom) const {
-	if (chunkIndex >= HollywoodEngine::kResourceChunkCount || descriptorIndex >= descriptorCount)
+	if (chunkIndex >= kResourceChunkCount || descriptorIndex >= descriptorCount)
 		return false;
 
 	const uint entryOffset = _resourceChunkOffsets[chunkIndex] + kFrameDescriptorSize * descriptorIndex;

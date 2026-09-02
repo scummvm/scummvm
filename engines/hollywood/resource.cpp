@@ -24,13 +24,14 @@
 #include "common/substream.h"
 #include "graphics/managed_surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {
 
 void ResourceChunkTable::clear() {
-	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i) {
+	for (int i = 0; i < kResourceChunkCount; ++i) {
 		offsets[i] = 0;
 		sizes[i] = 0;
 	}
@@ -39,26 +40,26 @@ void ResourceChunkTable::clear() {
 bool ResourceChunkTable::load(Common::SeekableReadStream &stream) {
 	clear();
 
-	if (stream.size() < HollywoodEngine::kResourceChunkCount * 8)
+	if (stream.size() < kResourceChunkCount * 8)
 		return false;
 
 	if (!stream.seek(0))
 		return false;
-	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
+	for (int i = 0; i < kResourceChunkCount; ++i)
 		offsets[i] = stream.readUint32LE();
 
-	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
+	for (int i = 0; i < kResourceChunkCount; ++i)
 		sizes[i] = stream.readUint32LE();
 
 	return !stream.err();
 }
 
 bool ResourceChunkTable::isValidChunk(uint index) const {
-	return index < HollywoodEngine::kResourceChunkCount && sizes[index] != 0;
+	return index < kResourceChunkCount && sizes[index] != 0;
 }
 
 Common::SeekableReadStream *createResourceChunkReadStream(const Common::Path &fileName, uint index) {
-	if (index >= HollywoodEngine::kResourceChunkCount)
+	if (index >= kResourceChunkCount)
 		return nullptr;
 
 	Common::File *file = new Common::File();
@@ -126,7 +127,7 @@ uint32 ChunkArchive::chunkSize(uint index) const {
 
 uint32 ChunkArchive::totalChunkSize(uint firstChunk, uint lastChunk) const {
 	uint32 byteCount = 0;
-	for (uint i = firstChunk; i <= lastChunk && i < HollywoodEngine::kResourceChunkCount; ++i)
+	for (uint i = firstChunk; i <= lastChunk && i < kResourceChunkCount; ++i)
 		byteCount += _chunkTable.sizes[i];
 	return byteCount;
 }

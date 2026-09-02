@@ -1215,7 +1215,7 @@ byte Scene9100::nextTalkingFrameVariant() {
 
 uint32 Scene9100::getSegmentOffset(byte segmentIndex) const {
 	const uint chunkIndex = 5 + segmentIndex;
-	if (chunkIndex >= SceneResources::kResourceChunkCount)
+	if (chunkIndex >= kResourceChunkCount)
 		return 0;
 
 	return _resources._chunkOffsets[chunkIndex];

@@ -28,7 +28,6 @@
 
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
 #include "hollywood/scenes/presentation_scene.h"
 #include "hollywood/scenes/scene_text_store.h"
 

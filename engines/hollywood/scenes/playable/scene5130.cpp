@@ -33,6 +33,7 @@
 #include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/playable/scene5130.h"
+#include "hollywood/scenes/scene_data.h"
 
 namespace Hollywood {
 

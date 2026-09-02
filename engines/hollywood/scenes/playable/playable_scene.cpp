@@ -1538,7 +1538,7 @@ void PlayableScene::updateActorPaletteForWorldPoint(int worldX, int worldY) {
 }
 
 void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
-	if (chunkIndex >= HollywoodEngine::kResourceChunkCount || frameIndex >= frameMapSize)
+	if (chunkIndex >= kResourceChunkCount || frameIndex >= frameMapSize)
 		return;
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[chunkIndex], 0,
@@ -1546,7 +1546,7 @@ void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount,
 }
 
 void PlayableScene::restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background) {
-	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount)
+	if (!layer.visible || layer.chunkIndex >= kResourceChunkCount)
 		return;
 
 	if (layer.hasPreviousDescriptor) {
@@ -1558,7 +1558,7 @@ void PlayableScene::restoreResourceSpriteLayerBackground(const ResourceSpriteLay
 }
 
 void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
-	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount)
+	if (!layer.visible || layer.chunkIndex >= kResourceChunkCount)
 		return;
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,

@@ -28,7 +28,7 @@
 #include "common/str.h"
 #include "common/types.h"
 
-#include "hollywood/resource.h"
+#include "hollywood/scenes/scene_data.h"
 
 namespace Graphics {
 struct Surface;

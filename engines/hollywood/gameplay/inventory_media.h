@@ -33,7 +33,7 @@ struct Surface;
 
 namespace Hollywood {
 
-enum InventoryMediaId {
+enum InventoryMediaId : int {
 	kInventoryMediaPoster,
 	kInventoryMediaPosterWithoutPhoto,
 	kInventoryMediaFrankensteinDiary,

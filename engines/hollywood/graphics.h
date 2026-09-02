@@ -28,7 +28,6 @@
 #include "graphics/palette.h"
 
 namespace Graphics {
-class ManagedSurface;
 struct Surface;
 }
 

@@ -97,8 +97,8 @@ private:
 		kFrameDecodeBufferSize = 0x78000,
 		kSceneFramebufferSize = 0x100000,
 		kPaletteSize = 0x300,
-		kRawScreenFrameSize = HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight,
-		kRawSceneFrameSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight,
+		kRawScreenFrameSize = 0x4b000,
+		kRawSceneFrameSize = kFrameDecodeBufferSize,
 		kCharacterFrameDescriptorCount = 17
 	};
 
