@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "common/types.h"
 #include "graphics/managed_surface.h"
+
 #include "hollywood/graphics.h"
 #include "hollywood/music.h"
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene7000.h"
-
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/endian.h"
@@ -28,8 +26,9 @@
 #include "common/path.h"
 #include "common/textconsole.h"
 
-#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/scenes/playable/scene7000.h"
 
 namespace Hollywood {
 

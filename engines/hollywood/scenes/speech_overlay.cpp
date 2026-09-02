@@ -19,12 +19,11 @@
  *
  */
 
-#include "hollywood/scenes/speech_overlay.h"
-
 #include "graphics/surface.h"
 
-#include "hollywood/font.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/font.h"
+#include "hollywood/scenes/speech_overlay.h"
 
 namespace Hollywood {
 

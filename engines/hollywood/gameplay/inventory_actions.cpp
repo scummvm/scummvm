@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/gameplay/inventory_actions.h"
-
 #include "common/events.h"
 #include "common/system.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/gameplay/inventory_actions.h"
 
 namespace Hollywood {
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/scenes/playable/playable_scene.h"
-
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -28,13 +26,14 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/gameplay/inventory_media.h"
 #include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/playable_scene.h"
 #include "hollywood/scenes/resource_delta_clip_player.h"
 #include "hollywood/scenes/scene_registry.h"
 

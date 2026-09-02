@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene6090.h"
-
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/scene6090.h"
 
 namespace Hollywood {
 
