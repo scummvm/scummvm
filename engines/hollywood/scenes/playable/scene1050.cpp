@@ -23,6 +23,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene1050.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -85,15 +86,6 @@ const byte kScene1050LargeOverlayFrameMap[] = {
 	44, 45, 44, 45, 46, 45, 46, 45, 46, 45, 46, 47,
 	48, 48, 48, 48, 48, 48, 49, 50, 51, 52, 53, 54,
 	55, 56, 57, 58, 59
-};
-
-const byte kScene1050DoorFrameMap[] = { 0, 1, 2, 3, 4, 5 };
-const byte kScene1050SuitcaseFrameMap[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-const byte kScene1050TravelFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 12, 13,
-	14, 15, 16, 11, 10, 9, 8, 7,
-	6, 5, 4, 3, 2, 1, 0
 };
 
 const byte kScene1050PackageFirstFrameMap[] = {
@@ -298,8 +290,8 @@ AmbientAudioProfile Scene1050::ambientAudioProfile() const {
 
 void Scene1050::runDoorBackToGorillaRoomAction() {
 	BlockingSequence(*this)
-		.actorReplacement(9, kScene1050DoorOverlayDescriptorCount,
-			kScene1050DoorFrameMap, ARRAYSIZE(kScene1050DoorFrameMap), kScene1050FrameMillis)
+		.actorReplacement(ActionOverlaySpec(9, kScene1050DoorOverlayDescriptorCount,
+			kScene1050FrameMillis))
 		.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene1050ExitState1040FromDoor);
 }
@@ -547,7 +539,7 @@ void Scene1050::runTravelUnlockEffect(byte destinationId) {
 	BlockingSequence(*this)
 		.loopingSound(0x32, 25)
 		.actorReplacement(13, kScene1050TravelOverlayDescriptorCount,
-			kScene1050TravelFrameMap, ARRAYSIZE(kScene1050TravelFrameMap), kScene1050FrameMillis)
+			kTravelUnlockFrames, kTravelUnlockFrameCount, kScene1050FrameMillis)
 		.stopSound();
 	unlockTravelDestination(destinationId);
 }
@@ -591,8 +583,8 @@ void Scene1050::handleSuitcasePickup() {
 		return;
 
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(12, kScene1050SuitcaseOverlayDescriptorCount,
-		kScene1050SuitcaseFrameMap, ARRAYSIZE(kScene1050SuitcaseFrameMap), kScene1050FrameMillis)
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene1050SuitcaseOverlayDescriptorCount,
+		kScene1050FrameMillis))
 		.commit(_vm->gameState().scene1050SuitcaseTaken, true)
 		.framebufferPatch(0);
 	addInventoryItem(0x19);

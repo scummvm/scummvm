@@ -45,21 +45,9 @@ const uint kScene3020ReturnTransitionDescriptorCount = 0x43;
 const byte kScene3020ReturnTransitionFinalFrame = 0x42;
 const byte kScene3020PickupInventoryItem = 0x31;
 
-const byte kScene3020LoopFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 29
-};
-
-const byte kScene3020PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13
-};
-
 const uint kScene3020LoopLayer = 0;
 const SceneLayerSpec kScene3020LayerSpecs[] = {
-	{kSceneAnimationBehindActors, 7, kScene3020LoopDescriptorCount,
-		kScene3020LoopFrameMap, ARRAYSIZE(kScene3020LoopFrameMap), true, 0}
+	{kSceneAnimationBehindActors, 7, kScene3020LoopDescriptorCount, nullptr, 0, true, 0}
 };
 
 PlayableSceneConfig scene3020Config() {
@@ -77,8 +65,8 @@ Scene3020::Scene3020(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3020Config()),
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack) {
 	_sceneLayers.configure(kScene3020LayerSpecs);
-	_loopTrack = _realtimeAnimationTracks.addFrameMap(kScene3020LoopLayer, kScene3020LoopFrameMillis,
-		_vm->gameState().windmillBladesMoving);
+	_loopTrack = _realtimeAnimationTracks.addLoop(kScene3020LoopLayer, kScene3020LoopFrameMillis,
+		kScene3020LoopDescriptorCount, _vm->gameState().windmillBladesMoving);
 }
 
 void Scene3020::initializeCustomPreviewState() {
@@ -295,8 +283,8 @@ void Scene3020::runPickupMace() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(9, kScene3020PickupDescriptorCount,
-		kScene3020PickupFrameMap, ARRAYSIZE(kScene3020PickupFrameMap), kScene3020PickupFrameMillis)
+	runActorReplacement(ActionOverlaySpec(9, kScene3020PickupDescriptorCount, kScene3020PickupFrameMillis)
+		.holdFirstFrame()
 		.patchAt(7, 1));
 	_vm->gameState().scene3020MaceTaken = true;
 	applySceneStateToHotspotsAndPatches(1);

@@ -68,12 +68,6 @@ const uint kScene3090FrontLayer = 0;
 const uint kScene3090PuzzleLayer = 1;
 const uint kScene3090BlindManLayer = 2;
 
-const byte kScene3090FrontFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25
-};
-
 const byte kScene3090PuzzleFrameMap[] = {
 	24, 25, 26, 21, 22, 23, 18, 19, 20, 15,
 	16, 17, 12, 13, 14, 9, 10, 11, 6, 7,
@@ -92,10 +86,6 @@ const byte kScene3090BlindManFrameMap[] = {
 	34, 35, 34, 33, 32, 31, 30
 };
 
-const byte kScene3090PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
 const byte kScene3090StrawFrameMap[] = {
 	11, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 12
 };
@@ -106,7 +96,7 @@ const byte kScene3090SaxophoneFrameMap[] = {
 
 const SceneLayerSpec kScene3090LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 9, kScene3090FrontDescriptorCount,
-		kScene3090FrontFrameMap, ARRAYSIZE(kScene3090FrontFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationBehindActors, 12, kScene3090PuzzleDescriptorCount,
 		kScene3090PuzzleFrameMap, ARRAYSIZE(kScene3090PuzzleFrameMap), true, 0},
 	{kSceneAnimationBehindActors, 11, kScene3090BlindManDescriptorCount,
@@ -137,7 +127,8 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		_blindManSpeechLastRandomFrame(kScene3090BlindManNoPreviousSpeechFrame),
 		_blindManSpeechTimerAccumulator(0) {
 	_sceneLayers.configure(kScene3090LayerSpecs);
-	_frontTrack = _realtimeAnimationTracks.addFrameMap(kScene3090FrontLayer, kScene3090FrontFrameMillis);
+	_frontTrack = _realtimeAnimationTracks.addLoop(kScene3090FrontLayer,
+		kScene3090FrontFrameMillis, kScene3090FrontDescriptorCount);
 }
 
 void Scene3090::initializeCustomPreviewState() {
@@ -679,7 +670,7 @@ void Scene3090::runSaltShakerPickup() {
 
 	state.scene3090SaltShakerTaken = true;
 	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
+		kScene3090OverlayFrameMillis).holdFirstFrame()
 		.drawAt(kSceneAnimationBehindActors));
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene3090SaltShakerItemId);
@@ -696,7 +687,7 @@ void Scene3090::runDowsingRodPickup() {
 
 	state.scene3090DowsingRodTaken = true;
 	runActorReplacement(ActionOverlaySpec(16, kScene3090PickupDescriptorCount,
-		kScene3090PickupFrameMap, ARRAYSIZE(kScene3090PickupFrameMap), kScene3090OverlayFrameMillis)
+		kScene3090OverlayFrameMillis).holdFirstFrame()
 		.drawAt(kSceneAnimationBehindActors));
 	applySceneStateToHotspotsAndPatches(5);
 	addInventoryItem(kScene3090DowsingRodItemId);

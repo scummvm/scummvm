@@ -26,6 +26,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene1030.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -105,19 +106,6 @@ const byte kScene1030RightEntryActorFrameMap[] = {
 	14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26, 27, 28, 29,
 	30, 31
-};
-
-const byte kScene1030EntryGestureRightFrames[] = {
-	5, 6, 7, 8, 8, 8, 8, 9, 10, 10
-};
-
-const byte kScene1030EntryGestureLeftFrames[] = {
-	0, 0, 0, 0, 5, 6, 7, 8, 9, 10
-};
-
-const byte kScene1030PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13
 };
 
 const byte kScene1030GreasyCottonFrameMap[] = {
@@ -534,11 +522,11 @@ void Scene1030::runFirstEntryConversation() {
 }
 
 void Scene1030::runEntryGestureSequence() {
-	for (uint i = 0; i < ARRAYSIZE(kScene1030EntryGestureRightFrames) && !Engine::shouldQuit(); ++i) {
+	for (uint i = 0; i < kTwoActorGestureFrameCount && !Engine::shouldQuit(); ++i) {
 		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
-			kScene1030EntryGestureRightFrames[i]);
+			kTwoActorGestureRightFrames[i]);
 		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
-			kScene1030EntryGestureLeftFrames[i]);
+			kTwoActorGestureLeftFrames[i]);
 		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
 			return;
 	}
@@ -633,10 +621,7 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 	}
 }
 
-void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, int patchFrame, byte patchState) {
-	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize,
-		kScene1030ForegroundFrameMillis);
+void Scene1030::runPickupOverlay(ActionOverlaySpec spec, int patchFrame, byte patchState) {
 	if (patchFrame >= 0) {
 		spec.commitAt(patchFrame, _vm->gameState().scene1030TablePickupState, patchState);
 		if (patchState == 2) {
@@ -661,16 +646,16 @@ void Scene1030::handleSceneEventFlag0() {
 }
 
 void Scene1030::handlePickupPunchBowl() {
-	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
-		ARRAYSIZE(kScene1030PickupFrameMap), 4, 1);
+	runPickupOverlay(ActionOverlaySpec(7, kScene1030PickupDescriptorCount,
+		kScene1030ForegroundFrameMillis).holdFirstFrame(), 4, 1);
 	addInventoryItem(0x1a);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
 }
 
 void Scene1030::handlePickupLemonSlice() {
-	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
-		ARRAYSIZE(kScene1030PickupFrameMap), 4, 3);
+	runPickupOverlay(ActionOverlaySpec(7, kScene1030PickupDescriptorCount,
+		kScene1030ForegroundFrameMillis).holdFirstFrame(), 4, 3);
 	addInventoryItem(0x57);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
@@ -681,8 +666,8 @@ void Scene1030::handlePickupShrinkingMan() {
 	if (!state.scene1030ShrinkingManNamed)
 		beginSecondarySpeechLine(0x0c, 0);
 	beginSecondarySpeechLine(0x0b, 0);
-	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
-		ARRAYSIZE(kScene1030PickupFrameMap), 4, 2);
+	runPickupOverlay(ActionOverlaySpec(7, kScene1030PickupDescriptorCount,
+		kScene1030ForegroundFrameMillis).holdFirstFrame(), 4, 2);
 	addInventoryItem(0x18);
 	_soundBank0.playSample(1, 100);
 }
@@ -701,8 +686,9 @@ void Scene1030::handleShrinkingManDescription() {
 
 void Scene1030::handleGreasyCottonExchange() {
 	beginSecondarySpeechLine(0x0f, 0);
-	runPickupOverlay(14, kScene1030GreasyCottonDescriptorCount, kScene1030GreasyCottonFrameMap,
-		ARRAYSIZE(kScene1030GreasyCottonFrameMap), -1, 0);
+	runPickupOverlay(ActionOverlaySpec(14, kScene1030GreasyCottonDescriptorCount,
+		kScene1030GreasyCottonFrameMap, ARRAYSIZE(kScene1030GreasyCottonFrameMap),
+		kScene1030ForegroundFrameMillis), -1, 0);
 	removeInventoryItem(0x02);
 	addInventoryItem(0x17);
 	_soundBank0.playSample(1, 100);

@@ -29,6 +29,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/intro/scene9090.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -102,12 +103,6 @@ const Scene9090SpeechStep kScene9090SpeechSteps[] = {
 		kScene9090SecondarySpeechColor, 0x00, 0x00, 0x00, false, kScene9090NoTurn, 0 },
 	{ 6, kScene9090InsetSpeaker,     0x0c0, 0x0c8, kScene9090PrimarySpeechColor,   0x3f, 0x3f, 0x3f, true,  kScene9090NoTurn, 0 },
 	{ 7, kScene9090DeskSpeaker,      0x078, 0x0aa, kScene9090PrimarySpeechColor,   0x00, 0x26, 0x3f, true,  kScene9090NoTurn, 0 }
-};
-
-const byte kScene9090DeskFrameMap[] = {
-	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
-	32, 33, 34, 35, 14, 15, 16, 16, 17, 18, 19, 29, 20, 21, 22, 23,
-	23, 24, 25, 26, 30, 22, 21, 20, 16
 };
 
 const byte kScene9090InsetFrameMap[] = {
@@ -410,10 +405,10 @@ void Scene9090::drawOfficePatch(uint chunkIndex) {
 }
 
 void Scene9090::drawDeskActor() {
-	if (_deskFrame >= ARRAYSIZE(kScene9090DeskFrameMap))
+	if (_deskFrame >= kQuillDeskFrameCount)
 		return;
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[5], 0,
-		kScene9090DeskDescriptorCount, kScene9090DeskFrameMap[_deskFrame],
+		kScene9090DeskDescriptorCount, kQuillDeskFrames[_deskFrame],
 		_sceneFramebuffer.surface());
 }
 

@@ -50,6 +50,8 @@ struct AmbientAudioProfile {
 		soundCueCount(0),
 		soundProbabilityModulus(0),
 		soundVolumePercent(0),
+		soundCueVolumes(nullptr),
+		soundCueVolumeCount(0),
 		musicMode(kAmbientMusicNone),
 		musicStillCueId(0),
 		musicFirstCueId(0),
@@ -65,6 +67,8 @@ struct AmbientAudioProfile {
 	byte soundCueCount;
 	byte soundProbabilityModulus;
 	byte soundVolumePercent;
+	const byte *soundCueVolumes;
+	byte soundCueVolumeCount;
 	AmbientMusicMode musicMode;
 	byte musicStillCueId;
 	byte musicFirstCueId;

@@ -43,18 +43,10 @@ const byte kScene5060GasFilledInventoryItem = 0x4d;
 const byte kScene5060GasSpeechBaseFrame = 6;
 const byte kScene5060GasSpeechFrameCount = 4;
 
-const byte kScene5060RockPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
 const byte kScene5060GasFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 25, 24, 23, 22, 21, 19,
 	18, 8, 9, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
 	17, 17, 18, 19, 20, 21, 22, 23, 24, 25, 4, 3, 2, 1, 0
-};
-
-const byte kScene5060AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
 };
 
 Common::Array<byte> sequentialFrameMap(uint frameCount) {
@@ -218,13 +210,7 @@ bool Scene5060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5060::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5060::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5060AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5060::runExitSideEffectsAfterLoop() {
@@ -256,7 +242,7 @@ void Scene5060::runRockPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(7, kScene5060RockPickupDescriptorCount,
-			kScene5060RockPickupFrameMap, ARRAYSIZE(kScene5060RockPickupFrameMap), kScene5060FrameMillis)
+			kScene5060FrameMillis).holdFirstFrame()
 			.startAt(1)
 			.resourcePatchAt(6, 8)
 			.noFinalFrameDelay())

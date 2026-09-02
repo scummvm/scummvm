@@ -105,10 +105,6 @@ const uint kScene1020ActionChunk21DescriptorCount = 0x17;
 const uint kScene1020ActionChunk22DescriptorCount = 0x0d;
 const uint kScene1020QuasimodoLayer = 0;
 
-const byte kScene1020Chunk14ForwardFrameMap[] = {
-	0, 1, 2, 3, 4, 5
-};
-
 const byte kScene1020Chunk14ReverseFrameMap[] = {
 	0, 4, 3, 2, 1, 0
 };
@@ -130,12 +126,6 @@ const byte kScene1020Chunk16AlternatingFrameMap[] = {
 const byte kScene1020Chunk16ForwardFrameMap[] = {
 	0, 0, 2, 3, 4, 5, 6, 7,
 	8, 9, 10
-};
-
-const byte kScene1020Chunk17ForwardFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20
 };
 
 const byte kScene1020Chunk18StateChangeFrameMap[] = {
@@ -160,17 +150,6 @@ const byte kScene1020Chunk20SpeakerFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7,
 	8, 9, 10, 11, 12, 13, 14, 15,
 	16, 11, 10, 9, 4
-};
-
-const byte kScene1020Chunk21GrateLiftFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7,
-	8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22
-};
-
-const byte kScene1020Chunk22PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12
 };
 
 const SceneLayerSpec kScene1020LayerSpecs[] = {
@@ -357,7 +336,6 @@ void Scene1020::runQuasimodoGrateCutscene() {
 
 	// noRedrawAtEnd: do not present the still-unpatched base between the halves.
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
-		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
 		kScene1020OverlayFrameMillis)
 		.endAt(kScene1020LiftPauseFrame + 1)
 		.soundAt(kScene1020GrateSlamFrame, kScene1020GrateLiftSoundId)
@@ -381,7 +359,6 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	}
 
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
-		kScene1020Chunk21GrateLiftFrameMap, ARRAYSIZE(kScene1020Chunk21GrateLiftFrameMap),
 		kScene1020OverlayFrameMillis)
 		.startAt(kScene1020LiftPauseFrame));
 
@@ -657,9 +634,7 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
 	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
 	spec.patchAt(patchFrame, 0xff);
-	if (chunkIndex == 14 && frameMap == kScene1020Chunk14ForwardFrameMap)
-		spec.soundAt(4, kScene1020LeverSoundId, 50);
-	else if (chunkIndex == 15)
+	if (chunkIndex == 15)
 		spec.loopingSoundAt(1, kScene1020ChainMotorSoundId).stopSoundAt(44);
 	else if (chunkIndex == 16)
 		spec.loopingSoundAt(1, kScene1020JammedRailSoundId).stopSoundAt(10);
@@ -669,6 +644,18 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	runOverlaySequence(spec);
 	if (chunkIndex >= 15 && chunkIndex <= 17)
 		_soundBank0.stop();
+}
+
+void Scene1020::runLeverOverlay(bool reverse) {
+	if (reverse) {
+		runOverlaySequence(ActionOverlaySpec(14, kScene1020ActionChunk14DescriptorCount,
+			kScene1020Chunk14ReverseFrameMap, ARRAYSIZE(kScene1020Chunk14ReverseFrameMap),
+			kScene1020OverlayFrameMillis));
+		return;
+	}
+
+	runOverlaySequence(ActionOverlaySpec(14, kScene1020ActionChunk14DescriptorCount,
+		kScene1020OverlayFrameMillis).soundAt(4, kScene1020LeverSoundId, 50));
 }
 
 void Scene1020::runOverlaySequence(const ActionOverlaySpec &spec) {
@@ -701,8 +688,8 @@ void Scene1020::handleSceneEventFlag0Overlay() {
 	}
 
 	beginSecondarySpeechLine(4, 1);
-	runOverlaySequence(22, kScene1020ActionChunk22DescriptorCount, kScene1020Chunk22PickupFrameMap,
-		ARRAYSIZE(kScene1020Chunk22PickupFrameMap), kScene1020OverlayFrameMillis, 8);
+	runOverlaySequence(ActionOverlaySpec(22, kScene1020ActionChunk22DescriptorCount,
+		kScene1020OverlayFrameMillis).holdFirstFrame().patchAt(8, 0xff));
 	addInventoryItem(0x16);
 	_soundBank0.playSample(1, 100);
 	state.scene1020SueTapeVisible = false;
@@ -726,32 +713,28 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 
 	if (_lastSceneActionItemId == 8) {
 		if (state.scene1020HookPositionState == 0) {
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
+			runLeverOverlay(false);
 			runOverlaySequence(15, kScene1020ActionChunk15DescriptorCount, kScene1020Chunk15PingPongFrameMap,
 				ARRAYSIZE(kScene1020Chunk15PingPongFrameMap), kScene1020OverlayFrameMillis);
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
+			runLeverOverlay(true);
 			beginSecondarySpeechLine(8, 2);
 		} else if (state.scene1020HookPositionState == 1) {
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
+			runLeverOverlay(false);
 			// Commit the move before the slide: overlay playback presents one frame from
 			// the base framebuffer when it ends, so patching after flashes the old position.
 			state.scene1020HookPositionState = 2;
 			applySceneStateToHotspotsAndPatches(1);
-			runOverlaySequence(17, kScene1020ActionChunk17DescriptorCount, kScene1020Chunk17ForwardFrameMap,
-				ARRAYSIZE(kScene1020Chunk17ForwardFrameMap), kScene1020OverlayFrameMillis);
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
+			runOverlaySequence(ActionOverlaySpec(17, kScene1020ActionChunk17DescriptorCount,
+				kScene1020OverlayFrameMillis).holdFirstFrame()
+				.loopingSoundAt(1, kScene1020ChainMotorSoundId).stopSoundAt(21));
+			_soundBank0.stop();
+			runLeverOverlay(true);
 			beginStaticSecondarySpeechLine(0x35, 0);
 		} else if (state.scene1020ChainAttachedToGrate == 0) {
 			beginSecondarySpeechLine(8, 2);
 		} else {
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
-			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
-				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
+			runLeverOverlay(false);
+			runLeverOverlay(true);
 			beginSecondarySpeechLine(0x0c, 0);
 		}
 		return;
@@ -765,13 +748,11 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 		return;
 	}
 
-	runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
-		ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
+	runLeverOverlay(false);
 	if (!state.scene1020RustyRailGreased) {
 		runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16AlternatingFrameMap,
 			ARRAYSIZE(kScene1020Chunk16AlternatingFrameMap), kScene1020OverlayFrameMillis);
-		runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
-			ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
+		runLeverOverlay(true);
 		beginSecondarySpeechLine(8, 0);
 		return;
 	}
@@ -781,8 +762,7 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 	applySceneStateToHotspotsAndPatches(1);
 	runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16ForwardFrameMap,
 		ARRAYSIZE(kScene1020Chunk16ForwardFrameMap), kScene1020OverlayFrameMillis);
-	runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
-		ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
+	runLeverOverlay(true);
 	beginSecondarySpeechLine(8, 1);
 }
 

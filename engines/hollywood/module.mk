@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	gameplay/actor_renderer.o \
 	gameplay/cursor.o \
 	gameplay/dialogue_menu.o \
+	gameplay/frankenstein_reward.o \
 	gameplay/game_loop.o \
 	gameplay/hotspots.o \
 	gameplay/inventory_media.o \
@@ -26,6 +27,7 @@ MODULE_OBJS = \
 	scenes/scene_resources.o \
 	scenes/scene_registry.o \
 	scenes/scene_text_store.o \
+	scenes/shared_frame_sequences.o \
 	scenes/speech_overlay.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \

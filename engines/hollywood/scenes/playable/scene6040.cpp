@@ -47,10 +47,6 @@ const byte kScene6040PaintInventoryItem = 0x60;
 const byte kScene6040LooseWireInventoryItem = 0x61;
 const byte kScene6040CutWireInventoryItem = 0x5f;
 
-const byte kScene6040PaintPickupFrameMap[] = {
-	9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-};
-
 const byte kScene6040WireInspectFrameMap[] = {
 	0x0b, 0, 1, 2, 3, 4, 3, 2, 3, 4,
 	3, 2, 3, 4, 3, 2, 1, 0, 0x0b
@@ -59,10 +55,6 @@ const byte kScene6040WireInspectFrameMap[] = {
 const byte kScene6040WireCutFrameMap[] = {
 	0x0b, 10, 8, 7, 6, 5, 4, 3, 2, 3, 4, 3, 2,
 	3, 4, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0x0b
-};
-
-const byte kScene6040WirePickupFrameMap[] = {
-	0x0b, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0x0b
 };
 
 const SceneLayerSpec kScene6040LayerSpecs[] = {
@@ -255,8 +247,8 @@ void Scene6040::runPaintCanPickup() {
 	}
 
 	state.scene6040PaintCanTaken = true;
-	runActorReplacement(ActionOverlaySpec(11, kScene6040PaintOverlayDescriptorCount,
-		kScene6040PaintPickupFrameMap, ARRAYSIZE(kScene6040PaintPickupFrameMap), kScene6040FrameMillis)
+	runActorReplacement(ActionOverlaySpec(11, kScene6040PaintOverlayDescriptorCount, kScene6040FrameMillis)
+		.bookendWithLastFrame()
 		.patchAt(5, 1));
 	addInventoryItem(kScene6040PaintInventoryItem);
 	_soundBank0.playSample(1, 100);
@@ -294,8 +286,8 @@ void Scene6040::runWirePickup() {
 	}
 
 	state.scene6040WireState = 1;
-	runActorReplacement(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
-		kScene6040WirePickupFrameMap, ARRAYSIZE(kScene6040WirePickupFrameMap), kScene6040FrameMillis)
+	runActorReplacement(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount, kScene6040FrameMillis)
+		.bookendWithLastFrame()
 		.patchAt(6, 2));
 	addInventoryItem(kScene6040LooseWireInventoryItem);
 	_soundBank0.playSample(1, 100);

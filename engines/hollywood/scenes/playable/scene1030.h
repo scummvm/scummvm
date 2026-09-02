@@ -63,8 +63,7 @@ private:
 	void drawLargeForegroundActor();
 	void advanceLargeForegroundActor(uint32 delta);
 	void advanceSmallForegroundActor(uint32 delta);
-	void runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, int patchFrame, byte patchState);
+	void runPickupOverlay(ActionOverlaySpec spec, int patchFrame, byte patchState);
 	void handleSceneEventFlag0();
 	void handlePickupPunchBowl();
 	void handlePickupLemonSlice();

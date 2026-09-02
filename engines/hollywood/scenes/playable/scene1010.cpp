@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene1010.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -71,13 +72,6 @@ const int kScene1010ForegroundRightXThreshold = 0x28a;
 const int kScene1010ForegroundRightYThreshold = 0x1cb;
 const uint32 kScene1010SceneActorBlinkFrameMillis = 75;
 const uint kScene1010SceneActorBlinkDescriptorCount = 0x0c;
-
-const byte kScene1010SceneActorBlinkFrameMap[] = {
-	0, 11, 0, 1, 2, 1, 0, 0,
-	1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 10, 10, 10, 10, 9, 8,
-	7, 6, 5, 4, 3, 2, 1, 0
-};
 
 PlayableSceneConfig scene1010Config() {
 	PlayableSceneConfig config(1010,
@@ -325,12 +319,12 @@ void Scene1010::advanceSceneActorBlinkAnimation(uint32 delta) {
 }
 
 void Scene1010::drawSceneActorBlinkFrame() {
-	if (_sceneActorBlinkFrameIndex >= ARRAYSIZE(kScene1010SceneActorBlinkFrameMap))
+	if (_sceneActorBlinkFrameIndex >= kTitleBlinkFrameCount)
 		return;
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
 		kScene1010SceneActorBlinkDescriptorCount,
-		kScene1010SceneActorBlinkFrameMap[_sceneActorBlinkFrameIndex], _sceneFramebuffer);
+		kTitleBlinkFrames[_sceneActorBlinkFrameIndex], _sceneFramebuffer);
 }
 
 } // End of namespace Hollywood

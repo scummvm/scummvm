@@ -89,14 +89,6 @@ const byte kScene1070SpencerFrameMap[] = {
 	21, 20, 19, 10, 24, 14, 13, 12, 11, 10, 10
 };
 
-const byte kScene1070MicrophoneFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
-const byte kScene1070MicrophoneStandFrameMap[] = {
-	12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const byte kScene1070BallFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0,
 	1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 3, 4,
@@ -953,8 +945,7 @@ void Scene1070::handleMicrophonePickup() {
 	BlockingSequence sequence(*this);
 	sequence.commit(state.scene1070MicrophoneTaken, true)
 		.actorReplacement(ActionOverlaySpec(14, kScene1070MicrophoneDescriptorCount,
-			kScene1070MicrophoneFrameMap, ARRAYSIZE(kScene1070MicrophoneFrameMap),
-			kScene1070FrameMillis).patchAt(5, 7));
+			kScene1070FrameMillis).holdFirstFrame().patchAt(5, 7));
 	addInventoryItem(0x23);
 	sequence.sound(1);
 	dispatchGenericSceneAction(21);
@@ -968,8 +959,7 @@ void Scene1070::handleMicStandPickup() {
 	BlockingSequence sequence(*this);
 	sequence.commit(state.scene1070MicrophoneStandTaken, true)
 		.actorReplacement(ActionOverlaySpec(18, kScene1070MicrophoneStandDescriptorCount,
-			kScene1070MicrophoneStandFrameMap, ARRAYSIZE(kScene1070MicrophoneStandFrameMap),
-			kScene1070FrameMillis).patchAt(6, 6));
+			kScene1070FrameMillis).bookendWithLastFrame().patchAt(6, 6));
 	addInventoryItem(0x24);
 	sequence.sound(1);
 	dispatchGenericSceneAction(21);

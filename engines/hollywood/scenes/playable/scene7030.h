@@ -53,8 +53,7 @@ private:
 	void configureAnimationLayers();
 	void setChunk5Frame(byte frameIndex);
 	byte chunk5Frame() const;
-	void runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int statePatchFrame = -1);
+	void runPunchBowlPatchOverlay(ActionOverlaySpec spec, int statePatchFrame = -1);
 	void handleActionSlot00TransitionToG04();
 	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02TransitionToG01Alt();

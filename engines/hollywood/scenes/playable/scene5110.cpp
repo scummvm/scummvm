@@ -26,6 +26,7 @@
 #include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/playable/scene5110.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -77,10 +78,6 @@ enum {
 	kScene5110DialogueTransitionUpTwo = 4
 };
 
-const byte kScene5110PickupFrameMap[] = {
-	11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
 const byte kScene5110FirstElevatorFrameMap[] = { 0, 1, 2, 3, 4, 5 };
 const byte kScene5110AlternateElevatorFrameMap[] = { 16, 15, 14, 13, 12, 5 };
 const byte kScene5110ElevatorCloseFrameMap[] = { 10, 9, 8, 7, 6, 5 };
@@ -91,11 +88,9 @@ const byte kScene5110ElevatorLowerFrameMap[] = { 5, 4, 3, 2, 1, 0 };
 const byte kScene5110WerewolfFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 5, 4, 3, 2, 0
 };
-const byte kScene5110CenterDetailFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0 };
 const byte kScene5110LeftSalonFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
-const byte kScene5110UpperRightFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0 };
 const byte kScene5110LowerDetailFrameMap[] = { 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, 0 };
 
 const SceneLayerSpec kScene5110LayerSpecs[] = {
@@ -103,12 +98,12 @@ const SceneLayerSpec kScene5110LayerSpecs[] = {
 	{kSceneAnimationScenePlaced, 8, 5, nullptr, 0, true, 1},
 	{kSceneAnimationScenePlaced, 9, 10, kScene5110WerewolfFrameMap,
 		ARRAYSIZE(kScene5110WerewolfFrameMap), true, 0},
-	{kSceneAnimationScenePlaced, 10, 5, kScene5110CenterDetailFrameMap,
-		ARRAYSIZE(kScene5110CenterDetailFrameMap), true, 0},
+	{kSceneAnimationScenePlaced, 10, 5, kFiveFramePingPongFrames,
+		kFiveFramePingPongFrameCount, true, 0},
 	{kSceneAnimationScenePlaced, 15, 9, kScene5110LeftSalonFrameMap,
 		ARRAYSIZE(kScene5110LeftSalonFrameMap), true, 0},
-	{kSceneAnimationScenePlaced, 16, 8, kScene5110UpperRightFrameMap,
-		ARRAYSIZE(kScene5110UpperRightFrameMap), true, 0},
+	{kSceneAnimationScenePlaced, 16, 8, kFiveFramePingPongFrames,
+		kFiveFramePingPongFrameCount, true, 0},
 	{kSceneAnimationScenePlaced, 17, 7, nullptr, 0, true, 0},
 	{kSceneAnimationScenePlaced, 18, 7, kScene5110LowerDetailFrameMap,
 		ARRAYSIZE(kScene5110LowerDetailFrameMap), true, 0},
@@ -589,8 +584,8 @@ void Scene5110::runUnderwearPickup() {
 	}
 
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
-			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+	sequence.actorReplacement(ActionOverlaySpec(12, kScene5110PickupDescriptorCount, kScene5110FrameMillis)
+			.bookendWithLastFrame()
 			.resourcePatchAt(6, 11)
 			.noFinalFrameDelay())
 		.commit(state.scene5110UnderwearTaken, true)
@@ -615,8 +610,8 @@ void Scene5110::runBottlePickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(3, 1)
-		.actorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
-			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+		.actorReplacement(ActionOverlaySpec(6, kScene5110PickupDescriptorCount, kScene5110FrameMillis)
+			.bookendWithLastFrame()
 			.resourcePatchAt(6, 5)
 			.noFinalFrameDelay())
 		.commit(state.scene5110BottleState, (byte)2)
@@ -712,8 +707,8 @@ void Scene5110::runMirrorPickup() {
 	}
 
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
-			kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+	sequence.actorReplacement(ActionOverlaySpec(14, kScene5110PickupDescriptorCount, kScene5110FrameMillis)
+			.bookendWithLastFrame()
 			.resourcePatchAt(6, 13)
 			.noFinalFrameDelay())
 		.commit(state.scene5110MirrorTaken, true)
