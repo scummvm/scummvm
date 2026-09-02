@@ -506,7 +506,7 @@ void Scene6050::initializeGuardDialogueRecords(Common::Array<DialogueChoiceRecor
 	records.clear();
 	records.resize(kScene6050DialogueChoiceRecordCount);
 
-	// DAT_0050e228: guard dialogue root choices.
+	// Guard dialogue root choices.
 	setGuardDialogueRecord(records, 0, 1, 0, kScene6050DialogueTransitionStay, 1, 1, 1);
 	setGuardDialogueRecord(records, 1, 1, 0, kScene6050DialogueTransitionStay, 3, 3, 1);
 	setGuardDialogueRecord(records, 2, 1, 0, kScene6050DialogueTransitionStay, 4, 4, 1);

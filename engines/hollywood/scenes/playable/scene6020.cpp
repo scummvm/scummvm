@@ -956,8 +956,8 @@ void Scene6020::initializeTaffyDialogueRecords(Common::Array<DialogueChoiceRecor
 	records.clear();
 	records.resize(kScene6020TaffyDialogueChoiceRecordCount);
 
-	// DAT_0050bb30: root choices for Taffy. Choice 0 enters Hannover's office while the original
-	// one-shot late-scene guard is still clear.
+	// The first choice enters Hannover's office while the one-shot late-scene
+	// guard remains clear.
 	setTaffyDialogueRecord(records, 0, 1, 0, kScene6020DialogueTransitionStay, 2, 2, 3);
 	setTaffyDialogueRecord(records, 1, 1, 0, kScene6020DialogueTransitionDown, 3, 3, 1);
 	setTaffyDialogueRecord(records, 2, 1, 0, kScene6020DialogueTransitionStay, 4, 4, 1);

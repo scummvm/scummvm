@@ -35,8 +35,7 @@ const uint16 kScene2070EntryFromRightPassageState = 0x0817;
 const uint16 kScene2080FirstState = 0x0820;
 const uint16 kScene2070ViewportXOffset = 0x0068;
 const uint16 kScene2070ViewportMaxXOffset = 0x00a8;
-// The original calls LoadActorSpriteBankSetB4(), but the RESOURCE.000
-// startup table maps that bank to offset/size table entry 0x0000.
+// Actor sprite bank set B4 starts at entry 0 in the RESOURCE.000 tables.
 const uint kScene2070ActorBankTableEntry = 0x0000;
 const uint kScene2070ActorPaletteTableEntry = 0x00cc;
 const uint kScene2070Resource003RowsOffsetIndex = 0x0000;

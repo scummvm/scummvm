@@ -895,7 +895,7 @@ void Scene5040::initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord
 	records.clear();
 	records.resize(kScene5040KarlDialogueChoiceRecordCount);
 
-	// DAT_005091e0: root choices for Karl Hecker.
+	// Karl Hecker's root choices.
 	setKarlDialogueRecord(records, 0, 0, kScene5040DialogueTransitionDown, 3, 3, 1); // ¿Qué está haciendo aquí?
 	setKarlDialogueRecord(records, 1, 0, kScene5040DialogueTransitionStay, 4, 4, 1); // ¿Ha visto al hombre lobo?
 	setKarlDialogueRecord(records, 2, 0, kScene5040DialogueTransitionStay, 5, 5, 1); // ¿Cuánto tiempo ha pasado en estas galerías?

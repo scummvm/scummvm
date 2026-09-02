@@ -87,7 +87,7 @@ const HollywoodGameStrings kItalianGameStrings = {
 	"N",
 
 	" passaggio",
-	" cassa da morto larga", // The executable's wide variant mistakenly remains Spanish.
+	" cassa da morto larga", // WORKAROUND: The Italian executable leaves this variant in Spanish.
 	" Cambiare bevanda",
 	" Aprire rubinetto",
 	" Smettere di fare cocktail"

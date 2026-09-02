@@ -356,8 +356,8 @@ void Scene7060::applyChunk6KeyTakenFrameMap() {
 	if (_chunk6FrameMap.size() <= 70)
 		return;
 
-	// Ghidra: HandleG06Chunk7PickupItem11 mutates these global frame-map bytes.
-	// Reapply it on scene reload when item 0x11 is already in Sue's inventory.
+	// Taking the key mutates the shared frame map. Reapply those changes on
+	// scene reload when Sue already carries it.
 	_chunk6FrameMap[33] = _chunk6FrameMap[58];
 	_chunk6FrameMap[37] = _chunk6FrameMap[62];
 	_chunk6FrameMap[41] = _chunk6FrameMap[66];
