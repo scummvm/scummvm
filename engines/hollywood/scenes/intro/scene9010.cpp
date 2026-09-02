@@ -327,8 +327,8 @@ bool Scene9010::playI02Animation() {
 	}
 	if (_i02FramePayload.empty() || file.size() <= 0 ||
 			(uint32)file.size() % _i02FramePayload.size() != 0) {
-		warning("%s has unexpected raw stream size: %lld payloadSize=%u",
-			kI02ArchiveName, (long long)file.size(), (uint)_i02FramePayload.size());
+		warning("%s has unexpected raw stream size: %" PRId64 " payloadSize=%u",
+			kI02ArchiveName, file.size(), (uint)_i02FramePayload.size());
 		return false;
 	}
 
