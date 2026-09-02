@@ -40,7 +40,8 @@ namespace Hollywood {
  * _baseFramebuffer carries persistent scene patches and supplies clean visual
  * regions; _sceneFramebuffer is the per-frame composite. _savedFramebuffer is a
  * separate resource-derived image used for region, hotspot, and depth lookup,
- * not a save-game snapshot. _screen is the cropped presentation surface.
+ * not a save-game snapshot. _screen is the cropped presentation surface;
+ * _presentedScreen caches its last backend submission.
  */
 class SceneSurfaceState {
 public:
@@ -57,6 +58,7 @@ public:
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
 	byte paletteEntryComponent6Bit(byte colorIndex, uint component) const;
 	void rebuildPresentationPaletteRemapTable();
+	bool updatePresentedScreenCache();
 
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
@@ -75,7 +77,9 @@ public:
 	Common::Array<uint16> _actorDepthYThresholds;
 	Common::Array<uint16> _drawActorDepthYThresholds;
 	Graphics::ManagedSurface _screen;
+	Graphics::ManagedSurface _presentedScreen;
 	Palette6Bit _displayPalette;
+	bool _hasPresentedScreen;
 };
 
 } // End of namespace Hollywood

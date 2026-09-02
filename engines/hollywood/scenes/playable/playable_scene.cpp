@@ -3349,7 +3349,7 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 	if ((panelState && panelState->visible()) || (dialogueMenuState && dialogueMenuState->visible()))
 		applyGameplayPanelPalette();
 	const uint16 xOffset = viewportXOffset();
-	_displayPalette.uploadFrom6Bit(_paletteCurrent);
+	const bool paletteChanged = _displayPalette.uploadFrom6Bit(_paletteCurrent);
 	_screen.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(xOffset, 0, xOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
 
@@ -3364,7 +3364,9 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 			hoverCaption->draw(*screenSurface, *_vm->font());
 	}
 
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
+	const bool screenChanged = _surfaceState.updatePresentedScreenCache();
+	if (screenChanged || paletteChanged)
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 	g_system->updateScreen();
 }
 

@@ -46,7 +46,8 @@ uint32 readUint32LE(const Common::Array<byte> &source, uint offset);
  * Converts the game's 256-entry RGB palette to backend 8-bit components.
  *
  * setFrom6Bit() scales each component by four and extends one dirty range.
- * upload() sends only that range; markAllDirty() forces a complete upload.
+ * upload() sends only that range and reports whether it changed the backend;
+ * markAllDirty() forces a complete upload.
  */
 class Palette6Bit {
 public:
@@ -54,8 +55,8 @@ public:
 
 	void setFrom6Bit(const Common::Array<byte> &palette);
 	void markAllDirty();
-	void upload();
-	void uploadFrom6Bit(const Common::Array<byte> &palette);
+	bool upload();
+	bool uploadFrom6Bit(const Common::Array<byte> &palette);
 
 	const Graphics::Palette &palette() const { return _palette; }
 
