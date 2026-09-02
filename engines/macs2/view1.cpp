@@ -1206,8 +1206,8 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 		return;
 	}
 
-	Script::ScriptExecutor *executor = g_engine->_scriptExecutor;
-	const uint16 actorIndex = executor->_pickupActorObjectID;
+	Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
+	const uint16 actorIndex = exec->_pickupActorObjectID;
 	if (actorIndex == 0) {
 		return;
 	}
@@ -1222,7 +1222,7 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 
 	Character *itemCharacter = getCharacterByIndex(targetObject->_index);
 	if (itemCharacter != nullptr) {
-		executor->saveWalkRuntime(itemCharacter, targetObject);
+		exec->saveWalkRuntime(itemCharacter, targetObject);
 		const int index = getCharacterArrayIndex(itemCharacter);
 		if (index >= 0) {
 			itemCharacter->_markedForDeletion = true;
@@ -1255,7 +1255,7 @@ void View1::transferPickupTarget(GameObject *targetObject) {
 
 	if (_activeInventoryItem != nullptr && _activeInventoryItem->_index == targetObject->_index) {
 		_activeInventoryItem = nullptr;
-		if (executor->_cursorMode == Script::MouseMode::UseInventory) {
+		if (exec->_cursorMode == Script::MouseMode::UseInventory) {
 			g_engine->setCursorMode(Script::MouseMode::Use);
 			updateCursor();
 		}
@@ -1843,7 +1843,7 @@ void View1::walkToScreenPosition(const Common::Point &pos) {
 }
 
 bool View1::handleInput(const MouseDownMessage &msg) {
-	Script::ScriptExecutor *script = g_engine->_scriptExecutor;
+	Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 	if (msg._button == MouseMessage::MB_LEFT) {
 		// Help mode (depth-based scene preview) from handleInput (1008:e8bf).
 		// When currentMode == VM_HELP, clicking on the depth map previews scenes.
@@ -1852,8 +1852,8 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		}
 
 		if (shouldShowActionBar() && _actionBar && _actionBar->isPointInUI(msg._pos)) {
-			if (script->_cursorMode != Script::MouseMode::Disabled) {
-				_actionBar->handleClick(msg._pos, script->isExecuting());
+			if (exec->_cursorMode != Script::MouseMode::Disabled) {
+				_actionBar->handleClick(msg._pos, exec->isExecuting());
 				presentFrame();
 			}
 			return true;
@@ -1869,11 +1869,11 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		// text-box-dismiss gate before the interaction check. The text box (if any)
 		// is cleared as a side-effect of the script rerunning. Clear it here so the
 		// UI updates immediately, but do NOT consume the click.
-		if (_isShowingTextBox && !script->isExecuting()) {
+		if (_isShowingTextBox && !exec->isExecuting()) {
 			handleTextBoxInput();
 		}
 
-		if (_uiPanelState == kUiPanelInventory && !script->isExecuting()) {
+		if (_uiPanelState == kUiPanelInventory && !exec->isExecuting()) {
 			return handleInventoryClick(msg);
 		}
 
@@ -1881,7 +1881,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return handleContainerInventoryClick(msg);
 		}
 
-		if (_uiPanelState == kUiPanelActionBar && !script->isExecuting()) {
+		if (_uiPanelState == kUiPanelActionBar && !exec->isExecuting()) {
 			return handleActionBarClick(msg);
 		}
 
@@ -1889,7 +1889,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 		// From handleInput (1008:f1d4): clicks during script execution are ONLY processed
 		// if cursor is not Disabled (0x1A). When cursor is Disabled (walk/wait in progress),
 		// clicks are completely ignored.
-		if (script->isScriptMidExecution() && script->_cursorMode != Script::MouseMode::Disabled) {
+		if (exec->isScriptMidExecution() && exec->_cursorMode != Script::MouseMode::Disabled) {
 			// Binary handleInput (1008:f1d4-f225): exact sequence of unconditional checks
 			// 1. if g_wIsShowingTextBox != 0: handleTextBoxInput()
 			// 2. if g_wIsShowingDialoguePanel != 0: dismissDialoguePanel()
@@ -1916,23 +1916,23 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 				}
 			}
 			if (!_isDialogueChoiceInputActive) {
-				script->_scriptClickFlag = 0;
-				script->_scriptClickX = (uint16)msg._pos.x;
-				script->_scriptClickY = (uint16)msg._pos.y;
-				script->_scriptClickResult = 1;
+				exec->_scriptClickFlag = 0;
+				exec->_scriptClickX = (uint16)msg._pos.x;
+				exec->_scriptClickY = (uint16)msg._pos.y;
+				exec->_scriptClickResult = 1;
 				g_engine->runScriptExecutor();
 			}
 			return true;
 		}
 
-		if (script->isExecuting()) {
+		if (exec->isExecuting()) {
 			return true;
 		}
 
 		if (shouldShowActionBar() && msg._pos.y >= actionBarTopY())
 			return true;
 
-		const Script::MouseMode mode = script->_cursorMode;
+		const Script::MouseMode mode = exec->_cursorMode;
 
 		// Walk never hit-tests; other verbs interact when a target is under the cursor.
 		// Empty-ground clicks walk so the persistent verb bar does not trap the player
@@ -1954,13 +1954,13 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 				}
 
 				if (mode != Script::MouseMode::UseInventory) {
-					script->_interactedInventoryItemId = 0;
+					exec->_interactedInventoryItemId = 0;
 					_activeInventoryItem = nullptr;
 				}
 
-				script->_interactedObjectID = index;
+				exec->_interactedObjectID = index;
 				g_engine->runScriptExecutor(false);
-				script->_interactedObjectID = 0;
+				exec->_interactedObjectID = 0;
 				return true;
 			}
 		}
@@ -1976,23 +1976,23 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return true;
 		}
 		// Handle no other interactions during a script
-		if (script->isExecuting()) {
+		if (exec->isExecuting()) {
 			if (!_isShowingDialoguePanel && !_isDialogueChoiceInputActive &&
 				!_isShowingTextBox &&
-				!script->_overlayTextStageActive &&
-				!script->_waitForPcmSound &&
-				!script->_waitForMusicControl &&
-				!script->_waitForAdlibReady &&
-				!script->_waitForObjectAnimStep &&
-				!script->_waitForSpecialAnimStep &&
-				!script->_waitForDeltaAnim &&
-				!script->_waitForDeltaSpeed &&
-				script->canOpenSaveMenu()) {
+				!exec->_overlayTextStageActive &&
+				!exec->_waitForPcmSound &&
+				!exec->_waitForMusicControl &&
+				!exec->_waitForAdlibReady &&
+				!exec->_waitForObjectAnimStep &&
+				!exec->_waitForSpecialAnimStep &&
+				!exec->_waitForDeltaAnim &&
+				!exec->_waitForDeltaSpeed &&
+				exec->canOpenSaveMenu()) {
 				if (ConfMan.getBool("original_menus")) {
-					_savedCursorMode = script->_cursorMode;
+					_savedCursorMode = exec->_cursorMode;
 					openOriginalSaveLoadPanel();
 				} else {
-					_savedCursorMode = script->_cursorMode;
+					_savedCursorMode = exec->_cursorMode;
 					g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 					g_engine->openMainMenuDialog();
 					updateCursor();
@@ -2001,7 +2001,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			return true;
 		}
 
-		if (script->_cursorMode == Script::MouseMode::Disabled) {
+		if (exec->_cursorMode == Script::MouseMode::Disabled) {
 			return true;
 		}
 		if (hasPersistentActionBar()) {
@@ -2009,7 +2009,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			if (canCycleVerbs) {
 				g_engine->nextCursorMode();
 				_activeInventoryItem = nullptr;
-				script->_interactedInventoryItemId = 0;
+				exec->_interactedInventoryItemId = 0;
 				if (_actionBar && shouldShowActionBar())
 					_actionBar->syncActiveVerbFromCursorMode();
 				updateCursor();
@@ -2451,29 +2451,29 @@ bool View1::tick() {
 
 	// Music fade tick from gameTick (1008:e556).
 	// Processes volume fade in/out each frame when active.
-	Script::ScriptExecutor *se = g_engine->_scriptExecutor;
-	if (se->_activeMusicSlot != 0 && se->_musicControlMode != 0) {
-		const uint16 musicStep = MAX<uint16>(se->_musicControlStep, 1);
-		if (se->_musicControlMode == 1) {
+	Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
+	if (exec->_activeMusicSlot != 0 && exec->_musicControlMode != 0) {
+		const uint16 musicStep = MAX<uint16>(exec->_musicControlStep, 1);
+		if (exec->_musicControlMode == 1) {
 			// Fade out: volume -= step
-			const int vol = (int)se->_musicControlVolume - (int)musicStep;
+			const int vol = (int)exec->_musicControlVolume - (int)musicStep;
 			if (vol < 1) {
-				se->_musicControlMode = 0;
-				se->_musicControlVolume = 0;
+				exec->_musicControlMode = 0;
+				exec->_musicControlVolume = 0;
 			} else {
-				se->_musicControlVolume = vol;
+				exec->_musicControlVolume = vol;
 			}
-			g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
+			g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(exec->_musicControlVolume));
 		} else {
 			// Fade in: volume += step. When >= 63: stop music.
-			const int vol = (int)se->_musicControlVolume + (int)musicStep;
+			const int vol = (int)exec->_musicControlVolume + (int)musicStep;
 			if (vol >= 0x3F) {
-				se->_musicControlMode = 0;
-				se->_activeMusicSlot = 0;
+				exec->_musicControlMode = 0;
+				exec->_activeMusicSlot = 0;
 				g_engine->getMusic()->stopMusic();
 			} else {
-				se->_musicControlVolume = vol;
-				g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(se->_musicControlVolume));
+				exec->_musicControlVolume = vol;
+				g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(exec->_musicControlVolume));
 			}
 		}
 	}
@@ -2551,29 +2551,27 @@ bool View1::tick() {
 	// Binary gameTick: drawScene during dialogue/text wait is gated; if movement
 	// finished fires while paused on a clickable wait, don't resume the script.
 	if (_uiPanelState == kUiPanelNone && !_isShowingDialoguePanel && !_isShowingTextBox) {
-		Script::ScriptExecutor *executor = g_engine->_scriptExecutor;
-
 		// Binary gameTick cascading if/else structure:
 		// if (frameWaitCounter == 0) { walkTarget / sound / music / adlib }
 		// else { drawScene(1); if counter==0 runScriptExecutor(); }
 		// Binary gameTick (1008:e556): each wait branch calls drawScene(1) before
 		// checking its completion flag and optionally resuming the script.
-		if (!executor->isFrameWaitActive()) {
+		if (!exec->isFrameWaitActive()) {
 			// Binary gameTick (1008:e752) walk-wait polling:
 			// When g_wWalkTargetObjectIndex > 0, check each frame if the character
 			// has reached its target position AND vertical offset matches.
 			// Binary uses exact equality: charPos == runtime.finalDest.
 			// This works because walkAlongPath snaps pos/finalDest on arrival.
-			uint16 walkTarget = executor->_walkTargetObjectIndex;
+			uint16 walkTarget = exec->_walkTargetObjectIndex;
 			if (walkTarget > 0) {
 				drawSceneUpdate();
 				GameObject *walkObject = GameObjects::getObjectByIndex(walkTarget);
 				if (walkObject == nullptr) {
-					executor->setScriptError(0x19);
-					executor->_walkTargetObjectIndex = 0;
+					exec->setScriptError(0x19);
+					exec->_walkTargetObjectIndex = 0;
 				} else if (walkObject->_dataOffset == 0) {
-					executor->setScriptError(2);
-					executor->_walkTargetObjectIndex = 0;
+					exec->setScriptError(2);
+					exec->_walkTargetObjectIndex = 0;
 				} else {
 					Character *c = getCharacterByIndex(walkTarget);
 					bool walkComplete = false;
@@ -2602,10 +2600,10 @@ bool View1::tick() {
 						}
 					}
 					if (walkComplete) {
-						if (!executor->_pickupInProgress) {
+						if (!exec->_pickupInProgress) {
 							debugC(kDebugScript, "waitForWalk complete obj=%u", walkTarget);
-							executor->debugLogActorWalkState("waitForWalk complete");
-							executor->_walkTargetObjectIndex = 0;
+							exec->debugLogActorWalkState("waitForWalk complete");
+							exec->_walkTargetObjectIndex = 0;
 							g_engine->runScriptExecutor();
 						} else if (c != nullptr && c->_gameObject->_orientation != OrientationPickup) {
 							// Binary: pickup in progress, trigger pickup animation.
@@ -2615,84 +2613,84 @@ bool View1::tick() {
 						}
 					}
 				}
-			} else if (executor->_waitForPcmSound) {
+			} else if (exec->_waitForPcmSound) {
 				drawSceneUpdate();
 				if (!g_engine->isSamplePlaying() && !g_engine->isSpeechPlaying()) {
 					debugC(kDebugScript, "waitForSound complete");
-					executor->debugLogActorWalkState("waitForSound complete");
-					executor->_waitForPcmSound = false;
+					exec->debugLogActorWalkState("waitForSound complete");
+					exec->_waitForPcmSound = false;
 					g_engine->getMusic()->setSmfDucked(false);
 					g_engine->runScriptExecutor();
 				}
-			} else if (executor->_waitForMusicControl) {
+			} else if (exec->_waitForMusicControl) {
 				drawSceneUpdate();
-				if (executor->_musicControlMode == 0) {
-					executor->_waitForMusicControl = false;
+				if (exec->_musicControlMode == 0) {
+					exec->_waitForMusicControl = false;
 					g_engine->runScriptExecutor();
 				}
-			} else if (executor->_waitForAdlibReady) {
+			} else if (exec->_waitForAdlibReady) {
 				drawSceneUpdate();
 				const Music *music = g_engine->getMusic();
 				const bool ready = music->isMidiFilePlaying() ? false : music->isPlaybackReady();
 				if (ready) {
-					executor->_waitForAdlibReady = false;
+					exec->_waitForAdlibReady = false;
 					g_engine->runScriptExecutor();
 				}
-			} else if (executor->_waitForObjectAnimStep) {
+			} else if (exec->_waitForObjectAnimStep) {
 				drawSceneUpdate();
 				bool animStepReached = false;
-				const GameObject *waitObject = GameObjects::getObjectByIndex(executor->_waitObjectAnimObjectId);
+				const GameObject *waitObject = GameObjects::getObjectByIndex(exec->_waitObjectAnimObjectId);
 				if (waitObject != nullptr && waitObject->_dataOffset != 0) {
-					const Common::Array<uint8> *blob = waitObject->getAnimSlotBlob(executor->_waitObjectAnimSlot);
+					const Common::Array<uint8> *blob = waitObject->getAnimSlotBlob(exec->_waitObjectAnimSlot);
 					if (blob != nullptr && !blob->empty()) {
 						AnimBlobView view(*blob);
 						if (view.isValid()) {
-							animStepReached = view.sequencePosition() >= executor->_waitObjectAnimTargetStep;
+							animStepReached = view.sequencePosition() >= exec->_waitObjectAnimTargetStep;
 						}
 					}
 				}
 				if (animStepReached) {
 					debugC(kDebugScript, "waitObjectAnimStep complete obj=%u slot=%u step=%u",
-						   executor->_waitObjectAnimObjectId, executor->_waitObjectAnimSlot,
-						   executor->_waitObjectAnimTargetStep);
-					executor->_waitForObjectAnimStep = false;
+						   exec->_waitObjectAnimObjectId, exec->_waitObjectAnimSlot,
+						   exec->_waitObjectAnimTargetStep);
+					exec->_waitForObjectAnimStep = false;
 					g_engine->runScriptExecutor();
 				}
-			} else if (executor->_waitForSpecialAnimStep) {
+			} else if (exec->_waitForSpecialAnimStep) {
 				drawSceneUpdate();
 				bool animStepReached = false;
-				const uint16 animIndex = executor->_waitSpecialAnimIndex;
+				const uint16 animIndex = exec->_waitSpecialAnimIndex;
 				if (animIndex > 0 && animIndex <= g_engine->_backgroundAnimationsBlobs.size()) {
 					const BackgroundAnimationBlob &blob = g_engine->_backgroundAnimationsBlobs[animIndex - 1];
 					const Common::Array<uint8> &active = blob.activeBlob();
 					if (!active.empty()) {
 						AnimBlobView view(active);
 						if (view.isValid())
-							animStepReached = view.sequencePosition() >= executor->_waitSpecialAnimTargetStep;
+							animStepReached = view.sequencePosition() >= exec->_waitSpecialAnimTargetStep;
 					}
 				}
 				if (animStepReached) {
 					debugC(kDebugScript, "waitSpecialAnimStep complete anim=%u step=%u",
-						   executor->_waitSpecialAnimIndex, executor->_waitSpecialAnimTargetStep);
-					executor->_waitForSpecialAnimStep = false;
+						   exec->_waitSpecialAnimIndex, exec->_waitSpecialAnimTargetStep);
+					exec->_waitForSpecialAnimStep = false;
 					g_engine->runScriptExecutor();
 				}
-			} else if (executor->_waitForDeltaAnim) {
+			} else if (exec->_waitForDeltaAnim) {
 				drawSceneUpdate();
 				if (!g_engine->tickDeltaPlayback()) {
 					debugC(kDebugScript, "waitForDeltaAnim complete");
-					executor->_waitForDeltaAnim = false;
+					exec->_waitForDeltaAnim = false;
 					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 					g_engine->runScriptExecutor();
 				} else {
 					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 					redraw();
 				}
-			} else if (executor->_waitForDeltaSpeed) {
+			} else if (exec->_waitForDeltaSpeed) {
 				drawSceneUpdate();
 				if (!g_engine->_deltaAnim.playing || !g_engine->tickDeltaPlayback()) {
 					debugC(kDebugScript, "waitForDeltaSpeed complete");
-					executor->_waitForDeltaSpeed = false;
+					exec->_waitForDeltaSpeed = false;
 					_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 					g_engine->runScriptExecutor();
 				} else {
@@ -2702,10 +2700,10 @@ bool View1::tick() {
 			}
 		} else {
 			drawSceneUpdate();
-			if (executor->getFrameWaitCounter() == 0) {
+			if (exec->getFrameWaitCounter() == 0) {
 				debugC(kDebugScript, "frameWait complete");
-				executor->debugLogActorWalkState("frameWait complete");
-				executor->endFrameWait();
+				exec->debugLogActorWalkState("frameWait complete");
+				exec->endFrameWait();
 				g_engine->runScriptExecutor();
 			}
 		}
@@ -2723,13 +2721,12 @@ void View1::flushPendingCharacterDeletes() {
 }
 
 void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate) {
-	// drawAllCharacters @ 1008:90a2
 	g_engine->_movementFinishedFlag = false;
 	sortObjectListByY();
 	rebuildCharacterLookupTable();
 
 	const uint16 sortedCount = _sortedObjectCount;
-	Script::ScriptExecutor *executor = g_engine->_scriptExecutor;
+	Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 
 	if (fullUpdate && sortedCount > 0) {
 		for (uint16 local_c = 1; local_c <= sortedCount; local_c++) {
@@ -2767,7 +2764,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 				current = nullptr;
 
 			if (current != nullptr) {
-				if (obj->_orientation != OrientationPickup || executor->_pickupInProgress)
+				if (obj->_orientation != OrientationPickup || exec->_pickupInProgress)
 					current->update();
 			}
 		}
@@ -2779,7 +2776,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 	}
 
 	// draw sorted scene objects back -> front
-	if (surface != nullptr && !executor->hasScriptError() && sortedCount > 0) {
+	if (surface != nullptr && !exec->hasScriptError() && sortedCount > 0) {
 		const uint16 animAdvanceMode = (fullUpdate && _uiPanelState == kUiPanelNone) ? 2 : 0;
 
 		for (uint16 local_c = 1; local_c <= sortedCount; local_c++) {
@@ -2811,26 +2808,26 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			const uint16 animSlot = g_engine->resolveAnimSlotIndex(obj);
 			if (!obj->isAnimSlotLoaded(animSlot)) {
-				executor->setScriptError(10);
+				exec->setScriptError(10);
 				return;
 			}
 
 			Common::Array<uint8> *blob = obj->getAnimSlotBlob(animSlot);
 			if (blob == nullptr || blob->empty()) {
-				executor->setScriptError(8);
+				exec->setScriptError(8);
 				return;
 			}
 
 			AnimBlobView blobView(*blob);
 			if (!blobView.isValid() || blobView.frameCount() == 0) {
-				executor->setScriptError(blobView.frameCount() == 0 ? 0x0B : 8);
+				exec->setScriptError(blobView.frameCount() == 0 ? 0x0B : 8);
 				return;
 			}
 
 			AnimFrame frame;
 			if (current != nullptr) {
 				if (!current->fillCurrentAnimationFrame(animAdvanceMode, frame)) {
-					executor->setScriptError(8);
+					exec->setScriptError(8);
 					return;
 				}
 			} else {
@@ -2958,22 +2955,22 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 	// Binary drawAllCharacters tail: movement-finished repeat run (opcode 0x27 area checks).
 	if (fullUpdate && g_engine->_movementFinishedFlag) {
-		if (executor->isScriptWaitDeferred()) {
+		if (exec->isScriptWaitDeferred()) {
 			debugC(kDebugScript,
 				   "repeatRun deferred: walkWait=%u frameWait=%u soundWait=%d musicWait=%d adlibWait=%d",
-				   executor->_walkTargetObjectIndex, executor->getFrameWaitCounter(),
-				   executor->_waitForPcmSound ? 1 : 0, executor->_waitForMusicControl ? 1 : 0,
-				   executor->_waitForAdlibReady ? 1 : 0);
+				   exec->_walkTargetObjectIndex, exec->getFrameWaitCounter(),
+				   exec->_waitForPcmSound ? 1 : 0, exec->_waitForMusicControl ? 1 : 0,
+				   exec->_waitForAdlibReady ? 1 : 0);
 		} else {
-			const Common::Point actorPos = executor->getCharPosition();
-			const uint16 area = executor->getAreaAtPoint(actorPos.x, actorPos.y);
+			const Common::Point actorPos = exec->getCharPosition();
+			const uint16 area = exec->getAreaAtPoint(actorPos.x, actorPos.y);
 			debugC(kDebugScript, "repeatRun start: actor=(%d,%d) areaRepeatRun=%u var[122]=%u",
-				   actorPos.x, actorPos.y, area, executor->getVariableValue(122));
-			executor->debugLogActorWalkState("repeatRun start");
-			executor->_isRepeatRun = true;
+				   actorPos.x, actorPos.y, area, exec->getVariableValue(122));
+			exec->debugLogActorWalkState("repeatRun start");
+			exec->_isRepeatRun = true;
 			g_engine->runScriptExecutor();
-			executor->_isRepeatRun = false;
-			executor->debugLogActorWalkState("repeatRun end");
+			exec->_isRepeatRun = false;
+			exec->debugLogActorWalkState("repeatRun end");
 		}
 	}
 }
@@ -4022,7 +4019,7 @@ bool Character::shouldStepVerticalMotion() const {
 }
 
 void Character::update() {
-	Script::ScriptExecutor *script = g_engine->_scriptExecutor;
+	Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 	if (_gameObject->_orientation == OrientationPickup) {
 		if (_pickedUpObject != nullptr) {
 			View1 *currentView = (View1 *)g_engine->findView("View1");
@@ -4034,17 +4031,17 @@ void Character::update() {
 
 			if (_pickupFrameCounter == _gameObject->_pickupFrameEnd) {
 				_gameObject->_orientation = _previousOrientation;
-				if (script->_pickupInProgress) {
-					script->_pickupInProgress = false;
-					script->_pickupActorObjectID = 0;
-					script->_pickupTargetObjectID = 0;
-					g_engine->setCursorMode(script->_cursorModeBeforeWait);
+				if (exec->_pickupInProgress) {
+					exec->_pickupInProgress = false;
+					exec->_pickupActorObjectID = 0;
+					exec->_pickupTargetObjectID = 0;
+					g_engine->setCursorMode(exec->_cursorModeBeforeWait);
 					currentView->updateCursor();
 				}
-				script->_walkTargetObjectIndex = 0;
+				exec->_walkTargetObjectIndex = 0;
 				_pickedUpObject = nullptr;
-				script->_interactedObjectID = 0x0000;
-				script->_interactedInventoryItemId = 0x0000;
+				exec->_interactedObjectID = 0x0000;
+				exec->_interactedInventoryItemId = 0x0000;
 				g_engine->_movementFinishedFlag = true;
 				return;
 			}
@@ -4208,7 +4205,7 @@ void Character::update() {
 		}
 		// Walkability check - binary uses getWalkabilityAt(posY, posX) >= 0xC8
 		if (!isWalkable(pos)) {
-			const uint16 tileArea = script->getAreaAtPoint(pos.x, pos.y);
+			const uint16 tileArea = exec->getAreaAtPoint(pos.x, pos.y);
 			if (tileArea >= 210 && tileArea <= 215) {
 				debugC(kDebugPath,
 						"walk blocked on plate area %u at (%d,%d) walk=%u int16=%d target=(%d,%d)",
@@ -4267,7 +4264,7 @@ void Character::update() {
 	}
 
 	if (pixelsMoved != walkSpeed) {
-		const uint16 tileArea = script->getAreaAtPoint(pos.x, pos.y);
+		const uint16 tileArea = exec->getAreaAtPoint(pos.x, pos.y);
 		if (tileArea >= 210 && tileArea <= 215) {
 			debugC(kDebugPath,
 				   "walk cancelled pixelsMoved=%d walkSpeed=%d at (%d,%d) area=%u walk=%u finalDest=(%d,%d)",
@@ -4562,7 +4559,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			hasData = (!frame._data.empty() && frame._width > 0);
 		}
 
-		Script::ScriptExecutor *scriptExecutor = g_engine->_scriptExecutor;
+		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
 		const bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&
 					  clickX < btnPos.x + btnW && clickY < btnPos.y + btnH &&
 					  hasData &&
@@ -4580,7 +4577,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 			// Process button action
 			if (i == 3) {
 				// Toggle music, reset clickedButton, redraw
-				scriptExecutor->_soundSystemActive = !scriptExecutor->_soundSystemActive;
+				exec->_soundSystemActive = !exec->_soundSystemActive;
 				_clickedButtonIndex = 0;
 				redraw();
 			} else if (i == 4) {
@@ -4590,27 +4587,27 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 					_saveConfirmArmed = true;
 				} else {
 					// Binary: second click arms error 0x1C and closes via button 7
-					scriptExecutor->setScriptError(0x1C);
+					exec->setScriptError(0x1C);
 					_clickedButtonIndex = 7;
 				}
 			} else if (i == 6) {
 				if (!_loadConfirmArmed) {
 					_loadConfirmArmed = true;
 				} else {
-					scriptExecutor->setScriptError(0x1B);
+					exec->setScriptError(0x1B);
 					_clickedButtonIndex = 7;
 				}
 			} else if (i == 7) {
 				// Binary: if music enabled AND sound active, play active music
-				if (scriptExecutor->_musicEnabled &&
-					scriptExecutor->_soundSystemActive) {
-					const uint16 slot = scriptExecutor->_activeMusicSlot;
-					if (slot != 0 && !scriptExecutor->_musicSlots[slot - 1].empty() &&
-						g_engine->getMusic()->playSongData(scriptExecutor->_musicSlots[slot - 1])) {
+				if (exec->_musicEnabled &&
+					exec->_soundSystemActive) {
+					const uint16 slot = exec->_activeMusicSlot;
+					if (slot != 0 && !exec->_musicSlots[slot - 1].empty() &&
+						g_engine->getMusic()->playSongData(exec->_musicSlots[slot - 1])) {
 						// Original's adlibTickHandler resets g_bAdlibMasterVolume=0 (full volume).
 						// ScummVM layers user volume on top via scaledMusicVolume, so re-apply it.
-						scriptExecutor->_musicControlMode = 0;
-						scriptExecutor->_musicControlVolume = 0;
+						exec->_musicControlMode = 0;
+						exec->_musicControlVolume = 0;
 						g_engine->getMusic()->setVolume(g_engine->scaledMusicVolume(0));
 					}
 				}
