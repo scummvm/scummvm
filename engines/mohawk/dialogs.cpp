@@ -512,6 +512,17 @@ void ZoombiniMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		return;
 	}
 
+	if (cmd == kOptionsCmd) {
+		GUI::ConfigDialog configDialog;
+		configDialog.runModal();
+
+		// Apply ScummVM and Zoombini settings as soon as the options dialog
+		// closes, while the main menu remains open.
+		vm->applyGameSettings();
+		vm->syncSoundSettings();
+		return;
+	}
+
 	MainMenuDialog::handleCommand(sender, cmd, data);
 }
 

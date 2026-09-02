@@ -60,7 +60,10 @@ public:
 	static const char *const kActionQuit;
 
 	// Bug fixes.
-	/** Enable fixes for known audio pops. */
+	/**
+	 * Enable fixes for known audio pops.
+	 * This is a Zoombini-internal constexpr key to represent Mohawk-inherited string key.
+	 */
 	constexpr static const char *kOptionFixAudioPops = "fix_audio_pops";
 	/** Enable the Fleens tree-descend feet fix. */
 	constexpr static const char *kOptionFixFleensTreeDescendFeetBug = "fix_fleens_tree_descend_feet_bug";
@@ -99,7 +102,7 @@ public:
 	 * When enabled, v1.x pages load MIDIMAC.MHK instead of MIDIMPC.MHK.
 	 * This plays the Macintosh MIDI soundtrack instead of the Windows soundtrack.
 	 * Mac MIDI assumes SC-55 instrumentation, while Windows MIDI assumes GS.
-	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild, does not contain any MIDI resources.
+	 * @remarks Broderbund v1.x only; TLC v2.0 rebuild does not contain any MIDI resources.
 	 */
 	constexpr static const char *kOptionUseMacMidi = "use_mac_midi";
 
