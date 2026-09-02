@@ -124,7 +124,7 @@ bool Scene9120::loadResourceI12Assets() {
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 2; i < kI12RequiredChunkCount; ++i)
-		resourceArenaSize += _resources.chunkTable.sizes[i];
+		resourceArenaSize += _resources._chunkTable.sizes[i];
 
 	_resources.allocateArena(resourceArenaSize);
 
@@ -158,7 +158,7 @@ void Scene9120::runTimedOverlayPhase() {
 			if (chunkIndex != 0) {
 				if ((chunkIndex & 1) == 0)
 					_soundBank0.playSample(kScene9120OverlaySoundId, 100);
-				drawTimedOverlayChunk(_resources.chunkOffsets[chunkIndex]);
+				drawTimedOverlayChunk(_resources._chunkOffsets[chunkIndex]);
 			}
 		}
 
@@ -260,11 +260,11 @@ void Scene9120::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte
 	if (localChunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
-	const uint32 baseOffset = _resources.chunkOffsets[localChunkIndex];
-	restoreSpriteBackground(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex,
+	const uint32 baseOffset = _resources._chunkOffsets[localChunkIndex];
+	restoreSpriteBackground(_resources._arena, baseOffset, 0, descriptorCount, descriptorIndex,
 		_descriptorBackground.surface(), _sceneFramebuffer.surface());
 	if (drawFrame)
-		drawStripSpriteFrame(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
+		drawStripSpriteFrame(_resources._arena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 byte Scene9120::getTimedOverlayChunk(uint tickIndex) const {
@@ -305,26 +305,26 @@ void Scene9120::clearActiveViewport() {
 }
 
 void Scene9120::drawTimedOverlayChunk(uint32 baseOffset) {
-	if (baseOffset + 2 > _resources.arena.size())
+	if (baseOffset + 2 > _resources._arena.size())
 		return;
 
-	const uint16 blockCount = readUint16LE(_resources.arena, baseOffset);
+	const uint16 blockCount = readUint16LE(_resources._arena, baseOffset);
 	uint cursor = baseOffset + 2;
 	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resources.arena.size())
+		if (cursor + 6 > _resources._arena.size())
 			return;
 
-		const uint32 packedDestination = readUint32LE(_resources.arena, cursor);
-		const uint16 size = readUint16LE(_resources.arena, cursor + 4);
+		const uint32 packedDestination = readUint32LE(_resources._arena, cursor);
+		const uint16 size = readUint16LE(_resources._arena, cursor + 4);
 		cursor += 6;
 
-		if (cursor + size > _resources.arena.size())
+		if (cursor + size > _resources._arena.size())
 			return;
 
 		const uint32 destinationOffset = ((packedDestination >> 16) + _yOffset) * HollywoodEngine::kSceneBufferWidth +
 			(packedDestination & 0xffff) + 0x2800;
 		if (destinationOffset + size <= _sceneFramebuffer.size())
-			memcpy(_sceneFramebuffer.data() + destinationOffset, _resources.arena.data() + cursor, size);
+			memcpy(_sceneFramebuffer.data() + destinationOffset, _resources._arena.data() + cursor, size);
 
 		cursor += size;
 	}

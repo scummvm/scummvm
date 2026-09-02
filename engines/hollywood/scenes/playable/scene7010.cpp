@@ -174,7 +174,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 	_hannoverSpeechTrack = _realtimeAnimationTracks.addRandom(kScene7010Chunk11Layer, kScene7010Chunk11SpeechFrameMillis,
 		0x0e, 0x12, true, false);
 	_doghouseSpeechTrack = _realtimeAnimationTracks.addStableRandom(
-		_actionOverlayPlayer.layer, kScene7010DoghouseSpeechFrameMillis,
+		_actionOverlayPlayer._layer, kScene7010DoghouseSpeechFrameMillis,
 		kScene7010DoghouseSpeechBaseFrame,
 		kScene7010DoghouseSpeechBaseFrame + kScene7010DoghouseSpeechFrameCount - 1,
 		true, false);

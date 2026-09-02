@@ -244,9 +244,9 @@ void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (_actionOverlayPlayer.isVisible()) {
-		const Graphics::Surface &background = overlayRedrawsSceneStateBlocks(_actionOverlayPlayer.layer.chunkIndex) ?
+		const Graphics::Surface &background = overlayRedrawsSceneStateBlocks(_actionOverlayPlayer._layer.chunkIndex) ?
 			_baseFramebufferOriginal.rawSurface() : _baseFramebuffer.rawSurface();
-		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, background);
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer._layer, background);
 	}
 	drawActionOverlayLayer();
 	drawSceneLayer(kScene1020QuasimodoLayer);
@@ -332,11 +332,11 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	// Borrow stage 107's text for the spoken lines and put this room's back afterwards.
 	// Keep our own small rows: those are the hotspot captions, and the patch below
 	// snapshots them -- stage 107's item 3 is "Spencer McDundee", not "cinta de Sue".
-	const Common::Array<byte> roomHotspotCaptions = _textStore.stageSmallRows;
+	const Common::Array<byte> roomHotspotCaptions = _textStore._stageSmallRows;
 	const bool spoken = _textStore.load(kScene1020TextArchiveName, sceneDebugName(),
 		kScene1020CutsceneStageIndex, resource003InventoryRowsOffsetIndex(),
 		speechCueDescriptorTableOffset());
-	_textStore.stageSmallRows = roomHotspotCaptions;
+	_textStore._stageSmallRows = roomHotspotCaptions;
 	if (!spoken) {
 		warning("%s failed to load stage %u cutscene text", sceneDebugName(),
 			kScene1020CutsceneStageIndex);

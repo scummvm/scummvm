@@ -230,14 +230,14 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawPrimaryNpc();
 	drawEnvironmentOverlayBeforeActor();
 	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum == kSceneAnimationBehindActors) {
+			_actionOverlayPlayer._stratum == kSceneAnimationBehindActors) {
 		drawActionOverlayLayer();
 	}
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (_actionOverlayPlayer.isVisible() &&
-			(_actionOverlayPlayer.stratum == kSceneAnimationActorReplacement ||
-			 _actionOverlayPlayer.stratum == kSceneAnimationScenePlaced)) {
+			(_actionOverlayPlayer._stratum == kSceneAnimationActorReplacement ||
+			 _actionOverlayPlayer._stratum == kSceneAnimationScenePlaced)) {
 		drawActionOverlayLayer();
 	}
 
@@ -245,7 +245,7 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[foregroundChunk], _sceneFramebuffer);
 	drawEnvironmentOverlayAfterForeground();
 	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.stratum == kSceneAnimationInFrontOfActors) {
+			_actionOverlayPlayer._stratum == kSceneAnimationInFrontOfActors) {
 		drawActionOverlayLayer();
 	}
 }
