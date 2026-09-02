@@ -77,7 +77,7 @@ namespace Mohawk {
 #define ID_SCRS MKTAG('S','C','R','S') // Snoid Script
 #define ID_NODE MKTAG('N','O','D','E') // Walk Node
 #define ID_PATH MKTAG('P','A','T','H') // Walk Path
-#define ID_SHPL MKTAG('S','H','P','L') // Shape List
+#define ID_SHPL MKTAG('S','H','P','L') // Standard Mohawk Palette
 
 // Living Books Resource FourCC's
 #define ID_TCUR MKTAG('t','C','U','R') // Cursor
@@ -124,7 +124,7 @@ namespace Mohawk {
 #define ID_STRL MKTAG('S','T','R','L') // String List (Zoombini, CSWorld, CSAmtrak)
 #define ID_TBMH MKTAG('t','B','M','H') // Standard Mohawk Bitmap
 #define ID_TMID MKTAG('t','M','I','D') // Standard Mohawk MIDI
-#define ID_REGS MKTAG('R','E','G','S') // Registration Data - Shape Offsets (Zoombini, Treehouse)
+#define ID_REGS MKTAG('R','E','G','S') // Registration/table data (resource-specific; Zoombini, Treehouse, CSTime)
 #define ID_BYTS MKTAG('B','Y','T','S') // Byte Array? (Used as Database Entry in CSWorld, CSAmtrak)
 #define ID_INTS MKTAG('I','N','T','S') // uint16 Array? (CSWorld, CSAmtrak)
 #define ID_BBOX MKTAG('B','B','O','X') // Boxes? (CSWorld, CSAmtrak)
