@@ -85,6 +85,60 @@ MODULE_OBJS += \
 	riven_stacks/tspit.o
 endif
 
+ifdef ENABLE_ZOOMBINI
+MODULE_OBJS += \
+	zoombini.o \
+	zoombini_dialogs.o \
+	zoombini_metaengine.o \
+	zoombini_resource.o \
+	zoombini_random.o \
+	zoombini_graphics.o \
+	zoombini_scripts.o \
+	zoombini_state.o \
+	zoombini_text.o \
+	zoombini_sound.o \
+	zoombini_debug.o \
+	zoombini_console.o \
+	zoombini_page.o \
+	zoombini_pages/grid_traversal.o \
+	zoombini_pages/interactive_base.o \
+	zoombini_pages/shelter_base.o \
+	zoombini_pages/puzzle_base.o \
+	zoombini_pages/interactive_rodmap.o \
+	zoombini_pages/shelter_picker.o \
+	zoombini_pages/shelter_basecamp1.o \
+	zoombini_pages/shelter_basecamp2.o \
+	zoombini_pages/shelter_town.o \
+	zoombini_pages/puzzle_bridge.o \
+	zoombini_pages/puzzle_caves.o \
+	zoombini_pages/puzzle_pizza.o \
+	zoombini_pages/puzzle_ferry.o \
+	zoombini_pages/puzzle_lilly.o \
+	zoombini_pages/puzzle_net.o \
+	zoombini_pages/puzzle_fleens.o \
+	zoombini_pages/puzzle_hotel.o \
+	zoombini_pages/puzzle_slides.o \
+	zoombini_pages/puzzle_tunnels.o \
+	zoombini_pages/puzzle_smoke.o \
+	zoombini_pages/puzzle_maze.o \
+	zoombini_pages/transition_base.o \
+	zoombini_pages/transition_logo.o \
+	zoombini_pages/transition_xfer.o \
+	zoombini_pages/dialog_base.o \
+	zoombini_pages/dialog_options.o \
+	zoombini_pages/dialog_saveload.o \
+	zoombini_pages/dialog_msgbox.o \
+	zoombini_pages/dialog_credits.o \
+	zoombini_pages/dialog_help.o \
+	zoombini_pages/dialog_debug.o
+endif
+
+# For games use truetype font
+ifdef ENABLE_ZOOMBINI
+MODULE_OBJS += \
+	ttfloader.o
+endif
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_MOHAWK), DYNAMIC_PLUGIN)
 PLUGIN := 1

@@ -47,6 +47,7 @@
 
 #ifdef ENABLE_ZOOMBINI
 #include "mohawk/zoombini.h"
+#include "mohawk/zoombini_metaengine.h"
 #endif
 
 namespace Mohawk {
@@ -474,7 +475,7 @@ void MohawkDefaultOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 }
 
 void MohawkDefaultOptionsWidget::load() {
-	_audioPopFixCheckbox->setState(ConfMan.getBool("fix_audio_pops", _domain));
+	_audioPopFixCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixAudioPops, _domain));
 }
 
 bool MohawkDefaultOptionsWidget::save() {
@@ -509,6 +510,17 @@ void ZoombiniMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		// and defer the game dialog until the ScummVM modal loop has unwound.
 		close();
 		vm->requestMainMenuSaveLoadDialog(cmd == kLoadCmd);
+		return;
+	}
+
+	if (cmd == kOptionsCmd) {
+		GUI::ConfigDialog configDialog;
+		configDialog.runModal();
+
+		// Apply ScummVM and Zoombini settings as soon as the options dialog
+		// closes, while the main menu remains open.
+		vm->applyGameSettings();
+		vm->syncSoundSettings();
 		return;
 	}
 
