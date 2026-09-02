@@ -443,7 +443,6 @@ protected:
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
 	bool dispatchGenericInventoryAction(const GameplayLoopCursorState &state);
 	void dispatchSceneAction(uint16 handlerId);
-	bool dispatchConfiguredSpeechAction(uint16 handlerId);
 	bool dispatchGenericSceneAction(uint16 handlerId);
 
 	// Pathfinding

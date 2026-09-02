@@ -149,17 +149,11 @@ const byte kScene7010DialogueTransitionUp = 2;
 const byte kScene7010DialogueTransitionStay = 3;
 const byte kScene7010DialogueTransitionUpTwo = 4;
 
-const SceneSpeechActionSpec kScene7010SpeechActions[] = {
-	{ 302, 1, 0 }, // Mirar escalera (look at stairs).
-	{ 309, 9, 0 }  // Mirar Junior (look at Junior).
-};
-
 static PlayableSceneConfig scene7010Config() {
 	PlayableSceneConfig config(7010,
 		SceneResourceLayout(19, 5, 18),
 		SceneViewport(kScene7010ViewportXOffset, kScene7010ViewportXOffset, kScene7010ViewportMaxXOffset),
 		SceneActorPose(0x184, 0x1c6, 1));
-	config.setSecondarySpeechActions(kScene7010SpeechActions);
 	config.loadInventoryActionTables = false;
 	config.loadActorDepthTables = false;
 	return config;
@@ -423,6 +417,9 @@ bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Ir a escalera (go to stairs)
 		handleActionSlot00TransitionToG03();
 		break;
+	case 302: // Mirar escalera (look at stairs)
+		handleActionSlot01SecondarySpeech();
+		break;
 	case 303: // Mirar caseta de perro (look at doghouse)
 		handleActionSlot02SecondarySpeech();
 		break;
@@ -438,8 +435,12 @@ bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 308: // Hablar con Junior (talk to Junior)
 		handleActionSlot07DialogueAndReturn();
 		break;
+	case 309: // Mirar Junior (look at Junior)
+		handleActionSlot08CommonSpeech();
+		break;
 	default:
-		return false;
+		warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
+		break;
 	}
 	return true;
 }
@@ -593,6 +594,10 @@ void Scene7010::handleActionSlot00TransitionToG03() {
 	_vm->gameState().mainFlowStateId = kScene7010ExitState7030;
 }
 
+void Scene7010::handleActionSlot01SecondarySpeech() {
+	beginSecondarySpeechLine(1, 0);
+}
+
 void Scene7010::handleActionSlot02SecondarySpeech() {
 	// The office statue sequence primes the Frankenstein-note condition;
 	// this look/description slot switches to the post-note line when set.
@@ -734,6 +739,10 @@ void Scene7010::handleActionSlot07DialogueAndReturn() {
 	runChunk8HideSequence();
 	walkActiveActorTo(0x16b, 0x1df, 3, 0);
 	beginSecondarySpeechLine(7, 2);
+}
+
+void Scene7010::handleActionSlot08CommonSpeech() {
+	beginSecondarySpeechLine(9, 0);
 }
 
 void Scene7010::runHannoverDialogueMenuRow98() {

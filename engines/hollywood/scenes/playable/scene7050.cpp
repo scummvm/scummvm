@@ -69,19 +69,11 @@ const SceneLayerSpec kScene7050LayerSpecs[] = {
 		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap), true, 0}
 };
 
-const SceneSpeechActionSpec kScene7050SpeechActions[] = {
-	{ 301, 1, 0 }, // Mirar puerta (look at door).
-	{ 304, 2, 0 }, // Mirar empleado del guardarropa (look at cloakroom attendant).
-	{ 305, 3, 0 }, // Mirar trapo (look at rag).
-	{ 308, 6, 0 }  // Mirar caja (look at box): party horns / movement behind it.
-};
-
 static PlayableSceneConfig scene7050Config() {
 	PlayableSceneConfig config(7050,
 		SceneResourceLayout(12, 5, 11),
 		SceneViewport(0x68),
 		SceneActorPose(0x0a1, 0x158, 2));
-	config.setSecondarySpeechActions(kScene7050SpeechActions);
 	return config;
 }
 
@@ -228,12 +220,24 @@ bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 306: // Unused G05 no-op slot.
 	case 307: // Unused G05 no-op slot.
 		return true;
+	case 301: // Mirar puerta (look at door)
+		beginSecondarySpeechLine(1, 0);
+		return true;
 	case 302: // Usar/Abrir puerta (use/open door)
 		handleActionSlot01ReturnToG04();
 		return true;
 	case 303: // Hablar con empleado del guardarropa (talk to cloakroom attendant)
 		runDialogueMenuRow98();
 		applySceneStateToHotspotsAndPatches(0);
+		return true;
+	case 304: // Mirar empleado del guardarropa (look at cloakroom attendant)
+		beginSecondarySpeechLine(2, 0);
+		return true;
+	case 305: // Mirar trapo (look at rag)
+		beginSecondarySpeechLine(3, 0);
+		return true;
+	case 308: // Mirar caja (look at box): party horns / movement behind it.
+		beginSecondarySpeechLine(6, 0);
 		return true;
 	case 311: // Coger trapo (take rag)
 		handleActionSlot10PickupItem10();

@@ -154,40 +154,11 @@ const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
 	{ 75, 1, 0, 2, 9, 10, 1, 0xff }
 };
 
-const SceneSpeechActionSpec kScene7100SpeechActions[] = {
-	{ 301, 0x01, 0 }, // Mirar puerta (look at door).
-	{ 302, 0x02, 0 }, // Abrir/Cerrar puerta (open/close door).
-	{ 304, 0x03, 0 }, // Coger Ron (take Ron).
-	{ 306, 0x05, 0 }, // Coger póster (take poster).
-	{ 307, 0x06, 0 }, // Coger ratonera (take mousetrap).
-	{ 310, 0x09, 0 }, // Coger camastro (take cot).
-	{ 311, 0x0a, 0 }, // Abrir camastro (open cot).
-	{ 312, 0x0b, 0 }, // Coger escalera (take ladder).
-	{ 313, 0x0c, 0 }, // Abrir escalera (open ladder).
-	{ 314, 0x0d, 0 }, // Coger pulsador (take push button).
-	{ 318, 0x11, 0 }, // Coger gancho (take hook).
-	{ 319, 0x12, 0 }, // Abrir gancho (open hook).
-	{ 320, 0x13, 0 }, // Coger tubería (take pipe).
-	{ 321, 0x14, 0 }, // Usar tablones (use boards).
-	{ 322, 0x15, 0 }, // Coger tablones (take boards).
-	{ 323, 0x16, 0 }, // Usar/Coger trozo de tubería (use/take pipe piece).
-	{ 324, 0x17, 0 }, // Coger almohada (take pillow).
-	{ 325, 0x18, 0 }, // Coger cables (take wires).
-	{ 329, 0x1c, 0 }, // Usar placa con cables (use plate on wires).
-	{ 331, 0x1e, 0 }, // Usar lupa en la celda (use magnifying glass in cell).
-	{ 332, 0x1f, 0 }, // Usar navaja con puerta (use multi-tool on door).
-	{ 333, 0x20, 0 }, // Usar herramientas con Ron (use tools on Ron).
-	{ 334, 0x21, 0 }, // Usar baraja con Ron (use cards on Ron).
-	{ 336, 0x23, 0 }, // Usar pamela/perfume en la celda (use hat/perfume in cell).
-	{ 337, 0x24, 0 }  // Usar rata con gancho/tubería/cables (use rat on hook/pipes/wires).
-};
-
 static PlayableSceneConfig scene7100Config() {
 	PlayableSceneConfig config(7100,
 		SceneResourceLayout(21, 5, 20),
 		SceneViewport(kScene7100ViewportXOffset),
 		SceneActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing));
-	config.setSecondarySpeechActions(kScene7100SpeechActions);
 	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
@@ -305,11 +276,26 @@ void Scene7100::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
+	case 301: // Mirar puerta (look at door)
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 302: // Abrir/Cerrar puerta (open/close door)
+		beginSecondarySpeechLine(2, 0);
+		return true;
 	case 303: // Hablar con Ron (talk to Ron)
 		runRonDialogue();
 		return true;
+	case 304: // Coger Ron (take Ron)
+		beginSecondarySpeechLine(3, 0);
+		return true;
 	case 305: // Usar póster (use poster, taking it down)
 		handlePickupItem15();
+		return true;
+	case 306: // Coger póster (take poster)
+		beginSecondarySpeechLine(5, 0);
+		return true;
+	case 307: // Coger ratonera (take mousetrap)
+		beginSecondarySpeechLine(6, 0);
 		return true;
 	case 308: // Usar placa (use plate)
 		beginSecondarySpeechLine(7, _vm->gameState().cellPlateRatProgress == 0 ? 0 : 1);
@@ -317,8 +303,47 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 309: // Coger placa (take plate)
 		beginSecondarySpeechLine(8, MIN<byte>(_vm->gameState().cellPlateRatProgress, 2));
 		return true;
+	case 310: // Coger camastro (take cot)
+		beginSecondarySpeechLine(9, 0);
+		return true;
+	case 311: // Abrir camastro (open cot)
+		beginSecondarySpeechLine(10, 0);
+		return true;
+	case 312: // Coger escalera (take ladder)
+		beginSecondarySpeechLine(0x0b, 0);
+		return true;
+	case 313: // Abrir escalera (open ladder)
+		beginSecondarySpeechLine(0x0c, 0);
+		return true;
+	case 314: // Coger pulsador (take push button)
+		beginSecondarySpeechLine(0x0d, 0);
+		return true;
 	case 315: // Abrir pulsador (open push button)
 		handleActionHandler315();
+		return true;
+	case 318: // Coger gancho (take hook)
+		beginSecondarySpeechLine(0x11, 0);
+		return true;
+	case 319: // Abrir gancho (open hook)
+		beginSecondarySpeechLine(0x12, 0);
+		return true;
+	case 320: // Coger tubería (take pipe)
+		beginSecondarySpeechLine(0x13, 0);
+		return true;
+	case 321: // Usar tablones (use boards)
+		beginSecondarySpeechLine(0x14, 0);
+		return true;
+	case 322: // Coger tablones (take boards)
+		beginSecondarySpeechLine(0x15, 0);
+		return true;
+	case 323: // Usar/Coger trozo de tubería (use/take pipe piece)
+		beginSecondarySpeechLine(0x16, 0);
+		return true;
+	case 324: // Coger almohada (take pillow)
+		beginSecondarySpeechLine(0x17, 0);
+		return true;
+	case 325: // Coger cables (take wires)
+		beginSecondarySpeechLine(0x18, 0);
 		return true;
 	case 326: // Usar placa con ratonera (use plate on mousetrap)
 		handlePlateOnMousetrap();
@@ -329,11 +354,32 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 328: // Usar navaja-destornillador con placa (use screwdriver on plate)
 		handleRemovePlate();
 		return true;
+	case 329: // Usar placa con cables (use plate on wires)
+		beginSecondarySpeechLine(0x1c, 0);
+		return true;
 	case 330: // Usar objetos inadecuados con puerta (use unsuitable items on door)
 		beginSecondarySpeechLine(0x1d, (byte)_random.getRandomNumber(1));
 		return true;
+	case 331: // Usar lupa en la celda (use magnifying glass in cell)
+		beginSecondarySpeechLine(0x1e, 0);
+		return true;
+	case 332: // Usar navaja con puerta (use multi-tool on door)
+		beginSecondarySpeechLine(0x1f, 0);
+		return true;
+	case 333: // Usar herramientas con Ron (use tools on Ron)
+		beginSecondarySpeechLine(0x20, 0);
+		return true;
+	case 334: // Usar baraja con Ron (use cards on Ron)
+		beginSecondarySpeechLine(0x21, 0);
+		return true;
 	case 335: // Usar objetos que podrían estropearse (use damageable items)
 		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
+		return true;
+	case 336: // Usar pamela/perfume en la celda (use hat/perfume in cell)
+		beginSecondarySpeechLine(0x23, 0);
+		return true;
+	case 337: // Usar rata con gancho/tubería/cables (use rat on hook/pipes/wires)
+		beginSecondarySpeechLine(0x24, 0);
 		return true;
 	case 340: // Dar objeto a Ron (give item to Ron)
 		handleInventoryTransferAction();
