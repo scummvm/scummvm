@@ -926,17 +926,17 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 		yOffset = xData._height / 2;
 	}
 	for (int i = 0; i < 16; i++) {
-		const PathfindingPoint &current = g_engine->_pathfindingPoints[i];
+		const PathfindingPoint &current = g_engine->_pathfinding._points[i];
 		renderString(current._position.x - xOffset, current._position.y - yOffset, "x");
 
 		const Common::String &number = Common::String::format("%u", i);
 		renderString(current._position.x - xOffset + 10, current._position.y - yOffset + 10, number.c_str());
 
 		for (uint8 adjacentIndex : current._adjacentPoints) {
-			if (adjacentIndex >= g_engine->_pathfindingPoints.size()) {
+			if (adjacentIndex >= g_engine->_pathfinding._points.size()) {
 				continue;
 			}
-			PathfindingPoint &other = g_engine->_pathfindingPoints[adjacentIndex - 1];
+			PathfindingPoint &other = g_engine->_pathfinding._points[adjacentIndex - 1];
 			s.drawLine(current._position.x, current._position.y, other._position.x, other._position.y, 0xFFFFFFFF);
 		}
 	}
@@ -1794,28 +1794,7 @@ void View1::walkToScreenPosition(const Common::Point &pos) {
 		return;
 	}
 
-	const Common::Point &charPos = protagonist->getPosition();
-
-	Common::Point target = pos;
-	g_engine->snapToWalkablePosition(&target.y, &target.x, charPos.y, charPos.x);
-
-	protagonist->_pathFinalDestination = target;
-	protagonist->_currentPathIndex = 0;
-	protagonist->_path.clear();
-
-	const bool directPath = g_engine->isPathWalkable(target.y, target.x, charPos.y, charPos.x);
-	if (directPath || Macs2Engine::isWalkabilityBlocking(g_engine->getWalkabilityAt(target.y, target.x))) {
-		protagonist->_targetPosition = target;
-	} else {
-		const bool found = protagonist->calculatePath(target);
-		if (!found) {
-			protagonist->_targetPosition = target;
-		}
-	}
-	protagonist->_stepDeltaX = (int16)ABS(protagonist->_targetPosition.x - charPos.x);
-	protagonist->_stepDeltaY = (int16)ABS(protagonist->_targetPosition.y - charPos.y);
-	protagonist->_stepError = 0;
-	protagonist->_stepDirectionSet = false;
+	protagonist->setWalkTarget(pos, true);
 	g_engine->_scriptExecutor->saveWalkRuntime(protagonist, protagonist->_gameObject);
 }
 
@@ -2833,7 +2812,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			}
 
 			int16 walkabilityOffset = 0;
-			if (g_engine->_pathfindingMap.w > 0) {
+			if (g_engine->_pathfinding._map.w > 0) {
 				walkabilityOffset = g_engine->getWalkabilityAt(charY, charX);
 				if (Macs2Engine::isWalkabilityBlocking((uint16)walkabilityOffset))
 					walkabilityOffset = 0;

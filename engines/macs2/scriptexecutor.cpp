@@ -315,18 +315,7 @@ OpcodeResult ScriptExecutor::scriptChangeAnimation() {
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	// getAreaAtPoint (1008:101d). Reads the pathfinding map pixel and applies
 	// the area override table at sceneData + value*5 + 0x4EA8.
-	if (x >= (uint16)_engine->screenWidth() || y >= (uint16)_engine->gameHeight() ||
-		_engine->_pathfindingMap.w == 0) {
-		return 0;
-	}
-	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
-	if (result >= AREA_OVERRIDE_MIN && result < 250) {
-		uint16 overrideValue = _engine->getPathfindingOverride2(result);
-		if (overrideValue >= AREA_OVERRIDE_MIN) {
-			result = overrideValue;
-		}
-	}
-	return result;
+	return _engine->_pathfinding.areaAt(x, y);
 }
 
 bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 resourceIndex, uint16 /*objectTableOffset*/) {
@@ -1425,25 +1414,7 @@ OpcodeResult Script::ScriptExecutor::scriptWalkToPosition() {
 		c = &stackCharacter;
 	}
 
-	const Common::Point current = c->getPosition();
-	const Common::Point target(x, y);
-
-	c->_currentPathIndex = 0;
-	c->_path.clear();
-	c->_pathFinalDestination = target;
-
-	bool directPath = _engine->isPathWalkable(y, x, current.y, current.x);
-	if (!directPath && Macs2Engine::isWalkabilityWalkable(_engine->getWalkabilityAt(y, x))) {
-		c->calculatePath(target);
-	}
-	if (c->_path.empty()) {
-		c->_targetPosition = c->_pathFinalDestination;
-	}
-
-	c->_stepDeltaX = (int16)ABS((int32)c->_targetPosition.x - current.x);
-	c->_stepDeltaY = (int16)ABS((int32)c->_targetPosition.y - current.y);
-	c->_stepError = 0;
-	c->_stepDirectionSet = false;
+	c->setWalkTarget(Common::Point(x, y), false);
 
 	// Binary loadObjectData seeds runtime+0x21D from the object table vertical offset;
 	// scriptWalkToPosition does not change it. Match that so waitForWalk can complete
@@ -3127,7 +3098,7 @@ OpcodeResult Script::ScriptExecutor::scriptSetPathfindingRemap() {
 		setScriptError(0x0D);
 		return OpcodeResult::Continue;
 	}
-	g_engine->_areaOverrides[sourceValue - AREA_OVERRIDE_MIN] = targetValue;
+	g_engine->_pathfinding._areaOverrides[sourceValue - AREA_OVERRIDE_MIN] = targetValue;
 	return OpcodeResult::Continue;
 }
 
@@ -3955,7 +3926,7 @@ OpcodeResult ScriptExecutor::scriptLoadWalkMask() {
 	const bool halfRes = _engine->isV2();
 	const int w = halfRes ? kScreenWidth : _engine->screenWidth();
 	const int h = halfRes ? kGameHeight : _engine->gameHeight();
-	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_pathfindingMap,
+	if (!_engine->loadMaskFromResource(resourceIndex, _executingScriptObjectId, _engine->_pathfinding._map,
 									   w, h, halfRes))
 		warning("loadWalkMask: failed resource %u", resourceIndex);
 	return OpcodeResult::Continue;

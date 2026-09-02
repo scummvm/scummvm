@@ -42,6 +42,7 @@
 #include "macs2/amiga_archive.h"
 #include "macs2/events.h"
 #include "macs2/macs2_constants.h"
+#include "macs2/pathfinding.h"
 #include "macs2/scriptexecutor.h"
 
 namespace Macs2 {
@@ -279,24 +280,6 @@ struct AnimBlobView {
 	}
 };
 
-struct PathfindingPoint {
-	uint8 _index;
-	Common::Point _position;
-	Common::Array<uint8> _adjacentPoints;
-};
-
-struct PathfindingAreaOverride {
-	bool _active;
-	uint16 _index;
-	uint16 _overrideValue;
-};
-
-// Area override table at scene+0x4EA8 (indexed by pathfinding value 0xC8..0xEF)
-// Set by opcode 0x4D, read by getAreaAtPoint (1008:101d)
-#define AREA_OVERRIDE_MIN 200
-#define AREA_OVERRIDE_MAX 239
-#define AREA_OVERRIDE_COUNT (AREA_OVERRIDE_MAX - AREA_OVERRIDE_MIN + 1)
-
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
@@ -367,10 +350,6 @@ public:
 	// Assumes that the stream is at the start of the right section
 	void readImageResources(Common::SeekableReadStream *stream);
 
-	// visited stack (matches binary's stack-frame approach, max 16 nodes)
-	int _visitedStack[17] {};
-	int _visitedCount = 0;
-
 public:
 	Macs2Engine(OSystem *osystem, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
@@ -406,41 +385,46 @@ public:
 	Common::Array<Common::String> _debugOutput;
 	Common::Array<Common::String> _textLog;
 
-	// Note: This is used both for pathfinding as well as for area IDs
-	Graphics::ManagedSurface _pathfindingMap;
-
-	Common::Array<PathfindingAreaOverride> _pathfindingOverrides;
-	// Area override table at scene+value*5+0x4EA8 (for getAreaAtPoint)
-	uint16 _areaOverrides[AREA_OVERRIDE_COUNT] = {0};
-	Common::Array<PathfindingPoint> _pathfindingPoints;
+	Pathfinding _pathfinding;
 	Common::Array<Common::Point> _path;
 
-	bool getPathfindingOverride(uint16 index, uint16 &result) const;
-	void setPathfindingOverride(uint16 index, uint16 overrideValue);
+	bool getPathfindingOverride(uint16 index, uint16 &result) const {
+		return _pathfinding.getWalkOverride(index, result);
+	}
+	void setPathfindingOverride(uint16 index, uint16 overrideValue) {
+		_pathfinding.setWalkOverride(index, overrideValue);
+	}
 
-	// Walkability threshold 0xC8 uses signed 16-bit comparison in the binary (JL/JGE).
-	// Values with (int16)value < 0xC8 are walkable heights; e.g. -2 (0xFFFE) is walkable.
 	static inline bool isWalkabilityBlocking(uint16 value) {
-		return (int16)value >= 0xC8;
+		return Pathfinding::isWalkabilityBlocking(value);
 	}
 	static inline bool isWalkabilityWalkable(uint16 value) {
-		return (int16)value < 0xC8;
+		return Pathfinding::isWalkabilityWalkable(value);
 	}
 
-	// This one implements the lookup relative to es:[di+4EA8h] vs. the other one at es:[di+4EA5h] and es:[di+4EA6h]
-	uint16 getPathfindingOverride2(uint16 index) const;
-	void removePathfindingOverride(uint16 index);
+	uint16 getPathfindingOverride2(uint16 index) const {
+		return _pathfinding.areaOverrideAt(index);
+	}
+	void removePathfindingOverride(uint16 index) {
+		_pathfinding.removeWalkOverride(index);
+	}
 
-	uint16 getWalkabilityAt(int16 y, int16 x);
+	uint16 getWalkabilityAt(int16 y, int16 x) {
+		return _pathfinding.walkabilityAt(y, x);
+	}
+	uint16 getWalkabilityAt(const Common::Point &p) {
+		return _pathfinding.walkabilityAt(p);
+	}
 	/** Sync depth map with the current background animation frame (v1 gate fix). */
 	void updateBackgroundAnimationDepthMap(size_t animIndex);
 	void updateAllBackgroundAnimationDepthMaps();
-	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2);
-	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX);
-	int getPathfindingNodeCount() const { return (int)_numPathfindingPoints; }
-	int euclideanDistance(const Common::Point &a, const Common::Point &b);
-	int walkableDistance(int nodeA, int nodeB);
-	int computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
+	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
+		return _pathfinding.isLineWalkable(y1, x1, y2, x2);
+	}
+	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
+		_pathfinding.snapToWalkable(pTargetY, pTargetX, charY, charX);
+	}
+	int getPathfindingNodeCount() const { return _pathfinding.nodeCount(); }
 
 	// This is the override list living at [5BD1]
 	// Savegames sync 16 words into indices 1..16 (array size 0x11 during sync).
@@ -613,7 +597,6 @@ public:
 
 	Common::Array<uint16> _hotspotColorTable;
 
-	uint16 _numPathfindingPoints;
 	uint16 _walkDepthThresholdY;
 	uint16 _walkDepthScaleFactor;
 	uint16 _walkBaseSpeedPct;
@@ -745,8 +728,6 @@ public:
 
 	// Schedules a run of the script the next time the executor is ticked
 	void scheduleRun(bool initScene = false);
-
-	uint16 getWalkabilityAt(const Common::Point &p);
 
 	int measureString(const Common::String &s);
 

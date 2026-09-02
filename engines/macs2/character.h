@@ -47,12 +47,10 @@ private:
 	uint16 lookupWalkability(const Common::Point &p) const;
 	bool shouldStepVerticalMotion() const;
 	bool isAnimationMirrored() const;
-	void floodFillConnectedNodes(int nodeIndex, bool *visited, int nodeCount);
 	// Returns false if we are at the end of the path already or the path is not valid
 	bool walkAlongPath();
 	void startLerpTo(const Common::Point &target, uint32 duration, bool ignoreObstacles = false);
 	bool isWalkable(const Common::Point &p) const;
-	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount);
 
 public:
 	Character();
@@ -87,6 +85,7 @@ public:
 	uint16 _motionStartVerticalOffset = 0;
 
 	bool calculatePath(Common::Point target);
+	void setWalkTarget(const Common::Point &target, bool snap);
 	void startPickup(Macs2::GameObject *object);
 
 	const Common::Point &getPosition() const;

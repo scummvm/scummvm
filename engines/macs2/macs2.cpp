@@ -199,7 +199,7 @@ void Macs2Engine::readResourceFile() {
 		const int gh = gameHeight();
 		_sceneBackground.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
 		_depthMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
-		_pathfindingMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
+		_pathfinding.createMap(sw, gh);
 		_shadowMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
 		_hotspotMap.create(sw, gh, Graphics::PixelFormat::createFormatCLUT8());
 		changeScene(Scenes::instance()._currentSceneIndex);
@@ -1004,11 +1004,11 @@ bool Macs2Engine::loadSceneGraphics(uint32 sceneIndex) {
 
 		_sceneBackground.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
 		_depthMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
-		_pathfindingMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
+		_pathfinding._map.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
 		_shadowMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
 		_hotspotMap.fillRect(Common::Rect(0, 0, kScreenWidth, kGameHeight), 0);
 		_numHotspots = 0;
-		_numPathfindingPoints = 0;
+		_pathfinding._numPoints = 0;
 		_walkDepthThresholdY = 100;
 		_walkDepthScaleFactor = 100;
 		_walkBaseSpeedPct = 100;
@@ -1106,7 +1106,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 
 	Graphics::ManagedSurface pathfindingRLE = readRLEImage(_fileStream->pos(), _fileStream);
 	// Walkability/pathfinding map at scene offset 0x2017
-	_pathfindingMap.blitFrom(pathfindingRLE);
+	_pathfinding._map.blitFrom(pathfindingRLE);
 
 	// Shadow/shading intensity map for character rendering
 	Graphics::ManagedSurface shadowRLE = readRLEImage(_fileStream->pos(), _fileStream);
@@ -1118,7 +1118,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 
 	// Pretty sure that this is the pathfinding points. We address them starting
 	// Load pathfinding nodes (16 entries x 10 bytes at scene+0x5023)
-	_pathfindingPoints.clear();
+	_pathfinding._points.clear();
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
 		current._index = i;
@@ -1130,7 +1130,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 		current._adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
 			current._adjacentPoints.push_back(adj[j]);
-		_pathfindingPoints.push_back(current);
+		_pathfinding._points.push_back(current);
 	}
 
 	_numHotspots = _fileStream->readUint16LE();
@@ -1143,7 +1143,7 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	readBackgroundAnimations(_fileStream);
 	updateAllBackgroundAnimationDepthMaps();
 
-	_numPathfindingPoints = _fileStream->readUint16LE();
+	_pathfinding._numPoints = _fileStream->readUint16LE();
 
 	// Offset 51F9h
 	_fileStream->readUint16LE();
@@ -1237,7 +1237,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 	Graphics::ManagedSurface half;
 	if (!readMegaPicImage(stream, kScreenWidth, kGameHeight, half))
 		return false;
-	upscaleHalfRes(half, _pathfindingMap);
+	upscaleHalfRes(half, _pathfinding._map);
 
 	if (!readMegaPicImage(stream, kScreenWidth, kGameHeight, half))
 		return false;
@@ -1247,7 +1247,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		return false;
 	upscaleHalfRes(half, _hotspotMap);
 
-	_pathfindingPoints.clear();
+	_pathfinding._points.clear();
 	for (int i = 0; i < 16; i++) {
 		PathfindingPoint current;
 		current._index = i;
@@ -1260,7 +1260,7 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		current._adjacentPoints.clear();
 		for (uint16 j = 0; j < numConnections && j < 4; j++)
 			current._adjacentPoints.push_back(adj[j]);
-		_pathfindingPoints.push_back(current);
+		_pathfinding._points.push_back(current);
 	}
 	stream->skip(352);
 
@@ -1320,9 +1320,9 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 		}
 	}
 
-	_numPathfindingPoints = stream->readUint16LE();
-	if (_numPathfindingPoints == 0 || _numPathfindingPoints > 16)
-		_numPathfindingPoints = 16;
+	_pathfinding._numPoints = stream->readUint16LE();
+	if (_pathfinding._numPoints == 0 || _pathfinding._numPoints > 16)
+		_pathfinding._numPoints = 16;
 	(void)stream->readUint16LE();
 	(void)stream->readUint16LE();
 	_walkDepthThresholdY = (uint16)(stream->readUint16LE() << 1);
@@ -1356,7 +1356,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
 	_backgroundAnimations.clear();
 	_backgroundAnimationsBlobs.clear();
-	memset(_areaOverrides, 0, sizeof(_areaOverrides));
+	_pathfinding.clearAreaOverrides();
 
 	if (isAmiga()) {
 		// Amiga scripts use scene ids = MM_resource_id + 1 (Ghidra FUN_002215fa
@@ -1477,7 +1477,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		Scenes::instance()._currentSceneSpecialAnimOffsets.clear();
 		_scriptExecutor->setScript(Scenes::instance()._currentSceneScript);
 
-		_pathfindingOverrides.clear();
+		_pathfinding.clearWalkOverrides();
 		for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 			_hotspotOverrides[i] = 0xFFFF;
 		}
@@ -1584,7 +1584,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Reset overrides before running the new scene's script (original placement:
 	// memsetBytes(0, 200, sceneData+0x528D) and memsetBytes(0xffff, 0x20, sceneData+0x5BD3)
 	// happen after all scene data is loaded, before script execution)
-	_pathfindingOverrides.clear();
+	_pathfinding.clearWalkOverrides();
 	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 		_hotspotOverrides[i] = 0xFFFF;
 	}
@@ -2032,28 +2032,6 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 	return false;
 }
 
-// getWalkabilityAt (1008:0e8c)
-// Params: (param_1=y, param_2=x)
-// Bounds: x<0 || x>=screenWidth || y<0 || y>=gameHeight -> return 0
-// Lookup: scene[y*4 + 0x2017] -> row pointer, then byte at [rowPtr + x]
-// Values 0xC8..0xEF: override range - checks scene[value*5 + 0x4EA5]:
-//   If override disabled (flag==0): returns 0xFF
-//   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
-uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
-	if (x < 0 || x >= screenWidth() || y < 0 || y >= gameHeight() || _pathfindingMap.w == 0) {
-		return 0;
-	}
-	uint16 value = _pathfindingMap.getPixel(x, y);
-	if (value >= 0xC8 && value <= 0xEF) {
-		uint16 overrideResult;
-		if (getPathfindingOverride(value, overrideResult)) {
-			return overrideResult;
-		}
-		return 0xFF;
-	}
-	return value;
-}
-
 void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
 	if (isV2() || _sceneDepthMap.w == 0 || animIndex >= _backgroundAnimations.size()) {
 		return;
@@ -2124,346 +2102,6 @@ void Macs2Engine::updateAllBackgroundAnimationDepthMaps() {
 	for (size_t i = 0; i < _backgroundAnimations.size(); i++) {
 		updateBackgroundAnimationDepthMap(i);
 	}
-}
-
-// Params: (pTargetY, pTargetX, charY, charX)
-// Modifies *pTargetY and *pTargetX in place.
-void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
-	int16 savedX = *pTargetX;
-	int16 savedY = *pTargetY;
-	const int16 maxY = (int16)gameHeightLast();
-	const int16 maxX = (int16)screenWidthLast();
-
-	// Phase 1: Scan downward with depth constraint
-	// Condition: walkability >= 200 OR (targetY - walkability) < savedY
-	while (true) {
-		uint16 w = getWalkabilityAt(*pTargetY, savedX);
-		if (isWalkabilityWalkable(w) && (*pTargetY - (int16)w >= savedY)) {
-			break;
-		}
-		if (*pTargetY >= maxY) {
-			break;
-		}
-		*pTargetY = *pTargetY + 1;
-	}
-
-	// Phase 2: Continue scanning to bottom for best depth match
-	int16 scanY = *pTargetY;
-	while (scanY <= maxY) {
-		uint16 w = getWalkabilityAt(scanY, *pTargetX);
-		if (scanY - (int16)w == savedY) {
-			*pTargetY = scanY;
-		}
-		if (scanY == maxY) {
-			break;
-		}
-		scanY++;
-	}
-
-	// Phase 3: If at screen bottom and still non-walkable, scan upward
-	if (*pTargetY == maxY) {
-		uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
-		if (isWalkabilityBlocking(w)) {
-			while (isWalkabilityBlocking(w) && *pTargetY > 0) {
-				*pTargetY = *pTargetY - 1;
-				w = getWalkabilityAt(*pTargetY, *pTargetX);
-			}
-		}
-	}
-
-	// Phase 4: If still non-walkable, scan X toward character
-	uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
-	if (isWalkabilityBlocking(w)) {
-		*pTargetY = savedY;
-		if (charX < *pTargetX) {
-			while (true) {
-				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (isWalkabilityWalkable(w2)) {
-					break;
-				}
-				if (*pTargetX <= 0) {
-					break;
-				}
-				*pTargetX = *pTargetX - 1;
-			}
-		} else {
-			while (true) {
-				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (isWalkabilityWalkable(w2)) {
-					break;
-				}
-				if (*pTargetX >= maxX) {
-					break;
-				}
-				*pTargetX = *pTargetX + 1;
-			}
-		}
-		// Phase 5: If all failed, fall back to character position
-		uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-		if (isWalkabilityBlocking(w2)) {
-			*pTargetX = charX;
-			*pTargetY = charY;
-		}
-	}
-
-	// Phase 6: Gradient-based wall push
-	int16 pushX = 0;
-	int16 pushY = 0;
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 1))) {
-		pushX--;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 1))) {
-		pushX++;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 1, *pTargetX))) {
-		pushY--;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 1, *pTargetX))) {
-		pushY++;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 2))) {
-		pushX--;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 2))) {
-		pushX++;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 2, *pTargetX))) {
-		pushY--;
-	}
-	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 2, *pTargetX))) {
-		pushY++;
-	}
-
-	while (pushX != 0 || pushY != 0) {
-		if (pushX < 0) {
-			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY, *pTargetX - 1))) {
-				*pTargetX = *pTargetX - 1;
-			}
-			pushX++;
-		}
-		if (pushX > 0) {
-			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY, *pTargetX + 1))) {
-				*pTargetX = *pTargetX + 1;
-			}
-			pushX--;
-		}
-		if (pushY < 0) {
-			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY - 1, *pTargetX))) {
-				*pTargetY = *pTargetY - 1;
-			}
-			pushY++;
-		}
-		if (pushY > 0) {
-			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY + 1, *pTargetX))) {
-				*pTargetY = *pTargetY + 1;
-			}
-			pushY--;
-		}
-	}
-}
-
-bool Macs2Engine::getPathfindingOverride(uint16 index, uint16 &result) const {
-	for (const PathfindingAreaOverride &current : _pathfindingOverrides) {
-		if (current._index == index && current._active) {
-			result = current._overrideValue;
-			return true;
-		}
-	}
-	return false;
-}
-void Macs2Engine::setPathfindingOverride(uint16 index, uint16 overrideValue) {
-	removePathfindingOverride(index);
-	PathfindingAreaOverride override;
-	override._active = true;
-	override._index = index;
-	override._overrideValue = overrideValue;
-	_pathfindingOverrides.push_back(override);
-}
-
-uint16 Macs2Engine::getPathfindingOverride2(uint16 index) const {
-	if (index < AREA_OVERRIDE_MIN || index > AREA_OVERRIDE_MAX) {
-		return 0;
-	}
-	return _areaOverrides[index - AREA_OVERRIDE_MIN];
-}
-
-void Macs2Engine::removePathfindingOverride(uint16 index) {
-	for (uint i = 0; i < _pathfindingOverrides.size(); i++) {
-		PathfindingAreaOverride &current = _pathfindingOverrides[i];
-		if (current._index == index) {
-			_pathfindingOverrides.remove_at(i);
-			return;
-		}
-	}
-};
-
-// Params: (param_1=y1, param_2=x1, param_3=y2, param_4=x2)
-// Traces from (x2,y2) toward (x1,y1). Checks walkability only on major-axis steps.
-// Uses unsigned 16-bit error accumulator with wrapping arithmetic.
-// Returns true if entire line is walkable (all sampled pixels < 0xC8).
-bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
-	uint16 error = 0;
-	int16 curX = x2;
-	int16 curY = y2;
-	uint16 absDx = (uint16)ABS((int)(x2 - x1));
-	uint16 absDy = (uint16)ABS((int)(y2 - y1));
-	bool result = true;
-
-	do {
-		bool steppedX;
-		if (error >= absDx) {
-			if (y1 < y2) {
-				curY--;
-			}
-			if (y2 < y1) {
-				curY++;
-			}
-			error -= absDx;
-			steppedX = false;
-		} else {
-			if (x1 < x2) {
-				curX--;
-			}
-			if (x2 < x1) {
-				curX++;
-			}
-			error += absDy;
-			steppedX = true;
-		}
-
-		if (absDx > absDy && steppedX) {
-			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX))) {
-				result = false;
-			}
-		}
-		if (absDx <= absDy && !steppedX) {
-			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX))) {
-				result = false;
-			}
-		}
-	} while (curX != x1 || curY != y1);
-
-	return result;
-}
-
-// integer Euclidean distance approximation.
-// Iterates i from 0 until i^2 >= dx^2 + dy^2. Capped at 0x500.
-int Macs2Engine::euclideanDistance(const Common::Point &a, const Common::Point &b) {
-	int32 dx = ABS((int)(b.x - a.x));
-	int32 dy = ABS((int)(b.y - a.y));
-	int32 distSq = dx * dx + dy * dy;
-	int i = 0;
-	while (i < 0x500 && (int32)i * i < distSq) {
-		i++;
-	}
-	return i;
-}
-
-// distance between two nodes IF walkable, else 0x500.
-// Uses binary search on precomputed squared-distance table (scene+0x61DC) for O(log n) sqrt.
-int Macs2Engine::walkableDistance(int nodeA, int nodeB) {
-	const Common::Point &a = _pathfindingPoints[nodeA - 1]._position;
-	const Common::Point &b = _pathfindingPoints[nodeB - 1]._position;
-	if (!isPathWalkable(a.y, a.x, b.y, b.x)) {
-		return 0x500;
-	}
-	// Binary search for integer sqrt(dx^2 + dy^2), matching binary at 1008:1293
-	int32 dx = ABS((int)(b.x - a.x));
-	int32 dy = ABS((int)(b.y - a.y));
-	int32 distSq = dx * dx + dy * dy;
-	int result = 0x280;
-	int step = 0x280;
-	do {
-		step = step >> 1;
-		if ((int32)result * result >= distSq) {
-			result -= step;
-		} else {
-			result += step;
-		}
-	} while (step > 1);
-	return result;
-}
-
-// recursive DFS cost to reach a reachable node.
-// Full recursive DFS with visited-stack cycle detection matching binary exactly.
-// Terminal: returns walkableDistance(node, finalDest) when node is reachable.
-// Recursive: min(computeMinCostToReachable(adj)) + walkableDistance(bestAdj, current).
-int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest) {
-	// Push current node to visited stack
-	_visitedCount++;
-	_visitedStack[_visitedCount] = nodeIndex;
-
-	int result;
-	const Common::Point &nodePos = _pathfindingPoints[nodeIndex - 1]._position;
-
-	if (reachable[nodeIndex]) {
-		// Terminal: return walkable distance from this node to finalDest
-		// Binary calls walkableDistance(nodePos, finalDest) = findPathNode(1008:1293)
-		if (!isPathWalkable(nodePos.y, nodePos.x, finalDest.y, finalDest.x)) {
-			result = 0x500;
-		} else {
-			int32 dx = ABS((int)(finalDest.x - nodePos.x));
-			int32 dy = ABS((int)(finalDest.y - nodePos.y));
-			int32 distSq = dx * dx + dy * dy;
-			int dist = 640;
-			int step = 320;
-			do {
-				step = step >> 1;
-				if ((int32)dist * dist >= distSq) {
-					dist -= step;
-				} else {
-					dist += step;
-				}
-			} while (step > 1);
-			result = dist;
-		}
-		_visitedCount--;
-		return result;
-	}
-
-	int bestCost = 0x7777;
-	int bestAdj = 0;
-	const PathfindingPoint &pt = _pathfindingPoints[nodeIndex - 1];
-	int adjCount = (int)pt._adjacentPoints.size();
-
-	if (adjCount > 0) {
-		for (int i = 0; i < adjCount; i++) {
-			const int adj = pt._adjacentPoints[i];
-			if (adj == prevNode) {
-				continue;
-			}
-
-			// Check visited stack
-			bool alreadyVisited = false;
-			for (int j = 1; j < _visitedCount; j++) {
-				if (_visitedStack[j] == adj) {
-					alreadyVisited = true;
-					break;
-				}
-			}
-			if (alreadyVisited) {
-				continue;
-			}
-
-			// Recursive call
-			const int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
-			if (cost < bestCost) {
-				bestAdj = adj;
-				bestCost = cost;
-			}
-		}
-	}
-
-	if (bestCost < 0x7777) {
-		// Add edge cost: walkable distance from bestAdj to current node
-		result = bestCost + walkableDistance(bestAdj, nodeIndex);
-	} else {
-		result = 0x7777;
-	}
-
-	// Pop visited stack
-	_visitedCount--;
-	return result;
 }
 
 void Macs2Engine::nextCursorMode() {
@@ -2858,10 +2496,6 @@ bool Macs2Engine::readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons
 	// Read next record's frame counter (or detect end)
 	_inputPlaybackEndFrame = _inputPlaybackStream->readUint16LE();
 	return !_inputPlaybackStream->eos();
-}
-
-uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
-	return getWalkabilityAt((int16)p.y, (int16)p.x);
 }
 
 int Macs2Engine::measureString(const Common::String &s) {

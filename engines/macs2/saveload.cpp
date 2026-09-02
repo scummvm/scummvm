@@ -304,21 +304,21 @@ Common::Error Macs2Engine::syncGameV1(Common::Serializer &s) {
 
 	// Scene data: pathfinding overrides [+0x528D]: 200 bytes ---
 	if (s.isLoading())
-		_pathfindingOverrides.clear();
-	for (int i = 0; i < ARRAYSIZE(_areaOverrides); i++) {
+		_pathfinding._walkOverrides.clear();
+	for (int i = 0; i < ARRAYSIZE(_pathfinding._areaOverrides); i++) {
 		uint8 active = 0;
 		uint16 overrideValue = 0;
 		uint16 remap = 0;
 		if (s.isSaving()) {
 			uint16 idx = AREA_OVERRIDE_MIN + i;
-			for (const auto &ov : _pathfindingOverrides) {
+			for (const auto &ov : _pathfinding._walkOverrides) {
 				if (ov._index == idx && ov._active) {
 					active = 1;
 					overrideValue = ov._overrideValue;
 					break;
 				}
 			}
-			remap = _areaOverrides[i];
+			remap = _pathfinding._areaOverrides[i];
 		}
 		s.syncAsByte(active);
 		s.syncAsUint16LE(overrideValue);
@@ -329,9 +329,9 @@ Common::Error Macs2Engine::syncGameV1(Common::Serializer &s) {
 				ov._active = true;
 				ov._index = AREA_OVERRIDE_MIN + i;
 				ov._overrideValue = overrideValue;
-				_pathfindingOverrides.push_back(ov);
+				_pathfinding._walkOverrides.push_back(ov);
 			}
-			_areaOverrides[i] = remap;
+			_pathfinding._areaOverrides[i] = remap;
 		}
 	}
 

@@ -1309,17 +1309,17 @@ static void showSceneMapsWindow() {
 		static Graphics::ManagedSurface overlayComposite;
 
 		if (selectedTab == 0) {
-			surface = &g_engine->_pathfindingMap;
+			surface = &g_engine->_pathfinding._map;
 		} else if (selectedTab == 1) {
 			surface = &g_engine->_depthMap;
 		} else if (selectedTab == 2) {
 			// Composite: pathfinding map + character path overlay + pathfinding points
-			overlayComposite.copyFrom(g_engine->_pathfindingMap);
+			overlayComposite.copyFrom(g_engine->_pathfinding._map);
 			View1 *view = (View1 *)g_engine->findView("View1");
 			if (view) {
 				// Draw pathfinding point nodes and connections
 				for (int i = 0; i < 16; i++) {
-					PathfindingPoint &pt = g_engine->_pathfindingPoints[i];
+					PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 					if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 						// Draw cross at node
 						for (int d = -2; d <= 2; d++) {
@@ -1335,7 +1335,7 @@ static void showSceneMapsWindow() {
 						for (uint8 adj : pt._adjacentPoints) {
 							if (adj == 0 || adj > 16)
 								continue;
-							PathfindingPoint &other = g_engine->_pathfindingPoints[adj - 1];
+							PathfindingPoint &other = g_engine->_pathfinding._points[adj - 1];
 							overlayComposite.drawLine(pt._position.x, pt._position.y, other._position.x, other._position.y, 0xFE);
 						}
 					}
@@ -1403,7 +1403,7 @@ static void showSceneMapsWindow() {
 					ImDrawList *dl = ImGui::GetWindowDrawList();
 					ImVec2 imgOrigin = ImGui::GetItemRectMin();
 					for (int i = 0; i < 16; i++) {
-						PathfindingPoint &pt = g_engine->_pathfindingPoints[i];
+						PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 						if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 							char buf[4];
 							snprintf(buf, sizeof(buf), "%d", i);
@@ -1528,7 +1528,7 @@ static void showSceneMapsWindow() {
 		ImGui::Text("_walkDepthThresholdY=%u  _walkDepthScaleFactor=%u  _walkBaseSpeedPct=%u",
 					g_engine->_walkDepthThresholdY, g_engine->_walkDepthScaleFactor, g_engine->_walkBaseSpeedPct);
 		ImGui::Text("Pathfinding points: %u  Path nodes: %u",
-					(uint)g_engine->_pathfindingPoints.size(), (uint)g_engine->_path.size());
+					(uint)g_engine->_pathfinding._points.size(), (uint)g_engine->_path.size());
 
 		// Node detail table
 		if (ImGui::CollapsingHeader("Node Graph", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -1536,8 +1536,8 @@ static void showSceneMapsWindow() {
 			Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 			Common::Point charPos = protagonist ? protagonist->getPosition() : Common::Point(0, 0);
 
-			for (int i = 0; i < (int)g_engine->_pathfindingPoints.size(); i++) {
-				const PathfindingPoint &pt = g_engine->_pathfindingPoints[i];
+			for (int i = 0; i < (int)g_engine->_pathfinding._points.size(); i++) {
+				const PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 				// Check reachability from character
 				bool reachable = protagonist && g_engine->isPathWalkable(charPos.y, charPos.x, pt._position.y, pt._position.x);
 				// Check if node is in current path

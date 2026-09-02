@@ -112,13 +112,13 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 
 	Common::Rect screenRect(0, 0, kScreenWidth, kGameHeight);
 	_depthMap.fillRect(screenRect, 0);
-	_pathfindingMap.fillRect(screenRect, 0);
+	_pathfinding._map.fillRect(screenRect, 0);
 	_shadowMap.fillRect(screenRect, 0);
 	_hotspotMap.fillRect(screenRect, 0);
 
 	Common::Array<byte> pathMap, depthMap, shadowMap;
 	if (extractAmigaMxmmSceneMaps(mxmm.data(), size, pathMap, depthMap, shadowMap)) {
-		blitMap(_pathfindingMap, pathMap);
+		blitMap(_pathfinding._map, pathMap);
 		blitMap(_depthMap, depthMap);
 		blitMap(_shadowMap, shadowMap);
 	}
@@ -149,12 +149,12 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 			   (uint)sceneResourceId);
 	}
 
-	_pathfindingPoints.clear();
-	_numPathfindingPoints = 0;
+	_pathfinding._points.clear();
+	_pathfinding._numPoints = 0;
 	uint16 numPfPoints = 0;
 	Common::Array<AmigaPathfindingNode> pfNodes;
 	if (extractAmigaMxmmScenePathfinding(mxmm.data(), size, numPfPoints, pfNodes)) {
-		_numPathfindingPoints = numPfPoints;
+		_pathfinding._numPoints = numPfPoints;
 		for (uint i = 0; i < pfNodes.size(); i++) {
 			PathfindingPoint current;
 			current._index = (uint16)i;
@@ -166,7 +166,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 				if (pfNodes[i].adjacent[j] != 0)
 					current._adjacentPoints.push_back(pfNodes[i].adjacent[j]);
 			}
-			_pathfindingPoints.push_back(current);
+			_pathfinding._points.push_back(current);
 		}
 	}
 
@@ -194,7 +194,7 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 		   "Amiga: loaded native MM_%04u (script %u bytes, strings %u bytes, pfNodes %u, "
 		   "hotspots %u, walk %u/%u/%u)",
 		   (uint)sceneResourceId, (uint)_amigaPendingSceneScript.size(),
-		   (uint)_amigaPendingSceneStrings.size(), (uint)_numPathfindingPoints, (uint)_numHotspots,
+		   (uint)_amigaPendingSceneStrings.size(), (uint)_pathfinding._numPoints, (uint)_numHotspots,
 		   (uint)_walkDepthThresholdY, (uint)_walkDepthScaleFactor, (uint)_walkBaseSpeedPct);
 	return true;
 }
@@ -671,7 +671,7 @@ void Macs2Engine::readAmigaResources() {
 
 	_sceneBackground.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_depthMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
-	_pathfindingMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_pathfinding.createMap(kScreenWidth, kGameHeight);
 	_shadowMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_hotspotMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_shadingTable.resize(0x800);
@@ -680,7 +680,7 @@ void Macs2Engine::readAmigaResources() {
 	buildAmigaPanelRemapTable();
 
 	_numHotspots = 0;
-	_numPathfindingPoints = 0;
+	_pathfinding._numPoints = 0;
 	_scenePaletteMode = 1;
 	_paletteDarkenPercent = 0;
 
