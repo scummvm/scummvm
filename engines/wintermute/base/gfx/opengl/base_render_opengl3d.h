@@ -99,6 +99,8 @@ public:
 	BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) override;
 	bool fadeToColor(byte r, byte g, byte b, byte a) override;
 
+	Graphics::PixelFormat getPixelFormat(bool hasAlpha) const override;
+
 	bool flip() override;
 	bool clear() override;
 

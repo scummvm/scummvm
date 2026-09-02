@@ -139,6 +139,14 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	return true;
 }
 
+Graphics::PixelFormat BaseRenderTinyGL::getPixelFormat(bool hasAlpha) const {
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (hasAlpha && format.aBits() < 8)
+		return Graphics::PixelFormat::createFormatRGBA32();
+	else
+		return format;
+}
+
 bool BaseRenderTinyGL::flip() {
 	if (_flipInProgress) {
 		return false;
@@ -674,9 +682,9 @@ bool BaseRenderTinyGL::fadeToColor(byte r, byte g, byte b, byte a) {
 
 BaseImage *BaseRenderTinyGL::takeScreenshot(int newWidth, int newHeight) {
 	BaseImage *screenshot = new BaseImage();
-	Graphics::Surface *surface = TinyGL::copyFromFrameBuffer(Graphics::PixelFormat::createFormatRGBA32());
-	screenshot->copyFrom(surface, newWidth, newHeight);
-	delete surface;
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+	screenshot->copyFrom(&glBuffer, newWidth, newHeight);
 	return screenshot;
 }
 

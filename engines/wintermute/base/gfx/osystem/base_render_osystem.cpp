@@ -253,7 +253,7 @@ bool BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	return true;
 }
 
-Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
+Graphics::PixelFormat BaseRenderOSystem::getPixelFormat(bool hasAlpha) const {
 	return _renderSurface->format;
 }
 
