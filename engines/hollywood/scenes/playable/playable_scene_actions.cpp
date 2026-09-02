@@ -24,6 +24,7 @@
 #include "common/system.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/scenes/playable/playable_scene.h"
 

@@ -24,7 +24,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
 
-#include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/detection.h"
 
 namespace Hollywood {

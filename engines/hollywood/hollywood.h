@@ -39,13 +39,6 @@ class Serializer;
 
 namespace Hollywood {
 
-enum HollywoodDebugChannels {
-	kDebugGeneral = 1,
-	kDebugResources,
-	kDebugScene,
-	kDebugPath
-};
-
 class HollywoodFont;
 
 class HollywoodEngine : public Engine {

@@ -24,6 +24,7 @@
 #include "common/path.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/scenes/intro/scene9030.h"
 
 namespace Hollywood {
