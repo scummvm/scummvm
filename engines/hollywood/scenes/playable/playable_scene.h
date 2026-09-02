@@ -200,7 +200,6 @@ protected:
 
 	// Resource format constants
 	enum {
-		kFrameBufferSize = 0x78000,
 		kPaletteMaskUsedBytes = 0x100,
 		kScenePaletteRegionCount = 21,
 		kScenePaletteRegionBoundaryCandidateCount = 3,

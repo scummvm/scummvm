@@ -142,7 +142,7 @@ Scene9090::Scene9090(HollywoodEngine *vm) :
 		_advanceClockDuringAnimation(false) {
 	_paletteResource.resize(kPaletteSize);
 	_presentationPaletteRemapTable.resize(256);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 	_clockFrames[0] = 10;
 	_clockFrames[1] = 7;
 	_clockFrames[2] = 3;
@@ -191,7 +191,7 @@ bool Scene9090::load() {
 	if (!_resources.validateChunkRange(kScene9090ArchiveName, _debugName, 0, 12))
 		return false;
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 

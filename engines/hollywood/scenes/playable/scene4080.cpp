@@ -779,7 +779,7 @@ bool Scene4080::runCoffinInsertSequence() {
 		HollywoodEngine::kSceneBufferHeight, Graphics::PixelFormat::createFormatCLUT8());
 	Common::Array<byte> insertPaletteChunk;
 	insertPaletteChunk.resize(kPaletteSize);
-	if (!loadFixedChunk(kScene4080CoffinFramebufferChunk, insertFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(kScene4080CoffinFramebufferChunk, insertFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(kScene4080CoffinPaletteChunk, insertPaletteChunk, kPaletteSize)) {
 		warning("Scene 4080 failed to load the coffin insert framebuffer or palette");
 		return false;

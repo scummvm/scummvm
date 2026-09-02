@@ -81,7 +81,7 @@ uint Scene6000::sceneArenaLastChunk() const {
 }
 
 void Scene6000::adjustPaletteAfterLoad() {
-	if (_paletteResource.size() >= 0x300) {
+	if (_paletteResource.size() >= kPaletteSize) {
 		_paletteResource[0x2fd] = 0x3f;
 		_paletteResource[0x2fe] = 0x3f;
 		_paletteResource[0x2ff] = 0x3f;

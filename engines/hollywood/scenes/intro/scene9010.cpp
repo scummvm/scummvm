@@ -63,7 +63,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_scene9010FadeComplete(false),
 		_scene9010FadeAccumulator(0) {
 	_paletteSource.resize(kPaletteSize);
-	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
+	_frameDecodeBuffer.resize(kSceneBufferByteCount);
 }
 
 bool Scene9010::play() {
@@ -120,7 +120,7 @@ bool Scene9010::loadScene9010Resources() {
 	}
 
 	_i02SingleFrameOnly = false;
-	if (!loadFixedChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
+	if (!loadFixedChunk(0, _frameDecodeBuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteSource, kPaletteSize) ||
 			!loadVariableChunk(2, _characterSpriteResource))
 		return false;

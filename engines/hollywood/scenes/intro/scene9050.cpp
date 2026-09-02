@@ -178,7 +178,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_i06PaletteDirty(false),
 		_i06SequenceFinished(false) {
 	_paletteResource.resize(kPaletteSize);
-	_clipBaseFramebuffer.resize(kFrameBufferSize);
+	_clipBaseFramebuffer.resize(kSceneBufferByteCount);
 	_continuousSound.setArchive(Common::Path(kStage9050SoundArchiveName));
 	_effectSound.setArchive(Common::Path(kStage9050SoundArchiveName));
 }
@@ -307,7 +307,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 		resourceArenaSize += _resources._chunkTable.sizes[baseIndex + i];
 	_resources.allocateArena(resourceArenaSize);
 
-	if (!loadFixedChunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(baseIndex, _clipBaseFramebuffer, kSceneBufferByteCount))
 		return false;
 	if (!loadFixedChunk(baseIndex + 1, _paletteResource, kPaletteSize))
 		return false;
@@ -332,7 +332,7 @@ bool Scene9050::loadResourceI08BlinkAssets() {
 
 	_resources.allocateArena(_resources._chunkTable.sizes[2]);
 
-	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(0, _clipBaseFramebuffer, kSceneBufferByteCount))
 		return false;
 	if (!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
@@ -353,7 +353,7 @@ bool Scene9050::loadResourceI07FinalAssets() {
 
 	_resources.allocateArena(_resources._chunkTable.sizes[2]);
 
-	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadFixedChunk(0, _clipBaseFramebuffer, kSceneBufferByteCount))
 		return false;
 	if (!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;

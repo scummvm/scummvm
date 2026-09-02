@@ -92,7 +92,7 @@ Scene3110::Scene3110(HollywoodEngine *vm) :
 		_memoryPulseLevel(0),
 		_memoryPulseActive(false) {
 	_memoryPulseSavedPalette.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 	_sound0.setArchive(Common::Path(kScene3110SoundArchiveName));
 	_sound1.setArchive(Common::Path(kScene3110SoundArchiveName));
 	_sound2.setArchive(Common::Path(kScene3110SoundArchiveName));
@@ -127,7 +127,7 @@ bool Scene3110::play() {
 
 bool Scene3110::loadFramebufferAndPalette(uint framebufferChunk, uint paletteChunk, uint paletteReadSize) {
 	if (!_resources.loadFixedChunk("scene 3110 framebuffer", framebufferChunk,
-			_baseFramebuffer, kFrameBufferSize))
+			_baseFramebuffer, kSceneBufferByteCount))
 		return false;
 
 	if (!_resources.loadFixedChunk("scene 3110 palette", paletteChunk,

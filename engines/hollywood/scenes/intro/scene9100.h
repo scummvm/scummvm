@@ -144,8 +144,6 @@ private:
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
 	enum {
-		kFrameDecodeBufferSize = 0x78000,
-		kPaletteSize = 0x300,
 		kI10ForegroundDescriptorCount = 0x24,
 		kI10DeskPrimaryStaticDescriptorCount = 3,
 		kI10DeskSecondaryStaticDescriptorCount = 6,

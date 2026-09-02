@@ -35,6 +35,7 @@ namespace Hollywood {
 
 enum {
 	kPaletteSize = 0x300,
+	kSceneBufferByteCount = 0x78000,
 	kFrameDescriptorSize = 14
 };
 

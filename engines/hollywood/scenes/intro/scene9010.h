@@ -94,11 +94,9 @@ private:
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
 	enum {
-		kFrameDecodeBufferSize = 0x78000,
 		kSceneFramebufferSize = 0x100000,
-		kPaletteSize = 0x300,
 		kRawScreenFrameSize = 0x4b000,
-		kRawSceneFrameSize = kFrameDecodeBufferSize,
+		kRawSceneFrameSize = kSceneBufferByteCount,
 		kCharacterFrameDescriptorCount = 17
 	};
 

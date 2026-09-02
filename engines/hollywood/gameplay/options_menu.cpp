@@ -48,7 +48,6 @@ const uint kOptionsResource000OffsetTableSize = 400;
 const uint kOptionsResource000SizeTableSize = 400;
 const uint kOptionsFramebufferEntry = 0x2a;
 const uint kOptionsObjectPaletteResource000Entry = 0x31;
-const uint kOptionsFramebufferSize = 0x78000;
 const uint kOptionsViewportXOffset = 0x180;
 const uint kOptionsObjectPaletteOffset = 0x210;
 const uint kOptionsObjectPaletteSize = 0xf0;
@@ -198,12 +197,13 @@ bool GameplayOptionsMenu::loadMenuFramebuffer() {
 	}
 
 	const uint32 frameOffset = readUint32LE(offsetTable, tableOffset);
-	if (frameOffset > (uint32)file.size() || kOptionsFramebufferSize > (uint32)file.size() - frameOffset) {
+	if (frameOffset > (uint32)file.size() ||
+			kSceneBufferByteCount > (uint32)file.size() - frameOffset) {
 		warning("%s options menu framebuffer is out of range", kOptionsResource000Name);
 		return false;
 	}
 
-	_menuFramebuffer.resize(kOptionsFramebufferSize);
+	_menuFramebuffer.resize(kSceneBufferByteCount);
 	file.seek(frameOffset);
 	if (file.read(_menuFramebuffer.data(), _menuFramebuffer.size()) != _menuFramebuffer.size()) {
 		warning("Failed to read Hollywood options menu framebuffer");
@@ -788,7 +788,7 @@ byte GameplayOptionsMenu::nearestPreviewPaletteColor(uint red, uint green, uint 
 }
 
 void GameplayOptionsMenu::composeScreen() {
-	if (_menuFramebuffer.size() < kOptionsFramebufferSize) {
+	if (_menuFramebuffer.size() < kSceneBufferByteCount) {
 		_screen.fillRect(_screen.getBounds(), 0);
 		return;
 	}

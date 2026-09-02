@@ -34,7 +34,6 @@
 namespace Hollywood {
 
 const char *const kTravelScreenArchiveName = "RESOURCE.I04";
-const uint kTravelScreenFramebufferBytes = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
 const uint kTravelScreenPaletteChunk = 0;
 const uint kTravelScreenFramebufferChunk = 1;
 const uint kTravelScreenFirstTileChunk = 2;
@@ -262,10 +261,10 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 bool TravelScreen::load(bool loadSelectionMask) {
 	Common::Array<byte> framebufferChunk;
 	if (!readChunk(kTravelScreenPaletteChunk, _palette, kPaletteSize) ||
-			!readChunk(kTravelScreenFramebufferChunk, framebufferChunk, kTravelScreenFramebufferBytes))
+			!readChunk(kTravelScreenFramebufferChunk, framebufferChunk, kSceneBufferByteCount))
 		return false;
 
-	_framebuffer.resize(kTravelScreenFramebufferBytes);
+	_framebuffer.resize(kSceneBufferByteCount);
 	memcpy(_framebuffer.data(), framebufferChunk.data(), framebufferChunk.size());
 
 	_tilePixels.resize(kTravelScreenTileBytes * kTravelScreenTileChunkCount);
@@ -346,7 +345,7 @@ void TravelScreen::composeUnlockedSlots() {
 }
 
 void TravelScreen::expandSelectionMask() {
-	_selectionMask.resize(kTravelScreenFramebufferBytes);
+	_selectionMask.resize(kSceneBufferByteCount);
 	_selectionMask.clear(kTravelScreenInvalidSlot);
 
 	uint destinationOffset = 0;

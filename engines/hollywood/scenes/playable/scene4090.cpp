@@ -596,7 +596,7 @@ bool Scene4090::runCoffinInsertSequence() {
 	Common::Array<byte> insertPaletteChunk;
 	insertPaletteChunk.resize(kPaletteSize);
 	if (!loadFixedChunk(kScene4090CoffinFramebufferChunk, insertFramebuffer,
-			kFrameBufferSize) ||
+			kSceneBufferByteCount) ||
 			!loadFixedChunk(kScene4090CoffinPaletteChunk, insertPaletteChunk,
 				kPaletteSize)) {
 		warning("Scene 4090 failed to load the coffin insert framebuffer or palette");

@@ -79,7 +79,7 @@ const byte kScene9170ScrollUpB[] = {
 };
 
 Scene9170::Scene9170(HollywoodEngine *vm) :
-		PresentationScene(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9170", kScene9170TallFramebufferSize, kSceneBufferByteCount),
 		_music(vm->introMusic()),
 		_speech(vm->getLanguage()),
 		_ambientSpeech(vm->getLanguage()),
@@ -106,7 +106,7 @@ Scene9170::Scene9170(HollywoodEngine *vm) :
 		_shakeActive(false),
 		_shakeRowOffset(0) {
 	_paletteResource.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 	_staticFramebuffer.resize(kScene9170TallFramebufferSize);
 	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
 	_upperDirty[0] = _upperDirty[1] = _upperDirty[2] = false;

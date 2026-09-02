@@ -112,7 +112,7 @@ Scene9140::Scene9140(HollywoodEngine *vm) :
 		_leftLoopEnabled(false),
 		_speechAnimationStep(0) {
 	_paletteResource.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 }
 
 bool Scene9140::play() {
@@ -156,7 +156,7 @@ bool Scene9140::load() {
 	if (!_resources.validateChunkRange(kScene9140ArchiveName, _debugName, 0, 4))
 		return false;
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 

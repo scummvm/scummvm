@@ -607,7 +607,7 @@ void Scene3070::runInterludeCutscene() {
 	_soundBank0.stop();
 	fadePaletteToBlack();
 
-	if (!loadFixedChunk(33, _baseFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(33, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(34, _paletteCurrent, kPaletteSize)) {
 		applySceneStateToHotspotsAndPatches(0xff);
 		_paletteCurrent = savedPalette;

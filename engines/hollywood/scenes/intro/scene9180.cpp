@@ -69,7 +69,7 @@ Scene9180::Scene9180(HollywoodEngine *vm) :
 	_paletteResource.resize(kPaletteSize);
 	_normalPalette.resize(kPaletteSize);
 	_brightPalette.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 }
 
 bool Scene9180::play() {
@@ -95,7 +95,7 @@ bool Scene9180::load() {
 	if (!_resources.validateChunkRange(kScene9180ArchiveName, _debugName, 0, 2))
 		return false;
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 

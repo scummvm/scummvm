@@ -27,10 +27,10 @@ namespace Hollywood {
 const char *const kIntroArchiveName = "RESOURCE.I00";
 
 Scene9000::Scene9000(HollywoodEngine *vm) :
-		PresentationScene(vm, "intro scene 9000", kFrameBufferSize, 0),
+		PresentationScene(vm, "intro scene 9000", kSceneBufferByteCount, 0),
 		_music() {
-	_paletteSource.resize(0x300);
-	_frameDecodeBuffer.resize(HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight);
+	_paletteSource.resize(kPaletteSize);
+	_frameDecodeBuffer.resize(kSceneBufferByteCount);
 }
 
 bool Scene9000::play() {

@@ -27,12 +27,12 @@
 namespace Hollywood {
 
 ChapterIntroScene::ChapterIntroScene(HollywoodEngine *vm, const char *debugName) :
-		PresentationScene(vm, debugName, kFrameBufferSize, 0),
+		PresentationScene(vm, debugName, kSceneBufferByteCount, 0),
 		_music(),
 		_paletteResource(),
 		_baseFramebuffer() {
 	_paletteResource.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 }
 
 bool ChapterIntroScene::play() {
@@ -98,7 +98,7 @@ bool ChapterIntroScene::load() {
 			sceneArenaLastChunk()))
 		return false;
 
-	if (!_resources.loadFixedChunk(_debugName, 0, _baseFramebuffer, kFrameBufferSize) ||
+	if (!_resources.loadFixedChunk(_debugName, 0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!_resources.loadFixedChunk(_debugName, 1, _paletteResource, kPaletteSize))
 		return false;
 

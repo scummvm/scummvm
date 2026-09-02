@@ -60,7 +60,7 @@ void SceneSurfaceState::initializeFramebuffers() {
 }
 
 uint SceneSurfaceState::framebufferByteCount() const {
-	return HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
+	return kSceneBufferByteCount;
 }
 
 byte *SceneSurfaceState::framebufferPixels(Graphics::ManagedSurface &surface) {
