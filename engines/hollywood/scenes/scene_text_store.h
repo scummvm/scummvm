@@ -57,7 +57,7 @@ struct SceneSpeechCue {
  * Loads and decodes scene text and speech-cue tables from RESOURCE.003.
  *
  * A full load provides stage rows, inventory-owner rows, and static cues.
- * Presentation scenes may instead load only the stage or static-cue subset.
+ * Presentation scenes may instead load only the stage or static speech data.
  */
 class SceneTextStore {
 public:
@@ -67,8 +67,8 @@ public:
 		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset,
 		bool validateSequentialVoiceMap = false);
 	bool loadStage(const char *archiveName, const char *sceneDebugName, uint stageIndex);
-	bool loadStaticSpeechCues(const char *archiveName, const char *sceneDebugName,
-		uint32 speechCueDescriptorOffset);
+	bool loadStaticSpeech(const char *archiveName, const char *sceneDebugName,
+		uint inventoryRowsOffsetIndex, uint32 speechCueDescriptorOffset);
 
 	Common::String inventoryItemName(byte itemId) const;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const;
@@ -96,6 +96,9 @@ private:
 	bool readStaticSpeechCues(Common::SeekableReadStream &stream,
 		const char *archiveName, uint32 speechCueDescriptorOffset,
 		uint trailingByteCount = 0);
+	bool readStaticSpeechRows(Common::SeekableReadStream &stream,
+		const char *archiveName, uint inventoryRowsOffsetIndex,
+		uint32 speechCueDescriptorOffset);
 	bool readInventoryRows(Common::SeekableReadStream &stream, const char *archiveName,
 		uint inventoryRowsOffsetIndex, byte smallRowCount, uint16 largeRowCount);
 	uint16 findStageVoiceSampleBase(uint largeRowCount) const;

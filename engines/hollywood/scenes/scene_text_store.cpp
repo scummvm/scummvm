@@ -58,18 +58,8 @@ bool SceneTextStore::load(const char *archiveName, const char *sceneDebugName,
 	}
 
 	if (!readDecodeKey(file, archiveName) ||
-			!readStaticSpeechCues(file, archiveName, speechCueDescriptorOffset, 3))
-		return false;
-
-	const byte ownerSmallRowCount = file.readByte();
-	const uint16 ownerLargeRowCount = file.readUint16LE();
-	if (file.err()) {
-		warning("Failed to read %s static text row counts", archiveName);
-		return false;
-	}
-
-	if (!readInventoryRows(file, archiveName, inventoryRowsOffsetIndex,
-			ownerSmallRowCount, ownerLargeRowCount) ||
+			!readStaticSpeechRows(file, archiveName, inventoryRowsOffsetIndex,
+				speechCueDescriptorOffset) ||
 			!readStage(file, archiveName, stageIndex))
 		return false;
 
@@ -100,15 +90,24 @@ bool SceneTextStore::loadStage(const char *archiveName, const char *sceneDebugNa
 	return readDecodeKey(file, archiveName) && readStage(file, archiveName, stageIndex);
 }
 
-bool SceneTextStore::loadStaticSpeechCues(const char *archiveName,
-		const char *sceneDebugName, uint32 speechCueDescriptorOffset) {
+bool SceneTextStore::loadStaticSpeech(const char *archiveName,
+		const char *sceneDebugName, uint inventoryRowsOffsetIndex,
+		uint32 speechCueDescriptorOffset) {
+	_validateSequentialVoiceMap = false;
+	_stageVoiceSampleBase = 0;
+	_stageBlock.clear();
+	_stageSmallRows.clear();
+	_stageLargeRows.clear();
+
 	Common::File file;
 	if (!file.open(Common::Path(archiveName))) {
-		warning("Failed to open %s for %s static speech cues", archiveName, sceneDebugName);
+		warning("Failed to open %s for %s static speech", archiveName, sceneDebugName);
 		return false;
 	}
 
-	return readStaticSpeechCues(file, archiveName, speechCueDescriptorOffset);
+	return readDecodeKey(file, archiveName) &&
+		readStaticSpeechRows(file, archiveName, inventoryRowsOffsetIndex,
+			speechCueDescriptorOffset);
 }
 
 bool SceneTextStore::readDecodeKey(Common::SeekableReadStream &stream,
@@ -203,6 +202,23 @@ bool SceneTextStore::readStaticSpeechCues(Common::SeekableReadStream &stream,
 	}
 
 	return true;
+}
+
+bool SceneTextStore::readStaticSpeechRows(Common::SeekableReadStream &stream,
+		const char *archiveName, uint inventoryRowsOffsetIndex,
+		uint32 speechCueDescriptorOffset) {
+	if (!readStaticSpeechCues(stream, archiveName, speechCueDescriptorOffset, 3))
+		return false;
+
+	const byte smallRowCount = stream.readByte();
+	const uint16 largeRowCount = stream.readUint16LE();
+	if (stream.err()) {
+		warning("Failed to read %s static text row counts", archiveName);
+		return false;
+	}
+
+	return readInventoryRows(stream, archiveName, inventoryRowsOffsetIndex,
+		smallRowCount, largeRowCount);
 }
 
 bool SceneTextStore::readInventoryRows(Common::SeekableReadStream &stream,
