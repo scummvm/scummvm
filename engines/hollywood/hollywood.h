@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_HOLLYWOOD_H
-#define HOLLYWOOD_HOLLYWOOD_H
+#ifndef HOLLYWOOD_H
+#define HOLLYWOOD_H
 
 #include "common/language.h"
 #include "common/platform.h"
@@ -114,4 +114,4 @@ private:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_HOLLYWOOD_H
+#endif // HOLLYWOOD_H
