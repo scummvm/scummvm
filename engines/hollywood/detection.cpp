@@ -20,14 +20,12 @@
  */
 
 #include "base/plugins.h"
-
 #include "common/file.h"
-
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
 
-#include "hollywood/detection.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/detection.h"
 
 namespace Hollywood {
 

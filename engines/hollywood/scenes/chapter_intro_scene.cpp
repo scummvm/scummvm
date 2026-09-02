@@ -19,10 +19,9 @@
  *
  */
 
-#include "hollywood/scenes/chapter_intro_scene.h"
-
-#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/scenes/chapter_intro_scene.h"
 #include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {

@@ -19,15 +19,14 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene2060.h"
-
 #include "common/endian.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/game_strings.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/scene2060.h"
 
 namespace Hollywood {
 

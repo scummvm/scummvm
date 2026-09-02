@@ -19,10 +19,9 @@
  *
  */
 
-#include "hollywood/scenes/resource_delta_clip_player.h"
-
-#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/graphics.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 

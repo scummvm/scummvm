@@ -19,17 +19,16 @@
  *
  */
 
-#include "hollywood/gameplay/travel_screen.h"
-
 #include "common/events.h"
 #include "common/path.h"
 #include "common/ptr.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {

@@ -19,9 +19,8 @@
  *
  */
 
-#include "hollywood/scenes/intro/scene9000.h"
-
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/intro/scene9000.h"
 
 namespace Hollywood {
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/font.h"
-
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
@@ -28,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/font.h"
 
 namespace Hollywood {
 

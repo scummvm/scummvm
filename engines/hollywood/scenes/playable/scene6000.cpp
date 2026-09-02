@@ -19,9 +19,8 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene6000.h"
-
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/scene6000.h"
 
 namespace Hollywood {
 
