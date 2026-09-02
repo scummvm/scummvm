@@ -76,8 +76,11 @@ Common::Error Ultima1Engine::run() {
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
-	if (s.isLoading())
+	if (s.isLoading()) {
+		delete _G(logic);
+		_G(logic) = nullptr;
 		_G(map).load(_G(savegame)._mapNum);
+	}
 
 	return Common::kNoError;
 }

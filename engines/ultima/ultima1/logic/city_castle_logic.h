@@ -36,23 +36,11 @@ protected:
 	 */
 	void loadEntities();
 
-	/**
-	 * Handle movement
-	 */
-	virtual void move(Data::Direction dir) = 0;
-
-	/**
-	 * Pass a turn
-	 */
-	void pass();
-
 public:
 	~CityCastleLogic() override {
 	}
 
 	void entering() override;
-	void action(int action) override;
-	void keypress(Common::KeyCode keycode) override;
 };
 
 class CityLogic : public CityCastleLogic {

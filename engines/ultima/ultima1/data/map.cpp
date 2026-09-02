@@ -146,9 +146,6 @@ void Map::load(int mapNum) {
 	// Set up copies of the map position and player tile to use
 	_playerTileId = TILE_PLAYER;
 
-	// Set up the correct logic to use
-	delete _G(logic);
-
 	// Set up logic handler for the mode and which view it'll be using
 	Common::String viewName;
 	if (mapNum >= 49) {

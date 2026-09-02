@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/logic/logic.h"
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/ultima1/metaengine.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -63,6 +64,48 @@ void Logic::endOfTurn() {
 	redrawMap();
 	redrawStats();
 	prompt();
+
+	// If this logic is no longer the active one, such as from switching maps,
+	// then delete it
+	if (this != _G(logic))
+		delete this;
+}
+
+void Logic::action(int action) {
+	switch (action) {
+	case KEYBIND_UP:
+		move(Data::DIR_UP);
+		break;
+	case KEYBIND_DOWN:
+		move(Data::DIR_DOWN);
+		break;
+	case KEYBIND_LEFT:
+		move(Data::DIR_LEFT);
+		break;
+	case KEYBIND_RIGHT:
+		move(Data::DIR_RIGHT);
+		break;
+	case KEYBIND_ENTER:
+		enter();
+		break;
+	case KEYBIND_PASS:
+		pass();
+		break;
+	case KEYBIND_STATS:
+		writeString("Ztats\n");
+		g_engine->addView("ZStats");
+		return;
+	default:
+		writeString("Huh?\n");
+		break;
+	}
+
+	endOfTurn();
+}
+
+void Logic::keypress(Common::KeyCode keycode) {
+	writeString("Huh?\n");
+	endOfTurn();
 }
 
 void Logic::board() {
@@ -93,6 +136,10 @@ void Logic::fire() {
 void Logic::get() {
 	writeString("Get?\n");
 	playFX(1);
+}
+
+void Logic::pass() {
+	writeString("Pass\n");
 }
 
 } // namespace Logic

@@ -74,22 +74,22 @@ protected:
 
 	/*--- Fallback player action handlers ---*/
 
-	void board();
-	void cast();
-	void drop();
-	void enter();
-	void fire();
-	void get();
+	virtual void board();
+	virtual void cast();
+	virtual void drop();
+	virtual void enter();
+	virtual void fire();
+	virtual void get();
+	virtual void move(Data::Direction dir) = 0;
+	virtual void pass();
 
 	/*---------------------------------------*/
 public:
 	virtual ~Logic() {
 	}
 
-	virtual void action(int action) {
-	}
-	virtual void keypress(Common::KeyCode keycode) {
-	}
+	virtual void action(int action);
+	virtual void keypress(Common::KeyCode keycode);
 	virtual void entering() {
 	}
 };

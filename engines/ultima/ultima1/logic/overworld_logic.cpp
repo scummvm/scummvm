@@ -53,43 +53,6 @@ OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
 }
 
-void OverworldLogic::action(int action) {
-	switch (action) {
-	case KEYBIND_UP:
-		move(Data::DIR_UP);
-		break;
-	case KEYBIND_DOWN:
-		move(Data::DIR_DOWN);
-		break;
-	case KEYBIND_LEFT:
-		move(Data::DIR_LEFT);
-		break;
-	case KEYBIND_RIGHT:
-		move(Data::DIR_RIGHT);
-		break;
-	case KEYBIND_ENTER:
-		enter();
-		break;
-	case KEYBIND_PASS:
-		pass();
-		break;
-	case KEYBIND_STATS:
-		writeString("Ztats\n");
-		g_engine->addView("ZStats");
-		return;
-	default:
-		writeString("Huh?\n");
-		break;
-	}
-
-	endOfTurn();
-}
-
-void OverworldLogic::keypress(Common::KeyCode keycode) {
-	writeString("Huh?\n");
-	endOfTurn();
-}
-
 void OverworldLogic::enter() {
 	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
 	if (location == 0) {
@@ -136,10 +99,6 @@ void OverworldLogic::enter() {
 		// Run any logic for entering it
 		_G(logic)->entering();
 	}
-}
-
-void OverworldLogic::pass() {
-	writeString("Pass\n");
 }
 
 void OverworldLogic::move(Data::Direction dir) {

@@ -30,6 +30,10 @@ namespace Ultima1 {
 namespace Logic {
 
 class DungeonLogic : public Logic {
+protected:
+	void move(Data::Direction dir) override {
+	}
+
 public:
 	~DungeonLogic() override {
 	}

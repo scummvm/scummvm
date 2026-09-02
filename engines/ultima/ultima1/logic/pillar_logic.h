@@ -30,6 +30,10 @@ namespace Ultima1 {
 namespace Logic {
 
 class PillarLogic : public Logic {
+protected:
+	void move(Data::Direction dir) override {
+	}
+
 public:
 	PillarLogic();
 	~PillarLogic() override {

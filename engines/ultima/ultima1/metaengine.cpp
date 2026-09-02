@@ -69,7 +69,7 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_STEAL, "STEAL", _s("Steal"), "s", nullptr },
 	{ KEYBIND_TRANSACT, "TRANSACT", _s("Transact"), "t", nullptr },
 	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
-	{ KEYBIND_VIEW, "VIEW", _s("View change"), "e", nullptr },
+	{ KEYBIND_VIEW, "VIEW", _s("View change"), "v", nullptr },
 	{ KEYBIND_EXIT, "EXIT", _s("eXit"), "x", nullptr },
 	{ KEYBIND_STATS, "STATS", _s("Ztats"), "z", nullptr },
 	{ KEYBIND_PASS, "PASS", _s("Pass"), " ", nullptr },

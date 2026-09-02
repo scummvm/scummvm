@@ -125,43 +125,6 @@ void CityCastleLogic::entering() {
 	loadEntities();
 }
 
-void CityCastleLogic::action(int action) {
-	switch (action) {
-	case KEYBIND_UP:
-		move(Data::DIR_UP);
-		break;
-	case KEYBIND_DOWN:
-		move(Data::DIR_DOWN);
-		break;
-	case KEYBIND_LEFT:
-		move(Data::DIR_LEFT);
-		break;
-	case KEYBIND_RIGHT:
-		move(Data::DIR_RIGHT);
-		break;
-	case KEYBIND_ENTER:
-		enter();
-		break;
-	case KEYBIND_PASS:
-		pass();
-		break;
-	case KEYBIND_STATS:
-		writeString("Ztats\n");
-		g_engine->addView("ZStats");
-		return;
-	return;	default:
-		writeString("Huh?\n");
-		break;
-	}
-
-	endOfTurn();
-}
-
-void CityCastleLogic::keypress(Common::KeyCode keycode) {
-	writeString("Huh?\n");
-	endOfTurn();
-}
-
 void CityCastleLogic::loadEntities() {
 	auto &map = _G(map);
 	auto &savegame = _G(savegame);
@@ -169,10 +132,6 @@ void CityCastleLogic::loadEntities() {
 
 	for (int idx = 0; idx < Data::LOCATION_ENTITY_COUNT; ++idx)
 		savegame._locationEntities[idx] = widgets[idx];
-}
-
-void CityCastleLogic::pass() {
-	writeString("Pass\n");
 }
 
 /*-------------------------------------------------------------------*/

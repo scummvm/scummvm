@@ -33,24 +33,9 @@ namespace Logic {
 class OverworldLogic : public Logic {
 private:
 	/**
-	 * Enter a location
-	 */
-	void enter();
-
-	/**
-	 * Pass a turn
-	 */
-	void pass();
-
-	/**
 	 * Check for movement
 	 */
 	bool moveCheck(Data::Direction dir);
-
-	/**
-	 * Handle movement
-	 */
-	void move(Data::Direction dir);
 
 	/**
 	 * Get the X co-ordinate for a tile within the map, offset from the left edge of the visible map area
@@ -116,13 +101,22 @@ private:
 	 */
 	void reduceFood();
 
+protected:
+	/**
+	 * Enter a location
+	 */
+	void enter() override;
+
+	/**
+	 * Handle movement
+	 */
+	void move(Data::Direction dir) override;
+
+
 public:
 	OverworldLogic();
 	~OverworldLogic() override {
 	}
-
-	void action(int action) override;
-	void keypress(Common::KeyCode keycode) override;
 };
 
 } // namespace Logic
