@@ -368,7 +368,6 @@ PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResource
 		inventoryOwnerIndex(sceneNumber / 1000 == 7 ? 1 : 0),
 		activeAudioChapterIndex(sceneNumber / 1000 == 7 ? kSceneConfigNoAudioChapter : sceneNumber / 1000),
 		actorBankTableEntry(0xd0),
-		actorBankSegmentCount(14),
 		actorPaletteTableEntry(0x108),
 		inventoryActionTableExtraOffset(sceneNumber / 1000 == 7 ? kResource000FixedInventoryVerbTableOffset : 0),
 		inventoryRowsOffsetIndex(0x32),
@@ -567,10 +566,6 @@ void PlayableScene::initializeInventoryOwnerState() {
 
 uint PlayableScene::resource000ActorBankTableEntry() const {
 	return _config.actorBankTableEntry;
-}
-
-uint PlayableScene::resource000ActorBankSegmentCount() const {
-	return _config.actorBankSegmentCount;
 }
 
 uint PlayableScene::resource000ActorPaletteTableEntry() const {
@@ -1153,7 +1148,7 @@ bool PlayableScene::loadResource000RuntimeTables(Common::Array<byte> &offsetTabl
 
 bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable) {
 	const uint tableEntry = resource000ActorBankTableEntry();
-	const uint segmentCount = resource000ActorBankSegmentCount();
+	const uint segmentCount = kActorBankSegmentCount;
 	if (tableEntry + 4 > offsetTable.size() ||
 			tableEntry + segmentCount * 4 > sizeTable.size()) {
 		warning("%s %s actor bank table entries are out of range: tableEntry=0x%04x segments=%u offsetTableSize=%u sizeTableSize=%u",
