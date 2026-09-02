@@ -3761,9 +3761,9 @@ bool Character::calculatePath(Common::Point target) {
 		int localBestCost = 0x7777;
 		int nextNode = currentNode;
 		for (uint a = 0; a < curPt._adjacentPoints.size(); a++) {
-			int adjIdx = curPt._adjacentPoints[a];
-			int cost = g_engine->computeMinCostToReachable(adjIdx, 0x7fff, _gameObject->_index, reachable, nodeCount, target);
-			int edgeCost = g_engine->walkableDistance(adjIdx, currentNode);
+			const int adjIdx = curPt._adjacentPoints[a];
+			const int cost = g_engine->computeMinCostToReachable(adjIdx, 0x7fff, _gameObject->_index, reachable, nodeCount, target);
+			const int edgeCost = g_engine->walkableDistance(adjIdx, currentNode);
 			if (cost + edgeCost < localBestCost) {
 				nextNode = adjIdx;
 				localBestCost = cost + edgeCost;
@@ -3937,25 +3937,24 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 	}
 
 	uint portraitBlobIndex = 17;
-	if (onRightSide && _gameObject->_blobs.size() > 18 && !_gameObject->_blobs[18].empty()) {
-		portraitBlobIndex = 18;
-	} else if (_gameObject->_blobs[portraitBlobIndex].empty() && _gameObject->_blobs.size() > 18 && !_gameObject->_blobs[18].empty()) {
-		portraitBlobIndex = 18;
+	if (_gameObject->_blobs.size() > 18 && !_gameObject->_blobs[18].empty()) {
+		if (onRightSide || _gameObject->_blobs[portraitBlobIndex].empty()) {
+			portraitBlobIndex = 18;
+		}
 	}
 
 	if (_gameObject->_blobs[portraitBlobIndex].empty()) {
 		return nullptr;
 	}
 
-	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->_blobs[portraitBlobIndex], true, frameIndex);
+	const uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->_blobs[portraitBlobIndex], true, frameIndex);
 	// offset points to per-frame: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
-	offset += 6; // skip to width/height/pixels
 	Common::Array<uint8> &blob = _gameObject->_blobs[portraitBlobIndex];
 	AnimFrame *result = new AnimFrame();
-	result->_width = READ_LE_UINT16(&blob[offset]);
-	result->_height = READ_LE_UINT16(&blob[offset + 2]);
+	result->_width = READ_LE_UINT16(&blob[offset + 6]);
+	result->_height = READ_LE_UINT16(&blob[offset + 8]);
 	result->_data.resize(result->_width * result->_height);
-	memcpy(result->_data.data(), &blob[offset + 4], result->_width * result->_height);
+	memcpy(result->_data.data(), &blob[offset + 10], result->_width * result->_height);
 	return result;
 }
 
@@ -4040,8 +4039,8 @@ void Character::update() {
 				}
 				exec->_walkTargetObjectIndex = 0;
 				_pickedUpObject = nullptr;
-				exec->_interactedObjectID = 0x0000;
-				exec->_interactedInventoryItemId = 0x0000;
+				exec->_interactedObjectID = 0;
+				exec->_interactedInventoryItemId = 0;
 				g_engine->_movementFinishedFlag = true;
 				return;
 			}
