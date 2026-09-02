@@ -28,6 +28,7 @@
 #include "common/stream.h"
 
 #include "audio/mixer.h"
+#include "audio/midiplayer.h"
 
 class MidiDriver;
 class MidiParser;
@@ -218,10 +219,11 @@ public:
 	 * Create a common Mohawk sound manager.
 	 */
 	explicit Sound(MohawkEngine *vm);
-	~Sound();
+	virtual ~Sound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
+	Audio::SoundHandle *playSound(uint16 id, Audio::Mixer::SoundType soundType, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
 	void stopSound();
 	void stopSound(uint16 id);
 	bool isPlaying(uint16 id);
@@ -235,8 +237,36 @@ private:
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::SeekableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr,
-			MohawkWaveLoopInfo *loopInfo = nullptr);
+	Audio::SeekableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr, MohawkWaveLoopInfo *loopInfo = nullptr);
+};
+
+class MidiPlayer : public Audio::MidiPlayer {
+public:
+	MidiPlayer(MohawkEngine *vm);
+	~MidiPlayer();
+
+	void pause(bool p);
+	void playMidi(uint16 id);
+
+	// When enabled, a GM reset is sent before each song starts. Needed for the
+	// Zoombini Macintosh MIDI profile (MIDIMAC.MHK), whose songs omit the inline
+	// GM/GS setup that the Windows profile (MIDIMPC.MHK) injects and therefore
+	// rely on a clean device state. Harmless but unnecessary for the PC profile,
+	// which re-initializes every channel itself, so callers leave it off there.
+	void setResetChannelsOnPlay(bool reset) { _resetChannelsOnPlay = reset; }
+
+	void pause() override { Audio::MidiPlayer::pause(); }
+
+	void sendToChannel(byte channel, uint32 b) override;
+	void onTimer() override;
+
+private:
+	MohawkEngine *_vm;
+	bool _paused;
+	bool _resetChannelsOnPlay;
+
+	static bool extractMohawkMidi(Common::SeekableReadStream *stream, Common::Array<byte> &standardMidi);
+	Common::SeekableReadStream *makeMidiStream(uint16 id);
 };
 
 } // End of namespace Mohawk
