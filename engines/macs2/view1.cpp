@@ -4329,29 +4329,19 @@ void View1::openOriginalSaveLoadPanel() {
 		}
 	}
 
-	// g_wUiPanelWidth = (g_wActionBarButtonWidth + 10) * 7 + 4
 	uint16 panelWidth = (maxW + 10) * 7 + 4;
-	// if (g_wUiPanelWidth < 0xD4) g_wUiPanelWidth = 0xD4
 	if (panelWidth < 212) {
 		panelWidth = 212;
 	}
-	// g_wUiPanelHeight = g_wActionBarButtonHeight + 0x8A
 	const uint16 panelHeight = maxH + 138;
-	// g_wUiPanelX = (g_wScreenWidth >> 1) - (g_wUiPanelWidth >> 1)
 	const int panelX = 160 - (panelWidth >> 1);
-	// g_wUiPanelY = (g_wScreenHeight >> 1) - (g_wUiPanelHeight >> 1)
 	const int panelY = 100 - (panelHeight >> 1);
 
-	// g_wActionBarButtonWidth = g_wActionBarButtonWidth + 6
 	_saveLoadButtonWidth = maxW + 6;
-	// g_wActionBarButtonHeight = g_wActionBarButtonHeight + 6
 	_saveLoadButtonHeight = maxH + 6;
-
 	_saveLoadPanelRect = Common::Rect(panelX, panelY, panelX + panelWidth, panelY + panelHeight);
 
-	// local_6 = ((g_wScreenWidth >> 1) - (g_wActionBarButtonWidth + 4) * 7 / 2) + 2
 	int buttonRowX = (160 - (int)((_saveLoadButtonWidth + 4) * 7) / 2) + 2;
-	// local_8 = (g_wUiPanelY + g_wUiPanelHeight - 4) - g_wActionBarButtonHeight
 	const int buttonRowY = (panelY + panelHeight - 4) - _saveLoadButtonHeight;
 
 	// Second loop: store button positions and draw them
@@ -4464,14 +4454,12 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 	// Slot loop: local_4 = 0..9
 	for (int slot = 0; slot <= 9; slot++) {
-		// drawPanelSlot(0xc, g_wUiPanelWidth - 8, g_wUiPanelY + 4 + slot * 0xc, g_wUiPanelX + 4)
-		const int slotX = panelX + 4;
-		const int slotY = panelY + 4 + slot * 12;
-		const int slotW = panelW - 8;
 		const int slotH = 12;
+		const int slotX = panelX + 4;
+		const int slotY = panelY + 4 + slot * slotH;
+		const int slotW = panelW - 8;
 		drawNinePatchBorder(Common::Point(slotX, slotY), Common::Point(slotW, slotH), kBorderPressed, false, false, s);
 
-		// drawText at (g_wUiPanelX + 6, g_wUiPanelY + 6 + slot * 0xc)
 		const int idx = _saveLoadPageIndex * 10 + slot;
 		Common::String label;
 		if (idx < ARRAYSIZE(_saveSlotNames) && !_saveSlotNames[idx].empty()) {
@@ -4482,7 +4470,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		}
 		const GlyphData *font = g_engine->numPanelGlyphs > 0 ? g_engine->_panelGlyphs : g_engine->_glyphs;
 		const uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
-		renderStringWithFont(panelX + 6, panelY + 6 + slot * 12, label, font, fontCount);
+		renderStringWithFont(panelX + 6, panelY + 6 + slot * slotH, label, font, fontCount);
 	}
 }
 
@@ -4507,8 +4495,8 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		// TODO: drawSaveLoadScrollArrows
 	}
 
-	int clickX = pos.x;
-	int clickY = pos.y;
+	const int clickX = pos.x;
+	const int clickY = pos.y;
 	// Slot loop: local_4 = 0..9
 	for (int slot = 0; slot <= 9; slot++) {
 		// Slot hit test for sub-mode 2 (save): editSaveSlotName
@@ -4556,7 +4544,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		bool hasData = false;
 		if (imgIdx < (int)g_engine->_imageResources.size()) {
 			const AnimFrame &frame = g_engine->_imageResources[imgIdx];
-			hasData = (!frame._data.empty() && frame._width > 0);
+			hasData = !frame._data.empty() && frame._width > 0;
 		}
 
 		Script::ScriptExecutor *exec = g_engine->_scriptExecutor;
@@ -4599,8 +4587,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 				}
 			} else if (i == 7) {
 				// Binary: if music enabled AND sound active, play active music
-				if (exec->_musicEnabled &&
-					exec->_soundSystemActive) {
+				if (exec->_musicEnabled && exec->_soundSystemActive) {
 					const uint16 slot = exec->_activeMusicSlot;
 					if (slot != 0 && !exec->_musicSlots[slot - 1].empty() &&
 						g_engine->getMusic()->playSongData(exec->_musicSlots[slot - 1])) {
