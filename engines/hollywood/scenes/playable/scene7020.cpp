@@ -103,6 +103,11 @@ bool Scene7020::play() {
 }
 
 void Scene7020::initializeCustomPreviewState() {
+	for (uint paletteClass = 1; paletteClass <= 3; ++paletteClass) {
+		const uint offset = kPaletteDeltaTable + paletteClass;
+		_metadata[offset] = (byte)((int8)_metadata[offset] - 8);
+	}
+
 	_primaryPoseMode = 0;
 	resetTransientOverlayLayers();
 	_drawChunk7OverlayInsteadOfActor = false;
@@ -423,6 +428,8 @@ void Scene7020::blackOutScenePalette() {
 		_paletteCurrent[i * 3 + 1] = 0;
 		_paletteCurrent[i * 3 + 2] = 0;
 	}
+	// Speech redraws rebuild actor colors from this cache unless it is blacked too.
+	memset(_actorPaletteBase.data(), 0, _actorPaletteBase.size());
 	drawPlayableComposite();
 	presentFrame();
 }
