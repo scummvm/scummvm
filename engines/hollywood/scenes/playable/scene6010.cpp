@@ -522,6 +522,7 @@ void Scene6010::runStudioClipSequence(bool exitAfterPlayback) {
 		if (!fastForward && waitDeltaClipFrameMillis(kScene6010ClipFrameMillis)) {
 			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 				return;
+			consumeStepAdvanceRequest();
 			_skipRequested = false;
 			fastForward = true;
 		}

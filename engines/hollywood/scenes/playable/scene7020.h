@@ -56,6 +56,7 @@ private:
 		byte red, byte green, byte blue);
 	void runScriptedSequence();
 	void runOpeningSueEntryAndIdleWaits();
+	bool finishOpeningSueEntryAfterSkip();
 	void runChunk6FrameRange(byte firstFrame, byte lastFrame, byte finalPoseMode);
 	void runChunk7RevealFramesThenHold();
 	void blackOutScenePalette();

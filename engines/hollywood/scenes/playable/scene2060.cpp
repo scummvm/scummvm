@@ -744,7 +744,7 @@ void Scene2060::runEntryPathAndGuide(int startX, int startY, byte startFacing,
 	_guideEffectActive = _guideEffectPrepared;
 	_guideFrameIndex = 0;
 
-	while ((_actorPathPlaybackActive || _guideEffectActive) && !_skipRequested && !Engine::shouldQuit()) {
+	while ((_actorPathPlaybackActive || _guideEffectActive) && !Engine::shouldQuit()) {
 		if (_actorPathPlaybackActive) {
 			const ActorPathFrame &frame = _actorPathFrames[actorFrameIndex];
 			_activeActorWorldX = frame.worldX;
@@ -759,7 +759,10 @@ void Scene2060::runEntryPathAndGuide(int startX, int startY, byte startFacing,
 		if (waitSceneMillis(kScene2060ActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
 			_guideEffectActive = false;
-			return;
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return;
+			consumeStepAdvanceRequest();
+			break;
 		}
 
 		if (_actorPathPlaybackActive) {
@@ -773,11 +776,13 @@ void Scene2060::runEntryPathAndGuide(int startX, int startY, byte startFacing,
 	}
 	_actorPathPlaybackActive = false;
 	_guideEffectActive = false;
-	if (_skipRequested || animationPlaybackShouldStop())
+	if (animationPlaybackShouldStop())
 		return;
 
 	_activeActorWorldX = targetX;
 	_activeActorWorldY = targetY;
+	if (!_actorPathFrames.empty())
+		_activeActorFacing = _actorPathFrames.back().facing;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_activeActorCel = 0;
 	drawPlayableComposite();
