@@ -851,19 +851,19 @@ void Scene6090::runInterruptionClips() {
 	Common::Array<byte> secondPalette;
 	Common::Array<byte> firstDelta;
 	Common::Array<byte> secondDelta;
-	firstPalette.resize(0x300);
-	secondPalette.resize(0x300);
+	firstPalette.resize(kPaletteSize);
+	secondPalette.resize(kPaletteSize);
 	Graphics::ManagedSurface firstBase;
 	Graphics::ManagedSurface secondBase;
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	firstBase.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
 	secondBase.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
 
-	if (!loadFixedChunk(19, firstPalette, 0x300) ||
-			!loadFixedChunk(20, firstBase, kFrameBufferSize) ||
+	if (!loadFixedChunk(19, firstPalette, kPaletteSize) ||
+			!loadFixedChunk(20, firstBase, kSceneBufferByteCount) ||
 			!loadVariableChunk(21, firstDelta) ||
-			!loadFixedChunk(22, secondPalette, 0x300) ||
-			!loadFixedChunk(23, secondBase, kFrameBufferSize) ||
+			!loadFixedChunk(22, secondPalette, kPaletteSize) ||
+			!loadFixedChunk(23, secondBase, kSceneBufferByteCount) ||
 			!loadVariableChunk(24, secondDelta)) {
 		warning("Scene 6090 failed to load an interruption clip resource");
 		return;

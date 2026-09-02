@@ -1059,7 +1059,7 @@ void Scene4010::ensureNormalBaseFramebuffer() {
 
 void Scene4010::applyD01BackgroundForCurrentState() {
 	if (alternateBackgroundActive()) {
-		loadFixedChunk(5, _baseFramebuffer, kFrameBufferSize);
+		loadFixedChunk(5, _baseFramebuffer, kSceneBufferByteCount);
 		_baseFramebufferOriginal.copyFrom(_baseFramebuffer);
 		return;
 	}

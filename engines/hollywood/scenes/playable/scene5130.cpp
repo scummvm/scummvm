@@ -51,7 +51,6 @@ const uint kScene5130Resource000HeaderSize = 1;
 const uint kScene5130ActorPaletteTableEntry = 0x00cc;
 const uint kScene5130ActorPaletteOffset = 0x270;
 const uint kScene5130ActorPaletteSize = 0x90;
-const uint kScene5130FrameBufferSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
 const uint16 kScene5130ReturnState = 0x1401;
 const byte kScene5130ActionChangeDrink = 1;
 const byte kScene5130ActionOpenTap = 2;
@@ -166,8 +165,8 @@ const int16 kScene5130DrinkPaletteTable[16][3] = {
 };
 
 Scene5130::Scene5130(HollywoodEngine *vm) :
-		PresentationScene(vm, "scene 5130", kScene5130FrameBufferSize,
-			kScene5130FrameBufferSize),
+		PresentationScene(vm, "scene 5130", kSceneBufferByteCount,
+			kSceneBufferByteCount),
 		_baseFramebuffer(),
 		_fillRuns(),
 		_paletteMask(),
@@ -191,7 +190,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_mixerActionsEnabled(false),
 		_deferredExitRequested(false),
 		_exitRequested(false) {
-	_baseFramebuffer.resize(kScene5130FrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 	_soundBank0.setArchive(Common::Path(kScene5130SoundArchiveName));
 }
 
@@ -233,7 +232,7 @@ bool Scene5130::load() {
 			kScene5130InitialRequiredChunkCount))
 		return false;
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kScene5130FrameBufferSize) ||
+	if (!loadFixedChunk(0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteCurrent, kPaletteSize) ||
 			!loadVariableChunk(2, _fillRuns) ||
 			!loadVariableChunk(3, _paletteMask)) {

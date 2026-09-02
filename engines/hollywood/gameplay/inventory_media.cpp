@@ -31,7 +31,6 @@
 namespace Hollywood {
 
 const char *const kInventoryMediaArchiveName = "RESOURCE.I04";
-const uint kInventoryMediaFramebufferBytes = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
 const uint kSueTapePaletteChunk = 8;
 const uint kSueTapeBaseChunk = 9;
 const uint kSueTapeFramesChunk = 10;
@@ -72,10 +71,10 @@ bool InventoryMediaPlayer::loadStill(InventoryMediaId mediaId) {
 
 	Common::Array<byte> pixels;
 	if (!readChunk(paletteChunk, _palette, kPaletteSize) ||
-			!readChunk(paletteChunk + 1, pixels, kInventoryMediaFramebufferBytes))
+			!readChunk(paletteChunk + 1, pixels, kSceneBufferByteCount))
 		return false;
 
-	_framebuffer.resize(kInventoryMediaFramebufferBytes);
+	_framebuffer.resize(kSceneBufferByteCount);
 	memcpy(_framebuffer.data(), pixels.data(), pixels.size());
 	_tapeResource.clear();
 	_tapeDescriptorTableOffset = 0;
@@ -95,7 +94,7 @@ bool InventoryMediaPlayer::loadSueTape() {
 	memcpy(_tapeResource.data(), base.data(), base.size());
 	memcpy(_tapeResource.data() + base.size(), frames.data(), frames.size());
 
-	_framebuffer.resize(kInventoryMediaFramebufferBytes);
+	_framebuffer.resize(kSceneBufferByteCount);
 	_framebuffer.clear();
 	drawResourceBlockList(_tapeResource, 0, _framebuffer.surface());
 	return true;

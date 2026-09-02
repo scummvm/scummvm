@@ -26,6 +26,7 @@
 
 #include "hollywood/debug.h"
 #include "hollywood/detection.h"
+#include "hollywood/graphics.h"
 
 namespace Hollywood {
 
@@ -164,7 +165,6 @@ enum Resource000FallbackEntry {
 const uint kFallbackResource000HeaderByteCount = 1;
 const uint kFallbackResource000OffsetTableSize = 400;
 const uint kFallbackResource000SizeTableSize = 400;
-const uint kFallbackOptionsFramebufferSize = 0x78000;
 const uint kFallbackMinimumInventoryPagesSize = 0x7e000;
 const uint kFallbackMinimumBottomPanelSize = 0x41d8;
 const uint kFallbackMinimumDialoguePanelSourceSize = 45 * 1024;
@@ -205,7 +205,7 @@ bool hasValidResource000StartupLayout(const AdvancedMetaEngineBase::FileMap &all
 	if ((uint32)file.size() < startupTablesSize)
 		return false;
 
-	if (!hasResource000Entry(file, kFallbackOptionsFramebufferEntry, kFallbackOptionsFramebufferSize))
+	if (!hasResource000Entry(file, kFallbackOptionsFramebufferEntry, kSceneBufferByteCount))
 		return false;
 	if (!hasResource000Entry(file, kFallbackInventoryPagesEntry, kFallbackMinimumInventoryPagesSize))
 		return false;

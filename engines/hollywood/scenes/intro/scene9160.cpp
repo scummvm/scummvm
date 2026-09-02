@@ -44,7 +44,7 @@ const byte kScene9160ScrollDeltaByStep[] = {
 };
 
 Scene9160::Scene9160(HollywoodEngine *vm) :
-		PresentationScene(vm, "Scene 9160", kScene9160TallFramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9160", kScene9160TallFramebufferSize, kSceneBufferByteCount),
 		_music(vm->introMusic()),
 		_paletteResource(),
 		_panelA(),

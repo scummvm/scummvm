@@ -105,7 +105,7 @@ uint Scene2000::sceneArenaLastChunk() const {
 }
 
 void Scene2000::adjustPaletteAfterLoad() {
-	if (_paletteResource.size() >= 0x300) {
+	if (_paletteResource.size() >= kPaletteSize) {
 		_paletteResource[0x2fd] = 0;
 		_paletteResource[0x2fe] = 0;
 		_paletteResource[0x2ff] = 0;

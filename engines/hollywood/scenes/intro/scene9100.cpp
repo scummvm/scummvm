@@ -105,8 +105,8 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_deskSecondaryActorVisible(false),
 		_dialogueBranch(false) {
 	_paletteDefault.resize(kPaletteSize);
-	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
-	_cleanOfficeBaseFramebuffer.resize(kFrameDecodeBufferSize);
+	_frameDecodeBuffer.resize(kSceneBufferByteCount);
+	_cleanOfficeBaseFramebuffer.resize(kSceneBufferByteCount);
 	_presentationPaletteRemapTable.resize(kPresentationPaletteRemapTableSize);
 	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
 		_presentationPaletteRemapTable[i] = 0;
@@ -215,7 +215,7 @@ bool Scene9100::load(bool dialogueBranch) {
 			!_resources.validateChunkRange(kI10ArchiveName, _debugName, 18, 26))
 		return false;
 
-	if (!loadFixedChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
+	if (!loadFixedChunk(0, _frameDecodeBuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteDefault, kPaletteSize) ||
 			!loadVariableChunk(2, _sceneFillRuns) ||
 			!loadVariableChunk(3, _scenePaletteMask) ||

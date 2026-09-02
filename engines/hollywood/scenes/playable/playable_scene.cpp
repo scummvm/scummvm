@@ -1008,7 +1008,7 @@ bool PlayableScene::load() {
 		return false;
 	}
 
-	if (!loadFixedChunk(framebufferChunkIndex, _baseFramebuffer, kFrameBufferSize)) {
+	if (!loadFixedChunk(framebufferChunkIndex, _baseFramebuffer, kSceneBufferByteCount)) {
 		warning("%s load failed: %s chunk %u framebuffer", sceneDebugName(), archiveName,
 			framebufferChunkIndex);
 		return false;
