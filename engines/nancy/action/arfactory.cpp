@@ -42,7 +42,7 @@
 //#include "engines/nancy/action/puzzle/blockingpuzzle.h"
 #include "engines/nancy/action/puzzle/blockspuzzle.h"
 #include "engines/nancy/action/puzzle/boardgamepuzzle.h"
-//#include "engines/nancy/action/puzzle/buildpuzzle.h"
+#include "engines/nancy/action/puzzle/buildpuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/cardgamepuzzle.h"
@@ -490,8 +490,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new OneBuildPuzzle();	// Moved from 234
 		else
-			//return new BuildPuzzle();
-			return nullptr; // TODO
+			return new BuildPuzzle();
 	case 167:
 		return new DrivingPuzzle(DrivingPuzzle::kChase);
 	case 168:
