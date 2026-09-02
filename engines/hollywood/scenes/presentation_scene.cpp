@@ -97,10 +97,6 @@ uint PresentationScene::presentXOffset() const {
 	return 0;
 }
 
-int PresentationScene::subtitleViewportXOffset() const {
-	return 0;
-}
-
 int PresentationScene::subtitleViewportYOffset() const {
 	return 0;
 }
@@ -130,8 +126,7 @@ bool PresentationScene::showAnchoredSubtitle(SpeechOverlay &overlay,
 	if (!showPositionedSubtitle(overlay, text, colorIndex, centerX, 0, wrapStyle))
 		return false;
 
-	layoutSpeechOverlay(overlay, _vm->font(), centerX, anchorBottomY,
-		subtitleViewportXOffset());
+	layoutSpeechOverlay(overlay, _vm->font(), centerX, anchorBottomY);
 	return true;
 }
 
@@ -153,8 +148,7 @@ bool PresentationScene::showPositionedSubtitle(SpeechOverlay &overlay,
 	overlay.colorIndex = colorIndex;
 	overlay.centerX = centerX;
 	overlay.topY = topY;
-	wrapSpeechOverlayText(text, centerX - subtitleViewportXOffset(), overlay.lines,
-		wrapStyle);
+	wrapSpeechOverlayText(text, centerX, overlay.lines, wrapStyle);
 	overlay.visible = !overlay.lines.empty();
 	return overlay.visible;
 }
@@ -221,7 +215,7 @@ void PresentationScene::drawLayerStack(SceneAnimationStratum stratum) {
 
 void PresentationScene::drawFrameOverlays() {
 	drawSpeechOverlayText(_subtitle, _vm->font(), *_screen.surfacePtr(),
-		subtitleViewportXOffset(), subtitleViewportYOffset());
+		0, subtitleViewportYOffset());
 }
 
 void PresentationScene::presentFrame() {

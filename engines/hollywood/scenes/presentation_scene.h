@@ -72,7 +72,6 @@ protected:
 	virtual void drawFrameOverlays();
 	virtual uint presentRowOffset() const;
 	virtual uint presentXOffset() const;
-	virtual int subtitleViewportXOffset() const;
 	virtual int subtitleViewportYOffset() const;
 	bool animationPlaybackShouldStop() const override;
 	void presentAnimationFrame() override;

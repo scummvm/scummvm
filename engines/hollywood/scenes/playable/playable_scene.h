@@ -208,6 +208,7 @@ protected:
 		kResource000TableByteCount = 400,
 		kAmbientSoundSlotCount = 3,
 		kActorFacingCount = 6,
+		kActorBankSegmentCount = 2 * (kActorFacingCount + 1),
 		kActorCelsPerFacing = 13,
 		kActiveActorDescriptorSize = 28,
 		kActiveActorFacingRunStride = 160000,
@@ -240,7 +241,6 @@ protected:
 	uint16 sceneViewportMaxXOffset() const;
 	byte inventoryOwnerIndex() const;
 	void initializeInventoryOwnerState();
-	uint resource000ActorBankSegmentCount() const;
 	uint resource000ActorPaletteTableEntry() const;
 	uint32 inventoryActionTableExtraOffset() const;
 	uint resource003InventoryRowsOffsetIndex() const;
