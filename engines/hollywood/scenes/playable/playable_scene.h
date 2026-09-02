@@ -252,6 +252,8 @@ protected:
 	bool shouldLoadActorDepthTables() const;
 	bool usesActorDepthTest() const;
 	bool isMainFlowStateInScene(uint16 stateId) const;
+	// True when the loop ended by moving to a valid state outside this scene.
+	bool didLeaveSceneAfterLoop() const;
 
 	// Resource layout hooks
 	virtual uint resource000ActorBankTableEntry() const;
@@ -266,7 +268,7 @@ protected:
 	virtual int replacementPaletteMaskResourceChunkIndex() const;
 	virtual bool shouldConvertSavedFramebufferFF() const;
 	virtual bool shouldLoadArenaChunk(uint index) const;
-	virtual bool shouldRunExitSideEffectsAfterLoop() const;
+	// Runs after the gameplay loop unless the scene requested an internal restart.
 	virtual void runExitSideEffectsAfterLoop();
 	// Returning false lets a custom entry sequence own the first presentation.
 	virtual bool shouldPresentPreviewBeforeEntrySequence() const;

@@ -42,7 +42,6 @@ private:
 	int alternatePaletteResourceChunkIndex() const override;
 	bool isAlternatePaletteResourceActive() const override;
 	bool shouldConvertSavedFramebufferFF() const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	void initializeCustomPreviewState() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,

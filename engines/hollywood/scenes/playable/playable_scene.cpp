@@ -448,8 +448,7 @@ bool PlayableScene::play() {
 	if (!_vm->isSceneRestartRequested()) {
 		if (_vm->gameState().activeActorPoseStateId != _vm->gameState().mainFlowStateId)
 			_vm->gameState().activeActorPoseValid = false;
-		if (shouldRunExitSideEffectsAfterLoop())
-			runExitSideEffectsAfterLoop();
+		runExitSideEffectsAfterLoop();
 	}
 	return result;
 }
@@ -646,10 +645,6 @@ bool PlayableScene::shouldLoadArenaChunk(uint index) const {
 	return !_vm->isDemo() || _sceneChunkTable.isValidChunk(index);
 }
 
-bool PlayableScene::shouldRunExitSideEffectsAfterLoop() const {
-	return false;
-}
-
 void PlayableScene::runExitSideEffectsAfterLoop() {
 }
 
@@ -669,6 +664,11 @@ bool PlayableScene::usesActorDepthTest() const {
 
 bool PlayableScene::isMainFlowStateInScene(uint16 stateId) const {
 	return isGameplayStateInScene(_sceneStateId, stateId);
+}
+
+bool PlayableScene::didLeaveSceneAfterLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
 }
 
 void PlayableScene::initializeCustomPreviewState() {

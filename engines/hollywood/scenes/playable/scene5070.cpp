@@ -266,10 +266,6 @@ byte Scene5070::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) con
 	return defaultVolumePercent;
 }
 
-bool Scene5070::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5070::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

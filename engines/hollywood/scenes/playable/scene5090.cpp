@@ -194,10 +194,6 @@ bool Scene5090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
-bool Scene5090::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5090::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

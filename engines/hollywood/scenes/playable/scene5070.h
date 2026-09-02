@@ -46,7 +46,6 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 
 	void runMineCartEntryClip();

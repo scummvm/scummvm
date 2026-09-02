@@ -281,10 +281,6 @@ void Scene5030::runCustomEntrySequence() {
 	}
 }
 
-bool Scene5030::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5030::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 	_vm->gameplayMusic()->stop();
