@@ -1036,7 +1036,6 @@ bool Scene5030::applyDialogueTransition(const DialogueChoiceRecord &record, byte
 		nodeIndex = record.nextNodeIndex;
 		depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 		break;
-	case kScene5030DialogueTransitionStay:
 	default:
 		break;
 	}

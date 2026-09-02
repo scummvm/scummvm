@@ -142,7 +142,6 @@ const byte kScene7010Route3To2StepDeltas[] = {
 const byte kScene7010DialogueTransitionEnd = 0;
 const byte kScene7010DialogueTransitionDown = 1;
 const byte kScene7010DialogueTransitionUp = 2;
-const byte kScene7010DialogueTransitionStay = 3;
 const byte kScene7010DialogueTransitionUpTwo = 4;
 
 PlayableSceneConfig scene7010Config() {
@@ -834,7 +833,6 @@ bool Scene7010::applyHannoverDialogueTransition(const DialogueChoiceRecord &reco
 		nodeIndex = record.nextNodeIndex;
 		depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 		break;
-	case kScene7010DialogueTransitionStay:
 	default:
 		break;
 	}
