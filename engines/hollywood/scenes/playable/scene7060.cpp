@@ -88,22 +88,11 @@ const byte kScene7060ShortExitFrameMap[] = {
 	0, 9, 8, 7
 };
 
-const SceneSpeechActionSpec kScene7060SpeechActions[] = {
-	{ 301, 1, 0 },  // Ir a escalera (go to stairs).
-	{ 302, 2, 0 },  // Mirar escalera (look at stairs).
-	{ 304, 3, 0 },  // Mirar gorila (look at gorilla).
-	{ 309, 7, 0 },  // Mirar escalera (look at stairs).
-	{ 310, 8, 0 },  // Mirar adornos (look at decorations).
-	{ 311, 9, 0 },  // Mirar cuadro (look at painting).
-	{ 313, 10, 0 }  // Mirar llave (look at key).
-};
-
 static PlayableSceneConfig scene7060Config() {
 	PlayableSceneConfig config(7060,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene7060ViewportXOffset, kScene7060ViewportXOffset, kScene7060ViewportMaxXOffset),
 		SceneActorPose(kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY, kScene7060EntryFromG04Facing));
-	config.setSecondarySpeechActions(kScene7060SpeechActions);
 	return config;
 }
 
@@ -210,8 +199,17 @@ void Scene7060::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7060::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
+	case 301: // Ir a escalera (go to stairs)
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 302: // Mirar escalera (look at stairs)
+		beginSecondarySpeechLine(2, 0);
+		return true;
 	case 303: // Hablar con gorila (talk to gorilla)
 		runDialogueMenuRow98();
+		return true;
+	case 304: // Mirar gorila (look at gorilla)
+		beginSecondarySpeechLine(3, 0);
 		return true;
 	case 305: // Mirar puerta (look at door)
 		handleSpeechRow04Variant();
@@ -225,8 +223,20 @@ bool Scene7060::dispatchCustomSceneAction(uint16 handlerId) {
 	case 308: // Ir a escalera (go to stairs)
 		_vm->gameState().mainFlowStateId = kScene7060ReturnToG04State;
 		return true;
+	case 309: // Mirar escalera (look at stairs)
+		beginSecondarySpeechLine(7, 0);
+		return true;
+	case 310: // Mirar adornos (look at decorations)
+		beginSecondarySpeechLine(8, 0);
+		return true;
+	case 311: // Mirar cuadro (look at painting)
+		beginSecondarySpeechLine(9, 0);
+		return true;
 	case 312: // Coger llave (take key)
 		handleChunk7PickupItem11();
+		return true;
+	case 313: // Mirar llave (look at key)
+		beginSecondarySpeechLine(10, 0);
 		return true;
 	case 314: // Usar llave con puerta (use key with door)
 		handleChunk9ExitToG07();

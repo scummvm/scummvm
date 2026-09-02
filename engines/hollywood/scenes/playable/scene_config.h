@@ -73,13 +73,6 @@ struct SceneActorPose {
 	byte facing;
 };
 
-// Maps a fixed scene action handler to one blocking secondary-speech response.
-struct SceneSpeechActionSpec {
-	uint16 handlerId;
-	uint16 rowIndex;
-	byte frameIndex;
-};
-
 /*
  * Static resource and presentation metadata for a playable scene. The scene
  * number supplies conventional archive names, stage index, and chapter-wide
@@ -96,12 +89,6 @@ struct PlayableSceneConfig {
 	void setActorPathStepDeltas(const byte (&table)[size]) {
 		actorPathStepDeltaTable = table;
 		actorPathStepDeltaTableSize = size;
-	}
-
-	template<uint size>
-	void setSecondarySpeechActions(const SceneSpeechActionSpec (&actions)[size]) {
-		secondarySpeechActions = actions;
-		secondarySpeechActionCount = size;
 	}
 
 	uint16 sceneId;
@@ -125,8 +112,6 @@ struct PlayableSceneConfig {
 	uint32 inventoryActionTableExtraOffset;
 	uint inventoryRowsOffsetIndex;
 	uint32 speechCueDescriptorTableOffset;
-	const SceneSpeechActionSpec *secondarySpeechActions;
-	uint secondarySpeechActionCount;
 	const byte *actorPathStepDeltaTable;
 	uint actorPathStepDeltaTableSize;
 	byte walkablePaletteMaxRegion;
