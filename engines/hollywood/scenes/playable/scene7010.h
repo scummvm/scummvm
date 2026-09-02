@@ -60,13 +60,11 @@ private:
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
 	void handleActionSlot00TransitionToG03();
-	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02SecondarySpeech();
 	void handleActionSlot03DialogueSequence();
 	void handleActionSlot04Item06Speech();
 	void handleActionSlot06DoghouseSequence();
 	void handleActionSlot07DialogueAndReturn();
-	void handleActionSlot08CommonSpeech();
 	void runHannoverDialogueMenuRow98();
 	void initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setHannoverDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
