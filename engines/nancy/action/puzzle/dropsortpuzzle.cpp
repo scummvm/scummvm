@@ -113,25 +113,7 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_loseSound.readData(stream);
 
 	// Count-prefixed 23-byte hotspot records; the first is the "give up / exit" hotspot.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
-			_exitScene.frameID = 0;
-			_exitFlag.label = exitFlagLabel;
-			_exitFlag.flag = exitFlagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
 }
 
 void DropSortPuzzle::init() {

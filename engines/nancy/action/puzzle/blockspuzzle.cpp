@@ -60,25 +60,7 @@ void BlocksPuzzle::readData(Common::SeekableReadStream &stream) {
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot (leave the puzzle unsolved), with the exit cursor type.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
-			_exitScene.frameID = 0;
-			_exitFlag.label = exitFlagLabel;
-			_exitFlag.flag = exitFlagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
 
 	// The block shapes, each a 13-byte descriptor of its row in the atlas image.
 	int16 numBlocks = stream.readSint16LE();

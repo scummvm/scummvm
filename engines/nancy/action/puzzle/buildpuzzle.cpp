@@ -173,25 +173,8 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readSoundBlock(stream, unused);
 
 	// The count-prefixed 23-byte hotspot records shared by the later puzzles.
-	int16 numExitZones = stream.readSint16LE();
-	for (int16 i = 0; i < numExitZones; ++i) {
-		Common::Rect zone;
-		readRect(stream, zone);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 flagLabel = stream.readSint16LE();
-		byte flagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = zone;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = 0;
-			_exitScene.continueSceneSound = kContinueSceneSound;
-			_exitFlag.label = flagLabel;
-			_exitFlag.flag = flagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	_exitScene.continueSceneSound = kContinueSceneSound;
 }
 
 void BuildPuzzle::setFlagOnChange(int16 label, bool value, int8 &last) {

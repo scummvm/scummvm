@@ -89,24 +89,7 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 	// Trailing count-prefixed array of 23-byte give-up hotspots
 	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
 	// The exit always jumps to the scene's first frame.
-	int16 numExitZones = stream.readSint16LE();
-	for (int16 i = 0; i < numExitZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 flagLabel = stream.readSint16LE();
-		byte flagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = 0;
-			_exitFlag.label = flagLabel;
-			_exitFlag.flag = flagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
 }
 
 HangmanData *HangmanPuzzle::getPuzzleData() const {

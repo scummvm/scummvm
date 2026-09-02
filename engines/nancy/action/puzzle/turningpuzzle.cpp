@@ -176,25 +176,7 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 
 	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle);
 	// the first one is the "give up" hotspot.
-	int16 numZones = stream.readSint16LE();
-	for (int16 i = 0; i < numZones; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene._sceneChange.sceneID = sceneID;
-			// The field after the scene id is a flag label (set on give-up), not a frame.
-			_exitScene._sceneChange.frameID = 0;
-			_exitScene._flag.label = exitFlagLabel;
-			_exitScene._flag.flag = exitFlagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene._sceneChange, _exitScene._flag);
 
 	uint16 numTypes = stream.readUint16LE();
 	_pieceTypes.resize(numTypes);

@@ -406,6 +406,29 @@ Common::String resolveSubtitleText(const Common::String &keyOrText, const Common
 	return fallback;
 }
 
+void readExitHotspot(Common::SeekableReadStream &stream, Common::Rect &hotspot, uint16 &cursorType,
+					SceneChangeDescription &scene, FlagDescription &flag) {
+	int16 numZones = stream.readSint16LE();
+
+	for (int16 i = 0; i < numZones; ++i) {
+		Common::Rect zone;
+		readRect(stream, zone);
+		uint16 zoneCursor = stream.readUint16LE();
+		uint16 sceneID = stream.readUint16LE();
+		int16 flagLabel = stream.readSint16LE();
+		byte flagValue = stream.readByte();
+
+		if (i == 0) {
+			hotspot = zone;
+			cursorType = zoneCursor;
+			scene.sceneID = sceneID;
+			scene.frameID = 0;
+			flag.label = flagLabel;
+			flag.flag = flagValue;
+		}
+	}
+}
+
 Common::String readSubtitleText(Common::SeekableReadStream &stream) {
 	char buf[30];
 	stream.read(buf, sizeof(buf));

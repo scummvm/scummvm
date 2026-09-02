@@ -71,6 +71,14 @@ Common::String resolveSubtitleText(const Common::String &keyOrText, const Common
 // AUTOTEXT key, falling back to the literal text when the key is not present in the table.
 Common::String readSubtitleText(Common::SeekableReadStream &stream);
 
+// Reads the count-prefixed array of 23-byte hotspot records that the Nancy 13
+// and 14 puzzle records end with, keeping the first: the give-up hotspot. The
+// field after the scene id is an event-flag label, NOT a frame id, so the exit
+// always lands on the scene's first frame. Leaves the scene's continueSceneSound
+// alone, as the puzzles differ on it.
+void readExitHotspot(Common::SeekableReadStream &stream, Common::Rect &hotspot, uint16 &cursorType,
+					SceneChangeDescription &scene, FlagDescription &flag);
+
 // Shows `text` as a single line in the game textbox, replacing its current contents.
 // Does nothing when `text` is empty or when the player has subtitles disabled. A
 // non-negative `overrideFontID` selects a font other than the textbox default. When

@@ -108,24 +108,7 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	readActionZoneArray(stream, _zones, true);
 
 	// The base trailer's hotspot records; the first is the give-up exit.
-	int16 numExit = stream.readSint16LE();
-	for (int16 i = 0; i < numExit; ++i) {
-		Common::Rect r;
-		readRect(stream, r);
-		uint16 cursorType = stream.readUint16LE();
-		uint16 sceneID = stream.readUint16LE();
-		int16 exitFlagLabel = stream.readSint16LE();
-		byte exitFlagValue = stream.readByte();
-
-		if (i == 0) {
-			_exitHotspot = r;
-			_exitCursorType = cursorType;
-			_exitScene.sceneID = sceneID;
-			_exitScene.frameID = 0;
-			_exitFlag.label = exitFlagLabel;
-			_exitFlag.flag = exitFlagValue;
-		}
-	}
+	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
 }
 
 void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m) {

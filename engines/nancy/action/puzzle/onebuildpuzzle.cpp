@@ -242,28 +242,10 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_solveScene.readData(stream);           // 0x1cf (0x1bd in Nancy13, where it ends the blob)
 
 	if (isNancy13) {
-		// Shared hotspot records; the first is the give-up hotspot, which replaces
-		// the header's cancel scene.
-		int16 numZones = stream.readSint16LE();
-		for (int16 i = 0; i < numZones; ++i) {
-			Common::Rect zone;
-			readRect(stream, zone);
-			uint16 cursorType = stream.readUint16LE();
-			uint16 sceneID = stream.readUint16LE();
-			int16 flagLabel = stream.readSint16LE();
-			byte flagValue = stream.readByte();
-
-			if (i == 0) {
-				_exitHotspot = zone;
-				_exitCursorType = cursorType;
-				_cancelScene._sceneChange.sceneID = sceneID;
-				// The field after the scene id is an event-flag label, not a frame.
-				_cancelScene._sceneChange.frameID = 0;
-				_cancelScene._sceneChange.continueSceneSound = kContinueSceneSound;
-				_cancelScene._flag.label = flagLabel;
-				_cancelScene._flag.flag = flagValue;
-			}
-		}
+		// The give-up hotspot replaces the header's cancel scene.
+		readExitHotspot(stream, _exitHotspot, _exitCursorType,
+						_cancelScene._sceneChange, _cancelScene._flag);
+		_cancelScene._sceneChange.continueSceneSound = kContinueSceneSound;
 	} else {
 		_cancelScene.readData(stream);      // 0x1e8 (ends the 513-byte blob)
 	}
