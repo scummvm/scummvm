@@ -51,6 +51,13 @@ struct SceneActionTarget {
 	byte facing;
 };
 
+/**
+ * Decodes scene hotspots, actions, approach targets, and names from resources.
+ *
+ * Hit testing checks runtime override rectangles first, palette-mapped pixels
+ * next, and fallback rectangles last. The most recently added rectangle wins
+ * within its group.
+ */
 class SceneHotspotTable {
 public:
 	bool load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
@@ -96,6 +103,12 @@ private:
 	Common::Array<SceneVerbActionRecord> _relationMode2ActionRecords;
 };
 
+/**
+ * Builds the bottom caption for the selected verb and hovered scene item.
+ *
+ * advance() throttles hotspot resolution, while refreshNow() forces an update.
+ * Relation context adds the selected inventory item and a valid second target.
+ */
 class SceneHoverCaption {
 public:
 	SceneHoverCaption(Common::Language language);
