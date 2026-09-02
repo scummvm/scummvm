@@ -51,6 +51,9 @@ const byte kScene5010FirstAmbientSoundCue = 0x25;
 const byte kScene5010AmbientSoundCueCount = 3;
 const byte kScene5010FirstAmbientMusicCue = 0x0b;
 const byte kScene5010AmbientMusicCueCount = 5;
+const byte kScene5010SwitchLeadFrameCounts[] = { 0x23, 0x13, 0x05 };
+const byte kScene5010SwitchCenterFrames[] = { 0x23, 0x32, 0x41 };
+const byte kScene5010SwitchTailFrames[] = { 0x00, 0x0f, 0x1e };
 
 const byte kScene5010TransportPrepFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7
@@ -679,38 +682,35 @@ Common::Array<byte> Scene5010::buildSwitchPanelAnimation(byte currentValue, byte
 		uint &hideStaticFrame, uint &showStaticFrame) const {
 	// Selector positions occupy separate frame bands; the two holds are where
 	// the original swaps the old and new static needle patches.
-	static const byte leadFrameCounts[] = { 0x23, 0x13, 0x05 };
-	static const byte centerFrames[] = { 0x23, 0x32, 0x41 };
-	static const byte tailFrames[] = { 0x00, 0x0f, 0x1e };
 	Common::Array<byte> frameMap;
 
 	frameMap.push_back(0x22);
-	for (uint i = 1; i <= leadFrameCounts[currentValue]; ++i)
+	for (uint i = 1; i <= kScene5010SwitchLeadFrameCounts[currentValue]; ++i)
 		frameMap.push_back((byte)(0x23 - i));
 
 	hideStaticFrame = frameMap.size();
 	for (uint i = 0; i < 7; ++i)
-		frameMap.push_back(centerFrames[currentValue]);
+		frameMap.push_back(kScene5010SwitchCenterFrames[currentValue]);
 
 	const int direction = targetValue > currentValue ? 1 : -1;
 	for (int i = 1; i <= 5; ++i)
-		frameMap.push_back((byte)(centerFrames[currentValue] + direction * i));
+		frameMap.push_back((byte)(kScene5010SwitchCenterFrames[currentValue] + direction * i));
 	for (int i = 4; i >= 0; --i)
-		frameMap.push_back((byte)(centerFrames[currentValue] + direction * i));
-	for (int frame = centerFrames[currentValue] + direction;; frame += direction) {
+		frameMap.push_back((byte)(kScene5010SwitchCenterFrames[currentValue] + direction * i));
+	for (int frame = kScene5010SwitchCenterFrames[currentValue] + direction;; frame += direction) {
 		frameMap.push_back((byte)frame);
-		if (frame == centerFrames[targetValue])
+		if (frame == kScene5010SwitchCenterFrames[targetValue])
 			break;
 	}
 	for (int i = 1; i <= 5; ++i)
-		frameMap.push_back((byte)(centerFrames[targetValue] - direction * i));
+		frameMap.push_back((byte)(kScene5010SwitchCenterFrames[targetValue] - direction * i));
 	for (int i = 4; i >= 0; --i)
-		frameMap.push_back((byte)(centerFrames[targetValue] - direction * i));
+		frameMap.push_back((byte)(kScene5010SwitchCenterFrames[targetValue] - direction * i));
 	for (uint i = 0; i < 6; ++i)
-		frameMap.push_back(centerFrames[targetValue]);
+		frameMap.push_back(kScene5010SwitchCenterFrames[targetValue]);
 
 	showStaticFrame = frameMap.size();
-	for (uint frame = tailFrames[targetValue]; frame <= 0x22; ++frame)
+	for (uint frame = kScene5010SwitchTailFrames[targetValue]; frame <= 0x22; ++frame)
 		frameMap.push_back((byte)frame);
 	return frameMap;
 }

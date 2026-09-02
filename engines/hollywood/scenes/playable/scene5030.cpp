@@ -97,6 +97,7 @@ const byte kScene5030ScoutResumeVanessaFrame = 0x0e;
 const byte kScene5030ScoutResumeGladysFrame = 0x14;
 const byte kScene5030DeckPatchFrame = 7;
 const byte kScene5030GrantDeckHook = 1;
+const byte kScene5030AmbientCueVolumes[] = { 10, 10, 10, 2, 10, 10, 10, 100 };
 
 const byte kScene5030MineCartEntryDelayBuckets[] = {
 	2, 2, 2, 2, 2, 2, 2, 2,
@@ -396,10 +397,9 @@ AmbientAudioProfile Scene5030::ambientAudioProfile() const {
 }
 
 byte Scene5030::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	static const byte kCueVolumes[] = { 10, 10, 10, 2, 10, 10, 10, 100 };
-	if (cueId < 0x0d || cueId >= 0x0d + ARRAYSIZE(kCueVolumes))
+	if (cueId < 0x0d || cueId >= 0x0d + ARRAYSIZE(kScene5030AmbientCueVolumes))
 		return defaultVolumePercent;
-	return kCueVolumes[cueId - 0x0d];
+	return kScene5030AmbientCueVolumes[cueId - 0x0d];
 }
 
 void Scene5030::handleAnimationFrameHook(byte hookId, uint frame) {
