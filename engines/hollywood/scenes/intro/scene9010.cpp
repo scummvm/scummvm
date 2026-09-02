@@ -196,8 +196,11 @@ bool Scene9010::loadI02StillFrameResource() {
 }
 
 bool Scene9010::runPoseTransition(bool targetAlternatePose) {
-	if (targetAlternatePose == _alternatePoseActive)
-		return !delayScene9010(2000);
+	if (targetAlternatePose == _alternatePoseActive) {
+		if (delayScene9010(2000) && (_skipRequested || Engine::shouldQuit()))
+			return false;
+		return true;
+	}
 
 	if (targetAlternatePose) {
 		_characterFrameIndex = 5;
@@ -206,10 +209,16 @@ bool Scene9010::runPoseTransition(bool targetAlternatePose) {
 			presentFrame();
 			if (_characterFrameIndex == 0x0e)
 				break;
-			if (delayScene9010(75))
-				return false;
+			if (delayScene9010(75)) {
+				if (_skipRequested || Engine::shouldQuit())
+					return false;
+				break;
+			}
 			_characterFrameIndex++;
 		}
+		_characterFrameIndex = 0x0e;
+		drawCharacterFrame(_characterFrameIndex);
+		presentFrame();
 		_alternatePoseActive = true;
 		return true;
 	}
@@ -220,8 +229,11 @@ bool Scene9010::runPoseTransition(bool targetAlternatePose) {
 		presentFrame();
 		if (_characterFrameIndex == 0x1c)
 			break;
-		if (delayScene9010(75))
-			return false;
+		if (delayScene9010(75)) {
+			if (_skipRequested || Engine::shouldQuit())
+				return false;
+			break;
+		}
 		_characterFrameIndex++;
 	}
 
@@ -259,7 +271,7 @@ bool Scene9010::playSpeechExchange(byte descriptorIndex) {
 		_speech.stop();
 		clearSubtitle();
 		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit() &&
-				delayScene9010(375))
+				delayScene9010(375) && (_skipRequested || Engine::shouldQuit()))
 			return false;
 	}
 
@@ -270,7 +282,9 @@ bool Scene9010::playSpeechExchange(byte descriptorIndex) {
 	if (_skipRequested || Engine::shouldQuit())
 		return false;
 
-	return !delayScene9010(250);
+	if (delayScene9010(250) && (_skipRequested || Engine::shouldQuit()))
+		return false;
+	return true;
 }
 
 bool Scene9010::playI02Animation() {
@@ -282,7 +296,7 @@ bool Scene9010::playI02Animation() {
 	presentFrame();
 
 	if (delay(3000))
-		return false;
+		return !(_skipRequested || Engine::shouldQuit());
 
 	if (_i02SingleFrameOnly)
 		return true;
@@ -300,7 +314,7 @@ bool Scene9010::playI02Animation() {
 			presentFrame();
 
 			if (delay(50))
-				return false;
+				return !(_skipRequested || Engine::shouldQuit());
 		}
 
 		return true;
@@ -329,7 +343,7 @@ bool Scene9010::playI02Animation() {
 		presentFrame();
 
 		if (delay(50))
-			return false;
+			return !(_skipRequested || Engine::shouldQuit());
 	}
 
 	return true;
@@ -560,7 +574,7 @@ bool Scene9010::delayScene9010(uint32 millis) {
 		}
 	}
 
-	return _skipRequested || Engine::shouldQuit();
+	return consumeStepAdvanceRequest() || _skipRequested || Engine::shouldQuit();
 }
 
 void Scene9010::stopAudio() {

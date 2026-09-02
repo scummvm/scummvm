@@ -284,7 +284,10 @@ void GameplayOptionsMenu::pollEvents(bool &done) {
 			_vm->cursor()->updatePosition(event.mouse);
 			break;
 		case Common::EVENT_KEYDOWN:
-			handleKeyDown(event.kbd.keycode, done);
+			if (!event.kbdRepeat ||
+					(event.kbd.keycode != Common::KEYCODE_RETURN &&
+					 event.kbd.keycode != Common::KEYCODE_KP_ENTER))
+				handleKeyDown(event.kbd.keycode, done);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_vm->cursor()->updatePosition(event.mouse);

@@ -402,8 +402,11 @@ void Scene9100::runRonEntryConversation() {
 				break;
 
 			const uint32 slice = 10;
-			if (delay(slice))
-				return;
+			if (delay(slice)) {
+				if (_skipRequested || Engine::shouldQuit())
+					return;
+				break;
+			}
 			elapsed += slice;
 
 			const bool clockDirty = advanceClockTimer(slice);
@@ -430,6 +433,7 @@ void Scene9100::runRonEntryConversation() {
 				presentFrame();
 			}
 		}
+		_speech.stop();
 
 		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
 			delayFrame(375, kTalkingOverlayNone, 0, true, true);
@@ -585,8 +589,11 @@ void Scene9100::runForegroundIdleBeat() {
 			presentFrame();
 		}
 		beatCounter++;
-		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
-			return;
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true)) {
+			if (_skipRequested || Engine::shouldQuit())
+				return;
+			break;
+		}
 	}
 
 	if (_skipRequested || Engine::shouldQuit())
@@ -624,8 +631,11 @@ void Scene9100::runOpeningPrelude() {
 			drawForegroundActorFrame(27);
 			presentFrame();
 		}
-		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
-			return;
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true)) {
+			if (_skipRequested || Engine::shouldQuit())
+				return;
+			break;
+		}
 		if (_foregroundActorFrame == 27) {
 			drawForegroundActorFrame(23);
 			presentFrame();
@@ -797,6 +807,7 @@ void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, 
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		waitForSpeechOrDelay(fallbackMillis, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
+		_speech.stop();
 		clearSubtitle();
 		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
 			delayFrame(375, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
@@ -1163,7 +1174,7 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 			presentFrame();
 	}
 
-	return _skipRequested || Engine::shouldQuit();
+	return consumeStepAdvanceRequest() || _skipRequested || Engine::shouldQuit();
 }
 
 bool Scene9100::advanceClockTimer(uint32 millis) {

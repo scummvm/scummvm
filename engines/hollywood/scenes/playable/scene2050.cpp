@@ -518,8 +518,10 @@ void Scene2050::runMuralPuzzleSubscreen() {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					done = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_SPACE) {
+				} else if (!event.kbdRepeat &&
+						(event.kbd.keycode == Common::KEYCODE_RETURN ||
+						 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+						 event.kbd.keycode == Common::KEYCODE_SPACE)) {
 					handleMuralTileClick(muralTileAtScreenPoint(
 						_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY()), done);
 				}

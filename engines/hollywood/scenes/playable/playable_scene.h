@@ -635,6 +635,7 @@ protected:
 		int actorWorldY);
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
+	bool consumeStepAdvanceRequest();
 	bool runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 rowIndex, byte frameIndex,
 		byte red, byte green, byte blue, byte &animationFrame, uint32 &animationMillis);
 	bool waitForFullscreenMediaDismissal();
@@ -785,6 +786,7 @@ protected:
 	byte _lastInventoryActionItemId;
 	byte _lastInventoryPrimaryItemId;
 	bool _skipRequested;
+	bool _stepAdvanceRequested;
 
 private:
 	void runActionOverlay(const ActionOverlaySpec &spec, SceneAnimationStratum stratum,

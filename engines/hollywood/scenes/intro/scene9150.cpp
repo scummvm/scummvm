@@ -131,8 +131,9 @@ void Scene9150::playStaticSpeechPair(byte rowIndex) {
 
 		const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
-		if (delay(duration))
+		if (delay(duration) && (_skipRequested || Engine::shouldQuit()))
 			return;
+		_speech.stop();
 	}
 }
 

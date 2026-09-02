@@ -689,12 +689,15 @@ void Scene5130::startSpeechPart() {
 void Scene5130::advanceSpeech(uint32 millis) {
 	while (_speechActive && millis >= _speechRemainingMillis) {
 		millis -= _speechRemainingMillis;
-		_speech.stop();
-		++_speechPartIndex;
-		startSpeechPart();
+		startNextSpeechPart();
 	}
 	if (_speechActive)
 		_speechRemainingMillis -= millis;
+}
+
+void Scene5130::startNextSpeechPart() {
+	++_speechPartIndex;
+	startSpeechPart();
 }
 
 void Scene5130::waitForSpeechLine() {
@@ -858,11 +861,12 @@ bool Scene5130::pollEvents(bool allowSkip) {
 				}
 				break;
 			}
-			if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
+			if (!event.kbdRepeat &&
+					(event.kbd.keycode == Common::KEYCODE_RETURN ||
+					 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 event.kbd.keycode == Common::KEYCODE_SPACE)) {
 				if (_speechActive)
-					stopSpeechLine();
+					startNextSpeechPart();
 				else if (_mixerActionsEnabled)
 					_pendingActionId = actionAtCursor();
 			}

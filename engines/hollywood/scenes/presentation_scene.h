@@ -106,6 +106,7 @@ protected:
 	void presentFrame(uint rowOffset, uint xOffset);
 	virtual bool pollEvents(bool allowSkip = true);
 	bool delay(uint32 millis, bool allowSkip = true);
+	bool consumeStepAdvanceRequest();
 
 	bool revealSavedFramebufferWithCurtain(byte bandWidth = 0x14);
 	bool clearSceneFramebufferWithCurtain(byte bandWidth = 0x14);
@@ -131,6 +132,7 @@ protected:
 	Palette6Bit _displayPalette;
 	SpeechOverlay _subtitle;
 	bool _skipRequested;
+	bool _stepAdvanceRequested;
 };
 
 } // End of namespace Hollywood

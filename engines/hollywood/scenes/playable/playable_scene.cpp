@@ -196,7 +196,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_lastSceneActionItemId(0),
 		_lastInventoryActionItemId(0),
 		_lastInventoryPrimaryItemId(0),
-		_skipRequested(false) {
+		_skipRequested(false),
+		_stepAdvanceRequested(false) {
 	_surfaceState.initialize(kPaletteSize, kScenePaletteMapByteCount, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
 		kScenePaletteRegionCount, kActorPaletteBaseBytes);
 	_speechController.initialize(kDefaultSecondarySpeechTextColor, kDefaultPrimarySpeechTextColor);
@@ -339,8 +340,11 @@ bool PlayableScene::BlockingSequence::canRun() {
 }
 
 void PlayableScene::BlockingSequence::finishMediaStep(bool completed) {
-	if (!completed && !_scene._skipRequested)
-		_running = false;
+	if (!completed) {
+		const bool stepAdvanced = _scene.consumeStepAdvanceRequest();
+		if (!stepAdvanced && !_scene._skipRequested)
+			_running = false;
+	}
 	refresh();
 }
 
@@ -2118,6 +2122,7 @@ void PlayableScene::installFullscreenInventoryMedia(const InventoryMediaPlayer &
 	_residentSoundEffects.stop();
 	clearAllSpeechOverlays();
 	_skipRequested = false;
+	_stepAdvanceRequested = false;
 
 	_sceneFramebuffer.copyRectToSurface(media.framebuffer(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
@@ -2133,6 +2138,7 @@ void PlayableScene::restoreFullscreenInventoryMedia(const Graphics::ManagedSurfa
 	_paletteCurrent = savedPalette;
 	_viewportXOffset = savedViewportX;
 	_skipRequested = false;
+	_stepAdvanceRequested = false;
 	_displayPalette.markAllDirty();
 	presentFrame();
 }
@@ -2164,11 +2170,15 @@ bool PlayableScene::pollFullscreenMediaEvents(bool &dismissed) {
 			presentFrame();
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-					event.kbd.keycode == Common::KEYCODE_SPACE)
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				dismissed = true;
+			} else if (!event.kbdRepeat &&
+					(event.kbd.keycode == Common::KEYCODE_RETURN ||
+					 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 event.kbd.keycode == Common::KEYCODE_SPACE)) {
+				_stepAdvanceRequested = true;
+				dismissed = true;
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_vm->cursor()->updatePosition(event.mouse);
@@ -2242,6 +2252,10 @@ bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 row
 		_speech.stop();
 		_primarySpeechOverlay.visible = false;
 		_primarySpeechOverlay.lines.clear();
+		if (dismissed && consumeStepAdvanceRequest()) {
+			dismissed = false;
+			continue;
+		}
 		if (dismissed || Engine::shouldQuit() || _vm->isSceneRestartRequested())
 			return true;
 	}
@@ -2963,6 +2977,12 @@ void PlayableScene::advanceRealtimeSpeech(uint32 delta) {
 bool PlayableScene::waitForRealtimeSpeech(bool allowSkip) {
 	while (isRealtimeSpeechActive() && !animationPlaybackShouldStop()) {
 		if (waitSceneMillis(50, allowSkip)) {
+			if (consumeStepAdvanceRequest()) {
+				_realtimeSpeechPlayer.stop();
+				++_realtimeSpeechContinuationPart;
+				startRealtimeSpeechPart();
+				continue;
+			}
 			stopRealtimeSpeech();
 			return true;
 		}
@@ -3201,13 +3221,27 @@ bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrim
 			break;
 
 		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, fallbackMillis - elapsed);
-		if (waitSceneMillis(slice))
+		if (waitSceneMillis(slice)) {
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return true;
+			if (consumeStepAdvanceRequest())
+				return false;
 			return true;
+		}
 		if (animatePrimaryLeft && !_primarySpeechOverlay.visible)
 			break;
 	}
 
 	return Engine::shouldQuit();
+}
+
+bool PlayableScene::consumeStepAdvanceRequest() {
+	if (!_stepAdvanceRequested)
+		return false;
+
+	_stepAdvanceRequested = false;
+	_skipRequested = false;
+	return true;
 }
 
 void PlayableScene::setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue) {
@@ -3286,6 +3320,7 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 }
 
 bool PlayableScene::pollEvents(bool allowSkip) {
+	_stepAdvanceRequested = false;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -3300,10 +3335,16 @@ bool PlayableScene::pollEvents(bool allowSkip) {
 			_displayPalette.markAllDirty();
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (allowSkip && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE)) {
+			if (allowSkip && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				_skipRequested = true;
+				return true;
+			}
+			if (allowSkip && !event.kbdRepeat &&
+					(event.kbd.keycode == Common::KEYCODE_RETURN ||
+					 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 event.kbd.keycode == Common::KEYCODE_SPACE)) {
+				_skipRequested = true;
+				_stepAdvanceRequested = true;
 				return true;
 			}
 			break;

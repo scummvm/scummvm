@@ -272,6 +272,8 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			presentFrame();
 			animationElapsed += loop.finishFrame();
 		}
+		_speech.stop();
+		consumeStepAdvanceRequest();
 		if (_skipRequested || Engine::shouldQuit())
 			return;
 

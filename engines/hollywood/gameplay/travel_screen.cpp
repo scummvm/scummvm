@@ -198,9 +198,10 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 				requestedSlot = slotAtPoint(event.mouse.x, event.mouse.y);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-						event.kbd.keycode == Common::KEYCODE_SPACE) {
+				if (!event.kbdRepeat &&
+						(event.kbd.keycode == Common::KEYCODE_RETURN ||
+						 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+						 event.kbd.keycode == Common::KEYCODE_SPACE)) {
 					selectRequested = true;
 					requestedSlot = slotAtPoint(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
 				}

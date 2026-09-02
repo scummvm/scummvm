@@ -253,8 +253,10 @@ bool DialogueMenu::pollEvents(bool &selected, bool &cancelled) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				cancelled = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
+			} else if (!event.kbdRepeat &&
+					(event.kbd.keycode == Common::KEYCODE_RETURN ||
+					 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 event.kbd.keycode == Common::KEYCODE_SPACE)) {
 				if (_state.highlightedLineIndex != 0xff)
 					selected = true;
 			}

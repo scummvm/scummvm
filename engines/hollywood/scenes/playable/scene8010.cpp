@@ -952,8 +952,10 @@ byte Scene8010::chooseFishermanQuizLine() {
 					_vm->cursor()->leaveInteractiveMode();
 					return 0xff;
 				}
-				if ((event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_SPACE) &&
+				if (!event.kbdRepeat &&
+						(event.kbd.keycode == Common::KEYCODE_RETURN ||
+						 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+						 event.kbd.keycode == Common::KEYCODE_SPACE) &&
 						state.highlightedLineIndex != 0xff) {
 					_vm->cursor()->leaveInteractiveMode();
 					return state.choiceForLine(state.highlightedLineIndex);
