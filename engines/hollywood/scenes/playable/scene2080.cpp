@@ -707,8 +707,10 @@ void Scene2080::beginForegroundDialogueSecondarySpeechLine(uint16 rowIndex, byte
 			break;
 
 		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, duration - elapsed);
-		if (waitForegroundDialogueMillis(slice))
+		if (waitForegroundDialogueMillis(slice)) {
+			consumeStepAdvanceRequest();
 			break;
+		}
 	}
 
 	_speech.stop();

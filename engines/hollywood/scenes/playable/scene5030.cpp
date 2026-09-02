@@ -1121,7 +1121,7 @@ bool Scene5030::waitForConcurrentPrimarySpeech() {
 	bool interrupted = false;
 	while (_concurrentPrimarySpeechActive && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (waitSceneMillis(10)) {
-			interrupted = true;
+			interrupted = !consumeStepAdvanceRequest();
 			break;
 		}
 	}

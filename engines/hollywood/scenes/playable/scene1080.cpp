@@ -554,7 +554,7 @@ void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescripto
 
 			const uint32 slice = 10;
 			if (waitSceneMillis(slice)) {
-				interrupted = true;
+				interrupted = !consumeStepAdvanceRequest();
 				break;
 			}
 			const uint32 now = g_system->getMillis();

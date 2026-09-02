@@ -283,10 +283,16 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 	uint32 chunk8Accumulator = 0;
 	uint32 chunk10Accumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
+	bool stepAdvanced = false;
 
-	for (uint frame = 0; frame < ARRAYSIZE(cels) && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		if (pollEvents(true))
-			return;
+	for (uint frame = 0; frame < ARRAYSIZE(cels) && !_skipRequested &&
+			!stepAdvanced && !Engine::shouldQuit(); ++frame) {
+		if (pollEvents(true)) {
+			stepAdvanced = consumeStepAdvanceRequest();
+			if (!stepAdvanced)
+				return;
+			break;
+		}
 
 		const int x = startX + ((targetX - startX) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
 		const int y = startY + ((targetY - startY) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
@@ -300,9 +306,13 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
 		presentFrame();
 
-		while (!_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents(true))
-				return;
+		while (!_skipRequested && !stepAdvanced && !Engine::shouldQuit()) {
+			if (pollEvents(true)) {
+				stepAdvanced = consumeStepAdvanceRequest();
+				if (!stepAdvanced)
+					return;
+				break;
+			}
 			const uint32 elapsed = g_system->getMillis() - frameStartMillis;
 			if (elapsed >= kScene7010ActorPathFrameMillis)
 				break;

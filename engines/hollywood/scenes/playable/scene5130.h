@@ -64,6 +64,7 @@ private:
 	void drawCaption();
 	void startSpeechLine(uint16 rowIndex, byte frameIndex);
 	void startSpeechPart();
+	void startNextSpeechPart();
 	void advanceSpeech(uint32 millis);
 	void waitForSpeechLine();
 	void stopSpeechLine();

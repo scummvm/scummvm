@@ -165,7 +165,7 @@ void Scene9170::runSequence() {
 	_rowOffset = 0;
 	addBlockListToCanvas(2, 0);
 	fadeInPalette();
-	if (delay(7000))
+	if (delay(7000) && (_skipRequested || Engine::shouldQuit()))
 		return;
 
 	scrollByTable(kScene9170ScrollDownA, ARRAYSIZE(kScene9170ScrollDownA), true);
@@ -219,7 +219,7 @@ void Scene9170::runSequence() {
 	presentFrame();
 	waitWithAnimations(1000, 3, false);
 	scrollByTable(kScene9170ScrollDownB, ARRAYSIZE(kScene9170ScrollDownB), true);
-	if (delay(3000))
+	if (delay(3000) && (_skipRequested || Engine::shouldQuit()))
 		return;
 	scrollByTable(kScene9170ScrollUpB, ARRAYSIZE(kScene9170ScrollUpB), false);
 	runSpeechLine(4, 2, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
@@ -229,7 +229,7 @@ void Scene9170::runSequence() {
 	presentFrame();
 	waitWithAnimations(2000, 3, false);
 	scrollTo(0x140, 4);
-	if (delay(3000))
+	if (delay(3000) && (_skipRequested || Engine::shouldQuit()))
 		return;
 
 	_lowerFrame = 7;
@@ -440,6 +440,7 @@ void Scene9170::waitWithAnimations(uint32 millis, byte speakerGroup, bool animat
 		speakerElapsed += slice;
 		effectElapsed += slice;
 	}
+	consumeStepAdvanceRequest();
 }
 
 void Scene9170::fadeInPalette() {
@@ -539,10 +540,11 @@ void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			speechElapsed += slice;
 			effectElapsed += slice;
 		}
+		_speech.stop();
+		consumeStepAdvanceRequest();
 		if (_skipRequested || Engine::shouldQuit())
 			return;
 
-		_speech.stop();
 		resetSpeakerFrame(speakerGroup);
 		clearSubtitle();
 		composeFrame();

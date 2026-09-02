@@ -833,7 +833,7 @@ bool Scene9050::runResourceI06AnimationLoop(bool interlude,
 		elapsed = 10;
 	}
 
-	return _skipRequested || Engine::shouldQuit();
+	return consumeStepAdvanceRequest() || _skipRequested || Engine::shouldQuit();
 }
 
 void Scene9050::ensureContinuousSound(byte cueId, byte volumePercent) {
@@ -1136,6 +1136,7 @@ bool Scene9050::waitSceneCounterPast(uint threshold) {
 		loop.finishFrame();
 	}
 
+	consumeStepAdvanceRequest();
 	return _skipRequested || Engine::shouldQuit();
 }
 

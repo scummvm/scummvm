@@ -186,6 +186,7 @@ void Scene9180::waitWithEffects(uint32 millis) {
 		presentFrame();
 		flickerElapsed += loop.finishFrame();
 	}
+	consumeStepAdvanceRequest();
 }
 
 void Scene9180::runSpeechLine(byte frameIndex) {
@@ -234,6 +235,8 @@ void Scene9180::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 			speechElapsed += slice;
 			flickerElapsed += slice;
 		}
+		_speech.stop();
+		consumeStepAdvanceRequest();
 		if (_skipRequested || Engine::shouldQuit())
 			return;
 		_frameMapIndex = 0x35;

@@ -238,6 +238,7 @@ bool Scene9160::waitBeforeScroll() {
 		loop.finishFrame();
 	}
 
+	consumeStepAdvanceRequest();
 	return _skipRequested || Engine::shouldQuit();
 }
 
