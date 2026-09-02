@@ -2624,16 +2624,12 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) const {
 	return 0;
 }
 
-Common::String getObjectHotspotName(uint16 objectIndex) {
-	return lookupObjectHotspotName(objectIndex);
-}
-
 Common::String lookupInteractionDisplayName(uint16 interactionId) {
 	if (interactionId >= 0x800) {
 		return lookupSceneHotspotName((uint16)Scenes::instance()._currentSceneIndex, (uint16)(interactionId - 0x800));
 	}
 	if (interactionId >= 0x400) {
-		return getObjectHotspotName((uint16)(interactionId - 0x400));
+		return lookupObjectHotspotName((uint16)(interactionId - 0x400));
 	}
 	return Common::String();
 }
@@ -2794,7 +2790,7 @@ void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hots
 			hotspotType = Graphics::kHotspotNPC;
 		}
 
-		const Common::String &name = getObjectHotspotName(entry.index);
+		const Common::String &name = lookupObjectHotspotName(entry.index);
 		hotspots.emplace_back(Graphics::HotspotInfo(screenPos, hotspotLabelToU32(name), hotspotType));
 	}
 }

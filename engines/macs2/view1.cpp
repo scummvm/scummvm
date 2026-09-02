@@ -35,6 +35,7 @@
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/amiga_decode.h"
+#include "macs2/hotspot_names.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/actionbar.h"
@@ -2155,7 +2156,7 @@ bool View1::msgMouseMove(const MouseMoveMessage &msg) {
 			_actionBar->clearSentenceObject();
 			GameObject *hovered = getClickedInventoryItem(msg._pos);
 			if (hovered != nullptr) {
-				const Common::String &name = getObjectHotspotName(hovered->_index);
+				const Common::String &name = lookupObjectHotspotName(hovered->_index);
 				if (!name.empty())
 					_actionBar->updateSentenceLine(name);
 			}
@@ -2383,9 +2384,9 @@ void View1::draw() {
 			}
 		}
 
-		GameObject *hoveredObject = getClickedInventoryItem(mousePos);
+		const GameObject *hoveredObject = getClickedInventoryItem(mousePos);
 		if (hoveredObject != nullptr) {
-			Common::String name = getObjectHotspotName(hoveredObject->_index);
+			const Common::String &name = lookupObjectHotspotName(hoveredObject->_index);
 			if (!name.empty()) {
 				renderString(mousePos.x + 20, mousePos.y + 20, name);
 			} else {

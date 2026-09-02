@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
+#include "macs2/hotspot_names.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/view1.h"
@@ -1199,7 +1200,7 @@ static void showInventoryWindow() {
 			if (ImGui::CollapsingHeader("Current Inventory", ImGuiTreeNodeFlags_DefaultOpen)) {
 				for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 					GameObject *obj = view->_inventoryItems[i];
-					Common::String name = getObjectHotspotName(obj->_index);
+					Common::String name = lookupObjectHotspotName(obj->_index);
 					if (name.empty())
 						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
@@ -1223,7 +1224,7 @@ static void showInventoryWindow() {
 						continue;
 					if (obj->_blobs.size() <= 0x13 || obj->_blobs[0x13].empty())
 						continue;
-					Common::String name = getObjectHotspotName(obj->_index);
+					Common::String name = lookupObjectHotspotName(obj->_index);
 					if (name.empty())
 						name = "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);

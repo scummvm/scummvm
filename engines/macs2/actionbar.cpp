@@ -28,6 +28,7 @@
 #include "gui/message.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
+#include "macs2/hotspot_names.h"
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/view1.h"
@@ -445,7 +446,7 @@ void ActionBar::handleMouseMoveScumm(const Common::Point &pos) {
 					break;
 				if (getInvItemRect(i).contains(pos)) {
 					_hoveredItemIndex = i;
-					updateSentenceLine(getObjectHotspotName(items[itemIdx]->_index));
+					updateSentenceLine(lookupObjectHotspotName(items[itemIdx]->_index));
 					break;
 				}
 			}
@@ -541,7 +542,7 @@ Common::String ActionBar::currentTargetDisplayName() const {
 		_view->_uiPanelState == View1::kUiPanelInventory) {
 		GameObject *hovered = _view->getClickedInventoryItem(mouse);
 		if (hovered != nullptr)
-			return getObjectHotspotName(hovered->_index);
+			return lookupObjectHotspotName(hovered->_index);
 		return Common::String();
 	}
 
@@ -560,7 +561,7 @@ Common::String ActionBar::buildSentenceLine() const {
 	const Common::String targetName = currentTargetDisplayName();
 	Common::String itemName;
 	if (_view->_activeInventoryItem != nullptr) {
-		itemName = getObjectHotspotName(_view->_activeInventoryItem->_index);
+		itemName = lookupObjectHotspotName(_view->_activeInventoryItem->_index);
 	}
 
 	if (mode == Script::MouseMode::UseInventory && !itemName.empty()) {

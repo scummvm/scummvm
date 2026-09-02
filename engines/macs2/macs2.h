@@ -964,7 +964,6 @@ public:
 };
 
 extern Macs2Engine *g_engine;
-Common::String getObjectHotspotName(uint16 objectIndex);
 /** Display name for a hit id: 0x400+object or 0x800+scene hotspot. */
 Common::String lookupInteractionDisplayName(uint16 interactionId);
 
