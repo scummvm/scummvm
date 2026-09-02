@@ -216,6 +216,7 @@ PlayableSceneConfig scene4080Config() {
 	config.setActorResources(kScene4080ActorBankTableEntry, kScene4080ActorPaletteTableEntry);
 	config.setTextResources(kScene4080Resource003RowsOffsetIndex, kScene4080SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -298,10 +299,6 @@ void Scene4080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_sceneChunkTable.isValidChunk(kScene4080ForegroundBlockChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080ForegroundBlockChunk], _sceneFramebuffer);
 	drawActionOverlayLayer();
-}
-
-bool Scene4080::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4080::runCustomEntrySequence() {

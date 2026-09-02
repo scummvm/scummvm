@@ -121,6 +121,7 @@ static PlayableSceneConfig scene5120Config() {
 	config.setActorResources(kScene5120ActorBankTableEntry, kScene5120ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5120SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -194,10 +195,6 @@ void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (actionVisible && !actionBehindActors && !actionReplacesActor)
 		drawActionOverlayLayer();
 	drawResourceSpriteLayer(_sceneLayers.layer(kScene5120ElevatorLayer));
-}
-
-bool Scene5120::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5120::runCustomEntrySequence() {

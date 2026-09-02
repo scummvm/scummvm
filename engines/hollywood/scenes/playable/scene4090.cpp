@@ -155,6 +155,7 @@ PlayableSceneConfig scene4090Config() {
 	config.setActorResources(kScene4090ActorBankTableEntry, kScene4090ActorPaletteTableEntry);
 	config.setTextResources(kScene4090Resource003RowsOffsetIndex, kScene4090SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -204,10 +205,6 @@ void Scene4090::drawCustomActorForegroundComposite(int activeWorldX, int activeW
 		return;
 
 	drawForegroundLayers(activeWorldY, !_multiSpriteCompositeActive);
-}
-
-bool Scene4090::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4090::runCustomEntrySequence() {

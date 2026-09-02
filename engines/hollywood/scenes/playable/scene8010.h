@@ -50,7 +50,6 @@ private:
 	void drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void advanceAmbientAudio(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;

@@ -178,6 +178,7 @@ PlayableSceneConfig scene5030Config() {
 	config.setTextResources(0, kScene5030SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -259,10 +260,6 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_sceneChunkTable.isValidChunk(7))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
 	drawActionOverlayLayer();
-}
-
-bool Scene5030::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5030::runCustomEntrySequence() {

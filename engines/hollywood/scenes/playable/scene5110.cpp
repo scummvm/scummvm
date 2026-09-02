@@ -130,6 +130,7 @@ static PlayableSceneConfig scene5110Config() {
 	config.setTextResources(0, kScene5110SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = false;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -195,10 +196,6 @@ void Scene5110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawNormalRoomLayers(activeWorldY);
 	drawActionOverlayLayer();
-}
-
-bool Scene5110::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5110::runCustomEntrySequence() {

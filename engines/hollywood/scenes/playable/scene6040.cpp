@@ -81,6 +81,7 @@ static PlayableSceneConfig scene6040Config() {
 	config.setActorResources(kScene6040ActorBankTableEntry, kScene6040ActorPaletteTableEntry);
 	config.setTextResources(kScene6040Resource003RowsOffsetIndex, kScene6040SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -105,10 +106,6 @@ void Scene6040::initializeCustomPreviewState() {
 void Scene6040::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
 	(void)activeWorldX;
 	drawForegroundBlocks(activeWorldY);
-}
-
-bool Scene6040::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene6040::runCustomEntrySequence() {

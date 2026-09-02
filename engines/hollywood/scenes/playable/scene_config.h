@@ -104,6 +104,7 @@ struct PlayableSceneConfig {
 	SceneActorPose defaultActorPose;
 	// False when scene resource layers render the protagonist.
 	bool drawDefaultActor;
+	bool entrySequenceOwnsFirstPresentation;
 	byte inventoryOwnerIndex;
 	byte activeAudioChapterIndex;
 	uint actorBankTableEntry;

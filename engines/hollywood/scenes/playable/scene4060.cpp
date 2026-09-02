@@ -236,6 +236,7 @@ PlayableSceneConfig scene4060Config() {
 	config.setActorResources(kScene4060ActorBankTableEntry, kScene4060ActorPaletteTableEntry);
 	config.setTextResources(kScene4060Resource003RowsOffsetIndex, kScene4060SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -346,10 +347,6 @@ void Scene4060::runCustomEntrySequence() {
 	}
 
 	runFirstEntrySequence();
-}
-
-bool Scene4060::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4060::runExitSideEffectsAfterLoop() {

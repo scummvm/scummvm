@@ -74,6 +74,7 @@ static PlayableSceneConfig scene5090Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet5A);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -94,10 +95,6 @@ void Scene5090::initializeCustomPreviewState() {
 	_mineCartRumbleActive = false;
 	_routeStartRegion = 0;
 	setActiveActorPose(0x0b5, 0x076, 2);
-}
-
-bool Scene5090::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5090::runCustomEntrySequence() {

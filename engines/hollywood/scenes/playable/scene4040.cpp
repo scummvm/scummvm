@@ -91,6 +91,7 @@ PlayableSceneConfig scene4040Config() {
 	config.setActorResources(kScene4040ActorBankTableEntry, kScene4040ActorPaletteTableEntry);
 	config.setTextResources(kScene4040Resource003RowsOffsetIndex, kScene4040SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -158,10 +159,6 @@ void Scene4040::runCustomEntrySequence() {
 		beginSecondarySpeechLine(0, 0);
 		state.scene4040EntryLineSeen = true;
 	}
-}
-
-bool Scene4040::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4040::runExitSideEffectsAfterLoop() {

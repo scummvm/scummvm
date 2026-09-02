@@ -47,7 +47,6 @@ private:
 		byte actorDrawOrderMode) override;
 	bool shouldApplyGameplayPanelObjectPalette() const override;
 	void runCustomEntrySequence() override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void advancePrimarySpeechAnimation(uint32 delta) override;

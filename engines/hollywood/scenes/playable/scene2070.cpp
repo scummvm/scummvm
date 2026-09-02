@@ -90,6 +90,7 @@ static PlayableSceneConfig scene2070Config() {
 	config.setTextResources(kScene2070Resource003RowsOffsetIndex, kScene2070SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -127,10 +128,6 @@ void Scene2070::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene2070::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2070::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {

@@ -184,6 +184,7 @@ static PlayableSceneConfig scene2030Config() {
 	config.setTextResources(kScene2030Resource003RowsOffsetIndex, kScene2030SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 6;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -239,10 +240,6 @@ void Scene2030::runCustomEntrySequence() {
 		runEntryFromChapterStart();
 		break;
 	}
-}
-
-bool Scene2030::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2030::runExitSideEffectsAfterLoop() {

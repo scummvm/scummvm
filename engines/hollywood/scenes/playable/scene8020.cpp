@@ -90,6 +90,7 @@ PlayableSceneConfig scene8020Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 20;
 	config.loadActorDepthTables = false;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -110,10 +111,6 @@ void Scene8020::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	resetForegroundLayer();
 	setActiveActorPose(kScene8020EntryStartX, kScene8020EntryStartY, kScene8020EntryFacing);
-}
-
-bool Scene8020::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene8020::runExitSideEffectsAfterLoop() {

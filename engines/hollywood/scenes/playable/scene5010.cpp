@@ -86,6 +86,7 @@ static PlayableSceneConfig scene5010Config() {
 	config.setTextResources(kScene5010Resource003RowsOffsetIndex, kScene5010SpeechCueDescriptorTableOffset);
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet87);
 	config.walkablePaletteMaxRegion = 8;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -155,10 +156,6 @@ void Scene5010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[27], _sceneFramebuffer);
 	if (_switchPanelActive)
 		drawSwitchPanelOverlay();
-}
-
-bool Scene5010::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5010::runCustomEntrySequence() {
