@@ -54,11 +54,11 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_music(),
 		_speech(vm->getLanguage(), vm->hasSpeechData()),
 		_text(),
+		_i02FramePayloadFormat(kI02FramePayloadUnknown),
+		_i02SingleFrameOnly(false),
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
-		_i02FramePayloadFormat(kI02FramePayloadUnknown),
-		_i02SingleFrameOnly(false),
 		_scene9010FadeCountdown(63),
 		_scene9010FadeComplete(false),
 		_scene9010FadeAccumulator(0) {
