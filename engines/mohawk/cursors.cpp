@@ -37,6 +37,13 @@
 #include "mohawk/myst_graphics.h"
 #endif
 
+#ifdef ENABLE_ZOOMBINI
+#include "graphics/paletteman.h"
+#include "mohawk/zoombini.h"
+#include "mohawk/zoombini_graphics.h"
+#include "mohawk/bitmap.h"
+#endif
+
 namespace Mohawk {
 
 void CursorManager::showCursor() {
@@ -190,6 +197,78 @@ LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
 LivingBooksCursorManager_v2::~LivingBooksCursorManager_v2() {
 	delete _sysArchive;
 }
+
+#ifdef ENABLE_ZOOMBINI
+
+ZoombiniCursorManager::ZoombiniCursorManager(MohawkEngine_Zoombini *vm) : _vm(vm) {
+}
+
+ZoombiniCursorManager::~ZoombiniCursorManager() {
+	for (Common::HashMap<uint16, Graphics::MacCursor *>::iterator it = _cachedCursors.begin(); it != _cachedCursors.end(); it++)
+		delete it->_value;
+}
+
+Graphics::MacCursor *ZoombiniCursorManager::loadCursor(uint16 id) {
+	Common::SeekableReadStream *stream = _vm->getResource(ID_CURS, ZmbResource(ZmbResource::kSystem, id));
+	static constexpr int64 kCursResourceSize = 68;
+	if (stream->size() != kCursResourceSize) {
+		delete stream;
+		error("cursor: malformed required Zoombini CURS %u size", id);
+		return nullptr;
+	}
+
+	Graphics::MacCursor *cursor = new Graphics::MacCursor();
+	if (!cursor->readFromStream(*stream, false, 0xFF, true)) {
+		delete stream;
+		delete cursor;
+		error("cursor: malformed required Zoombini cursor %u", id);
+		return nullptr;
+	}
+	delete stream;
+	return cursor;
+}
+
+void ZoombiniCursorManager::preloadCursors() {
+	for (uint16 id = kFirstCursorResourceId; id <= kLastCursorResourceId; id++)
+		if (!_cachedCursors.contains(id))
+			_cachedCursors[id] = loadCursor(id);
+}
+
+void ZoombiniCursorManager::setCursor(uint16 id) {
+	if (id < kFirstCursorResourceId || kLastCursorResourceId < id) {
+		error("cursor: invalid Zoombini CURS resource id %u", id);
+		return;
+	}
+
+	if (!_cachedCursors.contains(id))
+		_cachedCursors[id] = loadCursor(id);
+	CursorMan.replaceCursor(_cachedCursors[id]);
+}
+
+void ZoombiniCursorManager::setShapeCursor(ZmbResource::ArchiveKind archiveKind, uint16 imageId, uint16 shapeIdx, const Common::Point &minusREGS) {
+	MohawkSurface *mhkSurface = _vm->_gfx->findShape(ZmbResource(archiveKind, imageId), shapeIdx);
+	if (!mhkSurface) {
+		error("cursor: cannot find cursor bitmap, imageId(%u) shapeIdx(%u)", imageId, shapeIdx);
+		return;
+	}
+	Graphics::Surface *surface = mhkSurface->getSurface();
+	if (!surface) {
+		error("cursor: cursor bitmap is invalid, imageId(%u) shapeIdx(%u)", imageId, shapeIdx);
+		return;
+	}
+
+	if (surface->format.bytesPerPixel != 1) {
+		error("cursor: cursor bitmap is not 8bpp as expected, imageId(%u) shapeIdx(%u)", imageId, shapeIdx);
+		return;
+	}
+
+	CursorMan.replaceCursor(*surface, minusREGS.x, minusREGS.y, ZoombiniGraphics::kTransparentKey);
+
+	const Graphics::Palette &palette = _vm->_system->getPaletteManager()->grabPalette(0, 255);
+	CursorMan.replaceCursorPalette(palette.data(), 0, palette.size());
+}
+
+#endif
 
 void LivingBooksCursorManager_v2::setCursor(uint16 id) {
 	if (_sysArchive && _sysArchive->hasResource(ID_TCUR, id)) {
