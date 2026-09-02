@@ -73,7 +73,7 @@ void OverworldLogic::action(int action) {
 	case KEYBIND_PASS:
 		pass();
 		break;
-	case KEYBIND_ZSTATS:
+	case KEYBIND_STATS:
 		writeString("Ztats\n");
 		g_engine->addView("ZStats");
 		return;
@@ -134,7 +134,7 @@ void OverworldLogic::enter() {
 		_G(map).load(location);
 
 		// Run any logic for entering it
-		_G(logic)->enter();
+		_G(logic)->entering();
 	}
 }
 

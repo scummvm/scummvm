@@ -32,7 +32,7 @@ namespace Logic {
 PillarLogic::PillarLogic() {
 }
 
-void PillarLogic::enter() {
+void PillarLogic::entering() {
 	// TODO
 }
 

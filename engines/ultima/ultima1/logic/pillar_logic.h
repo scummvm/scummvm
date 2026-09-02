@@ -35,7 +35,7 @@ public:
 	~PillarLogic() override {
 	}
 
-	void enter() override;
+	void entering() override;
 	void action(int action) override;
 	void keypress(Common::KeyCode keycode) override;
 };

@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
-void DungeonLogic::enter() {
+void DungeonLogic::entering() {
 	// TODO
 }
 

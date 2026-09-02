@@ -121,7 +121,7 @@ static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 
-void CityCastleLogic::enter() {
+void CityCastleLogic::entering() {
 	loadEntities();
 }
 
@@ -145,7 +145,7 @@ void CityCastleLogic::action(int action) {
 	case KEYBIND_PASS:
 		pass();
 		break;
-	case KEYBIND_ZSTATS:
+	case KEYBIND_STATS:
 		writeString("Ztats\n");
 		g_engine->addView("ZStats");
 		return;
@@ -183,9 +183,9 @@ CityLogic::CityLogic() {
 	_G(map)._mapType = Data::MAPTYPE_CITY;
 }
 
-void CityLogic::enter() {
+void CityLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(19, 17);
-	CityCastleLogic::enter();
+	CityCastleLogic::entering();
 }
 
 void CityLogic::move(Data::Direction dir) {
@@ -250,9 +250,9 @@ CastleLogic::CastleLogic() {
 	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
 }
 
-void CastleLogic::enter() {
+void CastleLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(0, 9);
-	CityCastleLogic::enter();
+	CityCastleLogic::entering();
 }
 
 } // namespace Logic

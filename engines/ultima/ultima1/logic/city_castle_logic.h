@@ -50,7 +50,7 @@ public:
 	~CityCastleLogic() override {
 	}
 
-	void enter() override;
+	void entering() override;
 	void action(int action) override;
 	void keypress(Common::KeyCode keycode) override;
 };
@@ -72,7 +72,7 @@ public:
 	~CityLogic() override {
 	}
 
-	void enter() override;
+	void entering() override;
 };
 
 class CastleLogic : public CityCastleLogic {
@@ -88,7 +88,7 @@ public:
 	~CastleLogic() override {
 	}
 
-	void enter() override;
+	void entering() override;
 };
 
 } // namespace Logic

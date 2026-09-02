@@ -72,6 +72,16 @@ protected:
 	 */
 	void endOfTurn();
 
+	/*--- Fallback player action handlers ---*/
+
+	void board();
+	void cast();
+	void drop();
+	void enter();
+	void fire();
+	void get();
+
+	/*---------------------------------------*/
 public:
 	virtual ~Logic() {
 	}
@@ -80,7 +90,7 @@ public:
 	}
 	virtual void keypress(Common::KeyCode keycode) {
 	}
-	virtual void enter() {
+	virtual void entering() {
 	}
 };
 

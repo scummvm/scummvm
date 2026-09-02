@@ -49,13 +49,30 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
+	{ KEYBIND_UP, "ATTACK_UP", _s("Attack Up"), "8", nullptr},
+	{ KEYBIND_DOWN, "ATTACK_DOWN", _s("Attack Down"), "2", nullptr},
+	{ KEYBIND_LEFT, "ATTACK_LEFT", _s("Attack Left"), "4", nullptr},
+	{ KEYBIND_RIGHT, "ATTACK_RIGHT", _s("Attack Right"), "6", nullptr},
+	{ KEYBIND_BOARD, "BOARD", _s("Board"), "b", nullptr },
+	{ KEYBIND_CAST, "CAST", _s("Cast"), "c", nullptr },
+	{ KEYBIND_DROP, "DROP", _s("Drop"), "d", nullptr },
 	{ KEYBIND_ENTER, "ENTER", _s("Enter"), "e", nullptr },
-	{ KEYBIND_ZSTATS, "STATS", _s("Ztats"), "z", nullptr },
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
-};
-
-static const KeybindingRecord DUNGEON_KEYS[] = {
-	{ KEYBIND_ZSTATS, "STATS", _s("Ztats"), "z", nullptr },
+	{ KEYBIND_FIRE, "FIRE", _s("Fire"), "f", nullptr },
+	{ KEYBIND_GET, "GET", _s("Get"), "g", nullptr },
+	{ KEYBIND_HYPERJUMP, "HYPERJUMP", _s("Hyperjump"), "h", nullptr },
+	{ KEYBIND_INFORM, "INFORM", _s("Inform"), "i", nullptr },
+	{ KEYBIND_CLIMB, "CLIMB", _s("Klimb"), "k", nullptr },
+	{ KEYBIND_NOISE, "NOISE", _s("Noise"), "n", nullptr },
+	{ KEYBIND_OPEN, "OPEN", _s("Open"), "o", nullptr },
+	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
+	{ KEYBIND_READY, "READY", _s("Ready"), "r", nullptr },
+	{ KEYBIND_STEAL, "STEAL", _s("Steal"), "s", nullptr },
+	{ KEYBIND_TRANSACT, "TRANSACT", _s("Transact"), "t", nullptr },
+	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
+	{ KEYBIND_VIEW, "VIEW", _s("View change"), "e", nullptr },
+	{ KEYBIND_EXIT, "EXIT", _s("eXit"), "x", nullptr },
+	{ KEYBIND_STATS, "STATS", _s("Ztats"), "z", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass"), " ", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -69,7 +86,6 @@ static const KeysRecord ALL_RECORDS[] = {
 	{ "Ultima1", _s("Basic keys"), MINIMAL_KEYS },
 	{ "menu", _s("Menu keys"), MENU_KEYS },
 	{ "gameplay", _s("Gameplay keys"), GAMEPLAY_KEYS },
-	{ "dungeon", _s("Dungeon keys"), DUNGEON_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
@@ -90,18 +106,11 @@ static const KeysRecord GAMEPLAY_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord DUNGEON_RECORDS[] = {
-	{ "Ultima1", _s("Basic keys"), MINIMAL_KEYS },
-	{ "dungeon", _s("Dungeon keys"), DUNGEON_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
 static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
 	MINIMAL_RECORDS,
 	MENU_RECORDS,
-	GAMEPLAY_RECORDS,
-	DUNGEON_RECORDS,
+	GAMEPLAY_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {

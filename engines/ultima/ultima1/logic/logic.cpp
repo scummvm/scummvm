@@ -65,6 +65,36 @@ void Logic::endOfTurn() {
 	prompt();
 }
 
+void Logic::board() {
+	writeString("Board?\n");
+	playFX(1);
+}
+
+void Logic::cast() {
+	writeString("Cast -- Hmmmm... no effect!\n");
+	playFX(6);
+}
+
+void Logic::drop() {
+	writeString("Drop?\n");
+	playFX(1);
+}
+
+void Logic::enter() {
+	writeString("Enter?\n");
+	playFX(1);
+}
+
+void Logic::fire() {
+	writeString("Fire?\n");
+	playFX(1);
+}
+
+void Logic::get() {
+	writeString("Get?\n");
+	playFX(1);
+}
+
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima
