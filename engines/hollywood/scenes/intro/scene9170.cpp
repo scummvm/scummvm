@@ -283,7 +283,7 @@ void Scene9170::switchToLowerRoomFrame() {
 }
 
 void Scene9170::addBlockListToCanvas(uint chunkIndex, int yOffset) {
-	if (chunkIndex >= SceneResources::kResourceChunkCount)
+	if (chunkIndex >= kResourceChunkCount)
 		return;
 	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_staticFramebuffer.surface(), yOffset);
@@ -361,7 +361,7 @@ void Scene9170::composeFrame() {
 
 void Scene9170::restoreSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, byte frameIndex) {
-	if (chunkIndex >= SceneResources::kResourceChunkCount || frameMapSize == 0)
+	if (chunkIndex >= kResourceChunkCount || frameMapSize == 0)
 		return;
 
 	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
@@ -372,7 +372,7 @@ void Scene9170::restoreSpriteChannel(uint chunkIndex, uint descriptorCount, cons
 
 void Scene9170::drawSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, byte frameIndex) {
-	if (chunkIndex >= SceneResources::kResourceChunkCount || frameMapSize == 0)
+	if (chunkIndex >= kResourceChunkCount || frameMapSize == 0)
 		return;
 
 	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];

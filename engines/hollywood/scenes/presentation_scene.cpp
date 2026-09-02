@@ -197,7 +197,7 @@ bool PresentationScene::loadArenaChunkAlias(uint sourceIndex, uint aliasIndex,
 }
 
 void PresentationScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
-	if (!layer.visible || layer.chunkIndex >= SceneResources::kResourceChunkCount ||
+	if (!layer.visible || layer.chunkIndex >= kResourceChunkCount ||
 			!_resources._chunkTable.isValidChunk(layer.chunkIndex) ||
 			layer.descriptorIndex() >= layer.descriptorCount)
 		return;
