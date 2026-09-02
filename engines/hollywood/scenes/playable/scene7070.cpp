@@ -83,7 +83,7 @@ const byte kScene7070UseItem13FrameMap[] = {
 	15, 16, 17, 18, 19, 20, 21, 0x1f, 0x20, 0x21, 0
 };
 
-static PlayableSceneConfig scene7070Config() {
+PlayableSceneConfig scene7070Config() {
 	PlayableSceneConfig config(7070,
 		SceneResourceLayout(13, 5, 12),
 		SceneViewport(kScene7070ViewportXOffset),

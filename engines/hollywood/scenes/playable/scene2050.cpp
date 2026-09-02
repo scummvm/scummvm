@@ -127,7 +127,7 @@ const SceneLayerSpec kScene2050LayerSpecs[] = {
 		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene2050Config() {
+PlayableSceneConfig scene2050Config() {
 	PlayableSceneConfig config(2050,
 		SceneResourceLayout(15, 5, 14),
 		SceneViewport(kScene2050ViewportXOffset, kScene2050ViewportXOffset, kScene2050ViewportXOffset),

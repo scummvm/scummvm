@@ -149,7 +149,7 @@ const byte kScene7010DialogueTransitionUp = 2;
 const byte kScene7010DialogueTransitionStay = 3;
 const byte kScene7010DialogueTransitionUpTwo = 4;
 
-static PlayableSceneConfig scene7010Config() {
+PlayableSceneConfig scene7010Config() {
 	PlayableSceneConfig config(7010,
 		SceneResourceLayout(19, 5, 18),
 		SceneViewport(kScene7010ViewportXOffset, kScene7010ViewportXOffset, kScene7010ViewportMaxXOffset),

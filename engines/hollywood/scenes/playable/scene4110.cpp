@@ -88,7 +88,7 @@ const byte kScene4110AlternateFrameMap[] = {
 	6, 6, 5, 6, 6, 6, 6, 6, 5, 6, 7, 8, 9
 };
 
-static PlayableSceneConfig scene4110Config() {
+PlayableSceneConfig scene4110Config() {
 	PlayableSceneConfig config(4110,
 		SceneResourceLayout(5, 5, 9),
 		SceneViewport(kScene4110ViewportXOffset, kScene4110ViewportXOffset, kScene4110ViewportXOffset),

@@ -56,7 +56,7 @@ const byte kFrankieSerumItems[] = {
 	0x44, 0x3e, 0x38, 0x5d, 0x57
 };
 
-static bool addInventoryItemIfMissing(GameplayState &state, byte owner, byte itemId) {
+bool addInventoryItemIfMissing(GameplayState &state, byte owner, byte itemId) {
 	if (state.hasInventoryItem(owner, itemId))
 		return false;
 

@@ -72,7 +72,7 @@ const SceneLayerSpec kScene4020LayerSpecs[] = {
 		kScene4020IdleDescriptorCount, nullptr, 0, true, 0}
 };
 
-static PlayableSceneConfig scene4020Config() {
+PlayableSceneConfig scene4020Config() {
 	PlayableSceneConfig config(4020,
 		SceneResourceLayout(5, 5, 7),
 		SceneViewport(kScene4020ViewportXOffset, kScene4020ViewportXOffset, kScene4020ViewportXOffset),

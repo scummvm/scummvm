@@ -59,7 +59,7 @@ const byte kScene4100DoorFrameMap[] = {
 	0, 0, 1, 2
 };
 
-static PlayableSceneConfig scene4100Config() {
+PlayableSceneConfig scene4100Config() {
 	PlayableSceneConfig config(4100,
 		SceneResourceLayout(5, 5, 7),
 		SceneViewport(kScene4100ViewportXOffset, kScene4100ViewportMinXOffset, kScene4100ViewportMaxXOffset),

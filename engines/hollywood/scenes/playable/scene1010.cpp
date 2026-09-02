@@ -80,7 +80,7 @@ const byte kScene1010SceneActorBlinkFrameMap[] = {
 	7, 6, 5, 4, 3, 2, 1, 0
 };
 
-static PlayableSceneConfig scene1010Config() {
+PlayableSceneConfig scene1010Config() {
 	PlayableSceneConfig config(1010,
 		SceneResourceLayout(9, 5, 8),
 		SceneViewport(kScene1010ViewportXOffset, kScene1010ViewportMinXOffset, kScene1010ViewportMaxXOffset),

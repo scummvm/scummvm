@@ -36,11 +36,11 @@ enum {
 	kSpeechEdgeWidth = 0xa0
 };
 
-static uint speechLineWidth(const HollywoodFont *font, const Common::String &text) {
+uint speechLineWidth(const HollywoodFont *font, const Common::String &text) {
 	return font != nullptr && font->isLoaded() ? font->getStringWidth(text) + 2 : 0;
 }
 
-static uint speechOverlayWidth(const SpeechOverlay &overlay, const HollywoodFont *font) {
+uint speechOverlayWidth(const SpeechOverlay &overlay, const HollywoodFont *font) {
 	uint textWidth = 0;
 	for (uint i = 0; i < overlay.lines.size(); ++i)
 		textWidth = MAX<uint>(textWidth, speechLineWidth(font, overlay.lines[i]));

@@ -183,11 +183,11 @@ const SceneLayerSpec kScene1020LayerSpecs[] = {
 // state blocks applyResourceBlockBackground() bakes into _baseFramebuffer: clean their
 // dirty rect to the pristine background or the baked-in copy shows through as a
 // duplicate. Every other overlay must clean to _baseFramebuffer or those blocks vanish.
-static bool overlayRedrawsSceneStateBlocks(uint chunkIndex) {
+bool overlayRedrawsSceneStateBlocks(uint chunkIndex) {
 	return (chunkIndex >= 15 && chunkIndex <= 17) || chunkIndex == 21;
 }
 
-static PlayableSceneConfig scene1020Config() {
+PlayableSceneConfig scene1020Config() {
 	PlayableSceneConfig config(1020,
 		SceneResourceLayout(23, 5, 22),
 		SceneViewport(kScene1020ViewportXOffset),

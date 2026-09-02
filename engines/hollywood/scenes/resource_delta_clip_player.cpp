@@ -26,15 +26,15 @@
 
 namespace Hollywood {
 
-bool ResourceDeltaClipPlayer::drawFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
+bool drawResourceDeltaClipFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
 		uint framebufferByteCount) {
-	return drawFrame(resource, frameTableOffset, chunkSize, tableEntryCount, frameIndex, pixels,
+	return drawResourceDeltaClipFrame(resource, frameTableOffset, chunkSize, tableEntryCount, frameIndex, pixels,
 		HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		HollywoodEngine::kSceneBufferWidth, framebufferByteCount);
 }
 
-bool ResourceDeltaClipPlayer::drawFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
+bool drawResourceDeltaClipFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
 		uint destinationWidth, uint destinationHeight, uint destinationPitch,
 		uint destinationByteCount) {

@@ -316,7 +316,7 @@ void Scene3030::drawDeltaTransitionFrame(const Common::Array<byte> &clipData, ui
 
 void Scene3030::drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::Surface &destination) {
-	ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+	drawResourceDeltaClipFrame(clipData, 0, clipData.size(), tableEntryCount,
 		frameIndex, (byte *)destination.getPixels(), destination.w, destination.h,
 		destination.pitch, destination.pitch * destination.h);
 }

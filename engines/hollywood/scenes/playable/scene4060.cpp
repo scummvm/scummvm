@@ -240,7 +240,7 @@ PlayableSceneConfig scene4060Config() {
 	return config;
 }
 
-static void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records,
+void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records,
 		const Scene4060DialogueSeedRecord &seed) {
 	if (seed.index >= records.size())
 		return;

@@ -180,7 +180,7 @@ const SceneLayerSpec kScene1060LayerSpecs[] = {
 		kScene1060SmallTriggerFrameMap, ARRAYSIZE(kScene1060SmallTriggerFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene1060Config() {
+PlayableSceneConfig scene1060Config() {
 	PlayableSceneConfig config(1060,
 		SceneResourceLayout(15, 5, 14),
 		SceneViewport(kScene1060ViewportXOffset, kScene1060ViewportMinXOffset, kScene1060ViewportMaxXOffset),

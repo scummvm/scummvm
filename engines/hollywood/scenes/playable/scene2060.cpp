@@ -115,7 +115,7 @@ static_assert(ARRAYSIZE(kScene2060ClosedPassageChunks) == ARRAYSIZE(kScene2060Pa
 	"Scene 2060 closed passage chunk count changed");
 static_assert(ARRAYSIZE(kScene2060GuideRoute) == 20, "Scene 2060 guide route size changed");
 
-static PlayableSceneConfig scene2060Config() {
+PlayableSceneConfig scene2060Config() {
 	PlayableSceneConfig config(2060,
 		SceneResourceLayout(32, 5, 31),
 		SceneViewport(kScene2060ViewportXOffset, kScene2060ViewportXOffset, kScene2060ViewportXOffset),

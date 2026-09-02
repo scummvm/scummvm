@@ -148,7 +148,7 @@ const SceneLayerSpec kScene6090LayerSpecs[] = {
 		ARRAYSIZE(kScene6090SpecialEffectFrameMap), true, 0 }
 };
 
-static PlayableSceneConfig scene6090Config() {
+PlayableSceneConfig scene6090Config() {
 	PlayableSceneConfig config(6090,
 		SceneResourceLayout(25, 5, 18),
 		SceneViewport(0),

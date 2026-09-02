@@ -65,7 +65,7 @@ const SceneLayerSpec kScene7020LayerSpecs[] = {
 		nullptr, 0, false, 0}
 };
 
-static PlayableSceneConfig scene7020Config() {
+PlayableSceneConfig scene7020Config() {
 	PlayableSceneConfig config(7020,
 		SceneResourceLayout(8, 5, 7),
 		SceneViewport(kScene7020ViewportXOffset),

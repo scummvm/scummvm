@@ -269,7 +269,9 @@ public:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kStateCommit);
 		event.commitTarget = &target;
 		event.commitValue = static_cast<uint32>(static_cast<T>(value));
-		event.commitFunction = &commit<T>;
+		event.commitFunction = [](void *commitTarget, uint32 commitValue) {
+			*static_cast<T *>(commitTarget) = static_cast<T>(commitValue);
+		};
 		_events.push_back(event);
 		return self();
 	}
@@ -326,11 +328,6 @@ private:
 		event.everyFrame = everyFrame;
 		event.hookId = hookId;
 		_events.push_back(event);
-	}
-
-	template<class T>
-	static void commit(void *target, uint32 value) {
-		*static_cast<T *>(target) = static_cast<T>(value);
 	}
 
 	Spec &self() {

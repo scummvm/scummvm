@@ -58,7 +58,7 @@ const byte kScene5060AmbientSoundVolumes[] = {
 	10, 10, 10, 2, 10, 10, 10, 100
 };
 
-static Common::Array<byte> sequentialFrameMap(uint frameCount) {
+Common::Array<byte> sequentialFrameMap(uint frameCount) {
 	Common::Array<byte> frameMap;
 	frameMap.resize(frameCount);
 	for (uint i = 0; i < frameMap.size(); ++i)

@@ -1624,7 +1624,7 @@ void PlayableScene::drawActionOverlayLayer() {
 
 void PlayableScene::drawClipFrameDeltaFromResource(const Common::Array<byte> &resource,
 		uint32 frameTableOffset, uint32 chunkSize, uint tableEntryCount, byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(resource, frameTableOffset, chunkSize, tableEntryCount,
+	drawResourceDeltaClipFrame(resource, frameTableOffset, chunkSize, tableEntryCount,
 		frameIndex, framebufferPixels(_sceneFramebuffer), framebufferByteCount());
 }
 
@@ -1778,7 +1778,7 @@ bool PlayableScene::playFullscreenDeltaAnimation(const Common::Array<byte> &base
 
 	bool completed = true;
 	for (uint frame = 0; frame < frameCount && !animationPlaybackShouldStop(); ++frame) {
-		if (!ResourceDeltaClipPlayer::drawFrame(frames, 0, frames.size(),
+		if (!drawResourceDeltaClipFrame(frames, 0, frames.size(),
 				frameCount, (byte)frame, framebufferPixels(_sceneFramebuffer),
 				framebufferByteCount())) {
 			warning("%s failed to decode fullscreen delta frame %u", sceneDebugName(), frame);

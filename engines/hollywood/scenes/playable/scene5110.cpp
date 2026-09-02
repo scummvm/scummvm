@@ -121,7 +121,7 @@ const SceneLayerSpec kScene5110LayerSpecs[] = {
 static_assert(ARRAYSIZE(kScene5110LayerSpecs) == kScene5110LayerCount,
 	"Scene 5110 layer specification count changed");
 
-static PlayableSceneConfig scene5110Config() {
+PlayableSceneConfig scene5110Config() {
 	PlayableSceneConfig config(5110,
 		SceneResourceLayout(5, 5, 0x19),
 		SceneViewport(kScene5110ViewportXOffset, kScene5110ViewportXOffset, kScene5110ViewportXOffset),
