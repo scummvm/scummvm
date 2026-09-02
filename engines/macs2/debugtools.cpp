@@ -792,7 +792,7 @@ static void showVariablesWindow() {
 				ImGui::Text("Showing: Y | Count: %u", view->_dialogueChoiceCount);
 				ImGui::Text("BoxPos: (%d,%d)", view->_stringBoxPosition.x, view->_stringBoxPosition.y);
 				Common::Point mousePos = g_system->getEventManager()->getMousePos();
-				int lineHeight = g_engine->_maxGlyphHeight + 2;
+				int lineHeight = g_engine->_text._maxGlyphHeight + 2;
 				int firstLineY = view->_stringBoxPosition.y + 9;
 				int relY = mousePos.y - firstLineY;
 				int hoveredChoice = -1;

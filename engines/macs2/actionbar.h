@@ -85,7 +85,7 @@ private:
 	void drawScumm(Graphics::ManagedSurface &s);
 	bool handleClickScumm(const Common::Point &pos, bool scriptsRunning);
 	void handleMouseMoveScumm(const Common::Point &pos);
-	void actionBarFont(const GlyphData *&font, uint16 &fontCount, int &glyphH) const;
+	void actionBarFont(const GlyphData *&font, uint16 &glyphCount, int &glyphH) const;
 	void drawSentenceLine(Graphics::ManagedSurface &s);
 	void drawVerbBar(Graphics::ManagedSurface &s);
 	void drawInventoryStrip(Graphics::ManagedSurface &s);

@@ -177,11 +177,11 @@ void ActionBar::drawUIButton(const Common::Rect &rect, bool pressed, Graphics::M
 							   style, false, false, s);
 }
 
-void ActionBar::actionBarFont(const GlyphData *&font, uint16 &fontCount, int &glyphH) const {
-	const bool usePanelFont = g_engine->numPanelGlyphs > 0;
-	font = usePanelFont ? g_engine->_panelGlyphs : g_engine->_glyphs;
-	fontCount = usePanelFont ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
-	glyphH = usePanelFont ? (int)g_engine->maxPanelGlyphHeight : (int)g_engine->_maxGlyphHeight;
+void ActionBar::actionBarFont(const GlyphData *&font, uint16 &glyphCount, int &glyphH) const {
+	const bool usePanelFont = g_engine->_text.numPanelGlyphs > 0;
+	font = usePanelFont ? g_engine->_text._panelGlyphs : g_engine->_text._glyphs;
+	glyphCount = usePanelFont ? g_engine->_text.numPanelGlyphs : g_engine->_text._numGlyphs;
+	glyphH = usePanelFont ? (int)g_engine->_text.maxPanelGlyphHeight : (int)g_engine->_text._maxGlyphHeight;
 }
 
 void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
@@ -190,15 +190,15 @@ void ActionBar::drawSentenceLine(Graphics::ManagedSurface &s) {
 		return;
 
 	// Dialogue Font1 has German glyphs; the panel/save-load font does not.
-	const GlyphData *font = g_engine->_glyphs;
-	uint16 fontCount = g_engine->_numGlyphs;
-	int glyphH = (int)g_engine->_maxGlyphHeight;
-	if (fontCount == 0)
-		actionBarFont(font, fontCount, glyphH);
+	const GlyphData *font = g_engine->_text._glyphs;
+	uint16 glyphCount = g_engine->_text._numGlyphs;
+	int glyphH = (int)g_engine->_text._maxGlyphHeight;
+	if (glyphCount == 0)
+		actionBarFont(font, glyphCount, glyphH);
 
 	const int textY = kUITop + MAX(0, (kSentenceH - glyphH) / 2);
-	const int textX = MAX(0, (kScreenWidth - _view->measureStringWithFont(sentence, font, fontCount)) / 2);
-	_view->renderStringWithFontTo(textX, textY, sentence, font, fontCount, s);
+	const int textX = MAX(0, (kScreenWidth - _view->measureStringWithFont(sentence, font, glyphCount)) / 2);
+	_view->renderStringWithFontTo(textX, textY, sentence, font, glyphCount, s);
 }
 
 void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
@@ -215,7 +215,7 @@ void ActionBar::drawVerbBar(Graphics::ManagedSurface &s) {
 		drawUIButton(r, isActive || isHovered, s);
 
 		Common::String label = uiText(kVerbs[i].label);
-		if (g_engine->numPanelGlyphs > 0)
+		if (g_engine->_text.numPanelGlyphs > 0)
 			label.toUppercase();
 		const int textW = _view->measureStringWithFont(label, font, fontCount);
 		const int textX = r.left + (r.width() - textW) / 2;
@@ -661,8 +661,8 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 	const uint16 optTextMaxW = g_engine->_hudTextLayout[2] ? g_engine->_hudTextLayout[2] : 212;
 	const uint16 lineCount = g_engine->_hudTextLayout[3] ? g_engine->_hudTextLayout[3] : 9;
 	const uint16 linePitch = g_engine->_hudTextLayout[4] ? g_engine->_hudTextLayout[4] : 10;
-	const GlyphData *panelFont = g_engine->numPanelGlyphs ? g_engine->_panelGlyphs : g_engine->_glyphs;
-	const uint16 panelFontCount = g_engine->numPanelGlyphs ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
+	const GlyphData *panelGlyph = g_engine->_text.numPanelGlyphs ? g_engine->_text._panelGlyphs : g_engine->_text._glyphs;
+	const uint16 panelGlyphCount = g_engine->_text.numPanelGlyphs ? g_engine->_text.numPanelGlyphs : g_engine->_text._numGlyphs;
 
 	if (menuMode == MenuMode::Main) {
 		if (_view->_inventorySource == nullptr ||
@@ -701,38 +701,38 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 			delete icon;
 		}
 
-		const GlyphData *font = g_engine->_numGlyphs ? g_engine->_glyphs : panelFont;
-		const uint16 fontCount = g_engine->_numGlyphs ? g_engine->_numGlyphs : panelFontCount;
-		if (fontCount != 0) {
+		const GlyphData *font = g_engine->_text._numGlyphs ? g_engine->_text._glyphs : panelGlyph;
+		const uint16 glyphCount = g_engine->_text._numGlyphs ? g_engine->_text._numGlyphs : panelGlyphCount;
+		if (glyphCount != 0) {
 			Common::String sentence = buildSentenceLine();
 			if (!sentence.empty()) {
 				const uint16 maxW = (uint16)(g_engine->screenWidth() - 16);
 				while (sentence.size() > 1) {
-					if ((uint16)_view->measureStringWithFont(sentence, font, fontCount) <= maxW)
+					if ((uint16)_view->measureStringWithFont(sentence, font, glyphCount) <= maxW)
 						break;
 					sentence.deleteLastChar();
 				}
-				const int textW = _view->measureStringWithFont(sentence, font, fontCount);
+				const int textW = _view->measureStringWithFont(sentence, font, glyphCount);
 				const int textX = MAX(0, (g_engine->screenWidth() - textW) / 2);
-				const int glyphH = g_engine->_maxGlyphHeight ? (int)g_engine->_maxGlyphHeight : 12;
+				const int glyphH = g_engine->_text._maxGlyphHeight ? (int)g_engine->_text._maxGlyphHeight : 12;
 				const int textY = MAX(0, (int)panelTop - glyphH - 2);
-				_view->renderStringWithFontTo((uint16)textX, (uint16)textY, sentence, font, fontCount, s);
+				_view->renderStringWithFontTo((uint16)textX, (uint16)textY, sentence, font, glyphCount, s);
 			}
 		}
-	} else if (menuMode == MenuMode::Options && panelFontCount != 0) {
+	} else if (menuMode == MenuMode::Options && panelGlyphCount != 0) {
 		if (g_engine->_saveSlotNames.empty())
 			refreshSaveSlotNames();
 		for (uint i = 0; i < g_engine->_saveSlotNames.size() && i < lineCount; i++) {
 			Common::String name = g_engine->_saveSlotNames[i];
 			while (name.size() > 1) {
-				if ((uint16)_view->measureStringWithFont(name, panelFont, panelFontCount) <= optTextMaxW)
+				if ((uint16)_view->measureStringWithFont(name, panelGlyph, panelGlyphCount) <= optTextMaxW)
 					break;
 				name.deleteLastChar();
 			}
 			_view->renderStringWithFontTo(optTextX, panelTop + optTextY + (int)i * linePitch,
-										  name, panelFont, panelFontCount, s);
+										  name, panelGlyph, panelGlyphCount, s);
 		}
-	} else if (menuMode == MenuMode::DialogueList && panelFontCount != 0 && _view->_isDialogueChoiceInputActive) {
+	} else if (menuMode == MenuMode::DialogueList && panelGlyphCount != 0 && _view->_isDialogueChoiceInputActive) {
 		// Dialogue choice list at layout[5..6]; wired when assets set DialogueList.
 		const uint16 dlgX = g_engine->_hudTextLayout[5];
 		const uint16 dlgY = g_engine->_hudTextLayout[6];
@@ -743,7 +743,7 @@ void ActionBar::drawNative(Graphics::ManagedSurface &s) {
 							  line < _view->_drawnStringBox.size();
 				 li++, line++) {
 				_view->renderStringWithFontTo(dlgX, panelTop + dlgY + (int)line * pitch,
-											  _view->_drawnStringBox[line], panelFont, panelFontCount, s);
+											  _view->_drawnStringBox[line], panelGlyph, panelGlyphCount, s);
 			}
 		}
 	}

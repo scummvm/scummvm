@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	saveload.o \
 	scriptexecutor.o \
+	text.o \
 	actionbar.o \
 	view1.o
 

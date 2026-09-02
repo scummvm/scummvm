@@ -753,6 +753,7 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 
 void View1::renderString(uint16 x, uint16 y, const Common::String &s) {
 	Graphics::ManagedSurface surf = getSurface();
+	Text *text = &g_engine->_text;
 	uint16 currentX = x;
 	uint16 currentY = y;
 
@@ -760,7 +761,7 @@ void View1::renderString(uint16 x, uint16 y, const Common::String &s) {
 	uint16 widestGlyph = 1;
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		if (g_engine->findGlyph(*iter, data)) {
+		if (text->findGlyph(*iter, data)) {
 			widestGlyph = MAX(widestGlyph, data._width);
 		}
 	}
@@ -768,7 +769,7 @@ void View1::renderString(uint16 x, uint16 y, const Common::String &s) {
 	// Second pass: render with correct spacing
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		const bool found = g_engine->findGlyph(*iter, data);
+		const bool found = text->findGlyph(*iter, data);
 		if (found) {
 			drawSprite(currentX, currentY, data, surf, false);
 			currentX += data._width + 1;
@@ -786,20 +787,21 @@ void View1::renderString(const Common::Point &pos, const Common::String &s) {
 }
 
 void View1::renderStringTo(uint16 x, uint16 y, const Common::String &s, Graphics::ManagedSurface &surf) {
+	Text *text = &g_engine->_text;
 	uint16 currentX = x;
 	uint16 currentY = y;
 
 	uint16 widestGlyph = 1;
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		if (g_engine->findGlyph(*iter, data)) {
+		if (text->findGlyph(*iter, data)) {
 			widestGlyph = MAX(widestGlyph, data._width);
 		}
 	}
 
 	for (auto iter = s.begin(); iter != s.end(); iter++) {
 		GlyphData data;
-		const bool found = g_engine->findGlyph(*iter, data);
+		const bool found = text->findGlyph(*iter, data);
 		if (found) {
 			drawSprite(currentX, currentY, data, surf, false);
 			currentX += data._width + 1;
@@ -810,25 +812,8 @@ void View1::renderStringTo(uint16 x, uint16 y, const Common::String &s, Graphics
 }
 
 int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
-	int width = 0;
-	uint16 widestGlyph = 1;
-	for (uint i = 0; i < numGlyphs; i++) {
-		widestGlyph = MAX(widestGlyph, glyphs[i]._width);
-	}
-	for (auto iter = s.begin(); iter != s.end(); iter++) {
-		bool found = false;
-		for (uint i = 0; i < numGlyphs; i++) {
-			if (glyphs[i]._ascii == *iter) {
-				width += glyphs[i]._width + 1;
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			width += widestGlyph;
-		}
-	}
-	return width;
+	Text *text = &g_engine->_text;
+	return text->measureString(s, glyphs, numGlyphs);
 }
 
 void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
@@ -877,8 +862,8 @@ void View1::drawOverlayTextEntries() {
 		int x = entry.position.x;
 		const Common::String &text = entry.text;
 		// Use overlay font if loaded, otherwise fall back to main font
-		const GlyphData *font = g_engine->numOverlayGlyphs > 0 ? g_engine->_overlayGlyphs : g_engine->_glyphs;
-		const uint16 fontCount = g_engine->numOverlayGlyphs > 0 ? g_engine->numOverlayGlyphs : g_engine->_numGlyphs;
+		const GlyphData *font = g_engine->_text.numOverlayGlyphs > 0 ? g_engine->_text._overlayGlyphs : g_engine->_text._glyphs;
+		const uint16 fontCount = g_engine->_text.numOverlayGlyphs > 0 ? g_engine->_text.numOverlayGlyphs : g_engine->_text._numGlyphs;
 
 		if (entry.alignment == 1) {
 			x -= measureStringWithFont(text, font, fontCount);
@@ -896,12 +881,13 @@ void View1::drawOverlayTextEntries() {
 }
 
 void View1::showStringBox(const Common::StringArray &sa) {
+	Text *text = &g_engine->_text;
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
 	const int textInset = g_engine->dialogTextInset();
 	const int lineHeight = g_engine->dialogLineHeight();
-	const int totalWidth = g_engine->measureStrings(sa) + padW;
-	const int totalHeight = g_engine->measureStringsVertically(sa) + padH;
+	const int totalWidth = text->measureStrings(sa) + padW;
+	const int totalHeight = text->measureStringsVertically(sa, lineHeight) + padH;
 	g_engine->_textLog.push_back(Common::String::format(
 									 "Render text box: lines=%u pos=(%d,%d) size=(%d,%d) text=\"", sa.size(),
 									 _stringBoxPosition.x, _stringBoxPosition.y, totalWidth, totalHeight) +
@@ -918,10 +904,11 @@ void View1::showStringBox(const Common::StringArray &sa) {
 }
 
 void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
+	Text *text = &g_engine->_text;
 	GlyphData xData;
 	int xOffset = 0;
 	int yOffset = 0;
-	if (g_engine->findGlyph('x', xData)) {
+	if (text->findGlyph('x', xData)) {
 		xOffset = xData._width / 2;
 		yOffset = xData._height / 2;
 	}
@@ -1137,17 +1124,18 @@ bool View1::handleDialogueChoiceClick(int clickY, int clickX) {
 	// Checks if click is within text box bounds (X+9..X+W-9, Y+9..Y+H-9).
 	// Iterates choice entries to find which line was clicked.
 	// Stores script index at scene+0x53B7 and clears scene+0x53B9.
+	Text *text = &g_engine->_text;
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
 	const int textInset = g_engine->dialogTextInset();
-	const int boxW = g_engine->measureStrings(_drawnStringBox) + padW;
-	const int boxH = g_engine->measureStringsVertically(_drawnStringBox) + padH;
+	const int lineHeight = g_engine->dialogLineHeight();
+	const int boxW = text->measureStrings(_drawnStringBox) + padW;
+	const int boxH = text->measureStringsVertically(_drawnStringBox, lineHeight) + padH;
 	if (clickX < _stringBoxPosition.x + textInset || clickY < _stringBoxPosition.y + textInset ||
 		clickX > _stringBoxPosition.x + boxW - textInset || clickY > _stringBoxPosition.y + boxH - textInset) {
 		return false;
 	}
 
-	const int lineHeight = g_engine->dialogLineHeight();
 	const int firstLineY = _stringBoxPosition.y + textInset;
 	const int relY = clickY - firstLineY;
 	debug("handleDialogueChoiceClick: clickY=%d firstLineY=%d relY=%d lineHeight=%d clickedLine=%d",
@@ -3117,6 +3105,10 @@ void View1::drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::Managed
 	drawSprite(x, y, sprite._width, sprite._height, const_cast<byte *>(sprite._data.data()), s, mirrored, useDepth, depth, clipToGameArea);
 }
 
+void View1::drawSprite(int16 x, int16 y, const GlyphData &glyph, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth, bool clipToGameArea) {
+	drawSprite(x, y, glyph._width, glyph._height, const_cast<byte *>(glyph._data.data()), s, mirrored, useDepth, depth, clipToGameArea);
+}
+
 void View1::drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
 	for (int currentX = 0; currentX < width; currentX++) {
 		for (int currentY = 0; currentY < height; currentY++) {
@@ -3314,11 +3306,12 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	_currentSpeechActData.position = position;
 	_currentSpeechActData.onRightSide = onRightSide;
 
+	Text *text = &g_engine->_text;
 	const int padW = g_engine->dialogPadW();
 	const int padH = g_engine->dialogPadH();
 	const int portraitGap = g_engine->portraitTextGap();
-	const int totalWidth = g_engine->measureStrings(strings) + padW;
-	const int totalHeight = g_engine->measureStringsVertically(strings) + padH;
+	const int totalWidth = text->measureStrings(strings) + padW;
+	const int totalHeight = text->measureStringsVertically(strings, g_engine->dialogLineHeight()) + padH;
 	int stringBoxX = position.x;
 	int stringBoxY = position.y;
 	Common::Point portraitBoxPosition = position;
@@ -3753,8 +3746,8 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		} else {
 			label = "NONE";
 		}
-		const GlyphData *font = g_engine->numPanelGlyphs > 0 ? g_engine->_panelGlyphs : g_engine->_glyphs;
-		const uint16 fontCount = g_engine->numPanelGlyphs > 0 ? g_engine->numPanelGlyphs : g_engine->_numGlyphs;
+		const GlyphData *font = g_engine->_text.numPanelGlyphs > 0 ? g_engine->_text._panelGlyphs : g_engine->_text._glyphs;
+		const uint16 fontCount = g_engine->_text.numPanelGlyphs > 0 ? g_engine->_text.numPanelGlyphs : g_engine->_text._numGlyphs;
 		renderStringWithFont(panelX + 6, panelY + 6 + slot * slotH, label, font, fontCount);
 	}
 }

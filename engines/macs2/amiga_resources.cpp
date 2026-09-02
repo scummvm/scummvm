@@ -218,46 +218,46 @@ bool Macs2Engine::loadAmigaMxffFont() {
 	if (!decodeAmigaMxffFont(mxff.data(), size, glyphs) || glyphs.empty())
 		return false;
 
-	_numGlyphs = 0;
-	_maxGlyphHeight = 0;
-	amigaTextLinePitch = 0;
+	_text._numGlyphs = 0;
+	_text._maxGlyphHeight = 0;
+	_text.amigaTextLinePitch = 0;
 	if (size >= 0x0A) {
 		const uint16 atlasRows = READ_BE_UINT16(mxff.data() + 8);
 		if (atlasRows > 1)
-			amigaTextLinePitch = (uint16)(atlasRows - 1);
+			_text.amigaTextLinePitch = (uint16)(atlasRows - 1);
 	}
 	for (uint i = 0; i < glyphs.size() && i < 256; i++) {
-		_glyphs[i]._ascii = glyphs[i].ascii;
-		_glyphs[i]._width = glyphs[i].width;
-		_glyphs[i]._height = glyphs[i].height;
-		_glyphs[i]._data = Common::move(glyphs[i].pixels);
+		_text._glyphs[i]._ascii = glyphs[i].ascii;
+		_text._glyphs[i]._width = glyphs[i].width;
+		_text._glyphs[i]._height = glyphs[i].height;
+		_text._glyphs[i]._data = Common::move(glyphs[i].pixels);
 		// MXFF dialogue glyphs use copper COLOR23 (black) + COLOR27 (near-white
 		// outline). Remap into private UI bank 0xF0.. so outdoor copper cannot
 		// recolor text. COLOR17+i -> 0xF1+i (MXIN ui[1+i]); COLOR23->0xF7=ui[7]=0,
 		// COLOR27->0xFB=ui[11]=EEE. drawText @ 00224492 blits via drawSprite.
-		for (uint p = 0; p < _glyphs[i]._data.size(); p++) {
-			const byte c = _glyphs[i]._data[p];
+		for (uint p = 0; p < _text._glyphs[i]._data.size(); p++) {
+			const byte c = _text._glyphs[i]._data[p];
 			if (c == 0)
 				continue;
 			if (c >= 17 && c <= 31)
-				_glyphs[i]._data[p] = (byte)(0xF0 + (c - 16));
+				_text._glyphs[i]._data[p] = (byte)(0xF0 + (c - 16));
 			else if (c < 16)
-				_glyphs[i]._data[p] = (byte)(0xF0 + c);
+				_text._glyphs[i]._data[p] = (byte)(0xF0 + c);
 		}
-		_maxGlyphHeight = MAX(_maxGlyphHeight, _glyphs[i]._height);
-		_numGlyphs++;
+		_text._maxGlyphHeight = MAX(_text._maxGlyphHeight, _text._glyphs[i]._height);
+		_text._numGlyphs++;
 	}
-	if (amigaTextLinePitch == 0 && _maxGlyphHeight > 1)
-		amigaTextLinePitch = (uint16)(_maxGlyphHeight - 1);
+	if (_text.amigaTextLinePitch == 0 && _text._maxGlyphHeight > 1)
+		_text.amigaTextLinePitch = (uint16)(_text._maxGlyphHeight - 1);
 	// Reuse dialogue font for panel/save UI until a second MXFF exists.
-	numPanelGlyphs = _numGlyphs;
-	maxPanelGlyphHeight = _maxGlyphHeight;
-	for (uint i = 0; i < _numGlyphs; i++)
-		_panelGlyphs[i] = _glyphs[i];
+	_text.numPanelGlyphs = _text._numGlyphs;
+	_text.maxPanelGlyphHeight = _text._maxGlyphHeight;
+	for (uint i = 0; i < _text._numGlyphs; i++)
+		_text._panelGlyphs[i] = _text._glyphs[i];
 
 	debugC(1, kDebugFilePath, "Amiga: loaded MXFF font FF_0000 (%u glyphs, height %u, linePitch %u)",
-		   _numGlyphs, _maxGlyphHeight, amigaTextLinePitch);
-	return _numGlyphs > 0;
+		   _text._numGlyphs, _text._maxGlyphHeight, _text.amigaTextLinePitch);
+	return _text._numGlyphs > 0;
 }
 
 bool Macs2Engine::loadAmigaOverlayFontResource(uint16 ffId) {
@@ -279,27 +279,27 @@ bool Macs2Engine::loadAmigaOverlayFontResource(uint16 ffId) {
 	if (!decodeAmigaMxffFont(mxff.data(), size, glyphs) || glyphs.empty())
 		return false;
 
-	numOverlayGlyphs = 0;
-	maxOverlayGlyphHeight = 0;
+	_text.numOverlayGlyphs = 0;
+	_text.maxOverlayGlyphHeight = 0;
 	for (uint i = 0; i < glyphs.size() && i < 256; i++) {
-		_overlayGlyphs[i]._ascii = glyphs[i].ascii;
-		_overlayGlyphs[i]._width = glyphs[i].width;
-		_overlayGlyphs[i]._height = glyphs[i].height;
-		_overlayGlyphs[i]._data = Common::move(glyphs[i].pixels);
+		_text._overlayGlyphs[i]._ascii = glyphs[i].ascii;
+		_text._overlayGlyphs[i]._width = glyphs[i].width;
+		_text._overlayGlyphs[i]._height = glyphs[i].height;
+		_text._overlayGlyphs[i]._data = Common::move(glyphs[i].pixels);
 		// Same copper->UI-bank remap as loadAmigaMxffFont.
-		for (uint p = 0; p < _overlayGlyphs[i]._data.size(); p++) {
-			const byte c = _overlayGlyphs[i]._data[p];
+		for (uint p = 0; p < _text._overlayGlyphs[i]._data.size(); p++) {
+			const byte c = _text._overlayGlyphs[i]._data[p];
 			if (c == 0)
 				continue;
 			if (c >= 17 && c <= 31)
-				_overlayGlyphs[i]._data[p] = (byte)(0xF0 + (c - 16));
+				_text._overlayGlyphs[i]._data[p] = (byte)(0xF0 + (c - 16));
 			else if (c < 16)
-				_overlayGlyphs[i]._data[p] = (byte)(0xF0 + c);
+				_text._overlayGlyphs[i]._data[p] = (byte)(0xF0 + c);
 		}
-		maxOverlayGlyphHeight = MAX(maxOverlayGlyphHeight, _overlayGlyphs[i]._height);
-		numOverlayGlyphs++;
+		_text.maxOverlayGlyphHeight = MAX(_text.maxOverlayGlyphHeight, _text._overlayGlyphs[i]._height);
+		_text.numOverlayGlyphs++;
 	}
-	return numOverlayGlyphs > 0;
+	return _text.numOverlayGlyphs > 0;
 }
 
 bool Macs2Engine::loadAmigaOverlayFont(uint8 resourceIndex) {
@@ -312,13 +312,13 @@ bool Macs2Engine::loadAmigaOverlayFont(uint8 resourceIndex) {
 	}
 
 	// Fall back to the already-loaded main MXFF dialogue font.
-	if (_numGlyphs == 0)
+	if (_text._numGlyphs == 0)
 		return false;
 
-	numOverlayGlyphs = _numGlyphs;
-	maxOverlayGlyphHeight = _maxGlyphHeight;
-	for (uint i = 0; i < _numGlyphs; i++)
-		_overlayGlyphs[i] = _glyphs[i];
+	_text.numOverlayGlyphs = _text._numGlyphs;
+	_text.maxOverlayGlyphHeight = _text._maxGlyphHeight;
+	for (uint i = 0; i < _text._numGlyphs; i++)
+		_text._overlayGlyphs[i] = _text._glyphs[i];
 	return true;
 }
 

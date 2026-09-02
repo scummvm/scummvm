@@ -413,7 +413,8 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	int stringBoxX = x;
 	const int stringBoxY = y;
 	if (alignRight) {
-		const int totalWidth = g_engine->measureStrings(strings) + g_engine->dialogPadW();
+		Text *text = &g_engine->_text;
+		const int totalWidth = text->measureStrings(strings) + g_engine->dialogPadW();
 		stringBoxX -= totalWidth;
 	}
 

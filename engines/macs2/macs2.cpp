@@ -224,23 +224,23 @@ void Macs2Engine::loadResourceFileV1() {
 	uint32 font1SizeField = _fileStream->readUint32LE(); // skip size field
 	(void)font1SizeField;
 	uint16 font1GlyphCount = _fileStream->readUint16LE();
-	_maxGlyphHeight = 0;
+	_text._maxGlyphHeight = 0;
 	for (uint i = 0; i < font1GlyphCount; i++) {
-		_glyphs[i].readFromMemory(_fileStream);
-		_maxGlyphHeight = MAX(_glyphs[i]._height, _maxGlyphHeight);
+		_text._glyphs[i].readFromMemory(_fileStream);
+		_text._maxGlyphHeight = MAX(_text._glyphs[i]._height, _text._maxGlyphHeight);
 	}
-	_numGlyphs = font1GlyphCount;
+	_text._numGlyphs = font1GlyphCount;
 
 	// Font 2: clean sans-serif font used by save/load panel (scene data offset 0x1044)
 	uint32 font2SizeField = _fileStream->readUint32LE();
 	(void)font2SizeField;
 	uint16 font2GlyphCount = _fileStream->readUint16LE();
-	maxPanelGlyphHeight = 0;
+	_text.maxPanelGlyphHeight = 0;
 	for (uint i = 0; i < font2GlyphCount && i < 256; i++) {
-		_panelGlyphs[i].readFromMemory(_fileStream);
-		maxPanelGlyphHeight = MAX(maxPanelGlyphHeight, _panelGlyphs[i]._height);
+		_text._panelGlyphs[i].readFromMemory(_fileStream);
+		_text.maxPanelGlyphHeight = MAX(_text.maxPanelGlyphHeight, _text._panelGlyphs[i]._height);
 	}
-	numPanelGlyphs = font2GlyphCount;
+	_text.numPanelGlyphs = font2GlyphCount;
 
 	// Map scene offsets -> scene+0x5DDB. First entry is the help screen image offset.
 	for (uint i = 0; i < kMcsV1MapSceneOffsetCount; i++) {
@@ -262,8 +262,8 @@ void Macs2Engine::loadResourceFileV2() {
 	//   TalkVol + Font1 + SysFont + 0x400 map offsets
 	_shadingTable.clear();
 	_shadingTable.resize(0x800, 0);
-	_numGlyphs = 0;
-	numPanelGlyphs = 0;
+	_text._numGlyphs = 0;
+	_text.numPanelGlyphs = 0;
 	memset(_mapSceneOffsets, 0, sizeof(_mapSceneOffsets));
 	_imageResources.clear();
 	_imageResources.resize(33);
@@ -467,9 +467,9 @@ void Macs2Engine::loadResourceFileV2() {
 		_fileStream->seek(fontStart + (int64)fontSize, SEEK_SET);
 		return true;
 	};
-	if (!loadSizedFont(_glyphs, _numGlyphs, _maxGlyphHeight))
+	if (!loadSizedFont(_text._glyphs, _text._numGlyphs, _text._maxGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading Font1");
-	if (!loadSizedFont(_panelGlyphs, numPanelGlyphs, maxPanelGlyphHeight))
+	if (!loadSizedFont(_text._panelGlyphs, _text.numPanelGlyphs, _text.maxPanelGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading SysFont");
 
 	for (int i = 0; i < ARRAYSIZE(_mapSceneOffsets); i++)
@@ -492,7 +492,7 @@ void Macs2Engine::loadResourceFileV2() {
 		   "readGlobalAssetsV2: panel=%u+%u megapics=%u buttons=%u cursors=%u invent=%ux%u @(%u,%u) fonts=%u/%u",
 		   _panelTopY, _panelHeight, megas, (uint)_hudButtons.size(), installed,
 		   _inventCols, _inventRows, _inventOriginX, _inventOriginY,
-		   _numGlyphs, numPanelGlyphs);
+		   _text._numGlyphs, _text.numPanelGlyphs);
 	_fileStream->seek(kMcsV2ActorIndexOffset, SEEK_SET);
 	bootstrapMcsActorsObjectsAndScene();
 }
@@ -2012,24 +2012,14 @@ bool Macs2Engine::loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID)
 		return false;
 	}
 
-	numOverlayGlyphs = glyphCount;
-	maxOverlayGlyphHeight = 0;
+	_text.numOverlayGlyphs = glyphCount;
+	_text.maxOverlayGlyphHeight = 0;
 	for (uint i = 0; i < glyphCount; i++) {
-		_overlayGlyphs[i].readFromMemory(_fileStream);
-		maxOverlayGlyphHeight = MAX(maxOverlayGlyphHeight, _overlayGlyphs[i]._height);
+		_text._overlayGlyphs[i].readFromMemory(_fileStream);
+		_text.maxOverlayGlyphHeight = MAX(_text.maxOverlayGlyphHeight, _text._overlayGlyphs[i]._height);
 	}
 	_fileStream->seek(oldPos, SEEK_SET);
 	return true;
-}
-
-bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
-	for (int i = 0; i < _numGlyphs; i++) {
-		if (_glyphs[i]._ascii == c) {
-			out = _glyphs[i];
-			return true;
-		}
-	}
-	return false;
 }
 
 void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
@@ -2496,40 +2486,6 @@ bool Macs2Engine::readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons
 	// Read next record's frame counter (or detect end)
 	_inputPlaybackEndFrame = _inputPlaybackStream->readUint16LE();
 	return !_inputPlaybackStream->eos();
-}
-
-int Macs2Engine::measureString(const Common::String &s) {
-	int sum = 0;
-	GlyphData currentGlyph;
-	uint16 widestGlyph = 0;
-	for (auto current = s.begin(); current != s.end(); current++) {
-		bool found = findGlyph(*current, currentGlyph);
-		if (found) {
-			widestGlyph = MAX(widestGlyph, currentGlyph._width);
-		}
-	}
-
-	for (auto current = s.begin(); current != s.end(); current++) {
-		bool found = findGlyph(*current, currentGlyph);
-		if (!found) {
-			sum += widestGlyph;
-		} else {
-			sum += currentGlyph._width + 1;
-		}
-	}
-	return sum;
-}
-
-int Macs2Engine::measureStringsVertically(const Common::StringArray &sa) {
-	return (int)sa.size() * dialogLineHeight();
-}
-
-int Macs2Engine::measureStrings(const Common::StringArray &sa) {
-	int max = -1;
-	for (auto iter = sa.begin(); iter != sa.end(); iter++) {
-		max = MAX(measureString(*iter), max);
-	}
-	return max;
 }
 
 int Macs2Engine::computeStringIndex(Common::MemoryReadStream *stream, int targetOffset) {
@@ -3196,22 +3152,6 @@ bool Macs2Engine::tick() {
 	const bool result = Events::tick();
 	drawHotspots();
 	return result;
-}
-
-void GlyphData::readFromeFile(Common::File &file) {
-	_ascii = file.readByte();
-	_width = file.readUint16LE();
-	_height = file.readUint16LE();
-	_data.resize(_width * _height);
-	file.read(_data.data(), _width * _height);
-}
-
-void GlyphData::readFromMemory(Common::SeekableReadStream *stream) {
-	_ascii = stream->readByte();
-	_width = stream->readUint16LE();
-	_height = stream->readUint16LE();
-	_data.resize(_width * _height);
-	stream->read(_data.data(), _width * _height);
 }
 
 void AnimFrame::readFromeFile(Common::File &file) {

@@ -44,6 +44,8 @@
 #include "macs2/macs2_constants.h"
 #include "macs2/pathfinding.h"
 #include "macs2/scriptexecutor.h"
+#include "macs2/sprite.h"
+#include "macs2/text.h"
 
 namespace Macs2 {
 
@@ -98,19 +100,6 @@ public:
 
 struct Macs2GameDescription;
 class Music;
-
-struct Sprite {
-	uint16 _width = 0;
-	uint16 _height = 0;
-	Common::Array<uint8> _data;
-};
-
-struct GlyphData : public Sprite {
-	char _ascii = 0;
-
-	void readFromeFile(Common::File &file);
-	void readFromMemory(Common::SeekableReadStream *stream);
-};
 
 struct AnimFrame : public Sprite {
 	int16 _offsetX = 0;
@@ -435,13 +424,7 @@ public:
 	/** Per-cursor hotspot from native HUD button metadata (v2); (0,0) = use center. */
 	Common::Point _cursorHotspots[33];
 
-	GlyphData _glyphs[256];
-	GlyphData _panelGlyphs[256]; // Font 2: clean sans-serif font used by save/load panel
-	GlyphData _overlayGlyphs[256];
-	uint16 numOverlayGlyphs = 0;
-	uint16 maxOverlayGlyphHeight = 0;
-	uint16 numPanelGlyphs = 0;
-	uint16 maxPanelGlyphHeight = 0;
+	Text _text;
 	bool loadOverlayFont(uint8 resourceIndex, uint16 executingObjectID);
 	/**
 	 * Resolve scene/object resource table entry to an absolute MCS file offset.
@@ -515,14 +498,8 @@ public:
 	bool tickDeltaPlayback();
 	void applyDeltaFrameToBackground(const DeltaFrame &frame);
 	void playDeltaFrameSfx(uint16 displayFrame);
-	// Font glyph count (79 glyphs in the resource file's font data)
-	uint16 _numGlyphs = 79;
-	uint16 _maxGlyphHeight;
-
 	AnimFrame _animFrames[6];
 	// 6 flag/decoration animation frames at fixed file offset 0x6A5941, each followed by 6 padding bytes
-
-	bool findGlyph(char c, GlyphData &out) const;
 
 	// Character shading remap (loadResourceFile @ 1008:2e8d -> scene+0x53D3).
 	// Indexed as (color - 0xC0) * 0x20 + shadowIntensity (drawSpriteTransparent @ 1010:0ed1).
@@ -542,8 +519,6 @@ public:
 	/** Absolute file offset of the 0x3000-byte scene/object directory. */
 	uint32 _mcsDirectoryOffset = kMcsV1DirectoryOffset;
 
-	/** Amiga MXFF line pitch: measureTextWidth @ 00224420 uses (font[+8] - 1). */
-	uint16 amigaTextLinePitch = 0;
 	/** True after loadAmigaSceneBackground installed copper colors in 0..31. */
 	bool _amigaNativePlayfieldPalette = false;
 	Common::Array<byte> _amigaLineCopperPal;
@@ -729,11 +704,6 @@ public:
 	// Schedules a run of the script the next time the executor is ticked
 	void scheduleRun(bool initScene = false);
 
-	int measureString(const Common::String &s);
-
-	int measureStrings(const Common::StringArray &sa);
-	int measureStringsVertically(const Common::StringArray &sa);
-
 	Common::StringArray decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings, int sceneId = 0, int objectId = 0);
 
 	// --- Translation support ---
@@ -828,13 +798,13 @@ public:
 	int16 scaleScriptCoord(int16 coord) const { return isV2() ? (int16)(coord * 2) : coord; }
 
 	/** Dialogue / text-box chrome (DOS l0037_B368 / B462). */
-	int dialogPadW() const { return isAmiga() ? 0x08 : 0x12; }
-	int dialogPadH() const { return isAmiga() ? 0x08 : 0x10; }
-	int dialogTextInset() const { return isAmiga() ? 0x04 : 0x09; }
+	int dialogPadW() const { return isAmiga() ? 8 : 18; }
+	int dialogPadH() const { return isAmiga() ? 8 : 16; }
+	int dialogTextInset() const { return isAmiga() ? 4 : 9; }
 	int dialogLineGap() const { return 2; }
-	int portraitBorderPad() const { return isAmiga() ? 2 : 0x0D; }
+	int portraitBorderPad() const { return isAmiga() ? 2 : 13; }
 	int portraitContentInset() const { return isAmiga() ? 1 : 7; }
-	int portraitTextGap() const { return isAmiga() ? 0x0A : 0x12; }
+	int portraitTextGap() const { return isAmiga() ? 10 : 18; }
 	/**
 	 * Per-line step for dialogue layout.
 	 * DOS: maxGlyphHeight + dialogLineGap(). Amiga: absolute MXFF pitch
@@ -842,8 +812,8 @@ public:
 	 */
 	int dialogLineHeight() const {
 		if (isAmiga())
-			return amigaTextLinePitch ? (int)amigaTextLinePitch : (int)_maxGlyphHeight;
-		return (int)_maxGlyphHeight + dialogLineGap();
+			return _text.amigaTextLinePitch ? (int)_text.amigaTextLinePitch : (int)_text._maxGlyphHeight;
+		return (int)_text._maxGlyphHeight + dialogLineGap();
 	}
 
 	/** Depth-map compare Y for sprite occlusion (halved on v2 full-res depth). */

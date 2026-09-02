@@ -200,6 +200,7 @@ private:
 
 	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
+	void drawSprite(int16 x, int16 y, const GlyphData &glyph, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0, bool clipToGameArea = false);
 
 	void drawSpriteClipped(uint16 x, uint16 y, const Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
