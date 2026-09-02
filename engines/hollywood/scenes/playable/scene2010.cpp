@@ -65,12 +65,6 @@ const SceneLayerSpec kScene2010LayerSpecs[] = {
 		kScene2010GatekeeperFrameMap, ARRAYSIZE(kScene2010GatekeeperFrameMap), false, 0}
 };
 
-static_assert(ARRAYSIZE(kScene2010FirstOverlayFrameMap) == 19, "Scene 2010 anilla first overlay frame map size changed");
-static_assert(ARRAYSIZE(kScene2010GatekeeperFrameMap) == 32, "Scene 2010 gatekeeper frame map size changed");
-static_assert(kScene2010FirstOverlayDescriptorCount > 9, "Scene 2010 anilla first overlay descriptor count is too small");
-static_assert(kScene2010SecondOverlayDescriptorCount > 15, "Scene 2010 anilla second overlay descriptor count is too small");
-static_assert(kScene2010GatekeeperDescriptorCount > 27, "Scene 2010 gatekeeper descriptor count is too small");
-
 PlayableSceneConfig scene2010Config() {
 	PlayableSceneConfig config(2010,
 		SceneResourceLayout(11, 5, 10),

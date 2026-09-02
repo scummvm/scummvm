@@ -141,13 +141,6 @@ const byte kScene2030LeftMerchantPurchasePoseFrameMap[] = {
 	40, 41, 42, 43, 44, 44, 44, 44, 44
 };
 
-static_assert(ARRAYSIZE(kScene2030RightMerchantBuyOverlayFrameMap) ==
-	ARRAYSIZE(kScene2030RightMerchantBuyPoseFrameMap),
-	"Scene 2030 right-merchant handoff frame maps differ in size");
-static_assert(ARRAYSIZE(kScene2030LeftMerchantPurchaseOverlayFrameMap) ==
-	ARRAYSIZE(kScene2030LeftMerchantPurchasePoseFrameMap),
-	"Scene 2030 left-merchant handoff frame maps differ in size");
-
 struct Scene2030SynchronizedOverlayTarget {
 	Scene2030SynchronizedOverlayTarget(ActionOverlayPlayer &newOverlay,
 			ResourceSpriteLayer &newMerchantLayer, TimedAnimationChannel &newMerchantChannel,

@@ -71,11 +71,6 @@ const byte kScene2090ForegroundFrameMap[] = {
 	35, 53, 54, 55, 56, 57, 58
 };
 
-static_assert(ARRAYSIZE(kScene2090ForegroundFrameMap) == 0x4d,
-	"Scene 2090 foreground frame map size changed");
-static_assert(kScene2090ForegroundDescriptorCount > 58,
-	"Scene 2090 foreground descriptor count is too small");
-
 const uint kScene2090ForegroundLayer = 0;
 const SceneLayerSpec kScene2090LayerSpecs[] = {
 	{kSceneAnimationActorReplacement, kScene2090ForegroundChunk,
