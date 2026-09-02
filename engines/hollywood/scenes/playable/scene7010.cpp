@@ -288,9 +288,9 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 	for (uint frame = 0; frame < ARRAYSIZE(cels) && !_skipRequested &&
 			!stepAdvanced && !Engine::shouldQuit(); ++frame) {
 		if (pollEvents(true)) {
-			stepAdvanced = consumeStepAdvanceRequest();
-			if (!stepAdvanced)
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 				return;
+			stepAdvanced = consumeStepAdvanceRequest();
 			break;
 		}
 
@@ -308,9 +308,9 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 
 		while (!_skipRequested && !stepAdvanced && !Engine::shouldQuit()) {
 			if (pollEvents(true)) {
-				stepAdvanced = consumeStepAdvanceRequest();
-				if (!stepAdvanced)
+				if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 					return;
+				stepAdvanced = consumeStepAdvanceRequest();
 				break;
 			}
 			const uint32 elapsed = g_system->getMillis() - frameStartMillis;

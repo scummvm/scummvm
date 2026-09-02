@@ -342,7 +342,7 @@ void Scene7020::runScriptedSequence() {
 	_drawChunk7OverlayInsteadOfActor = false;
 	setChunk7Visible(false);
 	runOpeningSueEntryAndIdleWaits();
-	if (Engine::shouldQuit())
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
 	beginSecondarySpeechLine(1, 0);
@@ -371,9 +371,35 @@ void Scene7020::runScriptedSequence() {
 void Scene7020::runOpeningSueEntryAndIdleWaits() {
 	runEntryPath(kScene7020SueStartX, kScene7020SueStartY, kScene7020SueStartFacing,
 		kScene7020SueTargetX, kScene7020SueTargetY);
-	waitSceneMillis(kScene7020OpeningWaitMillis);
-	walkActiveActorTo(kScene7020SueTargetX, kScene7020SueTargetY, kScene7020SueFirstTurnFacing, 0);
-	waitSceneMillis(kScene7020OpeningWaitMillis);
+	if (finishOpeningSueEntryAfterSkip())
+		return;
+
+	if (waitSceneMillis(kScene7020OpeningWaitMillis)) {
+		finishOpeningSueEntryAfterSkip();
+		return;
+	}
+
+	if (!walkActiveActorTo(kScene7020SueTargetX, kScene7020SueTargetY,
+			kScene7020SueFirstTurnFacing, 0) || finishOpeningSueEntryAfterSkip())
+		return;
+
+	if (waitSceneMillis(kScene7020OpeningWaitMillis))
+		finishOpeningSueEntryAfterSkip();
+}
+
+bool Scene7020::finishOpeningSueEntryAfterSkip() {
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return true;
+	if (!_skipRequested)
+		return false;
+
+	consumeStepAdvanceRequest();
+	_skipRequested = false;
+	setActiveActorPose(kScene7020SueTargetX, kScene7020SueTargetY,
+		kScene7020SueFirstTurnFacing, 0);
+	drawPlayableComposite();
+	presentFrame();
+	return true;
 }
 
 void Scene7020::runChunk6FrameRange(byte firstFrame, byte lastFrame, byte finalPoseMode) {
