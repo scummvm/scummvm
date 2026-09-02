@@ -990,7 +990,7 @@ void Scene5030::initializeVanessaDialogueRecords(Common::Array<DialogueChoiceRec
 	records.clear();
 	records.resize(kScene5030DialogueChoiceRecordCount);
 
-	// DAT_00507e68: Vanessa root choices and the nested werewolf branch.
+	// Vanessa's root choices followed by the nested werewolf branch.
 	setDialogueRecord(records, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
 	setDialogueRecord(records, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
 	setDialogueRecord(records, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
@@ -1006,7 +1006,7 @@ void Scene5030::initializeGladysDialogueRecords(Common::Array<DialogueChoiceReco
 	records.clear();
 	records.resize(kScene5030DialogueChoiceRecordCount);
 
-	// DAT_00506b40: Gladys root choices and the nested werewolf branch.
+	// Gladys's root choices followed by the nested werewolf branch.
 	setDialogueRecord(records, 0, 0, kScene5030DialogueTransitionDown, 2, 2, 1, 0);
 	setDialogueRecord(records, 1, 0, kScene5030DialogueTransitionStay, 3, 3, 1, 1);
 	setDialogueRecord(records, 2, 0, kScene5030DialogueTransitionStay, 4, 4, 1, 2);
