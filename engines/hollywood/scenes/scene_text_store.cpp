@@ -41,9 +41,9 @@ const uint kSceneTextLargeRowBaseIndex = 500;
 SceneTextStore::SceneTextStore() :
 		_stageVoiceSampleBase(0),
 		_validateSequentialVoiceMap(false) {
-	decodeKey.resize(kSceneTextDecodeKeySize);
-	stageBlock.resize(kSceneTextDescriptorTableSize);
-	staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
+	_decodeKey.resize(kSceneTextDecodeKeySize);
+	_stageBlock.resize(kSceneTextDescriptorTableSize);
+	_staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
 }
 
 bool SceneTextStore::load(const char *archiveName, const char *sceneDebugName,
@@ -74,7 +74,7 @@ bool SceneTextStore::load(const char *archiveName, const char *sceneDebugName,
 			!readStage(file, archiveName, stageIndex))
 		return false;
 
-	const uint largeRowCount = stageLargeRows.size() / kSceneTextLargeRowSize;
+	const uint largeRowCount = _stageLargeRows.size() / kSceneTextLargeRowSize;
 	_stageVoiceSampleBase = _validateSequentialVoiceMap ?
 		findStageVoiceSampleBase(largeRowCount) : 0;
 	if (_validateSequentialVoiceMap && _stageVoiceSampleBase == 0) {
@@ -89,8 +89,8 @@ bool SceneTextStore::loadStage(const char *archiveName, const char *sceneDebugNa
 		uint stageIndex) {
 	_validateSequentialVoiceMap = false;
 	_stageVoiceSampleBase = 0;
-	inventoryOwnerSmallRows.clear();
-	inventoryOwnerLargeRows.clear();
+	_inventoryOwnerSmallRows.clear();
+	_inventoryOwnerLargeRows.clear();
 
 	Common::File file;
 	if (!file.open(Common::Path(archiveName))) {
@@ -114,9 +114,9 @@ bool SceneTextStore::loadStaticSpeechCues(const char *archiveName,
 
 bool SceneTextStore::readDecodeKey(Common::SeekableReadStream &stream,
 		const char *archiveName) {
-	decodeKey.resize(kSceneTextDecodeKeySize);
+	_decodeKey.resize(kSceneTextDecodeKeySize);
 	stream.seek(0);
-	if (stream.read(decodeKey.data(), decodeKey.size()) != decodeKey.size()) {
+	if (stream.read(_decodeKey.data(), _decodeKey.size()) != _decodeKey.size()) {
 		warning("Failed to read %s row decode key", archiveName);
 		return false;
 	}
@@ -141,9 +141,9 @@ bool SceneTextStore::readStage(Common::SeekableReadStream &stream,
 		return false;
 	}
 
-	stageBlock.resize(kSceneTextDescriptorTableSize);
+	_stageBlock.resize(kSceneTextDescriptorTableSize);
 	stream.seek(stageOffset);
-	if (stream.read(stageBlock.data(), stageBlock.size()) != stageBlock.size()) {
+	if (stream.read(_stageBlock.data(), _stageBlock.size()) != _stageBlock.size()) {
 		warning("Failed to read %s stage %u descriptor table", archiveName, stageIndex);
 		return false;
 	}
@@ -157,28 +157,28 @@ bool SceneTextStore::readStage(Common::SeekableReadStream &stream,
 		return false;
 	}
 
-	stageSmallRows.resize((uint32)(smallRowCount + 1) * kSceneTextSmallRowSize);
-	memset(stageSmallRows.data(), 0, stageSmallRows.size());
-	if (stream.read(stageSmallRows.data() + kSceneTextSmallRowSize, smallRowBytes) !=
+	_stageSmallRows.resize((uint32)(smallRowCount + 1) * kSceneTextSmallRowSize);
+	memset(_stageSmallRows.data(), 0, _stageSmallRows.size());
+	if (stream.read(_stageSmallRows.data() + kSceneTextSmallRowSize, smallRowBytes) !=
 			smallRowBytes) {
 		warning("Failed to read %s stage %u small text rows", archiveName, stageIndex);
 		return false;
 	}
 
-	stageLargeRows.resize(largeRowBytes);
-	if (stream.read(stageLargeRows.data(), stageLargeRows.size()) !=
-			stageLargeRows.size()) {
+	_stageLargeRows.resize(largeRowBytes);
+	if (stream.read(_stageLargeRows.data(), _stageLargeRows.size()) !=
+			_stageLargeRows.size()) {
 		warning("Failed to read %s stage %u large text rows", archiveName, stageIndex);
 		return false;
 	}
 
 	for (uint row = 1; row <= smallRowCount; ++row) {
 		for (uint column = 0; column < kSceneTextSmallRowSize; ++column)
-			stageSmallRows[row * kSceneTextSmallRowSize + column] -= decodeKey[column];
+			_stageSmallRows[row * kSceneTextSmallRowSize + column] -= _decodeKey[column];
 	}
 	for (uint row = 0; row < largeRowCount; ++row) {
 		for (uint column = 0; column < kSceneTextLargeRowSize; ++column)
-			stageLargeRows[row * kSceneTextLargeRowSize + column] -= decodeKey[column];
+			_stageLargeRows[row * kSceneTextLargeRowSize + column] -= _decodeKey[column];
 	}
 
 	debugC(1, kDebugResources, "Loaded %s stage %u text rows: smallRows=%u largeRows=%u",
@@ -195,10 +195,10 @@ bool SceneTextStore::readStaticSpeechCues(Common::SeekableReadStream &stream,
 		return false;
 	}
 
-	staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
+	_staticSpeechCueDescriptors.resize(kSceneTextSpeechCueDescriptorTableSize);
 	stream.seek(speechCueDescriptorOffset);
-	if (stream.read(staticSpeechCueDescriptors.data(),
-			staticSpeechCueDescriptors.size()) != staticSpeechCueDescriptors.size()) {
+	if (stream.read(_staticSpeechCueDescriptors.data(),
+			_staticSpeechCueDescriptors.size()) != _staticSpeechCueDescriptors.size()) {
 		warning("Failed to read %s static speech cue table", archiveName);
 		return false;
 	}
@@ -226,17 +226,17 @@ bool SceneTextStore::readInventoryRows(Common::SeekableReadStream &stream,
 		return false;
 	}
 
-	inventoryOwnerSmallRows.resize((uint32)(smallRowCount + 1) * kSceneTextSmallRowSize);
-	memset(inventoryOwnerSmallRows.data(), 0, inventoryOwnerSmallRows.size());
-	inventoryOwnerLargeRows.resize((uint32)(largeRowCount + 1) * kSceneTextLargeRowSize);
-	memset(inventoryOwnerLargeRows.data(), 0, inventoryOwnerLargeRows.size());
+	_inventoryOwnerSmallRows.resize((uint32)(smallRowCount + 1) * kSceneTextSmallRowSize);
+	memset(_inventoryOwnerSmallRows.data(), 0, _inventoryOwnerSmallRows.size());
+	_inventoryOwnerLargeRows.resize((uint32)(largeRowCount + 1) * kSceneTextLargeRowSize);
+	memset(_inventoryOwnerLargeRows.data(), 0, _inventoryOwnerLargeRows.size());
 	stream.seek(rowsOffset);
-	if (stream.read(inventoryOwnerSmallRows.data() + kSceneTextSmallRowSize,
+	if (stream.read(_inventoryOwnerSmallRows.data() + kSceneTextSmallRowSize,
 			smallRowBytes) != smallRowBytes) {
 		warning("Failed to read %s static small text rows", archiveName);
 		return false;
 	}
-	if (stream.read(inventoryOwnerLargeRows.data() + kSceneTextLargeRowSize,
+	if (stream.read(_inventoryOwnerLargeRows.data() + kSceneTextLargeRowSize,
 			largeRowBytes) != largeRowBytes) {
 		warning("Failed to read %s static large text rows", archiveName);
 		return false;
@@ -244,11 +244,11 @@ bool SceneTextStore::readInventoryRows(Common::SeekableReadStream &stream,
 
 	for (uint row = 1; row <= smallRowCount; ++row) {
 		for (uint column = 0; column < kSceneTextSmallRowSize; ++column)
-			inventoryOwnerSmallRows[row * kSceneTextSmallRowSize + column] -= decodeKey[column];
+			_inventoryOwnerSmallRows[row * kSceneTextSmallRowSize + column] -= _decodeKey[column];
 	}
 	for (uint row = 1; row <= largeRowCount; ++row) {
 		for (uint column = 0; column < kSceneTextLargeRowSize; ++column)
-			inventoryOwnerLargeRows[row * kSceneTextLargeRowSize + column] -= decodeKey[column];
+			_inventoryOwnerLargeRows[row * kSceneTextLargeRowSize + column] -= _decodeKey[column];
 	}
 
 	return true;
@@ -256,12 +256,12 @@ bool SceneTextStore::readInventoryRows(Common::SeekableReadStream &stream,
 
 Common::String SceneTextStore::inventoryItemName(byte itemId) const {
 	const uint offset = (uint)itemId * kSceneTextSmallRowSize;
-	if (offset >= inventoryOwnerSmallRows.size())
+	if (offset >= _inventoryOwnerSmallRows.size())
 		return Common::String();
 
-	const byte *row = inventoryOwnerSmallRows.data() + offset;
+	const byte *row = _inventoryOwnerSmallRows.data() + offset;
 	uint length = 0;
-	while (offset + length < inventoryOwnerSmallRows.size() &&
+	while (offset + length < _inventoryOwnerSmallRows.size() &&
 			length < kSceneTextSmallRowSize && row[length] != 0)
 		++length;
 
@@ -270,29 +270,29 @@ Common::String SceneTextStore::inventoryItemName(byte itemId) const {
 
 Common::String SceneTextStore::dialogueMenuText(byte stageId, byte textRowId) const {
 	const uint offset = ((uint)stageId * 100 + textRowId) * 5;
-	if (offset + 5 > stageBlock.size())
+	if (offset + 5 > _stageBlock.size())
 		return Common::String();
 
-	return largeTextRecord(readUint16LE(stageBlock, offset));
+	return largeTextRecord(readUint16LE(_stageBlock, offset));
 }
 
 SceneSpeechCue SceneTextStore::stageCue(uint16 rowIndex, byte frameIndex) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 100) * 5;
-	if (offset + 5 > stageBlock.size())
+	if (offset + 5 > _stageBlock.size())
 		return SceneSpeechCue();
 
-	return SceneSpeechCue(readUint16LE(stageBlock, offset), stageBlock[offset + 2],
-		readUint16LE(stageBlock, offset + 3));
+	return SceneSpeechCue(readUint16LE(_stageBlock, offset), _stageBlock[offset + 2],
+		readUint16LE(_stageBlock, offset + 3));
 }
 
 SceneSpeechCue SceneTextStore::staticSpeechCue(uint16 rowIndex, byte frameIndex) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
-	if (offset + 5 > staticSpeechCueDescriptors.size())
+	if (offset + 5 > _staticSpeechCueDescriptors.size())
 		return SceneSpeechCue();
 
-	return SceneSpeechCue(readUint16LE(staticSpeechCueDescriptors, offset),
-		staticSpeechCueDescriptors[offset + 2],
-		readUint16LE(staticSpeechCueDescriptors, offset + 3));
+	return SceneSpeechCue(readUint16LE(_staticSpeechCueDescriptors, offset),
+		_staticSpeechCueDescriptors[offset + 2],
+		readUint16LE(_staticSpeechCueDescriptors, offset + 3));
 }
 
 bool SceneTextStore::getStageCue(uint16 rowIndex, byte frameIndex,
@@ -310,7 +310,7 @@ bool SceneTextStore::getStageCue(uint16 rowIndex, byte frameIndex,
 		return false;
 
 	const uint localRecordId = cue.textRecordId - kSceneTextLargeRowBaseIndex;
-	const uint largeRowCount = stageLargeRows.size() / kSceneTextLargeRowSize;
+	const uint largeRowCount = _stageLargeRows.size() / kSceneTextLargeRowSize;
 	const uint lineCount = MAX<uint>(1, cue.continuationCount);
 	if (localRecordId + lineCount > largeRowCount)
 		return false;
@@ -326,14 +326,14 @@ uint16 SceneTextStore::findStageVoiceSampleBase(uint largeRowCount) const {
 
 	uint16 bestBase = 0;
 	uint bestCount = 0;
-	for (uint offset = 0; offset + 5 <= stageBlock.size(); offset += 5) {
-		const uint16 textRecordId = readUint16LE(stageBlock, offset);
+	for (uint offset = 0; offset + 5 <= _stageBlock.size(); offset += 5) {
+		const uint16 textRecordId = readUint16LE(_stageBlock, offset);
 		if (textRecordId < kSceneTextLargeRowBaseIndex)
 			continue;
 
 		const uint localRecordId = textRecordId - kSceneTextLargeRowBaseIndex;
-		const uint lineCount = MAX<uint>(1, stageBlock[offset + 2]);
-		const uint16 voiceSampleId = readUint16LE(stageBlock, offset + 3);
+		const uint lineCount = MAX<uint>(1, _stageBlock[offset + 2]);
+		const uint16 voiceSampleId = readUint16LE(_stageBlock, offset + 3);
 		if (localRecordId + lineCount > largeRowCount || voiceSampleId < localRecordId)
 			continue;
 
@@ -360,10 +360,10 @@ bool SceneTextStore::getStaticSpeechCue(uint16 rowIndex, byte frameIndex,
 Common::String SceneTextStore::largeTextRecord(uint16 recordId) const {
 	if (recordId < kSceneTextLargeRowBaseIndex) {
 		const uint offset = (uint)recordId * kSceneTextLargeRowSize;
-		if (recordId == 0 || offset >= inventoryOwnerLargeRows.size())
+		if (recordId == 0 || offset >= _inventoryOwnerLargeRows.size())
 			return Common::String();
 
-		const byte *row = inventoryOwnerLargeRows.data() + offset;
+		const byte *row = _inventoryOwnerLargeRows.data() + offset;
 		uint length = 0;
 		while (length < kSceneTextLargeRowSize && row[length] != 0)
 			++length;
@@ -373,10 +373,10 @@ Common::String SceneTextStore::largeTextRecord(uint16 recordId) const {
 
 	const uint localRecordId = recordId - kSceneTextLargeRowBaseIndex;
 	const uint offset = localRecordId * kSceneTextLargeRowSize;
-	if (offset >= stageLargeRows.size())
+	if (offset >= _stageLargeRows.size())
 		return Common::String();
 
-	const byte *row = stageLargeRows.data() + offset;
+	const byte *row = _stageLargeRows.data() + offset;
 	uint length = 0;
 	while (length < kSceneTextLargeRowSize && row[length] != 0)
 		++length;

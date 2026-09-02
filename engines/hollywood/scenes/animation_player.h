@@ -193,7 +193,7 @@ private:
 				return false;
 
 			target.setFrame(range.targetFrame(frame));
-			const Common::Array<AnimationFrameEvent> &events = range.events;
+			const Common::Array<AnimationFrameEvent> &events = range._events;
 			for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 				if (events[eventIndex].matches(frame))
 					_delegate.handleAnimationFrameEvent(events[eventIndex], frame);

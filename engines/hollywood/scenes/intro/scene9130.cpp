@@ -118,7 +118,7 @@ bool Scene9130::load() {
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
-	_resources.allocateArena(_resources.chunkTable.sizes[kScene9130ClipChunk]);
+	_resources.allocateArena(_resources._chunkTable.sizes[kScene9130ClipChunk]);
 	if (!loadArenaChunk(kScene9130ClipChunk))
 		return false;
 
@@ -165,8 +165,8 @@ bool Scene9130::waitForAnimationFrame(uint32 millis, bool allowSkip) {
 }
 
 void Scene9130::drawClipFrame(byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[kScene9130ClipChunk],
-		_resources.chunkTable.sizes[kScene9130ClipChunk], kScene9130ClipFrameCount,
+	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[kScene9130ClipChunk],
+		_resources._chunkTable.sizes[kScene9130ClipChunk], kScene9130ClipFrameCount,
 		frameIndex, _sceneFramebuffer.data(), _sceneFramebuffer.size());
 }
 

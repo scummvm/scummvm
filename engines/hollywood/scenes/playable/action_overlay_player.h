@@ -43,13 +43,13 @@ public:
 	}
 	void setFrame(uint frame);
 	void finish(bool previousHideActiveActor);
-	bool isVisible() const { return layer.visible; }
-	bool replacesActor() const { return isVisible() && hideActiveActor; }
+	bool isVisible() const { return _layer.visible; }
+	bool replacesActor() const { return isVisible() && _hideActiveActor; }
 
-	ResourceSpriteLayer layer;
-	SceneAnimationStratum stratum;
-	bool hideActiveActor;
-	bool restoreBackgroundBeforeDraw;
+	ResourceSpriteLayer _layer;
+	SceneAnimationStratum _stratum;
+	bool _hideActiveActor;
+	bool _restoreBackgroundBeforeDraw;
 
 private:
 	friend class PlayableScene;

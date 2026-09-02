@@ -64,11 +64,11 @@ public:
 		kResourceChunkCount = 40
 	};
 
-	ResourceChunkTable chunkTable;
-	uint32 chunkOffsets[kResourceChunkCount];
-	uint32 arenaCursor;
-	Common::Array<byte> arena;
-	Common::Array<byte> metadata;
+	ResourceChunkTable _chunkTable;
+	uint32 _chunkOffsets[kResourceChunkCount];
+	uint32 _arenaCursor;
+	Common::Array<byte> _arena;
+	Common::Array<byte> _metadata;
 
 private:
 	void clearChunkOffsets();

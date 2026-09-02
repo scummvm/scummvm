@@ -161,9 +161,9 @@ void Scene5120::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	const bool foregroundActorMode = actorDrawOrderMode == 2 || actorDrawOrderMode == 7 || actorDrawOrderMode == 8;
 	const bool actionVisible = _actionOverlayPlayer.isVisible();
 	const bool actionBehindActors = actionVisible &&
-		_actionOverlayPlayer.stratum == kSceneAnimationBehindActors;
+		_actionOverlayPlayer._stratum == kSceneAnimationBehindActors;
 	const bool actionReplacesActor = actionVisible &&
-		_actionOverlayPlayer.stratum == kSceneAnimationActorReplacement;
+		_actionOverlayPlayer._stratum == kSceneAnimationActorReplacement;
 
 	if (_projectorSpeechActive) {
 		copyBaseFramebufferToSceneFramebuffer();

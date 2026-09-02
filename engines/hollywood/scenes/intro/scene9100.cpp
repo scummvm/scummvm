@@ -140,7 +140,7 @@ bool Scene9100::play() {
 	if (!_skipRequested && !Engine::shouldQuit()) {
 		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
 		expandFillRunsToSavedFramebuffer();
-		drawResourceBlockListToSceneFramebuffer(_resources.chunkOffsets[16]);
+		drawResourceBlockListToSceneFramebuffer(_resources._chunkOffsets[16]);
 		presentFrame();
 		runOpeningPrelude();
 	}
@@ -232,9 +232,9 @@ bool Scene9100::load(bool dialogueBranch) {
 		return false;
 
 	const uint32 scratchSize = MAX<uint32>(
-		kScratchPrimaryPayloadBase + _resources.chunkTable.sizes[22],
-		MAX<uint32>(_resources.chunkTable.sizes[20],
-			kScratchChunk21Base + _resources.chunkTable.sizes[21]));
+		kScratchPrimaryPayloadBase + _resources._chunkTable.sizes[22],
+		MAX<uint32>(_resources._chunkTable.sizes[20],
+			kScratchChunk21Base + _resources._chunkTable.sizes[21]));
 	_resourceScratchArena.resize(scratchSize);
 	memset(_resourceScratchArena.data(), 0, _resourceScratchArena.size());
 	memset(_secondaryScratchBuffer.data(), 0, _secondaryScratchBuffer.size());
@@ -742,7 +742,7 @@ void Scene9100::runDialogueBranchSequence() {
 
 void Scene9100::prepareDialogueBranchOfficePatch() {
 	expandFillRunsToSavedFramebuffer();
-	drawResourceBlockListToSceneFramebuffer(_resources.chunkOffsets[17]);
+	drawResourceBlockListToSceneFramebuffer(_resources._chunkOffsets[17]);
 	drawOfficeCompositeLayers();
 	presentFrame();
 }
@@ -869,7 +869,7 @@ void Scene9100::restoreForegroundActorLayer() {
 		return;
 
 	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
-	restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+	restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
 void Scene9100::drawForegroundActorLayer() {
@@ -877,7 +877,7 @@ void Scene9100::drawForegroundActorLayer() {
 		return;
 
 	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
 void Scene9100::drawDeskActorLayer(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground) {
@@ -978,9 +978,9 @@ void Scene9100::advanceClockFrame() {
 
 void Scene9100::restoreClockAreaBackground() {
 	for (byte frame = 0; frame < kI10ClockDescriptorCount; ++frame) {
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[7], 0, kI10ClockDescriptorCount, frame);
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[8], 0, kI10ClockDescriptorCount, frame);
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[9], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[7], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[8], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[9], 0, kI10ClockDescriptorCount, frame);
 	}
 }
 
@@ -990,9 +990,9 @@ void Scene9100::drawClockLayers(bool restoreBackground) {
 
 	if (restoreBackground)
 		restoreClockAreaBackground();
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
 }
 
 void Scene9100::drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant) {
@@ -1018,31 +1018,31 @@ void Scene9100::restoreSpriteBackground(const Common::Array<byte> &resource, uin
 }
 
 void Scene9100::applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset) {
-	Hollywood::drawResourceBlockList(_resources.arena, baseOffset, _frameDecodeBuffer.surface());
+	Hollywood::drawResourceBlockList(_resources._arena, baseOffset, _frameDecodeBuffer.surface());
 }
 
 void Scene9100::drawResourceBlockListToSceneFramebuffer(uint32 baseOffset) {
-	Hollywood::drawResourceBlockList(_resources.arena, baseOffset, _sceneFramebuffer.surface());
+	Hollywood::drawResourceBlockList(_resources._arena, baseOffset, _sceneFramebuffer.surface());
 }
 
 void Scene9100::restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination) {
-	if (baseOffset + 2 > _resources.arena.size())
+	if (baseOffset + 2 > _resources._arena.size())
 		return;
 
-	const uint16 blockCount = readUint16(_resources.arena, baseOffset);
+	const uint16 blockCount = readUint16(_resources._arena, baseOffset);
 	uint cursor = baseOffset + 2;
 	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resources.arena.size())
+		if (cursor + 6 > _resources._arena.size())
 			return;
 
-		const uint32 packedDestination = readUint32(_resources.arena, cursor);
-		const uint16 size = readUint16(_resources.arena, cursor + 4);
+		const uint32 packedDestination = readUint32(_resources._arena, cursor);
+		const uint16 size = readUint16(_resources._arena, cursor + 4);
 		cursor += 6;
 
 		const uint x = packedDestination & 0xffff;
 		const uint y = (packedDestination >> 16) & 0xffff;
 		const uint targetOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + size > _resources.arena.size() ||
+		if (cursor + size > _resources._arena.size() ||
 				targetOffset + size > destination.size() ||
 				targetOffset + size > _cleanOfficeBaseFramebuffer.size())
 			return;
@@ -1056,7 +1056,7 @@ void Scene9100::removeInitialOfficeTitlePatch(IndexedSurfaceBuffer &destination)
 	if (_dialogueBranch)
 		return;
 
-	restoreResourceBlockListFromCleanOfficeBase(_resources.chunkOffsets[16], destination);
+	restoreResourceBlockListFromCleanOfficeBase(_resources._chunkOffsets[16], destination);
 }
 
 void Scene9100::expandFillRunsToSavedFramebuffer() {
@@ -1124,10 +1124,10 @@ void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 
 void Scene9100::copyPaletteSegment(byte segmentIndex) {
 	const uint32 sourceOffset = getSegmentOffset(segmentIndex);
-	if (sourceOffset + kPaletteSize > _resources.arena.size())
+	if (sourceOffset + kPaletteSize > _resources._arena.size())
 		return;
 
-	memcpy(_paletteCurrent.data(), _resources.arena.data() + sourceOffset, kPaletteSize);
+	memcpy(_paletteCurrent.data(), _resources._arena.data() + sourceOffset, kPaletteSize);
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
@@ -1208,7 +1208,7 @@ uint32 Scene9100::getSegmentOffset(byte segmentIndex) const {
 	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return 0;
 
-	return _resources.chunkOffsets[chunkIndex];
+	return _resources._chunkOffsets[chunkIndex];
 }
 
 uint16 Scene9100::readUint16(const Common::Array<byte> &source, uint offset) const {

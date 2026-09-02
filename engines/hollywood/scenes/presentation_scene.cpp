@@ -198,11 +198,11 @@ bool PresentationScene::loadArenaChunkAlias(uint sourceIndex, uint aliasIndex,
 
 void PresentationScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
 	if (!layer.visible || layer.chunkIndex >= SceneResources::kResourceChunkCount ||
-			!_resources.chunkTable.isValidChunk(layer.chunkIndex) ||
+			!_resources._chunkTable.isValidChunk(layer.chunkIndex) ||
 			layer.descriptorIndex() >= layer.descriptorCount)
 		return;
 
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[layer.chunkIndex], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[layer.chunkIndex], 0,
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer.surface());
 }
 

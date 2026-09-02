@@ -157,7 +157,7 @@ void Scene9180::drawFrameIndex(byte frameMapIndex) {
 	if (frameMapIndex >= ARRAYSIZE(kScene9180FrameMap))
 		return;
 
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[2], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[2], 0,
 		kScene9180DescriptorCount, kScene9180FrameMap[frameMapIndex],
 		_sceneFramebuffer.surface());
 }

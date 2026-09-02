@@ -163,11 +163,11 @@ void ChapterIntroScene::rotatePaletteRange(uint firstIndex, uint lastIndex) {
 }
 
 void ChapterIntroScene::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex) {
-	if (!_resources.chunkTable.isValidChunk(chunkIndex))
+	if (!_resources._chunkTable.isValidChunk(chunkIndex))
 		return;
 
-	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[chunkIndex],
-		_resources.chunkTable.sizes[chunkIndex], tableEntryCount, frameIndex, _sceneFramebuffer.data(),
+	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[chunkIndex],
+		_resources._chunkTable.sizes[chunkIndex], tableEntryCount, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }
 

@@ -111,10 +111,10 @@ bool Scene9010::loadScene9010Resources() {
 		return false;
 
 	if (!_resources.validateChunkRange(kI01ArchiveName, _debugName, 0, 2) ||
-			((_resources.chunkTable.isValidChunk(3) ||
-			_resources.chunkTable.isValidChunk(4)) &&
-			(!_resources.chunkTable.isValidChunk(3) ||
-			!_resources.chunkTable.isValidChunk(4)))) {
+			((_resources._chunkTable.isValidChunk(3) ||
+			_resources._chunkTable.isValidChunk(4)) &&
+			(!_resources._chunkTable.isValidChunk(3) ||
+			!_resources._chunkTable.isValidChunk(4)))) {
 		warning("%s is missing required post-intro chunks", kI01ArchiveName);
 		return false;
 	}
@@ -125,7 +125,7 @@ bool Scene9010::loadScene9010Resources() {
 			!loadVariableChunk(2, _characterSpriteResource))
 		return false;
 
-	if (_resources.chunkTable.isValidChunk(3)) {
+	if (_resources._chunkTable.isValidChunk(3)) {
 		if (!loadVariableChunk(3, _i02PaletteTable) ||
 				!loadVariableChunk(4, _i02FramePayload))
 			return false;

@@ -263,7 +263,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 		return false;
 
 	// Italian archives combine the two Spanish reveal layers into one chunk.
-	_i05EntriesPerSegment = _resources.chunkTable.isValidChunk(kI05LayeredRevealLayoutMarkerChunk) ?
+	_i05EntriesPerSegment = _resources._chunkTable.isValidChunk(kI05LayeredRevealLayoutMarkerChunk) ?
 		kI05LayeredRevealEntriesPerSegment : kI05CombinedRevealEntriesPerSegment;
 	const uint baseIndex = ((uint)segmentId - 1) * _i05EntriesPerSegment;
 	const bool finalLayeredSegment = _i05EntriesPerSegment == kI05LayeredRevealEntriesPerSegment &&
@@ -281,14 +281,14 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 2; i <= lastLocalChunkIndex; ++i)
-		resourceArenaSize += _resources.chunkTable.sizes[baseIndex + i];
+		resourceArenaSize += _resources._chunkTable.sizes[baseIndex + i];
 	_resources.allocateArena(resourceArenaSize);
 
 	if (!loadFixedChunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
 	if (!loadFixedChunk(baseIndex + 1, _paletteResource, kPaletteSize))
 		return false;
-	_i05ClipChunkSize = _resources.chunkTable.sizes[baseIndex + 3];
+	_i05ClipChunkSize = _resources._chunkTable.sizes[baseIndex + 3];
 
 	for (uint i = 2; i <= lastLocalChunkIndex; ++i) {
 		if (!loadArenaChunk(baseIndex + i, i))
@@ -307,7 +307,7 @@ bool Scene9050::loadResourceI08BlinkAssets() {
 			return false;
 	}
 
-	_resources.allocateArena(_resources.chunkTable.sizes[2]);
+	_resources.allocateArena(_resources._chunkTable.sizes[2]);
 
 	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
@@ -328,7 +328,7 @@ bool Scene9050::loadResourceI07FinalAssets() {
 			return false;
 	}
 
-	_resources.allocateArena(_resources.chunkTable.sizes[2]);
+	_resources.allocateArena(_resources._chunkTable.sizes[2]);
 
 	if (!loadFixedChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
@@ -467,13 +467,13 @@ void Scene9050::initializeResourceI06Interlude() {
 void Scene9050::copyResourceI06ScrolledBaseFrame() {
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 
-	const uint32 chunkOffset = _resources.chunkOffsets[1];
-	const uint32 chunkSize = _resources.chunkTable.sizes[1];
-	if (_i06BaseImageScrollOffset >= chunkSize || chunkOffset + chunkSize > _resources.arena.size())
+	const uint32 chunkOffset = _resources._chunkOffsets[1];
+	const uint32 chunkSize = _resources._chunkTable.sizes[1];
+	if (_i06BaseImageScrollOffset >= chunkSize || chunkOffset + chunkSize > _resources._arena.size())
 		return;
 
 	const uint32 copySize = MIN<uint32>(chunkSize - _i06BaseImageScrollOffset, _sceneFramebuffer.size());
-	memcpy(_sceneFramebuffer.data(), _resources.arena.data() + chunkOffset + _i06BaseImageScrollOffset, copySize);
+	memcpy(_sceneFramebuffer.data(), _resources._arena.data() + chunkOffset + _i06BaseImageScrollOffset, copySize);
 }
 
 void Scene9050::presentResourceI06AnimatedFrame() {
@@ -482,11 +482,11 @@ void Scene9050::presentResourceI06AnimatedFrame() {
 
 	if (redrawFrame) {
 		copyResourceI06ScrolledBaseFrame();
-		drawResourceBlockList(_resources.arena, _resources.chunkOffsets[4], _sceneFramebuffer.surface(), _i06RandomBasePhase);
+		drawResourceBlockList(_resources._arena, _resources._chunkOffsets[4], _sceneFramebuffer.surface(), _i06RandomBasePhase);
 		drawResourceI06AnimatedFrame(2, (byte)(_i06PrimarySpriteFrame + _i06VerticalBobOffset));
 		drawResourceI06AnimatedFrame(3, _i06SecondarySpriteFrame);
 		if (_i06OptionalOverlayChunk5Enabled)
-			drawResourceBlockList(_resources.arena, _resources.chunkOffsets[5], _sceneFramebuffer.surface());
+			drawResourceBlockList(_resources._arena, _resources._chunkOffsets[5], _sceneFramebuffer.surface());
 
 		_i06BaseFrameDirty = false;
 		_i06PrimarySpriteDirty = false;
@@ -504,7 +504,7 @@ void Scene9050::drawResourceI06AnimatedFrame(byte chunkIndex, byte frameIndex) {
 	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[chunkIndex], 0,
 		kI06AnimatedFrameDescriptorCount, frameIndex, _sceneFramebuffer.surface(), _i06RandomBasePhase);
 }
 
@@ -597,7 +597,7 @@ void Scene9050::advanceResourceI06Scroll() {
 	}
 
 	const int scrollOffset = (int)_i06BaseImageScrollOffset + getStage9050ResourceI06ScrollDelta(_i06FrameCounter);
-	_i06BaseImageScrollOffset = (uint16)MAX<int>(0, MIN<int>(scrollOffset, _resources.chunkTable.sizes[1] - 1));
+	_i06BaseImageScrollOffset = (uint16)MAX<int>(0, MIN<int>(scrollOffset, _resources._chunkTable.sizes[1] - 1));
 	if (_i06PreviousBaseImageScrollOffset != _i06BaseImageScrollOffset) {
 		_i06BaseFrameDirty = true;
 		_i06PreviousBaseImageScrollOffset = _i06BaseImageScrollOffset;
@@ -628,7 +628,7 @@ void Scene9050::advanceResourceI06InterludeScroll(bool runScriptedSpriteSequence
 	}
 
 	const int scrollOffset = (int)_i06BaseImageScrollOffset + getStage9050ResourceI06ScrollDelta(_i06FrameCounter);
-	_i06BaseImageScrollOffset = (uint16)MAX<int>(0, MIN<int>(scrollOffset, _resources.chunkTable.sizes[1] - 1));
+	_i06BaseImageScrollOffset = (uint16)MAX<int>(0, MIN<int>(scrollOffset, _resources._chunkTable.sizes[1] - 1));
 	if (_i06PreviousBaseImageScrollOffset != _i06BaseImageScrollOffset) {
 		_i06BaseFrameDirty = true;
 		_i06PreviousBaseImageScrollOffset = _i06BaseImageScrollOffset;
@@ -891,7 +891,7 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 }
 
 void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[3],
+	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[3],
 		_i05ClipChunkSize, lastFrameIndex, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }
@@ -915,9 +915,9 @@ bool Scene9050::playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, 
 }
 
 void Scene9050::runStage9050InterClipSpriteReveal() {
-	const uint32 paletteOffset = _resources.chunkOffsets[2];
-	if (paletteOffset + kPaletteSize <= _resources.arena.size()) {
-		memcpy(_paletteCurrent.data(), _resources.arena.data() + paletteOffset, kPaletteSize);
+	const uint32 paletteOffset = _resources._chunkOffsets[2];
+	if (paletteOffset + kPaletteSize <= _resources._arena.size()) {
+		memcpy(_paletteCurrent.data(), _resources._arena.data() + paletteOffset, kPaletteSize);
 		memcpy(_paletteResource.data(), _paletteCurrent.data(), kPaletteSize);
 		presentFrame();
 	}
@@ -954,11 +954,11 @@ void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte
 	if (localChunkIndex >= SceneResources::kResourceChunkCount)
 		return;
 
-	const uint32 baseOffset = _resources.chunkOffsets[localChunkIndex];
-	restoreSpriteBackground(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex,
+	const uint32 baseOffset = _resources._chunkOffsets[localChunkIndex];
+	restoreSpriteBackground(_resources._arena, baseOffset, 0, descriptorCount, descriptorIndex,
 		_clipBaseFramebuffer.surface(), _sceneFramebuffer.surface());
 	if (drawFrame)
-		drawStripSpriteFrame(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
+		drawStripSpriteFrame(_resources._arena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 bool Scene9050::runResourceI08BlinkSequence() {

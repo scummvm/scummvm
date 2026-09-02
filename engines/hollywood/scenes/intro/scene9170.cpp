@@ -246,7 +246,7 @@ void Scene9170::buildInitialStaticFrame() {
 	_staticFramebuffer.clear(0);
 	_sceneFramebuffer.clear(0);
 	_baseFramebuffer.clear(0);
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[3], _baseFramebuffer.surface());
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[3], _baseFramebuffer.surface());
 	copyBaseToCanvasAtYOffset(0x1e0);
 
 	_upperActorsEnabled = true;
@@ -265,7 +265,7 @@ void Scene9170::buildInitialStaticFrame() {
 
 void Scene9170::switchToLowerRoomFrame() {
 	_baseFramebuffer.clear(0);
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[1], _baseFramebuffer.surface());
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[1], _baseFramebuffer.surface());
 	copyBaseToCanvasAtYOffset(0);
 	_upperActorsEnabled = false;
 	_lowerActorsEnabled = true;
@@ -286,9 +286,9 @@ void Scene9170::switchToLowerRoomFrame() {
 void Scene9170::addBlockListToCanvas(uint chunkIndex, int yOffset) {
 	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return;
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_staticFramebuffer.surface(), yOffset);
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_sceneFramebuffer.surface(), yOffset);
 }
 
@@ -366,7 +366,7 @@ void Scene9170::restoreSpriteChannel(uint chunkIndex, uint descriptorCount, cons
 		return;
 
 	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
-	restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
+	restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[chunkIndex], 0,
 		descriptorCount, mappedFrame, _staticFramebuffer.surface(), _sceneFramebuffer.surface(),
 		_channelCanvasOffset);
 }
@@ -377,7 +377,7 @@ void Scene9170::drawSpriteChannel(uint chunkIndex, uint descriptorCount, const b
 		return;
 
 	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[chunkIndex], 0,
 		descriptorCount, mappedFrame, _sceneFramebuffer.surface(), _channelCanvasOffset);
 }
 
