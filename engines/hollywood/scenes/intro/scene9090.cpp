@@ -656,11 +656,16 @@ void Scene9090::runSpeechSteps(const byte *stepIndices, uint stepCount) {
 			}
 			if (!anyActive)
 				break;
-			if (delay(10))
-				return;
+			if (delay(10)) {
+				if (_skipRequested || Engine::shouldQuit())
+					return;
+				break;
+			}
 			elapsed += 10;
 			advanceDialogueAnimations(10, deskSpeaking, secondarySpeaking, insetSpeaking);
 		}
+		_primarySpeech.stop();
+		_secondarySpeech.stop();
 
 		for (uint i = 0; i < stepCount; ++i) {
 			if (!activeStep[i])

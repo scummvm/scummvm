@@ -79,7 +79,8 @@ PresentationScene::PresentationScene(HollywoodEngine *vm, const char *debugName,
 		_sceneLayers(),
 		_realtimeAnimationTracks(_sceneLayers),
 		_animationPlayer(*this),
-		_skipRequested(false) {
+		_skipRequested(false),
+		_stepAdvanceRequested(false) {
 	_paletteCurrent.resize(kPaletteSize);
 	_sceneFramebuffer.resize(sceneFramebufferSize);
 	_savedFramebuffer.resize(savedFramebufferSize);
@@ -246,6 +247,7 @@ void PresentationScene::presentFrame(uint rowOffset, uint xOffset) {
 }
 
 bool PresentationScene::pollEvents(bool allowSkip) {
+	_stepAdvanceRequested = false;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -255,11 +257,16 @@ bool PresentationScene::pollEvents(bool allowSkip) {
 			stopAudio();
 			return true;
 		case Common::EVENT_KEYDOWN:
-			if (allowSkip && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE)) {
+			if (allowSkip && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				_skipRequested = true;
 				stopAudio();
+				return true;
+			}
+			if (allowSkip && !event.kbdRepeat &&
+					(event.kbd.keycode == Common::KEYCODE_RETURN ||
+					 event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 event.kbd.keycode == Common::KEYCODE_SPACE)) {
+				_stepAdvanceRequested = true;
 				return true;
 			}
 			break;
@@ -276,7 +283,15 @@ bool PresentationScene::delay(uint32 millis, bool allowSkip) {
 	while (loop.beginFrame())
 		loop.finishFrame();
 
-	return _skipRequested || Engine::shouldQuit();
+	return consumeStepAdvanceRequest() || _skipRequested || Engine::shouldQuit();
+}
+
+bool PresentationScene::consumeStepAdvanceRequest() {
+	if (!_stepAdvanceRequested)
+		return false;
+
+	_stepAdvanceRequested = false;
+	return true;
 }
 
 bool PresentationScene::revealSavedFramebufferWithCurtain(byte bandWidth) {

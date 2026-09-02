@@ -142,8 +142,13 @@ void Scene9130::runClipAndDialogue() {
 
 	while (_speech.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
 		presentFrame();
-		if (delay(10))
-			return;
+		if (delay(10)) {
+			if (_skipRequested || Engine::shouldQuit())
+				return;
+			_speech.stop();
+			clearSubtitle();
+			maybeStartNextSpeechLine();
+		}
 	}
 }
 
@@ -161,7 +166,15 @@ bool Scene9130::waitForAnimationFrame(uint32 millis, bool allowSkip) {
 		loop.finishFrame();
 	}
 
-	return animationPlaybackShouldStop();
+	if (!consumeStepAdvanceRequest())
+		return animationPlaybackShouldStop();
+
+	if (_speech.isPlaying() || _subtitle.visible) {
+		_speech.stop();
+		clearSubtitle();
+		return false;
+	}
+	return true;
 }
 
 void Scene9130::drawClipFrame(byte frameIndex) {
