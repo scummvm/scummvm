@@ -143,29 +143,28 @@ struct Scene4070DialogueSeedRecord {
 	byte playerTextRowId;
 	byte responseFrameIndex;
 	byte disableAfterUse;
-	byte reserved;
 };
 
 const Scene4070DialogueSeedRecord kScene4070DialogueSeedRecords[] = {
-	{ 0, 1, 0, 3, 2, 2, 1, 0xff },   // Ensayando algun nuevo papel... (rehearsing a new role).
-	{ 1, 1, 0, 3, 3, 3, 1, 0xff },   // Premios cinematograficos (movie awards).
-	{ 2, 1, 0, 1, 4, 4, 1, 0xff },   // Actor favorito (favorite actor): enter personal topics.
-	{ 3, 0, 1, 1, 5, 5, 1, 0xff },   // Acompanantes (companions): conditional Sherilyn/Gwendolyn branch.
-	{ 4, 1, 2, 1, 6, 6, 1, 0xff },   // Fiesta de Hannover (Hannover party): enter party topics.
-	{ 5, 1, 0, 0, 7, 7, 0, 0xff },   // Despedida (exit).
-	{ 70, 1, 0, 3, 8, 8, 1, 0xff },  // Ejercicio (exercise).
-	{ 71, 1, 0, 3, 9, 9, 1, 0xff },  // Metodo adelgazante (slimming method).
-	{ 72, 1, 0, 3, 10, 10, 1, 0xff }, // Sueno/descanso (sleep/rest).
-	{ 73, 1, 0, 2, 11, 11, 0, 0xff }, // Peso y edad (weight and age): return to main menu.
-	{ 77, 0, 1, 3, 12, 12, 1, 0xff }, // Sherilyn: enabled after meeting Sherilyn.
-	{ 78, 0, 1, 3, 13, 13, 1, 0xff }, // Gwendolyn: enabled after meeting Gwendolyn.
-	{ 79, 1, 1, 3, 14, 14, 1, 0xff }, // Esqueletos (skeletons).
-	{ 80, 1, 0, 2, 15, 15, 0, 0xff }, // Hablar de otra cosa (talk about something else): return to main menu.
-	{ 84, 1, 2, 3, 16, 16, 1, 0xff }, // Frankenstein.
-	{ 85, 1, 2, 3, 17, 17, 1, 0xff }, // Entrevista de Sue (Sue's interview).
-	{ 86, 1, 2, 3, 18, 18, 1, 0xff }, // Relaciones (relationships).
-	{ 87, 1, 2, 3, 19, 19, 1, 0xff }, // Sospechas (suspicions).
-	{ 88, 1, 0, 2, 15, 15, 0, 0xff }  // Hablar de otra cosa (talk about something else): return to main menu.
+	{ 0, 1, 0, 3, 2, 2, 1 },
+	{ 1, 1, 0, 3, 3, 3, 1 },
+	{ 2, 1, 0, 1, 4, 4, 1 },
+	{ 3, 0, 1, 1, 5, 5, 1 },
+	{ 4, 1, 2, 1, 6, 6, 1 },
+	{ 5, 1, 0, 0, 7, 7, 0 },
+	{ 70, 1, 0, 3, 8, 8, 1 },
+	{ 71, 1, 0, 3, 9, 9, 1 },
+	{ 72, 1, 0, 3, 10, 10, 1 },
+	{ 73, 1, 0, 2, 11, 11, 0 },
+	{ 77, 0, 1, 3, 12, 12, 1 },
+	{ 78, 0, 1, 3, 13, 13, 1 },
+	{ 79, 1, 1, 3, 14, 14, 1 },
+	{ 80, 1, 0, 2, 15, 15, 0 },
+	{ 84, 1, 2, 3, 16, 16, 1 },
+	{ 85, 1, 2, 3, 17, 17, 1 },
+	{ 86, 1, 2, 3, 18, 18, 1 },
+	{ 87, 1, 2, 3, 19, 19, 1 },
+	{ 88, 1, 0, 2, 15, 15, 0 }
 };
 
 PlayableSceneConfig scene4070Config() {
@@ -835,7 +834,6 @@ void Scene4070::initializeDraculaDialogueRecords(Common::Array<DialogueChoiceRec
 		record.playerTextRowId = seed.playerTextRowId;
 		record.responseFrameIndex = seed.responseFrameIndex;
 		record.disableAfterUse = seed.disableAfterUse;
-		record.reserved = seed.reserved;
 	}
 
 	const GameplayState &state = _vm->gameState();

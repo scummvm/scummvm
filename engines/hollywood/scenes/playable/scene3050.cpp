@@ -592,7 +592,6 @@ void Scene3050::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 }
 
 void Scene3050::beginDialogueResponse(byte frameIndex) {

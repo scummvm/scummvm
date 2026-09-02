@@ -899,7 +899,6 @@ void Scene1070::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 }
 
 void Scene1070::handleSpencerDialogueEffect(byte effect, Common::Array<DialogueChoiceRecord> &records,

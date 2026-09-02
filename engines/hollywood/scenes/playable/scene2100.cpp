@@ -753,26 +753,26 @@ void Scene2100::initializeMummyDialogueRecords(Common::Array<DialogueChoiceRecor
 	const GameplayState &state = _vm->gameState();
 	records.resize(kScene2100MummyDialogueChoiceRecordCount);
 
-	setDialogueRecord(records, 0, 1, 0, 3, 2, 3, 1, 0xff);
-	setDialogueRecord(records, 1, state.scene2020PrincessConversationSeen ? 1 : 0, 2, 1, 3, 4, 1, 0xff);
-	setDialogueRecord(records, 2, 1, 1, 1, 4, 5, 1, 0xff);
-	setDialogueRecord(records, 3, state.scene2040SphinxExitInterviewState != 0 ? 1 : 0, 3, 1, 5, 6, 4, 0xff);
+	setDialogueRecord(records, 0, 1, 0, 3, 2, 3, 1);
+	setDialogueRecord(records, 1, state.scene2020PrincessConversationSeen ? 1 : 0, 2, 1, 3, 4, 1);
+	setDialogueRecord(records, 2, 1, 1, 1, 4, 5, 1);
+	setDialogueRecord(records, 3, state.scene2040SphinxExitInterviewState != 0 ? 1 : 0, 3, 1, 5, 6, 4);
 	setDialogueRecord(records, 4,
 		state.mainFlowStateId == kScene2100EntryState &&
 			state.scene2100MummyBranchState == 0 ? 1 : 0,
-		0, 0, 7, 8, 5, 0xff);
-	setDialogueRecord(records, 5, 1, 0, 0, 8, 9, 0, 0xff);
-	setDialogueRecord(records, 70, 1, 0, 2, 9, 10, 1, 0xff);
-	setDialogueRecord(records, 77, 1, 0, 2, 10, 11, 1, 0xff);
-	setDialogueRecord(records, 84, 1, 2, 3, 11, 12, 2, 0xff);
-	setDialogueRecord(records, 85, 1, 2, 3, 12, 13, 1, 0xff);
+		0, 0, 7, 8, 5);
+	setDialogueRecord(records, 5, 1, 0, 0, 8, 9, 0);
+	setDialogueRecord(records, 70, 1, 0, 2, 9, 10, 1);
+	setDialogueRecord(records, 77, 1, 0, 2, 10, 11, 1);
+	setDialogueRecord(records, 84, 1, 2, 3, 11, 12, 2);
+	setDialogueRecord(records, 85, 1, 2, 3, 12, 13, 1);
 	setDialogueRecord(records, 86, state.scene2100AfterlifeBranchUnlocked ? 1 : 0,
-		0, 1, 13, 14, 3, 0xff);
-	setDialogueRecord(records, 87, 1, 0, 2, 15, 16, 1, 0xff);
-	setDialogueRecord(records, 91, 1, 0, 2, 6, 7, 1, 0xff);
-	setDialogueRecord(records, 140, 1, 0, 1, 14, 15, 1, 0xff);
-	setDialogueRecord(records, 210, 1, 0, 1, 16, 17, 1, 0xff);
-	setDialogueRecord(records, 280, 1, 0, 5, 17, 18, 1, 0xff);
+		0, 1, 13, 14, 3);
+	setDialogueRecord(records, 87, 1, 0, 2, 15, 16, 1);
+	setDialogueRecord(records, 91, 1, 0, 2, 6, 7, 1);
+	setDialogueRecord(records, 140, 1, 0, 1, 14, 15, 1);
+	setDialogueRecord(records, 210, 1, 0, 1, 16, 17, 1);
+	setDialogueRecord(records, 280, 1, 0, 5, 17, 18, 1);
 
 	for (uint bit = 0; bit < ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices); ++bit) {
 		if ((state.scene2100MummyDialogueUsedChoiceMask & (1 << bit)) == 0)
@@ -786,7 +786,7 @@ void Scene2100::initializeMummyDialogueRecords(Common::Array<DialogueChoiceRecor
 
 void Scene2100::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const {
+		byte responseFrameIndex, byte disableAfterUse) const {
 	if (index >= records.size())
 		return;
 
@@ -797,7 +797,6 @@ void Scene2100::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = reserved;
 	record.selectable = enabled != 0;
 }
 

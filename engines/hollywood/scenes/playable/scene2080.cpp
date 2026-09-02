@@ -833,28 +833,28 @@ void Scene2080::initializeForegroundDialogueRecords(Common::Array<DialogueChoice
 	const GameplayState &state = _vm->gameState();
 	records.resize(kScene2080ForegroundDialogueChoiceRecordCount);
 
-	setDialogueRecord(records, 0, 0, 0, 3, 2, 2, 3, 0xff);
-	setDialogueRecord(records, 1, 1, 0, 1, 3, 3, 2, 0xff);
-	setDialogueRecord(records, 2, 0, 2, 1, 4, 4, 1, 0xff);
-	setDialogueRecord(records, 3, 1, 1, 1, 5, 5, 1, 0xff);
-	setDialogueRecord(records, 4, 1, 0, 0, 6, 6, 1, 0xff);
-	setDialogueRecord(records, 70, 1, 0, 2, 7, 7, 1, 0xff);
-	setDialogueRecord(records, 77, 1, 0, 2, 8, 8, 1, 0xff);
-	setDialogueRecord(records, 84, 1, 0, 0, 9, 10, 1, 0xff);
-	setDialogueRecord(records, 85, 1, 0, 0, 10, 10, 1, 0xff);
-	setDialogueRecord(records, 86, 1, 0, 0, 11, 10, 1, 0xff);
-	setDialogueRecord(records, 87, 1, 0, 0, 12, 10, 1, 0xff);
-	setDialogueRecord(records, 88, 1, 0, 0, 6, 6, 1, 0xff);
-	setDialogueRecord(records, 140, 1, 0, 0, 13, 10, 1, 0xff);
-	setDialogueRecord(records, 141, 1, 0, 0, 14, 10, 1, 0xff);
-	setDialogueRecord(records, 142, 1, 0, 0, 15, 10, 1, 0xff);
-	setDialogueRecord(records, 143, 1, 0, 0, 16, 10, 1, 0xff);
-	setDialogueRecord(records, 144, 1, 0, 0, 6, 6, 1, 0xff);
-	setDialogueRecord(records, 210, 1, 0, 0, 17, 10, 1, 0xff);
-	setDialogueRecord(records, 211, 1, 0, 0, 19, 10, 1, 0xff);
-	setDialogueRecord(records, 212, 1, 0, 0, 20, 10, 1, 0xff);
-	setDialogueRecord(records, 213, 1, 0, 0, 21, 10, 1, 0xff);
-	setDialogueRecord(records, 214, 1, 0, 0, 6, 6, 1, 0xff);
+	setDialogueRecord(records, 0, 0, 0, 3, 2, 2, 3);
+	setDialogueRecord(records, 1, 1, 0, 1, 3, 3, 2);
+	setDialogueRecord(records, 2, 0, 2, 1, 4, 4, 1);
+	setDialogueRecord(records, 3, 1, 1, 1, 5, 5, 1);
+	setDialogueRecord(records, 4, 1, 0, 0, 6, 6, 1);
+	setDialogueRecord(records, 70, 1, 0, 2, 7, 7, 1);
+	setDialogueRecord(records, 77, 1, 0, 2, 8, 8, 1);
+	setDialogueRecord(records, 84, 1, 0, 0, 9, 10, 1);
+	setDialogueRecord(records, 85, 1, 0, 0, 10, 10, 1);
+	setDialogueRecord(records, 86, 1, 0, 0, 11, 10, 1);
+	setDialogueRecord(records, 87, 1, 0, 0, 12, 10, 1);
+	setDialogueRecord(records, 88, 1, 0, 0, 6, 6, 1);
+	setDialogueRecord(records, 140, 1, 0, 0, 13, 10, 1);
+	setDialogueRecord(records, 141, 1, 0, 0, 14, 10, 1);
+	setDialogueRecord(records, 142, 1, 0, 0, 15, 10, 1);
+	setDialogueRecord(records, 143, 1, 0, 0, 16, 10, 1);
+	setDialogueRecord(records, 144, 1, 0, 0, 6, 6, 1);
+	setDialogueRecord(records, 210, 1, 0, 0, 17, 10, 1);
+	setDialogueRecord(records, 211, 1, 0, 0, 19, 10, 1);
+	setDialogueRecord(records, 212, 1, 0, 0, 20, 10, 1);
+	setDialogueRecord(records, 213, 1, 0, 0, 21, 10, 1);
+	setDialogueRecord(records, 214, 1, 0, 0, 6, 6, 1);
 
 	if (state.scene2080PrincessHairSearchState != 0) {
 		records[0].enabled = 1;
@@ -886,7 +886,7 @@ void Scene2080::initializeForegroundDialogueRecords(Common::Array<DialogueChoice
 
 void Scene2080::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const {
+		byte responseFrameIndex, byte disableAfterUse) const {
 	if (index >= records.size())
 		return;
 
@@ -897,7 +897,6 @@ void Scene2080::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = reserved;
 	record.selectable = enabled != 0;
 }
 

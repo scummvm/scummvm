@@ -534,7 +534,6 @@ void Scene6100::setCharlieDialogueRecord(Common::Array<DialogueChoiceRecord> &re
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 	record.selectable = enabled != 0;
 }
 

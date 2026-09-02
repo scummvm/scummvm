@@ -158,27 +158,26 @@ struct Scene4080DialogueSeedRecord {
 	byte playerTextRowId;
 	byte responseFrameIndex;
 	byte disableAfterUse;
-	byte reserved;
 };
 
 const Scene4080DialogueSeedRecord kScene4080DialogueSeedRecords[] = {
-	{ 0, 1, 0, 3, 3, 3, 1, 0xff },     // Hay gusa, eh? (hungry?).
-	{ 1, 1, 0, 1, 4, 4, 1, 0xff },     // Tentempie (snack): enter Dracula topics.
-	{ 2, 1, 1, 1, 5, 5, 1, 0xff },     // Conde Dracula (Count Dracula): enter count topics.
-	{ 3, 1, 0, 3, 6, 6, 1, 0xff },     // Sherilyn.
-	{ 4, 1, 0, 0, 7, 7, 0, 0xff },     // Despedida (exit).
-	{ 70, 1, 0, 1, 8, 8, 1, 0xff },    // Rellenita? (a bit plump?): enter weight topics.
-	{ 71, 1, 0, 3, 9, 9, 1, 0xff },    // Sangre (blood).
-	{ 72, 1, 0, 2, 10, 10, 0, 0xff },  // Hablar de otra cosa (talk about something else).
-	{ 77, 1, 1, 3, 11, 11, 1, 0xff },  // Donde esta Dracula? (where is Dracula?).
-	{ 78, 1, 1, 3, 12, 12, 1, 0xff },  // Premio (award).
-	{ 79, 1, 1, 3, 13, 13, 1, 0xff },  // Depresion (depression).
-	{ 80, 1, 0, 2, 10, 10, 0, 0xff },  // Hablar de otra cosa (talk about something else).
-	{ 140, 1, 0, 3, 14, 14, 2, 0xff }, // Trapecio (trapeze): reveals Gwendolyn's full name.
-	{ 141, 1, 0, 3, 15, 14, 2, 0xff }, // Comentario sobre trapecio (trapeze follow-up).
-	{ 142, 1, 0, 3, 16, 15, 1, 0xff }, // Markus Hecker.
-	{ 143, 1, 0, 3, 17, 16, 1, 0xff }, // Metodo adelgazante (slimming method).
-	{ 144, 1, 0, 4, 10, 10, 0, 0x00 }  // Hablar de otra cosa (talk about something else).
+	{ 0, 1, 0, 3, 3, 3, 1 },
+	{ 1, 1, 0, 1, 4, 4, 1 },
+	{ 2, 1, 1, 1, 5, 5, 1 },
+	{ 3, 1, 0, 3, 6, 6, 1 },
+	{ 4, 1, 0, 0, 7, 7, 0 },
+	{ 70, 1, 0, 1, 8, 8, 1 },
+	{ 71, 1, 0, 3, 9, 9, 1 },
+	{ 72, 1, 0, 2, 10, 10, 0 },
+	{ 77, 1, 1, 3, 11, 11, 1 },
+	{ 78, 1, 1, 3, 12, 12, 1 },
+	{ 79, 1, 1, 3, 13, 13, 1 },
+	{ 80, 1, 0, 2, 10, 10, 0 },
+	{ 140, 1, 0, 3, 14, 14, 2 },
+	{ 141, 1, 0, 3, 15, 14, 2 },
+	{ 142, 1, 0, 3, 16, 15, 1 },
+	{ 143, 1, 0, 3, 17, 16, 1 },
+	{ 144, 1, 0, 4, 10, 10, 0 }
 };
 
 PlayableSceneConfig scene4080Config() {
@@ -1230,7 +1229,6 @@ void Scene4080::initializeGwendolynDialogueRecords(Common::Array<DialogueChoiceR
 		record.playerTextRowId = seed.playerTextRowId;
 		record.responseFrameIndex = seed.responseFrameIndex;
 		record.disableAfterUse = seed.disableAfterUse;
-		record.reserved = seed.reserved;
 	}
 }
 
