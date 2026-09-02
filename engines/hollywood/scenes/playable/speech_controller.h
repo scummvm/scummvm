@@ -30,7 +30,12 @@
 
 namespace Hollywood {
 
-// Owns speech playback, subtitles, and actor speech-animation state.
+/**
+ * Owns speech playback, subtitle overlays, and actor speech-animation state.
+ *
+ * PlayableScene supplies elapsed time and draws the result; this helper owns
+ * and mutates the playback state but never presents a frame.
+ */
 class SpeechController {
 public:
 	SpeechController(Common::Language language, bool speechEnabled = true);

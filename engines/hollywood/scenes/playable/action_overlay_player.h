@@ -28,7 +28,12 @@
 
 namespace Hollywood {
 
-// Tracks overlay visibility independently from its scene-composition stratum.
+/**
+ * Stores a temporary resource overlay outside the regular scene layer stack.
+ *
+ * PlayableScene draws it at the selected stratum. Actor-replacement playback
+ * hides the active actor until finish() restores the previous state.
+ */
 class ActionOverlayPlayer {
 public:
 	ActionOverlayPlayer();

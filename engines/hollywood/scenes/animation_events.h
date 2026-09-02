@@ -27,8 +27,12 @@
 
 namespace Hollywood {
 
-// Ordered actions dispatched after an animation installs the selected frame.
-// Referenced maps and commit targets must remain valid during synchronous playback.
+/**
+ * Describes one action dispatched after an animation installs a frame.
+ *
+ * Actions run in insertion order. Referenced maps and commit targets must
+ * remain valid throughout synchronous playback.
+ */
 struct AnimationFrameEvent {
 	enum Type {
 		kFramebufferPatch,
@@ -129,7 +133,9 @@ struct AnimationFrameEvent {
 	byte hookId;
 };
 
-// Fluent frame events shared by resource overlays and layer-frame ranges.
+/**
+ * Adds ordered per-frame actions to an animation range or overlay specification.
+ */
 template<class Spec>
 class AnimationEventSpec {
 public:
