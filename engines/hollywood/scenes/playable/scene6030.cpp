@@ -402,7 +402,6 @@ void Scene6030::runHannoverDialogueMenu() {
 			nodeIndex = record.nextNodeIndex;
 			depthIndex = previousDepth - 2;
 			break;
-		case kScene6030DialogueTransitionStay:
 		default:
 			break;
 		}

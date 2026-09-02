@@ -829,7 +829,6 @@ bool Scene5110::applyWerewolfDialogueTransition(const DialogueChoiceRecord &reco
 		nodeIndex = record.nextNodeIndex;
 		depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 		break;
-	case kScene5110DialogueTransitionStay:
 	default:
 		break;
 	}

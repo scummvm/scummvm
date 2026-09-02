@@ -932,7 +932,6 @@ void Scene6020::runDialogueAndMaybeEnterScene6030() {
 			nodeIndex = record.nextNodeIndex;
 			depthIndex = previousDepth - 2;
 			break;
-		case kScene6020DialogueTransitionStay:
 		default:
 			break;
 		}

@@ -747,7 +747,6 @@ void Scene5040::runMineBoxLook() {
 		state.scene5040DialState = 3;
 		applySceneStateToHotspotsAndPatches(4);
 		break;
-	case 4:
 	default:
 		beginSecondarySpeechLine(10, 2);
 		break;
@@ -917,7 +916,6 @@ bool Scene5040::applyKarlDialogueTransition(const DialogueChoiceRecord &record, 
 		nodeIndex = record.nextNodeIndex;
 		depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
 		break;
-	case kScene5040DialogueTransitionStay:
 	default:
 		break;
 	}
