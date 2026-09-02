@@ -89,20 +89,8 @@ const byte kScene2080ForegroundActorFrameMap[] = {
 	1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
-const byte kScene2080AmbientFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25
-};
-
 const byte kScene2080ForwardExitOverlayFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 4, 5, 4, 3, 2, 1, 0
-};
-
-const byte kScene2080ForegroundExitFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25, 26, 27, 28, 29, 30, 31, 32
 };
 
 const byte kScene2080PrincessHairSearchFirstFrameMap[] = {
@@ -112,13 +100,9 @@ const byte kScene2080PrincessHairSearchFirstFrameMap[] = {
 	10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
-const byte kScene2080PrincessHairSearchSecondFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const SceneLayerSpec kScene2080LayerSpecs[] = {
 	{kSceneAnimationBehindActors, kScene2080AmbientChunk, kScene2080AmbientDescriptorCount,
-		kScene2080AmbientFrameMap, ARRAYSIZE(kScene2080AmbientFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationBehindActors, kScene2080ForegroundActorChunk,
 		kScene2080ForegroundActorDescriptorCount, kScene2080ForegroundActorFrameMap,
 		ARRAYSIZE(kScene2080ForegroundActorFrameMap), true, 1},
@@ -160,7 +144,8 @@ Scene2080::Scene2080(HollywoodEngine *vm) :
 		_deltaClipFrame(0),
 		_foregroundActorManualSequenceActive(false) {
 	_sceneLayers.configure(kScene2080LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(kScene2080AmbientLayer, kScene2080FrameMillis);
+	_ambientTrack = _realtimeAnimationTracks.addLoop(kScene2080AmbientLayer,
+		kScene2080FrameMillis, kScene2080AmbientDescriptorCount);
 }
 
 void Scene2080::initializeCustomPreviewState() {
@@ -918,9 +903,8 @@ void Scene2080::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 
 void Scene2080::runForegroundActorExitOverlay() {
 	_sceneLayers.setLayerVisible(kScene2080ForegroundActorLayer, false);
-	runSceneOverlay(ActionOverlaySpec(kScene2080ForegroundExitChunk, kScene2080ForegroundExitDescriptorCount,
-		kScene2080ForegroundExitFrameMap, ARRAYSIZE(kScene2080ForegroundExitFrameMap),
-		kScene2080FrameMillis)
+	runSceneOverlay(ActionOverlaySpec(kScene2080ForegroundExitChunk,
+		kScene2080ForegroundExitDescriptorCount, kScene2080FrameMillis)
 		.residentSoundAt(6, 10)
 		.residentSoundAt(12, 10)
 		.residentSoundAt(19, 10)
@@ -1010,7 +994,6 @@ void Scene2080::runCentralSarcophagusHairSearch() {
 		.secondarySpeech(11, 2)
 		.actorReplacement(ActionOverlaySpec(kScene2080PrincessHairSearchSecondChunk,
 			kScene2080PrincessHairSearchSecondDescriptorCount,
-			kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap),
 			kScene2080FrameMillis).startAt(1).noFinalFrameDelay());
 
 	if (!hasInventoryItem(kScene2080PrincessHairInventoryItem))

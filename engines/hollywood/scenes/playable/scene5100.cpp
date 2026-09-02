@@ -58,10 +58,6 @@ const byte kScene5100CartSpeedBuckets[] = {
 	9, 9, 9, 9, 9, 9
 };
 
-const byte kScene5100AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
-};
-
 enum Scene5100LayerId {
 	kScene5100MineCartLayer,
 	kScene5100ElevatorTravelLayer,
@@ -221,13 +217,7 @@ void Scene5100::runExitSideEffectsAfterLoop() {
 }
 
 AmbientAudioProfile Scene5100::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5100::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5100AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5100::handleLeftClick(const GameplayLoopCursorState &state) {

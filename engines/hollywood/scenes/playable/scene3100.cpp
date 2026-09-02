@@ -58,29 +58,11 @@ const byte kScene3100PaletteCycleLastColor = 0x9f;
 const uint kScene3100CabinLayer = 0;
 const uint kScene3100AlternateLayer = 1;
 
-const byte kScene3100CabinFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-};
-
-const byte kScene3100AlternateFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7,
-	8, 9, 10, 11, 12, 13, 14, 15
-};
-
-const byte kScene3100ObjectPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
 const byte kScene3100ExchangePickupFrameMap[] = {
 	6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7
-};
-
-const byte kScene3100ResolutionFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 };
 
 const byte kScene3100ResolutionCabinFrameMap[] = {
@@ -89,9 +71,9 @@ const byte kScene3100ResolutionCabinFrameMap[] = {
 
 const SceneLayerSpec kScene3100LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 6, kScene3100CabinDescriptorCount,
-		kScene3100CabinFrameMap, ARRAYSIZE(kScene3100CabinFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationBehindActors, 12, kScene3100AlternateDescriptorCount,
-		kScene3100AlternateFrameMap, ARRAYSIZE(kScene3100AlternateFrameMap), true, 0}
+		nullptr, 0, true, 0}
 };
 
 PlayableSceneConfig scene3100Config() {
@@ -509,8 +491,8 @@ void Scene3100::runConversationResolutionSequence() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(kScene3100DialogueStageId, 0x0b)
 		.commit(_resolutionSequenceActive, true)
-		.actorReplacement(ActionOverlaySpec(8, 0x0b,
-			kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
+		.actorReplacement(ActionOverlaySpec(8, 0x0b, kScene3100OverlayFrameMillis)
+			.holdFirstFrame()
 			.soundAt(5, 0x19)
 			.mappedLayerFrames(kScene3100CabinLayer, kScene3100ResolutionCabinFrameMap,
 				ARRAYSIZE(kScene3100ResolutionCabinFrameMap), 6)
@@ -535,7 +517,7 @@ void Scene3100::runObjectPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
-			kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
+			kScene3100OverlayFrameMillis).holdFirstFrame()
 			.resourcePatchAt(10, 10))
 		.commit(state.scene3100DaisyVisible, false)
 		.commit(state.scene3100DaisyTaken, true)

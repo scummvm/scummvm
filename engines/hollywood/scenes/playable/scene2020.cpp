@@ -76,14 +76,6 @@ const byte kScene2020PrincessFrameMap[] = {
 	0, 0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
 };
 
-const byte kScene2020PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8
-};
-
-const byte kScene2020TigerToothPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const byte kScene2020TigerItemOverlayFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
@@ -780,7 +772,7 @@ void Scene2020::runHatPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
-			kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+			kScene2020OverlayFrameMillis).holdFirstFrame()
 			.resourcePatchAt(4, state.scene2020SunglassesPresent ? 9 : 10)
 			.noFinalFrameDelay())
 		.commit(state.scene2020HatPresent, false)
@@ -803,7 +795,7 @@ void Scene2020::runSunglassesPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
-			kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+			kScene2020OverlayFrameMillis).holdFirstFrame()
 			.resourcePatchAt(4, state.scene2020HatPresent ? 8 : 10)
 			.noFinalFrameDelay())
 		.commit(state.scene2020SunglassesPresent, false)
@@ -823,7 +815,7 @@ void Scene2020::runTigerToothPickup() {
 	_princessLongIdleAllowed = false;
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
-			kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
+			kScene2020OverlayFrameMillis).holdFirstFrame()
 			.resourcePatchAt(7, 17)
 			.noFinalFrameDelay());
 	_princessLongIdleAllowed = previousLongIdleAllowed;

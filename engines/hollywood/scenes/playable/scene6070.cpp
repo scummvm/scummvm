@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene6070.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -88,10 +89,6 @@ const byte kScene6070TransferFrameMap[] = {
 const byte kScene6070TransferSueFrameMap[] = {
 	14, 14, 14, 14, 14, 14, 14, 14, 19, 20, 21, 22, 23, 24, 14};
 
-const byte kScene6070State609PropFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	7, 6, 5, 0, 13, 14, 15, 16, 17, 18, 19, 0};
-
 const byte kScene6070State609NpcFrameMap[] = {
 	0, 5, 6, 7, 8, 9, 10, 11, 12, 7, 6, 5, 0};
 
@@ -100,8 +97,8 @@ const SceneLayerSpec kScene6070LayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 9, 0x34, kScene6070ArrivalFrameMap,
 		ARRAYSIZE(kScene6070ArrivalFrameMap), false, 0 },
 	{ kSceneAnimationInFrontOfActors, 13, 5, nullptr, 0, false, 0 },
-	{ kSceneAnimationInFrontOfActors, 12, 0x14, kScene6070State609PropFrameMap,
-		ARRAYSIZE(kScene6070State609PropFrameMap), false, 0 },
+	{ kSceneAnimationInFrontOfActors, 12, 0x14, kDualPoseSpeakerFrames,
+		kDualPoseSpeakerFrameCount, false, 0 },
 	{ kSceneAnimationInFrontOfActors, 11, 0x0d, kScene6070State609NpcFrameMap,
 		ARRAYSIZE(kScene6070State609NpcFrameMap), false, 0 }
 };

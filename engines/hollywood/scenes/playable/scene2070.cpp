@@ -62,10 +62,6 @@ const byte kScene2070SealMemoryFrameMap[] = {
 	82, 83, 84, 85, 86, 87, 88, 89
 };
 
-const byte kScene2070InventoryOverlayFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 class Scene2070DeltaFrameTarget {
 public:
 	explicit Scene2070DeltaFrameTarget(byte &frame) : _frame(frame) {}
@@ -405,9 +401,8 @@ void Scene2070::drawSealMemoryDeltaLayer() {
 void Scene2070::runAnimatedInventoryStateChange() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(10, 0)
-		.actorReplacement(10, kScene2070InventoryOverlayDescriptorCount,
-			kScene2070InventoryOverlayFrameMap, ARRAYSIZE(kScene2070InventoryOverlayFrameMap),
-			kScene2070OverlayFrameMillis);
+		.actorReplacement(ActionOverlaySpec(10, kScene2070InventoryOverlayDescriptorCount,
+			kScene2070OverlayFrameMillis).holdFirstFrame());
 
 	addInventoryItem(0x2d);
 	sequence.sound(1)

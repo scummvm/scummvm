@@ -47,14 +47,6 @@ const int kScene7090GatedActionTargetY = 0x11b;
 const byte kScene7090GatedActionTargetFacing = 5;
 const int kScene7090GatedActionReturnX = 0x281;
 const int kScene7090GatedActionReturnY = 0x10d;
-const byte kScene7090BackToG07FrameMap[] = {
-	0, 1, 2, 3
-};
-const byte kScene7090GatedActionFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-};
-
 PlayableSceneConfig scene7090Config() {
 	PlayableSceneConfig config(7090,
 		SceneResourceLayout(11, 5, 10),
@@ -253,7 +245,6 @@ AmbientAudioProfile Scene7090::ambientAudioProfile() const {
 void Scene7090::handleBackToG07() {
 	BlockingSequence(*this)
 		.actorReplacement(ActionOverlaySpec(9, kScene7090Chunk9DescriptorCount,
-			kScene7090BackToG07FrameMap, ARRAYSIZE(kScene7090BackToG07FrameMap),
 			kScene7090FrameMillis))
 		.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene7090BackToG07State);
@@ -279,7 +270,6 @@ void Scene7090::handleGatedAction() {
 			kScene7090GatedActionTargetY, kScene7090GatedActionTargetFacing))
 		.commit(_prePatchChunk7Visible, true)
 		.actorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
-			kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap),
 			kScene7090FrameMillis)
 			.soundAt(3, 0x1b)
 			.stopSoundAt(0x12)

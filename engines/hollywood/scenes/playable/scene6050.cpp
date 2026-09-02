@@ -91,10 +91,6 @@ const byte kScene6050DisplaySecondaryFrameMap[] = {
 	0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7
 };
 
-const byte kScene6050DisplayPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const SceneLayerSpec kScene6050LayerSpecs[] = {
 	{ kSceneAnimationScenePlaced, 7, kScene6050GuardDescriptorCount,
 		kScene6050GuardFrameMap, ARRAYSIZE(kScene6050GuardFrameMap), false, 0 },
@@ -615,15 +611,15 @@ void Scene6050::runDisplayCasePickup() {
 		_scriptAnimationActive = true;
 		sequence.resourceLayerFrames(kScene6050ScriptLayer, 15,
 			kScene6050DisplayPickupDescriptorCount,
-			kScene6050DisplayPickupFrameMap,
-			AnimationFrameRange(0, 5, kScene6050ScriptFrameMillis), false)
+			AnimationFrameRange(kScene6050DisplayPickupDescriptorCount,
+				kScene6050ScriptFrameMillis).holdFirstFrame().frameRange(0, 5), false)
 			.commit(state.scene6050DisplayCaseOpened, true)
 			.framebufferPatch(3)
 			.resourceLayerFrames(kScene6050ScriptLayer, 15,
 				kScene6050DisplayPickupDescriptorCount,
-				kScene6050DisplayPickupFrameMap,
-				AnimationFrameRange(6, ARRAYSIZE(kScene6050DisplayPickupFrameMap) - 1,
-					kScene6050ScriptFrameMillis));
+				AnimationFrameRange(kScene6050DisplayPickupDescriptorCount,
+					kScene6050ScriptFrameMillis).holdFirstFrame().frameRange(6,
+						kScene6050DisplayPickupDescriptorCount));
 		_scriptAnimationActive = false;
 
 		addInventoryItem(kScene6050GuardPassInventoryItem);

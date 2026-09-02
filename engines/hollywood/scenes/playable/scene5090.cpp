@@ -49,14 +49,6 @@ const byte kScene5090LagoonPaletteLastColor = 0x8f;
 const uint32 kScene5090LagoonPaletteMillis = 500;
 const uint kScene5090LagoonWrapDestinationBase = 0x32d;
 
-const byte kScene5090EntryFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-};
-
-const byte kScene5090ReturnFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
-};
-
 const byte kScene5090WaterFillFrameMap[] = {
 	8, 7, 6, 5, 4, 3, 2, 1, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -301,13 +293,11 @@ void Scene5090::runEntryClip() {
 	_soundBank0.playSample(0x16, 100);
 	_mineCartRumbleActive = false;
 
-	for (uint playbackFrame = 1;
-			playbackFrame < ARRAYSIZE(kScene5090EntryFrameMap) &&
-			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++playbackFrame) {
-		if (playbackFrame != 1 && waitEntryClipFrameMillis(kScene5090FrameMillis))
+	for (uint frame = 0; frame < kScene5090EntryDescriptorCount &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
+		if (frame != 0 && waitEntryClipFrameMillis(kScene5090FrameMillis))
 			break;
-		drawClipFrameDelta(5, kScene5090EntryDescriptorCount,
-			kScene5090EntryFrameMap[playbackFrame]);
+		drawClipFrameDelta(5, kScene5090EntryDescriptorCount, frame);
 		presentFrame();
 	}
 }
@@ -332,9 +322,7 @@ void Scene5090::runReturnToMineSwitches() {
 	walkActiveActorTo(0x054, 0x068, 0xff, 0, false);
 	_mineCartRumbleActive = true;
 	_soundBank0.playSample(0x15, 100);
-	runActorReplacement(ActionOverlaySpec(5, kScene5090ReturnDescriptorCount,
-		kScene5090ReturnFrameMap, ARRAYSIZE(kScene5090ReturnFrameMap), kScene5090FrameMillis)
-		.startAt(1)
+	runActorReplacement(ActionOverlaySpec(5, kScene5090ReturnDescriptorCount, kScene5090FrameMillis)
 		.noFinalFrameDelay());
 	_mineCartRumbleActive = false;
 	_vm->gameState().mainFlowStateId = kScene5010ReturnState;

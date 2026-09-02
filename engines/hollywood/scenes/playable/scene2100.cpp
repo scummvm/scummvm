@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene2100.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -88,15 +89,6 @@ const byte kScene2100ReturnForegroundFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5
 };
 
-const byte kScene2100PassageFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8
-};
-
-const byte kScene2100PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13
-};
-
 const byte kScene2100TransitionFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 11, 12, 13, 14, 15, 16, 17,
@@ -131,7 +123,7 @@ const SceneLayerSpec kScene2100LayerSpecs[] = {
 	{kSceneAnimationBehindActors, kScene2100MummyChunk, kScene2100MummyDescriptorCount,
 		kScene2100ForegroundFrameMap, ARRAYSIZE(kScene2100ForegroundFrameMap), true, 0},
 	{kSceneAnimationBehindActors, kScene2100PassageChunk, kScene2100PassageDescriptorCount,
-		kScene2100PassageFrameMap, ARRAYSIZE(kScene2100PassageFrameMap), false, 0},
+		kHoldFirstNineFrames, kHoldFirstNineFrameCount, false, 0},
 	{kSceneAnimationInFrontOfActors, kScene2100DoorChunk, kScene2100DoorDescriptorCount,
 		kScene2100TransitionFrameMap, ARRAYSIZE(kScene2100TransitionFrameMap), false, 0}
 };
@@ -546,7 +538,7 @@ void Scene2100::runEntryFromScene2110() {
 	_sceneLayers.setLayerVisible(kFrontLayer, true);
 	_sceneLayers.setLayerResource(kAuxLayer, kScene2100PassageChunk,
 		kScene2100PassageDescriptorCount,
-		kScene2100PassageFrameMap, ARRAYSIZE(kScene2100PassageFrameMap));
+		kHoldFirstNineFrames, kHoldFirstNineFrameCount);
 	_sceneLayers.setLayerVisible(kAuxLayer, true);
 	_sceneLayers.setLayerStratum(kAuxLayer, kSceneAnimationBehindActors);
 	_foregroundChannel.reset(0, kScene2100ForegroundFrameMillis);
@@ -585,7 +577,7 @@ void Scene2100::runEntryFromLeftPassage() {
 
 	_sceneLayers.setLayerResource(kAuxLayer, kScene2100PassageChunk,
 		kScene2100PassageDescriptorCount,
-		kScene2100PassageFrameMap, ARRAYSIZE(kScene2100PassageFrameMap));
+		kHoldFirstNineFrames, kHoldFirstNineFrameCount);
 	_sceneLayers.setLayerVisible(kAuxLayer, true);
 	_sceneLayers.setLayerStratum(kAuxLayer, kSceneAnimationInFrontOfActors);
 	BlockingSequence sequence(*this);
@@ -1011,8 +1003,8 @@ void Scene2100::runRaStaffPickup() {
 	BlockingSequence sequence(*this);
 	sequence.commit(state.scene2100RaStaffTaken, true)
 		.actorReplacement(ActionOverlaySpec(kScene2100PickupChunk, kScene2100PickupDescriptorCount,
-			kScene2100PickupFrameMap, ARRAYSIZE(kScene2100PickupFrameMap),
 			kScene2100AuxFrameMillis)
+			.holdFirstFrame()
 			.patchAt(5, 1)
 			.noFinalFrameDelay())
 		.framebufferPatch(1);

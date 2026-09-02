@@ -39,7 +39,17 @@ struct AnimationFrameRange : AnimationEventSpec<AnimationFrameRange> {
 			allowSkip(true),
 			waitAfterFinalFrame(true),
 			frameOrder(nullptr),
-			repeatedFrame(-1) {
+			repeatedFrame(-1),
+			repeatFirstFrame(false),
+			heldFirstPlaybackFrame(0),
+			appendFirstFrame(false),
+			appendedPlaybackFrame(0),
+			appendedTargetFrame(0) {
+	}
+
+	// Plays every descriptor once, beginning at descriptor zero.
+	AnimationFrameRange(uint frameCount, uint32 newFrameMillis) :
+			AnimationFrameRange(0, frameCount - 1, newFrameMillis) {
 	}
 
 	template<uint size>
@@ -64,10 +74,40 @@ struct AnimationFrameRange : AnimationEventSpec<AnimationFrameRange> {
 		return *this;
 	}
 
+	AnimationFrameRange &holdFirstFrame() {
+		if (!repeatFirstFrame) {
+			heldFirstPlaybackFrame = firstFrame;
+			++lastFrame;
+			repeatFirstFrame = true;
+		}
+		return *this;
+	}
+
+	AnimationFrameRange &frameRange(uint newFirstFrame, uint newLastFrame) {
+		firstFrame = newFirstFrame;
+		lastFrame = newLastFrame;
+		return *this;
+	}
+
+	AnimationFrameRange &returnToFirstFrame() {
+		if (!appendFirstFrame && firstFrame <= lastFrame && lastFrame < 0xff) {
+			appendedTargetFrame = (byte)firstFrame;
+			appendedPlaybackFrame = ++lastFrame;
+			appendFirstFrame = true;
+		}
+		return *this;
+	}
+
 	byte targetFrame(uint playbackFrame) const {
+		if (appendFirstFrame && playbackFrame == appendedPlaybackFrame)
+			return appendedTargetFrame;
 		if (frameOrder != nullptr)
 			return frameOrder[playbackFrame];
-		return repeatedFrame >= 0 ? (byte)repeatedFrame : (byte)playbackFrame;
+		if (repeatedFrame >= 0)
+			return (byte)repeatedFrame;
+		if (!repeatFirstFrame || playbackFrame <= heldFirstPlaybackFrame)
+			return (byte)playbackFrame;
+		return (byte)(playbackFrame - 1);
 	}
 
 	uint firstFrame;
@@ -77,6 +117,11 @@ struct AnimationFrameRange : AnimationEventSpec<AnimationFrameRange> {
 	bool waitAfterFinalFrame;
 	const byte *frameOrder;
 	int repeatedFrame;
+	bool repeatFirstFrame;
+	uint heldFirstPlaybackFrame;
+	bool appendFirstFrame;
+	uint appendedPlaybackFrame;
+	byte appendedTargetFrame;
 };
 
 /**

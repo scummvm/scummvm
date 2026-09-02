@@ -44,7 +44,6 @@ private:
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;

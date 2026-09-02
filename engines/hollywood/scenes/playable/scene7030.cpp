@@ -65,9 +65,6 @@ const byte kScene7030Chunk5FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 3, 2, 3, 4, 3, 2, 1, 0, 5, 6,
 	7, 8, 7, 6, 7, 8, 7, 6, 5
 };
-const byte kScene7030Chunk7PickupBoneFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
 const byte kScene7030Chunk10PickupItem0CFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 9, 0
 };
@@ -438,9 +435,7 @@ byte Scene7030::chunk5Frame() const {
 	return _sceneLayers.layerFrame(kScene7030Chunk5Layer);
 }
 
-void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, int statePatchFrame) {
-	ActionOverlaySpec spec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
+void Scene7030::runPunchBowlPatchOverlay(ActionOverlaySpec spec, int statePatchFrame) {
 	if (statePatchFrame >= 0)
 		spec.commitAt(statePatchFrame, _sceneStateFlags[2], (byte)0)
 			.patchAt(statePatchFrame, 2);
@@ -495,9 +490,9 @@ void Scene7030::handleActionSlot10CommonSpeech() {
 
 void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
 	const bool speechStarted = startRealtimeSecondarySpeechLine(10, 0, 0);
-	runPunchBowlPatchOverlay(11, kScene7030Chunk11DescriptorCount,
+	runPunchBowlPatchOverlay(ActionOverlaySpec(11, kScene7030Chunk11DescriptorCount,
 		kScene7030Chunk11ExchangeItem0CFrameMap, ARRAYSIZE(kScene7030Chunk11ExchangeItem0CFrameMap),
-		kScene7030Chunk5FrameMillis);
+		kScene7030Chunk5FrameMillis));
 	if (speechStarted)
 		waitForRealtimeSpeech();
 	removeInventoryItem(0x0c);
@@ -517,9 +512,8 @@ void Scene7030::handleActionHandler314PickupBone() {
 	}
 
 	beginSecondarySpeechLine(5, 0);
-	runPunchBowlPatchOverlay(7, kScene7030Chunk7DescriptorCount,
-		kScene7030Chunk7PickupBoneFrameMap, ARRAYSIZE(kScene7030Chunk7PickupBoneFrameMap),
-		kScene7030Chunk5FrameMillis);
+	runPunchBowlPatchOverlay(ActionOverlaySpec(7, kScene7030Chunk7DescriptorCount,
+		kScene7030Chunk5FrameMillis).holdFirstFrame());
 	addInventoryItem(0x0b);
 	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
@@ -532,9 +526,9 @@ void Scene7030::handleActionHandler315PickupItem0C() {
 	if (_sceneStateFlags[2] == 1)
 		handleActionSlot08CommonSpeech();
 
-	runPunchBowlPatchOverlay(10, kScene7030Chunk10DescriptorCount,
+	runPunchBowlPatchOverlay(ActionOverlaySpec(10, kScene7030Chunk10DescriptorCount,
 		kScene7030Chunk10PickupItem0CFrameMap, ARRAYSIZE(kScene7030Chunk10PickupItem0CFrameMap),
-		kScene7030Chunk5FrameMillis, 3);
+		kScene7030Chunk5FrameMillis), 3);
 	_vm->gameState().punchBowlGlassPatchState = _sceneStateFlags[2];
 	addInventoryItem(0x0c);
 	_vm->gameState().inventoryPanelDirty = true;

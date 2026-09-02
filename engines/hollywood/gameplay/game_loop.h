@@ -39,6 +39,8 @@ namespace Hollywood {
 class HollywoodEngine;
 enum InventoryMediaId : int;
 
+extern const uint16 kGameplayVerbPanelStripXOffsets[9];
+
 struct GameplayLoopCursorState {
 	uint16 cursorX;
 	uint16 cursorY;

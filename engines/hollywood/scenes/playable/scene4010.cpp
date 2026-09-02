@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene4010.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -126,31 +127,13 @@ const byte kScene4010RoomIdleFrameMap[] = {
 	2, 1, 0, 0
 };
 
+const byte kScene4010HeckerResponsePoseFrames[] = {
+	0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e
+};
+
 const SceneLayerSpec kScene4010LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 6, kScene4010RoomIdleDescriptorCount,
 		kScene4010RoomIdleFrameMap, ARRAYSIZE(kScene4010RoomIdleFrameMap), true, 0}
-};
-
-const byte kScene4010ExitOverlayFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13, 14, 15, 16, 17, 18
-};
-
-const byte kScene4010Item3AFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13
-};
-
-const byte kScene4010DestinationFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 12, 13, 14, 15, 16, 11,
-	10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
-	0
-};
-
-const byte kScene4010PillboxFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13
 };
 
 PlayableSceneConfig scene4010Config() {
@@ -660,8 +643,8 @@ void Scene4010::runEntryFromRightSide() {
 
 void Scene4010::runEntryFromLeftSide() {
 	runEntryPath(0x01ad, 0x01ce, 4, 0x01ad, 0x01ce);
-	runActorReplacement(ActionOverlaySpec(17, kScene4010ExitOverlayDescriptorCount,
-		kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
+	runActorReplacement(ActionOverlaySpec(17, kScene4010ExitOverlayDescriptorCount, kScene4010OverlayFrameMillis)
+		.holdFirstFrame()
 		.startAt(1));
 }
 
@@ -719,8 +702,8 @@ void Scene4010::runHeckerDialoguePoseStart() {
 		return;
 	}
 
-	const byte frames[] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
-	runHeckerFrameSequence(frames, ARRAYSIZE(frames));
+	runHeckerFrameSequence(kScene4010HeckerResponsePoseFrames,
+		ARRAYSIZE(kScene4010HeckerResponsePoseFrames));
 	_heckerAnimationState = 6;
 }
 
@@ -741,8 +724,8 @@ void Scene4010::runHeckerResponsePoseEnd() {
 	if (!_heckerAlternateSpeechPose)
 		return;
 
-	const byte frames[] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
-	runHeckerFrameSequence(frames, ARRAYSIZE(frames));
+	runHeckerFrameSequence(kScene4010HeckerResponsePoseFrames,
+		ARRAYSIZE(kScene4010HeckerResponsePoseFrames));
 }
 
 void Scene4010::finishHeckerDialoguePose() {
@@ -934,7 +917,8 @@ void Scene4010::runProgressiveExitSpeech() {
 	sequence.secondarySpeech(6, frame);
 	if (state.scene4010ProgressiveExitSpeechState > 1) {
 		sequence.actorReplacement(ActionOverlaySpec(16, kScene4010ExitOverlayDescriptorCount,
-				kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap), kScene4010OverlayFrameMillis)
+				kScene4010OverlayFrameMillis)
+				.holdFirstFrame()
 				.soundAt(11, 0x27)
 				.noRedrawAtEnd()
 				.startAt(1))
@@ -957,7 +941,8 @@ void Scene4010::takeAnimatedItem3A() {
 	sequence.secondarySpeech(12, 0)
 		.commit(_roomAnimationPaused, true)
 		.actorReplacement(ActionOverlaySpec(9, kScene4010Item3AOverlayDescriptorCount,
-			kScene4010Item3AFrameMap, ARRAYSIZE(kScene4010Item3AFrameMap), kScene4010OverlayFrameMillis)
+			kScene4010OverlayFrameMillis)
+			.holdFirstFrame()
 			.startAt(1)
 			.resourcePatchAt(7, 8))
 		.commit(_roomAnimationPaused, false)
@@ -1007,7 +992,7 @@ void Scene4010::unlockDestinationFromRoomAction() {
 void Scene4010::runDestinationUnlockAnimation() {
 	Common::Array<byte> frameMap;
 	for (byte logicalFrame = 1; logicalFrame <= 0x0d; ++logicalFrame)
-		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
+		frameMap.push_back(kTravelUnlockFrames[logicalFrame]);
 
 	byte logicalFrame = 0x0d;
 	const uint soundStartFrame = frameMap.size();
@@ -1017,7 +1002,7 @@ void Scene4010::runDestinationUnlockAnimation() {
 			nextFrame = (byte)(0x0d + _random.getRandomNumber(4));
 		} while (nextFrame == logicalFrame);
 		logicalFrame = nextFrame;
-		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
+		frameMap.push_back(kTravelUnlockFrames[logicalFrame]);
 	}
 
 	uint soundStopFrame = 0;
@@ -1025,7 +1010,7 @@ void Scene4010::runDestinationUnlockAnimation() {
 		if (logicalFrame == 0x14)
 			soundStopFrame = frameMap.size();
 		++logicalFrame;
-		frameMap.push_back(kScene4010DestinationFrameMap[logicalFrame]);
+		frameMap.push_back(kTravelUnlockFrames[logicalFrame]);
 	}
 
 	BlockingSequence(*this)
@@ -1046,7 +1031,8 @@ void Scene4010::takeThrownItem() {
 	BlockingSequence sequence(*this);
 	sequence.commit(_roomAnimationPaused, true)
 		.actorReplacement(ActionOverlaySpec(12, kScene4010PillboxOverlayDescriptorCount,
-			kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap), kScene4010OverlayFrameMillis)
+			kScene4010OverlayFrameMillis)
+			.holdFirstFrame()
 			.startAt(1)
 			.resourcePatchAt(7, 11))
 		.commit(_roomAnimationPaused, false);

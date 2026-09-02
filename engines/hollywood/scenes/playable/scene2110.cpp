@@ -22,6 +22,7 @@
 #include "common/system.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/frankenstein_reward.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/playable/scene2110.h"
 
@@ -66,33 +67,15 @@ const byte kScene2110EntryLayerFrameMap[] = {
 	13
 };
 
-const byte kScene2110AmbientFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25
-};
-
-const byte kScene2110TreasureFrameMap[] = {
-	0, 1, 2, 3, 4, 8, 9, 10, 9, 8,
-	4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-	14, 15, 16, 17, 18, 4, 8, 9, 10, 9,
-	8, 4, 3, 2, 1, 0
-};
-
 const SceneLayerSpec kScene2110LayerSpecs[] = {
 	{kSceneAnimationBehindActors, kScene2110EntryLayerChunk,
 		kScene2110EntryLayerDescriptorCount, kScene2110EntryLayerFrameMap,
 		ARRAYSIZE(kScene2110EntryLayerFrameMap), false, 0},
 	{kSceneAnimationBehindActors, kScene2110AmbientChunk,
-		kScene2110AmbientDescriptorCount, kScene2110AmbientFrameMap,
-		ARRAYSIZE(kScene2110AmbientFrameMap), true, 0},
+		kScene2110AmbientDescriptorCount, nullptr, 0, true, 0},
 	{kSceneAnimationActorReplacement, kScene2110TreasureChunk,
-		kScene2110TreasureDescriptorCount, kScene2110TreasureFrameMap,
-		ARRAYSIZE(kScene2110TreasureFrameMap), false, 0}
-};
-
-const byte kScene2110TreasureGrantItems[] = {
-	0x30, 0x42, 0x4c
+		kScene2110TreasureDescriptorCount, kFrankensteinRewardFrameMap,
+		kFrankensteinRewardFrameCount, false, 0}
 };
 
 PlayableSceneConfig scene2110Config() {
@@ -114,7 +97,8 @@ Scene2110::Scene2110(HollywoodEngine *vm) :
 		_ambientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_entryIdleActive(false) {
 	_sceneLayers.configure(kScene2110LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(kScene2110AmbientLayer, kScene2110FrameMillis);
+	_ambientTrack = _realtimeAnimationTracks.addLoop(kScene2110AmbientLayer,
+		kScene2110FrameMillis, kScene2110AmbientDescriptorCount);
 }
 
 void Scene2110::initializeCustomPreviewState() {
@@ -333,7 +317,7 @@ void Scene2110::runTreasureGrantAction() {
 	GameplayState &state = _vm->gameState();
 	const byte rewardIndex = state.frankensteinPartRewardIndex();
 	const bool grantsReward = !state.scene2110TreasureGranted &&
-		rewardIndex < ARRAYSIZE(kScene2110TreasureGrantItems);
+		rewardIndex < kFrankensteinPartCount;
 
 	_sceneLayers.setLayerVisible(kScene2110TreasureLayer, true);
 	_sceneLayers.resetLayer(kScene2110TreasureLayer, 0);
@@ -365,7 +349,7 @@ void Scene2110::runTreasureGrantAction() {
 		return;
 	}
 
-	const byte itemId = kScene2110TreasureGrantItems[rewardIndex];
+	const byte itemId = kFrankensteinPartItems[rewardIndex];
 	if (!hasInventoryItem(itemId))
 		addInventoryItem(itemId);
 	sequence.actorPose(SceneActorPose(0x194, 0x155, 3));

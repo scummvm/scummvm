@@ -85,7 +85,6 @@ const Scene9050I06TimingProfile &scene9050I06TimingProfile(const HollywoodEngine
 		kScene9050FirstEditionI06TimingProfile : kScene9050LaterEditionI06TimingProfile;
 }
 
-const byte kStage9050InterClipRevealFrames[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 const byte kStage9050InterClipReverseFrames[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0 };
 const byte kStage9050ResourceI07FinalFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6,
@@ -997,7 +996,7 @@ void Scene9050::advanceStage9050Cutscene() {
 
 void Scene9050::runResourceI05InterClipRevealPhase(byte localChunkIndex) {
 	playBlockingAnimation(kInterClipRevealAnimation, 0,
-		ARRAYSIZE(kStage9050InterClipRevealFrames) - 1, 60, localChunkIndex);
+		kI05InterClipFrameDescriptorCount - 1, 60, localChunkIndex);
 }
 
 void Scene9050::runResourceI05InterClipReversePhase() {
@@ -1130,7 +1129,7 @@ void Scene9050::presentAnimationFrame() {
 	case kInterClipRevealAnimation:
 		restoreAndDrawResourceDescriptorFrame(_blockingAnimationChunk,
 			kI05InterClipFrameDescriptorCount,
-			kStage9050InterClipRevealFrames[_blockingAnimationFrame], true);
+			_blockingAnimationFrame, true);
 		break;
 	case kInterClipReverseAnimation: {
 		const bool drawFrame = _blockingAnimationFrame + 1 <

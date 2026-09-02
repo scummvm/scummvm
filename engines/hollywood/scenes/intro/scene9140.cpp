@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/intro/scene9140.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -36,16 +37,6 @@ const uint kScene9140SpeechFrameMillis = 125;
 const uint kScene9140PoseFrameMillis = 125;
 const uint kScene9140RightBodyDescriptorCount = 0x14;
 const uint kScene9140MouthDescriptorCount = 4;
-
-const byte kScene9140RightBodyFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 7, 6, 5, 0, 13, 14, 15,
-	16, 17, 18, 19, 0
-};
-
-const byte kScene9140MouthFrameMap[] = {
-	0, 1, 2, 3
-};
 
 const Scene9140::SequenceStep kScene9140Variant0[] = {
 	{ Scene9140::kSpeechLeft, 0, 0 },
@@ -257,7 +248,7 @@ void Scene9140::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16
 				animationElapsed %= kScene9140SpeechFrameMillis;
 				++_speechAnimationStep;
 				if (leftSpeaker) {
-					_mouthFrame = _speechAnimationStep % ARRAYSIZE(kScene9140MouthFrameMap);
+					_mouthFrame = _speechAnimationStep % kScene9140MouthDescriptorCount;
 					if (_leftLoopEnabled)
 						_rightBodyFrame = 0x11 + (_speechAnimationStep % 8);
 				} else {
@@ -300,13 +291,12 @@ void Scene9140::presentAnimationFrame() {
 void Scene9140::drawComposite() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte bodyFrame = _rightBodyFrame < ARRAYSIZE(kScene9140RightBodyFrameMap) ?
-		kScene9140RightBodyFrameMap[_rightBodyFrame] : 0;
+	const byte bodyFrame = _rightBodyFrame < kDualPoseSpeakerFrameCount ?
+		kDualPoseSpeakerFrames[_rightBodyFrame] : 0;
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[4], 0,
 		kScene9140RightBodyDescriptorCount, bodyFrame, _sceneFramebuffer.surface());
 
-	const byte mouthFrame = _mouthFrame < ARRAYSIZE(kScene9140MouthFrameMap) ?
-		kScene9140MouthFrameMap[_mouthFrame] : 0;
+	const byte mouthFrame = _mouthFrame < kScene9140MouthDescriptorCount ? _mouthFrame : 0;
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[3], 0,
 		kScene9140MouthDescriptorCount, mouthFrame, _sceneFramebuffer.surface());
 }

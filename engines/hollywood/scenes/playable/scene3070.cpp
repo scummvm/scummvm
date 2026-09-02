@@ -23,6 +23,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene3070.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -68,14 +69,6 @@ const byte kScene3070InterludeRightFrameMap[] = {
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 };
 
-const byte kScene3070InterludeLeftTransition[] = {
-	0, 0, 0, 0, 5, 6, 7, 8, 9, 10
-};
-
-const byte kScene3070InterludeRightTransition[] = {
-	5, 6, 7, 8, 8, 8, 8, 9, 10, 10
-};
-
 const byte kScene3070LateCutsceneFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19,
 	18, 17, 16, 15, 16, 17, 18, 19, 18, 17, 16, 15, 16, 17, 18, 19,
@@ -94,10 +87,6 @@ const SceneLayerSpec kScene3070LayerSpecs[] = {
 
 const byte kScene3070PatchOverlayFrameMap[] = {
 	8, 0, 1, 2, 2, 1, 0, 8
-};
-
-const byte kScene3070ItemPatchPickupFrameMap[] = {
-	8, 0, 1, 2, 3, 4, 5, 6, 7, 8
 };
 
 const byte kScene3070IngredientFrameMap[] = {
@@ -134,10 +123,6 @@ const byte kScene3070BodyAssemblyFrameMap[] = {
 	16, 15, 14, 13, 12, 8, 9, 10, 11
 };
 
-const byte kScene3070BodyAssemblyFinishFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
-};
-
 const byte kScene3070RevivalStartFrameMap[] = {
 	5, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0, 5
 };
@@ -148,10 +133,6 @@ const byte kScene3070RevivalLoopFrameMap[] = {
 	20, 21, 22, 23, 20, 21, 22, 23, 20, 21, 22, 23,
 	20, 21, 22, 23, 20, 21, 22, 23, 20, 21, 22, 23,
 	19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4
-};
-
-const byte kScene3070RevivalFinishFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 };
 
 PlayableSceneConfig scene3070Config() {
@@ -651,11 +632,11 @@ void Scene3070::runInterludeCutscene() {
 	beginPrimarySpeechLineWithAnimationGroup(kScene3070InterludePrimaryRowRight, 0,
 		0x079, 0x086, 0x0a, 0x3f, 0x00, kScene3070InterludeRightSpeechGroup);
 
-	for (uint frame = 0; frame < ARRAYSIZE(kScene3070InterludeLeftTransition); ++frame) {
+	for (uint frame = 0; frame < kTwoActorGestureFrameCount; ++frame) {
 		_sceneLayers.setLayerFrame(kScene3070InterludeLeftLayer,
-			kScene3070InterludeLeftTransition[frame]);
+			kTwoActorGestureLeftFrames[frame]);
 		_sceneLayers.setLayerFrame(kScene3070InterludeRightLayer,
-			kScene3070InterludeRightTransition[frame]);
+			kTwoActorGestureRightFrames[frame]);
 		if (waitSceneMillis(kScene3070OverlayFrameMillis))
 			break;
 	}
@@ -711,8 +692,7 @@ void Scene3070::runItemPatchPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
-			kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap),
-			kScene3070OverlayFrameMillis))
+			kScene3070OverlayFrameMillis).bookendWithLastFrame())
 		.commit(state.scene3070SurgicalNeedleThreadState, (byte)2)
 		.commit(state.scene3070SurgicalNeedleThreadTaken, true)
 		.framebufferPatch(0xff);
@@ -767,8 +747,7 @@ void Scene3070::runFrankensteinRevival() {
 			ARRAYSIZE(kScene3070RevivalLoopFrameMap), kScene3070OverlayFrameMillis)
 			.loopingSoundAt(20, 0x0c, 25)
 			.stopSoundAt(60))
-		.actorReplacement(ActionOverlaySpec(14, 19, kScene3070RevivalFinishFrameMap,
-			ARRAYSIZE(kScene3070RevivalFinishFrameMap), kScene3070OverlayFrameMillis).startAt(4));
+		.actorReplacement(ActionOverlaySpec(14, 19, kScene3070OverlayFrameMillis).startAt(4));
 
 	runCurtainClearToBlack();
 	sequence.commit(state.mainFlowStateId, kScene3110LongTransitionState)
@@ -814,8 +793,7 @@ void Scene3070::runBodyAssembly() {
 		.actorReplacement(ActionOverlaySpec(15, 29, kScene3070BodyAssemblyFrameMap,
 			ARRAYSIZE(kScene3070BodyAssemblyFrameMap), kScene3070OverlayFrameMillis)
 			.resourcePatchAt(10, 21))
-		.actorReplacement(ActionOverlaySpec(16, 20, kScene3070BodyAssemblyFinishFrameMap,
-			ARRAYSIZE(kScene3070BodyAssemblyFinishFrameMap), kScene3070OverlayFrameMillis))
+		.actorReplacement(ActionOverlaySpec(16, 20, kScene3070OverlayFrameMillis).holdFirstFrame())
 		.commit(_vm->gameState().scene3070FrankensteinBodyState, (byte)1)
 		.framebufferPatch(2);
 	removeInventoryItem(0x30);

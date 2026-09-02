@@ -57,22 +57,6 @@ const byte kScene2040ForegroundFrameMap[] = {
 	0, 1, 2, 3, 4, 3, 2, 1
 };
 
-const byte kScene2040FlowerPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-};
-
-const byte kScene2040SphinxNoseFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-	23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-	35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
-	47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-	59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
-	71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-	83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
-	95, 96
-};
-
 const byte kScene2040SeedPlantingFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 13, 14, 3, 2, 1, 0, 11
 };
@@ -84,19 +68,8 @@ const byte kScene2040EyeExchangeFirstFrameMap[] = {
 	6, 7, 8, 9, 10, 11
 };
 
-const byte kScene2040EyeExchangeSecondFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17
-};
-
 const byte kScene2040BaseOpeningFrameMap[] = {
 	8, 8, 7, 6, 5, 4, 3, 3, 3, 3, 3, 2, 1, 0, 9
-};
-
-const byte kScene2040BaseOpeningDeltaFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-	21, 22, 23, 24, 25, 26, 27, 28
 };
 
 const SceneLayerSpec kScene2040LayerSpecs[] = {
@@ -464,8 +437,7 @@ void Scene2040::runExitToInterior() {
 
 void Scene2040::runFlowerPickup() {
 	runActorReplacement(ActionOverlaySpec(13, kScene2040FlowerPickupDescriptorCount,
-		kScene2040FlowerPickupFrameMap, ARRAYSIZE(kScene2040FlowerPickupFrameMap),
-		kScene2040ActionFrameMillis)
+		kScene2040ActionFrameMillis).holdFirstFrame()
 		.resourcePatchAt(6, 10));
 	_vm->gameState().scene2040SphinxItemRevealed = 0;
 	applySceneStateToHotspotsAndPatches(2);
@@ -486,7 +458,7 @@ void Scene2040::runSphinxNoseSequence() {
 
 	if (_sceneChunkTable.isValidChunk(17)) {
 		runActorReplacement(ActionOverlaySpec(17, kScene2040SphinxNoseDescriptorCount,
-			kScene2040SphinxNoseFrameMap, ARRAYSIZE(kScene2040SphinxNoseFrameMap), kScene2040ActionFrameMillis)
+			kScene2040ActionFrameMillis).holdFirstFrame()
 			.soundAt(18, 0x2c, 50)
 			.soundAt(30, 0x2c, 50)
 			.soundAt(42, 0x2c, 50)
@@ -533,13 +505,13 @@ void Scene2040::runEyeExchangeSequence() {
 	addInventoryItem(0x1a);
 	_soundBank0.playSample(1, 100);
 	walkActiveActorTo(0x210, 0x172, 1, 0, false);
-	AnimationFrameRange secondRange(0, ARRAYSIZE(kScene2040EyeExchangeSecondFrameMap) - 1,
+	AnimationFrameRange secondRange(kScene2040EyeExchangeSecondDescriptorCount,
 		kScene2040ActionFrameMillis);
+	secondRange.holdFirstFrame();
 	secondRange.soundAt(1, 0x1f).stopSoundAt(0x12);
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene2040BehindActorLayer, 12,
-		kScene2040EyeExchangeSecondDescriptorCount, kScene2040EyeExchangeSecondFrameMap,
-		secondRange)
+		kScene2040EyeExchangeSecondDescriptorCount, secondRange)
 		.stopSound()
 		.commit(state.scene2040SphinxFaceState, (byte)3)
 		.commit(state.scene2040SphinxItemRevealed, (byte)1)
@@ -578,13 +550,16 @@ void Scene2040::runBaseOpeningDeltaSequence() {
 		return;
 
 	_soundBank0.playSample(0x2d, 100);
-	for (uint frame = 0; frame < ARRAYSIZE(kScene2040BaseOpeningDeltaFrameMap) &&
+	AnimationFrameRange range(kScene2040BaseOpeningDeltaTableEntryCount,
+		kScene2040ActionFrameMillis);
+	range.holdFirstFrame();
+	for (uint frame = range.firstFrame; frame <= range.lastFrame &&
 			!animationPlaybackShouldStop(); ++frame) {
 		restoreSceneLayerBackground(kScene2040ForegroundLayer, _baseFramebuffer);
 		drawSceneLayer(kScene2040ForegroundLayer);
 		drawClipFrameDelta(kScene2040BaseOpeningDeltaChunk,
 			kScene2040BaseOpeningDeltaTableEntryCount,
-			kScene2040BaseOpeningDeltaFrameMap[frame]);
+			range.targetFrame(frame));
 		presentFrame();
 		if (waitDeltaClipFrameMillis(kScene2040ActionFrameMillis))
 			break;

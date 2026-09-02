@@ -24,6 +24,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene4090.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -94,10 +95,6 @@ const int kScene4090ForegroundActorThresholdY = 0x0172;
 
 const byte kScene4090OrganOverlayHook = 1;
 
-const byte kScene4090DoorExitFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5
-};
-
 const byte kScene4090OrganOverlayFrameMap[] = {
 	0, 1, 2, 3, 3, 3, 3, 2, 1, 0
 };
@@ -107,33 +104,8 @@ const byte kScene4090OrganBodyFrameMap[] = {
 	4, 3, 2, 1, 0
 };
 
-const byte kScene4090FinalOpenFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-	32, 33, 34
-};
-
-const byte kScene4090FinalRoomOverlayFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-};
-
 const byte kScene4090FinalRoomChunk13FrameMap[] = {
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 1, 2, 3, 3
-};
-
-const byte kScene4090CoffinClipFrameMap[] = {
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21,
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22
-};
-
-const byte kScene4090FinalCloseFrameMap[] = {
-	0, 1, 2, 3, 4, 5
-};
-
-const byte kScene4090FinalCloseReverseFrameMap[] = {
-	5, 4, 3, 2, 1, 0
 };
 
 const byte kScene4090FinalFadeFrameMap[] = {
@@ -536,9 +508,9 @@ void Scene4090::stopMultiSpriteAnimation() {
 void Scene4090::runDoorExit() {
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090DoorExitChunk,
-		kScene4090DoorExitDescriptorCount, kScene4090DoorExitFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4090DoorExitFrameMap) - 1,
-			kScene4090FrameMillis).unskippable().noFinalFrameDelay());
+		kScene4090DoorExitDescriptorCount,
+		AnimationFrameRange(kScene4090DoorExitDescriptorCount, kScene4090FrameMillis)
+			.holdFirstFrame().unskippable().noFinalFrameDelay());
 	if (!sequence.completed())
 		return;
 	sequence.sound(3)
@@ -713,12 +685,12 @@ bool Scene4090::runCoffinInsertSequence() {
 }
 
 bool Scene4090::playCoffinDeltaClip(uint chunkIndex) {
-	for (uint frame = 0; frame < ARRAYSIZE(kScene4090CoffinClipFrameMap); ++frame) {
+	for (uint frame = 0; frame < kCoffinDeltaClipFrameCount; ++frame) {
 		if (animationPlaybackShouldStop())
 			return false;
 
 		drawClipFrameDelta(chunkIndex, kScene4090CoffinClipDescriptorCount,
-			kScene4090CoffinClipFrameMap[frame]);
+			kCoffinDeltaClipFrames[frame]);
 		presentFrame();
 
 		const uint frameCounter = frame + 1;
@@ -731,7 +703,7 @@ bool Scene4090::playCoffinDeltaClip(uint chunkIndex) {
 				frameCounter == 0x1d)
 			playResidentSoundEffect(1);
 
-		if (frame + 1 < ARRAYSIZE(kScene4090CoffinClipFrameMap) &&
+		if (frame + 1 < kCoffinDeltaClipFrameCount &&
 				waitFullscreenAnimationFrame(kScene4090FrameMillis, false))
 			return false;
 	}
@@ -890,9 +862,7 @@ void Scene4090::runFinalCutscene() {
 	_organBodyAnimationActive = false;
 	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
 		kScene4090FinalOverlayDescriptorCount,
-		kScene4090FinalRoomOverlayFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1,
-			kScene4090FrameMillis)
+		AnimationFrameRange(kScene4090FinalOverlayDescriptorCount, kScene4090FrameMillis)
 			.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
 				kScene4090FinalRoomChunk13FrameMap,
 				ARRAYSIZE(kScene4090FinalRoomChunk13FrameMap))
@@ -908,13 +878,12 @@ void Scene4090::runFinalCutscene() {
 	_randomAmbientAnimationActive = true;
 	sequence.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
 		kScene4090FinalOverlayDescriptorCount,
-		kScene4090FinalRoomOverlayFrameMap,
 		AnimationFrameRange(0, kScene4090FinalRoomOverlayHoldFrames - 1,
 			kScene4090FrameMillis).repeatFrame(
-				ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1).unskippable())
+				kScene4090FinalOverlayDescriptorCount - 1).unskippable())
 		.resourceLayerFrames(kScene4090ScriptLayer, kScene4090FinalOverlayChunk,
-			kScene4090FinalOverlayDescriptorCount, kScene4090FinalRoomOverlayFrameMap,
-			AnimationFrameRange(ARRAYSIZE(kScene4090FinalRoomOverlayFrameMap) - 1, 0,
+			kScene4090FinalOverlayDescriptorCount,
+			AnimationFrameRange(kScene4090FinalOverlayDescriptorCount - 1, 0,
 				kScene4090FrameMillis)
 				.visibleMappedLayerFrames(kScene4090AmbientFixedLayer,
 					kScene4090FinalRoomChunk13FrameMap,
@@ -957,12 +926,12 @@ void Scene4090::runFinalCutscene() {
 	presentFrame();
 
 	sequence.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk + 1,
-			kScene4090FinalOpenDescriptorCount, kScene4090FinalOpenFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalOpenFrameMap) - 1,
+			kScene4090FinalOpenDescriptorCount,
+			AnimationFrameRange(kScene4090FinalOpenDescriptorCount,
 				kScene4090FrameMillis).unskippable().noFinalFrameDelay())
 		.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk,
-			kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseFrameMap) - 1,
+			kScene4090FinalCloseDescriptorCount,
+			AnimationFrameRange(kScene4090FinalCloseDescriptorCount,
 				kScene4090FrameMillis).unskippable().noFinalFrameDelay());
 	if (!sequence.completed()) {
 		stopMultiSpriteAnimation();
@@ -978,8 +947,8 @@ void Scene4090::runFinalCutscene() {
 			kScene4090FinalPrimarySpeechNormalGroup);
 	}
 	sequence.resourceLayerFrames(kScene4090ScriptLayer, finalBaseChunk,
-		kScene4090FinalCloseDescriptorCount, kScene4090FinalCloseReverseFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4090FinalCloseReverseFrameMap) - 1,
+		kScene4090FinalCloseDescriptorCount,
+		AnimationFrameRange(kScene4090FinalCloseDescriptorCount - 1, 0,
 			kScene4090FrameMillis).unskippable().noFinalFrameDelay(), false);
 	if (!sequence.completed() || waitSceneMillis(kScene4090FastFrameMillis, false)) {
 		stopMultiSpriteAnimation();

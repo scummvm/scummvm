@@ -62,20 +62,6 @@ const byte kScene1040GorillaFrameMap[] = {
 	4
 };
 
-const byte kScene1040DoorFrameMap[] = { 1, 1, 2, 3 };
-
-const byte kScene1040BalloonFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12
-};
-
-const byte kScene1040CordFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21, 22,
-	23, 24
-};
-
 const byte kScene1040GorillaCordSetupFrameMap[] = {
 	9, 9, 8, 7, 6, 5, 4, 3,
 	2, 1, 0, 1, 2, 1, 0, 1,
@@ -291,8 +277,8 @@ AmbientAudioProfile Scene1040::ambientAudioProfile() const {
 
 void Scene1040::runDoorToCloakroomAction() {
 	BlockingSequence(*this)
-		.actorReplacement(8, kScene1040DoorOverlayDescriptorCount,
-			kScene1040DoorFrameMap, ARRAYSIZE(kScene1040DoorFrameMap), kScene1040FrameMillis)
+		.actorReplacement(ActionOverlaySpec(8, kScene1040DoorOverlayDescriptorCount,
+			kScene1040FrameMillis).holdFrame(1).startAt(1))
 		.sound(3)
 		.commit(_vm->gameState().scene1040CloakroomDoorOpened, true)
 		.commit(_vm->gameState().mainFlowStateId, kScene1040ExitState1050);
@@ -310,7 +296,7 @@ void Scene1040::handleCordPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
-		kScene1040CordFrameMap, ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis)
+		kScene1040FrameMillis).holdFirstFrame()
 		.resourcePatchAt(0, 14))
 		.commit(state.scene1040GorillaCordState, (byte)2)
 		.framebufferPatch(2);
@@ -325,7 +311,7 @@ void Scene1040::handleBalloonPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(9, kScene1040BalloonOverlayDescriptorCount,
-		kScene1040BalloonFrameMap, ARRAYSIZE(kScene1040BalloonFrameMap), kScene1040FrameMillis)
+		kScene1040FrameMillis).holdFirstFrame()
 		.patchAt(7, 3))
 		.commit(_vm->gameState().scene1040BalloonTaken, true)
 		.framebufferPatch(3);

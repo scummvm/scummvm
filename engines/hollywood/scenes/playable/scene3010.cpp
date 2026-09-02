@@ -55,12 +55,6 @@ const byte kScene3010InitialWindmillFrame = 4;
 const uint kScene3010WindmillLayer = 0;
 const uint kScene3010ForestIdleLayer = 1;
 
-const byte kScene3010WindmillFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 29
-};
-
 const byte kScene3010ForestIdleFrameMap[] = {
 	0, 1, 1, 1, 1, 1, 0, 1, 2, 3, 4,
 	5, 6, 7, 8, 9, 10, 11, 12, 13, 14
@@ -68,14 +62,9 @@ const byte kScene3010ForestIdleFrameMap[] = {
 
 const byte kScene3010ExitFrameMap[] = { 1, 2, 3, 4, 5 };
 
-const byte kScene3010ClimbFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13, 14, 15, 16, 17
-};
-
 const SceneLayerSpec kScene3010LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 7, kScene3010WindmillDescriptorCount,
-		kScene3010WindmillFrameMap, ARRAYSIZE(kScene3010WindmillFrameMap), true,
+		nullptr, 0, true,
 		kScene3010InitialWindmillFrame},
 	{kSceneAnimationInFrontOfActors, 9, kScene3010ForestIdleDescriptorCount,
 		kScene3010ForestIdleFrameMap, ARRAYSIZE(kScene3010ForestIdleFrameMap), true, 0}
@@ -99,7 +88,8 @@ Scene3010::Scene3010(HollywoodEngine *vm) :
 		_forestIdleState(0),
 		_climbOverlayActive(false) {
 	_sceneLayers.configure(kScene3010LayerSpecs);
-	_windmillTrack = _realtimeAnimationTracks.addFrameMap(kScene3010WindmillLayer, kScene3010WindmillFrameMillis, false);
+	_windmillTrack = _realtimeAnimationTracks.addLoop(kScene3010WindmillLayer,
+		kScene3010WindmillFrameMillis, kScene3010WindmillDescriptorCount, false);
 }
 
 bool Scene3010::shouldLoadArenaChunk(uint index) const {
@@ -443,13 +433,15 @@ void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tab
 
 void Scene3010::runWindmillClimbOverlay() {
 	_climbOverlayActive = true;
+	AnimationFrameRange climbRange(kScene3010ClimbDescriptorCount,
+		kScene3010WindmillFrameMillis);
+	climbRange.holdFirstFrame();
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(kScene3010ClimbChunk,
-		kScene3010ClimbDescriptorCount, kScene3010ClimbFrameMap,
-		ARRAYSIZE(kScene3010ClimbFrameMap));
+		kScene3010ClimbDescriptorCount, nullptr, 0);
 
 	for (uint frame = 0; frame < 7 && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested(); ++frame) {
-		_actionOverlayPlayer.setFrame(frame);
+		_actionOverlayPlayer.setFrame(climbRange.targetFrame(frame));
 		drawPlayableComposite();
 		presentFrame();
 		if (waitSceneMillis(kScene3010ForestIdleFrameMillis, false))
@@ -457,7 +449,7 @@ void Scene3010::runWindmillClimbOverlay() {
 	}
 
 	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		_actionOverlayPlayer.setFrame(7);
+		_actionOverlayPlayer.setFrame(climbRange.targetFrame(7));
 		drawPlayableComposite();
 		presentFrame();
 		while (_vm->gameState().windmillBladesMoving &&
@@ -469,9 +461,9 @@ void Scene3010::runWindmillClimbOverlay() {
 		}
 	}
 
-	for (uint frame = 8; frame + 1 < ARRAYSIZE(kScene3010ClimbFrameMap) &&
+	for (uint frame = 8; frame < climbRange.lastFrame &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		_actionOverlayPlayer.setFrame(frame);
+		_actionOverlayPlayer.setFrame(climbRange.targetFrame(frame));
 		drawPlayableComposite();
 		presentFrame();
 		if (waitSceneMillis(kScene3010WindmillFrameMillis, false))
@@ -479,7 +471,7 @@ void Scene3010::runWindmillClimbOverlay() {
 	}
 
 	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		_actionOverlayPlayer.setFrame(ARRAYSIZE(kScene3010ClimbFrameMap) - 1);
+		_actionOverlayPlayer.setFrame(climbRange.targetFrame(climbRange.lastFrame));
 		drawPlayableComposite();
 		presentFrame();
 	}

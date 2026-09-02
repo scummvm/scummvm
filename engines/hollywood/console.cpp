@@ -24,6 +24,7 @@
 
 #include "hollywood/hollywood.h"
 #include "hollywood/console.h"
+#include "hollywood/gameplay/frankenstein_reward.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/scene_registry.h"
 
@@ -46,10 +47,6 @@ const byte kKarnakLampItem = 0x3c;
 const byte kKarnakOilItem = 0x43;
 const byte kKarnakShovelItem = 0x50;
 const byte kKarnakMagnifierItem = 0x5a;
-
-const byte kFrankieBodyAssemblyItems[] = {
-	0x30, 0x42, 0x4c
-};
 
 const byte kFrankieSerumItems[] = {
 	0x44, 0x3e, 0x38, 0x5d, 0x57
@@ -107,9 +104,9 @@ bool Console::cmdGet(int argc, const char **argv) {
 			addedCount += addInventoryItemIfMissing(state, owner, kFrankieDiaryItem);
 
 		if (state.scene3070FrankensteinBodyState == 0) {
-			for (uint i = 0; i < ARRAYSIZE(kFrankieBodyAssemblyItems); ++i)
+			for (uint i = 0; i < kFrankensteinPartCount; ++i)
 				addedCount += addInventoryItemIfMissing(state, owner,
-					kFrankieBodyAssemblyItems[i]);
+					kFrankensteinPartItems[i]);
 		}
 		if (state.scene3070FrankensteinBodyState < 2)
 			addedCount += addInventoryItemIfMissing(state, owner, kFrankieBrainItem);

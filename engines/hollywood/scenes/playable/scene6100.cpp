@@ -52,10 +52,6 @@ const byte kScene6100CharlieFrameMap[] = {
 	40, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47
 };
 
-const byte kScene6100BriefcaseFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const byte kScene6100LetterFrameMap[] = {
 	0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
@@ -554,8 +550,8 @@ void Scene6100::takeCharlieBriefcase() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(7, 1)
 		.commit(_charlieManualSequenceActive, true)
-		.actorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100BriefcaseFrameMap,
-			ARRAYSIZE(kScene6100BriefcaseFrameMap), kScene6100AnimationFrameMillis)
+		.actorReplacement(ActionOverlaySpec(9, 0x0d, kScene6100AnimationFrameMillis)
+			.holdFirstFrame()
 			.drawAt(kSceneAnimationInFrontOfActors)
 			.commitAt(7, state.scene6100BriefcasePresent, false)
 			.patchAt(7, 2))

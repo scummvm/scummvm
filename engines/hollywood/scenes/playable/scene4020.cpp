@@ -52,11 +52,6 @@ const byte kScene4020ReturnFromD03FrameMap[] = {
 	2, 1, 0
 };
 
-const byte kScene4020EnterD03FrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12
-};
-
 const byte kScene4020SkullcrackerFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 12, 13, 14, 15, 8, 9, 10,
@@ -252,8 +247,9 @@ void Scene4020::runExitToScene4030() {
 		return;
 	}
 
-	runActorReplacement(ActionOverlaySpec(kScene4020GrateTransitionChunk, kScene4020GrateTransitionDescriptorCount,
-		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap), kScene4020FrameMillis)
+	runActorReplacement(ActionOverlaySpec(kScene4020GrateTransitionChunk,
+		kScene4020GrateTransitionDescriptorCount, kScene4020FrameMillis)
+		.holdFirstFrame()
 		.noRedrawAtEnd()
 		.startAt(1));
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;

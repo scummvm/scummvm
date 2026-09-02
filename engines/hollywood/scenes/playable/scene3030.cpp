@@ -52,16 +52,6 @@ const byte kScene3030ReturnTransitionFinalFrame = 0x14;
 const byte kScene3030RequiredInventoryItem = 0x1f;
 const byte kScene3030ResultInventoryItem = 0x41;
 
-const byte kScene3030LoopFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
-const byte kScene3030MachineEffectFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24
-};
-
 const byte kScene3030MachineActionFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 2,
 	1, 0, 0, 0, 0, 0, 1, 2, 3, 4,
@@ -70,9 +60,9 @@ const byte kScene3030MachineActionFrameMap[] = {
 
 const SceneLayerSpec kScene3030LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 6, kScene3030LoopDescriptorCount,
-		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationScenePlaced, 9, kScene3030MachineEffectDescriptorCount,
-		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false, 0},
+		nullptr, 0, false, 0},
 	{kSceneAnimationScenePlaced, 10, kScene3030MachineActionDescriptorCount,
 		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false, 0}
 };
@@ -93,8 +83,8 @@ Scene3030::Scene3030(HollywoodEngine *vm) :
 		_loopTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_machineSequenceActive(false) {
 	_sceneLayers.configure(kScene3030LayerSpecs);
-	_loopTrack = _realtimeAnimationTracks.addFrameMap(kScene3030LoopLayer, kScene3030LoopFrameMillis,
-		_vm->gameState().windmillBladesMoving);
+	_loopTrack = _realtimeAnimationTracks.addLoop(kScene3030LoopLayer, kScene3030LoopFrameMillis,
+		kScene3030LoopDescriptorCount, _vm->gameState().windmillBladesMoving);
 }
 
 void Scene3030::initializeCustomPreviewState() {
@@ -344,7 +334,7 @@ void Scene3030::runMachineActivationSequence() {
 	bool actionReleased = false;
 	// Ron holds frame 15 until the machine effect reaches frame 5.
 	while ((actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) ||
-			effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) &&
+			effectFrame + 1 < kScene3030MachineEffectDescriptorCount) &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (actionFrame + 1 < ARRAYSIZE(kScene3030MachineActionFrameMap) &&
 				(actionFrame < 15 || actionReleased)) {
@@ -358,7 +348,7 @@ void Scene3030::runMachineActivationSequence() {
 			}
 		}
 
-		if (effectStarted && effectFrame + 1 < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
+		if (effectStarted && effectFrame + 1 < kScene3030MachineEffectDescriptorCount) {
 			++effectFrame;
 			_sceneLayers.setVisibleLayerFrame(kScene3030MachineEffectLayer, effectFrame);
 			if (effectFrame == 5) {

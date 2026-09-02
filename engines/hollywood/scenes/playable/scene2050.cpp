@@ -75,12 +75,6 @@ const int kScene2050WalkMinX = 0x0c2;
 const int kScene2050WalkMaxX = 0x29a;
 const int kScene2050WalkMaxY = 0x1df;
 
-const byte kScene2050AmbientFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25
-};
-
 const byte kScene2050MuralClipForwardFrameMap[] = {
 	1, 2, 3, 4, 5, 6, 7
 };
@@ -119,7 +113,7 @@ private:
 const uint kScene2050AmbientLayer = 0;
 const SceneLayerSpec kScene2050LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 10, kScene2050AmbientDescriptorCount,
-		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap), true, 0}
+		nullptr, 0, true, 0}
 };
 
 PlayableSceneConfig scene2050Config() {
@@ -147,7 +141,8 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_sealDiscoveryActorPathFrameIndex(0),
 		_sealDiscoverySpeechStarted(false) {
 	_sceneLayers.configure(kScene2050LayerSpecs);
-	_ambientTrack = _realtimeAnimationTracks.addFrameMap(kScene2050AmbientLayer, kScene2050AmbientFrameMillis);
+	_ambientTrack = _realtimeAnimationTracks.addLoop(kScene2050AmbientLayer,
+		kScene2050AmbientFrameMillis, kScene2050AmbientDescriptorCount);
 }
 
 void Scene2050::initializeCustomPreviewState() {

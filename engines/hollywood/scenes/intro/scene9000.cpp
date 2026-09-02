@@ -26,11 +26,6 @@ namespace Hollywood {
 
 const char *const kIntroArchiveName = "RESOURCE.I00";
 
-const byte kIntroAnimationDescriptorSequence[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 19, 20
-};
-
 Scene9000::Scene9000(HollywoodEngine *vm) :
 		PresentationScene(vm, "intro scene 9000", kFrameBufferSize, 0),
 		_music() {
@@ -92,14 +87,13 @@ bool Scene9000::runChunk() {
 
 	presentFrame();
 
-	while ((frameIndex < 0x15 || !fadeInComplete) && !_skipRequested && !Engine::shouldQuit()) {
+	while ((frameIndex < kIntroFrameDescriptorCount || !fadeInComplete) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
 			return true;
 
-		if (frameIndex < 0x15) {
+		if (frameIndex < kIntroFrameDescriptorCount) {
 			frameIndex++;
-			const byte descriptorIndex = kIntroAnimationDescriptorSequence[frameIndex];
-			drawAnimationFrame(descriptorIndex);
+			drawAnimationFrame(frameIndex - 1);
 		}
 
 		if (!fadeInComplete) {
@@ -131,8 +125,7 @@ bool Scene9000::runChunk() {
 
 		if (frameIndex > 1) {
 			frameIndex--;
-			const byte descriptorIndex = kIntroAnimationDescriptorSequence[frameIndex];
-			drawAnimationFrame(descriptorIndex);
+			drawAnimationFrame(frameIndex - 1);
 		}
 
 		if (!fadeOutComplete) {

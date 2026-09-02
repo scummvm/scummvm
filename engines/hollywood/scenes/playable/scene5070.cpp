@@ -71,18 +71,6 @@ const byte kScene5070MineCartDelayBuckets[] = {
 	12, 12, 12, 12
 };
 
-const byte kScene5070AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
-};
-
-const byte kScene5070AviatorCapPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
-const byte kScene5070ShovelPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 PlayableSceneConfig scene5070Config() {
 	PlayableSceneConfig config(5070,
 		SceneResourceLayout(5, 5, 11),
@@ -253,13 +241,7 @@ bool Scene5070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5070::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5070::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5070AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5070::runExitSideEffectsAfterLoop() {
@@ -323,7 +305,7 @@ void Scene5070::runShovelPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(8, kScene5070ShovelPickupDescriptorCount,
-		kScene5070ShovelPickupFrameMap, ARRAYSIZE(kScene5070ShovelPickupFrameMap), kScene5070FrameMillis)
+		kScene5070FrameMillis).holdFirstFrame()
 		.commitAt(6, state.scene5070ShovelTaken, true)
 		.patchAt(6, 0)
 		.noFinalFrameDelay());
@@ -344,7 +326,7 @@ void Scene5070::runAviatorCapPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
-		kScene5070AviatorCapPickupFrameMap, ARRAYSIZE(kScene5070AviatorCapPickupFrameMap), kScene5070FrameMillis)
+		kScene5070FrameMillis).holdFirstFrame()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	addInventoryItem(kScene5070AviatorCapInventoryItem);

@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/frankenstein_reward.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/playable/scene4070.h"
 
@@ -91,9 +92,6 @@ const uint16 kScene4070TrophySpeechCenterX = 0x02dc;
 const uint16 kScene4070TrophySpeechTopY = 0x00ad;
 const byte kScene4070SlimmingTreatmentItem = 0x15;
 const byte kScene4070SlimmingFlyerItem = 0x58;
-const byte kScene4070FrankieLegsItem = 0x30;
-const byte kScene4070FrankieTorsoItem = 0x42;
-const byte kScene4070FrankieHeadItem = 0x4c;
 
 enum Scene4070AnimationHookId {
 	kScene4070TrophyScrollHook = 1
@@ -109,12 +107,6 @@ enum {
 const byte kScene4070DraculaFrameMap[] = {
 	1, 2, 3, 3, 2, 1, 3, 4, 5, 6, 11, 1, 7, 8, 9, 10,
 	12, 13, 14, 15, 16, 17, 18, 19, 1, 0, 0, 0, 0, 0, 0, 0
-};
-
-const byte kScene4070TrophyBaseFrameMap[] = {
-	0, 1, 2, 3, 4, 8, 9, 10, 9, 8, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 4, 8, 9, 10, 9, 8, 4,
-	3, 2, 1, 0
 };
 
 const byte kScene4070TreatmentNearDescriptorIndices[] = {
@@ -141,12 +133,6 @@ const SceneLayerSpec kScene4070LayerSpecs[] = {
 		kScene4070DraculaDescriptorCount, kScene4070DraculaFrameMap,
 		ARRAYSIZE(kScene4070DraculaFrameMap), false, kScene4070DraculaIdleFrame },
 	{ kSceneAnimationBehindActors, 0, 0, nullptr, 0, false, 0 }
-};
-
-const byte kScene4070FrankiePartItems[] = {
-	kScene4070FrankieLegsItem,
-	kScene4070FrankieTorsoItem,
-	kScene4070FrankieHeadItem
 };
 
 struct Scene4070DialogueSeedRecord {
@@ -568,7 +554,7 @@ void Scene4070::runTrophyBaseOpenAction() {
 		BlockingSequence sequence(*this);
 		sequence.resourceLayerFrames(kScene4070ScriptLayer,
 			kScene4070TrophyBaseChunk,
-			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+			kScene4070TrophyBaseDescriptorCount, kFrankensteinRewardFrameMap,
 			AnimationFrameRange(0, 4, kScene4070FrameMillis).unskippable());
 
 		const uint scrollFrameCount = _viewportXOffset > _viewportMinXOffset ?
@@ -576,7 +562,7 @@ void Scene4070::runTrophyBaseOpenAction() {
 		if (scrollFrameCount != 0) {
 			sequence.resourceLayerFrames(kScene4070ScriptLayer,
 				kScene4070TrophyBaseChunk,
-				kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+				kScene4070TrophyBaseDescriptorCount, kFrankensteinRewardFrameMap,
 				AnimationFrameRange(0, scrollFrameCount - 1, kScene4070ScrollFrameMillis)
 					.repeatFrame(4).hookEveryFrame(kScene4070TrophyScrollHook).unskippable());
 		}
@@ -622,13 +608,13 @@ void Scene4070::runFrankiePartGrantSequence() {
 	GameplayState &state = _vm->gameState();
 	const byte rewardIndex = state.frankensteinPartRewardIndex();
 	const bool grantsReward = state.scene4070FrankiePartGranted == 0 &&
-		rewardIndex < ARRAYSIZE(kScene4070FrankiePartItems);
+		rewardIndex < kFrankensteinPartCount;
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4070ScriptLayer, kScene4070TrophyBaseChunk,
-		kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+		kScene4070TrophyBaseDescriptorCount, kFrankensteinRewardFrameMap,
 		AnimationFrameRange(0, 0x0a, kScene4070FrameMillis).unskippable(), false);
 	if (!sequence.completed()) {
 		clearSceneLayer(kScene4070ScriptLayer);
@@ -640,14 +626,14 @@ void Scene4070::runFrankiePartGrantSequence() {
 		beginTrophySpeechLine(0x16, (byte)(rewardIndex * 2));
 		sequence.resourceLayerFrames(kScene4070ScriptLayer,
 			kScene4070TrophyBaseChunk,
-			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+			kScene4070TrophyBaseDescriptorCount, kFrankensteinRewardFrameMap,
 			AnimationFrameRange(0x0d, 0x23, kScene4070FrameMillis)
 				.soundAt(0x18, 1).unskippable());
 	} else {
 		beginTrophySpeechLine(0x66, 0);
 		sequence.resourceLayerFrames(kScene4070ScriptLayer,
 			kScene4070TrophyBaseChunk,
-			kScene4070TrophyBaseDescriptorCount, kScene4070TrophyBaseFrameMap,
+			kScene4070TrophyBaseDescriptorCount, kFrankensteinRewardFrameMap,
 			AnimationFrameRange(0x19, 0x23, kScene4070FrameMillis).unskippable());
 	}
 	_hideActiveActor = previousHideActiveActor;
@@ -659,8 +645,8 @@ void Scene4070::runFrankiePartGrantSequence() {
 		return;
 	}
 
-	if (!hasInventoryItem(kScene4070FrankiePartItems[rewardIndex]))
-		addInventoryItem(kScene4070FrankiePartItems[rewardIndex]);
+	if (!hasInventoryItem(kFrankensteinPartItems[rewardIndex]))
+		addInventoryItem(kFrankensteinPartItems[rewardIndex]);
 	setActiveActorPose(0x02f1, 0x0142, 3);
 	drawPlayableComposite();
 	presentFrame();

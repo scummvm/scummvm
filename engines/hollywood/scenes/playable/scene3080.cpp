@@ -49,22 +49,9 @@ const uint kScene3080FlyerOverlayDescriptorCount = 9;
 const uint kScene3080LargeLayer = 0;
 const uint kScene3080SmallIdleLayer = 1;
 
-const byte kScene3080LargeLayerFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7,
-	8, 9, 10, 11, 12, 13, 14, 15
-};
-
 const byte kScene3080SmallIdleFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7,
 	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-};
-
-const byte kScene3080DiaryOverlayFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
-const byte kScene3080StickOverlayFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 
 const byte kScene3080FlyerOverlayFrameMap[] = {
@@ -76,7 +63,7 @@ const byte kScene3080FlyerOverlayFrameMap[] = {
 
 const SceneLayerSpec kScene3080LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 17, kScene3080LargeLayerDescriptorCount,
-		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationInFrontOfActors, 7, kScene3080SmallIdleDescriptorCount,
 		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap), true, 0}
 };
@@ -432,7 +419,7 @@ void Scene3080::runDiaryPickup() {
 	}
 
 	runActorReplacement(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
-		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap), kScene3080OverlayFrameMillis)
+		kScene3080OverlayFrameMillis).holdFirstFrame()
 		.resourcePatchAt(10, 12)
 		.noRedrawAtEnd());
 	state.scene3080FrankensteinDiaryTaken = true;
@@ -451,7 +438,7 @@ void Scene3080::runStickPickup() {
 	}
 
 	runActorReplacement(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
-		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap), kScene3080OverlayFrameMillis)
+		kScene3080OverlayFrameMillis).holdFirstFrame()
 		.resourcePatchAt(10, 8)
 		.noRedrawAtEnd());
 	state.scene3080BranchTaken = true;

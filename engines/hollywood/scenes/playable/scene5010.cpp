@@ -54,14 +54,6 @@ const byte kScene5010SwitchLeadFrameCounts[] = { 0x23, 0x13, 0x05 };
 const byte kScene5010SwitchCenterFrames[] = { 0x23, 0x32, 0x41 };
 const byte kScene5010SwitchTailFrames[] = { 0x00, 0x0f, 0x1e };
 
-const byte kScene5010TransportPrepFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7
-};
-
-const byte kScene5010TransportReturnFrameMap[] = {
-	7, 6, 5, 4, 3, 2, 1, 0
-};
-
 enum Scene5010LayerId {
 	kScene5010SwitchLayer,
 	kScene5010SwitchPanelAnimationLayer
@@ -397,12 +389,8 @@ void Scene5010::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 void Scene5010::runMineCartArrival() {
 	setActiveActorPose(0x21c, 0x14c, 2);
 
-	Common::Array<byte> frameMap;
-	frameMap.resize(kScene5010TransportArrivalDescriptorCount);
-	for (uint i = 0; i < frameMap.size(); ++i)
-		frameMap[i] = (byte)i;
 	runActorReplacement(ActionOverlaySpec(15, kScene5010TransportArrivalDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5010FrameMillis)
+		kScene5010FrameMillis)
 		.soundAt(0x1e, 0x16)
 		.fadeFromBlackAt(0)
 		.noFinalFrameDelay()
@@ -413,8 +401,7 @@ void Scene5010::runMineCartArrival() {
 	_vm->gameState().scene5010MineCartDeparted = false;
 	applySceneStateToHotspotsAndPatches(6);
 	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount,
-		kScene5010TransportReturnFrameMap, ARRAYSIZE(kScene5010TransportReturnFrameMap),
-		kScene5010FrameMillis)
+		kScene5010FrameMillis).reverse()
 		.noFinalFrameDelay());
 }
 
@@ -477,19 +464,14 @@ void Scene5010::enterMineTransport() {
 		ensureMineDestinationTable();
 	}
 
-	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount,
-		kScene5010TransportPrepFrameMap, ARRAYSIZE(kScene5010TransportPrepFrameMap), kScene5010FrameMillis)
+	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount, kScene5010FrameMillis)
 		.noRedrawAtEnd());
 
 	state.scene5010MineCartDeparted = true;
 	applySceneStateToHotspotsAndPatches(6);
 
-	Common::Array<byte> frameMap;
-	frameMap.resize(kScene5010TransportDepartDescriptorCount);
-	for (uint i = 0; i < frameMap.size(); ++i)
-		frameMap[i] = (byte)i;
 	runActorReplacement(ActionOverlaySpec(16, kScene5010TransportDepartDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5010FrameMillis)
+		kScene5010FrameMillis)
 		.soundAt(0x1e, 0x15)
 		.noRedrawAtEnd());
 

@@ -132,10 +132,6 @@ const byte kScene7040MajorHotspotFrameMap[] = {
 	18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 25,
 	26, 27
 };
-const byte kScene7040Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
-const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-};
 const SceneLayerSpec kScene7040AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 17, kScene7040Chunk17DescriptorCount, nullptr, 0, false, 0 },
 	{ kSceneAnimationBehindActors, 16, kScene7040Chunk16DescriptorCount,
@@ -648,8 +644,8 @@ void Scene7040::handleActionSlot05ExitProgressSpeech() {
 void Scene7040::handleActionSlot06TransitionToG05() {
 	GameplayState &state = _vm->gameState();
 	BlockingSequence(*this)
-		.actorReplacement(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
-			ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis)
+		.actorReplacement(ActionOverlaySpec(10, kScene7040Chunk10DescriptorCount,
+			kScene7040Chunk14FrameMillis).holdFirstFrame())
 		.commit(state.openedOfficeClosetDoor, true)
 		.sound(3)
 		.commit(state.mainFlowStateId, kScene7040ExitState7050);
@@ -668,9 +664,8 @@ void Scene7040::handleActionSlot09PickupItem0FThenExit() {
 
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(8, 1)
-		.actorReplacement(18, kScene7040Chunk18DescriptorCount,
-			kScene7040Chunk18PickupItem0FFrameMap,
-			ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis);
+		.actorReplacement(ActionOverlaySpec(18, kScene7040Chunk18DescriptorCount,
+			kScene7040Chunk14FrameMillis));
 	addInventoryItem(0x0f);
 	sequence.sound(1)
 		.commit(state.officeNotePickupState, (byte)2)

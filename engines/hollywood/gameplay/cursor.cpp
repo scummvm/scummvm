@@ -39,7 +39,8 @@ const uint16 kCursorMaxX = 0x27f;
 const uint16 kCursorMaxY = 0x1df;
 const uint32 kCursorFrameMillis = 75;
 const uint16 kCursorGroupResourceIds[] = { 108, 109, 111, 112, 113, 114 };
-const byte kCursorAnimationFrameMap[] = { 0, 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+const byte kCursorAnimationFrameCount = 10;
+const byte kCursorAnimationPeakFrame = 5;
 const uint16 kFallbackCursorHotspotX = 16;
 const uint16 kFallbackCursorHotspotY = 16;
 const char kFallbackCursorDib0[] =
@@ -244,7 +245,7 @@ void HollywoodCursor::advance(uint32 deltaMillis) {
 	bool changed = false;
 	while (_frameTimer >= kCursorFrameMillis) {
 		_frameTimer -= kCursorFrameMillis;
-		_animationFrameIndex = _animationFrameIndex + 1 == ARRAYSIZE(kCursorAnimationFrameMap) ?
+		_animationFrameIndex = _animationFrameIndex + 1 == kCursorAnimationFrameCount ?
 			0 : _animationFrameIndex + 1;
 		changed = true;
 	}
@@ -261,10 +262,11 @@ void HollywoodCursor::clear() {
 }
 
 void HollywoodCursor::installCurrentFrame() {
-	if (_animationFrameIndex >= ARRAYSIZE(kCursorAnimationFrameMap))
+	if (_animationFrameIndex >= kCursorAnimationFrameCount)
 		return;
 
-	const byte cursorGroupIndex = kCursorAnimationFrameMap[_animationFrameIndex];
+	const byte cursorGroupIndex = _animationFrameIndex <= kCursorAnimationPeakFrame ?
+		_animationFrameIndex : kCursorAnimationFrameCount - _animationFrameIndex;
 	if (cursorGroupIndex >= _cursorGroups.size() || _cursorGroups[cursorGroupIndex]->cursors.empty())
 		return;
 

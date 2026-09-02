@@ -64,14 +64,6 @@ const byte kScene6030LargeLayerFrameMap[] = {
 	26, 26, 26, 0, 0, 0, 0, 0
 };
 
-const byte kScene6030SmallLayerFrameMap[] = {
-	0, 1, 2
-};
-
-const byte kScene6030SaxophoneFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
 enum Scene6030AnimationLayerId {
 	kScene6030HannoverLayer,
 	kScene6030BathroomExitLayer,
@@ -89,7 +81,7 @@ const SceneLayerSpec kScene6030AnimationLayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 7, kScene6030BathroomExitDescriptorCount,
 		nullptr, 0, false, 0 },
 	{ kSceneAnimationBehindActors, 8, kScene6030SmallLayerDescriptorCount,
-		kScene6030SmallLayerFrameMap, ARRAYSIZE(kScene6030SmallLayerFrameMap), true, 0 },
+		nullptr, 0, true, 0 },
 	{ kSceneAnimationInFrontOfActors, 9, kScene6030TaffyArrivalDescriptorCount,
 		nullptr, 0, false, 0 }
 };
@@ -605,10 +597,10 @@ void Scene6030::runSaxophonePickupSequence() {
 		return;
 
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(12,
-		kScene6030SaxophoneDescriptorCount, kScene6030SaxophoneFrameMap,
-		ARRAYSIZE(kScene6030SaxophoneFrameMap), kSceneAnimationScenePlaced);
+		kScene6030SaxophoneDescriptorCount, nullptr, 0, kSceneAnimationScenePlaced);
 	const bool completed = playAnimationFrames(_actionOverlayPlayer,
-		AnimationFrameRange(1, 0x0c, kScene6030PoseFrameMillis).unskippable());
+		AnimationFrameRange(kScene6030SaxophoneDescriptorCount,
+			kScene6030PoseFrameMillis).unskippable());
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 	if (!completed)
 		return;

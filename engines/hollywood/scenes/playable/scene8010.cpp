@@ -88,15 +88,11 @@ const byte kScene8010FishermanFrameMap[] = {
 	19, 20, 21, 22
 };
 
-const byte kScene8010BoatFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7
-};
-
 const SceneLayerSpec kScene8010LayerSpecs[] = {
 	{ kSceneAnimationBehindActors, 5, kScene8010FishermanDescriptorCount,
 		kScene8010FishermanFrameMap, ARRAYSIZE(kScene8010FishermanFrameMap), true, 0 },
 	{ kSceneAnimationBehindActors, 6, kScene8010BoatDescriptorCount,
-		kScene8010BoatFrameMap, ARRAYSIZE(kScene8010BoatFrameMap), true, 0 }
+		nullptr, 0, true, 0 }
 };
 
 const byte kScene8010FishermanQuizLinePermutation[] = {

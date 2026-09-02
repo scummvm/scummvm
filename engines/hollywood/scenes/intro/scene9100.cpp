@@ -29,6 +29,7 @@
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/scenes/intro/scene9100.h"
 #include "hollywood/scenes/scene_data.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -69,12 +70,6 @@ const uint32 kTalkingFrameIntervalMillis = 125;
 const uint32 kEntryPathFrameIntervalMillis = 60;
 const uint32 kRonEntryPathDurationMillis = 4200;
 const uint32 kSueEntryPathDurationMillis = 3600;
-
-const byte kI10ForegroundFrameRemap[] = {
-	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
-	32, 33, 34, 35, 14, 15, 16, 16, 17, 18, 19, 29, 20, 21, 22, 23,
-	23, 24, 25, 26, 30, 22, 21, 20, 16
-};
 
 const Scene9100::SpeechTextStyle kDeskPrimaryBlueSpeech = { 0x78, 0xb9, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
 const Scene9100::SpeechTextStyle kInsetBlueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
@@ -906,7 +901,7 @@ void Scene9100::drawInitialForegroundFrame() {
 }
 
 void Scene9100::drawForegroundActorFrame(byte frameIndex) {
-	if (frameIndex >= ARRAYSIZE(kI10ForegroundFrameRemap))
+	if (frameIndex >= kQuillDeskFrameCount)
 		return;
 
 	_foregroundActorFrame = frameIndex;
@@ -915,18 +910,18 @@ void Scene9100::drawForegroundActorFrame(byte frameIndex) {
 }
 
 void Scene9100::restoreForegroundActorLayer() {
-	if (_foregroundActorFrame >= ARRAYSIZE(kI10ForegroundFrameRemap))
+	if (_foregroundActorFrame >= kQuillDeskFrameCount)
 		return;
 
-	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
+	const uint16 descriptorIndex = kQuillDeskFrames[_foregroundActorFrame];
 	restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
 void Scene9100::drawForegroundActorLayer() {
-	if (_foregroundActorFrame >= ARRAYSIZE(kI10ForegroundFrameRemap))
+	if (_foregroundActorFrame >= kQuillDeskFrameCount)
 		return;
 
-	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
+	const uint16 descriptorIndex = kQuillDeskFrames[_foregroundActorFrame];
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 

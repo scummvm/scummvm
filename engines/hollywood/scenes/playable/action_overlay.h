@@ -51,7 +51,7 @@ struct ActionOverlayOptions {
  *
  * Playback blocks its caller while scene events, animation, and drawing continue
  * between frames. The clamped frame range is [firstFrame, endFrame), with zero
- * endFrame meaning the end of frameMap. Frame events run in declaration order
+ * endFrame meaning the end of the playback sequence. Frame events run in declaration order
  * after their frame is installed. Frames normally hold for frameMillis,
  * including the last; noFinalFrameDelay() makes the terminal frame an
  * immediate handoff.
@@ -61,6 +61,22 @@ struct ActionOverlayOptions {
  * from the base framebuffer before each draw.
  */
 struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
+	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount, uint32 newFrameMillis) :
+			chunkIndex(newChunkIndex),
+			descriptorCount(newDescriptorCount),
+			frameMap(nullptr),
+			frameMapSize(0),
+			frameMillis(newFrameMillis),
+			heldFrame(-1),
+			bookendLastFrame(false),
+			appendFirstFrame(false),
+			reversePlayback(false),
+			hasDrawStratum(false),
+			drawStratum(kSceneAnimationInFrontOfActors),
+			restoreBackgroundBeforeDraw(false),
+			options() {
+	}
+
 	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
 			const byte *newFrameMap, uint newFrameMapSize, uint32 newFrameMillis) :
 			chunkIndex(newChunkIndex),
@@ -68,10 +84,45 @@ struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
 			frameMap(newFrameMap),
 			frameMapSize(newFrameMapSize),
 			frameMillis(newFrameMillis),
+			heldFrame(-1),
+			bookendLastFrame(false),
+			appendFirstFrame(false),
+			reversePlayback(false),
 			hasDrawStratum(false),
 			drawStratum(kSceneAnimationInFrontOfActors),
 			restoreBackgroundBeforeDraw(false),
 			options() {
+	}
+
+	ActionOverlaySpec &holdFirstFrame() {
+		return holdFrame(0);
+	}
+
+	ActionOverlaySpec &holdFrame(int frame) {
+		const uint frameCount = frameMap != nullptr ? frameMapSize : descriptorCount;
+		heldFrame = frame >= 0 && (uint)frame < frameCount ? frame : -1;
+		bookendLastFrame = false;
+		appendFirstFrame = false;
+		return *this;
+	}
+
+	ActionOverlaySpec &bookendWithLastFrame() {
+		heldFrame = -1;
+		bookendLastFrame = true;
+		appendFirstFrame = false;
+		return *this;
+	}
+
+	ActionOverlaySpec &returnToFirstFrame() {
+		heldFrame = -1;
+		bookendLastFrame = false;
+		appendFirstFrame = true;
+		return *this;
+	}
+
+	ActionOverlaySpec &reverse() {
+		reversePlayback = true;
+		return *this;
 	}
 
 	ActionOverlaySpec &drawAt(SceneAnimationStratum stratum) {
@@ -116,11 +167,40 @@ struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
 		return *this;
 	}
 
+	uint playbackFrameCount() const {
+		const uint frameCount = frameMap != nullptr ? frameMapSize : descriptorCount;
+		if (frameCount == 0)
+			return 0;
+		return frameCount + (heldFrame >= 0 || bookendLastFrame || appendFirstFrame ? 1 : 0);
+	}
+
+	uint targetFrame(uint playbackFrame) const {
+		const uint frameCount = frameMap != nullptr ? frameMapSize : descriptorCount;
+		if (frameCount == 0)
+			return 0;
+		if (bookendLastFrame) {
+			if (playbackFrame == 0 || (reversePlayback && playbackFrame == frameCount))
+				return frameCount - 1;
+			return reversePlayback ? frameCount - playbackFrame - 1 : playbackFrame - 1;
+		}
+		if (appendFirstFrame && playbackFrame == frameCount)
+			return 0;
+		uint frame = heldFrame < 0 || playbackFrame <= (uint)heldFrame ?
+			playbackFrame : playbackFrame - 1;
+		if (!reversePlayback)
+			return frame;
+		return frameCount - 1 - frame;
+	}
+
 	uint chunkIndex;
 	uint descriptorCount;
 	const byte *frameMap;
 	uint frameMapSize;
 	uint32 frameMillis;
+	int heldFrame;
+	bool bookendLastFrame;
+	bool appendFirstFrame;
+	bool reversePlayback;
 	bool hasDrawStratum;
 	SceneAnimationStratum drawStratum;
 	bool restoreBackgroundBeforeDraw;

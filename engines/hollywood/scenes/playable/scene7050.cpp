@@ -57,11 +57,6 @@ const byte kScene7050Chunk7FrameMap[] = {
 	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
 	4, 18, 19, 20, 21, 22, 23, 24, 26, 20, 19, 18, 0
 };
-const byte kScene7050Chunk8ReturnFrameMap[] = { 0, 0, 1, 2, 3 };
-const byte kScene7050Chunk11PickupItem10FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
 const uint kScene7050AttendantLayer = 0;
 const SceneLayerSpec kScene7050LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 7, kScene7050Chunk7DescriptorCount,
@@ -363,8 +358,8 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 
 void Scene7050::handleActionSlot01ReturnToG04() {
 	BlockingSequence(*this)
-		.actorReplacement(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
-			ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis)
+		.actorReplacement(ActionOverlaySpec(8, kScene7050Chunk8DescriptorCount,
+			kScene7050FrameMillis).holdFirstFrame())
 		.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene7050ReturnToG04State);
 }
@@ -374,7 +369,7 @@ void Scene7050::handleActionSlot10PickupItem10() {
 	GameplayState &state = _vm->gameState();
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
-		kScene7050Chunk11PickupItem10FrameMap, ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis)
+		kScene7050FrameMillis)
 		.commitAt(4, state.cloakroomRagVisible, 0)
 		.patchAt(4, 1));
 	addInventoryItem(0x10);

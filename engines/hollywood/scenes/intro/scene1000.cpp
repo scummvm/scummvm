@@ -22,6 +22,7 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/intro/scene1000.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -39,13 +40,6 @@ const uint kTitleBackgroundRefreshPhase = 7;
 const uint kTitleEndPhase = 0x32;
 const uint kTitleNearEndPhase = 0x31;
 const uint kTitleBackgroundRefreshBytes = 0x10000;
-
-const byte kTitleBlinkDescriptorFrameMap[] = {
-	0, 11, 0, 1, 2, 1, 0, 0,
-	1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 10, 10, 10, 10, 9, 8,
-	7, 6, 5, 4, 3, 2, 1, 0
-};
 
 Scene1000::Scene1000(HollywoodEngine *vm) :
 		ChapterIntroScene(vm, "title front-end"),
@@ -207,8 +201,8 @@ void Scene1000::renderOverlayFrame(bool forceDirty) {
 			_secondaryDirty = true;
 	}
 
-	const uint blinkMapIndex = MIN<uint>(_blinkFrameIndex, ARRAYSIZE(kTitleBlinkDescriptorFrameMap) - 1);
-	const byte blinkDescriptor = kTitleBlinkDescriptorFrameMap[blinkMapIndex];
+	const uint blinkMapIndex = MIN<uint>(_blinkFrameIndex, kTitleBlinkFrameCount - 1);
+	const byte blinkDescriptor = kTitleBlinkFrames[blinkMapIndex];
 
 	if (_blinkDirty) {
 		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[3], 0,

@@ -39,9 +39,6 @@ const uint16 kScene7080Chunk7DescriptorCount = 0x0b;
 const uint32 kScene7080FrameMillis = 75;
 const byte kScene7080TableItemColorId = 6;
 const byte kScene7080PostPickupTableItemId = 4;
-const byte kScene7080BackToG07FrameMap[] = {
-	0, 1, 2, 3
-};
 const byte kScene7080PickupItem13FrameMap[] = {
 	0, 6, 7, 8, 9, 10, 1, 2, 3, 3, 4, 5, 0
 };
@@ -170,9 +167,8 @@ AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 
 void Scene7080::handleBackToG07() {
 	BlockingSequence(*this)
-		.actorReplacement(6, kScene7080Chunk6DescriptorCount,
-			kScene7080BackToG07FrameMap, ARRAYSIZE(kScene7080BackToG07FrameMap),
-			kScene7080FrameMillis)
+		.actorReplacement(ActionOverlaySpec(6, kScene7080Chunk6DescriptorCount,
+			kScene7080FrameMillis))
 		.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene7080BackToG07State);
 }
