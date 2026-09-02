@@ -4050,6 +4050,10 @@ msgstr "Pausar"
 msgid "Game menu"
 msgstr "Menú del juego"
 
+#: engines/mohawk/zoombini.cpp:622
+msgid "Ingame menu"
+msgstr "Menú interno del juego"
+
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:113 engines/access/metaengine.cpp:246
@@ -19586,3 +19590,98 @@ msgstr ""
 
 #~ msgid "Active filter mode: Nearest"
 #~ msgstr "Modo de filtro activo: más cercano"
+
+#: engines/mohawk/zoombini.cpp:641
+msgctxt "zoombini-keymap"
+msgid "OK"
+msgstr "Bien"
+
+#: engines/mohawk/zoombini.cpp:673
+msgctxt "zoombini-keymap"
+msgid "Options"
+msgstr "Opciones"
+
+#: engines/mohawk/zoombini.cpp:679
+msgctxt "zoombini-keymap"
+msgid "Ingame Options"
+msgstr "Opciones dentro del juego"
+
+#: engines/mohawk/zoombini.cpp:686
+msgctxt "zoombini-keymap"
+msgid "Toggle SFX"
+msgstr "Activar/desactivar los efectos de sonido"
+
+#: engines/mohawk/zoombini.cpp:691
+msgctxt "zoombini-keymap"
+msgid "Toggle BGM"
+msgstr "Activar/desactivar la música de fondo"
+
+#: engines/mohawk/zoombini.cpp:696
+msgctxt "zoombini-keymap"
+msgid "Toggle sticky mouse"
+msgstr "Activar/desactivar el control de ratón"
+
+#: engines/mohawk/zoombini.cpp:701
+msgctxt "zoombini-keymap"
+msgid "Toggle auto sticky mouse"
+msgstr "Activar/desactivar el control automático del ratón"
+
+#: engines/mohawk/zoombini.cpp:706
+msgctxt "zoombini-keymap"
+msgid "Toggle transitions"
+msgstr "Activar/desactivar las transiciones"
+
+#: engines/mohawk/zoombini.cpp:711
+msgctxt "zoombini-keymap"
+msgid "Toggle action level"
+msgstr "Activar/desactivar el nivel de acción"
+
+#: engines/mohawk/zoombini.cpp:716
+msgctxt "zoombini-keymap"
+msgid "Toggle cursor"
+msgstr "Activar/desactivar el cursor"
+
+#: engines/mohawk/zoombini.cpp:729
+msgctxt "zoombini-keymap"
+msgid "Replay puzzle instructions SFX"
+msgstr "Repetir los efectos de sonido de las instrucciones del puzle"
+
+#: engines/mohawk/zoombini.cpp:737
+msgctxt "zoombini-keymap"
+msgid "Toggle Help dialog narration"
+msgstr "Activar/desactivar la narración del diálogo de ayuda"
+
+#: engines/mohawk/zoombini.cpp:738
+msgctxt "zoombini-keymap"
+msgid "Toggle Immersion TouchSense (not implemented)"
+msgstr "Activar/desactivar Immersion TouchSense (no implementado)"
+
+#: engines/mohawk/zoombini.cpp:744
+msgctxt "zoombini-keymap"
+msgid "Toggle practice mode (Map)"
+msgstr "Activar/desactivar el modo práctica (mapa)"
+
+#: engines/mohawk/zoombini.cpp:753
+msgctxt "zoombini-keymap"
+msgid "New game"
+msgstr "Nueva partida"
+
+#: engines/mohawk/zoombini.cpp:680 engines/mohawk/zoombini.cpp:758
+msgctxt "zoombini-keymap"
+msgid "Load game"
+msgstr "Cargar partida"
+
+#: engines/mohawk/zoombini.cpp:763
+msgctxt "zoombini-keymap"
+msgid "Save game"
+msgstr "Grabar partida"
+
+#: engines/mohawk/zoombini.cpp:764
+msgctxt "zoombini-keymap"
+msgid "Delete game"
+msgstr "Borrar partida"
+
+#: engines/mohawk/zoombini.cpp:773
+msgctxt "zoombini-keymap"
+msgid "Quit"
+msgstr "Salir"
