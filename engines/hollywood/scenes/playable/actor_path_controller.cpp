@@ -27,8 +27,6 @@
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
-#include <math.h>
-
 namespace Hollywood {
 
 const uint kPathActorFacingCount = 6;

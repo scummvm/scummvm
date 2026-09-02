@@ -20,18 +20,6 @@
  */
 
 #include "hollywood/hollywood.h"
-#include "hollywood/console.h"
-#include "hollywood/font.h"
-#include "hollywood/gameplay/travel_screen.h"
-#include "hollywood/scenes/scene_registry.h"
-#include "hollywood/scenes/intro/scene9000.h"
-#include "hollywood/scenes/intro/scene9010.h"
-#include "hollywood/scenes/intro/scene9030.h"
-#include "hollywood/scenes/intro/scene9050.h"
-#include "hollywood/scenes/intro/scene9100.h"
-#include "hollywood/scenes/intro/scene9110.h"
-#include "hollywood/scenes/intro/scene9120.h"
-#include "hollywood/resource.h"
 
 #include "audio/mixer.h"
 #include "common/archive.h"
@@ -42,6 +30,19 @@
 #include "engines/util.h"
 #include "graphics/pixelformat.h"
 #include "graphics/thumbnail.h"
+
+#include "hollywood/console.h"
+#include "hollywood/font.h"
+#include "hollywood/gameplay/travel_screen.h"
+#include "hollywood/resource.h"
+#include "hollywood/scenes/intro/scene9000.h"
+#include "hollywood/scenes/intro/scene9010.h"
+#include "hollywood/scenes/intro/scene9030.h"
+#include "hollywood/scenes/intro/scene9050.h"
+#include "hollywood/scenes/intro/scene9100.h"
+#include "hollywood/scenes/intro/scene9110.h"
+#include "hollywood/scenes/intro/scene9120.h"
+#include "hollywood/scenes/scene_registry.h"
 
 namespace Hollywood {
 
