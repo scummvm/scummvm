@@ -107,6 +107,7 @@ PlayableSceneConfig scene4050Config() {
 	config.setTextResources(kScene4050Resource003RowsOffsetIndex, kScene4050SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
 	config.drawDefaultActor = false;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -157,10 +158,6 @@ void Scene4050::runCustomEntrySequence() {
 
 	state.scene4050EntryLineSeen = true;
 	beginRonResourceSpeechLine(1, 0);
-}
-
-bool Scene4050::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4050::runExitSideEffectsAfterLoop() {

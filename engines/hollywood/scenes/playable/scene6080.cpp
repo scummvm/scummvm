@@ -93,6 +93,7 @@ static PlayableSceneConfig scene6080Config() {
 	config.setTextResources(kScene6080Resource003RowsOffsetIndex, kScene6080SpeechCueDescriptorTableOffset);
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.walkablePaletteMaxRegion = 1;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -140,10 +141,6 @@ void Scene6080::runCustomEntrySequence() {
 		runReturnConversation();
 	else
 		state.scene6080Visited = true;
-}
-
-bool Scene6080::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene6080::prepareCustomGameplayLoop() {

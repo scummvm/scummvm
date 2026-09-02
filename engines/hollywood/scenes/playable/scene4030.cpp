@@ -210,6 +210,7 @@ PlayableSceneConfig scene4030Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet87);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -292,10 +293,6 @@ void Scene4030::runCustomEntrySequence() {
 	}
 	drawPlayableComposite();
 	presentFrame();
-}
-
-bool Scene4030::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4030::runExitSideEffectsAfterLoop() {

@@ -156,6 +156,7 @@ static PlayableSceneConfig scene6090Config() {
 	config.setTextResources(kScene6090Resource003RowsOffsetIndex, kScene6090SpeechCueDescriptorTableOffset);
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet87);
 	config.walkablePaletteMaxRegion = 1;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -362,10 +363,6 @@ void Scene6090::runCustomEntrySequence() {
 		beginSecondarySpeechLine(15, 5);
 	runOpeningConversation();
 	_manualSequenceActive = false;
-}
-
-bool Scene6090::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 bool Scene6090::playLayerTransition(uint layerId, byte firstFrame, byte lastFrame,

@@ -87,6 +87,7 @@ static PlayableSceneConfig scene5100Config() {
 	config.setTextResources(0, kScene5100SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
 	config.useActorDepthTest = false;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -126,10 +127,6 @@ void Scene5100::drawCustomForegroundComposite(int activeWorldX, int activeWorldY
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(6))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
-}
-
-bool Scene5100::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5100::runCustomEntrySequence() {

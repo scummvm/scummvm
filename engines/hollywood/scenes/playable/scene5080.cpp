@@ -64,6 +64,7 @@ static PlayableSceneConfig scene5080Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet5A);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -118,10 +119,6 @@ void Scene5080::prepareCustomComposite(bool drawActors, byte activeFacing,
 	(void)actorDrawOrderMode;
 	if (drawActors)
 		updateSceneActorDepthAndPalette(activeFacing, activeWorldX, activeWorldY);
-}
-
-bool Scene5080::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5080::runCustomEntrySequence() {

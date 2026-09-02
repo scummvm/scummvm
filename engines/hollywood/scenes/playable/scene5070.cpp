@@ -91,6 +91,7 @@ PlayableSceneConfig scene5070Config() {
 		SceneActorPose(0x2e3, 0x1d6, 5));
 	config.setActorResources(kScene5070ActorBankTableEntry, kScene5070ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5070SpeechCueDescriptorTableOffset);
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -119,10 +120,6 @@ void Scene5070::drawCustomForegroundComposite(int activeWorldX, int activeWorldY
 	(void)activeWorldY;
 	if (_sceneLayers.layerVisible(kScene5070MineCartLayer))
 		drawMineCartForeground();
-}
-
-bool Scene5070::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5070::runCustomEntrySequence() {

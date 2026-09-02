@@ -180,6 +180,7 @@ static PlayableSceneConfig scene2100Config() {
 	config.setTextResources(kScene2100Resource003RowsOffsetIndex, kScene2100SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -239,10 +240,6 @@ void Scene2100::runCustomEntrySequence() {
 		runEntryFromScene2010();
 		break;
 	}
-}
-
-bool Scene2100::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2100::runExitSideEffectsAfterLoop() {

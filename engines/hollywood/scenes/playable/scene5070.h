@@ -35,7 +35,6 @@ public:
 private:
 	void initializeCustomPreviewState() override;
 	void drawCustomForegroundComposite(int activeWorldX, int activeWorldY) override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
