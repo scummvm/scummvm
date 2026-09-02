@@ -51,18 +51,18 @@ public:
 	void startPrimaryDialogueSpeech(byte animationGroup, byte baseFrame);
 	void stopPrimaryDialogueSpeech(byte invalidPrimaryGroup, byte defaultPrimaryFrame);
 
-	SpeechPlayer player;
-	SpeechOverlay secondaryOverlay;
-	SpeechOverlay primaryOverlay;
-	byte primaryLeftSpeechLastFrame;
-	byte primaryDialogueSpeechLastFrame;
-	byte primaryDialogueSpeechGroup;
-	bool primaryLeftSpeechActive;
-	bool primaryDialogueSpeechActive;
-	uint32 secondaryActorTimerAccumulator;
-	uint32 primaryLeftSpeechTimerAccumulator;
-	uint32 primaryDialogueSpeechTimerAccumulator;
-	byte secondaryActorFrame;
+	SpeechPlayer _player;
+	SpeechOverlay _secondaryOverlay;
+	SpeechOverlay _primaryOverlay;
+	byte _primaryLeftSpeechLastFrame;
+	byte _primaryDialogueSpeechLastFrame;
+	byte _primaryDialogueSpeechGroup;
+	bool _primaryLeftSpeechActive;
+	bool _primaryDialogueSpeechActive;
+	uint32 _secondaryActorTimerAccumulator;
+	uint32 _primaryLeftSpeechTimerAccumulator;
+	uint32 _primaryDialogueSpeechTimerAccumulator;
+	byte _secondaryActorFrame;
 };
 
 } // End of namespace Hollywood

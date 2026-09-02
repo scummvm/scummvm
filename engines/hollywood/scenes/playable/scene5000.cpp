@@ -137,7 +137,7 @@ void Scene5000::runPresentation() {
 			++tick;
 
 			if (tick == kScene5000PatchTick)
-				drawResourceBlockList(_resources.arena, _resources.chunkOffsets[2],
+				drawResourceBlockList(_resources._arena, _resources._chunkOffsets[2],
 					_sceneFramebuffer.managedSurface());
 			if (tick == kScene5000BackgroundRefreshTick)
 				memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(),
@@ -159,11 +159,11 @@ void Scene5000::drawPresentationFrame(bool spriteDirty, int previousClipFrame) {
 	const uint mapIndex = MIN<uint>(_spriteFrame, ARRAYSIZE(kScene5000SpriteFrameMap) - 1);
 	const byte descriptor = kScene5000SpriteFrameMap[mapIndex];
 	if (spriteDirty) {
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[3], 0,
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[3], 0,
 			kScene5000SpriteDescriptorCount, descriptor, _baseFramebuffer.surface(),
 			_sceneFramebuffer.surface());
 	}
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[3], 0,
 		kScene5000SpriteDescriptorCount, descriptor, _sceneFramebuffer.managedSurface());
 	for (int clipFrame = previousClipFrame + 1; clipFrame <= _clipFrame; ++clipFrame)
 		drawClipFrameDelta(4, kScene5000ClipDescriptorCount, clipFrame);

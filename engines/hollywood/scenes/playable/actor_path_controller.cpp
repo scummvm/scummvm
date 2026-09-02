@@ -106,8 +106,8 @@ ActorPathController::ActorPathController() :
 void ActorPathController::initialize(uint routeBoundaryPointCount, uint routeStepCount, uint paletteRegionCount,
 		uint boundaryCandidateCount, uint routeStepCountPerRegionPair,
 		const byte *defaultStepDeltas, uint defaultStepDeltaCount) {
-	routeBoundaryPoints.resize(routeBoundaryPointCount);
-	routeSteps.resize(routeStepCount);
+	_routeBoundaryPoints.resize(routeBoundaryPointCount);
+	_routeSteps.resize(routeStepCount);
 	_paletteRegionCount = paletteRegionCount;
 	_boundaryCandidateCount = boundaryCandidateCount;
 	_routeStepCountPerRegionPair = routeStepCountPerRegionPair;
@@ -116,33 +116,33 @@ void ActorPathController::initialize(uint routeBoundaryPointCount, uint routeSte
 
 bool ActorPathController::loadRouteTables(const Common::Array<byte> &metadata, uint routeBoundaryOffset,
 		uint routeStepsOffset, const char *archiveName) {
-	const uint boundaryBytes = routeBoundaryPoints.size() * 4;
+	const uint boundaryBytes = _routeBoundaryPoints.size() * 4;
 	if (metadata.size() < routeBoundaryOffset + boundaryBytes ||
-			metadata.size() < routeStepsOffset + routeSteps.size()) {
+			metadata.size() < routeStepsOffset + _routeSteps.size()) {
 		warning("%s chunk 4 is too short for path route tables", archiveName);
 		return false;
 	}
 
-	for (uint i = 0; i < routeBoundaryPoints.size(); ++i) {
+	for (uint i = 0; i < _routeBoundaryPoints.size(); ++i) {
 		const uint offset = routeBoundaryOffset + i * 4;
-		routeBoundaryPoints[i].x = readSint16LE(metadata, offset);
-		routeBoundaryPoints[i].y = readSint16LE(metadata, offset + 2);
+		_routeBoundaryPoints[i].x = readSint16LE(metadata, offset);
+		_routeBoundaryPoints[i].y = readSint16LE(metadata, offset + 2);
 	}
-	memcpy(routeSteps.data(), metadata.data() + routeStepsOffset, routeSteps.size());
+	memcpy(_routeSteps.data(), metadata.data() + routeStepsOffset, _routeSteps.size());
 	return true;
 }
 
 void ActorPathController::resetStepDeltas(const byte *table, uint tableSize) {
-	stepDeltas.resize(tableSize);
+	_stepDeltas.resize(tableSize);
 	if (table != nullptr && tableSize != 0)
-		memcpy(stepDeltas.data(), table, tableSize);
+		memcpy(_stepDeltas.data(), table, tableSize);
 }
 
 void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDelegate &delegate,
 		int startX, int startY, int targetX, int targetY, byte initialDrawOrderMode,
 		byte initialFacing, byte initialCel, byte finalFacing, byte finalCel, byte invalidFacing,
 		byte invalidCel, const byte *baseStepDeltas, uint baseStepDeltaCount) {
-	frames.clear();
+	_frames.clear();
 	resetStepDeltas(baseStepDeltas, baseStepDeltaCount);
 
 	ActorPathBuildState state;
@@ -174,10 +174,10 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 			const uint routeOffset =
 				((uint)routeStartRegion * _paletteRegionCount + routeTargetRegion) *
 				_routeStepCountPerRegionPair + stepIndex;
-			if (routeOffset >= routeSteps.size())
+			if (routeOffset >= _routeSteps.size())
 				break;
 
-			const byte nextRegion = routeSteps[routeOffset];
+			const byte nextRegion = _routeSteps[routeOffset];
 			if (nextRegion == 0 || nextRegion >= _paletteRegionCount)
 				break;
 
@@ -226,12 +226,12 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 		invalidFacing, invalidCel);
 	if (restoredStepDeltas)
 		resetStepDeltas(baseStepDeltas, baseStepDeltaCount);
-	debugC(2, kDebugPath, "ActorPath route end: frames=%u", frames.size());
+	debugC(2, kDebugPath, "ActorPath route end: frames=%u", _frames.size());
 }
 
 void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing, byte invalidFacing, byte invalidCel) {
-	const uint firstFrame = frames.size();
+	const uint firstFrame = _frames.size();
 	if (targetX == state.x && targetY == state.y) {
 		debugC(3, kDebugPath,
 			"ActorPath build zero-distance: pos=(%d,%d) facing=%u cel=%u finalFacing=%u finalCel=%u requestedFacing=%d",
@@ -249,7 +249,7 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 			state.cel = finalCel;
 		appendFrame(state);
 		state.cel = nextCel(state.cel);
-		debugC(3, kDebugPath, "ActorPath build zero-distance end: addedFrames=%u", frames.size() - firstFrame);
+		debugC(3, kDebugPath, "ActorPath build zero-distance end: addedFrames=%u", _frames.size() - firstFrame);
 		return;
 	}
 
@@ -315,7 +315,7 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 	state.cel = nextCel(state.cel);
 	debugC(3, kDebugPath,
 		"ActorPath build segment end: addedFrames=%u finalState=(%d,%d f=%u c=%u d=%u)",
-		frames.size() - firstFrame, state.x, state.y, state.facing, state.cel, state.drawOrderMode);
+		_frames.size() - firstFrame, state.x, state.y, state.facing, state.cel, state.drawOrderMode);
 }
 
 void ActorPathController::appendFrame(const ActorPathBuildState &state) {
@@ -325,7 +325,7 @@ void ActorPathController::appendFrame(const ActorPathBuildState &state) {
 	frame.cel = state.cel;
 	frame.worldX = (int16)CLIP<int>(state.x, -32768, 32767);
 	frame.worldY = (int16)CLIP<int>(state.y, -32768, 32767);
-	frames.push_back(frame);
+	_frames.push_back(frame);
 }
 
 ScenePoint ActorPathController::nearestPaletteRouteBoundaryPoint(int startX, int startY,
@@ -339,10 +339,10 @@ ScenePoint ActorPathController::nearestPaletteRouteBoundaryPoint(int startX, int
 		_boundaryCandidateCount;
 	for (uint candidate = 0; candidate < _boundaryCandidateCount && candidate < ARRAYSIZE(points); ++candidate) {
 		const uint pointIndex = baseIndex + candidate;
-		if (pointIndex >= routeBoundaryPoints.size())
+		if (pointIndex >= _routeBoundaryPoints.size())
 			break;
 
-		const ScenePoint point = routeBoundaryPoints[pointIndex];
+		const ScenePoint point = _routeBoundaryPoints[pointIndex];
 		points[candidate] = point;
 		scores[candidate] =
 			sqrtf((float)ABS(startX - point.x)) +
@@ -365,10 +365,10 @@ ScenePoint ActorPathController::bestPaletteRouteBoundaryPoint(int startX, int st
 		_boundaryCandidateCount;
 	for (uint candidate = 0; candidate < _boundaryCandidateCount && candidate < ARRAYSIZE(points); ++candidate) {
 		const uint pointIndex = baseIndex + candidate;
-		if (pointIndex >= routeBoundaryPoints.size())
+		if (pointIndex >= _routeBoundaryPoints.size())
 			break;
 
-		const ScenePoint point = routeBoundaryPoints[pointIndex];
+		const ScenePoint point = _routeBoundaryPoints[pointIndex];
 		points[candidate] = point;
 		scores[candidate] =
 			sqrtf((float)ABS(startX - point.x)) +
@@ -440,10 +440,10 @@ uint ActorPathController::stepDelta(byte facing, byte cel) const {
 		return 0;
 
 	const uint offset = (uint)facing * 12 + cel - 1;
-	if (offset >= stepDeltas.size())
+	if (offset >= _stepDeltas.size())
 		return 0;
 
-	return stepDeltas[offset];
+	return _stepDeltas[offset];
 }
 
 byte ActorPathController::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {

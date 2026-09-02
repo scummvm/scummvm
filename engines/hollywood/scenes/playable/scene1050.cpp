@@ -165,10 +165,10 @@ void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_sceneLayers.layer(kScene1050LargeOverlayLayer));
-	if (_actionOverlayPlayer.layer.chunkIndex == 12)
+	if (_actionOverlayPlayer._layer.chunkIndex == 12)
 		drawActionOverlayLayer();
 	drawResourceSpriteLayer(_sceneLayers.layer(kScene1050SmallOverlayLayer));
-	if (_actionOverlayPlayer.layer.chunkIndex != 12)
+	if (_actionOverlayPlayer._layer.chunkIndex != 12)
 		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);

@@ -400,14 +400,14 @@ void Scene9090::composeFrame() {
 void Scene9090::drawOfficePatch(uint chunkIndex) {
 	if (chunkIndex >= SceneResources::kResourceChunkCount)
 		return;
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_sceneFramebuffer.surface());
 }
 
 void Scene9090::drawDeskActor() {
 	if (_deskFrame >= ARRAYSIZE(kScene9090DeskFrameMap))
 		return;
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[5], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[5], 0,
 		kScene9090DeskDescriptorCount, kScene9090DeskFrameMap[_deskFrame],
 		_sceneFramebuffer.surface());
 }
@@ -415,14 +415,14 @@ void Scene9090::drawDeskActor() {
 void Scene9090::drawInsetActor() {
 	if (_insetFrame >= ARRAYSIZE(kScene9090InsetFrameMap))
 		return;
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[7], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[7], 0,
 		kScene9090InsetDescriptorCount, kScene9090InsetFrameMap[_insetFrame],
 		_sceneFramebuffer.surface());
 }
 
 void Scene9090::drawClock() {
 	for (uint i = 0; i < 3; ++i) {
-		drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[10 + i], 0,
+		drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[10 + i], 0,
 			kScene9090ClockDescriptorCount, _clockFrames[i], _sceneFramebuffer.surface());
 	}
 }

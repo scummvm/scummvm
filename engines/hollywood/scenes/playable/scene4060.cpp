@@ -651,7 +651,7 @@ void Scene4060::runFirstEntrySequence() {
 	BlockingSequence sequence(*this);
 	sequence.fadeFromBlack()
 		.sound(0x31)
-		.presentedLayerFrames(_actionOverlayPlayer.layer,
+		.presentedLayerFrames(_actionOverlayPlayer._layer,
 			AnimationFrameRange(1, ARRAYSIZE(kScene4060EntryOverlayFrameMap) - 1,
 				kScene4060FrameMillis).noFinalFrameDelay());
 	_actionOverlayPlayer.finish(previousHideActiveActor);

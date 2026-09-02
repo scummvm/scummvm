@@ -24,53 +24,53 @@
 namespace Hollywood {
 
 SpeechController::SpeechController(Common::Language language, bool speechEnabled) :
-		player(language, speechEnabled),
-		primaryLeftSpeechLastFrame(0),
-		primaryDialogueSpeechLastFrame(0),
-		primaryDialogueSpeechGroup(0),
-		primaryLeftSpeechActive(false),
-		primaryDialogueSpeechActive(false),
-		secondaryActorTimerAccumulator(0),
-		primaryLeftSpeechTimerAccumulator(0),
-		primaryDialogueSpeechTimerAccumulator(0),
-		secondaryActorFrame(0) {
+		_player(language, speechEnabled),
+		_primaryLeftSpeechLastFrame(0),
+		_primaryDialogueSpeechLastFrame(0),
+		_primaryDialogueSpeechGroup(0),
+		_primaryLeftSpeechActive(false),
+		_primaryDialogueSpeechActive(false),
+		_secondaryActorTimerAccumulator(0),
+		_primaryLeftSpeechTimerAccumulator(0),
+		_primaryDialogueSpeechTimerAccumulator(0),
+		_secondaryActorFrame(0) {
 	initialize(0, 0);
 }
 
 void SpeechController::initialize(byte secondaryTextColor, byte primaryTextColor) {
-	secondaryOverlay.visible = false;
-	secondaryOverlay.colorIndex = secondaryTextColor;
-	secondaryOverlay.centerX = 0;
-	secondaryOverlay.topY = 0;
-	secondaryOverlay.lines.clear();
-	primaryOverlay.visible = false;
-	primaryOverlay.colorIndex = primaryTextColor;
-	primaryOverlay.centerX = 0;
-	primaryOverlay.topY = 0;
-	primaryOverlay.lines.clear();
+	_secondaryOverlay.visible = false;
+	_secondaryOverlay.colorIndex = secondaryTextColor;
+	_secondaryOverlay.centerX = 0;
+	_secondaryOverlay.topY = 0;
+	_secondaryOverlay.lines.clear();
+	_primaryOverlay.visible = false;
+	_primaryOverlay.colorIndex = primaryTextColor;
+	_primaryOverlay.centerX = 0;
+	_primaryOverlay.topY = 0;
+	_primaryOverlay.lines.clear();
 }
 
 void SpeechController::resetRuntimeState(byte invalidPrimaryGroup, byte defaultPrimaryFrame) {
-	primaryLeftSpeechLastFrame = 0;
-	primaryDialogueSpeechLastFrame = defaultPrimaryFrame;
-	primaryDialogueSpeechGroup = invalidPrimaryGroup;
-	primaryLeftSpeechActive = false;
-	primaryDialogueSpeechActive = false;
-	secondaryActorTimerAccumulator = 0;
-	primaryLeftSpeechTimerAccumulator = 0;
-	primaryDialogueSpeechTimerAccumulator = 0;
-	secondaryActorFrame = 0;
+	_primaryLeftSpeechLastFrame = 0;
+	_primaryDialogueSpeechLastFrame = defaultPrimaryFrame;
+	_primaryDialogueSpeechGroup = invalidPrimaryGroup;
+	_primaryLeftSpeechActive = false;
+	_primaryDialogueSpeechActive = false;
+	_secondaryActorTimerAccumulator = 0;
+	_primaryLeftSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechTimerAccumulator = 0;
+	_secondaryActorFrame = 0;
 	clearAllOverlays();
 }
 
 void SpeechController::clearSecondaryOverlay() {
-	secondaryOverlay.visible = false;
-	secondaryOverlay.lines.clear();
+	_secondaryOverlay.visible = false;
+	_secondaryOverlay.lines.clear();
 }
 
 void SpeechController::clearPrimaryOverlay() {
-	primaryOverlay.visible = false;
-	primaryOverlay.lines.clear();
+	_primaryOverlay.visible = false;
+	_primaryOverlay.lines.clear();
 }
 
 void SpeechController::clearAllOverlays() {
@@ -79,20 +79,20 @@ void SpeechController::clearAllOverlays() {
 }
 
 void SpeechController::prepareSecondaryActorSpeech() {
-	secondaryActorFrame = 0;
-	secondaryActorTimerAccumulator = 0;
+	_secondaryActorFrame = 0;
+	_secondaryActorTimerAccumulator = 0;
 }
 
 void SpeechController::advanceSecondaryActorSpeechAnimation(uint32 delta, Common::RandomSource &random,
 		uint32 frameMillis, byte frameCount) {
-	if (!secondaryOverlay.visible) {
+	if (!_secondaryOverlay.visible) {
 		prepareSecondaryActorSpeech();
 		return;
 	}
 
-	secondaryActorTimerAccumulator += delta;
-	while (secondaryActorTimerAccumulator >= frameMillis) {
-		secondaryActorTimerAccumulator -= frameMillis;
+	_secondaryActorTimerAccumulator += delta;
+	while (_secondaryActorTimerAccumulator >= frameMillis) {
+		_secondaryActorTimerAccumulator -= frameMillis;
 		advanceSecondaryActorSpeechFrame(random, frameCount);
 	}
 }
@@ -101,25 +101,25 @@ void SpeechController::advanceSecondaryActorSpeechFrame(Common::RandomSource &ra
 	if (frameCount == 0)
 		return;
 
-	byte nextFrame = secondaryActorFrame;
-	for (uint attempt = 0; attempt < 8 && nextFrame == secondaryActorFrame; ++attempt)
+	byte nextFrame = _secondaryActorFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _secondaryActorFrame; ++attempt)
 		nextFrame = (byte)random.getRandomNumber(frameCount - 1);
 
-	if (nextFrame == secondaryActorFrame)
-		nextFrame = (byte)((secondaryActorFrame + 1) % frameCount);
+	if (nextFrame == _secondaryActorFrame)
+		nextFrame = (byte)((_secondaryActorFrame + 1) % frameCount);
 
-	secondaryActorFrame = nextFrame;
+	_secondaryActorFrame = nextFrame;
 }
 
 byte SpeechController::advancePrimaryLeftSpeechFrame(Common::RandomSource &random) {
-	byte nextFrame = primaryLeftSpeechLastFrame;
-	for (uint attempt = 0; attempt < 8 && nextFrame == primaryLeftSpeechLastFrame; ++attempt)
+	byte nextFrame = _primaryLeftSpeechLastFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryLeftSpeechLastFrame; ++attempt)
 		nextFrame = (byte)random.getRandomNumber(3);
 
-	if (nextFrame == primaryLeftSpeechLastFrame)
-		nextFrame = (byte)((primaryLeftSpeechLastFrame + 1) % 4);
+	if (nextFrame == _primaryLeftSpeechLastFrame)
+		nextFrame = (byte)((_primaryLeftSpeechLastFrame + 1) % 4);
 
-	primaryLeftSpeechLastFrame = nextFrame;
+	_primaryLeftSpeechLastFrame = nextFrame;
 	return nextFrame;
 }
 
@@ -129,38 +129,38 @@ byte SpeechController::advancePrimaryDialogueSpeechFrame(Common::RandomSource &r
 		return baseFrame;
 
 	const byte lastFrame = baseFrame + frameCount - 1;
-	byte nextFrame = primaryDialogueSpeechLastFrame;
-	for (uint attempt = 0; attempt < 8 && nextFrame == primaryDialogueSpeechLastFrame; ++attempt)
+	byte nextFrame = _primaryDialogueSpeechLastFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryDialogueSpeechLastFrame; ++attempt)
 		nextFrame = (byte)(baseFrame + random.getRandomNumber(frameCount - 1));
 
-	if (nextFrame == primaryDialogueSpeechLastFrame)
+	if (nextFrame == _primaryDialogueSpeechLastFrame)
 		nextFrame = nextFrame >= lastFrame ? baseFrame : (byte)(nextFrame + 1);
 
-	primaryDialogueSpeechLastFrame = nextFrame;
+	_primaryDialogueSpeechLastFrame = nextFrame;
 	return nextFrame;
 }
 
 void SpeechController::startPrimaryLeftSpeech() {
-	primaryLeftSpeechActive = true;
+	_primaryLeftSpeechActive = true;
 }
 
 void SpeechController::stopPrimaryLeftSpeech() {
-	primaryLeftSpeechActive = false;
-	primaryLeftSpeechTimerAccumulator = 0;
+	_primaryLeftSpeechActive = false;
+	_primaryLeftSpeechTimerAccumulator = 0;
 }
 
 void SpeechController::startPrimaryDialogueSpeech(byte animationGroup, byte baseFrame) {
-	primaryDialogueSpeechActive = true;
-	primaryDialogueSpeechGroup = animationGroup;
-	primaryDialogueSpeechLastFrame = baseFrame;
-	primaryDialogueSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechActive = true;
+	_primaryDialogueSpeechGroup = animationGroup;
+	_primaryDialogueSpeechLastFrame = baseFrame;
+	_primaryDialogueSpeechTimerAccumulator = 0;
 }
 
 void SpeechController::stopPrimaryDialogueSpeech(byte invalidPrimaryGroup, byte defaultPrimaryFrame) {
-	primaryDialogueSpeechActive = false;
-	primaryDialogueSpeechGroup = invalidPrimaryGroup;
-	primaryDialogueSpeechTimerAccumulator = 0;
-	primaryDialogueSpeechLastFrame = defaultPrimaryFrame;
+	_primaryDialogueSpeechActive = false;
+	_primaryDialogueSpeechGroup = invalidPrimaryGroup;
+	_primaryDialogueSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechLastFrame = defaultPrimaryFrame;
 }
 
 } // End of namespace Hollywood

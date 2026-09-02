@@ -32,29 +32,29 @@ namespace Hollywood {
 void SceneSurfaceState::initialize(uint paletteSize, uint paletteMaskOriginalSize,
 		uint paletteMaskUsedBytes, uint paletteMapPageSize, uint paletteRegionCount,
 		uint actorPaletteBaseSize) {
-	paletteResource.resize(paletteSize);
-	paletteCurrent.resize(paletteSize);
-	actorPaletteBase.resize(actorPaletteBaseSize);
+	_paletteResource.resize(paletteSize);
+	_paletteCurrent.resize(paletteSize);
+	_actorPaletteBase.resize(actorPaletteBaseSize);
 	initializeFramebuffers();
-	paletteMaskOriginal.resize(paletteMaskOriginalSize);
-	fullPaletteRegionMask.resize(paletteMaskUsedBytes);
-	walkablePaletteMask.resize(paletteMaskUsedBytes);
-	colorToActorDepthClassMap.resize(paletteMapPageSize);
-	presentationPaletteRemapTable.resize(paletteMapPageSize);
-	for (uint i = 0; i < presentationPaletteRemapTable.size(); ++i)
-		presentationPaletteRemapTable[i] = 0;
-	actorDepthYThresholds.resize(paletteRegionCount);
-	drawActorDepthYThresholds.resize(paletteRegionCount);
-	screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+	_paletteMaskOriginal.resize(paletteMaskOriginalSize);
+	_fullPaletteRegionMask.resize(paletteMaskUsedBytes);
+	_walkablePaletteMask.resize(paletteMaskUsedBytes);
+	_colorToActorDepthClassMap.resize(paletteMapPageSize);
+	_presentationPaletteRemapTable.resize(paletteMapPageSize);
+	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
+		_presentationPaletteRemapTable[i] = 0;
+	_actorDepthYThresholds.resize(paletteRegionCount);
+	_drawActorDepthYThresholds.resize(paletteRegionCount);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 }
 
 void SceneSurfaceState::initializeFramebuffers() {
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	baseFramebufferOriginal.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	baseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	sceneFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	savedFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_baseFramebufferOriginal.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_baseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_sceneFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_savedFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
 }
 
 uint SceneSurfaceState::framebufferByteCount() const {
@@ -70,15 +70,15 @@ const byte *SceneSurfaceState::framebufferPixels(const Graphics::ManagedSurface 
 }
 
 void SceneSurfaceState::copyBaseFramebufferToSceneFramebuffer() {
-	sceneFramebuffer.copyRectToSurface(baseFramebuffer.rawSurface(), 0, 0,
+	_sceneFramebuffer.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 }
 
 void SceneSurfaceState::restoreBaseFramebufferFromOriginal() {
-	if (baseFramebufferOriginal.empty())
+	if (_baseFramebufferOriginal.empty())
 		return;
 
-	baseFramebuffer.copyRectToSurface(baseFramebufferOriginal.rawSurface(), 0, 0,
+	_baseFramebuffer.copyRectToSurface(_baseFramebufferOriginal.rawSurface(), 0, 0,
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 }
 
@@ -92,17 +92,17 @@ byte SceneSurfaceState::savedFramebufferPixelAt(uint offset) const {
 
 	const uint x = offset % HollywoodEngine::kSceneBufferWidth;
 	const uint y = offset / HollywoodEngine::kSceneBufferWidth;
-	return *(const byte *)savedFramebuffer.getBasePtr(x, y);
+	return *(const byte *)_savedFramebuffer.getBasePtr(x, y);
 }
 
 void SceneSurfaceState::setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue) {
 	const uint paletteOffset = colorIndex * 3;
-	if (paletteCurrent.size() <= paletteOffset + 2)
+	if (_paletteCurrent.size() <= paletteOffset + 2)
 		return;
 
-	paletteCurrent[paletteOffset] = red;
-	paletteCurrent[paletteOffset + 1] = green;
-	paletteCurrent[paletteOffset + 2] = blue;
+	_paletteCurrent[paletteOffset] = red;
+	_paletteCurrent[paletteOffset + 1] = green;
+	_paletteCurrent[paletteOffset + 2] = blue;
 }
 
 byte SceneSurfaceState::paletteEntryComponent6Bit(byte colorIndex, uint component) const {
@@ -110,14 +110,14 @@ byte SceneSurfaceState::paletteEntryComponent6Bit(byte colorIndex, uint componen
 		return 0;
 
 	const uint paletteOffset = colorIndex * 3 + component;
-	if (paletteOffset >= paletteCurrent.size())
+	if (paletteOffset >= _paletteCurrent.size())
 		return 0;
 
-	return paletteCurrent[paletteOffset];
+	return _paletteCurrent[paletteOffset];
 }
 
 void SceneSurfaceState::rebuildPresentationPaletteRemapTable() {
-	buildPresentationPaletteRemapTable(paletteCurrent, presentationPaletteRemapTable);
+	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
 } // End of namespace Hollywood

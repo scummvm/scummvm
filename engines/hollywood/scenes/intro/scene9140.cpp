@@ -301,12 +301,12 @@ void Scene9140::drawComposite() {
 
 	const byte bodyFrame = _rightBodyFrame < ARRAYSIZE(kScene9140RightBodyFrameMap) ?
 		kScene9140RightBodyFrameMap[_rightBodyFrame] : 0;
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[4], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[4], 0,
 		kScene9140RightBodyDescriptorCount, bodyFrame, _sceneFramebuffer.surface());
 
 	const byte mouthFrame = _mouthFrame < ARRAYSIZE(kScene9140MouthFrameMap) ?
 		kScene9140MouthFrameMap[_mouthFrame] : 0;
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[3], 0,
 		kScene9140MouthDescriptorCount, mouthFrame, _sceneFramebuffer.surface());
 }
 

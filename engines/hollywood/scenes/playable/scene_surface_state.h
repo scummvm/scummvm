@@ -33,14 +33,14 @@ namespace Hollywood {
 /**
  * Owns the palettes, masks, and indexed surfaces used by a playable scene.
  *
- * paletteResource is the room palette, paletteCurrent is the mutable display
- * palette, and actorPaletteBase holds the actor colors before scene lighting.
+ * _paletteResource is the room palette, _paletteCurrent is the mutable display
+ * palette, and _actorPaletteBase holds the actor colors before scene lighting.
  *
- * baseFramebufferOriginal is the restoration copy of the selected room image;
- * baseFramebuffer carries persistent scene patches and supplies clean visual
- * regions; sceneFramebuffer is the per-frame composite. savedFramebuffer is a
+ * _baseFramebufferOriginal is the restoration copy of the selected room image;
+ * _baseFramebuffer carries persistent scene patches and supplies clean visual
+ * regions; _sceneFramebuffer is the per-frame composite. _savedFramebuffer is a
  * separate resource-derived image used for region, hotspot, and depth lookup,
- * not a save-game snapshot. screen is the cropped presentation surface.
+ * not a save-game snapshot. _screen is the cropped presentation surface.
  */
 class SceneSurfaceState {
 public:
@@ -58,24 +58,24 @@ public:
 	byte paletteEntryComponent6Bit(byte colorIndex, uint component) const;
 	void rebuildPresentationPaletteRemapTable();
 
-	Common::Array<byte> paletteResource;
-	Common::Array<byte> paletteCurrent;
-	Common::Array<byte> actorPaletteBase;
-	Graphics::ManagedSurface baseFramebufferOriginal;
-	Graphics::ManagedSurface baseFramebuffer;
-	Graphics::ManagedSurface sceneFramebuffer;
-	Graphics::ManagedSurface savedFramebuffer;
-	Common::Array<byte> fillRuns;
-	Common::Array<byte> paletteMaskOriginal;
-	Common::Array<byte> paletteMask;
-	Common::Array<byte> fullPaletteRegionMask;
-	Common::Array<byte> walkablePaletteMask;
-	Common::Array<byte> colorToActorDepthClassMap;
-	Common::Array<byte> presentationPaletteRemapTable;
-	Common::Array<uint16> actorDepthYThresholds;
-	Common::Array<uint16> drawActorDepthYThresholds;
-	Graphics::ManagedSurface screen;
-	Palette6Bit displayPalette;
+	Common::Array<byte> _paletteResource;
+	Common::Array<byte> _paletteCurrent;
+	Common::Array<byte> _actorPaletteBase;
+	Graphics::ManagedSurface _baseFramebufferOriginal;
+	Graphics::ManagedSurface _baseFramebuffer;
+	Graphics::ManagedSurface _sceneFramebuffer;
+	Graphics::ManagedSurface _savedFramebuffer;
+	Common::Array<byte> _fillRuns;
+	Common::Array<byte> _paletteMaskOriginal;
+	Common::Array<byte> _paletteMask;
+	Common::Array<byte> _fullPaletteRegionMask;
+	Common::Array<byte> _walkablePaletteMask;
+	Common::Array<byte> _colorToActorDepthClassMap;
+	Common::Array<byte> _presentationPaletteRemapTable;
+	Common::Array<uint16> _actorDepthYThresholds;
+	Common::Array<uint16> _drawActorDepthYThresholds;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 };
 
 } // End of namespace Hollywood

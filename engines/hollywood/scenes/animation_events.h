@@ -136,14 +136,14 @@ public:
 	Spec &patchAt(int frame, byte selector) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kFramebufferPatch);
 		event.selector = selector;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
 	Spec &resourcePatchAt(int frame, uint resourceChunkIndex) {
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kResourcePatch);
 		event.resourceChunk = resourceChunkIndex;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -160,7 +160,7 @@ public:
 	}
 
 	Spec &stopSoundAt(int frame) {
-		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kStopSound));
+		_events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kStopSound));
 		return self();
 	}
 
@@ -180,7 +180,7 @@ public:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kResidentSound);
 		event.soundId = soundId;
 		event.soundVolumePercent = volumePercent;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -190,7 +190,7 @@ public:
 		event.speechRow = rowIndex;
 		event.speechFrame = frameIndex;
 		event.speechId = speechId;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -204,7 +204,7 @@ public:
 		event.speechRed = red;
 		event.speechGreen = green;
 		event.speechBlue = blue;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -217,7 +217,7 @@ public:
 		event.actorFacing = finalFacing;
 		event.actorCel = finalCel;
 		event.actorPathFrameMillis = frameMillis;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -225,7 +225,7 @@ public:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerFrame);
 		event.layerId = layerId;
 		event.layerFrame = layerFrame;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -245,7 +245,7 @@ public:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerVisibility);
 		event.layerId = layerId;
 		event.layerVisible = visible;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -253,7 +253,7 @@ public:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kLayerReset);
 		event.layerId = layerId;
 		event.layerFrame = layerFrame;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
@@ -264,17 +264,17 @@ public:
 		event.commitTarget = &target;
 		event.commitValue = static_cast<uint32>(static_cast<T>(value));
 		event.commitFunction = &commit<T>;
-		events.push_back(event);
+		_events.push_back(event);
 		return self();
 	}
 
 	Spec &invalidatePaletteAt(int frame) {
-		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kInvalidatePalette));
+		_events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kInvalidatePalette));
 		return self();
 	}
 
 	Spec &fadeFromBlackAt(int frame) {
-		events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kFadeFromBlack));
+		_events.push_back(AnimationFrameEvent(frame, AnimationFrameEvent::kFadeFromBlack));
 		return self();
 	}
 
@@ -288,7 +288,7 @@ public:
 		return self();
 	}
 
-	Common::Array<AnimationFrameEvent> events;
+	Common::Array<AnimationFrameEvent> _events;
 
 private:
 	void addSound(int frame, uint16 soundId, byte volumePercent, bool looping,
@@ -298,7 +298,7 @@ private:
 		event.soundId = soundId;
 		event.soundVolumePercent = volumePercent;
 		event.soundSlot = slotIndex;
-		events.push_back(event);
+		_events.push_back(event);
 	}
 
 	void addLayerFrameMap(uint layerId, const byte *mappedFrames, uint mappedFrameCount,
@@ -310,7 +310,7 @@ private:
 		event.layerFrameMapSize = mappedFrameCount;
 		event.layerFrameMapFirstFrame = firstPlaybackFrame;
 		event.showMappedLayer = showLayer;
-		events.push_back(event);
+		_events.push_back(event);
 	}
 
 	void addCustomHook(int frame, byte hookId, bool everyFrame) {
@@ -319,7 +319,7 @@ private:
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kCustomHook);
 		event.everyFrame = everyFrame;
 		event.hookId = hookId;
-		events.push_back(event);
+		_events.push_back(event);
 	}
 
 	template<class T>

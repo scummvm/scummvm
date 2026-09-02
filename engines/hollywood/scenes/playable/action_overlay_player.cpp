@@ -24,40 +24,40 @@
 namespace Hollywood {
 
 ActionOverlayPlayer::ActionOverlayPlayer() :
-		layer(),
-		stratum(kSceneAnimationInFrontOfActors),
-		hideActiveActor(false),
-		restoreBackgroundBeforeDraw(false) {
+		_layer(),
+		_stratum(kSceneAnimationInFrontOfActors),
+		_hideActiveActor(false),
+		_restoreBackgroundBeforeDraw(false) {
 }
 
 void ActionOverlayPlayer::reset() {
-	layer.visible = false;
-	stratum = kSceneAnimationInFrontOfActors;
-	hideActiveActor = false;
-	restoreBackgroundBeforeDraw = false;
+	_layer.visible = false;
+	_stratum = kSceneAnimationInFrontOfActors;
+	_hideActiveActor = false;
+	_restoreBackgroundBeforeDraw = false;
 }
 
 bool ActionOverlayPlayer::begin(uint overlayChunkIndex, uint overlayDescriptorCount,
 		const byte *frameMap, uint frameMapSize, SceneAnimationStratum newStratum,
 		bool newHideActiveActor, bool restoreBackground) {
-	const bool previousHideActiveActor = hideActiveActor;
-	stratum = newStratum;
-	layer.configure(overlayChunkIndex, (uint16)overlayDescriptorCount, frameMap, frameMapSize);
-	layer.visible = true;
-	hideActiveActor = newHideActiveActor;
-	restoreBackgroundBeforeDraw = restoreBackground;
+	const bool previousHideActiveActor = _hideActiveActor;
+	_stratum = newStratum;
+	_layer.configure(overlayChunkIndex, (uint16)overlayDescriptorCount, frameMap, frameMapSize);
+	_layer.visible = true;
+	_hideActiveActor = newHideActiveActor;
+	_restoreBackgroundBeforeDraw = restoreBackground;
 	return previousHideActiveActor;
 }
 
 void ActionOverlayPlayer::setFrame(uint frame) {
-	layer.setFrame((byte)frame);
+	_layer.setFrame((byte)frame);
 }
 
 void ActionOverlayPlayer::finish(bool previousHideActiveActor) {
-	layer.visible = false;
-	stratum = kSceneAnimationInFrontOfActors;
-	hideActiveActor = previousHideActiveActor;
-	restoreBackgroundBeforeDraw = false;
+	_layer.visible = false;
+	_stratum = kSceneAnimationInFrontOfActors;
+	_hideActiveActor = previousHideActiveActor;
+	_restoreBackgroundBeforeDraw = false;
 }
 
 } // End of namespace Hollywood

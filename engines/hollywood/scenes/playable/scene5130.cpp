@@ -251,10 +251,10 @@ bool Scene5130::load() {
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const uint32 arenaSize = _resources.chunkTable.sizes[4] + _resources.chunkTable.sizes[5] +
-		_resources.chunkTable.sizes[6] + _resources.chunkTable.sizes[7] +
-		_resources.chunkTable.sizes[8] + _resources.chunkTable.sizes[9] +
-		_resources.chunkTable.sizes[10];
+	const uint32 arenaSize = _resources._chunkTable.sizes[4] + _resources._chunkTable.sizes[5] +
+		_resources._chunkTable.sizes[6] + _resources._chunkTable.sizes[7] +
+		_resources._chunkTable.sizes[8] + _resources._chunkTable.sizes[9] +
+		_resources._chunkTable.sizes[10];
 	_resources.allocateArena(arenaSize);
 	for (uint chunk = kScene5130ArenaFirstChunk; chunk <= kScene5130ArenaLastChunk; ++chunk) {
 		if (!loadArenaChunk(chunk)) {
@@ -598,15 +598,15 @@ void Scene5130::drawFrame() {
 }
 
 void Scene5130::drawDrinkStrip() {
-	if (!_resources.chunkTable.isValidChunk(10) || _resources.chunkOffsets[10] >= _resources.arena.size())
+	if (!_resources._chunkTable.isValidChunk(10) || _resources._chunkOffsets[10] >= _resources._arena.size())
 		return;
 
-	const uint32 chunkOffset = _resources.chunkOffsets[10];
+	const uint32 chunkOffset = _resources._chunkOffsets[10];
 	byte *destinationPixels = _sceneFramebuffer.data();
 	for (uint row = 0; row < kScene5130DrinkStripHeight; ++row) {
 		const uint sourceRow = (_drinkStripRow + row) % kScene5130DrinkStripRows;
 		const uint sourceOffset = chunkOffset + sourceRow * kScene5130DrinkStripWidth;
-		if (sourceOffset + kScene5130DrinkStripWidth > _resources.arena.size())
+		if (sourceOffset + kScene5130DrinkStripWidth > _resources._arena.size())
 			continue;
 
 		const uint destinationOffset = (kScene5130DrinkStripY + row) * HollywoodEngine::kSceneBufferWidth +
@@ -614,7 +614,7 @@ void Scene5130::drawDrinkStrip() {
 		if (destinationOffset + kScene5130DrinkStripWidth > _sceneFramebuffer.size())
 			continue;
 
-		memcpy(destinationPixels + destinationOffset, _resources.arena.data() + sourceOffset,
+		memcpy(destinationPixels + destinationOffset, _resources._arena.data() + sourceOffset,
 			kScene5130DrinkStripWidth);
 	}
 }

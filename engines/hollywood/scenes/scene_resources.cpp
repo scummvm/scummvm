@@ -28,30 +28,30 @@
 namespace Hollywood {
 
 SceneResources::SceneResources() :
-		arenaCursor(0),
+		_arenaCursor(0),
 		_archive() {
-	chunkTable.clear();
+	_chunkTable.clear();
 	clearChunkOffsets();
 }
 
 void SceneResources::clearChunkOffsets() {
-	memset(chunkOffsets, 0, sizeof(chunkOffsets));
+	memset(_chunkOffsets, 0, sizeof(_chunkOffsets));
 }
 
 bool SceneResources::loadChunkTable(const char *archiveName) {
 	if (!_archive.open(Common::Path(archiveName))) {
 		warning("Failed to read %s header", archiveName);
-		chunkTable.clear();
+		_chunkTable.clear();
 		return false;
 	}
 
-	chunkTable = _archive.chunkTable();
+	_chunkTable = _archive.chunkTable();
 	return true;
 }
 
 bool SceneResources::validateChunk(const char *archiveName, const char *sceneDebugName,
 		uint index) const {
-	if (!chunkTable.isValidChunk(index)) {
+	if (!_chunkTable.isValidChunk(index)) {
 		warning("%s is missing %s chunk %u", archiveName, sceneDebugName, index);
 		return false;
 	}
@@ -73,7 +73,7 @@ bool SceneResources::validateRequiredChunks(const char *archiveName, const char 
 		uint requiredChunkCount, uint framebufferChunkIndex) const {
 	for (uint i = 0; i < requiredChunkCount; ++i) {
 		const uint chunkIndex = i == 0 ? framebufferChunkIndex : i;
-		if (!chunkTable.isValidChunk(chunkIndex)) {
+		if (!_chunkTable.isValidChunk(chunkIndex)) {
 			warning("%s is missing required %s chunk %u", archiveName, sceneDebugName, chunkIndex);
 			return false;
 		}
@@ -87,9 +87,9 @@ uint32 SceneResources::totalChunkSize(uint firstChunk, uint lastChunk) const {
 }
 
 void SceneResources::allocateArena(uint32 byteCount) {
-	arena.resize(byteCount);
-	memset(arena.data(), 0, arena.size());
-	arenaCursor = 0;
+	_arena.resize(byteCount);
+	memset(_arena.data(), 0, _arena.size());
+	_arenaCursor = 0;
 	clearChunkOffsets();
 }
 
@@ -143,18 +143,18 @@ bool SceneResources::loadArenaChunk(const char *sceneDebugName, uint archiveInde
 	}
 
 	const uint32 chunkSize = _archive.chunkSize(archiveIndex);
-	if (arenaCursor > arena.size() || chunkSize > arena.size() - arenaCursor) {
+	if (_arenaCursor > _arena.size() || chunkSize > _arena.size() - _arenaCursor) {
 		warning("%s chunk %u does not fit the %s resource arena", archiveName.c_str(), archiveIndex, sceneDebugName);
 		return false;
 	}
 
-	chunkOffsets[localChunkIndex] = arenaCursor;
-	if (!_archive.readChunkTo(archiveIndex, arena, arenaCursor))
+	_chunkOffsets[localChunkIndex] = _arenaCursor;
+	if (!_archive.readChunkTo(archiveIndex, _arena, _arenaCursor))
 		return false;
 
 	debugC(1, kDebugResources, "Loaded %s arena chunk %u as local chunk %u: offset=%u size=%u",
-		archiveName.c_str(), archiveIndex, localChunkIndex, arenaCursor, (uint)chunkSize);
-	arenaCursor += chunkSize;
+		archiveName.c_str(), archiveIndex, localChunkIndex, _arenaCursor, (uint)chunkSize);
+	_arenaCursor += chunkSize;
 	return true;
 }
 
@@ -172,19 +172,19 @@ bool SceneResources::loadArenaChunkAlias(const char *sceneDebugName, uint source
 		return false;
 	}
 
-	const uint32 destinationOffset = chunkOffsets[targetIndex];
+	const uint32 destinationOffset = _chunkOffsets[targetIndex];
 	const uint32 chunkSize = _archive.chunkSize(sourceIndex);
 	const uint32 requiredSize = destinationOffset + chunkSize;
-	if (requiredSize > arena.size()) {
-		const uint oldSize = arena.size();
-		arena.resize(requiredSize);
-		memset(arena.data() + oldSize, 0, arena.size() - oldSize);
+	if (requiredSize > _arena.size()) {
+		const uint oldSize = _arena.size();
+		_arena.resize(requiredSize);
+		memset(_arena.data() + oldSize, 0, _arena.size() - oldSize);
 	}
 
-	if (!_archive.readChunkTo(sourceIndex, arena, destinationOffset))
+	if (!_archive.readChunkTo(sourceIndex, _arena, destinationOffset))
 		return false;
 
-	chunkOffsets[aliasIndex] = destinationOffset;
+	_chunkOffsets[aliasIndex] = destinationOffset;
 	debugC(1, kDebugResources, "Loaded %s branch chunk %u as arena chunk %u: offset=%u size=%u",
 		archiveName.c_str(), sourceIndex, aliasIndex, destinationOffset, (uint)chunkSize);
 	return true;

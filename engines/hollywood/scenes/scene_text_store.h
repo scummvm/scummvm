@@ -74,13 +74,13 @@ public:
 		byte &continuationCount, uint16 &voiceSampleId) const;
 	Common::String largeTextRecord(uint16 recordId) const;
 
-	Common::Array<byte> decodeKey;
-	Common::Array<byte> stageBlock;
-	Common::Array<byte> stageSmallRows;
-	Common::Array<byte> stageLargeRows;
-	Common::Array<byte> staticSpeechCueDescriptors;
-	Common::Array<byte> inventoryOwnerSmallRows;
-	Common::Array<byte> inventoryOwnerLargeRows;
+	Common::Array<byte> _decodeKey;
+	Common::Array<byte> _stageBlock;
+	Common::Array<byte> _stageSmallRows;
+	Common::Array<byte> _stageLargeRows;
+	Common::Array<byte> _staticSpeechCueDescriptors;
+	Common::Array<byte> _inventoryOwnerSmallRows;
+	Common::Array<byte> _inventoryOwnerLargeRows;
 
 private:
 	SceneSpeechCue staticSpeechCue(uint16 rowIndex, byte frameIndex) const;

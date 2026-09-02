@@ -156,7 +156,7 @@ void Scene8000::runPresentation() {
 			secondAccumulator -= kScene8000SecondMillis;
 			++_tick;
 			if (_tick == kScene8000PatchTick) {
-				drawResourceBlockList(_resources.arena, _resources.chunkOffsets[2],
+				drawResourceBlockList(_resources._arena, _resources._chunkOffsets[2],
 					_sceneFramebuffer.managedSurface());
 				_secondaryVisible = true;
 				secondaryAccumulator = kScene8000SecondarySpriteMillis;
@@ -243,18 +243,18 @@ bool Scene8000::advanceMainSprite() {
 void Scene8000::drawPresentationFrame(bool mainDirty, bool secondaryDirty) {
 	const byte mainFrame = kScene8000MainFrameMap[MIN<uint>(_mainFrame, ARRAYSIZE(kScene8000MainFrameMap) - 1)];
 	if (mainDirty) {
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[3], 0,
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[3], 0,
 			kScene8000MainDescriptorCount, mainFrame, _baseFramebuffer.surface(),
 			_sceneFramebuffer.surface());
 	}
 	if (secondaryDirty) {
 		const byte secondaryFrame = kScene8000SecondaryFrameMap[MIN<uint>(_secondaryFrame,
 			ARRAYSIZE(kScene8000SecondaryFrameMap) - 1)];
-		restoreSpriteBackground(_resources.arena, _resources.chunkOffsets[4], 0,
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[4], 0,
 			kScene8000SecondaryDescriptorCount, secondaryFrame, _baseFramebuffer.surface(),
 			_sceneFramebuffer.surface());
 	}
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[3], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[3], 0,
 		kScene8000MainDescriptorCount, mainFrame, _sceneFramebuffer.managedSurface());
 	drawSecondarySpriteIfVisible();
 	presentFrame();
@@ -265,7 +265,7 @@ void Scene8000::drawSecondarySpriteIfVisible() {
 		return;
 
 	const byte frame = kScene8000SecondaryFrameMap[MIN<uint>(_secondaryFrame, ARRAYSIZE(kScene8000SecondaryFrameMap) - 1)];
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[4], 0,
+	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[4], 0,
 		kScene8000SecondaryDescriptorCount, frame, _sceneFramebuffer.managedSurface());
 }
 

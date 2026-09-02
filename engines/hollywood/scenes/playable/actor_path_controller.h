@@ -59,7 +59,7 @@ public:
 };
 
 /**
- * Expands resource-defined palette-region routes into actor animation frames.
+ * Expands resource-defined palette-region routes into actor animation _frames.
  *
  * Resource route tables select intermediate regions and candidate boundary
  * points. The delegate maps coordinates to regions and may customize each
@@ -82,10 +82,10 @@ public:
 
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 
-	Common::Array<ScenePoint> routeBoundaryPoints;
-	Common::Array<byte> routeSteps;
-	Common::Array<ActorPathFrame> frames;
-	Common::Array<byte> stepDeltas;
+	Common::Array<ScenePoint> _routeBoundaryPoints;
+	Common::Array<byte> _routeSteps;
+	Common::Array<ActorPathFrame> _frames;
+	Common::Array<byte> _stepDeltas;
 
 private:
 	void buildFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,

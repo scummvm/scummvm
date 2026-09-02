@@ -100,7 +100,7 @@ bool Scene9160::load() {
 
 	_lastOverlayChunk = 2;
 	while (_lastOverlayChunk + 1 < SceneResources::kResourceChunkCount &&
-			_resources.chunkTable.isValidChunk(_lastOverlayChunk + 1))
+			_resources._chunkTable.isValidChunk(_lastOverlayChunk + 1))
 		++_lastOverlayChunk;
 	if (_lastOverlayChunk < 4) {
 		warning("%s is missing the initial %s credit overlays", kScene9160ArchiveName, _debugName);
@@ -164,7 +164,7 @@ void Scene9160::drawOverlayChunk(uint chunkIndex, int yOffset) {
 	if (chunkIndex < kScene9160FirstOverlayChunk || chunkIndex > _lastOverlayChunk)
 		return;
 
-	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+	drawResourceBlockList(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_sceneFramebuffer.surface(), yOffset);
 }
 

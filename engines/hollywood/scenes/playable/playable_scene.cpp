@@ -110,37 +110,37 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_config(config),
 		_sceneStateId(vm->gameState().mainFlowStateId),
 		_resources(),
-		_sceneChunkTable(_resources.chunkTable),
-		_resourceChunkOffsets(_resources.chunkOffsets),
-		_resourceArena(_resources.arena),
-		_metadata(_resources.metadata),
+		_sceneChunkTable(_resources._chunkTable),
+		_resourceChunkOffsets(_resources._chunkOffsets),
+		_resourceArena(_resources._arena),
+		_metadata(_resources._metadata),
 		_surfaceState(),
-		_paletteResource(_surfaceState.paletteResource),
-		_paletteCurrent(_surfaceState.paletteCurrent),
-		_actorPaletteBase(_surfaceState.actorPaletteBase),
-		_baseFramebufferOriginal(_surfaceState.baseFramebufferOriginal),
-		_baseFramebuffer(_surfaceState.baseFramebuffer),
-		_sceneFramebuffer(_surfaceState.sceneFramebuffer),
-		_savedFramebuffer(_surfaceState.savedFramebuffer),
-		_fillRuns(_surfaceState.fillRuns),
-		_paletteMaskOriginal(_surfaceState.paletteMaskOriginal),
-		_paletteMask(_surfaceState.paletteMask),
-		_fullPaletteRegionMask(_surfaceState.fullPaletteRegionMask),
-		_walkablePaletteMask(_surfaceState.walkablePaletteMask),
-		_colorToActorDepthClassMap(_surfaceState.colorToActorDepthClassMap),
-		_presentationPaletteRemapTable(_surfaceState.presentationPaletteRemapTable),
-		_actorDepthYThresholds(_surfaceState.actorDepthYThresholds),
-		_drawActorDepthYThresholds(_surfaceState.drawActorDepthYThresholds),
-		_screen(_surfaceState.screen),
-		_displayPalette(_surfaceState.displayPalette),
+		_paletteResource(_surfaceState._paletteResource),
+		_paletteCurrent(_surfaceState._paletteCurrent),
+		_actorPaletteBase(_surfaceState._actorPaletteBase),
+		_baseFramebufferOriginal(_surfaceState._baseFramebufferOriginal),
+		_baseFramebuffer(_surfaceState._baseFramebuffer),
+		_sceneFramebuffer(_surfaceState._sceneFramebuffer),
+		_savedFramebuffer(_surfaceState._savedFramebuffer),
+		_fillRuns(_surfaceState._fillRuns),
+		_paletteMaskOriginal(_surfaceState._paletteMaskOriginal),
+		_paletteMask(_surfaceState._paletteMask),
+		_fullPaletteRegionMask(_surfaceState._fullPaletteRegionMask),
+		_walkablePaletteMask(_surfaceState._walkablePaletteMask),
+		_colorToActorDepthClassMap(_surfaceState._colorToActorDepthClassMap),
+		_presentationPaletteRemapTable(_surfaceState._presentationPaletteRemapTable),
+		_actorDepthYThresholds(_surfaceState._actorDepthYThresholds),
+		_drawActorDepthYThresholds(_surfaceState._drawActorDepthYThresholds),
+		_screen(_surfaceState._screen),
+		_displayPalette(_surfaceState._displayPalette),
 		_textStore(),
-		_stage003DecodeKey(_textStore.decodeKey),
-		_stage003SmallRows(_textStore.stageSmallRows),
+		_stage003DecodeKey(_textStore._decodeKey),
+		_stage003SmallRows(_textStore._stageSmallRows),
 		_pathController(),
-		_routeBoundaryPoints(_pathController.routeBoundaryPoints),
-		_routeSteps(_pathController.routeSteps),
-		_actorPathFrames(_pathController.frames),
-		_actorPathStepDeltas(_pathController.stepDeltas),
+		_routeBoundaryPoints(_pathController._routeBoundaryPoints),
+		_routeSteps(_pathController._routeSteps),
+		_actorPathFrames(_pathController._frames),
+		_actorPathStepDeltas(_pathController._stepDeltas),
 		_panelArt(vm->getLanguage()),
 		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random(Common::String::format("scene%u", config.sceneId)),
@@ -150,18 +150,18 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_concurrentActorPathChannel(),
 		_speechController(vm->getLanguage(), vm->hasSpeechData()),
 		_realtimeSpeechPlayer(vm->getLanguage(), vm->hasSpeechData()),
-		_speech(_speechController.player),
-		_speechOverlay(_speechController.secondaryOverlay),
-		_primarySpeechOverlay(_speechController.primaryOverlay),
-		_primaryLeftSpeechLastFrame(_speechController.primaryLeftSpeechLastFrame),
-		_primaryDialogueSpeechLastFrame(_speechController.primaryDialogueSpeechLastFrame),
-		_primaryDialogueSpeechGroup(_speechController.primaryDialogueSpeechGroup),
-		_primaryLeftSpeechActive(_speechController.primaryLeftSpeechActive),
-		_primaryDialogueSpeechActive(_speechController.primaryDialogueSpeechActive),
-		_secondaryActorTimerAccumulator(_speechController.secondaryActorTimerAccumulator),
-		_primaryLeftSpeechTimerAccumulator(_speechController.primaryLeftSpeechTimerAccumulator),
-		_primaryDialogueSpeechTimerAccumulator(_speechController.primaryDialogueSpeechTimerAccumulator),
-		_secondaryActorFrame(_speechController.secondaryActorFrame),
+		_speech(_speechController._player),
+		_speechOverlay(_speechController._secondaryOverlay),
+		_primarySpeechOverlay(_speechController._primaryOverlay),
+		_primaryLeftSpeechLastFrame(_speechController._primaryLeftSpeechLastFrame),
+		_primaryDialogueSpeechLastFrame(_speechController._primaryDialogueSpeechLastFrame),
+		_primaryDialogueSpeechGroup(_speechController._primaryDialogueSpeechGroup),
+		_primaryLeftSpeechActive(_speechController._primaryLeftSpeechActive),
+		_primaryDialogueSpeechActive(_speechController._primaryDialogueSpeechActive),
+		_secondaryActorTimerAccumulator(_speechController._secondaryActorTimerAccumulator),
+		_primaryLeftSpeechTimerAccumulator(_speechController._primaryLeftSpeechTimerAccumulator),
+		_primaryDialogueSpeechTimerAccumulator(_speechController._primaryDialogueSpeechTimerAccumulator),
+		_secondaryActorFrame(_speechController._secondaryActorFrame),
 		_realtimeSpeechElapsed(0),
 		_realtimeSpeechDuration(0),
 		_realtimeSpeechTextRecordId(0),
@@ -176,7 +176,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_realtimeSpeechActive(false),
 		_realtimeSpeechPrimary(false),
 		_actionOverlayPlayer(),
-		_hideActiveActor(_actionOverlayPlayer.hideActiveActor),
+		_hideActiveActor(_actionOverlayPlayer._hideActiveActor),
 		_ambientMusicTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
 		_currentAmbientSoundCueId(0),
@@ -1581,7 +1581,7 @@ void PlayableScene::drawLayerStack(SceneAnimationStratum stratum) {
 }
 
 void PlayableScene::drawActionOverlayAtStratum(SceneAnimationStratum stratum) {
-	if (_actionOverlayPlayer.isVisible() && _actionOverlayPlayer.stratum == stratum)
+	if (_actionOverlayPlayer.isVisible() && _actionOverlayPlayer._stratum == stratum)
 		drawActionOverlayLayer();
 }
 
@@ -1613,9 +1613,9 @@ void PlayableScene::clearSceneLayer(uint layerId) {
 
 void PlayableScene::drawActionOverlayLayer() {
 	if (_actionOverlayPlayer.isVisible() &&
-			_actionOverlayPlayer.restoreBackgroundBeforeDraw)
-		restoreResourceSpriteLayerBackground(_actionOverlayPlayer.layer, _baseFramebuffer);
-	drawResourceSpriteLayer(_actionOverlayPlayer.layer);
+			_actionOverlayPlayer._restoreBackgroundBeforeDraw)
+		restoreResourceSpriteLayerBackground(_actionOverlayPlayer._layer, _baseFramebuffer);
+	drawResourceSpriteLayer(_actionOverlayPlayer._layer);
 }
 
 void PlayableScene::drawClipFrameDeltaFromResource(const Common::Array<byte> &resource,
@@ -2595,7 +2595,7 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, spec.frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
-		const Common::Array<AnimationFrameEvent> &events = spec.events;
+		const Common::Array<AnimationFrameEvent> &events = spec._events;
 		for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 			if (events[eventIndex].matches(frame))
 				handleAnimationFrameEvent(events[eventIndex], frame);

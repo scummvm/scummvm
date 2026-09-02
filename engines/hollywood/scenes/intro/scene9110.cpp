@@ -124,7 +124,7 @@ bool Scene9110::loadResourceI11Assets() {
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 2; i < kI11RequiredChunkCount; ++i)
-		resourceArenaSize += _resources.chunkTable.sizes[i];
+		resourceArenaSize += _resources._chunkTable.sizes[i];
 
 	_resources.allocateArena(resourceArenaSize);
 
