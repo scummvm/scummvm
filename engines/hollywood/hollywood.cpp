@@ -31,6 +31,7 @@
 
 #include "hollywood/hollywood.h"
 #include "hollywood/console.h"
+#include "hollywood/debug.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/resource.h"

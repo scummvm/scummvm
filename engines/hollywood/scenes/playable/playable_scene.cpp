@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"

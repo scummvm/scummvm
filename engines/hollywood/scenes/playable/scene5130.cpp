@@ -26,6 +26,7 @@
 #include "common/util.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/font.h"
 #include "hollywood/game_strings.h"
 #include "hollywood/gameplay/cursor.h"

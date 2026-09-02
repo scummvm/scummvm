@@ -24,7 +24,7 @@
 #include "common/substream.h"
 #include "graphics/managed_surface.h"
 
-#include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/graphics.h"
 #include "hollywood/resource.h"
 

@@ -23,6 +23,7 @@
 #include "common/file.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/debug.h"
 #include "hollywood/font.h"
 #include "hollywood/scenes/intro/scene9010.h"
 
