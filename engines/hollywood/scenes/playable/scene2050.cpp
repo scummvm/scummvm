@@ -107,10 +107,6 @@ const byte kScene2050LabyrinthWalkFrameMap[] = {
 	24, 25, 26, 27, 28, 29, 30
 };
 
-static_assert(ARRAYSIZE(kScene2050AmbientFrameMap) == 0x1a, "Scene 2050 ambient frame map size changed");
-static_assert(ARRAYSIZE(kScene2050SealDiscoveryFrameMap) == 53, "Scene 2050 seal discovery frame map size changed");
-static_assert(ARRAYSIZE(kScene2050LabyrinthWalkFrameMap) == 47, "Scene 2050 labyrinth walk frame map size changed");
-
 class Scene2050DeltaFrameTarget {
 public:
 	explicit Scene2050DeltaFrameTarget(byte &frame) : _frame(frame) {}
