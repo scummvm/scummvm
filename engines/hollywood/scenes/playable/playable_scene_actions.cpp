@@ -198,26 +198,10 @@ void PlayableScene::dispatchSceneAction(uint16 handlerId) {
 	if (dispatchCustomSceneAction(handlerId))
 		return;
 
-	if (dispatchConfiguredSpeechAction(handlerId))
-		return;
-
 	if (dispatchGenericSceneAction(handlerId))
 		return;
 
 	warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
-}
-
-bool PlayableScene::dispatchConfiguredSpeechAction(uint16 handlerId) {
-	for (uint i = 0; i < _config.secondarySpeechActionCount; ++i) {
-		const SceneSpeechActionSpec &action = _config.secondarySpeechActions[i];
-		if (action.handlerId != handlerId)
-			continue;
-
-		beginSecondarySpeechLine(action.rowIndex, action.frameIndex);
-		return true;
-	}
-
-	return false;
 }
 
 bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
