@@ -23,7 +23,6 @@
 
 #include "graphics/pixelformat.h"
 
-#include "hollywood/detection.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -112,8 +111,7 @@ const Scene4010ReleaseProfile kScene4010ItalianDemoProfile = {
 
 const Scene4010ReleaseProfile &scene4010ReleaseProfile(const HollywoodEngine *vm) {
 	if (!vm->isDemo()) {
-		const char *extra = vm->getGameDescription()->extra;
-		if (extra != nullptr && Common::String(extra) == "1st edition")
+		if (vm->isFirstEdition())
 			return kScene4010FirstEditionProfile;
 		return kScene4010FullGameProfile;
 	}

@@ -61,6 +61,30 @@ const byte kI05CombinedRevealEntriesPerSegment = 5;
 const byte kI05LayeredRevealEntriesPerSegment = 6;
 const uint kI05LayeredRevealLayoutMarkerChunk = 35;
 
+struct Scene9050I06TimingProfile {
+	uint16 sequenceDoneFrame;
+	uint16 interludeStartFrame;
+	uint16 interludeDoneFrame;
+	uint16 frameCounterWrap;
+	uint16 overlayEnableFrame;
+	uint16 overlayDisableFrame;
+	uint16 scriptedSequenceFrame;
+};
+
+const Scene9050I06TimingProfile kScene9050LaterEditionI06TimingProfile = {
+	0x17f, 0x80, 0x1ff, 0x27f, 0x10, 0xa0, 0xc0
+};
+
+// RESOURCE.I06 is shared, but the first executable uses its first-half timing tables.
+const Scene9050I06TimingProfile kScene9050FirstEditionI06TimingProfile = {
+	0xbf, 0x40, 0xff, 0x13f, 8, 0x50, 0x60
+};
+
+const Scene9050I06TimingProfile &scene9050I06TimingProfile(const HollywoodEngine *vm) {
+	return vm->isFirstEdition() ?
+		kScene9050FirstEditionI06TimingProfile : kScene9050LaterEditionI06TimingProfile;
+}
+
 const byte kStage9050InterClipRevealFrames[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 const byte kStage9050InterClipReverseFrames[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0 };
 const byte kStage9050ResourceI07FinalFrameMap[] = {
@@ -343,22 +367,13 @@ bool Scene9050::loadResourceI07FinalAssets() {
 void Scene9050::runResourceI06AnimatedPresentation() {
 	initializeResourceI06AnimatedPresentation();
 
-	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
-		if (pollEvents())
-			return;
-		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
-		presentFrame();
-	}
+	if (revealSavedFramebufferWithCurtain())
+		return;
 
 	if (runResourceI06AnimationLoop(false, false))
 		return;
 
-	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
-		if (pollEvents())
-			return;
-		clearSceneFramebufferBand(sweepOffset, 0x14);
-		presentFrame();
-	}
+	clearSceneFramebufferWithCurtain();
 }
 
 void Scene9050::initializeResourceI06AnimatedPresentation() {
@@ -429,6 +444,8 @@ bool Scene9050::runResourceI06Interlude(bool runScriptedSpriteSequence) {
 }
 
 void Scene9050::initializeResourceI06Interlude() {
+	const Scene9050I06TimingProfile &timing = scene9050I06TimingProfile(_vm);
+
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 
@@ -437,7 +454,7 @@ void Scene9050::initializeResourceI06Interlude() {
 	_i06SecondarySpriteAccumulator = 0;
 	_i06VerticalBobAccumulator = 0;
 	_i06PalettePulseAccumulator = 0;
-	_i06FrameCounter = kI06InterludeStartFrame;
+	_i06FrameCounter = timing.interludeStartFrame;
 	_i06BaseImageScrollOffset = kI06InitialBaseScrollOffset;
 	_i06PreviousBaseImageScrollOffset = kI06InitialBaseScrollOffset;
 	_i06PrimarySpriteFrame = 0;
@@ -573,25 +590,27 @@ void Scene9050::advanceResourceI06InterludeTimers(uint32 millis, bool runScripte
 }
 
 void Scene9050::advanceResourceI06Scroll() {
-	if (_i06FrameCounter == kI06FrameCounterWrap) {
+	const Scene9050I06TimingProfile &timing = scene9050I06TimingProfile(_vm);
+
+	if (_i06FrameCounter == timing.frameCounterWrap) {
 		_i06FrameCounter = 0;
 		_i06SequenceFinished = true;
 	} else if (_i06PrimarySpriteSequenceState < 2) {
 		_i06FrameCounter++;
 	}
 
-	if (_i06FrameCounter == kI06SequenceDoneFrame)
+	if (_i06FrameCounter == timing.sequenceDoneFrame)
 		_i06SequenceFinished = true;
 
-	if (_i06FrameCounter == 0x10) {
+	if (_i06FrameCounter == timing.overlayEnableFrame) {
 		_i06OptionalOverlayChunk5Enabled = true;
 		_i06BaseFrameDirty = true;
 	}
-	if (_i06FrameCounter == 0xa0) {
+	if (_i06FrameCounter == timing.overlayDisableFrame) {
 		_i06OptionalOverlayChunk5Enabled = false;
 		_i06BaseFrameDirty = true;
 	}
-	if (_i06FrameCounter == 0xc0 && _i06PrimarySpriteSequenceState < 2) {
+	if (_i06FrameCounter == timing.scriptedSequenceFrame && _i06PrimarySpriteSequenceState < 2) {
 		_i06PrimarySpriteSequenceStep = 0;
 		_i06PrimarySpriteSequenceState = 2;
 	}
@@ -612,17 +631,19 @@ void Scene9050::advanceResourceI06Scroll() {
 }
 
 void Scene9050::advanceResourceI06InterludeScroll(bool runScriptedSpriteSequence) {
-	if (_i06FrameCounter == kI06FrameCounterWrap) {
+	const Scene9050I06TimingProfile &timing = scene9050I06TimingProfile(_vm);
+
+	if (_i06FrameCounter == timing.frameCounterWrap) {
 		_i06FrameCounter = 0;
 		_i06SequenceFinished = true;
 	} else {
 		_i06FrameCounter++;
 	}
 
-	if (_i06FrameCounter == kI06InterludeDoneFrame)
+	if (_i06FrameCounter == timing.interludeDoneFrame)
 		_i06SequenceFinished = true;
 
-	if (runScriptedSpriteSequence && _i06FrameCounter == 0xc0) {
+	if (runScriptedSpriteSequence && _i06FrameCounter == timing.scriptedSequenceFrame) {
 		_i06PrimarySpriteSequenceStep = 0;
 		_i06PrimarySpriteSequenceState = 2;
 	}
@@ -809,8 +830,13 @@ void Scene9050::markResourceI06CompositeDirty() {
 
 bool Scene9050::runResourceI06AnimationLoop(bool interlude,
 		bool runScriptedSpriteSequence) {
-	if (pollEvents())
-		return true;
+	if (pollEvents()) {
+		if (_skipRequested || Engine::shouldQuit())
+			return true;
+		consumeStepAdvanceRequest();
+		finishResourceI06AnimationLoop(interlude);
+		return false;
+	}
 
 	_i06ScrollAccumulator = 60;
 	_i06SecondarySpriteAccumulator = 75;
@@ -828,12 +854,52 @@ bool Scene9050::runResourceI06AnimationLoop(bool interlude,
 		presentResourceI06AnimatedFrame();
 		if (_i06SequenceFinished)
 			break;
-		if (delay(10))
-			return true;
+		if (delay(10)) {
+			if (_skipRequested || Engine::shouldQuit())
+				return true;
+			finishResourceI06AnimationLoop(interlude);
+			return false;
+		}
 		elapsed = 10;
 	}
 
-	return consumeStepAdvanceRequest() || _skipRequested || Engine::shouldQuit();
+	return _skipRequested || Engine::shouldQuit();
+}
+
+void Scene9050::finishResourceI06AnimationLoop(bool interlude) {
+	const Scene9050I06TimingProfile &timing = scene9050I06TimingProfile(_vm);
+	const uint firstFrame = interlude ? timing.interludeStartFrame + 1 : 1;
+	const uint finalFrame = interlude ? timing.interludeDoneFrame : timing.sequenceDoneFrame;
+
+	int scrollOffset = kI06InitialBaseScrollOffset;
+	for (uint frame = firstFrame; frame <= finalFrame; ++frame)
+		scrollOffset += getStage9050ResourceI06ScrollDelta(frame);
+
+	const uint32 baseImageSize = _resources._chunkTable.sizes[1];
+	const int maximumScrollOffset = baseImageSize == 0 ? 0 : (int)baseImageSize - 1;
+	_i06FrameCounter = finalFrame;
+	_i06BaseImageScrollOffset = (uint16)CLIP<int>(scrollOffset, 0, maximumScrollOffset);
+	_i06PreviousBaseImageScrollOffset = _i06BaseImageScrollOffset;
+	_i06PrimarySpriteFrame = 0;
+	_i06PrimarySpriteSequenceState = 0;
+	_i06PrimarySpriteSequenceStep = 0;
+	_i06VerticalBobOffset = 0;
+	_i06VerticalBobTicksRemaining = 0;
+	_i06OptionalOverlayChunk5Enabled = false;
+
+	const uint secondaryFrameIndex = finalFrame >> 1;
+	if (secondaryFrameIndex < ARRAYSIZE(kStage9050ResourceI06SecondarySpriteFrameByHalfFrame))
+		_i06SecondarySpriteFrame = kStage9050ResourceI06SecondarySpriteFrameByHalfFrame[secondaryFrameIndex];
+	_i06PreviousSecondarySpriteFrame = _i06SecondarySpriteFrame;
+	_i06SequenceFinished = true;
+
+	if (!interlude && (_currentMusicCue != kStage9050MusicCueMain || !_music.isPlaying())) {
+		_currentMusicCue = kStage9050MusicCueMain;
+		_music.playMusicCue(_currentMusicCue, 100);
+	}
+
+	markResourceI06CompositeDirty();
+	presentResourceI06AnimatedFrame();
 }
 
 void Scene9050::ensureContinuousSound(byte cueId, byte volumePercent) {
@@ -853,14 +919,8 @@ void Scene9050::stopContinuousSound() {
 void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback) {
 	debugC(1, kDebugScene, "Playing Stage 9050 %s segment %u to frame %u", kI05ArchiveName, segmentId, lastFrameIndex);
 
-	if (fadeInBeforePlayback) {
-		for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
-			if (pollEvents())
-				return;
-			clearSceneFramebufferBand(sweepOffset, 0x14);
-			presentFrame();
-		}
-	}
+	if (fadeInBeforePlayback && clearSceneFramebufferWithCurtain())
+		return;
 
 	if (_skipRequested || Engine::shouldQuit())
 		return;
@@ -873,12 +933,8 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 	presentFrame();
 
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
-	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
-		if (pollEvents())
-			return;
-		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
-		presentFrame();
-	}
+	if (revealSavedFramebufferWithCurtain())
+		return;
 
 	if (waitResourceI05ClipHold())
 		return;
@@ -967,12 +1023,8 @@ bool Scene9050::runResourceI08BlinkSequence() {
 	if (!loadResourceI08BlinkAssets())
 		return false;
 
-	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
-		if (pollEvents())
-			return true;
-		clearSceneFramebufferBand(sweepOffset, 0x14);
-		presentFrame();
-	}
+	if (clearSceneFramebufferWithCurtain())
+		return true;
 
 	if (_skipRequested || Engine::shouldQuit())
 		return true;
@@ -985,22 +1037,13 @@ bool Scene9050::runResourceI08BlinkSequence() {
 	presentFrame();
 
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
-	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
-		if (pollEvents())
-			return true;
-		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
-		presentFrame();
-	}
+	if (revealSavedFramebufferWithCurtain())
+		return true;
 
 	if (waitResourceI08BlinkLoop(6000))
 		return true;
 
-	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
-		if (pollEvents())
-			return true;
-		clearSceneFramebufferBand(sweepOffset, 0x14);
-		presentFrame();
-	}
+	clearSceneFramebufferWithCurtain();
 
 	return true;
 }
@@ -1054,7 +1097,20 @@ bool Scene9050::playBlockingAnimation(BlockingAnimationMode mode,
 	AnimationFrameRange range(firstFrame, lastFrame, frameMillis);
 	if (!waitAfterFinalFrame)
 		range.noFinalFrameDelay();
-	const bool completed = _animationPlayer.playAndPresent(_blockingAnimationFrame, range);
+	bool completed = _animationPlayer.playAndPresent(_blockingAnimationFrame, range);
+	if (!completed && !_skipRequested && !Engine::shouldQuit()) {
+		if (mode == kResourceI05ClipAnimation) {
+			while (_blockingAnimationFrame < lastFrame) {
+				_blockingAnimationFrame++;
+				drawResourceI05ClipFrameDelta(_i05ClipFrameCount, _blockingAnimationFrame);
+			}
+			presentFrame();
+		} else {
+			_blockingAnimationFrame = lastFrame;
+			presentAnimationFrame();
+		}
+		completed = true;
+	}
 	_blockingAnimationMode = kNoBlockingAnimation;
 	return completed;
 }

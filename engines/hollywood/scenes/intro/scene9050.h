@@ -74,6 +74,7 @@ private:
 	void advanceResourceI06PalettePulse();
 	void markResourceI06CompositeDirty();
 	bool runResourceI06AnimationLoop(bool interlude, bool runScriptedSpriteSequence);
+	void finishResourceI06AnimationLoop(bool interlude);
 	void ensureContinuousSound(byte cueId, byte volumePercent);
 	void stopContinuousSound();
 
@@ -106,11 +107,7 @@ private:
 		kI05InterClipFrameDescriptorCount = 10,
 		kI08BlinkFrameDescriptorCount = 2,
 		kI07FinalFrameDescriptorCount = 0x15,
-		kI06InitialBaseScrollOffset = 0xc0,
-		kI06SequenceDoneFrame = 0x17f,
-		kI06InterludeStartFrame = 0x80,
-		kI06InterludeDoneFrame = 0x1ff,
-		kI06FrameCounterWrap = 0x27f
+		kI06InitialBaseScrollOffset = 0xc0
 	};
 
 	MusicPlayer _music;

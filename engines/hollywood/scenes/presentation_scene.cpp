@@ -295,23 +295,37 @@ bool PresentationScene::consumeStepAdvanceRequest() {
 }
 
 bool PresentationScene::revealSavedFramebufferWithCurtain(byte bandWidth) {
+	bool fastForward = false;
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= bandWidth) {
-		if (pollEvents())
-			return true;
+		if (!fastForward && pollEvents()) {
+			if (_skipRequested || Engine::shouldQuit())
+				return true;
+			fastForward = consumeStepAdvanceRequest();
+		}
 		revealSavedFramebufferBand((uint)sweepOffset, bandWidth);
-		presentFrame();
+		if (!fastForward)
+			presentFrame();
 	}
+	if (fastForward)
+		presentFrame();
 
 	return _skipRequested || Engine::shouldQuit();
 }
 
 bool PresentationScene::clearSceneFramebufferWithCurtain(byte bandWidth) {
+	bool fastForward = false;
 	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += bandWidth) {
-		if (pollEvents())
-			return true;
+		if (!fastForward && pollEvents()) {
+			if (_skipRequested || Engine::shouldQuit())
+				return true;
+			fastForward = consumeStepAdvanceRequest();
+		}
 		clearSceneFramebufferBand(sweepOffset, bandWidth);
-		presentFrame();
+		if (!fastForward)
+			presentFrame();
 	}
+	if (fastForward)
+		presentFrame();
 
 	return _skipRequested || Engine::shouldQuit();
 }
