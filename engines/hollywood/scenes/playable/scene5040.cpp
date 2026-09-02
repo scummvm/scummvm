@@ -982,7 +982,7 @@ void Scene5040::remapSceneColors(byte sourceColor, byte itemId) {
 		return;
 
 	for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
-		if (_paletteMaskOriginal[color] == sourceColor)
+		if (_paletteMaskOriginal[kSceneColorToItemMap + color] == sourceColor)
 			_paletteMask[kSceneColorToItemMap + color] = itemId;
 	}
 }
