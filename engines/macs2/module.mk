@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	amiga_archive.o \
 	amiga_decode.o \
 	amiga_resources.o \
+	character.o \
 	midiparser_macs2.o \
 	music.o \
 	dialogs.o \

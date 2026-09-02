@@ -82,21 +82,6 @@ Common::Point getSceneObjectHotspotPosition(View1 *view, GameObject *obj) {
 
 } // namespace
 
-void resetCharacterWalkPath(Character *character) {
-	if (character == nullptr || character->_gameObject == nullptr) {
-		return;
-	}
-	const Common::Point &pos = character->getPosition();
-	character->_path.clear();
-	character->_currentPathIndex = 0;
-	character->_targetPosition = pos;
-	character->_pathFinalDestination = pos;
-	character->_stepDeltaX = 0;
-	character->_stepDeltaY = 0;
-	character->_stepError = 0;
-	character->_stepDirectionSet = false;
-}
-
 Macs2Engine *g_engine;
 
 Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::SeekableReadStream *stream) {
