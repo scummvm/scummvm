@@ -83,18 +83,19 @@ void Palette6Bit::markAllDirty() {
 	_dirtyEnd = 256;
 }
 
-void Palette6Bit::upload() {
+bool Palette6Bit::upload() {
 	if (_dirtyStart >= _dirtyEnd)
-		return;
+		return false;
 
 	g_system->getPaletteManager()->setPalette(_palette.data() + _dirtyStart * 3, _dirtyStart, _dirtyEnd - _dirtyStart);
 	_dirtyStart = 256;
 	_dirtyEnd = 0;
+	return true;
 }
 
-void Palette6Bit::uploadFrom6Bit(const Common::Array<byte> &palette) {
+bool Palette6Bit::uploadFrom6Bit(const Common::Array<byte> &palette) {
 	setFrom6Bit(palette);
-	upload();
+	return upload();
 }
 
 IndexedSurfaceBuffer::IndexedSurfaceBuffer() :

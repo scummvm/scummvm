@@ -202,6 +202,8 @@ bool GameplayLoop::run() {
 				_delegate->viewportXOffset(), _delegate->viewportYOffset());
 		syncPanelState();
 
+		// Scene hooks do not expose complete visual invalidation, so rebuild the
+		// composite here and let the presenter discard an unchanged final frame.
 		_delegate->drawGameplayFrame();
 		_delegate->presentGameplayFrame(_hoverCaption, _panelState);
 	}
