@@ -422,7 +422,7 @@ void Scene6030::initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRe
 	records.clear();
 	records.resize(kScene6030DialogueChoiceRecordCount);
 
-	// DAT_0050cea0: Hannover interview root choices.
+	// Hannover's interview root choices.
 	setHannoverDialogueRecord(records, 0, 1, 0, kScene6030DialogueTransitionDown, 10, 10, 1);
 	setHannoverDialogueRecord(records, 1, 1, 0, kScene6030DialogueTransitionStay, 11, 11, 1);
 	setHannoverDialogueRecord(records, 2, 1, 0, kScene6030DialogueTransitionStay, 12, 12, 1);

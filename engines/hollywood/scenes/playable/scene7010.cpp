@@ -783,7 +783,7 @@ void Scene7010::initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRe
 	records.clear();
 	records.resize(kScene7010HannoverDialogueChoiceRecordCount);
 
-	// DAT_00512088: Sue's row-98 Hannover courtyard dialogue menu.
+	// Sue's Hannover courtyard dialogue uses stage row 98.
 	setHannoverDialogueRecord(records, 0, 1, 0, kScene7010DialogueTransitionDown, 2, 5, 1);
 	setHannoverDialogueRecord(records, 1, 1, 0, kScene7010DialogueTransitionEnd, 3, 0, 1);
 	setHannoverDialogueRecord(records, 2, 1, 0, kScene7010DialogueTransitionEnd, 4, 0, 1);
