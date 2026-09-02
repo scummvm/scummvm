@@ -419,6 +419,11 @@ bool HollywoodEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
+bool HollywoodEngine::isFirstEdition() const {
+	return _gameDescription->extra != nullptr &&
+		!strcmp(_gameDescription->extra, "1st edition");
+}
+
 bool HollywoodEngine::hasSpeechData() const {
 	return !isDemo() ||
 		(getLanguage() == Common::ES_ESP && getPlatform() == Common::kPlatformDOS);
