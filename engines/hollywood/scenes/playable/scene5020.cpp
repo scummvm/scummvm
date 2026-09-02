@@ -67,10 +67,6 @@ const byte kScene5020MineCartDelayBuckets[] = {
 	12, 12, 12, 12
 };
 
-const byte kScene5020PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const uint kScene5020MineCartLayer = 0;
 const SceneLayerSpec kScene5020LayerSpecs[] = {
 	{kSceneAnimationInFrontOfActors, kScene5020MineCartOverlayChunk,
@@ -222,15 +218,7 @@ bool Scene5020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5020::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5020::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId == 0x10)
-		return 2;
-	if (cueId == 0x14)
-		return 100;
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5020::runMineCartArrival() {
@@ -286,8 +274,8 @@ void Scene5020::runPickupWoodenPlank() {
 		return;
 	}
 
-	runActorReplacement(kScene5020PickupOverlayChunk, kScene5020PickupOverlayDescriptorCount,
-		kScene5020PickupFrameMap, ARRAYSIZE(kScene5020PickupFrameMap), kScene5020OverlayFrameMillis);
+	runActorReplacement(ActionOverlaySpec(kScene5020PickupOverlayChunk,
+		kScene5020PickupOverlayDescriptorCount, kScene5020OverlayFrameMillis).holdFirstFrame());
 	addInventoryItem(kScene5020WoodenPlankItem);
 	_soundBank0.playSample(1, 100);
 	state.scene5020WoodenPlankTaken = true;

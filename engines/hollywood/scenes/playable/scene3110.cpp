@@ -82,15 +82,6 @@ const byte kScene3110CloseupFrameMap[] = {
 	0, 1, 2, 1, 0
 };
 
-const byte kScene3110Linear10FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-};
-
-const byte kScene3110Linear32FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
-};
-
 Scene3110::Scene3110(HollywoodEngine *vm) :
 		PresentationScene(vm, "scene 3110"),
 		_spriteSequenceTracks(nullptr),
@@ -647,9 +638,9 @@ void Scene3110::advanceMachineRoomPalette(MachineRoomState &state, uint32 elapse
 
 void Scene3110::runMonsterTableElectricSequence() {
 	const SpriteTrack tracks[] = {
-		{6, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 30, true},
-		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false},
-		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false}
+		{6, 0x20, nullptr, 0x20, 30, true},
+		{7, 10, nullptr, 10, 0, false},
+		{8, 10, nullptr, 10, 0, false}
 	};
 	AnimationFrameRange range(0, 85, kScene3110DefaultFrameMillis);
 	range.loopingSoundAt(30, 0x15, 75, 2)
@@ -660,9 +651,9 @@ void Scene3110::runMonsterTableElectricSequence() {
 
 void Scene3110::runMonsterTableFinalSequence() {
 	const SpriteTrack tracks[] = {
-		{9, 0x20, kScene3110Linear32FrameMap, ARRAYSIZE(kScene3110Linear32FrameMap), 0, true},
-		{7, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false},
-		{8, 10, kScene3110Linear10FrameMap, ARRAYSIZE(kScene3110Linear10FrameMap), 0, false}
+		{9, 0x20, nullptr, 0x20, 0, true},
+		{7, 10, nullptr, 10, 0, false},
+		{8, 10, nullptr, 10, 0, false}
 	};
 	AnimationFrameRange range(0, 89, kScene3110DefaultFrameMillis);
 	range.loopingSoundAt(0, 0x15, 75, 2);
@@ -726,7 +717,7 @@ uint Scene3110::frameForTrack(const SpriteTrack &track, uint tick) const {
 		return 0;
 
 	if (tick < track.firstTick)
-		return track.frameMap[0];
+		return track.frameMap ? track.frameMap[0] : 0;
 
 	const uint frameStep = tick - track.firstTick;
 	const uint frameIndex = track.holdLastFrame ?

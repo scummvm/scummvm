@@ -126,10 +126,6 @@ const byte kScene1060FlyDoctorFrameMap[] = {
 
 const byte kScene1060SmallTriggerFrameMap[] = { 0, 0, 1, 2, 3, 4, 5, 6 };
 
-const byte kScene1060TicketPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
 const byte kScene1060JuniorExchangeFrameMap[] = {
 	11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28
 };
@@ -1089,7 +1085,7 @@ void Scene1060::handleCloakroomTicketPickup() {
 	_ticketPickupSequenceActive = true;
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(10, kScene1060TicketPickupDescriptorCount,
-		kScene1060TicketPickupFrameMap, ARRAYSIZE(kScene1060TicketPickupFrameMap), kScene1060FrameMillis)
+		kScene1060FrameMillis).holdFirstFrame()
 		.commitAt(kScene1060TicketPickupStateFrame, state.scene1060DrFlyState, (byte)2)
 		.commitAt(kScene1060TicketPickupStateFrame, state.scene1060FlySlimeHotspotActive, false)
 		.patchAt(kScene1060TicketPickupStateFrame, 1));

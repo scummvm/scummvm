@@ -60,14 +60,6 @@ const byte kScene8020ForegroundFrameMap[] = {
 	9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 13, 18, 17, 18, 13, 14, 15
 };
 
-const byte kScene8020Pickup6cFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 0
-};
-
-const byte kScene8020Pickup5dFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const byte kScene8020Reverse6cFrameMap[] = {
 	0, 7, 6, 5, 4, 3, 2, 1, 0
 };
@@ -455,8 +447,9 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 	_foregroundRepeatCount = 0;
 	_soundBank0.stop();
 
-	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
-		kScene8020Pickup6cFrameMap, ARRAYSIZE(kScene8020Pickup6cFrameMap), kScene8020FrameMillis)
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk,
+		kScene8020InventoryItemOverlayDescriptorCount, kScene8020FrameMillis)
+		.returnToFirstFrame()
 		.resourcePatchAt(4, kScene8020Pickup6cPatchChunk)
 		.commitAt(4, _vm->gameState().scene8020ForegroundObjectState, (byte)2)
 		.unskippable()
@@ -472,8 +465,9 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 }
 
 void Scene8020::runPickupInventoryItem5dSequence() {
-	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
-		kScene8020Pickup5dFrameMap, ARRAYSIZE(kScene8020Pickup5dFrameMap), kScene8020FrameMillis)
+	runActorReplacement(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk,
+		kScene8020InventoryItem5dOverlayDescriptorCount, kScene8020FrameMillis)
+		.holdFirstFrame()
 		.resourcePatchAt(7, kScene8020Pickup5dPatchChunk)
 		.unskippable()
 		.noFinalFrameDelay()

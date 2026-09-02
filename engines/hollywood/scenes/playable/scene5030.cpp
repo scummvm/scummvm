@@ -96,8 +96,6 @@ const byte kScene5030ScoutResumeVanessaFrame = 0x0e;
 const byte kScene5030ScoutResumeGladysFrame = 0x14;
 const byte kScene5030DeckPatchFrame = 7;
 const byte kScene5030GrantDeckHook = 1;
-const byte kScene5030AmbientCueVolumes[] = { 10, 10, 10, 2, 10, 10, 10, 100 };
-
 const byte kScene5030MineCartEntryDelayBuckets[] = {
 	2, 2, 2, 2, 2, 2, 2, 2,
 	2, 2, 2, 2, 2, 2, 2, 2,
@@ -107,12 +105,6 @@ const byte kScene5030MineCartEntryDelayBuckets[] = {
 	4, 4, 4, 5, 5, 5, 5, 6,
 	6, 6, 6, 7, 7, 7, 7, 8,
 	8, 9, 9, 10, 11, 12
-};
-
-const byte kScene5030Chunk8FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25
 };
 
 const byte kScene5030Chunk9FrameMap[] = {
@@ -201,8 +193,7 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 	_sceneLayers.configureLayer(kScene5030MineCartEntryLayer, kSceneAnimationScenePlaced, 5,
 		kScene5030MineCartEntryDescriptorCount, nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5030Chunk8Layer, kSceneAnimationScenePlaced,
-		8, kScene5030Chunk8DescriptorCount,
-		kScene5030Chunk8FrameMap, ARRAYSIZE(kScene5030Chunk8FrameMap));
+		8, kScene5030Chunk8DescriptorCount, nullptr, 0);
 	_sceneLayers.configureLayer(kScene5030Chunk9Layer, kSceneAnimationScenePlaced,
 		9, kScene5030Chunk9DescriptorCount,
 		kScene5030Chunk9FrameMap, ARRAYSIZE(kScene5030Chunk9FrameMap));
@@ -213,7 +204,8 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5030AlternateVanessaLayer,
 		kSceneAnimationActorReplacement, 0, 0, nullptr, 0, false);
-	_chunk8Track = _realtimeAnimationTracks.addFrameMap(kScene5030Chunk8Layer, kScene5030FrameMillis);
+	_chunk8Track = _realtimeAnimationTracks.addLoop(kScene5030Chunk8Layer,
+		kScene5030FrameMillis, kScene5030Chunk8DescriptorCount);
 }
 
 void Scene5030::initializeCustomPreviewState() {
@@ -389,16 +381,10 @@ bool Scene5030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5030::ambientAudioProfile() const {
-	AmbientAudioProfile profile = createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x10, 1, 100, 1);
+	AmbientAudioProfile profile = createMineAmbientAudioProfile(0x10, 1, 1);
 	if (_musicSuppressed)
 		profile.musicMode = kAmbientMusicNone;
 	return profile;
-}
-
-byte Scene5030::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId < 0x0d || cueId >= 0x0d + ARRAYSIZE(kScene5030AmbientCueVolumes))
-		return defaultVolumePercent;
-	return kScene5030AmbientCueVolumes[cueId - 0x0d];
 }
 
 void Scene5030::handleAnimationFrameHook(byte hookId, uint frame) {

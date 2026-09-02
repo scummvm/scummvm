@@ -23,6 +23,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene4080.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -127,31 +128,8 @@ const byte kScene4080PalettePatchState2FrameMap[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-const byte kScene4080ExitFrameMap[] = {
-	0, 1, 2, 3, 4, 5
-};
-
-const byte kScene4080CoffinBookendForwardFrameMap[] = {
-	0, 1, 2, 3
-};
-
 const byte kScene4080CoffinBookendReverseFrameMap[] = {
 	0, 2, 1, 0
-};
-
-const byte kScene4080CoffinClipFrameMap[] = {
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21,
-	22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22
-};
-
-const byte kScene4080BottlePickupFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0
-};
-
-const byte kScene4080GominolaPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
 const byte kScene4080SteakPickupFrameMap[] = {
@@ -165,10 +143,6 @@ const byte kScene4080StakeSequenceFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
 	13, 13, 13, 13, 13, 13, 13, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26
-};
-
-const byte kScene4080FoodBagFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
 const byte kScene4080GwendolynReplyFrameMap[] = {
@@ -767,8 +741,8 @@ void Scene4080::advanceAmbientSound(uint32 delta) {
 void Scene4080::runCorridorExit() {
 	BlockingSequence(*this)
 		.resourceLayerFrames(kScene4080ScriptLayer, kScene4080ExitOverlayChunk,
-			kScene4080ExitOverlayDescriptorCount, kScene4080ExitFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4080ExitFrameMap) - 1,
+			kScene4080ExitOverlayDescriptorCount,
+			AnimationFrameRange(kScene4080ExitOverlayDescriptorCount,
 				kScene4080FrameMillis).noFinalFrameDelay())
 		.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene4080ExitState);
@@ -821,8 +795,8 @@ bool Scene4080::runCoffinInsertSequence() {
 		memset(insertPalette.data() + kScene4080CoffinPaletteBytes, 0, 3);
 
 	if (!playResourceLayerSequence(kScene4080ScriptLayer, kScene4080CoffinBookendChunk,
-			kScene4080CoffinBookendDescriptorCount, kScene4080CoffinBookendForwardFrameMap,
-			AnimationFrameRange(0, ARRAYSIZE(kScene4080CoffinBookendForwardFrameMap) - 1,
+			kScene4080CoffinBookendDescriptorCount,
+			AnimationFrameRange(kScene4080CoffinBookendDescriptorCount,
 				kScene4080FrameMillis).unskippable().noFinalFrameDelay(), false)) {
 		clearSceneLayer(kScene4080ScriptLayer);
 		return false;
@@ -889,12 +863,12 @@ bool Scene4080::runCoffinInsertSequence() {
 }
 
 bool Scene4080::playCoffinDeltaClip(uint chunkIndex) {
-	for (uint frame = 0; frame < ARRAYSIZE(kScene4080CoffinClipFrameMap); ++frame) {
+	for (uint frame = 0; frame < kCoffinDeltaClipFrameCount; ++frame) {
 		if (animationPlaybackShouldStop())
 			return false;
 
 		drawClipFrameDelta(chunkIndex, kScene4080CoffinClipDescriptorCount,
-			kScene4080CoffinClipFrameMap[frame]);
+			kCoffinDeltaClipFrames[frame]);
 		presentFrame();
 
 		const uint frameCounter = frame + 1;
@@ -906,7 +880,7 @@ bool Scene4080::playCoffinDeltaClip(uint chunkIndex) {
 				frameCounter == 0x19 || frameCounter == 0x1d)
 			playResidentSoundEffect(1);
 
-		if (frame + 1 < ARRAYSIZE(kScene4080CoffinClipFrameMap) &&
+		if (frame + 1 < kCoffinDeltaClipFrameCount &&
 				waitFullscreenAnimationFrame(kScene4080FrameMillis, false))
 			return false;
 	}
@@ -1031,9 +1005,9 @@ void Scene4080::runBottlePickupSequence() {
 	dispatchGenericSceneAction(21);
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080BottlePickupChunk,
-		kScene4080BottlePickupDescriptorCount, kScene4080BottlePickupFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4080BottlePickupFrameMap) - 1,
-			kScene4080FrameMillis).noFinalFrameDelay());
+		kScene4080BottlePickupDescriptorCount,
+		AnimationFrameRange(kScene4080BottlePickupDescriptorCount,
+			kScene4080FrameMillis).returnToFirstFrame().noFinalFrameDelay());
 	addInventoryItem(kScene4080OilBottleItem);
 	sequence.sound(1)
 		.commit(_vm->gameState().scene4080OilBottleState, (byte)0)
@@ -1050,9 +1024,9 @@ void Scene4080::runGominolaPickupSequence() {
 	GameplayState &state = _vm->gameState();
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080GominolaPickupChunk,
-		kScene4080GominolaPickupDescriptorCount, kScene4080GominolaPickupFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4080GominolaPickupFrameMap) - 1,
-			kScene4080FrameMillis)
+		kScene4080GominolaPickupDescriptorCount,
+		AnimationFrameRange(kScene4080GominolaPickupDescriptorCount, kScene4080FrameMillis)
+			.holdFirstFrame()
 			.commitAt(7, state.scene4080GominolaVisibleState, (byte)0)
 			.patchAt(7, 0xff)
 			.noFinalFrameDelay())
@@ -1086,9 +1060,9 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4080ScriptLayer, kScene4080FoodBagOverlayChunk,
-		kScene4080FoodBagOverlayDescriptorCount, kScene4080FoodBagFrameMap,
-		AnimationFrameRange(0, ARRAYSIZE(kScene4080FoodBagFrameMap) - 1,
-			kScene4080FrameMillis).noFinalFrameDelay());
+		kScene4080FoodBagOverlayDescriptorCount,
+		AnimationFrameRange(kScene4080FoodBagOverlayDescriptorCount, kScene4080FrameMillis)
+			.holdFirstFrame().noFinalFrameDelay());
 	removeInventoryItem(kScene4080MabusePillsItem);
 	sequence.sound(1)
 		.commit(_vm->gameState().scene4080GwendolynStateTransition, (byte)2)

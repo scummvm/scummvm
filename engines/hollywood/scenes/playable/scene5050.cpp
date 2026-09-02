@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/frankenstein_reward.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene5050.h"
@@ -44,24 +45,6 @@ const byte kScene5050PickupSpeechFrameCount = 4;
 
 enum Scene5050AnimationHookId {
 	kScene5050SpecialHoldHook = 1
-};
-
-const byte kScene5050SpecialTransitionFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-};
-
-const byte kScene5050PickupFrameMap[] = {
-	0, 1, 2, 3, 4, 8, 9, 10, 9, 8, 4, 5, 6, 7, 8, 9, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 4, 8, 9, 10, 9, 8, 4, 3, 2, 1, 0
-};
-
-const byte kScene5050PickupItems[] = {
-	0x30, 0x42, 0x4c
-};
-
-const byte kScene5050AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
 };
 
 PlayableSceneConfig scene5050Config() {
@@ -204,13 +187,7 @@ void Scene5050::runExitSideEffectsAfterLoop() {
 }
 
 AmbientAudioProfile Scene5050::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5050::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5050AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5050::handleAnimationFrameHook(byte hookId, uint frame) {
@@ -251,7 +228,6 @@ void Scene5050::runSpecialTransitionToMineSwitches() {
 
 	_specialTransitionActive = true;
 	runActorReplacement(ActionOverlaySpec(7, kScene5050SpecialTransitionDescriptorCount,
-		kScene5050SpecialTransitionFrameMap, ARRAYSIZE(kScene5050SpecialTransitionFrameMap),
 		kScene5050SpecialFrameMillis)
 		.hookAt(14, kScene5050SpecialHoldHook)
 		.noFinalFrameDelay()
@@ -273,9 +249,9 @@ void Scene5050::runTrophyBoxPickup() {
 	GameplayState &state = _vm->gameState();
 	const byte pickupIndex = state.frankensteinPartRewardIndex();
 	const bool grantItem = !state.scene5050TrophyBoxTaken &&
-		pickupIndex < ARRAYSIZE(kScene5050PickupItems);
+		pickupIndex < kFrankensteinPartCount;
 	runActorReplacement(ActionOverlaySpec(8, kScene5050PickupOverlayDescriptorCount,
-		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
+		kFrankensteinRewardFrameMap, kFrankensteinRewardFrameCount,
 		kScene5050PickupFrameMillis)
 		.endAt(11)
 		.primarySpeechAt(10, grantItem ? 0x16 : 0x66,
@@ -285,9 +261,9 @@ void Scene5050::runTrophyBoxPickup() {
 		.noRedrawAtEnd());
 
 	ActionOverlaySpec closing(8, kScene5050PickupOverlayDescriptorCount,
-		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
+		kFrankensteinRewardFrameMap, kFrankensteinRewardFrameCount,
 		kScene5050PickupFrameMillis);
-	closing.frameRange(grantItem ? 14 : 26, ARRAYSIZE(kScene5050PickupFrameMap))
+	closing.frameRange(grantItem ? 14 : 26, kFrankensteinRewardFrameCount)
 		.noFinalFrameDelay();
 	if (grantItem)
 		closing.soundAt(24, 1);
@@ -296,7 +272,7 @@ void Scene5050::runTrophyBoxPickup() {
 	if (!grantItem || Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
-	const byte itemId = kScene5050PickupItems[pickupIndex];
+	const byte itemId = kFrankensteinPartItems[pickupIndex];
 	addInventoryItem(itemId);
 	walkActiveActorTo(0x2b3, 0x1ba, 3, 0, false);
 	beginSecondarySpeechLine(0x16, (byte)(pickupIndex * 2 + 1));

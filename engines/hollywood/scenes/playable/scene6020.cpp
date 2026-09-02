@@ -80,16 +80,8 @@ const byte kScene6020SmallObjectFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 4, 3, 4, 5, 4, 3, 2, 1, 0
 };
 
-const byte kScene6020PickupForwardFrameMap[] = {
-	0x0b, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0x0b
-};
-
 const byte kScene6020PickupShortFrameMap[] = {
 	0x0b, 0, 1, 2, 3, 2, 1, 0, 0x0b
-};
-
-const byte kScene6020PickupReverseFrameMap[] = {
-	0x0b, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0x0b
 };
 
 const byte kScene6020LateSceneObjectFrameMap[] = {
@@ -686,8 +678,7 @@ void Scene6020::runPickupItem5A() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
-			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-			kScene6020FrameMillis).patchAt(6, 2))
+			kScene6020FrameMillis).bookendWithLastFrame().patchAt(6, 2))
 		.commit(_taffyDeskMagnifierHidden, true);
 	addInventoryItem(kScene6020MagnifierInventoryItem);
 	sequence.framebufferPatch(2)
@@ -703,8 +694,7 @@ void Scene6020::runPickupItem5B() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
-			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-			kScene6020FrameMillis).patchAt(4, 3));
+			kScene6020FrameMillis).bookendWithLastFrame().patchAt(4, 3));
 	addInventoryItem(0x5b);
 	sequence.framebufferPatch(3)
 		.sound(1)
@@ -733,8 +723,7 @@ void Scene6020::runPickupItem5E() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
-			kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-			kScene6020FrameMillis).patchAt(6, 4));
+			kScene6020FrameMillis).bookendWithLastFrame().patchAt(6, 4));
 	addInventoryItem(0x5e);
 	sequence.framebufferPatch(4)
 		.sound(1)
@@ -751,8 +740,7 @@ void Scene6020::runUseItem39Overlay() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
-		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap),
-		kScene6020FrameMillis));
+		kScene6020FrameMillis).bookendWithLastFrame().reverse());
 	removeInventoryItem(0x39);
 	sequence.commit(state.scene6030CoffeeState, (byte)1)
 		.sound(1)

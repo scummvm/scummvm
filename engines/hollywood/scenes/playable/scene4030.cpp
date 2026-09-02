@@ -105,11 +105,6 @@ const Scene4030MarkerPoint kScene4030MarkerPoints[][2] = {
 	{ { 0x366, 0x067 }, { 0x36a, 0x067 } }
 };
 
-const byte kScene4030RopePickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13
-};
-
 const byte kScene4030BoneRevealFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 10, 9, 10, 11, 10, 9, 10,
@@ -122,11 +117,6 @@ const byte kScene4030BoneRevealSecondaryFrameMap[] = {
 	9, 10, 11, 12
 };
 
-const byte kScene4030BonePickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12
-};
-
 const byte kScene4030LeverInstallFrameMap[] = {
 	11, 10, 9, 8, 7, 6, 5, 4, 3, 2,
 	2, 2, 1, 0, 11
@@ -134,10 +124,6 @@ const byte kScene4030LeverInstallFrameMap[] = {
 
 const byte kScene4030EntryOverlayFrameMap[] = {
 	7, 7, 6, 5, 4, 3, 2, 1, 0
-};
-
-const byte kScene4030StairExitFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7
 };
 
 const byte kScene4030MechanismPrimaryFrameMap[] = {
@@ -349,8 +335,7 @@ bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 313: // Usar escalera (use stairs): return toward the moat.
 		BlockingSequence(*this)
 			.actorReplacement(ActionOverlaySpec(kScene4030EntryOverlayChunk,
-				kScene4030EntryOverlayDescriptorCount, kScene4030StairExitFrameMap,
-				ARRAYSIZE(kScene4030StairExitFrameMap), kScene4030FrameMillis))
+				kScene4030EntryOverlayDescriptorCount, kScene4030FrameMillis).holdFirstFrame())
 			.commit(_vm->gameState().mainFlowStateId, _vm->isDemo() ?
 				kScene4010DemoReturnState : kScene4020ReturnState);
 		return true;
@@ -651,8 +636,8 @@ void Scene4030::takeRope() {
 	BlockingSequence sequence(*this);
 	sequence.commit(state.scene4030RopeTaken, true)
 		.actorReplacement(ActionOverlaySpec(kScene4030RopePickupChunk,
-			kScene4030RopePickupDescriptorCount, kScene4030RopePickupFrameMap,
-			ARRAYSIZE(kScene4030RopePickupFrameMap), kScene4030FrameMillis)
+			kScene4030RopePickupDescriptorCount, kScene4030FrameMillis)
+			.holdFirstFrame()
 			.patchAt(4, 4));
 	addInventoryItem(kScene4030RopeItem);
 	sequence.sound(1);
@@ -725,8 +710,8 @@ void Scene4030::takeBone() {
 	BlockingSequence sequence(*this);
 	sequence.commit(state.scene4030LooseBoneState, (byte)2)
 		.actorReplacement(ActionOverlaySpec(kScene4030BonePickupChunk,
-			kScene4030BonePickupDescriptorCount, kScene4030BonePickupFrameMap,
-			ARRAYSIZE(kScene4030BonePickupFrameMap), kScene4030FrameMillis)
+			kScene4030BonePickupDescriptorCount, kScene4030FrameMillis)
+			.holdFirstFrame()
 			.patchAt(7, 3));
 	addInventoryItem(kScene4030BoneItem);
 	sequence.sound(1);

@@ -44,7 +44,6 @@ private:
 		int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;
 	void runExitSideEffectsAfterLoop() override;
 
 	void runMineCartEntryClip();

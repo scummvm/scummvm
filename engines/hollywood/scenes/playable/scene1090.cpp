@@ -40,10 +40,6 @@ const uint kScene1090SwitchDescriptorCount = 6;
 const uint kScene1090WrappedBrainPickupDescriptorCount = 0x0e;
 
 const byte kScene1090SwitchFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0, 5 };
-const byte kScene1090WrappedBrainPickupFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
 PlayableSceneConfig scene1090Config() {
 	PlayableSceneConfig config(1090,
 		SceneResourceLayout(14, 5, 13),
@@ -246,9 +242,8 @@ void Scene1090::takeWrappedBrain() {
 	if (state.scene1090WrappedBrainState == 0)
 		revealWrappedBrain();
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(13, kScene1090WrappedBrainPickupDescriptorCount,
-			kScene1090WrappedBrainPickupFrameMap, ARRAYSIZE(kScene1090WrappedBrainPickupFrameMap),
-			kScene1090FrameMillis)
+	sequence.actorReplacement(ActionOverlaySpec(13, kScene1090WrappedBrainPickupDescriptorCount,
+			kScene1090FrameMillis))
 		.commit(state.scene1090WrappedBrainState, (byte)2)
 		.framebufferPatch(2);
 	addInventoryItem(0x25);

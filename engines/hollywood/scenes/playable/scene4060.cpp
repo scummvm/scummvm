@@ -116,10 +116,6 @@ const byte kScene4060SecondCardStatePrompted = 1;
 const byte kScene4060SecondCardStateWon = 2;
 const uint kScene4060PostSheetPokerAcceptRecord = 148;
 
-const byte kScene4060PokerOpenOverlayFrames[] = {
-	0, 1, 2, 3, 4, 5, 6
-};
-
 const byte kScene4060PokerOpenTableFrames[] = {
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x14, 0x14
 };
@@ -164,26 +160,6 @@ const byte kScene4060ForegroundState1FrameMap[] = {
 	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 	20, 21, 22, 23, 24, 23, 22, 21, 20, 19,
 	18, 17, 16, 15, 0
-};
-
-const byte kScene4060EntryOverlayFrameMap[] = {
-	0, 0, 1, 2, 3
-};
-
-const byte kScene4060ExitOverlayFrameMap[] = {
-	1, 1, 2, 3
-};
-
-const byte kScene4060FirstCardFrameMap[] = {
-	0x0b, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0a, 0x0b
-};
-
-const byte kScene4060SecondCardFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0a, 0x0b
-};
-
-const byte kScene4060InstallMirrorFrameMap[] = {
-	0x0b, 0x0a, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0x0b
 };
 
 struct Scene4060DialogueSeedRecord {
@@ -302,9 +278,9 @@ void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	configureForegroundLayerForState();
 	if (_exitFrameVisible) {
 		drawForegroundTableLayer();
-		drawMappedSpriteFrame(kScene4060ExitOverlayChunk, kScene4060ExitOverlayDescriptorCount,
-			kScene4060ExitOverlayFrameMap, ARRAYSIZE(kScene4060ExitOverlayFrameMap),
-			ARRAYSIZE(kScene4060ExitOverlayFrameMap) - 1);
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[kScene4060ExitOverlayChunk], 0,
+			kScene4060ExitOverlayDescriptorCount, kScene4060ExitOverlayDescriptorCount - 1,
+			_sceneFramebuffer);
 		return;
 	}
 
@@ -642,7 +618,7 @@ void Scene4060::runFirstEntrySequence() {
 	setActiveActorPose(kScene4060EntryRonWorldX, kScene4060EntryRonWorldY, kScene4060EntryRonFacing);
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(
 		kScene4060EntryOverlayChunk, kScene4060EntryOverlayDescriptorCount,
-		kScene4060EntryOverlayFrameMap, ARRAYSIZE(kScene4060EntryOverlayFrameMap));
+		nullptr, 0);
 	_actionOverlayPlayer.setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
@@ -651,7 +627,7 @@ void Scene4060::runFirstEntrySequence() {
 	sequence.fadeFromBlack()
 		.sound(0x31)
 		.presentedLayerFrames(_actionOverlayPlayer._layer,
-			AnimationFrameRange(1, ARRAYSIZE(kScene4060EntryOverlayFrameMap) - 1,
+			AnimationFrameRange(kScene4060EntryOverlayDescriptorCount,
 				kScene4060FrameMillis).noFinalFrameDelay());
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 	if (!sequence.completed())
@@ -676,8 +652,8 @@ void Scene4060::runExitToNextRoom() {
 	presentFrame();
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(kScene4060ExitOverlayChunk,
-			kScene4060ExitOverlayDescriptorCount, kScene4060ExitOverlayFrameMap,
-			ARRAYSIZE(kScene4060ExitOverlayFrameMap), kScene4060FrameMillis)
+			kScene4060ExitOverlayDescriptorCount, kScene4060FrameMillis)
+			.holdFrame(1).startAt(1)
 			.noFinalFrameDelay().noRedrawAtEnd());
 	_exitFrameVisible = true;
 	sequence.sound(3)
@@ -693,8 +669,8 @@ void Scene4060::runFirstCardStage() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk,
-			kScene4060FirstCardOverlayDescriptorCount, kScene4060FirstCardFrameMap,
-			ARRAYSIZE(kScene4060FirstCardFrameMap), kScene4060FrameMillis)
+			kScene4060FirstCardOverlayDescriptorCount, kScene4060FrameMillis)
+			.bookendWithLastFrame()
 			.resourcePatchAt(6, kScene4060FirstCardPatchChunk)
 			.noFinalFrameDelay().noRedrawAtEnd())
 		.commit(state.scene4060PictureCardStage, kScene4060CardStateFirstWon)
@@ -712,8 +688,8 @@ void Scene4060::runSecondCardStage() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(kScene4060SecondCardOverlayChunk,
-			kScene4060SecondCardOverlayDescriptorCount, kScene4060SecondCardFrameMap,
-			ARRAYSIZE(kScene4060SecondCardFrameMap), kScene4060FrameMillis)
+			kScene4060SecondCardOverlayDescriptorCount, kScene4060FrameMillis)
+			.holdFirstFrame()
 			.resourcePatchAt(5, kScene4060SecondCardPatchChunk)
 			.noFinalFrameDelay().noRedrawAtEnd())
 		.commit(state.scene4060PerfumeBottleCardStage, kScene4060SecondCardStateWon)
@@ -734,8 +710,8 @@ void Scene4060::runInstallMirrorStage() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(0x11, 1)
 		.actorReplacement(ActionOverlaySpec(kScene4060FirstCardOverlayChunk,
-			kScene4060FirstCardOverlayDescriptorCount, kScene4060InstallMirrorFrameMap,
-			ARRAYSIZE(kScene4060InstallMirrorFrameMap), kScene4060FrameMillis)
+			kScene4060FirstCardOverlayDescriptorCount, kScene4060FrameMillis)
+			.bookendWithLastFrame().reverse()
 			.resourcePatchAt(7, kScene4060MirrorInstalledPatchChunk)
 			.noFinalFrameDelay().noRedrawAtEnd())
 		.commit(state.scene4060PictureCardStage, kScene4060CardStateMirrorInstalled)
@@ -880,10 +856,10 @@ void Scene4060::runSherilynDialogueTransition() {
 void Scene4060::runSherilynPokerTransitionAnimation(bool finalRewardBranch) {
 	_pokerMidPatchVisible = false;
 	bool interrupted = false;
-	for (uint i = 0; i < ARRAYSIZE(kScene4060PokerOpenOverlayFrames) && !Engine::shouldQuit() && !interrupted; ++i) {
+	for (uint i = 0; i < ARRAYSIZE(kScene4060PokerOpenTableFrames) && !Engine::shouldQuit() && !interrupted; ++i) {
 		if (presentPokerTransitionFrame(kScene4060PokerOpenTableFrames[i],
 				kScene4060PokerOverlayChunk, kScene4060PokerOverlayDescriptorCount,
-				kScene4060PokerOpenOverlayFrames[i]))
+				(byte)i))
 			interrupted = true;
 	}
 

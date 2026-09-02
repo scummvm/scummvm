@@ -49,29 +49,14 @@ const uint kScene3060FrontLayer = 0;
 const uint kScene3060GlobeLayer = 1;
 const uint kScene3060ButtonLayer = 2;
 
-const byte kScene3060FrontFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18
-};
-
-const byte kScene3060GlobeFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 29
-};
-
 const byte kScene3060LeftButtonFrameMap[] = { 0, 1, 2, 2, 1, 0 };
 const byte kScene3060RightButtonFrameMap[] = { 0, 1, 4, 4, 1, 0 };
 const byte kScene3060RedButtonFrameMap[] = { 0, 1, 3, 3, 1, 0 };
-const byte kScene3060SecretDoorRevealFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
 const SceneLayerSpec kScene3060LayerSpecs[] = {
 	{kSceneAnimationInFrontOfActors, 5, kScene3060FrontDescriptorCount,
-		kScene3060FrontFrameMap, ARRAYSIZE(kScene3060FrontFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationScenePlaced, 6, kScene3060GlobeDescriptorCount,
-		kScene3060GlobeFrameMap, ARRAYSIZE(kScene3060GlobeFrameMap), true, 0},
+		nullptr, 0, true, 0},
 	{kSceneAnimationInFrontOfActors, 7, kScene3060ButtonDescriptorCount,
 		kScene3060LeftButtonFrameMap, ARRAYSIZE(kScene3060LeftButtonFrameMap), false, 0}
 };
@@ -668,7 +653,7 @@ void Scene3060::runSecretDoorReveal() {
 	_soundBank0.playSample(0x10, 100);
 	_secretDoorRevealActive = true;
 	runSceneOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
-		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap), kScene3060SecretDoorFrameMillis)
+		kScene3060SecretDoorFrameMillis)
 		.noRedrawAtEnd());
 	_secretDoorRevealActive = false;
 	_soundBank0.stop();

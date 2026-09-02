@@ -71,10 +71,6 @@ const byte kScene4040ExitFootstepFrames[] = {
 	3, 9, 15, 23, 29, 35, 41, 47, 53, 59
 };
 
-const byte kScene4040CandilFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8
-};
-
 const SceneLayerSpec kScene4040LayerSpecs[] = {
 	{kSceneAnimationBehindActors, kScene4040RandomBackgroundChunk,
 		kScene4040BackgroundDescriptorCount, nullptr, 0, true, 0},
@@ -517,8 +513,8 @@ void Scene4040::takeCandil() {
 
 	beginSecondarySpeechLine(8, 0);
 	state.scene4040CandilTaken = true;
-	runActorReplacement(ActionOverlaySpec(kScene4040CandilOverlayChunk, kScene4040CandilOverlayDescriptorCount,
-		kScene4040CandilFrameMap, ARRAYSIZE(kScene4040CandilFrameMap), kScene4040FrameMillis)
+	runActorReplacement(ActionOverlaySpec(kScene4040CandilOverlayChunk,
+		kScene4040CandilOverlayDescriptorCount, kScene4040FrameMillis)
 		.patchAt(3, 1)
 		.noFinalFrameDelay());
 	addInventoryItem(kScene4040CandilItem);

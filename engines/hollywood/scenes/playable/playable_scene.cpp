@@ -40,6 +40,10 @@
 
 namespace Hollywood {
 
+const byte kMineAmbientSoundCueVolumes[] = {
+	10, 10, 10, 2, 10, 10, 10, 100
+};
+
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
 const byte kAmbientMusicCueStillFrame = 0x0f;
@@ -813,11 +817,6 @@ AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(100);
 }
 
-byte PlayableScene::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	(void)cueId;
-	return defaultVolumePercent;
-}
-
 void PlayableScene::handleAnimationFrameHook(byte hookId, uint frame) {
 	(void)hookId;
 	(void)frame;
@@ -942,6 +941,15 @@ AmbientAudioProfile PlayableScene::createRandomAmbientAudioProfile(byte soundFir
 	profile.musicCueCount = musicCueCount;
 	profile.musicProbabilityModulus = musicProbabilityModulus;
 	profile.musicVolumePercent = musicVolumePercent;
+	return profile;
+}
+
+AmbientAudioProfile PlayableScene::createMineAmbientAudioProfile(byte musicFirstCueId,
+		byte musicCueCount, byte musicProbabilityModulus) const {
+	AmbientAudioProfile profile = createRandomAmbientAudioProfile(0x0d, 8, 10, 25,
+		musicFirstCueId, musicCueCount, 100, musicProbabilityModulus);
+	profile.soundCueVolumes = kMineAmbientSoundCueVolumes;
+	profile.soundCueVolumeCount = ARRAYSIZE(kMineAmbientSoundCueVolumes);
 	return profile;
 }
 
@@ -2639,11 +2647,12 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 		spec.descriptorCount, spec.frameMap, spec.frameMapSize, stratum,
 		hideActiveActor, spec.restoreBackgroundBeforeDraw);
 
-	const uint firstFrame = MIN<uint>(options.firstFrame, spec.frameMapSize);
-	const uint requestedEndFrame = options.endFrame == 0 ? spec.frameMapSize : options.endFrame;
-	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, spec.frameMapSize);
+	const uint playbackFrameCount = spec.playbackFrameCount();
+	const uint firstFrame = MIN<uint>(options.firstFrame, playbackFrameCount);
+	const uint requestedEndFrame = options.endFrame == 0 ? playbackFrameCount : options.endFrame;
+	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, playbackFrameCount);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayPlayer.setFrame(frame);
+		_actionOverlayPlayer.setFrame(spec.targetFrame(frame));
 		const Common::Array<AnimationFrameEvent> &events = spec._events;
 		for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 			if (events[eventIndex].matches(frame))
@@ -2655,9 +2664,9 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 			presentFrame();
 		} else if (waitSceneMillis(spec.frameMillis, options.allowSkip)) {
 			if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested() &&
-					consumeStepAdvanceRequest()) {
+				consumeStepAdvanceRequest()) {
 				for (++frame; frame < cappedEndFrame; ++frame) {
-					_actionOverlayPlayer.setFrame(frame);
+					_actionOverlayPlayer.setFrame(spec.targetFrame(frame));
 					for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
 						if (events[eventIndex].matches(frame))
 							handleAnimationFrameEvent(events[eventIndex], frame);
@@ -2853,8 +2862,14 @@ void PlayableScene::updateAmbientSoundCue(const AmbientAudioProfile &profile) {
 		_currentAmbientSoundCueId = (byte)(profile.soundFirstCueId +
 			_random.getRandomNumber(profile.soundCueCount - 1));
 	} while (profile.soundCueCount > 1 && _currentAmbientSoundCueId == _previousAmbientSoundCueId);
-	_ambientSoundBank0.playSample(_currentAmbientSoundCueId,
-		ambientSoundCueVolume(_currentAmbientSoundCueId, profile.soundVolumePercent));
+	byte volumePercent = profile.soundVolumePercent;
+	if (profile.soundCueVolumes != nullptr &&
+			_currentAmbientSoundCueId >= profile.soundFirstCueId) {
+		const uint volumeIndex = _currentAmbientSoundCueId - profile.soundFirstCueId;
+		if (volumeIndex < profile.soundCueVolumeCount)
+			volumePercent = profile.soundCueVolumes[volumeIndex];
+	}
+	_ambientSoundBank0.playSample(_currentAmbientSoundCueId, volumePercent);
 }
 
 void PlayableScene::updateAmbientMusicCue(const AmbientAudioProfile &profile) {

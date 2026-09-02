@@ -78,10 +78,6 @@ const byte kScene4110BackgroundSequenceLengths[] = {
 	1, 3, 5, 11, 2
 };
 
-const byte kScene4110PickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
-
 const byte kScene4110AlternateFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 5, 6, 6, 6,
 	6, 6, 5, 6, 6, 6, 6, 6, 5, 6, 7, 8, 9
@@ -378,9 +374,7 @@ void Scene4110::takeStraw() {
 
 	beginSecondarySpeechLine(3, 0);
 	runActorReplacement(ActionOverlaySpec(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
-		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap), kScene4110FrameMillis)
-		.restoreBaseBackground()
-		.frameRange(1, ARRAYSIZE(kScene4110PickupFrameMap)));
+		kScene4110FrameMillis).restoreBaseBackground());
 	addInventoryItem(kScene4110StrawItem);
 	_soundBank0.playSample(1, 100);
 	state.scene4110StrawTaken = true;

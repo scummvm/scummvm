@@ -102,9 +102,6 @@ const byte kPanelDialogueMenuHighlightColor = 0xf9;
 const byte kPanelSelectedColorDelta = 9;
 const byte kPanelArrowEnabledColor = 0xf1;
 const byte kPanelArrowDisabledColor = 0xf0;
-const uint16 kPanelVerbStripXOffsets[9] = {
-	0xff, 0, 8, 97, 186, 276, 366, 456, 545
-};
 const uint16 kPanelVerbStripLabelCenters[9] = {
 	0, 0, 0x33, 0x8c, 0xe5, 0x13f, 0x199, 499, 0x24c
 };
@@ -641,7 +638,7 @@ void GameplayPanelArt::applySelectedVerbStrip(Graphics::Surface &surface, int sc
 	if (surface.format.bytesPerPixel != 1 || stripIndex < 2 || stripIndex > 8)
 		return;
 
-	const int left = kPanelVerbStripXOffsets[stripIndex];
+	const int left = kGameplayVerbPanelStripXOffsets[stripIndex];
 	const int top = screenY + kPanelVerbStripTopInBuffer;
 	for (int row = 0; row < kPanelVerbStripHeight; ++row) {
 		const int y = top + row;

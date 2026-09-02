@@ -24,6 +24,7 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/playable/scene6080.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -57,9 +58,6 @@ const byte kScene6080SueAlternateFrameMap[] = {
 const byte kScene6080GuardNormalFrameMap[] = {
 	0, 1, 2, 2, 1, 0, 3, 4, 5, 6, 7, 8, 9, 6, 5, 4, 3, 0};
 
-const byte kScene6080GuardAlternateFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8};
-
 const byte kScene6080WaxBallFrameMap[] = {
 	0, 1, 31, 32, 33, 34, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 18, 19, 35, 36, 37, 36, 19, 35, 37, 37,
@@ -81,7 +79,7 @@ const SceneLayerSpec kScene6080LayerSpecs[] = {
 	{kSceneAnimationInFrontOfActors, 6, 0x0a,
 		kScene6080GuardNormalFrameMap, ARRAYSIZE(kScene6080GuardNormalFrameMap), true, 0},
 	{kSceneAnimationInFrontOfActors, 7, 9,
-		kScene6080GuardAlternateFrameMap, ARRAYSIZE(kScene6080GuardAlternateFrameMap), false, 0}
+		kHoldFirstNineFrames, kHoldFirstNineFrameCount, false, 0}
 };
 
 PlayableSceneConfig scene6080Config() {

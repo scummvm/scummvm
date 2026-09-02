@@ -73,31 +73,10 @@ const uint kScene5120ProjectorSpeechLayer = 7;
 const byte kScene5120WerewolfSpeechGroup = 0;
 const byte kScene5120ProjectorSpeechGroup = 1;
 
-const byte kScene5120ElevatorOpenFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
-};
-
-const byte kScene5120ElevatorCloseFrameMap[] = {
-	17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
-};
-
-const byte kScene5120TongsPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-};
-
 const byte kScene5120PillboxFillFrameMap[] = {
 	11, 11, 10, 9, 8, 7, 6, 5,
 	4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
 	5, 6, 7, 8, 9, 10, 11
-};
-
-const byte kScene5120ProjectorInstallFrameMap[] = {
-	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11
-};
-
-const byte kScene5120ProjectorFirstFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8,
-	9, 10, 11, 12, 13, 14, 15, 16, 17
 };
 
 const byte kScene5120ProjectorSecondFrameMap[] = {
@@ -512,9 +491,9 @@ void Scene5120::runAlternateEntrySequence() {
 
 void Scene5120::runElevatorDoorClip(bool opening) {
 	_sceneLayers.setLayerVisible(kScene5120ElevatorLayer, false);
-	ActionOverlaySpec spec(8, kScene5120ElevatorDescriptorCount,
-		opening ? kScene5120ElevatorOpenFrameMap : kScene5120ElevatorCloseFrameMap,
-		ARRAYSIZE(kScene5120ElevatorOpenFrameMap), kScene5120ElevatorFrameMillis);
+	ActionOverlaySpec spec(8, kScene5120ElevatorDescriptorCount, kScene5120ElevatorFrameMillis);
+	if (!opening)
+		spec.reverse();
 	runSceneOverlay(spec.noRedrawAtEnd());
 	_sceneLayers.showLayerAtFrame(kScene5120ElevatorLayer,
 		opening ? kScene5120ElevatorDescriptorCount - 1 : 0);
@@ -546,7 +525,7 @@ void Scene5120::runTongsPickup() {
 
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(20, kScene5120TongsPickupDescriptorCount,
-			kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap), kScene5120ActionFrameMillis)
+			kScene5120ActionFrameMillis).holdFirstFrame()
 			.resourcePatchAt(10, 6))
 		.commit(state.scene5120TongsTaken, true)
 		.framebufferPatch(1);
@@ -601,8 +580,7 @@ void Scene5120::runFilmProjectorSequence() {
 	runElevatorDoorClip(false);
 	_soundBank0.playSample(0x1e, 100, true);
 	runActorReplacement(ActionOverlaySpec(18, kScene5120ProjectorInstallDescriptorCount,
-		kScene5120ProjectorInstallFrameMap, ARRAYSIZE(kScene5120ProjectorInstallFrameMap),
-		kScene5120ActionFrameMillis));
+		kScene5120ActionFrameMillis).bookendWithLastFrame().reverse());
 	removeInventoryItem(kScene5120FilmInventoryItem);
 	_ambientSoundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(26, 0);
@@ -614,7 +592,6 @@ void Scene5120::runFilmProjectorSequence() {
 	}
 	runElevatorDoorClip(true);
 	runActorReplacement(ActionOverlaySpec(17, kScene5120ProjectorDescriptorCount,
-		kScene5120ProjectorFirstFrameMap, ARRAYSIZE(kScene5120ProjectorFirstFrameMap),
 		kScene5120ActionFrameMillis).noRedrawAtEnd());
 	_soundBank0.stop();
 
@@ -670,7 +647,7 @@ void Scene5120::initializeTransformedRoomLayers() {
 		kScene5120TransformationDescriptorCount, nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5120ElevatorLayer,
 		kSceneAnimationScenePlaced, 8, kScene5120ElevatorDescriptorCount,
-		kScene5120ElevatorOpenFrameMap, ARRAYSIZE(kScene5120ElevatorOpenFrameMap), false);
+		nullptr, 0, false);
 	_sceneLayers.configureLayer(kScene5120ProjectorSpeechLayer,
 		kSceneAnimationScenePlaced, 16, kScene5120ProjectorSpeechDescriptorCount,
 		nullptr, 0, false);

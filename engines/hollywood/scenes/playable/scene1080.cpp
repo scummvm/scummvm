@@ -25,6 +25,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene1080.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
 
 namespace Hollywood {
 
@@ -60,8 +61,6 @@ const uint kScene1080FrancoisLayer = 0;
 const uint kScene1080ForegroundLayer = 1;
 const uint kScene1080FrancoisActionLayer = 2;
 
-const byte kScene1080ForegroundFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0 };
-
 const byte kScene1080FrancoisFrameMap[] = {
 	0, 1, 2, 3, 16, 4, 17, 5, 4, 6, 7, 8, 9, 10, 11, 12,
 	13, 14, 15, 17, 18
@@ -81,7 +80,7 @@ const SceneLayerSpec kScene1080LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 8, kScene1080FrancoisDescriptorCount,
 		kScene1080FrancoisFrameMap, ARRAYSIZE(kScene1080FrancoisFrameMap), true, 0},
 	{kSceneAnimationInFrontOfActors, 11, kScene1080ForegroundDescriptorCount,
-		kScene1080ForegroundFrameMap, ARRAYSIZE(kScene1080ForegroundFrameMap), true, 0},
+		kFiveFramePingPongFrames, kFiveFramePingPongFrameCount, true, 0},
 	{kSceneAnimationInFrontOfActors, 9, kScene1080FrancoisActionDescriptorCount,
 		nullptr, 0, false, 0}
 };
@@ -281,7 +280,7 @@ void Scene1080::advanceForegroundLayer(uint32 delta) {
 				_sceneLayers.setLayerFrame(kScene1080ForegroundLayer, 0);
 			}
 		} else if (!_sceneLayers.advanceLayerFrame(kScene1080ForegroundLayer,
-				ARRAYSIZE(kScene1080ForegroundFrameMap) - 1)) {
+				kFiveFramePingPongFrameCount - 1)) {
 			_sceneLayers.setLayerFrame(kScene1080ForegroundLayer, 0);
 			_foregroundMode = 0;
 		}

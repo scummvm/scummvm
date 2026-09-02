@@ -56,10 +56,6 @@ const byte kScene5040KarlPrizeItem = 0x4a;
 const byte kScene5040KeyItem = 0x4b;
 const byte kScene5040KarlSceneItem = 4;
 
-const byte kScene5040AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
-};
-
 enum {
 	kScene5040KarlLayer
 };
@@ -90,18 +86,6 @@ const byte kScene5040KarlFrameMap[] = {
 	13, 12, 11, 10, 9, 8, 7, 6, 5, 0, 15, 16, 17, 18, 19, 20,
 	21, 22, 23, 24, 25, 26, 27, 28, 0, 29, 30, 31, 32, 33, 34, 34,
 	34, 34, 35, 36, 37, 0, 37, 38, 39, 40, 41, 42, 20, 21, 22, 21
-};
-
-const byte kScene5040MineBoxPickupFrameMap[] = {
-	12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
-const byte kScene5040Chunk15FrameMap[] = {
-	13, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-};
-
-const byte kScene5040MagneticBombFrameMap[] = {
-	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11
 };
 
 const byte kScene5040DowsingRodSwapFrameMap[] = {
@@ -186,8 +170,8 @@ void Scene5040::runCustomEntrySequence() {
 		beginStaticSecondarySpeechLine(0xd0, 0);
 		walkActiveActorTo(0x238, 0x145, 1, 0, false);
 		beginSecondarySpeechLine(8, 0);
-		runActorReplacement(ActionOverlaySpec(15, 0x0e,
-			kScene5040Chunk15FrameMap, ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis)
+		runActorReplacement(ActionOverlaySpec(15, 0x0e, kScene5040FrameMillis)
+			.bookendWithLastFrame()
 			.resourcePatchAt(6, 14));
 		state.scene5040SpecialTransitionState = 2;
 		addInventoryItem(kScene5040KarlPrizeItem);
@@ -406,13 +390,7 @@ void Scene5040::runExitSideEffectsAfterLoop() {
 }
 
 AmbientAudioProfile Scene5040::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5040::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5040AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 byte Scene5040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -779,8 +757,7 @@ void Scene5040::runMineBoxLook() {
 void Scene5040::runPatchedSockPickup() {
 	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
-		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
-		kScene5040FrameMillis).noRedrawAtEnd());
+		kScene5040FrameMillis).bookendWithLastFrame().noRedrawAtEnd());
 	state.scene5040DialState = 2;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040PatchedSockItem);
@@ -792,8 +769,7 @@ void Scene5040::runPatchedSockPickup() {
 void Scene5040::runMineKeyPickup() {
 	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
-		kScene5040MineBoxPickupFrameMap, ARRAYSIZE(kScene5040MineBoxPickupFrameMap),
-		kScene5040FrameMillis).noRedrawAtEnd());
+		kScene5040FrameMillis).bookendWithLastFrame().noRedrawAtEnd());
 	state.scene5040DialState = 4;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040KeyItem);
@@ -813,8 +789,7 @@ void Scene5040::runSpecialMineExitWithMagneticPillbox() {
 
 	_suspendKarlIdle = true;
 	runActorReplacement(ActionOverlaySpec(12, kScene5040ItemSwapDescriptorCount,
-		kScene5040MagneticBombFrameMap, ARRAYSIZE(kScene5040MagneticBombFrameMap),
-		kScene5040FrameMillis));
+		kScene5040FrameMillis).bookendWithLastFrame().reverse());
 	removeInventoryItem(kScene5040MagneticBombPillboxItem);
 	_soundBank0.playSample(1, 100);
 	walkActiveActorTo(0x230, 0x16b, 3, 0, false);

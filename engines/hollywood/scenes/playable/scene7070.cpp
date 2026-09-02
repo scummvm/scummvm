@@ -62,9 +62,6 @@ const int kScene7070DrawerHotspotLeft = 0x114;
 const int kScene7070DrawerHotspotTop = 0x10e;
 const int kScene7070DrawerHotspotRight = 0x148;
 const int kScene7070DrawerHotspotBottom = 0x124;
-const byte kScene7070ExitDoorFrameMap[] = {
-	0, 0, 1, 2, 3
-};
 const byte kScene7070Chunk12ItemFrameMap[] = {
 	0, 0x21, 0x20, 0x1f, 0x23, 0x22, 0x16, 0x17, 0x18, 0x19,
 	0x1a, 0x1b, 0x1c, 0x1d, 0x1f, 0x20, 0x21, 0
@@ -307,9 +304,8 @@ void Scene7070::handleExitDoorAction() {
 	const uint16 exitState = state.gramophoneCrankState < 3 ?
 		kScene7070ExitToG08State : kScene7070ExitToG09State;
 	BlockingSequence(*this)
-		.actorReplacement(8, kScene7070Chunk8DescriptorCount,
-			kScene7070ExitDoorFrameMap, ARRAYSIZE(kScene7070ExitDoorFrameMap),
-			kScene7070OverlayFrameMillis)
+		.actorReplacement(ActionOverlaySpec(8, kScene7070Chunk8DescriptorCount,
+			kScene7070OverlayFrameMillis).holdFirstFrame())
 		.sound(3)
 		.commit(state.gramophoneRoomDoorState, (byte)2)
 		.commit(state.mainFlowStateId, exitState);

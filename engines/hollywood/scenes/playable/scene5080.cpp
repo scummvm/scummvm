@@ -41,14 +41,6 @@ const byte kScene5080BookInventoryItem = 0x51;
 const byte kScene5080BookSourceItem = 10;
 const byte kScene5080StairDoorSceneItem = 8;
 
-const byte kScene5080AmbientSoundVolumes[] = {
-	10, 10, 10, 2, 10, 10, 10, 100
-};
-
-const byte kScene5080BookPickupFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-
 const byte kScene5080WardrobeFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 4, 3, 4, 5, 4, 3, 4, 5, 4, 3, 2, 1, 0
 };
@@ -348,13 +340,7 @@ bool Scene5080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 }
 
 AmbientAudioProfile Scene5080::ambientAudioProfile() const {
-	return createRandomAmbientAudioProfile(0x0d, 8, 10, 25, 0x0b, 5, 100, 50);
-}
-
-byte Scene5080::ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const {
-	if (cueId >= 0x0d && cueId <= 0x14)
-		return kScene5080AmbientSoundVolumes[cueId - 0x0d];
-	return defaultVolumePercent;
+	return createMineAmbientAudioProfile();
 }
 
 void Scene5080::runExitSideEffectsAfterLoop() {
@@ -411,8 +397,8 @@ void Scene5080::runBookPickup() {
 
 	beginStaticSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
 	BlockingSequence sequence(*this);
-	sequence.actorReplacement(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount,
-		kScene5080BookPickupFrameMap, ARRAYSIZE(kScene5080BookPickupFrameMap), kScene5080FrameMillis)
+	sequence.actorReplacement(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount, kScene5080FrameMillis)
+		.holdFirstFrame()
 		.noFinalFrameDelay()
 		.noRedrawAtEnd());
 	addInventoryItem(kScene5080BookInventoryItem);

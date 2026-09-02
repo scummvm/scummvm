@@ -68,12 +68,6 @@ const byte kScene7100PrimaryAltFrameMap[] = {
 const byte kScene7100Chunk8FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 17, 18, 19
 };
-const byte kScene7100Chunk7FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-};
-const byte kScene7100PickupItem15FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0
-};
 const byte kScene7100Handler315FrameMap[] = {
 	0, 1, 2, 3, 4, 4, 4, 4, 4
 };
@@ -583,8 +577,8 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
 			kScene7100Chunk8DescriptorCount, frame, _sceneFramebuffer);
 	} else if (_environmentState == 1) {
-		const byte frame = _environmentFrame < ARRAYSIZE(kScene7100Chunk7FrameMap) ?
-			kScene7100Chunk7FrameMap[_environmentFrame] : 0;
+		const byte frame = _environmentFrame < kScene7100Chunk7DescriptorCount ?
+			_environmentFrame : 0;
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
 			kScene7100Chunk7DescriptorCount, frame, _sceneFramebuffer);
 	}
@@ -959,9 +953,8 @@ void Scene7100::runCurtainClearToBlack() {
 void Scene7100::handlePickupItem15() {
 	BlockingSequence sequence(*this);
 	sequence.secondarySpeech(4, 0)
-		.actorReplacement(16, kScene7100Chunk16DescriptorCount,
-			kScene7100PickupItem15FrameMap, ARRAYSIZE(kScene7100PickupItem15FrameMap),
-			kScene7100FrameMillis);
+		.actorReplacement(ActionOverlaySpec(16, kScene7100Chunk16DescriptorCount,
+			kScene7100FrameMillis).returnToFirstFrame());
 	addInventoryItem(0x15);
 	sequence.sound(1)
 		.commit(_vm->gameState().posterOnCellWall, false)

@@ -318,7 +318,6 @@ protected:
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
 	virtual AmbientAudioProfile ambientAudioProfile() const;
-	virtual byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
 	// Advances scene services while a transition renderer owns the framebuffer.
 	virtual void advanceTransitionAnimation(uint32 delta);
@@ -329,6 +328,8 @@ protected:
 	AmbientAudioProfile createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
 		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
 		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const;
+	AmbientAudioProfile createMineAmbientAudioProfile(byte musicFirstCueId = 0x0b,
+		byte musicCueCount = 5, byte musicProbabilityModulus = 50) const;
 	bool playResidentSoundEffect(byte soundEffectId, byte volumePercent = 100);
 	bool playActiveActorFootstep();
 
