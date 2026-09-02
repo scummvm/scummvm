@@ -389,6 +389,12 @@ void Scene9090::initializeOfficeState() {
 void Scene9090::composeFrame() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 	drawOfficePatch(6);
+	// Chunk 7 replaces the upper portion of Ron's static chunk-6 pose.
+	if (_insetFrame < ARRAYSIZE(kScene9090InsetFrameMap)) {
+		restoreSpriteBackground(_resources._arena, _resources._chunkOffsets[7], 0,
+			kScene9090InsetDescriptorCount, kScene9090InsetFrameMap[_insetFrame],
+			_baseFramebuffer.surface(), _sceneFramebuffer.surface());
+	}
 	drawDeskActor();
 	drawSecondaryActor();
 	drawInsetActor();

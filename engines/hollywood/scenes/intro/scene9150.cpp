@@ -102,9 +102,13 @@ void Scene9150::runClip(byte staticSpeechRowIndex) {
 	_clipFrameIndex = 0;
 	AnimationFrameRange range(0, kScene9150DescriptorCount - 1,
 		kScene9150FrameIntervalMillis);
-	_animationPlayer.playAndPresent(_clipFrameIndex, range);
+	const bool completed = _animationPlayer.playAndPresent(_clipFrameIndex, range);
 	if (animationPlaybackShouldStop())
 		return;
+	if (!completed) {
+		_clipFrameIndex = kScene9150DescriptorCount - 1;
+		presentAnimationFrame();
+	}
 
 	playStaticSpeechPair(staticSpeechRowIndex);
 	fadeOutPalette();
