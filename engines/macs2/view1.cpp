@@ -2594,8 +2594,7 @@ bool View1::tick() {
 						// Binary gameTick (1008:e752): polls object table pos vs runtime finalDest;
 						// no on-screen Character is required (e.g. after moveObject to another scene).
 						const GameObject::StoredWalkRuntime &rt = walkObject->_storedWalkRuntime;
-						if (walkObject->_position.x == rt.pathFinalDestination.x &&
-							walkObject->_position.y == rt.pathFinalDestination.y) {
+						if (walkObject->_position == rt.pathFinalDestination) {
 							if ((int16)rt.motionTargetVerticalOffset < 0 ||
 								rt.motionTargetVerticalOffset == walkObject->_verticalOffsetScale) {
 								walkComplete = true;
@@ -2633,7 +2632,7 @@ bool View1::tick() {
 				}
 			} else if (executor->_waitForAdlibReady) {
 				drawSceneUpdate();
-				Music *music = g_engine->getMusic();
+				const Music *music = g_engine->getMusic();
 				const bool ready = music->isMidiFilePlaying() ? false : music->isPlaybackReady();
 				if (ready) {
 					executor->_waitForAdlibReady = false;
