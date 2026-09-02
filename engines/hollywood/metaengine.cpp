@@ -32,7 +32,7 @@
 
 namespace Hollywood {
 
-static const ADExtraGuiOptionsMap optionsList[] = {
+const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_RESTORED_CONTENT,
 		{

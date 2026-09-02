@@ -130,7 +130,7 @@ const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ADGameDescription fallbackWindowsDescription = {
+const ADGameDescription fallbackWindowsDescription = {
 	"hollywood",
 	"",
 	AD_ENTRY1(nullptr, nullptr),
@@ -140,7 +140,7 @@ static const ADGameDescription fallbackWindowsDescription = {
 	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 
-static const ADGameDescription fallbackDosDescription = {
+const ADGameDescription fallbackDosDescription = {
 	"hollywood",
 	"Unknown DOS version",
 	AD_ENTRY1(nullptr, nullptr),
@@ -150,7 +150,7 @@ static const ADGameDescription fallbackDosDescription = {
 	GUIO2(GAMEOPTION_RESTORED_CONTENT, GUIO_NOMIDI)
 };
 
-static const ADFileBasedFallback fileBasedFallback[] = {
+const ADFileBasedFallback fileBasedFallback[] = {
 	{ &fallbackDosDescription, { "MONSTERS.EXE", "RESOURCE.000", "RESOURCE.003", "RESOURCE.004", nullptr } },
 	{ nullptr, { nullptr } }
 };
