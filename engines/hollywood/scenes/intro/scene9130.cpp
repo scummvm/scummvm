@@ -113,7 +113,7 @@ bool Scene9130::load() {
 			return false;
 	}
 
-	if (!loadFixedChunk(0, _savedFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(0, _savedFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 

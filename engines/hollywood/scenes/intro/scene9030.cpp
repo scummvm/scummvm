@@ -30,7 +30,6 @@
 namespace Hollywood {
 
 const char *const kScene9030ArchiveName = "RESOURCE.I03";
-const uint kScene9030FrameDecodeBufferSize = 0x78000;
 const uint kScene9030FramebufferSize = 0x100000;
 const uint kScene9030TallFramebufferSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kScreenHeight * 2;
 const uint kScene9030HeaderSize = 0x140;
@@ -43,7 +42,7 @@ const byte kScene9030CurtainBandWidth = 0x14;
 
 Scene9030::Scene9030(HollywoodEngine *vm, const IndexedSurfaceBuffer *previousFramebuffer,
 		const Common::Array<byte> *previousPalette) :
-		PresentationScene(vm, "Scene 9030", kScene9030FramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9030", kScene9030FramebufferSize, kSceneBufferByteCount),
 		_previousFramebuffer(previousFramebuffer),
 		_previousPalette(previousPalette),
 		_rowOffset(0) {
@@ -123,14 +122,14 @@ bool Scene9030::load() {
 	}
 
 	file.seek(kScene9030HeaderSize);
-	byte *sceneDestination = _sceneFramebuffer.data() + kScene9030FrameDecodeBufferSize;
+	byte *sceneDestination = _sceneFramebuffer.data() + kSceneBufferByteCount;
 	if (sceneByteCount == kScene9030TallFramebufferSize) {
 		if (sceneByteCount > _sceneFramebuffer.size()) {
 			warning("%s first-edition scene does not fit scene buffer", kScene9030ArchiveName);
 			return false;
 		}
 		sceneDestination = _sceneFramebuffer.data();
-	} else if (kScene9030FrameDecodeBufferSize + sceneByteCount > _sceneFramebuffer.size()) {
+	} else if (kSceneBufferByteCount + sceneByteCount > _sceneFramebuffer.size()) {
 		warning("%s scene does not fit appended scene buffer", kScene9030ArchiveName);
 		return false;
 	}

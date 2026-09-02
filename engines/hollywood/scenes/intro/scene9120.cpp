@@ -30,7 +30,7 @@ const uint16 kScene9120MusicCueId = 0x000c;
 const uint16 kScene9120OverlaySoundId = 0x001a;
 
 Scene9120::Scene9120(HollywoodEngine *vm) :
-		PresentationScene(vm, "Scene 9120", kScene9120FramebufferSize, kFrameBufferSize),
+		PresentationScene(vm, "Scene 9120", kScene9120FramebufferSize, kSceneBufferByteCount),
 		_music(vm->introMusic()),
 		_soundBank0(),
 		_random("hollywood_scene9120"),
@@ -47,7 +47,7 @@ Scene9120::Scene9120(HollywoodEngine *vm) :
 		_smallAnimFrame(0),
 		_viewportDirty(false) {
 	_paletteResource.resize(kPaletteSize);
-	_descriptorBackground.resize(kFrameBufferSize);
+	_descriptorBackground.resize(kSceneBufferByteCount);
 	memset(_paletteResource.data(), 0, _paletteResource.size());
 	memset(_descriptorBackground.data(), 0, _descriptorBackground.size());
 }
@@ -297,10 +297,10 @@ void Scene9120::copyViewportToSavedFramebuffer() {
 
 void Scene9120::clearActiveViewport() {
 	const uint32 destinationOffset = (uint32)_yOffset * HollywoodEngine::kSceneBufferWidth + _xOffset;
-	if (destinationOffset + kFrameBufferSize > _sceneFramebuffer.size())
+	if (destinationOffset + kSceneBufferByteCount > _sceneFramebuffer.size())
 		return;
 
-	memset(_sceneFramebuffer.data() + destinationOffset, 0, kFrameBufferSize);
+	memset(_sceneFramebuffer.data() + destinationOffset, 0, kSceneBufferByteCount);
 }
 
 void Scene9120::drawTimedOverlayChunk(uint32 baseOffset) {

@@ -64,8 +64,8 @@ protected:
 	};
 
 	PresentationScene(HollywoodEngine *vm, const char *debugName,
-		uint32 sceneFramebufferSize = kFrameBufferSize,
-		uint32 savedFramebufferSize = kFrameBufferSize);
+		uint32 sceneFramebufferSize = kSceneBufferByteCount,
+		uint32 savedFramebufferSize = kSceneBufferByteCount);
 	virtual ~PresentationScene() {}
 
 	virtual void stopAudio() {}
@@ -114,10 +114,6 @@ protected:
 	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
 	void copySavedFramebufferRun(int y, int x, int width);
 	void clearSceneFramebufferRun(int y, int x, int width);
-
-	enum {
-		kFrameBufferSize = 0x78000
-	};
 
 	HollywoodEngine *_vm;
 	const char *_debugName;

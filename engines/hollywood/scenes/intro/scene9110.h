@@ -79,7 +79,6 @@ private:
 	void stopAudio() override;
 
 	enum {
-		kFrameBufferSize = 0x78000,
 		kI11RequiredChunkCount = 4,
 		kI11Chunk2DescriptorCount = 15,
 		kI11Chunk3DescriptorCount = 8,

@@ -55,7 +55,7 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_chunk2CycleDirection(0),
 		_lastMouthVariant(0xff) {
 	_paletteResource.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
+	_baseFramebuffer.resize(kSceneBufferByteCount);
 	const SceneLayerSpec layerSpecs[] = {
 		{ kSceneAnimationScenePlaced, 3, kI11Chunk3DescriptorCount, nullptr, 0, true, 0 },
 		{ kSceneAnimationScenePlaced, 2, kI11Chunk2DescriptorCount, nullptr, 0, true, 2 },
@@ -118,7 +118,7 @@ bool Scene9110::loadResourceI11Assets() {
 			return false;
 	}
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
+	if (!loadFixedChunk(0, _baseFramebuffer, kSceneBufferByteCount) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize))
 		return false;
 
