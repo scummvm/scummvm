@@ -46,6 +46,9 @@ void SceneSurfaceState::initialize(uint paletteSize, uint paletteMaskOriginalSiz
 	_drawActorDepthYThresholds.resize(paletteRegionCount);
 	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
+	_presentedScreen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	_hasPresentedScreen = false;
 }
 
 void SceneSurfaceState::initializeFramebuffers() {
@@ -117,6 +120,22 @@ byte SceneSurfaceState::paletteEntryComponent6Bit(byte colorIndex, uint componen
 
 void SceneSurfaceState::rebuildPresentationPaletteRemapTable() {
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
+}
+
+bool SceneSurfaceState::updatePresentedScreenCache() {
+	bool changed = !_hasPresentedScreen;
+	const uint rowBytes = _screen.w * _screen.format.bytesPerPixel;
+	for (int y = 0; !changed && y < _screen.h; ++y) {
+		if (memcmp(_screen.getBasePtr(0, y), _presentedScreen.getBasePtr(0, y), rowBytes) != 0)
+			changed = true;
+	}
+
+	if (!changed)
+		return false;
+
+	_presentedScreen.copyRectToSurface(_screen.rawSurface(), 0, 0, _screen.getBounds());
+	_hasPresentedScreen = true;
+	return true;
 }
 
 } // End of namespace Hollywood
