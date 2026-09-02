@@ -28,6 +28,7 @@
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/scenes/intro/scene9100.h"
+#include "hollywood/scenes/scene_data.h"
 
 namespace Hollywood {
 
@@ -42,6 +43,10 @@ const byte kScene9100ForegroundBeatSoundCue = 0x0e;
 const byte kScene9100DelayedSoundCue = 0x0f;
 const byte kScene9100SueEntrySoundCue = 0x10;
 const byte kScene9100AmbientSoundCue = 0x11;
+// Linear mixer levels equivalent to the original DirectSound -25 dB volume curve.
+const byte kScene9100QuietMixerVolume = 12;
+const byte kScene9100MusicMixerVolume = 13;
+const byte kScene9100ClockMixerVolume = 24;
 const uint16 kScene9101CompletionState = 1000;
 const uint kStage910Index = 910;
 const byte kPrimarySpeechTextColor = 0xfb;
@@ -86,6 +91,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_effectSound(),
 		_clockSound(),
 		_ambientSound(),
+		_residentSoundEffects(vm->isDemo() && vm->getPlatform() == Common::kPlatformDOS),
 		_random("hollywood_scene9100"),
 		_clockFrameAccumulator(kClockFrameIntervalMillis),
 		_talkingFrameAccumulator(0),
@@ -128,7 +134,7 @@ bool Scene9100::play() {
 
 	presentFrame();
 
-	_music.playMusicCue(kScene9100MusicCueId, 30);
+	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicMixerVolume);
 
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
 		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
@@ -138,7 +144,7 @@ bool Scene9100::play() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit()) {
-		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
+		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietMixerVolume, true);
 		expandFillRunsToSavedFramebuffer();
 		drawResourceBlockListToSceneFramebuffer(_resources._chunkOffsets[16]);
 		presentFrame();
@@ -168,7 +174,7 @@ bool Scene9100::playDialogueBranch() {
 
 	copyDefaultPalette();
 	presentFrame();
-	_music.playMusicCue(kScene9100MusicCueId, 30);
+	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicMixerVolume);
 
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
 		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
@@ -178,7 +184,7 @@ bool Scene9100::playDialogueBranch() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit())
-		_ambientSound.playSample(kScene9100AmbientSoundCue, 25, true);
+		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietMixerVolume, true);
 
 	if (!_skipRequested && !Engine::shouldQuit())
 		runDialogueBranchSequence();
@@ -217,8 +223,13 @@ bool Scene9100::load(bool dialogueBranch) {
 	if (!loadFixedChunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
 			!loadFixedChunk(1, _paletteDefault, kPaletteSize) ||
 			!loadVariableChunk(2, _sceneFillRuns) ||
+			!loadVariableChunk(3, _scenePaletteMask) ||
 			!_text.loadStage(kStage003ArchiveName, _debugName, kStage910Index))
 		return false;
+	if (_scenePaletteMask.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize) {
+		warning("%s chunk 3 is shorter than the scene footstep map", kI10ArchiveName);
+		return false;
+	}
 	memcpy(_cleanOfficeBaseFramebuffer.data(), _frameDecodeBuffer.data(), _cleanOfficeBaseFramebuffer.size());
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
@@ -415,12 +426,14 @@ void Scene9100::runRonEntryConversation() {
 				foregroundFrame = (byte)(_foregroundTalkBaseFrame + nextTalkingFrameVariant());
 				dirty = true;
 			}
+			bool pathAdvanced = false;
 			if (pathElapsed < kRonEntryPathDurationMillis)
 				pathFrameAccumulator += slice;
 			if (pathFrameAccumulator >= kEntryPathFrameIntervalMillis) {
 				pathElapsed = MIN<uint32>(kRonEntryPathDurationMillis,
 					pathElapsed + pathFrameAccumulator);
 				pathFrameAccumulator = 0;
+				pathAdvanced = true;
 				dirty = true;
 			}
 
@@ -429,7 +442,7 @@ void Scene9100::runRonEntryConversation() {
 				if (clockDirty)
 					advanceClockFrame();
 				drawForegroundActorFrame(foregroundFrame);
-				drawRonEntryPathFrame(pathElapsed, kRonEntryPathDurationMillis);
+				drawRonEntryPathFrame(pathElapsed, kRonEntryPathDurationMillis, pathAdvanced);
 				presentFrame();
 			}
 		}
@@ -450,7 +463,8 @@ void Scene9100::runRonEntryConversation() {
 	}
 }
 
-void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis) {
+void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis,
+		bool playFootstep) {
 	const int originalStartX = 0x307;
 	const int originalStartY = 0x1d4;
 	const int targetX = 0xc0;
@@ -466,6 +480,10 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int visibleStartY = originalStartY +
 		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
 	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
+	const int sceneX = originalStartX +
+		((targetX - originalStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
+	const int sceneY = originalStartY +
+		((targetY - originalStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
@@ -473,6 +491,8 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 :
 		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
+	if (playFootstep)
+		playActorFootstepIfDue(sceneX, sceneY, cel);
 	drawActorFrame(_actorBankI10Ron, facing, cel, x, y);
 }
 
@@ -529,7 +549,7 @@ void Scene9100::runSueEntryPath() {
 			pathElapsed + pathFrameAccumulator);
 		pathFrameAccumulator = 0;
 		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-		drawSueEntryPathFrame(pathElapsed, kSueEntryPathDurationMillis);
+		drawSueEntryPathFrame(pathElapsed, kSueEntryPathDurationMillis, true);
 		presentFrame();
 	}
 
@@ -540,7 +560,8 @@ void Scene9100::runSueEntryPath() {
 	}
 }
 
-void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis) {
+void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis,
+		bool playFootstep) {
 	const int originalStartX = 0x308;
 	const int originalStartY = 0x1b5;
 	const int targetX = 0x11b;
@@ -556,6 +577,10 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int visibleStartY = originalStartY +
 		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
 	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
+	const int sceneX = originalStartX +
+		((targetX - originalStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
+	const int sceneY = originalStartY +
+		((targetY - originalStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
@@ -563,12 +588,26 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 :
 		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
+	if (playFootstep)
+		playActorFootstepIfDue(sceneX, sceneY, cel);
 	drawActorFrame(_actorBankI10Sue, facing, cel, x, y);
 }
 
 void Scene9100::drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY) {
 	drawActorSpriteFrame(bank, facing, cel, worldX, worldY, -1,
 		_sceneFramebuffer.surface(), _presentationPaletteRemapTable);
+}
+
+void Scene9100::playActorFootstepIfDue(int worldX, int worldY, byte cel) {
+	if ((cel != 4 && cel != 10) || worldX < 0 || worldY < 0 ||
+			worldX >= HollywoodEngine::kSceneBufferWidth ||
+			worldY >= HollywoodEngine::kSceneBufferHeight)
+		return;
+
+	const uint offset = worldY * HollywoodEngine::kSceneBufferWidth + worldX;
+	const byte floorColor = _savedFramebuffer[offset];
+	const byte soundEffectId = _scenePaletteMask[kSceneColorToFootstepSoundMap + floorColor];
+	_residentSoundEffects.playSample(soundEffectId);
 }
 
 void Scene9100::runForegroundIdleBeat() {
@@ -618,13 +657,13 @@ void Scene9100::runOpeningPrelude() {
 		return;
 
 	animateForegroundFrames(11, 14);
-	_effectSound.playSample(kScene9100TransitionEndSoundCue, 25);
+	_effectSound.playSample(kScene9100TransitionEndSoundCue, kScene9100QuietMixerVolume);
 
 	_foregroundTalkBaseFrame = 15;
 	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 
 	animateForegroundFrames(20, 20);
-	_effectSound.playSample(kScene9100TransitionMiddleSoundCue, 25);
+	_effectSound.playSample(kScene9100TransitionMiddleSoundCue, kScene9100QuietMixerVolume);
 	animateForegroundFrames(21, 22);
 	for (uint pulse = 0; pulse < 120 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
 		if (_random.getRandomNumber(14) == 0) {
@@ -984,7 +1023,7 @@ void Scene9100::advanceClockFrame() {
 	}
 	restoreClockAreaBackground();
 	drawOfficeCompositeLayers();
-	_clockSound.playSample(kScene9100ClockSoundCue, 50);
+	_clockSound.playSample(kScene9100ClockSoundCue, kScene9100ClockMixerVolume);
 }
 
 void Scene9100::restoreClockAreaBackground() {
@@ -1202,6 +1241,7 @@ void Scene9100::stopAudio() {
 	_effectSound.stop();
 	_clockSound.stop();
 	_ambientSound.stop();
+	_residentSoundEffects.stop();
 }
 
 byte Scene9100::nextTalkingFrameVariant() {

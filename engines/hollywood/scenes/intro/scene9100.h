@@ -79,11 +79,14 @@ private:
 	void runEntryActorAnimations();
 	void playEntryActorAnimation(const ActorSpriteBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer);
 	void runRonEntryConversation();
-	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
+	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis,
+		bool playFootstep = false);
 	void runSueEntrySequence();
 	void runSueEntryPath();
-	void drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
+	void drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis,
+		bool playFootstep = false);
 	void drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY);
+	void playActorFootstepIfDue(int worldX, int worldY, byte cel);
 	void runForegroundIdleBeat();
 	void runOpeningPrelude();
 	void runCinematicSequence();
@@ -161,8 +164,10 @@ private:
 	SoundBank0Player _effectSound;
 	SoundBank0Player _clockSound;
 	SoundBank0Player _ambientSound;
+	ResidentSoundEffectPlayer _residentSoundEffects;
 	Common::RandomSource _random;
 	Common::Array<byte> _paletteDefault;
+	Common::Array<byte> _scenePaletteMask;
 	Common::Array<byte> _sceneFillRuns;
 	Common::Array<byte> _resourceScratchArena;
 	Common::Array<byte> _secondaryScratchBuffer;
