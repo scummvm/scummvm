@@ -116,12 +116,10 @@ bool Scene8020::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene8020::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene8020::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 	_soundBank0.stop();
 	stopAmbientSoundCues();

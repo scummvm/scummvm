@@ -333,12 +333,10 @@ bool Scene2060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return true;
 }
 
-bool Scene2060::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene2060::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 }
 

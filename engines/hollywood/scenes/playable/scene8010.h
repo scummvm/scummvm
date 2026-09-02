@@ -62,7 +62,6 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 
 	void resetSceneAnimations();

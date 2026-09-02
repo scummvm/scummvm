@@ -43,7 +43,6 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;

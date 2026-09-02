@@ -423,10 +423,6 @@ bool Scene5110::shouldConvertSavedFramebufferFF() const {
 	return true;
 }
 
-bool Scene5110::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5110::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

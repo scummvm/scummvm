@@ -245,10 +245,6 @@ bool Scene2100::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene2100::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene2100::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

@@ -245,12 +245,10 @@ bool Scene2030::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene2030::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene2030::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 }
 

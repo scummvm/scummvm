@@ -47,7 +47,6 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldConvertSavedFramebufferFF() const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;

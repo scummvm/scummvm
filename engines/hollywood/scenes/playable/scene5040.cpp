@@ -405,10 +405,6 @@ bool Scene5040::customizeRouteFinal(byte currentRegion, byte targetRegion,
 	return false;
 }
 
-bool Scene5040::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5040::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

@@ -46,7 +46,6 @@ private:
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;

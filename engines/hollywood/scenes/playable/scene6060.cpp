@@ -149,12 +149,10 @@ bool Scene6060::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const 
 	return actorWorldX <= 0x1a2 || actorWorldX >= 0x283;
 }
 
-bool Scene6060::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene6060::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 }
 

@@ -41,7 +41,6 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte ambientSoundCueVolume(byte cueId, byte defaultVolumePercent) const override;

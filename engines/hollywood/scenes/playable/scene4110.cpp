@@ -160,12 +160,10 @@ void Scene4110::runCustomEntrySequence() {
 	}
 }
 
-bool Scene4110::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene4110::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 	stopAmbientSoundCues();
 }

@@ -254,10 +254,6 @@ void Scene6080::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
 }
 
-bool Scene6080::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene6080::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

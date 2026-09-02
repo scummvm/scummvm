@@ -55,7 +55,6 @@ private:
 	byte primarySpeechVolumePercent(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 

@@ -163,10 +163,6 @@ bool Scene4050::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene4050::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene4050::runExitSideEffectsAfterLoop() {
 	if (!_transitionClearedToBlack)
 		fadePaletteToBlack();

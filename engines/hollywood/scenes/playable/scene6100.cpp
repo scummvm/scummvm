@@ -614,12 +614,10 @@ void Scene6100::giveBillyFordEnvelopeToCharlie() {
 		.secondarySpeech(9, 4);
 }
 
-bool Scene6100::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene6100::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 }
 

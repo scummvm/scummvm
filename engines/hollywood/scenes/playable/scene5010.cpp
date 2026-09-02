@@ -168,10 +168,6 @@ void Scene5010::runCustomEntrySequence() {
 		runReturnEntrySequence();
 }
 
-bool Scene5010::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5010::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

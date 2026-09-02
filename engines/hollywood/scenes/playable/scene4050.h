@@ -36,7 +36,6 @@ private:
 	void initializeCustomPreviewState() override;
 	void runCustomEntrySequence() override;
 	bool shouldPresentPreviewBeforeEntrySequence() const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;

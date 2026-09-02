@@ -118,10 +118,6 @@ void Scene5020::runCustomEntrySequence() {
 		kScene5020EntryTargetX, kScene5020EntryTargetY);
 }
 
-bool Scene5020::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene5020::runExitSideEffectsAfterLoop() {
 	fadePaletteToBlack();
 }

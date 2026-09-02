@@ -352,12 +352,10 @@ bool Scene4060::shouldPresentPreviewBeforeEntrySequence() const {
 	return false;
 }
 
-bool Scene4060::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene4060::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	fadePaletteToBlack();
 	stopAmbientSoundCues();
 }

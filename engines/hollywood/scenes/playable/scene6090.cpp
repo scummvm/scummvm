@@ -1217,10 +1217,6 @@ void Scene6090::dimEscapePaletteStep() {
 		++_paletteFadeThreshold;
 }
 
-bool Scene6090::shouldRunExitSideEffectsAfterLoop() const {
-	return true;
-}
-
 void Scene6090::runExitSideEffectsAfterLoop() {
 	stopAsyncPrimarySpeech();
 	_soundBank0.stop();

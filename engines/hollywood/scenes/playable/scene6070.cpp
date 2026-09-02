@@ -472,12 +472,10 @@ void Scene6070::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 	}
 }
 
-bool Scene6070::shouldRunExitSideEffectsAfterLoop() const {
-	const uint16 stateId = _vm->gameState().mainFlowStateId;
-	return !Engine::shouldQuit() && stateId != 0xff && !isMainFlowStateInScene(stateId);
-}
-
 void Scene6070::runExitSideEffectsAfterLoop() {
+	if (!didLeaveSceneAfterLoop())
+		return;
+
 	GameplayState &state = _vm->gameState();
 	if (kScene6070FixedGiveHandlerIndex < GameplayState::kFixedInventoryActionTableEntryCount) {
 		state.fixedInventoryVerbHandlerIdsByItemAndStrip[kScene6070FixedGiveHandlerIndex] =
