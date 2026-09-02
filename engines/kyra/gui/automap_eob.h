@@ -44,7 +44,7 @@ class EoBCoreEngine; // TODO: REMOVE
 
 class Automap_EoB {
 public:
-	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled);
+	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, int gameID, int lang, bool featureEnabled);
 	~Automap_EoB();
 
 	void markVisited(uint16 block);
@@ -94,6 +94,7 @@ private:
 	LevelBlockProperty *&_blockData;
 	const uint8 *const _wllWallFlags;
 	const uint8 *const _specialWallTypes;
+	const int8 *const _wllShapeMap;
 	const uint8 *_specialBlockIDs;
 	int _numSpecialBlockIDs;
 	const uint8 _wallOfForceID;

@@ -241,8 +241,8 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 	}
 };
 
-Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, int gameID, int lang, bool featureEnabled) : _system(system),
-	_blockData(*blockData), _wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
+Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, int gameID, int lang, bool featureEnabled) : _system(system),
+	_blockData(*blockData), _wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _wllShapeMap(wllShapeMap), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
 		_colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)), _wallOfForceID(gameID == GI_EOB1 ? 0xFF : 74), _portalParamsLen(0), _portalParams(nullptr){
 	_automapBg = new Graphics::Surface();
 	_automapFrame = new Graphics::Surface();
@@ -267,12 +267,13 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	const uint8 teleporter = gameID == GI_EOB1 ? 52 : 44;
 	const uint8 illusion1 = gameID == GI_EOB1 ? 67 : 46;
 	const uint8 illusion2 = gameID == GI_EOB1 ? 64 : 46;
+	const uint8 illusion3 = gameID == GI_EOB1 ? 66 : 46;
 	const uint8 plate1 = gameID == GI_EOB1 ? 28 : 35;
 	const uint8 plate2 = gameID == GI_EOB1 ? 28 : 36;
 	const uint8 pit = gameID == GI_EOB1 ? 27 : 38;
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
-	const uint8 types[] = { teleporter, illusion1, illusion2, stairsUp, stairsDown, pit, plate1, plate2 };
+	const uint8 types[] = { teleporter, illusion1, illusion2, illusion3, stairsUp, stairsDown, pit, plate1, plate2 };
 	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
 	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54, 14, 69 };
 
@@ -332,7 +333,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 			b = nb;
 			if (reveal)
 				_blockData[b].direction |= 1;
-			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere || wn == _wallOfForceID)
+			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere || wn == _wallOfForceID || wn == _specialBlockIDs[4] || wn == _specialBlockIDs[5])
 				break;
 		}
 	}
@@ -342,7 +343,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 	// on the map, unless the player turns around and looks at it. This is a bit annoying and we avoid it like this...
 	LevelBlockProperty &bp = _blockData[calcNewBlockPosition(block, dir ^ 2)];
 	for (int i = 0; i < 4; ++i) {
-		if (bp.walls[i] == _specialBlockIDs[3] || bp.walls[i] == _specialBlockIDs[4])
+		if (bp.walls[i] == _specialBlockIDs[4] || bp.walls[i] == _specialBlockIDs[5])
 			bp.direction |= 1;
 	}
 }
@@ -482,9 +483,10 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				if (st == 0 || st == 5 || st == 6 || st == 0xFF)
 					continue;
 
-				// At least for EOBI, there are cases where a wall has a clickable type, but there is no
-				// script function assigned to it. We don't want to draw these "fake" triggers.
-				if (st == 2 && _blockData[nb].assignedObjects == 0)
+				// For EOBI, there are cases where a wall has a clickable shape type, but there is no script
+				// function assigned to it or there isn't even a clickable shape. We don't want to draw these
+				// "fake" triggers.
+				if (st == 2 && (_blockData[nb].assignedObjects == 0 || _wllShapeMap[wn] == 0))
 					continue;
 
 				// If it is a door button on the door or on the door frame it has already been drawn
@@ -536,21 +538,22 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 					break;
 				case 1:
 				case 2:
+				case 3:
 					for (int pos = 0, g = 0; g < 5; ++g, pos += step) {
 						surf.drawLine(ix + (pos >> 8), iy, ix + (pos >> 8), iy + cell, colTable[kColorWall]);
 						surf.drawLine(ix, iy + (pos >> 8), ix + cell, iy + (pos >> 8), colTable[kColorWall]);
 					}
 					break;
-				case 3:
+				case 4:
 					automapFillTri(surf, cx - r, cy + r, cx + r, cy + r, cx, cy - r, colTable[kColorStair]);
 					break;
-				case 4:
+				case 5:
 					automapFillTri(surf, cx - r, cy - r, cx + r, cy - r, cx, cy + r, colTable[kColorStair]);
 					break;
-				case 5:
 				case 6:
 				case 7:
-					surf.drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, colTable[icon == 5 ? kColorPit : kColorPlate], true);
+				case 8:
+					surf.drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, colTable[icon == 6 ? kColorPit : kColorPlate], true);
 					break;
 				case 9:
 				case 11:
@@ -579,11 +582,21 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				drawIcon(sx, sy, 11, _colors, 0x400);
 			} else {
 				// Special blocks
-				const uint16 flags[] = { 0x08, 0x100, 0x100, 0x02, 0x04, 0x10, 0x20, 0x20 };
+				const uint16 flags[] = { 0x08, 0x100, 0x100, 0x100, 0x02, 0x04, 0x10, 0x20, 0x20 };
 				for (int i = 0; i < _numSpecialBlockIDs; ++i) {
-					uint8 s = _specialBlockIDs[i]; // order: teleporter, illusion1, illusion2, stairsUp, stairsDown, pit, plate1, plate2
-					if (bp->walls[0] == s || bp->walls[1] == s || bp->walls[2] == s || bp->walls[3] == s)
-						drawIcon(sx, sy, i, _colors, flags[i]);
+					uint8 s = _specialBlockIDs[i]; // order: teleporter, illusion1, illusion2, illusion3, stairsUp, stairsDown, pit, plate1, plate2
+					// This is a bit tricky for EOBI. EOBII has the special wall type on all four walls, but not EOBI, so we can't require it.
+					// However, there is at least one glitchy wall with a stairs id that can never be seen from inside the game, but would get a
+					// stairs drawn on the map. To avoid that, we also check if the wall is passible from the other side.
+					for (int ii = 0; ii < 4; ++ii) {
+						if (bp->walls[ii] != s)
+							continue;
+						uint16 nbb = calcNewBlockPosition(block, ii);
+						if (_wllWallFlags[_blockData[nbb].walls[ii ^ 2]] & 1) {
+							drawIcon(sx, sy, i, _colors, flags[i]);
+							break;
+						}
+					}
 				}
 			}
 		}
