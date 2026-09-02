@@ -583,8 +583,7 @@ struct GameplayState {
 		for (uint slot = 0; slot < kTravelScreenSlotCount; ++slot)
 			travelScreenSlotIds[slot] = kTravelScreenDisabledSlot;
 
-		// Verified in LoadResource000StartupTablesAndRuntimeGlobals: Ron starts
-		// with destination 0 and destination 5 visible in the notebook.
+		// Hollywood and Hannover are available from the start.
 		travelScreenSlotIds[0] = 0;
 		travelScreenSlotIds[1] = 5;
 	}
