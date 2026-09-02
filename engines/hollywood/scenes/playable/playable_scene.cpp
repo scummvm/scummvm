@@ -372,6 +372,8 @@ PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResource
 		inventoryActionTableExtraOffset(sceneNumber / 1000 == 7 ? kResource000FixedInventoryVerbTableOffset : 0),
 		inventoryRowsOffsetIndex(0x32),
 		speechCueDescriptorTableOffset(0x5f58),
+		secondarySpeechActions(nullptr),
+		secondarySpeechActionCount(0),
 		actorPathStepDeltaTable(sceneNumber / 1000 == 7 ?
 			kActorPathStepDeltaTableSet00 : kActorPathStepDeltaTableSetB4),
 		actorPathStepDeltaTableSize(kActorPathStepDeltaTableSize),
