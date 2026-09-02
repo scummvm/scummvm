@@ -420,7 +420,7 @@ void TurningPuzzle::execute() {
 				_solveState = kWaitForAnimation;
 			} else {
 				_solveState = kWaitForSound;
-				NancySceneState.setEventFlag(_solveScene._flag);
+				_shouldSetSolveFlag = true;
 			}
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
@@ -440,7 +440,7 @@ void TurningPuzzle::execute() {
 			} else if (g_nancy->getTotalPlayTime() > _solveSoundDelayTime) {
 				g_nancy->_sound->loadSound(_solveSound);
 				g_nancy->_sound->playSound(_solveSound);
-				NancySceneState.setEventFlag(_solveScene._flag);
+				_shouldSetSolveFlag = true;
 				_solveState = kWaitForSound;
 			}
 
@@ -454,8 +454,11 @@ void TurningPuzzle::execute() {
 				return;
 			}
 
-			if (g_nancy->getGameType() >= kGameTypeNancy13) {
-				// The solve scene and its event flag both come from the header.
+			// Nancy13 takes the solve scene and its event flag from the header. In every case
+			// the flag is only set here: setting it as soon as the puzzle is solved can
+			// invalidate this record's own dependencies, which stops it from being executed
+			// again before it ever reaches this point.
+			if (g_nancy->getGameType() >= kGameTypeNancy13 || _shouldSetSolveFlag) {
 				_solveScene.execute();
 			} else {
 				NancySceneState.changeScene(_solveScene._sceneChange);

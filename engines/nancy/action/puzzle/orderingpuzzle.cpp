@@ -594,11 +594,11 @@ void OrderingPuzzle::execute() {
 						return;
 					}
 
-					NancySceneState.setEventFlag(_solveExitScene._flag);
+					_shouldSetSolveFlag = true;
 				} else {
 					// Earlier games advance to the success scene regardless; the flag is set only on a solve.
 					if (solved) {
-						NancySceneState.setEventFlag(_solveExitScene._flag);
+						_shouldSetSolveFlag = true;
 					}
 				}
 			} else {
@@ -618,7 +618,7 @@ void OrderingPuzzle::execute() {
 						}
 					}
 
-					NancySceneState.setEventFlag(_solveExitScene._flag);
+					_shouldSetSolveFlag = true;
 				} else {
 					return;
 				}
@@ -668,7 +668,7 @@ void OrderingPuzzle::execute() {
 				break;
 			}
 
-			NancySceneState.setEventFlag(_solveExitScene._flag);
+			_shouldSetSolveFlag = true;
 			_currentStage = 0;
 			_state = kActionTrigger;
 			break;
@@ -688,6 +688,11 @@ void OrderingPuzzle::execute() {
 			_deathScene.execute();
 		} else if (_solveState == kNotSolved) {
 			_exitScene.execute();
+		} else if (_shouldSetSolveFlag) {
+			// The flag is only set here: setting it as soon as the solution is entered can
+			// invalidate this record's own dependencies, which stops it from being executed
+			// again before it ever reaches this point.
+			_solveExitScene.execute();
 		} else {
 			NancySceneState.changeScene(_solveExitScene._sceneChange);
 		}

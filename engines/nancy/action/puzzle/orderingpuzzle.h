@@ -138,6 +138,7 @@ protected:
 	Common::Array<bool> _secondStateItems;
 	Time _solveSoundPlayTime;
 	bool _checkButtonPressed = false;
+	bool _shouldSetSolveFlag = false;
 
 	PuzzleType _puzzleType;
 };

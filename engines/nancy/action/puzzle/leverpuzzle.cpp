@@ -113,7 +113,6 @@ void LeverPuzzle::execute() {
 				}
 			}
 
-			NancySceneState.setEventFlag(_solveExitScene._flag);
 			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
 			_solveState = kPlaySound;
 			break;
@@ -143,7 +142,10 @@ void LeverPuzzle::execute() {
 		if (_solveState == kNotSolved) {
 			_exitScene.execute();
 		} else {
-			NancySceneState.changeScene(_solveExitScene._sceneChange);
+			// The flag is only set here: setting it as soon as the puzzle is solved can
+			// invalidate this record's own dependencies, which stops it from being executed
+			// again before it ever reaches this point.
+			_solveExitScene.execute();
 		}
 
 		finishExecution();

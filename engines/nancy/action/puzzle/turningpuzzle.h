@@ -132,6 +132,7 @@ protected:
 	uint32 _solveAnimFace = 0;
 
 	SolveState _solveState = kNotSolved;
+	bool _shouldSetSolveFlag = false;
 };
 
 } // End of namespace Action
