@@ -56,18 +56,12 @@ private:
 	void runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame = -1);
 	void handleActionSlot00TransitionToG04();
-	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02TransitionToG01Alt();
-	void handleActionSlot03SecondarySpeech();
-	void handleActionSlot04SecondarySpeech();
 	void handleActionSlot05ToggleSceneState0Speech();
 	void handleActionSlot08CommonSpeech();
-	void handleActionSlot09CommonSpeech();
-	void handleActionSlot10CommonSpeech();
 	void handleActionHandler313ExchangeItem0CFor0D();
 	void handleActionHandler314PickupBone();
 	void handleActionHandler315PickupItem0C();
-	void handleActionHandler316SecondarySpeech();
 
 	byte _chunk9AmbientDecisionCounter;
 	int _chunk5FrameDirection;

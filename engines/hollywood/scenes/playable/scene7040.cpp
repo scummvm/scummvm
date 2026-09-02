@@ -152,11 +152,18 @@ const SceneLayerSpec kScene7040AnimationLayerSpecs[] = {
 		ARRAYSIZE(kScene7040Chunk14AltFrameMap), false, 0 }
 };
 
+const SceneSpeechActionSpec kScene7040SpeechActions[] = {
+	{ 305, 4, 0 }, // Mirar escalera (look at stairs).
+	{ 308, 6, 0 }, // Mirar estatua (look at statue).
+	{ 309, 7, 0 }  // Mirar florero (look at vase).
+};
+
 static PlayableSceneConfig scene7040Config() {
 	PlayableSceneConfig config(7040,
 		SceneResourceLayout(20, 5, 18),
 		SceneViewport(0xc8),
 		SceneActorPose(0x14a, 0x139, 1));
+	config.setSecondarySpeechActions(kScene7040SpeechActions);
 	return config;
 }
 
@@ -543,20 +550,11 @@ bool Scene7040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Ir a escalera (go to stairs)
 		handleActionSlot03TransitionToState7060();
 		return true;
-	case 305: // Mirar escalera (look at stairs)
-		beginSecondarySpeechLine(4, 0);
-		return true;
 	case 306: // Mirar puerta (look at door)
 		handleActionSlot05ExitProgressSpeech();
 		return true;
 	case 307: // Usar/Abrir puerta (use/open door)
 		handleActionSlot06TransitionToG05();
-		return true;
-	case 308: // Mirar estatua (look at statue)
-		beginSecondarySpeechLine(6, 0);
-		return true;
-	case 309: // Mirar florero (look at vase)
-		beginSecondarySpeechLine(7, 0);
 		return true;
 	case 310: // Coger libreta (take notebook)
 		handleActionSlot09PickupItem0FThenExit();

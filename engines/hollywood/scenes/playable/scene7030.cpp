@@ -95,11 +95,21 @@ const byte kScene7030Route6StepDeltas[] = {
 	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5
 };
 
+const SceneSpeechActionSpec kScene7030SpeechActions[] = {
+	{ 302, 1, 0 },  // Mirar puerta (look at door).
+	{ 304, 2, 0 },  // Mirar escalera (look at stairs).
+	{ 305, 3, 0 },  // Hablar con Húmero (talk to Húmero).
+	{ 310, 8, 0 },  // Mirar ponchera (look at punch bowl).
+	{ 311, 9, 0 },  // Usar ponchera (use punch bowl).
+	{ 316, 10, 1 }  // Usar vaso con ponchera (use glass with punch bowl).
+};
+
 static PlayableSceneConfig scene7030Config() {
 	PlayableSceneConfig config(7030,
 		SceneResourceLayout(12, 5, 11),
 		SceneViewport(kScene7030ViewportXOffset),
 		SceneActorPose(0x1fa, 0x142, 4));
+	config.setSecondarySpeechActions(kScene7030SpeechActions);
 	config.useActorDepthTest = true;
 	return config;
 }
@@ -212,29 +222,14 @@ bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Ir a puerta (go to door)
 		handleActionSlot00TransitionToG04();
 		break;
-	case 302: // Mirar puerta (look at door)
-		handleActionSlot01SecondarySpeech();
-		break;
 	case 303: // Ir a escalera (go to stairs)
 		handleActionSlot02TransitionToG01Alt();
-		break;
-	case 304: // Mirar escalera (look at stairs)
-		handleActionSlot03SecondarySpeech();
-		break;
-	case 305: // Hablar con Húmero (talk to Húmero)
-		handleActionSlot04SecondarySpeech();
 		break;
 	case 306: // Mirar Húmero (look at Húmero)
 		handleActionSlot05ToggleSceneState0Speech();
 		break;
 	case 309: // Mirar vaso (look at glass)
 		handleActionSlot08CommonSpeech();
-		break;
-	case 310: // Mirar ponchera (look at punch bowl)
-		handleActionSlot09CommonSpeech();
-		break;
-	case 311: // Usar ponchera (use punch bowl)
-		handleActionSlot10CommonSpeech();
 		break;
 	case 312: // Usar florero con ponchera (use vase with punch bowl)
 		break;
@@ -247,12 +242,8 @@ bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Coger vaso (take glass)
 		handleActionHandler315PickupItem0C();
 		break;
-	case 316: // Usar vaso con ponchera (use glass with punch bowl)
-		handleActionHandler316SecondarySpeech();
-		break;
 	default:
-		warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
-		break;
+		return false;
 	}
 	return true;
 }
@@ -452,20 +443,8 @@ void Scene7030::handleActionSlot00TransitionToG04() {
 	_vm->gameState().mainFlowStateId = kScene7030ExitState7040;
 }
 
-void Scene7030::handleActionSlot01SecondarySpeech() {
-	beginSecondarySpeechLine(1, 0);
-}
-
 void Scene7030::handleActionSlot02TransitionToG01Alt() {
 	_vm->gameState().mainFlowStateId = kScene7030ReturnState7011;
-}
-
-void Scene7030::handleActionSlot03SecondarySpeech() {
-	beginSecondarySpeechLine(2, 0);
-}
-
-void Scene7030::handleActionSlot04SecondarySpeech() {
-	beginSecondarySpeechLine(3, 0);
 }
 
 void Scene7030::handleActionSlot05ToggleSceneState0Speech() {
@@ -484,14 +463,6 @@ void Scene7030::handleActionSlot08CommonSpeech() {
 	_sceneStateFlags[2] = 2;
 	_vm->gameState().punchBowlGlassPatchState = _sceneStateFlags[2];
 	applySceneStateToHotspotsAndPatches(2);
-}
-
-void Scene7030::handleActionSlot09CommonSpeech() {
-	beginSecondarySpeechLine(8, 0);
-}
-
-void Scene7030::handleActionSlot10CommonSpeech() {
-	beginSecondarySpeechLine(9, 0);
 }
 
 void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
@@ -540,10 +511,6 @@ void Scene7030::handleActionHandler315PickupItem0C() {
 	addInventoryItem(0x0c);
 	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
-}
-
-void Scene7030::handleActionHandler316SecondarySpeech() {
-	beginSecondarySpeechLine(10, 1);
 }
 
 } // End of namespace Hollywood
