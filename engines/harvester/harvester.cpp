@@ -60,6 +60,10 @@ Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Language HarvesterEngine::getLanguage() const {
+	return _gameDescription->language;
+}
+
 bool HarvesterEngine::isDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
