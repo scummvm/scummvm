@@ -79,7 +79,7 @@ private:
 	void initializeMerchantShopDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const;
+		byte responseFrameIndex, byte disableAfterUse) const;
 	uint16 merchantShopProductPrice(byte productRowId) const;
 	void runLeftMerchantPurchase(byte productRowId);
 	void subtractEgyptianMoney(uint16 amount);

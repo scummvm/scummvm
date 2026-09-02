@@ -522,7 +522,6 @@ void Scene6050::setGuardDialogueRecord(Common::Array<DialogueChoiceRecord> &reco
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 }
 
 void Scene6050::runInteriorBlockedByGuard() {

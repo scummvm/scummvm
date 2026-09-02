@@ -39,7 +39,6 @@ struct DialogueChoiceRecord {
 	byte playerTextRowId;
 	byte responseFrameIndex;
 	byte disableAfterUse;
-	byte reserved;
 	byte selectable; // Clickable/selectable when visible.
 };
 

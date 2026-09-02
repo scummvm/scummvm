@@ -687,7 +687,6 @@ void Scene6070::initializeSueDialogueRecords(
 		record.playerTextRowId = seed.playerTextRowId;
 		record.responseFrameIndex = seed.responseFrameIndex;
 		record.disableAfterUse = seed.disableAfterUse;
-		record.reserved = 0xff;
 	}
 }
 

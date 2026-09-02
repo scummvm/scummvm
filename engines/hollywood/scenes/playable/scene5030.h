@@ -33,6 +33,11 @@ public:
 	Scene5030(HollywoodEngine *vm);
 
 private:
+	struct ScoutDialogueRecords {
+		Common::Array<DialogueChoiceRecord> choices;
+		Common::Array<byte> companionReplyFrameIndices;
+	};
+
 	void initializeCustomPreviewState() override;
 	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -78,11 +83,11 @@ private:
 	void runGladysConversation();
 	void runSpecialInventorySequence();
 	void grantDeckOfCards();
-	void initializeVanessaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
-	void initializeGladysDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
-	void setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+	void initializeVanessaDialogueRecords(ScoutDialogueRecords &dialogue) const;
+	void initializeGladysDialogueRecords(ScoutDialogueRecords &dialogue) const;
+	void setDialogueRecord(ScoutDialogueRecords &dialogue, uint index,
 		byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte otherScoutFrameIndex) const;
+		byte responseFrameIndex, byte disableAfterUse, byte companionReplyFrameIndex) const;
 	bool applyDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const;
 	void beginRonDialogueLine(uint16 rowIndex, byte frameIndex);
 	void beginVanessaSpeechLine(uint16 rowIndex, byte frameIndex);

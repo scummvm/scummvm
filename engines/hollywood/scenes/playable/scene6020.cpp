@@ -969,7 +969,6 @@ void Scene6020::setTaffyDialogueRecord(Common::Array<DialogueChoiceRecord> &reco
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 }
 
 void Scene6020::runTaffyLookUpTransition() {

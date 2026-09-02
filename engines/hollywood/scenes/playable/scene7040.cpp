@@ -780,32 +780,27 @@ void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[0].playerTextRowId = 1;
 	records[0].responseFrameIndex = 1;
 	records[0].disableAfterUse = 1;
-	records[0].reserved = 0xff;
 
 	records[1].transitionMode = 3;
 	records[1].playerTextRowId = 2;
 	records[1].responseFrameIndex = 2;
 	records[1].disableAfterUse = 1;
-	records[1].reserved = 0xff;
 
 	records[2].enabled = 1;
 	records[2].transitionMode = 3;
 	records[2].playerTextRowId = 3;
 	records[2].responseFrameIndex = 3;
 	records[2].disableAfterUse = 1;
-	records[2].reserved = 0xff;
 
 	records[3].transitionMode = 3;
 	records[3].playerTextRowId = 4;
 	records[3].responseFrameIndex = 4;
 	records[3].disableAfterUse = 1;
-	records[3].reserved = 0xff;
 
 	records[4].enabled = 1;
 	records[4].transitionMode = 0;
 	records[4].playerTextRowId = 5;
 	records[4].responseFrameIndex = 5;
-	records[4].reserved = 0xff;
 
 	const GameplayState &state = _vm->gameState();
 	if (state.officeStatueActionProgress != 0)

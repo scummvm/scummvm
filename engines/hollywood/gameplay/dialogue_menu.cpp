@@ -44,7 +44,6 @@ DialogueChoiceRecord::DialogueChoiceRecord() :
 		playerTextRowId(0),
 		responseFrameIndex(0),
 		disableAfterUse(0),
-		reserved(0),
 		selectable(1) {
 }
 

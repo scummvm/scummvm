@@ -906,7 +906,6 @@ void Scene4010::setHeckerDialogueRecord(Common::Array<DialogueChoiceRecord> &rec
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 	record.selectable = enabled != 0;
 }
 

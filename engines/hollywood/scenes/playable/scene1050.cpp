@@ -365,28 +365,24 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[0].playerTextRowId = 2;
 	records[0].responseFrameIndex = 2;
 	records[0].disableAfterUse = 1;
-	records[0].reserved = 0xff;
 
 	records[1].enabled = 1;
 	records[1].transitionMode = 3;
 	records[1].playerTextRowId = 3;
 	records[1].responseFrameIndex = 3;
 	records[1].disableAfterUse = 1;
-	records[1].reserved = 0xff;
 
 	records[2].enabled = 1;
 	records[2].transitionMode = 3;
 	records[2].playerTextRowId = 4;
 	records[2].responseFrameIndex = 4;
 	records[2].disableAfterUse = 1;
-	records[2].reserved = 0xff;
 
 	records[3].enabled = 1;
 	records[3].transitionMode = 3;
 	records[3].playerTextRowId = 5;
 	records[3].responseFrameIndex = 5;
 	records[3].disableAfterUse = 1;
-	records[3].reserved = 0xff;
 
 	records[4].enabled = 1;
 	records[4].nextNodeIndex = 1;
@@ -394,21 +390,18 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[4].playerTextRowId = 6;
 	records[4].responseFrameIndex = 6;
 	records[4].disableAfterUse = 1;
-	records[4].reserved = 0xff;
 
 	records[5].enabled = 1;
 	records[5].transitionMode = 0;
 	records[5].playerTextRowId = 7;
 	records[5].responseFrameIndex = 7;
 	records[5].disableAfterUse = 1;
-	records[5].reserved = 0xff;
 
 	records[70].enabled = 1;
 	records[70].transitionMode = 1;
 	records[70].playerTextRowId = 8;
 	records[70].responseFrameIndex = 8;
 	records[70].disableAfterUse = 10;
-	records[70].reserved = 0xff;
 
 	records[77].enabled = 1;
 	records[77].nextNodeIndex = 1;
@@ -416,7 +409,6 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[77].playerTextRowId = 9;
 	records[77].responseFrameIndex = 9;
 	records[77].disableAfterUse = 4;
-	records[77].reserved = 0xff;
 
 	records[78].enabled = 1;
 	records[78].nextNodeIndex = 1;
@@ -424,7 +416,6 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[78].playerTextRowId = 10;
 	records[78].responseFrameIndex = 10;
 	records[78].disableAfterUse = 3;
-	records[78].reserved = 0xff;
 
 	records[79].enabled = 1;
 	records[79].nextNodeIndex = 1;
@@ -432,7 +423,6 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[79].playerTextRowId = 11;
 	records[79].responseFrameIndex = 11;
 	records[79].disableAfterUse = 5;
-	records[79].reserved = 0xff;
 
 	records[80].enabled = 1;
 	records[80].nextNodeIndex = 1;
@@ -440,7 +430,6 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[80].playerTextRowId = 12;
 	records[80].responseFrameIndex = 12;
 	records[80].disableAfterUse = 2;
-	records[80].reserved = 0xff;
 
 	records[81].enabled = 1;
 	records[81].nextNodeIndex = 1;
@@ -448,7 +437,6 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[81].playerTextRowId = 13;
 	records[81].responseFrameIndex = 13;
 	records[81].disableAfterUse = 1;
-	records[81].reserved = 0xff;
 
 	records[82].enabled = 1;
 	records[82].nextNodeIndex = 1;
@@ -456,21 +444,18 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	records[82].playerTextRowId = 14;
 	records[82].responseFrameIndex = 14;
 	records[82].disableAfterUse = 1;
-	records[82].reserved = 0xff;
 
 	records[83].enabled = 1;
 	records[83].transitionMode = 2;
 	records[83].playerTextRowId = 15;
 	records[83].responseFrameIndex = 15;
 	records[83].disableAfterUse = 1;
-	records[83].reserved = 0xff;
 
 	records[140].enabled = 1;
 	records[140].transitionMode = 4;
 	records[140].playerTextRowId = 16;
 	records[140].responseFrameIndex = 16;
 	records[140].disableAfterUse = 1;
-	records[140].reserved = 0xff;
 }
 
 void Scene1050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternatePose) {

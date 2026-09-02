@@ -224,8 +224,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.travelScreenCurrentChapterId);
 	syncStateBool(s, state.scene1050CharlieBogWerewolfClueHeard);
 	syncStateBool(s, state.scene1060EntryLineSeen);
-	s.syncAsByte(state.scene1060DrFlyState);
-	syncStateBool(s, state.scene1060DrFlyConversationSeen);
+	s.syncAsByte(state.scene1060DrMoscaState);
+	syncStateBool(s, state.scene1060DrMoscaConversationSeen);
 	syncStateBool(s, state.scene1060PocketPaperTaken);
 	syncStateBool(s, state.scene1060InvisibleManConversationSeen);
 	s.syncAsByte(state.scene1060PartyRemainsState);
@@ -561,8 +561,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 	}
 	if (state.travelScreenCurrentChapterId > 9)
 		state.travelScreenCurrentChapterId = 0;
-	if (state.scene1060DrFlyState > 2)
-		state.scene1060DrFlyState = 0;
+	if (state.scene1060DrMoscaState > 2)
+		state.scene1060DrMoscaState = 0;
 	if (state.scene1060PartyRemainsState > 1)
 		state.scene1060PartyRemainsState = 0;
 	if (state.scene1070SpencerTravelClueProgress > 3)

@@ -869,17 +869,17 @@ void Scene5040::initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord
 	records.resize(kScene5040KarlDialogueChoiceRecordCount);
 
 	// Karl Hecker's root choices.
-	setKarlDialogueRecord(records, 0, 0, kScene5040DialogueTransitionDown, 3, 3, 1); // ¿Qué está haciendo aquí?
-	setKarlDialogueRecord(records, 1, 0, kScene5040DialogueTransitionStay, 4, 4, 1); // ¿Ha visto al hombre lobo?
-	setKarlDialogueRecord(records, 2, 0, kScene5040DialogueTransitionStay, 5, 5, 1); // ¿Cuánto tiempo ha pasado en estas galerías?
-	setKarlDialogueRecord(records, 3, 0, kScene5040DialogueTransitionStay, 6, 6, 1); // He oído hablar de usted y sus hermanos.
-	setKarlDialogueRecord(records, 4, 0, kScene5040DialogueTransitionEnd, 7, 7, 0); // Bueno, le dejo ya.
+	setKarlDialogueRecord(records, 0, 0, kScene5040DialogueTransitionDown, 3, 3, 1);
+	setKarlDialogueRecord(records, 1, 0, kScene5040DialogueTransitionStay, 4, 4, 1);
+	setKarlDialogueRecord(records, 2, 0, kScene5040DialogueTransitionStay, 5, 5, 1);
+	setKarlDialogueRecord(records, 3, 0, kScene5040DialogueTransitionStay, 6, 6, 1);
+	setKarlDialogueRecord(records, 4, 0, kScene5040DialogueTransitionEnd, 7, 7, 0);
 
 	// Depth 1, node 0: follow-up choices after Karl explains he is looking for the diamond.
-	setKarlDialogueRecord(records, 70, 0, kScene5040DialogueTransitionStay, 8, 8, 1); // Difícil encontrarlo en las galerías.
-	setKarlDialogueRecord(records, 71, 0, kScene5040DialogueTransitionStay, 9, 9, 1); // Por qué es importante el diamante.
-	setKarlDialogueRecord(records, 72, 0, kScene5040DialogueTransitionStay, 10, 10, 1); // Qué tipo de sorpresas.
-	setKarlDialogueRecord(records, 73, 0, kScene5040DialogueTransitionUp, 11, 11, 0); // Espero que tenga suerte.
+	setKarlDialogueRecord(records, 70, 0, kScene5040DialogueTransitionStay, 8, 8, 1);
+	setKarlDialogueRecord(records, 71, 0, kScene5040DialogueTransitionStay, 9, 9, 1);
+	setKarlDialogueRecord(records, 72, 0, kScene5040DialogueTransitionStay, 10, 10, 1);
+	setKarlDialogueRecord(records, 73, 0, kScene5040DialogueTransitionUp, 11, 11, 0);
 }
 
 void Scene5040::setKarlDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
@@ -895,7 +895,6 @@ void Scene5040::setKarlDialogueRecord(Common::Array<DialogueChoiceRecord> &recor
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 	record.selectable = 1;
 }
 

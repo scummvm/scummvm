@@ -850,15 +850,15 @@ void Scene2030::runMerchantShopDialogue() {
 
 void Scene2030::initializeMerchantShopDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
 	records.resize(kScene2030ShopDialogueChoiceRecordCount);
-	setMerchantShopDialogueRecord(records, 0, 1, 0, 1, 1, 1, 2, 0xff);
-	setMerchantShopDialogueRecord(records, 1, 1, 0, 1, 2, 2, 2, 0xff);
-	setMerchantShopDialogueRecord(records, 2, 1, 0, 1, 7, 6, 2, 0xff);
-	setMerchantShopDialogueRecord(records, 3, 1, 0, 3, 8, 7, 1, 0xff);
-	setMerchantShopDialogueRecord(records, 4, 1, 0, 1, 9, 8, 2, 0xff);
-	setMerchantShopDialogueRecord(records, 5, 1, 0, 0, 3, 3, 0, 0);
-	setMerchantShopDialogueRecord(records, 70, 1, 0, 0, 4, 4, 1, 0xff);
-	setMerchantShopDialogueRecord(records, 71, 0, 0, 0, 5, 5, 3, 0xff);
-	setMerchantShopDialogueRecord(records, 72, 1, 0, 0, 6, 3, 1, 0xff);
+	setMerchantShopDialogueRecord(records, 0, 1, 0, 1, 1, 1, 2);
+	setMerchantShopDialogueRecord(records, 1, 1, 0, 1, 2, 2, 2);
+	setMerchantShopDialogueRecord(records, 2, 1, 0, 1, 7, 6, 2);
+	setMerchantShopDialogueRecord(records, 3, 1, 0, 3, 8, 7, 1);
+	setMerchantShopDialogueRecord(records, 4, 1, 0, 1, 9, 8, 2);
+	setMerchantShopDialogueRecord(records, 5, 1, 0, 0, 3, 3, 0);
+	setMerchantShopDialogueRecord(records, 70, 1, 0, 0, 4, 4, 1);
+	setMerchantShopDialogueRecord(records, 71, 0, 0, 0, 5, 5, 3);
+	setMerchantShopDialogueRecord(records, 72, 1, 0, 0, 6, 3, 1);
 
 	const GameplayState &state = _vm->gameState();
 	if (state.scene2030SeedOfferState != 1) {
@@ -871,7 +871,7 @@ void Scene2030::initializeMerchantShopDialogueRecords(Common::Array<DialogueChoi
 
 void Scene2030::setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
-		byte responseFrameIndex, byte disableAfterUse, byte reserved) const {
+		byte responseFrameIndex, byte disableAfterUse) const {
 	if (index >= records.size())
 		return;
 
@@ -882,7 +882,6 @@ void Scene2030::setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = reserved;
 }
 
 uint16 Scene2030::merchantShopProductPrice(byte productRowId) const {

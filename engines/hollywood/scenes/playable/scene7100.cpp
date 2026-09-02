@@ -120,31 +120,30 @@ struct Scene7100DialogueSeedRecord {
 	byte playerTextRowId;
 	byte responseFrameIndex;
 	byte disableAfterUse;
-	byte reserved;
 };
 
 const Scene7100DialogueSeedRecord kScene7100RonDialogueSeedRecords[] = {
-	{ 0, 1, 0, 0, 4, 4, 1, 0xff },
-	{ 1, 1, 0, 3, 1, 1, 1, 0xff },
-	{ 2, 1, 0, 3, 2, 2, 1, 0xff },
-	{ 3, 1, 0, 3, 3, 3, 1, 0xff },
-	{ 4, 1, 0, 3, 5, 5, 1, 0xff },
-	{ 5, 1, 0, 0, 6, 6, 1, 0xff }
+	{ 0, 1, 0, 0, 4, 4, 1 },
+	{ 1, 1, 0, 3, 1, 1, 1 },
+	{ 2, 1, 0, 3, 2, 2, 1 },
+	{ 3, 1, 0, 3, 3, 3, 1 },
+	{ 4, 1, 0, 3, 5, 5, 1 },
+	{ 5, 1, 0, 0, 6, 6, 1 }
 };
 
 const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
-	{ 0, 1, 0, 3, 0, 1, 1, 0xff },
-	{ 1, 1, 0, 3, 1, 2, 1, 0xff },
-	{ 2, 1, 0, 3, 2, 3, 1, 0xff },
-	{ 3, 1, 0, 3, 3, 4, 1, 0xff },
-	{ 4, 1, 0, 1, 4, 5, 1, 0xff },
-	{ 5, 1, 0, 0, 5, 0xff, 1, 0xff },
-	{ 70, 1, 0, 3, 6, 7, 1, 0xff },
-	{ 71, 1, 0, 3, 8, 9, 1, 0xff },
-	{ 72, 1, 0, 3, 10, 11, 1, 0xff },
-	{ 73, 1, 0, 3, 11, 12, 1, 0xff },
-	{ 74, 0, 0, 0, 7, 8, 1, 0xff },
-	{ 75, 1, 0, 2, 9, 10, 1, 0xff }
+	{ 0, 1, 0, 3, 0, 1, 1 },
+	{ 1, 1, 0, 3, 1, 2, 1 },
+	{ 2, 1, 0, 3, 2, 3, 1 },
+	{ 3, 1, 0, 3, 3, 4, 1 },
+	{ 4, 1, 0, 1, 4, 5, 1 },
+	{ 5, 1, 0, 0, 5, 0xff, 1 },
+	{ 70, 1, 0, 3, 6, 7, 1 },
+	{ 71, 1, 0, 3, 8, 9, 1 },
+	{ 72, 1, 0, 3, 10, 11, 1 },
+	{ 73, 1, 0, 3, 11, 12, 1 },
+	{ 74, 0, 0, 0, 7, 8, 1 },
+	{ 75, 1, 0, 2, 9, 10, 1 }
 };
 
 PlayableSceneConfig scene7100Config() {
@@ -727,7 +726,6 @@ void Scene7100::initializeRonDialogueRecords(Common::Array<DialogueChoiceRecord>
 		record.playerTextRowId = seed.playerTextRowId;
 		record.responseFrameIndex = seed.responseFrameIndex;
 		record.disableAfterUse = seed.disableAfterUse;
-		record.reserved = seed.reserved;
 	}
 }
 
@@ -867,7 +865,6 @@ void Scene7100::initializeRescueDialogueRecords(
 		record.playerTextRowId = seed.playerTextRowId;
 		record.responseFrameIndex = seed.responseFrameIndex;
 		record.disableAfterUse = seed.disableAfterUse;
-		record.reserved = seed.reserved;
 	}
 }
 

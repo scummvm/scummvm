@@ -808,7 +808,6 @@ void Scene5110::setWerewolfDialogueRecord(Common::Array<DialogueChoiceRecord> &r
 	record.playerTextRowId = playerTextRowId;
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
-	record.reserved = 0xff;
 	record.selectable = 1;
 }
 
