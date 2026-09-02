@@ -312,14 +312,13 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 	_vm->_system->getPaletteManager()->setPalette(_mainPalette, 0, 256);
 }
 
-void Screen::updatePalette() {
-	// FIXME: This is used to replace all the inline code to setup the palette before calls to setupPalette/paletteFade
-	// See if all that code can really be factorized into a single function or not
-	debugC(kDebugLevelScene, "[Screen::updatePalette] Not implemented!");
+void Screen::copyGrayPaletteToWorkingPalette() {
+	memcpy(_mainPalette + 3, _currentPalette + 3, sizeof(_mainPalette) - 6);
+	debugC(kDebugLevelScene, "[Screen] Copied grayscale scene palette to the working palette");
 }
 
-void Screen::updatePalette(int32 param) {
-	if (param >= 21) {
+void Screen::blendScenePaletteForFadeStep(int32 step) {
+	if (step >= 21) {
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
 			_mainPalette[j]     = _currentPalette[j];
 			_mainPalette[j + 1] = _currentPalette[j + 1];
@@ -338,15 +337,28 @@ void Screen::updatePalette(int32 param) {
 		byte *paletteData = getPaletteData(paletteId);
 		paletteData += 4;
 
-		float fParam = param / 20.0;
+		float fraction = step / 20.0;
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
-			_mainPalette[j]     = (byte)((1.0 - fParam) * 4 * paletteData[j]     + fParam * _currentPalette[j]);
-			_mainPalette[j + 1] = (byte)((1.0 - fParam) * 4 * paletteData[j + 1] + fParam * _currentPalette[j + 1]);
-			_mainPalette[j + 2] = (byte)((1.0 - fParam) * 4 * paletteData[j + 2] + fParam * _currentPalette[j + 2]);
+			_mainPalette[j]     = (byte)((1.0 - fraction) * 4 * paletteData[j]     + fraction * _currentPalette[j]);
+			_mainPalette[j + 1] = (byte)((1.0 - fraction) * 4 * paletteData[j + 1] + fraction * _currentPalette[j + 1]);
+			_mainPalette[j + 2] = (byte)((1.0 - fraction) * 4 * paletteData[j + 2] + fraction * _currentPalette[j + 2]);
 		}
 
 		setupPalette(nullptr, 0, 0);
 	}
+}
+
+void Screen::blendPaletteFromGray(int32 step, int32 stepCount) {
+	blendPalette(_currentPalette, _mainPalette, step, stepCount);
+}
+
+void Screen::blendPaletteToGray(int32 step, int32 stepCount) {
+	blendPalette(_mainPalette, _currentPalette, step, stepCount);
+}
+
+void Screen::blendPalette(const byte *from, const byte *to, int32 step, int32 stepCount) {
+	for (uint32 i = 3; i < ARRAYSIZE(_mainPalette) - 3; ++i)
+		_mainPalette[i] = (byte)(from[i] + ((int32)to[i] - from[i]) * step / stepCount);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -257,8 +257,8 @@ private:
 	void updateDrawingStatus1(int32 rectIndex);
 	void updateDrawingStatus2(int32 rectIndex);
 	bool updateScreen();
-	void updatePalette1();
-	void updatePalette2();
+	void blendPaletteFromGray();
+	void blendPaletteToGray();
 
 	bool isKeywordVisible(int16 keyword) const  { return (bool)(BYTE1(keyword) & kKeywordOptionsVisible); }
 	bool isKeywordDisabled(int16 keyword) const { return (bool)(BYTE1(keyword) & kKeywordOptionsDisabled); }

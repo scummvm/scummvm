@@ -1259,7 +1259,7 @@ IMPLEMENT_OPCODE(CreatePalette)
 		return;
 	}
 
-	getScreen()->updatePalette(cmd->param1);
+	getScreen()->blendScenePaletteForFadeStep(cmd->param1);
 
 	_processNextEntry = true;
 	++cmd->param1;

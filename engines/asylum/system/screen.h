@@ -106,8 +106,10 @@ public:
 	const byte *getPalette() { return _mainPalette; }
 	void setMainPalette(const byte *data);
 	void loadGrayPalette();
-	void updatePalette();
-	void updatePalette(int32 param);
+	void copyGrayPaletteToWorkingPalette();
+	void blendScenePaletteForFadeStep(int32 step);
+	void blendPaletteFromGray(int32 step, int32 stepCount);
+	void blendPaletteToGray(int32 step, int32 stepCount);
 	void setupPalette(byte *buffer, int start, int count);
 
 	bool isFading() { return _isFading; }
@@ -175,6 +177,7 @@ private:
 	Common::Queue<FadeParameters> _fadeQueue;
 
 	byte *getPaletteData(ResourceId id);
+	void blendPalette(const byte *from, const byte *to, int32 step, int32 stepCount);
 	void setPaletteGamma(byte *data, byte *target = NULL);
 
 	void stopQueuedPaletteFade();
