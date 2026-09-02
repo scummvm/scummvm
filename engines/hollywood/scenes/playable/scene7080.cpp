@@ -47,7 +47,7 @@ const byte kScene7080PickupItem13FrameMap[] = {
 	0, 6, 7, 8, 9, 10, 1, 2, 3, 3, 4, 5, 0
 };
 
-static PlayableSceneConfig scene7080Config() {
+PlayableSceneConfig scene7080Config() {
 	PlayableSceneConfig config(7080,
 		SceneResourceLayout(9, 5, 8),
 		SceneViewport(kScene7080ViewportXOffset),

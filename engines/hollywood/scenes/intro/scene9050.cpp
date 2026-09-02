@@ -947,7 +947,7 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 }
 
 void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[3],
+	drawResourceDeltaClipFrame(_resources._arena, _resources._chunkOffsets[3],
 		_i05ClipChunkSize, lastFrameIndex, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }

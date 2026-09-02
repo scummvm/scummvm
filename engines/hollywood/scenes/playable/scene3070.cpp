@@ -155,7 +155,7 @@ const byte kScene3070RevivalFinishFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 };
 
-static PlayableSceneConfig scene3070Config() {
+PlayableSceneConfig scene3070Config() {
 	PlayableSceneConfig config(3070,
 		SceneResourceLayout(24, 5, 36),
 		SceneViewport(kScene3070ViewportXOffset, kScene3070ViewportMinXOffset, kScene3070ViewportMaxXOffset),

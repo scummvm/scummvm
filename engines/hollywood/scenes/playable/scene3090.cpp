@@ -114,7 +114,7 @@ const SceneLayerSpec kScene3090LayerSpecs[] = {
 		kScene3090BlindManFrameMap, ARRAYSIZE(kScene3090BlindManFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene3090Config() {
+PlayableSceneConfig scene3090Config() {
 	PlayableSceneConfig config(3090,
 		SceneResourceLayout(20, 5, 19),
 		SceneViewport(kScene3090ViewportXOffset, kScene3090ViewportMinXOffset, kScene3090ViewportMaxXOffset),

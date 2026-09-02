@@ -178,7 +178,7 @@ bool Scene9130::waitForAnimationFrame(uint32 millis, bool allowSkip) {
 }
 
 void Scene9130::drawClipFrame(byte frameIndex) {
-	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[kScene9130ClipChunk],
+	drawResourceDeltaClipFrame(_resources._arena, _resources._chunkOffsets[kScene9130ClipChunk],
 		_resources._chunkTable.sizes[kScene9130ClipChunk], kScene9130ClipFrameCount,
 		frameIndex, _sceneFramebuffer.data(), _sceneFramebuffer.size());
 }

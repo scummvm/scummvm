@@ -432,7 +432,7 @@ bool Scene4040::drawStairDeltaClipFrame(uint chunkIndex, byte frameIndex) {
 	copyBaseFramebufferToSceneFramebuffer();
 	drawBackgroundLayers();
 	for (uint frame = 0; frame <= frameIndex; ++frame) {
-		if (!ResourceDeltaClipPlayer::drawFrame(_resourceArena, _resourceChunkOffsets[chunkIndex],
+		if (!drawResourceDeltaClipFrame(_resourceArena, _resourceChunkOffsets[chunkIndex],
 				_sceneChunkTable.sizes[chunkIndex], kScene4040StairClipFrameCount,
 				(byte)frame, framebufferPixels(_sceneFramebuffer), framebufferByteCount()))
 			return false;

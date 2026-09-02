@@ -103,7 +103,7 @@ const SceneLayerSpec kScene6050LayerSpecs[] = {
 	{ kSceneAnimationScenePlaced, 0, 0, nullptr, 0, false, 0 }
 };
 
-static PlayableSceneConfig scene6050Config() {
+PlayableSceneConfig scene6050Config() {
 	PlayableSceneConfig config(6050,
 		SceneResourceLayout(16, 5, 15),
 		SceneViewport(kScene6050ViewportXOffset, kScene6050ViewportMinXOffset, kScene6050ViewportXOffset),

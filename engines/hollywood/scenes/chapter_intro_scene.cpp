@@ -166,7 +166,7 @@ void ChapterIntroScene::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount
 	if (!_resources._chunkTable.isValidChunk(chunkIndex))
 		return;
 
-	ResourceDeltaClipPlayer::drawFrame(_resources._arena, _resources._chunkOffsets[chunkIndex],
+	drawResourceDeltaClipFrame(_resources._arena, _resources._chunkOffsets[chunkIndex],
 		_resources._chunkTable.sizes[chunkIndex], tableEntryCount, frameIndex, _sceneFramebuffer.data(),
 		_sceneFramebuffer.size());
 }

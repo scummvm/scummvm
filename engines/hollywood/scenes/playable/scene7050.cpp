@@ -69,7 +69,7 @@ const SceneLayerSpec kScene7050LayerSpecs[] = {
 		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene7050Config() {
+PlayableSceneConfig scene7050Config() {
 	PlayableSceneConfig config(7050,
 		SceneResourceLayout(12, 5, 11),
 		SceneViewport(0x68),

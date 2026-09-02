@@ -113,7 +113,7 @@ const byte kScene5120MainProjectionFrameMap[] = {
 	0, 0, 1, 2, 3, 4
 };
 
-static PlayableSceneConfig scene5120Config() {
+PlayableSceneConfig scene5120Config() {
 	PlayableSceneConfig config(5120,
 		SceneResourceLayout(5, 5, 0x15),
 		SceneViewport(kScene5120ViewportXOffset, kScene5120ViewportXOffset, kScene5120ViewportXOffset),

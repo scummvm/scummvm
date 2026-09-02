@@ -91,7 +91,7 @@ const SceneLayerSpec kScene1040LayerSpecs[] = {
 		kScene1040GorillaFrameMap, ARRAYSIZE(kScene1040GorillaFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene1040Config() {
+PlayableSceneConfig scene1040Config() {
 	PlayableSceneConfig config(1040,
 		SceneResourceLayout(17, 5, 16),
 		SceneViewport(kScene1040ViewportXOffset, kScene1040ViewportMinXOffset, kScene1040ViewportMaxXOffset),

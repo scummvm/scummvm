@@ -82,7 +82,7 @@ const SceneLayerSpec kScene3080LayerSpecs[] = {
 		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene3080Config() {
+PlayableSceneConfig scene3080Config() {
 	PlayableSceneConfig config(3080,
 		SceneResourceLayout(18, 5, 17),
 		SceneViewport(kScene3080ViewportXOffset),

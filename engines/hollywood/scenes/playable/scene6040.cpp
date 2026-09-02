@@ -73,7 +73,7 @@ const SceneLayerSpec kScene6040LayerSpecs[] = {
 		nullptr, 0, true, 0}
 };
 
-static PlayableSceneConfig scene6040Config() {
+PlayableSceneConfig scene6040Config() {
 	PlayableSceneConfig config(6040,
 		SceneResourceLayout(14, 5, 13),
 		SceneViewport(kScene6040ViewportXOffset, kScene6040ViewportXOffset, kScene6040ViewportMaxXOffset),

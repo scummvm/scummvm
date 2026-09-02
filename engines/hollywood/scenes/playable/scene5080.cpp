@@ -54,7 +54,7 @@ const byte kScene5080WardrobeFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 4, 3, 4, 5, 4, 3, 4, 5, 4, 3, 2, 1, 0
 };
 
-static PlayableSceneConfig scene5080Config() {
+PlayableSceneConfig scene5080Config() {
 	PlayableSceneConfig config(5080,
 		SceneResourceLayout(5, 5, 8),
 		SceneViewport(kScene5080ViewportXOffset, kScene5080ViewportXOffset, kScene5080ViewportXOffset),

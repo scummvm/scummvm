@@ -154,7 +154,7 @@ const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
 	{ 75, 1, 0, 2, 9, 10, 1, 0xff }
 };
 
-static PlayableSceneConfig scene7100Config() {
+PlayableSceneConfig scene7100Config() {
 	PlayableSceneConfig config(7100,
 		SceneResourceLayout(21, 5, 20),
 		SceneViewport(kScene7100ViewportXOffset),

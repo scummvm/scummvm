@@ -175,7 +175,7 @@ struct Scene2030SynchronizedOverlayTarget {
 	uint frameCount;
 };
 
-static PlayableSceneConfig scene2030Config() {
+PlayableSceneConfig scene2030Config() {
 	PlayableSceneConfig config(2030,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene2030ViewportXOffset, kScene2030ViewportXOffset, kScene2030ViewportXOffset),
@@ -783,7 +783,7 @@ void Scene2030::drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCoun
 	if (!_sceneChunkTable.isValidChunk(chunkIndex))
 		return;
 
-	ResourceDeltaClipPlayer::drawFrame(_resourceArena, _resourceChunkOffsets[chunkIndex],
+	drawResourceDeltaClipFrame(_resourceArena, _resourceChunkOffsets[chunkIndex],
 		_sceneChunkTable.sizes[chunkIndex], tableEntryCount, frameIndex,
 		(byte *)destination.getPixels(), destination.w, destination.h, destination.pitch,
 		destination.pitch * destination.h);

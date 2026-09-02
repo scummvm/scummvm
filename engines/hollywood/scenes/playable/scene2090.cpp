@@ -83,7 +83,7 @@ const SceneLayerSpec kScene2090LayerSpecs[] = {
 		ARRAYSIZE(kScene2090ForegroundFrameMap), false, 0}
 };
 
-static PlayableSceneConfig scene2090Config() {
+PlayableSceneConfig scene2090Config() {
 	PlayableSceneConfig config(2090,
 		SceneResourceLayout(8, 5, 7),
 		SceneViewport(kScene2090ViewportXOffset, kScene2090ViewportXOffset, kScene2090ViewportXOffset),

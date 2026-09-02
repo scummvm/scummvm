@@ -80,7 +80,7 @@ private:
 	byte &_frame;
 };
 
-static PlayableSceneConfig scene2070Config() {
+PlayableSceneConfig scene2070Config() {
 	PlayableSceneConfig config(2070,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene2070ViewportXOffset, kScene2070ViewportXOffset, kScene2070ViewportMaxXOffset),
