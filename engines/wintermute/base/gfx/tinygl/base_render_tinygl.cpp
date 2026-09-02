@@ -103,10 +103,11 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	// Disable shadow rendering as it's slow and a bit glitching in precision
 	_shadowVolumesSupported = false;
 
-	Graphics::PixelFormat pixelFormat = getPixelFormat();
-	initGraphics(width, height, &pixelFormat);
-	if (g_system->getScreenFormat() != pixelFormat) {
-		warning("Couldn't setup GFX-backend for %dx%dx%d", width, height, pixelFormat.bytesPerPixel * 8);
+	initGraphics(width, height, nullptr);
+
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+	if (pixelFormat.isCLUT8()) {
+		warning("Couldn't setup GFX-backend for %dx%dx%s", width, height, pixelFormat.toString().c_str());
 		return false;
 	}
 
