@@ -127,6 +127,7 @@ static PlayableSceneConfig scene2060Config() {
 	config.setActorPathStepDeltas(kScene2060ActorPathStepDeltaTable);
 	config.walkablePaletteMaxRegion = 1;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -180,10 +181,6 @@ void Scene2060::initializeCustomPreviewState() {
 	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene2060::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,

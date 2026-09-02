@@ -37,7 +37,6 @@ private:
 	void drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;

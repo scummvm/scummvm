@@ -75,6 +75,7 @@ PlayableSceneConfig scene5060Config() {
 	config.setTextResources(0, kScene5060SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -88,10 +89,6 @@ void Scene5060::initializeCustomPreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	setActiveActorPose(0x1fe, 0x17c, 4);
-}
-
-bool Scene5060::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5060::runCustomEntrySequence() {

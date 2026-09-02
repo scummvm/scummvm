@@ -118,6 +118,7 @@ PlayableSceneConfig scene5040Config() {
 	config.setActorResources(kScene5040ActorBankTableEntry, kScene5040ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5040SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -171,10 +172,6 @@ void Scene5040::drawCustomActorForegroundComposite(int activeWorldX, int activeW
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(16))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[16], _sceneFramebuffer);
-}
-
-bool Scene5040::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5040::runCustomEntrySequence() {

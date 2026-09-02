@@ -93,6 +93,7 @@ static PlayableSceneConfig scene2090Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet5A);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -131,10 +132,6 @@ void Scene2090::runCustomEntrySequence() {
 	} else {
 		runEntryFromScene2080();
 	}
-}
-
-bool Scene2090::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2090::runExitSideEffectsAfterLoop() {

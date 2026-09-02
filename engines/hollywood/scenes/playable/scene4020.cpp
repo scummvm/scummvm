@@ -81,6 +81,7 @@ static PlayableSceneConfig scene4020Config() {
 	config.setTextResources(kScene4020Resource003RowsOffsetIndex, kScene4020SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 2;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -101,10 +102,6 @@ void Scene4020::initializeCustomPreviewState() {
 	else
 		setActiveActorPose(0x50, 0x173, 2);
 }
-bool Scene4020::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
-}
-
 void Scene4020::runExitSideEffectsAfterLoop() {
 	if (!didLeaveSceneAfterLoop())
 		return;

@@ -43,7 +43,6 @@ private:
 	void initializeCustomPreviewState() override;
 	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	void runCustomEntrySequence() override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;

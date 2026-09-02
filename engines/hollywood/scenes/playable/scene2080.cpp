@@ -153,6 +153,7 @@ static PlayableSceneConfig scene2080Config() {
 	config.setActorResources(kScene2080ActorBankTableEntry, kScene2080ActorPaletteTableEntry);
 	config.setTextResources(kScene2080Resource003RowsOffsetIndex, kScene2080SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -188,10 +189,6 @@ void Scene2080::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene2080::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene2080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,

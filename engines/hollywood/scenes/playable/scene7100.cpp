@@ -159,6 +159,7 @@ static PlayableSceneConfig scene7100Config() {
 		SceneResourceLayout(21, 5, 20),
 		SceneViewport(kScene7100ViewportXOffset),
 		SceneActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing));
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -257,10 +258,6 @@ void Scene7100::runCustomEntrySequence() {
 		drawPlayableComposite();
 		runCurtainRevealFromBlack();
 	}
-}
-
-bool Scene7100::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene7100::prepareCustomGameplayLoop() {

@@ -85,6 +85,7 @@ PlayableSceneConfig scene5020Config() {
 		SceneActorPose(0x27d, 0x16c, 4));
 	config.setActorResources(kScene5020ActorBankTableEntry, kScene5020ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5020SpeechCueDescriptorTableOffset);
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -103,10 +104,6 @@ void Scene5020::drawCustomActorForegroundComposite(int activeWorldX, int activeW
 		byte actorDrawOrderMode) {
 	(void)activeWorldX;
 	drawForeground(actorDrawOrderMode, activeWorldY);
-}
-
-bool Scene5020::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene5020::runCustomEntrySequence() {

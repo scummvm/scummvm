@@ -128,6 +128,7 @@ PlayableSceneConfig scene8010Config() {
 	config.setTextResources(kScene8010Resource003RowsOffsetIndex, kScene8010SpeechCueDescriptorTableOffset);
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet00);
 	config.loadActorDepthTables = false;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -174,10 +175,6 @@ void Scene8010::runCustomEntrySequence() {
 	}
 
 	runFirstEntry();
-}
-
-bool Scene8010::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene8010::advanceCustomGameplayLoop(uint32 delta) {

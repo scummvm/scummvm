@@ -69,6 +69,7 @@ static PlayableSceneConfig scene4100Config() {
 	config.setActorPathStepDeltas(kActorPathStepDeltaTableSet5A);
 	config.walkablePaletteMaxRegion = 20;
 	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
@@ -116,10 +117,6 @@ void Scene4100::initializeCustomPreviewState() {
 
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
-
-bool Scene4100::shouldPresentPreviewBeforeEntrySequence() const {
-	return false;
 }
 
 void Scene4100::runCustomEntrySequence() {

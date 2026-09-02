@@ -38,7 +38,6 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
-	bool shouldPresentPreviewBeforeEntrySequence() const override;
 	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;

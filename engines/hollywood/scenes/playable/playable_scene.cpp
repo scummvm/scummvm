@@ -364,6 +364,7 @@ PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResource
 		viewportMaxXOffset(sceneViewport.maxXOffset),
 		defaultActorPose(actorPose),
 		drawDefaultActor(true),
+		entrySequenceOwnsFirstPresentation(false),
 		inventoryOwnerIndex(sceneNumber / 1000 == 7 ? 1 : 0),
 		activeAudioChapterIndex(sceneNumber / 1000 == 7 ? kSceneConfigNoAudioChapter : sceneNumber / 1000),
 		actorBankTableEntry(0xd0),
@@ -649,7 +650,7 @@ void PlayableScene::runExitSideEffectsAfterLoop() {
 }
 
 bool PlayableScene::shouldPresentPreviewBeforeEntrySequence() const {
-	return true;
+	return !_config.entrySequenceOwnsFirstPresentation;
 }
 
 bool PlayableScene::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const {
