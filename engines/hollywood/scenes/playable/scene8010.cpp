@@ -514,6 +514,7 @@ void Scene8010::drawTransitionClip(uint chunkIndex, bool showFirstFrameImmediate
 		if (!fastForward && waitTransitionFrameMillis(kScene8010TransitionFrameMillis)) {
 			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 				return;
+			consumeStepAdvanceRequest();
 			_skipRequested = false;
 			fastForward = true;
 		}

@@ -421,6 +421,7 @@ bool Scene4040::runStairDeltaClip(uint chunkIndex, const byte *footstepFrames,
 				break;
 			presentFrame();
 		}
+		consumeStepAdvanceRequest();
 		_skipRequested = false;
 	}
 

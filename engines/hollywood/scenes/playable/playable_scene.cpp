@@ -1642,8 +1642,15 @@ void PlayableScene::playDeltaClip(uint chunkIndex, uint tableEntryCount, uint fr
 			!_vm->isSceneRestartRequested(); ++frame) {
 		drawClipFrameDelta(chunkIndex, tableEntryCount, (byte)frame);
 		presentFrame();
-		if (waitDeltaClipFrameMillis(frameMillis))
+		if (waitDeltaClipFrameMillis(frameMillis)) {
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				break;
+			consumeStepAdvanceRequest();
+			for (++frame; frame < frameCount; ++frame)
+				drawClipFrameDelta(chunkIndex, tableEntryCount, (byte)frame);
+			presentFrame();
 			break;
+		}
 	}
 }
 
@@ -1659,8 +1666,21 @@ bool PlayableScene::playTransitionFrames(TransitionFrameRenderer &renderer, byte
 	presentFrame();
 
 	while (frameIndex < lastFrame && !animationPlaybackShouldStop()) {
-		if (pollEvents(allowSkip))
-			return false;
+		if (pollEvents(allowSkip)) {
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return false;
+
+			const bool stepAdvanced = consumeStepAdvanceRequest();
+			if (mode == kCumulativeTransitionFrames) {
+				while (frameIndex < lastFrame)
+					renderer.drawFrame((byte)++frameIndex);
+			} else {
+				frameIndex = lastFrame;
+				renderer.drawFrame((byte)frameIndex);
+			}
+			presentFrame();
+			return stepAdvanced;
+		}
 
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
@@ -1933,15 +1953,21 @@ void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int t
 		handleActorPathFootstep(frameIndex + 1 == _actorPathFrames.size(), footstepPlayed);
 		if (waitSceneMillis(kActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
-			return;
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return;
+			consumeStepAdvanceRequest();
+			break;
 		}
 	}
 	_actorPathPlaybackActive = false;
 
 	_activeActorWorldX = targetX;
 	_activeActorWorldY = targetY;
+	if (!_actorPathFrames.empty())
+		_activeActorFacing = _actorPathFrames.back().facing;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_activeActorCel = 0;
+	_lastViewportScrollActorWorldX = _activeActorWorldX;
 	drawPlayableComposite();
 	presentFrame();
 }
@@ -1969,6 +1995,7 @@ uint16 PlayableScene::viewportYOffset() const {
 
 void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
+	_stepAdvanceRequested = false;
 	cancelConcurrentActorPath();
 	stopRealtimeSpeech();
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
@@ -2305,9 +2332,12 @@ void PlayableScene::advanceConcurrentActorPath(uint32 delta) {
 }
 
 void PlayableScene::finishConcurrentActorPath(bool allowSkip) {
+	bool interrupted = false;
 	while (_concurrentActorPathActive && !animationPlaybackShouldStop()) {
-		if (waitSceneMillis(10, allowSkip))
+		if (waitSceneMillis(10, allowSkip)) {
+			interrupted = true;
 			break;
+		}
 	}
 
 	if (_concurrentActorPathActive && !_actorPathFrames.empty()) {
@@ -2320,6 +2350,8 @@ void PlayableScene::finishConcurrentActorPath(bool allowSkip) {
 	}
 	_concurrentActorPathActive = false;
 	_actorPathPlaybackActive = false;
+	if (interrupted && !animationPlaybackShouldStop())
+		consumeStepAdvanceRequest();
 }
 
 void PlayableScene::cancelConcurrentActorPath() {
@@ -2356,6 +2388,7 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 				return false;
 
 			if (cancelOnSkip) {
+				consumeStepAdvanceRequest();
 				_skipRequested = false;
 				drawPlayableComposite();
 				presentFrame();
@@ -2369,6 +2402,8 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 			_activeActorCel = lastFrame.cel;
 			_activeActorDrawOrderMode = lastFrame.drawOrderMode;
 			_actorPathPlaybackActive = false;
+			_lastViewportScrollActorWorldX = _activeActorWorldX;
+			consumeStepAdvanceRequest();
 			drawPlayableComposite();
 			presentFrame();
 			return true;
@@ -2619,6 +2654,16 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 			drawPlayableComposite();
 			presentFrame();
 		} else if (waitSceneMillis(spec.frameMillis, options.allowSkip)) {
+			if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested() &&
+					consumeStepAdvanceRequest()) {
+				for (++frame; frame < cappedEndFrame; ++frame) {
+					_actionOverlayPlayer.setFrame(frame);
+					for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
+						if (events[eventIndex].matches(frame))
+							handleAnimationFrameEvent(events[eventIndex], frame);
+					}
+				}
+			}
 			break;
 		}
 	}
@@ -2708,6 +2753,10 @@ void PlayableScene::presentAnimationFrame() {
 
 bool PlayableScene::waitForAnimationFrame(uint32 millis, bool allowSkip) {
 	return waitSceneMillis(millis, allowSkip);
+}
+
+bool PlayableScene::consumeAnimationFastForwardRequest() {
+	return consumeStepAdvanceRequest();
 }
 
 void PlayableScene::resetViewportFromScene() {

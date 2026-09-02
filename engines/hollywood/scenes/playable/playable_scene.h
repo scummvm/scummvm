@@ -606,6 +606,7 @@ protected:
 	bool animationPlaybackShouldStop() const override;
 	void presentAnimationFrame() override;
 	bool waitForAnimationFrame(uint32 millis, bool allowSkip) override;
+	bool consumeAnimationFastForwardRequest() override;
 	void handleAnimationFrameEvent(const AnimationFrameEvent &event, uint frame) override;
 
 	// Speech playback

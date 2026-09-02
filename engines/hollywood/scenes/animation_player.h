@@ -114,8 +114,9 @@ struct AnimationTransition {
  * Events run after the target changes and before the frame wait. The delegate
  * owns event pumping and scene advancement; playAndPresent() also asks it to
  * present every new frame immediately. A range may present its terminal frame
- * without holding it for another interval. Playback stops uniformly on a
- * skip, restart, or quit.
+ * without holding it for another interval. A delegate may consume a step
+ * advance by installing the remaining frames and events immediately; other
+ * interruptions stop playback.
  */
 class SceneAnimationPlayerDelegate {
 public:
@@ -124,6 +125,7 @@ public:
 	virtual bool animationPlaybackShouldStop() const = 0;
 	virtual void presentAnimationFrame() = 0;
 	virtual bool waitForAnimationFrame(uint32 millis, bool allowSkip) = 0;
+	virtual bool consumeAnimationFastForwardRequest() { return false; }
 	virtual void handleAnimationFrameEvent(const AnimationFrameEvent &event, uint frame) {
 		if (event.type == AnimationFrameEvent::kCustomHook)
 			handleAnimationFrameHook(event.hookId, frame);
@@ -205,8 +207,24 @@ private:
 			}
 			if (frame == (int)range.lastFrame && !range.waitAfterFinalFrame)
 				return true;
-			if (_delegate.waitForAnimationFrame(range.frameMillis, range.allowSkip))
-				return false;
+			if (_delegate.waitForAnimationFrame(range.frameMillis, range.allowSkip)) {
+				if (!_delegate.consumeAnimationFastForwardRequest())
+					return false;
+
+				for (int remainingFrame = frame + step;
+						step > 0 ? remainingFrame <= (int)range.lastFrame :
+							remainingFrame >= (int)range.lastFrame;
+						remainingFrame += step) {
+					target.setFrame(range.targetFrame(remainingFrame));
+					for (uint eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
+						if (events[eventIndex].matches(remainingFrame))
+							_delegate.handleAnimationFrameEvent(events[eventIndex], remainingFrame);
+					}
+				}
+				if (frame != (int)range.lastFrame && presentBeforeWait)
+					_delegate.presentAnimationFrame();
+				return !_delegate.animationPlaybackShouldStop();
+			}
 			if (frame == (int)range.lastFrame)
 				return true;
 		}
@@ -229,8 +247,11 @@ private:
 		}
 
 		while (frame != (int)transition.lastFrame) {
-			if (_delegate.waitForAnimationFrame(transition.frameMillis, transition.allowSkip))
-				return false;
+			if (_delegate.waitForAnimationFrame(transition.frameMillis, transition.allowSkip)) {
+				if (!_delegate.consumeAnimationFastForwardRequest())
+					return false;
+				break;
+			}
 			frame += step;
 			target.setFrame((byte)frame);
 		}
