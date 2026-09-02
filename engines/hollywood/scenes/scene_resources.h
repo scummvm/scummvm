@@ -30,7 +30,12 @@
 
 namespace Hollywood {
 
-// Owns scene archive chunks and generic chunk loading helpers.
+/**
+ * Owns an open scene archive and storage for its loaded chunks.
+ *
+ * Fixed chunks load into caller-owned buffers. Regular arena chunks append to
+ * _arena; _chunkOffsets maps local indexes and aliases into that storage.
+ */
 class SceneResources {
 public:
 	SceneResources();

@@ -66,8 +66,12 @@ private:
 	uint _dirtyEnd;
 };
 
-// Owns a CLUT8 scene-sized surface while preserving byte-offset access for
-// original resource decoders that address 1024-wide framebuffers directly.
+/**
+ * Owns a CLUT8 surface with a byte-addressable resource-buffer interface.
+ *
+ * The surface remains 1024 pixels wide so data() and operator[] preserve the
+ * offsets used by the original resource decoders.
+ */
 class IndexedSurfaceBuffer {
 public:
 	IndexedSurfaceBuffer();

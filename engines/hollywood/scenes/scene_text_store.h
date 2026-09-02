@@ -53,7 +53,12 @@ struct SceneSpeechCue {
 	uint16 voiceSampleId;
 };
 
-// Owns the RESOURCE.003 rows and cue tables required by a scene.
+/**
+ * Loads and decodes scene text and speech-cue tables from RESOURCE.003.
+ *
+ * A full load provides stage rows, inventory-owner rows, and static cues.
+ * Presentation scenes may instead load only the stage or static-cue subset.
+ */
 class SceneTextStore {
 public:
 	SceneTextStore();
