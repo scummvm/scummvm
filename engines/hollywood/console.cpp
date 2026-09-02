@@ -248,7 +248,7 @@ bool Console::cmdSolve(int argc, const char **argv) {
 
 bool Console::parseItemId(const char *argument, uint &itemId) {
 	char *endPtr = nullptr;
-	const long parsedValue = strtol(argument, &endPtr, 0);
+	const int32 parsedValue = strtol(argument, &endPtr, 0);
 	if (endPtr == argument || *endPtr != 0 || parsedValue < 0)
 		return false;
 
