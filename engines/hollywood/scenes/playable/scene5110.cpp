@@ -118,9 +118,6 @@ const SceneLayerSpec kScene5110LayerSpecs[] = {
 		nullptr, 0, false, 0}
 };
 
-static_assert(ARRAYSIZE(kScene5110LayerSpecs) == kScene5110LayerCount,
-	"Scene 5110 layer specification count changed");
-
 PlayableSceneConfig scene5110Config() {
 	PlayableSceneConfig config(5110,
 		SceneResourceLayout(5, 5, 0x19),

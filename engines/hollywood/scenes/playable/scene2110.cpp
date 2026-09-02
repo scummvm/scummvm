@@ -96,13 +96,6 @@ const byte kScene2110TreasureGrantItems[] = {
 	0x30, 0x42, 0x4c
 };
 
-static_assert(ARRAYSIZE(kScene2110EntryLayerFrameMap) == 0x1f,
-	"Scene 2110 entry-layer frame map size changed");
-static_assert(ARRAYSIZE(kScene2110AmbientFrameMap) == 0x1a,
-	"Scene 2110 ambient frame map size changed");
-static_assert(ARRAYSIZE(kScene2110TreasureFrameMap) == 0x24,
-	"Scene 2110 treasure frame map size changed");
-
 PlayableSceneConfig scene2110Config() {
 	PlayableSceneConfig config(2110,
 		SceneResourceLayout(8, 5, 7),

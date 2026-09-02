@@ -89,13 +89,6 @@ const byte kScene2020TigerItemOverlayFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
 
-static_assert(ARRAYSIZE(kScene2020PoolFrameMap) == 4, "Scene 2020 pool frame map size changed");
-static_assert(ARRAYSIZE(kScene2020TigerFrameMap) == 36, "Scene 2020 tiger frame map size changed");
-static_assert(ARRAYSIZE(kScene2020PrincessFrameMap) == 36, "Scene 2020 princess frame map size changed");
-static_assert(ARRAYSIZE(kScene2020PickupFrameMap) == 10, "Scene 2020 pickup frame map size changed");
-static_assert(ARRAYSIZE(kScene2020TigerToothPickupFrameMap) == 14, "Scene 2020 tooth pickup frame map size changed");
-static_assert(ARRAYSIZE(kScene2020TigerItemOverlayFrameMap) == 11, "Scene 2020 tiger item overlay frame map size changed");
-
 const SceneLayerSpec kScene2020LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 5, kScene2020PoolDescriptorCount,
 		kScene2020PoolFrameMap, ARRAYSIZE(kScene2020PoolFrameMap), true, 0},

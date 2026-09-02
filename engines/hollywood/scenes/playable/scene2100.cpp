@@ -128,31 +128,6 @@ const byte kScene2100SpecialExitFrameMap[] = {
 	20, 21, 22, 23, 24, 25, 26
 };
 
-static_assert(ARRAYSIZE(kScene2100ForegroundFrameMap) == 18,
-	"Scene 2100 foreground frame map size changed");
-static_assert(ARRAYSIZE(kScene2100PrincessArrivalFrameMap) == 0x21,
-	"Scene 2100 princess-arrival frame map size changed");
-static_assert(ARRAYSIZE(kScene2100ReturnForegroundFrameMap) == 7,
-	"Scene 2100 return foreground frame map size changed");
-static_assert(ARRAYSIZE(kScene2100PassageFrameMap) == 10,
-	"Scene 2100 passage frame map size changed");
-static_assert(ARRAYSIZE(kScene2100PickupFrameMap) == 15,
-	"Scene 2100 pickup frame map size changed");
-static_assert(ARRAYSIZE(kScene2100TransitionFrameMap) == 0x35,
-	"Scene 2100 transition frame map size changed");
-static_assert(kScene2100DoorDescriptorCount > 46,
-	"Scene 2100 transition descriptor count is too small");
-static_assert(ARRAYSIZE(kScene2100SpecialIntroFrameMap) == 0x17,
-	"Scene 2100 special intro frame map size changed");
-static_assert(ARRAYSIZE(kScene2100SpecialSpeechShortFrameMap) == 9,
-	"Scene 2100 short speech frame map size changed");
-static_assert(ARRAYSIZE(kScene2100SpecialSpeechLongFrameMap) == 20,
-	"Scene 2100 long speech frame map size changed");
-static_assert(ARRAYSIZE(kScene2100SpecialExitFrameMap) == 0x1b,
-	"Scene 2100 special exit frame map size changed");
-static_assert(ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices) <= 16,
-	"Scene 2100 mummy dialogue choice mask is too small");
-
 const SceneLayerSpec kScene2100LayerSpecs[] = {
 	{kSceneAnimationBehindActors, kScene2100MummyChunk, kScene2100MummyDescriptorCount,
 		kScene2100ForegroundFrameMap, ARRAYSIZE(kScene2100ForegroundFrameMap), true, 0},

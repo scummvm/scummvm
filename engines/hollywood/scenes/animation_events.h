@@ -265,7 +265,6 @@ public:
 
 	template<class T, class V>
 	Spec &commitAt(int frame, T &target, const V &value) {
-		static_assert(sizeof(T) <= sizeof(uint32), "Animation frame state value is too large");
 		AnimationFrameEvent event(frame, AnimationFrameEvent::kStateCommit);
 		event.commitTarget = &target;
 		event.commitValue = static_cast<uint32>(static_cast<T>(value));

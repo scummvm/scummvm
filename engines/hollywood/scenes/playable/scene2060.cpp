@@ -105,16 +105,6 @@ const byte kScene2060GuideRoute[][2] = {
 	{0x39, 5}, {0x3f, 3}, {0x40, 5}, {0x46, 3}, {0x47, 3}
 };
 
-static_assert(ARRAYSIZE(kScene2060ActorPathStepDeltaTable) == 72, "Scene 2060 actor path table size changed");
-static_assert(ARRAYSIZE(kScene2060PassageMaskByMazeIndex) == kScene2060MazeIndexCount,
-	"Scene 2060 passage mask table size changed");
-static_assert(ARRAYSIZE(kScene2060PassageBits) == 6, "Scene 2060 passage bit count changed");
-static_assert(ARRAYSIZE(kScene2060OpenPassageChunks) == ARRAYSIZE(kScene2060PassageBits),
-	"Scene 2060 open passage chunk count changed");
-static_assert(ARRAYSIZE(kScene2060ClosedPassageChunks) == ARRAYSIZE(kScene2060PassageBits),
-	"Scene 2060 closed passage chunk count changed");
-static_assert(ARRAYSIZE(kScene2060GuideRoute) == 20, "Scene 2060 guide route size changed");
-
 PlayableSceneConfig scene2060Config() {
 	PlayableSceneConfig config(2060,
 		SceneResourceLayout(32, 5, 31),

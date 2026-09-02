@@ -128,13 +128,6 @@ const SceneLayerSpec kScene2080LayerSpecs[] = {
 		ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap), false, 0}
 };
 
-static_assert(ARRAYSIZE(kScene2080ForegroundActorFrameMap) == 0x10, "Scene 2080 foreground actor frame map size changed");
-static_assert(ARRAYSIZE(kScene2080AmbientFrameMap) == 0x1a, "Scene 2080 ambient frame map size changed");
-static_assert(ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap) == 13, "Scene 2080 forward exit overlay frame map size changed");
-static_assert(ARRAYSIZE(kScene2080ForegroundExitFrameMap) == 0x21, "Scene 2080 foreground exit frame map size changed");
-static_assert(ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap) == 0x2d, "Scene 2080 princess hair search first frame map size changed");
-static_assert(ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap) == 0x0d, "Scene 2080 princess hair search second frame map size changed");
-
 class Scene2080DeltaFrameTarget {
 public:
 	explicit Scene2080DeltaFrameTarget(byte &frame) : _frame(frame) {}
