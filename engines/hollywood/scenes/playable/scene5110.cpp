@@ -129,7 +129,6 @@ static PlayableSceneConfig scene5110Config() {
 	config.setActorResources(kScene5110ActorBankTableEntry, kScene5110ActorPaletteTableEntry);
 	config.setTextResources(0, kScene5110SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 20;
-	config.useActorDepthTest = false;
 	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }

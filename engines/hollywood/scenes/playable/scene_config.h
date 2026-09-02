@@ -108,7 +108,6 @@ struct PlayableSceneConfig {
 	byte inventoryOwnerIndex;
 	byte activeAudioChapterIndex;
 	uint actorBankTableEntry;
-	uint actorBankSegmentCount;
 	uint actorPaletteTableEntry;
 	uint32 inventoryActionTableExtraOffset;
 	uint inventoryRowsOffsetIndex;
