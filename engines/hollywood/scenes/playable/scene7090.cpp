@@ -56,11 +56,24 @@ const byte kScene7090GatedActionFrameMap[] = {
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 };
 
+const SceneSpeechActionSpec kScene7090SpeechActions[] = {
+	{ 302, 1, 0 }, // Mirar puerta (look at door).
+	{ 303, 2, 0 }, // Mirar ventana (look at window).
+	{ 304, 3, 0 }, // Mirar cama (look at bed).
+	{ 305, 4, 0 }, // Usar cama (use bed).
+	{ 306, 5, 0 }, // Mirar mesa (look at table).
+	{ 307, 6, 0 }, // Mirar archivadores (look at filing cabinets).
+	{ 308, 7, 0 }, // Mirar botella y copas de champagne (look at champagne bottle and glasses).
+	{ 309, 8, 0 }, // Mirar papelera (look at wastebasket).
+	{ 310, 9, 0 }  // Mirar armadura (look at armor).
+};
+
 static PlayableSceneConfig scene7090Config() {
 	PlayableSceneConfig config(7090,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene7090ViewportXOffset),
 		SceneActorPose(kScene7090EntryX, kScene7090EntryY, kScene7090EntryFacing));
+	config.setSecondarySpeechActions(kScene7090SpeechActions);
 	return config;
 }
 
@@ -124,33 +137,6 @@ bool Scene7090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Usar/Abrir puerta (use/open door)
 		handleBackToG07();
-		return true;
-	case 302: // Mirar puerta (look at door)
-		beginSecondarySpeechLine(1, 0);
-		return true;
-	case 303: // Mirar ventana (look at window)
-		beginSecondarySpeechLine(2, 0);
-		return true;
-	case 304: // Mirar cama (look at bed)
-		beginSecondarySpeechLine(3, 0);
-		return true;
-	case 305: // Usar cama (use bed)
-		beginSecondarySpeechLine(4, 0);
-		return true;
-	case 306: // Mirar mesa (look at table)
-		beginSecondarySpeechLine(5, 0);
-		return true;
-	case 307: // Mirar archivadores (look at filing cabinets)
-		beginSecondarySpeechLine(6, 0);
-		return true;
-	case 308: // Mirar botella y copas de champagne (look at champagne bottle and glasses)
-		beginSecondarySpeechLine(7, 0);
-		return true;
-	case 309: // Mirar papelera (look at wastebasket)
-		beginSecondarySpeechLine(8, 0);
-		return true;
-	case 310: // Mirar armadura (look at armor)
-		beginSecondarySpeechLine(9, 0);
 		return true;
 	case 311: // Usar armadura (use armor)
 		handleGatedAction();

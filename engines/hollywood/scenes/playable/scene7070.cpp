@@ -83,11 +83,26 @@ const byte kScene7070UseItem13FrameMap[] = {
 	15, 16, 17, 18, 19, 20, 21, 0x1f, 0x20, 0x21, 0
 };
 
+const SceneSpeechActionSpec kScene7070SpeechActions[] = {
+	{ 302, 1, 0 },    // Mirar chimenea (look at fireplace).
+	{ 303, 2, 0 },    // Mirar gramófono (look at gramophone).
+	{ 304, 3, 0 },    // Usar gramófono/disco (use gramophone/record).
+	{ 308, 7, 0 },    // Mirar mesa (look at table).
+	{ 309, 8, 0 },    // Mirar trofeos (look at trophies).
+	{ 310, 9, 0 },    // Coger/Usar carbón (take/use coal).
+	{ 311, 10, 0 },   // Mirar carbón (look at coal).
+	{ 314, 0x16, 0 }, // Cerrar cajón/Coger manivela (close drawer/take crank).
+	{ 318, 0x0f, 1 }, // Usar trapo con carbón (use sooty rag with coal).
+	{ 321, 0x12, 0 }, // Usar llave con puerta (use key with door).
+	{ 322, 0x0b, 2 }  // Restored: Mirar/Coger cajón superior (look at/take upper drawer).
+};
+
 static PlayableSceneConfig scene7070Config() {
 	PlayableSceneConfig config(7070,
 		SceneResourceLayout(13, 5, 12),
 		SceneViewport(kScene7070ViewportXOffset),
 		SceneActorPose(kScene7070EntryFromG06TargetX, kScene7070EntryFromG06TargetY, kScene7070EntryFromG06Facing));
+	config.setSecondarySpeechActions(kScene7070SpeechActions);
 	return config;
 }
 
@@ -154,15 +169,6 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Ir a pasillo (go to hallway)
 		handleBackToG06();
 		return true;
-	case 302: // Mirar chimenea (look at fireplace)
-		beginSecondarySpeechLine(1, 0);
-		return true;
-	case 303: // Mirar gramófono (look at gramophone)
-		beginSecondarySpeechLine(2, 0);
-		return true;
-	case 304: // Usar gramófono/disco (use gramophone/record)
-		beginSecondarySpeechLine(3, 0);
-		return true;
 	case 305: // Mirar mueble con discos (look at record cabinet)
 		beginSecondarySpeechLine(0x17, 0);
 		if (_vm->restoredContentEnabled())
@@ -174,18 +180,6 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 307: // Usar/Abrir puerta (use/open door)
 		handleExitDoorAction();
 		return true;
-	case 308: // Mirar mesa (look at table)
-		beginSecondarySpeechLine(7, 0);
-		return true;
-	case 309: // Mirar trofeos (look at trophies)
-		beginSecondarySpeechLine(8, 0);
-		return true;
-	case 310: // Coger/Usar carbón (take/use coal)
-		beginSecondarySpeechLine(9, 0);
-		return true;
-	case 311: // Mirar carbón (look at coal)
-		beginSecondarySpeechLine(10, 0);
-		return true;
 	case 312: // Restored: Mirar cajón (look at drawer)
 		if (_vm->restoredContentEnabled())
 			beginSecondarySpeechLine(0x0b, 0);
@@ -193,9 +187,6 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 313: // Restored: Abrir cajón (open drawer)
 		if (_vm->restoredContentEnabled())
 			beginSecondarySpeechLine(0x0c, 0);
-		return true;
-	case 314: // Cerrar cajón/Coger manivela (close drawer/take crank)
-		beginSecondarySpeechLine(0x16, 0);
 		return true;
 	case 315: // Mirar manivela (look at crank)
 		beginSecondarySpeechLine(0x0d, _vm->gameState().gramophoneRoomDoorState < 2 ? 0 : 1);
@@ -206,20 +197,11 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 317: // Usar trapo con carbón (use rag with coal)
 		handleTradeItem10ForItem08();
 		return true;
-	case 318: // Usar trapo con carbón (use sooty rag with coal)
-		beginSecondarySpeechLine(0x0f, 1);
-		return true;
 	case 319: // Usar tarjeta con puerta (use card with door)
 		handlePrimeExitDoorAction();
 		return true;
 	case 320: // Usar manivela con gramófono/cajón (use crank with gramophone/drawer)
 		handleUseItem13OnSceneObject();
-		return true;
-	case 321: // Usar llave con puerta (use key with door)
-		beginSecondarySpeechLine(0x12, 0);
-		return true;
-	case 322: // Restored: Mirar/Coger cajón superior (look at/take upper drawer)
-		beginSecondarySpeechLine(0x0b, 2);
 		return true;
 	default:
 		return false;

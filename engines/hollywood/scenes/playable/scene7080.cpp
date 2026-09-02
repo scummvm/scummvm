@@ -47,11 +47,24 @@ const byte kScene7080PickupItem13FrameMap[] = {
 	0, 6, 7, 8, 9, 10, 1, 2, 3, 3, 4, 5, 0
 };
 
+const SceneSpeechActionSpec kScene7080SpeechActions[] = {
+	{ 302, 1, 0 }, // Mirar puerta (look at door).
+	{ 303, 2, 0 }, // Mirar ventana (look at window).
+	{ 304, 3, 0 }, // Mirar estantería (look at shelves).
+	{ 305, 4, 0 }, // Mirar mesa (look at table).
+	{ 306, 5, 0 }, // Mirar archivadores (look at filing cabinets).
+	{ 308, 6, 0 }, // Mirar manivela (look at crank).
+	{ 309, 7, 0 }, // Mirar papelera (look at wastebasket).
+	{ 310, 8, 0 }, // Mirar armadura (look at armor).
+	{ 311, 9, 0 }  // Usar armadura (use armor).
+};
+
 static PlayableSceneConfig scene7080Config() {
 	PlayableSceneConfig config(7080,
 		SceneResourceLayout(9, 5, 8),
 		SceneViewport(kScene7080ViewportXOffset),
 		SceneActorPose(kScene7080EntryX, kScene7080EntryY, kScene7080EntryFacing));
+	config.setSecondarySpeechActions(kScene7080SpeechActions);
 	return config;
 }
 
@@ -97,35 +110,8 @@ bool Scene7080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Usar/Abrir puerta (use/open door)
 		handleBackToG07();
 		return true;
-	case 302: // Mirar puerta (look at door)
-		beginSecondarySpeechLine(1, 0);
-		return true;
-	case 303: // Mirar ventana (look at window)
-		beginSecondarySpeechLine(2, 0);
-		return true;
-	case 304: // Mirar estantería (look at shelves)
-		beginSecondarySpeechLine(3, 0);
-		return true;
-	case 305: // Mirar mesa (look at table)
-		beginSecondarySpeechLine(4, 0);
-		return true;
-	case 306: // Mirar archivadores (look at filing cabinets)
-		beginSecondarySpeechLine(5, 0);
-		return true;
 	case 307: // Coger manivela (take crank)
 		handlePickupItem13();
-		return true;
-	case 308: // Mirar manivela (look at crank)
-		beginSecondarySpeechLine(6, 0);
-		return true;
-	case 309: // Mirar papelera (look at wastebasket)
-		beginSecondarySpeechLine(7, 0);
-		return true;
-	case 310: // Mirar armadura (look at armor)
-		beginSecondarySpeechLine(8, 0);
-		return true;
-	case 311: // Usar armadura (use armor)
-		beginSecondarySpeechLine(9, 0);
 		return true;
 	default:
 		return false;
