@@ -1258,7 +1258,7 @@ int EoBEngine::resurrectionSelectDialogue() {
 void EoBEngine::healParty() {
 	int cnt = rollDice(1, 3, 2);
 	for (int i = 0; i < 6 && cnt; i++) {
-		if (testCharacter(i, 3))
+		if (!testCharacter(i, 3))
 			continue;
 
 		_characters[i].flags &= ~4;

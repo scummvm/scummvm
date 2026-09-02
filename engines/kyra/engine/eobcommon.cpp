@@ -1406,7 +1406,7 @@ void EoBCoreEngine::neutralizePoison(int character) {
 	_characters[character].flags &= ~2;
 	_characters[character].effectFlags &= ~0x2000;
 	deleteCharEventTimer(character, -34);
-	gui_drawCharPortraitWithStats(character);
+	gui_drawCharPortraitWithStats(character, false);
 }
 
 void EoBCoreEngine::npcSequence(int npcIndex) {
