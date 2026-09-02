@@ -1003,8 +1003,8 @@ bool dispatchInventoryRelationAction(HollywoodEngine *vm, GameplayLoopDelegate *
 
 bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		uint16 handlerId, byte owner) {
-	// Mirrors the low shared table installed by InstallSceneActionCallbackTable
-	// at 004d6000. This is not the larger main-scene callback table.
+	// Shared handlers from InstallSceneActionCallbackTable (0x004d6000);
+	// main-scene handlers are dispatched separately.
 	const bool sharedHandler =
 		handlerId == 0 || handlerId == 1 || handlerId == 35 ||
 		handlerId == 41 || handlerId == 45 || handlerId == 49 ||
