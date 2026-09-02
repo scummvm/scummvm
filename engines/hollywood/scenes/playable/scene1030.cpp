@@ -139,7 +139,7 @@ const SceneLayerSpec kScene1030LayerSpecs[] = {
 		kScene1030RightEntryActorFrameMap, ARRAYSIZE(kScene1030RightEntryActorFrameMap), false, 0 }
 };
 
-static PlayableSceneConfig scene1030Config() {
+PlayableSceneConfig scene1030Config() {
 	PlayableSceneConfig config(1030,
 		SceneResourceLayout(15, 5, 14),
 		SceneViewport(kScene1030ViewportXOffset),

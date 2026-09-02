@@ -39,7 +39,7 @@ const uint kScene6060ActorPaletteTableEntry = 0x00cc;
 const uint kScene6060Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene6060SpeechCueDescriptorTableOffset = 0x1135;
 
-static PlayableSceneConfig scene6060Config() {
+PlayableSceneConfig scene6060Config() {
 	PlayableSceneConfig config(6060,
 		SceneResourceLayout(5, 5, 4),
 		SceneViewport(kScene6060EntryFromLobbyViewportX, kScene6060ViewportMinX, kScene6060ViewportMaxX),

@@ -75,7 +75,7 @@ const SceneLayerSpec kScene6100LayerSpecs[] = {
 	{kSceneAnimationBehindActors, 6, 0x17, nullptr, 0, false, 0}
 };
 
-static PlayableSceneConfig scene6100Config() {
+PlayableSceneConfig scene6100Config() {
 	PlayableSceneConfig config(6100,
 		SceneResourceLayout(10, 5, 9),
 		SceneViewport(0x00a0, 0, 0x00a0),

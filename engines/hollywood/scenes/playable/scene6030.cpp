@@ -95,7 +95,7 @@ const SceneLayerSpec kScene6030AnimationLayerSpecs[] = {
 		nullptr, 0, false, 0 }
 };
 
-static PlayableSceneConfig scene6030Config() {
+PlayableSceneConfig scene6030Config() {
 	PlayableSceneConfig config(6030,
 		SceneResourceLayout(13, 5, 12),
 		SceneViewport(kScene6030ViewportXOffset),

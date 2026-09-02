@@ -316,7 +316,7 @@ private:
 		ResourceSpriteLayer layer;
 	};
 
-	static uint availableFrameCount(const ResourceSpriteLayer &layer) {
+	uint availableFrameCount(const ResourceSpriteLayer &layer) const {
 		return layer.frameMap != nullptr ? layer.frameMapSize : layer.descriptorCount;
 	}
 

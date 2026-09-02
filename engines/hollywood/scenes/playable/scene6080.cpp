@@ -85,7 +85,7 @@ const SceneLayerSpec kScene6080LayerSpecs[] = {
 		kScene6080GuardAlternateFrameMap, ARRAYSIZE(kScene6080GuardAlternateFrameMap), false, 0}
 };
 
-static PlayableSceneConfig scene6080Config() {
+PlayableSceneConfig scene6080Config() {
 	PlayableSceneConfig config(6080,
 		SceneResourceLayout(10, 5, 9),
 		SceneViewport(kScene6080ViewportXOffset, 0, kScene6080ViewportXOffset),

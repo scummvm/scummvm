@@ -87,7 +87,7 @@ const byte kScene6010Pickup58FrameMap[] = {
 	3, 4, 5, 6, 7, 8, 9
 };
 
-static PlayableSceneConfig scene6010Config() {
+PlayableSceneConfig scene6010Config() {
 	PlayableSceneConfig config(6010,
 		SceneResourceLayout(19, 5, 18),
 		SceneViewport(kScene6010ViewportXOffset, kScene6010ViewportMinXOffset, kScene6010ViewportMaxXOffset),

@@ -111,7 +111,7 @@ const byte kScene8010FishermanQuizLinePermutation[] = {
 	6, 5, 1, 4, 3, 2, 0, 7
 };
 
-static void appendFishermanPromptFragment(Common::String &text, const Common::String &fragment) {
+void appendFishermanPromptFragment(Common::String &text, const Common::String &fragment) {
 	if (fragment.empty())
 		return;
 	if (!text.empty())

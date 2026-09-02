@@ -125,11 +125,11 @@ const Scene6070DialogueSeedRecord kScene6070SueDialogueSeedRecords[] = {
 	{4, 1, 0, 3, 7, 7, 1},
 	{5, 1, 0, 0, 9, 9, 1}};
 
-static bool isScene6070AlternateCutscene(const HollywoodEngine *vm) {
+bool isScene6070AlternateCutscene(const HollywoodEngine *vm) {
 	return vm->gameState().mainFlowStateId == kScene6070AlternateCutsceneState;
 }
 
-static uint16 scene6070InitialViewport(const HollywoodEngine *vm) {
+uint16 scene6070InitialViewport(const HollywoodEngine *vm) {
 	switch (vm->gameState().mainFlowStateId) {
 	case kScene6070FirstState:
 		return kScene6070ViewportFromScene6050;
@@ -141,7 +141,7 @@ static uint16 scene6070InitialViewport(const HollywoodEngine *vm) {
 	}
 }
 
-static PlayableSceneConfig scene6070Config(HollywoodEngine *vm) {
+PlayableSceneConfig scene6070Config(HollywoodEngine *vm) {
 	PlayableSceneConfig config(6070,
 		SceneResourceLayout(15, 5, 13),
 		SceneViewport(scene6070InitialViewport(vm), kScene6070ViewportMinX, kScene6070ViewportMaxX),

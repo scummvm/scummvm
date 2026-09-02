@@ -120,7 +120,7 @@ const SceneLayerSpec kScene1070LayerSpecs[] = {
 		kScene1070GhostFrameMap, ARRAYSIZE(kScene1070GhostFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene1070Config() {
+PlayableSceneConfig scene1070Config() {
 	PlayableSceneConfig config(1070,
 		SceneResourceLayout(19, 5, 18),
 		SceneViewport(kScene1070ViewportXOffset, kScene1070ViewportMinXOffset, kScene1070ViewportMaxXOffset),

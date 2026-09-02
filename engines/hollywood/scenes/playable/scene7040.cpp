@@ -152,7 +152,7 @@ const SceneLayerSpec kScene7040AnimationLayerSpecs[] = {
 		ARRAYSIZE(kScene7040Chunk14AltFrameMap), false, 0 }
 };
 
-static PlayableSceneConfig scene7040Config() {
+PlayableSceneConfig scene7040Config() {
 	PlayableSceneConfig config(7040,
 		SceneResourceLayout(20, 5, 18),
 		SceneViewport(0xc8),

@@ -636,7 +636,7 @@ void Scene4030::drawTowerTransitionFrame(const Graphics::ManagedSurface &transit
 
 bool Scene4030::drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::ManagedSurface &destination) {
-	return ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+	return drawResourceDeltaClipFrame(clipData, 0, clipData.size(), tableEntryCount,
 		frameIndex, framebufferPixels(destination), destination.w, destination.h,
 		destination.pitch, destination.pitch * destination.h);
 }

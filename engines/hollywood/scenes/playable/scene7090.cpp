@@ -56,7 +56,7 @@ const byte kScene7090GatedActionFrameMap[] = {
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 };
 
-static PlayableSceneConfig scene7090Config() {
+PlayableSceneConfig scene7090Config() {
 	PlayableSceneConfig config(7090,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene7090ViewportXOffset),

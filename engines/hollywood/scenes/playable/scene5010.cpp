@@ -80,7 +80,7 @@ enum {
 	kScene5010MovingColumn
 };
 
-static PlayableSceneConfig scene5010Config() {
+PlayableSceneConfig scene5010Config() {
 	PlayableSceneConfig config(5010,
 		SceneResourceLayout(5, 5, 27),
 		SceneViewport(kScene5010ViewportXOffset, kScene5010ViewportMinXOffset, kScene5010ViewportMaxXOffset),

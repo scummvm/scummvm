@@ -154,7 +154,7 @@ const byte kScene4010PillboxFrameMap[] = {
 	9, 10, 11, 12, 13
 };
 
-static PlayableSceneConfig scene4010Config() {
+PlayableSceneConfig scene4010Config() {
 	PlayableSceneConfig config(4010,
 		SceneResourceLayout(5, 6, 17),
 		SceneViewport(kScene4010ViewportXOffset, kScene4010ViewportXOffset, kScene4010ViewportMaxXOffset),

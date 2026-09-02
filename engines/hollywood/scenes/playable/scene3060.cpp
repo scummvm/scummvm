@@ -77,7 +77,7 @@ const SceneLayerSpec kScene3060LayerSpecs[] = {
 		kScene3060LeftButtonFrameMap, ARRAYSIZE(kScene3060LeftButtonFrameMap), false, 0}
 };
 
-static PlayableSceneConfig scene3060Config() {
+PlayableSceneConfig scene3060Config() {
 	PlayableSceneConfig config(3060,
 		SceneResourceLayout(10, 5, 9),
 		SceneViewport(0),

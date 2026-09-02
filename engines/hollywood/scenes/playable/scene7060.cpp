@@ -88,7 +88,7 @@ const byte kScene7060ShortExitFrameMap[] = {
 	0, 9, 8, 7
 };
 
-static PlayableSceneConfig scene7060Config() {
+PlayableSceneConfig scene7060Config() {
 	PlayableSceneConfig config(7060,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene7060ViewportXOffset, kScene7060ViewportXOffset, kScene7060ViewportMaxXOffset),

@@ -89,7 +89,7 @@ const SceneLayerSpec kScene3050LayerSpecs[] = {
 		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene3050Config() {
+PlayableSceneConfig scene3050Config() {
 	PlayableSceneConfig config(3050,
 		SceneResourceLayout(8, 5, 7),
 		SceneViewport(kScene3050ViewportXOffset, kScene3050ViewportMinXOffset, kScene3050ViewportMaxXOffset),

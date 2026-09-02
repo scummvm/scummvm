@@ -162,7 +162,7 @@ const SceneLayerSpec kScene2100LayerSpecs[] = {
 		kScene2100TransitionFrameMap, ARRAYSIZE(kScene2100TransitionFrameMap), false, 0}
 };
 
-static uint16 mummyDialogueChoiceBit(uint recordIndex) {
+uint16 mummyDialogueChoiceBit(uint recordIndex) {
 	for (uint bit = 0; bit < ARRAYSIZE(kScene2100MummyDialogueTrackedRecordIndices); ++bit) {
 		if (kScene2100MummyDialogueTrackedRecordIndices[bit] == recordIndex)
 			return (uint16)(1 << bit);
@@ -171,7 +171,7 @@ static uint16 mummyDialogueChoiceBit(uint recordIndex) {
 	return 0;
 }
 
-static PlayableSceneConfig scene2100Config() {
+PlayableSceneConfig scene2100Config() {
 	PlayableSceneConfig config(2100,
 		SceneResourceLayout(17, 5, 16),
 		SceneViewport(kScene2100ViewportXOffset, kScene2100ViewportXOffset, kScene2100ViewportMaxXOffset),

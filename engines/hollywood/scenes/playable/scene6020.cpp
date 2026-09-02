@@ -143,7 +143,7 @@ const byte kScene6020PhoneFrameMap[] = {
 
 const byte kScene6020PhoneSpeechFrameMap[] = { 24, 23, 22, 16 };
 
-static PlayableSceneConfig scene6020Config() {
+PlayableSceneConfig scene6020Config() {
 	PlayableSceneConfig config(6020,
 		SceneResourceLayout(21, 5, 20),
 		SceneViewport(kScene6020ViewportXOffset, kScene6020ViewportMinXOffset, kScene6020ViewportMaxXOffset),

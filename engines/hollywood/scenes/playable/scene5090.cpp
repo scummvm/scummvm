@@ -64,7 +64,7 @@ const byte kScene5090WaterFillFrameMap[] = {
 	1, 2, 3, 4, 5, 6, 7, 8
 };
 
-static PlayableSceneConfig scene5090Config() {
+PlayableSceneConfig scene5090Config() {
 	PlayableSceneConfig config(5090,
 		SceneResourceLayout(5, 5, 7),
 		SceneViewport(kScene5090ViewportXOffset, kScene5090ViewportXOffset, kScene5090ViewportXOffset),

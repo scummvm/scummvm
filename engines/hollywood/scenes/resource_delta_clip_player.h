@@ -30,20 +30,17 @@ namespace Hollywood {
 /**
  * Applies one resource delta frame to an existing indexed framebuffer.
  *
- * Frames contain bounded rows of literal or repeated pixel runs. drawFrame()
+ * Frames contain bounded rows of literal or repeated pixel runs. The decoder
  * validates resource and destination bounds and clips runs to the row width;
  * pixels outside those runs retain their previous values.
  */
-class ResourceDeltaClipPlayer {
-public:
-	static bool drawFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
-		uint framebufferByteCount);
-	static bool drawFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
-		uint destinationWidth, uint destinationHeight, uint destinationPitch,
-		uint destinationByteCount);
-};
+bool drawResourceDeltaClipFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
+	uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
+	uint framebufferByteCount);
+bool drawResourceDeltaClipFrame(const Common::Array<byte> &resource, uint32 frameTableOffset,
+	uint32 chunkSize, uint tableEntryCount, byte frameIndex, byte *pixels,
+	uint destinationWidth, uint destinationHeight, uint destinationPitch,
+	uint destinationByteCount);
 
 } // End of namespace Hollywood
 

@@ -82,7 +82,7 @@ const SceneLayerSpec kScene3010LayerSpecs[] = {
 		kScene3010ForestIdleFrameMap, ARRAYSIZE(kScene3010ForestIdleFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene3010Config() {
+PlayableSceneConfig scene3010Config() {
 	PlayableSceneConfig config(3010,
 		SceneResourceLayout(14, 5, 13),
 		SceneViewport(kScene3010ViewportXOffset),
@@ -425,7 +425,7 @@ bool Scene3010::waitDepartureFrame(uint32 millis, const Common::Array<byte> &cli
 void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::ManagedSurface &transitionBackground, bool applyFrame) {
 	if (applyFrame) {
-		ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+		drawResourceDeltaClipFrame(clipData, 0, clipData.size(), tableEntryCount,
 			frameIndex, (byte *)transitionBackground.getPixels(), transitionBackground.w,
 			transitionBackground.h, transitionBackground.pitch,
 			transitionBackground.pitch * transitionBackground.h);
@@ -435,7 +435,7 @@ void Scene3010::drawDepartureFrame(const Common::Array<byte> &clipData, uint tab
 		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	drawSceneLayer(kScene3010WindmillLayer);
 	drawSceneLayer(kScene3010ForestIdleLayer);
-	ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+	drawResourceDeltaClipFrame(clipData, 0, clipData.size(), tableEntryCount,
 		frameIndex, (byte *)_sceneFramebuffer.getPixels(), _sceneFramebuffer.w,
 		_sceneFramebuffer.h, _sceneFramebuffer.pitch,
 		_sceneFramebuffer.pitch * _sceneFramebuffer.h);

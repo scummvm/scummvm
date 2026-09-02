@@ -95,7 +95,7 @@ const SceneLayerSpec kScene3100LayerSpecs[] = {
 		kScene3100AlternateFrameMap, ARRAYSIZE(kScene3100AlternateFrameMap), true, 0}
 };
 
-static PlayableSceneConfig scene3100Config() {
+PlayableSceneConfig scene3100Config() {
 	PlayableSceneConfig config(3100,
 		SceneResourceLayout(13, 5, 12),
 		SceneViewport(kScene3100ViewportXOffset, kScene3100ViewportMinXOffset, kScene3100ViewportMaxXOffset),

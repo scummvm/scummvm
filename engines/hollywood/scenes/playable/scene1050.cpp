@@ -123,7 +123,7 @@ const byte kScene1050PackageSecondLargeOverlayFrameMap[] = {
 	60, 60, 60
 };
 
-static PlayableSceneConfig scene1050Config() {
+PlayableSceneConfig scene1050Config() {
 	PlayableSceneConfig config(1050,
 		SceneResourceLayout(14, 5, 13),
 		SceneViewport(kScene1050ViewportXOffset, kScene1050ViewportMinXOffset, kScene1050ViewportMaxXOffset),

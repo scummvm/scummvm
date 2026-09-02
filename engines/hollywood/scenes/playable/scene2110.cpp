@@ -103,7 +103,7 @@ static_assert(ARRAYSIZE(kScene2110AmbientFrameMap) == 0x1a,
 static_assert(ARRAYSIZE(kScene2110TreasureFrameMap) == 0x24,
 	"Scene 2110 treasure frame map size changed");
 
-static PlayableSceneConfig scene2110Config() {
+PlayableSceneConfig scene2110Config() {
 	PlayableSceneConfig config(2110,
 		SceneResourceLayout(8, 5, 7),
 		SceneViewport(kScene2110ViewportXOffset, kScene2110ViewportXOffset, kScene2110ViewportMaxXOffset),

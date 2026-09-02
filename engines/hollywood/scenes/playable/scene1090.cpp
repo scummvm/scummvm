@@ -45,7 +45,7 @@ const byte kScene1090WrappedBrainPickupFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
-static PlayableSceneConfig scene1090Config() {
+PlayableSceneConfig scene1090Config() {
 	PlayableSceneConfig config(1090,
 		SceneResourceLayout(14, 5, 13),
 		SceneViewport(kScene1090ViewportXOffset, kScene1090ViewportMinXOffset, kScene1090ViewportMaxXOffset),

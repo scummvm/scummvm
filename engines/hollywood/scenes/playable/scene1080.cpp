@@ -87,7 +87,7 @@ const SceneLayerSpec kScene1080LayerSpecs[] = {
 		nullptr, 0, false, 0}
 };
 
-static PlayableSceneConfig scene1080Config() {
+PlayableSceneConfig scene1080Config() {
 	PlayableSceneConfig config(1080,
 		SceneResourceLayout(12, 5, 11),
 		SceneViewport(kScene1080ViewportXOffset, kScene1080ViewportMinXOffset, kScene1080ViewportMaxXOffset),

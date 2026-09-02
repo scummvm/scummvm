@@ -95,7 +95,7 @@ const byte kScene7030Route6StepDeltas[] = {
 	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5
 };
 
-static PlayableSceneConfig scene7030Config() {
+PlayableSceneConfig scene7030Config() {
 	PlayableSceneConfig config(7030,
 		SceneResourceLayout(12, 5, 11),
 		SceneViewport(kScene7030ViewportXOffset),

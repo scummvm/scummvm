@@ -78,7 +78,7 @@ const SceneLayerSpec kScene5100LayerSpecs[] = {
 		nullptr, 0, false, 0}
 };
 
-static PlayableSceneConfig scene5100Config() {
+PlayableSceneConfig scene5100Config() {
 	PlayableSceneConfig config(5100,
 		SceneResourceLayout(5, 5, 9),
 		SceneViewport(kScene5100ViewportXOffset, kScene5100ViewportXOffset, kScene5100ViewportXOffset),

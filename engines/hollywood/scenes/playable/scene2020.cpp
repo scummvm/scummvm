@@ -107,7 +107,7 @@ const SceneLayerSpec kScene2020LayerSpecs[] = {
 		nullptr, 0, false, 0}
 };
 
-static PlayableSceneConfig scene2020Config() {
+PlayableSceneConfig scene2020Config() {
 	PlayableSceneConfig config(2020,
 		SceneResourceLayout(19, 5, 18),
 		SceneViewport(0),

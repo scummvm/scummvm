@@ -71,7 +71,7 @@ static_assert(kScene2010FirstOverlayDescriptorCount > 9, "Scene 2010 anilla firs
 static_assert(kScene2010SecondOverlayDescriptorCount > 15, "Scene 2010 anilla second overlay descriptor count is too small");
 static_assert(kScene2010GatekeeperDescriptorCount > 27, "Scene 2010 gatekeeper descriptor count is too small");
 
-static PlayableSceneConfig scene2010Config() {
+PlayableSceneConfig scene2010Config() {
 	PlayableSceneConfig config(2010,
 		SceneResourceLayout(11, 5, 10),
 		SceneViewport(kScene2010ViewportXOffset, kScene2010ViewportXOffset, kScene2010ViewportXOffset),
