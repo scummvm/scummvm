@@ -19,10 +19,9 @@
  *
  */
 
-#include "hollywood/scenes/intro/scene1000.h"
-
-#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/scenes/intro/scene1000.h"
 
 namespace Hollywood {
 

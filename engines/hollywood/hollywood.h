@@ -24,9 +24,9 @@
 
 #include "common/language.h"
 #include "common/platform.h"
-
 #include "engines/engine.h"
 #include "graphics/surface.h"
+
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/music.h"

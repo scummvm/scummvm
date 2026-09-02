@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/scenes/scene_text_store.h"
-
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/path.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/graphics.h"
+#include "hollywood/scenes/scene_text_store.h"
 
 namespace Hollywood {
 

@@ -20,15 +20,13 @@
  */
 
 #include "base/plugins.h"
-
 #include "common/config-manager.h"
 #include "common/translation.h"
-
 #include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
-#include "hollywood/detection.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/detection.h"
 
 namespace Hollywood {
 

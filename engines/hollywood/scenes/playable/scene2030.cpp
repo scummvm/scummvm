@@ -19,12 +19,11 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene2030.h"
-
+#include "hollywood/hollywood.h"
 #include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/scene2030.h"
 #include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {

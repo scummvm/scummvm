@@ -19,13 +19,12 @@
  *
  */
 
-#include "hollywood/console.h"
-
 #include "common/str.h"
 #include "common/util.h"
 
-#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/console.h"
+#include "hollywood/gameplay/game_state.h"
 #include "hollywood/scenes/scene_registry.h"
 
 namespace Hollywood {

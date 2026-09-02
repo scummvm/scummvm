@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/gameplay/inventory_media.h"
-
 #include "common/path.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/inventory_media.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {

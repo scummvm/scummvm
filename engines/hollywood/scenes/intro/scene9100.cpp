@@ -19,15 +19,14 @@
  *
  */
 
-#include "hollywood/scenes/intro/scene9100.h"
-
 #include "common/debug.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/intro/scene9100.h"
 
 namespace Hollywood {
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/gameplay/cursor.h"
-
 #include "common/events.h"
 #include "common/formats/winexe.h"
 #include "common/memstream.h"
@@ -29,6 +27,8 @@
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+
+#include "hollywood/gameplay/cursor.h"
 
 namespace Hollywood {
 

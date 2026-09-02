@@ -19,13 +19,12 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene_surface_state.h"
-
 #include "common/rect.h"
 #include "graphics/pixelformat.h"
 
-#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/actor_renderer.h"
+#include "hollywood/scenes/playable/scene_surface_state.h"
 
 namespace Hollywood {
 

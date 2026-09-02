@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/gameplay/options_menu.h"
-
 #include "common/events.h"
 #include "common/file.h"
 #include "common/formats/winexe.h"
@@ -32,11 +30,12 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/gameplay/options_menu.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
 
 namespace Hollywood {
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/graphics.h"
-
 #include "common/rect.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
@@ -28,6 +26,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/graphics.h"
 
 namespace Hollywood {
 

@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/gameplay/panel_art.h"
-
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/formats/winexe.h"
@@ -29,10 +27,11 @@
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/gameplay/panel_art.h"
 
 namespace Hollywood {
 

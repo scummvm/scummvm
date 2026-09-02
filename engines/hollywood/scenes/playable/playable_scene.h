@@ -26,8 +26,8 @@
 #include "common/random.h"
 #include "common/str.h"
 #include "common/types.h"
-
 #include "graphics/managed_surface.h"
+
 #include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_loop.h"
 #include "hollywood/gameplay/panel_art.h"

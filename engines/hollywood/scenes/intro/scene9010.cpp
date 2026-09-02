@@ -19,13 +19,12 @@
  *
  */
 
-#include "hollywood/scenes/intro/scene9010.h"
-
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "hollywood/font.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/font.h"
+#include "hollywood/scenes/intro/scene9010.h"
 
 namespace Hollywood {
 

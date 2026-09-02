@@ -19,11 +19,11 @@
  *
  */
 
-#include "hollywood/scenes/scene_resources.h"
-
 #include "common/debug.h"
 #include "common/path.h"
 #include "graphics/managed_surface.h"
+
+#include "hollywood/scenes/scene_resources.h"
 
 namespace Hollywood {
 

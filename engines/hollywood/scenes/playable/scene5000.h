@@ -22,9 +22,9 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE5000_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE5000_H
 
-#include "hollywood/scenes/chapter_intro_scene.h"
-
 #include "common/random.h"
+
+#include "hollywood/scenes/chapter_intro_scene.h"
 
 namespace Hollywood {
 

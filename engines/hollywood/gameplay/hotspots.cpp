@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/gameplay/hotspots.h"
-
 #include "graphics/surface.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/game_strings.h"
+#include "hollywood/gameplay/hotspots.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {

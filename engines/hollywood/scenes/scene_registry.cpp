@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/scenes/scene_registry.h"
-
 #include "hollywood/scenes/intro/scene1000.h"
 #include "hollywood/scenes/intro/scene9090.h"
 #include "hollywood/scenes/intro/scene9100.h"
@@ -114,6 +112,7 @@
 #include "hollywood/scenes/playable/scene8000.h"
 #include "hollywood/scenes/playable/scene8010.h"
 #include "hollywood/scenes/playable/scene8020.h"
+#include "hollywood/scenes/scene_registry.h"
 
 namespace Hollywood {
 

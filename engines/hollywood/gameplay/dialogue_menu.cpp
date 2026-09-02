@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/gameplay/dialogue_menu.h"
-
 #include "common/events.h"
 #include "common/system.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/cursor.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/gameplay/dialogue_menu.h"
 
 namespace Hollywood {
 

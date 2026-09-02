@@ -19,17 +19,16 @@
  *
  */
 
-#include "hollywood/scenes/intro/scene9090.h"
-
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/path.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/intro/scene9090.h"
 
 namespace Hollywood {
 

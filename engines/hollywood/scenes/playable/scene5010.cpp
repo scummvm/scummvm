@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene5010.h"
-
 #include "common/events.h"
 #include "common/system.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
-#include "hollywood/hollywood.h"
+#include "hollywood/scenes/playable/scene5010.h"
 
 namespace Hollywood {
 

@@ -19,13 +19,12 @@
  *
  */
 
-#include "hollywood/scenes/playable/actor_path_controller.h"
-
 #include "common/debug.h"
 #include "common/util.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/graphics.h"
+#include "hollywood/scenes/playable/actor_path_controller.h"
 
 namespace Hollywood {
 

@@ -19,11 +19,10 @@
  *
  */
 
-#include "hollywood/gameplay/actor_renderer.h"
-
 #include "graphics/surface.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/gameplay/actor_renderer.h"
 
 namespace Hollywood {
 

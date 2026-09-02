@@ -19,8 +19,6 @@
  *
  */
 
-#include "hollywood/hollywood.h"
-
 #include "audio/mixer.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -31,6 +29,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/thumbnail.h"
 
+#include "hollywood/hollywood.h"
 #include "hollywood/console.h"
 #include "hollywood/font.h"
 #include "hollywood/gameplay/travel_screen.h"

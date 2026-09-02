@@ -19,14 +19,13 @@
  *
  */
 
-#include "hollywood/resource.h"
-
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
 #include "graphics/managed_surface.h"
 
 #include "hollywood/graphics.h"
+#include "hollywood/resource.h"
 
 namespace Hollywood {
 

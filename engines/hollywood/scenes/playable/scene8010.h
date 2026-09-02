@@ -22,9 +22,9 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE8010_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE8010_H
 
-#include "hollywood/scenes/playable/playable_scene.h"
-
 #include "common/str.h"
+
+#include "hollywood/scenes/playable/playable_scene.h"
 
 namespace Hollywood {
 
