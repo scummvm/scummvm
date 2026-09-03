@@ -586,7 +586,8 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 		readRectArray(*chunkStream, _textboxBounds, 9);
 		readRect(*chunkStream, _inputTextboxBounds);
 
-		chunkStream->skip(25); // prefixes and suffixes for filenames
+		// Prefixes and suffixes for filenames. Nancy15 widened the last one from 5 to 32 bytes
+		chunkStream->skip(s.getVersion() <= kGameTypeNancy14 ? 25 : 52);
 
 		_mainFontID = chunkStream->readSint16LE();
 		_highlightFontID = chunkStream->readSint16LE();
