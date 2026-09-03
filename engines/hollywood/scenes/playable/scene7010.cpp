@@ -158,6 +158,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7010Config()),
 		_dialogueOverlayMode(0),
 		_chunk8SpecialSequenceActive(false),
+		_returnEntryPathPending(false),
 		_chunk10IdlePairA(),
 		_chunk10IdlePairB(),
 		_chunk8Animation(),
@@ -194,6 +195,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = 0xff;
+	_returnEntryPathPending = false;
 	_chunk10IdlePairA.reset(pairASecondPhase, _chunk10IdlePairA.randomPhaseTicks(_random));
 	_chunk10IdlePairB.reset(pairBSecondPhase, _chunk10IdlePairB.randomPhaseTicks(_random));
 	_sceneLayers.setLayerFrame(kScene7010Chunk10IdleLayerA, _chunk10IdlePairA.firstFrame);
@@ -208,8 +210,9 @@ void Scene7010::initializeCustomPreviewState() {
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_activeActorWorldX = kScene7010SueEntryTargetX;
-	_activeActorWorldY = kScene7010SueEntryTargetY;
+	const bool returnEntry = _vm->gameState().mainFlowStateId == kScene7010ReturnState;
+	_activeActorWorldX = returnEntry ? kScene7010SueReturnStartX : kScene7010SueEntryStartX;
+	_activeActorWorldY = returnEntry ? kScene7010SueReturnStartY : kScene7010SueEntryStartY;
 	_activeActorFacing = kScene7010SueEntryFacing;
 	_activeActorCel = kScene7010SueEntryFinalCel;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
@@ -258,8 +261,9 @@ bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
 void Scene7010::runCustomEntrySequence() {
 	const bool returnEntry = _vm->gameState().mainFlowStateId == kScene7010ReturnState;
 	if (returnEntry) {
-		runSueEntryPath(kScene7010SueReturnStartX, kScene7010SueReturnStartY,
-			kScene7010SueReturnTargetX, kScene7010SueReturnTargetY);
+		setActiveActorPose(kScene7010SueReturnStartX, kScene7010SueReturnStartY,
+			kScene7010SueEntryFacing, kScene7010SueEntryFinalCel);
+		_returnEntryPathPending = true;
 		return;
 	}
 
@@ -272,28 +276,43 @@ void Scene7010::runCustomEntrySequence() {
 }
 
 void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY) {
-	const byte cels[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, kScene7010SueEntryFinalCel };
+	setActiveActorPose(startX, startY, kScene7010SueEntryFacing, kScene7010SueEntryFinalCel);
+	drawCutsceneComposite(true, _activeActorFacing, _activeActorCel,
+		_activeActorWorldX, _activeActorWorldY, false, 0, 0, 0, 0,
+		_activeActorDrawOrderMode);
+	presentFrame();
+
+	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY,
+		0xff, kScene7010SueEntryFinalCel);
+	if (_actorPathFrames.size() <= 1) {
+		setActiveActorPose(targetX, targetY, kScene7010SueEntryFacing,
+			kScene7010SueEntryFinalCel);
+		return;
+	}
+
 	uint32 chunk8Accumulator = 0;
 	uint32 chunk10Accumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
 	bool stepAdvanced = false;
+	_actorPathPlaybackActive = true;
 
-	for (uint frame = 0; frame < ARRAYSIZE(cels) && !_skipRequested &&
-			!stepAdvanced && !Engine::shouldQuit(); ++frame) {
+	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() &&
+			!_skipRequested && !stepAdvanced && !Engine::shouldQuit(); ++frameIndex) {
 		if (pollEvents(true)) {
-			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
+				_actorPathPlaybackActive = false;
 				return;
+			}
 			stepAdvanced = consumeStepAdvanceRequest();
 			break;
 		}
 
-		const int x = startX + ((targetX - startX) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
-		const int y = startY + ((targetY - startY) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
-		_activeActorWorldX = x;
-		_activeActorWorldY = y;
-		_activeActorFacing = kScene7010SueEntryFacing;
-		_activeActorCel = cels[frame];
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
 		const uint32 frameStartMillis = g_system->getMillis();
 		drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
@@ -301,8 +320,10 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 
 		while (!_skipRequested && !stepAdvanced && !Engine::shouldQuit()) {
 			if (pollEvents(true)) {
-				if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
+					_actorPathPlaybackActive = false;
 					return;
+				}
 				stepAdvanced = consumeStepAdvanceRequest();
 				break;
 			}
@@ -330,11 +351,13 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 		}
 	}
 
-	_activeActorWorldX = targetX;
-	_activeActorWorldY = targetY;
-	_activeActorFacing = kScene7010SueEntryFacing;
-	_activeActorCel = kScene7010SueEntryFinalCel;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	_actorPathPlaybackActive = false;
+	const ActorPathFrame &lastFrame = _actorPathFrames.back();
+	_activeActorWorldX = lastFrame.worldX;
+	_activeActorWorldY = lastFrame.worldY;
+	_activeActorFacing = lastFrame.facing;
+	_activeActorCel = lastFrame.cel;
+	_activeActorDrawOrderMode = lastFrame.drawOrderMode;
 }
 
 void Scene7010::runJuniorSpeech() {
@@ -358,7 +381,10 @@ void Scene7010::runJuniorSpeech() {
 
 void Scene7010::prepareCustomGameplayLoop() {
 	_sceneStateFlags[0] = 1;
-	if (_vm->gameState().mainFlowStateId == kScene7010ReturnState) {
+	if (_returnEntryPathPending) {
+		_activeActorWorldX = kScene7010SueReturnStartX;
+		_activeActorWorldY = kScene7010SueReturnStartY;
+	} else if (_vm->gameState().mainFlowStateId == kScene7010ReturnState) {
 		_activeActorWorldX = kScene7010SueReturnTargetX;
 		_activeActorWorldY = kScene7010SueReturnTargetY;
 	} else {
@@ -382,6 +408,11 @@ void Scene7010::prepareCustomGameplayLoop() {
 	_realtimeAnimationTracks.resetTimer(_hannoverSpeechTrack);
 	_realtimeAnimationTracks.resetTimer(_doghouseSpeechTrack);
 	_realtimeAnimationTracks.resetTimer(_dialogueOverlayTrack);
+	if (_returnEntryPathPending) {
+		_returnEntryPathPending = false;
+		startPlayerDirectedActorPath(kScene7010SueReturnTargetX,
+			kScene7010SueReturnTargetY, 0xff, kScene7010SueEntryFinalCel, 0);
+	}
 }
 
 void Scene7010::advanceCustomGameplayLoop(uint32 delta) {
@@ -510,10 +541,8 @@ bool Scene7010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		}
 	}
 
-	if (selector == 4 || selector == 0xff) {
-		// The original initializer sets G01 flag 4 to 1, and slot 03 only
-		// promotes it to 2. The pre-walk branch for value 0 is not reachable
-		// in normal gameplay, so bodegas/edificio dispatches in place.
+	if (selector == 2 || selector == 4 || selector == 0xff) {
+		// Hannover intercepts Sue during this action, before she reaches the bodegas.
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x19, 0);
 	}
 
@@ -622,9 +651,8 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 		handleActionSlot04Item06Speech();
 
 	beginSecondarySpeechLine(_sceneStateFlags[4] == 1 ? 3 : 4, _sceneStateFlags[4] == 1 ? 1 : 2);
-	walkActiveActorTo(0x298, 0x1af, 1, 0);
-	setChunk11Visible(true);
-	runChunk11FrameRange(0, 0x0e);
+	if (!runHannoverInterception())
+		return;
 
 	if (_sceneStateFlags[4] == 1) {
 		beginHannoverPrimarySpeechLine(0, 0);
@@ -685,6 +713,43 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 		_sceneStateFlags[4] = 2;
 	else
 		beginSecondarySpeechLine(5, 0);
+}
+
+bool Scene7010::runHannoverInterception() {
+	startConcurrentActorPath(0x298, 0x1af, 1, 0,
+		kScene7010ActorPathFrameMillis, true);
+	setChunk11Visible(true);
+	setChunk11Frame(0);
+
+	while (concurrentActorPathActive() && _activeActorWorldX <= 0x230 &&
+			!animationPlaybackShouldStop()) {
+		if (!waitSceneMillis(10))
+			continue;
+
+		if (animationPlaybackShouldStop()) {
+			cancelConcurrentActorPath();
+			return false;
+		}
+
+		consumeStepAdvanceRequest();
+		cancelConcurrentActorPath();
+		setActiveActorPose(0x298, 0x1af, 1, 0);
+		setChunk11Frame(0x0e);
+		return true;
+	}
+
+	if (!runChunk11FrameRange(0, 0x0e)) {
+		if (animationPlaybackShouldStop()) {
+			cancelConcurrentActorPath();
+			return false;
+		}
+		cancelConcurrentActorPath();
+		setActiveActorPose(0x298, 0x1af, 1, 0);
+		setChunk11Frame(0x0e);
+		return true;
+	}
+	finishConcurrentActorPath(true);
+	return !animationPlaybackShouldStop();
 }
 
 void Scene7010::handleActionSlot04Item06Speech() {

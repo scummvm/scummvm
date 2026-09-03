@@ -63,6 +63,7 @@ private:
 	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02SecondarySpeech();
 	void handleActionSlot03DialogueSequence();
+	bool runHannoverInterception();
 	void handleActionSlot04Item06Speech();
 	void handleActionSlot06DoghouseSequence();
 	void handleActionSlot07DialogueAndReturn();
@@ -98,6 +99,7 @@ private:
 
 	byte _dialogueOverlayMode;
 	bool _chunk8SpecialSequenceActive;
+	bool _returnEntryPathPending;
 	AlternatingRandomFramePair _chunk10IdlePairA;
 	AlternatingRandomFramePair _chunk10IdlePairB;
 	TimedAnimationChannel _chunk8Animation;
