@@ -959,11 +959,13 @@ void View1::drawDebugOutput(Graphics::ManagedSurface &s) {
 }
 
 void View1::drawPath(Graphics::ManagedSurface &s) {
-	if (g_engine->_path.size() < 2) {
-		return;
-	}
-	for (uint i = 0; i < g_engine->_path.size() - 1; i++) {
-		s.drawLine(g_engine->_path[i].x, g_engine->_path[i].y, g_engine->_path[i + 1].x, g_engine->_path[i + 1].y, 0xFF);
+	Common::Array<Common::Point> pts;
+	for (Character *c : _characters) {
+		if (c == nullptr)
+			continue;
+		c->getPathPolyline(pts);
+		for (uint i = 0; i + 1 < pts.size(); i++)
+			s.drawLine(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y, 0xFF);
 	}
 }
 
@@ -1049,7 +1051,7 @@ void View1::closeScriptActionBar(Script::MouseMode &outSavedCursorMode) {
 }
 
 void View1::enterMapMode() {
-	const uint32 helpOffset = g_engine->_mapSceneOffsets[0];
+	const uint32 helpOffset = g_engine->_helpOffsets[0];
 	if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
 		return;
 	}
@@ -1741,7 +1743,7 @@ bool View1::handleHelpClick(const MouseDownMessage &msg) {
 		const uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
 		if (depth > 0 && depth < 0xFA) {
 			// Binary: fileSeek(scene + 0x5DD7 + depth*4) = _mapSceneOffsets[depth-1]
-			uint32 subSceneOffset = g_engine->_mapSceneOffsets[depth - 1];
+			uint32 subSceneOffset = g_engine->_helpOffsets[depth - 1];
 			if (subSceneOffset != 0 && subSceneOffset < (uint32)g_engine->_fileStream->size()) {
 				startFadeToBlack(8);
 				Graphics::ManagedSurface preview = g_engine->readRLEImage(subSceneOffset, g_engine->_fileStream);

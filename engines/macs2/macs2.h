@@ -365,7 +365,6 @@ public:
 	Common::Array<Common::String> _textLog;
 
 	Pathfinding _pathfinding;
-	Common::Array<Common::Point> _path;
 
 	/** Sync depth map with the current background animation frame (v1 gate fix). */
 	void updateBackgroundAnimationDepthMap(size_t animIndex);
@@ -411,12 +410,13 @@ public:
 	};
 	struct DeltaSfxEvent {
 		uint16 frameIndex = 0;
-		Common::String fileName;
 		bool duckMusic = false;
+		Common::String fileName;
 	};
 	struct DeltaAnimState {
 		bool loaded = false;
 		bool playing = false;
+		bool applyPaletteOnStart = false;
 		uint16 frameCount = 0;
 		uint16 startFrame = 0;
 		uint16 endFrame = 0;
@@ -428,7 +428,6 @@ public:
 		uint16 clipMaX = 0;
 		uint16 clipMaY = 0;
 		Graphics::Palette palette{Graphics::PALETTE_COUNT};
-		bool applyPaletteOnStart = false;
 		Common::Array<DeltaFrame> frames;
 		Common::Array<DeltaSfxEvent> sfxEvents;
 		void clear(int screenW, int screenH) {
@@ -465,7 +464,7 @@ public:
 
 	// Map scene offsets from resource file (scene+0x5DDB, 256 entries x 4 bytes).
 	// Each entry is a file offset to a scene preview image for map mode.
-	uint32 _mapSceneOffsets[256] = {0};
+	uint32 _helpOffsets[256] = {0};
 
 	Common::Array<BackgroundAnimation> _backgroundAnimations;
 	Common::Array<BackgroundAnimationBlob> _backgroundAnimationsBlobs;

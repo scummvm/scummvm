@@ -1340,11 +1340,16 @@ static void showSceneMapsWindow() {
 						}
 					}
 				}
-				// Draw current path
-				if (g_engine->_path.size() >= 2) {
-					for (uint i = 0; i < g_engine->_path.size() - 1; i++) {
-						overlayComposite.drawLine(g_engine->_path[i].x, g_engine->_path[i].y,
-												  g_engine->_path[i + 1].x, g_engine->_path[i + 1].y, 0x0F);
+				// Draw each character's remaining walk
+				Common::Array<Common::Point> pathPts;
+				for (uint i = 0; i < view->_characters.size(); i++) {
+					Character *c = view->_characters[i];
+					if (c == nullptr)
+						continue;
+					c->getPathPolyline(pathPts);
+					for (uint p = 0; p + 1 < pathPts.size(); p++) {
+						overlayComposite.drawLine(pathPts[p].x, pathPts[p].y,
+												  pathPts[p + 1].x, pathPts[p + 1].y, 0x0F);
 					}
 				}
 				// Draw character positions
@@ -1527,13 +1532,15 @@ static void showSceneMapsWindow() {
 		ImGui::Separator();
 		ImGui::Text("_walkDepthThresholdY=%u  _walkDepthScaleFactor=%u  _walkBaseSpeedPct=%u",
 					g_engine->_walkDepthThresholdY, g_engine->_walkDepthScaleFactor, g_engine->_walkBaseSpeedPct);
+
+		View1 *view = (View1 *)g_engine->findView("View1");
+		Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 		ImGui::Text("Pathfinding points: %u  Path nodes: %u",
-					(uint)g_engine->_pathfinding._points.size(), (uint)g_engine->_path.size());
+					(uint)g_engine->_pathfinding._points.size(),
+					protagonist ? (uint)protagonist->_path.size() : 0);
 
 		// Node detail table
 		if (ImGui::CollapsingHeader("Node Graph", ImGuiTreeNodeFlags_DefaultOpen)) {
-			View1 *view = (View1 *)g_engine->findView("View1");
-			Character *protagonist = view ? view->getCharacterByIndex(Scenes::instance()._currentActorIndex) : nullptr;
 			Common::Point charPos = protagonist ? protagonist->getPosition() : Common::Point(0, 0);
 
 			for (int i = 0; i < (int)g_engine->_pathfinding._points.size(); i++) {
@@ -1544,7 +1551,7 @@ static void showSceneMapsWindow() {
 				bool inPath = false;
 				if (protagonist) {
 					for (uint p = 0; p < protagonist->_path.size(); p++) {
-						if (protagonist->_path[p] == (uint16)i) {
+						if (protagonist->_path[p] == (uint16)(i + 1)) {
 							inPath = true;
 							break;
 						}

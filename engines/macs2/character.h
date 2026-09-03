@@ -87,6 +87,8 @@ public:
 	bool calculatePath(Common::Point target);
 	void setWalkTarget(const Common::Point &target, bool snap);
 	void startPickup(Macs2::GameObject *object);
+	/** Remaining walk polyline: current position, unused path nodes, final destination. */
+	void getPathPolyline(Common::Array<Common::Point> &out) const;
 
 	const Common::Point &getPosition() const;
 	void setPosition(const Common::Point &newPosition);

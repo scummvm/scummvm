@@ -244,7 +244,7 @@ void Macs2Engine::loadResourceFileV1() {
 
 	// Map scene offsets -> scene+0x5DDB. First entry is the help screen image offset.
 	for (uint i = 0; i < kMcsV1MapSceneOffsetCount; i++) {
-		_mapSceneOffsets[i] = _fileStream->readUint32LE();
+		_helpOffsets[i] = _fileStream->readUint32LE();
 	}
 
 	_fileStream->seek(kMcsV1ActorIndexOffset, SEEK_SET);
@@ -264,7 +264,7 @@ void Macs2Engine::loadResourceFileV2() {
 	_shadingTable.resize(0x800, 0);
 	_text._numGlyphs = 0;
 	_text.numPanelGlyphs = 0;
-	memset(_mapSceneOffsets, 0, sizeof(_mapSceneOffsets));
+	memset(_helpOffsets, 0, sizeof(_helpOffsets));
 	_imageResources.clear();
 	_imageResources.resize(33);
 	for (int i = 0; i < ARRAYSIZE(_cursorHotspots); i++) {
@@ -472,8 +472,8 @@ void Macs2Engine::loadResourceFileV2() {
 	if (!loadSizedFont(_text._panelGlyphs, _text.numPanelGlyphs, _text.maxPanelGlyphHeight))
 		warning("readGlobalAssetsV2: failed loading SysFont");
 
-	for (int i = 0; i < ARRAYSIZE(_mapSceneOffsets); i++)
-		_mapSceneOffsets[i] = _fileStream->readUint32LE();
+	for (int i = 0; i < ARRAYSIZE(_helpOffsets); i++)
+		_helpOffsets[i] = _fileStream->readUint32LE();
 
 	_saveListScroll = 1;
 	_saveSlotNames.clear();

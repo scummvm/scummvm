@@ -191,6 +191,31 @@ void Character::setWalkTarget(const Common::Point &target, bool snap) {
 	_stepDirectionSet = false;
 }
 
+void Character::getPathPolyline(Common::Array<Common::Point> &out) const {
+	out.clear();
+	if (_gameObject == nullptr)
+		return;
+
+	out.push_back(getPosition());
+
+	const Common::Array<PathfindingPoint> &nodes = g_engine->_pathfinding._points;
+	int idx = _currentPathIndex;
+	if (idx < 0)
+		idx = 0;
+	for (int i = idx; i < (int)_path.size(); i++) {
+		const uint16 nodeIdx = _path[i];
+		if (nodeIdx == 0 || nodeIdx > nodes.size())
+			continue;
+		out.push_back(nodes[nodeIdx - 1]._position);
+	}
+
+	if (out.back() != _pathFinalDestination)
+		out.push_back(_pathFinalDestination);
+
+	if (out.size() < 2)
+		out.clear();
+}
+
 const Common::Point &Character::getPosition() const {
 	return _gameObject->_position;
 }
