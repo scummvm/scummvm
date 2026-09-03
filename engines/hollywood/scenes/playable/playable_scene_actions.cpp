@@ -152,6 +152,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	}
 	if (actionRecord.movementMode == 1)
 		finalFacing = target.facing;
+	finalFacing = customizeSceneActionFacing(actionRecord.actionHandlerId, finalFacing);
 	if (actionRecord.movementMode != 3)
 		finalCel = 0;
 
@@ -197,6 +198,7 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 				target.approachPoint.x, target.approachPoint.y);
 		}
 	}
+	finalFacing = customizeSceneActionFacing(actionRecord.actionHandlerId, finalFacing);
 
 	if (!startPlayerDirectedActorPath(targetX, targetY, finalFacing, 0,
 			actionRecord.actionHandlerId))

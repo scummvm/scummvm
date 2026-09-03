@@ -63,6 +63,7 @@ const byte kScene1030AmbientMusicCueCount = 5;
 const byte kScene1030AmbientSoundProbabilityModulus = 25;
 const byte kScene1030AmbientMusicProbabilityModulus = 50;
 const byte kScene1030InvalidActorFacing = 0xff;
+const byte kScene1030PunchBowlFacing = 3;
 const uint32 kScene1030ForegroundFrameMillis = 75;
 const uint32 kScene1030SmallForegroundTickMillis = 150;
 const uint kScene1030LargeForegroundDescriptorCount = 0x3f;
@@ -335,6 +336,12 @@ bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
 	default:
 		return false;
 	}
+}
+
+byte Scene1030::customizeSceneActionFacing(uint16 handlerId, byte calculatedFacing) const {
+	if (handlerId == 310 && _activeActorDrawOrderMode < 3)
+		return kScene1030PunchBowlFacing;
+	return calculatedFacing;
 }
 
 bool Scene1030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {

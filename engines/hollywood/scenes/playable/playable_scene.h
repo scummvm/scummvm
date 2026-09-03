@@ -307,6 +307,8 @@ protected:
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
 	// Controls actor paths started by scene clicks, including free walk and item relations.
 	virtual bool shouldPlayGameplayClickPath() const;
+	// Allows scene staging to adjust metadata-derived facing before path playback.
+	virtual byte customizeSceneActionFacing(uint16 handlerId, byte calculatedFacing) const;
 	// Returning true validates the adjusted target instead of running the default floor-mask search.
 	virtual bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	// Called before route lookup so a scene can adjust resource routes for this path origin.
