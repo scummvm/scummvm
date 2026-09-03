@@ -89,7 +89,7 @@ protected:
 	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config);
 
 	// Executes blocking steps immediately; it coordinates control flow without storing a scene script.
-	// Pose, patch, and commit steps still finalize state after interrupted media.
+	// Final-state steps survive input fast-forward, but not shutdown or a scene restart.
 	class BlockingSequence {
 	public:
 		explicit BlockingSequence(PlayableScene &scene);
@@ -156,7 +156,8 @@ protected:
 
 		template<class T>
 		BlockingSequence &commit(T &target, const T &value) {
-			target = value;
+			if (canFinalize())
+				target = value;
 			return *this;
 		}
 
@@ -167,11 +168,13 @@ protected:
 
 	private:
 		bool canRun();
+		bool canFinalize();
 		void finishMediaStep(bool completed);
 		void refresh();
 
 		PlayableScene &_scene;
 		bool _running;
+		bool _aborted;
 	};
 
 	enum TransitionFrameMode {
