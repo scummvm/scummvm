@@ -611,41 +611,15 @@ void Macs2Engine::bootstrapMcsActorsObjectsAndScene() {
 	}
 }
 
-void Macs2Engine::readExecutable() {
-	inventoryIconIndices.resize(6);
-	containerInventoryIconIndices.resize(6);
-
+void Macs2Engine::initInventoryIconIndices() {
 	if (isAmiga() || isV2()) {
-		for (uint i = 0; i < 6; i++) {
-			inventoryIconIndices[i] = (uint16)(i + 1);
-			containerInventoryIconIndices[i] = (uint16)(i + 1);
-		}
+		inventoryIconIndices = {1, 2, 3, 4, 5, 6};
+		containerInventoryIconIndices = {1, 2, 3, 4, 5, 6};
 		return;
 	}
 
-	Common::ScopedPtr<Common::MemoryReadStream> exeFileStream;
-	{
-		// Extra scope in order to make sure no code tries to read from the file directly.
-		Common::File file;
-		if (!file.open("MCSEXEC.EXE"))
-			error("readExecutable(): Error reading executable file");
-
-		int64 size = file.size();
-		byte *fileData = (byte *)malloc(size);
-		file.read(fileData, size);
-
-		exeFileStream.reset(new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES));
-	}
-
-	// Full MCSEXEC.EXE and demo MCSEXEC.EXE are different binaries (different MD5, ~12k differing bytes),
-	// but the whole Data5 segment is identical (1020:0000...1020:3787)
-	// TODO: if there are ever other games using different versions of MCSEXEC.EXE, we should check the checksum here
-
-	exeFileStream->seek(0x0001B610, SEEK_SET);
-	exeFileStream->read(inventoryIconIndices.data(), 12);
-
-	exeFileStream->seek(0x0001B61C, SEEK_SET);
-	exeFileStream->read(containerInventoryIconIndices.data(), 12);
+	inventoryIconIndices = {2, 3, 11, 12, 13, 9};
+	containerInventoryIconIndices = {2, 3, 11, 12, 18, 9};
 }
 
 void Macs2Engine::softRestart() {
@@ -3071,7 +3045,7 @@ void Macs2Engine::setGameSpeedMode(uint16 mode) {
 Common::Error Macs2Engine::run() {
 	setGameSpeedMode(ConfMan.getInt(kGameSpeedModeConfigKey));
 	loadBootstrapResources();
-	readExecutable();
+	initInventoryIconIndices();
 
 	// Load translation data if available
 	if (getFeatures() & GF_TRANSLATED) {

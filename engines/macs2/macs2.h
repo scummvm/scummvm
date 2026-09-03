@@ -329,9 +329,7 @@ public:
 	 */
 	bool loadAmigaSceneBackground(uint32 sceneResourceId);
 
-	// We also need some data from the executable, specifically embedded
-	// Adlib data
-	void readExecutable();
+	void initInventoryIconIndices();
 
 	// Assumes that the stream is at the location of the number of background animations
 	void readBackgroundAnimations(Common::SeekableReadStream *stream);
