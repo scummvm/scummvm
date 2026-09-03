@@ -25,13 +25,64 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/memstream.h"
 #include "common/util.h"
 #include "engines/macs2/midiparser_macs2.h"
 
 #define CALLBACKS_PER_SECOND 120
 
 namespace Macs2 {
+
+// AdLib lookup tables from MCSEXEC.EXE Data5. Full and demo binaries match at these offsets.
+static const uint8 kOpSlotTable[18] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x08, 0x09,
+	0x0A, 0x0B, 0x0C, 0x0D, 0x10, 0x11, 0x12, 0x13,
+	0x14, 0x15
+};
+
+// Voice -> modulator operator (MCSEXEC 0x1B68D)
+static const uint8 kOpMap1[9] = {
+	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12
+};
+
+// Voice -> carrier operator (MCSEXEC 0x1B696)
+static const uint8 kOpMap2[9] = {
+	0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0x14, 0x15
+};
+
+// MIDI note -> OPL F-number low byte (MCSEXEC 0x1B69F)
+static const uint8 kFreqTableLo[128] = {
+	0xAB, 0xB5, 0xC0, 0xCC, 0xD8, 0xE5, 0xF2, 0x01, 0x10, 0x20, 0x31, 0x43, 0x57, 0x6B, 0x81, 0x98,
+	0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87, 0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02,
+	0x20, 0x41, 0x63, 0x87, 0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87,
+	0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87, 0x57, 0x6B, 0x81, 0x98,
+	0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87, 0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02,
+	0x20, 0x41, 0x63, 0x87, 0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87,
+	0x57, 0x6B, 0x81, 0x98, 0xB0, 0xCA, 0xE5, 0x02, 0x20, 0x41, 0x63, 0x87, 0xAE, 0xD6, 0x02, 0x30,
+	0x60, 0x94, 0xCA, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+// MIDI note -> OPL block / F-number high byte (MCSEXEC 0x1B71F)
+static const uint8 kFreqTableHi[128] = {
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21, 0x21,
+	0x21, 0x21, 0x21, 0x22, 0x22, 0x22, 0x22, 0x22, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x26,
+	0x26, 0x26, 0x26, 0x26, 0x29, 0x29, 0x29, 0x29, 0x29, 0x29, 0x29, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A,
+	0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2E, 0x2E, 0x2E, 0x2E, 0x2E, 0x31, 0x31, 0x31, 0x31,
+	0x31, 0x31, 0x31, 0x32, 0x32, 0x32, 0x32, 0x32, 0x35, 0x35, 0x35, 0x35, 0x35, 0x35, 0x35, 0x36,
+	0x36, 0x36, 0x36, 0x36, 0x39, 0x39, 0x39, 0x39, 0x39, 0x39, 0x39, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A,
+	0x3D, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3E, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F,
+	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F
+};
+
+static const uint8 kPercVolTable[32] = {
+	28, 25, 23, 18, 14, 11, 8, 2,
+	50, 42, 37, 35, 34, 32, 30, 2,
+	55, 50, 49, 48, 45, 43, 40, 2,
+	60, 60, 58, 56, 54, 52, 50, 2
+};
+
+static const uint8 kPercOpMap[5] = {19, 20, 18, 21, 17};
+static const uint8 kPercFreqChannel[5] = {6, 7, 8, 8, 7};
+
 
 Music::Music() : _opl(nullptr), _parser(nullptr), _playing(false),
 				 _masterVolume(0), _numOplChannels(9), _instrumentDataOffset(0),
@@ -91,8 +142,8 @@ void Music::silenceAll() {
 		writeReg(i + 0xB0, readReg(i + 0xB0) & 0xDF);
 	}
 	// Silence all operator volumes
-	for (int i = 0; i < (int)_opSlotTable.size() && i <= 0x11; i++) {
-		writeReg(_opSlotTable[i] + 0x40, 0xFF);
+	for (int i = 0; i < ARRAYSIZE(kOpSlotTable); i++) {
+		writeReg(kOpSlotTable[i] + 0x40, 0xFF);
 	}
 }
 
@@ -325,10 +376,10 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 
 		// Key off, set volumes, then key on
 		writeReg(voice + 0xB0, 0);
-		const byte reg2 = readReg(_opMap2[voice] + 0x40);
-		writeReg(_opMap2[voice] + 0x40, (reg2 & 0xC0) + vol1);
-		const byte reg1 = readReg(_opMap1[voice] + 0x40);
-		writeReg(_opMap1[voice] + 0x40, (reg1 & 0xC0) + vol2);
+		const byte reg2 = readReg(kOpMap2[voice] + 0x40);
+		writeReg(kOpMap2[voice] + 0x40, (reg2 & 0xC0) + vol1);
+		const byte reg1 = readReg(kOpMap1[voice] + 0x40);
+		writeReg(kOpMap1[voice] + 0x40, (reg1 & 0xC0) + vol2);
 
 		_channelPitchBend[channel] = 0;
 		setFrequency(voice, note, 0);
@@ -337,14 +388,14 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 		const uint16 instBase = (uint16)_channelPrograms[channel] << 4;
 		const uint8 percIdx = channel - 0x0B;
 
-		if (percIdx >= _percOpMap.size())
+		if (percIdx >= ARRAYSIZE(kPercOpMap))
 			return;
 
-		const uint8 opIdx = _percOpMap[percIdx];
+		const uint8 opIdx = kPercOpMap[percIdx];
 
 		if (channel == 0x0B) {
 			// Bass drum: load full instrument
-			loadInstrument(_percFreqChannel[percIdx], _channelPrograms[0x0B]);
+			loadInstrument(kPercFreqChannel[percIdx], _channelPrograms[0x0B]);
 		} else if ((uint32)_instrumentDataOffset + instBase + 9 <= _songData.size()) {
 			const byte *instPtr = _songData.data() + _instrumentDataOffset + instBase;
 			writeReg(opIdx + 0x20, instPtr[0]);
@@ -359,13 +410,13 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 		if ((uint32)(_instrumentDataOffset + instBase + 3) < _songData.size()) {
 			const byte volByte = _songData[_instrumentDataOffset + instBase + 3];
 			const uint8 volIdx = ((volByte & 0x3F) >> 4) * 8 + (velocity >> 4);
-			if (volIdx < _percVolTable.size())
-				vol = _percVolTable[volIdx] + _masterVolume;
+			if (volIdx < ARRAYSIZE(kPercVolTable))
+				vol = kPercVolTable[volIdx] + _masterVolume;
 		}
 		if (vol > 0x3F)
 			vol = 0x3F;
 
-		const uint8 freqChan = _percFreqChannel[percIdx];
+		const uint8 freqChan = kPercFreqChannel[percIdx];
 		writeReg(freqChan + 0xB0, 0);
 		const byte regVal = readReg(opIdx + 0x40);
 		writeReg(opIdx + 0x40, vol + (regVal & 0xC0));
@@ -387,9 +438,11 @@ void Music::noteOff(byte channel, byte note) {
 		for (uint8 v = 0; v < _numOplChannels; v++) {
 			if (_voiceAge[v] == 0 && _voiceMidiChannel[v] == channel && _voiceNote[v] == note) {
 				// Write frequency without key-on
-				const uint16 freq = ((uint16)_freqTableHi[note] << 8) | _freqTableLo[note];
-				writeReg(v + 0xA0, freq & 0xFF);
-				writeReg(v + 0xB0, (freq >> 8) & 0xDF); // clear key-on bit
+				if (note < ARRAYSIZE(kFreqTableLo)) {
+					const uint16 freq = ((uint16)kFreqTableHi[note] << 8) | kFreqTableLo[note];
+					writeReg(v + 0xA0, freq & 0xFF);
+					writeReg(v + 0xB0, (freq >> 8) & 0xDF); // clear key-on bit
+				}
 				_voiceAge[v] = 1;
 				break;
 			}
@@ -444,8 +497,8 @@ void Music::loadInstrument(uint8 voice, uint8 program) {
 		return;
 
 	const byte *inst = _songData.data() + _instrumentDataOffset + instBase;
-	const uint8 op1 = _opMap1[voice];
-	const uint8 op2 = _opMap2[voice];
+	const uint8 op1 = kOpMap1[voice];
+	const uint8 op2 = kOpMap2[voice];
 
 	writeReg(op1 + 0x20, inst[0]);
 	writeReg(op2 + 0x20, inst[1]);
@@ -461,19 +514,19 @@ void Music::loadInstrument(uint8 voice, uint8 program) {
 }
 
 void Music::setFrequency(uint8 voice, uint8 note, uint8 pitchBend) {
-	if (note == 0xFF || note >= _freqTableLo.size())
+	if (note == 0xFF || note >= ARRAYSIZE(kFreqTableLo))
 		return;
 
-	uint16 freq = ((uint16)_freqTableHi[note] << 8) | _freqTableLo[note];
+	uint16 freq = ((uint16)kFreqTableHi[note] << 8) | kFreqTableLo[note];
 
 	if (pitchBend != 0) {
 		if (pitchBend < 0x80) {
 			const uint8 nextNote = (note < 0x7F) ? note + 1 : 0x7F;
-			const uint16 nextFreq = ((uint16)_freqTableHi[nextNote] << 8) | _freqTableLo[nextNote];
+			const uint16 nextFreq = ((uint16)kFreqTableHi[nextNote] << 8) | kFreqTableLo[nextNote];
 			freq += (uint16)((uint64)pitchBend * (nextFreq - freq) >> 7);
 		} else {
 			const uint8 prevNote = (note > 0) ? note - 1 : 0;
-			const uint16 prevFreq = ((uint16)_freqTableHi[prevNote] << 8) | _freqTableLo[prevNote];
+			const uint16 prevFreq = ((uint16)kFreqTableHi[prevNote] << 8) | kFreqTableLo[prevNote];
 			freq -= (uint16)((uint64)pitchBend * (freq - prevFreq) >> 7);
 		}
 	}
@@ -490,38 +543,10 @@ void Music::updateDebugState() {
 		_debug.voices[i].note = _voiceNote[i];
 		_debug.voices[i].channel = _voiceMidiChannel[i];
 		_debug.voices[i].active = (_voiceAge[i] == 0);
-		_debug.voices[i].volume = _regShadow[_opMap2.size() > (uint)i ? _opMap2[i] + 0x40 : 0] & 0x3F;
+		_debug.voices[i].volume = _regShadow[kOpMap2[i] + 0x40] & 0x3F;
 		_debug.regHistory[i][_debug.ringPos] = (_regShadow[i + 0xB0] & 0x20) ? 1.0f - (_debug.voices[i].volume / 63.0f) : 0.0f;
 	}
 	_debug.ringPos = (_debug.ringPos + 1) % kDebugRingSize;
-}
-
-void Music::readDataFromExecutable(Common::MemoryReadStream *fileStream) {
-	constexpr uint32 size = 255;
-
-	_opSlotTable.resize(size);
-	loadData(fileStream, 0x0001B669, size, _opSlotTable.data());
-
-	_opMap1.resize(size);
-	loadData(fileStream, 0x0001B68D, size, _opMap1.data());
-
-	_opMap2.resize(size);
-	loadData(fileStream, 0x0001B696, size, _opMap2.data());
-
-	_freqTableLo.resize(size);
-	loadData(fileStream, 0x0001B69F, size, _freqTableLo.data());
-
-	_freqTableHi.resize(size);
-	loadData(fileStream, 0x0001B71F, size, _freqTableHi.data());
-
-	_percVolTable = {28, 25, 23, 18, 14, 11, 8, 2, 50, 42, 37, 35, 34, 32, 30, 2, 55, 50, 49, 48, 45, 43, 40, 2, 60, 60, 58, 56, 54, 52, 50, 2};
-	_percOpMap = {19, 20, 18, 21, 17};
-	_percFreqChannel = {6, 7, 8, 8, 7};
-}
-
-void Music::loadData(Common::MemoryReadStream *fileStream, int64 pos, uint16 size, void *target) {
-	fileStream->seek(pos, SEEK_SET);
-	fileStream->read(target, size);
 }
 
 SmfMidiPlayer::SmfMidiPlayer() {

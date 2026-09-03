@@ -641,8 +641,6 @@ void Macs2Engine::readExecutable() {
 	// but the whole Data5 segment is identical (1020:0000...1020:3787)
 	// TODO: if there are ever other games using different versions of MCSEXEC.EXE, we should check the checksum here
 
-	_music->readDataFromExecutable(exeFileStream.get());
-
 	exeFileStream->seek(0x0001B610, SEEK_SET);
 	exeFileStream->read(inventoryIconIndices.data(), 12);
 

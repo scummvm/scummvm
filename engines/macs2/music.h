@@ -30,10 +30,6 @@
 
 class MidiParser;
 
-namespace Common {
-class MemoryReadStream;
-}
-
 namespace OPL {
 class OPL;
 }
@@ -93,8 +89,6 @@ public:
 	bool isPlaybackReady() const { return _adlibPlaybackReady; }
 	bool isMidiFilePlaying() const;
 	bool hasAdlibBackend() const { return _opl != nullptr; }
-
-	void readDataFromExecutable(Common::MemoryReadStream *fileStream);
 
 	// MidiDriver_BASE interface
 	void send(uint32 b) override;
@@ -170,18 +164,6 @@ private:
 	void stopAdlibPlayback();
 	void stopSmfPlayback();
 	bool ensureSmfPlayer();
-
-	// Lookup tables from EXE
-	Common::Array<uint8> _opSlotTable;
-	Common::Array<uint8> _opMap1;
-	Common::Array<uint8> _opMap2;
-	Common::Array<uint8> _freqTableLo;
-	Common::Array<uint8> _freqTableHi;
-	Common::Array<uint8> _percVolTable;
-	Common::Array<uint8> _percOpMap;
-	Common::Array<uint8> _percFreqChannel;
-
-	void loadData(Common::MemoryReadStream *stream, int64 pos, uint16 size, void *target);
 };
 
 } // End of namespace Macs2
