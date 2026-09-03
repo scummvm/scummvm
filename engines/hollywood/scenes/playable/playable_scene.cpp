@@ -223,7 +223,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 
 PlayableScene::BlockingSequence::BlockingSequence(PlayableScene &scene) :
 		_scene(scene),
-		_running(true) {
+		_running(true),
+		_aborted(false) {
 	refresh();
 }
 
@@ -276,7 +277,8 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorReplaceme
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::actorPose(
 		const SceneActorPose &pose, byte cel) {
-	_scene.setActiveActorPose(pose.x, pose.y, pose.facing, cel);
+	if (canFinalize())
+		_scene.setActiveActorPose(pose.x, pose.y, pose.facing, cel);
 	return *this;
 }
 
@@ -328,7 +330,8 @@ PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::primarySpeech(
 }
 
 PlayableScene::BlockingSequence &PlayableScene::BlockingSequence::framebufferPatch(byte selector) {
-	_scene.applySceneStateToHotspotsAndPatches(selector);
+	if (canFinalize())
+		_scene.applySceneStateToHotspotsAndPatches(selector);
 	return *this;
 }
 
@@ -346,6 +349,11 @@ bool PlayableScene::BlockingSequence::canRun() {
 	return _running;
 }
 
+bool PlayableScene::BlockingSequence::canFinalize() {
+	refresh();
+	return !_aborted;
+}
+
 void PlayableScene::BlockingSequence::finishMediaStep(bool completed) {
 	if (!completed) {
 		const bool stepAdvanced = _scene.consumeStepAdvanceRequest();
@@ -356,8 +364,10 @@ void PlayableScene::BlockingSequence::finishMediaStep(bool completed) {
 }
 
 void PlayableScene::BlockingSequence::refresh() {
-	if (_scene.animationPlaybackShouldStop())
+	if (_scene.animationPlaybackShouldStop()) {
 		_running = false;
+		_aborted = true;
+	}
 }
 
 PlayableSceneConfig::PlayableSceneConfig(uint16 sceneNumber, const SceneResourceLayout &resourceLayout,
