@@ -338,7 +338,7 @@ byte Scene7060::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene7060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_chunk6Animation.setFrame(frameIndex);
+	_chunk6Animation.setStateAndFrame(0, frameIndex);
 }
 
 void Scene7060::initializeChunk6FrameMap() {
@@ -504,6 +504,7 @@ void Scene7060::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 void Scene7060::runDialogueMenuRow98() {
 	Common::Array<DialogueChoiceRecord> records;
 	initializeDialogueRecords(records);
+	_chunk6RandomIdlePaused = true;
 
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
@@ -528,6 +529,7 @@ void Scene7060::runDialogueMenuRow98() {
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene7060DialogueStageId, 6);
 			beginPrimaryDialogueSpeech(6);
+			_chunk6RandomIdlePaused = false;
 			return;
 		}
 
@@ -564,6 +566,8 @@ void Scene7060::runDialogueMenuRow98() {
 			break;
 		}
 	}
+
+	_chunk6RandomIdlePaused = false;
 }
 
 void Scene7060::beginPrimaryDialogueSpeech(byte frameIndex) {
