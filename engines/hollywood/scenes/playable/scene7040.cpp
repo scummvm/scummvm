@@ -105,20 +105,20 @@ const byte kScene7040Chunk11FrameMap[] = {
 	27, 1, 0, 0, 0, 0, 0, 0
 };
 const byte kScene7040Chunk14ActionFrameMap[] = {
-	49, 49, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-	14, 15, 16, 17, 14, 18, 19, 20, 21, 25, 26, 27, 28, 29, 30, 31,
-	32, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
-	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
-	34, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
-	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
-	34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 21, 22, 23, 24, 21, 37,
-	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 0, 0, 0, 0
+	0, 49, 49, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+	13, 14, 15, 16, 17, 14, 18, 19, 20, 21, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36,
+	35, 33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36,
+	35, 34, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36,
+	35, 33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36,
+	35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 21, 22, 23, 24, 21,
+	37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 0, 0, 0
 };
 const byte kScene7040Chunk14AltFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-	27, 26, 25, 24, 19, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
-	43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55, 55, 0
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 27, 26, 25, 24, 19, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+	42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55, 55
 };
 const byte kScene7040Chunk16PostItemFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6,
@@ -257,31 +257,31 @@ void Scene7040::runCustomEntrySequence() {
 		kScene7040Entry7040RepeatTargetY : kScene7040Entry7040FirstTargetY;
 	runEntryPath(kScene7040Entry7040StartX, kScene7040Entry7040StartY,
 		kScene7040Entry7040Facing, targetX, targetY);
-	if (!seenJosephGuestListGreeting && !shouldStopJosephGuestListGreeting())
+	if (!seenJosephGuestListGreeting && !shouldAbortJosephGuestListGreeting())
 		runJosephGuestListGreeting();
 }
 
 void Scene7040::runJosephGuestListGreeting() {
 	beginSecondarySpeechLine(kScene7040DialogueStageId, 6);
-	if (shouldStopJosephGuestListGreeting())
+	if (shouldAbortJosephGuestListGreeting())
 		return;
 	_preItemIdleAnimation.state = 2;
 	waitPreItemIdleSequence();
-	if (shouldStopJosephGuestListGreeting())
+	if (shouldAbortJosephGuestListGreeting())
 		return;
 	_preItemIdleAnimation.state = 3;
 	beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 6, kScene7040DialoguePrimaryCenterX,
 		kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
 		kScene7040DialoguePrimaryBlue);
-	if (shouldStopJosephGuestListGreeting())
+	if (shouldAbortJosephGuestListGreeting())
 		return;
 	beginSecondarySpeechLine(kScene7040DialogueStageId, 7);
-	if (shouldStopJosephGuestListGreeting())
+	if (shouldAbortJosephGuestListGreeting())
 		return;
 	beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 7, kScene7040DialoguePrimaryCenterX,
 		kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
 		kScene7040DialoguePrimaryBlue);
-	if (shouldStopJosephGuestListGreeting())
+	if (shouldAbortJosephGuestListGreeting())
 		return;
 	_preItemIdleAnimation.reset();
 	_vm->gameState().seenJosephGuestListGreeting = true;
@@ -294,12 +294,17 @@ void Scene7040::waitPreItemIdleSequence() {
 	}
 }
 
-bool Scene7040::shouldStopJosephGuestListGreeting() {
-	if (!_skipRequested && !Engine::shouldQuit() && !_vm->isSceneRestartRequested())
-		return false;
+bool Scene7040::shouldAbortJosephGuestListGreeting() {
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
+		_preItemIdleAnimation.reset();
+		return true;
+	}
 
-	_preItemIdleAnimation.reset();
-	return true;
+	if (_skipRequested) {
+		consumeStepAdvanceRequest();
+		_skipRequested = false;
+	}
+	return false;
 }
 
 void Scene7040::prepareCustomGameplayLoop() {

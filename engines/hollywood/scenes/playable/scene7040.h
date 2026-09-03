@@ -64,7 +64,7 @@ private:
 
 	void runJosephGuestListGreeting();
 	void waitPreItemIdleSequence();
-	bool shouldStopJosephGuestListGreeting();
+	bool shouldAbortJosephGuestListGreeting();
 	void advanceChunk11PreItemIdleAnimation(uint32 delta);
 	void advanceChunk16PostItemAnimation(uint32 delta);
 	byte pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame);
