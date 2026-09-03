@@ -787,6 +787,11 @@ bool PlayableScene::shouldPlayGameplayClickPath() const {
 	return true;
 }
 
+byte PlayableScene::customizeSceneActionFacing(uint16 handlerId, byte calculatedFacing) const {
+	(void)handlerId;
+	return calculatedFacing;
+}
+
 bool PlayableScene::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	(void)targetX;
 	(void)targetY;
