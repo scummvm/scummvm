@@ -188,25 +188,30 @@ void PlaySound::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 }
 
-void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
-	// The sound is a set of candidate names, one picked at random (0 = no sound).
+void readMultiNameSound(Common::SeekableReadStream &stream, SoundDescription &sound, Common::String &ccText) {
 	const uint16 numNames = stream.readUint16LE();
-	if (numNames > 0) {
-		Common::Array<Common::String> names;
-		names.resize(numNames);
-		for (uint16 i = 0; i < numNames; ++i) {
-			readFilename(stream, names[i]);
-		}
-
-		_sound.channelID = stream.readUint16LE();
-		_sound.numLoops = stream.readUint32LE();
-		_sound.volume = stream.readUint16LE();
-
-		_sound.name = names[selectRandomSound(names)];
-
-		// Subtitles are keyed by the played sound's name in the CVTX chunks.
-		_ccText = resolveSoundSubtitle(_sound.name);
+	if (numNames == 0) {
+		return;
 	}
+
+	Common::Array<Common::String> names;
+	names.resize(numNames);
+	for (uint16 i = 0; i < numNames; ++i) {
+		readFilename(stream, names[i]);
+	}
+
+	sound.channelID = stream.readUint16LE();
+	sound.numLoops = stream.readUint32LE();
+	sound.volume = stream.readUint16LE();
+
+	sound.name = names[selectRandomSound(names)];
+
+	// Subtitles are keyed by the played sound's name in the CVTX chunks.
+	ccText = resolveSoundSubtitle(sound.name);
+}
+
+void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
+	readMultiNameSound(stream, _sound, _ccText);
 
 	// No inline SoundEffectDescription anymore, and the scene change is just a
 	// scene ID (frame/vertical offset stay 0).

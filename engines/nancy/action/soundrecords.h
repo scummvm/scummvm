@@ -27,6 +27,12 @@
 namespace Nancy {
 namespace Action {
 
+// Reads a Nancy13+ sound block: a list of candidate names, one of which is picked
+// at random, followed by the shared channel/loop/volume fields. A block with no
+// names carries no sound at all and stops after the count. Also resolves the
+// picked sound's subtitle, which Nancy13+ keys off the sound name.
+void readMultiNameSound(Common::SeekableReadStream &stream, SoundDescription &sound, Common::String &ccText);
+
 // Sets the volume for a particular channel.
 class SetVolume : public ActionRecord {
 public:

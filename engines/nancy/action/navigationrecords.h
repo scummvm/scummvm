@@ -196,6 +196,43 @@ protected:
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneCursorTypeSceneChange"; }
 };
 
+// Nancy13 replacement for the record above (AR 27 in both). Also picks what happens
+// from the item the player is holding, but every accepted item now comes with its own
+// sound and event flags, and says whether it is returned to the inventory or used up.
+// The scene only changes once the sound has finished playing.
+class HotMultiframeInvTypeSceneChange : public ActionRecord {
+public:
+	// One branch of the record. The same block, minus the item fields, describes
+	// what happens when the held item matches nothing.
+	struct ItemUse {
+		void readData(Common::SeekableReadStream &stream);
+
+		int16 itemID = -1;
+		bool loseItem = false;
+		SoundDescription sound;
+		Common::String ccText;
+		uint16 sceneID = kNoScene;
+		Common::Array<FlagDescription> flags;
+	};
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<ItemUse> _itemUses;
+	ItemUse _defaultItemUse;
+	Common::Array<HotspotDescription> _hotspots;
+
+	bool canHaveHotspot() const override { return true; }
+
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Default scene %d", _defaultItemUse.sceneID); }
+
+protected:
+	Common::String getRecordTypeName() const override { return "HotMultiframeInvTypeSceneChange"; }
+
+	// The branch the record is currently waiting on; also marks that it has triggered
+	const ItemUse *_activeUse = nullptr;
+};
+
 // Simply switches to the Map state. TVD/nancy1 only.
 class MapCall : public ActionRecord {
 public:
