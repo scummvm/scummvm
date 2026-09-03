@@ -317,7 +317,10 @@ void Scene7070::handleChunk12ItemAction() {
 	sequence.actorReplacement(ActionOverlaySpec(12, kScene7070Chunk12DescriptorCount,
 		kScene7070Chunk12ItemFrameMap, ARRAYSIZE(kScene7070Chunk12ItemFrameMap),
 		kScene7070OverlayFrameMillis)
-		.soundAt(6, 0x19));
+		.resourcePatchAt(6, 11)
+		.soundAt(6, 0x19)
+		.soundAt(6, 0x1a, 100, 2)
+		.resourcePatchAt(0x0e, 10));
 
 	if (state.gramophoneCrankState == 1) {
 		sequence.secondarySpeech(0x0e, 0)
