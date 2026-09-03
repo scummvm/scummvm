@@ -2233,6 +2233,10 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 }
 
 void View1::draw() {
+	drawSceneFrame(false);
+}
+
+void View1::drawSceneFrame(bool fullUpdate) {
 	if (_paletteDirty && _currentFadeValue < 0) {
 		setViewPaletteSafely(g_engine->_pal);
 		_paletteDirty = false;
@@ -2249,7 +2253,7 @@ void View1::draw() {
 
 	// Handle highlighting
 
-	drawAllCharacters(&s, true);
+	drawAllCharacters(&s, fullUpdate);
 	drawOverlayTextEntries();
 	if (shouldDrawPathfindingOverlay()) {
 		drawPathfindingPoints(s);
@@ -2376,7 +2380,7 @@ void View1::draw() {
 }
 
 void View1::drawSceneUpdate() {
-	draw();
+	drawSceneFrame(true);
 	_needsRedraw = false;
 }
 
@@ -2650,6 +2654,8 @@ bool View1::tick() {
 				g_engine->runScriptExecutor();
 			}
 		}
+		if (!exec->isScriptMidExecution())
+			drawSceneUpdate();
 	}
 
 	redraw();

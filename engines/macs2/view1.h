@@ -392,6 +392,7 @@ public:
 	void layoutActionBarButtons();
 	void drawMainMenu(Graphics::ManagedSurface &s);
 	void drawSceneUpdate();
+	void drawSceneFrame(bool fullUpdate);
 
 	void handleTextBoxInput();
 	void dismissDialoguePanel();
