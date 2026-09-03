@@ -446,6 +446,24 @@ void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {
 	_overlayType = kPlayOverlayStatic;
 }
 
+void OverlayMultiframeTerse::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_z = stream.readUint16LE();
+
+	uint16 numBlitDescriptions = stream.readUint16LE();
+	_blitDescriptions.resize(numBlitDescriptions);
+	for (auto &bm : _blitDescriptions) {
+		bm.readData(stream);
+	}
+
+	// Every blit description carries its own source rect, so the single general
+	// source rect they all point to is left empty; execute() then takes both the
+	// position and the size from the description itself.
+	_srcRects.push_back(Common::Rect());
+
+	_overlayType = kPlayOverlayStatic;
+}
+
 void OverlayAnimTerse::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING

@@ -88,7 +88,9 @@ public:
 	bool canHaveHotspot() const override { return true; }
 	bool isViewportRelative() const override { return true; }
 	bool survivesSceneChange(bool nextSceneIsNoArt) const override { return nextSceneIsNoArt; }
-	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Scene %d, file %s", _sceneChange.sceneID, _imageName.baseName().c_str());
+	}
 
 protected:
 	Common::String getRecordTypeName() const override;
@@ -106,6 +108,20 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "OverlayStaticTerse"; }
+};
+
+// Short version of a static overlay for a moving scene background. Unlike
+// OverlayStaticTerse, which carries a single source/destination pair, this one
+// carries a blit description for every background frame the overlay appears on.
+class OverlayMultiframeTerse : public Overlay {
+public:
+	OverlayMultiframeTerse() : Overlay(kInterruptibleAnimation) {}
+	virtual ~OverlayMultiframeTerse() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayMultiframeTerse"; }
 };
 
 // Short version of an animated overlay; assumes scene background doesn't move
@@ -175,7 +191,9 @@ public:
 	bool canHaveHotspot() const override { return true; }
 	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_hoverCursor; }
 	bool cursorSetFromScript() const override { return true; }
-	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Scene %d, file %s", _sceneChange.sceneID, _imageName.baseName().c_str());
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "RolloverOverlay"; }

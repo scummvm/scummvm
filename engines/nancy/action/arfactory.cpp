@@ -235,8 +235,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 50:
 		return new ConversationVideo();
 	case 51:
-	case 52:
 		return new PlaySecondaryVideo();
+	case 52:
+		if (g_nancy->getGameType() <= kGameTypeNancy14)
+			return new PlaySecondaryVideo();
+		else
+			return new OverlayMultiframeTerse();
 	case 53:
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new PlaySecondaryMovie(PlaySecondaryMovie::kSecondaryMovie);
