@@ -24,6 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -70,7 +71,7 @@ protected:
 	int pegCount() const;
 	void doJump(int fromCol, int fromRow, int destCol, int destRow);
 
-	Common::Point cursorToViewport(const Common::Point &mousePos) const;
+	void carryPeg(int col, int row, NancyInput &input);
 	// The puzzle's cursors are raw Nancy13 cursor type ids stored in the AR data.
 	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
 	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
@@ -112,7 +113,7 @@ protected:
 	Common::Array<Common::Rect> _destRects;
 	int _carriedCol = -1;				// the peg currently picked up (dragged), or -1
 	int _carriedRow = -1;
-	Common::Point _dragPos;				// cursor position (viewport space) while dragging
+	Misc::MouseFollowObject _carriedObject;	// the carried peg's sprite, riding the cursor
 	bool _ended = false;
 	bool _solved = false;
 	bool _exitRequested = false;

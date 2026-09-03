@@ -23,6 +23,7 @@
 #define NANCY_ACTION_GRIDMAPPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -131,11 +132,7 @@ protected:
 
 	ItemSlot _items[kMaxItems];
 	int      _heldItem = -1;
-	Common::Point _heldDrawPos;
-	// Set on a swap (drop onto an occupied cell) so the freshly-placed
-	// glyph isn't covered by the picked-up one drawn at the cursor.
-	// Cleared on the next mouse move.
-	bool     _skipHeldDraw = false;
+	Misc::MouseFollowObject _heldObject;
 	bool     _isSolved = false;
 
 	Graphics::ManagedSurface _boardImage;
@@ -144,6 +141,7 @@ protected:
 	void initState();
 	void persistState();
 	void redraw();
+	void holdItem(int item, NancyInput &input);
 	Common::Rect mapCellRect(int row, int col) const;
 	Common::Rect itemsCellRect(int row, int col) const;
 	Common::Rect mapCellHitRect(int row, int col) const;

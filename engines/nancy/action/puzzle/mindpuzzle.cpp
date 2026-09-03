@@ -172,6 +172,22 @@ void MindPuzzle::drawPeg(int color, const Common::Rect &dest) {
 	_drawSurface.blitFrom(_image, _ballSrcRects[color], dest);
 }
 
+// Puts the given color on the cursor, or takes the held ball off it for a color of -1.
+void MindPuzzle::holdBall(int color, NancyInput &input) {
+	_heldColor = color;
+
+	if (_heldColor >= 0 && _heldColor < (int)_ballSrcRects.size()) {
+		_heldBall._drawSurface.create(_image, _ballSrcRects[_heldColor]);
+		_heldBall.setTransparent(true);
+		_heldBall.setVisible(true);
+		_heldBall.pickUp();
+		_heldBall.handleInput(input);
+	} else {
+		_heldBall.setVisible(false);
+		_heldBall.putDown();
+	}
+}
+
 void MindPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
@@ -189,16 +205,6 @@ void MindPuzzle::redraw() {
 				}
 			}
 		}
-	}
-
-	// The ball being dragged follows the cursor, centered on it.
-	if (_heldColor >= 0 && _heldColor < (int)_ballSrcRects.size()) {
-		const Common::Rect &src = _ballSrcRects[_heldColor];
-		int w = src.width();
-		int h = src.height();
-		Common::Rect dst(_heldDrawPos.x - w / 2, _heldDrawPos.y - h / 2,
-			_heldDrawPos.x - w / 2 + w, _heldDrawPos.y - h / 2 + h);
-		_drawSurface.blitFrom(_image, src, dst);
 	}
 
 	_needsRedraw = true;
@@ -259,6 +265,7 @@ void MindPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		_heldBall.registerGraphics();
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -312,20 +319,16 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	// ball already there) or anywhere else to send it back to the palette.
 	if (_heldColor != -1) {
 		g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
-
-		if (_heldDrawPos != mouseVP) {
-			_heldDrawPos = mouseVP;
-			redraw();
-		}
+		_heldBall.handleInput(input);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			int slot = -1;
 			if (slotHit(mouseVP, slot)) {
 				int16 previous = _guess[_currentRow][slot];
 				_guess[_currentRow][slot] = _heldColor;
-				_heldColor = previous;	// keep dragging the displaced ball, if any
+				holdBall(previous, input);	// keep dragging the displaced ball, if any
 			} else {
-				_heldColor = -1;
+				holdBall(-1, input);
 			}
 			redraw();
 		}
@@ -337,9 +340,7 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	if (color != -1) {
 		g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			_heldColor = color;
-			_heldDrawPos = mouseVP;
-			redraw();
+			holdBall(color, input);
 		}
 		return;
 	}
@@ -349,9 +350,8 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	if (slotHit(mouseVP, slot) && _guess[_currentRow][slot] != -1) {
 		g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			_heldColor = _guess[_currentRow][slot];
+			holdBall(_guess[_currentRow][slot], input);
 			_guess[_currentRow][slot] = -1;
-			_heldDrawPos = mouseVP;
 			redraw();
 		}
 		return;

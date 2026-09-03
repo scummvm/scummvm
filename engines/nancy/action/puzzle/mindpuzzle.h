@@ -23,6 +23,7 @@
 #define NANCY_ACTION_MINDPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -91,7 +92,7 @@ protected:
 
 	int16 _currentRow = 0;
 	int16 _heldColor = -1;
-	Common::Point _heldDrawPos;		// viewport-local cursor while a ball is held
+	Misc::MouseFollowObject _heldBall;	// the held ball's sprite, riding the cursor
 	int16 _remainingGuesses = 0;
 	bool _solved = false;
 
@@ -103,6 +104,7 @@ protected:
 	void generateSecret();
 	void scoreRow(int row);
 	void drawPeg(int color, const Common::Rect &dest);
+	void holdBall(int color, NancyInput &input);
 	void redraw();
 	int  paletteHit(const Common::Point &mouseVP) const;
 	bool slotHit(const Common::Point &mouseVP, int &slot) const;

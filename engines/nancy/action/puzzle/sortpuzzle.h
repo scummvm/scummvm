@@ -23,6 +23,7 @@
 #define NANCY_ACTION_SORTPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -140,7 +141,7 @@ protected:
 	bool _hasHeld   = false;
 	bool _isSolved  = false;
 
-	Common::Point _heldDrawPos;
+	Misc::MouseFollowObject _heldObject;
 
 	Graphics::ManagedSurface _boardImage;
 	Graphics::ManagedSurface _cursorImage;
@@ -148,6 +149,7 @@ protected:
 	void initState();
 	void persistState();
 	void redraw();
+	void holdCell(const Cell &cell, bool hasHeld, NancyInput &input);
 	void checkSolved();
 	bool cellsMatch(const Cell &cur, const Cell &sol) const;
 	Common::Rect cellRect(int row, int col) const;

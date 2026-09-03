@@ -23,6 +23,7 @@
 #define NANCY_ACTION_BEADPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -106,7 +107,7 @@ protected:
 
 	Common::Array<int16> _placed;
 	int16 _heldBead = -1;
-	Common::Point _heldDrawPos;
+	Misc::MouseFollowObject _heldBeadObject;
 
 	int16  _dropCurrentSlot = 0;
 	uint32 _dropNextTick    = 0;
@@ -120,6 +121,7 @@ protected:
 	Graphics::ManagedSurface _image;
 
 	void redraw();
+	void holdBead(int16 bead, NancyInput *input);
 	void evaluate();
 	void persistState();
 };

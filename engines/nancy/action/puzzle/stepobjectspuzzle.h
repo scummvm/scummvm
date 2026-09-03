@@ -24,6 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -99,7 +100,8 @@ protected:
 	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	void redraw();
-	void drawSprite(const Common::Rect &srcRect, const Common::Point &destPos, byte alpha);
+	void putDownCarried();
+	void drawSprite(Graphics::ManagedSurface &dest, const Common::Rect &srcRect, const Common::Point &destPos, byte alpha);
 	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// File data
@@ -131,7 +133,7 @@ protected:
 	Common::Array<Step> _playerSteps;
 	PuzzleState _puzzleState = kIdle;
 	int _carriedID = -1;
-	Common::Rect _carriedRect;
+	Misc::MouseFollowObject _carriedObject;
 	uint32 _stepSoundEnd = 0;
 	bool _lastStepWasDrop = false;
 	bool _lastStepCorrect = false;

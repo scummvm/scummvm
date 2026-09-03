@@ -114,6 +114,7 @@ void BlocksPuzzle::init() {
 
 	redraw();
 	registerGraphics();
+	_carriedObject.registerGraphics();
 }
 
 Common::Rect BlocksPuzzle::blockSrc(int16 block, byte rotation, int16 frame) const {
@@ -148,7 +149,24 @@ bool BlocksPuzzle::isSolved() const {
 	return true;
 }
 
-void BlocksPuzzle::pickUp(int16 cell) {
+void BlocksPuzzle::updateCarried(NancyInput *input) {
+	if (_carriedBlock == kNoBlock || !_image.getBounds().contains(_carriedSrc)) {
+		_carriedObject.setVisible(false);
+		_carriedObject.putDown();
+		return;
+	}
+
+	_carriedObject._drawSurface.create(_image, _carriedSrc);
+	_carriedObject.setTransparent(true);
+	_carriedObject.setVisible(true);
+	_carriedObject.pickUp();
+
+	if (input) {
+		_carriedObject.handleInput(*input);
+	}
+}
+
+void BlocksPuzzle::pickUp(int16 cell, NancyInput &input) {
 	playSoundBlock(_sounds[kHandleSound]);
 
 	if (cell == kTurntableCell) {
@@ -164,10 +182,11 @@ void BlocksPuzzle::pickUp(int16 cell) {
 		c.block = kNoBlock;
 	}
 
+	updateCarried(&input);
 	redraw();
 }
 
-void BlocksPuzzle::drop(int16 cell) {
+void BlocksPuzzle::drop(int16 cell, NancyInput &input) {
 	playSoundBlock(_sounds[kHandleSound]);
 
 	// Putting a block down where one already sits swaps them, so the displaced block ends
@@ -196,6 +215,7 @@ void BlocksPuzzle::drop(int16 cell) {
 		}
 	}
 
+	updateCarried(&input);
 	redraw();
 }
 
@@ -231,13 +251,6 @@ void BlocksPuzzle::redraw() {
 
 	if (_hasTurntable && _turnBlock != kNoBlock) {
 		_drawSurface.blitFrom(_image, _turnSrc, Common::Point(_turntableDest.left, _turntableDest.top));
-	}
-
-	// The carried block rides the cursor. While it is being turned in hand its sprite is
-	// the animation's current frame.
-	if (_carriedBlock != kNoBlock) {
-		_drawSurface.blitFrom(_image, _carriedSrc,
-			Common::Point(_dragPos.x - _carriedSrc.width() / 2, _dragPos.y - _carriedSrc.height() / 2));
 	}
 
 	_needsRedraw = true;
@@ -332,6 +345,7 @@ void BlocksPuzzle::execute() {
 			}
 
 			_carriedSrc = _turnSrc;
+			updateCarried(nullptr);
 			redraw();
 			break;
 		}
@@ -370,12 +384,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// The carried block keeps tracking the cursor even while it is being turned.
-	if (_carriedBlock != kNoBlock) {
-		Common::Rect screenPt(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1);
-		Common::Rect vpPt = NancySceneState.getViewport().convertScreenToViewport(screenPt);
-		_dragPos = Common::Point(vpPt.left, vpPt.top);
-		redraw();
-	}
+	_carriedObject.handleInput(input);
 
 	if (_puzzleState != kPlaying) {
 		return;
@@ -401,7 +410,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		if (cell != kNoBlock) {
 			setDataCursor(_carryCursorType);
 			if (click) {
-				drop(cell);
+				drop(cell, input);
 			}
 
 			input.eatMouseInput();
@@ -415,7 +424,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 	if (cell != kNoBlock) {
 		setDataCursor(_carryCursorType);
 		if (click) {
-			pickUp(cell);
+			pickUp(cell, input);
 		}
 
 		input.eatMouseInput();
@@ -436,7 +445,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_turntableDest).contains(input.mousePos)) {
 			setDataCursor(_carryCursorType);
 			if (click) {
-				pickUp(kTurntableCell);
+				pickUp(kTurntableCell, input);
 			}
 
 			input.eatMouseInput();

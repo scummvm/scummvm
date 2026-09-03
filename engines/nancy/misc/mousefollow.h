@@ -35,10 +35,18 @@ namespace Misc {
 // sure that its center stays above the mouse hotspot. The position
 // of such an object is clipped to the Viewport. Used in puzzles:
 // - AssemblyPuzzle
+// - BeadPuzzle
+// - BlocksPuzzle
 // - CubePuzzle
+// - DropSortPuzzle
+// - GridMapPuzzle
+// - MindPuzzle
+// - PegsPuzzle
 // - RippedLetterPuzzle
-// - TowerPuzzle
+// - SortPuzzle
+// - StepObjectsPuzzle
 // - TangramPuzzle
+// - TowerPuzzle
 class MouseFollowObject : public RenderObject {
 public:
 	MouseFollowObject();

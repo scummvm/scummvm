@@ -25,6 +25,7 @@
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -73,11 +74,11 @@ protected:
 	Common::Rect itemDestAt(const Common::Point &pos, int16 type) const;
 	int itemAtCursor(const Common::Point &mousePos) const;	// belt item under the cursor, or -1
 	int binAtCursor(const Common::Point &mousePos) const;	// bin under the cursor, or -1
-	Common::Point cursorToViewport(const Common::Point &mousePos) const;
 
 	// Drops a candy into a bin: correct-bin sound if accepted, else a mistake (for an
 	// enabled bin). Also handles candies falling off the belt into the reject bin.
 	void applyDrop(int binIndex, int16 type);
+	void carryItem(int16 type, NancyInput &input);
 
 	void redraw();
 	void drawCounter();
@@ -137,7 +138,7 @@ protected:
 	int _rejectBin = -1;				// bin at the end of the belt (unsorted candies land here)
 
 	int16 _carriedType = kNoItem;
-	Common::Point _dragPos;
+	Misc::MouseFollowObject _carriedObject;
 
 	int _strikes = 0;
 	bool _solved = false;

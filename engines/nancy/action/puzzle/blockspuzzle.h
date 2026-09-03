@@ -24,6 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
@@ -94,8 +95,10 @@ protected:
 	// occupied cells; putting down considers every cell.
 	int16 cellAtCursor(const Common::Point &mousePos, bool occupiedOnly) const;
 	bool isSolved() const;
-	void pickUp(int16 cell);
-	void drop(int16 cell);
+	void pickUp(int16 cell, NancyInput &input);
+	void drop(int16 cell, NancyInput &input);
+	// Syncs the block riding the cursor with _carriedBlock / _carriedSrc
+	void updateCarried(NancyInput *input);
 	void startTurn();
 	void redraw();
 	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
@@ -133,7 +136,7 @@ protected:
 	int16 _carriedBlock = kNoBlock;		// the block on the cursor, or kNoBlock
 	byte _carriedRotation = 0;
 	Common::Rect _carriedSrc;
-	Common::Point _dragPos;				// cursor position (viewport space) while carrying
+	Misc::MouseFollowObject _carriedObject;
 
 	int16 _turnBlock = kNoBlock;		// the block being turned, or kNoBlock
 	byte _turnRotation = 0;

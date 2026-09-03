@@ -139,6 +139,7 @@ void BeadPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		_heldBeadObject.registerGraphics();
 		_state = kRun;
 		// fall through
 
@@ -153,7 +154,7 @@ void BeadPuzzle::execute() {
 			if (g_system->getMillis() >= _dropNextTick) {
 				if (_dropCurrentSlot <= (int)_placed.size()) {
 					_placed.push_back(_heldBead);
-					_heldBead = -1;
+					holdBead(-1, nullptr);
 					_subState = kPlaying;
 					persistState();
 				} else {
@@ -217,10 +218,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
-	if (_heldBead != -1 && _heldDrawPos != mouseVP) {
-		_heldDrawPos = mouseVP;
-		redraw();
-	}
+	_heldBeadObject.handleInput(input);
 
 	if (_subState == kShowingResult) {
 		if (!_resultHotspot.isEmpty() && _resultHotspot.contains(mouseVP)) {
@@ -230,7 +228,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 				g_nancy->_sound->stopSound(_wrongSound);
 				if (!_placed.empty())
 					_placed.pop_back();
-				_heldBead = -1;
+				holdBead(-1, nullptr);
 				_subState = kPlaying;
 				_resultKind = kNoResult;
 				_resultSoundPlayed = false;
@@ -246,8 +244,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				if ((int)_placed.size() < (int)_numSlots) {
-					_heldBead = (int16)i;
-					_heldDrawPos = mouseVP;
+					holdBead((int16)i, &input);
 					if (_pickupSound.name != "NO SOUND") {
 						g_nancy->_sound->loadSound(_pickupSound);
 						g_nancy->_sound->playSound(_pickupSound);
@@ -282,9 +279,11 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 					g_nancy->_sound->loadSound(_placeSound);
 					g_nancy->_sound->playSound(_placeSound);
 				}
-				// Animate the bead sliding from the bottom of the thread up
-				// to the next free slot before committing it.
+				// The bead leaves the cursor and slides from the bottom of the
+				// thread up to the next free slot before it is committed.
 				_subState = kDroppingBead;
+				_heldBeadObject.setVisible(false);
+				_heldBeadObject.putDown();
 				_dropCurrentSlot = (int16)((int)_numSlots - 1);
 				_dropNextTick = g_system->getMillis() + kDropTickMs;
 				redraw();
@@ -297,7 +296,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		    _pickupHotspots[_heldBead].contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				_heldBead = -1;
+				holdBead(-1, nullptr);
 				g_nancy->_sound->stopSound(_pickupSound);
 				redraw();
 			}
@@ -344,6 +343,28 @@ void BeadPuzzle::evaluate() {
 	redraw();
 }
 
+// Puts a bead on the cursor, or takes the held one off it for a bead of -1. The
+// input is only needed when picking one up, to place it under the cursor at once.
+void BeadPuzzle::holdBead(int16 bead, NancyInput *input) {
+	_heldBead = bead;
+
+	if (_heldBead >= 0 && _heldBead < (int16)_numBeadTypes &&
+			_image.getBounds().contains(_beadSrcRects[_heldBead])) {
+		_heldBeadObject._drawSurface.create(_image, _beadSrcRects[_heldBead]);
+		_heldBeadObject.setTransparent(true);
+		_heldBeadObject.setVisible(true);
+		_heldBeadObject.pickUp();
+		if (input) {
+			_heldBeadObject.handleInput(*input);
+		}
+	} else {
+		_heldBeadObject.setVisible(false);
+		_heldBeadObject.putDown();
+	}
+
+	redraw();
+}
+
 void BeadPuzzle::redraw() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
@@ -371,13 +392,6 @@ void BeadPuzzle::redraw() {
 		const Common::Rect &dst = _slotDestRects[_dropCurrentSlot];
 		if (!src.isEmpty() && !dst.isEmpty())
 			_drawSurface.blitFrom(_image, src, Common::Point(dst.left, dst.top));
-	} else if (_subState == kPlaying && _heldBead >= 0 && _heldBead < (int)_numBeadTypes) {
-		const Common::Rect &src = _beadSrcRects[_heldBead];
-		if (!src.isEmpty()) {
-			int x = _heldDrawPos.x - src.width()  / 2;
-			int y = _heldDrawPos.y - src.height() / 2;
-			_drawSurface.blitFrom(_image, src, Common::Point(x, y));
-		}
 	}
 
 	_needsRedraw = true;
