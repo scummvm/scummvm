@@ -143,11 +143,11 @@ bool Character::handleWalkability(Character *c) {
 }
 
 uint16 Character::lookupWalkability(const Common::Point &p) const {
-	return g_engine->getWalkabilityAt((int16)p.y, (int16)p.x);
+	return g_engine->_pathfinding.walkabilityAt(p);
 }
 
 bool Character::isWalkable(const Common::Point &p) const {
-	return Macs2Engine::isWalkabilityWalkable(lookupWalkability(p));
+	return Pathfinding::isWalkabilityWalkable(lookupWalkability(p));
 }
 
 Character::Character() : _pathfindingOverlay(g_engine->screenWidth() * g_engine->gameHeight(), 0) {
@@ -200,8 +200,8 @@ void Character::setPosition(const Common::Point &newPosition) {
 }
 
 uint16 Character::getVerticalOffset() const {
-	uint16 result = g_engine->getWalkabilityAt(getPosition());
-	if (Macs2Engine::isWalkabilityBlocking(result)) {
+	uint16 result = g_engine->_pathfinding.walkabilityAt(getPosition());
+	if (Pathfinding::isWalkabilityBlocking(result)) {
 		result = 0;
 	}
 
@@ -540,41 +540,41 @@ void Character::update() {
 			pos = savedPos;
 			// Wall-sliding: build push vector from +/-1 and +/-2 samples
 			int pushX = 0, pushY = 0;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
 				pushX--;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
 				pushX++;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
 				pushY--;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
 				pushY++;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 2, pos.y))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 2, pos.y))))
 				pushX--;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 2, pos.y))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 2, pos.y))))
 				pushX++;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 2))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 2))))
 				pushY--;
-			if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 2))))
+			if (Pathfinding::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 2))))
 				pushY++;
 			// Apply push vector
 			while (pushX != 0 || pushY != 0) {
 				if (pushX < 0) {
-					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
+					if (Pathfinding::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
 						pos.x--;
 					pushX++;
 				}
 				if (pushX > 0) {
-					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
+					if (Pathfinding::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
 						pos.x++;
 					pushX--;
 				}
 				if (pushY < 0) {
-					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
+					if (Pathfinding::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
 						pos.y--;
 					pushY++;
 				}
 				if (pushY > 0) {
-					if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
+					if (Pathfinding::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
 						pos.y++;
 					pushY--;
 				}
@@ -594,7 +594,7 @@ void Character::update() {
 				   "walk cancelled pixelsMoved=%d walkSpeed=%d at (%d,%d) area=%u walk=%u finalDest=(%d,%d)",
 				   pixelsMoved, walkSpeed, pos.x, pos.y, tileArea, lookupWalkability(pos),
 				   _pathFinalDestination.x, _pathFinalDestination.y);
-		} else if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(pos))) {
+		} else if (Pathfinding::isWalkabilityBlocking(lookupWalkability(pos))) {
 			debugC(kDebugPath,
 				   "walk cancelled (non-walkable) pixelsMoved=%d walkSpeed=%d at (%d,%d) walk=%u",
 				   pixelsMoved, walkSpeed, pos.x, pos.y, lookupWalkability(pos));

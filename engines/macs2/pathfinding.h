@@ -82,7 +82,6 @@ public:
 	bool getWalkOverride(uint16 index, uint16 &result) const;
 	void setWalkOverride(uint16 index, uint16 overrideValue);
 	void removeWalkOverride(uint16 index);
-	uint16 areaOverrideAt(uint16 index) const;
 
 	bool isLineWalkable(int16 y1, int16 x1, int16 y2, int16 x2) const;
 	void snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) const;
@@ -96,6 +95,7 @@ public:
 private:
 	int _visitedStack[17] {};
 	int _visitedCount = 0;
+	uint16 areaOverrideAt(uint16 index) const;
 
 	int computeMinCostToReachable(int nodeIndex, int prevNode, const bool *reachable, int nodeCount, const Common::Point &finalDest);
 	bool canNodeConnectSourceToTarget(uint16 nodeIndex, const Common::Point &charPos, const Common::Point &target, const bool *reachable, int nodeCount) const;

@@ -1494,11 +1494,11 @@ static void showSceneMapsWindow() {
 					uint8 val = surface->getPixel(mx, my);
 					if (val >= 0xC8 && val <= 0xEF) {
 						uint16 overrideResult;
-						bool overrideActive = g_engine->getPathfindingOverride(val, overrideResult);
+						bool overrideActive = g_engine->_pathfinding.getWalkOverride(val, overrideResult);
 						if (overrideActive)
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone → %u = %s]",
 											  mx, my, val, val, overrideResult,
-											  Macs2Engine::isWalkabilityWalkable(overrideResult) ? "WALKABLE" : "non-walkable");
+											  Pathfinding::isWalkabilityWalkable(overrideResult) ? "WALKABLE" : "non-walkable");
 						else
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone, DISABLED → non-walkable]",
 											  mx, my, val, val);
@@ -1539,7 +1539,7 @@ static void showSceneMapsWindow() {
 			for (int i = 0; i < (int)g_engine->_pathfinding._points.size(); i++) {
 				const PathfindingPoint &pt = g_engine->_pathfinding._points[i];
 				// Check reachability from character
-				bool reachable = protagonist && g_engine->isPathWalkable(charPos.y, charPos.x, pt._position.y, pt._position.x);
+				bool reachable = protagonist && g_engine->_pathfinding.isLineWalkable(charPos.y, charPos.x, pt._position.y, pt._position.x);
 				// Check if node is in current path
 				bool inPath = false;
 				if (protagonist) {

@@ -39,6 +39,7 @@
 #include "macs2/macs2.h"
 #include "macs2/music.h"
 #include "macs2/actionbar.h"
+#include "macs2/pathfinding.h"
 
 namespace Macs2 {
 namespace {
@@ -2801,8 +2802,8 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			int16 walkabilityOffset = 0;
 			if (g_engine->_pathfinding._map.w > 0) {
-				walkabilityOffset = g_engine->getWalkabilityAt(charY, charX);
-				if (Macs2Engine::isWalkabilityBlocking((uint16)walkabilityOffset))
+				walkabilityOffset = g_engine->_pathfinding.walkabilityAt(charY, charX);
+				if (Pathfinding::isWalkabilityBlocking((uint16)walkabilityOffset))
 					walkabilityOffset = 0;
 			}
 			if (g_engine->isV2())

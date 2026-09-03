@@ -375,43 +375,9 @@ public:
 	Pathfinding _pathfinding;
 	Common::Array<Common::Point> _path;
 
-	bool getPathfindingOverride(uint16 index, uint16 &result) const {
-		return _pathfinding.getWalkOverride(index, result);
-	}
-	void setPathfindingOverride(uint16 index, uint16 overrideValue) {
-		_pathfinding.setWalkOverride(index, overrideValue);
-	}
-
-	static inline bool isWalkabilityBlocking(uint16 value) {
-		return Pathfinding::isWalkabilityBlocking(value);
-	}
-	static inline bool isWalkabilityWalkable(uint16 value) {
-		return Pathfinding::isWalkabilityWalkable(value);
-	}
-
-	uint16 getPathfindingOverride2(uint16 index) const {
-		return _pathfinding.areaOverrideAt(index);
-	}
-	void removePathfindingOverride(uint16 index) {
-		_pathfinding.removeWalkOverride(index);
-	}
-
-	uint16 getWalkabilityAt(int16 y, int16 x) {
-		return _pathfinding.walkabilityAt(y, x);
-	}
-	uint16 getWalkabilityAt(const Common::Point &p) {
-		return _pathfinding.walkabilityAt(p);
-	}
 	/** Sync depth map with the current background animation frame (v1 gate fix). */
 	void updateBackgroundAnimationDepthMap(size_t animIndex);
 	void updateAllBackgroundAnimationDepthMaps();
-	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
-		return _pathfinding.isLineWalkable(y1, x1, y2, x2);
-	}
-	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX) {
-		_pathfinding.snapToWalkable(pTargetY, pTargetX, charY, charX);
-	}
-	int getPathfindingNodeCount() const { return _pathfinding.nodeCount(); }
 
 	// This is the override list living at [5BD1]
 	// Savegames sync 16 words into indices 1..16 (array size 0x11 during sync).

@@ -2052,8 +2052,8 @@ void Macs2Engine::updateBackgroundAnimationDepthMap(size_t animIndex) {
 			if (px < 0 || px >= _depthMap.w || py < 0 || py >= _depthMap.h) {
 				continue;
 			}
-			const uint16 walkVal = getWalkabilityAt((int16)py, (int16)px);
-			if (isWalkabilityWalkable(walkVal)) {
+			const uint16 walkVal = _pathfinding.walkabilityAt((int16)py, (int16)px);
+			if (Pathfinding::isWalkabilityWalkable(walkVal)) {
 				_depthMap.setPixel(px, py, (byte)walkVal);
 			}
 		}
