@@ -31,6 +31,7 @@
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
 #include "harvester/cft_font.h"
+#include "harvester/cheats.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
@@ -322,8 +323,8 @@ static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, 
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
-		InventorySystem &inventory)
-	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
+		InventorySystem &inventory, CheatSystem &cheats)
+	: _engine(engine), _mousePos(mousePos), _inventory(inventory), _cheats(cheats) {
 }
 
 Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetName,
@@ -3043,14 +3044,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 							monster.monsterName.c_str(), currentFrame, script.getPlayerCurrentHitPoints());
 					} else {
 						const int playerHitPointsBefore = script.getPlayerCurrentHitPoints();
-						const bool changed = script.adjustPlayerCurrentHitPoints(-monster.damageAmount);
+						const bool damageDisabled = _cheats.isPlayerDamageDisabled();
+						const bool changed = damageDisabled
+							? false
+							: script.adjustPlayerCurrentHitPoints(-monster.damageAmount);
 						const int playerHitPointsAfter = script.getPlayerCurrentHitPoints();
 						const int damageLanded = playerHitPointsBefore - playerHitPointsAfter;
 						debugC(1, kDebugCombat,
-							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d damage_type='%s' player_hp=%d->%d changed=%d",
+							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d damage_type='%s' player_hp=%d->%d changed=%d damage_disabled=%d",
 							monster.monsterName.c_str(), currentFrame, monster.damageAmount,
 							Player::describeCombatDamageType(monster.damageType),
-							playerHitPointsBefore, playerHitPointsAfter, changed);
+							playerHitPointsBefore, playerHitPointsAfter, changed,
+							damageDisabled ? 1 : 0);
 						if (damageLanded > 0 && playerState.entity) {
 							spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
 							if (idleState.entity) {
@@ -4175,6 +4180,37 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (Player::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
+				}
+
+				if (Script *script = _engine.getScript()) {
+					InteractionResult cheatInteraction;
+					CheatActivation cheatActivation;
+					const CheatInputResult cheatInputResult = _cheats.processKey(
+						event.kbd, *script, scene.state.roomName,
+						cheatInteraction, cheatActivation);
+					if (cheatInputResult != kCheatInputIgnored) {
+						if (cheatInputResult == kCheatInputComplete && cheatActivation.activated) {
+							if (cheatActivation.clearInteractionState && _inventory.clearSelection())
+								needsRedraw = true;
+							if (cheatActivation.inventoryChanged && _inventory.isOpen() &&
+									!_inventory.refresh()) {
+								return Common::kReadingFailed;
+							}
+							if (cheatActivation.hasInteraction) {
+								if (_inventory.isOpen())
+									(void)_inventory.close();
+								bool didTransition = false;
+								Common::Error cheatError = interactionProcessor.handleInteractionResult(
+									cheatInteraction, didTransition, Common::String());
+								if (cheatError.getCode() != Common::kNoError)
+									return cheatError;
+								if (flow.hasPendingMainMenuReturn())
+									return Common::kNoError;
+							}
+							needsRedraw = true;
+						}
+						break;
+					}
 				}
 
 				if (_inventory.isOpen()) {

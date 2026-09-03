@@ -2422,6 +2422,18 @@ bool Script::consumePlayerCombatResourceUnit(int loadout) {
 	return adjustPlayerCombatResourceCount(loadout, -1, maxCount, "PLAYER_ATTACK");
 }
 
+bool Script::setPlayerCombatResourceCount(int loadout, int count) {
+	int *currentCount = getPlayerCombatResourceCountPtr(loadout);
+	const int maxCount = resolveCombatResourceDisplayMax(loadout);
+	if (!currentCount || maxCount <= 0)
+		return false;
+
+	const int clampedCount = CLIP<int>(count, 0, maxCount);
+	const bool changed = *currentCount != clampedCount;
+	*currentCount = clampedCount;
+	return changed;
+}
+
 int *Script::getPlayerCombatResourceCountPtr(int loadout) {
 	switch (loadout) {
 	case 2:
