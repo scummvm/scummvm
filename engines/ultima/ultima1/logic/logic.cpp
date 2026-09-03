@@ -97,6 +97,9 @@ void Logic::action(int action) {
 	case KEYBIND_RIGHT:
 		move(Data::DIR_RIGHT);
 		break;
+	case KEYBIND_CLIMB:
+		climb();
+		break;
 	case KEYBIND_ENTER:
 		enter();
 		break;
@@ -111,6 +114,18 @@ void Logic::action(int action) {
 		break;
 	case KEYBIND_INFORM:
 		inform();
+		break;
+	case KEYBIND_NOISE:
+		noise();
+		break;
+	case KEYBIND_OPEN:
+		open();
+		break;
+	case KEYBIND_QUIT:
+		quit();
+		break;
+	case KEYBIND_READY:
+		ready();
 		break;
 	case KEYBIND_PASS:
 		pass();
@@ -139,6 +154,11 @@ void Logic::board() {
 void Logic::cast() {
 	writeString("Cast -- Hmmmm... no effect!\n");
 	playFX(6);
+}
+
+void Logic::climb() {
+	writeString("K-Limb?\n");
+	playFX(1);
 }
 
 void Logic::drop() {
@@ -191,6 +211,25 @@ void Logic::inform() {
 			break;
 		}
 	} 
+}
+
+void Logic::noise() {
+	_G(savegame)._soundOn = !_G(savegame)._soundOn;
+	writeString("Noise %s\n", _G(savegame)._soundOn ? "on" : "off");
+}
+
+void Logic::open() {
+	writeString("Open?\n");
+	playFX(1);
+}
+
+void Logic::quit() {
+	writeString("Quit - only allowed outdoors!\n");
+	playFX(1);
+}
+
+void Logic::ready() {
+	// TODO
 }
 
 void Logic::zstats() {

@@ -77,12 +77,17 @@ protected:
 
 	virtual void board();
 	virtual void cast();
+	virtual void climb();
 	virtual void drop();
 	virtual void enter();
 	virtual void fire();
 	virtual void get();
 	virtual void hyperjump();
 	virtual void inform();
+	virtual void noise();
+	virtual void open();
+	virtual void quit();
+	virtual void ready();
 	virtual void zstats();
 	virtual void move(Data::Direction dir) = 0;
 	virtual void pass();
