@@ -39,6 +39,11 @@ static void readFlag(Common::SeekableReadStream &stream, FlagDescription &flag) 
 	flag.flag = stream.readByte();
 }
 
+MultiBuildPuzzle::~MultiBuildPuzzle() {
+	for (uint i = 0; i < _pieces.size(); ++i)
+		delete _pieces[i];
+}
+
 void MultiBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_primaryImageName, _primaryImage);
 	_primaryImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -64,7 +69,7 @@ void MultiBuildPuzzle::init() {
 	}
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
-		Piece &p = _pieces[i];
+		Piece &p = *_pieces[i];
 
 		if (!p.imageName.empty()) {
 			// Nancy 13: the piece brings its own closeup image.
@@ -115,7 +120,7 @@ void MultiBuildPuzzle::registerGraphics() {
 		_animRender.registerGraphics();
 
 	for (uint i = 0; i < _pieces.size(); ++i)
-		_pieces[i].registerGraphics();
+		_pieces[i]->registerGraphics();
 }
 
 void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -161,19 +166,17 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	// Pieces: the data file always has 20 slots; only _numPieces are used.
-	// Reserve up-front so counter-spawn push_back doesn't reallocate (pieces are
-	// RenderObjects already registered with the graphics manager).
 	// Slot size: 67 bytes in Nancy 9, 83 in Nancy 10, 116 in Nancy 13.
 	const uint pieceSize = isNancy13 ? 116 : (isNancy10 ? 83 : 67);
-	_pieces.reserve(80);
-	_pieces.resize(_numPieces);
+	for (uint i = 0; i < _numPieces; ++i)
+		_pieces.push_back(new Piece());
 	for (uint i = 0; i < 20; ++i) {
 		if (i >= _numPieces) {
 			stream.skip(pieceSize);
 			continue;
 		}
 
-		Piece &p = _pieces[i];
+		Piece &p = *_pieces[i];
 		// srcRect is empty when the unplaced piece is baked into the scene
 		// overlay (cake mixing) and non-empty when it must be rendered live at
 		// rest (plant potting).
@@ -404,7 +407,7 @@ void MultiBuildPuzzle::execute() {
 			if (_cancelScene._flag.label != kFlagNoLabel) {
 				uint16 count = 0;
 				for (uint i = 0; i < _numPieces; ++i) {
-					if (_pieces[i].isPlaced && _pieces[i].counterByte == 0)
+					if (_pieces[i]->isPlaced && _pieces[i]->counterByte == 0)
 						++count;
 				}
 				count += (uint16)(_pieces.size() - _numPieces);
@@ -436,7 +439,7 @@ bool MultiBuildPuzzle::altZoneSnapValid() const {
 	if (_pickedUpPiece < 0)
 		return false;
 
-	const Piece &pp = _pieces[_pickedUpPiece];
+	const Piece &pp = *_pieces[_pickedUpPiece];
 	int halfW = (pp.gameRect.width()  - 1) / 2;
 	int halfH = (pp.gameRect.height() - 1) / 2;
 	int cx = pp.gameRect.left + halfW;
@@ -445,7 +448,7 @@ bool MultiBuildPuzzle::altZoneSnapValid() const {
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		if ((int)i == _pickedUpPiece)
 			continue;
-		const Piece &other = _pieces[i];
+		const Piece &other = *_pieces[i];
 		if (other.gameRect == other.homeRect)
 			continue;
 		if (other.gameRect.top  - 4 < cy + halfH &&
@@ -464,13 +467,13 @@ void MultiBuildPuzzle::spawnCounterPiece(int srcIdx) {
 	if (_pieces.size() >= 80)
 		return;
 
-	const Piece &src = _pieces[srcIdx];
+	const Piece &src = *_pieces[srcIdx];
 	// All clones share surfaces with the original piece at typeIdx.
 	int sharedType = (src.typeIdx >= 0) ? src.typeIdx : srcIdx;
-	const Piece &surf = _pieces[sharedType];
+	const Piece &surf = *_pieces[sharedType];
 
-	_pieces.push_back(Piece());
-	Piece &np = _pieces.back();
+	_pieces.push_back(new Piece());
+	Piece &np = *_pieces.back();
 	np.srcRect      = src.srcRect;
 	np.homeRect     = src.homeRect;
 	np.altSrcRect   = src.altSrcRect;
@@ -499,17 +502,17 @@ void MultiBuildPuzzle::spawnCounterPiece(int srcIdx) {
 
 	int newIdx = (int)_pieces.size() - 1;
 	updatePieceRender(newIdx);
-	_pieces[newIdx].setVisible(true);
-	_pieces[newIdx].setTransparent(true);
-	_pieces[newIdx].setZOrder((uint16)(_z + newIdx + 1));
-	_pieces[newIdx].registerGraphics();
+	_pieces[newIdx]->setVisible(true);
+	_pieces[newIdx]->setTransparent(true);
+	_pieces[newIdx]->setZOrder((uint16)(_z + newIdx + 1));
+	_pieces[newIdx]->registerGraphics();
 }
 
 bool MultiBuildPuzzle::isValidDrop() const {
 	if (_pickedUpPiece < 0)
 		return false;
 
-	const Piece &pp = _pieces[_pickedUpPiece];
+	const Piece &pp = *_pieces[_pickedUpPiece];
 
 	// Bounding-box-inside test. Left/top are strict; right/bottom allow up to
 	// kEdgeTolerance px of overflow (matches the design tolerance the engine
@@ -539,9 +542,9 @@ bool MultiBuildPuzzle::isValidDrop() const {
 		for (uint i = 0; i < _pieces.size(); ++i) {
 			if ((int)i == _pickedUpPiece)
 				continue;
-			if (!_pieces[i].isPlaced)
+			if (!_pieces[i]->isPlaced)
 				continue;
-			const Piece &other = _pieces[i];
+			const Piece &other = *_pieces[i];
 			int otherLeft   = other.gameRect.left;
 			int otherTop    = other.gameRect.top;
 			int otherRight  = other.gameRect.right  - 1;
@@ -599,7 +602,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	if (_isDragging) {
 		// Centre dragged piece on cursor. Offset uses (width-1)/2 to match
 		// the original's inclusive-coordinate delta arithmetic.
-		Piece &pp = _pieces[_pickedUpPiece];
+		Piece &pp = *_pieces[_pickedUpPiece];
 		int newLeft = mouseVP.x - (_pickedUpWidth  - 1) / 2;
 		int newTop  = mouseVP.y - (_pickedUpHeight - 1) / 2;
 		pp.gameRect.left   = newLeft;
@@ -637,8 +640,8 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 
 			if (validDrop) {
 				int srcIdx = (pp.typeIdx >= 0) ? pp.typeIdx : placedIdx;
-				if (isNancy10 && _pieces[srcIdx].placeCount < 255)
-					_pieces[srcIdx].placeCount++;
+				if (isNancy10 && _pieces[srcIdx]->placeCount < 255)
+					_pieces[srcIdx]->placeCount++;
 
 				if (addMode) {
 					// Ingredient goes back to its shelf slot, still pickable.
@@ -694,7 +697,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_selectedPiece != -1) {
-		Piece &pp = _pieces[_selectedPiece];
+		Piece &pp = *_pieces[_selectedPiece];
 
 		// Only the closeup itself is interactive: clicking it picks it up to
 		// drag. Anywhere else the exit hotspots stay live, so the player can back
@@ -741,7 +744,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	bool rotationsEnabled = _canRotateAll && _useRotationHotspot &&
 	                        _rotHotspotWidth > 0 && _rotHotspotHeight > 0;
 	for (int i = (int)_pieces.size() - 1; i >= 0; --i) {
-		Piece &p = _pieces[i];
+		Piece &p = *_pieces[i];
 		if (!p.gameRect.contains(mouseVP))
 			continue;
 		// Placed counter pieces are locked (can't re-grab the placed ingredient).
@@ -752,12 +755,12 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			                     p.gameRect.left + _rotHotspotWidth,
 			                     p.gameRect.top  + _rotHotspotHeight);
 			if (rotRect.contains(mouseVP)) {
-				if (topmostRot == -1 || p.getZOrder() > _pieces[topmostRot].getZOrder())
+				if (topmostRot == -1 || p.getZOrder() > _pieces[topmostRot]->getZOrder())
 					topmostRot = (int16)i;
 				continue;
 			}
 		}
-		if (topmost == -1 || p.getZOrder() > _pieces[topmost].getZOrder())
+		if (topmost == -1 || p.getZOrder() > _pieces[topmost]->getZOrder())
 			topmost = (int16)i;
 	}
 
@@ -765,7 +768,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		// Hovering rotation hotspot: click rotates 90° and picks up.
 		g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			Piece &pp = _pieces[topmostRot];
+			Piece &pp = *_pieces[topmostRot];
 			pp.isPlaced = false;
 			pp.curRotation = (pp.curRotation + 1) % 4;
 			if (!pp.hasSurface[pp.curRotation])
@@ -786,7 +789,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(dragCursor, true);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			Piece &pp = _pieces[topmost];
+			Piece &pp = *_pieces[topmost];
 			pp.isPlaced = false;
 			pp.curRotation = 0;
 			pp.setZOrder((uint16)(_z + (int)_pieces.size() * 2));
@@ -821,7 +824,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 void MultiBuildPuzzle::openCloseup(int pieceIdx, const Common::Rect &viewportScreen) {
 	// A piece with a fixed closeup destination uses it (cake mixing, all of
 	// Nancy 13); otherwise the closeup is centred on the piece (plant potting).
-	Piece &p = _pieces[pieceIdx];
+	Piece &p = *_pieces[pieceIdx];
 	_selectedPiece = (int16)pieceIdx;
 
 	const int cuW = p.cuSrcRect.width();
@@ -880,15 +883,17 @@ void MultiBuildPuzzle::submitPuzzle() {
 void MultiBuildPuzzle::resetPuzzle() {
 	// Counter clones live past _numPieces; dropping them deregisters their
 	// render objects.
-	if (_pieces.size() > _numPieces)
-		_pieces.resize(_numPieces);
+	while (_pieces.size() > _numPieces) {
+		delete _pieces.back();
+		_pieces.pop_back();
+	}
 
 	_selectedPiece = -1;
 	_pickedUpPiece = -1;
 	_isDragging = false;
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
-		Piece &p = _pieces[i];
+		Piece &p = *_pieces[i];
 		p.placeCount = 0;
 		p.isPlaced = false;
 		p.curRotation = 0;
@@ -904,8 +909,8 @@ void MultiBuildPuzzle::resetPuzzle() {
 bool MultiBuildPuzzle::updateSolveFlags() {
 	uint16 total = 0;
 	for (uint i = 0; i < _numPieces; ++i) {
-		if (_pieces[i].counterByte == 0 || _allowAltZoneSnap)
-			total += _pieces[i].placeCount;
+		if (_pieces[i]->counterByte == 0 || _allowAltZoneSnap)
+			total += _pieces[i]->placeCount;
 	}
 	total += (uint16)(_pieces.size() - _numPieces);
 
@@ -933,7 +938,7 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	// every ingredient count matches; only then is it raised to its true value.
 	bool exact = true;
 	for (uint i = 0; i < _numPieces; ++i) {
-		const Piece &p = _pieces[i];
+		const Piece &p = *_pieces[i];
 		if (p.placeCount > 0 && p.compare == kDoNotPlace) {
 			exact = false;
 			break;
@@ -976,7 +981,7 @@ void MultiBuildPuzzle::checkIfSolved() {
 		// Nancy 9: bool placement semantics, no per-drop flag setting.
 		uint16 count = 0;
 		for (uint i = 0; i < _numPieces; ++i) {
-			if (_pieces[i].isPlaced && _pieces[i].counterByte == 0)
+			if (_pieces[i]->isPlaced && _pieces[i]->counterByte == 0)
 				++count;
 		}
 		count += (uint16)(_pieces.size() - _numPieces);
@@ -985,9 +990,9 @@ void MultiBuildPuzzle::checkIfSolved() {
 			return;
 
 		for (uint i = 0; i < _numPieces; ++i) {
-			if (_pieces[i].isPlaced && _pieces[i].compare == kDoNotPlace)
+			if (_pieces[i]->isPlaced && _pieces[i]->compare == kDoNotPlace)
 				return;
-			if (!_pieces[i].isPlaced && _pieces[i].mustPlace)
+			if (!_pieces[i]->isPlaced && _pieces[i]->mustPlace)
 				return;
 		}
 	}
@@ -1017,7 +1022,7 @@ void MultiBuildPuzzle::clearAnimFrame() {
 }
 
 void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {
-	Piece &p = _pieces[pieceIdx];
+	Piece &p = *_pieces[pieceIdx];
 	bool isSelected = (!_isDragging && pieceIdx == _selectedPiece);
 	bool isDragging  = (_isDragging  && pieceIdx == _pickedUpPiece);
 

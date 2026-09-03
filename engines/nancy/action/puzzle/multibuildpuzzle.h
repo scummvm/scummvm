@@ -40,7 +40,7 @@ namespace Action {
 class MultiBuildPuzzle : public RenderActionRecord {
 public:
 	MultiBuildPuzzle() : RenderActionRecord(7) {}
-	virtual ~MultiBuildPuzzle() {}
+	virtual ~MultiBuildPuzzle();
 
 	void init() override;
 	void registerGraphics() override;
@@ -131,7 +131,7 @@ protected:
 	uint8 _altZoneSnapMode = 0;        // Raw value: 2 = "add ingredient" mode (cake), count via placeCount, no counter-spawn
 	bool _checkOverlapOnDrop = false;  // Reject drop if it overlaps an already-placed piece
 
-	Common::Array<Piece> _pieces;
+	Common::Array<Piece *> _pieces;
 
 	SoundDescription _rotationSound;
 	SoundDescription _pickupSound;
