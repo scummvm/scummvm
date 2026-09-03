@@ -42,7 +42,7 @@ uint16 Pathfinding::walkabilityAt(int16 y, int16 x) const {
 	if (x < 0 || x >= _map.w || y < 0 || y >= _map.h) {
 		return 0;
 	}
-	uint16 value = _map.getPixel(x, y);
+	const uint16 value = _map.getPixel(x, y);
 	if (value >= 0xC8 && value <= 0xEF) {
 		uint16 overrideResult;
 		if (getWalkOverride(value, overrideResult)) {
@@ -99,7 +99,7 @@ uint16 Pathfinding::areaOverrideAt(uint16 index) const {
 
 void Pathfinding::removeWalkOverride(uint16 index) {
 	for (uint i = 0; i < _walkOverrides.size(); i++) {
-		PathfindingAreaOverride &current = _walkOverrides[i];
+		const PathfindingAreaOverride &current = _walkOverrides[i];
 		if (current._index == index) {
 			_walkOverrides.remove_at(i);
 			return;
@@ -112,8 +112,8 @@ void Pathfinding::snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, 
 		return;
 	}
 
-	int16 savedX = *pTargetX;
-	int16 savedY = *pTargetY;
+	const int16 savedX = *pTargetX;
+	const int16 savedY = *pTargetY;
 	const int16 maxY = (int16)(_map.h - 1);
 	const int16 maxX = (int16)(_map.w - 1);
 
@@ -133,7 +133,7 @@ void Pathfinding::snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, 
 	// Phase 2: Continue scanning to bottom for best depth match
 	int16 scanY = *pTargetY;
 	while (scanY <= maxY) {
-		uint16 w = walkabilityAt(scanY, *pTargetX);
+		const uint16 w = walkabilityAt(scanY, *pTargetX);
 		if (scanY - (int16)w == savedY) {
 			*pTargetY = scanY;
 		}
@@ -155,12 +155,12 @@ void Pathfinding::snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, 
 	}
 
 	// Phase 4: If still non-walkable, scan X toward character
-	uint16 w = walkabilityAt(*pTargetY, *pTargetX);
+	const uint16 w = walkabilityAt(*pTargetY, *pTargetX);
 	if (isWalkabilityBlocking(w)) {
 		*pTargetY = savedY;
 		if (charX < *pTargetX) {
 			while (true) {
-				uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
+				const uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
 				if (isWalkabilityWalkable(w2)) {
 					break;
 				}
@@ -171,7 +171,7 @@ void Pathfinding::snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, 
 			}
 		} else {
 			while (true) {
-				uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
+				const uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
 				if (isWalkabilityWalkable(w2)) {
 					break;
 				}
@@ -182,7 +182,7 @@ void Pathfinding::snapToWalkable(int16 *pTargetY, int16 *pTargetX, int16 charY, 
 			}
 		}
 		// Phase 5: If all failed, fall back to character position
-		uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
+		const uint16 w2 = walkabilityAt(*pTargetY, *pTargetX);
 		if (isWalkabilityBlocking(w2)) {
 			*pTargetX = charX;
 			*pTargetY = charY;
@@ -249,8 +249,8 @@ bool Pathfinding::isLineWalkable(int16 y1, int16 x1, int16 y2, int16 x2) const {
 	uint16 error = 0;
 	int16 curX = x2;
 	int16 curY = y2;
-	uint16 absDx = (uint16)ABS((int)(x2 - x1));
-	uint16 absDy = (uint16)ABS((int)(y2 - y1));
+	const uint16 absDx = (uint16)ABS((int)(x2 - x1));
+	const uint16 absDy = (uint16)ABS((int)(y2 - y1));
 	bool result = true;
 
 	do {
@@ -291,9 +291,9 @@ bool Pathfinding::isLineWalkable(int16 y1, int16 x1, int16 y2, int16 x2) const {
 }
 
 int Pathfinding::euclideanDistance(const Common::Point &a, const Common::Point &b) const {
-	int32 dx = ABS((int)(b.x - a.x));
-	int32 dy = ABS((int)(b.y - a.y));
-	int32 distSq = dx * dx + dy * dy;
+	const int32 dx = ABS((int)(b.x - a.x));
+	const int32 dy = ABS((int)(b.y - a.y));
+	const int32 distSq = dx * dx + dy * dy;
 	int i = 0;
 	while (i < 0x500 && (int32)i * i < distSq) {
 		i++;
@@ -307,9 +307,9 @@ int Pathfinding::walkableDistance(int nodeA, int nodeB) const {
 	if (!isLineWalkable(a.y, a.x, b.y, b.x)) {
 		return 0x500;
 	}
-	int32 dx = ABS((int)(b.x - a.x));
-	int32 dy = ABS((int)(b.y - a.y));
-	int32 distSq = dx * dx + dy * dy;
+	const int32 dx = ABS((int)(b.x - a.x));
+	const int32 dy = ABS((int)(b.y - a.y));
+	const int32 distSq = dx * dx + dy * dy;
 	int result = 0x280;
 	int step = 0x280;
 	do {
@@ -334,9 +334,9 @@ int Pathfinding::computeMinCostToReachable(int nodeIndex, int prevNode, const bo
 		if (!isLineWalkable(nodePos.y, nodePos.x, finalDest.y, finalDest.x)) {
 			result = 0x500;
 		} else {
-			int32 dx = ABS((int)(finalDest.x - nodePos.x));
-			int32 dy = ABS((int)(finalDest.y - nodePos.y));
-			int32 distSq = dx * dx + dy * dy;
+			const int32 dx = ABS((int)(finalDest.x - nodePos.x));
+			const int32 dy = ABS((int)(finalDest.y - nodePos.y));
+			const int32 distSq = dx * dx + dy * dy;
 			int dist = 640;
 			int step = 320;
 			do {
