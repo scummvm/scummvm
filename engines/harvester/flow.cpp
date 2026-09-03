@@ -56,7 +56,7 @@ namespace {
 static const char *const kQuickTipsPath = "ADJHEAD.RCS";
 static const char *const kMenuPath = "MENU.INI";
 static const char *const kMenuSectionName = "menu";
-static const char *const kDemoMenuItems[] = {
+static const char *const kBuiltInMenuItems[] = {
 	"NEW GAME",
 	"SAVE GAME",
 	"LOAD GAME",
@@ -1518,16 +1518,11 @@ bool Flow::loadMenuItems() {
 
 	Common::Array<byte> data;
 	if (!_engine.getResources()->loadFile(kMenuPath, data)) {
-		if (_engine.isDemo()) {
-			for (const char *item : kDemoMenuItems)
-				_menuItems.push_back(item);
-			debugC(1, kDebugGeneral,
-				"Harvester: using %u built-in DOS demo menu items",
-				(uint)_menuItems.size());
-			return true;
-		}
-
-		warning("Harvester: unable to load startup menu '%s'", kMenuPath);
+		for (const char *item : kBuiltInMenuItems)
+			_menuItems.push_back(item);
+		debugC(2, kDebugGeneral,
+			"Harvester: using %u built-in startup menu items because '%s' is unavailable",
+			(uint)_menuItems.size(), kMenuPath);
 		return true;
 	}
 

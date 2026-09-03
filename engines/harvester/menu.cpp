@@ -102,6 +102,18 @@ static const int kOptionsSliderHeight = 0x1e;
 static const int kOptionsItemCount = 7;
 static const int kStartupOptionMaxLevel = 9;
 
+// The first three strings retain the padding from the European executable's
+// fixed-width table so their centered text sits underneath the volume bars.
+static const char *const kEuropeanBuiltInOptionItems[kOptionsItemCount] = {
+	" SOUND FX              ",
+	" MUSIC               ",
+	" GAMMA               ",
+	"TEXT",
+	"GORE",
+	"QUICK TIPS",
+	"PASSWORD"
+};
+
 static const int kQuickTipsOverlayX = 167;
 static const int kQuickTipsOverlayY = 200;
 static const int kQuickTipsHeaderY = 202;
@@ -269,6 +281,16 @@ static void loadMenuDisplayValue(Common::INIFile &menu, const char *key, Common:
 	dest = Common::move(value);
 }
 
+static void applyEuropeanBuiltInMenuText(MenuTextConfig &config) {
+	config.yesLabel = "Yes";
+	config.noLabel = "No";
+	config.clickLabel = "Click";
+	config.newGamePrompt = "START A NEW GAME?";
+	config.quitGamePrompt = " QUIT HARVESTER?";
+	for (uint i = 0; i < config.optionItems.size(); ++i)
+		config.optionItems[i] = kEuropeanBuiltInOptionItems[i];
+}
+
 } // End of anonymous namespace
 
 bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
@@ -295,8 +317,13 @@ bool loadMenuTextConfig(HarvesterEngine &engine, MenuTextConfig &config) {
 		return false;
 
 	Common::Array<byte> data;
-	if (!resources->loadFile(kMenuPath, data))
-		return false;
+	if (!resources->loadFile(kMenuPath, data)) {
+		if (!engine.isDemo())
+			applyEuropeanBuiltInMenuText(config);
+		debugC(2, kDebugGeneral,
+			"Harvester: using built-in menu text because '%s' is unavailable", kMenuPath);
+		return true;
+	}
 
 	Common::MemoryReadStream stream(data.data(), data.size());
 	Common::INIFile menu;
