@@ -36,6 +36,7 @@ namespace Action {
 // - sandwich making: click and drag ingredients onto a plate. Some ingredients
 //   are bad and lead to food poisoning (win condition is checked on exit)
 // - sand castle building: free placement of sand pieces (no win condition)
+// - Nancy 13 burger counter: assemble an order, then ring it up at a hotspot
 class MultiBuildPuzzle : public RenderActionRecord {
 public:
 	MultiBuildPuzzle() : RenderActionRecord(7) {}
@@ -54,6 +55,20 @@ protected:
 	Common::String getRecordTypeName() const override { return "MultiBuildPuzzle"; }
 	bool isValidDrop() const;
 
+	// Nancy 13 stores this in the mustPlace byte; values below kPieceInspect are counts.
+	enum PieceKind {
+		kPieceIngredient	= 0,	// Normal draggable piece
+		kPieceInspect		= 101,	// Opens a closeup, dismissed by the next click
+		kPieceReset			= 102	// Button that clears the whole board
+	};
+
+	// How a piece's placement count is matched against mustPlace.
+	enum PieceCompare {
+		kPlaceExactly		= 0,
+		kDoNotPlace			= 1,
+		kPlaceAtLeast		= 2		// Nancy 13
+	};
+
 	// A single puzzle piece. Each piece is its own RenderObject.
 	// Unplaced: _drawSurface shows srcRect from primary image.
 	// Placed:   _drawSurface shows the rotation sprite (from altSrcRect or srcRect).
@@ -65,9 +80,11 @@ protected:
 		Common::Rect altSrcRect;  // If non-empty: used as source for sprite creation
 		Common::Rect cuSrcRect;   // Source in closeup image
 		Common::Rect placedDstRect; // Nancy 10: placement destination on screen
+		Common::Path imageName;   // Nancy 13: the piece's own closeup image, if any
 		uint8 counterByte = 0;    // Non-zero: respawns on placement; doesn't count toward solve
-		uint8 mustPlace = 0;      // Exact required placement count, checked only when non-zero (0 = no count requirement). 0/1 in Nancy 9; recipe quantities in cake mixing; 0 for all pieces in cake cooking
-		uint8 mustNotPlace = 0;   // Non-zero: placing this fails the solution check
+		uint8 mustPlace = 0;      // Required placement count; 0 = no count requirement
+		uint8 compare = kPlaceExactly; // How placeCount is matched against mustPlace
+		uint8 kind = kPieceIngredient;
 		uint8 placeCount = 0;     // Runtime: number of times this piece (or any clone of it) has been placed
 
 		Common::Rect gameRect;    // Current viewport-space rect
@@ -77,6 +94,7 @@ protected:
 
 		Graphics::ManagedSurface rotateSurfaces[4];
 		bool hasSurface[4] = {};
+		Graphics::ManagedSurface image;
 
 		bool isViewportRelative() const override { return true; }
 	};
@@ -129,6 +147,17 @@ protected:
 	Common::String _solveText;     // Raw fallback used if key missing
 
 	SceneChangeWithFlag _cancelScene;
+
+	// "Enough pieces placed" flag; its own field in Nancy 13, the cancel scene's before.
+	FlagDescription _minCountFlag;
+
+	// Nancy 13: outcome of ringing the order up. The order is always accepted;
+	// its contents are carried by the two flags updateSolveFlags() writes.
+	SceneChangeWithFlag _submitScene;
+	SoundDescription _submitSound;
+	Common::String _submitTextKey;
+	Common::String _submitText;
+
 	Common::Rect _exitHotspot;
 	Common::Rect _exitHotspot2;
 	Common::Rect _targetZone;      // Valid drop area (drawer/plate/...)
@@ -141,6 +170,7 @@ protected:
 	bool _isDragging = false;
 	bool _isSolved = false;
 	bool _isCancelled = false;
+	bool _isSubmitted = false;
 
 	// Event-flag write tracking: the original re-writes the solve flags on every
 	// drop, but re-writing an unchanged flag can re-trigger scene voice lines, so
@@ -149,12 +179,14 @@ protected:
 	int _solveFlagLastValue = -1;     // last value written to the solve-scene flag (-1 = never)
 
 	enum SolveState {
-		kIdle           = 0,
-		kWaitTimer      = 1,
-		kWaitSolveSound = 4,
-		kPlaySolveSound = 5,
-		kAnimStep       = 6, // Blit current frame, advance counters
-		kAnimWaitFrame  = 7  // ~100 ms hold between frames
+		kIdle            = 0,
+		kWaitTimer       = 1,
+		kWaitSolveSound  = 4,
+		kPlaySolveSound  = 5,
+		kAnimStep        = 6, // Blit current frame, advance counters
+		kAnimWaitFrame   = 7, // ~100 ms hold between frames
+		kWaitSubmitSound = 8, // Nancy 13: order rung up, waiting on the bell
+		kResetButtonHeld = 9  // Nancy 13: reset button shown pressed for 200 ms
 	};
 	SolveState _solveState = kIdle;
 	uint32 _timerEnd = 0;
@@ -184,22 +216,27 @@ protected:
 
 	void checkIfSolved();
 	void checkIfSolvedOnExit();
-	// Updates the global cancel/solve event flags from the current placement
-	// state. Returns true on exact match (all placeCounts == mustPlace, no
-	// mustNotPlace pieces placed).
+	// Nancy 13: ring the order up through the first exit hotspot.
+	void submitPuzzle();
+	// Nancy 13: return every piece to its slot and drop the counter clones.
+	void resetPuzzle();
+	// Updates the min-count/solve event flags. Returns true when every piece
+	// satisfies its own placement rule.
 	bool updateSolveFlags();
 	void updatePieceRender(int pieceIdx);
 	static void rotateSurface90CW(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dst);
 	// Clone an existing piece at the end of _pieces (counter-piece respawn).
 	void spawnCounterPiece(int srcIdx);
+	// Move a piece into its closeup position and select it.
+	void openCloseup(int pieceIdx, const Common::Rect &viewportScreen);
 	// Drop is valid if it overhangs the top of a moved piece (sand-castle stacking).
 	bool altZoneSnapValid() const;
-	// Map data cursor id (0..21) to CursorManager::CursorType; out-of-range falls back.
+	// Map a data cursor id to CursorManager::CursorType; out-of-range falls back.
 	CursorManager::CursorType cursorFromDataID(int16 id, CursorManager::CursorType fallback) const;
 	// Tests one exit hotspot and (if hovered) sets its cursor / handles the click.
 	// Returns true when the cursor is inside `hot`, so the caller can skip the
-	// other hotspot.
-	bool checkExitHotspot(const Common::Rect &hot, int16 cursorID, const NancyInput &input);
+	// other hotspot. In Nancy 13 the first hotspot rings the order up.
+	bool checkExitHotspot(const Common::Rect &hot, int16 cursorID, bool isSubmit, const NancyInput &input);
 };
 
 } // End of namespace Action

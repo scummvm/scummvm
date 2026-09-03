@@ -33,6 +33,12 @@
 namespace Nancy {
 namespace Action {
 
+// Nancy 13 stores several flags outside a SceneChangeWithFlag.
+static void readFlag(Common::SeekableReadStream &stream, FlagDescription &flag) {
+	flag.label = stream.readSint16LE();
+	flag.flag = stream.readByte();
+}
+
 void MultiBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_primaryImageName, _primaryImage);
 	_primaryImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -60,22 +66,31 @@ void MultiBuildPuzzle::init() {
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &p = _pieces[i];
 
-		const Common::Rect &spriteSrc = !p.altSrcRect.isEmpty() ? p.altSrcRect : p.srcRect;
+		if (!p.imageName.empty()) {
+			// Nancy 13: the piece brings its own closeup image.
+			g_nancy->_resource->loadImage(p.imageName, p.image);
+			p.image.setTransparentColor(_drawSurface.getTransparentColor());
+		}
 
-		int w = spriteSrc.width();
-		int h = spriteSrc.height();
+		// Fixtures are never dragged, so they get no drag sprites.
+		if (p.kind == kPieceIngredient) {
+			const Common::Rect &spriteSrc = !p.altSrcRect.isEmpty() ? p.altSrcRect : p.srcRect;
 
-		p.rotateSurfaces[0].create(w, h, _primaryImage.format);
-		p.rotateSurfaces[0].setTransparentColor(_primaryImage.getTransparentColor());
-		p.rotateSurfaces[0].blitFrom(_primaryImage, spriteSrc, Common::Point(0, 0));
-		p.hasSurface[0] = true;
+			int w = spriteSrc.width();
+			int h = spriteSrc.height();
 
-		// Rotations 1-3: created if canRotateAll or piece has a valid altSrcRect
-		if (_canRotateAll || !p.altSrcRect.isEmpty()) {
-			for (int r = 1; r < 4; ++r) {
-				rotateSurface90CW(p.rotateSurfaces[r - 1], p.rotateSurfaces[r]);
-				p.rotateSurfaces[r].setTransparentColor(_primaryImage.getTransparentColor());
-				p.hasSurface[r] = true;
+			p.rotateSurfaces[0].create(w, h, _primaryImage.format);
+			p.rotateSurfaces[0].setTransparentColor(_primaryImage.getTransparentColor());
+			p.rotateSurfaces[0].blitFrom(_primaryImage, spriteSrc, Common::Point(0, 0));
+			p.hasSurface[0] = true;
+
+			// Rotations 1-3: created if canRotateAll or piece has a valid altSrcRect
+			if (_canRotateAll || !p.altSrcRect.isEmpty()) {
+				for (int r = 1; r < 4; ++r) {
+					rotateSurface90CW(p.rotateSurfaces[r - 1], p.rotateSurfaces[r]);
+					p.rotateSurfaces[r].setTransparentColor(_primaryImage.getTransparentColor());
+					p.hasSurface[r] = true;
+				}
 			}
 		}
 
@@ -105,6 +120,7 @@ void MultiBuildPuzzle::registerGraphics() {
 
 void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
 
 	readFilename(stream, _primaryImageName);
 
@@ -144,39 +160,53 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 			_animLayout[i] = stream.readSint16LE();
 	}
 
-	// Pieces: data file always has 20 × 67-byte slots; only _numPieces are used.
+	// Pieces: the data file always has 20 slots; only _numPieces are used.
 	// Reserve up-front so counter-spawn push_back doesn't reallocate (pieces are
 	// RenderObjects already registered with the graphics manager).
-	// In Nancy 10, the pieces have been bumped up to 83.
+	// Slot size: 67 bytes in Nancy 9, 83 in Nancy 10, 116 in Nancy 13.
+	const uint pieceSize = isNancy13 ? 116 : (isNancy10 ? 83 : 67);
 	_pieces.reserve(80);
 	_pieces.resize(_numPieces);
 	for (uint i = 0; i < 20; ++i) {
-		if (i < _numPieces) {
-			Piece &p = _pieces[i];
-			if (isNancy10) {
-				// Same rect order as Nancy 9, with placedDstRect appended.
-				// srcRect is empty when the unplaced piece is baked into the
-				// scene overlay (cake mixing) and non-empty when it must be
-				// rendered live at rest (plant potting).
-				readRect(stream, p.srcRect);
-				readRect(stream, p.homeRect);
-				readRect(stream, p.altSrcRect);
-				readRect(stream, p.cuSrcRect);
-				readRect(stream, p.placedDstRect);
-				p.counterByte  = stream.readByte();
-				p.mustPlace    = stream.readByte();
-				p.mustNotPlace = stream.readByte();
-			} else {
-				readRect(stream, p.srcRect);
-				readRect(stream, p.homeRect);
-				readRect(stream, p.altSrcRect);
-				readRect(stream, p.cuSrcRect);
-				p.counterByte  = stream.readByte();
-				p.mustPlace    = stream.readByte();
-				p.mustNotPlace = stream.readByte();
+		if (i >= _numPieces) {
+			stream.skip(pieceSize);
+			continue;
+		}
+
+		Piece &p = _pieces[i];
+		// srcRect is empty when the unplaced piece is baked into the scene
+		// overlay (cake mixing) and non-empty when it must be rendered live at
+		// rest (plant potting).
+		readRect(stream, p.srcRect);
+		readRect(stream, p.homeRect);
+		readRect(stream, p.altSrcRect);
+		readRect(stream, p.cuSrcRect);
+
+		if (isNancy10) {
+			readRect(stream, p.placedDstRect);
+		}
+
+		if (isNancy13) {
+			Common::String pieceImage;
+			readFilename(stream, pieceImage);
+			if (pieceImage != "NO_FILE" && !pieceImage.empty())
+				p.imageName = Common::Path(pieceImage);
+		}
+
+		p.counterByte = stream.readByte();
+		p.mustPlace = stream.readByte();
+
+		if (isNancy13) {
+			// The count byte doubles as a piece kind; fixtures take no
+			// part in the recipe check.
+			if (p.mustPlace >= kPieceInspect) {
+				p.kind = p.mustPlace;
+				p.mustPlace = 0;
 			}
+			p.compare = stream.readByte();
 		} else {
-			stream.skip(isNancy10 ? 83 : 67);
+			// Older games only distinguish "must be placed" from "must not be".
+			p.compare = stream.readByte() != 0 ? kDoNotPlace : kPlaceExactly;
 		}
 	}
 
@@ -195,6 +225,44 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 		assembleTextLine(missedBuf, _missedText, 200);
 	}
 
+	char textBuf[200];
+
+	if (isNancy13) {
+		// Flags now precede their scene, the exit cursors sit next to their
+		// hotspots, and the submit scene/sound/caption are new.
+		_dragCursorID = stream.readSint16LE();
+
+		readFlag(stream, _minCountFlag);
+		_solveScene._sceneChange.readData(stream);
+		stream.skip(2); // shouldStopRendering
+
+		_solveSound.readNormal(stream);
+		readFilename(stream, _solveTextKey);
+		stream.read(textBuf, 200);
+		assembleTextLine(textBuf, _solveText, 200);
+
+		readFlag(stream, _solveScene._flag);
+		_submitScene._sceneChange.readData(stream);
+		stream.skip(2);
+
+		_submitSound.readNormal(stream);
+		readFilename(stream, _submitTextKey);
+		stream.read(textBuf, 200);
+		assembleTextLine(textBuf, _submitText, 200);
+
+		readRect(stream, _exitHotspot);
+		_exitCursorID1 = stream.readSint16LE();
+		readFlag(stream, _submitScene._flag);
+
+		_cancelScene._sceneChange.readData(stream);
+		stream.skip(2);
+
+		readRect(stream, _exitHotspot2);
+		_exitCursorID2 = stream.readSint16LE();
+		readFlag(stream, _cancelScene._flag);
+		return;
+	}
+
 	_dragCursorID  = stream.readSint16LE();
 	_exitCursorID1 = stream.readSint16LE();
 	_exitCursorID2 = stream.readSint16LE();
@@ -203,7 +271,6 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveSound.readNormal(stream);
 
 	readFilename(stream, _solveTextKey);
-	char textBuf[200];
 	stream.read(textBuf, 200);
 	assembleTextLine(textBuf, _solveText, 200);
 
@@ -211,6 +278,8 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRect(stream, _exitHotspot);
 	readRect(stream, _exitHotspot2);
+
+	_minCountFlag = _cancelScene._flag;
 }
 
 void MultiBuildPuzzle::execute() {
@@ -223,6 +292,7 @@ void MultiBuildPuzzle::execute() {
 		g_nancy->_sound->loadSound(_dropSound);
 		g_nancy->_sound->loadSound(_solveSound);
 		g_nancy->_sound->loadSound(_missedSound);
+		g_nancy->_sound->loadSound(_submitSound);
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -246,6 +316,21 @@ void MultiBuildPuzzle::execute() {
 			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
+			}
+			break;
+
+		case kWaitSubmitSound:
+			if (!g_nancy->_sound->isSoundPlaying(_submitSound)) {
+				g_nancy->_sound->stopSound(_submitSound);
+				_state = kActionTrigger;
+			}
+			break;
+
+		case kResetButtonHeld:
+			// The button shows its pressed sprite briefly, then clears the board.
+			if (g_system->getMillis() >= _timerEnd) {
+				_solveState = kIdle;
+				resetPuzzle();
 			}
 			break;
 
@@ -307,7 +392,11 @@ void MultiBuildPuzzle::execute() {
 		g_nancy->_sound->stopSound(_dropSound);
 		g_nancy->_sound->stopSound(_solveSound);
 		g_nancy->_sound->stopSound(_missedSound);
-		if (_isCancelled) {
+		g_nancy->_sound->stopSound(_submitSound);
+		if (_isSubmitted) {
+			NancySceneState.setEventFlag(_submitScene._flag);
+			NancySceneState.changeScene(_submitScene._sceneChange);
+		} else if (_isCancelled) {
 			NancySceneState.changeScene(_cancelScene._sceneChange);
 			// Cancel flag is only set if at least one piece was placed (or
 			// spawned). For sandwich (all counter pieces) the spawn delta is
@@ -332,7 +421,10 @@ void MultiBuildPuzzle::execute() {
 }
 
 CursorManager::CursorType MultiBuildPuzzle::cursorFromDataID(int16 id, CursorManager::CursorType fallback) const {
-	if (id < 0 || id > 21)
+	// Nancy 13 ids reach past the older games' cursor range.
+	const int16 maxID = g_nancy->getGameType() >= kGameTypeNancy13
+		? (int16)g_nancy->getStaticData().numCursorTypes - 1 : 21;
+	if (id < 0 || id > maxID)
 		return fallback;
 	return (CursorManager::CursorType)id;
 }
@@ -383,9 +475,11 @@ void MultiBuildPuzzle::spawnCounterPiece(int srcIdx) {
 	np.homeRect     = src.homeRect;
 	np.altSrcRect   = src.altSrcRect;
 	np.cuSrcRect    = src.cuSrcRect;
+	np.placedDstRect = src.placedDstRect;
 	np.counterByte  = src.counterByte;
 	np.mustPlace    = src.mustPlace;
-	np.mustNotPlace = src.mustNotPlace;
+	np.compare      = src.compare;
+	np.kind         = src.kind;
 	np.typeIdx      = sharedType;
 	np.curRotation  = 0;
 	np.gameRect     = np.homeRect;
@@ -477,7 +571,7 @@ bool MultiBuildPuzzle::isValidDrop() const {
 }
 
 void MultiBuildPuzzle::handleInput(NancyInput &input) {
-	if (_state != kRun || _solveState != kIdle || _isSolved || _isCancelled)
+	if (_state != kRun || _solveState != kIdle || _isSolved || _isCancelled || _isSubmitted)
 		return;
 
 	const VIEW *viewData = GetEngineData(VIEW);
@@ -489,8 +583,8 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	// reachable while an ingredient closeup is showing, so the player can back
 	// away at the bottom of the screen to cancel adding it.
 	if (!_isDragging && !vpScreen.contains(input.mousePos)) {
-		if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
-			checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+		if (!checkExitHotspot(_exitHotspot, _exitCursorID1, true, input))
+			checkExitHotspot(_exitHotspot2, _exitCursorID2, false, input);
 		return;
 	}
 
@@ -577,8 +671,12 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 
 			updatePieceRender(placedIdx);
 
-			if (_autoSolveOnDrop || _pieces.size() > 79)
+			if (g_nancy->getGameType() >= kGameTypeNancy13 && _pieces.size() > 79) {
+				// Safety valve: the piece array is full, so hand the order over.
+				submitPuzzle();
+			} else if (_autoSolveOnDrop || _pieces.size() > 79) {
 				checkIfSolved();
+			}
 
 			if (validDrop && _hasAnimImage && _solveState != kAnimStep &&
 					_solveState != kAnimWaitFrame) {
@@ -602,12 +700,21 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		// drag. Anywhere else the exit hotspots stay live, so the player can back
 		// away at the bottom of the screen to cancel adding the ingredient.
 		if (!pp.gameRect.contains(mouseVP)) {
-			if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
-				checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+			if (!checkExitHotspot(_exitHotspot, _exitCursorID1, true, input))
+				checkExitHotspot(_exitHotspot2, _exitCursorID2, false, input);
 			return;
 		}
 
 		g_nancy->_cursor->setCursorType(dragCursor, true);
+
+		if ((input.input & NancyInput::kLeftMouseButtonUp) && pp.kind != kPieceIngredient) {
+			// Fixtures are only there to be looked at; clicking puts them away.
+			int sel = _selectedPiece;
+			_selectedPiece = -1;
+			pp.gameRect = pp.homeRect;
+			updatePieceRender(sel);
+			return;
+		}
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			int sel = _selectedPiece;
@@ -685,28 +792,14 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			pp.setZOrder((uint16)(_z + (int)_pieces.size() * 2));
 			pp.registerGraphics();
 
-			if (_hasCloseupImage && !pp.cuSrcRect.isEmpty()) {
-				// First click shows the closeup view. When the piece carries a
-				// fixed closeup destination (cake mixing), the closeup appears at
-				// that absolute, screen-centred position; otherwise it is centred
-				// on the piece (plant potting).
-				_selectedPiece = topmost;
-				const int cuW = pp.cuSrcRect.width();
-				const int cuH = pp.cuSrcRect.height();
-				int cuLeft;
-				int cuTop;
-				if (!pp.placedDstRect.isEmpty()) {
-					cuLeft = pp.placedDstRect.left;
-					cuTop  = pp.placedDstRect.top;
-				} else {
-					const int pieceW = pp.rotateSurfaces[pp.curRotation].w;
-					const int pieceH = pp.rotateSurfaces[pp.curRotation].h;
-					cuLeft = pp.gameRect.left + pieceW / 2 - cuW / 2;
-					cuTop  = pp.gameRect.top  + pieceH / 2 - cuH / 2;
-					cuLeft = CLIP<int>(cuLeft, 0, MAX(0, vpScreen.width()  - cuW));
-					cuTop  = CLIP<int>(cuTop,  0, MAX(0, vpScreen.height() - cuH));
+			if ((_hasCloseupImage || !pp.image.empty()) && !pp.cuSrcRect.isEmpty()) {
+				// First click shows the closeup view.
+				openCloseup(topmost, vpScreen);
+				if (pp.kind == kPieceReset) {
+					// The reset button clears the board on its own.
+					_solveState = kResetButtonHeld;
+					_timerEnd = g_system->getMillis() + 200;
 				}
-				pp.gameRect = Common::Rect(cuLeft, cuTop, cuLeft + cuW, cuTop + cuH);
 			} else {
 				// Direct drag on first click.
 				_isDragging = true;
@@ -721,19 +814,48 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Exit hotspots: a click in either fires the exit path. Each uses its own data cursor id.
-	if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
-		checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+	if (!checkExitHotspot(_exitHotspot, _exitCursorID1, true, input))
+		checkExitHotspot(_exitHotspot2, _exitCursorID2, false, input);
 }
 
-bool MultiBuildPuzzle::checkExitHotspot(const Common::Rect &hot, int16 cursorID, const NancyInput &input) {
+void MultiBuildPuzzle::openCloseup(int pieceIdx, const Common::Rect &viewportScreen) {
+	// A piece with a fixed closeup destination uses it (cake mixing, all of
+	// Nancy 13); otherwise the closeup is centred on the piece (plant potting).
+	Piece &p = _pieces[pieceIdx];
+	_selectedPiece = (int16)pieceIdx;
+
+	const int cuW = p.cuSrcRect.width();
+	const int cuH = p.cuSrcRect.height();
+	int cuLeft;
+	int cuTop;
+	if (!p.placedDstRect.isEmpty()) {
+		cuLeft = p.placedDstRect.left;
+		cuTop  = p.placedDstRect.top;
+	} else {
+		const int pieceW = p.rotateSurfaces[p.curRotation].w;
+		const int pieceH = p.rotateSurfaces[p.curRotation].h;
+		cuLeft = p.gameRect.left + pieceW / 2 - cuW / 2;
+		cuTop  = p.gameRect.top  + pieceH / 2 - cuH / 2;
+		cuLeft = CLIP<int>(cuLeft, 0, MAX(0, viewportScreen.width()  - cuW));
+		cuTop  = CLIP<int>(cuTop,  0, MAX(0, viewportScreen.height() - cuH));
+	}
+	p.gameRect = Common::Rect(cuLeft, cuTop, cuLeft + cuW, cuTop + cuH);
+}
+
+bool MultiBuildPuzzle::checkExitHotspot(const Common::Rect &hot, int16 cursorID, bool isSubmit, const NancyInput &input) {
 	if (hot.isEmpty())
 		return false;
 	Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(hot);
 	if (!exitScreen.contains(input.mousePos))
 		return false;
-	g_nancy->_cursor->setCursorType(cursorFromDataID(cursorID, g_nancy->_cursor->_puzzleExitCursor));
-	if (input.input & NancyInput::kLeftMouseButtonUp)
-		checkIfSolvedOnExit();
+	g_nancy->_cursor->setCursorType(cursorFromDataID(cursorID, g_nancy->_cursor->_puzzleExitCursor),
+		g_nancy->getGameType() >= kGameTypeNancy13);
+	if (input.input & NancyInput::kLeftMouseButtonUp) {
+		if (isSubmit && g_nancy->getGameType() >= kGameTypeNancy13)
+			submitPuzzle();
+		else
+			checkIfSolvedOnExit();
+	}
 	return true;
 }
 
@@ -744,6 +866,39 @@ void MultiBuildPuzzle::checkIfSolvedOnExit() {
 		_isCancelled = true;
 		_state = kActionTrigger;
 	}
+}
+
+void MultiBuildPuzzle::submitPuzzle() {
+	// The order is handed over as-is; the two flags say what was in it.
+	updateSolveFlags();
+	_isSubmitted = true;
+	g_nancy->_sound->playSound(_submitSound);
+	showSubtitle(resolveSubtitleText(_submitTextKey, _submitText, "CONVO"));
+	_solveState = kWaitSubmitSound;
+}
+
+void MultiBuildPuzzle::resetPuzzle() {
+	// Counter clones live past _numPieces; dropping them deregisters their
+	// render objects.
+	if (_pieces.size() > _numPieces)
+		_pieces.resize(_numPieces);
+
+	_selectedPiece = -1;
+	_pickedUpPiece = -1;
+	_isDragging = false;
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		Piece &p = _pieces[i];
+		p.placeCount = 0;
+		p.isPlaced = false;
+		p.curRotation = 0;
+		p.gameRect = p.homeRect;
+		updatePieceRender(i);
+	}
+
+	// The flags are rewritten on the next board change.
+	_minCountFlagLastValue = -1;
+	_solveFlagLastValue = -1;
 }
 
 bool MultiBuildPuzzle::updateSolveFlags() {
@@ -759,13 +914,13 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	// Below the threshold, Nancy 10 leaves it latched (so backing away from the
 	// counter and stepping back up keeps BAKE available), while Nancy 11+ clears
 	// it. Written only on a value change (see member comment).
-	if (_cancelScene._flag.label != kFlagNoLabel) {
+	if (_minCountFlag.label != kFlagNoLabel) {
 		const bool enough = total >= _requiredPieces;
 		if (enough || g_nancy->getGameType() >= kGameTypeNancy11) {
-			byte want = enough ? _cancelScene._flag.flag
-				: (_cancelScene._flag.flag == g_nancy->_false ? g_nancy->_true : g_nancy->_false);
+			byte want = enough ? _minCountFlag.flag
+				: (_minCountFlag.flag == g_nancy->_false ? g_nancy->_true : g_nancy->_false);
 			if ((int)want != _minCountFlagLastValue) {
-				NancySceneState.setEventFlag(_cancelScene._flag.label, want);
+				NancySceneState.setEventFlag(_minCountFlag.label, want);
 				_minCountFlagLastValue = want;
 			}
 		}
@@ -778,17 +933,21 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	// every ingredient count matches; only then is it raised to its true value.
 	bool exact = true;
 	for (uint i = 0; i < _numPieces; ++i) {
-		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0) {
+		const Piece &p = _pieces[i];
+		if (p.placeCount > 0 && p.compare == kDoNotPlace) {
 			exact = false;
 			break;
 		}
-		// mustPlace is an exact required count only when non-zero. A zero
-		// mustPlace means the piece has no count requirement (e.g. cake
-		// cooking, where the win rule is just "place enough good ingredients
-		// and no bad ones"); placing it must not fail the check.
-		if (_pieces[i].mustPlace > 0 && _pieces[i].placeCount != _pieces[i].mustPlace) {
-			exact = false;
-			break;
+		// A zero mustPlace means no count requirement (cake cooking).
+		if (p.mustPlace > 0) {
+			if (p.compare == kPlaceExactly && p.placeCount != p.mustPlace) {
+				exact = false;
+				break;
+			}
+			if (p.compare == kPlaceAtLeast && p.placeCount < p.mustPlace) {
+				exact = false;
+				break;
+			}
 		}
 	}
 
@@ -826,7 +985,7 @@ void MultiBuildPuzzle::checkIfSolved() {
 			return;
 
 		for (uint i = 0; i < _numPieces; ++i) {
-			if (_pieces[i].isPlaced && _pieces[i].mustNotPlace)
+			if (_pieces[i].isPlaced && _pieces[i].compare == kDoNotPlace)
 				return;
 			if (!_pieces[i].isPlaced && _pieces[i].mustPlace)
 				return;
@@ -889,13 +1048,14 @@ void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {
 			p._drawSurface.setTransparentColor(p.rotateSurfaces[rot].getTransparentColor());
 			p._drawSurface.blitFrom(p.rotateSurfaces[rot], Common::Point(0, 0));
 		}
-	} else if (isSelected && _hasCloseupImage && !p.cuSrcRect.isEmpty()) {
-		// Zoomed closeup.
+	} else if (isSelected && (_hasCloseupImage || !p.image.empty()) && !p.cuSrcRect.isEmpty()) {
+		// Zoomed closeup, drawn from the piece's own image when it has one.
+		const Graphics::ManagedSurface &source = p.image.empty() ? _closeupImage : p.image;
 		int w = p.cuSrcRect.width();
 		int h = p.cuSrcRect.height();
-		p._drawSurface.create(w, h, _closeupImage.format);
-		p._drawSurface.setTransparentColor(_closeupImage.getTransparentColor());
-		p._drawSurface.blitFrom(_closeupImage, p.cuSrcRect, Common::Point(0, 0));
+		p._drawSurface.create(w, h, source.format);
+		p._drawSurface.setTransparentColor(source.getTransparentColor());
+		p._drawSurface.blitFrom(source, p.cuSrcRect, Common::Point(0, 0));
 	} else {
 		// At rest on the shelf: show srcRect from primary image.
 		int w = p.srcRect.width();
