@@ -499,6 +499,23 @@ void HollywoodEngine::normalizeLoadedGameState() {
 			state.inventoryFirstVisibleSlotByOwner[owner] = GameplayState::kInventoryFirstSlot;
 	}
 
+	const int loadedScene = gameplaySceneNumberForState(state.mainFlowStateId);
+	// Older saves could leave this false when the greeting was skipped mid-sequence.
+	if (!state.seenJosephGuestListGreeting &&
+			((loadedScene >= 7040 && loadedScene <= 7100) ||
+			state.frankensteinNoteOverlayMode != 0 ||
+			state.officeStatueActionProgress != 0 ||
+			state.officeNotePickupState != 0 ||
+			state.openedOfficeClosetDoor ||
+			state.spokenToCloakroomAttendant ||
+			state.spokenToBruno ||
+			state.activatedLabExitMachine ||
+			state.seenGramophoneRoomIntro ||
+			state.seenHannoverOfficeIntro ||
+			state.seenHannoverBedroomIntro)) {
+		state.seenJosephGuestListGreeting = true;
+	}
+
 	if (state.humeroBarrierState == 0)
 		state.humeroBarrierState = 1;
 	if (state.punchBowlGlassPatchState > 2)

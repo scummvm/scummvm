@@ -260,17 +260,15 @@ void Scene7010::runCustomEntrySequence() {
 	if (returnEntry) {
 		runSueEntryPath(kScene7010SueReturnStartX, kScene7010SueReturnStartY,
 			kScene7010SueReturnTargetX, kScene7010SueReturnTargetY);
-		_sceneStateFlags[0] = 1;
 		return;
 	}
 
 	runSueEntryPath(kScene7010SueEntryStartX, kScene7010SueEntryStartY,
 		kScene7010SueEntryTargetX, kScene7010SueEntryTargetY);
-	if (_skipRequested || Engine::shouldQuit())
+	if (_skipRequested || Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
 	runJuniorSpeech();
-	_sceneStateFlags[0] = 1;
 }
 
 void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY) {
@@ -359,6 +357,7 @@ void Scene7010::runJuniorSpeech() {
 }
 
 void Scene7010::prepareCustomGameplayLoop() {
+	_sceneStateFlags[0] = 1;
 	if (_vm->gameState().mainFlowStateId == kScene7010ReturnState) {
 		_activeActorWorldX = kScene7010SueReturnTargetX;
 		_activeActorWorldY = kScene7010SueReturnTargetY;

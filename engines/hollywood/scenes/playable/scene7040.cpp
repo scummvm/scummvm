@@ -257,8 +257,10 @@ void Scene7040::runCustomEntrySequence() {
 		kScene7040Entry7040RepeatTargetY : kScene7040Entry7040FirstTargetY;
 	runEntryPath(kScene7040Entry7040StartX, kScene7040Entry7040StartY,
 		kScene7040Entry7040Facing, targetX, targetY);
-	if (!seenJosephGuestListGreeting && !shouldAbortJosephGuestListGreeting())
+	if (!seenJosephGuestListGreeting && !shouldAbortJosephGuestListGreeting()) {
+		state.seenJosephGuestListGreeting = true;
 		runJosephGuestListGreeting();
+	}
 }
 
 void Scene7040::runJosephGuestListGreeting() {
@@ -284,7 +286,6 @@ void Scene7040::runJosephGuestListGreeting() {
 	if (shouldAbortJosephGuestListGreeting())
 		return;
 	_preItemIdleAnimation.reset();
-	_vm->gameState().seenJosephGuestListGreeting = true;
 }
 
 void Scene7040::waitPreItemIdleSequence() {
