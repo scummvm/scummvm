@@ -507,6 +507,7 @@ protected:
 
 	// Viewport
 	void resetViewportFromScene();
+	void centerViewportOnActor(int actorWorldX);
 	void advanceViewportScroll(uint32 delta);
 
 	// Speech overlays
