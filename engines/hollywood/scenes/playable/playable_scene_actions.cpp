@@ -35,10 +35,26 @@ const byte kActionInvalidCel = 0xff;
 
 void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
-	if (isRealtimeSecondarySpeechActive())
-		stopRealtimeSpeech();
-	_vm->cursor()->leaveInteractiveMode();
+	if (gameplayActionInputBlocked())
+		return;
+
 	processSceneActionClick(state);
+}
+
+void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
+	_skipRequested = false;
+	if (gameplayActionInputBlocked())
+		return;
+
+	_lastInventoryActionItemId = state.resolvedItem;
+	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
+	_vm->cursor()->leaveInteractiveMode();
+	if (_playerDirectedActorPathActive) {
+		cancelConcurrentActorPath();
+		_activeActorCel = 0;
+	}
+	if (!dispatchGenericInventoryAction(state))
+		dispatchSceneAction(state.inventoryActionHandlerId);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
@@ -46,15 +62,22 @@ void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 	}
 }
 
-void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
-	_skipRequested = false;
-	if (isRealtimeSecondarySpeechActive())
-		stopRealtimeSpeech();
-	_lastInventoryActionItemId = state.resolvedItem;
-	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
+bool PlayableScene::gameplayActionInputBlocked() const {
+	return isRealtimeSpeechActive() || _speechOverlay.visible ||
+		_primarySpeechOverlay.visible || _actionOverlayPlayer.isVisible() ||
+		_hideActiveActor || (_actorPathPlaybackActive && !_playerDirectedActorPathActive);
+}
+
+void PlayableScene::runGameplayAction(uint16 handlerId) {
+	if (handlerId == 0)
+		return;
+
+	if (_playerDirectedActorPathActive) {
+		cancelConcurrentActorPath();
+		_activeActorCel = 0;
+	}
 	_vm->cursor()->leaveInteractiveMode();
-	if (!dispatchGenericInventoryAction(state))
-		dispatchSceneAction(state.inventoryActionHandlerId);
+	dispatchSceneAction(handlerId);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
@@ -92,7 +115,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 		debugC(1, kDebugPath, "%s path target adjusted: raw=(%u,%u) adjusted=(%d,%d) adjustedRegion=%u adjustedWalk=%u",
 			sceneDebugName(), state.sceneX, state.sceneY, targetX, targetY,
 			paletteRegionAt(targetX, targetY), walkableMaskAt(targetX, targetY));
-		walkActiveActorTo(targetX, targetY, kActionInvalidFacing, 0, true);
+		startPlayerDirectedActorPath(targetX, targetY, kActionInvalidFacing, 0, 0);
 		return;
 	}
 
@@ -101,7 +124,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 		return;
 	_lastSceneActionItemId = itemId;
 	if (!shouldPlayGameplayClickPath()) {
-		dispatchSceneAction(actionRecord.actionHandlerId);
+		runGameplayAction(actionRecord.actionHandlerId);
 		return;
 	}
 
@@ -132,9 +155,9 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	if (actionRecord.movementMode != 3)
 		finalCel = 0;
 
-	if (!walkActiveActorTo(targetX, targetY, finalFacing, finalCel, true))
-		return;
-	dispatchSceneAction(actionRecord.actionHandlerId);
+	if (!startPlayerDirectedActorPath(targetX, targetY, finalFacing, finalCel,
+			actionRecord.actionHandlerId))
+		runGameplayAction(actionRecord.actionHandlerId);
 }
 
 void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId) {
@@ -149,7 +172,7 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 	_lastInventoryActionItemId = 0;
 	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
 	if (!shouldPlayGameplayClickPath()) {
-		dispatchSceneAction(actionRecord.actionHandlerId);
+		runGameplayAction(actionRecord.actionHandlerId);
 		return;
 	}
 
@@ -175,9 +198,9 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 		}
 	}
 
-	if (!walkActiveActorTo(targetX, targetY, finalFacing, 0, true))
-		return;
-	dispatchSceneAction(actionRecord.actionHandlerId);
+	if (!startPlayerDirectedActorPath(targetX, targetY, finalFacing, 0,
+			actionRecord.actionHandlerId))
+		runGameplayAction(actionRecord.actionHandlerId);
 }
 
 bool PlayableScene::dispatchGenericInventoryAction(const GameplayLoopCursorState &state) {

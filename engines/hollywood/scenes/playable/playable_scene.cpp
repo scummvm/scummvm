@@ -192,6 +192,9 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_concurrentActorPathFrameIndex(0),
 		_concurrentActorPathActive(false),
 		_actorPathPlaybackActive(false),
+		_playerDirectedActorPathActive(false),
+		_playerDirectedActorPathFootstepPlayed(false),
+		_pendingGameplayActionHandlerId(0),
 		_activeActorWorldX(config.defaultActorPose.x),
 		_activeActorWorldY(config.defaultActorPose.y),
 		_activeActorFacing(config.defaultActorPose.facing),
@@ -2301,6 +2304,9 @@ bool PlayableScene::runSueTapeSpeechLine(InventoryMediaPlayer &media, uint16 row
 
 void PlayableScene::startConcurrentActorPath(int targetX, int targetY, byte finalFacing,
 		byte finalCel, uint32 frameMillis, bool snapToTargetIfNoPath) {
+	_playerDirectedActorPathActive = false;
+	_playerDirectedActorPathFootstepPlayed = false;
+	_pendingGameplayActionHandlerId = 0;
 	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY,
 		targetX, targetY, finalFacing, finalCel);
 	_concurrentActorPathFrameIndex = 1;
@@ -2320,6 +2326,18 @@ void PlayableScene::startConcurrentActorPath(int targetX, int targetY, byte fina
 	}
 }
 
+bool PlayableScene::startPlayerDirectedActorPath(int targetX, int targetY,
+		byte finalFacing, byte finalCel, uint16 actionHandlerId) {
+	startConcurrentActorPath(targetX, targetY, finalFacing, finalCel,
+		kActorPathFrameMillis);
+	if (!_concurrentActorPathActive)
+		return false;
+
+	_playerDirectedActorPathActive = true;
+	_pendingGameplayActionHandlerId = actionHandlerId;
+	return true;
+}
+
 void PlayableScene::advanceConcurrentActorPath(uint32 delta) {
 	if (!_concurrentActorPathActive)
 		return;
@@ -2333,10 +2351,17 @@ void PlayableScene::advanceConcurrentActorPath(uint32 delta) {
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
+		if (_playerDirectedActorPathActive) {
+			const bool terminalFrame = _concurrentActorPathFrameIndex >= _actorPathFrames.size();
+			handleActorPathFootstep(terminalFrame, _playerDirectedActorPathFootstepPlayed);
+		}
 	}
 	if (_concurrentActorPathFrameIndex >= _actorPathFrames.size()) {
-		_concurrentActorPathActive = false;
-		_actorPathPlaybackActive = false;
+		const uint16 actionHandlerId = _playerDirectedActorPathActive ?
+			_pendingGameplayActionHandlerId : 0;
+		cancelConcurrentActorPath();
+		if (actionHandlerId != 0)
+			runGameplayAction(actionHandlerId);
 	}
 }
 
@@ -2357,8 +2382,7 @@ void PlayableScene::finishConcurrentActorPath(bool allowSkip) {
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
 	}
-	_concurrentActorPathActive = false;
-	_actorPathPlaybackActive = false;
+	cancelConcurrentActorPath();
 	if (interrupted && !animationPlaybackShouldStop())
 		consumeStepAdvanceRequest();
 }
@@ -2368,6 +2392,9 @@ void PlayableScene::cancelConcurrentActorPath() {
 	_concurrentActorPathFrameIndex = 0;
 	_concurrentActorPathActive = false;
 	_actorPathPlaybackActive = false;
+	_playerDirectedActorPathActive = false;
+	_playerDirectedActorPathFootstepPlayed = false;
+	_pendingGameplayActionHandlerId = 0;
 }
 
 bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {
