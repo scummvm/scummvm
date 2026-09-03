@@ -153,6 +153,20 @@ static const byte kTextColorHover = 251;
 static const byte kShadowColor = 0;
 static const byte kTransparentPaletteIndex = 0;
 
+static bool isDialogueVoiceInterruptEvent(const Common::Event &event) {
+	return event.type == Common::EVENT_LBUTTONDOWN ||
+		event.type == Common::EVENT_RBUTTONDOWN ||
+		(event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE);
+}
+
+static bool isDialoguePointerPressEvent(const Common::Event &event) {
+	return event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN;
+}
+
+static bool isDialogueContinueEvent(const Common::Event &event) {
+	return isDialoguePointerPressEvent(event) || event.type == Common::EVENT_KEYDOWN;
+}
+
 static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &state) {
 	syncDialogueBool(s, state.boyleGascanApplicationState);
 	syncDialogueBool(s, state.dialogueStateD2e98);
@@ -523,8 +537,9 @@ public:
 			int headVariant) override {
 		setActiveSpeakerPortrait(speakerId, headVariant);
 
+		const StartupDialogueTextMode textMode = _script->getDialogueTextMode();
 		Common::String subtitleText;
-		const bool textEnabled = _script->getDialogueTextMode() != kStartupDialogueTextNone &&
+		const bool textEnabled = textMode != kStartupDialogueTextNone &&
 			_text->resolveDialogueSubtitle(wavId, subtitleText);
 		Common::Array<Common::String> subtitleLines;
 		const IndexedBitmap *textboxBitmap = nullptr;
@@ -537,8 +552,8 @@ public:
 		const Common::String voicePath = buildDialogueVoicePath(*_script, wavId);
 		const bool voiceStarted = !voicePath.empty() && _engine.playSpeech(voicePath);
 		debugC(2, kDebugDialogue,
-			"Harvester: dialogue line wav=0x%x speaker='%s' headVariant=%d voice='%s' subtitle='%s'",
-			wavId, speakerId.c_str(), headVariant, voicePath.c_str(),
+			"Harvester: dialogue line wav=0x%x speaker='%s' headVariant=%d voice='%s' textMode=%d subtitle='%s'",
+			wavId, speakerId.c_str(), headVariant, voicePath.c_str(), (int)textMode,
 			textEnabled ? subtitleText.c_str() : "");
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError) {
@@ -546,7 +561,8 @@ public:
 			return releaseError;
 		}
 
-		bool interrupted = false;
+		bool voiceInterrupted = false;
+		bool pointerInterrupted = false;
 		Graphics::FrameLimiter limiter(g_system, 60);
 		for (;;) {
 			drawDialogueOverlay(textboxBitmap, textEnabled ? &subtitleLines : nullptr, nullptr, -1, false, nullptr);
@@ -559,27 +575,16 @@ public:
 					return result;
 				}
 
-				switch (event.type) {
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-					interrupted = true;
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-							event.kbd.keycode == Common::KEYCODE_RETURN ||
-							event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-							event.kbd.keycode == Common::KEYCODE_SPACE) {
-						interrupted = true;
-					}
-					break;
-				default:
-					break;
+				if (isDialogueVoiceInterruptEvent(event)) {
+					voiceInterrupted = true;
+					if (isDialoguePointerPressEvent(event))
+						pointerInterrupted = true;
 				}
 			}
 
 			if (_entityManager)
 				(void)_entityManager->syncCursorEntityPosition(_mousePos);
-			if (interrupted || (!voiceStarted || !_engine.isSpeechPlaying()))
+			if (voiceInterrupted || (!voiceStarted || !_engine.isSpeechPlaying()))
 				break;
 
 			limiter.delayBeforeSwap();
@@ -587,14 +592,15 @@ public:
 		}
 
 		_engine.stopSpeech();
-		if (interrupted) {
+		if (pointerInterrupted) {
 			Common::Error releaseResult = waitForPointerRelease();
 			if (releaseResult.getCode() != Common::kNoError)
 				return releaseResult;
-		} else if (textEnabled && _script->getDialogueTextMode() == kStartupDialogueTextClick) {
+		} else if (textMode == kStartupDialogueTextClick) {
 			Graphics::FrameLimiter clickLimiter(g_system, 60);
 			for (;;) {
-				drawDialogueOverlay(textboxBitmap, &subtitleLines, nullptr, -1, false, nullptr);
+				drawDialogueOverlay(textboxBitmap, textEnabled ? &subtitleLines : nullptr,
+					nullptr, -1, false, nullptr);
 
 				bool continuePressed = false;
 				Common::Event event;
@@ -603,22 +609,8 @@ public:
 					if (DialogueFlowAccess::handleSystemEvent(_flow, event, result))
 						return result;
 
-					switch (event.type) {
-					case Common::EVENT_LBUTTONDOWN:
-					case Common::EVENT_RBUTTONDOWN:
+					if (isDialogueContinueEvent(event))
 						continuePressed = true;
-						break;
-					case Common::EVENT_KEYDOWN:
-						if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-								event.kbd.keycode == Common::KEYCODE_RETURN ||
-								event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-								event.kbd.keycode == Common::KEYCODE_SPACE) {
-							continuePressed = true;
-						}
-						break;
-					default:
-						break;
-					}
 				}
 
 				if (_entityManager)
