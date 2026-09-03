@@ -141,6 +141,14 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 			numCharacters = 115;
 		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy15) {
+			// Nancy15 added two more characters. Their glyphs are only present in a
+			// few of the fonts, and it is not yet known which characters they are
+			stream.skip(4);
+
+			numCharacters = 117;
+		}
 	}
 
 	_characterRects.resize(numCharacters);
