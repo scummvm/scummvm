@@ -142,8 +142,6 @@ bool Macs2Engine::loadAmigaSceneBackground(uint32 sceneResourceId) {
 
 	_backgroundAnimations.clear();
 	_backgroundAnimationsBlobs.clear();
-	_mapImageFileOffset = 0;
-	_mapSubSceneTableFilePos = 0;
 	if (amigaMxmmHasMxaaOverlay(mxmm.data(), size)) {
 		debugC(1, kDebugFilePath, "Amiga: MM_%04u has MXAA overlay data (not loaded yet)",
 			   (uint)sceneResourceId);

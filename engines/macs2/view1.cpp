@@ -1049,9 +1049,6 @@ void View1::closeScriptActionBar(Script::MouseMode &outSavedCursorMode) {
 }
 
 void View1::enterMapMode() {
-	// Binary handleInput end-block when scene+0x61db != 0 (1008:e8bf): fade, load map
-	// from scene+0x5DDB (_mapSceneOffsets[0]), set cursor 0x18 (PanelUse).
-	// this path is the DOS help-map overlay
 	const uint32 helpOffset = g_engine->_mapSceneOffsets[0];
 	if (helpOffset == 0 || helpOffset >= (uint32)g_engine->_fileStream->size()) {
 		return;
@@ -1065,7 +1062,6 @@ void View1::enterMapMode() {
 	g_engine->applyPaletteDarkening();
 	Graphics::ManagedSurface mapDepth = g_engine->readRLEImage(g_engine->_fileStream->pos(), g_engine->_fileStream);
 	g_engine->_depthMap.blitFrom(mapDepth);
-	g_engine->_mapSubSceneTableFilePos = g_engine->_fileStream->pos();
 	_currentMode = ViewMode::VM_HELP;
 	g_engine->setCursorMode(Script::MouseMode::PanelUse);
 	updateCursor();

@@ -1004,25 +1004,8 @@ bool Macs2Engine::loadSceneGraphicsV1(uint32 sceneIndex) {
 	// Background image
 	_fileStream->seek(0xC + 0x4 + 0xC * newSceneIndex - 0xC, SEEK_SET);
 	uint32 bgImageOffset = _fileStream->readUint32LE();
-	uint32 sceneTableEntry2 = _fileStream->readUint32LE();
-	uint32 sceneTableEntry3 = _fileStream->readUint32LE();
-	(void)sceneTableEntry3; // strings offset, not used here
-	_mapSubSceneTableFilePos = 0;
-	_mapImageFileOffset = 0;
-	// The map image file offset is stored in the scene data block
-	if (sceneTableEntry2 != 0 && sceneTableEntry2 < (uint32)_fileStream->size()) {
-		_fileStream->seek(sceneTableEntry2 + 0x3C0, SEEK_SET);
-		uint32 mapOffset = _fileStream->readUint32LE();
-		if (mapOffset != 0 && mapOffset < (uint32)_fileStream->size()) {
-			// Validate it's actually RLE data for a kScreenWidth-wide image
-			_fileStream->seek(mapOffset, SEEK_SET);
-			uint16 rowLen = _fileStream->readUint16LE();
-			if (rowLen >= 50 && rowLen <= 640) {
-				_mapImageFileOffset = mapOffset;
-				_mapSubSceneTableFilePos = sceneTableEntry2 + 0x3C0;
-			}
-		}
-	}
+	/* sceneTableEntry2 = */ _fileStream->readUint32LE();
+	/* sceneTableEntry3 = */ _fileStream->readUint32LE();
 	_fileStream->seek(bgImageOffset, SEEK_SET);
 
 	// TODO: Copy-pasted code here
@@ -1302,9 +1285,6 @@ bool Macs2Engine::loadSceneGraphicsV2(uint32 sceneIndex) {
 	_walkBaseSpeedPct = stream->readUint16LE();
 	_scenePaletteMode = stream->readUint16LE();
 	_paletteDarkenPercent = stream->readUint16LE();
-
-	_mapImageFileOffset = 0;
-	_mapSubSceneTableFilePos = 0;
 
 	stream->seek(_mcsDirectoryOffset + 0xC * sceneIndex - 0x8, SEEK_SET);
 	const uint32 scriptBlobOffset = stream->readUint32LE();

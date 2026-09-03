@@ -347,14 +347,6 @@ public:
 	Graphics::ManagedSurface _sceneBackground;
 	Graphics::ManagedSurface _hotspotMap;
 
-	// File offset to the map mode image for the current scene (scene table entry +8).
-	// When 0, the map mode is unavailable for this scene.
-	uint32 _mapImageFileOffset = 0;
-
-	// Per-depth sub-scene file offsets for map mode preview (binary: scene+0x5DD7+depth*4).
-	// File position where the sub-scene offset table starts (after map depth map).
-	int64 _mapSubSceneTableFilePos = 0;
-
 	// This is the depth map
 	Graphics::ManagedSurface _depthMap;
 	// Scene-load snapshot used to restore depth under background animation frame 0.
