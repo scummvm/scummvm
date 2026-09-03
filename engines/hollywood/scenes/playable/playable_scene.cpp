@@ -1943,6 +1943,7 @@ void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int t
 	_activeActorFacing = startFacing;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	centerViewportOnActor(_activeActorWorldX);
 
 	drawPlayableComposite();
 	presentFrame();
@@ -2781,18 +2782,30 @@ void PlayableScene::resetViewportFromScene() {
 	_lastViewportScrollActorWorldX = _activeActorWorldX;
 }
 
+void PlayableScene::centerViewportOnActor(int actorWorldX) {
+	const int centeredOffset = actorWorldX - HollywoodEngine::kScreenWidth / 2;
+	if (centeredOffset <= _viewportMinXOffset) {
+		_viewportXOffset = _viewportMinXOffset;
+	} else if (centeredOffset >= _viewportMaxXOffset) {
+		_viewportXOffset = _viewportMaxXOffset;
+	} else {
+		_viewportXOffset = (uint16)CLIP<int>((centeredOffset + 2) & ~3,
+			_viewportMinXOffset, _viewportMaxXOffset);
+	}
+}
+
 void PlayableScene::advanceViewportScroll(uint32 delta) {
 	(void)delta;
-	if (!_actorPathPlaybackActive || _viewportMinXOffset >= _viewportMaxXOffset) {
+	if (_viewportMinXOffset >= _viewportMaxXOffset) {
 		_lastViewportScrollActorWorldX = _activeActorWorldX;
 		return;
 	}
 
 	const int actorScreenX = _activeActorWorldX - _viewportXOffset;
-	if (_lastViewportScrollActorWorldX < _activeActorWorldX &&
+	if ((!_actorPathPlaybackActive || _lastViewportScrollActorWorldX < _activeActorWorldX) &&
 			actorScreenX > kViewportScrollRightThreshold && _viewportXOffset < _viewportMaxXOffset) {
 		_viewportXOffset = MIN<uint16>(_viewportXOffset + kViewportScrollStep, _viewportMaxXOffset);
-	} else if (_activeActorWorldX < _lastViewportScrollActorWorldX &&
+	} else if ((!_actorPathPlaybackActive || _activeActorWorldX < _lastViewportScrollActorWorldX) &&
 			actorScreenX < kViewportScrollLeftThreshold && _viewportMinXOffset < _viewportXOffset) {
 		if (_viewportXOffset > _viewportMinXOffset + kViewportScrollStep)
 			_viewportXOffset -= kViewportScrollStep;
