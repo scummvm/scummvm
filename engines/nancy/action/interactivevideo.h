@@ -30,6 +30,30 @@ namespace Action {
 class ActionManager;
 class PlaySecondaryMovie;
 
+struct InteractiveHotspot {
+	Common::Rect hotspot;
+	int32 setID = 0;
+	int16 flagID = -1;
+	int16 cursorID = -1;
+};
+
+struct InteractiveFrame {
+	uint16 frameID = 0;
+	bool triggerOnNoHotspot = false;
+	int16 noHSFlagID = -1;
+	int16 noHSCursorID = -1;
+	Common::Array<InteractiveHotspot> hotspots;
+};
+
+// Contents of an .iv file: the movie the hotspots belong to, and the list of
+// movie frames that have hotspots on them.
+struct InteractiveVideoData {
+	Common::Path videoName;
+	Common::Array<InteractiveFrame> frames;
+};
+
+void readInteractiveVideoFile(const Common::Path &filename, InteractiveVideoData &data);
+
 class InteractiveVideo : public ActionRecord {
 public:
 	InteractiveVideo() {}
@@ -43,26 +67,10 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "InteractiveVideo"; }
 
-	struct InteractiveHotspot {
-		Common::Rect hotspot;
-		int16 flagID = -1;
-		int16 cursorID = -1;
-	};
-
-	struct InteractiveFrame {
-		uint16 frameID = 0;
-		bool triggerOnNoHotspot = false;
-		int16 noHSFlagID = -1;
-		int16 noHSCursorID = -1;
-		Common::Array<InteractiveHotspot> hotspots;
-	};
-
 	Common::Array<FlagDescription> _flags;
 	Common::Array<int16> _cursors;
 
-	// IV file data
-	Common::Path _videoName;
-	Common::Array<InteractiveFrame> _frames;
+	InteractiveVideoData _ivData;
 
 	// Pointer to a movie AR
 	PlaySecondaryMovie *_movieAR = nullptr;

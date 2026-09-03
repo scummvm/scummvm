@@ -25,6 +25,7 @@
 #include "common/ptr.h"
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/interactivevideo.h"
 #include "engines/nancy/movieplayer.h"
 
 namespace Nancy {
@@ -134,17 +135,19 @@ public:
 	// (AR 150) can change it later.
 	byte _movieVolume = 100;
 
-	// AR 47 "InteractiveVideo" (a PlaySecondaryMovie subclass): after the
-	// normal AR-44-style movie data it carries a name, a flag byte, and a
-	// list of named {value, flag} entries. Read but not yet acted on.
-	struct InteractiveEntry {
-		Common::Path name;
-		uint32 value = 0;
-		byte flag = 0;
+	// AR 47 "InteractiveVideo" (a PlaySecondaryMovie subclass): the movie's
+	// clickable areas live in an external .iv file, which lists them per movie
+	// frame and tags each one with a set ID. The record itself carries the name
+	// of that file and the table below, which turns a set ID into the event flag
+	// a click sets and the cursor shown while the mouse is over the area.
+	struct InteractiveSet {
+		int16 setID = 0;
+		FlagDescription flagDesc;
+		int16 cursorID = -1;
 	};
 	Common::Path _interactiveName;
-	bool _interactiveFlag = false;
-	Common::Array<InteractiveEntry> _interactiveEntries;
+	Common::Array<InteractiveSet> _interactiveSets;
+	InteractiveVideoData _interactiveVideo;
 	Common::Array<FlagAtFrame> _frameFlags;
 	MultiEventFlagDescription _triggerFlags;
 	FlagDescription _videoStartFlag;
@@ -254,6 +257,16 @@ protected:
 	void readDataNancy13(Common::Serializer &ser, Common::SeekableReadStream &stream);
 
 	void readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream);
+
+	// AR 47 appends the name of its .iv file and the set table to the movie data.
+	void readInteractiveData(Common::Serializer &ser);
+
+	// The set a hotspot belongs to, or nullptr if the record doesn't describe it.
+	const InteractiveSet *getInteractiveSet(int32 setID) const;
+
+	// Picks the hover cursor from the hotspots the .iv file lists for the frame
+	// currently on screen, and sets their event flag when one is clicked.
+	void handleInteractiveInput(NancyInput &input);
 
 	// Apply a RandomSequence's playback config to the PSM flat fields
 	// and reload the decoder. Returns true on success.

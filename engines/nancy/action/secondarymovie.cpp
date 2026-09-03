@@ -67,7 +67,62 @@ bool PlaySecondaryMovie::survivesSceneChange(bool nextSceneIsNoArt) const {
 	return isRandom() && g_nancy->getGameType() < kGameTypeNancy13 && !_isDone && !_randomStopRequested;
 }
 
+const PlaySecondaryMovie::InteractiveSet *PlaySecondaryMovie::getInteractiveSet(int32 setID) const {
+	for (const InteractiveSet &set : _interactiveSets) {
+		if (set.setID == setID) {
+			return &set;
+		}
+	}
+
+	return nullptr;
+}
+
+void PlaySecondaryMovie::handleInteractiveInput(NancyInput &input) {
+	if (_state != kRun) {
+		return;
+	}
+
+	int curFrame = _decoder.getCurFrame();
+	if (curFrame < 0) {
+		return;
+	}
+
+	for (const InteractiveFrame &frame : _interactiveVideo.frames) {
+		if (frame.frameID != curFrame) {
+			continue;
+		}
+
+		for (const InteractiveHotspot &hotspot : frame.hotspots) {
+			if (!NancySceneState.getViewport().convertViewportToScreen(hotspot.hotspot).contains(input.mousePos)) {
+				continue;
+			}
+
+			// The set the hotspot belongs to describes what it does; hotspots
+			// carry their own flag and cursor in Nancy10 and earlier instead.
+			const InteractiveSet *set = getInteractiveSet(hotspot.setID);
+			if (!set) {
+				return;
+			}
+
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)set->cursorID, true);
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				NancySceneState.setEventFlag(set->flagDesc);
+			}
+
+			return;
+		}
+
+		return;
+	}
+}
+
 void PlaySecondaryMovie::handleInput(NancyInput &input) {
+	if (_movieType == kInteractiveMovie) {
+		handleInteractiveInput(input);
+		return;
+	}
+
 	// The character's box (set as the hotspot while it is on screen) is
 	// clickable; clicking opens its conversation scene, and hovering drives the
 	// recognition movie. The talk hover cursor is applied by ActionManager via
@@ -601,22 +656,27 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 
 	_sound.name = "NO SOUND";
 
-	// AR 47 ("InteractiveVideo") appends a name, a flag byte, and a list of
-	// named {value, flag} entries on top of the AR-44 movie data.
+	// AR 47 ("InteractiveVideo") appends its interactive-video data on top of
+	// the AR-44 movie data.
 	if (_movieType == kInteractiveMovie) {
-		readFilename(ser, _interactiveName);
-		byte flag = 0;
-		ser.syncAsByte(flag);
-		_interactiveFlag = flag != 0;
+		readInteractiveData(ser);
+	}
+}
 
-		uint16 numEntries = 0;
-		ser.syncAsUint16LE(numEntries);
-		_interactiveEntries.resize(numEntries);
-		for (uint i = 0; i < numEntries; ++i) {
-			readFilename(ser, _interactiveEntries[i].name);
-			ser.syncAsUint32LE(_interactiveEntries[i].value);
-			ser.syncAsByte(_interactiveEntries[i].flag);
-		}
+void PlaySecondaryMovie::readInteractiveData(Common::Serializer &ser) {
+	readFilename(ser, _interactiveName);
+
+	ser.skip(1);	// Draws the hotspot rects on top of the movie when set
+
+	uint16 numSets = 0;
+	ser.syncAsUint16LE(numSets);
+	_interactiveSets.resize(numSets);
+	for (uint i = 0; i < numSets; ++i) {
+		InteractiveSet &set = _interactiveSets[i];
+		ser.syncAsSint16LE(set.setID);
+		ser.syncAsSint16LE(set.flagDesc.label);
+		ser.syncAsByte(set.flagDesc.flag);
+		ser.syncAsSint16LE(set.cursorID);
 	}
 }
 
@@ -640,9 +700,17 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 		return;
 	}
 
-	// Nancy13's AR 41 shares this class but carries a more compact chunk.
-	if (g_nancy->getGameType() == kGameTypeNancy13 && _movieType == kSecondaryMovieTerse) {
+	// Nancy13's AR 41 shares this class but carries a more compact chunk, and
+	// AR 47 stacks its interactive-video data on top of that same layout.
+	if (g_nancy->getGameType() == kGameTypeNancy13 &&
+			(_movieType == kSecondaryMovieTerse || _movieType == kInteractiveMovie)) {
 		readDataNancy13(ser, stream);
+
+		if (_movieType == kInteractiveMovie) {
+			readInteractiveData(ser);
+			readInteractiveVideoFile(_interactiveName, _interactiveVideo);
+		}
+
 		return;
 	}
 
