@@ -443,6 +443,8 @@ protected:
 	// Scene action dispatch
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
+	bool gameplayActionInputBlocked() const;
+	void runGameplayAction(uint16 handlerId);
 	bool dispatchGenericInventoryAction(const GameplayLoopCursorState &state);
 	void dispatchSceneAction(uint16 handlerId);
 	bool dispatchGenericSceneAction(uint16 handlerId);
@@ -451,6 +453,9 @@ protected:
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
 	void startConcurrentActorPath(int targetX, int targetY, byte finalFacing, byte finalCel,
 		uint32 frameMillis, bool snapToTargetIfNoPath = false);
+	// Player-directed paths stay in the gameplay loop so a later click can replace them.
+	bool startPlayerDirectedActorPath(int targetX, int targetY, byte finalFacing,
+		byte finalCel, uint16 actionHandlerId);
 	void finishConcurrentActorPath(bool allowSkip = false);
 	void cancelConcurrentActorPath();
 	bool concurrentActorPathActive() const { return _concurrentActorPathActive; }
@@ -781,6 +786,9 @@ protected:
 	uint _concurrentActorPathFrameIndex;
 	bool _concurrentActorPathActive;
 	bool _actorPathPlaybackActive;
+	bool _playerDirectedActorPathActive;
+	bool _playerDirectedActorPathFootstepPlayed;
+	uint16 _pendingGameplayActionHandlerId;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
 	byte _activeActorFacing;
