@@ -452,6 +452,9 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	case 69: // Door/lock condition: no key needed, it is not locked.
 		beginStaticSecondarySpeechLine(0x44, 0);
 		return true;
+	case 200: // Mirar cáscara de huevo (look at eggshell).
+		beginStaticSecondarySpeechLine(0xbb, 0);
+		return true;
 	case 224: // That item cannot be used here.
 		beginStaticSecondarySpeechLine(0xd3, 0);
 		return true;
