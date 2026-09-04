@@ -560,7 +560,7 @@ uint16 MohawkEngine_Zoombini::playBuiltinMidiTestResource(bool advance) {
 				_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType);
 		} else {
 			if (advance || !_midi->isPlaying())
-				_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(resourceId)));
+				_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(resourceId)));
 		}
 	}
 

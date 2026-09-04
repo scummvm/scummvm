@@ -253,13 +253,16 @@ public:
 	~ZoombiniMidiPlayer() override;
 
 	/** Start playback of a resolved Zoombini MIDI resource. */
-	void playZmbMidi(ZmbResource resource);
+	void playMidi(ZmbResource resource);
 	/** Apply the ScummVM music volume while respecting the game BGM gate. */
 	void syncBgmVolume(bool enabled);
 	/** Stop the current MIDI track. */
 	void stopMidi() { stop(); }
 
 private:
+	/** Keep the numeric-ID base overload available internally but inaccessible to Zoombini callers. */
+	using MidiPlayer::playMidi;
+
 	/** Engine instance that owns this MIDI player. */
 	MohawkEngine_Zoombini *_vm;
 };

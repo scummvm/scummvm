@@ -268,16 +268,15 @@ bool ZoombiniConsole::CmdSub_MidiPlay(int argc, const char **argv) {
 	ZmbResource resource;
 	if (!parseResourceId(argv[2], resource) || resource._archiveKind != ZmbResource::kPage)
 		return true;
-	const int16 resid = resource._id;
 
-	if (!_vm->hasResource(ID_TMID, ZmbResource(ZmbResource::kPage, resid))) {
-		debugPrintf("Cannot find resource MIDI(%d)\n", resid);
+	if (!_vm->hasResource(ID_TMID, resource)) {
+		debugPrintf("Cannot find resource MIDI(%s)\n", resource.toString().c_str());
 		debugPrintf("\n");
 		return true;
 	}
 
 	_vm->_midi->stop();
-	_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, resid));
+	_vm->_midi->playMidi(resource);
 	return false;
 }
 

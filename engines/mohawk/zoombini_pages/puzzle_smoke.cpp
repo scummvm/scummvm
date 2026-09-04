@@ -117,7 +117,7 @@ void ZoombiniPuzzleSmoke::open() {
 void ZoombiniPuzzleSmoke::setBackgroundMusic() {
 	if (!_vm->isVersionFamilyTlcV2()) {
 		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
-		_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30030_SmokeBgmBase + routeLevel)));
+		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30030_SmokeBgmBase + routeLevel)));
 	}
 }
 
