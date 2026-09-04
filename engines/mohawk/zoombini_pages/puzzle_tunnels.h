@@ -888,9 +888,7 @@ private:
 	// Timer storage is generic, but eligibility, pool state, and completion are
 	// Tunnels-owned and must not be merged with another page's idle state machine.
 
-	/** Absolute frame at which idle or celebration animation may advance. */
-	uint32 _idleActorDeadline = 0;
-	/** Current idle-actor delay, restarted whenever a lane approach begins. */
+	/** Required shared inactivity before another idle-actor sequence can be queued. */
 	uint32 _idleActorDelay = 0;
 	/** Number of celebration walkers requested by the current result. */
 	int16 _celebrationTarget = 0;

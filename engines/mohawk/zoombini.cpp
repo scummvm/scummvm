@@ -328,9 +328,9 @@ Common::Error MohawkEngine_Zoombini::run() {
 }
 
 void MohawkEngine_Zoombini::resetFidgetActivity() {
-	// Reset the threshold and restart the idle timer
-	// so @ref MohawkEngine_Zoombini::doFrame() begins a new inactivity period.
+	// Activity restarts both idle timers without ending an active fidget suppression.
 	_lastActivityFrame = getAnimationFrameCounter(_system->getMillis());
+	_lastFidgetIntervalFrame = _lastActivityFrame;
 	if (_fidgetThreshold)
 		_fidgetThreshold = 64;
 }
@@ -660,8 +660,8 @@ void MohawkEngine_Zoombini::doFrame() {
 	// Modal time does not count toward this idle interval.
 	if (_fidgetThreshold && !isDialogOpened) {
 		uint32 curFrame = getAnimationFrameCounter(frameStartTime);
-		if (3600 < curFrame - _lastActivityFrame) {
-			_lastActivityFrame = curFrame;
+		if (3600 < curFrame - _lastFidgetIntervalFrame) {
+			_lastFidgetIntervalFrame = curFrame;
 			_fidgetThreshold /= 2;
 			if (!_fidgetThreshold)
 				_fidgetThreshold = 1;

@@ -564,7 +564,7 @@ protected:
 	/** Absolute frame counter recorded at the most recent celebration attempt. */
 	uint32 _lastCelebrationFrame = 0;
 	/** Minimum frame interval between celebration attempts. */
-	uint32 _celebrationFrameInterval = 120;
+	uint32 _celebrationFrameInterval = 60;
 	/** Bit mask of pack indices already selected by the non-repeating celebration pool. */
 	uint32 _celebrationUsedSnoidMask = 0;
 	/**

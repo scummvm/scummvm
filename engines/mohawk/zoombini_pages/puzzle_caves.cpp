@@ -1575,8 +1575,8 @@ void ZoombiniPuzzleCaves::onPostRenderFrame() {
 		startSnoidScrs(walkSnoid, ZmbResource(ZmbResource::kPage, walkScrsId), ZmbScrsCompletionMode::kReturnToIdle, &walkTarget);
 	}
 
-	// After the final placement, start one random idle pack Snoid's feet-specific walk-in every 30 ticks.
-	// Continue until @ref ZoombiniPuzzleCaves::_completionWalkInTargetCount reaches zero.
+	// After the final placement, try one visible idle pack Snoid's feet-specific walk-in after more than 30 ticks.
+	// Stop once the started count reaches @ref ZoombiniPuzzleCaves::_completionWalkInTargetCount.
 	if (_completionWalkInsActive && _completionWalkInStartedCount < _completionWalkInTargetCount) {
 		uint32 nowFrame = getCurrentFrameCounter();
 		if (30 < nowFrame - _completionWalkLastStartFrame) {
@@ -1585,17 +1585,8 @@ void ZoombiniPuzzleCaves::onPostRenderFrame() {
 			// Attempt indices and random-pool indices are both zero-based in the range 0 through N - 1.
 			for (int16 attemptIdx = 0; attemptIdx < _pageLoadedZmbCount && !fired; attemptIdx++) {
 				const uint16 snoidPoolIdx = _vm->_rnd->getNonRepeatRandom(_pageLoadedZmbCount, _completionWalkPoolState);
-				ZmbSnoid *cand = nullptr;
-				for (ZmbFeatureList<ZmbSnoid>::const_iterator it = _snoidMap.begin(); it != _snoidMap.end(); it++) {
-					ZmbSnoid *s = *it;
-					if (!s || !s->hasFlag(ZmbFeature::FLAG_00000001_TYPE_SNOID))
-						continue;
-					if (s->getId() == static_cast<uint16>(10000 + snoidPoolIdx)) {
-						cand = s;
-						break;
-					}
-				}
-				if (cand && cand->getAnimState() == kSnoidAnimState000_Idle && cand->_packIsOccupied) {
+				ZmbSnoid *cand = getIdleSnoid(static_cast<uint16>(10000 + snoidPoolIdx));
+				if (cand && cand->isRenderActivated()) {
 					const int16 scrsId = static_cast<int16>(cand->_trait._feet + kResScrs12999_WalkBase);
 					if (startSnoidScrs(cand, ZmbResource(ZmbResource::kPage, scrsId))) {
 						_completionWalkInStartedCount += 1;
@@ -1604,7 +1595,7 @@ void ZoombiniPuzzleCaves::onPostRenderFrame() {
 				}
 			}
 		}
-	} else if (_completionWalkInTargetCount <= _completionWalkInStartedCount && _completionWalkInsActive) {
+	} else if (_completionWalkInTargetCount <= _completionWalkInStartedCount) {
 		// Clear driver state.
 		_completionWalkPoolState = 0;
 		_completionWalkLastStartFrame = 0;
