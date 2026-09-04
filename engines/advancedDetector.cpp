@@ -253,8 +253,6 @@ bool AdvancedMetaEngineDetectionBase::cleanupPirated(ADDetectedGames &matched) c
 }
 
 DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
-	FileMap allFiles;
-
 	if (fslist.empty())
 		return DetectedGames();
 
@@ -262,11 +260,33 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	// the _directoryGlobsMap
 	preprocessDescriptions();
 
-	// Compose a hashmap of all files in fslist.
-	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+	// Compose a hashmap of all files in fslist. Every engine composes the very
+	// same one for the game directory itself, so it is composed once per
+	// detection run and shared between them; engines descending into
+	// subdirectories take a copy and add those on top of it.
+	FileMap *files = ADCacheMan.getFileMap();
+
+	if (!files) {
+		files = &ADCacheMan.createFileMap();
+
+		composeFileHashMap(*files, fslist, 1);
+	}
+
+	// Copy of the shared map, extended by this engine's subdirectories
+	FileMap subdirFiles;
+
+	if (!_globsMap.empty()) {
+		// The subdirectories must not be added to the shared map, otherwise
+		// every other engine would see the subdirectories of this one.
+		subdirFiles = *files;
+
+		composeFileHashMap(subdirFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth), Common::Path(), true);
+
+		files = &subdirFiles;
+	}
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), *files, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
 
 	cleanupPirated(matches);
 
@@ -289,7 +309,7 @@ DetectedGames AdvancedMetaEngineDetectionBase::detectGames(const Common::FSList 
 	if (!foundKnownGames) {
 		// Use fallback detector if there were no matches by other means
 		ADDetectedGameExtraInfo *extraInfo = nullptr;
-		ADDetectedGame fallbackDetectionResult = fallbackDetect(allFiles, fslist, &extraInfo);
+		ADDetectedGame fallbackDetectionResult = fallbackDetect(*files, fslist, &extraInfo);
 
 		if (fallbackDetectionResult.desc) {
 			DetectedGame fallbackDetectedGame = toDetectedGame(fallbackDetectionResult, extraInfo);
@@ -448,7 +468,7 @@ Common::Error AdvancedMetaEngineDetectionBase::identifyGame(DetectedGame &game, 
 	return Common::kNoError;
 }
 
-void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName) const {
+void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::Path &parentName, bool subdirsOnly) const {
 	if (depth <= 0)
 		return;
 
@@ -456,6 +476,9 @@ void AdvancedMetaEngineDetectionBase::composeFileHashMap(FileMap &allFiles, cons
 		return;
 
 	for (const auto &file : fslist) {
+		if (subdirsOnly && !file.isDirectory())
+			continue;
+
 		Common::String efname = Common::punycode_encodefilename(file.getName());
 		Common::Path tstr = (_flags & kADFlagMatchFullPaths) ? parentName.appendComponent(efname) : Common::Path(efname, Common::Path::kNoSeparator);
 
@@ -731,6 +754,27 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 	debugC(3, kDebugGlobalDetection, "Starting detection for engine '%s' in dir '%s'", getName(), parent.getPath().toString(Common::Path::kNativeSeparator).c_str());
 
 	preprocessDescriptions();
+
+	// Early rejection: if none of the file names referenced by this engine's
+	// detection entries exist in the game folder, there is no chance of a match.
+	bool anyFileFound = false;
+	for (auto it = allFiles.begin(); it != allFiles.end(); ++it) {
+		if (_fileNamesMap.contains(it->_key)) {
+			anyFileFound = true;
+			break;
+		}
+
+		bool isMacDecoratedName = false;
+		Common::Path undecorated = Common::MacResManager::disassembleName(it->_key, &isMacDecoratedName);
+		if (isMacDecoratedName && _fileNamesMap.contains(undecorated)) {
+			anyFileFound = true;
+			break;
+		}
+	}
+	if (!anyFileFound) {
+		debugC(3, kDebugGlobalDetection, "Skipping engine '%s': no matching file names in directory", getName());
+		return matched;
+	}
 
 	// Check which files are included in some ADGameDescription *and* whether
 	// they are present. Compute MD5s and file sizes for the available files.
@@ -1017,6 +1061,27 @@ void AdvancedMetaEngineDetectionBase::preprocessDescriptions() {
 	// Now scan all detection entries
 	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		const ADGameDescription *g = (const ADGameDescription *)descPtr;
+
+		// Collect all unique file names for early rejection
+		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			Common::String fname = fileDesc->fileName;
+
+			// For archive entries, extract the archive name
+			if (gameFileToMD5Props(fileDesc, g->flags) & kMD5Archive) {
+				Common::StringTokenizer tok(fname, ":");
+				tok.nextToken(); // skip archive type
+				fname = tok.nextToken(); // archive name
+			}
+
+			// For paths with directory components, extract the leaf filename
+			// unless kADFlagMatchFullPaths is set
+			if (!(_flags & kADFlagMatchFullPaths) && fname.contains('/')) {
+				fname = Common::Path(fname).baseName();
+			}
+
+			_fileNamesMap.setVal(Common::Path(fname, fname.contains('/')
+				? '/' : Common::Path::kNoSeparator), true);
+		}
 
 		// Scan for potential directory globs
 		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {

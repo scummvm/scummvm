@@ -1170,7 +1170,42 @@ Path MacResManager::disassembleAppleDoubleName(const Path &name, bool *isAppleDo
 	if (name.isSeparatorTerminated()) {
 		ret.appendInPlace("/");
 	}
+	if (isAppleDouble) {
+		*isAppleDouble = true;
+	}
 	return ret;
+}
+
+Path MacResManager::disassembleName(const Path &name, bool *isMacDecoratedName) {
+	String fileName = name.baseName();
+
+	// Remove the AppleDouble "._" prefix, if present
+	bool stripped = fileName.hasPrefix("._");
+	if (stripped)
+		fileName.erase(0, 2);
+
+	// Remove the extension used for raw resource forks and AppleDouble
+	// (".rsrc") or MacBinary (".bin") files, if present
+	uint extLen = 0;
+
+	if (fileName.hasSuffixIgnoreCase(".rsrc"))
+		extLen = 5;
+	else if (fileName.hasSuffixIgnoreCase(".bin"))
+		extLen = 4;
+
+	if (extLen) {
+		fileName.erase(fileName.size() - extLen);
+		stripped = true;
+	}
+
+	if (isMacDecoratedName) {
+		*isMacDecoratedName = stripped;
+	}
+
+	if (!stripped)
+		return name;
+
+	return name.getParent().appendComponent(fileName);
 }
 
 void MacResManager::dumpRaw() {
