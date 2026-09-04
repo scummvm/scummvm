@@ -753,11 +753,11 @@ void Scene4030::updateIronMaidenMechanism() {
 		(state.scene4030RopeTaken ? 1 : 0);
 	state.scene4030IronMaidenOpen = !state.scene4030IronMaidenOpen;
 	playIronMaidenMechanismAnimation(secondaryFrameGroup);
+	applySceneStateToHotspotsAndPatches(1);
 	if (!state.scene4030MechanismRemarkSeen) {
 		beginSecondarySpeechLine(19, 0);
 		state.scene4030MechanismRemarkSeen = true;
 	}
-	applySceneStateToHotspotsAndPatches(1);
 }
 
 void Scene4030::playIronMaidenMechanismAnimation(byte secondaryFrameGroup) {
@@ -790,8 +790,6 @@ void Scene4030::playIronMaidenMechanismAnimation(byte secondaryFrameGroup) {
 	clearSceneLayer(kScene4030SecondaryActionLayer);
 	clearSceneLayer(kScene4030PrimaryActionLayer);
 	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
 }
 
 void Scene4030::copyStageItemName(byte destinationItem, byte sourceItem) {

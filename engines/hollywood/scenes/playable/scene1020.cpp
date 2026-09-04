@@ -689,7 +689,7 @@ void Scene1020::handleSceneEventFlag0Overlay() {
 
 	beginSecondarySpeechLine(4, 1);
 	runOverlaySequence(ActionOverlaySpec(22, kScene1020ActionChunk22DescriptorCount,
-		kScene1020OverlayFrameMillis).holdFirstFrame().patchAt(8, 0xff));
+		kScene1020OverlayFrameMillis).holdFirstFrame().resourcePatchAt(8, 12));
 	addInventoryItem(0x16);
 	_soundBank0.playSample(1, 100);
 	state.scene1020SueTapeVisible = false;

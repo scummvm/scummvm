@@ -285,7 +285,7 @@ void Scene3020::runPickupMace() {
 
 	runActorReplacement(ActionOverlaySpec(9, kScene3020PickupDescriptorCount, kScene3020PickupFrameMillis)
 		.holdFirstFrame()
-		.patchAt(7, 1));
+		.resourcePatchAt(7, 8));
 	_vm->gameState().scene3020MaceTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene3020PickupInventoryItem);
