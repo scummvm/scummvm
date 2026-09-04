@@ -79,7 +79,6 @@ private:
 	void beginKarlMiningSpeechLine(byte frameIndex);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 	void remapSceneColors(byte sourceColor, byte itemId);
-	void clearSceneItemFromColorMap(byte itemId);
 
 	TimedAnimationChannel _karlIdleChannel;
 	byte _karlIdleFrame;
