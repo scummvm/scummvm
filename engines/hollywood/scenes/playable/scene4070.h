@@ -79,6 +79,7 @@ private:
 	uint32 _draculaIdleSpeechTimerAccumulator;
 	bool _rightSidePatchActive;
 	bool _draculaIdleSequenceActive;
+	bool _draculaThrowAnimationActive;
 	bool _draculaDialogueMenuActive;
 	SoundBank0Player _loopingSoundBank0;
 	Common::Array<byte> _originalColorToItemMap;

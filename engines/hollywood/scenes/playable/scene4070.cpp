@@ -186,6 +186,7 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_draculaIdleSpeechTimerAccumulator(0),
 		_rightSidePatchActive(false),
 		_draculaIdleSequenceActive(false),
+		_draculaThrowAnimationActive(false),
 		_draculaDialogueMenuActive(false),
 		_loopingSoundBank0(),
 		_originalColorToItemMap() {
@@ -214,7 +215,8 @@ void Scene4070::prepareCustomComposite(bool drawActors, byte activeFacing,
 	(void)actorDrawOrderMode;
 	if (drawActors)
 		setRightSidePatchActive(activeWorldX >= kScene4070SidePatchThresholdX, false);
-	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
+	_sceneLayers.setLayerVisible(kScene4070DraculaLayer,
+		isDraculaVisible() && !_draculaThrowAnimationActive);
 }
 
 void Scene4070::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
@@ -426,6 +428,7 @@ void Scene4070::resetAnimationLayers() {
 	_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
 	_draculaIdleSpeechTimerAccumulator = 0;
 	_draculaIdleSequenceActive = false;
+	_draculaThrowAnimationActive = false;
 	_draculaDialogueMenuActive = false;
 }
 
@@ -709,19 +712,17 @@ void Scene4070::runSlimmingTreatmentSequence() {
 		return;
 
 	beginDraculaSpeechLine(16, 1);
+	_draculaThrowAnimationActive = true;
 	sequence.resourceLayerFrames(kScene4070ScriptLayer, kScene4070TreatmentReturnChunk,
 			kScene4070TreatmentReturnDescriptorCount,
 			AnimationFrameRange(kScene4070TreatmentReturnFrameIndices,
-				kScene4070TreatmentReturnFrameMillis)
-				.mappedLayerFrames(kScene4070DraculaLayer,
-					kScene4070TreatmentReturnFrameIndices,
-					ARRAYSIZE(kScene4070TreatmentReturnFrameIndices))
-				.unskippable());
+				kScene4070TreatmentReturnFrameMillis).unskippable());
+	_draculaThrowAnimationActive = false;
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
 	if (!sequence.completed())
 		return;
 
 	state.scene4010PillboxPickupState = 1;
-	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
 }
 
 void Scene4070::runFlyerOnDracula() {
