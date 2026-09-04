@@ -228,6 +228,10 @@ void Scene2100::advanceCustomGameplayLoop(uint32 delta) {
 		advanceMummyIdle(delta);
 }
 
+bool Scene2100::shouldDrawSecondaryActorInPlayableComposite() const {
+	return !_hideActiveActor && PlayableScene::shouldDrawSecondaryActorInPlayableComposite();
+}
+
 bool Scene2100::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Mirar puerta de piedra (look at stone door): unusual carving.
@@ -247,6 +251,9 @@ bool Scene2100::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 306: // Usar sillón (use armchair): Ron refuses to rest now.
 		beginSecondarySpeechLine(4, 0);
+		return true;
+	case 141: // Mirar bastón de Rá (look at Ra staff): inventory callback redirected here in scene 2100.
+		beginStaticSecondarySpeechLine(0x82, 0);
 		return true;
 	case 142: // Usar bastón de Rá (use Ra staff): inventory callback redirected here in scene 2100.
 	case 307: // Usar bastón de Rá (use Ra staff): open the passage to the treasure room.
@@ -939,14 +946,18 @@ void Scene2100::runStoneDoorToTreasureRoom() {
 	if (!sequence.completed())
 		return;
 
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
 	_sceneLayers.setLayerResource(kFrontLayer, kScene2100DoorChunk,
 		kScene2100DoorDescriptorCount,
 		kScene2100TransitionFrameMap, ARRAYSIZE(kScene2100TransitionFrameMap));
 	_sceneLayers.setLayerVisible(kFrontLayer, true);
 	sequence.presentedLayerTransition(kFrontLayer,
 		AnimationTransition(0, 3, 3, kScene2100AuxFrameMillis).unskippable());
-	if (!sequence.completed())
+	if (!sequence.completed()) {
+		_hideActiveActor = previousHideActiveActor;
 		return;
+	}
 	_auxChannel.reset(3, kScene2100AuxFrameMillis);
 	_doorCeremonyState = 2;
 	_doorCeremonyFinishing = false;
@@ -959,26 +970,34 @@ void Scene2100::runStoneDoorToTreasureRoom() {
 	_doorCeremonyFinishing = true;
 	while (_doorCeremonyAnimationActive && !Engine::shouldQuit() &&
 			!_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(10, false))
+		if (waitSceneMillis(10, false)) {
+			_hideActiveActor = previousHideActiveActor;
 			return;
+		}
 	}
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested()) {
+		_hideActiveActor = previousHideActiveActor;
 		return;
+	}
 
 	_sceneLayers.setLayerFrame(kFrontLayer, 31);
 	drawPlayableComposite();
 	presentFrame();
-	if (waitSceneMillis(kScene2100AuxFrameMillis, false))
+	if (waitSceneMillis(kScene2100AuxFrameMillis, false)) {
+		_hideActiveActor = previousHideActiveActor;
 		return;
+	}
 	_soundBank0.playSample(0x10, 100);
 	if (waitSceneMillis(kScene2100AuxFrameMillis, false)) {
 		_soundBank0.stop();
+		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
 	for (byte frame = 32; frame <= 50; ++frame) {
 		_sceneLayers.setLayerFrame(kFrontLayer, frame);
 		if (waitSceneMillis(kScene2100AuxFrameMillis, false)) {
 			_soundBank0.stop();
+			_hideActiveActor = previousHideActiveActor;
 			return;
 		}
 	}
@@ -986,6 +1005,7 @@ void Scene2100::runStoneDoorToTreasureRoom() {
 	_sceneLayers.setLayerFrame(kFrontLayer, 51);
 	drawPlayableComposite();
 	presentFrame();
+	_hideActiveActor = previousHideActiveActor;
 
 	GameplayState &state = _vm->gameState();
 	sequence.commit(state.scene2100PassageOpen, true)
