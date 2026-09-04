@@ -179,17 +179,7 @@ void ZoombiniDialogHelp::helpDialog_onPostRender(ZmbFeature *feature) {
 							 static_cast<ZoombiniPage::ButtonGetRectFunc>(&ZoombiniDialogHelp::helpDialog_getButtonTextRect), tc);
 
 	// [Text Render] String Header
-	Common::U32String helpHead;
-	if (_showPickerHeaderEasterEgg)
-		helpHead = _vm->_text->getLocalizedString(ZoombiniText::kDialogHelpPickerUpdateVersion);
-	else {
-		helpHead = _vm->_text->getPageName(_forPageType);
-		const int16 routeLevel = _vm->_state->readPageRouteLevel(_forPageType);
-		if (0 < routeLevel) {
-			helpHead += Common::U32String::format(" %d ", routeLevel + 1);
-			helpHead += _vm->_text->getLocalizedString(ZoombiniText::kDialogHelpLevel);
-		}
-	}
+	const Common::U32String helpHead = helpDialog_getHeading();
 
 	ZoombiniGraphics::TextConf headConf;
 	headConf._textPalette = 0x23;
@@ -272,6 +262,28 @@ const Common::Rect &ZoombiniDialogHelp::helpDialog_getTitleRect() const {
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getHeadRect() const {
 	return _vm->isVersionFamilyTlcV2() ? _helpDialogTlcHeadRect : _helpDialogHeadRect;
+}
+
+Common::U32String ZoombiniDialogHelp::helpDialog_getHeading() const {
+	if (_showPickerHeaderEasterEgg)
+		return _vm->_text->getLocalizedString(ZoombiniText::kDialogHelpPickerUpdateVersion);
+
+	Common::U32String heading = _vm->_text->getPageName(_forPageType);
+	const int16 routeLevel = _vm->_state->readPageRouteLevel(_forPageType);
+	if (routeLevel == 0)
+		return heading;
+
+	Common::U32String levelLabel = _vm->_text->getLocalizedString(ZoombiniText::kDialogHelpLevel);
+	if (_vm->getLanguage() == Common::KO_KOR) {
+		heading += Common::U32String::format(" %d", routeLevel + 1);
+		heading += levelLabel;
+	} else {
+		levelLabel.toLowercase();
+		heading += ' ';
+		heading += levelLabel;
+		heading += Common::U32String::format(" %d", routeLevel + 1);
+	}
+	return heading;
 }
 
 const Common::Rect &ZoombiniDialogHelp::helpDialog_getBodyRect() const {
