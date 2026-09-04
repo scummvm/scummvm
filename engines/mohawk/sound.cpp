@@ -586,8 +586,15 @@ void MidiPlayer::playMidi(uint16 id) {
 	// debugC(3, kDebugMusic, "MidiPlayer::play");
 
 	Common::StackLock lock(_mutex);
-	Common::SeekableReadStream *stream = makeMidiStream(id);
+	playMidiStreamLocked(makeMidiStream(id), id);
+}
 
+void MidiPlayer::playMidiStream(Common::SeekableReadStream *stream, uint16 id) {
+	Common::StackLock lock(_mutex);
+	playMidiStreamLocked(stream, id);
+}
+
+void MidiPlayer::playMidiStreamLocked(Common::SeekableReadStream *stream, uint16 id) {
 	stop();
 	if (!stream)
 		return;
