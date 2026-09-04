@@ -159,6 +159,9 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 30:  // Usar algodon as cleaning rag: Ron refuses to clean.
 		beginRonRandomSpeechLine(delegate, 0x1d, 1);
 		return true;
+	case 31:  // Usar serrucho where it cannot be used.
+		beginRonRandomSpeechLine(delegate, 0x1e, 1);
+		return true;
 	case 32:  // Usar bisturi as tool: "I am a journalist, not a surgeon."
 		beginRonRandomSpeechLine(delegate, 0x1f, 1);
 		return true;
@@ -171,10 +174,10 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 44:  // Usar lupa where not needed.
 		beginRonRandomSpeechLine(delegate, 0x2b, 2);
 		return true;
-	case 52:  // Usar estaca with serrucho: too small to sharpen.
+	case 52:  // Usar bisturi with madero: too small to sharpen.
 		beginRonSpeechLine(delegate, 0x33, 0);
 		return true;
-	case 53:  // Usar serrucho with estaca: Ron would cut it badly.
+	case 53:  // Usar bisturi with poster: Ron would cut it badly.
 		beginRonSpeechLine(delegate, 0x34, 0);
 		return true;
 	case 58:  // Usar flor del Nilo with ponchera/glass: keeps well without water.
@@ -643,6 +646,7 @@ bool isRonInventoryAction(uint16 handlerId) {
 	case 2:
 	case 20:
 	case 30:
+	case 31:
 	case 32:
 	case 34:
 	case 40:
