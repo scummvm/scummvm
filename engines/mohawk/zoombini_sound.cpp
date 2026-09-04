@@ -384,7 +384,7 @@ void ZoombiniMidiPlayer::syncBgmVolume(bool enabled) {
 		setVolume(0);
 }
 
-void ZoombiniMidiPlayer::playZmbMidi(ZmbResource resource) {
+void ZoombiniMidiPlayer::playMidi(ZmbResource resource) {
 	if (resource._id <= 0) {
 		error("ZoombiniMidiPlayer: invalid MIDI resource id %d", resource._id);
 		return;
@@ -397,9 +397,7 @@ void ZoombiniMidiPlayer::playZmbMidi(ZmbResource resource) {
 	// so request a GM reset per song to keep a clean device state.
 	// The Windows profile (MIDIMPC.MHK) re-initializes itself and needs no reset, so the flag tracks the option on every play.
 	setResetChannelsOnPlay(ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionUseMacMidi));
-	ZmbResource::ArchiveKind lastKind = _vm->setActiveResourceKind(resource._archiveKind);
-	playMidi(static_cast<uint16>(resource._id));
-	_vm->setActiveResourceKind(lastKind);
+	playMidiStream(_vm->getResource(ID_TMID, resource), static_cast<uint16>(resource._id));
 	syncBgmVolume(!_vm->_state || _vm->_state->getEnableMusic());
 }
 
