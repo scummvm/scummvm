@@ -467,6 +467,9 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	case 231: // Generic item-on-room combination failure.
 		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
 		return true;
+	case 238: // Usar ascensor (use elevator): directs Ron to the individual buttons.
+		beginStaticSecondarySpeechLine(0xe6, 0);
+		return true;
 	default:
 		return false;
 	}
