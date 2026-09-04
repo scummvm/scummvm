@@ -207,7 +207,7 @@ bool Scene1010::dispatchCustomSceneAction(uint16 handlerId) {
 			beginSecondarySpeechLine(4, 0);
 			return true;
 		}
-		_vm->gameState().requestTravelScreenSelection(1);
+		requestTravelScreenSelection(1);
 		return true;
 	default:
 		return false;

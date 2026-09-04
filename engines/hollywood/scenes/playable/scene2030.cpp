@@ -322,7 +322,7 @@ bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {
 		runRightMerchantSaleSequence(kScene2030RightMerchantSaleItemB, kScene2030RightMerchantSaleValueB, 3, 6);
 		return true;
 	case 314: // Ir a avioneta (go to airplane): open travel destination selector.
-		_vm->gameState().requestTravelScreenSelection(2);
+		requestTravelScreenSelection(2);
 		return true;
 	default:
 		return false;
