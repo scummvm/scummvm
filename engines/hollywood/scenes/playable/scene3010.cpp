@@ -214,7 +214,7 @@ bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 		runUmbrellaClimb();
 		return true;
 	case 312: // Ir al camino (go to the road): open Ron's destination selector.
-		_vm->gameState().requestTravelScreenSelection(3);
+		requestTravelScreenSelection(3);
 		return true;
 	default:
 		return false;

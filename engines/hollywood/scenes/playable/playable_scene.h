@@ -478,6 +478,7 @@ protected:
 	void rebuildWalkablePaletteMask();
 	// Adds a notebook destination and presents its original unlock transition.
 	bool unlockTravelDestination(byte destinationId);
+	void requestTravelScreenSelection(byte currentChapterId);
 
 	// Inventory
 	bool hasInventoryItem(byte itemId) const;

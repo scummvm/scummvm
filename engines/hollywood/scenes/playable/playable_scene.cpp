@@ -2630,6 +2630,11 @@ bool PlayableScene::unlockTravelDestination(byte destinationId) {
 	return true;
 }
 
+void PlayableScene::requestTravelScreenSelection(byte currentChapterId) {
+	syncActiveActorPoseToGameState();
+	_vm->gameState().requestTravelScreenSelection(currentChapterId);
+}
+
 bool PlayableScene::hasInventoryItem(byte itemId) const {
 	const byte owner = _vm->gameState().currentInventoryOwnerIndex;
 	return _vm->gameState().hasInventoryItem(owner, itemId);
