@@ -776,7 +776,18 @@ uint16 GameplayLoop::fixedInventoryActionHandler(byte owner, byte itemId, byte s
 }
 
 uint16 GameplayLoop::dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const {
-	return _vm->gameState().dialogueInventoryRelationHandler(primaryItemId, secondaryItemId, relationMode);
+	const GameplayState &gameState = _vm->gameState();
+	const uint16 handlerId = gameState.dialogueInventoryRelationHandler(
+		primaryItemId, secondaryItemId, relationMode);
+	if (handlerId != 0)
+		return handlerId;
+
+	// Restore the dormant saw refusal for the omitted saw-with-wood relation.
+	if (_vm->restoredContentEnabled() && currentInventoryOwner() == 0 &&
+			relationMode == 1 && primaryItemId == 0x13 && secondaryItemId == 0x47)
+		return 31;
+
+	return 0;
 }
 
 bool GameplayLoop::scrollInventoryPanelPreviousPage() {
