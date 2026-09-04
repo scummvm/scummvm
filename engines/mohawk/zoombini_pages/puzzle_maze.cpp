@@ -132,7 +132,7 @@ void ZoombiniPuzzleMaze::setBackgroundMusic() {
 	// Select the MIDI track from the active route difficulty.
 	if (!_vm->isVersionFamilyTlcV2()) {
 		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
-		_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30035_MazeBgmBase + routeLevel)));
+		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30035_MazeBgmBase + routeLevel)));
 	}
 }
 
