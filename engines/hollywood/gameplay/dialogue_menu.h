@@ -74,6 +74,8 @@ public:
 	virtual ~DialogueMenuDelegate();
 
 	virtual Common::String dialogueMenuText(byte stageId, byte textRowId) const = 0;
+	// Returning another visible choice moves the cursor to it before selection.
+	virtual byte redirectDialogueMenuChoice(byte depthIndex, byte nodeIndex, byte choiceIndex) const;
 	virtual void advanceDialogueMenu(uint32 deltaMillis) = 0;
 	virtual void drawDialogueMenuFrame() = 0;
 	virtual void presentDialogueMenuFrame(const DialogueMenuState &state) = 0;
@@ -108,6 +110,8 @@ private:
 		byte depthIndex, byte nodeIndex, byte &selectableChoiceCount);
 	void appendWrappedChoiceText(byte choiceIndex, const Common::String &text, bool selectable);
 	bool pollEvents(bool &selected, bool &cancelled);
+	bool animateChoiceRedirect(byte choiceIndex);
+	bool waitForChoiceRedirect(uint32 millis);
 	void updateHoverFromCursor();
 	byte lineAt(uint16 cursorY) const;
 
