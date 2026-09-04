@@ -142,6 +142,8 @@ protected:
 	int16 beginBasecampPackLoad();
 	/** Load residents and finish the common Basecamp runner layout. */
 	void completeBasecampPackLoad(int16 arrivingCount);
+	/** Register an arriving Zoombini on its pedestal after its walk completes. */
+	void onSnoidWalkCompleted(ZmbSnoid *snoid) override;
 	/** Register the sixteen page-owned pedestal runners. */
 	void loadBasecampPedestalFeatures(ZmbResource bitmap, uint16 firstScrbId);
 
