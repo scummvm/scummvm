@@ -125,7 +125,7 @@ void ZoombiniPuzzleCaves::setBackgroundMusic() {
 	if (!_vm->isVersionFamilyTlcV2()) { // TLC v2.0 has no MIDI resources.
 		const int16 routeLevel = _difficultyLevel - kPuzzleLevel1;
 		if (routeLevel < 3 || ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixCavesL4MidiSilentBug))
-			_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30025_CavesBgmBase + routeLevel)));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30025_CavesBgmBase + routeLevel)));
 	}
 }
 

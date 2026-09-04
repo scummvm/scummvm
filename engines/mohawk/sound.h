@@ -248,17 +248,19 @@ public:
 	void pause(bool p);
 	void playMidi(uint16 id);
 
-	// When enabled, a GM reset is sent before each song starts. Needed for the
-	// Zoombini Macintosh MIDI profile (MIDIMAC.MHK), whose songs omit the inline
-	// GM/GS setup that the Windows profile (MIDIMPC.MHK) injects and therefore
-	// rely on a clean device state. Harmless but unnecessary for the PC profile,
-	// which re-initializes every channel itself, so callers leave it off there.
+	// When enabled, a GM reset is sent before each song starts.
+	// Needed for the MIDI tracks without the inline GM/GS setup.
+	// e.g. Zoombini Macintosh MIDI profile
 	void setResetChannelsOnPlay(bool reset) { _resetChannelsOnPlay = reset; }
 
 	void pause() override { Audio::MidiPlayer::pause(); }
 
 	void sendToChannel(byte channel, uint32 b) override;
 	void onTimer() override;
+
+protected:
+	/** Play an already-opened Mohawk tMID stream and take ownership of it. */
+	void playMidiStream(Common::SeekableReadStream *stream, uint16 id);
 
 private:
 	MohawkEngine *_vm;
@@ -267,6 +269,7 @@ private:
 
 	static bool extractMohawkMidi(Common::SeekableReadStream *stream, Common::Array<byte> &standardMidi);
 	Common::SeekableReadStream *makeMidiStream(uint16 id);
+	void playMidiStreamLocked(Common::SeekableReadStream *stream, uint16 id);
 };
 
 } // End of namespace Mohawk

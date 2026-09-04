@@ -107,7 +107,7 @@ void ZoombiniShelterPicker::setBackgroundMusic() {
 	if (_vm->isVersionFamilyTlcV2())
 		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound30001_Isle), Audio::Mixer::kMusicSoundType);
 	else
-		_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
+		_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, kResMidi30001_Isle));
 
 	_pickerEntryNarrationPending = true;
 }
