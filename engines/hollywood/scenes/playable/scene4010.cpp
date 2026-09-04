@@ -291,7 +291,7 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(16, 0);
 		return true;
 	case 319: // Usar coche (use car): open Ron's destination selector.
-		_vm->gameState().requestTravelScreenSelection(4);
+		requestTravelScreenSelection(4);
 		return true;
 	default:
 		return false;

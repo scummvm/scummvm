@@ -329,11 +329,19 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			TravelScreen travelScreen(this);
 			uint16 selectedStateId = stateId;
+			const uint16 returnStateId = gameState().activeActorPoseStateId;
 			const byte currentChapterId = gameState().travelScreenCurrentChapterId != 0 ?
 				gameState().travelScreenCurrentChapterId : 1;
 			if (!travelScreen.runSelection(currentChapterId, selectedStateId))
 				return Common::kReadingFailed;
 			if (!Engine::shouldQuit() && !isSceneRestartRequested()) {
+				if (selectedStateId == kTravelScreenSelectionState) {
+					if (!isImplementedGameplayState(returnStateId) ||
+							returnStateId == kTravelScreenSelectionState)
+						return Common::kReadingFailed;
+					selectedStateId = returnStateId;
+					gameState().activeActorPoseValid = true;
+				}
 				gameState().mainFlowStateId = selectedStateId;
 				gameState().travelScreenCurrentChapterId = 0;
 			}

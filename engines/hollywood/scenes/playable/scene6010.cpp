@@ -235,7 +235,7 @@ bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {
 			beginSecondarySpeechLine(0, 1);
 			return true;
 		}
-		state.requestTravelScreenSelection(6);
+		requestTravelScreenSelection(6);
 		return true;
 	default:
 		return false;

@@ -617,7 +617,7 @@ void Scene8010::runExitToScene8020() {
 }
 
 void Scene8010::runTravelScreenAction() {
-	_vm->gameState().requestTravelScreenSelection(6);
+	requestTravelScreenSelection(6);
 }
 
 void Scene8010::applyFishermanNameTextPatch() {
