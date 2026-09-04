@@ -1191,6 +1191,11 @@ void ZoombiniPuzzleSlides::onEveryFrame() {
 			_lastVictoryPaletteFrame = getCurrentFrameCounter();
 		}
 	}
+}
+
+void ZoombiniPuzzleSlides::onPostRenderFrame() {
+	if (_pageLoadedZmbCount <= 0 || isDeparturePending())
+		return;
 
 	// Consume at most one celebration opportunity on each Slides page visit.
 	// The opportunity is consumed before its frame deadline and runner search,
@@ -1220,7 +1225,7 @@ void ZoombiniPuzzleSlides::onEveryFrame() {
 				// Do not replace a placement or another active animation with celebration SCRS playback.
 				if (snoid &&
 					snoid->isRenderActivated() &&
-					snoid->hasFlag(ZmbFeature::FLAG_00000001_TYPE_SNOID)) {
+					snoid->getFlags() == ZmbFeature::FLAG_00000001_TYPE_SNOID) {
 					// Select SCRS 13001-13005 from the one-based feet trait.
 					int16 scrsId = static_cast<int16>(snoid->_trait._feet - 1 + kResScrs13001_NormalBase);
 					if (snoid->startScrsPlayback(ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle, resolveScrsRejectState(scrsId))) {

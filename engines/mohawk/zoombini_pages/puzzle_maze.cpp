@@ -147,8 +147,6 @@ void ZoombiniPuzzleMaze::initStates() {
 	_celebrationTrigger = false;
 	_celebrationsPlayed = 0;
 	_celebrationTarget = 0;
-	_celebrationPoolState = 0;
-	_celebrationLastFrame = 0;
 	_upperLeftArrivalDepthReorderPending = false;
 	_upperRightArrivalDepthReorderPending = false;
 
@@ -5524,6 +5522,9 @@ void ZoombiniPuzzleMaze::onSnoidWalkCompleted(ZmbSnoid *snoid) {
 void ZoombiniPuzzleMaze::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) {
 	const bool isSnoid = feature->hasFlag(ZmbFeature::FLAG_00000001_TYPE_SNOID);
 	if (isSnoid) {
+		// Completion callbacks may stop selection before the post-render controller clears the finished batch.
+		if (eventCode == kAnimEventM1_End && _celebrationTarget <= _celebrationsPlayed)
+			_celebrationTrigger = false;
 		int16 runnerIdx = findRunnerByFeatureId(feature->getId());
 		if (runnerIdx < 0)
 			return;
@@ -6905,16 +6906,14 @@ void ZoombiniPuzzleMaze::onPostRenderFrame() {
 }
 
 void ZoombiniPuzzleMaze::processIdleAnimations() {
+	ZoombiniGameState::MazeCelebrationHistory &history = _vm->_state->getMazeCelebrationHistory();
 	if (_celebrationTrigger && _celebrationsPlayed < _celebrationTarget) {
-		if (30 < getCurrentFrameCounter() - _celebrationLastFrame) {
-			_celebrationLastFrame = getCurrentFrameCounter();
+		if (30 < getCurrentFrameCounter() - history._lastFrame) {
+			history._lastFrame = getCurrentFrameCounter();
 			for (int16 snoidIdx = 0; snoidIdx < _pageLoadedZmbCount; snoidIdx++) {
-				uint16 poolIdx = _vm->_rnd->getNonRepeatRandom(_pageLoadedZmbCount, _celebrationPoolState);
-				ZmbSnoid *snoid = getSnoid(10000 + poolIdx);
-				int16 runnerIdx = snoid ? findRunnerBySnoidId(snoid->getId()) : -1;
-				if (!snoid || runnerIdx < 0 || !snoid->_packIsOccupied ||
-					!snoid->isRenderActivated() ||
-					snoid->getAnimState() != kSnoidAnimState000_Idle)
+				uint16 poolIdx = _vm->_rnd->getNonRepeatRandom(_pageLoadedZmbCount, history._poolState);
+				ZmbSnoid *snoid = getIdleSnoid(10000 + poolIdx);
+				if (!snoid || !snoid->isRenderActivated())
 					continue;
 
 				int16 scrsId = static_cast<int16>(snoid->_trait._feet + kResScrs15090_CelebrationBase);
@@ -6929,9 +6928,9 @@ void ZoombiniPuzzleMaze::processIdleAnimations() {
 				break;
 			}
 		}
-	} else if (_celebrationTrigger && _celebrationTarget <= _celebrationsPlayed) {
-		_celebrationPoolState = 0;
-		_celebrationLastFrame = 0;
+	} else if (_celebrationTarget <= _celebrationsPlayed) {
+		history._poolState = 0;
+		history._lastFrame = 0;
 		_celebrationTrigger = false;
 		_celebrationsPlayed = 0;
 	}
