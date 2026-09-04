@@ -484,7 +484,7 @@ void HollywoodEngine::normalizeLoadedGameState() {
 				state.activeActorWorldY >= kSceneBufferHeight) {
 			state.activeActorPoseValid = false;
 		} else {
-			if (state.activeActorFacing == 0xff || state.activeActorFacing > 4)
+			if (state.activeActorFacing == 0xff || state.activeActorFacing > 5)
 				state.activeActorFacing = 1;
 			if (state.activeViewportXOffset > kSceneBufferWidth - kScreenWidth)
 				state.activeViewportXOffset = 0;
