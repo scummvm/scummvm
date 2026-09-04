@@ -676,10 +676,29 @@ void Scene6020::runPickupItem5A() {
 	if (_taffyAnimationState != 3)
 		return;
 
+	byte taffyFrames[kScene6020Chunk15DescriptorCount + 1];
+	byte taffyFrame = _sceneLayers.layer(kScene6020TaffyLayer).frameIndex;
+	taffyFrames[0] = taffyFrame;
+	for (uint frame = 1; frame < ARRAYSIZE(taffyFrames); ++frame) {
+		taffyFrame = taffyFrame < 0x29 ? taffyFrame + 1 : 0x23;
+		taffyFrames[frame] = taffyFrame;
+	}
+
+	const bool previousManualAnimation = _taffyDepartureAnimationActive;
+	_taffyDepartureAnimationActive = true;
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
-			kScene6020FrameMillis).bookendWithLastFrame().patchAt(6, 2))
-		.commit(_taffyDeskMagnifierHidden, true);
+			kScene6020FrameMillis).bookendWithLastFrame()
+			.mappedLayerFrames(kScene6020TaffyLayer, taffyFrames, ARRAYSIZE(taffyFrames))
+			.patchAt(6, 2));
+	_taffyDepartureAnimationActive = previousManualAnimation;
+	if (!sequence.completed())
+		return;
+
+	_taffyAnimationState = 3;
+	_taffyHoldCounter = 3;
+	_taffyChannel.resetTimer();
+	sequence.commit(_taffyDeskMagnifierHidden, true);
 	addInventoryItem(kScene6020MagnifierInventoryItem);
 	sequence.framebufferPatch(2)
 		.sound(1)
