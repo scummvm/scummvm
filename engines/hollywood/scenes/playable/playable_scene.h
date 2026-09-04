@@ -502,6 +502,7 @@ protected:
 
 	// Speech animation hooks
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
+	virtual byte primarySpeechAnimationInitialFrame(byte animationGroup, byte baseFrame) const;
 	// Number of consecutive logical mouth frames starting at the base frame.
 	virtual byte primarySpeechAnimationFrameCount(byte animationGroup) const;
 	// Allows resource-specific actor layers to retain their original mouth-frame cadence.

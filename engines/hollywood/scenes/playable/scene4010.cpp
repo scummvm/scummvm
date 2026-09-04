@@ -919,7 +919,6 @@ void Scene4010::runProgressiveExitSpeech() {
 				kScene4010OverlayFrameMillis)
 				.holdFirstFrame()
 				.soundAt(11, 0x27)
-				.noRedrawAtEnd()
 				.startAt(1))
 			.commit(state.mainFlowStateId, _releaseProfile.moatExitState);
 	}

@@ -420,8 +420,7 @@ void Scene3080::runDiaryPickup() {
 
 	runActorReplacement(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
 		kScene3080OverlayFrameMillis).holdFirstFrame()
-		.resourcePatchAt(10, 12)
-		.noRedrawAtEnd());
+		.resourcePatchAt(10, 12));
 	state.scene3080FrankensteinDiaryTaken = true;
 	state.scene3080FrankensteinDiaryRevealed = false;
 	applySceneStateToHotspotsAndPatches(2);
@@ -439,8 +438,7 @@ void Scene3080::runStickPickup() {
 
 	runActorReplacement(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
 		kScene3080OverlayFrameMillis).holdFirstFrame()
-		.resourcePatchAt(10, 8)
-		.noRedrawAtEnd());
+		.resourcePatchAt(10, 8));
 	state.scene3080BranchTaken = true;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(0x35);

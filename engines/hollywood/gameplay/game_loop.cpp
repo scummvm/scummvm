@@ -172,7 +172,7 @@ bool GameplayLoop::run() {
 
 	uint32 lastMillis = g_system->getMillis();
 	while (!Engine::shouldQuit() && !_delegate->shouldExitGameplayLoop()) {
-		if (pollEvents())
+		if (pollEvents() || _delegate->shouldExitGameplayLoop())
 			break;
 
 		g_system->delayMillis(kGameplayLoopTickMillis);
@@ -186,6 +186,8 @@ bool GameplayLoop::run() {
 		const uint16 previousViewportX = _delegate->viewportXOffset();
 		const uint16 previousViewportY = _delegate->viewportYOffset();
 		_delegate->advanceGameplayLoop(delta);
+		if (Engine::shouldQuit() || _delegate->shouldExitGameplayLoop())
+			break;
 		const bool viewportChanged =
 			previousViewportX != _delegate->viewportXOffset() ||
 			previousViewportY != _delegate->viewportYOffset();

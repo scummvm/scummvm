@@ -969,8 +969,7 @@ void Scene7010::runChunk13Item09PickupOverlaySequence() {
 		.startAt(1)
 		.layerFrameAt(5, kScene7010Chunk11Layer, 0x38)
 		.drawAt(kSceneAnimationScenePlaced)
-		.restoreBaseBackground()
-		.noRedrawAtEnd());
+		.restoreBaseBackground());
 	if (!hasInventoryItem(kScene7010HannoverBusinessCardItem))
 		addInventoryItem(kScene7010HannoverBusinessCardItem);
 	_soundBank0.playSample(1, 100);

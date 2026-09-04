@@ -652,7 +652,7 @@ void Scene4060::runExitToNextRoom() {
 	sequence.actorReplacement(ActionOverlaySpec(kScene4060ExitOverlayChunk,
 			kScene4060ExitOverlayDescriptorCount, kScene4060FrameMillis)
 			.holdFrame(1).startAt(1)
-			.noFinalFrameDelay().noRedrawAtEnd());
+			.noFinalFrameDelay());
 	_exitFrameVisible = true;
 	sequence.sound(3)
 		.commit(_vm->gameState().mainFlowStateId, kScene4100EntryFromScene4060State);
@@ -670,7 +670,7 @@ void Scene4060::runFirstCardStage() {
 			kScene4060FirstCardOverlayDescriptorCount, kScene4060FrameMillis)
 			.bookendWithLastFrame()
 			.resourcePatchAt(6, kScene4060FirstCardPatchChunk)
-			.noFinalFrameDelay().noRedrawAtEnd())
+			.noFinalFrameDelay())
 		.commit(state.scene4060PictureCardStage, kScene4060CardStateFirstWon)
 		.framebufferPatch(0);
 	addInventoryItem(kScene4060FirstWonCardItem);
@@ -689,7 +689,7 @@ void Scene4060::runSecondCardStage() {
 			kScene4060SecondCardOverlayDescriptorCount, kScene4060FrameMillis)
 			.holdFirstFrame()
 			.resourcePatchAt(5, kScene4060SecondCardPatchChunk)
-			.noFinalFrameDelay().noRedrawAtEnd())
+			.noFinalFrameDelay())
 		.commit(state.scene4060PerfumeBottleCardStage, kScene4060SecondCardStateWon)
 		.framebufferPatch(1);
 	addInventoryItem(kScene4060SecondWonCardItem);
@@ -711,7 +711,7 @@ void Scene4060::runInstallMirrorStage() {
 			kScene4060FirstCardOverlayDescriptorCount, kScene4060FrameMillis)
 			.bookendWithLastFrame().reverse()
 			.resourcePatchAt(7, kScene4060MirrorInstalledPatchChunk)
-			.noFinalFrameDelay().noRedrawAtEnd())
+			.noFinalFrameDelay())
 		.commit(state.scene4060PictureCardStage, kScene4060CardStateMirrorInstalled)
 		.framebufferPatch(0);
 	removeInventoryItem(kScene4060MirrorItem);
