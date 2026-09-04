@@ -20,6 +20,25 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Chamber of the Sci-Mutant Priestess hinzugefügt.
    - Unterstützung für Star Wars: Rebel Assault hinzugefügt.
    - Unterstützung für Star Wars: Rebel Assault II: The Hidden Empire hinzugefügt.
+   - Unterstützung für Dragonsphere hinzugefügt.
+   - Unterstützung für Return of the Phantom hinzugefügt.
+   - Unterstützung für Once Upon a Forest hinzugefügt.
+   - Unterstützung für Alpha Polaris hinzugefügt.
+   - Unterstützung für Art of Murder: FBI Confidential hinzugefügt.
+   - Unterstützung für Barrow Hill - The Dark Path hinzugefügt.
+   - Unterstützung für Dark Fall: Lost Souls hinzugefügt.
+   - Unterstützung für Devil In The Capital hinzugefügt.
+   - Unterstützung für Dirty Split hinzugefügt.
+   - Unterstützung für Face Noir hinzugefügt.
+   - Unterstützung für Ghost in the Sheet hinzugefügt.
+   - Unterstützung für Hamlet hinzugefügt.
+   - Unterstützung für The Lost Crown - A Ghost-Hunting Adventure hinzugefügt.
+   - Unterstützung für Murder In Tehran's Alleys 2016 hinzugefügt.
+   - Unterstützung für Murder In Tehran's Alleys 1933 hinzugefügt.
+   - Unterstützung für Reversion series hinzugefügt.
+   - Unterstützung für Rhiannon: Curse of the Four Branches hinzugefügt.
+   - Unterstützung für Shadows on the Vatican series hinzugefügt.
+   - Unterstützung für mehr als 140 weitere Wintermute-Spiele hinzugefügt.
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
@@ -51,6 +70,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die koreanische Fan-Übersetzung in Kyra1 hinzugefügt (in ScummVM 2026.3.0).
    - Fehlerhafte nicht-koreanische kyra1-Spiele (Fehlermeldung "You're missing the 'KYRA.DAT'
      engine data file or it got corrupted...) wiederhergestellt.
+   - Unterstützung für ein optionales Automap-Overlay in Eye of the Beholder 1 und 2 hinzugefügt.
 
  Lure:
    - Charakter-Wegfindung optimiert.
@@ -60,6 +80,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Mehrere Fehlerkorrekturen für Riddle of Master Lu, einschließlich Abstürzen, fehlender Funktionen und Spiel-Fehler.
    - Fehler im Originalspiel korrigiert, der dafür sorgt, dass bei einer Unterhaltung mit Wolf das Spiel einfriert.
    - Unterstützung für originale Cheat-Codes hinzugefügt.
+   - Log-Einträge können jetzt übersetzt werden.
 
  MM:
    - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
@@ -76,6 +97,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
      wird. Das Löschen der Flags hat in einigen Szenen zu Problemen geführt.
    - Spielstände können jetzt über den GMM geladen werden, bevor eine neue Szene gestartet wird.
+   - Zwischensequenzen und Dialoge können jetzt mit "ESC" übersprungen werden.
+   - Unterstützung für das Mausrad zu einigen UI-Elementen hinzugefügt.
+   - Mehrere Probleme mit dem Memory-Puzzle in Nancy 9 korrigiert.
+   - Mehrere Probleme mit dem "I can't" Item-Sound korrigiert.
+   - Die Passwort-Angaben in einigen Puzzles sind jetzt fehlertoleranter, so sind etwa
+     "Xoc" und "Lady Xoc" akzeptierte Antworten).
 
  SCUMM:
    - Cursor-Skalierung in frühen Windows HE-Spielen korrigiert.
@@ -85,6 +112,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  SLUDGE:
    - Shape-Shift Escape wurde zur Spiele-Datenbank hinzugefügt.
+
+ TsAGE:
+   - Unterstützung für MIDI und MT-32 hinzugefügt.
+   - Verbesserte Wiedergabe von Sound Blaster-Samples.
+   - Sound wird jetzt korrekt pausiert, wenn das Spiel selbst pausiert wird.
+
+ Voyeur:
+   - Die Bewegung aus der Ego-Perspektive beim Anblick der Villa entspricht jetzt dem Original.
 
  Atari-Portierung:
    - Unterstützung für die nFM-Bibliothek hinzugefügt.
