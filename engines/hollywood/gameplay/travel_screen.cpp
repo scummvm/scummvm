@@ -54,6 +54,8 @@ const byte kEgyptChapterId = 2;
 const uint16 kEgyptChapterEntryState = 2000;
 const byte kCastleChapterId = 4;
 const uint16 kCastleChapterEntryState = 4000;
+const byte kAustraliaChapterId = 5;
+const uint16 kAustraliaChapterEntryState = 5000;
 const uint16 kTravelInterludeState = 9140;
 const uint32 kTravelUnlockTransitionMillis = 5000;
 const byte kTravelScreenNormalRamp[] = {
@@ -232,6 +234,12 @@ bool TravelScreen::runSelection(byte currentChapterId, uint16 &selectedStateId) 
 				state.scene2100MummyBranchState = 2;
 				state.scene2010TravelReturnSpeechState = 1;
 				state.scene9140ReturnStateId = kEgyptChapterEntryState;
+				selectedStateId = kTravelInterludeState;
+			} else if (currentChapterId != kAustraliaChapterId &&
+					selectedStateId == kAustraliaChapterEntryState &&
+					state.scene5110SalonTransformState == 2 && state.scene5050TrophyBoxTaken) {
+				state.scene5110SalonTransformState = 3;
+				state.scene9140ReturnStateId = kAustraliaChapterEntryState;
 				selectedStateId = kTravelInterludeState;
 			}
 			_vm->cursor()->leaveInteractiveMode();
