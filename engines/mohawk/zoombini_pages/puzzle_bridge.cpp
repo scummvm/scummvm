@@ -232,7 +232,7 @@ void ZoombiniPuzzleBridge::initStates() {
 	_celebrationTargetCount = 0;
 	_celebrationStartedCount = 0;
 	_lastCelebrationFrame = 0;
-	_celebrationFrameInterval = 120;
+	_celebrationFrameInterval = 60;
 	_celebrationUsedSnoidMask = 0;
 }
 

@@ -159,8 +159,6 @@ void ZoombiniPuzzleNet::initStates() {
 	_idleAnimTrigger = false;
 	_idleAnimCount = 0;
 	_idleAnimMax = _vm->_state->_f.getLessActionEnabled() ? 2 : 3;
-	_idleAnimPoolState = 0;
-	_idleAnimLastFrame = 0;
 	_roundCompleted = false;
 }
 
@@ -2166,14 +2164,15 @@ label_postColumn:
 
 	// Idle animations
 	if (0 < _pageLoadedZmbCount) {
+		ZoombiniGameState::NetCelebrationHistory &history = _vm->_state->getNetCelebrationHistory();
 		if (_idleAnimTrigger && _idleAnimCount < _idleAnimMax) {
-			if (30 < getCurrentFrameCounter() - _idleAnimLastFrame) {
+			if (30 < getCurrentFrameCounter() - history._lastFrame) {
 				bool triggered = false;
 				int16 attempts = 0;
-				_idleAnimLastFrame = getCurrentFrameCounter();
+				history._lastFrame = getCurrentFrameCounter();
 
 				do {
-					uint16 poolIdx = _vm->_rnd->getNonRepeatRandom(_pageLoadedZmbCount, _idleAnimPoolState);
+					uint16 poolIdx = _vm->_rnd->getNonRepeatRandom(_pageLoadedZmbCount, history._poolState);
 					uint16 snoidId = 10000 + poolIdx;
 
 					// Skip snoids in active column slots
@@ -2190,18 +2189,15 @@ label_postColumn:
 					// Celebration can replace only an idle runner, even after the round is complete.
 					if (snoid &&
 						snoid->isRenderActivated() &&
-						snoid->hasFlag(ZmbFeature::FLAG_00000001_TYPE_SNOID)) {
+						snoid->getFlags() == ZmbFeature::FLAG_00000001_TYPE_SNOID) {
 						// Skip locked snoids unless round is complete
 						if (snoid->_packIsOccupied && !_roundCompleted) {
-							attempts += 1;
-							if (20 < attempts)
-								triggered = true;
+							// Occupancy advances the pool without consuming the invalid-candidate budget.
 							continue;
 						}
 
 						int16 scrsId = static_cast<int16>(snoid->_trait._feet - 1 + kResScrs13046_NormalIdleBase);
-						// Idle fidget SCRS 13046-13050 are NET group 1 -> state 8.
-						// Route through the shared resolver instead of hardcoding.
+						// The registered idle-script group determines the playback state.
 						if (startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle)) {
 							snoid->setScrsEndEventEnabled(false);
 							_idleAnimCount += 1;
@@ -2214,9 +2210,9 @@ label_postColumn:
 					}
 				} while (!triggered);
 			}
-		} else if (_idleAnimMax <= _idleAnimCount && 0 < _idleAnimMax) {
-			_idleAnimPoolState = 0;
-			_idleAnimLastFrame = 0;
+		} else if (_idleAnimMax <= _idleAnimCount) {
+			history._poolState = 0;
+			history._lastFrame = 0;
 			_idleAnimTrigger = false;
 			_idleAnimCount = 0;
 		}

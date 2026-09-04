@@ -1485,10 +1485,8 @@ void ZoombiniPuzzleHotel::placeZoombiniInRoom(int16 roomSlot, ZmbSnoid *snoid) {
 	_placementScriptPhase = kSnoidScriptAcceptedEntrance01;
 	_pendingBodyArrangement = 0;
 	const Common::Point *endPos = (_difficultyLevel == kPuzzleLevel4) ? &basePos : nullptr;
-	if (startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle, endPos)) {
-		snoid->setFrameInterval(6);
-		snoid->resetNextAnimFrame();
-	} else {
+	// Preserve the pending frame and any faster cadence retained from a previous rejection.
+	if (!startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle, endPos)) {
 		finalizeAcceptedPlacement();
 	}
 }
@@ -1518,7 +1516,6 @@ void ZoombiniPuzzleHotel::startRejectedPlacement(ZmbSnoid *snoid) {
 	_rejectionAnimActive = true;
 	if (startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle)) {
 		snoid->setFrameInterval(3);
-		snoid->resetNextAnimFrame();
 		if (_roomIconFeatures[_targetRoomSlot]) {
 			// Group the room floor with the Snoid through @ref ZoombiniPage::registerFeatureTimingGroup().
 			// The pre-existing floor runner owns the timing group, so both retract together.

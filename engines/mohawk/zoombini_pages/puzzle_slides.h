@@ -87,6 +87,8 @@ public:
 	void initHelpPrompt() override;
 	/** Advance grid matching, animations, and queue state. */
 	void onEveryFrame() override;
+	/** Select celebration only after Snoid animation and arrival callbacks have run. */
+	void onPostRenderFrame() override;
 	/** Process cell and travel animation callbacks. */
 	void onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) override;
 
