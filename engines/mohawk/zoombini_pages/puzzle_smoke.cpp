@@ -2608,8 +2608,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 			if (2 < _loadedOnCliffCount) {
 				// The 1-based feet trait selects SCRS 12045-12049.
 				const int16 feetTrait = CLIP<int16>(static_cast<int16>(_activeZmb->_trait._feet), 1, 5);
-				playZmbScript(ZmbScrsCompletionMode::kReturnToIdle, nullptr,
-							  static_cast<int16>(kResScrs12045_FeetIdleBase + feetTrait - 1), _activeZmb);
+				startSnoidScrs(_activeZmb, ZmbResource(ZmbResource::kPage, kResScrs12045_FeetIdleBase + feetTrait - 1));
 			}
 
 			_loadedOnCliffCount += 1;
@@ -2712,7 +2711,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 		}
 	}
 
-	// Run the finite completion-celebration idle sequence.
+	// Run the finite completion-celebration idle sequence without replacing existing timing-group membership.
 	if (_bCelebrationIdleActive && _celebrationIdleProgress < _pageLoadedZmbCount - 1) {
 		if (30 < getCurrentFrameCounter() - _lastCelebrationIdleFrame) {
 			_lastCelebrationIdleFrame = getCurrentFrameCounter();
@@ -2734,8 +2733,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 						if (fallbackZmb && fallbackZmb->isRenderActivated() &&
 							fallbackZmb->getAnimState() == kSnoidAnimState000_Idle) {
 							const int16 feetTrait = CLIP<int16>(static_cast<int16>(fallbackZmb->_trait._feet), 1, 5);
-							playZmbScript(ZmbScrsCompletionMode::kReturnToIdle, nullptr,
-										  static_cast<int16>(kResScrs12045_FeetIdleBase + feetTrait - 1), fallbackZmb);
+							startSnoidScrs(fallbackZmb, ZmbResource(ZmbResource::kPage, kResScrs12045_FeetIdleBase + feetTrait - 1));
 						}
 						_celebrationIdleProgress = 4;
 						break;
@@ -2746,8 +2744,7 @@ void ZoombiniPuzzleSmoke::onPostRenderFrame() {
 				if (idleZmb->isRenderActivated() && idleZmb->getAnimState() == kSnoidAnimState000_Idle) {
 					// The 1-based feet trait selects idle SCRS 12045-12049.
 					const int16 feetTrait = CLIP<int16>(static_cast<int16>(idleZmb->_trait._feet), 1, 5);
-					playZmbScript(ZmbScrsCompletionMode::kReturnToIdle, nullptr,
-								  static_cast<int16>(kResScrs12045_FeetIdleBase + feetTrait - 1), idleZmb);
+					startSnoidScrs(idleZmb, ZmbResource(ZmbResource::kPage, kResScrs12045_FeetIdleBase + feetTrait - 1));
 					_celebrationIdleProgress = (0 < _celebrationIdleProgress) ? _celebrationIdleProgress + 1 : 4;
 					break;
 				}

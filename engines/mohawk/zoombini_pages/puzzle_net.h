@@ -803,7 +803,7 @@ private:
 	bool _columnLabelInvalidatedThisFrame = false;
 
 	// --- Idle animation state ---
-	// Net owns the trigger, candidate pool, and round completion contract.
+	// Net owns the trigger and round completion contract; selection history survives page visits.
 	// Do not promote these fields into generic puzzle idle state.
 
 	/** Whether a Net idle-animation batch should be selected. */
@@ -812,10 +812,6 @@ private:
 	int16 _idleAnimCount = 0;
 	/** Target number of idle animations in the current batch. */
 	int16 _idleAnimMax = 0;
-	/** Non-repeating random pool state for idle animation selection. */
-	uint32 _idleAnimPoolState = 0;
-	/** Frame at which the idle animation driver last ran. */
-	uint32 _idleAnimLastFrame = 0;
 	/** Whether the current Net round completed. */
 	bool _roundCompleted = false;
 };

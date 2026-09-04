@@ -1750,6 +1750,22 @@ public:
 		uint32 _lastFrame = 0;
 	};
 
+	/** Net selection history retained across page visits, new games, and save loads, without serialization. */
+	struct NetCelebrationHistory {
+		/** Non-repeat pool for celebration candidates, including skipped Snoids. */
+		uint32 _poolState = 0;
+		/** Frame of the most recent selection attempt, whether or not it succeeded. */
+		uint32 _lastFrame = 0;
+	};
+
+	/** Maze selection history retained across page visits, new games, and save loads, without serialization. */
+	struct MazeCelebrationHistory {
+		/** Non-repeat pool for celebration candidates, including skipped Snoids. */
+		uint32 _poolState = 0;
+		/** Frame of the most recent selection attempt, whether or not it succeeded. */
+		uint32 _lastFrame = 0;
+	};
+
 	/**
 	 * Runtime-only Ferry selector state shared by every Ferry page instance.
 	 *
@@ -1939,6 +1955,10 @@ public:
 	}
 	/** Return the runtime state shared by all Slides page instances. */
 	SlidesCelebrationState &getSlidesCelebrationState() { return _slidesCelebrationState; }
+	/** Return the retained Net celebration selection history for this engine session. */
+	NetCelebrationHistory &getNetCelebrationHistory() { return _netCelebrationHistory; }
+	/** Return the retained Maze celebration selection history for this engine session. */
+	MazeCelebrationHistory &getMazeCelebrationHistory() { return _mazeCelebrationHistory; }
 	/** Return the runtime selector state shared by all Ferry page instances. */
 	FerryRuntimeState &getFerryRuntimeState() { return _ferryRuntimeState; }
 	/** Return the runtime ambient scheduler state shared by all interactive pages. */
@@ -2285,6 +2305,10 @@ public:
 	AmbientSoundState _ambientSoundState;
 	/** Runtime-only Slides celebration scheduler state for this engine session. */
 	SlidesCelebrationState _slidesCelebrationState;
+	/** Runtime-only Net celebration selection history for this engine session. */
+	NetCelebrationHistory _netCelebrationHistory;
+	/** Runtime-only Maze celebration selection history for this engine session. */
+	MazeCelebrationHistory _mazeCelebrationHistory;
 	/** Runtime-only Ferry selector state for this engine session. */
 	FerryRuntimeState _ferryRuntimeState;
 	/** Runtime-only Maze layout selector state for this engine session. */

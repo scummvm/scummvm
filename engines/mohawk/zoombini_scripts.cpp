@@ -1190,6 +1190,8 @@ bool ZmbSnoid::startScrsPlayback(ZmbResource resource, ZmbScrsCompletionMode com
 	// Preserve the facing direction from before playback.
 	// @p completionMode independently controls whether the Snoid is hidden when the SCRS ends.
 	_scrsCompletionMode = completionMode;
+	// Starting a script replaces the previous idle age with its completion marker.
+	_idleTickCounter = completionMode == ZmbScrsCompletionMode::kHide ? 1 : 0;
 
 	if (playbackMode == ZmbScrsPlaybackMode::kReject)
 		_animState = kSnoidAnimState008_ScriptReject;
@@ -1527,7 +1529,7 @@ bool ZmbSnoid::onSnoidAnimTick(ZoombiniPage *page) {
 	// The counters may then trigger the wrong fidget voice SFX.
 	if (!isRenderActivated())
 		return false;
-	// Bridge accepted crossings use a random interval of 4 or 5; other Snoids keep the registration-time interval of 6.
+	// Page scripts may customize the registration-time cadence for subsequent animation ticks.
 	uint32 currentFrame = page->getCurrentFrameCounter();
 	if (!getFrameTimingResult(currentFrame))
 		return false;
