@@ -336,12 +336,45 @@ bool Scene5040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		if (state.scene5040MineGalleryState != 1)
 			remapSceneColors(0x0d, 0);
 	}
-	if (state.scene5040OldSockTaken) {
-		remapSceneColors(6, 0);
-		if (state.scene5040MineGalleryState != 1)
+	// The pickaxe mask is split across authored pseudo-items 0x0b and 0x0c.
+	// Reproduce the original state-dependent remap so it becomes scene item 6
+	// while Karl is paused at the wall and remains part of Karl otherwise.
+	if (!state.scene5040OldSockTaken) {
+		remapSceneColors(6, 6);
+		switch (state.scene5040MineGalleryState) {
+		case 0:
 			remapSceneColors(0x0b, 0);
-		remapSceneColors(0x0c, 0);
-		clearSceneItemFromColorMap(6);
+			remapSceneColors(0x0c, 4);
+			break;
+		case 1:
+			remapSceneColors(0x0b, 6);
+			remapSceneColors(0x0c, 6);
+			break;
+		case 2:
+			remapSceneColors(0x0b, 0);
+			remapSceneColors(0x0c, 0);
+			break;
+		default:
+			break;
+		}
+	} else {
+		remapSceneColors(6, 0);
+		switch (state.scene5040MineGalleryState) {
+		case 0:
+			remapSceneColors(0x0b, 0);
+			remapSceneColors(0x0c, 4);
+			break;
+		case 1:
+			remapSceneColors(0x0b, 4);
+			remapSceneColors(0x0c, 0);
+			break;
+		case 2:
+			remapSceneColors(0x0b, 0);
+			remapSceneColors(0x0c, 0);
+			break;
+		default:
+			break;
+		}
 	}
 	switch (state.scene5040DialState) {
 	case 1:
@@ -955,16 +988,6 @@ void Scene5040::remapSceneColors(byte sourceColor, byte itemId) {
 	for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
 		if (_paletteMaskOriginal[kSceneColorToItemMap + color] == sourceColor)
 			_paletteMask[kSceneColorToItemMap + color] = itemId;
-	}
-}
-
-void Scene5040::clearSceneItemFromColorMap(byte itemId) {
-	if (_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
-		return;
-
-	for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
-		if (_paletteMask[kSceneColorToItemMap + color] == itemId)
-			_paletteMask[kSceneColorToItemMap + color] = 0;
 	}
 }
 
