@@ -866,7 +866,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 		_openingSkipEnabled = false;
 		unloadUllaAnimFeature();
 		if (!_vm->isVersionFamilyTlcV2())
-			_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
 	} else if (_openingSkipped) {
 		// Reset the state after a skipped guide.
 		_guidePromptPending = false;
@@ -884,7 +884,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 			loadScrbOntoFeature(_mistakeCounterFeature, static_cast<int16>(_initialCounterStep + kResScrb6000_CounterBase));
 		}
 		if (!_vm->isVersionFamilyTlcV2())
-			_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
 	} else if (!_openingAnimVariant || (_openingAnimVariant == 4 && _guidePromptPending)) {
 		// Play the guide prompt.
 		replaceUllaAnimFeature(kResBitmapShape7500_Guide, static_cast<int16>(kResScrb7500_GuideBase + (_difficultyLevel - 1)),
@@ -904,7 +904,7 @@ void ZoombiniPuzzleHotel::setupCloseView() {
 		// This is not the generic completion rule for registered timing groups.
 		_initialCounterFillStepPending = true;
 		if (!_vm->isVersionFamilyTlcV2())
-			_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
 	} else {
 		// Play the guide with its sounds.
 		unloadUllaAnimFeature();
@@ -1935,7 +1935,7 @@ void ZoombiniPuzzleHotel::onPostRenderFrame() {
 		_guidePromptCompleted = false;
 		_openingSkipEnabled = false;
 		if (!_vm->isVersionFamilyTlcV2())
-			_vm->_midi->playZmbMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
+			_vm->_midi->playMidi(ZmbResource(ZmbResource::kPage, static_cast<int16>(kResMidi30020_HotelBgmBase + (_difficultyLevel - 1))));
 
 		if (_openingSkipped) {
 			// The user skipped the guide.
