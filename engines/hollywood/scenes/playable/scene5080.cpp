@@ -39,6 +39,7 @@ const uint kScene5080WardrobeDescriptorCount = 6;
 const byte kScene5080KeyInventoryItem = 0x4b;
 const byte kScene5080BookInventoryItem = 0x51;
 const byte kScene5080BookSourceItem = 10;
+const byte kScene5080StairSceneItem = 7;
 const byte kScene5080StairDoorSceneItem = 8;
 
 const byte kScene5080WardrobeFrameMap[] = {
@@ -107,9 +108,9 @@ void Scene5080::initializeCustomPreviewState() {
 
 void Scene5080::prepareCustomComposite(bool drawActors, byte activeFacing,
 		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
+	(void)activeFacing;
 	if (drawActors)
-		updateSceneActorDepthAndPalette(activeFacing, activeWorldX, activeWorldY);
+		updateSceneActorDepthAndPalette(actorDrawOrderMode, activeWorldX, activeWorldY);
 }
 
 void Scene5080::runCustomEntrySequence() {
@@ -312,6 +313,9 @@ bool Scene5080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkableMaskForCurrentSide();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (state.scene5080AlternatePassageSide)
+		_hotspots.addFallbackRectHotspot(kScene5080StairSceneItem,
+			Common::Rect(0x182, 0x074, 0x1c8, 0x0c5));
 
 	if (state.scene5080PassageUnlocked) {
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x44, 0);
@@ -338,7 +342,7 @@ bool Scene5080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		approachPoint.x = 0x286;
 		approachPoint.y = 0x13a;
 	}
-	_hotspots.setActionTarget(7, interactionPoint, approachPoint);
+	_hotspots.setActionTarget(kScene5080StairSceneItem, interactionPoint, approachPoint);
 	return true;
 }
 
@@ -433,14 +437,12 @@ void Scene5080::runPassageSideSwitch() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	if (state.scene5080AlternatePassageSide) {
-		setActiveActorPose(0x230, 0x157, 4);
-		drawPlayableComposite();
-		presentFrame();
+		setActiveActorPose(0x230, 0x157, 5);
+		walkActiveActorTo(0x230, 0x157, 4, 0, false);
 		walkActiveActorTo(0x166, 0x0d6, 0xff, 0, false);
 	} else {
-		setActiveActorPose(0x258, 0x0fd, 2);
-		drawPlayableComposite();
-		presentFrame();
+		setActiveActorPose(0x258, 0x0fd, 3);
+		walkActiveActorTo(0x258, 0x0fd, 2, 0, false);
 		walkActiveActorTo(0x2b8, 0x188, 0xff, 0, false);
 	}
 }
@@ -499,7 +501,7 @@ void Scene5080::handlePassageUnlock() {
 	if (!state.scene5080PassageUnlocked) {
 		state.scene5080PassageUnlocked = true;
 		applySceneStateToHotspotsAndPatches(1);
-		beginStaticSecondarySpeechLine(8, 0);
+		beginStaticSecondarySpeechLine(_vm->restoredContentEnabled() ? 0x35 : 8, 0);
 		runPassageSideSwitch();
 		return;
 	}
@@ -523,19 +525,20 @@ void Scene5080::rebuildWalkableMaskForCurrentSide() {
 	}
 }
 
-void Scene5080::updateSceneActorDepthAndPalette(byte facing, int worldX, int worldY) {
+void Scene5080::updateSceneActorDepthAndPalette(byte drawOrderMode, int worldX, int worldY) {
 	_drawActorDepthYThresholds = _actorDepthYThresholds;
 	if (_drawActorDepthYThresholds.size() > 2) {
-		const bool sideFacing = facing >= 1 && facing <= 4;
-		_drawActorDepthYThresholds[1] = sideFacing ? 0x01a2 : 0;
-		_drawActorDepthYThresholds[2] = sideFacing ? 0x03e7 : 0x010c;
+		const bool lowerDrawOrder = drawOrderMode >= 1 && drawOrderMode <= 4;
+		_drawActorDepthYThresholds[1] = lowerDrawOrder ? 0x01a2 : 0;
+		_drawActorDepthYThresholds[2] = lowerDrawOrder ? 0x03e7 : 0x010c;
 	}
 	if (_drawActorDepthYThresholds.size() > 4) {
 		_drawActorDepthYThresholds[4] =
-			((facing >= 1 && facing <= 5) || (worldX > 0x178 && worldY < 0x0cf)) ? 0x03e7 : 0;
+			((drawOrderMode >= 1 && drawOrderMode <= 5) ||
+			(worldX > 0x178 && worldY < 0x0cf)) ? 0x03e7 : 0;
 	}
 
-	if (facing != 5 ||
+	if (drawOrderMode != 5 ||
 			_paletteMaskOriginal.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize ||
 			_paletteMask.size() < kSceneColorToFootstepSoundMap + kScenePaletteMapPageSize)
 		return;
