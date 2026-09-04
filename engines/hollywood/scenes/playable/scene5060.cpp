@@ -82,6 +82,17 @@ void Scene5060::initializeCustomPreviewState() {
 	setActiveActorPose(0x1fe, 0x17c, 4);
 }
 
+void Scene5060::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)drawActors;
+	(void)activeFacing;
+	(void)activeWorldX;
+	(void)activeWorldY;
+
+	if (_drawActorDepthYThresholds.size() > 2)
+		_drawActorDepthYThresholds[2] = actorDrawOrderMode < 6 ? 0 : 0x03e7;
+}
+
 void Scene5060::runCustomEntrySequence() {
 	setActiveActorPose(0x2d9, 0x19b, 4);
 	drawPlayableComposite();
