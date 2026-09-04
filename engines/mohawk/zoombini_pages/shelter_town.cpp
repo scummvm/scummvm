@@ -1541,11 +1541,25 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	const byte memorialMonth = stateFile._memorialMonths[memorialDataSlotIdx];
 	const byte monthIdx = memorialMonth == 0 ? 0 : MIN<byte>(memorialMonth - 1, 11);
 
-	Common::U32String dateText = _vm->_text->getLocalizedString(static_cast<uint32>(ZoombiniText::kMemorialJanuary) + monthIdx);
-	dateText += Common::U32String::format(" %u", stateFile._memorialDays[memorialDataSlotIdx]);
-	if (_vm->getLanguage() == Common::KO_KOR)
-		dateText += Common::U32String(U"일");
-	dateText += Common::U32String::format(", %u", stateFile._memorialYears[memorialDataSlotIdx]);
+	const Common::U32String monthText = _vm->_text->getLocalizedString(static_cast<uint32>(ZoombiniText::kMemorialJanuary) + monthIdx);
+	const byte memorialDay = stateFile._memorialDays[memorialDataSlotIdx];
+	const uint16 memorialYear = stateFile._memorialYears[memorialDataSlotIdx];
+	const bool usesDayMonthYear = _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU) ||
+								  _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_11_EU) ||
+								  _vm->isGameVariant(MohawkGameFeatures::GF_ZMB_11_FR_2002);
+
+	Common::U32String dateText;
+	if (usesDayMonthYear) {
+		dateText = Common::U32String::format("%u ", memorialDay);
+		dateText += monthText;
+		dateText += Common::U32String::format(" %u", memorialYear);
+	} else {
+		dateText = monthText;
+		dateText += Common::U32String::format(" %u", memorialDay);
+		if (_vm->getLanguage() == Common::KO_KOR)
+			dateText += Common::U32String(U"일");
+		dateText += Common::U32String::format(", %u", memorialYear);
+	}
 
 	const Common::U32String rowText[5] = {
 		_vm->_text->getLocalizedString(honorKey),

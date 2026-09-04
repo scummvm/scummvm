@@ -77,6 +77,8 @@ protected:
 	const Common::Rect &helpDialog_getTitleRect() const;
 	/** Return the heading rectangle for the current release layout. */
 	const Common::Rect &helpDialog_getHeadRect() const;
+	/** Build the release-specific localized Help heading. */
+	Common::U32String helpDialog_getHeading() const;
 	/** Return the body rectangle for the current release layout. */
 	const Common::Rect &helpDialog_getBodyRect() const;
 	/** Handle pointer navigation within the help dialog. */
