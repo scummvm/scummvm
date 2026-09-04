@@ -411,7 +411,9 @@ void Scene5100::runReturnToMineSwitches() {
 void Scene5100::advanceElevatorDoor(uint32 delta) {
 	ResourceSpriteLayer &doorLayer = _sceneLayers.layer(kScene5100ElevatorDoorLayer);
 	if (!_elevatorDoorClosing) {
-		if (!doorLayer.visible && _activeActorDrawOrderMode == 2 && _activeActorFacing == 5) {
+		// The implicit close accompanies the scripted walk out of the elevator.
+		if (!doorLayer.visible && _actorPathPlaybackActive && !_playerDirectedActorPathActive &&
+				_activeActorDrawOrderMode == 2 && _activeActorFacing == 5) {
 			_sceneLayers.showLayerAtFrame(kScene5100ElevatorDoorLayer, 0);
 			_elevatorDoorChannel.reset(0, kScene5100ElevatorFrameMillis);
 			_elevatorDoorClosing = true;
