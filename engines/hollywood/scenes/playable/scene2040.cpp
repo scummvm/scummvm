@@ -183,8 +183,11 @@ bool Scene2040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 308: // Coger flor del Nilo (take Nile flower): pickup after the plant grows.
 		runFlowerPickup();
 		return true;
-	case 309: // Mirar flor del Nilo (look at Nile flower): already collected response.
-		beginSecondarySpeechLine(5, 0);
+	case 309: // Mirar flor del Nilo (look at Nile flower).
+		if (_vm->restoredContentEnabled())
+			beginStaticSecondarySpeechLine(0x7f, 0);
+		else
+			beginSecondarySpeechLine(5, 0);
 		return true;
 	case 310: // Mirar pata de la esfinge (look at sphinx paw): paws covered with sand.
 		beginSecondarySpeechLine(6, 0);
