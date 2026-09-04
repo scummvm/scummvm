@@ -2725,16 +2725,16 @@ void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec,
 		}
 	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
-
-	if (options.redrawAtEnd) {
-		drawPlayableComposite();
-		presentFrame();
-	}
 }
 
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	(void)animationGroup;
 	return 0;
+}
+
+byte PlayableScene::primarySpeechAnimationInitialFrame(byte animationGroup, byte baseFrame) const {
+	(void)animationGroup;
+	return baseFrame;
 }
 
 byte PlayableScene::primarySpeechAnimationFrameCount(byte animationGroup) const {
@@ -3026,9 +3026,10 @@ bool PlayableScene::startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIn
 	setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, red, green, blue);
 	_primarySpeechOverlay.colorIndex = kDefaultPrimarySpeechTextColor;
 	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-	_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+	const byte initialFrame = primarySpeechAnimationInitialFrame(animationGroup, baseFrame);
+	_speechController.startPrimaryDialogueSpeech(animationGroup, initialFrame);
 	primarySpeechAnimationStarted(animationGroup, baseFrame);
-	setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+	setPrimarySpeechAnimationFrame(animationGroup, initialFrame);
 	startRealtimeSpeechPart();
 	return _realtimeSpeechActive;
 }
@@ -3270,9 +3271,10 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		}
 		if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
 			const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-			_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+			const byte initialFrame = primarySpeechAnimationInitialFrame(animationGroup, baseFrame);
+			_speechController.startPrimaryDialogueSpeech(animationGroup, initialFrame);
 			primarySpeechAnimationStarted(animationGroup, baseFrame);
-			setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+			setPrimarySpeechAnimationFrame(animationGroup, initialFrame);
 		}
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
 		if (animatePrimaryLeft) {

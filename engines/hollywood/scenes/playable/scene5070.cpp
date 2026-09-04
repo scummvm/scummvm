@@ -327,8 +327,7 @@ void Scene5070::runAviatorCapPickup() {
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(7, kScene5070AviatorCapPickupDescriptorCount,
 		kScene5070FrameMillis).holdFirstFrame()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	addInventoryItem(kScene5070AviatorCapInventoryItem);
 	sequence.sound(1)
 		.commit(state.scene5070AviatorCapState, kScene5070AviatorCapTakenState)

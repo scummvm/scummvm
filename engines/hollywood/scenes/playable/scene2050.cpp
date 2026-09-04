@@ -373,7 +373,7 @@ void Scene2050::runLongLabyrinthWalkClip() {
 	ActionOverlaySpec spec(12, kScene2050LabyrinthWalkDescriptorCount,
 		kScene2050LabyrinthWalkFrameMap, ARRAYSIZE(kScene2050LabyrinthWalkFrameMap),
 		kScene2050OverlayFrameMillis);
-	spec.startAt(1).hookEveryFrame(kScene2050LabyrinthFootstepHook).noRedrawAtEnd();
+	spec.startAt(1).hookEveryFrame(kScene2050LabyrinthFootstepHook);
 	runActorReplacement(spec);
 }
 
@@ -428,7 +428,6 @@ void Scene2050::runMuralClipForward() {
 	ActionOverlaySpec spec(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipForwardFrameMap, ARRAYSIZE(kScene2050MuralClipForwardFrameMap),
 		kScene2050OverlayFrameMillis);
-	spec.noRedrawAtEnd();
 	runActorReplacement(spec);
 }
 
@@ -436,7 +435,6 @@ void Scene2050::runMuralClipBackward() {
 	ActionOverlaySpec spec(9, kScene2050MuralClipDescriptorCount,
 		kScene2050MuralClipBackwardFrameMap, ARRAYSIZE(kScene2050MuralClipBackwardFrameMap),
 		kScene2050OverlayFrameMillis);
-	spec.noRedrawAtEnd();
 	runActorReplacement(spec);
 }
 

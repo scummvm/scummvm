@@ -421,6 +421,14 @@ byte Scene5120::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	return 0;
 }
 
+byte Scene5120::primarySpeechAnimationInitialFrame(byte animationGroup, byte baseFrame) const {
+	if (animationGroup != kScene5120WerewolfSpeechGroup)
+		return baseFrame;
+
+	const byte frame = _sceneLayers.layerFrame(kScene5120MainProjectionLayer);
+	return frame < primarySpeechAnimationFrameCount(animationGroup) ? frame : baseFrame;
+}
+
 byte Scene5120::primarySpeechAnimationFrameCount(byte animationGroup) const {
 	(void)animationGroup;
 	return 5;
@@ -494,7 +502,7 @@ void Scene5120::runElevatorDoorClip(bool opening) {
 	ActionOverlaySpec spec(8, kScene5120ElevatorDescriptorCount, kScene5120ElevatorFrameMillis);
 	if (!opening)
 		spec.reverse();
-	runSceneOverlay(spec.noRedrawAtEnd());
+	runSceneOverlay(spec);
 	_sceneLayers.showLayerAtFrame(kScene5120ElevatorLayer,
 		opening ? kScene5120ElevatorDescriptorCount - 1 : 0);
 }
@@ -592,7 +600,7 @@ void Scene5120::runFilmProjectorSequence() {
 	}
 	runElevatorDoorClip(true);
 	runActorReplacement(ActionOverlaySpec(17, kScene5120ProjectorDescriptorCount,
-		kScene5120ActionFrameMillis).noRedrawAtEnd());
+		kScene5120ActionFrameMillis));
 	_soundBank0.stop();
 
 	_projectorSpeechActive = true;
@@ -604,7 +612,7 @@ void Scene5120::runFilmProjectorSequence() {
 
 	runActorReplacement(ActionOverlaySpec(17, kScene5120ProjectorDescriptorCount,
 		kScene5120ProjectorSecondFrameMap, ARRAYSIZE(kScene5120ProjectorSecondFrameMap),
-		kScene5120ActionFrameMillis).noRedrawAtEnd());
+		kScene5120ActionFrameMillis));
 	if (!runRoomTransformationSequence())
 		return;
 

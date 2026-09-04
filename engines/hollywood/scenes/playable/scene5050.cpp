@@ -230,8 +230,7 @@ void Scene5050::runSpecialTransitionToMineSwitches() {
 	runActorReplacement(ActionOverlaySpec(7, kScene5050SpecialTransitionDescriptorCount,
 		kScene5050SpecialFrameMillis)
 		.hookAt(14, kScene5050SpecialHoldHook)
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	_specialTransitionActive = false;
 	fadePaletteToBlack();
 	_specialExitAlreadyFaded = true;
@@ -257,8 +256,7 @@ void Scene5050::runTrophyBoxPickup() {
 		.primarySpeechAt(10, grantItem ? 0x16 : 0x66,
 			grantItem ? (byte)(pickupIndex * 2) : 0,
 			0x29d, 0x128, 0x3f, 0x3f, 0x3f)
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 
 	ActionOverlaySpec closing(8, kScene5050PickupOverlayDescriptorCount,
 		kFrankensteinRewardFrameMap, kFrankensteinRewardFrameCount,

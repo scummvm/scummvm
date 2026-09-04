@@ -334,13 +334,11 @@ void Scene1020::runQuasimodoGrateCutscene() {
 	// The lift frames draw Quasimodo themselves, so his layer comes down for them.
 	_sceneLayers.setLayerVisible(kScene1020QuasimodoLayer, false);
 
-	// noRedrawAtEnd: do not present the still-unpatched base between the halves.
 	runOverlaySequence(ActionOverlaySpec(21, kScene1020ActionChunk21DescriptorCount,
 		kScene1020OverlayFrameMillis)
 		.endAt(kScene1020LiftPauseFrame + 1)
 		.soundAt(kScene1020GrateSlamFrame, kScene1020GrateLiftSoundId)
-		.hookAt(kScene1020GrateSlamFrame, kScene1020CutsceneHookId)
-		.noRedrawAtEnd());
+		.hookAt(kScene1020GrateSlamFrame, kScene1020CutsceneHookId));
 
 	state.scene1020GrateRaised = true;
 	if (!state.scene1020SueTapeNoticed) {

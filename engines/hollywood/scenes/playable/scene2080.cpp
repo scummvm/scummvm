@@ -954,8 +954,7 @@ void Scene2080::runForwardExitToScene2090() {
 		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap), kScene2080FrameMillis)
 		.soundAt(6, 0x11)
 		.startAt(1)
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 
 	if (sequence.completed() &&
 			loadVariableChunk(kScene2080ForwardExitClipChunk, _deltaClipData)) {

@@ -34,14 +34,12 @@ struct ActionOverlayOptions {
 	ActionOverlayOptions() :
 		firstFrame(0),
 		endFrame(0),
-		redrawAtEnd(true),
 		allowSkip(true),
 		waitAfterFinalFrame(true) {
 	}
 
 	uint firstFrame;
 	uint endFrame;
-	bool redrawAtEnd;
 	bool allowSkip;
 	bool waitAfterFinalFrame;
 };
@@ -54,7 +52,9 @@ struct ActionOverlayOptions {
  * endFrame meaning the end of the playback sequence. Frame events run in declaration order
  * after their frame is installed. Frames normally hold for frameMillis,
  * including the last; noFinalFrameDelay() makes the terminal frame an
- * immediate handoff.
+ * immediate handoff. The terminal frame remains presented until the caller's
+ * next draw, so state and scene transitions cannot expose an intermediate
+ * composite.
  * unskippable() reserves input for the scene while a state-changing sequence
  * runs. The playback entry point controls actor visibility; drawAt() only
  * changes composition order. restoreBaseBackground() clears the sprite bounds
@@ -133,11 +133,6 @@ struct ActionOverlaySpec : AnimationEventSpec<ActionOverlaySpec> {
 
 	ActionOverlaySpec &restoreBaseBackground() {
 		restoreBackgroundBeforeDraw = true;
-		return *this;
-	}
-
-	ActionOverlaySpec &noRedrawAtEnd() {
-		options.redrawAtEnd = false;
 		return *this;
 	}
 

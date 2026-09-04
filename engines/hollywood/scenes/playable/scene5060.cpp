@@ -286,8 +286,7 @@ void Scene5060::runGasInventoryAction() {
 			kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
 			.frameRange(1, 6)
 			.primarySpeechAt(5, 3, 0, 0x0154, 0x00ca, 0x3f, 0x3f, 0x3f)
-			.noFinalFrameDelay()
-			.noRedrawAtEnd())
+			.noFinalFrameDelay())
 		.actorReplacement(ActionOverlaySpec(6, kScene5060GasDescriptorCount,
 			kScene5060GasFrameMap, ARRAYSIZE(kScene5060GasFrameMap), kScene5060FrameMillis)
 			.startAt(10)

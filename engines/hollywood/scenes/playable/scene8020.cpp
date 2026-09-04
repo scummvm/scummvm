@@ -453,8 +453,7 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 		.resourcePatchAt(4, kScene8020Pickup6cPatchChunk)
 		.commitAt(4, _vm->gameState().scene8020ForegroundObjectState, (byte)2)
 		.unskippable()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -470,8 +469,7 @@ void Scene8020::runPickupInventoryItem5dSequence() {
 		.holdFirstFrame()
 		.resourcePatchAt(7, kScene8020Pickup5dPatchChunk)
 		.unskippable()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -487,8 +485,7 @@ void Scene8020::runRemoveInventoryItem6cSequence() {
 		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
 		.commitAt(5, _vm->gameState().scene8020ForegroundObjectState, (byte)0)
 		.unskippable()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -510,8 +507,7 @@ void Scene8020::runForegroundTransformationSequence() {
 		.commitAt(5, _foregroundAnimationState, (byte)2)
 		.commitAt(5, _foregroundRepeatCount, (byte)100)
 		.unskippable()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 

@@ -1013,8 +1013,7 @@ void Scene7100::handleCaptureRat() {
 		runSceneOverlay(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
 			kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap),
 			kScene7100FrameMillis)
-			.soundAt(0x0e, 0x16)
-			.noRedrawAtEnd());
+			.soundAt(0x0e, 0x16));
 	}
 	sequence.secondarySpeech(0x1a, 1)
 		.commit(_environmentState, (byte)4)
