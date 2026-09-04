@@ -143,7 +143,6 @@ void ZoombiniPuzzleFleens::initStates() {
 	_idleSnoidFidgetLastSelectionFrame = 0;
 	_idleSnoidFidgetSelectionInterval = 60;
 	_idleSnoidFidgetPoolState = 0;
-	_fleenFidgetThreshold = 64;
 	_departureWalkPendingCount = 0;
 	_departureWalkCompletedCount = 0;
 	_draggedFleenIndex = -1;
@@ -650,11 +649,11 @@ void ZoombiniPuzzleFleens::tickFleenCreature(FleenCreature &creature) {
 		if (getCurrentFrameCounter() < creature.nextTickFrame)
 			return;
 		creature.nextTickFrame = getCurrentFrameCounter() + creature.feature->getFrameInterval();
-		if (_fleenFidgetThreshold == 0)
+		if (_vm->_fidgetThreshold == 0)
 			return;
-		const byte oldCounter = creature.fidgetCounter;
+		const int8 oldCounter = static_cast<int8>(creature.fidgetCounter);
 		creature.fidgetCounter += 1;
-		if (_fleenFidgetThreshold + 16 < oldCounter) {
+		if (_vm->_fidgetThreshold + 16 < oldCounter) {
 			FleenActionCode actionCode;
 			if (50 < _vm->_rnd->getRandomNumber(1, 100)) {
 				actionCode = FleenActionCode::kIdleFidget03;
@@ -950,7 +949,8 @@ void ZoombiniPuzzleFleens::beginBoardingAnimation(ZmbSnoid &snoid, int16 fleenIn
 	_boardingFleenIndex = fleenIndex;
 	_boardingStartEnabled = false;
 	_submittedPairQueueEventPending = true;
-	_fleenFidgetThreshold = 0;
+	// Boarding suspends new idle fidgets for both Snoids and Fleens.
+	_vm->_fidgetThreshold = 0;
 
 	FleenCreature &creature = _fleenCreatures[fleenIndex];
 	if (creature.isTarget && creature.posCode <= kFleenPosCode19_TargetBranchLast) {
@@ -1046,7 +1046,7 @@ void ZoombiniPuzzleFleens::processInitialLureOrSubmittedPairEscapeEvent(ZmbSnoid
 		_boardingFleenIndex = -1;
 		snoid.setAnimState(kSnoidAnimState000_Idle);
 		snoid.setupIdleHotspots();
-		_fleenFidgetThreshold = 64;
+		_vm->_fidgetThreshold = 64;
 		break;
 	case kFleenEscapeEventCode000_ToggleFacing:
 		// The escaping Snoid reached its facing marker.

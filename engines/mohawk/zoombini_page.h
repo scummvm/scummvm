@@ -1298,6 +1298,11 @@ protected:
 	 * @ref ZoombiniPage::endSnoidDrag() restores the saved value on release.
 	 */
 	uint32 _dragSavedSnoidFrameInterval = 6;
+
+	/** A held Snoid suspends new idle fidgets without cancelling animations already playing. */
+	bool _snoidDragFidgetsSuppressed = false;
+	uint16 _dragSavedFidgetThreshold = 64;
+
 	/** Runner-list neighbors captured before the dragged Snoid is moved to the global tail. */
 	ZmbFeature *_dragSavedRunnerPrevious = nullptr;
 	/** Next runner captured before the dragged Snoid is moved to the global tail. */
@@ -1711,6 +1716,9 @@ protected:
 								 Common::Array<uint16> &assignedRunnerIds) const;
 
 private:
+	/** Restore the threshold on release or page teardown, including an already-disabled value. */
+	void restoreSnoidDragFidgets();
+
 	/** Partition a feature into render/event buckets from its flags. */
 	static void categorizeFeature(ZmbFeature *feature, Common::Array<ZmbFeature *> &loopAnimList, Common::Array<ZmbFeature *> &overlayList, Common::Array<ZmbFeature *> &normalList, Common::Array<ZmbFeature *> &entityList);
 	/** Sort one feature bucket by authored registration and Z order. */

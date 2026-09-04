@@ -147,7 +147,6 @@ void ZoombiniPuzzleTunnels::initStates() {
 	_pendingBodyArrangement = 0;
 
 	// Reset ambient animation
-	_idleActorDeadline = 0;
 	_idleActorDelay = 0;
 	_celebrationTarget = 0;
 	_celebrationsPlayed = 0;
@@ -544,7 +543,6 @@ void ZoombiniPuzzleTunnels::activatePage() {
 	// These two draws follow the help selection in the authored setup RNG order.
 	queueGateActorSequence(GateActorSequenceMode::kEntry01);
 	_idleActorDelay = _vm->_rnd->getRandomNumber(5400, 10800);
-	_idleActorDeadline = getCurrentFrameCounter() + _idleActorDelay;
 	ZoombiniPage::activatePage();
 }
 
@@ -1475,7 +1473,6 @@ void ZoombiniPuzzleTunnels::playGateActor(int16 actorSlot, int16 scrbId, GateAct
 void ZoombiniPuzzleTunnels::advanceAnimStep() {
 	if (_animQueueCount <= 0)
 		return;
-	_vm->resetFidgetActivity();
 
 	AnimQueueEntry &head = _animQueue[0];
 	head.actorSequenceStep += 1;
@@ -1517,10 +1514,7 @@ void ZoombiniPuzzleTunnels::advanceAnimStep() {
 		scrb = head.secondaryFollowupScrbId;
 		break;
 	default:
-		// Beyond step 4: pop entry
-		popAnimQueueEntry();
-		_animationQueueAdvanceEnabled = true;
-		return;
+		break;
 	}
 
 	if (0 <= runner && runner < 4 && 0 < scrb && _gateActorFeatures[runner]) {
@@ -1531,6 +1525,7 @@ void ZoombiniPuzzleTunnels::advanceAnimStep() {
 		popAnimQueueEntry();
 		_animationQueueAdvanceEnabled = true;
 	}
+	_vm->resetFidgetActivity();
 }
 
 // =========================================================================
@@ -2447,8 +2442,9 @@ void ZoombiniPuzzleTunnels::onPostRenderFrame() {
 					}
 
 					_animationQueueAdvanceEnabled = false;
-					_idleActorDeadline = getCurrentFrameCounter() + _idleActorDelay;
 				}
+				// Waiting for a queued Snoid also postpones shared idle activity.
+				_vm->resetFidgetActivity();
 			}
 			goto postAnimQueue;
 		}
@@ -2477,11 +2473,10 @@ void ZoombiniPuzzleTunnels::onPostRenderFrame() {
 
 postAnimQueue:
 	// Idle animation scheduling
-	if (!_postGameStarted && _idleActorDeadline < getCurrentFrameCounter()) {
+	if (!_postGameStarted && _idleActorDelay < _vm->getActivityIdleFrames()) {
 		_vm->resetFidgetActivity();
 		queueGateActorSequence(GateActorSequenceMode::kIdle00);
 		_idleActorDelay = _vm->_rnd->getRandomNumber(5400, 10800);
-		_idleActorDeadline = getCurrentFrameCounter() + _idleActorDelay;
 	}
 
 	// The final setup phase loads SCRB 7000 onto the main path feature.

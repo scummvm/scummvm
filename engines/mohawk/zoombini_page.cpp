@@ -45,6 +45,7 @@ ZoombiniPage::ZoombiniPage(MohawkEngine_Zoombini *vm, ZoombiniPageCategory pageC
 }
 
 ZoombiniPage::~ZoombiniPage() {
+	restoreSnoidDragFidgets();
 	clear();
 }
 
@@ -177,6 +178,7 @@ void ZoombiniPage::close() {
 	if (_isClosed)
 		return;
 
+	restoreSnoidDragFidgets();
 	if (_pageCategory != ZoombiniPageCategory::kDialog)
 		_vm->_sound->releaseAllLoadedSounds();
 	onFadeOut();
@@ -184,6 +186,7 @@ void ZoombiniPage::close() {
 }
 
 void ZoombiniPage::closeForQuit() {
+	restoreSnoidDragFidgets();
 	// Run the active page's palette cleanup after the save-before-quit prompt.
 	// Do not let an already-closed page suppress this shutdown-specific fade.
 	if (_pageCategory != ZoombiniPageCategory::kDialog)
@@ -217,6 +220,10 @@ void ZoombiniPage::onFrame() {
 		_lastFrameTime = _currentFrameTime;
 		_lastFrameCounter = _currentFrameCounter;
 	}
+
+	// Holding still is activity too; neither idle timer may accumulate during the drag.
+	if (_snoidDragFidgetsSuppressed)
+		_vm->resetFidgetActivity();
 }
 
 void ZoombiniPage::onModalFrame() {
@@ -2986,6 +2993,11 @@ bool ZoombiniPage::isPointOccupiedByOtherSnoid(const ZmbSnoid *self, const Commo
 }
 
 void ZoombiniPage::beginSnoidDrag(ZmbSnoid *snoid) {
+	assert(!_snoidDragFidgetsSuppressed);
+	_dragSavedFidgetThreshold = _vm->_fidgetThreshold;
+	_snoidDragFidgetsSuppressed = true;
+	_vm->_fidgetThreshold = 0;
+
 	// Queue the previously materialized click rectangle before replacing the pose.
 	addExternalDirtyRect(snoid->getClickRect());
 
@@ -3042,9 +3054,17 @@ void ZoombiniPage::endSnoidDrag(ZmbSnoid *snoid) {
 	// Do not restore the runner's former linked-list position.
 	snoid->setFlags(_dragSavedSnoidFlags);
 	snoid->setFrameInterval(_dragSavedSnoidFrameInterval);
+	restoreSnoidDragFidgets();
 
 	_vm->_cursor->showCursor();
 	onSnoidDragEnded(snoid);
+}
+
+void ZoombiniPage::restoreSnoidDragFidgets() {
+	if (!_snoidDragFidgetsSuppressed)
+		return;
+	_vm->_fidgetThreshold = _dragSavedFidgetThreshold;
+	_snoidDragFidgetsSuppressed = false;
 }
 
 void ZoombiniPage::restoreSnoidPreDragRunnerOrder(ZmbSnoid *snoid) {

@@ -72,6 +72,8 @@ public:
 
 	/** Advance raft movement, reactions, and pending walk-ins. */
 	void onEveryFrame() override;
+	/** Process Captain reactions, reject callbacks, and idle scheduling after rendering. */
+	void onPostRenderFrame() override;
 	/** Start a seat drag or handle ferry controls. */
 	ZmbEventHandleResult onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) override;
 	/** Process raft and rejected-Snoid animation callbacks. */
