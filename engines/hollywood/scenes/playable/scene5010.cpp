@@ -198,7 +198,8 @@ bool Scene5010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 311: // Usar sistema de agujas (use switch system), duplicate hotspot.
 		runSwitchPanel();
 		return true;
-	case 312: // Unused no-op scene action slot after setup.
+	case 312: // Ir a camino (go to road): open Ron's destination selector.
+		requestTravelScreenSelection(5);
 		return true;
 	default:
 		return false;
