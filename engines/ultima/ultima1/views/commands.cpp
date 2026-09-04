@@ -52,11 +52,13 @@ bool Commands::msgGame(const GameMessage &msg) {
 	if (msg._name == "TEXT") {
 		writeString(msg._stringValue);
 		return true;
+	} else if (msg._name == "RESET_LINE") {
+		resetLine();
+		return true;
+	} else if (msg._name == "SHOW_CURSOR") {
+		showCursor();
 	} else if (msg._name == "PROMPT") {
 		prompt();
-		return true;
-	} else if (msg._name == "SPACE") {
-		spaceToContinue();
 		return true;
 	}
 
@@ -68,17 +70,20 @@ void Commands::writeString(const Common::String &msg) {
 	_surface.writeString(msg);
 }
 
-void Commands::prompt() {
+void Commands::resetLine() {
 	_surface.fillRect(TextRect(0, 4, 29, 4), 0);	// Clear entire bottom row
-	_surface.writeString(Point(0, 4), "\x10");
-	_textCursor.setPosition(Common::Point(1, 24));
+	_surface.setTextPos(Point(0, 4));
+}
+
+void Commands::showCursor() {
+	_textCursor.setPosition(Common::Point(_surface.getTextPos().x, 24));
 	_textCursor.show();
 }
 
-void Commands::spaceToContinue() {
-	writeString("Press Space to continue:");
-	_textCursor.setPosition(Common::Point(25, 24));
-	_textCursor.show();
+void Commands::prompt() {
+	resetLine();
+	_surface.writeString("\x10");
+	showCursor();
 }
 
 } // namespace Views

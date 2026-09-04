@@ -126,7 +126,7 @@ void Logic::action(int action) {
 		break;
 	case KEYBIND_READY:
 		ready();
-		break;
+		return;
 	case KEYBIND_PASS:
 		pass();
 		break;
@@ -229,7 +229,7 @@ void Logic::quit() {
 }
 
 void Logic::ready() {
-	// TODO
+	g_engine->addView("Ready");
 }
 
 void Logic::zstats() {

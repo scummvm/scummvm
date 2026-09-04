@@ -19,16 +19,53 @@
  *
  */
 
-#include "ultima/ultima1/views/dead.h"
+#include "ultima/ultima1/views/interactions/interaction.h"
+#include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
+namespace Interactions {
 
-Dead::Dead() : View("Dead") {
+using namespace Ultima::Shared::Messages;
+
+Interaction::Interaction(const Common::String &name) : View(name) {
 	setBounds(Common::Rect(0, 0, 0, 0));
 }
 
+bool Interaction::tick() {
+	g_engine->findView("Commands")->tick();
+	return Shared::Gfx::View::tick();
+}
+
+void Interaction::writeString(const Common::String &msg) {
+	g_engine->findView("Commands")->send(GameMessage("TEXT", msg));
+}
+
+void Interaction::writeString(const char *format, ...) {
+	va_list alist;
+
+	// Start reading values
+	va_start(alist, format);
+	Common::String msg = Common::String::vformat(format, alist);
+	va_end(alist);
+
+	writeString(msg);
+}
+
+void Interaction::resetLine() {
+	g_engine->findView("Commands")->send(GameMessage("RESET_LINE"));
+}
+
+void Interaction::showCursor() {
+	g_engine->findView("Commands")->send(GameMessage("SHOW_CURSOR"));
+}
+
+void Interaction::prompt() {
+	g_engine->findView("Commands")->send(GameMessage("PROMPT"));
+}
+
+} // namespace Interactions
 } // namespace Views
 } // namespace Ultima1
 } // namespace Ultima

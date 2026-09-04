@@ -45,8 +45,9 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 
 	void writeString(const Common::String &msg);
+	void resetLine();
+	void showCursor();
 	void prompt();
-	void spaceToContinue();
 };
 
 } // namespace Views

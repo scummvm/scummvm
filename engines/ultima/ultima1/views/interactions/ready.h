@@ -19,25 +19,42 @@
  *
  */
 
-#ifndef ULTIMA1_VIEWS_DEAD_H
-#define ULTIMA1_VIEWS_DEAD_H
+#ifndef ULTIMA1_VIEWS_INTERACTIONS_READY_H
+#define ULTIMA1_VIEWS_INTERACTIONS_READY_H
 
-#include "ultima/shared/gfx/view.h"
+#include "ultima/ultima1/views/interactions/interaction.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Views {
+namespace Interactions {
+
+using namespace Ultima::Shared::Messages;
 
 /**
- * Dummy view to go to when the player dies. This allows the game to know
- * not to allow saving anymore, and to stop on-screen map animations.
+ * Handler for the Ready command
  */
-class Dead : public Shared::Gfx::View {
+class Ready : public Interaction {
+	enum Mode {
+		READY_AREA, READY_WEAPON, READY_ARMOUR, READY_SPELL
+	};
+private:
+	Mode _mode = READY_AREA;
+
+	void nothing();
+
 public:
-	Dead();
-	~Dead() override {}
+	Ready();
+	~Ready() override {
+	}
+
+	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+} // namespace Interactions
 } // namespace Views
 } // namespace Ultima1
 } // namespace Ultima

@@ -58,6 +58,9 @@ public:
 	int getStringWidth(const Common::String &str) const;
 
 	void setTextPos(const Common::Point &pt);
+	const Common::Point &getTextPos() const {
+		return _textPos;
+	}
 	byte setColor(byte color);
 	void setColor(byte fgColor, byte bgColor);
 	void reverseColor();

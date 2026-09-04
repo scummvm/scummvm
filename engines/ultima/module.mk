@@ -65,10 +65,12 @@ MODULE_OBJS += \
 	ultima1/logic/dungeon_logic.o \
 	ultima1/logic/overworld_logic.o \
 	ultima1/logic/pillar_logic.o \
+	ultima1/views/interactions/interaction.o \
+	ultima1/views/interactions/dead.o \
+	ultima1/views/interactions/ready.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \
-	ultima1/views/dead.o \
 	ultima1/views/dialog.o \
 	ultima1/views/full_screen_dialog.o \
 	ultima1/views/game.o \

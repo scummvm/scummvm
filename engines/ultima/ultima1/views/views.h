@@ -23,6 +23,8 @@
 #define ULTIMA1_VIEWS_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima1/views/interactions/dead.h"
+#include "ultima/ultima1/views/interactions/ready.h"
 #include "ultima/ultima1/views/create_character.h"
 #include "ultima/ultima1/views/game.h"
 #include "ultima/ultima1/views/location_map.h"
@@ -37,6 +39,8 @@ namespace Ultima1 {
 namespace Views {
 
 struct Views : public Shared::Views {
+	Interactions::Dead _dead;
+	Interactions::Ready _ready;
 	CreateCharacter _createCharacter;
 	Game _game;
 	LocationMap _locationMap;
