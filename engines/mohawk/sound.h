@@ -229,6 +229,10 @@ public:
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
 
+protected:
+	/** Play a decoded audio stream and take ownership of it. */
+	Audio::SoundHandle *playSoundStream(Audio::SeekableAudioStream *seekableStream, uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, const MohawkWaveLoopInfo &loopInfo);
+
 private:
 	MohawkEngine *_vm;
 

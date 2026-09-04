@@ -51,9 +51,9 @@ Audio::SoundHandle *ZoombiniSound::playSound(ZmbResource resource, Audio::Mixer:
 		return nullptr;
 	}
 	pruneInactiveSoundEntries();
-	ZmbResource lastResource = _vm->setActiveResource(resource);
-	Audio::SoundHandle *sndHandle = Sound::playSound(static_cast<uint16>(resource._id), soundType, volume, loop, nullptr);
-	_vm->setActiveResource(lastResource);
+	MohawkWaveLoopInfo loopInfo;
+	Audio::SeekableAudioStream *seekableStream = makeMohawkWaveStream(_vm->getResource(ID_SND, resource), nullptr, &loopInfo);
+	Audio::SoundHandle *sndHandle = playSoundStream(seekableStream, static_cast<uint16>(resource._id), soundType, volume, loop, loopInfo);
 	if (!sndHandle) {
 		error("ZoombiniSound: malformed or unsupported required sound resource %s", resource.toString().c_str());
 		return nullptr;
