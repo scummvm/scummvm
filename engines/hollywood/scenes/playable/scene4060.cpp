@@ -114,7 +114,6 @@ const byte kScene4060CardStateFirstWon = 1;
 const byte kScene4060CardStateMirrorInstalled = 2;
 const byte kScene4060SecondCardStatePrompted = 1;
 const byte kScene4060SecondCardStateWon = 2;
-const uint kScene4060PostSheetPokerAcceptRecord = 148;
 
 const byte kScene4060PokerOpenTableFrames[] = {
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x14, 0x14
@@ -812,13 +811,17 @@ void Scene4060::initializeSherilynCardDialogueRecords(Common::Array<DialogueChoi
 			records[2].enabled = 1;
 	} else {
 		records[1].enabled = 1;
-		// The original still draws this acceptance line, but the cursor cannot select it.
-		records[kScene4060PostSheetPokerAcceptRecord].enabled = 1;
-		records[kScene4060PostSheetPokerAcceptRecord].selectable = 0;
 	}
 
 	if (state.scene4080GwendolynStateTransition != 0)
 		records[4].enabled = 1;
+}
+
+byte Scene4060::redirectDialogueMenuChoice(byte depthIndex, byte nodeIndex, byte choiceIndex) const {
+	if (_vm->gameState().scene4060SherilynSheetWon != 0 && depthIndex == 2 && nodeIndex == 1 && choiceIndex == 1)
+		return 2;
+
+	return choiceIndex;
 }
 
 void Scene4060::runSherilynDialogueProgressReplay() {

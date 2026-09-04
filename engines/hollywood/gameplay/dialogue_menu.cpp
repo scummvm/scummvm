@@ -36,6 +36,8 @@ const uint16 kDialogueMenuHoverTopBaseY = 0x1d3;
 const uint16 kDialogueMenuHoverBottomY = 0x1d5;
 const uint16 kDialogueMenuTextWidth = 0x266;
 const uint kDialogueMenuMaxCharsPerLine = 100;
+const uint32 kDialogueMenuChoiceRedirectStepMillis = 40;
+const uint32 kDialogueMenuChoiceRedirectPauseMillis = 1000;
 
 DialogueChoiceRecord::DialogueChoiceRecord() :
 		enabled(0),
@@ -74,6 +76,10 @@ byte DialogueMenuState::choiceForLine(byte lineIndex) const {
 }
 
 DialogueMenuDelegate::~DialogueMenuDelegate() {
+}
+
+byte DialogueMenuDelegate::redirectDialogueMenuChoice(byte, byte, byte choiceIndex) const {
+	return choiceIndex;
 }
 
 DialogueMenu::DialogueMenu(HollywoodEngine *vm, DialogueMenuDelegate *delegate) :
@@ -122,9 +128,13 @@ byte DialogueMenu::choose(byte stageId, const Common::Array<DialogueChoiceRecord
 			return kCancelledChoice;
 		}
 		if (selected) {
-			const byte choiceIndex = _state.choiceForLine(_state.highlightedLineIndex);
+			byte choiceIndex = _state.choiceForLine(_state.highlightedLineIndex);
+			const byte redirectedChoice = _delegate->redirectDialogueMenuChoice(depthIndex, nodeIndex,
+				choiceIndex);
+			if (redirectedChoice != choiceIndex && animateChoiceRedirect(redirectedChoice))
+				choiceIndex = redirectedChoice;
 			_vm->cursor()->leaveInteractiveMode();
-			return choiceIndex;
+			return Engine::shouldQuit() ? kCancelledChoice : choiceIndex;
 		}
 
 		g_system->delayMillis(kDialogueMenuTickMillis);
@@ -265,6 +275,58 @@ bool DialogueMenu::pollEvents(bool &selected, bool &cancelled) {
 	}
 
 	return false;
+}
+
+bool DialogueMenu::animateChoiceRedirect(byte choiceIndex) {
+	byte targetLineIndex = 0xff;
+	for (byte lineIndex = 0; lineIndex < _state.lines.size(); ++lineIndex) {
+		if (_state.choiceForLine(lineIndex) == choiceIndex) {
+			targetLineIndex = lineIndex;
+			break;
+		}
+	}
+	if (targetLineIndex == 0xff)
+		return false;
+
+	const int topY = (int)kDialogueMenuHoverTopBaseY - (int)_state.lineCount * kDialogueMenuLineHeight;
+	const uint16 targetY = (uint16)(topY + targetLineIndex * kDialogueMenuLineHeight +
+		(kDialogueMenuLineHeight + 1) / 2);
+	Common::Point cursorPosition(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
+	while (cursorPosition.y != targetY && !Engine::shouldQuit()) {
+		cursorPosition.y += cursorPosition.y < targetY ? 1 : -1;
+		_vm->cursor()->updatePosition(cursorPosition);
+		g_system->warpMouse(cursorPosition.x, cursorPosition.y);
+		_vm->cursor()->advance(kDialogueMenuChoiceRedirectStepMillis);
+		updateHoverFromCursor();
+		_delegate->drawDialogueMenuFrame();
+		_delegate->presentDialogueMenuFrame(_state);
+		if (waitForChoiceRedirect(kDialogueMenuChoiceRedirectStepMillis))
+			return false;
+	}
+
+	if (waitForChoiceRedirect(kDialogueMenuChoiceRedirectPauseMillis))
+		return false;
+	g_system->warpMouse(cursorPosition.x, cursorPosition.y);
+	return true;
+}
+
+bool DialogueMenu::waitForChoiceRedirect(uint32 millis) {
+	uint32 remaining = millis;
+	while (remaining != 0 && !Engine::shouldQuit()) {
+		const uint32 delay = MIN<uint32>(remaining, kDialogueMenuTickMillis);
+		g_system->delayMillis(delay);
+		remaining -= delay;
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				Engine::quitGame();
+				return true;
+			}
+		}
+	}
+
+	return Engine::shouldQuit();
 }
 
 void DialogueMenu::updateHoverFromCursor() {
