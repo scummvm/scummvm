@@ -78,7 +78,6 @@ enum RSoundFadeCheckMode {
  */
 class Channel {
 public:
-	RSound *_owner = nullptr;
 	byte _midiChannel = 0;					// 1-9: the MIDI channel to which the data in this struct pertains
 
 	byte _deltaCounter = 0;					// number of ticks until the next event occurs; loaded from the delta byte of a note or chord event
@@ -128,12 +127,6 @@ public:
 	 * volume fade triggered by event 0xF8.
 	 */
 	void setFadeOut(bool fadeOut);
-
-	/**
-	 * Loads new sound data into the channel, starts playback by setting
-	 * _deltaCounter to 1 and resets pitch bend to center on the MT-32.
-	 */
-	void playData(byte *soundData);
 };
 
 /**
@@ -209,6 +202,12 @@ private:
 	void Channel_processFadeOut(Channel *channel);
 
 	/**
+	 * Loads new sound data into the channel, starts playback by setting
+	 * _deltaCounter to 1 and resets pitch bend to center on the MT-32.
+	 */
+	void Channel_playData(Channel *channel, byte *soundData);
+
+	/**
 	 * Sends Note-Off (velocity 0) for all active notes on the
 	 * given channel's MIDI channel, then clears the active note table for it.
 	 */
@@ -247,31 +246,69 @@ protected:
 	void resultCheck();
 
 	/**
-	 * Play the specified sound using any free channel from 5 to 8.
-	 * Returns the channel that was used (or nullptr if none was free),
-	 * since some commands poke the just-loaded channel's loop pointer
-	 * directly afterward.
+	 * Returns a pointer to the channel data corresponding to the
+	 * specified MIDI channel.
 	 */
-	Channel *playSoundCh5To8(int offset);
+	Channel *getChannel(byte channel);
+
+	/*
+	 * MIDI channels are allocated to sound data either statically or
+	 * dynamically. Channels 1-4 and 9 are usually statically allocated,
+	 * where the command will specify the channel to use for loading the
+	 * sound data using playSoundStatic. Because channel 9 is the rhythm
+	 * channel and sound data must be specifically written for this
+	 * channel, it can only be allocated statically.
+	 * Channels 5-8 are usually dynamically allocated. The command will
+	 * use playSoundDynamic to look for a free channel and then load the
+	 * sound data into that channel.
+	 * Usually, commands will load music statically into channels 1-4 and 9,
+	 * and SFX dynamically into channels 5-8. However, there are many
+	 * exceptions.
+	 */
 
 	/**
-	 * Play the specified sound using any free channel from 1 to 8.
+	 * Play the specified sound by statically allocating the specified
+	 * channel. This will unload any sound already playing on the
+	 * channel.
 	 */
-	Channel *playSoundCh1To8(int offset);
+	Channel *playSoundStatic(int offset, byte channel);
+	Channel *playSoundStatic(byte *soundData, byte channel);
 
 	/**
-	 * Allocates a MIDI channel, loads the specified sound data into it
-	 * and starts playback. Allocation will look for a free channel in
-	 * the range starting with the specified channel (default 5) and
-	 * ending with channel 8. If no suitable channel could be found,
-	 * nullptr is returned and the sound data is not played.
+	 * Play the specified sound by allocating one of the free dynamic
+	 * channels. Returns the channel that was used (or nullptr if none
+	 * was free), since some commands poke the just-loaded channel's
+	 * loop pointer directly afterward.
+	 */
+	Channel *playSoundDynamic(int offset);
+
+	/**
+	 * Play the specified sound by allocating any free melodic channel,
+	 * dynamic or static.
+	 */
+	Channel *playSoundAnyChannel(int offset);
+
+	/**
+	 * Dynamically allocates a melodic channel, loads the specified sound
+	 * data into it and starts playback. Allocation will look for a
+	 * free channel in the range starting with the specified channel
+	 * (default 5) and ending with channel 8. If no suitable channel
+	 * could be found, nullptr is returned and the sound data is not
+	 * played.
 	 */
 	Channel *allocateAndPlay(byte *pData, int startingChannel = 5);
 
 	/**
-	 * Checks to see whether the given block of data is already loaded into a channel.
+	 * Checks to see whether the given block of data is already loaded
+	 * into a channel and being played.
 	 */
 	bool isSoundPlaying(byte *pData);
+
+	/**
+	 * Checks to see whether the given block of data is already loaded
+	 * into the specified channel and being played.
+	 */
+	bool isSoundPlaying(byte channel, byte *pData);
 
 	uint16 generateRandomNumber();
 
@@ -291,6 +328,12 @@ protected:
 	 * (inclusive, 1-based). Shared tail used by command0/command2/command4.
 	 */
 	void sendMidiChannelReset(int first, int last);
+
+	/**
+	 * Sets the volume for a channel. The value is set on the channel data
+	 * and it is sent out to the MT-32.
+	 */
+	void setChannelVolume(byte channel, byte volume);
 
 	/**
 	 * Sends a single SysEx message: bytes from pData up to (but not

@@ -58,17 +58,6 @@ void Channel::setFadeOut(bool fadeOut) {
 	}
 }
 
-void Channel::playData(byte *soundData) {
-	bool ticksProcessingDisabled = _owner->_ticksProcessingDisabled;
-	_owner->_ticksProcessingDisabled = true;
-
-	loadData(soundData);
-	_deltaCounter = 1;
-	_owner->sendPitchBend(_midiChannel, 0x40);
-
-	_owner->_ticksProcessingDisabled = ticksProcessingDisabled;
-}
-
 /*-----------------------------------------------------------------------*/
 
 RSound::RSound(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common::Path &filename,
@@ -89,7 +78,6 @@ RSound::RSound(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common:
 	_fadeOutCounter = _fadeOutSpeed;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
-		_channels[i]._owner = this;
 		_channels[i]._midiChannel = i + 1;
 	}
 
@@ -172,46 +160,73 @@ void RSound::resultCheck() {
 	}
 }
 
-Channel *RSound::playSoundCh5To8(int offset) {
+Channel *RSound::getChannel(byte channel) {
+	return &_channels[channel - 1];
+}
+
+Channel *RSound::playSoundStatic(byte *soundData, byte channel) {
+	assert(channel >= 1 && channel <= RSOUND_CHANNEL_COUNT);
+
+	Channel *chan = getChannel(channel);
+	Channel_playData(chan, soundData);
+
+	return chan;
+}
+
+Channel *RSound::playSoundStatic(int offset, byte channel) {
+	return playSoundStatic(loadData(offset), channel);
+}
+
+Channel *RSound::playSoundDynamic(int offset) {
 	return allocateAndPlay(loadData(offset));
 }
 
-Channel *RSound::playSoundCh1To8(int offset) {
-	return allocateAndPlay(loadData(offset), 0);
+Channel *RSound::playSoundAnyChannel(int offset) {
+	return allocateAndPlay(loadData(offset), 1);
 }
 
 Channel *RSound::allocateAndPlay(byte *pData, int startingChannel) {
 	int endChannel = RSOUND_CHANNEL_COUNT - 1;
 
+	Channel *foundChannel = nullptr;
+
 	// Scan for a free channel
-	for (int i = startingChannel; i < endChannel; ++i) {
-		if (_channels[i]._deltaCounter == 0) {
-			_channels[i].playData(pData);
-			return &_channels[i];
+	for (int i = startingChannel; i <= endChannel; ++i) {
+		if (getChannel(i)->_deltaCounter == 0) {
+			foundChannel = getChannel(i);
+			break;
 		}
 	}
 
-	// None found; fall back to a channel that is fading out to stop
-	for (int i = endChannel - 1; i >= startingChannel; --i) {
-		if (_channels[i]._fadeOutActive) {
-			_channels[i].playData(pData);
-			return &_channels[i];
+	if (foundChannel == nullptr) {
+		// None found; fall back to a channel that is fading out to stop
+		for (int i = endChannel; i >= startingChannel; --i) {
+			if (getChannel(i)->_fadeOutActive) {
+				foundChannel = getChannel(i);
+				break;
+			}
 		}
 	}
 
-	// No available channel
-	return nullptr;
+	if (foundChannel != nullptr)
+		Channel_playData(foundChannel, pData);
+
+	return foundChannel;
 }
 
 bool RSound::isSoundPlaying(byte *pData) {
-	// Deliberately excludes channel 9 (index 8), matching the disassembly -
+	// Deliberately excludes channel 9, matching the disassembly -
 	// same as allocateAndPlay()'s scan never reaching channel 9 either.
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT - 1; ++i) {
-		if (_channels[i]._deltaCounter > 0 && _channels[i]._soundData == pData)
+	for (int i = 1; i < RSOUND_CHANNEL_COUNT; ++i) {
+		if (isSoundPlaying(i, pData))
 			return true;
 	}
 
 	return false;
+}
+
+bool RSound::isSoundPlaying(byte channel, byte *pData) {
+	return getChannel(channel)->_deltaCounter > 0 && getChannel(channel)->_soundData == pData;
 }
 
 uint16 RSound::generateRandomNumber() {
@@ -254,6 +269,11 @@ void RSound::muteChannel(byte midiChannel) {
 
 void RSound::unmuteChannel(byte midiChannel, byte volume) {
 	sendVolume(midiChannel, volume);
+}
+
+void RSound::setChannelVolume(byte channel, byte volume) {
+	getChannel(channel)->_volume = volume;
+	sendVolume(channel, volume);
 }
 
 byte *RSound::sendSysExData(byte *pData, uint maxLength) {
@@ -313,6 +333,17 @@ void RSound::stopAllNotes() {
 
 /*-----------------------------------------------------------------------*/
 
+void RSound::Channel_playData(Channel *channel, byte *soundData) {
+	bool ticksProcessingDisabled = _ticksProcessingDisabled;
+	_ticksProcessingDisabled = true;
+
+	channel->loadData(soundData);
+	channel->_deltaCounter = 1;
+	sendPitchBend(channel->_midiChannel, 0x40);
+
+	_ticksProcessingDisabled = ticksProcessingDisabled;
+}
+
 void RSound::Channel_turnOffActiveNotes(Channel *channel) {
 	byte *channelActiveNotes = _activeNotes[channel->_midiChannel];
 
@@ -351,8 +382,8 @@ void RSound::processChannelFadeOuts() {
 
 	_fadeOutCounter = _fadeOutSpeed;
 
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		Channel_processFadeOut(&_channels[i]);
+	for (int i = 1; i <= RSOUND_CHANNEL_COUNT; ++i)
+		Channel_processFadeOut(getChannel(i));
 }
 
 void RSound::setFadeOutSpeed(int fadeOutSpeed) {
@@ -394,16 +425,13 @@ void RSound::Channel_processTick(Channel *channel) {
 				if (note == 0 || delta == 0) {
 					Channel_turnOffActiveNotes(channel);
 				} else {
+					// In the original code this calculation can result in underflow
+					// of the duration, which is a byte value. This actually happens
+					// during playback of several tracks.
+					// Assignment to the noteDurationCounter byte field
+					// results in the same behavior as the original code,
+					// f.e. duration -1 becomes counter value 0xFF.
 					int duration = delta - channel->_noteDurationOffset;
-					if (duration < 0) {
-						// In the original code this calculation can result in underflow
-						// of the duration, which is a byte value. Not sure if this
-						// actually happens in any of the sound data.
-						warning("Calculated note duration is negative");
-						// Assignment to the noteDurationCounter byte field should
-						// result in the same behavior as the original code, i.e.
-						// duration -1 becomes counter value 0xFF.
-					}
 					channel->_noteDurationCounter = duration;
 
 					// If the note duration offset is 0 or positive, the notes played by
@@ -718,8 +746,8 @@ void RSound::Channel_processTick(Channel *channel) {
 }
 
 void RSound::processTickAllChannels() {
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		Channel_processTick(&_channels[i]);
+	for (int i = 1; i <= RSOUND_CHANNEL_COUNT; ++i)
+		Channel_processTick(getChannel(i));
 }
 
 void RSound::processTick() {
@@ -745,18 +773,20 @@ void RSound::processTick() {
 void RSound::resetChannelRange(int firstChannel, int lastChannel, bool includeChannel9) {
 	_ticksProcessingDisabled = true;
 
-	for (int i = firstChannel - 1; i < lastChannel; ++i) {
-		_channels[i]._deltaCounter = 0;
-		_channels[i]._pitchSlideStepSize = 0;
-		_channels[i]._volumeFadeStepSize = 0;
-		_channels[i]._panningSweepStepSize = 0;
+	for (int i = firstChannel; i <= lastChannel; ++i) {
+		Channel *chan = getChannel(i);
+		chan->_deltaCounter = 0;
+		chan->_pitchSlideStepSize = 0;
+		chan->_volumeFadeStepSize = 0;
+		chan->_panningSweepStepSize = 0;
 	}
 
 	if (lastChannel <= 8 && includeChannel9) {
-		_channels[8]._deltaCounter = 0;
-		_channels[8]._pitchSlideStepSize = 0;
-		_channels[8]._volumeFadeStepSize = 0;
-		_channels[8]._panningSweepStepSize = 0;
+		Channel *chan = getChannel(9);
+		chan->_deltaCounter = 0;
+		chan->_pitchSlideStepSize = 0;
+		chan->_volumeFadeStepSize = 0;
+		chan->_panningSweepStepSize = 0;
 	}
 
 	_ticksProcessingDisabled = false;
@@ -821,8 +851,8 @@ int RSound::command0() {
 
 int RSound::command1() {
 	setFadeOutSpeed(1);
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		_channels[i].setFadeOut(true);
+	for (int i = 1; i <= RSOUND_CHANNEL_COUNT; ++i)
+		getChannel(i)->setFadeOut(true);
 	return 0;
 }
 
@@ -842,9 +872,9 @@ int RSound::command2() {
 int RSound::command3() {
 	// Start fade-out to stop for channels 1-4 and 9.
 	setFadeOutSpeed(1);
-	for (int i = 0; i < 4; ++i)
-		_channels[i].setFadeOut(true);
-	_channels[8].setFadeOut(true);
+	for (int i = 1; i <= 4; ++i)
+		getChannel(i)->setFadeOut(true);
+	getChannel(9)->setFadeOut(true);
 	return 0;
 }
 
@@ -862,8 +892,8 @@ int RSound::command4() {
 int RSound::command5() {
 	// Start fade-out to stop for channels 5-8.
 	setFadeOutSpeed(1);
-	for (int i = 4; i < 8; ++i)
-		_channels[i].setFadeOut(true);
+	for (int i = 5; i <= 8; ++i)
+		getChannel(i)->setFadeOut(true);
 	return 0;
 }
 
@@ -876,8 +906,8 @@ int RSound::command6() {
 }
 
 int RSound::command7() {
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		unmuteChannel(_channels[i]._midiChannel, _channels[i]._volume);
+	for (int i = 1; i <= RSOUND_CHANNEL_COUNT; ++i)
+		unmuteChannel(i, getChannel(i)->_volume);
 	_mute = false;
 	_ticksProcessingDisabled = false;
 	return 0;
@@ -885,8 +915,8 @@ int RSound::command7() {
 
 int RSound::command8() {
 	int result = 0;
-	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i)
-		result |= _channels[i]._deltaCounter;
+	for (int i = 1; i <= RSOUND_CHANNEL_COUNT; ++i)
+		result |= getChannel(i)->_deltaCounter;
 
 	return result;
 }

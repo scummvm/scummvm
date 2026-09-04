@@ -61,7 +61,7 @@ private:
 	 * Shared loader for command11/12/13 - matches method1 in the
 	 * disassembly (isSoundPlaying-gated command1() + 4-channel load).
 	 */
-	void method1();
+	void playCommand11_12_13SharedChannels();
 
 	/**
 	 * Clamp helper: param > 0x40 ? param - 0x40 : 0. Matches the same
@@ -115,7 +115,7 @@ private:
 	bool _command23Toggle;
 
 	byte adjustedCommandParam() const;
-	void startCommand111213();
+	void playCommand11_12_13CommonChannels();
 	int executeDemoCommonCommand(int commandId);
 
 public:
@@ -130,15 +130,13 @@ private:
 
 	/**
 	 * Random-pick table used by command18 (TABLE1 in the disassembly).
-	 * Only entries 0-14 are ever reachable (command18 masks the random
-	 * index with decimal 30 = 0x1E), but all 16 confirmed clean entries
-	 * are kept for completeness. A further two rows of data follow
-	 * TABLE1 in seg001 but were never listed as reachable by any command
-	 * in this batch, and their values look like they may be text/other
-	 * data rather than further table entries - excluded until a command
-	 * turns up that actually reaches them.
+	 * A further two rows of data follow TABLE1 in seg001 but were never
+	 * listed as reachable by any command in this batch, and their values
+	 * look like they may be text/other data rather than further table
+	 * entries - excluded until a command turns up that actually reaches
+	 * them.
 	 */
-	static const uint16 _table1[16];
+	static const uint16 _command18RandomSfx[16];
 
 	/**
 	 * Persistent counter (initial value
@@ -146,7 +144,7 @@ private:
 	 * command12 runs; the low 7 bits are written into the sound data's
 	 * pitch/note byte before playback. command5 resets it back to 47.
 	 */
-	byte _pitchCycleCounter = 0x2F;
+	byte _volumeCycleCounter = 0x2F;
 
 	int command5();
 
@@ -208,15 +206,17 @@ private:
 	 * Toggle used by command39/40 (initially 0). Shared between both commands: flips bit 2 (^= 4) on
 	 * every call to either one, and the post-toggle value + 0x28 is
 	 * written into the same sound data's byte 6, regardless of which of
-	 * the two commands triggered the toggle.
+	 * the two commands triggered the toggle. This alternates the two
+	 * command's played note value between 0x28 and 0x2C.
 	 */
-	byte _command3940Toggle = 0;
+	byte _command39_40NoteToggle = 0;
 
 	/**
 	 * Shared helper: pData[5] = value, then plays pData. Command 25
-	 * calls it for both native sequence offsets.
+	 * calls it for both native sequence offsets. "method1" in
+	 * disassembly.
 	 */
-	Channel *method1(int offset, byte value);
+	Channel *patchAndPlaySound(int offset, byte value);
 
 	/**
 	 * Matches the disassembly's OTHER "method1" (a same-named but
@@ -240,18 +240,6 @@ private:
 	 */
 	void sendDualVolume(byte volume);
 
-	/**
-	 * Shared tail used by both command1
-	 * (falls through into it after calling command3()) and command5
-	 * (jumps straight into it after its isSoundPlaying gate). Enables
-	 * channels 5-8 (1-based; indices 4-7) - notably never reaches
-	 * channel 9.
-	 */
-	void resetUpperChannelsTail();
-
-	int command1();
-	int command3();
-	int command5();
 	int command9();
 	int command10();
 	int command11();
@@ -269,7 +257,7 @@ private:
 	int command24();
 	int command25();
 	int command26();
-	int command27x42();
+	int command27_42();
 	int command28();
 	int command29();
 	int command30();
@@ -288,7 +276,7 @@ private:
 	int command44();
 	int command45();
 	int command46();
-	int command47x49();
+	int command47_49();
 	int command48();
 	int command50();
 	int command51();
@@ -320,28 +308,28 @@ private:
 	static const CommandPtr _commandList[60];
 
 	/**
-	 * Called only from command12's shared
-	 * tail; computes (param >> 1) + 36.
-	 */
-	byte paramToVariant();
-
-	/**
 	 * Writes the same variant byte into
 	 * offset 1 of the five sound blocks command12 (re)loads.
+	 * Value is computed from command param.
 	 */
 	void setCommand12Variant();
 
 	/**
-	 * Shared tail of both command10 and
-	 * command58, loading channels 1-3 (1-based; indices 0-2).
+	 * Shared tail of both command10 and command58, loading channels 1-3.
 	 */
-	void loadIntroChannels();
+	void playCommand10_58CommonChannels();
 
 	void tickCallback() override;
 
-	void loadCommand54();
-	void loadCommand55();
-	void loadCommand56();
+	void command54Callback();
+	void command55Callback();
+	void command56Callback();
+
+	/**
+	 * Loads a null stream (containing event 00 00) into the specified
+	 * channel, which stops playback on that channel.
+	 */
+	void stopChannel(byte channel);
 
 	int command9();
 	int command10();
@@ -377,15 +365,20 @@ private:
 	static const CommandPtr _commandList[42];
 
 	/**
-	 * Shared tail of command29 and
-	 * command38, loading channels 4 and 9 (1-based; indices 3 and 8).
+	 * Shared tail of command29 and command38, loading channels 4 and 9.
 	 */
-	void loadTailChannels();
+	void playCommand29_38CommonChannels();
+
+	/**
+	 * Loads a null stream (containing event 00 00) into the specified
+	 * channel, which stops playback on that channel.
+	 */
+	void stopChannel(byte channel);
 
 	int command9();
 	int command10();
-	int command11x24();
-	int command12x25();
+	int command11_24();
+	int command12_25();
 	int command13();
 	int command14();
 	int command15();
@@ -440,20 +433,20 @@ private:
 	void tickCallback() override;
 
 	/**
-	 * command24/command28's
+	 * command24/command29's
 	 * own full-reload bodies. When channel 1 is currently playing the
 	 * OTHER command's theme, that command doesn't interrupt it
 	 * immediately - it just points _callbackFnPtr at this same reload
 	 * logic so the switch happens on the next callback tick instead.
 	 */
-	void reloadCommand24();
-	void reloadCommand28();
+	void command24Callback();
+	void command29Callback();
 
 	int command9();
 	int command10();
 	int command11();
 	int command12();
-	int command13x14();
+	int command13_14();
 	int command15();
 	int command16();
 	int command17();
@@ -465,7 +458,7 @@ private:
 	int command23();
 	int command24();
 	int command25();
-	int command28();
+	int command29();
 public:
 	RSound6(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
@@ -512,7 +505,7 @@ private:
 	 * Shared tail of command14/command15 -
 	 * mutates three bytes of the shared sound data then plays it 4 times.
 	 */
-	void setCommand1415Variant(byte v1, byte v2);
+	void playCommand14_15Variant(byte v1, byte v2);
 
 	int command9();
 	int command10();
@@ -613,16 +606,16 @@ private:
 	int command50();
 	int command51();
 
-	// Deferred loader bodies, scheduled via _callbackFnPtr by the commands above
-	void loadCommand38();
-	void loadCommand39();
-	void loadCommand40();
-	void loadCommand41();
-	void loadCommand42();
-	void loadCommand44_46();
-	void loadCommand45();
-	void loadCommand47();
-	void loadCommand50();
+	// Deferred callbacks, scheduled via _callbackFnPtr by the commands above
+	void command38Callback();
+	void command39Callback();
+	void command40Callback();
+	void command41Callback();
+	void command42Callback();
+	void command44_46Callback();
+	void command45Callback();
+	void command47Callback();
+	void command50Callback();
 public:
 	RSound9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
 
