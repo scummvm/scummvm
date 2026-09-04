@@ -756,7 +756,7 @@ void Scene5040::runMineBoxLook() {
 void Scene5040::runPatchedSockPickup() {
 	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
-		kScene5040FrameMillis).bookendWithLastFrame().noRedrawAtEnd());
+		kScene5040FrameMillis).bookendWithLastFrame());
 	state.scene5040DialState = 2;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040PatchedSockItem);
@@ -768,7 +768,7 @@ void Scene5040::runPatchedSockPickup() {
 void Scene5040::runMineKeyPickup() {
 	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(10, kScene5040MineBoxPickupDescriptorCount,
-		kScene5040FrameMillis).bookendWithLastFrame().noRedrawAtEnd());
+		kScene5040FrameMillis).bookendWithLastFrame());
 	state.scene5040DialState = 4;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(kScene5040KeyItem);

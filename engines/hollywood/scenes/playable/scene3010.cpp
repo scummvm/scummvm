@@ -295,8 +295,7 @@ void Scene3010::runEntryFromPath() {
 void Scene3010::runExitToScene3050() {
 	runActorReplacement(ActionOverlaySpec(8, kScene3010ExitDescriptorCount, kScene3010ExitFrameMap,
 		ARRAYSIZE(kScene3010ExitFrameMap), kScene3010ForestIdleFrameMillis)
-		.restoreBaseBackground()
-		.noRedrawAtEnd());
+		.restoreBaseBackground());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene3050State;
 }

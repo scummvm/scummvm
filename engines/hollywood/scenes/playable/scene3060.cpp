@@ -653,8 +653,7 @@ void Scene3060::runSecretDoorReveal() {
 	_soundBank0.playSample(0x10, 100);
 	_secretDoorRevealActive = true;
 	runSceneOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
-		kScene3060SecretDoorFrameMillis)
-		.noRedrawAtEnd());
+		kScene3060SecretDoorFrameMillis));
 	_secretDoorRevealActive = false;
 	_soundBank0.stop();
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())

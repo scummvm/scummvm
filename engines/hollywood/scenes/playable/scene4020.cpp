@@ -250,7 +250,6 @@ void Scene4020::runExitToScene4030() {
 	runActorReplacement(ActionOverlaySpec(kScene4020GrateTransitionChunk,
 		kScene4020GrateTransitionDescriptorCount, kScene4020FrameMillis)
 		.holdFirstFrame()
-		.noRedrawAtEnd()
 		.startAt(1));
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;
 }

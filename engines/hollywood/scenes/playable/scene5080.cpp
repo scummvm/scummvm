@@ -406,8 +406,7 @@ void Scene5080::runBookPickup() {
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount, kScene5080FrameMillis)
 		.holdFirstFrame()
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	addInventoryItem(kScene5080BookInventoryItem);
 	sequence.sound(1)
 		.commit(state.scene5080BookTaken, true)

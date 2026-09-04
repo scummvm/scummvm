@@ -601,20 +601,17 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 	if (state.officeStatueActionProgress == 2) {
 		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.noRedrawAtEnd()
 			.endAt(0x2d));
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
 		setChunk12OverlayVisible(true);
 		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.noRedrawAtEnd()
 			.frameRange(0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap)));
 	} else {
 		runActorReplacement(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
-			.soundAt(0x2c, 0x15)
-			.noRedrawAtEnd());
+			.soundAt(0x2c, 0x15));
 	}
 	setChunk12OverlayVisible(false);
 

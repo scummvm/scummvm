@@ -394,8 +394,7 @@ void Scene5010::runMineCartArrival() {
 		kScene5010FrameMillis)
 		.soundAt(0x1e, 0x16)
 		.fadeFromBlackAt(0)
-		.noFinalFrameDelay()
-		.noRedrawAtEnd());
+		.noFinalFrameDelay());
 	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return;
 
@@ -465,16 +464,14 @@ void Scene5010::enterMineTransport() {
 		ensureMineDestinationTable();
 	}
 
-	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount, kScene5010FrameMillis)
-		.noRedrawAtEnd());
+	runActorReplacement(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount, kScene5010FrameMillis));
 
 	state.scene5010MineCartDeparted = true;
 	applySceneStateToHotspotsAndPatches(6);
 
 	runActorReplacement(ActionOverlaySpec(16, kScene5010TransportDepartDescriptorCount,
 		kScene5010FrameMillis)
-		.soundAt(0x1e, 0x15)
-		.noRedrawAtEnd());
+		.soundAt(0x1e, 0x15));
 
 	state.mainFlowStateId = mineDestinationForCurrentSwitch();
 }

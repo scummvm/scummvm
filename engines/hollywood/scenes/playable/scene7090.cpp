@@ -272,8 +272,7 @@ void Scene7090::handleGatedAction() {
 		.actorReplacement(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
 			kScene7090FrameMillis)
 			.soundAt(3, 0x1b)
-			.stopSoundAt(0x12)
-			.noRedrawAtEnd())
+			.stopSoundAt(0x12))
 		.commit(_prePatchChunk7Visible, false)
 		.commit(state.movedBedroomArmor, true)
 		.commit(state.hannoverCourtyardDialogueState, (byte)2)
