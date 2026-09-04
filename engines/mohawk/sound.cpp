@@ -220,9 +220,7 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
  * @param loopInfo Optional destination for a validated embedded-loop range.
  * @return The decoded seekable stream, or nullptr when decoding fails.
  */
-Audio::SeekableAudioStream *makeMohawkWaveStream(
-		Common::SeekableReadStream *stream, CueList *cueList,
-		MohawkWaveLoopInfo *loopInfo) {
+Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList, MohawkWaveLoopInfo *loopInfo) {
 	uint32 tag = 0;
 	ADPCMStatus adpcmStatus;
 	DataChunk dataChunk;
@@ -430,10 +428,13 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList 
 }
 
 Audio::SoundHandle *Sound::playSound(uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, CueList *cueList) {
-	debug (0, "Playing sound %d", id);
-
 	MohawkWaveLoopInfo loopInfo;
 	Audio::SeekableAudioStream *seekableStream = makeAudioStream(id, cueList, &loopInfo);
+	return playSoundStream(seekableStream, id, soundType, volume, loop, loopInfo);
+}
+
+Audio::SoundHandle *Sound::playSoundStream(Audio::SeekableAudioStream *seekableStream, uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, const MohawkWaveLoopInfo &loopInfo) {
+	debug (0, "Playing sound %d", id);
 
 	if (seekableStream) {
 		SndHandle *handle = getHandle();
