@@ -70,7 +70,7 @@ const byte kActorFacingTurnTable[] = {
 	0, 0, 0, 0, 1, 0, 0, 1, 2, 4, 3, 0, 4, 0, 0, 0, 0, 0
 };
 const int8 kActorPathAxisDirectionByFacing[] = { -1, 1, 1, 1, -1, -1 };
-const byte kActorInitialCelByFacing[] = { 0, 12, 12, 12, 1, 12 };
+const byte kActorInitialCelByFacing[] = { 12, 12, 12, 1, 12, 2 };
 const float kActorPathDiagonalSlopeThreshold = 0.087488f;
 const float kActorFacingSteepSlopeThreshold = 3.732051f;
 const float kActorFacingDiagonalSlopeThreshold = 0.267949f;

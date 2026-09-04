@@ -63,7 +63,7 @@ private:
 	void handlePassageUnlock();
 	void switchActiveActorBankForCurrentSide();
 	void rebuildWalkableMaskForCurrentSide();
-	void updateSceneActorDepthAndPalette(byte facing, int worldX, int worldY);
+	void updateSceneActorDepthAndPalette(byte drawOrderMode, int worldX, int worldY);
 	void clearSceneItemFromColorMap(byte itemId);
 	void remapSceneItemInColorMap(byte fromItemId, byte toItemId);
 	void remapActorDepthClass(byte fromClass, byte toClass);
