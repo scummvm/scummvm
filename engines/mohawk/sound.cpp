@@ -437,10 +437,13 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList 
 }
 
 Audio::SoundHandle *Sound::playSound(uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, CueList *cueList) {
-	debug (0, "Playing sound %d", id);
-
 	MohawkWaveLoopInfo loopInfo;
 	Audio::SeekableAudioStream *seekableStream = makeAudioStream(id, cueList, &loopInfo);
+	return playSoundStream(seekableStream, id, soundType, volume, loop, loopInfo);
+}
+
+Audio::SoundHandle *Sound::playSoundStream(Audio::SeekableAudioStream *seekableStream, uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, const MohawkWaveLoopInfo &loopInfo) {
+	debug (0, "Playing sound %d", id);
 
 	if (seekableStream) {
 		SndHandle *handle = getHandle();
