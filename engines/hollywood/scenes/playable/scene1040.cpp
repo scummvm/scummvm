@@ -312,7 +312,7 @@ void Scene1040::handleBalloonPickup() {
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(9, kScene1040BalloonOverlayDescriptorCount,
 		kScene1040FrameMillis).holdFirstFrame()
-		.patchAt(7, 3))
+		.resourcePatchAt(7, 10))
 		.commit(_vm->gameState().scene1040BalloonTaken, true)
 		.framebufferPatch(3);
 	addInventoryItem(0x1c);
