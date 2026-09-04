@@ -191,6 +191,15 @@ void ZoombiniShelterBasecamp::completeBasecampPackLoad(int16 arrivingCount) {
 	initializeBasecampGoButtonState(static_cast<int16>(_snoidMap.size()), getBasecampAvailableSnoidCount());
 }
 
+void ZoombiniShelterBasecamp::onSnoidWalkCompleted(ZmbSnoid *snoid) {
+	if (!snoid)
+		return;
+
+	const int16 pedestalIdx = hitTestDrawOnRegSlot(snoid->getPointLoc(), _clickZoneRadius, true);
+	if (0 <= pedestalIdx)
+		setDrawOnRegOccupant(pedestalIdx, snoid->getId());
+}
+
 void ZoombiniShelterBasecamp::loadBasecampPedestalFeatures(ZmbResource bitmap, uint16 firstScrbId) {
 	for (uint16 pedestalIdx = 0; pedestalIdx < kPedestalCount; pedestalIdx++) {
 		loadScrbFeature(bitmap, firstScrbId + pedestalIdx, 7, _pedestalPoints[pedestalIdx],
