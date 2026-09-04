@@ -1169,17 +1169,18 @@ void ZoombiniPuzzlePizza::onPostRenderFrame() {
 	if (_delivererReturnPending && _postmanSnoid &&
 		_postmanSnoid->getAnimState() == kSnoidAnimState000_Idle) {
 		_delivererReturnPending = false;
-		if (_postmanSnoid->getPointLoc() != kMachineSeatPosition)
-			_postmanSnoid->initWalkToTarget(kMachineSeatPosition);
+		_postmanSnoid->initWalkToTarget(kMachineSeatPosition);
+		_delivererWalkInPending = true;
 	}
 
-	// Restore the normal tick rate after the deliverer arrives.
+	// Both a new deliverer and a returning one turn right after reaching the seat.
+	// Keep the current cadence: selection walks use 2, while return animations set 6.
 	// After a lost deliverer, also release the produce lock raised
 	// by @ref ZoombiniPuzzlePizza::advanceToNextDeliverySlot().
 	if (_delivererWalkInPending && _postmanSnoid &&
 		_postmanSnoid->getAnimState() == kSnoidAnimState000_Idle) {
 		_delivererWalkInPending = false;
-		_postmanSnoid->setFrameInterval(6);
+		_postmanSnoid->setAnimState(kSnoidAnimState002_TurnRight);
 		if (_lostDelivererCount)
 			_produceSubmissionEnabled = true;
 	}

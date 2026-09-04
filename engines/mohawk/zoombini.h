@@ -288,9 +288,12 @@ public:
 
 	/**
 	 * Frame counter at the last user activity or authored presentation boundary.
-	 * @ref MohawkEngine_Zoombini::doFrame() uses it to detect idle periods for dynamic fidget-threshold halving.
+	 * Actor inactivity checks keep measuring from this boundary when the fidget threshold is halved.
 	 */
 	uint32 _lastActivityFrame = 0;
+
+	/** Frame counter at the last activity boundary or fidget-threshold halving. */
+	uint32 _lastFidgetIntervalFrame = 0;
 
 	/**
 	 * Fidget voice cadence state retained modulo 32.

@@ -905,7 +905,7 @@ void ZoombiniPuzzleFerry::startRejectWalk(int16 destinationCode) {
 }
 
 // ---------------------------------------------------------------------------
-// Set up a pending reject controller from @ref ZoombiniPuzzleFerry::onEveryFrame().
+// Set up a pending reject controller from @ref ZoombiniPuzzleFerry::onPostRenderFrame().
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzleFerry::handleRejectWalkSetup() {
 	_rejectSetupPending = false;
@@ -983,12 +983,16 @@ void ZoombiniPuzzleFerry::onEveryFrame() {
 		_departureState = ZmbDepartureState::kAnimating;
 		return;
 	}
+}
+
+void ZoombiniPuzzleFerry::onPostRenderFrame() {
+	if (!_pageActive || isDeparturePending())
+		return;
 
 	// -----------------------------------------------------------------------
 	// [1] Pending Captain SCRB animation.
-	// The active reject owns the raft runner until a return SCRS takes over.
-	// Its initial bad reaction uses a dedicated slot, while ordinary reactions
-	// remain deferred so they cannot replace the reject controller.
+	// Consume callbacks from the current render before scheduling independent idle fidgets.
+	// The initial reject reaction uses a dedicated slot ahead of other Captain reactions.
 	// -----------------------------------------------------------------------
 	if (_pendingRejectReactionScrbId != 0) {
 		int16 scrb = _pendingRejectReactionScrbId;

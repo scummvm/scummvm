@@ -2057,16 +2057,11 @@ private:
 	// Celebration state ---
 	/** Whether a celebration batch should be selected. */
 	bool _celebrationTrigger = false;
-	// Maze owns the eligibility scan, non-repeat pool, and completion target.
-	// Keep this state separate from other pages' celebration timers.
+	// Maze owns the eligibility scan and completion target; selection history survives page visits.
 	/** Number of celebration animations already played. */
 	int16 _celebrationsPlayed = 0;
 	/** Number of Snoids targeted by the current celebration batch. */
 	int16 _celebrationTarget = 0;
-	/** Non-repeating random pool state for celebration selection. */
-	uint32 _celebrationPoolState = 0;
-	/** Frame at which the last celebration started. */
-	uint32 _celebrationLastFrame = 0;
 
 	// --- Zoombini count ---
 	/** Number of accepted runners whose exit sequence has completed. */

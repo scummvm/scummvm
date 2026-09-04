@@ -704,7 +704,7 @@ private:
 	int16 _evictionFleenIndex = -1;
 	/** Number of idle Zoombinis to select for one post-escape fidget pass. */
 	int16 _idleSnoidFidgetTargetCount = 0;
-	// Fleens owns the idle candidate set, fidget threshold, and completion path.
+	// Fleens owns the celebration candidate set and completion path.
 	// Matching timer fields elsewhere do not define a reusable state machine.
 	/** Number of idle Zoombini fidget scripts started in the current pass. */
 	int16 _idleSnoidFidgetStartedCount = 0;
@@ -714,8 +714,6 @@ private:
 	uint32 _idleSnoidFidgetSelectionInterval = 60;
 	/** Non-repeating random pool state used to select idle Zoombinis. */
 	uint32 _idleSnoidFidgetPoolState = 0;
-	/** Per-Fleen counter threshold for starting its independent branch fidget. */
-	int16 _fleenFidgetThreshold = 64;
 	/** Number of Zoombini walk animations expected in the active Go departure round. */
 	int16 _departureWalkPendingCount = 0;
 	/** Number of Zoombini walk animations completed in the active Go departure round. */
