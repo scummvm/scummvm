@@ -31,17 +31,21 @@ namespace Logic {
 
 class DungeonLogic : public Logic {
 protected:
-	bool move(Data::Direction dir) override {
-		return true;
-	}
+	/**
+	 * Handle dungeon movement
+	 */
+	bool move(Data::Direction dir) override;
+
+	/**
+	 * Handles updating creatures/NPCs
+	 */
+	void updateCreatures() override;
 
 public:
 	~DungeonLogic() override {
 	}
 
 	void entering() override;
-	void action(int action) override;
-	void keypress(Common::KeyCode keycode) override;
 };
 
 } // namespace Logic

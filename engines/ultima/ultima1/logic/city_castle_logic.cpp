@@ -161,6 +161,10 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	return true;
 }
 
+void CityCastleLogic::updateCreatures() {
+
+}
+
 bool CityCastleLogic::drop() {
 	g_engine->addView("Drop");
 	return false;
@@ -325,6 +329,23 @@ int CityCastleLogic::checkAt(int x, int y) const {
 		return -1;
 
 	return 0;
+}
+
+void CityCastleLogic::updateBardJester(int entityIndex) {
+
+}
+
+void CityCastleLogic::updateWench(int entityIndex) {
+
+}
+
+void CityCastleLogic::updatePrincess(int entityIndex) {
+
+}
+
+bool CityCastleLogic::guardMove(int entityIndex) {
+	// TODO
+	return false;
 }
 
 /*-------------------------------------------------------------------*/

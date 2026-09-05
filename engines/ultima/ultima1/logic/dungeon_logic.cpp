@@ -32,12 +32,12 @@ void DungeonLogic::entering() {
 	// TODO
 }
 
-void DungeonLogic::action(int action) {
-	// TODO
+bool DungeonLogic::move(Data::Direction dir) {
+	return true;
 }
 
-void DungeonLogic::keypress(Common::KeyCode keycode) {
-	action(KEYBIND_PASS);
+void DungeonLogic::updateCreatures() {
+	// TODO
 }
 
 } // namespace Logic

@@ -92,11 +92,6 @@ private:
 	void generateCreatures();
 
 	/**
-	 * Update overworld creatures
-	 */
-	void updateCreatures();
-
-	/**
 	 * Reduce the food the player has
 	 */
 	void reduceFood();
@@ -112,6 +107,10 @@ protected:
 	 */
 	bool move(Data::Direction dir) override;
 
+	/**
+	 * Handles updating creatures/NPCs
+	 */
+	void updateCreatures() override;
 
 public:
 	OverworldLogic();

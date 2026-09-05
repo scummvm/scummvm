@@ -36,6 +36,26 @@ private:
 	 */
 	int checkAt(int x, int y) const;
 
+	/**
+	 * Updates Bard/Jesters at end of turn
+	 */
+	void updateBardJester(int entityIndex);
+
+	/**
+	 * Updates wenches at end of turn
+	 */
+	void updateWench(int entityIndex);
+
+	/**
+	 * Updates princesses at end of turn
+	 */
+	void updatePrincess(int entityIndex);
+
+	/**
+	 * Handles hostile guard movement
+	 */
+	bool guardMove(int entityIndex);
+
 protected:
 	/**
 	 * Load the NPCs for the given location
@@ -46,6 +66,11 @@ protected:
 	 * Handle movement
 	 */
 	bool move(Data::Direction dir) override;
+
+	/**
+	 * Handles updating creatures/NPCs
+	 */
+	void updateCreatures() override;
 
 	/**
 	 * The Drop command is only usable within cities and castles

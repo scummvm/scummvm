@@ -188,32 +188,6 @@ bool OverworldLogic::moveCheck(Data::Direction dir) {
 	return true;
 }
 
-int OverworldLogic::getViewportX(int xp) const {
-	error("Deprecated");
-#if 0
-	int x = _G(savegame)._overworldPos.x - Data::MAP_VISIBLE_CENTER_X + xp;
-	if (x < 0)
-		x += Data::OVERWORLD_WIDTH;
-	else if (x >= Data::OVERWORLD_WIDTH)
-		x -= Data::OVERWORLD_WIDTH;
-
-	return x;
-#endif
-}
-
-int OverworldLogic::getViewportY(int yp) const {
-	error("Deprecated");
-#if 0
-	int y = _G(savegame)._overworldPos.y - Data::MAP_VISIBLE_CENTER_Y + yp;
-	if (y < 0)
-		y += Data::OVERWORLD_HEIGHT;
-	else if (y >= Data::OVERWORLD_HEIGHT)
-		y -= Data::OVERWORLD_HEIGHT;
-
-	return y;
-#endif
-}
-
 void OverworldLogic::impassable(int reason) {
 	writeString(Common::String::format("%s\n", IMPASSABLE_REASONS[reason]));
 	playFX(0);
@@ -228,22 +202,6 @@ void OverworldLogic::moveLeft() {
 		pt.x = Data::OVERWORLD_WIDTH - 1;
 		pt.y = (pt.y >= OVERWORLD_MID_Y) ? pt.y - OVERWORLD_MID_Y : pt.y + OVERWORLD_MID_Y;
 	}
-#if 0
-	// Shift the existing columns right by one, to make room for a new
-	// column of tiles at the left edge
-	auto &tiles = _G(map)._mapTilesId;
-	for (int col = Data::MAP_VISIBLE_WIDTH - 2; col >= 0; --col) {
-		for (int row = 0; row < Data::MAP_VISIBLE_HEIGHT; ++row)
-			tiles[row][col + 1] = tiles[row][col];
-	}
-
-	// Fill in the new left-hand column
-	for (int row = 0; row < Data::MAP_VISIBLE_HEIGHT; ++row) {
-		int x = getViewportX(0);
-		int y = getViewportY(row);
-		tiles[row][0] = _G(map).getMapTile(x, y);
-	}
-#endif
 }
 
 void OverworldLogic::moveRight() {
@@ -255,66 +213,18 @@ void OverworldLogic::moveRight() {
 		pt.y = (pt.y >= OVERWORLD_MID_Y) ? pt.y - OVERWORLD_MID_Y : pt.y + OVERWORLD_MID_Y;
 		pt.x = 0;
 	}
-#if 0
-	// Shift the existing columns left by one, to make room for a new
-	// column of tiles at the right edge
-	auto &tiles = _G(map)._mapTilesId;
-	for (int col = 1; col < Data::MAP_VISIBLE_WIDTH; ++col) {
-		for (int row = 0; row < Data::MAP_VISIBLE_HEIGHT; ++row)
-			tiles[row][col - 1] = tiles[row][col];
-	}
-
-	// Fill in the new right-hand column
-	for (int row = 0; row < Data::MAP_VISIBLE_HEIGHT; ++row) {
-		int x = getViewportX(Data::MAP_VISIBLE_WIDTH - 1);
-		int y = getViewportY(row);
-		tiles[row][Data::MAP_VISIBLE_WIDTH - 1] = _G(map).getMapTile(x, y);
-	}
-#endif
 }
 
 void OverworldLogic::moveUp() {
 	// Change overworld position
 	Common::Point &pt = _G(savegame)._overworldPos;
 	pt.y = (pt.y == 0) ? Data::OVERWORLD_HEIGHT - 1 : pt.y - 1;
-#if 0
-	// Shift the existing rows down by one, to make room for a new
-	// row of tiles at the top edge
-	auto &tiles = _G(map)._mapTilesId;
-	for (int row = Data::MAP_VISIBLE_HEIGHT - 2; row >= 0; --row) {
-		for (int col = 0; col < Data::MAP_VISIBLE_WIDTH; ++col)
-			tiles[row + 1][col] = tiles[row][col];
-	}
-
-	// Fill in the new top row
-	for (int col = 0; col < Data::MAP_VISIBLE_WIDTH; ++col) {
-		int x = getViewportX(col);
-		int y = getViewportY(0);
-		tiles[0][col] = _G(map).getMapTile(x, y);
-	}
-#endif
 }
 
 void OverworldLogic::moveDown() {
 	// Change overworld position
 	Common::Point &pt = _G(savegame)._overworldPos;
 	pt.y = (pt.y == Data::OVERWORLD_HEIGHT - 1) ? 0 : pt.y + 1;
-#if 0
-	// Shift the existing rows up by one, to make room for a new
-	// row of tiles at the bottom edge
-	auto &tiles = _G(map)._mapTilesId;
-	for (int row = 1; row < Data::MAP_VISIBLE_HEIGHT; ++row) {
-		for (int col = 0; col < Data::MAP_VISIBLE_WIDTH; ++col)
-			tiles[row - 1][col] = tiles[row][col];
-	}
-
-	// Fill in the new bottom row
-	for (int col = 0; col < Data::MAP_VISIBLE_WIDTH; ++col) {
-		int x = getViewportX(col);
-		int y = getViewportY(Data::MAP_VISIBLE_HEIGHT - 1);
-		tiles[Data::MAP_VISIBLE_HEIGHT - 1][col] = _G(map).getMapTile(x, y);
-	}
-#endif
 }
 
 void OverworldLogic::continentChanged(int oldContinent) {

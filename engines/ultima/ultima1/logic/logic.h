@@ -73,6 +73,11 @@ protected:
 	 */
 	virtual void endOfTurn();
 
+	/**
+	 * Handles updating creatures/NPCs
+	 */
+	virtual void updateCreatures() = 0;
+
 	/*--- Fallback player action handlers. Each returns true if end of
 	 * turn processing should happen immediately afterward, or false if
 	 * that's being deferred - typically because a sub-dialog was opened

@@ -35,6 +35,12 @@ protected:
 		return true;
 	}
 
+	/**
+	 * Handles updating creatures/NPCs
+	 */
+	void updateCreatures() override {
+	}
+
 public:
 	PillarLogic();
 	~PillarLogic() override {
