@@ -121,6 +121,7 @@ class AutoRoute;
 class Control;
 class Disk;
 class Grid;
+class Intro;
 class Mouse;
 class MusicBase;
 class Screen;
@@ -142,7 +143,8 @@ public:
 		Text *skyText,
 		MusicBase *skyMusic,
 		Mouse *skyMouse,
-		Sound *skySound);
+		Sound *skySound,
+		Intro *skyIntro);
 	~Logic();
 	void engine();
 	void useControlInstance(Control *control) { _skyControl = control; }
@@ -329,6 +331,8 @@ protected:
 
 	uint32 _currentSection;
 
+	int _creditLoopCount; // for ibass
+
 	Common::RandomSource _rnd;
 
 	SkyCompact	*_skyCompact;
@@ -340,6 +344,7 @@ protected:
 	AutoRoute	*_skyAutoRoute;
 	Mouse		*_skyMouse;
 	Control		*_skyControl;
+	Intro		*_skyIntro;
 
 	friend class Debugger;
 };
