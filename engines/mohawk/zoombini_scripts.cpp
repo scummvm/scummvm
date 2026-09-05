@@ -912,12 +912,12 @@ ZmbDrawRecord *ZmbFeature::findDrawRecordByHotspotIdx(uint16 hsIdx1, uint16 hsId
 	return nullptr;
 }
 
-ZmbDrawRecord *ZmbFeature::findDrawRecordByHotspotIdx(Common::Array<uint16> hsIdxArr) {
+ZmbDrawRecord *ZmbFeature::findDrawRecordByHotspotIdx(Common::Array<uint16> hsIdxs) {
 	for (Common::StableMap<uint32, ZmbDrawRecord *>::iterator it = _drawnRecordMap.begin(); it != _drawnRecordMap.end(); it++) {
 		ZmbDrawRecord *record = it->second;
 
-		for (uint32 i = 0; i < hsIdxArr.size(); i++) {
-			if (record->_hs._hsId == hsIdxArr[i])
+		for (uint32 i = 0; i < hsIdxs.size(); i++) {
+			if (record->_hs._hsId == hsIdxs[i])
 				return record;
 		}
 	}
@@ -942,12 +942,12 @@ ZmbDrawRecord *ZmbFeature::findDrawRecordByShapeId(uint16 shapeId1, uint16 shape
 	return nullptr;
 }
 
-ZmbDrawRecord *ZmbFeature::findDrawRecordByShapeId(Common::Array<uint16> shapeIdArr) {
+ZmbDrawRecord *ZmbFeature::findDrawRecordByShapeId(Common::Array<uint16> shapeIds) {
 	for (Common::StableMap<uint32, ZmbDrawRecord *>::iterator it = _drawnRecordMap.begin(); it != _drawnRecordMap.end(); it++) {
 		ZmbDrawRecord *record = it->second;
 
-		for (uint32 shapeIdx = 0; shapeIdx < shapeIdArr.size(); shapeIdx++) {
-			if (record->_hs._shapeIdx == shapeIdArr[shapeIdx])
+		for (uint32 shapeIdx = 0; shapeIdx < shapeIds.size(); shapeIdx++) {
+			if (record->_hs._shapeIdx == shapeIds[shapeIdx])
 				return record;
 		}
 	}
