@@ -985,14 +985,14 @@ public:
 	ZmbDrawRecord *findDrawRecordByHotspotIdx(uint16 hsIdx);
 	/** Find a draw record matching either of two hotspot IDs. */
 	ZmbDrawRecord *findDrawRecordByHotspotIdx(uint16 hsIdx1, uint16 hsIdx2);
-	/** Find a draw record matching any ID in @p hsIdxArr. */
-	ZmbDrawRecord *findDrawRecordByHotspotIdx(Common::Array<uint16> hsIdxArr);
+	/** Find a draw record matching any ID in @p hsIdxs. */
+	ZmbDrawRecord *findDrawRecordByHotspotIdx(Common::Array<uint16> hsIdxs);
 	/** Find a draw record by one shape ID. */
 	ZmbDrawRecord *findDrawRecordByShapeId(uint16 shapeId);
 	/** Find a draw record matching either of two shape IDs. */
 	ZmbDrawRecord *findDrawRecordByShapeId(uint16 shapeId1, uint16 shapeId2);
-	/** Find a draw record matching any ID in @p shapeIdArr. */
-	ZmbDrawRecord *findDrawRecordByShapeId(Common::Array<uint16> shapeIdArr);
+	/** Find a draw record matching any ID in @p shapeIds. */
+	ZmbDrawRecord *findDrawRecordByShapeId(Common::Array<uint16> shapeIds);
 
 	bool isCloseScheduled() const { return _isCloseScheduled; }
 	void scheduleClose() { _isCloseScheduled = true; }
