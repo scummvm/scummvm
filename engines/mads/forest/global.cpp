@@ -1010,16 +1010,24 @@ void global_error_code() {
 		text_show(text_id);
 }
 
-void global_midi_play(int num) {
+const char *global_midi_name(int num) {
 	static const char *NAMES[15] = {
 		"adven2", "foolarnd", "homeag", "humorus1", "humorus2", "pianogtr", "raindrop",
 		"xad", "xcarey", "xuspens1", "travels1", "xcarey2", "birdsong", "adventur", "action1"
 	};
 
-	assert(num >= 1 && num <= 15);
-	Common::String name = Common::String::format("*%s.hmi", NAMES[num - 1]);
+	return num >= 1 && num <= 15 ? NAMES[num - 1] : nullptr;
+}
 
-	midi_play(name.c_str());
+void global_midi_play(int num) {
+	const char *name = global_midi_name(num);
+	assert(name);
+	if (!config_file.music_flag)
+		return;
+
+	Common::String resourceName = Common::String::format("*%s.hmi", name);
+
+	midi_play(resourceName.c_str());
 }
 
 void global_daemon_code() {
