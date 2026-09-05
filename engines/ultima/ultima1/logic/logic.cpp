@@ -132,6 +132,9 @@ void Logic::action(int action) {
 	case KEYBIND_READY:
 		doEndOfTurn = ready();
 		break;
+	case KEYBIND_STEAL:
+		doEndOfTurn = steal();
+		break;
 	case KEYBIND_PASS:
 		doEndOfTurn = pass();
 		break;
@@ -250,6 +253,12 @@ bool Logic::quit() {
 bool Logic::ready() {
 	g_engine->addView("Ready");
 	return false;
+}
+
+bool Logic::steal() {
+	writeString("Steal?\n");
+	playFX(1);
+	return true;
 }
 
 bool Logic::zstats() {

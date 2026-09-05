@@ -48,25 +48,43 @@ protected:
 	bool get() override;
 
 	/**
+	 * The Steal command is usable in both cities and castles
+	 */
+	bool steal() override;
+
+	/**
 	 * Checks the castle item allowance, consuming one use if available.
-	 * Denies with a message if there isn't one
+	 * Denies with a message if there isn't one. Used by Get
 	 */
 	bool checkCastlePermission();
 
 	/**
-	 * Grants the player a random weapon, used by the castle Get command
+	 * Rolls whether the player is caught in the act. If so, prints a
+	 * message and makes the guards hostile from then on. Wizards get an
+	 * extra chance to avoid a middling roll; a hostile guard or a bad
+	 * enough roll catches anyone. Used by Steal
 	 */
-	void findWeapon();
+	bool checkCaughtStealing();
 
 	/**
-	 * Grants the player a random amount of food, used by the castle Get command
+	 * Grants the player a random weapon. If checkCaught is true (Steal),
+	 * this can fail by getting the player caught; Get always passes false
 	 */
-	void findFood();
+	void findWeapon(bool checkCaught);
 
 	/**
-	 * Grants the player a random piece of armor, used by the castle Get command
+	 * Grants the player a random amount of food. If checkCaught is true
+	 * (Steal), this can fail by getting the player caught; Get always
+	 * passes false
 	 */
-	void findArmor();
+	void findFood(bool checkCaught);
+
+	/**
+	 * Grants the player a random piece of armor. If checkCaught is true
+	 * (Steal), this can fail by getting the player caught; Get always
+	 * passes false
+	 */
+	void findArmor(bool checkCaught);
 
 public:
 	~CityCastleLogic() override {

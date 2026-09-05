@@ -140,15 +140,15 @@ bool CityCastleLogic::get() {
 		switch (_G(map).getTileAt(pos.x, pos.y)) {
 		case Data::CTILE_STEAL_WEAPON:
 			if (checkCastlePermission())
-				findWeapon();
+				findWeapon(false);
 			break;
 		case Data::CTILE_STEAL_ARMOR:
 			if (checkCastlePermission())
-				findArmor();
+				findArmor(false);
 			break;
 		case Data::CTILE_STEAL_FOOD:
 			if (checkCastlePermission())
-				findFood();
+				findFood(false);
 			break;
 		default:
 			writeString(" - nothing here!\n");
@@ -159,6 +159,29 @@ bool CityCastleLogic::get() {
 			writeString(" what");
 		writeString("?\n");
 		playFX(1);
+	}
+
+	return true;
+}
+
+bool CityCastleLogic::steal() {
+	writeString("Steal");
+
+	const auto &pos = _G(savegame)._locationPosition;
+	switch (_G(map).getTileAt(pos.x, pos.y)) {
+	case Data::CTILE_STEAL_FOOD:
+		findFood(true);
+		break;
+	case Data::CTILE_STEAL_WEAPON:
+		findWeapon(true);
+		break;
+	case Data::CTILE_STEAL_ARMOR:
+		findArmor(true);
+		break;
+	default:
+		writeString(" - nothing here!\n");
+		playFX(1);
+		break;
 	}
 
 	return true;
@@ -177,7 +200,30 @@ bool CityCastleLogic::checkCastlePermission() {
 	return true;
 }
 
-void CityCastleLogic::findWeapon() {
+bool CityCastleLogic::checkCaughtStealing() {
+	auto &sg = _G(savegame);
+	int roll = getRandomNumber(1, 255);
+	bool caught = (sg._guardsHostile != 0) || (roll < 38);
+
+	if (!caught && sg._class == Data::CLASS_WIZARD)
+		return false;
+
+	if (!caught) {
+		if (roll > 77)
+			return false;
+		caught = true;
+	}
+
+	writeString("\n");
+	writeString("Oh no!  Thou wert caught!\n");
+	sg._guardsHostile = 1;
+	return true;
+}
+
+void CityCastleLogic::findWeapon(bool checkCaught) {
+	if (checkCaught && checkCaughtStealing())
+		return;
+
 	writeString("\n");
 	writeString("Thou dost find a");
 
@@ -194,7 +240,10 @@ void CityCastleLogic::findWeapon() {
 		++sg._weapons[idx];
 }
 
-void CityCastleLogic::findFood() {
+void CityCastleLogic::findFood(bool checkCaught) {
+	if (checkCaught && checkCaughtStealing())
+		return;
+
 	writeString("\n");
 	writeString("Thou dost find ");
 
@@ -206,7 +255,10 @@ void CityCastleLogic::findFood() {
 	redrawStats();
 }
 
-void CityCastleLogic::findArmor() {
+void CityCastleLogic::findArmor(bool checkCaught) {
+	if (checkCaught && checkCaughtStealing())
+		return;
+
 	writeString("\n");
 	writeString("Thou dost find ");
 

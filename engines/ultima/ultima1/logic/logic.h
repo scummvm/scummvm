@@ -91,6 +91,7 @@ protected:
 	virtual bool open();
 	virtual bool quit();
 	virtual bool ready();
+	virtual bool steal();
 	virtual bool zstats();
 	virtual bool move(Data::Direction dir) = 0;
 	virtual bool pass();
