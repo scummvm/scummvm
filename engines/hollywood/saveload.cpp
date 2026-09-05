@@ -242,7 +242,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1080EntryLineSeen);
 	s.syncAsByte(state.scene1080FrancoisProgressState);
 	syncStateBool(s, state.scene1090EntryLineSeen);
-	syncStateBool(s, state.scene1090LightsOn);
+	syncStateBool(s, state.scene1090LightsOff);
 	s.syncAsByte(state.scene1090WrappedBrainState);
 	syncStateBool(s, state.scene2010EntryLineSeen);
 	syncStateBool(s, state.scene2010LongSequenceFirstSpeechSeen);
@@ -588,6 +588,9 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1080FrancoisProgressState = 0;
 	if (state.scene1090WrappedBrainState > 2)
 		state.scene1090WrappedBrainState = 0;
+	// Older saves initialized the unvisited pantry with its light on.
+	if (!state.scene1090EntryLineSeen && state.scene1090WrappedBrainState == 0)
+		state.scene1090LightsOff = true;
 	if (state.scene2010TravelReturnSpeechState > 2)
 		state.scene2010TravelReturnSpeechState = 0;
 	if (state.scene2020TigerToothState > 2)
