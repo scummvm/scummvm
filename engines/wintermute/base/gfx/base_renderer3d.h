@@ -113,8 +113,6 @@ public:
 	void setWindowed(bool windowed) override;
 	void onWindowChange() override;
 
-	Graphics::PixelFormat getPixelFormat() const override;
-
 	virtual bool setWorldTransform(const DXMatrix &transform) = 0;
 	virtual bool setViewTransform(const DXMatrix &transform) = 0;
 	virtual bool setProjectionTransform(const DXMatrix &transform) = 0;

@@ -431,6 +431,11 @@ struct PixelFormat {
 		// We do not really need to check masks when all shifts equal zeroes
 		return bytesPerPixel == 1 && rShift == 0 && gShift == 0 && bShift == 0 && aShift == 0;
 	}
+
+	/** Shortcut method for checking if the current format is valid or not */
+	bool isValid() const {
+		return bytesPerPixel > 0;
+	}
 };
 
 template<>
