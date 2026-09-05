@@ -60,6 +60,10 @@ enum LocationTileId {
 	CTILE_GROUND = 1,
 	CTILE_PLAYER = 18,
 	CTILE_GUARD_MB = 51,
+	// Unnamed in the original - both are "wishing well"-style tiles that
+	// dropPence/dropPenceCastle give a random bonus for dropping coins on
+	CTILE_52 = 52,
+	CTILE_53 = 53,
 	CTILE_BLANK = 63
 };
 

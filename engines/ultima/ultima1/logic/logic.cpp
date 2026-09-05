@@ -100,6 +100,9 @@ void Logic::action(int action) {
 	case KEYBIND_CLIMB:
 		climb();
 		break;
+	case KEYBIND_DROP:
+		drop();
+		return;
 	case KEYBIND_ENTER:
 		enter();
 		break;
@@ -164,6 +167,7 @@ void Logic::climb() {
 void Logic::drop() {
 	writeString("Drop?\n");
 	playFX(1);
+	endOfTurn();
 }
 
 void Logic::enter() {

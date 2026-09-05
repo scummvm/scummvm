@@ -36,6 +36,11 @@ protected:
 	 */
 	void loadEntities();
 
+	/**
+	 * The Drop command is only usable within cities and castles
+	 */
+	void drop() override;
+
 public:
 	~CityCastleLogic() override {
 	}

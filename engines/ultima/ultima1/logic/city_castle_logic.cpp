@@ -125,6 +125,10 @@ void CityCastleLogic::entering() {
 	loadEntities();
 }
 
+void CityCastleLogic::drop() {
+	g_engine->addView("Drop");
+}
+
 void CityCastleLogic::loadEntities() {
 	auto &map = _G(map);
 	auto &savegame = _G(savegame);
