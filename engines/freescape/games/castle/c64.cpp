@@ -355,6 +355,18 @@ private:
 void CastleEngine::initC64() {
 	_viewArea = Common::Rect(40, 32, 280, 152);
 	_c64LiftingGateStartTicks = -1;
+	_c64MusicEnabled = true;
+
+	// C64 call sites: throw $63b3, climb/drop $53cf/$549f, area change
+	// $6cde, and a damaging landing $8142. The gate supplies the start sound.
+	_soundIndexShoot = 5;
+	_soundIndexCollide = 3;
+	_soundIndexStepUp = 12;
+	_soundIndexStepDown = 12;
+	_soundIndexMenu = 3;
+	_soundIndexFallen = 8;
+	_soundIndexStart = -1;
+	_soundIndexAreaChange = 7;
 }
 
 void CastleEngine::loadMessagesC64(Common::SeekableReadStream *file, int offset, int number) {
@@ -582,7 +594,8 @@ void CastleEngine::loadAssetsC64FullGame() {
 	surf->free();
 	delete surf;
 
-	_playerMusic = new CastleC64MusicPlayer();
+	_sound = createCastleC64Sound(_mixer, uiData);
+	_playerMusic = new CastleC64MusicPlayer(_mixer);
 
 	// TODO: title screen is in BASIC loader (file 009) - not yet extracted
 }
@@ -612,6 +625,7 @@ void CastleEngine::drawC64InfoMenu(Graphics::Surface *surface) {
 	// The original menu at $7808 uses these rows within the 3D viewport.
 	drawStringInSurface("********************", 60, 46, front, highlight, back, surface);
 	drawStringInSurface(_messagesList[68], 50, 61, front, highlight, back, surface);
+	drawStringInSurface(_c64MusicEnabled ? "F-AUDIO: MUSIC" : "F-AUDIO: EFFECTS", 50, 72, front, highlight, back, surface);
 	drawStringInSurface(_messagesList[69], 50, 82, front, highlight, back, surface);
 	drawStringInSurface(keys, 130, 82, front, highlight, back, surface);
 	drawStringInSurface(_messagesList[70], 50, 93, front, highlight, back, surface);
@@ -623,11 +637,40 @@ void CastleEngine::drawC64InfoMenu(Graphics::Surface *surface) {
 	drawStringInSurface("********************", 60, 133, front, highlight, back, surface);
 }
 
+void CastleEngine::toggleC64AudioMode() {
+	_c64MusicEnabled = !_c64MusicEnabled;
+	_syncSound = false;
+	// $79bf switches between music and effects. Stop and release the old
+	// SID first, since both modes use all three voices of the same chip.
+	if (_c64MusicEnabled) {
+		enableCastleC64Sound(_sound, false);
+		if (_playerMusic)
+			_playerMusic->startMusic();
+	} else {
+		if (_playerMusic)
+			_playerMusic->stopMusic();
+		enableCastleC64Sound(_sound, true);
+		if (_sound)
+			_sound->playSound(3, Sound::kTypeNormal);
+	}
+}
+
 void CastleEngine::liftC64Gate() {
 	// $8347 raises the gate by two rows per step. Start the clock after the
 	// initial area is ready so its setup does not consume animation time.
 	_c64LiftingGateStartTicks = _ticks;
-	waitInLoop(_c64Gate.h / kCastleC64GateLiftStep * kCastleC64GateFrameTicks);
+	for (int step = 0; step < _c64Gate.h / kCastleC64GateLiftStep && !shouldQuit(); step++) {
+		int remaining = _c64LiftingGateStartTicks + (step + 1) * kCastleC64GateFrameTicks - _ticks;
+		if (remaining <= 0)
+			continue;
+		// $834b retriggers the rattle on every step, then $8363 plays the
+		// impact. Gate sounds interrupt effects without waiting for them.
+		if (_sound)
+			_sound->playSound(3, Sound::kTypeNormal);
+		waitInLoop(remaining - 1);
+	}
+	if (_sound && !shouldQuit())
+		_sound->playSound(2, Sound::kTypeNormal);
 	_c64LiftingGateStartTicks = -1;
 }
 
@@ -635,7 +678,15 @@ void CastleEngine::dropC64Gate() {
 	// $49bb completes the fall before polling for a restart. The wait loop
 	// consumes pending gameplay input while still allowing the user to quit.
 	_droppingGateStartTicks = _ticks;
-	waitInLoop(_c64GateDropHeights.size() * kCastleC64GateFrameTicks);
+	for (uint frame = 0; frame < _c64GateDropHeights.size() && !shouldQuit(); frame++) {
+		int remaining = _droppingGateStartTicks + (frame + 1) * kCastleC64GateFrameTicks - _ticks;
+		if (remaining <= 0)
+			continue;
+		// $8300 plays an impact each time the gate reaches the ground.
+		if (_sound && _c64GateDropHeights[frame] == _c64Gate.h)
+			_sound->playSound(2, Sound::kTypeNormal);
+		waitInLoop(remaining - 1);
+	}
 }
 
 void CastleEngine::drawC64Gate(Graphics::Surface *surface) {

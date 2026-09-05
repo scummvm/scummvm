@@ -23,18 +23,30 @@
 #define FREESCAPE_CASTLE_C64_MUSIC_H
 
 #include "audio/sid.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "common/array.h"
 #include "freescape/music.h"
 
 namespace Freescape {
 
-class CastleC64MusicPlayer : public MusicPlayer {
+class Sound;
+Sound *createCastleC64Sound(Audio::Mixer *mixer, const Common::Array<byte> &data);
+void enableCastleC64Sound(Sound *sound, bool enabled);
+void updateCastleC64GhostSound(Sound *sound, bool active);
+
+class CastleC64MusicPlayer : public MusicPlayer, private Audio::AudioStream {
 public:
-	CastleC64MusicPlayer();
+	CastleC64MusicPlayer(Audio::Mixer *mixer);
 	~CastleC64MusicPlayer() override;
 
 	void startMusic() override;
 	void stopMusic() override;
 	bool isPlaying() const override;
+	int readBuffer(int16 *buffer, int numSamples) override;
+	int getRate() const override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
 
 private:
 	enum {
@@ -63,7 +75,11 @@ private:
 	};
 
 	SID::SID *_sid;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
 	bool _musicActive;
+	int _samplesUntilTick;
+	int _sampleRemainder;
 	uint32 _tick;
 	ChannelState _channels[kChannelCount];
 

@@ -35,6 +35,7 @@
 #include "freescape/freescape.h"
 #include "freescape/gfx.h"
 #include "freescape/games/castle/castle.h"
+#include "freescape/games/castle/c64.music.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/music.h"
 
@@ -553,9 +554,9 @@ void CastleEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *inf
 	act->addDefaultInputMapping("q");
 	infoScreenKeyMap->addAction(act);
 
-	act = new Common::Action("TOGGLESOUND", _("Toggle sound"));
+	act = new Common::Action("TOGGLESOUND", isC64() ? _("Toggle music/sound effects") : _("Toggle sound"));
 	act->setCustomEngineActionEvent(kActionToggleSound);
-	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping(isC64() ? "f" : "t");
 	infoScreenKeyMap->addAction(act);
 
 	act = new Common::Action("ROTL", _("Rotate left"));
@@ -742,6 +743,11 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 }
 
 void CastleEngine::initGameState() {
+	if (isC64()) {
+		stopAllSounds();
+		stopAllSounds(Sound::kTypeMovement);
+		_syncSound = false;
+	}
 	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
 
@@ -804,7 +810,9 @@ void CastleEngine::initGameState() {
 	_droppingGateStartTicks = isC64() ? -1 : 0;
 	_thunderFrameDuration = 0;
 
-	if (_playerMusic)
+	if (isC64())
+		enableCastleC64Sound(_sound, !_c64MusicEnabled);
+	if (_playerMusic && (!isC64() || _c64MusicEnabled))
 		_playerMusic->startMusic();
 }
 
@@ -1279,6 +1287,10 @@ void CastleEngine::drawInfoMenu() {
 					}
 
 					_gfx->setViewport(_viewArea);
+				} else if (isC64() && event.customType == kActionToggleSound) {
+					toggleC64AudioMode();
+					drawC64InfoMenu(surface);
+					menuTexture->update(surface);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
 				} else if (event.customType == kActionQuit) {
@@ -2133,6 +2145,12 @@ void CastleEngine::checkSensors() {
 
 	_lastTick = _ticks;
 
+	if (isC64()) {
+		// The IRQ at $73a1 supplies the ghost tone while a live spirit is
+		// present. Ordinary effects take priority over this repeating cue.
+		updateCastleC64GhostSound(_sound, _gameStateControl == kFreescapeGameStatePlaying && !_disableSensors && ghostInArea());
+	}
+
 	if (_sensors.empty()) {
 		_gfx->_shakeOffset = Common::Point();
 		return;
@@ -2599,6 +2617,9 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 	if (isC64()) {
 		_c64LiftingGateStartTicks = -1;
 		_droppingGateStartTicks = -1;
+		stopAllSounds();
+		stopAllSounds(Sound::kTypeMovement);
+		_syncSound = false;
 	}
 
 	_keysCollected.clear();
