@@ -42,6 +42,22 @@ private:
 	Mode _mode = READY_AREA;
 
 	void nothing();
+	void ready(const char *name);
+
+	/**
+	 * Handles a letter keypress made while selecting from a list of
+	 * items - validates it against the owned items array, falling back
+	 * to the currently equipped index if it's out of range or refers to
+	 * an item that isn't owned, then readies the result
+	 */
+	void selectItem(const int16 *items, const char *const *names, int maxIndex,
+		int16 &equippedIndex, const char *label, Common::KeyCode keycode);
+
+	/**
+	 * Draws the centered, lettered list of items selectable in the
+	 * current mode
+	 */
+	void drawItemList(const int16 *items, const char *const *names, int maxIndex);
 
 public:
 	Ready();
