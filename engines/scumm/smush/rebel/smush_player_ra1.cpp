@@ -1113,8 +1113,7 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 		height = MIN(height, _ra1FadeFrameHeight);
 	}
 
-	if (!_insane || !static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive() ||
-			_vm->_screenWidth != kRA1PresentationScreenWidth ||
+	if (_vm->_screenWidth != kRA1PresentationScreenWidth ||
 			_vm->_screenHeight != kRA1PresentationScreenHeight) {
 		SmushPlayer::handleGameUpdateScreen(src, srcPitch, width, height);
 		ra1RememberDisplayedFrame(_ra1FadeFrame, _ra1FadeFrameSize,
@@ -1124,15 +1123,17 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 		return;
 	}
 
-	int ra1ViewX = _ra1ViewportOffsetX;
-	int ra1ViewY = _ra1ViewportOffsetY;
+	const bool interactive = _insane && static_cast<InsaneRebel1 *>(_insane)->isInteractiveVideoActive();
+	const int ra1ViewX = interactive ? _ra1ViewportOffsetX : 0;
+	const int ra1ViewY = interactive ? _ra1ViewportOffsetY : 0;
 
 	const byte *sourceBase = useFadeFrame ? src : _dst;
 	const int sourcePitch = useFadeFrame ? srcPitch : _width;
 	const int sourceWidth = useFadeFrame ? width : _width;
 	const int sourceHeight = useFadeFrame ? height : _height;
-	const int srcX = useFadeFrame ? 0 : CLIP(_scrollX + ra1ViewX + kRA1PresentationBorder, 0, sourceWidth - 1);
-	const int srcY = useFadeFrame ? 0 : CLIP(_scrollY + ra1ViewY + kRA1PresentationBorder, 0, sourceHeight - 1);
+	// Retained FADE frames already use screen coordinates, including the border.
+	const int srcX = CLIP((useFadeFrame ? 0 : _scrollX + ra1ViewX) + kRA1PresentationBorder, 0, sourceWidth - 1);
+	const int srcY = CLIP((useFadeFrame ? 0 : _scrollY + ra1ViewY) + kRA1PresentationBorder, 0, sourceHeight - 1);
 
 	int frameWidth = MIN<int>(sourceWidth - srcX, kRA1PresentationWidth);
 	int frameHeight = MIN<int>(sourceHeight - srcY, kRA1PresentationHeight);
@@ -1149,7 +1150,8 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 	}
 	memset(_ra1PresentationBuffer, 0, presentationSize);
 
-	// Interactive gameplay draws a 312x192 viewport inside a black 320x200 frame.
+	// RA1 presents a 312x192 viewport inside a black 320x200 frame, including
+	// cinematics. The four-pixel inset keeps scenery outside cockpit overlays hidden.
 	const byte *dst = sourceBase + srcY * sourcePitch + srcX;
 	byte *presentationDst = _ra1PresentationBuffer +
 		kRA1PresentationBorder * kRA1PresentationScreenWidth + kRA1PresentationBorder;

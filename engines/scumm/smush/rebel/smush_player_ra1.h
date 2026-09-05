@@ -85,7 +85,7 @@ private:
 	int32 _ra1CleanFrameSize;
 	bool _ra1HasCleanFrame;
 
-	// Interactive movies present a 312x192 viewport inside a black frame.
+	// Movies present a 312x192 viewport inside a black frame.
 	byte *_ra1PresentationBuffer;
 	int32 _ra1PresentationBufferSize;
 
