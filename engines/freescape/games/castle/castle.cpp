@@ -610,6 +610,8 @@ void CastleEngine::beforeStarting() {
 		waitInLoop(250);
 	else if (isSpectrum() || isCPC())
 		waitInLoop(100);
+	else if (isC64())
+		liftC64Gate();
 	else if (isAmiga() || isAtariST())
 		waitInLoop(250);
 }
@@ -799,7 +801,7 @@ void CastleEngine::initGameState() {
 	_lastMinute = minutes;
 	_lastTenSeconds = seconds / 10;
 
-	_droppingGateStartTicks = 0;
+	_droppingGateStartTicks = isC64() ? -1 : 0;
 	_thunderFrameDuration = 0;
 
 	if (_playerMusic)
@@ -1534,6 +1536,8 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 		// TODO: playSound(X, false);
 	} else if (isSpectrum() || isCPC()) {
 		playSound(9, false);
+	} else if (isC64() && !hasEscaped()) {
+		dropC64Gate();
 	}
 
 	if (!isDOS() && hasEscaped()) {
@@ -2592,6 +2596,11 @@ Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, 
 }
 
 Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	if (isC64()) {
+		_c64LiftingGateStartTicks = -1;
+		_droppingGateStartTicks = -1;
+	}
+
 	_keysCollected.clear();
 	int numberKeys = stream->readUint32LE();
 	for (int i = 0; i < numberKeys; i++) {

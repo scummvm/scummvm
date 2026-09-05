@@ -44,7 +44,10 @@ enum {
 	kCastleC64MessageLeft = 118,
 	kCastleC64MessageRight = 280,
 	kCastleC64MessageX = 120,
-	kCastleC64MessageY = 182
+	kCastleC64MessageY = 182,
+	kCastleC64GateFrameTicks = 2,
+	kCastleC64GateLiftStep = 2,
+	kCastleC64GateTransparent = 4
 };
 
 // Match the colors of the bundled C64 border. The unused palette entries are
@@ -351,6 +354,7 @@ private:
 
 void CastleEngine::initC64() {
 	_viewArea = Common::Rect(40, 32, 280, 152);
+	_c64LiftingGateStartTicks = -1;
 }
 
 void CastleEngine::loadMessagesC64(Common::SeekableReadStream *file, int offset, int number) {
@@ -467,6 +471,36 @@ void CastleEngine::loadAssetsC64FullGame() {
 		_strenghtWeightsFrames.push_back(new Graphics::ManagedSurface());
 		loadCastleC64Frame(uiData, 0x1f6f, _strenghtWeightsFrames[frame], frame);
 	}
+
+	// $8367 draws ten 24-pixel columns. Four-row crossbars repeat every
+	// 24 rows, with fifteen rows of vertical bars below the lowest crossbar.
+	// Crossbars overwrite all pixels, including pen 0; between them only
+	// the leftmost and rightmost pixel pairs cover the scene ($84a4).
+	_c64Gate.create(240, 120, Graphics::PixelFormat::createFormatCLUT8());
+	_c64Gate.fillRect(Common::Rect(240, 120), kCastleC64GateTransparent);
+	for (int y = 0; y < _c64Gate.h; y++) {
+		int fromBottom = _c64Gate.h - 1 - y;
+		if (fromBottom < 15 || (fromBottom - 15) % 24 >= 4) {
+			for (int x = 0; x < _c64Gate.w; x += 24) {
+				_c64Gate.fillRect(Common::Rect(x, y, x + 2, y + 1), 1);
+				_c64Gate.fillRect(Common::Rect(x + 22, y, x + 24, y + 1), 3);
+			}
+			continue;
+		}
+		int row = 3 - (fromBottom - 15) % 24;
+		for (int x = 0; x < _c64Gate.w; x += 2) {
+			byte pixels = uiData[0x82d7 + row * 3 + (x / 8) % 3];
+			byte color = (pixels >> (6 - x % 8)) & 3;
+			_c64Gate.setPixel(x, y, color);
+			_c64Gate.setPixel(x + 1, y, color);
+		}
+	}
+
+	// $82e3 uses twenty heights, followed by $ff, to accelerate the fall
+	// and bounce twice after landing. Each step waits for two timer ticks.
+	_c64GateDropHeights.clear();
+	for (int frame = 0; frame < 20; frame++)
+		_c64GateDropHeights.push_back(uiData[0x82c2 + frame]);
 
 	// $6ee7 stretches seven three-byte rows across the riddle board. The
 	// bottom reverses the top six rows; row six fills the middle of the board.
@@ -589,7 +623,56 @@ void CastleEngine::drawC64InfoMenu(Graphics::Surface *surface) {
 	drawStringInSurface("********************", 60, 133, front, highlight, back, surface);
 }
 
+void CastleEngine::liftC64Gate() {
+	// $8347 raises the gate by two rows per step. Start the clock after the
+	// initial area is ready so its setup does not consume animation time.
+	_c64LiftingGateStartTicks = _ticks;
+	waitInLoop(_c64Gate.h / kCastleC64GateLiftStep * kCastleC64GateFrameTicks);
+	_c64LiftingGateStartTicks = -1;
+}
+
+void CastleEngine::dropC64Gate() {
+	// $49bb completes the fall before polling for a restart. The wait loop
+	// consumes pending gameplay input while still allowing the user to quit.
+	_droppingGateStartTicks = _ticks;
+	waitInLoop(_c64GateDropHeights.size() * kCastleC64GateFrameTicks);
+}
+
+void CastleEngine::drawC64Gate(Graphics::Surface *surface) {
+	int height;
+	if ((_gameStateControl == kFreescapeGameStateStart || _gameStateControl == kFreescapeGameStateRestart) && _c64LiftingGateStartTicks >= 0) {
+		int ticks = MAX(0, _ticks - _c64LiftingGateStartTicks);
+		height = MAX(0, _c64Gate.h - (ticks / kCastleC64GateFrameTicks) * kCastleC64GateLiftStep);
+	} else if (_gameStateControl == kFreescapeGameStateEnd && _droppingGateStartTicks >= 0 && !hasEscaped()) {
+		int ticks = MAX(0, _ticks - _droppingGateStartTicks);
+		int frame = MIN<int>(ticks / kCastleC64GateFrameTicks, _c64GateDropHeights.size() - 1);
+		height = _c64GateDropHeights[frame];
+	} else {
+		return;
+	}
+	if (!height)
+		return;
+
+	// The gate is drawn into the viewport bitmap and uses its current VIC
+	// colors, unlike the HUD frames whose colors come from the static border.
+	uint32 colors[4];
+	for (int color = 0; color < 4; color++) {
+		uint8 r, g, b;
+		_gfx->selectColorFromFourColorPalette(color, r, g, b);
+		colors[color] = surface->format.ARGBToColor(255, r, g, b);
+	}
+	for (int y = 0; y < height; y++) {
+		const byte *src = (const byte *)_c64Gate.getBasePtr(0, _c64Gate.h - height + y);
+		for (int x = 0; x < _c64Gate.w; x++) {
+			if (src[x] != kCastleC64GateTransparent)
+				surface->setPixel(_viewArea.left + x, _viewArea.top + y, colors[src[x]]);
+		}
+	}
+}
+
 void CastleEngine::drawC64UI(Graphics::Surface *surface) {
+	drawC64Gate(surface);
+
 	uint32 front = castleC64UIColor(surface->format, 5);
 	uint32 back = castleC64UIColor(surface->format, 0);
 	_font.setSecondaryColor(castleC64UIColor(surface->format, 15));

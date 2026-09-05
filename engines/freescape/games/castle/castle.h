@@ -107,8 +107,14 @@ public:
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawC64InfoMenu(Graphics::Surface *surface);
 	void drawC64HudSurface(Graphics::Surface *surface, const Graphics::Surface &frame, const Common::Point &origin);
+	void liftC64Gate();
+	void dropC64Gate();
+	void drawC64Gate(Graphics::Surface *surface);
 	Graphics::ManagedSurface _c64KeysBackground;
+	Graphics::ManagedSurface _c64Gate;
 	Common::Array<uint32> _c64UIColors;
+	Common::Array<byte> _c64GateDropHeights;
+	int _c64LiftingGateStartTicks;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
