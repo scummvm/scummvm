@@ -295,12 +295,15 @@ bool Scene6070::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 309: // Usar/Abrir puerta de la celda (use/open the cell door).
 		if (state.scene6070CellDoorOpen)
-			dispatchGenericSceneAction(8);
+			beginStaticSecondarySpeechLine(8, 0);
 		else
 			beginSecondarySpeechLine(2, 0);
 		return true;
 	case 310: // Cerrar puerta de la celda (close the cell door).
-		dispatchGenericSceneAction(state.scene6070CellDoorOpen ? 19 : 11);
+		if (state.scene6070CellDoorOpen)
+			beginStaticSecondarySpeechLine(0x13, (byte)_random.getRandomNumber(1));
+		else
+			beginStaticSecondarySpeechLine(0x0b, 0);
 		return true;
 	case 311: // Ir por puerta de la celda (go through the cell door).
 		if (state.scene6070CellDoorOpen)
