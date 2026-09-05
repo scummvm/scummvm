@@ -530,6 +530,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1040GorillaCordState = 0;
 	if (state.scene6040WireState > 2)
 		state.scene6040WireState = 0;
+	if (state.scene6040WireState == 0 && state.hasInventoryItem(0, 0x5f))
+		state.scene6040WireState = 2;
 	if (state.scene6100CharlieState > 2)
 		state.scene6100CharlieState = 1;
 	if (state.scene3060SecretDoorRevealState > 2)
