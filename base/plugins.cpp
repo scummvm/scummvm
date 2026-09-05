@@ -128,6 +128,9 @@ public:
 		#if defined(RISCOS)
 		LINK_PLUGIN(RISCOS)
 		#endif
+		#if defined(ANDROID_BACKEND)
+		LINK_PLUGIN(ANDROID)
+		#endif
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
 		#endif

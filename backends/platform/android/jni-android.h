@@ -102,6 +102,8 @@ public:
 	static void setCurrentGame(const Common::String &target);
 	static void notifyHTTPService(int localPort, bool minimal);
 	static jobject getTTSManager();
+	static Common::Array<Common::String> getMIDIDevices();
+	static jobject openMIDIDevice(int deviceId, int *port);
 
 	static inline bool haveSurface();
 	static inline bool swapBuffers();
@@ -161,6 +163,8 @@ private:
 	static jmethodID _MID_setCurrentGame;
 	static jmethodID _MID_notifyHTTPService;
 	static jmethodID _MID_getTTSManager;
+	static jmethodID _MID_getMIDIDevices;
+	static jmethodID _MID_openMIDIDevice;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;

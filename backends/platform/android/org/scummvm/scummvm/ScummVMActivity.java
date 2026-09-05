@@ -43,6 +43,7 @@ import android.hardware.usb.UsbManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.midi.MidiDevice;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.nsd.NsdManager;
@@ -87,6 +88,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -971,6 +973,37 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected TextToSpeechManager getTTSManager() {
 			return _tts;
+		}
+
+		@Override
+		protected String[] getMIDIDevices() {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+				// No MIDI support before Marshmallow and no NDK support before Quince Tart
+				return new String[]{};
+			}
+
+			ArrayList<MidiPort> ports = MidiPort.getMidiPorts(ScummVMActivity.this);
+			String[] devices = new String[ports.size()];
+			for (int i = 0; i < devices.length; i++) {
+				devices[i] = ports.get(i).getName();
+			}
+			return devices;
+		}
+
+		@Override
+		protected MidiDevice openMIDIDevice(int device, int[] portId) {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+				// No MIDI support before Marshmallow and no NDK support before Quince Tart
+				return null;
+			}
+
+			ArrayList<MidiPort> ports = MidiPort.getMidiPorts(ScummVMActivity.this);
+			if (device >= ports.size()) {
+				return null;
+			}
+			MidiPort portDevice = ports.get(device);
+
+			return portDevice.open(ScummVMActivity.this, portId);
 		}
 
 		@Override

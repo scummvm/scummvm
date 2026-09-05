@@ -103,6 +103,8 @@ jmethodID JNI::_MID_getScummVMLogPath;
 jmethodID JNI::_MID_setCurrentGame = 0;
 jmethodID JNI::_MID_notifyHTTPService = 0;
 jmethodID JNI::_MID_getTTSManager = 0;
+jmethodID JNI::_MID_getMIDIDevices = 0;
+jmethodID JNI::_MID_openMIDIDevice = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -612,6 +614,64 @@ jobject JNI::getTTSManager() {
 	return ttsManager;
 }
 
+Common::Array<Common::String> JNI::getMIDIDevices() {
+	Common::Array<Common::String> res;
+
+	JNIEnv *env = JNI::getEnv();
+
+	jobjectArray array =
+		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getMIDIDevices);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error getting MIDI devices");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return res;
+	}
+
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jstring midi_obj = (jstring)env->GetObjectArrayElement(array, i);
+		const char *midi = env->GetStringUTFChars(midi_obj, 0);
+
+		if (midi) {
+			res.push_back(midi);
+			env->ReleaseStringUTFChars(midi_obj, midi);
+		}
+
+		env->DeleteLocalRef(midi_obj);
+	}
+
+	env->DeleteLocalRef(array);
+	return res;
+}
+
+jobject JNI::openMIDIDevice(int device, int32_t *portId) {
+	Common::Array<Common::String> res;
+
+	JNIEnv *env = JNI::getEnv();
+
+	jintArray portIdArray = env->NewIntArray(1);
+
+	jobject deviceObj = env->CallObjectMethod(_jobj, _MID_openMIDIDevice, device, portIdArray);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error opening MIDI device");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return nullptr;
+	}
+
+	env->GetIntArrayRegion(portIdArray, 0, 1, portId);
+	env->DeleteLocalRef(portIdArray);
+
+	return deviceObj;
+}
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the base directory, with a higher priority
@@ -756,6 +816,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, setCurrentGame, "(Ljava/lang/String;)V");
 	FIND_METHOD(, notifyHTTPService, "(IZ)V");
 	FIND_METHOD(, getTTSManager, "()Lorg/scummvm/scummvm/TextToSpeechManager;");
+	FIND_METHOD(, getMIDIDevices, "()[Ljava/lang/String;");
+	FIND_METHOD(, openMIDIDevice, "(I[I)Landroid/media/midi/MidiDevice;");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
