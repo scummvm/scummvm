@@ -340,27 +340,9 @@ void ZoombiniSound::stopSoundQueue(ZmbSoundQueueHandle handle) {
 	stopChannel(it->_value);
 }
 
-void ZoombiniSound::clearSoundQueue(ZmbSoundQueueHandle handle) {
-	Common::HashMap<uint32, SoundQueueChannel>::iterator it = _soundQueues.find(handle);
-	if (it == _soundQueues.end())
-		return;
-	SoundQueueChannel &ch = it->_value;
-	while (!ch.queue.empty())
-		ch.queue.pop();
-}
-
 void ZoombiniSound::stopAllSoundQueues() {
 	for (Common::HashMap<uint32, SoundQueueChannel>::iterator it = _soundQueues.begin(); it != _soundQueues.end(); it++)
 		stopChannel(it->_value);
-}
-
-bool ZoombiniSound::isSoundQueueEmpty(ZmbSoundQueueHandle handle) const {
-	Common::HashMap<uint32, SoundQueueChannel>::const_iterator it = _soundQueues.find(handle);
-	if (it == _soundQueues.end())
-		return true;
-
-	const SoundQueueChannel &ch = it->_value;
-	return !ch.playing && ch.queue.empty();
 }
 
 bool ZoombiniSound::isSoundQueuePlaying(ZmbSoundQueueHandle handle) const {

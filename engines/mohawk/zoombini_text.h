@@ -22,7 +22,6 @@
 #ifndef MOHAWK_ZOOMBINI_TEXT_H
 #define MOHAWK_ZOOMBINI_TEXT_H
 
-#include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/language.h"
 #include "common/scummsys.h"
@@ -45,20 +44,6 @@ class MohawkEngine_Zoombini;
 /** Extract the localized hard-coded strings from the Zoombinis executable, and provide access to them by key. */
 class ZoombiniText {
 public:
-	struct CreditLineAddress {
-		/** Source paragraph index in the extracted credit list. */
-		int groupIndex = -1;
-		/** Line index within the source paragraph. */
-		int inGroupLineIndex = -1;
-
-		CreditLineAddress() {}
-		CreditLineAddress(int sourceGroupIndex, int sourceInGroupLineIndex) : groupIndex(sourceGroupIndex), inGroupLineIndex(sourceInGroupLineIndex) {}
-
-		bool isValid() const {
-			return 0 <= groupIndex && 0 <= inGroupLineIndex;
-		}
-	};
-
 	/** Load localized text sources for the selected engine language. */
 	ZoombiniText(MohawkEngine_Zoombini *vm, Common::Language lang);
 	/** Release loaded fonts, strings, and name caches. */
@@ -68,14 +53,8 @@ public:
 	static Common::Array<Common::String> tokenizeLines(const Common::String &text);
 	/** Tokenize a @ref Common::U32String by CRLF, CR, or LF. */
 	static Common::Array<Common::U32String> tokenizeLines(const Common::U32String &text);
-	/** Format a credit address as a stable patch key. */
-	static Common::String formatCreditLineKey(const CreditLineAddress &address);
-	/** Format paragraph and line indices as a stable patch key. */
+	/** Format paragraph and line indices as a stable text-dump key. */
 	static Common::String formatCreditLineKey(uint32 paragraphIndex, uint32 lineIndex);
-	/** Parse a stable credit key into a line address. */
-	static bool parseCreditLineKey(const Common::String &creditKey, CreditLineAddress &address);
-	/** Parse a stable credit key into paragraph and line indices. */
-	static bool parseCreditLineKey(const Common::String &creditKey, uint32 &paragraphIndex, uint32 &lineIndex);
 
 	enum Key : uint32 {
 		kNone = 0,
@@ -388,36 +367,34 @@ public:
 		CreditLimits creditLimits = {0, 0, 0};
 
 		/** Build a source descriptor for a loose executable file. */
-		static ExeTextSource fromFile(const char *sourceFileName, uint32 sourceExpectedSize);
+		static ExeTextSource fromFile(const char *fileName, uint32 expectedSize);
 		/** Build a source descriptor for an executable member inside an InstallShield v3 .Z archive. */
-		static ExeTextSource fromArchiveMember(const char *sourceArchiveName, const char *sourceArchiveMemberName, uint32 sourceExpectedSize);
+		static ExeTextSource fromArchiveMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize);
 		/** Build a source descriptor for an executable member inside an InstallShield cabinet. */
-		static ExeTextSource fromCabinetMember(const char *sourceArchiveName, const char *sourceArchiveMemberName, uint32 sourceExpectedSize);
+		static ExeTextSource fromCabinetMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize);
 
 		/** Set the code page and keyed string table, returning the updated descriptor. */
 		template<size_t size>
-		ExeTextSource withTextTable(Common::CodePage sourceCodePage, const ExeTextEntry (&sourceEntries)[size]);
+		ExeTextSource withTextTable(Common::CodePage srcCodePage, const ExeTextEntry (&srcEntries)[size]);
 		/** Set the required-bytes identity check, returning the updated descriptor. */
-		ExeTextSource withRequiredBytes(uint32 sourceRequiredBytesOffset, const char *sourceRequiredBytes);
+		ExeTextSource withRequiredBytes(uint32 srcOffset, const char *srcBytes);
 		/** Set the keyed-string patch callback, returning the updated descriptor. */
-		ExeTextSource withTextPatches(ExeTextPatchFunction sourceTextPatch);
+		ExeTextSource withTextPatches(ExeTextPatchFunction patch);
 		/** Set the credit-line patch callback, returning the updated descriptor. */
-		ExeTextSource withCreditLinePatches(ExeTextPatchFunction sourceCreditLinePatch);
+		ExeTextSource withCreditLinePatches(ExeTextPatchFunction patch);
 		/** Enable the MacRoman trademark-byte escape, returning the updated descriptor. */
 		ExeTextSource withMacRomanTrademarkByteAAEscape();
 		/** Set the anchor-based credit lookup, returning the updated descriptor. */
-		ExeTextSource withCreditAnchor(const char *sourceCreditAnchor);
+		ExeTextSource withCreditAnchor(const char *anchor);
 
 		/** Set the pointer-stream credit lookup and first consumed index, returning the updated descriptor. */
-		ExeTextSource withCreditPointerTable(uint32 sourceCreditPointerTableOffset, uint32 sourceCreditPointerBaseAddress,
-											 uint32 sourceCreditPointerFirstIndex);
+		ExeTextSource withCreditPtrTable(uint32 tableOffset, uint32 baseAddress, uint32 firstIndex);
 		/** Set the blank-entry pointer value, returning the updated descriptor. */
-		ExeTextSource withCreditPointerBlankAddress(uint32 sourceCreditPointerBlankAddress);
+		ExeTextSource withCreditPtrBlankAddress(uint32 address);
 		/** Set the inclusive blank-entry pointer range, returning the updated descriptor. */
-		ExeTextSource withCreditPointerBlankAddressRange(uint32 sourceCreditPointerBlankAddressFirst,
-														 uint32 sourceCreditPointerBlankAddressLast);
+		ExeTextSource withCreditPtrBlankAddressRange(uint32 firstAddress, uint32 lastAddress);
 		/** Set the release-specific executable credit bounds, returning the updated descriptor. */
-		ExeTextSource withCreditLimits(const CreditLimits &sourceCreditLimits);
+		ExeTextSource withCreditLimits(const CreditLimits &limits);
 	};
 
 	/** One paragraph of localized credit text. */
@@ -493,28 +470,17 @@ public:
 	bool getStrl(Common::U32String &outStr, ZmbResource resource, uint16 subStrIdx);
 	/** Return the localized name for a canonical Zoombini ID. */
 	Common::U32String getZoombiniName(int16 zmbid);
-	/**
-	 * Load all 625 Zoombini names into the forward cache from snoid ID to name,
-	 * then build the reverse index from name to snoid ID in one pass.
-	 * Must be called before @ref ZoombiniText::findZoombiniNameId().
-	 */
-	void cacheAllZoombiniNames();
-	/**
-	 * Return the snoid ID from 0 through 624 for the given name, or -1 if it is not found.
-	 * Requires @ref ZoombiniText::cacheAllZoombiniNames() to have been called first.
-	 */
-	int16 findZoombiniNameId(const Common::U32String &name) const;
-	/** Clear forward and reverse Zoombini-name caches. */
-	void clearNameCache();
 
+	// [*] Zoombini names
 	/**
 	 * Pick the next name for a preview Zoombini.
-	 * Korean: draws from the 625-slot STRL name pool,
-	 * tracking used names in @ref ZoombiniGameState::_zoombiniNameGeneratedTable and rebuilding it when exhausted.
+	 * Korean: draws each of the 625 STRL name IDs once per cycle, then clears the draw history.
+	 * Different IDs may contain equal strings, and existing Zoombini names do not restrict selection.
 	 * English: generates a name procedurally from syllable tables.
 	 */
 	Common::U32String pickNextZoombiniName();
 
+	// [*] Text getters
 	/** Return the localized display name for a page type. */
 	Common::U32String getPageName(ZoombiniPageType pageType) const;
 	/** Return one localized string by numeric key. */
@@ -523,35 +489,6 @@ public:
 	void getLocalizedStrings(Common::Array<LocalizedString> &strings) const;
 	/** Copy localized credit paragraphs in display order. */
 	void getLocalizedCredits(Common::Array<CreditParagraph> &paragraphs) const;
-
-	/** Patch one named localized text entry with UTF-32 text. */
-	bool patchLocalizedText(const Common::String &textKey, const Common::U32String &text);
-	/** Patch one named localized text entry with UTF-8 text. */
-	bool patchLocalizedText(const Common::String &textKey, const char *utf8Text);
-	/** Apply a UTF-32 patch map to named localized strings. */
-	bool patchLocalizedTexts(const Common::HashMap<Common::String, Common::U32String> &patches);
-	/** Apply a UTF-8 patch map to named localized strings. */
-	bool patchLocalizedTexts(const Common::HashMap<Common::String, Common::String> &patches);
-	/** Replace one numeric localized string with UTF-32 text. */
-	void patchLocalizedString(uint32 textKey, const Common::U32String &text);
-	/** Replace one numeric localized string with UTF-8 text. */
-	void patchLocalizedString(uint32 textKey, const char *utf8Text);
-	/** Replace a credit line addressed by paragraph and line indices. */
-	bool patchCreditLine(uint32 paragraphIndex, uint32 lineIndex, const Common::U32String &text);
-	/** Replace a UTF-8 credit line addressed by paragraph and line indices. */
-	bool patchCreditLine(uint32 paragraphIndex, uint32 lineIndex, const char *utf8Text);
-	/** Replace a credit line addressed by a stable key. */
-	bool patchCreditLine(const Common::String &creditKey, const Common::U32String &text);
-	/** Replace a UTF-8 credit line addressed by a stable key. */
-	bool patchCreditLine(const Common::String &creditKey, const char *utf8Text);
-	/** Split a credit paragraph after one line and insert blank lines. */
-	bool splitCreditParagraph(uint32 paragraphIndex, uint32 lineIndex, uint32 newParagraphBlankLineCount);
-	/** Split a credit paragraph addressed by a stable line key. */
-	bool splitCreditParagraph(const Common::String &creditKey, uint32 newParagraphBlankLineCount);
-	/** Replace one complete credit paragraph. */
-	bool patchCreditParagraph(uint32 paragraphIndex, const CreditParagraph &paragraph);
-	/** Replace the complete localized credit list. */
-	void patchLocalizedCredits(const Common::Array<CreditParagraph> &paragraphs);
 
 private:
 	/** Bounds measured from the Spanish v1.0 executable credit source. */
@@ -626,16 +563,12 @@ private:
 
 	/** Build the page-type to localized-key lookup. */
 	void initPageKeyMap();
-	/** Initialize localized credits from the selected source family. */
-	void initLocalizedCredits();
 	/** Initialize English resource and fallback strings. */
 	void initEnglishStrings();
 	/** Load Europe-language strings from the original archive family. */
 	bool initOriginalEuropeArchiveStrings();
 	/** Load hard-coded strings from the original executable family. */
 	bool initOriginalExecutableStrings();
-	/** Apply one paragraph split patch. */
-	static bool applyCreditParagraphSplit(Common::Array<CreditParagraph> &creditParagraphs, const CreditLineAddress &address, uint32 newParagraphBlankLineCount);
 	/** Read a release-matched executable image of the exact configured size into memory. */
 	static bool readExecutableData(Common::SeekableReadStream *exeStream, uint32 expectedSize, Common::Array<byte> &data);
 	/** Find an ASCII byte sequence in executable data. */
@@ -656,13 +589,9 @@ private:
 	/** Read executable credits through a pointer table. */
 	static bool readCreditStringsFromPointerTable(const Common::Array<byte> &data, const ExeTextSource &source, Common::Array<Common::U32String> &creditStrings);
 	/** Build display paragraphs from decoded credit lines. */
-	static bool buildCreditParagraphsFromStrings(const Common::Array<Common::U32String> &creditStrings,
-												 Common::Array<CreditParagraph> &creditParagraphs,
-												 CreditSourceKind sourceKind, uint32 entryCountLimit);
+	static bool buildCreditParagraphsFromStrings(const Common::Array<Common::U32String> &creditStrings, Common::Array<CreditParagraph> &creditParagraphs, CreditSourceKind kind, uint32 entryCountLimit);
 	/** Load and assemble original executable credits. */
 	static bool loadOriginalExecutableCredits(const Common::Array<byte> &data, const ExeTextSource &source, Common::Array<CreditParagraph> &creditParagraphs);
-	/** Parse an unsigned decimal text value. */
-	static bool parseUnsignedDecimalString(const Common::String &text, uint32 &value);
 	/** Correct the Spanish 1.0 executable text directly in the localized string map. */
 	void patchSpanish10ExeText();
 	/** Correct the Korean executable credit directly in the loaded paragraphs. */
@@ -704,10 +633,8 @@ private:
 	/** Fallback font loaders used when the preferred font lacks a glyph. */
 	Common::Array<TTFLoader *> _fallbackTTFLoaders;
 
-	/** Forward canonical-ID to name cache. */
+	/** Forward canonical-ID cache for the STRL Zoombini-name pool. */
 	Common::HashMap<int16, Common::U32String> _nameCache;
-	/** Reverse name-to-canonical-ID cache. */
-	Common::HashMap<Common::U32String, int16> _nameIndexCache;
 
 	/** Localized strings keyed by numeric text ID. */
 	Common::HashMap<uint32, Common::U32String> _strMap;

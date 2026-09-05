@@ -83,7 +83,7 @@ void ZoombiniShelterBasecampTwo::setBackgroundBitmap() {
 }
 
 void ZoombiniShelterBasecampTwo::initStates() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	_storageLeftmostColumnIdx = f._storedChunkBC2.getLeftmostColumnIdx();
 	// Trust complete trait records rather than the serialized header. The
 	// original drag restore path could leave that header one or more entries low.
@@ -93,7 +93,7 @@ void ZoombiniShelterBasecampTwo::initStates() {
 }
 
 void ZoombiniShelterBasecampTwo::loadFeatures() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	// -- Preload shape bitmaps --
 	_vm->_gfx->preloadShapes(ZmbResource(ZmbResource::kPage, kResBitmapShape6000_Main));
@@ -301,7 +301,7 @@ bool ZoombiniShelterBasecampTwo::storage_preRender(ZmbFeature *feature) {
 	feature->setSortRect(Common::Rect());
 	advanceBasecampStorageScroll();
 
-	_vm->_state->_f._storedChunkBC2.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
+	_vm->_state->getCurrentState()._storedChunkBC2.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
 	return true;
 }
 
@@ -310,7 +310,7 @@ void ZoombiniShelterBasecampTwo::storage_postRender(ZmbFeature *feature) {
 
 	// Z-order: 1) honeycomb, 2) snoids, 3) lattice, 4) border
 	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
-	ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC2;
+	ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC2;
 
 	// Choose shapes based on scroll animation state
 	uint16 honeycombShape, latticeShape;
@@ -557,7 +557,7 @@ bool ZoombiniShelterBasecampTwo::updateButtonAnimations(const Common::Point &cur
 void ZoombiniShelterBasecampTwo::playArrivalVoice() {
 	// Select the arrival voice from the transient SFX group
 	// when @ref ZoombiniGameState::_lastPageBeforeContainer identifies a puzzle.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	int16 toPlaySoundId = 0;
 	ZmbSfxGroupFlags sfxGroupFlags = ZmbSfxGroupFlags::kRandom_00;
@@ -664,7 +664,7 @@ void ZoombiniShelterBasecampTwo::renderScrollButtons() {
 }
 
 int16 ZoombiniShelterBasecampTwo::findLastOccupiedSlot() {
-	const ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC2;
+	const ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC2;
 	const int16 lastOccupiedSlot = findLastBasecampStorageEntry(chunk, StorageOccupancyTest::kHairOrEyes);
 	return lastOccupiedSlot < 0 ? 0 : lastOccupiedSlot;
 }
@@ -674,7 +674,7 @@ void ZoombiniShelterBasecampTwo::recalcStorageCapacity() {
 }
 
 bool ZoombiniShelterBasecampTwo::expandBasecampStorageAtLeftBoundary() {
-	ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC2;
+	ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC2;
 	if (!expandBasecampStorageEntriesAtLeftBoundary(chunk, StorageOccupancyTest::kHairOrEyes))
 		return false;
 
@@ -690,15 +690,8 @@ void ZoombiniShelterBasecampTwo::compactStorage() {
 	_storageLastOccupiedIdx = MAX<int16>(_storageLastOccupiedIdx, 0);
 }
 
-void ZoombiniShelterBasecampTwo::resetStorageSortRect() {
-	// Reset the storage feature's sort rect.
-	ZmbFeature *storage = _storageFeature;
-	if (storage)
-		storage->setSortRect(Common::Rect());
-}
-
 int16 ZoombiniShelterBasecampTwo::findStorageSlotIndex(bool searchOccupied, const Common::Rect &clickRect, int16 leftmostColumnIdx) {
-	const ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC2;
+	const ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC2;
 	return findBasecampStorageSlotIndex(chunk, searchOccupied, clickRect, leftmostColumnIdx,
 										_storageColumnCount, _storageCapacity,
 										_storageMatrixX_nonanim, _storageMatrixY_nonanim,
@@ -706,7 +699,7 @@ int16 ZoombiniShelterBasecampTwo::findStorageSlotIndex(bool searchOccupied, cons
 }
 
 ZmbStateStoredChunk &ZoombiniShelterBasecampTwo::getBasecampStorageChunk() {
-	return _vm->_state->_f._storedChunkBC2;
+	return _vm->_state->getCurrentState()._storedChunkBC2;
 }
 
 void ZoombiniShelterBasecampTwo::refreshBasecampStorageState() {
@@ -717,17 +710,17 @@ void ZoombiniShelterBasecampTwo::refreshBasecampStorageState() {
 }
 
 int16 ZoombiniShelterBasecampTwo::getBasecampAvailableSnoidCount() const {
-	const ZmbStateFile &f = _vm->_state->_f;
+	const ZmbStateFile &f = _vm->_state->getCurrentState();
 	return f._zmbPackIsle.getPackZmbCount() +
 		   f._zmbStoredBC1Count + f._zmbStoredBC2Count;
 }
 
 ZmbStateActivePack &ZoombiniShelterBasecampTwo::getBasecampResidentPack() {
-	return _vm->_state->_f._zmbPackBC2;
+	return _vm->_state->getCurrentState()._zmbPackBC2;
 }
 
 int16 &ZoombiniShelterBasecampTwo::getBasecampStoredPopulationCount() {
-	return _vm->_state->_f._zmbStoredBC2Count;
+	return _vm->_state->getCurrentState()._zmbStoredBC2Count;
 }
 
 int16 *ZoombiniShelterBasecampTwo::getBasecampRuntimeStoredCount() {

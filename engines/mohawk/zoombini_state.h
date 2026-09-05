@@ -1445,8 +1445,6 @@ struct ZmbRosterEntry {
 	Common::U32String getSaveName(MohawkEngine_Zoombini *vm) const;
 	/** Decode the user-visible save name through an explicitly selected code page. */
 	Common::U32String getSaveName(Common::CodePage codePage) const;
-	/** Decode the legacy state-file stem, or return empty when unterminated. */
-	Common::U32String getFileName(MohawkEngine_Zoombini *vm) const;
 	/** Return the bounded byte length of the save name, or the field capacity when unterminated. */
 	uint16 getSaveNameLength() const;
 	/** Return the validated ASCII ZOOM#### state-file stem. */
@@ -1862,8 +1860,6 @@ public:
 	bool renameGame(int slot, const Common::U32String &saveName);
 	/** Move one save entry to an adjacent roster slot. */
 	bool moveGame(int slot, int destinationSlot);
-	/** Renumber all state-file stems in roster order and reset the next counter. */
-	ZmbSaveCompactResult compactSaveFiles();
 	/** Return whether the most recent load operation was cancelled by the user. */
 	bool wasLastLoadCancelled() const { return _lastLoadCancelledFlag; }
 	/** Mark the game state changed by a debugger command. */
@@ -1920,15 +1916,8 @@ public:
 	 */
 	static Common::String makeSaveFilename(const Common::String &targetName, const byte *baseName);
 
-	/**
-	 * Scan all living Zoombini entries in active packs and stored chunks.
-	 * Mark their names in @ref ZoombiniGameState::_zoombiniNameGeneratedTable.
-	 * This prevents new names from duplicating names assigned to existing Zoombinis.
-	 */
-	void buildNameGeneratedTable();
-
 	/** Return whether serialized-state changes are not reflected in a save file. */
-	bool isStateDirty() const { return _f._isDirty; }
+	bool isStateDirty() const { return _journeyState._isDirty; }
 	/** Return whether quitting should currently offer a save. */
 	bool needsSaveBeforeQuit() const { return _saveBeforeQuitPending; }
 	/** Mark the current state for a save-before-quit prompt. */
@@ -2113,12 +2102,6 @@ public:
 	bool setMemorialDate(ZmbRouteId routeId, int16 difficultyLevel, uint16 year, byte month, byte day);
 
 	/**
-	 * Calculates the sequence index of the current page within its active route.
-	 * @return The zero-based index of the page in the route progression.
-	 */
-	uint16 getPageIdxInRoute();
-
-	/**
 	 * Determines if the next logical destination in the game flow is a container
 	 * page (e.g., Basecamp 1, Basecamp 2, or Zoombiniville).
 	 * @return True if the next page is a container; otherwise false.
@@ -2137,7 +2120,16 @@ public:
 	 * Read and cleared during BC1, BC2, and Town page initialization.
 	 */
 	uint16 _lastPageBeforeContainer = 0;
-	bool inPracticeMode() { return _practiceLevel != 0; }
+	/** Return whether RodMap practice mode has a selected difficulty. */
+	bool inPracticeMode() const { return _practiceLevel != 0; }
+	/** Return the state used by the active gameplay session. */
+	ZmbStateFile &getCurrentState() { return _practiceModeActive ? _practiceState : _journeyState; }
+	/** Return the state used by the active gameplay session. */
+	const ZmbStateFile &getCurrentState() const { return _practiceModeActive ? _practiceState : _journeyState; }
+	/** Seed and activate an isolated practice state. */
+	void beginPracticeState();
+	/** Stop using the isolated practice state without changing the saved game state. */
+	void endPracticeState();
 
 	/**
 	 * "Perfect streak" flag.
@@ -2194,15 +2186,15 @@ public:
 	/** Reset to a new-game baseline, optionally running the shortcut-only save preflight. */
 	void startNewGame(bool askSaveCurrentGame);
 	/** Return whether sound effects are enabled. */
-	bool getEnableSound() { return _f.getSfxEnabled(); }
+	bool getEnableSound() { return _journeyState.getSfxEnabled(); }
 	/** Return whether background music is enabled. */
-	bool getEnableMusic() { return _f.getBgmEnabled(); }
+	bool getEnableMusic() { return _journeyState.getBgmEnabled(); }
 	/** Return whether sticky-mouse behavior is enabled. */
-	bool getEnableStickyMouse() { return _f.getStickyMouseEnabled(); }
+	bool getEnableStickyMouse() { return _journeyState.getStickyMouseEnabled(); }
 	/** Return whether automatic sticky-mouse activation is enabled. */
-	bool getEnableAutoStickyMouse() { return _f.getAutoStickyMouseEnabled(); }
+	bool getEnableAutoStickyMouse() { return _journeyState.getAutoStickyMouseEnabled(); }
 	/** Return the delay before automatic sticky-mouse activation. */
-	uint16 getAutoStickyThreshold() { return _f._autoStickyDelay; }
+	uint16 getAutoStickyThreshold() { return _journeyState._autoStickyDelay; }
 	/** Return whether transition scenes are enabled. */
 	bool getEnableTransitions();
 	/** Return whether touch-sense behavior is enabled. */
@@ -2210,40 +2202,46 @@ public:
 	/** Return whether help audio is enabled. */
 	bool getEnableHelpAudio();
 	/** Return whether reduced-action mode is enabled. */
-	bool isLessActionEnabled() { return _f.getLessActionEnabled(); }
+	bool isLessActionEnabled() { return _journeyState.getLessActionEnabled(); }
+	/** Return whether the persistent built-in debug option is enabled. */
+	bool getDebugEnabled() const { return _journeyState.getDebugEnabled(); }
+	/** Set the persistent built-in debug option. */
+	void setDebugEnabled(bool enabled) { _journeyState.setDebugEnabled(enabled); }
+	/** Return the generated-Zoombini count from the journey state. */
+	int16 getGeneratedZoombiniCount() const { return _journeyState._zmbGeneratedCount; }
 	/** Return whether the in-game cursor is visible. */
 	bool isCursorVisible() { return _flagCursorVisible; }
 	/** Set the global sound-enabled option and optionally show its page notification. */
-	void setEnableSound(bool val, bool showNotification = true);
+	void setEnableSound(bool val, bool showNoti = true);
 	/** Set the global music-enabled option and optionally show its page notification. */
-	void setEnableMusic(bool val, bool showNotification = true);
+	void setEnableMusic(bool val, bool showNoti = true);
 	/** Set the sticky-mouse option and optionally show its page notification. */
-	void setEnableStickyMouse(bool val, bool showNotification = true);
+	void setEnableStickyMouse(bool val, bool showNoti = true);
 	/** Set the automatic sticky-mouse option. */
 	void setEnableAutoStickyMouse(bool val);
 	/** Set the transition-effects option and optionally show its page notification. */
-	void setEnableTransitions(bool val, bool showNotification = true);
+	void setEnableTransitions(bool val, bool showNoti = true);
 	/** Set the touch-sense option and optionally show its page notification. */
-	void setEnableTouchSense(bool val, bool showNotification = true);
+	void setEnableTouchSense(bool val, bool showNoti = true);
 	/** Set the help-audio option and optionally show its page notification. */
-	void setEnableHelpAudio(bool val, bool showNotification = true);
+	void setEnableHelpAudio(bool val, bool showNoti = true);
 	/** Set the reduced-action option. */
 	void setLessActionEnabled(bool val);
 	/** Set visibility of the in-game cursor. */
 	void setCursorVisible(bool val);
 	/** Toggle sound effects and return the new value. */
-	bool toggleSound(bool showNotification = true) {
-		setEnableSound(!getEnableSound(), showNotification);
+	bool toggleSound(bool showNoti = true) {
+		setEnableSound(!getEnableSound(), showNoti);
 		return getEnableSound();
 	}
 	/** Toggle background music and return the new value. */
-	bool toggleMusic(bool showNotification = true) {
-		setEnableMusic(!getEnableMusic(), showNotification);
+	bool toggleMusic(bool showNoti = true) {
+		setEnableMusic(!getEnableMusic(), showNoti);
 		return getEnableMusic();
 	}
 	/** Toggle sticky-mouse behavior and return the new value. */
-	bool toggleStickyMouse(bool showNotification = true) {
-		setEnableStickyMouse(!getEnableStickyMouse(), showNotification);
+	bool toggleStickyMouse(bool showNoti = true) {
+		setEnableStickyMouse(!getEnableStickyMouse(), showNoti);
 		return getEnableStickyMouse();
 	}
 	/** Toggle automatic sticky-mouse behavior and return the new value. */
@@ -2252,18 +2250,18 @@ public:
 		return getEnableAutoStickyMouse();
 	}
 	/** Toggle transition effects and return the new value. */
-	bool toggleTransitions(bool showNotification = true) {
-		setEnableTransitions(!getEnableTransitions(), showNotification);
+	bool toggleTransitions(bool showNoti = true) {
+		setEnableTransitions(!getEnableTransitions(), showNoti);
 		return getEnableTransitions();
 	}
 	/** Toggle touch-sense behavior and return the new value. */
-	bool toggleTouchSense(bool showNotification = true) {
-		setEnableTouchSense(!getEnableTouchSense(), showNotification);
+	bool toggleTouchSense(bool showNoti = true) {
+		setEnableTouchSense(!getEnableTouchSense(), showNoti);
 		return getEnableTouchSense();
 	}
 	/** Toggle help audio and return the new value. */
-	bool toggleHelpAudio(bool showNotification = true) {
-		setEnableHelpAudio(!getEnableHelpAudio(), showNotification);
+	bool toggleHelpAudio(bool showNoti = true) {
+		setEnableHelpAudio(!getEnableHelpAudio(), showNoti);
 		return getEnableHelpAudio();
 	}
 	/** Toggle reduced-action mode and return the new value. */
@@ -2277,30 +2275,19 @@ public:
 		return isCursorVisible();
 	}
 
-	/** Current serialized game state. */
-	ZmbStateFile _f;
 	/** Current serialized save roster. */
 	ZmbRosterFile _r;
-	/** Feature pointers retained while a page is active. */
-	Common::Array<ZmbFeature *> _loadedZmbFeatures;
 
-	/** Current practice difficulty, or zero outside practice mode. */
+	/** Selected practice difficulty, retained on rodmap between practice sessions, or zero in journey mode. */
 	uint16 _practiceLevel = 0;
-	/** Used-name table for canonical Zoombini names. */
-	byte _zoombiniNameGeneratedTable[625] = {
-		0,
-	};
-
 	/**
-	 * Practice-mode state snapshot.
-	 * Practice launches capture the active game state in memory and restore it on RodMap re-entry.
-	 * This prevents practice play from modifying the user's pack or progression flags.
-	 *
-	 * @ref ZoombiniGameState::_practiceStateBackupActive is set when the snapshot is captured and cleared on restore.
+	 * Runtime flags indexed by canonical STRL name ID, from 0 through 624.
+	 * A non-zero entry means that ID has already been selected in the current name cycle.
+	 * The supported v1.11KR release is currently the only release with the STRL 30000-30006 name pool.
+	 * Releases without that pool generate names procedurally and do not use this table.
+	 * This table is not serialized and survives save loads and new games within the engine session.
 	 */
-	ZmbStateFile _practiceStateBackup;
-	/** Whether @ref _practiceStateBackup contains a snapshot awaiting restoration. */
-	bool _practiceStateBackupActive = false;
+	byte _nameIdDrawnFlags[625] = { 0 };
 	/** Runtime-only ambient scheduler state for this engine session. */
 	AmbientSoundState _ambientSoundState;
 	/** Runtime-only Slides celebration scheduler state for this engine session. */
@@ -2326,6 +2313,13 @@ public:
 	int32 _currentSaveSlot = kUnsavedNewGame;
 
 private:
+	/** Canonical serialized state for journey gameplay and save files. */
+	ZmbStateFile _journeyState;
+	/** Isolated gameplay state used only while a practice puzzle or transition is active. */
+	ZmbStateFile _practiceState;
+	/** Whether gameplay state access is currently routed to @ref ZoombiniGameState::_practiceState. */
+	bool _practiceModeActive = false;
+
 	/** Return the save-manager error, or the operation-specific fallback. */
 	static Common::Error getSaveFileWriteError(Common::SaveFileManager *saveFileMan, Common::ErrorCode fallbackErrorCode);
 	/** Build the localized write-failure reason, including backend details when available. */
@@ -2337,8 +2331,6 @@ private:
 	/** Write one roster while returning the operation-specific fallback error category. */
 	static bool writeRosterFile(Common::SaveFileManager *saveFileMan, const Common::String &filename, const ZmbRosterFile &roster,
 								Common::ErrorCode *fallbackErrorCode);
-	/** Mark one generated name as already used. */
-	void markGeneratedName(const Common::U32String &name);
 	/** Return whether any living Zoombini has a serialized non-ASCII name. */
 	bool hasNonAsciiZoombiniName(const ZmbStateFile &state) const;
 	/** Replace every living Zoombini name through the active release's standard name generator. */
