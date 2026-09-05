@@ -212,8 +212,8 @@ void Scene6070::initializeCustomPreviewState() {
 		break;
 	}
 
-	resetSceneLayers();
 	initializeDefaultPreviewState();
+	resetSceneLayers();
 }
 
 void Scene6070::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {

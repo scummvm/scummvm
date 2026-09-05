@@ -190,10 +190,10 @@ void Scene6020::drawCustomBackgroundComposite(int activeWorldX, int activeWorldY
 	(void)activeWorldY;
 	drawResourceSpriteLayer(_sceneLayers.layer(kScene6020TaffyLayer));
 	drawTaffyForegroundBlock();
-	drawTaffyDepartureLayer();
 }
 
 void Scene6020::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
+	drawTaffyDepartureLayer();
 	drawForegroundBlocks(activeWorldX, activeWorldY);
 	drawPhoneLayer();
 }
@@ -481,12 +481,10 @@ void Scene6020::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
 }
 
 void Scene6020::setTaffyDeskMagnifierHidden(bool hidden) {
-	if (!hidden && hasInventoryItem(kScene6020MagnifierInventoryItem))
-		hidden = true;
-
 	if (_taffyDeskMagnifierHidden == hidden)
 		return;
 
+	// Track Taffy's current gesture independently of the collected desk item.
 	_taffyDeskMagnifierHidden = hidden;
 	applyTaffyDeskMagnifierPatch();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
@@ -795,9 +793,14 @@ void Scene6020::runTaffyRatHandoffAnimation() {
 	if (!loadTaffyDepartureResource())
 		return;
 
+	const bool previousHideActiveActor = _hideActiveActor;
+	const bool previousManualAnimation = _taffyDepartureAnimationActive;
+	// The handoff frames already contain Ron's entire body.
+	_hideActiveActor = true;
 	_taffyDepartureAnimationActive = true;
 	_sceneLayers.setLayerVisible(kScene6020TaffyLayer, true);
-	for (uint frame = 0; frame < ARRAYSIZE(kScene6020RatHandoffObjectFrames) && !Engine::shouldQuit(); ++frame) {
+	for (uint frame = 0; frame < ARRAYSIZE(kScene6020RatHandoffObjectFrames) &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
 		_sceneLayers.setLayerFrame(kScene6020TaffyLayer, kScene6020RatHandoffTaffyFrames[frame]);
 		setTaffyDepartureFrame(0, kScene6020RatHandoffDescriptorCount,
 			kScene6020RatHandoffObjectFrames[frame]);
@@ -806,7 +809,9 @@ void Scene6020::runTaffyRatHandoffAnimation() {
 		if (waitSceneMillis(kScene6020FrameMillis))
 			break;
 	}
-	_taffyDepartureAnimationActive = false;
+	clearTaffyDepartureFrame();
+	_hideActiveActor = previousHideActiveActor;
+	_taffyDepartureAnimationActive = previousManualAnimation;
 }
 
 void Scene6020::runTaffyWalkOffAnimation() {
@@ -841,7 +846,7 @@ void Scene6020::runLateSceneObjectAnimation() {
 void Scene6020::runFinalSceneObjectAnimation() {
 	GameplayState &state = _vm->gameState();
 	if (!state.scene6020TaffyLeft || !state.scene6020AgendaRead ||
-			state.scene6020PhoneCallCompleted || !state.scene6090Visited || !loadPhoneResource()) {
+			state.scene6020PhoneCallCompleted || !state.scene6100EntryLineSeen || !loadPhoneResource()) {
 		beginSecondarySpeechLine(20, 0);
 		return;
 	}
@@ -850,6 +855,8 @@ void Scene6020::runFinalSceneObjectAnimation() {
 	state.scene6011PendingItem69Visible = true;
 	beginSecondarySpeechLine(20, 1);
 
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
 	_phoneAnimationActive = true;
 	_sceneLayers.setLayerVisible(kScene6020PhoneLayer, true);
 	AnimationFrameRange firstPart(0, 59, kScene6020FrameMillis);
@@ -860,6 +867,7 @@ void Scene6020::runFinalSceneObjectAnimation() {
 		applyPhoneFramebufferPatch(17);
 		_sceneLayers.setLayerVisible(kScene6020PhoneLayer, false);
 		_phoneAnimationActive = false;
+		_hideActiveActor = previousHideActiveActor;
 		return;
 	}
 
@@ -883,6 +891,7 @@ void Scene6020::runFinalSceneObjectAnimation() {
 	applyPhoneFramebufferPatch(17);
 	_sceneLayers.setLayerVisible(kScene6020PhoneLayer, false);
 	_phoneAnimationActive = false;
+	_hideActiveActor = previousHideActiveActor;
 	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		drawPlayableComposite();
 		presentFrame();
