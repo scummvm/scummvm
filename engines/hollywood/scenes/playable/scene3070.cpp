@@ -602,6 +602,8 @@ void Scene3070::runLateCutsceneBranch() {
 void Scene3070::runInterludeCutscene() {
 	const Common::Array<byte> savedPalette = _paletteCurrent;
 	const uint16 savedViewportX = _viewportXOffset;
+	const uint16 savedViewportMinX = _viewportMinXOffset;
+	const uint16 savedViewportMaxX = _viewportMaxXOffset;
 	_vm->gameplayMusic()->stop();
 	_ambientSoundBank0.stop();
 	_soundBank0.stop();
@@ -618,6 +620,9 @@ void Scene3070::runInterludeCutscene() {
 	}
 
 	_viewportXOffset = 0x10;
+	// Keep the flashback camera independent of Ron's position in the laboratory.
+	_viewportMinXOffset = _viewportXOffset;
+	_viewportMaxXOffset = _viewportXOffset;
 	_interludeActive = true;
 	_sceneLayers.setLayerVisible(kScene3070InterludeLeftLayer, true);
 	_sceneLayers.setLayerVisible(kScene3070InterludeRightLayer, true);
@@ -663,6 +668,8 @@ void Scene3070::runInterludeCutscene() {
 	applySceneStateToHotspotsAndPatches(0xff);
 	_paletteCurrent = savedPalette;
 	_viewportXOffset = savedViewportX;
+	_viewportMinXOffset = savedViewportMinX;
+	_viewportMaxXOffset = savedViewportMaxX;
 	drawPlayableComposite();
 	presentFrame();
 	fadePaletteFromBlack();
