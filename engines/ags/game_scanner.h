@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef AGS_GAME_SCANNER_H
+#define AGS_GAME_SCANNER_H
+
 #include "common/array.h"
 #include "common/fs.h"
 
@@ -73,3 +76,5 @@ public:
 #endif
 
 } // namespace AGS3
+
+#endif // AGS_GAME_SCANNER_H

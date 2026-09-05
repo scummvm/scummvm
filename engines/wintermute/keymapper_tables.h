@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef WINTERMUTE_KEYMAPPER_TABLES_H
+#define WINTERMUTE_KEYMAPPER_TABLES_H
+
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
@@ -2338,3 +2341,5 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 }
 
 } // End of namespace Wintermute
+
+#endif // WINTERMUTE_KEYMAPPER_TABLES_H

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef FREESCAPE_DARK_H
+#define FREESCAPE_DARK_H
+
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "freescape/music.h"
@@ -189,3 +192,5 @@ private:
 };
 
 }
+
+#endif // FREESCAPE_DARK_H
