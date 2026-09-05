@@ -162,7 +162,36 @@ bool CityCastleLogic::move(Data::Direction dir) {
 }
 
 void CityCastleLogic::updateCreatures() {
+	Common::Array<int> guardIndexes;
 
+	for (int i = 0; i < Data::LOCATION_ENTITY_COUNT; ++i) {
+		const auto &e = _G(savegame)._locationEntities[i];
+
+		switch (e._type) {
+		case Data::CTILE_BARD:
+			updateBardJester(i);
+			break;
+		case Data::CTILE_WENCH:
+			updateWench(i);
+			break;
+		case Data::CTILE_PRINCESS:
+			updatePrincess(i);
+			break;
+		case Data::CTILE_GUARD:
+			if (_G(savegame)._guardsHostile && !guardMove(i))
+				guardIndexes.push_back(i);
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Handle guards' attacks
+	for (const int index : guardIndexes) {
+		guardAttack(index);
+		if (_G(savegame)._hits <= 0)
+			break;
+	}
 }
 
 bool CityCastleLogic::drop() {
@@ -332,20 +361,24 @@ int CityCastleLogic::checkAt(int x, int y) const {
 }
 
 void CityCastleLogic::updateBardJester(int entityIndex) {
-
+	// TODO
 }
 
 void CityCastleLogic::updateWench(int entityIndex) {
-
+	// TODO
 }
 
 void CityCastleLogic::updatePrincess(int entityIndex) {
-
+	// TODO
 }
 
 bool CityCastleLogic::guardMove(int entityIndex) {
 	// TODO
 	return false;
+}
+
+void CityCastleLogic::guardAttack(int entityIndex) {
+	// TODO
 }
 
 /*-------------------------------------------------------------------*/

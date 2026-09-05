@@ -56,6 +56,12 @@ private:
 	 */
 	bool guardMove(int entityIndex);
 
+	/**
+	 * Handles hostile guard attacks
+	 * 
+	 */
+	void guardAttack(int entityIndex);
+
 protected:
 	/**
 	 * Load the NPCs for the given location

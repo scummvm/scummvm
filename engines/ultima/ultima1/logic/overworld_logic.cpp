@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/stack.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
 #include "ultima/ultima1/core/strings.h"
 #include "ultima/ultima1/data/entity.h"
@@ -313,8 +314,7 @@ void OverworldLogic::generateCreatures() {
 }
 
 void OverworldLogic::updateCreatures() {
-	int attackIndexes[Data::CREATURES_COUNT];
-	int attackCount = 0;
+	Common::Stack<int> attackers;
 
 	for (int idx = 1; idx <= _G(overworldEntityCount); ++idx) {
 		auto &e = _G(savegame)._overworldEntities[idx];
@@ -322,35 +322,40 @@ void OverworldLogic::updateCreatures() {
 		if (e._type >= Data::TILE_FIRST_MONSTER && e._type <= Data::TILE_LAST_MONSTER) {
 			int xDiff = _G(savegame)._overworldPos.x - e._x;
 			int yDiff = _G(savegame)._overworldPos.y - e._y;
+			int distance = Data::OverworldEntity::getMonsterAttackDistance(e._type, xDiff, yDiff);
 
-			if (Data::OverworldEntity::getMonsterAttackDistance(e._type, xDiff, yDiff) != 0) {
-				if (attackCount < Data::CREATURES_COUNT)
-					attackIndexes[attackCount] = idx;
-				++attackCount;
+			if (distance != 0) {
+				if ((int)attackers.size() < Data::CREATURES_COUNT)
+					attackers.push(idx);
 			} else {
-				// TODO: monster movement (monsterMoveCheck, monsterMoveCheckX/Y, monsterTransportCheck)
+				monsterMoveCheck(idx, xDiff, yDiff);
 			}
 		}
 	}
 
-	while (attackCount > 0) {
-		--attackCount;
-		if (_G(savegame)._hits <= 0)
-			break;
+	while (!attackers.empty() && _G(savegame)._hits > 0) {
+		// Get the attacker index from the end of the 
+		int idx = attackers.pop();
 
-		int idx = attackIndexes[attackCount];
 		auto &e = _G(savegame)._overworldEntities[idx];
 		int xDiff = _G(savegame)._overworldPos.x - e._x;
 		int yDiff = _G(savegame)._overworldPos.y - e._y;
+		int distance = Data::OverworldEntity::getMonsterAttackDistance(e._type, xDiff, yDiff);
 
-		// TODO: monsterAttack(idx, xDiff, yDiff, getMonsterAttackDistance(e._type, xDiff, yDiff))
-		// - creature combat/damage resolution
-		warning("TODO: xDiff=%d, yDiff=%d", xDiff, yDiff);
+		monsterAttack(idx, xDiff, yDiff, distance);
 	}
 }
 
 void OverworldLogic::reduceFood() {
 
+}
+
+void OverworldLogic::monsterMoveCheck(int entityIndex, int xDiff, int yDiff) {
+	// TODO
+}
+
+void OverworldLogic::monsterAttack(int entityIndex, int xDiff, int yDiff, int distance) {
+	// TODO
 }
 
 } // namespace Logic

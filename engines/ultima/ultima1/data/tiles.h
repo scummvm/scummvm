@@ -58,9 +58,12 @@ enum OverworldTileId {
 enum LocationTileId {
 	CTILE_WALL = 0,
 	CTILE_GROUND = 1,
+	CTILE_GUARD = 17,
 	CTILE_PLAYER = 18,
-	// Unnamed in the original - all three are "wishing well"-style tiles that
-	// dropPence/dropPenceCastle give a random bonus for dropping coins on
+	CTILE_BARD = 19,
+	CTILE_PRINCESS = 22,
+	CTILE_WENCH = 50,
+	// Wishing tiles for dropping coins on
 	CTILE_DROP1 = 51,
 	CTILE_DROP2 = 52,
 	CTILE_DROP3 = 53,

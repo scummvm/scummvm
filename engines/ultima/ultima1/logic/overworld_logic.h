@@ -38,20 +38,6 @@ private:
 	bool moveCheck(Data::Direction dir);
 
 	/**
-	 * Get the X co-ordinate for a tile within the map, offset from the left edge of the visible map area
-	 * @param xp	X offset within the window
-	 * @return		X-coordinate within the map
-	*/
-	int getViewportX(int xp) const;
-
-	/**
-	 * Get the Y co-ordinate for a tile within the map, offset from the top edge of the visible map area
-	 * @param yp	Y offset within the window
-	 * @return		Y-coordinate within the map
-	 */
-	int getViewportY(int yp) const;
-
-	/**
 	 * Impassable tile
 	 */
 	void impassable(int reason);
@@ -95,6 +81,10 @@ private:
 	 * Reduce the food the player has
 	 */
 	void reduceFood();
+
+	void monsterMoveCheck(int entityIndex, int xDiff, int yDiff);
+
+	void monsterAttack(int entityIndex, int xDiff, int yDiff, int distance);
 
 protected:
 	/**
