@@ -86,10 +86,6 @@ protected:
 	/** Release the currently held scroll button, if any. */
 	bool releaseHeldScrollButton(ZmbFeature *feature);
 
-	/** Render the virtual feature used by the Basecamp1 controls. */
-	ZmbRenderResult virt03_render(ZmbFeature *feature);
-	/** Finish rendering the Basecamp1 control overlay. */
-	void virt03_postRender(ZmbFeature *feature);
 	/** Dispatch a click to an Easter egg using its page-local hit rectangle. */
 	ZmbEventHandleResult genericEasterEgg_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos, const Common::Rect &clickRect);
 
@@ -308,8 +304,6 @@ protected:
 	Common::StableMap<uint32, ContinuousButtonState> _scrollButtonStateMap;
 	/** Hit rectangles indexed by storage scroll-button ID. */
 	Common::HashMap<uint32, Common::Rect> _scrollButtonRectMap;
-	/** Hit rectangles indexed by Easter egg feature ID. */
-	Common::HashMap<uint32, Common::Rect> _easterEggRectMap;
 	/** X coordinates of the six Basecamp1 storage columns. */
 	static constexpr int16 _storageMatrixX1[kStorageAnimatedColumnCount]{
 		0x37,

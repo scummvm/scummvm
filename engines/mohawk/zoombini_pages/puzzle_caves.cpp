@@ -235,7 +235,7 @@ void ZoombiniPuzzleCaves::loadFeatures() {
 	// The authored page materializes the active pack before deriving its rule buckets.
 	// This ordering makes both trait collection and the later runner links observe the
 	// same feature graph as the original controller.
-	assert(!_vm->_state->_f._zmbPackActive.getSkipOccupiedEntries());
+	assert(!_vm->_state->getCurrentState()._zmbPackActive.getSkipOccupiedEntries());
 	loadZoombinisFromPack(kWaitingSnoidPositions, ARRAYSIZE(kWaitingSnoidPositions));
 	assert(0 < _pageLoadedZmbCount && _pageLoadedZmbCount <= 16);
 

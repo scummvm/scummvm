@@ -218,7 +218,7 @@ void ZoombiniPuzzleFleens::initHelpPrompt() {
 }
 
 void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
-	const ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	const ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	int16 zmbCount = 0;
 	for (int16 i = 0; i < activePack.getPackZmbCount() && i < activePack.getEntryCapacity(); i++) {
 		if (activePack.getEntry(i).getIsOccupied())
@@ -235,11 +235,11 @@ void ZoombiniPuzzleFleens::buildZmbTraitSetup() {
 	byte *traitValueRotations;
 	byte *traitDestSlots;
 	if (isTlc) {
-		traitValueRotations = _vm->_state->_f._v2FleensTraitValueRotations;
-		traitDestSlots = _vm->_state->_f._v2FleensTraitDestSlots;
+		traitValueRotations = _vm->_state->getCurrentState()._v2FleensTraitValueRotations;
+		traitDestSlots = _vm->_state->getCurrentState()._v2FleensTraitDestSlots;
 	} else {
-		traitValueRotations = _vm->_state->_f._v1FleensTraitValueRotations;
-		traitDestSlots = _vm->_state->_f._v1FleensTraitDestSlots;
+		traitValueRotations = _vm->_state->getCurrentState()._v1FleensTraitValueRotations;
+		traitDestSlots = _vm->_state->getCurrentState()._v1FleensTraitDestSlots;
 	}
 
 	_targetSnoidOrdinals[0] = _vm->_rnd->getRandomNumber(1, zmbCount);
@@ -332,7 +332,7 @@ void ZoombiniPuzzleFleens::readFleenPositionRegs(int16 regsResId, Common::Array<
 }
 
 void ZoombiniPuzzleFleens::spawnFleenCreatures() {
-	const ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	const ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	_targetBranchPositions.clear();
 	_normalBranchPositions.clear();
 	readFleenPositionRegs(kResRegs5000_SpecialPositions, _targetBranchPositions);
@@ -956,7 +956,7 @@ void ZoombiniPuzzleFleens::beginBoardingAnimation(ZmbSnoid &snoid, int16 fleenIn
 	if (creature.isTarget && creature.posCode <= kFleenPosCode19_TargetBranchLast) {
 		_matchedTargetCount += 1;
 		if (_vm->_state->inPracticeMode() && 3 <= _matchedTargetCount)
-			_vm->_state->_f._isDirty = true;
+			_vm->_state->getCurrentState()._isDirty = true;
 	}
 
 	if (appendQueue && _submittedPairCount < 7) {

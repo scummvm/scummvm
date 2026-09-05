@@ -166,10 +166,6 @@ Common::Point ZmbShapeOffsetRegs::getShapeDelta(uint16 shapeIdx) const {
 	return _offsets[shapeIdx];
 }
 
-Common::Point ZmbShapeOffsetRegs::getHotspotDelta(const ZmbHotspot &hotspot) const {
-	return getShapeDelta(hotspot._shapeIdx);
-}
-
 bool ZmbScriptDecoder::decodeScrbResource(MohawkEngine_Zoombini *vm, ZmbResource resource, ZmbScriptDecoder::DecodedScrb &decodedScrb) {
 	decodedScrb.frames.clear();
 	if (!vm) {
@@ -324,10 +320,6 @@ ZmbHotspot &ZmbHotspotGroup::operator[](uint32 hsId) {
 	return getHotspot(hsId);
 }
 
-void ZmbHotspotGroup::appendHotspot(const ZmbHotspot &hs) {
-	_hotspots.push_back(hs);
-}
-
 void ZmbHotspotGroup::setHotspots(const Common::Array<ZmbHotspot> &hotspots) {
 	_hotspots = hotspots;
 }
@@ -419,8 +411,7 @@ void ZmbFeature::initValues() {
 
 void ZmbFeature::setEventHooks(const EventHooks &hooks) {
 	_eventHooks = hooks;
-	_usesDefaultRenderFunc = !_eventHooks._renderFunc ||
-							 _eventHooks._renderFunc == &ZoombiniPage::blitShapes;
+	_usesDefaultRenderFunc = !_eventHooks._renderFunc || _eventHooks._renderFunc == static_cast<OnRenderFunc>(&ZoombiniPage::blitShapes);
 	if (!_eventHooks._renderFunc)
 		_eventHooks._renderFunc = &ZoombiniPage::blitShapes;
 	if (!_eventHooks._selectRenderFrameFunc)
@@ -659,14 +650,6 @@ bool ZmbFeature::playOwnedSound(ZmbResource resource, Audio::Mixer::SoundType so
 	return true;
 }
 
-bool ZmbFeature::playFrameSound(int32 frameIdx) const {
-	ZmbResource resource;
-	if (!getFrameSoundResource(frameIdx, resource))
-		return false;
-
-	return playOwnedSound(resource);
-}
-
 bool ZmbFeature::enqueueFrameSound(int32 frameIdx, bool forcePriority) const {
 	ZmbResource resource;
 	if (!getFrameSoundResource(frameIdx, resource))
@@ -818,29 +801,6 @@ ZmbHotspotGroup *ZmbFeature::getCurrentScriptVisualFrame() {
 	return getHotspotGroup(_lastFrameIdx);
 }
 
-uint32 ZmbFeature::getHotspotTotalCount() const {
-	if (_activeDecodedFrames) {
-		uint32 count = 0;
-		for (uint32 frameIdx = 0; frameIdx < _activeDecodedFrames->size(); frameIdx++)
-			count += (*_activeDecodedFrames)[frameIdx].hotspots.size();
-		return count;
-	}
-
-	uint32 count = 0;
-	Common::HashMap<int32, ZmbHotspotGroup *>::const_iterator it = _virtualFrameMap.begin();
-	for (; it != _virtualFrameMap.end(); it++) {
-		ZmbHotspotGroup *hsGroup = it->_value;
-		count += hsGroup->getHotspotCount();
-	}
-	return count;
-}
-
-uint16 ZmbFeature::getHotspotIdCount() const {
-	if (_activeDecodedFrames)
-		return static_cast<uint16>(_activeDecodedFrames->size());
-	return _virtualFrameMap.size();
-}
-
 int32 ZmbFeature::defaultSelectRenderFrame(uint32 currentFrameCounter) {
 	// The next-render deadline gates the entire pre-render body.
 	// @ref ZmbFeature::_frameTimingReady propagates the result to @ref ZoombiniPage::preRenderFeature().
@@ -910,17 +870,6 @@ ZmbDrawRecord *ZmbFeature::getDrawRecord(uint16 frame, uint16 hsIdx) {
 	return it->second;
 }
 
-void ZmbFeature::eraseDrawRecord(uint16 frame, uint16 hsIdx) {
-	uint32 hash = ZmbHotspot::hash(frame, hsIdx);
-	Common::StableMap<uint32, ZmbDrawRecord *>::iterator it = _drawnRecordMap.find(hash);
-	if (it == _drawnRecordMap.end())
-		return;
-
-	ZmbDrawRecord *record = it->second;
-	_drawnRecordMap.erase(it);
-	delete record;
-}
-
 void ZmbFeature::clearDrawRecords() {
 	for (Common::StableMap<uint32, ZmbDrawRecord *>::iterator it = _drawnRecordMap.begin(); it != _drawnRecordMap.end(); it++) {
 		delete it->second;
@@ -943,14 +892,6 @@ ZmbDrawRecord *ZmbFeature::findDrawRecordAtPoint(const Common::Point &absPos) {
 			return record;
 	}
 	return nullptr;
-}
-
-void ZmbFeature::findDrawRecordsAtPoint(const Common::Point &absPos, Common::Array<ZmbDrawRecord *> &foundRecords) {
-	for (Common::StableMap<uint32, ZmbDrawRecord *>::iterator it = _drawnRecordMap.begin(); it != _drawnRecordMap.end(); it++) {
-		ZmbDrawRecord *record = it->second;
-		if (record->_drawnRect.contains(absPos))
-			foundRecords.push_back(record);
-	}
 }
 
 ZmbDrawRecord *ZmbFeature::findDrawRecordByHotspotIdx(uint16 hsIdx) {
@@ -1011,10 +952,6 @@ ZmbDrawRecord *ZmbFeature::findDrawRecordByShapeId(Common::Array<uint16> shapeId
 		}
 	}
 	return nullptr;
-}
-
-void ZmbFeature::activateSubFeature() {
-	;
 }
 
 void ZmbFeature::clear() {

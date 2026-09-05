@@ -227,7 +227,6 @@ Common::Error MohawkEngine_Zoombini::run() {
 	_text = new ZoombiniText(this, _language);
 	applyGameSettings();
 
-
 	// Set MHK archive root based on game variant and language
 	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
 	if (isVersionFamilyEuV1()) {
@@ -297,6 +296,7 @@ Common::Error MohawkEngine_Zoombini::run() {
 	int32 bootParam = ConfMan.getInt("boot_param");
 	if (parsePracticeBootParam(bootParam, bootPracticePage, bootPracticeLevel)) {
 		_state->_practiceLevel = bootPracticeLevel;
+		_state->beginPracticeState();
 		_state->generateRandomPack();
 		_state->markGameStateReady();
 		debug(1, "engine: boot_param %d selects practice page %d at level %u",
@@ -521,7 +521,7 @@ bool MohawkEngine_Zoombini::handleBuiltinCheatSpace(const Common::KeyState &kbd)
 }
 
 void MohawkEngine_Zoombini::setBuiltinDebugMode(bool enabled) {
-	_state->_f.setDebugEnabled(enabled);
+	_state->setDebugEnabled(enabled);
 	_state->markDebugStateMutation();
 	_state->markSaveBeforeQuitPending();
 	if (!enabled) {
@@ -1157,6 +1157,8 @@ void MohawkEngine_Zoombini::loadNextPage() {
 
 	assert(!_pageQueue.empty());
 	ZoombiniPageType nextPageType = _pageQueue.pop();
+	if (nextPageType == ZoombiniPageType::kRodMap)
+		_state->endPracticeState();
 
 	ZoombiniPage *page;
 	switch (nextPageType) {
@@ -1227,7 +1229,7 @@ void MohawkEngine_Zoombini::loadNextPage() {
 
 	_activePage = page;
 	if (page->getPageCategory() == ZoombiniPageCategory::kInteractive)
-		_state->_f.setCurrentPageType(nextPageType);
+		_state->getCurrentState().setCurrentPageType(nextPageType);
 
 	// Perfect streak flag.
 	if (_state->inPracticeMode()) {
@@ -1497,7 +1499,7 @@ ZoombiniDialogResult MohawkEngine_Zoombini::openLoadDialogWithSavePrompt() {
 		return ZoombiniDialogResult::kNo;
 	}
 
-	if (_state->_f._zmbGeneratedCount != 0 &&
+	if (_state->getGeneratedZoombiniCount() != 0 &&
 		openMsgBoxDialog(ZoombiniMsgBoxType::kAskSaveCurrentGame) == ZoombiniDialogResult::kYes)
 		openSaveDialog();
 

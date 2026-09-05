@@ -53,48 +53,48 @@ const ZoombiniText::CreditLimits ZoombiniText::kV20USCreditLimits = {360, 49, 41
 const ZoombiniText::CreditLimits ZoombiniText::kV20PLCreditLimits = {360, 63, 4300};
 constexpr uint32 ZoombiniText::kV10ITCreditEntryCount;
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromFile(const char *sourceFileName, uint32 sourceExpectedSize) {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromFile(const char *fileName, uint32 expectedSize) {
 	ZoombiniText::ExeTextSource source;
-	source.fileName = sourceFileName;
-	source.expectedSize = sourceExpectedSize;
+	source.fileName = fileName;
+	source.expectedSize = expectedSize;
 	return source;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromArchiveMember(const char *sourceArchiveName, const char *sourceArchiveMemberName, uint32 sourceExpectedSize) {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromArchiveMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize) {
 	ZoombiniText::ExeTextSource source;
-	source.archiveName = sourceArchiveName;
-	source.archiveMemberName = sourceArchiveMemberName;
-	source.expectedSize = sourceExpectedSize;
+	source.archiveName = archiveName;
+	source.archiveMemberName = archiveMemberName;
+	source.expectedSize = expectedSize;
 	return source;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromCabinetMember(const char *sourceArchiveName, const char *sourceArchiveMemberName, uint32 sourceExpectedSize) {
-	ZoombiniText::ExeTextSource source = fromArchiveMember(sourceArchiveName, sourceArchiveMemberName, sourceExpectedSize);
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::fromCabinetMember(const char *archiveName, const char *archiveMemberName, uint32 expectedSize) {
+	ZoombiniText::ExeTextSource source = fromArchiveMember(archiveName, archiveMemberName, expectedSize);
 	source.archiveIsCabinet = true;
 	return source;
 }
 
 template<size_t size>
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextTable(Common::CodePage sourceCodePage, const ZoombiniText::ExeTextEntry (&sourceEntries)[size]) {
-	codePage = sourceCodePage;
-	entries = sourceEntries;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextTable(Common::CodePage srcCodePage, const ZoombiniText::ExeTextEntry (&srcEntries)[size]) {
+	this->codePage = srcCodePage;
+	this->entries = srcEntries;
 	entryCount = size;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withRequiredBytes(uint32 sourceRequiredBytesOffset, const char *sourceRequiredBytes) {
-	requiredBytesOffset = sourceRequiredBytesOffset;
-	requiredBytes = sourceRequiredBytes;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withRequiredBytes(uint32 srcOffset, const char *srcBytes) {
+	this->requiredBytesOffset = srcOffset;
+	this->requiredBytes = srcBytes;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextPatches(ZoombiniText::ExeTextPatchFunction sourceTextPatch) {
-	textPatches = sourceTextPatch;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withTextPatches(ZoombiniText::ExeTextPatchFunction patch) {
+	textPatches = patch;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditLinePatches(ZoombiniText::ExeTextPatchFunction sourceCreditLinePatch) {
-	creditLinePatches = sourceCreditLinePatch;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditLinePatches(ZoombiniText::ExeTextPatchFunction patch) {
+	creditLinePatches = patch;
 	return *this;
 }
 
@@ -103,36 +103,34 @@ ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withMacRomanTrademarkBy
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditAnchor(const char *sourceCreditAnchor) {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditAnchor(const char *anchor) {
 	creditSourceKind = CreditSourceKind::kExecutableAnchorSequence;
-	creditAnchor = sourceCreditAnchor;
+	creditAnchor = anchor;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPointerTable(uint32 sourceCreditPointerTableOffset, uint32 sourceCreditPointerBaseAddress,
-																				uint32 sourceCreditPointerFirstIndex) {
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPtrTable(uint32 tableOffset, uint32 baseAddress, uint32 firstIndex) {
 	creditSourceKind = CreditSourceKind::kExecutablePointerStream;
-	creditPointerTableOffset = sourceCreditPointerTableOffset;
-	creditPointerBaseAddress = sourceCreditPointerBaseAddress;
-	creditPointerFirstIndex = sourceCreditPointerFirstIndex;
+	creditPointerTableOffset = tableOffset;
+	creditPointerBaseAddress = baseAddress;
+	creditPointerFirstIndex = firstIndex;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPointerBlankAddress(uint32 sourceCreditPointerBlankAddress) {
-	creditPointerBlankAddressFirst = sourceCreditPointerBlankAddress;
-	creditPointerBlankAddressLast = sourceCreditPointerBlankAddress;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPtrBlankAddress(uint32 address) {
+	creditPointerBlankAddressFirst = address;
+	creditPointerBlankAddressLast = address;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPointerBlankAddressRange(uint32 sourceCreditPointerBlankAddressFirst,
-																							uint32 sourceCreditPointerBlankAddressLast) {
-	creditPointerBlankAddressFirst = sourceCreditPointerBlankAddressFirst;
-	creditPointerBlankAddressLast = sourceCreditPointerBlankAddressLast;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditPtrBlankAddressRange(uint32 firstAddress, uint32 lastAddress) {
+	creditPointerBlankAddressFirst = firstAddress;
+	creditPointerBlankAddressLast = lastAddress;
 	return *this;
 }
 
-ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditLimits(const ZoombiniText::CreditLimits &sourceCreditLimits) {
-	creditLimits = sourceCreditLimits;
+ZoombiniText::ExeTextSource ZoombiniText::ExeTextSource::withCreditLimits(const ZoombiniText::CreditLimits &limits) {
+	creditLimits = limits;
 	return *this;
 }
 
@@ -1951,18 +1949,16 @@ bool ZoombiniText::readCreditStringsFromPointerTable(const Common::Array<byte> &
 	return false;
 }
 
-bool ZoombiniText::buildCreditParagraphsFromStrings(const Common::Array<Common::U32String> &creditStrings,
-													Common::Array<CreditParagraph> &creditParagraphs,
-													CreditSourceKind sourceKind, uint32 entryCountLimit) {
+bool ZoombiniText::buildCreditParagraphsFromStrings(const Common::Array<Common::U32String> &creditStrings, Common::Array<CreditParagraph> &creditParagraphs, CreditSourceKind kind, uint32 entryCountLimit) {
 	creditParagraphs.clear();
-	if (sourceKind == CreditSourceKind::kNone || entryCountLimit == 0 || entryCountLimit < creditStrings.size())
+	if (kind == CreditSourceKind::kNone || entryCountLimit == 0 || entryCountLimit < creditStrings.size())
 		return false;
 
 	Common::Array<Common::U32String> lines;
 	uint32 blankLineCount = 0;
 	bool firstLineIsTitle = true;
 	bool reachedTerminator = false;
-	const bool leadingSpaceMarksBody = sourceKind == CreditSourceKind::kExecutablePointerStream;
+	const bool leadingSpaceMarksBody = kind == CreditSourceKind::kExecutablePointerStream;
 
 	for (const Common::U32String &text : creditStrings) {
 		if (isCreditTerminator(text)) {
@@ -2017,54 +2013,6 @@ bool ZoombiniText::loadOriginalExecutableCredits(const Common::Array<byte> &data
 
 bool ZoombiniText::compareLocalizedStrings(const LocalizedString &left, const LocalizedString &right) {
 	return left._key < right._key;
-}
-
-bool ZoombiniText::applyCreditParagraphSplit(Common::Array<CreditParagraph> &creditParagraphs, const CreditLineAddress &address, uint32 newParagraphBlankLineCount) {
-	if (!address.isValid())
-		return false;
-
-	const uint32 paragraphIndex = static_cast<uint32>(address.groupIndex);
-	const uint32 lineIndex = static_cast<uint32>(address.inGroupLineIndex);
-	if (creditParagraphs.size() <= paragraphIndex)
-		return false;
-
-	CreditParagraph &paragraph = creditParagraphs[paragraphIndex];
-	if (lineIndex == 0 || paragraph._lines.size() <= lineIndex)
-		return false;
-
-	Common::Array<Common::U32String> retainedLines;
-	retainedLines.reserve(lineIndex);
-	for (uint32 currentLineIndex = 0; currentLineIndex < lineIndex; currentLineIndex++)
-		retainedLines.push_back(paragraph._lines[currentLineIndex]);
-
-	Common::Array<Common::U32String> movedLines;
-	movedLines.reserve(paragraph._lines.size() - lineIndex);
-	for (uint32 currentLineIndex = lineIndex; currentLineIndex < paragraph._lines.size(); currentLineIndex++)
-		movedLines.push_back(paragraph._lines[currentLineIndex]);
-
-	paragraph._lines = retainedLines;
-	creditParagraphs.insert_at(paragraphIndex + 1, CreditParagraph(movedLines, newParagraphBlankLineCount));
-	return true;
-}
-
-bool ZoombiniText::parseUnsignedDecimalString(const Common::String &text, uint32 &value) {
-	if (text.empty())
-		return false;
-
-	uint32 parsedValue = 0;
-	for (uint charIndex = 0; charIndex < text.size(); charIndex++) {
-		const char ch = text[charIndex];
-		if (ch < '0' || '9' < ch)
-			return false;
-
-		const uint32 digit = static_cast<uint32>(ch - '0');
-		if ((0xFFFFFFFFu - digit) / 10 < parsedValue)
-			return false;
-		parsedValue = parsedValue * 10 + digit;
-	}
-
-	value = parsedValue;
-	return true;
 }
 
 bool ZoombiniText::initOriginalEuropeArchiveStrings() {
@@ -2559,15 +2507,15 @@ bool ZoombiniText::initOriginalExecutableStrings() {
 			ZoombiniText::ExeTextSource::fromFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20PLExecutableSize)
 				.withTextTable(Common::kWindows1250, kV20PL_PETextEntries)
 				.withRequiredBytes(0xC9AF4, "Bez nazwy")
-				.withCreditPointerTable(0xCA190, 0x413000, 21)
-				.withCreditPointerBlankAddressRange(0x4DD234, 0x4DD3F4)
+				.withCreditPtrTable(0xCA190, 0x413000, 21)
+				.withCreditPtrBlankAddressRange(0x4DD234, 0x4DD3F4)
 				.withCreditLimits(kV20PLCreditLimits)};
 		const ZoombiniText::ExeTextSource english20RetailSources[] = {
 			ZoombiniText::ExeTextSource::fromFile("INSTALL/HD/Zoombinis Logical Journey.exe", kV20USExecutableSize)
 				.withTextTable(Common::kWindows1252, kV20US_PETextEntries)
 				.withMacRomanTrademarkByteAAEscape()
-				.withCreditPointerTable(0x90080, 0x400000, 21)
-				.withCreditPointerBlankAddress(0x4A286C)
+				.withCreditPtrTable(0x90080, 0x400000, 21)
+				.withCreditPtrBlankAddress(0x4A286C)
 				.withCreditLimits(kV20USCreditLimits)};
 		const ZoombiniText::ExeTextSource english20DemoSources[] = {
 			ZoombiniText::ExeTextSource::fromFile("Zoom.exe", kV20USDemoExecutableSize)
@@ -2724,41 +2672,8 @@ Common::Array<Common::U32String> ZoombiniText::tokenizeLines(const Common::U32St
 	return lines;
 }
 
-Common::String ZoombiniText::formatCreditLineKey(const CreditLineAddress &address) {
-	return Common::String::format("credit-g%02d-%03d", address.groupIndex, address.inGroupLineIndex);
-}
-
 Common::String ZoombiniText::formatCreditLineKey(uint32 paragraphIndex, uint32 lineIndex) {
-	return formatCreditLineKey(CreditLineAddress(static_cast<int>(paragraphIndex), static_cast<int>(lineIndex)));
-}
-
-bool ZoombiniText::parseCreditLineKey(const Common::String &creditKey, CreditLineAddress &address) {
-	const Common::String prefix = "credit-g";
-	if (creditKey.size() <= prefix.size() || creditKey.find(prefix) != 0)
-		return false;
-
-	const size_t separatorIndex = creditKey.find('-', prefix.size());
-	if (separatorIndex == Common::String::npos || separatorIndex == prefix.size() || creditKey.size() <= separatorIndex + 1)
-		return false;
-
-	uint32 groupIndex = 0;
-	uint32 lineIndex = 0;
-	if (!parseUnsignedDecimalString(creditKey.substr(prefix.size(), separatorIndex - prefix.size()), groupIndex) ||
-		!parseUnsignedDecimalString(creditKey.substr(separatorIndex + 1, creditKey.size() - separatorIndex - 1), lineIndex))
-		return false;
-
-	address = CreditLineAddress(static_cast<int>(groupIndex), static_cast<int>(lineIndex));
-	return true;
-}
-
-bool ZoombiniText::parseCreditLineKey(const Common::String &creditKey, uint32 &paragraphIndex, uint32 &lineIndex) {
-	CreditLineAddress address;
-	if (!parseCreditLineKey(creditKey, address))
-		return false;
-
-	paragraphIndex = static_cast<uint32>(address.groupIndex);
-	lineIndex = static_cast<uint32>(address.inGroupLineIndex);
-	return true;
+	return Common::String::format("credit-g%02u-%03u", paragraphIndex, lineIndex);
 }
 
 const Graphics::Font *ZoombiniText::getTextFont() {
@@ -2943,6 +2858,7 @@ Common::U32String ZoombiniText::getZoombiniName(int16 snoidId) {
 	if (it != _nameCache.end())
 		return it->_value;
 
+	// Each STRL resource stores up to 100 names; 30000-30006 cover IDs 0-624.
 	int16 nameResId = static_cast<int16>(snoidId / 100 + ZoombiniPage::kSysResStrl30000_ZoombiniNames); // 30000 ~ 30006
 	uint nameStrId = static_cast<uint>(snoidId % 100);
 
@@ -2957,27 +2873,6 @@ Common::U32String ZoombiniText::getZoombiniName(int16 snoidId) {
 		_nameCache[baseKey + i] = zmbNames[i];
 
 	return zmbNames[nameStrId];
-}
-
-void ZoombiniText::cacheAllZoombiniNames() {
-	if (!_nameIndexCache.empty())
-		return; // Already built
-	for (int16 i = 0; i < 625; i++) {
-		Common::U32String name = getZoombiniName(i); // populates _nameCache in batches
-		_nameIndexCache[name] = i;
-	}
-}
-
-int16 ZoombiniText::findZoombiniNameId(const Common::U32String &name) const {
-	Common::HashMap<Common::U32String, int16>::const_iterator it = _nameIndexCache.find(name);
-	if (it == _nameIndexCache.end())
-		return -1;
-	return it->_value;
-}
-
-void ZoombiniText::clearNameCache() {
-	_nameCache.clear();
-	_nameIndexCache.clear();
 }
 
 /**
@@ -3133,27 +3028,29 @@ Common::U32String ZoombiniText::generateRandomName() {
 }
 
 Common::U32String ZoombiniText::pickNextZoombiniName() {
+	// Only v1.11KR release has the STRL name pool.
+	// Use resource presence rather than a version check so the fallback remains capability-based.
 	if (!_vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames)))
 		return generateRandomName();
 
-	// Korean: draw from the 625-slot name pool, tracking which names have been used.
-	byte *nameTable = _vm->_state->_zoombiniNameGeneratedTable;
+	// Track drawn IDs for one complete cycle, independently of names assigned to saved Zoombinis.
+	byte *drawnFlags = _vm->_state->_nameIdDrawnFlags;
 
 	bool allGenerated = true;
 	for (int i = 0; i < 625; i++) {
-		if (!nameTable[i]) {
+		if (!drawnFlags[i]) {
 			allGenerated = false;
 			break;
 		}
 	}
 	if (allGenerated)
-		_vm->_state->buildNameGeneratedTable();
+		memset(drawnFlags, 0, sizeof(_vm->_state->_nameIdDrawnFlags));
 
 	uint16 nameId;
 	do {
 		nameId = static_cast<uint16>(_vm->_rnd->getRandomNumber(624));
-	} while (nameTable[nameId]);
-	nameTable[nameId] = 1;
+	} while (drawnFlags[nameId]);
+	drawnFlags[nameId] = 1;
 
 	return getZoombiniName(nameId);
 }
@@ -3182,97 +3079,6 @@ void ZoombiniText::getLocalizedStrings(Common::Array<LocalizedString> &strings) 
 
 void ZoombiniText::getLocalizedCredits(Common::Array<CreditParagraph> &paragraphs) const {
 	paragraphs = _creditParagraphs;
-}
-
-bool ZoombiniText::patchLocalizedText(const Common::String &textKey, const Common::U32String &text) {
-	CreditLineAddress address;
-	if (parseCreditLineKey(textKey, address))
-		return patchCreditLine(static_cast<uint32>(address.groupIndex), static_cast<uint32>(address.inGroupLineIndex), text);
-
-	uint32 numericKey = 0;
-	if (!parseUnsignedDecimalString(textKey, numericKey))
-		return false;
-
-	patchLocalizedString(numericKey, text);
-	return true;
-}
-
-bool ZoombiniText::patchLocalizedText(const Common::String &textKey, const char *utf8Text) {
-	return patchLocalizedText(textKey, Common::U32String(utf8Text, Common::kUtf8));
-}
-
-bool ZoombiniText::patchLocalizedTexts(const Common::HashMap<Common::String, Common::U32String> &patches) {
-	bool allPatched = true;
-	for (Common::HashMap<Common::String, Common::U32String>::const_iterator it = patches.begin(); it != patches.end(); it++)
-		allPatched = patchLocalizedText(it->_key, it->_value) && allPatched;
-	return allPatched;
-}
-
-bool ZoombiniText::patchLocalizedTexts(const Common::HashMap<Common::String, Common::String> &patches) {
-	bool allPatched = true;
-	for (Common::HashMap<Common::String, Common::String>::const_iterator it = patches.begin(); it != patches.end(); it++)
-		allPatched = patchLocalizedText(it->_key, it->_value.c_str()) && allPatched;
-	return allPatched;
-}
-
-void ZoombiniText::patchLocalizedString(uint32 textKey, const Common::U32String &text) {
-	_strMap[textKey] = text;
-}
-
-void ZoombiniText::patchLocalizedString(uint32 textKey, const char *utf8Text) {
-	patchLocalizedString(textKey, Common::U32String(utf8Text, Common::kUtf8));
-}
-
-bool ZoombiniText::patchCreditLine(uint32 paragraphIndex, uint32 lineIndex, const Common::U32String &text) {
-	if (_creditParagraphs.size() <= paragraphIndex || _creditParagraphs[paragraphIndex]._lines.size() <= lineIndex)
-		return false;
-
-	_creditParagraphs[paragraphIndex]._lines[lineIndex] = text;
-	return true;
-}
-
-bool ZoombiniText::patchCreditLine(uint32 paragraphIndex, uint32 lineIndex, const char *utf8Text) {
-	return patchCreditLine(paragraphIndex, lineIndex, Common::U32String(utf8Text, Common::kUtf8));
-}
-
-bool ZoombiniText::patchCreditLine(const Common::String &creditKey, const Common::U32String &text) {
-	CreditLineAddress address;
-	if (!parseCreditLineKey(creditKey, address))
-		return false;
-
-	return patchCreditLine(static_cast<uint32>(address.groupIndex), static_cast<uint32>(address.inGroupLineIndex), text);
-}
-
-bool ZoombiniText::patchCreditLine(const Common::String &creditKey, const char *utf8Text) {
-	return patchCreditLine(creditKey, Common::U32String(utf8Text, Common::kUtf8));
-}
-
-bool ZoombiniText::splitCreditParagraph(uint32 paragraphIndex, uint32 lineIndex, uint32 newParagraphBlankLineCount) {
-	return applyCreditParagraphSplit(_creditParagraphs, CreditLineAddress(static_cast<int>(paragraphIndex), static_cast<int>(lineIndex)), newParagraphBlankLineCount);
-}
-
-bool ZoombiniText::splitCreditParagraph(const Common::String &creditKey, uint32 newParagraphBlankLineCount) {
-	CreditLineAddress address;
-	if (!parseCreditLineKey(creditKey, address))
-		return false;
-
-	return applyCreditParagraphSplit(_creditParagraphs, address, newParagraphBlankLineCount);
-}
-
-bool ZoombiniText::patchCreditParagraph(uint32 paragraphIndex, const CreditParagraph &paragraph) {
-	if (_creditParagraphs.size() <= paragraphIndex)
-		return false;
-
-	_creditParagraphs[paragraphIndex] = paragraph;
-	return true;
-}
-
-void ZoombiniText::patchLocalizedCredits(const Common::Array<CreditParagraph> &paragraphs) {
-	_creditParagraphs = paragraphs;
-}
-
-void ZoombiniText::initLocalizedCredits() {
-	_creditParagraphs.clear();
 }
 
 void ZoombiniText::initPageKeyMap() {

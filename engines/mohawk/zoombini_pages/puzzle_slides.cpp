@@ -2033,16 +2033,6 @@ void ZoombiniPuzzleSlides::buildChainSequence() {
 	}
 }
 
-int16 ZoombiniPuzzleSlides::findRunnerInLockedState() const {
-	for (int16 slotIdx = 0; slotIdx < _slotCount; slotIdx++) {
-		int16 cellIdx = _slotCellIndices[slotIdx];
-		if (0 <= cellIdx && _cellGrid[cellIdx * kFieldsPerCell + 1] == kCellLocked) {
-			return _cellGrid[cellIdx * kFieldsPerCell + 2];
-		}
-	}
-	return -1;
-}
-
 int16 ZoombiniPuzzleSlides::findRunnerByMatchingTrait(int16 runnerIdx) {
 	_currentMatchedTraitIndex = _vm->_rnd->getRandomNumber(0, 3);
 	for (int16 tries = 4; 0 < tries; tries--) {
@@ -2441,33 +2431,6 @@ void ZoombiniPuzzleSlides::propagateMatchChain(int16 chainIdx) {
 			}
 		}
 	}
-}
-
-int16 ZoombiniPuzzleSlides::checkTraitMatchOutcome(int16 destCellIdx, int16 runnerListIdx, int16 occupiedCellIdx) {
-	if (destCellIdx < 0 || occupiedCellIdx < 0 || kNumCells <= destCellIdx || kNumCells <= occupiedCellIdx ||
-		runnerListIdx < 0 || _pageLoadedZmbCount <= runnerListIdx || !cellStateIs(occupiedCellIdx, kCellOccupied))
-		return 0;
-
-	int16 traitCursor = _vm->_rnd->getRandomNumber(0, 3);
-	ZmbSnoid *occupiedSnoid = getSnoid(_cellGrid[occupiedCellIdx * kFieldsPerCell + 2]);
-	if (!occupiedSnoid)
-		return 0;
-
-	for (int16 tries = 0; tries < 4; tries++) {
-		const bool matches = _snoidTraits[runnerListIdx][traitCursor] == occupiedSnoid->_trait[traitCursor];
-
-		if (matches) {
-			const int16 traitKind = kTraitHair + traitCursor;
-			_cellGrid[destCellIdx * kFieldsPerCell + 2] = traitKind;
-			return traitKind;
-		}
-
-		traitCursor += 1;
-		if (3 < traitCursor)
-			traitCursor = 0;
-	}
-
-	return 0;
 }
 
 // =============================================================================
@@ -3571,13 +3534,6 @@ void ZoombiniPuzzleSlides::processCommandQueue(ZmbFeature *feature, ZmbHotspotGr
 			hotspotIdx += 1;
 		}
 	}
-}
-
-void ZoombiniPuzzleSlides::invalidateVisualRects(uint16 rectIdx, ZmbFeature *feature) {
-	(void)rectIdx;
-	(void)feature;
-
-	// Mark visual regions for redraw
 }
 
 // =============================================================================
