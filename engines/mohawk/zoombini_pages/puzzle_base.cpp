@@ -34,7 +34,7 @@ ZoombiniPuzzle::ZoombiniPuzzle(MohawkEngine_Zoombini *vm, ZoombiniPageType pageT
 	_departXferSrcSiPage = departXferSrcSiPage;
 
 	// Every puzzle starts from one active pack containing 1 to 16 Snoids.
-	const int16 packZmbCount = vm->_state->_f._zmbPackActive.getPackZmbCount();
+	const int16 packZmbCount = vm->_state->getCurrentState()._zmbPackActive.getPackZmbCount();
 	assert(0 < packZmbCount && packZmbCount <= 16);
 }
 
@@ -86,7 +86,7 @@ void ZoombiniPuzzle::queueNarratorSound(int16 soundId) {
 }
 
 bool ZoombiniPuzzle::passesPartialResultFeedbackGate() {
-	const ZmbStateFile::PageFlag &pageFlag = _vm->_state->_f.getPageFlagFromPageType(getPageType());
+	const ZmbStateFile::PageFlag &pageFlag = _vm->_state->getCurrentState().getPageFlagFromPageType(getPageType());
 	return _difficultyLevel - 1 < _vm->_rnd->getRandomNumber(0, 4) ||
 		   _vm->_state->getPageVisitCountFromPageFlag(pageFlag) <= kPartialResultFeedbackEarlyVisitCount;
 }
@@ -128,7 +128,7 @@ void ZoombiniPuzzle::saveStateBeforeMapTransition() {
 	// Besides matching the saved state, this avoids reactivating hidden pack
 	// Snoids solely for serialization during a practice-page fade.
 	if (_vm->_state->inPracticeMode()) {
-		ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+		ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 		activePack.clearEntries();
 		activePack.setSkipOccupiedEntries(true);
 		activePack.setSkipUnoccupiedEntries(true);
@@ -143,7 +143,7 @@ void ZoombiniPuzzle::saveStateBeforeMapTransition() {
 int16 ZoombiniPuzzle::loadOccupiedSnoidsFromActivePack(const Common::Point *positions,
 													   uint16 positionCount,
 													   Common::Array<ZmbSnoid *> *loadedSnoids) {
-	ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	assert(activePack.getPackZmbCount() <= 16);
 	return loadSnoidsFromPack(activePack, positions, positionCount, false, 10000, loadedSnoids);
 }

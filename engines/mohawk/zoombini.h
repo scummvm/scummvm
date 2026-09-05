@@ -449,7 +449,7 @@ public:
 	/** Set the serialized built-in debug mode and apply its shared mutation feedback. */
 	void setBuiltinDebugMode(bool enabled);
 	/** Return whether the serialized built-in debug flag is active. */
-	bool isBuiltinDebugMode() const { return _state && _state->_f.getDebugEnabled(); }
+	bool isBuiltinDebugMode() const { return _state && _state->getDebugEnabled(); }
 	/** Return whether the runtime-only built-in MIDI test is active. */
 	bool isBuiltinMidiTestMode() const { return _builtinMidiTestMode; }
 	/** Set the page-independent runtime MIDI test mode and show its built-in notification. */
