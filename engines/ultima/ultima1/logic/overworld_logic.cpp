@@ -350,12 +350,105 @@ void OverworldLogic::reduceFood() {
 
 }
 
+bool OverworldLogic::monsterTransportCheck(int entityIndex, int xDiff, int yDiff) {
+	// Faster player transports make it harder for monsters to keep up - each
+	// movement attempt has a per-transport-type chance of being skipped
+	if (getRandomNumber(1, 100) > Data::TRANSPORT_RANDOM_THRESHOLD[_G(savegame)._transportType])
+		return false;
+
+	const auto &e = _G(savegame)._overworldEntities[entityIndex];
+	int tile1, tile2;
+	if (e._type >= Data::TILE_FIRST_MONSTER && e._type <= 25) {
+		// Sea monsters can only move onto water
+		tile1 = tile2 = Data::TILE_OCEAN;
+	} else if (e._type == 31 || e._type == 35) {
+		// These two monster types can only move onto woods
+		tile1 = tile2 = Data::TILE_WOODS;
+	} else {
+		// Everything else can move onto either woods or grass
+		tile1 = Data::TILE_WOODS;
+		tile2 = Data::TILE_GRASS;
+	}
+
+	int newX = _G(savegame)._overworldPos.x - xDiff;
+	int newY = _G(savegame)._overworldPos.y - yDiff;
+	int tile = _G(map).getTileAt(newX, newY);
+
+	// Single-terrain (amphibious) monster types are also allowed to move
+	// onto a city/castle/dungeon entrance tile, regardless of the mismatch
+	if (tile1 == tile2 && tile >= Data::TILE_CASTLE1 && tile <= Data::TILE_DUNGEON)
+		return true;
+
+	return (tile == tile1 || tile == tile2) &&
+		_G(map).mapRangeCheckX(newX) && _G(map).mapRangeCheckY(newY);
+}
+
+bool OverworldLogic::monsterMoveCheckX(int entityIndex, int xDiff, int yDiff) {
+	if (xDiff == 0)
+		return false;
+
+	int step = (xDiff > 0) ? -1 : 1;
+	if (!monsterTransportCheck(entityIndex, xDiff + step, yDiff))
+		return false;
+
+	_G(savegame)._overworldEntities[entityIndex]._x -= step;
+	return true;
+}
+
+bool OverworldLogic::monsterMoveCheckY(int entityIndex, int xDiff, int yDiff) {
+	if (yDiff == 0)
+		return false;
+
+	int step = (yDiff > 0) ? -1 : 1;
+	if (!monsterTransportCheck(entityIndex, xDiff, yDiff + step))
+		return false;
+
+	_G(savegame)._overworldEntities[entityIndex]._y -= step;
+	return true;
+}
+
 void OverworldLogic::monsterMoveCheck(int entityIndex, int xDiff, int yDiff) {
-	// TODO
+	// Randomly vary which axis is tried first, so pursuing monsters don't
+	// always prefer the same axis when moving diagonally
+	if (getRandomNumber(1, 10) & 1) {
+		if (!monsterMoveCheckY(entityIndex, xDiff, yDiff))
+			monsterMoveCheckX(entityIndex, xDiff, yDiff);
+	} else {
+		if (!monsterMoveCheckX(entityIndex, xDiff, yDiff))
+			monsterMoveCheckY(entityIndex, xDiff, yDiff);
+	}
 }
 
 void OverworldLogic::monsterAttack(int entityIndex, int xDiff, int yDiff, int distance) {
-	// TODO
+	// WORKAROUND: the original animates the attack as a projectile flying
+	// tile-by-tile towards the player, using up to distance tiles and
+	// stopping early if it's blocked by mountains. That's purely visual and
+	// doesn't affect whether the attack hits, so it's skipped here
+	const auto &e = _G(savegame)._overworldEntities[entityIndex];
+	int monsterIdx = (e._type - Data::TILE_FIRST_MONSTER) / 2;
+
+	writeString(Data::OVERWORLD_MONSTERS[monsterIdx]);
+	writeString(" attacks!");
+
+	auto &sg = _G(savegame);
+	int roll = getRandomNumber(1, 255);
+	int threshold = 200 - sg._stamina / 2 - sg._equippedArmor * 8;
+
+	if (roll >= threshold) {
+		writeString("\n");
+		writeString("Missed!\n");
+		return;
+	}
+
+	int damage = getRandomNumber(1, Data::OVERWORLD_MONSTERS_DAMAGE[monsterIdx] * 2 + 1);
+	playFX(2);
+
+	writeString("\n");
+	writeString("Hit! ");
+	writeString("%d damage\n", damage);
+
+	sg._hits -= damage;
+	redrawStats();
 }
 
 } // namespace Logic

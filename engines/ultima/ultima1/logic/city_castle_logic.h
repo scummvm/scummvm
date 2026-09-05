@@ -58,9 +58,23 @@ private:
 
 	/**
 	 * Handles hostile guard attacks
-	 * 
+	 *
 	 */
 	void guardAttack(int entityIndex);
+
+	/**
+	 * Returns a random one-tile step delta (-1, 0, or 1), used by NPCs that
+	 * wander aimlessly (bards/jesters, wenches, and princesses when not
+	 * being pursued)
+	 */
+	int randomWanderDelta();
+
+	/**
+	 * Attempts to move an NPC by a given delta, checking first that the
+	 * destination isn't blocked by the map, the player, or another NPC.
+	 * Returns true if the move succeeded
+	 */
+	bool moveEntityBy(int entityIndex, int deltaX, int deltaY);
 
 protected:
 	/**

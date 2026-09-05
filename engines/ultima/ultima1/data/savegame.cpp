@@ -51,6 +51,9 @@ const char *TRANSPORT_NAMES[] = {
 };
 const char *GEM_NAMES[] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
 
+// Indexed by TransportType
+const int TRANSPORT_RANDOM_THRESHOLD[] = { 100, 50, 33, 100, 50, 25, 10, 10 };
+
 void LocationEntity::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_type);
 	s.syncAsSint16LE(_position.x);
@@ -162,7 +165,7 @@ void Savegame::removeOverworldCreatureAt(int x, int y) {
 
 int Savegame::getLocationEntityAt(int x, int y) const {
 	int foundIndex = -1;
-	for (int startingIndex = 1; startingIndex < LOCATION_ENTITY_COUNT && foundIndex == -1; ++startingIndex) {
+	for (int startingIndex = 0; startingIndex < LOCATION_ENTITY_COUNT && foundIndex == -1; ++startingIndex) {
 		const auto &e = _locationEntities[startingIndex];
 		if (e._position.x == x && e._position.y == y)
 			foundIndex = startingIndex;

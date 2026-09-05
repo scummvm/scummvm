@@ -45,6 +45,11 @@ extern const char *SPELL_NAMES[];
 extern const char *TRANSPORT_NAMES[];
 extern const char *GEM_NAMES[];
 
+// Per player-transport-type chance (as a 1-100 threshold) for a pursuing
+// monster to get a chance to move/attack on a given turn - faster player
+// transports make it harder for monsters to keep up
+extern const int TRANSPORT_RANDOM_THRESHOLD[];
+
 enum Sex {
 	SEX_MALE = 0, SEX_FEMALE = 1
 };

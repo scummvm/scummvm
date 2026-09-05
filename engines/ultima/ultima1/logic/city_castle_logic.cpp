@@ -350,7 +350,19 @@ void CityCastleLogic::loadEntities() {
 }
 
 int CityCastleLogic::checkAt(int x, int y) const {
-	int tile = _G(map).getTileAt(x, y);
+	if (x < 0 || x >= Data::CITY_WIDTH || y < 0 || y >= Data::CITY_HEIGHT)
+		return Data::CTILE_BLANK;
+
+	// The player or an NPC standing on the tile takes priority over
+	// whatever the map itself has there
+	if (x == _G(savegame)._locationPosition.x && y == _G(savegame)._locationPosition.y)
+		return Data::CTILE_PLAYER;
+
+	int idx = _G(savegame).getLocationEntityAt(x, y);
+	if (idx != -1)
+		return _G(savegame)._locationEntities[idx]._type;
+
+	int tile = _G(map).getMapTile(x, y);
 	if (tile == Data::CTILE_BLANK)
 		return tile;
 
@@ -360,25 +372,171 @@ int CityCastleLogic::checkAt(int x, int y) const {
 	return 0;
 }
 
+int CityCastleLogic::randomWanderDelta() {
+	int delta = getRandomNumber(1, 215) % 3;
+	return (delta == 2) ? -1 : delta;
+}
+
+bool CityCastleLogic::moveEntityBy(int entityIndex, int deltaX, int deltaY) {
+	auto &e = _G(savegame)._locationEntities[entityIndex];
+	int x = e._position.x + deltaX;
+	int y = e._position.y + deltaY;
+
+	int tile = checkAt(x, y);
+	if (tile != -1 && tile != Data::CTILE_BLANK)
+		return false;
+
+	e._position = Common::Point(x, y);
+	redrawMap();
+	return true;
+}
+
 void CityCastleLogic::updateBardJester(int entityIndex) {
-	// TODO
+	if (_G(savegame)._guardsHostile)
+		return;
+
+	auto &e = _G(savegame)._locationEntities[entityIndex];
+	int x = e._position.x + randomWanderDelta();
+	int y = e._position.y + randomWanderDelta();
+	int tile = checkAt(x, y);
+
+	bool stolen = false;
+	if (tile == -1) {
+		e._position = Common::Point(x, y);
+		redrawMap();
+		playFX(4);
+
+	} else if (tile == Data::CTILE_PLAYER) {
+		// Try to pickpocket a weapon that isn't currently readied
+		auto &sg = _G(savegame);
+		for (int idx = Data::WEAPON_COUNT - 1; idx >= 1 && !stolen; --idx) {
+			if (sg._weapons[idx] && idx != sg._equippedWeapon) {
+				--sg._weapons[idx];
+				stolen = true;
+			}
+		}
+
+		if (stolen && getRandomNumber(1, 255) < sg._agility + 128) {
+			writeString(_G(map)._mapType == Data::MAPTYPE_CITY ?
+				"Iolo stole something!\n" : "The jester stole something!\n");
+		}
+	}
+
+	if (!stolen && getRandomNumber(1, 255) < 15) {
+		if (_G(map)._mapType == Data::MAPTYPE_CITY) {
+			writeString("Iolo the Bard sings:\n");
+			writeString("Ho eyoh he hum!\n");
+		} else {
+			writeString("Gwino the jester sings:\n");
+			writeString("I've got the key!\n");
+		}
+	}
 }
 
 void CityCastleLogic::updateWench(int entityIndex) {
-	// TODO
+	if (_G(savegame)._guardsHostile)
+		return;
+
+	auto &e = _G(savegame)._locationEntities[entityIndex];
+	int x = e._position.x + randomWanderDelta();
+	int y = e._position.y + randomWanderDelta();
+
+	if (checkAt(x, y) == -1) {
+		e._position = Common::Point(x, y);
+		redrawMap();
+		playFX(4);
+	}
 }
 
 void CityCastleLogic::updatePrincess(int entityIndex) {
-	// TODO
+	if (!_G(savegame)._guardsHostile) {
+		// Not currently being chased, so she just wanders like a wench
+		updateWench(entityIndex);
+		return;
+	}
+
+	const auto &e = _G(savegame)._locationEntities[entityIndex];
+	const auto &pos = _G(savegame)._locationPosition;
+
+	int diffX = e._position.x - pos.x;
+	int deltaX = (diffX == 0) ? 0 : (diffX > 0 ? -1 : 1);
+	int diffY = e._position.y - pos.y;
+	int deltaY = (diffY == 0) ? 0 : (diffY > 0 ? -1 : 1);
+
+	// Randomly vary which axis is tried first
+	bool moved = false;
+	if (getRandomNumber(1, 100) < 50) {
+		if (deltaY != 0)
+			moved = moveEntityBy(entityIndex, 0, deltaY);
+		if (!moved && deltaX != 0)
+			moved = moveEntityBy(entityIndex, deltaX, 0);
+	} else {
+		if (deltaX != 0)
+			moved = moveEntityBy(entityIndex, deltaX, 0);
+		if (!moved && deltaY != 0)
+			moved = moveEntityBy(entityIndex, 0, deltaY);
+	}
+
+	if (moved)
+		playFX(4);
 }
 
 bool CityCastleLogic::guardMove(int entityIndex) {
-	// TODO
-	return false;
+	const auto &e = _G(savegame)._locationEntities[entityIndex];
+	const auto &pos = _G(savegame)._locationPosition;
+
+	int diffX = e._position.x - pos.x;
+	int diffY = e._position.y - pos.y;
+	int absDiffX = ABS(diffX);
+	int absDiffY = ABS(diffY);
+
+	// Already adjacent enough to attack instead, or too far away to bother
+	if (absDiffX < 2 && absDiffY < 2)
+		return false;
+	if (absDiffX + absDiffY >= 13)
+		return false;
+
+	int deltaX = (diffX == 0) ? 0 : (diffX > 0 ? -1 : 1);
+	int deltaY = (diffY == 0) ? 0 : (diffY > 0 ? -1 : 1);
+
+	bool moved = false;
+	if (deltaX != 0)
+		moved = moveEntityBy(entityIndex, deltaX, 0);
+	if (!moved && deltaY != 0)
+		moved = moveEntityBy(entityIndex, 0, deltaY);
+
+	if (moved)
+		playFX(4);
+
+	return moved;
 }
 
 void CityCastleLogic::guardAttack(int entityIndex) {
-	// TODO
+	const auto &e = _G(savegame)._locationEntities[entityIndex];
+	const auto &pos = _G(savegame)._locationPosition;
+
+	if (ABS(e._position.x - pos.x) >= 2 || ABS(e._position.y - pos.y) >= 2)
+		return;
+
+	writeString("Attacked by guard!\n");
+	playFX(7);
+
+	auto &sg = _G(savegame);
+	int roll = getRandomNumber(1, 255);
+	int threshold = sg._stamina / 2 + sg._equippedArmor * 8 + 56;
+
+	if (roll < threshold) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	writeString("Hit!...");
+	int damage = getRandomNumber(2, sg._hits / 128 + 15);
+	writeString("%d damage!\n", damage);
+	playFX(2);
+
+	sg._hits -= damage;
+	redrawStats();
 }
 
 /*-------------------------------------------------------------------*/

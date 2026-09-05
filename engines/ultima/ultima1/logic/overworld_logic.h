@@ -82,6 +82,27 @@ private:
 	 */
 	void reduceFood();
 
+	/**
+	 * Returns true if a monster is allowed to move onto the tile a given
+	 * offset away from the player, taking into account the terrain that
+	 * type of monster needs, and a per-player-transport-type chance for
+	 * the monster to get a turn at all (faster transports make it harder
+	 * for monsters to keep up)
+	 */
+	bool monsterTransportCheck(int entityIndex, int xDiff, int yDiff);
+
+	/**
+	 * Attempts to move a monster one step closer to the player along the
+	 * X axis. Returns true if it moved
+	 */
+	bool monsterMoveCheckX(int entityIndex, int xDiff, int yDiff);
+
+	/**
+	 * Attempts to move a monster one step closer to the player along the
+	 * Y axis. Returns true if it moved
+	 */
+	bool monsterMoveCheckY(int entityIndex, int xDiff, int yDiff);
+
 	void monsterMoveCheck(int entityIndex, int xDiff, int yDiff);
 
 	void monsterAttack(int entityIndex, int xDiff, int yDiff, int distance);

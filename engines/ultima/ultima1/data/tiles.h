@@ -41,6 +41,7 @@ enum OverworldTileId {
 	TILE_SIGNPOST = 6,
 	TILE_CITY1 = 7,
 	TILE_CITY2 = 8,
+	TILE_DUNGEON = 9,
 	TILE_PLAYER = 10,
 	TILE_HORSE = 11,
 	TILE_CART = 12,
