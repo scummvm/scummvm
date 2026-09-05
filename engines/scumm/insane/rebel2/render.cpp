@@ -2476,7 +2476,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// End the looping attack-run segment once the shield/reactor is destroyed.
 	if (_rebelShieldGateActive) {
 		// Level 13: the finale (continuation segment, flag 0x40) ends when the last armed
-		// group (the reactor) is depleted; the approach segment plays fully.
+		// group (the reactor) is depleted.
 		if (_rebelReactorMode && _rebelGaugeArmed && _rebelLastArmedSlot >= 0 &&
 		    (_player->_curVideoFlags & 0x40) != 0) {
 			const int slot = _rebelLastArmedSlot;
@@ -2486,6 +2486,15 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 		if (_rebelShieldDestroyed)
 			_vm->_smushVideoShouldFinish = true;
+
+		// The original level 13 switches at frame count - 10. The remaining
+		// nine frames overlap the cached LOAD bridge that precedes 13PLAY_B.
+		if (_rebelReactorMode && maxFrame >= 9 && curFrame == maxFrame - 9 &&
+				!static_cast<SmushPlayerRebel2 *>(_player)->isPlayingLoadBuffer() &&
+				!_vm->_smushVideoShouldFinish) {
+			// Use normal EOF handling so queued audio survives the handoff.
+			_player->_endOfFile = true;
+		}
 	}
 
 	const int hudScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);

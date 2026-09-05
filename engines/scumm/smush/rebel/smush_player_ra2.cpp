@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/rect.h"
 #include "common/system.h"
 
@@ -158,6 +159,10 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_loadReadOffset = 8;
 	_lastLoadChunkIdx = -1;
 	_loadStreamId = 0;
+	_loadPlaybackPending = false;
+	_loadContinuationStream = nullptr;
+	_loadContinuationSize = 0;
+	_loadContinuationFrameCount = 0;
 	_ra2FrameSourceSkipX = 0;
 	_ra2FrameSourceSkipY = 0;
 	_ra2FrameObjectOriginalWidth = 0;
@@ -182,6 +187,8 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 }
 
 void SmushPlayerRebel2::destroyGamePlayerFields() {
+	delete _loadContinuationStream;
+	_loadContinuationStream = nullptr;
 	delete _multiFont;
 	_multiFont = nullptr;
 	free(_storedFobjData);
@@ -213,6 +220,7 @@ void SmushPlayerRebel2::ra2InitAudioTrackSizes() {
 }
 
 void SmushPlayerRebel2::initGameVideoState() {
+	_loadPlaybackPending = (_curVideoFlags & 0x40) != 0;
 	_ra2PendingAnimHeaderPalette = false;
 	_ra2UsingGameplaySurface = false;
 	_smushAudioTable[100] = 0;
@@ -232,6 +240,9 @@ void SmushPlayerRebel2::initGameVideoState() {
 }
 
 void SmushPlayerRebel2::releaseGameVideoState() {
+	delete _loadContinuationStream;
+	_loadContinuationStream = nullptr;
+	_loadPlaybackPending = false;
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
@@ -1245,7 +1256,57 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 }
 
 void SmushPlayerRebel2::handleGameParseNextFrame() {
+	if (_loadPlaybackPending) {
+		_loadPlaybackPending = false;
+		ra2StartLoadPlayback();
+	} else if (_loadContinuationStream && _base->pos() >= _baseSize) {
+		delete _base;
+		_base = _loadContinuationStream;
+		_baseSize = _loadContinuationSize;
+		_nbframes = _loadContinuationFrameCount;
+		_loadContinuationStream = nullptr;
+		_frame = 0;
+		_startFrame = 0;
+		_startTime = _vm->_system->getMillis();
+		_pauseTime = 0;
+	}
 	processDispatches(_smushAudioSampleRate / 12);
+}
+
+void SmushPlayerRebel2::ra2StartLoadPlayback() {
+	// Continuation movies omit the opening frames stored in the preceding
+	// movie's LOAD chunks. Play these first, including their keyframe, and
+	// retain the decoder when returning to the continuation on disk.
+	if (!_loadBuffer || _loadBufferOffset < 22 ||
+			READ_BE_UINT32(_loadBuffer) != MKTAG('A', 'N', 'I', 'M') ||
+			READ_BE_UINT32(_loadBuffer + 8) != MKTAG('A', 'H', 'D', 'R'))
+		return;
+
+	const uint32 animSize = READ_BE_UINT32(_loadBuffer + 4);
+	const uint32 headerSize = READ_BE_UINT32(_loadBuffer + 12);
+	if (animSize > (uint32)_loadBufferOffset - 8 || animSize < 8 ||
+			headerSize < 0x306 || headerSize > animSize - 8) {
+		warning("SmushPlayerRebel2::ra2StartLoadPlayback: incomplete LOAD animation");
+		return;
+	}
+
+	const uint32 frameOffset = 16 + headerSize;
+	const uint16 frameCount = READ_LE_UINT16(_loadBuffer + 18);
+	if (frameCount == 0 || frameOffset >= animSize + 8)
+		return;
+
+	Common::MemoryReadStream loaded(_loadBuffer, animSize + 8);
+	loaded.seek(frameOffset);
+	Common::SeekableReadStream *frames = loaded.readStream(animSize + 8 - frameOffset);
+
+	// The disk AHDR has already been consumed. Keep its palette and resume
+	// at its first FRME after the cached animation, without releasing SMUSH.
+	_loadContinuationStream = _base;
+	_loadContinuationSize = _baseSize;
+	_loadContinuationFrameCount = _nbframes;
+	_base = frames;
+	_baseSize = frames->size();
+	_nbframes = frameCount;
 }
 
 bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int height) {
