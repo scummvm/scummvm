@@ -40,17 +40,17 @@ namespace GUI {
 class ScrollContainerWidget;
 
 enum {
-	WIDGET_ENABLED		= 1 <<  0,
-	WIDGET_INVISIBLE	= 1 <<  1,
-	WIDGET_HILITED		= 1 <<  2,
-	WIDGET_PRESSED		= 1 <<	4,
-	WIDGET_CLEARBG		= 1 <<  5,
-	WIDGET_WANT_TICKLE	= 1 <<  7,
-	WIDGET_TRACK_MOUSE	= 1 <<  8,
+	WIDGET_ENABLED          = 1 <<  0,
+	WIDGET_INVISIBLE        = 1 <<  1,
+	WIDGET_HILITED          = 1 <<  2,
+	WIDGET_PRESSED          = 1 <<  3,
+	WIDGET_CLEARBG          = 1 <<  4,
+	WIDGET_WANT_TICKLE      = 1 <<  5,
+	WIDGET_TRACK_MOUSE      = 1 <<  6,
 	/* Used by containers which need to receive
 	 * mouse events in place of their children */
-	WIDGET_HOOK_DRAG	= 1 << 9,
-	WIDGET_DYN_TOOLTIP  = 1 << 10, // Widgets updates tooltip by coordinates
+	WIDGET_HOOK_DRAG        = 1 <<  7,
+	WIDGET_DYN_TOOLTIP      = 1 <<  8, // Widgets updates tooltip by coordinates
 };
 
 enum {
