@@ -38,9 +38,11 @@ private:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) override;
 	void runCustomEntrySequence() override;
+	void runExitSideEffectsAfterLoop() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool shouldAnimatePrimarySpeechLine() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
@@ -51,9 +53,10 @@ private:
 
 	void resetGuardLayer();
 	void advanceGuardIdleLayer(uint32 delta);
-	void runGuardFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame);
-	void runGuardLookUpTransition();
-	void runGuardLookDownTransition();
+	bool runGuardFrameTransition(byte firstFrame, byte lastFrame, byte finalFrame);
+	bool runGuardLookUpTransition();
+	bool runGuardLookDownTransition();
+	bool runGuardGestureTransition(bool raised);
 	void beginGuardSpeechLine(byte frameIndex);
 	void beginSceneGuardSpeechLine(uint16 rowIndex, byte frameIndex);
 	void advanceDisplayCaseSecondaryLayer(uint32 delta);
@@ -69,18 +72,15 @@ private:
 	void runDisplayCasePickup();
 	void runExitAuthorizationSequence();
 	void runInteriorDoorWireSequence();
-	void rememberOriginalColorMap();
-	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void rebuildMuseumWalkableMask();
-
-	Common::Array<byte> _originalColorToItemMap;
 	TimedAnimationChannel _guardChannel;
+	TimedAnimationChannel _guardBlinkChannel;
 	TimedAnimationChannel _displayCaseSecondaryChannel;
 	byte _guardAnimationState;
 	bool _guardManualSequenceActive;
-	bool _guardConversationActive;
+	bool _guardGesturing;
 	bool _scriptAnimationActive;
 	bool _displayCaseSecondaryActive;
+	bool _entryWalkPending;
 };
 
 } // End of namespace Hollywood
