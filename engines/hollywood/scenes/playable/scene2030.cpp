@@ -279,8 +279,6 @@ void Scene2030::realtimeSpeechEnded(byte speechId, bool completed) {
 }
 
 bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {
-	stopMerchantCalloutSpeech();
-
 	switch (handlerId) {
 	case 301: // Ir a esfinge (go to sphinx): transition toward scene 2040.
 		runSphinxExitTransition();

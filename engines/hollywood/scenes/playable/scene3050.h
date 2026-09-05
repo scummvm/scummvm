@@ -51,7 +51,6 @@ private:
 	void setForegroundActorFrame(byte frameIndex);
 	void advanceForegroundActorLayer(uint32 delta);
 	void advanceDialogueActorLayer(uint32 delta);
-	void updateForegroundActorIdleSpeech(uint32 delta);
 	bool canStartForegroundActorIdleSpeech() const;
 	void startForegroundActorIdleSpeech(byte frameIndex);
 	void finishForegroundActorIdleSpeech();
@@ -73,11 +72,8 @@ private:
 	byte _foregroundActorMode;
 	byte _foregroundActorIdleCounter;
 	byte _foregroundActorIdleSpeechFrame;
-	bool _foregroundActorIdleSpeechActive;
 	bool _foregroundActorManualSequenceActive;
 	bool _dialogueMenuActive;
-	uint32 _foregroundActorIdleSpeechTimer;
-	uint32 _foregroundActorIdleSpeechDuration;
 };
 
 } // End of namespace Hollywood

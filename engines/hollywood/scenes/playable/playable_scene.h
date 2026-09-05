@@ -432,7 +432,8 @@ protected:
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);
 	// Realtime speech advances inside the gameplay loop, leaving panels and scene input responsive.
 	bool startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX,
-		uint16 topY, byte red, byte green, byte blue, byte animationGroup, byte speechId);
+		uint16 topY, byte red, byte green, byte blue, byte animationGroup, byte speechId,
+		byte volumePercent = 0xff);
 	bool startRealtimeSecondarySpeechLine(uint16 rowIndex, byte frameIndex, byte speechId);
 	bool waitForRealtimeSpeech(bool allowSkip = true);
 	void advanceRealtimeSpeech(uint32 delta);

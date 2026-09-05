@@ -3007,7 +3007,7 @@ void PlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 
 bool PlayableScene::startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIndex,
 		uint16 centerX, uint16 topY, byte red, byte green, byte blue,
-		byte animationGroup, byte speechId) {
+		byte animationGroup, byte speechId, byte volumePercent) {
 	stopRealtimeSpeech();
 	if (!getStage003Cue(rowIndex, frameIndex, _realtimeSpeechTextRecordId,
 			_realtimeSpeechContinuationCount, _realtimeSpeechVoiceSampleId)) {
@@ -3020,16 +3020,19 @@ bool PlayableScene::startRealtimePrimarySpeechLine(uint16 rowIndex, byte frameIn
 	_realtimeSpeechTopY = topY;
 	_realtimeSpeechAnimationGroup = animationGroup;
 	_realtimeSpeechId = speechId;
-	_realtimeSpeechVolumePercent = primarySpeechVolumePercent(animationGroup);
+	_realtimeSpeechVolumePercent = volumePercent == 0xff ?
+		primarySpeechVolumePercent(animationGroup) : volumePercent;
 	_realtimeSpeechPrimary = true;
 	_realtimeSpeechActive = true;
 	setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, red, green, blue);
 	_primarySpeechOverlay.colorIndex = kDefaultPrimarySpeechTextColor;
-	const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-	const byte initialFrame = primarySpeechAnimationInitialFrame(animationGroup, baseFrame);
-	_speechController.startPrimaryDialogueSpeech(animationGroup, initialFrame);
-	primarySpeechAnimationStarted(animationGroup, baseFrame);
-	setPrimarySpeechAnimationFrame(animationGroup, initialFrame);
+	if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
+		const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+		const byte initialFrame = primarySpeechAnimationInitialFrame(animationGroup, baseFrame);
+		_speechController.startPrimaryDialogueSpeech(animationGroup, initialFrame);
+		primarySpeechAnimationStarted(animationGroup, baseFrame);
+		setPrimarySpeechAnimationFrame(animationGroup, initialFrame);
+	}
 	startRealtimeSpeechPart();
 	return _realtimeSpeechActive;
 }
@@ -3138,11 +3141,13 @@ void PlayableScene::finishRealtimeSpeech(bool completed) {
 	_realtimeSpeechId = 0;
 	if (primary) {
 		_speechController.clearPrimaryOverlay();
-		const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-		setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
-		_speechController.stopPrimaryDialogueSpeech(kInvalidPrimarySpeechAnimationGroup, 7);
-		if (completed)
-			primarySpeechAnimationRestored(animationGroup, baseFrame);
+		if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
+			const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+			setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
+			_speechController.stopPrimaryDialogueSpeech(kInvalidPrimarySpeechAnimationGroup, 7);
+			if (completed)
+				primarySpeechAnimationRestored(animationGroup, baseFrame);
+		}
 	} else {
 		_speechController.clearSecondaryOverlay();
 		_speechController.prepareSecondaryActorSpeech();
@@ -3245,6 +3250,9 @@ void PlayableScene::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte 
 void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
 		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
 		bool animatePrimaryLeft, bool animatePrimaryDialogue, byte primaryAnimationGroup) {
+	if (&overlay == &_primarySpeechOverlay || isRealtimeSecondarySpeechActive())
+		stopRealtimeSpeech();
+
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
 		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
@@ -3284,7 +3292,7 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		bool restoredPrimarySpeechAnimation = false;
 		byte restoredPrimarySpeechAnimationGroup = 0;
 		byte restoredPrimarySpeechBaseFrame = 0;
-		if (_primaryDialogueSpeechActive) {
+		if (_primaryDialogueSpeechActive && !(_realtimeSpeechActive && _realtimeSpeechPrimary)) {
 			restoredPrimarySpeechAnimation = true;
 			restoredPrimarySpeechAnimationGroup = _primaryDialogueSpeechGroup;
 			restoredPrimarySpeechBaseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);

@@ -63,9 +63,10 @@ void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &stat
 }
 
 bool PlayableScene::gameplayActionInputBlocked() const {
-	return isRealtimeSpeechActive() || _speechOverlay.visible ||
-		_primarySpeechOverlay.visible || _actionOverlayPlayer.isVisible() ||
-		_hideActiveActor || (_actorPathPlaybackActive && !_playerDirectedActorPathActive);
+	// NPC chatter does not block actions; scripted speech waits handle their own input.
+	return isRealtimeSecondarySpeechActive() || _speechOverlay.visible ||
+		_actionOverlayPlayer.isVisible() || _hideActiveActor ||
+		(_actorPathPlaybackActive && !_playerDirectedActorPathActive);
 }
 
 void PlayableScene::runGameplayAction(uint16 handlerId) {

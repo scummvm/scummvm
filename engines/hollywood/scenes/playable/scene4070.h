@@ -45,6 +45,7 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 	void handleAnimationFrameHook(byte hookId, uint frame) override;
+	void realtimeSpeechEnded(byte speechId, bool completed) override;
 
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	byte primarySpeechAnimationFrameCount(byte animationGroup) const override;
@@ -63,6 +64,7 @@ private:
 	void applyDraculaHotspotState();
 	void beginDraculaSpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginDraculaIdleSpeechLine(byte frameIndex, bool alternatePose);
+	void stopDraculaIdleSpeech();
 	void beginTrophySpeechLine(uint16 rowIndex, byte frameIndex);
 	void runCorridorExit();
 	void runTrophyBaseOpenAction();
@@ -78,7 +80,7 @@ private:
 	uint _randomAmbientTrack;
 	uint32 _draculaIdleSpeechTimerAccumulator;
 	bool _rightSidePatchActive;
-	bool _draculaIdleSequenceActive;
+	byte _draculaIdleState;
 	bool _draculaThrowAnimationActive;
 	bool _draculaDialogueMenuActive;
 	SoundBank0Player _loopingSoundBank0;

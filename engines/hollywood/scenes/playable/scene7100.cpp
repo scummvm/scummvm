@@ -1056,7 +1056,6 @@ void Scene7100::handleRemovePlate() {
 }
 
 void Scene7100::handleInventoryTransferAction() {
-	stopRealtimeSpeech();
 	const byte sueItemId = _lastInventoryPrimaryItemId;
 	const uint mappingIndex = sueItemId - kScene7100FirstTransferableSueItem;
 	if (mappingIndex >= ARRAYSIZE(kScene7100RonItemBySueItem)) {
@@ -1064,6 +1063,7 @@ void Scene7100::handleInventoryTransferAction() {
 		return;
 	}
 
+	stopRealtimeSpeech();
 	_manualPrimaryAnimationActive = true;
 	_primaryMode = 0;
 	_primaryFrame = 0;
