@@ -68,6 +68,8 @@ MODULE_OBJS += \
 	ultima1/views/interactions/interaction.o \
 	ultima1/views/interactions/dead.o \
 	ultima1/views/interactions/drop.o \
+	ultima1/views/interactions/king.o \
+	ultima1/views/interactions/merchant.o \
 	ultima1/views/interactions/ready.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \

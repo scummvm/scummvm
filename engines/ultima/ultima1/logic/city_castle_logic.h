@@ -105,6 +105,12 @@ protected:
 	 */
 	int checkAt(int x, int y) const;
 
+	/**
+	 * The Transact command opens the Merchant view when standing at a shop
+	 * counter
+	 */
+	bool transact() override;
+
 public:
 	CityLogic();
 	~CityLogic() override {
@@ -121,6 +127,11 @@ protected:
 	bool move(Data::Direction dir) override {
 		return true;
 	}
+
+	/**
+	 * The Transact command opens the King view when standing at the throne
+	 */
+	bool transact() override;
 
 public:
 	CastleLogic();

@@ -324,6 +324,28 @@ bool CityLogic::move(Data::Direction dir) {
 	return true;
 }
 
+bool CityLogic::transact() {
+	writeString("Transact");
+
+	if (_G(savegame)._guardsHostile) {
+		writeString("\n");
+		writeString("None will talk to thee!\n");
+		return true;
+	}
+
+	const auto &pos = _G(savegame)._locationPosition;
+	int tile = _G(map).getTileAt(pos.x, pos.y);
+	if (tile < Data::CTILE_ARMORY || tile > Data::CTILE_TRANSPORT) {
+		writeString("\n");
+		writeString("Thou art not by a counter!\n");
+		playFX(1);
+		return true;
+	}
+
+	g_engine->addView("Merchant");
+	return false;
+}
+
 int CityLogic::checkAt(int x, int y) const {
 	int tile = _G(map).getTileAt(x, y);
 	if (tile == Data::CTILE_BLANK)
@@ -356,6 +378,24 @@ CastleLogic::CastleLogic() {
 	_G(map)[row][31] = 11;
 
 	_G(savegame)._castleKeyVal = getRandomNumber(1) == 1 ? 61 : 60;
+}
+
+bool CastleLogic::transact() {
+	writeString("Transact with king\n");
+
+	const auto &pos = _G(savegame)._locationPosition;
+	if (_G(map).getTileAt(pos.x, pos.y) != Data::CTILE_KING) {
+		writeString("He is not here!\n");
+		return true;
+	}
+
+	if (_G(savegame)._guardsHostile) {
+		writeString("He rejects thine offer!\n");
+		return true;
+	}
+
+	g_engine->addView("King");
+	return false;
 }
 
 void CastleLogic::entering() {

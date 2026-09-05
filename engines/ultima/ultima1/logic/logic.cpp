@@ -135,6 +135,9 @@ void Logic::action(int action) {
 	case KEYBIND_STEAL:
 		doEndOfTurn = steal();
 		break;
+	case KEYBIND_TRANSACT:
+		doEndOfTurn = transact();
+		break;
 	case KEYBIND_PASS:
 		doEndOfTurn = pass();
 		break;
@@ -257,6 +260,12 @@ bool Logic::ready() {
 
 bool Logic::steal() {
 	writeString("Steal?\n");
+	playFX(1);
+	return true;
+}
+
+bool Logic::transact() {
+	writeString("Transact?\n");
 	playFX(1);
 	return true;
 }

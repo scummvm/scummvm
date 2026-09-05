@@ -64,9 +64,20 @@ enum LocationTileId {
 	// dropPence/dropPenceCastle give a random bonus for dropping coins on
 	CTILE_52 = 52,
 	CTILE_53 = 53,
+	// Shop counter tiles. Each shop spans two adjacent tiles - the even one
+	// is just the other half of the counter, while the odd one is also the
+	// tile get/steal work against
+	CTILE_ARMORY = 54,
 	CTILE_STEAL_ARMOR = 55,
+	CTILE_GROCER = 56,
 	CTILE_STEAL_FOOD = 57,
+	CTILE_WEAPONS = 58,
 	CTILE_STEAL_WEAPON = 59,
+	CTILE_MAGIC = 60,
+	CTILE_TAVERN = 61,
+	// Tile 62 is a transport shop counter in cities, but the king in castles
+	CTILE_TRANSPORT = 62,
+	CTILE_KING = 62,
 	CTILE_BLANK = 63
 };
 
