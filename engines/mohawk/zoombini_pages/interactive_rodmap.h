@@ -357,6 +357,8 @@ protected:
 		Common::Rect(23, 131, 197, 152),
 		Common::Rect(23, 153, 197, 175),
 	};
+	/** Stable hit rectangle shared by the TLC option-button SCRBs. */
+	const Common::Rect _tlcOptionButtonClickRect = Common::Rect(480, 17, 545, 47);
 	/** Text rectangle used by the TLC-specific option-button label. */
 	const Common::Rect _tlcOptionButtonTextRect = Common::Rect(0x01E8, 0x0018, 0x021E, 0x0024);
 

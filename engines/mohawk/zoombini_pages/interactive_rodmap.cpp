@@ -191,6 +191,8 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 	_optionButtonFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000), getOptionButtonScrbId(), 3,
 										   ZmbFeature::FLAG_00001000_TOPMOST,
 										   hooks1006);
+	if (_vm->isVersionFamilyTlcV2())
+		_optionButtonFeature->setClickRect(_tlcOptionButtonClickRect);
 
 	// [*] Callback-only runner: Route Names
 	// A scrbId=0 callback runner draws the route labels before the static panels.
@@ -863,24 +865,28 @@ void ZoombiniInteractiveRodMap::optionButton1006_renderTlcLabel() {
 }
 
 void ZoombiniInteractiveRodMap::optionButton1006_updateTlcHover(const Common::Point &absPos) {
-	// Z1-20U/TLC v2.0 release only: hover reloads SCRB 1007 onto the
-	// existing options-button runner, then restores SCRB 1006 on leave.
+	// TLC v2.0 hover reloads SCRB 1007 onto the existing options-button runner, then restores SCRB 1006 on leave.
 	if (!_vm->isVersionFamilyTlcV2() || !_optionButtonFeature)
 		return;
 
-	const bool hovered = _optionButtonFeature->findDrawRecordAtPoint(absPos) != nullptr;
+	const bool hovered = _tlcOptionButtonClickRect.contains(absPos);
 	if (_optionButtonTlcHovered == hovered)
 		return;
 
 	_optionButtonTlcHovered = hovered;
 	loadScrbOntoFeature(_optionButtonFeature, hovered ? kResScrbMenuButtonHover1007 : kResScrbUsMenuButton1006);
+	_optionButtonFeature->setClickRect(_tlcOptionButtonClickRect);
 }
 
 ZmbEventHandleResult ZoombiniInteractiveRodMap::optionButton1006_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
 	(void)relPos;
 
-	ZmbDrawRecord *drawRecord = feature->findDrawRecordAtPoint(absPos);
-	if (!drawRecord)
+	bool hit;
+	if (_vm->isVersionFamilyTlcV2())
+		hit = _tlcOptionButtonClickRect.contains(absPos);
+	else
+		hit = feature->findDrawRecordAtPoint(absPos) != nullptr;
+	if (!hit)
 		return ZmbEventHandleResult::kPassthrough;
 
 	_optionButtonState.press(_vm, feature, _currentFrameCounter);
