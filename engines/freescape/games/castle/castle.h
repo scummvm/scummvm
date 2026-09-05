@@ -107,6 +107,7 @@ public:
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawC64InfoMenu(Graphics::Surface *surface);
 	void toggleC64AudioMode();
+	void updateC64SpiritPalette();
 	void updateC64BackgroundPalette();
 	void resetC64Lightning();
 	void updateC64Lightning();
@@ -123,6 +124,8 @@ public:
 	Common::Array<byte> _c64GateDropHeights;
 	int _c64LiftingGateStartTicks;
 	bool _c64MusicEnabled;
+	byte _c64SpiritAttackColors[2];
+	int _c64SpiritAttackStartTicks;
 	int _c64NextLightningTicks;
 	int _c64LightningPhase;
 	int _c64LightningPhaseTicks;

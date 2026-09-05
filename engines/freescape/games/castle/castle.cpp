@@ -630,6 +630,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
+	if (isC64())
+		_c64SpiritAttackStartTicks = -1;
 	_currentArea->show();
 	_maxFallingDistance = MAX(32, _currentArea->getScale() * 16 - 2);
 
@@ -749,6 +751,7 @@ void CastleEngine::initGameState() {
 		stopAllSounds();
 		stopAllSounds(Sound::kTypeMovement);
 		_syncSound = false;
+		_c64SpiritAttackStartTicks = -1;
 		resetC64Lightning();
 	}
 	FreescapeEngine::initGameState();
@@ -2175,8 +2178,9 @@ void CastleEngine::checkSensors() {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	}*/
 
-	// This is the frequency to shake the screen
-	if (_ticks % 5 == 0) {
+	// C64 cycles its viewport colours before rendering in drawC64Background.
+	// The other platforms use the generic attack flash/shake path.
+	if (!isC64() && _ticks % 5 == 0) {
 		if (_underFireFrames <= 0)
 			_underFireFrames = 1;
 	}
@@ -2620,6 +2624,7 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 	if (isC64()) {
 		_c64LiftingGateStartTicks = -1;
 		_droppingGateStartTicks = -1;
+		_c64SpiritAttackStartTicks = -1;
 		resetC64Lightning();
 		stopAllSounds();
 		stopAllSounds(Sound::kTypeMovement);

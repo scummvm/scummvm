@@ -367,6 +367,7 @@ void CastleEngine::initC64() {
 	_viewArea = Common::Rect(40, 32, 280, 152);
 	_c64LiftingGateStartTicks = -1;
 	_c64MusicEnabled = true;
+	_c64SpiritAttackStartTicks = -1;
 	resetC64Lightning();
 
 	// C64 call sites: throw $63b3, climb/drop $53cf/$549f, area change
@@ -465,6 +466,10 @@ void CastleEngine::loadAssetsC64FullGame() {
 
 	loadMessagesC64(&uiStream, 0x1401, 75);
 	loadRiddlesC64(&uiStream, 0x18ae, 9);
+
+	// $7403 selects the screen-RAM colour pairs at counter values 8 and 4.
+	_c64SpiritAttackColors[0] = uiData[0x735c];
+	_c64SpiritAttackColors[1] = uiData[0x735b];
 
 	// $4d06 tiles sixteen bytes per row; $4ddd overlays a single 85-row
 	// bolt. Both bitmaps use VIC multicolor pixel pairs, without headers.
@@ -672,6 +677,34 @@ void CastleEngine::toggleC64AudioMode() {
 	}
 }
 
+void CastleEngine::updateC64SpiritPalette() {
+	int screenHigh = _currentArea->_underFireBackgroundColor;
+	int screenLow = _currentArea->_paperColor;
+	if (_gameStateControl == kFreescapeGameStatePlaying && !isPaused() && !_disableSensors && ghostInArea()) {
+		int ticks = _ticks;
+		if (_c64SpiritAttackStartTicks < 0)
+			_c64SpiritAttackStartTicks = ticks;
+
+		// $73cb-$742d counts down from ten at 50 Hz: two ticks of the
+		// area colours, four of $78, four of $82, then repeat. Only the
+		// viewport's screen RAM changes; background and colour RAM do not.
+		int phase = (ticks - _c64SpiritAttackStartTicks) % 10;
+		if (phase >= 2) {
+			byte colors = _c64SpiritAttackColors[phase < 6 ? 0 : 1];
+			screenHigh = colors >> 4;
+			screenLow = colors & 15;
+		}
+	} else {
+		_c64SpiritAttackStartTicks = -1;
+	}
+
+	if (_gfx->_underFireBackgroundColor == screenHigh && _gfx->_paperColor == screenLow)
+		return;
+	_gfx->_underFireBackgroundColor = screenHigh;
+	_gfx->_paperColor = screenLow;
+	updateC64BackgroundPalette();
+}
+
 void CastleEngine::updateC64BackgroundPalette() {
 	uint32 colors[4];
 	for (int color = 0; color < 4; color++) {
@@ -750,6 +783,7 @@ void CastleEngine::updateC64Lightning() {
 }
 
 void CastleEngine::drawC64Background() {
+	updateC64SpiritPalette();
 	updateC64Lightning();
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
