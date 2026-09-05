@@ -105,8 +105,6 @@ public:
 	Common::Point getSubImageDelta(uint16 subImage) const;
 	/** Return the registration delta for a one-based shape. */
 	Common::Point getShapeDelta(uint16 shapeIdx) const;
-	/** Return the registration delta for a hotspot's shape convention. */
-	Common::Point getHotspotDelta(const ZmbHotspot &hotspot) const;
 
 private:
 	/**
@@ -288,11 +286,6 @@ public:
 	 * @return The hotspot at the given index
 	 */
 	ZmbHotspot &operator[](uint32 hsId);
-	/**
-	 * Append a hotspot to the group.
-	 * @param hs The hotspot to append
-	 */
-	void appendHotspot(const ZmbHotspot &hs);
 	/**
 	 * Set hotspots to the group.
 	 * @param hotspots Array of hotspots to set
@@ -805,8 +798,6 @@ public:
 	bool getFrameSoundResource(int32 frameIdx, ZmbResource &resource) const;
 	/** Play an immediate sound and retain its mixer handle under this feature. */
 	bool playOwnedSound(ZmbResource resource, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType) const;
-	/** Play a frame's embedded SFX with duplicate-SND suppression. */
-	bool playFrameSound(int32 frameIdx) const;
 	/**
 	 * Enqueue a frame's embedded SFX for the render-frame priority pass.
 	 * @param forcePriority Select this candidate above every authored page range.
@@ -854,10 +845,6 @@ public:
 	ZmbHotspotGroup *getHotspotGroupExact(int32 frameid) const;
 	/** Return one immutable raw frame from the active cached SCRB or SCRS. */
 	const ZmbDecodedScriptFrame *getDecodedScriptFrame(int32 frameIdx) const;
-	/** Return the total number of hotspots across all parsed frames. */
-	uint32 getHotspotTotalCount() const;
-	/** Return the number of distinct hotspot IDs in the script. */
-	uint16 getHotspotIdCount() const;
 
 	/** Return the authored cached-script frame count or the number of virtual groups. */
 	uint32 getFrameCount() const { return _activeDecodedFrames ? _activeDecodedFrames->size() : _virtualFrameMap.size(); }
@@ -920,8 +907,6 @@ public:
 	ZmbDrawRecord *setDrawRecord(ZmbHotspotGroup *hsGroup, const ZmbHotspot &hs, const Common::Rect &drawnRect);
 	/** Find the draw record for a frame and hotspot index. */
 	ZmbDrawRecord *getDrawRecord(uint16 frame, uint16 hsIdx);
-	/** Remove one frame/hotspot draw record. */
-	void eraseDrawRecord(uint16 frame, uint16 hsIdx);
 	/** Remove all materialized draw records. */
 	void clearDrawRecords();
 	bool hasDrawRecords() const { return !_drawnRecordMap.empty(); }
@@ -996,8 +981,6 @@ public:
 	const Common::Rect &getVisualRectConstraint() const { return _visualRectConstraint; }
 	/** Find the topmost draw record containing an absolute point. */
 	ZmbDrawRecord *findDrawRecordAtPoint(const Common::Point &absPos);
-	/** Collect every draw record containing an absolute point. */
-	void findDrawRecordsAtPoint(const Common::Point &absPos, Common::Array<ZmbDrawRecord *> &foundRecords);
 	/** Find a draw record by one hotspot ID. */
 	ZmbDrawRecord *findDrawRecordByHotspotIdx(uint16 hsIdx);
 	/** Find a draw record matching either of two hotspot IDs. */
@@ -1013,9 +996,6 @@ public:
 
 	bool isCloseScheduled() const { return _isCloseScheduled; }
 	void scheduleClose() { _isCloseScheduled = true; }
-
-	/** Activate a feature that is currently owned by a parent chain. */
-	void activateSubFeature();
 
 	void activateRender() { _isRenderActivated = true; }
 	void deactivateRender() { _isRenderActivated = false; }

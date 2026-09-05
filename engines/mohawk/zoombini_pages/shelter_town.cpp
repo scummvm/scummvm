@@ -186,7 +186,7 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		return false;
 	}
 	if (action == BuiltinDebugAction::kMemorialPrevious || action == BuiltinDebugAction::kMemorialNext) {
-		if (_vm->_state->_f._memorialRoutes[15] != 0) {
+		if (_vm->_state->getCurrentState()._memorialRoutes[15] != 0) {
 			if (action == BuiltinDebugAction::kMemorialNext)
 				_builtinCheatTextIndex += 1;
 			else
@@ -199,7 +199,7 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		return false;
 	}
 	if (action == BuiltinDebugAction::kMemorialFill) {
-		ZmbStateFile &stateFile = _vm->_state->_f;
+		ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 		int16 emptySlot = -1;
 		for (int16 slotIdx = 0; slotIdx < 16; slotIdx++) {
 			if (stateFile._memorialRoutes[slotIdx] == 0) {
@@ -227,7 +227,7 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		return false;
 	}
 	if (action == BuiltinDebugAction::kMemorialClear) {
-		ZmbStateFile &stateFile = _vm->_state->_f;
+		ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 		for (uint16 slotIdx = 0; slotIdx < 16; slotIdx++)
 			stateFile._memorialRoutes[slotIdx] = 0;
 		_builtinMemorialRouteCounter = 0;
@@ -399,7 +399,7 @@ void ZoombiniShelterTown::setBackgroundBitmap() {
 }
 
 void ZoombiniShelterTown::initStates() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	updateClockHandTime();
 
 	// Count only occupied active-pack entries, not all loaded features.
@@ -438,7 +438,7 @@ void ZoombiniShelterTown::initStates() {
 }
 
 void ZoombiniShelterTown::loadFeatures() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	// Preload images
 	_vm->_gfx->preloadShapes(ZmbResource(ZmbResource::kPage, kResBitmapShape2000_Cursors));
@@ -806,8 +806,7 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 					uint16 poolIdx = _vm->_rnd->getNonRepeatRandom(5, _ambientVoicePoolState);
 					const int16 nextSoundId = kAmbientVoicePool[poolIdx];
 					// Retry SND 20093 when the Town population exceeds 600.
-					if (nextSoundId == kSysResSound20093_Ambient &&
-						600 < _vm->_state->_f._zmbStoredTownCount)
+					if (nextSoundId == kSysResSound20093_Ambient && 600 < _vm->_state->getCurrentState()._zmbStoredTownCount)
 						retry = true;
 					nextSoundResource = ZmbResource(ZmbResource::kSystem, nextSoundId);
 					_ambientSoundResource = nextSoundResource;
@@ -841,7 +840,7 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 	// Recalculate budget when exhausted.
 	// Budget thresholds depend on the stored Town population.
 	if (_idleAnimBudget <= 0) {
-		const int16 storedCount = _vm->_state->_f._zmbStoredTownCount;
+		const int16 storedCount = _vm->_state->getCurrentState()._zmbStoredTownCount;
 		if (storedCount == 0)
 			return;
 		else if (storedCount == 625)
@@ -878,7 +877,7 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 }
 
 void ZoombiniShelterTown::transferActivePackToTownStorage() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	ZmbStateStoredChunk &town = f._storedChunkTown;
 	int16 activeIdx = 0;
 
@@ -918,7 +917,7 @@ void ZoombiniShelterTown::debugClearPopulationPreview() {
 		return;
 
 	_debugPopulationPreviewActive = false;
-	_townPopDensity = calculatePopulationDensity(_vm->_state->_f._zmbStoredTownCount);
+	_townPopDensity = calculatePopulationDensity(_vm->_state->getCurrentState()._zmbStoredTownCount);
 	refreshPopulationOverlay();
 }
 
@@ -975,7 +974,7 @@ void ZoombiniShelterTown::advanceDebugFireworksCycle() {
 void ZoombiniShelterTown::saveStateBeforeMapTransition() {
 	// Before shared cleanup, Town clears the active pack
 	// and filters out both occupied and unoccupied active-pack entries.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	f._zmbPackActive.clearEntries();
 	f._zmbPackActive.setSkipOccupiedEntries(true);
 	f._zmbPackActive.setSkipUnoccupiedEntries(true);
@@ -1000,7 +999,7 @@ void ZoombiniShelterTown::memorialMarkers_preRenderShape(ZmbFeature *feature, Zm
 	(void)feature;
 	(void)hsGroup;
 
-	const ZmbStateFile &stateFile = _vm->_state->_f;
+	const ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 	_clockTowerHandsEnabled = false;
 	_memorialHotspotCount = 0;
 	for (int16 markerIdx = 0; markerIdx < 16; markerIdx++) {
@@ -1180,7 +1179,7 @@ void ZoombiniShelterTown::queueTownSound(ZmbResource resource) {
 
 int16 ZoombiniShelterTown::computeRouteMusicId() const {
 	// Cycle the Maze visit count across town music resources 3000-3002.
-	const int16 mazeVisitCount = static_cast<int16>(_vm->_state->_f._pageFlagMaze.getVisitCount());
+	const int16 mazeVisitCount = static_cast<int16>(_vm->_state->getCurrentState()._pageFlagMaze.getVisitCount());
 	int16 soundId = static_cast<int16>((mazeVisitCount - 1) % 3 + kResSound3000_BGM);
 	return CLIP<int16>(soundId, kResSound3000_BGM, kResSound3002_BGM);
 }
@@ -1235,7 +1234,7 @@ void ZoombiniShelterTown::clockHands_preRenderShape(ZmbFeature *feature, ZmbHots
 	hotspots[1]._shapeIdx = ZmbHotspot::kShapeNone;
 
 	// The hands exist only after the clock-tower memorial is unlocked and visible.
-	uint16 scrollCol = _vm->_state->_f._townScrollCol;
+	uint16 scrollCol = _vm->_state->getCurrentState()._townScrollCol;
 	if (!_clockTowerHandsEnabled || (scrollCol != 1 && scrollCol != 2))
 		return;
 
@@ -1427,7 +1426,7 @@ void ZoombiniShelterTown::endDrag(const Common::Point &dropPos) {
 void ZoombiniShelterTown::showMemorialCard(int16 slotIdx) {
 	if (slotIdx < 0 || 16 <= slotIdx)
 		return;
-	if (_vm->_state->_f._memorialRoutes[slotIdx] == 0)
+	if (_vm->_state->getCurrentState()._memorialRoutes[slotIdx] == 0)
 		return;
 	if (_memorialCardFeature)
 		unloadScrbFeature(_memorialCardFeature);
@@ -1505,7 +1504,7 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	if (memorialDataSlotIdx < 0 || 16 <= memorialDataSlotIdx)
 		return;
 
-	const ZmbStateFile &stateFile = _vm->_state->_f;
+	const ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 	const byte route = stateFile._memorialRoutes[memorialDataSlotIdx];
 	const byte level = stateFile._memorialLevels[memorialDataSlotIdx];
 	if (route == 0 || level == 0)
@@ -1582,10 +1581,8 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 	textConf._vAlign = Graphics::kTextAlignCenter;
 
 	for (uint16 rowIdx = 0; rowIdx < 5; rowIdx++) {
-		Common::Rect textRect(cardRect.left,
-							  cardRect.top + topOffset + kTownMemorialCardRowTopY[rowIdx],
-							  cardRect.right,
-							  cardRect.top + topOffset + kTownMemorialCardRowBottomY[rowIdx]);
+		Common::Rect textRect(cardRect.left, cardRect.top + topOffset + kTownMemorialCardRowTopY[rowIdx],
+							  cardRect.right, cardRect.top + topOffset + kTownMemorialCardRowBottomY[rowIdx]);
 		textConf._fontUsage = rowFont[rowIdx];
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, rowText[rowIdx], textRect, textConf);
 	}
@@ -1594,7 +1591,7 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 int16 ZoombiniShelterTown::hitTestMemorialHotspots(const Common::Point &pos) const {
 	// Test the rectangles built by @ref ZoombiniShelterTown::memorialMarkers_preRenderShape().
 	// They correspond to the currently visible SCRB 1001 frame.
-	const ZmbStateFile &f = _vm->_state->_f;
+	const ZmbStateFile &f = _vm->_state->getCurrentState();
 	for (uint16 markerIdx = 0; markerIdx < _memorialHotspotCount && markerIdx < 16; markerIdx++) {
 		const int16 slotIdx = _memorialSlotMapping[markerIdx];
 		if (slotIdx < 0 || 16 <= slotIdx)
@@ -1691,7 +1688,7 @@ void ZoombiniShelterTown::advanceLayerFrameState(uint16 scrollCol) {
 }
 
 void ZoombiniShelterTown::scrollTownLeft() {
-	ZmbStateFile &stateFile = _vm->_state->_f;
+	ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 	_vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX), Audio::Mixer::kSFXSoundType);
 	if (stateFile._townScrollCol == 0)
 		stateFile._townScrollCol = 5;
@@ -1702,7 +1699,7 @@ void ZoombiniShelterTown::scrollTownLeft() {
 }
 
 void ZoombiniShelterTown::scrollTownRight() {
-	ZmbStateFile &stateFile = _vm->_state->_f;
+	ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 	_vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX), Audio::Mixer::kSFXSoundType);
 	stateFile._townScrollCol += 1;
 	if (5 < stateFile._townScrollCol)

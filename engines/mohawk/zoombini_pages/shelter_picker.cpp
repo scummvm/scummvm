@@ -118,7 +118,7 @@ void ZoombiniShelterPicker::setBackgroundBitmap() {
 }
 
 bool ZoombiniShelterPicker::hasPickerRoomForVoicePrompt() const {
-	const ZmbStateFile &f = _vm->_state->_f;
+	const ZmbStateFile &f = _vm->_state->getCurrentState();
 	const int16 activeCount = static_cast<int16>(_snoidMap.size());
 	const int32 remaining = 625 - static_cast<int32>(f._zmbStoredTownCount) - static_cast<int32>(f._zmbStoredBC2Count) - static_cast<int32>(f._zmbStoredBC1Count) - activeCount;
 
@@ -178,7 +178,7 @@ void ZoombiniShelterPicker::startPickerEntryNarration() {
 		return;
 	_pickerEntryNarrationPending = false;
 
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	if (f._currentRoute == 1) {
 		playPendingPickerVoice(getAfterVideoVoiceSoundId());
 	} else {
@@ -210,7 +210,7 @@ void ZoombiniShelterPicker::loadFeatures() {
 	if (!_vm->_state->isLessActionEnabled())
 		registerWaveBoatFeatures();
 	else
-		_vm->_state->_f._pickerWaveBoatAnimationState = kPickerWaveBoatBothStopped;
+		_vm->_state->getCurrentState()._pickerWaveBoatAnimationState = kPickerWaveBoatBothStopped;
 	updateWaveBoatAnimationState(true);
 
 	// Background Objects
@@ -281,7 +281,7 @@ void ZoombiniShelterPicker::loadFeatures() {
 	}
 
 	// Transfer the Isle pack only after every page-owned feature has been registered.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	f._zmbPackIsle.copyTo(f._zmbPackActive);
 	f._zmbPackIsle.clearEntries();
 	loadZoombinisFromPack(f._zmbPackActive);
@@ -618,8 +618,8 @@ void ZoombiniShelterPicker::pickerButtons_onButtonAction(ZmbFeature *feature, ui
 
 	switch (bsIdx) {
 	case kPickerButtons_Generate: {
-		ZmbStateFile &f = _vm->_state->_f;
-		if (_vm->_state->_f.getDebugEnabled() && _shiftRapidFillActive && _snoidMap.empty()) {
+		ZmbStateFile &f = _vm->_state->getCurrentState();
+		if (_vm->_state->getDebugEnabled() && _shiftRapidFillActive && _snoidMap.empty()) {
 			Common::String ignoredOutput;
 			debugApplySyntheticGeneratePrefix(ignoredOutput);
 		}
@@ -731,7 +731,7 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onLButtonDown(ZmbFeatu
 		}
 	}
 	if (_diceButtonRect.contains(absPos) &&
-		ZmbTrait::SNOID_MAX <= _vm->_state->_f._zmbGeneratedCount) {
+		ZmbTrait::SNOID_MAX <= _vm->_state->getCurrentState()._zmbGeneratedCount) {
 		_diceRapidFillPending = false;
 		updateDiceButtonVisual(feature);
 		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound1008_AllZoombinisGenerated), Audio::Mixer::kSFXSoundType);
@@ -764,7 +764,7 @@ ZmbEventHandleResult ZoombiniShelterPicker::pickerButtons_onKeyUp(ZmbFeature *fe
 }
 
 void ZoombiniShelterPicker::updateDiceButtonVisual(ZmbFeature *feature) {
-	const bool generationAvailable = _vm->_state->_f._zmbGeneratedCount < ZmbTrait::SNOID_MAX;
+	const bool generationAvailable = _vm->_state->getCurrentState()._zmbGeneratedCount < ZmbTrait::SNOID_MAX;
 	const bool rapidFill = generationAvailable && (_shiftRapidFillActive || _diceRapidFillPending);
 	ButtonState &diceButton = _pickerButtonStateMap[kPickerButtons_Dice];
 	diceButton._shapeNormalIdx = rapidFill ? kShape4200_06_DiceArrowButtonNormal : kShape4200_04_DiceButtonNormal;
@@ -977,7 +977,7 @@ void ZoombiniShelterPicker::removeSeatedZoombini(ZmbSnoid *snoid) {
 	}
 
 	// Decrement twin status
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	int16 snoidTraitId = snoid->_trait.snoidId();
 	if (0 < f._twinGenStatus[snoidTraitId])
 		f._twinGenStatus[snoidTraitId] -= 1;
@@ -1020,7 +1020,7 @@ void ZoombiniShelterPicker::repackSeatPositions() {
 	// Compact each visual row independently.
 	// Every shifted Snoid walks directly to the hole while NODE/PATH traversal is temporarily disabled,
 	// so it cannot follow Picker path 1000 during this special operation.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	for (int16 emptySeatIdx = 0; emptySeatIdx < 15; emptySeatIdx++) {
 		if (_seatToSnoid[emptySeatIdx])
@@ -1068,7 +1068,7 @@ void ZoombiniShelterPicker::onGoButtonActivated() {
 	// Play the Picker departure sound.
 	playDepartSfx();
 
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	// Clear only the Isle pack count; the active pack continues to Xfer and Bridge.
 	f._zmbPackIsle.clearEntries();
 
@@ -1134,7 +1134,7 @@ void ZoombiniShelterPicker::onMapButtonActivated() {
 void ZoombiniShelterPicker::saveStateBeforeMapTransition() {
 	// Copy active pack -> Isle pack (preserve snoids on the picker for when user returns).
 	// Then clear active pack.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	// Write current Snoid runners back to @ref ZmbStateFile::_zmbPackActive.
 	saveSnoidsToPack();
@@ -1165,7 +1165,7 @@ bool ZoombiniShelterPicker::randomizePreviewTraits(bool randomizeAll) {
 					for (int ni = 0; ni < 5; ni++) {
 						for (int fi = 0; fi < 5; fi++) {
 							int16 snoidId = static_cast<int16>(125 * hi + 25 * ei + 5 * ni + fi);
-							if (_vm->_state->_f._twinGenStatus[snoidId] < 2) {
+							if (_vm->_state->getCurrentState()._twinGenStatus[snoidId] < 2) {
 								_previewSnoid._trait._hair = static_cast<byte>(hi + 1);
 								_previewSnoid._trait._eyes = static_cast<byte>(ei + 1);
 								_previewSnoid._trait._nose = static_cast<byte>(ni + 1);
@@ -1206,16 +1206,14 @@ void ZoombiniShelterPicker::updateWaveBoatAnimationState(bool preserveAnimationS
 	if (!_wavesFeature || !_boatFeature)
 		return;
 
-	uint16 &animationState = _vm->_state->_f._pickerWaveBoatAnimationState;
+	uint16 &animationState = _vm->_state->getCurrentState()._pickerWaveBoatAnimationState;
 	if (!preserveAnimationState)
 		animationState += 1;
 	if (kPickerBoatOnlyRunning < animationState)
 		animationState = kPickerWaveBoatBothRunning;
 
-	const bool wavesRunning = animationState == kPickerWaveBoatBothRunning ||
-							  animationState == kPickerWaveOnlyRunning;
-	const bool boatRunning = animationState == kPickerWaveBoatBothRunning ||
-							 animationState == kPickerBoatOnlyRunning;
+	const bool wavesRunning = animationState == kPickerWaveBoatBothRunning || animationState == kPickerWaveOnlyRunning;
+	const bool boatRunning = animationState == kPickerWaveBoatBothRunning || animationState == kPickerBoatOnlyRunning;
 
 	if (wavesRunning) {
 		_wavesFeature->activateRender();
@@ -1231,7 +1229,7 @@ void ZoombiniShelterPicker::updateWaveBoatAnimationState(bool preserveAnimationS
 }
 
 bool ZoombiniShelterPicker::isGenerationComplete() const {
-	return 16u <= _snoidMap.size() || ZmbTrait::SNOID_MAX <= _vm->_state->_f._zmbGeneratedCount;
+	return 16u <= _snoidMap.size() || ZmbTrait::SNOID_MAX <= _vm->_state->getCurrentState()._zmbGeneratedCount;
 }
 
 bool ZoombiniShelterPicker::isDepartureReady() const {
@@ -1239,7 +1237,7 @@ bool ZoombiniShelterPicker::isDepartureReady() const {
 	if (loadedSnoidCount == 0)
 		return false;
 
-	return 16u <= loadedSnoidCount || ZmbTrait::SNOID_MAX <= _vm->_state->_f._zmbGeneratedCount;
+	return 16u <= loadedSnoidCount || ZmbTrait::SNOID_MAX <= _vm->_state->getCurrentState()._zmbGeneratedCount;
 }
 
 void ZoombiniShelterPicker::applyDiceReroll(bool fillEmptySeats) {
@@ -1260,7 +1258,7 @@ void ZoombiniShelterPicker::randomizeTraitSelection(bool fillEmptySeats) {
 	}
 
 	if (fillEmptySeats) {
-		ZmbStateFile &f = _vm->_state->_f;
+		ZmbStateFile &f = _vm->_state->getCurrentState();
 		_rapidFillSnoidIds.clear();
 		Common::Point spawnPos(148, 215);
 		{
@@ -1346,7 +1344,7 @@ bool ZoombiniShelterPicker::isZoombiniTraitGeneratable(ZmbTrait trait) const {
 	if (!trait.isComplete())
 		return false;
 	int16 snoidId = trait.snoidId();
-	return _vm->_state->_f._twinGenStatus[snoidId] < 2;
+	return _vm->_state->getCurrentState()._twinGenStatus[snoidId] < 2;
 }
 
 void ZoombiniShelterPicker::generateZoombiniName() {
@@ -1404,7 +1402,7 @@ bool ZoombiniShelterPicker::debugApplySyntheticGeneratePrefix(Common::String &ou
 		return false;
 	}
 
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	f._zmbGeneratedCount = ZmbTrait::SNOID_MAX - 1;
 	f._zmbStoredTownCount = ZmbTrait::SNOID_MAX - 1;
 	_vm->_state->markUnsafeSyntheticDebugState();
@@ -1445,7 +1443,7 @@ bool ZoombiniShelterPicker::runBuiltinDebugAction(BuiltinDebugAction action, Com
 		updateWaveBoatAnimationState(false);
 		_vm->_state->markDebugStateMutation();
 		_vm->_state->markSaveBeforeQuitPending();
-		output = Common::String::format("Picker wave/boat animation state: %u.\n", _vm->_state->_f._pickerWaveBoatAnimationState);
+		output = Common::String::format("Picker wave/boat animation state: %u.\n", _vm->_state->getCurrentState()._pickerWaveBoatAnimationState);
 		return false;
 	}
 	if (action == BuiltinDebugAction::kUpdateHelp) {
@@ -1465,9 +1463,9 @@ bool ZoombiniShelterPicker::runBuiltinDebugAction(BuiltinDebugAction action, Com
 	if (!debugApplySyntheticGeneratePrefix(output))
 		return true;
 
-	const int16 beforeCount = _vm->_state->_f._zmbGeneratedCount;
+	const int16 beforeCount = _vm->_state->getCurrentState()._zmbGeneratedCount;
 	pickerButtons_onButtonAction(_pickerButtonsFeature, kPickerButtons_Generate, generateButton);
-	if (_vm->_state->_f._zmbGeneratedCount == beforeCount) {
+	if (_vm->_state->getCurrentState()._zmbGeneratedCount == beforeCount) {
 		output += "The normal Generate action did not create the final Zoombini.\n";
 		return true;
 	}
@@ -1515,7 +1513,7 @@ int16 ZoombiniShelterPicker::debugGenerateZoombinisIntoEmptySeats(Common::String
 
 	stopPendingPickerVoice();
 
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	// Unlike the Shift+dice rapid fill, which walks every Zoombini in from the
 	// cave with staggered starts, the debugger command places each rolled

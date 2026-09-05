@@ -135,14 +135,8 @@ public:
 	/** Stop the current sound and discard all pending entries in the queue. */
 	void stopSoundQueue(ZmbSoundQueueHandle handle);
 
-	/** Discard pending entries without stopping the currently playing sound. */
-	void clearSoundQueue(ZmbSoundQueueHandle handle);
-
 	/** Stop and discard every queue that has been created. */
 	void stopAllSoundQueues();
-
-	/** Returns true when the queue is idle (nothing playing, nothing pending). */
-	bool isSoundQueueEmpty(ZmbSoundQueueHandle handle) const;
 
 	/** Returns true while the queue has a sound actively playing. */
 	bool isSoundQueuePlaying(ZmbSoundQueueHandle handle) const;

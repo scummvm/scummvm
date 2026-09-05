@@ -1907,6 +1907,13 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 		return true;
 	}
 
+	// An explicit level enters practice mode. A selected practice level on RodMap
+	// also starts a fresh isolated session before any active-pack mutation.
+	if (0 < level)
+		_vm->_state->_practiceLevel = level;
+	if (_vm->_state->inPracticeMode())
+		_vm->_state->beginPracticeState();
+
 	// Materialize the live party before using the active pack for the transition.
 	// Puzzle setup clears every pack Snoid's occupancy, and only passing Snoids become occupied again.
 	// @ref ZoombiniConsole::CmdSub_GoXfer() bypasses that result and must carry every Snoid still owned by the puzzle.
@@ -1919,7 +1926,7 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 		activePage->saveSnoidsToPack();
 	}
 
-	ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	int16 generatedSnoidCount = 0;
 	int16 debitedIsleCount = 0;
 	if (activePack.getPackZmbCount() == 0) {
@@ -1929,10 +1936,6 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 		debitedIsleCount = _vm->_state->subtractDebugGeneratedSnoidsFromIsle(generatedSnoidCount);
 	}
 	_vm->_state->markDebugStateMutation();
-
-	// Set the difficulty when specified, as in practice mode.
-	if (0 < level)
-		_vm->_state->_practiceLevel = level;
 
 	// Simulate source-puzzle completion so its per-puzzle level flag is up to date.
 	// @ref ZoombiniInteractive::executeDeparture() normally updates routing before starting the transition.
@@ -1944,7 +1947,7 @@ bool ZoombiniConsole::CmdSub_GoXfer(int argc, const char **argv) {
 	const ZmbDestPageKind srcDi = xferRoute ? xferRoute->srcPuzzlePage : ZmbDestPageKind::kUnk_00;
 	const int16 xferRouteId = xferRoute ? static_cast<int16>(xferRoute->routeId) : -1;
 	if (0 <= xferRouteId && !_vm->_state->inPracticeMode()) {
-		ZmbStateFile &f = _vm->_state->_f;
+		ZmbStateFile &f = _vm->_state->getCurrentState();
 		// Container icons use route-completion slots rather than the per-puzzle slots.
 		// A debug jump can skip the container departure that normally records them.
 		for (int16 routeId = 0; routeId < xferRouteId; routeId += 1)
@@ -2075,6 +2078,7 @@ bool ZoombiniConsole::CmdSub_GoPractice(int argc, const char **argv) {
 
 	// Set practice mode at the specified difficulty level
 	_vm->_state->_practiceLevel = static_cast<uint16>(level);
+	_vm->_state->beginPracticeState();
 
 	// Generate random snoids as the active pack
 	_vm->_state->generateRandomPack(packCount);
@@ -2308,7 +2312,7 @@ static const char *mazeNextLayoutName(int16 difficultyLevel, int16 counter) {
 
 void ZoombiniConsole::printStateKeyValue(const char *key, StateKeyKind keyKind, uint memorialRouteIndex, uint memorialLevel,
 										 uint fleensTraitIndex) {
-	const ZmbStateFile &state = _vm->_state->_f;
+	const ZmbStateFile &state = _vm->_state->getCurrentState();
 	const char *value = nullptr;
 	switch (keyKind) {
 	case kStateKindSfx:
@@ -2551,7 +2555,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 			return true;
 		}
 
-		ZmbStateFile &state = _vm->_state->_f;
+		ZmbStateFile &state = _vm->_state->getCurrentState();
 		byte *traitValues = nullptr;
 		if (keyKind == kStateKindFleensTraitValueRotation) {
 			if (_vm->isVersionFamilyTlcV2())
@@ -2590,7 +2594,7 @@ bool ZoombiniConsole::CmdSub_StateSet(int argc, const char **argv) {
 		return true;
 	}
 
-	ZmbStateFile &state = _vm->_state->_f;
+	ZmbStateFile &state = _vm->_state->getCurrentState();
 	const bool isBooleanKey =
 		(kStateKindSfx <= keyKind && keyKind <= kStateKindHelpAudio) ||
 		keyKind == kStateKindMemorialActive || keyKind == kStateKindDebug || keyKind == kStateKindMidiDebug;
@@ -2916,7 +2920,7 @@ bool ZoombiniConsole::Cmd_State(int argc, const char **argv) {
 		return true;
 	}
 
-	const ZmbStateFile &state = _vm->_state->_f;
+	const ZmbStateFile &state = _vm->_state->getCurrentState();
 	const char *pageName = "unknown";
 	switch (state._currentPage) {
 	case ZmbDestPageKind::kIsle_03:

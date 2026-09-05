@@ -173,7 +173,7 @@ void ZoombiniTransitionXfer::computeXferRoute() {
 // No-voice variants remain in the same Speech mixer category as the narrated variants.
 int16 ZoombiniTransitionXfer::selectXferSoundId() const {
 	// Use a local page-flag copy so the SFX group lookup cannot increment the stored state counter.
-	ZmbStateFile::PageFlag pageFlag = _vm->_state->_f.getPageFlagFromPageType(_nextPageType);
+	ZmbStateFile::PageFlag pageFlag = _vm->_state->getCurrentState().getPageFlagFromPageType(_nextPageType);
 	const ZmbSfxGroupFlags sfxGroupFlags = _vm->_state->getSfxGroupFlagsFromPageFlag(pageFlag, _nextPageType);
 	const int16 routeLevel = _vm->_state->readPageRouteLevel(_nextPageType) + 1;
 
@@ -600,7 +600,7 @@ void ZoombiniTransitionXfer::loadFeatures() {
 	_envOneShotScrbId = 0;
 	_envOneShotAvailable = false;
 	_xfer5EventScrbId = 0;
-	_xfer5DisplayedTownCount = _vm->_state->_f._zmbStoredTownCount;
+	_xfer5DisplayedTownCount = _vm->_state->getCurrentState()._zmbStoredTownCount;
 	_xfer5TownCountNeedsBake = true;
 	_xfer5TownCountRefreshPending = false;
 	_xfer5ForegroundFeatures[0] = nullptr;
@@ -723,7 +723,7 @@ void ZoombiniTransitionXfer::loadFeatures() {
 	// -----------------------------------------------------------------------
 	// Snoids -- loaded from active pack (set by preceding page's save/cleanup).
 	// -----------------------------------------------------------------------
-	ZmbStateActivePack &pack = _vm->_state->_f._zmbPackActive;
+	ZmbStateActivePack &pack = _vm->_state->getCurrentState()._zmbPackActive;
 
 	// Reset the shared walk/drag lock before loading walkers.
 	_vm->_walkersInProgress = 0;
@@ -1339,7 +1339,7 @@ static const int16 kRouteViewSlotTable[22] = {
 // Build the per-puzzle completion array from game state.
 // Apply the route-slot fix-up and set @ref ZoombiniTransitionXfer::_routeProgressLevel for shape selection.
 void ZoombiniTransitionXfer::buildPuzzleCompletionArray() {
-	const ZmbStateFile &state = _vm->_state->_f;
+	const ZmbStateFile &state = _vm->_state->getCurrentState();
 
 	// First loop: read per-SI-page completion level.
 	// SI indices align with the completion slots consumed by route-slot lookups,
@@ -1616,7 +1616,7 @@ void ZoombiniTransitionXfer::computeRoutePathColorLevel() {
 		return;
 	}
 
-	const ZmbStateFile &state = _vm->_state->_f;
+	const ZmbStateFile &state = _vm->_state->getCurrentState();
 	uint16 colorLevel = 0;
 
 	switch (_nextPageType) {
@@ -2046,7 +2046,7 @@ void ZoombiniTransitionXfer::close() {
 	// The Xfer loader consumed the serialized active pack,
 	// so rebuild it from the transition's real pack runners before opening the destination puzzle.
 	// Without this handoff the puzzle receives an empty active pack and creates no Zoombini runners.
-	ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	if (_vm->_state->inPracticeMode() && !_vm->_debugPreserveActivePackOnXferClose) {
 		activePack.clearEntries();
 		activePack.setSkipOccupiedEntries(true);

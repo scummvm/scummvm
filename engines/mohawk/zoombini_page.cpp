@@ -122,54 +122,6 @@ void ZoombiniPage::onAnimFrame() {
 	checkCloseFeatures();
 }
 
-void ZoombiniPage::showWarningBox(const Common::U32String &text, uint32 durationSeconds) {
-	_warningBoxText = text;
-	_warningBoxShowUntilFrame = _currentFrameCounter + durationSeconds * MohawkEngine_Zoombini::kAnimateFrameRate;
-
-	if (!_warningBoxFeature) {
-		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(&ZoombiniPage::warningBox_preRender);
-		hooks.setPostRenderFunc(&ZoombiniPage::warningBox_onPostRender);
-
-		_warningBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, 0), 0, 0,
-											 ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
-											 hooks);
-		_warningBoxFeature->setSortRect(_warningBoxRect);
-		_warningBoxFeature->setClickRect(_warningBoxRect);
-	}
-
-	addExternalDirtyRect(_warningBoxRect);
-}
-
-bool ZoombiniPage::warningBox_preRender(ZmbFeature *feature) {
-	if (_warningBoxShowUntilFrame <= _currentFrameCounter) {
-		addDirtyRect(_warningBoxRect);
-		feature->scheduleClose();
-		_warningBoxFeature = nullptr;
-		_warningBoxText.clear();
-	}
-
-	return false;
-}
-
-void ZoombiniPage::warningBox_onPostRender(ZmbFeature *feature) {
-	(void)feature;
-
-	if (_warningBoxText.empty())
-		return;
-
-	const ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
-	_vm->_gfx->fillArea(screenKind, _warningBoxRect, WARNING_BOX_OUTER_COLOR);
-	_vm->_gfx->fillArea(screenKind, Common::Rect(_warningBoxRect.left + 1, _warningBoxRect.top + 1, _warningBoxRect.right - 1, _warningBoxRect.bottom - 1), WARNING_BOX_INNER_COLOR);
-	_vm->_gfx->fillArea(screenKind, Common::Rect(_warningBoxRect.left + 3, _warningBoxRect.top + 3, _warningBoxRect.right - 3, _warningBoxRect.bottom - 3), WARNING_BOX_FILL_COLOR);
-
-	ZoombiniGraphics::TextConf textConf;
-	textConf._textPalette = WARNING_BOX_TEXT_COLOR;
-	textConf._hAlign = Graphics::kTextAlignCenter;
-	textConf._vAlign = Graphics::kTextAlignCenter;
-	_vm->_gfx->drawText(screenKind, _warningBoxText, Common::Rect(_warningBoxRect.left + 8, _warningBoxRect.top + 6, _warningBoxRect.right - 8, _warningBoxRect.bottom - 6), textConf);
-}
-
 bool ZoombiniPage::isClosed() {
 	return _isClosed;
 }
@@ -2410,14 +2362,10 @@ void ZoombiniPage::preRenderFeature(ZmbFeature *feature) {
  * and updates draw records without invoking the shape hook again.
  */
 ZmbRenderResult ZoombiniPage::blitShapes(ZmbFeature *feature) {
-	return blitShapesInternal(feature, ZoombiniGraphics::kPaletteRemapNone);
+	return blitShapes(feature, ZoombiniGraphics::kPaletteRemapNone);
 }
 
-ZmbRenderResult ZoombiniPage::blitShapesWithColorAssist(ZmbFeature *feature) {
-	return blitShapesInternal(feature, ZoombiniGraphics::kPaletteRemapNoseNet);
-}
-
-ZmbRenderResult ZoombiniPage::blitShapesInternal(ZmbFeature *feature, ZoombiniGraphics::PaletteRemapMode remapColorAssistPalette) {
+ZmbRenderResult ZoombiniPage::blitShapes(ZmbFeature *feature, ZoombiniGraphics::PaletteRemapMode remapColorAssistPalette) {
 	ZmbSnoid *snoid = dynamic_cast<ZmbSnoid *>(feature);
 
 	// Skip a normal feature only when rendering is inactive and DEFER_RENDER is set.
@@ -2850,7 +2798,7 @@ void ZoombiniPage::schedulePackSnoids(bool activateRender, bool occupied) {
 
 void ZoombiniPage::saveSnoidsToPack(bool saveMode) {
 	// Two-pass: occupied snoids first, then non-occupied.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	if (!saveMode)
 		_vm->setArrivalTurnDirection(ArrivalTurnDirection::kRight);
@@ -3269,19 +3217,6 @@ bool ZoombiniPage::applyTerrainMaskToShapeScreen() {
 // ---------------------------------------------------------------------------
 // Draw-on-Region Slot System
 // ---------------------------------------------------------------------------
-
-int16 ZoombiniPage::registerDrawOnRegSlot(ZmbFeature *runner, const Common::Point &snapPos) {
-	if (kMaxDrawOnRegSlots <= _drawOnRegCount) {
-		warning("Draw-on-reg slot overflow (max %d)", kMaxDrawOnRegSlots);
-		return -1;
-	}
-	int16 slotIdx = _drawOnRegCount;
-	_drawOnRegFeatures[slotIdx] = runner;
-	_drawOnRegSnapPositions[slotIdx] = snapPos;
-	_drawOnRegOccupancy[slotIdx] = 0;
-	_drawOnRegCount += 1;
-	return slotIdx;
-}
 
 void ZoombiniPage::setDrawOnRegSnapPosition(int16 slotIdx, const Common::Point &pos) {
 	assert(0 <= slotIdx && slotIdx < _drawOnRegCount);

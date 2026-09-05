@@ -733,30 +733,6 @@ bool ZoombiniPuzzleBridge::testTraitMatch(const ZmbTrait &trait, BridgeLane targ
 	return laneRejects;
 }
 
-void ZoombiniPuzzleBridge::bridgeButtons_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
-	// Enable or disable the Go button based on whether any Snoid has crossed.
-	setGoButtonsEnabled(_goButtonEnabled);
-	goMapButtons_preRenderShape(feature, hsGroup, hotspots);
-}
-
-ZmbEventHandleResult ZoombiniPuzzleBridge::bridgeButtons_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
-	return goMapButtons_onLButtonDown(feature, absPos, relPos);
-}
-
-ZmbRenderResult ZoombiniPuzzleBridge::bridgeVisuals_render(ZmbFeature *feature) {
-	(void)feature;
-
-	// Toggle the Go button visibility based on whether any Zoombini has crossed.
-	setGoButtonsEnabled(_goButtonEnabled);
-	return ZmbRenderResult::kRendered;
-}
-
-void ZoombiniPuzzleBridge::bridgeVisuals_postRender(ZmbFeature *feature) {
-	(void)feature;
-
-	// Shared button rendering requires no additional page work here.
-}
-
 // ---------------------------------------------------------------------------
 // Reload SCRB animation data on an existing feature.
 // Delegates to @ref ZoombiniPage::loadScrbOntoFeature().

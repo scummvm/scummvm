@@ -157,14 +157,6 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 	// RodMap preserves registration and explicit link order for its complete lifetime.
 	setRunnerZSortEnabled(false);
 
-	// Restore the user's snapshotted state when re-entering the map after a practice puzzle.
-	// @ref ZoombiniGameState::_practiceLevel remains outside @ref ZoombiniGameState::_f,
-	// so practice mode stays active for launching another puzzle without re-toggling it.
-	if (_vm->_state->_practiceStateBackupActive) {
-		_vm->_state->_f = _vm->_state->_practiceStateBackup;
-		_vm->_state->_practiceStateBackupActive = false;
-	}
-
 	_vm->_gfx->preloadShapes(ZmbResource(ZmbResource::kPage, kResBitmapShape1000));
 
 	// [*] SCRB 1000: Page Icon
@@ -543,7 +535,7 @@ bool ZoombiniInteractiveRodMap::isPageHoverable(uint32 pageIndex) {
 }
 
 bool ZoombiniInteractiveRodMap::isPracticeExitAvailable(ZoombiniPageType pageType) const {
-	const ZmbStateFile &state = _vm->_state->_f;
+	const ZmbStateFile &state = _vm->_state->getCurrentState();
 
 	switch (pageType) {
 	case ZoombiniPageType::kPicker:
@@ -591,13 +583,9 @@ void ZoombiniInteractiveRodMap::clearHoveredPage(bool reloadPageIcons) {
 }
 
 void ZoombiniInteractiveRodMap::generatePracticePack() {
-	// Generate 16 practice-mode Snoids with independently randomized hair, eye, nose, and feet traits.
-	// Snapshot the active state before replacing the pack so the rod map can restore it after the puzzle.
-	// Keep the first snapshot for the complete practice session.
-	if (!_vm->_state->_practiceStateBackupActive) {
-		_vm->_state->_practiceStateBackup = _vm->_state->_f;
-		_vm->_state->_practiceStateBackupActive = true;
-	}
+	// Generate the selected number of practice Snoids with independently randomized hair, eye, nose, and feet traits.
+	// Start from a fresh copy of the user's state without modifying the canonical game state.
+	_vm->_state->beginPracticeState();
 	_vm->_state->generateRandomPack(_builtinPracticePackCount);
 }
 
@@ -703,6 +691,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 				// so no state restore is needed here.
 				if (_vm->isVersionFamilyEuV1()) {
 					if (isPracticeExitAvailable(nextType)) {
+						_vm->_state->endPracticeState();
 						_vm->_state->_practiceLevel = 0;
 						refreshModeDependentFeatures(false);
 						// Materialize the journey map before close freezes the final composite for the fade.
@@ -1081,11 +1070,11 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 
 			// Select one of the four four-line return-path blocks in TEXTSTR.MHK STRL 2002.
 			ZoombiniText::Key firstStringKey;
-			if ((_vm->_state->_f._levelFlagRouteMontDespair & 0x0F) != 0)
+			if ((_vm->_state->getCurrentState()._levelFlagRouteMontDespair & 0x0F) != 0)
 				firstStringKey = ZoombiniText::kEuropePracticeReturnZoombiniton1;
-			else if (_vm->_state->_f._levelFlagLoWhosBayouHiDeepDarkForest != 0)
+			else if (_vm->_state->getCurrentState()._levelFlagLoWhosBayouHiDeepDarkForest != 0)
 				firstStringKey = ZoombiniText::kEuropePracticeReturnShadeTree1;
-			else if ((_vm->_state->_f._levelFlagRouteBigBadHungry & 0x0F) != 0)
+			else if ((_vm->_state->getCurrentState()._levelFlagRouteBigBadHungry & 0x0F) != 0)
 				firstStringKey = ZoombiniText::kEuropePracticeReturnShelterRock1;
 			else
 				firstStringKey = ZoombiniText::kEuropePracticeReturnInitial1;
@@ -1113,9 +1102,9 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 			Common::Rect valueRect = descriptionRect;
 			valueRect.left += descriptionWidth;
 			valueRect.right = record->_drawnRect.right - 7;
-			const int16 storedBasecamp1 = _vm->_state->_f._zmbStoredBC1Count;
-			const int16 storedBasecamp2 = _vm->_state->_f._zmbStoredBC2Count;
-			const int16 storedTown = _vm->_state->_f._zmbStoredTownCount;
+			const int16 storedBasecamp1 = _vm->_state->getCurrentState()._zmbStoredBC1Count;
+			const int16 storedBasecamp2 = _vm->_state->getCurrentState()._zmbStoredBC2Count;
+			const int16 storedTown = _vm->_state->getCurrentState()._zmbStoredTownCount;
 			const ZoombiniText::Key descriptionKeys[4] = {
 				ZoombiniText::kEuropeJourneyStatZoombiniIsle,
 				ZoombiniText::kEuropeJourneyStatShelterRock,
@@ -1163,9 +1152,9 @@ void ZoombiniInteractiveRodMap::textJourneyStat1002_postRender(ZmbFeature *featu
 				descKey[2] = ZoombiniText::kBasecamp2;
 				descKey[3] = ZoombiniText::kTown;
 			}
-			descVal[1] = _vm->_state->_f._zmbStoredBC1Count;
-			descVal[2] = _vm->_state->_f._zmbStoredBC2Count;
-			descVal[3] = _vm->_state->_f._zmbStoredTownCount;
+			descVal[1] = _vm->_state->getCurrentState()._zmbStoredBC1Count;
+			descVal[2] = _vm->_state->getCurrentState()._zmbStoredBC2Count;
+			descVal[3] = _vm->_state->getCurrentState()._zmbStoredTownCount;
 			descVal[0] = 625 - (descVal[1] + descVal[2] + descVal[3]);
 		}
 
@@ -1309,7 +1298,7 @@ void ZoombiniInteractiveRodMap::buildPageRouteLevelMap() {
 		for (uint32 i = 0; i < ARRAYSIZE(pageLevelValues); i++)
 			pageLevelValues[i] = _vm->_state->_practiceLevel;
 	} else {
-		const ZmbStateFile &state = _vm->_state->_f;
+		const ZmbStateFile &state = _vm->_state->getCurrentState();
 
 		// The first progress byte has no route-vertex counterpart.
 		// Route vertices begin at the following Bridge byte.

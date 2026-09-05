@@ -96,7 +96,7 @@ void ZoombiniShelterBasecampOne::setBackgroundBitmap() {
 }
 
 void ZoombiniShelterBasecampOne::initStates() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	_storageLeftmostColumnIdx = f._storedChunkBC1.getLeftmostColumnIdx();
 	// Complete trait records are the physical belt occupants. Older original
 	// saves may have a lower header after a restored drag failed to increment it.
@@ -236,7 +236,7 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	}
 
 	// [*] Zoombini Pack Management
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 
 	// Load the incoming pack, then replace it with the BC1 resident snapshot.
 	const int16 arrivingCount = beginBasecampPackLoad();
@@ -391,7 +391,7 @@ void ZoombiniShelterBasecampOne::storage_postRender(ZmbFeature *feature) {
 
 	// Draw stored zoombinis, then the lattice grid overlay, then the border.
 	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
-	ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC1;
+	ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC1;
 	renderBasecampStorageEntries(chunk, _storageMatrixX1, _storageMatrixY1, _storageMatrixX2, _storageMatrixY2, StorageOccupancyTest::kComplete);
 
 	// Lattice overlay (drawn on top of snoids) and border (drawn last)
@@ -413,7 +413,7 @@ void ZoombiniShelterBasecampOne::scroll_postRender(ZmbFeature *feature) {
 
 	updateHeldBasecampStorageScroll();
 	advanceBasecampStorageScroll();
-	_vm->_state->_f._storedChunkBC1.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
+	_vm->_state->getCurrentState()._storedChunkBC1.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
 }
 
 ZmbEventHandleResult ZoombiniShelterBasecampOne::scroll_lButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
@@ -573,16 +573,6 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::scroll_mouseMove(ZmbFeature *fe
 	return ZmbEventHandleResult::kPassthrough;
 }
 
-ZmbRenderResult ZoombiniShelterBasecampOne::virt03_render(ZmbFeature *feature) {
-	(void)feature;
-
-	return ZmbRenderResult::kRendered;
-}
-
-void ZoombiniShelterBasecampOne::virt03_postRender(ZmbFeature *feature) {
-	(void)feature;
-}
-
 ZmbEventHandleResult ZoombiniShelterBasecampOne::genericEasterEgg_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos, const Common::Rect &clickRect) {
 	(void)relPos;
 
@@ -639,12 +629,12 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggHollowBugs_onLButtonDo
 }
 
 int16 ZoombiniShelterBasecampOne::findLastOccupiedIdx() const {
-	const ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC1;
+	const ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC1;
 	return findLastBasecampStorageEntry(chunk, StorageOccupancyTest::kComplete) + 1;
 }
 
 bool ZoombiniShelterBasecampOne::expandBasecampStorageAtLeftBoundary() {
-	ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC1;
+	ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC1;
 	if (!expandBasecampStorageEntriesAtLeftBoundary(chunk, StorageOccupancyTest::kComplete))
 		return false;
 
@@ -656,7 +646,7 @@ bool ZoombiniShelterBasecampOne::expandBasecampStorageAtLeftBoundary() {
 }
 
 void ZoombiniShelterBasecampOne::calcStorageColumns() {
-	ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC1;
+	ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC1;
 	recalculateBasecampStorageCapacity(_storageMaxCellIdx, chunk.getStoredCount());
 }
 
@@ -675,14 +665,14 @@ void ZoombiniShelterBasecampOne::calcStorageColumns() {
  * @return The storage entry index (0~624), or -1 if no matching slot found.
  */
 int16 ZoombiniShelterBasecampOne::findStorageSlotIndex(bool searchOccupied, const Common::Rect &clickRect, int16 leftmostColumnIdx) {
-	const ZmbStateStoredChunk &chunk = _vm->_state->_f._storedChunkBC1;
+	const ZmbStateStoredChunk &chunk = _vm->_state->getCurrentState()._storedChunkBC1;
 	return findBasecampStorageSlotIndex(chunk, searchOccupied, clickRect, leftmostColumnIdx,
 										kStorageColumnCount, kStorageEntryCount,
 										_storageMatrixX2, _storageMatrixY2, StorageOccupancyTest::kHair);
 }
 
 ZmbStateStoredChunk &ZoombiniShelterBasecampOne::getBasecampStorageChunk() {
-	return _vm->_state->_f._storedChunkBC1;
+	return _vm->_state->getCurrentState()._storedChunkBC1;
 }
 
 void ZoombiniShelterBasecampOne::refreshBasecampStorageState() {
@@ -693,7 +683,7 @@ void ZoombiniShelterBasecampOne::refreshBasecampStorageState() {
 }
 
 int16 ZoombiniShelterBasecampOne::getBasecampAvailableSnoidCount() const {
-	const ZmbStateFile &f = _vm->_state->_f;
+	const ZmbStateFile &f = _vm->_state->getCurrentState();
 	return f._zmbPackIsle.getPackZmbCount() + f._zmbStoredBC1Count;
 }
 
@@ -720,7 +710,7 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggBonfire_onLButtonDown(
 int32 ZoombiniShelterBasecampOne::easterEggMushroom_selectRenderFrame(ZmbFeature *feature) {
 	uint16 stateIdx = feature->getId() - kResScrb1111_EasterEggMushroom1;
 	assert(stateIdx <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1);
-	return _vm->_state->_f._bcOneMushroomColors[stateIdx];
+	return _vm->_state->getCurrentState()._bcOneMushroomColors[stateIdx];
 }
 
 ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
@@ -734,7 +724,8 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown
 	assert(mushroomIdx <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1);
 
 	uint16 colorCount = static_cast<uint16>(feature->getMaxFrameIdx() + 1);
-	_vm->_state->_f._bcOneMushroomColors[mushroomIdx] = (_vm->_state->_f._bcOneMushroomColors[mushroomIdx] + 1) % colorCount;
+	ZmbStateFile &state = _vm->_state->getCurrentState();
+	state._bcOneMushroomColors[mushroomIdx] = (state._bcOneMushroomColors[mushroomIdx] + 1) % colorCount;
 
 	// Activate one pre-render pass to update @ref ZmbFeature::_lastFrameIdx.
 	// The shape remains visible because the feature does not use @ref ZmbFeature::FLAG_01000000_DEFER_RENDER.
@@ -747,11 +738,11 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown
 }
 
 ZmbStateActivePack &ZoombiniShelterBasecampOne::getBasecampResidentPack() {
-	return _vm->_state->_f._zmbPackBC1;
+	return _vm->_state->getCurrentState()._zmbPackBC1;
 }
 
 int16 &ZoombiniShelterBasecampOne::getBasecampStoredPopulationCount() {
-	return _vm->_state->_f._zmbStoredBC1Count;
+	return _vm->_state->getCurrentState()._zmbStoredBC1Count;
 }
 
 int16 *ZoombiniShelterBasecampOne::getBasecampRuntimeStoredCount() {
