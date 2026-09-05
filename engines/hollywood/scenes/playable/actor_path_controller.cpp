@@ -234,9 +234,9 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 			"ActorPath build zero-distance: pos=(%d,%d) facing=%u cel=%u finalFacing=%u finalCel=%u requestedFacing=%d",
 			state.x, state.y, state.facing, state.cel, finalFacing, finalCel, requestedFacing);
 		if (finalFacing != invalidFacing && state.facing != finalFacing) {
+			const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + finalFacing) * 3;
 			for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
-				const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + finalFacing) * 3 + turnStep;
-				state.facing = kActorFacingTurnTable[turnOffset];
+				state.facing = kActorFacingTurnTable[turnOffset + turnStep];
 				state.cel = kActorInitialCelByFacing[state.facing];
 				appendFrame(state);
 				state.cel = nextCel(state.cel);
@@ -254,9 +254,9 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 	const int originalX = state.x;
 	const int originalY = state.y;
 	if (state.facing != movementFacing) {
+		const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + movementFacing) * 3;
 		for (uint turnStep = 0; turnStep < 3 && state.facing != movementFacing; ++turnStep) {
-			const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + movementFacing) * 3 + turnStep;
-			state.facing = kActorFacingTurnTable[turnOffset];
+			state.facing = kActorFacingTurnTable[turnOffset + turnStep];
 			state.cel = kActorInitialCelByFacing[state.facing];
 			appendFrame(state);
 			state.cel = nextCel(state.cel);
@@ -298,9 +298,9 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 	state.x = targetX;
 	state.y = targetY;
 	if (finalFacing != invalidFacing && state.facing != finalFacing) {
+		const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + finalFacing) * 3;
 		for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
-			const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + finalFacing) * 3 + turnStep;
-			state.facing = kActorFacingTurnTable[turnOffset];
+			state.facing = kActorFacingTurnTable[turnOffset + turnStep];
 			state.cel = kActorInitialCelByFacing[state.facing];
 			appendFrame(state);
 			state.cel = nextCel(state.cel);
