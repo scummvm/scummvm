@@ -64,6 +64,9 @@ enum LocationTileId {
 	// dropPence/dropPenceCastle give a random bonus for dropping coins on
 	CTILE_52 = 52,
 	CTILE_53 = 53,
+	CTILE_STEAL_ARMOR = 55,
+	CTILE_STEAL_FOOD = 57,
+	CTILE_STEAL_WEAPON = 59,
 	CTILE_BLANK = 63
 };
 

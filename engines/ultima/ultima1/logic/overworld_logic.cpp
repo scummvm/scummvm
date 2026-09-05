@@ -53,7 +53,7 @@ OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
 }
 
-void OverworldLogic::enter() {
+bool OverworldLogic::enter() {
 	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
 	if (location == 0) {
 		writeString("Enter?\n");
@@ -99,11 +99,13 @@ void OverworldLogic::enter() {
 		// Run any logic for entering it
 		_G(logic)->entering();
 	}
+
+	return true;
 }
 
-void OverworldLogic::move(Data::Direction dir) {
+bool OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
-		return;
+		return true;
 
 	if (_G(savegame)._transportType <= Data::TRANSPORT_CART)
 		playFX(4);
@@ -130,6 +132,8 @@ void OverworldLogic::move(Data::Direction dir) {
 
 	if (_G(map).getContinentAt(_G(savegame)._overworldPos) != continentNum)
 		continentChanged(continentNum);
+
+	return true;
 }
 
 bool OverworldLogic::moveCheck(Data::Direction dir) {

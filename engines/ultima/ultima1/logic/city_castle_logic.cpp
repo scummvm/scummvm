@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/logic/city_castle_logic.h"
+#include "ultima/ultima1/core/strings.h"
 #include "ultima/ultima1/metaengine.h"
 #include "ultima/ultima1/ultima1.h"
 
@@ -125,8 +126,98 @@ void CityCastleLogic::entering() {
 	loadEntities();
 }
 
-void CityCastleLogic::drop() {
+bool CityCastleLogic::drop() {
 	g_engine->addView("Drop");
+	return false;
+}
+
+bool CityCastleLogic::get() {
+	writeString("Get");
+
+	if (_G(map)._mapType == Data::MAPTYPE_CASTLE) {
+		const auto &pos = _G(savegame)._locationPosition;
+
+		switch (_G(map).getTileAt(pos.x, pos.y)) {
+		case Data::CTILE_STEAL_WEAPON:
+			if (checkCastlePermission())
+				findWeapon();
+			break;
+		case Data::CTILE_STEAL_ARMOR:
+			if (checkCastlePermission())
+				findArmor();
+			break;
+		case Data::CTILE_STEAL_FOOD:
+			if (checkCastlePermission())
+				findFood();
+			break;
+		default:
+			writeString(" - nothing here!\n");
+			break;
+		}
+	} else {
+		if (_G(map)._mapType == Data::MAPTYPE_CITY)
+			writeString(" what");
+		writeString("?\n");
+		playFX(1);
+	}
+
+	return true;
+}
+
+bool CityCastleLogic::checkCastlePermission() {
+	if (_G(savegame)._castleItemAllowance <= 0) {
+		writeString("\n");
+		writeString("Thou hast not the king's\n");
+		writeString("permission!\n");
+		playFX(1);
+		return false;
+	}
+
+	--_G(savegame)._castleItemAllowance;
+	return true;
+}
+
+void CityCastleLogic::findWeapon() {
+	writeString("\n");
+	writeString("Thou dost find a");
+
+	int idx = getRandomNumber(1, 15);
+	const char *name = Data::WEAPON_NAMES[idx];
+
+	if (isVowel(*name))
+		writeString("n");
+	writeString(Common::String(name).size() > 8 ? "\n" : " ");
+	writeString("%s\n", name);
+
+	auto &sg = _G(savegame);
+	if (sg._weapons[idx] < 255)
+		++sg._weapons[idx];
+}
+
+void CityCastleLogic::findFood() {
+	writeString("\n");
+	writeString("Thou dost find ");
+
+	int amount = getRandomNumber(2, 31);
+	writeString("%d bags of\n", amount);
+	writeString("food!\n");
+
+	_G(savegame)._food += amount;
+	redrawStats();
+}
+
+void CityCastleLogic::findArmor() {
+	writeString("\n");
+	writeString("Thou dost find ");
+
+	int idx = getRandomNumber(1, 5);
+	if (idx <= 4)
+		writeString("a ");
+	writeString("%s\n", Data::ARMOR_NAMES[idx]);
+
+	auto &sg = _G(savegame);
+	if (sg._armor[idx] < 255)
+		++sg._armor[idx];
 }
 
 void CityCastleLogic::loadEntities() {
@@ -151,7 +242,7 @@ void CityLogic::entering() {
 	CityCastleLogic::entering();
 }
 
-void CityLogic::move(Data::Direction dir) {
+bool CityLogic::move(Data::Direction dir) {
 	const int deltaX = DELTA_X[dir];
 	const int deltaY = DELTA_Y[dir];
 	const int x = _G(savegame)._locationPosition.x + deltaX;
@@ -177,6 +268,8 @@ void CityLogic::move(Data::Direction dir) {
 			playFX(1);
 		}
 	}
+
+	return true;
 }
 
 int CityLogic::checkAt(int x, int y) const {

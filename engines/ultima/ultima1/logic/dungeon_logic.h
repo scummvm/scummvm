@@ -31,7 +31,8 @@ namespace Logic {
 
 class DungeonLogic : public Logic {
 protected:
-	void move(Data::Direction dir) override {
+	bool move(Data::Direction dir) override {
+		return true;
 	}
 
 public:

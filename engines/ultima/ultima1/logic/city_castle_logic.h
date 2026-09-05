@@ -39,7 +39,34 @@ protected:
 	/**
 	 * The Drop command is only usable within cities and castles
 	 */
-	void drop() override;
+	bool drop() override;
+
+	/**
+	 * The Get command only does anything within castles - cities just
+	 * show a "Get what?" prompt, matching the original
+	 */
+	bool get() override;
+
+	/**
+	 * Checks the castle item allowance, consuming one use if available.
+	 * Denies with a message if there isn't one
+	 */
+	bool checkCastlePermission();
+
+	/**
+	 * Grants the player a random weapon, used by the castle Get command
+	 */
+	void findWeapon();
+
+	/**
+	 * Grants the player a random amount of food, used by the castle Get command
+	 */
+	void findFood();
+
+	/**
+	 * Grants the player a random piece of armor, used by the castle Get command
+	 */
+	void findArmor();
 
 public:
 	~CityCastleLogic() override {
@@ -53,7 +80,7 @@ protected:
 	/**
 	 * Handle movement
 	 */
-	void move(Data::Direction dir) override;
+	bool move(Data::Direction dir) override;
 
 	/**
 	 * Checks if the player can move to a given location
@@ -73,7 +100,8 @@ protected:
 	/**
 	 * Handle movement
 	 */
-	void move(Data::Direction dir) override {
+	bool move(Data::Direction dir) override {
+		return true;
 	}
 
 public:

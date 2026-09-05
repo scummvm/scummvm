@@ -105,12 +105,12 @@ protected:
 	/**
 	 * Enter a location
 	 */
-	void enter() override;
+	bool enter() override;
 
 	/**
 	 * Handle movement
 	 */
-	void move(Data::Direction dir) override;
+	bool move(Data::Direction dir) override;
 
 
 public:

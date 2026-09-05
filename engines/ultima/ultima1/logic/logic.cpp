@@ -84,64 +84,67 @@ void Logic::endOfTurn() {
 }
 
 void Logic::action(int action) {
+	bool doEndOfTurn = true;
+
 	switch (action) {
 	case KEYBIND_UP:
-		move(Data::DIR_UP);
+		doEndOfTurn = move(Data::DIR_UP);
 		break;
 	case KEYBIND_DOWN:
-		move(Data::DIR_DOWN);
+		doEndOfTurn = move(Data::DIR_DOWN);
 		break;
 	case KEYBIND_LEFT:
-		move(Data::DIR_LEFT);
+		doEndOfTurn = move(Data::DIR_LEFT);
 		break;
 	case KEYBIND_RIGHT:
-		move(Data::DIR_RIGHT);
+		doEndOfTurn = move(Data::DIR_RIGHT);
 		break;
 	case KEYBIND_CLIMB:
-		climb();
+		doEndOfTurn = climb();
 		break;
 	case KEYBIND_DROP:
-		drop();
-		return;
+		doEndOfTurn = drop();
+		break;
 	case KEYBIND_ENTER:
-		enter();
+		doEndOfTurn = enter();
 		break;
 	case KEYBIND_FIRE:
-		fire();
+		doEndOfTurn = fire();
 		break;
 	case KEYBIND_GET:
-		get();
+		doEndOfTurn = get();
 		break;
 	case KEYBIND_HYPERJUMP:
-		hyperjump();
+		doEndOfTurn = hyperjump();
 		break;
 	case KEYBIND_INFORM:
-		inform();
+		doEndOfTurn = inform();
 		break;
 	case KEYBIND_NOISE:
-		noise();
+		doEndOfTurn = noise();
 		break;
 	case KEYBIND_OPEN:
-		open();
+		doEndOfTurn = open();
 		break;
 	case KEYBIND_QUIT:
-		quit();
+		doEndOfTurn = quit();
 		break;
 	case KEYBIND_READY:
-		ready();
-		return;
+		doEndOfTurn = ready();
+		break;
 	case KEYBIND_PASS:
-		pass();
+		doEndOfTurn = pass();
 		break;
 	case KEYBIND_STATS:
-		zstats();
-		return;
+		doEndOfTurn = zstats();
+		break;
 	default:
 		writeString("Huh?\n");
 		break;
 	}
 
-	endOfTurn();
+	if (doEndOfTurn)
+		endOfTurn();
 }
 
 void Logic::keypress(Common::KeyCode keycode) {
@@ -149,48 +152,55 @@ void Logic::keypress(Common::KeyCode keycode) {
 	endOfTurn();
 }
 
-void Logic::board() {
+bool Logic::board() {
 	writeString("Board?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::cast() {
+bool Logic::cast() {
 	writeString("Cast -- Hmmmm... no effect!\n");
 	playFX(6);
+	return true;
 }
 
-void Logic::climb() {
+bool Logic::climb() {
 	writeString("K-Limb?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::drop() {
+bool Logic::drop() {
 	writeString("Drop?\n");
 	playFX(1);
-	endOfTurn();
+	return true;
 }
 
-void Logic::enter() {
+bool Logic::enter() {
 	writeString("Enter?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::fire() {
+bool Logic::fire() {
 	writeString("Fire?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::get() {
+bool Logic::get() {
 	writeString("Get?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::hyperjump() {
+bool Logic::hyperjump() {
 	writeString("HyperJump?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::inform() {
+bool Logic::inform() {
 	writeString("Inform and search\n");
 	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
 	int continent = _G(map).getContinentAt(_G(savegame)._overworldPos);
@@ -214,35 +224,43 @@ void Logic::inform() {
 			writeString("%s\n", Data::CONTINENT_NAMES[continent]);
 			break;
 		}
-	} 
+	}
+
+	return true;
 }
 
-void Logic::noise() {
+bool Logic::noise() {
 	_G(savegame)._soundOn = !_G(savegame)._soundOn;
 	writeString("Noise %s\n", _G(savegame)._soundOn ? "on" : "off");
+	return true;
 }
 
-void Logic::open() {
+bool Logic::open() {
 	writeString("Open?\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::quit() {
+bool Logic::quit() {
 	writeString("Quit - only allowed outdoors!\n");
 	playFX(1);
+	return true;
 }
 
-void Logic::ready() {
+bool Logic::ready() {
 	g_engine->addView("Ready");
+	return false;
 }
 
-void Logic::zstats() {
+bool Logic::zstats() {
 	writeString("Ztats\n");
 	g_engine->addView("ZStats");
+	return false;
 }
 
-void Logic::pass() {
+bool Logic::pass() {
 	writeString("Pass\n");
+	return true;
 }
 
 } // namespace Logic

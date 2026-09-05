@@ -73,24 +73,27 @@ protected:
 	 */
 	virtual void endOfTurn();
 
-	/*--- Fallback player action handlers ---*/
+	/*--- Fallback player action handlers. Each returns true if end of
+	 * turn processing should happen immediately afterward, or false if
+	 * that's being deferred - typically because a sub-dialog was opened
+	 * that will only complete the action once it closes ---*/
 
-	virtual void board();
-	virtual void cast();
-	virtual void climb();
-	virtual void drop();
-	virtual void enter();
-	virtual void fire();
-	virtual void get();
-	virtual void hyperjump();
-	virtual void inform();
-	virtual void noise();
-	virtual void open();
-	virtual void quit();
-	virtual void ready();
-	virtual void zstats();
-	virtual void move(Data::Direction dir) = 0;
-	virtual void pass();
+	virtual bool board();
+	virtual bool cast();
+	virtual bool climb();
+	virtual bool drop();
+	virtual bool enter();
+	virtual bool fire();
+	virtual bool get();
+	virtual bool hyperjump();
+	virtual bool inform();
+	virtual bool noise();
+	virtual bool open();
+	virtual bool quit();
+	virtual bool ready();
+	virtual bool zstats();
+	virtual bool move(Data::Direction dir) = 0;
+	virtual bool pass();
 
 	/*---------------------------------------*/
 public:
