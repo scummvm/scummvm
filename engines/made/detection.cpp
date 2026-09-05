@@ -31,6 +31,8 @@ static const PlainGameDescriptor madeGames[] = {
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
 	{"rodney", "Rodney's Funscreen"},
+	{"rsbestnde", "Richard Scarry's Best Neighborhood Disc Ever!"},
+	{"rsbusynde", "Richard Scarry's Busiest Neighborhood Disc Ever!"},
 	{nullptr, nullptr}
 };
 
@@ -67,6 +69,7 @@ ADDetectedGame MadeMetaEngineDetection::fallbackDetect(const FileMap &allFiles, 
 	Made::g_fallbackDesc.gameID = 0;
 	Made::g_fallbackDesc.features = 0;
 	Made::g_fallbackDesc.version = 3;
+	Made::g_fallbackDesc.subVersion = 0;
 
 	//return (const ADGameDescription *)&Made::g_fallbackDesc;
 	return ADDetectedGame();
