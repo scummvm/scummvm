@@ -191,7 +191,7 @@ struct GameplayState {
 		scene1080EntryLineSeen = false;
 		scene1080FrancoisProgressState = 0;
 		scene1090EntryLineSeen = false;
-		scene1090LightsOn = false;
+		scene1090LightsOff = true;
 		scene1090WrappedBrainState = 0;
 		scene2010EntryLineSeen = false;
 		scene2010LongSequenceFirstSpeechSeen = false;
@@ -967,7 +967,7 @@ struct GameplayState {
 	bool scene1080EntryLineSeen;
 	byte scene1080FrancoisProgressState;
 	bool scene1090EntryLineSeen;
-	bool scene1090LightsOn;
+	bool scene1090LightsOff;
 	byte scene1090WrappedBrainState;
 	bool scene2010EntryLineSeen;
 	bool scene2010LongSequenceFirstSpeechSeen;

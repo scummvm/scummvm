@@ -34,23 +34,29 @@ public:
 
 private:
 	void runCustomEntrySequence() override;
+	void runExitSideEffectsAfterLoop() override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	bool copyArenaChunkToFramebuffer(uint chunkIndex);
 	bool copyArenaChunkToFixedArray(uint chunkIndex, Common::Array<byte> &destination, uint destinationSize);
 	bool copyArenaChunkToVariableArray(uint chunkIndex, Common::Array<byte> &destination);
-	void rememberDarkResourceSet();
+	void rememberLitResourceSet();
 	void applyActiveLightResourceSet();
+	void applyActorLightPaletteAdjustments();
 	void rebuildPantryWalkableMask();
 	void applyWrappedBrainPatch();
 	void runSwitchAction();
 	void revealWrappedBrain();
 	void takeWrappedBrain();
 
-	Common::Array<byte> _darkPaletteResource;
-	Common::Array<byte> _darkPaletteMask;
+	Common::Array<byte> _litPaletteResource;
 };
 
 } // End of namespace Hollywood
