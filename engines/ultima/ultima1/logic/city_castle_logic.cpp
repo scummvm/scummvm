@@ -416,13 +416,27 @@ void CastleLogic::leaving() {
 	}
 }
 
+bool CastleLogic::isPrincessAtDelta(int deltaX, int deltaY) const {
+	const auto &pos = _G(savegame)._locationPosition;
+	int idx = _G(savegame).getLocationEntityAt(pos.x + deltaX, pos.y + deltaY);
+
+	// Widget type 22 is a princess
+	return idx != -1 && _G(savegame)._locationEntities[idx]._type == 22;
+}
+
 bool CastleLogic::isPrincessSaved() {
-	// TODO
+	for (int deltaY = -1; deltaY <= 1; ++deltaY) {
+		for (int deltaX = -1; deltaX <= 1; ++deltaX) {
+			if ((deltaX || deltaY) && isPrincessAtDelta(deltaX, deltaY))
+				return true;
+		}
+	}
+
 	return false;
 }
 
 void CastleLogic::princessSaved() {
-	// TODO: Show a Princess interaction
+	g_engine->addView("PrincessSaved");
 }
 
 } // namespace Logic

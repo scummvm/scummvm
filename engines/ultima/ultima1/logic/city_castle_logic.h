@@ -128,6 +128,12 @@ public:
 class CastleLogic : public CityCastleLogic {
 private:
 	/**
+	 * Returns true if a princess NPC is standing at a given offset from
+	 * the player's current position
+	 */
+	bool isPrincessAtDelta(int deltaX, int deltaY) const;
+
+	/**
 	 * Returns true if the player has left the castle with a princess
 	 */
 	bool isPrincessSaved();
