@@ -50,7 +50,6 @@ private:
 	void runCustomEntrySequence() override;
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
-	void advancePrimarySpeechAnimation(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool shouldPlayGameplayClickPath() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
@@ -77,14 +76,6 @@ private:
 	void advanceHannoverPose();
 	void runDelayedInterruption();
 	void runInterruptionClips();
-
-	void startAsyncPrimarySpeechLine(uint16 rowIndex, byte frameIndex,
-		uint16 centerX, uint16 topY, byte red, byte green, byte blue,
-		byte animationGroup, byte volumePercent = 100);
-	void startAsyncPrimarySpeechPart();
-	void advanceAsyncPrimarySpeech(uint32 delta);
-	void stopAsyncPrimarySpeech();
-	void waitForAsyncPrimarySpeech();
 
 	void applyPatchChunk(uint chunkIndex);
 	void setRescueFrame(byte frame);
@@ -121,19 +112,6 @@ private:
 	bool _escapePaletteActive;
 	bool _paletteLockedDark;
 	bool _muffledSpeechStarted;
-
-	bool _asyncPrimaryActive;
-	bool _asyncPrimaryAnimated;
-	uint16 _asyncTextRecordId;
-	uint16 _asyncVoiceSampleId;
-	uint16 _asyncCenterX;
-	uint16 _asyncTopY;
-	byte _asyncPartCount;
-	byte _asyncPartIndex;
-	byte _asyncAnimationGroup;
-	byte _asyncColorIndex;
-	byte _asyncVolumePercent;
-	uint32 _asyncPartRemainingMillis;
 };
 
 } // End of namespace Hollywood
