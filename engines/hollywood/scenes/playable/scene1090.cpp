@@ -39,7 +39,10 @@ const uint32 kScene1090FrameMillis = 75;
 const uint kScene1090SwitchDescriptorCount = 6;
 const uint kScene1090WrappedBrainPickupDescriptorCount = 0x0e;
 
-const byte kScene1090SwitchFrameMap[] = { 0, 1, 2, 3, 4, 3, 2, 1, 0, 5 };
+const byte kScene1090SwitchFrameMap[] = { 0, 0, 1, 2, 3, 4, 3, 2, 1, 0, 5 };
+const int8 kScene1090LitActorPaletteDeltas[] = { -6, -6, -13, -18, -5, -23 };
+const int8 kScene1090DarkActorPaletteDeltas[] = { -25, -20, -30, -35, -5, -40 };
+
 PlayableSceneConfig scene1090Config() {
 	PlayableSceneConfig config(1090,
 		SceneResourceLayout(14, 5, 13),
@@ -48,24 +51,33 @@ PlayableSceneConfig scene1090Config() {
 	config.setActorResources(kScene1090ActorBankTableEntry, kScene1090ActorPaletteTableEntry);
 	config.setTextResources(kScene1090Resource003RowsOffsetIndex, kScene1090SpeechCueDescriptorTableOffset);
 	config.walkablePaletteMaxRegion = 1;
+	config.useActorDepthTest = true;
+	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
 }
 
 Scene1090::Scene1090(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1090Config()),
-		_darkPaletteResource(),
-		_darkPaletteMask() {
+		_litPaletteResource() {
 }
 
 void Scene1090::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
-	runEntryPath(0x101, 0x15b, 2, 0x101, 0x15b);
+	setActiveActorPose(0x101, 0x15b, 2);
+	drawPlayableComposite();
+	if (fadePaletteFromBlack())
+		return;
 	if (!state.scene1090EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
 		state.scene1090EntryLineSeen = true;
 	}
 	drawPlayableComposite();
 	presentFrame();
+}
+
+void Scene1090::runExitSideEffectsAfterLoop() {
+	if (didLeaveSceneAfterLoop())
+		fadePaletteToBlack();
 }
 
 bool Scene1090::dispatchCustomSceneAction(uint16 handlerId) {
@@ -77,7 +89,7 @@ bool Scene1090::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Mirar interruptor (look at light switch).
-		beginSecondarySpeechLine(2, 0);
+		beginSecondarySpeechLine(2, _vm->gameState().scene1090LightsOff ? 0 : 1);
 		return true;
 	case 304: // Usar interruptor (use light switch).
 		runSwitchAction();
@@ -99,21 +111,76 @@ bool Scene1090::dispatchCustomSceneAction(uint16 handlerId) {
 	}
 }
 
+bool Scene1090::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = CLIP<int>(targetX, 0x76, 0x1ac);
+	targetY = CLIP<int>(targetY, 0, 0x1df);
+	while (targetY < 0x1df) {
+		++targetY;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
+	}
+	while (targetY > 0 && walkableMaskAt(targetX, targetY) == 0)
+		--targetY;
+	return true;
+}
+
+bool Scene1090::customizeRouteSegment(byte currentRegion, byte nextRegion,
+		const ActorPathBuildState &state, const ScenePoint &boundary,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+	(void)restoredStepDeltas;
+	if (currentRegion == 2) {
+		if (nextRegion == 1)
+			requestedFacing = 2;
+		else if (nextRegion > 2)
+			requestedFacing = 5;
+	}
+	return requestedFacing >= 0;
+}
+
+bool Scene1090::customizeRouteFinal(byte currentRegion, byte targetRegion,
+		const ActorPathBuildState &state, int targetX, int targetY,
+		int &requestedFacing, bool &restoredStepDeltas) {
+	(void)currentRegion;
+	(void)state;
+	(void)targetX;
+	(void)targetY;
+	(void)restoredStepDeltas;
+	if (targetRegion == 4)
+		requestedFacing = 1;
+	return requestedFacing >= 0;
+}
+
 bool Scene1090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
-	(void)selector;
 	if (_paletteMaskOriginal.empty())
 		return true;
 
-	rememberDarkResourceSet();
-	applyActiveLightResourceSet();
-	applyWrappedBrainPatch();
-	rebuildPantryWalkableMask();
-	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (selector == 0xff) {
+		rememberLitResourceSet();
+		applyActiveLightResourceSet();
+		rebuildPantryWalkableMask();
+	}
+	if (selector == 1 || selector == 0xff) {
+		applyActorLightPaletteAdjustments();
+		updateActorPaletteForWorldPoint(_activeActorWorldX, _activeActorWorldY);
+	}
+	if (selector == 2 || selector == 0xff) {
+		applyWrappedBrainPatch();
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	}
 	return true;
 }
 
 AmbientAudioProfile Scene1090::ambientAudioProfile() const {
-	return createLoopingAmbientAudioProfile(100);
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
 }
 
 bool Scene1090::copyArenaChunkToFramebuffer(uint chunkIndex) {
@@ -160,25 +227,23 @@ bool Scene1090::copyArenaChunkToVariableArray(uint chunkIndex, Common::Array<byt
 	return true;
 }
 
-void Scene1090::rememberDarkResourceSet() {
-	if (!_darkPaletteResource.empty())
+void Scene1090::rememberLitResourceSet() {
+	if (!_litPaletteResource.empty())
 		return;
 
-	_darkPaletteResource = _paletteResource;
-	_darkPaletteMask = _paletteMaskOriginal;
+	_litPaletteResource = _paletteResource;
 }
 
 void Scene1090::applyActiveLightResourceSet() {
-	if (_vm->gameState().scene1090LightsOn) {
+	if (_vm->gameState().scene1090LightsOff) {
 		copyArenaChunkToFramebuffer(5);
 		copyArenaChunkToFixedArray(6, _paletteResource, kPaletteSize);
 		copyArenaChunkToVariableArray(7, _paletteMask);
 	} else {
 		restoreBaseFramebufferFromOriginal();
-		if (!_darkPaletteResource.empty())
-			_paletteResource = _darkPaletteResource;
-		if (!_darkPaletteMask.empty())
-			_paletteMask = _darkPaletteMask;
+		if (!_litPaletteResource.empty())
+			_paletteResource = _litPaletteResource;
+		_paletteMask = _paletteMaskOriginal;
 	}
 
 	if (_paletteMask.size() >= kScenePaletteMapPageSize)
@@ -190,7 +255,26 @@ void Scene1090::applyActiveLightResourceSet() {
 	_paletteCurrent = _paletteResource;
 	loadResource000ActorPalette(_resource000OffsetTable);
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
-	_surfaceState.rebuildPresentationPaletteRemapTable();
+	if (_paletteMask.size() >= kScenePresentationPaletteRemapMap + kScenePaletteMapPageSize) {
+		memcpy(_presentationPaletteRemapTable.data(),
+			_paletteMask.data() + kScenePresentationPaletteRemapMap, _presentationPaletteRemapTable.size());
+	} else {
+		_surfaceState.rebuildPresentationPaletteRemapTable();
+	}
+}
+
+void Scene1090::applyActorLightPaletteAdjustments() {
+	if (_metadata.size() < kPaletteAdjustTable + 6)
+		return;
+
+	const bool lightsOff = _vm->gameState().scene1090LightsOff;
+	const int8 *deltas = lightsOff ? kScene1090DarkActorPaletteDeltas : kScene1090LitActorPaletteDeltas;
+	for (uint i = 0; i < ARRAYSIZE(kScene1090LitActorPaletteDeltas); ++i)
+		_metadata[kPaletteDeltaTable + i + 1] = (byte)deltas[i];
+	_metadata[kPaletteAdjustTable + 2] = lightsOff ? 2 : 1;
+	_metadata[kPaletteAdjustTable + 3] = (byte)-12;
+	_metadata[kPaletteAdjustTable + 4] = 2;
+	_metadata[kPaletteAdjustTable + 5] = (byte)-12;
 }
 
 void Scene1090::rebuildPantryWalkableMask() {
@@ -205,16 +289,16 @@ void Scene1090::applyWrappedBrainPatch() {
 	if (_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return;
 
-	const bool hotspotActive = !_vm->gameState().scene1090LightsOn &&
+	const bool hotspotActive = !_vm->gameState().scene1090LightsOff &&
 		_vm->gameState().scene1090WrappedBrainState == 0;
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
-		if (_paletteMask[kSceneColorToItemMap + i] == 4)
+		if (_paletteMaskOriginal[kSceneColorToItemMap + i] == 4)
 			_paletteMask[kSceneColorToItemMap + i] = hotspotActive ? 4 : 0;
 	}
 
 	const uint patchChunk = _vm->gameState().scene1090WrappedBrainState != 0 ?
-		(_vm->gameState().scene1090LightsOn ? 12 : 10) :
-		(_vm->gameState().scene1090LightsOn ? 11 : 9);
+		(_vm->gameState().scene1090LightsOff ? 12 : 10) :
+		(_vm->gameState().scene1090LightsOff ? 11 : 9);
 	if (_sceneChunkTable.isValidChunk(patchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[patchChunk], _baseFramebuffer);
 }
@@ -223,9 +307,11 @@ void Scene1090::runSwitchAction() {
 	GameplayState &state = _vm->gameState();
 	runActorReplacement(ActionOverlaySpec(8, kScene1090SwitchDescriptorCount,
 		kScene1090SwitchFrameMap, ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis)
-		.commitAt(5, state.scene1090LightsOn, !state.scene1090LightsOn)
-		.patchAt(5, 1)
-		.invalidatePaletteAt(5));
+		.commitAt(6, state.scene1090LightsOff, !state.scene1090LightsOff)
+		.patchAt(6, 0xff)
+		.invalidatePaletteAt(6)
+		.noFinalFrameDelay()
+		.unskippable());
 }
 
 void Scene1090::revealWrappedBrain() {
@@ -241,10 +327,20 @@ void Scene1090::takeWrappedBrain() {
 
 	if (state.scene1090WrappedBrainState == 0)
 		revealWrappedBrain();
+	if (animationPlaybackShouldStop())
+		return;
+
 	BlockingSequence sequence(*this);
 	sequence.actorReplacement(ActionOverlaySpec(13, kScene1090WrappedBrainPickupDescriptorCount,
-			kScene1090FrameMillis))
-		.commit(state.scene1090WrappedBrainState, (byte)2)
+			kScene1090FrameMillis)
+			.holdFirstFrame()
+			.resourcePatchAt(4, 10)
+			.noFinalFrameDelay()
+			.unskippable());
+	if (!sequence.completed())
+		return;
+
+	sequence.commit(state.scene1090WrappedBrainState, (byte)2)
 		.framebufferPatch(2);
 	addInventoryItem(0x25);
 	sequence.sound(1);

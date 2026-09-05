@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/system.h"
-
 #include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
@@ -51,7 +49,6 @@ const byte kScene1080DialogueNoResponseFrame = 0xff;
 const uint kScene1080DialogueChoiceRecordCount = 10 * 10 * 7;
 const uint kScene1080BrainQuestionRecord = 70;
 const uint kScene1080FrankensteinBrainQuestionRecord = 71;
-const byte kScene1080PrimarySpeechTextColor = 0xfb;
 const byte kScene1080FrancoisWorkSoundFirstCue = 0x34;
 const byte kScene1080FrancoisWorkSoundCueCount = 3;
 const byte kScene1080BalloonSoundCue = 0x33;
@@ -510,64 +507,20 @@ void Scene1080::handleFrancoisDistraction() {
 
 void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescriptor,
 		byte lastDescriptor, uint16 centerX, uint16 topY) {
-	uint16 textRecordId = 0;
-	byte continuationCount = 0;
-	uint16 voiceSampleId = 0;
-	if (!getStage003Cue(12, frameIndex, textRecordId, continuationCount, voiceSampleId))
+	if (animationPlaybackShouldStop())
 		return;
 
-	setPaletteEntry6Bit(kScene1080PrimarySpeechTextColor, 0x0d, 0x32, 0x3a);
 	_francoisActionActive = true;
 	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer, false);
-	_sceneLayers.setLayerVisible(kScene1080FrancoisActionLayer, true);
-	_sceneLayers.setLayerFrame(kScene1080FrancoisActionLayer, firstDescriptor);
-	byte descriptor = firstDescriptor;
-	uint32 frameMillis = 0;
-	const byte partCount = MAX<byte>(1, continuationCount);
-	bool interrupted = false;
+	_sceneLayers.showLayerAtFrame(kScene1080FrancoisActionLayer, firstDescriptor);
+	startRealtimePrimarySpeechLine(12, frameIndex, centerX, topY,
+		0x0d, 0x32, 0x3a, 0xff, 0);
 
-	for (byte part = 0; part < partCount && !interrupted && !Engine::shouldQuit() &&
-			!_vm->isSceneRestartRequested(); ++part) {
-		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
-		if (text.empty())
-			continue;
-
-		_primarySpeechOverlay.visible = true;
-		_primarySpeechOverlay.colorIndex = kScene1080PrimarySpeechTextColor;
-		wrapActorSpeechText(text, centerX, _primarySpeechOverlay.lines);
-		calculateSpeechOverlayBounds(_primarySpeechOverlay, centerX, topY, true,
-			_activeActorWorldY);
-
-		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
-		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
-		const uint32 startMillis = g_system->getMillis();
-		uint32 lastMillis = startMillis;
-		while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-			const uint32 elapsed = g_system->getMillis() - startMillis;
-			const bool speechFinished = !_speech.isPlaying() && elapsed >= duration;
-			if (speechFinished && (part + 1 < partCount || descriptor >= lastDescriptor))
-				break;
-
-			const uint32 slice = 10;
-			if (waitSceneMillis(slice)) {
-				interrupted = !consumeStepAdvanceRequest();
-				break;
-			}
-			const uint32 now = g_system->getMillis();
-			frameMillis += now - lastMillis;
-			lastMillis = now;
-			while (frameMillis >= kScene1080FrancoisWorkFrameMillis && descriptor < lastDescriptor) {
-				frameMillis -= kScene1080FrancoisWorkFrameMillis;
-				_sceneLayers.setLayerFrame(kScene1080FrancoisActionLayer, ++descriptor);
-			}
-		}
-
-		_speech.stop();
-		_primarySpeechOverlay.visible = false;
-		_primarySpeechOverlay.lines.clear();
-	}
+	// Present every reaction frame; elapsed-time catch-up can hide the sniff.
+	playAnimationFrames(kScene1080FrancoisActionLayer,
+		AnimationFrameRange(firstDescriptor, lastDescriptor,
+			kScene1080FrancoisWorkFrameMillis).unskippable());
+	waitForRealtimeSpeech();
 }
 
 void Scene1080::initializeFrancoisDialogueRecords(
