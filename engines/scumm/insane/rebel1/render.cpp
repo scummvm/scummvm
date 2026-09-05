@@ -776,6 +776,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	if (_currentLevel == 7) {
 		updateLevel8WalkerState();
+		checkDynamicLevelBranch(curFrame);
 		const int viewportX = _player ? ra1Player()->_ra1ViewportOffsetX : 0;
 		const int viewportY = _player ? ra1Player()->_ra1ViewportOffsetY : 0;
 		renderLevel8Overlay(renderBitmap, pitch, width, height, viewportX, viewportY);
@@ -1855,10 +1856,11 @@ void InsaneRebel1::updateLevel8WalkerState() {
 
 		if (newRoute != 0) {
 			_pendingRouteIndex = newRoute;
-			_pendingRouteCutoverFrame = _currentSmushFrame + 7;
-			// The destination starts at frame 1, advanced by the source tail
-			// already displayed. This also applies when repeating the same route.
-			_pendingRouteStartFrame = 1 + (_pendingRouteCutoverFrame - _currentSmushFrame);
+			// The original makes this choice in the post-frame callback, after
+			// that frame's splice check. It renders one more source frame before
+			// switching, advancing the destination's frame-1 start by that frame.
+			_pendingRouteCutoverFrame = _currentSmushFrame + 1;
+			_pendingRouteStartFrame = 2;
 			debugC(DEBUG_INSANE, "L8 branch: route=%d -> %d at localFrame=%u shipX=%d resumeLocalFrame=%d cutoverFrame=%d",
 				route, newRoute, (unsigned)fc, _shipPosX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);

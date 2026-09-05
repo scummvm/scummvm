@@ -287,10 +287,10 @@ bool InsaneRebel1::runLevel1() {
 		if (shouldAbortGameFlow())
 			return false;
 
-		if (_rightPathSelected && _health >= 0) {
+		if (_rightPathSelected && !_interactiveVideoCheatSkipped && _health >= 0) {
 			_pathBranchEnabled = false;
 			_flyControlMode = 1;
-			playInteractiveVideo("LVL1/L1PLAY1R.ANM", 0x187);
+			playInteractiveVideo("LVL1/L1PLAY1R.ANM", 1);
 			if (shouldAbortGameFlow())
 				return false;
 		}
@@ -1543,19 +1543,20 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 				_levelRouteIndex, (int)_pendingRouteStartFrame,
 				(int)videoStartFrame, (unsigned)videoOffset);
 		}
-	} else if (_currentLevel == 7 && resumingRoute) {
-		// Walker routes restart at their own local frame, even when branching
-		// back to the same ANM. Their embedded GAME counters are not seek targets.
+	} else if ((_currentLevel == 0 || _currentLevel == 7) && resumingRoute) {
+		// Route continuations use destination-local frames. In L1 this skips
+		// both the overlapping frame and the GAME reset at the start of the
+		// right-hand clip. L8 can also branch back to the same ANM.
 		videoStartFrame = startFrame;
 		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		if (videoOffset < 0) {
-			debugC(DEBUG_INSANE, "L8 resume: route=%d localFrame=%d offset lookup failed",
-				_levelRouteIndex, (int)videoStartFrame);
+			debugC(DEBUG_INSANE, "L%d resume: localFrame=%d offset lookup failed",
+				_currentLevel + 1, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debugC(DEBUG_INSANE, "L8 resume: route=%d localFrame=%d offset=0x%x",
-				_levelRouteIndex, (int)videoStartFrame, (unsigned)videoOffset);
+			debugC(DEBUG_INSANE, "L%d resume: localFrame=%d offset=0x%x",
+				_currentLevel + 1, (int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 13 && resumingRoute) {
 		// L14PLY2B is already the continuation clip. Preserve state, but do not seek.
@@ -1564,12 +1565,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 	}
 }
 
-void InsaneRebel1::captureInteractiveVideoInput() {
-	const bool level7RouteSplice = (_currentLevel == 6 && _levelRouteIndex > 0);
-	const bool walkerRouteContinuation = (_currentLevel == 7 &&
-		(_walkerRoundReplay || _pendingRouteStartFrame > 0));
-	const bool preserveInputState = _preserveInteractiveRuntimeState || level7RouteSplice || walkerRouteContinuation;
-
+void InsaneRebel1::captureInteractiveVideoInput(bool preserveInputState) {
 	enableIOSGamepadController();
 
 	// Center mouse, hide system cursor, and lock mouse to window.
@@ -1625,7 +1621,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 		resetInteractiveVideoAudio();
 	setupInteractiveVideoState(startFrame);
 	resolveSeek(filename, startFrame, videoOffset, videoStartFrame);
-	captureInteractiveVideoInput();
+	captureInteractiveVideoInput(preserveRuntimeState);
 	playInteractiveVideoFile(filename, videoOffset, videoStartFrame);
 	releaseInteractiveVideoInput();
 	_preserveInteractiveRuntimeState = false;

@@ -246,7 +246,7 @@ private:
 	void preserveInteractiveVideoAudioState();
 	void setupInteractiveVideoState(int32 startFrame);
 	void resolveSeek(const char *filename, int32 startFrame, int32 &videoOffset, int32 &videoStartFrame);
-	void captureInteractiveVideoInput();
+	void captureInteractiveVideoInput(bool preserveInputState);
 	void releaseInteractiveVideoInput();
 	void playInteractiveVideoFile(const char *filename, int32 videoOffset, int32 videoStartFrame);
 	void enableIOSGamepadController();
@@ -555,7 +555,8 @@ private:
 	RebelTouchTapDetector _touchTapDetector;
 
 	// Path branching for levels with left/right alternative videos.
-	static const int32 kPathBranchCounter = 394;
+	static const int32 kLevel1BranchDecisionFrame = 0x182;
+	static const int32 kLevel1BranchCutoverFrame = 0x187;
 	int32 _gameCounter;
 	bool _pathBranchEnabled;
 	bool _rightPathSelected;
