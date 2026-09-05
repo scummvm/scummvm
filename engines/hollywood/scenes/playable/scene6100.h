@@ -39,6 +39,9 @@ private:
 	void prepareCustomGameplayLoop() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void advancePrimarySpeechAnimation(uint32 delta) override;
+	void prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) override;
+	bool shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool customizeRouteSegment(byte currentRegion, byte nextRegion,
 		const ActorPathBuildState &state, const ScenePoint &boundary,

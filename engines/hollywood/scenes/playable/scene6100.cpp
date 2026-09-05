@@ -156,6 +156,23 @@ void Scene6100::advancePrimarySpeechAnimation(uint32 delta) {
 		PlayableScene::advancePrimarySpeechAnimation(delta);
 }
 
+void Scene6100::prepareCustomComposite(bool drawActors, byte activeFacing,
+		int activeWorldX, int activeWorldY, byte actorDrawOrderMode) {
+	(void)drawActors;
+	(void)activeFacing;
+	(void)activeWorldX;
+	(void)activeWorldY;
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+	// The stair foreground covers Ron only while he is on the stairs.
+	if (_drawActorDepthYThresholds.size() > 3)
+		_drawActorDepthYThresholds[3] = actorDrawOrderMode == 3 ? 0x03e7 : 0;
+}
+
+bool Scene6100::shouldUseActorDepthTest(int actorWorldX, int actorWorldY) const {
+	(void)actorWorldY;
+	return _activeActorDrawOrderMode == 3 || actorWorldX <= 0x113 || actorWorldX >= 0x264;
+}
+
 void Scene6100::advanceCharlieIdle(uint32 delta) {
 	ResourceSpriteLayer &layer = _sceneLayers.layer(kScene6100CharlieLayer);
 	if (!layer.visible)
