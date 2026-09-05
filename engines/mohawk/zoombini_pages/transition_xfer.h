@@ -368,9 +368,6 @@ protected:
 	/** Second replacement palette value written during flood-fill expansion. */
 	byte _routePathReplace2 = 0;
 
-	/** Screen position where the route path overlay was rendered. */
-	Common::Rect _routePathScreenRect;
-
 	// -----------------------------------------------------------------------
 	// Route View Slot State (XFER_1-4 only)
 	// Remaps main SCRB shapes based on puzzle completion to show completed bands in foreground colors.

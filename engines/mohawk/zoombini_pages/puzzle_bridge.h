@@ -252,17 +252,6 @@ protected:
 	 */
 	int16 collectZmbTraits(Common::Array<ZmbTrait> &outTraits) const;
 
-	// Button rendering callback
-	/** Prepare the Bridge lane button hotspots. */
-	void bridgeButtons_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
-	/** Handle a pointer press on a Bridge control. */
-	ZmbEventHandleResult bridgeButtons_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos);
-
-	// Bridge visual rendering callback
-	/** Render the Bridge visual overlay and lane segments. */
-	ZmbRenderResult bridgeVisuals_render(ZmbFeature *feature);
-	/** Record Bridge visual coverage after rendering. */
-	void bridgeVisuals_postRender(ZmbFeature *feature);
 	/** Reload SCRB animation data on an existing feature. */
 	void reloadScrbAnimation(uint16 featureId, int16 newScrbId);
 	/** Rebuild the cliff-gate runner at the current peg-loss stage. */

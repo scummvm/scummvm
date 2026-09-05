@@ -799,6 +799,18 @@ ZoombiniGameState::ZoombiniGameState(MohawkEngine_Zoombini *vm, Common::SaveFile
 ZoombiniGameState::~ZoombiniGameState() {
 }
 
+void ZoombiniGameState::beginPracticeState() {
+	if (_practiceModeActive)
+		return;
+
+	_practiceState = _journeyState;
+	_practiceModeActive = true;
+}
+
+void ZoombiniGameState::endPracticeState() {
+	_practiceModeActive = false;
+}
+
 bool ZoombiniGameState::parseRoster(const Common::Array<byte> &bytes, ZmbRosterFile &roster) {
 	if (bytes.size() != kZmbRosterFileSize)
 		return false;
@@ -1751,10 +1763,8 @@ bool ZoombiniGameState::loadGame(int slot) {
 		return false;
 	}
 
-	// Rebuild @ref ZoombiniGameState::_zoombiniNameGeneratedTable from all generated and stored Zoombinis.
-	buildNameGeneratedTable();
 	_gameStateReadyFlag = true;
-	if (_f._isDirty)
+	if (_journeyState._isDirty)
 		markSaveBeforeQuitPending();
 	else
 		clearSaveBeforeQuitPending();
@@ -1803,7 +1813,7 @@ bool ZoombiniGameState::saveNewGame(const Common::U32String &saveName) {
 
 	const uint16 oldFileNameCounter = _r._nextSaveFileNameCounter;
 	const int32 oldCurrentSaveSlot = _currentSaveSlot;
-	const bool oldStateDirty = _f._isDirty;
+	const bool oldStateDirty = _journeyState._isDirty;
 
 	ZmbRosterEntry entry;
 	memcpy(entry._saveName, encodedSaveName.c_str(), encodedSaveName.size());
@@ -1829,7 +1839,7 @@ bool ZoombiniGameState::saveNewGame(const Common::U32String &saveName) {
 	_r.removeEntryAt(slot);
 	_r._nextSaveFileNameCounter = oldFileNameCounter;
 	_currentSaveSlot = oldCurrentSaveSlot;
-	_f._isDirty = oldStateDirty;
+	_journeyState._isDirty = oldStateDirty;
 	return false;
 }
 
@@ -1877,16 +1887,9 @@ bool ZoombiniGameState::moveGame(int slot, int destinationSlot) {
 	return true;
 }
 
-ZoombiniGameState::ZmbSaveCompactResult ZoombiniGameState::compactSaveFiles() {
-	const ZmbSaveCompactResult result = compactSaveFilesForTarget(getTargetName());
-	if (result == ZmbSaveCompactResult::kSuccess)
-		loadRoster();
-	return result;
-}
-
 void ZoombiniGameState::markDebugStateMutation() {
 	_debugStateMutationFlag = true;
-	_f._isDirty = true;
+	_journeyState._isDirty = true;
 }
 
 void ZoombiniGameState::markUnsafeSyntheticDebugState() {
@@ -1995,7 +1998,7 @@ bool ZoombiniGameState::loadState(int slot) {
 		replaceZoombiniNamesWithStandardNames(loadedState);
 		loadedState._isDirty = true;
 	}
-	_f = loadedState;
+	_journeyState = loadedState;
 
 	_currentSaveSlot = slot;
 	clearDebugStateMutation();
@@ -2004,13 +2007,13 @@ bool ZoombiniGameState::loadState(int slot) {
 }
 
 void ZoombiniGameState::syncGameState(Common::Serializer &s, bool isTlcLayout, bool hasCompletionCounters) {
-	_f.sync(s, isTlcLayout, hasCompletionCounters);
+	_journeyState.sync(s, isTlcLayout, hasCompletionCounters);
 }
 
 void ZoombiniGameState::dumpCurrentState(Common::WriteStream &out) {
 	Common::Serializer s(nullptr, &out);
 	const ZmbSaveFormat targetFormat = getTargetSaveFormat(_vm);
-	_f.sync(s, isTlcSaveFormat(targetFormat), hasCompletionCounters(targetFormat));
+	_journeyState.sync(s, isTlcSaveFormat(targetFormat), hasCompletionCounters(targetFormat));
 }
 
 Common::String ZoombiniGameState::getTargetName() const {
@@ -2082,14 +2085,6 @@ Common::String ZoombiniGameState::getRosterFilename() const {
 	return getTargetName() + ".WHO";
 }
 
-void ZoombiniGameState::markGeneratedName(const Common::U32String &name) {
-	if (name.empty())
-		return;
-	int32 nameId = _vm->_text->findZoombiniNameId(name);
-	if (0 <= nameId)
-		_zoombiniNameGeneratedTable[nameId] = 1;
-}
-
 bool ZoombiniGameState::hasNonAsciiZoombiniName(const ZmbStateFile &state) const {
 	const ZmbStateActivePack *packs[] = {
 		&state._zmbPackIsle,
@@ -2148,38 +2143,6 @@ void ZoombiniGameState::replaceZoombiniNamesWithStandardNames(ZmbStateFile &stat
 	}
 }
 
-void ZoombiniGameState::buildNameGeneratedTable() {
-	memset(_zoombiniNameGeneratedTable, 0, sizeof(_zoombiniNameGeneratedTable));
-
-	// Only v1.11KR ZOOMBINI.MHK contains STRL 30000-30006 (the name pool).
-	// This table is session-only and cannot be rebuilt without that pool,
-	// so skip the reverse lookup and leave it zeroed.
-	if (!_vm->hasResource(ID_STRL, ZmbResource(ZmbResource::kSystem, ZoombiniPage::kSysResStrl30000_ZoombiniNames)))
-		return;
-
-	// Ensure the full name pool (0..624) is loaded and the reverse index is ready.
-	_vm->_text->cacheAllZoombiniNames();
-
-	// Scan active packs (Isle, BC1, BC2, Active)
-	ZmbStateActivePack *packs[] = {&_f._zmbPackIsle, &_f._zmbPackBC1, &_f._zmbPackBC2, &_f._zmbPackActive};
-	for (uint32 packEntryIdx = 0; packEntryIdx < ARRAYSIZE(packs); packEntryIdx++) {
-		for (int16 entryIdx = 0; entryIdx < packs[packEntryIdx]->getEntryCapacity(); entryIdx++) {
-			const ZmbStateActiveEntry &e = packs[packEntryIdx]->getEntry(entryIdx);
-			if (e.getIsOccupied())
-				markGeneratedName(e.getU32Name(_vm));
-		}
-	}
-
-	// Scan stored chunks (BC1, BC2, Town).
-	ZmbStateStoredChunk *chunks[] = {&_f._storedChunkBC1, &_f._storedChunkBC2, &_f._storedChunkTown};
-	for (uint32 arrayIdx = 0; arrayIdx < ARRAYSIZE(chunks); arrayIdx++) {
-		for (int entryIdx = 0; entryIdx < chunks[arrayIdx]->getEntryCapacity(); entryIdx++) {
-			const ZmbStateStoredEntry &e = chunks[arrayIdx]->getEntry(entryIdx);
-			markGeneratedName(e.getName(_vm));
-		}
-	}
-}
-
 bool ZoombiniGameState::saveState(int slot) {
 	const Common::String filename = getSaveFilename(slot);
 	if (filename.empty())
@@ -2226,18 +2189,18 @@ bool ZoombiniGameState::saveState(int slot) {
 	if (writeState) {
 		switch (pageType) {
 		case ZoombiniPageType::kPicker:
-			_f._zmbPackActive.copyTo(_f._zmbPackIsle);
-			temporaryDestPack = &_f._zmbPackIsle;
+			_journeyState._zmbPackActive.copyTo(_journeyState._zmbPackIsle);
+			temporaryDestPack = &_journeyState._zmbPackIsle;
 			clearActiveBeforeWrite = true;
 			break;
 		case ZoombiniPageType::kBasecamp1:
-			_f._zmbPackActive.copyTo(_f._zmbPackBC1);
-			temporaryDestPack = &_f._zmbPackBC1;
+			_journeyState._zmbPackActive.copyTo(_journeyState._zmbPackBC1);
+			temporaryDestPack = &_journeyState._zmbPackBC1;
 			clearActiveBeforeWrite = true;
 			break;
 		case ZoombiniPageType::kBasecamp2:
-			_f._zmbPackActive.copyTo(_f._zmbPackBC2);
-			temporaryDestPack = &_f._zmbPackBC2;
+			_journeyState._zmbPackActive.copyTo(_journeyState._zmbPackBC2);
+			temporaryDestPack = &_journeyState._zmbPackBC2;
 			clearActiveBeforeWrite = true;
 			break;
 		default:
@@ -2246,7 +2209,7 @@ bool ZoombiniGameState::saveState(int slot) {
 	}
 
 	if (clearActiveBeforeWrite || !writeState)
-		_f._zmbPackActive.clearEntries();
+		_journeyState._zmbPackActive.clearEntries();
 	if (!writeState)
 		return false;
 
@@ -2255,7 +2218,7 @@ bool ZoombiniGameState::saveState(int slot) {
 	if (!saveFile) {
 		if (temporaryDestPack)
 			temporaryDestPack->clearEntries();
-		_f._zmbPackActive.clearEntries();
+		_journeyState._zmbPackActive.clearEntries();
 		warning("Cannot create Zoombini state save file '%s': %s", filename.c_str(),
 				getSaveFileWriteError(_saveFileMan, Common::kCreatingFileFailed).getDesc().c_str());
 		showStateFileWriteFailure(_saveFileMan, filename, Common::kCreatingFileFailed);
@@ -2273,7 +2236,7 @@ bool ZoombiniGameState::saveState(int slot) {
 
 	if (temporaryDestPack)
 		temporaryDestPack->clearEntries();
-	_f._zmbPackActive.clearEntries();
+	_journeyState._zmbPackActive.clearEntries();
 	if (writeFailed) {
 		warning("Cannot write Zoombini state save file '%s': %s", filename.c_str(),
 				getSaveFileWriteError(_saveFileMan, Common::kWritingFailed).getDesc().c_str());
@@ -2281,7 +2244,7 @@ bool ZoombiniGameState::saveState(int slot) {
 		return false;
 	}
 
-	_f._isDirty = false;
+	_journeyState._isDirty = false;
 	_currentSaveSlot = slot;
 	return true;
 }
@@ -2642,13 +2605,6 @@ Common::U32String ZmbRosterEntry::getSaveName(Common::CodePage codePage) const {
 	return Common::U32String(encodedName, codePage);
 }
 
-Common::U32String ZmbRosterEntry::getFileName(MohawkEngine_Zoombini *vm) const {
-	const uint16 fileNameLength = getFileNameLength();
-	if (ARRAYSIZE(_fileName) <= fileNameLength)
-		return Common::U32String();
-	return vm->_text->toU32String(_fileName, fileNameLength, ZoombiniText::kExeString);
-}
-
 uint16 ZmbRosterEntry::getSaveNameLength() const {
 	for (uint16 length = 0; length < ARRAYSIZE(_saveName); length++) {
 		if (_saveName[length] == 0)
@@ -2984,7 +2940,7 @@ void ZmbStateFile::sync(Common::Serializer &s, bool isTlcLayout, bool hasComplet
 }
 
 ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageFlag(ZmbStateFile::PageFlag &pageFlag) {
-	return getSfxGroupFlagsFromPageFlag(pageFlag, static_cast<ZoombiniPageType>(static_cast<int16>(_f._currentPage)));
+	return getSfxGroupFlagsFromPageFlag(pageFlag, getCurrentState().getCurrentPageType());
 }
 
 ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageFlag(ZmbStateFile::PageFlag &pageFlag,
@@ -3060,12 +3016,12 @@ ZmbStateFile::PageFlag &ZmbStateFile::getPageFlagFromPageType(ZoombiniPageType p
 }
 
 ZmbSfxGroupFlags ZoombiniGameState::getSfxGroupFlagsFromPageType(ZoombiniPageType pageType) {
-	ZmbStateFile::PageFlag &pageFlag = _f.getPageFlagFromPageType(pageType);
+	ZmbStateFile::PageFlag &pageFlag = getCurrentState().getPageFlagFromPageType(pageType);
 	return getSfxGroupFlagsFromPageFlag(pageFlag, pageType);
 }
 
 int16 ZoombiniGameState::readActivePageRouteLevel() {
-	return readPageRouteLevel(static_cast<ZoombiniPageType>(static_cast<int16>(_f._currentPage)));
+	return readPageRouteLevel(getCurrentState().getCurrentPageType());
 }
 
 int16 ZoombiniGameState::readPageRouteLevel(ZoombiniPageType pageType) {
@@ -3073,23 +3029,25 @@ int16 ZoombiniGameState::readPageRouteLevel(ZoombiniPageType pageType) {
 		return _practiceLevel - 1;
 	}
 
+	const ZmbStateFile &state = getCurrentState();
+
 	// Puzzle pages 7-18 map in groups of three to @ref ZmbStateFile::_routeLevels.
 	// Pages 7-9 use route 0, 10-12 route 1, 13-15 route 2, and 16-18 route 3.
 	if (ZoombiniPageType::kBridge <= pageType && pageType <= ZoombiniPageType::kMaze) {
 		const uint16 routeIdx =
 			(static_cast<uint16>(pageType) - static_cast<uint16>(ZoombiniPageType::kBridge)) / 3;
-		return _f._routeLevels[routeIdx];
+		return state._routeLevels[routeIdx];
 	}
 
 	// Container/storage pages
 	switch (pageType) {
 	case ZoombiniPageType::kPicker:
 	case ZoombiniPageType::kBasecamp1: // BIG BAD AND HUNGRY
-		return _f._routeLevels[0];
+		return state._routeLevels[0];
 	case ZoombiniPageType::kBasecamp2: // WHO'S BAYOU or DEEP DARK FOREST
-		return MAX(_f._routeLevels[1], _f._routeLevels[2]);
+		return MAX(state._routeLevels[1], state._routeLevels[2]);
 	case ZoombiniPageType::kTown: // MOUNTAIN OF DESPAIR
-		return _f._routeLevels[3];
+		return state._routeLevels[3];
 	default:
 		break;
 	}
@@ -3097,21 +3055,23 @@ int16 ZoombiniGameState::readPageRouteLevel(ZoombiniPageType pageType) {
 }
 
 int16 ZoombiniGameState::readActivePageRouteId() {
-	if (_f._currentPage < ZmbDestPageKind::kBridge_07 || ZmbDestPageKind::kMaze_18 < _f._currentPage)
+	const ZmbDestPageKind currentPage = getCurrentState()._currentPage;
+	if (currentPage < ZmbDestPageKind::kBridge_07 || ZmbDestPageKind::kMaze_18 < currentPage)
 		return -1;
-	return (static_cast<int16>(_f._currentPage) - static_cast<int16>(ZmbDestPageKind::kBridge_07)) / 3;
+	return (static_cast<int16>(currentPage) - static_cast<int16>(ZmbDestPageKind::kBridge_07)) / 3;
 }
 
 int16 ZoombiniGameState::readRouteLevel(ZmbRouteId routeId) {
+	const ZmbStateFile &state = getCurrentState();
 	switch (routeId) {
 	case ZmbRouteId::kBigBadHungry:
-		return _f._routeLevels[0];
+		return state._routeLevels[0];
 	case ZmbRouteId::kWhosBayou:
-		return _f._routeLevels[1];
+		return state._routeLevels[1];
 	case ZmbRouteId::kDeepDarkForest:
-		return _f._routeLevels[2];
+		return state._routeLevels[2];
 	case ZmbRouteId::kMontDespair:
-		return _f._routeLevels[3];
+		return state._routeLevels[3];
 	default:
 		error("state: invalid route level for routeId(%hd)", static_cast<int16>(routeId));
 		break;
@@ -3149,11 +3109,12 @@ int16 ZoombiniGameState::findFirstClearMemorialSlot(ZmbRouteId routeId, int16 di
 	if (ZmbRouteId::kMontDespair < routeId || difficultyLevel < 1 || 4 < difficultyLevel)
 		return -1;
 
+	const ZmbStateFile &state = getCurrentState();
 	const byte memorialRoute = static_cast<byte>(static_cast<uint16>(routeId) + 1);
 	const byte memorialLevel = static_cast<byte>(difficultyLevel);
-	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(_f._memorialRoutes); slotIdx += 1) {
-		if (_f._memorialRoutes[slotIdx] == memorialRoute &&
-			_f._memorialLevels[slotIdx] == memorialLevel)
+	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(state._memorialRoutes); slotIdx += 1) {
+		if (state._memorialRoutes[slotIdx] == memorialRoute &&
+			state._memorialLevels[slotIdx] == memorialLevel)
 			return static_cast<int16>(slotIdx);
 	}
 
@@ -3170,16 +3131,17 @@ bool ZoombiniGameState::addFirstClearMemorial(ZmbRouteId routeId, int16 difficul
 
 	const byte memorialRoute = static_cast<byte>(static_cast<uint16>(routeId) + 1);
 	const byte memorialLevel = static_cast<byte>(difficultyLevel);
+	ZmbStateFile &state = getCurrentState();
 
-	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(_f._memorialRoutes); slotIdx += 1) {
-		if (_f._memorialRoutes[slotIdx] != 0)
+	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(state._memorialRoutes); slotIdx += 1) {
+		if (state._memorialRoutes[slotIdx] != 0)
 			continue;
 
-		_f._memorialYears[slotIdx] = year;
-		_f._memorialMonths[slotIdx] = month;
-		_f._memorialDays[slotIdx] = day;
-		_f._memorialRoutes[slotIdx] = memorialRoute;
-		_f._memorialLevels[slotIdx] = memorialLevel;
+		state._memorialYears[slotIdx] = year;
+		state._memorialMonths[slotIdx] = month;
+		state._memorialDays[slotIdx] = day;
+		state._memorialRoutes[slotIdx] = memorialRoute;
+		state._memorialLevels[slotIdx] = memorialLevel;
 		return true;
 	}
 
@@ -3187,14 +3149,15 @@ bool ZoombiniGameState::addFirstClearMemorial(ZmbRouteId routeId, int16 difficul
 }
 
 void ZoombiniGameState::clearFirstClearMemorial(uint16 slotIdx) {
-	if (ARRAYSIZE(_f._memorialRoutes) <= slotIdx)
+	ZmbStateFile &state = getCurrentState();
+	if (ARRAYSIZE(state._memorialRoutes) <= slotIdx)
 		return;
 
-	_f._memorialYears[slotIdx] = 0;
-	_f._memorialMonths[slotIdx] = 0;
-	_f._memorialDays[slotIdx] = 0;
-	_f._memorialRoutes[slotIdx] = 0;
-	_f._memorialLevels[slotIdx] = 0;
+	state._memorialYears[slotIdx] = 0;
+	state._memorialMonths[slotIdx] = 0;
+	state._memorialDays[slotIdx] = 0;
+	state._memorialRoutes[slotIdx] = 0;
+	state._memorialLevels[slotIdx] = 0;
 }
 
 bool ZoombiniGameState::recordFirstClearMemorial(ZmbRouteId routeId, int16 difficultyLevel) {
@@ -3219,9 +3182,10 @@ bool ZoombiniGameState::readMemorialDate(ZmbRouteId routeId, int16 difficultyLev
 	if (slotIdx < 0)
 		return false;
 
-	year = _f._memorialYears[slotIdx];
-	month = _f._memorialMonths[slotIdx];
-	day = _f._memorialDays[slotIdx];
+	const ZmbStateFile &state = getCurrentState();
+	year = state._memorialYears[slotIdx];
+	month = state._memorialMonths[slotIdx];
+	day = state._memorialDays[slotIdx];
 	return true;
 }
 
@@ -3253,9 +3217,10 @@ bool ZoombiniGameState::setMemorialDate(ZmbRouteId routeId, int16 difficultyLeve
 	if (slotIdx < 0)
 		return addFirstClearMemorial(routeId, difficultyLevel, year, month, day);
 
-	_f._memorialYears[slotIdx] = year;
-	_f._memorialMonths[slotIdx] = month;
-	_f._memorialDays[slotIdx] = day;
+	ZmbStateFile &state = getCurrentState();
+	state._memorialYears[slotIdx] = year;
+	state._memorialMonths[slotIdx] = month;
+	state._memorialDays[slotIdx] = day;
 	return true;
 }
 
@@ -3266,6 +3231,7 @@ void ZoombiniGameState::syncRouteProgressFlags(ZmbRouteId routeId, int16 difficu
 	// The selected level is its starting state, so only lower levels are complete.
 	const uint routeIndex = static_cast<uint>(routeId);
 	const byte completedLevelMask = static_cast<byte>((1 << (difficultyLevel - 1)) - 1);
+	ZmbStateFile &state = getCurrentState();
 
 	// Page flags store ordinary clears in the low nibble and perfect clears in the high nibble.
 	const byte pageFlags = static_cast<byte>(completedLevelMask | (completedLevelMask << 4));
@@ -3273,21 +3239,21 @@ void ZoombiniGameState::syncRouteProgressFlags(ZmbRouteId routeId, int16 difficu
 	// Each route owns three consecutive puzzle flags after the first three reserved entries.
 	const uint firstPageFlagIndex = 3 + routeIndex * 3;
 	for (uint puzzleIndex = 0; puzzleIndex < 3; puzzleIndex++)
-		_f._pageLevelFlags[firstPageFlagIndex + puzzleIndex] = pageFlags;
+		state._pageLevelFlags[firstPageFlagIndex + puzzleIndex] = pageFlags;
 
 	// Endpoint flags use the same mask; Routes 2 and 3 occupy opposite nibbles of one byte.
 	switch (routeId) {
 	case ZmbRouteId::kBigBadHungry:
-		_f._levelFlagRouteBigBadHungry = static_cast<byte>((_f._levelFlagRouteBigBadHungry & 0xF0) | completedLevelMask);
+		state._levelFlagRouteBigBadHungry = static_cast<byte>((state._levelFlagRouteBigBadHungry & 0xF0) | completedLevelMask);
 		break;
 	case ZmbRouteId::kWhosBayou:
-		_f._levelFlagLoWhosBayouHiDeepDarkForest = static_cast<byte>((_f._levelFlagLoWhosBayouHiDeepDarkForest & 0xF0) | completedLevelMask);
+		state._levelFlagLoWhosBayouHiDeepDarkForest = static_cast<byte>((state._levelFlagLoWhosBayouHiDeepDarkForest & 0xF0) | completedLevelMask);
 		break;
 	case ZmbRouteId::kDeepDarkForest:
-		_f._levelFlagLoWhosBayouHiDeepDarkForest = static_cast<byte>((_f._levelFlagLoWhosBayouHiDeepDarkForest & 0x0F) | (completedLevelMask << 4));
+		state._levelFlagLoWhosBayouHiDeepDarkForest = static_cast<byte>((state._levelFlagLoWhosBayouHiDeepDarkForest & 0x0F) | (completedLevelMask << 4));
 		break;
 	case ZmbRouteId::kMontDespair:
-		_f._levelFlagRouteMontDespair = static_cast<byte>((_f._levelFlagRouteMontDespair & 0xF0) | completedLevelMask);
+		state._levelFlagRouteMontDespair = static_cast<byte>((state._levelFlagRouteMontDespair & 0xF0) | completedLevelMask);
 		break;
 	default:
 		break;
@@ -3300,14 +3266,15 @@ void ZoombiniGameState::syncRouteFirstClearMemorials(ZmbRouteId routeId, int16 d
 
 	// Memorial records use one-based route values.
 	const byte memorialRoute = static_cast<byte>(static_cast<uint16>(routeId) + 1);
+	const ZmbStateFile &state = getCurrentState();
 
 	// A level decrease removes this route's records at the selected level and above.
 	// Malformed zero-level records are removed during the same cleanup.
-	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(_f._memorialRoutes); slotIdx += 1) {
-		if (_f._memorialRoutes[slotIdx] != memorialRoute)
+	for (uint16 slotIdx = 0; slotIdx < ARRAYSIZE(state._memorialRoutes); slotIdx += 1) {
+		if (state._memorialRoutes[slotIdx] != memorialRoute)
 			continue;
 
-		const int16 memorialLevel = _f._memorialLevels[slotIdx];
+		const int16 memorialLevel = state._memorialLevels[slotIdx];
 		if (removeAtOrAboveTarget && (memorialLevel == 0 || difficultyLevel <= memorialLevel))
 			clearFirstClearMemorial(slotIdx);
 	}
@@ -3328,13 +3295,14 @@ bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
 		return false;
 
 	const uint routeIndex = static_cast<uint>(routeId);
-	int16 &routeLevel = _f._routeLevels[routeIndex];
+	ZmbStateFile &state = getCurrentState();
+	int16 &routeLevel = state._routeLevels[routeIndex];
 	if (3 <= routeLevel)
 		return false;
 
 	routeLevel += 1;
 	if (_vm->hasRoutePerfectCounterState())
-		_f._routePerfectCounters[routeIndex] = 0;
+		state._routePerfectCounters[routeIndex] = 0;
 	_routeLevelJustAdvanced = true;
 	return true;
 }
@@ -3344,7 +3312,8 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 diffic
 		return false;
 
 	const uint routeIndex = static_cast<uint>(routeId);
-	int16 &routeLevel = _f._routeLevels[routeIndex];
+	ZmbStateFile &state = getCurrentState();
+	int16 &routeLevel = state._routeLevels[routeIndex];
 	const int16 targetRouteLevel = difficultyLevel - 1;
 	if (routeLevel == targetRouteLevel)
 		return true;
@@ -3360,7 +3329,7 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 diffic
 	}
 
 	if (_vm->hasRoutePerfectCounterState())
-		_f._routePerfectCounters[routeIndex] = 0;
+		state._routePerfectCounters[routeIndex] = 0;
 	syncRouteProgressFlags(routeId, difficultyLevel);
 	syncRouteFirstClearMemorials(routeId, difficultyLevel, routeLevelDecreased);
 
@@ -3371,30 +3340,10 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 diffic
 	return true;
 }
 
-uint16 ZoombiniGameState::getPageIdxInRoute() {
-	switch (_f._currentPage) {
-	case ZmbDestPageKind::kBridge_07:
-	case ZmbDestPageKind::kFerry_10:
-	case ZmbDestPageKind::kFleens_13:
-	case ZmbDestPageKind::kCaves_16:
-		return 1;
-	case ZmbDestPageKind::kTunnels_08:
-	case ZmbDestPageKind::kLilly_11:
-	case ZmbDestPageKind::kHotel_14:
-	case ZmbDestPageKind::kSmoke_17:
-		return 2;
-	case ZmbDestPageKind::kPizza_09:
-	case ZmbDestPageKind::kSlides_12:
-	case ZmbDestPageKind::kNet_15:
-	case ZmbDestPageKind::kMaze_18:
-		return 3;
-	default:
-		return 0;
-	}
-}
-
 bool ZoombiniGameState::isNextPageContainer() {
-	return _f._currentPage == ZmbDestPageKind::kPizza_09 || _f._currentPage == ZmbDestPageKind::kSlides_12 || _f._currentPage == ZmbDestPageKind::kNet_15 || _f._currentPage == ZmbDestPageKind::kMaze_18;
+	const ZmbDestPageKind currentPage = getCurrentState()._currentPage;
+	return currentPage == ZmbDestPageKind::kPizza_09 || currentPage == ZmbDestPageKind::kSlides_12 ||
+		   currentPage == ZmbDestPageKind::kNet_15 || currentPage == ZmbDestPageKind::kMaze_18;
 }
 
 void ZoombiniGameState::markXferContainerArrival(ZmbSrcPageKind srcPage, const ZmbXferRouteInfo &routeInfo) {
@@ -3447,7 +3396,7 @@ int ZoombiniGameState::getAvailableSaveSlot() {
 
 void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 	ZoombiniPage *activePage = _vm->getActivePage();
-	if (!activePage || activePage->getPageCategory() != ZoombiniPageCategory::kInteractive || _f._zmbGeneratedCount == 0)
+	if (!activePage || activePage->getPageCategory() != ZoombiniPageCategory::kInteractive || _journeyState._zmbGeneratedCount == 0)
 		return;
 
 	// Ctrl+N owns the save-current-game preflight. The Options New button does not.
@@ -3471,9 +3420,9 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 	}
 
 	// Initialize a new game state
-	_f = ZmbStateFile();
+	_journeyState = ZmbStateFile();
 	initVariantDefaults();
-	_f._isDirty = true;
+	_journeyState._isDirty = true;
 	clearDebugStateMutation();
 	_debugUnsafeSyntheticStateFlag = false;
 	_currentSaveSlot = kUnsavedNewGame;
@@ -3482,6 +3431,7 @@ void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 	_ferryRuntimeState.resetForNewGame();
 	_vm->syncSoundSettings();
 
+	endPracticeState();
 	_practiceLevel = 0;
 	ZoombiniPageType nextPageType;
 	if (activePage->getPageType() == ZoombiniPageType::kRodMap)
@@ -3496,28 +3446,28 @@ void ZoombiniGameState::initVariantDefaults() {
 	if (!_vm->isVersionFamilyTlcV2())
 		return;
 
-	_f.setTouchSenseEnabled(true);
-	_f.setHelpAudioEnabled(true);
-	_f.setV2TransitionsDisabled(false);
+	_journeyState.setTouchSenseEnabled(true);
+	_journeyState.setHelpAudioEnabled(true);
+	_journeyState.setV2TransitionsDisabled(false);
 }
 
 bool ZoombiniGameState::getEnableTransitions() {
 	if (_vm->isVersionFamilyTlcV2())
-		return !_f.getV2TransitionsDisabled();
+		return !_journeyState.getV2TransitionsDisabled();
 
-	return !_f.getV1TransitionsDisabled();
+	return !_journeyState.getV1TransitionsDisabled();
 }
 
 bool ZoombiniGameState::getEnableTouchSense() {
-	return _vm->isVersionFamilyTlcV2() && _f.getTouchSenseEnabled();
+	return _vm->isVersionFamilyTlcV2() && _journeyState.getTouchSenseEnabled();
 }
 
 bool ZoombiniGameState::getEnableHelpAudio() {
-	return !_vm->isVersionFamilyTlcV2() || _f.getHelpAudioEnabled();
+	return !_vm->isVersionFamilyTlcV2() || _journeyState.getHelpAudioEnabled();
 }
 
 void ZoombiniGameState::setEnableSound(bool val, bool showNotification) {
-	_f.setSfxEnabled(val);
+	_journeyState.setSfxEnabled(val);
 	_vm->syncSoundSettings();
 
 	ZoombiniPage *page = _vm->getActivePage();
@@ -3529,7 +3479,7 @@ void ZoombiniGameState::setEnableSound(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setEnableMusic(bool val, bool showNotification) {
-	_f.setBgmEnabled(val);
+	_journeyState.setBgmEnabled(val);
 	_vm->syncSoundSettings();
 
 	ZoombiniPage *page = _vm->getActivePage();
@@ -3541,7 +3491,7 @@ void ZoombiniGameState::setEnableMusic(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setEnableStickyMouse(bool val, bool showNotification) {
-	_f.setStickyMouseEnabled(val);
+	_journeyState.setStickyMouseEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
 	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
@@ -3552,7 +3502,7 @@ void ZoombiniGameState::setEnableStickyMouse(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setEnableAutoStickyMouse(bool val) {
-	_f.setAutoStickyMouseEnabled(val);
+	_journeyState.setAutoStickyMouseEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
 	if (page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
@@ -3564,9 +3514,9 @@ void ZoombiniGameState::setEnableAutoStickyMouse(bool val) {
 
 void ZoombiniGameState::setEnableTransitions(bool val, bool showNotification) {
 	if (_vm->isVersionFamilyTlcV2()) {
-		_f.setV2TransitionsDisabled(!val);
+		_journeyState.setV2TransitionsDisabled(!val);
 	} else {
-		_f.setV1TransitionsDisabled(!val);
+		_journeyState.setV1TransitionsDisabled(!val);
 	}
 
 	ZoombiniPage *page = _vm->getActivePage();
@@ -3581,7 +3531,7 @@ void ZoombiniGameState::setEnableTouchSense(bool val, bool showNotification) {
 	if (!_vm->isVersionFamilyTlcV2())
 		return;
 
-	_f.setTouchSenseEnabled(val);
+	_journeyState.setTouchSenseEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
 	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
@@ -3598,7 +3548,7 @@ void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNotification) {
 	if (!_vm->isVersionFamilyTlcV2())
 		return;
 
-	_f.setHelpAudioEnabled(val);
+	_journeyState.setHelpAudioEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
 	if (showNotification && page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
@@ -3609,7 +3559,7 @@ void ZoombiniGameState::setEnableHelpAudio(bool val, bool showNotification) {
 }
 
 void ZoombiniGameState::setLessActionEnabled(bool val) {
-	_f.setLessActionEnabled(val);
+	_journeyState.setLessActionEnabled(val);
 
 	ZoombiniPage *page = _vm->getActivePage();
 	if (page && page->getPageCategory() == ZoombiniPageCategory::kInteractive) {
@@ -3635,15 +3585,16 @@ int16 ZoombiniGameState::generateRandomPack(int16 count) {
 }
 
 int16 ZoombiniGameState::generatePickerRandomPack() {
+	ZmbStateFile &state = getCurrentState();
 	// A partial Isle pack represents the Picker-side Snoids that the debug
 	// replacement is allowed to consume. Limit the replacement to that count.
-	const int16 isleCount = countOccupiedSnoidsInPack(_f._zmbPackIsle);
+	const int16 isleCount = countOccupiedSnoidsInPack(state._zmbPackIsle);
 	int16 maxCount = 16;
 	if (0 < isleCount && isleCount < maxCount)
 		maxCount = isleCount;
 
 	// Picker stops creating Snoids at the 625-entry roster limit.
-	const int16 remainingGenerated = 625 - _f._zmbGeneratedCount;
+	const int16 remainingGenerated = 625 - state._zmbGeneratedCount;
 	if (remainingGenerated < maxCount)
 		maxCount = remainingGenerated;
 	maxCount = MAX<int16>(maxCount, 0);
@@ -3652,7 +3603,8 @@ int16 ZoombiniGameState::generatePickerRandomPack() {
 }
 
 int16 ZoombiniGameState::generateRandomPack(int16 maxCount, bool usePickerGenerationRules) {
-	ZmbStateActivePack &pack = _f._zmbPackActive;
+	ZmbStateFile &state = getCurrentState();
+	ZmbStateActivePack &pack = state._zmbPackActive;
 	const int16 previousOccupiedCount = countOccupiedSnoidsInPack(pack);
 	pack.clearEntries();
 	pack.setSkipOccupiedEntries(false);
@@ -3667,7 +3619,7 @@ int16 ZoombiniGameState::generateRandomPack(int16 maxCount, bool usePickerGenera
 			traits._eyes = static_cast<byte>(_vm->_rnd->getRandomNumber(1, 5));
 			traits._nose = static_cast<byte>(_vm->_rnd->getRandomNumber(1, 5));
 			traits._feet = static_cast<byte>(_vm->_rnd->getRandomNumber(1, 5));
-			canGenerate = traits.isComplete() && _f._twinGenStatus[traits.snoidId()] < 2;
+			canGenerate = traits.isComplete() && state._twinGenStatus[traits.snoidId()] < 2;
 		}
 
 		if (!usePickerGenerationRules) {
@@ -3689,7 +3641,7 @@ int16 ZoombiniGameState::generateRandomPack(int16 maxCount, bool usePickerGenera
 							traits._eyes = static_cast<byte>(eye + 1);
 							traits._nose = static_cast<byte>(nose + 1);
 							traits._feet = static_cast<byte>(feet + 1);
-							if (_f._twinGenStatus[traits.snoidId()] < 2) {
+							if (state._twinGenStatus[traits.snoidId()] < 2) {
 								canGenerate = true;
 								break;
 							}
@@ -3709,8 +3661,8 @@ int16 ZoombiniGameState::generateRandomPack(int16 maxCount, bool usePickerGenera
 			break;
 
 		if (usePickerGenerationRules) {
-			_f._twinGenStatus[traits.snoidId()] += 1;
-			_f._zmbGeneratedCount += 1;
+			state._twinGenStatus[traits.snoidId()] += 1;
+			state._zmbGeneratedCount += 1;
 		}
 		generatedCount += 1;
 	}
@@ -3725,7 +3677,8 @@ int16 ZoombiniGameState::subtractDebugGeneratedSnoidsFromIsle(int16 generatedCou
 	if (generatedCount < 1)
 		return 0;
 
-	ZmbStateActivePack &islePack = _f._zmbPackIsle;
+	ZmbStateFile &state = getCurrentState();
+	ZmbStateActivePack &islePack = state._zmbPackIsle;
 	const int16 removeLimit = MIN<int16>(generatedCount, countOccupiedSnoidsInPack(islePack));
 	int16 removedCount = 0;
 	const int16 entryLimit = CLIP<int16>(islePack.getPackZmbCount(), 0, islePack.getEntryCapacity());
@@ -3737,10 +3690,10 @@ int16 ZoombiniGameState::subtractDebugGeneratedSnoidsFromIsle(int16 generatedCou
 			continue;
 
 		const int16 snoidTraitId = entry.getTraits().snoidId();
-		if (0 < _f._twinGenStatus[snoidTraitId])
-			_f._twinGenStatus[snoidTraitId] -= 1;
-		if (0 < _f._zmbGeneratedCount)
-			_f._zmbGeneratedCount -= 1;
+		if (0 < state._twinGenStatus[snoidTraitId])
+			state._twinGenStatus[snoidTraitId] -= 1;
+		if (0 < state._zmbGeneratedCount)
+			state._zmbGeneratedCount -= 1;
 		entry = ZmbStateActiveEntry();
 		removedCount += 1;
 	}

@@ -544,8 +544,6 @@ private:
 	void generateBaseNodes();
 	/** Initialize the SCRS animation table for a runner based on feet trait. */
 	void initRunnerAnimTable(int16 runnerIdx);
-	/** Initialize all active Zoombini animation tables. */
-	void initAllRunnerAnimTables();
 
 	// Path selection ---
 
@@ -741,9 +739,6 @@ private:
 
 	/** Get trait value by category (1=hair, 2=eye, 3=nose, 4=feet). */
 	static byte getTraitByCategory(const ZmbTrait &trait, int16 category);
-
-	/** Get MazeRunnerState for a runner index. */
-	MazeRunnerState *getRunnerState(int16 runnerIdx);
 
 	/** Find runner index by snoid ID. */
 	int16 findRunnerBySnoidId(uint16 snoidId) const;
@@ -2045,8 +2040,6 @@ private:
 	bool _gridInitialized = false;
 	/** Whether the Maze frame loop may consume its runner and animation queues. */
 	bool _queueProcessingEnabled = false;
-	/** Whether all runner SCRS tables have been initialized. */
-	bool _animTablesInitialized = false;
 	/** Whether each launcher seat is present in the selected layout header. */
 	bool _launcherSeatEnabled[14] = {};
 

@@ -325,9 +325,6 @@ public:
 	/** Return whether this page permits the game-owned Save/Load dialog. */
 	virtual bool canOpenSaveLoadDialog() const { return false; }
 
-	/** Show a localized warning overlay for the requested duration. */
-	void showWarningBox(const Common::U32String &text, uint32 durationSeconds = DEFAULT_WARNING_BOX_SHOW_SECONDS);
-
 	/** Start the page fade-in transition. */
 	void onFadeIn();
 	/** Start the page fade-out transition. */
@@ -584,10 +581,8 @@ public:
 	 * Only blits shapes and computes sort rects.
 	 */
 	ZmbRenderResult blitShapes(ZmbFeature *feature);
-	/** Blit a feature with the page's active Color Assist remap. */
-	ZmbRenderResult blitShapesWithColorAssist(ZmbFeature *feature);
 	/** Blit a feature using an explicitly selected palette remap mode. */
-	ZmbRenderResult blitShapesInternal(ZmbFeature *feature, ZoombiniGraphics::PaletteRemapMode remapColorAssistPalette);
+	ZmbRenderResult blitShapes(ZmbFeature *feature, ZoombiniGraphics::PaletteRemapMode remapColorAssistPalette);
 
 	/** Select the SCRB frame that should be rendered at the current frame counter. */
 	int32 selectRenderFrame(ZmbFeature *feature);
@@ -806,12 +801,6 @@ public:
 
 	/** Occupancy: 0 = empty, else = feature ID of seated snoid. */
 	uint16 _drawOnRegOccupancy[kMaxDrawOnRegSlots] = {};
-
-	/**
-	 * Register a draw-on-reg slot manually (for pages with custom layout parsing).
-	 * Returns the 0-based slot index.
-	 */
-	int16 registerDrawOnRegSlot(ZmbFeature *runner, const Common::Point &snapPos);
 
 	/** Override the snap position of an existing slot. */
 	void setDrawOnRegSnapPosition(int16 slotIdx, const Common::Point &pos);
@@ -1442,28 +1431,6 @@ protected:
 
 	/** Number of frames used by generic button press animations. */
 	static constexpr uint32 BUTTON_PRESS_ANIMATION_FRAMES = 4;
-	/** Default warning-box duration in seconds. */
-	static constexpr uint32 DEFAULT_WARNING_BOX_SHOW_SECONDS = 4;
-	/** Outer border palette used by warning boxes. */
-	static constexpr uint32 WARNING_BOX_OUTER_COLOR = ZoombiniGraphics::kColor29_Brown;
-	/** Inner border palette used by warning boxes. */
-	static constexpr uint32 WARNING_BOX_INNER_COLOR = ZoombiniGraphics::kColor27_Red;
-	/** Fill palette used by warning boxes. */
-	static constexpr uint32 WARNING_BOX_FILL_COLOR = ZoombiniGraphics::kColor2B_Yellow;
-	/** Text palette used by warning boxes. */
-	static constexpr uint32 WARNING_BOX_TEXT_COLOR = ZoombiniGraphics::kColor2D_Black;
-	/** Authored screen rectangle for the warning overlay. */
-	const Common::Rect _warningBoxRect = Common::Rect(0x0178, 0x000C, 0x0274, 0x0048);
-	/** Current warning text displayed by the warning overlay. */
-	Common::U32String _warningBoxText;
-	/** Animation frame at which the warning overlay is hidden. */
-	uint32 _warningBoxShowUntilFrame = 0;
-	/** Feature runner used to render the warning overlay. */
-	ZmbFeature *_warningBoxFeature = nullptr;
-	/** Prepare warning-box hotspots and visibility. */
-	bool warningBox_preRender(ZmbFeature *feature);
-	/** Render warning-box text after its background shapes. */
-	void warningBox_onPostRender(ZmbFeature *feature);
 
 	/** AnimateState - Helper for press-animation and toggle-animation handling */
 	class AnimateState {
