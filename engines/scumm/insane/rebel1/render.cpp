@@ -1773,7 +1773,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	_hudDirtyFlag = 0xFF;
 }
 
-// Each route has up to 3 attack windows. -2 means disabled.
+// Each route has up to 3 attack windows, indexed by ANM-local frame. -2 means disabled.
 const int16 InsaneRebel1::kWalkerAttackWindow1[3] = { 2588, 2323, 877 };
 const int16 InsaneRebel1::kWalkerAttackWindow2[3] = { 1709, 1444, -2 };
 const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
@@ -1781,7 +1781,7 @@ const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
 void InsaneRebel1::updateLevel8WalkerState() {
 	if (_walkerHealth >= 11) {
 		_walkerHealth = (int16)(100 - (_killCount + (_killCount >> 2)));
-	} else if (_walkerHealth > 0 && (_gameCounter & 3) == 0) {
+	} else if (_walkerHealth > 0 && (_currentSmushFrame & 3) == 0) {
 		_walkerHealth--;
 	}
 
@@ -1791,7 +1791,7 @@ void InsaneRebel1::updateLevel8WalkerState() {
 	}
 
 	int route = CLIP(_levelRouteIndex, 0, 2);
-	uint16 fc = (uint16)_gameCounter;
+	uint16 fc = (uint16)_currentSmushFrame;
 
 	const int16 *windows[3] = {
 		&kWalkerAttackWindow1[route],
@@ -1831,7 +1831,7 @@ void InsaneRebel1::updateLevel8WalkerState() {
 				_walkerBranchChoice = (_shipPosX < 0xA0) ? 1 : 2;
 			}
 		} else {
-			if ((_gameCounter & 7) == 0)
+			if ((fc & 7) == 0)
 				playSfx(kSfxLockOn, 127, 0);
 		}
 	}
@@ -1853,12 +1853,14 @@ void InsaneRebel1::updateLevel8WalkerState() {
 				newRoute = 2;
 		}
 
-		if (newRoute != 0 && newRoute != route) {
+		if (newRoute != 0) {
 			_pendingRouteIndex = newRoute;
-			_pendingRouteCutoverFrame = _gameCounter + 7;
-			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
-			debugC(DEBUG_INSANE, "L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
-				route, newRoute, (unsigned)_gameCounter, _shipPosX,
+			_pendingRouteCutoverFrame = _currentSmushFrame + 7;
+			// The destination starts at frame 1, advanced by the source tail
+			// already displayed. This also applies when repeating the same route.
+			_pendingRouteStartFrame = 1 + (_pendingRouteCutoverFrame - _currentSmushFrame);
+			debugC(DEBUG_INSANE, "L8 branch: route=%d -> %d at localFrame=%u shipX=%d resumeLocalFrame=%d cutoverFrame=%d",
+				route, newRoute, (unsigned)fc, _shipPosX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 		}
 		_walkerBranchChoice = 0;
@@ -1871,7 +1873,7 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	if (_currentLevel != 7)
 		return;
 
-	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_gameCounter & 2) != 0)) {
+	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_currentSmushFrame & 2) != 0)) {
 		int16 projX = 0x61, projY = 0x8D;
 		projectGameplayPoint(projX, projY);
 		projX = (int16)(0x61 - ((projX - 0x61) >> 2));
@@ -1889,7 +1891,7 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		&kWalkerAttackWindow2[route],
 		&kWalkerAttackWindow3[route]
 	};
-	int16 frameNum = (int16)(uint16)_gameCounter;
+	int16 frameNum = (int16)(uint16)_currentSmushFrame;
 
 	bool inWindow = false;
 	bool inDirectionalPhase = false;
@@ -1933,7 +1935,7 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 				viewportX + 0xA8 - parallaxX, viewportY + 0x93 - parallaxY, "<<u");
 		}
 	} else {
-		if ((_gameCounter & 4) == 0) {
+		if ((frameNum & 4) == 0) {
 			int16 projX = 0, projY = 0;
 			projectGameplayPoint(projX, projY);
 			int16 drawX = (int16)(0xA9 - (projX >> 2));

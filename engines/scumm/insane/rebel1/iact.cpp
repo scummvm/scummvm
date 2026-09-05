@@ -694,8 +694,8 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		return;
 
 	if ((_currentLevel == 6 || _currentLevel == 7) && _pendingRouteIndex >= 0) {
-		const uint32 routeFrame = (_currentLevel == 6 && curFrame >= 0) ?
-			(uint32)curFrame : (uint32)_gameCounter;
+		const uint32 routeFrame = (curFrame >= 0) ?
+			(uint32)curFrame : (uint32)_currentSmushFrame;
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
@@ -707,9 +707,8 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 			_vm->_smushVideoShouldFinish = true;
 			const int32 resumeFrame = (_currentLevel == 6 && _pendingRouteStartFrame < 0) ?
 				0 : _pendingRouteStartFrame;
-			debugC(DEBUG_INSANE, "L%d cutover: route=%d -> %d at %s=%u (resumeFrame=%d)",
+			debugC(DEBUG_INSANE, "L%d cutover: route=%d -> %d at localFrame=%u (resumeFrame=%d)",
 				_currentLevel + 1, _levelRouteIndex, _pendingRouteIndex,
-				_currentLevel == 6 ? "localFrame" : "frame",
 				(unsigned)routeFrame, (int)resumeFrame);
 		}
 		return;
@@ -1512,7 +1511,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 
 	bool level8WalkerPlayerHit = false;
 	if (_currentLevel == 7) {
-		const uint16 walkerFrame = (uint16)_gameCounter;
+		const uint16 walkerFrame = (uint16)_currentSmushFrame;
 		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
 			_perspectiveX, _perspectiveY);
 		// Player collision and boss damage are tracked separately.
