@@ -57,6 +57,7 @@ const uint kScene4040CyclicBackgroundLayer = 1;
 const uint kScene4040CandilOverlayChunk = 14;
 const uint kScene4040CandilOverlayDescriptorCount = 9;
 const byte kScene4040CandilItem = 0x3c;
+const byte kScene4040DemoCordItem = 0x1b;
 const byte kScene4040CandilSceneItem = 8;
 const byte kScene4040PaletteOverrideColor = 0xfb;
 const byte kScene4040ActorPaletteFirstColor = 0xd0;
@@ -198,10 +199,10 @@ bool Scene4040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 309: // Mirar cuerda (look at rope).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 310: // Coger candil (take oil lamp): item 0x3c.
+	case 310: // Coger candil/cordon (take oil lamp/cord).
 		takeCandil();
 		return true;
-	case 311: // Mirar candil (look at oil lamp).
+	case 311: // Mirar candil/cordon (look at oil lamp/cord).
 		beginSecondarySpeechLine(9, 0);
 		return true;
 	default:
@@ -513,11 +514,15 @@ void Scene4040::takeCandil() {
 
 	beginSecondarySpeechLine(8, 0);
 	state.scene4040CandilTaken = true;
-	runActorReplacement(ActionOverlaySpec(kScene4040CandilOverlayChunk,
-		kScene4040CandilOverlayDescriptorCount, kScene4040FrameMillis)
-		.patchAt(3, 1)
-		.noFinalFrameDelay());
-	addInventoryItem(kScene4040CandilItem);
+	const bool spanishDemo = _vm->isDemo() && _vm->getLanguage() == Common::ES_ESP;
+	ActionOverlaySpec pickup(kScene4040CandilOverlayChunk,
+		kScene4040CandilOverlayDescriptorCount, kScene4040FrameMillis);
+	if (spanishDemo)
+		pickup.holdFirstFrame().patchAt(4, 1);
+	else
+		pickup.patchAt(3, 1);
+	runActorReplacement(pickup.noFinalFrameDelay());
+	addInventoryItem(spanishDemo ? kScene4040DemoCordItem : kScene4040CandilItem);
 	_soundBank0.playSample(1, 100);
 }
 

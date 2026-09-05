@@ -378,7 +378,9 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 	if (selector == 5 || selector == 0xff) {
 		if (state.scene4010PillboxPickupState == 1) {
-			if (_sceneChunkTable.isValidChunk(10))
+			// The Spanish demo already has the branch in its background.
+			const bool spanishDemo = _vm->isDemo() && _vm->getLanguage() == Common::ES_ESP;
+			if (!spanishDemo && _sceneChunkTable.isValidChunk(10))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 		} else {
 			removeColorMapItem(7);
@@ -622,6 +624,9 @@ void Scene4010::runFirstEntrySequence() {
 	} else {
 		setActiveActorPose(0x00c8, 0x01ae, 1);
 	}
+
+	if (_vm->isDemo() && _vm->getLanguage() == Common::ES_ESP)
+		beginSecondarySpeechLine(0, 0);
 }
 
 void Scene4010::runEntryFromRightSide() {

@@ -115,6 +115,10 @@ const byte kScene4060CardStateMirrorInstalled = 2;
 const byte kScene4060SecondCardStatePrompted = 1;
 const byte kScene4060SecondCardStateWon = 2;
 
+const byte kScene4060DemoEntryFrameMap[] = {
+	0, 0, 1, 2, 3
+};
+
 const byte kScene4060PokerOpenTableFrames[] = {
 	0x10, 0x11, 0x12, 0x13, 0x14, 0x14, 0x14
 };
@@ -612,25 +616,40 @@ void Scene4060::drawSceneForegroundBlocks(int activeWorldY) {
 }
 
 void Scene4060::runFirstEntrySequence() {
+	const bool spanishDemo = _vm->isDemo() && _vm->getLanguage() == Common::ES_ESP;
 	setActiveActorPose(kScene4060EntryRonWorldX, kScene4060EntryRonWorldY, kScene4060EntryRonFacing);
 	const bool previousHideActiveActor = _actionOverlayPlayer.beginActorReplacement(
 		kScene4060EntryOverlayChunk, kScene4060EntryOverlayDescriptorCount,
-		nullptr, 0);
+		spanishDemo ? kScene4060DemoEntryFrameMap : nullptr,
+		spanishDemo ? ARRAYSIZE(kScene4060DemoEntryFrameMap) : 0);
 	_actionOverlayPlayer.setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
 
 	BlockingSequence sequence(*this);
-	sequence.fadeFromBlack()
-		.sound(0x31)
-		.presentedLayerFrames(_actionOverlayPlayer._layer,
-			AnimationFrameRange(kScene4060EntryOverlayDescriptorCount,
-				kScene4060FrameMillis).noFinalFrameDelay());
+	sequence.fadeFromBlack();
+	if (spanishDemo) {
+		sequence.presentedLayerFrames(_actionOverlayPlayer._layer,
+			AnimationFrameRange(ARRAYSIZE(kScene4060DemoEntryFrameMap),
+				kScene4060FrameMillis).soundAt(1, 0x2f).noFinalFrameDelay());
+	} else {
+		sequence.sound(0x31)
+			.presentedLayerFrames(_actionOverlayPlayer._layer,
+				AnimationFrameRange(kScene4060EntryOverlayDescriptorCount,
+					kScene4060FrameMillis).noFinalFrameDelay());
+	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
 	if (!sequence.completed())
 		return;
 
 	if (!_vm->gameState().scene4060EntryLineSeen) {
+		if (spanishDemo) {
+			sequence.actorPath(SceneActorPose(0x00c2, 0x0133, 1));
+			if (!sequence.completed())
+				return;
+			beginSherilynSpeechLine(kScene4060SherilynResponseRow, 1);
+			sequence.actorPath(SceneActorPose(0x00c2, 0x0133, 3));
+		}
 		sequence.secondarySpeech(0, 0)
 			.commit(_vm->gameState().scene4060EntryLineSeen, true);
 	}
