@@ -115,27 +115,8 @@ void Widget::draw() {
 		}
 		oldClip = g_gui.theme()->swapClipRect(clip);
 
-		// Draw border
-		if (_flags & WIDGET_BORDER) {
-			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
-			                                    ThemeEngine::kWidgetBackgroundBorder);
-			_x += 4;
-			_y += 4;
-			_w -= 8;
-			_h -= 8;
-		}
-
 		// Now perform the actual widget draw
 		drawWidget();
-
-
-		// Restore x/y
-		if (_flags & WIDGET_BORDER) {
-			_x -= 4;
-			_y -= 4;
-			_w += 8;
-			_h += 8;
-		}
 
 		_x = oldX;
 		_y = oldY;
@@ -396,7 +377,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool sca
 		_lowresHotkey = hotkey;
 	}
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -418,7 +399,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 		_lowresHotkey = hotkey;
 	}
 
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -618,7 +599,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, bo
 	: ButtonWidget(boss, x, y, w, h, scale, Common::U32String(), tooltip, cmd, hotkey),
 	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -630,7 +611,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, co
 	: ButtonWidget(boss, name, Common::U32String(), tooltip, cmd, hotkey),
 	  _showButton(true) {
 	Common::fill(_alphaType, _alphaType + ARRAYSIZE(_alphaType), Graphics::ALPHA_OPAQUE);
-	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
@@ -762,7 +743,6 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void CheckboxWidget::setState(bool state) {
 	if (_state != state) {
 		_state = state;
-		//_flags ^= WIDGET_INV_BORDER;
 		markAsDirty();
 	}
 	sendCommand(_cmd, _state);
@@ -842,7 +822,6 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 
 	if (_state != state) {
 		_state = state;
-		//_flags ^= WIDGET_INV_BORDER;
 		markAsDirty();
 	}
 	sendCommand(_cmd, _state);
