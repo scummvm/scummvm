@@ -159,14 +159,14 @@ void ZoombiniShelterBasecamp::executeDeparture() {
 }
 
 void ZoombiniShelterBasecamp::saveBasecampPackState(bool isDeparture) {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	const int16 departingCount = splitActivePackForBasecamp(f._zmbPackActive, getBasecampResidentPack(), isDeparture);
 	getBasecampStoredPopulationCount() -= departingCount;
 	finalizeBasecampStorageForSave();
 }
 
 int16 ZoombiniShelterBasecamp::beginBasecampPackLoad() {
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	int16 arrivingCount = 0;
 	if (0 < f._zmbPackActive.getPackZmbCount()) {
 		arrivingCount = loadDynamicSnoidsFromPack(f._zmbPackActive, _pedestalPoints, kPedestalCount, false, nullptr);
@@ -182,7 +182,7 @@ int16 ZoombiniShelterBasecamp::beginBasecampPackLoad() {
 }
 
 void ZoombiniShelterBasecamp::completeBasecampPackLoad(int16 arrivingCount) {
-	loadDynamicSnoidsFromPack(_vm->_state->_f._zmbPackActive, _pedestalPoints, kPedestalCount, true, nullptr);
+	loadDynamicSnoidsFromPack(_vm->_state->getCurrentState()._zmbPackActive, _pedestalPoints, kPedestalCount, true, nullptr);
 	layoutStaticAndWalkIn(-20, arrivingCount == 0);
 	renderFeatures();
 	if (arrivingCount != 0)
@@ -218,7 +218,7 @@ void ZoombiniShelterBasecamp::updateBasecampGoButtonState(int16 fieldSnoidCount,
 }
 
 void ZoombiniShelterBasecamp::initializeBasecampGoButtonState(int16 fieldSnoidCount, int16 availableSnoidCount) {
-	_isFinalArrival = ZmbTrait::SNOID_MAX <= _vm->_state->_f._zmbGeneratedCount &&
+	_isFinalArrival = ZmbTrait::SNOID_MAX <= _vm->_state->getCurrentState()._zmbGeneratedCount &&
 					  availableSnoidCount < kPedestalCount;
 	updateBasecampGoButtonState(fieldSnoidCount, availableSnoidCount);
 }
@@ -371,7 +371,7 @@ int16 ZoombiniShelterBasecamp::findLastBasecampStorageEntry(
 
 int16 ZoombiniShelterBasecamp::storeBasecampActivePackInStorage(StorageOccupancyTest occupancyTest) {
 	ZmbStateStoredChunk &chunk = getBasecampStorageChunk();
-	const ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+	const ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 	int16 occupiedCount = 0;
 	for (int16 entryIdx = 0; entryIdx < activePack.getPackZmbCount(); entryIdx++) {
 		if (activePack.getEntry(entryIdx).getIsOccupied())

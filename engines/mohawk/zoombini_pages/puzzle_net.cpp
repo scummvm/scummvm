@@ -158,7 +158,7 @@ void ZoombiniPuzzleNet::initStates() {
 	// Less-action mode limits each ambient cycle to two animations instead of three.
 	_idleAnimTrigger = false;
 	_idleAnimCount = 0;
-	_idleAnimMax = _vm->_state->_f.getLessActionEnabled() ? 2 : 3;
+	_idleAnimMax = _vm->_state->isLessActionEnabled() ? 2 : 3;
 	_roundCompleted = false;
 }
 

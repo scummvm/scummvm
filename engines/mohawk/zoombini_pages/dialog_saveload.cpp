@@ -640,7 +640,7 @@ void ZoombiniDialogSaveLoad::longButtons_onButtonAction(ZmbFeature *feature, uin
 			}
 
 			_vm->getActivePage()->close();
-			_vm->setNextPage(_vm->_state->_f.getCurrentPageType());
+			_vm->setNextPage(_vm->_state->getCurrentState().getCurrentPageType());
 
 			_dialogResult = ZoombiniDialogResult::kYes;
 			close();

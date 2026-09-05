@@ -368,9 +368,6 @@ private:
 	 */
 	int16 validateChainAndMarkMatched(int16 startCellIdx);
 
-	/** Find a runner in locked (508) state. */
-	int16 findRunnerInLockedState() const;
-
 	/** Find a runner by matching trait. */
 	int16 findRunnerByMatchingTrait(int16 runnerIdx);
 
@@ -400,9 +397,6 @@ private:
 
 	/** Propagate match through the chain. */
 	void propagateMatchChain(int16 chainIdx);
-
-	/** Select and store a random-priority matching trait for an occupied cell. */
-	int16 checkTraitMatchOutcome(int16 destCellIdx, int16 runnerListIdx, int16 occupiedCellIdx);
 
 	/** Ensure a grid cell has a draw-on-reg feature backing its SCRB transitions. */
 	void ensureCellFeature(int16 cellIdx);
@@ -549,9 +543,6 @@ private:
 	/** Process command queue. */
 	void processCommandQueue(ZmbFeature *feature, ZmbHotspotGroup *hsGroup,
 							 Common::Array<ZmbHotspot> &hotspots);
-
-	/** Invalidate visual rects for redraw. */
-	void invalidateVisualRects(uint16 rectIdx, ZmbFeature *feature);
 
 	// =========================================================================
 	// Static Data Tables

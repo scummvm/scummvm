@@ -327,9 +327,9 @@ bool ZoombiniInteractive::runGlobalDebugAction(GlobalDebugAction action, Common:
 		addExternalDirtyRect(Common::Rect(0, 0, ZoombiniGraphics::kScreenWidth, ZoombiniGraphics::kScreenHeight));
 		output = "Requested a full-screen redraw by merging the whole screen into the external dirty region.\n";
 	} else if (action == GlobalDebugAction::kUnlockRoutes) {
-		_vm->_state->_f.setRouteCompletionFlag(ZmbRouteId::kBigBadHungry, 0);
-		_vm->_state->_f.setRouteCompletionFlag(ZmbRouteId::kWhosBayou, 0);
-		_vm->_state->_f.setRouteCompletionFlag(ZmbRouteId::kMontDespair, 0);
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kBigBadHungry, 0);
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kWhosBayou, 0);
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kMontDespair, 0);
 		_vm->_state->markDebugStateMutation();
 		_vm->_state->markSaveBeforeQuitPending();
 		output = "Built-in route unlock bits applied.\n";
@@ -760,15 +760,6 @@ void ZoombiniInteractive::bindEmbeddedControlFeature(ZmbFeature *feature) {
 	_helpButtonFeature = feature;
 }
 
-void ZoombiniInteractive::manualLinkBehindStandardControls(ZmbFeature *feature) {
-	if (_goMapButtonsFeature)
-		manualLinkBefore(feature, _goMapButtonsFeature);
-	else if (_helpButtonFeature)
-		manualLinkBefore(feature, _helpButtonFeature);
-	else
-		manualLinkAtEnd(feature);
-}
-
 void ZoombiniInteractive::updateTlcButtonHover(const Common::Point &absPos) {
 	// v2.0US release only: shared three-button hover visuals.
 	if (!_vm->isVersionFamilyTlcV2())
@@ -876,7 +867,7 @@ void ZoombiniInteractive::executeDeparture() {
 	if (_vm->_state->inPracticeMode()) {
 		// A completed practice puzzle discards its temporary pack and returns directly to RodMap;
 		// it must not save the pack, advance a route, or use Xfer.
-		ZmbStateActivePack &activePack = _vm->_state->_f._zmbPackActive;
+		ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 		activePack.clearEntries();
 		activePack.setSkipOccupiedEntries(true);
 		activePack.setSkipUnoccupiedEntries(true);
@@ -896,7 +887,7 @@ void ZoombiniInteractive::executeDeparture() {
 			routeLevel -= 1;
 		const int16 activeRouteId = _vm->_state->readActivePageRouteId();
 		if (activeRouteId != -1 && _vm->_state->isNextPageContainer()) {
-			_vm->_state->_f.setRouteCompletionFlag(static_cast<ZmbRouteId>(activeRouteId), routeLevel);
+			_vm->_state->getCurrentState().setRouteCompletionFlag(static_cast<ZmbRouteId>(activeRouteId), routeLevel);
 		}
 
 		if (_departXferSrcSiPage != ZmbSrcPageKind::kMinus1) {
@@ -909,7 +900,7 @@ void ZoombiniInteractive::executeDeparture() {
 
 void ZoombiniInteractive::routeNonOccupiedToRestingPack() {
 	// Handle per-puzzle level flags, non-occupied Snoid routing, perfect streak tracking, and route level advancement.
-	ZmbStateFile &f = _vm->_state->_f;
+	ZmbStateFile &f = _vm->_state->getCurrentState();
 	ZmbDestPageKind currentDiPage = f._currentPage;
 
 	// Only puzzle pages (DI 7-18) participate in route tracking.
@@ -1117,18 +1108,6 @@ void ZoombiniInteractive::startDepartWalkAnimation(const Common::Point &target, 
 	}
 }
 
-bool ZoombiniInteractive::isDepartWalkComplete() const {
-	// All snoids idle or off-screen right edge.
-	for (ZmbFeatureList<ZmbSnoid>::const_iterator it = _snoidMap.begin(); it != _snoidMap.end(); it++) {
-		if (!(*it)->isPackSnoid())
-			continue;
-		const ZmbSnoid *snoid = *it;
-		if (snoid->getAnimState() != kSnoidAnimState000_Idle && snoid->getPointLoc().x < 640)
-			return false;
-	}
-	return true;
-}
-
 void ZoombiniInteractive::playDepartSfx(int16 systemSoundId) {
 	Audio::SoundHandle *handle = _vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, systemSoundId), Audio::Mixer::kSFXSoundType);
 	_hasDepartSfxHandle = (handle != nullptr);
@@ -1147,7 +1126,7 @@ void ZoombiniInteractive::onMapButtonActivated() {
 		return;
 
 	saveStateBeforeMapTransition();
-	_vm->_state->_f._isDirty = true;
+	_vm->_state->getCurrentState()._isDirty = true;
 
 	_vm->setNextPage(ZoombiniPageType::kRodMap);
 	close();

@@ -108,8 +108,6 @@ protected:
 	bool expandBasecampStorageAtLeftBoundary() override;
 	/** Compact occupied storage entries toward the first storage slot. */
 	void compactStorage();
-	/** Reset the rectangle used while sorting and dragging storage entries. */
-	void resetStorageSortRect();
 
 	// Apply Basecamp2's column layout and rectangle hit-test contract.
 	// Basecamp One uses different coordinates and the same selection rule.

@@ -4317,16 +4317,6 @@ void ZoombiniPuzzleMaze::initRunnerAnimTable(int16 runnerIdx) {
 	rs.scrsTable[11] = static_cast<uint16>(feet - 1); // feet index (0-based)
 }
 
-void ZoombiniPuzzleMaze::initAllRunnerAnimTables() {
-	if (_animTablesInitialized)
-		return;
-	_animTablesInitialized = true;
-
-	for (int16 i = 0; i < _runnerCount; i++) {
-		initRunnerAnimTable(i);
-	}
-}
-
 // =================================================================
 // Path selection helpers
 // =================================================================
@@ -5466,12 +5456,6 @@ byte ZoombiniPuzzleMaze::getTraitByCategory(const ZmbTrait &trait, int16 categor
 	return trait.getTraitValue(ZmbTrait::traitKindFromIndex(category - 1));
 }
 
-ZoombiniPuzzleMaze::MazeRunnerState *ZoombiniPuzzleMaze::getRunnerState(int16 runnerIdx) {
-	if (runnerIdx < 0 || kMaxRunners <= runnerIdx)
-		return nullptr;
-	return &_runnerStates[runnerIdx];
-}
-
 int16 ZoombiniPuzzleMaze::findRunnerBySnoidId(uint16 snoidId) const {
 	for (int16 i = 0; i < _runnerCount; i++) {
 		if (_runnerSnoidIds[i] == snoidId)
@@ -5914,7 +5898,6 @@ void ZoombiniPuzzleMaze::handleGridDrop(int16 seatIdx, ZmbSnoid *snoid) {
 	snoid->setAnimState(kSnoidAnimState000_Idle);
 	snoid->setFlags(ZmbFeature::FLAG_00000001_TYPE_SNOID | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
 	initRunnerAnimTable(runnerIdx);
-	_animTablesInitialized = true;
 
 	if (_placedRunnerCount < 10) {
 		_placedRunnerIndices[_placedRunnerCount] = runnerIdx;

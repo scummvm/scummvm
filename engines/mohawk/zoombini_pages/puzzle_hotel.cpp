@@ -231,7 +231,7 @@ void ZoombiniPuzzleHotel::loadFeatures() {
 		break;
 	default:
 		// Level 1 uses type 0 on its first visit and types 1-3 thereafter.
-		if (1 < _vm->_state->getPageVisitCountFromPageFlag(_vm->_state->_f._pageFlagHotel))
+		if (1 < _vm->_state->getPageVisitCountFromPageFlag(_vm->_state->getCurrentState()._pageFlagHotel))
 			_openingAnimVariant = _vm->_rnd->getRandomNumber(1, 3);
 		break;
 	}

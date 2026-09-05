@@ -619,12 +619,6 @@ protected:
 	void startDepartWalkAnimation(const Common::Point &target, uint32 stagger = 45);
 
 	/**
-	 * Poll whether all departure-walking snoids have finished.
-	 * Returns true when every snoid is idle or off-screen.
-	 */
-	bool isDepartWalkComplete() const;
-
-	/**
 	 * Play the departure SFX and track its handle for completion polling.
 	 * @param systemSoundId  System resource ID of the departure SFX (default 996).
 	 */
@@ -751,8 +745,6 @@ protected:
 
 	/** Return whether @p pos lies inside any configured navigation or help button. */
 	bool isPointInControlButtonRect(const Common::Point &pos) const;
-	/** Relink @p feature immediately behind the standard navigation and help controls. */
-	void manualLinkBehindStandardControls(ZmbFeature *feature);
 
 private:
 	/**
