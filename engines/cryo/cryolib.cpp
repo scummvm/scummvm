@@ -263,8 +263,8 @@ void CLBlitter_FillScreenView(unsigned int fill) {
 
 ///// events wrapper
 
-void CryoEngine::pollEvents() {
-	g_system->delayMillis(10);
+void CryoEngine::pollEvents(uint32 delayMs) {
+	g_system->delayMillis(delayMs);
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -309,8 +309,8 @@ void CryoEngine::setMousePosition(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
 
-bool CryoEngine::isMouseButtonDown() {
-	pollEvents();
+bool CryoEngine::isMouseButtonDown(uint32 delayMs) {
+	pollEvents(delayMs);
 	return _mouseButton != 0;
 }
 
