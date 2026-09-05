@@ -286,7 +286,7 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 			if (file) {
 				int saveVersion = file->readByte();
 
-				if (saveVersion != kSavegameVersion) {
+				if (saveVersion < kSavegameVersionMin || saveVersion > kSavegameVersion) {
 					warning("Savegame of incompatible version");
 					delete file;
 					continue;
@@ -319,7 +319,7 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 	if (file) {
 		int saveVersion = file->readByte();
 
-		if (saveVersion != kSavegameVersion) {
+		if (saveVersion < kSavegameVersionMin || saveVersion > kSavegameVersion) {
 			warning("Savegame of incompatible version");
 			delete file;
 			return SaveStateDescriptor();
