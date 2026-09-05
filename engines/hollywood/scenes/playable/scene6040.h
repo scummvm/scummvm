@@ -46,7 +46,7 @@ private:
 	void runPaintCanPickup();
 	void runWireInspectionAnimation();
 	void runCutWireWithTool();
-	void runWirePickup();
+	void runLidRemoval();
 	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 
