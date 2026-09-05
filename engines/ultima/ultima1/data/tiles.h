@@ -59,11 +59,11 @@ enum LocationTileId {
 	CTILE_WALL = 0,
 	CTILE_GROUND = 1,
 	CTILE_PLAYER = 18,
-	CTILE_GUARD_MB = 51,
-	// Unnamed in the original - both are "wishing well"-style tiles that
+	// Unnamed in the original - all three are "wishing well"-style tiles that
 	// dropPence/dropPenceCastle give a random bonus for dropping coins on
-	CTILE_52 = 52,
-	CTILE_53 = 53,
+	CTILE_DROP1 = 51,
+	CTILE_DROP2 = 52,
+	CTILE_DROP3 = 53,
 	// Shop counter tiles. Each shop spans two adjacent tiles - the even one
 	// is just the other half of the counter, while the odd one is also the
 	// tile get/steal work against

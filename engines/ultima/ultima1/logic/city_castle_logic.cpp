@@ -321,7 +321,7 @@ int CityCastleLogic::checkAt(int x, int y) const {
 	if (tile == Data::CTILE_BLANK)
 		return tile;
 
-	if (tile == Data::CTILE_GROUND || tile >= Data::CTILE_GUARD_MB)
+	if (tile == Data::CTILE_GROUND || tile >= Data::CTILE_DROP1)
 		return -1;
 
 	return 0;

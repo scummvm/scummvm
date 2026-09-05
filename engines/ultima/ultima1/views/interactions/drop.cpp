@@ -246,7 +246,7 @@ void Drop::dropPenceCityBonus(int total) {
 	auto &sg = _G(savegame);
 	int tile = _G(map).getTileAt(sg._locationPosition.x, sg._locationPosition.y);
 
-	if (tile != Data::CTILE_GUARD_MB) {
+	if (tile != Data::CTILE_DROP1) {
 		writeString("Ok!");
 		return;
 	}
@@ -275,7 +275,7 @@ void Drop::dropPenceCastleBonus(int total) {
 	auto &sg = _G(savegame);
 	int tile = _G(map).getTileAt(sg._locationPosition.x, sg._locationPosition.y);
 
-	if (tile != Data::CTILE_GUARD_MB && tile != Data::CTILE_52 && tile != Data::CTILE_53) {
+	if (tile != Data::CTILE_DROP1 && tile != Data::CTILE_DROP2 && tile != Data::CTILE_DROP3) {
 		writeString("Ok!");
 		return;
 	}
@@ -283,11 +283,11 @@ void Drop::dropPenceCastleBonus(int total) {
 	writeString("Shazam!");
 	g_engine->playFX(5);
 
-	if (tile == Data::CTILE_53) {
+	if (tile == Data::CTILE_DROP3) {
 		sg._food += total * 3;
 		redrawStats();
 
-	} else if (tile == Data::CTILE_52) {
+	} else if (tile == Data::CTILE_DROP2) {
 		if (total >= 10) {
 			int weaponIdx = g_engine->getRandomNumber(1, 15);
 			if (sg._weapons[weaponIdx] < 255)
@@ -295,7 +295,7 @@ void Drop::dropPenceCastleBonus(int total) {
 		}
 
 	} else {
-		// CTILE_GUARD_MB - boost a random attribute (never Hits), capped at 99
+		// CTILE_51 - boost a random attribute (never Hits), capped at 99
 		int attrIdx = g_engine->getRandomNumber(1, 6);
 		int16 *attr;
 		switch (attrIdx) {
