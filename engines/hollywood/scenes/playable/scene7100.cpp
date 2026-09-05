@@ -149,7 +149,7 @@ const Scene7100DialogueSeedRecord kScene7100RescueDialogueSeedRecords[] = {
 PlayableSceneConfig scene7100Config() {
 	PlayableSceneConfig config(7100,
 		SceneResourceLayout(21, 5, 20),
-		SceneViewport(kScene7100ViewportXOffset),
+		SceneViewport(kScene7100ViewportXOffset, 0, kScene7100ViewportXOffset),
 		SceneActorPose(kScene7100EntryX, kScene7100EntryY, kScene7100EntryFacing));
 	config.entrySequenceOwnsFirstPresentation = true;
 	return config;
@@ -1015,8 +1015,8 @@ void Scene7100::handleCaptureRat() {
 			kScene7100FrameMillis)
 			.soundAt(0x0e, 0x16));
 	}
-	sequence.secondarySpeech(0x1a, 1)
-		.commit(_environmentState, (byte)4)
+	sequence.commit(_environmentState, (byte)4)
+		.secondarySpeech(0x1a, 1)
 		.actorPath(SceneActorPose(0x0ad, 0x17b, 5))
 		.secondarySpeech(0x10, 0)
 		.actorReplacement(ActionOverlaySpec(20, kScene7100Chunk20DescriptorCount,
