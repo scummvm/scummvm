@@ -1035,7 +1035,7 @@ struct GameplayState {
 	byte scene6030CoffeeState;
 	bool scene6040EntryLineSeen;
 	bool scene6040PaintCanTaken;
-	byte scene6040WireState;
+	byte scene6040WireState; // 0: lid present, 1: wire exposed, 2: wire taken.
 	bool scene6050MuseumInteriorUnlocked;
 	bool scene6050GuardPresent;
 	bool scene6050GuardAllowsEntry;
