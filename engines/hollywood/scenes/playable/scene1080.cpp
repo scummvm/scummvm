@@ -1,0 +1,563 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/hollywood.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
+#include "hollywood/scenes/playable/scene1080.h"
+#include "hollywood/scenes/shared_frame_sequences.h"
+
+namespace Hollywood {
+
+const uint16 kScene1080FirstState = 0x0438;
+const uint16 kScene1080ExitStateBallroom = 0x042f;
+const uint16 kScene1080ExitStatePantry = 0x0442;
+const uint16 kScene1080ViewportXOffset = 0x00a0;
+const uint16 kScene1080ViewportMinXOffset = 0x0068;
+const uint16 kScene1080ViewportMaxXOffset = 0x00a8;
+const uint kScene1080ActorBankTableEntry = 0x0000;
+const uint kScene1080ActorPaletteTableEntry = 0x00cc;
+const uint kScene1080Resource003RowsOffsetIndex = 0x0000;
+const uint32 kScene1080SpeechCueDescriptorTableOffset = 0x1135;
+const uint32 kScene1080FrameMillis = 75;
+const uint32 kScene1080FrancoisIdleFrameMillis = 75;
+const uint32 kScene1080FrancoisWorkFrameMillis = 60;
+const uint kScene1080ForegroundDescriptorCount = 5;
+const uint kScene1080FrancoisDescriptorCount = 0x13;
+const uint kScene1080FrancoisActionDescriptorCount = 0x1c;
+const uint kScene1080BalloonDescriptorCount = 8;
+const byte kScene1080FrancoisSpeechGroup = 1;
+const byte kScene1080DialogueNoResponseFrame = 0xff;
+const uint kScene1080DialogueChoiceRecordCount = 10 * 10 * 7;
+const uint kScene1080BrainQuestionRecord = 70;
+const uint kScene1080FrankensteinBrainQuestionRecord = 71;
+const byte kScene1080FrancoisWorkSoundFirstCue = 0x34;
+const byte kScene1080FrancoisWorkSoundCueCount = 3;
+const byte kScene1080BalloonSoundCue = 0x33;
+const byte kScene1080FirstAmbientMusicCue = 0x0b;
+const byte kScene1080AmbientMusicCueCount = 5;
+const uint kScene1080FrancoisLayer = 0;
+const uint kScene1080ForegroundLayer = 1;
+const uint kScene1080FrancoisActionLayer = 2;
+
+const byte kScene1080FrancoisFrameMap[] = {
+	0, 1, 2, 3, 16, 4, 17, 5, 4, 6, 7, 8, 9, 10, 11, 12,
+	13, 14, 15, 17, 18
+};
+
+const byte kScene1080BalloonFrameMap[] = {
+	0, 0, 7, 6, 5, 4, 3, 2,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1,
+	2, 3, 4, 5, 6, 7, 0
+};
+
+const SceneLayerSpec kScene1080LayerSpecs[] = {
+	{kSceneAnimationBehindActors, 8, kScene1080FrancoisDescriptorCount,
+		kScene1080FrancoisFrameMap, ARRAYSIZE(kScene1080FrancoisFrameMap), true, 0},
+	{kSceneAnimationInFrontOfActors, 11, kScene1080ForegroundDescriptorCount,
+		kFiveFramePingPongFrames, kFiveFramePingPongFrameCount, true, 0},
+	{kSceneAnimationInFrontOfActors, 9, kScene1080FrancoisActionDescriptorCount,
+		nullptr, 0, false, 0}
+};
+
+PlayableSceneConfig scene1080Config() {
+	PlayableSceneConfig config(1080,
+		SceneResourceLayout(12, 5, 11),
+		SceneViewport(kScene1080ViewportXOffset, kScene1080ViewportMinXOffset, kScene1080ViewportMaxXOffset),
+		SceneActorPose(0x1d3, 0x15c, 2));
+	config.setActorResources(kScene1080ActorBankTableEntry, kScene1080ActorPaletteTableEntry);
+	config.setTextResources(kScene1080Resource003RowsOffsetIndex, kScene1080SpeechCueDescriptorTableOffset);
+	config.walkablePaletteMaxRegion = 6;
+	return config;
+}
+
+Scene1080::Scene1080(HollywoodEngine *vm) :
+		PlayableScene(vm, scene1080Config()),
+		_foregroundChannel(),
+		_francoisIdleChannel(),
+		_francoisWorkChannel(),
+		_foregroundMode(0),
+		_francoisMode(0),
+		_francoisActionActive(false) {
+	_sceneLayers.configure(kScene1080LayerSpecs);
+}
+
+void Scene1080::initializeCustomPreviewState() {
+	initializeDefaultPreviewState();
+	resetAnimationLayers();
+	if (_vm->gameState().mainFlowStateId == kScene1080FirstState) {
+		_activeActorWorldX = 0x1d3;
+		_activeActorWorldY = 0x15c;
+		_activeActorFacing = 2;
+	} else {
+		_activeActorWorldX = 0x1fd;
+		_activeActorWorldY = 0x14d;
+		_activeActorFacing = 4;
+	}
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+}
+
+void Scene1080::drawCustomActorForegroundComposite(int activeWorldX, int activeWorldY,
+		byte actorDrawOrderMode) {
+	(void)actorDrawOrderMode;
+
+	drawForegroundBlocks(activeWorldX, activeWorldY);
+}
+
+void Scene1080::runCustomEntrySequence() {
+	GameplayState &state = _vm->gameState();
+	if (state.mainFlowStateId == kScene1080FirstState) {
+		runEntryPath(0x157, 0x0b4, 2, 0x1d3, 0x15c);
+		if (!state.scene1080EntryLineSeen) {
+			beginSecondarySpeechLine(0, 0);
+			state.scene1080EntryLineSeen = true;
+		}
+	} else {
+		runEntryPath(0x1fd, 0x14d, 4, 0x1fd, 0x14d);
+	}
+	drawPlayableComposite();
+	presentFrame();
+}
+
+void Scene1080::prepareCustomGameplayLoop() {
+	resetAnimationLayers();
+}
+
+void Scene1080::advanceCustomGameplayLoop(uint32 delta) {
+	advanceForegroundLayer(delta);
+	if (!_primaryDialogueSpeechActive &&
+			_vm->gameState().scene1080FrancoisProgressState < 2 && !_francoisActionActive)
+		advanceFrancoisLayer(delta);
+}
+
+bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 178: // Usar globo con gas con Francois (use the gas-filled balloon with Francois).
+		handleFrancoisDistraction();
+		return true;
+	case 301: // Ir a escalera (go to stairs).
+		_vm->gameState().mainFlowStateId = kScene1080ExitStateBallroom;
+		return true;
+	case 302: // Mirar escalera (look at stairs).
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 303: // Ir a despensa (go to pantry).
+		if (_vm->gameState().scene1080FrancoisProgressState >= 2)
+			_vm->gameState().mainFlowStateId = kScene1080ExitStatePantry;
+		else
+			beginSecondarySpeechLine(2, 0);
+		return true;
+	case 304: // Mirar despensa (look at pantry).
+		beginSecondarySpeechLine(3, 0);
+		return true;
+	case 305: // Hablar con Francois (talk to Francois).
+		runFrancoisConversation();
+		return true;
+	case 306: // Mirar Francois (look at Francois).
+		beginSecondarySpeechLine(4, 0);
+		return true;
+	case 307: // Coger/abrir cajas (take/open boxes).
+		beginSecondarySpeechLine(5, 0);
+		return true;
+	case 308: // Mirar cajas (look at boxes).
+		beginSecondarySpeechLine(6, 0);
+		return true;
+	case 309: // Coger lata derramada (take spilled can).
+		beginSecondarySpeechLine(7, 0);
+		return true;
+	case 310: // Mirar lata derramada (look at spilled can).
+		beginSecondarySpeechLine(8, 0);
+		return true;
+	case 311: // Coger latas (take cans).
+		beginSecondarySpeechLine(9, 0);
+		return true;
+	case 312: // Mirar latas (look at cans).
+		beginSecondarySpeechLine(10, 0);
+		return true;
+	case 313: // Mirar platos sucios (look at dirty plates).
+		beginSecondarySpeechLine(11, 0);
+		return true;
+	case 314: // Continuar la distraccion de Francois (run the balloon distraction sequence).
+		handleFrancoisDistraction();
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool Scene1080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
+	if (_paletteMaskOriginal.empty())
+		return true;
+
+	restoreBaseFramebufferFromOriginal();
+	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	applyKitchenItemMap();
+	rebuildKitchenWalkableMask();
+	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+
+	if (_vm->gameState().scene1080FrancoisProgressState >= 2) {
+		ScenePoint point;
+		point.x = 0x02b9;
+		point.y = 0x0123;
+		_hotspots.setActionTarget(2, point, point);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x11, 1);
+	}
+	return true;
+}
+
+bool Scene1080::shouldAnimatePrimarySpeechLine() const {
+	return true;
+}
+
+byte Scene1080::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	if (animationGroup == kScene1080FrancoisSpeechGroup)
+		return 0;
+	return 0;
+}
+
+void Scene1080::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	if (animationGroup == kScene1080FrancoisSpeechGroup)
+		_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, frameIndex);
+}
+
+AmbientAudioProfile Scene1080::ambientAudioProfile() const {
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = kScene1080FirstAmbientMusicCue;
+	profile.musicCueCount = kScene1080AmbientMusicCueCount;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
+}
+
+void Scene1080::resetAnimationLayers() {
+	_sceneLayers.reset();
+	_foregroundChannel.reset(0, kScene1080FrameMillis);
+	_francoisIdleChannel.reset(0, kScene1080FrancoisIdleFrameMillis);
+	_francoisWorkChannel.reset(0, kScene1080FrancoisWorkFrameMillis);
+	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer,
+		_vm->gameState().scene1080FrancoisProgressState < 2);
+	_foregroundMode = 0;
+	_francoisMode = 0;
+	_francoisActionActive = false;
+}
+
+void Scene1080::advanceForegroundLayer(uint32 delta) {
+	const uint frameCount = _foregroundChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_foregroundMode == 0) {
+			if (_random.getRandomNumber(29) == 0) {
+				_foregroundMode = 1;
+				_sceneLayers.setLayerFrame(kScene1080ForegroundLayer, 0);
+			}
+		} else if (!_sceneLayers.advanceLayerFrame(kScene1080ForegroundLayer,
+				kFiveFramePingPongFrameCount - 1)) {
+			_sceneLayers.setLayerFrame(kScene1080ForegroundLayer, 0);
+			_foregroundMode = 0;
+		}
+	}
+}
+
+void Scene1080::advanceFrancoisLayer(uint32 delta) {
+	uint frameCount = _francoisIdleChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		const byte currentFrame = _sceneLayers.layerFrame(kScene1080FrancoisLayer);
+		switch (_francoisMode) {
+		case 0:
+			if (currentFrame != 0x13) {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0x13);
+			} else if (_random.getRandomNumber(14) == 0) {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0x14);
+			} else if (_random.getRandomNumber(49) == 0) {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 8);
+				_francoisMode = 2;
+			}
+			break;
+		case 1:
+			if (!_sceneLayers.advanceLayerFrame(kScene1080FrancoisLayer, 6)) {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0x13);
+				_francoisMode = 0;
+			}
+			break;
+		case 2:
+			if (!_sceneLayers.advanceLayerFrame(kScene1080FrancoisLayer, 8))
+				_francoisMode = 3;
+			break;
+		case 5:
+			if (currentFrame == 0) {
+				if (_random.getRandomNumber(14) == 0)
+					_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 4);
+			} else {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	frameCount = _francoisWorkChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_francoisMode != 3)
+			continue;
+
+		const byte currentFrame = _sceneLayers.layerFrame(kScene1080FrancoisLayer);
+		if (currentFrame < 0x12) {
+			if (currentFrame == 9) {
+				const byte cue = kScene1080FrancoisWorkSoundFirstCue +
+					(byte)_random.getRandomNumber(kScene1080FrancoisWorkSoundCueCount - 1);
+				_additionalAmbientSoundBank0Slots[0].playSample(cue, 15);
+			}
+			_sceneLayers.advanceLayerFrame(kScene1080FrancoisLayer, 0x12);
+		} else {
+			_additionalAmbientSoundBank0Slots[0].stop();
+			if (_random.getRandomNumber(9) == 0) {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 6);
+				_francoisMode = 1;
+			} else {
+				_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 9);
+			}
+		}
+	}
+}
+
+void Scene1080::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
+	if (activeWorldY < 0x134 && activeWorldX < 0x1c7 && _sceneChunkTable.isValidChunk(6))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
+	if (activeWorldY < 0x133 && activeWorldX > 0x23d && _sceneChunkTable.isValidChunk(7))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
+	if (_sceneChunkTable.isValidChunk(5))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+}
+
+void Scene1080::rebuildKitchenWalkableMask() {
+	const bool francoisGone = _vm->gameState().scene1080FrancoisProgressState >= 2;
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
+		const byte originalRegion = _paletteMaskOriginal[i];
+		byte region = originalRegion;
+		if (francoisGone && originalRegion == 6)
+			region = 1;
+		_fullPaletteRegionMask[i] = region;
+
+		byte walkableRegion = region;
+		if (walkableRegion > walkablePaletteMaxRegion() || walkableRegion == 2 || walkableRegion == 4 ||
+				(!francoisGone && originalRegion == 6))
+			walkableRegion = 0;
+		_walkablePaletteMask[i] = walkableRegion;
+	}
+}
+
+void Scene1080::applyKitchenItemMap() {
+	if (_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
+			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
+		return;
+
+	const bool francoisGone = _vm->gameState().scene1080FrancoisProgressState >= 2;
+	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
+		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
+		byte item = originalItem;
+		if (francoisGone) {
+			if (originalItem == 8)
+				item = 0;
+			else if (originalItem == 3 || originalItem == 2)
+				item = 2;
+		} else {
+			if (originalItem == 8 || originalItem == 3)
+				item = 3;
+			else if (originalItem == 2)
+				item = 0;
+		}
+		_paletteMask[kSceneColorToItemMap + i] = item;
+	}
+}
+
+void Scene1080::runFrancoisConversation() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeFrancoisDialogueRecords(records);
+
+	GameplayState &state = _vm->gameState();
+	const byte frame = state.scene1080FrancoisProgressState == 0 ? 0 : 1;
+	_additionalAmbientSoundBank0Slots[0].stop();
+	_francoisMode = 5;
+	_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0);
+	beginSecondarySpeechLine(0x62, frame);
+	beginPrimarySpeechLineWithAnimationGroup(99, frame, 0x022e, 0x0084,
+		0x0d, 0x32, 0x3a, kScene1080FrancoisSpeechGroup);
+	if (state.scene1080FrancoisProgressState == 0)
+		state.scene1080FrancoisProgressState = 1;
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(0x62, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(0x62, 6);
+			beginPrimarySpeechLineWithAnimationGroup(99, 6, 0x022e, 0x0084,
+				0x0d, 0x32, 0x3a, kScene1080FrancoisSpeechGroup);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(0x62, record.playerTextRowId);
+		if (record.responseFrameIndex != kScene1080DialogueNoResponseFrame) {
+			beginPrimarySpeechLineWithAnimationGroup(99, record.responseFrameIndex,
+				0x022e, 0x0084, 0x0d, 0x32, 0x3a, kScene1080FrancoisSpeechGroup);
+		}
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+		// The restored Frankenstein-brain question follows the general brain exchange.
+		if (_vm->restoredContentEnabled() && recordIndex == kScene1080BrainQuestionRecord)
+			records[kScene1080FrankensteinBrainQuestionRecord].enabled = 1;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Scene1080::handleFrancoisDistraction() {
+	GameplayState &state = _vm->gameState();
+	if (state.scene1080FrancoisProgressState >= 2) {
+		beginStaticSecondarySpeechLine(0x13, (byte)_random.getRandomNumber(1));
+		return;
+	}
+
+	BlockingSequence sequence(*this);
+	sequence.actorPath(SceneActorPose(0x0317, 0x01b3, 1))
+		.actorReplacement(ActionOverlaySpec(10, kScene1080BalloonDescriptorCount,
+			kScene1080BalloonFrameMap, ARRAYSIZE(kScene1080BalloonFrameMap),
+			kScene1080FrameMillis)
+			.drawAt(kSceneAnimationBehindActors)
+			.loopingSoundAt(8, kScene1080BalloonSoundCue, 30)
+			.stopSoundAt(47))
+		.stopSound();
+	if (!sequence.completed())
+		return;
+
+	if (hasInventoryItem(0x4d))
+		removeInventoryItem(0x4d);
+	if (!hasInventoryItem(0x1c))
+		addInventoryItem(0x1c);
+	sequence.sound(1)
+		.actorPose(SceneActorPose(_activeActorWorldX, _activeActorWorldY, 5));
+
+	_additionalAmbientSoundBank0Slots[0].stop();
+	_francoisMode = 5;
+	_sceneLayers.setLayerFrame(kScene1080FrancoisLayer, 0);
+	runFrancoisActionSpeechLine(0, 0, 0x0f, 0x022e, 0x0084);
+	runFrancoisActionSpeechLine(2, 0x10, 0x1b, 0x01bd, 0x0066);
+	beginPrimarySpeechLine(12, 3, 0x0154, 0x0048, 0x0d, 0x32, 0x3a);
+	_francoisActionActive = false;
+	_sceneLayers.setLayerVisible(kScene1080FrancoisActionLayer, false);
+
+	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer, false);
+	sequence.commit(state.scene1080FrancoisProgressState, (byte)2)
+		.framebufferPatch(1)
+		.secondarySpeech(12, 1);
+}
+
+void Scene1080::runFrancoisActionSpeechLine(byte frameIndex, byte firstDescriptor,
+		byte lastDescriptor, uint16 centerX, uint16 topY) {
+	if (animationPlaybackShouldStop())
+		return;
+
+	_francoisActionActive = true;
+	_sceneLayers.setLayerVisible(kScene1080FrancoisLayer, false);
+	_sceneLayers.showLayerAtFrame(kScene1080FrancoisActionLayer, firstDescriptor);
+	startRealtimePrimarySpeechLine(12, frameIndex, centerX, topY,
+		0x0d, 0x32, 0x3a, 0xff, 0);
+
+	// Present every reaction frame; elapsed-time catch-up can hide the sniff.
+	playAnimationFrames(kScene1080FrancoisActionLayer,
+		AnimationFrameRange(firstDescriptor, lastDescriptor,
+			kScene1080FrancoisWorkFrameMillis).unskippable());
+	waitForRealtimeSpeech();
+}
+
+void Scene1080::initializeFrancoisDialogueRecords(
+		Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene1080DialogueChoiceRecordCount);
+
+	setDialogueRecord(records, 0, 1, 0, 3, 2, 2, 1);
+	setDialogueRecord(records, 1, 1, 0, 1, 3, 3, 1);
+	setDialogueRecord(records, 2, 1, 0, 3, 4, 4, 1);
+	setDialogueRecord(records, 3, 1, 1, 1, 5, 5, 1);
+	setDialogueRecord(records, 4, 1, 0, 0, 6, 6, 1);
+
+	setDialogueRecord(records, kScene1080BrainQuestionRecord, 1, 0, 3, 7, 7, 1);
+	setDialogueRecord(records, kScene1080FrankensteinBrainQuestionRecord, 0, 0, 3, 8, 8, 1);
+	setDialogueRecord(records, 72, 1, 0, 2, 9, 9, 0);
+
+	setDialogueRecord(records, 77, 1, 1, 3, 10, 10, 1);
+	setDialogueRecord(records, 78, 1, 1, 3, 11, 11, 1);
+	setDialogueRecord(records, 79, 1, 1, 3, 12, 12, 1);
+	setDialogueRecord(records, 80, 1, 1, 3, 13, 13, 1);
+	setDialogueRecord(records, 81, 1, 0, 2, 9, 9, 1);
+}
+
+void Scene1080::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const {
+	if (index >= records.size())
+		return;
+
+	DialogueChoiceRecord &record = records[index];
+	record.enabled = enabled;
+	record.nextNodeIndex = nextNodeIndex;
+	record.transitionMode = transitionMode;
+	record.playerTextRowId = playerTextRowId;
+	record.responseFrameIndex = responseFrameIndex;
+	record.disableAfterUse = disableAfterUse;
+}
+
+} // End of namespace Hollywood
