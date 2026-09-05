@@ -291,7 +291,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		} else {
 			str = Common::convertBiDiU32String(lineStr, Common::BIDI_PAR_LTR);
 		}
-		_font->drawAlphaString(surface, str, 0, heightOffset, width, useColor, alignment);
+		_font->drawString(surface, str, 0, heightOffset, width, useColor, alignment);
 		heightOffset += (int)_lineHeight;
 	}
 
