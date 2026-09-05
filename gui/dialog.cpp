@@ -28,19 +28,10 @@
 
 namespace GUI {
 
-/*
- * TODO list
- * - add some sense of the window being "active" (i.e. in front) or not. If it
- *   was inactive and just became active, reset certain vars (like who is focused).
- *   Maybe we should just add lostFocus and receivedFocus methods to Dialog, just
- *   like we have for class Widget?
- * ...
- */
-
 Dialog::Dialog(int x, int y, int w, int h, bool scale)
 	: GuiObject(x, y, w, h, scale),
-	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
+	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _dragHookWidget(nullptr), _tickleWidget(nullptr),
+	  _visible(false), _backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though
 	// their widgets rely on the layout to be initialized correctly by the theme.
 	// Thus we need to catch screen changes here too. If we do not do that, it
@@ -48,14 +39,13 @@ Dialog::Dialog(int x, int y, int w, int h, bool scale)
 	// started a 640x480 game with a non 1x scaler.
 	g_gui.checkScreenChange();
 
-	_mouseUpdatedOnFocus = true;
 	_result = -1;
 }
 
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
-	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
-	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
+	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _dragHookWidget(nullptr), _tickleWidget(nullptr),
+	  _visible(false), _backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault), _handlingMouseWheel(false) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
 	// game will be forced to 1x. At this stage GUI will not be aware of
@@ -66,7 +56,6 @@ Dialog::Dialog(const Common::String &name)
 	// and bug #2903: "SCUMM: F5 crashes game (640x480)"
 	g_gui.checkScreenChange();
 
-	_mouseUpdatedOnFocus = true;
 	_result = -1;
 }
 
@@ -120,12 +109,18 @@ void Dialog::reflowLayout() {
 
 void Dialog::lostFocus() {
 	if (_dragWidget) {
-		_dragWidget->lostFocus();
+		if (_dragHookWidget) {
+			// We can't eat a cancelDrag
+			_dragHookWidget->handleDragHook(_dragWidget, kDragHookStateCancel, 0, 0, 0);
+			_dragHookWidget = nullptr;
+		}
+		_dragWidget->cancelDrag();
 		_dragWidget = nullptr;
 	}
 
 	if (_tickleWidget) {
-		_tickleWidget->lostFocus();
+		_tickleWidget->cancelTickle();
+		_tickleWidget = nullptr;
 	}
 }
 
@@ -216,13 +211,46 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 	w = findWidget(x, y);
 
-	if (w && !(w->getFlags() & WIDGET_IGNORE_DRAG))
+	if (w) {
 		_dragWidget = w;
+
+		// Find the next parent willing to hook for drag
+		Widget *it = w;
+		while (true) {
+			if (it->getFlags() & WIDGET_HOOK_DRAG) {
+				_dragHookWidget = it;
+				break;
+			}
+
+			if (it->_boss == this) {
+				break;
+			}
+			it = (Widget *)it->_boss;
+		}
+
+		// If the widget hooks itself disable the hook
+		// This allows a widget to prevent hooking by its parents
+		if (_dragHookWidget == w) {
+			_dragHookWidget = nullptr;
+		}
+	}
 
 	// If the click occurred inside a widget which is not the currently
 	// focused one, change the focus to that widget.
 	if (w && w != _focusedWidget && w->wantsFocus()) {
 		setFocusWidget(w);
+	}
+
+	if (_dragHookWidget) {
+		if (_dragHookWidget->handleDragHook(w, kDragHookStateMouseDown,
+			x - (_dragHookWidget->getAbsX() - _x),
+			y - (_dragHookWidget->getAbsY() - _y),
+			button)) {
+			// hook widget ate the event and will eat the next ones
+			_dragWidget = _dragHookWidget;
+			_dragHookWidget = nullptr;
+			return;
+		}
 	}
 
 	if (w)
@@ -232,25 +260,27 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	Widget *w;
 
-	if (_focusedWidget) {
-		//w = _focusedWidget;
-
-		// Lose focus on mouseup unless the widget requested to retain the focus
-		if (! (_focusedWidget->getFlags() & WIDGET_RETAIN_FOCUS )) {
-			releaseFocus();
-		}
-	}
-
 	if (_dragWidget)
 		w = _dragWidget;
 	else
 		w = findWidget(x, y);
+
+	if (_dragHookWidget) {
+		if (_dragHookWidget->handleDragHook(_dragWidget, kDragHookStateMouseUp,
+			x - (_dragHookWidget->getAbsX() - _x),
+			y - (_dragHookWidget->getAbsY() - _y),
+			button)) {
+			// hook widget ate the event and no other event will arise
+			w = nullptr;
+		}
+	}
 
 	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 
 	if (_dragWidget) {
 		_dragWidget = nullptr;
+		_dragHookWidget = nullptr;
 		// Fake a mouse move to refresh now hovered widget
 		handleMouseMoved(x, y, button);
 	}
@@ -271,21 +301,9 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 	Widget *w = findWidget(x, y);
 	if (!w)
 		w = _focusedWidget;
-	if (w) {
-		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
-		// Find the scrollable ancestor to set as the tickle target
-		Widget *scrollable = w;
-		while (scrollable) {
-			if (scrollable->hasVisibleScrollBar()) {
-				setTickleWidget(scrollable);
-				break;
-			}
-			if (scrollable->_boss == this)		
-				break;
 
-			scrollable = static_cast<Widget *>(scrollable->_boss);
-		}
-	}
+	if (w)
+		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
 
 	_handlingMouseWheel = false;
 }
@@ -346,28 +364,6 @@ void Dialog::handleKeyUp(Common::KeyState state) {
 void Dialog::handleMouseMoved(int x, int y, int button) {
 	Widget *w;
 
-	if (_focusedWidget && !_dragWidget) {
-		w = _focusedWidget;
-		int wx = w->getAbsX() - _x;
-		int wy = w->getAbsY() - _y;
-
-		// We still send mouseEntered/Left messages to the focused item
-		// (but to no other items).
-		bool mouseInFocusedWidget = (x >= wx && x < wx + w->_w && y >= wy && y < wy + w->_h);
-		if (mouseInFocusedWidget && _mouseWidget != w) {
-			if (_mouseWidget)
-				_mouseWidget->handleMouseLeft(button);
-			_mouseWidget = w;
-			w->handleMouseEntered(button);
-		} else if (!mouseInFocusedWidget && _mouseWidget == w) {
-			_mouseWidget = nullptr;
-			w->handleMouseLeft(button);
-		}
-
-		if (w->getFlags() & WIDGET_TRACK_MOUSE)
-			w->handleMouseMoved(x - wx, y - wy, button);
-	}
-
 	// We process mouseEntered/Left events if we don't have any
 	// currently active dragged widget or if the currently dragged widget
 	// does not want to be informed about the mouse mouse events.
@@ -390,18 +386,40 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		_mouseWidget = w;
 	}
 
+	if (_dragHookWidget) {
+		if (_dragHookWidget->handleDragHook(_dragWidget, kDragHookStateMouseMoved,
+			x - (_dragHookWidget->getAbsX() - _x),
+			y - (_dragHookWidget->getAbsY() - _y),
+			button)) {
+			// hook widget ate the event and will eat the next ones
+			_dragWidget = _dragHookWidget;
+			_dragHookWidget = nullptr;
+			return;
+		}
+	}
+
 	// We only sent mouse move events when the widget requests to be informed about them.
 	if (w && (w->getFlags() & WIDGET_TRACK_MOUSE))
 		w->handleMouseMoved(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button);
 }
 
 void Dialog::handleTickle() {
+	if (_tickleWidget)
+		_tickleWidget->handleTickle();
+
 	// Focused widget receives tickle notifications
-	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
+	if (_focusedWidget &&
+	    _focusedWidget != _tickleWidget &&
+	    _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_focusedWidget->handleTickle();
 
-	if (_tickleWidget && _tickleWidget->getFlags() & WIDGET_WANT_TICKLE)
-		_tickleWidget->handleTickle();
+	// Drag widget also receives tickle notifications
+	if (_dragWidget &&
+	    _dragWidget != _tickleWidget &&
+	    _dragWidget != _focusedWidget &&
+	    _dragWidget->getFlags() & WIDGET_WANT_TICKLE)
+		_dragWidget->handleTickle();
+
 }
 
 void Dialog::handleOtherEvent(const Common::Event &evt) {
@@ -444,10 +462,26 @@ void Dialog::removeWidget(Widget *del) {
 		_mouseWidget = nullptr;
 	if (del == _focusedWidget || del->containsWidget(_focusedWidget))
 		_focusedWidget = nullptr;
-	if (del == _dragWidget || del->containsWidget(_dragWidget))
+	if (del == _dragWidget || del->containsWidget(_dragWidget)) {
 		_dragWidget = nullptr;
+		// As _dragHookWidget is a parent of _dragWidget we don't need a specific check
+		_dragHookWidget = nullptr;
+	}
 
 	GuiObject::removeWidget(del);
+}
+
+void Dialog::registerTickleWidget(Widget *widget) {
+	if (_tickleWidget && _tickleWidget != widget) {
+		_tickleWidget->cancelTickle();
+	}
+	_tickleWidget = widget;
+}
+
+void Dialog::unregisterTickleWidget(Widget *widget) {
+	if (_tickleWidget == widget) {
+		_tickleWidget = nullptr;
+	}
 }
 
 } // End of namespace GUI

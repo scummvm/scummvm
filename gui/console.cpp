@@ -899,8 +899,7 @@ void ConsoleDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	w = findWidget(x, y);
 
 	if (w) {
-		if (!(w->getFlags() & WIDGET_IGNORE_DRAG))
-			_dragWidget = w;
+		_dragWidget = w;
 
 		if (w != _focusedWidget && w->wantsFocus()) {
 			setFocusWidget(w);

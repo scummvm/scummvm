@@ -156,8 +156,4 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void HelpDialog::handleTickle() {
-	_tab->handleTickle();
-}
-
 } // End of namespace GUI

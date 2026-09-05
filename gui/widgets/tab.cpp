@@ -62,7 +62,7 @@ TabWidget::TabWidget(GuiObject *boss, const Common::String &name, ThemeEngine::T
 }
 
 void TabWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
 	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
@@ -297,15 +297,6 @@ void TabWidget::handleMouseWheel(int x, int y, int direction) {
 		adjustTabs(kTabForwards);
 	} else {
 		adjustTabs(kTabBackwards);
-	}
-}
-
-void TabWidget::handleTickle() {
-	Widget *w = _firstWidget;
-	while (w) {
-		if (w->getFlags() & WIDGET_WANT_TICKLE)
-			w->handleTickle();
-		w = w->next();
 	}
 }
 

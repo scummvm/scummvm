@@ -39,7 +39,6 @@ public:
 	HelpDialog();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-	void handleTickle() override;
 
 private:
 	void addTabs(const char * const *tabs);
