@@ -90,6 +90,7 @@ class GraphicsManager;
 struct Location;
 class Message;
 class SoundManager;
+class SubtitleManager;
 class Window;
 class VideoWindow;
 
@@ -137,6 +138,7 @@ public:
 
 	GraphicsManager *_gfx;
 	SoundManager *_sound;
+	SubtitleManager *_subtitles;
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
 	Window *_captureWindow;
