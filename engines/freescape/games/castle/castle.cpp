@@ -1164,6 +1164,8 @@ void CastleEngine::drawInfoMenu() {
 				surface->copyRectToSurfaceWithKey((const Graphics::Surface)*sndIndicator, 96, 103,
 					Common::Rect(0, 0, sndIndicator->w, sndIndicator->h), black);
 		}
+	} else if (isC64()) {
+		drawC64InfoMenu(surface);
 	} else if (isSpectrum() || isCPC()) {
 		Common::Array<Common::String> lines;
 		lines.push_back(centerAndPadString("********************", 21));
@@ -1252,6 +1254,10 @@ void CastleEngine::drawInfoMenu() {
 
 					loadGameDialog();
 					_eventManager->purgeMouseEvents();
+					if (isC64()) {
+						drawC64InfoMenu(surface);
+						menuTexture->update(surface);
+					}
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
 						CursorMan.showMouse(true);
@@ -1295,7 +1301,7 @@ void CastleEngine::drawInfoMenu() {
 			case Common::EVENT_RBUTTONDOWN:
 			// fallthrough
 			case Common::EVENT_LBUTTONDOWN:
-				if (isSpectrum() || isCPC())
+				if (isSpectrum() || isCPC() || isC64())
 					break;
 
 				mousePos = getNormalizedPosition(event.mouse);
@@ -1470,7 +1476,10 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String keysCollectedString;
 	if (isDOS())
 		keysCollectedString = _messagesList[130];
-	else if (isSpectrum()) {
+	else if (isC64()) {
+		keysCollectedString = _messagesList[72];
+		Common::replace(keysCollectedString, "XX", "X");
+	} else if (isSpectrum()) {
 		if (_language == Common::EN_ANY)
 			keysCollectedString = "X COLLECTED";
 		else if (_language == Common::ES_ESP)
@@ -1488,6 +1497,8 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String scoreString;
 	if (isDOS())
 		scoreString = _messagesList[131];
+	else if (isC64())
+		scoreString = _messagesList[74];
 	else if (isSpectrum() || isCPC()) {
 		if (_language == Common::EN_ANY)
 			scoreString = "SCORE XXXXXXX";
@@ -1503,7 +1514,10 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	Common::String spiritsDestroyedString;
 	if (isDOS())
 		spiritsDestroyedString = _messagesList[133];
-	else if (isSpectrum() || isCPC()) {
+	else if (isC64()) {
+		spiritsDestroyedString = _messagesList[73];
+		Common::replace(spiritsDestroyedString, "XX", "X");
+	} else if (isSpectrum() || isCPC()) {
 		if (_language == Common::EN_ANY)
 			spiritsDestroyedString = "X DESTROYED";
 		else if (_language == Common::ES_ESP)
@@ -1823,6 +1837,8 @@ void CastleEngine::drawFullscreenRiddleAndWait(uint16 riddle) {
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 	if (isAmiga())
 		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xEE, 0xAA, 0x00);
+	else if (isC64())
+		front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 119, 83, 0);
 	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -1887,6 +1903,10 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		x = 40;
 		y = 46;
 		maxWidth = 139;
+	} else if (isC64()) {
+		x = 40;
+		y = 45;
+		maxWidth = 137;
 	} else if (isSpectrum()) {
 		x = 64;
 		y = 37;
@@ -1929,8 +1949,9 @@ void CastleEngine::drawRiddle(uint16 riddle, uint32 front, uint32 back, Graphics
 		}
 	}
 	if (_riddleBottomFrame) {
-		Common::Rect srcRect(0, 0, _riddleBottomFrame->w, _riddleBottomFrame->h - 1);
-		Common::Rect destRect(x, maxWidth, x + _riddleBottomFrame->w, maxWidth + _riddleBottomFrame->h - 1);
+		int height = _riddleBottomFrame->h - (isC64() ? 0 : 1);
+		Common::Rect srcRect(0, 0, _riddleBottomFrame->w, height);
+		Common::Rect destRect(x, maxWidth, x + _riddleBottomFrame->w, maxWidth + height);
 		destRect.clip(_viewArea);
 		srcRect = Common::Rect(destRect.left - x, destRect.top - maxWidth, destRect.right - x, destRect.bottom - maxWidth);
 		if (srcRect.isValidRect() && !srcRect.isEmpty())
@@ -1974,6 +1995,8 @@ void CastleEngine::drawRiddleStringInSurface(const Common::String &str, int x, i
 		_fontRiddle.drawString(surface, ustr, x, y, _screenW, fontColor);
 	} else {
 		_font.setBackground(backColor);
+		if (isC64())
+			_font.setSecondaryColor(fontColor);
 		_font.drawString(surface, ustr, x, y, _screenW, fontColor);
 	}
 }

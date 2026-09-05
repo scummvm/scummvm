@@ -105,6 +105,10 @@ public:
 
 	void loadAssetsC64FullGame() override;
 	void drawC64UI(Graphics::Surface *surface) override;
+	void drawC64InfoMenu(Graphics::Surface *surface);
+	void drawC64HudSurface(Graphics::Surface *surface, const Graphics::Surface &frame, const Common::Point &origin);
+	Graphics::ManagedSurface _c64KeysBackground;
+	Common::Array<uint32> _c64UIColors;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;

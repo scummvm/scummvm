@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "graphics/managed_surface.h"
 
 #include "freescape/freescape.h"
@@ -46,6 +47,93 @@ enum {
 	kCastleC64MessageY = 182
 };
 
+// Match the colors of the bundled C64 border. The unused palette entries are
+// black; the HUD uses only these ten VIC colors.
+static const byte kCastleC64UIPalette[16][3] = {
+	{0, 0, 0}, {255, 255, 255}, {0, 0, 0}, {0, 0, 0},
+	{0, 0, 0}, {98, 213, 50}, {0, 0, 0}, {255, 255, 70},
+	{183, 99, 30}, {119, 83, 0}, {0, 0, 0}, {98, 98, 98},
+	{148, 148, 148}, {183, 255, 134}, {0, 0, 0}, {205, 205, 205}
+};
+
+static uint32 castleC64UIColor(const Graphics::PixelFormat &format, byte color) {
+	const byte *rgb = kCastleC64UIPalette[color];
+	return format.ARGBToColor(255, rgb[0], rgb[1], rgb[2]);
+}
+
+static Common::Array<byte> unpackCastleC64UI(Common::SeekableReadStream *file) {
+	// The startup relocates the packed stream from $0d50 to $2708, then
+	// expands it into $0200..$ffff. Decode only through the screen attributes
+	// at $c400..$c7e7: the later bitmap pages require the separate tape loader.
+	// Page flags at $09ff descend through memory, least significant bit first.
+	// A clear bit selects a page with its own escape byte and count/value runs.
+	Common::Array<byte> packed;
+	packed.resize(file->size());
+	file->seek(0);
+	if (packed.size() < 0x551 || file->read(packed.data(), packed.size()) != packed.size())
+		error("Unable to read Castle C64 UI data");
+
+	Common::Array<byte> data;
+	data.resize(0xc800);
+	uint32 source = 0x551; // $0d50, including the PRG load-address adjustment
+	int flagOffset = 0x200; // $09ff
+	byte flags = packed[flagOffset];
+	int bitsLeft = 6; // The first two pages are not part of the packed stream.
+	for (uint page = 2; page < 0xc8; page++) {
+		if (!bitsLeft) {
+			flags = packed[--flagOffset];
+			bitsLeft = 8;
+		}
+		bool raw = flags & 1;
+		flags >>= 1;
+		bitsLeft--;
+		uint end = (page + 1) * 256;
+		if (source >= packed.size())
+			error("Truncated Castle C64 UI page %x", page);
+		byte escape = raw ? 0 : packed[source++];
+		for (uint dest = page * 256; dest < end;) {
+			if (source >= packed.size())
+				error("Truncated Castle C64 UI page %x", page);
+			byte value = packed[source++];
+			uint count = 1;
+			if (!raw && value == escape) {
+				if (source + 2 > packed.size())
+					error("Truncated Castle C64 UI run");
+				count = packed[source++];
+				if (!count)
+					count = 256;
+				value = packed[source++];
+			}
+			if (count > end - dest)
+				error("Castle C64 UI run crosses a page boundary");
+			while (count--)
+				data[dest++] = value;
+		}
+	}
+	return data;
+}
+
+static void loadCastleC64Frame(const Common::Array<byte> &data, uint address, Graphics::ManagedSurface *surface, int frame = 0) {
+	// $7cf6 reads a five-byte header: byte width, height, final-byte mask,
+	// and frame size. These HUD frames all use the whole final byte.
+	if (address + 5 > data.size())
+		error("Missing Castle C64 UI frame header at %x", address);
+	uint width = data[address];
+	uint height = data[address + 1];
+	uint size = data[address + 3] | (data[address + 4] << 8);
+	uint pixels = address + 5 + frame * size;
+	if (!width || !height || data[address + 2] != 0xff || size != width * height || pixels + size > data.size())
+		error("Invalid Castle C64 UI frame at %x", address);
+	surface->create(width * 8, height, Graphics::PixelFormat::createFormatCLUT8());
+	for (uint y = 0; y < height; y++) {
+		for (uint x = 0; x < width * 8; x += 2) {
+			byte color = (data[pixels + y * width + x / 8] >> (6 - x % 8)) & 3;
+			surface->setPixel(x, y, color);
+			surface->setPixel(x + 1, y, color);
+		}
+	}
+}
+
 struct CastleC64Repeat {
 	uint16 offset;
 	byte count;
@@ -70,105 +158,6 @@ const CastleC64Repeat kCastleC64DatabaseRepeats[] = {
 	{ 0x1edb, 6, 0x00 }, { 0x1ee1, 6, 0x00 }, { 0x1ee7, 6, 0x00 }, { 0x20d0, 4, 0x00 },
 	{ 0x2128, 6, 0x00 }, { 0x217e, 6, 0x00 }, { 0x21c5, 4, 0x00 }, { 0x2250, 6, 0x00 },
 	{ 0x2255, 113, 0x00 }
-};
-
-static const byte kCastleC64FontData[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x18, 0x18, 0x18, 0x18, 0x00, 0x00, 0x18, 0x00,
-	0x66, 0x66, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x66, 0x66, 0xff, 0x66, 0xff, 0x66, 0x66, 0x00,
-	0x18, 0x3e, 0x58, 0x3c, 0x1a, 0x7c, 0x18, 0x00,
-	0x62, 0x66, 0x0c, 0x18, 0x30, 0x66, 0x46, 0x00,
-	0x3c, 0x66, 0x3c, 0x38, 0x67, 0x66, 0x3f, 0x00,
-	0x06, 0x0c, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x0c, 0x18, 0x30, 0x30, 0x30, 0x18, 0x0c, 0x00,
-	0x30, 0x18, 0x0c, 0x0c, 0x0c, 0x18, 0x30, 0x00,
-	0x00, 0x66, 0x3c, 0xff, 0x3c, 0x66, 0x00, 0x00,
-	0x00, 0x18, 0x18, 0x7e, 0x18, 0x18, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x30,
-	0x00, 0x00, 0x00, 0x7e, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00,
-	0x00, 0x03, 0x06, 0x0c, 0x18, 0x30, 0x60, 0x00,
-	0x3c, 0x66, 0x66, 0x66, 0x66, 0x66, 0x3c, 0x00,
-	0x18, 0x18, 0x38, 0x18, 0x18, 0x18, 0x7e, 0x00,
-	0x3c, 0x66, 0x06, 0x0c, 0x30, 0x60, 0x7e, 0x00,
-	0x3c, 0x66, 0x06, 0x1c, 0x06, 0x66, 0x3c, 0x00,
-	0x06, 0x0e, 0x1e, 0x66, 0x7f, 0x06, 0x06, 0x00,
-	0x7e, 0x60, 0x7c, 0x06, 0x06, 0x66, 0x3c, 0x00,
-	0x3c, 0x66, 0x60, 0x7c, 0x66, 0x66, 0x3c, 0x00,
-	0x7e, 0x66, 0x0c, 0x18, 0x18, 0x18, 0x18, 0x00,
-	0x3c, 0x66, 0x66, 0x3c, 0x66, 0x66, 0x3c, 0x00,
-	0x3c, 0x66, 0x66, 0x3e, 0x06, 0x66, 0x3c, 0x00,
-	0x00, 0x00, 0x18, 0x00, 0x00, 0x18, 0x00, 0x00,
-	0x00, 0x00, 0x18, 0x00, 0x00, 0x18, 0x18, 0x30,
-	0x0e, 0x18, 0x30, 0x60, 0x30, 0x18, 0x0e, 0x00,
-	0x00, 0x00, 0x7e, 0x00, 0x7e, 0x00, 0x00, 0x00,
-	0x70, 0x18, 0x0c, 0x06, 0x0c, 0x18, 0x70, 0x00,
-	0x3c, 0x66, 0x06, 0x0c, 0x18, 0x00, 0x18, 0x00,
-	0x3c, 0x66, 0x6e, 0x6e, 0x60, 0x62, 0x3c, 0x00,
-	0x18, 0x3c, 0x66, 0x7e, 0x66, 0x66, 0x66, 0x00,
-	0x7c, 0x66, 0x66, 0x7c, 0x66, 0x66, 0x7c, 0x00,
-	0x3c, 0x66, 0x60, 0x60, 0x60, 0x66, 0x3c, 0x00,
-	0x78, 0x6c, 0x66, 0x66, 0x66, 0x6c, 0x78, 0x00,
-	0x7e, 0x60, 0x60, 0x78, 0x60, 0x60, 0x7e, 0x00,
-	0x7e, 0x60, 0x60, 0x78, 0x60, 0x60, 0x60, 0x00,
-	0x3c, 0x66, 0x60, 0x6e, 0x66, 0x66, 0x3c, 0x00,
-	0x66, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66, 0x00,
-	0x3c, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3c, 0x00,
-	0x1e, 0x0c, 0x0c, 0x0c, 0x0c, 0x6c, 0x38, 0x00,
-	0x66, 0x6c, 0x78, 0x70, 0x78, 0x6c, 0x66, 0x00,
-	0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x7e, 0x00,
-	0x63, 0x77, 0x7f, 0x6b, 0x63, 0x63, 0x63, 0x00,
-	0x66, 0x76, 0x7e, 0x7e, 0x6e, 0x66, 0x66, 0x00,
-	0x3c, 0x66, 0x66, 0x66, 0x66, 0x66, 0x3c, 0x00,
-	0x7c, 0x66, 0x66, 0x7c, 0x60, 0x60, 0x60, 0x00,
-	0x3c, 0x66, 0x66, 0x66, 0x66, 0x3c, 0x0e, 0x00,
-	0x7c, 0x66, 0x66, 0x7c, 0x78, 0x6c, 0x66, 0x00,
-	0x3c, 0x66, 0x60, 0x3c, 0x06, 0x66, 0x3c, 0x00,
-	0x7e, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00,
-	0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x3c, 0x00,
-	0x66, 0x66, 0x66, 0x66, 0x66, 0x3c, 0x18, 0x00,
-	0x63, 0x63, 0x63, 0x6b, 0x7f, 0x77, 0x63, 0x00,
-	0x66, 0x66, 0x3c, 0x18, 0x3c, 0x66, 0x66, 0x00,
-	0x66, 0x66, 0x66, 0x3c, 0x18, 0x18, 0x18, 0x00,
-	0x7e, 0x06, 0x0c, 0x18, 0x30, 0x60, 0x7e, 0x00,
-	0x3c, 0x30, 0x30, 0x30, 0x30, 0x30, 0x3c, 0x00,
-	0x00, 0x60, 0x30, 0x18, 0x0c, 0x06, 0x03, 0x00,
-	0x3c, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x3c, 0x00,
-	0x18, 0x3c, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00,
-	0x18, 0x0c, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x3c, 0x06, 0x3e, 0x66, 0x3e, 0x00,
-	0x00, 0x60, 0x60, 0x7c, 0x66, 0x66, 0x7c, 0x00,
-	0x00, 0x00, 0x3c, 0x60, 0x60, 0x60, 0x3c, 0x00,
-	0x00, 0x06, 0x06, 0x3e, 0x66, 0x66, 0x3e, 0x00,
-	0x00, 0x00, 0x3c, 0x66, 0x7e, 0x60, 0x3c, 0x00,
-	0x00, 0x0e, 0x18, 0x3e, 0x18, 0x18, 0x18, 0x00,
-	0x00, 0x00, 0x3e, 0x66, 0x66, 0x3e, 0x06, 0x7c,
-	0x00, 0x60, 0x60, 0x7c, 0x66, 0x66, 0x66, 0x00,
-	0x00, 0x18, 0x00, 0x38, 0x18, 0x18, 0x3c, 0x00,
-	0x00, 0x06, 0x00, 0x06, 0x06, 0x06, 0x06, 0x3c,
-	0x00, 0x60, 0x60, 0x6c, 0x78, 0x6c, 0x66, 0x00,
-	0x00, 0x38, 0x18, 0x18, 0x18, 0x18, 0x3c, 0x00,
-	0x00, 0x00, 0x66, 0x7f, 0x7f, 0x6b, 0x63, 0x00,
-	0x00, 0x00, 0x7c, 0x66, 0x66, 0x66, 0x66, 0x00,
-	0x00, 0x00, 0x3c, 0x66, 0x66, 0x66, 0x3c, 0x00,
-	0x00, 0x00, 0x7c, 0x66, 0x66, 0x7c, 0x60, 0x60,
-	0x00, 0x00, 0x3e, 0x66, 0x66, 0x3e, 0x06, 0x06,
-	0x00, 0x00, 0x7c, 0x66, 0x60, 0x60, 0x60, 0x00,
-	0x00, 0x00, 0x3e, 0x60, 0x3c, 0x06, 0x7c, 0x00,
-	0x00, 0x18, 0x7e, 0x18, 0x18, 0x18, 0x0e, 0x00,
-	0x00, 0x00, 0x66, 0x66, 0x66, 0x66, 0x3e, 0x00,
-	0x00, 0x00, 0x66, 0x66, 0x66, 0x3c, 0x18, 0x00,
-	0x00, 0x00, 0x63, 0x6b, 0x7f, 0x3e, 0x36, 0x00,
-	0x00, 0x00, 0x66, 0x3c, 0x18, 0x3c, 0x66, 0x00,
-	0x00, 0x00, 0x66, 0x66, 0x66, 0x3e, 0x0c, 0x78,
-	0x00, 0x00, 0x7e, 0x0c, 0x18, 0x30, 0x7e, 0x00,
-	0x0e, 0x18, 0x18, 0x70, 0x18, 0x18, 0x0e, 0x00,
-	0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00,
-	0x70, 0x18, 0x18, 0x0e, 0x18, 0x18, 0x70, 0x00,
-	0x31, 0x6b, 0x46, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
 uint16 readCastleC64Uint16LE(const Common::Array<byte> &data, uint32 offset) {
@@ -232,25 +221,30 @@ Common::Array<byte> normalizeCastleC64Database(Common::SeekableReadStream *file)
 	return decoded;
 }
 
-Common::Array<Graphics::ManagedSurface *> loadCastleC64Font() {
+static Common::Array<Graphics::ManagedSurface *> loadCastleC64Font(const Common::Array<byte> &data) {
 	Common::Array<Graphics::ManagedSurface *> chars;
 
-	for (uint chr = 0; chr < ARRAYSIZE(kCastleC64FontData) / 8; chr++) {
+	// $85eb expands four packed bytes per character into eight rows of
+	// double-width pixels. Row 1 uses color RAM for the highlight.
+	for (uint chr = 32; chr < 128; chr++) {
 		Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
-		surface->create(8, 8, Graphics::PixelFormat::createFormatCLUT8());
+		surface->create(10, 8, Graphics::PixelFormat::createFormatCLUT8());
 		surface->clear(0);
-
-		for (int y = 0; y < 8; y++) {
-			byte row = kCastleC64FontData[chr * 8 + y];
-			for (int x = 0; x < 8; x++) {
-				if (row & (0x80 >> x))
-					surface->setPixel(x, y, 1);
+		uint glyph = (chr >= 'a' && chr <= 'z') ? chr - 'a' + 'A' : chr;
+		if (glyph <= 'Z') {
+			for (int y = 0; y < 8; y++) {
+				byte row = data[0x231a + (glyph - 32) * 4 + y / 2];
+				row = (y & 1) ? row & 15 : row >> 4;
+				for (int x = 0; x < 4; x++) {
+					if (row & (8 >> x)) {
+						surface->setPixel(x * 2, y, y == 1 ? 2 : 1);
+						surface->setPixel(x * 2 + 1, y, y == 1 ? 2 : 1);
+					}
+				}
 			}
 		}
-
 		chars.push_back(surface);
 	}
-
 	return chars;
 }
 
@@ -359,8 +353,6 @@ void CastleEngine::initC64() {
 	_viewArea = Common::Rect(40, 32, 280, 152);
 }
 
-extern byte kC64Palette[16][3];
-
 void CastleEngine::loadMessagesC64(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
 	debugC(1, kFreescapeDebugParser, "String table:");
@@ -389,32 +381,37 @@ void CastleEngine::loadRiddlesC64(Common::SeekableReadStream *file, int offset, 
 
 	for (int i = 0; i < number; i++) {
 		Riddle riddle;
-		riddle._origin = Common::Point(40, 33);
+		riddle._origin = Common::Point(40, 32);
+		int previousInset = 0;
 
 		int numberLines = file->readByte();
 		debugC(1, kFreescapeDebugParser, "c64 riddle %d number of lines: %d", i, numberLines);
 
 		for (int j = 0; j < numberLines; j++) {
-			int8 x = (int8)file->readByte();
+			int8 x = 2 * (int8)file->readByte(); // C64 horizontal offsets count pixel pairs.
 			int8 y = (int8)file->readByte();
 			int size = file->readByte();
 
-			if (size == 0xff)
+			// $6dd6 applies both deltas to every record, including the rows
+			// of asterisks. Discarding those rows also loses the text origin.
+			if (size == 0xff) {
+				riddle._lines.push_back(RiddleText(x + 6 - previousInset, y, "********************"));
+				previousInset = 6;
 				continue;
-
-			file->readByte(); // color/control byte
-			Common::String message;
-			int chars = 0;
-			while (chars < size) {
-				byte c = file->readByte();
-				if (c <= 1 || c < 0x20 || c > 0xf0)
-					continue;
-				message += c;
-				chars++;
 			}
 
+			int inset = file->readByte() ? 6 : 0;
+			if (inset)
+				size--;
+			if (size < 0 || file->pos() + size > file->size())
+				error("Truncated Castle C64 riddle %d", i);
+			Common::String message;
+			for (int chars = 0; chars < size; chars++)
+				message += file->readByte();
+
 			debugC(1, kFreescapeDebugParser, "'%s' with offset: %d, %d", message.c_str(), x, y);
-			riddle._lines.push_back(RiddleText(x, y, message));
+			riddle._lines.push_back(RiddleText(x + inset - previousInset, y, message));
+			previousInset = inset;
 		}
 
 		_riddleList.push_back(riddle);
@@ -430,16 +427,87 @@ void CastleEngine::loadAssetsC64FullGame() {
 	if (!file.isOpen())
 		error("Failed to open castlemaster.c64.data");
 
-	// The original tape loader preloads display support into high RAM before
-	// this main program image starts; castlemaster.c64.data has no standalone
-	// font block like the other C64 Freescape games.
-	Common::Array<Graphics::ManagedSurface *> chars = loadCastleC64Font();
+	Common::Array<byte> uiData = unpackCastleC64UI(&file);
+	Common::MemoryReadStream uiStream(uiData.data(), uiData.size());
+	Common::Array<Graphics::ManagedSurface *> chars = loadCastleC64Font(uiData);
 	_font = Font(chars);
-	_font.setCharWidth(8);
+	_font.setCharWidth(10);
+	_font.setSecondaryColor(castleC64UIColor(_gfx->_texturePixelFormat, 15));
 	_fontLoaded = true;
 
-	loadMessagesC64(&file, 0x13a9, 75);
-	loadRiddlesC64(&file, 0x1823, 9);
+	loadMessagesC64(&uiStream, 0x1401, 75);
+	loadRiddlesC64(&uiStream, 0x18ae, 9);
+
+	// Preserve multicolor pixel indices until drawing. VIC colors depend on
+	// the destination 8x8 cell, even within a single moving weight or key.
+	file.seek(0x301); // Packed color RAM at $0b00, high nibble first.
+	_c64UIColors.resize(1000 * 4);
+	for (int cell = 0; cell < 1000; cell += 2) {
+		byte colorRAM = file.readByte();
+		for (int i = 0; i < 2; i++) {
+			byte screen = uiData[0xc400 + cell + i];
+			byte colors[4] = {0, byte(screen >> 4), byte(screen & 15), byte(i ? colorRAM & 15 : colorRAM >> 4)};
+			for (int color = 0; color < 4; color++)
+				_c64UIColors[(cell + i) * 4 + color] = castleC64UIColor(_gfx->_texturePixelFormat, colors[color]);
+		}
+	}
+
+	loadCastleC64Frame(uiData, 0x1dd9, &_c64KeysBackground);
+	_keysBorderFrames.push_back(new Graphics::ManagedSurface());
+	loadCastleC64Frame(uiData, 0x1e32, _keysBorderFrames[0]);
+	_spiritsMeterIndicatorBackgroundFrame = new Graphics::ManagedSurface();
+	loadCastleC64Frame(uiData, 0x1e45, _spiritsMeterIndicatorBackgroundFrame);
+	_spiritsMeterIndicatorFrame = new Graphics::ManagedSurface();
+	loadCastleC64Frame(uiData, 0x1e8a, _spiritsMeterIndicatorFrame);
+	_strenghtBackgroundFrame = new Graphics::ManagedSurface();
+	loadCastleC64Frame(uiData, 0x1e9f, _strenghtBackgroundFrame);
+	_strenghtBarFrame = new Graphics::ManagedSurface();
+	loadCastleC64Frame(uiData, 0x1f49, _strenghtBarFrame);
+	for (int frame = 0; frame < 4; frame++) {
+		_strenghtWeightsFrames.push_back(new Graphics::ManagedSurface());
+		loadCastleC64Frame(uiData, 0x1f6f, _strenghtWeightsFrames[frame], frame);
+	}
+
+	// $6ee7 stretches seven three-byte rows across the riddle board. The
+	// bottom reverses the top six rows; row six fills the middle of the board.
+	Graphics::ManagedSurface *riddleFrames[3];
+	const byte riddleColors[4] = {0, 9, 7, 9};
+	for (int frame = 0; frame < 3; frame++) {
+		riddleFrames[frame] = new Graphics::ManagedSurface();
+		int height = frame == 1 ? 1 : 6;
+		riddleFrames[frame]->create(240, height, _gfx->_texturePixelFormat);
+		for (int y = 0; y < height; y++) {
+			int row = frame == 0 ? y : (frame == 1 ? 6 : 5 - y);
+			for (int x = 0; x < 240; x += 2) {
+				int column = x < 8 ? 0 : (x >= 232 ? 2 : 1);
+				byte pixels = uiData[0x2023 + row * 3 + column];
+				byte color = riddleColors[(pixels >> (6 - x % 8)) & 3];
+				uint32 pixel = castleC64UIColor(_gfx->_texturePixelFormat, color);
+				riddleFrames[frame]->setPixel(x, y, pixel);
+				riddleFrames[frame]->setPixel(x + 1, y, pixel);
+			}
+		}
+	}
+	_riddleTopFrame = riddleFrames[0];
+	_riddleBackgroundFrame = riddleFrames[1];
+	_riddleBottomFrame = riddleFrames[2];
+
+	// The IRQ at $74be advances the flag every eight PAL ticks. Its frames
+	// are six bitmap cells in C64 cell order, copied to $e128 and $e268.
+	for (int frame = 0; frame < 4; frame++) {
+		Graphics::ManagedSurface *flag = new Graphics::ManagedSurface();
+		flag->create(24, 16, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 24; x += 2) {
+				byte pixels = uiData[0x2038 + frame * 48 + (y / 8) * 24 + (x / 8) * 8 + y % 8];
+				byte color = (pixels >> (6 - x % 8)) & 3;
+				flag->setPixel(x, y, color);
+				flag->setPixel(x + 1, y, color);
+			}
+		}
+		_flagFrames.push_back(flag);
+	}
+
 	Common::Array<byte> database = normalizeCastleC64Database(&file);
 	CastleC64DatabaseReadStream databaseStream(database);
 	load8bitBinary(&databaseStream, 0, 16);
@@ -485,12 +553,82 @@ void CastleEngine::loadAssetsC64FullGame() {
 	// TODO: title screen is in BASIC loader (file 009) - not yet extracted
 }
 
-void CastleEngine::drawC64UI(Graphics::Surface *surface) {
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x62, 0xD5, 0x32);
+void CastleEngine::drawC64HudSurface(Graphics::Surface *surface, const Graphics::Surface &frame, const Common::Point &origin) {
+	for (int y = 0; y < frame.h; y++) {
+		const byte *src = (const byte *)frame.getBasePtr(0, y);
+		for (int x = 0; x < frame.w; x++) {
+			int cell = ((origin.y + y) / 8) * 40 + (origin.x + x) / 8;
+			surface->setPixel(origin.x + x, origin.y + y, _c64UIColors[cell * 4 + src[x]]);
+		}
+	}
+}
 
-	uint8 r, g, b;
-	_gfx->readFromPalette(0, r, g, b);
-	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+void CastleEngine::drawC64InfoMenu(Graphics::Surface *surface) {
+	uint32 front = castleC64UIColor(surface->format, 9);
+	uint32 highlight = castleC64UIColor(surface->format, 15);
+	uint32 back = castleC64UIColor(surface->format, 0);
+	surface->fillRect(_viewArea, back);
+	Common::String keys = _messagesList[72];
+	Common::String spirits = _messagesList[73];
+	Common::String score = _messagesList[74];
+	Common::replace(keys, "XX", Common::String::format("%2d", MIN<uint>(_keysCollected.size(), 10)));
+	Common::replace(spirits, "XX", Common::String::format("%2d", _gameStateVars[k8bitVariableSpiritsDestroyed]));
+	Common::replace(score, "XXXXXXX", Common::String::format("%07d", _gameStateVars[k8bitVariableScore]));
+
+	// The original menu at $7808 uses these rows within the 3D viewport.
+	drawStringInSurface("********************", 60, 46, front, highlight, back, surface);
+	drawStringInSurface(_messagesList[68], 50, 61, front, highlight, back, surface);
+	drawStringInSurface(_messagesList[69], 50, 82, front, highlight, back, surface);
+	drawStringInSurface(keys, 130, 82, front, highlight, back, surface);
+	drawStringInSurface(_messagesList[70], 50, 93, front, highlight, back, surface);
+	drawStringInSurface(spirits, 130, 93, front, highlight, back, surface);
+	drawStringInSurface(_messagesList[71], 50, 104, front, highlight, back, surface);
+	int strength = CLIP<int>(_gameStateVars[k8bitVariableShield], 1, 24);
+	drawStringInSurface(_messagesList[62 + (strength - 1) / 4], 150, 104, front, highlight, back, surface);
+	drawStringInSurface(score, 80, 115, front, highlight, back, surface);
+	drawStringInSurface("********************", 60, 133, front, highlight, back, surface);
+}
+
+void CastleEngine::drawC64UI(Graphics::Surface *surface) {
+	uint32 front = castleC64UIColor(surface->format, 5);
+	uint32 back = castleC64UIColor(surface->format, 0);
+	_font.setSecondaryColor(castleC64UIColor(surface->format, 15));
+
+	// $702c rebuilds the key rack on a full redraw, including after loading.
+	// Composing it afresh also removes keys when restarting or loading a save.
+	Graphics::ManagedSurface buffer(96, 19, Graphics::PixelFormat::createFormatCLUT8());
+	buffer.copyRectToSurface(_c64KeysBackground, 0, 0, Common::Rect(48, 14));
+	for (uint key = 0; key < MIN<uint>(_keysCollected.size(), 10); key++)
+		buffer.copyRectToSurfaceWithKey(*_keysBorderFrames[0], 42 - 4 * key, 0, Common::Rect(8, 14), 0);
+	drawC64HudSurface(surface, buffer.getSubArea(Common::Rect(48, 14)), Common::Point(48, 179));
+
+	// $7171 draws paired discs from the outside inward, four pixels apart.
+	// A partial disc precedes the full discs; strength below four lowers the
+	// bar and both discs. Only the original 88x15 window is copied to the HUD.
+	buffer.copyRectToSurface(*_strenghtBackgroundFrame, 0, 0, Common::Rect(88, 15));
+	int strength = CLIP<int>(_gameStateVars[k8bitVariableShield], 0, 24);
+	int drop = MAX(0, 4 - strength);
+	buffer.copyRectToSurface(*_strenghtBarFrame, 6, 6 + drop, Common::Rect(88, 3));
+	int pairs = (strength + 3) / 4;
+	for (int pair = 0; pair < pairs; pair++) {
+		int frame = (pair == 0 && strength % 4) ? 4 - strength % 4 : 0;
+		buffer.copyRectToSurfaceWithKey(*_strenghtWeightsFrames[frame], 8 + pair * 4, drop, Common::Rect(8, 15), 0);
+		buffer.copyRectToSurfaceWithKey(*_strenghtWeightsFrames[frame], 80 - pair * 4, drop, Common::Rect(8, 15), 0);
+	}
+	drawC64HudSurface(surface, buffer.getSubArea(Common::Rect(88, 15)), Common::Point(40, 158));
+
+	// $726a rounds the spirit position up to a pixel pair, then clips the
+	// moving face to the middle eight bitmap cells. Derive it from saved
+	// state here so a loaded game does not display the previous position.
+	int spiritsDestroyed = CLIP<int>(_gameStateVars[k8bitVariableSpiritsDestroyed], 0, _spiritsToKill);
+	int position = CLIP<int>(_spiritsMeter * (_spiritsToKill - spiritsDestroyed) / _spiritsToKill, 0, 64);
+	buffer.copyRectToSurface(*_spiritsMeterIndicatorBackgroundFrame, 8, 0, Common::Rect(64, 8));
+	buffer.copyRectToSurfaceWithKey(*_spiritsMeterIndicatorFrame, (position + 1) & ~1, 0, Common::Rect(16, 8), 0);
+	drawC64HudSurface(surface, buffer.getSubArea(Common::Rect(8, 0, 72, 8)), Common::Point(160, 161));
+
+	int flagFrame = (g_system->getMillis() / 160) % 4;
+	drawC64HudSurface(surface, *_flagFrames[flagFrame], Common::Point(296, 0));
+	// TODO: animate the eye indicator using the frames at $1fb0.
 
 	// The original loader leaves "CASTLE MASTER" in the bottom message strip.
 	// Clear the whole writable part of that strip before drawing runtime text.
