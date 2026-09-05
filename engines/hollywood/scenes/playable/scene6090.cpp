@@ -965,11 +965,11 @@ void Scene6090::runRopeRescueSequence() {
 	_soundBank0.stop();
 	_postRescue = true;
 	applyPatchChunk(12);
+	setActiveActorPose(0x17f, 0xf7, 5);
 	_compositeMode = kEscapeComposite;
 
 	startRealtimePrimarySpeechLine(15, 30, 0x13e, 0x50,
 		0x20, 0x32, 0, kScene6090InvalidSpeechGroup, kScene6090PrimarySpeechId);
-	walkActiveActorTo(0x17f, 0xf7, 5, 0);
 	waitForRealtimeSpeech(false);
 	beginSecondarySpeechLine(15, 31);
 	walkActiveActorTo(0xaa, 0x118, 5, 0);
