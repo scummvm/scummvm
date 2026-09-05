@@ -735,7 +735,7 @@ void Scene6050::runExitAuthorizationSequence() {
 
 	if (state.inventoryItemResourcePageByOwnerAndItemId[0][kScene6050WireInventoryItem] == 0x40 &&
 			!state.scene6050GuardAllowsEntry) {
-		startSecondarySpeechLine(13, 1);
+		startRealtimeSecondarySpeechLine(13, 1, 0);
 		state.scene6050GuardAllowsEntry = true;
 	}
 
@@ -744,6 +744,7 @@ void Scene6050::runExitAuthorizationSequence() {
 			kScene6050DoorSequenceDescriptorCount,
 			kScene6050DoorSequenceFrameMap,
 			AnimationFrameRange(25, 27, kScene6050ScriptFrameMillis).unskippable(), false);
+		waitForRealtimeSpeech();
 		if (!sequence.completed()) {
 			clearScriptLayers();
 			return;
