@@ -555,10 +555,10 @@ Common::Error EEMEngine::run() {
 		warning("FONT.FNT failed to load; text will not render");
 	}
 
-	// _InitMIDI @ 20a2:013a. The demo ships no music. The Mac release stores
-	// SMF MIDI resources in EEM Sound&Music instead of loose DOS XMIDI files.
+	// _InitMIDI @ 20a2:013a. The demo ships no music. Mac releases use
+	// Halestorm song and instrument resources instead of loose DOS XMIDI files.
 	if (!isDemo())
-		_music = new MusicPlayer(isFloppy(), isMacintosh());
+		_music = new MusicPlayer(isFloppy(), isMacintosh(), isLondon());
 
 	// _InitDrivers @ 1ff1:0368 (SBDIG.ADV / PASDIG.ADV).
 	_audio = new AudioPlayer(this);

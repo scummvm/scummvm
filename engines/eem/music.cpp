@@ -21,12 +21,15 @@
 
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+#include "audio/mixer.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "eem/detection.h"
@@ -36,10 +39,7 @@
 namespace EEM {
 
 const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
-const int kMacMidiDriverFlags = MDT_MIDI | MDT_PREFER_GM;
-const uint16 kInvalidMacMidiResource = 0xffff;
 const uint16 kInvalidMacSongResource = 0xffff;
-const byte kNoMacInstrument = 0xff;
 
 Common::String musicNameFromPath(const Common::Path &path) {
 	Common::String name = path.baseName();
@@ -50,7 +50,89 @@ Common::String musicNameFromPath(const Common::Path &path) {
 	return name;
 }
 
-Common::SeekableReadStream *openMacMidiResource(uint16 resourceId) {
+static bool copyMacMidiVLQ(Common::SeekableReadStream &stream, int64 end,
+						  Common::WriteStream &output, uint32 &value) {
+	value = 0;
+	for (uint i = 0; i < 4 && stream.pos() < end; ++i) {
+		const byte b = stream.readByte();
+		output.writeByte(b);
+		value = (value << 7) | (b & 0x7f);
+		if (!(b & 0x80))
+			return true;
+	}
+	return false;
+}
+
+static Common::SeekableReadStream *expandMacMidiRunningStatus(Common::SeekableReadStream &stream) {
+	if (stream.size() < 14 || stream.readUint32BE() != MKTAG('M', 'T', 'h', 'd'))
+		return nullptr;
+	stream.seek(0);
+
+	// Halestorm shares running status between tracks. Expand it here so each
+	// EEM MIDI event carries its own command and channel, including note-offs.
+	Common::MemoryWriteStreamDynamic output(DisposeAfterUse::YES);
+	while (stream.size() - stream.pos() >= 8) {
+		const uint32 tag = stream.readUint32BE();
+		const uint32 size = stream.readUint32BE();
+		if (size > stream.size() - stream.pos())
+			return nullptr;
+		const int64 end = stream.pos() + size;
+		output.writeUint32BE(tag);
+		const uint32 sizeOffset = output.pos();
+		output.writeUint32BE(size);
+
+		if (tag != MKTAG('M', 'T', 'r', 'k')) {
+			if (output.writeStream(&stream, size) != size)
+				return nullptr;
+			continue;
+		}
+
+		byte runningStatus = 0;
+		while (stream.pos() < end) {
+			uint32 delta;
+			if (!copyMacMidiVLQ(stream, end, output, delta) || stream.pos() == end)
+				return nullptr;
+
+			byte status = stream.readByte();
+			if (status < 0x80) {
+				if (!runningStatus)
+					return nullptr;
+				stream.seek(-1, SEEK_CUR);
+				status = runningStatus;
+			}
+			output.writeByte(status);
+
+			uint32 dataSize;
+			if (status < 0xf0) {
+				runningStatus = status;
+				dataSize = ((status & 0xf0) == 0xc0 || (status & 0xf0) == 0xd0) ? 1 : 2;
+			} else if (status == 0xff) {
+				if (stream.pos() == end)
+					return nullptr;
+				output.writeByte(stream.readByte());
+				if (!copyMacMidiVLQ(stream, end, output, dataSize))
+					return nullptr;
+			} else if (status == 0xf0 || status == 0xf7) {
+				runningStatus = 0;
+				if (!copyMacMidiVLQ(stream, end, output, dataSize))
+					return nullptr;
+			} else {
+				return nullptr;
+			}
+
+			if (dataSize > end - stream.pos() || output.writeStream(&stream, dataSize) != dataSize)
+				return nullptr;
+		}
+		WRITE_BE_UINT32(output.getData() + sizeOffset, output.size() - sizeOffset - 4);
+	}
+	if (stream.pos() != stream.size() || stream.err())
+		return nullptr;
+
+	Common::MemoryReadStream expanded(output.getData(), output.size());
+	return expanded.readStream(expanded.size());
+}
+
+Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 	static const char *const kMacMusicForks[] = {
 		"EEM Sound&Music",
 		"rsrc/EEM Sound&Music",
@@ -63,14 +145,34 @@ Common::SeekableReadStream *openMacMidiResource(uint16 resourceId) {
 		MKTAG('M', 'i', 'd', 'i'),
 	};
 
-	for (uint i = 0; i < ARRAYSIZE(kMacMusicForks); i++) {
-		for (uint j = 0; j < ARRAYSIZE(kMacMidiTypes); j++) {
-			Common::SeekableReadStream *stream =
-				openMacResource(Common::Path(kMacMusicForks[i]),
-								kMacMidiTypes[j], resourceId);
-			if (stream)
+	const uint firstFork = _isLondon ? 2 : 0;
+	for (uint i = firstFork; i < firstFork + 2; i++) {
+		const Common::Path path(kMacMusicForks[i]);
+		if (type == MKTAG('M', 'I', 'D', 'I') || type == MKTAG('M', 'i', 'd', 'i')) {
+			for (uint j = 0; j < ARRAYSIZE(kMacMidiTypes); j++) {
+				Common::SeekableReadStream *stream = openMacResource(path, kMacMidiTypes[j], id);
+				if (stream) {
+					Common::SeekableReadStream *expanded = expandMacMidiRunningStatus(*stream);
+					delete stream;
+					if (!expanded)
+						warning("MusicPlayer: invalid Mac MIDI resource %u", id);
+					return expanded;
+				}
+			}
+			continue;
+		} else if (type == MKTAG('s', 'n', 'd', ' ')) {
+			// London stores most instrument samples as delta-compressed csnd.
+			Common::SeekableReadStream *packed = openMacResource(path, MKTAG('c', 's', 'n', 'd'), id);
+			if (packed) {
+				Common::SeekableReadStream *stream = decompressMacSound(*packed);
+				delete packed;
 				return stream;
+			}
 		}
+
+		Common::SeekableReadStream *stream = openMacResource(path, type, id);
+		if (stream)
+			return stream;
 	}
 
 	return nullptr;
@@ -116,45 +218,38 @@ uint16 macSongResourceIdForMus(uint num) {
 	return kInvalidMacSongResource;
 }
 
-MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
-	_isFloppy(isFloppy), _isMacintosh(isMacintosh) {
-	clearMacInstrumentMap();
+MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh, bool isLondon) :
+	_isFloppy(isFloppy), _isMacintosh(isMacintosh), _isLondon(isLondon) {
+	if (_isMacintosh)
+		return;
 
 	// _InitMIDI @ 20a2:013a — `_AIL_register_driver` against
 	// ADLIB.ADV / SBFM.ADV / MT32MPU.ADV. We honour the launcher's
 	// "Music driver" setting and prefer MT-32 when unset.
-	const MidiDriver::DeviceHandle dev =
-		MidiDriver::detectDevice(_isMacintosh ? kMacMidiDriverFlags
-											  : kMidiDriverFlags);
+	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(kMidiDriverFlags);
 	MusicType musicType = MidiDriver::getMusicType(dev);
-	if (!_isMacintosh && musicType == MT_GM &&
-		ConfMan.getBool("native_mt32"))
+	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
 		musicType = MT_MT32;
 
-	if (_isMacintosh) {
+	switch (musicType) {
+	case MT_ADLIB:
+		// _MIDIPlayFile @ 20a2:024c opens SAMPLE.AD (string at 29be:14d6)
+		// and installs every patch the sequence requests via
+		// `_AIL_install_timbre`.
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_AdLib_create(
+			Common::Path("SAMPLE.AD"), Common::Path());
+		break;
+	case MT_MT32:
+		// MT32MPU.ADV in the original. No Miles MT-32 bank ships with
+		// EEM, so use the standard MT-32 driver.
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_MT32_create(Common::Path());
+		break;
+	default:
 		_milesAudioMode = false;
-		createDriver(kMacMidiDriverFlags);
-	} else {
-		switch (musicType) {
-		case MT_ADLIB:
-			// _MIDIPlayFile @ 20a2:024c opens SAMPLE.AD (string at 29be:14d6)
-			// and installs every patch the sequence requests via
-			// `_AIL_install_timbre`.
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_AdLib_create(
-				Common::Path("SAMPLE.AD"), Common::Path());
-			break;
-		case MT_MT32:
-			// MT32MPU.ADV in the original. No Miles MT-32 bank ships with
-			// EEM, so use the standard MT-32 driver.
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_MT32_create(Common::Path());
-			break;
-		default:
-			_milesAudioMode = false;
-			createDriver(kMidiDriverFlags);
-			break;
-		}
+		createDriver(kMidiDriverFlags);
+		break;
 	}
 
 	if (_driver) {
@@ -165,9 +260,7 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 			_driver = nullptr;
 		} else {
 			// Miles AdLib handles its own reset.
-			if (_isMacintosh) {
-				_driver->sendGMReset();
-			} else if (musicType != MT_ADLIB) {
+			if (musicType != MT_ADLIB) {
 				if (musicType == MT_MT32 || _nativeMT32)
 					_driver->sendMT32Reset();
 				else
@@ -180,16 +273,38 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 	}
 }
 
-void MusicPlayer::send(uint32 b) {
-	if (_isMacintosh && (b & 0xF0) == 0xC0) {
-		const byte channel = (byte)(b & 0x0F);
-		const byte rawProgram = (byte)((b >> 8) & 0x7F);
-		const byte inst = _macChannelInstrument[channel] != kNoMacInstrument
-			? _macChannelInstrument[channel] : rawProgram;
-		const byte gmProgram = mapMacInstrumentToGM(inst, channel);
-		b = (b & 0xFFFF00FF) | ((uint32)gmProgram << 8);
-	}
+MusicPlayer::~MusicPlayer() {
+	stop();
+}
 
+void MusicPlayer::stop() {
+	if (_isMacintosh) {
+		// Halestorm may already report the song as finished and ignore abort.
+		// Releasing EEM's driver also stops any remaining sample voices.
+		delete _macDriver;
+		_macDriver = nullptr;
+	} else {
+		Audio::MidiPlayer::stop();
+	}
+}
+
+bool MusicPlayer::isPlaying() const {
+	if (_isMacintosh)
+		return _macDriver && _macDriver->doCommand(Audio::HalestormDriver::kSongIsPlaying);
+	return Audio::MidiPlayer::isPlaying();
+}
+
+void MusicPlayer::setVolume(int volume) {
+	if (_isMacintosh) {
+		_masterVolume = CLIP<int>(volume, 0, Audio::Mixer::kMaxMixerVolume);
+		if (_macDriver)
+			_macDriver->setMusicVolume(_masterVolume);
+	} else {
+		Audio::MidiPlayer::setVolume(volume);
+	}
+}
+
+void MusicPlayer::send(uint32 b) {
 	// Miles drivers (both AdLib and MT-32) implement their own per-
 	// source-channel mixing and timbre installation, so forward the raw
 	// event.
@@ -200,18 +315,15 @@ void MusicPlayer::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
-void MusicPlayer::startLoadedMusic(const Common::String &name, bool loop,
-								   bool smf) {
-	_parser = smf ? MidiParser::createParser_SMF()
-				  : MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
+void MusicPlayer::startLoadedMusic(const Common::String &name, bool loop) {
+	_parser = MidiParser::createParser_XMIDI(nullptr, nullptr, 0);
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
 	if (!_parser->loadMusic(_xmiData.data(), _xmiData.size())) {
-		warning("MusicPlayer: %s parser rejected %s",
-				smf ? "SMF" : "XMIDI", name.c_str());
+		warning("MusicPlayer: XMIDI parser rejected %s", name.c_str());
 		delete _parser;
 		_parser = nullptr;
 		_xmiData.clear();
@@ -225,142 +337,39 @@ void MusicPlayer::startLoadedMusic(const Common::String &name, bool loop,
 	syncVolume();
 	_isPlaying = true;
 	debugC(1, kDebugSound,
-		   "MusicPlayer: playing %s (%u bytes, loop=%d, miles=%d, smf=%d)",
-		   name.c_str(), _xmiData.size(), loop, _milesAudioMode, smf);
-}
-
-void MusicPlayer::clearMacInstrumentMap() {
-	memset(_macChannelInstrument, kNoMacInstrument,
-		   sizeof(_macChannelInstrument));
-}
-
-byte MusicPlayer::mapMacInstrumentToGM(byte inst, byte channel) const {
-	if (channel == 9)
-		return 0;
-
-	switch (inst) {
-	case 2:
-	case 3:
-		return 0;   // Piano
-	case 11:
-		return 16;  // Organ
-	case 60:
-		return 24;  // Guitar
-	case 64:
-	case 65:
-		return 33;  // Bass
-	case 73:
-	case 74:
-	case 75:
-		return 73;  // Flute
-	case 83:
-	case 84:
-		return 71;  // Clarinet
-	default:
-		return inst < 128 ? inst : 0;
-	}
-}
-
-bool MusicPlayer::loadMacSong(uint16 resourceId, uint16 &midiId) {
-	midiId = kInvalidMacMidiResource;
-	clearMacInstrumentMap();
-
-	static const char *const kMacMusicForks[] = {
-		"EEM Sound&Music",
-		"rsrc/EEM Sound&Music",
-		"EEM London CD",
-		"rsrc/EEM London CD",
-	};
-
-	Common::SeekableReadStream *stream = nullptr;
-	for (uint i = 0; i < ARRAYSIZE(kMacMusicForks) && !stream; i++) {
-		stream = openMacResource(Common::Path(kMacMusicForks[i]),
-								 MKTAG('S', 'O', 'N', 'G'), resourceId);
-	}
-	if (!stream) {
-		warning("MusicPlayer: Mac SONG resource %u missing", resourceId);
-		return false;
-	}
-
-	const uint32 size = (uint32)stream->size();
-	if (size < 18) {
-		delete stream;
-		warning("MusicPlayer: Mac SONG resource %u too short", resourceId);
-		return false;
-	}
-
-	Common::Array<byte> song;
-	song.resize(size);
-	if (stream->read(song.data(), size) != size) {
-		delete stream;
-		warning("MusicPlayer: short read on Mac SONG resource %u", resourceId);
-		return false;
-	}
-	delete stream;
-
-	midiId = READ_BE_UINT16(song.data());
-	const uint16 instCount = READ_BE_UINT16(song.data() + 16);
-	uint32 pos = 18;
-	for (uint i = 0; i < instCount && pos + 4 <= size; i++, pos += 4) {
-		const uint16 channel = READ_BE_UINT16(song.data() + pos);
-		const uint16 inst = READ_BE_UINT16(song.data() + pos + 2);
-		if (channel < ARRAYSIZE(_macChannelInstrument) && inst < 128)
-			_macChannelInstrument[channel] = (byte)inst;
-	}
-
-	return true;
+		   "MusicPlayer: playing %s (%u bytes, loop=%d, miles=%d)",
+		   name.c_str(), _xmiData.size(), loop, _milesAudioMode);
 }
 
 void MusicPlayer::playMacSongResource(uint16 resourceId, bool loop) {
+	stop();
 	if (resourceId == kInvalidMacSongResource)
 		return;
 
-	uint16 midiId = kInvalidMacMidiResource;
-	if (!loadMacSong(resourceId, midiId))
-		return;
-
-	playMacMidiResource(midiId, loop);
-}
-
-void MusicPlayer::playMacMidiResource(uint16 resourceId, bool loop) {
-	if (resourceId == kInvalidMacMidiResource)
-		return;
-
-	Common::SeekableReadStream *stream = openMacMidiResource(resourceId);
-	if (!stream) {
-		warning("MusicPlayer: Mac Midi resource %u missing", resourceId);
+	_macDriver = new Audio::HalestormDriver(this, g_system->getMixer());
+	if (!_macDriver->init(true, Audio::HalestormDriver::kSimple, 0, false)) {
+		warning("MusicPlayer: Halestorm initialization failed");
+		stop();
 		return;
 	}
 
-	const uint32 size = (uint32)stream->size();
-	if (size == 0) {
-		delete stream;
-		warning("MusicPlayer: Mac Midi resource %u is empty", resourceId);
+	syncVolume();
+	const int command = loop ? Audio::HalestormDriver::kSongPlayLoop : Audio::HalestormDriver::kSongPlayOnce;
+	const int result = _macDriver->doCommand(command, resourceId);
+	if (result) {
+		warning("MusicPlayer: failed to play Mac SONG resource %u (%d)", resourceId, result);
+		stop();
 		return;
 	}
-	_xmiData.resize(size);
-	if (stream->read(_xmiData.data(), size) != size) {
-		delete stream;
-		_xmiData.clear();
-		warning("MusicPlayer: short read on Mac Midi resource %u", resourceId);
-		return;
-	}
-	delete stream;
 
-	startLoadedMusic(Common::String::format("Mac Midi %u", resourceId), loop,
-					 /* smf= */ true);
+	debugC(1, kDebugSound, "MusicPlayer: playing Mac SONG %u (loop=%d)", resourceId, loop);
 }
 
 void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
-	if (!_driver)
-		return;
-
-	Common::StackLock lock(_mutex);
-	stop();
-
 	if (_isMacintosh) {
 		const uint16 resourceId = macSongResourceIdForFile(xmiPath);
 		if (resourceId == kInvalidMacSongResource) {
+			stop();
 			warning("MusicPlayer: no Mac SONG mapping for %s",
 					xmiPath.toString().c_str());
 			return;
@@ -368,6 +377,12 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 		playMacSongResource(resourceId, loop);
 		return;
 	}
+
+	if (!_driver)
+		return;
+
+	Common::StackLock lock(_mutex);
+	stop();
 
 	Common::File f;
 	if (!f.open(xmiPath)) {
@@ -387,14 +402,16 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 		return;
 	}
 
-	startLoadedMusic(xmiPath.toString(), loop, /* smf= */ false);
+	startLoadedMusic(xmiPath.toString(), loop);
 }
 
 void MusicPlayer::playMus(uint num, bool loop) {
 	if (_isMacintosh) {
-		Common::StackLock lock(_mutex);
-		stop();
-		playMacSongResource(macSongResourceIdForMus(num), loop);
+		// London SONG ids are 1000 + the MUS number; EEM1 uses named tracks.
+		const uint16 resourceId = _isLondon
+			? (num < kInvalidMacSongResource - 1000 ? 1000 + num : kInvalidMacSongResource)
+			: macSongResourceIdForMus(num);
+		playMacSongResource(resourceId, loop);
 		return;
 	}
 

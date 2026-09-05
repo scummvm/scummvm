@@ -87,6 +87,9 @@ Common::SeekableReadStream *openMacResource(const Common::Path &path,
 											uint32 typeId,
 											uint16 resourceId);
 
+/// Decode a csnd resource to a snd resource. The caller owns the returned stream.
+Common::SeekableReadStream *decompressMacSound(Common::SeekableReadStream &stream);
+
 } // End of namespace EEM
 
 #endif

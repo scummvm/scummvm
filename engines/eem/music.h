@@ -22,6 +22,7 @@
 #ifndef EEM_MUSIC_H
 #define EEM_MUSIC_H
 
+#include "audio/mac/halestorm.h"
 #include "audio/midiplayer.h"
 
 #include "common/array.h"
@@ -31,7 +32,8 @@
 namespace EEM {
 
 /**
- * MIDI music player. Mirrors MIDI.C in EEMCD.EXE
+ * Music player. DOS uses MIDI; Macintosh uses Halestorm with the original
+ * SONG, Midi, INST and snd resources. Mirrors MIDI.C in EEMCD.EXE
  * (_MIDIPlayFile / _MIDIPlay / _StopMIDI / _IsMIDIPlaying /
  * _StartTravelMusic family at 20a2:00e2-05c9).
  *
@@ -48,9 +50,10 @@ namespace EEM {
  *   MUS00005 — winner (_DisplayCorrect @ 1df2:0789).
  *   MUS00006 — loser  (_DisplayAlibi  @ 1df2:018a).
  */
-class MusicPlayer : public Audio::MidiPlayer {
+class MusicPlayer : public Audio::MidiPlayer, private Audio::HalestormLoader {
 public:
-	explicit MusicPlayer(bool isFloppy = false, bool isMacintosh = false);
+	explicit MusicPlayer(bool isFloppy = false, bool isMacintosh = false, bool isLondon = false);
+	~MusicPlayer() override;
 
 	/// _MIDIPlayFile @ 20a2:024c. loop=true mirrors
 	void playFile(const Common::Path &xmiPath, bool loop = false);
@@ -59,23 +62,25 @@ public:
 	/// floppy: TRAVEL-N.XMI / FANFARE2.XMI.
 	void playMus(uint num, bool loop = false);
 
+	void stop() override;
+	bool isPlaying() const;
+	void setVolume(int volume) override;
+
 	// WORKAROUND: Miles drivers handle source-channel routing themselves;
 	// bypass Audio::MidiPlayer::sendToChannel. Same as Toltecs / SAGA.
 	void send(uint32 b) override;
 
 private:
-	void playMacMidiResource(uint16 resourceId, bool loop);
 	void playMacSongResource(uint16 resourceId, bool loop);
-	void startLoadedMusic(const Common::String &name, bool loop, bool smf);
-	bool loadMacSong(uint16 resourceId, uint16 &midiId);
-	void clearMacInstrumentMap();
-	byte mapMacInstrumentToGM(byte inst, byte channel) const;
+	void startLoadedMusic(const Common::String &name, bool loop);
+	Common::SeekableReadStream *getResource(uint16 id, uint32 type) override;
 
 	bool _milesAudioMode = false;
 	const bool _isFloppy;
 	const bool _isMacintosh;
+	const bool _isLondon;
 	Common::Array<byte> _xmiData;
-	byte _macChannelInstrument[16] = {};
+	Audio::HalestormDriver *_macDriver = nullptr;
 };
 
 } // End of namespace EEM
