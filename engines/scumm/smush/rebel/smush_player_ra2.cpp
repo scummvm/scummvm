@@ -543,20 +543,21 @@ public:
 				data_start++;
 
 			char *data_end = data_start;
-			while (1) {
+			while (data_end < buffer + length) {
 				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '\r' && data_end[1] == '\n') break;
 				if (data_end[-2] == '\n' && data_end[-1] == '\n') break;
 				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '#') break;
 				data_end++;
-				if (data_end >= buffer + length) { data_end = buffer + length; break; }
 			}
 			data_end -= 2;
 
-			if (data_end <= data_start) { def_start = strchr(def_end + 1, '#'); continue; }
+			// Retail TRS_DEMO_TEXT is defined but empty. Keep its entry so the
+			// intro's final TRES cue does not resolve to "unknown string".
+			if (data_end < data_start)
+				data_end = data_start;
 
-			if (data_start[0] == '/' && data_start[1] == '/')
+			if (data_end - data_start >= 2 && data_start[0] == '/' && data_start[1] == '/')
 				data_start += 2;
-			if (data_end <= data_start) { def_start = strchr(def_end + 1, '#'); continue; }
 
 			char *value = new char[data_end - data_start + 1];
 			memcpy(value, data_start, data_end - data_start);
@@ -581,7 +582,7 @@ public:
 			} else {
 				delete[] value;
 			}
-			def_start = strchr(data_end + 2, '#');
+			def_start = strchr(data_end, '#');
 		}
 		return true;
 	}
