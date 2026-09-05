@@ -761,12 +761,14 @@ void ZoombiniInteractive::bindEmbeddedControlFeature(ZmbFeature *feature) {
 }
 
 void ZoombiniInteractive::updateTlcButtonHover(const Common::Point &absPos) {
-	// v2.0US release only: shared three-button hover visuals.
+	// TLC v2.0 releases: shared three-button hover visuals.
 	if (!_vm->isVersionFamilyTlcV2())
 		return;
 
-	genericButton_updateHoverState(_goMapButtonsFeature, absPos, _goMapButtonStateMap, _threeButtonRectMap);
-	genericButton_updateHoverState(_helpButtonFeature, absPos, _helpButtonStateMap, _threeButtonRectMap);
+	if (_goMapButtonsFeature)
+		genericButton_updateHoverState(_goMapButtonsFeature, absPos, _goMapButtonStateMap, _threeButtonRectMap);
+	if (_helpButtonFeature)
+		genericButton_updateHoverState(_helpButtonFeature, absPos, _helpButtonStateMap, _threeButtonRectMap);
 }
 
 ZmbRenderResult ZoombiniInteractive::goMapButtons_renderSeparateBitmaps(ZmbFeature *feature) {
