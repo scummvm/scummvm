@@ -44,7 +44,7 @@ const byte kScene6090HannoverSpeechGroup = 0;
 const byte kScene6090KarloffSpeechGroup = 1;
 const byte kScene6090SueSpeechGroup = 2;
 const byte kScene6090InvalidSpeechGroup = 0xff;
-const byte kScene6090PrimarySpeechColor = 0xfb;
+const byte kScene6090PrimarySpeechId = 1;
 
 enum {
 	kScene6090LeftAmbientLayer,
@@ -188,19 +188,7 @@ Scene6090::Scene6090(HollywoodEngine *vm) :
 		_escapeAnimationActive(false),
 		_escapePaletteActive(false),
 		_paletteLockedDark(false),
-		_muffledSpeechStarted(false),
-		_asyncPrimaryActive(false),
-		_asyncPrimaryAnimated(false),
-		_asyncTextRecordId(0),
-		_asyncVoiceSampleId(0),
-		_asyncCenterX(0),
-		_asyncTopY(0),
-		_asyncPartCount(0),
-		_asyncPartIndex(0),
-		_asyncAnimationGroup(kScene6090InvalidSpeechGroup),
-		_asyncColorIndex(kScene6090PrimarySpeechColor),
-		_asyncVolumePercent(100),
-		_asyncPartRemainingMillis(0) {
+		_muffledSpeechStarted(false) {
 	_sceneLayers.configure(kScene6090LayerSpecs);
 	_leftAmbientTrack = _realtimeAnimationTracks.addLoop(kScene6090LeftAmbientLayer,
 		kScene6090FrameMillis, 0x1a);
@@ -270,9 +258,6 @@ void Scene6090::resetSceneLayers() {
 	_escapePaletteActive = false;
 	_paletteLockedDark = false;
 	_muffledSpeechStarted = false;
-	_asyncPrimaryActive = false;
-	_asyncPrimaryAnimated = false;
-	_asyncPartRemainingMillis = 0;
 	_escapePaletteSource.clear();
 }
 
@@ -556,13 +541,6 @@ void Scene6090::advanceCustomGameplayLoop(uint32 delta) {
 		advanceMechanism(delta);
 }
 
-void Scene6090::advancePrimarySpeechAnimation(uint32 delta) {
-	if (_asyncPrimaryActive)
-		advanceAsyncPrimarySpeech(delta);
-	else
-		PlayableScene::advancePrimarySpeechAnimation(delta);
-}
-
 void Scene6090::advanceTiedRonIdle(uint32 delta) {
 	if (_compositeMode != kIntroComposite)
 		return;
@@ -610,10 +588,10 @@ void Scene6090::advanceSueIdle(uint32 delta) {
 				}
 			} else {
 				sueFaceLayer.setFrame(sueFaceLayer.frameIndex + 1);
-				if (_postRescue && !_asyncPrimaryActive &&
+				if (_postRescue && !isRealtimeSpeechActive() &&
 						!_primaryDialogueSpeechActive && !_speech.isPlaying()) {
-					startAsyncPrimarySpeechLine(15, 33, 0x32, 0x78,
-						0x3f, 0x28, 0x32, kScene6090InvalidSpeechGroup);
+					startRealtimePrimarySpeechLine(15, 33, 0x32, 0x78,
+						0x3f, 0x28, 0x32, kScene6090InvalidSpeechGroup, kScene6090PrimarySpeechId);
 				}
 			}
 			break;
@@ -634,11 +612,11 @@ void Scene6090::advanceMechanism(uint32 delta) {
 			}
 			break;
 		case 1:
-			if (!_asyncPrimaryActive) {
+			if (!isRealtimeSpeechActive()) {
 				if (_speakerMode == 1) {
 					_speakerMode = 2;
-					startAsyncPrimarySpeechLine(15, 27, 0xd2, 0x82,
-						0x20, 0x32, 0, kScene6090KarloffSpeechGroup, 25);
+					startRealtimePrimarySpeechLine(15, 27, 0xd2, 0x82,
+						0x20, 0x32, 0, kScene6090KarloffSpeechGroup, kScene6090PrimarySpeechId, 25);
 				} else {
 					_speakerMode = 0;
 					karloffLayer.setFrame(0x0c);
@@ -713,8 +691,8 @@ void Scene6090::advanceHannoverPose() {
 		if (hannoverLayer.frameIndex == 4) {
 			_hannoverPoseMode = 1;
 			_speakerMode = 1;
-			startAsyncPrimarySpeechLine(15, 26, 0xb4, 0x7c,
-				0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup, 25);
+			startRealtimePrimarySpeechLine(15, 26, 0xb4, 0x7c,
+				0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup, kScene6090PrimarySpeechId, 25);
 		} else {
 			hannoverLayer.setFrame(hannoverLayer.frameIndex + 1);
 		}
@@ -732,106 +710,8 @@ void Scene6090::advanceHannoverPose() {
 	}
 }
 
-void Scene6090::startAsyncPrimarySpeechLine(uint16 rowIndex, byte frameIndex,
-		uint16 centerX, uint16 topY, byte red, byte green, byte blue,
-		byte animationGroup, byte volumePercent) {
-	uint16 textRecordId = 0;
-	byte continuationCount = 0;
-	uint16 voiceSampleId = 0;
-	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
-		return;
-
-	stopAsyncPrimarySpeech();
-	setPaletteEntry6Bit(kScene6090PrimarySpeechColor, red, green, blue);
-	_asyncPrimaryActive = true;
-	_asyncPrimaryAnimated = animationGroup != kScene6090InvalidSpeechGroup;
-	_asyncTextRecordId = textRecordId;
-	_asyncVoiceSampleId = voiceSampleId;
-	_asyncCenterX = centerX;
-	_asyncTopY = topY;
-	_asyncPartCount = MAX<byte>(1, continuationCount);
-	_asyncPartIndex = 0;
-	_asyncAnimationGroup = animationGroup;
-	_asyncColorIndex = kScene6090PrimarySpeechColor;
-	_asyncVolumePercent = volumePercent;
-	if (_asyncPrimaryAnimated) {
-		const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
-		_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
-		primarySpeechAnimationStarted(animationGroup, baseFrame);
-		setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
-	}
-	startAsyncPrimarySpeechPart();
-}
-
-void Scene6090::startAsyncPrimarySpeechPart() {
-	while (_asyncPrimaryActive && _asyncPartIndex < _asyncPartCount) {
-		const Common::String text = getResource003LargeTextRecord(
-			_asyncTextRecordId + _asyncPartIndex);
-		if (text.empty()) {
-			++_asyncPartIndex;
-			continue;
-		}
-
-		_primarySpeechOverlay.visible = true;
-		_primarySpeechOverlay.colorIndex = _asyncColorIndex;
-		wrapActorSpeechText(text, _asyncCenterX, _primarySpeechOverlay.lines);
-		calculateSpeechOverlayBounds(_primarySpeechOverlay, _asyncCenterX, _asyncTopY,
-			true, _activeActorWorldY);
-		const uint16 sampleId = _asyncVoiceSampleId == 0 ? 0 :
-			_asyncVoiceSampleId + _asyncPartIndex;
-		const bool started = sampleId != 0 && _speech.playSample(sampleId, _asyncVolumePercent);
-		_asyncPartRemainingMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
-		return;
-	}
-	stopAsyncPrimarySpeech();
-}
-
-void Scene6090::advanceAsyncPrimarySpeech(uint32 delta) {
-	if (!_asyncPrimaryActive)
-		return;
-	if (_asyncPrimaryAnimated)
-		advancePrimaryDialogueSpeechFrame(delta);
-
-	while (_asyncPrimaryActive && delta >= _asyncPartRemainingMillis) {
-		delta -= _asyncPartRemainingMillis;
-		_speech.stop();
-		_primarySpeechOverlay.visible = false;
-		_primarySpeechOverlay.lines.clear();
-		++_asyncPartIndex;
-		startAsyncPrimarySpeechPart();
-	}
-	if (_asyncPrimaryActive)
-		_asyncPartRemainingMillis -= delta;
-}
-
-void Scene6090::stopAsyncPrimarySpeech() {
-	if (!_asyncPrimaryActive)
-		return;
-
-	_speech.stop();
-	_primarySpeechOverlay.visible = false;
-	_primarySpeechOverlay.lines.clear();
-	if (_asyncPrimaryAnimated) {
-		const byte baseFrame = primarySpeechAnimationBaseFrame(_asyncAnimationGroup);
-		setPrimarySpeechAnimationFrame(_asyncAnimationGroup, baseFrame);
-		_speechController.stopPrimaryDialogueSpeech(kScene6090InvalidSpeechGroup, 7);
-		primarySpeechAnimationRestored(_asyncAnimationGroup, baseFrame);
-	}
-	_asyncPrimaryActive = false;
-	_asyncPrimaryAnimated = false;
-	_asyncPartRemainingMillis = 0;
-}
-
-void Scene6090::waitForAsyncPrimarySpeech() {
-	while (_asyncPrimaryActive && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (waitSceneMillis(25, false))
-			break;
-	}
-}
-
 void Scene6090::runDelayedInterruption() {
-	stopAsyncPrimarySpeech();
+	stopRealtimeSpeech();
 	_speakerMode = 0;
 	_sceneLayers.setLayerFrame(kScene6090KarloffLayer, 0x0c);
 	_mechanismState = 6;
@@ -948,63 +828,49 @@ void Scene6090::runInterruptionClips() {
 bool Scene6090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Acción imposible (impossible action).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
 		return true;
 	case 302: // Mirar cuerda (look at the rope).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 303: // Usar/Coger cuerda (use/take the rope): attempt the timed rescue.
 		if (!_delayedEventDone) {
-			stopAsyncPrimarySpeech();
 			beginSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
 		} else if (_speakerMode == 0) {
-			stopAsyncPrimarySpeech();
 			beginSecondarySpeechLine(3, 0);
 		} else {
-			stopAsyncPrimarySpeech();
+			stopRealtimeSpeech();
 			runRopeRescueSequence();
 		}
 		return true;
 	case 304: // Mirar peso (look at the counterweight).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(4, 0);
 		return true;
 	case 305: // Mirar anilla (look at the ring).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 306: // Mirar brazo giratorio (look at the rotating arm).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(6, 0);
 		return true;
 	case 307: // Mirar gancho (look at the hook holding Sue).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(7, 0);
 		return true;
 	case 308: // Hablar con Sue (talk to Sue).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(8, 0);
 		return true;
 	case 309: // Mirar Sue (look at Sue).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(9, 0);
 		return true;
 	case 310: // Hablar con Hannover (talk to Hannover).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(10, 0);
 		return true;
 	case 311: // Mirar Hannover (look at Hannover).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	case 312: // Hablar con Karloff (talk to Karloff).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(12, 0);
 		return true;
 	case 313: // Mirar Karloff (look at Karloff).
-		stopAsyncPrimarySpeech();
 		beginSecondarySpeechLine(_mechanismState == 3 ? 14 : 13, 0);
 		return true;
 	default:
@@ -1101,10 +967,10 @@ void Scene6090::runRopeRescueSequence() {
 	applyPatchChunk(12);
 	_compositeMode = kEscapeComposite;
 
-	startAsyncPrimarySpeechLine(15, 30, 0x13e, 0x50,
-		0x20, 0x32, 0, kScene6090InvalidSpeechGroup);
+	startRealtimePrimarySpeechLine(15, 30, 0x13e, 0x50,
+		0x20, 0x32, 0, kScene6090InvalidSpeechGroup, kScene6090PrimarySpeechId);
 	walkActiveActorTo(0x17f, 0xf7, 5, 0);
-	waitForAsyncPrimarySpeech();
+	waitForRealtimeSpeech(false);
 	beginSecondarySpeechLine(15, 31);
 	walkActiveActorTo(0xaa, 0x118, 5, 0);
 
@@ -1123,7 +989,7 @@ void Scene6090::runRopeRescueSequence() {
 		ARRAYSIZE(kScene6090SpecialEffectFrameMap) - 1);
 	drawPlayableComposite();
 	presentFrame();
-	stopAsyncPrimarySpeech();
+	stopRealtimeSpeech();
 
 	_compositeMode = kEscapeComposite;
 	_activeActorFacing = 2;
@@ -1146,7 +1012,7 @@ void Scene6090::runRopeRescueSequence() {
 		if (waitSceneMillis(25, false))
 			return;
 	}
-	stopAsyncPrimarySpeech();
+	stopRealtimeSpeech();
 	_sceneLayers.setLayerFrame(kScene6090FreedSueLayer, 0x4f);
 
 	beginPrimarySpeechLineWithAnimationGroup(15, 35, 0xe4, 0x78,
@@ -1180,10 +1046,10 @@ void Scene6090::advanceEscapeAnimation(uint32 delta) {
 		}
 		freedSueLayer.setFrame(freedSueLayer.frameIndex + 1);
 		if (freedSueLayer.frameIndex > 0x1a && !_muffledSpeechStarted &&
-				!_asyncPrimaryActive && !_primaryDialogueSpeechActive && !_speech.isPlaying()) {
+				!isRealtimeSpeechActive() && !_primaryDialogueSpeechActive && !_speech.isPlaying()) {
 			_muffledSpeechStarted = true;
-			startAsyncPrimarySpeechLine(15, 33, 0xe4, 0x78,
-				0x3f, 0x28, 0x32, kScene6090InvalidSpeechGroup);
+			startRealtimePrimarySpeechLine(15, 33, 0xe4, 0x78,
+				0x3f, 0x28, 0x32, kScene6090InvalidSpeechGroup, kScene6090PrimarySpeechId);
 		}
 	}
 }
@@ -1215,7 +1081,7 @@ void Scene6090::dimEscapePaletteStep() {
 }
 
 void Scene6090::runExitSideEffectsAfterLoop() {
-	stopAsyncPrimarySpeech();
+	stopRealtimeSpeech();
 	_soundBank0.stop();
 	_secondaryEffectSound.stop();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());

@@ -46,7 +46,6 @@ const uint32 kScene4070FrameMillis = 75;
 const uint32 kScene4070TrophyOpenFrameMillis = 100;
 const uint32 kScene4070TreatmentReturnFrameMillis = 100;
 const uint32 kScene4070PrimarySpeechFrameMillis = 125;
-const uint32 kScene4070DraculaIdleTransitionFrameMillis = 100;
 const uint32 kScene4070DraculaIdleCheckMillis = 100;
 const uint32 kScene4070ScrollFrameMillis = 10;
 const uint kScene4070ForegroundBlockChunk = 5;
@@ -95,6 +94,18 @@ const byte kScene4070SlimmingFlyerItem = 0x58;
 
 enum Scene4070AnimationHookId {
 	kScene4070TrophyScrollHook = 1
+};
+
+enum Scene4070DraculaIdleState {
+	kScene4070DraculaIdle,
+	kScene4070DraculaTurning,
+	kScene4070DraculaSpeaking,
+	kScene4070DraculaReturning
+};
+
+enum Scene4070RealtimeSpeechId {
+	kScene4070DraculaIdleSpeech = 1,
+	kScene4070DraculaAlternateIdleSpeech
 };
 
 enum {
@@ -185,7 +196,7 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_randomAmbientTrack(RealtimeAnimationTracks::kInvalidTrack),
 		_draculaIdleSpeechTimerAccumulator(0),
 		_rightSidePatchActive(false),
-		_draculaIdleSequenceActive(false),
+		_draculaIdleState(kScene4070DraculaIdle),
 		_draculaThrowAnimationActive(false),
 		_draculaDialogueMenuActive(false),
 		_loopingSoundBank0(),
@@ -427,7 +438,7 @@ void Scene4070::resetAnimationLayers() {
 	_sceneLayers.setLayerVisible(kScene4070DraculaLayer, isDraculaVisible());
 	_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
 	_draculaIdleSpeechTimerAccumulator = 0;
-	_draculaIdleSequenceActive = false;
+	_draculaIdleState = kScene4070DraculaIdle;
 	_draculaThrowAnimationActive = false;
 	_draculaDialogueMenuActive = false;
 }
@@ -449,39 +460,50 @@ void Scene4070::setRightSidePatchActive(bool active, bool playSound) {
 
 void Scene4070::advanceDraculaIdle(uint32 delta) {
 	ResourceSpriteLayer &draculaLayer = _sceneLayers.layer(kScene4070DraculaLayer);
-	if (!isDraculaVisible() || _draculaIdleSequenceActive ||
-			_sceneLayers.layerVisible(kScene4070ScriptLayer) ||
-			_primaryDialogueSpeechActive || _primarySpeechOverlay.visible ||
-			_actorPathPlaybackActive || _hideActiveActor)
+	if (!isDraculaVisible() || _sceneLayers.layerVisible(kScene4070ScriptLayer) || _hideActiveActor)
 		return;
 
-	if (!_draculaDialogueMenuActive && !_speechOverlay.visible) {
-		_draculaIdleSpeechTimerAccumulator += delta;
-		while (_draculaIdleSpeechTimerAccumulator >= kScene4070DraculaIdleCheckMillis) {
-			_draculaIdleSpeechTimerAccumulator -= kScene4070DraculaIdleCheckMillis;
-			if (_random.getRandomNumber(49) != 0)
-				continue;
+	if (_primaryDialogueSpeechActive && !isRealtimeSpeechActive())
+		return;
 
-			BlockingSequence sequence(*this);
-			sequence.commit(_draculaIdleSequenceActive, true);
-			if (_random.getRandomNumber(1) == 0) {
-				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(1), false);
+	_draculaIdleSpeechTimerAccumulator += delta;
+	while (_draculaIdleSpeechTimerAccumulator >= kScene4070DraculaIdleCheckMillis) {
+		_draculaIdleSpeechTimerAccumulator -= kScene4070DraculaIdleCheckMillis;
+		switch (_draculaIdleState) {
+		case kScene4070DraculaTurning:
+			if (draculaLayer.frameIndex < 2)
+				draculaLayer.setFrame(draculaLayer.frameIndex + 1);
+			else
+				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(2), true);
+			break;
+		case kScene4070DraculaReturning:
+			if (draculaLayer.frameIndex < 5) {
+				draculaLayer.setFrame(draculaLayer.frameIndex + 1);
 			} else {
-				sequence.presentedLayerFrames(kScene4070DraculaLayer,
-					AnimationFrameRange(0, 2, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
-				if (sequence.completed()) {
-					beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(2), true);
-					sequence.presentedLayerFrames(kScene4070DraculaLayer,
-						AnimationFrameRange(3, 5, kScene4070DraculaIdleTransitionFrameMillis).unskippable());
-				}
+				_draculaIdleState = kScene4070DraculaIdle;
 				draculaLayer.setFrame(kScene4070DraculaIdleFrame);
+				_draculaIdleChannel.resetTimer();
 			}
-			sequence.commit(_draculaIdleSequenceActive, false);
-			_draculaIdleChannel.reset(kScene4070DraculaIdleFrame, kScene4070PrimarySpeechFrameMillis);
-			if (!sequence.completed())
-				return;
+			break;
+		case kScene4070DraculaSpeaking:
+			break;
+		case kScene4070DraculaIdle:
+			if (_draculaDialogueMenuActive || _speechOverlay.visible ||
+					_primarySpeechOverlay.visible || _actorPathPlaybackActive ||
+					_random.getRandomNumber(49) != 0)
+				break;
+			if (_random.getRandomNumber(1) == 0)
+				beginDraculaIdleSpeechLine((byte)_random.getRandomNumber(1), false);
+			else {
+				_draculaIdleState = kScene4070DraculaTurning;
+				draculaLayer.setFrame(0);
+			}
+			break;
 		}
 	}
+
+	if (_draculaIdleState != kScene4070DraculaIdle || _primaryDialogueSpeechActive)
+		return;
 
 	const uint idleTicks = _draculaIdleChannel.consumeFrames(delta);
 	for (uint tick = 0; tick < idleTicks; ++tick) {
@@ -531,11 +553,36 @@ void Scene4070::beginDraculaSpeechLine(uint16 rowIndex, byte frameIndex) {
 }
 
 void Scene4070::beginDraculaIdleSpeechLine(byte frameIndex, bool alternatePose) {
-	beginPrimarySpeechLineWithAnimationGroup(18, frameIndex,
+	_draculaIdleState = kScene4070DraculaSpeaking;
+	if (!startRealtimePrimarySpeechLine(18, frameIndex,
 		alternatePose ? kScene4070DraculaAlternateSpeechCenterX : kScene4070DraculaSpeechCenterX,
 		alternatePose ? kScene4070DraculaAlternateSpeechTopY : kScene4070DraculaSpeechTopY,
 		kScene4070DraculaTextRed, kScene4070DraculaTextGreen, kScene4070DraculaTextBlue,
-		alternatePose ? kScene4070DraculaAlternateIdleSpeechGroup : kScene4070DraculaIdleSpeechGroup);
+		alternatePose ? kScene4070DraculaAlternateIdleSpeechGroup : kScene4070DraculaIdleSpeechGroup,
+		alternatePose ? kScene4070DraculaAlternateIdleSpeech : kScene4070DraculaIdleSpeech))
+		stopDraculaIdleSpeech();
+}
+
+void Scene4070::realtimeSpeechEnded(byte speechId, bool completed) {
+	if (speechId != kScene4070DraculaIdleSpeech && speechId != kScene4070DraculaAlternateIdleSpeech)
+		return;
+
+	const bool returnFromAlternatePose = completed && speechId == kScene4070DraculaAlternateIdleSpeech;
+	_draculaIdleState = returnFromAlternatePose ? kScene4070DraculaReturning : kScene4070DraculaIdle;
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, returnFromAlternatePose ? 3 : kScene4070DraculaIdleFrame);
+	_draculaIdleSpeechTimerAccumulator = 0;
+	_draculaIdleChannel.resetTimer();
+}
+
+void Scene4070::stopDraculaIdleSpeech() {
+	if (_draculaIdleState == kScene4070DraculaIdle)
+		return;
+
+	stopRealtimeSpeech();
+	_draculaIdleState = kScene4070DraculaIdle;
+	_sceneLayers.setLayerFrame(kScene4070DraculaLayer, kScene4070DraculaIdleFrame);
+	_draculaIdleSpeechTimerAccumulator = 0;
+	_draculaIdleChannel.resetTimer();
 }
 
 void Scene4070::beginTrophySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -658,6 +705,7 @@ void Scene4070::runFrankiePartGrantSequence() {
 }
 
 void Scene4070::runSlimmingTreatmentSequence() {
+	stopDraculaIdleSpeech();
 	GameplayState &state = _vm->gameState();
 	if (!hasInventoryItem(kScene4070SlimmingTreatmentItem)) {
 		beginSecondarySpeechLine(16, 0);
@@ -726,6 +774,7 @@ void Scene4070::runSlimmingTreatmentSequence() {
 }
 
 void Scene4070::runFlyerOnDracula() {
+	stopDraculaIdleSpeech();
 	if (!hasInventoryItem(kScene4070SlimmingFlyerItem)) {
 		beginSecondarySpeechLine(17, 0);
 		return;
@@ -735,6 +784,7 @@ void Scene4070::runFlyerOnDracula() {
 }
 
 void Scene4070::runDraculaDialogue() {
+	stopDraculaIdleSpeech();
 	GameplayState &state = _vm->gameState();
 	if (state.scene4070DraculaStage >= 3) {
 		runLaterDraculaConversation();
