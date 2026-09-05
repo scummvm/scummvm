@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/random.h"
 #include "graphics/managed_surface.h"
 
 #include "freescape/freescape.h"
@@ -47,7 +48,11 @@ enum {
 	kCastleC64MessageY = 182,
 	kCastleC64GateFrameTicks = 2,
 	kCastleC64GateLiftStep = 2,
-	kCastleC64GateTransparent = 4
+	kCastleC64GateTransparent = 4,
+	kCastleC64ThunderClockTicks = 60,
+	kCastleC64LightningIdle = 0,
+	kCastleC64LightningBolt = 1,
+	kCastleC64LightningFlash = 2
 };
 
 // Match the colors of the bundled C64 border. The unused palette entries are
@@ -116,6 +121,19 @@ static Common::Array<byte> unpackCastleC64UI(Common::SeekableReadStream *file) {
 	return data;
 }
 
+static void loadCastleC64Bitmap(const Common::Array<byte> &data, uint address, uint width, uint height, Graphics::ManagedSurface *surface) {
+	if (!width || !height || address + width * height > data.size())
+		error("Invalid Castle C64 bitmap at %x", address);
+	surface->create(width * 8, height, Graphics::PixelFormat::createFormatCLUT8());
+	for (uint y = 0; y < height; y++) {
+		for (uint x = 0; x < width * 8; x += 2) {
+			byte color = (data[address + y * width + x / 8] >> (6 - x % 8)) & 3;
+			surface->setPixel(x, y, color);
+			surface->setPixel(x + 1, y, color);
+		}
+	}
+}
+
 static void loadCastleC64Frame(const Common::Array<byte> &data, uint address, Graphics::ManagedSurface *surface, int frame = 0) {
 	// $7cf6 reads a five-byte header: byte width, height, final-byte mask,
 	// and frame size. These HUD frames all use the whole final byte.
@@ -127,14 +145,7 @@ static void loadCastleC64Frame(const Common::Array<byte> &data, uint address, Gr
 	uint pixels = address + 5 + frame * size;
 	if (!width || !height || data[address + 2] != 0xff || size != width * height || pixels + size > data.size())
 		error("Invalid Castle C64 UI frame at %x", address);
-	surface->create(width * 8, height, Graphics::PixelFormat::createFormatCLUT8());
-	for (uint y = 0; y < height; y++) {
-		for (uint x = 0; x < width * 8; x += 2) {
-			byte color = (data[pixels + y * width + x / 8] >> (6 - x % 8)) & 3;
-			surface->setPixel(x, y, color);
-			surface->setPixel(x + 1, y, color);
-		}
-	}
+	loadCastleC64Bitmap(data, pixels, width, height, surface);
 }
 
 struct CastleC64Repeat {
@@ -356,6 +367,7 @@ void CastleEngine::initC64() {
 	_viewArea = Common::Rect(40, 32, 280, 152);
 	_c64LiftingGateStartTicks = -1;
 	_c64MusicEnabled = true;
+	resetC64Lightning();
 
 	// C64 call sites: throw $63b3, climb/drop $53cf/$549f, area change
 	// $6cde, and a damaging landing $8142. The gate supplies the start sound.
@@ -453,6 +465,11 @@ void CastleEngine::loadAssetsC64FullGame() {
 
 	loadMessagesC64(&uiStream, 0x1401, 75);
 	loadRiddlesC64(&uiStream, 0x18ae, 9);
+
+	// $4d06 tiles sixteen bytes per row; $4ddd overlays a single 85-row
+	// bolt. Both bitmaps use VIC multicolor pixel pairs, without headers.
+	loadCastleC64Bitmap(uiData, 0x21fa, 16, 18, &_c64MountainBackground);
+	loadCastleC64Bitmap(uiData, 0x20f8, 3, 85, &_c64Lightning);
 
 	// Preserve multicolor pixel indices until drawing. VIC colors depend on
 	// the destination 8x8 cell, even within a single moving weight or key.
@@ -653,6 +670,142 @@ void CastleEngine::toggleC64AudioMode() {
 		if (_sound)
 			_sound->playSound(3, Sound::kTypeNormal);
 	}
+}
+
+void CastleEngine::updateC64BackgroundPalette() {
+	uint32 colors[4];
+	for (int color = 0; color < 4; color++) {
+		uint8 r, g, b;
+		_gfx->selectColorFromFourColorPalette(color, r, g, b);
+		// Pen 0 is transparent when compositing the lightning bitmap.
+		colors[color] = _gfx->_texturePixelFormat.ARGBToColor(color ? 255 : 0, r, g, b);
+	}
+	if (!_background)
+		_background = new Graphics::ManagedSurface();
+	if (_thunderFrames.empty())
+		_thunderFrames.push_back(new Graphics::ManagedSurface());
+
+	const Graphics::Surface *sources[] = {&_c64MountainBackground.rawSurface(), &_c64Lightning.rawSurface()};
+	Graphics::ManagedSurface *destinations[] = {_background, _thunderFrames[0]};
+	for (uint frame = 0; frame < ARRAYSIZE(sources); frame++) {
+		const Graphics::Surface &src = *sources[frame];
+		Graphics::ManagedSurface *dst = destinations[frame];
+		dst->create(src.w, src.h, _gfx->_texturePixelFormat);
+		for (int y = 0; y < src.h; y++) {
+			const byte *pixels = (const byte *)src.getBasePtr(0, y);
+			for (int x = 0; x < src.w; x++)
+				dst->setPixel(x, y, colors[pixels[x]]);
+		}
+	}
+
+	delete _skyTexture;
+	_skyTexture = nullptr;
+	for (auto *texture : _thunderTextures)
+		delete texture;
+	_thunderTextures.clear();
+}
+
+void CastleEngine::resetC64Lightning() {
+	_c64NextLightningTicks = -1;
+	_c64LightningPhase = kCastleC64LightningIdle;
+	_c64LightningPhaseTicks = 0;
+	_c64LightningX = 0;
+}
+
+void CastleEngine::updateC64Lightning() {
+	int ticks = _ticks;
+	if (_gameStateControl != kFreescapeGameStatePlaying) {
+		resetC64Lightning();
+		return;
+	}
+
+	// $7531 decrements the initial counter of 5 every 60 PAL ticks,
+	// stopping at 1 until the main loop draws the bolt ($4cb8).
+	if (_c64NextLightningTicks < 0)
+		_c64NextLightningTicks = ticks + 4 * kCastleC64ThunderClockTicks;
+	if (_c64LightningPhase == kCastleC64LightningIdle && ticks >= _c64NextLightningTicks) {
+		// $483e reloads from the low six timer bits plus ten; the next
+		// bolt appears when that counter reaches 1.
+		_c64NextLightningTicks = ticks + (9 + _rnd->getRandomNumber(63)) * kCastleC64ThunderClockTicks;
+		if (_currentArea->isOutside() && !_avoidRenderingFrames) {
+			_c64LightningPhase = kCastleC64LightningBolt;
+			_c64LightningPhaseTicks = ticks + 1;
+			// $4d90 chooses one of 27 byte-aligned positions in the viewport.
+			_c64LightningX = 8 * (1 + _rnd->getRandomNumber(26));
+		}
+	} else if (_c64LightningPhase != kCastleC64LightningIdle && ticks >= _c64LightningPhaseTicks) {
+		if (_c64LightningPhase == kCastleC64LightningBolt) {
+			_c64LightningPhase = kCastleC64LightningFlash;
+			_c64LightningPhaseTicks = ticks + 1;
+			// $484d plays sound 8 and flashes the background for one PAL tick.
+			// A rendering callback must not enter the scripted SOUND wait loop.
+			if (_sound && _currentArea->isOutside())
+				_sound->playSound(8, Sound::kTypeNormal);
+		} else {
+			_c64LightningPhase = kCastleC64LightningIdle;
+		}
+	}
+	if (!_currentArea->isOutside())
+		_c64LightningPhase = kCastleC64LightningIdle;
+}
+
+void CastleEngine::drawC64Background() {
+	updateC64Lightning();
+	clearBackground();
+	_gfx->drawBackground(_currentArea->_skyColor);
+	if (_avoidRenderingFrames || !_currentArea->isOutside())
+		return;
+
+	// Use the same perspective skybox as the other Castle releases. Center
+	// it on the camera so movement does not introduce foreground parallax.
+	Math::Vector3d camera = _inWaitLoop ? _position : getCameraRenderPosition();
+	if (_currentArea->getAreaID() == 1 && _background) {
+		if (!_skyTexture)
+			_skyTexture = _gfx->createTexture(_background->surfacePtr(), true);
+		_gfx->drawSkybox(_skyTexture, camera);
+	}
+
+	if (_c64LightningPhase == kCastleC64LightningFlash)
+		_gfx->clear(255, 255, 255);
+	if (_c64LightningPhase != kCastleC64LightningBolt || _thunderFrames.empty())
+		return;
+
+	// $4c19/$4da5 place the bottom of the lightning bitmap ten rows above
+	// the horizon. Project that horizon using the Castle viewport's FOV.
+	float horizontal = sqrt(_cameraFront.x() * _cameraFront.x() + _cameraFront.z() * _cameraFront.z());
+	if (horizontal < 0.001f)
+		return;
+	float focalLength = _viewArea.height() * 0.5f * 1.6f / tan(Math::deg2rad(75.0f) * 0.5f);
+	float horizon = _viewArea.top + _viewArea.height() * 0.5f + focalLength * _cameraFront.y() / horizontal;
+	if (horizon < _viewArea.top || horizon > _viewArea.bottom + 95)
+		return;
+	int horizonY = int(horizon) + 1;
+
+	// Compose a full-screen layer: the shader renderer's 2D path does not
+	// support partial source/destination rectangles. Clip before uploading.
+	const Graphics::Surface &source = _thunderFrames[0]->rawSurface();
+	int x = _viewArea.left + _c64LightningX;
+	int y = horizonY - 95;
+	Common::Rect dst(x, y, x + source.w, y + source.h);
+	dst.clip(_viewArea);
+	if (dst.isEmpty())
+		return;
+	Common::Rect src(dst.left - x, dst.top - y, dst.right - x, dst.bottom - y);
+	Graphics::ManagedSurface lightning(_screenW, _screenH, _gfx->_texturePixelFormat);
+	lightning.clear(0);
+	lightning.copyRectToSurfaceWithKey(source, dst.left, dst.top, src, 0);
+	if (_thunderTextures.empty())
+		_thunderTextures.push_back(_gfx->createTexture(lightning.surfacePtr()));
+	else
+		_thunderTextures[0]->update(lightning.surfacePtr());
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _thunderTextures[0]);
+	_gfx->setViewport(_viewArea);
+
+	// The lightning blit changes the OpenGL matrices. Restore the camera
+	// before drawing the 3D scene, which must occlude the background.
+	_gfx->updateProjectionMatrix(75.0f, 1.6f, _nearClipPlane, _farClipPlane * 100);
+	_gfx->positionCamera(camera, camera + _cameraFront, _roll);
 }
 
 void CastleEngine::liftC64Gate() {

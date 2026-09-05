@@ -681,6 +681,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->fillColorPairArray();
 
 	swapPalette(areaID);
+	if (isC64())
+		updateC64BackgroundPalette();
 
 	// Enable/disable COLOR15 cycling based on per-area flag (Amiga/Atari)
 	if ((isAmiga() || isAtariST()) && _currentArea)
@@ -747,6 +749,7 @@ void CastleEngine::initGameState() {
 		stopAllSounds();
 		stopAllSounds(Sound::kTypeMovement);
 		_syncSound = false;
+		resetC64Lightning();
 	}
 	FreescapeEngine::initGameState();
 	_playerHeightNumber = 1;
@@ -2617,6 +2620,7 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 	if (isC64()) {
 		_c64LiftingGateStartTicks = -1;
 		_droppingGateStartTicks = -1;
+		resetC64Lightning();
 		stopAllSounds();
 		stopAllSounds(Sound::kTypeMovement);
 		_syncSound = false;
@@ -2646,6 +2650,10 @@ Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *s
 
 
 void CastleEngine::drawBackground() {
+	if (isC64()) {
+		drawC64Background();
+		return;
+	}
 	clearBackground();
 	_gfx->drawBackground(_currentArea->_skyColor);
 
