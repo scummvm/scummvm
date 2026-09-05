@@ -539,13 +539,14 @@ void Scene4090::runOrganRevealSequence() {
 	_sceneLayers.setVisibleLayerFrame(kScene4090OrganBodyLayer, 0);
 	_randomAmbientAnimationActive = false;
 	_organBodyAnimationActive = false;
+	const bool spanishDemo = _vm->isDemo() && _vm->getLanguage() == Common::ES_ESP;
 	BlockingSequence sequence(*this);
 	sequence.resourceLayerFrames(kScene4090ScriptLayer,
 		kScene4090OrganOverlayChunk, kScene4090OrganOverlayDescriptorCount,
 		kScene4090OrganOverlayFrameMap,
 		AnimationFrameRange(0, ARRAYSIZE(kScene4090OrganOverlayFrameMap) - 1,
 			kScene4090FrameMillis)
-			.soundAt(3, 0x3d)
+			.soundAt(3, spanishDemo ? 0x26 : 0x3d)
 			.hookAt(3, kScene4090OrganOverlayHook)
 			.unskippable())
 		.actorPath(SceneActorPose(0x0294, 0x0175, 5));

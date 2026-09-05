@@ -55,6 +55,7 @@ private:
 	void resetAmbientSoundScheduler();
 	void advanceAmbientSound(uint32 delta);
 	void copySpecialStepDeltas(uint destinationOffset);
+	void runFirstDoorAction();
 	void runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState);
 
 	TimedAnimationChannel _paletteCycleChannel;

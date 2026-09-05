@@ -25,6 +25,7 @@
 
 namespace Hollywood {
 
+const uint16 kScene4100DemoExteriorState = 0x0fab;
 const uint16 kScene4060ReturnState = 0x0fdd;
 const uint16 kScene4070ReturnState = 0x0fe6;
 const uint16 kScene4080ReturnState = 0x0ff0;
@@ -180,7 +181,7 @@ bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(1, _random.getRandomBit());
 		return true;
 	case 302: // Usar/abrir primera puerta (use/open first door): return to Scene 4060.
-		runDoorTransition(kScene4100FirstDoorOverlayChunk, kScene4100DoorOverlayDescriptorCount, kScene4060ReturnState);
+		runFirstDoorAction();
 		return true;
 	case 304: // Usar/abrir segunda puerta (use/open second door): return to Scene 4080.
 		runDoorTransition(kScene4100SecondDoorOverlayChunk, kScene4100DoorOverlayDescriptorCount, kScene4080ReturnState);
@@ -194,8 +195,9 @@ bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 308: // Mirar patio (look at courtyard).
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 309: // Ir al patio (go to courtyard): enter Scene 4110.
-		_vm->gameState().mainFlowStateId = kScene4110FirstState;
+	case 309: // Ir al exterior (go outside).
+		_vm->gameState().mainFlowStateId = _vm->isDemo() ?
+			kScene4100DemoExteriorState : kScene4110FirstState;
 		return true;
 	case 310: // Mirar planta (look at plant).
 		beginSecondarySpeechLine(4, 0);
@@ -281,6 +283,15 @@ bool Scene4100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		if ((_walkablePaletteMask[i] != 0 && _walkablePaletteMask[i] < 7) ||
 				_walkablePaletteMask[i] == 0x14)
 			_walkablePaletteMask[i] = 0;
+	}
+
+	// The original demo reserves Dracula's salon for its closing showcase.
+	if (_vm->isDemo() && !_vm->restoredContentEnabled() &&
+			_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
+		for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
+			if (_paletteMask[kSceneColorToItemMap + color] == 7)
+				_paletteMask[kSceneColorToItemMap + color] = 0;
+		}
 	}
 
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
@@ -375,6 +386,23 @@ void Scene4100::copySpecialStepDeltas(uint destinationOffset) {
 		_actorPathStepDeltas[destinationOffset + i] =
 			kActorPathStepDeltaTableSet5A[kScene4100SpecialStepDeltaSourceOffset + i];
 	}
+}
+
+void Scene4100::runFirstDoorAction() {
+	const bool spanishDemo = _vm->isDemo() && _vm->getLanguage() == Common::ES_ESP;
+	if (spanishDemo) {
+		// In the demo Ron must reach Sherilyn through the tower window.
+		beginSecondarySpeechLine(7, 0);
+		if (animationPlaybackShouldStop())
+			return;
+		beginPrimarySpeechLine(7, 1, 0x86, 0x32, 0x3f, 0x32, 0);
+		if (!animationPlaybackShouldStop())
+			beginSecondarySpeechLine(7, 2);
+		return;
+	}
+
+	runDoorTransition(kScene4100FirstDoorOverlayChunk,
+		kScene4100DoorOverlayDescriptorCount, kScene4060ReturnState);
 }
 
 void Scene4100::runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState) {

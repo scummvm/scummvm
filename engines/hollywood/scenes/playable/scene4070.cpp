@@ -27,6 +27,7 @@
 namespace Hollywood {
 
 const char *const kScene4070SoundArchiveName = "RESOURCE.S04";
+const char *const kScene4070DemoSoundArchiveName = "RESOURCE.S0D";
 const uint16 kScene4100EntryFromScene4070State = 0x1008;
 const int kScene4070EntryStartX = 0x03a7;
 const int kScene4070EntryStartY = 0x013a;
@@ -201,7 +202,8 @@ Scene4070::Scene4070(HollywoodEngine *vm) :
 		_draculaDialogueMenuActive(false),
 		_loopingSoundBank0(),
 		_originalColorToItemMap() {
-	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
+	_loopingSoundBank0.setArchive(Common::Path(_vm->isDemo() ?
+		kScene4070DemoSoundArchiveName : kScene4070SoundArchiveName));
 	_sceneLayers.configure(kScene4070LayerSpecs);
 	_ambientTrack = _realtimeAnimationTracks.addLoop(kScene4070AmbientLayer,
 		kScene4070FrameMillis, kScene4070AmbientDescriptorCount);
@@ -258,7 +260,8 @@ void Scene4070::runCustomEntrySequence() {
 
 void Scene4070::prepareCustomGameplayLoop() {
 	resetAnimationLayers();
-	_loopingSoundBank0.setArchive(Common::Path(kScene4070SoundArchiveName));
+	_loopingSoundBank0.setArchive(Common::Path(_vm->isDemo() ?
+		kScene4070DemoSoundArchiveName : kScene4070SoundArchiveName));
 	_rightSidePatchActive = _activeActorWorldX >= kScene4070SidePatchThresholdX;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
@@ -266,8 +269,9 @@ void Scene4070::prepareCustomGameplayLoop() {
 void Scene4070::advanceCustomGameplayLoop(uint32 delta) {
 	advanceDraculaIdle(delta);
 	updateSidePatchForActorPosition();
+	// The demo keeps this same fireplace loop in its showcase bank.
 	if (!_loopingSoundBank0.isPlaying())
-		_loopingSoundBank0.playSampleLooping(0x33, 100);
+		_loopingSoundBank0.playSampleLooping(_vm->isDemo() ? 0x0e : 0x33, 100);
 }
 
 bool Scene4070::dispatchCustomSceneAction(uint16 handlerId) {
