@@ -126,6 +126,41 @@ void CityCastleLogic::entering() {
 	loadEntities();
 }
 
+void CityCastleLogic::leaving() {
+	// Left the bounds of the map, returning to the overworld
+	_G(map).load(Data::MAP_OVERWORLD);
+}
+
+bool CityCastleLogic::move(Data::Direction dir) {
+	const int deltaX = DELTA_X[dir];
+	const int deltaY = DELTA_Y[dir];
+	const int x = _G(savegame)._locationPosition.x + deltaX;
+	const int y = _G(savegame)._locationPosition.y + deltaY;
+
+	if (x < 0 || y < 0 || x >= Data::CITY_WIDTH || y >= Data::CITY_HEIGHT) {
+		leaving();
+
+	} else {
+		int tile = checkAt(x, y);
+
+		if (tile == -1 || tile == Data::CTILE_BLANK) {
+			// Write direction traveled
+			writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
+
+			_G(savegame)._locationPosition = Common::Point(x, y);
+			playFX(1);
+			redrawMap();
+
+		} else {
+			// Can't move in that direction
+			writeString("Blocked!\n");
+			playFX(1);
+		}
+	}
+
+	return true;
+}
+
 bool CityCastleLogic::drop() {
 	g_engine->addView("Drop");
 	return false;
@@ -281,6 +316,17 @@ void CityCastleLogic::loadEntities() {
 		savegame._locationEntities[idx] = widgets[idx];
 }
 
+int CityCastleLogic::checkAt(int x, int y) const {
+	int tile = _G(map).getTileAt(x, y);
+	if (tile == Data::CTILE_BLANK)
+		return tile;
+
+	if (tile == Data::CTILE_GROUND || tile >= Data::CTILE_GUARD_MB)
+		return -1;
+
+	return 0;
+}
+
 /*-------------------------------------------------------------------*/
 
 CityLogic::CityLogic() {
@@ -292,36 +338,6 @@ CityLogic::CityLogic() {
 void CityLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(19, 17);
 	CityCastleLogic::entering();
-}
-
-bool CityLogic::move(Data::Direction dir) {
-	const int deltaX = DELTA_X[dir];
-	const int deltaY = DELTA_Y[dir];
-	const int x = _G(savegame)._locationPosition.x + deltaX;
-	const int y = _G(savegame)._locationPosition.y + deltaY;
-
-	if (x < 0 || y < 0 || x >= Data::CITY_WIDTH || y >= Data::CITY_HEIGHT) {
-		// Left the bounds of the map, returning to the overworld
-		_G(map).load(Data::MAP_OVERWORLD);
-	} else {
-		int tile = checkAt(x, y);
-
-		if (tile == -1 || tile == Data::CTILE_BLANK) {
-			// Write direction traveled
-			writeString(Common::String::format("%s\n", Data::DIRECTION_NAMES[dir]));
-
-			_G(savegame)._locationPosition = Common::Point(x, y);
-			playFX(1);
-			redrawMap();
-			
-		} else {
-			// Can't move in that direction
-			writeString("Blocked!\n");
-			playFX(1);
-		}
-	}
-
-	return true;
 }
 
 bool CityLogic::transact() {
@@ -345,18 +361,6 @@ bool CityLogic::transact() {
 	g_engine->addView("Merchant");
 	return false;
 }
-
-int CityLogic::checkAt(int x, int y) const {
-	int tile = _G(map).getTileAt(x, y);
-	if (tile == Data::CTILE_BLANK)
-		return tile;
-
-	if (tile == Data::CTILE_GROUND || tile >= Data::CTILE_GUARD_MB)
-		return -1;
-
-	return 0;
-}
-
 
 /*-------------------------------------------------------------------*/
 
@@ -401,6 +405,24 @@ bool CastleLogic::transact() {
 void CastleLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(0, 9);
 	CityCastleLogic::entering();
+}
+
+void CastleLogic::leaving() {
+	// Check when leaving castles if we've saved the princess
+	if (isPrincessSaved()) {
+		princessSaved();
+	} else {
+		CityCastleLogic::leaving();
+	}
+}
+
+bool CastleLogic::isPrincessSaved() {
+	// TODO
+	return false;
+}
+
+void CastleLogic::princessSaved() {
+	// TODO: Show a Princess interaction
 }
 
 } // namespace Logic

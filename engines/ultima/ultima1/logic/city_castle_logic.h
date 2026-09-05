@@ -30,11 +30,22 @@ namespace Ultima1 {
 namespace Logic {
 
 class CityCastleLogic : public Logic {
+private:
+	/**
+	 * Checks if the player can move to a given location
+	 */
+	int checkAt(int x, int y) const;
+
 protected:
 	/**
 	 * Load the NPCs for the given location
 	 */
 	void loadEntities();
+
+	/**
+	 * Handle movement
+	 */
+	bool move(Data::Direction dir) override;
 
 	/**
 	 * The Drop command is only usable within cities and castles
@@ -91,20 +102,15 @@ public:
 	}
 
 	void entering() override;
+
+	/**
+	 * Called to leave the location
+	 */
+	virtual void leaving();
 };
 
 class CityLogic : public CityCastleLogic {
 protected:
-	/**
-	 * Handle movement
-	 */
-	bool move(Data::Direction dir) override;
-
-	/**
-	 * Checks if the player can move to a given location
-	 */
-	int checkAt(int x, int y) const;
-
 	/**
 	 * The Transact command opens the Merchant view when standing at a shop
 	 * counter
@@ -120,14 +126,18 @@ public:
 };
 
 class CastleLogic : public CityCastleLogic {
-protected:
+private:
 	/**
-	 * Handle movement
+	 * Returns true if the player has left the castle with a princess
 	 */
-	bool move(Data::Direction dir) override {
-		return true;
-	}
+	bool isPrincessSaved();
 
+	/**
+	 * Called when a princess has been saved, to show the princess dialog before loading the overworld map. 
+	 */
+	void princessSaved();
+
+protected:
 	/**
 	 * The Transact command opens the King view when standing at the throne
 	 */
@@ -139,6 +149,11 @@ public:
 	}
 
 	void entering() override;
+
+	/**
+	 * Called when leaving the castle
+	 */
+	void leaving() override;
 };
 
 } // namespace Logic
