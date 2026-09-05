@@ -435,10 +435,29 @@ struct GameplayState {
 		mainFlowStateId = 0x1b62;
 	}
 
+	byte multiToolKnifeResourcePage() const {
+		switch (multiToolKnifeState) {
+		case 1:
+			return 0x1e;
+		case 3:
+			return 0x2d;
+		case 5:
+			return 0x7d;
+		case 7:
+			return 0x0e;
+		case 9:
+			return 0x18;
+		default:
+			return 0x68;
+		}
+	}
+
 	void initializeRonItemResourcePages() {
 		if (kInventoryOwnerCount == 0)
 			return;
 
+		// The wire's saved resource page also records whether it has been bent.
+		const bool wireBent = inventoryItemResourcePageByOwnerAndItemId[0][0x5f] == 0x40;
 		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
 			inventoryItemResourcePageByOwnerAndItemId[0][itemId] = kInvalidInventoryItemResourcePage;
 
@@ -486,7 +505,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[0][0x2a] = 0x28;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x2b] = 0x2c;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x2c] = 0x0c;
-		inventoryItemResourcePageByOwnerAndItemId[0][0x2d] = 0x68;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2d] = multiToolKnifeResourcePage();
 		inventoryItemResourcePageByOwnerAndItemId[0][0x2e] = 0x27;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x2f] = 0x0f;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x30] = 0x5a;
@@ -536,7 +555,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[0][0x5c] = 0x64;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x5d] = 0x45;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x5e] = 0x35;
-		inventoryItemResourcePageByOwnerAndItemId[0][0x5f] = 0x32;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5f] = wireBent ? 0x40 : 0x32;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x60] = 0x52;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x61] = 0x65;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x62] = 0x34;
@@ -644,7 +663,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[1][0x17] = 0x03;
 		inventoryItemResourcePageByOwnerAndItemId[1][0x18] = 0x61;
 		inventoryItemResourcePageByOwnerAndItemId[1][0x19] = 0x26;
-		inventoryItemResourcePageByOwnerAndItemId[1][0x1a] = 0x68;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1a] = multiToolKnifeResourcePage();
 		inventoryItemResourcePageByOwnerAndItemId[1][0x1b] = 0x2f;
 		inventoryItemResourcePageByOwnerAndItemId[1][0x1c] = 0x3f;
 		inventoryItemResourcePageByOwnerAndItemId[1][0x1d] = 0x14;

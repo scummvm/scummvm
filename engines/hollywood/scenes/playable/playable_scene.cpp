@@ -2095,6 +2095,24 @@ Common::String PlayableScene::inventoryItemName(byte owner, byte itemId) const {
 	if (owner != inventoryOwnerIndex())
 		return Common::String();
 
+	if (owner == 0 && itemId == 0x5f &&
+			_vm->gameState().inventoryItemResourcePageByOwnerAndItemId[owner][itemId] == 0x40) {
+		const Common::String name = _textStore.inventoryItemName(114);
+		if (!name.empty())
+			return name;
+	}
+
+	if ((owner == 0 && itemId == 0x2d) || (owner == 1 && itemId == 0x1a)) {
+		const byte knifeState = _vm->gameState().multiToolKnifeState;
+		// Each open attachment has a localized name after the regular item rows.
+		if (knifeState < 10 && (knifeState & 1) != 0) {
+			const byte nameRow = (owner == 0 ? 109 : 35) + knifeState / 2;
+			const Common::String name = _textStore.inventoryItemName(nameRow);
+			if (!name.empty())
+				return name;
+		}
+	}
+
 	return _textStore.inventoryItemName(itemId);
 }
 
