@@ -24,17 +24,18 @@
 
 #include "image/codecs/codec.h"
 
+#include "common/array.h"
 #include "common/hashmap.h"
+#include "common/rect.h"
 #include "graphics/palette.h"
 
 namespace Image {
 
 struct CDToonsBlock {
-	uint16 flags;
+	uint16 typeFlags;
 	uint32 size;
 	uint16 startFrame;
 	uint16 endFrame;
-	uint16 unknown12;
 	byte *data;
 };
 
@@ -55,14 +56,22 @@ public:
 	bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 private:
+	struct CDToonsAction {
+		uint16 blockId;
+		Common::Rect rect;
+	};
+
 	Graphics::Surface *_surface;
+	Graphics::Surface *_backingSurface;
+	bool _backingSurfaceValid;
 	Graphics::Palette _palette;
 	bool _dirtyPalette;
 	uint16 _currentPaletteId;
 
 	Common::HashMap<uint16, CDToonsBlock> _blocks;
 
-	void renderBlock(byte *data, uint size, int x, int y, uint width, uint height);
+	void renderActions(const Common::Array<CDToonsAction> &actions, uint begin, uint end, Graphics::Surface &surface, const Common::Rect *clipRect);
+	void renderBlock(Graphics::Surface &surface, byte *data, uint size, int x, int y, uint width, uint height, const Common::Rect *clipRect = nullptr);
 	void setPalette(byte *data);
 };
 

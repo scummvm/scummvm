@@ -4065,6 +4065,10 @@ msgstr "Pause"
 msgid "Game menu"
 msgstr "Spielmenü"
 
+#: engines/mohawk/zoombini.cpp:622
+msgid "Ingame menu"
+msgstr "Menü im Spiel"
+
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:113 engines/access/metaengine.cpp:246
@@ -19627,3 +19631,98 @@ msgstr ""
 
 #~ msgid "Command line argument not processed"
 #~ msgstr "Argument in Kommandozeile nicht verarbeitet"
+
+#: engines/mohawk/zoombini.cpp:641
+msgctxt "zoombini-keymap"
+msgid "OK"
+msgstr "OK"
+
+#: engines/mohawk/zoombini.cpp:673
+msgctxt "zoombini-keymap"
+msgid "Options"
+msgstr "Optionen"
+
+#: engines/mohawk/zoombini.cpp:679
+msgctxt "zoombini-keymap"
+msgid "Ingame Options"
+msgstr "Ingame-Optionen"
+
+#: engines/mohawk/zoombini.cpp:686
+msgctxt "zoombini-keymap"
+msgid "Toggle SFX"
+msgstr "SFX umschalten"
+
+#: engines/mohawk/zoombini.cpp:691
+msgctxt "zoombini-keymap"
+msgid "Toggle BGM"
+msgstr "BGM umschalten"
+
+#: engines/mohawk/zoombini.cpp:696
+msgctxt "zoombini-keymap"
+msgid "Toggle sticky mouse"
+msgstr "Magnetmaus umschalten"
+
+#: engines/mohawk/zoombini.cpp:701
+msgctxt "zoombini-keymap"
+msgid "Toggle auto sticky mouse"
+msgstr "Autom. Magnetmaus umschalten"
+
+#: engines/mohawk/zoombini.cpp:706
+msgctxt "zoombini-keymap"
+msgid "Toggle transitions"
+msgstr "Übergänge umschalten"
+
+#: engines/mohawk/zoombini.cpp:711
+msgctxt "zoombini-keymap"
+msgid "Toggle action level"
+msgstr "Action-Level umschalten"
+
+#: engines/mohawk/zoombini.cpp:716
+msgctxt "zoombini-keymap"
+msgid "Toggle cursor"
+msgstr "Cursor umschalten"
+
+#: engines/mohawk/zoombini.cpp:729
+msgctxt "zoombini-keymap"
+msgid "Replay puzzle instructions SFX"
+msgstr "Puzzle-Anleitungs-SFX erneut abspielen"
+
+#: engines/mohawk/zoombini.cpp:737
+msgctxt "zoombini-keymap"
+msgid "Toggle Help dialog narration"
+msgstr "Sprachausgabe des Hilfedialogs umschalten"
+
+#: engines/mohawk/zoombini.cpp:738
+msgctxt "zoombini-keymap"
+msgid "Toggle Immersion TouchSense (not implemented)"
+msgstr "Immersion TouchSense umschalten (nicht implementiert)"
+
+#: engines/mohawk/zoombini.cpp:744
+msgctxt "zoombini-keymap"
+msgid "Toggle practice mode (Map)"
+msgstr "Übungsmodus umschalten (Karte)"
+
+#: engines/mohawk/zoombini.cpp:753
+msgctxt "zoombini-keymap"
+msgid "New game"
+msgstr "Neues Spiel"
+
+#: engines/mohawk/zoombini.cpp:680 engines/mohawk/zoombini.cpp:758
+msgctxt "zoombini-keymap"
+msgid "Load game"
+msgstr "Spiel laden"
+
+#: engines/mohawk/zoombini.cpp:763
+msgctxt "zoombini-keymap"
+msgid "Save game"
+msgstr "Spiel speichern"
+
+#: engines/mohawk/zoombini.cpp:764
+msgctxt "zoombini-keymap"
+msgid "Delete game"
+msgstr "Spiel löschen"
+
+#: engines/mohawk/zoombini.cpp:773
+msgctxt "zoombini-keymap"
+msgid "Quit"
+msgstr "Beenden"

@@ -4078,6 +4078,10 @@ msgstr "Pause"
 msgid "Game menu"
 msgstr "Menu du jeu"
 
+#: engines/mohawk/zoombini.cpp:622
+msgid "Ingame menu"
+msgstr "Menu en jeu"
+
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:113 engines/access/metaengine.cpp:246
@@ -19664,3 +19668,98 @@ msgstr ""
 
 #~ msgid "Command line argument not processed"
 #~ msgstr "Argument de ligne de commande non traité"
+
+#: engines/mohawk/zoombini.cpp:641
+msgctxt "zoombini-keymap"
+msgid "OK"
+msgstr "OK"
+
+#: engines/mohawk/zoombini.cpp:673
+msgctxt "zoombini-keymap"
+msgid "Options"
+msgstr "Options"
+
+#: engines/mohawk/zoombini.cpp:679
+msgctxt "zoombini-keymap"
+msgid "Ingame Options"
+msgstr "Options en jeu"
+
+#: engines/mohawk/zoombini.cpp:686
+msgctxt "zoombini-keymap"
+msgid "Toggle SFX"
+msgstr "Activer/désactiver les effets sonores"
+
+#: engines/mohawk/zoombini.cpp:691
+msgctxt "zoombini-keymap"
+msgid "Toggle BGM"
+msgstr "Activer/désactiver la musique de fond"
+
+#: engines/mohawk/zoombini.cpp:696
+msgctxt "zoombini-keymap"
+msgid "Toggle sticky mouse"
+msgstr "Activer/désactiver la souris aimantée"
+
+#: engines/mohawk/zoombini.cpp:701
+msgctxt "zoombini-keymap"
+msgid "Toggle auto sticky mouse"
+msgstr "Activer/désactiver la souris aimantée automatique"
+
+#: engines/mohawk/zoombini.cpp:706
+msgctxt "zoombini-keymap"
+msgid "Toggle transitions"
+msgstr "Activer/désactiver les transitions"
+
+#: engines/mohawk/zoombini.cpp:711
+msgctxt "zoombini-keymap"
+msgid "Toggle action level"
+msgstr "Activer/désactiver le niveau d'action"
+
+#: engines/mohawk/zoombini.cpp:716
+msgctxt "zoombini-keymap"
+msgid "Toggle cursor"
+msgstr "Activer/désactiver le curseur"
+
+#: engines/mohawk/zoombini.cpp:729
+msgctxt "zoombini-keymap"
+msgid "Replay puzzle instructions SFX"
+msgstr "Réécouter les effets sonores des instructions du puzzle"
+
+#: engines/mohawk/zoombini.cpp:737
+msgctxt "zoombini-keymap"
+msgid "Toggle Help dialog narration"
+msgstr "Activer/désactiver la narration de la fenêtre d'aide"
+
+#: engines/mohawk/zoombini.cpp:738
+msgctxt "zoombini-keymap"
+msgid "Toggle Immersion TouchSense (not implemented)"
+msgstr "Activer/désactiver Immersion TouchSense (non implémenté)"
+
+#: engines/mohawk/zoombini.cpp:744
+msgctxt "zoombini-keymap"
+msgid "Toggle practice mode (Map)"
+msgstr "Activer/désactiver le mode entraînement (carte)"
+
+#: engines/mohawk/zoombini.cpp:753
+msgctxt "zoombini-keymap"
+msgid "New game"
+msgstr "Nouvelle partie"
+
+#: engines/mohawk/zoombini.cpp:680 engines/mohawk/zoombini.cpp:758
+msgctxt "zoombini-keymap"
+msgid "Load game"
+msgstr "Charger partie"
+
+#: engines/mohawk/zoombini.cpp:763
+msgctxt "zoombini-keymap"
+msgid "Save game"
+msgstr "Enregistrer partie"
+
+#: engines/mohawk/zoombini.cpp:764
+msgctxt "zoombini-keymap"
+msgid "Delete game"
+msgstr "Supprimer la partie"
+
+#: engines/mohawk/zoombini.cpp:773
+msgctxt "zoombini-keymap"
+msgid "Quit"
+msgstr "Quitter"

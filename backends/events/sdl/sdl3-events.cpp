@@ -614,6 +614,9 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
+	if (_textInputEnabled)
+		applyNativeTextInputState();
+
 	finishSimulatedMouseClicks();
 
 	// In case we still need to send a key up event for a key down from a
@@ -731,6 +734,9 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		}
 
 	case SDL_EVENT_TEXT_INPUT: {
+		if (!shouldDispatchTextInput())
+			return false;
+
 		// When we get a TEXTINPUT event it means we got some user input for
 		// which no KEYDOWN exists. SDL 1.2 introduces a "fake" key down+up
 		// in such cases. We will do the same to mimic it's behavior.
@@ -761,6 +767,20 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 
+	case SDL_EVENT_TEXT_EDITING:
+		if (!isImeCompositionEnabled())
+			return false;
+
+		event.type = Common::EVENT_IME_COMPOSITION;
+		event.imeComposition = Common::ImeComposition();
+		event.imeComposition.text = Common::U32String(ev.edit.text);
+		event.imeComposition.state = event.imeComposition.text.empty()
+			? Common::ImeComposition::kComplete
+			: Common::ImeComposition::kCompositing;
+		event.imeComposition.start = ev.edit.start;
+		event.imeComposition.length = ev.edit.length;
+		return true;
+
 		case SDL_EVENT_WINDOW_EXPOSED:
 			if (_graphicsManager) {
 				_graphicsManager->notifyVideoExpose();
@@ -786,6 +806,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 			// Always allow the display to turn off if ScummVM is out of focus
 			event.type = Common::EVENT_FOCUS_LOST;
 			SDL_EnableScreenSaver();
+			if (isImeCompositionEnabled()) {
+				Common::Event imeCancellationEvent;
+				imeCancellationEvent.type = Common::EVENT_IME_COMPOSITION;
+				imeCancellationEvent.imeComposition = Common::ImeComposition(Common::ImeComposition::kCancelled);
+				g_system->getEventManager()->pushEvent(imeCancellationEvent);
+			}
 			return true;
 		}
 
@@ -1038,6 +1064,9 @@ bool SdlEventSource::isJoystickConnected() const {
 }
 
 uint32 SdlEventSource::obtainUnicode(const SDL_KeyboardEvent &key) {
+	if (!shouldDispatchTextInput())
+		return 0;
+
 	SDL_Event events[2];
 
 #if defined(USE_IMGUI)

@@ -8,3 +8,7 @@ engines/mohawk/myst_stacks/preview.cpp
 engines/mohawk/riven.cpp
 engines/mohawk/riven_stack.cpp
 engines/mohawk/riven_stacks/aspit.cpp
+engines/mohawk/zoombini.cpp
+engines/mohawk/zoombini_dialogs.cpp
+engines/mohawk/zoombini_state.cpp
+engines/mohawk/zoombini_text.cpp

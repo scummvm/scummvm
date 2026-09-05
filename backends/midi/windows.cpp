@@ -36,6 +36,9 @@
 #include "common/translation.h"
 #include "common/textconsole.h"
 #include "common/error.h"
+#include "engines/engine.h"
+#include "gui/gui-manager.h"
+#include "gui/message.h"
 #include <mmsystem.h>
 
 ////////////////////////////////////////
@@ -43,6 +46,29 @@
 // Windows MIDI driver
 //
 ////////////////////////////////////////
+
+class WindowsMidiDetectionDialog final : public GUI::MessageDialog {
+public:
+	// I18N: Shown while Windows detects MIDI output devices.
+	explicit WindowsMidiDetectionDialog(HANDLE enumerationThread) :
+			GUI::MessageDialog(_("Detecting MIDI devices..."), Common::U32String(), Common::U32String()),
+			_enumerationThread(enumerationThread) {
+	}
+
+	void handleTickle() override {
+		GUI::MessageDialog::handleTickle();
+		if (WaitForSingleObject(_enumerationThread, 0) == WAIT_OBJECT_0)
+			close();
+	}
+
+	void handleKeyDown(Common::KeyState state) override {
+		if (state.keycode != Common::KEYCODE_ESCAPE)
+			GUI::MessageDialog::handleKeyDown(state);
+	}
+
+private:
+	HANDLE _enumerationThread;
+};
 
 class MidiDriver_WIN final : public MidiDriver_MPU401 {
 private:
@@ -164,6 +190,9 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 
 class WindowsMusicPlugin : public MusicPluginObject {
 public:
+	WindowsMusicPlugin() : _uiThreadId(GetCurrentThreadId()) {
+	}
+
 	const char *getName() const override {
 		return _s("Windows MIDI");
 	}
@@ -175,9 +204,19 @@ public:
 	MusicDevices getDevices() const override;
 	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const override;
+
+private:
+	struct EnumerationState {
+		const WindowsMusicPlugin *plugin;
+		MusicDevices devices;
+	};
+
+	DWORD _uiThreadId;
+	MusicDevices enumerateDevices() const;
+	static DWORD WINAPI enumerateDevicesThread(LPVOID parameter);
 };
 
-MusicDevices WindowsMusicPlugin::getDevices() const {
+MusicDevices WindowsMusicPlugin::enumerateDevices() const {
 	MusicDevices devices;
 	int numDevs = midiOutGetNumDevs();
 	MIDIOUTCAPS tmp;
@@ -230,6 +269,44 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 		devices.push_back(MusicDevice(this, *i, MT_GM));
 
 	return devices;
+}
+
+DWORD WINAPI WindowsMusicPlugin::enumerateDevicesThread(LPVOID parameter) {
+	EnumerationState *state = static_cast<EnumerationState *>(parameter);
+	state->devices = state->plugin->enumerateDevices();
+	return 0;
+}
+
+MusicDevices WindowsMusicPlugin::getDevices() const {
+	if (GetCurrentThreadId() != _uiThreadId ||
+			(g_engine == nullptr && (!GUI::GuiManager::hasInstance() || !g_gui.isActive())))
+		return enumerateDevices();
+
+	EnumerationState state;
+	state.plugin = this;
+
+	DWORD threadId;
+	HANDLE enumerationThread = CreateThread(nullptr, 0, enumerateDevicesThread, &state, 0, &threadId);
+	if (enumerationThread == nullptr) {
+		warning("Could not create Windows MIDI device enumeration thread");
+		return enumerateDevices();
+	}
+
+	// This worker is a compatibility bridge around the synchronous music-plugin API.
+	// FIXME: Additional work is required to add a Windows MIDI Services backend.
+	// Select it at runtime when available, but retain WinMM as the fallback for older
+	// Windows versions and unavailable or failed Windows MIDI Services initialization.
+	// The new backend must initialize WinRT and COM on an MTA worker thread and keep
+	// endpoint state current with MidiEndpointDeviceWatcher.
+	const DWORD dialogDelay = 100;
+	if (WaitForSingleObject(enumerationThread, dialogDelay) == WAIT_TIMEOUT) {
+		WindowsMidiDetectionDialog dialog(enumerationThread);
+		dialog.runModal();
+	}
+
+	WaitForSingleObject(enumerationThread, INFINITE);
+	CloseHandle(enumerationThread);
+	return state.devices;
 }
 
 Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle dev) const {

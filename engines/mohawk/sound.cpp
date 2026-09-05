@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -35,6 +36,103 @@
 #include "mohawk/resource.h"
 
 namespace Mohawk {
+
+/**
+ * Extract the Standard MIDI File data from a Mohawk tMID resource.
+ *
+ * Broderbund stores SMF chunks inside an MHWK/MIDI container. The container
+ * may also hold driver patch-cache chunks such as Prg# and Key#, before or
+ * after MTrk chunks. The original player enumerates those chunks separately;
+ * ScummVM's SMF parser must receive only the standard MThd and MTrk chunks.
+ *
+ * The original Zoombini Windows player accepts both format 0 and format 1
+ * SMF resources and schedules every MTrk independently. Do not flatten a
+ * type-1 resource as a compatibility workaround: MIDIMPC and MIDIMAC are
+ * separately authored device profiles, not a parser-format limitation.
+ */
+bool MidiPlayer::extractMohawkMidi(Common::SeekableReadStream *stream, Common::Array<byte> &standardMidi) {
+	const uint32 resourceSize = stream->size();
+	if (resourceSize < 26) {
+		warning("Mohawk MIDI resource is too small (%u bytes)", resourceSize);
+		return false;
+	}
+
+	Common::Array<byte> resourceData;
+	resourceData.resize(resourceSize);
+	if (stream->read(resourceData.data(), resourceSize) != resourceSize) {
+		warning("Could not read complete Mohawk MIDI resource");
+		return false;
+	}
+
+	const byte *data = resourceData.data();
+	if (READ_BE_UINT32(data) != ID_MHWK || READ_BE_UINT32(data + 8) != ID_MIDI) {
+		warning("Invalid Mohawk MIDI resource header");
+		return false;
+	}
+
+	const uint32 containerSize = READ_BE_UINT32(data + 4);
+	if (containerSize > resourceSize - 8) {
+		warning("Mohawk MIDI container length %u exceeds resource length %u", containerSize, resourceSize);
+		return false;
+	}
+	const uint32 containerEnd = (containerSize + 9) & ~1U;
+
+	const uint32 smfHeaderOffset = 12;
+	if (READ_BE_UINT32(data + smfHeaderOffset) != MKTAG('M', 'T', 'h', 'd')) {
+		warning("Could not find MThd in Mohawk MIDI resource");
+		return false;
+	}
+
+	const uint32 smfHeaderSize = READ_BE_UINT32(data + smfHeaderOffset + 4);
+	if (smfHeaderSize != 6 || smfHeaderSize > containerEnd - smfHeaderOffset - 8) {
+		warning("Invalid MThd length %u in Mohawk MIDI resource", smfHeaderSize);
+		return false;
+	}
+
+	const uint16 midiType = READ_BE_UINT16(data + smfHeaderOffset + 8);
+	const uint16 trackCount = READ_BE_UINT16(data + smfHeaderOffset + 10);
+	if (midiType > 1 || trackCount == 0) {
+		warning("Unsupported Mohawk MIDI type %u with %u tracks", midiType, trackCount);
+		return false;
+	}
+
+	uint32 chunkOffset = smfHeaderOffset + 8 + smfHeaderSize;
+	standardMidi.resize(8 + smfHeaderSize);
+	memcpy(standardMidi.data(), data + smfHeaderOffset, standardMidi.size());
+
+	uint16 tracksRead = 0;
+	while (tracksRead < trackCount) {
+		if (chunkOffset > containerEnd || containerEnd - chunkOffset < 8) {
+			warning("Mohawk MIDI resource ended before MTrk chunk %u", tracksRead);
+			return false;
+		}
+
+		const uint32 chunkTag = READ_BE_UINT32(data + chunkOffset);
+		const uint32 chunkSize = READ_BE_UINT32(data + chunkOffset + 4);
+		if (chunkSize > containerEnd - chunkOffset - 8) {
+			warning("Invalid Mohawk MIDI chunk length %u", chunkSize);
+			return false;
+		}
+
+		const uint32 nextChunkOffset = chunkOffset + 8 + chunkSize;
+		const uint32 alignedChunkOffset = (nextChunkOffset + 1) & ~1U;
+		if (alignedChunkOffset < nextChunkOffset || alignedChunkOffset > containerEnd) {
+			warning("Invalid Mohawk MIDI chunk alignment");
+			return false;
+		}
+
+		if (chunkTag == MKTAG('M', 'T', 'r', 'k')) {
+			const uint32 outputOffset = standardMidi.size();
+			standardMidi.resize(outputOffset + 8 + chunkSize);
+			memcpy(standardMidi.data() + outputOffset, data + chunkOffset, 8 + chunkSize);
+			++tracksRead;
+		}
+
+		chunkOffset = alignedChunkOffset;
+	}
+
+	return true;
+}
 
 /**
  * Applies a heuristic to detect and address discontinuity
@@ -109,13 +207,28 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
 	}
 }
 
-Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
+/**
+ * Decode an MHWK/WAVE resource and optionally export a supported loop range.
+ *
+ * Loop metadata stays separate from the returned decoder stream so existing
+ * callers retain the public rewindable-stream contract.
+ * Zoombini playback always requests @p loopInfo and applies the exported
+ * infinite loop.
+ *
+ * @param stream The resource stream, which is consumed and deleted.
+ * @param cueList Optional destination for parsed Cue# entries.
+ * @param loopInfo Optional destination for a validated embedded-loop range.
+ * @return The decoded seekable stream, or nullptr when decoding fails.
+ */
+Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList, MohawkWaveLoopInfo *loopInfo) {
 	uint32 tag = 0;
 	ADPCMStatus adpcmStatus;
 	DataChunk dataChunk;
 	uint32 dataSize = 0;
 
 	memset(&dataChunk, 0, sizeof(DataChunk));
+	if (loopInfo)
+		*loopInfo = MohawkWaveLoopInfo();
 
 	if (stream->readUint32BE() != ID_MHWK) // MHWK tag again
 		error ("Could not find tag 'MHWK'");
@@ -199,8 +312,10 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 				break;
 			case ID_DATA:
 				debug(2, "Found Tag DATA");
-				// We subtract 20 from the actual chunk size, which is the total size
-				// of the chunk's header
+				// The Data payload begins with a 20-byte big-endian format header.
+				// The declared chunk size includes this header.
+				// loopStart is inclusive and loopEnd is exclusive.
+				// Both loop positions use source sample frames rather than byte offsets.
 				dataSize = stream->readUint32BE() - 20;
 				dataChunk.sampleRate = stream->readUint16BE();
 				dataChunk.sampleCount = stream->readUint32BE();
@@ -211,21 +326,14 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 				dataChunk.loopStart = stream->readUint32BE();
 				dataChunk.loopEnd = stream->readUint32BE();
 
-			// For unsigned 8-bit PCM, check for and fix a potential pop/click at the end of the sample.
-			if (dataChunk.encoding == kCodecRaw && dataChunk.bitsPerSample == 8 && dataChunk.sampleCount >= 4) {
-				MohawkEngine *mohawkEngine = static_cast<MohawkEngine *>(g_engine);
-				const char *gameId = mohawkEngine->getGameId();
-				// Myst does not have pops and Riven does not have unsigned 8-bit PCM and so is ignored.
-				if (strcmp(gameId, "myst") != 0 && strcmp(gameId, "riven") != 0 && ConfMan.getBool("fix_audio_pops")) {
-					scanAndFixAudioPops(dataChunk, dataSize, stream);
+				// For unsigned 8-bit PCM, check for and fix a potential pop/click at the end of the sample.
+				if (dataChunk.encoding == kCodecRaw && dataChunk.bitsPerSample == 8 && dataChunk.sampleCount >= 4) {
+					MohawkEngine *mohawkEngine = static_cast<MohawkEngine *>(g_engine);
+					const char *gameId = mohawkEngine->getGameId();
+					// Myst does not have pops and Riven does not have unsigned 8-bit PCM and so is ignored.
+					if (strcmp(gameId, "myst") != 0 && strcmp(gameId, "riven") != 0 && ConfMan.getBool("fix_audio_pops"))
+						scanAndFixAudioPops(dataChunk, dataSize, stream);
 				}
-			}
-
-				// NOTE: We currently ignore all of the loop parameters here. Myst uses the
-				// loopCount variable but the loopStart and loopEnd are always 0 and the size of
-				// the sample. Myst ME doesn't use the Mohawk Sound format and just standard WAVE
-				// files and therefore does not contain any of this metadata and we have to specify
-				// whether or not to loop elsewhere.
 
 				dataChunk.audioData = stream->readStream(dataSize);
 				break;
@@ -237,7 +345,7 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	// makeMohawkWaveStream always takes control of the original stream
 	delete stream;
 
-	// The sound in Myst uses raw unsigned 8-bit data
+	// The sound in Myst, Zoombini uses raw unsigned 8-bit data
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (dataChunk.encoding == kCodecRaw) {
@@ -250,6 +358,21 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 			flags |= Audio::FLAG_16BITS;
 		else
 			flags |= Audio::FLAG_UNSIGNED;
+
+		// Publish only the verified raw 8-bit infinite-loop form.
+		// Available Zoombini looped SND resources use this form.
+		// Finite loops are not published because
+		// @ref Audio::SubLoopingAudioStream ends at the exclusive loop end
+		// after its final iteration instead of continuing through the tail.
+		// Validate after the optional pop fix so the exclusive loop end cannot
+		// exceed a truncated sample payload.
+		if (loopInfo && dataChunk.bitsPerSample == 8 &&
+			dataChunk.loopCount == 0xFFFF &&
+			dataChunk.loopStart < dataChunk.loopEnd &&
+			dataChunk.loopEnd <= dataChunk.sampleCount) {
+			loopInfo->start = dataChunk.loopStart;
+			loopInfo->end = dataChunk.loopEnd;
+		}
 
 		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
 	} else if (dataChunk.encoding == kCodecADPCM) {
@@ -268,7 +391,7 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	return nullptr;
 }
 
-Sound::Sound(MohawkEngine* vm) :
+Sound::Sound(MohawkEngine *vm) :
 		_vm(vm) {
 }
 
@@ -276,12 +399,12 @@ Sound::~Sound() {
 	stopSound();
 }
 
-Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
-	Audio::RewindableAudioStream *audStream = nullptr;
+Audio::SeekableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList, MohawkWaveLoopInfo *loopInfo) {
+	Audio::SeekableAudioStream *audStream = nullptr;
 
 	switch (_vm->getGameType()) {
 	case GType_ZOOMBINI:
-		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
+		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id), cueList, loopInfo);
 		break;
 	case GType_LIVINGBOOKSV1:
 		audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
@@ -294,35 +417,55 @@ Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList
 		// fall through
 	default:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_TWAV, id), cueList);
+		break;
 	}
 
 	return audStream;
 }
 
 Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList *cueList) {
+	return playSound(id, Audio::Mixer::kPlainSoundType, volume, loop, cueList);
+}
+
+Audio::SoundHandle *Sound::playSound(uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, CueList *cueList) {
+	MohawkWaveLoopInfo loopInfo;
+	Audio::SeekableAudioStream *seekableStream = makeAudioStream(id, cueList, &loopInfo);
+	return playSoundStream(seekableStream, id, soundType, volume, loop, loopInfo);
+}
+
+Audio::SoundHandle *Sound::playSoundStream(Audio::SeekableAudioStream *seekableStream, uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, const MohawkWaveLoopInfo &loopInfo) {
 	debug (0, "Playing sound %d", id);
 
-	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id, cueList);
-
-	if (rewindStream) {
+	if (seekableStream) {
 		SndHandle *handle = getHandle();
 		handle->type = kUsedHandle;
 		handle->id = id;
-		handle->samplesPerSecond = rewindStream->getRate();
+		handle->samplesPerSecond = seekableStream->getRate();
 
-		// Set the stream to loop here if it's requested
-		Audio::AudioStream *audStream = rewindStream;
-		if (loop)
-			audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
+		// Logical Journey of the Zoombinis make use of loop.
+		// Playback starts with the resource prefix from frame zero.
+		// Reaching the exported exclusive end then seeks to the inclusive start.
+		// @ref Audio::SubLoopingAudioStream uses zero iterations to mean an infinite loop.
+		// It takes ownership of the decoded seekable stream. The mixer owns the wrapper.
+		// The ordinary whole-resource loop policy remains the fallback
+		// only when the resource has no supported embedded loop.
+		Audio::AudioStream *audStream = seekableStream;
+		if (loopInfo.isValid()) {
+			audStream = new Audio::SubLoopingAudioStream(seekableStream, 0,
+				Audio::Timestamp(0, loopInfo.start, seekableStream->getRate()),
+				Audio::Timestamp(0, loopInfo.end, seekableStream->getRate()));
+		} else if (loop) { // Set the stream to loop here if it's requested
+			audStream = Audio::makeLoopingAudioStream(seekableStream, 0);
+		}
 
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
+		_vm->_mixer->playStream(soundType, &handle->handle, audStream, -1, volume);
 		return &handle->handle;
 	}
 
 	return nullptr;
 }
 
-Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
+Audio::SeekableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
 	uint32 size = 0;
@@ -417,6 +560,119 @@ uint Sound::getNumSamplesPlayed(uint16 id) {
 		}
 
 	return 0;
+}
+
+
+MidiPlayer::MidiPlayer(MohawkEngine *vm) : _vm(vm) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+	_paused = false;
+	_resetChannelsOnPlay = false;
+
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
+}
+
+MidiPlayer::~MidiPlayer() {
+
+}
+
+void MidiPlayer::playMidi(uint16 id) {
+	// debugC(3, kDebugMusic, "MidiPlayer::play");
+
+	Common::StackLock lock(_mutex);
+	playMidiStreamLocked(makeMidiStream(id), id);
+}
+
+void MidiPlayer::playMidiStream(Common::SeekableReadStream *stream, uint16 id) {
+	Common::StackLock lock(_mutex);
+	playMidiStreamLocked(stream, id);
+}
+
+void MidiPlayer::playMidiStreamLocked(Common::SeekableReadStream *stream, uint16 id) {
+	stop();
+	if (!stream)
+		return;
+
+	// The Zoombini Macintosh MIDI profile (MIDIMAC.MHK) relies on a clean GM
+	// device state because, unlike the Windows profile (MIDIMPC.MHK), its songs
+	// carry no inline GM/GS setup (bank selects, RPN pitch-bend range, resets).
+	// Send a GM reset before each song so stale program/controller state from a
+	// previous song cannot bleed in. Gated by the caller so the PC profile path
+	// stays byte-for-byte unchanged.
+	if (_resetChannelsOnPlay)
+		_driver->sendGMReset();
+
+	Common::Array<byte> standardMidi;
+	const bool extracted = extractMohawkMidi(stream, standardMidi);
+	delete stream;
+	if (!extracted)
+		return;
+
+	_midiData = static_cast<byte *>(malloc(standardMidi.size()));
+	if (!_midiData) {
+		warning("Could not allocate %u bytes for Mohawk MIDI resource", standardMidi.size());
+		return;
+	}
+	memcpy(_midiData, standardMidi.data(), standardMidi.size());
+
+	_parser = MidiParser::createParser_SMF();
+	if (!_parser->loadMusic(_midiData, standardMidi.size())) {
+		warning("Could not parse Mohawk MIDI resource %u", id);
+		delete _parser;
+		_parser = nullptr;
+		free(_midiData);
+		_midiData = nullptr;
+		return;
+	}
+
+	syncVolume();
+	_parser->setTrack(0);
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_isLooping = true;
+	_isPlaying = true;
+}
+
+void MidiPlayer::pause(bool p) {
+	_paused = p;
+
+	for (int i = 0; i < kNumChannels; ++i) {
+		if (_channelsTable[i]) {
+			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
+		}
+	}
+}
+
+void MidiPlayer::onTimer() {
+	Common::StackLock lock(_mutex);
+
+	if (!_paused && _isPlaying && _parser) {
+		_parser->onTimer();
+	}
+}
+
+void MidiPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
+}
+
+Common::SeekableReadStream *MidiPlayer::makeMidiStream(uint16 id) {
+	return _vm->getResource(ID_TMID, id);
 }
 
 } // End of namespace Mohawk

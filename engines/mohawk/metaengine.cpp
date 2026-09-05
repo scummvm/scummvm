@@ -54,6 +54,12 @@
 #include "mohawk/riven_saveload.h"
 #endif
 
+#ifdef ENABLE_ZOOMBINI
+#include "mohawk/zoombini.h"
+#include "mohawk/zoombini_dialogs.h"
+#include "mohawk/zoombini_metaengine.h"
+#endif
+
 #include "mohawk/detection.h"
 
 namespace Mohawk {
@@ -114,6 +120,16 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 		MohawkEngine::hasFeature(f)
 	        || (f == kSupportsLoadingDuringRuntime)
 	        || (f == kSupportsSavingDuringRuntime)
+	        || (f == kSupportsChangingOptionsDuringRuntime);
+}
+
+#endif
+
+#ifdef ENABLE_ZOOMBINI
+
+bool MohawkEngine_Zoombini::hasFeature(EngineFeature f) const {
+	return
+		MohawkEngine::hasFeature(f)
 	        || (f == kSupportsChangingOptionsDuringRuntime);
 }
 
@@ -200,7 +216,7 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 	SaveStateList saveList;
 
-	// Loading games is only supported in Myst/Riven currently.
+	// Loading games with ScummVM GUI is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
 	if (gameId == "myst") {
 		saveList = listSavesForPrefix("myst", "mys");
@@ -278,6 +294,12 @@ Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	}
 #endif
 
+#ifdef ENABLE_ZOOMBINI
+	if (gameId == "zoombini") {
+		return Mohawk::MohawkEngine_Zoombini::initKeymaps(target);
+	}
+#endif
+
 	return AdvancedMetaEngine::initKeymaps(target);
 }
 
@@ -316,6 +338,17 @@ Common::Error MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 #else
 		return Common::Error(Common::kUnsupportedGameidError, _s("CSTime support not compiled in"));
 #endif
+	case Mohawk::GType_ZOOMBINI:
+#ifdef ENABLE_ZOOMBINI
+#ifndef ENABLE_ZOOMBINI_TLC
+		if (gd->features & Mohawk::GF_ZMB_20_US)
+			return Common::Error(Common::kUnsupportedGameidError, _s("Zoombinis: Logical Journey v2.0 (The Learning Company release) support not compiled in"));
+#endif
+		*engine = new Mohawk::MohawkEngine_Zoombini(syst, gd);
+		break;
+#else
+		return Common::Error(Common::kUnsupportedGameidError, _s("Zoombini support not compiled in"));
+#endif
 	default:
 		return Common::kUnsupportedGameidError;
 	}
@@ -333,6 +366,12 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 	if (gameId == "riven") {
 		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
 	}
+
+#ifdef ENABLE_ZOOMBINI
+	if (gameId == "zoombini") {
+		return Mohawk::MohawkMetaEngine_Zoombini::registerDefaultSettings();
+	}
+#endif
 
 	// Rest of the Mohawk games.
 	ConfMan.registerDefault("fix_audio_pops", true);
@@ -356,6 +395,12 @@ GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidget(GUI::Gui
 #ifdef ENABLE_RIVEN
 	if (gameId == "riven") {
 		return new Mohawk::RivenOptionsWidget(boss, name, target);
+	}
+#endif
+
+#ifdef ENABLE_ZOOMBINI
+	if (gameId == "zoombini") {
+		return new Mohawk::ZoombiniOptionsWidget(boss, name, target);
 	}
 #endif
 
