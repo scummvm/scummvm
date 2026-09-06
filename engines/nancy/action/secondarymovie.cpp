@@ -58,12 +58,18 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 }
 
 bool PlaySecondaryMovie::survivesSceneChange(bool nextSceneIsNoArt) const {
+	// A NO_ART_SCENE keeps every movie on screen: conversations that play the
+	// character's animation in one scene and show their reply options in a
+	// videoless one rely on it, so the character stays put instead of vanishing
+	// as the options come up.
+	if (nextSceneIsNoArt) {
+		return true;
+	}
+
 	// Nancy11's random movies can be ambient loops that intentionally keep
 	// playing across scene changes. Nancy13's per-character reaction movies
 	// (AR 42) are scene-local: they must stop when their scene is left, and are
-	// reloaded if it's re-entered. A plain (non-random) cinematic movie is
-	// self-contained and does not persist, not even into a NO_ART_SCENE — so the
-	// NO_ART flag is deliberately ignored here.
+	// reloaded if it's re-entered.
 	return isRandom() && g_nancy->getGameType() < kGameTypeNancy13 && !_isDone && !_randomStopRequested;
 }
 
