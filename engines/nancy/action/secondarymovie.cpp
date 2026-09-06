@@ -666,10 +666,14 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 	// the AR-44 movie data.
 	if (_movieType == kInteractiveMovie) {
 		readInteractiveData(ser);
+		readInteractiveVideoFileNancy14(_interactiveName, _interactiveVideo);
+		resolveInteractiveSets();
 	}
 }
 
 void PlaySecondaryMovie::readInteractiveData(Common::Serializer &ser) {
+	const bool named = g_nancy->getGameType() >= kGameTypeNancy14;
+
 	readFilename(ser, _interactiveName);
 
 	ser.skip(1);	// Draws the hotspot rects on top of the movie when set
@@ -679,10 +683,31 @@ void PlaySecondaryMovie::readInteractiveData(Common::Serializer &ser) {
 	_interactiveSets.resize(numSets);
 	for (uint i = 0; i < numSets; ++i) {
 		InteractiveSet &set = _interactiveSets[i];
-		ser.syncAsSint16LE(set.setID);
+
+		if (named) {
+			readFilename(ser, set.name);
+		} else {
+			int16 setID = 0;
+			ser.syncAsSint16LE(setID);
+			set.setID = setID;
+		}
+
 		ser.syncAsSint16LE(set.flagDesc.label);
 		ser.syncAsByte(set.flagDesc.flag);
 		ser.syncAsSint16LE(set.cursorID);
+	}
+}
+
+// Turns the Nancy14 sets' names into the set indices the .iv file's hotspots use
+void PlaySecondaryMovie::resolveInteractiveSets() {
+	for (InteractiveSet &set : _interactiveSets) {
+		set.setID = -1;
+		for (uint i = 0; i < _interactiveVideo.setNames.size(); ++i) {
+			if (_interactiveVideo.setNames[i].equalsIgnoreCase(set.name)) {
+				set.setID = i;
+				break;
+			}
+		}
 	}
 }
 

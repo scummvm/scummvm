@@ -50,9 +50,19 @@ struct InteractiveFrame {
 struct InteractiveVideoData {
 	Common::Path videoName;
 	Common::Array<InteractiveFrame> frames;
+
+	// Nancy14 only: the file's named hotspot sets, in file order. A hotspot's
+	// setID is an index into this array, and the name is what the action record
+	// keys its own set table by.
+	Common::Array<Common::String> setNames;
 };
 
 void readInteractiveVideoFile(const Common::Path &filename, InteractiveVideoData &data);
+
+// Nancy14 replaced the .iv format with an "IVDataHI" one: the sets are named
+// rather than numbered, and the flag and cursor for each live in the action
+// record instead of the file.
+void readInteractiveVideoFileNancy14(const Common::Path &filename, InteractiveVideoData &data);
 
 class InteractiveVideo : public ActionRecord {
 public:

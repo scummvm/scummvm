@@ -60,6 +60,76 @@ void readInteractiveVideoFile(const Common::Path &filename, InteractiveVideoData
 	delete ivFile;
 }
 
+// Length-prefixed string, the length being a 7-bits-per-byte varint
+static Common::String readIVString(Common::SeekableReadStream &stream) {
+	uint32 len = 0;
+	for (uint shift = 0; shift < 35; shift += 7) {
+		byte b = stream.readByte();
+		len |= (uint32)(b & 0x7f) << shift;
+		if (!(b & 0x80)) {
+			break;
+		}
+	}
+
+	Common::String ret;
+	while (len-- && !stream.eos()) {
+		ret += (char)stream.readByte();
+	}
+
+	return ret;
+}
+
+void readInteractiveVideoFileNancy14(const Common::Path &filename, InteractiveVideoData &data) {
+	// Nancy14 keeps this data inside a ciftree, under the bare name; earlier
+	// games ship it as a loose .iv file
+	Common::ScopedPtr<Common::SeekableReadStream> ivFile(
+		SearchMan.createReadStreamForMember(filename.append(".iv")));
+	if (!ivFile) {
+		ivFile.reset(SearchMan.createReadStreamForMember(filename));
+	}
+
+	if (!ivFile) {
+		warning("Could not open iv resource %s", filename.toString().c_str());
+		return;
+	}
+
+	if (readIVString(*ivFile) != "IVDataHI") {
+		warning("Invalid iv file %s", filename.toString().c_str());
+		return;
+	}
+
+	if (ivFile->readSint32LE() != 1 || ivFile->readSint32LE() != 1) {
+		warning("iv file %s is an old version", filename.toString().c_str());
+		return;
+	}
+
+	int32 numSets = ivFile->readSint32LE();
+	data.setNames.resize(MAX<int32>(numSets, 0));
+	for (int32 i = 0; i < numSets; ++i) {
+		data.setNames[i] = readIVString(*ivFile);
+		ivFile->readSint32LE();	// Legacy numeric set id, unused
+	}
+
+	// Frames run up to and including this id rather than being counted
+	int32 lastFrameID = ivFile->readSint32LE();
+	while (lastFrameID >= 0 && !ivFile->eos()) {
+		data.frames.push_back(InteractiveFrame());
+		InteractiveFrame &frame = data.frames.back();
+		frame.frameID = ivFile->readSint32LE();
+
+		int32 numHotspots = ivFile->readSint32LE();
+		frame.hotspots.resize(MAX<int32>(numHotspots, 0));
+		for (int32 i = 0; i < numHotspots; ++i) {
+			frame.hotspots[i].setID = ivFile->readSint32LE();
+			readRect(*ivFile, frame.hotspots[i].hotspot);
+		}
+
+		if ((int32)frame.frameID >= lastFrameID) {
+			break;
+		}
+	}
+}
+
 void InteractiveVideo::readData(Common::SeekableReadStream &stream) {
 	Common::Path ivFilename;
 	readFilename(stream, ivFilename);

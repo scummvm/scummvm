@@ -140,8 +140,11 @@ public:
 	// frame and tags each one with a set ID. The record itself carries the name
 	// of that file and the table below, which turns a set ID into the event flag
 	// a click sets and the cursor shown while the mouse is over the area.
+	// From Nancy14 the sets are named instead of numbered; setID is then the
+	// index of that name in the .iv file's own set list, resolved at load.
 	struct InteractiveSet {
-		int16 setID = 0;
+		Common::String name;
+		int32 setID = 0;
 		FlagDescription flagDesc;
 		int16 cursorID = -1;
 	};
@@ -260,6 +263,7 @@ protected:
 
 	// AR 47 appends the name of its .iv file and the set table to the movie data.
 	void readInteractiveData(Common::Serializer &ser);
+	void resolveInteractiveSets();
 
 	// The set a hotspot belongs to, or nullptr if the record doesn't describe it.
 	const InteractiveSet *getInteractiveSet(int32 setID) const;
