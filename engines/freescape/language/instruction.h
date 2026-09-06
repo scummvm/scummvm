@@ -26,9 +26,17 @@
 #define FREESCAPE_INSTRUCTION_H
 
 #include "common/array.h"
+#include "common/str.h"
 #include "freescape/language/token.h"
 
 namespace Freescape {
+
+enum {
+	kConditionalShot = 1 << 0,
+	kConditionalTimeout = 1 << 1,
+	kConditionalCollided = 1 << 2,
+	kConditionalActivated = 1 << 3,
+};
 
 class FCLInstruction;
 typedef Common::Array<FCLInstruction> FCLInstructionVector;
@@ -37,9 +45,9 @@ class FCLInstruction {
 public:
 	FCLInstruction();
 	FCLInstruction(Token::Type type);
-	void setSource(int32 source);
-	void setAdditional(int32 additional);
-	void setDestination(int32 destination);
+	void setSource(int32 source, Token::Type type = Token::CONSTANT);
+	void setAdditional(int32 additional, Token::Type type = Token::CONSTANT);
+	void setDestination(int32 destination, Token::Type type = Token::CONSTANT);
 
 	Token::Type getType() const;
 
@@ -57,6 +65,11 @@ public:
 	int32 _source;
 	int32 _additional;
 	int32 _destination;
+	// UNKNOWN denotes an omitted operand.
+	Token::Type _sourceType;
+	Token::Type _additionalType;
+	Token::Type _destinationType;
+	Common::String _text;
 
 	FCLInstructionVector *_thenInstructions;
 	FCLInstructionVector *_elseInstructions;

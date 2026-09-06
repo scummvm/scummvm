@@ -78,6 +78,8 @@ public:
 		TRIGANIM,
 		UPDATEI,
 		VAREQ,
+		VARGT,
+		VARLT,
 		IFGTEQ,
 		IFLTEQ,
 		VISQ,

@@ -53,13 +53,16 @@ MODULE_OBJS := \
 	games/eclipse/cpc.o \
 	games/eclipse/zx.o \
 	games/3dck/3dck.o \
+	games/3dck/ui.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
 	loaders/c64.o \
 	language/8bitDetokeniser.o \
+	language/16bitDetokeniser.o \
 	language/instruction.o \
+	language/instruction16bit.o \
 	metaengine.o \
 	movement.o \
 	objects/geometricobject.o \

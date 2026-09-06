@@ -11,41 +11,38 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef FREESCAPE_8BITDETOKENIZER_H
-#define FREESCAPE_8BITDETOKENIZER_H
+#ifndef FREESCAPE_INSTRUCTION16BIT_H
+#define FREESCAPE_INSTRUCTION16BIT_H
 
+#include "common/hashmap.h"
 #include "freescape/language/instruction.h"
 
 namespace Freescape {
 
-enum {
-	k8bitGameBitTravelRock = 30
+struct FCLLoop {
+	uint32 start = 0;
+	uint16 remaining = 0;
 };
 
-enum {
-	k8bitVariableCrawling = 30,
-	k8bitVariableSpiritsDestroyed = 28,
-	k8bitVariableEnergy = 62,
-	k8bitVariableScore = 61,
-	k8bitVariableShieldDrillerTank = 60,
-	k8bitVariableEnergyDrillerTank = 59,
-	k8bitVariableShieldDrillerJet = 58,
-	k8bitVariableEnergyDrillerJet = 57,
-	k8bitMaxVariable = 64
+struct FCLExecutionState {
+	const FCLInstructionVector *source = nullptr, *code = nullptr;
+	uint32 ip = 0, restart = 0;
+	Common::HashMap<uint32, FCLLoop> loops;
+	bool running = false;
+	bool predicate = true, previousPredicate = true;
+	Token::Type booleanOp = Token::UNKNOWN;
 };
 
-extern uint8 k8bitVariableShield;
+enum FCLExecutionResult { kFCLFinished, kFCLYielded, kFCLPaused };
 
-Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated);
+} // namespace Freescape
 
-} // End of namespace Freescape
-
-#endif // FREESCAPE_8BITDETOKENIZER_H
+#endif

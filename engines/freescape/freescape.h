@@ -394,6 +394,7 @@ public:
 	virtual void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target);
 	EventManagerWrapper *_eventManager;
 	void processInput();
+	virtual bool handleInput(const Common::Event &event) { return false; }
 	void resetInput();
 	void stopMovement();
 	void generateDemoInput();
@@ -401,7 +402,7 @@ public:
 	virtual void releasedKey(const int keycode);
 	Common::Point getNormalizedPosition(Common::Point position);
 	virtual bool onScreenControls(Common::Point mouse);
-	void updatePlayerMovement(float deltaTime);
+	virtual void updatePlayerMovement(float deltaTime);
 	void updatePlayerMovementSmooth(float deltaTime);
 	void updatePlayerMovementClassic(float deltaTime);
 	void resolveCollisions(Math::Vector3d newPosition);
@@ -477,13 +478,14 @@ public:
 	Math::Vector3d _objExecutingCodeSize;
 	bool _executingGlobalCode;
 	virtual void executeMovementConditions();
-	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
+	virtual bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated);
 	void executeEntranceConditions(Entrance *entrance);
-	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
+	virtual void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
+	virtual void updateScripts() {}
 	bool executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer, bool activated);
 
 	// Instructions
-	bool checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
+	bool checkConditional(const FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
 	bool checkIfGreaterOrEqual(FCLInstruction &instruction);
 	bool checkIfLessOrEqual(FCLInstruction &instruction);
 	void executeExecute(FCLInstruction &instruction);

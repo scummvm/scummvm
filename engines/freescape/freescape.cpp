@@ -940,6 +940,9 @@ void FreescapeEngine::processInput() {
 				continue;
 		}
 
+		if (handleInput(event))
+			continue;
+
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (_hasFallen || _playerWasCrushed)
@@ -1233,6 +1236,7 @@ Common::Error FreescapeEngine::run() {
 
 		checkSensors();
 		checkIfPlayerWasCrushed();
+		updateScripts();
 		drawFrame();
 
 		if (_shootingFrames == 0) {

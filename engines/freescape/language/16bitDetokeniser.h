@@ -11,41 +11,23 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef FREESCAPE_8BITDETOKENIZER_H
-#define FREESCAPE_8BITDETOKENIZER_H
+#ifndef FREESCAPE_16BITDETOKENISER_H
+#define FREESCAPE_16BITDETOKENISER_H
 
 #include "freescape/language/instruction.h"
 
 namespace Freescape {
 
-enum {
-	k8bitGameBitTravelRock = 30
-};
+Common::String detokenise16bitCondition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
 
-enum {
-	k8bitVariableCrawling = 30,
-	k8bitVariableSpiritsDestroyed = 28,
-	k8bitVariableEnergy = 62,
-	k8bitVariableScore = 61,
-	k8bitVariableShieldDrillerTank = 60,
-	k8bitVariableEnergyDrillerTank = 59,
-	k8bitVariableShieldDrillerJet = 58,
-	k8bitVariableEnergyDrillerJet = 57,
-	k8bitMaxVariable = 64
-};
+} // namespace Freescape
 
-extern uint8 k8bitVariableShield;
-
-Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool enableActivated);
-
-} // End of namespace Freescape
-
-#endif // FREESCAPE_8BITDETOKENIZER_H
+#endif

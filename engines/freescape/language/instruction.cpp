@@ -41,9 +41,10 @@ FCLInstructionVector *duplicateCondition(FCLInstructionVector *condition) {
 
 FCLInstruction FCLInstruction::duplicate() {
 	FCLInstruction copy(_type);
-	copy.setSource(_source);
-	copy.setDestination(_destination);
-	copy.setAdditional(_additional);
+	copy.setSource(_source, _sourceType);
+	copy.setDestination(_destination, _destinationType);
+	copy.setAdditional(_additional, _additionalType);
+	copy._text = _text;
 
 	copy._thenInstructions = duplicateCondition(_thenInstructions);
 	copy._elseInstructions = duplicateCondition(_elseInstructions);
@@ -55,6 +56,7 @@ FCLInstruction::FCLInstruction(Token::Type type_) {
 	_source = 0;
 	_destination = 0;
 	_additional = 0;
+	_sourceType = _destinationType = _additionalType = Token::UNKNOWN;
 	_type = type_;
 	_thenInstructions = nullptr;
 	_elseInstructions = nullptr;
@@ -64,21 +66,25 @@ FCLInstruction::FCLInstruction() {
 	_source = 0;
 	_destination = 0;
 	_additional = 0;
+	_sourceType = _destinationType = _additionalType = Token::UNKNOWN;
 	_type = Token::UNKNOWN;
 	_thenInstructions = nullptr;
 	_elseInstructions = nullptr;
 }
 
-void FCLInstruction::setSource(int32 source_) {
+void FCLInstruction::setSource(int32 source_, Token::Type type) {
 	_source = source_;
+	_sourceType = type;
 }
 
-void FCLInstruction::setAdditional(int32 additional_) {
+void FCLInstruction::setAdditional(int32 additional_, Token::Type type) {
 	_additional = additional_;
+	_additionalType = type;
 }
 
-void FCLInstruction::setDestination(int32 destination_) {
+void FCLInstruction::setDestination(int32 destination_, Token::Type type) {
 	_destination = destination_;
+	_destinationType = type;
 }
 
 void FCLInstruction::setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch) {
@@ -587,7 +593,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 	return (obj->isInvisible() == (value != 0));
 }
 
-bool FreescapeEngine::checkConditional(FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated) {
+bool FreescapeEngine::checkConditional(const FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated) {
 	uint16 conditional = instruction._source;
 	bool result = false;
 

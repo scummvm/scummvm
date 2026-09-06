@@ -24,6 +24,7 @@
 #include "math/utils.h"
 
 #include "freescape/games/3dck/3dck.h"
+#include "freescape/language/16bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -127,6 +128,8 @@ void KitEngine::loadAssets() {
 	_border->setPalette(_palette, 0, 256);
 	_gfx->_palette = _palette;
 	_gfx->_keyColor = 0;
+	_scriptSurface.create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	_scriptSurface.fillRect(_fullscreenViewArea, 0);
 }
 
 void KitEngine::loadWorld(Common::SeekableReadStream &file) {
@@ -154,7 +157,9 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	_fieldOfView = 2.0f * Math::rad2deg(atan(24.0f / xScale));
 	_viewAspectRatio = float(yScale) / xScale;
 
-	file.skip(10);
+	file.skip(6);
+	_timerInterval = file.readUint16BE();
+	_activationRange = file.readUint16BE();
 	_maxFallingDistance = file.readUint16BE();
 	_stepUpDistance = file.readUint16BE();
 	_startArea = file.readUint16BE();
@@ -175,6 +180,7 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	file.skip(2);
 	uint32 indicatorOffset = 2 * file.readUint16BE();
 	uint16 indicatorCount = file.readUint16BE();
+	_initialCondition = file.readUint16BE();
 	if (indicatorOffset > uint32(file.size()) || (!indicatorOffset && indicatorCount))
 		error("Invalid 3D Construction Kit indicator offset");
 	uint32 areasEnd = indicatorOffset ? indicatorOffset : file.size();
@@ -184,7 +190,8 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 		_indicatorData = readWords(file, 17 * indicatorCount);
 	}
 
-	file.seek(500);
+	file.seek(150);
+	_controlData = readWords(file, 35 * 5);
 	requireBytes(file, uint32(areaCount) * 4);
 	Common::Array<uint32> areaOffsets;
 	for (uint i = 0; i < areaCount; i++) {
@@ -199,6 +206,8 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 		error("Invalid 3D Construction Kit global condition offset");
 	Common::SeekableSubReadStream conditionData(&file, globalConditions, areaOffsets.front());
 	_globalConditions = loadConditions(conditionData);
+	if (_initialCondition > _globalConditions.size())
+		error("Invalid 3D Construction Kit initial condition");
 	if (conditionData.pos() != conditionData.size())
 		error("Invalid 3D Construction Kit global condition size");
 
@@ -226,7 +235,8 @@ Common::Array<KitEngine::ConditionData> KitEngine::loadConditions(Common::Seekab
 		uint16 words = file.readUint16BE() & 0x7fff;
 		ConditionData condition;
 		condition.name = name;
-		condition.code = readCode(file, 2 * words);
+		Common::String source = detokenise16bitCondition(readCode(file, 2 * words), condition.condition);
+		debugC(1, kFreescapeDebugParser, "3DCK condition %s:\n%s", name, source.c_str());
 		conditions.push_back(condition);
 	}
 	return conditions;
@@ -259,6 +269,7 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 		if (data.objects.contains(record.id))
 			error("Duplicate 3D Construction Kit object %u in area %u", record.id, id);
 		data.objects[record.id] = record;
+		data.objectOrder.push_back(record.id);
 		if (!obj)
 			continue;
 		if (id != 255)
@@ -351,11 +362,12 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 		// Entrances can retain editor data after their header.
 		data.extra = readWords(payload, (payload.size() - payload.pos()) / 2);
 	} else {
-		data.code = readCode(payload, payload.size() - payload.pos());
+		Common::String source = detokenise16bitCondition(readCode(payload, payload.size() - payload.pos()), data.condition);
+		debugC(1, kFreescapeDebugParser, "3DCK object %u condition:\n%s", data.id, source.c_str());
 	}
 	file.seek(end);
-	debugC(1, kFreescapeDebugParser, "3DCK object %u: type %u, flags %02x, %u script bytes",
-		data.id, data.type, data.flags, data.code.size());
+	debugC(1, kFreescapeDebugParser, "3DCK object %u: type %u, flags %02x, %u instructions",
+		data.id, data.type, data.flags, data.condition.size());
 
 	if (data.type == kEntranceType && data.id != 255)
 		return new Entrance(data.id & 0x7fff, data.initialOrigin, data.size, FCLInstructionVector(), "");
@@ -375,11 +387,15 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 void KitEngine::initGameState() {
 	FreescapeEngine::initGameState();
 	_playerHeight = _initialPlayerHeight;
+	resetScripts();
+	_currentArea = nullptr;
 }
 
 void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (!_areaMap.contains(areaID))
 		error("Unknown 3D Construction Kit area %u", areaID);
+	if (_currentArea)
+		_kitVariables[9] = _currentArea->getAreaID();
 	_currentArea = _areaMap[areaID];
 	Entrance *entrance = static_cast<Entrance *>(_currentArea->entranceWithID(entranceID));
 	if (!entrance)
@@ -393,7 +409,13 @@ void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 	_gfx->_scale = _currentArea->getScale();
 	_gotoExecuted = true;
+	_delayedShootObject = nullptr;
+	_timerTicks = 0;
+	_scriptSurface.fillRect(_viewArea, 0);
 	resetInput();
+	_shootMode = true;
+	g_system->lockMouse(false);
+	readSystemVariables();
 }
 
 void KitEngine::checkIfStillInArea() {
@@ -403,14 +425,7 @@ void KitEngine::checkIfStillInArea() {
 }
 
 bool KitEngine::checkIfGameEnded() {
-	if (_hasFallen || _playerWasCrushed)
-		_gameStateControl = kFreescapeGameStateRestart;
 	return false;
-}
-
-void KitEngine::drawUI() {
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->renderCrossair(_crossairPosition);
 }
 
 } // namespace Freescape

@@ -23,6 +23,7 @@
 #define FREESCAPE_GAMES_3DCK_H
 
 #include "freescape/freescape.h"
+#include "freescape/language/instruction16bit.h"
 
 namespace Freescape {
 
@@ -37,13 +38,27 @@ public:
 	bool checkIfGameEnded() override;
 	void borderScreen() override {}
 	void drawUI() override;
+	bool handleInput(const Common::Event &event) override;
+	void updatePlayerMovement(float deltaTime) override;
+	void updateTimeVariables() override;
+	void updateScripts() override;
+	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) override;
+	void executeLocalGlobalConditions(bool shot, bool collided, bool timer) override {}
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return false; }
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return false; }
 
 private:
+	struct ObjectData;
+	struct ScriptState : FCLExecutionState {
+		ObjectData *object = nullptr;
+		uint16 area = 0;
+		byte events = 0;
+	};
+
 	struct ConditionData {
 		Common::String name;
-		Common::Array<byte> code;
+		FCLInstructionVector condition;
+		ScriptState script;
 	};
 
 	struct SensorData {
@@ -62,26 +77,66 @@ private:
 		Math::Vector3d origin, size, initialOrigin;
 		Common::Array<uint16> members;
 		Common::Array<uint16> extra;
-		Common::Array<byte> code;
+		FCLInstructionVector condition;
 		SensorData sensor;
+		ScriptState script;
+		Common::Array<uint16> animatedObjects;
+		uint16 animator = 0;
 	};
 
 	struct AreaData {
 		Common::HashMap<uint16, ObjectData> objects;
+		Common::Array<uint16> objectOrder;
 		Common::Array<ConditionData> conditions;
+	};
+
+	struct ScriptEntry {
+		ScriptState *script;
+		bool resume;
+		ScriptEntry(ScriptState *s, bool r) : script(s), resume(r) {}
 	};
 
 	void loadWorld(Common::SeekableReadStream &file);
 	Area *loadArea(Common::SeekableReadStream &file);
 	Object *loadObject(Common::SeekableReadStream &file, ObjectData &data);
 	Common::Array<ConditionData> loadConditions(Common::SeekableReadStream &file);
+	void resetScripts();
+	void startScript(ScriptState &script);
+	void beginScriptFrame();
+	FCLExecutionResult executeCode(ScriptState &script, uint &budget);
+	void readSystemVariables();
+	void writeSystemVariables();
+	void setScriptVariable(byte index, uint32 value);
+	int32 getVariableOrConstant(int32 operand, Token::Type type) const;
+	void setScriptPredicate(ScriptState &script, bool value);
+	ObjectData *scriptObject(uint16 area, uint16 id);
+	void collectObjects(uint16 area, uint16 id, Common::Array<uint16> &objects);
+	void setObjectStatus(uint16 area, uint16 id, Token::Type operation);
+	bool moveAnimation(ScriptState &script, Math::Vector3d movement, bool absolute);
+	void interact(bool shot);
+	void printMessage(uint16 indicator, const Common::String &message);
+	void updateIndicators();
+	uint32 indicatorColor(byte color) const;
 
 	Common::HashMap<uint16, AreaData> _areaData;
 	Common::Array<ConditionData> _globalConditions;
 	Common::Array<uint16> _indicatorData;
+	Common::Array<uint16> _controlData;
 
 	byte _palette[256 * 3];
 	uint16 _initialPlayerHeight;
+	uint16 _initialCondition = 0, _timerInterval = 0, _activationRange = 0;
+	uint32 _kitVariables[256] = {};
+	uint32 _changedVariables = 0;
+	uint32 _scriptTicks = 0, _timerTicks = 0, _delayUntil = 0;
+	int _lastScriptTick = 0;
+	bool _timerTriggered = false, _initialScriptPending = false;
+	bool _scriptFrameActive = false, _scriptDelayed = false;
+	bool _soundWarning = false;
+	uint _scriptQueueIndex = 0;
+	Common::Array<ScriptEntry> _scriptQueue;
+	Common::Array<ScriptState *> _suspendedScripts;
+	Graphics::ManagedSurface _scriptSurface;
 };
 
 } // namespace Freescape
