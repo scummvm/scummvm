@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
@@ -64,7 +65,7 @@ protected:
 public:
 	Data::Map _map;
 	Data::Savegame _savegame;
-	Logic::Logic *_logic = nullptr;
+	Common::SharedPtr<Logic::Logic> _logic;
 	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;
 	uint32 _moveCtr = 0;

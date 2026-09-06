@@ -107,9 +107,7 @@ void PrincessSaved::spawnTimeMachine() {
 }
 
 void PrincessSaved::finish() {
-	// Clear out the Castle logic handler and load the overworld map
-	delete _G(logic);
-	_G(logic) = nullptr;
+	// Switch back to the overworld map
 	_G(map).load(Data::MAP_OVERWORLD);
 }
 

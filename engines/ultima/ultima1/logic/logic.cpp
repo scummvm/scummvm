@@ -75,15 +75,10 @@ void Logic::endOfTurn() {
 
 	redrawMap();
 	redrawStats();
-	prompt();
-
-	// If this logic is no longer the active one, such as from switching maps,
-	// then delete it
-	if (this != _G(logic))
-		delete this;
 }
 
 void Logic::action(int action) {
+	Common::SharedPtr<Logic> currLogic = _G(logic);
 	bool doEndOfTurn = true;
 
 	switch (action) {
@@ -149,8 +144,15 @@ void Logic::action(int action) {
 		break;
 	}
 
-	if (doEndOfTurn)
-		endOfTurn();
+	// End of turn handling
+	if (doEndOfTurn) {
+		// Only do end of turn stuff like creature movement and food reduction if we're
+		// still in the same map we started on
+		if (_G(logic) == currLogic)
+			endOfTurn();
+
+		prompt();
+	}
 }
 
 void Logic::keypress(Common::KeyCode keycode) {

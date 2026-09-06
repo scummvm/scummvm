@@ -410,9 +410,6 @@ void CreateCharacter::confirmAndSave() {
 	_cursor.hide();
 
 	// Load the overworld map
-	delete _G(logic);
-	_G(logic) = nullptr;
-
 	_G(map).load(MAP_OVERWORLD);
 }
 

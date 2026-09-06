@@ -156,18 +156,18 @@ void Map::load(int mapNum) {
 	// Set up logic handler for the mode and which view it'll be using
 	Common::String viewName;
 	if (mapNum >= 49) {
-		_G(logic) = new Logic::DungeonLogic();
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::DungeonLogic());
 		viewName = "DungeonMap";
 	} else if (mapNum == MAP_OVERWORLD) {
-		_G(logic) = new Logic::OverworldLogic();
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
 		viewName = "OverworldMap";
 	} else {
 		if (mapNum < 33)
-			_G(logic) = new Logic::CityLogic();
+			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityLogic());
 		else if (mapNum < 41)
-			_G(logic) = new Logic::CastleLogic();
+			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CastleLogic());
 		else
-			_G(logic) = new Logic::PillarLogic();
+			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::PillarLogic());
 
 		viewName = "LocationMap";
 	}
