@@ -21,6 +21,7 @@
 
 #include "hollywood/hollywood.h"
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/scenes/intro/demo_montage.h"
 #include "hollywood/scenes/playable/scene4060.h"
 
 namespace Hollywood {
@@ -652,6 +653,25 @@ void Scene4060::runFirstEntrySequence() {
 		}
 		sequence.secondarySpeech(0, 0)
 			.commit(_vm->gameState().scene4060EntryLineSeen, true);
+		if (spanishDemo && sequence.completed()) {
+			stopAmbientSoundCues();
+			_soundBank0.stop();
+			_residentSoundEffects.stop();
+			if (!playSpanishDemoEnding(_vm)) {
+				warning("Could not load the Spanish demo ending");
+				return;
+			}
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return;
+			if (!_vm->restoredContentEnabled()) {
+				_vm->gameState().mainFlowStateId = 0xff;
+			} else {
+				// Restored playability continues after the original demo's endpoint.
+				invalidatePresentationPalette();
+				drawPlayableComposite();
+				presentFrame();
+			}
+		}
 	}
 }
 

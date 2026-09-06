@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	scenes/speech_overlay.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
+	scenes/intro/demo_montage.o \
 	scenes/intro/scene9010.o \
 	scenes/intro/scene9030.o \
 	scenes/intro/scene9050.o \

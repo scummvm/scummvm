@@ -35,6 +35,7 @@
 #include "hollywood/font.h"
 #include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/resource.h"
+#include "hollywood/scenes/intro/demo_montage.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
 #include "hollywood/scenes/intro/scene9030.h"
@@ -237,6 +238,11 @@ Common::Error HollywoodEngine::run() {
 	}
 
 	const int bootParam = startupLoad ? 0 : ConfMan.getInt("boot_param");
+	if (!startupLoad && isDemo() && getLanguage() == Common::ES_ESP &&
+			(bootParam == 255 || bootParam == 9001)) {
+		return playSpanishDemoEnding(this, bootParam == 9001) ?
+			Common::kNoError : Common::kReadingFailed;
+	}
 	const bool bootToIntroScene = isImplementedIntroSceneNumber(bootParam);
 	const bool bootToGameplayScene = isImplementedGameplayState(bootParam);
 	bool bootSceneReached = bootParam == 0;
