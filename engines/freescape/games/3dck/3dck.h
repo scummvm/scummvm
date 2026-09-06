@@ -41,9 +41,44 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return false; }
 
 private:
+	struct ConditionData {
+		Common::String name;
+		Common::Array<byte> code;
+	};
+
+	struct SensorData {
+		byte colors[2] = {};
+		uint16 interval = 0;
+		uint16 range = 0;
+		uint16 unknown = 0;
+		uint16 directions = 0;
+	};
+
+	struct ObjectData {
+		uint16 id = 0;
+		byte type = 0;
+		byte flags = 0;
+		uint16 state = 0;
+		Math::Vector3d origin, size, initialOrigin;
+		Common::Array<uint16> members;
+		Common::Array<uint16> extra;
+		Common::Array<byte> code;
+		SensorData sensor;
+	};
+
+	struct AreaData {
+		Common::HashMap<uint16, ObjectData> objects;
+		Common::Array<ConditionData> conditions;
+	};
+
 	void loadWorld(Common::SeekableReadStream &file);
 	Area *loadArea(Common::SeekableReadStream &file);
-	Object *loadObject(Common::SeekableReadStream &file);
+	Object *loadObject(Common::SeekableReadStream &file, ObjectData &data);
+	Common::Array<ConditionData> loadConditions(Common::SeekableReadStream &file);
+
+	Common::HashMap<uint16, AreaData> _areaData;
+	Common::Array<ConditionData> _globalConditions;
+	Common::Array<uint16> _indicatorData;
 
 	byte _palette[256 * 3];
 	uint16 _initialPlayerHeight;

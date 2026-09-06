@@ -19,12 +19,19 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/substream.h"
 #include "math/utils.h"
 
 #include "freescape/games/3dck/3dck.h"
 
 namespace Freescape {
+
+enum {
+	kKitAnimatorType = 16,
+	kKitInitiallyInvisible = 0x04,
+	kKitMovable = 0x80
+};
 
 static void requireBytes(Common::SeekableReadStream &file, uint32 size) {
 	if (file.err() || file.pos() > file.size() || size > file.size() - file.pos())
@@ -39,10 +46,35 @@ static uint16 readBlockSize(Common::SeekableReadStream &file) {
 }
 
 static Math::Vector3d readVector(Common::SeekableReadStream &file) {
-	uint16 x = file.readUint16BE();
-	uint16 y = file.readUint16BE();
-	uint16 z = file.readUint16BE();
+	int16 x = file.readSint16BE();
+	int16 y = file.readSint16BE();
+	int16 z = file.readSint16BE();
 	return Math::Vector3d(x, y, z);
+}
+
+static Common::Array<uint16> readWords(Common::SeekableReadStream &file, uint32 count) {
+	requireBytes(file, 2 * count);
+	Common::Array<uint16> words;
+	for (uint32 i = 0; i < count; i++)
+		words.push_back(file.readUint16BE());
+	return words;
+}
+
+static Common::Array<byte> readCode(Common::SeekableReadStream &file, uint32 size) {
+	requireBytes(file, size);
+	Common::Array<byte> code;
+	code.resize(size);
+	if (size && file.read(code.data(), size) != size)
+		error("Truncated 3D Construction Kit condition");
+	return code;
+}
+
+static void readColors(Common::SeekableReadStream &file, byte &first, byte &second) {
+	requireBytes(file, 2);
+	// Each word interleaves the nibbles of two VGA palette indices.
+	uint16 pair = file.readUint16BE();
+	first = ((pair & 0xf) << 4) | ((pair >> 8) & 0xf);
+	second = (pair & 0xf0) | ((pair >> 12) & 0xf);
 }
 
 KitEngine::KitEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd), _initialPlayerHeight(0) {
@@ -140,34 +172,64 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	_angleRotations.push_back(angle);
 	_angleRotationIndex = 0;
 
+	file.skip(2);
+	uint32 indicatorOffset = 2 * file.readUint16BE();
+	uint16 indicatorCount = file.readUint16BE();
+	if (indicatorOffset > uint32(file.size()) || (!indicatorOffset && indicatorCount))
+		error("Invalid 3D Construction Kit indicator offset");
+	uint32 areasEnd = indicatorOffset ? indicatorOffset : file.size();
+	if (indicatorCount) {
+		file.seek(indicatorOffset);
+		// The indicator table follows the last area's conditions.
+		_indicatorData = readWords(file, 17 * indicatorCount);
+	}
+
 	file.seek(500);
 	requireBytes(file, uint32(areaCount) * 4);
 	Common::Array<uint32> areaOffsets;
 	for (uint i = 0; i < areaCount; i++) {
 		uint32 offset = file.readUint32BE();
-		if (offset > uint32(file.size()) / 2)
+		if (offset >= areasEnd / 2)
 			error("Invalid 3D Construction Kit area offset");
 		areaOffsets.push_back(2 * offset);
 	}
-	if (globalConditions < uint32(file.pos()) || globalConditions > uint32(file.size()))
+	Common::sort(areaOffsets.begin(), areaOffsets.end());
+	if (areaOffsets.empty() || globalConditions < uint32(file.pos()) ||
+			globalConditions + 2 > areaOffsets.front())
 		error("Invalid 3D Construction Kit global condition offset");
-	file.seek(globalConditions);
-	requireBytes(file, 2);
-	if (file.readUint16BE())
-		error("3D Construction Kit conditions are not implemented yet");
+	Common::SeekableSubReadStream conditionData(&file, globalConditions, areaOffsets.front());
+	_globalConditions = loadConditions(conditionData);
+	if (conditionData.pos() != conditionData.size())
+		error("Invalid 3D Construction Kit global condition size");
 
 	for (uint i = 0; i < areaOffsets.size(); i++) {
-		if (areaOffsets[i] < globalConditions + 2)
+		uint32 end = i + 1 < areaOffsets.size() ? areaOffsets[i + 1] : areasEnd;
+		if (areaOffsets[i] >= end)
 			error("Invalid 3D Construction Kit area offset");
-		file.seek(areaOffsets[i]);
-		Area *area = loadArea(file);
+		Common::SeekableSubReadStream areaData(&file, areaOffsets[i], end);
+		Area *area = loadArea(areaData);
 		uint16 id = area->getAreaID();
-		if (_areaMap.contains(id))
-			error("Duplicate 3D Construction Kit area %u", id);
 		_areaMap[id] = area;
 	}
 	if (!_areaMap.contains(_startArea) || !_areaMap[_startArea]->entranceWithID(_startEntrance))
 		error("Invalid 3D Construction Kit starting area or entrance");
+}
+
+Common::Array<KitEngine::ConditionData> KitEngine::loadConditions(Common::SeekableReadStream &file) {
+	requireBytes(file, 2);
+	uint16 count = file.readUint16BE();
+	Common::Array<ConditionData> conditions;
+	for (uint i = 0; i < count; i++) {
+		requireBytes(file, 14);
+		char name[13] = {};
+		file.read(name, 12);
+		uint16 words = file.readUint16BE() & 0x7fff;
+		ConditionData condition;
+		condition.name = name;
+		condition.code = readCode(file, 2 * words);
+		conditions.push_back(condition);
+	}
+	return conditions;
 }
 
 Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
@@ -176,6 +238,8 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	uint16 flags = file.readUint16BE();
 	uint16 objectCount = file.readUint16BE();
 	uint16 id = file.readUint16BE();
+	if (_areaMap.contains(id))
+		error("Duplicate 3D Construction Kit area %u", id);
 	file.skip(2);
 	uint32 conditions = start + 2 * file.readUint16BE();
 	uint16 scale = file.readUint16BE();
@@ -184,16 +248,22 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	file.skip(14);
 	if (!scale || scale > 255 || conditions < uint32(file.pos()) || conditions > uint32(file.size()))
 		error("Invalid 3D Construction Kit area header");
-	if (id == 255 && objectCount)
-		error("3D Construction Kit global objects are not implemented yet");
 
+	AreaData &data = _areaData[id];
 	ObjectMap *objects = new ObjectMap();
 	ObjectMap *entrances = new ObjectMap();
 	Common::SeekableSubReadStream objectData(&file, file.pos(), conditions);
 	for (uint i = 0; i < objectCount; i++) {
-		Object *obj = loadObject(objectData);
-		obj->scale(scale);
-		obj->_loadIndex = i;
+		ObjectData record;
+		Object *obj = loadObject(objectData, record);
+		if (data.objects.contains(record.id))
+			error("Duplicate 3D Construction Kit object %u in area %u", record.id, id);
+		data.objects[record.id] = record;
+		if (!obj)
+			continue;
+		if (id != 255)
+			obj->scale(scale);
+		obj->_loadIndex = (id == 255 ? 0 : 0x4000) + i;
 		ObjectMap *map = obj->getType() == kEntranceType ? entrances : objects;
 		if (map->contains(obj->getObjectID()))
 			error("Duplicate 3D Construction Kit object %u", obj->getObjectID());
@@ -202,9 +272,10 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	if (objectData.pos() != objectData.size())
 		error("Invalid 3D Construction Kit object count");
 	file.seek(conditions);
-	requireBytes(file, 2);
-	if (file.readUint16BE())
-		error("3D Construction Kit conditions are not implemented yet");
+	data.conditions = loadConditions(file);
+	if (file.pos() != file.size())
+		error("Invalid 3D Construction Kit area condition size");
+	debugC(1, kFreescapeDebugParser, "3DCK area %u: %u objects, %u conditions", id, objectCount, data.conditions.size());
 
 	Area *area = new Area(id, flags, objects, entrances, false);
 	area->_scale = scale;
@@ -213,36 +284,92 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	area->_groundColor = ((ground & 0xf) << 4) | ((ground >> 8) & 0xf);
 	area->_usualBackgroundColor = 0;
 	area->_underFireBackgroundColor = 0;
+	// The runner supplies a default floor at Y=0.
+	if (id != 255)
+		area->addFloor();
 	return area;
 }
 
-Object *KitEngine::loadObject(Common::SeekableReadStream &file) {
+Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data) {
 	requireBytes(file, 20);
-	byte flags = file.readByte();
-	byte type = file.readByte();
-	file.skip(2);
-	Math::Vector3d origin = readVector(file);
-	Math::Vector3d size = readVector(file);
-	uint16 id = file.readUint16BE();
+	data.flags = file.readByte();
+	data.type = file.readByte() & 0x7f;
+	data.state = file.readUint16BE();
+	data.origin = readVector(file);
+	data.size = readVector(file);
+	data.initialOrigin = data.origin;
+	data.id = file.readUint16BE();
 	uint16 words = file.readUint16BE();
 	if (words < 10)
 		error("Invalid 3D Construction Kit object size");
 	requireBytes(file, 2 * (words - 10));
+	uint32 end = file.pos() + 2 * (words - 10);
+	Common::SeekableSubReadStream payload(&file, file.pos(), end);
+	if (data.type > kKitAnimatorType)
+		error("Unsupported 3D Construction Kit object %u (type %u)", data.id, data.type);
 
-	if (type == kEntranceType && words == 10)
-		return new Entrance(id & 0x7fff, origin, size, FCLInstructionVector(), "");
-	if (type != kCubeType || words != 13 || (flags & 0x80))
-		error("Unsupported 3D Construction Kit object %u (type %u)", id, type);
-
-	Common::Array<uint8> *colors = new Common::Array<uint8>();
-	for (uint i = 0; i < 3; i++) {
-		// Each word interleaves the nibbles of two VGA palette indices.
-		uint16 pair = file.readUint16BE();
-		colors->push_back(((pair & 0xf) << 4) | ((pair >> 8) & 0xf));
-		colors->push_back((pair & 0xf0) | ((pair >> 12) & 0xf));
+	bool geometric = data.type >= kCubeType && data.type <= kHexagonType && data.type != kSensorType;
+	Common::Array<uint8> *colors = nullptr;
+	Common::Array<float> *ordinates = nullptr;
+	if (geometric) {
+		ObjectType type = ObjectType(data.type);
+		int colorCount = GeometricObject::numberOfColoursForObjectOfType(type);
+		colors = new Common::Array<uint8>();
+		for (int i = 0; i < colorCount; i += 2) {
+			byte first, second;
+			readColors(payload, first, second);
+			colors->push_back(first);
+			colors->push_back(second);
+		}
+		int ordinateCount = GeometricObject::numberOfOrdinatesForType(type);
+		if (ordinateCount) {
+			requireBytes(payload, 2 * ordinateCount);
+			ordinates = new Common::Array<float>();
+			for (int i = 0; i < ordinateCount; i++)
+				ordinates->push_back(payload.readSint16BE());
+		}
+	} else if (data.type == kSensorType) {
+		requireBytes(payload, 10);
+		readColors(payload, data.sensor.colors[0], data.sensor.colors[1]);
+		data.sensor.interval = payload.readUint16BE();
+		data.sensor.range = payload.readUint16BE();
+		data.sensor.unknown = payload.readUint16BE();
+		data.sensor.directions = payload.readUint16BE();
+	} else if (data.type == kKitAnimatorType) {
+		data.extra = readWords(payload, 3);
 	}
-	return new GeometricObject(kCubeType, id, (flags & 4) ? 0x80 : 0,
-		origin, size, colors, nullptr, nullptr, FCLInstructionVector());
+
+	if (data.flags & kKitMovable) {
+		requireBytes(payload, 6);
+		data.initialOrigin = readVector(payload);
+	}
+	if (data.type == kGroupType || (data.type == kEntranceType && data.id == 255)) {
+		data.members = readWords(payload, data.state);
+		if (payload.pos() != payload.size())
+			error("Invalid 3D Construction Kit object list %u", data.id);
+	} else if (data.type == kEntranceType) {
+		// Entrances can retain editor data after their header.
+		data.extra = readWords(payload, (payload.size() - payload.pos()) / 2);
+	} else {
+		data.code = readCode(payload, payload.size() - payload.pos());
+	}
+	file.seek(end);
+	debugC(1, kFreescapeDebugParser, "3DCK object %u: type %u, flags %02x, %u script bytes",
+		data.id, data.type, data.flags, data.code.size());
+
+	if (data.type == kEntranceType && data.id != 255)
+		return new Entrance(data.id & 0x7fff, data.initialOrigin, data.size, FCLInstructionVector(), "");
+	if (!geometric)
+		return nullptr;
+
+	ObjectType type = ObjectType(data.type);
+	if (GeometricObject::isPolygon(type)) {
+		// Polygon vertices are relative; pyramid ordinates are already offsets.
+		for (uint i = 0; i < ordinates->size(); i++)
+			(*ordinates)[i] += data.initialOrigin.getValue(i % 3);
+	}
+	return new GeometricObject(type, data.id, (data.flags & kKitInitiallyInvisible) ? 0x80 : 0,
+		data.initialOrigin, data.size, colors, nullptr, ordinates, FCLInstructionVector());
 }
 
 void KitEngine::initGameState() {

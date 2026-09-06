@@ -1171,8 +1171,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("3DKIT.RUN", "f35147729a2f5b6852a504223aeb6a57", 112158),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NOMIDI)
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
 	},
 	{
 		"3dkit",
