@@ -413,8 +413,7 @@ void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	_timerTicks = 0;
 	_scriptSurface.fillRect(_viewArea, 0);
 	resetInput();
-	_shootMode = true;
-	g_system->lockMouse(false);
+	g_system->lockMouse(true);
 	readSystemVariables();
 }
 

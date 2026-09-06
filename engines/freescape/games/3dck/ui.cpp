@@ -119,7 +119,10 @@ bool KitEngine::handleInput(const Common::Event &event) {
 		switch (event.customType) {
 		case kActionEscape:
 			return false;
-		case kActionChangeMode: case kActionSkip:
+		case kActionChangeMode:
+			_kitVariables[15] = ' ';
+			return false;
+		case kActionSkip:
 			_kitVariables[15] = ' ';
 			return true;
 		case kActionMoveUp: control = 0; break;
@@ -148,20 +151,24 @@ bool KitEngine::handleInput(const Common::Event &event) {
 				interact(event.customType == kActionShoot);
 			return true;
 		}
-		if (_scriptFrameActive)
-			return true;
+		// Track held movement keys during DELAY; movement itself waits.
+		bool movement = event.customType == kActionMoveUp || event.customType == kActionMoveDown ||
+			event.customType == kActionMoveLeft || event.customType == kActionMoveRight;
+		return _scriptFrameActive && !movement;
 	} else if (_scriptFrameActive && event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END &&
 			(event.customType == kActionRiseOrFlyUp || event.customType == kActionLowerOrFlyDown)) {
 		_moveUp = _moveDown = false;
 		return true;
 	} else if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-		_crossairPosition = getNormalizedPosition(event.mouse);
+		Common::Point mouse = getNormalizedPosition(event.mouse);
+		if (_shootMode)
+			_crossairPosition = mouse;
 		int buttons = g_system->getEventManager()->getButtonState();
 		_kitVariables[16] = ((buttons & Common::EventManager::LBUTTON) ? 1 : 0) |
 			((buttons & Common::EventManager::RBUTTON) ? 2 : 0);
 		_kitVariables[16] |= event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2;
-		_kitVariables[17] = _crossairPosition.x;
-		_kitVariables[18] = _crossairPosition.y;
+		_kitVariables[17] = mouse.x;
+		_kitVariables[18] = mouse.y;
 		if (!_scriptFrameActive)
 			interact(event.type == Common::EVENT_LBUTTONDOWN);
 		return true;
