@@ -60,6 +60,7 @@ enum DungeonItemId {
 };
 
 struct DungeonCell {
+	DungeonTileId _tileNum;
 	uint8 _monsterId;
 	uint8 _itemId;
 	uint16 _monsterHp;
@@ -67,7 +68,6 @@ struct DungeonCell {
 
 struct MapDungeon {
 private:
-	DungeonCell _cells[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 	uint16 _randomSeed = 0;
 	// Tracks which of the 5 monster slots have already been filled while
 	// generating the current level
@@ -97,16 +97,16 @@ private:
 	 */
 	void dungeonSpawnMonster();
 
-protected:
-	byte _dungeonTiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-
-	/**
-	 * Loads a dungeon level
-	 */
-	void generateDungeonLevel();
+public:
+	DungeonCell _cells[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
 public:
 	MapDungeon();
+
+	/**
+	 * Generates a dungeon level
+	 */
+	void generateDungeonLevel();
 };
 
 } // namespace Data

@@ -128,6 +128,9 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 	s.syncAsSint16LE(_freeingPrincess);
 	s.syncAsSint16LE(_castleItemAllowance);
 	s.syncAsSint16LE(_castleKeyVal);
+	s.syncAsByte(_dungeonLevel);
+	s.syncAsByte(_dungeonDirection);
+	s.syncAsSint16LE(_dungeonExitHitPoints);
 }
 
 void Savegame::synchronize(Common::Serializer &s) {

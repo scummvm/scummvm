@@ -31,12 +31,10 @@ MapDungeon::MapDungeon() {
 }
 
 void MapDungeon::clear() {
-	Common::fill(&_dungeonTiles[0][0], &_dungeonTiles[0][0] + DUNGEON_WIDTH * DUNGEON_HEIGHT, 0);
 	for (auto &y : _cells) {
 		for (auto &x : y) {
+			x._tileNum = DTILE_HALLWAY;
 			x._itemId = DITEM_NONE;
-			// Unlike _itemId, 0 is a real monster Id, so "no monster" needs
-			// its own sentinel value
 			x._monsterId = DUNGEON_NO_MONSTER;
 			x._monsterHp = 0;
 		}
@@ -70,17 +68,17 @@ void MapDungeon::generateDungeonLevel() {
 
 	// Outer border walls
 	for (int i = 0; i < DUNGEON_WIDTH; ++i) {
-		_dungeonTiles[0][i] = DTILE_WALL;
-		_dungeonTiles[DUNGEON_HEIGHT - 1][i] = DTILE_WALL;
-		_dungeonTiles[i][0] = DTILE_WALL;
-		_dungeonTiles[i][DUNGEON_WIDTH - 1] = DTILE_WALL;
+		_cells[0][i]._tileNum = DTILE_WALL;
+		_cells[DUNGEON_HEIGHT - 1][i]._tileNum = DTILE_WALL;
+		_cells[i][0]._tileNum = DTILE_WALL;
+		_cells[i][DUNGEON_WIDTH - 1]._tileNum = DTILE_WALL;
 	}
 
 	// Randomize the tiles at the grid intersections that divide the level
 	// into a rough 4x4 arrangement of rooms
 	for (int x = 2; x <= 8; x += 2) {
 		for (int y = 1; y <= 9; ++y)
-			_dungeonTiles[y][x] = getRandomNumber(1, 4) - 1;
+			_cells[y][x]._tileNum = (DungeonTileId)getRandomNumber(DTILE_HALLWAY, DTILE_DOOR);
 	}
 
 	// Scatter some extra walls/support beams around the level, at one of
@@ -91,13 +89,13 @@ void MapDungeon::generateDungeonLevel() {
 
 	int decorCount = dungeonLevel * 2;
 	for (int i = 0; i <= decorCount; ++i) {
-		int newTile = (getRandomNumber(1, 255) > 160) ? DTILE_BEAMS : DTILE_WALL;
+		DungeonTileId newTile = (getRandomNumber(1, 255) > 160) ? DTILE_BEAMS : DTILE_WALL;
 		int idx = getRandomNumber(1, 16) - 1;
 
 		if (dungeonLevel & 1)
-			_dungeonTiles[DUNGEON_DATA2[idx]][DUNGEON_DATA1[idx]] = newTile;
+			_cells[DUNGEON_DATA2[idx]][DUNGEON_DATA1[idx]]._tileNum = newTile;
 		else
-			_dungeonTiles[DUNGEON_DATA1[idx]][DUNGEON_DATA2[idx]] = newTile;
+			_cells[DUNGEON_DATA1[idx]][DUNGEON_DATA2[idx]]._tileNum = newTile;
 	}
 
 	// Re-seed partway through, so item placement below doesn't correlate
@@ -111,31 +109,31 @@ void MapDungeon::generateDungeonLevel() {
 		int x = getRandomNumber(10, 99) / 10;
 		int y = getRandomNumber(10, 99) / 10;
 
-		int tile = _dungeonTiles[y][x];
+		int tile = _cells[y][x]._tileNum;
 		if (tile != DTILE_WALL && tile != DTILE_SECRET_DOOR && tile != DTILE_BEAMS)
 			_cells[y][x]._itemId = newItem;
 	}
 
 	// Place the ladders connecting to the levels above/below, alternating
 	// which of the two fixed spots is up/down between odd/even levels
-	_dungeonTiles[2][1] = DTILE_HALLWAY;
+	_cells[2][1]._tileNum = DTILE_HALLWAY;
 	if (dungeonLevel & 1) {
-		_dungeonTiles[3][7] = DTILE_LADDER_UP;
-		_dungeonTiles[7][3] = DTILE_LADDER_DOWN;
+		_cells[3][7]._tileNum = DTILE_LADDER_UP;
+		_cells[7][3]._tileNum = DTILE_LADDER_DOWN;
 	} else {
-		_dungeonTiles[3][7] = DTILE_LADDER_DOWN;
-		_dungeonTiles[7][3] = DTILE_LADDER_UP;
+		_cells[3][7]._tileNum = DTILE_LADDER_DOWN;
+		_cells[7][3]._tileNum = DTILE_LADDER_UP;
 	}
 
 	if (dungeonLevel == DUNGEON_FLOORS)
 		// No level below the deepest one
-		_dungeonTiles[3][7] = DTILE_HALLWAY;
+		_cells[3][7]._tileNum = DTILE_HALLWAY;
 
 	if (dungeonLevel == 1) {
 		// The topmost level connects back to the overworld instead, via a
 		// separate fixed spot
-		_dungeonTiles[1][1] = DTILE_LADDER_UP;
-		_dungeonTiles[3][7] = DTILE_HALLWAY;
+		_cells[1][1]._tileNum = DTILE_LADDER_UP;
+		_cells[3][7]._tileNum = DTILE_HALLWAY;
 	}
 
 	// Spawn 3 of the level's 5 possible monster slots
@@ -156,8 +154,8 @@ void MapDungeon::dungeonSpawnMonster() {
 		y = getRandomNumber(0, 242) % 9 + 1;
 
 		valid = _cells[y][x]._monsterId == DUNGEON_NO_MONSTER &&
-			_dungeonTiles[y][x] != DTILE_WALL && _dungeonTiles[y][x] != DTILE_SECRET_DOOR &&
-			_dungeonTiles[y][x] != DTILE_BEAMS && _cells[y][x]._itemId != DITEM_CHEST;
+			_cells[y][x]._tileNum != DTILE_WALL && _cells[y][x]._tileNum != DTILE_SECRET_DOOR &&
+			_cells[y][x]._tileNum != DTILE_BEAMS && _cells[y][x]._itemId != DITEM_CHEST;
 	}
 
 	if (!valid)

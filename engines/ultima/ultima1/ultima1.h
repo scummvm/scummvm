@@ -38,6 +38,7 @@
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/data/map_dungeon.h"
 #include "ultima/ultima1/data/savegame.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/logic/logic.h"
@@ -64,6 +65,7 @@ protected:
 
 public:
 	Data::Map _map;
+	Data::MapDungeon _dungeon;
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
 	int _overworldEntityCount = 0;

@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/data/map_dungeon.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/logic/city_castle_logic.h"
 #include "ultima/ultima1/logic/dungeon_logic.h"
@@ -182,11 +183,8 @@ void Map::load(int mapNum) {
 		break;
 
 	case MAPTYPE_DUNGEON:
-		generateDungeonLevel();
-
-		_mapRows.reserve(DUNGEON_HEIGHT);
-		for (int y = 0; y < DUNGEON_HEIGHT; ++y)
-			_mapRows.push_back(Row(this, &_dungeonTiles[y][0]));
+		_G(dungeon).generateDungeonLevel();
+		_mapRows.clear();		// Dungeon doesn't use this map
 		break;
 
 	default:
