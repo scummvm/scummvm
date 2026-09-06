@@ -88,7 +88,7 @@ bool OverworldLogic::enter() {
 		_G(map)._isLordBritishCastle = location == 33;
 
 		Common::String msg = "Entering...\n";
-		if (!_G(map)._isLordBritishCastle)
+		if (location < 33)
 			msg += "The city of ";
 		msg += Data::LOCATION_NAMES[location - 1];
 		msg += "\n";

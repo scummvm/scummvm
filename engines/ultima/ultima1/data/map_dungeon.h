@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_DATA_MAP_DUNGEON_H
 #define ULTIMA1_DATA_MAP_DUNGEON_H
 
-#include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -64,6 +64,8 @@ struct DungeonCell {
 	uint8 _monsterId;
 	uint8 _itemId;
 	uint16 _monsterHp;
+
+	void synchronize(Common::Serializer &s);
 };
 
 struct MapDungeon {
@@ -107,6 +109,8 @@ public:
 	 * Generates a dungeon level
 	 */
 	void generateDungeonLevel();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace Data
