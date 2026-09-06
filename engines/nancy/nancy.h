@@ -54,6 +54,16 @@ class Serializer;
  */
 namespace Nancy {
 
+// Save game version history:
+// - 1: Initial version
+// - 2: Conditional dialogue and hints moved to nancy.dat
+// - 3: Puzzle data stored as lazily initialized PuzzleData objects
+// - 4: Journal entries sync their scene ID (Nancy9+)
+// - 5: Nancy10 taskbar notification badges persisted
+// - 6: Nancy12 timers reworked
+// - 7: Nancy10 unnamed notebook task event flags added
+// - 8: Nancy12 DrivingPuzzle fuel state persisted
+// - 9: RippedLetterPuzzle stores its scene ID and tried flag
 static const int kSavegameVersion = 9;
 
 struct NancyGameDescription;
