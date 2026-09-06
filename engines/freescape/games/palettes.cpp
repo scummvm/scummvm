@@ -144,6 +144,9 @@ byte kDrillerCPCPalette[32][3] = {
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&kEGADefaultPalette;
+	} else if (_renderMode == Common::kRenderVGA) {
+		if (!_gfx->_palette)
+			error("Missing VGA palette");
 	} else if (_renderMode == Common::kRenderC64) {
 		_gfx->_palette = (byte *)&kC64Palette;
 	} else if (_renderMode == Common::kRenderZX) {

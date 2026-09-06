@@ -258,6 +258,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	// close-up detail. Other games need a smaller value to avoid clipping of nearby objects
 	_nearClipPlane = (isDriller() || isDark()) ? 2 : 0.5;
 	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
+	_fieldOfView = 75.0f;
+	_viewAspectRatio = isCastle() ? 1.6f : 2.18f;
 
 	// These depends on the specific game
 	_playerHeight = 0;
@@ -721,8 +723,8 @@ void FreescapeEngine::drawFrame() {
 		return;
 	}
 
-	const float fov = 75.0f;
-	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	const float fov = _fieldOfView;
+	float aspectRatio = _viewAspectRatio;
 
 	Math::Vector3d renderPosition = getCameraRenderPosition();
 
@@ -787,8 +789,8 @@ void FreescapeEngine::drawFrame() {
 }
 
 void FreescapeEngine::drawFrameStereo(int farClipPlane) {
-	const float fov = 75.0f;
-	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	const float fov = _fieldOfView;
+	float aspectRatio = _viewAspectRatio;
 
 	Math::Vector3d renderPosition = getCameraRenderPosition();
 

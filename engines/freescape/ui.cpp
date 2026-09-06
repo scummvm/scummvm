@@ -86,8 +86,8 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 		if (_currentArea->isOutside())
 			farClipPlane *= 100;
 
-		const float fov = 75.0f;
-		float aspectRatio = isCastle() ? 1.6 : 2.18;
+		const float fov = _fieldOfView;
+		float aspectRatio = _viewAspectRatio;
 		_gfx->updateProjectionMatrix(fov, aspectRatio, _nearClipPlane, farClipPlane);
 		_gfx->positionCamera(_position, _position + _cameraFront, _roll);
 

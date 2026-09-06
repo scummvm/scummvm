@@ -640,7 +640,13 @@ bool Renderer::getRGBAt(uint8 index, uint8 ecolor, uint8 &r1, uint8 &g1, uint8 &
 		return true;
 	}
 
-	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
+	if (_renderMode == Common::kRenderVGA) {
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		return true;
+	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
 		// Hardware palette cycling: if the main color index matches the cycling
 		// palette entry and cycling is active, use the cycling color directly.
 		// This must happen BEFORE color pair resolution since on real hardware

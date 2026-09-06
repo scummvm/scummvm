@@ -52,6 +52,7 @@ MODULE_OBJS := \
 	games/eclipse/opl.music.o \
 	games/eclipse/cpc.o \
 	games/eclipse/zx.o \
+	games/3dck/3dck.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \

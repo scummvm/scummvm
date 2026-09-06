@@ -575,6 +575,8 @@ public:
 	void flashScreen(int backgroundColor);
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;
+	float _fieldOfView;
+	float _viewAspectRatio;
 	float _nearClipPlane;
 	float _farClipPlane;
 

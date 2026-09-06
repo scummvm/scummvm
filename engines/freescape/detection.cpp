@@ -1158,6 +1158,15 @@ const ADGameDescription gameDescriptions[] = {
 	// 3D Construction Kit games
 	{
 		"3dkit",
+		"Cube",
+		AD_ENTRY1s("CUBE.RUN", "3b7930be0f646b98885cfb70c26c89a2", 66138),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
 		"The 3-D Kit Game",
 		AD_ENTRY1s("3DKIT.RUN", "f35147729a2f5b6852a504223aeb6a57", 112158),
 		Common::EN_ANY,

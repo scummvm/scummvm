@@ -317,8 +317,8 @@ void FreescapeEngine::shoot() {
 	float ndcY = 1.0f - (2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height());
 
 	// Calculate angular offsets using perspective projection
-	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
-	float aspectRatio = isCastle() ? 1.6 : 2.18;
+	float fovHorizontalRad = Math::deg2rad(_fieldOfView);
+	float aspectRatio = _viewAspectRatio;
 	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
 
 	// Convert NDC to angle offset
