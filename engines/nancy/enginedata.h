@@ -909,15 +909,30 @@ struct PCUI : public EngineData {
 	Common::Array<Character> characters;	// indexed by the on-disk slot byte
 };
 
-// Fixed layout/graphics block for the Nancy 15 player-character ("Design
-// Select") switcher screen. Companion to PCUI. Supplies the background and
-// overlay image names plus the on-screen button/selection rects.
+// Fixed 314-byte layout block for the Nancy 15 "Design Select" screen, which
+// picks the look (outfit) the player character's UI and cutscenes use. Reached
+// from the in-game setup menu. Companion to PCUI.
 struct LDSN : public EngineData {
+	static const uint kNumButtons = 2;
+	// The screen lists the available designs in a fixed column of rows
+	static const uint kNumDesignRows = 9;
+
 	LDSN(Common::SeekableReadStream *chunkStream);
 
-	Common::String backgroundImageName;	// "UI_DesignSelectBG"
-	Common::String overlayImageName;	// "UI_DesignSelect_OVL"
-	Common::Array<Common::Rect> rects;	// button + per-character selection rects
+	Common::Path backgroundImageName;			// "UI_DesignSelectBG"
+	Common::Path overlayImageName;				// "UI_DesignSelect_OVL"
+
+	// The accept button's two states, drawn out of the background image
+	Common::Rect acceptDownSrc;
+	Common::Rect acceptDownDest;
+	Common::Rect acceptHighlightSrc;
+	Common::Rect acceptHighlightDest;
+
+	// Hotspots: [0] accepts the highlighted design, [1] leaves without applying
+	Common::Array<Common::Rect> buttonHotspots;
+	Common::Array<Common::Rect> designRowDests;	// where each design's name is drawn
+	int16 fontID = 0;							// design names
+	int16 highlightFontID = 0;					// ...and the selected one
 };
 
 // Player-UI header. Introduced in Nancy 15, first chunk of each character's

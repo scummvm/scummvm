@@ -1419,13 +1419,17 @@ LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, backgroundImageName);
 	readFilename(*chunkStream, overlayImageName);
 
-	// The remainder is a run of button/selection rects (16 bytes each),
-	// followed by a short trailer whose fields aren't fully understood yet.
-	while (chunkStream->pos() + 16 <= chunkStream->size()) {
-		Common::Rect rect;
-		readRect(*chunkStream, rect);
-		rects.push_back(rect);
-	}
+	// The accept button's "PLAYERCHAR DOWN" and "PLAYERCHAR HILITE" sprites
+	readRect(*chunkStream, acceptDownSrc);
+	readRect(*chunkStream, acceptDownDest);
+	readRect(*chunkStream, acceptHighlightSrc);
+	readRect(*chunkStream, acceptHighlightDest);
+
+	readRectArray(*chunkStream, buttonHotspots, kNumButtons);
+	readRectArray(*chunkStream, designRowDests, kNumDesignRows);
+
+	fontID = chunkStream->readSint16LE();
+	highlightFontID = chunkStream->readSint16LE();
 }
 
 PUIH::PUIH(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
