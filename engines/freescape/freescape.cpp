@@ -29,7 +29,7 @@
 #include "math/utils.h"
 
 #include "freescape/freescape.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/objects/sensor.h"
 #include "freescape/sweepAABB.h"
 #include "freescape/doodle.h"

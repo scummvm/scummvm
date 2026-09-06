@@ -24,7 +24,7 @@
 #include "math/utils.h"
 
 #include "freescape/games/3dck/8bit.h"
-#include "freescape/language/8bitKitDetokeniser.h"
+#include "freescape/language/detokeniser.h"
 
 namespace Freescape {
 
@@ -153,7 +153,7 @@ Common::Array<Kit8Engine::ConditionData> Kit8Engine::loadConditions(Common::Seek
 		Common::Array<byte> code;
 		code.resize(length);
 		file.read(code.data(), length);
-		Common::String source = detokenise8bitKitCondition(code, condition.code);
+		Common::String source = detokeniseKit8Condition(code, condition.condition);
 		debugC(1, kFreescapeDebugParser, "Condition %u:\n%s", condition.id, source.c_str());
 		conditions.push_back(condition);
 	}
@@ -270,23 +270,7 @@ GeometricObject *Kit8Engine::loadGeometricObject(Common::SeekableReadStream &fil
 
 void Kit8Engine::initGameState() {
 	FreescapeEngine::initGameState();
-	memset(_variables, 0, sizeof(_variables));
-	_changedVariables = 0;
-	_currentKey = 255;
-	_textColor = 7;
-	_variables[121] = _variables[125] = 255;
-	_variables[127] = 0x9c;
-	_scriptStack.clear();
-	_conditions = nullptr;
-	_initialScriptPending = true;
-	_scriptFrameActive = false;
-	_zero = _carry = _previousZero = false;
-	_shotObject = _hitObject = _activatedObject = 0;
-	_fallen = _crushed = _pendingTimer = _timerTriggered = false;
-	_crossVisible = true;
-	_timerTicks = _timerInterval = _delayUntil = 0;
-	_lastTime = g_system->getMillis();
-	_scriptSurface.fillRect(_fullscreenViewArea, 255);
+	resetScripts();
 	_currentArea = nullptr;
 	_movementMode = 1;
 	_playerHeight = 0;

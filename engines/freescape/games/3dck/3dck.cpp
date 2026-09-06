@@ -24,7 +24,7 @@
 #include "math/utils.h"
 
 #include "freescape/games/3dck/3dck.h"
-#include "freescape/language/16bitDetokeniser.h"
+#include "freescape/language/detokeniser.h"
 
 namespace Freescape {
 
@@ -235,7 +235,7 @@ Common::Array<KitEngine::ConditionData> KitEngine::loadConditions(Common::Seekab
 		uint16 words = file.readUint16BE() & 0x7fff;
 		ConditionData condition;
 		condition.name = name;
-		Common::String source = detokenise16bitCondition(readCode(file, 2 * words), condition.condition);
+		Common::String source = detokeniseKit16Condition(readCode(file, 2 * words), condition.condition);
 		debugC(1, kFreescapeDebugParser, "3DCK condition %s:\n%s", name, source.c_str());
 		conditions.push_back(condition);
 	}
@@ -362,7 +362,7 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 		// Entrances can retain editor data after their header.
 		data.extra = readWords(payload, (payload.size() - payload.pos()) / 2);
 	} else {
-		Common::String source = detokenise16bitCondition(readCode(payload, payload.size() - payload.pos()), data.condition);
+		Common::String source = detokeniseKit16Condition(readCode(payload, payload.size() - payload.pos()), data.condition);
 		debugC(1, kFreescapeDebugParser, "3DCK object %u condition:\n%s", data.id, source.c_str());
 	}
 	file.seek(end);

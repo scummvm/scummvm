@@ -19,14 +19,27 @@
  *
  */
 
-#ifndef FREESCAPE_16BITDETOKENISER_H
-#define FREESCAPE_16BITDETOKENISER_H
+#ifndef FREESCAPE_LANGUAGE_EXECUTION_3DCK16_H
+#define FREESCAPE_LANGUAGE_EXECUTION_3DCK16_H
 
-#include "freescape/language/instruction.h"
+#include "common/hashmap.h"
+#include "freescape/language/execution.h"
 
 namespace Freescape {
 
-Common::String detokenise16bitCondition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
+struct FCLKit16Loop {
+	uint32 start = 0;
+	uint16 remaining = 0;
+};
+
+// Each condition or animator keeps its own continuation and predicate.
+struct FCLKit16ExecutionState : FCLExecutionFrame {
+	const FCLInstructionVector *source = nullptr;
+	uint32 restart = 0;
+	Common::HashMap<uint32, FCLKit16Loop> loops;
+	bool running = false;
+	FCLPredicateState predicate = FCLPredicateState(true);
+};
 
 } // namespace Freescape
 

@@ -23,7 +23,7 @@
 #define FREESCAPE_GAMES_3DCK_H
 
 #include "freescape/freescape.h"
-#include "freescape/language/instruction16bit.h"
+#include "freescape/language/execution_3dck16.h"
 
 namespace Freescape {
 
@@ -49,7 +49,7 @@ public:
 
 private:
 	struct ObjectData;
-	struct ScriptState : FCLExecutionState {
+	struct ScriptState : FCLKit16ExecutionState {
 		ObjectData *object = nullptr;
 		uint16 area = 0;
 		byte events = 0;
@@ -116,7 +116,7 @@ private:
 	void executeObjectStatus(const FCLInstruction &instruction);
 	bool checkObjectStatus(const FCLInstruction &instruction);
 	void executeGetPosition(const FCLInstruction &instruction);
-	bool executeExecute(const FCLInstruction &instruction, ScriptState &script);
+	bool executeCall(const FCLInstruction &instruction, ScriptState &script);
 	bool executeGoto(const FCLInstruction &instruction);
 	void executeMode(const FCLInstruction &instruction);
 	bool executeDelay(const FCLInstruction &instruction);
@@ -135,7 +135,6 @@ private:
 	void setScriptVariable(byte index, uint32 value);
 	void setVariableResult(const FCLInstruction &instruction, ScriptState &script, uint32 value);
 	int32 getVariableOrConstant(int32 operand, Token::Type type) const;
-	void setScriptPredicate(ScriptState &script, bool value);
 	void getObjectReference(const FCLInstruction &instruction, uint16 &area, uint16 &id) const;
 	ObjectData *scriptObject(uint16 area, uint16 id);
 	ObjectData *scriptAnimator(const FCLInstruction &instruction);

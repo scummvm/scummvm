@@ -25,7 +25,7 @@
 #include "freescape/freescape.h"
 #include "freescape/games/driller/driller.h"
 #include "freescape/games/driller/opl.music.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

@@ -20,19 +20,12 @@
  */
 
 #include "common/textconsole.h"
-#include "freescape/language/8bitKitDetokeniser.h"
+
+#include "freescape/language/detokeniser.h"
 
 namespace Freescape {
 
-struct KitOpcode {
-	byte opcode;
-	Token::Type token;
-	const char *name;
-	byte minArgs, maxArgs;
-	byte event;
-};
-
-static const KitOpcode kKitOpcodes[] = {
+static const FCLOpcode kKitOpcodes[] = {
 	{0x00, Token::SETVAR, "SETV", 2, 2, 0},
 	{0x01, Token::ADDVAR, "ADDV", 2, 2, 0},
 	{0x02, Token::ADCV, "ADCV", 2, 2, 0},
@@ -79,10 +72,10 @@ static const KitOpcode kKitOpcodes[] = {
 	{0x3f, Token::END, "END", 0, 0, 0}
 };
 
-Common::String detokenise8bitKitCondition(const Common::Array<byte> &code, FCLInstructionVector &instructions) {
+Common::String detokeniseKit8Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions) {
 	Common::String source;
-	for (uint pos = 0; pos < code.size();) {
-		byte raw = code[pos++];
+	for (uint pos = 0; pos < tokenisedCondition.size();) {
+		byte raw = tokenisedCondition[pos++];
 		if (raw == 0xff) {
 			instructions.push_back(FCLInstruction(Token::ENDOFFILE));
 			return source;
@@ -91,36 +84,31 @@ Common::String detokenise8bitKitCondition(const Common::Array<byte> &code, FCLIn
 		bool variableSource = opcode >= 0x10 && opcode <= 0x19;
 		if (variableSource)
 			opcode &= ~0x10;
-		const KitOpcode *entry = nullptr;
-		for (const auto &candidate : kKitOpcodes) {
-			if (candidate.opcode == opcode) {
-				entry = &candidate;
-				break;
-			}
-		}
+		const FCLOpcode *entry = findFCLOpcode(kKitOpcodes, opcode);
 		if (!entry)
 			error("Unsupported 8-bit 3D Construction Kit opcode %02x", opcode);
 		uint count = raw >> 6;
-		if (count < entry->minArgs || count > entry->maxArgs || count > code.size() - pos)
+		if (count < entry->minArgs || count > entry->maxArgs || count > tokenisedCondition.size() - pos)
 			error("Invalid 8-bit 3D Construction Kit %s operands", entry->name);
-		FCLInstruction instruction(entry->token);
+		FCLInstruction instruction(entry->type);
 		if (count > 0)
-			instruction.setSource(code[pos], variableSource ? Token::VARIABLE : Token::CONSTANT);
+			instruction.setSource(tokenisedCondition[pos], variableSource ? Token::VARIABLE : Token::CONSTANT);
 		if (count > 1)
-			instruction.setDestination(code[pos + 1], opcode <= 9 ? Token::VARIABLE : Token::CONSTANT);
+			instruction.setDestination(tokenisedCondition[pos + 1], opcode <= 9 ? Token::VARIABLE : Token::CONSTANT);
 		if (count > 2)
-			instruction.setAdditional(code[pos + 2]);
+			instruction.setAdditional(tokenisedCondition[pos + 2]);
 		if (entry->event) {
 			if (count > 1)
-				instruction.setAdditional(code[pos + 1]);
+				instruction.setAdditional(tokenisedCondition[pos + 1]);
 			if (count > 0)
-				instruction.setDestination(code[pos]);
+				instruction.setDestination(tokenisedCondition[pos]);
 			instruction.setSource(entry->event);
 		}
+		normaliseKitOperands(instruction);
 		instructions.push_back(instruction);
 		source += entry->name;
 		for (uint arg = 0; arg < count; arg++)
-			source += Common::String::format(" %u", code[pos + arg]);
+			source += Common::String::format(" %u", tokenisedCondition[pos + arg]);
 		source += '\n';
 		pos += count;
 	}

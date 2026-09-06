@@ -25,13 +25,12 @@
 // https://web.archive.org/web/20200116141513/http://www.seasip.demon.co.uk/ZX/Driller/
 
 #include "freescape/freescape.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/detokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 
-uint8 k8bitVariableShield = 63;
-
-Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
+Common::String detokeniseFreescapeCondition(const Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();

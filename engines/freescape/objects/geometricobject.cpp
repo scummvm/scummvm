@@ -28,8 +28,6 @@
 
 namespace Freescape {
 
-extern FCLInstructionVector *duplicateCondition(FCLInstructionVector *condition);
-
 int GeometricObject::numberOfColoursForObjectOfType(ObjectType type) {
 	switch (type) {
 	default:

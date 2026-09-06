@@ -19,14 +19,36 @@
  *
  */
 
-#ifndef FREESCAPE_8BIT_KIT_DETOKENISER_H
-#define FREESCAPE_8BIT_KIT_DETOKENISER_H
+#ifndef FREESCAPE_LANGUAGE_DETOKENISER_H
+#define FREESCAPE_LANGUAGE_DETOKENISER_H
 
 #include "freescape/language/instruction.h"
 
 namespace Freescape {
 
-Common::String detokenise8bitKitCondition(const Common::Array<byte> &code, FCLInstructionVector &instructions);
+// Classic games retain their byte-oriented dialect on DOS, Amiga and Atari ST.
+Common::String detokeniseFreescapeCondition(const Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari);
+Common::String detokeniseKit8Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
+Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
+
+void normaliseKitOperands(FCLInstruction &instruction);
+
+struct FCLOpcode {
+	byte opcode;
+	Token::Type type;
+	const char *name;
+	byte minArgs, maxArgs;
+	byte event;
+};
+
+template<uint N>
+const FCLOpcode *findFCLOpcode(const FCLOpcode (&opcodes)[N], byte opcode) {
+	for (const auto &entry : opcodes) {
+		if (entry.opcode == opcode)
+			return &entry;
+	}
+	return nullptr;
+}
 
 } // namespace Freescape
 

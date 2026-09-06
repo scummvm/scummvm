@@ -25,7 +25,7 @@
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/ay.music.h"
 #include "freescape/games/eclipse/eclipse.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

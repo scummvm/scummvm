@@ -36,7 +36,7 @@
 #include "freescape/gfx.h"
 #include "freescape/games/castle/castle.h"
 #include "freescape/games/castle/c64.music.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/music.h"
 
 namespace Freescape {
@@ -1600,7 +1600,7 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	}
 }
 
-// Same as FreescapeEngine::executeExecute but updates the spirits destroyed counter
+// Same as FreescapeEngine::executeCall but updates the spirits destroyed counter
 void CastleEngine::executeDestroy(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();

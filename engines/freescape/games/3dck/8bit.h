@@ -23,6 +23,7 @@
 #define FREESCAPE_GAMES_3DCK_8BIT_H
 
 #include "freescape/freescape.h"
+#include "freescape/language/execution_3dck8.h"
 
 namespace Freescape {
 
@@ -48,21 +49,17 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return false; }
 
 private:
+	typedef FCLKit8ExecutionState ScriptState;
+
 	struct ConditionData {
 		byte id;
-		FCLInstructionVector code;
+		FCLInstructionVector condition;
 	};
 
 	struct AreaData {
 		byte palette[4];
 		Common::Array<byte> globals;
 		Common::Array<ConditionData> conditions;
-	};
-
-	struct ScriptFrame {
-		const FCLInstructionVector *code;
-		uint ip;
-		ScriptFrame(const FCLInstructionVector &instructions) : code(&instructions), ip(0) {}
 	};
 
 	Common::Array<ConditionData> loadConditions(Common::SeekableReadStream &file);
@@ -73,18 +70,20 @@ private:
 	void setMovementMode(byte mode);
 	void readSystemVariables();
 	void writeSystemVariables();
-	void startScript(const FCLInstructionVector &code);
-	bool executeCode(uint &budget);
-	void executeArithmetic(const FCLInstruction &instruction);
-	void executeComparison(const FCLInstruction &instruction);
-	void executeConditional(const FCLInstruction &instruction);
+	void resetScripts();
+	void beginScriptFrame();
+	void startScript(ScriptState &script, const FCLInstructionVector &code);
+	FCLExecutionResult executeCode(ScriptState &script, uint &budget);
+	void executeArithmetic(const FCLInstruction &instruction, ScriptState &script);
+	void executeComparison(const FCLInstruction &instruction, ScriptState &script);
+	void executeConditional(const FCLInstruction &instruction, ScriptState &script);
 	void executeObjectStatus(const FCLInstruction &instruction);
 	void executeGoto(const FCLInstruction &instruction);
 	void executeMode(const FCLInstruction &instruction);
-	void executeCall(const FCLInstruction &instruction);
+	void executeCall(const FCLInstruction &instruction, ScriptState &script);
 	void executeSound(const FCLInstruction &instruction);
 	void executeColour(const FCLInstruction &instruction);
-	void setPredicate(bool value);
+	void getObjectReference(const FCLInstruction &instruction, uint16 &area, uint16 &id) const;
 	Object *scriptObject(uint16 area, uint16 id);
 	void interact(bool shot);
 	void printMessage(byte id, byte x, byte y);
@@ -94,13 +93,11 @@ private:
 	Common::HashMap<uint16, AreaData> _areaData;
 	Common::Array<ConditionData> _globalConditions, _procedures;
 	Common::HashMap<byte, Common::String> _kitMessages;
-	Common::Array<ScriptFrame> _scriptStack;
-	const Common::Array<ConditionData> *_conditions = nullptr;
+	ScriptState _script;
+	const Common::Array<ConditionData> *_activeConditions = nullptr;
 	uint _conditionIndex = 0;
 	bool _initialScriptPending = true, _scriptFrameActive = false, _globalPhase = false;
-	bool _executing = true, _zero = false, _carry = false, _previousZero = false;
-	Token::Type _booleanOp = Token::UNKNOWN;
-	byte _variables[128] = {};
+	byte _kitVariables[128] = {};
 	uint16 _changedVariables = 0;
 	byte _currentKey = 255;
 	byte _palette[4] = {};

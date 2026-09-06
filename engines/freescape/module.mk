@@ -61,12 +61,14 @@ MODULE_OBJS := \
 	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
 	loaders/c64.o \
-	language/8bitDetokeniser.o \
-	language/8bitKitDetokeniser.o \
-	language/16bitDetokeniser.o \
+	language/detokeniser.o \
+	language/detokeniser_freescape.o \
+	language/detokeniser_3dck8.o \
+	language/detokeniser_3dck16.o \
 	language/instruction.o \
-	language/instruction8bitKit.o \
-	language/instruction16bit.o \
+	language/execution_freescape.o \
+	language/execution_3dck8.o \
+	language/execution_3dck16.o \
 	metaengine.o \
 	movement.o \
 	objects/geometricobject.o \

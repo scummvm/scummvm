@@ -26,7 +26,7 @@
 #include "freescape/freescape.h"
 #include "freescape/games/castle/ay.music.h"
 #include "freescape/games/castle/castle.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 
 namespace Freescape {
 

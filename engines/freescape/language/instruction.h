@@ -44,6 +44,8 @@ enum {
 class FCLInstruction;
 typedef Common::Array<FCLInstruction> FCLInstructionVector;
 
+FCLInstructionVector *duplicateCondition(const FCLInstructionVector *condition);
+
 class FCLInstruction {
 public:
 	FCLInstruction();
@@ -54,21 +56,16 @@ public:
 
 	Token::Type getType() const;
 
-	bool isConditional() const {
-		Token::Type type = getType();
-		return 	type == Token::Type::BITNOTEQ || type == Token::Type::VARNOTEQ || \
-				type == Token::Type::IFGTEQ || type == Token::Type::IFLTEQ || \
-				type == Token::Type::VAREQ || _type == Token::Type::INVISQ;
-	}
-
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
-	FCLInstruction duplicate();
+	FCLInstruction duplicate() const;
 
+	// Source/destination: arithmetic uses (variable, value); GOTO uses (area, entrance).
+	// Object commands use (object) or (area, object).
 	int32 _source;
 	int32 _additional;
 	int32 _destination;
-	// UNKNOWN denotes an omitted operand.
+	// Kit decoders mark omitted operands as UNKNOWN.
 	Token::Type _sourceType;
 	Token::Type _additionalType;
 	Token::Type _destinationType;
@@ -78,7 +75,7 @@ public:
 	FCLInstructionVector *_elseInstructions;
 
 private:
-	enum Token::Type _type;
+	Token::Type _type;
 };
 
 } // End of namespace Freescape

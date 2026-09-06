@@ -26,7 +26,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/objects/global.h"
 #include "freescape/wb.h"
 #include "freescape/objects/connections.h"

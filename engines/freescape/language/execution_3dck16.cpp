@@ -75,8 +75,7 @@ void KitEngine::startScript(ScriptState &script) {
 	script.code = script.source;
 	script.ip = script.restart = 0;
 	script.loops.clear();
-	script.predicate = script.previousPredicate = true;
-	script.booleanOp = Token::UNKNOWN;
+	script.predicate = FCLPredicateState(true);
 	script.events = script.object ? script.object->flags & 0x38 : 0;
 	if (script.object)
 		script.object->flags &= ~0x38;
@@ -245,15 +244,6 @@ int32 KitEngine::getVariableOrConstant(int32 operand, Token::Type type) const {
 	return type == Token::VARIABLE ? int32(_kitVariables[operand]) : operand;
 }
 
-void KitEngine::setScriptPredicate(ScriptState &script, bool value) {
-	if (script.booleanOp == Token::AND)
-		value = script.previousPredicate && value;
-	else if (script.booleanOp == Token::OR)
-		value = script.previousPredicate || value;
-	script.predicate = value;
-	script.booleanOp = Token::UNKNOWN;
-}
-
 KitEngine::ObjectData *KitEngine::scriptObject(uint16 area, uint16 id) {
 	if (!area)
 		area = _currentArea->getAreaID();
@@ -323,13 +313,12 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 		case Token::ENDIF:
 			break;
 		case Token::IF:
-			script.predicate = true;
-			script.booleanOp = Token::UNKNOWN;
+			script.predicate.value = true;
+			script.predicate.operation = Token::UNKNOWN;
 			break;
 		case Token::AND:
 		case Token::OR:
-			script.previousPredicate = script.predicate;
-			script.booleanOp = instruction.getType();
+			script.predicate.combine(instruction.getType());
 			break;
 		case Token::THEN:
 		case Token::ELSE:
@@ -370,7 +359,7 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 		case Token::INVISQ:
 		case Token::VISQ:
 		case Token::DESTROYEDQ:
-			setScriptPredicate(script, checkObjectStatus(instruction));
+			script.predicate.set(checkObjectStatus(instruction));
 			break;
 		case Token::GETXPOS:
 		case Token::GETYPOS:
@@ -378,7 +367,7 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 			executeGetPosition(instruction);
 			break;
 		case Token::EXECUTE:
-			if (!executeExecute(instruction, script))
+			if (!executeCall(instruction, script))
 				return kFCLFinished;
 			break;
 		case Token::GOTO:
@@ -465,7 +454,7 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 }
 
 void KitEngine::executeIfThenElse(const FCLInstruction &instruction, ScriptState &script) {
-	if (instruction.getType() == Token::THEN && script.predicate)
+	if (instruction.getType() == Token::THEN && script.predicate.value)
 		return;
 	const FCLInstructionVector &code = *script.code;
 	int depth = 0;
@@ -485,14 +474,14 @@ void KitEngine::executeIfThenElse(const FCLInstruction &instruction, ScriptState
 
 void KitEngine::executeConditional(const FCLInstruction &instruction, ScriptState &script) {
 	// RUNVGA retains these flags until the object's execution yields or ends.
-	setScriptPredicate(script, checkConditional(instruction,
+	script.predicate.set(checkConditional(instruction,
 		script.events & 16, script.events & 32, _timerTriggered, script.events & 8));
 }
 
 void KitEngine::setVariableResult(const FCLInstruction &instruction, ScriptState &script, uint32 value) {
 	if (instruction._sourceType == Token::VARIABLE)
 		setScriptVariable(instruction._source, value);
-	setScriptPredicate(script, value != 0);
+	script.predicate.set(value != 0);
 }
 
 void KitEngine::executeSetVariable(const FCLInstruction &instruction, ScriptState &script) {
@@ -534,13 +523,13 @@ void KitEngine::executeVariableComparison(const FCLInstruction &instruction, Scr
 	int32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
 	switch (instruction.getType()) {
 	case Token::VAREQ:
-		setScriptPredicate(script, source == destination);
+		script.predicate.set(source == destination);
 		break;
 	case Token::VARGT:
-		setScriptPredicate(script, source > destination);
+		script.predicate.set(source > destination);
 		break;
 	case Token::VARLT:
-		setScriptPredicate(script, source < destination);
+		script.predicate.set(source < destination);
 		break;
 	default:
 		break;
@@ -587,7 +576,7 @@ void KitEngine::executeGetPosition(const FCLInstruction &instruction) {
 	}
 }
 
-bool KitEngine::executeExecute(const FCLInstruction &instruction, ScriptState &script) {
+bool KitEngine::executeCall(const FCLInstruction &instruction, ScriptState &script) {
 	uint16 id = getVariableOrConstant(instruction._source, instruction._sourceType);
 	ObjectData *object = scriptObject(0, id);
 	if (!object || object->type == kGroupType)
@@ -643,7 +632,7 @@ void KitEngine::executeLoop(const FCLInstruction &instruction, ScriptState &scri
 		}
 		end++;
 	}
-	FCLLoop &loop = script.loops[end];
+	FCLKit16Loop &loop = script.loops[end];
 	loop.start = script.ip;
 	loop.remaining = getVariableOrConstant(instruction._source, instruction._sourceType);
 }
@@ -730,7 +719,7 @@ void KitEngine::executeMove(const FCLInstruction &instruction, ScriptState &scri
 	int16 y = getVariableOrConstant(instruction._destination, instruction._destinationType);
 	int16 z = getVariableOrConstant(instruction._additional, instruction._additionalType);
 	bool absolute = instruction.getType() == Token::MOVETO;
-	setScriptPredicate(script, moveAnimation(script, Math::Vector3d(x, y, z), absolute));
+	script.predicate.set(moveAnimation(script, Math::Vector3d(x, y, z), absolute));
 }
 
 void KitEngine::executeSound(const FCLInstruction &instruction) {

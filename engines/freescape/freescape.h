@@ -39,7 +39,7 @@
 #include "freescape/area.h"
 #include "freescape/font.h"
 #include "freescape/gfx.h"
-#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/variables.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/sensor.h"
@@ -488,12 +488,11 @@ public:
 	bool checkConditional(const FCLInstruction &instruction, bool shot, bool collided, bool timer, bool activated);
 	bool checkIfGreaterOrEqual(FCLInstruction &instruction);
 	bool checkIfLessOrEqual(FCLInstruction &instruction);
-	void executeExecute(FCLInstruction &instruction);
+	void executeCall(FCLInstruction &instruction);
 	void executeIncrementVariable(FCLInstruction &instruction);
 	void executeDecrementVariable(FCLInstruction &instruction);
 	void executeSetVariable(FCLInstruction &instruction);
 	void executeGoto(FCLInstruction &instruction);
-	void executeIfThenElse(FCLInstruction &instruction);
 	virtual void executeMakeInvisible(FCLInstruction &instruction);
 	void executeMakeVisible(FCLInstruction &instruction);
 	void executeToggleVisibility(FCLInstruction &instruction);

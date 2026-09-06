@@ -118,12 +118,12 @@ void Kit8Engine::updateInstruments() {
 		byte variable = instrument[4] & 127, color = instrument[5];
 		if (!type || type > 3 || x >= 40 || y >= 25 || !length)
 			continue;
-		uint16 value = _variables[variable];
+		uint16 value = _kitVariables[variable];
 		if (type == 1) {
 			if (length > 5 || x + length > 40)
 				continue;
 			if (length > 3)
-				value |= _variables[(variable + 1) & 127] << 8;
+				value |= _kitVariables[(variable + 1) & 127] << 8;
 			printText(Common::String::format("%0*u", length, value), x, y, color);
 		} else {
 			if ((type == 2 && x + length > 40) || (type == 3 && y + length > 25))
@@ -173,7 +173,7 @@ bool Kit8Engine::handleInput(const Common::Event &event) {
 		else if (_currentKey == key)
 			_currentKey = 255;
 		if (!_scriptFrameActive)
-			_variables[121] = _currentKey;
+			_kitVariables[121] = _currentKey;
 	} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 		switch (event.customType) {
 		case kActionShoot:
@@ -182,10 +182,10 @@ bool Kit8Engine::handleInput(const Common::Event &event) {
 				interact(event.customType == kActionShoot);
 			return true;
 		case kActionSkip:
-			_variables[121] = ' ';
+			_kitVariables[121] = ' ';
 			return true;
 		case kActionInfoMenu:
-			_variables[121] = 'I';
+			_kitVariables[121] = 'I';
 			return true;
 		case kActionEscape:
 		case kActionChangeMode:
@@ -208,7 +208,7 @@ bool Kit8Engine::handleInput(const Common::Event &event) {
 }
 
 void Kit8Engine::interact(bool shot) {
-	if (!_viewArea.contains(_crossairPosition) || (shot && !_variables[125]))
+	if (!_viewArea.contains(_crossairPosition) || (shot && !_kitVariables[125]))
 		return;
 	float x = 2.0f * (_crossairPosition.x - _viewArea.left) / _viewArea.width() - 1;
 	float y = 1 - 2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height();
@@ -217,8 +217,8 @@ void Kit8Engine::interact(bool shot) {
 		_yaw - Math::rad2deg(atan(x * projection)), false);
 	Object *object = _currentArea->checkCollisionRay(Math::Ray(_position, direction), 8192, true);
 	if (shot) {
-		if (_variables[125] != 255)
-			_variables[125]--;
+		if (_kitVariables[125] != 255)
+			_kitVariables[125]--;
 		_shootingFrames = 3;
 	}
 	if (!object || !object->isGeometric())
