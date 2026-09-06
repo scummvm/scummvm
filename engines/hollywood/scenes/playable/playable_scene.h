@@ -676,7 +676,7 @@ protected:
 
 	// Event pumping
 	// Returns true for quit, scene restart, or accepted skip input.
-	bool pollEvents(bool allowSkip);
+	virtual bool pollEvents(bool allowSkip);
 
 	// Engine and resources
 	HollywoodEngine *_vm;

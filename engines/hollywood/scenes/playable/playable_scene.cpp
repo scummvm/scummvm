@@ -461,6 +461,8 @@ bool PlayableScene::play() {
 		runEntryCutscene();
 		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 			return true;
+		if (_vm->isDemo() && _vm->gameState().mainFlowStateId == 0xff)
+			return true;
 	}
 
 	_skipRequested = false;
@@ -1375,7 +1377,8 @@ bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byt
 
 bool PlayableScene::loadStage003SceneRows() {
 	const uint stageIndex = sceneStageIndex();
-	const bool validateSequentialVoiceMap = stageIndex >= 201 && stageIndex <= 211;
+	// Demo recordings use compact sample numbers, not the full chapter's sequence.
+	const bool validateSequentialVoiceMap = !_vm->isDemo() && stageIndex >= 201 && stageIndex <= 211;
 	return _textStore.load(kStage003ArchiveName, sceneDebugName(), stageIndex,
 		resource003InventoryRowsOffsetIndex(), speechCueDescriptorTableOffset(),
 		validateSequentialVoiceMap);
