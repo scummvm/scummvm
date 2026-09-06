@@ -971,13 +971,11 @@ void ResourceUse::init() {
 	}
 
 	if (haveItem && _drawResourceValue) {
-		// The value is rendered with a '$' prefix and `unknown2` decimal places
-		// (Old Clock tracks cents), using the font selected by `unknown1`.
 		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
-		const Font *font = g_nancy->_graphics->getFont(item.unknown1);
-		if (font && item.unknown2 > 0) {
-			const int32 value = NancySceneState.getUIResource(_resourceIndex);
-			const Common::String text = Common::String::format("$%d.%02d", value / 100, value % 100);
+		const Font *font = g_nancy->_graphics->getFont(item.fontID);
+		if (font && item.numDecimals >= 0) {
+			const Common::String text =
+				formatUIResourceValue(item, NancySceneState.getUIResource(_resourceIndex));
 			font->drawString(&_drawSurface, text, _valueDest.x, _valueDest.y, screenBounds.width() - _valueDest.x, 0);
 		}
 	}

@@ -841,16 +841,18 @@ struct EVNT : public EngineData {
 };
 
 // UI overlay element table. Introduced in Nancy 12. Each record describes one UI
-// element: the shared overlay image it belongs to, its on-screen rect and up to
-// six associated sound cues. Unused slots use the name "NO_UI_ITEM", and slots
-// without a given sound use "NO SOUND".
+// element: its starting value, the shared overlay image it belongs to, its
+// on-screen rect and up to six associated sound cues. Unused slots use the name
+// "NO_UI_ITEM", and slots without a given sound use "NO SOUND".
 struct UIRC : public EngineData {
 	struct ItemRecord {
-		uint16 id = 0;
+		uint16 startingValue = 0;
+		// Nancy 14 added an upper bound: a value that goes above it is reset to 0
+		uint16 maxValue = 0;
 		Common::Path overlayName;
 		Common::Rect rect;
-		int16 unknown1 = 0;
-		int16 unknown2 = 0;
+		int16 fontID = 0;
+		int16 numDecimals = 0;
 		int16 soundChannel = 0;
 		int16 soundVolume = 0;
 		Common::String soundNames[6];
@@ -859,10 +861,13 @@ struct UIRC : public EngineData {
 	UIRC(Common::SeekableReadStream *chunkStream);
 
 	static const uint kNumSounds = 6;
-	static const uint kItemRecordSize = 257;
 
 	Common::Array<ItemRecord> items;
 };
+
+// Renders a UI resource's value the way the games' UI does: a currency symbol
+// followed by the value, split into whole units and decimals as the record asks.
+Common::String formatUIResourceValue(const UIRC::ItemRecord &item, int32 value);
 
 // Music mix table. Introduced in Nancy 13. Each record maps a short location
 // code (e.g. "BRI", "CAM", "TUT") to the set of music / ambience tracks that

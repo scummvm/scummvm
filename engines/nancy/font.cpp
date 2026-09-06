@@ -387,9 +387,11 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			case '\xef':
 				offset = _iWithDiaeresisOffset;
 				break;
+			case '\x80':
+				offset = _euroOffset;
+				break;
 			// TODO: _uppercaseAWithDotOffset
 			// TODO: _aWithDotOffset
-			// TODO: _euroOffset
 			// TODO: _oeLigatureOffset
 			default:
 				offset = -1;

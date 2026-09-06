@@ -715,9 +715,8 @@ bool Scene::getEventFlag(FlagDescription eventFlag) const {
 	return getEventFlag(eventFlag.label, eventFlag.flag);
 }
 
-// On first use, seed each resource value from the UIRC boot chunk (record id =
-// initial value). After a save is loaded `seeded` is already true, so the
-// restored values are kept.
+// On first use, seed each resource value from the UIRC boot chunk. After a save
+// is loaded `seeded` is already true, so the restored values are kept.
 static void seedUIResourceData(UIResourceData *data) {
 	if (!data || data->seeded) {
 		return;
@@ -729,7 +728,7 @@ static void seedUIResourceData(UIResourceData *data) {
 	if (uirc) {
 		data->values.resize(uirc->items.size());
 		for (uint i = 0; i < uirc->items.size(); ++i) {
-			data->values[i] = uirc->items[i].id;
+			data->values[i] = uirc->items[i].startingValue;
 		}
 	}
 }
@@ -746,9 +745,21 @@ int32 Scene::getUIResource(uint index) {
 void Scene::setUIResource(uint index, int32 value) {
 	UIResourceData *data = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
 	seedUIResourceData(data);
-	if (data && index < data->values.size()) {
-		data->values[index] = value;
+	if (!data || index >= data->values.size()) {
+		return;
 	}
+
+	// Nancy 14 added a per-resource maximum. It guards the fixed-width display
+	// rather than capping the resource: a value above it empties the resource
+	// outright instead of being clamped to it.
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		const UIRC *uirc = GetEngineData(UIRC)
+		if (uirc && index < uirc->items.size() && value > (int32)uirc->items[index].maxValue) {
+			value = 0;
+		}
+	}
+
+	data->values[index] = MAX<int32>(value, 0);
 }
 
 // Nancy 11+ AR 30/31 store the "player scrolling disabled" state in an event

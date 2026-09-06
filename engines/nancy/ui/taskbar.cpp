@@ -158,7 +158,8 @@ bool Taskbar::isButtonActive(uint index) const {
 }
 
 bool Taskbar::isMoneyDisplay(uint index) const {
-	return g_nancy->getGameType() == kGameTypeNancy12 && index == kTaskButtonCoinPurse;
+	const GameType gameType = g_nancy->getGameType();
+	return (gameType == kGameTypeNancy12 || gameType == kGameTypeNancy14) && index == kTaskButtonCoinPurse;
 }
 
 void Taskbar::drawMoney() {
@@ -168,20 +169,16 @@ void Taskbar::drawMoney() {
 		return;
 	}
 
-	// The coin purse displays UI resource 0: its current value rendered with a
-	// '$' prefix and `unknown2` decimal places. Old Clock tracks cents
-	// (decimals 2), so a value of 350 shows as "$3.50". `unknown1` selects the
-	// font. The live value lives in the scene state (seeded from UIRC, changed
-	// by AR 132); UIRC only supplies the formatting config.
+	// The coin purse displays UI resource 0: its current value, rendered in the
+	// font the record selects. The live value lives in the scene state (seeded
+	// from UIRC, changed by AR 132); UIRC only supplies the formatting config.
 	const UIRC::ItemRecord &res = uirc->items[0];
-	if (res.unknown2 < 1) {
+	if (res.numDecimals < 0) {
 		return;
 	}
-	const int32 value = NancySceneState.getUIResource(0);
-	const Common::String text =
-		Common::String::format("$%d.%02d", value / 100, value % 100);
+	const Common::String text = formatUIResourceValue(res, NancySceneState.getUIResource(0));
 
-	const Font *font = g_nancy->_graphics->getFont(res.unknown1);
+	const Font *font = g_nancy->_graphics->getFont(res.fontID);
 	if (!font) {
 		return;
 	}
@@ -193,8 +190,9 @@ void Taskbar::drawMoney() {
 	// center. That vertical coordinate is the bottom row the glyphs are aligned
 	// on, while drawString() takes the top of the line, so shift it up by the
 	// height of a line.
-	const int x = dst.left + 12;
-	const int y = dst.top + dst.height() / 2 + 10 - font->getFontHeight() + 1;
+	const bool isNancy14 = g_nancy->getGameType() == kGameTypeNancy14;
+	const int x = dst.left + (isNancy14 ? 15 : 12);
+	const int y = dst.top + dst.height() / 2 + (isNancy14 ? 8 : 10) - font->getFontHeight() + 1;
 	font->drawString(&_drawSurface, text, x, y, dst.right - x, 0, Graphics::kTextAlignLeft);
 	_needsRedraw = true;
 }
@@ -462,8 +460,8 @@ void Taskbar::handleInput(NancyInput &input) {
 
 	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
-	// The Nancy12 coin purse shows Nancy's money on hover but isn't clickable, so
-	// it skips the press/click handling below.
+	// The coin purse shows Nancy's money on hover but isn't clickable, so it
+	// skips the press/click handling below.
 	if (isMoneyDisplay(newHovered)) {
 		return;
 	}

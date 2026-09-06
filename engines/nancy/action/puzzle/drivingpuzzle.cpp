@@ -394,7 +394,7 @@ void DrivingPuzzle::saveState() const {
 void DrivingPuzzle::refillFuel() {
 	const UIRC *uirc = GetEngineData(UIRC)
 	if (uirc && _frictionIndex >= 0 && (uint)_frictionIndex < uirc->items.size()) {
-		NancySceneState.setUIResource(_frictionIndex, uirc->items[_frictionIndex].id);
+		NancySceneState.setUIResource(_frictionIndex, uirc->items[_frictionIndex].startingValue);
 		_fuelBurnAccum = 0.0;
 	}
 }
@@ -403,7 +403,7 @@ void DrivingPuzzle::repairTire() {
 	_tireDamage = 0;
 	const UIRC *uirc = GetEngineData(UIRC)
 	if (uirc && kTireResourceIndex < uirc->items.size()) {
-		NancySceneState.setUIResource(kTireResourceIndex, uirc->items[kTireResourceIndex].id);
+		NancySceneState.setUIResource(kTireResourceIndex, uirc->items[kTireResourceIndex].startingValue);
 	}
 }
 

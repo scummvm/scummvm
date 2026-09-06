@@ -1320,13 +1320,20 @@ EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	while (chunkStream->size() - chunkStream->pos() >= (int64)kItemRecordSize) {
+	// Nancy 14 added the maximum value field, growing each record by 2 bytes
+	const bool hasMaxValue = g_nancy->getGameType() >= kGameTypeNancy14;
+	const uint recordSize = hasMaxValue ? 259 : 257;
+
+	while (chunkStream->size() - chunkStream->pos() >= (int64)recordSize) {
 		ItemRecord rec;
-		rec.id = chunkStream->readUint16LE();
+		rec.startingValue = chunkStream->readUint16LE();
+		if (hasMaxValue) {
+			rec.maxValue = chunkStream->readUint16LE();
+		}
 		readFilename(*chunkStream, rec.overlayName);
 		readRect(*chunkStream, rec.rect);
-		rec.unknown1 = chunkStream->readSint16LE();
-		rec.unknown2 = chunkStream->readSint16LE();
+		rec.fontID = chunkStream->readSint16LE();
+		rec.numDecimals = chunkStream->readSint16LE();
 		rec.soundChannel = chunkStream->readSint16LE();
 		rec.soundVolume = chunkStream->readSint16LE();
 		for (uint i = 0; i < kNumSounds; ++i) {
@@ -1334,6 +1341,29 @@ UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		}
 		items.push_back(rec);
 	}
+}
+
+Common::String formatUIResourceValue(const UIRC::ItemRecord &item, int32 value) {
+	// Nancy 12 counts cents and shows a dollar amount, Nancy 14 counts whole
+	// euros. 0x80 is the euro sign in the games' extended ASCII character set.
+	const char currencySymbol = g_nancy->getGameType() >= kGameTypeNancy14 ? '\x80' : '$';
+
+	int32 divisor = 1;
+	for (int16 i = 0; i < item.numDecimals; ++i) {
+		divisor *= 10;
+	}
+
+	Common::String ret = Common::String::format("%c%d", currencySymbol, value / divisor);
+
+	if (item.numDecimals > 0) {
+		Common::String decimals = Common::String::format("%d", value % divisor);
+		while ((int16)decimals.size() < item.numDecimals) {
+			decimals = "0" + decimals;
+		}
+		ret += "." + decimals;
+	}
+
+	return ret;
 }
 
 MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
