@@ -793,7 +793,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 		if (newObject) {
 			newObject->scale(scale);
-			newObject->_loadIndex = 0x4000 + object; // area objects render after globals (original pass 2)
+			// Seed the sort with globals (area 255) before local objects.
+			newObject->_loadIndex = (areaNumber == 255 ? 0 : 0x4000) + object;
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);

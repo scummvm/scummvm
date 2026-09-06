@@ -64,8 +64,8 @@ public:
 	uint8 getScale();
 	void remapColor(int index, int color);
 	void unremapColor(int index);
-	void draw(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, float fov, float aspectRatio, float nearClipPlane, float farClipPlane);
-	void drawDepthLayer(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance, float fov, float aspectRatio, float nearClipPlane, float farClipPlane);
+	void draw(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, float roll, bool insideWait, float fov, float aspectRatio, float nearClipPlane, float farClipPlane);
+	void drawDepthLayer(Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, float roll, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance, float fov, float aspectRatio, float nearClipPlane, float farClipPlane);
 	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 
@@ -117,6 +117,7 @@ public:
 private:
 	Math::Vector3d _lastCameraPosition;
 	Math::Vector3d _lastCameraDirection;
+	float _lastCameraRoll;
 	float _lastFov;
 	float _lastAspectRatio;
 	float _lastNearClipPlane;
@@ -125,6 +126,7 @@ private:
 	ObjectArray _depthLayerSortedObjects;
 	Math::Vector3d _lastDepthLayerCameraPosition;
 	Math::Vector3d _lastDepthLayerCameraDirection;
+	float _lastDepthLayerCameraRoll;
 	float _lastDepthLayerFov;
 	float _lastDepthLayerAspectRatio;
 	float _lastDepthLayerNearClipPlane;

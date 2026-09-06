@@ -88,6 +88,8 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 
 	_lastTick = 0;
 	_lastDepthLayerTick = 0;
+	_lastCameraRoll = 0.0f;
+	_lastDepthLayerCameraRoll = 0.0f;
 	_lastFov = 0.0f;
 	_lastAspectRatio = 0.0f;
 	_lastNearClipPlane = 0.0f;
@@ -258,8 +260,7 @@ static float aabbMinProjection(const Math::AABB &aabb, const Math::Vector3d &axi
 	return support.dotProduct(axis);
 }
 
-static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
-	(void)aspectRatio;
+static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction, float roll, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	if (!aabb.isValid())
 		return false;
 
@@ -267,40 +268,110 @@ static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3
 	if (front.getSquareMagnitude() == 0.0f)
 		return true;
 
+	// Exclude offscreen objects before sorting; they can change the visible draw order.
+	Math::Vector3d right = Math::Vector3d::crossProduct(front, Math::Vector3d(0.0f, 1.0f, 0.0f));
+	if (right.getSquareMagnitude() < 0.0001f)
+		right = Math::Vector3d(1.0f, 0.0f, 0.0f);
+	else
+		right.normalize();
+	Math::Vector3d up = Math::Vector3d::crossProduct(right, front).getNormalized();
+	if (roll != 0.0f) {
+		// Match positionCamera's roll by rotating the view axes inversely.
+		const float c = cos(Math::deg2rad(roll));
+		const float s = sin(Math::deg2rad(roll));
+		auto rotateAxis = [c, s](const Math::Vector3d &axis) {
+			return Math::Vector3d(c * axis.x() + s * axis.y(), -s * axis.x() + c * axis.y(), axis.z());
+		};
+		front = rotateAxis(front);
+		right = rotateAxis(right);
+		up = rotateAxis(up);
+	}
+
 	const float padding = 32.0f;
 	const float minDepth = aabbMinProjection(aabb, front) - camera.dotProduct(front);
 	const float maxDepth = aabbMaxProjection(aabb, front) - camera.dotProduct(front);
-
 	if (maxDepth < nearClipPlane - padding)
 		return false;
 	if (minDepth > farClipPlane + padding)
 		return false;
 
-	// Coarse view-octant cull matching the original (compute_view_clip_bounds):
-	// keep every object in the world octant(s) the frustum spans rather than a tight
-	// cone, and on axes the frustum straddles (its component within the fov
-	// half-angle) keep both sides. The kept set must match the original because the
-	// painter's bubble sort below is non-transitive: a tighter cone drops
-	// straddle-axis side objects and reorders the visible ones.
-	const float threshold = (float)sin(Math::deg2rad(fov) / 2.0f);
-	const Math::Vector3d mn = aabb.getMin();
-	const Math::Vector3d mx = aabb.getMax();
-	for (int i = 0; i < 3; i++) {
-		const float comp = front.getValue(i);
-		if (comp > threshold && mx.getValue(i) < camera.getValue(i))
-			return false;
-		if (comp < -threshold && mn.getValue(i) > camera.getValue(i))
+	// Match updateProjectionMatrix's horizontal FOV.
+	const float horizontalScale = tan(Math::deg2rad(fov) / 2.0f);
+	const float verticalScale = horizontalScale / aspectRatio;
+	const Math::Vector3d planes[] = {
+		front * horizontalScale + right, front * horizontalScale - right,
+		front * verticalScale + up, front * verticalScale - up
+	};
+	for (uint i = 0; i < ARRAYSIZE(planes); i++) {
+		if (aabbMaxProjection(aabb, planes[i]) - camera.dotProduct(planes[i]) < -padding)
 			return false;
 	}
 
 	return true;
 }
 
-static bool objectIsSortCandidate(Object *obj, const Math::Vector3d &camera, const Math::Vector3d &direction, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+static bool objectIsSortCandidate(Object *obj, const Math::Vector3d &camera, const Math::Vector3d &direction, float roll, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	if (!obj || obj->isDestroyed() || obj->isInvisible() || !obj->isGeometric())
 		return false;
 
-	return aabbIntersectsViewVolume(obj->_occlusionBox, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane);
+	// Sorting bounds may exclude geometry; cull using the actual bounds.
+	return aabbIntersectsViewVolume(obj->_boundingBox, camera, direction, roll, fov, aspectRatio, nearClipPlane, farClipPlane);
+}
+
+// Returns 0 if incomparable, 1 if A is closer, or 2 if B is closer.
+static int compareBoundingBoxAxis(float minA, float maxA, float minB, float maxB) {
+	// Touching bounds are comparable; overlapping intervals are not.
+	if (minA < maxB && minB < maxA)
+		return 0;
+
+	const bool negativeA = minA < 0.0f;
+	const bool negativeB = minB < 0.0f;
+	if (negativeA != (maxA < 0.0f))
+		return 1;
+	if (negativeB != (maxB < 0.0f))
+		return 2;
+	if (negativeA != negativeB)
+		return 0;
+
+	float difference = minB - minA;
+	if (difference == 0.0f)
+		difference = maxB - maxA;
+	return (difference < 0.0f) == negativeB ? 1 : 2;
+}
+
+static void sortObjectsForRendering(ObjectArray &objects, const Math::Vector3d &camera) {
+	const int n = objects.size();
+	if (n < 2)
+		return;
+
+	// Start in file order, with globals first.
+	Common::sort(objects.begin(), objects.end(), [](Object *a, Object *b) {
+		return a->_loadIndex < b->_loadIndex;
+	});
+
+	// Incomparable pairs also swap, so keep n - 1 passes over all adjacent pairs.
+	for (int pass = 1; pass < n; pass++) {
+		bool changed = false;
+		for (int j = 0; j < n - 1; j++) {
+			// Sort using unrotated header bounds relative to the camera.
+			const Math::Vector3d minA = objects[j]->_occlusionBox.getMin() - camera;
+			const Math::Vector3d maxA = objects[j]->_occlusionBox.getMax() - camera;
+			const Math::Vector3d minB = objects[j + 1]->_occlusionBox.getMin() - camera;
+			const Math::Vector3d maxB = objects[j + 1]->_occlusionBox.getMax() - camera;
+			int result = 0;
+			for (int axis = 0; axis < 3; axis++)
+				result = (result << 2) | compareBoundingBoxAxis(minA.getValue(axis), maxA.getValue(axis), minB.getValue(axis), maxB.getValue(axis));
+
+			// Keep order only if B is closer on some axis and A is closer on none.
+			if (result != 0 && (result & 0x15) == 0)
+				continue;
+
+			SWAP(objects[j], objects[j + 1]);
+			changed = true;
+		}
+		if (!changed)
+			break;
+	}
 }
 
 static float aabbNearestDepth(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction) {
@@ -356,10 +427,10 @@ static bool objectInDepthLayer(Object *obj, const Math::Vector3d &camera, const 
 	return depthLayer == Area::kRenderDepthForeground ? foreground : !foreground;
 }
 
-void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, float roll, bool insideWait, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	bool runAnimation = animationTicks != _lastTick;
 	bool cameraChanged = camera != _lastCameraPosition;
-	bool directionChanged = direction != _lastCameraDirection;
+	bool directionChanged = direction != _lastCameraDirection || roll != _lastCameraRoll;
 	bool projectionChanged = fov != _lastFov || aspectRatio != _lastAspectRatio || nearClipPlane != _lastNearClipPlane || farClipPlane != _lastFarClipPlane;
 	bool sort = runAnimation || cameraChanged || directionChanged || projectionChanged || _sortedObjects.empty();
 
@@ -394,7 +465,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				continue;
 			}
 
-			if (sort && objectIsSortCandidate(obj, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane))
+			if (sort && objectIsSortCandidate(obj, camera, direction, roll, fov, aspectRatio, nearClipPlane, farClipPlane))
 				_sortedObjects.push_back(obj);
 		}
 	}
@@ -403,117 +474,8 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		floor->draw(gfx);
 	}
 
-	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
-	auto checkAxis = [](float minA, float maxA, float minB, float maxB) -> int {
-		bool signMinA = minA >= 0;
-		bool signMaxA = maxA >= 0;
-		bool signMinB = minB >= 0;
-		bool signMaxB = maxB >= 0;
-		if (minA >= maxB - 0.5f) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
-			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
-				return 1; // A is closer
-			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
-				return 2; // B is closer
-
-			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
-				return 0;
-
-			// Same side
-			if (!signMinA) { // Negative side (sign bit set in asm)
-				if (minA > minB) return 1; // A closer
-				if (minA < minB) return 2; // B closer
-				if (maxA > maxB) return 1; // A closer
-				return 2; // B closer
-			} else { // Positive side (sign bit clear in asm)
-				if (minA < minB) return 1; // A closer
-				if (minA > minB) return 2; // B closer
-				if (maxA > maxB) return 2; // B closer
-				return 1; // A closer
-			}
-		} else if (minB >= maxA - 0.5f) { // B is clearly "greater" than A
-			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
-				return 2; // B is closer
-			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
-				return 1; // A is closer
-
-			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
-				return 0;
-
-			// Same side
-			if (!signMinB) { // Negative side
-				if (minB > minA) return 2; // B closer
-				if (minB < minA) return 1; // A closer
-				if (maxB > maxA) return 2; // B closer
-				return 1; // A closer
-			} else { // Positive side
-				if (minB < minA) return 2; // B closer
-				if (minB > minA) return 1; // A closer
-				if (maxB > maxA) return 1; // A closer
-				return 2; // B closer
-			}
-		}
-		return 0; // Overlap (L9cf3_objects_incomparable_in_this_axis)
-	};
-
-	// Bubble sort as implemented in castlemaster2-annotated.asm (L9c2d_sort_objects_for_rendering)
-	// NOTE: The sorting is performed on unprojected world-space coordinates relative to the player (L847f).
-	// The rotation/view matrix (computed in L95de) is NOT applied to the bounding boxes used for sorting.
-	// It is only applied to the vertices during the projection phase (L850f/L9177).
-	int n = _sortedObjects.size();
-	if (n > 1 && sort) {
-		// Seed the non-transitive bubble sort below in object load (file) order --
-		// the same order the original game's renderer iterates its object list.
-		// That data order is what makes the Newell pairwise sort resolve
-		// correctly; any depth heuristic (center distance, nearest depth) is only
-		// an approximation and mis-orders some scenes, the file order does not.
-		Common::sort(_sortedObjects.begin(), _sortedObjects.end(),
-			[](Object *a, Object *b) {
-				return a->_loadIndex < b->_loadIndex;
-			});
-		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
-			bool changed = false;
-			for (int j = 0; j < n - 1; j++) { // L9c45_objects_loop
-				Object *a = _sortedObjects[j];
-				Object *b = _sortedObjects[j + 1];
-
-				Math::AABB bboxA = a->_occlusionBox;
-				Math::AABB bboxB = b->_occlusionBox;
-				Math::Vector3d minA = bboxA.getMin() - camera;
-				Math::Vector3d maxA = bboxA.getMax() - camera;
-				Math::Vector3d minB = bboxB.getMin() - camera;
-				Math::Vector3d maxB = bboxB.getMax() - camera;
-
-				int result = 0;
-
-				// X axis
-				result = (result << 2) | checkAxis(minA.x(), maxA.x(), minB.x(), maxB.x());
-				// Y axis
-				result = (result << 2) | checkAxis(minA.y(), maxA.y(), minB.y(), maxB.y());
-				// Z axis
-				result = (result << 2) | checkAxis(minA.z(), maxA.z(), minB.z(), maxB.z());
-
-				bool keepOrder = false;
-				// If result indicates B is closer in at least one axis, AND A is NEVER closer in any axis, keep order (A before B)
-				// Codes where B is closer (2) and A is not (1):
-				// 2 (Z), 8 (Y), 32 (X) -> hex: 02, 08, 20
-				// 2+8=10 (0A), 2+32=34 (22), 8+32=40 (28)
-				// 2+8+32=42 (2A)
-				// L9d37_next_object (Keep order)
-				if (result == 0x02 || result == 0x08 || result == 0x20 ||
-					result == 0x0A || result == 0x22 || result == 0x28 || result == 0x2A)
-					keepOrder = true; // A before B
-
-				if (!keepOrder) {
-					// Swap objects (L9d2c_flip_objects_loop)
-					_sortedObjects[j] = b;
-					_sortedObjects[j + 1] = a;
-					changed = true;
-				}
-			}
-			if (!changed)
-				break;
-		}
-	}
+	if (sort)
+		sortObjectsForRendering(_sortedObjects, camera);
 
 	for (auto &obj : _sortedObjects) {
 		obj->draw(gfx);
@@ -528,6 +490,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	if (sort) {
 		_lastCameraPosition = camera;
 		_lastCameraDirection = direction;
+		_lastCameraRoll = roll;
 		_lastFov = fov;
 		_lastAspectRatio = aspectRatio;
 		_lastNearClipPlane = nearClipPlane;
@@ -535,10 +498,10 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	}
 }
 
-void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d camera, Math::Vector3d direction, float roll, bool insideWait, RenderDepthLayer depthLayer, float foregroundDistance, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
 	bool runAnimation = depthLayer != kRenderDepthBackground && animationTicks != _lastDepthLayerTick;
 	bool cameraChanged = camera != _lastDepthLayerCameraPosition;
-	bool directionChanged = direction != _lastDepthLayerCameraDirection;
+	bool directionChanged = direction != _lastDepthLayerCameraDirection || roll != _lastDepthLayerCameraRoll;
 	bool projectionChanged = fov != _lastDepthLayerFov || aspectRatio != _lastDepthLayerAspectRatio || nearClipPlane != _lastDepthLayerNearClipPlane || farClipPlane != _lastDepthLayerFarClipPlane;
 	bool layerChanged = depthLayer != _lastRenderDepthLayer || (depthLayer != kRenderDepthAll && ABS(foregroundDistance - _lastForegroundDistance) > 0.001f);
 	bool sort = runAnimation || cameraChanged || directionChanged || projectionChanged || layerChanged || _depthLayerSortedObjects.empty();
@@ -579,7 +542,7 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 
 			if (sort &&
 					objectInDepthLayer(obj, camera, normalizedDirection, depthLayer, foregroundDistance) &&
-					objectIsSortCandidate(obj, camera, direction, fov, aspectRatio, nearClipPlane, farClipPlane))
+					objectIsSortCandidate(obj, camera, direction, roll, fov, aspectRatio, nearClipPlane, farClipPlane))
 				_depthLayerSortedObjects.push_back(obj);
 		}
 	}
@@ -588,113 +551,8 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 		floor->draw(gfx);
 	}
 
-	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
-	auto checkAxis = [](float minA, float maxA, float minB, float maxB) -> int {
-		bool signMinA = minA >= 0;
-		bool signMaxA = maxA >= 0;
-		bool signMinB = minB >= 0;
-		bool signMaxB = maxB >= 0;
-		if (minA >= maxB - 0.5f) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
-			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
-				return 1; // A is closer
-			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
-				return 2; // B is closer
-
-			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
-				return 0;
-
-			// Same side
-			if (!signMinA) { // Negative side (sign bit set in asm)
-				if (minA > minB) return 1; // A closer
-				if (minA < minB) return 2; // B closer
-				if (maxA > maxB) return 1; // A closer
-				return 2; // B closer
-			} else { // Positive side (sign bit clear in asm)
-				if (minA < minB) return 1; // A closer
-				if (minA > minB) return 2; // B closer
-				if (maxA > maxB) return 2; // B closer
-				return 1; // A closer
-			}
-		} else if (minB >= maxA - 0.5f) { // B is clearly "greater" than A
-			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
-				return 2; // B is closer
-			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
-				return 1; // A is closer
-
-			if (signMinA != signMinB) // Different sides (L9cf3_objects_incomparable_in_this_axis)
-				return 0;
-
-			// Same side
-			if (!signMinB) { // Negative side
-				if (minB > minA) return 2; // B closer
-				if (minB < minA) return 1; // A closer
-				if (maxB > maxA) return 2; // B closer
-				return 1; // A closer
-			} else { // Positive side
-				if (minB < minA) return 2; // B closer
-				if (minB > minA) return 1; // A closer
-				if (maxB > maxA) return 1; // A closer
-				return 2; // B closer
-			}
-		}
-		return 0; // Overlap (L9cf3_objects_incomparable_in_this_axis)
-	};
-
-	// Bubble sort as implemented in castlemaster2-annotated.asm (L9c2d_sort_objects_for_rendering)
-	// NOTE: The sorting is performed on unprojected world-space coordinates relative to the player (L847f).
-	// The rotation/view matrix (computed in L95de) is NOT applied to the bounding boxes used for sorting.
-	// It is only applied to the vertices during the projection phase (L850f/L9177).
-	int n = _depthLayerSortedObjects.size();
-	if (n > 1 && sort) {
-		// Seed in object load (file) order, matching the original (see Area::draw).
-		Common::sort(_depthLayerSortedObjects.begin(), _depthLayerSortedObjects.end(),
-			[](Object *a, Object *b) {
-				return a->_loadIndex < b->_loadIndex;
-			});
-		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
-			bool changed = false;
-			for (int j = 0; j < n - 1; j++) { // L9c45_objects_loop
-				Object *a = _depthLayerSortedObjects[j];
-				Object *b = _depthLayerSortedObjects[j + 1];
-
-				Math::AABB bboxA = a->_occlusionBox;
-				Math::AABB bboxB = b->_occlusionBox;
-				Math::Vector3d minA = bboxA.getMin() - camera;
-				Math::Vector3d maxA = bboxA.getMax() - camera;
-				Math::Vector3d minB = bboxB.getMin() - camera;
-				Math::Vector3d maxB = bboxB.getMax() - camera;
-
-				int result = 0;
-
-				// X axis
-				result = (result << 2) | checkAxis(minA.x(), maxA.x(), minB.x(), maxB.x());
-				// Y axis
-				result = (result << 2) | checkAxis(minA.y(), maxA.y(), minB.y(), maxB.y());
-				// Z axis
-				result = (result << 2) | checkAxis(minA.z(), maxA.z(), minB.z(), maxB.z());
-
-				bool keepOrder = false;
-				// If result indicates B is closer in at least one axis, AND A is NEVER closer in any axis, keep order (A before B)
-				// Codes where B is closer (2) and A is not (1):
-				// 2 (Z), 8 (Y), 32 (X) -> hex: 02, 08, 20
-				// 2+8=10 (0A), 2+32=34 (22), 8+32=40 (28)
-				// 2+8+32=42 (2A)
-				// L9d37_next_object (Keep order)
-				if (result == 0x02 || result == 0x08 || result == 0x20 ||
-					result == 0x0A || result == 0x22 || result == 0x28 || result == 0x2A)
-					keepOrder = true; // A before B
-
-				if (!keepOrder) {
-					// Swap objects (L9d2c_flip_objects_loop)
-					_depthLayerSortedObjects[j] = b;
-					_depthLayerSortedObjects[j + 1] = a;
-					changed = true;
-				}
-			}
-			if (!changed)
-				break;
-		}
-	}
+	if (sort)
+		sortObjectsForRendering(_depthLayerSortedObjects, camera);
 
 	for (auto &obj : _depthLayerSortedObjects) {
 		obj->draw(gfx);
@@ -710,6 +568,7 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 	if (sort) {
 		_lastDepthLayerCameraPosition = camera;
 		_lastDepthLayerCameraDirection = direction;
+		_lastDepthLayerCameraRoll = roll;
 		_lastDepthLayerFov = fov;
 		_lastDepthLayerAspectRatio = aspectRatio;
 		_lastDepthLayerNearClipPlane = nearClipPlane;

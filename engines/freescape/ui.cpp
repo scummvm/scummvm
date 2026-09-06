@@ -92,7 +92,7 @@ void FreescapeEngine::waitInLoop(int maxWait) {
 		_gfx->positionCamera(_position, _position + _cameraFront, _roll);
 
 		drawBackground();
-		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront, true, fov, aspectRatio, _nearClipPlane, farClipPlane);
+		_currentArea->draw(_gfx, _ticks / 10, _position, _cameraFront, _roll, true, fov, aspectRatio, _nearClipPlane, farClipPlane);
 		drawBorder();
 		drawUI();
 
