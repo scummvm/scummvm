@@ -28,30 +28,6 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
-/** Shared mechanics of the two distinct Rex demo Roland overlays. */
-class RSoundDemo : public RSound {
-private:
-	int _firstEffectChannel;
-
-protected:
-	RSoundDemo(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common::Path &filename,
-			int dataOffset, int dataSize, int sysExOffset,
-			int firstEffectChannel);
-
-	void startVoice(int channelIndex, int sequenceOffset);
-	int startVoiceInRange(int sequenceOffset, int firstChannel,
-			int lastChannel);
-	int startAnyVoice(int sequenceOffset);
-	int startEffectVoice(int sequenceOffset);
-	void requestStopRange(int firstChannel, int channelCount);
-	void requestStopAll();
-	void stopAndResetRange(int firstChannel, int channelCount);
-	void setVoiceVolume(int channelIndex, byte volume);
-	bool isSequenceActive(int sequenceOffset);
-	byte *sequenceData(int sequenceOffset) { return loadData(sequenceOffset); }
-	Channel &voice(int channelIndex) { return _channels[channelIndex]; }
-};
-
 class RSound1 : public RSound {
 private:
 	typedef int (RSound1:: *CommandPtr)();
@@ -110,16 +86,53 @@ public:
 };
 
 /** Demo RSOUND.001: `RLND AGAdemo 6-11-92`; 41 commands. */
-class RSoundDemo1 : public RSoundDemo {
+class RSoundDemo1 : public RSound {
 private:
+	typedef int (RSoundDemo1::*CommandPtr)();
+	static const CommandPtr _commandList[41];
+
 	bool _command23Toggle;
 
 	byte adjustedCommandParam() const;
 	void playCommand11_12_13CommonChannels();
-	int executeDemoCommonCommand(int commandId);
+	int patchAndPlaySound(int offset);
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
+	int command39();
+	int command40();
 
 public:
-	explicit RSoundDemo1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
+	RSoundDemo1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
+
 	int command(int commandId, int param) override;
 };
 
@@ -623,12 +636,47 @@ public:
 };
 
 /** Demo RSOUND.009: `RLND AGAdemo 6-25-92`; 40 commands. */
-class RSoundDemo9 : public RSoundDemo {
+class RSoundDemo9 : public RSound {
 private:
-	int executeDemoCommonCommand(int commandId);
+	typedef int (RSoundDemo9::*CommandPtr)();
+	static const CommandPtr _commandList[40];
+
+	int patchAndPlaySound(byte param);
+
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+	int command30();
+	int command31();
+	int command32();
+	int command33();
+	int command34_39();
+	int command35();
+	int command36();
+	int command37();
+	int command38();
 
 public:
-	explicit RSoundDemo9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
+	RSoundDemo9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver);
+
 	int command(int commandId, int param) override;
 };
 

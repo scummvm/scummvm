@@ -216,6 +216,18 @@ private:
 protected:
 	int _commandParam;
 
+	// Specifies the lowest channel in the channel range that is used for
+	// dynamic channel allocation. F.e. if this is 5, channels 1-4 are
+	// initialized and stopped by the static commands 2 and 3, and channels
+	// 5-8 are initialized and stopped by the dyanmic commands 4 and 5. Also,
+	// channels 5-8 are used by playSoundDynamic.
+	// Channel 9 can be included with the static or dynamic channels by setting
+	// the corresponding boolean field. This will only affect commands 2-5;
+	// channel 9 is never used by playSoundDynamic.
+	byte _dynamicStartChannel;
+	bool _staticIncludeChannel9;
+	bool _dynamicIncludeChannel9;
+
 	void setFadeOutSpeed(int fadeOutSpeed);
 
 	/**
@@ -296,12 +308,13 @@ protected:
 	 * could be found, nullptr is returned and the sound data is not
 	 * played.
 	 */
-	Channel *allocateAndPlay(byte *pData, int startingChannel = 5);
+	Channel *allocateAndPlay(byte *pData, int startingChannel);
 
 	/**
 	 * Checks to see whether the given block of data is already loaded
 	 * into a channel and being played.
 	 */
+	bool isSoundPlaying(int offset);
 	bool isSoundPlaying(byte *pData);
 
 	/**
@@ -327,7 +340,7 @@ protected:
 	 * controllers, volume=100, pan=center) of MIDI channels [first, last]
 	 * (inclusive, 1-based). Shared tail used by command0/command2/command4.
 	 */
-	void sendMidiChannelReset(int first, int last);
+	void sendMidiChannelReset(int first, int last, bool includeChannel9 = false);
 
 	/**
 	 * Sets the volume for a channel. The value is set on the channel data

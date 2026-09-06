@@ -77,6 +77,17 @@ RSound::RSound(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common:
 	_fadeOutSpeed = (_fadeOutCheckMode == kRSoundFadeCheckAlternating ? 2 : 0);
 	_fadeOutCounter = _fadeOutSpeed;
 
+	_dynamicStartChannel = 5;
+	_dynamicIncludeChannel9 = false;
+	// The full game RSOUND drivers command 2 and 3 include channel 9 when
+	// initializing channel data and fading channels to stop, but command 2
+	// does not include channel 9 when initializing MIDI channels. Instead,
+	// command 4 includes channel 9 when initializing MIDI channels, but
+	// command 4 and 5 do not include channel 9 when initializing channel
+	// data and fading channels to stop. This is probably a bug, which is
+	// not replicated in this reimplementation.
+	_staticIncludeChannel9 = true;
+
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
 		_channels[i]._midiChannel = i + 1;
 	}
@@ -178,7 +189,7 @@ Channel *RSound::playSoundStatic(int offset, byte channel) {
 }
 
 Channel *RSound::playSoundDynamic(int offset) {
-	return allocateAndPlay(loadData(offset));
+	return allocateAndPlay(loadData(offset), _dynamicStartChannel);
 }
 
 Channel *RSound::playSoundAnyChannel(int offset) {
@@ -212,6 +223,10 @@ Channel *RSound::allocateAndPlay(byte *pData, int startingChannel) {
 		Channel_playData(foundChannel, pData);
 
 	return foundChannel;
+}
+
+bool RSound::isSoundPlaying(int offset) {
+	return isSoundPlaying(loadData(offset));
 }
 
 bool RSound::isSoundPlaying(byte *pData) {
@@ -825,12 +840,18 @@ void RSound::resetAllChannels() {
  * controllers, volume=100, pan=center) of MIDI channels [first, last]
  * (both inclusive, 1-based). Shared tail used by command0/command2/command4.
  */
-void RSound::sendMidiChannelReset(int first, int last) {
+void RSound::sendMidiChannelReset(int first, int last, bool includeChannel9) {
 	for (int ch = first; ch <= last; ++ch) {
 		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
 		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS, 0);
 		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_VOLUME, 100);
 		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | ch, MidiDriver::MIDI_CONTROLLER_PANNING, 0x40);
+	}
+	if (last <= 8 && includeChannel9) {
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | 9, MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | 9, MidiDriver::MIDI_CONTROLLER_RESET_ALL_CONTROLLERS, 0);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | 9, MidiDriver::MIDI_CONTROLLER_VOLUME, 100);
+		_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | 9, MidiDriver::MIDI_CONTROLLER_PANNING, 0x40);
 	}
 }
 
@@ -857,42 +878,39 @@ int RSound::command1() {
 }
 
 int RSound::command2() {
-	// Channels 1-4 and 9 (also reinitializes the held-notes
+	// Initialize the static channels (also reinitializes the active notes
 	// table) plus the MIDI channel reset for those same channels.
-	resetChannelRange(1, 4, true);
+	resetChannelRange(1, _dynamicStartChannel - 1, _staticIncludeChannel9);
 	clearActiveNotes();
 	setFadeOutSpeed(0);
-	// The original code does not reset MIDI channel 9, which is
-	// probably an oversight.
-	sendMidiChannelReset(1, 4);
-	sendMidiChannelReset(9, 9);
+	sendMidiChannelReset(1, _dynamicStartChannel - 1, _staticIncludeChannel9);
+	sendSysEx(_sysExOffset);
 	return 0;
 }
 
 int RSound::command3() {
-	// Start fade-out to stop for channels 1-4 and 9.
+	// Start fade-out to stop for the static channels.
 	setFadeOutSpeed(1);
-	for (int i = 1; i <= 4; ++i)
+	for (int i = 1; i < _dynamicStartChannel; ++i)
 		getChannel(i)->setFadeOut(true);
-	getChannel(9)->setFadeOut(true);
+	if (_staticIncludeChannel9)
+		getChannel(9)->setFadeOut(true);
 	return 0;
 }
 
 int RSound::command4() {
-	// Channels 5-8 (does NOT touch the held-notes
+	// Initialize the dynamic Channels (does NOT touch the active notes
 	// table) plus the MIDI channel reset for those same channels.
-	resetChannelRange(5, 8);
+	resetChannelRange(_dynamicStartChannel, 8, _dynamicIncludeChannel9);
 	setFadeOutSpeed(0);
-	// The original code also resets MIDI channel 9, which is
-	// probably incorrect.
-	sendMidiChannelReset(5, 8);
+	sendMidiChannelReset(_dynamicStartChannel, 8, _dynamicIncludeChannel9);
 	return 0;
 }
 
 int RSound::command5() {
-	// Start fade-out to stop for channels 5-8.
+	// Start fade-out to stop for the dynamic channels.
 	setFadeOutSpeed(1);
-	for (int i = 5; i <= 8; ++i)
+	for (int i = _dynamicStartChannel; i <= (_dynamicIncludeChannel9 ? 9 : 8); ++i)
 		getChannel(i)->setFadeOut(true);
 	return 0;
 }
