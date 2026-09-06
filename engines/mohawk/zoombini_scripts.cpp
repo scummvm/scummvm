@@ -418,6 +418,27 @@ void ZmbFeature::setEventHooks(const EventHooks &hooks) {
 		_eventHooks._selectRenderFrameFunc = &ZoombiniPage::selectRenderFrame;
 }
 
+Common::Rect ZmbFeature::getDepthSortRect() const {
+	if (!_hasStableDepthSortRect)
+		return getZSortRect();
+
+	Common::Rect rect = _stableDepthSortRect;
+	rect.translate(_pointLoc.x - _stableDepthSortPointLoc.x, _pointLoc.y - _stableDepthSortPointLoc.y);
+	return rect;
+}
+
+void ZmbFeature::beginDepthSortStability() {
+	const Common::Rect rect = getDepthSortRect();
+	if (rect.isEmpty()) {
+		_hasStableDepthSortRect = false;
+		return;
+	}
+
+	_stableDepthSortRect = rect;
+	_stableDepthSortPointLoc = _pointLoc;
+	_hasStableDepthSortRect = true;
+}
+
 void ZmbFeature::onPreRender(ZoombiniPage *page) {
 	if (!page)
 		return;
@@ -1086,6 +1107,7 @@ bool ZmbSnoid::startScrsPlayback(ZmbResource resource, ZmbScrsCompletionMode com
 		return false;
 	}
 	_activeScrsId = resource._id;
+	beginDepthSortStability();
 
 	// Parsed SCRS shape indices remain raw and therefore need @ref ZmbSnoid::getBodyLayerBaseOffset().
 	_usesVirtualHotspots = false;
@@ -1161,6 +1183,7 @@ void ZmbSnoid::syncScrsPointLoc() {
 void ZmbSnoid::finishScrsPlayback(bool restorePosition) {
 	if (restorePosition)
 		setPointLoc(_scrsOrigPointLoc);
+	endDepthSortStability();
 	clearPreparedRenderHotspots();
 	_scrsRenderOffset = Common::Point(0, 0);
 	_activeScrsId = 0;
@@ -1174,6 +1197,9 @@ void ZmbSnoid::setAnimState(SnoidAnimState state, const Common::Point *pos) {
 	// Clamp unknown states to idle
 	if (kSnoidAnimState010_ArrivalMotion < state && state != kSnoidAnimState112_Path)
 		state = kSnoidAnimState000_Idle;
+	if ((previousState == kSnoidAnimState008_ScriptReject || previousState == kSnoidAnimState009_ScriptNormal) &&
+		state != kSnoidAnimState008_ScriptReject && state != kSnoidAnimState009_ScriptNormal)
+		endDepthSortStability();
 
 	// Enable rendering for every state.
 	// A hide-on-complete SCRS callback may start another state.
