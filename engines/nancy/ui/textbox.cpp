@@ -55,6 +55,9 @@ void Textbox::init() {
 	// Nancy 10, SCTB in Nancy 11). Delegate to a ScrollTextBox; the code below
 	// is the Nancy 1-9 bottom-right flat box.
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Nancy15+ rebuilds the text box whenever the player character changes,
+		// since its description comes out of that character's own data files
+		delete _scrollTextBox;
 		_scrollTextBox = new ScrollTextBox();
 		_scrollTextBox->init();
 		return;

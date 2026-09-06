@@ -43,6 +43,10 @@ void Camera::init() {
 	_cameraData = GetEngineData(UICM);
 	assert(_cameraData);
 
+	// Drop the cached viewfinder art, so a re-init after a Nancy15 player
+	// character switch picks up the incoming character's version of it
+	_image.free();
+
 	setTransparent(true);
 	setVisible(false);
 }
