@@ -636,7 +636,7 @@ private:
 	void processTraversalColumnRelinkQueue();
 	/** Start queued feet-specific celebrations for accepted runners. */
 	void processAcceptedCelebrationQueue();
-	/** Apply level-4 upper-left and shared upper-right arrival depth reorders before exit completion work. */
+	/** Apply deferred upper-left and upper-right depth reorders before exit completion work. */
 	void processArrivalDepthReorderRequests();
 	/** Complete queued rejection and boundary-exit sequences. */
 	void processExitCompletionQueue();
@@ -662,7 +662,7 @@ private:
 	void handleArrival(MazeCornerGroup cornerGroup, int16 runnerIdx);
 	/** Seed the per-direction waiting-position counters to their page-setup values. */
 	void resetArrivalPosCounters();
-	/** Sort an exact Snoid flag group by its current visual depth and link it after column zero. */
+	/** Sort an exact Snoid flag group by its logical depth and link it after column zero. */
 	void reorderExactFlagSnoidGroupByDepth(uint32 exactFlags);
 
 	/** Assign crossing SCRB pairs, which handles collision between two snoids. */
@@ -1981,9 +1981,9 @@ private:
 	static constexpr uint32 kUpperLeftWaitingSnoidFlags = ZmbFeature::FLAG_00000001_TYPE_SNOID | ZmbFeature::FLAG_00008000_LOOP_ANIM;
 	/** Exact flags shared by upper-right waiting and traversing Snoids. */
 	static constexpr uint32 kUpperRightWaitingSnoidFlags = ZmbFeature::FLAG_00000001_TYPE_SNOID | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY;
-	/** Whether a completed level-4 upper-left walk requires a depth reorder on the next Maze queue pass. */
+	/** Whether the level-4 upper-left group requires a depth reorder on the next Maze queue pass. */
 	bool _upperLeftArrivalDepthReorderPending = false;
-	/** Whether a completed upper-right walk requires a depth reorder on the next Maze queue pass. */
+	/** Whether the upper-right group requires a depth reorder on the next Maze queue pass. */
 	bool _upperRightArrivalDepthReorderPending = false;
 
 	/** Runner indices waiting for rejection or boundary-exit completion. */

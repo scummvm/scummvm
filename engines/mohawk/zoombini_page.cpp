@@ -650,8 +650,8 @@ void ZoombiniPage::categorizeFeature(ZmbFeature *feature, Common::Array<ZmbFeatu
 /**
  * Sort features by ascending click-rectangle bottom and left coordinates.
  *
- * Uses the current visual rectangle from @ref ZmbFeature::getZSortRect() for stable Z-ordering.
- * The method reads @ref ZmbFeature::_sortRect while preserving manual click zones separately.
+ * Uses the logical depth rectangle from @ref ZmbFeature::getDepthSortRect().
+ * Ordinary features use their current visual rectangle, while an active Snoid SCRS retains its pre-script geometry.
  *
  * A topmost incoming feature always traverses to the current tail.
  * Existing topmost entries remain ordinary comparison nodes for later incoming features.
@@ -666,9 +666,9 @@ void ZoombiniPage::insertionSortFeatures(Common::Array<ZmbFeature *> &list) {
 		if (incoming->hasFlag(ZmbFeature::FLAG_00001000_TOPMOST)) {
 			insertPos = sorted.size();
 		} else {
-			const Common::Rect &incomingRect = incoming->getZSortRect();
+			const Common::Rect incomingRect = incoming->getDepthSortRect();
 			while (insertPos < sorted.size()) {
-				const Common::Rect &existingRect = sorted[insertPos]->getZSortRect();
+				const Common::Rect existingRect = sorted[insertPos]->getDepthSortRect();
 				if (incomingRect.bottom < existingRect.bottom ||
 					(incomingRect.bottom == existingRect.bottom &&
 					 incomingRect.left < existingRect.left))
@@ -721,7 +721,7 @@ void ZoombiniPage::mergeSortedListInto(Common::Array<ZmbFeature *> &existingList
 			continue;
 		}
 
-		const Common::Rect &inRect = incoming->getZSortRect();
+		const Common::Rect inRect = incoming->getDepthSortRect();
 		uint32 insertPos = existingList.size(); // default: append at end
 		bool found = false;
 
@@ -746,7 +746,7 @@ void ZoombiniPage::mergeSortedListInto(Common::Array<ZmbFeature *> &existingList
 				break;
 			}
 
-			const Common::Rect &exRect = existing->getZSortRect();
+			const Common::Rect exRect = existing->getDepthSortRect();
 
 			// Sort key comparison: incoming should go before existing?
 			// Incoming.bottom < existing.bottom, or (equal bottom and incoming.left < existing.left).

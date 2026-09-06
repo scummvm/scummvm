@@ -6209,8 +6209,8 @@ void ZoombiniPuzzleMaze::reorderExactFlagSnoidGroupByDepth(uint32 exactFlags) {
 		ZmbSnoid *incoming = group[groupIdx];
 		int32 insertionIdx = static_cast<int32>(groupIdx) - 1;
 		while (0 <= insertionIdx) {
-			const Common::Rect &incomingRect = incoming->getClickRect();
-			const Common::Rect &existingRect = group[insertionIdx]->getClickRect();
+			const Common::Rect incomingRect = incoming->getDepthSortRect();
+			const Common::Rect existingRect = group[insertionIdx]->getDepthSortRect();
 			if (!(incomingRect.bottom < existingRect.bottom || (incomingRect.bottom == existingRect.bottom && incomingRect.left < existingRect.left)))
 				break;
 			group[insertionIdx + 1] = group[insertionIdx];
