@@ -129,6 +129,11 @@ protected:
 	SoundDescription _sound;
 	SoundDescription _responseGenericSound;
 
+	// Nancy14 added concatenated lines: several sound files that play back to
+	// back as a single line of dialogue. Empty for an ordinary single-sound line.
+	Common::Array<Common::String> _concatSounds;
+	uint _curConcatSound = 0;
+
 	byte _conditionalResponseCharacterID;
 	byte _goodbyeResponseCharacterID;
 	byte _defaultNextScene = kDefaultNextSceneEnabled;
