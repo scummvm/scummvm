@@ -316,114 +316,77 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 		if (!budget)
 			return kFCLPaused;
 		budget--;
-		const FCLInstructionVector &code = *script.code;
 		uint32 ip = script.ip++;
-		const FCLInstruction &instruction = code[ip];
-		Token::Type op = instruction.getType();
-		int32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
-		int32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
-		int32 additional = getVariableOrConstant(instruction._additional, instruction._additionalType);
-		bool hasDestination = instruction._destinationType != Token::UNKNOWN;
-		switch (op) {
-		case Token::NOP: case Token::ENDIF:
+		const FCLInstruction &instruction = (*script.code)[ip];
+		switch (instruction.getType()) {
+		case Token::NOP:
+		case Token::ENDIF:
 			break;
 		case Token::IF:
 			script.predicate = true;
 			script.booleanOp = Token::UNKNOWN;
 			break;
-		case Token::AND: case Token::OR:
+		case Token::AND:
+		case Token::OR:
 			script.previousPredicate = script.predicate;
-			script.booleanOp = op;
+			script.booleanOp = instruction.getType();
 			break;
-		case Token::THEN: case Token::ELSE:
-			if (op == Token::ELSE || !script.predicate) {
-				int depth = 0;
-				while (script.ip < code.size()) {
-					Token::Type next = code[script.ip++].getType();
-					if (next == Token::IF)
-						depth++;
-					else if (next == Token::ENDIF) {
-						if (!depth)
-							break;
-						depth--;
-					} else if (next == Token::ELSE && !depth && op == Token::THEN) {
-						break;
-					}
-				}
-			}
+		case Token::THEN:
+		case Token::ELSE:
+			executeIfThenElse(instruction, script);
 			break;
 		case Token::CONDITIONAL:
-			// RUNVGA retains these flags until the object's execution yields or ends.
-			setScriptPredicate(script, checkConditional(instruction,
-				script.events & 16, script.events & 32, _timerTriggered, script.events & 8));
+			executeConditional(instruction, script);
 			break;
-		case Token::SETVAR: case Token::ADDVAR: case Token::SUBVAR: case Token::ANDV: case Token::ORV: case Token::NOTV: {
-			uint32 value = destination;
-			switch (op) {
-			case Token::ADDVAR: value += uint32(source); break;
-			case Token::SUBVAR: value = uint32(source) - value; break;
-			case Token::ANDV: value &= uint32(source); break;
-			case Token::ORV: value |= uint32(source); break;
-			case Token::NOTV: value = ~uint32(source); break;
-			default: break;
-			}
-			if (instruction._sourceType == Token::VARIABLE)
-				setScriptVariable(instruction._source, value);
-			setScriptPredicate(script, value != 0);
+		case Token::SETVAR:
+			executeSetVariable(instruction, script);
 			break;
-		}
-		case Token::VAREQ: case Token::VARGT: case Token::VARLT:
-			setScriptPredicate(script, op == Token::VAREQ ? source == destination : op == Token::VARGT ? source > destination : source < destination);
+		case Token::ADDVAR:
+			executeIncrementVariable(instruction, script);
 			break;
-		case Token::INVIS: case Token::VIS: case Token::TOGVIS: case Token::DESTROY:
-		case Token::INVISQ: case Token::VISQ: case Token::DESTROYEDQ: {
-			uint16 area = hasDestination && source ? source : _currentArea->getAreaID();
-			uint16 object = hasDestination ? destination : source;
-			if (op == Token::INVIS || op == Token::VIS || op == Token::TOGVIS || op == Token::DESTROY)
-				setObjectStatus(area, object, op);
-			else {
-				Common::Array<uint16> objects;
-				collectObjects(area, object, objects);
-				bool result = false;
-				for (uint16 member : objects) {
-					byte flags = scriptObject(area, member)->flags;
-					result = op == Token::DESTROYEDQ ? (flags & 1) != 0 : op == Token::INVISQ ? (flags & 2) != 0 : !(flags & 2);
-				}
-				setScriptPredicate(script, result);
-			}
+		case Token::SUBVAR:
+			executeDecrementVariable(instruction, script);
 			break;
-		}
-		case Token::GETXPOS: case Token::GETYPOS: case Token::GETZPOS: {
-			ObjectData *object = scriptObject(additional, destination);
-			if (object)
-				setScriptVariable(instruction._source & 0xff, int32(object->origin.getValue(op - Token::GETXPOS)));
+		case Token::ANDV:
+			executeAndVariable(instruction, script);
 			break;
-		}
-		case Token::EXECUTE: {
-			ObjectData *object = scriptObject(0, source);
-			if (!object || object->type == kGroupType)
-				return kFCLFinished;
-			// EXECUTE replaces the code, retaining the original object's event flags.
-			script.code = &object->condition;
-			script.ip = 0;
-			script.loops.clear();
+		case Token::ORV:
+			executeOrVariable(instruction, script);
 			break;
-		}
-		case Token::GOTO: {
-			uint16 area = instruction._sourceType != Token::UNKNOWN ? source : _currentArea->getAreaID();
-			if (!_areaMap.contains(area) || !_areaMap[area]->entranceWithID(destination & 0x7fff)) {
-				warning("Invalid 3D Construction Kit GOTO (%d, %u)", destination, area);
-				return kFCLFinished;
-			}
-			writeSystemVariables();
-			uint16 previous = _currentArea->getAreaID();
-			gotoArea(area, destination & 0x7fff);
-			if (previous != area)
+		case Token::NOTV:
+			executeNotVariable(instruction, script);
+			break;
+		case Token::VAREQ:
+		case Token::VARGT:
+		case Token::VARLT:
+			executeVariableComparison(instruction, script);
+			break;
+		case Token::INVIS:
+		case Token::VIS:
+		case Token::TOGVIS:
+		case Token::DESTROY:
+			executeObjectStatus(instruction);
+			break;
+		case Token::INVISQ:
+		case Token::VISQ:
+		case Token::DESTROYEDQ:
+			setScriptPredicate(script, checkObjectStatus(instruction));
+			break;
+		case Token::GETXPOS:
+		case Token::GETYPOS:
+		case Token::GETZPOS:
+			executeGetPosition(instruction);
+			break;
+		case Token::EXECUTE:
+			if (!executeExecute(instruction, script))
 				return kFCLFinished;
 			break;
-		}
+		case Token::GOTO:
+			if (!executeGoto(instruction))
+				return kFCLFinished;
+			break;
 		case Token::MODE:
-			setScriptVariable(6, CLIP<int32>(source, 1, 3) - 1);
+			executeMode(instruction);
 			break;
 		case Token::ENDGAME:
 			_gameStateControl = kFreescapeGameStateRestart;
@@ -433,59 +396,30 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 		case Token::WAIT:
 			return kFCLYielded;
 		case Token::DELAY:
-			if (uint16(source)) {
-				_delayUntil = _scriptTicks + uint16(source);
-				_scriptDelayed = true;
+			if (executeDelay(instruction))
 				return kFCLPaused;
-			}
 			break;
 		case Token::REDRAW:
 			_scriptSurface.fillRect(_viewArea, 0);
 			return animator ? kFCLYielded : kFCLPaused;
-		case Token::LOOP: {
-			int depth = 0;
-			uint32 end = script.ip;
-			while (end < code.size()) {
-				Token::Type next = code[end].getType();
-				if (next == Token::LOOP)
-					depth++;
-				else if (next == Token::AGAIN) {
-					if (!depth)
-						break;
-					depth--;
-				}
-				end++;
-			}
-			FCLLoop &loop = script.loops[end];
-			loop.start = script.ip;
-			loop.remaining = uint16(source);
+		case Token::LOOP:
+			executeLoop(instruction, script);
 			break;
-		}
-		case Token::AGAIN: {
-			auto loop = script.loops.find(ip);
-			if (loop == script.loops.end())
+		case Token::AGAIN:
+			if (!executeAgain(script, ip))
 				return kFCLFinished;
-			if (--loop->_value.remaining != 0) {
-				script.ip = loop->_value.start;
-			} else {
-				script.loops.erase(loop);
-			}
 			break;
-		}
-		case Token::STARTANIM: case Token::STOPANIM: case Token::TRIGANIM: {
-			ObjectData *object = scriptObject(hasDestination ? source : 0, uint16(hasDestination ? destination : source) | 0x4000);
-			if (object && object->type == 16) {
-				if (op == Token::STARTANIM)
-					object->flags &= ~2;
-				else if (op == Token::STOPANIM)
-					object->flags |= 2;
-				else
-					object->flags |= 1;
-			}
-			if (animator && op == Token::STOPANIM)
+		case Token::STARTANIM:
+			executeStartAnim(instruction);
+			break;
+		case Token::STOPANIM:
+			executeStopAnim(instruction);
+			if (animator)
 				return kFCLYielded;
 			break;
-		}
+		case Token::TRIGANIM:
+			executeTriggerAnim(instruction);
+			break;
 		case Token::START:
 			if (animator)
 				script.restart = script.ip;
@@ -494,63 +428,316 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 			if (animator)
 				script.ip = script.restart;
 			break;
-		case Token::INCLUDE: case Token::REMOVE:
-			if (animator) {
-				Common::Array<uint16> objects;
-				collectObjects(script.area, source, objects);
-				for (uint16 member : objects) {
-					ObjectData &object = *scriptObject(script.area, member);
-					if (!(object.flags & 0x80))
-						continue;
-					if (op == Token::INCLUDE && !object.animator) {
-						object.animator = script.object->id;
-						script.object->animatedObjects.push_back(member);
-					} else if (op == Token::REMOVE && object.animator == script.object->id) {
-						auto &members = script.object->animatedObjects;
-						for (uint i = 0; i < members.size(); i++) {
-							if (members[i] == member) {
-								members.remove_at(i);
-								break;
-							}
-						}
-						object.animator = 0;
-					}
-				}
-			}
+		case Token::INCLUDE:
+			if (animator)
+				executeInclude(instruction, script);
+			break;
+		case Token::REMOVE:
+			if (animator)
+				executeRemove(instruction, script);
 			break;
 		case Token::WAITTRIG:
-			if (animator) {
-				if (!(script.object->flags & 1)) {
-					script.ip = ip;
-					return kFCLYielded;
-				}
-				script.object->flags &= ~1;
-			}
+			if (animator && executeWaitTrigger(script, ip))
+				return kFCLYielded;
 			break;
-		case Token::MOVE: case Token::MOVETO:
+		case Token::MOVE:
+		case Token::MOVETO:
 			if (animator) {
-				setScriptPredicate(script, moveAnimation(script,
-					Math::Vector3d(int16(source), int16(destination), int16(additional)), op == Token::MOVETO));
+				executeMove(instruction, script);
 				return kFCLYielded;
 			}
 			break;
 		case Token::PRINT:
-			printMessage(source, instruction._text);
+			printMessage(getVariableOrConstant(instruction._source, instruction._sourceType), instruction._text);
 			break;
 		case Token::UPDATEI:
 			updateIndicators();
 			break;
-		case Token::SOUND: case Token::SYNCSND:
-			if (!_soundWarning) {
-				warning("3D Construction Kit sound playback is not implemented");
-				_soundWarning = true;
-			}
+		case Token::SOUND:
+		case Token::SYNCSND:
+			executeSound(instruction);
 			break;
 		default:
-			error("Unhandled 16-bit FCL instruction %d at ip: %u", op, ip);
+			error("Unhandled 16-bit FCL instruction %d at ip: %u", instruction.getType(), ip);
 		}
 	}
 	return kFCLFinished;
+}
+
+void KitEngine::executeIfThenElse(const FCLInstruction &instruction, ScriptState &script) {
+	if (instruction.getType() == Token::THEN && script.predicate)
+		return;
+	const FCLInstructionVector &code = *script.code;
+	int depth = 0;
+	while (script.ip < code.size()) {
+		Token::Type next = code[script.ip++].getType();
+		if (next == Token::IF) {
+			depth++;
+		} else if (next == Token::ENDIF) {
+			if (!depth)
+				break;
+			depth--;
+		} else if (next == Token::ELSE && !depth && instruction.getType() == Token::THEN) {
+			break;
+		}
+	}
+}
+
+void KitEngine::executeConditional(const FCLInstruction &instruction, ScriptState &script) {
+	// RUNVGA retains these flags until the object's execution yields or ends.
+	setScriptPredicate(script, checkConditional(instruction,
+		script.events & 16, script.events & 32, _timerTriggered, script.events & 8));
+}
+
+void KitEngine::setVariableResult(const FCLInstruction &instruction, ScriptState &script, uint32 value) {
+	if (instruction._sourceType == Token::VARIABLE)
+		setScriptVariable(instruction._source, value);
+	setScriptPredicate(script, value != 0);
+}
+
+void KitEngine::executeSetVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 value = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	setVariableResult(instruction, script, value);
+}
+
+void KitEngine::executeIncrementVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	uint32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	setVariableResult(instruction, script, source + destination);
+}
+
+void KitEngine::executeDecrementVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	uint32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	setVariableResult(instruction, script, source - destination);
+}
+
+void KitEngine::executeAndVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	uint32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	setVariableResult(instruction, script, source & destination);
+}
+
+void KitEngine::executeOrVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	uint32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	setVariableResult(instruction, script, source | destination);
+}
+
+void KitEngine::executeNotVariable(const FCLInstruction &instruction, ScriptState &script) {
+	uint32 value = getVariableOrConstant(instruction._source, instruction._sourceType);
+	setVariableResult(instruction, script, ~value);
+}
+
+void KitEngine::executeVariableComparison(const FCLInstruction &instruction, ScriptState &script) {
+	int32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	int32 destination = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	switch (instruction.getType()) {
+	case Token::VAREQ:
+		setScriptPredicate(script, source == destination);
+		break;
+	case Token::VARGT:
+		setScriptPredicate(script, source > destination);
+		break;
+	case Token::VARLT:
+		setScriptPredicate(script, source < destination);
+		break;
+	default:
+		break;
+	}
+}
+
+void KitEngine::getObjectReference(const FCLInstruction &instruction, uint16 &area, uint16 &id) const {
+	int32 source = getVariableOrConstant(instruction._source, instruction._sourceType);
+	area = _currentArea->getAreaID();
+	id = source;
+	if (instruction._destinationType != Token::UNKNOWN) {
+		if (source)
+			area = source;
+		id = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	}
+}
+
+void KitEngine::executeObjectStatus(const FCLInstruction &instruction) {
+	uint16 area, id;
+	getObjectReference(instruction, area, id);
+	setObjectStatus(area, id, instruction.getType());
+}
+
+bool KitEngine::checkObjectStatus(const FCLInstruction &instruction) {
+	uint16 area, id;
+	getObjectReference(instruction, area, id);
+	Common::Array<uint16> objects;
+	collectObjects(area, id, objects);
+	byte mask = instruction.getType() == Token::DESTROYEDQ ? 1 : 2;
+	bool expected = instruction.getType() != Token::VISQ;
+	bool result = false;
+	for (uint16 member : objects)
+		result = ((scriptObject(area, member)->flags & mask) != 0) == expected;
+	return result;
+}
+
+void KitEngine::executeGetPosition(const FCLInstruction &instruction) {
+	uint16 area = getVariableOrConstant(instruction._additional, instruction._additionalType);
+	uint16 id = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	ObjectData *object = scriptObject(area, id);
+	if (object) {
+		int axis = instruction.getType() - Token::GETXPOS;
+		setScriptVariable(instruction._source & 0xff, int32(object->origin.getValue(axis)));
+	}
+}
+
+bool KitEngine::executeExecute(const FCLInstruction &instruction, ScriptState &script) {
+	uint16 id = getVariableOrConstant(instruction._source, instruction._sourceType);
+	ObjectData *object = scriptObject(0, id);
+	if (!object || object->type == kGroupType)
+		return false;
+	// EXECUTE replaces the code, retaining the original object's event flags.
+	script.code = &object->condition;
+	script.ip = 0;
+	script.loops.clear();
+	return true;
+}
+
+bool KitEngine::executeGoto(const FCLInstruction &instruction) {
+	uint16 area = _currentArea->getAreaID();
+	if (instruction._sourceType != Token::UNKNOWN)
+		area = getVariableOrConstant(instruction._source, instruction._sourceType);
+	int32 entrance = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	if (!_areaMap.contains(area) || !_areaMap[area]->entranceWithID(entrance & 0x7fff)) {
+		warning("Invalid 3D Construction Kit GOTO (%d, %u)", entrance, area);
+		return false;
+	}
+	writeSystemVariables();
+	uint16 previous = _currentArea->getAreaID();
+	gotoArea(area, entrance & 0x7fff);
+	return previous == area;
+}
+
+void KitEngine::executeMode(const FCLInstruction &instruction) {
+	int32 mode = getVariableOrConstant(instruction._source, instruction._sourceType);
+	setScriptVariable(6, CLIP<int32>(mode, 1, 3) - 1);
+}
+
+bool KitEngine::executeDelay(const FCLInstruction &instruction) {
+	uint16 delay = getVariableOrConstant(instruction._source, instruction._sourceType);
+	if (!delay)
+		return false;
+	_delayUntil = _scriptTicks + delay;
+	_scriptDelayed = true;
+	return true;
+}
+
+void KitEngine::executeLoop(const FCLInstruction &instruction, ScriptState &script) {
+	const FCLInstructionVector &code = *script.code;
+	int depth = 0;
+	uint32 end = script.ip;
+	while (end < code.size()) {
+		Token::Type next = code[end].getType();
+		if (next == Token::LOOP) {
+			depth++;
+		} else if (next == Token::AGAIN) {
+			if (!depth)
+				break;
+			depth--;
+		}
+		end++;
+	}
+	FCLLoop &loop = script.loops[end];
+	loop.start = script.ip;
+	loop.remaining = getVariableOrConstant(instruction._source, instruction._sourceType);
+}
+
+bool KitEngine::executeAgain(ScriptState &script, uint32 ip) {
+	auto loop = script.loops.find(ip);
+	if (loop == script.loops.end())
+		return false;
+	if (--loop->_value.remaining != 0)
+		script.ip = loop->_value.start;
+	else
+		script.loops.erase(loop);
+	return true;
+}
+
+KitEngine::ObjectData *KitEngine::scriptAnimator(const FCLInstruction &instruction) {
+	uint16 area, id;
+	getObjectReference(instruction, area, id);
+	ObjectData *object = scriptObject(area, id | 0x4000);
+	return object && object->type == 16 ? object : nullptr;
+}
+
+void KitEngine::executeStartAnim(const FCLInstruction &instruction) {
+	ObjectData *object = scriptAnimator(instruction);
+	if (object)
+		object->flags &= ~2;
+}
+
+void KitEngine::executeStopAnim(const FCLInstruction &instruction) {
+	ObjectData *object = scriptAnimator(instruction);
+	if (object)
+		object->flags |= 2;
+}
+
+void KitEngine::executeTriggerAnim(const FCLInstruction &instruction) {
+	ObjectData *object = scriptAnimator(instruction);
+	if (object)
+		object->flags |= 1;
+}
+
+void KitEngine::executeInclude(const FCLInstruction &instruction, ScriptState &script) {
+	uint16 id = getVariableOrConstant(instruction._source, instruction._sourceType);
+	Common::Array<uint16> objects;
+	collectObjects(script.area, id, objects);
+	for (uint16 member : objects) {
+		ObjectData &object = *scriptObject(script.area, member);
+		if (!(object.flags & 0x80) || object.animator)
+			continue;
+		object.animator = script.object->id;
+		script.object->animatedObjects.push_back(member);
+	}
+}
+
+void KitEngine::executeRemove(const FCLInstruction &instruction, ScriptState &script) {
+	uint16 id = getVariableOrConstant(instruction._source, instruction._sourceType);
+	Common::Array<uint16> objects;
+	collectObjects(script.area, id, objects);
+	for (uint16 member : objects) {
+		ObjectData &object = *scriptObject(script.area, member);
+		if (!(object.flags & 0x80) || object.animator != script.object->id)
+			continue;
+		auto &members = script.object->animatedObjects;
+		for (uint i = 0; i < members.size(); i++) {
+			if (members[i] == member) {
+				members.remove_at(i);
+				break;
+			}
+		}
+		object.animator = 0;
+	}
+}
+
+bool KitEngine::executeWaitTrigger(ScriptState &script, uint32 ip) {
+	if (!(script.object->flags & 1)) {
+		script.ip = ip;
+		return true;
+	}
+	script.object->flags &= ~1;
+	return false;
+}
+
+void KitEngine::executeMove(const FCLInstruction &instruction, ScriptState &script) {
+	int16 x = getVariableOrConstant(instruction._source, instruction._sourceType);
+	int16 y = getVariableOrConstant(instruction._destination, instruction._destinationType);
+	int16 z = getVariableOrConstant(instruction._additional, instruction._additionalType);
+	bool absolute = instruction.getType() == Token::MOVETO;
+	setScriptPredicate(script, moveAnimation(script, Math::Vector3d(x, y, z), absolute));
+}
+
+void KitEngine::executeSound(const FCLInstruction &instruction) {
+	if (!_soundWarning) {
+		warning("3D Construction Kit sound playback is not implemented");
+		_soundWarning = true;
+	}
 }
 
 bool KitEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {
