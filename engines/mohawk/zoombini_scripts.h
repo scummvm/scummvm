@@ -1100,6 +1100,11 @@ public:
 	 * while @ref ZmbFeature::_clickRect remains available for manual hit zones and as the first-draw fallback.
 	 */
 	const Common::Rect &getZSortRect() const { return !_sortRect.isEmpty() ? _sortRect : _clickRect; }
+	/**
+	 * Return the logical depth rectangle used by positional runner sorting.
+	 * An active Snoid SCRS retains its pre-script geometry while following changes to the runner position.
+	 */
+	Common::Rect getDepthSortRect() const;
 
 	/**
 	 * Set the SCRB ID to chain to at end-of-animation-cycle (CHAIN_SCRIPT).
@@ -1143,6 +1148,10 @@ protected:
 	void bindDecodedFrames(const Common::Array<ZmbDecodedScriptFrame> *frames);
 	/** Copy one cached frame into the runner's reusable materialized group. */
 	ZmbHotspotGroup *materializeDecodedFrame(int32 frameIdx) const;
+	/** Preserve the current logical depth geometry while allowing the runner position to move. */
+	void beginDepthSortStability();
+	/** Resume using current visual geometry for positional depth sorting. */
+	void endDepthSortStability() { _hasStableDepthSortRect = false; }
 
 private:
 	/** Resolve an embedded sound ID to its explicit archive-qualified resource. */
@@ -1279,6 +1288,12 @@ private:
 	// @ref ZoombiniPage::blitShapes() updates it for @ref ZoombiniPage::renderFeatures() sorting.
 	/** Bounding rectangle used for positional Z sorting and dirty invalidation. */
 	Common::Rect _sortRect;
+	/** Logical depth geometry retained while a Snoid SCRS changes pose. */
+	Common::Rect _stableDepthSortRect;
+	/** Runner position at which @ref ZmbFeature::_stableDepthSortRect was captured. */
+	Common::Point _stableDepthSortPointLoc;
+	/** Whether positional sorting uses the translated stable depth rectangle. */
+	bool _hasStableDepthSortRect = false;
 
 	// [*] State controls
 	/** Whether the feature is scheduled for close and removal. */
