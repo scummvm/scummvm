@@ -1032,11 +1032,13 @@ void Room407::daemon() {
 		terminateMachineAndNull(_glassJarPopup);
 
 		if (_periodicTableState == 1116)
-			terminateMachineAndNull(_tabletopPopupWithItems2);
+			terminateMachineAndNull(_glassTopPopupWithItems2);
 		if (_items2State == 1116)
 			terminateMachineAndNull(_glassBottomWithItems1);
 		if (_stopperState == 1116)
 			terminateMachineAndNull(_glassBottomWithItems2);
+		if (_leverKeyState == 1113)
+			terminateMachineAndNull(_tabletopPopupWithItems3);
 
 		setHotspots();
 		player_set_commands_allowed(true);
@@ -1611,8 +1613,7 @@ void Room407::pre_parser() {
 			(takeFlag && player_said("GARDEN HOSE ")) ||
 			player_said("GLASS JAR ", "FAUCET PIPE") ||
 			player_said("GLASS JAR ", "FAUCET PIPE/HOSE") ||
-			player_said("GLASS JAR ", "FAUCET PIPE/HOSE/TUBE")) {
-		_G(player).resetWalk();
+			player_said("GLASS JAR ", "FAUCET PIPE/HOSE/TUBE")) {		
 		kernel_timing_trigger(1, 777, KT_PARSE, KT_PREPARSE);
 	}
 
@@ -2678,10 +2679,6 @@ void Room407::setHotspots() {
 			hotspot_set_active("PERIODIC TABLE/JAR", false);
 		if (_periodicTableState != 1120)
 			hotspot_set_active("PERIODIC TABLE ", false);
-
-		if (inv_object_is_here("EMERALD/CORK"))
-			hotspot_set_active("EMERALD/CORK", false);
-
 		if (_xyzzy7 == 1112) {
 			if (_stopperState != 1116)
 				hotspot_set_active("JAR/RUBBER PLUG", false);
