@@ -30,6 +30,7 @@
 #include "ultima/ultima1/views/interactions/princess_saved.h"
 #include "ultima/ultima1/views/interactions/ready.h"
 #include "ultima/ultima1/views/create_character.h"
+#include "ultima/ultima1/views/dungeon_map.h"
 #include "ultima/ultima1/views/game.h"
 #include "ultima/ultima1/views/location_map.h"
 #include "ultima/ultima1/views/main_menu.h"
@@ -50,6 +51,7 @@ struct Views : public Shared::Views {
 	Interactions::PrincessSaved _princessSaved;
 	Interactions::Ready _ready;
 	CreateCharacter _createCharacter;
+	DungeonMap _dungeonMap;
 	Game _game;
 	LocationMap _locationMap;
 	MainMenu _mainMenu;

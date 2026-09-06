@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
 #include "ultima/ultima1/data/tiles.h"
+#include "ultima/ultima1/data/map_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -67,7 +68,7 @@ extern const char *DIRECTION_NAMES[5];
 extern const char *LOCATION_NAMES[LOCATION_COUNT];
 extern const char *CONTINENT_NAMES[4];
 
-struct Map {
+struct Map : public MapDungeon {
 private:
 	Common::Array<byte> _overworldMap;		// Cached overworld map data
 	Common::Array<byte> _cityMap[10];		// Cached city/castle/town maps
@@ -108,6 +109,11 @@ private:
 	Common::Array<Row> _mapRows;			// Used for array operator getting map contents
 	Graphics::ManagedSurface _overworldTiles[OVERWORLD_TILES_COUNT];
 	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
+
+	/**
+	 * Used to generate the dungeon.
+	 */
+	void loadDungeonMap();
 
 public:
 	int _currentMap = -1;

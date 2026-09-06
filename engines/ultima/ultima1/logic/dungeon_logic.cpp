@@ -28,8 +28,15 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
+DungeonLogic::DungeonLogic() {
+	_G(map)._mapType = Data::MAPTYPE_DUNGEON;
+}
+
 void DungeonLogic::entering() {
-	// TODO
+	_G(savegame)._locationPosition = Common::Point(1, 1);
+	_G(savegame)._dungeonLevel = 1;
+	_G(savegame)._dungeonDirection = 4;
+	_G(savegame)._dungeonExitHitPoints = 0;
 }
 
 bool DungeonLogic::move(Data::Direction dir) {

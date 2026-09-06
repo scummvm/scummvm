@@ -174,15 +174,27 @@ void Map::load(int mapNum) {
 
 	// Set up the map row pointers
 	_mapRows.clear();
-	if (_currentMap == MAP_OVERWORLD) {
+	switch (_mapType) {
+	case MAPTYPE_OVERWORLD:
 		_mapRows.reserve(OVERWORLD_HEIGHT);
 		for (int y = 0; y < OVERWORLD_HEIGHT; ++y)
 			_mapRows.push_back(Row(this, &_overworldMap[y * OVERWORLD_WIDTH]));
-	} else {
+		break;
+
+	case MAPTYPE_DUNGEON:
+		generateDungeonLevel();
+
+		_mapRows.reserve(DUNGEON_HEIGHT);
+		for (int y = 0; y < DUNGEON_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_dungeonTiles[y][0]));
+		break;
+
+	default:
 		_mapRows.reserve(CITY_HEIGHT + 1);		// One extra row for out-of-bounds y access
 		for (int y = 0; y < CITY_HEIGHT; ++y)
 			_mapRows.push_back(Row(this, &_cityMap[_mapStyle][y * CITY_WIDTH]));
 		_mapRows.push_back(Row(this, nullptr));
+		break;
 	}
 
 	// If the focused view isn't already a dialog under the game frame, then reset to the game

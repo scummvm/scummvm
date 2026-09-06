@@ -55,6 +55,7 @@ MODULE_OBJS += \
 	ultima1/core/strings.o \
 	ultima1/data/entity.o \
 	ultima1/data/map.o \
+	ultima1/data/map_dungeon.o \
 	ultima1/data/savegame.o \
 	ultima1/data/tiles.o \
 	ultima1/gfx/pic_decoder.o \
@@ -76,6 +77,7 @@ MODULE_OBJS += \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \
 	ultima1/views/dialog.o \
+	ultima1/views/dungeon_map.o \
 	ultima1/views/full_screen_dialog.o \
 	ultima1/views/game.o \
 	ultima1/views/location_map.o \

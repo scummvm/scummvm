@@ -42,6 +42,7 @@ protected:
 	void updateCreatures() override;
 
 public:
+	DungeonLogic();
 	~DungeonLogic() override {
 	}
 
