@@ -1416,7 +1416,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 	if (feature == _toppingOverlayFeature) {
 		if (eventCode == kAnimEventM1_End) {
 			if (feature->getScriptSoundPolicy() ==
-				ZmbFeature::ScriptSoundPolicy::kPriorityQueue) {
+				ZmbFeature::ScriptSoundPolicy::kImmediate) {
 				feature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kInheritPage);
 			}
 			if (_overlayPhase == kPhaseToppingDelivery) {
@@ -2346,9 +2346,12 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 	}
 	case kQuestionEventCode060_StartTraitReveal: {
 		// The machine feature reached the trait-reveal marker.
-		// Start the Postman SCRS before the delivery overlay is classified.
+		// The fast two-frame cadence belongs only to the initial walk to the machine seat.
+		// Restore the normal cadence before the first authored delivery SCRS starts,
+		// matching the cadence already retained by the Postman on later deliveries.
 		// Play snoid SCRS for trait reveal
 		if (_postmanSnoid) {
+			_postmanSnoid->setFrameInterval(6);
 			const int16 traitIdx = getTraitIndexForOrder(0);
 			const int16 scrsId = static_cast<int16>(kResScrs13000_CarryBase + traitIdx);
 			startSnoidScrs(_postmanSnoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle);
@@ -2381,13 +2384,18 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 		if (_postmanSnoid)
 			startSnoidScrs(_postmanSnoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle);
 
-		// Load delivery overlay SCRB
+		// Load delivery overlay SCRB.
 		if (_toppingOverlayFeature) {
-			// Queue only the coupled delivery overlay so its SFX can replace the movement loop.
-			_toppingOverlayFeature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kPriorityQueue);
 			loadScrbOntoFeature(_toppingOverlayFeature, overlayScrbId);
 			_overlayPhase = kPhaseToppingDelivery;
 			linkToppingRunners();
+			// Keep the Postman and pizza overlay on one cadence, with the earlier Postman runner as timing owner.
+			if (_postmanSnoid)
+				registerFeatureTimingGroup(_postmanSnoid, _toppingOverlayFeature);
+			// Preserve the queued Postman movement while mixing the coupled machine overlay independently.
+			if (_postmanSnoid)
+				_postmanSnoid->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kPriorityQueue);
+			_toppingOverlayFeature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kImmediate);
 		}
 
 		// Refresh the preview.
