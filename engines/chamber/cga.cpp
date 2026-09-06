@@ -172,7 +172,17 @@ void CGARenderer::blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	if (!mainSurface) {
 		mainSurface = new Graphics::Surface();
 	}
-	if (g_vm->_renderMode == Common::kRenderCGA) {
+	/* The block below this one renders into a 720x348 Hercules canvas and
+	 * blits it to the screen at a fixed +40/+74 offset, which is only valid
+	 * when init() took the isCustomHerc branch and called initGraphics(720,
+	 * 348). That branch is driven by _videoMode, but the test here used
+	 * _renderMode, so a user who has not explicitly selected a render mode
+	 * (_renderMode == kRenderDefault, while _videoMode is set to kRenderCGA
+	 * a few lines later in ChamberEngine::ChamberEngine) fell through to the
+	 * Hercules path against a 320x200 screen and tripped
+	 * Surface::copyRectToSurface's bounds assertion (74 + 200 > 200).
+	 * Select the Hercules path only when Hercules was actually requested. */
+	if (g_vm->_renderMode != Common::kRenderHercG && g_vm->_renderMode != Common::kRenderHercA) {
 		if (mainSurface->w != g_vm->_screenW) {
 			mainSurface->free();
 			mainSurface->create(g_vm->_screenW, g_vm->_screenH, Graphics::PixelFormat::createFormatCLUT8());
