@@ -36,6 +36,9 @@ enum {
 	kConditionalTimeout = 1 << 1,
 	kConditionalCollided = 1 << 2,
 	kConditionalActivated = 1 << 3,
+	kConditionalSensed = 1 << 4,
+	kConditionalFallen = 1 << 5,
+	kConditionalCrushed = 1 << 6,
 };
 
 class FCLInstruction;

@@ -304,6 +304,7 @@ public:
 	int _inkColor;
 	int _paperColor;
 	int _underFireBackgroundColor;
+	int _fourColorBackground;
 	Common::Point _shakeOffset;
 	byte _stipples[16][128];
 

@@ -32,6 +32,7 @@
 #include "freescape/games/driller/driller.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/games/3dck/3dck.h"
+#include "freescape/games/3dck/8bit.h"
 #include "freescape/detection.h"
 
 
@@ -210,7 +211,10 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 	} else if (Common::String(gd->gameId) == "castlemaster" || Common::String(gd->gameId) == "castlemaster2") {
 		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);
 	} else if (Common::String(gd->gameId) == "3dkit") {
-		*engine = new Freescape::KitEngine(syst, gd);
+		if (gd->platform == Common::kPlatformAmstradCPC)
+			*engine = new Freescape::Kit8Engine(syst, gd);
+		else
+			*engine = new Freescape::KitEngine(syst, gd);
 	} else
 		*engine = new Freescape::FreescapeEngine(syst, gd);
 
