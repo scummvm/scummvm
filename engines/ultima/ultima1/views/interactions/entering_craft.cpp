@@ -183,7 +183,7 @@ void EnteringCraft::nextPage() {
 		showPage();
 	} else {
 		close();
-		_G(map).load(Data::MAP_MONDIAN);
+		_G(map).load(Data::MAP_MONDAIN);
 	}
 }
 

@@ -64,6 +64,7 @@ MODULE_OBJS += \
 	ultima1/logic/logic.o \
 	ultima1/logic/city_castle_logic.o \
 	ultima1/logic/dungeon_logic.o \
+	ultima1/logic/mondain_logic.o \
 	ultima1/logic/overworld_logic.o \
 	ultima1/logic/pillar_logic.o \
 	ultima1/logic/space_logic.o \
@@ -86,6 +87,7 @@ MODULE_OBJS += \
 	ultima1/views/game.o \
 	ultima1/views/location_map.o \
 	ultima1/views/main_menu.o \
+	ultima1/views/mondain_map.o \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \
 	ultima1/views/space_map.o \

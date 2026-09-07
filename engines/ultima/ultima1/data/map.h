@@ -43,12 +43,15 @@ constexpr int CITY_WIDTH = 38;
 constexpr int CITY_HEIGHT = 18;
 constexpr int CITY_SIZE = CITY_WIDTH * CITY_HEIGHT;
 
+constexpr int MONDAIN_WIDTH = 19;
+constexpr int MONDAIN_HEIGHT = 9;
+
 constexpr int LOCATION_COUNT = 84;
 
 enum {
 	MAP_OVERWORLD = 0,
 	MAP_SPACE = 90,
-	MAP_MONDIAN = 91
+	MAP_MONDAIN = 91
 };
 
 enum Direction {
@@ -60,7 +63,8 @@ enum MapType {
 	MAPTYPE_CITY = 1,
 	MAPTYPE_CASTLE = 2,
 	MAPTYPE_DUNGEON = 3,
-	MAPTYPE_SPACE = 4
+	MAPTYPE_SPACE = 4,
+	MAPTYPE_MONDAIN = 5
 };
 
 typedef Common::Array< Common::Array<byte> > MapTiles;
@@ -73,6 +77,7 @@ struct Map {
 private:
 	Common::Array<byte> _overworldMap;		// Cached overworld map data
 	Common::Array<byte> _cityMap[10];		// Cached city/castle/town maps
+	byte _mondainMap[MONDAIN_HEIGHT][MONDAIN_WIDTH];	// Cached Mondain encounter map
 
 	MapTiles _mapTiles;						// Visible on-screen tiles
 	int _mapWidth = 0, _mapHeight = 0;		// Map width/height
@@ -110,6 +115,7 @@ private:
 	Common::Array<Row> _mapRows;			// Used for array operator getting map contents
 	Graphics::ManagedSurface _overworldTiles[OVERWORLD_TILES_COUNT];
 	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
+	Graphics::ManagedSurface _mondainTiles[MONDAIN_TILES_COUNT];
 
 	/**
 	 * Used to generate the dungeon.

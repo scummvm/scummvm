@@ -25,6 +25,7 @@
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/logic/city_castle_logic.h"
 #include "ultima/ultima1/logic/dungeon_logic.h"
+#include "ultima/ultima1/logic/mondain_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
 #include "ultima/ultima1/logic/pillar_logic.h"
 #include "ultima/ultima1/logic/space_logic.h"
@@ -94,6 +95,22 @@ const char *CONTINENT_NAMES[4] = {
 	"of Danger and Despair"
 };
 
+// The Mondain encounter room. The original stores this top-to-bottom
+// columns first, then left-to-right (MONDAIN_WIDTH columns of MONDAIN_HEIGHT
+// bytes each); transposed here to left-to-right rows, top-to-bottom, for
+// consistency with the overworld/city maps
+static const byte MONDAIN_MAP[MONDAIN_HEIGHT][MONDAIN_WIDTH] = {
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 5, 5, 5, 0 },
+	{ 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
+	{ 0, 0, 1, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
+	{ 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 5, 5, 5, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
 void Map::init() {
 	// Load the overworld map
 	Common::File ow;
@@ -131,9 +148,13 @@ void Map::init() {
 		}
 	}
 
+	// Copy the Mondain map
+	Common::copy(&MONDAIN_MAP[0][0], &MONDAIN_MAP[0][0] + MONDAIN_WIDTH * MONDAIN_HEIGHT, &_mondainMap[0][0]);
+
 	// Load tiles
 	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16);
 	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT, 8);
+	loadTiles("egamond.bin", _mondainTiles, MONDAIN_TILES_COUNT, 16);
 }
 
 void Map::load(int mapNum) {
@@ -144,6 +165,11 @@ void Map::load(int mapNum) {
 		_mapHeight = OVERWORLD_HEIGHT;
 		_outsideMapTile = 0xff;
 		_tiles = _overworldTiles;
+
+	} else if (mapNum == MAP_MONDAIN) {
+		_mapWidth = MONDAIN_WIDTH;
+		_mapHeight = MONDAIN_HEIGHT;
+		_tiles = _mondainTiles;
 
 	} else {
 		_mapWidth = CITY_WIDTH;
@@ -160,6 +186,9 @@ void Map::load(int mapNum) {
 	if (mapNum == MAP_SPACE) {
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::SpaceLogic());
 		viewName = "SpaceMap";
+	} else if (mapNum == MAP_MONDAIN) {
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::MondainLogic());
+		viewName = "MondainMap";
 	} else if (mapNum >= 49) {
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::DungeonLogic());
 		viewName = "DungeonMap";
@@ -189,6 +218,12 @@ void Map::load(int mapNum) {
 	case MAPTYPE_DUNGEON:
 		_G(dungeon).generateDungeonLevel();
 		_mapRows.clear();		// Dungeon doesn't use this map
+		break;
+
+	case MAPTYPE_MONDAIN:
+		_mapRows.reserve(MONDAIN_HEIGHT);
+		for (int y = 0; y < MONDAIN_HEIGHT; ++y)
+			_mapRows.push_back(Row(this, &_mondainMap[y * OVERWORLD_WIDTH][0]));
 		break;
 
 	case MAPTYPE_SPACE:

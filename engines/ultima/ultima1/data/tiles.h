@@ -30,6 +30,7 @@ namespace Data {
 
 constexpr int OVERWORLD_TILES_COUNT = 52;
 constexpr int CITY_TILES_COUNT = 51;
+constexpr int MONDAIN_TILES_COUNT = 19;
 
 enum OverworldTileId {
 	TILE_OCEAN = 0,
