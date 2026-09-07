@@ -196,7 +196,20 @@ struct JournalData : public PuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('J', 'O', 'U', 'R'); }
 	virtual void synchronize(Common::Serializer &ser);
 
-	Common::HashMap<uint16, Common::Array<Entry>> journalEntries;
+	// From Nancy15 every protagonist keeps their own journal, so entries are
+	// always reached through the active player character's slot. Earlier games
+	// have a single character and only ever touch slot 0.
+	Common::Array<Entry> &entries(uint16 surfaceID);
+	bool hasEntries(uint16 surfaceID) const;
+
+	// Hands the journal of one character to another. Nancy15 seeds a Hardy
+	// boy's journal from his brother's the first time he is played.
+	void inheritEntries(uint from, uint to);
+
+	Common::HashMap<uint16, Common::Array<Entry>> journalEntries[kMaxPlayerCharacters];
+
+private:
+	static void syncOneJournal(Common::Serializer &ser, Common::HashMap<uint16, Common::Array<Entry>> &journal);
 };
 
 // Contains variables that can be read and modified through action records.
@@ -342,6 +355,14 @@ struct UIResourceData : public PuzzleData {
 	// Set true once seeded from UIRC, so a loaded save isn't re-seeded.
 	bool seeded = false;
 	Common::Array<int32> values;
+
+	// Nancy15+ gives every protagonist their own resources, seeded from their
+	// own UIRC. `values` holds the active character's; these are the others'.
+	// An empty entry means that character has never been played.
+	Common::Array<Common::Array<int32>> characterValues;
+
+	// Grows the array as needed
+	Common::Array<int32> &getCharacterValues(uint character);
 };
 
 // Nancy 10+ taskbar button-disable overrides, set by AR 29 (ControlUIItems).
@@ -375,14 +396,32 @@ struct TaskbarData : public PuzzleData {
 // Nancy15+ active player character (Nancy / Frank / Joe), selected by AR 134.
 // The whole popup UI is rebuilt from the character's own data files, so the
 // selection has to survive a save/load for the right UI to come back.
+// Every character also carries their own inventory: the active character's is
+// the live one inside Scene, while the other characters' are parked here.
 struct PlayerCharacterData : public PuzzleData {
+	struct Inventory {
+		bool isValid = false;			// False until the character has been played
+		int16 heldItem = -1;
+		Common::Array<byte> items;
+		Common::Array<byte> disabledItems;
+		Common::Array<int16> order;		// Display order of the inventory popup
+	};
+
 	PlayerCharacterData() {}
 	virtual ~PlayerCharacterData() {}
 
 	static constexpr uint32 getTag() { return MKTAG('P', 'C', 'H', 'R'); }
 	virtual void synchronize(Common::Serializer &ser);
 
+	// Grows the array as needed, so a character that has never been played
+	// still gets an (empty) inventory
+	Inventory &getInventory(uint character);
+
 	uint16 characterIndex = 0;
+	Common::Array<Inventory> inventories;
+	// The look each character wears, chosen on the Design Select screen.
+	// Empty means their PCUI default.
+	Common::String designs[kMaxPlayerCharacters];
 };
 
 // Nancy13+ WordFindPuzzle (AR 170). The puzzle is solved one word at a time across

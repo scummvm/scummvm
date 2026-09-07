@@ -72,12 +72,17 @@ void AddInventoryNoHS::execute() {
 
 void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_characterIndex = stream.readByte();
+	}
 }
 
 void RemoveInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
-		NancySceneState.removeItemFromInventory(_itemID, false);
-	}
+	uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+		g_nancy->getPlayerCharacter() : _characterIndex;
+
+	NancySceneState.removeItemFromCharacterInventory(characterIndex, _itemID);
 
 	_isDone = true;
 }

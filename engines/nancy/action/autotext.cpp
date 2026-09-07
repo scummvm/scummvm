@@ -105,7 +105,7 @@ void Autotext::execute() {
 		}
 
 		Common::String stringToPush;
-		auto &entriesForSurface = journalData->journalEntries[_surfaceID];
+		auto &entriesForSurface = journalData->entries(_surfaceID);
 		bool foundThisKey = false;
 		for (auto &entry : entriesForSurface) {
 			Common::String &stringID = entry.stringID;

@@ -41,13 +41,17 @@ protected:
 	Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
 };
 
-// Simply removes an item from the player's inventory.
+// Simply removes an item from a player character's inventory.
 class RemoveInventoryNoHS : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	uint _itemID;
+
+	// Nancy15+ names the character to take the item from; every earlier game
+	// has a single protagonist, so the item always leaves the active inventory
+	byte _characterIndex = kPlayerCharacterActive;
 
 protected:
 	Common::String getRecordTypeName() const override { return "RemoveInventoryNoHS"; }

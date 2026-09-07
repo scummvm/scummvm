@@ -141,8 +141,40 @@ void SimplePuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(solvedPuzzle);
 }
 
+// PCUI has room for more characters than any game actually ships, so the
+// active one is kept inside the journals we keep
+static uint activeJournalSlot() {
+	return MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1);
+}
+
+Common::Array<JournalData::Entry> &JournalData::entries(uint16 surfaceID) {
+	return journalEntries[activeJournalSlot()][surfaceID];
+}
+
+bool JournalData::hasEntries(uint16 surfaceID) const {
+	return journalEntries[activeJournalSlot()].contains(surfaceID);
+}
+
+void JournalData::inheritEntries(uint from, uint to) {
+	if (from < kMaxPlayerCharacters && to < kMaxPlayerCharacters) {
+		journalEntries[to] = journalEntries[from];
+	}
+}
+
 void JournalData::synchronize(Common::Serializer &ser) {
-	uint16 numEntries = journalEntries.size();
+	syncOneJournal(ser, journalEntries[0]);
+
+	// Nancy15+ protagonists each keep their own journal. Only their slots are
+	// written, so the save format of every earlier game is untouched.
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		for (uint i = 1; i < kMaxPlayerCharacters; ++i) {
+			syncOneJournal(ser, journalEntries[i]);
+		}
+	}
+}
+
+void JournalData::syncOneJournal(Common::Serializer &ser, Common::HashMap<uint16, Common::Array<Entry>> &journal) {
+	uint16 numEntries = journal.size();
 	ser.syncAsUint16LE(numEntries);
 
 	if (ser.isLoading()) {
@@ -151,7 +183,7 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			ser.syncAsUint16LE(id);
 			uint16 numStrings = 0;
 			ser.syncAsUint16LE(numStrings);
-			auto &entry = journalEntries[id];
+			auto &entry = journal[id];
 			for (uint j = 0; j < numStrings; ++j) {
 				entry.push_back(Entry());
 				ser.syncString(entry.back().stringID);
@@ -169,7 +201,7 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			}
 		}
 	} else {
-		for (auto &a : journalEntries) {
+		for (auto &a : journal) {
 			uint16 id = a._key;
 			ser.syncAsUint16LE(id);
 			uint16 numStrings = a._value.size();
@@ -466,6 +498,14 @@ void TimerData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+Common::Array<int32> &UIResourceData::getCharacterValues(uint character) {
+	if (character >= characterValues.size()) {
+		characterValues.resize(character + 1);
+	}
+
+	return characterValues[character];
+}
+
 void UIResourceData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(seeded);
 
@@ -477,6 +517,34 @@ void UIResourceData::synchronize(Common::Serializer &ser) {
 
 	for (uint16 i = 0; i < numValues; ++i) {
 		ser.syncAsSint32LE(values[i]);
+	}
+
+	// Only Nancy15 has more than one protagonist, so no earlier game's saves
+	// carry this block -- and the chunks are written back to back, so reading
+	// it where it was never written would desync the ones after
+	if (g_nancy->getGameType() < kGameTypeNancy15) {
+		return;
+	}
+
+	uint16 numCharacters = (uint16)characterValues.size();
+	ser.syncAsUint16LE(numCharacters);
+	if (ser.isLoading()) {
+		characterValues.clear();
+		characterValues.resize(numCharacters);
+	}
+
+	for (uint16 i = 0; i < numCharacters; ++i) {
+		Common::Array<int32> &characterSet = characterValues[i];
+
+		numValues = (uint16)characterSet.size();
+		ser.syncAsUint16LE(numValues);
+		if (ser.isLoading()) {
+			characterSet.resize(numValues);
+		}
+
+		for (uint16 j = 0; j < numValues; ++j) {
+			ser.syncAsSint32LE(characterSet[j]);
+		}
 	}
 }
 
@@ -499,8 +567,57 @@ void TaskbarData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+PlayerCharacterData::Inventory &PlayerCharacterData::getInventory(uint character) {
+	if (character >= inventories.size()) {
+		inventories.resize(character + 1);
+	}
+
+	return inventories[character];
+}
+
 void PlayerCharacterData::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(characterIndex);
+
+	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+		ser.syncString(designs[i]);
+	}
+
+	uint16 numInventories = inventories.size();
+	ser.syncAsUint16LE(numInventories);
+
+	if (ser.isLoading()) {
+		inventories.clear();
+		inventories.resize(numInventories);
+	}
+
+	for (uint i = 0; i < numInventories; ++i) {
+		Inventory &inventory = inventories[i];
+
+		ser.syncAsByte(inventory.isValid);
+		ser.syncAsSint16LE(inventory.heldItem);
+
+		uint16 numItems = inventory.items.size();
+		ser.syncAsUint16LE(numItems);
+		if (ser.isLoading()) {
+			inventory.items.resize(numItems);
+			inventory.disabledItems.resize(numItems);
+		}
+
+		uint16 orderSize = inventory.order.size();
+		ser.syncAsUint16LE(orderSize);
+		if (ser.isLoading()) {
+			inventory.order.resize(orderSize);
+		}
+
+		if (numItems) {
+			ser.syncArray(inventory.items.data(), numItems, Common::Serializer::Byte);
+			ser.syncArray(inventory.disabledItems.data(), numItems, Common::Serializer::Byte);
+		}
+
+		if (orderSize) {
+			ser.syncArray(inventory.order.data(), orderSize, Common::Serializer::Sint16LE);
+		}
+	}
 }
 
 void WordFindPuzzleData::synchronize(Common::Serializer &ser) {

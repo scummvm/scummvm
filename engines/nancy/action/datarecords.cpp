@@ -469,7 +469,7 @@ void ModifyListEntry::execute() {
 	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 	assert(journalData);
 
-	Common::Array<JournalData::Entry> &array = journalData->journalEntries[_surfaceID];
+	Common::Array<JournalData::Entry> &array = journalData->entries(_surfaceID);
 
 	JournalData::Entry *found = nullptr;
 	for (uint i = 0; i < array.size(); ++i) {

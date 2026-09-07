@@ -465,6 +465,42 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 	}
 }
 
+void Scene::removeItemFromCharacterInventory(uint characterIndex, int16 id) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		if (hasItem(id) == g_nancy->_true) {
+			removeItemFromInventory(id, false);
+		}
+
+		return;
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return;
+	}
+
+	// A character who hasn't been played yet owns nothing to take away
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+	if (!inventory.isValid) {
+		return;
+	}
+
+	if ((uint)id < inventory.items.size()) {
+		inventory.items[id] = g_nancy->_false;
+	}
+
+	for (uint i = 0; i < inventory.order.size(); ++i) {
+		if (inventory.order[i] == id) {
+			inventory.order.remove_at(i);
+			break;
+		}
+	}
+
+	if (inventory.heldItem == id) {
+		inventory.heldItem = -1;
+	}
+}
+
 void Scene::setHeldItem(int16 id) {
 	_flags.heldItem = id; g_nancy->_cursor->setCursorItemID(id);
 }
@@ -488,6 +524,43 @@ byte Scene::hasItem(int16 id) const {
 			  (uint)_flags.items.size());
 		return g_nancy->_false;
 	}
+}
+
+byte Scene::hasCharacterItem(uint characterIndex, int16 id) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		return hasItem(id);
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return g_nancy->_false;
+	}
+
+	const PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+	if (inventory.heldItem == id) {
+		return g_nancy->_true;
+	}
+
+	if (id >= 0 && (uint)id < inventory.items.size()) {
+		return inventory.items[id];
+	}
+
+	return g_nancy->_false;
+}
+
+int32 Scene::getCharacterUIResource(uint characterIndex, uint index) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		return getUIResource(index);
+	}
+
+	auto *resourceData = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
+	if (!resourceData) {
+		return 0;
+	}
+
+	// A character who hasn't been played yet has no resources of their own yet
+	const Common::Array<int32> &characterSet = resourceData->getCharacterValues(characterIndex);
+	return index < characterSet.size() ? characterSet[index] : 0;
 }
 
 void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID) {
@@ -888,7 +961,121 @@ bool Scene::changePlayerCharacter(uint characterIndex) {
 		return false;
 	}
 
+	// Each protagonist carries their own items and resources, so the outgoing
+	// character's are parked and the incoming character's are made live
+	storeCharacterInventory(previousCharacter);
+	storeCharacterResources(previousCharacter);
+	inheritBrotherProgress(characterIndex);
+	loadCharacterInventory(characterIndex);
+	loadCharacterResources(characterIndex);
+
 	return true;
+}
+
+void Scene::inheritBrotherProgress(uint characterIndex) {
+	if (characterIndex != kPlayerCharacterFrank && characterIndex != kPlayerCharacterJoe) {
+		return;
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	auto *journalData = (JournalData *)getPuzzleData(JournalData::getTag());
+	if (!playerChar || !journalData) {
+		return;
+	}
+
+	// The Hardy boys work the case as a team, so whichever brother is played
+	// second takes over the notes the other has already made instead of
+	// starting a fresh journal. Nancy always keeps her own. Their resources
+	// (the money they carry) pass over the same way; their items don't.
+	const uint brother = characterIndex == kPlayerCharacterFrank ? kPlayerCharacterJoe : kPlayerCharacterFrank;
+	if (!playerChar->getInventory(characterIndex).isValid && playerChar->getInventory(brother).isValid) {
+		journalData->inheritEntries(brother, characterIndex);
+
+		auto *resourceData = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
+		if (resourceData) {
+			resourceData->getCharacterValues(characterIndex) = resourceData->getCharacterValues(brother);
+		}
+	}
+}
+
+void Scene::storeCharacterInventory(uint characterIndex) {
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return;
+	}
+
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+	inventory.isValid = true;
+	inventory.heldItem = _flags.heldItem;
+	inventory.items = _flags.items;
+	inventory.disabledItems = _flags.disabledItems;
+	inventory.order = _inventoryBox.getOrder();
+}
+
+void Scene::loadCharacterInventory(uint characterIndex) {
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return;
+	}
+
+	const uint numItems = g_nancy->getStaticData().numItems;
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+
+	if (inventory.isValid) {
+		_flags.items = inventory.items;
+		_flags.disabledItems = inventory.disabledItems;
+		_inventoryBox.getOrder() = inventory.order;
+		setHeldItem(inventory.heldItem);
+	} else {
+		// A character that hasn't been played yet starts out empty-handed
+		_flags.items.clear();
+		_flags.disabledItems.clear();
+		_inventoryBox.getOrder().clear();
+		setHeldItem(-1);
+	}
+
+	_flags.items.resize(numItems, g_nancy->_false);
+	_flags.disabledItems.resize(numItems, 0);
+
+	if (_inventoryPopup.isOpen()) {
+		_inventoryPopup.refreshGrid();
+	}
+}
+
+void Scene::storeCharacterResources(uint characterIndex) {
+	auto *resourceData = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
+	if (!resourceData || !resourceData->seeded) {
+		return;
+	}
+
+	resourceData->getCharacterValues(characterIndex) = resourceData->values;
+}
+
+void Scene::loadCharacterResources(uint characterIndex) {
+	auto *resourceData = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
+	if (!resourceData) {
+		return;
+	}
+
+	Common::Array<int32> &characterSet = resourceData->getCharacterValues(characterIndex);
+	resourceData->values = characterSet;
+
+	// A character who hasn't been played yet starts from the resource values in
+	// their own UIRC, which the switch has just loaded
+	resourceData->seeded = !characterSet.empty();
+}
+
+void Scene::setPlayerCharacterDesign(uint characterIndex, const Common::String &designName) {
+	g_nancy->setPlayerCharacterDesign(characterIndex, designName);
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (playerChar && characterIndex < kMaxPlayerCharacters) {
+		playerChar->designs[characterIndex] = designName;
+	}
+
+	// The rebuild is left to onStateEnter(). The Design Select screen is a
+	// different state, and tearing the scene's widgets down from underneath it
+	// would draw them over that screen for a frame.
 }
 
 bool Scene::applyPlayerCharacter(uint characterIndex) {
@@ -1142,6 +1329,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 		if (g_nancy->getGameType() >= kGameTypeNancy15) {
 			auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
 			if (playerChar) {
+				for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+					g_nancy->setPlayerCharacterDesign(i, playerChar->designs[i]);
+				}
+
 				applyPlayerCharacter(playerChar->characterIndex);
 			}
 		}
