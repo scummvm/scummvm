@@ -34,8 +34,7 @@ constexpr int COLOR_HIGHLIGHT = 12; // light red - currently equipped/readied it
 constexpr int LINES_PER_PAGE = 26;
 
 bool ZStats::msgFocus(const FocusMessage &msg) {
-	g_engine->send("Commands", GameMessage("TEXT", "Press Space to continue: "));
-	g_engine->send("Commands", GameMessage("SHOW_CURSOR"));
+	g_engine->send("Commands", GameMessage("SPACE"));
 
 	buildLines();
 	_pageStart = 0;

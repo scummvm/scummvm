@@ -93,7 +93,9 @@ bool OverworldLogic::board() {
 
 	if (tileNum == Data::TILE_TIME_MACHINE) {
 		if (sg._redGems != 0 && sg._whiteGem != 0 && sg._blueGem != 0 && sg._greenGems != 0) {
-			_G(map).load(Data::MAP_MONDIAN);
+			// EnteringCraft shows its four instructional pages, then loads
+			// the Mondain map itself once the last one is dismissed
+			g_engine->addView("EnteringCraft");
 		} else {
 			g_engine->addView("OperateCraft");
 		}

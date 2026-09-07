@@ -58,8 +58,12 @@ bool Commands::msgGame(const GameMessage &msg) {
 		return true;
 	} else if (msg._name == "SHOW_CURSOR") {
 		showCursor();
+		return true;
 	} else if (msg._name == "PROMPT") {
 		prompt();
+		return true;
+	} else if (msg._name == "SPACE") {
+		space();
 		return true;
 	} else if (msg._name == "DELAY") {
 		delay(msg._value);
@@ -91,6 +95,12 @@ void Commands::showCursor() {
 void Commands::prompt() {
 	resetLine();
 	_surface.writeString("\x10");
+	showCursor();
+}
+
+void Commands::space() {
+	resetLine();
+	_surface.writeString("\x10Press Space to continue: ");
 	showCursor();
 }
 

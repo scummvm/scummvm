@@ -25,6 +25,7 @@
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima1/views/interactions/dead.h"
 #include "ultima/ultima1/views/interactions/drop.h"
+#include "ultima/ultima1/views/interactions/entering_craft.h"
 #include "ultima/ultima1/views/interactions/king.h"
 #include "ultima/ultima1/views/interactions/liftoff.h"
 #include "ultima/ultima1/views/interactions/merchant.h"
@@ -48,6 +49,7 @@ namespace Views {
 struct Views : public Shared::Views {
 	Interactions::Dead _dead;
 	Interactions::Drop _drop;
+	Interactions::EnteringCraft _enteringCraft;
 	Interactions::King _king;
 	Interactions::LiftOff _liftOff;
 	Interactions::Merchant _merchant;

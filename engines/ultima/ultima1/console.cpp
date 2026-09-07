@@ -20,20 +20,38 @@
  */
 
 #include "ultima/ultima1/console.h"
+#include "ultima/ultima1/ultima1.h"
+#include "ultima/ultima1/views/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
+	registerCmd("view", WRAP_METHOD(Console, cmdView));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
+bool Console::cmdView(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("view <view name>\n");
+		return true;
+	} else {
+		auto *view = g_engine->findView(argv[1]);
+
+		if (!view) {
+			debugPrintf("Unknown view name\n");
+			return true;
+		} else if (dynamic_cast<Views::Dialog *>(view)) {
+			g_engine->replaceView("Game", true);
+			g_engine->addView(argv[1]);
+			return false;
+		} else {
+			g_engine->replaceView(argv[1], true);
+			return false;
+		}
+	}
 }
 
 } // namespace Ultima1

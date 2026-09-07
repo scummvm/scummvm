@@ -44,6 +44,12 @@ private:
 	 */
 	void delay(uint milli);
 
+	void writeString(const Common::String &msg);
+	void resetLine();
+	void showCursor();
+	void prompt();
+	void space();
+
 public:
 	Commands(UIElement *parent);
 	~Commands() override {}
@@ -51,11 +57,6 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
-
-	void writeString(const Common::String &msg);
-	void resetLine();
-	void showCursor();
-	void prompt();
 };
 
 } // namespace Views
