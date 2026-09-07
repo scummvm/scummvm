@@ -324,7 +324,23 @@ void ValueTest::execute() {
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {
 	if (_flagsType == kEventFlags) {
-		_flags.readData(stream);
+		if (g_nancy->getGameType() >= kGameTypeNancy15) {
+			// Nancy15 writes only the flags it actually sets, preceded by their
+			// number, instead of a fixed block of 10 descriptions
+			uint16 numFlags = stream.readUint16LE();
+
+			for (uint i = 0; i < numFlags; ++i) {
+				int16 label = stream.readSint16LE();
+				uint16 flag = stream.readUint16LE();
+
+				if (i < ARRAYSIZE(_flags.descs)) {
+					_flags.descs[i].label = label;
+					_flags.descs[i].flag = flag;
+				}
+			}
+		} else {
+			_flags.readData(stream);
+		}
 	} else {
 		// Terse version only has 2 flags
 		_flags.descs[0].label = stream.readSint16LE();
