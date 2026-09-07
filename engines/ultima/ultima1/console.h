@@ -31,6 +31,7 @@ namespace Ultima1 {
 class Console : public GUI::Debugger {
 private:
 	bool cmdView(int argc, const char **argv);
+	bool cmdMap(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

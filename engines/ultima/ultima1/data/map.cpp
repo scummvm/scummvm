@@ -154,7 +154,11 @@ void Map::init() {
 	// Load tiles
 	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16);
 	loadTiles("egatown.bin", _cityTiles, CITY_TILES_COUNT, 8);
-	loadTiles("egamond.bin", _mondainTiles, MONDAIN_TILES_COUNT, 16);
+
+	// Tile 0 is a blank empty floor tile, followed by 19 tiles, and tile 20 is duplicated from egatiles.bin
+	_mondainTiles[0].create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+	loadTiles("egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16);
+	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
 }
 
 void Map::load(int mapNum) {
@@ -223,7 +227,7 @@ void Map::load(int mapNum) {
 	case MAPTYPE_MONDAIN:
 		_mapRows.reserve(MONDAIN_HEIGHT);
 		for (int y = 0; y < MONDAIN_HEIGHT; ++y)
-			_mapRows.push_back(Row(this, &_mondainMap[y * OVERWORLD_WIDTH][0]));
+			_mapRows.push_back(Row(this, &_mondainMap[y][0]));
 		break;
 
 	case MAPTYPE_SPACE:

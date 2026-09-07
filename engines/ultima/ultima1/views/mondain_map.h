@@ -36,7 +36,10 @@ public:
 	MondainMap() : Dialog("MondainMap") {}
 	~MondainMap() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Views

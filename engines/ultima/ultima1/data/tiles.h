@@ -89,6 +89,10 @@ enum LocationTileId {
 	CTILE_BLANK = 63
 };
 
+enum MondainTileId {
+	MTILE_PLAYER = 20
+};
+
 /**
  * Loads the overworld tile sheet (52 16x16 tiles, 4-bit EGA planar,
  * row-interleaved: each 16-pixel row is 4 planes x 2 bytes) into a

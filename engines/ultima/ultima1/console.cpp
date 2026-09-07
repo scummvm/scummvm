@@ -28,6 +28,7 @@ namespace Ultima1 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("view", WRAP_METHOD(Console, cmdView));
+	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 }
 
 Console::~Console() {
@@ -51,6 +52,18 @@ bool Console::cmdView(int argc, const char **argv) {
 			g_engine->replaceView(argv[1], true);
 			return false;
 		}
+	}
+}
+
+bool Console::cmdMap(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("map <map num>\n");
+		return true;
+	} else {
+		int mapNum = atoi(argv[1]);
+		_G(map).load(mapNum);
+		_G(logic)->entering();
+		return false;
 	}
 }
 

@@ -31,10 +31,54 @@ constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
 constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 
+
+bool MondainMap::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
+	delayFrames(1);
+	return UIElement::msgFocus(msg);
+}
+
+bool MondainMap::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return Dialog::msgUnfocus(msg);
+}
+
+bool MondainMap::tick() {
+	redraw();
+	return Dialog::tick();
+}
+
 void MondainMap::draw() {
+	auto &map = g_engine->_map;
+	const Graphics::ManagedSurface *tiles = map.tiles();
+	auto s = getSurface();
+	const auto &pos = _G(savegame)._locationPosition;
+
 	Dialog::draw();
 
-	// TODO
+	// Draw the visible map contents
+	for (int oy = 0; oy < Data::MONDAIN_HEIGHT; oy++) {
+		for (int ox = 0; ox < Data::MONDAIN_WIDTH; ox++) {
+			int tileId = _G(map).getTileAt(ox, oy);
+
+			const Graphics::ManagedSurface &tileImg = tiles[tileId];
+			s.blitFrom(tileImg, Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
+		}
+	}
+
+#if 0
+	// Draw any people in the location
+	for (const auto &entity : _G(savegame)._locationEntities) {
+		if (entity._type != -1) {
+			const Graphics::ManagedSurface &tileImg = tiles[entity._type];
+			s.blitFrom(tileImg, Common::Point(entity._position.x * TILE_WIDTH + 8, entity._position.y * TILE_HEIGHT + 8));
+		}
+	}
+#endif
+
+	// Draw the player
+	const Graphics::ManagedSurface &tileImg = tiles[Data::MTILE_PLAYER];
+	s.blitFrom(tileImg, Common::Point(pos.x * TILE_WIDTH + 8, pos.y * TILE_HEIGHT + 8));
 }
 
 } // namespace Views

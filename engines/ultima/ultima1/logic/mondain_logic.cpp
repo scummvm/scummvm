@@ -30,10 +30,11 @@ namespace Ultima1 {
 namespace Logic {
 
 MondainLogic::MondainLogic() {
+	_G(map)._mapType = Data::MAPTYPE_MONDAIN;
 }
 
 void MondainLogic::entering() {
-	// TODO
+	_G(savegame)._locationPosition = Common::Point(3, 4);
 }
 
 } // namespace Logic

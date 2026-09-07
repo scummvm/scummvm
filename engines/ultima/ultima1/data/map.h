@@ -115,7 +115,7 @@ private:
 	Common::Array<Row> _mapRows;			// Used for array operator getting map contents
 	Graphics::ManagedSurface _overworldTiles[OVERWORLD_TILES_COUNT];
 	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
-	Graphics::ManagedSurface _mondainTiles[MONDAIN_TILES_COUNT];
+	Graphics::ManagedSurface _mondainTiles[MONDAIN_TILES_COUNT + 2];
 
 	/**
 	 * Used to generate the dungeon.
