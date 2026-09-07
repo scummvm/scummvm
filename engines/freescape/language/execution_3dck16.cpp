@@ -75,6 +75,7 @@ void KitEngine::resetScripts() {
 void KitEngine::startScript(ScriptState &script) {
 	script.code = script.source;
 	script.ip = script.restart = 0;
+	script.resumeTick = 0;
 	script.loops.clear();
 	script.predicate = FCLPredicateState(true);
 	script.events = script.object ? script.object->flags & 0x38 : 0;
@@ -205,6 +206,10 @@ void KitEngine::updateScripts() {
 				_scriptQueueIndex++;
 				continue;
 			}
+			if (animator && script.running && int32(_scriptTicks - script.resumeTick) < 0) {
+				_scriptQueueIndex++;
+				continue;
+			}
 			if (!script.running)
 				startScript(script);
 			entry.resume = true;
@@ -218,7 +223,9 @@ void KitEngine::updateScripts() {
 			script.running = false;
 			if (animator)
 				object->flags |= 2;
-		} else if (!animator) {
+		} else if (animator) {
+			script.resumeTick = _scriptTicks + kFCLRedrawTicks;
+		} else {
 			_suspendedScripts.push_back(&script);
 		}
 		_scriptQueueIndex++;

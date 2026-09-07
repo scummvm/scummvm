@@ -23,6 +23,7 @@
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #include "freescape/freescape.h"
+#include "freescape/language/execution.h"
 #include "freescape/language/variables.h"
 #include "freescape/sweepAABB.h"
 
@@ -298,7 +299,7 @@ bool FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Redrawing screen");
-	uint32 delay = (100 / 15) + 1;
+	uint32 delay = kFCLRedrawTicks - 1; // waitInLoop includes its final tick.
 	if (isEclipse2() && _currentArea->getAreaID() == _startArea && _gameStateControl == kFreescapeGameStateStart)
 		delay = delay * 10;
 

@@ -127,6 +127,8 @@ void KitEngine::loadAssets() {
 		_palette[i] = (component << 2) | (component >> 4);
 	}
 	_border->setPalette(_palette, 0, 256);
+	// Preserve the full VGA palette during shared border processing.
+	_border->convertToInPlace(_gfx->_texturePixelFormat);
 	_gfx->_palette = _palette;
 	_gfx->_keyColor = 0;
 	_scriptSurface.create(_screenW, _screenH, _gfx->_texturePixelFormat);

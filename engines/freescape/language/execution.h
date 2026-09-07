@@ -26,6 +26,9 @@
 
 namespace Freescape {
 
+// Default redraw cadence in 50 Hz ticks.
+static const uint32 kFCLRedrawTicks = 8;
+
 enum FCLExecutionResult {
 	kFCLFinished,
 	kFCLYielded, // Resume this script after the other scripts in the frame.

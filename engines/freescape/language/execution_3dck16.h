@@ -36,6 +36,7 @@ struct FCLKit16Loop {
 struct FCLKit16ExecutionState : FCLExecutionFrame {
 	const FCLInstructionVector *source = nullptr;
 	uint32 restart = 0;
+	uint32 resumeTick = 0;
 	Common::HashMap<uint32, FCLKit16Loop> loops;
 	bool running = false;
 	FCLPredicateState predicate = FCLPredicateState(true);
