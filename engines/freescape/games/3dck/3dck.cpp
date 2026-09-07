@@ -332,6 +332,12 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 			colors->push_back(first);
 			colors->push_back(second);
 		}
+		if (GeometricObject::isPyramid(type)) {
+			// Kit stores opposite sides together; the renderer walks around the base.
+			const byte sides[] = {(*colors)[2], (*colors)[0], (*colors)[3], (*colors)[1]};
+			for (uint i = 0; i < ARRAYSIZE(sides); i++)
+				(*colors)[i] = sides[i];
+		}
 		int ordinateCount = GeometricObject::numberOfOrdinatesForType(type);
 		if (ordinateCount) {
 			requireBytes(payload, 2 * ordinateCount);
