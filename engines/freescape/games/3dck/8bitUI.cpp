@@ -46,6 +46,10 @@ void Kit8Engine::loadPresentation() {
 		loadPresentationZX();
 		return;
 	}
+	if (isC64()) {
+		loadPresentationC64();
+		return;
+	}
 	// Shade 0 is transparent; the CPC runner indexes these patterns with shade - 1.
 	static const byte patterns[15][4] = {
 		{0x00, 0x00, 0x00, 0x00},
@@ -89,6 +93,10 @@ void Kit8Engine::applyPalette() {
 		applyPaletteZX();
 		return;
 	}
+	if (isC64()) {
+		applyPaletteC64();
+		return;
+	}
 	_gfx->_fourColorBackground = kCPCInks[_palette[0]];
 	_gfx->_underFireBackgroundColor = kCPCInks[_palette[2]];
 	_gfx->_paperColor = kCPCInks[_palette[1]];
@@ -102,8 +110,8 @@ void Kit8Engine::printText(const Common::String &text, byte x, byte y, byte colo
 	if (!_textOutputEnabled || x >= _screenW / 8 || y >= _screenH / 8)
 		return;
 	Graphics::DosFont font;
-	byte foreground = isSpectrum() ? 1 : color & 3;
-	byte background = isSpectrum() ? 0 : ((color >> 3) & 1) | ((color >> 1) & 2);
+	byte foreground = isSpectrum() ? 1 : color & (isC64() ? 15 : 3);
+	byte background = isSpectrum() ? 0 : isC64() ? color >> 4 : ((color >> 3) & 1) | ((color >> 1) & 2);
 	for (uint i = 0; i < text.size() && x < _screenW / 8; i++, x++) {
 		byte chr = text[i];
 		if (isSpectrum())
@@ -145,14 +153,16 @@ void Kit8Engine::updateInstruments() {
 			Common::Rect bar(8 * x, 8 * y, 8 * (x + (type == 2 ? length : 1)), 8 * (y + (type == 3 ? length : 1)));
 			if (isSpectrum())
 				setAttributesZX(bar, color);
-			_scriptSurface.fillRect(bar, isSpectrum() ? 0 : (color >> 2) & 3);
+			_scriptSurface.fillRect(bar, isSpectrum() ? 0 : isC64() ? color >> 4 : (color >> 2) & 3);
 			int filled = MIN<int>(value, 8 * length);
+			if (isC64() && type == 2)
+				filled &= ~1;
 			if (type == 2)
 				bar.right = bar.left + filled;
 			else
 				bar.top = bar.bottom - filled;
 			if (!bar.isEmpty())
-				_scriptSurface.fillRect(bar, isSpectrum() ? 1 : color & 3);
+				_scriptSurface.fillRect(bar, isSpectrum() ? 1 : color & (isC64() ? 15 : 3));
 		}
 	}
 }
@@ -160,9 +170,9 @@ void Kit8Engine::updateInstruments() {
 void Kit8Engine::drawUI() {
 	uint32 colors[16];
 	bool flash = (g_system->getMillis() / 320) & 1;
-	for (uint i = 0; i < (isSpectrum() ? 16 : 4); i++) {
+	for (uint i = 0; i < (isSpectrum() || isC64() ? 16 : 4); i++) {
 		byte r, g, b;
-		if (isSpectrum())
+		if (isSpectrum() || isC64())
 			_gfx->readFromPalette(i, r, g, b);
 		else
 			_gfx->selectColorFromFourColorPalette(i, r, g, b);
@@ -173,6 +183,8 @@ void Kit8Engine::drawUI() {
 			byte pen = _scriptSurface.getPixel(x, y);
 			if (pen == 255)
 				pen = _borderSurface.getPixel(x, y);
+			if (isC64() && pen == 16)
+				pen = _palette[0];
 			if (isSpectrum() && pen != 255) {
 				byte attr = _attributes[(y / 8) * 32 + x / 8];
 				if ((attr & 128) && flash)

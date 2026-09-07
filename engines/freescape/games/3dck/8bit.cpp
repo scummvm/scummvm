@@ -52,7 +52,21 @@ void Kit8Engine::loadAssets() {
 	requireBytes(dataFile, 160);
 	uint32 signature = dataFile.readUint32BE();
 	uint32 dataOffset = 0;
-	if (isCPC() && signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) {
+	uint32 dataEnd = dataFile.size();
+	if (isC64()) {
+		dataFile.seek(0);
+		if (dataFile.readUint16LE() != 0x0400)
+			error("Invalid 3D Construction Kit C64 runner address");
+		// The compiled runner embeds its world at $4a00.
+		dataOffset = 2 + 0x4a00 - 0x0400;
+		if (dataOffset + 160 > dataEnd)
+			error("Truncated 3D Construction Kit C64 runner");
+		dataFile.seek(dataOffset + 4);
+		uint16 size = dataFile.readUint16LE();
+		if (size < 160 || dataOffset + size > dataEnd)
+			error("Invalid 3D Construction Kit C64 world size");
+		dataEnd = dataOffset + size;
+	} else if (isCPC() && signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) {
 		byte header[128];
 		dataFile.seek(0);
 		dataFile.read(header, sizeof(header));
@@ -63,11 +77,11 @@ void Kit8Engine::loadAssets() {
 			error("Invalid 3D Construction Kit AMSDOS header");
 		dataOffset = sizeof(header);
 	}
-	Common::SeekableSubReadStream file(&dataFile, dataOffset, dataFile.size());
+	Common::SeekableSubReadStream file(&dataFile, dataOffset, dataEnd);
 	requireBytes(file, 160);
 	signature = file.readUint32BE();
 	bool validSignature = isSpectrum() ? signature == MKTAG('K', 'I', 'T', 'S') :
-		signature == MKTAG('K', 'I', 'T', 'A') || signature == MKTAG('K', 'I', 'T', 'C');
+		signature == MKTAG('K', 'I', 'T', 'C') || (isCPC() && signature == MKTAG('K', 'I', 'T', 'A'));
 	if (!validSignature || file.readUint16LE() != file.size())
 		error("Unsupported 8-bit 3D Construction Kit data format");
 	uint16 procedures = file.readUint16LE();
@@ -92,6 +106,15 @@ void Kit8Engine::loadAssets() {
 	// Projection scales: 125 * 64 / (extent - 1), with a depth scale of 18.
 	int xScale = 8000 / (width - 1);
 	int yScale = 8000 / (height - 1);
+	if (isC64()) {
+		// C64 normalizes the projection scales to 64.
+		xScale = 64;
+		yScale = 64 * width / height;
+		if (yScale >= 64) {
+			xScale = 4096 / yScale;
+			yScale = 64;
+		}
+	}
 	if (xScale > 127 || yScale > 127)
 		error("Unsupported 8-bit 3D Construction Kit viewport size");
 	_fieldOfView = 2 * Math::rad2deg(atan(18.0f / xScale));
@@ -127,6 +150,9 @@ void Kit8Engine::loadAssets() {
 		Common::String text;
 		while (length--)
 			text += char(messageData.readByte());
+		// C64 message lengths include the editor's terminator.
+		if (isC64() && !text.empty() && byte(text.lastChar()) == 0xff)
+			text.deleteLastChar();
 		_kitMessages[id] = text;
 	}
 	Common::SeekableSubReadStream procedureData(&file, procedures, conditions);
@@ -195,7 +221,7 @@ Area *Kit8Engine::loadArea(Common::SeekableReadStream &file) {
 	AreaData &data = _areaData[id];
 	for (uint i = 0; i < 4; i++) {
 		data.palette[i] = file.readByte();
-		if (data.palette[i] > (isSpectrum() ? (i == 2 ? 1 : 7) : 26))
+		if (data.palette[i] > (isSpectrum() ? (i == 2 ? 1 : 7) : isC64() ? 15 : 26))
 			error("Invalid 8-bit 3D Construction Kit palette");
 	}
 	byte scale = file.readByte();

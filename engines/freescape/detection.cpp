@@ -1177,6 +1177,16 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"A Chance in Hell",
+		AD_ENTRY2s("3D1", "a3a5df3cf7ef4fec315e2eb18e00de26", 39938,
+			"3D4", "t:252c24449148d4ba4a176b14fed3f15d", 8002),
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERC64)
+	},
+	{
+		"3dkit",
 		"Ciudadela Fantasma",
 		AD_ENTRY2s("DATA.DAT", "284bd42e1ce459a9c97e30496d35803f", 6271,
 			"CIUDAD10.BIN", "ad9339f91dd579351f0a1a7b4d963c49", 25216),

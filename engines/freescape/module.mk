@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	games/3dck/3dck.o \
 	games/3dck/8bit.o \
 	games/3dck/8bitUI.o \
+	games/3dck/c64.o \
 	games/3dck/ui.o \
 	games/3dck/zx.o \
 	games/palettes.o \

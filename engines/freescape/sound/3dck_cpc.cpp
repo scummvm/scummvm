@@ -184,6 +184,10 @@ int KitCPCSound::readBuffer(int16 *buffer, int samples) {
 }
 
 void Kit8Engine::loadSounds() {
+	if (isC64()) {
+		warning("3D Construction Kit C64 sound effects are not implemented");
+		return;
+	}
 	if (isSpectrum()) {
 		loadSoundsZX();
 		return;

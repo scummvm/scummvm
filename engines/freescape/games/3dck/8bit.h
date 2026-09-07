@@ -71,11 +71,13 @@ private:
 	GeometricObject *loadGeometricObject(Common::SeekableReadStream &file, const byte header[9]);
 	void loadPresentation();
 	void loadPresentationZX();
+	void loadPresentationC64();
 	void loadSounds();
 	void loadSoundsZX();
 	void playPendingSound();
 	void applyPalette();
 	void applyPaletteZX();
+	void applyPaletteC64();
 	void setAttributesZX(const Common::Rect &rect, byte color);
 	void setMovementMode(byte mode);
 	void readSystemVariables();
