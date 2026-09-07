@@ -147,8 +147,8 @@ bool KitEngine::handleInput(const Common::Event &event) {
 				_kitVariables[15] = key;
 		}
 		if (event.customType == kActionShoot || event.customType == kActionActivate) {
-			if (!_scriptFrameActive)
-				interact(event.customType == kActionShoot);
+			if (!event.kbdRepeat)
+				_pendingInteractions |= event.customType == kActionShoot ? 1 : 2;
 			return true;
 		}
 		// Track held movement keys during DELAY; movement itself waits.
@@ -169,16 +169,51 @@ bool KitEngine::handleInput(const Common::Event &event) {
 		_kitVariables[16] |= event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2;
 		_kitVariables[17] = mouse.x;
 		_kitVariables[18] = mouse.y;
-		if (!_scriptFrameActive)
-			interact(event.type == Common::EVENT_LBUTTONDOWN);
+		if (_viewArea.contains(_crossairPosition))
+			_pendingInteractions |= event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2;
+		return true;
+	} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_hasFallen || _playerWasCrushed)
+			return true;
+		if (_shootMode)
+			_crossairPosition = getNormalizedPosition(event.mouse);
+		else {
+			// Relative mouse input keeps queued button events intact.
+			int y = _invertY ? -event.relMouse.y : event.relMouse.y;
+			rotate(event.relMouse.x * _mouseSensitivity, y * _mouseSensitivity, 0);
+		}
 		return true;
 	}
 	return false;
 }
 
+void KitEngine::updateInteractions() {
+	int buttons = g_system->getEventManager()->getButtonState();
+	bool shot = (buttons & Common::EventManager::LBUTTON) || _eventManager->isActionActive(kActionShoot);
+	bool activated = (buttons & Common::EventManager::RBUTTON) || _eventManager->isActionActive(kActionActivate);
+	if (_shootCooldown)
+		_shootCooldown--;
+	if (_activateCooldown)
+		_activateCooldown--;
+
+	// The DOS runner uses bit 3 to require a button release between shots.
+	if (!_shootCooldown && ((_pendingInteractions & 1) || (shot && !(_kitVariables[20] & 8)))) {
+		_pendingInteractions &= ~1;
+		interact(true);
+	}
+	if (!_activateCooldown && ((_pendingInteractions & 2) || activated)) {
+		_pendingInteractions &= ~2;
+		interact(false);
+	}
+}
+
 void KitEngine::interact(bool shot) {
 	if (!_viewArea.contains(_crossairPosition) || (shot && !(_kitVariables[20] & 1)))
 		return;
+	if (shot)
+		_shootCooldown = 2;
+	else
+		_activateCooldown = 2;
 	float x = 2.0f * (_crossairPosition.x - _viewArea.left) / _viewArea.width() - 1;
 	float y = 1 - 2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height();
 	float projection = tan(Math::deg2rad(_fieldOfView) / 2);

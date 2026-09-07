@@ -35,6 +35,7 @@ void KitEngine::resetScripts() {
 	_lastScriptTick = _ticks;
 	_scriptFrameActive = _scriptDelayed = false;
 	_initialScriptPending = _initialCondition != 0;
+	_pendingInteractions = _shootCooldown = _activateCooldown = 0;
 	_scriptQueue.clear();
 	_suspendedScripts.clear();
 	_scriptSurface.fillRect(_fullscreenViewArea, 0);
@@ -799,18 +800,6 @@ bool KitEngine::moveAnimation(ScriptState &script, Math::Vector3d movement, bool
 	}
 	_areaMap[script.area]->getSortedObjects().clear();
 	return unobstructed;
-}
-
-void KitEngine::updatePlayerMovement(float deltaTime) {
-	if (_scriptFrameActive)
-		return;
-	float height = _position.y();
-	FreescapeEngine::updatePlayerMovement(deltaTime);
-	if (_hasFallen) {
-		_kitVariables[10] += MAX<int>(0, height - _position.y() - _maxFallingDistance);
-		_hasFallen = false;
-		_avoidRenderingFrames = 0;
-	}
 }
 
 } // namespace Freescape

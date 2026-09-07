@@ -416,6 +416,7 @@ void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->_scale = _currentArea->getScale();
 	_gotoExecuted = true;
 	_delayedShootObject = nullptr;
+	_pendingInteractions = 0;
 	_timerTicks = 0;
 	_scriptSurface.fillRect(_viewArea, 0);
 	resetInput();
@@ -427,6 +428,47 @@ void KitEngine::checkIfStillInArea() {
 	float limit = 8192.0f / _currentArea->getScale();
 	_position.x() = CLIP(_position.x(), 0.0f, limit);
 	_position.z() = CLIP(_position.z(), 0.0f, limit);
+}
+
+void KitEngine::updatePlayerMovement(float deltaTime) {
+	if (_scriptFrameActive || _initialScriptPending)
+		return;
+	updateInteractions();
+	if (!_eventManager->isActionActive(kActionMoveUp))
+		_moveForward = false;
+	if (!_eventManager->isActionActive(kActionMoveDown))
+		_moveBackward = false;
+	if (!_eventManager->isActionActive(kActionMoveLeft))
+		_strafeLeft = false;
+	if (!_eventManager->isActionActive(kActionMoveRight))
+		_strafeRight = false;
+
+	Math::Vector3d front = _flyMode ? _cameraFront : directionToVector(0, _yaw, false);
+	Math::Vector3d movement;
+	if (_moveForward)
+		movement += front;
+	if (_moveBackward)
+		movement -= front;
+	if (_strafeLeft)
+		movement += _cameraRight;
+	if (_strafeRight)
+		movement -= _cameraRight;
+	if (movement.length() == 0)
+		return;
+	movement.normalize();
+
+	// The runner advances one full step per completed script frame.
+	float height = _position.y();
+	resolveCollisions(_position + movement * _playerSteps[_playerStepIndex]);
+	checkIfStillInArea();
+	_lastPosition = _position;
+	_gotoExecuted = false;
+	clearGameBit(31);
+	if (_hasFallen) {
+		_kitVariables[10] += MAX<int>(0, height - _position.y() - _maxFallingDistance);
+		_hasFallen = false;
+		_avoidRenderingFrames = 0;
+	}
 }
 
 bool KitEngine::checkIfGameEnded() {

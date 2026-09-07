@@ -141,6 +141,7 @@ private:
 	void collectObjects(uint16 area, uint16 id, Common::Array<uint16> &objects);
 	void setObjectStatus(uint16 area, uint16 id, Token::Type operation);
 	bool moveAnimation(ScriptState &script, Math::Vector3d movement, bool absolute);
+	void updateInteractions();
 	void interact(bool shot);
 	void printMessage(uint16 indicator, const Common::String &message);
 	void updateIndicators();
@@ -161,6 +162,7 @@ private:
 	bool _timerTriggered = false, _initialScriptPending = false;
 	bool _scriptFrameActive = false, _scriptDelayed = false;
 	bool _soundWarning = false;
+	byte _pendingInteractions = 0, _shootCooldown = 0, _activateCooldown = 0;
 	uint _scriptQueueIndex = 0;
 	Common::Array<ScriptEntry> _scriptQueue;
 	Common::Array<ScriptState *> _suspendedScripts;
