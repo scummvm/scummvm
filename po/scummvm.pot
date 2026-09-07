@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-09-06 11:39+0000\n"
+"POT-Creation-Date: 2026-09-07 05:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5977,7 +5977,7 @@ msgid "Climb"
 msgstr ""
 
 #: engines/access/metaengine.cpp:375 engines/bbvs/metaengine.cpp:142
-#: engines/freescape/games/castle/castle.cpp:576
+#: engines/freescape/games/castle/castle.cpp:577
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
@@ -6617,7 +6617,7 @@ msgid "Whether textures should be linearly filtered"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:98 engines/cine/metaengine.cpp:347
-#: engines/freescape/games/castle/castle.cpp:593
+#: engines/freescape/games/castle/castle.cpp:594
 msgid "Activate"
 msgstr ""
 
@@ -7048,9 +7048,9 @@ msgstr ""
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/dgds/metaengine.cpp:75 engines/dm/metaengine.cpp:120
 #: engines/drascula/metaengine.cpp:285 engines/efh/metaengine.cpp:272
-#: engines/freescape/games/castle/castle.cpp:538
+#: engines/freescape/games/castle/castle.cpp:539
 #: engines/freescape/games/dark/dark.cpp:231
-#: engines/freescape/games/driller/driller.cpp:120
+#: engines/freescape/games/driller/driller.cpp:121
 #: engines/freescape/games/eclipse/eclipse.cpp:337
 #: engines/hopkins/metaengine.cpp:238 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
@@ -7076,9 +7076,9 @@ msgstr ""
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
 #: engines/dgds/metaengine.cpp:74 engines/drascula/metaengine.cpp:260
 #: engines/efh/metaengine.cpp:279 engines/efh/metaengine.cpp:613
-#: engines/freescape/games/castle/castle.cpp:543
+#: engines/freescape/games/castle/castle.cpp:544
 #: engines/freescape/games/dark/dark.cpp:236
-#: engines/freescape/games/driller/driller.cpp:125
+#: engines/freescape/games/driller/driller.cpp:126
 #: engines/freescape/games/eclipse/eclipse.cpp:342
 #: engines/hopkins/metaengine.cpp:244 engines/made/metaengine.cpp:198
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -7126,9 +7126,9 @@ msgstr ""
 #: engines/bladerunner/metaengine.cpp:375 engines/cruise/metaengine.cpp:229
 #: engines/darkseed/metaengine.cpp:60 engines/dragons/metaengine.cpp:223
 #: engines/efh/metaengine.cpp:373 engines/efh/metaengine.cpp:619
-#: engines/freescape/games/castle/castle.cpp:551
+#: engines/freescape/games/castle/castle.cpp:552
 #: engines/freescape/games/dark/dark.cpp:241
-#: engines/freescape/games/driller/driller.cpp:130
+#: engines/freescape/games/driller/driller.cpp:131
 #: engines/freescape/games/eclipse/eclipse.cpp:347
 #: engines/mads/metaengine.cpp:339 engines/phoenixvr/metaengine.cpp:89
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
@@ -7539,11 +7539,11 @@ msgstr ""
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/colony/metaengine.cpp:56 engines/freescape/metaengine.cpp:107
+#: engines/colony/metaengine.cpp:56 engines/freescape/metaengine.cpp:109
 msgid "Invert Y-axis on mouse"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:57 engines/freescape/metaengine.cpp:108
+#: engines/colony/metaengine.cpp:57 engines/freescape/metaengine.cpp:110
 msgid "Use alternative camera controls"
 msgstr ""
 
@@ -7564,17 +7564,17 @@ msgid "Strafe right"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:138
-#: engines/freescape/games/castle/castle.cpp:561
+#: engines/freescape/games/castle/castle.cpp:562
 #: engines/freescape/games/dark/dark.cpp:257
-#: engines/freescape/games/driller/driller.cpp:144
+#: engines/freescape/games/driller/driller.cpp:145
 #: engines/freescape/games/eclipse/eclipse.cpp:360
 msgid "Rotate left"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:143
-#: engines/freescape/games/castle/castle.cpp:566
+#: engines/freescape/games/castle/castle.cpp:567
 #: engines/freescape/games/dark/dark.cpp:262
-#: engines/freescape/games/driller/driller.cpp:149
+#: engines/freescape/games/driller/driller.cpp:150
 #: engines/freescape/games/eclipse/eclipse.cpp:365
 msgid "Rotate right"
 msgstr ""
@@ -7584,7 +7584,7 @@ msgid "Look behind"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:163
-#: engines/freescape/games/castle/castle.cpp:588
+#: engines/freescape/games/castle/castle.cpp:589
 #: engines/freescape/games/eclipse/eclipse.cpp:403
 msgid "Face forward"
 msgstr ""
@@ -8253,7 +8253,7 @@ msgstr ""
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
-#: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:571
+#: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:572
 #: engines/grim/grim.cpp:501 engines/grim/grim.cpp:596
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197 engines/ultima/ultima8/metaengine.cpp:56
@@ -8345,103 +8345,103 @@ msgstr ""
 msgid "Fool's Errand keymappings"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:41
+#: engines/freescape/metaengine.cpp:43
 msgid "Prerecorded sounds"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:44
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:52
+#: engines/freescape/metaengine.cpp:54
 msgid "Extended timer"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:55
 msgid "Start the game timer at 99:59:59"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:63
+#: engines/freescape/metaengine.cpp:65
 msgid "Automatic drilling"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:66
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:74
+#: engines/freescape/metaengine.cpp:76
 msgid "Disable demo mode"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:75
+#: engines/freescape/metaengine.cpp:77
 msgid "Never activate demo mode"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:85
+#: engines/freescape/metaengine.cpp:87
 msgid "Disable sensors"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:86
+#: engines/freescape/metaengine.cpp:88
 msgid "Sensors will not shoot the player"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:96
+#: engines/freescape/metaengine.cpp:98
 msgid "Disable falling"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:97
+#: engines/freescape/metaengine.cpp:99
 msgid "Player cannot fall over edges"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:118
+#: engines/freescape/metaengine.cpp:120
 msgid "Authentic graphics"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:119
+#: engines/freescape/metaengine.cpp:121
 msgid "Keep graphics as close as possible to the original"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:129
+#: engines/freescape/metaengine.cpp:131
 msgid "Enable rock travel"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:130
+#: engines/freescape/metaengine.cpp:132
 msgid "Enable traveling using a rock shoot at start"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:140
+#: engines/freescape/metaengine.cpp:142
 msgid "Smoother movement"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:141
+#: engines/freescape/metaengine.cpp:143
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
 #. I18N: Use modern FPS-style controls: WASD for movement, Shift to run
-#: engines/freescape/metaengine.cpp:152
+#: engines/freescape/metaengine.cpp:154
 msgid "WASD controls"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:153
+#: engines/freescape/metaengine.cpp:155
 msgid "Use WASD keys for movement and Shift to run"
 msgstr ""
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
-#: engines/freescape/metaengine.cpp:164
+#: engines/freescape/metaengine.cpp:166
 msgid "Backported music from C64 releases (AdLib)"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:165
+#: engines/freescape/metaengine.cpp:167
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
 
 #. I18N: Enable background music using AY chip emulation
-#: engines/freescape/metaengine.cpp:176
+#: engines/freescape/metaengine.cpp:178
 msgid "Backported music from C64 releases"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:177
+#: engines/freescape/metaengine.cpp:179
 msgid "Enable background music ported from the C64 version"
 msgstr ""
 
@@ -8476,72 +8476,76 @@ msgstr ""
 msgid "Toggle red/blue 3D"
 msgstr ""
 
-#: engines/freescape/games/castle/castle.cpp:528
+#: engines/freescape/games/castle/castle.cpp:529
 msgid "Select prince"
 msgstr ""
 
-#: engines/freescape/games/castle/castle.cpp:533
+#: engines/freescape/games/castle/castle.cpp:534
 msgid "Select princess"
 msgstr ""
 
-#: engines/freescape/games/castle/castle.cpp:556
+#: engines/freescape/games/castle/castle.cpp:557
+msgid "Toggle music/sound effects"
+msgstr ""
+
+#: engines/freescape/games/castle/castle.cpp:557
 #: engines/freescape/games/dark/dark.cpp:251
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/driller/driller.cpp:139
 #: engines/freescape/games/eclipse/eclipse.cpp:355
 #: engines/hugo/metaengine.cpp:154
 msgid "Toggle sound"
 msgstr ""
 
-#: engines/freescape/games/castle/castle.cpp:582
+#: engines/freescape/games/castle/castle.cpp:583
 msgid "Crawl"
 msgstr ""
 
-#: engines/freescape/games/castle/castle.cpp:599
+#: engines/freescape/games/castle/castle.cpp:600
 msgid "Run (hold)"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:267
-#: engines/freescape/games/driller/driller.cpp:183
+#: engines/freescape/games/driller/driller.cpp:184
 #: engines/ultima/ultima8/metaengine.cpp:97
 msgid "Roll left"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:272
-#: engines/freescape/games/driller/driller.cpp:188
+#: engines/freescape/games/driller/driller.cpp:189
 #: engines/ultima/ultima8/metaengine.cpp:98
 msgid "Roll right"
 msgstr ""
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:278
-#: engines/freescape/games/driller/driller.cpp:155
+#: engines/freescape/games/driller/driller.cpp:156
 msgid "Increase turn angle"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:283
-#: engines/freescape/games/driller/driller.cpp:160
+#: engines/freescape/games/driller/driller.cpp:161
 msgid "Decrease turn angle"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:289
-#: engines/freescape/games/driller/driller.cpp:166
+#: engines/freescape/games/driller/driller.cpp:167
 msgid "Increase step size"
 msgstr ""
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:295
-#: engines/freescape/games/driller/driller.cpp:172
+#: engines/freescape/games/driller/driller.cpp:173
 msgid "Decrease step size"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:300
-#: engines/freescape/games/driller/driller.cpp:177
+#: engines/freescape/games/driller/driller.cpp:178
 msgid "Rise / Fly up"
 msgstr ""
 
 #: engines/freescape/games/dark/dark.cpp:306
-#: engines/freescape/games/driller/driller.cpp:193
+#: engines/freescape/games/driller/driller.cpp:194
 msgid "Lower / Fly down"
 msgstr ""
 
@@ -8550,12 +8554,12 @@ msgid "Enable / Disable jetpack"
 msgstr ""
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:200
+#: engines/freescape/games/driller/driller.cpp:201
 msgid "Deploy drilling rig"
 msgstr ""
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:207
+#: engines/freescape/games/driller/driller.cpp:208
 msgid "Collect drilling rig"
 msgstr ""
 
