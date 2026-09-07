@@ -34,6 +34,7 @@ public:
 	void loadAssets() override;
 	void initGameState() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
+	Math::Vector3d clipPosition(const Math::Vector3d &position) const override;
 	void checkIfStillInArea() override;
 	bool checkIfGameEnded() override { return false; }
 	void borderScreen() override {}

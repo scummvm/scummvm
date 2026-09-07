@@ -31,6 +31,7 @@ namespace Freescape {
 
 void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
 	Common::Action *act;
+	const bool isKit = Common::String(_gameDescription->gameId) == "3dkit";
 
 	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
 	act->setCustomEngineActionEvent(kActionMoveUp);
@@ -93,9 +94,18 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act = new Common::Action("SKIP", _("Skip"));
 	act->setCustomEngineActionEvent(kActionSkip);
 	act->addDefaultInputMapping("SPACE");
-	act->addDefaultInputMapping("RETURN");
+	if (!isKit)
+		act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
+
+	if (isKit) {
+		act = new Common::Action("RETURN", _("Return"));
+		act->setKeyEvent(Common::KeyState(Common::KEYCODE_RETURN, 13));
+		act->addDefaultInputMapping("RETURN");
+		act->addDefaultInputMapping("KP_ENTER");
+		engineKeyMap->addAction(act);
+	}
 
 	// I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
 	act = new Common::Action("SWITCH", _("Change mode"));
@@ -597,12 +607,13 @@ void FreescapeEngine::updatePlayerMovementSmooth(float deltaTime) {
 		clearGameBit(31);
 }
 
-void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
+void FreescapeEngine::resolveCollisions(Math::Vector3d position) {
 	if (_noClipMode) {
 		_position = position;
 		return;
 	}
 
+	position = clipPosition(position);
 	Math::Vector3d newPosition = position;
 	Math::Vector3d lastPosition = _lastPosition;
 
@@ -653,6 +664,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	Math::Vector3d fallStart = newPosition;   // current standing point
 	Math::Vector3d fallEnd   = fallStart;     // copy for downward probe
 	fallEnd.y() = -8192;                      // probe way down below
+	fallEnd = clipPosition(fallEnd);
 	newPosition = _currentArea->resolveCollisions(fallStart, fallEnd, _playerHeight);
 	int fallen = _lastPosition.y() - newPosition.y();
 

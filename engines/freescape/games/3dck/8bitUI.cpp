@@ -169,6 +169,8 @@ void Kit8Engine::drawUI() {
 bool Kit8Engine::handleInput(const Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 		byte key = event.kbd.ascii < 128 ? event.kbd.ascii : 255;
+		if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+			key = 13;
 		if (key >= 'a' && key <= 'z')
 			key -= 'a' - 'A';
 		if (event.type == Common::EVENT_KEYDOWN)
@@ -177,18 +179,24 @@ bool Kit8Engine::handleInput(const Common::Event &event) {
 			_currentKey = 255;
 		if (!_scriptFrameActive)
 			_kitVariables[121] = _currentKey;
-	} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+	} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+		if (event.customType == kActionSkip || event.customType == kActionInfoMenu) {
+			byte key = event.customType == kActionSkip ? ' ' : 'I';
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
+				_currentKey = key;
+			else if (_currentKey == key)
+				_currentKey = 255;
+			if (!_scriptFrameActive)
+				_kitVariables[121] = _currentKey;
+			return true;
+		}
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END)
+			return false;
 		switch (event.customType) {
 		case kActionShoot:
 		case kActionActivate:
 			if (!_scriptFrameActive)
 				interact(event.customType == kActionShoot);
-			return true;
-		case kActionSkip:
-			_kitVariables[121] = ' ';
-			return true;
-		case kActionInfoMenu:
-			_kitVariables[121] = 'I';
 			return true;
 		case kActionEscape:
 		case kActionChangeMode:

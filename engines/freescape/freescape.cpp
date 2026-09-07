@@ -749,7 +749,8 @@ void FreescapeEngine::drawFrame() {
 
 	drawBackground();
 	if (_avoidRenderingFrames == 0) { // Avoid rendering inside objects
-		_currentArea->draw(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, fov, aspectRatio, _nearClipPlane, farClipPlane);
+		if (_currentArea->hasDrawableObjects())
+			_currentArea->draw(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, fov, aspectRatio, _nearClipPlane, farClipPlane);
 		if (_gameStateControl == kFreescapeGameStatePlaying &&
 		    _currentArea->hasActiveGroups() && _ticks % 50 == 0) {
 			executeMovementConditions();
@@ -822,7 +823,7 @@ void FreescapeEngine::drawFrameStereo(int farClipPlane) {
 	_gfx->positionCamera(renderPosition, renderPosition + _cameraFront, _roll);
 
 	drawBackground();
-	if (_avoidRenderingFrames == 0)
+	if (_avoidRenderingFrames == 0 && _currentArea->hasDrawableObjects())
 		_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, Area::kRenderDepthBackground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
 
 	for (int pass = 0; pass < 2; pass++) {
@@ -832,7 +833,7 @@ void FreescapeEngine::drawFrameStereo(int farClipPlane) {
 
 		_gfx->clearDepthBuffer();
 
-		if (_avoidRenderingFrames == 0) // Avoid rendering inside objects
+		if (_avoidRenderingFrames == 0 && _currentArea->hasDrawableObjects()) // Avoid rendering inside objects
 			_currentArea->drawDepthLayer(_gfx, _ticks / 10, renderPosition, _cameraFront, _roll, false, Area::kRenderDepthForeground, stereoForegroundDistance, fov, aspectRatio, _nearClipPlane, farClipPlane);
 
 		if (_underFireFrames > 0) {

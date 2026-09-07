@@ -372,11 +372,17 @@ void Kit8Engine::setMovementMode(byte mode) {
 	_lastPosition = _position;
 }
 
-void Kit8Engine::checkIfStillInArea() {
+Math::Vector3d Kit8Engine::clipPosition(const Math::Vector3d &position) const {
 	float scale = _currentArea->getScale();
-	_position.x() = CLIP(_position.x(), 0.0f, 4063.5f / scale);
-	_position.y() = CLIP(_position.y(), 0.0f, 2015.5f / scale);
-	_position.z() = CLIP(_position.z(), 0.0f, 4063.5f / scale);
+	// Walking bounds apply to the feet, before restoring the eye height.
+	float height = _flyMode ? 0 : _playerHeight;
+	return Math::Vector3d(CLIP(position.x(), 0.0f, 4063.5f / scale),
+		CLIP(position.y() - height, 0.0f, 2015.5f / scale) + height,
+		CLIP(position.z(), 0.0f, 4063.5f / scale));
+}
+
+void Kit8Engine::checkIfStillInArea() {
+	_position = clipPosition(_position);
 }
 
 void Kit8Engine::updatePlayerMovement(float deltaTime) {

@@ -406,6 +406,7 @@ public:
 	void updatePlayerMovementSmooth(float deltaTime);
 	void updatePlayerMovementClassic(float deltaTime);
 	void resolveCollisions(Math::Vector3d newPosition);
+	virtual Math::Vector3d clipPosition(const Math::Vector3d &position) const { return position; }
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
 	void increaseStepSize();

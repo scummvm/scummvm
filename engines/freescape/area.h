@@ -85,6 +85,7 @@ public:
 	void resetArea();
 	void resetAreaGroups();
 	bool isOutside();
+	bool hasDrawableObjects() const { return !_drawableObjects.empty(); }
 	bool hasActiveGroups();
 
 	Common::Array<Common::String> _conditionSources;
