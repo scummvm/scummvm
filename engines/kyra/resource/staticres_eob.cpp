@@ -452,7 +452,7 @@ void EoBCoreEngine::initStaticResource() {
 	_dscItemPosIndex = _staticres->loadRawData(kEoBBaseDscItemPosIndex, temp);
 	_dscItemShpX = (const int16 *)_staticres->loadRawDataBe16(kEoBBaseDscItemShpX, temp);
 	_dscItemScaleIndex = _staticres->loadRawData(kEoBBaseDscItemScaleIndex, temp);
-	_dscItemTileIndex = _staticres->loadRawData(kEoBBaseDscItemTileIndex, temp);
+	_dscItemTileIndex = (const int8 *)_staticres->loadRawData(kEoBBaseDscItemTileIndex, temp);
 	_dscItemShapeMap = _staticres->loadRawData(kEoBBaseDscItemShapeMap, temp);
 
 	_bookNumbers = _staticres->loadStrings(kEoBBaseBookNumbers, temp);

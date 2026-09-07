@@ -705,7 +705,7 @@ protected:
 	const uint8 *_dscItemPosIndex;
 	const int16 *_dscItemShpX;
 	const uint8 *_dscItemScaleIndex;
-	const uint8 *_dscItemTileIndex;
+	const int8 *_dscItemTileIndex;
 	const uint8 *_dscItemShapeMap;
 
 	const uint8 *_dscDoorScaleMult1;
