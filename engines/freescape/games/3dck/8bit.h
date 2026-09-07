@@ -104,6 +104,7 @@ private:
 	byte _colorPatterns[15][4] = {};
 	byte _instruments[8][6] = {};
 	byte _textColor = 7, _movementMode = 1;
+	bool _textOutputEnabled = false;
 	byte _climbHeight = 0, _fallHeight = 0, _walkSpeed = 0, _activationRange = 0;
 	byte _shotObject = 0, _hitObject = 0, _activatedObject = 0;
 	bool _fallen = false, _crushed = false, _crossVisible = true;

@@ -20,6 +20,7 @@
  */
 
 #include "common/algorithm.h"
+#include "common/endian.h"
 #include "common/substream.h"
 #include "math/utils.h"
 
@@ -43,11 +44,27 @@ Kit8Engine::Kit8Engine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 }
 
 void Kit8Engine::loadAssets() {
-	Common::File file;
-	if (!file.open(_gameDescription->filesDescriptions[0].fileName))
+	Common::File dataFile;
+	if (!dataFile.open(_gameDescription->filesDescriptions[0].fileName))
 		error("Unable to open 8-bit 3D Construction Kit data");
+	requireBytes(dataFile, 160);
+	uint32 signature = dataFile.readUint32BE();
+	uint32 dataOffset = 0;
+	if (signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) {
+		byte header[128];
+		dataFile.seek(0);
+		dataFile.read(header, sizeof(header));
+		uint16 checksum = 0;
+		for (uint i = 0; i < 67; i++)
+			checksum += header[i];
+		if (checksum != READ_LE_UINT16(header + 67) || READ_LE_UINT24(header + 64) != dataFile.size() - sizeof(header))
+			error("Invalid 3D Construction Kit AMSDOS header");
+		dataOffset = sizeof(header);
+	}
+	Common::SeekableSubReadStream file(&dataFile, dataOffset, dataFile.size());
 	requireBytes(file, 160);
-	if (file.readUint32BE() != MKTAG('K', 'I', 'T', 'C') || file.readUint16LE() != file.size())
+	signature = file.readUint32BE();
+	if ((signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) || file.readUint16LE() != file.size())
 		error("Unsupported 8-bit 3D Construction Kit data format");
 	uint16 procedures = file.readUint16LE();
 	uint16 conditions = file.readUint16LE();
@@ -126,8 +143,11 @@ void Kit8Engine::loadAssets() {
 		if (entry._key == 255)
 			continue;
 		for (byte id : _areaData[entry._key].globals) {
-			if (!_areaMap.contains(255) || !_areaMap[255]->objectWithID(id) || entry._value->objectWithID(id))
-				error("Invalid 8-bit 3D Construction Kit global object %u", id);
+			// The CPC runner ignores references to absent globals.
+			if (!_areaMap.contains(255) || !_areaMap[255]->objectWithID(id))
+				continue;
+			if (entry._value->objectWithID(id))
+				error("Duplicate 8-bit 3D Construction Kit global object %u", id);
 			entry._value->addObjectFromArea(id, _areaMap[255]);
 		}
 	}
@@ -186,6 +206,12 @@ Area *Kit8Engine::loadArea(Common::SeekableReadStream &file) {
 		byte type = header[0] & 0x0f;
 		byte objectID = header[7];
 		byte size = header[8];
+		if (id == 255 && !objectID && !size) {
+			// Ciudadela Fantasma ends its globals with an unused, incomplete record.
+			warning("Ignoring incomplete 8-bit 3D Construction Kit global object");
+			file.seek(conditions);
+			break;
+		}
 		if (size < 9 || start + size > conditions)
 			error("Invalid 8-bit 3D Construction Kit object size");
 		if (objectID == 255) {
@@ -249,6 +275,15 @@ GeometricObject *Kit8Engine::loadGeometricObject(Common::SeekableReadStream &fil
 		colors->push_back(color & 15);
 		colors->push_back(color >> 4);
 	}
+	if (type == kCubeType) {
+		// CPC Kit stores the positive X face first.
+		SWAP((*colors)[0], (*colors)[1]);
+	} else if (GeometricObject::isPyramid(type)) {
+		// Kit stores opposite sides together; the renderer walks around the base.
+		const byte sides[] = {(*colors)[2], (*colors)[0], (*colors)[3], (*colors)[1]};
+		for (uint i = 0; i < ARRAYSIZE(sides); i++)
+			(*colors)[i] = sides[i];
+	}
 	Common::Array<float> *ordinates = nullptr;
 	if (ordinateCount) {
 		static const byte pyramidAxes[3][2] = {{1, 2}, {0, 2}, {0, 1}};
@@ -304,6 +339,8 @@ void Kit8Engine::gotoArea(uint16 areaID, int entranceID) {
 	memcpy(_palette, data.palette, sizeof(_palette));
 	for (byte id : data.globals) {
 		Object *object = _currentArea->objectWithID(id);
+		if (!object)
+			continue;
 		object->restore();
 		object->makeVisible();
 	}

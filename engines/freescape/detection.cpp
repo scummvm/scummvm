@@ -1167,6 +1167,16 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"Ciudadela Fantasma",
+		AD_ENTRY2s("DATA.DAT", "284bd42e1ce459a9c97e30496d35803f", 6271,
+			"CIUDAD10.BIN", "ad9339f91dd579351f0a1a7b4d963c49", 25216),
+		Common::ES_ESP,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERCPC)
+	},
+	{
+		"3dkit",
 		"Cube",
 		AD_ENTRY1s("CUBE.RUN", "3b7930be0f646b98885cfb70c26c89a2", 66138),
 		Common::EN_ANY,

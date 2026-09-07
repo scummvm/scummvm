@@ -29,7 +29,6 @@ void Kit8Engine::resetScripts() {
 	memset(_kitVariables, 0, sizeof(_kitVariables));
 	_changedVariables = 0;
 	_currentKey = 255;
-	_textColor = 7;
 	_kitVariables[121] = _kitVariables[125] = 255;
 	_kitVariables[127] = 0x9c;
 	_script = ScriptState();
@@ -137,6 +136,8 @@ void Kit8Engine::updateScripts() {
 	uint budget = 4096;
 	while (budget) {
 		if (_script.stack.empty()) {
+			// The CPC runner enables text after its first initialization condition.
+			_textOutputEnabled = true;
 			if (_conditionIndex == _activeConditions->size()) {
 				if (!_globalPhase)
 					break;

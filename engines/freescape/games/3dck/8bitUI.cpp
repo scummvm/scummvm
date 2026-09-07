@@ -33,12 +33,14 @@ static const byte kCPCInks[27] = {
 };
 
 void Kit8Engine::loadPresentation() {
+	// Shade 0 is transparent; the CPC runner indexes these patterns with shade - 1.
 	static const byte patterns[15][4] = {
+		{0x00, 0x00, 0x00, 0x00},
 		{0x0f, 0x0f, 0x0f, 0x0f}, {0xf0, 0xf0, 0xf0, 0xf0}, {0xff, 0xff, 0xff, 0xff},
 		{0x0a, 0x05, 0x0a, 0x05}, {0xa0, 0x50, 0xa0, 0x50}, {0xaa, 0x55, 0xaa, 0x55},
 		{0xa5, 0x5a, 0xa5, 0x5a}, {0xaf, 0x5f, 0xaf, 0x5f}, {0xfa, 0xf5, 0xfa, 0xf5},
 		{0x02, 0x08, 0x02, 0x08}, {0x20, 0x80, 0x20, 0x80}, {0x22, 0x88, 0x22, 0x88},
-		{0x2d, 0x87, 0x2d, 0x87}, {0x2f, 0x8f, 0x2f, 0x8f}, {0xff, 0x66, 0x66, 0xff}
+		{0x2d, 0x87, 0x2d, 0x87}, {0x2f, 0x8f, 0x2f, 0x8f}
 	};
 	memcpy(_colorPatterns, patterns, sizeof(_colorPatterns));
 	_colorMap.resize(ARRAYSIZE(_colorPatterns));
@@ -67,7 +69,8 @@ void Kit8Engine::loadPresentation() {
 	}
 	_borderSurface.fillRect(_viewArea, 255);
 	// A saved editor data file omits the runner's font and border.
-	if (file.open("DISC.BIN") && file.size() == 25216) {
+	const char *runner = _gameDescription->filesDescriptions[1].fileName;
+	if (file.open(runner ? runner : "DISC.BIN") && file.size() == 25216) {
 		byte header[128];
 		file.read(header, sizeof(header));
 		if (READ_LE_UINT16(header + 21) == 0x3e00 && READ_LE_UINT16(header + 24) == 25088) {
@@ -88,7 +91,7 @@ void Kit8Engine::applyPalette() {
 }
 
 void Kit8Engine::printText(const Common::String &text, byte x, byte y, byte color) {
-	if (x >= 40 || y >= 25)
+	if (!_textOutputEnabled || x >= 40 || y >= 25)
 		return;
 	Graphics::DosFont font;
 	byte background = ((color >> 3) & 1) | ((color >> 1) & 2);
