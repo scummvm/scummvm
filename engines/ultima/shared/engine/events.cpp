@@ -60,7 +60,8 @@ void Events::runGame(Views &views) {
 				_views.clear();
 				break;
 			} else {
-				processEvent(e);
+				if (processEvent(e))
+					break;
 			}
 		}
 
@@ -79,7 +80,7 @@ void Events::runGame(Views &views) {
 	delete _screen;
 }
 
-void Events::processEvent(Common::Event &ev) {
+bool Events::processEvent(Common::Event &ev) {
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
 		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
@@ -100,10 +101,12 @@ void Events::processEvent(Common::Event &ev) {
 		break;
 	case Common::EVENT_MOUSEMOVE:
 		msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
-		break;
+		return false;
 	default:
-		break;
+		return false;
 	}
+
+	return true;
 }
 
 void Events::replaceView(UIElement *ui, bool replaceAllViews) {
@@ -198,6 +201,11 @@ void Events::addKeypress(const Common::KeyCode kc) {
 
 void Events::pauseMillis(uint millis) {
 	g_system->delayMillis(millis);
+}
+
+void Events::updateScreen() {
+	_screen->update();
+
 }
 
 /*------------------------------------------------------------------------*/

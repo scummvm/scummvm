@@ -299,8 +299,10 @@ private:
 protected:
 	/**
 	 * Process an event
+	 * @param ev		Event to process
+	 * @returns			True if no further events should be handled this game frame
 	 */
-	void processEvent(Common::Event &ev);
+	bool processEvent(Common::Event &ev);
 
 	/**
 	 * Returns true if the game should quit
@@ -446,6 +448,11 @@ public:
 	 * entire event loop and screen updates.
 	 */
 	void pauseMillis(uint millis = 10);
+
+	/**
+	 * Updates the screen
+	 */
+	void updateScreen();
 };
 
 extern Events *g_events;

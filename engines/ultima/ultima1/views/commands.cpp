@@ -28,6 +28,7 @@ namespace Ultima1 {
 namespace Views {
 
 constexpr int COLOR_TEXT = 11;      // light cyan - normal values
+constexpr int NEWLINE_DELAY = 50;	// Delay after a newline
 
 Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
 }
@@ -60,6 +61,9 @@ bool Commands::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "PROMPT") {
 		prompt();
 		return true;
+	} else if (msg._name == "DELAY") {
+		delay(msg._value);
+		return true;
 	}
 
 	return false;
@@ -68,6 +72,10 @@ bool Commands::msgGame(const GameMessage &msg) {
 void Commands::writeString(const Common::String &msg) {
 	_textCursor.hide();
 	_surface.writeString(msg);
+
+	if (msg.contains('\n')) {
+		delay(NEWLINE_DELAY);
+	}
 }
 
 void Commands::resetLine() {
@@ -84,6 +92,11 @@ void Commands::prompt() {
 	resetLine();
 	_surface.writeString("\x10");
 	showCursor();
+}
+
+void Commands::delay(uint milli) {
+	g_engine->updateScreen();
+	g_engine->pauseMillis(NEWLINE_DELAY);
 }
 
 } // namespace Views

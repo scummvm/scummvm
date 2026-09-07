@@ -36,6 +36,14 @@ private:
 	Shared::Gfx::GfxSurface _surface;
 	Gfx::TextCursor _textCursor;
 
+	/**
+	 * Ensures the commands view is updated on-screen, and then delays for a set amount.
+	 * This is useful for ensuring text isn't scrolled too quickly off screen when there's
+	 * more lines than can fit within a single turn
+	 * @param milli		Delay amount in milliseconds
+	 */
+	void delay(uint milli);
+
 public:
 	Commands(UIElement *parent);
 	~Commands() override {}
