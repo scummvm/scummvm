@@ -27,6 +27,7 @@
 #include "ultima/ultima1/logic/dungeon_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
 #include "ultima/ultima1/logic/pillar_logic.h"
+#include "ultima/ultima1/logic/space_logic.h"
 #include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/ultima1.h"
 
@@ -162,6 +163,9 @@ void Map::load(int mapNum) {
 	} else if (mapNum == MAP_OVERWORLD) {
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
 		viewName = "OverworldMap";
+	} else if (mapNum == MAP_SPACE) {
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::SpaceLogic());
+		viewName = "SpaceMap";
 	} else {
 		if (mapNum < 33)
 			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityLogic());
@@ -185,6 +189,10 @@ void Map::load(int mapNum) {
 	case MAPTYPE_DUNGEON:
 		_G(dungeon).generateDungeonLevel();
 		_mapRows.clear();		// Dungeon doesn't use this map
+		break;
+
+	case MAPTYPE_SPACE:
+		_mapRows.clear();		// Outer space doesn't use this map
 		break;
 
 	default:

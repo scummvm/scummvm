@@ -47,7 +47,8 @@ constexpr int LOCATION_COUNT = 84;
 
 enum {
 	MAP_OVERWORLD = 0,
-	MAP_CITY1 = 1
+	MAP_SPACE = 90,
+	MAP_MONDIAN = 91
 };
 
 enum Direction {
@@ -58,7 +59,8 @@ enum MapType {
 	MAPTYPE_OVERWORLD = 0,
 	MAPTYPE_CITY = 1,
 	MAPTYPE_CASTLE = 2,
-	MAPTYPE_DUNGEON = 3
+	MAPTYPE_DUNGEON = 3,
+	MAPTYPE_SPACE = 4
 };
 
 typedef Common::Array< Common::Array<byte> > MapTiles;

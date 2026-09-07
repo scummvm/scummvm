@@ -70,6 +70,9 @@ void Dialog::draw() {
 
 bool Dialog::tick() {
 	g_engine->findView("Game")->tick();
+	if (_G(logic))
+		_G(logic)->tick();
+
 	return Shared::Gfx::View::tick();
 }
 

@@ -119,6 +119,11 @@ public:
 	virtual void keypress(Common::KeyCode keycode);
 	virtual void entering() {
 	}
+
+	/**
+	 * Called once per game frame for any logic updates
+	 */
+	virtual void tick() {}
 };
 
 } // namespace Logic
