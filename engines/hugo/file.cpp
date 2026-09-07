@@ -318,7 +318,6 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 		return false;
 	}
 
-	// Write version.  We can't restore from obsolete versions
 	out->writeByte(kSavegameVersion);
 
 	if (savegameDescription == "") {
@@ -415,9 +414,8 @@ bool FileManager::restoreGame(const int16 slot) {
 	// Initialize new-game status
 	_vm->initStatus();
 
-	// Check version, can't restore from different versions
 	int saveVersion = in->readByte();
-	if (saveVersion != kSavegameVersion) {
+	if (saveVersion < kSavegameVersionMin || saveVersion > kSavegameVersion) {
 		warning("Savegame of incompatible version");
 		delete in;
 		return false;
@@ -462,7 +460,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	for (int i = 0; i < _vm->_numStates; i++)
 		_vm->_screenStates[i] = in->readByte();
 
-	_vm->_scheduler->restoreSchedulerData(in);
+	_vm->_scheduler->restoreSchedulerData(in, saveVersion);
 
 	// Restore palette and change it if necessary
 	_vm->_screen->restorePal(in);
