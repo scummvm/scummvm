@@ -97,6 +97,8 @@ private:
 	};
 
 	void loadWorld(Common::SeekableReadStream &file);
+	void loadSounds(Common::SeekableReadStream &file);
+	void playPendingSound();
 	Area *loadArea(Common::SeekableReadStream &file);
 	Object *loadObject(Common::SeekableReadStream &file, ObjectData &data);
 	Common::Array<ConditionData> loadConditions(Common::SeekableReadStream &file);
@@ -161,7 +163,7 @@ private:
 	int _lastScriptTick = 0;
 	bool _timerTriggered = false, _initialScriptPending = false;
 	bool _scriptFrameActive = false, _scriptDelayed = false;
-	bool _soundWarning = false;
+	int _pendingSound = -1;
 	byte _pendingInteractions = 0, _shootCooldown = 0, _activateCooldown = 0;
 	uint _scriptQueueIndex = 0;
 	Common::Array<ScriptEntry> _scriptQueue;

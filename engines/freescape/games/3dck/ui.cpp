@@ -107,6 +107,8 @@ void KitEngine::drawUI() {
 	drawFullscreenSurface(_scriptSurface.surfacePtr());
 	_gfx->setViewport(_fullscreenViewArea);
 	_gfx->renderCrossair(_crossairPosition);
+	if (!_scriptFrameActive)
+		playPendingSound();
 }
 
 bool KitEngine::handleInput(const Common::Event &event) {
@@ -224,6 +226,8 @@ void KitEngine::interact(bool shot) {
 		_kitVariables[21]++;
 		if (_kitVariables[20] & 2)
 			_shootingFrames = 3;
+		if (_kitVariables[20] & 4)
+			_pendingSound = 4;
 	}
 	if (!object || !object->isGeometric())
 		return;

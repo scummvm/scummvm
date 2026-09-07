@@ -27,6 +27,8 @@
 namespace Freescape {
 
 void KitEngine::resetScripts() {
+	stopAllSounds();
+	_pendingSound = -1;
 	// V255 survives ENDGAME, as in the original runner.
 	memset(_kitVariables, 0, 255 * sizeof(_kitVariables[0]));
 	_changedVariables = 0;
@@ -398,6 +400,7 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 			break;
 		case Token::REDRAW:
 			_scriptSurface.fillRect(_viewArea, 0);
+			playPendingSound();
 			return animator ? kFCLYielded : kFCLPaused;
 		case Token::LOOP:
 			executeLoop(instruction, script);
@@ -731,10 +734,11 @@ void KitEngine::executeMove(const FCLInstruction &instruction, ScriptState &scri
 }
 
 void KitEngine::executeSound(const FCLInstruction &instruction) {
-	if (!_soundWarning) {
-		warning("3D Construction Kit sound playback is not implemented");
-		_soundWarning = true;
-	}
+	uint16 index = getVariableOrConstant(instruction._source, instruction._sourceType);
+	if (instruction.getType() == Token::SYNCSND)
+		_pendingSound = index == 0xffff ? -1 : index;
+	else if (_sound)
+		_sound->playSound(index, Sound::kTypeNormal);
 }
 
 bool KitEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) {

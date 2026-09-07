@@ -133,6 +133,9 @@ void KitEngine::loadAssets() {
 	_gfx->_keyColor = 0;
 	_scriptSurface.create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	_scriptSurface.fillRect(_fullscreenViewArea, 0);
+	uint16 soundSize = readBlockSize(file);
+	Common::SeekableSubReadStream sounds(&file, file.pos(), file.pos() + soundSize);
+	loadSounds(sounds);
 }
 
 void KitEngine::loadWorld(Common::SeekableReadStream &file) {
@@ -472,9 +475,18 @@ void KitEngine::updatePlayerMovement(float deltaTime) {
 	float height = _position.y();
 	resolveCollisions(_position + movement * _playerSteps[_playerStepIndex]);
 	checkIfStillInArea();
+	bool blocked = (_position - _lastPosition).length() < 1;
 	_lastPosition = _position;
 	_gotoExecuted = false;
 	clearGameBit(31);
+	if (_hasFallen)
+		_pendingSound = 7;
+	else if (!_flyMode && _position.y() > height)
+		_pendingSound = 5;
+	else if (!_flyMode && _position.y() < height)
+		_pendingSound = 6;
+	else if (blocked)
+		_pendingSound = 2;
 	if (_hasFallen) {
 		_kitVariables[10] += MAX<int>(0, height - _position.y() - _maxFallingDistance);
 		_hasFallen = false;

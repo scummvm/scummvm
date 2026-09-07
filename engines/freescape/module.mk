@@ -78,6 +78,8 @@ MODULE_OBJS := \
 	sound/amiga.o \
 	sound/atari.o \
 	sound/common.o \
+	sound/3dck.o \
+	sound/3dck_adlib.o \
 	sound/cpc.o \
 	sound/dos.o \
 	sound/fx.o \
