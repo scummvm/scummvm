@@ -165,6 +165,7 @@ enum NancyState {
 	kBoot, kLogo, kCredits, kMap,
 	kMainMenu, kLoadSave, kSetup,
 	kHelp, kScene, kSaveDialog,
+	kDesignSelect,	// Nancy15 only
 
 	// Not real states
 	kNone,

@@ -60,6 +60,8 @@ private:
 	Common::Array<Common::ScopedPtr<UI::Toggle>> _toggles;
 	Common::Array<Common::ScopedPtr<UI::Scrollbar>> _scrollbars;
 	Common::ScopedPtr<UI::Button> _exitButton;
+	// Nancy15 only: opens the Design Select screen
+	Common::ScopedPtr<UI::Button> _designSelectButton;
 
 	const SET *_setupData = nullptr;
 };

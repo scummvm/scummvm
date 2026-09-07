@@ -267,6 +267,8 @@ struct SET : public EngineData {
 	Common::Array<Common::Rect> _buttonDests;
 	Common::Array<Common::Rect> _buttonDownSrcs;
 	Common::Rect _doneButtonHighlightSrc;
+	// Nancy15's extra (Design Select) button has a highlight of its own
+	Common::Rect _extraButtonHighlightSrc;
 	Common::Array<Common::Rect> _scrollbarSrcs;
 
 	Common::Array<uint16> _scrollbarsCenterYPos;

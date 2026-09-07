@@ -479,11 +479,39 @@ SET::SET(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	}
 
 	readRectArray(*chunkStream, _scrollbarBounds, 3);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// Nancy15 added a button to the setup screen. Nothing in the chunk says
+		// how many there are, so take the count from the space left over once
+		// everything that follows them is accounted for: the Done button's
+		// highlight (16), three scrollbar sources (48), the scrollbars' centre
+		// positions (18) and three menu sound descriptions (141).
+		static const int32 kBytesAfterButtons = 16 + 48 + 18 + 141;
+		static const int32 kBytesPerButton = 2 * 16;	// one dest and one source
+
+		// The extra button brings a second highlight source with it
+		const int32 remaining = (int32)chunkStream->size() - (int32)chunkStream->pos() - kBytesAfterButtons - 16;
+		if (remaining >= kBytesPerButton) {
+			numButtons = remaining / kBytesPerButton;
+
+			if (remaining % kBytesPerButton > 1) {
+				warning("SET chunk has %d bytes left over after %u buttons, the setup screen may be misread",
+					remaining % kBytesPerButton, numButtons);
+			}
+		} else {
+			warning("Unexpected SET chunk size %d, the setup screen will be misread", (int)chunkStream->size());
+		}
+	}
+
 	readRectArray(*chunkStream, _buttonDests, numButtons);
 	readRectArray(*chunkStream, _buttonDownSrcs, numButtons);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy2) {
 		readRect(*chunkStream, _doneButtonHighlightSrc);
+	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		readRect(*chunkStream, _extraButtonHighlightSrc);
 	}
 
 	readRectArray(*chunkStream, _scrollbarSrcs, 3);
