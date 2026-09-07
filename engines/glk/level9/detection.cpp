@@ -800,7 +800,7 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		// Check if it's a valid Level 9 game
 		byte *startFile = &data[0];
 		Scanner scanner;
-		int offset = scanner.scanner(&data[0], fileSize) < 0;
+		int offset = scanner.scanner(&data[0], fileSize);
 		if (offset < 0)
 			continue;
 
