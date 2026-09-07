@@ -447,6 +447,11 @@ void Kit8Engine::executeCall(const FCLInstruction &instruction, ScriptState &scr
 }
 
 void Kit8Engine::executeColour(const FCLInstruction &instruction) {
+	if (isSpectrum() && instruction._source >= 3) {
+		// The Spectrum runner routes selectors 3 and above to the hardware border.
+		_palette[3] = instruction._destination & 7;
+		return;
+	}
 	uint index = instruction._source & 3;
 	_palette[index] = isSpectrum() ? instruction._destination & (index == 2 ? 1 : 7) : MIN<int>(26, instruction._destination);
 	applyPalette();
