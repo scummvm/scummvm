@@ -35,6 +35,55 @@ MondainLogic::MondainLogic() {
 
 void MondainLogic::entering() {
 	_G(savegame)._locationPosition = Common::Point(3, 4);
+	_G(savegame)._mondainPos = Common::Point(15, 4);
+}
+
+bool MondainLogic::move(Data::Direction dir) {
+	// TODO
+	return true;
+}
+
+void MondainLogic::updateCreatures() {
+	// TODO
+}
+
+bool MondainLogic::get() {
+	return true;
+}
+
+bool MondainLogic::inform() {
+	if (_G(savegame)._gemDestroyedFlag) {
+		writeString("Inform and Search\n");
+		writeString("Mondain's magical aura doth\n");
+		writeString("seem substantially diminished\n");
+		writeString("in the absence of the gem.\n");
+	} else {
+		writeString("Inform and Search...it looks\n");
+		writeString("as if he is creating the evil\n");
+		writeString("gem!\n");
+	}
+
+	return true;
+}
+
+bool MondainLogic::quit() {
+	writeString("Quit...is not allowed!\n");
+	playFX(1);
+	return true;
+}
+
+bool MondainLogic::steal() {
+	writeString("Steal...he's watching,\n");
+	writeString("That would be foolish!\n");
+	playFX(1);
+	return true;
+}
+
+bool MondainLogic::transact() {
+	writeString("Transact...Mondain will\n");
+	writeString("not negotiate!\n");
+	playFX(1);
+	return true;
 }
 
 } // namespace Logic

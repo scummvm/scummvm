@@ -106,6 +106,7 @@ protected:
 	virtual bool ready();
 	virtual bool steal();
 	virtual bool transact();
+	virtual bool xit();
 	virtual bool zstats();
 	virtual bool move(Data::Direction dir) = 0;
 	virtual bool pass();

@@ -31,15 +31,18 @@ namespace Logic {
 
 class MondainLogic : public Logic {
 protected:
-	bool move(Data::Direction dir) override {
-		return true;
-	}
+	bool move(Data::Direction dir) override;
 
 	/**
 	 * Handles updating creatures/NPCs
 	 */
-	void updateCreatures() override {
-	}
+	void updateCreatures() override;
+
+	bool get() override;
+	bool inform() override;
+	bool quit() override;
+	bool steal() override;
+	bool transact() override;
 
 public:
 	MondainLogic();

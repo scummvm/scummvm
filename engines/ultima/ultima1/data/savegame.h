@@ -192,6 +192,9 @@ public:
 	uint8 _dungeonDirection = 4;
 	uint16 _dungeonExitHitPoints = 0;
 
+	bool _gemDestroyedFlag = false;
+	Common::Point _mondainPos;
+
 	/**
 	 * Synchronize savegame data
 	*/
