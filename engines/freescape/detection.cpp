@@ -1230,6 +1230,24 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"Christmas Tree Demo",
+		AD_ENTRY1s("CHRISTMA.RUN", "106b8f0dd0384d3138a8f0f62caef392", 69910),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
+		"Desert Maze",
+		AD_ENTRY1s("DESMAZE.RUN", "5cfab15e53d77029bdb02c87acae3186", 99212),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
 		"Desert Sands v1.3",
 		AD_ENTRY1s("SANDS.RUN", "de4f0391d43ce48b0bb6f589dfe470f5", 73964),
 		Common::EN_ANY,
@@ -1248,12 +1266,30 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"Easy? or Not?",
+		AD_ENTRY1s("EASY.RUN", "28e4c38ff4d06443433a02f857069fa4", 93108),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
 		"Eerie Estates",
 		AD_ENTRY1s("EERIE.RUN", "5455621ccac85393579aa71670d9d9d8", 105314),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"3dkit",
+		"Funnyrace",
+		AD_ENTRY1s("FUNRACE.RUN", "a8643c6eb251802a9e27612d417592be", 99098),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
 	},
 	{
 		"3dkit",
@@ -1302,6 +1338,15 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"Mountain Adventure",
+		AD_ENTRY1s("MOUNTAIN.RUN", "ec3bb57fe23b1a6785e870af1baa74d7", 129106),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
 		"Rubber Room v1.0",
 		AD_ENTRY1s("RUBROOM.RUN", "81b31463957a2951fd356010bdaba520", 71830),
 		Common::EN_ANY,
@@ -1317,6 +1362,15 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"3dkit",
+		"Tunnel Adventure",
+		AD_ENTRY1s("TUNNEL.RUN", "414738d92decdfee028fa0d04679c23d", 98918),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
 	},
 	{
 		"3dkit",

@@ -30,6 +30,7 @@ namespace Freescape {
 
 enum {
 	kKitAnimatorType = 16,
+	kKitDisabledType = 0x7f,
 	kKitInitiallyInvisible = 0x04,
 	kKitMovable = 0x80
 };
@@ -178,7 +179,8 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	_angleRotationIndex = 0;
 
 	file.skip(2);
-	uint32 indicatorOffset = 2 * file.readUint16BE();
+	// DOS word offsets wrap at 64 KiB.
+	uint32 indicatorOffset = uint16(2 * file.readUint16BE());
 	uint16 indicatorCount = file.readUint16BE();
 	_initialCondition = file.readUint16BE();
 	if (indicatorOffset > uint32(file.size()) || (!indicatorOffset && indicatorCount))
@@ -195,10 +197,14 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	requireBytes(file, uint32(areaCount) * 4);
 	Common::Array<uint32> areaOffsets;
 	for (uint i = 0; i < areaCount; i++) {
-		uint32 offset = file.readUint32BE();
-		if (offset >= areasEnd / 2)
+		uint32 offset = uint16(2 * file.readUint32BE());
+		if (indicatorCount && offset >= indicatorOffset && offset < indicatorOffset + 2 * _indicatorData.size()) {
+			warning("Ignoring stale 3D Construction Kit area offset %u into indicator data", offset);
+			continue;
+		}
+		if (offset >= areasEnd)
 			error("Invalid 3D Construction Kit area offset");
-		areaOffsets.push_back(2 * offset);
+		areaOffsets.push_back(offset);
 	}
 	Common::sort(areaOffsets.begin(), areaOffsets.end());
 	if (areaOffsets.empty() || globalConditions < uint32(file.pos()) ||
@@ -266,6 +272,8 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	for (uint i = 0; i < objectCount; i++) {
 		ObjectData record;
 		Object *obj = loadObject(objectData, record);
+		if (record.type == kKitDisabledType)
+			continue;
 		if (data.objects.contains(record.id))
 			error("Duplicate 3D Construction Kit object %u in area %u", record.id, id);
 		data.objects[record.id] = record;
@@ -280,12 +288,9 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 			error("Duplicate 3D Construction Kit object %u", obj->getObjectID());
 		(*map)[obj->getObjectID()] = obj;
 	}
-	if (objectData.pos() != objectData.size())
-		error("Invalid 3D Construction Kit object count");
+	// Unused records can remain between the counted objects and conditions.
 	file.seek(conditions);
 	data.conditions = loadConditions(file);
-	if (file.pos() != file.size())
-		error("Invalid 3D Construction Kit area condition size");
 	debugC(1, kFreescapeDebugParser, "3DCK area %u: %u objects, %u conditions", id, objectCount, data.conditions.size());
 
 	Area *area = new Area(id, flags, objects, entrances, false);
@@ -315,6 +320,10 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 		error("Invalid 3D Construction Kit object size");
 	requireBytes(file, 2 * (words - 10));
 	uint32 end = file.pos() + 2 * (words - 10);
+	if (data.type == kKitDisabledType) {
+		file.seek(end);
+		return nullptr;
+	}
 	Common::SeekableSubReadStream payload(&file, file.pos(), end);
 	if (data.type > kKitAnimatorType)
 		error("Unsupported 3D Construction Kit object %u (type %u)", data.id, data.type);

@@ -138,8 +138,14 @@ Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCond
 			loops++;
 			break;
 		case Token::AGAIN:
-			if (--loops < 0)
+			if (loops) {
+				loops--;
+			} else if (!READ_BE_UINT16(&tokenisedCondition[bytePointer + 2])) {
+				// An orphaned AGAIN with no jump offset has no effect in RUNVGA.
+				instruction = FCLInstruction(Token::NOP);
+			} else {
 				error("16-bit FCL AGAIN without LOOP");
+			}
 			break;
 		default:
 			break;
