@@ -201,6 +201,17 @@ public:
 
 	void registerGraphics();
 
+	// Nancy15+ AR 134. Hands the game over to another protagonist: swaps in that
+	// character's own copy of the popup UI data and rebuilds every widget built
+	// from it, then swaps the inventories. Returns whether the character
+	// actually changed.
+	bool changePlayerCharacter(uint characterIndex);
+
+	// Replaces the current scene's background video without leaving the scene.
+	// Nancy15+ uses this to show the same location from the newly selected
+	// player character's point of view.
+	void changeSceneVideo(const Common::Path &videoFile);
+
 	void synchronize(Common::Serializer &serializer);
 
 	UI::FullScreenImage &getFrame() { return _frame; }
@@ -291,6 +302,10 @@ private:
 
 	// Maps an event flag label to its index in the eventFlags array
 	int16 eventFlagToIndex(int16 label) const;
+
+	// Rebuilds the popup UI from a Nancy15+ player character's own data files,
+	// without touching the inventory. Returns whether the character changed.
+	bool applyPlayerCharacter(uint characterIndex);
 
 	struct SceneState {
 		SceneSummary summary;

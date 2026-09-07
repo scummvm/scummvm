@@ -499,6 +499,10 @@ void TaskbarData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void PlayerCharacterData::synchronize(Common::Serializer &ser) {
+	ser.syncAsUint16LE(characterIndex);
+}
+
 void WordFindPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(currentWord);
 }
@@ -577,6 +581,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new UIResourceData();
 	case TaskbarData::getTag():
 		return new TaskbarData();
+	case PlayerCharacterData::getTag():
+		return new PlayerCharacterData();
 	default:
 		return nullptr;
 	}

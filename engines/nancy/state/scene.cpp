@@ -185,6 +185,9 @@ void Scene::process() {
 
 void Scene::onStateEnter(const NancyState::NancyState prevState) {
 	if (_state != kInit) {
+		// Picks up a look chosen on the Design Select screen while we were away
+		applyPlayerCharacter(g_nancy->getPlayerCharacter());
+
 		registerGraphics();
 
 		if (prevState != NancyState::kPause) {
@@ -878,6 +881,83 @@ void Scene::registerGraphics() {
 	}
 }
 
+bool Scene::changePlayerCharacter(uint characterIndex) {
+	uint previousCharacter = g_nancy->getPlayerCharacter();
+
+	if (!applyPlayerCharacter(characterIndex)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Scene::applyPlayerCharacter(uint characterIndex) {
+	if (g_nancy->getGameType() < kGameTypeNancy15 || !g_nancy->playerCharacterNeedsReload(characterIndex)) {
+		return false;
+	}
+
+	// The open popups describe the outgoing character, so get them off the
+	// screen while the data they were built from is still around
+	closeActivePopups();
+
+	if (!g_nancy->setPlayerCharacter(characterIndex)) {
+		return false;
+	}
+
+	auto *taskData = GetEngineData(TASK);
+	assert(taskData);
+	_frame.init(taskData->imageName);
+
+	_textbox.init();
+	_inventoryPopup.init();
+	_notebookPopup.init();
+	_cellPhonePopup.init();
+	_conversationPopup.init();
+
+	delete _taskbar;
+	_taskbar = new UI::Taskbar();
+	_taskbar->init();
+	_taskbar->syncFromPuzzleData();
+	_taskbar->updateNotificationStates(_sceneState.currentScene.sceneID);
+
+	if (_camera) {
+		_camera->init();
+	}
+
+	registerGraphics();
+	g_nancy->_graphics->redrawAll();
+
+	return true;
+}
+
+void Scene::changeSceneVideo(const Common::Path &videoFile) {
+	_sceneState.summary.videoFile = videoFile;
+
+	const Common::Path palettePath = !_sceneState.summary.palettes.empty() ?
+		_sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] :
+		Common::Path();
+
+	// The replacement covers the same location, so the vertical scroll carries
+	// over, but panning restarts from the video's first frame
+	_sceneState.currentScene.frameID = 0;
+	_viewport.loadVideo(videoFile,
+						0,
+						_viewport.getCurVerticalScroll(),
+						_sceneState.summary.panningType,
+						_sceneState.summary.videoFormat,
+						palettePath);
+
+	// loadVideo() re-enables every edge, so the scene's own restrictions
+	// have to be reapplied on top of the new video
+	if (_viewport.getFrameCount() <= 1) {
+		_viewport.disableEdges(kLeft | kRight);
+	}
+
+	if (_viewport.getMaxScroll() == 0) {
+		_viewport.disableEdges(kUp | kDown);
+	}
+}
+
 void Scene::synchronize(Common::Serializer &ser) {
 	if (_flags.eventFlags.empty())
 		init();
@@ -1053,6 +1133,18 @@ void Scene::synchronize(Common::Serializer &ser) {
 			_taskbar->syncFromPuzzleData();
 			_taskbar->updateNotificationStates(_sceneState.currentScene.sceneID);
 		}
+
+		// Nancy15+ builds its popup UI out of the active player character's own
+		// data files, so bring that data back before the widgets are used again.
+		// Only the UI is swapped: the inventory restored above already is the
+		// saved character's own, while the other characters' stay parked in the
+		// PlayerCharacterData.
+		if (g_nancy->getGameType() >= kGameTypeNancy15) {
+			auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+			if (playerChar) {
+				applyPlayerCharacter(playerChar->characterIndex);
+			}
+		}
 	}
 
 	_isRunningAd = false;
@@ -1071,6 +1163,12 @@ UI::Clock *Scene::getClock() {
 }
 
 void Scene::init() {
+	// A design may have been picked before the game itself started, so refresh
+	// the engine data the widgets below are built from
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		g_nancy->setPlayerCharacter(g_nancy->getPlayerCharacter());
+	}
+
 	auto *bootSummary = GetEngineData(BSUM)
 	auto *hintData = GetEngineData(HINT)
 	assert(bootSummary);

@@ -408,10 +408,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new CameraAction();
 	case 134:	// Nancy15
 		// Switches the active player character (Nancy / Frank / Joe), the
-		// dual-protagonist mechanic new to The Creature of Kapu Cave.
-		// TODO: not yet implemented (depends on the PCUI/LDSN player-char UI)
-		// return new PlayCharAR();
-		return nullptr;	// TODO
+		// dual-protagonist mechanic new to The Creature of Kapu Cave
+		return new PlayChar();
 	case 140:
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new SetVolume();			// Moved to 149 in Nancy9, empty slot in Nancy9-11

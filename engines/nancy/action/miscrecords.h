@@ -534,6 +534,22 @@ protected:
 	bool _paymentApplied = false;
 };
 
+// Added in Nancy15 (AR 134). Hands control to one of the game's protagonists
+// (Nancy, Frank or Joe), which swaps in that character's own copy of the popup
+// UI, and optionally replaces the current scene's background with one showing
+// the location from the incoming character's point of view.
+class PlayChar : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlayChar"; }
+
+	byte _characterIndex = 0;	// index into the PCUI character list
+	Common::Path _videoFile;	// replacement scene background, empty to keep the current one
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

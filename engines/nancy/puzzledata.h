@@ -372,6 +372,19 @@ struct TaskbarData : public PuzzleData {
 	bool notifications[kNumButtons][kNumNotificationSubCategories] = {};
 };
 
+// Nancy15+ active player character (Nancy / Frank / Joe), selected by AR 134.
+// The whole popup UI is rebuilt from the character's own data files, so the
+// selection has to survive a save/load for the right UI to come back.
+struct PlayerCharacterData : public PuzzleData {
+	PlayerCharacterData() {}
+	virtual ~PlayerCharacterData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('P', 'C', 'H', 'R'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	uint16 characterIndex = 0;
+};
+
 // Nancy13+ WordFindPuzzle (AR 170). The puzzle is solved one word at a time across
 // several scene visits; this remembers which word is currently active so progress
 // survives leaving and re-entering the scene (and saving/loading).
