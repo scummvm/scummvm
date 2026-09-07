@@ -339,6 +339,13 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 	if (geometric) {
 		ObjectType type = ObjectType(data.type);
 		int colorCount = GeometricObject::numberOfColoursForObjectOfType(type);
+		int ordinateCount = GeometricObject::numberOfOrdinatesForType(type);
+		// Hidden editor remnants can lack geometry (Desert Maze).
+		if ((data.flags & kKitInitiallyInvisible) && payload.size() < colorCount + 2 * ordinateCount) {
+			warning("Ignoring incomplete hidden 3D Construction Kit object %u", data.id);
+			file.seek(end);
+			return nullptr;
+		}
 		colors = new Common::Array<uint8>();
 		for (int i = 0; i < colorCount; i += 2) {
 			byte first, second;
@@ -352,7 +359,6 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 			for (uint i = 0; i < ARRAYSIZE(sides); i++)
 				(*colors)[i] = sides[i];
 		}
-		int ordinateCount = GeometricObject::numberOfOrdinatesForType(type);
 		if (ordinateCount) {
 			requireBytes(payload, 2 * ordinateCount);
 			ordinates = new Common::Array<float>();
@@ -414,18 +420,22 @@ void KitEngine::initGameState() {
 void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (!_areaMap.contains(areaID))
 		error("Unknown 3D Construction Kit area %u", areaID);
+	float oldScale = _currentArea ? _currentArea->getScale() : 1;
 	if (_currentArea)
 		_kitVariables[9] = _currentArea->getAreaID();
 	_currentArea = _areaMap[areaID];
 	Entrance *entrance = static_cast<Entrance *>(_currentArea->entranceWithID(entranceID));
-	if (!entrance)
-		error("Unknown 3D Construction Kit entrance %d", entranceID);
-	_position = entrance->getOrigin();
-	_position.y() += _playerHeight;
-	Math::Vector3d rotation = entrance->getRotation();
-	_pitch = rotation.x();
-	_yaw = 90.0f - rotation.y();
-	_roll = rotation.z();
+	if (entrance) {
+		_position = entrance->getOrigin();
+		_position.y() += _playerHeight;
+		Math::Vector3d rotation = entrance->getRotation();
+		_pitch = rotation.x();
+		_yaw = 90.0f - rotation.y();
+		_roll = rotation.z();
+	} else {
+		// RUNVGA retains world coordinates and rotation when the entrance is absent.
+		_position *= oldScale / _currentArea->getScale();
+	}
 	_lastPosition = _position;
 	_gfx->_scale = _currentArea->getScale();
 	_gotoExecuted = true;

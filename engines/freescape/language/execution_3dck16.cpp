@@ -604,7 +604,7 @@ bool KitEngine::executeGoto(const FCLInstruction &instruction) {
 	if (instruction._sourceType != Token::UNKNOWN)
 		area = getVariableOrConstant(instruction._source, instruction._sourceType);
 	int32 entrance = getVariableOrConstant(instruction._destination, instruction._destinationType);
-	if (!_areaMap.contains(area) || !_areaMap[area]->entranceWithID(entrance & 0x7fff)) {
+	if (!_areaMap.contains(area)) {
 		warning("Invalid 3D Construction Kit GOTO (%d, %u)", entrance, area);
 		return false;
 	}
