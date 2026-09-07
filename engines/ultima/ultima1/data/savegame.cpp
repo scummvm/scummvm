@@ -54,6 +54,9 @@ const char *GEM_NAMES[] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
 // Indexed by TransportType
 const int TRANSPORT_RANDOM_THRESHOLD[] = { 100, 50, 33, 100, 50, 25, 10, 10 };
 
+// Indexed by TransportType
+const int FOOD_PER_TRANSPORT[] = { 2, 3, 3, 4, 5, 6, 11, 0 };
+
 void LocationEntity::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_type);
 	s.syncAsSint16LE(_position.x);

@@ -241,6 +241,61 @@ void DungeonLogic::updateCreatures() {
 	// TODO
 }
 
+void DungeonLogic::showNearbyText() {
+	const Common::Point &pos = _G(savegame)._locationPosition;
+
+	// A chest/coffin at the player's own feet is only noticed when they're
+	// standing in a doorway, matching the original's dungeonUpdate
+	const Data::DungeonCell &hereCell = _G(dungeon)._cells[pos.y][pos.x];
+	if (hereCell._tileNum == Data::DTILE_DOOR) {
+		if (hereCell._itemId == Data::DITEM_COFFIN)
+			writeString("Coffin\n");
+		else if (hereCell._itemId == Data::DITEM_CHEST)
+			writeString("Chest\n");
+	}
+
+	// Items/monsters visible ahead, in the direction currently faced, up to
+	// wherever the dungeon view itself would be blocked (capped at 5 tiles,
+	// matching the view's own render distance)
+	int deltaX = getDirDeltaX();
+	int deltaY = getDirDeltaY();
+	int x = pos.x, y = pos.y;
+
+	for (int distance = 1; distance <= 5; ++distance) {
+		x += deltaX;
+		y += deltaY;
+		const Data::DungeonCell &cell = _G(dungeon)._cells[y][x];
+
+		if (cell._itemId == Data::DITEM_COFFIN)
+			writeString("Coffin\n");
+		else if (cell._itemId == Data::DITEM_CHEST)
+			writeString("Chest\n");
+
+		bool hasMonster = cell._monsterId != Data::DUNGEON_NO_MONSTER;
+		if (hasMonster) {
+			writeString(Data::UNDERWORLD_MONSTERS[cell._monsterId]);
+			writeString("\n");
+		}
+
+		// Disguised monster types (mimic, invisible seeker, gelatinous
+		// cube) don't block the view/movement, so scanning continues past
+		// them - matching DungeonMap::isMonsterBlocking
+		bool isBlockingMonster = hasMonster && cell._monsterId != Data::UMONS_GELATINOUS_CUBE &&
+			cell._monsterId != Data::UMONS_MIMIC && cell._monsterId != Data::UMONS_INVISIBLE_SEEKER;
+
+		if (cell._tileNum == Data::DTILE_WALL || cell._tileNum == Data::DTILE_SECRET_DOOR ||
+				cell._tileNum == Data::DTILE_DOOR || isBlockingMonster)
+			break;
+	}
+}
+
+void DungeonLogic::endOfTurn() {
+	showNearbyText();
+
+	// Calls updateCreatures() in turn
+	Logic::endOfTurn();
+}
+
 } // namespace Logic
 } // namespace Ultima1
 } // namespace Ultima

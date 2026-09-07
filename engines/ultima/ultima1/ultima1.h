@@ -71,6 +71,7 @@ public:
 	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;
 	uint32 _moveCtr = 0;
+	int _transportFoodCtr = 0;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

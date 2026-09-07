@@ -52,6 +52,7 @@ static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
+	_G(transportFoodCtr) = 1;
 }
 
 bool OverworldLogic::enter() {
@@ -243,9 +244,9 @@ void OverworldLogic::continentChanged(int oldContinent) {
 void OverworldLogic::endOfTurn() {
 	if (_G(creaturesCount) < Data::CREATURES_COUNT)
 		generateCreatures();
-	updateCreatures();
 	reduceFood();
 
+	// Calls updateCreatures() in turn
 	Logic::endOfTurn();
 }
 
@@ -347,7 +348,13 @@ void OverworldLogic::updateCreatures() {
 }
 
 void OverworldLogic::reduceFood() {
-
+	if (_G(transportFoodCtr) >= Data::FOOD_PER_TRANSPORT[_G(savegame)._transportType]) {
+		_G(transportFoodCtr) = 0;
+		--_G(savegame)._food;
+		redrawStats();
+	} else {
+		++_G(transportFoodCtr);
+	}
 }
 
 bool OverworldLogic::monsterTransportCheck(int entityIndex, int xDiff, int yDiff) {

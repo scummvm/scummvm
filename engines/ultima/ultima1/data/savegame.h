@@ -50,6 +50,11 @@ extern const char *GEM_NAMES[];
 // transports make it harder for monsters to keep up
 extern const int TRANSPORT_RANDOM_THRESHOLD[];
 
+// Per player-transport-type number of turns between each point of food
+// consumed - faster/hungrier transports (or none at all, for the time
+// machine) burn through food quicker
+extern const int FOOD_PER_TRANSPORT[];
+
 enum Sex {
 	SEX_MALE = 0, SEX_FEMALE = 1
 };

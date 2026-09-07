@@ -39,6 +39,17 @@ constexpr int DUNGEON_MONSTER_SLOTS = 5;
 // _itemId sentinel does
 constexpr uint8 DUNGEON_NO_MONSTER = 0xff;
 
+// Disguised monster Ids that don't block movement/view like a normal
+// monster would - a mimic looks (and is named) like a chest, an
+// invisible seeker isn't visibly drawn at all, and a gelatinous cube
+// fills the passage but can still be seen/moved past
+constexpr int UMONS_GELATINOUS_CUBE = 9;
+constexpr int UMONS_MIMIC = 11;
+constexpr int UMONS_INVISIBLE_SEEKER = 20;
+
+// Dungeon monster names, indexed by DungeonCell::_monsterId (0-24)
+extern const char *UNDERWORLD_MONSTERS[];
+
 enum DungeonTileId {
 	DTILE_HALLWAY = 0,
 	DTILE_WALL = 1,

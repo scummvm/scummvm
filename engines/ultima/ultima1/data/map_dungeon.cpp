@@ -26,6 +26,13 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+const char *UNDERWORLD_MONSTERS[] = {
+	"Ranger", "Skeleton", "Thief", "Giant rat", "Bat", "Spider", "Viper", "Orc",
+	"Cyclops", "Gelatinous cube", "Ettin", "Chest", "Lizard man", "Minatour",
+	"Carrion creeper", "Tangler", "Gremlin", "Wandering eyes", "Wraith", "Lich",
+	"Invisible seeker", "Mind whipper", "Zorn", "Daemon", "Balron"
+};
+
 MapDungeon::MapDungeon() {
 	clear();
 }

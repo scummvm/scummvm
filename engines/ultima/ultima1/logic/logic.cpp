@@ -76,6 +76,7 @@ int Logic::getRandomNumber(int maxNumber) {
 
 void Logic::endOfTurn() {
 	_G(moveCtr)++;
+	updateCreatures();
 
 	redrawMap();
 	redrawStats();

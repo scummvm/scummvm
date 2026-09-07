@@ -36,12 +36,6 @@ constexpr int HIGHLIGHT_COLOR = 12;
 static const int DUNGEON_ARRAY_X[6] = { 0, 72, 108, 126, 135, 144 };
 static const int DUNGEON_ARRAY_Y[6] = { 0, 36, 54, 63, 68, 72 };
 
-// Dungeon monster Ids that don't block the view, being either invisible or
-// disguised as something else
-constexpr int UMONS_GELATINOUS_CUBE = 9;
-constexpr int UMONS_MIMIC = 11;
-constexpr int UMONS_INVISIBLE_SEEKER = 20;
-
 // Y offset added to widget shape coordinates, indexed by a 0-4 distance tier
 static const int UWIDGET_OFFSET_Y[5] = { 139, 112, 96, 88, 84 };
 
@@ -159,8 +153,8 @@ bool DungeonMap::isMonsterBlocking(int x, int y) const {
 	if (monsterId == Data::DUNGEON_NO_MONSTER)
 		return false;
 
-	return monsterId != UMONS_GELATINOUS_CUBE && monsterId != UMONS_MIMIC &&
-		monsterId != UMONS_INVISIBLE_SEEKER;
+	return monsterId != Data::UMONS_GELATINOUS_CUBE && monsterId != Data::UMONS_MIMIC &&
+		monsterId != Data::UMONS_INVISIBLE_SEEKER;
 }
 
 bool DungeonMap::isCellOccupied(int deltaX, int deltaY) const {
@@ -535,28 +529,28 @@ void DungeonMap::dungeonDrawWidget(const uint8 *data, int distance, int color) {
 }
 
 void DungeonMap::drawCoffin(int distance) {
-	// TODO: show "Coffin" in the commands area (writeStringNewline in the
-	// original) - that belongs to DungeonLogic, as with monster names
+	// The original also shows "Coffin" in the commands area here - that's
+	// handled by DungeonLogic::endOfTurn instead, as with monster names
 	dungeonDrawWidget(COFFIN_DRAW_DATA, distance, EDGE_COLOR);
 }
 
 void DungeonMap::drawChest(int distance) {
-	// TODO: show "Chest" in the commands area (writeStringNewline in the
-	// original) - that belongs to DungeonLogic, as with monster names.
+	// The original also shows "Chest" in the commands area here - that's
+	// handled by DungeonLogic::endOfTurn instead, as with monster names.
 	// Reuses the mimic's widget shape, since the original draws chests and
 	// mimics identically
-	dungeonDrawWidget(UWIDGET_DRAW_TABLE[UMONS_MIMIC], distance, EDGE_COLOR);
+	dungeonDrawWidget(UWIDGET_DRAW_TABLE[Data::UMONS_MIMIC], distance, EDGE_COLOR);
 }
 
 void DungeonMap::dungeonDrawMonster(int monsterId, int distance) {
 	if (distance >= 5)
 		return;
 
-	// TODO: show the monster's name in the commands area (writeStringNewline
-	// with UNDERWORLD_MONSTERS[monsterId] in the original) - that belongs
-	// to DungeonLogic, once it exists there
+	// The original also shows the monster's name in the commands area here
+	// (UNDERWORLD_MONSTERS[monsterId]) - that's handled by
+	// DungeonLogic::endOfTurn instead
 
-	if (monsterId == UMONS_GELATINOUS_CUBE) {
+	if (monsterId == Data::UMONS_GELATINOUS_CUBE) {
 		// The cube fills the whole passage rather than using a widget shape
 		drawWall(distance);
 		drawLeftEdge(distance);

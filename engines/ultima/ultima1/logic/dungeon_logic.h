@@ -70,6 +70,14 @@ private:
 	void climbLadderUp();
 	void climbLadderDown();
 
+	/**
+	 * Announces any item/monster close enough to the player to be shown in
+	 * the dungeon view - a chest or coffin at the player's own feet (only
+	 * noticed when standing in a doorway), and any item/monster along the
+	 * corridor directly ahead, up to wherever the view is blocked
+	 */
+	void showNearbyText();
+
 protected:
 	/**
 	 * Handle dungeon movement
@@ -85,6 +93,11 @@ protected:
 	 * Handles updating creatures/NPCs
 	 */
 	void updateCreatures() override;
+
+	/**
+	 * Called after an action is done
+	 */
+	void endOfTurn() override;
 
 public:
 	DungeonLogic();
