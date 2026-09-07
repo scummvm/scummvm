@@ -281,6 +281,7 @@ public:
 	MESSAGE(Action);
 	MESSAGE(Game);
 	MESSAGE(Value);
+	MESSAGE(AttackTile);
 #undef MESSAGE
 };
 

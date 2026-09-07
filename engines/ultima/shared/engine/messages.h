@@ -128,6 +128,27 @@ struct ActionMessage : public Message {
 	}
 };
 
+/**
+ * Sent to a map view to have it briefly overlay a tile directly on-screen
+ * at a given map position - e.g. a projectile flying towards the player,
+ * or a hit flash - before restoring the view back to normal. (x, y) are
+ * in map/world tile coordinates, not screen pixels; it's up to the view
+ * receiving the message to convert that to its own on-screen position.
+ * The handler is expected to pause briefly before returning, so combat
+ * logic that shows several of these in a row (e.g. multiple attackers in
+ * a single turn) will naturally have each shown with a delay in turn
+ */
+struct AttackTileMessage : public Message {
+	int _x, _y;
+	int _tileId;
+
+	AttackTileMessage() : Message(), _x(0), _y(0), _tileId(0) {
+	}
+	AttackTileMessage(int x, int y, int tileId) : Message(),
+		_x(x), _y(y), _tileId(tileId) {
+	}
+};
+
 } // namespace Messages
 } // namespace Shared
 } // namespace Ultima

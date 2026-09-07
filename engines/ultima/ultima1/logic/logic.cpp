@@ -54,6 +54,10 @@ void Logic::redrawMap() {
 	g_engine->focusedView()->redraw();
 }
 
+void Logic::showAttackTile(int x, int y, int tileId) {
+	g_engine->focusedView()->send(AttackTileMessage(x, y, tileId));
+}
+
 void Logic::redrawStats() {
 	g_engine->findView("Stats")->draw();
 }

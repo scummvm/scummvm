@@ -31,6 +31,7 @@ constexpr int TILE_WIDTH = 8;
 constexpr int TILE_HEIGHT = 8;
 constexpr int MAP_VISIBLE_WIDTH = 38;
 constexpr int MAP_VISIBLE_HEIGHT = 18;
+constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 
 bool LocationMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
@@ -41,6 +42,22 @@ bool LocationMap::msgFocus(const FocusMessage &msg) {
 bool LocationMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return Dialog::msgUnfocus(msg);
+}
+
+bool LocationMap::msgAttackTile(const AttackTileMessage &msg) {
+	if (msg._x >= 0 && msg._x < MAP_VISIBLE_WIDTH && msg._y >= 0 && msg._y < MAP_VISIBLE_HEIGHT) {
+		const Graphics::ManagedSurface *tiles = g_engine->_map.tiles();
+		auto s = getSurface();
+		s.blitFrom(tiles[msg._tileId], Common::Point(msg._x * TILE_WIDTH + 8, msg._y * TILE_HEIGHT + 8));
+
+		g_engine->updateScreen();
+		g_engine->pauseMillis(ATTACK_TILE_DELAY);
+
+		// Restore the map back to normal
+		draw();
+	}
+
+	return true;
 }
 
 void LocationMap::timeout() {

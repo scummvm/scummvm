@@ -29,6 +29,7 @@ namespace Views {
 
 constexpr int TILE_WIDTH = 16;
 constexpr int TILE_HEIGHT = 16;
+constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
@@ -39,6 +40,27 @@ bool OverworldMap::msgFocus(const FocusMessage &msg) {
 bool OverworldMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 	return Dialog::msgUnfocus(msg);
+}
+
+bool OverworldMap::msgAttackTile(const AttackTileMessage &msg) {
+	int mapLeft = _G(savegame)._overworldPos.x - Data::OVERWORLD_VISIBLE_CENTER_X;
+	int mapTop = _G(savegame)._overworldPos.y - Data::OVERWORLD_VISIBLE_CENTER_Y;
+	int ox = msg._x - mapLeft;
+	int oy = msg._y - mapTop;
+
+	if (ox >= 0 && ox < Data::OVERWORLD_VISIBLE_WIDTH && oy >= 0 && oy < Data::OVERWORLD_VISIBLE_HEIGHT) {
+		const Graphics::ManagedSurface *tiles = g_engine->_map.tiles();
+		auto s = getSurface();
+		s.blitFrom(tiles[msg._tileId], Common::Point(ox * TILE_WIDTH + 8, oy * TILE_HEIGHT + 8));
+
+		g_engine->updateScreen();
+		g_engine->pauseMillis(ATTACK_TILE_DELAY);
+
+		// Restore the map back to normal
+		draw();
+	}
+
+	return true;
 }
 
 void OverworldMap::timeout() {

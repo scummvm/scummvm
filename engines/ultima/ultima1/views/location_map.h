@@ -37,6 +37,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAttackTile(const AttackTileMessage &msg) override;
 	void draw() override;
 	void timeout() override;
 };

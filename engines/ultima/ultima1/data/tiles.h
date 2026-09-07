@@ -53,7 +53,10 @@ enum OverworldTileId {
 	TILE_TIME_MACHINE = 18,
 	TILE_FIRST_MONSTER = 19,
 	TILE_WANDERING_WARLOCK = 47,
-	TILE_LAST_MONSTER = 47
+	TILE_LAST_MONSTER = 47,
+	// Attack projectile/impact glyph, flashed briefly over the map during
+	// combat animations
+	TILE_ATTACK = 50
 };
 
 enum LocationTileId {

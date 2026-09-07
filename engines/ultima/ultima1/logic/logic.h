@@ -64,6 +64,14 @@ protected:
 	void redrawMap();
 
 	/**
+	 * Has the currently focused map view briefly flash a tile on-screen at
+	 * a given map position - e.g. a projectile flying towards the player,
+	 * or a hit flash - pausing before returning. Used for combat
+	 * animations; see AttackTileMessage
+	 */
+	void showAttackTile(int x, int y, int tileId);
+
+	/**
 	 * Signal the stats to redraw
 	 */
 	void redrawStats();

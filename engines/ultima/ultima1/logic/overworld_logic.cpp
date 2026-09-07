@@ -420,25 +420,46 @@ void OverworldLogic::monsterMoveCheck(int entityIndex, int xDiff, int yDiff) {
 }
 
 void OverworldLogic::monsterAttack(int entityIndex, int xDiff, int yDiff, int distance) {
-	// WORKAROUND: the original animates the attack as a projectile flying
-	// tile-by-tile towards the player, using up to distance tiles and
-	// stopping early if it's blocked by mountains. That's purely visual and
-	// doesn't affect whether the attack hits, so it's skipped here
 	const auto &e = _G(savegame)._overworldEntities[entityIndex];
 	int monsterIdx = (e._type - Data::TILE_FIRST_MONSTER) / 2;
 
 	writeString(Data::OVERWORLD_MONSTERS[monsterIdx]);
 	writeString(" attacks!");
 
+	// Animate a projectile flying from the monster towards the player, one
+	// tile at a time, stopping early if it's blocked by mountains
+	int xDelta = (xDiff > 0) ? -1 : (xDiff < 0 ? 1 : 0);
+	int yDelta = (yDiff > 0) ? -1 : (yDiff < 0 ? 1 : 0);
+	const auto &pos = _G(savegame)._overworldPos;
+
+	int tempX, tempY, tile;
+	int attackCtr = 1;
+	for (;;) {
+		tempX = xDiff + xDelta * attackCtr;
+		tempY = yDiff + yDelta * attackCtr;
+
+		showAttackTile(pos.x - tempX, pos.y - tempY, Data::TILE_ATTACK);
+		tile = _G(map).getTileAt(pos.x - tempX, pos.y - tempY);
+
+		++attackCtr;
+		if (attackCtr > distance || tile == Data::TILE_MOUNTAINS || (tempX == 0 && tempY == 0))
+			break;
+	}
+
 	auto &sg = _G(savegame);
 	int roll = getRandomNumber(1, 255);
 	int threshold = 200 - sg._stamina / 2 - sg._equippedArmor * 8;
+	bool isHit = roll < threshold;
 
-	if (roll >= threshold) {
+	// A shot that got blocked or ran out of range before reaching the
+	// player always misses, regardless of the roll
+	if (tempX != 0 || tempY != 0 || !isHit) {
 		writeString("\n");
 		writeString("Missed!\n");
 		return;
 	}
+
+	showAttackTile(pos.x, pos.y, Data::TILE_ATTACK);
 
 	int damage = getRandomNumber(1, Data::OVERWORLD_MONSTERS_DAMAGE[monsterIdx] * 2 + 1);
 	playFX(2);
