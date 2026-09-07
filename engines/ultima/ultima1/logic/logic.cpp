@@ -80,6 +80,9 @@ void Logic::endOfTurn() {
 
 	redrawMap();
 	redrawStats();
+
+	if (_G(savegame)._hits == 0)
+		g_engine->addView("Dead");
 }
 
 void Logic::action(int action) {
@@ -156,7 +159,8 @@ void Logic::action(int action) {
 		if (_G(logic) == currLogic)
 			endOfTurn();
 
-		prompt();
+		if (_G(savegame)._hits > 0)
+			prompt();
 	}
 }
 

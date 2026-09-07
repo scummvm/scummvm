@@ -29,16 +29,74 @@ namespace Ultima1 {
 namespace Views {
 namespace Interactions {
 
+using namespace Ultima::Shared::Messages;
+
 /**
- * Dummy view to go to when the player dies. This allows the game to know
- * not to allow saving anymore, and to stop on-screen map animations.
+ * Shown when the player's hit points reach zero. Plays out the original's
+ * resurrection sequence: shows the skull glyph and "<name>, thou art dead",
+ * pauses briefly, then "Attempting resurrection!" and animates hits and
+ * food back up to 99 each, one point at a time. Finishes by stripping the
+ * player's weapons and any ridden transport, moving them to a random spot
+ * on the continent they died on, and returning to the overworld.
+ *
+ * The whole sequence plays out automatically via tick() - no player input
+ * is needed, or accepted, while it's running.
  */
 class Dead : public Interaction {
+private:
+	enum Phase {
+		PHASE_INTRO,
+		PHASE_HITS,
+		PHASE_FOOD
+	};
+
+	Phase _phase = PHASE_INTRO;
+	int _delayCtr = 0;
+
+	/**
+	 * Draws the skull glyph shown in the map area while the player is dead
+	 */
+	void drawDeathGraphic();
+
+	/**
+	 * Removes any overworld creatures on a given continent. Called for
+	 * every continent once hits have been restored, so the resurrected
+	 * player doesn't return to a world still full of whatever was hunting
+	 * them down before they died
+	 */
+	void removeCreaturesOnContinent(int continent);
+
+	/**
+	 * Picks a new random position for the player, on the same continent
+	 * they died on, on a patch of grass or woods
+	 */
+	void resetPlayerPosition();
+
+	/**
+	 * Finishes the resurrection - loses any ridden transport and all
+	 * weapons, unreadies everything, then returns to the overworld
+	 */
+	void finish();
+
 public:
 	Dead() : Interaction("Dead") {
 	}
 	~Dead() override {
 	}
+
+	bool msgFocus(const FocusMessage &msg) override;
+
+	// The death sequence is automatic - swallow input rather than letting
+	// it reach the (soon to be replaced) logic/view underneath
+	bool msgAction(const ActionMessage &msg) override {
+		return true;
+	}
+	bool msgKeypress(const KeypressMessage &msg) override {
+		return true;
+	}
+
+	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Interactions
