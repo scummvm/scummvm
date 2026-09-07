@@ -57,7 +57,6 @@
 
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#define SDL_SRCCOLORKEY 0
 #define SDL_SRCALPHA    0
 #define SDL_FULLSCREEN  0x40000000
 #endif
@@ -2312,8 +2311,10 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 
 	if (keycolorChanged) {
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-		uint32 flags = _disableMouseKeyColor ? 0 : SDL_SRCCOLORKEY | SDL_SRCALPHA;
-		SDL_SetSurfaceColorKey(_mouseOrigSurface, flags, _mouseKeyColor);
+		SDL_SetSurfaceColorKey(_mouseOrigSurface, !_disableMouseKeyColor, _mouseKeyColor);
+		SDL_SetSurfaceRLE(_mouseOrigSurface, !_disableMouseKeyColor);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_SetColorKey(_mouseOrigSurface, !_disableMouseKeyColor, _mouseKeyColor);
 		SDL_SetSurfaceRLE(_mouseOrigSurface, !_disableMouseKeyColor);
 #else
 		uint32 flags = _disableMouseKeyColor ? 0 : SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA;
@@ -2429,8 +2430,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	SDL_SetColors(_mouseSurface, _cursorPaletteDisabled ? _currentPalette : _cursorPalette, 0, 256);
 #if SDL_VERSION_ATLEAST(3, 0, 0)
-	uint32 flags = _disableMouseKeyColor ? 0 : SDL_SRCCOLORKEY | SDL_SRCALPHA;
-	SDL_SetSurfaceColorKey(_mouseSurface, flags, _mouseKeyColor);
+	SDL_SetSurfaceColorKey(_mouseSurface, !_disableMouseKeyColor, _mouseKeyColor);
+	SDL_SetSurfaceRLE(_mouseSurface, !_disableMouseKeyColor);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetColorKey(_mouseSurface, !_disableMouseKeyColor, _mouseKeyColor);
 	SDL_SetSurfaceRLE(_mouseSurface, !_disableMouseKeyColor);
 #else
 	uint32 flags = _disableMouseKeyColor ? 0 : SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA;
@@ -3239,14 +3242,6 @@ int SurfaceSdlGraphicsManager::SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, U
 
 
 	return 0;
-}
-
-int SurfaceSdlGraphicsManager::SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key) {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-	return SDL_SetSurfaceColorKey(surface, flag, key) ? -1 : 0;
-#else
-	return ::SDL_SetColorKey(surface, flag ? SDL_TRUE : SDL_FALSE, key) ? -1 : 0;
-#endif
 }
 
 #if defined(USE_IMGUI) && (defined(USE_IMGUI_SDLRENDERER2) || defined(USE_IMGUI_SDLRENDERER3))
