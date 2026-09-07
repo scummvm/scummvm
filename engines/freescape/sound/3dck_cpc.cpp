@@ -184,6 +184,10 @@ int KitCPCSound::readBuffer(int16 *buffer, int samples) {
 }
 
 void Kit8Engine::loadSounds() {
+	if (isSpectrum()) {
+		loadSoundsZX();
+		return;
+	}
 	byte data[sizeof(kKitCPCSounds)];
 	memcpy(data, kKitCPCSounds, sizeof(data));
 	Common::File file;

@@ -211,7 +211,7 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 	} else if (Common::String(gd->gameId) == "castlemaster" || Common::String(gd->gameId) == "castlemaster2") {
 		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);
 	} else if (Common::String(gd->gameId) == "3dkit") {
-		if (gd->platform == Common::kPlatformAmstradCPC)
+		if (gd->platform == Common::kPlatformAmstradCPC || gd->platform == Common::kPlatformZX)
 			*engine = new Freescape::Kit8Engine(syst, gd);
 		else
 			*engine = new Freescape::KitEngine(syst, gd);

@@ -35,8 +35,8 @@ static void requireBytes(Common::SeekableReadStream &file, uint32 size) {
 }
 
 Kit8Engine::Kit8Engine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	_screenW = 320;
-	_screenH = 200;
+	_screenW = isSpectrum() ? 256 : 320;
+	_screenH = isSpectrum() ? 192 : 200;
 	_fullscreenViewArea = Common::Rect(_screenW, _screenH);
 	_playerHeightNumber = _playerHeightMaxNumber = 0;
 	_playerWidth = _playerDepth = 16;
@@ -52,7 +52,7 @@ void Kit8Engine::loadAssets() {
 	requireBytes(dataFile, 160);
 	uint32 signature = dataFile.readUint32BE();
 	uint32 dataOffset = 0;
-	if (signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) {
+	if (isCPC() && signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) {
 		byte header[128];
 		dataFile.seek(0);
 		dataFile.read(header, sizeof(header));
@@ -66,7 +66,9 @@ void Kit8Engine::loadAssets() {
 	Common::SeekableSubReadStream file(&dataFile, dataOffset, dataFile.size());
 	requireBytes(file, 160);
 	signature = file.readUint32BE();
-	if ((signature != MKTAG('K', 'I', 'T', 'A') && signature != MKTAG('K', 'I', 'T', 'C')) || file.readUint16LE() != file.size())
+	bool validSignature = isSpectrum() ? signature == MKTAG('K', 'I', 'T', 'S') :
+		signature == MKTAG('K', 'I', 'T', 'A') || signature == MKTAG('K', 'I', 'T', 'C');
+	if (!validSignature || file.readUint16LE() != file.size())
 		error("Unsupported 8-bit 3D Construction Kit data format");
 	uint16 procedures = file.readUint16LE();
 	uint16 conditions = file.readUint16LE();
@@ -87,7 +89,7 @@ void Kit8Engine::loadAssets() {
 	if (!width || !height || x + width > _screenW || y + height > _screenH || !_walkSpeed || !turnSpeed)
 		error("Invalid 8-bit 3D Construction Kit display or movement settings");
 	_viewArea = Common::Rect(x, y, x + width, y + height);
-	// CPC projection scales: 125 * 64 / (extent - 1), with a depth scale of 18.
+	// Projection scales: 125 * 64 / (extent - 1), with a depth scale of 18.
 	int xScale = 8000 / (width - 1);
 	int yScale = 8000 / (height - 1);
 	if (xScale > 127 || yScale > 127)
@@ -193,7 +195,7 @@ Area *Kit8Engine::loadArea(Common::SeekableReadStream &file) {
 	AreaData &data = _areaData[id];
 	for (uint i = 0; i < 4; i++) {
 		data.palette[i] = file.readByte();
-		if (data.palette[i] > 26)
+		if (data.palette[i] > (isSpectrum() ? (i == 2 ? 1 : 7) : 26))
 			error("Invalid 8-bit 3D Construction Kit palette");
 	}
 	byte scale = file.readByte();
@@ -389,18 +391,32 @@ void Kit8Engine::checkIfStillInArea() {
 }
 
 void Kit8Engine::updatePlayerMovement(float deltaTime) {
-	if (_scriptFrameActive || _initialScriptPending)
+	if (!isFrameReady() || _scriptFrameActive || _initialScriptPending || (isSpectrum() && isPlayingSound()))
 		return;
 	Math::Vector3d front = _cameraFront;
 	if (_movementMode == 3)
 		_cameraFront = directionToVector(0, _yaw, false);
-	FreescapeEngine::updatePlayerMovement(deltaTime);
+	FreescapeEngine::updatePlayerMovement(kFrameDuration / 1000.0f);
 	_cameraFront = front;
+}
+
+void Kit8Engine::pauseEngineIntern(bool pause) {
+	uint32 now = g_system->getMillis();
+	if (pause)
+		_pauseStartTime = now;
+	else {
+		uint32 elapsed = now - _pauseStartTime;
+		_lastTime += elapsed;
+		_nextFrameTime += elapsed;
+		if (_delayUntil)
+			_delayUntil += elapsed;
+	}
+	FreescapeEngine::pauseEngineIntern(pause);
 }
 
 void Kit8Engine::checkSensors() {
 	// TODO: sensor firing.
-	if (_scriptFrameActive || !_currentArea)
+	if (!isFrameReady() || _scriptFrameActive || !_currentArea)
 		return;
 	for (auto *object : _sensors) {
 		Sensor *sensor = static_cast<Sensor *>(object);

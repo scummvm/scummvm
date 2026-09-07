@@ -38,12 +38,15 @@ void Kit8Engine::resetScripts() {
 	_activeConditions = nullptr;
 	_initialScriptPending = true;
 	_scriptFrameActive = false;
+	_redrawPending = false;
 	_shotObject = _hitObject = _activatedObject = 0;
 	_fallen = _crushed = _pendingTimer = _timerTriggered = false;
 	_crossVisible = true;
 	_timerTicks = _timerInterval = _delayUntil = 0;
 	_lastTime = g_system->getMillis();
+	_nextFrameTime = _lastTime;
 	_scriptSurface.fillRect(_fullscreenViewArea, 255);
+	memcpy(_attributes, _borderAttributes, sizeof(_attributes));
 }
 
 void Kit8Engine::readSystemVariables() {
@@ -85,6 +88,11 @@ void Kit8Engine::writeSystemVariables() {
 
 void Kit8Engine::updateTimeVariables() {
 	uint32 now = g_system->getMillis();
+	// The Spectrum beeper disables interrupts until the effect ends.
+	if (isSpectrum() && isPlayingSound()) {
+		_lastTime = now;
+		return;
+	}
 	uint32 elapsed = (now - _lastTime) / 20;
 	_lastTime += 20 * elapsed;
 	uint16 counter = (_kitVariables[122] | (_kitVariables[123] << 8)) + elapsed;
@@ -127,10 +135,15 @@ void Kit8Engine::beginScriptFrame() {
 }
 
 void Kit8Engine::updateScripts() {
+	if (isSpectrum() && isPlayingSound())
+		return;
 	_fallen |= _hasFallen;
 	_crushed |= _playerWasCrushed;
 	_hasFallen = _playerWasCrushed = false;
 	_avoidRenderingFrames = 0;
+	if ((!_scriptFrameActive || _redrawPending) && !isFrameReady())
+		return;
+	_redrawPending = false;
 	if (_delayUntil && int32(_delayUntil - g_system->getMillis()) > 0)
 		return;
 	_delayUntil = 0;
@@ -162,6 +175,8 @@ void Kit8Engine::updateScripts() {
 		return;
 	updateInstruments();
 	_scriptFrameActive = false;
+	// Approximate 8-bit rendering time using Freescape's movement cadence.
+	_nextFrameTime = _lastTime + kFrameDuration;
 	_soundSyncReady = true;
 	_shotObject = _hitObject = _activatedObject = 0;
 }
@@ -255,6 +270,8 @@ FCLExecutionResult Kit8Engine::executeCode(ScriptState &script, uint &budget) {
 		case Token::SOUND:
 		case Token::SYNCSND:
 			executeSound(instruction);
+			if (isSpectrum() && isPlayingSound())
+				return kFCLPaused;
 			break;
 		case Token::DELAY:
 			_delayUntil = g_system->getMillis() + 20 * (instruction._source ? instruction._source : 256);
@@ -269,6 +286,8 @@ FCLExecutionResult Kit8Engine::executeCode(ScriptState &script, uint &budget) {
 			writeSystemVariables();
 			_scriptSurface.fillRect(_viewArea, 255);
 			updateInstruments();
+			_nextFrameTime = _lastTime + kFrameDuration;
+			_redrawPending = true;
 			_soundSyncReady = true;
 			return kFCLPaused;
 		default:
@@ -428,7 +447,8 @@ void Kit8Engine::executeCall(const FCLInstruction &instruction, ScriptState &scr
 }
 
 void Kit8Engine::executeColour(const FCLInstruction &instruction) {
-	_palette[instruction._source & 3] = MIN<int>(26, instruction._destination);
+	uint index = instruction._source & 3;
+	_palette[index] = isSpectrum() ? instruction._destination & (index == 2 ? 1 : 7) : MIN<int>(26, instruction._destination);
 	applyPalette();
 }
 

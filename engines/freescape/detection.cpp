@@ -1158,6 +1158,16 @@ const ADGameDescription gameDescriptions[] = {
 	// 3D Construction Kit games
 	{
 		"3dkit",
+		"Dead by Dawn",
+		AD_ENTRY2s("3dkit.zx.data", "ec7ff343b0ba9f2e685bde2fb8f6d8d8", 13242,
+			"3dkit.zx.code", "1ef359f328832b77f0adead4d292f21f", 24575),
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERZX)
+	},
+	{
+		"3dkit",
 		"A Chance in Hell",
 		AD_ENTRY1s("Datafile0.bin", "8b4d53e7758b69a8df43947baddcf94a", 5589),
 		Common::EN_ANY,
@@ -1507,12 +1517,13 @@ ADDetectedGames FreescapeMetaEngineDetection::detectZxTapeGames(const Common::FS
 		Common::File file;
 		Common::String name = node.getName();
 		if ((name.hasSuffixIgnoreCase(".tap") || name.hasSuffixIgnoreCase(".tzx")) && file.open(node)) {
+			Freescape::ZxTapeFileList files;
+			// Decode sampled recordings once, then match each game's virtual filenames.
+			if (!Freescape::extractZxSpectrumTapeFiles(file, "", files))
+				continue;
 			for (const ADGameDescription *desc = Freescape::gameDescriptions; desc->gameId; ++desc) {
 				if (!(desc->flags & skipADFlags) && desc->platform == Common::kPlatformZX) {
-					file.seek(0);
-					Freescape::ZxTapeFileList files;
-					if (Freescape::extractZxSpectrumTapeFiles(file, desc->gameId, files) &&
-							Freescape::matchZxSpectrumTapeFiles(files, *desc, _md5Bytes))
+					if (Freescape::matchZxSpectrumTapeFiles(files, *desc, _md5Bytes))
 						detectedGames.push_back(ADDetectedGame(desc));
 				}
 			}

@@ -39,6 +39,7 @@ public:
 	bool checkIfGameEnded() override { return false; }
 	void borderScreen() override {}
 	void drawUI() override;
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	bool handleInput(const Common::Event &event) override;
 	void updatePlayerMovement(float deltaTime) override;
 	void updateTimeVariables() override;
@@ -52,6 +53,7 @@ public:
 
 private:
 	typedef FCLKit8ExecutionState ScriptState;
+	static const uint kFrameDuration = 100;
 
 	struct ConditionData {
 		byte id;
@@ -68,13 +70,19 @@ private:
 	Area *loadArea(Common::SeekableReadStream &file);
 	GeometricObject *loadGeometricObject(Common::SeekableReadStream &file, const byte header[9]);
 	void loadPresentation();
+	void loadPresentationZX();
 	void loadSounds();
+	void loadSoundsZX();
 	void playPendingSound();
 	void applyPalette();
+	void applyPaletteZX();
+	void setAttributesZX(const Common::Rect &rect, byte color);
 	void setMovementMode(byte mode);
 	void readSystemVariables();
 	void writeSystemVariables();
 	void resetScripts();
+	bool isFrameReady() const { return int32(_lastTime - _nextFrameTime) >= 0; }
+	void pauseEngineIntern(bool pause) override;
 	void beginScriptFrame();
 	void startScript(ScriptState &script, const FCLInstructionVector &code);
 	FCLExecutionResult executeCode(ScriptState &script, uint &budget);
@@ -101,11 +109,14 @@ private:
 	const Common::Array<ConditionData> *_activeConditions = nullptr;
 	uint _conditionIndex = 0;
 	bool _initialScriptPending = true, _scriptFrameActive = false, _globalPhase = false;
+	bool _redrawPending = false;
 	byte _kitVariables[128] = {};
 	uint16 _changedVariables = 0;
 	byte _currentKey = 255;
 	byte _palette[4] = {};
 	byte _colorPatterns[15][4] = {};
+	byte _zxPalette[16 * 3] = {};
+	byte _borderAttributes[32 * 24] = {}, _attributes[32 * 24] = {};
 	byte _instruments[8][6] = {};
 	byte _textColor = 7, _movementMode = 1;
 	bool _textOutputEnabled = false;
@@ -116,6 +127,7 @@ private:
 	byte _pendingSound = 0;
 	bool _soundSyncReady = false;
 	uint32 _lastTime = 0, _timerTicks = 0, _timerInterval = 0, _delayUntil = 0;
+	uint32 _nextFrameTime = 0, _pauseStartTime = 0;
 	byte _fontData[96][8] = {};
 	bool _hasFont = false;
 	Graphics::ManagedSurface _scriptSurface, _overlaySurface, _borderSurface;

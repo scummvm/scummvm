@@ -56,6 +56,7 @@ MODULE_OBJS := \
 	games/3dck/8bit.o \
 	games/3dck/8bitUI.o \
 	games/3dck/ui.o \
+	games/3dck/zx.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \
@@ -81,6 +82,7 @@ MODULE_OBJS := \
 	sound/3dck.o \
 	sound/3dck_adlib.o \
 	sound/3dck_cpc.o \
+	sound/3dck_zx.o \
 	sound/cpc.o \
 	sound/dos.o \
 	sound/fx.o \
