@@ -55,6 +55,54 @@ OverworldLogic::OverworldLogic() {
 	_G(transportFoodCtr) = 1;
 }
 
+bool OverworldLogic::board() {
+	auto &sg = _G(savegame);
+
+	if (sg._transportType != Data::TRANSPORT_FOOT) {
+		writeString("X-it thy craft first!\n");
+		playFX(1);
+		return true;
+	}
+
+	int tileNum = _G(map).getTileAt(sg._overworldPos.x, sg._overworldPos.y);
+	if (tileNum < Data::TILE_HORSE || tileNum > Data::TILE_TIME_MACHINE) {
+		writeString("Nothing to Board!\n");
+		playFX(1);
+		return true;
+	}
+
+	// The vehicle becomes the player's own overworld graphic, rather than a
+	// separate entity standing at the same spot
+	sg._overworldEntities[0]._type = tileNum;
+	sg.removeOverworldCreatureAt(sg._overworldPos.x, sg._overworldPos.y);
+
+	// TILE_FRIGATE2 (the flag-waving animation frame of TILE_FRIGATE1)
+	// doesn't have its own TransportType, so every tile past it needs to
+	// shift back down by one to line back up
+	sg._transportType = tileNum - Data::TILE_HORSE + 1;
+	if (sg._transportType > 4)
+		--sg._transportType;
+
+	writeString(tileNum == Data::TILE_HORSE || tileNum == Data::TILE_CART ? "Mount " : "Board ");
+	writeString("%s\n", Data::TRANSPORT_NAMES[sg._transportType]);
+
+	if (tileNum == Data::TILE_SHUTTLE) {
+		g_engine->addView("LiftOff");
+		return false;
+	}
+
+	if (tileNum == Data::TILE_TIME_MACHINE) {
+		if (sg._redGems != 0 && sg._whiteGem != 0 && sg._blueGem != 0 && sg._greenGems != 0) {
+			_G(map).load(Data::MAP_MONDIAN);
+		} else {
+			g_engine->addView("OperateCraft");
+		}
+		return false;
+	}
+
+	return true;
+}
+
 bool OverworldLogic::enter() {
 	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
 	if (location == 0) {

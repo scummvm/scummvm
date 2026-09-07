@@ -90,6 +90,9 @@ void Logic::action(int action) {
 	bool doEndOfTurn = true;
 
 	switch (action) {
+	case KEYBIND_BOARD:
+		doEndOfTurn = board();
+		break;
 	case KEYBIND_UP:
 		doEndOfTurn = move(Data::DIR_UP);
 		break;

@@ -109,6 +109,11 @@ private:
 
 protected:
 	/**
+	 * Board a vehicle the player is standing on
+	 */
+	bool board() override;
+
+	/**
 	 * Enter a location
 	 */
 	bool enter() override;
