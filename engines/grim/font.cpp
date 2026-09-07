@@ -300,11 +300,13 @@ int BitmapFont::getKernedStringLength(const Common::String &text) const {
 
 int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
-	const uint size = text.size();
-	for (uint32 i = 0; i < size; ) {
+	int startColumn = 0;
+	for (uint32 i = 0; i < text.size(); ) {
 		const uint32 ch = getNextChar(text, i);
-		result += getCharStartingCol(ch);
-		result += (i >= size) ? getCharBitmapWidth(ch) : getCharKernedWidth(ch);
+		const int charExtent = startColumn + getCharStartingCol(ch) + getCharBitmapWidth(ch);
+		if (charExtent > result)
+			result = charExtent;
+		startColumn += getCharKernedWidth(ch);
 	}
 	return result;
 }
@@ -397,14 +399,23 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 		int32 charBitmapWidth = getCharBitmapWidth(ch);
 		int32 charBitmapPitch = getCharBitmapPitch(ch);
 		int32 charBitmapHeight = getCharBitmapHeight(ch);
-		int8 fontRow = getCharStartingLine(ch) + getBaseOffsetY();
-		int8 fontCol = getCharStartingCol(ch);
+		int32 fontRow = getCharStartingLine(ch) + getBaseOffsetY();
+		int32 fontCol = getCharStartingCol(ch);
+
+		if (startColumn + fontCol + charBitmapWidth > buf.w ||
+		    fontRow + charBitmapHeight > buf.h || startColumn + fontCol < 0 || fontRow < 0) {
+			warning("BitmapFont::render: glyph 0x%x extends outside the %dx%d surface "
+			        "for string \"%s\"; clipping. This is a font metrics bug.",
+			        ch, buf.w, buf.h, currentLine.c_str());
+		}
 
 		for (int line = 0; line < charBitmapHeight; line++) {
 			int lineOffset = (fontRow + line);
 			int columnOffset = startColumn + fontCol;
 			int fontOffset = (charBitmapPitch * line);
 			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++, columnOffset++, fontOffset++) {
+				if (lineOffset < 0 || lineOffset >= buf.h || columnOffset < 0 || columnOffset >= buf.w)
+					continue;
 				byte pixel = getCharData(ch)[fontOffset];
 				if (pixel == 0x80) {
 					buf.setPixel(columnOffset, lineOffset, blackColor);
