@@ -565,7 +565,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 				dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
 			break;
 		case DependencyType::kTimerLessThanDependencyTime:
-			debugPrintf("kTimerLessThanDependencyTime");
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				// Repurposed as a value-table test in Nancy14
+				static const char *const comparisons[] = { "==", ">", ">=", "<", "<=" };
+				debugPrintf("kValueTest, value %u %s %i", dep.label,
+					dep.condition < ARRAYSIZE(comparisons) ? comparisons[dep.condition] : "?",
+					dep.milliseconds);
+			} else {
+				debugPrintf("kTimerLessThanDependencyTime");
+			}
 			break;
 		case DependencyType::kTimerGreaterThanDependencyTime:
 			debugPrintf("kTimerGreaterThanDependencyTime");
