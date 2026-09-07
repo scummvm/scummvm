@@ -203,7 +203,6 @@ protected:
 	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
 	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
-	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
 #endif
 
 	/** Unseen game screen */
