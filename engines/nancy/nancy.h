@@ -111,8 +111,25 @@ public:
 	const EngineData *getEngineData(const Common::String &name) const;
 	const Common::String getEventFlagName(uint flagID) const;
 
+	// Nancy15+ lets the player alternate between several protagonists, each of whom
+	// carries their own copy of the popup UI. Swaps the engine data describing it to
+	// the given PCUI character's, and returns whether anything actually changed.
+	// Scene::reloadPlayerCharacterUI() rebuilds the widgets themselves.
+	bool setPlayerCharacter(uint characterIndex);
+	uint getPlayerCharacter() const { return _playerCharacter; }
+
+	// A character's "design" is the look their UI wears; it names the CIF tree
+	// everything is loaded from. Nancy's can be changed on the Design Select
+	// screen, and defaults to the character's PCUI entry.
+	Common::String getPlayerCharacterDesign(uint characterIndex) const;
+	void setPlayerCharacterDesign(uint characterIndex, const Common::String &designName);
+
+	// Whether setPlayerCharacter() would actually have to load anything
+	bool playerCharacterNeedsReload(uint characterIndex) const;
+
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }
+	NancyState::NancyState getPreviousState() const { return _gameFlow.prevState; }
 	void setToPreviousState();
 
 	void setMouseEnabled(bool enabled);
@@ -168,6 +185,12 @@ private:
 
 	StaticData _staticData;
 	Common::HashMap<Common::String, EngineData *> _engineData;
+
+	// Nancy15+ active player character, the CIF tree their UI came from, and
+	// each character's chosen design (empty = their PCUI default)
+	uint _playerCharacter = 0;
+	Common::String _playerCharacterTree;
+	Common::String _playerCharacterDesigns[kMaxPlayerCharacters];
 
 	const byte _datFileMajorVersion;
 	const byte _datFileMinorVersion;

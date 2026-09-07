@@ -50,6 +50,18 @@ static const int8 kEvNoEvent						= -1;
 static const int8 kFrNoFrame						= -1;
 static const uint16 kNoScene						= 9999;
 
+// Nancy15 alternates between three protagonists (Nancy and the Hardy boys
+// Frank and Joe), each of whom keeps their own UI and journal. The two
+// brothers share their progress: whichever is played second inherits it
+// from the other.
+static const uint kMaxPlayerCharacters				= 3;
+static const uint kPlayerCharacterFrank				= 1;
+static const uint kPlayerCharacterJoe				= 2;
+
+// Inventory action records name the character whose inventory they change.
+// This value stands for whoever is being played at the time.
+static const byte kPlayerCharacterActive			= 9;
+
 // Taskbar popup UI types. Shared by ControlUIItems (AR 29), UIPopupPrepScene
 // (AR 32) and the Scene UI-prep-scene machinery.
 enum UIType {
