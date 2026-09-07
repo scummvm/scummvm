@@ -164,6 +164,7 @@ void Kit8Engine::drawUI() {
 		_gfx->setViewport(_fullscreenViewArea);
 		_gfx->renderCrossair(_crossairPosition);
 	}
+	playPendingSound();
 }
 
 bool Kit8Engine::handleInput(const Common::Event &event) {
@@ -231,6 +232,7 @@ void Kit8Engine::interact(bool shot) {
 		if (_kitVariables[125] != 255)
 			_kitVariables[125]--;
 		_shootingFrames = 3;
+		playSound(3, true);
 	}
 	if (!object || !object->isGeometric())
 		return;

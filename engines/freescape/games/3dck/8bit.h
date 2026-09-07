@@ -44,6 +44,7 @@ public:
 	void updateTimeVariables() override;
 	void checkSensors() override;
 	void updateScripts() override;
+	void playSound(int index, bool sync, Sound::Type type = Sound::kTypeNormal) override;
 	bool executeObjectConditions(GeometricObject *obj, bool shot, bool collided, bool activated) override;
 	void executeLocalGlobalConditions(bool shot, bool collided, bool timer) override {}
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return false; }
@@ -67,6 +68,8 @@ private:
 	Area *loadArea(Common::SeekableReadStream &file);
 	GeometricObject *loadGeometricObject(Common::SeekableReadStream &file, const byte header[9]);
 	void loadPresentation();
+	void loadSounds();
+	void playPendingSound();
 	void applyPalette();
 	void setMovementMode(byte mode);
 	void readSystemVariables();
@@ -109,7 +112,9 @@ private:
 	byte _climbHeight = 0, _fallHeight = 0, _walkSpeed = 0, _activationRange = 0;
 	byte _shotObject = 0, _hitObject = 0, _activatedObject = 0;
 	bool _fallen = false, _crushed = false, _crossVisible = true;
-	bool _timerTriggered = false, _pendingTimer = false, _soundWarning = false;
+	bool _timerTriggered = false, _pendingTimer = false;
+	byte _pendingSound = 0;
+	bool _soundSyncReady = false;
 	uint32 _lastTime = 0, _timerTicks = 0, _timerInterval = 0, _delayUntil = 0;
 	byte _fontData[96][8] = {};
 	bool _hasFont = false;

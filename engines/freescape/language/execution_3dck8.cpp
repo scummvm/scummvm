@@ -26,6 +26,9 @@
 namespace Freescape {
 
 void Kit8Engine::resetScripts() {
+	stopAllSounds();
+	_pendingSound = 0;
+	_soundSyncReady = false;
 	memset(_kitVariables, 0, sizeof(_kitVariables));
 	_changedVariables = 0;
 	_currentKey = 255;
@@ -159,6 +162,7 @@ void Kit8Engine::updateScripts() {
 		return;
 	updateInstruments();
 	_scriptFrameActive = false;
+	_soundSyncReady = true;
 	_shotObject = _hitObject = _activatedObject = 0;
 }
 
@@ -265,6 +269,7 @@ FCLExecutionResult Kit8Engine::executeCode(ScriptState &script, uint &budget) {
 			writeSystemVariables();
 			_scriptSurface.fillRect(_viewArea, 255);
 			updateInstruments();
+			_soundSyncReady = true;
 			return kFCLPaused;
 		default:
 			error("Unsupported 8-bit 3D Construction Kit instruction %u", op);
@@ -428,10 +433,7 @@ void Kit8Engine::executeColour(const FCLInstruction &instruction) {
 }
 
 void Kit8Engine::executeSound(const FCLInstruction &instruction) {
-	if (instruction._source && !_soundWarning) {
-		warning("8-bit 3D Construction Kit sound effects are not implemented");
-		_soundWarning = true;
-	}
+	playSound(instruction._source, instruction.getType() == Token::SYNCSND);
 }
 
 bool Kit8Engine::executeObjectConditions(GeometricObject *object, bool shot, bool collided, bool activated) {

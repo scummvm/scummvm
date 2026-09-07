@@ -523,7 +523,7 @@ public:
 	void waitForSounds(Sound::Type type = Sound::kTypeNormal);
 	void stopAllSounds(Sound::Type type = Sound::kTypeNormal);
 	bool isPlayingSound(Sound::Type type = Sound::kTypeNormal);
-	void playSound(int index, bool sync, Sound::Type type = Sound::kTypeNormal);
+	virtual void playSound(int index, bool sync, Sound::Type type = Sound::kTypeNormal);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
 

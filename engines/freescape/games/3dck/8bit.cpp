@@ -41,6 +41,8 @@ Kit8Engine::Kit8Engine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_playerHeightNumber = _playerHeightMaxNumber = 0;
 	_playerWidth = _playerDepth = 16;
 	_soundIndexShoot = -1;
+	_soundIndexCollide = 5;
+	_soundIndexFall = 7;
 }
 
 void Kit8Engine::loadAssets() {
@@ -154,6 +156,7 @@ void Kit8Engine::loadAssets() {
 	if (!_areaMap.contains(_startArea) || !_areaMap[_startArea]->entranceWithID(_startEntrance))
 		error("Invalid 8-bit 3D Construction Kit starting entrance");
 	loadPresentation();
+	loadSounds();
 }
 
 Common::Array<Kit8Engine::ConditionData> Kit8Engine::loadConditions(Common::SeekableReadStream &file) {

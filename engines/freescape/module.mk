@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	sound/common.o \
 	sound/3dck.o \
 	sound/3dck_adlib.o \
+	sound/3dck_cpc.o \
 	sound/cpc.o \
 	sound/dos.o \
 	sound/fx.o \
