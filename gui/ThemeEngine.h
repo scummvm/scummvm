@@ -758,6 +758,13 @@ protected:
 	Common::Rect getDrawDataExtendedRect(DrawData type, const Common::Rect &r) const;
 
 	/**
+	 * Compute the rectangle to restore from the backbuffer for a given draw data
+	 * type applied to the given base rect. Covers the item and the ones drawn on
+	 * top of it, but not its own edge and shadow.
+	 */
+	Common::Rect getDrawDataRestoreRect(DrawData type, const Common::Rect &r) const;
+
+	/**
 	 * DEBUG: Draws a white square and writes some text next to it.
 	 */
 	void debugWidgetPosition(const char *name, const Common::Rect &r);
