@@ -30,6 +30,8 @@ namespace Logic {
 
 DungeonLogic::DungeonLogic() {
 	_G(map)._mapType = Data::MAPTYPE_DUNGEON;
+	if (_G(savegame)._dungeonLevel == 0)
+		_G(savegame)._dungeonLevel = 1;
 }
 
 void DungeonLogic::entering() {

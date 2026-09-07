@@ -183,7 +183,7 @@ public:
 	int16 _freeingPrincess = 0;
 	int16 _castleItemAllowance = 0;
 	int16 _castleKeyVal = 0;
-	uint8 _dungeonLevel = 0;
+	uint8 _dungeonLevel = 1;
 	uint8 _dungeonDirection = 4;
 	uint16 _dungeonExitHitPoints = 0;
 
