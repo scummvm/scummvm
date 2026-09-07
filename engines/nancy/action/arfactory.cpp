@@ -39,7 +39,7 @@
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
-//#include "engines/nancy/action/puzzle/blockingpuzzle.h"
+#include "engines/nancy/action/puzzle/blockingpuzzle.h"
 #include "engines/nancy/action/puzzle/blockspuzzle.h"
 #include "engines/nancy/action/puzzle/boardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/buildpuzzle.h"
@@ -530,8 +530,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 179:
 		return new MeterPuzzle();
 	case 180:
-		//return new BlockingPuzzle();
-		return nullptr;	// TODO
+		return new BlockingPuzzle();
 	case 181:
 		return new PaintPuzzle();
 	case 182:
