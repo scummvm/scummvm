@@ -57,7 +57,6 @@
 
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#define SDL_SRCALPHA    0
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
@@ -986,7 +985,11 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		error("allocating _screen failed");
 
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetSurfaceBlendMode(_screen, SDL_BLENDMODE_NONE);
+#else
 	SDL_SetAlpha(_screen, 0, 255);
+#endif
 
 	// SDL 1.2 palettes default to all black,
 	// SDL 1.3 palettes default to all white,
@@ -2686,8 +2689,9 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdMessageFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
 	// Enable alpha blending
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-	SDL_SetAlpha(_osdMessageSurface, SDL_SRCALPHA, _osdMessageAlpha);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetSurfaceAlphaMod(_osdMessageSurface, _osdMessageAlpha);
+	SDL_SetSurfaceBlendMode(_osdMessageSurface, SDL_BLENDMODE_BLEND);
 	SDL_SetSurfaceRLE(_osdMessageSurface, true);
 #else
 	SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
@@ -2817,8 +2821,9 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-			SDL_SetAlpha(_osdMessageSurface, SDL_SRCALPHA, _osdMessageAlpha);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SDL_SetSurfaceAlphaMod(_osdMessageSurface, _osdMessageAlpha);
+			SDL_SetSurfaceBlendMode(_osdMessageSurface, SDL_BLENDMODE_BLEND);
 			SDL_SetSurfaceRLE(_osdMessageSurface, true);
 #else
 			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCALPHA, _osdMessageAlpha);
@@ -3206,41 +3211,6 @@ int SurfaceSdlGraphicsManager::SDL_SetColors(SDL_Surface *surface, SDL_Color *co
 		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
 	}
 #endif
-	return 0;
-}
-
-int SurfaceSdlGraphicsManager::SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
-#if SDL_VERSION_ATLEAST(3, 0, 0)
-	if (!SDL_SetSurfaceAlphaMod(surface, alpha)) {
-		return -1;
-	}
-
-	if (alpha == 255 || !flag) {
-		if (!SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
-			return -1;
-		}
-	} else {
-		if (!SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
-			return -1;
-		}
-	}
-#else
-	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
-		return -1;
-	}
-
-	if (alpha == 255 || !flag) {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
-			return -1;
-		}
-	} else {
-		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
-			return -1;
-		}
-	}
-#endif
-
-
 	return 0;
 }
 
