@@ -274,7 +274,7 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
 	const uint8 types[] = { teleporter, illusion1, illusion2, illusion3, stairsUp, stairsDown, pit, plate1, plate2 };
-	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
+	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 8, 45, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
 	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54, 14, 69 };
 
 	uint8 *specialBlockIDs = new uint8[ARRAYSIZE(types)]();
@@ -483,6 +483,14 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				if (st == 0 || st == 5 || st == 6 || st == 0xFF)
 					continue;
 
+				// Check if it is a stone portal.
+				if (st == _portalParams[0]) {
+					for (int i = 1; i < _portalParamsLen && st != 20; i += 2) {
+						if (level == _portalParams[i] && wn == _portalParams[i + 1])
+							st = 20;
+					}
+				}
+
 				// For EOBI, there are cases where a wall has a clickable shape type, but there is no script
 				// function assigned to it or there isn't even a clickable shape. We don't want to draw these
 				// "fake" triggers.
@@ -504,14 +512,6 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				// Same for levers: There are center/floor switches which also shouldn't be drawn on the walls.
 				if (isCenteredSwitch(nb))
 					continue;
-
-				// Check if it is a stone portal.
-				if (st == _portalParams[0]) {
-					for (int i = 1; i < _portalParamsLen && st != 20; i += 2) {
-						if (level == _portalParams[i] && wn == _portalParams[i + 1])
-							st = 20;
-					}
-				}
 
 				uint32 pcol = _colors[(st == 10) ? kColorNiche : (st == 1 || st == 3 || st == 4) ? kColorLever : (st == 20 ? kColorTele : kColorInteractive)];
 				uint flag = (st == 10) ? 0x1000 : (st == 1 || st == 3 || st == 4) ? 0x400 : (st == 20 ? 0x2000 : 0x800);
