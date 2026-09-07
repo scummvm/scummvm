@@ -3445,6 +3445,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// from the Macromind Director 4.0.4 CD
 	MACDEMO1("wackyjacks", "Demo", "Wacky Jacks Preview", "7f443f2e63fd497a9ad85b10dc880a91", 388159, 314),
 
+	MACGAME1("wackyraces", "", "xn--WackyRacesInteractive-6a27h", "r:6dd167472851493c20c0ac88b1db2bbf", 369624, 313),
 	// Original filename is 'WackyRaces/Intercative' - typo on the original disc
 	MACDEMO1_l("wackyraces", "", "xn--WackyRacesIntercative-6a27h", "71f7df248f2ebc7f0df0c9be39d3aeea", 377276, Common::JA_JPN, 313),
 
