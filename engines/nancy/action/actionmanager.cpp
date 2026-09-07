@@ -30,6 +30,8 @@
 #include "engines/nancy/font.h"
 #include "engines/nancy/graphics.h"
 
+#include "engines/nancy/puzzledata.h"
+
 #include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/actionrecord.h"
 
@@ -317,6 +319,17 @@ static bool evaluateValueTestDependency(const DependencyRecord &dep) {
 	}
 }
 
+// Nancy15+ dependencies that act on a player character name them in the
+// otherwise unused hours field, with kPlayerCharacterActive standing for
+// whoever is being played at the time.
+static uint dependencyCharacter(const DependencyRecord &dep) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15 && dep.hours >= 0 && dep.hours != kPlayerCharacterActive) {
+		return dep.hours;
+	}
+
+	return g_nancy->getPlayerCharacter();
+}
+
 void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor) {
 	if (dep.children.size()) {
 		// Recursively process child dependencies
@@ -370,7 +383,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			dep.satisfied = true;
 			break;
 		case DependencyType::kInventory:
-			dep.satisfied = NancySceneState.hasItem(dep.label) == dep.condition;
+			dep.satisfied = NancySceneState.hasCharacterItem(dependencyCharacter(dep), dep.label) == dep.condition;
 
 			break;
 		case DependencyType::kEvent:
@@ -477,7 +490,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			if (g_nancy->getGameType() >= kGameTypeNancy12) {
 				// Nancy12 repurposed dependency type 10 as a resource check (e.g. the
 				// car's gas gauge): resource value vs. threshold, by condition modifier.
-				int32 resVal = NancySceneState.getUIResource(dep.label);
+				int32 resVal = NancySceneState.getCharacterUIResource(dependencyCharacter(dep), dep.label);
 				int32 threshold = dep.milliseconds;
 				switch (dep.condition) {
 				case 0:	// equal
@@ -665,6 +678,12 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			break;
 		case DependencyType::kDefaultAR:
 			dep.satisfied = !_previousRecordWasExecuted;
+			break;
+		case DependencyType::kPlayerCharacter:
+			// Nancy15+ only: gates a record on who is being played, so the
+			// three protagonists can share a scene and each get their own ARs
+			dep.satisfied = (g_nancy->getPlayerCharacter() == (uint)dep.label) == (dep.condition != 0);
+
 			break;
 		default:
 			warning("Unimplemented Dependency type %i", (int)dep.type);

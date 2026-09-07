@@ -70,7 +70,8 @@ enum struct DependencyType : int16 {
 	kTimerIsActive					= 22,	// Nancy11+ software-timer slot is running/counting
 	kTimerEqualsDependencyTime		= 23,	// The next three compare a running software
 	kTimerBelowDependencyTime		= 24,	// timer's elapsed time against the dependency's
-	kTimerAboveDependencyTime		= 25	// own time, and only while that slot is running
+	kTimerAboveDependencyTime		= 25,	// own time, and only while that slot is running
+	kPlayerCharacter				= 26	// Nancy15+ which protagonist is being played
 };
 
 // Describes a condition that needs to be fulfilled before the
