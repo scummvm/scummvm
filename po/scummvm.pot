@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-09-08 06:50+0000\n"
+"POT-Creation-Date: 2026-09-08 11:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1054,7 +1054,7 @@ msgstr ""
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
-#: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:70
+#: engines/freescape/movement.cpp:36 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
 #: engines/scumm/metaengine.cpp:1139 engines/supernova/metaengine.cpp:273
@@ -1076,7 +1076,7 @@ msgstr ""
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
-#: engines/freescape/movement.cpp:44 engines/got/metaengine.cpp:71
+#: engines/freescape/movement.cpp:45 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
 #: engines/scumm/metaengine.cpp:1106 engines/supernova/metaengine.cpp:279
@@ -3733,7 +3733,7 @@ msgstr ""
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:246
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
-#: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
+#: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:94
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
 #: engines/illusions/metaengine.cpp:142 engines/macs2/metaengine.cpp:58
 #: engines/made/metaengine.cpp:151 engines/mohawk/myst.cpp:566
@@ -6765,7 +6765,7 @@ msgstr ""
 #. I18N: ESC key
 #: engines/bagel/metaengine.cpp:59 engines/bagel/metaengine.cpp:65
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
-#: engines/freescape/movement.cpp:107 engines/got/metaengine.cpp:78
+#: engines/freescape/movement.cpp:117 engines/got/metaengine.cpp:78
 #: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:270 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/saga/metaengine.cpp:328
@@ -7552,13 +7552,13 @@ msgid "Move backward"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:124 engines/dm/metaengine.cpp:162
-#: engines/freescape/movement.cpp:53 engines/hpl1/metaengine.cpp:78
+#: engines/freescape/movement.cpp:54 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:104
 msgid "Strafe left"
 msgstr ""
 
 #: engines/colony/metaengine.cpp:131 engines/dm/metaengine.cpp:182
-#: engines/freescape/movement.cpp:61 engines/hpl1/metaengine.cpp:79
+#: engines/freescape/movement.cpp:62 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Strafe right"
 msgstr ""
@@ -8446,33 +8446,38 @@ msgid "Enable background music ported from the C64 version"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/freescape/movement.cpp:69 engines/mm/mm1/metaengine.cpp:84
+#: engines/freescape/movement.cpp:70 engines/mm/mm1/metaengine.cpp:84
 msgid "Shoot"
 msgstr ""
 
-#: engines/freescape/movement.cpp:78
+#: engines/freescape/movement.cpp:79
 msgid "Rotate up"
 msgstr ""
 
-#: engines/freescape/movement.cpp:83
+#: engines/freescape/movement.cpp:84
 msgid "Rotate down"
 msgstr ""
 
-#: engines/freescape/movement.cpp:88
+#: engines/freescape/movement.cpp:89
 msgid "Turn back"
 msgstr ""
 
+#. I18N: Return refers to return/enter key
+#: engines/freescape/movement.cpp:103 engines/tsage/metaengine.cpp:196
+msgid "Return"
+msgstr ""
+
 #. I18N: Toggles between cursor lock modes, switching between free cursor movement and camera/head movement.
-#: engines/freescape/movement.cpp:101
+#: engines/freescape/movement.cpp:111
 msgid "Change mode"
 msgstr ""
 
-#: engines/freescape/movement.cpp:112
+#: engines/freescape/movement.cpp:122
 msgid "Info menu"
 msgstr ""
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
-#: engines/freescape/movement.cpp:119
+#: engines/freescape/movement.cpp:129
 msgid "Toggle red/blue 3D"
 msgstr ""
 
@@ -14133,11 +14138,6 @@ msgstr ""
 
 #: engines/trecision/metaengine.cpp:163
 msgid "Open system menu"
-msgstr ""
-
-#. I18N: Return refers to return/enter key
-#: engines/tsage/metaengine.cpp:196
-msgid "Return"
 msgstr ""
 
 #: engines/tsage/metaengine.cpp:221
