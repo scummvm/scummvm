@@ -28,6 +28,9 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/savefile.h"
+#include "common/system.h"
+
 
 namespace Made {
 
@@ -108,11 +111,78 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Made::MadeGameDescription *desc) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override { return 999; }
+	bool removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		false;
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSimpleSavesNames);
+}
+
+// The games save in the original format, so there is no ScummVM header to read
+// the description out of. The version 3 games (Return to Zork) start with the
+// original's own header, which keeps the description the player typed in a
+// fixed 64 byte field. The version 2 games write their state raw, with no
+// header and no description at all, so those only get a slot number.
+static Common::String readSavegameDescription(Common::SeekableReadStream *in, int slot) {
+	if (in->readUint32BE() == MKTAG('S', 'G', 'A', 'M')) {
+		in->readUint32LE();	// size
+		in->readUint16LE();	// version
+
+		char desc[65];
+		if (in->read(desc, sizeof(desc) - 1) == sizeof(desc) - 1) {
+			// Nothing guarantees a terminator is among the 64 bytes
+			desc[sizeof(desc) - 1] = 0;
+			if (desc[0])
+				return desc;
+		}
+	}
+
+	return Common::String::format("Save %d", slot);
+}
+
+SaveStateList MadeMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames = saveFileMan->listSavefiles(getSavegameFilePattern(target));
+	SaveStateList saveList;
+
+	for (const auto &filename : filenames) {
+		const int slot = atoi(filename.c_str() + filename.size() - 3);
+		if (slot < 0 || slot > getMaximumSaveSlot())
+			continue;
+
+		Common::InSaveFile *in = saveFileMan->openForLoading(filename);
+		if (!in)
+			continue;
+
+		saveList.push_back(SaveStateDescriptor(this, slot, readSavegameDescription(in, slot)));
+		delete in;
+	}
+
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+bool MadeMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
+SaveStateDescriptor MadeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::InSaveFile *in =
+		g_system->getSavefileManager()->openForLoading(getSavegameFile(slot, target));
+	if (!in)
+		return SaveStateDescriptor();
+
+	SaveStateDescriptor desc(this, slot, readSavegameDescription(in, slot));
+	delete in;
+	return desc;
 }
 
 bool Made::MadeEngine::hasFeature(EngineFeature f) const {
