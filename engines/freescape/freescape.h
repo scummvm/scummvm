@@ -682,7 +682,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	// C64 specifics
-	byte *decompressC64RLE(byte *buffer, int *size, byte marker);
+	Common::Array<byte> unpackC64Snapshot(Common::SeekableReadStream *file, const Common::Path &continuation);
 	byte *_extraBuffer;
 };
 

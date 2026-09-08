@@ -535,7 +535,8 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"darkside", // Tape release
 		"",
-		AD_ENTRY1s("DARKSIDE.C64.DATA", "7d5fc9a962a146e303a0c71a2d5c651e", 48129),
+		AD_ENTRY2s("DARKSIDE.C64.DATA", "7d5fc9a962a146e303a0c71a2d5c651e", 48129,
+			"DARKSIDE.C64.DATA2", "b0c66200fcd60cf746f00bd7f9177d70", 2682),
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		GF_C64_TAPE,
@@ -668,7 +669,8 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"totaleclipse2", // Tape release
 		"",
-		AD_ENTRY1s("TOTALECLIPSE2.C64.DATA", "7ab839a4260c197f24b41ef6ab45ef21", 47105),
+		AD_ENTRY2s("TOTALECLIPSE2.C64.DATA", "7ab839a4260c197f24b41ef6ab45ef21", 47105,
+			"TOTALECLIPSE2.C64.DATA2", "0c1ddf1de6b8995d52bfb21abed062f4", 2818),
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_UNSTABLE | GF_C64_TAPE,
@@ -728,7 +730,8 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"totaleclipse", // Tape relese
 		"",
-		AD_ENTRY1s("TOTALECLIPSE.C64.DATA", "968fd46b941a00f887741dfc348ac149", 47105),
+		AD_ENTRY2s("TOTALECLIPSE.C64.DATA", "968fd46b941a00f887741dfc348ac149", 47105,
+			"TOTALECLIPSE.C64.DATA2", "c45f16800b83c8dc4e0bcdbc3a4a75ac", 4097),
 		Common::EN_ANY,
 		Common::kPlatformC64,
 		ADGF_TESTING | GF_C64_TAPE,

@@ -58,20 +58,15 @@ extern byte kC64Palette[16][3];
 void EclipseEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	file.open(isEclipse2() ? "totaleclipse2.c64.data" : "totaleclipse.c64.data");
+	Common::Array<byte> data;
 
 	if (_variant & GF_C64_TAPE) {
-		int size = file.size();
+		data = unpackC64Snapshot(&file, isEclipse2() ? "totaleclipse2.c64.data2" : "totaleclipse.c64.data2");
+		Common::MemoryReadStream dfile(data.data(), data.size(), DisposeAfterUse::NO);
 
-		byte *buffer = (byte *)malloc(size * sizeof(byte));
-		file.read(buffer, file.size());
-
-		_extraBuffer = decompressC64RLE(buffer, &size, isEclipse2() ? 0xd2 : 0xe1);
-		// size should be the size of the decompressed data
-		Common::MemoryReadStream dfile(_extraBuffer, size, DisposeAfterUse::NO);
-
-		loadMessagesFixedSize(&dfile, 0x1d84, 16, isEclipse2() ? 34 : 30);
-		loadFonts(&dfile, 0xc3e);
-		load8bitBinary(&dfile, 0x9a3e, 16);
+		loadMessagesFixedSize(&dfile, 0x1946, 16, isEclipse2() ? 34 : 30);
+		loadFonts(&dfile, 0x0800);
+		load8bitBinary(&dfile, 0x9600, 16);
 	} else if (_variant & GF_C64_DISC) {
 		loadMessagesFixedSize(&file, isEclipse2() ? 0x1538 : 0x1534, 16, isEclipse2() ? 34 : 30);
 		loadFonts(&file, 0x3f2);
@@ -120,14 +115,10 @@ void EclipseEngine::loadAssetsC64FullGame() {
 					_playerMusic = new EclipseC64MusicPlayer(_c64MusicData);
 				}
 			}
-		} else if ((_variant & GF_C64_TAPE) && _extraBuffer) {
-			// Tape decompressed data has music at a 0x0C3F offset from disc addresses.
-			// The music player expects data indexed from load address 0x0410.
-			// Remap: musicData[i] = decompressed[i + 0x084E]
-			static const int kTapeMusicShift = 0x084E;
-			static const int kMusicRegionSize = 0x1100; // covers 0x0410..0x14FF
+		} else if (_variant & GF_C64_TAPE) {
+			static const int kMusicRegionSize = 0x1100; // covers 0x0410..0x150f
 			_c64MusicData.resize(kMusicRegionSize);
-			memcpy(_c64MusicData.data(), _extraBuffer + kTapeMusicShift, kMusicRegionSize);
+			memcpy(_c64MusicData.data(), data.data() + 0x0410, kMusicRegionSize);
 			delete _playerMusic;
 			_playerMusic = new EclipseC64MusicPlayer(_c64MusicData);
 		}
