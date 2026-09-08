@@ -247,22 +247,17 @@ void Sound::playPCSpeaker(int soundID) {
 		break;
 	}
 	case kLift:
-	{
-		uint32 div = 4649;
-		queueTick(div, 1);
-		while (div > 3103) {
-			div -= 8;
-			queueTick(div, 1);
-		}
-		break;
-	}
 	case kDrop:
 	{
-		uint32 div = 3103;
-		queueTick(div, 1);
-		while (div < 4649) {
-			div += 8;
-			queueTick(div, 1);
+		// VSP uses PIT divisor 0x4000; DURATION 1 waits two interrupts.
+		const uint32 stepUs = uint64(0x4000) * 2 * 1000000 / 1193180;
+		const bool lifting = soundID == kLift;
+		const int step = lifting ? -8 : 8;
+		int div = lifting ? 4649 : 3103;
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, 1193180.0f / div, stepUs);
+		while (lifting ? div > 3103 : div < 4649) {
+			div += step;
+			_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, 1193180.0f / div, stepUs);
 		}
 		break;
 	}
@@ -368,7 +363,8 @@ bool Sound::playMacSound(int soundID, bool loop) {
 	case kSlug: resID = 8347; break;
 	case kTunnel1: resID = 16403; break;
 	case kTunnel2: resID = 17354; break;
-	case kLift: resID = 28521; break;
+	case kLift:
+	case kDrop: resID = 28521; break;
 	case kGlass: resID = 19944; break;
 	case kDoor: resID = 26867; break;
 	case kToilet: resID = 4955; break;

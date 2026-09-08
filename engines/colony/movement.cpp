@@ -1369,22 +1369,28 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 	_suppressCollisionSound = false;
 }
 
-// DOS Forward(): inch ahead along _me.ang until the player leaves the cell.
-bool ColonyEngine::stepOutOfCell() {
+// DOS Forward(), ExitFL() and DropFL(): leave the current cell.
+bool ColonyEngine::stepOutOfCell(uint8 angle, bool backwards) {
 	const int xindex = _me.xindex;
 	const int yindex = _me.yindex;
+	const int direction = backwards ? -1 : 1;
+	clearPlayerCellMarker();
 
 	// clampToWalls() can pin the player short of the boundary, so cap the walk.
 	int guard = 16;
 	_me.type = 2; // temporary small collision type
 	while (_me.xindex == xindex && _me.yindex == yindex) {
-		if (--guard < 0 || checkwall(_me.xloc + _cost[_me.ang], _me.yloc + _sint[_me.ang], &_me)) {
+		const int xnew = _me.xloc + direction * _cost[angle];
+		const int ynew = _me.yloc + direction * _sint[angle];
+		if (--guard < 0 || checkwall(xnew, ynew, &_me)) {
 			_sound->play(Sound::kChime);
 			_me.type = kMeNum;
+			setPlayerCellMarker();
 			return false;
 		}
 	}
 	_me.type = kMeNum;
+	setPlayerCellMarker();
 	return true;
 }
 
@@ -1396,14 +1402,10 @@ bool ColonyEngine::exitTeleport() {
 	const int xindex = _me.xindex;
 	const int yindex = _me.yindex;
 
-	// goToDestination() stamped this cell as the player's; occupiedObjectAt()
-	// would read that marker back as a blocker.
-	clearPlayerCellMarker();
-
 	_me.ang = 48;
 	bool out = false;
 	for (int tries = 0; tries < 4 && !out; tries++) {
-		out = stepOutOfCell();
+		out = stepOutOfCell(_me.ang);
 		if (!out) {
 			_me.xloc = xloc;
 			_me.yloc = yloc;
@@ -1446,18 +1448,8 @@ void ColonyEngine::exitForklift() {
 	int xindex = _me.xindex;
 	int yindex = _me.yindex;
 
-	// Walk backward until we move into a different cell
-	while (_me.xindex == xindex && _me.yindex == yindex) {
-		int xnew = _me.xloc - _cost[_me.ang];
-		int ynew = _me.yloc - _sint[_me.ang];
-		_me.type = 2; // temporary small collision type
-		if (checkwall(xnew, ynew, &_me)) {
-			_sound->play(Sound::kChime);
-			_me.type = kMeNum;
-			return;
-		}
-		_me.type = kMeNum;
-	}
+	if (!stepOutOfCell(_me.look, true))
+		return;
 
 	// Snap to cell center for the dropped forklift
 	xloc = (xloc >> 8);
@@ -1495,9 +1487,8 @@ void ColonyEngine::dropCarriedObject() {
 		return;
 	}
 
-	// Play the drop animation — GANIMATE.C DoLift: DoDropSound()
-	if (loadAnimation("lift")) {
-		_sound->play(Sound::kDrop);
+	// Play the drop animation.
+	if (loadLiftAnimation(_carryType)) {
 		_animationResult = 0;
 		playAnimation();
 		if (!_animationResult) {
@@ -1511,18 +1502,8 @@ void ColonyEngine::dropCarriedObject() {
 	int xindex = _me.xindex;
 	int yindex = _me.yindex;
 
-	// Walk backward until we move into a different cell
-	while (_me.xindex == xindex && _me.yindex == yindex) {
-		int xnew = _me.xloc - _cost[_me.ang];
-		int ynew = _me.yloc - _sint[_me.ang];
-		_me.type = 2;
-		if (checkwall(xnew, ynew, &_me)) {
-			_sound->play(Sound::kChime);
-			_me.type = kMeNum;
-			return;
-		}
-		_me.type = kMeNum;
-	}
+	if (!stepOutOfCell(_me.look, true))
+		return;
 
 	// DOS: teleport always drops at ang=0; other objects use player's angle
 	uint8 ang = (_carryType == kObjTeleport) ? 0 : _me.ang;

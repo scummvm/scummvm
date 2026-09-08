@@ -337,20 +337,19 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 		}
 	}
 
-	// Clear player from current robot array position
-	if (_vm->_me.xindex >= 0 && _vm->_me.xindex < 32 &&
-		_vm->_me.yindex >= 0 && _vm->_me.yindex < 32)
-		_vm->_robotArray[_vm->_me.xindex][_vm->_me.yindex] = 0;
+	_vm->clearPlayerCellMarker();
 
 	// Load the target level
-	if (level != _vm->_level)
+	if (level != _vm->_level) {
 		_vm->loadMap(level);
+		_vm->clearPlayerCellMarker();
+	}
 
 	// If no coordinates given, scan for an entry point (stairs/tunnel/elevator)
 	if (targetX < 0) {
 		for (int x = 0; x < 31 && targetX < 0; x++) {
 			for (int y = 0; y < 31 && targetX < 0; y++) {
-				for (int d = 0; d < 5; d++) {
+				for (int d = 0; d < 4; d++) {
 					int feat = _vm->_mapData[x][y][d][0];
 					if (feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
 						feat == kWallFeatureTunnel || feat == kWallFeatureElevator) {
@@ -377,8 +376,8 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 	_vm->_me.xloc = (targetX << 8) + 128;
 	_vm->_me.yloc = (targetY << 8) + 128;
 
-	// Register player in robot array
-	_vm->_robotArray[targetX][targetY] = kMeNum;
+	_vm->setPlayerCellMarker();
+	_vm->_bumpedObject = 0;
 
 	debugPrintf("Teleported to level %d at (%d, %d)\n", _vm->_level, targetX, targetY);
 	return false;
@@ -697,6 +696,7 @@ bool Debugger::cmdForklift(int argc, const char **argv) {
 			return true;
 		}
 		_vm->_fl = state;
+		_vm->_bumpedObject = 0;
 		if (state > 0)
 			_vm->_me.lookY = 0; // reset vertical look
 		if (state == 0) {

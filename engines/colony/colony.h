@@ -795,7 +795,7 @@ private:
 	bool patchMapFrom(const PassPatch &from, uint8 *mapdata);
 	void exitForklift();
 	void dropCarriedObject();
-	bool stepOutOfCell();
+	bool stepOutOfCell(uint8 angle, bool backwards = false);
 	bool exitTeleport();
 	void teleportPlayer();
 	bool setDoorState(int x, int y, int direction, int state);
@@ -914,6 +914,7 @@ private:
 	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr, bool gameOver = false);
 	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);
+	bool loadLiftAnimation(int objectType);
 	void deleteAnimation();
 	void takeOff();
 	void fullOfStars();
