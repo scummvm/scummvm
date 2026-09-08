@@ -6962,8 +6962,12 @@ void Runtime::recordSaveGameSnapshot() {
 
 	snapshot->variables = _variables;
 
-	for (const Common::HashMap<uint, uint32>::Node &timerNode : _timers)
-		snapshot->timers[timerNode._key] = timerNode._value - timeBase;
+	for (const Common::HashMap<uint, uint32>::Node &timerNode : _timers) {
+		// Don't save expired timers, since rebasing them on load in a later session
+		// could underflow the timestamp
+		if (timerNode._value > timeBase)
+			snapshot->timers[timerNode._key] = (timerNode._value - timeBase);
+	}
 
 	snapshot->escOn = _escOn;
 
@@ -7172,8 +7176,11 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_havePendingPostSwapScreenReset = true;
 
-	for (const Common::HashMap<uint, uint32>::Node &timerNode : snapshot->timers)
-		_timers[timerNode._key] = timerNode._value + timeBase;
+	for (const Common::HashMap<uint, uint32>::Node &timerNode : snapshot->timers) {
+		// Ignore negative timer values (these could be produced from older versions of ScummVM)
+		if ((timerNode._value & 0x80000000u) == 0)
+			_timers[timerNode._key] = timerNode._value + timeBase;
+	}
 
 	_escOn = snapshot->escOn;
 
