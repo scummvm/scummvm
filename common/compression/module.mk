@@ -22,6 +22,7 @@ MODULE_OBJS += \
 	unp64/exo_util.o \
 	unp64/scanners/scanners.o \
 	unp64/scanners/action_packer.o \
+	unp64/scanners/action_replay.o \
 	unp64/scanners/byte_boiler.o \
 	unp64/scanners/caution.o \
 	unp64/scanners/ccs.o \

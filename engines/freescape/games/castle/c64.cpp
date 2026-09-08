@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/compression/unp64.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/random.h"
@@ -32,7 +34,7 @@
 namespace Freescape {
 
 enum {
-	kCastleC64DatabaseOffset = 0x9951,
+	kCastleC64DatabaseAddress = 0x9d00,
 	kCastleC64RuntimeDemoPointerOffset = 0x42,
 	kCastleC64RuntimeAreaTableOffset = 0x4f,
 	kCastleC64CompactDemoPointerOffset = 0x3e,
@@ -69,55 +71,41 @@ static uint32 castleC64UIColor(const Graphics::PixelFormat &format, byte color) 
 	return format.ARGBToColor(255, rgb[0], rgb[1], rgb[2]);
 }
 
-static Common::Array<byte> unpackCastleC64UI(Common::SeekableReadStream *file) {
-	// The startup relocates the packed stream from $0d50 to $2708, then
-	// expands it into $0200..$ffff. Decode only through the screen attributes
-	// at $c400..$c7e7: the later bitmap pages require the separate tape loader.
-	// Page flags at $09ff descend through memory, least significant bit first.
-	// A clear bit selects a page with its own escape byte and count/value runs.
+static Common::Array<byte> unpackCastleC64(Common::SeekableReadStream *file) {
+	if (file->size() < 2 || file->size() > 0x10000)
+		error("Invalid Castle C64 program size");
+
 	Common::Array<byte> packed;
 	packed.resize(file->size());
 	file->seek(0);
-	if (packed.size() < 0x551 || file->read(packed.data(), packed.size()) != packed.size())
-		error("Unable to read Castle C64 UI data");
+	if (file->read(packed.data(), packed.size()) != packed.size() || READ_LE_UINT16(packed.data()) != 0x0801)
+		error("Unable to read Castle C64 program");
+
+	// The split tape loader preserves the rest of the snapshot at $d000.
+	Common::File loader;
+	if (loader.open("castlemaster.c64.loader")) {
+		const uint32 sourceOffset = 2 + 0x0847 - 0x0801;
+		const uint32 destinationOffset = 2 + 0xd000 - 0x0801;
+		if (loader.size() <= sourceOffset || loader.size() - sourceOffset > 0x3000 ||
+			loader.readUint16LE() != 0x0801 || packed.size() > destinationOffset)
+			error("Invalid Castle C64 split loader");
+		uint32 size = loader.size() - sourceOffset;
+		packed.resize(destinationOffset + size);
+		loader.seek(sourceOffset);
+		if (loader.read(packed.data() + destinationOffset, size) != size)
+			error("Truncated Castle C64 split loader");
+	}
 
 	Common::Array<byte> data;
-	data.resize(0xc800);
-	uint32 source = 0x551; // $0d50, including the PRG load-address adjustment
-	int flagOffset = 0x200; // $09ff
-	byte flags = packed[flagOffset];
-	int bitsLeft = 6; // The first two pages are not part of the packed stream.
-	for (uint page = 2; page < 0xc8; page++) {
-		if (!bitsLeft) {
-			flags = packed[--flagOffset];
-			bitsLeft = 8;
-		}
-		bool raw = flags & 1;
-		flags >>= 1;
-		bitsLeft--;
-		uint end = (page + 1) * 256;
-		if (source >= packed.size())
-			error("Truncated Castle C64 UI page %x", page);
-		byte escape = raw ? 0 : packed[source++];
-		for (uint dest = page * 256; dest < end;) {
-			if (source >= packed.size())
-				error("Truncated Castle C64 UI page %x", page);
-			byte value = packed[source++];
-			uint count = 1;
-			if (!raw && value == escape) {
-				if (source + 2 > packed.size())
-					error("Truncated Castle C64 UI run");
-				count = packed[source++];
-				if (!count)
-					count = 256;
-				value = packed[source++];
-			}
-			if (count > end - dest)
-				error("Castle C64 UI run crosses a page boundary");
-			while (count--)
-				data[dest++] = value;
-		}
-	}
+	data.resize(0x10000);
+	uint32 size = 0;
+	if (!Common::Unp64::unp64(packed.data(), packed.size(), data.data(), &size, nullptr) || size < 2)
+		error("Unable to unpack Castle C64 snapshot");
+	uint32 address = READ_LE_UINT16(data.data());
+	if (address > 0x1401 || size - 2 > data.size() - address || address + size - 2 < 0xc800)
+		error("Incomplete Castle C64 snapshot");
+	memmove(data.data() + address, data.data() + 2, size - 2);
+	memset(data.data(), 0, address);
 	return data;
 }
 
@@ -148,91 +136,11 @@ static void loadCastleC64Frame(const Common::Array<byte> &data, uint address, Gr
 	loadCastleC64Bitmap(data, pixels, width, height, surface);
 }
 
-struct CastleC64Repeat {
-	uint16 offset;
-	byte count;
-	byte value;
-};
-
-const uint16 kCastleC64DatabaseSkips[] = {
-	0x01fc, 0x02fc, 0x05fa, 0x08f9, 0x09f9, 0x0af9, 0x0bf4, 0x0cf0,
-	0x0deb, 0x0fe9, 0x10e5, 0x11e3, 0x13e1, 0x14de, 0x18dd, 0x19db,
-	0x1cd9, 0x1ed7, 0x20cf, 0x21c8
-};
-
-const CastleC64Repeat kCastleC64DatabaseRepeats[] = {
-	{ 0x0006, 4, 0x00 }, { 0x0009, 4, 0xff }, { 0x0010, 4, 0x55 }, { 0x001b, 4, 0xaa },
-	{ 0x02dd, 4, 0x02 }, { 0x0327, 4, 0x00 }, { 0x0347, 4, 0x01 }, { 0x0355, 4, 0x00 },
-	{ 0x05fe, 4, 0x00 }, { 0x0610, 4, 0x01 }, { 0x0936, 4, 0x00 }, { 0x0aca, 4, 0x00 },
-	{ 0x0b58, 6, 0x00 }, { 0x0bd9, 6, 0x00 }, { 0x0c5a, 4, 0x01 }, { 0x0c69, 4, 0x01 },
-	{ 0x0c78, 4, 0x02 }, { 0x0c87, 4, 0x02 }, { 0x0c95, 4, 0x00 }, { 0x0d43, 6, 0x00 },
-	{ 0x0d9e, 6, 0x00 }, { 0x0ec9, 6, 0x00 }, { 0x0fea, 5, 0x00 }, { 0x1085, 6, 0x00 },
-	{ 0x1163, 6, 0x00 }, { 0x127e, 6, 0x00 }, { 0x140b, 4, 0x06 }, { 0x1497, 6, 0x00 },
-	{ 0x1543, 5, 0x00 }, { 0x1910, 6, 0x00 }, { 0x1a1b, 6, 0x00 }, { 0x1da9, 6, 0x00 },
-	{ 0x1edb, 6, 0x00 }, { 0x1ee1, 6, 0x00 }, { 0x1ee7, 6, 0x00 }, { 0x20d0, 4, 0x00 },
-	{ 0x2128, 6, 0x00 }, { 0x217e, 6, 0x00 }, { 0x21c5, 4, 0x00 }, { 0x2250, 6, 0x00 },
-	{ 0x2255, 113, 0x00 }
-};
-
 uint16 readCastleC64Uint16LE(const Common::Array<byte> &data, uint32 offset) {
 	if (offset + 1 >= data.size())
 		error("Castle C64 database pointer read out of range at 0x%x", offset);
 
 	return data[offset] | (data[offset + 1] << 8);
-}
-
-Common::Array<byte> normalizeCastleC64Database(Common::SeekableReadStream *file) {
-	file->seek(kCastleC64DatabaseOffset);
-	if (file->pos() != kCastleC64DatabaseOffset)
-		error("Unable to seek to Castle C64 database at 0x%x", kCastleC64DatabaseOffset);
-	if (file->size() <= kCastleC64DatabaseOffset)
-		error("Castle C64 database file is too short");
-
-	uint32 rawSize = file->size() - kCastleC64DatabaseOffset;
-	Common::Array<byte> raw;
-	raw.resize(rawSize);
-	if (file->read(&raw[0], rawSize) != rawSize)
-		error("Unable to read Castle C64 database");
-	if (raw.size() < 3)
-		error("Castle C64 database is too short");
-
-	const uint16 decodedSize = readCastleC64Uint16LE(raw, 1);
-	Common::Array<byte> decoded;
-	uint32 sourceOffset = 0;
-	uint skipIndex = 0;
-	uint repeatIndex = 0;
-
-	while (decoded.size() < decodedSize) {
-		if (sourceOffset >= raw.size())
-			error("Castle C64 database normalization ran out of source data");
-
-		if (skipIndex < ARRAYSIZE(kCastleC64DatabaseSkips) && sourceOffset == kCastleC64DatabaseSkips[skipIndex]) {
-			sourceOffset++;
-			skipIndex++;
-			continue;
-		}
-
-		if (repeatIndex < ARRAYSIZE(kCastleC64DatabaseRepeats) && sourceOffset == kCastleC64DatabaseRepeats[repeatIndex].offset) {
-			const CastleC64Repeat &repeat = kCastleC64DatabaseRepeats[repeatIndex];
-			if (sourceOffset + 2 >= raw.size() || raw[sourceOffset + 1] != repeat.count || raw[sourceOffset + 2] != repeat.value)
-				error("Castle C64 database repeat mismatch at 0x%x", sourceOffset);
-
-			for (uint i = 0; i < repeat.count && decoded.size() < decodedSize; i++)
-				decoded.push_back(repeat.value);
-
-			sourceOffset += 3;
-			repeatIndex++;
-			continue;
-		}
-
-		decoded.push_back(raw[sourceOffset++]);
-	}
-
-	if (skipIndex != ARRAYSIZE(kCastleC64DatabaseSkips) || repeatIndex != ARRAYSIZE(kCastleC64DatabaseRepeats))
-		error("Castle C64 database normalization did not consume all relocation entries");
-
-	debugC(1, kFreescapeDebugParser, "Castle C64 normalized database: 0x%x -> 0x%x bytes", sourceOffset, decodedSize);
-	return decoded;
 }
 
 static Common::Array<Graphics::ManagedSurface *> loadCastleC64Font(const Common::Array<byte> &data) {
@@ -266,7 +174,7 @@ class CastleC64DatabaseReadStream : public Common::SeekableReadStream {
 public:
 	CastleC64DatabaseReadStream(const Common::Array<byte> &data) : _data(data), _pos(0), _eos(false), _colorMapRead(false) {
 		if (_data.size() < kCastleC64RuntimeAreaTableOffset)
-			error("Castle C64 normalized database is too short");
+			error("Castle C64 database is too short");
 
 		for (uint i = 0; i < 4; i++)
 			_compactPointerBytes[i] = _data[kCastleC64RuntimeDemoPointerOffset + i];
@@ -456,7 +364,7 @@ void CastleEngine::loadAssetsC64FullGame() {
 	if (!file.isOpen())
 		error("Failed to open castlemaster.c64.data");
 
-	Common::Array<byte> uiData = unpackCastleC64UI(&file);
+	Common::Array<byte> uiData = unpackCastleC64(&file);
 	Common::MemoryReadStream uiStream(uiData.data(), uiData.size());
 	Common::Array<Graphics::ManagedSurface *> chars = loadCastleC64Font(uiData);
 	_font = Font(chars);
@@ -576,7 +484,10 @@ void CastleEngine::loadAssetsC64FullGame() {
 		_flagFrames.push_back(flag);
 	}
 
-	Common::Array<byte> database = normalizeCastleC64Database(&file);
+	uint16 databaseSize = readCastleC64Uint16LE(uiData, kCastleC64DatabaseAddress + 1);
+	if (databaseSize < kCastleC64RuntimeAreaTableOffset || kCastleC64DatabaseAddress + databaseSize > uiData.size())
+		error("Invalid Castle C64 database size");
+	Common::Array<byte> database(uiData.data() + kCastleC64DatabaseAddress, databaseSize);
 	CastleC64DatabaseReadStream databaseStream(database);
 	load8bitBinary(&databaseStream, 0, 16);
 
@@ -619,7 +530,7 @@ void CastleEngine::loadAssetsC64FullGame() {
 	_sound = createCastleC64Sound(_mixer, uiData);
 	_playerMusic = new CastleC64MusicPlayer(_mixer);
 
-	// TODO: title screen is in BASIC loader (file 009) - not yet extracted
+	// TODO: Extract the title screen from the snapshot.
 }
 
 void CastleEngine::drawC64HudSurface(Graphics::Surface *surface, const Graphics::Surface &frame, const Common::Point &origin) {

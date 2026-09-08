@@ -96,6 +96,9 @@ static int isBasicRun2(int pc) {
 }
 
 int unp64(const byte *compressed, uint32 length, byte *destinationBuffer, uint32 *finalLength, const char *switches) {
+	if (!compressed || !destinationBuffer || !finalLength || length < 2)
+		return 0;
+	*finalLength = 0;
 
 	char settings[4][64];
 	int numSettings = 0;
@@ -716,6 +719,8 @@ int unp64(const byte *compressed, uint32 length, byte *destinationBuffer, uint32
 	if (unp._endAdr < unp._strMem)
 		unp._endAdr = 0x10000;
 
+	if (unp._strMem < 2 || unp._strMem >= unp._endAdr)
+		return 0;
 	mem[unp._strMem - 2] = unp._strMem & 0xff;
 	mem[unp._strMem - 1] = unp._strMem >> 8;
 

@@ -27,6 +27,7 @@ namespace Unp64 {
 
 void scnECA(UnpStr *unp);
 void scnExpert(UnpStr *unp);
+void scnActionReplay(UnpStr *unp);
 void scnCruel(UnpStr *unp);
 void scnPuCrunch(UnpStr *unp);
 void scnByteBoiler(UnpStr *unp);
@@ -44,6 +45,7 @@ void scnExomizer(UnpStr *unp);
 Scnptr g_scanFunc[] = {
 	scnECA,
 	scnExpert,
+	scnActionReplay,
 	scnCruel,
 	scnPuCrunch,
 	scnByteBoiler,
