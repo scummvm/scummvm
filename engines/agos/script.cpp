@@ -743,6 +743,23 @@ void AGOSEngine::o_waitSync() {
 	uint var = getVarOrWord();
 	_scriptVar2 = (var == 200);
 
+	// WORKAROUND: In Simon the Sorcerer 2 CD, there are cases where
+	// two consecutive wait instructions are used in game scripts,
+	// during large dialogs. This isn't handled well, and leads to
+	// very long and noticeable wait times. If such cases are found,
+	// and speech and subtitles are enabled simultaneously, skip the
+	// second long wait, and keep only the first short one.
+	if (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE) &&
+		_speech && _subtitles && var == 200) {
+		byte nextOpcode = getByte();
+		if (nextOpcode == 119) {
+			_codePtr += 2;
+			warning("Skipping consecutive wait instruction");
+		} else {
+			_codePtr--; // restore code pointer
+		}
+	}
+
 	if (var != 200 || !_skipVgaWait)
 		waitForSync(var);
 	_skipVgaWait = false;
