@@ -269,6 +269,49 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// English CD with *.gra files -- variant with a different english.txt
+		// (dw.gra is byte-identical to the catalogued releases).
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.gra", 0, "c8808ccd988d603dd35dff42013ae7fd", 781656},
+				{"english.txt", 0, "6a371099c0bd0777fa32e8d442cad204", 228542},
+				{"english.smp", 0, NULL, AD_NO_SIZE},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_DW1,
+		0,
+		GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+	{	// English CD with *.scn files -- uncatalogued variant.
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "70955425870c7720d6eebed903b2ef41", 776188},
+				{"english.txt", 0, "7526cfc3a64e00f223795de476b4e2c9", 228878},
+				{"english.smp", 0, NULL, AD_NO_SIZE},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_DW1,
+		0,
+		GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// Italian CD with english speech and *.gra files.
 		// Note: It contains only italian subtitles, but inside english.txt
 		{
