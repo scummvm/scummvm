@@ -22,14 +22,14 @@
 #ifndef IGOR_H
 #define IGOR_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
@@ -46,7 +46,7 @@ namespace Igor {
 struct IgorGameDescription;
 
 enum {
-	kFlagDemo   = 1 << 0,
+	kFlagDemo = 1 << 0,
 	kFlagFloppy = 1 << 1,
 	kFlagTalkie = 1 << 2
 };
@@ -62,6 +62,16 @@ enum {
 	kQuickSaveSlot = 0,
 	kMaxSaveStates = 10,
 	kNoSpeechSound = 999
+};
+
+enum {
+	MAX_DIALOGUE_TEXTS = 6,
+	MAX_OBJECT_NAME_LENGTH = 31,
+	MAX_DIALOGUE_TEXT_LENGTH = 51,
+	MAX_VERB_NAME_LENGTH = 12,
+	MAX_ROOM_OBJECT_AREAS = 256,
+	MAX_DIALOGUE_QUESTIONS = 30,
+	MAX_DIALOGUE_REPLIES = 70
 };
 
 struct DetectedGameVersion {
@@ -86,12 +96,19 @@ struct StringEntry {
 	StringEntry(int i, const char *s) : id(i), str(s) {}
 };
 
+struct RoomObjectArea {
+	uint8 area;
+	uint8 object;
+	uint8 y1Lum;
+	uint8 y2Lum;
+	uint8 deltaLum;
+};
+
 class IgorEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	// MidiPlayer *_midiPlayer;
-
 
 	Common::File _ovlFile;
 
@@ -106,17 +123,24 @@ private:
 	uint8 *_inventoryPanelBuffer;
 	uint8 *_inventoryImagesBuffer;
 	uint8 *_verbsPanelBuffer;
+	int _screenVGAVOffset;
 
 	bool _eventQuitGame;
 	uint32 _nextTimer;
 
-
 	DetectedGameVersion _game;
 
+
+	char _globalDialogueTexts[300][MAX_DIALOGUE_TEXT_LENGTH];
+	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
+	uint8 _walkXScaleRoom[320];
+	uint8 _walkYScaleRoom[144 * 3];
+	RoomObjectArea _roomObjectAreasTable[MAX_ROOM_OBJECT_AREAS];
 
 	int16 _currentPart;
 	uint8 _currentPalette[768];
 	uint8 _paletteBuffer[768];
+	uint8 _igorPalette[48];
 
 	int _gameTicks;
 	int _resourceEntriesCount;
@@ -125,7 +149,6 @@ private:
 
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
-
 
 	void restart();
 	void setupDefaultPalette();
@@ -136,6 +159,7 @@ private:
 
 	void PART_MAIN();
 	void PART_05();
+	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 	void handleRoomInput();
 
@@ -143,18 +167,32 @@ private:
 	void leavePartLoop();
 	void runPartLoop();
 
+
+	void scrollPalette(int startColor, int endColor);
+	void setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b);
+	void setPaletteRange(int startColor, int endColor);
+	void updatePalette(int count);
+
+	void fadeInPalette(int count);
+	void fadeOutPalette(int count);
+
+	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);
+	void decodeRoomText(const uint8 *p);
+	void decodeRoomAreas(const uint8 *p, int count);
+	void decodeRoomMask(const uint8 *p);
+
+	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
+	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
+
 	void waitForTimer(int ticks = -1);
 
 	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void loadRoomData(int pal, int img, int box, int msk, int txt);
 
-
-protected:
-	// Engine APIs
-	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+
 public:
 	IgorEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~IgorEngine() override;
@@ -174,10 +212,9 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsLoadingDuringRuntime) ||
+			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
@@ -201,6 +238,13 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+protected:
+	// Engine APIs
+	Common::Error run() override;
+	static const uint8 PAL_48_1[];
+	static const uint8 PAL_96_1[];
+	static const uint8 PAL_IGOR_1[];
+	static const uint8 PAL_IGOR_2[];
 };
 
 extern IgorEngine *g_engine;

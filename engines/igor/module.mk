@@ -3,7 +3,8 @@ MODULE := engines/igor
 MODULE_OBJS = \
 	igor.o \
 	console.o \
-	metaengine.o
+	metaengine.o \
+	static.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IGOR), DYNAMIC_PLUGIN)
