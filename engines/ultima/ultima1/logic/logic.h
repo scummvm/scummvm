@@ -81,6 +81,9 @@ protected:
 	 */
 	bool combat(int direction, int amount);
 
+	/**
+	 * Attack with a weapon
+	 */
 	virtual bool attack(Data::Direction dir);
 
 	/**
@@ -91,7 +94,8 @@ protected:
 	/**
 	 * Handles updating creatures/NPCs
 	 */
-	virtual void updateCreatures() = 0;
+	virtual void updateCreatures() {
+	}
 
 	/*--- Fallback player action handlers. Each returns true if end of
 	 * turn processing should happen immediately afterward, or false if
@@ -115,7 +119,9 @@ protected:
 	virtual bool transact();
 	virtual bool xit();
 	virtual bool zstats();
-	virtual bool move(Data::Direction dir) = 0;
+	virtual bool move(Data::Direction dir) {
+		return false;
+	}
 	virtual bool pass();
 
 	/*---------------------------------------*/

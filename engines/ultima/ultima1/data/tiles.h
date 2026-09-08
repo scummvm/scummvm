@@ -55,6 +55,10 @@ enum OverworldTileId {
 	TILE_FIRST_MONSTER = 19,
 	TILE_WANDERING_WARLOCK = 47,
 	TILE_LAST_MONSTER = 47,
+	// Flying spell-attack projectile glyph, used for casting Magic
+	// Missile/Kill on the overworld - distinct from the melee TILE_ATTACK
+	// impact flash below
+	TILE_SPELL_ATTACK = 49,
 	// Attack projectile/impact glyph, flashed briefly over the map during
 	// combat animations
 	TILE_ATTACK = 50

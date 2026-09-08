@@ -23,6 +23,7 @@
 #ifndef ULTIMA2_LOGIC_OVERWORLD_LOGIC_H
 #define ULTIMA2_LOGIC_OVERWORLD_LOGIC_H
 
+#include "common/ptr.h"
 #include "ultima/ultima1/logic/logic.h"
 #include "ultima/ultima1/data/map.h"
 
@@ -31,6 +32,26 @@ namespace Ultima1 {
 namespace Logic {
 
 class OverworldLogic : public Logic {
+private:
+	/**
+	 * Bridging class used to receive back the selected direction from the Direction view, and then
+	 * dispatch it for either spell or weapon attack in the given direction.
+	 */
+	class DirectionLogic : public Logic {
+	public:
+		enum Mode { SPELL, WEAPON, FIRE };
+	private:
+		Common::SharedPtr<Logic> _oldLogic;
+		Mode _mode;
+
+	public:
+		DirectionLogic(Mode mode);
+		~DirectionLogic() override {
+		}
+		void action(int action) override;
+	};
+	friend class DirectionLogic;
+
 private:
 	/**
 	 * Check for movement
@@ -109,9 +130,37 @@ private:
 
 	void castPrayer();
 	void castSpell(int spellNum, int val);
-	bool castSpellAttack();
+
+	/**
+	 * Returns the magic "strike" power of the currently readied weapon,
+	 * used by the Magic Missile spell - a random value up to the player's
+	 * intelligence, doubled/tripled/halved again depending on whether a
+	 * wand, amulet, staff, or triangle is readied
+	 */
+	int getMagicWeaponPower();
+
+	/**
+	 * Adds coins to the player's purse, capped at 9999
+	 */
+	void giveCoins(int coins);
+
+	/**
+	 * Animates a spell-attack projectile flying up to maxDistance tiles in
+	 * the given direction, stopping early at a monster or mountains, then
+	 * resolves the hit - rolling to hit, then applying damage or killing
+	 * the monster there, awarding coins/experience on a kill
+	 */
+	void attackDamage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId);
+
+	void castSpellAttack(Data::Direction dir);
+	void combat(Data::Direction dir, int val);
 
 protected:
+	/**
+	 * Attack with weapon
+	 */
+	bool attack(Data::Direction dir) override;
+
 	/**
 	 * Board a vehicle the player is standing on
 	 */

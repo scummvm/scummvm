@@ -50,9 +50,71 @@ static const char *IMPASSABLE_REASONS[] = {
 static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
+
+OverworldLogic::DirectionLogic::DirectionLogic(Mode mode) : _mode(mode) {
+	_oldLogic = _G(logic);
+}
+
+void OverworldLogic::DirectionLogic::action(int action) {
+	Data::Direction dir;
+
+	switch (action) {
+	case KEYBIND_UP:
+		dir = Data::DIR_UP;
+		break;
+	case KEYBIND_DOWN:
+		dir = Data::DIR_DOWN;
+		break;
+	case KEYBIND_LEFT:
+		dir = Data::DIR_LEFT;
+		break;
+	case KEYBIND_RIGHT:
+		dir = Data::DIR_RIGHT;
+		break;
+	default:
+		dir = Data::DIR_UNSPECIFIED;
+		break;
+	}
+
+	_G(logic) = _oldLogic;
+
+	switch (_mode) {
+	case SPELL:
+		static_cast<OverworldLogic *>(_oldLogic.get())->castSpellAttack(dir);
+		break;
+	case WEAPON:
+		static_cast<OverworldLogic *>(_oldLogic.get())->combat(dir, 7);
+		break;
+	case FIRE:
+	default:
+		static_cast<OverworldLogic *>(_oldLogic.get())->combat(dir, 8);
+		break;
+	}
+}
+
+/*-------------------------------------------------------------------*/
+
 OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
 	_G(transportFoodCtr) = 1;
+}
+
+bool OverworldLogic::attack(Data::Direction dir) {
+	writeString("Attack with %s", Data::WEAPON_NAMES_LOWER[_G(savegame)._equippedWeapon]);
+
+	int maxDistance = Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon];
+	if (!maxDistance) {
+		// It's a non-attacking "weapon" like the rope
+		writeString("?\n");
+		playFX(1);
+		return true;
+
+	} else {
+		writeString(": ");
+		_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::WEAPON));
+		g_engine->addView("Direction");
+		return false;
+	}
 }
 
 bool OverworldLogic::board() {
@@ -115,7 +177,11 @@ bool OverworldLogic::cast() {
 
 	case Data::SPELL_MAGIC_MISSILE:
 	case Data::SPELL_KILL:
-		return castSpellAttack();
+		// Select direction
+		writeString(": ");
+		_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::SPELL));
+		g_engine->addView("Direction");
+		return false;
 
 	default:
 		writeString("\n");
@@ -184,12 +250,15 @@ bool OverworldLogic::fire() {
 	writeString("Fire ");
 
 	if (_G(savegame)._transportType == Data::TRANSPORT_FRIGATE || _G(savegame)._transportType == Data::TRANSPORT_AIRCAR) {
+		writeString(_G(savegame)._transportType == Data::TRANSPORT_FRIGATE ? "cannons: " : "lasers: ");
+		_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::FIRE));
+		g_engine->addView("Direction");
+		return false;
 
 	} else {
 		writeString("what?\n");
+		return true;
 	}
-
-	return true;
 }
 
 bool OverworldLogic::move(Data::Direction dir) {
@@ -594,9 +663,127 @@ void OverworldLogic::castPrayer() {
 	}
 }
 
-bool OverworldLogic::castSpellAttack() {
-	// TODO
-	return true;
+int OverworldLogic::getMagicWeaponPower() {
+	Data::Savegame &sg = _G(savegame);
+	int result = getRandomNumber(1, sg._intelligence);
+
+	if (sg._equippedWeapon == Data::WEAPON_WAND)
+		result *= 2;
+	else if (sg._equippedWeapon == Data::WEAPON_AMULET)
+		result = result * 3 / 2;
+	else if (sg._equippedWeapon == Data::WEAPON_STAFF || sg._equippedWeapon == Data::WEAPON_TRIANGLE)
+		result *= 3;
+
+	return result;
+}
+
+void OverworldLogic::giveCoins(int coins) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._coins + coins > 9999)
+		coins = 9999 - sg._coins;
+
+	sg._coins += coins;
+	writeString("%d gold\n", coins);
+}
+
+void OverworldLogic::attackDamage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+	// DELTA_X/Y aren't valid for DIR_UNSPECIFIED (-1) - treat it the same
+	// as DELTA_X/Y's own unused index 0, i.e. the projectile just stays put
+	// on the player's own tile
+	int deltaIdx = (dir == Data::DIR_UNSPECIFIED) ? 0 : dir;
+	int dx = DELTA_X[deltaIdx], dy = DELTA_Y[deltaIdx];
+	const Common::Point &pos = _G(savegame)._overworldPos;
+
+	int x = pos.x, y = pos.y, tile = 0;
+	for (int step = 1; step <= maxDistance; ++step) {
+		x = pos.x + dx * step;
+		y = pos.y + dy * step;
+
+		showAttackTile(x, y, tileId);
+		tile = _G(map).getTileAt(x, y);
+
+		if (tile >= Data::TILE_FIRST_MONSTER || tile == Data::TILE_MOUNTAINS)
+			break;
+	}
+
+	if (tile < Data::TILE_FIRST_MONSTER) {
+		// Ran out of range, or blocked by mountains, without finding a monster
+		writeString("Miss!\n");
+		return;
+	}
+
+	int monsterIdx = (tile - Data::TILE_FIRST_MONSTER) / 2;
+	const char *monsterName = Data::OVERWORLD_MONSTERS[monsterIdx];
+
+	if (getRandomNumber(1, 100) > hitChance) {
+		writeString("Missed the %s!\n", monsterName);
+		return;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	int entityIdx = sg.getOverworldEntityAt(x, y, 1);
+	if (entityIdx == -1) {
+		// Shouldn't normally happen - the scan found a monster tile with no
+		// matching entity there
+		writeString("Miss!\n");
+		return;
+	}
+
+	Data::OverworldEntity &e = sg._overworldEntities[entityIdx];
+	e._hits -= strike;
+
+	writeString(e._hits > 0 ? "Hit the %s" : "Killed the %s", monsterName);
+
+	if (e._hits > 0) {
+		writeString(Common::String(monsterName).size() > 6 ? "!\n" : "! ");
+		writeString("%d damage\n", strike);
+		playFX(2);
+
+	} else {
+		sg.removeOverworldCreatureAt(x, y);
+		--_G(creaturesCount);
+
+		int coins = getRandomNumber(1, Data::OVERWORLD_MONSTERS_DAMAGE[monsterIdx] * 4) + 10;
+		int expGain = getRandomNumber(2, Data::OVERWORLD_MONSTERS_DAMAGE[monsterIdx] * 5);
+		sg._experience += expGain;
+		playFX(2);
+
+		giveCoins(coins);
+		redrawStats();
+	}
+}
+
+void OverworldLogic::castSpellAttack(Data::Direction dir) {
+	Data::Savegame &sg = _G(savegame);
+
+	writeString("%s\n", (dir >= Data::DIR_LEFT && dir <= Data::DIR_DOWN) ? Data::DIRECTION_NAMES[dir] : "");
+
+	int strike;
+	if (sg._equippedSpell == Data::SPELL_MAGIC_MISSILE) {
+		writeString("\"DELCIO-ERE-UI\" ");
+		strike = getMagicWeaponPower();
+	} else {
+		// SPELL_KILL - cast() only ever routes Magic Missile/Kill here
+		writeString("\"INTERFICIO-NUNC!\" ");
+		strike = 9999;
+	}
+
+	bool success = (sg._class == Data::CLASS_FIGHTER) ||
+		(getRandomNumber(1, 100) < sg._wisdom + 50);
+
+	if (!success) {
+		writeString("Failed!\n");
+		playFX(6);
+		return;
+	}
+
+	playFX(5);
+	writeString("\n");
+	attackDamage(dir, 7, 3, strike, 101, Data::TILE_SPELL_ATTACK);
+}
+
+void OverworldLogic::combat(Data::Direction dir, int val) {
+
 }
 
 } // namespace Logic

@@ -70,6 +70,7 @@ MODULE_OBJS += \
 	ultima1/logic/space_logic.o \
 	ultima1/views/interactions/interaction.o \
 	ultima1/views/interactions/dead.o \
+	ultima1/views/interactions/direction.o \
 	ultima1/views/interactions/drop.o \
 	ultima1/views/interactions/entering_craft.o \
 	ultima1/views/interactions/king.o \
