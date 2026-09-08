@@ -20,10 +20,13 @@
  */
 
 #include "made/screen.h"
+
 #include "made/made.h"
+#include "made/mpegplayer.h"
 #include "made/screenfx.h"
 #include "made/database.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"
@@ -31,6 +34,10 @@
 #include "graphics/cursorman.h"
 
 namespace Made {
+
+// The ReelMagic card treated the first palette entry of the graphics layer as
+// transparent, letting the MPEG picture behind it show through.
+static const byte kTransparentIndex = 0;
 
 enum TextChannelIndex {
 	kTapeRecorderName = 84,
@@ -81,6 +88,21 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_screenLock = false;
 	_paletteLock = false;
 
+	_trueColor = (_vm->getFeatures() & GF_REELMAGIC) != 0;
+	// Preserve all 240 video lines by default and stretch the 200-line graphics
+	// over them. Reducing the video instead is available as an option.
+	_stretchGraphics = _trueColor && !ConfMan.getBool("reelmagic_video_reduce");
+	_outputHeight = _stretchGraphics ? 240 : 200;
+	_outputScreen = nullptr;
+	_videoLayer = nullptr;
+	_fxScreen = nullptr;
+	if (_trueColor) {
+		_fxScreen = new Graphics::Surface();
+		_fxScreen->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	}
+	memset(_outputPalette, 0, sizeof(_outputPalette));
+	memset(_outputColors, 0, sizeof(_outputColors));
+
 	_paletteInitialized = false;
 	_needPalette = false;
 	_oldPaletteColorCount = 256;
@@ -123,6 +145,14 @@ Screen::~Screen() {
 
 	delete _backgroundScreen;
 	delete _workScreen;
+	if (_outputScreen) {
+		_outputScreen->free();
+		delete _outputScreen;
+	}
+	if (_fxScreen) {
+		_fxScreen->free();
+		delete _fxScreen;
+	}
 	if (_vm->getGameID() != GID_RTZ)
 		delete _screenMask;
 	delete _fx;
@@ -242,6 +272,33 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 }
 
 void Screen::setRGBPalette(byte *palRGB, int start, int count) {
+	if (_trueColor) {
+		// There is no backend palette in true colour; presentWorkScreen() looks
+		// the colours up itself.
+		memcpy(_outputPalette + start * 3, palRGB, count * 3);
+
+		const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+		for (int i = start; i < start + count && i < 256; i++) {
+			const byte *rgb = _outputPalette + i * 3;
+			_outputColors[i] = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+		}
+
+		// The cursor is paletted too, so it follows the screen palette
+		CursorMan.replaceCursorPalette(_outputPalette, 0, 256);
+
+		// A paletted screen recolours whatever is already on it the moment the
+		// palette changes, and the game leans on that: ScreenEffects::flash()
+		// makes lightning by swapping in an inverted palette and back, and the
+		// fades work the same way. Nothing would come of either here unless the
+		// picture is built again with the new colours. _fxScreen is the mirror
+		// of what is currently showing, which is what a palette change acts on -
+		// not the work screen, which may be part way through being drawn.
+		if (_fxScreen)
+			blitTrueColorRect((const byte *)_fxScreen->getPixels(), _fxScreen->pitch,
+				0, 0, _fxScreen->w, _fxScreen->h);
+		return;
+	}
+
 	_vm->_system->getPaletteManager()->setPalette(palRGB, start, count);
 }
 
@@ -381,7 +438,7 @@ void Screen::updateSprites() {
 	drawSpriteChannels(_backgroundScreenDrawCtx, 3, 0);
 	drawSpriteChannels(_workScreenDrawCtx, 1, 2);
 
-	_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	presentWorkScreen();
 	_vm->_screen->updateScreenAndWait(10);
 }
 
@@ -930,22 +987,119 @@ int16 Screen::getTextWidth(int16 fontNum, const char *text) {
 }
 
 Graphics::Surface *Screen::lockScreen() {
-	return _vm->_system->lockScreen();
+	if (!_trueColor)
+		return _vm->_system->lockScreen();
+
+	// copyFxRect() reveals the new picture over the old one a few pixels at a
+	// time, so it needs to read and write the screen as 8 bit paletted pixels.
+	// Hand it the mirror, which still holds what is showing.
+	return _fxScreen;
 }
 
 void Screen::unlockScreen() {
-	_vm->_system->unlockScreen();
+	if (!_trueColor) {
+		_vm->_system->unlockScreen();
+		return;
+	}
+
+	blitTrueColorRect((const byte *)_fxScreen->getPixels(), _fxScreen->pitch,
+		0, 0, _fxScreen->w, _fxScreen->h);
 }
 
 void Screen::showWorkScreen() {
-	_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+	presentWorkScreen();
+}
+
+void Screen::presentWorkScreen() {
+	if (!_trueColor) {
+		_vm->_system->copyRectToScreen(_workScreen->getPixels(), _workScreen->pitch, 0, 0, _workScreen->w, _workScreen->h);
+		return;
+	}
+
+	// The ReelMagic card mixed its MPEG picture in as an underlay: wherever the
+	// graphics layer holds the transparent palette index the video shows
+	// through, everywhere else the graphics win.
+	const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+	if (!_outputScreen) {
+		_outputScreen = new Graphics::Surface();
+		_outputScreen->create(_workScreen->w, _outputHeight, format);
+	}
+
+	blitTrueColorRect((const byte *)_workScreen->getPixels(), _workScreen->pitch,
+		0, 0, _workScreen->w, _workScreen->h);
+
+	// Keep the mirror the screen effects draw on in step with what is showing
+	if (_fxScreen)
+		memcpy(_fxScreen->getPixels(), _workScreen->getPixels(), _workScreen->pitch * _workScreen->h);
+}
+
+void Screen::blitTrueColorRect(const byte *src, int srcPitch, int x, int y, int w, int h) {
+	const Graphics::PixelFormat format = _vm->_system->getScreenFormat();
+	if (!_outputScreen) {
+		_outputScreen = new Graphics::Surface();
+		_outputScreen->create(_workScreen->w, _outputHeight, format);
+	}
+
+	// Work out which output lines the source lines land on. Without stretching
+	// that is one for one; with it, every 5th line is a duplicate of the
+	// previous one, bringing the 200-line graphics up to 240 lines.
+	int firstY = y, lastY = y + h;
+	if (_stretchGraphics) {
+		firstY = MAX(0, y * 240 / 200 - 1);
+		lastY = MIN(_outputHeight, (y + h) * 240 / 200 + 1);
+	} else {
+		firstY = MAX(0, firstY);
+		lastY = MIN(_outputHeight, lastY);
+	}
+
+	for (int outY = firstY; outY < lastY; outY++) {
+		const int srcY = _stretchGraphics ? MIN(outY * 200 / 240, _workScreen->h - 1) : outY;
+		if (srcY < y || srcY >= y + h)
+			continue;
+
+		const byte *srcLine = src + (srcY - y) * srcPitch;
+
+		if (format.bytesPerPixel == 2) {
+			const uint16 *video = _videoLayer ? (const uint16 *)_videoLayer->getBasePtr(x, outY) : nullptr;
+			uint16 *dst = (uint16 *)_outputScreen->getBasePtr(x, outY);
+			for (int i = 0; i < w; i++)
+				dst[i] = (video && srcLine[i] == kTransparentIndex) ? video[i] : (uint16)_outputColors[srcLine[i]];
+		} else {
+			const uint32 *video = _videoLayer ? (const uint32 *)_videoLayer->getBasePtr(x, outY) : nullptr;
+			uint32 *dst = (uint32 *)_outputScreen->getBasePtr(x, outY);
+			for (int i = 0; i < w; i++)
+				dst[i] = (video && srcLine[i] == kTransparentIndex) ? video[i] : _outputColors[srcLine[i]];
+		}
+	}
+
+	if (lastY > firstY)
+		_vm->_system->copyRectToScreen(_outputScreen->getBasePtr(x, firstY), _outputScreen->pitch,
+			x, firstY, w, lastY - firstY);
 }
 
 void Screen::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
+	if (!_trueColor) {
+		_vm->_system->copyRectToScreen(buf, pitch, x, y, w, h);
+		return;
+	}
+
+	// The effects hand over 8 bit graphics, which the backend cannot take here.
+	// Convert them, and remember them, since an effect builds its picture up out
+	// of many of these and may go on to draw on the mirror directly.
+	blitTrueColorRect((const byte *)buf, pitch, x, y, w, h);
+
+	if (_fxScreen) {
+		const byte *src = (const byte *)buf;
+		for (int i = 0; i < h; i++)
+			memcpy(_fxScreen->getBasePtr(x, y + i), src + i * pitch, w);
+	}
 }
 
 void Screen::updateScreenAndWait(int delay) {
+	// Keep any background movie moving while the script goes about its business
+	if (_vm->_mpegPlayer)
+		_vm->_mpegPlayer->update();
+
 	_vm->_system->updateScreen();
 	uint32 startTime = _vm->_system->getMillis();
 	while (_vm->_system->getMillis() < startTime + delay) {

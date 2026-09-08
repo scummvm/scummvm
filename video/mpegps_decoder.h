@@ -64,6 +64,17 @@ public:
 	// Used only by qdEngine
 	void setPrebufferedPackets(int packets);
 
+	// How far ahead of the playback clock audio packets are handed to the mixer,
+	// in milliseconds. The default remains 100 ms.
+	void setAudioLeadTime(uint32 ms);
+
+	// Hand over each frame as it becomes ready rather than decoding a whole
+	// packet onto one surface, which loses every frame of a packet but its last.
+	// Off by default: it changes when frames come out, and the callers that do
+	// not need it are tuned to the existing behaviour. Must be set before
+	// loadStream(), which is where the video track is built.
+	void setStopAtFirstFrame(bool stop) { _stopAtFirstFrame = stop; }
+
 protected:
 	void readNextPacket() override;
 	bool useAudioSync() const override { return false; }
@@ -81,6 +92,7 @@ private:
 		Common::SeekableReadStream *getNextPacket(uint32 currentTime, int32 &startCode, uint32 &pts, uint32 &dts);
 
 		void setPrebufferedPackets(int packets) { _prebufferedPackets = packets; }
+		void setAudioLeadTime(uint32 ms) { _audioLeadTime = ms; }
 
 	private:
 		class Packet {
@@ -109,6 +121,7 @@ private:
 		uint32 _firstVideoPacketPts = 0xFFFFFFFF;
 
 		int _prebufferedPackets = 150;
+		uint32 _audioLeadTime = 100;
 	};
 
 	// Base class for handling MPEG streams
@@ -129,6 +142,7 @@ private:
 	class MPEGVideoTrack : public VideoTrack, public MPEGStream {
 	public:
 		MPEGVideoTrack(Common::SeekableReadStream *firstPacket);
+		void setStopAtFirstFrame(bool stop);
 		~MPEGVideoTrack();
 
 		bool endOfTrack() const override { return _endOfTrack; }
@@ -143,10 +157,13 @@ private:
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) override;
 		StreamType getStreamType() const override { return kStreamTypeVideo; }
 
-		void setEndOfTrack() { _endOfTrack = true; }
+		bool decodePendingFrame();
+		bool finish();
 
 	private:
 		bool _endOfTrack;
+		bool _stopAtFirstFrame;
+		bool _endSequenceQueued;
 		int _curFrame;
 		uint32 _framePts;
 		Audio::Timestamp _nextFrameStartTime;
@@ -157,6 +174,8 @@ private:
 		Graphics::PixelFormat _pixelFormat;
 
 		void findDimensions(Common::SeekableReadStream *firstPacket);
+		void ensureSurface();
+		bool accountFrame(bool foundFrame, uint32 framePeriod);
 
 #ifdef USE_MPEG2
 		Image::MPEGDecoder *_mpegDecoder;
@@ -243,6 +262,7 @@ private:
 	MPEGStream *getStream(uint32 startCode, Common::SeekableReadStream *packet);
 
 	MPEGPSDemuxer *_demuxer;
+	bool _stopAtFirstFrame = false;
 
 	// A map from stream types to stream handlers
 	typedef Common::HashMap<int, MPEGStream *> StreamMap;
