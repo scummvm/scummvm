@@ -209,6 +209,37 @@ bool DungeonLogic::move(Data::Direction dir) {
 	return true;
 }
 
+bool DungeonLogic::attack(Data::Direction dir) {
+	writeString("Attack with %s", Data::WEAPON_NAMES_LOWER[_G(savegame)._equippedWeapon]);
+
+	int maxDistance = Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon];
+	if (!maxDistance) {
+		// It's a non-attacking "weapon" like the rope
+		writeString("?\n");
+		playFX(1);
+
+	} else {
+		writeString("\n");
+
+		int monsterDistance = getMonsterDistance(maxDistance);
+		if (!monsterDistance) {
+			writeString("Nothing\n");
+
+		} else {
+			int agility = _G(savegame)._agility + 50;
+			int strike = getRandomNumber(2, _G(savegame)._equippedWeapon * 8 + _G(savegame)._strength);
+			int deltaX = getDirDeltaX();
+			int deltaY = getDirDeltaY();
+			int x = _G(savegame)._locationPosition.x + monsterDistance * deltaX;
+			int y = _G(savegame)._locationPosition.y + monsterDistance * deltaY;
+
+			dungeonAttackAt(2, agility, strike, x, y);
+		}
+	}
+
+	return true;
+}
+
 bool DungeonLogic::climb() {
 	writeString("K-Limb");
 
@@ -294,6 +325,129 @@ void DungeonLogic::endOfTurn() {
 
 	// Calls updateCreatures() in turn
 	Logic::endOfTurn();
+}
+
+int DungeonLogic::getMonsterDistance(int maxDistance) const {
+	int deltaX = getDirDeltaX();
+	int deltaY = getDirDeltaY();
+	int x, y, tile = 0, monsterId = -1;
+	int dist;
+
+	for (dist = 0; dist < maxDistance; ++dist) {
+		x = _G(savegame)._locationPosition.x + deltaX * dist;
+		y = _G(savegame)._locationPosition.y + deltaY * dist;
+		tile = _G(dungeon)._cells[y][x]._tileNum;
+		monsterId = _G(dungeon)._cells[y][x]._monsterId;
+
+		if (monsterId != -1 || tile == Data::DTILE_WALL || tile == Data::DTILE_SECRET_DOOR ||
+			tile == Data::DTILE_BEAMS || tile == Data::DTILE_DOOR)
+			break;
+	}
+
+	return (monsterId != -1 && tile != Data::DTILE_WALL &&
+		tile != Data::DTILE_SECRET_DOOR && tile != Data::DTILE_BEAMS) ? dist : 0;;
+}
+
+void DungeonLogic::writeMonsterName(int monsterId) {
+	if (monsterId == Data::UMONS_MIMIC)
+		writeString("Mimic");
+	else
+		writeString(Data::UNDERWORLD_MONSTERS[monsterId]);
+}
+
+void DungeonLogic::monsterDead(int monsterId) {
+	// Only 4 monster Ids have a castle quest tied to them - the ones named
+	// in King::QUEST_MONSTER_NAMES, indexed by continent
+	int castleIdx;
+	switch (monsterId) {
+	case 9:
+		castleIdx = 2;
+		break;
+	case 14:
+		castleIdx = 4;
+		break;
+	case 19:
+		castleIdx = 6;
+		break;
+	case 24:
+		castleIdx = 8;
+		break;
+	default:
+		return;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	if (sg._questStatus[castleIdx] == -1) {
+		sg._questStatus[castleIdx] = 1;
+		writeString("A quest has been completed!\n");
+		playFX(5);
+		writeString("\n");
+	}
+}
+
+void DungeonLogic::giveCoins(int coins) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._coins + coins > 9999)
+		coins = 9999 - sg._coins;
+
+	sg._coins += coins;
+	writeString("%d gold\n", coins);
+}
+
+void DungeonLogic::dungeonAttackAt(int effectNum, int agility, int strike, int x, int y) {
+	Data::MapDungeon &dungeon = _G(dungeon);
+	Data::Savegame &sg = _G(savegame);
+	const Common::Point &pos = sg._locationPosition;
+
+	// If the player is currently standing in a doorway, the shot can only
+	// connect if it's heading straight down a clear corridor - not through
+	// another door, or into a chest/coffin
+	bool canHit = true;
+	if (dungeon._cells[pos.y][pos.x]._tileNum == Data::DTILE_DOOR) {
+		Data::DungeonTileId targetTile = dungeon._cells[y][x]._tileNum;
+		canHit = targetTile == Data::DTILE_HALLWAY || targetTile == Data::DTILE_LADDER_UP ||
+			targetTile == Data::DTILE_LADDER_DOWN;
+	}
+
+	if (getRandomNumber(1, 100) > agility) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	Data::DungeonTileId hereTile = dungeon._cells[pos.y][pos.x]._tileNum;
+	if (hereTile == Data::DTILE_WALL || hereTile == Data::DTILE_SECRET_DOOR ||
+			hereTile == Data::DTILE_BEAMS || !canHit) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	playFX(effectNum);
+	if (strike != 10000)
+		writeString("Hit! ");
+
+	Data::DungeonCell &cell = dungeon._cells[y][x];
+	if (cell._monsterHp <= strike) {
+		// Monster killed
+		writeMonsterName(cell._monsterId);
+		writeString(strike == 10000 ? " destroyed!\n" : " killed!\n");
+
+		monsterDead(cell._monsterId);
+
+		int coins = getRandomNumber(2, sg._dungeonLevel * 3 + 10 + cell._monsterId);
+		writeString("Thou dost find: ");
+		giveCoins(coins);
+
+		dungeon.killMonster(x, y);
+
+		int expGain = getRandomNumber(2, sg._dungeonLevel * sg._dungeonLevel + 10);
+		sg._experience += expGain;
+		sg._dungeonExitHitPoints += expGain * 2;
+		redrawStats();
+	} else {
+		// Damaged, but survived
+		writeString("%d damage!\n", strike);
+		cell._monsterHp -= strike;
+	}
 }
 
 } // namespace Logic

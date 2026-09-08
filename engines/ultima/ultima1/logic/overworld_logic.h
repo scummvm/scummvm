@@ -119,6 +119,11 @@ protected:
 	bool enter() override;
 
 	/**
+	 * Fire transport weaponry
+	 */
+	bool fire() override;
+
+	/**
 	 * Handle movement
 	 */
 	bool move(Data::Direction dir) override;

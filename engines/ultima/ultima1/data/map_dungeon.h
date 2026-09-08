@@ -121,6 +121,12 @@ public:
 	 */
 	void generateDungeonLevel();
 
+	/**
+	 * Removes a slain monster from the given cell, freeing up its monster
+	 * slot, then spawns a fresh monster elsewhere in its place
+	 */
+	void killMonster(int x, int y);
+
 	void synchronize(Common::Serializer &s);
 };
 

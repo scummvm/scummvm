@@ -77,6 +77,13 @@ protected:
 	void redrawStats();
 
 	/**
+	 * Triggers combat action
+	 */
+	bool combat(int direction, int amount);
+
+	virtual bool attack(Data::Direction dir);
+
+	/**
 	 * Handles end of turn logic
 	 */
 	virtual void endOfTurn();

@@ -160,6 +160,18 @@ bool OverworldLogic::enter() {
 	return true;
 }
 
+bool OverworldLogic::fire() {
+	writeString("Fire ");
+
+	if (_G(savegame)._transportType == Data::TRANSPORT_FRIGATE || _G(savegame)._transportType == Data::TRANSPORT_AIRCAR) {
+
+	} else {
+		writeString("what?\n");
+	}
+
+	return true;
+}
+
 bool OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
 		return true;

@@ -78,11 +78,48 @@ private:
 	 */
 	void showNearbyText();
 
+	/**
+	 * Get the distance to the closest monster, if any, in front of the player
+	 */
+	int getMonsterDistance(int maxDistance) const;
+
+	/**
+	 * Writes the name of the given monster, special-casing a mimic (which
+	 * is otherwise catalogued in UNDERWORLD_MONSTERS under the name of
+	 * whatever item it's disguised as)
+	 */
+	void writeMonsterName(int monsterId);
+
+	/**
+	 * Marks the castle quest tied to the given monster (if any) as
+	 * completed, provided it's currently outstanding. Only 4 of the 25
+	 * monster Ids - one per continent's "kill a monster" quest - have a
+	 * quest tied to them
+	 */
+	void monsterDead(int monsterId);
+
+	/**
+	 * Adds coins to the player's purse, capped at 9999
+	 */
+	void giveCoins(int coins);
+
+	/**
+	 * Resolves an attack (physical or magical) landing at the given
+	 * dungeon cell - rolls to hit, then applies damage or kills the
+	 * monster there, awarding coins/experience on a kill
+	 */
+	void dungeonAttackAt(int effectNum, int agility, int strike, int x, int y);
+
 protected:
 	/**
 	 * Handle dungeon movement
 	 */
 	bool move(Data::Direction dir) override;
+
+	/**
+	 * Attack command
+	 */
+	bool attack(Data::Direction dir) override;
 
 	/**
 	 * Handles climbing a ladder at the player's current position

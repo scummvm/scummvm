@@ -90,9 +90,6 @@ void Logic::action(int action) {
 	bool doEndOfTurn = true;
 
 	switch (action) {
-	case KEYBIND_BOARD:
-		doEndOfTurn = board();
-		break;
 	case KEYBIND_UP:
 		doEndOfTurn = move(Data::DIR_UP);
 		break;
@@ -104,6 +101,24 @@ void Logic::action(int action) {
 		break;
 	case KEYBIND_RIGHT:
 		doEndOfTurn = move(Data::DIR_RIGHT);
+		break;
+	case KEYBIND_ATTACK:
+		doEndOfTurn = attack(Data::DIR_UNSPECIFIED);
+		break;
+	case KEYBIND_ATTACK_UP:
+		doEndOfTurn = attack(Data::DIR_UP);
+		break;
+	case KEYBIND_ATTACK_DOWN:
+		doEndOfTurn = attack(Data::DIR_DOWN);
+		break;
+	case KEYBIND_ATTACK_LEFT:
+		doEndOfTurn = attack(Data::DIR_LEFT);
+		break;
+	case KEYBIND_ATTACK_RIGHT:
+		doEndOfTurn = attack(Data::DIR_RIGHT);
+		break;
+	case KEYBIND_BOARD:
+		doEndOfTurn = board();
 		break;
 	case KEYBIND_CLIMB:
 		doEndOfTurn = climb();
@@ -173,6 +188,20 @@ void Logic::action(int action) {
 void Logic::keypress(Common::KeyCode keycode) {
 	writeString("Huh?\n");
 	endOfTurn();
+}
+
+bool Logic::attack(Data::Direction dir) {
+	writeString("Attack with %s", Data::WEAPON_NAMES_LOWER[_G(savegame)._equippedWeapon]);
+
+	if (Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon]) {
+		writeString(": ");
+		return combat(dir, 7);
+
+	} else {
+		writeString("?\n");
+		playFX(1);
+		return true;
+	}
 }
 
 bool Logic::board() {
@@ -301,6 +330,11 @@ bool Logic::zstats() {
 
 bool Logic::pass() {
 	writeString("Pass\n");
+	return true;
+}
+
+bool Logic::combat(int direction, int amount) {
+	// TODO
 	return true;
 }
 

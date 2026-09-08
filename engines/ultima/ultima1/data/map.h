@@ -55,7 +55,7 @@ enum {
 };
 
 enum Direction {
-	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
+	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4, DIR_UNSPECIFIED = -1
 };
 
 enum MapType {

@@ -187,6 +187,15 @@ void MapDungeon::dungeonSpawnMonster() {
 	_cells[y][x]._monsterHp = getRandomNumber(1, dungeonLevel * dungeonLevel + 1) + 10 + monsterId;
 }
 
+void MapDungeon::killMonster(int x, int y) {
+	DungeonCell &cell = _cells[y][x];
+	_monsterSlotUsed[cell._monsterId % DUNGEON_MONSTER_SLOTS] = false;
+	cell._monsterId = DUNGEON_NO_MONSTER;
+	cell._monsterHp = 0;
+
+	dungeonSpawnMonster();
+}
+
 } // namespace Data
 } // namespace Ultima1
 } // namespace Ultima

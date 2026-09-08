@@ -41,6 +41,8 @@ extern const char *RACE_NAMES[];
 extern const char *CLASS_NAMES[];
 extern const char *ARMOR_NAMES[];
 extern const char *WEAPON_NAMES[];
+extern const char *WEAPON_NAMES_LOWER[];
+extern const byte WEAPONS_DISTANCE[];
 extern const char *SPELL_NAMES[];
 extern const char *TRANSPORT_NAMES[];
 extern const char *GEM_NAMES[];

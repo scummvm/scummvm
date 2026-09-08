@@ -42,6 +42,13 @@ const char *WEAPON_NAMES[] = {
 	"Bow & Arrows", "Amulet", "Wand", "Staff", "Triangle", "Pistol",
 	"Light Sword", "Phazor", "Blaster"
 };
+const char *WEAPON_NAMES_LOWER[] = {
+	"hands", "dagger", "mace", "axe", "rope", "sword", "g sword", "bow", "amulet",
+	"wand", "staff", "triangle", "pistol", "L sword", "phazor", "blaster"
+};
+const byte WEAPONS_DISTANCE[] = {
+	1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3
+};
 const char *SPELL_NAMES[] = {
 	"Prayer", "Open", "Unlock", "Magic Missile", "Steal", "Ladder Down",
 	"Ladder Up", "Blink", "Create", "Destroy", "Kill"
