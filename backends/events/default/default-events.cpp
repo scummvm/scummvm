@@ -331,6 +331,10 @@ void DefaultEventManager::purgeKeyboardEvents() {
 			_modifierState = event.kbd.flags;
 			break;
 
+		case Common::EVENT_IME_COMPOSITION:
+			// A pending preedit belongs to the GUI text field that owned it.
+			break;
+
 		default:
 			filteredQueue.push(event);
 			break;

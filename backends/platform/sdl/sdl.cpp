@@ -595,6 +595,10 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 #endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 void OSystem_SDL::engineInit() {
+	// GUI composition control applies only while a GUI text field owns input.
+	// An engine must acquire and enable its own scope after it starts.
+	releaseImeCompositionControl();
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_graphicsManager) {
 		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
