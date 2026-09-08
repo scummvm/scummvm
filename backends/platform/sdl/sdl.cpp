@@ -640,6 +640,15 @@ void OSystem_SDL::engineDone() {
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
+		// ScummVM renders the transient composition text in its own editable
+		// widgets. Request editing events before SDL initializes the video
+		// backend, since SDL3 otherwise lets the native IME consume them.
+#if SDL_VERSION_ATLEAST(3, 2, 0)
+		SDL_SetHintWithPriority(SDL_HINT_IME_IMPLEMENTED_UI, "composition", SDL_HINT_OVERRIDE);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_SetHintWithPriority(SDL_HINT_IME_INTERNAL_EDITING, "0", SDL_HINT_OVERRIDE);
+#endif
+
 		// We always initialize the video subsystem because we will need it to
 		// be initialized before the graphics managers to retrieve the desktop
 		// resolution, for example. WebOS also requires this initialization
