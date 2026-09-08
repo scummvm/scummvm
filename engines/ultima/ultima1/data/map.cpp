@@ -27,7 +27,6 @@
 #include "ultima/ultima1/logic/dungeon_logic.h"
 #include "ultima/ultima1/logic/mondain_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
-#include "ultima/ultima1/logic/pillar_logic.h"
 #include "ultima/ultima1/logic/space_logic.h"
 #include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/ultima1.h"
@@ -202,10 +201,8 @@ void Map::load(int mapNum) {
 	} else {
 		if (mapNum < 33)
 			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityLogic());
-		else if (mapNum < 41)
-			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CastleLogic());
 		else
-			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::PillarLogic());
+			_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CastleLogic());
 
 		viewName = "LocationMap";
 	}

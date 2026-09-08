@@ -60,9 +60,15 @@ bool Console::cmdMap(int argc, const char **argv) {
 		debugPrintf("map <map num>\n");
 		return true;
 	} else {
-		int mapNum = atoi(argv[1]);
-		_G(map).load(mapNum);
-		_G(logic)->entering();
+		int location = atoi(argv[1]);
+
+		if (location >= 41 && location < 49) {
+			g_engine->send("Pillar", Shared::Messages::GameMessage("PILLAR", location - 41));
+		} else {
+			_G(map).load(location);
+			_G(logic)->entering();
+		}
+
 		return false;
 	}
 }

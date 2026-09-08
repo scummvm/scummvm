@@ -66,7 +66,6 @@ MODULE_OBJS += \
 	ultima1/logic/dungeon_logic.o \
 	ultima1/logic/mondain_logic.o \
 	ultima1/logic/overworld_logic.o \
-	ultima1/logic/pillar_logic.o \
 	ultima1/logic/space_logic.o \
 	ultima1/views/interactions/interaction.o \
 	ultima1/views/interactions/dead.o \
@@ -76,6 +75,7 @@ MODULE_OBJS += \
 	ultima1/views/interactions/liftoff.o \
 	ultima1/views/interactions/merchant.o \
 	ultima1/views/interactions/operate_craft.o \
+	ultima1/views/interactions/pillar.o \
 	ultima1/views/interactions/princess_saved.o \
 	ultima1/views/interactions/ready.o \
 	ultima1/views/view.o \

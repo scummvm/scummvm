@@ -30,6 +30,7 @@
 #include "ultima/ultima1/views/interactions/liftoff.h"
 #include "ultima/ultima1/views/interactions/merchant.h"
 #include "ultima/ultima1/views/interactions/operate_craft.h"
+#include "ultima/ultima1/views/interactions/pillar.h"
 #include "ultima/ultima1/views/interactions/princess_saved.h"
 #include "ultima/ultima1/views/interactions/ready.h"
 #include "ultima/ultima1/views/create_character.h"
@@ -56,6 +57,7 @@ struct Views : public Shared::Views {
 	Interactions::LiftOff _liftOff;
 	Interactions::Merchant _merchant;
 	Interactions::OperateCraft _operateCraft;
+	Interactions::Pillar _pillar;
 	Interactions::PrincessSaved _princessSaved;
 	Interactions::Ready _ready;
 	CreateCharacter _createCharacter;

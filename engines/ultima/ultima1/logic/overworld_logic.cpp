@@ -145,8 +145,13 @@ bool OverworldLogic::enter() {
 		msg += "\n";
 		writeString(msg);
 
-		// Load the new location
-		_G(map).load(location);
+		if (location >= 41 && location < 49) {
+			g_engine->send("Pillar", Shared::Messages::GameMessage("PILLAR", location - 41));
+
+		} else {
+			// Load the new location
+			_G(map).load(location);
+		}
 
 		// Run any logic for entering it
 		_G(logic)->entering();
