@@ -41,7 +41,6 @@
 #include "glk/windows.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/types.h"
-#include "glk/scott/unp64/unp64.h"
 
 namespace Glk {
 namespace Scott {
@@ -181,16 +180,6 @@ public:
 
 	// detect game
 	Common::HashMap<Common::String, int> _md5Index;
-
-	// unp64
-	UnpStr _unp;
-	int _parsePar = 1;
-	int _iter = 0;
-
-	// 6502 emu
-	int _byted011[2] = {0, 0};
-	int _retfire = 0xff;
-	int _retspace = 0xff;
 
 	// robin of sherwood]
 	uint8_t *_forestImages = nullptr;

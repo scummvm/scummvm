@@ -20,12 +20,12 @@
  */
 
 #include "common/endian.h"
-#include "glk/scott/types.h"
-#include "glk/scott/unp64/unp64.h"
-#include "glk/scott/unp64/exo_util.h"
+#include "common/scummsys.h"
+#include "common/compression/unp64/unp64.h"
+#include "common/compression/unp64/exo_util.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 void scnExpert(UnpStr *unp) {
 	byte *mem;
@@ -243,5 +243,5 @@ void scnExpert(UnpStr *unp) {
 	}
 }
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common

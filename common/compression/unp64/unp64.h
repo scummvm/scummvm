@@ -19,11 +19,11 @@
  *
  */
 
-#ifndef GLK_SCOTT_UNP64_H
-#define GLK_SCOTT_UNP64_H
+#ifndef COMMON_COMPRESSION_UNP64_UNP64_H
+#define COMMON_COMPRESSION_UNP64_UNP64_H
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 struct LoadInfo;
 struct CpuCtx;
@@ -38,7 +38,7 @@ struct UnpStr {
 	int _rtAFrc;          /* flag, return address must be exactly RetAdr, else anything >= RetAdr */
 	int _wrMemF;          /* flag, clean unwritten memory */
 	int _lfMemF;          /* flag, clean end memory leftovers */
-	int _exoFnd;          /* flag, Exomizer detected */ 
+	int _exoFnd;          /* flag, Exomizer detected */
 	int _fStack;          /* flag, fill stack with 0 and SP=$ff, else as in C64 */
 	int _ecaFlg;          /* ECA found, holds relocated areas high bytes */
 	int _fEndBf;          /* End memory address pointer before unpacking, set when DepAdr is reached */
@@ -72,7 +72,7 @@ typedef void (*Scnptr)(UnpStr *);
 
 void scanners(UnpStr *);
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common
 
-#endif 
+#endif

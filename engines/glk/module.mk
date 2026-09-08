@@ -260,25 +260,6 @@ MODULE_OBJS := \
 	scott/scott.o \
 	scott/seas_of_blood.o \
 	scott/ti99_4a_terp.o \
-	scott/unp64/unp64.o \
-	scott/unp64/6502_emu.o \
-	scott/unp64/exo_util.o \
-	scott/unp64/scanners/scanners.o \
-	scott/unp64/scanners/action_packer.o \
-	scott/unp64/scanners/byte_boiler.o \
-	scott/unp64/scanners/caution.o \
-	scott/unp64/scanners/ccs.o \
-	scott/unp64/scanners/cruel.o \
-	scott/unp64/scanners/eca.o \
-	scott/unp64/scanners/exomizer.o \
-	scott/unp64/scanners/expert.o \
-	scott/unp64/scanners/master_compressor.o \
-	scott/unp64/scanners/megabyte.o \
-	scott/unp64/scanners/pu_crunch.o \
-	scott/unp64/scanners/section8.o \
-	scott/unp64/scanners/tbc_multicomp.o \
-	scott/unp64/scanners/tcs_crunch.o \
-	scott/unp64/scanners/xtc.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \

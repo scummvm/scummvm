@@ -19,35 +19,21 @@
  *
  */
 
-#include "common/endian.h"
-#include "glk/scott/types.h"
-#include "glk/scott/unp64/unp64.h"
-#include "glk/scott/unp64/exo_util.h"
+#ifndef COMMON_COMPRESSION_UNP64_H
+#define COMMON_COMPRESSION_UNP64_H
 
-namespace Glk {
-namespace Scott {
+#include "common/scummsys.h"
 
-void scnActionPacker(UnpStr *unp) {
-	byte *mem;
+namespace Common {
+namespace Unp64 {
 
-	if (unp->_idFlag)
-		return;
-	mem = unp->_mem;
-	if (unp->_depAdr == 0) {
-		if (u32eq(mem + 0x811, 0x018538A9) &&
-			u32eq(mem + 0x81d, 0xCEF7D0E8) &&
-			u32eq(mem + 0x82d, 0x0F9D0837) &&
-			u32eq(mem + 0x84b, 0x03D00120)) {
-			unp->_depAdr = 0x110;
-			unp->_forced = 0x811;
-			unp->_strMem = READ_LE_UINT16(&mem[0x848]);
-			unp->_fEndAf = 0x120;
-			unp->_retAdr = READ_LE_UINT16(&mem[0x863]);
-			unp->_idFlag = 1;
-			return;
-		}
-	}
-}
+/**
+ * Unpack a C64 PRG, preserving its two-byte load address.
+ * destinationBuffer must hold 65536 bytes. Returns zero on failure.
+ */
+int unp64(const byte *compressed, uint32 length, byte *destinationBuffer, uint32 *finalLength, const char *settings);
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common
+
+#endif

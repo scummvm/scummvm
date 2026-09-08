@@ -41,13 +41,13 @@
  *
  */
 
-#ifndef GLK_SCOTT_EXO_UTIL_H
-#define GLK_SCOTT_EXO_UTIL_H
+#ifndef COMMON_COMPRESSION_UNP64_EXO_UTIL_H
+#define COMMON_COMPRESSION_UNP64_EXO_UTIL_H
 
-#include "glk/scott/types.h"
+#include "common/scummsys.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 struct LoadInfo {
 	int _basicTxtStart; /* in */
@@ -59,20 +59,20 @@ struct LoadInfo {
 
 int findSys(const byte *buf, int target);
 
-void loadData(uint8_t *data, size_t dataLength, byte mem[65536], LoadInfo *info);
+void loadData(const byte *data, uint32 dataLength, byte mem[65536], LoadInfo *info);
 
 int strToInt(const char *str, int *value);
 
-bool u32eq(const unsigned char *addr, uint32_t val);
-bool u16eq(const unsigned char *addr, uint16_t val);
-bool u16gteq(const unsigned char *addr, uint16_t val);
-bool u16lteq(const unsigned char *addr, uint16_t val);
-bool u16noteq(const unsigned char *addr, uint16_t val);
-bool u32eqmasked(const unsigned char *addr, uint32_t mask, uint32_t val);
-bool u32eqxored(const unsigned char *addr, uint32_t ormask, uint32_t val);
-bool u16eqmasked(const unsigned char *addr, uint16_t mask, uint16_t val);
+bool u32eq(const unsigned char *addr, uint32 val);
+bool u16eq(const unsigned char *addr, uint16 val);
+bool u16gteq(const unsigned char *addr, uint16 val);
+bool u16lteq(const unsigned char *addr, uint16 val);
+bool u16noteq(const unsigned char *addr, uint16 val);
+bool u32eqmasked(const unsigned char *addr, uint32 mask, uint32 val);
+bool u32eqxored(const unsigned char *addr, uint32 ormask, uint32 val);
+bool u16eqmasked(const unsigned char *addr, uint16 mask, uint16 val);
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common
 
 #endif

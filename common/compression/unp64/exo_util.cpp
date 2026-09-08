@@ -42,10 +42,10 @@
  */
 
 #include "common/util.h"
-#include "glk/scott/unp64/exo_util.h"
+#include "common/compression/unp64/exo_util.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 int findSys(const byte *buf, int target) {
 	int outstart = -1;
@@ -123,7 +123,7 @@ int findSys(const byte *buf, int target) {
 	return outstart;
 }
 
-static void loadPrgData(byte mem[65536], uint8_t *data, size_t dataLength, LoadInfo *info) {
+static void loadPrgData(byte mem[65536], const byte *data, uint32 dataLength, LoadInfo *info) {
 	int len = MIN(65536 - info->_start, static_cast<int>(dataLength));
 	memcpy(mem + info->_start, data, (size_t)len);
 
@@ -135,7 +135,7 @@ static void loadPrgData(byte mem[65536], uint8_t *data, size_t dataLength, LoadI
 	}
 }
 
-void loadData(uint8_t *data, size_t dataLength, byte mem[65536], LoadInfo *info) {
+void loadData(const byte *data, uint32 dataLength, byte mem[65536], LoadInfo *info) {
 	int load = data[0] + data[1] * 0x100;
 
 	info->_start = load;
@@ -180,7 +180,7 @@ int strToInt(const char *str, int *value) {
 	return status;
 }
 
-bool u32eq(const unsigned char *addr, uint32_t val)
+bool u32eq(const unsigned char *addr, uint32 val)
 {
 	return addr[3] == (val >> 24) &&
 	addr[2] == ((val >> 16) & 0xff) &&
@@ -188,48 +188,48 @@ bool u32eq(const unsigned char *addr, uint32_t val)
 	addr[0] == (val & 0xff);
 }
 
-bool u32eqmasked(const unsigned char *addr, uint32_t mask, uint32_t val)
+bool u32eqmasked(const unsigned char *addr, uint32 mask, uint32 val)
 {
-	uint32_t val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
+	uint32 val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
 	return (val1 & mask) == val;
 }
 
-bool u32eqxored(const unsigned char *addr, uint32_t xormask, uint32_t val)
+bool u32eqxored(const unsigned char *addr, uint32 xormask, uint32 val)
 {
-	uint32_t val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
+	uint32 val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
 	return (val1 ^ xormask) == val;
 }
 
-bool u16eqmasked(const unsigned char *addr, uint16_t mask, uint16_t val)
+bool u16eqmasked(const unsigned char *addr, uint16 mask, uint16 val)
 {
-	uint16_t val1 = addr[0] | (addr[1] << 8);
+	uint16 val1 = addr[0] | (addr[1] << 8);
 	return (val1 & mask) == val;
 }
 
 
-bool u16eq(const unsigned char *addr, uint16_t val)
+bool u16eq(const unsigned char *addr, uint16 val)
 {
 	return addr[1] == (val >> 8) &&
 	addr[0] == (val & 0xff);
 }
 
-bool u16noteq(const unsigned char *addr, uint16_t val)
+bool u16noteq(const unsigned char *addr, uint16 val)
 {
 	return addr[1] != (val >> 8) ||
 	addr[0] != (val & 0xff);
 }
 
-bool u16gteq(const unsigned char *addr, uint16_t val)
+bool u16gteq(const unsigned char *addr, uint16 val)
 {
-	uint16_t val2 = addr[0] | (addr[1] << 8);
+	uint16 val2 = addr[0] | (addr[1] << 8);
 	return val2 >= val;
 }
 
-bool u16lteq(const unsigned char *addr, uint16_t val)
+bool u16lteq(const unsigned char *addr, uint16 val)
 {
-	uint16_t val2 = addr[0] | (addr[1] << 8);
+	uint16 val2 = addr[0] | (addr[1] << 8);
 	return val2 <= val;
 }
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common

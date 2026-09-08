@@ -30,6 +30,7 @@
  * https://github.com/angstsmurf/spatterlight/tree/master/terps/scott
  */
 
+#include "common/compression/unp64.h"
 #include "common/str.h"
 #include "common/scummsys.h"
 #include "common/ptr.h"
@@ -41,7 +42,6 @@
 #include "glk/scott/game_info.h"
 #include "glk/scott/resource.h"
 #include "glk/scott/saga_draw.h"
-#include "glk/scott/unp64/unp64_interface.h"
 
 namespace Glk {
 namespace Scott {
@@ -480,7 +480,7 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 	uint8_t *uncompressed = nullptr;
 	_G(_fileLength) = *extent;
 
-	size_t decompressedLength = *extent;
+	uint32 decompressedLength = *extent;
 
 	uncompressed = new uint8_t[0xffff];
 
@@ -489,9 +489,9 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 	for (int i = 1; i <= record._decompressIterations; i++) {
 		/* We only send switches on the iteration specified by parameter */
 		if (i == record._parameter && record._switches != nullptr) {
-			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, record._switches);
+			result = Common::Unp64::unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, record._switches);
 		} else
-			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, nullptr);
+			result = Common::Unp64::unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, nullptr);
 		if (result) {
 			if (_G(_entireFile) != nullptr)
 				delete[] _G(_entireFile);

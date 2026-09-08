@@ -41,28 +41,31 @@
  *
  */
 
-#ifndef GLK_SCOTT_6502_EMU_H
-#define GLK_SCOTT_6502_EMU_H
+#ifndef COMMON_COMPRESSION_UNP64_6502_EMU_H
+#define COMMON_COMPRESSION_UNP64_6502_EMU_H
 
-#include "glk/scott/types.h"
+#include "common/scummsys.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 struct CpuCtx {
-	uint32_t _cycles;
-	uint16_t _pc;
-	uint8_t *_mem;
-	uint8_t _sp;
-	uint8_t _flags;
-	uint8_t _a;
-	uint8_t _x;
-	uint8_t _y;
+	uint32 _cycles;
+	uint16 _pc;
+	uint8 *_mem;
+	uint8 _sp;
+	uint8 _flags;
+	uint8 _a;
+	uint8 _x;
+	uint8 _y;
+	int _byted011[2] = {0, 0};
+	int _retfire = 0xff;
+	int _retspace = 0xff;
 };
 
 int nextInst(CpuCtx *r);
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common
 
 #endif

@@ -315,6 +315,7 @@ _fmtowns_pc98_audio=auto
 _sid_audio=auto
 _svq1=auto
 _truemotion1=auto
+_unp64=auto
 _vgmtrans_audio=auto
 _xan=auto
 _midi=auto
@@ -366,6 +367,7 @@ add_component svq1 "Sorenson Video 1" "_svq1" "USE_SVQ1"
 add_component tinygl "TinyGL" "_tinygl" "USE_TINYGL"
 add_component truemotion1 "TrueMotion 1" "_truemotion1" "USE_TRUEMOTION1"
 add_component universaltracker "External Tracker Libraries" "_universaltracker" "USE_UNIVERSALTRACKER"
+add_component unp64 "UNP64" "_unp64" "USE_UNP64"
 add_component vgmtrans_audio "VGMTrans Soundfont audio" "_vgmtrans_audio" "USE_VGMTRANS_AUDIO"
 add_component xan "XAN" "_xan" "USE_XAN"
 

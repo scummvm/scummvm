@@ -19,17 +19,35 @@
  *
  */
 
-#ifndef GLK_SCOTT_UNP64_INTERFACE_H
-#define GLK_SCOTT_UNP64_INTERFACE_H
+#include "common/endian.h"
+#include "common/scummsys.h"
+#include "common/compression/unp64/unp64.h"
+#include "common/compression/unp64/exo_util.h"
 
-#include "glk/scott/types.h"
+namespace Common {
+namespace Unp64 {
 
-namespace Glk {
-namespace Scott {
+void scnActionPacker(UnpStr *unp) {
+	byte *mem;
 
-int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t *finalLength, const char *settings);
+	if (unp->_idFlag)
+		return;
+	mem = unp->_mem;
+	if (unp->_depAdr == 0) {
+		if (u32eq(mem + 0x811, 0x018538A9) &&
+			u32eq(mem + 0x81d, 0xCEF7D0E8) &&
+			u32eq(mem + 0x82d, 0x0F9D0837) &&
+			u32eq(mem + 0x84b, 0x03D00120)) {
+			unp->_depAdr = 0x110;
+			unp->_forced = 0x811;
+			unp->_strMem = READ_LE_UINT16(&mem[0x848]);
+			unp->_fEndAf = 0x120;
+			unp->_retAdr = READ_LE_UINT16(&mem[0x863]);
+			unp->_idFlag = 1;
+			return;
+		}
+	}
+}
 
-} // End of namespace Scott
-} // End of namespace Glk
-
-#endif 
+} // End of namespace Unp64
+} // End of namespace Common

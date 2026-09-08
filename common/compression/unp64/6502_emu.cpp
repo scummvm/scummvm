@@ -41,11 +41,10 @@
  *
  */
 
-#include "glk/scott/globals.h"
-#include "glk/scott/unp64/6502_emu.h"
+#include "common/compression/unp64/6502_emu.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 #define FLAG_N 128
 #define FLAG_V 64
@@ -55,13 +54,13 @@ namespace Scott {
 #define FLAG_C 1
 
 struct ArgEa {
-	uint16_t _value;
+	uint16 _value;
 };
 struct ArgRelative {
-	int8_t _value;
+	int8 _value;
 };
 struct ArgImmediate {
-	uint8_t _value;
+	uint8 _value;
 };
 
 union InstArg {
@@ -86,7 +85,7 @@ struct ModeInfo {
 struct InstInfo {
 	OpInfo *_op;
 	ModeInfo *_mode;
-	uint8_t _cycles;
+	uint8 _cycles;
 };
 
 #define MODE_IMMEDIATE 0
@@ -116,30 +115,30 @@ static int mode_zp(CpuCtx *r, InstArg *arg) {
 }
 
 static int mode_zpx(CpuCtx *r, InstArg *arg) { /* iAN: ldx #1 lda $ff,x should fetch from $00 and not $100 */
-	uint8_t lsbLo = (r->_mem[r->_pc + 1] + r->_x) & 0xff;
+	uint8 lsbLo = (r->_mem[r->_pc + 1] + r->_x) & 0xff;
 	arg->_ea._value = lsbLo;
 	r->_pc += 2;
 	return MODE_ZERO_PAGE_X;
 }
 
 static int mode_zpy(CpuCtx *r, InstArg *arg) { /* iAN: ldy #1 ldx $ff,y should fetch from $00 and not $100 */
-	uint8_t lsbLo = (r->_mem[r->_pc + 1] + r->_y) & 0xff;
+	uint8 lsbLo = (r->_mem[r->_pc + 1] + r->_y) & 0xff;
 	arg->_ea._value = lsbLo;
 	r->_pc += 2;
 	return MODE_ZERO_PAGE_Y;
 }
 
 static int mode_abs(CpuCtx *r, InstArg *arg) {
-	uint16_t offset = r->_mem[r->_pc + 1];
-	uint16_t base = r->_mem[r->_pc + 2] << 8;
+	uint16 offset = r->_mem[r->_pc + 1];
+	uint16 base = r->_mem[r->_pc + 2] << 8;
 	arg->_ea._value = base + offset;
 	r->_pc += 3;
 	return MODE_ABSOLUTE;
 }
 
 static int mode_absx(CpuCtx *r, InstArg *arg) {
-	uint16_t offset = r->_mem[r->_pc + 1] + r->_x;
-	uint16_t base = r->_mem[r->_pc + 2] << 8;
+	uint16 offset = r->_mem[r->_pc + 1] + r->_x;
+	uint16 base = r->_mem[r->_pc + 2] << 8;
 	arg->_ea._value = base + offset;
 	r->_pc += 3;
 	r->_cycles += (offset > 255);
@@ -147,8 +146,8 @@ static int mode_absx(CpuCtx *r, InstArg *arg) {
 }
 
 static int mode_absy(CpuCtx *r, InstArg *arg) {
-	uint16_t offset = r->_mem[r->_pc + 1] + r->_y;
-	uint16_t base = r->_mem[r->_pc + 2] << 8;
+	uint16 offset = r->_mem[r->_pc + 1] + r->_y;
+	uint16 base = r->_mem[r->_pc + 2] << 8;
 	arg->_ea._value = base + offset;
 	r->_pc += 3;
 	r->_cycles += (offset > 255);
@@ -167,20 +166,20 @@ static int mode_ind(CpuCtx *r, InstArg *arg) {
 }
 
 static int mode_indx(CpuCtx *r, InstArg *arg) {
-	uint8_t lsbLo = r->_mem[r->_pc + 1] + r->_x;
-	uint8_t msbLo = lsbLo + 1;
-	uint16_t base = r->_mem[msbLo] << 8;
-	uint16_t offset = r->_mem[lsbLo];
+	uint8 lsbLo = r->_mem[r->_pc + 1] + r->_x;
+	uint8 msbLo = lsbLo + 1;
+	uint16 base = r->_mem[msbLo] << 8;
+	uint16 offset = r->_mem[lsbLo];
 	arg->_ea._value = base + offset;
 	r->_pc += 2;
 	return MODE_INDIRECT_X;
 }
 
 static int mode_indy(CpuCtx *r, InstArg *arg) {
-	uint8_t lsbLo = r->_mem[r->_pc + 1];
-	uint8_t msbLo = lsbLo + 1;
-	uint16_t base = r->_mem[msbLo] << 8;
-	uint16_t offset = r->_mem[lsbLo] + r->_y;
+	uint8 lsbLo = r->_mem[r->_pc + 1];
+	uint8 msbLo = lsbLo + 1;
+	uint16 base = r->_mem[msbLo] << 8;
+	uint16 offset = r->_mem[lsbLo] + r->_y;
 	arg->_ea._value = base + offset;
 	r->_pc += 2;
 	r->_cycles += (offset > 255);
@@ -188,7 +187,7 @@ static int mode_indy(CpuCtx *r, InstArg *arg) {
 }
 
 static int mode_rel(CpuCtx *r, InstArg *arg) {
-	arg->_rel._value = (int8_t)r->_mem[r->_pc + 1];
+	arg->_rel._value = (int8)r->_mem[r->_pc + 1];
 	r->_pc += 2;
 	return MODE_RELATIVE;
 }
@@ -217,7 +216,7 @@ static ModeInfo mode_rel_o	= { &mode_rel,	"$%02x" };
 static ModeInfo mode_acc_o	= { &mode_acc,	"a" };
 static ModeInfo mode_imp_o	= { &mode_imp,	nullptr };
 
-static void updateFlagsNz(CpuCtx *r, uint8_t value) {
+static void updateFlagsNz(CpuCtx *r, uint8 value) {
 	r->_flags &= ~(FLAG_Z | FLAG_N);
 	r->_flags |= (value == 0 ? FLAG_Z : 0) | (value & FLAG_N);
 }
@@ -226,8 +225,8 @@ static void updateCarry(CpuCtx *r, int boolean) {
 	r->_flags = (r->_flags & ~FLAG_C) | (boolean != 0 ? FLAG_C : 0);
 }
 
-static uint16_t subtract(CpuCtx *r, int carry, uint8_t val1, uint8_t value) {
-	uint16_t target = val1 - value - (1 - !!carry);
+static uint16 subtract(CpuCtx *r, int carry, uint8 val1, uint8 value) {
+	uint16 target = val1 - value - (1 - !!carry);
 	updateCarry(r, !(target & 256));
 	updateFlagsNz(r, target & 255);
 	return target;
@@ -238,8 +237,8 @@ static void update_overflow(CpuCtx *r, int boolean) {
 }
 
 static void op_adc(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
-	uint16_t result;
+	uint8 value;
+	uint16 result;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -256,7 +255,7 @@ static void op_adc(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_and(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -270,7 +269,7 @@ static void op_and(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_asl(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t *valuep;
+	uint8 *valuep;
 	switch (mode) {
 	case MODE_ACCUMULATOR:
 		valuep = &r->_a;
@@ -285,7 +284,7 @@ static void op_asl(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void branch(CpuCtx *r, InstArg *arg) {
-	uint16_t target = r->_pc + arg->_rel._value;
+	uint16 target = r->_pc + arg->_rel._value;
 	r->_cycles += 1 + ((target & ~255) != (r->_pc & ~255));
 	r->_pc = target;
 }
@@ -369,7 +368,7 @@ static void op_clv(CpuCtx *r, int mode, InstArg *arg) {
 
 
 static void op_cmp(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -382,7 +381,7 @@ static void op_cmp(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_cpx(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -395,7 +394,7 @@ static void op_cpx(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_cpy(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -423,7 +422,7 @@ static void op_dey(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_eor(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -463,7 +462,7 @@ static void op_jsr(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_lda(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -477,7 +476,7 @@ static void op_lda(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_ldx(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -491,7 +490,7 @@ static void op_ldx(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_ldy(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -505,7 +504,7 @@ static void op_ldy(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_lsr(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t *valuep;
+	uint8 *valuep;
 	switch (mode) {
 	case MODE_ACCUMULATOR:
 		valuep = &r->_a;
@@ -522,7 +521,7 @@ static void op_lsr(CpuCtx *r, int mode, InstArg *arg) {
 static void op_nop(CpuCtx *r, int mode, InstArg *arg) {}
 
 static void op_ora(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -553,8 +552,8 @@ static void op_plp(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_rol(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t *valuep;
-	uint8_t old_flags;
+	uint8 *valuep;
+	uint8 old_flags;
 	switch (mode) {
 	case MODE_ACCUMULATOR:
 		valuep = &r->_a;
@@ -571,8 +570,8 @@ static void op_rol(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_ror(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t *valuep;
-	uint8_t old_flags;
+	uint8 *valuep;
+	uint8 old_flags;
 	switch (mode) {
 	case MODE_ACCUMULATOR:
 		valuep = &r->_a;
@@ -601,8 +600,8 @@ static void op_rts(CpuCtx *r, int mode, InstArg *arg) {
 }
 
 static void op_sbc(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
-	uint16_t result;
+	uint8 value;
+	uint16 result;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -672,7 +671,7 @@ static void op_tya(CpuCtx *r, int mode, InstArg *arg) {
 
 /* iAN */
 static void op_anc(CpuCtx *r, int mode, InstArg *arg) {
-	uint8_t value;
+	uint8 value;
 	switch (mode) {
 	case MODE_IMMEDIATE:
 		value = arg->_imm._value;
@@ -1123,13 +1122,13 @@ static InstInfo g_ops[256] = {
 	{ &op_isb_o, &mode_absx_o,	7 }, /* $ff isb $ffff,x */
 };
 
-int flipfire(void) {
-	_G(_retfire) ^= 0x90;
-	return _G(_retfire);
+static int flipfire(CpuCtx *r) {
+	r->_retfire ^= 0x90;
+	return r->_retfire;
 }
-int flipspace(void) {
-	_G(_retspace) ^= 0x10;
-	return _G(_retspace);
+static int flipspace(CpuCtx *r) {
+	r->_retspace ^= 0x10;
+	return r->_retspace;
 }
 
 int nextInst(CpuCtx* r) {
@@ -1173,13 +1172,13 @@ int nextInst(CpuCtx* r) {
 				if (arg->_ea._value == 0xd011) {
 					switch (opCode) {
 					case 0x8D:
-						_G(_byted011)[0] = r->_a & 0x7f;
+						r->_byted011[0] = r->_a & 0x7f;
 						break;
 					case 0x8E:
-						_G(_byted011)[0] = r->_x & 0x7f;
+						r->_byted011[0] = r->_x & 0x7f;
 						break;
 					case 0x8C:
-						_G(_byted011)[0] = r->_y & 0x7f;
+						r->_byted011[0] = r->_y & 0x7f;
 						break;
 					default:
 						break;
@@ -1187,16 +1186,16 @@ int nextInst(CpuCtx* r) {
 				}
 				WriteToIO = 1;
 			} else {
-				_G(_byted011)[1] = (r->_cycles / 0x3f) % 0x157;
-				_G(_byted011)[0] = (_G(_byted011)[0] & 0x7f) | ((_G(_byted011)[1] & 0x100) >> 1);
-				_G(_byted011)[1] &= 0xff;
+				r->_byted011[1] = (r->_cycles / 0x3f) % 0x157;
+				r->_byted011[0] = (r->_byted011[0] & 0x7f) | ((r->_byted011[1] & 0x100) >> 1);
+				r->_byted011[1] &= 0xff;
 				switch (opCode) {
 				case 0xad:
 				case 0xaf: /* lda $ffff / lax $ffff */
 
 					if ((arg->_ea._value == 0xd011) || (arg->_ea._value == 0xd012)) {
 						r->_cycles += g_ops[opCode]._cycles;
-						r->_a = _G(_byted011)[arg->_ea._value - 0xd011];
+						r->_a = r->_byted011[arg->_ea._value - 0xd011];
 						if (opCode == 0xaf)
 							r->_x = r->_a;
 						updateFlagsNz(r, r->_a);
@@ -1208,9 +1207,9 @@ int nextInst(CpuCtx* r) {
 					if (arg->_ea._value == 0xdc00 || arg->_ea._value == 0xdc01) {
 						r->_cycles += g_ops[opCode]._cycles;
 						if (arg->_ea._value == 0xdc00)
-							r->_a = flipfire();
+							r->_a = flipfire(r);
 						else
-							r->_a = flipspace();
+							r->_a = flipspace(r);
 						if (opCode == 0xaf)
 							r->_x = r->_a;
 						updateFlagsNz(r, r->_a);
@@ -1234,9 +1233,9 @@ int nextInst(CpuCtx* r) {
 					if (arg->_ea._value == 0xdc00 || arg->_ea._value == 0xdc01) {
 						r->_cycles += g_ops[opCode]._cycles;
 						if (arg->_ea._value == 0xdc00)
-							r->_a &= flipfire();
+							r->_a &= flipfire(r);
 						else
-							r->_a &= flipspace();
+							r->_a &= flipspace(r);
 
 						updateFlagsNz(r, r->_a);
 						WriteToIO = 6;
@@ -1247,7 +1246,7 @@ int nextInst(CpuCtx* r) {
 
 					if ((arg->_ea._value == 0xd011) || (arg->_ea._value == 0xd012)) {
 						r->_cycles += g_ops[opCode]._cycles;
-						r->_x = _G(_byted011)[arg->_ea._value - 0xd011];
+						r->_x = r->_byted011[arg->_ea._value - 0xd011];
 						updateFlagsNz(r, r->_x);
 						WriteToIO = 5;
 						break;
@@ -1255,9 +1254,9 @@ int nextInst(CpuCtx* r) {
 					if (arg->_ea._value == 0xdc00 || arg->_ea._value == 0xdc01) {
 						r->_cycles += g_ops[opCode]._cycles;
 						if (arg->_ea._value == 0xdc00)
-							r->_x = flipfire();
+							r->_x = flipfire(r);
 						else
-							r->_x = flipspace();
+							r->_x = flipspace(r);
 						updateFlagsNz(r, r->_x);
 						WriteToIO = 6;
 						break;
@@ -1267,7 +1266,7 @@ int nextInst(CpuCtx* r) {
 
 					if ((arg->_ea._value == 0xd011) || (arg->_ea._value == 0xd012)) {
 						r->_cycles += g_ops[opCode]._cycles;
-						r->_y = _G(_byted011)[arg->_ea._value - 0xd011];
+						r->_y = r->_byted011[arg->_ea._value - 0xd011];
 						updateFlagsNz(r, r->_y);
 						WriteToIO = 5;
 						break;
@@ -1275,9 +1274,9 @@ int nextInst(CpuCtx* r) {
 					if (arg->_ea._value == 0xdc00 || arg->_ea._value == 0xdc01) {
 						r->_cycles += g_ops[opCode]._cycles;
 						if (arg->_ea._value == 0xdc00)
-							r->_y = flipfire();
+							r->_y = flipfire(r);
 						else
-							r->_y = flipspace();
+							r->_y = flipspace(r);
 						updateFlagsNz(r, r->_y);
 						WriteToIO = 6;
 						break;
@@ -1288,7 +1287,7 @@ int nextInst(CpuCtx* r) {
 
 					if ((arg->_ea._value == 0xd011) || (arg->_ea._value == 0xd012)) {
 						r->_cycles += g_ops[opCode]._cycles;
-						bt = _G(_byted011)[arg->_ea._value - 0xd011];
+						bt = r->_byted011[arg->_ea._value - 0xd011];
 						r->_flags &= ~(FLAG_N | FLAG_V | FLAG_Z);
 						r->_flags |= (bt & FLAG_N) != 0 ? FLAG_N : 0;
 						r->_flags |= (bt & FLAG_V) != 0 ? FLAG_V : 0;
@@ -1302,7 +1301,7 @@ int nextInst(CpuCtx* r) {
 				case 0xcc: /* cpy $ffff */
 					if ((arg->_ea._value == 0xd011) || (arg->_ea._value == 0xd012)) {
 						r->_cycles += g_ops[opCode]._cycles;
-						bt = _G(_byted011)[arg->_ea._value - 0xd011];
+						bt = r->_byted011[arg->_ea._value - 0xd011];
 						br = r->_a;
 						if (opCode == 0xec)
 							br = r->_x;
@@ -1321,9 +1320,9 @@ int nextInst(CpuCtx* r) {
 						if (opCode == 0xcc)
 							br = r->_y;
 						if (arg->_ea._value == 0xdc00)
-							bt = flipfire();
+							bt = flipfire(r);
 						else
-							bt = flipspace();
+							bt = flipspace(r);
 						subtract(r, 1, br, bt);
 						WriteToIO = 6;
 						break;
@@ -1345,5 +1344,5 @@ int nextInst(CpuCtx* r) {
 	return 0;
 }
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common

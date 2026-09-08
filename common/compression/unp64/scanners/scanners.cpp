@@ -19,11 +19,11 @@
  *
  */
 
-#include "glk/scott/unp64/unp64.h"
+#include "common/compression/unp64/unp64.h"
 #include "common/util.h"
 
-namespace Glk {
-namespace Scott {
+namespace Common {
+namespace Unp64 {
 
 void scnECA(UnpStr *unp);
 void scnExpert(UnpStr *unp);
@@ -69,5 +69,5 @@ void scanners(UnpStr* unp) {
 	}
 }
 
-} // End of namespace Scott
-} // End of namespace Glk
+} // End of namespace Unp64
+} // End of namespace Common
