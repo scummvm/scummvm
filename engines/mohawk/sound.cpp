@@ -122,9 +122,7 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
  * @param loopInfo Optional destination for a validated embedded-loop range.
  * @return The decoded seekable stream, or nullptr when decoding fails.
  */
-Audio::SeekableAudioStream *makeMohawkWaveStream(
-		Common::SeekableReadStream *stream, CueList *cueList,
-		MohawkWaveLoopInfo *loopInfo) {
+Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList, MohawkWaveLoopInfo *loopInfo) {
 	uint32 tag = 0;
 	ADPCMStatus adpcmStatus;
 	DataChunk dataChunk;
