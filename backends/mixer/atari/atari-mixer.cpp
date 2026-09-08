@@ -84,19 +84,8 @@ AtariMixerManager::AtariMixerManager() : MixerManager() {
 	suspendAudio();
 
 	ConfMan.registerDefault("output_rate", DEFAULT_OUTPUT_RATE);
-	_outputRate = ConfMan.getInt("output_rate");
-	if (_outputRate <= 0)
-		_outputRate = DEFAULT_OUTPUT_RATE;
-
 	ConfMan.registerDefault("output_channels", DEFAULT_OUTPUT_CHANNELS);
-	_outputChannels = ConfMan.getInt("output_channels");
-	if (_outputChannels <= 0 || _outputChannels > 2)
-		_outputChannels = DEFAULT_OUTPUT_CHANNELS;
-
 	ConfMan.registerDefault("audio_buffer_size", DEFAULT_SAMPLES);
-	_samples = ConfMan.getInt("audio_buffer_size");
-	if (_samples <= 0)
-		_samples = DEFAULT_SAMPLES;
 
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
@@ -106,16 +95,28 @@ AtariMixerManager::~AtariMixerManager() {
 
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
-	AtariAudioShutdown();
-
-	Mfree(_atariSampleBuffer);
-	_atariSampleBuffer = nullptr;
-
-	delete[] _sampleBuffer;
-	_sampleBuffer = nullptr;
+	deinit();
 }
 
 void AtariMixerManager::init() {
+	debug("audio init");
+
+	assert(!_mixer);
+
+	// read either from game domain or from defaults
+	// but never write back so 22050 Hz will stay even on TT/stock Falcon
+	_outputRate = ConfMan.getInt("output_rate");
+	if (_outputRate <= 0)
+		_outputRate = DEFAULT_OUTPUT_RATE;
+
+	_outputChannels = ConfMan.getInt("output_channels");
+	if (_outputChannels <= 0 || _outputChannels > 2)
+		_outputChannels = DEFAULT_OUTPUT_CHANNELS;
+
+	_samples = ConfMan.getInt("audio_buffer_size");
+	if (_samples <= 0)
+		_samples = DEFAULT_SAMPLES;
+
 	USoundSpec desired, obtained;
 
 	desired.frequency = _outputRate;
@@ -179,6 +180,26 @@ void AtariMixerManager::init() {
 	_mixer->setReady(true);
 
 	resumeAudio();
+}
+
+void AtariMixerManager::deinit() {
+	debug("audio deinit");
+
+	suspendAudio();
+
+	AtariAudioShutdown();
+
+	delete _mixer;
+	_mixer = nullptr;
+
+	Mfree(_atariSampleBuffer);
+	_atariSampleBuffer = nullptr;
+	_atariSampleBufferSize = 0;
+
+	delete[] _sampleBuffer;
+	_sampleBuffer = nullptr;
+	_sampleBufferSize = 0;
+	_samples = 0;
 }
 
 void AtariMixerManager::suspendAudio() {
