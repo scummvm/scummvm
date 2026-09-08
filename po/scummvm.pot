@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-09-08 00:00+0000\n"
+"POT-Creation-Date: 2026-09-08 06:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2682,7 +2682,7 @@ msgid "Fit to page"
 msgstr ""
 
 #: gui/printing-dialog.cpp:60 backends/graphics/opengl/opengl-graphics.cpp:315
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:125
 #: engines/glk/dialogs.cpp:372 engines/twine/metaengine.cpp:312
 msgid "Center"
 msgstr ""
@@ -4060,7 +4060,7 @@ msgid "Toggle aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:316
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:126
 msgid "Pixel-perfect scaling"
 msgstr ""
 
@@ -4069,17 +4069,17 @@ msgid "Even pixels scaling"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:318
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
 msgid "Fit to window"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:319
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:130
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
 msgid "Stretch to window"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:320
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:131
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:129
 msgid "Fit to window (4:3)"
 msgstr ""
 
@@ -4089,37 +4089,37 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2868
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
 msgid "Active graphics filter:"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2902
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2908
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2924
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2926
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2953
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
 msgid "Stretch mode"
 msgstr ""
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:121
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:119
 msgid "SDL Surface"
 msgstr ""
 
