@@ -323,12 +323,16 @@ void DownloadPacksDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kDownloadEndedCmd:
 		setState(kDownloadComplete);
+		if (_packsglob && !strcmp(_packsglob, "gui-icons*.dat"))
+			g_gui.initIconsSet();
 		break;
 	case kListDownloadFinishedCmd:
 		setState(kDownloadStateListDownloaded);
 		calculateList();
 		break;
 	case kDownloadProceedCmd:
+		if (_packsglob && !strcmp(_packsglob, "gui-icons*.dat"))
+			g_gui.clearIconsSet();
 		setState(kDownloadStateDownloading);
 		g_state->proceedDownload();
 		break;
@@ -409,6 +413,8 @@ void DownloadPacksDialog::calculateList() {
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
 		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		if (!str)
+			continue;
 		uint32 size = str->size();
 		delete str;
 
@@ -453,6 +459,8 @@ void DownloadPacksDialog::clearCache() {
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
 		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		if (!str)
+			continue;
 		uint32 size = str->size();
 		delete str;
 
@@ -467,16 +475,20 @@ void DownloadPacksDialog::clearCache() {
 		// Cancel all downloads
 		g_state->session.abortRequest();
 
+		if (_packsglob && !strcmp(_packsglob, "gui-icons*.dat"))
+			g_gui.clearIconsSet();
+
 		// Build list of previously downloaded icon files
 		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 			Common::String fname = (*ic)->getName();
 			Common::FSNode fs(iconsPath.join(fname));
 			Common::WriteStream *str = fs.createWriteStream();
-
-			// Overwrite previously downloaded pack files with dummy data
-			str->writeByte(0);
-			str->finalize();
-			delete str;
+			if (str) {
+				// Overwrite previously downloaded pack files with dummy data
+				str->writeByte(0);
+				str->finalize();
+				delete str;
+			}
 		}
 		g_state->fileHash.clear();
 
