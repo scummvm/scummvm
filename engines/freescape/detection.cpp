@@ -110,12 +110,12 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{
-		"driller", // Tape re-relase
+		"driller", // Tape rerelease
 		"",
-		AD_ENTRY1s("DRILLER.C64.DATA", "4afec6eea3887343e7f91fb21a2f2948", 43278),
+		AD_ENTRY1s("DRILLER.C64.DATA", "4d7ed1343f9cd522447602bf402c79a6", 56329),
 		Common::EN_ANY,
 		Common::kPlatformC64,
-		ADGF_UNSUPPORTED, //| GF_C64_TAPE,
+		ADGF_UNSTABLE | GF_C64_TAPE | GF_C64_PACKED,
 		GUIO3(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING, GUIO_RENDERC64)
 	},
 	{

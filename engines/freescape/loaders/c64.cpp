@@ -52,6 +52,10 @@ Common::Array<byte> FreescapeEngine::unpackC64Snapshot(Common::SeekableReadStrea
 	if (part.read(packed.data() + offset, partSize) != partSize)
 		error("Truncated C64 continuation %s", continuation.toString().c_str());
 
+	return unpackC64Snapshot(packed);
+}
+
+Common::Array<byte> FreescapeEngine::unpackC64Snapshot(const Common::Array<byte> &packed) {
 	Common::Array<byte> data;
 	data.resize(0x10000);
 	uint32 size = 0;
