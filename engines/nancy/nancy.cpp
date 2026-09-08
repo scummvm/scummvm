@@ -49,6 +49,7 @@
 #include "engines/nancy/state/credits.h"
 #include "engines/nancy/state/mainmenu.h"
 #include "engines/nancy/state/setupmenu.h"
+#include "engines/nancy/state/designselect.h"
 #include "engines/nancy/state/loadsave.h"
 #include "engines/nancy/state/savedialog.h"
 
@@ -87,6 +88,7 @@ NancyEngine::~NancyEngine() {
 	destroyState(NancyState::kScene);
 	destroyState(NancyState::kMainMenu);
 	destroyState(NancyState::kSetup);
+	destroyState(NancyState::kDesignSelect);
 	destroyState(NancyState::kLoadSave);
 	destroyState(NancyState::kSaveDialog);
 
@@ -779,6 +781,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::Map::instance();
 	case NancyState::kSetup:
 		return &State::SetupMenu::instance();
+	case NancyState::kDesignSelect:
+		return &State::DesignSelect::instance();
 	case NancyState::kHelp:
 		return &State::Help::instance();
 	case NancyState::kScene:
@@ -829,6 +833,12 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 	case NancyState::kSetup:
 		if (State::SetupMenu::hasInstance()) {
 			State::SetupMenu::instance().destroy();
+		}
+
+		break;
+	case NancyState::kDesignSelect:
+		if (State::DesignSelect::hasInstance()) {
+			State::DesignSelect::instance().destroy();
 		}
 		break;
 	case NancyState::kLoadSave:

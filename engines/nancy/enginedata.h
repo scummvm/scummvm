@@ -921,17 +921,15 @@ struct LDSN : public EngineData {
 
 	LDSN(Common::SeekableReadStream *chunkStream);
 
-	Common::Path backgroundImageName;			// "UI_DesignSelectBG"
-	Common::Path overlayImageName;				// "UI_DesignSelect_OVL"
+	Common::Path backgroundImageName;	// "UI_DesignSelectBG", fills the screen
+	Common::Path overlayImageName;		// "UI_DesignSelect_OVL", the buttons' sprite sheet
 
-	// The accept button's two states, drawn out of the background image
-	Common::Rect acceptDownSrc;
-	Common::Rect acceptDownDest;
-	Common::Rect acceptHighlightSrc;
-	Common::Rect acceptHighlightDest;
+	// The two buttons' artwork, cut from the overlay image. [0] applies the
+	// highlighted design, [1] leaves without applying.
+	Common::Array<Common::Rect> buttonDownSrcs;
+	Common::Array<Common::Rect> buttonHighlightSrcs;
+	Common::Array<Common::Rect> buttonDests;
 
-	// Hotspots: [0] accepts the highlighted design, [1] leaves without applying
-	Common::Array<Common::Rect> buttonHotspots;
 	Common::Array<Common::Rect> designRowDests;	// where each design's name is drawn
 	int16 fontID = 0;							// design names
 	int16 highlightFontID = 0;					// ...and the selected one

@@ -1447,13 +1447,9 @@ LDSN::LDSN(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(*chunkStream, backgroundImageName);
 	readFilename(*chunkStream, overlayImageName);
 
-	// The accept button's "PLAYERCHAR DOWN" and "PLAYERCHAR HILITE" sprites
-	readRect(*chunkStream, acceptDownSrc);
-	readRect(*chunkStream, acceptDownDest);
-	readRect(*chunkStream, acceptHighlightSrc);
-	readRect(*chunkStream, acceptHighlightDest);
-
-	readRectArray(*chunkStream, buttonHotspots, kNumButtons);
+	readRectArray(*chunkStream, buttonDownSrcs, kNumButtons);
+	readRectArray(*chunkStream, buttonHighlightSrcs, kNumButtons);
+	readRectArray(*chunkStream, buttonDests, kNumButtons);
 	readRectArray(*chunkStream, designRowDests, kNumDesignRows);
 
 	fontID = chunkStream->readSint16LE();

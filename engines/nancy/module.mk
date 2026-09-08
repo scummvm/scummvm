@@ -99,6 +99,7 @@ MODULE_OBJS = \
   ui/textbox.o \
   ui/viewport.o \
   state/credits.o \
+  state/designselect.o \
   state/logo.o \
   state/loadsave.o \
   state/help.o \
