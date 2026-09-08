@@ -240,6 +240,25 @@ bool DungeonLogic::attack(Data::Direction dir) {
 	return true;
 }
 
+bool DungeonLogic::cast() {
+	writeString("Cast %s", Data::SPELL_NAMES[_G(savegame)._equippedSpell]);
+
+	int spell = _G(savegame)._equippedSpell;
+	if (spell == Data::SPELL_PRAYER) {
+		castPrayer();
+
+	} else if (!_G(savegame)._spells[spell]) {
+		writeString("\n");
+		playFX(6);
+		writeString("You've used up that spell!\n");
+
+	} else {
+		castSpell(spell, true);
+	}
+
+	return true;
+}
+
 bool DungeonLogic::climb() {
 	writeString("K-Limb");
 
@@ -447,6 +466,198 @@ void DungeonLogic::dungeonAttackAt(int effectNum, int agility, int strike, int x
 		// Damaged, but survived
 		writeString("%d damage!\n", strike);
 		cell._monsterHp -= strike;
+	}
+}
+
+
+void DungeonLogic::castPrayer() {
+	writeString("\n%s\n", Data::SPELL_PHRASES[0]);
+
+	int spell = getRandomNumber(Data::SPELL_OPEN, Data::SPELL_KILL);
+	if (spell == Data::SPELL_STEAL)
+		spell = Data::SPELL_LADDER_DOWN;
+
+	castSpell(spell, false);
+}
+
+int DungeonLogic::getMagicWeaponPower() {
+	Data::Savegame &sg = _G(savegame);
+	int result = getRandomNumber(1, sg._intelligence);
+
+	if (sg._equippedWeapon == Data::WEAPON_WAND)
+		result *= 2;
+	else if (sg._equippedWeapon == Data::WEAPON_AMULET)
+		result = result * 3 / 2;
+	else if (sg._equippedWeapon == Data::WEAPON_STAFF || sg._equippedWeapon == Data::WEAPON_TRIANGLE)
+		result *= 3;
+
+	return result;
+}
+
+void DungeonLogic::castOpen() {
+	Data::Savegame &sg = _G(savegame);
+	writeString(" opened!\n");
+
+	_G(dungeon)._cells[sg._locationPosition.y][sg._locationPosition.x]._itemId = Data::DITEM_NONE;
+
+	writeString("Thou dost find: ");
+	int coins = getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9);
+	giveCoins(coins);
+}
+
+void DungeonLogic::castSpell(int spell, bool showPhrase) {
+	if (showPhrase)
+		writeString("%s\n", Data::SPELL_PHRASES[spell]);
+
+	Data::MapDungeon &dungeon = _G(dungeon);
+	Data::Savegame &sg = _G(savegame);
+	const Common::Point &pos = sg._locationPosition;
+	bool failed = false;
+
+	switch (spell) {
+	case Data::SPELL_OPEN: {
+		Data::DungeonCell &cell = dungeon._cells[pos.y][pos.x];
+		if (cell._itemId == Data::DITEM_COFFIN) {
+			writeString("Coffin");
+			castOpen();
+		} else {
+			failed = true;
+		}
+		break;
+	}
+
+	case Data::SPELL_UNLOCK: {
+		Data::DungeonCell &cell = dungeon._cells[pos.y][pos.x];
+		if (cell._itemId == Data::DITEM_CHEST) {
+			writeString("Chest");
+			castOpen();
+		} else {
+			failed = true;
+		}
+		break;
+	}
+
+	case Data::SPELL_MAGIC_MISSILE: {
+		int distance = getMonsterDistance(5);
+		if (!distance) {
+			failed = true;
+		} else {
+			int strike = getMagicWeaponPower();
+			int x = pos.x + getDirDeltaX() * distance;
+			int y = pos.y + getDirDeltaY() * distance;
+			dungeonAttackAt(5, 101, strike, x, y);
+		}
+		break;
+	}
+
+	case Data::SPELL_STEAL:
+		// Has no dungeon effect - same as the original's jump table, which
+		// points this spell straight at its no-op default case
+		break;
+
+	case Data::SPELL_LADDER_DOWN:
+		if (sg._dungeonLevel == 10 || dungeon._cells[pos.y][pos.x]._tileNum == Data::DTILE_BEAMS) {
+			failed = true;
+		} else if ((pos.x & 1) || (pos.y & 1)) {
+			dungeon._cells[pos.y][pos.x]._tileNum = Data::DTILE_LADDER_DOWN;
+			writeString("Ladder created!\n");
+		} else {
+			failed = true;
+		}
+		break;
+
+	case Data::SPELL_LADDER_UP:
+		if (!((pos.x & 1) || (pos.y & 1))) {
+			failed = true;
+		} else if (dungeon._cells[pos.y][pos.x]._tileNum == Data::DTILE_BEAMS) {
+			failed = true;
+		} else {
+			dungeon._cells[pos.y][pos.x]._tileNum = Data::DTILE_LADDER_UP;
+			writeString("Ladder created!\n");
+		}
+		break;
+
+	case Data::SPELL_BLINK: {
+		// Keep picking random spots until an unoccupied floor tile, other
+		// than the player's own, turns up - the original loops
+		// unconditionally until it finds one; a 500-attempt cap is added
+		// here for safety, matching MapDungeon::dungeonSpawnMonster
+		int newX = 0, newY = 0;
+		bool valid = false;
+
+		for (int attempt = 0; attempt < 500 && !valid; ++attempt) {
+			newX = getRandomNumber(1, 9);
+			newY = getRandomNumber(1, 9);
+			if (newX == pos.x && newY == pos.y)
+				continue;
+
+			Data::DungeonTileId tile = dungeon._cells[newY][newX]._tileNum;
+			if (tile == Data::DTILE_BEAMS || tile == Data::DTILE_WALL || tile == Data::DTILE_SECRET_DOOR)
+				continue;
+			if (dungeon._cells[newY][newX]._monsterId != Data::DUNGEON_NO_MONSTER)
+				continue;
+
+			valid = true;
+		}
+
+		if (valid) {
+			sg._locationPosition = Common::Point(newX, newY);
+			writeString("Teleported!\n");
+		} else {
+			failed = true;
+		}
+		break;
+	}
+
+	case Data::SPELL_CREATE: {
+		int x = pos.x + getDirDeltaX();
+		int y = pos.y + getDirDeltaY();
+		Data::DungeonCell &cell = dungeon._cells[y][x];
+
+		if (cell._tileNum == Data::DTILE_HALLWAY && cell._monsterId == Data::DUNGEON_NO_MONSTER &&
+				cell._itemId == Data::DITEM_NONE) {
+			cell._tileNum = Data::DTILE_BEAMS;
+			writeString("Field created!\n");
+		} else {
+			failed = true;
+		}
+		break;
+	}
+
+	case Data::SPELL_DESTROY: {
+		int x = pos.x + getDirDeltaX();
+		int y = pos.y + getDirDeltaY();
+		Data::DungeonCell &cell = dungeon._cells[y][x];
+
+		if (cell._tileNum == Data::DTILE_BEAMS) {
+			cell._tileNum = Data::DTILE_HALLWAY;
+			writeString("Field destroyed!\n");
+		} else {
+			failed = true;
+		}
+		break;
+	}
+
+	case Data::SPELL_KILL: {
+		int x = pos.x + getDirDeltaX();
+		int y = pos.y + getDirDeltaY();
+
+		if (dungeon._cells[y][x]._monsterId == Data::DUNGEON_NO_MONSTER)
+			failed = true;
+		else
+			dungeonAttackAt(5, 101, 10000, x, y);
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	if (failed) {
+		playFX(6);
+		writeString("Failed!\n");
+	} else if (spell != Data::SPELL_KILL && spell != Data::SPELL_MAGIC_MISSILE) {
+		playFX(5);
 	}
 }
 

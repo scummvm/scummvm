@@ -375,7 +375,7 @@ void CreateCharacter::confirmAndSave() {
 	p._experience = 0;
 	p._food = 200;
 	p._equippedWeapon = WEAPON_DAGGER;
-	p._equippedSpell = SPELL_NONE;
+	p._equippedSpell = SPELL_PRAYER;
 	p._equippedArmor = ARMOR_LEATHER;
 	p._transportType = TRANSPORT_FOOT;
 	p._overworldPos = Common::Point(49, 40);

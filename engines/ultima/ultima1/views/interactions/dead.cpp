@@ -248,7 +248,7 @@ void Dead::finish() {
 		sg._weapons[i] = 0;
 	sg._equippedWeapon = Data::WEAPON_NONE;
 	sg._equippedArmor = Data::ARMOR_NONE;
-	sg._equippedSpell = Data::SPELL_NONE;
+	sg._equippedSpell = Data::SPELL_PRAYER;
 
 	g_engine->playFX(5);
 	resetPlayerPosition();

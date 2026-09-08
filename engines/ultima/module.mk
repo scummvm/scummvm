@@ -53,6 +53,7 @@ MODULE_OBJS += \
 	ultima1/messages.o \
 	ultima1/metaengine.o \
 	ultima1/core/strings.o \
+	ultima1/data/data.o \
 	ultima1/data/entity.o \
 	ultima1/data/map.o \
 	ultima1/data/map_dungeon.o \

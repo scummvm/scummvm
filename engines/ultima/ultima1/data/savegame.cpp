@@ -27,43 +27,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
-const char *SEX_NAMES[] = { "Male", "Female" };
-const char *RACE_NAMES[] = { nullptr, "Human", "Elf", "Dwarf", "Bobbit" };
-const char *CLASS_NAMES[] = { nullptr, "Fighter", "Cleric", "Wizard", "Thief" };
-
-// Index 0 of each ("Skin"/"Hands"/"Prayer"/"Foot") is the innate/default
-// state and is never shown in the stats screen, but is included here to
-// keep these arrays indexed identically to the enums/savegame arrays above
-const char *ARMOR_NAMES[] = {
-	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
-};
-const char *WEAPON_NAMES[] = {
-	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword",
-	"Bow & Arrows", "Amulet", "Wand", "Staff", "Triangle", "Pistol",
-	"Light Sword", "Phazor", "Blaster"
-};
-const char *WEAPON_NAMES_LOWER[] = {
-	"hands", "dagger", "mace", "axe", "rope", "sword", "g sword", "bow", "amulet",
-	"wand", "staff", "triangle", "pistol", "L sword", "phazor", "blaster"
-};
-const byte WEAPONS_DISTANCE[] = {
-	1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3
-};
-const char *SPELL_NAMES[] = {
-	"Prayer", "Open", "Unlock", "Magic Missile", "Steal", "Ladder Down",
-	"Ladder Up", "Blink", "Create", "Destroy", "Kill"
-};
-const char *TRANSPORT_NAMES[] = {
-	"Foot", "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle", "Time Machine"
-};
-const char *GEM_NAMES[] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
-
-// Indexed by TransportType
-const int TRANSPORT_RANDOM_THRESHOLD[] = { 100, 50, 33, 100, 50, 25, 10, 10 };
-
-// Indexed by TransportType
-const int FOOD_PER_TRANSPORT[] = { 2, 3, 3, 4, 5, 6, 11, 0 };
-
 void LocationEntity::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_type);
 	s.syncAsSint16LE(_position.x);

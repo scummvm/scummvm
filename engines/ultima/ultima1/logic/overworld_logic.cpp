@@ -105,6 +105,26 @@ bool OverworldLogic::board() {
 	return true;
 }
 
+bool OverworldLogic::cast() {
+	writeString("Cast %s", Data::SPELL_NAMES[_G(savegame)._equippedSpell]);
+
+	switch (_G(savegame)._equippedSpell) {
+	case Data::SPELL_PRAYER:
+		castPrayer();
+		return true;
+
+	case Data::SPELL_MAGIC_MISSILE:
+	case Data::SPELL_KILL:
+		return castSpellAttack();
+
+	default:
+		writeString("\n");
+		playFX(6);
+		writeString("Failed, dungeon spell only!\n");
+		return true;
+	}
+}
+
 bool OverworldLogic::enter() {
 	int location = _G(map).getLocationAt(_G(savegame)._overworldPos);
 	if (location == 0) {
@@ -544,6 +564,39 @@ void OverworldLogic::monsterAttack(int entityIndex, int xDiff, int yDiff, int di
 
 	sg._hits -= damage;
 	redrawStats();
+}
+
+void OverworldLogic::castPrayer() {
+	bool flag = false;
+	writeString("\n%s\n", Data::SPELL_PHRASES[0]);
+
+	if (_G(savegame)._hits < 15) {
+		_G(savegame)._hits = 15;
+		redrawStats();
+		writeString(" Shazam!\n");
+		playFX(5);
+		flag = true;
+
+	} else if (_G(savegame)._food < 15) {
+		_G(savegame)._food = 15;
+		redrawStats();
+		writeString(" Shazam!\n");
+		playFX(5);
+		flag = true;
+
+	} else if (getRandomNumber(1, 100) < 25) {
+		// TODO
+		flag = true;
+	}
+
+	if (!flag) {
+		// TODO
+	}
+}
+
+bool OverworldLogic::castSpellAttack() {
+	// TODO
+	return true;
 }
 
 } // namespace Logic

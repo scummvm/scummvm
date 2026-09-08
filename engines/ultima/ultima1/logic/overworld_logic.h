@@ -107,11 +107,20 @@ private:
 
 	void monsterAttack(int entityIndex, int xDiff, int yDiff, int distance);
 
+	void castPrayer();
+	void castSpell(int spellNum, int val);
+	bool castSpellAttack();
+
 protected:
 	/**
 	 * Board a vehicle the player is standing on
 	 */
 	bool board() override;
+
+	/**
+	 * Cast a spell
+	 */
+	bool cast() override;
 
 	/**
 	 * Enter a location

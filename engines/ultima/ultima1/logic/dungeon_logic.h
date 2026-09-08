@@ -110,6 +110,30 @@ private:
 	 */
 	void dungeonAttackAt(int effectNum, int agility, int strike, int x, int y);
 
+	/**
+	 * Returns the magic "strike" power of the currently readied weapon,
+	 * used by the Magic Missile spell - a random value up to the player's
+	 * intelligence, doubled/tripled/halved again depending on whether a
+	 * wand, amulet, staff, or triangle is readied
+	 */
+	int getMagicWeaponPower();
+
+	/**
+	 * Shared finish for the Open/Unlock spells - empties the chest/coffin
+	 * at the player's current position and awards coins
+	 */
+	void castOpen();
+
+	/**
+	 * Casts the prayer spell
+	 */
+	void castPrayer();
+
+	/**
+	 * Casts a spell
+	 */
+	void castSpell(int spell, bool showPhrase);
+
 protected:
 	/**
 	 * Handle dungeon movement
@@ -120,6 +144,11 @@ protected:
 	 * Attack command
 	 */
 	bool attack(Data::Direction dir) override;
+
+	/**
+	 * Cast a spell
+	 */
+	bool cast() override;
 
 	/**
 	 * Handles climbing a ladder at the player's current position
