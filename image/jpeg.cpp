@@ -243,6 +243,12 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 } // End of anonymous namespace
 #endif
 
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
+#endif
+
 bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #ifdef USE_JPEG
 	// Reset member variables from previous decodings
@@ -383,5 +389,9 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return false;
 #endif
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 } // End of Graphics namespace
