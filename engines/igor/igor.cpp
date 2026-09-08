@@ -206,7 +206,8 @@ Common::Error IgorEngine::run() {
 void IgorEngine::setupDefaultPalette() {
 	memset(_currentPalette, 0, 255 * 3);
 	memset(&_currentPalette[255 * 3], 63, 3);
-	g_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
+	updatePalette(768);
+	// g_system->getPaletteManager()->setPalette(_currentPalette, 0, 256);
 }
 
 void IgorEngine::readTableFile() {
@@ -336,10 +337,13 @@ void IgorEngine::PART_05() {
 	//Enforce display of room
 	{
 		// g_system->getPaletteManager()->setPalette(_paletteBuffer, 0, 256);
-		memcpy(_currentPalette, _paletteBuffer, 768);
-		updatePalette(768);
+		// memcpy(_currentPalette, _paletteBuffer, 768);
+		// updatePalette(768);
 		// fadeInPalette(768);
+
 		memcpy(_screenVGA, _screenLayer1, 46080);
+		fadeInPalette(768);
+
 	}
 
 	enterPartLoop();
@@ -347,6 +351,15 @@ void IgorEngine::PART_05() {
 		runPartLoop();
 	}
 	leavePartLoop();
+	if (_currentPart == 255) {
+		fadeOutPalette(768);
+	} else if (_currentPart != 60) {
+		// if (_objectsState[63] == 0) {
+		// 	_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
+		// }
+		memcpy(_currentPalette, _paletteBuffer, 624);
+		fadeOutPalette(624);
+	}
 }
 
 void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
