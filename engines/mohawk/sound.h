@@ -207,8 +207,7 @@ struct MohawkWaveLoopInfo {
  * @param loopInfo Optional destination for a validated embedded-loop range.
  * @return The decoded stream, or nullptr when the resource cannot be decoded.
  */
-Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream,
-		CueList *cueList = nullptr, MohawkWaveLoopInfo *loopInfo = nullptr);
+Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = nullptr, MohawkWaveLoopInfo *loopInfo = nullptr);
 
 class MohawkEngine;
 
