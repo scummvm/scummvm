@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
@@ -142,11 +143,9 @@ int MidiDriver_ALSA::open() {
 
 			snd_seq_port_info_set_client(pinfo, seq_client);
 			snd_seq_port_info_set_port(pinfo, -1);
-			while (found_port == -1 && snd_seq_query_next_port(seq_handle, pinfo) >= 0) {
+			while ((found_port = snd_seq_query_next_port(seq_handle, pinfo)) >= 0) {
 				if (check_permission(pinfo)) {
-					if (first_port == -1)
-						first_port = snd_seq_port_info_get_port(pinfo);
-					if (found_port == -1 && snd_seq_port_info_get_write_use(pinfo) == 0)
+					if (snd_seq_port_info_get_write_use(pinfo) == 0)
 						found_port = snd_seq_port_info_get_port(pinfo);
 				}
 			}
@@ -288,6 +287,9 @@ void MidiDriver_ALSA::sysEx(const byte *msg, uint16 length) {
 	// Send it
 	snd_seq_ev_set_sysex(&ev, length + 2, &buf);
 	send_event(1);
+
+	// FIXME: Limiting delay between sysEx calls to allow processing and prevent overflow on physical MIDI devices. Need to make this configurable...
+	g_system->delayMillis(39);
 }
 
 void MidiDriver_ALSA::send_event(int do_flush) {
@@ -305,21 +307,23 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 
 class AlsaDevice {
 public:
-	AlsaDevice(Common::String name, MusicType mt, int client);
+	AlsaDevice(Common::String name, MusicType mt, int client, int port);
 	Common::String getName();
 	MusicType getType();
 	int getClient();
+	int getPort();
 
 private:
 	Common::String _name;
 	MusicType _type;
 	int _client;
+	int _port;
 };
 
 typedef Common::List<AlsaDevice> AlsaDevices;
 
-AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client)
-	: _name(name), _type(mt), _client(client) {
+AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client, int port)
+	: _name(name), _type(mt), _client(client), _port(port) {
 	// Make sure we do not get any trailing spaces to avoid problems when
 	// storing the name in the configuration file.
 	_name.trim();
@@ -335,6 +339,10 @@ MusicType AlsaDevice::getType() {
 
 int AlsaDevice::getClient() {
 	return _client;
+}
+
+int AlsaDevice::getPort() {
+	return _port;
 }
 
 class AlsaMusicPlugin : public MusicPluginObject {
@@ -372,15 +380,16 @@ AlsaDevices AlsaMusicPlugin::getAlsaDevices() const {
 		/* reset query info */
 		snd_seq_port_info_set_client(pinfo, snd_seq_client_info_get_client(cinfo));
 		snd_seq_port_info_set_port(pinfo, -1);
-		while (!found_valid_port && snd_seq_query_next_port(seq_handle, pinfo) >= 0) {
+		// TEMP: removed found_valid_port as it's preventing enumerating all the ports; get info return being negative will break the loop instead
+		while (snd_seq_query_next_port(seq_handle, pinfo) >= 0) {
 			if (check_permission(pinfo)) {
-				found_valid_port = true;
-
-				const char *name = snd_seq_client_info_get_name(cinfo);
-				// TODO: Can we figure out the appropriate music type?
+				// TEMP: added (pinfo) below to get port name to differentiate between devices on a multiplexer
+				const char *name = snd_seq_port_info_get_name(pinfo);
+				// TODO: Can we figure out the appropriate music type?| yes, with some sysex chicanery but limited to modernish gear
 				MusicType type = MT_GM;
 				int client = snd_seq_client_info_get_client(cinfo);
-				devices.push_back(AlsaDevice(name, type, client));
+				int port = snd_seq_port_info_get_port(pinfo);
+				devices.push_back(AlsaDevice(name, type, client, port)); 
 			}
 		}
 	}
@@ -467,7 +476,7 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 			if (device.getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
 				found = true;
 				seq_client = d.getClient();
-				seq_port = -1;
+				seq_port = d.getPort();
 				break;
 			}
 		}
