@@ -208,7 +208,7 @@ void CDSTTMInterpreter::handleOperation(TTMEnviro &env_, TTMSeq &seq, uint16 op,
 	case 0x1020: { // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		int16 delayMillis = (int16)round(ivals[0] * MS_PER_FRAME);
+		int16 delayMillis = (int16)roundf(ivals[0] * MS_PER_FRAME);
 		env._cdsDelay = delayMillis;
 		break;
 	}

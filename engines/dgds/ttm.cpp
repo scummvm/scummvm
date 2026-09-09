@@ -759,7 +759,7 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
 	case 0x1020: { // SET DELAY:	    i:int   [0..n]
 		// TODO: Probably should do this accounting (as well as timeCut and dialogs)
 		// 		 in game frames, not millis.
-		int delayMillis = (int)round(ivals[0] * MS_PER_FRAME);
+		int delayMillis = (int)roundf(ivals[0] * MS_PER_FRAME);
 		_vm->adsInterpreter()->setScriptDelay(delayMillis);
 		break;
 	}
