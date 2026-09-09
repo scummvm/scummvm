@@ -19,9 +19,11 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "engines/util.h"
-#include "mads/console.h"
+#include "mads/forest/console.h"
 #include "mads/core/attr.h"
+#include "mads/core/config.h"
 #include "mads/core/conv.h"
 #include "mads/core/env.h"
 #include "mads/core/game.h"
@@ -94,6 +96,11 @@ Common::Error ForestEngine::run() {
 
 void ForestEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
+
+	_musicFlag = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
+	config_file.music_flag = _musicFlag;
+	if (!_musicFlag)
+		midi_stop();
 
 	_midiPlayer.syncSoundSettings();
 }

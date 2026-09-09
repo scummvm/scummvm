@@ -28,7 +28,7 @@
  * MIDI parser for the HMI SOS formats HMI and HMP.
  * 
  * Implementation is incomplete. Currently only the track chunks are read and
- * played back. Not implemented yet: device track mapping, branching, callbacks, etc.
+ * played back. Not implemented yet: branching, callbacks, etc.
  */
 class MidiParser_HMP : public MidiParser_SMF {
 protected:
@@ -48,11 +48,29 @@ protected:
 	HmpVersion determineVersion(const byte *pos);
 
 public:
+	enum HmiDevice {
+		kHmiDeviceNone = 0,
+		kHmiDeviceSoundMasterII = 0xA000,
+		kHmiDeviceMpu401 = 0xA001,
+		kHmiDeviceAdLib = 0xA002,
+		kHmiDeviceMt32 = 0xA004,
+		kHmiDevicePcSpeaker = 0xA006,
+		kHmiDeviceAwe32 = 0xA008,
+		kHmiDeviceOpl3 = 0xA009,
+		kHmiDeviceGus = 0xA00A
+	};
+
 	MidiParser_HMP(int8 source = -1);
 
 	bool loadMusic(const byte *data, uint32 size) override;
 
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
+
+	/**
+	 * Select the native device used to filter early HMI subtracks.
+	 * The default value leaves every subtrack enabled.
+	 */
+	void setHmiDevice(HmiDevice device) { _hmiDevice = device; }
 
 protected:
 	HmpVersion _version;
@@ -61,6 +79,7 @@ protected:
 	uint32 _songLength;
 	uint32 _channelPriorities[16];
 	uint32 _deviceTrackMappings[32][5];
+	uint16 _hmiDevice;
 	uint8 _restoreControllers[128];
 	uint32 _callbackPointer;
 	uint32 _callbackSegment;
@@ -69,6 +88,7 @@ protected:
 	// version (i.e. 2 bytes for HMI, 4 bytes for HMP)
 	uint32 readWord(const byte *&data, HmpVersion version);
 	uint32 readWord(Common::SeekableReadStream *stream, HmpVersion version);
+	bool isHmiTrackCompatible(uint track) const;
 };
 
 #endif
