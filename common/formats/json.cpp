@@ -1071,9 +1071,9 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 		ret_string = indentDepth ? "{\n" + indentStr1 : "{";
 		JSONObject::const_iterator iter = _objectValue->begin();
 		while (iter != _objectValue->end()) {
-			ret_string += stringifyString((*iter)._key);
+			ret_string += stringifyString(iter->_key);
 			ret_string += ":";
-			ret_string += (*iter)._value->stringifyImpl(indentDepth1);
+			ret_string += iter->_value->stringifyImpl(indentDepth1);
 
 			// Not at the end - add a separator
 			if (++iter != _objectValue->end())
