@@ -627,8 +627,8 @@ void Music::getSongNames(Common::StringArray &songs) {
 		Common::StringArray fileList;
 		_vm->_res->getResourceNames("music.lib", fileList);
 		for (Common::StringArray::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-			if ((*i).matchString("*.XMI", true)) {
-				(*i).erase((*i).size() - 4);
+			if (i->matchString("*.XMI", true)) {
+				i->erase(i->size() - 4);
 				songs.push_back(*i);
 			}
 		}
