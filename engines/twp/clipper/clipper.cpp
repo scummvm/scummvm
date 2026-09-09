@@ -1199,7 +1199,7 @@ void ClipperBase::DisposeLocalMinimaList() {
 //------------------------------------------------------------------------------
 
 bool ClipperBase::PopLocalMinima(cInt Y, const LocalMinimum *&locMin) {
-	if (m_CurrentLM == m_MinimaList.end() || (*m_CurrentLM).Y != Y)
+	if (m_CurrentLM == m_MinimaList.end() || m_CurrentLM->Y != Y)
 		return false;
 	locMin = &(*m_CurrentLM);
 	++m_CurrentLM;
