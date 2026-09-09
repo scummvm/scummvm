@@ -34,12 +34,12 @@ constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
 	delayFrames(1);
-	return Dialog::msgFocus(msg);
+	return Map::msgFocus(msg);
 }
 
 bool OverworldMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	return Dialog::msgUnfocus(msg);
+	return Map::msgUnfocus(msg);
 }
 
 bool OverworldMap::msgAttackTile(const AttackTileMessage &msg) {
@@ -101,7 +101,7 @@ int OverworldMap::animatedTileId(byte tileId) const {
 }
 
 void OverworldMap::draw() {
-	Dialog::draw();
+	Map::draw();
 
 	auto &map = g_engine->_map;
 	const Graphics::ManagedSurface *tiles = map.tiles();

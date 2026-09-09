@@ -89,6 +89,7 @@ MODULE_OBJS += \
 	ultima1/views/game.o \
 	ultima1/views/location_map.o \
 	ultima1/views/main_menu.o \
+	ultima1/views/map.o \
 	ultima1/views/mondain_map.o \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \

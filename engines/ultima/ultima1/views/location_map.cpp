@@ -36,12 +36,12 @@ constexpr int ATTACK_TILE_DELAY = 100;	// Delay after flashing an attack tile
 bool LocationMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
 	delayFrames(1);
-	return UIElement::msgFocus(msg);
+	return Map::msgFocus(msg);
 }
 
 bool LocationMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	return Dialog::msgUnfocus(msg);
+	return Map::msgUnfocus(msg);
 }
 
 bool LocationMap::msgAttackTile(const AttackTileMessage &msg) {
@@ -73,7 +73,7 @@ void LocationMap::draw() {
 	auto s = getSurface();
 	const auto &pos = _G(savegame)._locationPosition;
 
-	Dialog::draw();
+	Map::draw();
 
 	// Draw the visible map contents
 	for (int oy = 0; oy < MAP_VISIBLE_HEIGHT; oy++) {

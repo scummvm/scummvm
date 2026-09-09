@@ -188,6 +188,7 @@ void Logic::action(int action) {
 void Logic::keypress(Common::KeyCode keycode) {
 	writeString("Huh?\n");
 	endOfTurn();
+	prompt();
 }
 
 bool Logic::attack(Data::Direction dir) {

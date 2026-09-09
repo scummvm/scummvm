@@ -29,6 +29,7 @@
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/console.h"
 #include "ultima/ultima1/views/views.h"
+#include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/metaengine.h"
 
 namespace Ultima {
@@ -71,6 +72,11 @@ Common::Error Ultima1Engine::run() {
 	runGame(views);
 
 	return Common::kNoError;
+}
+
+bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
+	// Only allow saving when any of the different map views are active
+	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;
 }
 
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {

@@ -29,16 +29,16 @@ namespace Views {
 
 bool SpaceMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	return Dialog::msgFocus(msg);
+	return Map::msgFocus(msg);
 }
 
 bool SpaceMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	return Dialog::msgUnfocus(msg);
+	return Map::msgUnfocus(msg);
 }
 
 void SpaceMap::draw() {
-	Dialog::draw();
+	Map::draw();
 
 	// TODO
 }

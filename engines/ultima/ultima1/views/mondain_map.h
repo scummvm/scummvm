@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_MONDAIN_MAP_H
 #define ULTIMA1_VIEWS_MONDAIN_MAP_H
 
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
@@ -31,9 +31,9 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class MondainMap : public Dialog {
+class MondainMap : public Map {
 public:
-	MondainMap() : Dialog("MondainMap") {}
+	MondainMap() : Map("MondainMap") {}
 	~MondainMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

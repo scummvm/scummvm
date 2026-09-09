@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_DUNGEON_MAP_H
 #define ULTIMA1_VIEWS_DUNGEON_MAP_H
 
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/map_dungeon.h"
 
@@ -32,7 +32,7 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class DungeonMap : public Dialog {
+class DungeonMap : public Map {
 private:
 	/**
 	 * Returns the cell at a given position, or a solid wall cell if the
@@ -171,7 +171,7 @@ private:
 	void drawDungeonView();
 
 public:
-	DungeonMap() : Dialog("DungeonMap") {}
+	DungeonMap() : Map("DungeonMap") {}
 	~DungeonMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

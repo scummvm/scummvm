@@ -101,16 +101,16 @@ static const uint8 COFFIN_DRAW_DATA[] = {
 
 bool DungeonMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	return Dialog::msgFocus(msg);
+	return Map::msgFocus(msg);
 }
 
 bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-	return Dialog::msgUnfocus(msg);
+	return Map::msgUnfocus(msg);
 }
 
 void DungeonMap::draw() {
-	Dialog::draw();
+	Map::draw();
 	auto s = getSurface();
 
 	// Write title showing the dungeon level

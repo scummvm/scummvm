@@ -70,20 +70,7 @@ void Dialog::draw() {
 
 bool Dialog::tick() {
 	g_engine->findView("Game")->tick();
-	if (_G(logic))
-		_G(logic)->tick();
-
 	return Shared::Gfx::View::tick();
-}
-
-bool Dialog::msgAction(const ActionMessage &msg) {
-	g_engine->_logic->action(msg._action);
-	return true;
-}
-
-bool Dialog::msgKeypress(const KeypressMessage &msg) {
-	g_engine->_logic->keypress(msg.keycode);
-	return true;
 }
 
 } // namespace Views

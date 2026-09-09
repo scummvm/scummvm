@@ -22,7 +22,7 @@
 #ifndef ULTIMA2_VIEWS_LOCATION_MAP_H
 #define ULTIMA2_VIEWS_LOCATION_MAP_H
 
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,9 +30,9 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class LocationMap : public Dialog {
+class LocationMap : public Map {
 public:
-	LocationMap() : Dialog("LocationMap") {}
+	LocationMap() : Map("LocationMap") {}
 	~LocationMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

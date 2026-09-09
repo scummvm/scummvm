@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_SPACE_MAP_H
 #define ULTIMA1_VIEWS_SPACE_MAP_H
 
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
@@ -31,9 +31,9 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class SpaceMap : public Dialog {
+class SpaceMap : public Map {
 public:
-	SpaceMap() : Dialog("SpaceMap") {}
+	SpaceMap() : Map("SpaceMap") {}
 	~SpaceMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

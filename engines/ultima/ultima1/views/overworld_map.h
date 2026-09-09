@@ -22,7 +22,7 @@
 #ifndef ULTIMA1_VIEWS_OVERWORLD_MAP_H
 #define ULTIMA1_VIEWS_OVERWORLD_MAP_H
 
-#include "ultima/ultima1/views/dialog.h"
+#include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
@@ -31,7 +31,7 @@ namespace Views {
 
 using namespace Shared::Messages;
 
-class OverworldMap : public Dialog {
+class OverworldMap : public Map {
 private:
 	typedef byte VisibleTiles[Data::OVERWORLD_VISIBLE_HEIGHT][Data::OVERWORLD_VISIBLE_WIDTH];
 	VisibleTiles _mapTilesId = {};		// Calculated visible on-screen tiles
@@ -55,7 +55,7 @@ private:
 	int animatedTileId(byte tileId) const;
 
 public:
-	OverworldMap() : Dialog("OverworldMap") {}
+	OverworldMap() : Map("OverworldMap") {}
 	~OverworldMap() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
