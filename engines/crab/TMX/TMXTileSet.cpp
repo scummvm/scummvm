@@ -135,7 +135,7 @@ void TileSetGroup::preDraw(MapLayer &layer, const Vector2i &tileSize, Graphics::
 	for (rOuter = layer._boundRect.begin(); rOuter != layer._boundRect.end(); ++rOuter) {
 		rInner = rOuter;
 		while (++rInner != layer._boundRect.end()) {
-			if ((*rOuter).collide(*rInner)) {
+			if (rOuter->collide(*rInner)) {
 					rOuter->extend(*rInner);
 				layer._boundRect.erase(rInner);
 				rInner = rOuter;
