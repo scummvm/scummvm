@@ -1500,7 +1500,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 				responsiveAnimationDelay(_system, 50);
 			}
 			_liftUp = false;
-			_animationResult = 1;
 		} else if (item == 9 && !_liftUp) {
 			_sound->play(Sound::kLift);
 			// Raise the object: animate states 1→5
@@ -1513,8 +1512,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 				responsiveAnimationDelay(_system, 50);
 			}
 			_liftUp = true;
-			_animationResult = 1;
 		}
+		_animationResult = (_liftUp != (_fl == 2));
 	}
 }
 

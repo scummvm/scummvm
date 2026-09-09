@@ -1479,22 +1479,19 @@ void ColonyEngine::dropCarriedObject() {
 	if (_fl != 2)
 		return;
 
-	// Special case: carrying reactor core — IBM_COMM.C: DoGlassSound()
+	if (!loadLiftAnimation(_carryType))
+		return;
+	_animationResult = 0;
+	playAnimation();
+	if (!_animationResult)
+		return;
+
+	// DropFL(): lowering a core onto the floor destroys it.
 	if (_carryType == kObjReactor) {
 		_sound->play(Sound::kGlass);
 		_carryType = 0;
 		_fl = 1;
 		return;
-	}
-
-	// Play the drop animation.
-	if (loadLiftAnimation(_carryType)) {
-		_animationResult = 0;
-		playAnimation();
-		if (!_animationResult) {
-			// Animation was cancelled  don't drop
-			return;
-		}
 	}
 
 	int xloc = _me.xloc;
