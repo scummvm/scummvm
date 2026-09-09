@@ -346,7 +346,7 @@ void PuzzlePipes::updateScreen() {
 
 	uint32 filled = 0;
 	for (uint32 i = 0; i < 4; ++i) {
-		if (fabs(_levelValues[i] - _previousLevels[i]) > 0.005)
+		if (fabsf(_levelValues[i] - _previousLevels[i]) > 0.005)
 			_previousLevels[i] += _levelValues[i] > _previousLevels[i] ? 0.01f : -0.01f;
 		else
 			++filled;
