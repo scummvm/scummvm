@@ -157,7 +157,7 @@ void GUI_Font:: textExtent(const char *text, int *w, int *h, int line_wrap) {
 	}
 
 	if (line_wrap && len > line_wrap) {
-		*h = (int)ceil((float)len / (float)line_wrap);
+		*h = (int)ceilf((float)len / (float)line_wrap);
 		*h *= _charH - 1;
 	} else
 		*h = _charH - 1;

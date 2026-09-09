@@ -102,7 +102,7 @@ void FireballProcess::run() {
 	}
 
 	// limit speed
-	int speed = static_cast<int>(sqrt(static_cast<float>(_xSpeed * _xSpeed + _ySpeed * _ySpeed)));
+	int speed = static_cast<int>(sqrtf(static_cast<float>(_xSpeed * _xSpeed + _ySpeed * _ySpeed)));
 	if (speed > 32) {
 		_xSpeed = (_xSpeed * 32) / speed;
 		_ySpeed = (_ySpeed * 32) / speed;

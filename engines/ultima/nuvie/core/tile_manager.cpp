@@ -665,10 +665,10 @@ void TileManager::get_rotated_tile(const Tile *tileP, Tile *dest_tile, float rot
 
 	float theta = float(rotate * M_PI / 180.0); /* Convert to radians.  */
 
-	int32 const stx = int32((sin(theta)) * 8192.0);
-	int32 const ctx = int32((cos(theta)) * 8192.0);
-	int32 const sty = int32((sin(theta)) * 8192.0);
-	int32 const cty = int32((cos(theta)) * 8192.0);
+	int32 const stx = int32((sinf(theta)) * 8192.0);
+	int32 const ctx = int32((cosf(theta)) * 8192.0);
+	int32 const sty = int32((sinf(theta)) * 8192.0);
+	int32 const cty = int32((cosf(theta)) * 8192.0);
 	int32 const mx = int32(px * 8192.0);
 	int32 const my = int32(py * 8192.0);
 

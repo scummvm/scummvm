@@ -786,7 +786,7 @@ void Screen::buildalphamap8() {
 				//Unitize
 				r /= sqrtf(sqr(globeradius_2[i]) + sqr(globeradius_2[i]));
 				//Calculate brightness
-				r  = (float)exp(-(10 * r * r));
+				r  = (float)expf(-(10 * r * r));
 				//Fit into a byte
 				r *= 255;
 				//Place it

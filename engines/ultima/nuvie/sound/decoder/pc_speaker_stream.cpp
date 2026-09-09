@@ -115,8 +115,8 @@ int PCSpeakerSweepFreqStream::readBuffer(sint16 *buffer, const int numSamples) {
 		if ((float)i + n > (float)samples)
 			n = (float)(samples - i);
 
-		float remainder = n - floor(n);
-		n = floor(n);
+		float remainder = n - floorf(n);
+		n = floorf(n);
 		pcspkr->PCSPEAKER_CallBack(&buffer[i], (uint32)n);
 		sample_pos += n;
 
@@ -281,7 +281,7 @@ int PCSpeakerStutterStream::readBuffer(sint16 *buffer, const int numSamples) {
 	uint32 s = 0;
 
 	for (; cx > 0 && s < (uint32)numSamples; cx--) {
-		uint32 n = (uint32)floor(delay_remaining);
+		uint32 n = (uint32)floorf(delay_remaining);
 		if (n > 0) {
 			pcspkr->PCSPEAKER_CallBack(&buffer[s], n);
 			delay_remaining -= n;
@@ -306,7 +306,7 @@ int PCSpeakerStutterStream::readBuffer(sint16 *buffer, const int numSamples) {
 		          }
 		       }
 		*/
-		n = (uint32)floor(delay);
+		n = (uint32)floorf(delay);
 		if (s + n > (uint32)numSamples)
 			n = numSamples - s;
 
