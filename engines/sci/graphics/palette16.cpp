@@ -480,7 +480,7 @@ void GfxPalette::setOnScreen(bool update) {
 }
 
 static byte convertMacGammaToSCIGamma(int comp) {
-	return (byte)sqrt(comp * 255.0f);
+	return (byte)sqrtf(comp * 255.0f);
 }
 
 void GfxPalette::copySysPaletteToScreen(bool update) {

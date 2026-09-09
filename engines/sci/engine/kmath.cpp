@@ -88,7 +88,7 @@ reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
+	return make_reg(0, (int16)sqrtf((float) ABS(argv[0].toSint16())));
 }
 
 uint16 kGetAngle_SCI0(int16 x1, int16 y1, int16 x2, int16 y2) {
@@ -207,7 +207,7 @@ reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {
 	int angle = (argc > 5) ? argv[5].toSint16() : 0;
 	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * M_PI / 180.0)); // This works because cos(0)==1
 	int yrel = argv[0].toSint16() - ydiff;
-	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
+	return make_reg(0, (int16)sqrtf((float) xrel*xrel + yrel*yrel));
 }
 
 reg_t kTimesSin(EngineState *s, int argc, reg_t *argv) {

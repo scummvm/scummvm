@@ -778,7 +778,7 @@ static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
 		return PF_OK;
 	}
 
-	p = Common::Point((int)floor(f.x), (int)floor(f.y));
+	p = Common::Point((int)floorf(f.x), (int)floorf(f.y));
 
 	// Try (x, y), (x + 1, y), (x , y + 1) and (x + 1, y + 1)
 	if (contained(p, polygon) == CONT_INSIDE) {
@@ -1368,7 +1368,7 @@ static void AStar(PathfindingState *s) {
 
 	openSet.push_front(s->vertex_start);
 	s->vertex_start->costG = 0;
-	s->vertex_start->costF = (uint32)sqrt((float)s->vertex_start->v.sqrDist(s->vertex_end->v));
+	s->vertex_start->costF = (uint32)sqrtf((float)s->vertex_start->v.sqrDist(s->vertex_end->v));
 
 	while (!openSet.empty()) {
 		// Find vertex in open set with lowest F cost
@@ -1407,7 +1407,7 @@ static void AStar(PathfindingState *s) {
 			if (!openSet.contains(vertex))
 				openSet.push_front(vertex);
 
-			new_dist = vertex_min->costG + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
+			new_dist = vertex_min->costG + (uint32)sqrtf((float)vertex_min->v.sqrDist(vertex->v));
 
 			// When travelling to a vertex on the screen edge, we
 			// add a penalty score to make this path less appealing.
@@ -1441,7 +1441,7 @@ static void AStar(PathfindingState *s) {
 
 			if (new_dist < vertex->costG) {
 				vertex->costG = new_dist;
-				vertex->costF = vertex->costG + (uint32)sqrt((float)vertex->v.sqrDist(s->vertex_end->v));
+				vertex->costF = vertex->costG + (uint32)sqrtf((float)vertex->v.sqrDist(s->vertex_end->v));
 				vertex->path_prev = vertex_min;
 			}
 		}
