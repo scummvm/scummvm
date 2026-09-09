@@ -338,8 +338,8 @@ void rotoscaleBlitLogic(byte *dst, const byte *src,
 
 	uint32 invAngle = 360 - (transform._angle % 360);
 	float invAngleRad = Math::deg2rad<uint32,float>(invAngle);
-	float invCos = cos(invAngleRad);
-	float invSin = sin(invAngleRad);
+	float invCos = cosf(invAngleRad);
+	float invSin = sinf(invAngleRad);
 
 	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));

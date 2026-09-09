@@ -640,8 +640,8 @@ void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int 
 		clampHeight = destinationRectangle.height();
 
 	uint32 invAngle = 360 - (rotation % 360);
-	float invCos = cos(invAngle * (float)M_PI / 180.0f);
-	float invSin = sin(invAngle * (float)M_PI / 180.0f);
+	float invCos = cosf(invAngle * (float)M_PI / 180.0f);
+	float invSin = sinf(invAngle * (float)M_PI / 180.0f);
 
 	int icosx = (int)(invCos * (65536.0f * srcWidth / width));
 	int isinx = (int)(invSin * (65536.0f * srcWidth / width));
@@ -826,8 +826,8 @@ void tglCleanupImages() {
 Common::Point transformPoint(float x, float y, int rotation) {
 	float rotateRad = rotation * (float)M_PI / 180.0f;
 	Common::Point newPoint;
-	newPoint.x = x * cos(rotateRad) - y * sin(rotateRad);
-	newPoint.y = x * sin(rotateRad) + y * cos(rotateRad);
+	newPoint.x = x * cosf(rotateRad) - y * sinf(rotateRad);
+	newPoint.y = x * sinf(rotateRad) + y * cosf(rotateRad);
 	return newPoint;
 }
 
@@ -844,10 +844,10 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 	float right = MAX(nw.x, MAX(ne.x, MAX(sw.x, se.x)));
 
 	Common::Rect res;
-	res.top = (int32)(floor(top)) + originY;
-	res.bottom = (int32)(ceil(bottom)) + originY;
-	res.left = (int32)(floor(left)) + originX;
-	res.right = (int32)(ceil(right)) + originX;
+	res.top = (int32)(floorf(top)) + originY;
+	res.bottom = (int32)(ceilf(bottom)) + originY;
+	res.left = (int32)(floorf(left)) + originX;
+	res.right = (int32)(ceilf(right)) + originX;
 
 	return res;
 }

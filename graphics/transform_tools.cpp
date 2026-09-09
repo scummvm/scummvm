@@ -41,8 +41,8 @@ FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, 
 		y *= -1;
 #endif
 	FloatPoint newPoint;
-	newPoint.x = x * cos(rotateRad) - y * sin(rotateRad);
-	newPoint.y = x * sin(rotateRad) + y * cos(rotateRad);
+	newPoint.x = x * cosf(rotateRad) - y * sinf(rotateRad);
+	newPoint.y = x * sinf(rotateRad) + y * cosf(rotateRad);
 	if (mirrorX) {
 		newPoint.x *= -1;
 	}
@@ -71,15 +71,15 @@ Common::Rect TransformTools::newRect(const Common::Rect &oldRect, const Transfor
 	float right = MAX(nw1.x, MAX(ne1.x, MAX(sw1.x, se1.x)));
 
 	if (newHotspot) {
-		newHotspot->y = (uint32)(-floor(top));
-		newHotspot->x = (uint32)(-floor(left));
+		newHotspot->y = (uint32)(-floorf(top));
+		newHotspot->x = (uint32)(-floorf(left));
 	}
 
 	Common::Rect res;
-	res.top = (int32)(floor(top)) + transform._hotspot.y;
-	res.bottom = (int32)(ceil(bottom)) + transform._hotspot.y;
-	res.left = (int32)(floor(left)) + transform._hotspot.x;
-	res.right = (int32)(ceil(right)) + transform._hotspot.x;
+	res.top = (int32)(floorf(top)) + transform._hotspot.y;
+	res.bottom = (int32)(ceilf(bottom)) + transform._hotspot.y;
+	res.left = (int32)(floorf(left)) + transform._hotspot.x;
+	res.right = (int32)(ceilf(right)) + transform._hotspot.x;
 
 	return res;
 }

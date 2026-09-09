@@ -161,14 +161,14 @@ void GLContext::glopRotate(GLParam *p) {
 		float len = u[0] * u[0] + u[1] * u[1] + u[2] * u[2];
 		if (len == 0.0f)
 			return;
-		len = 1.0f / sqrt(len);
+		len = 1.0f / sqrtf(len);
 		u[0] *= len;
 		u[1] *= len;
 		u[2] *= len;
 
 		// store cos and sin values
-		cost = cos(angle);
-		sint = sin(angle);
+		cost = cosf(angle);
+		sint = sinf(angle);
 
 		// fill in the values
 		m._m[3][0] = 0.0f;

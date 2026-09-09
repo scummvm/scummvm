@@ -226,7 +226,7 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 			d.X = l->position.X - v->ec.X;
 			d.Y = l->position.Y - v->ec.Y;
 			d.Z = l->position.Z - v->ec.Z;
-			dist = sqrt(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
+			dist = sqrtf(d.X * d.X + d.Y * d.Y + d.Z * d.Z);
 			att = 1.0f / (l->attenuation[0] +
 			              dist * (l->attenuation[1] +
 			              dist * l->attenuation[2]));
@@ -258,7 +258,7 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 					} else {
 						// TODO: optimize
 						if (l->spot_exponent > 0) {
-							att = att * pow(dot_spot, l->spot_exponent);
+							att = att * powf(dot_spot, l->spot_exponent);
 						}
 					}
 				}
@@ -284,7 +284,7 @@ void GLContext::gl_shade_vertex(GLVertex *v) {
 					if (dot_spec > 0) {
 						GLSpecBuf *specbuf;
 						int idx;
-						dot_spec = dot_spec / sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+						dot_spec = dot_spec / sqrtf(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
 						// TODO: optimize
 						// testing specular buffer code
 						// dot_spec= pow(dot_spec,m->shininess)

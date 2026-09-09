@@ -163,7 +163,7 @@ static int MatrixInverse(float *m) {
 }
 
 void Vector3::normalize() {
-	float n = sqrt(X * X + Y * Y + Z * Z);
+	float n = sqrtf(X * X + Y * Y + Z * Z);
 	if (n != 0) {
 		X /= n;
 		Y /= n;
@@ -276,8 +276,8 @@ void Matrix4::rotation(float t, int u) {
 		v = 0;
 	if ((w = v + 1) > 2)
 		w = 0;
-	s = sin(t);
-	c = cos(t);
+	s = sinf(t);
+	c = cosf(t);
 	_m[v][v] = c;
 	_m[v][w] = -s;
 	_m[w][v] = s;
