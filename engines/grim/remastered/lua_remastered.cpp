@@ -443,7 +443,7 @@ void Lua_Remastered::FindSaveGames() {
 
 	Common::StringArray::iterator it = saveFiles.begin();
 	for (int i = 0; it != saveFiles.end(); ++it) {
-		const char *filename  = (*it).c_str();
+		const char *filename  = it->c_str();
 		warning("Savefile: %s", filename);
 		SaveGame *savedState = SaveGame::openForLoading(filename);
 
@@ -457,7 +457,7 @@ void Lua_Remastered::FindSaveGames() {
 			}
 			return;
 		}
-		int slot = atoi((*it).c_str() + 6);
+		int slot = atoi(it->c_str() + 6);
 		Common::String str1;
 		Common::String str2;
 		int x;
