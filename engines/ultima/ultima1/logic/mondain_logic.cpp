@@ -137,6 +137,220 @@ void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, i
 	playFX(2);
 }
 
+bool MondainLogic::isWithinRange7() const {
+	const Common::Point &pos = _G(savegame)._locationPosition;
+	const Common::Point &mondainPos = _G(savegame)._mondainPos;
+	return ABS(pos.x - mondainPos.x) + ABS(pos.y - mondainPos.y) < 7;
+}
+
+bool MondainLogic::rollSpellSuccess() {
+	Data::Savegame &sg = _G(savegame);
+	return getRandomNumber(1, 249) < (sg._intelligence + 160) || sg._class == Data::CLASS_WIZARD;
+}
+
+int MondainLogic::getMagicWeaponPower() {
+	Data::Savegame &sg = _G(savegame);
+	int result = getRandomNumber(2, sg._intelligence);
+
+	if (sg._equippedWeapon == Data::WEAPON_WAND)
+		result *= 2;
+	else if (sg._equippedWeapon == Data::WEAPON_AMULET)
+		result = result * 3 / 2;
+	else if (sg._equippedWeapon == Data::WEAPON_STAFF || sg._equippedWeapon == Data::WEAPON_TRIANGLE)
+		result *= 3;
+
+	return result;
+}
+
+bool MondainLogic::castTeleport() {
+	writeString("\n");
+
+	if (!rollSpellSuccess())
+		return false;
+
+	Data::Savegame &sg = _G(savegame);
+	int newX = 0, newY = 0;
+	bool valid = false;
+
+	// The original retries with no attempt cap at all - bounded here for
+	// safety, matching the same defensive pattern used for the dungeon and
+	// overworld Blink spells
+	for (int attempt = 0; attempt < 500 && !valid; ++attempt) {
+		newX = getRandomNumber(1, 255) % Data::MONDAIN_WIDTH;
+		newY = getRandomNumber(1, 255) % Data::MONDAIN_HEIGHT;
+		valid = _G(map).getMapTile(newX, newY) == 0;
+	}
+
+	if (!valid)
+		return false;
+
+	_G(map)[sg._locationPosition.y][sg._locationPosition.x] = 0;
+	sg._locationPosition = Common::Point(newX, newY);
+	_G(map)[newY][newX] = Data::MTILE_PLAYER;
+
+	playFX(5);
+	writeString("Done.\n");
+	return true;
+}
+
+bool MondainLogic::castInterficioNunc() {
+	writeString("\n");
+
+	if (!rollSpellSuccess() || !isWithinRange7())
+		return false;
+
+	// The Kill spell doesn't work on Mondain at all - it backfires,
+	// doubling his remaining hit points instead (capped at 15000)
+	writeString("\"INTERFICIO-NUNC!\"\n");
+	writeString("The spell doth seem\n");
+	writeString("to make him stronger!\n");
+
+	Data::Savegame &sg = _G(savegame);
+	if (sg._mondainHits < 15000)
+		sg._mondainHits *= 2;
+
+	playFX(5);
+	return true;
+}
+
+bool MondainLogic::castPlaceBarrier(Data::Direction dir) {
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("nothing\n");
+		playFX(6);
+		return true;
+	}
+
+	writeString("%s\n", Data::DIRECTION_NAMES[dir]);
+	if (!rollSpellSuccess())
+		return false;
+
+	Data::Savegame &sg = _G(savegame);
+	int x = sg._locationPosition.x + DELTA_X[dir];
+	int y = sg._locationPosition.y + DELTA_Y[dir];
+
+	// Can't place a barrier on an occupied tile, or anywhere in line with
+	// Mondain
+	if (_G(map).getMapTile(x, y) != 0 || x == sg._mondainPos.x || y == sg._mondainPos.y)
+		return false;
+
+	_G(map)[y][x] = 5;
+	playFX(5);
+	writeString("Done.\n");
+	return true;
+}
+
+bool MondainLogic::castRemoveBarrier(Data::Direction dir) {
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("nothing\n");
+		playFX(6);
+		return true;
+	}
+
+	writeString("%s\n", Data::DIRECTION_NAMES[dir]);
+	if (!rollSpellSuccess())
+		return false;
+
+	Data::Savegame &sg = _G(savegame);
+	int x = sg._locationPosition.x + DELTA_X[dir];
+	int y = sg._locationPosition.y + DELTA_Y[dir];
+
+	if (_G(map).getMapTile(x, y) != 5)
+		return false;
+
+	_G(map)[y][x] = 0;
+	playFX(5);
+	writeString("Done.\n");
+	return true;
+}
+
+bool MondainLogic::castMagicMissile(Data::Direction dir) {
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("nothing\n");
+		playFX(6);
+		return false;
+	}
+
+	writeString("%s\n", Data::DIRECTION_NAMES[dir]);
+	if (!rollSpellSuccess() || !isWithinRange7())
+		return false;
+
+	int strike = getMagicWeaponPower();
+	damage(dir, 5, 5, strike, 500, 0);
+	return true;
+}
+
+bool MondainLogic::cast() {
+	Data::Savegame &sg = _G(savegame);
+	int spell = sg._equippedSpell;
+
+	writeString("Cast %s", Data::SPELL_NAMES[spell]);
+
+	if (sg._spells[spell] == 0) {
+		writeString("\n");
+		writeString("You've used up that spell!\n");
+		playFX(6);
+		return true;
+	}
+
+	if (spell != Data::SPELL_PRAYER)
+		--sg._spells[spell];
+
+	if (spell != Data::SPELL_MAGIC_MISSILE && spell != Data::SPELL_BLINK && spell != Data::SPELL_CREATE &&
+			spell != Data::SPELL_DESTROY && spell != Data::SPELL_KILL) {
+		// Nothing else has any effect on Mondain
+		writeString("\n");
+		writeString("Failed!\n");
+		playFX(6);
+		return true;
+	}
+
+	bool success;
+	switch (spell) {
+	case Data::SPELL_BLINK:
+		success = castTeleport();
+		break;
+	case Data::SPELL_KILL:
+		success = castInterficioNunc();
+		break;
+	default:
+		// Magic Missile/Create/Destroy all need a direction first, so
+		// defer to the Direction view - castSpellAttack() picks up from
+		// here once one's been chosen
+		writeString(": ");
+		_castSpell = spell;
+		_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::SPELL));
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	if (!success) {
+		writeString("Failed!\n");
+		playFX(6);
+	}
+	return true;
+}
+
+void MondainLogic::castSpellAttack(Data::Direction dir) {
+	bool success;
+	switch (_castSpell) {
+	case Data::SPELL_CREATE:
+		success = castPlaceBarrier(dir);
+		break;
+	case Data::SPELL_DESTROY:
+		success = castRemoveBarrier(dir);
+		break;
+	default:
+		// SPELL_MAGIC_MISSILE
+		success = castMagicMissile(dir);
+		break;
+	}
+
+	if (!success) {
+		writeString("Failed!\n");
+		playFX(6);
+	}
+}
+
 void MondainLogic::tick() {
 	// Only advance the animations once every 4 frames
 	if (++_tickCounter < 4)
