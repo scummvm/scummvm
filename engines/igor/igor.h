@@ -74,6 +74,24 @@ enum {
 	MAX_DIALOGUE_REPLIES = 70
 };
 
+enum FacingPosition {
+	kFacingPositionBack = 1,
+	kFacingPositionRight = 2,
+	kFacingPositionFront = 3,
+	kFacingPositionLeft = 4
+};
+
+enum {
+	kTalkModeSpeechOnly = 0,
+	kTalkModeSpeechAndText = 1,
+	kTalkModeTextOnly = 2
+};
+
+struct RoomWalkBounds {
+	int x1, y1;
+	int x2, y2;
+};
+
 struct DetectedGameVersion {
 	int version;
 	int flags;
@@ -104,7 +122,95 @@ struct RoomObjectArea {
 	uint8 deltaLum;
 };
 
+struct GameStateData {
+	uint8 enableLight;
+	int8 colorLum;
+	int16 counter[5];
+	bool igorMoving;
+	bool dialogueTextRunning;
+	bool updateLight;
+	bool unkF;
+	uint8 unk10;
+	uint8 unk11;
+	bool dialogueStarted;
+	// byte[1]
+	uint8 dialogueData[500];
+	uint8 dialogueChoiceStart;
+	uint8 dialogueChoiceCount;
+	// byte[2]
+	uint8 nextMusicCounter;
+	bool jumpToNextMusic;
+	uint8 configSoundEnabled;
+	uint8 talkSpeed;
+	uint8 talkMode;
+	// byte[3]
+	uint8 musicNum;
+	uint8 musicSequenceIndex;
+};
+
+struct WalkData {
+	int16 x, y;
+	uint8 posNum;
+	uint8 frameNum;
+	uint8 clipSkipX;
+	int16 clipWidth;
+	int16 scaleWidth;
+	uint8 xPosChanged;
+	int16 dxPos;
+	uint8 yPosChanged;
+	int16 dyPos;
+	uint8 scaleHeight;
+
+	void setPos(int xPos, int yPos, uint8 facingPos, uint8 frame) {
+		x = xPos;
+		y = yPos;
+		posNum = facingPos;
+		frameNum = frame;
+	}
+
+	void setDefaultScale() {
+		clipSkipX = 1;
+		clipWidth = 30;
+		scaleWidth = 50;
+		xPosChanged = 1;
+		dxPos = 0;
+		yPosChanged = 1;
+		dyPos = 0;
+		scaleHeight = 50;
+	}
+
+	void setScale(int w, int h) {
+		scaleWidth = w;
+		scaleHeight = h;
+	}
+
+	static void setNextFrame(uint8 pos, uint8 &frame) {
+		switch (pos) {
+		case kFacingPositionBack:
+		case kFacingPositionFront:
+			if (frame == 6) {
+				frame = 1;
+			} else {
+				++frame;
+			}
+			break;
+		case kFacingPositionLeft:
+		case kFacingPositionRight:
+			if (frame == 8) {
+				frame = 1;
+			} else {
+				++frame;
+			}
+			break;
+		}
+	}
+};
+
+
 class IgorEngine : public Engine {
+public:
+
+	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -126,6 +232,7 @@ private:
 	int _screenVGAVOffset;
 
 	bool _eventQuitGame;
+	GameStateData _gameState;
 	uint32 _nextTimer;
 
 	DetectedGameVersion _game;
@@ -137,10 +244,22 @@ private:
 	uint8 _walkYScaleRoom[144 * 3];
 	RoomObjectArea _roomObjectAreasTable[MAX_ROOM_OBJECT_AREAS];
 
+
+	WalkData _walkData[100];
+	uint8 _walkCurrentPos;
+	uint8 _walkDataLastIndex;
+	uint8 _walkDataCurrentIndex;
+	uint8 _walkCurrentFrame;
+	int _walkDataCurrentPosX, _walkDataCurrentPosY;
+	int _walkToObjectPosX, _walkToObjectPosY;
+
 	int16 _currentPart;
 	uint8 _currentPalette[768];
 	uint8 _paletteBuffer[768];
 	uint8 _igorPalette[48];
+	uint8 *_igorTempFrames;
+
+	RoomWalkBounds _roomWalkBounds;
 
 	int _gameTicks;
 	int _resourceEntriesCount;
@@ -149,6 +268,12 @@ private:
 
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
+
+	UpdateRoomBackgroundProc _updateRoomBackground;
+
+	static const uint8 _walkWidthScaleTable[];
+	static const uint8 _walkScaleTable[];
+	static const float _walkScaleSpeedTable[];
 
 	void restart();
 	void setupDefaultPalette();
@@ -159,13 +284,29 @@ private:
 
 	void PART_MAIN();
 	void PART_05();
+
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 	void handleRoomInput();
+	void handleRoomIgorWalk();
 
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
+
+	int lookupScale(int xOffset, int yOffset, int h) const;
+	void lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const;
+
+	void buildWalkPathArea(int srcX, int srcY, int dstX, int dstY);
+	int getVerticalStepsCount(int minX, int minY, int maxX, int maxY);
+	int getHorizontalStepsCount(int minX, int minY, int maxX, int maxY);
+	void buildWalkPathAreaUpDirection(int srcX, int srcY, int dstX, int dstY);
+	void buildWalkPathAreaDownDirection(int srcX, int srcY, int dstX, int dstY);
+	void buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, int dstY);
+	void buildWalkPathAreaLeftDirection(int srcX, int srcY, int dstX, int dstY);
+	void waitForIgorMove();
+
+	void moveIgor(int pos, int frame);
 
 
 	void scrollPalette(int startColor, int endColor);
@@ -189,6 +330,10 @@ private:
 	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void loadRoomData(int pal, int img, int box, int msk, int txt);
+
+	void setRoomWalkBounds(int x1, int y1, int x2, int y2);
+
+	void buildWalkPath(int srcX, int srcY, int dstX, int dstY);
 
 public:
 	Graphics::Screen *_screen = nullptr;

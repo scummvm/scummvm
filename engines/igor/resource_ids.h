@@ -29,6 +29,13 @@
 #define FRM_IgorDirLeft 320
 #define FRM_IgorHead 321
 
+
+#define TXT_SpringBridge 245
+#define IMG_SpringBridge 246
+#define PAL_SpringBridge 247
+#define MSK_SpringBridge 248
+#define BOX_SpringBridge 249
+
 #define TXT_SpringRock 270
 #define IMG_SpringRock 271
 #define PAL_SpringRock 272
