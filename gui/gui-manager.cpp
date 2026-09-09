@@ -574,7 +574,7 @@ void GuiManager::addToTrash(GuiObject* object, Dialog *parent) {
 
 	for (auto it = _guiObjectTrash.begin(); it != _guiObjectTrash.end(); ++it) {
 		if (it->object == object) {
-			debug(6, "The object %p was already scheduled for deletion, skipping", (void *)(*it).object);
+			debug(6, "The object %p was already scheduled for deletion, skipping", (void *)it->object);
 			return;
 		}
 	}
@@ -1051,9 +1051,9 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 void GuiManager::emptyTrash(Dialog *const activeDialog) {
 	Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
 	while (it != _guiObjectTrash.end()) {
-		if ((*it).parent == nullptr || (*it).parent == activeDialog) {
-			debug(7, "Delayed deletion of Gui Object %p", (void *)(*it).object);
-			delete (*it).object;
+		if (it->parent == nullptr || it->parent == activeDialog) {
+			debug(7, "Delayed deletion of Gui Object %p", (void *)it->object);
+			delete it->object;
 			it = _guiObjectTrash.erase(it);
 		} else
 			++it;
