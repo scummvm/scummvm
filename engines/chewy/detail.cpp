@@ -566,10 +566,10 @@ void Detail::calc_zoom_kor(int16 *kx, int16 *ky, int16 xzoom, int16 yzoom) {
 	float tmpy = (float)(((float)*ky / 100.0) * ((float)yzoom));
 
 	float tmpx1 = tmpx - (int16)tmpx;
-	if (fabs(tmpx1) > 0.5)
+	if (fabsf(tmpx1) > 0.5f)
 		++tmpx;
 	float tmpy1 = tmpy - (int16)tmpy;
-	if (fabs(tmpy1) > 0.5)
+	if (fabsf(tmpy1) > 0.5f)
 		++tmpy;
 	*kx += (int16)tmpx;
 	*ky += (int16)tmpy;
