@@ -234,7 +234,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 				r.setWidth(width2);
 				r.setHeight(height1);
 
-				(*destViewPort->_rectListPtr[destViewPort->_pageIndex]).push_back(r);
+				destViewPort->_rectListPtr[destViewPort->_pageIndex]->push_back(r);
 				++destViewPort->_rectListCount[destViewPort->_pageIndex];
 			}
 		} else {
