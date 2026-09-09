@@ -479,7 +479,7 @@ Common::String ConverseGump::get_token_at_cursor() {
 	Common::List<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 		if (i == cursor_position) {
-			Common::String keyword = (*iter).s;
+			Common::String keyword = iter->s;
 			if (!is_permanent_keyword(keyword)) {
 				keyword_list->erase(iter);
 				if (permit_input)

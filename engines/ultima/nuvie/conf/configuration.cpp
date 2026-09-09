@@ -301,7 +301,7 @@ void Configuration::load(GameId gameId, bool isEnhanced) {
 	const Common::ConfigManager::Domain &domain = *ConfMan.getActiveDomain();
 	Common::ConfigManager::Domain::const_iterator it;
 	for (it = domain.begin(); it != domain.end(); ++it) {
-		_settings[(*it)._key] = (*it)._value;
+		_settings[it->_key] = it->_value;
 	}
 }
 

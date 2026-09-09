@@ -369,7 +369,7 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 			psc->m_Sounds.push_back(song);	// add this sound to the collection
 			m_MusicMap[group] = psc;		// insert this pair into the map
 		} else {
-			psc = (*it)._value;				// yes, get the existing
+			psc = it->_value;				// yes, get the existing
 			psc->m_Sounds.push_back(song);	// add this sound to the collection
 		}
 	}
@@ -630,7 +630,7 @@ void SoundManager::musicStop() {
 
 Common::List < SoundManagerSfx >::iterator SoundManagerSfx_find(Common::List < SoundManagerSfx >::iterator first, Common::List < SoundManagerSfx >::iterator last, const SfxIdType &value) {
 	for (; first != last; first++) {
-		if ((*first).sfx_id == value)
+		if (first->sfx_id == value)
 			break;
 	}
 	return first;
@@ -785,7 +785,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 	it = m_TileSampleMap.find(id);
 	if (it != m_TileSampleMap.end()) {
 		SoundCollection *psc;
-		psc = (*it)._value;
+		psc = it->_value;
 		return psc->Select();
 	}
 	return nullptr;
@@ -796,7 +796,7 @@ Sound *SoundManager::RequestObjectSound(int id) {
 	it = m_ObjectSampleMap.find(id);
 	if (it != m_ObjectSampleMap.end()) {
 		SoundCollection *psc;
-		psc = (*it)._value;
+		psc = it->_value;
 		return psc->Select();
 	}
 	return nullptr;
@@ -818,7 +818,7 @@ Sound *SoundManager::RequestSong(const Common::String &group) {
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {
 		SoundCollection *psc;
-		psc = (*it)._value;
+		psc = it->_value;
 		return psc->Select();
 	}
 	return nullptr;
