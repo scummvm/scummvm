@@ -54,8 +54,8 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 				applyItemBonus(item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_combatEffectCtr)
-					(isEquipped ? &g_globals->_currCharacter->_equipped :
-						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
+					(isEquipped ? g_globals->_currCharacter->_equipped :
+						g_globals->_currCharacter->_backpack).removeCharge(&invEntry);
 
 				g_globals->_party.updateAC();
 				msg = STRING["dialogs.character.use_combat.done"];
@@ -104,8 +104,8 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 				applyItemBonus (item->_tempBonus_id, item->_tempBonus_value);
 
 				if (g_globals->_nonCombatEffectCtr)
-					(isEquipped ? &g_globals->_currCharacter->_equipped :
-						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
+					(isEquipped ? g_globals->_currCharacter->_equipped :
+						g_globals->_currCharacter->_backpack).removeCharge(&invEntry);
 
 				g_globals->_party.updateAC();
 				msg = STRING["spells.done"];
