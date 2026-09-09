@@ -139,7 +139,7 @@ static void normalizeMacSiteData(Common::Array<byte> &data,
 
 	for (uint i = 0; i < numSites; i++) {
 		const uint16 siteOff = siteOffsets[i];
-		if (siteOff + 12 > data.size())
+		if (siteOff + 12u > data.size())
 			continue;
 
 		const uint16 dropsOff = readBE16(data, siteOff + 0);
@@ -152,14 +152,14 @@ static void normalizeMacSiteData(Common::Array<byte> &data,
 
 		// Drop blocks keep byte[0]=sitepic and byte[1]=count, then Mac uses
 		// count x {u16 pic, u16 x, u16 y}.
-		if (dropsOff + 2 <= data.size()) {
+		if (dropsOff + 2u <= data.size()) {
 			const uint count = data[dropsOff + 1];
 			swapU16Range(data, dropsOff + 2,
 						 dropsOff + 2 + count * 6);
 		}
 
 		// Hotspot blocks keep byte[0]=count, then count x {u16 x1, y1, x2, y2}.
-		if (hotspotOff + 1 <= data.size()) {
+		if (hotspotOff + 1u <= data.size()) {
 			const uint count = data[hotspotOff];
 			swapU16Range(data, hotspotOff + 1,
 						 hotspotOff + 1 + count * 8);
@@ -213,7 +213,7 @@ static void normalizeMacMystery(Common::Array<byte> &data) {
 	// followed by Mac-native big-endian dialog records. Keep the records
 	// byte-exact; their widened coordinate fields are parsed by the Mac
 	// briefing path.
-	if (section[0] + 4 <= data.size())
+	if (section[0] + 4u <= data.size())
 		swapU16Range(data, section[0] + 2, section[0] + 4);
 
 	// Remaining structured regions. The text regions at section[6] and
@@ -637,7 +637,7 @@ const byte *Mystery::hotspots(uint siteNum) const {
 		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
 			return nullptr;
 		const uint16 hotspotOff = READ_LE_UINT16(site + 4);
-		if (hotspotOff == 0 || hotspotOff + 1 > _data.size())
+		if (hotspotOff == 0 || hotspotOff + 1u > _data.size())
 			return nullptr;
 		return _data.data() + hotspotOff + 1;
 	}
