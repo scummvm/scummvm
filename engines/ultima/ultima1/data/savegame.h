@@ -149,6 +149,8 @@ public:
 	int16 _mondainPhaseTimer = 20;
 	// Set once Mondain has been finally defeated
 	int16 _mondainDefeatedFlag = 0;
+	// Mondain's own hit points
+	int16 _mondainHits = 1000;
 
 	/**
 	 * Synchronize savegame data

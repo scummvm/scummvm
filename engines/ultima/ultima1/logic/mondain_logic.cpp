@@ -34,6 +34,10 @@ static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 MondainLogic::MondainLogic() {
 	_G(map)._mapType = Data::MAPTYPE_MONDAIN;
+
+	// The Mondain encounter's own cityCastleAttackDir uses a weaker per-
+	// point-of-strength scale (*3) than the main game's (*8)
+	_weaponDamageScale = 3;
 }
 
 void MondainLogic::entering() {
@@ -98,6 +102,39 @@ bool MondainLogic::move(Data::Direction dir) {
 	}
 
 	return true;
+}
+
+void MondainLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+	playFX(effectNum);
+
+	Data::Savegame &sg = _G(savegame);
+	int dx = DELTA_X[dir], dy = DELTA_Y[dir];
+	const Common::Point &pos = sg._locationPosition;
+
+	int scanX = pos.x, scanY = pos.y;
+	bool foundMondain = false;
+
+	for (int step = 1; step <= maxDistance; ++step) {
+		scanX = pos.x + dx * step;
+		scanY = pos.y + dy * step;
+
+		int tileVal = _G(map).getMapTile(scanX, scanY);
+		foundMondain = tileVal == 0 && scanX == sg._mondainPos.x && scanY == sg._mondainPos.y;
+
+		if (foundMondain || scanX <= 0 || scanY <= 0 ||
+				scanX >= Data::MONDAIN_WIDTH || scanY >= Data::MONDAIN_HEIGHT)
+			break;
+	}
+
+	if (!foundMondain || getRandomNumber(1, 100) > hitChance) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	sg._mondainHits -= strike;
+	writeString("Hit Mondain! ");
+	writeString("%d damage!\n", strike);
+	playFX(2);
 }
 
 void MondainLogic::tick() {

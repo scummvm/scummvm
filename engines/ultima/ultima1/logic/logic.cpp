@@ -359,7 +359,7 @@ void Logic::combatDir(Data::Direction direction, int effect) {
 		// Attacking with the readied weapon
 		maxDistance = Data::WEAPONS_DISTANCE[sg._equippedWeapon];
 		hitChance = sg._agility + 50;
-		strike = getRandomNumber(2, sg._equippedWeapon * 8 + sg._strength);
+		strike = getRandomNumber(2, sg._equippedWeapon * _weaponDamageScale + sg._strength);
 	} else {
 		// Firing a frigate's cannons/aircar's lasers
 		maxDistance = 3;

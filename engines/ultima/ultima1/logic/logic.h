@@ -43,6 +43,12 @@ private:
 	void combatDir(Data::Direction direction, int effect);
 
 protected:
+	// Per-point-of-strength/readied-item scaling factor used by combatDir's
+	// weapon-attack strike roll - 8 for the main game, but MondainLogic
+	// overrides it to 3 to match the Mondain encounter's own weaker curve
+	int _weaponDamageScale = 8;
+
+
 	/**
 	 * Dispatches some text to be shown in the Commands window
 	 */
