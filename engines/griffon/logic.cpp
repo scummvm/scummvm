@@ -561,7 +561,7 @@ void GriffonEngine::updateNPCs() {
 						ydif = _player.py - npy;
 
 						if (ABS(xdif) < 24 && ABS(ydif) < 24) {
-							float dist = sqrt(xdif * xdif + ydif * ydif);
+							float dist = sqrtf(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
 								if (config.effects) {
@@ -667,7 +667,7 @@ void GriffonEngine::updateNPCs() {
 								ydif = _player.py - npy;
 
 								if (ABS(xdif) < 48 && ABS(ydif) < 48) {
-									float dist = sqrt(xdif * xdif + ydif * ydif);
+									float dist = sqrtf(xdif * xdif + ydif * ydif);
 
 									if ((dist) < 36) {
 										if (config.effects) {
@@ -847,7 +847,7 @@ void GriffonEngine::updateNPCs() {
 						ydif = _player.py - npy;
 
 						if (ABS(xdif) < 24 && ABS(ydif) < 24) {
-							float dist = sqrt(xdif * xdif + ydif * ydif);
+							float dist = sqrtf(xdif * xdif + ydif * ydif);
 
 							if ((dist) < 24) {
 								if (config.effects) {
@@ -1694,7 +1694,7 @@ void GriffonEngine::updateSpells() {
 						float ay = _spellInfo[i].fireballs[ff][1];
 						float bx = _player.px + 4;
 						float by = _player.py + 4;
-						float d = sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+						float d = sqrtf((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
 
 						float tx = (bx - ax) / d;
 						float ty = (by - ay) / d;
@@ -2100,7 +2100,7 @@ void GriffonEngine::updateSpellsUnder() {
 					int xdif = _spellInfo[i].enemyx - _npcInfo[f].x;
 					int ydif = _spellInfo[i].enemyy - _npcInfo[f].y;
 
-					float dist = sqrt((float)(xdif * xdif + ydif * ydif));
+					float dist = sqrtf((float)(xdif * xdif + ydif * ydif));
 
 					if (dist > 20)
 						dist = 20;
