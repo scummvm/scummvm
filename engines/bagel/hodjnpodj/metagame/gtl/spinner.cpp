@@ -177,9 +177,9 @@ bool CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, bool bHodj) {
 	m_pSprite = new CSprite();                      // load the sprite image
 	if ((m_pDC != nullptr) &&
 	        (m_pSprite != nullptr)) {
-		bSuccess = (*m_pSprite).LoadSprite(m_pDC, SPINNER_SPEC);
+		bSuccess = m_pSprite->LoadSprite(m_pDC, SPINNER_SPEC);
 		if (bSuccess)
-			(*m_pSprite).SetMasked(true);
+			m_pSprite->SetMasked(true);
 		else {
 			delete m_pSprite;                       // failed so release it
 			m_pSprite = nullptr;
@@ -314,7 +314,7 @@ bool CSpinner::Show(int nX, int nY) {
 	m_nX = nX;
 	m_nY = nY;
 
-	bSuccess = (*m_pSprite).PaintSprite(m_pDC, nX, nY);
+	bSuccess = m_pSprite->PaintSprite(m_pDC, nX, nY);
 
 	if (bSuccess)
 		m_bVisible = true;
@@ -342,7 +342,7 @@ bool CSpinner::Hide() {
 		return false;
 
 	if (m_bVisible) {                                   // if visible ...
-		bSuccess = (*m_pSprite).EraseSprite(m_pDC);     // ... just erase the sprite
+		bSuccess = m_pSprite->EraseSprite(m_pDC);     // ... just erase the sprite
 		if (bSuccess)
 			m_bVisible = false;                         // ... and mark spinner as invisible
 	} else
@@ -381,8 +381,8 @@ int CSpinner::Spin() {
 	CSound::waitWaveSounds();
 
 	pSound = new CSound();                              // create the spinner sound
-	(*pSound).initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
-	(*pSound).play();                                   // start the spinner sound
+	pSound->initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
+	pSound->play();                                   // start the spinner sound
 
 	if (!m_bVisible) {                                  // make it visible
 		bSuccess = Show(m_nX, m_nY);
@@ -415,7 +415,7 @@ int CSpinner::Spin() {
 
 	app->pause();
 
-	(*pSound).stop();
+	pSound->stop();
 	delete pSound;
 	pSound = nullptr;
 

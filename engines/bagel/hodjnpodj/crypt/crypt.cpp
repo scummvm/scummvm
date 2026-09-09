@@ -256,7 +256,7 @@ bool CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	/********************
 	* Symbol hilited?   *
 	********************/
-	nClickedCode = (*pSprite).GetTypeCode();
+	nClickedCode = pSprite->GetTypeCode();
 	if (m_cPaintGram->IsSymbolChar(nClickedCode) == true) {
 		return false;                                   // Yes - do not hilite symbols
 	}

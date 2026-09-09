@@ -125,7 +125,7 @@ bool COptions::OnInitDialog() {
 	}  // use it
 
 	// get the parent window's rectangular bounds
-	(*pMainWnd).GetWindowRect(&cWindRect);  // get pos/size of parent
+	pMainWnd->GetWindowRect(&cWindRect);  // get pos/size of parent
 //	((CWnd *)this)->GetWindowRect(&cDlgRect);  // get pos/size of dialog
 	cDlgRect.SetRect(0, 0, 222, 210);
 
@@ -149,60 +149,60 @@ bool COptions::OnInitDialog() {
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 		pRulesButton = new CColorButton();
 		ASSERT(pRulesButton != nullptr);
-		(*pRulesButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pRulesButton).SetControl(IDC_OPTIONS_RULES, this);
+		pRulesButton->SetPalette(pOptionsPalette);
+		bSuccess = pRulesButton->SetControl(IDC_OPTIONS_RULES, this);
 
 		pNewgameButton = new CColorButton();
 		ASSERT(pNewgameButton != nullptr);
-		(*pNewgameButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pNewgameButton).SetControl(IDC_OPTIONS_NEWGAME, this);
+		pNewgameButton->SetPalette(pOptionsPalette);
+		bSuccess = pNewgameButton->SetControl(IDC_OPTIONS_NEWGAME, this);
 
 		pOptionsButton = new CColorButton();
 		ASSERT(pOptionsButton != nullptr);
-		(*pOptionsButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pOptionsButton).SetControl(IDC_OPTIONS_OPTIONS, this);
+		pOptionsButton->SetPalette(pOptionsPalette);
+		bSuccess = pOptionsButton->SetControl(IDC_OPTIONS_OPTIONS, this);
 
 		pAudioButton = new CColorButton();
 		ASSERT(pAudioButton != nullptr);
-		(*pAudioButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pAudioButton).SetControl(IDC_OPTIONS_AUDIO, this);
+		pAudioButton->SetPalette(pOptionsPalette);
+		bSuccess = pAudioButton->SetControl(IDC_OPTIONS_AUDIO, this);
 
 		pReturnButton = new CColorButton();
 		ASSERT(pReturnButton != nullptr);
-		(*pReturnButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pReturnButton).SetControl(IDC_OPTIONS_RETURN, this);
+		pReturnButton->SetPalette(pOptionsPalette);
+		bSuccess = pReturnButton->SetControl(IDC_OPTIONS_RETURN, this);
 
 		pQuitButton = new CColorButton();
 		ASSERT(pQuitButton != nullptr);
-		(*pQuitButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pQuitButton).SetControl(IDC_OPTIONS_QUIT, this);
+		pQuitButton->SetPalette(pOptionsPalette);
+		bSuccess = pQuitButton->SetControl(IDC_OPTIONS_QUIT, this);
 	} else if (m_iDlgId == IDD_SUBOPTIONS) {
 		pOkayButton = new CColorButton();
 		ASSERT(pOkayButton != nullptr);
-		(*pOkayButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pOkayButton).SetControl(IDC_SUB_OKAY, this);
+		pOkayButton->SetPalette(pOptionsPalette);
+		bSuccess = pOkayButton->SetControl(IDC_SUB_OKAY, this);
 
 		pCancelButton = new CColorButton();
 		ASSERT(pCancelButton != nullptr);
-		(*pCancelButton).SetPalette(pOptionsPalette);
-		bSuccess = (*pCancelButton).SetControl(IDC_SUB_CANCEL, this);
+		pCancelButton->SetPalette(pOptionsPalette);
+		bSuccess = pCancelButton->SetControl(IDC_SUB_CANCEL, this);
 	}
 
 	if (g_engine->isDemo()) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 			pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
 			ASSERT(pButton != nullptr);                        // ... and verify we have it
-			(*pButton).EnableWindow(false);
+			pButton->EnableWindow(false);
 		}
 	} else {
-		if ((*pGameInfo).bPlayingMetagame) {
+		if (pGameInfo->bPlayingMetagame) {
 			if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 				pButton = GetDlgItem(IDC_OPTIONS_OPTIONS);      // get the window for the options button
 				ASSERT(pButton != nullptr);                        // ... and verify we have it
-				(*pButton).EnableWindow(false);
+				pButton->EnableWindow(false);
 				pButton = GetDlgItem(IDC_OPTIONS_NEWGAME);      // get the window for the options button
 				ASSERT(pButton != nullptr);                        // ... and verify we have it
-				(*pButton).EnableWindow(false);
+				pButton->EnableWindow(false);
 			}
 		}
 	}
@@ -248,9 +248,9 @@ void COptions::OnDestroy() {
 		delete m_pDlgBackground;
 		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pDlgParentWnd).GetUpdateRect(nullptr, false);
+		bUpdateNeeded = m_pDlgParentWnd->GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			(*m_pDlgParentWnd).ValidateRect(nullptr);
+			m_pDlgParentWnd->ValidateRect(nullptr);
 	}
 
 	CDialog::OnDestroy();
@@ -356,15 +356,15 @@ void COptions::RefreshBackground() {
 	pDC = GetDC();
 
 	if (pOptionsPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(pOptionsPalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(pOptionsPalette, false);
+		pDC->RealizePalette();
 	}
 
 	bSuccess = PaintBitmap(pDC, pOptionsPalette, m_pDlgBackground, 0, 0);
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }

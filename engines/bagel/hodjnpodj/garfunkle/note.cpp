@@ -101,7 +101,7 @@ void CNote::LinkNote() {
 	m_pPrev = m_pNoteTail;          //... by pointing it back at the current
 	//... tail, making it the tail, and
 	if (m_pNoteTail)                //... pointing it at nullptr (the list terminator)
-		(*m_pNoteTail).m_pNext = this;
+		m_pNoteTail->m_pNext = this;
 	else
 		m_pNoteHead = this;
 	m_pNoteTail = this;
@@ -122,12 +122,12 @@ void CNote::LinkNote() {
 
 void CNote::UnLinkNote() {
 	if (m_pPrev)                            // disconnect us from the note chain
-		(*m_pPrev).m_pNext = m_pNext;       // ... by pointing the one before us, and
+		m_pPrev->m_pNext = m_pNext;       // ... by pointing the one before us, and
 	else                                    // ... the one after us, at each other
 		m_pNoteHead = m_pNext;              // special case the instances where the
 	// ... note to be removed is the first
 	if (m_pNext)                            // ...  or the last in the list, update
-		(*m_pNext).m_pPrev = m_pPrev;       // ... the head of chain pointer
+		m_pNext->m_pPrev = m_pPrev;       // ... the head of chain pointer
 	else
 		m_pNoteTail = m_pPrev;
 
@@ -151,7 +151,7 @@ void CNote::FlushNoteList() {
 	CNote   *pNote;
 
 	while ((pNote = CNote::GetNoteHead())) {
-		(*pNote).UnLinkNote();
+		pNote->UnLinkNote();
 		delete pNote;
 	}
 }

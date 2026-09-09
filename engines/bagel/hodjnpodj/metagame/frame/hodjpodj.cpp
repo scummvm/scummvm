@@ -358,11 +358,11 @@ bool CHodjPodjWindow::CheckConfig(CDC *pDC) {
 
 	bLowMemory = CheckLowMemory();
 
-	nDevCaps = (*pDC).GetDeviceCaps(BITSPIXEL);
+	nDevCaps = pDC->GetDeviceCaps(BITSPIXEL);
 	if (nDevCaps < 8) {
 		error("Please set your display to 256 colors before playing this game");
 	} else {
-		nDevCaps = (*pDC).GetDeviceCaps(RASTERCAPS);
+		nDevCaps = pDC->GetDeviceCaps(RASTERCAPS);
 		if (!(nDevCaps & RC_PALETTE))
 			error("It is recommended that your display be set to 256 colors before playing");
 	}
@@ -570,7 +570,7 @@ bool CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		pWnd = (CWnd *)lParam;
 		if (pWnd != nullptr) {
-			(*pWnd).SendMessage(WM_CLOSE, 0, 0L);
+			pWnd->SendMessage(WM_CLOSE, 0, 0L);
 			delete pWnd;
 		}
 
@@ -713,7 +713,7 @@ void CHodjPodjWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	pMyApp = AfxGetApp();
 
-	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+	hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 
 	//if (hNewCursor != nullptr);
 	SetCursor(hNewCursor);
@@ -784,14 +784,14 @@ void CHodjPodjWindow::BlackScreen() {
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pGamePalette != nullptr) {                                  // map in color palette to be used
-		pPalOld = (*pDC).SelectPalette(pGamePalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(pGamePalette, false);
+		pDC->RealizePalette();
 	}
 
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pPalOld != nullptr)                                 // relinquish the resources we built
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -1603,12 +1603,12 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	switch (msg) {
 	case WM_DESTROY:
 		if (bReturnToMeta && (lpMetaGame != nullptr)) {
-			bSoundEffectsEnabled = (*lpMetaGame).m_stGameStruct.bSoundEffectsEnabled;
-			bMusicEnabled = (*lpMetaGame).m_stGameStruct.bMusicEnabled;
-			bScrollingEnabled = (*lpMetaGame).m_bScrolling;
+			bSoundEffectsEnabled = lpMetaGame->m_stGameStruct.bSoundEffectsEnabled;
+			bMusicEnabled = lpMetaGame->m_stGameStruct.bMusicEnabled;
+			bScrollingEnabled = lpMetaGame->m_bScrolling;
 		} else if (bReturnToGrandTour && (lpGrandTour != nullptr)) {
-			bSoundEffectsEnabled = (*lpGrandTour).stMiniGame.bSoundEffectsEnabled;
-			bMusicEnabled = (*lpGrandTour).stMiniGame.bMusicEnabled;
+			bSoundEffectsEnabled = lpGrandTour->stMiniGame.bSoundEffectsEnabled;
+			bMusicEnabled = lpGrandTour->stMiniGame.bMusicEnabled;
 		}
 
 		nGameReturn = lParam;
@@ -1726,14 +1726,14 @@ void CHodjPodjWindow::StartBackgroundMidi() {
 	if (bMusicEnabled && (pBackgroundMidi == nullptr)) {
 		PositionAtHomePath();
 		pBackgroundMidi = new CSound(this, LOGO_MIDI, SOUND_MIDI | SOUND_LOOP /* | SOUND_DONT_LOOP_TO_END */);
-		(*pBackgroundMidi).play();
+		pBackgroundMidi->play();
 	}
 }
 
 
 void CHodjPodjWindow::StopBackgroundMidi() {
 	if (pBackgroundMidi != nullptr) {
-		(*pBackgroundMidi).stop();
+		pBackgroundMidi->stop();
 		delete pBackgroundMidi;
 		pBackgroundMidi = nullptr;
 	}
@@ -1892,7 +1892,7 @@ void InitBFCInfo(CBfcMgr *pBfcMgr) {
 
 			pPlayer->m_pInventory->AddItem(k == 0 ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK, 1);
 			pItem = pPlayer->m_pInventory->FindItem(k == 0 ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK);
-			(*pItem).SetActionCode(ITEM_ACTION_NOTEBOOK);
+			pItem->SetActionCode(ITEM_ACTION_NOTEBOOK);
 			pPlayer->m_pInventory->AddItem(MG_OBJ_CROWN, 20);
 		}
 

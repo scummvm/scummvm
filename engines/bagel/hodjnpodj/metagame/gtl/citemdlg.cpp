@@ -108,7 +108,7 @@ bool CItemDialog::OnInitDialog() {
 	                 nText_row_offset + nTextHeight);
 
 	if ((m_pTextMessage = new CText()) != nullptr) {
-		bSuccess = (*m_pTextMessage).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
+		bSuccess = m_pTextMessage->SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // Initialize the text objext
 	}
 
@@ -121,7 +121,7 @@ bool CItemDialog::OnInitDialog() {
 	);
 
 	if ((m_pTextDescription = new CText()) != nullptr) {
-		bSuccess = (*m_pTextDescription).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
+		bSuccess = m_pTextDescription->SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
 		ASSERT(bSuccess);   // Initialize the text objext
 	}
 
@@ -130,8 +130,8 @@ bool CItemDialog::OnInitDialog() {
 	// build a color OK button to let us exit
 	m_pOKButton = new CColorButton();
 	ASSERT(m_pOKButton != nullptr);
-	(*m_pOKButton).SetPalette(m_pPalette);
-	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // Tie to the dialog control
+	m_pOKButton->SetPalette(m_pPalette);
+	bSuccess = m_pOKButton->SetControl((int) GetDefID(), this); // Tie to the dialog control
 	ASSERT(bSuccess);
 
 	return true;
@@ -156,18 +156,18 @@ void CItemDialog::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(buf, "%s %s", m_bHodj ? "Hodj" : "Podj", m_bGain ? "gains" : "loses");
-	bSuccess = (*m_pTextMessage).DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
+	bSuccess = m_pTextMessage->DisplayString(pDC, buf, 20, FW_BOLD, TEXT_COLOR);
 	ASSERT(bSuccess);
 
-	Common::sprintf_s(buf, "%s", (*m_pItem).GetDescription((*m_pItem).GetID(), m_lAmount));
+	Common::sprintf_s(buf, "%s", m_pItem->GetDescription(m_pItem->GetID(), m_lAmount));
 	while (buf[i] != 0) i++;
 	if (i > 20)
-		bSuccess = (*m_pTextDescription).DisplayString(pDC, buf, 13, FW_BOLD, ITEMDLG_TEXT_COLOR);
+		bSuccess = m_pTextDescription->DisplayString(pDC, buf, 13, FW_BOLD, ITEMDLG_TEXT_COLOR);
 	else
-		bSuccess = (*m_pTextDescription).DisplayString(pDC, buf, 16, FW_BOLD, ITEMDLG_TEXT_COLOR);
+		bSuccess = m_pTextDescription->DisplayString(pDC, buf, 16, FW_BOLD, ITEMDLG_TEXT_COLOR);
 	ASSERT(bSuccess);
 
-	PaintMaskedDIB(pDC, m_pPalette, (*m_pItem).GetArtSpec(),
+	PaintMaskedDIB(pDC, m_pPalette, m_pItem->GetArtSpec(),
 	    (ITEMDLG_DX - ITEMDLG_BITMAP_DX / 2), (ITEMDLG_DY - ITEMDLG_BITMAP_DY),
 	    ITEMDLG_BITMAP_DX, ITEMDLG_BITMAP_DY);
 

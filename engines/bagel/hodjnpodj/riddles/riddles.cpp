@@ -281,7 +281,7 @@ CRiddlesWindow::CRiddlesWindow() :
 			//
 			m_pSoundTrack = new CSound(this, "sound\\riddles.mid", SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			if (m_pSoundTrack != nullptr) {
-				(*m_pSoundTrack).midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
+				m_pSoundTrack->midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
 			} else {
 				errCode = ERR_MEMORY;
 			}
@@ -520,7 +520,7 @@ bool CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					}
 					if (m_pSoundTrack != nullptr) {
 						if (!m_pSoundTrack->playing())
-							(*m_pSoundTrack).midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
+							m_pSoundTrack->midiLoopPlaySegment(1930, 32870, 0, FMT_MILLISEC);
 					}
 				}
 
@@ -1377,7 +1377,7 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (animRect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
+		pSprite->SharePalette(pGamePalette);
 		nSelector = brand() % 3;                     // Pick one of the 3 easter eggs randomly
 		switch (nSelector) {
 
@@ -1406,19 +1406,19 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			break;
 		} // end Switch
 
-		bSuccess = (*pSprite).LoadCels(pDC, animBuf, nNumCels);
+		bSuccess = pSprite->LoadCels(pDC, animBuf, nNumCels);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		if (bSuccess) {
 			if (pGameParams->bSoundEffectsEnabled) {
 				pEffect = new CSound((CWnd *)this, soundBuf,                                // Load up the sound file as a
 				                     SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-				(*pEffect).play();                                                          //...play the sound effect
+				pEffect->play();                                                          //...play the sound effect
 			}
 			for (i = 0; i < nNumCels; i++) {
-				(*pSprite).PaintSprite(pDC, animLoc.x, animLoc.y);
+				pSprite->PaintSprite(pDC, animLoc.x, animLoc.y);
 				Sleep(ANIM_SLEEP);
 			}
 		} // end if bSuccess
@@ -1432,7 +1432,7 @@ void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		if (pGameParams->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, COLUMN_WAV,                              // Load up the sound file as a
 			                     SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                          //...play the sound effect
+			pEffect->play();                                                          //...play the sound effect
 		}
 	} else {
 

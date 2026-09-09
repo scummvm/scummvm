@@ -458,7 +458,7 @@ bool CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 	}
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 

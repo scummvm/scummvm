@@ -261,7 +261,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	ASSERT(pDibDoc);                                // ... and verify we got it
 	bTestDibDoc = pDibDoc->OpenDocument(SPLASHSPEC);    // next load in the actual DIB based artwork
 	ASSERT(bTestDibDoc);
-	pGamePalette = (*pDibDoc).DetachPalette();      // grab its palette and save it for later use
+	pGamePalette = pDibDoc->DetachPalette();      // grab its palette and save it for later use
 	delete pDibDoc;                                 // now discard the splash screen
 
 // set window coordinates to center game on screeen
@@ -429,7 +429,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		pGameSound = new CSound(this, GAME_THEME,
 		                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr)
-			(*pGameSound).midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
+			pGameSound->midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 	bFirstTime = true;
@@ -660,7 +660,7 @@ void CMainPokerWindow::SplashScreen() {
 	rcDIB.top = rcDIB.left = 0;             // setup the source rectangle from which
 	rcDIB.right = cxDIB;                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;
-	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);    // transfer the image to the screen
+	PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);    // transfer the image to the screen
 
 	rectDisplayUser.SetRect(USER_AMOUNT_X, USER_AMOUNT_Y, USER_AMOUNT_X + AMOUNT_WIDTH, USER_AMOUNT_Y + AMOUNT_HEIGHT);
 	rectDisplayBet.SetRect(POT_AMOUNT_X, POT_AMOUNT_Y, POT_AMOUNT_X + AMOUNT_WIDTH, POT_AMOUNT_Y + AMOUNT_HEIGHT);
@@ -846,7 +846,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 	switch (nOption) {
 
 	case ID_SETPAYOFFS:                     // if Winning Ratio's button was hit, popup the Payoff dialog
-		(*pWnd).UpdateWindow();
+		pWnd->UpdateWindow();
 		nSetPayOff = dlgPayOff.DoModal();
 		nPayOff = nSetPayOff;
 		pcwndPoker->SetPayOffs(nSetPayOff);              // the return is what set of payoffs was selected was clicked
@@ -855,7 +855,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 
 	case ID_SETUSERAMT:                     // if Set Amount button was hit, popup the Set Amount dialog
 		dlgSetAmt.SetInitialOptions(pcwndPoker->m_lUserAmount);
-		(*pWnd).UpdateWindow();
+		pWnd->UpdateWindow();
 		nSetAmount = dlgSetAmt.DoModal();
 		if (nSetAmount != 0)   {             // the return is what the amount was set to, set m_lUserAmount to it
 			pcwndPoker->m_lUserAmount = nSetAmount;
@@ -916,7 +916,7 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					pGameSound = new CSound(this, GAME_THEME,
 					                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 					if (pGameSound != nullptr)
-						(*pGameSound).midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(6370, 33000, 0, FMT_MILLISEC);
 				}
 			} // end if pGameSound
 			else {
@@ -1087,7 +1087,7 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 
 
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 
@@ -1132,14 +1132,14 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		              CLOCK_X, CLOCK_Y, CLOCK_SLEEP, m_bPlaySounds);
 	} else if (rBoom.PtInRect(point))  {
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, BOOM_ANIM, BOOM_FRAMES);
+		pSprite->SharePalette(pGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, BOOM_ANIM, BOOM_FRAMES);
 		if (!bSuccess) {
 			delete pSprite;
 			return;
 		}
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
@@ -1149,13 +1149,13 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
-		(*pSprite).SetCel(BOOM_FRAMES);
+		pSprite->SetCel(BOOM_FRAMES);
 		for (i = 0; i < 13; i++) {
-			(*pSprite).PaintSprite(pDC, BOOM_X, BOOM_Y);
+			pSprite->PaintSprite(pDC, BOOM_X, BOOM_Y);
 			Sleep(BOOM_SLEEP);
 		}
 
@@ -1164,13 +1164,13 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
 //		(*pSprite).SetCel( nNumCels );
 		while (i < BOOM_FRAMES) {
-			(*pSprite).PaintSprite(pDC, BOOM_X, BOOM_Y);
+			pSprite->PaintSprite(pDC, BOOM_X, BOOM_Y);
 			Sleep(BOOM_SLEEP);
 			i++;
 		}
@@ -1185,7 +1185,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
@@ -1198,7 +1198,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
@@ -1211,7 +1211,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
@@ -1224,7 +1224,7 @@ void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 		}
 		if (pEffect != nullptr) {
-			bSuccess = (*pEffect).play();
+			bSuccess = pEffect->play();
 			if (!bSuccess)
 				delete pEffect;
 		}
@@ -2241,7 +2241,7 @@ void CMainPokerWindow::ReleaseResources() {
 			delete apHold[i];
 	}
 
-	(*pGamePalette).DeleteObject();         // release the game color palette
+	pGamePalette->DeleteObject();         // release the game color palette
 	delete pGamePalette;
 
 }
@@ -2347,27 +2347,27 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 	int     i;
 
 	pSprite = new CSprite;
-	(*pSprite).SharePalette(pPalette);
-	bSuccess = (*pSprite).LoadCels(pDC, pszAnimFile, nNumCels);
+	pSprite->SharePalette(pPalette);
+	bSuccess = pSprite->LoadCels(pDC, pszAnimFile, nNumCels);
 	if (!bSuccess) {
 		delete pSprite;
 		return;
 	}
-	(*pSprite).SetMasked(false);
-	(*pSprite).SetMobile(false);
+	pSprite->SetMasked(false);
+	pSprite->SetMobile(false);
 
 	if (bPlaySound) {
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 	}
 	if (pEffect != nullptr) {
-		bSuccess = (*pEffect).play();
+		bSuccess = pEffect->play();
 		if (!bSuccess)
 			delete pEffect;
 	}
-	(*pSprite).SetCel(nNumCels);
+	pSprite->SetCel(nNumCels);
 	for (i = 0; i < nNumCels; i++) {
-		(*pSprite).PaintSprite(pDC, nXLoc, nYLoc);
+		pSprite->PaintSprite(pDC, nXLoc, nYLoc);
 		Sleep(nSleep);
 	}
 

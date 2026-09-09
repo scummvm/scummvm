@@ -286,23 +286,23 @@ bool CUserCfgDlg::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(m_pPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(m_pPalette);                        // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 	if ((pDefaultsButton = new CColorButton) != nullptr) {                 // build a color QUIT button to let us exit
-		(*pDefaultsButton).SetPalette(m_pPalette);                      // set the palette to use
-		(*pDefaultsButton).SetControl(ID_RESET, this);              // tie to the dialog control
+		pDefaultsButton->SetPalette(m_pPalette);                      // set the palette to use
+		pDefaultsButton->SetControl(ID_RESET, this);              // tie to the dialog control
 	}
 
 	if ((pFixedButton = new CCheckButton) != nullptr) {        // build a color QUIT button to let us exit
-		(*pFixedButton).SetPalette(m_pPalette);             // set the palette to use
-		(*pFixedButton).SetControl(ID_FIXED, this);         // tie to the dialog control
+		pFixedButton->SetPalette(m_pPalette);             // set the palette to use
+		pFixedButton->SetControl(ID_FIXED, this);         // tie to the dialog control
 	}
 
 	if ((m_pNamesButton = new CCheckButton) != nullptr) {

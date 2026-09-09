@@ -282,7 +282,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	if (m_lpGameStruct->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME,
 		                        SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
-		(*pGameSound).midiLoopPlaySegment(500, 31500, 0, FMT_MILLISEC);
+		pGameSound->midiLoopPlaySegment(500, 31500, 0, FMT_MILLISEC);
 	} // end if pGameSound
 
 	EndWaitCursor();
@@ -860,7 +860,7 @@ bool CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
-						(*pGameSound).midiLoopPlaySegment(500, 31500, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(500, 31500, 0, FMT_MILLISEC);
 				}
 			}
 			if (bResetGame && !m_lpGameStruct->bPlayingMetagame)
@@ -876,7 +876,7 @@ bool CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	(*this).SetFocus();                         // Reset focus back to the main window
+	(this)->SetFocus();                         // Reset focus back to the main window
 	return true;
 }
 
@@ -907,17 +907,17 @@ void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
 		PlayEasterEgg(pDC, (CWnd *)this, pGamePalette, CHICKEN_ANIM, CHICKEN_WAV, NUM_CHICKEN_CELS,
-		              CHICKEN_X, CHICKEN_Y, CHICKEN_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled);
+		              CHICKEN_X, CHICKEN_Y, CHICKEN_SLEEP, m_lpGameStruct->bSoundEffectsEnabled);
 	} else if (rCow.PtInRect(point)) {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
 		PlayEasterEgg(pDC, (CWnd *)this, pGamePalette, COW_ANIM, COW_WAV, NUM_COW_CELS,
-		              COW_X, COW_Y, COW_SLEEP, (*m_lpGameStruct).bSoundEffectsEnabled);
-	} else if (rPig.PtInRect(point) && (*m_lpGameStruct).bSoundEffectsEnabled) {
+		              COW_X, COW_Y, COW_SLEEP, m_lpGameStruct->bSoundEffectsEnabled);
+	} else if (rPig.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled) {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
 		sndPlaySound(PIG_WAV, SND_ASYNC);
-	} else if (rFlower.PtInRect(point) && (*m_lpGameStruct).bSoundEffectsEnabled) {
+	} else if (rFlower.PtInRect(point) && m_lpGameStruct->bSoundEffectsEnabled) {
 		CSound::waitWaveSounds();
 		sndPlaySound(nullptr, 0);
 		sndPlaySound(FLOWER_WAV, SND_ASYNC);
@@ -1210,7 +1210,7 @@ void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 			}
 
 			if (bFoundWord) {
-				if ((*m_lpGameStruct).bSoundEffectsEnabled) {
+				if (m_lpGameStruct->bSoundEffectsEnabled) {
 					sndPlaySound(nullptr, 0);
 					sndPlaySound(FIND_WAV, SND_ASYNC);
 				}
@@ -1289,7 +1289,7 @@ void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 				} while ((ptTemp.x != ptCurrPosInGrid.x) || (ptTemp.y != ptCurrPosInGrid.y));
 			} // end if bWordFound
 			else {
-				if ((*m_lpGameStruct).bSoundEffectsEnabled) {
+				if (m_lpGameStruct->bSoundEffectsEnabled) {
 					sndPlaySound(nullptr, 0);
 					sndPlaySound(NOPE_WAV, SND_SYNC);
 					sndPlaySound(TRYAGAIN_WAV, SND_SYNC);
@@ -1302,7 +1302,7 @@ void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 			CMsgDlg     msgGameOver((CWnd *)this, pGamePalette);
 			KillTimer(GAMETIMER);
 			m_bNoGrid = true;
-			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
+			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);
 				sndPlaySound(ALLFOUND_WAV, SND_SYNC);            // play sound
 			}
@@ -1376,7 +1376,7 @@ void CMainWSWindow::OnTimer(uintptr nWhichTimer) {
 
 			ReleaseDC(pDC);
 			m_bNoGrid = true;
-			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
+			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);
 				sndPlaySound(TIMEOUT_WAV, SND_SYNC);             // play sound
 			}
@@ -1390,7 +1390,7 @@ void CMainWSWindow::OnTimer(uintptr nWhichTimer) {
 			CDC *pDC = GetDC();
 			lCurrentTimer++;
 			nLastCell++;
-			if ((*m_lpGameStruct).bSoundEffectsEnabled) {
+			if (m_lpGameStruct->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);
 				sndPlaySound(TICK_WAV, SND_ASYNC);
 			}
@@ -1708,27 +1708,27 @@ void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 	int     i;
 
 	pSprite = new CSprite;
-	(*pSprite).SharePalette(pPalette);
-	bSuccess = (*pSprite).LoadCels(pDC, pszAnimFile, nNumCels);
+	pSprite->SharePalette(pPalette);
+	bSuccess = pSprite->LoadCels(pDC, pszAnimFile, nNumCels);
 	if (!bSuccess) {
 		delete pSprite;
 		return;
 	}
-	(*pSprite).SetMasked(false);
-	(*pSprite).SetMobile(false);
+	pSprite->SetMasked(false);
+	pSprite->SetMobile(false);
 
 	if (bPlaySound) {
 		pEffect = new CSound(pWnd, pszSoundFile,                                 // Load up the sound file as a
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
 	}
 	if (pEffect != nullptr) {
-		bSuccess = (*pEffect).play();
+		bSuccess = pEffect->play();
 		if (!bSuccess)
 			delete pEffect;
 	}
-	(*pSprite).SetCel(-1);           // nNumCels
+	pSprite->SetCel(-1);           // nNumCels
 	for (i = 0; i < nNumCels; i++) {
-		(*pSprite).PaintSprite(pDC, nXLoc, nYLoc);
+		pSprite->PaintSprite(pDC, nXLoc, nYLoc);
 		Sleep(nSleep);
 	}
 
