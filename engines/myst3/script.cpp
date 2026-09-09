@@ -912,8 +912,8 @@ void Script::polarToRectSimple(Context &c, const Opcode &cmd) {
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[5]);
 	float angleRad = 2 * (float)M_PI / cmd.args[6] * angleDeg;
-	float angleSin = sin(angleRad);
-	float angleCos = cos(angleRad);
+	float angleSin = sinf(angleRad);
+	float angleCos = cosf(angleRad);
 
 	int32 offsetX = cmd.args[2];
 	int32 offsetY = cmd.args[3];
@@ -936,8 +936,8 @@ void Script::polarToRect(Context &c, const Opcode &cmd) {
 
 	int32 angleDeg = _vm->_state->getVar(cmd.args[8]);
 	float angleRad = 2 * (float)M_PI / cmd.args[9] * angleDeg;
-	float angleSin = sin(angleRad);
-	float angleCos = cos(angleRad);
+	float angleSin = sinf(angleRad);
+	float angleCos = cosf(angleRad);
 
 	float radiusX;
 	float radiusY;
@@ -1689,9 +1689,9 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 			float pitch, heading;
 			_vm->_cursor->getDirection(pitch, heading);
 
-			float amplitude = sqrt(Math::square(maxPosX - minPosX) + Math::square(maxPosY - minPosY));
-			float distanceToMin = sqrt(Math::square(pitch - minPosX) + Math::square(heading - minPosY));
-			float distanceToMax = sqrt(Math::square(pitch - maxPosX) + Math::square(heading - maxPosY));
+			float amplitude = sqrtf(Math::square(maxPosX - minPosX) + Math::square(maxPosY - minPosY));
+			float distanceToMin = sqrtf(Math::square(pitch - minPosX) + Math::square(heading - minPosY));
+			float distanceToMax = sqrtf(Math::square(pitch - maxPosX) + Math::square(heading - maxPosY));
 
 			ratioPosition = distanceToMax < amplitude ? distanceToMin / amplitude : 0.0;
 		} else {
@@ -1783,7 +1783,7 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 			float posHeading = cmd.args[2 + i * 3 + 1] * 0.1;
 
 			// Distance between the mouse and the lever
-			float distance = sqrt(Math::square(pitch - posPitch) + Math::square(heading - posHeading));
+			float distance = sqrtf(Math::square(pitch - posPitch) + Math::square(heading - posHeading));
 
 			if (distance < minDistance) {
 				minDistance = distance;
@@ -1901,7 +1901,7 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 			mouse = _vm->_scene->scalePoint(mouse);
 			int16 distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
 			int16 distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]);
-			float distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+			float distance = sqrtf((float) distanceX * distanceX + distanceY * distanceY);
 
 			uint16 bestPosition = lastLeverPosition;
 			if (distance > maxDistance) {
@@ -1920,7 +1920,7 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 					mouse = _vm->_scene->scalePoint(mouse);
 					distanceX = mouse.x - leverWidth / 2 - _vm->_state->getVar(cmd.args[0]);
 					distanceY = mouse.y - leverHeight / 2 - _vm->_state->getVar(cmd.args[1]);
-					distance = sqrt((float) distanceX * distanceX + distanceY * distanceY);
+					distance = sqrtf((float) distanceX * distanceX + distanceY * distanceY);
 
 					if (distance < minDistance) {
 						minDistance = distance;

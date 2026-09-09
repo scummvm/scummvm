@@ -1727,8 +1727,8 @@ void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading,
 	if (scriptTicks) {
 		numTicks = scriptTicks;
 	} else {
-		numTicks = sqrt(pitchDistance * pitchDistance + headingDistance * headingDistance)
-				* 30.0f / _state->getCameraMoveSpeed();
+		numTicks = sqrtf(pitchDistance * pitchDistance + headingDistance * headingDistance)
+		           * 30.0f / _state->getCameraMoveSpeed();
 
 		if (numTicks > 0.0f)
 			numTicks += 10.0f;

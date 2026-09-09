@@ -118,9 +118,9 @@ Math::Vector3d Scene::directionToVector(float pitch, float heading) {
 	float radHeading = Math::deg2rad(heading);
 	float radPitch = Math::deg2rad(pitch);
 
-	v.setValue(0, cos(radPitch) * cos(radHeading));
-	v.setValue(1, sin(radPitch));
-	v.setValue(2, cos(radPitch) * sin(radHeading));
+	v.setValue(0, cosf(radPitch) * cosf(radHeading));
+	v.setValue(1, sinf(radPitch));
+	v.setValue(2, cosf(radPitch) * sinf(radHeading));
 
 	return v;
 }
