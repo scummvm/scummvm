@@ -380,8 +380,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		radians = degrees * (float)0.017453292;
 		rads = (degrees + 0.5F) * (float)0.017453292;
 
-		x = (float)cos(rads);
-		y = (float)sin(rads);
+		x = cosf(rads);
+		y = sinf(rads);
 
 		StartPt.x = Center.x + (int)(x * radius);
 		StartPt.y = Center.y + (int)(y * radius);
@@ -407,8 +407,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		delete pMyBrush;
 		pMyBrush = nullptr;
 
-		x = (float)cos(radians);
-		y = (float)sin(radians);
+		x = cosf(radians);
+		y = sinf(radians);
 
 		EndPt.x = Center.x + (int)(x * radius);
 		EndPt.y = Center.y + (int)(y * radius);
@@ -967,8 +967,8 @@ void CMainWindow::CheckUnderBeam() {
 	while (degrees < endAngle) {
 		radians = degrees * (float)0.017453292;                     // Convert to radians
 
-		x = (float)cos(radians);
-		y = (float)sin(radians);
+		x = cosf(radians);
+		y = sinf(radians);
 
 		End.x = Start.x + (int)(x * radius);
 		End.y = Start.y + (int)(y * radius);
