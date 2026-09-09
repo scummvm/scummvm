@@ -98,7 +98,7 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 	Math::Angle angle = (_topRight - _topLeft).getAngle();
 
 	if (angle == 0) {
-		Vector2d circleDistance(fabs(center.getX() - c.getX()), fabs(center.getY() - c.getY()));
+		Vector2d circleDistance(fabsf(center.getX() - c.getX()), fabsf(center.getY() - c.getY()));
 
 		if (circleDistance.getX() > (w / 2.f + radius)) {
 			return false;
@@ -114,8 +114,8 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 			return true;
 		}
 
-		float cornerDistance_sq = pow(circleDistance.getX() - w / 2.f, 2.f) +
-		                              pow(circleDistance.getY() - h / 2.f, 2.f);
+		float cornerDistance_sq = powf(circleDistance.getX() - w / 2.f, 2.f) +
+		                          powf(circleDistance.getY() - h / 2.f, 2.f);
 
 		return (cornerDistance_sq <= radius * radius);
 	} else { //The rectangle was rotated
@@ -167,20 +167,20 @@ float Rect2d::getWidth() const {
 	float x = _topRight.getX() - _topLeft.getX();
 	float y = _topRight.getY() - _topLeft.getY();
 
-	return sqrt(x * x + y * y);
+	return sqrtf(x * x + y * y);
 }
 
 float Rect2d::getHeight() const {
 	float x = _bottomLeft.getX() - _topLeft.getX();
 	float y = _bottomLeft.getY() - _topLeft.getY();
 
-	return sqrt(x * x + y * y);
+	return sqrtf(x * x + y * y);
 }
 
 Vector2d Rect2d::getIntersection(const Vector2d &start, const Vector2d &dir, Segment2d *edge) const {
 	float w = getWidth();
 	float h = getHeight();
-	float d = sqrt(w * w + h * h);
+	float d = sqrtf(w * w + h * h);
 
 	Segment2d line(start, start + dir.getNormalized() * 2*d);
 	Vector2d intersection;

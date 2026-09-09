@@ -79,10 +79,10 @@ float Angle::getRadians() const {
 float Angle::getDegrees(float low) const {
 	float degrees = _degrees;
 	if (degrees >= low + 360.f) {
-		float x = floor((degrees - low) / 360.f);
+		float x = floorf((degrees - low) / 360.f);
 		degrees -= 360.f * x;
 	} else if (degrees < low) {
-		float x = floor((degrees - low) / 360.f);
+		float x = floorf((degrees - low) / 360.f);
 		degrees -= 360.f * x;
 	}
 	return degrees;

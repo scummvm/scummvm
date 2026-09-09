@@ -138,21 +138,21 @@ void Quaternion::fromMatrix(const Matrix3 &m) {
 			h = 2;
 
 		if (h == 0) {
-			s = sqrt(m.getValue(0, 0) - (m.getValue(1,1) + m.getValue(2, 2)) + 1.0f);
+			s = sqrtf(m.getValue(0, 0) - (m.getValue(1,1) + m.getValue(2, 2)) + 1.0f);
 			qx = s * 0.5f;
 			s = 0.5f / s;
 			qy = (m.getValue(0, 1) + m.getValue(1, 0)) * s;
 			qz = (m.getValue(2, 0) + m.getValue(0, 2)) * s;
 			qw = (m.getValue(2, 1) - m.getValue(1, 2)) * s;
 		} else if (h == 1) {
-			s = sqrt(m.getValue(1, 1) - (m.getValue(2,2) + m.getValue(0, 0)) + 1.0f);
+			s = sqrtf(m.getValue(1, 1) - (m.getValue(2,2) + m.getValue(0, 0)) + 1.0f);
 			qy = s * 0.5f;
 			s = 0.5f / s;
 			qz = (m.getValue(1, 2) + m.getValue(2, 1)) * s;
 			qx = (m.getValue(0, 1) + m.getValue(1, 0)) * s;
 			qw = (m.getValue(0, 2) - m.getValue(2, 0)) * s;
 		} else {
-			s = sqrt(m.getValue(2, 2) - (m.getValue(0,0) + m.getValue(1, 1)) + 1.0f);
+			s = sqrtf(m.getValue(2, 2) - (m.getValue(0,0) + m.getValue(1, 1)) + 1.0f);
 			qz = s * 0.5f;
 			s = 0.5f / s;
 			qx = (m.getValue(2, 0) + m.getValue(0, 2)) * s;
@@ -208,7 +208,7 @@ Vector3d Quaternion::directionVector(const int col) const {
 
 Angle Quaternion::getAngleBetween(const Quaternion &to) {
 	Quaternion q = this->inverse() * to;
-	Angle diff(Math::rad2deg(2 * acos(q.w())));
+	Angle diff(Math::rad2deg(2 * acosf(q.w())));
 	return diff;
 }
 
@@ -274,10 +274,10 @@ Quaternion& Quaternion::operator+=(const Quaternion &o) {
 }
 
 bool Quaternion::operator==(const Quaternion &o) const {
-	float dw = fabs(w() - o.w());
-	float dx = fabs(x() - o.x());
-	float dy = fabs(y() - o.y());
-	float dz = fabs(z() - o.z());
+	float dw = fabsf(w() - o.w());
+	float dx = fabsf(x() - o.x());
+	float dy = fabsf(y() - o.y());
+	float dz = fabsf(z() - o.z());
 	// Threshold of equality
 	float th = 1E-5f;
 

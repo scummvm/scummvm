@@ -45,7 +45,7 @@ Vector2d Line2d::getDirection() const {
 }
 
 float Line2d::getDistanceTo(const Vector2d &point, Vector2d *intersection) const {
-	float dist = fabsf(_a * point.getX() + _b * point.getY() - _c) / sqrt(_a * _a + _b * _b);
+	float dist = fabsf(_a * point.getX() + _b * point.getY() - _c) / sqrtf(_a * _a + _b * _b);
 
 	if (intersection) {
 		intersectsLine(getPerpendicular(point), intersection);

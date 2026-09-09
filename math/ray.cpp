@@ -91,7 +91,7 @@ bool Ray::intersectTriangle(const Vector3d &v0, const Vector3d &v1,
 	const Vector3d h = Vector3d::crossProduct(_direction, e2);
 
 	float a = e1.dotProduct(h);
-	if (fabs(a) < 1e-6f)
+	if (fabsf(a) < 1e-6f)
 		return false;
 
 	float f = 1.0f / a;
