@@ -696,7 +696,7 @@ void MacWindow::mergeDirtyRects() {
 		rInner = rOuter;
 		while (++rInner != _dirtyRects.end()) {
 
-			if ((*rOuter).intersects(*rInner)) {
+			if (rOuter->intersects(*rInner)) {
 				// These two rectangles overlap, so merge them
 				rOuter->extend(*rInner);
 
