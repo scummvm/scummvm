@@ -94,7 +94,7 @@ bool ResourceMan::addNhcArchive(const Common::Path &filename) {
 
 ResourceFileEntry *ResourceMan::findEntrySimple(uint32 fileHash) {
 	EntriesMap::iterator p = _entries.find(fileHash);
-	return p != _entries.end() ? &(*p)._value : nullptr;
+	return p != _entries.end() ? &p->_value : nullptr;
 }
 
 ResourceFileEntry *ResourceMan::findEntry(uint32 fileHash, ResourceFileEntry **firstEntry) {
@@ -242,7 +242,7 @@ void ResourceMan::unloadResource(ResourceHandle &resourceHandle) {
 
 void ResourceMan::purgeResources() {
 	for (Common::HashMap<uint32, ResourceData*>::iterator it = _data.begin(); it != _data.end(); ++it) {
-		ResourceData *resourceData = (*it)._value;
+		ResourceData *resourceData = it->_value;
 		if (resourceData->dataRefCount == 0) {
 			delete[] resourceData->data;
 			resourceData->data = nullptr;
