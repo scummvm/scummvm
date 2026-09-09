@@ -102,6 +102,7 @@ enum Variant {
 	kVariantFloppy   = 1,
 	kVariantLondonCD = 2,
 	kVariantMac      = 3,
+	kVariantMacCD    = 4,
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -132,6 +133,7 @@ public:
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy || isDemo(); }
 	bool isLondon() const { return _variant == kVariantLondonCD; }
+	bool isMacCD() const { return _variant == kVariantMacCD; }
 	// London (game) and Macintosh (platform) are orthogonal -- the London CD
 	// shipped for both DOS and Mac -- so derive Mac-ness from the platform
 	// rather than the single-valued `_variant` (which can only hold one of
@@ -496,6 +498,7 @@ private:
 
 	bool waitIntroDelay(uint32 maxMs);
 	void runMacStartup();
+	void playMacCDIntro();
 	void showMacEAKidsLogo();
 	void showMacStillLogo(uint picId, uint palId, uint holdMs,
 						  bool playThunder);

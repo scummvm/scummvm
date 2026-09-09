@@ -301,6 +301,15 @@ const uint16 kWaitAnims[7][6] = {
 	{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
 };
 
+// EEM1 Mac CD, CODE 7:5318, A5-0x30b2.
+const uint16 kMacWaitAnims[5][6] = {
+	{ 0x00, 0x0a, 7, 7, 153, 153 },
+	{ 0x03, 0x0c, 7, 7, 153, 153 },
+	{ 0x01, 0x0b, 7, 7, 153, 153 },
+	{ 0x04, 0x0d, 7, 7, 153, 153 },
+	{ 0x02, 0x10, 7, 7, 153, 153 },
+};
+
 const uint16 kKdAnimTable[6][6] = {
 	{ 0x03, 0x0c, 6, 6, 80, 80 }, // 0 — speaker idx 1 wait anim
 	{ 0x01, 0x0b, 6, 6, 80, 80 }, // 1 — same as PDA idle
@@ -1689,10 +1698,15 @@ bool SiteScreen::partnerIdleAnimParams(uint siteNum, uint16 &animId,
 	} else {
 		const uint16 speaker = READ_LE_UINT16(site + 8);
 		const uint16 (*waitTable)[6] = kWaitAnims;
-		if (_vm->isLondon())
+		uint tableSize = ARRAYSIZE(kWaitAnims);
+		if (_vm->isMacCD()) {
+			waitTable = kMacWaitAnims;
+			tableSize = ARRAYSIZE(kMacWaitAnims);
+		} else if (_vm->isLondon()) {
 			waitTable = _vm->isMacintosh()
 				? kMacWaitAnimsLondon : kWaitAnimsLondon;
-		if (speaker >= ARRAYSIZE(kWaitAnims))
+		}
+		if (speaker >= tableSize)
 			return false;
 		animId = waitTable[speaker][0 + partner];
 		x      = (int)(int16)waitTable[speaker][2 + partner];
@@ -2097,11 +2111,13 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 //        frees the slot and re-activates `WaitHandle`.
 bool EEMEngine::loadKdAnim(uint16 num, Animation &anim, int &px, int &py,
 						   uint16 &animId) {
-	if (num >= ARRAYSIZE(kKdAnimTable))
+	if (num >= (isMacCD() ? ARRAYSIZE(kMacWaitAnims) - 1 : ARRAYSIZE(kKdAnimTable)))
 		return false;
 
 	const uint16 (*kdTable)[6] = kKdAnimTable;
-	if (isLondon()) {
+	if (isMacCD()) {
+		kdTable = kMacWaitAnims + 1;
+	} else if (isLondon()) {
 		// EEM2 Mac FUN_0000ce6e indexes `_WaitAnims + 1`
 		// (`lea (-0x2034,A5)`), so KD gestures share the Mac idle anchors
 		// for speaker rows 1..6.

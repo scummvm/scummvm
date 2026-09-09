@@ -295,7 +295,8 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		Common::String(gameDesc->extra).contains("Floppy"))
 		_variant = kVariantFloppy;
 	if (gameDesc && gameDesc->platform == Common::kPlatformMacintosh)
-		_variant = kVariantMac;
+		_variant = gameDesc->extra && Common::String(gameDesc->extra).contains("CD")
+			? kVariantMacCD : kVariantMac;
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
@@ -1644,6 +1645,64 @@ void EEMEngine::showMacTitleIntro() {
 	waitIntroDelay(0xFFFFFFFFu);
 }
 
+void EEMEngine::playMacCDIntro() {
+	// CODE 2:5884 uses one-based frame numbers and pauses for each line.
+	static const uint16 kVoiceFrames[] = {
+		11, 15, 17, 19, 63, 64, 97, 98, 103, 104,
+		105, 125, 126, 127, 219, 220, 311, 312, 313
+	};
+	const uint32 kFrameDelayMs = 9 * 1000 / 60;
+	Video::FlicDecoder flic;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		Common::MacResManager::openFileOrDataFork(Common::Path("FIN07.FLC")));
+	if (!stream || !flic.loadStream(stream.get())) {
+		warning("Mac CD intro FIN07.FLC failed to load");
+		return;
+	}
+	stream.release();
+
+	if (_audio)
+		_audio->initMysterySounds(60);
+	if (_music)
+		_music->playFile(Common::Path("THEME.XMI"), false);
+
+	uint cue = 0;
+	bool aborted = false;
+	uint32 lastFrameMs = g_system->getMillis();
+	flic.start();
+	while (!flic.endOfVideo() && !shouldQuit() && !aborted && !_skipIntro) {
+		const Graphics::Surface *frame = flic.decodeNextFrame();
+		if (!frame)
+			break;
+		// The Mac player ignores the FLC header's frame delay.
+		const uint32 elapsed = g_system->getMillis() - lastFrameMs;
+		if (waitIntroDelay(elapsed < kFrameDelayMs ? kFrameDelayMs - elapsed : 1))
+			break;
+		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0,
+			MIN<int>(frame->w, screenWidth()), MIN<int>(frame->h, screenHeight()));
+		if (flic.hasDirtyPalette())
+			g_system->getPaletteManager()->setPalette(flic.getPalette(), 0, 256);
+		g_system->updateScreen();
+		lastFrameMs = g_system->getMillis();
+
+		const uint frameNumber = flic.getCurFrame() + 1;
+		if (frameNumber == 219 && _music)
+			_music->playFile(Common::Path("THEME.XMI"), false);
+		if (cue < ARRAYSIZE(kVoiceFrames) && frameNumber == kVoiceFrames[cue]) {
+			if (_audio) {
+				_audio->spoolSound(cue);
+				while (_audio->isSpoolPlaying() && !shouldQuit() && !aborted)
+					aborted = waitIntroDelay(10);
+				_audio->stopSpool();
+			}
+			cue++;
+		}
+	}
+	if (_audio)
+		_audio->cleanMysterySounds();
+	fadeCurrentPaletteToBlack();
+}
+
 void EEMEngine::runMacStartup() {
 	CursorMan.showMouse(false);
 	_skipIntro = false;
@@ -1658,6 +1717,8 @@ void EEMEngine::runMacStartup() {
 		showMacStillLogo(kPicStormLogo, kPalStormLogo, 3000,
 						 /* playThunder= */ true);
 
+	if (!shouldQuit() && !_skipIntro && isMacCD())
+		playMacCDIntro();
 	if (!shouldQuit() && !_skipIntro && _music)
 		_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
 	if (!shouldQuit() && !_skipIntro)

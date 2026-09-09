@@ -49,6 +49,7 @@ struct MacSndResource {
 };
 
 const MacSndResource kMacSndResources[] = {
+	{ "JAKE",     8001 }, { "JEN",      8002 },
 	{ "B-0003SL", 7022 }, { "B-0004SL", 7023 }, { "B-0006SL", 7021 },
 	{ "DING",     7000 }, { "F-0013SL", 8018 }, { "F-0016SL", 8017 },
 	{ "F-0061SL", 8015 }, { "F-0067SL", 8016 }, { "F-0140SL", 8020 },

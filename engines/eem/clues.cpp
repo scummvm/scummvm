@@ -362,7 +362,7 @@ void EEMEngine::doChoosePartner() {
 	}
 
 	if (_audio && !isDemo()) {
-		if (isFloppy() || isMacintosh()) {
+		if (isFloppy() || (isMacintosh() && !isMacCD())) {
 			// Floppy _DoChoosePartner_Floppy @ 19bb:0a8e 
 			_audio->playFloppyVoiceSlot(0x14, _partner);
 		} else {
