@@ -70,7 +70,7 @@ int LogicHEBasketball::u32_userComputeInitialShotVelocity(int theta, int hDist, 
 			if ((numerator / denominator) < 0) {
 				velocity = 0;
 			} else {
-				velocity = sqrt(numerator / denominator);
+				velocity = sqrtf(numerator / denominator);
 			}
 
 			// Hack, because this is off somehow, or because to go in the hoop,

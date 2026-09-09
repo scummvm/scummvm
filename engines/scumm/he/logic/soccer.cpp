@@ -853,7 +853,7 @@ int LogicHEsoccer::findCollisionWith(int objId, float inX, float inY, float inZ,
 		getPointsForFace(faceId, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, objPoints);
 		crossProduct(x1, y1, z1, x2, y2, z2, x1, y1, z1, x3, y3, z3, faceCrossX, faceCrossY, faceCrossZ);
 
-		float faceArea = sqrt(faceCrossX * faceCrossX + faceCrossY * faceCrossY + faceCrossZ * faceCrossZ);
+		float faceArea = sqrtf(faceCrossX * faceCrossX + faceCrossY * faceCrossY + faceCrossZ * faceCrossZ);
 
 		// The original did not initialize these variables and would
 		// use them uninitialized if faceArea == 0.0

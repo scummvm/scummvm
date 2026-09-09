@@ -377,8 +377,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		if (!getCoordinateVisibility(targetX, targetY, currentPlayer)) {
 			int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1, 0);
 			int targetAngle = calcAngle(getHubX(closestHub), getHubY(closestHub), targetX, targetY);
-			int testX = static_cast<int>(getHubX(closestHub) + (500 * cos(degToRad(targetAngle))) + getMaxX()) % getMaxX();
-			int testY = static_cast<int>(getHubY(closestHub) + (500 * sin(degToRad(targetAngle))) + getMaxY()) % getMaxY();
+			int testX = static_cast<int>(getHubX(closestHub) + (500 * cosf(degToRad(targetAngle))) + getMaxX()) % getMaxX();
+			int testY = static_cast<int>(getHubY(closestHub) + (500 * sinf(degToRad(targetAngle))) + getMaxY()) % getMaxY();
 
 			int balloonFlag = 0;
 
@@ -1812,8 +1812,8 @@ Tree *AI::initApproachTarget(int targetX, int targetY, Node **retNode) {
 
 	//target adjustment so that room is allowed for the appropriate shot
 	int tempAngle = calcAngle(getHubX(sourceHub), getHubY(sourceHub), targetX, targetY);
-	int adjX = -120 * cos(degToRad(tempAngle));
-	int adjY = -120 * sin(degToRad(tempAngle));
+	int adjX = -120 * cosf(degToRad(tempAngle));
+	int adjY = -120 * sinf(degToRad(tempAngle));
 
 	Traveller::setTargetPosX(targetX + adjX);
 	Traveller::setTargetPosY(targetY + adjY);
@@ -2099,7 +2099,7 @@ int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 							testAngle = (_vm->_rnd.getRandomNumber(89) + minAngle) % 360;
 							testDist = radius;
 
-							xPos = targetX + testDist * cos(degToRad(testAngle));
+							xPos = targetX + testDist * cosf(degToRad(testAngle));
 							yPos = targetY + testDist * sin(degToRad(testAngle));
 						} else {
 							switch (_vm->_rnd.getRandomNumber(1)) {
@@ -2113,8 +2113,8 @@ int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 							}
 
 							testDist = (((((double)n - (double)attempt) / n) * .5) + .5) * (getDistance(getHubX(nextUnit), getHubY(nextUnit), targetX, targetY) / .8);
-							xPos = getHubX(nextUnit) + testDist * cos(degToRad(testAngle));
-							yPos = getHubY(nextUnit) + testDist * sin(degToRad(testAngle));
+							xPos = getHubX(nextUnit) + testDist * cosf(degToRad(testAngle));
+							yPos = getHubY(nextUnit) + testDist * sinf(degToRad(testAngle));
 						}
 
 						// check if points are good
@@ -2815,8 +2815,8 @@ int AI::simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps,
 
 	if (!sXSpeed && !sYSpeed) {
 		sZSpeed = (static_cast<int>(.70711 * power));
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
+		sXSpeed = (static_cast<int>(cosf(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sinf(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 
@@ -2963,8 +2963,8 @@ int AI::simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 
 	if (!sXSpeed && !sYSpeed) {
 		sZSpeed = (static_cast<int>(.70711 * power));
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
+		sXSpeed = (static_cast<int>(cosf(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sinf(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 
@@ -3054,8 +3054,8 @@ int AI::fakeSimulateWeaponLaunch(int x, int y, int power, int angle) {
 	int maxX = getMaxX();
 	int maxY = getMaxY();
 
-	x += distance * cos(radAngle);
-	y += distance * sin(radAngle);
+	x += distance * cosf(radAngle);
+	y += distance * sinf(radAngle);
 
 	x = (x + maxX) % maxX;
 	y = (y + maxY) % maxY;

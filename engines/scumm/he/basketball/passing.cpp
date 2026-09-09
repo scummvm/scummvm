@@ -40,7 +40,7 @@ static float getBallImpactTime(CCollisionSphere *ball, int gravity, int height) 
 		tFinal = 0;
 	} else {
 		// See how long before the ball hits the ground...
-		tFinal = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+		tFinal = (-b - sqrtf(b * b - 4 * a * c)) / (2 * a);
 		tFinal = MAX(0.0, tFinal);
 	}
 
@@ -104,8 +104,8 @@ int LogicHEBasketball::u32_userHitMovingTarget(U32FltPoint2D sourcePlayer, U32Fl
 	if (((b * b) < (4 * a * c)) || (a == 0)) {
 		tFinal = 0.0;
 	} else {
-		double t1 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
-		double t2 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+		double t1 = (-b + sqrtf(b * b - 4 * a * c)) / (2 * a);
+		double t2 = (-b - sqrtf(b * b - 4 * a * c)) / (2 * a);
 		tFinal = MIN_GREATER_THAN_ZERO(t1, t2);
 		tFinal -= BALL_LEAD_TIME; // Put the player at the target spot a few frames
 								  // before the ball to give them a chance to get ready
@@ -287,9 +287,9 @@ int LogicHEBasketball::u32_userGetBallIntercept(int playerID, int ballID, int pl
 				}
 			} else {
 				// Find the closest place we could intercept the ball...
-				tFinal = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+				tFinal = (-b - sqrtf(b * b - 4 * a * c)) / (2 * a);
 				if (tFinal < 0) {
-					tFinal = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+					tFinal = (-b + sqrtf(b * b - 4 * a * c)) / (2 * a);
 				}
 
 				// See if the ball will come down low enough to catch by that time...

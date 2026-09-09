@@ -142,7 +142,7 @@ int32 LogicHErace::op_1003(int32 *args) {
 int32 LogicHErace::op_1004(int32 *args) {
 	int value = args[1] ? args[1] : 1;
 
-	writeScummVar(108, (int32)(sqrt((float)args[0]) * value));
+	writeScummVar(108, (int32)(sqrtf((float)args[0]) * value));
 
 	return 1;
 }

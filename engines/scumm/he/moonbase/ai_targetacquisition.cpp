@@ -444,8 +444,8 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 			int randAngle = directAngleToHub + _ai->_vm->_rnd.getRandomNumber(179) - 90;
 			int randDist = _ai->_vm->_rnd.getRandomNumber(109) + 40;
 
-			int x = (int)(targetX + randDist * cos(_ai->degToRad(randAngle)));
-			int y = (int)(targetY + randDist * sin(_ai->degToRad(randAngle)));
+			int x = (int)(targetX + randDist * cosf(_ai->degToRad(randAngle)));
+			int y = (int)(targetY + randDist * sinf(_ai->degToRad(randAngle)));
 
 			int powAngle = _ai->getPowerAngleFromPoint(hubX, hubY, x, y, 20);
 

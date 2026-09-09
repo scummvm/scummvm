@@ -87,7 +87,7 @@ float CCollisionSphere::getObjectDistance(const CCollisionCylinder &targetObject
 	if (zDistance < 0)
 		zDistance = 0;
 
-	float totalDistance = sqrt((xyDistance * xyDistance) + (zDistance * zDistance));
+	float totalDistance = sqrtf((xyDistance * xyDistance) + (zDistance * zDistance));
 
 	return totalDistance;
 }
@@ -381,7 +381,7 @@ bool CCollisionSphere::nudgeObject(const CCollisionCylinder &targetObject, U32Di
 			centerDistance = parallelDistance;
 		}
 
-		float perdistance = sqrt(centerDistance * centerDistance - parallelDistance * parallelDistance);
+		float perdistance = sqrtf(centerDistance * centerDistance - parallelDistance * parallelDistance);
 
 		// Now we need to find the point along the velocity vector where the distance 
 		// between that point and the center of the target cylinder equals intersectionDist.
@@ -397,7 +397,7 @@ bool CCollisionSphere::nudgeObject(const CCollisionCylinder &targetObject, U32Di
 			intersectionDist = perdistance;
 		}
 
-		float xyCollisionDist = parallelDistance - sqrt(intersectionDist * intersectionDist - perdistance * perdistance);
+		float xyCollisionDist = parallelDistance - sqrtf(intersectionDist * intersectionDist - perdistance * perdistance);
 		collisionTimeFinal = (_velocity.xyMagnitude() == 0) ? 0 : (xyCollisionDist / _velocity.xyMagnitude());
 	} else {
 		collisionTimeFinal = -getPenetrationTime(targetObject, *distance, Z_INDEX);
@@ -591,7 +591,7 @@ void CCollisionSphere::handleCollisions(CCollisionObjectVector *collisionVector,
 }
 
 bool CCollisionSphere::isOnObject(const CCollisionBox &targetObject, const U32Distance3D &distance) const {
-	float distancePercentage = fabs(distance.z - radius) / radius;
+	float distancePercentage = fabsf(distance.z - radius) / radius;
 
 	// See if bouncing has slowed to the point that we are rolling...
 	return ((distancePercentage < .1) &&
@@ -600,7 +600,7 @@ bool CCollisionSphere::isOnObject(const CCollisionBox &targetObject, const U32Di
 }
 
 bool CCollisionSphere::isOnObject(const CCollisionCylinder &targetObject, const U32Distance3D &distance) const {
-	float distancePercentage = fabs(distance.z - radius) / radius;
+	float distancePercentage = fabsf(distance.z - radius) / radius;
 
 	// See if bouncing has slowed to the point that we are rolling...
 	return ((distancePercentage < .1) &&

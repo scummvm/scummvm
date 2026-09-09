@@ -117,7 +117,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	if (_mixer->getOutputBufSize() != 0) {
 		// Let's find the optimal value for the maximum number of streams which can stay in the queue at once;
 		// (A number which is too low can lead to buffer underrun, while the higher the number is, the higher is the audio latency)
-		_maxQueuedStreams = (int)ceil((_mixer->getOutputBufSize() / _waveOutPreferredFeedSize) / ((float)_mixer->getOutputRate() / _internalSampleRate));
+		_maxQueuedStreams = (int)ceilf((_mixer->getOutputBufSize() / _waveOutPreferredFeedSize) / ((float)_mixer->getOutputRate() / _internalSampleRate));
 
 		// This mixer's optimal output sample rate for this audio engine is one which is a multiple of 22050Hz;
 		// if we're dealing with one which is a multiple of 48000Hz, compensate the number of queued streams...

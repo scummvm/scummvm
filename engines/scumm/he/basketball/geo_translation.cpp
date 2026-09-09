@@ -100,13 +100,13 @@ static U32FltPoint2D worldToScreenTranslation(const U32FltPoint3D &worldPoint, L
 	// this compression after a certain point on the screen. This 'if block' handles that
 	// case...
 	if (worldPoint.y < logic->_bottomScalingPointCutoff) {
-		slope = 1 / (2 * sqrt(a * logic->_bottomScalingPointCutoff + a * c));
+		slope = 1 / (2 * sqrtf(a * logic->_bottomScalingPointCutoff + a * c));
 		pixelsFromBottom = slope * (worldPoint.y - logic->_bottomScalingPointCutoff) + BOTTOM_SCALING_PIXEL_CUTOFF;
 	} else if (worldPoint.y < logic->_topScalingPointCutoff) {
-		slope = 1 / (2 * sqrt(a * worldPoint.y + a * c));
-		pixelsFromBottom = (sqrt(worldPoint.y + c) - sqrt(c)) / sqrt(a);
+		slope = 1 / (2 * sqrtf(a * worldPoint.y + a * c));
+		pixelsFromBottom = (sqrtf(worldPoint.y + c) - sqrtf(c)) / sqrtf(a);
 	} else {
-		slope = 1 / (2 * sqrt(a * logic->_topScalingPointCutoff + a * c));
+		slope = 1 / (2 * sqrtf(a * logic->_topScalingPointCutoff + a * c));
 		pixelsFromBottom = slope * (worldPoint.y - logic->_topScalingPointCutoff) + TOP_SCALING_PIXEL_CUTOFF;
 	}
 
@@ -115,17 +115,17 @@ static U32FltPoint2D worldToScreenTranslation(const U32FltPoint3D &worldPoint, L
 	// Let's find x...
 
 	if (pixelsFromBottom < BOTTOM_SCALING_PIXEL_CUTOFF) {
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (BOTTOM_SCALING_PIXEL_CUTOFF / tan(logic->_courtAngle)));
-		xOffset = (tan((BBALL_M_PI / 2.0) - logic->_courtAngle) * BOTTOM_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (BOTTOM_SCALING_PIXEL_CUTOFF / tanf(logic->_courtAngle)));
+		xOffset = (tanf((BBALL_M_PI / 2.0) - logic->_courtAngle) * BOTTOM_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
 	} else if (pixelsFromBottom < TOP_SCALING_PIXEL_CUTOFF) {
-		courtWidth = (TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tan(logic->_courtAngle))));
-		xOffset = (tan((BBALL_M_PI / 2.0) - logic->_courtAngle) * pixelsFromBottom) + COURT_X_OFFSET;
+		courtWidth = (TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tanf(logic->_courtAngle))));
+		xOffset = (tanf((BBALL_M_PI / 2.0) - logic->_courtAngle) * pixelsFromBottom) + COURT_X_OFFSET;
 	} else {
 		// Find the width of the court in pixels at the current y coordinate...
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (TOP_SCALING_PIXEL_CUTOFF / tan(logic->_courtAngle)));
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (TOP_SCALING_PIXEL_CUTOFF / tanf(logic->_courtAngle)));
 
 		// Find the number of pixels beetween the left side of the screen and the beginning of the court at the current y coordinate...
-		xOffset = tan(((BBALL_M_PI / 2.0) - logic->_courtAngle) * TOP_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
+		xOffset = tanf(((BBALL_M_PI / 2.0) - logic->_courtAngle) * TOP_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
 	}
 
 	// Find the screen x based on the world x and y...
@@ -186,17 +186,17 @@ int LogicHEBasketball::u32_userScreenToWorldTranslation(const U32FltPoint2D &scr
 	// -Let's find x...
 
 	if (pixelsFromBottom < BOTTOM_SCALING_PIXEL_CUTOFF) {
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (BOTTOM_SCALING_PIXEL_CUTOFF / tan(_courtAngle)));
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (BOTTOM_SCALING_PIXEL_CUTOFF / tanf(_courtAngle)));
 		xOffset = (tan((BBALL_M_PI / 2.0) - _courtAngle) * BOTTOM_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
 	} else if (pixelsFromBottom < TOP_SCALING_PIXEL_CUTOFF) {
 		// Find the width of the court in pixels at the current y coordinate...
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tan(_courtAngle)));
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tanf(_courtAngle)));
 
 		// Find the number of pixels beetween the left side of the screen and the beginning of the court at the current y coordinate...
 		xOffset = (tan((BBALL_M_PI / 2.0) - _courtAngle) * pixelsFromBottom) + COURT_X_OFFSET;
 	} else {
 		// Find the width of the court in pixels at the current y coordinate...
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (TOP_SCALING_PIXEL_CUTOFF / tan(_courtAngle)));
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (TOP_SCALING_PIXEL_CUTOFF / tanf(_courtAngle)));
 
 		// Find the number of pixels beetween the left side of the screen and the beginning of the court at the current y coordinate...
 		xOffset = (tan((BBALL_M_PI / 2.0) - _courtAngle) * TOP_SCALING_PIXEL_CUTOFF) + COURT_X_OFFSET;
@@ -241,7 +241,7 @@ int LogicHEBasketball::u32_userComputePointsForPixels(int pixels, int screenYPos
 #endif
 	} else {
 		// Find the width of the court in pixels at the current y coordinate...
-		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tan(courtAngle)));
+		courtWidth = TRANSLATED_NEAR_MAX_X - (2.0 * (pixelsFromBottom / tanf(courtAngle)));
 	}
 
 	points = (MAX_WORLD_X / courtWidth) * pixels;

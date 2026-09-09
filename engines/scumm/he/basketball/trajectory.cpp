@@ -36,20 +36,20 @@ int LogicHEBasketball::u32_userComputeTrajectoryToTarget(const U32FltPoint3D &so
 	yDist = targetPoint.y - sourcePoint.y;
 	zDist = targetPoint.z - sourcePoint.z;
 
-	hDist = sqrt((xDist * xDist) + (yDist * yDist));
-	totalDist = sqrt((hDist * hDist) + (zDist * zDist));
+	hDist = sqrtf((xDist * xDist) + (yDist * yDist));
+	totalDist = sqrtf((hDist * hDist) + (zDist * zDist));
 
 	if (totalDist < speed)
 		speed = (int)(totalDist + 0.5F);
 
-	hAngle = atan2(yDist, xDist);
-	vAngle = atan2(zDist, totalDist);
+	hAngle = atan2f(yDist, xDist);
+	vAngle = atan2f(zDist, totalDist);
 
-	hSpeed = speed * cos(vAngle);
+	hSpeed = speed * cosf(vAngle);
 
-	trajectory.x = hSpeed * cos(hAngle);
-	trajectory.y = hSpeed * sin(hAngle);
-	trajectory.z = speed * sin(vAngle);
+	trajectory.x = hSpeed * cosf(hAngle);
+	trajectory.y = hSpeed * sinf(hAngle);
+	trajectory.z = speed * sinf(vAngle);
 
 	writeScummVar(_vm1->VAR_U32_USER_VAR_A, _vm->_basketball->u32FloatToInt(trajectory.x));
 	writeScummVar(_vm1->VAR_U32_USER_VAR_B, _vm->_basketball->u32FloatToInt(trajectory.y));
@@ -68,14 +68,14 @@ int LogicHEBasketball::u32_userComputeLaunchTrajectory(const U32FltPoint2D &sour
 	xDist = targetPoint.x - sourcePoint.x;
 	yDist = targetPoint.y - sourcePoint.y;
 
-	hAngle = atan2(yDist, xDist);
+	hAngle = atan2f(yDist, xDist);
 	vAngle = (launchAngle * BBALL_M_PI) / 180;
 
-	hVelocity = iVelocity * cos(vAngle);
+	hVelocity = iVelocity * cosf(vAngle);
 
-	trajectory.x = hVelocity * cos(hAngle);
-	trajectory.y = hVelocity * sin(hAngle);
-	trajectory.z = iVelocity * sin(vAngle);
+	trajectory.x = hVelocity * cosf(hAngle);
+	trajectory.y = hVelocity * sinf(hAngle);
+	trajectory.z = iVelocity * sinf(vAngle);
 
 	writeScummVar(_vm1->VAR_U32_USER_VAR_A, _vm->_basketball->u32FloatToInt(trajectory.x));
 	writeScummVar(_vm1->VAR_U32_USER_VAR_B, _vm->_basketball->u32FloatToInt(trajectory.y));
@@ -100,7 +100,7 @@ int LogicHEBasketball::u32_userComputeAngleBetweenVectors(const U32FltVector3D &
 			radiansCosine = -1;
 		}
 
-		radians = acos(radiansCosine);
+		radians = acosf(radiansCosine);
 		angle = (radians * 180) / BBALL_M_PI;
 	}
 

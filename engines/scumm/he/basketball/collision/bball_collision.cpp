@@ -263,7 +263,7 @@ static void trackCollisionObject(const ICollisionObject &sourceObject, const ICo
 		// is less than or equal to the distance between the source object and the last
 		// target object, then the current target object is stored along side the last
 		// target object. Otherwise, the current object replaces the last object.
-		if ((fabs(pastDist - currentDist) < COLLISION_EPSILON) ||
+		if ((fabsf(pastDist - currentDist) < COLLISION_EPSILON) ||
 			(!sourceObject.isCollisionHandled(targetObject)) ||
 			(!sourceObject.isCollisionHandled(**objectIt))) {
 			break;

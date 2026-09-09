@@ -90,7 +90,7 @@ float CCollisionCylinder::getObjectDistance(const CCollisionSphere &targetObject
 	if (zDistance < 0)
 		zDistance = 0;
 
-	float totalDistance = sqrt((xyDistance * xyDistance) + (zDistance * zDistance));
+	float totalDistance = sqrtf((xyDistance * xyDistance) + (zDistance * zDistance));
 	return (totalDistance);
 }
 
@@ -109,7 +109,7 @@ float CCollisionCylinder::getObjectDistance(const CCollisionBox &targetObject) c
 	if (zDistance < 0)
 		zDistance = 0;
 
-	float totalDistance = sqrt((xyDistance * xyDistance) + (zDistance * zDistance));
+	float totalDistance = sqrtf((xyDistance * xyDistance) + (zDistance * zDistance));
 	return (totalDistance);
 }
 
@@ -128,7 +128,7 @@ float CCollisionCylinder::getObjectDistance(const CCollisionCylinder &targetObje
 	if (zDistance < 0)
 		zDistance = 0;
 
-	float totalDistance = sqrt((xyDistance * xyDistance) + (zDistance * zDistance));
+	float totalDistance = sqrtf((xyDistance * xyDistance) + (zDistance * zDistance));
 	return (totalDistance);
 }
 
@@ -455,9 +455,9 @@ bool CCollisionCylinder::circleOutOfObject(const CCollisionBox &targetObject, U3
 													&xIntercept);
 		} else {
 			if (revDirection == kClockwise) {
-				xIntercept.x = sqrt(xInterceptSquared) + _revCenterPt.x;
+				xIntercept.x = sqrtf(xInterceptSquared) + _revCenterPt.x;
 			} else {
-				xIntercept.x = -sqrt(xInterceptSquared) + _revCenterPt.x;
+				xIntercept.x = -sqrtf(xInterceptSquared) + _revCenterPt.x;
 			}
 		}
 	} else if (distance->y > 0) {
@@ -472,9 +472,9 @@ bool CCollisionCylinder::circleOutOfObject(const CCollisionBox &targetObject, U3
 													&xIntercept);
 		} else {
 			if (revDirection == kClockwise) {
-				xIntercept.x = -sqrt(xInterceptSquared) + _revCenterPt.x;
+				xIntercept.x = -sqrtf(xInterceptSquared) + _revCenterPt.x;
 			} else {
-				xIntercept.x = sqrt(xInterceptSquared) + _revCenterPt.x;
+				xIntercept.x = sqrtf(xInterceptSquared) + _revCenterPt.x;
 			}
 		}
 	} else {
@@ -505,9 +505,9 @@ bool CCollisionCylinder::circleOutOfObject(const CCollisionBox &targetObject, U3
 													&yIntercept);
 		} else {
 			if (revDirection == kClockwise) {
-				yIntercept.y = -sqrt(yInterceptSquared) + _revCenterPt.y;
+				yIntercept.y = -sqrtf(yInterceptSquared) + _revCenterPt.y;
 			} else {
-				yIntercept.y = sqrt(yInterceptSquared) + _revCenterPt.y;
+				yIntercept.y = sqrtf(yInterceptSquared) + _revCenterPt.y;
 			}
 		}
 	} else if (distance->x > 0) {
@@ -522,9 +522,9 @@ bool CCollisionCylinder::circleOutOfObject(const CCollisionBox &targetObject, U3
 													&yIntercept);
 		} else {
 			if (revDirection == kClockwise) {
-				yIntercept.y = sqrt(yInterceptSquared) + _revCenterPt.y;
+				yIntercept.y = sqrtf(yInterceptSquared) + _revCenterPt.y;
 			} else {
-				yIntercept.y = -sqrt(yInterceptSquared) + _revCenterPt.y;
+				yIntercept.y = -sqrtf(yInterceptSquared) + _revCenterPt.y;
 			}
 		}
 	} else {
@@ -701,7 +701,7 @@ bool CCollisionCylinder::nudgeObject(const CCollisionCylinder &targetObject, U32
 			centerDistance = parallelDistance;
 		}
 
-		float perdistance = sqrt(centerDistance * centerDistance - parallelDistance * parallelDistance);
+		float perdistance = sqrtf(centerDistance * centerDistance - parallelDistance * parallelDistance);
 
 		// Now we need to find the point along the velocity vector where the distance 
 		// between that point and the center of the target cylinder equals intersectionDist.
@@ -717,7 +717,7 @@ bool CCollisionCylinder::nudgeObject(const CCollisionCylinder &targetObject, U32
 			intersectionDist = perdistance;
 		}
 
-		float xyCollisionDist = parallelDistance - sqrt(intersectionDist * intersectionDist - perdistance * perdistance);
+		float xyCollisionDist = parallelDistance - sqrtf(intersectionDist * intersectionDist - perdistance * perdistance);
 		collisionTimeFinal = (_velocity.xyMagnitude() == 0) ? 0 : (xyCollisionDist / _velocity.xyMagnitude());
 	} else {
 		collisionTimeFinal = -getPenetrationTime(targetObject, *distance, Z_INDEX);
