@@ -228,8 +228,8 @@ void AGSWaves::DrawCylinder(ScriptMethodParams &params) {
 			float r = width;
 
 			float omega = width / 2;
-			float z0 = f - sqrt(r * r - omega * omega);
-			float zc = (2 * z0 + sqrt(4 * z0 * z0 - 4 * (pcx * pcx / (f * f) + 1) * (z0 * z0 - r * r))) / (2 * (pcx * pcx / (f * f) + 1));
+			float z0 = f - sqrtf(r * r - omega * omega);
+			float zc = (2 * z0 + sqrtf(4 * z0 * z0 - 4 * (pcx * pcx / (f * f) + 1) * (z0 * z0 - r * r))) / (2 * (pcx * pcx / (f * f) + 1));
 
 			float finalpointx = pcx * zc / f;
 			float finalpointy = pcy * zc / f;
@@ -286,14 +286,14 @@ void AGSWaves::DrawForceField(ScriptMethodParams &params) {
 
 			float jx = uvx;
 			float jy = uvy + b_time[id] * 3.14;
-			float jz = sin(b_time[id]);
+			float jz = sinf(b_time[id]);
 			float jyy = uvy + b_time[id];
-			float jzz = cos(b_time[id] + 3.0);
+			float jzz = cosf(b_time[id] + 3.0f);
 
 			float af = ABS(noiseField(jx, jy, jz) - noiseField(jx, jyy, jzz));
-			float newR = 0.5 - pow(af, float(0.2)) / 2.0;
+			float newR = 0.5f - powf(af, 0.2f) / 2.0f;
 			float newG = 0.0;
-			float newB = 0.4 - pow(af, float(0.4));
+			float newB = 0.4f - powf(af, 0.4f);
 
 			int Rd = int(newR * 255.0);
 			int Gd = int(newG * 255.0);
@@ -1138,11 +1138,11 @@ int AGSWaves::SetColorRGBA(int r, int g, int b, int a) {
 }
 
 float AGSWaves::noiseField(float tx, float ty, float tz) {
-	float px = floor(tx);
+	float px = floorf(tx);
 	float fx = fracts(tx);
-	float py = floor(ty);
+	float py = floorf(ty);
 	float fy = fracts(ty);
-	float pz = floor(tz);
+	float pz = floorf(tz);
 	float fz = fracts(tz);
 	fx = fx * fx * (3.0 - 2.0 * fx);
 	fy = fy * fy * (3.0 - 2.0 * fy);
@@ -1161,7 +1161,7 @@ int AGSWaves::ConvertColorToGrayScale(int color) {
 	int b = getBcolor(color);
 
 	float d = float((r * r + g * g + b * b) / 3);
-	int gr = int(sqrt(d));
+	int gr = int(sqrtf(d));
 
 	return ((gr << 16) | (gr << 8) | (gr << 0) | (255 << 24));
 }

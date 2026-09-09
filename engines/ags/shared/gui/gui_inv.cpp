@@ -118,8 +118,8 @@ void GUIInvWindow::CalculateNumCells() {
 		ColCount = _width / data_to_game_coord(ItemWidth);
 		RowCount = _height / data_to_game_coord(ItemHeight);
 	} else {
-		ColCount = floor((float)_width / (float)data_to_game_coord(ItemWidth) + 0.5f);
-		RowCount = floor((float)_height / (float)data_to_game_coord(ItemHeight) + 0.5f);
+		ColCount = floorf((float)_width / (float)data_to_game_coord(ItemWidth) + 0.5f);
+		RowCount = floorf((float)_height / (float)data_to_game_coord(ItemHeight) + 0.5f);
 	}
 }
 

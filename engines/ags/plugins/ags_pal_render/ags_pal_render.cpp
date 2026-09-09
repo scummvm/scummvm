@@ -375,7 +375,7 @@ void AGSPalRender::LensInitialize(ScriptMethodParams &params) {
 			int lx, ly;
 			int xsq = x * x;
 			if ((xsq + ysq) < (radsq)) {
-				float shift = zoom / sqrt((float)(zoomsq - (xsq + ysq - radsq)));
+				float shift = zoom / sqrtf((float)(zoomsq - (xsq + ysq - radsq)));
 				lx = (int)(x * shift - x);
 				ly = (int)(y * shift - y);
 			} else {

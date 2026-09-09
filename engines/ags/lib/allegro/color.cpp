@@ -529,7 +529,7 @@ void hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b) {
 	if (s == 0.0f) { /* ok since we don't divide by s, and faster */
 		*r = *g = *b = v + 0.5f;
 	} else {
-		h = fmod(h, 360.0f) / 60.0f;
+		h = fmodf(h, 360.0f) / 60.0f;
 		if (h < 0.0f)
 			h += 6.0f;
 

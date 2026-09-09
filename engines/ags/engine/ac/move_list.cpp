@@ -33,13 +33,13 @@ float MoveList::GetStepLength() const {
 	assert(numstage > 0);
 	float permove_x = fixtof(xpermove[onstage]);
 	float permove_y = fixtof(ypermove[onstage]);
-	return sqrt(permove_x * permove_x + permove_y * permove_y);
+	return sqrtf(permove_x * permove_x + permove_y * permove_y);
 }
 
 float MoveList::GetPixelUnitFraction() const {
 	assert(numstage > 0);
 	float distance = GetStepLength() * onpart;
-	return distance - floor(distance);
+	return distance - floorf(distance);
 }
 
 void MoveList::SetPixelUnitFraction(float frac) {

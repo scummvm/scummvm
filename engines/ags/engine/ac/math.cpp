@@ -34,11 +34,11 @@ namespace AGS3 {
 int FloatToInt(float value, int roundDirection) {
 	switch (roundDirection) {
 	case eRoundDown:
-		return static_cast<int>(floor(value));
+		return static_cast<int>(floorf(value));
 	case eRoundUp:
-		return static_cast<int>(ceil(value));
+		return static_cast<int>(ceilf(value));
 	case eRoundNearest:
-		return static_cast<int>(round(value));
+		return static_cast<int>(roundf(value));
 	default:
 		quit("!FloatToInt: invalid round direction");
 	}
@@ -54,59 +54,59 @@ float StringToFloat(const char *theString) {
 }
 
 float Math_Cos(float value) {
-	return cos(value);
+	return cosf(value);
 }
 
 float Math_Sin(float value) {
-	return sin(value);
+	return sinf(value);
 }
 
 float Math_Tan(float value) {
-	return tan(value);
+	return tanf(value);
 }
 
 float Math_ArcCos(float value) {
-	return acos(value);
+	return acosf(value);
 }
 
 float Math_ArcSin(float value) {
-	return asin(value);
+	return asinf(value);
 }
 
 float Math_ArcTan(float value) {
-	return atan(value);
+	return atanf(value);
 }
 
 float Math_ArcTan2(float yval, float xval) {
-	return atan2(yval, xval);
+	return atan2f(yval, xval);
 }
 
 float Math_Log(float value) {
-	return log(value);
+	return logf(value);
 }
 
 float Math_Log10(float value) {
-	return ::log10(value);
+	return log10f(value);
 }
 
 float Math_Exp(float value) {
-	return exp(value);
+	return expf(value);
 }
 
 float Math_Cosh(float value) {
-	return cosh(value);
+	return coshf(value);
 }
 
 float Math_Sinh(float value) {
-	return sinh(value);
+	return sinhf(value);
 }
 
 float Math_Tanh(float value) {
-	return tanh(value);
+	return tanhf(value);
 }
 
 float Math_RaiseToPower(float base, float exp) {
-	return ::pow(base, exp);
+	return powf(base, exp);
 }
 
 float Math_DegreesToRadians(float value) {
@@ -125,7 +125,7 @@ float Math_Sqrt(float value) {
 	if (value < 0.0)
 		error("!Sqrt: cannot perform square root of negative number");
 
-	return ::sqrt(value);
+	return sqrtf(value);
 }
 
 int __Rand(int upto) {

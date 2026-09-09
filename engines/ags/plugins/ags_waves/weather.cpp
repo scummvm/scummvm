@@ -258,8 +258,8 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 				if (particles[h].angleLay > 12.0) {
 					particles[h].angleLay = 0.0;
 					particles[h].angle += particles[h].anglespeed;
-					int Y = particles[h].y + int((sin(particles[h].angle) * particles[h].radius));
-					int X = particles[h].x + int((cos(particles[h].angle) * particles[h].radius));
+					int Y = particles[h].y + int((sinf(particles[h].angle) * particles[h].radius));
+					int X = particles[h].x + int((cosf(particles[h].angle) * particles[h].radius));
 					particles[h].x = X;
 					particles[h].y = Y;
 				}
@@ -477,8 +477,8 @@ void AGSWaves::WindUpdate(ScriptMethodParams &params) {
 					if (particles2[h].angleLay > 12.0) {
 						particles2[h].angleLay = 0.0;
 						particles2[h].angle += particles2[h].anglespeed;
-						int Y = particles2[h].y + int((sin(particles2[h].angle) * particles2[h].radius));
-						int X = particles2[h].x + int((cos(particles2[h].angle) * particles2[h].radius));
+						int Y = particles2[h].y + int((sinf(particles2[h].angle) * particles2[h].radius));
+						int X = particles2[h].x + int((cosf(particles2[h].angle) * particles2[h].radius));
 						particles2[h].x = X;
 						particles2[h].y = Y;
 					}

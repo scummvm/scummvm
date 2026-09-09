@@ -317,8 +317,8 @@ void Weather::SetTransparency(int min_value, int max_value) {
 	if (min_value > max_value)
 		min_value = max_value;
 
-	_mMinAlpha = 255 - floor((float)max_value * 2.55f + 0.5f);
-	_mMaxAlpha = 255 - floor((float)min_value * 2.55f + 0.5f);
+	_mMinAlpha = 255 - floorf((float)max_value * 2.55f + 0.5f);
+	_mMaxAlpha = 255 - floorf((float)min_value * 2.55f + 0.5f);
 	_mDeltaAlpha = _mMaxAlpha - _mMinAlpha;
 
 	if (_mDeltaAlpha == 0)

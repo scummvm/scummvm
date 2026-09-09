@@ -470,7 +470,7 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 			UnpackSquare(pneig[ni], nx, ny);
 			float edx = (float)(nx - ex);
 			float edy = (float)(ny - ey);
-			sort[ni].cost = sqrt(edx * edx + edy * edy);
+			sort[ni].cost = sqrtf(edx * edx + edy * edy);
 			sort[ni].index = pneig[ni];
 		}
 
@@ -508,12 +508,12 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 			float dx = (float)(nx - x);
 			float dy = (float)(ny - y);
 			// FIXME: can do better here
-			float cost = sqrt(dx * dx + dy * dy);
+			float cost = sqrtf(dx * dx + dy * dy);
 			float ecost = dist + cost;
 
 			float edx = (float)(nx - ex);
 			float edy = (float)(ny - ey);
-			float heur = sqrt(edx * edx + edy * edy);
+			float heur = sqrtf(edx * edx + edy * edy);
 
 			if (ecost < ndist) {
 				ecost *= DIST_SCALE_PACK;
