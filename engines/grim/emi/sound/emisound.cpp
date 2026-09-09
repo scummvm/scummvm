@@ -826,7 +826,7 @@ void EMISound::pause(bool paused) {
 	}
 
 	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
-		SoundTrack *track = (*it)._value;
+		SoundTrack *track = it->_value;
 		if (!track->isPlaying() || paused == track->isPaused())
 			continue;
 
@@ -1086,7 +1086,7 @@ void EMISound::updateSoundPositions() {
 	}
 
 	for (TrackMap::iterator it = _preloadedTrackMap.begin(); it != _preloadedTrackMap.end(); ++it) {
-		SoundTrack *track = (*it)._value;
+		SoundTrack *track = it->_value;
 		track->updatePosition();
 	}
 }
