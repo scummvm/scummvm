@@ -381,12 +381,14 @@ private:
 };
 
 bool InstallerArchive::load(const Common::FSNode &dir) {
-	// disk 1 first, then the five continuation segments, concatenated into one
-	// logical stream (payload spans cross floppy boundaries).
+	// The CD installer contains only the application; floppy data spans six disks.
+	const bool cd = dir.getChild("Eagle Eye CD Installer").exists();
 	Common::Array<Common::String> names;
-	names.push_back("Eagle Eye Installer");
-	for (int i = 2; i <= 6; i++)
-		names.push_back(Common::String::format("EEM Install Data %d", i));
+	names.push_back(cd ? "Eagle Eye CD Installer" : "Eagle Eye Installer");
+	if (!cd) {
+		for (int i = 2; i <= 6; i++)
+			names.push_back(Common::String::format("EEM Install Data %d", i));
+	}
 
 	_diskBase.resize(names.size() + 1); // 1-based; index 0 unused
 	for (uint i = 0; i < _diskBase.size(); i++)

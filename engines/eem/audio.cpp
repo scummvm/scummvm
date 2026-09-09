@@ -225,8 +225,10 @@ void AudioPlayer::cleanMysterySounds() {
 
 bool AudioPlayer::initMacMysterySounds(uint mysteryNum) {
 	const uint16 firstResourceId = 1001;
-	const Common::Path candidates[2] = {
+	const Common::Path candidates[] = {
+		Common::Path(Common::String::format("M%u.DBD", mysteryNum)),
 		Common::Path(Common::String::format("M%02u.DBD", mysteryNum)),
+		Common::Path(Common::String::format("M%u.CPD", mysteryNum)),
 		Common::Path(Common::String::format("M%02u.CPD", mysteryNum))
 	};
 
@@ -259,6 +261,9 @@ void AudioPlayer::playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
 	Common::SeekableReadStream *stream =
 		openMacResource(Common::Path("EEM Sound&Music"),
 						MKTAG('s', 'n', 'd', ' '), resourceId);
+	if (!stream)
+		stream = openMacResource(Common::Path("Eagle Eye Mysteries CD"),
+								 MKTAG('s', 'n', 'd', ' '), resourceId);
 	if (!stream) {
 		warning("AudioPlayer: Mac snd resource %u missing", resourceId);
 		return;

@@ -35,6 +35,8 @@ class SeekableReadStream;
 
 namespace EEM {
 
+bool openDataFile(Common::File &file, const Common::Path &path);
+
 struct DBEntry {
 	uint32 offset;     ///< Byte offset in the .DBD file.
 	uint16 compressed; ///< Non-zero = PKWARE DCL ("Implode") packed payload.

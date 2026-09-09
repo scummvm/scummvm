@@ -44,7 +44,8 @@ class EEMEngine;
  *   (_UncompressedSound @ 202f:03e6); otherwise PKWARE DCL Implode
  *   (_DeCompressSound @ 202f:02ad). Each blob starts with SB Time Constant +
  *   AIL block count, then 8-bit unsigned PCM.
- * - Mac mystery spool streams live in M%02d.DBD/M%02d.CPD resource forks.
+ * - Mac mystery spool streams live in M%d.DBD/M%d.CPD resource forks
+ *   (some releases use two-digit numbers).
  *   The executable tries compressed 'csnd' by resource id, then falls back to
  *   plain 'snd '; ids are 1001 + the zero-based mystery voice slot.
  *
@@ -86,7 +87,7 @@ public:
 	void playFloppyVoiceSlot(uint slot, uint partner);
 
 	/// Loads the current mystery voice bundle. DOS uses M%u.SDX/M%u.SDB;
-	/// Mac uses M%02u.DBD/M%02u.CPD 'csnd'/'snd ' resources.
+	/// Mac uses M%u.DBD/M%u.CPD 'csnd'/'snd ' resources.
 	bool initMysterySounds(uint mysteryNum);
 
 	/// _CleanMysterySounds @ 202f:05a5.

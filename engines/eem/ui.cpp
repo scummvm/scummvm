@@ -63,7 +63,7 @@ static bool openNumberedScriptFile(Common::File &f, Common::String &name,
 								   uint patternCount) {
 	for (uint i = 0; i < patternCount; i++) {
 		name = Common::String::format(patterns[i], num);
-		if (f.open(Common::Path(name)))
+		if (openDataFile(f, Common::Path(name)))
 			return true;
 	}
 	name.clear();
@@ -542,7 +542,7 @@ bool loadMacEndingBlob(uint num, Common::Array<byte> &out, bool &looseScript) {
 		return false;
 
 	Common::File f;
-	if (!f.open(Common::Path("MysteryData"))) {
+	if (!openDataFile(f, Common::Path("MysteryData"))) {
 		warning("doShowEnding: cannot open MysteryData");
 		return false;
 	}
@@ -1814,7 +1814,7 @@ void EEMEngine::doSetup() {
 			if (kNewCaseBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				if (isDemo()) {
-					if (_mystery.load(0, &_rng, isMacintosh())) {
+					if (_mystery.load(0, &_rng, isMacintosh(), isLondon())) {
 						resetSiteArrivalState();
 						_nextScreen = kScreenInitClues;
 					} else {
@@ -2391,7 +2391,7 @@ void EEMEngine::doActionScreen() {
 	}
 
 	if (pick == kPickPractice) {
-		if (!_mystery.load(0, &_rng, isMacintosh())) {
+		if (!_mystery.load(0, &_rng, isMacintosh(), isLondon())) {
 			warning("doActionScreen: failed to load practice mystery");
 			_mystery.clear();
 			resetSiteArrivalState();
@@ -2643,7 +2643,7 @@ void EEMEngine::doCaseSelection() {
 		return;
 
 	const uint mn = stageLo + selRow;
-	if (!_mystery.load(mn, &_rng, isMacintosh())) {
+	if (!_mystery.load(mn, &_rng, isMacintosh(), isLondon())) {
 		warning("doCaseSelection: failed to load mystery %u", mn);
 		_mystery.clear();
 		return;
@@ -2875,7 +2875,7 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 		return parseString(Common::String(p, len),
 						   _playerName, _partner);
 	}
-	if (isMacintosh() && !isLondon() && bufBase) {
+	if (_mystery.usesCompactMacData() && bufBase) {
 		const uint16 textOff = READ_LE_UINT16(ni + clueId * 8);
 		if (textOff == 0 || textOff >= mysSz)
 			return Common::String();
@@ -3570,9 +3570,7 @@ Common::String EEMEngine::accuseNoteText(uint clueId,
 			(const char *)(ctx.bufBaseNotes + textOff),
 			_playerName, _partner);
 	}
-	// Only the compact EEM1 Mac mystery data uses 8-byte NoteIndex records.
-	// EEM2 London Mac loose scripts keep the London 2-byte table.
-	if (isMacintosh() && !isLondon() && ctx.bufBaseNotes) {
+	if (_mystery.usesCompactMacData() && ctx.bufBaseNotes) {
 		const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * 8);
 		if (textOff == 0 || textOff >= _mystery.dataSize())
 			return Common::String();

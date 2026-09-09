@@ -35,6 +35,10 @@
 
 namespace EEM {
 
+bool openDataFile(Common::File &file, const Common::Path &path) {
+	return file.open(Common::MacResManager::openFileOrDataFork(path), path.toString());
+}
+
 DBDArchive::DBDArchive() {
 }
 
@@ -221,13 +225,13 @@ bool DBDArchive::open(const Common::Path &dbdName, const Common::Path &dbxName, 
 	close();
 	_bigEndian = bigEndian;
 
-	if (!_dbd.open(dbdName)) {
+	if (!openDataFile(_dbd, dbdName)) {
 		warning("DBDArchive: cannot open %s", dbdName.toString().c_str());
 		return false;
 	}
 
 	Common::File dbx;
-	if (!dbx.open(dbxName)) {
+	if (!openDataFile(dbx, dbxName)) {
 		warning("DBDArchive: cannot open %s", dbxName.toString().c_str());
 		_dbd.close();
 		return false;

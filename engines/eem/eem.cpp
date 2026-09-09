@@ -30,6 +30,7 @@
 #include "common/path.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/macresman.h"
 
 #include "engines/util.h"
 
@@ -431,26 +432,26 @@ Common::FSNode findChildDirectoryIgnoreCase(const Common::FSNode &dir,
 	return Common::FSNode();
 }
 
-void addMacLondonDirectoryIfPresent(const Common::FSNode &dir,
-									const char *archiveName,
-									int depth = 1) {
+void addMacDirectoryIfPresent(const Common::FSNode &dir,
+							 const char *archiveName, int depth = 1) {
 	if (dir.exists() && dir.isDirectory() &&
 		!SearchMan.hasArchive(archiveName))
 		SearchMan.addDirectory(archiveName, dir, 0, depth);
 }
 
-void addMacLondonSearchPathsFrom(const Common::FSNode &base,
-								 const char *archivePrefix) {
+void addMacCDSearchPathsFrom(const Common::FSNode &base,
+							 const char *archivePrefix, bool london) {
 	if (!base.exists() || !base.isDirectory())
 		return;
 
-	Common::FSNode cd = findChildDirectoryIgnoreCase(base, "EEM2 CD");
-	if (!cd.exists()) {
+	const char *cdName = london ? "EEM2 CD" : "EEM CD";
+	Common::FSNode cd = findChildDirectoryIgnoreCase(base, cdName);
+	if (!cd.exists() && london) {
 		Common::FSNode wrapper = findChildDirectoryIgnoreCase(base, "EEM_London");
 		if (wrapper.exists())
 			cd = findChildDirectoryIgnoreCase(wrapper, "EEM2 CD");
 	}
-	if (!cd.exists() && base.getName().equalsIgnoreCase("EEM2 CD"))
+	if (!cd.exists() && base.getName().equalsIgnoreCase(cdName))
 		cd = base;
 	if (!cd.exists()) {
 		const Common::String baseName = base.getName();
@@ -475,32 +476,33 @@ void addMacLondonSearchPathsFrom(const Common::FSNode &base,
 	const Common::FSNode scriptsDir = findChildDirectoryIgnoreCase(cd, "Mac Scripts");
 	const Common::FSNode animDir = findChildDirectoryIgnoreCase(cd, "Anim Files");
 
-	addMacLondonDirectoryIfPresent(dataDir, dataArchive.c_str(), 2);
-	addMacLondonDirectoryIfPresent(scriptsDir, scriptsArchive.c_str(), 3);
-	addMacLondonDirectoryIfPresent(animDir, animArchive.c_str(), 2);
+	addMacDirectoryIfPresent(dataDir, dataArchive.c_str(), 2);
+	addMacDirectoryIfPresent(scriptsDir, scriptsArchive.c_str(), 3);
+	addMacDirectoryIfPresent(animDir, animArchive.c_str(), 2);
 
 	if (scriptsDir.exists()) {
 		Common::String approachesArchive = Common::String::format(
 			"%s-approaches", archivePrefix);
-		addMacLondonDirectoryIfPresent(
+		addMacDirectoryIfPresent(
 			findChildDirectoryIgnoreCase(scriptsDir, "Approaches"),
 			approachesArchive.c_str());
 	}
 
 	const Common::FSNode app =
-		findChildDirectoryIgnoreCase(cd.getParent(), "EEM London CD");
-	addMacLondonDirectoryIfPresent(app, appArchive.c_str(), 2);
+		findChildDirectoryIgnoreCase(cd.getParent(),
+			london ? "EEM London CD" : "Eagle Eye Mysteries CD");
+	addMacDirectoryIfPresent(app, appArchive.c_str(), 2);
 }
 
 static bool loadMacFontResource(EEMFont &font, uint16 resourceId, int size) {
 	addMacResourceSearchPaths();
 
-	// The Eagle Eye fonts live in the game application's resource fork. EEM1 Mac
-	// ships it as "Eagle Eye Mysteries"; EEM2 (London) Mac ships it as
-	// "EEM London CD" but reuses the same FONT resource ids (3214/3209).
+	// The Mac applications share FONT resource IDs 3214/3209.
 	static const char *const kAppForks[] = {
 		"Eagle Eye Mysteries",
 		"rsrc/Eagle Eye Mysteries",
+		"Eagle Eye Mysteries CD",
+		"rsrc/Eagle Eye Mysteries CD",
 		"EEM London CD",
 	};
 	for (uint i = 0; i < ARRAYSIZE(kAppForks); i++) {
@@ -927,40 +929,22 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 bool EEMEngine::openArchives() {
 	const bool mac = isMacintosh();
 
-	// EEM2 (London) Mac is played straight from the CD, whose data lives in
-	// subfolders ("Data Files", "Mac Scripts") with the Mac app in "EEM London
-	// CD". Register them so the bare-name opens below -- and the later script,
-	// mystery and palette loaders -- resolve whether the user points ScummVM at
-	// the disc root or at the "EEM2 CD" folder.
-	if (mac && isLondon()) {
+	// Accept either the disc root or its data folder.
+	if (mac) {
 		const Common::FSNode gameDir(ConfMan.getPath("path"));
-		addMacLondonSearchPathsFrom(gameDir, "eem-london-game");
-		addMacLondonSearchPathsFrom(gameDir.getParent(), "eem-london-parent");
-		// Disc-root layout (recommended -- this also reaches the "EEM London
-		// CD" app that holds the Mac fonts/sound). The "/"-separated names
-		// descend two levels (see Common::addSubDirectoryMatching).
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Data Files", 0, 2);
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Mac Scripts", 0, 3);
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Anim Files", 0, 2);
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM London CD", 0, 2);
-		// ...or the user pointed ScummVM straight at the "EEM2 CD" folder.
-		SearchMan.addSubDirectoryMatching(gameDir, "Data Files", 0, 2);
-		SearchMan.addSubDirectoryMatching(gameDir, "Mac Scripts", 0, 3);
-		SearchMan.addSubDirectoryMatching(gameDir, "Anim Files", 0, 2);
+		addMacCDSearchPathsFrom(gameDir, "eem-mac-game", isLondon());
+		addMacCDSearchPathsFrom(gameDir.getParent(), "eem-mac-parent", isLondon());
 	}
 
-	// The EEM1 Mac release can be played straight from its floppy installer.
-	// When those files are present, mount a virtual archive that decompresses
-	// the game data (PICS.DBD, MysteryData, fonts, ...) on demand, so the opens
-	// below and the Mac resource-fork lookups resolve transparently. (EEM2 Mac
-	// ships loose on the CD and has no such installer.)
+	// EEM1 installers provide the application resources, and floppy game data.
 	if (mac && !isLondon() && !SearchMan.hasArchive("eem-installer")) {
 		const Common::FSNode gameDir(ConfMan.getPath("path"));
-		if (Common::Archive *installer = createInstallerArchive(gameDir)) {
+		Common::Archive *installer = createInstallerArchive(gameDir);
+		if (!installer)
+			installer = createInstallerArchive(gameDir.getParent());
+		if (installer) {
 			SearchMan.add("eem-installer", installer);
 			debugC(1, kDebugGeneral, "Mounted Eagle Eye Mysteries Mac installer archive");
-		} else {
-			warning("EEMTEST: createInstallerArchive returned null");
 		}
 	}
 
@@ -985,7 +969,7 @@ bool EEMEngine::loadSitePalettes() {
 	Common::File f;
 	// EEM2 DOS uses "SITEPALS." (8.3); EEM1 and both Mac releases use "SITEPALS".
 	const char *palFile = (isLondon() && !isMacintosh()) ? "SITEPALS." : "SITEPALS";
-	if (!f.open(Common::Path(palFile))) {
+	if (!openDataFile(f, Common::Path(palFile))) {
 		warning("%s missing", palFile);
 		return false;
 	}
@@ -1066,10 +1050,13 @@ void EEMEngine::interruptAudio(bool stopMusicToo) {
 void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 						bool holdLastFrame) {
 	Video::FlicDecoder flic;
-	if (!flic.loadFile(path)) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		Common::MacResManager::openFileOrDataFork(path));
+	if (!stream || !flic.loadStream(stream.get())) {
 		warning("playFlc: %s missing", path.toString().c_str());
 		return;
 	}
+	stream.release();
 
 	const int fw = flic.getWidth();
 	const int fh = flic.getHeight();
@@ -1757,7 +1744,7 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs,
 }
 
 bool EEMEngine::startLondonTrainingMystery() {
-	if (_mystery.load(0, &_rng, isMacintosh())) {
+	if (_mystery.load(0, &_rng, isMacintosh(), isLondon())) {
 		resetSiteArrivalState();
 		if (_audio)
 			_audio->initMysterySounds(0);
@@ -2278,7 +2265,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (hasMystery) {
 		uint16 mysteryNum = 0;
 		s.syncAsUint16LE(mysteryNum);
-		if (!_mystery.load(mysteryNum, &_rng, isMacintosh())) {
+		if (!_mystery.load(mysteryNum, &_rng, isMacintosh(), isLondon())) {
 			_mystery.clear();
 			resetSiteArrivalState();
 			return Common::kReadingFailed;

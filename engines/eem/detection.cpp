@@ -32,13 +32,13 @@ const PlainGameDescriptor eemGames[] = {
 	{ nullptr, nullptr }
 };
 
-// The EEM2 (London) Macintosh CD keeps its data in subfolders ("EEM2 CD" with
-// "Data Files"/"Mac Scripts", and the app in "EEM London CD"). Let the detector
-// descend into them; the DOS releases have no such folders and are unaffected.
+// Macintosh CDs keep data and scripts in separate subfolders.
 static const char *const directoryGlobs[] = {
+	"EEM CD",
 	"EEM2 CD",
 	"Data Files",
 	"Mac Scripts",
+	"Eagle Eye Mysteries CD",
 	"EEM London CD",
 	nullptr
 };
@@ -115,6 +115,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUI_OPTIONS_EEM_MAC
 	},
 	{
+		"eem",
+		"CD",
+		AD_ENTRY2s("pics.dbd", "d:abbef80edd830e0a85d7fdc42e6a419c", 3840029,
+				   "m0.bin",   "d:acd867b61ef36dd98f94bbf00cc5adb0", 12193),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUI_OPTIONS_EEM_MAC
+	},
+	{
 		// Eagle Eye Mysteries in London
 		"eem2",
 		"CD",
@@ -169,7 +179,7 @@ const DebugChannelDef debugFlagList[] = {
 class EEMMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	EEMMetaEngineDetection() : AdvancedMetaEngineDetection(EEM::gameDescriptions, EEM::eemGames) {
-		// Reach the EEM2 Mac data nested under "EEM2 CD/Data Files" etc.
+		// Reach the Mac CD data and script folders.
 		_maxScanDepth = 3;
 		_directoryGlobs = EEM::directoryGlobs;
 	}

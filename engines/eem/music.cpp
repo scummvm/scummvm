@@ -82,7 +82,7 @@ static Common::SeekableReadStream *expandMacMidiRunningStatus(Common::SeekableRe
 		output.writeUint32BE(size);
 
 		if (tag != MKTAG('M', 'T', 'r', 'k')) {
-			if (output.writeStream(&stream, size) != size)
+			if (size && output.writeStream(&stream, size) != size)
 				return nullptr;
 			continue;
 		}
@@ -120,7 +120,8 @@ static Common::SeekableReadStream *expandMacMidiRunningStatus(Common::SeekableRe
 				return nullptr;
 			}
 
-			if (dataSize > end - stream.pos() || output.writeStream(&stream, dataSize) != dataSize)
+			if (dataSize > end - stream.pos() ||
+				(dataSize && output.writeStream(&stream, dataSize) != dataSize))
 				return nullptr;
 		}
 		WRITE_BE_UINT32(output.getData() + sizeOffset, output.size() - sizeOffset - 4);
@@ -136,8 +137,14 @@ Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 	static const char *const kMacMusicForks[] = {
 		"EEM Sound&Music",
 		"rsrc/EEM Sound&Music",
+		"Eagle Eye Mysteries CD",
+		"rsrc/Eagle Eye Mysteries CD",
+		nullptr
+	};
+	static const char *const kMacLondonMusicForks[] = {
 		"EEM London CD",
 		"rsrc/EEM London CD",
+		nullptr
 	};
 	static const uint32 kMacMidiTypes[] = {
 		MKTAG('c', 'm', 'i', 'd'),
@@ -145,9 +152,9 @@ Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 		MKTAG('M', 'i', 'd', 'i'),
 	};
 
-	const uint firstFork = _isLondon ? 2 : 0;
-	for (uint i = firstFork; i < firstFork + 2; i++) {
-		const Common::Path path(kMacMusicForks[i]);
+	const char *const *forks = _isLondon ? kMacLondonMusicForks : kMacMusicForks;
+	for (uint i = 0; forks[i]; i++) {
+		const Common::Path path(forks[i]);
 		if (type == MKTAG('M', 'I', 'D', 'I') || type == MKTAG('M', 'i', 'd', 'i')) {
 			for (uint j = 0; j < ARRAYSIZE(kMacMidiTypes); j++) {
 				Common::SeekableReadStream *stream = openMacResource(path, kMacMidiTypes[j], id);

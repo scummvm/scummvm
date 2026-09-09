@@ -59,10 +59,9 @@ public:
 	Mystery() = default;
 	~Mystery() = default;
 
-	/// Load M<num>.BIN and reset per-mystery state. The Mac release stores
-	/// cases in the indexed MysteryData container instead of loose files.
+	/// Load M<num>.BIN, or MysteryData for Mac floppy, and reset mystery state.
 	bool load(uint num, class Common::RandomSource *rng = nullptr,
-			  bool macintosh = false);
+			  bool macintosh = false, bool london = false);
 
 	void clear();
 
@@ -246,6 +245,7 @@ private:
 	bool   _isFloppy = false;
 	bool   _isMacintosh = false;
 	bool   _isMacintoshLooseScripts = false;
+	bool   _isLondon = false;
 	uint16 _floppySuspectsOff = 0;   ///< header[+4]    suspects
 	uint16 _floppyHintBlockOff = 0;  ///< header[+6]    hint -> clue table
 	uint16 _floppyNoteIndexOff = 0;  ///< header[+8]    notes (7B/clue)
