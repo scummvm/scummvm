@@ -189,10 +189,10 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 	// 1e3 & 2e4 quad
 	if (floatComp(sinus, 0.0f) >= 0)
 		// 1 & 2 quad
-		return (float)acos(cosinus);
+		return acosf(cosinus);
 
 	// 3 quad
-	return (M_PI * 2) - (float)acos(cosinus);
+	return (M_PI * 2) - acosf(cosinus);
 }
 
 void TrecisionEngine::processTime() {

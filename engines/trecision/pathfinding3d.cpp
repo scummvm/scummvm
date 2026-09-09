@@ -695,7 +695,7 @@ void PathFinding3D::setPosition(int num) {
 		if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0) // ox == 0.0f && oz == 0.0f
 			warning("setPosition: Unknown error : null light");
 
-		float t = sqrt(ox * ox + oz * oz);
+		float t = sqrtf(ox * ox + oz * oz);
 		ox /= t;
 		oz /= t;
 
@@ -760,7 +760,7 @@ void PathFinding3D::lookAt(float x, float z) {
 		return;
 	}
 
-	float t = sqrt(ox * ox + oz * oz);
+	float t = sqrtf(ox * ox + oz * oz);
 	ox /= t;
 	oz /= t;
 
@@ -1000,7 +1000,7 @@ void PathFinding3D::buildFramelist() {
 		if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0)
 			continue;
 
-		approx = sqrt(ox * ox + oz * oz);
+		approx = sqrtf(ox * ox + oz * oz);
 		ox /= approx;
 		oz /= approx;
 
@@ -1053,11 +1053,11 @@ void PathFinding3D::buildFramelist() {
 
 			theta = _step[index]._theta;
 
-			curLen = sqrt(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
+			curLen = sqrtf(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
 
 			theta = ((270.0f - theta) * M_PI) / 180.0f;
-			ox = cos(theta) * curLen;
-			oz = sin(theta) * curLen;
+			ox = cosf(theta) * curLen;
+			oz = sinf(theta) * curLen;
 
 			cx = _step[index]._px + _step[index]._dx;
 			float cz = _step[index]._pz + _step[index]._dz;
@@ -1092,11 +1092,11 @@ void PathFinding3D::buildFramelist() {
 
 			oldTheta = _step[index - 1]._theta;
 
-			curLen = sqrt(_step[index - 1]._dx * _step[index - 1]._dx + _step[index - 1]._dz * _step[index - 1]._dz);
+			curLen = sqrtf(_step[index - 1]._dx * _step[index - 1]._dx + _step[index - 1]._dz * _step[index - 1]._dz);
 
 			oldTheta = ((270.0f - oldTheta) * M_PI) / 180.0f;
-			ox = cos(oldTheta) * curLen;
-			oz = sin(oldTheta) * curLen;
+			ox = cosf(oldTheta) * curLen;
+			oz = sinf(oldTheta) * curLen;
 
 			cx = _step[index - 1]._px + _step[index - 1]._dx;
 			float cz = _step[index - 1]._pz + _step[index - 1]._dz;
@@ -1114,11 +1114,11 @@ void PathFinding3D::buildFramelist() {
 			oldTheta = theta;
 			theta = _step[index]._theta;
 
-			curLen = sqrt(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
+			curLen = sqrtf(_step[index]._dx * _step[index]._dx + _step[index]._dz * _step[index]._dz);
 
 			theta = ((270.0f - theta) * M_PI) / 180.0f;
-			ox = cos(theta) * curLen;
-			oz = sin(theta) * curLen;
+			ox = cosf(theta) * curLen;
+			oz = sinf(theta) * curLen;
 
 			cx = _step[index]._px + _step[index]._dx;
 			cz = _step[index]._pz + _step[index]._dz;
@@ -1435,7 +1435,7 @@ void PathFinding3D::pointOut() {
 	SPan *panel = &_panel[_curPanel];
 	float nx = panel->_z1 - panel->_z2;
 	float nz = panel->_x2 - panel->_x1;
-	float temp = sqrt(nx * nx + nz * nz);
+	float temp = sqrtf(nx * nx + nz * nz);
 	nx /= temp;
 	nz /= temp;
 
@@ -1558,14 +1558,14 @@ bool PathFinding3D::intersectLinePanel(SPan *p, float x, float y, float z) {
 	float dx = (x - x1);
 	float dy = (y - y1);
 	float dz = (z - z1);
-	float t = sqrt(dx * dx + dy * dy + dz * dz);
+	float t = sqrtf(dx * dx + dy * dy + dz * dz);
 	dx /= t;
 	dy /= t;
 	dz /= t;
 
 	float nx = p->_z1 - p->_z2;
 	float nz = p->_x2 - p->_x1;
-	t = sqrt(nx * nx + nz * nz);
+	t = sqrtf(nx * nx + nz * nz);
 	nx /= t;
 	nz /= t;
 	// ny is always equal to zero for panels
@@ -1609,7 +1609,7 @@ bool PathFinding3D::intersectLineFloor(float x, float y, float z) {
 	float dx = (x - x1);
 	float dy = (y - y1);
 	float dz = (z - z1);
-	float t = sqrt(dx * dx + dy * dy + dz * dz);
+	float t = sqrtf(dx * dx + dy * dy + dz * dz);
 	dx /= t;
 	dy /= t;
 	dz /= t;
@@ -1666,7 +1666,7 @@ void PathFinding3D::actorOrder() {
 
 	float ox = actor->_px + actor->_dx - actor->_camera->_ex;
 	float oz = actor->_pz + actor->_dz - actor->_camera->_ez;
-	float dist = sqrt(ox * ox + oz * oz);
+	float dist = sqrtf(ox * ox + oz * oz);
 	float lx = (-oz / dist) * largeValue;
 	float lz = (ox / dist) * largeValue;
 

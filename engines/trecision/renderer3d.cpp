@@ -503,8 +503,8 @@ void Renderer3D::calcCharacterPoints() {
 	actor->_area[5] = -32000;
 
 	float t = (actor->_theta * M_PI * 2) / 360.0;
-	float cost = cos(t);
-	float sint = sin(t);
+	float cost = cosf(t);
+	float sint = sinf(t);
 
 	// Put all vertices in dark color
 	for (int i = 0; i < MAXVERTEX; ++i)
@@ -527,7 +527,7 @@ void Renderer3D::calcCharacterPoints() {
 			ty = light->_y;
 
 			if (light->_position) {                       // if it's attenuated
-				dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
+				dist = sqrtf(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
 
 				// adjust light intensity due to the distance
 				if (_vm->floatComp(dist, light->_outr) == 1) // if it's out of range it's off
@@ -542,7 +542,7 @@ void Renderer3D::calcCharacterPoints() {
 			l0 = tx * cost - tz * sint;
 			l2 = tx * sint + tz * cost;
 			l1 = ty;
-			t = sqrt(l0 * l0 + l1 * l1 + l2 * l2);
+			t = sqrtf(l0 * l0 + l1 * l1 + l2 * l2);
 			l0 /= t;
 			l1 /= t;
 			l2 /= t;
@@ -556,12 +556,12 @@ void Renderer3D::calcCharacterPoints() {
 				pa1 = light->_dy;
 				pa2 = light->_dx * sint + light->_dz * cost;
 
-				t = sqrt(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
+				t = sqrtf(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
 				pa0 /= t;
 				pa1 /= t;
 				pa2 /= t;
 
-				tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / (M_PI * 2);
+				tz = acosf((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / (M_PI * 2);
 				tz = CLIP(tz, 0.f, 180.f);
 
 				// tx falloff
@@ -613,7 +613,7 @@ void Renderer3D::calcCharacterPoints() {
 				pa1 = curVertex->_ny;
 				pa2 = curVertex->_nz;
 
-				lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / M_PI);
+				lint = (int)((acosf(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / M_PI);
 				lint = CLIP(lint, 0, 180);
 
 				_vVertex[j]._angle -= (180 - lint);
