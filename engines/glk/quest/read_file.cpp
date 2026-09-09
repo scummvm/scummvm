@@ -407,9 +407,9 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFile &gf) {
 	*/
 	o << "Geas File\n";
 	for (StringArrayIntMap::const_iterator i = gf.type_indecies.begin(); i != gf.type_indecies.end(); i ++) {
-		o << "Blocks of type " << (*i)._key << "\n";
-		for (uint j = 0; j < (*i)._value.size(); j ++)
-			o << gf.blocks[(*i)._value[j]];
+		o << "Blocks of type " << i->_key << "\n";
+		for (uint j = 0; j < i->_value.size(); j ++)
+			o << gf.blocks[i->_value[j]];
 		o << "\n";
 	}
 

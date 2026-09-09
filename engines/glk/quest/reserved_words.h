@@ -71,7 +71,7 @@ public:
 		for (StringBoolMap::iterator i = _data.begin(); i != _data.end(); ++i) {
 			if (i != _data.begin())
 				o.writeString(", ");
-			o.writeString((*i)._key);
+			o.writeString(i->_key);
 		}
 
 		o.writeString("}");
