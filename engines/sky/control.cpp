@@ -1136,8 +1136,8 @@ void Control::initHelpPanel() {
 	}
 	Graphics::Surface *converted = surface->convertTo(_skyScreen->_screen32.format);
 
-	float scaleX = (float)GAME_SCREEN_WIDTH / converted->w;
-	float scaleY = (float)FULL_SCREEN_HEIGHT / converted->h;
+	float scaleX = (float)_skyScreen->_screen32.w / converted->w;
+	float scaleY = (float)_skyScreen->_screen32.h / converted->h;
 	float scaleFactor = MIN(scaleX, scaleY);
 
 	int16 newW = (int16)(converted->w * scaleFactor);
@@ -1147,8 +1147,8 @@ void Control::initHelpPanel() {
 	converted->free();
 	delete converted;
 
-	int destX = (GAME_SCREEN_WIDTH - newW) / 2;
-	int destY = (FULL_SCREEN_HEIGHT - newH) / 2;
+	int destX = (_skyScreen->_screen32.w - newW) / 2;
+	int destY = (_skyScreen->_screen32.h - newH) / 2;
 	Graphics::Font *font = nullptr;
 #ifdef USE_FREETYPE2
 	font = Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 12);
@@ -1346,6 +1346,7 @@ void Control::buttonControl(ConResource *pButton) {
 			_text->setSprite(NULL);
 	}
 	Common::Point mouse = _system->getEventManager()->getMousePos();
+	scaleCoordinates(mouse);
 	int destY = (mouse.y - 16 >= 0) ? mouse.y - 16 : 0;
 	_text->setXY(mouse.x + 12, destY);
 }
@@ -1492,6 +1493,7 @@ void Control::doControlPanel() {
 		}
 		bool haveButton = false;
 		Common::Point mouse = _system->getEventManager()->getMousePos();
+		scaleCoordinates(mouse);
 		for (uint8 lookCnt = 0; lookCnt < 9; lookCnt++) {
 			if (_controlPanLookList[lookCnt]->isMouseOver(mouse.x, mouse.y)) {
 				haveButton = true;
@@ -1647,6 +1649,7 @@ bool Control::getYesNo(char *text, uint bufSize) {
 			return retVal;
 		}
 		Common::Point mouse = _system->getEventManager()->getMousePos();
+		scaleCoordinates(mouse);
 		if ((mouse.y >= 83) && (mouse.y <= 110)) {
 			if ((mouse.x >= 77) && (mouse.x <= 114)) { // over 'yes'
 				wantMouse = MOUSE_CROSS;
@@ -1674,6 +1677,7 @@ bool Control::getYesNo(char *text, uint bufSize) {
 
 uint16 Control::doMusicSlide() {
 	Common::Point mouse = _system->getEventManager()->getMousePos();
+	scaleCoordinates(mouse);
 	int ofsY = _slide2->_y - mouse.y;
 	uint8 volume;
 	while (_mouseClicked) {
@@ -1681,6 +1685,7 @@ uint16 Control::doMusicSlide() {
 		if (!_controlPanel)
 			return 0;
 		mouse = _system->getEventManager()->getMousePos();
+		scaleCoordinates(mouse);
 		int newY = ofsY + mouse.y;
 		if (newY < 59) newY = 59;
 		if (newY > 91) newY = 91;
@@ -1706,6 +1711,7 @@ uint16 Control::doMusicSlide() {
 
 uint16 Control::doSpeedSlide() {
 	Common::Point mouse = _system->getEventManager()->getMousePos();
+	scaleCoordinates(mouse);
 	int ofsY = _slide->_y - mouse.y;
 	uint16 speedDelay = _slide->_y - (MPNL_Y + 93);
 	speedDelay *= SPEED_MULTIPLY;
@@ -1715,6 +1721,7 @@ uint16 Control::doSpeedSlide() {
 		if (!_controlPanel)
 			return SPEED_CHANGED;
 		mouse = _system->getEventManager()->getMousePos();
+		scaleCoordinates(mouse);
 		int newY = ofsY + mouse.y;
 		if (newY < MPNL_Y + 93) newY = MPNL_Y + 93;
 		if (newY > MPNL_Y + 104) newY = MPNL_Y + 104;
@@ -1953,6 +1960,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 
 		bool haveButton = false;
 		Common::Point mouse = _system->getEventManager()->getMousePos();
+		scaleCoordinates(mouse);
 		for (cnt = 0; cnt < lookListLen; cnt++)
 			if (lookList[cnt]->isMouseOver(mouse.x, mouse.y)) {
 				buttonControl(lookList[cnt]);
@@ -2123,6 +2131,13 @@ bool Control::loadSaveAllowed() {
 
 bool Control::isControlPanelOpen() {
 	return _controlPanel;
+}
+
+void Control::scaleCoordinates(Common::Point &mouse) {
+	if (SkyEngine::isIbass()) {
+		mouse.x = (mouse.x * 2) / 3;
+		mouse.y = (mouse.y * 5) / 8;
+	}
 }
 
 int Control::displayMessage(const char *message, ...) {
