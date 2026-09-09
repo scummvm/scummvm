@@ -216,7 +216,7 @@ void Window::enqueueAllMovies() {
 	}
 
 	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
-		_movieQueue.push_back((*file).getName());
+		_movieQueue.push_back(file->getName());
 
 	Common::sort(_movieQueue.begin(), _movieQueue.end());
 
