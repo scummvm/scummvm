@@ -296,7 +296,7 @@ float Paula::filterCalculateA0(int rate, int cutoff) {
 	/* Compensate for the bilinear transformation. This allows us to specify the
 	 * stop frequency more exactly, but the filter becomes less steep further
 	 * from stopband. */
-	omega = tan(omega / 2) * 2;
+	omega = tanf(omega / 2) * 2;
 	return 1 / (1 + 1 / omega);
 }
 

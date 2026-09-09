@@ -19,6 +19,7 @@
  *
  */
 
+
 #include "audio/effects/hmi/interfaces/mono_delay.h"
 
 namespace Audio {
@@ -62,7 +63,7 @@ int HMIMonoDelay::initEffect(HMIPreset *preset, HMIEffectNode *base) {
 
 int HMIMonoDelay::getMinDuration(HMIEffectNode *base, uint32 *out) {
 	HMIMonoDelayNode *n = (HMIMonoDelayNode *)base;
-	*out = (uint32)(log(kHmiMillis) / log(n->feedback) * n->delayTime);
+	*out = (uint32)(log(kHmiMillis) / logf(n->feedback) * n->delayTime);
 	return 0;
 }
 

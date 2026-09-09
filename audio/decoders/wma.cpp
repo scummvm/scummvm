@@ -425,7 +425,7 @@ void WMACodec::initNoise() {
 	_noiseIndex = 0;
 
 	uint  seed = 1;
-	float norm = (1.0 / (float)(1LL << 31)) * sqrt(3.0f) * _noiseMult;
+	float norm = (1.0f / (float)(1LL << 31)) * sqrtf(3.0f) * _noiseMult;
 
 	for (int i = 0; i < kNoiseTabSize; i++) {
 		seed = seed * 314159 + 1;
@@ -532,7 +532,7 @@ void WMACodec::initLSPToCurve() {
 		int   m = (1 << kLSPPowBits) + i;
 		float a = (float) m * (0.5 / (1 << kLSPPowBits));
 
-		a = pow(a, -0.25f);
+		a = powf(a, -0.25f);
 
 		_lspPowMTable1[i] = 2 * a - b;
 		_lspPowMTable2[i] = b - a;
@@ -1003,7 +1003,7 @@ float WMACodec::getNormalizedMDCTLength() const {
 
 	float mdctNorm = 1.0 / (float) n4;
 	if (_version == 1)
-		mdctNorm *= sqrt((float) n4);
+		mdctNorm *= sqrtf((float) n4);
 
 	return mdctNorm;
 }
@@ -1072,7 +1072,7 @@ void WMACodec::calculateMDCTCoefficients(int bSize, bool *hasChannel,
 				if (k >= 0 && _highBandCoded[i][k]) {
 					// Use noise with specified power
 
-					float mult1 = sqrt(expPower[k] / expPower[lastHighBand]);
+					float mult1 = sqrtf(expPower[k] / expPower[lastHighBand]);
 
 					mult1 *= pow(10, _highBandValues[i][k] * 0.05);
 					mult1 /= _maxExponent[i] * _noiseMult;

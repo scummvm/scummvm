@@ -881,7 +881,7 @@ void QDM2Stream::softclipTableInit(void) {
 	float delta = 1.0 / -dfl;
 
 	for (i = 0; i < ARRAYSIZE(_softclipTable); i++)
-		_softclipTable[i] = SOFTCLIP_THRESHOLD - ((int)(sin((float)i * delta) * dfl) & 0x0000FFFF);
+		_softclipTable[i] = SOFTCLIP_THRESHOLD - ((int)(sinf((float)i * delta) * dfl) & 0x0000FFFF);
 }
 
 // random generated table

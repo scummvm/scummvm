@@ -1655,7 +1655,7 @@ uint16 MidiDriver_ADLIB_Multisource::calculateFrequency(uint8 channel, uint8 sou
 		// Note that the resulting value is double the actual frequency because
 		// of the use of block 0 (which halves the frequency). This allows for
 		// slightly higher precision in the pitch bend calculation.
-		oplFrequency = round(noteFrequency * _oplFrequencyConversionFactor);
+		oplFrequency = roundf(noteFrequency * _oplFrequencyConversionFactor);
 		block = 0;
 	}
 
@@ -1779,7 +1779,7 @@ uint8 MidiDriver_ADLIB_Multisource::calculateUnscaledVolume(uint8 channel, uint8
 		// 40 log(velocity * volume * expression / 127 ^ 3)
 		// Note that velocity is not specified in detail in the MIDI standards;
 		// we use the same volume curve as channel volume and expression.
-		float volumeDb = 40 * log10((velocity * _controlData[source][channel].volume * _controlData[source][channel].expression) / 2048383.0f);
+		float volumeDb = 40 * log10f((velocity * _controlData[source][channel].volume * _controlData[source][channel].expression) / 2048383.0f);
 		// Convert to OPL volume (every unit is 0.75 dB attenuation). The
 		// operator volume is an additional (negative) volume adjustment to balance
 		// the instruments.

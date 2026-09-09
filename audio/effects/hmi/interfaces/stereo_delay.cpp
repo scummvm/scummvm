@@ -19,6 +19,7 @@
  *
  */
 
+
 #include "audio/effects/hmi/interfaces/stereo_delay.h"
 
 namespace Audio {
@@ -76,7 +77,7 @@ int HMIStereoDelay::getMinDuration(HMIEffectNode *base, uint32 *out) {
 	HMIStereoDelayNode *n = (HMIStereoDelayNode *)base;
 
 	double delay = n->delayTimeL > n->delayTimeR ? n->delayTimeL : n->delayTimeR;
-	*out = (uint32)(log(kHmiMillis) / log(n->feedback) * delay);
+	*out = (uint32)(log(kHmiMillis) / logf(n->feedback) * delay);
 	return 0;
 }
 
