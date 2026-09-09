@@ -24,10 +24,10 @@
 namespace Titanic {
 
 float FPoint::normalize() {
-	float hyp = sqrt(_x * _x + _y * _y);
+	float hyp = sqrtf(_x * _x + _y * _y);
 	assert(hyp != 0.0);
 
-	float fraction = 1.0 / hyp;
+	float fraction = 1.0f / hyp;
 	_x *= fraction;
 	_y *= fraction;
 	return hyp;

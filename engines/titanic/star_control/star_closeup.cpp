@@ -222,8 +222,8 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			f3 = (f1 + entryP->_fieldC) & 0x1FF;
 			f4 = _sineTable[f1 & 0x1FF] * entryP->_field10;
 			f5 = _sineTable[f3];
-			f6 = cos(f4);
-			f7 = sin(f4);
+			f6 = cosf(f4);
+			f7 = sinf(f4);
 			f8 = _sineTable[f3 + 128];
 			f9 = f7;
 			f10 = f6 * f8;
@@ -517,9 +517,9 @@ bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 				angle = Math::deg2rad<float>(degrees);
 
 				FVector &tempV = entry._data2[idx];
-				tempV._x = sin(angle) * sinVal * val;
+				tempV._x = sinf(angle) * sinVal * val;
 				tempV._y = cosVal * val;
-				tempV._z = cos(angle) * sinVal * val;
+				tempV._z = cosf(angle) * sinVal * val;
 			}
 		}
 	}

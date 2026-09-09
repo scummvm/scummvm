@@ -55,7 +55,7 @@ void FVector::rotVectAxisY(float angleDeg) {
 }
 
 bool FVector::normalize(float & hyp) {
-	hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	hyp = sqrtf(_x * _x + _y * _y + _z * _z);
 	if (hyp==0) {
 		return false;
 	}
@@ -82,9 +82,9 @@ FVector FVector::getPolarCoord() const {
 		assert(dest._x);
 	}
 
-	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
+	dest._y = acosf(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
 								// result is restricted to [0,pi]
-	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
+	dest._z = atan2f(vector._x,vector._z); // result is restricted to [-pi,pi]
 
 	return dest;
 }
@@ -94,7 +94,7 @@ float FVector::getDistance(const FVector &src) const {
 	float yd = src._y - _y;
 	float zd = src._z - _z;
 
-	return sqrt(xd * xd + yd * yd + zd * zd);
+	return sqrtf(xd * xd + yd * yd + zd * zd);
 }
 
 FVector FVector::matProdRowVect(const FPose &pose) const {
