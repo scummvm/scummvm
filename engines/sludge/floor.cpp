@@ -417,7 +417,7 @@ bool FloorManager::doBorderStuff(OnScreenPerson *moveMe) {
 	float yDiff = moveMe->thisStepY - moveMe->y;
 	float xDiff = moveMe->x - moveMe->thisStepX;
 	if (xDiff || yDiff) {
-		moveMe->wantAngle = 180 + ANGLEFIX * atan2(xDiff, yDiff * 2);
+		moveMe->wantAngle = 180 + ANGLEFIX * atan2f(xDiff, yDiff * 2);
 		moveMe->spinning = true;
 	}
 
