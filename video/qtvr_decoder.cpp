@@ -304,7 +304,7 @@ void QuickTimeDecoder::setPanAngle(float angle) {
 	PanoSampleDesc *desc = (PanoSampleDesc *)_panoTrack->sampleDescs[0];
 
 	float panRange = abs(desc->_hPanEnd - desc->_hPanStart);
-	angle = fmod(angle, panRange);
+	angle = fmodf(angle, panRange);
 
 	if (desc->_hPanStart != desc->_hPanEnd && (desc->_hPanStart != 0.0 || desc->_hPanEnd != 360.0)) {
 		if (angle < desc->_hPanStart + _hfov) {
@@ -1039,7 +1039,7 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 		} else if (warpMode == 2) {
 			xCoord = t * mousePixelVector[0] / mousePixelVector[2];
 		}
-		yawRatio = atan(xCoord) / (2.0 * M_PI);
+		yawRatio = atanf(xCoord) / (2.0 * M_PI);
 	}
 
 	float angleT = (360.0f - _decoder->_panAngle) / 360.0f;
@@ -1048,14 +1048,14 @@ Common::Point QuickTimeDecoder::PanoTrackHandler::projectPoint(int16 mx, int16 m
 	hotX = (1.0f - (angleT + yawRatio)) * (float)hotHeight;
 
 	if (warpMode == 0) {
-		float tiltFactor = tan(verticalFovRadians / 2.0f);
+		float tiltFactor = tanf(verticalFovRadians / 2.0f);
 		float normalizedY = ((float)my / (float)(h - 1)) * 2.0f - 1.0f;  // Range [-1, 1]
-		float projectedY = (normalizedY * tiltFactor) + tan(tiltAngleRadians);
+		float projectedY = (normalizedY * tiltFactor) + tanf(tiltAngleRadians);
 		hotY = static_cast<int32>((projectedY + 1.0f) / 2.0f * hotWidth);
 	} else {
 		// To get the vertical coordinate, need to project the vector on to a unit cylinder.
 		// To do that, compute the length of the XZ vector,
-		float xzVectorLen = sqrt(xCoord * xCoord + 1.0f);
+		float xzVectorLen = sqrtf(xCoord * xCoord + 1.0f);
 
 		float projectedY = xzVectorLen * mousePixelVector[1] / mousePixelVector[2];
 		float normalizedYCoordinate = (projectedY - minTiltY) / (maxTiltY - minTiltY);
@@ -1188,7 +1188,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 	float maxProjectedY = bottomRightVector[1] / bottomRightVector[2];
 
 	float panRange = abs(desc->_hPanEnd - desc->_hPanStart);
-	float angleT = fmod((panRange - panAngle) / panRange, 1.0f);
+	float angleT = fmodf((panRange - panAngle) / panRange, 1.0f);
 	if (angleT < 0.0f) {
 		angleT += 1.0f;
 	}
@@ -1279,7 +1279,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 			float xCoord = t * maxProjectedX;
 
 			float yCoords[2] = {minProjectedY, maxProjectedY};
-			float length = sqrt(xCoord * xCoord + 1.0f);
+			float length = sqrtf(xCoord * xCoord + 1.0f);
 
 			// Compute projection ranges
 			for (int v = 0; v < 2; v++) {
@@ -1288,7 +1288,7 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 				cylinderProjectionRanges[x * 2 + v] = (newY - minTiltY) / (maxTiltY - minTiltY);
 			}
 
-			cylinderAngleOffsets[x] = atan(xCoord) * 0.5f / M_PI;
+			cylinderAngleOffsets[x] = atanf(xCoord) * 0.5f / M_PI;
 		}
 	}
 
@@ -1343,9 +1343,9 @@ void QuickTimeDecoder::PanoTrackHandler::projectPanorama(uint8 scaleFactor,
 			int32 sourceYCoord;
 
 			if (warpMode == 0) {
-				float tiltFactor = tan(verticalFovRadians / 2.0f);
+				float tiltFactor = tanf(verticalFovRadians / 2.0f);
 				float normalizedY = ((float)y / (float)(h - 1)) * 2.0f - 1.0f;
-				float projectedY = (normalizedY * tiltFactor) - tan(tiltAngleRadians);
+				float projectedY = (normalizedY * tiltFactor) - tanf(tiltAngleRadians);
 				sourceYCoord = static_cast<int32>((projectedY + 1.0f) / 2.0f * panoHeight);
 			} else {
 				sourceYCoord = (2 * y + 1) * (bottomSrcCoord - topSrcCoord) / (2 * h) + topSrcCoord;
@@ -1550,7 +1550,7 @@ void QuickTimeDecoder::handleObjectMouseMove(int16 x, int16 y) {
 	bool changed = false;
 
 	if (ABS(mouseDeltaY) >= sensitivity) {
-		int newFrame = track->getCurFrame() - round(speedY) * _nav.columns;
+		int newFrame = track->getCurFrame() - roundf(speedY) * _nav.columns;
 
 		if (newFrame >= 0 && newFrame < track->getFrameCount()) {
 			track->setCurFrame(newFrame);

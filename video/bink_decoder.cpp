@@ -1591,7 +1591,7 @@ void BinkDecoder::BinkAudioTrack::readAudioCoeffs(float *coeffs) {
 		int value = _audioInfo->bits->getBits<8>();
 
 		//                              0.066399999 / log10(M_E)
-		quant[i] = exp(MIN(value, 95) * 0.15289164787221953823f) * _audioInfo->root;
+		quant[i] = expf(MIN(value, 95) * 0.15289164787221953823f) * _audioInfo->root;
 	}
 
 	float q = 0.0;
