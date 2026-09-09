@@ -3270,7 +3270,7 @@ bool CGtlData::DetermineGameEligibility(CXodj *xpXodj, int iGameCode, bool bExec
 			CDC *pDC = nullptr;
 			if ((pDC = gpMyView->GetDC()) != nullptr) {
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, true);
-				nDevCaps = (*pDC).GetDeviceCaps(RASTERCAPS);
+				nDevCaps = pDC->GetDeviceCaps(RASTERCAPS);
 				m_cBgbMgr.m_xpBsuSet->PrepareDc(pDC, false);
 				gpMyView->ReleaseDC(pDC);
 				if (!(nDevCaps & RC_PALETTE)) {

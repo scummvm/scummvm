@@ -101,9 +101,9 @@ void CBmpDialog::OnDestroy() {
 		delete m_pDlgBackground;
 		m_pDlgBackground = nullptr;
 
-		bUpdateNeeded = (*m_pParentWnd).GetUpdateRect(nullptr, false);
+		bUpdateNeeded = m_pParentWnd->GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			(*m_pParentWnd).ValidateRect(nullptr);
+			m_pParentWnd->ValidateRect(nullptr);
 	}
 
 	CDialog::OnDestroy();
@@ -121,7 +121,7 @@ bool CBmpDialog::OnInitDialog() {
 
 	// get the button's position and size
 
-	(*m_pParentWnd).GetWindowRect(&cWindRect);          // get pos/size of parent
+	m_pParentWnd->GetWindowRect(&cWindRect);          // get pos/size of parent
 	((CWnd *)this)->GetWindowRect(&cDlgRect);           // get pos/size of dialog
 
 	pDC = GetDC();

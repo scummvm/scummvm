@@ -115,7 +115,7 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 26, LEFT_SIDE + 175, 41);
 	if ((m_pButtonsText = new CText()) != nullptr) {
-		(*m_pButtonsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pButtonsText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollButtons.SetScrollRange(MIN_BUTTONS, MAX_BUTTONS, 0);
@@ -123,31 +123,31 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 175, 80);
 	if ((m_pSpeedText = new CText()) != nullptr) {
-		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pSpeedText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
 	m_ScrollSpeed.SetScrollPos(m_nSpeed, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 	if ((pGameButton = new CRadioButton) != nullptr) {                 // build a color QUIT button to let us exit
-		(*pGameButton).SetPalette(pSubOptionsPalette);                      // set the palette to use
-		(*pGameButton).SetControl(IDC_PLAYGAME, this);              // tie to the dialog control
+		pGameButton->SetPalette(pSubOptionsPalette);                      // set the palette to use
+		pGameButton->SetControl(IDC_PLAYGAME, this);              // tie to the dialog control
 	}
 
 
 	if ((pMusicButton = new CRadioButton) != nullptr) {                    // build a color QUIT button to let us exit
-		(*pMusicButton).SetPalette(pSubOptionsPalette);                     // set the palette to use
-		(*pMusicButton).SetControl(IDC_PLAYMUSIC, this);            // tie to the dialog control
+		pMusicButton->SetPalette(pSubOptionsPalette);                     // set the palette to use
+		pMusicButton->SetControl(IDC_PLAYMUSIC, this);            // tie to the dialog control
 	}
 
 
@@ -169,14 +169,14 @@ bool COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_PLAYGAME:
 			m_bPlayGame = true;
-			(*pGameButton).SetCheck(m_bPlayGame);
-			(*pMusicButton).SetCheck(!m_bPlayGame);
+			pGameButton->SetCheck(m_bPlayGame);
+			pMusicButton->SetCheck(!m_bPlayGame);
 			break;
 
 		case IDC_PLAYMUSIC:
 			m_bPlayGame = false;
-			(*pGameButton).SetCheck(m_bPlayGame);
-			(*pMusicButton).SetCheck(!m_bPlayGame);
+			pGameButton->SetCheck(m_bPlayGame);
+			pMusicButton->SetCheck(!m_bPlayGame);
 			break;
 
 		case IDOK:
@@ -237,7 +237,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
+		pScrollBar->SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();
@@ -282,14 +282,14 @@ void COptnDlg::UpdateScrollbars() {
 	m_nNumButtons = m_ScrollButtons.GetScrollPos();
 	if (OldValue != m_nNumButtons) {
 		Common::sprintf_s(msg, "Number of Musicians:  %d", m_nNumButtons);
-		(*m_pButtonsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pButtonsText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if (OldValue != m_nSpeed) {
 		Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
-		(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pSpeedText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	ReleaseDC(pDC);
@@ -314,13 +314,13 @@ void COptnDlg::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(msg, "Number of Musicians:  %d", m_nNumButtons);
-	(*m_pButtonsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pButtonsText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
-	(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pSpeedText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
-	(*pGameButton).SetCheck(m_bPlayGame);
-	(*pMusicButton).SetCheck(!m_bPlayGame);
+	pGameButton->SetCheck(m_bPlayGame);
+	pMusicButton->SetCheck(!m_bPlayGame);
 
 	ReleaseDC(pDC);
 

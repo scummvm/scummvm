@@ -147,7 +147,7 @@ bool CLongDialog::OnInitDialog() {
 	);
 
 	if ((m_cTextMessage1 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage1->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
@@ -160,7 +160,7 @@ bool CLongDialog::OnInitDialog() {
 	);
 
 	if ((m_cTextMessage2 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage2->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
@@ -174,7 +174,7 @@ bool CLongDialog::OnInitDialog() {
 		    nStat_row_offset + (12 * i) + nStatHeight
 		);
 		if ((m_cWordList[i] = new CText()) != nullptr) {
-			bAssertCheck = (*m_cWordList[i]).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+			bAssertCheck = m_cWordList[i]->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 			ASSERT(bAssertCheck);   // initialize the text objext
 		}
 	}
@@ -182,9 +182,9 @@ bool CLongDialog::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	if ((m_pButton1 = new CColorButton) != nullptr) {            // build the first color button
-		(*m_pButton1).SetPalette(m_pPalette);                 // set the palette to use
-		(*m_pButton1).SetControl(IDOK, this);                 // tie to the dialog control
-		(*m_pButton1).SetWindowText(m_pszButton1Text);
+		m_pButton1->SetPalette(m_pPalette);                 // set the palette to use
+		m_pButton1->SetControl(IDOK, this);                 // tie to the dialog control
+		m_pButton1->SetWindowText(m_pszButton1Text);
 	}
 
 	return true;  // return true  unless you set the focus to a control

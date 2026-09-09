@@ -776,24 +776,24 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (birdRect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pMyGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, BIRD_ANIM, NUM_BIRD_CELS);
+		pSprite->SharePalette(pMyGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, BIRD_ANIM, NUM_BIRD_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
-		if ((*pGameParams).bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_BIRD, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
 				pEffect->play();
 			}
 		}
-		(*pSprite).SetCel(NUM_BIRD_CELS);
+		pSprite->SetCel(NUM_BIRD_CELS);
 		for (i = 0; i < NUM_BIRD_CELS; i++) {
-			(*pSprite).PaintSprite(pDC, BIRD_X, BIRD_Y);
+			pSprite->PaintSprite(pDC, BIRD_X, BIRD_Y);
 			CSound::handleMessages();
 			Sleep(BIRD_SLEEP);
 		}
@@ -804,24 +804,24 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (horse1Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pMyGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, HORSE1_ANIM, NUM_HORSE1_CELS);
+		pSprite->SharePalette(pMyGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, HORSE1_ANIM, NUM_HORSE1_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
-		if ((*pGameParams).bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE1, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
 				pEffect->play();
 			}
 		}
-		(*pSprite).SetCel(NUM_HORSE1_CELS);
+		pSprite->SetCel(NUM_HORSE1_CELS);
 		for (i = 0; i < NUM_HORSE1_CELS; i++) {
-			(*pSprite).PaintSprite(pDC, HORSE1_X, HORSE1_Y);
+			pSprite->PaintSprite(pDC, HORSE1_X, HORSE1_Y);
 			CSound::handleMessages();
 			Sleep(HORSE1_SLEEP);
 		}
@@ -833,24 +833,24 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (horse2Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pMyGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, HORSE2_ANIM, NUM_HORSE2_CELS);
+		pSprite->SharePalette(pMyGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, HORSE2_ANIM, NUM_HORSE2_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
-		if ((*pGameParams).bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_HORSE2, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
 				pEffect->play();
 			}
 		}
-		(*pSprite).SetCel(NUM_HORSE2_CELS);
+		pSprite->SetCel(NUM_HORSE2_CELS);
 		for (i = 0; i < NUM_HORSE2_CELS; i++) {
-			(*pSprite).PaintSprite(pDC, HORSE2_X, HORSE2_Y);
+			pSprite->PaintSprite(pDC, HORSE2_X, HORSE2_Y);
 			CSound::handleMessages();
 			Sleep(HORSE2_SLEEP);
 		}
@@ -862,24 +862,24 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (flowerRect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pMyGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, FLOWER_ANIM, NUM_FLOWER_CELS);
+		pSprite->SharePalette(pMyGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, FLOWER_ANIM, NUM_FLOWER_CELS);
 		if (!bSuccess) {
 			delete pSprite;
 			ReleaseDC(pDC);
 			return;
 		}
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
-		if ((*pGameParams).bSoundEffectsEnabled) {
+		if (pGameParams->bSoundEffectsEnabled) {
 			if ((pEffect = new CSound((CWnd *)this, WAV_FLOWER, SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE | SOUND_QUEUE)) != nullptr) {
 				pEffect->play();
 			}
 		}
-		(*pSprite).SetCel(NUM_FLOWER_CELS);
+		pSprite->SetCel(NUM_FLOWER_CELS);
 		for (i = 0; i < NUM_FLOWER_CELS; i++) {
-			(*pSprite).PaintSprite(pDC, FLOWER_X, FLOWER_Y);
+			pSprite->PaintSprite(pDC, FLOWER_X, FLOWER_Y);
 			CSound::handleMessages();
 			Sleep(FLOWER_SLEEP);
 		}

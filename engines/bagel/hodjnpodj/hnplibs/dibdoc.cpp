@@ -48,7 +48,7 @@ CDibDoc::~CDibDoc() {
 	delete m_hDIB;
 
 	if (m_palDIB != nullptr) {
-		(*m_palDIB).DeleteObject();
+		m_palDIB->DeleteObject();
 		delete m_palDIB;
 	}
 }

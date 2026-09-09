@@ -102,13 +102,13 @@ CLife::CLife(CDC *pDC) {
 
 	for (i = 0 ; i < VILLAGES ; i++) {
 		pBaseSprite[i] = new CSprite();
-		(*pBaseSprite[i]).SharePalette(pGamePalette);
-		bCheck = (*pBaseSprite[i]).LoadSprite(pDC, curly[i]);
+		pBaseSprite[i]->SharePalette(pGamePalette);
+		bCheck = pBaseSprite[i]->LoadSprite(pDC, curly[i]);
 		ASSERT(bCheck);
 
-		(*pBaseSprite[i]).SetMobile(true);
-		(*pBaseSprite[i]).SetMasked(true);
-		(*pBaseSprite[i]).SetOptimizeSpeed(true);
+		pBaseSprite[i]->SetMobile(true);
+		pBaseSprite[i]->SetMasked(true);
+		pBaseSprite[i]->SetOptimizeSpeed(true);
 	}
 
 	for (i = 0 ; i < MONTHS ; i++) {
@@ -223,7 +223,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlay
 	row = (point.y - BOARD_START_ROW) / (BOARD_SPACING_TIMES_TWO + CURLY_Y);
 	col = (point.x - BOARD_START_COL) / (BOARD_SPACING_TIMES_TWO + CURLY_X);
 
-	if (!(*pColony).islife(row, col)) { //life at this cell now?
+	if (!pColony->islife(row, col)) { //life at this cell now?
 		// No - so do we have colonies left to place?
 		if (!nLifeCounter && !bIsInfiniteLife) {
 			// No - so indicate this to user
@@ -241,7 +241,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlay
 	} // end if
 
 	// flip it on/off
-	(*pColony).flip(row, col);
+	pColony->flip(row, col);
 
 	// Update colony placed count on the board
 	gMainWnd->RefreshStats();
@@ -252,7 +252,7 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlay
 
 	pSprite = CSprite::GetSpriteChain();
 	// User want to turn life off?
-	if ((*pColony).islife(row, col)) {
+	if (pColony->islife(row, col)) {
 		if (bIsInfiniteLife != true) {
 			//decrement colony counter if not infinite
 			nLifeCounter--;
@@ -261,12 +261,12 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlay
 			ASSERT(bAssertCheck);   // paint the text
 		}
 		i = brand() % VILLAGES;
-		pSprite = (*pBaseSprite[i]).DuplicateSprite(pDC);
-		mySize = (*pSprite).GetSize();
-		(*pSprite).LinkSprite();
+		pSprite = pBaseSprite[i]->DuplicateSprite(pDC);
+		mySize = pSprite->GetSize();
+		pSprite->LinkSprite();
 
 		// paint the sprite in its new location
-		(*pSprite).PaintSprite(pDC,
+		pSprite->PaintSprite(pDC,
 		                       sprite_loc.x,  // finding center of cell
 		                       sprite_loc.y);
 
@@ -284,8 +284,8 @@ void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, bool bPlay
 
 		pSprite = CSprite::Touched(sprite_loc);
 		if (pSprite != nullptr) { // See if the point is in the sprite's rectangle
-			(*pSprite).RefreshBackground(pDC);      // ... simply repaint background
-			(*pSprite).UnlinkSprite(); // ... and if so, unlink it from chain
+			pSprite->RefreshBackground(pDC);      // ... simply repaint background
+			pSprite->UnlinkSprite(); // ... and if so, unlink it from chain
 			delete pSprite;
 		}
 	}
@@ -323,21 +323,21 @@ void CLife::evolution(CDC *pDC) {
 	CPoint sprite_loc;                  // center location of sprite on board
 	int i;                              // used to gen random village
 	int row, col;                           // indexs help find board cell
-	colony colonyCopy((*pColony).row(), (*pColony).col());
+	colony colonyCopy(pColony->row(), pColony->col());
 
 	// make copy of original pColony for later ref
 	colonyCopy = (*pColony);
 	// Update stats
 	if (m_nYears == 0) //just starting evolution?
-		m_nCumLife = (*pColony).m_nColony_count;
+		m_nCumLife = pColony->m_nColony_count;
 	else
-		m_nCumLife += (*pColony).m_nColony_count;
+		m_nCumLife += pColony->m_nColony_count;
 
 	m_nYears++;
 	m_dScore = ((double) m_nCumLife) / ((double) m_nYears);
 
 	//Evolve internal board
-	(*pColony).evolve(colonyCopy);
+	pColony->evolve(colonyCopy);
 
 	// update score
 	if (m_nCumLife > LARGE && bIsInfiniteTurns) { // This prevents int overflow
@@ -351,28 +351,28 @@ void CLife::evolution(CDC *pDC) {
 
 	//Update visual board
 	if (colonyCopy != (*pColony))
-		for (row = 0; row < (*pColony).row(); row++)
-			for (col = 0; col < (*pColony).col(); col++) {
+		for (row = 0; row < pColony->row(); row++)
+			for (col = 0; col < pColony->col(); col++) {
 				pSprite = CSprite::GetSpriteChain();
 
 				// Any change for this particular cell?
-				if (colonyCopy.islife(row, col) == (*pColony).islife(row, col))
+				if (colonyCopy.islife(row, col) == pColony->islife(row, col))
 					continue;  // no change -- loop
 
-				if ((*pColony).islife(row, col)) { //Need to put a sprite there?
+				if (pColony->islife(row, col)) { //Need to put a sprite there?
 					// Yes, paint new sprite in cell
 					i = brand() % VILLAGES;
-					pSprite = (*pBaseSprite[i]).DuplicateSprite(pDC);
-					mySize = (*pSprite).GetSize();
+					pSprite = pBaseSprite[i]->DuplicateSprite(pDC);
+					mySize = pSprite->GetSize();
 					//set it up to be centered
 
 					sprite_loc.y = BOARD_START_ROW + (CURLY_Y + BOARD_SPACING_TIMES_TWO) * row;
 					sprite_loc.x = BOARD_START_COL + (CURLY_X + BOARD_SPACING_TIMES_TWO) * col;
 
-					(*pSprite).LinkSprite();
+					pSprite->LinkSprite();
 
 					// paint the sprite in its new location
-					(*pSprite).PaintSprite(pDC,
+					pSprite->PaintSprite(pDC,
 					                       sprite_loc.x,  // finding center of cell
 					                       sprite_loc.y);
 				} else {
@@ -383,8 +383,8 @@ void CLife::evolution(CDC *pDC) {
 
 					pSprite = CSprite::Touched(sprite_loc);
 					if (pSprite != nullptr) { // See if the point is in the sprite's rectangle
-						(*pSprite).RefreshBackground(pDC);      // ... simply repaint background
-						(*pSprite).UnlinkSprite(); // ... and if so, unlink it from chain
+						pSprite->RefreshBackground(pDC);      // ... simply repaint background
+						pSprite->UnlinkSprite(); // ... and if so, unlink it from chain
 						delete pSprite;
 					}
 				}
@@ -417,7 +417,7 @@ void CLife::evolution(CDC *pDC) {
  *
  ****************************************************************/
 void CLife::NewGame(CDC *pDC) {
-	colony  pColonyCopy((*pColony).row(), (*pColony).col());
+	colony  pColonyCopy(pColony->row(), pColony->col());
 
 	// Reset internal grid
 	(*pColony)      = pColonyCopy;

@@ -117,9 +117,9 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	pDibDoc = new CDibDoc();                        // create an object to hold our splash screen
 	ASSERT(pDibDoc);                                // ... and verify we got it
-	bSuccess = (*pDibDoc).OpenDocument(SPLASHSPEC); // next load in the actual DIB based artwork
+	bSuccess = pDibDoc->OpenDocument(SPLASHSPEC); // next load in the actual DIB based artwork
 	ASSERT(bSuccess);                               // next load in the actual DIB based artwork
-	pGamePalette = (*pDibDoc).DetachPalette();      // grab its palette and save it for later use
+	pGamePalette = pDibDoc->DetachPalette();      // grab its palette and save it for later use
 	delete pDibDoc;                                 // now discard the splash screen
 
 	MainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
@@ -156,11 +156,11 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	                   SCROLL_BUTTON_Y,
 	                   SCROLL_BUTTON_X + SCROLL_BUTTON_DX,
 	                   SCROLL_BUTTON_Y + SCROLL_BUTTON_DY + 1);
-	bSuccess = (*m_pScrollButton).Create(nullptr,              // create the actual button
+	bSuccess = m_pScrollButton->Create(nullptr,              // create the actual button
 	                                     BS_OWNERDRAW | WS_CHILD | WS_VISIBLE,
 	                                     ScrollRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pScrollButton).LoadBitmaps(    // load the artwork for the button states
+	bSuccess = m_pScrollButton->LoadBitmaps(    // load the artwork for the button states
 	               "SCROLLUP",
 	               "SCROLLDOWN",
 	               "SCROLLUP",
@@ -236,7 +236,7 @@ CMainWindow::CMainWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 	if (m_lpGameStruct->bMusicEnabled) {
 		if (pGameSound != nullptr) {
-			(*pGameSound).midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);    //32750
+			pGameSound->midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);    //32750
 		} // end if pGameSound
 	}
 
@@ -370,14 +370,14 @@ void CMainWindow::SplashScreen() {
 	rcDIB.top = rcDIB.left = 0;                         // setup the source rectangle from which
 	rcDIB.right = cxDIB;                                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;
-	PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);    // transfer the image to the screen
+	PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);    // transfer the image to the screen
 
 	pSprite = CSprite::GetSpriteChain();                // now get a pointer to the sprite chain
 	while (pSprite) {                                   // ... and for each sprite, clear its saved
-		(*pSprite).ClearBackground();                   // ... background and repaint its image, thus
-		bSuccess = (*pSprite).RefreshSprite(pDC);       // ... restoring the image but forcing it to
+		pSprite->ClearBackground();                   // ... background and repaint its image, thus
+		bSuccess = pSprite->RefreshSprite(pDC);       // ... restoring the image but forcing it to
 		ASSERT(bSuccess);                               // ... restoring the image but forcing it to
-		pSprite = (*pSprite).GetNextSprite();
+		pSprite = pSprite->GetNextSprite();
 	}          // ... fetch/save the background it covers up
 
 	if (m_bIsFirstTimeHack == true) {
@@ -391,8 +391,8 @@ void CMainWindow::DisplayStats(CDC *pDC) {
 	bool        bSuccess;
 
 	if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {
-		(*m_pHourGlass).ClearBackground();                  // ... background and repaint its image, thus
-		bSuccess = (*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
+		m_pHourGlass->ClearBackground();                  // ... background and repaint its image, thus
+		bSuccess = m_pHourGlass->RefreshSprite(pDC);      // ... restoring the image but forcing it to
 		ASSERT(bSuccess);                                   // ... restoring the image but forcing it to
 	}
 
@@ -406,8 +406,8 @@ void CMainWindow::RefreshStats() {
 
 	if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {                // Game is timed
 		if (m_pHourGlass != nullptr) {
-			(*m_pHourGlass).ClearBackground();                  // ... background and repaint its image, thus
-			(*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
+			m_pHourGlass->ClearBackground();                  // ... background and repaint its image, thus
+			m_pHourGlass->RefreshSprite(pDC);      // ... restoring the image but forcing it to
 		}
 	}
 	if (m_cCryptograms->bIsGameOver == true) {
@@ -504,7 +504,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_OPTIONS_RULES:
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 
 			CSound::waitWaveSounds();
 			RulesDlg.DoModal();
@@ -548,7 +548,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			ReleaseDC(pDC);
 
 			m_bIgnoreScrollClick = false;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 			if (m_cCryptograms->IsSolved() == true) {
 				GameWin();
 				if (m_lpGameStruct->bPlayingMetagame)
@@ -560,24 +560,24 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_SCROLL:
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 				m_bPause = false;
 				break;
 
 			case IDC_OPTIONS_NEWGAME:
 				pDC = GetDC();
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 
 				//UpdateWindow();
@@ -591,7 +591,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			} //end switch(ComDlg.DoModal())
 			if ((m_lpGameStruct->bMusicEnabled == false) && (pGameSound != nullptr)) {
 				if (pGameSound->playing())
-					(*pGameSound).stop();
+					pGameSound->stop();
 			} else if (m_lpGameStruct->bMusicEnabled) {
 				if (pGameSound == nullptr) {
 					pGameSound = new CSound(this, GAME_THEME,
@@ -599,7 +599,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
-						(*pGameSound).midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(1080, 32500, 0, FMT_MILLISEC);
 				} // end if pGameSound
 			}
 			break;
@@ -608,7 +608,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	}
 
-	(*this).SetFocus();                     // Reset focus back to the main window
+	(this)->SetFocus();                     // Reset focus back to the main window
 	return true;
 }
 
@@ -760,7 +760,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	hourRect.SetRect(HOUR_X, HOUR_Y, HOUR_X + HOUR_DX, HOUR_Y + HOUR_DY);
 
 	pDC = GetDC();
-	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == true) {
+	if (m_cCryptograms->HandleUserUpdate(pDC, point) == true) {
 		GameWin();
 		if (m_lpGameStruct->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);
@@ -773,11 +773,11 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	else if (skullRect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, "art\\skull.bmp", NUM_SKULL_CELS);
+		pSprite->SharePalette(pGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, "art\\skull.bmp", NUM_SKULL_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			nPick = brand() % NUM_SKULL_SOUNDS;
@@ -809,20 +809,20 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 			}
 			pEffect = new CSound((CWnd *)this, bufName, SOUND_QUEUE |
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                      //...play the narration
+			pEffect->play();                                                      //...play the narration
 		} else      // no sound playing
 			nSleepTime = SKULL_SLEEP;
 
 		if (bSuccess) {
-			(*pSprite).SetCel(NUM_SKULL_CELS);
+			pSprite->SetCel(NUM_SKULL_CELS);
 			for (i = 0; i < NUM_SKULL_CELS; i++) {
-				(*pSprite).PaintSprite(pDC, SKULL_X, SKULL_Y);
+				pSprite->PaintSprite(pDC, SKULL_X, SKULL_Y);
 				if (i < (NUM_SKULL_CELS - 1))
 					Sleep(nSleepTime);
 			}
 			if (nPick == 1) {
 				for (i = 0; i < NUM_SKULL_CELS; i++) {
-					(*pSprite).PaintSprite(pDC, SKULL_X, SKULL_Y);
+					pSprite->PaintSprite(pDC, SKULL_X, SKULL_Y);
 					Sleep(JOKE2B_SLEEP);
 				}
 			}
@@ -834,21 +834,21 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (urn1Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn01.bmp", NUM_URN1_CELS);
+		pSprite->SharePalette(pGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, "art\\urn01.bmp", NUM_URN1_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN1, SOUND_QUEUE |
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                      //...play the narration
+			pEffect->play();                                                      //...play the narration
 		}
 		if (bSuccess) {
-			(*pSprite).SetCel(NUM_URN1_CELS);
+			pSprite->SetCel(NUM_URN1_CELS);
 			for (i = 0; i < NUM_URN1_CELS; i++) {
-				(*pSprite).PaintSprite(pDC, URN1_X, URN1_Y);
+				pSprite->PaintSprite(pDC, URN1_X, URN1_Y);
 				Sleep(URN1_SLEEP);
 			}
 		}
@@ -859,21 +859,21 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (urn2Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn02.bmp", NUM_URN2_CELS);
+		pSprite->SharePalette(pGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, "art\\urn02.bmp", NUM_URN2_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN2, SOUND_QUEUE |
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                      //...play the narration
+			pEffect->play();                                                      //...play the narration
 		}
 		if (bSuccess) {
-			(*pSprite).SetCel(NUM_URN2_CELS);
+			pSprite->SetCel(NUM_URN2_CELS);
 			for (i = 0; i < NUM_URN2_CELS; i++) {
-				(*pSprite).PaintSprite(pDC, URN2_X, URN2_Y);
+				pSprite->PaintSprite(pDC, URN2_X, URN2_Y);
 				Sleep(URN2_SLEEP);
 			}
 		}
@@ -884,21 +884,21 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (urn3Rect.PtInRect(point)) {
 		pDC = GetDC();
 		pSprite = new CSprite;
-		(*pSprite).SharePalette(pGamePalette);
-		bSuccess = (*pSprite).LoadCels(pDC, "art\\urn03.bmp", NUM_URN3_CELS);
+		pSprite->SharePalette(pGamePalette);
+		bSuccess = pSprite->LoadCels(pDC, "art\\urn03.bmp", NUM_URN3_CELS);
 		ASSERT(bSuccess);
-		(*pSprite).SetMasked(false);
-		(*pSprite).SetMobile(false);
+		pSprite->SetMasked(false);
+		pSprite->SetMobile(false);
 
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_URN3, SOUND_QUEUE |
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                      //...play the narration
+			pEffect->play();                                                      //...play the narration
 		}
 		if (bSuccess) {
-			(*pSprite).SetCel(NUM_URN3_CELS);
+			pSprite->SetCel(NUM_URN3_CELS);
 			for (i = 0; i < NUM_URN3_CELS; i++) {
-				(*pSprite).PaintSprite(pDC, URN3_X, URN3_Y);
+				pSprite->PaintSprite(pDC, URN3_X, URN3_Y);
 				Sleep(URN3_SLEEP);
 			}
 		}
@@ -909,22 +909,22 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	} else if (gryphRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
 		pEffect = new CSound((CWnd *)this, WAV_GRYPH, SOUND_QUEUE |
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	} else if (stepsRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled)) {
 		pEffect = new CSound((CWnd *)this, WAV_STEPS, SOUND_QUEUE |
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	} else if (m_cCryptograms->m_cStats->m_nTime < MAX_TIME &&
 	           (hourRect.PtInRect(point) && (m_lpGameStruct->bSoundEffectsEnabled))) {
 		pEffect = new CSound((CWnd *)this, WAV_HOUR, SOUND_QUEUE |
 		                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-		(*pEffect).play();                                                      //...play the narration
+		pEffect->play();                                                      //...play the narration
 	} else if (((torch1Rect.PtInRect(point)) || (torch2Rect.PtInRect(point))) ||
 	           ((torch3Rect.PtInRect(point)) || (torch4Rect.PtInRect(point)))) {
 		if (m_lpGameStruct->bSoundEffectsEnabled) {
 			pEffect = new CSound((CWnd *)this, WAV_TORCH, SOUND_QUEUE |
 			                     SOUND_WAVE | SOUND_ASYNCH | SOUND_AUTODELETE);  //...Wave file, to delete itself
-			(*pEffect).play();                                                      //...play the narration
+			pEffect->play();                                                      //...play the narration
 		}
 	}
 }
@@ -938,7 +938,7 @@ void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	CDC *pDC;
 
 	pDC = GetDC();
-	if ((*m_cCryptograms).HandleUserUpdate(pDC, point) == true) {
+	if (m_cCryptograms->HandleUserUpdate(pDC, point) == true) {
 		GameWin();
 		if (m_lpGameStruct->bPlayingMetagame)
 			PostMessage(WM_CLOSE, 0, 0);
@@ -1088,11 +1088,11 @@ void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigne
 void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_OPTIONS_RULES, BN_CLICKED);  // Activate the Options dialog
-		(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
+		m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
 		m_bIgnoreScrollClick = false;
 	} else if (nChar == VK_F2) {                                 // F2 key is hit
 		SendMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);     // Activate the Rules dialog
-		(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
+		m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L); // Reset scroll button to up state
 		m_bIgnoreScrollClick = false;
 	}
 }
@@ -1349,9 +1349,9 @@ void CALLBACK GetGameParams(CWnd *pParentWnd) {
 //		(*pParentWnd).PostMessage(WM_COMMAND, IDC_OPTIONS_NEWGAME, BN_CLICKED);
 		tempLetters = cOpnDlg.m_nLttrsSlvd;
 		tempTimeLimit = cOpnDlg.m_nTime;
-		(*pParentWnd).PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);
+		pParentWnd->PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);
 	} else {
-		(*pParentWnd).PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);
+		pParentWnd->PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);
 	}
 
 }

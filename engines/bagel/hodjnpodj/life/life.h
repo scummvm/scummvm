@@ -62,7 +62,7 @@ public:
 	void    DisplayMonth(int nMonth, CDC *pDC);
 	void    ResetMonths(CDC *pDC);
 	int     ColonyPlaced() {
-		return (*pColony).m_nColony_count;
+		return pColony->m_nColony_count;
 	}
 
 public:
