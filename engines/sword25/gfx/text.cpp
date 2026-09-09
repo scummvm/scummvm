@@ -159,14 +159,14 @@ bool Text::doRender(RectangleList *updateRects) {
 	Common::Array<Line>::iterator iter = _lines.begin();
 	for (; iter != _lines.end(); ++iter) {
 		// Determine whether any letters of the current line are affected by the update.
-		Common::Rect checkRect = (*iter).bbox;
+		Common::Rect checkRect = iter->bbox;
 		checkRect.translate(_absoluteX, _absoluteY);
 
 		// Render each letter individually.
-		int curX = _absoluteX + (*iter).bbox.left;
-		int curY = _absoluteY + (*iter).bbox.top;
-		for (uint i = 0; i < (*iter).text.size(); ++i) {
-			Common::Rect curRect = fontPtr->getCharacterRect((byte)(*iter).text[i]);
+		int curX = _absoluteX + iter->bbox.left;
+		int curY = _absoluteY + iter->bbox.top;
+		for (uint i = 0; i < iter->text.size(); ++i) {
+			Common::Rect curRect = fontPtr->getCharacterRect((byte)iter->text[i]);
 
 			Common::Rect renderRect(curX, curY, curX + curRect.width(), curY + curRect.height());
 			renderRect.translate(curRect.left - curX, curRect.top - curY);
@@ -284,7 +284,7 @@ void Text::updateFormat() {
 		_height = 0;
 		Common::Array<Line>::iterator iter = _lines.begin();
 		for (; iter != _lines.end(); ++iter) {
-			Common::Rect &bbox = (*iter).bbox;
+			Common::Rect &bbox = iter->bbox;
 			bbox.left = (_width - bbox.right) / 2;
 			bbox.right = bbox.left + bbox.right;
 			bbox.top = (iter - _lines.begin()) * fontPtr->getLineHeight();
