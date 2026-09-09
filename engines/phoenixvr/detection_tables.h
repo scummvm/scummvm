@@ -409,6 +409,17 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	{"dracula1",
+		"Retail version",
+		AD_ENTRY3s("Install/script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+				   "Install/InsertCD.vr", "f13b71b0b788be8d2157b9d5082cec87", 52394,
+				   "Interface.vr", "195a7b2b6185245b64145f3e43e4f508", 90805),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula1",
 		"GOG release",
 		AD_ENTRY2s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
 				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
