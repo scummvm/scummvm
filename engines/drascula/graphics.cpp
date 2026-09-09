@@ -490,14 +490,14 @@ void DrasculaEngine::screenSaver() {
 			count = 0;
 
 		for (int i = 0; i < 320; i++) {
-			tempLine[i] = (int)(sin(coeff2) * 16);
+			tempLine[i] = (int)(sinf(coeff2) * 16);
 			coeff2 += 0.02f;
 			tempLine[i] = checkWrapY(tempLine[i]);
 		}
 
 		coeff2 = coeff;
 		for (int i = 0; i < 200; i++) {
-			tempRow[i] = (int)(sin(coeff2) * 16);
+			tempRow[i] = (int)(sinf(coeff2) * 16);
 			coeff2 += 0.02f;
 			tempRow[i] = checkWrapX(tempRow[i]);
 		}
