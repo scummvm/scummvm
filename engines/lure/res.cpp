@@ -371,7 +371,7 @@ RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
 	RoomExitJoinList::iterator i;
 
 	for (i = _exitJoins.begin(); i != _exitJoins.end(); ++i) {
-		RoomExitJoinData *rec = (*i).get();
+		RoomExitJoinData *rec = i->get();
 		if ((rec->hotspots[0].hotspotId == hotspotId) || (rec->hotspots[1].hotspotId == hotspotId))
 			return rec;
 	}
@@ -387,7 +387,7 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 	RoomDataList::iterator i;
 
 	for (i = _roomData.begin(); i != _roomData.end(); ++i) {
-		RoomData *rec = (*i).get();
+		RoomData *rec = i->get();
 		if (rec->roomNumber == roomNumber) return rec;
 	}
 
@@ -443,7 +443,7 @@ HotspotData *Resources::getHotspot(uint16 hotspotId) {
 	HotspotDataList::iterator i;
 
 	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
-		HotspotData *rec = (*i).get();
+		HotspotData *rec = i->get();
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
@@ -454,7 +454,7 @@ Hotspot *Resources::getActiveHotspot(uint16 hotspotId) {
 	HotspotList::iterator i;
 
 	for (i = _activeHotspots.begin(); i != _activeHotspots.end(); ++i) {
-		Hotspot *rec = (*i).get();
+		Hotspot *rec = i->get();
 		if (rec->hotspotId() == hotspotId) return rec;
 	}
 
@@ -466,7 +466,7 @@ HotspotOverrideData *Resources::getHotspotOverride(uint16 hotspotId) {
 	HotspotOverrideList::iterator i;
 
 	for (i = _hotspotOverrides.begin(); i != _hotspotOverrides.end(); ++i) {
-		HotspotOverrideData *rec = (*i).get();
+		HotspotOverrideData *rec = i->get();
 		if (rec->hotspotId == hotspotId) return rec;
 	}
 
@@ -477,7 +477,7 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 	HotspotAnimList::iterator i;
 
 	for (i = _animData.begin(); i != _animData.end(); ++i) {
-		HotspotAnimData *rec = (*i).get();
+		HotspotAnimData *rec = i->get();
 		if (rec->animRecordId == animRecordId) return rec;
 	}
 
@@ -489,7 +489,7 @@ int Resources::getAnimationIndex(HotspotAnimData *animData) {
 	int index = 0;
 
 	for (i = _animData.begin(); i != _animData.end(); ++i, ++index) {
-		HotspotAnimData *rec = (*i).get();
+		HotspotAnimData *rec = i->get();
 		if (rec == animData)
 			return index;
 	}
@@ -508,7 +508,7 @@ uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
 	TalkHeaderList::iterator i;
 	for (i = _talkHeaders.begin(); i != _talkHeaders.end(); ++i) {
-		TalkHeaderData *rec = (*i).get();
+		TalkHeaderData *rec = i->get();
 		if (rec->characterId == hotspotId) return rec;
 	}
 	return nullptr;
@@ -695,7 +695,7 @@ void Resources::deactivateHotspot(Hotspot *hotspot) {
 	HotspotList::iterator i = _activeHotspots.begin();
 
 	while (i != _activeHotspots.end()) {
-		Hotspot *h = (*i).get();
+		Hotspot *h = i->get();
 		if (h == hotspot) {
 			_activeHotspots.erase(i);
 			break;
@@ -738,7 +738,7 @@ void Resources::setTalkData(uint16 offset) {
 
 	TalkDataList::iterator i;
 	for (i = _talkData.begin(); i != _talkData.end(); ++i) {
-		TalkData *rec = (*i).get();
+		TalkData *rec = i->get();
 		if (rec->recordId == offset) {
 			_activeTalkData = rec;
 			return;
