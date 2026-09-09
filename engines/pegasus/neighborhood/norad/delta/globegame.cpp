@@ -1185,27 +1185,27 @@ void GlobeGame::globePointToLatLong(const GlobeGame::Point3D &pt, int16 latOrigi
 
 	// Rotate around z axis latOrigin degrees to bring equator parallel with XZ plane
 	float theta = degreesToRadians(latOrigin);
-	float s = sin(theta);
-	float c = cos(theta);
+	float s = sinf(theta);
+	float c = cosf(theta);
 	float x = scratch.x * c - scratch.y * s;
 	float y = scratch.y * c + scratch.x * s;
 	scratch.x = x;
 	scratch.y = y;
 
 	// Calculate latitude
-	latitude = (int16)radiansToDegrees(asin(scratch.y / kGlobeRadius));
+	latitude = (int16)radiansToDegrees(asinf(scratch.y / kGlobeRadius));
 
 	// Rotate around y axis longOrigin degrees to bring longitude 0 to positive X axis
 	theta = degreesToRadians(longOrigin);
-	s = sin(theta);
-	c = cos(theta);
+	s = sinf(theta);
+	c = cosf(theta);
 	x = scratch.x * c - scratch.z * s;
 	float z = scratch.z * c + scratch.x * s;
 	scratch.x = x;
 	scratch.z = z;
 
 	// Calculate longitude
-	longitude = (int16)radiansToDegrees(acos(scratch.x / sqrt(scratch.x * scratch.x + scratch.z * scratch.z)));
+	longitude = (int16)radiansToDegrees(acosf(scratch.x / sqrtf(scratch.x * scratch.x + scratch.z * scratch.z)));
 
 	if (scratch.z < 0)
 		longitude = -longitude;
@@ -1238,7 +1238,7 @@ bool GlobeGame::lineHitsGlobe(const GlobeGame::Line3D &line, GlobeGame::Point3D 
 
 	if (t >= 0.0f) {
 		// Return smaller root, which corresponds to closest intersection point.
-		t = (-b - sqrt(t)) / (2 * a);
+		t = (-b - sqrtf(t)) / (2 * a);
 		pt.x = i * t + line.pt1.x;
 		pt.y = j * t + line.pt1.y;
 		pt.z = k * t + line.pt1.z;
