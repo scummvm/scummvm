@@ -227,7 +227,7 @@ void TeFreeMoveZone::calcGridMatrix() {
 		const TeVector3f32 diff = v2 - v1;
 		const TeVector2f32 diff2(diff.x(), diff.z());
 		float len = diff2.length();
-		float f = fmod(atan2(diff.z(), diff.x()), M_PI_2);
+		float f = fmodf(atan2f(diff.z(), diff.x()), (float)M_PI_2);
 		if (f < 0)
 			f += (float)M_PI_2;
 

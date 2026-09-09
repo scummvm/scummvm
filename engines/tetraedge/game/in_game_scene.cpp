@@ -190,7 +190,7 @@ bool InGameScene::aroundAnchorZone(const AnchorZone *zone) {
 
 	float xoff = charpos.x() - zone->_loc.x();
 	float zoff = charpos.z() - zone->_loc.z();
-	return sqrt(xoff * xoff + zoff * zoff) <= zone->_radius;
+	return sqrtf(xoff * xoff + zoff * zoff) <= zone->_radius;
 }
 
 TeLayout *InGameScene::background() {

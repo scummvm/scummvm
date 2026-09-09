@@ -529,12 +529,12 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			// Return the head to the centerpoint if there is no anchor.
 			const float lastHeadX = _lastHeadRotation.getX();
 			const float headXAdjust = (lastHeadX > 0) ? -0.1 : 0.1;
-			const float newX = (fabs(headXAdjust) > fabs(lastHeadX)) ? 0.0 : lastHeadX + headXAdjust;
+			const float newX = (fabsf(headXAdjust) > fabsf(lastHeadX)) ? 0.0 : lastHeadX + headXAdjust;
 			_lastHeadRotation.setX(newX);
 
 			const float lastHeadY = _lastHeadRotation.getY();
 			const float headYAdjust = (lastHeadY > 0) ? -0.1 : 0.1;
-			const float newY = (fabs(headYAdjust) > fabs(lastHeadY)) ? 0.0 : lastHeadY + headYAdjust;
+			const float newY = (fabsf(headYAdjust) > fabsf(lastHeadY)) ? 0.0 : lastHeadY + headYAdjust;
 			_lastHeadRotation.setY(newY);
 
 			_headRotation = _lastHeadRotation;
@@ -943,7 +943,7 @@ void Character::update(double msFromStart) {
 	_curve->pseudoTangent(offset, t1, t2);
 	const TeVector3f32 normalizedTangent = (t2 - t1).getNormalized();
 	float angle = TeVector3f32(0.0, 0.0, 1.0).dotProduct(normalizedTangent);
-	angle = acos(angle);
+	angle = acosf(angle);
 	TeVector3f32 crossprod = TeVector3f32::crossProduct(TeVector3f32(0.0, 0.0, 1.0), normalizedTangent);
 	if (crossprod.y() >= 0.0f) {
 		angle = -angle;
@@ -953,7 +953,7 @@ void Character::update(double msFromStart) {
 	_model->setRotation(rot);
 
 	const Common::String endGAnim = walkAnim(WalkPart_EndG);
-	if (_walkCurveLast == _walkCurveEnd || fabs(_walkCurveEnd - _walkCurveStart) < fabs(_walkCurveLast - _walkCurveStart)) {
+	if (_walkCurveLast == _walkCurveEnd || fabs(_walkCurveEnd - _walkCurveStart) < fabsf(_walkCurveLast - _walkCurveStart)) {
 		if (_walkToFlag) {
 			_walkToFlag = false;
 			endMove();
