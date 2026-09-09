@@ -135,7 +135,7 @@ void ResourceSystem::unloadAllResources() {
 BaseResourceLoader *ResourceSystem::getResourceLoader(uint32 resId) {
 	ResourceLoadersMapIterator it = _resourceLoaders.find(ResourceTypeId(resId));
 	if (it != _resourceLoaders.end())
-		return (*it)._value;
+		return it->_value;
 	error("ResourceSystem::getResourceLoader() Could not find resource loader for resource id %08X", resId);
 }
 
