@@ -154,7 +154,7 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 			// Coverity complains about the order of arguments here,
 			// but changing that breaks the Zork Nemesis safe puzzle.
-			float dd = atan2((float)tmp.x, (float)tmp.y) * 57.29578;
+			float dd = atan2f((float)tmp.x, (float)tmp.y) * 57.29578f;
 
 			int16 dp_state = 360 / _statesCount;
 

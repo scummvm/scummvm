@@ -209,11 +209,11 @@ void RenderTable::generateLookupTable(bool tilt) {
 		// polarCoord is the coordinate of the working window pixel parallel to the direction of camera rotation
 		// halfPolarSize is the distance from the central axis to the outermost working window pixel in the direction of camera rotation
 		// alpha represents the angle in the direction of camera rotation between the view axis and the centre of a pixel at the given polar coordinate
-		const float alpha = atan(((float)polarCoord - halfPolarSize) / cylinderRadius);
+		const float alpha = atanf(((float)polarCoord - halfPolarSize) / cylinderRadius);
 		// To map the polar coordinate to the cylinder surface coordinates, we just need to calculate the arc length
 		// We also scale it by linearScale
 		polarCoordInCylinderCoords = (cylinderRadius * scale * alpha) + halfPolarSize;
-		cosAlpha = cos(alpha);
+		cosAlpha = cosf(alpha);
 	};
 	auto innerLoop = [&](uint & polarCoord, uint & linearCoord, float & halfLinearSize,  float & polarOffset, float & linearOffset) {
 		// To calculate linear coordinate in cylinder coordinates, we can do similar triangles comparison,
@@ -232,8 +232,8 @@ void RenderTable::generateLookupTable(bool tilt) {
 		_internalBuffer[indexBR].flipH();
 	};
 	if (tilt) {
-		cylinderRadius = (_halfWidth + 0.5f) / tan(_tiltOptions.verticalFOV);
-		_tiltOptions.gap = cylinderRadius * atan2((float)(_halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
+		cylinderRadius = (_halfWidth + 0.5f) / tanf(_tiltOptions.verticalFOV);
+		_tiltOptions.gap = cylinderRadius * atan2f((float)(_halfHeight / cylinderRadius), 1.0f) * _tiltOptions.linearScale;
 		for (uint y = 0; y <= _halfRows; ++y) {
 			outerLoop(y, _halfHeight, _tiltOptions.linearScale);
 			const uint32 columnIndexTL = y * _numColumns;
@@ -249,7 +249,7 @@ void RenderTable::generateLookupTable(bool tilt) {
 			}
 		}
 	} else {
-		cylinderRadius = (_halfHeight + 0.5f) / tan(_panoramaOptions.verticalFOV);
+		cylinderRadius = (_halfHeight + 0.5f) / tanf(_panoramaOptions.verticalFOV);
 		for (uint x = 0; x <= _halfColumns; ++x) {
 			const uint32 columnIndexL = x;
 			const uint32 columnIndexR = (_numColumns - 1) - x;

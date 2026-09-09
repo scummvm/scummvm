@@ -145,7 +145,7 @@ uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth, uint8 direct
 }
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode, Math::Angle azimuth, uint8 directionality) {
-	uint8 index = abs(round(azimuth.getDegrees(-180)));
+	uint8 index = abs(roundf(azimuth.getDegrees(-180)));
 	uint32 output = convert(inputValue, mode);
 	uint32 directionalOutput = (output * directionalAmplitude[index]) * directionality;
 	directionalOutput /= 0xFF;
