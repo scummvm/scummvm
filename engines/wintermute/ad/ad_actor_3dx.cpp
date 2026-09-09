@@ -721,9 +721,9 @@ void AdActor3DX::getNextStep3D() {
 void AdActor3DX::initLine3D(DXVector3 startPt, DXVector3 endPt, bool firstStep) {
 	if (firstStep) {
 		_nextState = STATE_FOLLOWING_PATH;
-		turnTo(radToDeg(-atan2(endPt._z - startPt._z, endPt._x - startPt._x)) - 90);
+		turnTo(radToDeg(-atan2f(endPt._z - startPt._z, endPt._x - startPt._x)) - 90);
 	} else {
-		_turningLeft = prepareTurn(radToDeg(-atan2(endPt._z - startPt._z, endPt._x - startPt._x)) - 90);
+		_turningLeft = prepareTurn(radToDeg(-atan2f(endPt._z - startPt._z, endPt._x - startPt._x)) - 90);
 	}
 }
 
@@ -823,8 +823,8 @@ bool AdActor3DX::prepareTurn(float targetAngle) {
 	delta2 = targetAngle + 360 - _angle;
 	delta3 = targetAngle - 360 - _angle;
 
-	delta1 = (fabs(delta1) <= fabs(delta2)) ? delta1 : delta2;
-	delta = (fabs(delta1) <= fabs(delta3)) ? delta1 : delta3;
+	delta1 = (fabsf(delta1) <= fabsf(delta2)) ? delta1 : delta2;
+	delta = (fabsf(delta1) <= fabsf(delta3)) ? delta1 : delta3;
 
 	_targetAngle = _angle + delta;
 	turnLeft = (delta < 0);
@@ -1680,7 +1680,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			BaseObject *obj = (BaseObject *)val->getNative();
 			DXVector3 objPos;
 			((AdGame *)_game)->_scene->_geom->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
-			angle = radToDeg(-atan2(objPos._z - _posVector._z, objPos._x - _posVector._x)) - 90;
+			angle = radToDeg(-atan2f(objPos._z - _posVector._z, objPos._x - _posVector._x)) - 90;
 		} else {
 			// otherwise turn to direction
 			dir = val->getInt();

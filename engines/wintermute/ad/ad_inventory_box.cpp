@@ -108,8 +108,8 @@ bool AdInventoryBox::display() {
 	}
 
 	int itemsX, itemsY;
-	itemsX = (int)floor((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
-	itemsY = (int)floor((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
+	itemsX = (int)floorf((float)((_itemsArea.right - _itemsArea.left + _spacing) / (_itemWidth + _spacing)));
+	itemsY = (int)floorf((float)((_itemsArea.bottom - _itemsArea.top + _spacing) / (_itemHeight + _spacing)));
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);

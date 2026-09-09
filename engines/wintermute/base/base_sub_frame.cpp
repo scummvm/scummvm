@@ -219,7 +219,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 //////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float zoomY, bool precise, uint32 alpha, float rotate, Graphics::TSpriteBlendMode blendMode) {
 
-	rotate = fmod(rotate, 360.0f);
+	rotate = fmodf(rotate, 360.0f);
 	if (rotate < 0) {
 		rotate += 360.0f;
 	}

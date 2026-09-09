@@ -156,7 +156,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 
 			case PartForce::FORCE_POINT: {
 				DXVector2 vecDist = force->_pos - _pos;
-				float dist = fabs(DXVec2Length(&vecDist));
+				float dist = fabsf(DXVec2Length(&vecDist));
 
 				dist = 100.0f / dist;
 

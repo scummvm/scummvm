@@ -490,7 +490,7 @@ float AdSceneGeometry::getHeightAt(DXVector3 pos, float tolerance, bool *intFoun
 					continue; // only fall down
 				}
 
-				if (!intFoundTmp || fabs(ret - pos._y) > fabs(intersection._y - pos._y)) {
+				if (!intFoundTmp || fabsf(ret - pos._y) > fabsf(intersection._y - pos._y)) {
 					ret = intersection._y;
 				}
 
@@ -946,7 +946,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 				dif = _lights[i]->_pos - point;
 			}
 
-			_lights[i]->_distance = fabs(DXVec3Length(&dif));
+			_lights[i]->_distance = fabsf(DXVec3Length(&dif));
 
 			activeLights.add(_lights[i]);
 		}

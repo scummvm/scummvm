@@ -98,12 +98,12 @@ DXMatrix *C3DUtils::matrixSetTranslation(DXMatrix *mat, DXVector3 *vec) {
 }
 
 DXMatrix *C3DUtils::matrixSetRotation(DXMatrix *mat, DXVector3 *vec) {
-	double cr = cos(vec->_x);
-	double sr = sin(vec->_x);
-	double cp = cos(vec->_y);
-	double sp = sin(vec->_y);
-	double cy = cos(vec->_z);
-	double sy = sin(vec->_z);
+	double cr = cosf(vec->_x);
+	double sr = sinf(vec->_x);
+	double cp = cosf(vec->_y);
+	double sp = sinf(vec->_y);
+	double cy = cosf(vec->_z);
+	double sy = sinf(vec->_z);
 
 	mat->matrix._11 = (float)(cp * cy);
 	mat->matrix._12 = (float)(cp * sy);

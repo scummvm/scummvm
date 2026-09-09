@@ -80,18 +80,18 @@ void Camera3D::rotateView(float x, float y, float z) {
 	// Rotate the view along the desired axis
 	if (x) {
 		// Rotate the view vector up or down, then add it to our position
-		_target._z = (float)(_position._z + sin(x) * vVector._y + cos(x) * vVector._z);
-		_target._y = (float)(_position._y + cos(x) * vVector._y - sin(x) * vVector._z);
+		_target._z = (float)(_position._z + sinf(x) * vVector._y + cosf(x) * vVector._z);
+		_target._y = (float)(_position._y + cosf(x) * vVector._y - sinf(x) * vVector._z);
 	}
 	if (y) {
 		// Rotate the view vector right or left, then add it to our position
-		_target._z = (float)(_position._z + sin(y) * vVector._x + cos(y) * vVector._z);
-		_target._x = (float)(_position._x + cos(y) * vVector._x - sin(y) * vVector._z);
+		_target._z = (float)(_position._z + sinf(y) * vVector._x + cosf(y) * vVector._z);
+		_target._x = (float)(_position._x + cosf(y) * vVector._x - sinf(y) * vVector._z);
 	}
 	if (z) {
 		// Rotate the view vector diagnally right or diagnally down, then add it to our position
-		_target._x = (float)(_position._x + sin(z) * vVector._y + cos(z) * vVector._x);
-		_target._y = (float)(_position._y + cos(z) * vVector._y - sin(z) * vVector._x);
+		_target._x = (float)(_position._x + sinf(z) * vVector._y + cosf(z) * vVector._x);
+		_target._y = (float)(_position._y + cosf(z) * vVector._y - sinf(z) * vVector._x);
 	}
 }
 
