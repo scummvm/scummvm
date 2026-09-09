@@ -683,7 +683,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 		assert(b*c == bc);
 
 		assert(a2pb2 == a*a + b*b);
-		assert(ra2pb2 == (int)sqrt((float)a*a + (float)b*b));
+		assert(ra2pb2 == (int)sqrtf((float)a*a + (float)b*b));
 #endif
 
 
@@ -712,7 +712,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 		if ((d1 < 0 && d2 < 0) || (d1 > 0 && d2 > 0))
 			continue;
 //#endif
-		dropD = ((a * h) + (b * k) + c) / (int)sqrt((float)a*a + (float)b*b);
+		dropD = ((a * h) + (b * k) + c) / (int)sqrtf((float)a*a + (float)b*b);
 		dropD = ABS(dropD);
 		if (dropD < shortestD) {
 			shortestD = dropD;
