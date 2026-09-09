@@ -38,7 +38,7 @@ void SoundManager::soundDriverInit() {
 
 	// The following is a way to adapt the amount of buffers to the current device capabilities.
 	// Re-adapted from my own code found within the Digital iMUSE subsystem from the SCUMM engine.
-	_maxQueuedStreams = (uint32)ceil((_mixer->getOutputBufSize() / 1470) / ((float)_mixer->getOutputRate() / 44100));
+	_maxQueuedStreams = (uint32)ceilf((_mixer->getOutputBufSize() / 1470) / ((float)_mixer->getOutputRate() / 44100));
 
 	if (_mixer->getOutputRate() % 44100) {
 		_maxQueuedStreams++;
