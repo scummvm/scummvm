@@ -56,6 +56,13 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_inventoryImagesBuffer = (uint8 *)malloc(48000);
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
 
+	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
+	DebugMan.addDebugChannel(kDebugScreen,   "Screen",   "Screen debug level");
+	DebugMan.addDebugChannel(kDebugWalk,     "Walk",     "Walk debug level");
+	DebugMan.addDebugChannel(kDebugGame,     "Game",     "Game debug level");
+
+
 	{ // hardcoded now
 		_game.ovlFileName = "igor.exe";
 		_game.sfxFileName = "igor.dat";
@@ -86,7 +93,7 @@ IgorEngine::~IgorEngine() {
 	free(_inventoryImagesBuffer);
 	free(_verbsPanelBuffer);
 
-	// Common::clearAllDebugChannels();
+	// DebugMan.clearAllDebugChannels();
 
 	// delete _midiPlayer;
 	delete _screen;
@@ -156,7 +163,7 @@ void IgorEngine::restart() {
 	// memset(_inputVars, 0, sizeof(_inputVars));
 	// _scrollInventory = false;
 	// _roomCursorOn = true;
-	// _currentCursor = 0;
+	_currentCursor = 0;
 	// _dialogueCursorOn = true;
 	// _updateDialogue = 0;
 	_updateRoomBackground = 0;
@@ -291,7 +298,7 @@ ResourceEntry *IgorEngine::findData(int id) {
 }
 
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
-	// debugC(9, kDebugResource, "loadData() id %d", id);
+	debugC(9, kDebugResource, "loadData() id %d", id);
 	ResourceEntry *re = findData(id);
 	if (!dst) {
 		dst = (uint8 *)malloc(re->size);
@@ -400,19 +407,19 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		_walkDataLastIndex = 1;
 		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
 		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
-		// debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
+		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
 		int currentArea = srcArea;
 		// for (int i = 1; dstArea != currentArea; ++i) {
 		// 	const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
 		// 	int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
-		// 	debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
+			// debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
 		// 	int nextPosX, nextPosY;
 		// 	if (dstArea != nextArea) {
 		// 		getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
 		// 	} else {
 		// 		getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
 		// 	}
-		// 	debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
+			// debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
 		// 	buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
 		// 	srcX = nextPosX;
 		// 	srcY = nextPosY;
@@ -421,7 +428,7 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		buildWalkPathArea(srcX, srcY, dstX, dstY);
 		--_walkDataLastIndex;
 	}
-	// debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
+	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
 }
 
 void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
@@ -463,11 +470,11 @@ void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 }
 
 void IgorEngine::enterPartLoop() {
-	CursorMan.showMouse(true);
-	// if (!_gameState.dialogueTextRunning) {
-	// 	showCursor();
-	// }
-	// _gameState.igorMoving = false;
+	// CursorMan.showMouse(true);
+	if (!_gameState.dialogueTextRunning) {
+		showCursor();
+	}
+	_gameState.igorMoving = false;
 	// if (_game.version == kIdEngDemo110) {
 	// 	CHECK_FOR_END_OF_DEMO();
 	// }
@@ -518,7 +525,7 @@ void IgorEngine::lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, ui
 
 void IgorEngine::moveIgor(int pos, int frame) {
 	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
-	// debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
+	debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
 	WalkData *wd = &_walkData[_walkDataCurrentIndex];
 	uint8 _walkClipSkipX = wd->clipSkipX;
 	uint8 _walkHeightScale = wd->scaleHeight;
@@ -644,11 +651,33 @@ void IgorEngine::moveIgor(int pos, int frame) {
 	}
 }
 
+void IgorEngine::setCursor(int num) {
+	uint8 cursor[11 * 11];
+	memset(cursor, 0, 11 * 11);
+	const uint8 *mask = &_mouseCursorMask[num * 24];
+	for (int i = 0; i < 24; ++i) {
+		if (mask[i]) {
+			const int offset = ((int8)_mouseCursorData[i + 24] + 5) * 11 + ((int8)_mouseCursorData[i] + 5);
+			cursor[offset] = 255;
+		}
+	}
+	CursorMan.replaceCursor(cursor, 11, 11, 5, 5, 0);
+}
+
+void IgorEngine::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void IgorEngine::hideCursor() {
+	CursorMan.showMouse(false);
+
+}
+
 void IgorEngine::buildWalkPathArea(int srcX, int srcY, int dstX, int dstY) {
 	if (srcX != dstX || srcY != dstY) {
 		const int dx = dstX - srcX;
 		const int dy = dstY - srcY;
-		// debugC(9, kDebugWalk, "buildWalkPathArea() dx = %d dy = %d src %d,%d dst %d,%d", dx, dy, srcX, srcY, dstX, dstY);
+		debugC(9, kDebugWalk, "buildWalkPathArea() dx = %d dy = %d src %d,%d dst %d,%d", dx, dy, srcX, srcY, dstX, dstY);
 		assert(_walkDataLastIndex > 0);
 		if (ABS(dy) * 2 > ABS(dx)) {
 			if (srcY > dstY) {
@@ -676,7 +705,7 @@ static int16 truncReal(float f) {
 
 
 int IgorEngine::getVerticalStepsCount(int minX, int minY, int maxX, int maxY) {
-	// debugC(9, kDebugWalk, "getVerticalStepsCount() %d %d %d %d", minX, minY, maxX, maxY);
+	debugC(9, kDebugWalk, "getVerticalStepsCount() %d %d %d %d", minX, minY, maxX, maxY);
 	int curX = 2;
 	if ((_walkXScaleRoom[minX] != 1 || _walkXScaleRoom[maxX] != 3) && (_walkXScaleRoom[maxX] != 1 || _walkXScaleRoom[minX] != 3)) {
 		curX = _walkXScaleRoom[minX];
@@ -702,7 +731,7 @@ int IgorEngine::getHorizontalStepsCount(int minX, int minY, int maxX, int maxY) 
 	float r1 = _walkScaleSpeedTable[scale - 1];
 	scale = _walkYScaleRoom[(_walkXScaleRoom[minX] - 1) * 144 + minY];
 	float r2 = _walkScaleSpeedTable[scale - 1];
-	// debugC(9, kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
+	debugC(9, kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
 
 	int16 steps = roundReal((maxX - minX) / ((r1 + r2) / 2.0f));
 	int count = 0;
@@ -1460,7 +1489,7 @@ void IgorEngine::scrollPalette(int startColor, int endColor) {
 }
 
 void IgorEngine::setPaletteRange(int startColor, int endColor) {
-	// debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
+	debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
 	assert(endColor - startColor + 1 <= 256);
 	for (int i = startColor; i <= endColor; ++i) {
 		setPaletteColor(i, _currentPalette[3 * i], _currentPalette[3 * i + 1], _currentPalette[3 * i + 2]);
@@ -1489,7 +1518,7 @@ void IgorEngine::updatePalette(int count) {
 }
 
 void IgorEngine::fadeInPalette(int count) {
-	// debugC(9, kDebugScreen, "fadeInPalette(%d)", count);
+	debugC(9, kDebugScreen, "fadeInPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	int m = 66;
 	do {
@@ -1510,7 +1539,7 @@ void IgorEngine::fadeInPalette(int count) {
 }
 
 void IgorEngine::fadeOutPalette(int count) {
-	// debugC(9, kDebugScreen, "fadeOutPalette(%d)", count);
+	debugC(9, kDebugScreen, "fadeOutPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	memcpy(_paletteBuffer, _currentPalette, 768);
 	int m = 0;
@@ -1536,7 +1565,7 @@ void IgorEngine::fadeOutPalette(int count) {
 void IgorEngine::waitForTimer(int ticks) {
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	_system->updateScreen();
-	debug("Screen updated!");
+
 	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay;
 	do {
 		Common::Event ev;
@@ -1581,17 +1610,17 @@ void IgorEngine::waitForTimer(int ticks) {
 		if (_system->getMillis() >= endTicks) {
 			break;
 		}
-		debug("Waiting for timer: %d ms left", endTicks - _system->getMillis());
+
 	} while (true);
 	_nextTimer = _system->getMillis() + kTimerTicksCount * 1000 / kTickDelay;
 	if (ticks != -1) {
 		return;
 	}
 	_gameTicks += kTimerTicksCount;
-	// if ((_gameTicks & 31) == 0) {
-	// 	setCursor(_currentCursor);
-	// 	_currentCursor = (_currentCursor + 1) & 3;
-	// }
+	if ((_gameTicks & 31) == 0) {
+		setCursor(_currentCursor);
+		_currentCursor = (_currentCursor + 1) & 3;
+	}
 	// if (_game.flags & kFlagFloppy) {
 	// 	updateMusic();
 	// }
@@ -1679,7 +1708,7 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 				decodeRoomString(p, _roomObjectNames[index], len);
 				p += len;
 				_roomObjectNames[index][len] = '\0';
-				// debugC(9, kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
+				debugC(9, kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
 			}
 			code = *p++;
 		}
@@ -1698,14 +1727,14 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 			decodeRoomString(p, _globalDialogueTexts[index], len);
 			p += len;
 			_globalDialogueTexts[index][len] = '\0';
-			// debugC(9, kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
+			debugC(9, kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
 		}
 		code = *p++;
 	}
 }
 
 void IgorEngine::decodeRoomText(const uint8 *p) {
-	// debugC(9, kDebugResource, "decodeRoomText()");
+	debugC(9, kDebugResource, "decodeRoomText()");
 	memcpy(_walkXScaleRoom, p, 320);
 	p += 320;
 	memcpy(_walkYScaleRoom, p, 432);

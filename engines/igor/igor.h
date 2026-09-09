@@ -46,6 +46,14 @@ namespace Igor {
 struct IgorGameDescription;
 
 enum {
+	kDebugEngine   = 400 << 1,
+	kDebugResource = 400 << 2,
+	kDebugScreen   = 400 << 3,
+	kDebugWalk     = 400 << 4,
+	kDebugGame     = 400 << 5
+};
+
+enum {
 	kFlagDemo = 1 << 0,
 	kFlagFloppy = 1 << 1,
 	kFlagTalkie = 1 << 2
@@ -236,7 +244,7 @@ private:
 	uint32 _nextTimer;
 
 	DetectedGameVersion _game;
-
+	int _currentCursor;
 
 	char _globalDialogueTexts[300][MAX_DIALOGUE_TEXT_LENGTH];
 	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
@@ -274,6 +282,8 @@ private:
 	static const uint8 _walkWidthScaleTable[];
 	static const uint8 _walkScaleTable[];
 	static const float _walkScaleSpeedTable[];
+	static const uint8 _mouseCursorMask[];
+	static const uint8 _mouseCursorData[];
 
 	void restart();
 	void setupDefaultPalette();
@@ -308,6 +318,9 @@ private:
 
 	void moveIgor(int pos, int frame);
 
+	void setCursor(int num);
+	void showCursor();
+	void hideCursor();
 
 	void scrollPalette(int startColor, int endColor);
 	void setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b);
