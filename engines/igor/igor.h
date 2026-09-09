@@ -95,6 +95,17 @@ enum {
 	kTalkModeTextOnly = 2
 };
 
+enum InputVar {
+	kInputSkipDialogue = 0,
+	kInputCursorXPos,
+	kInputCursorYPos,
+	kInputClick,
+	kInputEscape,
+	kInputPause,
+	kInputOptions,
+	kInputVarCount
+};
+
 struct RoomWalkBounds {
 	int x1, y1;
 	int x2, y2;
@@ -154,6 +165,69 @@ struct GameStateData {
 	// byte[3]
 	uint8 musicNum;
 	uint8 musicSequenceIndex;
+};
+
+struct Action {
+	uint8 verb;
+	uint8 object1Num;
+	uint8 object1Type;
+	uint8 verbType; // 1:use,2:give
+	uint8 object2Num;
+	uint8 object2Type;
+};
+
+
+struct RoomDataOffsets {
+	struct {
+		int box;
+		int boxSize;
+		int boxSrcSize;
+		int boxDstSize;
+	} area;
+	struct {
+		int walkPoints;
+		int walkFacingPosition;
+	} obj;
+	struct {
+		int defaultVerb;
+		int useVerb;
+		int giveVerb;
+		int object2;
+		int object1;
+		int objectSize;
+	} action;
+	struct {
+		int questionsOffset;
+		int questionsSize;
+		int repliesOffset;
+		int repliesSize;
+		int matSize;
+	} dlg;
+};
+
+enum ObjectType {
+	kObjectTypeInventory = 1,
+	kObjectTypeRoom = 2
+};
+
+enum Verb {
+	kVerbWalk = 1,
+	kVerbTalk,
+	kVerbTake,
+	kVerbLook,
+	kVerbUse,
+	kVerbOpen,
+	kVerbClose,
+	kVerbGive
+};
+
+enum {
+	kIdEngDemo100,
+	kIdEngDemo110,
+	kIdEngFloppy,
+	kIdSpaFloppy,
+	kIdEngCD,
+	kIdSpaCD
 };
 
 struct WalkData {
@@ -243,16 +317,23 @@ private:
 	GameStateData _gameState;
 	uint32 _nextTimer;
 
+	int _language;
 	DetectedGameVersion _game;
 	int _currentCursor;
+	bool _roomCursorOn;
 
 	char _globalDialogueTexts[300][MAX_DIALOGUE_TEXT_LENGTH];
-	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
 	uint8 _walkXScaleRoom[320];
 	uint8 _walkYScaleRoom[144 * 3];
 	RoomObjectArea _roomObjectAreasTable[MAX_ROOM_OBJECT_AREAS];
+	uint8 _roomActionsTable[0x2000];
 
 
+	Action _currentAction;
+	uint8 _actionCode;
+	uint8 _actionWalkPoint;
+
+	int16 _inputVars[kInputVarCount];
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;
 	uint8 _walkDataLastIndex;
@@ -262,12 +343,21 @@ private:
 	int _walkToObjectPosX, _walkToObjectPosY;
 
 	int16 _currentPart;
+
+
+	char _verbPrepositions[3][7];
+	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
+	char _globalObjectNames[35][MAX_OBJECT_NAME_LENGTH];
+	char _verbsName[9][MAX_VERB_NAME_LENGTH];
+
 	uint8 _currentPalette[768];
 	uint8 _paletteBuffer[768];
 	uint8 _igorPalette[48];
 	uint8 *_igorTempFrames;
 
 	RoomWalkBounds _roomWalkBounds;
+	RoomDataOffsets _roomDataOffsets;
+	UpdateRoomBackgroundProc _updateRoomBackground;
 
 	int _gameTicks;
 	int _resourceEntriesCount;
@@ -277,8 +367,10 @@ private:
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
 
-	UpdateRoomBackgroundProc _updateRoomBackground;
-
+	static const uint8 _sentenceColorIndex[];
+	static const uint8 _fontCharIndex[];
+	static const uint8 _fontCharWidth[];
+	static const uint32 _fontData[];
 	static const uint8 _walkWidthScaleTable[];
 	static const uint8 _walkScaleTable[];
 	static const float _walkScaleSpeedTable[];
@@ -290,6 +382,7 @@ private:
 
 	void readTableFile();
 	void loadMainTexts();
+	const char *getString(int id) const;
 	void loadIgorFrames();
 
 	void PART_MAIN();
@@ -298,6 +391,11 @@ private:
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 	void handleRoomInput();
+	void formatActionSentence(uint8 color);
+	int getStringWidth(const char *s) const;
+	void drawActionSentence(const char *sentence, uint8 color);
+	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3);
+	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3);
 	void handleRoomIgorWalk();
 
 	void enterPartLoop();

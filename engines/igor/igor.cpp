@@ -66,6 +66,8 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	{ // hardcoded now
 		_game.ovlFileName = "igor.exe";
 		_game.sfxFileName = "igor.dat";
+		_game.version = kIdSpaCD;
+		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 		_currentPart = 50;
 	}
 
@@ -113,7 +115,7 @@ void IgorEngine::restart() {
 	memset(&_gameState, 0, sizeof(_gameState));
 	_nextTimer = 0;
 	// _fastMode = false;
-	// _language = 0;
+	_language = 0;
 
 	memset(_walkData, 0, sizeof(_walkData));
 	_walkCurrentPos = 0;
@@ -122,12 +124,11 @@ void IgorEngine::restart() {
 	_walkDataCurrentPosX = _walkDataCurrentPosY = 0;
 	_walkToObjectPosX = _walkToObjectPosY = 0;
 
-	// memset(&_currentAction, 0, sizeof(_currentAction));
-	// _currentAction.verb = kVerbWalk;
-	// _actionCode = 0;
-	// _actionWalkPoint = 0;
-	// memset(_inputVars, 0, sizeof(_inputVars));
-	// _musicData = 0;
+	memset(&_currentAction, 0, sizeof(_currentAction));
+	_currentAction.verb = kVerbWalk;
+	_actionCode = 0;
+	_actionWalkPoint = 0;
+	memset(_inputVars, 0, sizeof(_inputVars));
 
 	// _talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
 	// memset(_dialogueTextsTable, 0, sizeof(_dialogueTextsTable));
@@ -144,25 +145,22 @@ void IgorEngine::restart() {
 	// memset(_objectsState, 0, sizeof(_objectsState));
 	// memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	// memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
-	// memset(_verbPrepositions, 0, sizeof(_verbPrepositions));
-	// memset(_globalObjectNames, 0, sizeof(_globalObjectNames));
+	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));
+	memset(_globalObjectNames, 0, sizeof(_globalObjectNames));
 	memset(_globalDialogueTexts, 0, sizeof(_globalDialogueTexts));
-	// memset(_verbsName, 0, sizeof(_verbsName));
+	memset(_verbsName, 0, sizeof(_verbsName));
 	memset(_roomObjectNames, 0, sizeof(_roomObjectNames));
 
 	_igorTempFrames = _facingIgorFrames[0] + 10500;
 
 	memset(_roomObjectAreasTable, 0, sizeof(_roomObjectAreasTable));
-	// memset(_roomActionsTable, 0, sizeof(_roomActionsTable));
+	memset(_roomActionsTable, 0, sizeof(_roomActionsTable));
 	// _executeMainAction = 0;
 	// _executeRoomAction = 0;
 	// _previousMusic = 0;
 	// _musicData = 0;
-	// _actionCode = 0;
-	// _actionWalkPoint = 0;
-	// memset(_inputVars, 0, sizeof(_inputVars));
 	// _scrollInventory = false;
-	// _roomCursorOn = true;
+	_roomCursorOn = true;
 	_currentCursor = 0;
 	// _dialogueCursorOn = true;
 	// _updateDialogue = 0;
@@ -273,7 +271,73 @@ void IgorEngine::readTableFile() {
 	error("Unable to read 'IGOR.TBL'");
 }
 
+static void decodeMainString(const uint8 *src, char *dst) {
+	int sz = *src - 0x6D;
+	if (sz != 0) {
+		++src;
+		for (int i = 0; i < sz; ++i) {
+			uint8 code = src[i] - 0x6D;
+			dst[i] = (char)code;
+		}
+	}
+	dst[sz] = '\0';
+}
+
 void IgorEngine::loadMainTexts() {
+	loadData(IMG_VerbsPanel, _verbsPanelBuffer);
+	if (_game.version == kIdSpaCD) {
+		const struct {
+			int strId;
+			int x;
+		} verbTexts[] = {
+			{ STR_Talk,   21 },
+			{ STR_Take,   67 },
+			{ STR_Look,  113 },
+			{ STR_Use,   159 },
+			{ STR_Open,  205 },
+			{ STR_Close, 251 },
+			{ STR_Give,  297 }
+		};
+		for (int i = 0; i < 7; ++i) {
+			const char *s = getString(verbTexts[i].strId);
+			int x = verbTexts[i].x - getStringWidth(s) / 2;
+			drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
+		}
+	}
+	int dataSize;
+	uint8 *p = loadData(TXT_MainTable, 0, &dataSize);
+	const uint8 *src = &p[0] + _language * 7;
+	for (int i = 0; i < 3; ++i, src += 7 * 2) {
+		decodeMainString(src, _verbPrepositions[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbPrepositions[%d] '%s'", i, _verbPrepositions[i]);
+	}
+	src = &p[0x2A] + _language * 31;
+	for (int i = 0; i < 35; ++i, src += 31 * 2) {
+		decodeMainString(src, _globalObjectNames[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalObjectNames[%d] '%s'", i, _globalObjectNames[i]);
+	}
+	src = &p[0x8BA] + _language * 51;
+	for (int i = 0; i < 250; ++i, src += 51 * 2) {
+		decodeMainString(src, _globalDialogueTexts[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalDialogueTexts[%d] '%s'", i, _globalDialogueTexts[i]);
+	}
+	src = &p[0x6CA4] + _language * 12;
+	for (int i = 0; i < 9; ++i, src += 12 * 2) {
+		decodeMainString(src, _verbsName[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbsName[%d] '%s'", i, _verbsName[i]);
+	}
+	free(p);
+}
+
+const char *IgorEngine::getString(int id) const {
+	const char *str = 0;
+	for (Common::Array<StringEntry>::const_iterator it = _stringEntries.begin(); it != _stringEntries.end(); ++it) {
+		if ((*it).id == id) {
+			str = (*it).str.c_str();
+			break;
+		}
+	}
+	return str;
 }
 
 void IgorEngine::loadIgorFrames() {
@@ -665,11 +729,15 @@ void IgorEngine::setCursor(int num) {
 }
 
 void IgorEngine::showCursor() {
-	CursorMan.showMouse(true);
+	debugC(9, kDebugEngine, "showCursor()");
+	_roomCursorOn = true;
+	CursorMan.showMouse(_roomCursorOn);
 }
 
 void IgorEngine::hideCursor() {
-	CursorMan.showMouse(false);
+	debugC(9, kDebugEngine, "hideCursor()");
+	_roomCursorOn = false;
+	CursorMan.showMouse(_roomCursorOn);
 
 }
 
@@ -1507,7 +1575,7 @@ void IgorEngine::setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b) {
 
 void IgorEngine::updatePalette(int count) {
 	assert(count <= 768);
-	uint8 pal[1024];
+	uint8 pal[768];
 	for (int j = 0, i = 0; i < count; ++i) {
 		pal[j++] = (_currentPalette[i] << 2);// | (_currentPalette[i] >> 4);
 		// if (((i + 1) % 3) == 0) {
@@ -1572,36 +1640,37 @@ void IgorEngine::waitForTimer(int ticks) {
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
 			case Common::EVENT_QUIT:
-				// _inputVars[kInputEscape] = 1;
+				_inputVars[kInputEscape] = 1;
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;
-				// 		case Common::EVENT_KEYDOWN:
-				// 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				// 				_inputVars[kInputEscape] = 1;
-				// 			} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
-				// 				_inputVars[kInputOptions] = 1;
-				// 			} else if (ev.kbd.keycode == Common::KEYCODE_p) {
-				// 				_inputVars[kInputPause] = 1;
-				// 			} else if (ev.kbd.keycode == Common::KEYCODE_F11) {
-				// 				sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
-				// 				saveGameState(kQuickSaveSlot);
-				// 			} else if (ev.kbd.keycode == Common::KEYCODE_F12) {
-				// 				loadGameState(kQuickSaveSlot);
-				// 			}
-				// 			break;
-				// 		case Common::EVENT_MOUSEMOVE:
-				// 			_inputVars[kInputCursorXPos] = ev.mouse.x;
-				// 			_inputVars[kInputCursorYPos] = ev.mouse.y;
-				// 			break;
-				// 		case Common::EVENT_RBUTTONDOWN:
-				// 			_inputVars[kInputSkipDialogue] = 1;
-				// 			break;
-				// 		case Common::EVENT_LBUTTONDOWN:
-				// 			_inputVars[kInputClick] = 1;
-				// 			_inputVars[kInputCursorXPos] = ev.mouse.x;
-				// 			_inputVars[kInputCursorYPos] = ev.mouse.y;
-				// 			break;
+						case Common::EVENT_KEYDOWN:
+							if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+								_inputVars[kInputEscape] = 1;
+							} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
+								_inputVars[kInputOptions] = 1;
+							} else if (ev.kbd.keycode == Common::KEYCODE_p) {
+								_inputVars[kInputPause] = 1;
+							}
+							// else if (ev.kbd.keycode == Common::KEYCODE_F11) {
+							// 	sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
+							// 	saveGameState(kQuickSaveSlot);
+							// } else if (ev.kbd.keycode == Common::KEYCODE_F12) {
+							// 	loadGameState(kQuickSaveSlot);
+							// }
+							break;
+						case Common::EVENT_MOUSEMOVE:
+							_inputVars[kInputCursorXPos] = ev.mouse.x;
+							_inputVars[kInputCursorYPos] = ev.mouse.y;
+							break;
+						case Common::EVENT_RBUTTONDOWN:
+							_inputVars[kInputSkipDialogue] = 1;
+							break;
+						case Common::EVENT_LBUTTONDOWN:
+							_inputVars[kInputClick] = 1;
+							_inputVars[kInputCursorXPos] = ev.mouse.x;
+							_inputVars[kInputCursorYPos] = ev.mouse.y;
+							break;
 			default:
 				break;
 			}
@@ -1626,6 +1695,201 @@ void IgorEngine::waitForTimer(int ticks) {
 	// }
 	if (_gameTicks == 64) {
 		_gameTicks = 0;
+	}
+}
+
+
+void IgorEngine::handleRoomInput() {
+	if (_inputVars[kInputPause]) {
+		_inputVars[kInputPause] = 0;
+		// handlePause();
+	}
+	if (_inputVars[kInputOptions]) {
+		_inputVars[kInputOptions] = 0;
+		// handleOptionsMenu();
+	}
+	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
+		// _talkDelayCounter = _talkDelay;
+		// if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
+		// 	stopSound();
+		// 	_talkSpeechCounter = -1;
+		// }
+		// _inputVars[kInputSkipDialogue] = 0;
+	}
+
+	if (!_roomCursorOn || _gameState.dialogueTextRunning /*|| _scrollInventory*/) {
+		return;
+	}
+
+	// if (_inputVars[kInputClick]) {
+	// 	if (_gameState.igorMoving) {
+	// 		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex - 1].x;
+	// 		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex - 1].y;
+	// 		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX].area == 0) {
+	// 			return;
+	// 		}
+	// 		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex + 1].x;
+	// 		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex + 1].y;
+	// 		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX].area == 0) {
+	// 			return;
+	// 		}
+	// 	}
+	// 	_inputVars[kInputClick] = 0;
+	// }
+	bool actionHovering = !_inputVars[kInputClick];
+	_inputVars[kInputClick] = 0;
+
+	if (actionHovering && _actionCode != 0) {
+		return;
+	}
+
+	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
+
+	} else if (_inputVars[kInputCursorYPos] < 144) {
+		int area = _screenLayer2[_inputVars[kInputCursorYPos] * 320 + _inputVars[kInputCursorXPos]];
+		int object = _roomObjectAreasTable[area].object;
+		if (_currentAction.verbType == 0) {
+			_currentAction.object1Num = object;
+			_currentAction.object1Type = kObjectTypeRoom;
+			// if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 48 + _currentAction.object1Num] != 0) {
+			// 	formatActionSentence(0);
+			// 	if (!actionHovering) {
+			// 		_currentAction.verbType = 1;
+			// 	}
+			// 	return;
+			// }
+			// if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 48 + _currentAction.object1Num] != 0) {
+			// 	formatActionSentence(0);
+			// 	if (!actionHovering) {
+			// 		_currentAction.verbType = 2;
+			// 	}
+			// 	return;
+			// }
+		} else {
+			_currentAction.object2Num = object;
+			_currentAction.object2Type = kObjectTypeRoom;
+		}
+	}
+	else {
+		return;
+	}
+
+	// if (_currentAction.verbType == 0) {
+	// 	if (_currentAction.object1Type == kObjectTypeInventory) {
+	// 		_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
+	// 	} else {
+	// 		_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
+	// 	}
+	// }
+
+	if (_currentAction.verbType == 1) {
+		int offset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
+		offset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
+		_actionCode = _roomActionsTable[_roomDataOffsets.action.useVerb + offset];
+	}
+	if (_currentAction.verbType == 2) {
+		int offset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;
+		offset += _roomActionsTable[_roomDataOffsets.action.object1 + _currentAction.object1Num + _currentAction.object1Type * 38] * _roomDataOffsets.action.objectSize;
+		_actionCode = _roomActionsTable[_roomDataOffsets.action.giveVerb + offset];
+	}
+
+	if (actionHovering) {
+		formatActionSentence(0);
+		_currentAction.object2Num = 0;
+		_actionCode = 0;
+		return;
+	}
+
+}
+
+void IgorEngine::formatActionSentence(uint8 color) {
+	char actionSentence[512];
+	if (_currentAction.verb == kVerbWalk && _inputVars[kInputCursorYPos] > 143) {
+		_currentAction.object1Num = 0;
+	}
+
+	Common::strlcpy(actionSentence, _verbsName[_currentAction.verb], sizeof(actionSentence));
+	if (_currentAction.object1Num != 0) {
+		if (_currentAction.object1Type == kObjectTypeInventory) {
+			Common::strlcat(actionSentence, _globalObjectNames[_currentAction.object1Num], sizeof(actionSentence));
+		} else {
+			Common::strlcat(actionSentence, _roomObjectNames[_currentAction.object1Num], sizeof(actionSentence));
+		}
+		if (_currentAction.verbType != 0) {
+			Common::strlcat(actionSentence, _verbPrepositions[_currentAction.verbType], sizeof(actionSentence));
+			if (_currentAction.object2Num != 0) {
+				if (_currentAction.object2Type == kObjectTypeInventory) {
+					Common::strlcat(actionSentence, _globalObjectNames[_currentAction.object2Num], sizeof(actionSentence));
+				} else {
+					Common::strlcat(actionSentence, _roomObjectNames[_currentAction.object2Num], sizeof(actionSentence));
+				}
+			}
+		}
+	}
+	drawActionSentence(actionSentence, _sentenceColorIndex[color]);
+}
+
+int IgorEngine::getStringWidth(const char *s) const {
+	int w = 0;
+	for (; *s; ++s) {
+		if (*s == ' ') {
+			w += 5;
+		} else {
+			int chr = _fontCharIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			w += _fontCharWidth[chr];
+		}
+	}
+	return w;
+}
+
+void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
+	memset(_screenVGA + 144 * 320, 0, 11 * 320);
+	int w = getStringWidth(sentence);
+	int x = (320 - w) / 2;
+	drawString(_screenVGA, sentence, x, 144, color, 0, 0);
+}
+void IgorEngine::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) {
+	for (; *s; ++s) {
+		if (*s == ' ') {
+			x += 5;
+		} else {
+			int chr = _fontCharIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			if (x + _fontCharWidth[chr] > 320) {
+				break;
+			}
+			drawChar(dst, chr, x, y, color1, color2, color3);
+			x += _fontCharWidth[chr];
+		}
+	}
+}
+
+void IgorEngine::drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3) {
+	dst += y * 320 + x;
+	for (int j = 0; j < 11; ++j, dst += 320) {
+		uint32 chrLineMask = _fontData[chr * 11 + j];
+		for (int i = 0; i < 9; ++i, chrLineMask >>= 2) {
+			switch (chrLineMask & 3) {
+			case 1:
+				dst[i] = color1;
+				break;
+			case 2:
+				if (color2 != -1) {
+					dst[i] = color2;
+				}
+				break;
+			case 3:
+				if (color3 != -1) {
+					dst[i] = color3;
+				}
+				break;
+			}
+		}
 	}
 }
 
@@ -1755,10 +2019,6 @@ void IgorEngine::PART_MAIN() {
 			break;
 		}
 	}
-}
-
-void IgorEngine::handleRoomInput() {
-
 }
 
 void IgorEngine::handleRoomIgorWalk() {

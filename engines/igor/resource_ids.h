@@ -23,11 +23,6 @@
 #define IGOR_RESOURCE_IDS
 
 
-#define FRM_IgorDirBack 317
-#define FRM_IgorDirRight 318
-#define FRM_IgorDirFront 319
-#define FRM_IgorDirLeft 320
-#define FRM_IgorHead 321
 
 
 #define TXT_SpringBridge 245
@@ -41,5 +36,21 @@
 #define PAL_SpringRock 272
 #define MSK_SpringRock 273
 #define BOX_SpringRock 274
+
+#define FRM_IgorDirBack 317
+#define FRM_IgorDirRight 318
+#define FRM_IgorDirFront 319
+#define FRM_IgorDirLeft 320
+#define FRM_IgorHead 321
+#define IMG_VerbsPanel 322
+#define TXT_MainTable 323
+
+#define STR_Talk 402
+#define STR_Take 403
+#define STR_Look 404
+#define STR_Use 405
+#define STR_Open 406
+#define STR_Close 407
+#define STR_Give 408
 
 #endif // IGOR_RESOURCE_IDS
