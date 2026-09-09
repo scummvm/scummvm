@@ -89,7 +89,7 @@ void MazeEvents::synchronize(XeenSerializer &s) {
 		}
 	} else {
 		for (uint i = 0; i < size(); ++i)
-			(*this).operator[](i).synchronize(s);
+			(this)->operator[](i).synchronize(s);
 	}
 }
 
