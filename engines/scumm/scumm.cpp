@@ -2824,8 +2824,8 @@ Common::Error ScummEngine::go() {
 		filenames = saveFileMan->listSavefiles(_targetName + "-chase???.???");
 
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-			Common::String from = (*file).c_str();
-			Common::String to = (*file).c_str();
+			Common::String from = file->c_str();
+			Common::String to = file->c_str();
 			to.insertString("000-", from.size() - 12);
 			saveFileMan->renameSavefile(from, to);
 		}
