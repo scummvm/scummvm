@@ -270,8 +270,8 @@ void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt
 		angleIncr -= angleStep;
 
 		Common::Point newPoint(
-			centerX + _vm->getRandom(8) - 2 + (int)(cos(currentAngle) * radius),
-			centerY + _vm->getRandom(8) - 2 - (int)(sin(currentAngle) * radius));
+			centerX + _vm->getRandom(8) - 2 + (int)(cosf(currentAngle) * radius),
+			centerY + _vm->getRandom(8) - 2 - (int)(sinf(currentAngle) * radius));
 
 		Control *trailControl = _vm->_dict->getObjectControl(_trailObjectIds[i]);
 

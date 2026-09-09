@@ -52,21 +52,21 @@ FixedPoint16 fixedDistance(FixedPoint16 x1, FixedPoint16 y1, FixedPoint16 x2, Fi
 	float xd = fixedToFloat(x1) - fixedToFloat(x2);
 	float yd = fixedToFloat(y1) - fixedToFloat(y2);
 	if (xd != 0.0f || yd != 0.0f)
-		return floatToFixed(sqrt(xd * xd + yd * yd));
+		return floatToFixed(sqrtf(xd * xd + yd * yd));
 	return 0;
 }
 
 FixedPoint16 fixedAtan(FixedPoint16 value) {
 	//return floatToFixed(atan2(1.0, fixedToFloat(value)));
-	return floatToFixed(atan(fixedToFloat(value)));
+	return floatToFixed(atanf(fixedToFloat(value)));
 }
 
 FixedPoint16 fixedCos(FixedPoint16 value) {
-	return floatToFixed(cos(fixedToFloat(value)));
+	return floatToFixed(cosf(fixedToFloat(value)));
 }
 
 FixedPoint16 fixedSin(FixedPoint16 value) {
-	return floatToFixed(sin(fixedToFloat(value)));
+	return floatToFixed(sinf(fixedToFloat(value)));
 }
 
 } // End of namespace Illusions
