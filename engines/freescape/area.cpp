@@ -926,7 +926,7 @@ void Area::changeObjectID(uint16 objectID, uint16 newObjectID) {
 	_addedObjects.erase(objectID);
 	_addedObjects[newObjectID] = obj;
 
-	(*_objectsByID).erase(objectID);
+	_objectsByID->erase(objectID);
 	(*_objectsByID)[newObjectID] = obj;
 }
 
