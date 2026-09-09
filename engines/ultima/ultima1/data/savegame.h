@@ -132,9 +132,18 @@ public:
 	// Set to 1 when the player first steps next to Mondain, then counts up
 	// frame by frame to drive his hit-reaction animation
 	int16 _mondainHitAnimFrame = 0;
+	// +1/-1 step direction _mondainHitAnimFrame currently bounces by,
+	// between 1 and 4
+	int16 _mondainHitAnimDir = 0;
 	// Set once combat with Mondain has been triggered (the player got
 	// adjacent to him for the first time)
 	int16 _mondainCombatFlag = 0;
+	// Which of Mondain's story-driven forms/poses is currently shown - a
+	// tile Id offset added to _mondainPhaseAnimOffset
+	int16 _mondainPhase = 2;
+	// Small cycling offset added to _mondainPhase to animate his current
+	// pose - what it cycles through depends on the current phase
+	int16 _mondainPhaseAnimOffset = 0;
 
 	/**
 	 * Synchronize savegame data

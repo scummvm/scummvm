@@ -76,6 +76,19 @@ void MondainMap::draw() {
 	}
 #endif
 
+	// Draw Mondain himself - his current pose, plus (while he's reacting to
+	// a hit) a small flash effect just to the left of him
+	const auto &sg = _G(savegame);
+	const auto &mondainPos = sg._mondainPos;
+
+	if (sg._mondainHitAnimFrame != 0) {
+		const Graphics::ManagedSurface &hitTileImg = tiles[sg._mondainHitAnimFrame + 5];
+		s.blitFrom(hitTileImg, Common::Point((mondainPos.x - 1) * TILE_WIDTH + 8, mondainPos.y * TILE_HEIGHT + 8));
+	}
+
+	const Graphics::ManagedSurface &mondainTileImg = tiles[sg._mondainPhase + sg._mondainPhaseAnimOffset];
+	s.blitFrom(mondainTileImg, Common::Point(mondainPos.x * TILE_WIDTH + 8, mondainPos.y * TILE_HEIGHT + 8));
+
 	// Draw the player
 	const Graphics::ManagedSurface &tileImg = tiles[Data::MTILE_PLAYER];
 	s.blitFrom(tileImg, Common::Point(pos.x * TILE_WIDTH + 8, pos.y * TILE_HEIGHT + 8));

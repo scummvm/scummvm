@@ -93,10 +93,41 @@ bool MondainLogic::move(Data::Direction dir) {
 
 	if (isAdjacentToMondain() && sg._mondainHitAnimFrame == 0) {
 		sg._mondainHitAnimFrame = 1;
+		sg._mondainHitAnimDir = 1;
 		sg._mondainCombatFlag = 1;
 	}
 
 	return true;
+}
+
+void MondainLogic::tick() {
+	// Only advance the animations once every 4 frames
+	if (++_tickCounter < 4)
+		return;
+	_tickCounter = 0;
+
+	Data::Savegame &sg = _G(savegame);
+
+	// Bounce the hit-reaction frame back and forth between 1 and 4
+	if (sg._mondainHitAnimFrame != 0) {
+		sg._mondainHitAnimFrame += sg._mondainHitAnimDir;
+
+		if (sg._mondainHitAnimFrame == 1)
+			sg._mondainHitAnimDir = 1;
+		else if (sg._mondainHitAnimFrame > 4)
+			sg._mondainHitAnimDir = -1;
+	}
+
+	// Cycle the idle pose animation - what it does depends on which of
+	// Mondain's story-driven phases is currently active
+	if (sg._mondainPhase == 2) {
+		sg._mondainPhaseAnimOffset = (getRandomNumber(1, 200) < 100) ? 1 : 0;
+	} else if (sg._mondainPhase == 11) {
+		if (sg._mondainPhaseAnimOffset == 2)
+			sg._mondainPhaseAnimOffset = 0;
+		else
+			++sg._mondainPhaseAnimOffset;
+	}
 }
 
 bool MondainLogic::isAdjacentToMondain() const {

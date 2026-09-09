@@ -31,6 +31,11 @@ namespace Logic {
 
 class MondainLogic : public Logic {
 private:
+	// tick() is called once per game frame, but the original only advanced
+	// Mondain's animations once every few frames - this counts frames
+	// between updates
+	int _tickCounter = 0;
+
 	/**
 	 * Returns true if Mondain is standing in any of the 8 cells surrounding
 	 * the player's current position
@@ -57,6 +62,12 @@ public:
 	}
 
 	void entering() override;
+
+	/**
+	 * Called once per game frame - advances Mondain's hit-reaction and
+	 * idle-pose animations
+	 */
+	void tick() override;
 };
 
 } // namespace Logic

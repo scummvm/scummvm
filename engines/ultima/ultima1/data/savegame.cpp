@@ -110,7 +110,10 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 		s.syncAsSint16LE(_mondainPos.y);
 		s.syncAsByte(_gemDestroyedFlag);
 		s.syncAsSint16LE(_mondainHitAnimFrame);
+		s.syncAsSint16LE(_mondainHitAnimDir);
 		s.syncAsSint16LE(_mondainCombatFlag);
+		s.syncAsSint16LE(_mondainPhase);
+		s.syncAsSint16LE(_mondainPhaseAnimOffset);
 	}
 }
 
