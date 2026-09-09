@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GLK_JACL_TYPES_H
+#define GLK_JACL_TYPES_H
+
 #include "glk/jacl/constants.h"
 #include "common/file.h"
 
@@ -221,3 +224,5 @@ public:
 
 } // End of namespace JACL
 } // End of namespace Glk
+
+#endif // GLK_JACL_TYPES_H

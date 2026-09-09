@@ -19,6 +19,8 @@
  *
  */
 
+#ifndef GLK_AGT_EXEC_H
+#define GLK_AGT_EXEC_H
 
 namespace Glk {
 namespace AGT {
@@ -269,3 +271,5 @@ extern rbool it_locked(integer obj, word noun);
 
 } // End of namespace AGT
 } // End of namespace Glk
+
+#endif // GLK_AGT_EXEC_H

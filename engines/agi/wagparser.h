@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef AGI_WAGPARSER_H
+#define AGI_WAGPARSER_H
+
 namespace Agi {
 
 /**
@@ -305,3 +308,5 @@ protected:
 };
 
 } // End of namespace Agi
+
+#endif // AGI_WAGPARSER_H

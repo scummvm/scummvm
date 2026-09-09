@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef PRINCE_VARIATXT_H
+#define PRINCE_VARIATXT_H
+
 #include "common/stream.h"
 
 namespace Prince {
@@ -37,3 +40,5 @@ private:
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_VARIATXT_H

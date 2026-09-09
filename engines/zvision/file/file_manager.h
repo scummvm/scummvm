@@ -19,12 +19,12 @@
  *
  */
 
+#ifndef ZVISION_FILE_MANAGER
+#define ZVISION_FILE_MANAGER
+
 #include "common/file.h"
 #include "common/path.h"
 #include "zvision/zvision.h"
-
-#ifndef ZVISION_FILE_MANAGER
-#define ZVISION_FILE_MANAGER
 
 namespace ZVision {
 
@@ -43,4 +43,4 @@ private:
 
 } // End of namespace ZVision
 
-#endif
+#endif // ZVISION_FILE_MANAGER

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef PRINCE_CURVE_VALUES_H
+#define PRINCE_CURVE_VALUES_H
+
 namespace Prince {
 
 const int curveValues[17][4] = {
@@ -42,3 +45,5 @@ const int curveValues[17][4] = {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_CURVE_VALUES_H

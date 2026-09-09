@@ -18,6 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef SLUDGE_FUNCTIONLIST_H
+#define SLUDGE_FUNCTIONLIST_H
+
 /*
  This is the list of the built in functions
 
@@ -203,3 +207,5 @@ static builtInFunctionData builtInFunctionArray[] = {
 const static int NUM_FUNCS = ARRAYSIZE(builtInFunctionArray);
 
 } // End of namespace Sludge
+
+#endif // SLUDGE_FUNCTIONLIST_H

@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef GRAPHICS_PM5544_H
+#define GRAPHICS_PM5544_H
+
 namespace Graphics {
 
 class ManagedSurface;
@@ -35,3 +38,5 @@ class ManagedSurface;
 ManagedSurface *renderPM5544(int width, int height);
 
 }  // End of namespace Graphics
+
+#endif // GRAPHICS_PM5544_H

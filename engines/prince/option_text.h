@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef PRINCE_OPTION_TEXT_H
+#define PRINCE_OPTION_TEXT_H
+
 namespace Prince {
 
 // PL - Mazovia coding
@@ -158,3 +161,5 @@ const char *optionsTextHE[] = {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_OPTION_TEXT_H

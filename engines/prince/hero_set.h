@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef PRINCE_HERO_SET_H
+#define PRINCE_HERO_SET_H
+
 #include "common/scummsys.h"
 
 namespace Prince {
@@ -241,3 +244,5 @@ const HeroSetAnimNames *heroSetTable[7] = {
 };
 
 } // End of namespace Prince
+
+#endif // PRINCE_HERO_SET_H
