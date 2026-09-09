@@ -79,19 +79,19 @@ void LBAAngles::lba2() {
 
 
 int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
-	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
+	return (int32)sqrtf((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
 }
 
 int32 getDistance2D(const IVec3 &v1, const IVec3 &v2) {
-	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.z - v1.z) * (v2.z - v1.z)));
+	return (int32)sqrtf((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.z - v1.z) * (v2.z - v1.z)));
 }
 
 int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) {
-	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
+	return (int32)sqrtf((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
 }
 
 int32 getDistance3D(const IVec3 &v1, const IVec3 &v2) {
-	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)));
+	return (int32)sqrtf((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)));
 }
 
 }

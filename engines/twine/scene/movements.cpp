@@ -94,7 +94,7 @@ int32 Movements::getAngle(int32 x0, int32 z0, int32 x1, int32 z1) {
 		flag = false;
 	}
 
-	_targetActorDistance = (int32)sqrt((float)(newX + newZ));
+	_targetActorDistance = (int32)sqrtf((float)(newX + newZ));
 
 	if (!_targetActorDistance) {
 		return 0;
