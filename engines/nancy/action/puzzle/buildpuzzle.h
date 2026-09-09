@@ -34,7 +34,7 @@ namespace Action {
 // being assigned a zone index rather than by matching a rect.
 class BuildPuzzle : public RenderActionRecord {
 public:
-	BuildPuzzle() : RenderActionRecord(7), _cursorItem(99) {}
+	BuildPuzzle() : RenderActionRecord(7), _buttonPress(98), _cursorItem(99) {}
 	virtual ~BuildPuzzle() {}
 
 	void init() override;
@@ -154,15 +154,24 @@ protected:
 	SoundDescription _pickupSound;
 	SoundDescription _dropSound;
 	SoundDescription _notebookSound;
-	SoundDescription _resetSound;
+	SoundDescription _putDownSound;
 	SoundDescription _holdSound;
+
+	// Two on-screen buttons: one hands the puzzle in, one clears it. Only the
+	// parfait puzzle has them; the rest are handed in through an exit hotspot.
+	Common::Rect _submitSrcRect;
+	Common::Rect _submitHotspot;
+	SoundDescription _submitSound;
+	Common::Rect _startOverSrcRect;
+	Common::Rect _startOverHotspot;
+	SoundDescription _startOverSound;
 
 	// Both cleared when the puzzle starts from scratch.
 	int16 _wrongIngredientFlag = -1;	// set once something not in a recipe is dropped in
 	int16 _solvedFlag = -1;
 
-	// When _usePlacedGate is set, the scene only changes once this many pieces
-	// have been placed.
+	// The submit button lights up at _requiredPlaced pieces. With _usePlacedGate
+	// set, dropping the last one ends the puzzle by itself instead.
 	uint16 _requiredPlaced = 0;
 	byte _usePlacedGate = 0;
 	uint16 _stateItemID = 255;			// shared item state tracking the placed count
@@ -181,6 +190,18 @@ protected:
 	Graphics::ManagedSurface _pieceImage;	// a kind 3 piece's own close-up art
 	Common::Path _pieceImageName;
 
+	// The button showing its pressed art, and until when.
+	enum HeldButton {
+		kNoButton = 0,
+		kSubmitButton,
+		kStartOverButton
+	};
+	HeldButton _heldButton = kNoButton;
+	uint32 _buttonTimerEnd = 0;
+	RenderObject _buttonPress;
+
+	int16 _placedCount = 0;
+
 	// Whatever is currently on the cursor: a scoop, or an ingredient.
 	RenderObject _cursorItem;
 	int16 _activeHold = -1;
@@ -190,7 +211,7 @@ protected:
 	int16 _closeupPiece = -1;
 	uint16 _numDefined = 0;			// pieces read from the record; the rest are spare slots
 	bool _isSolved = false;
-	bool _leaveRequested = false;
+	bool _isFailed = false;
 	bool _isInitialized = false;
 
 	void setPieceCursor(bool isHeld);
@@ -214,11 +235,19 @@ protected:
 	int16 clonePiece(int16 pieceIdx);
 	void updatePieceRender(int16 pieceIdx);
 	bool checkSolved() const;
+	// Also updates the shared item state that mirrors the count
+	void setPlacedCount(int16 count);
+	// Show a button pressed; it acts once its art has been up for a moment
+	void pressButton(HeldButton button);
+	// Hand the puzzle in: the solve scene, or the fail scene when a zone is short
+	void takeOutcome();
+	// Empty every zone and put all the pieces back
+	void resetPuzzle();
 
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
+	// The tea puzzle has four: backing away, plus the teapot, the recipe book
+	// and the sink.
+	Common::Array<ExitHotspot> _exitHotspots;
+	int16 _takenExit = -1;
 };
 
 } // End of namespace Action

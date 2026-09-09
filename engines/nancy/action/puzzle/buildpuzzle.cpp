@@ -56,11 +56,12 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_requiredPlaced = stream.readUint16LE();
 	_usePlacedGate = stream.readByte();
 	_stateItemID = stream.readUint16LE();
-	stream.skip(32);						// 0x4e: two overlay rects
-	SoundDescription unused;
-	readSoundBlock(stream, unused);
-	stream.skip(32);						// 0x6e: two more overlay rects
-	readSoundBlock(stream, unused);
+	readRect(stream, _submitSrcRect);
+	readRect(stream, _submitHotspot);
+	readSoundBlock(stream, _submitSound);
+	readRect(stream, _startOverSrcRect);
+	readRect(stream, _startOverHotspot);
+	readSoundBlock(stream, _startOverSound);
 	stream.skip(32);						// 0x8e: the "done" overlay gate and its rect
 
 	readFilename(stream, _anim1Name);
@@ -152,7 +153,7 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readSoundBlock(stream, _pickupSound);
 	readSoundBlock(stream, _dropSound);
 	readSoundBlock(stream, _notebookSound);
-	readSoundBlock(stream, _resetSound);
+	readSoundBlock(stream, _putDownSound);
 
 	_wrongIngredientFlag = stream.readSint16LE();
 	_solvedFlag = stream.readSint16LE();
@@ -162,6 +163,7 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveFlag.label = stream.readSint16LE();
 	_solveFlag.flag = stream.readByte();
 
+	SoundDescription unused;
 	readSoundBlock(stream, unused);
 
 	_failScene.sceneID = stream.readUint16LE();
@@ -173,8 +175,10 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readSoundBlock(stream, unused);
 
 	// The count-prefixed 23-byte hotspot records shared by the later puzzles.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspots(stream, _exitHotspots);
+	for (uint i = 0; i < _exitHotspots.size(); ++i) {
+		_exitHotspots[i].scene.continueSceneSound = kContinueSceneSound;
+	}
 }
 
 void BuildPuzzle::setFlagOnChange(int16 label, bool value, int8 &last) {
@@ -259,6 +263,9 @@ void BuildPuzzle::init() {
 	_cursorItem.setTransparent(true);
 	_cursorItem.setVisible(false);
 
+	_buttonPress.setTransparent(true);
+	_buttonPress.setVisible(false);
+
 	_isInitialized = true;
 }
 
@@ -276,6 +283,7 @@ void BuildPuzzle::registerGraphics() {
 	}
 
 	_cursorItem.registerGraphics();
+	_buttonPress.registerGraphics();
 }
 
 byte BuildPuzzle::carriedAmount() const {
@@ -495,6 +503,7 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 	// exists while it is in a zone, so it goes away rather than onto the cursor.
 	if (piece.assignedZone != -1) {
 		adjustZone(piece.assignedZone, piece.sourceID, -1);
+		setPlacedCount(_placedCount - 1);
 		piece.assignedZone = -1;
 
 		if (pieceIdx >= (int16)_numDefined) {
@@ -578,13 +587,106 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 	_pieces[placedIdx].setZOrder((uint16)(_z + placedIdx + 1));
 	updatePieceRender(placedIdx);
 
+	setPlacedCount(_placedCount + 1);
+
 	bool solved = checkSolved();
 	setFlagOnChange(_solvedFlag, solved, _lastSolvedFlag);
 
-	if (solved) {
+	// Without the gate the puzzle waits to be handed in, so a wrong mix can be
+	// thrown away first.
+	if (!_usePlacedGate) {
+		return;
+	}
+
+	if (solved && _placedCount >= (int16)_requiredPlaced) {
 		_isSolved = true;
 		_state = kActionTrigger;
+	} else if (!solved && _placedCount > (int16)_requiredPlaced) {
+		_isFailed = true;
+		_state = kActionTrigger;
 	}
+}
+
+void BuildPuzzle::setPlacedCount(int16 count) {
+	_placedCount = MAX<int16>(0, count);
+
+	if (_stateItemID != 255) {
+		TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		if (table) {
+			table->setSingleValue(_stateItemID, _placedCount);
+		}
+	}
+}
+
+void BuildPuzzle::pressButton(HeldButton button) {
+	const Common::Rect &src = button == kSubmitButton ? _submitSrcRect : _startOverSrcRect;
+	const Common::Rect &dest = button == kSubmitButton ? _submitHotspot : _startOverHotspot;
+	SoundDescription &sound = button == kSubmitButton ? _submitSound : _startOverSound;
+
+	// Both buttons draw their pressed art out of the main image.
+	if (!src.isEmpty()) {
+		_buttonPress._drawSurface.create(_image, src);
+		_buttonPress.setTransparent(true);
+		_buttonPress.moveTo(dest);
+		_buttonPress.setVisible(true);
+	}
+
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+
+	_heldButton = button;
+	// Submit holds a little longer than the button that clears the board.
+	_buttonTimerEnd = g_system->getMillis() + (button == kSubmitButton ? 500 : 300);
+}
+
+void BuildPuzzle::takeOutcome() {
+	if (checkSolved()) {
+		if (_solveScene.sceneID != kNoScene) {
+			_isSolved = true;
+			_state = kActionTrigger;
+		}
+	} else if (_failScene.sceneID != kNoScene) {
+		_isFailed = true;
+		_state = kActionTrigger;
+	}
+}
+
+void BuildPuzzle::resetPuzzle() {
+	for (uint i = 0; i < _zones.size(); ++i) {
+		Zone &zone = _zones[i];
+		zone.numWrong = 0;
+		zone.numHeld = 0;
+		for (uint j = 0; j < zone.counts.size(); ++j) {
+			zone.counts[j] = 0;
+		}
+	}
+
+	for (uint i = 0; i < _holds.size(); ++i) {
+		_holds[i].setVisible(!_holds[i].srcRect.isEmpty());
+	}
+
+	for (uint i = 0; i < _pieces.size(); ++i) {
+		Piece &piece = _pieces[i];
+		piece.assignedZone = -1;
+
+		// The copies made while filling the zones go away again.
+		if (i >= _numDefined) {
+			piece.inUse = false;
+			piece.setVisible(false);
+			continue;
+		}
+
+		piece.liveRect = piece.destRect;
+		updatePieceRender((int16)i);
+	}
+
+	_heldPiece = -1;
+	_closeupPiece = -1;
+	_activeHold = -1;
+	setPlacedCount(0);
+
+	setFlagOnChange(_solvedFlag, false, _lastSolvedFlag);
+	setFlagOnChange(_wrongIngredientFlag, false, _lastWrongFlag);
 }
 
 void BuildPuzzle::execute() {
@@ -595,14 +697,28 @@ void BuildPuzzle::execute() {
 		_state = kRun;
 		break;
 	case kRun:
+		if (_heldButton != kNoButton && g_system->getMillis() >= _buttonTimerEnd) {
+			HeldButton button = _heldButton;
+			_heldButton = kNoButton;
+			_buttonPress.setVisible(false);
+
+			if (button == kSubmitButton) {
+				takeOutcome();
+			} else {
+				resetPuzzle();
+			}
+		}
 		break;
 	case kActionTrigger:
 		if (_isSolved) {
 			NancySceneState.setEventFlag(_solveFlag);
 			NancySceneState.changeScene(_solveScene);
-		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+		} else if (_isFailed) {
+			NancySceneState.setEventFlag(_failFlag);
+			NancySceneState.changeScene(_failScene);
+		} else if (_takenExit >= 0) {
+			NancySceneState.setEventFlag(_exitHotspots[_takenExit].flag);
+			NancySceneState.changeScene(_exitHotspots[_takenExit].scene);
 		}
 
 		finishExecution();
@@ -620,11 +736,37 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
+	if (_heldButton != kNoButton) {
+		return;
+	}
+
 	Common::Point mouseVP(input.mousePos.x - viewData->screenPosition.left,
 							input.mousePos.y - viewData->screenPosition.top);
 	bool clicked = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
 	updateCursorItem(mouseVP);
+
+	// The buttons sit above the board, and submitting needs enough pieces placed.
+	if (!_startOverHotspot.isEmpty() && _startOverHotspot.contains(mouseVP)) {
+		setPieceCursor(false);
+
+		if (clicked) {
+			pressButton(kStartOverButton);
+		}
+
+		return;
+	}
+
+	if (!_submitHotspot.isEmpty() && _submitHotspot.contains(mouseVP) &&
+			_placedCount >= (int16)_requiredPlaced) {
+		setPieceCursor(false);
+
+		if (clicked) {
+			pressButton(kSubmitButton);
+		}
+
+		return;
+	}
 
 	// A close-up covers the board; clicking it takes the piece, except for a
 	// piece that is only ever there to be looked at.
@@ -764,20 +906,25 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (_exitHotspot.isEmpty()) {
-		return;
-	}
+	for (uint i = 0; i < _exitHotspots.size(); ++i) {
+		const ExitHotspot &exit = _exitHotspots[i];
+		if (exit.hotspot.isEmpty() ||
+				!NancySceneState.getViewport().convertViewportToScreen(exit.hotspot).contains(input.mousePos)) {
+			continue;
+		}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		if (_exitCursorType != 0) {
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, true);
+		if (exit.cursorType != 0) {
+			g_nancy->_cursor->setCursorType((CursorManager::CursorType)exit.cursorType, true, true);
 		} else {
 			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 		}
 
 		if (clicked) {
+			_takenExit = (int16)i;
 			_state = kActionTrigger;
 		}
+
+		return;
 	}
 }
 
