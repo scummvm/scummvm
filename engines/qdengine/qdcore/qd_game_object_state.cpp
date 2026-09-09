@@ -40,8 +40,8 @@
 namespace QDEngine {
 
 bool qdScreenTransform::operator == (const qdScreenTransform &trans) const {
-	return fabs(_angle - trans._angle) < FLT_EPS &&
-	       fabs(_scale.x - trans._scale.x) < FLT_EPS && fabs(_scale.y - trans._scale.y) < FLT_EPS;
+	return fabsf(_angle - trans._angle) < FLT_EPS &&
+	       fabsf(_scale.x - trans._scale.x) < FLT_EPS && fabsf(_scale.y - trans._scale.y) < FLT_EPS;
 }
 
 bool qdScreenTransform::change(float dt, const qdScreenTransform &target_trans, const qdScreenTransform &speed) {
@@ -477,7 +477,7 @@ bool qdGameObjectState::save_script_body(Common::WriteStream &fh, int indent) co
 		fh.writeString(Common::String::format(" rnd_move=\"%f %f\"", _rnd_move_radius, _rnd_move_speed));
 	}
 
-	if (fabs(_fade_time - 0.1f) > FLT_EPS) {
+	if (fabsf(_fade_time - 0.1f) > FLT_EPS) {
 		fh.writeString(Common::String::format(" fade_time=\"%f\"", _fade_time));
 	}
 
@@ -1005,18 +1005,18 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 		angle = M_PI / 4.0f * 5.0f;
 		break;
 	case MOVEMENT_HORIZONTAL:
-		angle = (fabs(getDeltaAngle(0.0f, angle)) < fabs(getDeltaAngle(M_PI, angle))) ? 0.0f : M_PI;
+		angle = (fabsf(getDeltaAngle(0.0f, angle)) < fabsf(getDeltaAngle(M_PI, angle))) ? 0.0f : M_PI;
 		break;
 	case MOVEMENT_VERTICAL:
-		angle = (fabs(getDeltaAngle(M_PI / 2.0f, angle)) < fabs(getDeltaAngle(M_PI / 2.0f * 3.0f, angle))) ? M_PI / 2.0f : M_PI / 2.0f * 3.0f;
+		angle = (fabsf(getDeltaAngle(M_PI / 2.0f, angle)) < fabsf(getDeltaAngle(M_PI / 2.0f * 3.0f, angle))) ? M_PI / 2.0f : M_PI / 2.0f * 3.0f;
 		break;
 	case MOVEMENT_FOUR_DIRS: {
-		float dist0 = fabs(getDeltaAngle(0.0f, angle));
+		float dist0 = fabsf(getDeltaAngle(0.0f, angle));
 		float angle0 = 0.0f;
 
 		for (int i = 1; i < 4; i++) {
 			float angle1 = float(i) * M_PI / 2.0f;
-			float dist1 = fabs(getDeltaAngle(angle1, angle));
+			float dist1 = fabsf(getDeltaAngle(angle1, angle));
 			if (dist1 < dist0) {
 				dist0 = dist1;
 				angle0 = angle1;
@@ -1027,12 +1027,12 @@ float qdGameObjectStateWalk::adjust_direction_angle(float angle) const {
 	}
 	break;
 	case MOVEMENT_EIGHT_DIRS: {
-		float dist0 = fabs(getDeltaAngle(0.0f, angle));
+		float dist0 = fabsf(getDeltaAngle(0.0f, angle));
 		float angle0 = 0.0f;
 
 		for (int i = 1; i < 8; i++) {
 			float angle1 = float(i) * M_PI / 4.0f;
-			float dist1 = fabs(getDeltaAngle(angle1, angle));
+			float dist1 = fabsf(getDeltaAngle(angle1, angle));
 			if (dist1 < dist0) {
 				dist0 = dist1;
 				angle0 = angle1;

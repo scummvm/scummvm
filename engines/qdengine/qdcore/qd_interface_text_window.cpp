@@ -453,15 +453,15 @@ bool qdInterfaceTextWindow::quant(float dt) {
 		if (_text_set) {
 			debugC(2, kDebugText,"** qdInterfaceTextWindow::quant(): text_set, id: %d", _text_set->ID());
 
-			if (fabs(_scrolling_position) > FLT_EPS) {
+			if (fabsf(_scrolling_position) > FLT_EPS) {
 				float delta = _scrolling_speed * dt;
-				if (fabs(_scrolling_position) > delta)
+				if (fabsf(_scrolling_position) > delta)
 					_scrolling_position += (_scrolling_position > 0) ? -delta : delta;
 				else
 					_scrolling_position = 0;
 
 				Vect2i pos = _text_set->screen_pos();
-				pos.y = _text_set_position + round(_scrolling_position);
+				pos.y = _text_set_position + roundf(_scrolling_position);
 				_text_set->set_screen_pos(pos);
 			}
 

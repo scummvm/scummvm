@@ -115,8 +115,8 @@ bool qdInterfaceScreen::quant(float dt) {
 		if (_autohide_phase > 1.0f)
 			_autohide_phase = 1.0f;
 
-		int x = round(float(_autohide_offset.x) * _autohide_phase);
-		int y = round(float(_autohide_offset.y) * _autohide_phase);
+		int x = roundf(float(_autohide_offset.x) * _autohide_phase);
+		int y = roundf(float(_autohide_offset.y) * _autohide_phase);
 
 		g_engine->set_screen_offset(Vect2i(x, y));
 	} else {

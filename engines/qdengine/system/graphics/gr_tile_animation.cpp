@@ -413,8 +413,8 @@ void grTileAnimation::drawFrame_scale(const Vect2i &position, int frame_index, f
 		else
 			frameSize =_scaleArray[closest_scale]._frameSize;
 
-		int x = position.x - round(float(frameSize.x) * scale) / 2;
-		int y = position.y - round(float(frameSize.y) * scale) / 2;
+		int x = position.x - roundf(float(frameSize.x) * scale) / 2;
+		int y = position.y - roundf(float(frameSize.y) * scale) / 2;
 
 		grDispatcher::instance()->putSpr_a(x, y, frameSize.x, frameSize.y, data, mode, scale);
 	} else {
@@ -568,7 +568,7 @@ int grTileAnimation::find_closest_scale(float *scale) const {
 	float temp = 1.0;
 
 	for (uint i = 0; i < _scaleArray.size(); i++) {
-		if (fabs(*scale - _scaleArray[i]._scale) < fabs(*scale - temp)) {
+		if (fabsf(*scale - _scaleArray[i]._scale) < fabsf(*scale - temp)) {
 			idx = i;
 			temp = _scaleArray[i]._scale;
 		}

@@ -62,7 +62,7 @@ CrossProduct(const Vect3f &v1, const Vect3f &v2) {
 //угол между векторами лежащими в плоскости ХОУ
 //иначе ее применять НЕЛЬЗЯ
 float VectorAngle(const Vect3f &v1, const Vect3f &v2) {
-	return float(atan2(v2.y, v2.x) - atan2(v1.y, v1.x));
+	return float(atan2f(v2.y, v2.x) - atan2f(v1.y, v1.x));
 }
 
 }//vector_helpers
@@ -210,8 +210,8 @@ ViewMatrix(const Vect3f &from,
 
 MATRIX3D
 RotateXMatrix(const float rads) {
-	float cosine = (float) cos(rads);
-	float sine = (float) sin(rads);
+	float cosine = cosf(rads);
+	float sine = sinf(rads);
 	MATRIX3D ret = IdentityMatrix();
 	ret(1, 1) = cosine;
 	ret(2, 2) = -cosine;
@@ -229,8 +229,8 @@ RotateXMatrix(const float rads) {
 
 MATRIX3D
 RotateYMatrix(const float rads) {
-	float const cosine  = (float) cos(rads);
-	float const sine    = (float) sin(rads);
+	float const cosine  = cosf(rads);
+	float const sine    = sinf(rads);
 
 	MATRIX3D ret = IdentityMatrix();
 	ret(0, 0) = cosine;
@@ -251,8 +251,8 @@ RotateYMatrix(const float rads) {
 
 MATRIX3D
 RotateZMatrix(const float rads) {
-	float const cosine = (float) cos(rads);
-	float const sine = (float) sin(rads);
+	float const cosine = cosf(rads);
+	float const sine = sinf(rads);
 	MATRIX3D ret = IdentityMatrix();
 	ret(0, 0) = cosine;
 	ret(1, 1) = -cosine;
@@ -513,7 +513,7 @@ ludcmp(MATRIX3D &a, int *indx, float *d) {
 				sum -= a(i, k) * a(k, j);
 			}
 			a(i, j) = sum;
-			if ((dum = vv[i] * (float)fabs(sum)) >= big) {
+			if ((dum = vv[i] * fabsf(sum)) >= big) {
 				big = dum;
 				imax = i;
 			}

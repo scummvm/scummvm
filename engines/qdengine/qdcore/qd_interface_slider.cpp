@@ -117,7 +117,7 @@ bool qdInterfaceSlider::keyboard_handler(Common::KeyCode vkey) {
 }
 
 int qdInterfaceSlider::option_value() const {
-	return round(_phase * 255.0f);
+	return roundf(_phase * 255.0f);
 }
 
 bool qdInterfaceSlider::set_option_value(int value) {

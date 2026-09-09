@@ -86,8 +86,8 @@ Puzzle::Puzzle(MinigameManager *runtime) {
 		return;
 
 	if (_runtime->getParameter("rotate_period", _rotateTimePeriod, false)) {
-		assert(sqr(sqrt((float)_gameSize)) == _gameSize);
-		if (sqr(sqrt((float)_gameSize)) != _gameSize)
+		assert(sqr(sqrtf((float)_gameSize)) == _gameSize);
+		if (sqr(sqrtf((float)_gameSize)) != _gameSize)
 			return;
 	} else
 		_rotateTimePeriod = 86400; // сутки
@@ -281,7 +281,7 @@ void Puzzle::quant(float dt) {
 	if (_inField < (int)_nodes.size() && _runtime->getTime() > _nextObjTime &&
 			((int)_stack.size() < _stackSize - 1 || ((int)_stack.size() < _stackSize && _pickedItem == -1))) { // нужно добавить в инвентори фишку
 		// ищем случайный не выставленный фрагмент
-		int freeIdx = round(_runtime->rnd(0.f, _nodes.size() - 1));
+		int freeIdx = roundf(_runtime->rnd(0.f, _nodes.size() - 1));
 		Nodes::iterator it = _nodes.begin();
 		for (;;) {
 			if (++it == _nodes.end())
@@ -452,7 +452,7 @@ const mgVect3f &Puzzle::position(int num) const {
 	assert(num >= 0 && num < (int)_positions.size());
 	// Если глобальный поворот ненулевой, пересчитываем индекс
 	if (_globalAngle > 0) {
-		int size = sqrt((float)_gameSize);
+		int size = sqrtf((float)_gameSize);
 		int y = num / size;
 		int x = num - y * size;
 		--size;

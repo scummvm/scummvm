@@ -176,8 +176,8 @@ void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class RLEBuffe
 void grDispatcher::putSpr_rle(int x, int y, int sx, int sy, const class RLEBuffer *p, int mode, float scale, bool alpha_flag) {
 	debugC(4, kDebugGraphics, "grDispatcher::putSpr_rle([%d, %d], [%d, %d], mode: %d, scale: %f, alpha: %d", x, y, sx, sy, mode, scale, alpha_flag);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (sx_dest <= 0 || sy_dest <= 0) return;
 
@@ -448,8 +448,8 @@ void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer 
 void grDispatcher::putSprMask_rle(int x, int y, int sx, int sy, const RLEBuffer *p, uint32 mask_color, int mask_alpha, int mode, float scale, bool alpha_flag) {
 	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_rle([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d, scale: %f, alpha_flag: %d)", x, y, sx, sy, mask_color, mask_alpha, mode, scale, alpha_flag);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (sx_dest <= 0 || sy_dest <= 0) return;
 
@@ -796,8 +796,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class RLEB
 void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const class RLEBuffer *p, int contour_color, int mode, float scale, bool alpha_flag) {
 	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour([%d, %d], [%d, %d], contour_color: %d, mode: %d, scale: %f, alpha_flag: %d)", x, y, sx, sy, contour_color, mode, scale, alpha_flag);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 

@@ -107,7 +107,7 @@ int qdAnimationSet::get_angle_index(float direction_angle, int dir_count) {
 	if (direction_angle < 0.0f)
 		direction_angle += 2.0f * M_PI;
 
-	int index = round(direction_angle * float(dir_count) / (2.0f * M_PI));
+	int index = roundf(direction_angle * float(dir_count) / (2.0f * M_PI));
 	if (index >= dir_count) index -= dir_count;
 	if (index < 0) index += dir_count;
 
@@ -225,7 +225,7 @@ bool qdAnimationSet::save_script(Common::WriteStream &fh, int indent) const {
 
 	fh.writeString(Common::String::format(" size=\"%d\"", size()));
 
-	if (fabs(_start_angle) > FLT_EPS) {
+	if (fabsf(_start_angle) > FLT_EPS) {
 		fh.writeString(Common::String::format(" start_angle=\"%f\"", _start_angle));
 	}
 

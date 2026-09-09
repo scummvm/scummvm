@@ -617,7 +617,7 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f &target) const {
 
 	float angle = dr.psi() + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
 
-	if (fabs(angle) >= M_PI * 2.0f) angle = fmodf(angle, M_PI * 2.0f);
+	if (fabsf(angle) >= M_PI * 2.0f) angle = fmodf(angle, M_PI * 2.0f);
 	if (angle < 0.0f) angle += M_PI * 2.0f;
 
 	return angle;
@@ -625,7 +625,7 @@ float qdGameObjectMoving::calc_direction_angle(const Vect3f &target) const {
 
 float qdGameObjectMoving::animate_rotation(float dt) {
 	// Второе значение - на сколько повернуться за квант
-	float work_dt = fabs(_rotation_angle / rotation_angle_per_quant());
+	float work_dt = fabsf(_rotation_angle / rotation_angle_per_quant());
 	if (work_dt <= FLT_EPS) return dt;   // Поворачиваться не нужно
 	// Считаем на сколько можем повернуться и сколько после этого останется квантов
 	if (work_dt > dt) {
@@ -809,8 +809,8 @@ Vect3f qdGameObjectMoving::get_future_r(float dt, bool &end_movement, bool real_
 
 			float dist = sp * time;
 			float angle = _direction_angle + qdCamera::current_camera()->get_z_angle() * M_PI / 180.0f;
-			r.x += dist * cos(angle);
-			r.y += dist * sin(angle);
+			r.x += dist * cosf(angle);
+			r.y += dist * sinf(angle);
 
 			set_grid_zone_attributes(sGridCell::CELL_SELECTED);
 
@@ -1044,7 +1044,7 @@ bool qdGameObjectMoving::is_path_walkable(int x1, int y1, int x2, int y2) const 
 	dr.normalize(0.2f);
 
 	if (abs(x2 - x1) > abs(y2 - y1)) {
-		int dx = round(float(x2 - x1) / dr.x);
+		int dx = roundf(float(x2 - x1) / dr.x);
 		do {
 			if (!is_walkable(Vect2s(r.xi(), r.yi())))
 				return false;
@@ -1052,7 +1052,7 @@ bool qdGameObjectMoving::is_path_walkable(int x1, int y1, int x2, int y2) const 
 			r += dr;
 		} while (--dx >= 0);
 	} else {
-		int dy = round(float(y2 - y1) / dr.y);
+		int dy = roundf(float(y2 - y1) / dr.y);
 		do {
 			if (!is_walkable(Vect2s(r.xi(), r.yi())))
 				return false;
@@ -1095,8 +1095,8 @@ bool qdGameObjectMoving::update_screen_pos() {
 
 			if (offs.x || offs.y) {
 				float scale = calc_scale();
-				offs.x = round(float(offs.x) * scale);
-				offs.y = round(float(offs.y) * scale);
+				offs.x = roundf(float(offs.x) * scale);
+				offs.y = roundf(float(offs.y) * scale);
 
 				set_screen_R(get_screen_R() + offs);
 			}
@@ -1111,7 +1111,7 @@ bool qdGameObjectMoving::update_screen_pos() {
 Vect2s qdGameObjectMoving::screen_size() const {
 	float scale = calc_scale();
 
-	return Vect2s(round(static_cast<float>(get_animation()->size_x()) * scale), round(static_cast<float>(get_animation()->size_y()) * scale));
+	return Vect2s(roundf(static_cast<float>(get_animation()->size_x()) * scale), roundf(static_cast<float>(get_animation()->size_y()) * scale));
 }
 
 float qdGameObjectMoving::radius() const {
@@ -1205,7 +1205,7 @@ bool qdGameObjectMoving::is_in_position(const Vect3f pos) const {
 
 bool qdGameObjectMoving::is_in_position(const Vect3f pos, float angle) const {
 	if (!is_in_position(pos)) return false;
-	if (fabs(_direction_angle - angle) <= 0.01f) return true;
+	if (fabsf(_direction_angle - angle) <= 0.01f) return true;
 
 	return false;
 }
@@ -1236,7 +1236,7 @@ bool qdGameObjectMoving::is_moving2position(const Vect3f pos) const {
 bool qdGameObjectMoving::is_moving2position(const Vect3f pos, float angle) const {
 	if (!is_moving2position(pos)) return false;
 
-	if (fabs(angle - _target_angle) <= 0.01f)
+	if (fabsf(angle - _target_angle) <= 0.01f)
 		return true;
 
 	return false;
@@ -1286,9 +1286,9 @@ Vect2s qdGameObjectMoving::walk_grid_size(const Vect3f &r) const {
 
 	if (qdCamera::current_camera() && qdCamera::current_camera()->need_perspective_correction()) {
 		float scale = calc_scale(r);
-		size.x = round(float(size.x) * scale);
+		size.x = roundf(float(size.x) * scale);
 		if (size.x < 1) size.x = 1;
-		size.y = round(float(size.y) * scale);
+		size.y = roundf(float(size.y) * scale);
 		if (size.y < 1) size.y = 1;
 	}
 
@@ -1301,9 +1301,9 @@ Vect2s qdGameObjectMoving::walk_grid_size(const Vect2s &r) const {
 	if (qdCamera::current_camera() && qdCamera::current_camera()->need_perspective_correction()) {
 		Vect3f rr = qdCamera::current_camera()->get_cell_coords(r.x, r.y);
 		float scale = calc_scale(rr);
-		size.x = round(float(size.x) * scale);
+		size.x = roundf(float(size.x) * scale);
 		if (size.x < 1) size.x = 1;
-		size.y = round(float(size.y) * scale);
+		size.y = roundf(float(size.y) * scale);
 		if (size.y < 1) size.y = 1;
 	}
 
@@ -2151,8 +2151,8 @@ bool qdGameObjectMoving::avoid_collision(const qdGameObjectMoving *p) {
 	float dist = (radius() + p->radius()) * 0.7f;
 
 	Vect3f r(R());
-	r.x += dist * cos(direction);
-	r.y += dist * sin(direction);
+	r.x += dist * cosf(direction);
+	r.y += dist * sinf(direction);
 
 	if (move(r, true)) return true;
 
@@ -2484,7 +2484,7 @@ void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, con
 				d.x = 0;
 		}
 
-		if (fabs(d.x) <= FLT_EPS && fabs(d.y) <= FLT_EPS)
+		if (fabsf(d.x) <= FLT_EPS && fabsf(d.y) <= FLT_EPS)
 			break;
 
 		++it;
@@ -2495,25 +2495,25 @@ void qdGameObjectMoving::finalize_path(const Vect3f &from, const Vect3f &to, con
 bool qdGameObjectMoving::adjust_position(Vect3f &pos) const {
 	switch (movement_type()) {
 	case qdGameObjectStateWalk::MOVEMENT_LEFT:
-		if (pos.x <= R().x && fabs(R().y - pos.y) <= bound().y / 2.0f) {
+		if (pos.x <= R().x && fabsf(R().y - pos.y) <= bound().y / 2.0f) {
 			pos.y = R().y;
 			return true;
 		}
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_UP:
-		if (pos.y >= R().y && fabs(R().x - pos.x) <= bound().x / 2.0f) {
+		if (pos.y >= R().y && fabsf(R().x - pos.x) <= bound().x / 2.0f) {
 			pos.x = R().x;
 			return true;
 		}
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_RIGHT:
-		if (pos.x >= R().x && fabs(R().y - pos.y) <= bound().y / 2.0f) {
+		if (pos.x >= R().x && fabsf(R().y - pos.y) <= bound().y / 2.0f) {
 			pos.y = R().y;
 			return true;
 		}
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_DOWN:
-		if (pos.y <= R().y && fabs(R().x - pos.x) <= bound().x / 2.0f) {
+		if (pos.y <= R().y && fabsf(R().x - pos.x) <= bound().x / 2.0f) {
 			pos.x = R().x;
 			return true;
 		}
@@ -2527,13 +2527,13 @@ bool qdGameObjectMoving::adjust_position(Vect3f &pos) const {
 	case qdGameObjectStateWalk::MOVEMENT_DOWN_LEFT:
 		return adjust_position(pos, M_PI / 4.0f * 5.0f);
 	case qdGameObjectStateWalk::MOVEMENT_HORIZONTAL:
-		if (fabs(R().y - pos.y) <= bound().y / 2.0f) {
+		if (fabsf(R().y - pos.y) <= bound().y / 2.0f) {
 			pos.y = R().y;
 			return true;
 		}
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_VERTICAL:
-		if (fabs(R().x - pos.x) <= bound().x / 2.0f) {
+		if (fabsf(R().x - pos.x) <= bound().x / 2.0f) {
 			pos.x = R().x;
 			return true;
 		}
@@ -2546,15 +2546,15 @@ bool qdGameObjectMoving::adjust_position(Vect3f &pos) const {
 }
 
 bool qdGameObjectMoving::adjust_position(Vect3f &pos, float dir_angle) const {
-	float d = -pos.x * sin(dir_angle) + pos.y * cos(dir_angle);
+	float d = -pos.x * sinf(dir_angle) + pos.y * cosf(dir_angle);
 
-	if (fabs(d) <= radius()) {
+	if (fabsf(d) <= radius()) {
 		float angle = calc_direction_angle(pos);
 		float delta_angle = getDeltaAngle(angle, dir_angle);
-		if (fabs(delta_angle) <= M_PI / 2.0f) {
-			float d1 = sqrt(pos.x * pos.x + pos.y * pos.y - d * d);
-			pos.x = d1 * cos(dir_angle);
-			pos.y = d1 * sin(dir_angle);
+		if (fabsf(delta_angle) <= M_PI / 2.0f) {
+			float d1 = sqrtf(pos.x * pos.x + pos.y * pos.y - d * d);
+			pos.x = d1 * cosf(dir_angle);
+			pos.y = d1 * sinf(dir_angle);
 			return true;
 		}
 	}
@@ -2567,36 +2567,36 @@ bool qdGameObjectMoving::is_direction_allowed(float angle) const {
 
 	switch (movement_type()) {
 	case qdGameObjectStateWalk::MOVEMENT_LEFT:
-		if (fabs(angle - M_PI) <= 0.01f) return true;
+		if (fabsf(angle - M_PI) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_UP:
-		if (fabs(angle - M_PI / 2.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 2.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_RIGHT:
-		if (fabs(angle) <= 0.01f) return true;
+		if (fabsf(angle) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_DOWN:
-		if (fabs(angle - M_PI / 2.0f * 3.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 2.0f * 3.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_UP_LEFT:
-		if (fabs(angle - M_PI / 4.0f * 3.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 4.0f * 3.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_UP_RIGHT:
-		if (fabs(angle - M_PI / 4.0f * 1.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 4.0f * 1.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_DOWN_RIGHT:
-		if (fabs(angle - M_PI / 4.0f * 7.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 4.0f * 7.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_DOWN_LEFT:
-		if (fabs(angle - M_PI / 4.0f * 5.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 4.0f * 5.0f) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_HORIZONTAL:
-		if (fabs(angle) <= 0.01f) return true;
-		if (fabs(angle - M_PI) <= 0.01f) return true;
+		if (fabsf(angle) <= 0.01f) return true;
+		if (fabsf(angle - M_PI) <= 0.01f) return true;
 		break;
 	case qdGameObjectStateWalk::MOVEMENT_VERTICAL:
-		if (fabs(angle - M_PI / 2.0f) <= 0.01f) return true;
-		if (fabs(angle - M_PI / 2.0f * 3.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 2.0f) <= 0.01f) return true;
+		if (fabsf(angle - M_PI / 2.0f * 3.0f) <= 0.01f) return true;
 		break;
 	default:
 		return true;
@@ -2738,8 +2738,8 @@ bool qdGameObjectMoving::move_from_personage_path() {
 			float dir = 2.0f * M_PI / float(num_angles) * float(j);
 
 			Vect3f r(R());
-			r.x += dist * cos(dir);
-			r.y += dist * sin(dir);
+			r.x += dist * cosf(dir);
+			r.y += dist * sinf(dir);
 
 			if (!check_grid_zone_attributes(Vect2f(r.x, r.y), sGridCell::CELL_PERSONAGE_PATH)) {
 				if (move(r, true))

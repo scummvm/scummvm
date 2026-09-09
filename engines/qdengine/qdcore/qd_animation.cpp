@@ -160,7 +160,7 @@ void qdAnimation::redraw(int x, int y, int z, int mode) const {
 void qdAnimation::redraw(int x, int y, int z, float scale, int mode) const {
 	debugC(2, kDebugGraphics, "qdAnimation::redraw([%d, %d, %d], scale: %f, mode: %d), name: '%s'", x, y, z, scale, mode, transCyrillic(_parent ? _parent->name() : name()));
 
-	if (fabs(scale - 1.0f) < 0.01f) {
+	if (fabsf(scale - 1.0f) < 0.01f) {
 		redraw(x, y, z, mode);
 		return;
 	}
@@ -208,7 +208,7 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, int mode) const {
 void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale, int mode) const {
 	debugC(2, kDebugGraphics, "qdAnimation::redraw_rot([%d, %d, %d], angle: %f, scale: [%f, %f], mode: %d), name: '%s'", x, y, z, angle, scale.x, scale.y, mode, transCyrillic(_parent ? _parent->name() : name()));
 
-	if (fabs(scale.x - 1.0f) < 0.01f && fabs(scale.y - 1.0f) < 0.01f) {
+	if (fabsf(scale.x - 1.0f) < 0.01f && fabsf(scale.y - 1.0f) < 0.01f) {
 		redraw_rot(x, y, z, angle, mode);
 		return;
 	}
@@ -221,7 +221,7 @@ void qdAnimation::redraw_rot(int x, int y, int z, float angle, const Vect2f &sca
 
 	if (tileAnimation()) {
 		tileAnimation()->drawFrame(Vect2i(x, y), get_cur_frame_number(), angle, scale, mode);
-	} else if (fabs(scale.x - scale.y) >= 0.01f) {
+	} else if (fabsf(scale.x - scale.y) >= 0.01f) {
 		if (const qdAnimationFrame *p = get_cur_frame())
 			p->redraw_rot(x, y, z, angle, scale, mode);
 	} else {
@@ -260,7 +260,7 @@ void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alp
 }
 
 void qdAnimation::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode) const {
-	if (fabs(scale - 1.0f) < 0.01f) {
+	if (fabsf(scale - 1.0f) < 0.01f) {
 		draw_mask(x, y, z, mask_color, mask_alpha, mode);
 		return;
 	}
@@ -304,7 +304,7 @@ void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_co
 }
 
 void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color, int mask_alpha, const Vect2f &scale, int mode) const {
-	if (fabs(scale.x - 1.0f) < 0.01f && fabs(scale.y - 1.0f) < 0.01f) {
+	if (fabsf(scale.x - 1.0f) < 0.01f && fabsf(scale.y - 1.0f) < 0.01f) {
 		draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, mode);
 		return;
 	}
@@ -317,7 +317,7 @@ void qdAnimation::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_co
 
 	if (tileAnimation()) {
 		tileAnimation()->drawMask_rot(Vect2i(x, y), get_cur_frame_number(), mask_color, mask_alpha, angle, scale, mode);
-	} else if (fabs(scale.x - scale.y) >= 0.01f) {
+	} else if (fabsf(scale.x - scale.y) >= 0.01f) {
 		if (const qdAnimationFrame *p = get_cur_frame())
 			p->draw_mask_rot(x, y, z, angle, mask_color, mask_alpha, scale, mode);
 	} else {
@@ -1117,7 +1117,7 @@ void qdAnimation::clear_frames() {
 }
 
 bool qdAnimation::add_scale(float value) {
-	if (fabs(value - 1.0f) <= 0.01f || value <= 0.01f) return false;
+	if (fabsf(value - 1.0f) <= 0.01f || value <= 0.01f) return false;
 
 	Std::vector<float>::const_iterator it = Common::find(_scales.begin(), _scales.end(), value);
 	if (it != _scales.end()) return false;
@@ -1151,7 +1151,7 @@ int qdAnimation::get_scale_index(float &scale_value) const {
 	const Std::vector<float> &scales_vect = (check_flag(QD_ANIMATION_FLAG_REFERENCE) && _parent) ? _parent->_scales : _scales;
 
 	for (uint i = 0; i < scales_vect.size(); i++) {
-		if (fabs(scale_value - scl) > fabs(scale_value - scales_vect[i])) {
+		if (fabsf(scale_value - scl) > fabsf(scale_value - scales_vect[i])) {
 			scl = scales_vect[i];
 			index = i;
 		}

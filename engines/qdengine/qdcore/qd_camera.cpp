@@ -152,13 +152,13 @@ void qdCamera::clear_grid() {
 	}
 }
 float qdCamera::get_scale(const Vect3f &glCoord) const {
-	if ((_focus < 5000.0f) || (fabs(_scale_pow - 1) > 0.001)) {
+	if ((_focus < 5000.0f) || (fabsf(_scale_pow - 1) > 0.001)) {
 		Vect3f cameraCoord = global2camera_coord(glCoord);
 		float buf = cameraCoord.z + _scale_z_offset;
 		// Если координата отрицательна, то масштабирование происходит по линейному
 		// закону. Иначе по общему (степенному) закону.
 		if (buf > 0)
-			buf = exp(_scale_pow * log(buf));
+			buf = expf(_scale_pow * logf(buf));
 
 		float scale = (_focus / (buf + _focus));
 		if (scale < 0)
@@ -208,8 +208,8 @@ const Vect3f qdCamera::rscr2camera_coord(const Vect2s &rScrPoint, float z) const
 }
 
 const Vect2s qdCamera::camera_coord2rscr(const Vect3f &coord) const {
-	int16 sx = round(coord.x * _focus / (coord.z + _focus));
-	int16 sy = round(coord.y * _focus / (coord.z + _focus));
+	int16 sx = roundf(coord.x * _focus / (coord.z + _focus));
+	int16 sy = roundf(coord.y * _focus / (coord.z + _focus));
 	return Vect2s(sx, sy);
 }
 
@@ -311,15 +311,15 @@ const Vect2s qdCamera::plane2rscr(const Vect3f &plnPoint) const {
 
 	if (res.z < (SMALL_VALUE - _focus)) return Vect2s(0, 0);
 
-	int sx0 = round(res.x * _focus / (res.z + _focus));
-	int sy0 = round(res.y * _focus / (res.z + _focus));
+	int sx0 = roundf(res.x * _focus / (res.z + _focus));
+	int sy0 = roundf(res.y * _focus / (res.z + _focus));
 
 	return Vect2s(sx0, sy0);
 }
 
 const sGridCell *qdCamera::get_cell(float X, float Y) const {
-	int x = round(X - _gridCenter.x);
-	int y = round(Y - _gridCenter.y);
+	int x = roundf(X - _gridCenter.x);
+	int y = roundf(Y - _gridCenter.y);
 
 	const int XSP = _cellSX * _GSX;
 	const int YSP = _cellSY * _GSY;
@@ -335,8 +335,8 @@ const sGridCell *qdCamera::get_cell(float X, float Y) const {
 }
 
 const Vect2s qdCamera::get_cell_index(float X, float Y, bool grid_crop) const {
-	int x = round(X - _gridCenter.x);
-	int y = round(Y - _gridCenter.y);
+	int x = roundf(X - _gridCenter.x);
+	int y = roundf(Y - _gridCenter.y);
 
 	const int XSP = _cellSX * _GSX;
 	const int YSP = _cellSY * _GSY;
@@ -1462,13 +1462,13 @@ bool qdCamera::set_grid_line_attributes(const Vect2s &start_pos, const Vect2s &e
 	dr.normalize(d);
 
 	if (abs(dx) > abs(dy)) {
-		int i = round(float(dx) / dr.x);
+		int i = roundf(float(dx) / dr.x);
 		do {
 			set_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr);
 			r += dr;
 		} while (--i >= 0);
 	} else {
-		int i = round(float(dy) / dr.y);
+		int i = roundf(float(dy) / dr.y);
 		do {
 			set_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr);
 			r += dr;
@@ -1495,13 +1495,13 @@ bool qdCamera::drop_grid_line_attributes(const Vect2s &start_pos, const Vect2s &
 	dr.normalize(d);
 
 	if (abs(dx) > abs(dy)) {
-		int i = round(float(dx) / dr.x);
+		int i = roundf(float(dx) / dr.x);
 		do {
 			drop_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr);
 			r += dr;
 		} while (--i >= 0);
 	} else {
-		int i = round(float(dy) / dr.y);
+		int i = roundf(float(dy) / dr.y);
 		do {
 			drop_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr);
 			r += dr;
@@ -1526,14 +1526,14 @@ bool qdCamera::check_grid_line_attributes(const Vect2s &start_pos, const Vect2s 
 	dr.normalize(d);
 
 	if (abs(dx) > abs(dy)) {
-		int i = round(float(dx) / dr.x);
+		int i = roundf(float(dx) / dr.x);
 		do {
 			if (check_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr))
 				return true;
 			r += dr;
 		} while (--i >= 0);
 	} else {
-		int i = round(float(dy) / dr.y);
+		int i = roundf(float(dy) / dr.y);
 		do {
 			if (check_grid_attributes(Vect2s(r.xi(), r.yi()), size, attr))
 				return true;

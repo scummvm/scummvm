@@ -140,8 +140,8 @@ bool qdGameObject::update_screen_pos() {
 			}
 
 			if (_parallax_offset.x || _parallax_offset.y) {
-				_screen_r.x += round(float(_parallax_offset.x) * cp->scrolling_phase_x());
-				_screen_r.y += round(float(_parallax_offset.y) * cp->scrolling_phase_y());
+				_screen_r.x += roundf(float(_parallax_offset.x) * cp->scrolling_phase_x());
+				_screen_r.y += roundf(float(_parallax_offset.y) * cp->scrolling_phase_y());
 			}
 		} else
 			return false;

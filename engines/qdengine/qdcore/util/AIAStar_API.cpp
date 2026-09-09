@@ -40,7 +40,7 @@ int qdHeuristic::getH(int x, int y) {
 	y -= _target.y;
 
 	if (g_engine->_gameVersion <= 20041201) {
-		return sqrt(static_cast<float>(x * x + y * y));
+		return sqrtf(static_cast<float>(x * x + y * y));
 	} else {
 		// Достаточно будет эвристики без квадратного корня, который медленный
 		return static_cast<float>(x * x + y * y);

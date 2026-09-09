@@ -33,8 +33,8 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 
 	int i, j, sx_dest, sy_dest;
 
-	sx_dest = round(float(sx) * scale);
-	sy_dest = round(float(sy) * scale);
+	sx_dest = roundf(float(sx) * scale);
+	sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 
@@ -101,8 +101,8 @@ void grDispatcher::putSpr_a(int x, int y, int sx, int sy, const byte *p, int mod
 void grDispatcher::putSpr(int x, int y, int sx, int sy, const byte *p, int mode, int spriteFormat, float scale) {
 	debugC(4, kDebugGraphics, "grDispatcher::putSpr([%d, %d], [%d, %d], mode: %d, format: %d, scale: %f)", x, y, sx, sy, mode, spriteFormat, scale);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 
@@ -248,8 +248,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	float sn = sinf(angle);
 	float cs = cosf(angle);
 
-	int sx = round(fabs(cs) * float(size.x) + fabs(sn) * float(size.y)) + 2;
-	int sy = round(fabs(sn) * float(size.x) + fabs(cs) * float(size.y)) + 2;
+	int sx = round(fabsf(cs) * float(size.x) + fabsf(sn) * float(size.y)) + 2;
+	int sy = round(fabsf(sn) * float(size.x) + fabsf(cs) * float(size.y)) + 2;
 
 	int x0 = xc - sx / 2;
 	int y0 = yc - sy / 2;
@@ -257,8 +257,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	int dx = 0;
 	int dy = 0;
 
-	if (!((int)(round(R2G(angle))) % 90)) {
-		int angle_num = round(cycleAngle(angle) / (M_PI / 2.f));
+	if (!((int)(roundf(R2G(angle))) % 90)) {
+		int angle_num = roundf(cycleAngle(angle) / (M_PI / 2.f));
 		switch (angle_num) {
 		case 1:
 			dy = -2;
@@ -276,8 +276,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	if (!clip_rectangle(x0, y0, sx, sy))
 		return;
 
-	int sin_a = round(sn * float(1 << F_PREC));
-	int cos_a = round(cs * float(1 << F_PREC));
+	int sin_a = roundf(sn * float(1 << F_PREC));
+	int cos_a = roundf(cs * float(1 << F_PREC));
 
 	if (has_alpha) {
 		for (int y = 0; y <= sy; y++) {
@@ -355,14 +355,14 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 
 	const int F_PREC = 16;
 
-	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
-	int yc = pos.y + round(float(size.y) * scale.y / 2.f);
+	int xc = pos.x + roundf(float(size.x) * scale.x / 2.f);
+	int yc = pos.y + roundf(float(size.y) * scale.y / 2.f);
 
 	float sn = sinf(angle);
 	float cs = cosf(angle);
 
-	int sx = round(fabs(cs) * float(size.x) * scale.x + fabs(sn) * float(size.y) * scale.y) + 2;
-	int sy = round(fabs(sn) * float(size.x) * scale.x + fabs(cs) * float(size.y) * scale.y) + 2;
+	int sx = roundf(fabsf(cs) * float(size.x) * scale.x + fabsf(sn) * float(size.y) * scale.y) + 2;
+	int sy = roundf(fabsf(sn) * float(size.x) * scale.x + fabsf(cs) * float(size.y) * scale.y) + 2;
 
 	int x0 = xc - sx / 2;
 	int y0 = yc - sy / 2;
@@ -370,8 +370,8 @@ void grDispatcher::putSpr_rot(const Vect2i &pos, const Vect2i &size, const byte 
 	if (!clip_rectangle(x0, y0, sx, sy))
 		return;
 
-	int sin_a = round(sinf(angle) * float(1 << F_PREC));
-	int cos_a = round(cosf(angle) * float(1 << F_PREC));
+	int sin_a = roundf(sinf(angle) * float(1 << F_PREC));
+	int cos_a = roundf(cosf(angle) * float(1 << F_PREC));
 
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
@@ -457,8 +457,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	float sn = sinf(angle);
 	float cs = cosf(angle);
 
-	int sx = round(fabs(cs) * float(size.x) + fabs(sn) * float(size.y)) + 2;
-	int sy = round(fabs(sn) * float(size.x) + fabs(cs) * float(size.y)) + 2;
+	int sx = round(fabsf(cs) * float(size.x) + fabsf(sn) * float(size.y)) + 2;
+	int sy = round(fabsf(sn) * float(size.x) + fabsf(cs) * float(size.y)) + 2;
 
 	int x0 = xc - sx / 2;
 	int y0 = yc - sy / 2;
@@ -466,8 +466,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	if (!clip_rectangle(x0, y0, sx, sy))
 		return;
 
-	int sin_a = round(sn * float(1 << F_PREC));
-	int cos_a = round(cs * float(1 << F_PREC));
+	int sin_a = roundf(sn * float(1 << F_PREC));
+	int cos_a = roundf(cs * float(1 << F_PREC));
 
 	if (has_alpha) {
 		byte mr, mg, mb;
@@ -576,14 +576,14 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 
 	debugC(4, kDebugGraphics, "grDispatcher::putSprMask_rot([%d, %d], [%d, %d], alpha: %d, mask: %d, mask_alpha: %d, mode: %d, angle: %f, scale: [%f, %f])", pos.x, pos.y, size.x, size.y, has_alpha, mask_color, mask_alpha, mode, angle, scale.x, scale.y);
 
-	int xc = pos.x + round(float(size.x) * scale.x / 2.f);
-	int yc = pos.y + round(float(size.y) * scale.y / 2.f);
+	int xc = pos.x + roundf(float(size.x) * scale.x / 2.f);
+	int yc = pos.y + roundf(float(size.y) * scale.y / 2.f);
 
 	float sn = sinf(angle);
 	float cs = cosf(angle);
 
-	int sx = round(fabs(cs) * float(size.x) * scale.x + fabs(sn) * float(size.y) * scale.y) + 2;
-	int sy = round(fabs(sn) * float(size.x) * scale.x + fabs(cs) * float(size.y) * scale.y) + 2;
+	int sx = round(fabsf(cs) * float(size.x) * scale.x + fabsf(sn) * float(size.y) * scale.y) + 2;
+	int sy = round(fabsf(sn) * float(size.x) * scale.x + fabsf(cs) * float(size.y) * scale.y) + 2;
 
 	int x0 = xc - sx / 2;
 	int y0 = yc - sy / 2;
@@ -591,8 +591,8 @@ void grDispatcher::putSprMask_rot(const Vect2i &pos, const Vect2i &size, const b
 	if (!clip_rectangle(x0, y0, sx, sy))
 		return;
 
-	int sin_a = round(sinf(angle) * float(1 << F_PREC));
-	int cos_a = round(cosf(angle) * float(1 << F_PREC));
+	int sin_a = roundf(sinf(angle) * float(1 << F_PREC));
+	int cos_a = roundf(cosf(angle) * float(1 << F_PREC));
 
 	Vect2i iscale = Vect2i(scale.x * float(1 << F_PREC), scale.y * float(1 << F_PREC));
 	Vect2i scaled_size = Vect2i(iscale.x * size.x, iscale.y * size.y);
@@ -904,8 +904,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, i
 void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour([%d, %d], [%d, %d], contour: %d, mode: %d, scale: %f)", x, y, sx, sy, contour_color, mode, scale);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 
@@ -987,8 +987,8 @@ void grDispatcher::drawSprContour(int x, int y, int sx, int sy, const byte *p, i
 void grDispatcher::drawSprContour_a(int x, int y, int sx, int sy, const byte *p, int contour_color, int mode, float scale) {
 	debugC(4, kDebugGraphics, "grDispatcher::drawSprContour_a([%d, %d], [%d, %d], contour: %d, mode: %d, scale: %f)", x, y, sx, sy, contour_color, mode, scale);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 
@@ -1206,8 +1206,8 @@ void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint3
 void grDispatcher::putSprMask(int x, int y, int sx, int sy, const byte *p, uint32 mask_color, int mask_alpha, int mode, float scale) {
 	debugC(4, kDebugGraphics, "grDispatcher::putSprMask([%d, %d], [%d, %d], mask: %d, alpha: %d, mode: %d, scale: %f)", x, y, sx, sy, mask_color, mask_alpha, mode, scale);
 
-	int sx_dest = round(float(sx) * scale);
-	int sy_dest = round(float(sy) * scale);
+	int sx_dest = roundf(float(sx) * scale);
+	int sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 
@@ -1355,8 +1355,8 @@ void grDispatcher::putSprMask_a(int x, int y, int sx, int sy, const byte *p, uin
 
 	int i, j, sx_dest, sy_dest;
 
-	sx_dest = round(float(sx) * scale);
-	sy_dest = round(float(sy) * scale);
+	sx_dest = roundf(float(sx) * scale);
+	sy_dest = roundf(float(sy) * scale);
 
 	if (!sx_dest || !sy_dest) return;
 

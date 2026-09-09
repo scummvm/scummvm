@@ -1524,14 +1524,14 @@ void qdGameScene::collision_quant() {
 			float angle = _selected_object->calc_direction_angle((*it)->R());
 
 			if (dr.norm() < dist) {
-				if (fabs(getDeltaAngle(angle, _selected_object->direction_angle())) < M_PI / 2.0f) {
+				if (fabsf(getDeltaAngle(angle, _selected_object->direction_angle())) < M_PI / 2.0f) {
 					if ((*it)->has_control_type(qdGameObjectMoving::CONTROL_COLLISION))
 						(*it)->set_movement_impulse(_selected_object->direction_angle());
 				}
 			}
 
 			if (dr.norm() < dist) {
-				if (fabs(getDeltaAngle(angle, _selected_object->direction_angle())) < M_PI / 2.0f) {
+				if (fabsf(getDeltaAngle(angle, _selected_object->direction_angle())) < M_PI / 2.0f) {
 					if ((*it)->has_control_type(qdGameObjectMoving::CONTROL_AVOID_COLLISION))
 						(*it)->avoid_collision(_selected_object);
 				}

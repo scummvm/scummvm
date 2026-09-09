@@ -270,7 +270,7 @@ void qdGameObjectMouse::quant(float dt) {
 			if (_screen_pos_offset.norm2() >= sqr(p->rnd_move_radius()) || (_screen_pos_offset_delta.x <= FLT_EPS && _screen_pos_offset_delta.y <= FLT_EPS)) {
 				float angle = qd_fabs_rnd(M_PI * 2.0f);
 
-				Vect2f r(p->rnd_move_radius() * cos(angle), p->rnd_move_radius() * sin(angle));
+				Vect2f r(p->rnd_move_radius() * cosf(angle), p->rnd_move_radius() * sinf(angle));
 				_screen_pos_offset_delta = r - _screen_pos_offset;
 				_screen_pos_offset_delta.normalize(p->rnd_move_speed());
 			}

@@ -561,7 +561,7 @@ int MinigameTriangle::rowByNum(int num) const {
 
 	switch (_gameType) {
 	case TRIANGLE:
-		return floor(sqrt((float)num));
+		return floorf(sqrtf((float)num));
 	case RECTANGLE:
 		return num / _fieldWidth;
 	default:

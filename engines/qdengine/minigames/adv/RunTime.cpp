@@ -657,8 +657,8 @@ void MinigameManager::gameWin() {
 	if (_currentGameIndex._gameNum == 0)
 		return;
 
-	int gameTime = round(getTime());
-	_eventManager->addScore(round(_timeManager->leftTime() * _timeManager->timeCost()));
+	int gameTime = roundf(getTime());
+	_eventManager->addScore(roundf(_timeManager->leftTime() * _timeManager->timeCost()));
 
 	_currentGameInfo->_game._lastTime = gameTime;
 	_currentGameInfo->_game._lastScore = _eventManager->score();
@@ -767,7 +767,7 @@ mgVect2f MinigameManager::world2game(const mgVect3f& pos) const {
 
 mgVect3f MinigameManager::world2game(qdMinigameObjectInterface *obj) const {
 	mgVect2i scr = obj->screen_R();
-	return mgVect3f(scr.x, scr.y, round(getDepth(obj)));
+	return mgVect3f(scr.x, scr.y, roundf(getDepth(obj)));
 }
 
 mgVect2f MinigameManager::getSize(qdMinigameObjectInterface *obj) const {
@@ -858,7 +858,7 @@ float MinigameManager::rnd(float min, float max) const {
 }
 
 int MinigameManager::rnd(int min, int max) const {
-	return min + round(_engine->fabs_rnd(max - min));
+	return min + roundf(_engine->fabs_rnd(max - min));
 }
 
 int MinigameManager::rnd(const Std::vector<float> &prob) const {
@@ -1006,13 +1006,13 @@ void MinigameManager::GameInfoIndex::read(Common::ReadStream &in) {
 }
 
 int MinigameManager::getParameter(const char* name, const int& defValue) {
-	return round(getParameter(name, (float)defValue));
+	return roundf(getParameter(name, (float)defValue));
 }
 
 bool MinigameManager::getParameter(const char* name, int& out, bool obligatory) {
 	float retValue = out;
 	if (getParameter(name, retValue, obligatory)) {
-		out = round(retValue);
+		out = roundf(retValue);
 		return true;
 	}
 	return false;
@@ -1150,11 +1150,11 @@ float TimeManager::leftTime() const {
 }
 
 void TimeManager::quant(float dt) {
-	int seconds = round(_runtime->getTime());
+	int seconds = roundf(_runtime->getTime());
 	if (seconds != _lastEventTime) {
 		_lastEventTime = seconds;
 		_runtime->textManager().updateTime(seconds);
-		int amountSeconds = round(leftTime());
+		int amountSeconds = roundf(leftTime());
 		if (_gameTime < 0.f || amountSeconds > 10)
 			if (seconds % 60 == 0)
 				_runtime->signal(EVENT_TIME_60_SECOND_TICK);

@@ -763,8 +763,8 @@ void qdGameObjectAnimated::debug_redraw() const {
 	} else {
 		Vect2f scale(_current_transform.scale());
 
-		ssz.x = round(float(ssz.x) * scale.x);
-		ssz.y = round(float(ssz.y) * scale.y);
+		ssz.x = roundf(float(ssz.x) * scale.x);
+		ssz.y = roundf(float(ssz.y) * scale.y);
 
 		float sn = sinf(-_current_transform.angle());
 		float cs = cosf(-_current_transform.angle());
@@ -774,44 +774,44 @@ void qdGameObjectAnimated::debug_redraw() const {
 		v0 = Vect2i(-ssz.x / 2, -ssz.y / 2);
 		v1 = Vect2i(-ssz.x / 2, +ssz.y / 2);
 
-		p0.x = screen_pos().x + round(float(v0.x) * cs + float(v0.y) * sn);
-		p0.y = screen_pos().y + round(float(-v0.x) * sn + float(v0.y) * cs);
+		p0.x = screen_pos().x + roundf(float(v0.x) * cs + float(v0.y) * sn);
+		p0.y = screen_pos().y + roundf(float(-v0.x) * sn + float(v0.y) * cs);
 
-		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
-		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
+		p1.x = screen_pos().x + roundf(float(v1.x) * cs + float(v1.y) * sn);
+		p1.y = screen_pos().y + roundf(float(-v1.x) * sn + float(v1.y) * cs);
 
 		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(-ssz.x / 2, +ssz.y / 2);
 		v1 = Vect2i(+ssz.x / 2, +ssz.y / 2);
 
-		p0.x = screen_pos().x + round(float(v0.x) * cs + float(v0.y) * sn);
-		p0.y = screen_pos().y + round(float(-v0.x) * sn + float(v0.y) * cs);
+		p0.x = screen_pos().x + roundf(float(v0.x) * cs + float(v0.y) * sn);
+		p0.y = screen_pos().y + roundf(float(-v0.x) * sn + float(v0.y) * cs);
 
-		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
-		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
+		p1.x = screen_pos().x + roundf(float(v1.x) * cs + float(v1.y) * sn);
+		p1.y = screen_pos().y + roundf(float(-v1.x) * sn + float(v1.y) * cs);
 
 		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(+ssz.x / 2, +ssz.y / 2);
 		v1 = Vect2i(+ssz.x / 2, -ssz.y / 2);
 
-		p0.x = screen_pos().x + round(float(v0.x) * cs + float(v0.y) * sn);
-		p0.y = screen_pos().y + round(float(-v0.x) * sn + float(v0.y) * cs);
+		p0.x = screen_pos().x + roundf(float(v0.x) * cs + float(v0.y) * sn);
+		p0.y = screen_pos().y + roundf(float(-v0.x) * sn + float(v0.y) * cs);
 
-		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
-		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
+		p1.x = screen_pos().x + roundf(float(v1.x) * cs + float(v1.y) * sn);
+		p1.y = screen_pos().y + roundf(float(-v1.x) * sn + float(v1.y) * cs);
 
 		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 
 		v0 = Vect2i(+ssz.x / 2, -ssz.y / 2);
 		v1 = Vect2i(-ssz.x / 2, -ssz.y / 2);
 
-		p0.x = screen_pos().x + round(float(v0.x) * cs + float(v0.y) * sn);
-		p0.y = screen_pos().y + round(float(-v0.x) * sn + float(v0.y) * cs);
+		p0.x = screen_pos().x + roundf(float(v0.x) * cs + float(v0.y) * sn);
+		p0.y = screen_pos().y + roundf(float(-v0.x) * sn + float(v0.y) * cs);
 
-		p1.x = screen_pos().x + round(float(v1.x) * cs + float(v1.y) * sn);
-		p1.y = screen_pos().y + round(float(-v1.x) * sn + float(v1.y) * cs);
+		p1.x = screen_pos().x + roundf(float(v1.x) * cs + float(v1.y) * sn);
+		p1.y = screen_pos().y + roundf(float(-v1.x) * sn + float(v1.y) * cs);
 
 		grDispatcher::instance()->line(p0.x, p0.y, p1.x, p1.y, 0x000000FF);
 	}
@@ -846,8 +846,8 @@ bool qdGameObjectAnimated::hit(int x, int y) const {
 				float cs = cosf(_current_transform.angle());
 				float sn = sinf(_current_transform.angle());
 
-				int xx = round(1.f / _current_transform.scale().x * (float(x) * cs + float(y) * sn));
-				int yy = round(1.f / _current_transform.scale().y * (float(-x) * sn + float(y) * cs));
+				int xx = roundf(1.f / _current_transform.scale().x * (float(x) * cs + float(y) * sn));
+				int yy = roundf(1.f / _current_transform.scale().y * (float(-x) * sn + float(y) * cs));
 
 				return _animation.hit(xx, yy);
 			} else
@@ -1197,13 +1197,13 @@ bool qdGameObjectAnimated::update_screen_pos() {
 			if (delta.x || delta.y) {
 				Vect2f scale(_current_transform.scale());
 
-				delta.x = round(float(delta.x) * scale.x);
-				delta.y = round(float(delta.y) * scale.y);
+				delta.x = roundf(float(delta.x) * scale.x);
+				delta.y = roundf(float(delta.y) * scale.y);
 
 				float angle = _current_transform.angle();
 
-				r.x += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
-				r.y += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
+				r.x += roundf(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
+				r.y += roundf(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 			}
 
 			set_screen_R(r);
@@ -1510,8 +1510,8 @@ grScreenRegion qdGameObjectAnimated::screen_region() const {
 				float sn = sinf(_current_transform.angle());
 				float cs = cosf(_current_transform.angle());
 
-				int sx = round(fabs(cs) * float(size.x) * scale.x + fabs(sn) * float(size.y) * scale.y) + 2;
-				int sy = round(fabs(sn) * float(size.x) * scale.x + fabs(cs) * float(size.y) * scale.y) + 2;
+				int sx = roundf(fabsf(cs) * float(size.x) * scale.x + fabsf(sn) * float(size.y) * scale.y) + 2;
+				int sy = roundf(fabsf(sn) * float(size.x) * scale.x + fabsf(cs) * float(size.y) * scale.y) + 2;
 
 				reg = grScreenRegion(0, 0, sx, sy);
 				reg.move(r.x, r.y);

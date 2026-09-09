@@ -172,22 +172,22 @@ void qdAnimationSetPreview::set_screen(Vect2s offs, Vect2s size) {
 void qdAnimationSetPreview::redraw_grid() {
 	float size = 0;
 	Vect2f p = _camera->scr2plane(_screen_offset);
-	if (fabs(p.x) > size) size = fabs(p.x);
-	if (fabs(p.y) > size) size = fabs(p.y);
+	if (fabsf(p.x) > size) size = fabsf(p.x);
+	if (fabsf(p.y) > size) size = fabsf(p.y);
 	p = _camera->scr2plane(_screen_offset + _screen_size);
-	if (fabs(p.x) > size) size = fabs(p.x);
-	if (fabs(p.y) > size) size = fabs(p.y);
+	if (fabsf(p.x) > size) size = fabsf(p.x);
+	if (fabsf(p.y) > size) size = fabsf(p.y);
 	p = _camera->scr2plane(Vect2s(_screen_offset.x + _screen_size.x, _screen_offset.y));
-	if (fabs(p.x) > size) size = fabs(p.x);
-	if (fabs(p.y) > size) size = fabs(p.y);
+	if (fabsf(p.x) > size) size = fabsf(p.x);
+	if (fabsf(p.y) > size) size = fabsf(p.y);
 	p = _camera->scr2plane(Vect2s(_screen_offset.x, _screen_offset.y + _screen_size.y));
-	if (fabs(p.x) > size) size = fabs(p.x);
-	if (fabs(p.y) > size) size = fabs(p.y);
+	if (fabsf(p.x) > size) size = fabsf(p.x);
+	if (fabsf(p.y) > size) size = fabsf(p.y);
 
-	int sz = round(size) + _cell_size;
+	int sz = roundf(size) + _cell_size;
 	sz -= sz % _cell_size;
 	for (int i = -sz; i <= sz; i += _cell_size) {
-		int dx = round(_cell_offset);
+		int dx = roundf(_cell_offset);
 
 		Vect3f v00 = _camera->global2camera_coord(Vect3f(i + dx, -sz, 0));
 		Vect3f v10 = _camera->global2camera_coord(Vect3f(i + dx, sz, 0));

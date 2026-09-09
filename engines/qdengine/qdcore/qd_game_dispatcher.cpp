@@ -805,7 +805,7 @@ void qdGameDispatcher::redraw_scene(bool draw_interface) {
 
 			grDispatcher::instance()->rectangleAlpha(0, 0,
 					g_engine->_screenW, g_engine->_screenH,
-			        0, round(phase * 255.f));
+			        0, roundf(phase * 255.f));
 		}
 	}
 }
@@ -1645,7 +1645,7 @@ bool qdGameDispatcher::check_condition(qdCondition *cnd) {
 
 			float angle = obj->calc_direction_angle(obj1->R());
 
-			if (fabs(angle - obj->direction_angle()) < M_PI / 2.0f) return true;
+			if (fabsf(angle - obj->direction_angle()) < M_PI / 2.0f) return true;
 		}
 		return false;
 	case qdCondition::CONDITION_KEYPRESS: {

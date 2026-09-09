@@ -587,8 +587,8 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, int mode) const {
 		delta.y = -delta.y;
 
 	if (delta.x || delta.y) {
-		xx += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
-		yy += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
+		xx += roundf(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
+		yy += roundf(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 	}
 
 	xx -= _picture_size.x / 2;
@@ -614,16 +614,16 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale,
 	if (mode & GR_FLIP_VERTICAL)
 		delta.y = -delta.y;
 
-	delta.x = round(float(delta.x) * scale.x);
-	delta.y = round(float(delta.y) * scale.y);
+	delta.x = roundf(float(delta.x) * scale.x);
+	delta.y = roundf(float(delta.y) * scale.y);
 
 	if (delta.x || delta.y) {
-		xx += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
-		yy += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
+		xx += roundf(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
+		yy += roundf(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 	}
 
-	xx -= round(float(_picture_size.x / 2) * scale.x);
-	yy -= round(float(_picture_size.y / 2) * scale.y);
+	xx -= roundf(float(_picture_size.x / 2) * scale.x);
+	yy -= roundf(float(_picture_size.y / 2) * scale.y);
 
 	if (!is_compressed()) {
 		if (!_data) return;
@@ -635,18 +635,18 @@ void qdSprite::redraw_rot(int x, int y, int z, float angle, const Vect2f &scale,
 void qdSprite::redraw(int x, int y, int z, float scale, int mode) const {
 	debugC(3, kDebugGraphics, "qdSprite::redraw([%d, %d, %d], scale: %f, mode: %d)", x, y, z, scale, mode);
 
-	int xx = x - round(float(size_x()) * scale) / 2;
-	int yy = y - round(float(size_y()) * scale) / 2;
+	int xx = x - roundf(float(size_x()) * scale) / 2;
+	int yy = y - roundf(float(size_y()) * scale) / 2;
 
 	if (mode & GR_FLIP_HORIZONTAL)
-		xx += round(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
+		xx += roundf(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
 	else
-		xx += round(float(_picture_offset.x) * scale);
+		xx += roundf(float(_picture_offset.x) * scale);
 
 	if (mode & GR_FLIP_VERTICAL)
-		yy += round(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
+		yy += roundf(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
 	else
-		yy += round(float(_picture_offset.y) * scale);
+		yy += roundf(float(_picture_offset.y) * scale);
 
 #ifdef _GR_ENABLE_ZBUFFER
 	if (!is_compressed()) {
@@ -694,18 +694,18 @@ void qdSprite::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha,
 }
 
 void qdSprite::draw_mask(int x, int y, int z, uint32 mask_color, int mask_alpha, float scale, int mode) const {
-	int xx = x - round(float(size_x()) * scale) / 2;
-	int yy = y - round(float(size_y()) * scale) / 2;
+	int xx = x - roundf(float(size_x()) * scale) / 2;
+	int yy = y - roundf(float(size_y()) * scale) / 2;
 
 	if (mode & GR_FLIP_HORIZONTAL)
-		xx += round(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
+		xx += roundf(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
 	else
-		xx += round(float(_picture_offset.x) * scale);
+		xx += roundf(float(_picture_offset.x) * scale);
 
 	if (mode & GR_FLIP_VERTICAL)
-		yy += round(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
+		yy += roundf(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
 	else
-		yy += round(float(_picture_offset.y) * scale);
+		yy += roundf(float(_picture_offset.y) * scale);
 
 	if (!is_compressed()) {
 		if (!_data) return;
@@ -729,8 +729,8 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color
 		delta.y = -delta.y;
 
 	if (delta.x || delta.y) {
-		xx += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
-		yy += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
+		xx += roundf(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
+		yy += roundf(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 	}
 
 	xx -= _picture_size.x / 2;
@@ -754,16 +754,16 @@ void qdSprite::draw_mask_rot(int x, int y, int z, float angle, uint32 mask_color
 	if (mode & GR_FLIP_VERTICAL)
 		delta.y = -delta.y;
 
-	delta.x = round(float(delta.x) * scale.x);
-	delta.y = round(float(delta.y) * scale.y);
+	delta.x = roundf(float(delta.x) * scale.x);
+	delta.y = roundf(float(delta.y) * scale.y);
 
 	if (delta.x || delta.y) {
-		xx += round(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
-		yy += round(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
+		xx += roundf(float(delta.x) * cosf(angle) - float(delta.y) * sinf(angle));
+		yy += roundf(float(delta.x) * sinf(angle) + float(delta.y) * cosf(angle));
 	}
 
-	xx -= round(float(_picture_size.x / 2) * scale.x);
-	yy -= round(float(_picture_size.y / 2) * scale.y);
+	xx -= roundf(float(_picture_size.x / 2) * scale.x);
+	yy -= roundf(float(_picture_size.y / 2) * scale.y);
 
 	if (!is_compressed()) {
 		if (!_data) return;
@@ -798,18 +798,18 @@ void qdSprite::draw_contour(int x, int y, uint32 color, int mode) const {
 }
 
 void qdSprite::draw_contour(int x, int y, uint32 color, float scale, int mode) const {
-	int xx = x - round(float(size_x()) * scale) / 2;
-	int yy = y - round(float(size_y()) * scale) / 2;
+	int xx = x - roundf(float(size_x()) * scale) / 2;
+	int yy = y - roundf(float(size_y()) * scale) / 2;
 
 	if (mode & GR_FLIP_HORIZONTAL)
-		xx += round(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
+		xx += roundf(float(_size.x - _picture_offset.x - _picture_size.x) * scale);
 	else
-		xx += round(float(_picture_offset.x) * scale);
+		xx += roundf(float(_picture_offset.x) * scale);
 
 	if (mode & GR_FLIP_VERTICAL)
-		yy += round(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
+		yy += roundf(float(_size.y - _picture_offset.y - _picture_size.y) * scale);
 	else
-		yy += round(float(_picture_offset.y) * scale);
+		yy += roundf(float(_picture_offset.y) * scale);
 
 	if (!is_compressed()) {
 		if (check_flag(ALPHA_FLAG))
@@ -876,8 +876,8 @@ bool qdSprite::hit(int x, int y) const {
 }
 
 bool qdSprite::hit(int x, int y, float scale) const {
-	x = round(float(x) / scale);
-	y = round(float(y) / scale);
+	x = roundf(float(x) / scale);
+	y = roundf(float(y) / scale);
 
 	return hit(x, y);
 }
@@ -1306,8 +1306,8 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 
 	undo_crop();
 
-	int sx = round(float(_picture_size.x) * coeff_x);
-	int sy = round(float(_picture_size.y) * coeff_y);
+	int sx = roundf(float(_picture_size.x) * coeff_x);
+	int sy = roundf(float(_picture_size.y) * coeff_y);
 
 	byte *src_data = _data;
 
@@ -1361,11 +1361,11 @@ bool qdSprite::scale(float coeff_x, float coeff_y) {
 	_picture_size.x = sx;
 	_picture_size.y = sy;
 
-	_size.x = round(float(_size.x) * coeff_x);
-	_size.y = round(float(_size.y) * coeff_y);
+	_size.x = roundf(float(_size.x) * coeff_x);
+	_size.y = roundf(float(_size.y) * coeff_y);
 
-	_picture_offset.x = round(float(_picture_offset.x) * coeff_x);
-	_picture_offset.y = round(float(_picture_offset.y) * coeff_y);
+	_picture_offset.x = roundf(float(_picture_offset.x) * coeff_x);
+	_picture_offset.y = roundf(float(_picture_offset.y) * coeff_y);
 
 	crop();
 
@@ -1387,17 +1387,17 @@ grScreenRegion qdSprite::screen_region(int mode, float scale) const {
 	int x, y;
 
 	if (mode & GR_FLIP_HORIZONTAL)
-		x = round(float(_size.x / 2 - _picture_offset.x - _picture_size.x / 2) * scale);
+		x = roundf(float(_size.x / 2 - _picture_offset.x - _picture_size.x / 2) * scale);
 	else
-		x = round(float(_picture_offset.x + _picture_size.x / 2 - _size.x / 2) * scale);
+		x = roundf(float(_picture_offset.x + _picture_size.x / 2 - _size.x / 2) * scale);
 
 	if (mode & GR_FLIP_VERTICAL)
-		y = round(float(_size.y / 2 - _picture_offset.y - _picture_size.y / 2) * scale);
+		y = roundf(float(_size.y / 2 - _picture_offset.y - _picture_size.y / 2) * scale);
 	else
-		y = round(float(_picture_offset.y + _picture_size.y / 2 - _size.y / 2) * scale);
+		y = roundf(float(_picture_offset.y + _picture_size.y / 2 - _size.y / 2) * scale);
 
-	int sx = round(float(_picture_size.x) * scale) + 4;
-	int sy = round(float(_picture_size.y) * scale) + 4;
+	int sx = roundf(float(_picture_size.x) * scale) + 4;
+	int sy = roundf(float(_picture_size.y) * scale) + 4;
 
 	return grScreenRegion(x, y, sx, sy);
 }
