@@ -104,8 +104,8 @@ static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Regi
 	DijkstraNode::Iter dijkstraIter = dijkstraNodes.begin();
 	for (Common::Array<Vertex>::const_iterator nodesIter = nodes.begin();
 	        nodesIter != nodes.end(); nodesIter++, dijkstraIter++) {
-		(*dijkstraIter).parentIter = dijkstraNodes.end();
-		if (region.isLineOfSight(*nodesIter, start))(*dijkstraIter).cost = (*nodesIter).distance(start);
+		dijkstraIter->parentIter = dijkstraNodes.end();
+		if (region.isLineOfSight(*nodesIter, start))dijkstraIter->cost = nodesIter->distance(start);
 	}
 	assert(dijkstraIter == dijkstraNodes.end());
 }
@@ -115,8 +115,8 @@ static DijkstraNode::Iter chooseClosestNode(DijkstraNode::Container &nodes) {
 	int minCost = Infinity;
 
 	for (DijkstraNode::Iter iter = nodes.begin(); iter != nodes.end(); iter++) {
-		if (!(*iter).chosen && (*iter).cost < minCost) {
-			minCost = (*iter).cost;
+		if (!iter->chosen && iter->cost < minCost) {
+			minCost = iter->cost;
 			closestNodeInter = iter;
 		}
 	}
@@ -135,7 +135,7 @@ static void relaxNodes(DijkstraNode::Container &nodes,
 	for (uint i = 0; i < nodes.size(); i++) {
 		int cost = visibilityMatrix[curNodeIndex][i];
 		if (!nodes[i].chosen && cost != Infinity) {
-			int totalCost = (*curNodeIter).cost + cost;
+			int totalCost = curNodeIter->cost + cost;
 			if (totalCost < nodes[i].cost) {
 				nodes[i].parentIter = curNodeIter;
 				nodes[i].cost = totalCost;
@@ -150,7 +150,7 @@ static void relaxEndPoint(const Vertex &curNodePos,
 						  DijkstraNode &endPoint,
 						  const Region &region) {
 	if (region.isLineOfSight(curNodePos, endPointPos)) {
-		int totalCost = (*curNodeIter).cost + curNodePos.distance(endPointPos);
+		int totalCost = curNodeIter->cost + curNodePos.distance(endPointPos);
 		if (totalCost < endPoint.cost) {
 			endPoint.parentIter = curNodeIter;
 			endPoint.cost = totalCost;
@@ -192,17 +192,17 @@ bool WalkRegion::findPath(const Vertex &start, const Vertex &end, BS_Path &path)
 			return false;
 
 		// If the destination point is closer than the point cost, scan can stop
-		(*nodeInter).chosen = true;
-		if (endPoint.cost <= (*nodeInter).cost) {
+		nodeInter->chosen = true;
+		if (endPoint.cost <= nodeInter->cost) {
 			// Insert the end point in the list
 			path.push_back(end);
 
 			// The list is done in reverse order and inserted into the path
 			DijkstraNode::ConstIter curNode = endPoint.parentIter;
 			while (curNode != dijkstraNodes.end()) {
-				assert((*curNode).chosen);
+				assert(curNode->chosen);
 				path.push_back(_nodes[curNode - dijkstraNodes.begin()]);
-				curNode = (*curNode).parentIter;
+				curNode = curNode->parentIter;
 			}
 
 			// The starting point is inserted into the path

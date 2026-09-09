@@ -443,8 +443,8 @@ void VectorImage::render(int width, int height) {
 			}
 
 			// Close vectors
-			(*fill0pos).code = ART_END;
-			(*fill1pos).code = ART_END;
+			fill0pos->code = ART_END;
+			fill1pos->code = ART_END;
 
 			drawBez(fill1, fill0, _pixelData, width, height, _boundingBox.left, _boundingBox.top, scaleX, scaleY, -1, _elements[e].getFillStyleColor(s));
 
