@@ -51,70 +51,9 @@ static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 
-OverworldLogic::DirectionLogic::DirectionLogic(Mode mode) : _mode(mode) {
-	_oldLogic = _G(logic);
-}
-
-void OverworldLogic::DirectionLogic::action(int action) {
-	Data::Direction dir;
-
-	switch (action) {
-	case KEYBIND_UP:
-		dir = Data::DIR_UP;
-		break;
-	case KEYBIND_DOWN:
-		dir = Data::DIR_DOWN;
-		break;
-	case KEYBIND_LEFT:
-		dir = Data::DIR_LEFT;
-		break;
-	case KEYBIND_RIGHT:
-		dir = Data::DIR_RIGHT;
-		break;
-	default:
-		dir = Data::DIR_UNSPECIFIED;
-		break;
-	}
-
-	_G(logic) = _oldLogic;
-
-	switch (_mode) {
-	case SPELL:
-		static_cast<OverworldLogic *>(_oldLogic.get())->castSpellAttack(dir);
-		break;
-	case WEAPON:
-		static_cast<OverworldLogic *>(_oldLogic.get())->combat(dir, 7);
-		break;
-	case FIRE:
-	default:
-		static_cast<OverworldLogic *>(_oldLogic.get())->combat(dir, 8);
-		break;
-	}
-}
-
-/*-------------------------------------------------------------------*/
-
 OverworldLogic::OverworldLogic() {
 	_G(map)._mapType = Data::MAPTYPE_OVERWORLD;
 	_G(transportFoodCtr) = 1;
-}
-
-bool OverworldLogic::attack(Data::Direction dir) {
-	writeString("Attack with %s", Data::WEAPON_NAMES_LOWER[_G(savegame)._equippedWeapon]);
-
-	int maxDistance = Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon];
-	if (!maxDistance) {
-		// It's a non-attacking "weapon" like the rope
-		writeString("?\n");
-		playFX(1);
-		return true;
-
-	} else {
-		writeString(": ");
-		_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::WEAPON));
-		g_engine->addView("Direction");
-		return false;
-	}
 }
 
 bool OverworldLogic::board() {
@@ -686,7 +625,7 @@ void OverworldLogic::giveCoins(int coins) {
 	writeString("%d gold\n", coins);
 }
 
-void OverworldLogic::attackDamage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+void OverworldLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
 	// DELTA_X/Y aren't valid for DIR_UNSPECIFIED (-1) - treat it the same
 	// as DELTA_X/Y's own unused index 0, i.e. the projectile just stays put
 	// on the player's own tile
@@ -699,6 +638,8 @@ void OverworldLogic::attackDamage(Data::Direction dir, int effectNum, int maxDis
 		x = pos.x + dx * step;
 		y = pos.y + dy * step;
 
+		if (step == 1)
+			playFX(effectNum);
 		showAttackTile(x, y, tileId);
 		tile = _G(map).getTileAt(x, y);
 
@@ -779,11 +720,7 @@ void OverworldLogic::castSpellAttack(Data::Direction dir) {
 
 	playFX(5);
 	writeString("\n");
-	attackDamage(dir, 7, 3, strike, 101, Data::TILE_SPELL_ATTACK);
-}
-
-void OverworldLogic::combat(Data::Direction dir, int val) {
-
+	damage(dir, 7, 3, strike, 101, Data::TILE_SPELL_ATTACK);
 }
 
 } // namespace Logic

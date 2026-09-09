@@ -195,9 +195,17 @@ bool Logic::attack(Data::Direction dir) {
 
 	if (Data::WEAPONS_DISTANCE[_G(savegame)._equippedWeapon]) {
 		writeString(": ");
-		return combat(dir, 7);
 
+		if (dir == Data::DIR_UNSPECIFIED) {
+			_G(logic) = Common::SharedPtr<Logic>(new DirectionLogic(DirectionLogic::WEAPON));
+			g_engine->addView("Direction");
+			return false;
+		} else {
+			combat(dir, 7);
+			return true;
+		}
 	} else {
+		// It's a non-attacking "weapon" like the rope
 		writeString("?\n");
 		playFX(1);
 		return true;
@@ -333,9 +341,75 @@ bool Logic::pass() {
 	return true;
 }
 
-bool Logic::combat(int direction, int amount) {
-	// TODO
-	return true;
+void Logic::combat(Data::Direction direction, int effect) {
+	if (direction == Data::DIR_UNSPECIFIED) {
+		writeString("nothing\n");
+	} else {
+		writeString("%s\n", Data::DIRECTION_NAMES[direction]);
+		combatDir(direction, effect);
+	}
+}
+
+void Logic::combatDir(Data::Direction direction, int effect) {
+	Data::Savegame &sg = _G(savegame);
+	int maxDistance, hitChance, strike;
+
+	if (effect == 7) {
+		// Attacking with the readied weapon
+		maxDistance = Data::WEAPONS_DISTANCE[sg._equippedWeapon];
+		hitChance = sg._agility + 50;
+		strike = getRandomNumber(2, sg._equippedWeapon * 8 + sg._strength);
+	} else {
+		// Firing a frigate's cannons/aircar's lasers
+		maxDistance = 3;
+		hitChance = 80;
+		strike = getRandomNumber(1, sg._transportType * 10) + 30;
+	}
+
+	damage(direction, effect, maxDistance, strike, hitChance, Data::TILE_ATTACK);
+}
+
+/*-------------------------------------------------------------------*/
+
+DirectionLogic::DirectionLogic(Mode mode) : _mode(mode) {
+	_oldLogic = _G(logic);
+}
+
+void DirectionLogic::action(int action) {
+	Data::Direction dir;
+
+	switch (action) {
+	case KEYBIND_UP:
+		dir = Data::DIR_UP;
+		break;
+	case KEYBIND_DOWN:
+		dir = Data::DIR_DOWN;
+		break;
+	case KEYBIND_LEFT:
+		dir = Data::DIR_LEFT;
+		break;
+	case KEYBIND_RIGHT:
+		dir = Data::DIR_RIGHT;
+		break;
+	default:
+		dir = Data::DIR_UNSPECIFIED;
+		break;
+	}
+
+	_G(logic) = _oldLogic;
+
+	switch (_mode) {
+	case SPELL:
+		_oldLogic->castSpellAttack(dir);
+		break;
+	case WEAPON:
+		_oldLogic->combat(dir, 7);
+		break;
+	case FIRE:
+	default:
+		_oldLogic->combat(dir, 8);
+		break;
+	}
 }
 
 } // namespace Logic

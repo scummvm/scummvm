@@ -194,6 +194,97 @@ void CityCastleLogic::updateCreatures() {
 	}
 }
 
+void CityCastleLogic::damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
+	attackPerson(dir, maxDistance, strike, hitChance);
+}
+
+void CityCastleLogic::attackPerson(Data::Direction dir, int maxDistance, int strike, int hitChance) {
+	playFX(7);
+
+	int deltaX = DELTA_X[dir], deltaY = DELTA_Y[dir];
+	const auto &pos = _G(savegame)._locationPosition;
+
+	// Scan up to maxDistance tiles for whatever's there, just to pick which
+	// "Type! " message to show - stops as soon as anything but open ground
+	// is found
+	int tile = -1;
+	for (int step = 1; step <= maxDistance; ++step) {
+		tile = checkAt(pos.x + deltaX * step, pos.y + deltaY * step);
+		if (tile != -1 && tile != Data::CTILE_BLANK)
+			break;
+	}
+
+	// The actual attack always lands on whatever's directly adjacent,
+	// regardless of how far away the scan above found something - matching
+	// a quirk in the original
+	int idx = _G(savegame).getLocationEntityAt(pos.x + deltaX, pos.y + deltaY);
+	bool hit = (idx != -1) && (getRandomNumber(1, 100) <= hitChance);
+
+	if (!hit) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	writeString("Hit ");
+	switch (tile) {
+	case Data::CTILE_WENCH:
+		writeString(_G(savegame)._sex == Data::SEX_MALE ? "Wench! " : "Lecher! ");
+		break;
+	case Data::CTILE_BARD:
+		writeString(_G(map)._mapType == Data::MAPTYPE_CITY ? "Bard! " : "Jester! ");
+		break;
+	case Data::CTILE_PRINCESS:
+		writeString("Princess! ");
+		break;
+	case Data::CTILE_MERCHANT:
+		writeString("Merchant! ");
+		break;
+	case Data::CTILE_GUARD:
+		writeString("Guard! ");
+		break;
+	case Data::CTILE_KING_WIDGET:
+		writeString("King! ");
+		break;
+	default:
+		break;
+	}
+
+	_G(savegame)._guardsHostile = 1;
+	playFX(2);
+
+	Data::LocationEntity &e = _G(savegame)._locationEntities[idx];
+	if (strike >= e._hitPoints) {
+		// Killed
+		writeString("Killed!\n");
+
+		if (tile == Data::CTILE_PRINCESS) {
+			_G(savegame)._freeingPrincess = 0;
+		} else {
+			++_G(savegame)._experience;
+			redrawStats();
+		}
+
+		e._type = -1;
+		e._position.x = 127;
+		redrawMap();
+
+		if (tile == Data::CTILE_GUARD)
+			_G(savegame)._experience += 14;
+
+		if (tile == Data::CTILE_BARD && _G(map)._mapType == Data::MAPTYPE_CASTLE) {
+			writeString("Thou hast found a key!\n");
+			_G(savegame)._hasCastleKey = 1;
+		}
+
+	} else {
+		// The king is invincible in Lord British's castle
+		if (!(tile == Data::CTILE_KING_WIDGET && _G(map)._isLordBritishCastle))
+			e._hitPoints -= strike;
+
+		writeString("%d damage!\n", strike);
+	}
+}
+
 bool CityCastleLogic::drop() {
 	g_engine->addView("Drop");
 	return false;

@@ -70,6 +70,10 @@ enum LocationTileId {
 	CTILE_GUARD = 17,
 	CTILE_PLAYER = 18,
 	CTILE_BARD = 19,
+	// The king/merchant NPC widget types - distinct from CTILE_KING(62)
+	// below, which is the throne tile the player stands on to transact
+	CTILE_KING_WIDGET = 20,
+	CTILE_MERCHANT = 21,
 	CTILE_PRINCESS = 22,
 	CTILE_WENCH = 50,
 	// Wishing tiles for dropping coins on

@@ -76,6 +76,15 @@ private:
 	 */
 	bool moveEntityBy(int entityIndex, int deltaX, int deltaY);
 
+	/**
+	 * Resolves a weapon/cannon-fire attack against whichever NPC widget is
+	 * standing directly adjacent to the player in the given direction -
+	 * the type shown in the attack message is instead whatever widget (if
+	 * any) is found scanning up to maxDistance tiles away, matching a
+	 * quirk in the original where the two don't have to be the same NPC
+	 */
+	void attackPerson(Data::Direction dir, int maxDistance, int strike, int hitChance);
+
 protected:
 	/**
 	 * Load the NPCs for the given location
@@ -91,6 +100,13 @@ protected:
 	 * Handles updating creatures/NPCs
 	 */
 	void updateCreatures() override;
+
+	/**
+	 * Resolves a weapon/cannon-fire attack - see attackPerson. effectNum
+	 * and tileId aren't used here; the city/castle side of the original's
+	 * shared damage() function never draws a projectile
+	 */
+	void damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) override;
 
 	/**
 	 * The Drop command is only usable within cities and castles

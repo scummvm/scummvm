@@ -24,17 +24,24 @@
 #define ULTIMA2_LOGIC_H
 
 #include "common/events.h"
+#include "common/ptr.h"
 #include "ultima/ultima1/data/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
+class DirectionLogic;
+
 /**
  * Base class for gameplay handling logic used by the Commands class to respond to player actions
  * or other miscellaneous keypresses.
  */
 class Logic {
+	friend class DirectionLogic;
+private:
+	void combatDir(Data::Direction direction, int effect);
+
 protected:
 	/**
 	 * Dispatches some text to be shown in the Commands window
@@ -79,7 +86,7 @@ protected:
 	/**
 	 * Triggers combat action
 	 */
-	bool combat(int direction, int amount);
+	void combat(Data::Direction direction, int effect);
 
 	/**
 	 * Attack with a weapon
@@ -95,6 +102,28 @@ protected:
 	 * Handles updating creatures/NPCs
 	 */
 	virtual void updateCreatures() {
+	}
+
+	/**
+	 * Cast spell direction chosen for overworld spells
+	 */
+	virtual void castSpellAttack(Data::Direction dir) {
+	}
+
+	/**
+	 * Resolves a weapon/cannon-fire/spell attack in a given direction -
+	 * rolls to hit, then applies damage or kills whatever's found there.
+	 * The city/castle half (CityCastleLogic) attacks an NPC widget; the
+	 * overworld half (OverworldLogic) attacks a monster entity - dungeons
+	 * have their own separate attack handling and don't use this
+	 * @param dir			Direction to attack in
+	 * @param effectNum		Sound effect Id to play on a successful hit
+	 * @param maxDistance	How far away a target can be and still be hit
+	 * @param strike		Amount of damage to inflict
+	 * @param hitChance		1-100 threshold a to-hit roll must be under
+	 * @param tileId		Tile Id shown for the weapon/projectile effect
+	 */
+	virtual void damage(Data::Direction dir, int effectNum, int maxDistance, int strike, int hitChance, int tileId) {
 	}
 
 	/*--- Fallback player action handlers. Each returns true if end of
@@ -138,6 +167,26 @@ public:
 	 * Called once per game frame for any logic updates
 	 */
 	virtual void tick() {}
+};
+
+/**
+ * Bridging class used to receive back the selected direction from the Direction view, and then
+ * dispatch it for either spell or weapon attack in the given direction.
+ */
+class DirectionLogic : public Logic {
+public:
+	enum Mode {
+		SPELL, WEAPON, FIRE
+	};
+private:
+	Common::SharedPtr<Logic> _oldLogic;
+	Mode _mode;
+
+public:
+	DirectionLogic(Mode mode);
+	~DirectionLogic() override {
+	}
+	void action(int action) override;
 };
 
 } // namespace Logic
