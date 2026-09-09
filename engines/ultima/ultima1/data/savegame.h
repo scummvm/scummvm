@@ -144,6 +144,11 @@ public:
 	// Small cycling offset added to _mondainPhase to animate his current
 	// pose - what it cycles through depends on the current phase
 	int16 _mondainPhaseAnimOffset = 0;
+	// Drives Mondain's story-driven phase transitions (not yet ported) -
+	// destroying the gem while it happens to read 30 defeats him outright
+	int16 _mondainPhaseTimer = 20;
+	// Set once Mondain has been finally defeated
+	int16 _mondainDefeatedFlag = 0;
 
 	/**
 	 * Synchronize savegame data

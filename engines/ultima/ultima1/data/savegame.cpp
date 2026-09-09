@@ -114,6 +114,8 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 		s.syncAsSint16LE(_mondainCombatFlag);
 		s.syncAsSint16LE(_mondainPhase);
 		s.syncAsSint16LE(_mondainPhaseAnimOffset);
+		s.syncAsSint16LE(_mondainPhaseTimer);
+		s.syncAsSint16LE(_mondainDefeatedFlag);
 	}
 }
 

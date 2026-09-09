@@ -144,6 +144,36 @@ void MondainLogic::updateCreatures() {
 }
 
 bool MondainLogic::get() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("Get (Gem)");
+
+	if (sg._gemDestroyedFlag || !isAdjacentToMondain()) {
+		writeString("..'tis nothing here!\n");
+		playFX(1);
+		return true;
+	}
+
+	// Destroy the gem - it can only be done once, adjacent to Mondain
+	sg._mondainCombatFlag = 1;
+	sg._gemDestroyedFlag = true;
+	sg._mondainHitAnimFrame = 0;
+
+	int damage = sg._hits * 3 / 4;
+
+	writeString("... ");
+	writeString("%d damage!\n", damage);
+
+	for (int i = 0; i < 5; ++i)
+		playFX(2);
+
+	writeString("The Gem is DESTROYED!\n");
+
+	sg._hits -= damage;
+	redrawStats();
+
+	if (sg._mondainPhaseTimer == 30)
+		sg._mondainDefeatedFlag = 1;
+
 	return true;
 }
 
