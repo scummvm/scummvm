@@ -1048,7 +1048,7 @@ void Actor::resetScreenRectangleAndBbox() {
 float Actor::distanceFromView(View *view) const{
 	float xDist = _position.x - view->_cameraPosition.x;
 	float zDist = _position.z + view->_cameraPosition.y; // y<->z is intentional, not a bug
-	return sqrt(xDist * xDist + zDist * zDist);
+	return sqrtf(xDist * xDist + zDist * zDist);
 }
 
 bool Actor::isWalking() const {

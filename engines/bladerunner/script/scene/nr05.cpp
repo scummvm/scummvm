@@ -231,8 +231,8 @@ void SceneScriptNR05::rotateActorOnTable(int frame) {
 		angle = angle + M_PI;
 		invertedAngle = invertedAngle + M_PI;
 	}
-	float c = cos(invertedAngle);
-	float s = sin(invertedAngle);
+	float c = cosf(invertedAngle);
+	float s = sinf(invertedAngle);
 	float x = 6.0f * s - 80.0f * c + -450.0f;
 	float z = 80.0f * s + 6.0f * c + -531.0f;
 

@@ -209,7 +209,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 
 	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0f;
 
-	float distanceToCamera = fabs(-centerZ - _view->_cameraPosition.y); // y<->z is intentional, not a bug
+	float distanceToCamera = fabsf(-centerZ - _view->_cameraPosition.y); // y<->z is intentional, not a bug
 	_sceneObjects[index].distanceToCamera = distanceToCamera;
 
 	// insert according to distance from camera

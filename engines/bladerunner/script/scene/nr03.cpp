@@ -441,7 +441,7 @@ void SceneScriptNR03::rotateActorOnTable(int frame) {
 	int facing;
 	float angle, invertedAngle;
 
-	angle = cos((frame - 70) * (M_PI / 40.0f)) * M_PI_2;
+	angle = cosf((frame - 70) * (M_PI / 40.0f)) * M_PI_2;
 	invertedAngle = M_PI - angle;
 	if (!Game_Flag_Query(kFlagNR03toNR05)
 	 &&  Actor_Query_Goal_Number(kActorGuzza) != kGoalGuzzaSitAtNR03
@@ -450,8 +450,8 @@ void SceneScriptNR03::rotateActorOnTable(int frame) {
 		invertedAngle = invertedAngle + M_PI;
 	}
 
-	float c = cos(invertedAngle);
-	float s = sin(invertedAngle);
+	float c = cosf(invertedAngle);
+	float s = sinf(invertedAngle);
 	float x = 36.49f * s - -60.21f * c + -265.49f;
 	float z = -60.21f * s + 36.49f * c + -408.79f;
 

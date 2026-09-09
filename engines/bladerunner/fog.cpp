@@ -140,7 +140,7 @@ void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, floa
 	float d = b * b - c;
 
 	if (d >= 0.0f) { // there is an interstection between ray and the sphere
-		float sqrt_d = sqrt(d);
+		float sqrt_d = sqrtf(d);
 
 		Vector3 intersection1 = rayOrigin + (-b - sqrt_d) * rayDirection;
 		Vector3 intersection2 = rayOrigin + (-b + sqrt_d) * rayDirection;
@@ -169,9 +169,9 @@ void FogCone::read(Common::ReadStream *stream, int frameCount) {
 	_frameCount = frameCount;
 	int size = readCommon(stream);
 	float coneAngle = stream->readFloatLE();
-	float tan_coneAngle = tan(coneAngle);
+	float tan_coneAngle = tanf(coneAngle);
 
-	_cos_coneAngle = cos(coneAngle);
+	_cos_coneAngle = cosf(coneAngle);
 	_tan_coneAngle_sq = tan_coneAngle * tan_coneAngle;
 
 	readAnimationData(stream, size - 52);
@@ -196,16 +196,16 @@ void FogCone::calculateCoeficient(Vector3 position, Vector3 viewPosition, float 
 			planeNormal = -1.0f * planeNormal;
 		}
 
-		float cosTheta = sqrt(1.0f - Vector3::dot(planeNormal, v) * Vector3::dot(planeNormal, v));
+		float cosTheta = sqrtf(1.0f - Vector3::dot(planeNormal, v) * Vector3::dot(planeNormal, v));
 
 		if (cosTheta > _cos_coneAngle) {
 			Vector3 u = Vector3::cross(v, planeNormal).normalize();
 			Vector3 w = Vector3::cross(u, v).normalize();
 
-			float tanTheta = sqrt(1.0f - cosTheta * cosTheta) / cosTheta;
+			float tanTheta = sqrtf(1.0f - cosTheta * cosTheta) / cosTheta;
 
 			Vector3 temp1 = tanTheta * w;
-			Vector3 temp2 = sqrt(_tan_coneAngle_sq - tanTheta * tanTheta) * u;
+			Vector3 temp2 = sqrtf(_tan_coneAngle_sq - tanTheta * tanTheta) * u;
 
 			Vector3 delta1 = v + temp1 - temp2;
 			Vector3 delta2 = v + temp1 + temp2;

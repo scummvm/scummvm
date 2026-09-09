@@ -1531,7 +1531,7 @@ double AIScriptDektora::comp_distance(int actorId, float x1, float y1, float z1)
 
 	Actor_Query_XYZ(actorId, &x, &y, &z);
 
-	return sqrt((z1 - z) * (z1 - z) + (x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
+	return sqrtf((z1 - z) * (z1 - z) + (x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
 }
 
 void AIScriptDektora::checkCombat() {

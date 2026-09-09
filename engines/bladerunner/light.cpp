@@ -228,8 +228,8 @@ float Light1::calculate(Vector3 start, Vector3 end) const {
 		v40 = calculateFalloutCoefficient(start, end, _falloffStart, _falloffEnd);
 	}
 
-	float v41 = atan2(sqrt(start.x * start.x + start.y * start.y), -start.z);
-	float v42 = atan2(sqrt(end.x * end.x + end.y * end.y), -end.z);
+	float v41 = atan2f(sqrtf(start.x * start.x + start.y * start.y), -start.z);
+	float v42 = atan2f(sqrtf(end.x * end.x + end.y * end.y), -end.z);
 
 	float v43;
 	if ((_angleStart >= v41 && _angleStart >= v42) || (_angleEnd <= v41 && _angleEnd <= v42)) {
@@ -252,7 +252,7 @@ void Light1::calculateColor(Color *outColor, Vector3 position) const {
 	outColor->b = 0.0f;
 
 	if (positionT.z < 0.0f) {
-		float v12 = attenuation(_angleStart, _angleEnd, atan2(sqrt(positionT.x * positionT.x + positionT.y * positionT.y), -positionT.z));
+		float v12 = attenuation(_angleStart, _angleEnd, atan2f(sqrtf(positionT.x * positionT.x + positionT.y * positionT.y), -positionT.z));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
 
 		outColor->r = v12 * v13 * _color.r;
@@ -270,10 +270,10 @@ float Light2::calculate(Vector3 start, Vector3 end) const {
 		v54 = calculateFalloutCoefficient(start, end, _falloffStart, _falloffEnd);
 	}
 
-	float v55 = atan2(fabs(start.x), -start.z);
-	float v58 = atan2(fabs(start.y), -start.z);
-	float v57 = atan2(fabs(end.x), -end.z);
-	float v56 = atan2(fabs(end.y), -end.z);
+	float v55 = atan2f(fabsf(start.x), -start.z);
+	float v58 = atan2f(fabsf(start.y), -start.z);
+	float v57 = atan2f(fabsf(end.x), -end.z);
+	float v56 = atan2f(fabsf(end.y), -end.z);
 
 	float v59;
 	if ((_angleStart >= v55 && _angleStart >= v57 && _angleStart >= v58 && _angleStart >= v56) || (_angleEnd <= v55 && _angleEnd <= v57 && _angleEnd <= v58 && _angleEnd <= v56)) {
@@ -296,8 +296,8 @@ void Light2::calculateColor(Color *outColor, Vector3 position) const {
 	outColor->b = 0.0f;
 
 	if (positionT.z < 0.0f) {
-		float v11 = attenuation(_angleStart, _angleEnd, atan2(fabs(positionT.y), -positionT.z));
-		float v12 = attenuation(_angleStart, _angleEnd, atan2(fabs(positionT.x), -positionT.z));
+		float v11 = attenuation(_angleStart, _angleEnd, atan2f(fabsf(positionT.y), -positionT.z));
+		float v12 = attenuation(_angleStart, _angleEnd, atan2f(fabsf(positionT.x), -positionT.z));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
 
 		outColor->r = v11 * v12 * v13 * _color.r;
@@ -314,7 +314,7 @@ void Light3::calculateColor(Color *outColor, Vector3 position) const {
 	outColor->b = 0.0f;
 
 	if (positionT.z < 0.0f) {
-		float v12 = attenuation(_angleStart, _angleEnd, sqrt(positionT.x * positionT.x + positionT.y * positionT.y));
+		float v12 = attenuation(_angleStart, _angleEnd, sqrtf(positionT.x * positionT.x + positionT.y * positionT.y));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
 
 		outColor->r = v12 * v13 * _color.r;
@@ -331,8 +331,8 @@ void Light4::calculateColor(Color *outColor, Vector3 position) const {
 	outColor->b = 0.0f;
 
 	if (positionT.z < 0.0f) {
-		float v11 = attenuation(_angleStart, _angleEnd, fabs(positionT.y));
-		float v12 = attenuation(_angleStart, _angleEnd, fabs(positionT.x));
+		float v11 = attenuation(_angleStart, _angleEnd, fabsf(positionT.y));
+		float v12 = attenuation(_angleStart, _angleEnd, fabsf(positionT.x));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
 
 		outColor->r = v11 * v12 * v13 * _color.r;

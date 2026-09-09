@@ -79,8 +79,8 @@ Matrix4x3::Matrix4x3(
 }
 
 Matrix4x3 rotationMatrixX(float angle) {
-	float ca = cos(angle);
-	float sa = sin(angle);
+	float ca = cosf(angle);
+	float sa = sinf(angle);
 
 	return Matrix4x3( 1.0f, 0.0f, 0.0f, 0.0f,
 	                  0.0f,   ca,   sa, 0.0f,

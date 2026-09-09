@@ -376,7 +376,7 @@ void AIScriptGenericWalkerC::movingStart() {
 	deltaX = walkerX - mccoyX;
 	deltaZ = walkerZ - mccoyZ;
 
-	float dist = sqrt(deltaX * deltaX + deltaZ * deltaZ);
+	float dist = sqrtf(deltaX * deltaX + deltaZ * deltaZ);
 	if (dist == 0.0f) {
 		deltaZ = 0.0f;
 		deltaX = 0.0f;

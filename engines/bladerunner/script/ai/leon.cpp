@@ -516,7 +516,7 @@ void AIScriptLeon::FledCombat() {}
 float AIScriptLeon::distanceTo(int actorId, float x, float y, float z) {
 	float actorX, actorY, actorZ;
 	Actor_Query_XYZ(actorId, &actorX, &actorY, &actorZ);
-	return sqrt(static_cast<float>((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX)));
+	return sqrtf(static_cast<float>((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX)));
 }
 
 } // End of namespace BladeRunner

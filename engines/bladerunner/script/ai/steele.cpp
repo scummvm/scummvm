@@ -581,7 +581,7 @@ double AIScriptSteele::comp_distance(int actorId, float a5, float a6, int a1, fl
 	float actorY;
 
 	Actor_Query_XYZ(actorId, &actorX, &actorY, &actorZ);
-	return sqrt((a4 - actorZ) * (a4 - actorZ) + (a2 - actorX) * (a2 - actorX) + (a3 - actorY) * (a3 - actorY));
+	return sqrtf((a4 - actorZ) * (a4 - actorZ) + (a2 - actorX) * (a2 - actorX) + (a3 - actorY) * (a3 - actorY));
 }
 
 bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {

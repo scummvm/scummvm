@@ -124,18 +124,18 @@ void Shape::drawFilledTriangleAux(Graphics::Surface &surface, const int &dst_x, 
 
 		if (triangleV2.y == triangleV3.y) {
 			if (vTmp1.x < vTmp2.x) {
-				leftEndPoint = ceil(vTmp1.x);
+				leftEndPoint = ceilf(vTmp1.x);
 				rightEndPoint = int(vTmp2.x);
 			} else {
-				leftEndPoint = ceil(vTmp2.x);
+				leftEndPoint = ceilf(vTmp2.x);
 				rightEndPoint = int(vTmp1.x);
 			}
 		} else {
 			if (vTmp1.y < vTmp2.y) {
-				leftEndPoint = ceil(vTmp1.y);
+				leftEndPoint = ceilf(vTmp1.y);
 				rightEndPoint = int(vTmp2.y);
 			} else {
-				leftEndPoint = ceil(vTmp2.y);
+				leftEndPoint = ceilf(vTmp2.y);
 				rightEndPoint = int(vTmp1.y);
 			}
 		}
@@ -143,9 +143,9 @@ void Shape::drawFilledTriangleAux(Graphics::Surface &surface, const int &dst_x, 
 		void *dstPtr;
 		for (int xPos = leftEndPoint; xPos <= rightEndPoint; ++xPos) {
 			if (triangleV2.y == triangleV3.y) {
-				dstPtr = surface.getBasePtr(CLIP(dst_x + xPos, 0, surface.w - 1), CLIP(dst_y + (int)ceil(vTmp1.y), 0, surface.h - 1));
+				dstPtr = surface.getBasePtr(CLIP(dst_x + xPos, 0, surface.w - 1), CLIP(dst_y + (int)ceilf(vTmp1.y), 0, surface.h - 1));
 			} else {
-				dstPtr = surface.getBasePtr(CLIP(dst_x + (int)ceil(vTmp1.x), 0, surface.w - 1), CLIP(dst_y + xPos, 0, surface.h - 1));
+				dstPtr = surface.getBasePtr(CLIP(dst_x + (int)ceilf(vTmp1.x), 0, surface.w - 1), CLIP(dst_y + xPos, 0, surface.h - 1));
 			}
 			drawPixel(surface, dstPtr, colorRGB);
 		}

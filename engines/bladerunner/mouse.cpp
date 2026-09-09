@@ -657,7 +657,7 @@ Vector3 Mouse::getXYZ(int x, int y) const {
 	int screenRight = BladeRunnerEngine::kOriginalGameWidth  - x;
 	int screenDown  = BladeRunnerEngine::kOriginalGameHeight - y;
 
-	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
+	float zcoef = 1.0f / tanf(_vm->_view->_fovX / 2.0f);
 
 	// Division of float by int is float, so no precision is lost here
 	float x3d = (2.0f / BladeRunnerEngine::kOriginalGameWidth  * screenRight - 1.0f);

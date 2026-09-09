@@ -363,9 +363,9 @@ int Obstacles::findEmptyPolygon() const {
 
 float Obstacles::getLength(float x0, float z0, float x1, float z1) {
 	if (x0 == x1) {
-		return fabs(z1 - z0);
+		return fabsf(z1 - z0);
 	}
-	return fabs(x1 - x0);
+	return fabsf(x1 - x0);
 }
 
 #if DISABLE_PATHFINDING

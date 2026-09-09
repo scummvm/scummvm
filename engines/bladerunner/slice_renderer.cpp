@@ -118,9 +118,9 @@ Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	assert(_sliceFramePtr);
 
 	Vector3 viewPos = _view->_sliceViewMatrix * _position;
-	float dir = atan2(viewPos.x, viewPos.z) + _facing;
-	float s = sin(dir);
-	float c = cos(dir);
+	float dir = atan2f(viewPos.x, viewPos.z) + _facing;
+	float s = sinf(dir);
+	float c = cosf(dir);
 
 	Matrix3x2 mRotation(c, -s, 0.0f,
 	                    s,  c, 0.0f);
@@ -321,7 +321,7 @@ void SliceLineIterator::setup(
 	_stepZ     = (endScreenZ - startScreenZ) / size;
 
 	_stepSlice     = (endSlice - startSlice) / size;
-	_currentSlice  = startSlice - (startScreenY - floor(startScreenY) - 1.0f) * _stepSlice;
+	_currentSlice  = startSlice - (startScreenY - floorf(startScreenY) - 1.0f) * _stepSlice;
 
 	_currentX = startScreenX;
 	_stepX    = (endScreenX - startScreenX) / size;
@@ -435,7 +435,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 				&coeficientShadow,
 				&colorShadow);
 
-		int transparency = 32.0f * sqrt(setEffectColor.r * setEffectColor.r + setEffectColor.g * setEffectColor.g + setEffectColor.b * setEffectColor.b);
+		int transparency = 32.0f * sqrtf(setEffectColor.r * setEffectColor.r + setEffectColor.g * setEffectColor.g + setEffectColor.b * setEffectColor.b);
 
 		drawShadowInWorld(transparency, surface, zbuffer);
 	}
@@ -489,11 +489,11 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	loadFrame(animationId, animationFrame);
 
 	float frameHeight = _frameSliceHeight * _frameSliceCount;
-	float frameSize = sqrt(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
+	float frameSize = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
 	float size = scale / MAX(frameSize, frameHeight);
 
-	float s = sin(_facing);
-	float c = cos(_facing);
+	float s = sinf(_facing);
+	float c = cosf(_facing);
 
 	Matrix3x2 mRotation(c, -s, 0.0f,
 	                    s,  c, 0.0f);
@@ -612,8 +612,8 @@ void SliceRenderer::drawShadowInWorld(int transparency, Graphics::Surface &surfa
 		0.0f, 1.0f, 0.0f, _position.y,
 		0.0f, 0.0f, 1.0f, _position.z);
 
-	float s = sin(_facing);
-	float c = cos(_facing);
+	float s = sinf(_facing);
+	float c = cosf(_facing);
 
 	Matrix4x3 mRotation(
 		   c,   -s, 0.0f, 0.0f,
