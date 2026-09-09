@@ -96,8 +96,8 @@ void TMXMap::load(const Common::Path &path, const Common::String &filename) {
 			_w = _tileRows * _tileSize.x;
 			_h = _tileCols * _tileSize.y;
 
-			_pathRows = (int)ceil((float)_w / (float)_pathSize.x + .5f); // Adding .5 before casting in order to round up (SZ)
-			_pathCols = (int)ceil((float)_h / (float)_pathSize.y + .5f);
+			_pathRows = (int)ceilf((float)_w / (float)_pathSize.x + .5f); // Adding .5 before casting in order to round up (SZ)
+			_pathCols = (int)ceilf((float)_h / (float)_pathSize.y + .5f);
 
 			g_engine->_imageManager->_tileset.load(path, node);
 
