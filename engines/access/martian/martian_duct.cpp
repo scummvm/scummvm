@@ -158,8 +158,8 @@ void MartianDuct::updateMatrix() {
 	// The original does a full fixed-point matrix calculation here, but
 	// half the values are always 1 or 0 so it's much simpler than that.
 	float moveAngleRad = (float)(_moveAngle / 256.0f) * 2.0f * M_PI;
-	float cosVal = cos(moveAngleRad);
-	float sinVal = sin(moveAngleRad);
+	float cosVal = cosf(moveAngleRad);
+	float sinVal = sinf(moveAngleRad);
 
 	// 3D rotation through Y axis.  We never rotate through the others.
 	_matrix[0][0] = cosVal;
@@ -669,8 +669,8 @@ Point3 MartianDuct::divmul1(const Point3 &pt1, const Point3 &pt2) {
 	Point3 out;
 	out.z = 2;
 	float tmp = (2.0f - pt1.z) / (pt2.z - pt1.z);
-	out.x = (int)round((pt2.x - pt1.x) * tmp + pt1.x);
-	out.y = (int)round((pt2.y - pt1.y) * tmp + pt1.y);
+	out.x = (int)roundf((pt2.x - pt1.x) * tmp + pt1.x);
+	out.y = (int)roundf((pt2.y - pt1.y) * tmp + pt1.y);
 	return out;
 }
 
@@ -678,9 +678,9 @@ Point3 MartianDuct::divmul2(const Point3 &pt1, const Point3 &pt2) {
 	// called for kDuctFlagXLessThanNegZ
 	Point3 out;
 	float tmp = (pt1.z + pt1.x * 2.0f) / ((pt1.x - pt2.x) * 2 - pt2.z + pt1.z);
-	out.z = (int)round((pt2.z - pt1.z) * tmp + pt1.z);
+	out.z = (int)roundf((pt2.z - pt1.z) * tmp + pt1.z);
 	out.x = -(out.z / 2);
-	out.y = (int)round((pt2.y - pt1.y) * tmp + pt1.y);
+	out.y = (int)roundf((pt2.y - pt1.y) * tmp + pt1.y);
 	return out;
 }
 
@@ -688,9 +688,9 @@ Point3 MartianDuct::divmul3(const Point3 &pt1, const Point3 &pt2) {
 	// called for kDuctFlagZLessThanY
 	Point3 out;
 	float tmp = (pt1.z - pt1.y * 2.0f) / ((pt2.y - pt1.y) * 2 - pt2.z + pt1.z);
-	out.y = (int)round((pt2.z - pt1.z) * tmp + pt1.z);
+	out.y = (int)roundf((pt2.z - pt1.z) * tmp + pt1.z);
 	out.z = out.y;
-	out.x = (int)round((pt2.x - pt1.x) * tmp + pt1.x);
+	out.x = (int)roundf((pt2.x - pt1.x) * tmp + pt1.x);
 	return out;
 }
 
@@ -698,9 +698,9 @@ Point3 MartianDuct::divmul4(const Point3 &pt1, const Point3 &pt2) {
 	// called for kDuctFlagZLessThanX
 	Point3 out;
 	float tmp = (pt1.z - pt1.x * 2.0f) / ((pt2.x - pt1.x) * 2 - pt2.z + pt1.z);
-	out.z = (int)round((pt2.z - pt1.z) * tmp + pt1.z);
+	out.z = (int)roundf((pt2.z - pt1.z) * tmp + pt1.z);
 	out.x = out.z / 2;
-	out.y = (int)round((pt2.y - pt1.y) * tmp + pt1.y);
+	out.y = (int)roundf((pt2.y - pt1.y) * tmp + pt1.y);
 	return out;
 }
 
@@ -708,9 +708,9 @@ Point3 MartianDuct::divmul5(const Point3 &pt1, const Point3 &pt2) {
 	// called for kDuctFlagYLessThanNegZ
 	Point3 out;
 	float tmp = (pt1.z + pt1.y * 2.0f) / ((pt1.y - pt2.y) * 2 - pt2.z + pt1.z);
-	out.z = (int)round((pt2.z - pt1.z) * tmp + pt1.z);
+	out.z = (int)roundf((pt2.z - pt1.z) * tmp + pt1.z);
 	out.y = -(out.z / 2);
-	out.x = (int)round((pt2.x - pt1.x) * tmp + pt1.x);
+	out.x = (int)roundf((pt2.x - pt1.x) * tmp + pt1.x);
 	return out;
 }
 
