@@ -95,7 +95,8 @@ bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
 	float l = parseDouble(node, "linear");
 	float q = parseDouble(node, "quadratic");
 	if (c < 0 || l < 0 || q < 0)
-		warning("Loaded invalid lighting attenuation vals %f %f %f", c, l, q);
+		warning("Loaded invalid lighting attenuation vals %s %s %s", node->values["constant"].c_str(), node->values["linear"].c_str(), node->values["quadratic"].c_str());
+
 	_lights->back()->setConstAtten(c);
 	_lights->back()->setLinearAtten(l);
 	_lights->back()->setQuadraticAtten(q);
@@ -105,7 +106,7 @@ bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
 bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
 	float cutoff = parseDouble(node);
 	if (cutoff < 0.0f || (cutoff > 90.0f && cutoff != 180.0f))
-		warning("Loaded invalid lighting cutoff value %f", cutoff);
+		warning("Loaded invalid lighting cutoff value %s", node->values["value"].c_str());
 	_lights->back()->setCutoff((cutoff * M_PI) / 180.0);
 	return true;
 }
@@ -114,8 +115,8 @@ bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
 	float expon = parseDouble(node);
 	if (expon < 0.0f || expon > 128.0f) {
 		// Print debug but don't bother warning - the value is not used anyway.
-		debug("Loaded invalid lighting exponent value %f, default to 1.0", expon);
-		expon = 1.0;
+		debug("Loaded invalid lighting exponent value %s, default to 1.0", node->values["value"].c_str());
+		expon = 1.0f;
 	}
 	_lights->back()->setExponent(expon);
 	return true;

@@ -90,7 +90,7 @@ Common::String TeLight::dump() const {
 
 void TeLight::correctAttenuation() {
 	if (!_constAtten && !_linearAtten && !_quadraticAtten)
-		_constAtten = 1.0;
+		_constAtten = 1.0f;
 }
 
 /*static*/
