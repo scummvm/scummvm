@@ -198,7 +198,7 @@ void GfxOpenGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	float right = nclip * tan(fov / 2 * ((float)M_PI / 180));
+	float right = nclip * tanf(fov / 2 * ((float)M_PI / 180));
 	glFrustum(-right, right, -right * 0.75, right * 0.75, nclip, fclip);
 
 	glMatrixMode(GL_MODELVIEW);

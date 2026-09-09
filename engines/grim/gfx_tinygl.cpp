@@ -114,7 +114,7 @@ void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
-	float right = nclip * tan(fov / 2 * ((float)M_PI / 180));
+	float right = nclip * tanf(fov / 2 * ((float)M_PI / 180));
 	tglFrustumf(-right, right, -right * 0.75f, right * 0.75f, nclip, fclip);
 
 	tglMatrixMode(TGL_MODELVIEW);

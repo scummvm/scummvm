@@ -312,7 +312,7 @@ bool EMIEngine::compareActor(const Actor *x, const Actor *y) {
 		xp = xp * camRot.getRotation();
 		yp = yp * camRot.getRotation();
 
-		if (fabs(xp.z() - yp.z()) < 0.001f) {
+		if (fabsf(xp.z() - yp.z()) < 0.001f) {
 			return x->getId() < y->getId();
 		} else {
 			return xp.z() > yp.z();

@@ -275,7 +275,7 @@ void Lua_V1::GetAngleBetweenVectors() {
 	vec2.normalize();
 
 	float dot = vec1.dotProduct(vec2);
-	float angle = 90.0f - (180.0f * asin(dot)) / (float)M_PI;
+	float angle = 90.0f - (180.0f * asinf(dot)) / (float)M_PI;
 	if (angle < 0)
 		angle = -angle;
 	lua_pushnumber(angle);

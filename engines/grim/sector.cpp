@@ -317,7 +317,7 @@ float Sector::distanceToPoint(const Math::Vector3d &point) const {
 	// dist is positive if it is above the plain, negative if it is
 	// below and 0 if it is on the plane.
 	float dist = (a * point.x() + b * point.y() + c * point.z() + d);
-	dist /= sqrt(a * a + b * b + c * c);
+	dist /= sqrtf(a * a + b * b + c * c);
 	return dist;
 }
 
@@ -408,14 +408,14 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			//
 			// The value of at least 0.1 was chosen to fix a path finding issue
 			// in set pac when guybrush tried to reach the pile of rocks.
-			if (fabs(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.1f ||
-			    fabs(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.1f) {
+			if (fabsf(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.1f ||
+			    fabsf(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.1f) {
 				it = bridges.erase(it);
 				continue;
 			}
 		} else {
-			if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
-			    fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
+			if (fabsf(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
+			    fabsf(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
 				it = bridges.erase(it);
 				continue;
 			}

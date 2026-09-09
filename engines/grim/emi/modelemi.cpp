@@ -357,7 +357,7 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 					dir.normalize();
 
 					if (distSq > l->_falloffNear * l->_falloffNear) {
-						float dist = sqrt(distSq);
+						float dist = sqrtf(distSq);
 						float attn = 1.0f - (dist - l->_falloffNear) / (l->_falloffFar - l->_falloffNear);
 						shade *= attn;
 					}

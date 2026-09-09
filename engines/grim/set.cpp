@@ -1049,15 +1049,15 @@ void Set::calculateSoundPosition(const Math::Vector3d &pos, int minVol, int maxV
 	Math::Vector3d right;
 	cameraVector.normalize();
 	float roll = -_currSetup->_roll * (float)M_PI / 180.f;
-	float cosr = cos(roll);
+	float cosr = cosf(roll);
 	// Rotate the up vector by roll.
-	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
+	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sinf(roll) +
 	     cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
 	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
-	angle = atan2(Math::Vector3d::dotProduct(vector, right), Math::Vector3d::dotProduct(vector, cameraVector));
+	angle = atan2f(Math::Vector3d::dotProduct(vector, right), Math::Vector3d::dotProduct(vector, cameraVector));
 
-	float pan = sin(angle);
+	float pan = sinf(angle);
 	balance = (int)((pan + 1.f) / 2.f * 127.f + 0.5f);
 }
 

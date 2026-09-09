@@ -430,8 +430,8 @@ void GfxOpenGLS::setupCameraFrustum(float fov, float nclip, float fclip) {
 
 	_fov = fov; _nclip = nclip; _fclip = fclip;
 
-	float right = nclip * tan(fov / 2 * ((float)M_PI / 180));
-	float top = right * 0.75;
+	float right = nclip * tanf(fov / 2 * ((float)M_PI / 180));
+	float top = right * 0.75f;
 
 	_projMatrix = makeFrustumMatrix(-right, right, -top, top, nclip, fclip);
 }

@@ -25,55 +25,55 @@ static void math_abs() {
 }
 
 static void math_sin() {
-	lua_pushnumber(sin(TORAD(luaL_check_number(1))));
+	lua_pushnumber(sinf(TORAD(luaL_check_number(1))));
 }
 
 static void math_cos() {
-	lua_pushnumber(cos(TORAD(luaL_check_number(1))));
+	lua_pushnumber(cosf(TORAD(luaL_check_number(1))));
 }
 
 static void math_tan() {
-	lua_pushnumber(tan(TORAD(luaL_check_number(1))));
+	lua_pushnumber(tanf(TORAD(luaL_check_number(1))));
 }
 
 static void math_asin() {
-	lua_pushnumber(FROMRAD(asin(luaL_check_number(1))));
+	lua_pushnumber(FROMRAD(asinf(luaL_check_number(1))));
 }
 
 static void math_acos() {
-	lua_pushnumber(FROMRAD(acos(luaL_check_number(1))));
+	lua_pushnumber(FROMRAD(acosf(luaL_check_number(1))));
 }
 
 static void math_atan() {
-	lua_pushnumber(FROMRAD(atan(luaL_check_number(1))));
+	lua_pushnumber(FROMRAD(atanf(luaL_check_number(1))));
 }
 
 static void math_ceil() {
-	lua_pushnumber(ceil(luaL_check_number(1)));
+	lua_pushnumber(ceilf(luaL_check_number(1)));
 }
 
 static void math_floor() {
-	lua_pushnumber(floor(luaL_check_number(1)));
+	lua_pushnumber(floorf(luaL_check_number(1)));
 }
 
 static void math_mod() {
-	lua_pushnumber(fmod(luaL_check_number(1), luaL_check_number(2)));
+	lua_pushnumber(fmodf(luaL_check_number(1), luaL_check_number(2)));
 }
 
 static void math_sqrt() {
-	lua_pushnumber(sqrt(luaL_check_number(1)));
+	lua_pushnumber(sqrtf(luaL_check_number(1)));
 }
 
 static void math_pow() {
-	lua_pushnumber(pow(luaL_check_number(1), luaL_check_number(2)));
+	lua_pushnumber(powf(luaL_check_number(1), luaL_check_number(2)));
 }
 
 static void math_deg() {
-	lua_pushnumber(luaL_check_number(1) * (180.0 / (float)M_PI));
+	lua_pushnumber(luaL_check_number(1) * (180.0f / (float)M_PI));
 }
 
 static void math_rad() {
-	lua_pushnumber(luaL_check_number(1) * ((float)M_PI / 180.0));
+	lua_pushnumber(luaL_check_number(1) * ((float)M_PI / 180.0f));
 }
 
 static void math_min() {

@@ -96,8 +96,8 @@ void SoundTrack::updatePosition() {
 	Math::Vector3d relPos = (_pos - setup->_pos);
 	Math::Vector3d p(relPos);
 	p = p * worldRot.getRotation();
-	float angle = atan2(p.x(), p.z());
-	float pan = sin(angle);
+	float angle = atan2f(p.x(), p.z());
+	float pan = sinf(angle);
 	_balance = (int)(pan * 127.0f);
 
 	if (_handle) {

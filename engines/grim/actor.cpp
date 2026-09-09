@@ -909,7 +909,7 @@ void Actor::walkForward() {
 			// EMI: some sectors are significantly higher/lower than others.
 			if (currSector && g_grim->getGameType() == GType_MONKEY4) {
 				float planeDist = currSector->distanceToPoint(_pos);
-				if (fabs(planeDist) < 1.f)
+				if (fabsf(planeDist) < 1.f)
 					_pos -= planeDist * currSector->getNormal();
 			}
 
