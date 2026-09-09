@@ -104,6 +104,14 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 	s.syncAsByte(_dungeonLevel);
 	s.syncAsByte(_dungeonDirection);
 	s.syncAsSint16LE(_dungeonExitHitPoints);
+
+	if (_mapNum == MAP_MONDAIN) {
+		s.syncAsSint16LE(_mondainPos.x);
+		s.syncAsSint16LE(_mondainPos.y);
+		s.syncAsByte(_gemDestroyedFlag);
+		s.syncAsSint16LE(_mondainHitAnimFrame);
+		s.syncAsSint16LE(_mondainCombatFlag);
+	}
 }
 
 void Savegame::synchronize(Common::Serializer &s) {

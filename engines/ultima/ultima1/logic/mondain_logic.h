@@ -30,6 +30,13 @@ namespace Ultima1 {
 namespace Logic {
 
 class MondainLogic : public Logic {
+private:
+	/**
+	 * Returns true if Mondain is standing in any of the 8 cells surrounding
+	 * the player's current position
+	 */
+	bool isAdjacentToMondain() const;
+
 protected:
 	bool move(Data::Direction dir) override;
 

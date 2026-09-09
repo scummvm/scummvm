@@ -129,6 +129,12 @@ public:
 
 	bool _gemDestroyedFlag = false;
 	Common::Point _mondainPos;
+	// Set to 1 when the player first steps next to Mondain, then counts up
+	// frame by frame to drive his hit-reaction animation
+	int16 _mondainHitAnimFrame = 0;
+	// Set once combat with Mondain has been triggered (the player got
+	// adjacent to him for the first time)
+	int16 _mondainCombatFlag = 0;
 
 	/**
 	 * Synchronize savegame data
