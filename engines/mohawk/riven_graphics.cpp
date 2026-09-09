@@ -983,8 +983,8 @@ void FliesEffect::updateFlyPosition(uint index) {
 	if (fly.directionAngleRadZ < 0.0F) {
 		fly.directionAngleRadZ = fly.directionAngleRadZ + 2.0F * M_PI;
 	}
-	fly.posXFloat += cos(fly.directionAngleRad) * fly.speed;
-	fly.posYFloat += sin(fly.directionAngleRad) * fly.speed;
+	fly.posXFloat += cosf(fly.directionAngleRad) * fly.speed;
+	fly.posYFloat += sinf(fly.directionAngleRad) * fly.speed;
 	fly.posX = fly.posXFloat;
 	fly.posY = fly.posYFloat;
 	selectAlphaMap(
@@ -993,7 +993,7 @@ void FliesEffect::updateFlyPosition(uint index) {
 			&fly.alphaMap,
 			&fly.width,
 			&fly.height);
-	fly.posZFloat += cos(fly.directionAngleRadZ) * (fly.speed / 2.0F);
+	fly.posZFloat += cosf(fly.directionAngleRadZ) * (fly.speed / 2.0F);
 	fly.posZ = fly.posZFloat;
 	if (_parameters->canBlur && fly.speed > _parameters->blurSpeedTreshold) {
 		fly.hasBlur = true;

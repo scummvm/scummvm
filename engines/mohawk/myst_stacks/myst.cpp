@@ -3280,8 +3280,8 @@ Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 
 	// Polar to rect coords
 	float radians = Math::deg2rad<uint16,float>(angle);
-	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0f);
-	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0f);
+	end.x = (int16)(_towerRotationCenter.x + cosf(radians) * 310.0f);
+	end.y = (int16)(_towerRotationCenter.y + sinf(radians) * 310.0f);
 
 	return end;
 }
