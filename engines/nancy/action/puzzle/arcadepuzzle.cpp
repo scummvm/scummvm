@@ -233,10 +233,10 @@ void ArcadePuzzle::buildAngleTable() {
 	while (left <= halfW) {
 		// Rotate unit vector (1,0) by curAngleDeg
 		float angleRad = curAngleDeg * (float)M_PI / 180.0f;
-		float dx = (float)cos(angleRad);
-		float dy = (float)sin(angleRad);
+		float dx = (float)cosf(angleRad);
+		float dy = (float)sinf(angleRad);
 		// Normalize (already unit length from cos/sin, but in case of precision)
-		float len = (float)sqrt(dx * dx + dy * dy);
+		float len = (float)sqrtf(dx * dx + dy * dy);
 		if (len > 0.0f) { dx /= len; dy /= len; }
 
 		// sub-entry 0: direct
@@ -256,7 +256,7 @@ void ArcadePuzzle::buildAngleTable() {
 		float rdx  = 2.0f * dot * mirrorNx - dx;    // = -dx
 		float rdy  = 2.0f * dot * mirrorNy - dy;    // = dy
 		// Normalize
-		float rlen = (float)sqrt(rdx * rdx + rdy * rdy);
+		float rlen = (float)sqrtf(rdx * rdx + rdy * rdy);
 		if (rlen > 0.0f) { rdx /= rlen; rdy /= rlen; }
 
 		_angleTable[left * 6 + 3] = rdx;
@@ -1070,7 +1070,7 @@ void ArcadePuzzle::applyCollision() {
 			_ballSpin = _angleTable[hitPos * 6 + 5];
 		}
 
-		const float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
+		const float len = sqrtf(_ballDX * _ballDX + _ballDY * _ballDY);
 		if (len > 0.0f) {
 			_ballDX /= len;
 			_ballDY /= len;
@@ -1093,7 +1093,7 @@ void ArcadePuzzle::applyCollision() {
 		float dot = dx * n[0] + dy * n[1];
 		_ballDX = 2.0f * dot * n[0] - dx;
 		_ballDY = 2.0f * dot * n[1] - dy;
-		float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
+		float len = sqrtf(_ballDX * _ballDX + _ballDY * _ballDY);
 		if (len > 0.0f) { _ballDX /= len; _ballDY /= len; }
 		g_nancy->_sound->playSound(_sounds[0]); // wall bounce sound (same as paddle)
 		break;
@@ -1106,7 +1106,7 @@ void ArcadePuzzle::applyCollision() {
 		float dot = dx * n[0] + dy * n[1];
 		_ballDX = 2.0f * dot * n[0] - dx;
 		_ballDY = 2.0f * dot * n[1] - dy;
-		float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
+		float len = sqrtf(_ballDX * _ballDX + _ballDY * _ballDY);
 		if (len > 0.0f) { _ballDX /= len; _ballDY /= len; }
 		playBrickHitSound();
 		break;

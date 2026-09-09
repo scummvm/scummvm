@@ -960,7 +960,7 @@ bool RaycastDeferredLoader::loadInner() {
 		uint center = selectedBounds.left + (selectedBounds.width() >> 1);
 		for (uint i = 0; i < _owner._wallCastColumnAngles.size(); ++i) {
 			int32 &angle = _owner._wallCastColumnAngles[i];
-			angle = (int32)(atan(((float)i - (float)center) / (float)_owner._fov) * _owner._rotationSingleStep);
+			angle = (int32)(atanf(((float)i - (float)center) / (float)_owner._fov) * _owner._rotationSingleStep);
 			clampRotation(angle);
 		}
 
