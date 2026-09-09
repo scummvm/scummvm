@@ -108,7 +108,7 @@ void VisualEffectFireFlies::setParams(const Common::String &params) {
 		Frame &frame = _frames[i];
 
 		// Barycentric coordinates
-		float t = (cos((_frames.size() - i) / (float)_frames.size() * 2.1415f + 0.5f) + 1.0f) * 0.5f;
+		float t = (cosf((_frames.size() - i) / (float)_frames.size() * 2.1415f + 0.5f) + 1.0f) * 0.5f;
 		frame.weight1 = (1.0f - t) * (1.0f - t) * (1.0f - t) / 6.0f;
 		frame.weight2 = (t * t * t * 3.0f - t * t * 6.0f + 4.0f) / 6.0f;
 		frame.weight3 = (((3.0f - t * 3.0f) * t + 3.0f) * t + 1.0f) / 6.0f;

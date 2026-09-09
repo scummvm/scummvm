@@ -102,7 +102,7 @@ bool FloorFace::intersectRay(const Math::Ray &ray, Math::Vector3d &intersection)
 	float num = -Math::Vector3d::dotProduct(n, ray.getOrigin() - _vertices[0]);
 	float denom = Math::Vector3d::dotProduct(n, ray.getDirection());
 
-	if (fabs(denom) < 0.00001) {
+	if (fabsf(denom) < 0.00001f) {
 		// The ray is parallel to the plane
 		return false;
 	}

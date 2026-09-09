@@ -259,7 +259,7 @@ Gfx::Bitmap *DialogBox::loadBackground(Gfx::Driver *gfx) {
 
 void DialogBox::onRender() {
 	if (_background) {
-		uint32 backgroundRepeatX = ceil(_foreground->width() / (float)_background->width());
+		uint32 backgroundRepeatX = ceilf(_foreground->width() / (float)_background->width());
 		for (uint i = 0; i < backgroundRepeatX; i++) {
 			_surfaceRenderer->render(_background, Common::Point(i * _background->width(), 0));
 		}
