@@ -343,7 +343,7 @@ void GraphicsManager::calculateScalingMasks() {
 		float position = step;
 		int counter = 1;
 		while (position < kAlfredFrameHeight) {
-			int idx = static_cast<int>(round(position));
+			int idx = static_cast<int>(roundf(position));
 			if (idx < kAlfredFrameHeight) {
 				row[idx] = counter;
 				counter++;
