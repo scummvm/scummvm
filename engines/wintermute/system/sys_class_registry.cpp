@@ -113,7 +113,7 @@ bool SystemClassRegistry::registerInstance(const char *className, void *instance
 		return false;
 	}
 
-	SystemInstance *inst = (*mapIt)._value->addInstance(instance, _count++);
+	SystemInstance *inst = mapIt->_value->addInstance(instance, _count++);
 	return (inst != nullptr);
 }
 
@@ -137,7 +137,7 @@ bool SystemClassRegistry::unregisterInstance(const char *className, void *instan
 	if (mapIt == _nameMap.end()) {
 		return false;
 	}
-	(*mapIt)._value->removeInstance(instance);
+	mapIt->_value->removeInstance(instance);
 
 	InstanceMap::iterator instIt = _instanceMap.find(instance);
 	if (instIt != _instanceMap.end()) {
@@ -161,7 +161,7 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 	}
 
 
-	SystemInstance *inst = (*it)._value;
+	SystemInstance *inst = it->_value;
 	*instanceID = inst->getId();
 	*classID = inst->getClass()->getId();
 
@@ -174,7 +174,7 @@ void *SystemClassRegistry::idToPointer(int classID, int instanceID) {
 	if (it == _savedInstanceMap.end()) {
 		return nullptr;
 	} else {
-		return (*it)._value->getInstance();
+		return it->_value->getInstance();
 	}
 }
 
@@ -247,7 +247,7 @@ bool SystemClassRegistry::loadTable(BaseGame *game, BasePersistenceManager *pers
 
 		NameMap::iterator mapIt = _nameMap.find(className);
 		if (mapIt != _nameMap.end()) {
-			(*mapIt)._value->loadTable(game,  persistMgr);
+			mapIt->_value->loadTable(game,  persistMgr);
 		}
 	}
 
@@ -328,7 +328,7 @@ bool SystemClassRegistry::enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const 
 		return STATUS_FAILED;
 	}
 
-	(*mapIt)._value->instanceCallback(lpCallback, lpData);
+	mapIt->_value->instanceCallback(lpCallback, lpData);
 	return STATUS_OK;
 }
 

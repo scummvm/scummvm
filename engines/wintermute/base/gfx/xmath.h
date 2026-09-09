@@ -203,22 +203,22 @@ DXMatrix *DXMatrixShadow(DXMatrix *pout, const DXVector4 *plight, const DXPlane 
 DXVector2 *DXVec2TransformCoord(DXVector2 *pout, const DXVector2 *pv, const DXMatrix *pm);
 
 static inline DXMatrix *DXMatrixIdentity(DXMatrix *pout) {
-	(*pout)._m[0][1] = 0.0f;
-	(*pout)._m[0][2] = 0.0f;
-	(*pout)._m[0][3] = 0.0f;
-	(*pout)._m[1][0] = 0.0f;
-	(*pout)._m[1][2] = 0.0f;
-	(*pout)._m[1][3] = 0.0f;
-	(*pout)._m[2][0] = 0.0f;
-	(*pout)._m[2][1] = 0.0f;
-	(*pout)._m[2][3] = 0.0f;
-	(*pout)._m[3][0] = 0.0f;
-	(*pout)._m[3][1] = 0.0f;
-	(*pout)._m[3][2] = 0.0f;
-	(*pout)._m[0][0] = 1.0f;
-	(*pout)._m[1][1] = 1.0f;
-	(*pout)._m[2][2] = 1.0f;
-	(*pout)._m[3][3] = 1.0f;
+	pout->_m[0][1] = 0.0f;
+	pout->_m[0][2] = 0.0f;
+	pout->_m[0][3] = 0.0f;
+	pout->_m[1][0] = 0.0f;
+	pout->_m[1][2] = 0.0f;
+	pout->_m[1][3] = 0.0f;
+	pout->_m[2][0] = 0.0f;
+	pout->_m[2][1] = 0.0f;
+	pout->_m[2][3] = 0.0f;
+	pout->_m[3][0] = 0.0f;
+	pout->_m[3][1] = 0.0f;
+	pout->_m[3][2] = 0.0f;
+	pout->_m[0][0] = 1.0f;
+	pout->_m[1][1] = 1.0f;
+	pout->_m[2][2] = 1.0f;
+	pout->_m[3][3] = 1.0f;
 	return pout;
 }
 
