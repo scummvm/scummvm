@@ -849,7 +849,7 @@ void Object::walk(Common::SharedPtr<Object> actor, Common::SharedPtr<Object> obj
 		const float dy = dst.getY() - src.getY();
 		const float minDistX = 30.f;
 		const float minDistY = 15.f;
-		if ((fabs(dx) > 1.f) || (fabs(dy) > 1.f)) {
+		if ((fabsf(dx) > 1.f) || (fabsf(dy) > 1.f)) {
 			float angle = atan2f(dy, dx) * 180.f / M_PI;
 			if (angle < 0.f)
 				angle += 360.f;

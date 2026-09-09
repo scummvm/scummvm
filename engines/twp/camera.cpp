@@ -109,7 +109,7 @@ void Camera::update(Common::SharedPtr<Room> room, Common::SharedPtr<Object> foll
 		else
 			y = cameraPos.getY() + (d.getY() > 0 ? MIN(delta.getY(), d.getY()) : MAX(delta.getY(), d.getY()));
 		setAtCore(Math::Vector2d(x, y));
-		if (!sameActor && (fabs(pos.getX() - x) < 1.f) && (fabs(pos.getY() - y) < 1.f))
+		if (!sameActor && (fabsf(pos.getX() - x) < 1.f) && (fabsf(pos.getY() - y) < 1.f))
 			_follow = follow;
 	}
 }

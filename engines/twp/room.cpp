@@ -521,7 +521,7 @@ bool Walkbox::contains(const Math::Vector2d &position, bool toleranceOnOutside) 
 		Math::Vector2d newPoint = (Math::Vector2d)_polygon[i];
 		float newSqDist = distanceSquared(newPoint, point);
 
-		if (oldSqDist + newSqDist + 2.0f * sqrt(oldSqDist * newSqDist) - distanceSquared(newPoint, oldPoint) < epsilon)
+		if (oldSqDist + newSqDist + 2.0f * sqrtf(oldSqDist * newSqDist) - distanceSquared(newPoint, oldPoint) < epsilon)
 			return toleranceOnOutside;
 
 		Math::Vector2d left;

@@ -147,11 +147,11 @@ float distanceToSegmentSquared(const Math::Vector2d &p, const Math::Vector2d &v,
 }
 
 float distanceToSegment(const Math::Vector2d &p, const Math::Vector2d &v, const Math::Vector2d &w) {
-	return sqrt(distanceToSegmentSquared(p, v, w));
+	return sqrtf(distanceToSegmentSquared(p, v, w));
 }
 
 float distance(const Math::Vector2d &p1, const Math::Vector2d &p2) {
-	return sqrt(distanceSquared(p1, p2));
+	return sqrtf(distanceSquared(p1, p2));
 }
 
 Common::String join(const Common::Array<Common::String> &array, const Common::String &sep) {
@@ -200,7 +200,7 @@ float dot(const Math::Vector2d &u, const Math::Vector2d &v) {
 	return (u.getX() * v.getX()) + (u.getY() * v.getY());
 }
 
-float length(const Math::Vector2d &v) { return sqrt(dot(v, v)); }
+float length(const Math::Vector2d &v) { return sqrtf(dot(v, v)); }
 
 bool lineSegmentsCross(const Math::Vector2d &a, const Math::Vector2d &b, const Math::Vector2d &c, const Math::Vector2d &d) {
 	const float EPSILON = 1e-3f;

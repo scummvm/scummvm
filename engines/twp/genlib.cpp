@@ -299,7 +299,7 @@ static SQInteger distance(HSQUIRRELVM v) {
 	if (!obj2)
 		return sq_throwerror(v, "failed to get object2 or actor2");
 	Math::Vector2d d = obj1->_node->getAbsPos() - obj2->_node->getAbsPos();
-	sqpush(v, sqrt(d.getX() * d.getX() + d.getY() * d.getY()));
+	sqpush(v, sqrtf(d.getX() * d.getX() + d.getY() * d.getY()));
 	return 1;
 }
 

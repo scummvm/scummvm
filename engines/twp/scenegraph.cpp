@@ -51,7 +51,7 @@ protected:
 	void onUpdate(float elapsed) override {
 		_shakeTime += 40.f * elapsed;
 		_elapsed += elapsed;
-		_shakeOffset = Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime));
+		_shakeOffset = Math::Vector2d(_amount * cosf(_shakeTime + 0.3f), _amount * sinf(_shakeTime));
 	}
 
 private:
@@ -692,7 +692,7 @@ void Inventory::drawItems(const Math::Matrix4 &trsf) {
 			t.translate(Math::Vector3d(pos.getX(), pos.getY(), 0.f));
 			if (obj->_jiggle) {
 				Math::Matrix3 rot;
-				rot.buildAroundZ(18.f * sin(_jiggleTime));
+				rot.buildAroundZ(18.f * sinf(_jiggleTime));
 				t.setRotation(rot);
 			}
 			float s = obj->getScale();

@@ -133,7 +133,7 @@ Shake::Shake(Node *node, float amount)
 void Shake::onUpdate(float elapsed) {
 	_shakeTime += 40.f * elapsed;
 	_elapsed += elapsed;
-	_node->setShakeOffset(Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime)));
+	_node->setShakeOffset(Math::Vector2d(_amount * cosf(_shakeTime + 0.3f), _amount * sinf(_shakeTime)));
 }
 
 OverlayTo::OverlayTo(float duration, Common::SharedPtr<Room> room, const Color &to)
@@ -194,7 +194,7 @@ WalkTo::WalkTo(Common::SharedPtr<Object> obj, const Math::Vector2d &dest, int fa
 
 	// don't know yet why walkspeed is so slow, so I cheat
 	Math::Vector2d walkSpeed = obj->_walkSpeed * 2;
-	_wsd = sqrt(walkSpeed.getX() * walkSpeed.getX() + walkSpeed.getY() * walkSpeed.getY());
+	_wsd = sqrtf(walkSpeed.getX() * walkSpeed.getX() + walkSpeed.getY() * walkSpeed.getY());
 	if (sqrawexists(obj->_table, "preWalking"))
 		sqcall(obj->_table, "preWalking");
 }
@@ -678,7 +678,7 @@ Jiggle::~Jiggle() = default;
 
 void Jiggle::onUpdate(float elapsed) {
 	_jiggleTime += 20.f * elapsed;
-	_node->setRotationOffset(_amount * sin(_jiggleTime));
+	_node->setRotationOffset(_amount * sinf(_jiggleTime));
 }
 
 MoveCursorTo::MoveCursorTo(const Math::Vector2d &pos, float time)

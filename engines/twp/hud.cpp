@@ -36,7 +36,7 @@ private:
 	virtual void onUpdate(float elapsed) override {
 		_shakeTime += 40.f * elapsed;
 		_elapsed += elapsed;
-		_slot->_shakeOffset = Math::Vector2d(_amount * cos(_shakeTime + 0.3f), _amount * sin(_shakeTime));
+		_slot->_shakeOffset = Math::Vector2d(_amount * cosf(_shakeTime + 0.3f), _amount * sinf(_shakeTime));
 	}
 
 private:
