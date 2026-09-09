@@ -3933,8 +3933,8 @@ void SceneRegions::load(int sceneNum) {
 
 int SceneRegions::indexOf(const Common::Point &pt) {
 	for (SceneRegions::iterator i = begin(); i != end(); ++i) {
-		if ((*i).contains(pt))
-			return (*i)._regionId;
+		if (i->contains(pt))
+			return i->_regionId;
 	}
 
 	return 0;

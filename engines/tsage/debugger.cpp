@@ -299,7 +299,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 		} else {
 			// Scene uses a region, so get it and use it to fill out only the correct parts
 			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
-			while ((ri != g_globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
+			while ((ri != g_globals->_sceneRegions.end()) && (ri->_regionId != o->_sceneRegionId))
 				++ri;
 
 			if (ri != g_globals->_sceneRegions.end()) {
