@@ -54,7 +54,7 @@ bool SoundSubfolder::hasFile(const Common::Path &path) const {
 int SoundSubfolder::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
 	for (FileMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		++total;
 	}
 
@@ -120,7 +120,7 @@ int SoundZip::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
 
 	for (FileMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		++total;
 	}
 
