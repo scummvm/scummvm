@@ -268,8 +268,8 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 
 	const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 	for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
-		delete[] (*it).name;
-		(*it).name = nullptr;
+		delete[] it->name;
+		it->name = nullptr;
 	}
 
 	Mt32dynamicMappings->clear();
@@ -1085,7 +1085,7 @@ byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
 	if (Mt32dynamicMappings != nullptr) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
-			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
+			if (scumm_strnicmp(iname, it->name, 10) == 0)
 				return getGmInstrument((*it));
 		}
 	}
@@ -1105,8 +1105,8 @@ byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
 	if (Mt32dynamicMappings != nullptr) {
 		const Mt32ToGmMapList::iterator end = Mt32dynamicMappings->end();
 		for (Mt32ToGmMapList::iterator it = Mt32dynamicMappings->begin(); it != end; ++it) {
-			if (scumm_strnicmp(iname, (*it).name, 10) == 0)
-				return (*it).gmRhythmKey;
+			if (scumm_strnicmp(iname, it->name, 10) == 0)
+				return it->gmRhythmKey;
 		}
 	}
 

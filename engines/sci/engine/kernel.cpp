@@ -391,9 +391,9 @@ uint16 Kernel::findRegType(reg_t reg) {
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.getOffset() <= (*(Script *)mobj).getBufSize() &&
+		if (reg.getOffset() <= ((Script *)mobj)->getBufSize() &&
 			reg.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET &&
-			(*(Script *)mobj).offsetIsObject(reg.getOffset())) {
+			((Script *)mobj)->offsetIsObject(reg.getOffset())) {
 			result |= ((Script *)mobj)->getObject(reg.getOffset()) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
 		} else
 			result |= SIG_TYPE_REFERENCE;
