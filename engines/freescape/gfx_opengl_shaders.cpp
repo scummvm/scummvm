@@ -420,8 +420,8 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	copyToVertexArray(0, Math::Vector3d(remap(ballX, _screenW), remap(ballY, _screenH), 0));
 
 	for (int i = 0; i <= triangleAmount; i++) {
-		float x = remap(ballX + (radius * cos(i * twicePi / triangleAmount)), _screenW);
-		float y = remap(ballY + (radius * sin(i * twicePi / triangleAmount)), _screenH);
+		float x = remap(ballX + (radius * cosf(i * twicePi / triangleAmount)), _screenW);
+		float y = remap(ballY + (radius * sinf(i * twicePi / triangleAmount)), _screenH);
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
 	}
 

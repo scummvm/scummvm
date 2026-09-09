@@ -440,8 +440,8 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	for (int i = 0; i <= triangleAmount; i++) {
 		copyToVertexArray(i + 1,
-		                  Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
-		                                 position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
+		                  Math::Vector3d(position.x(), position.y() + (radius * cosf(i *  twicePi / triangleAmount)),
+		                                 position.z() + (adj * radius * sinf(i * twicePi / triangleAmount)))
 		                 );
 	}
 
@@ -458,8 +458,8 @@ void OpenGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 		for (int i = 0; i <= triangleAmount; i++) {
 			copyToVertexArray(i + 1,
-			                  Math::Vector3d(position.x(), position.y() + (radius * cos(i *  twicePi / triangleAmount)),
-			                                 position.z() + (adj * radius * sin(i * twicePi / triangleAmount)))
+			                  Math::Vector3d(position.x(), position.y() + (radius * cosf(i *  twicePi / triangleAmount)),
+			                                 position.z() + (adj * radius * sinf(i * twicePi / triangleAmount)))
 			                 );
 		}
 
@@ -520,8 +520,8 @@ void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	copyToVertexArray(0, Math::Vector3d(ballX, ballY, 0));
 
 	for (int i = 0; i <= triangleAmount; i++) {
-		float x = ballX + (radius * cos(i * twicePi / triangleAmount));
-		float y = ballY + (radius * sin(i * twicePi / triangleAmount));
+		float x = ballX + (radius * cosf(i * twicePi / triangleAmount));
+		float y = ballY + (radius * sinf(i * twicePi / triangleAmount));
 		copyToVertexArray(i + 1, Math::Vector3d(x, y, 0));
 	}
 

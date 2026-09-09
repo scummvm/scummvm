@@ -231,10 +231,10 @@ void FreescapeEngine::activate() {
 
 	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
 	float aspectRatio = 1.6f;
-	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
+	float fovVerticalRad = 2.0f * atanf(tanf(fovHorizontalRad / 2.0f) / aspectRatio);
 
-	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
-	float angleOffsetY = atan(ndcY * tan(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetX = atanf(ndcX * tanf(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetY = atanf(ndcY * tanf(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
 
 	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
@@ -332,8 +332,8 @@ void FreescapeEngine::shoot() {
 	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
 
 	// Convert NDC to angle offset
-	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
-	float angleOffsetY = atan(ndcY * tan(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetX = atanf(ndcX * tanf(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
+	float angleOffsetY = atanf(ndcY * tanf(fovVerticalRad / 2.0f)) * 180.0f / M_PI;
 
 	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
@@ -519,14 +519,14 @@ void FreescapeEngine::updatePlayerMovementClassic(float deltaTime) {
 		stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraFront.length());
 		stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraRight.length());
 
-		stepFront.x() = floor(stepFront.x()) + 0.5;
-		stepFront.z() = floor(stepFront.z()) + 0.5;
+		stepFront.x() = floorf(stepFront.x()) + 0.5f;
+		stepFront.z() = floorf(stepFront.z()) + 0.5f;
 	} else {
 		stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / _cameraFront.length());
 		stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / _cameraRight.length());
 
-		stepFront.x() = ceil(stepFront.x());
-		stepFront.z() = ceil(stepFront.z());
+		stepFront.x() = ceilf(stepFront.x());
+		stepFront.z() = ceilf(stepFront.z());
 	}
 
 	float positionY = _position.y();

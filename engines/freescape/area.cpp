@@ -296,7 +296,7 @@ static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3
 		return false;
 
 	// Match updateProjectionMatrix's horizontal FOV.
-	const float horizontalScale = tan(Math::deg2rad(fov) / 2.0f);
+	const float horizontalScale = tanf(Math::deg2rad(fov) / 2.0f);
 	const float verticalScale = horizontalScale / aspectRatio;
 	const Math::Vector3d planes[] = {
 		front * horizontalScale + right, front * horizontalScale - right,
