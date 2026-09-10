@@ -121,38 +121,6 @@ void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marke
 	}
 }
 
-void blitMacBigMapPartnerFrame(Graphics::ManagedSurface &dstSurface,
-							   const Picture &frame, int anchorX,
-							   int anchorY) {
-	const byte transp = (byte)(frame.flags >> 8);
-	const int x = anchorX - (int)(int16)frame.miscflags;
-	const int y = anchorY - (int)(int16)frame.rowoff;
-	for (int row = 0; row < frame.surface.h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= dstSurface.h)
-			continue;
-		const byte *src = (const byte *)frame.surface.getBasePtr(0, row);
-		byte *dst = (byte *)dstSurface.getBasePtr(0, dstY);
-		for (int col = 0; col < frame.surface.w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= dstSurface.w)
-				continue;
-			const byte color = src[col];
-			if (color != transp) {
-				// The map partner frames are authored against the overview
-				// ColorTable: 0 is white and 0xff is black. The detail-map
-				// ColorTable swaps those endpoints.
-				if (color == 0x00)
-					dst[dstX] = 0xff;
-				else if (color == 0xff)
-					dst[dstX] = 0x00;
-				else
-					dst[dstX] = color;
-			}
-		}
-	}
-}
-
 struct BigMapEntryInfo {
 	uint16 overviewX = 0;
 	uint16 overviewY = 0;
@@ -897,15 +865,17 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 	byte palette[768] = {};
 	const bool haveVideo =
 		decodeLondonApproachFirstFrame(data.videoId, base, palette, mac);
+	bool havePalette = haveVideo;
 	if (!haveVideo)
 		base.clear();
 	if (mac) {
+		havePalette = getSitePalette(0x45 + data.videoId, palette) || havePalette;
 		Picture background;
 		const uint16 backgroundPic =
 			kMacLondonApproachBackgroundBasePic + data.videoId;
 		if (_picsArchive.getPicture(backgroundPic, background) &&
 			!background.surface.empty()) {
-			if (haveVideo) {
+			if (havePalette) {
 				const byte black =
 					closestPaletteIndex(palette, 0x00, 0x00, 0x00, 0xfe);
 				remapSurfaceColor(background.surface, 0xff, black);
@@ -954,7 +924,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		return -1;
 	};
 	const byte approachTextColor =
-		closestPaletteIndex(haveVideo ? palette : nullptr, 0, 0, 0,
+		closestPaletteIndex(havePalette ? palette : nullptr, 0, 0, 0,
 							mac ? (byte)0xfe : (byte)1);
 
 	auto drawApproachOverlay = [&](Graphics::ManagedSurface &scratch,
@@ -1112,16 +1082,16 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 	fadeCurrentPaletteToBlack();
 	CursorMan.showMouse(true);
 	setSiteHotspotCursorId(6);
-	if (_music && _voiceOn)
+	if (_music && _musicOn)
 		_music->playMus(0x27, /* loop= */ true);
 
 	uint page = 0;
 	drawScreen(page);
-	if (haveVideo)
+	if (havePalette)
 		fadePaletteFromBlack(palette);
 	else
 		setSitePalette(0x3b);
-	if (haveVideo) {
+	if (haveVideo && !mac) {
 		playVideo(page);
 		drawScreen(page);
 	}
@@ -1384,8 +1354,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		const int anchorX = mac ? scaleX(0x101) : 0x101;
 		const int anchorY = mac ? scaleY(0x50) : 0x50;
 		if (mac)
-			blitMacBigMapPartnerFrame(scratch, detailAnim[frameIdx],
-									  anchorX, anchorY);
+			blitMacAnimFrameAnchored(scratch.surfacePtr(), detailAnim[frameIdx],
+									 anchorX, anchorY);
 		else
 			blitAnimFrameAnchored(scratch.surfacePtr(),
 								  detailAnim[frameIdx],

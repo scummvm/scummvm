@@ -116,7 +116,7 @@ uint EEMEngine::getBalloonLineCapacity(uint16 balloonId, int lineH) const {
 
 	const BalloonInsets &insets = kBalloonInsetTable[idx];
 	int textHeight = (int)insets.indDY - (int)insets.y;
-	if (isMacCD())
+	if (isMacTalkie())
 		textHeight = insets.indDY * kMacScreenHeight / kScreenHeight -
 			insets.y * kMacScreenHeight / kScreenHeight;
 	else if (isMacintosh())
@@ -238,6 +238,9 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				puzzleId);
 		return true;
 	}
+
+	if (isMacintosh() && isLondon() && bigEndian)
+		return doMacLondonPuzzle(f);
 
 	const uint16 type = readPuzzleU16(f, bigEndian);
 	const int sw = screenWidth();
@@ -813,7 +816,7 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 		return bubNum;
 
 	const BalloonInsets &originalInsets = kBalloonInsetTable[originalId];
-	const int lineH = isMacCD() ? 16 : _font.getFontHeight();
+	const int lineH = isMacTalkie() ? 16 : _font.getFontHeight();
 	const uint originalCapacity = getBalloonLineCapacity(originalId, lineH);
 	if (originalCapacity == 0)
 		return bubNum;
@@ -821,7 +824,7 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 	Common::Array<Common::String> lines;
 	uint16 insetX, insetY, wrapWidth;
 	getBalloonInsets(originalId, insetX, insetY, wrapWidth);
-	const int wrapW = wrapWidth - (isMacCD() ? 5 : 0);
+	const int wrapW = wrapWidth - (isMacTalkie() ? 5 : 0);
 	_font.wordWrapText(text, MAX<int>(8, wrapW), lines);
 	if (lines.empty())
 		return bubNum;
@@ -872,8 +875,8 @@ bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	if (isMacCD()) {
-		// CODE 2:1f74 truncates the fixed-point products.
+	if (isMacTalkie()) {
+		// Mac CD truncates the fixed-point products.
 		xInset = kBalloonInsetTable[idx].x * kMacScreenWidth / kScreenWidth;
 		yInset = kBalloonInsetTable[idx].y * kMacScreenHeight / kScreenHeight;
 		textW = kBalloonInsetTable[idx].w * kMacScreenWidth / kScreenWidth;

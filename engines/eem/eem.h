@@ -141,6 +141,7 @@ public:
 	// rather than the single-valued `_variant` (which can only hold one of
 	// them at a time). This lets EEM2 Mac be both London and Macintosh.
 	bool isMacintosh() const { return getPlatform() == Common::kPlatformMacintosh; }
+	bool isMacTalkie() const { return isMacCD() || (isMacintosh() && isLondon()); }
 	bool isDemo() const {
 		return _gameDescription && (_gameDescription->flags & ADGF_DEMO);
 	}
@@ -215,6 +216,7 @@ public:
 	/// EEM2/London `_DoPuzzle @ 2542:1482`. A clue entry can gate the rest of
 	/// itself behind a "check the manual / a real map" puzzle
 	bool doPuzzle(uint puzzleId);
+	bool doMacLondonPuzzle(Common::SeekableReadStream &stream);
 
 	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);
 
@@ -516,6 +518,8 @@ private:
 	void showLondonCharSelect();
 	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 								 bool haveBriefingBg);
+	void playMacLondonInitCluesAnim(uint16 caseType, const Picture &bg,
+									bool haveBriefingBg);
 	void playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
 								   const Picture &bg, bool haveBriefingBg);
 
@@ -600,6 +604,7 @@ public:
 	/// EEM2 `_DoTravel @ 1717:0622` transition music. The matrix entry
 	/// (1..3) chooses one of three short one-shot MUS tracks at random.
 	void startLondonTravelMusic(uint8 travelKind);
+	bool playMacLondonTravelAnimation(uint8 travelKind);
 private:
 	static int scaleCoord(int value, int target, int source) {
 		const bool negative = value < 0;

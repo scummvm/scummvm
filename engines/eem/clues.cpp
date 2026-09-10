@@ -373,22 +373,101 @@ void EEMEngine::doChoosePartner() {
 	}
 }
 
-// EEM2 case-intro animation — `_DoInitClues` @ 1abf:03b3.
+// Mac London CODE 6:324c.
+void EEMEngine::playMacLondonInitCluesAnim(uint16 caseType, const Picture &bg,
+										   bool haveBriefingBg) {
+	const MacSpritePaletteMap palette = getMacSpritePaletteMap();
+	Graphics::ManagedSurface background(screenWidth(), screenHeight(),
+		Graphics::PixelFormat::createFormatCLUT8());
+	background.clear();
+	if (haveBriefingBg)
+		background.simpleBlitFrom(bg.surface);
+	remapMacSurfaceEndpoints(background, palette);
+	Graphics::ManagedSurface base;
+	base.copyFrom(background);
+	byte pal[kPalSize];
+	const bool havePalette = getSitePalette(0x39, pal);
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	const uint16 music[] = { 27, 36, 28, 29, 36 };
+	bool firstFrame = true;
+
+	auto playAnimation = [&](uint id, int x, int y) {
+		Animation anim;
+		if (!_aniArchive.loadAnimation(id, anim) || anim.empty())
+			return;
+		bool skip = false;
+		for (uint i = 0; i < anim.size() && !shouldQuit(); ++i) {
+			Graphics::ManagedSurface frame;
+			frame.copyFrom(base);
+			blitMacAnimFrameAnchored(frame.surfacePtr(), anim[i], x, y, palette);
+			g_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
+			if (firstFrame) {
+				if (havePalette)
+					fadePaletteFromBlack(pal);
+				if (_music && _musicOn && caseType < ARRAYSIZE(music))
+					_music->playMus(music[caseType], true);
+				firstFrame = false;
+			}
+			g_system->updateScreen();
+			if (i + 1 == anim.size())
+				base.copyFrom(frame);
+			const uint32 start = g_system->getMillis();
+			while (!skip && !shouldQuit() &&
+				   g_system->getMillis() - start < animationFramePeriodMs()) {
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if (event.type == Common::EVENT_QUIT ||
+						event.type == Common::EVENT_RETURN_TO_LAUNCHER)
+						return;
+					if (event.type == Common::EVENT_KEYDOWN ||
+						event.type == Common::EVENT_LBUTTONDOWN)
+						skip = true;
+				}
+				g_system->updateScreen();
+				g_system->delayMillis(10);
+			}
+		}
+	};
+
+	playAnimation(_partner == kPartnerJake ? 0x18 : 0x1c,
+		332, _partner == kPartnerJake ? 120 : 118);
+	if (shouldQuit())
+		return;
+	switch (caseType) {
+	case 0: playAnimation(0x24, 0, 94); break;
+	case 2: playAnimation(0x26, 0, 90); break;
+	case 3: playAnimation(0x27, 0, 77); break;
+	default: break;
+	}
+	if (shouldQuit())
+		return;
+	if (caseType == 1 && _audio)
+		_audio->playVoc(Common::Path("phone1.voc"));
+	base.copyRectToSurface(background.getBasePtr(256, 0), background.pitch,
+		256, 0, 256, screenHeight());
+	const uint partnerAni = caseType == 1
+		? (_partner == kPartnerJake ? 0x17 : 0x1e)
+		: (_partner == kPartnerJake ? 0x19 : 0x1d);
+	playAnimation(partnerAni, 332, _partner == kPartnerJake ? 120 : 119);
+	if (_audio)
+		_audio->stopVoice();
+}
+
+// EEM2 DOS case-intro animation — `_DoInitClues` @ 1abf:03b3.
 void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 										bool haveBriefingBg) {
-	const bool mac = isMacintosh();
-	const uint introAni = mac ? (_partner == kPartnerJake ? 0x18 : 0x1c)
-							  : (_partner == kPartnerJake ? 0x18 : 0x71);
-	const uint introScript = mac ? 0x17 : 0x18;
-	const int kAnchorX = mac ? 0x14c : 0xd2;
-	const int kAnchorY = mac ? (_partner == kPartnerJake ? 0x78 : 0x76)
-							 : 0x3f;
+	if (isMacintosh()) {
+		playMacLondonInitCluesAnim(caseType, bg, haveBriefingBg);
+		return;
+	}
+	const uint introAni = _partner == kPartnerJake ? 0x18 : 0x71;
+	const uint introScript = 0x18;
+	const int kAnchorX = 0xd2;
+	const int kAnchorY = 0x3f;
 	Animation anim;
 	const bool haveAnim =
 		_aniArchive.loadAnimation(introAni, anim) && !anim.empty();
-	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
-	if (mac)
-		macPaletteMap = getMacSpritePaletteMap();
 
 	// `_DoInitClues @ 1abf:03b3` registers a SECOND, fixed briefing character
 	// (Nigel) on the LEFT, gated on caseType (jumptable @ CS:0x720):
@@ -423,22 +502,13 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 				const uint cell =
 					partnerFrameAtTick((uint16)introScript,
 									   (uint)anim.size(), frame * 140);
-				if (mac)
-					blitMacAnimFrameAnchored(scr, anim[cell],
-											 kAnchorX, kAnchorY,
-											 macPaletteMap);
-				else
-					blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
+				blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
 			}
 			if (haveNpc) {
 				// NPC frame script = 0x0e (the `_NewAnimation` animId arg).
 				const uint ncell =
 					partnerFrameAtTick(0x0e, (uint)npc.size(), frame * 140);
-				if (mac)
-					blitMacAnimFrameAnchored(scr, npc[ncell], npcX, npcY,
-											 macPaletteMap);
-				else
-					blitAnimFrameAnchored(scr, npc[ncell], npcX, npcY);
+				blitAnimFrameAnchored(scr, npc[ncell], npcX, npcY);
 			}
 			g_system->unlockScreen();
 		}
@@ -751,6 +821,11 @@ void EEMEngine::doInitClues() {
 				   marked);
 		displayClue(briefingClues);
 	}
+	if (isMacintosh() && isLondon()) {
+		_mystery._onSites[0] = 1;
+		stopMusic();
+		fadeCurrentPaletteToBlack();
+	}
 }
 
 void splitLondonPlayerName(const Common::String &displayName,
@@ -945,7 +1020,7 @@ void EEMEngine::displayClue(const byte *clueBlock, uint maxEntries) {
 
 	const uint stride = isLondon() ? 0x54 : 62;
 	const bool mac = isMacintosh();
-	const bool macSolved = isMacCD() && clueBlock == _mystery.solvedClueBlock();
+	const bool macSolved = isMacTalkie() && clueBlock == _mystery.solvedClueBlock();
 	const int sw = screenWidth();
 	const int sh = screenHeight();
 	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
@@ -982,7 +1057,7 @@ void EEMEngine::displayClue(const byte *clueBlock, uint maxEntries) {
 	//       5 notebook entries (-1 terminated)
 	//   EEM1 +0x3a / EEM2 +0x4e: KD-anim number (-1 = none)
 	for (uint i = 0; i < count && !shouldQuit(); i++) {
-		if (isMacCD() && _audio)
+		if (isMacTalkie() && _audio)
 			_audio->stopSpool();
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, sw, sh);
 		const byte *c = clueBlock + 4 + i * stride;
@@ -1027,7 +1102,7 @@ void EEMEngine::displayClue(const byte *clueBlock, uint maxEntries) {
 		// ClueBlock +2; entries N>0 read (entry-1)+0x3c (last word).
 		const uint16 charX  = READ_LE_UINT16(c + (useP1 ? 4 : 0));
 		// Mac CD adds 7.68 to the portrait Y and rounds to an integer.
-		const int charY = READ_LE_UINT16(c + (useP1 ? 6 : 2)) + (isMacCD() ? 8 : 0);
+		const int charY = READ_LE_UINT16(c + (useP1 ? 6 : 2)) + (isMacTalkie() ? 8 : 0);
 		uint16 charPicId = (i == 0)
 			? READ_LE_UINT16(clueBlock + 2)
 			: READ_LE_UINT16(c - 2);
@@ -1105,7 +1180,7 @@ void EEMEngine::displayClue(const byte *clueBlock, uint maxEntries) {
 				copyY = bubY;
 			}
 
-			if (isMacCD()) {
+			if (isMacTalkie()) {
 				dialogFont.drawMacWordWrapped(&scratch, textX, textY,
 					MAX<int>(8, textW), text, textColor);
 			} else {

@@ -322,7 +322,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
-	setAnimScripts(isLondon(), isMacCD());
+	setAnimScripts(isLondon(), isMacTalkie());
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
 
@@ -576,7 +576,7 @@ Common::Error EEMEngine::run() {
 			warning("Mac FONT resource failed to load; text will not render");
 		if (!loadMacDialogFont(_dialogFont))
 			warning("Mac dialog FONT resource failed to load");
-		if (isMacCD() && !loadMacFontResource(_newspaperFont, kMacSmallFontResource, 9))
+		if (isMacTalkie() && !loadMacFontResource(_newspaperFont, kMacSmallFontResource, 9))
 			warning("Mac newspaper FONT resource failed to load");
 	} else if (!_font.load(Common::Path("FONT.FNT"))) {
 		warning("FONT.FNT failed to load; text will not render");
@@ -2219,17 +2219,25 @@ void EEMEngine::startLondonTravelMusic(uint8 travelKind) {
 		{ 7, 23, 17 },
 		{ 10, 21, 24 },
 	};
+	static const uint16 kMacLondonTravelMusic[4][3] = {
+		{ 0, 0, 0 },
+		{ 22, 25, 7 },
+		{ 23, 17, 10 },
+		{ 21, 24, 35 },
+	};
 	if (!_music || !_musicOn || travelKind == 0 ||
 		travelKind >= ARRAYSIZE(kLondonTravelMusic))
 		return;
 
-	const uint track = kLondonTravelMusic[travelKind][_rng.getRandomNumber(2)];
+	const uint choice = _rng.getRandomNumber(2);
+	const uint track = isMacintosh() ? kMacLondonTravelMusic[travelKind][choice]
+								   : kLondonTravelMusic[travelKind][choice];
 	_music->playMus(track, /* loop= */ false);
 }
 
 void EEMEngine::finishTravelMusic(bool skipped) {
-	// Mac CD fades after the entrance; DOS lets the travel tune finish.
-	if (isMacCD()) {
+	// Mac talkies fade after the animation; EEM1 DOS lets the tune finish.
+	if (isMacTalkie()) {
 		if (_music && _music->isPlaying() && !shouldQuit()) {
 			_music->fadeOut();
 			const uint32 startMs = g_system->getMillis();

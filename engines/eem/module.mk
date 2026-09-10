@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	font.o \
 	graphics.o \
 	installer.o \
+	mac_ui.o \
 	map_ui.o \
 	metaengine.o \
 	music.o \

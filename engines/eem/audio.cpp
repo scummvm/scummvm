@@ -64,6 +64,7 @@ const MacSndResource kMacSndResources[] = {
 	{ "M-0107SL", 7011 }, { "M-0113SL", 7013 }, { "M-0115SL", 7014 },
 	{ "M-0163SL", 7024 }, { "NEWSCAN",  7003 }, { "NEWSSHRT", 7007 },
 	{ "PHONESL",  7012 }, { "SQUAK2SL", 7019 }, { "THUNDER",  7025 },
+	{ "PHONE1",   1399 },
 };
 
 Common::String macSndNameFromPath(const Common::Path &path) {
@@ -265,6 +266,9 @@ void AudioPlayer::playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
 	if (!stream)
 		stream = openMacResource(Common::Path("Eagle Eye Mysteries CD"),
 								 MKTAG('s', 'n', 'd', ' '), resourceId);
+	if (!stream && _vm->isLondon())
+		stream = openMacResource(Common::Path("EEM London CD"),
+			MKTAG('s', 'n', 'd', ' '), resourceId);
 	if (!stream) {
 		warning("AudioPlayer: Mac snd resource %u missing", resourceId);
 		return;

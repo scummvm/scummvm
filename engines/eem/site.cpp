@@ -761,11 +761,7 @@ const uint32 kImpatienceDelayMs = 60 * 1000;
 // London variant is active; any seqnum not listed falls through to the shared
 // EEM1 scripts below. Only the seqnums that actually differ are listed.
 //
-// NOTE: EEM2 scripts 0x27/0x2e/0x30 end with a `0x81 N` jump (loop back to
-// entry N) rather than a 0x80 restart. `frameFromScriptAtTick` has no jump
-// support (EEM1 never used it), so the flat frame list is stored: correct for a
-// one-shot play-through, but a looped play replays the intro instead of just
-// the post-jump tail. Acceptable for these site NPC fidgets; revisit if needed.
+// DOS London scripts 0x27/0x2e/0x30 still use flat loops here.
 const uint8 kScript06London[] = {
 	0,1,2,3,4,5,6,7,8,9,10,11,11,11,5,6,7,8,9,10,
 	11,11,11,5,6,7,8,9,10,11,11,11,5,4,3,2,1,0,
@@ -859,19 +855,361 @@ const AnimScriptLong kAnimScriptsLondonLong[] = {
 
 // Select the scripts and timing of the original release.
 bool g_londonAnimScripts = false;
-bool g_macCDAnimScripts = false;
+bool g_macAnimScripts = false;
 
-void setAnimScripts(bool london, bool macCD) {
+void setAnimScripts(bool london, bool macTalkie) {
 	g_londonAnimScripts = london;
-	g_macCDAnimScripts = macCD;
+	g_macAnimScripts = macTalkie;
 }
 
 struct AnimScriptRef {
 	const uint8 *frames;
 	uint16 len;
+	uint16 loopStart;
+
+	constexpr AnimScriptRef(const uint8 *data = nullptr, uint16 count = 0, uint16 start = 0)
+		: frames(data), len(count), loopStart(start) {}
 };
+
+// Mac London animation sequences, including their loop destinations.
+const uint8 kMacLondonScript19[] = {
+	0, 0, 0, 0
+};
+
+const uint8 kMacLondonScript44[] = {
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0, 1, 2, 3, 4, 5, 6, 7,
+	8
+};
+
+const uint8 kMacLondonScript45[] = {
+	0, 0, 0, 0, 0, 1, 2, 3
+};
+
+const uint8 kMacLondonScript46[] = {
+	33, 33, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+	18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 32
+};
+
+const uint8 kMacLondonScript47[] = {
+	19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19,
+	19, 19, 19, 19, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 19
+};
+
+const uint8 kMacLondonScript48[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+	0, 0, 0, 0, 0
+};
+
+const uint8 kMacLondonScript49[] = {
+	33, 33, 33, 33, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 31, 30, 29,
+	28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9,
+	8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
+const uint8 kMacLondonScript4a[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 30, 29, 28, 27, 26, 25, 24, 23,
+	22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3,
+	2, 1, 0
+};
+
+const uint8 kMacLondonScript4b[] = {
+	20, 20, 20, 20, 20, 20, 20, 20, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+	12, 13, 14, 15, 16, 17, 18, 19, 19
+};
+
+const uint8 kMacLondonScript4c[] = {
+	0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacLondonScript4d[] = {
+	1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20, 21, 22, 0, 0, 0
+};
+
+const uint8 kMacLondonScript4e[] = {
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 0, 2
+};
+
+const uint8 kMacLondonScript51[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+};
+
+const uint8 kMacLondonScript53[] = {
+	24, 24, 24, 25, 26, 27, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+	14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+};
+
+const uint8 kMacLondonScript54[] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 0, 1, 2
+};
+
+const uint8 kMacLondonScript56[] = {
+	0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11,
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20
+};
+
+const uint8 kMacLondonScript57[] = {
+	29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 0, 1, 2, 3, 4, 5, 6, 7,
+	8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+	28, 29
+};
+
+const uint8 kMacLondonScript58[] = {
+	33, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+	19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 33
+};
+
+const uint8 kMacLondonScript59[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20, 21, 22, 23, 24, 25, 25, 25, 25, 25, 25, 24, 23, 22, 21, 21, 22, 23, 24, 25,
+	25, 25, 25, 25, 25, 25, 25, 25, 25
+};
+
+const uint8 kMacLondonScript5a[] = {
+	3, 3, 3, 3, 3, 0, 1, 2, 2, 2, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 2, 1, 0
+};
+
+const uint8 kMacLondonScript5b[] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 2, 2, 2, 1, 0
+};
+
+const uint8 kMacLondonScript5d[] = {
+	0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacLondonScript5e[] = {
+	0, 0, 0, 0, 1, 2, 3, 4, 0
+};
+
+const uint8 kMacLondonScript5f[] = {
+	6, 6, 6, 6, 6, 6, 6, 0, 1, 2, 0, 6, 3, 4, 5
+};
+
+const uint8 kMacLondonScript64[] = {
+	12, 12, 12, 12, 12, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6,
+	6, 6, 6, 5, 5, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11
+};
+
+const uint8 kMacLondonScript65[] = {
+	7, 7, 7, 7, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7,
+	7, 7, 7, 7
+};
+
+const uint8 kMacLondonScript66[] = {
+	10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+	10, 10, 10, 10, 10, 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+};
+
+const uint8 kMacLondonScript67[] = {
+	0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 4, 4, 5, 5, 4, 4, 5, 5,
+	4, 4, 5, 5
+};
+
+const uint8 kMacLondonScript68[] = {
+	0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 2, 1
+};
+
+const uint8 kMacLondonScript6a[] = {
+	15, 0, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+	14, 15, 15, 15, 15
+};
+
+const uint8 kMacLondonScript6c[] = {
+	0, 1, 2, 3, 4, 5, 5, 5, 5, 3, 2, 1, 0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacLondonScript6d[] = {
+	0, 0, 1, 2, 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0
+};
+
+const uint8 kMacLondonScript6e[] = {
+	1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0
+};
+
+const uint8 kMacLondonScript70[] = {
+	1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1
+};
+
+const uint8 kMacLondonScript71[] = {
+	0, 1, 2, 3, 4, 5, 6
+};
+
+const uint8 kMacLondonScript74[] = {
+	0, 1, 1, 0, 1, 0, 2, 3, 4, 5, 6, 0
+};
+
+const uint8 kMacLondonScript75[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+const uint8 kMacLondonScript76[] = {
+	3, 3, 3, 4, 0, 1, 2, 3, 3, 3, 4, 0, 1, 2, 3, 3, 3, 3
+};
+
+const uint8 kMacLondonScript77[] = {
+	16, 16, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16
+};
+
+const uint8 kMacLondonScript78[] = {
+	0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1
+};
+
+const uint8 kMacLondonScript79[] = {
+	28, 28, 29, 29, 30, 30, 31, 31, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
+	6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+	16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25,
+	26, 26, 27, 27
+};
+
+const uint8 kMacLondonScript7a[] = {
+	14, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	14, 14, 14
+};
+
+const uint8 kMacLondonScript7c[] = {
+	6, 6, 0, 1, 2, 3, 4, 5, 6, 6, 6
+};
+
+const AnimScriptRef kMacLondonAnimScripts[] = {
+	{ kAnimScripts[0].frames, 10, 0 }, // 00
+	{ kAnimScripts[24].frames, 6, 0 }, // 01
+	{ kAnimScripts[2].frames, 26, 0 }, // 02
+	{ kAnimScriptsLondon[1].frames, 15, 0 }, // 03
+	{ kAnimScriptsLondon[2].frames, 23, 0 }, // 04
+	{ kAnimScriptsLondon[3].frames, 11, 0 }, // 05
+	{ kScript06London, 38, 0 }, // 06
+	{ kAnimScripts[7].frames, 10, 0 }, // 07
+	{ kAnimScripts[8].frames, 8, 0 }, // 08
+	{ kAnimScripts[9].frames, 9, 0 }, // 09
+	{ kAnimScripts[0].frames, 10, 0 }, // 0a
+	{ kAnimScripts[24].frames, 6, 0 }, // 0b
+	{ kAnimScriptsLondon[1].frames, 15, 0 }, // 0c
+	{ kAnimScriptsLondon[2].frames, 23, 0 }, // 0d
+	{ kAnimScriptsLondon[7].frames, 22, 0 }, // 0e
+	{ kAnimScripts[9].frames, 9, 0 }, // 0f
+	{ kAnimScripts[2].frames, 26, 0 }, // 10
+	{ kAnimScripts[17].frames, 8, 0 }, // 11
+	{ kAnimScripts[18].frames, 9, 0 }, // 12
+	{ kAnimScripts[17].frames, 8, 0 }, // 13
+	{ kAnimScripts[36].frames, 11, 0 }, // 14
+	{ kAnimScripts[0].frames, 10, 0 }, // 15
+	{ kAnimScripts[0].frames, 10, 0 }, // 16
+	{ kScript17, 30, 0 }, // 17
+	{ kAnimScriptsLondon[9].frames, 17, 0 }, // 18
+	{ kMacLondonScript19, 4, 0 }, // 19
+	{ kScript06London, 38, 0 }, // 1a
+	{ kAnimScriptsLondon[3].frames, 11, 0 }, // 1b
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 1c
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 1d
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 1e
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 1f
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 20
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 21
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 22
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 23
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 24
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 25
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 26
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 27
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 28
+	{ kMacLondonScript19, 4, 0 }, // 29
+	{ kAnimScripts[34].frames, 4, 0 }, // 2a
+	{ kAnimScriptsLondon[12].frames, 12, 0 }, // 2b
+	{ kAnimScripts[29].frames, 12, 11 }, // 2c
+	{ kScript1dLondon, 46, 0 }, // 2d
+	{ kScript1eLondon, 33, 0 }, // 2e
+	{ kScript1fLondon, 38, 0 }, // 2f
+	{ kAnimScriptsLondon[14].frames, 19, 0 }, // 30
+	{ kAnimScriptsLondon[10].frames, 2, 0 }, // 31
+	{ kAnimScriptsLondon[16].frames, 10, 0 }, // 32
+	{ kMacLondonScript19, 4, 0 }, // 33
+	{ kAnimScriptsLondon[17].frames, 18, 0 }, // 34
+	{ kScript25London, 59, 0 }, // 35
+	{ kAnimScriptsLondon[18].frames, 20, 0 }, // 36
+	{ kScript27London, 29, 22 }, // 37
+	{ kMacLondonScript19, 4, 0 }, // 38
+	{ kAnimScriptsLondon[20].frames, 14, 0 }, // 39
+	{ kAnimScripts[34].frames, 4, 0 }, // 3a
+	{ kScript2bLondon, 39, 0 }, // 3b
+	{ kAnimScriptsLondon[22].frames, 22, 0 }, // 3c
+	{ kAnimScripts[29].frames, 12, 11 }, // 3d
+	{ kAnimScripts[24].frames, 6, 0 }, // 3e
+	{ kAnimScriptsLondon[25].frames, 26, 25 }, // 3f
+	{ kScript31London, 62, 0 }, // 40
+	{ kAnimScriptsLondon[26].frames, 27, 0 }, // 41
+	{ kAnimScriptsLondon[27].frames, 27, 0 }, // 42
+	{ kAnimScripts[34].frames, 4, 0 }, // 43
+	{ kMacLondonScript44, 21, 0 }, // 44
+	{ kMacLondonScript45, 8, 0 }, // 45
+	{ kMacLondonScript46, 36, 35 }, // 46
+	{ kMacLondonScript47, 45, 44 }, // 47
+	{ kMacLondonScript48, 25, 0 }, // 48
+	{ kMacLondonScript49, 69, 0 }, // 49
+	{ kMacLondonScript4a, 63, 0 }, // 4a
+	{ kMacLondonScript4b, 29, 28 }, // 4b: hold the last frame; original jumps past it.
+	{ kMacLondonScript4c, 35, 0 }, // 4c
+	{ kMacLondonScript4d, 26, 24 }, // 4d
+	{ kMacLondonScript4e, 28, 0 }, // 4e
+	{ kAnimScriptsLondon[1].frames, 15, 0 }, // 4f
+	{ kAnimScripts[33].frames, 5, 0 }, // 50
+	{ kMacLondonScript51, 20, 0 }, // 51
+	{ kAnimScripts[36].frames, 11, 0 }, // 52
+	{ kMacLondonScript53, 30, 0 }, // 53
+	{ kMacLondonScript54, 28, 0 }, // 54
+	{ kAnimScripts[17].frames, 8, 0 }, // 55
+	{ kMacLondonScript56, 33, 29 }, // 56
+	{ kMacLondonScript57, 42, 0 }, // 57
+	{ kMacLondonScript58, 36, 35 }, // 58
+	{ kMacLondonScript59, 49, 10 }, // 59
+	{ kMacLondonScript5a, 34, 0 }, // 5a
+	{ kMacLondonScript5b, 19, 0 }, // 5b
+	{ kMacLondonScript19, 4, 0 }, // 5c
+	{ kMacLondonScript5d, 12, 0 }, // 5d
+	{ kMacLondonScript5e, 9, 0 }, // 5e
+	{ kMacLondonScript5f, 15, 0 }, // 5f
+	{ kMacLondonScript51, 20, 0 }, // 60
+	{ kMacLondonScript51, 20, 0 }, // 61
+	{ kMacLondonScript51, 20, 0 }, // 62
+	{ kMacLondonScript51, 20, 0 }, // 63
+	{ kMacLondonScript64, 35, 0 }, // 64
+	{ kMacLondonScript65, 24, 0 }, // 65
+	{ kMacLondonScript66, 36, 0 }, // 66
+	{ kMacLondonScript67, 24, 0 }, // 67
+	{ kMacLondonScript68, 20, 0 }, // 68
+	{ kAnimScripts[17].frames, 8, 0 }, // 69
+	{ kMacLondonScript6a, 25, 0 }, // 6a
+	{ kMacLondonScript19, 4, 0 }, // 6b
+	{ kMacLondonScript6c, 18, 0 }, // 6c
+	{ kMacLondonScript6d, 19, 0 }, // 6d
+	{ kMacLondonScript6e, 20, 0 }, // 6e
+	{ kAnimScripts[31].frames, 13, 0 }, // 6f
+	{ kMacLondonScript70, 15, 0 }, // 70
+	{ kMacLondonScript71, 7, 0 }, // 71
+	{ kAnimScripts[24].frames, 6, 0 }, // 72
+	{ kAnimScripts[33].frames, 5, 0 }, // 73
+	{ kMacLondonScript74, 12, 0 }, // 74
+	{ kMacLondonScript75, 14, 0 }, // 75
+	{ kMacLondonScript76, 18, 0 }, // 76
+	{ kMacLondonScript77, 20, 0 }, // 77
+	{ kMacLondonScript78, 20, 0 }, // 78
+	{ kMacLondonScript79, 64, 0 }, // 79
+	{ kMacLondonScript7a, 23, 0 }, // 7a
+	{ kAnimScriptsLondon[12].frames, 12, 0 }, // 7b
+	{ kMacLondonScript7c, 11, 0 }, // 7c
+	{ kAnimScripts[17].frames, 8, 0 }, // 7d
+};
+
 AnimScriptRef findAnimScript(uint16 seqnum) {
-	if (g_macCDAnimScripts) {
+	if (g_macAnimScripts && g_londonAnimScripts && seqnum < ARRAYSIZE(kMacLondonAnimScripts))
+		return kMacLondonAnimScripts[seqnum];
+	if (g_macAnimScripts && !g_londonAnimScripts) {
 		for (uint i = 0; i < ARRAYSIZE(kAnimScriptsMacCD); i++) {
 			if (kAnimScriptsMacCD[i].seqnum == seqnum) {
 				AnimScriptRef r;
@@ -922,24 +1260,24 @@ AnimScriptRef findAnimScript(uint16 seqnum) {
 }
 
 uint animationFramePeriodMs() {
-	// Mac CD CODE 2:21c4 advances after nine 60 Hz ticks.
-	return g_macCDAnimScripts ? 150 : 140;
+	// Mac CD CheckFrameRate advances after nine 60 Hz ticks.
+	return g_macAnimScripts ? 150 : 140;
 }
 
 uint frameFromScriptAtTick(const uint8 *frames, uint len,
-								  uint numFrames, uint32 tickMs) {
+								  uint numFrames, uint32 tickMs, uint loopStart = 0) {
 	if (!frames || len == 0)
 		return numFrames > 0 ? (uint)((tickMs / animationFramePeriodMs()) % numFrames) : 0;
-	const uint scriptIdx = (uint)((tickMs / animationFramePeriodMs()) % len);
+	const uint tick = tickMs / animationFramePeriodMs();
+	const uint scriptIdx = tick < len ? tick : loopStart + (tick - len) % (len - loopStart);
 	const uint frame     = frames[scriptIdx];
 	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
-// Looping path of `_UpdateAnimations`: walk the script one entry per
-// `_CheckFrameRate` tick, wrap on 0x80.
+// Advance one entry per frame tick, then follow the loop destination.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	const AnimScriptRef s = findAnimScript(seqnum);
-	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs);
+	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs, s.loopStart);
 }
 
 uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
@@ -1032,6 +1370,8 @@ bool SiteScreen::playLondonTravelAnimation(uint fromSite, uint toSite) {
 				travelKind, fromPic, toPic);
 		return false;
 	}
+	if (_vm->isMacintosh())
+		return _vm->playMacLondonTravelAnimation(travelKind);
 
 	const uint partnerSuffix = (travelKind == 3) ? 0 : _vm->getPartnerIndex();
 	const Common::String name = Common::String::format("TRAVEL%u%u.ANM",
@@ -1077,9 +1417,10 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	const uint16 approachId = (london && sd) ? READ_LE_UINT16(sd + 2) : 0xffff;
 
 	if (london) {
-		if (playArrival)
+		const bool playApproach = firstVisit && approachId != 0xffff;
+		if (playArrival && !(_vm->isMacintosh() && playApproach))
 			playLondonTravelAnimation(_mystery->_lastSite, siteNum);
-		if (firstVisit && approachId != 0xffff) {
+		if (playApproach) {
 			debugC(1, kDebugSite,
 				   "London approach: site %u first visit, approach %u",
 				   siteNum, approachId);
@@ -1656,7 +1997,7 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 		Picture pic;
 		if (!_vm->getPics().getPicture(picId, pic))
 			continue;
-		if (_vm->isMacCD())
+		if (_vm->isMacTalkie())
 			blitMacMaskedSurface(screen, pic, x, y);
 		else
 			blitMaskedSurface(screen, pic, x, y);
@@ -1708,7 +2049,7 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	if (!_mystery || !_vm)
 		return;
 
-	if (_vm->isMacintosh() && !_vm->isMacCD())
+	if (_vm->isMacintosh() && !_vm->isMacTalkie())
 		return;
 
 	if (_vm->isFloppy()) {
@@ -1766,10 +2107,10 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 		Animation anim;
 		if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
 			continue;
-		const uint32 elapsed = _vm->isMacCD() ? tickMs - _waitPhaseAnchor : tickMs;
+		const uint32 elapsed = _vm->isMacTalkie() ? tickMs - _waitPhaseAnchor : tickMs;
 		const uint frameIdx = partnerFrameAtTick((uint16)animId,
 												  (uint)anim.size(), elapsed);
-		if (_vm->isMacCD())
+		if (_vm->isMacTalkie())
 			blitMacAnimFrameAnchored(screen, anim[frameIdx], x, y);
 		else
 			blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
@@ -2369,8 +2710,8 @@ bool EEMEngine::loadKdAnim(uint16 num, Animation &anim, int &px, int &py,
 	}
 	const uint partner = (_partner == kPartnerJake) ? 0 : 1;
 	animId = kdTable[num][partner];
-	px     = (int)kdTable[num][2 + partner];
-	py     = (int)kdTable[num][4 + partner];
+	px     = (int16)kdTable[num][2 + partner];
+	py     = (int16)kdTable[num][4 + partner];
 
 	if (!_aniArchive.loadAnimation(animId, anim) || anim.empty()) {
 		warning("loadKdAnim(%u): anim %u failed to load", num, animId);

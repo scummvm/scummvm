@@ -48,7 +48,7 @@ uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 /// Total time for one full play of a one-shot gesture (frame count * period).
 uint32 oneShotDurationMs(uint16 seqnum, uint numFrames);
 
-void setAnimScripts(bool london, bool macCD);
+void setAnimScripts(bool london, bool macTalkie);
 uint animationFramePeriodMs();
 
 /// bigMapPartnerFrameAtTick: overview-map partner walk. EEM1 (11-frame anim):
