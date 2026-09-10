@@ -73,6 +73,7 @@ void LiftOff::finish() {
 
 	close();
 	_G(map).load(Data::MAP_SPACE);
+	_G(logic)->entering();
 }
 
 } // namespace Interactions

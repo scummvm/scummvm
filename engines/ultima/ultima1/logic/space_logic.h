@@ -41,6 +41,11 @@ protected:
 	void updateCreatures() override {
 	}
 
+	/**
+	 * Inform - shows the animated sector scan of the galaxy
+	 */
+	bool inform() override;
+
 public:
 	SpaceLogic();
 	~SpaceLogic() override {

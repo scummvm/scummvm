@@ -40,6 +40,7 @@
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/map_dungeon.h"
 #include "ultima/ultima1/data/savegame.h"
+#include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/data/tiles.h"
 #include "ultima/ultima1/logic/logic.h"
 
@@ -66,12 +67,16 @@ protected:
 public:
 	Data::Map _map;
 	Data::MapDungeon _dungeon;
+	Data::SpaceMap _spaceMap;
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
 	int _overworldEntityCount = 0;
 	int _creaturesCount = 0;
 	uint32 _moveCtr = 0;
 	int _transportFoodCtr = 0;
+	// The player's current galaxy sector while in outer space
+	int _sectorX = Data::SPACE_STATION_X;
+	int _sectorY = Data::SPACE_STATION_Y;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

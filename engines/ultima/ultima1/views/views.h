@@ -34,6 +34,7 @@
 #include "ultima/ultima1/views/interactions/pillar.h"
 #include "ultima/ultima1/views/interactions/princess_saved.h"
 #include "ultima/ultima1/views/interactions/ready.h"
+#include "ultima/ultima1/views/interactions/sector_scan.h"
 #include "ultima/ultima1/views/interactions/win.h"
 #include "ultima/ultima1/views/create_character.h"
 #include "ultima/ultima1/views/dungeon_map.h"
@@ -63,6 +64,7 @@ struct Views : public Shared::Views {
 	Interactions::Pillar _pillar;
 	Interactions::PrincessSaved _princessSaved;
 	Interactions::Ready _ready;
+	Interactions::SectorScan _sectorScan;
 	Interactions::Win _win;
 	CreateCharacter _createCharacter;
 	DungeonMap _dungeonMap;

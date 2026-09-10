@@ -33,7 +33,17 @@ SpaceLogic::SpaceLogic() {
 }
 
 void SpaceLogic::entering() {
-	// TODO
+	// The original re-launches SPACE.EXE each time, always starting fresh
+	// at the station sector with a newly rolled galaxy
+	_G(sectorX) = Data::SPACE_STATION_X;
+	_G(sectorY) = Data::SPACE_STATION_Y;
+	_G(spaceMap).setup();
+}
+
+bool SpaceLogic::inform() {
+	writeString("Inform and Search\n");
+	g_engine->addView("SectorScan");
+	return false;
 }
 
 } // namespace Logic

@@ -58,6 +58,7 @@ MODULE_OBJS += \
 	ultima1/data/map.o \
 	ultima1/data/map_dungeon.o \
 	ultima1/data/savegame.o \
+	ultima1/data/space_map.o \
 	ultima1/data/tiles.o \
 	ultima1/gfx/pic_decoder.o \
 	ultima1/gfx/text_cursor.o \
@@ -81,6 +82,7 @@ MODULE_OBJS += \
 	ultima1/views/interactions/pillar.o \
 	ultima1/views/interactions/princess_saved.o \
 	ultima1/views/interactions/ready.o \
+	ultima1/views/interactions/sector_scan.o \
 	ultima1/views/interactions/win.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
