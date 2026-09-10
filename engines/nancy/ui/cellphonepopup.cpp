@@ -1799,23 +1799,24 @@ int CellPhonePopup::findContactByDialBuffer() const {
 		return -1;
 	}
 
-	// Dial pattern lives in prefix[2..], terminated by '\n'.
+	// The whole dial pattern is compared against the dialed digits, with any
+	// digit not yet entered counting as a zero. Contacts carry one entry per
+	// form of their number (full, without the leading '1', local only), each
+	// padded out with zeroes, so a shorter number pressed with Talk matches
+	// its own entry. Entries hidden from the directory are still callable, so
+	// the visibility flag plays no part here.
 	const uint dialLen = _dialedNumber.size();
 	for (uint i = 0; i < _contacts.size(); ++i) {
 		const UICL::Contact &c = _contacts[i];
-		if (!isContactVisible(c)) {
-			continue;
-		}
 		bool match = true;
-		for (uint b = 0; b < dialLen; ++b) {
-			const byte slotIdx = (byte)(_dialedNumber[b] - '0');
-			if (b >= sizeof(c.dialPattern) || slotIdx != c.dialPattern[b]) {
+		for (uint b = 0; b < sizeof(c.dialPattern); ++b) {
+			const byte slotIdx = b < dialLen ? (byte)(_dialedNumber[b] - '0') : 0;
+			if (slotIdx != c.dialPattern[b]) {
 				match = false;
 				break;
 			}
 		}
-		if (match && dialLen < sizeof(c.dialPattern) &&
-				c.dialPattern[dialLen] == '\n') {
+		if (match) {
 			return (int)i;
 		}
 	}
