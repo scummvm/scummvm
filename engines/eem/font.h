@@ -72,6 +72,9 @@ public:
 	/// each line at (x, y) downward. Returns total height drawn.
 	int drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
 						int width, const Common::String &s, uint32 color) const;
+	int drawMacWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
+						   int width, const Common::String &s, uint32 color,
+						   int lineHeight = 16) const;
 
 private:
 	void clear();

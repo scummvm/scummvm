@@ -944,6 +944,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 	const uint stride = isLondon() ? 0x54 : 62;
 	const bool mac = isMacintosh();
+	const bool macSolved = isMacCD() && clueBlock == _mystery.solvedClueBlock();
 	const int sw = screenWidth();
 	const int sh = screenHeight();
 	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
@@ -964,6 +965,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			g_system->unlockScreen();
 		}
 	}
+	if (macSolved && !_partnerEraseBg.empty())
+		bg.simpleBlitFrom(_partnerEraseBg);
 
 	// ClueEntry layout. EEM1 entries are 62 bytes; EEM2/London entries
 	// extend this to 0x54 bytes and move the side-effect lists below.
@@ -978,6 +981,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	//       5 notebook entries (-1 terminated)
 	//   EEM1 +0x3a / EEM2 +0x4e: KD-anim number (-1 = none)
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
+		if (isMacCD() && _audio)
+			_audio->stopSpool();
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, sw, sh);
 		const byte *c = clueBlock + 4 + i * stride;
 
@@ -996,10 +1001,11 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		uint16 kdAnimId = 0;
 		const bool haveKd = kdAnimNum != -1 &&
 			loadKdAnim((uint16)kdAnimNum, kdAnim, kdPx, kdPy, kdAnimId);
+		const bool animatePartner = haveKd || (macSolved && _hasPartnerIdle);
 
 		// Animate the gesture over the partner-less scene so it doesn't ghost
 		// the static partner.
-		if (haveKd && _partnerEraseBg.w == sw &&
+		if (animatePartner && _partnerEraseBg.w == sw &&
 			_partnerEraseBg.h == sh) {
 			g_system->copyRectToScreen(_partnerEraseBg.getPixels(),
 				_partnerEraseBg.pitch, 0, 0, sw, sh);
@@ -1019,11 +1025,12 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		// Speaker portrait: pic[clues + i*62 - 2]. Entry 0 ID is in
 		// ClueBlock +2; entries N>0 read (entry-1)+0x3c (last word).
 		const uint16 charX  = READ_LE_UINT16(c + (useP1 ? 4 : 0));
-		const uint16 charY  = READ_LE_UINT16(c + (useP1 ? 6 : 2));
+		// Mac CD adds 7.68 to the portrait Y and rounds to an integer.
+		const int charY = READ_LE_UINT16(c + (useP1 ? 6 : 2)) + (isMacCD() ? 8 : 0);
 		uint16 charPicId = (i == 0)
 			? READ_LE_UINT16(clueBlock + 2)
 			: READ_LE_UINT16(c - 2);
-		if (isLondon() && charPicId == 0x13e &&
+		if ((isLondon() || isMacCD()) && charPicId == 0x13e &&
 			_partner == kPartnerJake)
 			charPicId = 0x13f;
 		if (charPicId != 0 && charPicId != 0xFFFF) {
@@ -1097,12 +1104,16 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				copyY = bubY;
 			}
 
-			if (mac && textColor != 0xFF) {
+			if (isMacCD()) {
+				dialogFont.drawMacWordWrapped(&scratch, textX, textY,
+					MAX<int>(8, textW), text, textColor);
+			} else {
+				if (mac && textColor != 0xFF)
+					dialogFont.drawWordWrapped(&scratch, textX, textY,
+						MAX<int>(8, textW), text, 0xFF);
 				dialogFont.drawWordWrapped(&scratch, textX, textY,
-					MAX<int>(8, textW), text, 0xFF);
+					MAX<int>(8, textW), text, textColor);
 			}
-			dialogFont.drawWordWrapped(&scratch, textX, textY,
-				MAX<int>(8, textW), text, textColor);
 
 			copyY = CLIP<int>(copyY, 0, sh - 1);
 			const int copyRows = CLIP<int>(MIN<int>(copyH, sh - copyY),
@@ -1112,7 +1123,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 					scratch.pitch, 0, copyY, sw, copyRows);
 				// Gesture entry: let the wait loop present, so the partner-less
 				// base isn't flashed before the gesture's first frame.
-				if (!haveKd)
+				if (!animatePartner)
 					g_system->updateScreen();
 			}
 		}
@@ -1139,7 +1150,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			bool haveKdBase = false;
 			uint kdLastFrame = (uint)-1;
 			const uint32 kdStartMs = g_system->getMillis();
-			if (haveKd) {
+			if (animatePartner) {
 				Graphics::Surface *kdScr = g_system->lockScreen();
 				if (kdScr) {
 					kdBase.simpleBlitFrom(*kdScr);
@@ -1201,7 +1212,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 					const uint32 kdElapsed = g_system->getMillis() - kdStartMs;
 					if (haveIdle && kdElapsed >= kdDurationMs) {
 						// Resume the looping idle wait-anim.
-						const uint f = partnerFrameAtTick(_partnerIdleAnimId,
+						const uint f = partnerFrameAtTick(macSolved ? 0x02 : _partnerIdleAnimId,
 							(uint)idleAnim.size(), kdElapsed - kdDurationMs);
 						if ((!kdInIdle || f != kdLastIdleFrame) &&
 							f < idleAnim.size()) {
@@ -1219,7 +1230,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 							g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
 								0, 0, sw, sh);
 						}
-					} else {
+					} else if (haveKd) {
 						// Gesture one-shot.
 						const uint f = oneShotFrameAtTick(kdAnimId,
 							(uint)kdAnim.size(), kdElapsed);

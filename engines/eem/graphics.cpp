@@ -116,7 +116,10 @@ uint EEMEngine::getBalloonLineCapacity(uint16 balloonId, int lineH) const {
 
 	const BalloonInsets &insets = kBalloonInsetTable[idx];
 	int textHeight = (int)insets.indDY - (int)insets.y;
-	if (isMacintosh())
+	if (isMacCD())
+		textHeight = insets.indDY * kMacScreenHeight / kScreenHeight -
+			insets.y * kMacScreenHeight / kScreenHeight;
+	else if (isMacintosh())
 		textHeight = scaleY(textHeight); // table is in DOS coords; Mac renders scaled
 	return MAX<uint>(1, textHeight / lineH + 1);
 }
@@ -810,14 +813,15 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 		return bubNum;
 
 	const BalloonInsets &originalInsets = kBalloonInsetTable[originalId];
-	const int lineH = _font.getFontHeight();
+	const int lineH = isMacCD() ? 16 : _font.getFontHeight();
 	const uint originalCapacity = getBalloonLineCapacity(originalId, lineH);
 	if (originalCapacity == 0)
 		return bubNum;
 
 	Common::Array<Common::String> lines;
-	const int wrapW = isMacintosh() ? scaleX((int)originalInsets.w)
-									: (int)originalInsets.w;
+	uint16 insetX, insetY, wrapWidth;
+	getBalloonInsets(originalId, insetX, insetY, wrapWidth);
+	const int wrapW = wrapWidth - (isMacCD() ? 5 : 0);
 	_font.wordWrapText(text, MAX<int>(8, wrapW), lines);
 	if (lines.empty())
 		return bubNum;
@@ -868,7 +872,12 @@ bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	if (isMacintosh()) {
+	if (isMacCD()) {
+		// CODE 2:1f74 truncates the fixed-point products.
+		xInset = kBalloonInsetTable[idx].x * kMacScreenWidth / kScreenWidth;
+		yInset = kBalloonInsetTable[idx].y * kMacScreenHeight / kScreenHeight;
+		textW = kBalloonInsetTable[idx].w * kMacScreenWidth / kScreenWidth;
+	} else if (isMacintosh()) {
 		xInset = (uint16)scaleX(kBalloonInsetTable[idx].x);
 		yInset = (uint16)scaleY(kBalloonInsetTable[idx].y);
 		textW  = (uint16)scaleX(kBalloonInsetTable[idx].w);

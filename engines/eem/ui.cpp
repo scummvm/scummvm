@@ -1747,12 +1747,15 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	CursorMan.showMouse(true);
 
 	const bool floppyEnding = isFloppy();
+	const bool macCDEnding = isMacCD() && macLooseEnding;
 	const int sw = screenWidth();
 	const int sh = screenHeight();
-	const Common::Rect endingPrevRect =
+	const Common::Rect endingPrevRect = macCDEnding ? Common::Rect(0, 20, 43, 384) :
 		scaleDosRectIfMac(*this, kEndingPrevPageRect);
-	const Common::Rect endingNextRect =
+	const Common::Rect endingNextRect = macCDEnding ? Common::Rect(45, 20, 506, 376) :
 		scaleDosRectIfMac(*this, kEndingNextPageRect);
+	const Common::Rect endingExitRect = macCDEnding ? Common::Rect(0, 0, 506, 20) :
+		Common::Rect();
 	uint pageOffsets[8];
 	const uint pageOffsetCap =
 		(uint)ARRAYSIZE(pageOffsets);
@@ -1798,11 +1801,14 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		for (uint p = 0; p < maxPages; p++) {
 			if (cursor + 10 >= size)
 				break;
-			pageOffsets[validPages++] = cursor;
+			const uint pageStart = cursor;
 			// Skip the 10-byte header and find the null terminator.
 			cursor += 10;
 			while (cursor < size && buf[cursor] != 0)
 				cursor++;
+			if (cursor >= size)
+				break;
+			pageOffsets[validPages++] = pageStart;
 			cursor++;  // past the null
 		}
 	}
@@ -1811,7 +1817,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 
 	const bool showFirstTryBadge =
 		num < sizeof(_mysteriesSolved) && _mysteriesSolved[num] == 2 &&
-		(floppyEnding || ConfMan.getBool("restored_content"));
+		!macCDEnding && (floppyEnding || ConfMan.getBool("restored_content"));
 	Picture firstTryBadge;
 	const bool haveFirstTryBadge =
 		showFirstTryBadge &&
@@ -1821,11 +1827,12 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	int direction = 0;
 	bool exitLoop = false;
 	bool dirty = true;
+	auto updateCursor = [&](const Common::Point &pos) {
+		setInteractiveMouseCursor(endingPrevRect.contains(pos) ||
+			endingNextRect.contains(pos) || endingExitRect.contains(pos));
+	};
 	const Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	setInteractiveMouseCursor(endingPrevRect.contains(mousePos.x,
-													  mousePos.y) ||
-							  endingNextRect.contains(mousePos.x,
-													  mousePos.y));
+	updateCursor(mousePos);
 	while (!shouldQuit() && !exitLoop) {
 		if (dirty) {
 			const uint off = pageOffsets[pageIdx];
@@ -1883,15 +1890,22 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 					break;
 				const uint16 picNum =
 					readScriptU16(buf.data() + off, macLooseEnding);
-				const Common::Rect textRect =
-					readRectXYXY(buf.data() + off + 2, macLooseEnding);
+				const Common::Rect textRect = macCDEnding
+					? readMacQuickDrawRectBE(buf.data() + off + 2)
+					: readRectXYXY(buf.data() + off + 2, macLooseEnding);
 				x1 = textRect.left;
 				y1 = textRect.top;
 				x2 = textRect.right;
 
 				Picture bg;
-				if (_picsArchive.getPicture(picNum, bg))
+				if (macCDEnding) {
+					if (_picsArchive.getPicture(kFloppyEndingBackgroundPic, bg))
+						blitTravisBackground(scratch, bg, true);
+					if (_picsArchive.getPicture(picNum, bg))
+						blitMacMaskedSurface(scratch.surfacePtr(), bg, 92, 34);
+				} else if (_picsArchive.getPicture(picNum, bg)) {
 					scratch.simpleBlitFrom(bg.surface);
+				}
 				raw = (const char *)buf.data() + off + 10;
 			}
 
@@ -1903,16 +1917,20 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 
 			const Common::String text = parseString(raw, _playerName, _partner);
 
-			const EEMFont &renderFont = haveTinyFont ? tinyFont : _font;
+			const EEMFont &renderFont = macCDEnding ? _newspaperFont :
+				(haveTinyFont ? tinyFont : _font);
 			if (renderFont.isLoaded() && x2 > x1) {
 				const int textW = MIN<int>((int)x2 - (int)x1,
 										   sw - (int)x1);
 				MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
 				if (macEnding)
 					macPaletteMap = getMacSpritePaletteMap();
-				renderFont.drawWordWrapped(&scratch, (int)x1, (int)y1,
-										   textW, text,
-										   macEnding ? macPaletteMap.black : 0);
+				if (macCDEnding)
+					renderFont.drawMacWordWrapped(&scratch, x1, y1, textW, text, 0x2b, 13);
+				else
+					renderFont.drawWordWrapped(&scratch, (int)x1, (int)y1,
+											   textW, text,
+											   macEnding ? macPaletteMap.black : 0);
 			}
 
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -1930,9 +1948,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 				break;
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE)
-				setInteractiveMouseCursor(
-					endingPrevRect.contains(ev.mouse.x, ev.mouse.y) ||
-					endingNextRect.contains(ev.mouse.x, ev.mouse.y));
+				updateCursor(ev.mouse);
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
@@ -1970,10 +1986,11 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 					break;
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				setInteractiveMouseCursor(
-					endingPrevRect.contains(ev.mouse.x, ev.mouse.y) ||
-					endingNextRect.contains(ev.mouse.x, ev.mouse.y));
-				if (endingPrevRect.contains(ev.mouse.x, ev.mouse.y)) {
+				updateCursor(ev.mouse);
+				if (endingExitRect.contains(ev.mouse)) {
+					direction = 0;
+					exitLoop = true;
+				} else if (endingPrevRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (pageIdx > 0) {
 						pageIdx--;
 						dirty = true;
@@ -4396,10 +4413,10 @@ void EEMEngine::drawKDBalloonOverCurrentScreen(Common::String text) {
 		_balloonArchive.size() > (bubNum & 0x7F) &&
 		_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
-	const int balloonX = mac ? scaleX(0x21) : 0x21;
-	const int topBandH = mac ? scaleY(0x50) : 0x50;
-	const int centeredMaxH = mac ? scaleY(0x4e) : 0x4e;
-	int balloonY = mac ? scaleY(1) : 1;
+	const int balloonX = isMacCD() ? 100 : scaleX(0x21);
+	const int topBandH = isMacCD() ? 155 : scaleY(0x50);
+	const int centeredMaxH = isMacCD() ? 155 : scaleY(0x4e);
+	int balloonY = isMacCD() ? 1 : scaleY(1);
 	if (haveBalloon && balloon.surface.h < centeredMaxH)
 		balloonY = (topBandH - balloon.surface.h) / 2;
 
@@ -4425,8 +4442,12 @@ void EEMEngine::drawKDBalloonOverCurrentScreen(Common::String text) {
 	if (dialogFont.isLoaded()) {
 		const byte textColor =
 			mac ? macPaletteMap.black : (haveBalloon ? 0 : 0xF);
-		dialogFont.drawWordWrapped(&ms, balloonX + tx, balloonY + ty,
-								   tw, text, textColor);
+		if (isMacCD())
+			dialogFont.drawMacWordWrapped(&ms, balloonX + tx, balloonY + ty,
+									  tw, text, textColor);
+		else
+			dialogFont.drawWordWrapped(&ms, balloonX + tx, balloonY + ty,
+									   tw, text, textColor);
 	}
 
 	copyToScreen(ms);
@@ -4461,7 +4482,7 @@ void EEMEngine::doAccuse() {
 		const int foundPoints = _mystery.foundPoints();
 		readyTier = (foundPoints == 0)    ? 0
 				  : (foundPoints < 0x32)  ? 1
-				  : (foundPoints < 0x65)  ? 2
+				  : (foundPoints < (isMacCD() ? 100 : 101)) ? 2
 											: 3;
 	}
 
@@ -4480,7 +4501,7 @@ void EEMEngine::doAccuse() {
 		// final two SDB entries, but its KD digital table points kdspeak 9
 		// at earlier hint clips. Use the otherwise unreferenced pair. EEM1
 		// SDB indices, so EEM1 only.
-		if (!isLondon() && _mystery.number() == 0)
+		if (!isLondon() && !isMacCD() && _mystery.number() == 0)
 			entryVoiceOverride = (_partner == kPartnerJake) ? 105 : 104;
 		break;
 	case 1:
@@ -4509,8 +4530,12 @@ void EEMEngine::doAccuse() {
 			else
 				_audio->sayKDDigital(entryKdIdx, entryKDSpeak, _partner);
 		}
-		waitForInput(60000);
+		waitForInput(isMacCD() ? 0xFFFFFFFFu : 60000);
+		if (isMacCD())
+			interruptAudio();
 	}
+	if (shouldQuit())
+		return;
 	if (!canAccuse) {
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
@@ -4545,7 +4570,8 @@ void EEMEngine::doAccuse() {
 	// London matches the selected notes against the answer sets; EEM1/floppy
 	// sum clue points.
 	const bool accuseSolved =
-		isLondon() ? _mystery.londonSolved() : _mystery.solvedCheck();
+		isLondon() ? _mystery.londonSolved() :
+		(isMacCD() ? _mystery.selectedPoints() >= 99 : _mystery.solvedCheck());
 	if (!accuseSolved) {
 		const byte *kdIdx = _mystery.kdTextIndex();
 		const int16 hintOff = kdIdx
@@ -4582,7 +4608,9 @@ void EEMEngine::doAccuse() {
 		if (_audio && kdIdx)
 			_audio->sayKDDigital(kdIdx, 3, _partner);
 
-		waitForInput(20000);
+		waitForInput(isMacCD() ? 0xFFFFFFFFu : 20000);
+		if (isMacCD() && _audio)
+			_audio->stopSpool();
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
@@ -4605,25 +4633,41 @@ void EEMEngine::doAccuse() {
 			Common::String hint =
 				parseString(raw ? raw : "", _playerName, _partner);
 			if (!hint.empty()) {
-				// Render gallery first so the snapshot includes partner.
-				drawAccuseGallery(num, gd, /* highlighted= */ -1,
-								  slotRects, slotSuspect);
+				if (isMacCD()) {
+					Picture background;
+					Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
+						Graphics::PixelFormat::createFormatCLUT8());
+					scratch.clear();
+					if (_picsArchive.getPicture(0x1a7, background))
+						blitTravisBackground(scratch, background, true);
+					blitPdaPartner(scratch, _aniArchive, _partner, kPdaNotebookPartner,
+						g_system->getMillis(), true, true);
+					copyToScreen(scratch);
+				} else {
+					drawAccuseGallery(num, gd, /* highlighted= */ -1,
+									  slotRects, slotSuspect);
+				}
 				drawKDBalloonOverCurrentScreen(hint);
 				if (_audio)
 					_audio->sayKDDigital(kdIdx, 4, _partner);
-				waitForInput(8000);
+				waitForInput(isMacCD() ? 0xFFFFFFFFu : 8000);
+				if (isMacCD() && _audio)
+					_audio->stopSpool();
 			}
 		}
 	}
+	if (shouldQuit())
+		return;
 
 	if (isLondon() && _music && _voiceOn)
 		_music->playMus(33, /* loop= */ true);
 
-	// Wrap past empty slots (matches original DI advance).
-	if (slotRects[highlighted].isEmpty())
-		highlighted = nextLiveSlot(slotRects, highlighted, +1);
-
 	drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
+	// Wrap past empty slots (matches original DI advance).
+	if (slotRects[highlighted].isEmpty()) {
+		highlighted = nextLiveSlot(slotRects, highlighted, +1);
+		drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
+	}
 
 	int picked = -1;
 	uint32 lastTick = g_system->getMillis();
@@ -4717,15 +4761,13 @@ void EEMEngine::doAccuse() {
 		   pickedGuilty ? "yes" : "no",
 		   guessedRight ? "correct" : "wrong");
 
-	// `_DisplayAlibi @ 1df2:0145`:
-	//   1. MIDI 6 loser sting (gallery still visible).
-	//   2. PIC 0x3e + suspect balloon + portrait at (0x82, py).
-	//      bindx = digit prefix (else 2). bindx<8 centres balloon,
-	//      bindx>=8 pins at x=0x21.
-	//   3. `_SpoolSound(talk-1)` where talk = partner==0 ? gd[+6] : gd[+0].
-	//   4. Partner reaction balloon @ KDTextIndex[+10], `_SayKDDigital(5)`.
-	//   5. _FirstTry = 0; NextScreen = LastScreen (1df2:043f).
+	// DisplayAlibi: DOS 1df2:0145, Mac CD CODE 7:043e.
 	if (!guessedRight) {
+		const bool macCD = isMacCD();
+		const int sw = macCD ? screenWidth() : kScreenWidth;
+		const int sh = macCD ? screenHeight() : kScreenHeight;
+		const MacSpritePaletteMap palette = macCD ? getMacSpritePaletteMap() :
+			MacSpritePaletteMap{0x00, 0xFF};
 		static const uint16 kAlibiBubbles[16] = {
 			0x002B, 0x002C, 0x002D, 0x002E,
 			0x00AB, 0x00AC, 0x00AD, 0x00AE,
@@ -4765,58 +4807,67 @@ void EEMEngine::doAccuse() {
 			_balloonArchive.size() > (bubNum & 0x7F) &&
 			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
-		int balloonX = 0x21;
+		int balloonX = macCD ? 100 : 0x21;
 		int balloonY = 1;
-		int py = 0x5a;
+		int py = macCD ? 173 : 0x5a;
 		if (bindx < 8) {
 			const int bw = haveBalloon ? balloon.surface.w : 0;
 			const int bh = haveBalloon ? balloon.surface.h : 0;
-			balloonX = (kScreenWidth - bw) / 2;
-			if (bh < 0x5a) {
-				balloonY = (0x5a - bh) / 2;
+			balloonX = (sw - bw) / 2;
+			if (bh < py) {
+				balloonY = (py - bh) / 2;
 			} else {
 				balloonY = 1;
-				py = bh;
+				if (!macCD)
+					py = bh;
 			}
 		} else {
 			const int bh = haveBalloon ? balloon.surface.h : 0;
-			balloonX = 0x21;
-			balloonY = (bh < 0x4f) ? (0x50 - bh) / 2 : 1;
+			balloonY = macCD ? MAX(1, (155 - bh) / 2) :
+				((bh < 0x4f) ? (0x50 - bh) / 2 : 1);
 		}
 
-		Graphics::ManagedSurface base(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface base(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		base.clear();
 		if (haveAlibiBg)
-			base.simpleBlitFrom(alibiBg.surface);
+			blitTravisBackground(base, alibiBg, macCD);
 		if (haveSuspect) {
-			const byte transp = (byte)(suspect.flags >> 8);
-			base.transBlitFrom(suspect.surface,
-							   Common::Point(0x82, py),
-							   (uint32)transp);
+			if (macCD)
+				blitMacMaskedSurface(base.surfacePtr(), suspect, 208, py);
+			else
+				base.transBlitFrom(suspect.surface, Common::Point(0x82, py),
+					(uint32)(byte)(suspect.flags >> 8));
 		}
 
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(base);
 		if (haveBalloon) {
-			const byte transp = (byte)(balloon.flags >> 8);
-			scratch.transBlitFrom(balloon.surface,
-								  Common::Point(balloonX, balloonY),
-								  (uint32)transp);
+			if (macCD)
+				blitMacMaskedSurface(scratch.surfacePtr(), balloon, balloonX, balloonY,
+					(bubNum & 0x80) != 0, palette);
+			else
+				scratch.transBlitFrom(balloon.surface, Common::Point(balloonX, balloonY),
+					(uint32)(byte)(balloon.flags >> 8));
 		}
 
 		uint16 tx = 5, ty = 4, tw = 155;
 		getBalloonInsets(bubNum, tx, ty, tw);
 		if (_font.isLoaded() && !alibi.empty()) {
-			_font.drawWordWrapped(&scratch, balloonX + tx,
-								  balloonY + ty, tw, alibi,
-								  haveBalloon ? 0 : 0xF);
+			if (macCD)
+				_font.drawMacWordWrapped(&scratch, balloonX + tx, balloonY + ty,
+					tw, alibi, palette.black);
+			else
+				_font.drawWordWrapped(&scratch, balloonX + tx,
+									  balloonY + ty, tw, alibi,
+									  haveBalloon ? 0 : 0xF);
 		}
-		blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
-					   g_system->getMillis());
+		blitPdaPartner(scratch, _aniArchive, _partner,
+					   macCD ? kPdaNotebookPartner : kPdaGalleryPartner,
+					   g_system->getMillis(), macCD, macCD);
 
-		if (_music && _voiceOn) {
+		if (!macCD && _music && _voiceOn) {
 			_music->playMus(6, /* loop= */ false);
 			const uint32 musStart = g_system->getMillis();
 			bool aborted = false;
@@ -4842,20 +4893,22 @@ void EEMEngine::doAccuse() {
 			_music->stop();
 		}
 
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
-		g_system->updateScreen();
-		if (_audio && gd && !isMacintosh()) {
+		copyToScreen(scratch);
+		if (_audio && gd && (!isMacintosh() || macCD)) {
 			const uint16 alibiVoice =
-				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x00);
+				READ_LE_UINT16(gd + (uint)picked * 0x46 + (macCD ? 4 : 0));
 			const uint16 jakeVoice =
 				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x06);
 			const uint16 talk =
 				(_partner == kPartnerJake) ? jakeVoice : alibiVoice;
-			if (talk != 0)
+			if (talk != 0 && talk != 0xFFFF)
 				_audio->spoolSound((uint)(talk - 1));
 		}
-		waitForInput(60000);
+		waitForInput(macCD ? 0xFFFFFFFFu : 60000);
+		if (macCD && _audio)
+			_audio->stopSpool();
+		if (shouldQuit())
+			return;
 
 		const byte *reactIdx = _mystery.kdTextIndex();
 		if (reactIdx) {
@@ -4876,35 +4929,41 @@ void EEMEngine::doAccuse() {
 				const bool haveR =
 					_balloonArchive.size() > (rBub & 0x7F) &&
 					_balloonArchive.loadEntry(rBub & 0x7F, rBalloon);
-				const int rX = 0x21;
+				const int rX = macCD ? 100 : 0x21;
 				int rY = 1;
-				if (haveR && rBalloon.surface.h < 0x4e)
-					rY = (0x50 - rBalloon.surface.h) / 2;
+				if (haveR && rBalloon.surface.h < (macCD ? 155 : 0x4e))
+					rY = ((macCD ? 155 : 0x50) - rBalloon.surface.h) / 2;
 
 				scratch.simpleBlitFrom(base);
 				if (haveR) {
-					const byte transp = (byte)(rBalloon.flags >> 8);
-					scratch.transBlitFrom(rBalloon.surface,
-										   Common::Point(rX, rY),
-										   (uint32)transp);
+					if (macCD)
+						blitMacMaskedSurface(scratch.surfacePtr(), rBalloon, rX, rY);
+					else
+						scratch.transBlitFrom(rBalloon.surface, Common::Point(rX, rY),
+							(uint32)(byte)(rBalloon.flags >> 8));
 				}
 				uint16 rtx = 5, rty = 4, rtw = 155;
 				getBalloonInsets(rBub, rtx, rty, rtw);
 				if (_font.isLoaded()) {
-					_font.drawWordWrapped(&scratch, rX + rtx,
-										  rY + rty, rtw, react,
-										  haveR ? 0 : 0xF);
+					if (macCD)
+						_font.drawMacWordWrapped(&scratch, rX + rtx, rY + rty,
+							rtw, react, palette.black);
+					else
+						_font.drawWordWrapped(&scratch, rX + rtx,
+											  rY + rty, rtw, react,
+											  haveR ? 0 : 0xF);
 				}
 				blitPdaPartner(scratch, _aniArchive, _partner,
-							   kPdaGalleryPartner, g_system->getMillis());
-				g_system->copyRectToScreen(scratch.getPixels(),
-					scratch.pitch, 0, 0, kScreenWidth, kScreenHeight);
-				g_system->updateScreen();
+							   macCD ? kPdaNotebookPartner : kPdaGalleryPartner,
+							   g_system->getMillis(), macCD, macCD);
+				copyToScreen(scratch);
 				if (_audio)
 					_audio->sayKDDigital(reactIdx, 5, _partner);
 			}
 		}
-		waitForInput(60000);
+		waitForInput(macCD ? 0xFFFFFFFFu : 60000);
+		if (macCD && _audio)
+			_audio->stopSpool();
 
 		_mystery._firstTry = false;
 		_nextScreen = _lastScreen != kScreenInvalid
@@ -4914,11 +4973,11 @@ void EEMEngine::doAccuse() {
 
 	{
 		const uint mn = _mystery.number();
-		if (mn < sizeof(_mysteriesSolved)) {
-			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
+		if (!isMacCD()) {
+			if (mn < sizeof(_mysteriesSolved))
+				_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
+			advanceChainStageAfterSolve(mn);
 		}
-
-		advanceChainStageAfterSolve(mn);
 
 		// `_DisplayCorrect` win background = `_BuildBackground(scene, 0x42, 0x14)`
 		// (frame PIC 0x3d + scene at 0x42,0x14, palette scene+1). EEM1 CD uses
@@ -4935,8 +4994,8 @@ void EEMEngine::doAccuse() {
 			scratch.simpleBlitFrom(frame.surface);
 		if (winScene < _sitesArchive.size() &&
 			_sitesArchive.loadEntry(winScene, scene)) {
-			const int sx = scaleX(0x42);
-			const int sy = scaleY(0x14);
+			const int sx = isMacCD() ? 106 : scaleX(0x42);
+			const int sy = isMacCD() ? 38 : scaleY(0x14);
 			const int sw = MIN<int>(scene.surface.w, screenW - sx);
 			const int sh = MIN<int>(scene.surface.h, screenH - sy);
 			if (sw > 0 && sh > 0)
@@ -4944,15 +5003,22 @@ void EEMEngine::doAccuse() {
 										  scene.surface.pitch, sx, sy,
 										  sw, sh);
 		}
+		if (isMacCD()) {
+			remapMacSurfaceEndpoints(scratch, getMacSpritePaletteMap());
+			setPartnerEraseBg(&scratch);
+			setPartnerIdleAnim(true, _partner == kPartnerJake ? 0x02 : 0x10, 7, 152);
+		}
 		blitPdaPartner(scratch, _aniArchive, _partner,
-					   kPdaGalleryPartner, g_system->getMillis(),
-					   isMacintosh());
+					   isMacCD() ? kPdaNotebookPartner : kPdaGalleryPartner,
+					   g_system->getMillis(), isMacintosh(), isMacCD());
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, screenW, screenH);
 		g_system->updateScreen();
 
-		if (_music && _voiceOn)
+		if (_music && (isMacCD() ? _musicOn : _voiceOn))
 			_music->playMus(5, /* loop= */ false);
+		if (isMacCD())
+			waitForMusicDone();
 
 		const byte *solved = _mystery.solvedClueBlock();
 		if (isMacintosh() && _mystery.usesCompactMacData() && solved) {
@@ -4982,6 +5048,15 @@ void EEMEngine::doAccuse() {
 		} else if (solved) {
 			displayClue(solved);
 		}
+		if (isMacCD()) {
+			setPartnerIdleAnim(false, 0, 0, 0);
+			setPartnerEraseBg(nullptr);
+			if (shouldQuit())
+				return;
+			if (mn < sizeof(_mysteriesSolved))
+				_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
+			advanceChainStageAfterSolve(mn);
+		}
 		if (_music && _voiceOn)
 			_music->stop();
 
@@ -4989,9 +5064,13 @@ void EEMEngine::doAccuse() {
 			playAnm(Common::Path(isLondon() ? "SCRAP.ANM" : "SCRAPBK.ANI"),
 					120, /* holdLastFrame= */ false);
 			displayScrapbookExtra(mn);
+		} else if (isMacCD()) {
+			fadeCurrentPaletteToBlack();
+			showStillPicture(0x20d, 0x25, 4000);
 		}
 
-		doShowEnding(mn);
+		if (!shouldQuit())
+			doShowEnding(mn);
 
 		_mystery.clear();
 		const Common::Error err = saveProfile(_playerName);

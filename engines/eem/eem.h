@@ -511,7 +511,7 @@ private:
 	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
 	void showLondonEAKidsLogo();
-	void showLondonLogo(uint picId, uint palId, uint holdMs,
+	void showStillPicture(uint picId, uint palId, uint holdMs,
 						bool playThunder = false);
 	void showLondonCharSelect();
 	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
@@ -637,6 +637,7 @@ private:
 	Mystery    _mystery;         ///< M<n>.BIN
 	EEMFont    _font;            ///< FONT.FNT (8 px)
 	EEMFont    _dialogFont;      ///< Mac 14pt FONT used inside speech balloons.
+	EEMFont    _newspaperFont;
 
 	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
 

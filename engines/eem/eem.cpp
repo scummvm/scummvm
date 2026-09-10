@@ -554,6 +554,8 @@ Common::Error EEMEngine::run() {
 			warning("Mac FONT resource failed to load; text will not render");
 		if (!loadMacDialogFont(_dialogFont))
 			warning("Mac dialog FONT resource failed to load");
+		if (isMacCD() && !loadMacFontResource(_newspaperFont, kMacSmallFontResource, 9))
+			warning("Mac newspaper FONT resource failed to load");
 	} else if (!_font.load(Common::Path("FONT.FNT"))) {
 		warning("FONT.FNT failed to load; text will not render");
 	}
@@ -1776,18 +1778,18 @@ void EEMEngine::showLondonEAKidsLogo() {
 	fadeCurrentPaletteToBlack();
 }
 
-void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs,
+void EEMEngine::showStillPicture(uint picId, uint palId, uint holdMs,
 							   bool playThunder) {
 	Picture pic;
 	if (!_picsArchive.getPicture(picId, pic) || pic.surface.empty()) {
-		warning("London logo PIC 0x%x load failed", picId);
+		warning("PIC 0x%x load failed", picId);
 		return;
 	}
 	blitAt(pic, 0, 0);
 
 	byte target[kPalSize];
 	if (!getSitePalette(palId, target)) {
-		warning("London palette 0x%x load failed", palId);
+		warning("Palette 0x%x load failed", palId);
 		return;
 	}
 	byte black[kPalSize] = {};
@@ -1833,9 +1835,9 @@ void EEMEngine::runLondonStartup() {
 
 	if (isMacintosh()) {
 		if (!shouldQuit() && !_skipIntro)
-			showLondonLogo(0x20c, 0x3e, 3000);  // publisher logo (FUN_00009074)
+			showStillPicture(0x20c, 0x3e, 3000);  // publisher logo (FUN_00009074)
 		if (!shouldQuit() && !_skipIntro)
-			showLondonLogo(0x20b, 0x3d, 3000, /* playThunder= */ true);
+			showStillPicture(0x20b, 0x3d, 3000, /* playThunder= */ true);
 
 		// The Mac CD ships the post-logo intro as Flic movies where DOS uses
 		// bolt/movie/wave .ANM. KDCDINTR is the centered intro; BOOK54 is the
@@ -1859,7 +1861,7 @@ void EEMEngine::runLondonStartup() {
 			fadeCurrentPaletteToBlack();
 		}
 		if (!shouldQuit() && !_skipIntro)
-			showLondonLogo(kDosLondonPicHighScoreLogo,
+			showStillPicture(kDosLondonPicHighScoreLogo,
 						   kDosLondonPalHighScoreLogo, 3000);
 
 		// Intro movie with its theme (MUS00101.XMI).
