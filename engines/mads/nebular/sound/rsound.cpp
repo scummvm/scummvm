@@ -29,7 +29,7 @@ namespace MADS {
 namespace RexNebular {
 namespace Sound {
 
-void Channel::loadData(byte *soundData) {
+void Channel::loadData(byte *soundData, byte source) {
 	_pitchSlideStepSize = 0;
 	_panningSweepStepSize = 0;
 	_innerLoopCounter = 0;
@@ -44,6 +44,8 @@ void Channel::loadData(byte *soundData) {
 	_innerLoopStart = soundData;
 	_outerLoopStart = soundData;
 	_soundData = soundData;
+
+	_source = source;
 }
 
 void Channel::setFadeOut(bool fadeOut) {
@@ -77,15 +79,17 @@ RSound::RSound(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver, const Common:
 	_fadeOutSpeed = (_fadeOutCheckMode == kRSoundFadeCheckAlternating ? 2 : 0);
 	_fadeOutCounter = _fadeOutSpeed;
 
+	// The default settings for these fields match those used by RSOUND.003-008
+	// of the full version of Rex: static channels 1-4 and 9 and dynamic
+	// channels 5-8.
+	// There is a (probable) bug in the implementation of commands 2 and 4 of
+	// RSOUND.003-008. Command 2 includes channel 9 when stopping channel
+	// playback, but does not include channel 9 when initializing MIDI
+	// channels. Conversely, command 4 does not include channel 9 when stopping
+	// playback, but does include channel 9 when initializing MIDI channels.
+	// This inconsistency is not replicated in this reimplementation.
 	_dynamicStartChannel = 5;
 	_dynamicIncludeChannel9 = false;
-	// The full game RSOUND drivers command 2 and 3 include channel 9 when
-	// initializing channel data and fading channels to stop, but command 2
-	// does not include channel 9 when initializing MIDI channels. Instead,
-	// command 4 includes channel 9 when initializing MIDI channels, but
-	// command 4 and 5 do not include channel 9 when initializing channel
-	// data and fading channels to stop. This is probably a bug, which is
-	// not replicated in this reimplementation.
 	_staticIncludeChannel9 = true;
 
 	for (int i = 0; i < RSOUND_CHANNEL_COUNT; ++i) {
@@ -175,28 +179,28 @@ Channel *RSound::getChannel(byte channel) {
 	return &_channels[channel - 1];
 }
 
-Channel *RSound::playSoundStatic(byte *soundData, byte channel) {
+Channel *RSound::playSoundStatic(byte *soundData, byte channel, byte source) {
 	assert(channel >= 1 && channel <= RSOUND_CHANNEL_COUNT);
 
 	Channel *chan = getChannel(channel);
-	Channel_playData(chan, soundData);
+	Channel_playData(chan, soundData, source);
 
 	return chan;
 }
 
-Channel *RSound::playSoundStatic(int offset, byte channel) {
-	return playSoundStatic(loadData(offset), channel);
+Channel *RSound::playSoundStatic(int offset, byte channel, byte source) {
+	return playSoundStatic(loadData(offset), channel, source);
 }
 
-Channel *RSound::playSoundDynamic(int offset) {
-	return allocateAndPlay(loadData(offset), _dynamicStartChannel);
+Channel *RSound::playSoundDynamic(int offset, byte source) {
+	return allocateAndPlay(loadData(offset), _dynamicStartChannel, source);
 }
 
-Channel *RSound::playSoundAnyChannel(int offset) {
-	return allocateAndPlay(loadData(offset), 1);
+Channel *RSound::playSoundAnyChannel(int offset, byte source) {
+	return allocateAndPlay(loadData(offset), 1, source);
 }
 
-Channel *RSound::allocateAndPlay(byte *pData, int startingChannel) {
+Channel *RSound::allocateAndPlay(byte *pData, int startingChannel, byte source) {
 	int endChannel = RSOUND_CHANNEL_COUNT - 1;
 
 	Channel *foundChannel = nullptr;
@@ -220,7 +224,7 @@ Channel *RSound::allocateAndPlay(byte *pData, int startingChannel) {
 	}
 
 	if (foundChannel != nullptr)
-		Channel_playData(foundChannel, pData);
+		Channel_playData(foundChannel, pData, source);
 
 	return foundChannel;
 }
@@ -257,25 +261,26 @@ int RSound::getTicksSinceLastCommand() {
 /*-----------------------------------------------------------------------*/
 
 void RSound::sendNoteOn(byte midiChannel, byte note, byte velocity) {
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel, note, velocity);
+	_midiDriver->send(getChannel(midiChannel)->_source, MidiDriver::MIDI_COMMAND_NOTE_ON | midiChannel, note, velocity);
 }
 
 void RSound::sendProgramChange(byte midiChannel, byte program) {
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | midiChannel, program, 0);
+	_midiDriver->send(getChannel(midiChannel)->_source, MidiDriver::MIDI_COMMAND_PROGRAM_CHANGE | midiChannel, program, 0);
 }
 
 void RSound::sendVolume(byte midiChannel, byte volume) {
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
+	_midiDriver->send(getChannel(midiChannel)->_source,
+					  MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel,
 					  MidiDriver::MIDI_CONTROLLER_VOLUME, volume);
 }
 
 void RSound::sendPitchBend(byte midiChannel, byte value) {
 	// LSB always 0 - only coarse (MSB) control is used
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_PITCH_BEND | midiChannel, 0, value);
+	_midiDriver->send(getChannel(midiChannel)->_source, MidiDriver::MIDI_COMMAND_PITCH_BEND | midiChannel, 0, value);
 }
 
 void RSound::sendPanning(byte midiChannel, byte value) {
-	_midiDriver->send(MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_PANNING, value);
+	_midiDriver->send(getChannel(midiChannel)->_source, MidiDriver::MIDI_COMMAND_CONTROL_CHANGE | midiChannel, MidiDriver::MIDI_CONTROLLER_PANNING, value);
 }
 
 void RSound::muteChannel(byte midiChannel) {
@@ -348,11 +353,11 @@ void RSound::stopAllNotes() {
 
 /*-----------------------------------------------------------------------*/
 
-void RSound::Channel_playData(Channel *channel, byte *soundData) {
+void RSound::Channel_playData(Channel *channel, byte *soundData, byte source) {
 	bool ticksProcessingDisabled = _ticksProcessingDisabled;
 	_ticksProcessingDisabled = true;
 
-	channel->loadData(soundData);
+	channel->loadData(soundData, source);
 	channel->_deltaCounter = 1;
 	sendPitchBend(channel->_midiChannel, 0x40);
 
@@ -621,7 +626,7 @@ void RSound::Channel_processTick(Channel *channel) {
 				// Reload data to completely reset channel state, but keep
 				// fade-out to stop state.
 				bool fadeOutActive = channel->_fadeOutActive;
-				channel->loadData(channel->_soundDataStart);
+				channel->loadData(channel->_soundDataStart, channel->_source);
 				channel->_fadeOutActive = fadeOutActive;
 				break;
 			}
@@ -780,12 +785,12 @@ void RSound::processTick() {
 /*-----------------------------------------------------------------------*/
 
 /**
- * Zeroes _deltaCounter and the three fade-step fields for channels in
- * [first, last].
+ * Stops playback and effects processing by zeroing _deltaCounter and the
+ * three step size fields for channels in [first, last].
  * Deliberately does NOT touch the loop pointers, volume, program, pan etc,
  * matching the original.
  */
-void RSound::resetChannelRange(int firstChannel, int lastChannel, bool includeChannel9) {
+void RSound::stopChannelRange(int firstChannel, int lastChannel, bool includeChannel9) {
 	_ticksProcessingDisabled = true;
 
 	for (int i = firstChannel; i <= lastChannel; ++i) {
@@ -831,7 +836,7 @@ byte *RSound::loadData(int offset) {
  * command0.
  */
 void RSound::resetAllChannels() {
-	resetChannelRange(1, RSOUND_CHANNEL_COUNT);
+	stopChannelRange(1, RSOUND_CHANNEL_COUNT);
 	clearActiveNotes();
 }
 
@@ -878,9 +883,9 @@ int RSound::command1() {
 }
 
 int RSound::command2() {
-	// Initialize the static channels (also reinitializes the active notes
-	// table) plus the MIDI channel reset for those same channels.
-	resetChannelRange(1, _dynamicStartChannel - 1, _staticIncludeChannel9);
+	// Stops playback on the static channels (also reinitializes the active
+	// notes table) plus the MIDI channel reset for those same channels.
+	stopChannelRange(1, _dynamicStartChannel - 1, _staticIncludeChannel9);
 	clearActiveNotes();
 	setFadeOutSpeed(0);
 	sendMidiChannelReset(1, _dynamicStartChannel - 1, _staticIncludeChannel9);
@@ -899,9 +904,9 @@ int RSound::command3() {
 }
 
 int RSound::command4() {
-	// Initialize the dynamic Channels (does NOT touch the active notes
+	// Stops playback on the dynamic Channels (does NOT touch the active notes
 	// table) plus the MIDI channel reset for those same channels.
-	resetChannelRange(_dynamicStartChannel, 8, _dynamicIncludeChannel9);
+	stopChannelRange(_dynamicStartChannel, 8, _dynamicIncludeChannel9);
 	setFadeOutSpeed(0);
 	sendMidiChannelReset(_dynamicStartChannel, 8, _dynamicIncludeChannel9);
 	return 0;

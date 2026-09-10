@@ -70,7 +70,7 @@ enum RSoundFadeCheckMode {
  *   0x09 _volumeFadeCounter	0x16 _pSrc
  *   0x0A _pitchSlideCounter
  *   0x0B _panningSweepCounter
- * _owner and _midiChannel below are NOT part of the original struct (it
+ * _source and _midiChannel below are NOT part of the original struct (it
  * has no equivalent fields) - they're C++-side conveniences so Channel
  * methods and callers don't need the MIDI channel number (array index+1)
  * threaded through separately. Any future raw "[bx+N]" disassembly offset
@@ -79,6 +79,7 @@ enum RSoundFadeCheckMode {
 class Channel {
 public:
 	byte _midiChannel = 0;					// 1-9: the MIDI channel to which the data in this struct pertains
+	byte _source = 0;						// The source used for the multisource driver (0: music, 1: SFX)
 
 	byte _deltaCounter = 0;					// number of ticks until the next event occurs; loaded from the delta byte of a note or chord event
 											// 0: channel is not active
@@ -119,7 +120,7 @@ public:
 	 * touch volume, program, velocity, key-on state or delta/duration -
 	 * matches the original disassembly.
 	 */
-	void loadData(byte *soundData);
+	void loadData(byte *soundData, byte source);
 
 	/**
 	 * Marks the channel as fading out (fading toward silence) and stopping
@@ -205,7 +206,7 @@ private:
 	 * Loads new sound data into the channel, starts playback by setting
 	 * _deltaCounter to 1 and resets pitch bend to center on the MT-32.
 	 */
-	void Channel_playData(Channel *channel, byte *soundData);
+	void Channel_playData(Channel *channel, byte *soundData, byte source);
 
 	/**
 	 * Sends Note-Off (velocity 0) for all active notes on the
@@ -224,6 +225,8 @@ protected:
 	// Channel 9 can be included with the static or dynamic channels by setting
 	// the corresponding boolean field. This will only affect commands 2-5;
 	// channel 9 is never used by playSoundDynamic.
+	// There are a number of variations of these settings in the RSOUND.00x
+	// drivers used by Rex.
 	byte _dynamicStartChannel;
 	bool _staticIncludeChannel9;
 	bool _dynamicIncludeChannel9;
@@ -231,10 +234,11 @@ protected:
 	void setFadeOutSpeed(int fadeOutSpeed);
 
 	/**
-	 * Clear the active and fade state for MIDI channels in [first, last].
-	 * Specify includeChannel9 to also reset MIDI channel 9.
+	 * Stop playback by clearing the delta and effects counters for MIDI
+	 * channels in [first, last]. Specify includeChannel9 to also reset MIDI
+	 * channel 9.
 	 */
-	void resetChannelRange(int firstChannel, int lastChannel, bool includeChannel9 = false);
+	void stopChannelRange(int firstChannel, int lastChannel, bool includeChannel9 = false);
 
 	/** Reset the per-MIDI-channel active note tracking table to empty. */
 	void clearActiveNotes();
@@ -283,8 +287,8 @@ protected:
 	 * channel. This will unload any sound already playing on the
 	 * channel.
 	 */
-	Channel *playSoundStatic(int offset, byte channel);
-	Channel *playSoundStatic(byte *soundData, byte channel);
+	Channel *playSoundStatic(int offset, byte channel, byte source = 0);
+	Channel *playSoundStatic(byte *soundData, byte channel, byte source = 0);
 
 	/**
 	 * Play the specified sound by allocating one of the free dynamic
@@ -292,13 +296,13 @@ protected:
 	 * was free), since some commands poke the just-loaded channel's
 	 * loop pointer directly afterward.
 	 */
-	Channel *playSoundDynamic(int offset);
+	Channel *playSoundDynamic(int offset, byte source = 1);
 
 	/**
 	 * Play the specified sound by allocating any free melodic channel,
 	 * dynamic or static.
 	 */
-	Channel *playSoundAnyChannel(int offset);
+	Channel *playSoundAnyChannel(int offset, byte source = 1);
 
 	/**
 	 * Dynamically allocates a melodic channel, loads the specified sound
@@ -308,7 +312,7 @@ protected:
 	 * could be found, nullptr is returned and the sound data is not
 	 * played.
 	 */
-	Channel *allocateAndPlay(byte *pData, int startingChannel);
+	Channel *allocateAndPlay(byte *pData, int startingChannel, byte source);
 
 	/**
 	 * Checks to see whether the given block of data is already loaded
@@ -382,7 +386,7 @@ protected:
 	int command2();
 	int command3();
 	int command4();
-	int command5();
+	virtual int command5();
 	int command6();
 	int command7();
 	int command8();

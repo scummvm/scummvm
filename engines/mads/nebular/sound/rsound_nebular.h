@@ -159,7 +159,8 @@ private:
 	 */
 	byte _volumeCycleCounter = 0x2F;
 
-	int command5();
+	int command0() override;
+	int command5() override;
 
 	int command9();
 	int command10();
@@ -253,6 +254,8 @@ private:
 	 */
 	void sendDualVolume(byte volume);
 
+	int command5() override;
+
 	int command9();
 	int command10();
 	int command11();
@@ -343,6 +346,8 @@ private:
 	 * channel, which stops playback on that channel.
 	 */
 	void stopChannel(byte channel);
+
+	int command0() override;
 
 	int command9();
 	int command10();
@@ -454,6 +459,8 @@ private:
 	 */
 	void command24Callback();
 	void command29Callback();
+
+	int command0() override;
 
 	int command9();
 	int command10();

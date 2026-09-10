@@ -40,11 +40,19 @@ const RSound1::CommandPtr RSound1::_commandList[42] = {
 };
 
 RSound1::RSound1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
-	RSound(mixer, midiDriver, "rsound.001", 0x1350, 0x1A90, 0x67, kRSoundFadeCheckAlternating) {
+		RSound(mixer, midiDriver, "rsound.001", 0x1350, 0x1A90, 0x67, kRSoundFadeCheckAlternating) {
+	// Rex full game RSOUND.001 includes channel 9 with the dynamic channel
+	// commands 4 and 5.
+	// The original code actually uses channels 4-8 instead of 5-8 for
+	// playSoundDynamic, which is inconsistent with command 2-5. This
+	// inconsistency has not been replicated in this reimplementation for now.
+	_dynamicStartChannel = 5;
+	_dynamicIncludeChannel9 = true;
+	_staticIncludeChannel9 = false;
 }
 
 int RSound1::command(int commandId, int param) {
-	if (commandId > 41)
+	if (commandId < 0 || commandId > 41)
 		return 0;
 
 	_commandParam = param;
@@ -105,7 +113,7 @@ int RSound1::command13() {
 }
 
 int RSound1::command14() {
-	playSoundDynamic(0x16C2);
+	playSoundDynamic(0x16C2, 0);
 	return 0;
 }
 
@@ -179,7 +187,7 @@ int RSound1::command26() {
 	pData[8] = v1;
 	int v2 = clampParam() + 64;
 	pData[5] = v2;
-	playSoundStatic(pData, 8);
+	playSoundStatic(pData, 8, 1);
 	return 0;
 }
 
@@ -189,7 +197,7 @@ int RSound1::command27() {
 	pData[8] = v1;
 	int v2 = clampParam() + 64;
 	pData[5] = v2;
-	playSoundStatic(pData, 8);
+	playSoundStatic(pData, 8, 1);
 	return 0;
 }
 
@@ -314,16 +322,17 @@ const RSoundDemo1::CommandPtr RSoundDemo1::_commandList[41] = {
 RSoundDemo1::RSoundDemo1(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 		RSound(mixer, midiDriver, "rsound.001", 0x12E0, 0x1D28, 0x67, kRSoundFadeCheckAlternating),
 		_command23Toggle(false) {
-	// The demo RSOUND.001 driver command 2 includes channel 5 when 
-	// initializing channel data, but command 2 and 3 do not include channel 5
-	// when initializing MIDI channels and fading channels to stop. Instead,
-	// command 4 includes channel 5 when initializing channel data, but
-	// command 4 and 5 do not include channel 5 when initializing MIDI
-	// channels and fading channels to stop. This is probably a bug, which is
-	// not replicated in this reimplementation.
+	// Like the full game RSOUND.001, the demo RSOUND.001 driver includes
+	// channel 9 with the dynamic commands 4 and 5.
+	// Command 2 includes channel 5 when stopping playback, but command 2 and 3
+	// do not include channel 5 when initializing MIDI channels and fading
+	// channels to stop. Instead, command 4 includes channel 5 when stopping
+	// playback, but command 4 and 5 do not include channel 5 when initializing
+	// MIDI channels and fading channels to stop.
+	// This inconsistency is not replicated in this reimplementation.
+	// Interestingly, the demo RSOUND.001 does not include the playSoundDynamic
+	// function. All dynamically allocated sound data uses playSoundAnyChannel.
 	_dynamicStartChannel = 5;
-	// The demo RSOUND.001 driver processes channel 9 with the dynamic
-	// commands 4 and 5, instead of the static commands 2 and 3.
 	_dynamicIncludeChannel9 = true;
 	_staticIncludeChannel9 = false;
 }
@@ -391,7 +400,7 @@ int RSoundDemo1::command13() {
 }
 
 int RSoundDemo1::command14() {
-	playSoundAnyChannel(0x1AE2);
+	playSoundAnyChannel(0x1AE2, 0);
 	return 0;
 }
 
@@ -463,7 +472,7 @@ int RSoundDemo1::patchAndPlaySound(int offset) {
 	byte *data = loadData(offset);
 	data[8] = (generateRandomNumber() & 0x18) + 0x2D;
 	data[5] = adjustedCommandParam() + 0x40;
-	playSoundStatic(data, 8);
+	playSoundStatic(data, 8, 1);
 	return 0;
 }
 
@@ -584,15 +593,33 @@ const RSound2::CommandPtr RSound2::_commandList[44] = {
 
 RSound2::RSound2(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
 	RSound(mixer, midiDriver, "rsound.002", 0x1390, 0x42F0, 0x87, kRSoundFadeCheckAlternating) {
+	// RSOUND.002 is a bit of a mess when it comes to dynamic and static
+	// channels.
+	// playSoundDynamic uses channels 4-8. Commands 3 and 5 are consistent with
+	// this, as they fade out channels 1-3 and 9, and 4-8, respectively. These
+	// ranges have been reimplemented in this driver code.
+	// However, the original code commands 2 and 4 are not consistent with this
+	// and not consistent with itself. Playback is stopped on channels 1-5 and
+	// 6-9, while MIDI initialization is done on channels 1-4 and 5-9. These
+	// inconsistencies are not replicated in this reimplementation for now.
+	_dynamicStartChannel = 4;
+	_dynamicIncludeChannel9 = false;
+	_staticIncludeChannel9 = true;
 }
 
 int RSound2::command(int commandId, int param) {
-	if (commandId > 43)
+	if (commandId < 0 || commandId > 43)
 		return 0;
 
 	_commandParam = param;
 	_ticksSinceLastCommand = 0;
 	return (this->*_commandList[commandId])();
+}
+
+int RSound2::command0() {
+	_volumeCycleCounter = 47;
+
+	return RSound::command0();
 }
 
 int RSound2::command5() {
@@ -658,9 +685,9 @@ int RSound2::command15() {
 	byte *pData = loadData(0x1DFC);
 	if (!isSoundPlaying(pData)) {
 		command1();
-		playSoundAnyChannel(0x1DFC);
-		playSoundAnyChannel(0x222E);
-		playSoundAnyChannel(0x2648);
+		playSoundAnyChannel(0x1DFC, 0);
+		playSoundAnyChannel(0x222E, 0);
+		playSoundAnyChannel(0x2648, 0);
 		playSoundStatic(0x26A2, 9);
 	}
 	return 0;
@@ -670,12 +697,12 @@ int RSound2::command16() {
 	byte *pData = loadData(0x3456);
 	if (!isSoundPlaying(pData)) {
 		command1();
-		playSoundAnyChannel(0x3456);
-		playSoundAnyChannel(0x3572);
-		playSoundAnyChannel(0x367E);
-		playSoundAnyChannel(0x37C6);
-		playSoundAnyChannel(0x39AE);
-		playSoundAnyChannel(0x3A3A);
+		playSoundAnyChannel(0x3456, 0);
+		playSoundAnyChannel(0x3572, 0);
+		playSoundAnyChannel(0x367E, 0);
+		playSoundAnyChannel(0x37C6, 0);
+		playSoundAnyChannel(0x39AE, 0);
+		playSoundAnyChannel(0x3A3A, 0);
 	}
 	return 0;
 }
@@ -683,10 +710,10 @@ int RSound2::command16() {
 int RSound2::command17() {
 	byte *pData = loadData(0x3AC0);
 	if (!isSoundPlaying(pData)) {
-		playSoundDynamic(0x3AC0);
-		playSoundDynamic(0x3C70);
-		playSoundDynamic(0x3E16);
-		playSoundDynamic(0x3FBE);
+		playSoundDynamic(0x3AC0, 0);
+		playSoundDynamic(0x3C70, 0);
+		playSoundDynamic(0x3E16, 0);
+		playSoundDynamic(0x3FBE, 0);
 	}
 	return 0;
 }
@@ -704,12 +731,12 @@ int RSound2::command19() {
 	byte *pData = loadData(0x2A64);
 	if (!isSoundPlaying(pData)) {
 		command1();
-		playSoundAnyChannel(0x2A64);
-		playSoundAnyChannel(0x2BE2);
-		playSoundAnyChannel(0x2DAC);
-		playSoundAnyChannel(0x2ECE);
-		playSoundAnyChannel(0x3026);
-		playSoundAnyChannel(0x30C2);
+		playSoundAnyChannel(0x2A64, 0);
+		playSoundAnyChannel(0x2BE2, 0);
+		playSoundAnyChannel(0x2DAC, 0);
+		playSoundAnyChannel(0x2ECE, 0);
+		playSoundAnyChannel(0x3026, 0);
+		playSoundAnyChannel(0x30C2, 0);
 	}
 	return 0;
 }
@@ -819,8 +846,8 @@ int RSound2::command35() {
 }
 
 int RSound2::command36() {
-	playSoundDynamic(0xFF4);
-	playSoundDynamic(0x1008);
+	playSoundDynamic(0xFF4, 0);
+	playSoundDynamic(0x1008, 0);
 	return 0;
 }
 
@@ -833,12 +860,12 @@ int RSound2::command38() {
 	byte *pData = loadData(0x2B0E);
 	if (!isSoundPlaying(pData)) {
 		command1();
-		playSoundAnyChannel(0x2B0E);
-		playSoundAnyChannel(0x2CD0);
-		playSoundAnyChannel(0x2E46);
-		playSoundAnyChannel(0x2F7C);
-		playSoundAnyChannel(0x3074);
-		playSoundAnyChannel(0x317E);
+		playSoundAnyChannel(0x2B0E, 0);
+		playSoundAnyChannel(0x2CD0, 0);
+		playSoundAnyChannel(0x2E46, 0);
+		playSoundAnyChannel(0x2F7C, 0);
+		playSoundAnyChannel(0x3074, 0);
+		playSoundAnyChannel(0x317E, 0);
 	}
 	return 0;
 }
@@ -895,7 +922,7 @@ RSound3::RSound3(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound3::command(int commandId, int param) {
-	if (commandId > 60)
+	if (commandId < 0 || commandId > 60)
 		return 0;
 
 	_commandParam = param;
@@ -907,6 +934,12 @@ Channel *RSound3::patchAndPlaySound(int offset, byte value) {
 	byte *pData = loadData(offset);
 	pData[5] = value;
 	return playSoundDynamic(offset);
+}
+
+int RSound3::command5() {
+	if (!isSoundPlaying(0x1AE6))
+		return RSound::command5();
+	return 0;
 }
 
 int RSound3::command9() {
@@ -1149,8 +1182,8 @@ int RSound3::command35() {
 }
 
 int RSound3::command36() {
-	playSoundDynamic(0x14DA);
-	playSoundDynamic(0x14EE);
+	playSoundDynamic(0x14DA, 0);
+	playSoundDynamic(0x14EE, 0);
 	return 0;
 }
 
@@ -1271,7 +1304,7 @@ RSound4::RSound4(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound4::command(int commandId, int param) {
-	if (commandId > 59)
+	if (commandId < 0 || commandId > 59)
 		return 0;
 
 	_commandParam = param;
@@ -1290,6 +1323,14 @@ void RSound4::tickCallback() {
 
 void RSound4::stopChannel(byte channel) {
 	getChannel(channel)->_pSrc = loadData(0x1188);
+}
+
+int RSound4::command0() {
+	_callbackCounter = 0;
+	_callbackPeriod = 0;
+	_callbackFnPtr = nullptr;
+
+	return RSound::command0();
 }
 
 int RSound4::command9() {
@@ -1385,8 +1426,8 @@ int RSound4::command35() {
 }
 
 int RSound4::command36() {
-	playSoundDynamic(0x123C);
-	playSoundDynamic(0x1250);
+	playSoundDynamic(0x123C, 0);
+	playSoundDynamic(0x1250, 0);
 	return 0;
 }
 
@@ -1407,15 +1448,15 @@ int RSound4::command53() {
 	command1();
 	_callbackCounter = 56;
 	_callbackPeriod = 56;
-	playSoundAnyChannel(0x1888);
-	playSoundAnyChannel(0x18DE);
+	playSoundAnyChannel(0x1888, 0);
+	playSoundAnyChannel(0x18DE, 0);
 	return 0;
 }
 
 void RSound4::command54Callback() {
 	_callbackFnPtr = nullptr;
-	playSoundAnyChannel(0x18B2);
-	playSoundAnyChannel(0x1904);
+	playSoundAnyChannel(0x18B2, 0);
+	playSoundAnyChannel(0x1904, 0);
 }
 
 int RSound4::command54() {
@@ -1426,7 +1467,7 @@ int RSound4::command54() {
 
 void RSound4::command55Callback() {
 	_callbackFnPtr = nullptr;
-	playSoundAnyChannel(0x191E);
+	playSoundAnyChannel(0x191E, 0);
 }
 
 int RSound4::command55() {
@@ -1437,7 +1478,7 @@ int RSound4::command55() {
 
 void RSound4::command56Callback() {
 	_callbackFnPtr = nullptr;
-	playSoundAnyChannel(0x185C);
+	playSoundAnyChannel(0x185C, 0);
 }
 
 int RSound4::command56() {
@@ -1483,7 +1524,7 @@ RSound5::RSound5(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound5::command(int commandId, int param) {
-	if (commandId > 41)
+	if (commandId < 0 || commandId > 41)
 		return 0;
 
 	_commandParam = param;
@@ -1522,7 +1563,7 @@ int RSound5::command13() {
 }
 
 int RSound5::command14() {
-	playSoundStatic(0x1272, 8);
+	playSoundStatic(0x1272, 8, 1);
 	return 0;
 }
 
@@ -1650,8 +1691,8 @@ int RSound5::command35() {
 }
 
 int RSound5::command36() {
-	playSoundDynamic(0x1464);
-	playSoundDynamic(0x1478);
+	playSoundDynamic(0x1464, 0);
+	playSoundDynamic(0x1478, 0);
 	return 0;
 }
 
@@ -1701,7 +1742,7 @@ RSound6::RSound6(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound6::command(int commandId, int param) {
-	if (commandId > 29)
+	if (commandId < 0 || commandId > 29)
 		return 0;
 
 	_commandParam = param;
@@ -1716,6 +1757,14 @@ void RSound6::tickCallback() {
 	_callbackCounter = _callbackPeriod;
 	if (_callbackFnPtr != nullptr)
 		(this->*_callbackFnPtr)();
+}
+
+int RSound6::command0() {
+	_callbackCounter = 0;
+	_callbackPeriod = 0;
+	_callbackFnPtr = nullptr;
+
+	return RSound::command0();
 }
 
 int RSound6::command9() {
@@ -1783,7 +1832,7 @@ int RSound6::command20() {
 }
 
 int RSound6::command21() {
-	playSoundStatic(0x1282, 5);
+	playSoundStatic(0x1282, 5, 1);
 	playSoundDynamic(0x1282);
 	playSoundDynamic(0x1282);
 	playSoundDynamic(0x12AA);
@@ -1791,10 +1840,10 @@ int RSound6::command21() {
 }
 
 int RSound6::command22() {
-	playSoundStatic(0x12CE, 5);
-	playSoundStatic(0x12CE, 6);
-	playSoundStatic(0x12CE, 7);
-	playSoundStatic(0x12CE, 8);
+	playSoundStatic(0x12CE, 5, 1);
+	playSoundStatic(0x12CE, 6, 1);
+	playSoundStatic(0x12CE, 7, 1);
+	playSoundStatic(0x12CE, 8, 1);
 	return 0;
 }
 
@@ -1826,7 +1875,7 @@ int RSound6::command24() {
 }
 
 int RSound6::command25() {
-	playSoundStatic(0x12FE, 5);
+	playSoundStatic(0x12FE, 5, 1);
 	return 0;
 }
 
@@ -1877,7 +1926,7 @@ RSound7::RSound7(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound7::command(int commandId, int param) {
-	if (commandId > 37)
+	if (commandId < 0 || commandId > 37)
 		return 0;
 
 	_commandParam = param;
@@ -1910,7 +1959,7 @@ int RSound7::command17() {
 }
 
 int RSound7::command18() {
-	playSoundStatic(0x12FC, 8);
+	playSoundStatic(0x12FC, 8, 1);
 	return 0;
 }
 
@@ -2000,8 +2049,8 @@ int RSound7::command35() {
 }
 
 int RSound7::command36() {
-	playSoundDynamic(0x1358);
-	playSoundDynamic(0x136C);
+	playSoundDynamic(0x1358, 0);
+	playSoundDynamic(0x136C, 0);
 	return 0;
 }
 
@@ -2030,7 +2079,7 @@ RSound8::RSound8(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 }
 
 int RSound8::command(int commandId, int param) {
-	if (commandId > 37)
+	if (commandId < 0 || commandId > 37)
 		return 0;
 
 	_commandParam = param;
@@ -2044,10 +2093,10 @@ int RSound8::command9() {
 }
 
 int RSound8::command10() {
-	playSoundStatic(0x115A, 1);
-	playSoundStatic(0x115A, 2);
-	playSoundStatic(0x115A, 3);
-	playSoundStatic(0x1150, 4);
+	playSoundStatic(0x115A, 1, 1);
+	playSoundStatic(0x115A, 2, 1);
+	playSoundStatic(0x115A, 3, 1);
+	playSoundStatic(0x1150, 4, 1);
 	return 0;
 }
 
@@ -2127,10 +2176,10 @@ int RSound8::command22() {
 }
 
 int RSound8::command23() {
-	playSoundStatic(0x128E, 1);
-	playSoundStatic(0x128E, 2);
-	playSoundStatic(0x128E, 3);
-	playSoundStatic(0x128E, 4);
+	playSoundStatic(0x128E, 1, 1);
+	playSoundStatic(0x128E, 2, 1);
+	playSoundStatic(0x128E, 3, 1);
+	playSoundStatic(0x128E, 4, 1);
 	return 0;
 }
 
@@ -2207,8 +2256,8 @@ int RSound8::command35() {
 }
 
 int RSound8::command36() {
-	playSoundDynamic(0x12E6);
-	playSoundDynamic(0x12FA);
+	playSoundDynamic(0x12E6, 0);
+	playSoundDynamic(0x12FA, 0);
 	return 0;
 }
 
@@ -2237,13 +2286,19 @@ const RSound9::CommandPtr RSound9::_commandList[52] = {
 
 RSound9::RSound9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) : 
 	RSound(mixer, midiDriver, "rsound.009", 0x1520, 0x8920, 0x6F, kRSoundFadeCheckAlternating) {
+	// The full game RSOUND.009 driver uses static channels 1-5 and dynamic
+	// channels 6-9.
+	_dynamicStartChannel = 6;
+	_dynamicIncludeChannel9 = true;
+	_staticIncludeChannel9 = false;
+
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
 	_callbackFnPtr = nullptr;
 }
 
 int RSound9::command(int commandId, int param) {
-	if (commandId > 51)
+	if (commandId < 0 || commandId > 51)
 		return 0;
 
 	_commandParam = param;
@@ -2264,6 +2319,7 @@ int RSound9::command0() {
 	_callbackCounter = 0;
 	_callbackPeriod = 0;
 	_callbackFnPtr = nullptr;
+
 	return RSound::command0();
 }
 
@@ -2289,37 +2345,37 @@ int RSound9::command10() {
 }
 
 int RSound9::command11() {
-	playSoundStatic(0x33E2, 8);
+	playSoundStatic(0x33E2, 8, 1);
 	return 0;
 }
 
 int RSound9::command12() {
-	playSoundStatic(0x342E, 8);
+	playSoundStatic(0x342E, 8, 1);
 	return 0;
 }
 
 int RSound9::command13() {
-	playSoundStatic(0x343A, 8);
+	playSoundStatic(0x343A, 8, 1);
 	return 0;
 }
 
 int RSound9::command14() {
-	playSoundStatic(0x3442, 8);
+	playSoundStatic(0x3442, 8, 1);
 	return 0;
 }
 
 int RSound9::command15() {
-	playSoundStatic(0x3462, 8);
+	playSoundStatic(0x3462, 8, 1);
 	return 0;
 }
 
 int RSound9::command16() {
-	playSoundStatic(0x347A, 8);
+	playSoundStatic(0x347A, 8, 1);
 	return 0;
 }
 
 int RSound9::command17() {
-	playSoundStatic(0x3470, 8);
+	playSoundStatic(0x3470, 8, 1);
 	return 0;
 }
 
@@ -2396,7 +2452,7 @@ int RSound9::command28() {
 	int v = (generateRandomNumber() & 28) + 15;
 	byte *pData = loadData(0x334A);
 	pData[6] = v & 0x7F;
-	playSoundStatic(pData, 8);
+	playSoundStatic(pData, 8, 1);
 	return 0;
 }
 
@@ -2668,9 +2724,8 @@ const RSoundDemo9::CommandPtr RSoundDemo9::_commandList[40] = {
 
 RSoundDemo9::RSoundDemo9(Audio::Mixer *mixer, MidiDriver_MT32GM *midiDriver) :
 		RSound(mixer, midiDriver, "rsound.009", 0x11D0, 0x3664, 0x69, kRSoundFadeCheckAlternating) {
-	// The demo RSOUND.009 driver uses channel range 1-5 for the static init
-	// and stop commands 2 and 3, and 6-9 for the dynamic init and stop
-	// commands 4 and 5.
+	// Like the full game, the demo RSOUND.009 driver uses static channels 1-5
+	// and dynamic channels 6-9.
 	_dynamicStartChannel = 6;
 	_dynamicIncludeChannel9 = true;
 	_staticIncludeChannel9 = false;
@@ -2686,37 +2741,37 @@ int RSoundDemo9::command(int commandId, int param) {
 }
 
 int RSoundDemo9::command11() {
-	playSoundStatic(0x1454, 8);
+	playSoundStatic(0x1454, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command12() {
-	playSoundStatic(0x14A0, 8);
+	playSoundStatic(0x14A0, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command13() {
-	playSoundStatic(0x14AC, 8);
+	playSoundStatic(0x14AC, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command14() {
-	playSoundStatic(0x14B4, 8);
+	playSoundStatic(0x14B4, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command15() {
-	playSoundStatic(0x14D4, 8);
+	playSoundStatic(0x14D4, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command16() {
-	playSoundStatic(0x14EC, 8);
+	playSoundStatic(0x14EC, 8, 1);
 	return 0;
 }
 
 int RSoundDemo9::command17() {
-	playSoundStatic(0x14E2, 8);
+	playSoundStatic(0x14E2, 8, 1);
 	return 0;
 }
 
