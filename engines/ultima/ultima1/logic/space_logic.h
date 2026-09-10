@@ -55,6 +55,12 @@ protected:
 	}
 
 	/**
+	 * Space has no land-style turn (no food upkeep, no creature phase) - a
+	 * command just refreshes the display
+	 */
+	void endOfTurn() override;
+
+	/**
 	 * Inform - the animated sector scan of the galaxy (works in either view)
 	 */
 	bool inform() override;

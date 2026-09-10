@@ -44,6 +44,7 @@
 #include "ultima/ultima1/views/mondain_map.h"
 #include "ultima/ultima1/views/overworld_map.h"
 #include "ultima/ultima1/views/space_cockpit.h"
+#include "ultima/ultima1/views/space_game.h"
 #include "ultima/ultima1/views/space_map.h"
 #include "ultima/ultima1/views/startup.h"
 #include "ultima/ultima1/views/title.h"
@@ -75,6 +76,7 @@ struct Views : public Shared::Views {
 	MondainMap _mondainMap;
 	OverworldMap _overworldMap;
 	SpaceCockpit _spaceCockpit;
+	SpaceGame _spaceGame;
 	SpaceMap _spaceMap;
 	Startup _startup;
 	Title _title;

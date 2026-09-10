@@ -100,7 +100,9 @@ MODULE_OBJS += \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \
 	ultima1/views/space_cockpit.o \
+	ultima1/views/space_game.o \
 	ultima1/views/space_map.o \
+	ultima1/views/space_stats.o \
 	ultima1/views/stats.o \
 	ultima1/views/startup.o \
 	ultima1/views/title.o \

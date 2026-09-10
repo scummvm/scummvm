@@ -31,8 +31,16 @@ namespace Logic {
 
 using namespace Shared::Messages;
 
+const char *Logic::commandsViewName() const {
+	return _G(map)._mapType == Data::MAPTYPE_SPACE ? "SpaceCommands" : "Commands";
+}
+
+const char *Logic::statsViewName() const {
+	return _G(map)._mapType == Data::MAPTYPE_SPACE ? "SpaceStats" : "Stats";
+}
+
 void Logic::writeString(const Common::String &msg) {
-	g_engine->findView("Commands")->send(GameMessage("TEXT", msg));
+	g_engine->findView(commandsViewName())->send(GameMessage("TEXT", msg));
 }
 
 void Logic::writeString(const char *format, ...) {
@@ -47,7 +55,7 @@ void Logic::writeString(const char *format, ...) {
 }
 
 void Logic::prompt() {
-	g_engine->findView("Commands")->send(GameMessage("PROMPT"));
+	g_engine->findView(commandsViewName())->send(GameMessage("PROMPT"));
 }
 
 void Logic::redrawMap() {
@@ -59,7 +67,7 @@ void Logic::showAttackTile(int x, int y, int tileId) {
 }
 
 void Logic::redrawStats() {
-	g_engine->findView("Stats")->draw();
+	g_engine->findView(statsViewName())->draw();
 }
 
 void Logic::playFX(int num) {

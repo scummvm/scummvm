@@ -69,7 +69,7 @@ void Dialog::draw() {
 }
 
 bool Dialog::tick() {
-	g_engine->findView("Game")->tick();
+	g_engine->findView(_G(map)._mapType == Data::MAPTYPE_SPACE ? "SpaceGame" : "Game")->tick();
 	return Shared::Gfx::View::tick();
 }
 

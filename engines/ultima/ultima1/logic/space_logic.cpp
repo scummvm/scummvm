@@ -24,6 +24,7 @@
 #include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/metaengine.h"
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -42,6 +43,22 @@ void SpaceLogic::entering() {
 	_G(shipIndex) = 2;
 	_G(cockpitSpeed) = 0;
 	_G(spaceMap).setup();
+
+	// Seed the player's own ship slot from the savegame. setupSpaceMap also
+	// parks two fighters at the station and positions everything - still
+	// TODO - but the fuel/shield are what the HUD and flight need
+	Data::SpaceMapShip &ship =
+		_G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)];
+	ship._shipType = Data::SHIP_SHUTTLE;
+	ship._fuel = _G(savegame)._shipFuel;
+	ship._shield = _G(savegame)._shipShield;
+}
+
+void SpaceLogic::endOfTurn() {
+	redrawMap();
+	redrawStats();
+	// TODO: death in space (hits/shields at zero) returns to Sosaria via
+	// OUT.EXE, not the land resurrection sequence
 }
 
 int SpaceLogic::shipFuel() const {
@@ -51,7 +68,7 @@ int SpaceLogic::shipFuel() const {
 void SpaceLogic::subtractFuel(int amount) {
 	int16 &fuel = _G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)]._fuel;
 	fuel = (fuel > amount) ? (int16)(fuel - amount) : 0;
-	// TODO: displayFuelNumber() - refresh the cockpit's fuel readout
+	redrawStats();
 }
 
 void SpaceLogic::keypress(Common::KeyCode keycode) {

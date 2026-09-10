@@ -243,11 +243,19 @@ void Map::load(int mapNum) {
 		break;
 	}
 
+	// Outer space uses its own base game frame (its own stats corner); make
+	// sure the right one - SpaceGame vs Game - is the active base before the
+	// map view goes on top of it
+	bool isSpaceView = (viewName == "SpaceMap" || viewName == "SpaceCockpit");
+	const char *baseViewName = isSpaceView ? "SpaceGame" : "Game";
+	if (!g_engine->isPresent(baseViewName))
+		g_engine->replaceView(baseViewName, true);
+
 	// If the focused view isn't already a dialog under the game frame, then reset to the game
 	// frame and draw it immediately
 	Views::Dialog *view = dynamic_cast<Views::Dialog *>(g_engine->focusedView());
 	if (view == nullptr) {
-		g_engine->replaceView("Game", true);
+		g_engine->replaceView(baseViewName, true);
 		g_engine->focusedView()->draw();
 
 		// Now add the appropriate map view on top of it
