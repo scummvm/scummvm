@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -133,7 +134,7 @@ static Common::SeekableReadStream *expandMacMidiRunningStatus(Common::SeekableRe
 	return expanded.readStream(expanded.size());
 }
 
-Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
+void MusicPlayer::openMacMusicResources() {
 	static const char *const kMacMusicForks[] = {
 		"EEM Sound&Music",
 		"rsrc/EEM Sound&Music",
@@ -146,18 +147,33 @@ Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 		"rsrc/EEM London CD",
 		nullptr
 	};
+	const char *const *forks = _isLondon ? kMacLondonMusicForks : kMacMusicForks;
+	for (uint i = 0; forks[i]; i++)
+		_macResourcePaths.push_back(Common::Path(forks[i]));
+
+	// Keep installer forks open; reopening them decompresses the whole application.
+	_macResources = new Common::MacResManager[_macResourcePaths.size()];
+	for (uint i = 0; i < _macResourcePaths.size(); i++)
+		_macResources[i].open(_macResourcePaths[i]);
+}
+
+Common::SeekableReadStream *MusicPlayer::getMacMusicResource(uint file, uint16 id, uint32 type) {
+	if (_macResources[file].hasResFork())
+		return _macResources[file].getResource(type, id);
+	return openMacResource(_macResourcePaths[file], type, id);
+}
+
+Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 	static const uint32 kMacMidiTypes[] = {
 		MKTAG('c', 'm', 'i', 'd'),
 		MKTAG('M', 'I', 'D', 'I'),
 		MKTAG('M', 'i', 'd', 'i'),
 	};
 
-	const char *const *forks = _isLondon ? kMacLondonMusicForks : kMacMusicForks;
-	for (uint i = 0; forks[i]; i++) {
-		const Common::Path path(forks[i]);
+	for (uint i = 0; i < _macResourcePaths.size(); i++) {
 		if (type == MKTAG('M', 'I', 'D', 'I') || type == MKTAG('M', 'i', 'd', 'i')) {
 			for (uint j = 0; j < ARRAYSIZE(kMacMidiTypes); j++) {
-				Common::SeekableReadStream *stream = openMacResource(path, kMacMidiTypes[j], id);
+				Common::SeekableReadStream *stream = getMacMusicResource(i, id, kMacMidiTypes[j]);
 				if (stream) {
 					Common::SeekableReadStream *expanded = expandMacMidiRunningStatus(*stream);
 					delete stream;
@@ -169,7 +185,7 @@ Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 			continue;
 		} else if (type == MKTAG('s', 'n', 'd', ' ')) {
 			// London stores most instrument samples as delta-compressed csnd.
-			Common::SeekableReadStream *packed = openMacResource(path, MKTAG('c', 's', 'n', 'd'), id);
+			Common::SeekableReadStream *packed = getMacMusicResource(i, id, MKTAG('c', 's', 'n', 'd'));
 			if (packed) {
 				Common::SeekableReadStream *stream = decompressMacSound(*packed);
 				delete packed;
@@ -177,7 +193,7 @@ Common::SeekableReadStream *MusicPlayer::getResource(uint16 id, uint32 type) {
 			}
 		}
 
-		Common::SeekableReadStream *stream = openMacResource(path, type, id);
+		Common::SeekableReadStream *stream = getMacMusicResource(i, id, type);
 		if (stream)
 			return stream;
 	}
@@ -230,8 +246,10 @@ uint16 macSongResourceIdForMus(uint num, bool macCD) {
 MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh, bool isLondon, bool isMacCD) :
 	_isFloppy(isFloppy), _isMacintosh(isMacintosh), _isLondon(isLondon),
 	_isMacCD(isMacCD) {
-	if (_isMacintosh)
+	if (_isMacintosh) {
+		openMacMusicResources();
 		return;
+	}
 
 	// _InitMIDI @ 20a2:013a — `_AIL_register_driver` against
 	// ADLIB.ADV / SBFM.ADV / MT32MPU.ADV. We honour the launcher's
@@ -285,6 +303,7 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh, bool isLondon, bool is
 
 MusicPlayer::~MusicPlayer() {
 	stop();
+	delete[] _macResources;
 }
 
 void MusicPlayer::stop() {

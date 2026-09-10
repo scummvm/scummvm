@@ -29,6 +29,10 @@
 #include "common/path.h"
 #include "common/scummsys.h"
 
+namespace Common {
+class MacResManager;
+}
+
 namespace EEM {
 
 /**
@@ -74,6 +78,8 @@ public:
 	void send(uint32 b) override;
 
 private:
+	void openMacMusicResources();
+	Common::SeekableReadStream *getMacMusicResource(uint file, uint16 id, uint32 type);
 	void playMacSongResource(uint16 resourceId, bool loop);
 	void startLoadedMusic(const Common::String &name, bool loop);
 	Common::SeekableReadStream *getResource(uint16 id, uint32 type) override;
@@ -84,6 +90,8 @@ private:
 	const bool _isLondon;
 	const bool _isMacCD;
 	Common::Array<byte> _xmiData;
+	Common::Array<Common::Path> _macResourcePaths;
+	Common::MacResManager *_macResources = nullptr;
 	Audio::HalestormDriver *_macDriver = nullptr;
 };
 
