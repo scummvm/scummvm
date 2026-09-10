@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "mads/mads.h"
 #include "mads/core/general.h"
 #include "mads/core/config.h"
@@ -137,12 +139,17 @@ int  eye_pokes   = 0;
 int  recent_eye  = 0;
 int  rebel_base  = 0;
 int  poke_count_message = -1;
+int  rebel_second_message = -1;
 int  poke_count         = 0;
 int  poke_counting      = false;
 
 char poke_count_buf[2][20];
 
-char bonus_buf[80] = "";
+static const byte REBEL_QUOTES[][2] = {
+	{ 82, 83 }, { 84, 85 }, { 86, 0 }, { 87, 0 }, { 88, 89 },
+	{ 90, 0 }, { 91, 0 }, { 92, 93 }, { 94, 95 }, { 96, 0 },
+	{ 97, 0 }, { 98, 0 }, { 99, 0 }
+};
 
 Palette special_pal;                     /* Palette for fadeout */
 
@@ -298,6 +305,31 @@ done:
 	;
 }
 
+static void add_bonus_message() {
+	const byte *quote_ids = REBEL_QUOTES[rebel_base - 1];
+
+	if (poke_count_message >= 0)
+		kernel_message_delete(poke_count_message);
+	if (rebel_second_message >= 0)
+		kernel_message_delete(rebel_second_message);
+	rebel_second_message = -1;
+
+	if (quote_ids[1] != 0) {
+		poke_count_message = kernel_message_add(
+			quote_string(quotes, quote_ids[0]), 160, 27,
+			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
+		rebel_second_message = kernel_message_add(
+			quote_string(quotes, quote_ids[1]), 160, 40,
+			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
+	} else {
+		poke_count_message = kernel_message_add(
+			quote_string(quotes, quote_ids[0]), 160, 40,
+			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
+	}
+
+	rebel_base++;
+}
+
 static void process_messages(int anim) {
 	int total;
 	int count;
@@ -319,21 +351,47 @@ static void process_messages(int anim) {
 
 	eye_pokes++;
 
-	if (eye_pokes < 6) {
-		id = eye_pokes - 1;
-	} else {
-		id = imath_random(0, EYE_QUOTES - 1);
-	}
-
 	if (poke_counting) {
-		if (poke_count_message >= 0) {
+		if (poke_count_message >= 0)
 			kernel_message_delete(poke_count_message);
-		}
+		if (rebel_second_message >= 0)
+			kernel_message_delete(rebel_second_message);
+		rebel_second_message = -1;
 		poke_count++;
-		buf = (poke_count & 1);
+		buf = poke_count & 1;
 		Common::sprintf_s(poke_count_buf[buf], "%d", poke_count);
 		poke_count_message = kernel_message_add(poke_count_buf[buf], 160, 40,
 			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
+
+		if (poke_count == 999) {
+			add_bonus_message();
+			goto done;
+		}
+		if (poke_count >= 1000)
+			poke_counting = false;
+	}
+
+	if ((rebel_base > 0) && (rebel_base != 9) &&
+			(rebel_base <= (int)ARRAYSIZE(REBEL_QUOTES))) {
+		add_bonus_message();
+		if (rebel_base == 9) {
+			poke_count = 0;
+			poke_counting = true;
+		}
+		goto done;
+	}
+
+	if (eye_pokes < 6) {
+		id = eye_pokes - 1;
+	} else {
+		id = imath_random(0,
+			(ConfMan.getBool("restore_main_menu_content") && !rebel_base) ?
+			EYE_QUOTES : EYE_QUOTES - 1);
+		if (id == EYE_QUOTES) {
+			rebel_base = 1;
+			add_bonus_message();
+			goto done;
+		}
 	}
 
 	id += quote_mainmenu_phantom_1;
@@ -391,6 +449,7 @@ void menu_control() {
 	recent_eye = 0;
 	rebel_base = 0;
 	poke_count_message = -1;
+	rebel_second_message = -1;
 	poke_count = 0;
 	poke_counting = false;
 

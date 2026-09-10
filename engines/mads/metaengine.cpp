@@ -141,6 +141,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_RESTORE_PHANTOM_MAIN_MENU_CONTENT,
+		{
+			_s("Enable restored main menu content"),
+			_s("Restore unused content in the main menu."),
+			"restore_main_menu_content",
+			false,
+			0,
+			0
+		}
+	},
+
 #ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
