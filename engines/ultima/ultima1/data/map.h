@@ -144,9 +144,17 @@ public:
 
 	/**
 	 * Loads a specified map.
-	 * @param mapNum 
+	 * @param mapNum
 	 */
 	void load(int mapNum);
+
+	/**
+	 * Restores the Mondain encounter room to its pristine layout, discarding
+	 * anything left behind by a previous visit (placed barriers, conjured
+	 * hazards, the player/position markers). The original re-reads the room
+	 * from disk each time its executable launches; this is the equivalent
+	 */
+	void resetMondainMap();
 
 	/**
 	 * Returns the map width

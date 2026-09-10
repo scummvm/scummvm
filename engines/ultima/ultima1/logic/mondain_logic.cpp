@@ -45,8 +45,34 @@ MondainLogic::MondainLogic() {
 }
 
 void MondainLogic::entering() {
-	_G(savegame)._locationPosition = Common::Point(3, 4);
-	_G(savegame)._mondainPos = Common::Point(15, 4);
+	Data::Savegame &sg = _G(savegame);
+
+	// Discard anything a previous visit left in the room (placed barriers,
+	// conjured hazards, stale position markers)
+	_G(map).resetMondainMap();
+
+	// Fixed starting positions - the player by the time machine on the west
+	// wall, Mondain across the room to the east. These match the MTILE_PLAYER
+	// marker baked into MONDAIN_MAP; Mondain is drawn purely as an overlay,
+	// so his cell stays 0 in the map data
+	sg._locationPosition = Common::Point(3, 4);
+	sg._mondainPos = Common::Point(15, 4);
+
+	// The original re-launches a dedicated executable for this encounter, so
+	// every bit of its state starts from that executable's static
+	// initializers. We reuse the one long-lived Savegame, so reset the same
+	// state here to those values - otherwise a second visit (via the debug
+	// map command, say) would inherit a dead or half-fought Mondain
+	sg._mondainHits = 1000;
+	sg._mondainPhase = 2;
+	sg._mondainPhaseAnimOffset = 0;
+	sg._mondainPhaseTimer = 20;
+	sg._mondainHitAnimFrame = 0;
+	sg._mondainHitAnimDir = 0;
+	sg._mondainCombatFlag = 0;
+	sg._gemDestroyedFlag = false;
+	sg._mondainDefeatedFlag = 0;
+	sg._mondainHazardAnim = -1;
 }
 
 bool MondainLogic::move(Data::Direction dir) {

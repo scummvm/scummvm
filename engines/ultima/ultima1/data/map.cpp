@@ -103,7 +103,7 @@ static const byte MONDAIN_MAP[MONDAIN_HEIGHT][MONDAIN_WIDTH] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 5, 5, 5, 0 },
 	{ 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
-	{ 0, 0, 1, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0 },
+	{ 0, 0, 1,20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
 	{ 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 5, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 5, 5, 5, 0 },
@@ -148,7 +148,7 @@ void Map::init() {
 	}
 
 	// Copy the Mondain map
-	Common::copy(&MONDAIN_MAP[0][0], &MONDAIN_MAP[0][0] + MONDAIN_WIDTH * MONDAIN_HEIGHT, &_mondainMap[0][0]);
+	resetMondainMap();
 
 	// Load tiles
 	loadTiles("egatiles.bin", _overworldTiles, OVERWORLD_TILES_COUNT, 16);
@@ -158,6 +158,10 @@ void Map::init() {
 	_mondainTiles[0].create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
 	loadTiles("egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16);
 	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
+}
+
+void Map::resetMondainMap() {
+	Common::copy(&MONDAIN_MAP[0][0], &MONDAIN_MAP[0][0] + MONDAIN_WIDTH * MONDAIN_HEIGHT, &_mondainMap[0][0]);
 }
 
 void Map::load(int mapNum) {
