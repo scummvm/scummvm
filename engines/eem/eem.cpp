@@ -36,6 +36,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/paletteman.h"
 
 #include "video/flic_decoder.h"
@@ -224,15 +225,22 @@ void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 }
 
-bool installMacLondonCursor(uint16 resourceId) {
-	static const char *const kAppForks[] = {
+bool installMacCursor(uint16 resourceId, bool london) {
+	static const char *const kMacCDAppForks[] = {
+		"Eagle Eye Mysteries CD",
+		"rsrc/Eagle Eye Mysteries CD",
+		nullptr
+	};
+	static const char *const kLondonAppForks[] = {
 		"EEM London CD",
-		"rsrc/EEM London CD"
+		"rsrc/EEM London CD",
+		nullptr
 	};
 
-	for (uint i = 0; i < ARRAYSIZE(kAppForks); i++) {
+	const char *const *appForks = london ? kLondonAppForks : kMacCDAppForks;
+	for (uint i = 0; appForks[i]; i++) {
 		Common::ScopedPtr<Common::SeekableReadStream> crsrStream(
-			openMacResource(Common::Path(kAppForks[i]),
+			openMacResource(Common::Path(appForks[i]),
 							MKTAG('c', 'r', 's', 'r'), resourceId));
 		if (crsrStream) {
 			Graphics::MacCursor macCursor;
@@ -248,12 +256,26 @@ bool installMacLondonCursor(uint16 resourceId) {
 }
 
 void installMouseCursor(DBDArchive &pics, bool interactive, bool mac,
-						bool london) {
-	if (mac && london) {
-		// EEM2 (London) Mac keeps pointers as 'crsr' colour cursors in the
-		// application resource fork; the DOS cursor PIC ids are mostly 1x1
-		// stubs or unrelated full-screen pictures in this release.
-		if (installMacLondonCursor(kLondonMacCursorCrsrs[0]))
+						bool london, bool macCD) {
+	if (mac && !london && !macCD) {
+		// Mac floppy CODE 2:484c selects QuickDraw's standard arrow.
+		const byte *data, *palette, *mask;
+		int width, height, hotspotX, hotspotY, transparent;
+		if (Graphics::MacWindowManager::getBuiltInCursorData(Graphics::kMacCursorArrow,
+				data, palette, mask, width, height, hotspotX, hotspotY, transparent)) {
+			CursorMan.replaceCursor(data, width, height, hotspotX, hotspotY,
+				transparent, nullptr, mask);
+			byte colors[6];
+			memcpy(colors, palette, sizeof(colors));
+			if (interactive)
+				colors[0] = 0xff;
+			CursorMan.replaceCursorPalette(colors, 0, 2);
+			return;
+		}
+	}
+	if (mac && (london || macCD)) {
+		// Mac CD CODE 2:3aea selects the same native arrow as Mac London.
+		if (installMacCursor(kLondonMacCursorCrsrs[0], london))
 			return;
 	}
 
@@ -296,7 +318,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_variant = kVariantFloppy;
 	if (gameDesc && gameDesc->platform == Common::kPlatformMacintosh)
 		_variant = gameDesc->extra && Common::String(gameDesc->extra).contains("CD")
-			? kVariantMacCD : kVariantMac;
+			? kVariantMacCD : kVariantMacFloppy;
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
@@ -570,7 +592,7 @@ Common::Error EEMEngine::run() {
 	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
-	installMouseCursor(_picsArchive, false, isMacintosh(), isLondon());
+	installMouseCursor(_picsArchive, false, isMacintosh(), isLondon(), isMacCD());
 	CursorMan.showMouse(false);
 
 	// _AllBlack @ 172b:0d4b.
@@ -872,7 +894,13 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 		return;
 
 	_interactiveMouseCursor = active;
-	installMouseCursor(_picsArchive, active, isMacintosh(), isLondon());
+	if (isMacCD()) {
+		// Native arrow 132 uses white (0) and black (1); only recolour its fill.
+		const byte palette[] = { 0xff, 0xff, 0xff, (byte)(active ? 0xff : 0), 0, 0 };
+		CursorMan.replaceCursorPalette(palette, 0, 2);
+		return;
+	}
+	installMouseCursor(_picsArchive, active, isMacintosh(), isLondon(), isMacCD());
 	// The red-outline highlight replaced any London cursor shape; force the
 	// next setSiteHotspotCursorId to reinstall.
 	_siteCursorId = -1;
@@ -899,7 +927,7 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 		uint16 resourceId = kLondonMacCursorCrsrs[cursorId];
 		if (cursorId == 4 || cursorId == 5)
 			resourceId = (_partner == kPartnerJenny) ? 139 : 138;
-		if (!installMacLondonCursor(resourceId)) {
+		if (!installMacCursor(resourceId, true)) {
 			warning("EEM2 Mac: cursor %d ('crsr' %u) missing",
 					cursorId, resourceId);
 			return;

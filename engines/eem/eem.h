@@ -100,11 +100,11 @@ enum ScreenId {
 /// Distribution variant from `ADGameDescription::extra` (set by
 /// `gameDescriptions[]` in `detection.cpp`).
 enum Variant {
-	kVariantCD       = 0,
-	kVariantFloppy   = 1,
-	kVariantLondonCD = 2,
-	kVariantMac      = 3,
-	kVariantMacCD    = 4,
+	kVariantCD        = 0,
+	kVariantFloppy    = 1,
+	kVariantLondonCD  = 2,
+	kVariantMacFloppy = 3,
+	kVariantMacCD     = 4,
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -198,8 +198,7 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
-	/// Interactive-region cursor. DOS/EEM1 uses a red-outline pointer; Mac
-	/// London uses the original Color QuickDraw arrow.
+	/// Highlight interactive regions; Mac London retains its native colours.
 	void setInteractiveMouseCursor(bool active);
 
 	/// Interactive cursor over searchable hotspots.

@@ -92,7 +92,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"eem",
-		"",
+		"Floppy",
 		AD_ENTRY2s("MysteryData", "d94c087c27e68cc299d7c5e737e458f9", 941029,
 				   "PICS.DBD",    "8905041070ff1352666d98cd78d5501c", 3800445),
 		Common::EN_ANY,
@@ -106,7 +106,7 @@ const ADGameDescription gameDescriptions[] = {
 		// the fly (see installer.cpp). "d:" hashes the data fork so this matches
 		// both the raw-fork (CD/floppy) and MacBinary-wrapped captures.
 		"eem",
-		"",
+		"Floppy",
 		AD_ENTRY2s("Eagle Eye Installer", "d:08440dbf0cb47fb57e522f050159ffaa", 1391577,
 				   "EEM Install Data 2",  "aebccc677e149b37285f291f6ac72f57", 1446428),
 		Common::EN_ANY,
