@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/util.h"
 #include "ultima/ultima1/logic/space_logic.h"
 #include "ultima/ultima1/data/map.h"
 #include "ultima/ultima1/data/space_map.h"
@@ -31,6 +30,7 @@ namespace Ultima1 {
 namespace Logic {
 
 SpaceLogic::SpaceLogic() {
+	_G(map)._mapType = Data::MAPTYPE_SPACE;
 }
 
 void SpaceLogic::entering() {
@@ -40,7 +40,6 @@ void SpaceLogic::entering() {
 	_G(sectorX) = Data::SPACE_STATION_X;
 	_G(sectorY) = Data::SPACE_STATION_Y;
 	_G(shipIndex) = 2;
-	_G(cockpitView) = false;
 	_G(cockpitSpeed) = 0;
 	_G(spaceMap).setup();
 }
@@ -55,24 +54,7 @@ void SpaceLogic::subtractFuel(int amount) {
 	// TODO: displayFuelNumber() - refresh the cockpit's fuel readout
 }
 
-void SpaceLogic::setSpeed(int speed) {
-	writeString("Speed %d\n", speed);
-
-	int reqFuel = ABS(speed - _G(cockpitSpeed)) * 4;
-	if (reqFuel > shipFuel()) {
-		writeString("Not enough fuel!\n");
-	} else {
-		_G(cockpitSpeed) = speed;
-		subtractFuel(reqFuel);
-	}
-}
-
 void SpaceLogic::keypress(Common::KeyCode keycode) {
-	if (_G(cockpitView) && keycode >= Common::KEYCODE_1 && keycode <= Common::KEYCODE_8) {
-		setSpeed(keycode - Common::KEYCODE_0);
-		return;
-	}
-
 	writeString("Huh?\n");
 	playFX(1);
 }
@@ -101,14 +83,6 @@ bool SpaceLogic::climb() {
 	return true;
 }
 
-bool SpaceLogic::fire() {
-	// Overhead view - nothing to shoot at. In the cockpit view the original
-	// runs handleFireCommand (space combat), which isn't ported yet
-	writeString("Fire?\n");
-	playFX(1);
-	return true;
-}
-
 bool SpaceLogic::quit() {
 	writeString("Quit?\n");
 	playFX(1);
@@ -117,15 +91,6 @@ bool SpaceLogic::quit() {
 
 bool SpaceLogic::ready() {
 	writeString("Ready?\n");
-	playFX(1);
-	return true;
-}
-
-bool SpaceLogic::view() {
-	// The original's View toggles between the cockpit and overhead sector
-	// map (with fuel/collision checks and a "whilst in space dock" guard) -
-	// not ported until the flight system is
-	writeString("View?\n");
 	playFX(1);
 	return true;
 }

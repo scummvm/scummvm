@@ -39,6 +39,11 @@ constexpr int SPACE_STATION_Y = 3;
 // player's own ship, spawned attackers)
 constexpr int SPACE_SHIPS_PER_SECTOR = 4;
 
+// Direction names shown in the cockpit view, indexed by Data::Direction
+// (1-4): the arrow keys read as Left / Right / Climb / Dive rather than the
+// overhead view's West / East / North / South
+extern const char *SPACE_COCKPIT_DIRECTION_NAMES[5];
+
 // Ship types (SHIP_* in the disassembly)
 enum SpaceShipType {
 	SHIP_NONE = -1,

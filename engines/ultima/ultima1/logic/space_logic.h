@@ -29,8 +29,17 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
+/**
+ * Shared base for the two outer-space modes. Outer space has two quite
+ * different play views - the overhead sector map (SpaceMapLogic) and the
+ * first-person cockpit (SpaceCockpitLogic) - swapped with the View command.
+ * This holds what's common to both: entering(), the fuel accessors, and the
+ * many commands that just say "<X>?" in either mode
+ */
 class SpaceLogic : public Logic {
-private:
+protected:
+	SpaceLogic();
+
 	/**
 	 * Fuel remaining in the ship the player is currently flying
 	 * (getShipFuel)
@@ -42,48 +51,39 @@ private:
 	 */
 	void subtractFuel(int amount);
 
-	/**
-	 * Sets the cockpit flight speed (1-8), spending 4 fuel per step of
-	 * change - the number keys while in the cockpit view. setSpeed
-	 */
-	void setSpeed(int speed);
-
-protected:
-	bool move(Data::Direction dir) override {
-		return true;
-	}
-
-	/**
-	 * Handles updating creatures/NPCs
-	 */
 	void updateCreatures() override {
 	}
 
 	/**
-	 * Inform - shows the animated sector scan of the galaxy
+	 * Inform - the animated sector scan of the galaxy (works in either view)
 	 */
 	bool inform() override;
 
 	// Commands that do nothing in outer space - just a beep and a prompt.
-	// The rest (board/drop/enter/get/open/steal/transact/unlock/xit/noise)
+	// board/drop/enter/get/open/steal/transact/unlock/xit/noise/pass
 	// already say the right thing via the base Logic fallbacks
 	bool attack(Data::Direction dir) override;
 	bool cast() override;
 	bool climb() override;
-	bool fire() override;
 	bool quit() override;
 	bool ready() override;
-	bool view() override;
 
 public:
-	SpaceLogic();
 	~SpaceLogic() override {
 	}
 
+	/**
+	 * Sets up the whole space encounter: rolls the galaxy, drops the player
+	 * at the station sector flying the shuttle. Deliberately on the base
+	 * class - it's only ever called on the SpaceMapLogic that take-off
+	 * loads, but conceptually it belongs to "entering space", not to the
+	 * overhead view specifically
+	 */
 	void entering() override;
 
 	/**
-	 * The number keys set the flight speed while in the cockpit view
+	 * Any unmapped key is just "Huh?" (overridden by SpaceCockpitLogic for
+	 * the speed number keys)
 	 */
 	void keypress(Common::KeyCode keycode) override;
 };

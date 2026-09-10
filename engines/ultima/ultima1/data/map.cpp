@@ -27,7 +27,7 @@
 #include "ultima/ultima1/logic/dungeon_logic.h"
 #include "ultima/ultima1/logic/mondain_logic.h"
 #include "ultima/ultima1/logic/overworld_logic.h"
-#include "ultima/ultima1/logic/space_logic.h"
+#include "ultima/ultima1/logic/space_map_logic.h"
 #include "ultima/ultima1/views/dialog.h"
 #include "ultima/ultima1/ultima1.h"
 
@@ -191,7 +191,7 @@ void Map::load(int mapNum) {
 	// Set up logic handler for the mode and which view it'll be using
 	Common::String viewName;
 	if (mapNum == MAP_SPACE) {
-		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::SpaceLogic());
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::SpaceMapLogic());
 		viewName = "SpaceMap";
 	} else if (mapNum == MAP_MONDAIN) {
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::MondainLogic());

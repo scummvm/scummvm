@@ -68,7 +68,9 @@ MODULE_OBJS += \
 	ultima1/logic/dungeon_logic.o \
 	ultima1/logic/mondain_logic.o \
 	ultima1/logic/overworld_logic.o \
+	ultima1/logic/space_cockpit_logic.o \
 	ultima1/logic/space_logic.o \
+	ultima1/logic/space_map_logic.o \
 	ultima1/views/interactions/interaction.o \
 	ultima1/views/interactions/dead.o \
 	ultima1/views/interactions/direction.o \
@@ -97,6 +99,7 @@ MODULE_OBJS += \
 	ultima1/views/mondain_map.o \
 	ultima1/views/overworld.o \
 	ultima1/views/overworld_map.o \
+	ultima1/views/space_cockpit.o \
 	ultima1/views/space_map.o \
 	ultima1/views/stats.o \
 	ultima1/views/startup.o \

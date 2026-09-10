@@ -27,6 +27,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Data {
 
+const char *SPACE_COCKPIT_DIRECTION_NAMES[5] = { nullptr, "Left", "Right", "Climb", "Dive" };
+
 int SpaceMap::getRandomNumber(int minVal, int maxVal) {
 	// seed = ror16(seed + 0x9248, 3)
 	_randomSeed = (uint16)(_randomSeed + 0x9248);
