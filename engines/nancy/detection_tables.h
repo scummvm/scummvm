@@ -119,7 +119,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy1
@@ -158,7 +158,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY2_GUIOPTIONS
 		},
 		kGameTypeNancy2
@@ -197,7 +197,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy3
@@ -214,7 +214,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy3
@@ -242,7 +242,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy3
@@ -281,7 +281,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy4
@@ -298,7 +298,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy4
@@ -315,7 +315,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy4
@@ -344,7 +344,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY_GUIOPTIONS
 		},
 		kGameTypeNancy4
@@ -372,7 +372,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY5_GUIOPTIONS
 		},
 		kGameTypeNancy5
@@ -389,7 +389,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY5_GUIOPTIONS
 		},
 		kGameTypeNancy5
@@ -406,7 +406,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY5_GUIOPTIONS
 		},
 		kGameTypeNancy5
@@ -435,7 +435,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY5_GUIOPTIONS
 		},
 		kGameTypeNancy5
@@ -467,7 +467,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy6
@@ -484,7 +484,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy6
@@ -501,7 +501,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy6
@@ -529,7 +529,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy6
@@ -557,7 +557,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy7
@@ -574,7 +574,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy7
@@ -602,7 +602,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY6_7_GUIOPTIONS
 		},
 		kGameTypeNancy7
@@ -630,7 +630,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy8
@@ -658,7 +658,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy8
@@ -690,7 +690,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy9
@@ -737,7 +737,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy10
@@ -754,7 +754,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy10
@@ -770,7 +770,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy10
@@ -817,7 +817,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DROPPLATFORM | GF_COMPRESSED,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy11

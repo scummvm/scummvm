@@ -579,11 +579,9 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
 
 	// Load archive if running a compressed variant
-	if (isCompressed()) {
-		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
-		if (cabinet) {
-			SearchMan.add("data1.cab", cabinet);
-		}
+	Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+	if (cabinet) {
+		SearchMan.add("data1.cab", cabinet);
 	}
 
 	_resource->readCifTree("ciftree", "dat", 1);
@@ -976,10 +974,6 @@ Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
 	NancySceneState.getActionManager().synchronize(ser);
 
 	return Common::kNoError;
-}
-
-bool NancyEngine::isCompressed() {
-	return getGameFlags() & GF_COMPRESSED;
 }
 
 } // End of namespace Nancy

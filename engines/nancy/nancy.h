@@ -181,8 +181,6 @@ private:
 
 	Common::Error synchronize(Common::Serializer &serializer);
 
-	bool isCompressed();
-
 	StaticData _staticData;
 	Common::HashMap<Common::String, EngineData *> _engineData;
 
