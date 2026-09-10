@@ -85,6 +85,11 @@ protected:
 	Common::Rect _exitHotspot;
 	Common::Array<PhoneCall> _calls;
 
+	// Number of digits a number needs before the phone starts dialing. Numbers
+	// beginning with a '1' are long distance and have their own length
+	uint16 _numberLength = 7;
+	uint16 _longDistanceNumberLength = 11;
+
 	// NewPhone properties
 	bool _hasDisplay = false;
 	uint16 _displayFont = 0;

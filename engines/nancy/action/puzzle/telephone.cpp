@@ -128,6 +128,11 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 	readRect(stream, _exitHotspot);
 
+	if (_phoneType == kTelephone && g_nancy->getGameType() >= kGameTypeNancy14) {
+		_numberLength = stream.readUint16LE();
+		_longDistanceNumberLength = stream.readUint16LE();
+	}
+
 	uint numCalls = stream.readUint16LE();
 
 	_calls.resize(numCalls);
@@ -193,6 +198,9 @@ void Telephone::execute() {
 				// Pressed a new button, check all numbers for match
 				// We do this before going to the ringing state to support nancy4's voice mail system,
 				// where call numbers can be 1 digit long
+				uint numberLength = (_calledNumber.size() && _calledNumber[0] == 1) ? _longDistanceNumberLength : _numberLength;
+				bool isNumberComplete = _calledNumber.size() >= numberLength;
+
 				for (uint i = 0; i < _calls.size(); ++i) {
 					auto &call = _calls[i];
 					bool invalid = false;
@@ -206,13 +214,8 @@ void Telephone::execute() {
 					}
 
 					// We do not want to check for a terminator if the dialed number is of
-					// appropriate size (7 digits, or 11 when the number starts with '1')
-					bool checkNextDigit = true;
-					if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
-						checkNextDigit = false;
-					}
-
-					if (!invalid && checkNextDigit) {
+					// appropriate size
+					if (!invalid && !isNumberComplete) {
 						// Check if the next digit in the phone number is '10' (star). Presumably, that will never
 						// be contained in a valid phone number
 						if (_calls[i].phoneNumber[_calledNumber.size()] != 10) {
@@ -230,7 +233,7 @@ void Telephone::execute() {
 
 				if (_selected == -1) {
 					// Did not find a suitable match, check if the dialed number is above allowed size
-					if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
+					if (isNumberComplete) {
 						shouldRing = true;
 					}
 				} else {
