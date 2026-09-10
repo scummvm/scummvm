@@ -228,6 +228,9 @@ bool readHotspotRect(const byte *r, bool mac, Common::Rect &rect) {
 }
 
 Common::Rect siteControlRect(const EEMEngine *vm, const Common::Rect &rect) {
+	// Mac CD SiteButtons retain the feet shortcut outside TRAVIS.
+	if (vm && vm->isMacCD() && rect == kPdaPartnerFootMapRect)
+		return Common::Rect(11, 340, 91, 384);
 	return pdaControlRect(vm, rect);
 }
 
