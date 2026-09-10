@@ -271,6 +271,7 @@ constexpr Common::Rect kPdaLondonCloseRect(Common::Point(0, 0), 66, 79);
 // Mac _NotebookRect and the TRAVIS button table use native QuickDraw rects;
 // keep them exact instead of deriving them from the rounded DOS scaler.
 constexpr Common::Rect kMacNotebookTextRect(Common::Point(125, 23), 336, 269);
+constexpr Common::Rect kMacLondonNotebookTextRect(Common::Point(125, 23), 331, 274);
 constexpr Common::Rect kMacPdaHelpRect(Common::Point(164, 336), 33, 28);
 constexpr Common::Rect kMacPdaNotebookRect(Common::Point(247, 336), 34, 28);
 constexpr Common::Rect kMacPdaGalleryRect(Common::Point(330, 336), 34, 28);
@@ -289,13 +290,17 @@ constexpr Common::Rect kMacCDPdaMapRect(Common::Point(149, 334), 35, 30);
 constexpr Common::Rect kMacCDPdaNotebookRect(Common::Point(249, 334), 36, 30);
 constexpr Common::Rect kMacCDPdaGalleryRect(Common::Point(327, 334), 35, 30);
 constexpr Common::Rect kMacCDPdaHelpRect(Common::Point(426, 334), 36, 30);
-constexpr Common::Rect kMacCDPdaScrollRect(Common::Point(476, 19), 16, 294);
-constexpr Common::Rect kMacCDSuspectScrollRect(Common::Point(476, 179), 16, 113);
-constexpr Common::Rect kMacCDSuspectTextRect(Common::Point(125, 179), 326, 113);
-constexpr Common::Rect kMacCDAccuseTextRect(Common::Point(126, 52), 346, 259);
-constexpr int kMacCDPdaLineHeight = 16;
-constexpr int kMacCDPdaTextInsetX = 5;
-constexpr int kMacCDPdaTextInsetY = 4;
+constexpr Common::Rect kMacTravisScrollRect(Common::Point(476, 19), 16, 294);
+constexpr Common::Rect kMacTravisSuspectScrollRect(Common::Point(476, 179), 16, 113);
+constexpr Common::Rect kMacTravisSuspectTextRect(Common::Point(125, 179), 326, 113);
+constexpr Common::Rect kMacTravisAccuseTextRect(Common::Point(126, 52), 346, 259);
+constexpr int kMacTravisLineHeight = 16;
+constexpr int kMacTravisTextInsetX = 5;
+constexpr int kMacTravisTextInsetY = 4;
+
+bool usesTravisScrollBar(const EEMEngine *vm) {
+	return vm && (vm->isMacCD() || (vm->isMacintosh() && vm->isLondon()));
+}
 
 class TravisScrollBar {
 public:
@@ -524,6 +529,8 @@ constexpr uint kRestoredContentLastMystery = 0x18;
 Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect) {
 	if (!vm || !vm->isMacintosh())
 		return rect;
+	if (usesTravisScrollBar(vm) && (rect == kPdaPageNextRect || rect == kPdaPagePrevRect))
+		return Common::Rect();
 	if (vm->isMacCD()) {
 		if (rect == kPdaNotebookRect)
 			return kMacCDPdaNotebookRect;
@@ -533,7 +540,7 @@ Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect) {
 			return kMacCDPdaGalleryRect;
 		if (rect == kPdaHelp2Rect)
 			return kMacCDPdaHelpRect;
-		if (rect == kPdaPageNextRect || rect == kPdaPagePrevRect || rect == kPdaPartnerFootMapRect)
+		if (rect == kPdaPartnerFootMapRect)
 			return Common::Rect();
 	}
 	if (rect == kPdaNotebookRect)
@@ -560,7 +567,7 @@ Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect) {
 }
 
 int macPdaScrollBarDelta(const EEMEngine *vm, int x, int y) {
-	if (!vm || !vm->isMacintosh() || vm->isMacCD() || !kMacPdaScrollBarRect.contains(x, y))
+	if (!vm || !vm->isMacintosh() || usesTravisScrollBar(vm) || !kMacPdaScrollBarRect.contains(x, y))
 		return 0;
 
 	static const Common::Rect kMacPdaScrollBarButtons[] = {
@@ -578,8 +585,8 @@ int macPdaScrollBarDelta(const EEMEngine *vm, int x, int y) {
 }
 
 bool macPdaScrollBarAt(const EEMEngine *vm, int x, int y) {
-	if (vm && vm->isMacCD())
-		return kMacCDPdaScrollRect.contains(x, y);
+	if (usesTravisScrollBar(vm))
+		return kMacTravisScrollRect.contains(x, y);
 	return macPdaScrollBarDelta(vm, x, y) != 0;
 }
 
@@ -589,16 +596,18 @@ bool pdaSiteButtonAt(const EEMEngine *vm, int x, int y) {
 		 !kMacPdaPartnerHeadHintRect.contains(x, y));
 }
 
-bool handleMacCDPdaKey(Common::Event &event, const Common::Array<Common::Rect> *items = nullptr,
-					  bool includeButtons = true) {
+bool handleMacTravisKey(const EEMEngine &vm, Common::Event &event,
+					   const Common::Array<Common::Rect> *items = nullptr, bool includeButtons = true) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return false;
 	const Common::Point mouse = g_system->getEventManager()->getMousePos();
 	if (event.kbd.keycode == Common::KEYCODE_TAB) {
 		const Common::Rect buttons[] = {
-			kMacCDPdaNotebookRect, kMacCDPdaGalleryRect, kMacPdaAccuseRect,
-			kMacCDPdaHelpRect, kMacCDPdaMapRect, kMacPdaSiteRect,
-			kMacPdaPartnerHeadHintRect, Common::Rect(0, 0, 106, 152)
+			pdaControlRect(&vm, kPdaNotebookRect), pdaControlRect(&vm, kPdaGalleryRect),
+			pdaControlRect(&vm, kPdaAccuseRect), pdaControlRect(&vm, kPdaHelp2Rect),
+			pdaControlRect(&vm, kPdaHelpRect), pdaControlRect(&vm, kPdaSiteRect),
+			pdaControlRect(&vm, kPdaPartnerHeadHintRect),
+			vm.isMacCD() ? Common::Rect(0, 0, 106, 152) : kMacPdaPartnerFootMapRect
 		};
 		Common::Array<Common::Rect> targets;
 		if (includeButtons) {
@@ -630,7 +639,7 @@ bool handleMacCDPdaKey(Common::Event &event, const Common::Array<Common::Rect> *
 		return false;
 	}
 	if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-		if (kMacCDPdaScrollRect.contains(mouse))
+		if (kMacTravisScrollRect.contains(mouse))
 			return true;
 		event.type = Common::EVENT_LBUTTONDOWN;
 		event.mouse = mouse;
@@ -3025,8 +3034,8 @@ void EEMEngine::doNotebook() {
 	CursorMan.showMouse(true);
 
 	int page = 0;
-	TravisScrollBar macScroll(kMacCDPdaScrollRect);
-	TravisScrollBar *scrollBar = isMacCD() ? &macScroll : nullptr;
+	TravisScrollBar macScroll(kMacTravisScrollRect);
+	TravisScrollBar *scrollBar = usesTravisScrollBar(this) ? &macScroll : nullptr;
 
 	const bool notebookFromSite = isLondon() && _lastScreen == kScreenSite;
 	if (_music && _voiceOn && notebookFromSite)
@@ -3056,7 +3065,8 @@ void EEMEngine::doNotebook() {
 		bool dirty = false;
 		bool exitFlag = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (isMacCD() && (handleMacCDPdaKey(ev) || trackMacCDPdaButton(*this, ev)))
+			if ((scrollBar && handleMacTravisKey(*this, ev)) ||
+				(isMacCD() && trackMacCDPdaButton(*this, ev)))
 				continue;
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -3235,7 +3245,7 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 void EEMEngine::drawNotebookFrame(int &page, TravisScrollBar *scrollBar) {
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
 	const Common::Rect notebookRect =
-		isMacintosh() ? kMacNotebookTextRect : kNotebookRect;
+		isMacintosh() ? (isLondon() ? kMacLondonNotebookTextRect : kMacNotebookTextRect) : kNotebookRect;
 	const int sw = screenWidth();
 	const int sh = screenHeight();
 
@@ -3274,10 +3284,10 @@ void EEMEngine::drawNotebookFrame(int &page, TravisScrollBar *scrollBar) {
 	const int kRectY = notebookRect.top;
 	const int kRectW = notebookRect.width();
 	const int kRectH = notebookRect.height();
-	const int insetX = isMacCD() ? kMacCDPdaTextInsetX : 0;
-	const int insetY = isMacCD() ? kMacCDPdaTextInsetY : 0;
+	const int insetX = scrollBar ? kMacTravisTextInsetX : 0;
+	const int insetY = scrollBar ? kMacTravisTextInsetY : 0;
 	const int textWidth = kRectW - insetX;
-	const int lineH = isMacCD() ? kMacCDPdaLineHeight : _font.getFontHeight();
+	const int lineH = scrollBar ? kMacTravisLineHeight : _font.getFontHeight();
 
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
@@ -3331,7 +3341,7 @@ void EEMEngine::drawNotebookFrame(int &page, TravisScrollBar *scrollBar) {
 		Common::Array<Common::String> wrapped;
 		_font.wordWrapText(txt, textWidth, wrapped);
 		const int h = (int)wrapped.size() * lineH;
-		const byte color = !isMacCD() && _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
+		const byte color = !scrollBar && _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 		for (uint li = 0; li < wrapped.size(); li++) {
 			_font.drawString(&textSurface, wrapped[li], insetX,
 							 y - kRectY + insetY + (int)li * lineH, textWidth, color);
@@ -3340,7 +3350,7 @@ void EEMEngine::drawNotebookFrame(int &page, TravisScrollBar *scrollBar) {
 	}
 
 	const bool isLastPage = (page + 1 >= (int)pageStarts.size());
-	if (isLastPage && !isMacCD()) {
+	if (isLastPage && !scrollBar) {
 		const char *kEndMarker = isSpanish()
 			? "-- Fin de las notas --"
 			: "-- End of notes --";
@@ -3396,7 +3406,7 @@ void EEMEngine::doGallery() {
 		Common::Event ev;
 		bool exitFlag = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (isMacCD() && (handleMacCDPdaKey(ev, &slotRects) || trackMacCDPdaButton(*this, ev)))
+			if (isMacCD() && (handleMacTravisKey(*this, ev, &slotRects) || trackMacCDPdaButton(*this, ev)))
 				continue;
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -3535,6 +3545,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
 	const bool floppyMI = isFloppy();
 	const bool mac = isMacintosh();
+	const bool useScrollBar = usesTravisScrollBar(this);
 	const bool compactMI = floppyMI || _mystery.usesCompactMacData();
 	const byte *suspect = compactMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
@@ -3549,7 +3560,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	setInteractiveMouseCursor(false);
 
 	const Common::Rect noteRectBase(78, 93, 288, 152);
-	const Common::Rect noteRect = isMacCD() ? kMacCDSuspectTextRect :
+	const Common::Rect noteRect = useScrollBar ? kMacTravisSuspectTextRect :
 		(mac ? scaleRect(noteRectBase) : noteRectBase);
 	const int rx = noteRect.left;
 	const int ry = noteRect.top;
@@ -3557,9 +3568,9 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	const int rh = noteRect.height();
 	const int sw = screenWidth();
 	const int sh = screenHeight();
-	const int lineH = isMacCD() ? kMacCDPdaLineHeight : _font.getFontHeight();
-	const int insetX = isMacCD() ? kMacCDPdaTextInsetX : 0;
-	const int insetY = isMacCD() ? kMacCDPdaTextInsetY : 0;
+	const int lineH = useScrollBar ? kMacTravisLineHeight : _font.getFontHeight();
+	const int insetX = useScrollBar ? kMacTravisTextInsetX : 0;
+	const int insetY = useScrollBar ? kMacTravisTextInsetY : 0;
 	const int textWidth = MAX<int>(8, rw - insetX);
 	const uint clueMax = compactMI ? clueCount : 30u;
 	const byte *ni = _mystery.noteIndex();
@@ -3569,12 +3580,12 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 
 	int pageStart = 0;
 	Common::Array<int> pageStack;
-	TravisScrollBar macScroll(kMacCDSuspectScrollRect);
+	TravisScrollBar macScroll(kMacTravisSuspectScrollRect);
 	Common::Array<uint> macClues;
-	if (isMacCD()) {
+	if (useScrollBar) {
 		Common::Array<int> heights;
 		for (uint i = 0; i < clueCount && i < clueMax; ++i) {
-			const uint clueId = READ_LE_UINT16(suspect + 0xa + i * 2);
+			const uint clueId = compactMI ? suspect[5 + i] : READ_LE_UINT16(suspect + 0xa + i * 2);
 			if (clueId >= Mystery::kCluesFoundCap || clueId >= niCount || !_mystery._cluesFound[clueId])
 				continue;
 			const Common::String text = notebookNoteText(clueId, ni, niCount, false,
@@ -3588,7 +3599,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		}
 		macScroll.layout(heights, rh, pageStart);
 	}
-	const uint entryCount = isMacCD() ? macClues.size() : MIN(clueCount, clueMax);
+	const uint entryCount = useScrollBar ? macClues.size() : MIN(clueCount, clueMax);
 	bool back = false;
 	bool exitGallery = false;
 	bool isFirstShow = true;
@@ -3622,9 +3633,9 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		bool drewAny = false;
 		uint k = pageStart;
 		bool reachedEnd = false;
-		const uint end = isMacCD() ? macScroll.end(pageStart) : entryCount;
+		const uint end = useScrollBar ? macScroll.end(pageStart) : entryCount;
 		for (; k < end; k++) {
-			const uint16 clueId = isMacCD() ? macClues[k] : compactMI
+			const uint16 clueId = useScrollBar ? macClues[k] : compactMI
 				? (uint16)suspect[5 + k]
 				: READ_LE_UINT16(suspect + 0xa + k * 2);
 			if (!compactMI && clueId == 0xFFFF) {
@@ -3651,7 +3662,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				// Defer to next page.
 				break;
 			}
-			const byte color = !isMacCD() && _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
+			const byte color = !useScrollBar && _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 			for (uint l = 0; l < wrapped.size(); l++) {
 				_font.drawString(&textSurface, wrapped[l], insetX,
 					yPos - ry + insetY + (int)l * lineH, textWidth, color);
@@ -3665,7 +3676,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		const bool hasMore = !reachedEnd;
 		const bool hasPrev = !pageStack.empty();
 
-		if (!isMacCD() && pageStart == 0 && !drewAny && _font.isLoaded()) {
+		if (!useScrollBar && pageStart == 0 && !drewAny && _font.isLoaded()) {
 			_font.drawString(&ms,
 				isSpanish()
 					? "Aun no hay pistas para este sospechoso."
@@ -3673,7 +3684,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				rx, ry, MAX<int>(8, rw), 0x5C);
 		}
 		// Header / footer text.
-		if (!isMacCD() && _font.isLoaded()) {
+		if (!useScrollBar && _font.isLoaded()) {
 			_font.drawString(&ms,
 				isSpanish() ? "EXPEDIENTE" : "SUSPECT FILE",
 				rx, ry - 11, MAX<int>(8, rw), 0x3C);
@@ -3681,7 +3692,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				isSpanish() ? "(ESC: volver)" : "(ESC: back)",
 				rx, ry + rh + 2, MAX<int>(8, rw), 0x3C);
 		}
-		if (isMacCD())
+		if (useScrollBar)
 			macScroll.draw(ms, pageStart);
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 			0, 0, sw, sh);
@@ -3708,7 +3719,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		while (!back && !advance && !prev && !redraw && !shouldQuit()) {
 			Common::Event e2;
 			while (g_system->getEventManager()->pollEvent(e2)) {
-				if (isMacCD() && (handleMacCDPdaKey(e2) || trackMacCDPdaButton(*this, e2)))
+				if ((useScrollBar && handleMacTravisKey(*this, e2)) ||
+					(isMacCD() && trackMacCDPdaButton(*this, e2)))
 					continue;
 				if (e2.type == Common::EVENT_QUIT ||
 					e2.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -3721,7 +3733,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					redraw = true;
 					break;
 				}
-				if (isMacCD() && macScroll.handleEvent(e2, pageStart)) {
+				if (useScrollBar && macScroll.handleEvent(e2, pageStart)) {
 					redraw = true;
 					break;
 				}
@@ -3730,7 +3742,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						macPdaScrollBarDelta(this, e2.mouse.x, e2.mouse.y);
 					setInteractiveMouseCursor(
 						galleryButtonAt(this, e2.mouse.x, e2.mouse.y) ||
-						(isMacCD() && macScroll.contains(e2.mouse)) ||
+						(useScrollBar && macScroll.contains(e2.mouse)) ||
 						(scrollDelta < 0 && hasPrev) ||
 						(scrollDelta > 0 && hasMore));
 				}
@@ -3840,7 +3852,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				gizmoLastTick = now;
 				cycleTravisPalette(isMacCD());
 			}
-			if (isMacCD() && (macScroll.update(pageStart) || now - lastDraw >= 150))
+			if (useScrollBar && (macScroll.update(pageStart) || now - lastDraw >= 150))
 				redraw = true;
 			g_system->updateScreen();
 			g_system->delayMillis(20);
@@ -3982,8 +3994,8 @@ void EEMEngine::accuseRebuildPagination(const AccuseNotesCtx &ctx) {
 		Common::Array<int> heights;
 		for (uint i = 0; i < ctx.found->size(); ++i) {
 			Common::Array<Common::String> lines;
-			_font.wordWrapText(accuseNoteText((*ctx.found)[i], ctx), ctx.rectW - kMacCDPdaTextInsetX, lines);
-			heights.push_back(lines.size() * kMacCDPdaLineHeight);
+			_font.wordWrapText(accuseNoteText((*ctx.found)[i], ctx), ctx.rectW - kMacTravisTextInsetX, lines);
+			heights.push_back(lines.size() * kMacTravisLineHeight);
 		}
 		ctx.scrollBar->layout(heights, ctx.rectH, *ctx.page);
 		return;
@@ -4035,9 +4047,9 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 	const Common::Array<uint> &found = *ctx.found;
 	slotRects.clear();
 	slotClues.clear();
-	const int lineH = isMacCD() ? kMacCDPdaLineHeight : _font.getFontHeight();
-	const int insetX = isMacCD() ? kMacCDPdaTextInsetX : 0;
-	const int insetY = isMacCD() ? kMacCDPdaTextInsetY : 0;
+	const int lineH = ctx.scrollBar ? kMacTravisLineHeight : _font.getFontHeight();
+	const int insetX = ctx.scrollBar ? kMacTravisTextInsetX : 0;
+	const int insetY = ctx.scrollBar ? kMacTravisTextInsetY : 0;
 	const int textWidth = ctx.rectW - insetX;
 	const int startIdx = ctx.scrollBar ? *ctx.page : ctx.pageBreaks[*ctx.page];
 	const int endIdx   = ctx.scrollBar ? ctx.scrollBar->end(*ctx.page) : (*ctx.page + 1 < *ctx.numPages)
@@ -4068,8 +4080,8 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 							 y - ctx.rectY + insetY + (int)li * lineH, textWidth, color);
 		}
 		slotRects.push_back(Common::Rect(ctx.rectX, y,
-			ctx.rectX + ctx.rectW - (isMacCD() ? 12 : 0),
-			MIN(y + h + (isMacCD() ? 6 : 0), ctx.rectY + ctx.rectH)));
+			ctx.rectX + ctx.rectW - (ctx.scrollBar ? 12 : 0),
+			MIN(y + h + (ctx.scrollBar ? 6 : 0), ctx.rectY + ctx.rectH)));
 		slotClues.push_back(clueId);
 		y += h + 7;
 	}
@@ -4090,7 +4102,7 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 		_font.drawString(&scratch, counter, scaleX(209), scaleY(11), scaleX(100), 0x0f);
 	}
 
-	if (!isMacCD() && *ctx.numPages > 1) {
+	if (!ctx.scrollBar && *ctx.numPages > 1) {
 		_font.drawString(&scratch,
 			Common::String::format("p%d/%d", *ctx.page + 1, *ctx.numPages),
 			ctx.rectX, scaleY(11), scaleX(60), 0x0F);
@@ -4141,7 +4153,7 @@ bool EEMEngine::doAccuseNotes() {
 
 	const Common::Rect noteRectBase(79, 27, 304, 159);
 	const Common::Rect noteRect =
-		isMacCD() ? kMacCDAccuseTextRect : (isMacintosh() ? scaleRect(noteRectBase) : noteRectBase);
+		usesTravisScrollBar(this) ? kMacTravisAccuseTextRect : (isMacintosh() ? scaleRect(noteRectBase) : noteRectBase);
 	const int rectX = noteRect.left;
 	const int rectY = noteRect.top;
 	const int rectW = noteRect.width();
@@ -4161,7 +4173,7 @@ bool EEMEngine::doAccuseNotes() {
 	Common::Array<uint> slotClues;
 
 	int page = 0;
-	TravisScrollBar macScroll(kMacCDPdaScrollRect);
+	TravisScrollBar macScroll(kMacTravisScrollRect);
 	int pageBreaks[16];
 	int numPages = 1;
 	pageBreaks[0] = 0;
@@ -4188,7 +4200,7 @@ bool EEMEngine::doAccuseNotes() {
 	ctx.pageBreaksCap = (int)ARRAYSIZE(pageBreaks);
 	ctx.numPages      = &numPages;
 	ctx.page          = &page;
-	ctx.scrollBar     = isMacCD() ? &macScroll : nullptr;
+	ctx.scrollBar     = usesTravisScrollBar(this) ? &macScroll : nullptr;
 
 	accuseRebuildPagination(ctx);
 	accuseDrawScreen(ctx);
@@ -4204,7 +4216,8 @@ bool EEMEngine::doAccuseNotes() {
 		Common::Event ev;
 		bool dirty = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (isMacCD() && (handleMacCDPdaKey(ev, &slotRects, false) || trackMacCDPdaButton(*this, ev)))
+			if ((ctx.scrollBar && handleMacTravisKey(*this, ev, &slotRects, false)) ||
+				(isMacCD() && trackMacCDPdaButton(*this, ev)))
 				continue;
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -4625,7 +4638,7 @@ void EEMEngine::doAccuse() {
 					ev.kbd.flags = ev.kbd.keycode == Common::KEYCODE_LEFT ? Common::KBD_SHIFT : 0;
 					ev.kbd.keycode = Common::KEYCODE_TAB;
 				}
-				if (handleMacCDPdaKey(ev, &slotRects, false))
+				if (handleMacTravisKey(*this, ev, &slotRects, false))
 					continue;
 				if (ev.type == Common::EVENT_MOUSEMOVE)
 					setInteractiveMouseCursor(rectListContains(slotRects, ev.mouse.x, ev.mouse.y));
