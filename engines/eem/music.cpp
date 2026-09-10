@@ -212,7 +212,9 @@ uint16 macSongResourceIdForFile(const Common::Path &path) {
 	return kInvalidMacSongResource;
 }
 
-uint16 macSongResourceIdForMus(uint num) {
+uint16 macSongResourceIdForMus(uint num, bool macCD) {
+	if (macCD && num < 5)
+		return 1002 + num;
 	static const uint16 kTravelTracks[5] = {
 		1004, 1002, 1003, 1006, 1005 // Travel-6/4/7/1/8
 	};
@@ -225,8 +227,9 @@ uint16 macSongResourceIdForMus(uint num) {
 	return kInvalidMacSongResource;
 }
 
-MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh, bool isLondon) :
-	_isFloppy(isFloppy), _isMacintosh(isMacintosh), _isLondon(isLondon) {
+MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh, bool isLondon, bool isMacCD) :
+	_isFloppy(isFloppy), _isMacintosh(isMacintosh), _isLondon(isLondon),
+	_isMacCD(isMacCD) {
 	if (_isMacintosh)
 		return;
 
@@ -299,6 +302,17 @@ bool MusicPlayer::isPlaying() const {
 	if (_isMacintosh)
 		return _macDriver && _macDriver->doCommand(Audio::HalestormDriver::kSongIsPlaying);
 	return Audio::MidiPlayer::isPlaying();
+}
+
+void MusicPlayer::fadeOut() {
+	// Mac CD CODE 6:2358 uses Halestorm fade speed 30.
+	if (_macDriver)
+		_macDriver->doCommand(Audio::HalestormDriver::kSongFadeOut, 30);
+}
+
+bool MusicPlayer::isFading() const {
+	return _macDriver && isPlaying() &&
+		_macDriver->doCommand(Audio::HalestormDriver::kSongFadeGetState) > 2;
 }
 
 void MusicPlayer::setVolume(int volume) {
@@ -414,10 +428,9 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 
 void MusicPlayer::playMus(uint num, bool loop) {
 	if (_isMacintosh) {
-		// London SONG ids are 1000 + the MUS number; EEM1 uses named tracks.
 		const uint16 resourceId = _isLondon
 			? (num < kInvalidMacSongResource - 1000 ? 1000 + num : kInvalidMacSongResource)
-			: macSongResourceIdForMus(num);
+			: macSongResourceIdForMus(num, _isMacCD);
 		playMacSongResource(resourceId, loop);
 		return;
 	}

@@ -300,7 +300,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
-	setLondonAnimScripts(isLondon());
+	setAnimScripts(isLondon(), isMacCD());
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
 
@@ -561,7 +561,7 @@ Common::Error EEMEngine::run() {
 	// _InitMIDI @ 20a2:013a. The demo ships no music. Mac releases use
 	// Halestorm song and instrument resources instead of loose DOS XMIDI files.
 	if (!isDemo())
-		_music = new MusicPlayer(isFloppy(), isMacintosh(), isLondon());
+		_music = new MusicPlayer(isFloppy(), isMacintosh(), isLondon(), isMacCD());
 
 	// _InitDrivers @ 1ff1:0368 (SBDIG.ADV / PASDIG.ADV).
 	_audio = new AudioPlayer(this);
@@ -2190,6 +2190,35 @@ void EEMEngine::startLondonTravelMusic(uint8 travelKind) {
 
 	const uint track = kLondonTravelMusic[travelKind][_rng.getRandomNumber(2)];
 	_music->playMus(track, /* loop= */ false);
+}
+
+void EEMEngine::finishTravelMusic(bool skipped) {
+	// Mac CD fades after the entrance; DOS lets the travel tune finish.
+	if (isMacCD()) {
+		if (_music && _music->isPlaying() && !shouldQuit()) {
+			_music->fadeOut();
+			const uint32 startMs = g_system->getMillis();
+			while (_music->isFading() && !shouldQuit() &&
+				   g_system->getMillis() - startMs < 5000) {
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if (event.type == Common::EVENT_QUIT ||
+						event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+						stopMusic();
+						return;
+					}
+				}
+				g_system->updateScreen();
+				g_system->delayMillis(10);
+			}
+		}
+		stopMusic();
+	} else if (!isFloppy() && !isLondon()) {
+		if (skipped || shouldQuit())
+			stopMusic();
+		else
+			waitForMusicDone();
+	}
 }
 
 void EEMEngine::waitForMusicDone(uint32 maxMs) {

@@ -162,12 +162,12 @@ struct BigMapEntryInfo {
 	uint16 crime = 0;
 };
 
-bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
+bool readBigMapEntryInfo(const byte *entry, const EEMEngine &vm, bool compactMac,
 						 BigMapEntryInfo &out) {
 	if (!entry)
 		return false;
 
-	if (macintosh) {
+	if (compactMac) {
 		out.detailX   = READ_LE_UINT16(entry + 0x0);
 		out.detailY   = READ_LE_UINT16(entry + 0x2);
 		out.buttonId  = entry[0x5];
@@ -177,7 +177,7 @@ bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
 		return true;
 	}
 
-	if (floppy) {
+	if (vm.isFloppy()) {
 		out.detailX   = READ_LE_UINT16(entry + 0x0);
 		out.detailY   = READ_LE_UINT16(entry + 0x2);
 		out.buttonId  = entry[0x4];
@@ -193,6 +193,13 @@ bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
 	out.detailX   = READ_LE_UINT16(entry + 0x8);
 	out.detailY   = READ_LE_UINT16(entry + 0xa);
 	out.crime     = READ_LE_UINT16(entry + 0xc);
+	if (vm.isMacCD()) {
+		// Mac CD scales DOS map coordinates and truncates the result (CODE 6).
+		out.overviewX = out.overviewX * kMacScreenWidth / kScreenWidth;
+		out.overviewY = out.overviewY * kMacScreenHeight / kScreenHeight;
+		out.detailX = out.detailX * kMacScreenWidth / kScreenWidth;
+		out.detailY = out.detailY * kMacScreenHeight / kScreenHeight;
+	}
 	return true;
 }
 
@@ -613,8 +620,6 @@ bool EEMEngine::bigMapTrySelectDetailSite(int mouseX, int mouseY,
 		Common::Rect rect;
 	};
 	Common::Array<DetailMapHit> hits;
-	const bool floppyMap = _mystery.isLoaded() && isFloppy();
-	const bool macMap = isMacintosh() && _mystery.usesCompactMacData();
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		// On-map flag alone, matching `_SearchMapButtons`.
 		if (!_mystery._onSites[i])
@@ -623,7 +628,7 @@ bool EEMEngine::bigMapTrySelectDetailSite(int mouseX, int mouseY,
 		if (!entry)
 			continue;
 		BigMapEntryInfo info;
-		if (!readBigMapEntryInfo(entry, floppyMap, macMap, info))
+		if (!readBigMapEntryInfo(entry, *this, _mystery.usesCompactMacData(), info))
 			continue;
 
 		Picture button;
@@ -1257,10 +1262,8 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		if (!entry)
 			continue;
 
-		const bool floppy  = _mystery.isLoaded() && isFloppy();
 		BigMapEntryInfo info;
-		if (!readBigMapEntryInfo(entry, floppy,
-								 mac && _mystery.usesCompactMacData(), info))
+		if (!readBigMapEntryInfo(entry, *this, _mystery.usesCompactMacData(), info))
 			continue;
 		const bool isDone = (i < Mystery::kVisitedSiteCap)
 							 && _mystery._visitedSite[i];
@@ -1343,7 +1346,6 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	scratch.copyRectToSurface(mapPixels.data() + scrollY * mapW + scrollX,
 							  mapW, kMapWinX, kMapWinY, copyW, copyH);
 
-	const bool floppyMap = _mystery.isLoaded() && isFloppy();
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		// `_DrawBigMapButtons` gates markers on the on-map flag alone, never the
 		// current site: a sublocation (in-site jump, never flagged) must not draw.
@@ -1353,8 +1355,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		if (!entry)
 			continue;
 		BigMapEntryInfo info;
-		if (!readBigMapEntryInfo(entry, floppyMap,
-								 mac && _mystery.usesCompactMacData(), info))
+		if (!readBigMapEntryInfo(entry, *this, _mystery.usesCompactMacData(), info))
 			continue;
 		Picture button;
 		if (!_buttonArchive.loadEntry(info.buttonId, button))

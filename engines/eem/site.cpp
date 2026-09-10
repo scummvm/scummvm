@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
 #include "eem/audio.h"
@@ -274,7 +275,17 @@ void cyclePaletteRangeReverse(uint8 start, uint8 end) {
 	g_system->getPaletteManager()->setPalette(buf, start, count);
 }
 
-void applyHotspotGlowPalette() {
+void applyHotspotGlowPalette(bool macCD) {
+	if (macCD) {
+		// Mac CD CODE 2:3d5e, including the searched-hotspot color.
+		static const byte kMacGlow[7 * 3] = {
+			0x54, 0xFC, 0xFC, 0x38, 0xDC, 0xE4, 0x20, 0xBC, 0xD0,
+			0x0C, 0x9C, 0xBC, 0x20, 0xBC, 0xD0, 0x38, 0xDC, 0xE4,
+			0x0C, 0x9C, 0xBC
+		};
+		g_system->getPaletteManager()->setPalette(kMacGlow, 0xF8, 7);
+		return;
+	}
 	static const byte kAntsGlow[6 * 3] = {
 		0x40, 0x40, 0x00, // F9 — dim
 		0x80, 0x80, 0x00, // FA
@@ -361,7 +372,7 @@ const uint16 kMacWaitAnimsLondon[7][6] = {
 //
 // Repeated frames are the original's "frame-hold" mechanism: per-tick
 // walk advances exactly one entry, so K repeats hold the frame for
-// K * `kFramePeriodMs` ≈ K * 140 ms (e.g. [0,0,0,0,0,0,0,0,0,2] →
+// K * the frame period (e.g. [0,0,0,0,0,0,0,0,0,2] →
 // nine ticks of frame 0, one tick of frame 2 = "blink with long
 // idle hold"). Same scripts serve wait anims (looping) and kd-clue
 // reactions (state-4 one-shot — see `_PlayAnimation`); state field
@@ -647,6 +658,85 @@ const AnimScriptLong kAnimScriptsLong[] = {
 	{ 0x36, 60,  kScript36 },
 };
 
+// Mac CD animation scripts that differ from DOS (A5-0x4c26).
+const uint8 kMacCDScript1a[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 9,
+	8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacCDScript1c[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20
+};
+
+const uint8 kMacCDScript22[] = {
+	0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4,
+	5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9,
+	10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13,
+	13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17,
+	18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22,
+	23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32,
+	33, 33, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42,
+	43, 43, 44, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacCDScript25[] = {
+	0, 1, 2, 3, 4
+};
+
+const uint8 kMacCDScript2a[] = {
+	0, 1, 2, 2, 3, 4
+};
+
+const uint8 kMacCDScript2c[] = {
+	0, 1, 2, 3, 4, 5, 0, 6, 7, 8, 9, 10, 11, 12, 13, 13, 13, 13, 13, 13,
+	13, 13, 14, 14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 15, 16, 17, 18, 19,
+	20, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0
+};
+
+const uint8 kMacCDScript30[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 16, 16,
+	16, 16, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+	34, 16, 16, 16, 16, 16, 16, 16, 16, 16
+};
+
+const uint8 kMacCDScript33[] = {
+	0, 1, 2, 3, 4, 5, 6, 7
+};
+
+const uint8 kMacCDScript34[] = {
+	0, 1, 2, 3, 4, 5
+};
+
+const uint8 kMacCDScript35[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+};
+
+const uint8 kMacCDScript36[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1, 2, 3, 4, 5,
+	6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4,
+	3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const AnimScriptLong kAnimScriptsMacCD[] = {
+	{ 0x1a, ARRAYSIZE(kMacCDScript1a), kMacCDScript1a },
+	{ 0x1c, ARRAYSIZE(kMacCDScript1c), kMacCDScript1c },
+	{ 0x22, ARRAYSIZE(kMacCDScript22), kMacCDScript22 },
+	{ 0x25, ARRAYSIZE(kMacCDScript25), kMacCDScript25 },
+	{ 0x2a, ARRAYSIZE(kMacCDScript2a), kMacCDScript2a },
+	{ 0x2c, ARRAYSIZE(kMacCDScript2c), kMacCDScript2c },
+	{ 0x30, ARRAYSIZE(kMacCDScript30), kMacCDScript30 },
+	{ 0x33, ARRAYSIZE(kMacCDScript33), kMacCDScript33 },
+	{ 0x34, ARRAYSIZE(kMacCDScript34), kMacCDScript34 },
+	{ 0x35, ARRAYSIZE(kMacCDScript35), kMacCDScript35 },
+	{ 0x36, ARRAYSIZE(kMacCDScript36), kMacCDScript36 },
+};
+
 // `_PatientSequence` and `_ImpatientSequence` are standalone script
 // pointers. CD has the data but never calls the switchers; floppy calls 
 // them from `_DoSiteLoop_Floppy` (via `_Switch2Patient` / `_Switch2Impatient`). 
@@ -764,11 +854,13 @@ const AnimScriptLong kAnimScriptsLondonLong[] = {
 	{ 0x31, 62, kScript31London },
 };
 
-// Set true for the London variant so findAnimScript uses the EEM2 tables.
+// Select the scripts and timing of the original release.
 bool g_londonAnimScripts = false;
+bool g_macCDAnimScripts = false;
 
-void setLondonAnimScripts(bool enabled) {
-	g_londonAnimScripts = enabled;
+void setAnimScripts(bool london, bool macCD) {
+	g_londonAnimScripts = london;
+	g_macCDAnimScripts = macCD;
 }
 
 struct AnimScriptRef {
@@ -776,6 +868,16 @@ struct AnimScriptRef {
 	uint16 len;
 };
 AnimScriptRef findAnimScript(uint16 seqnum) {
+	if (g_macCDAnimScripts) {
+		for (uint i = 0; i < ARRAYSIZE(kAnimScriptsMacCD); i++) {
+			if (kAnimScriptsMacCD[i].seqnum == seqnum) {
+				AnimScriptRef r;
+				r.frames = kAnimScriptsMacCD[i].frames;
+				r.len = kAnimScriptsMacCD[i].len;
+				return r;
+			}
+		}
+	}
 	if (g_londonAnimScripts) {
 		for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLondon); i++) {
 			if (kAnimScriptsLondon[i].seqnum == seqnum) {
@@ -816,20 +918,22 @@ AnimScriptRef findAnimScript(uint16 seqnum) {
 	return r;
 }
 
-// Original frame period from `_InitFrameCounter @ 1a35:01ae`:
-const uint kFramePeriodMs = 140;
+uint animationFramePeriodMs() {
+	// Mac CD CODE 2:21c4 advances after nine 60 Hz ticks.
+	return g_macCDAnimScripts ? 150 : 140;
+}
 
 uint frameFromScriptAtTick(const uint8 *frames, uint len,
 								  uint numFrames, uint32 tickMs) {
 	if (!frames || len == 0)
-		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
-	const uint scriptIdx = (uint)((tickMs / kFramePeriodMs) % len);
+		return numFrames > 0 ? (uint)((tickMs / animationFramePeriodMs()) % numFrames) : 0;
+	const uint scriptIdx = (uint)((tickMs / animationFramePeriodMs()) % len);
 	const uint frame     = frames[scriptIdx];
 	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
 // Looping path of `_UpdateAnimations`: walk the script one entry per
-// `_CheckFrameRate` tick (`kFramePeriodMs` ~= 140 ms), wrap on 0x80.
+// `_CheckFrameRate` tick, wrap on 0x80.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	const AnimScriptRef s = findAnimScript(seqnum);
 	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs);
@@ -837,7 +941,7 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 
 uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	const AnimScriptRef s = findAnimScript(seqnum);
-	const uint tick = (uint)(tickMs / kFramePeriodMs);
+	const uint tick = (uint)(tickMs / animationFramePeriodMs());
 	if (!s.frames || s.len == 0)
 		return numFrames > 0 ? MIN<uint>(tick, numFrames - 1) : 0;
 	const uint scriptIdx = MIN<uint>(tick, (uint)s.len - 1);
@@ -848,7 +952,7 @@ uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 uint32 oneShotDurationMs(uint16 seqnum, uint numFrames) {
 	const AnimScriptRef s = findAnimScript(seqnum);
 	const uint count = (s.frames && s.len) ? (uint)s.len : numFrames;
-	return (uint32)count * kFramePeriodMs;
+	return (uint32)count * animationFramePeriodMs();
 }
 
 // Play `unfold` once, then loop `waitSeq` forever. Mirrors the
@@ -856,7 +960,7 @@ uint32 oneShotDurationMs(uint16 seqnum, uint numFrames) {
 uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 									   const uint8 *waitSeq, uint waitSeqLen,
 									   uint numFrames, uint32 elapsedMs) {
-	const uint tick = elapsedMs / kFramePeriodMs;
+	const uint tick = elapsedMs / animationFramePeriodMs();
 	const uint frame = (tick < unfoldLen)
 		? unfold[tick]
 		: waitSeq[(tick - unfoldLen) % waitSeqLen];
@@ -954,10 +1058,8 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	}
 
 	_waitPhaseAnchor = g_system->getMillis();
-	if (resetPartnerMood) {
+	if (resetPartnerMood)
 		_partnerWaitMood = kPartnerWaitDefault;
-		initImpatienceCounter();
-	}
 
 	const bool firstVisit = (siteNum < Mystery::kVisitedSiteCap)
 							 && (_mystery->_visitedSite[siteNum] == 0);
@@ -980,8 +1082,6 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 				   siteNum, approachId);
 			_vm->doLondonApproach(approachId);
 		}
-	} else if (playArrival) {
-		_vm->startTravelMusic();
 	}
 
 	const bool compactSite = _vm->isFloppy() ||
@@ -999,7 +1099,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	}
 	_vm->setSitePaletteForSite(sitepic);
 
-	applyHotspotGlowPalette();
+	applyHotspotGlowPalette(_vm->isMacCD());
 
 	renderBackground(siteNum);
 
@@ -1008,17 +1108,24 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 			renderFloppyDrops(siteNum);
 		else
 			renderStaticDrops(siteNum);
-		renderAnimatedDrops(siteNum, g_system->getMillis());
+		renderAnimatedDrops(siteNum, _vm->isMacCD() ? _waitPhaseAnchor : g_system->getMillis());
+		if (!london && !_vm->isMacCD())
+			_vm->startTravelMusic();
+		const bool cursorVisible = CursorMan.isVisible();
+		if (_vm->isMacCD())
+			CursorMan.showMouse(false);
 		const bool skippedArrival = enterSiteAnim();
 		_vm->markSiteArrivalPlayed(siteNum);
-		if (!_vm->isFloppy() && !_vm->isLondon()) {
-			if (skippedArrival)
-				_vm->stopMusic();
-			else
-				_vm->waitForMusicDone();
-		}
+		_vm->finishTravelMusic(skippedArrival);
+		if (_vm->isMacCD())
+			CursorMan.showMouse(cursorVisible);
+		if (_vm->shouldQuit())
+			return;
 		renderBackground(siteNum);
 	}
+	_waitPhaseAnchor = g_system->getMillis();
+	if (resetPartnerMood)
+		initImpatienceCounter();
 
 	if (compactSite)
 		renderFloppyDrops(siteNum);
@@ -1074,7 +1181,8 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 }
 
 void SiteScreen::initImpatienceCounter() {
-	_impatientDeadlineMs = g_system->getMillis() + kImpatienceDelayMs;
+	_impatientDeadlineMs = g_system->getMillis() +
+		(_vm->isMacCD() ? 30000 : kImpatienceDelayMs);
 }
 
 bool SiteScreen::checkImpatienceCounter() {
@@ -1253,7 +1361,7 @@ void SiteScreen::run() {
 
 		const uint32 now = g_system->getMillis();
 		if (_snapshotSite == (int)cur &&
-			now - _lastTickMs >= kFramePeriodMs) {
+			now - _lastTickMs >= animationFramePeriodMs()) {
 			if (checkImpatienceCounter()) {
 				_partnerWaitMood = kPartnerWaitImpatient;
 				debugC(1, kDebugSite, "Partner impatience: switched to impatient");
@@ -1269,11 +1377,89 @@ void SiteScreen::run() {
 		g_system->delayMillis(10);
 	}
 }
-// `_EnterSiteAnim @ 1000:9b21`. Two phases (partner-dependent):
-//   Phase 1 — skateboard scroll: anim 6 (Jake) / 0xe (Jenny).
-//             Slides from (320-w, 199-h) leftward off-screen.
-//   Phase 2 — KD slide-in: anim 7 (Jake) / 0xf (Jenny).
-//             Slides from x=-w at y=0x8b/0x8e until x=0.
+
+static bool waitForArrivalFrame(EEMEngine *vm, uint32 deadline, bool allowSkip) {
+	while (!vm->shouldQuit()) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT ||
+				event.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return true;
+			if (allowSkip && (event.type == Common::EVENT_KEYDOWN ||
+							  event.type == Common::EVENT_LBUTTONDOWN))
+				return true;
+		}
+		const int32 remaining = deadline - g_system->getMillis();
+		if (remaining <= 0)
+			return false;
+		g_system->delayMillis(MIN<int32>(remaining, 10));
+	}
+	return true;
+}
+
+// Mac CD CODE 2:4e22. Only the skate across is skippable.
+bool SiteScreen::enterMacSiteAnim(const Graphics::ManagedSurface &bg) {
+	const bool jake = _vm->getPartnerIndex() == kPartnerJake;
+	Animation skate, entry;
+	if (!_vm->getAni().loadAnimation(jake ? 6 : 14, skate) || skate.empty() ||
+		!_vm->getAni().loadAnimation(jake ? 7 : 15, entry) || entry.empty())
+		return false;
+
+	const MacSpritePaletteMap paletteMap = getMacSpritePaletteMap();
+	Graphics::ManagedSurface scratch(bg.w, bg.h, bg.format);
+	auto drawFrame = [&](const Picture &frame, int x, int y) {
+		scratch.simpleBlitFrom(bg);
+		blitMacAnimFrameAnchored(scratch.surfacePtr(), frame, x, y, paletteMap);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch, 0, 0, bg.w, bg.h);
+		g_system->updateScreen();
+	};
+
+	byte palette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	_vm->startTravelMusic();
+	fadePaletteFromBlack(palette);
+
+	int x = 512;
+	const int y = 383 - skate[0].surface.h;
+	uint frame = 0;
+	uint distance = 0;
+	uint tick = 0;
+	bool skipped = false;
+	const uint32 startMs = g_system->getMillis();
+	// The original's fastest-machine path moves four pixels per Mac tick.
+	do {
+		if (waitForArrivalFrame(_vm, startMs + ++tick * 1000 / 60, true)) {
+			skipped = true;
+			break;
+		}
+		x -= 4;
+		drawFrame(skate[frame], x, y);
+		distance += 4;
+		if (distance > 21) {
+			frame = (frame + 1) % skate.size();
+			distance = 0;
+		}
+	} while (x >= 0 || -x <= skate[frame].surface.w);
+
+	g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, bg.w, bg.h);
+	g_system->updateScreen();
+	if (waitForArrivalFrame(_vm, g_system->getMillis() + 500, false))
+		return true;
+
+	const int entryY = jake ? 267 : 273;
+	uint32 nextFrameMs = g_system->getMillis();
+	drawFrame(entry[0], 0, entryY);
+	// Frame zero is drawn again on the first advancing tick.
+	for (uint i = 0; i < entry.size(); i++) {
+		nextFrameMs += animationFramePeriodMs();
+		if (waitForArrivalFrame(_vm, nextFrameMs, false))
+			return true;
+		drawFrame(entry[i], 0, entryY);
+	}
+	return skipped;
+}
+
+// DOS _EnterSiteAnim at 172b:2871.
 bool SiteScreen::enterSiteAnim() {
 	if (!_vm || !_mystery)
 		return false;
@@ -1292,6 +1478,8 @@ bool SiteScreen::enterSiteAnim() {
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
+	if (_vm->isMacCD())
+		return enterMacSiteAnim(bg);
 	const bool mac = _vm->isMacintosh();
 	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
 	if (mac)
@@ -1355,7 +1543,7 @@ bool SiteScreen::enterSiteAnim() {
 					return true;
 				}
 			}
-			g_system->delayMillis(kFramePeriodMs);
+			g_system->delayMillis(animationFramePeriodMs());
 		}
 		return false;
 	}
@@ -1465,7 +1653,10 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 		Picture pic;
 		if (!_vm->getPics().getPicture(picId, pic))
 			continue;
-		blitMaskedSurface(screen, pic, x, y);
+		if (_vm->isMacCD())
+			blitMacMaskedSurface(screen, pic, x, y);
+		else
+			blitMaskedSurface(screen, pic, x, y);
 	}
 
 	g_system->unlockScreen();
@@ -1514,7 +1705,7 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	if (!_mystery || !_vm)
 		return;
 
-	if (_vm->isMacintosh())
+	if (_vm->isMacintosh() && !_vm->isMacCD())
 		return;
 
 	if (_vm->isFloppy()) {
@@ -1572,9 +1763,13 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 		Animation anim;
 		if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
 			continue;
+		const uint32 elapsed = _vm->isMacCD() ? tickMs - _waitPhaseAnchor : tickMs;
 		const uint frameIdx = partnerFrameAtTick((uint16)animId,
-												  (uint)anim.size(), tickMs);
-		blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
+												  (uint)anim.size(), elapsed);
+		if (_vm->isMacCD())
+			blitMacAnimFrameAnchored(screen, anim[frameIdx], x, y);
+		else
+			blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
 	}
 
 	g_system->unlockScreen();
@@ -1585,7 +1780,7 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 	if (!_mystery)
 		return;
 
-	if (_vm && _vm->isMacintosh())
+	if (_vm && _vm->isMacintosh() && !_vm->isMacCD())
 		return;
 
 	if (_vm && _vm->isFloppy()) {
@@ -1614,8 +1809,9 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 		const uint16 startPal = READ_LE_UINT16(site + 0x48 + i * 6 + 2);
 		const uint16 endPal   = READ_LE_UINT16(site + 0x48 + i * 6 + 4);
 		ColorCycleRange r;
-		r.start = (uint8)startPal;
-		r.end   = (uint8)endPal;
+		// Mac CODE 2:3dd2 takes one-based palette indices.
+		r.start = (uint8)(startPal - (_vm->isMacCD() ? 1 : 0));
+		r.end   = (uint8)(endPal - (_vm->isMacCD() ? 1 : 0));
 		if (r.end > r.start)
 			_colorCycles.push_back(r);
 	}
@@ -1625,7 +1821,10 @@ void SiteScreen::applyColorCycles() {
 	for (uint i = 0; i < _colorCycles.size(); i++) {
 		cyclePaletteRange(_colorCycles[i].start, _colorCycles[i].end);
 	}
-	cyclePaletteRange(0xF9, 0xFE);
+	if (_vm->isMacCD())
+		cyclePaletteRange(0xF8, 0xFD);
+	else
+		cyclePaletteRange(0xF9, 0xFE);
 }
 
 void SiteScreen::captureBgSnapshot() {
@@ -1861,6 +2060,28 @@ byte currentWhitePaletteIndex(byte fallback) {
 	return fallback;
 }
 
+static void drawMacSiteHotspot(Graphics::Surface *screen, const Common::Rect &rect, bool seen) {
+	byte color = seen ? 0xFE : 0xF8;
+	auto plot = [&](int x, int y) {
+		Common::Rect pixel(x, y, x + 2, y + 2);
+		pixel.clip(Common::Rect(screen->w, screen->h));
+		if (!pixel.isEmpty())
+			screen->fillRect(pixel, color);
+		if (!seen && ++color > 0xFD)
+			color = 0xF8;
+	};
+	int x = rect.left;
+	int y = rect.top + 1;
+	for (; y <= rect.bottom - 3; ++y)
+		plot(x, y);
+	for (; x <= rect.right - 3; ++x)
+		plot(x, y);
+	for (; y >= rect.top + 1; --y)
+		plot(x, y);
+	for (; x >= rect.left; --x)
+		plot(x, y);
+}
+
 void SiteScreen::renderHotspots(uint siteNum) {
 	if (ConfMan.getBool("hide_highlight_boxes"))
 		return;
@@ -1910,6 +2131,10 @@ void SiteScreen::renderHotspots(uint siteNum) {
 			const uint seenKey = READ_LE_UINT16(r + 0xa);
 			seen = seenKey < Mystery::kHotSpotsCap &&
 				   _mystery->_hotSpotsSeen[seenKey];
+		}
+		if (_vm->isMacCD()) {
+			drawMacSiteHotspot(screen, rect, seen);
+			continue;
 		}
 		if (seen) {
 			screen->frameRect(rect, searchedColor);
@@ -2011,7 +2236,22 @@ void SiteScreen::displayClueAndAutosave(const byte *clueBlock, bool forceSave) {
 	const bool hasIdle =
 		partnerIdleAnimParams(_mystery->_siteNumber, idleId, idleX, idleY);
 
-	_vm->setPartnerEraseBg(&_bgSnapshot);
+	Graphics::ManagedSurface clueBg;
+	if (_vm->isMacCD()) {
+		// Keep the site's animated objects behind partner gestures.
+		const uint32 now = g_system->getMillis();
+		restoreBgSnapshot();
+		renderAnimatedDrops(_mystery->_siteNumber, now);
+		renderHotspots(_mystery->_siteNumber);
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			clueBg.create(screen->w, screen->h, screen->format);
+			clueBg.simpleBlitFrom(*screen);
+			g_system->unlockScreen();
+		}
+		renderPartner(_mystery->_siteNumber, now);
+	}
+	_vm->setPartnerEraseBg(clueBg.empty() ? &_bgSnapshot : &clueBg);
 	_vm->setPartnerIdleAnim(hasIdle, idleId, idleX, idleY);
 	_vm->displayClue(clueBlock);
 	_vm->setPartnerIdleAnim(false, 0, 0, 0);

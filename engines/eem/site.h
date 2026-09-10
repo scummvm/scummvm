@@ -36,7 +36,7 @@ class EEMEngine;
 class Mystery;
 
 /// partnerFrameAtTick: frame index for `seqnum` at `tickMs`. Walks `kAnimScripts`
-/// at `kFramePeriodMs` per entry; wraps
+/// at the release's frame period per entry; wraps
 /// on the script's 0x80 terminator. Falls back to flipbook (`tick % numFrames`)
 /// when no script is registered. `numFrames` is the ANI.DBD entry's cell count,
 /// used both for the fallback and to clamp script values past the asset.
@@ -48,10 +48,8 @@ uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 /// Total time for one full play of a one-shot gesture (frame count * period).
 uint32 oneShotDurationMs(uint16 seqnum, uint numFrames);
 
-/// Select the EEM2 ("London") animation-script table inside `findAnimScript`.
-/// EEM2 ships its own `_AnimationSequences`; many partner/KD scripts differ
-/// from EEM1's, so the engine must use the EEM2 sequences for that variant.
-void setLondonAnimScripts(bool enabled);
+void setAnimScripts(bool london, bool macCD);
+uint animationFramePeriodMs();
 
 /// bigMapPartnerFrameAtTick: overview-map partner walk. EEM1 (11-frame anim):
 /// count-up 0..8 once, then idle `_BigMapWaitSeq`. London's anim 0x14/0x12 has
@@ -101,8 +99,8 @@ void cyclePaletteRange(uint8 start, uint8 end);
 /// (END→START).
 void cyclePaletteRangeReverse(uint8 start, uint8 end);
 
-/// Load the 6-step yellow marching-ants ramp into palette 0xF9..0xFE
-void applyHotspotGlowPalette();
+/// Load the hotspot palette used by the release.
+void applyHotspotGlowPalette(bool macCD = false);
 
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
 struct Hotspot {
@@ -147,6 +145,7 @@ private:
 
 	/// Partner site-arrival sequence
 	bool enterSiteAnim();
+	bool enterMacSiteAnim(const Graphics::ManagedSurface &bg);
 
 	/// renderPartner: persistent in-site partner sprite
 	void renderPartner(uint siteNum, uint32 tickMs);

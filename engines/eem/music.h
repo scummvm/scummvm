@@ -52,7 +52,8 @@ namespace EEM {
  */
 class MusicPlayer : public Audio::MidiPlayer, private Audio::HalestormLoader {
 public:
-	explicit MusicPlayer(bool isFloppy = false, bool isMacintosh = false, bool isLondon = false);
+	explicit MusicPlayer(bool isFloppy = false, bool isMacintosh = false,
+						 bool isLondon = false, bool isMacCD = false);
 	~MusicPlayer() override;
 
 	/// _MIDIPlayFile @ 20a2:024c. loop=true mirrors
@@ -64,6 +65,8 @@ public:
 
 	void stop() override;
 	bool isPlaying() const;
+	void fadeOut();
+	bool isFading() const;
 	void setVolume(int volume) override;
 
 	// WORKAROUND: Miles drivers handle source-channel routing themselves;
@@ -79,6 +82,7 @@ private:
 	const bool _isFloppy;
 	const bool _isMacintosh;
 	const bool _isLondon;
+	const bool _isMacCD;
 	Common::Array<byte> _xmiData;
 	Audio::HalestormDriver *_macDriver = nullptr;
 };

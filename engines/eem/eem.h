@@ -578,6 +578,7 @@ public:
 	/// `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI` from
 	/// `_mystery._siteNumber % 5`, one-shot.
 	void startTravelMusic();
+	void finishTravelMusic(bool skipped);
 
 	/// `_IsMIDIPlaying` spin + `_StopMIDI` cleanup in `_DoSiteLoop`.
 	void waitForMusicDone(uint32 maxMs = 60000);
