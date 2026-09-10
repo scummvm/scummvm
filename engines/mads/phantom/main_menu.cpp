@@ -307,6 +307,14 @@ done:
 
 static void add_bonus_message() {
 	const byte *quote_ids = REBEL_QUOTES[rebel_base - 1];
+	int count;
+
+	for (count = 0; count < EYE_MESSAGES; count++) {
+		if ((eye_message[count] >= 0) &&
+				(eye_message[count] != poke_count_message) &&
+				(eye_message[count] != rebel_second_message))
+			kernel_message_delete(eye_message[count]);
+	}
 
 	if (poke_count_message >= 0)
 		kernel_message_delete(poke_count_message);
