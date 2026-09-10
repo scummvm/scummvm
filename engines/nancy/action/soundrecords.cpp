@@ -49,6 +49,25 @@ static uint selectRandomSound(Common::Array<Common::String> &soundNames) {
 	return g_nancy->_randomSource->getRandomNumber(soundNames.size() - 1);
 }
 
+// Some entries hold nothing but markup: "silence", which scenes play as a
+// placeholder, is just "<n>". Showing one would clear the textbox and put a
+// blank line in it, wiping whatever caption is up.
+static bool hasVisibleText(const Common::String &text) {
+	bool inToken = false;
+
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] == '<') {
+			inToken = true;
+		} else if (text[i] == '>') {
+			inToken = false;
+		} else if (!inToken && !Common::isSpace(text[i])) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Nancy13+ subtitles are no longer stored inside the sound record. Instead, the
 // engine looks the played sound's name up in the CVTX text chunks when the sound
 // starts and, if a matching entry exists, shows it in the game textbox. The
@@ -61,14 +80,17 @@ static Common::String resolveSoundSubtitle(const Common::String &soundName) {
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 	if (autotext) {
 		Common::String text = autotext->texts.getValOrDefault(soundName, "");
-		if (!text.empty()) {
+		if (hasVisibleText(text)) {
 			return text;
 		}
 	}
 
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	if (convo) {
-		return convo->texts.getValOrDefault(soundName, "");
+		Common::String text = convo->texts.getValOrDefault(soundName, "");
+		if (hasVisibleText(text)) {
+			return text;
+		}
 	}
 
 	return Common::String();
@@ -545,7 +567,7 @@ void ConcatMultiSound::readData(Common::SeekableReadStream &stream) {
 	_sound.numLoops = (uint16)stream.readSint32LE();	// stored as an int32 on disk
 	_sound.volume = stream.readUint16LE();
 	_exitSceneID = stream.readSint16LE();
-	_field35 = stream.readByte();
+	_subtitleMode = stream.readByte();
 
 	// MultiSound: one shared set of flag pairs.
 	if (!perGroupFlags()) {
@@ -560,6 +582,32 @@ void ConcatMultiSound::readData(Common::SeekableReadStream &stream) {
 	_sound.name = "NO SOUND";
 }
 
+void ConcatMultiSound::showGroupSubtitle() {
+	if (_subtitleMode == kSubtitleModeNone) {
+		return;
+	}
+
+	// A group is captioned as a single block: the text of each of its sounds, in
+	// playback order, with a line break after every sound whose flag is set.
+	// Sounds with no text of their own contribute nothing.
+	Common::String text;
+	for (const SequencedSound &sound : _groups[_currentGroup].sounds) {
+		Common::String part = resolveSoundSubtitle(sound.name);
+		if (part.empty()) {
+			continue;
+		}
+
+		text += part;
+		if (sound.flag) {
+			text += "<n>";
+		}
+	}
+
+	if (!text.empty()) {
+		showSubtitle(text + "<e>");
+	}
+}
+
 void ConcatMultiSound::startCurrentSound() {
 	SoundGroup &group = _groups[_currentGroup];
 	SequencedSound &sound = group.sounds[_currentSound];
@@ -569,6 +617,11 @@ void ConcatMultiSound::startCurrentSound() {
 		for (const FlagDescription &flag : group.flags) {
 			NancySceneState.setEventFlag(flag);
 		}
+	}
+
+	// The whole group is subtitled at once, as its first sound starts.
+	if (_currentSound == 0) {
+		showGroupSubtitle();
 	}
 
 	_sound.name = sound.name;

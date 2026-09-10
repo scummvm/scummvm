@@ -172,6 +172,13 @@ void ConversationSound::readTerseData(Common::SeekableReadStream &stream) {
 	}
 }
 
+// Conversation captions live in the CONVO text chunk, but Nancy14 keeps a few of
+// them in AUTOTEXT instead. A key that CONVO does have, but maps to no text, is a
+// deliberately silent line, so only fall back when the key is missing altogether.
+static Common::String resolveConversationText(const Common::String &key) {
+	return resolveSubtitleText(key, resolveSubtitleText(key), "CONVO");
+}
+
 void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 	readFilename(stream, _sound.name);
 	_sound.channelID = 12;	// hardcoded, as in the terse variants
@@ -200,16 +207,14 @@ void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 	_sceneChange.frameID = stream.readUint16LE();
 	_sceneChange.continueSceneSound = kContinueSceneSound;
 
-	// Caption and response texts are external, keyed by sound name in CONVO.
+	// Caption and response texts are external, keyed by sound name.
 	// Each part of a concatenated line has its own caption; they make up one
 	// exchange, so they are shown together.
-	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
-	assert(convo);
 	if (_concatSounds.empty()) {
-		_text = convo->texts.getValOrDefault(_sound.name, "");
+		_text = resolveConversationText(_sound.name);
 	} else {
 		for (uint i = 0; i < _concatSounds.size(); ++i) {
-			_text += convo->texts.getValOrDefault(_concatSounds[i], "");
+			_text += resolveConversationText(_concatSounds[i]);
 		}
 	}
 
@@ -221,7 +226,7 @@ void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 		response.sceneChange.sceneID = stream.readUint16LE();
 		response.sceneChange.continueSceneSound = kContinueSceneSound;
 		response.conditionFlags.read(stream);
-		response.text = convo->texts.getValOrDefault(response.soundName, "");
+		response.text = resolveConversationText(response.soundName);
 	}
 
 	uint16 numFlagsStructs = stream.readUint16LE();
