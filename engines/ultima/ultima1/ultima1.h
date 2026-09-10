@@ -68,6 +68,7 @@ public:
 	Data::Map _map;
 	Data::MapDungeon _dungeon;
 	Data::SpaceMap _spaceMap;
+	Data::SpaceStarfield _starfield;
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
 	int _overworldEntityCount = 0;

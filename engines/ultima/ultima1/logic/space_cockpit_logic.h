@@ -36,6 +36,10 @@ namespace Logic {
  */
 class SpaceCockpitLogic : public SpaceLogic {
 private:
+	// tick() fires ~20/sec; only advance the starfield every few calls so
+	// it doesn't streak by too fast
+	int _tickCounter = 0;
+
 	/**
 	 * Sets the flight speed (1-8), spending 4 fuel per step of change
 	 * (setSpeed) - the number keys
@@ -54,6 +58,12 @@ public:
 	}
 
 	void keypress(Common::KeyCode keycode) override;
+
+	/**
+	 * Advances the panning starfield each frame (the starfield half of
+	 * cockpitPerFrame)
+	 */
+	void tick() override;
 };
 
 } // namespace Logic

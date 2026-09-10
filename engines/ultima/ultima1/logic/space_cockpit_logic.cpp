@@ -50,6 +50,17 @@ void SpaceCockpitLogic::keypress(Common::KeyCode keycode) {
 	SpaceLogic::keypress(keycode);
 }
 
+void SpaceCockpitLogic::tick() {
+	// The original advances the starfield every cockpit frame; at 20fps
+	// that's far too fast, so only every 3rd tick
+	if (++_tickCounter < 3)
+		return;
+	_tickCounter = 0;
+
+	_G(starfield).advance();
+	redrawMap();
+}
+
 bool SpaceCockpitLogic::move(Data::Direction dir) {
 	writeString("%s\n", Data::SPACE_COCKPIT_DIRECTION_NAMES[dir]);
 
@@ -59,9 +70,30 @@ bool SpaceCockpitLogic::move(Data::Direction dir) {
 	}
 	subtractFuel(2);
 
-	// TODO: set the starfield pan velocity (viewPanDeltaX/Y) - Left/Right
-	// pan X by -/+4, Climb/Dive pan Y by -/+4 - which the cockpit view's
-	// per-frame starfield update then applies
+	// Steer by setting the starfield pan velocity - the view's per-frame
+	// update slides the centre and clamps it at the viewport edges
+	Data::SpaceStarfield &sf = _G(starfield);
+	switch (dir) {
+	case Data::DIR_LEFT:
+		sf._panX = -4;
+		sf._panY = 0;
+		break;
+	case Data::DIR_RIGHT:
+		sf._panX = 4;
+		sf._panY = 0;
+		break;
+	case Data::DIR_UP:
+		sf._panY = -4;
+		sf._panX = 0;
+		break;
+	case Data::DIR_DOWN:
+		sf._panY = 4;
+		sf._panX = 0;
+		break;
+	default:
+		break;
+	}
+
 	return true;
 }
 
@@ -73,9 +105,14 @@ bool SpaceCockpitLogic::fire() {
 }
 
 bool SpaceCockpitLogic::pass() {
-	// TODO: re-centres the starscape (clears the pan velocity, recentres
-	// viewCenterX/Y, redraws the viewport border)
+	// Re-centres the starscape and stops any drift
 	writeString("Center\n");
+
+	Data::SpaceStarfield &sf = _G(starfield);
+	sf._centerX = 0x9f;
+	sf._centerY = 0x4f;
+	sf._panX = sf._panY = 0;
+	redrawMap();
 	return true;
 }
 

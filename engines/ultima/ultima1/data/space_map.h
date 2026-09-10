@@ -110,6 +110,48 @@ public:
 	void setup();
 };
 
+// The cockpit view's warp starfield holds this many stars
+constexpr int SPACE_STAR_COUNT = 40;
+
+/**
+ * The panning warp starfield drawn in the first-person cockpit view -
+ * SPACE.EXE's setupStars / advanceStarfield. Purely visual (not saved)
+ */
+struct SpaceStarfield {
+	// The viewport centre the stars radiate from and the aiming crosshair
+	// sits at (viewCenterX/Y), and the pan velocity applied to it each
+	// frame while steering (viewPanDeltaX/Y)
+	int16 _centerX = 0x9f, _centerY = 0x4f;
+	int16 _panX = 0, _panY = 0;
+
+	// Each star is an offset from the centre that accelerates outward
+	int16 _starX[SPACE_STAR_COUNT] = {};
+	int16 _starY[SPACE_STAR_COUNT] = {};
+
+	/**
+	 * Fresh random stars, centre and pan back to their defaults (setupStars)
+	 */
+	void reset();
+
+	/**
+	 * One frame: every star drifts further from the centre (respawning at
+	 * an edge once it leaves the viewport), then the centre pans by the
+	 * current pan velocity, which is zeroed on hitting a viewport edge
+	 * (advanceStarfield, normal-cruise path)
+	 */
+	void advance();
+
+	/**
+	 * True if a screen point is inside the cockpit viewport (starWithinView)
+	 */
+	static bool withinView(int x, int y) {
+		return x > 20 && x < 300 && y > 20 && y < 140;
+	}
+
+private:
+	void spawnStar(int index);
+};
+
 } // namespace Data
 } // namespace Ultima1
 } // namespace Ultima

@@ -108,6 +108,69 @@ void SpaceMap::setupSector(int x, int y) {
 	// and the checkOverlap* helpers). Not needed for the sector scan
 }
 
+void SpaceStarfield::spawnStar(int index) {
+	// A random quadrant and a random offset magnitude, so the star starts
+	// somewhere near an edge and heads outward
+	int quadrant = g_engine->getRandomNumber(0, 255) / 64;
+	int dx = g_engine->getRandomNumber(2, 255) / 2;
+	int dy = g_engine->getRandomNumber(4, 255) / 4;
+
+	if (quadrant == 1 || quadrant == 2)
+		dx = -dx;
+	if (quadrant > 1)
+		dy = -dy;
+
+	// If that would already be off-view, park it far away so next frame
+	// just respawns it
+	if (!withinView(_centerX + dx, _centerY + dy)) {
+		dx = 5000;
+		dy = 5000;
+	}
+
+	_starX[index] = (int16)dx;
+	_starY[index] = (int16)dy;
+}
+
+void SpaceStarfield::reset() {
+	_centerX = 0x9f;
+	_centerY = 0x4f;
+	_panX = _panY = 0;
+
+	for (int i = 0; i < SPACE_STAR_COUNT; ++i)
+		spawnStar(i);
+}
+
+void SpaceStarfield::advance() {
+	for (int i = 0; i < SPACE_STAR_COUNT; ++i) {
+		int stepX = _starX[i] / 8;
+		int stepY = _starY[i] / 6;
+
+		// Always move at least one pixel in the star's own direction
+		if (stepX == 0)
+			stepX = (_starX[i] > 0) - (_starX[i] < 0);
+		if (stepY == 0)
+			stepY = (_starY[i] > 0) - (_starY[i] < 0);
+
+		_starX[i] = (int16)(_starX[i] + stepX);
+		_starY[i] = (int16)(_starY[i] + stepY);
+
+		if (!withinView(_centerX + _starX[i], _centerY + _starY[i]))
+			spawnStar(i);
+	}
+
+	// Pan the centre, stopping dead (and dropping the pan) at a viewport edge
+	_centerX = (int16)(_centerX + _panX);
+	if (_centerX >= 300 || _centerX <= 20) {
+		_centerX = (int16)(_centerX - _panX);
+		_panX = 0;
+	}
+	_centerY = (int16)(_centerY + _panY);
+	if (_centerY >= 140 || _centerY <= 20) {
+		_centerY = (int16)(_centerY - _panY);
+		_panY = 0;
+	}
+}
+
 } // namespace Data
 } // namespace Ultima1
 } // namespace Ultima

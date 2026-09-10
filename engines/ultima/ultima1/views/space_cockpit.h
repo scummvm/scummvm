@@ -24,6 +24,7 @@
 
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/shared/gfx/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,11 +33,18 @@ namespace Views {
 using namespace Shared::Messages;
 
 /**
- * The first-person cockpit view of outer space - a panning starscape with
- * the ship's HUD, where enemy-craft combat happens. Paired with
- * SpaceCockpitLogic; swapped in from SpaceMap by the View command
+ * The first-person cockpit view of outer space - the panning warp starfield
+ * inside the cockpit frame, with the aiming crosshair at the centre (this
+ * is also where enemy-craft combat happens). Paired with SpaceCockpitLogic;
+ * swapped in from SpaceMap by the View command
  */
 class SpaceCockpit : public Map {
+private:
+	/**
+	 * Draws the static cockpit frame around the viewport (drawCockpitFrame)
+	 */
+	void drawCockpitFrame(Shared::Gfx::GfxSurface &s);
+
 public:
 	SpaceCockpit() : Map("SpaceCockpit") {}
 	~SpaceCockpit() override {}
