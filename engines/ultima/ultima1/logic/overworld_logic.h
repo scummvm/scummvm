@@ -145,6 +145,11 @@ protected:
 	bool fire() override;
 
 	/**
+	 * Quit - Save the Game
+	 */
+	bool quit() override;
+
+	/**
 	 * Handle movement
 	 */
 	bool move(Data::Direction dir) override;

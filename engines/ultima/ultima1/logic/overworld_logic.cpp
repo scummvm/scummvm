@@ -200,6 +200,16 @@ bool OverworldLogic::fire() {
 	}
 }
 
+bool OverworldLogic::quit() {
+	writeString("Quit - saving game...");
+	g_engine->updateScreen();
+	if (g_engine->saveGameDialog())
+		writeString("saved.");
+	writeString("\n");
+
+	return true;
+}
+
 bool OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
 		return true;
