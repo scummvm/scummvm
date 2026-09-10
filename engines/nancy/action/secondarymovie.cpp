@@ -23,6 +23,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/video.h"
@@ -244,8 +245,8 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 // The header grew to mirror the non-random AR (videoFormat / visibility / cursor
 // / sceneID / frameID, plus two currently unmapped u16s and a per-movie volume
 // byte). The sequence records are unchanged. The tail is a blt-descriptor list
-// for the main movie, then the recognition ("secondary") movie's name and its
-// own blt-descriptor list, in place of Nancy13's secondaryMovie record + hotspot
+// for the main movie, then the name of a foreground mask image and its own
+// blt-descriptor list, in place of Nancy13's secondaryMovie record + hotspot
 // list.
 void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
 	readFilename(ser, _startingSequenceName);
@@ -276,15 +277,14 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 		_videoDescs[i].readData(stream);
 	}
 
-	// Recognition ("secondary") movie: its name followed by its own blt
-	// descriptors. The descriptors are consumed to keep the stream aligned
-	// (no home in the struct yet).
-	readFilename(ser, _secondaryMovie.name);
-	uint16 numSecondaryDescs = 0;
-	ser.syncAsUint16LE(numSecondaryDescs);
-	for (uint i = 0; i < numSecondaryDescs; ++i) {
-		SecondaryVideoDescription unused;
-		unused.readData(stream);
+	// Foreground mask: the name of an image, followed by the blt descriptors
+	// that place it over the movie for each background frame.
+	readFilename(ser, _maskName);
+	uint16 numMaskDescs = 0;
+	ser.syncAsUint16LE(numMaskDescs);
+	_maskDescs.resize(numMaskDescs);
+	for (uint i = 0; i < numMaskDescs; ++i) {
+		_maskDescs[i].readData(stream);
 	}
 
 	applyStartingRandomSequence();
@@ -454,6 +454,7 @@ int PlaySecondaryMovie::beginRandomPause(const RandomSequence &seq) {
 	_randomPauseEndTime = g_system->getMillis() + (uint32)MAX<int32>(0, pauseMs);
 	_randomChainState = kRandomPaused;
 	setVisible(false);
+	_mask.setVisible(false);
 	_decoder.pauseVideo(true);
 	return -1;
 }
@@ -845,9 +846,41 @@ void PlaySecondaryMovie::init() {
 		resolveSentinelFrames();
 	}
 
+	if (!_maskName.empty() && _maskImage.empty()) {
+		g_nancy->_resource->loadImage(_maskName, _maskImage);
+		_mask.setVisible(false);
+		_mask.init();
+	}
+
 	_screenPosition = _drawSurface.getBounds();
 
 	RenderObject::init();
+}
+
+void PlaySecondaryMovie::registerGraphics() {
+	if (!_maskImage.empty()) {
+		_mask.registerGraphics();
+	}
+
+	RenderActionRecord::registerGraphics();
+}
+
+void PlaySecondaryMovie::updateMask(int viewportFrame) {
+	if (_maskImage.empty()) {
+		return;
+	}
+
+	for (const SecondaryVideoDescription &desc : _maskDescs) {
+		if (desc.frameID == viewportFrame) {
+			_mask._drawSurface.create(_maskImage, desc.srcRect);
+			_mask.setTransparent(true);
+			_mask.moveTo(desc.destRect);
+			_mask.setVisible(_isVisible);
+			return;
+		}
+	}
+
+	_mask.setVisible(false);
 }
 
 void PlaySecondaryMovie::onPause(bool pause) {
@@ -972,6 +1005,8 @@ void PlaySecondaryMovie::execute() {
 				setVisible(false);
 				_hasHotspot = false;
 			}
+
+			updateMask(newFrame);
 		}
 
 		// We update the decoder here instead of in updateGraphics() to avoid an

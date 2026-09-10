@@ -95,6 +95,7 @@ public:
 
 	void init() override;
 	void onPause(bool pause) override;
+	void registerGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -175,6 +176,18 @@ public:
 	// Nancy13+ carries one extra "secondary" movie after the sequence list: the
 	// character's recognition animation, played while the mouse hovers it.
 	RandomSequence _secondaryMovie;
+
+	// Nancy14 replaced that slot with a foreground mask: a still image blitted
+	// over the movie, so scenery standing in front of the character (a table,
+	// a counter) covers the lower part of it.
+	class ForegroundMask : public RenderObject {
+	public:
+		ForegroundMask() : RenderObject(9) {}
+		bool isViewportRelative() const override { return true; }
+	};
+
+	Common::Path _maskName;
+	Common::Array<SecondaryVideoDescription> _maskDescs;
 
 	// Nancy13 talkable characters: the scene to open when the character is
 	// clicked (its conversation). kNoScene means the character isn't clickable.
@@ -305,7 +318,13 @@ protected:
 	// against the loaded decoder's frame count. Random sequences only.
 	void resolveSentinelFrames();
 
+	// Show the foreground mask blit belonging to the given background frame,
+	// or hide it when the record doesn't describe one for that frame.
+	void updateMask(int viewportFrame);
+
 	Graphics::ManagedSurface _fullFrame;
+	Graphics::ManagedSurface _maskImage;
+	ForegroundMask _mask;
 	int _curViewportFrame = -1;
 	bool _isFinished = false;
 };
