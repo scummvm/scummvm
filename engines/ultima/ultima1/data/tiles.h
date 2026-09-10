@@ -91,6 +91,11 @@ enum LocationTileId {
 	CTILE_STEAL_WEAPON = 59,
 	CTILE_MAGIC = 60,
 	CTILE_TAVERN = 61,
+	// In castles, tiles 60/61 are instead the two lock tiles the player
+	// stands on to Unlock a princess's cell - one of them matches the key
+	// (_castleKeyVal), the other is the wrong one
+	CTILE_LOCK1 = 60,
+	CTILE_LOCK2 = 61,
 	// Tile 62 is a transport shop counter in cities, but the king in castles
 	CTILE_TRANSPORT = 62,
 	CTILE_KING = 62,

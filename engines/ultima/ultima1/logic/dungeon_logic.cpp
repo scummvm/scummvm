@@ -292,6 +292,92 @@ bool DungeonLogic::climb() {
 	return true;
 }
 
+bool DungeonLogic::unlock() {
+	Data::Savegame &sg = _G(savegame);
+	const Common::Point &pos = sg._locationPosition;
+	Data::DungeonCell &cell = _G(dungeon)._cells[pos.y][pos.x];
+
+	writeString("Unlock chest");
+
+	if (cell._itemId != Data::DITEM_CHEST) {
+		writeString(" - none here!\n");
+		playFX(1);
+		return true;
+	}
+
+	writeString("\n");
+
+	// Wizards pick any lock; everyone else rolls against agility
+	if (getRandomNumber(1, 75) > sg._agility && sg._class != Data::CLASS_WIZARD) {
+		writeString("Thou hast set off a trap!");
+		playFX(2);
+		writeString("\n");
+		sg._hits -= sg._dungeonLevel;
+		redrawStats();
+		return true;
+	}
+
+	cell._itemId = Data::DITEM_NONE;
+	writeString("Thou dost find: ");
+	giveCoins(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9));
+	return true;
+}
+
+bool DungeonLogic::open() {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapDungeon &dungeon = _G(dungeon);
+	const Common::Point &pos = sg._locationPosition;
+	Data::DungeonCell &cell = dungeon._cells[pos.y][pos.x];
+
+	writeString("Open coffin");
+
+	if (cell._itemId != Data::DITEM_COFFIN) {
+		writeString(" - none here!\n");
+		playFX(1);
+		return true;
+	}
+
+	writeString("\n");
+
+	int aheadX = pos.x + getDirDeltaX();
+	int aheadY = pos.y + getDirDeltaY();
+	const Data::DungeonCell &ahead = dungeon._cells[aheadY][aheadX];
+
+	// Roughly 40% chance something lurking inside springs out into the cell
+	// ahead (if that cell can take it) - the coffin then stays shut
+	if (getRandomNumber(1, 255) < 104 && ahead._tileNum != Data::DTILE_WALL &&
+			ahead._tileNum != Data::DTILE_SECRET_DOOR &&
+			ahead._monsterId == Data::DUNGEON_NO_MONSTER) {
+		dungeon.spawnMonsterAt(aheadX, aheadY);
+		return true;
+	}
+
+	cell._itemId = Data::DITEM_NONE;
+	writeString("Thou dost find: ");
+	giveCoins(getRandomNumber(3, sg._dungeonLevel * sg._dungeonLevel + 9));
+	return true;
+}
+
+bool DungeonLogic::inform() {
+	writeString("Inform and search\n");
+
+	Data::MapDungeon &dungeon = _G(dungeon);
+	const Common::Point &pos = _G(savegame)._locationPosition;
+	Data::DungeonCell &ahead = dungeon._cells[pos.y + getDirDeltaY()][pos.x + getDirDeltaX()];
+
+	writeString("Thou dost find ");
+
+	if (ahead._tileNum == Data::DTILE_SECRET_DOOR &&
+			dungeon._cells[pos.y][pos.x]._tileNum != Data::DTILE_DOOR) {
+		writeString("a secret door!\n");
+		ahead._tileNum = Data::DTILE_DOOR;
+	} else {
+		writeString("nothing\n");
+	}
+
+	return true;
+}
+
 void DungeonLogic::updateCreatures() {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapDungeon &dungeon = _G(dungeon);

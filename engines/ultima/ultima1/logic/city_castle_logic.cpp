@@ -346,6 +346,13 @@ bool CityCastleLogic::steal() {
 	return true;
 }
 
+bool CityCastleLogic::unlock() {
+	// Cities have nothing to unlock (CastleLogic overrides this)
+	writeString("Unlock what?\n");
+	playFX(1);
+	return true;
+}
+
 bool CityCastleLogic::checkCastlePermission() {
 	if (_G(savegame)._castleItemAllowance <= 0) {
 		writeString("\n");
@@ -703,6 +710,44 @@ bool CastleLogic::transact() {
 
 	g_engine->addView("King");
 	return false;
+}
+
+bool CastleLogic::unlock() {
+	Data::Savegame &sg = _G(savegame);
+	const auto &pos = sg._locationPosition;
+
+	writeString("Unlock");
+
+	// The player has to be standing on one of the two lock tiles (the
+	// princess's barred cell is the cell directly above)
+	int tile = _G(map).getMapTile(pos.x, pos.y);
+	if (tile != Data::CTILE_LOCK1 && tile != Data::CTILE_LOCK2) {
+		writeString(" what?\n");
+		playFX(1);
+		return true;
+	}
+
+	writeString("\n");
+
+	if (!sg._hasCastleKey) {
+		writeString("Thou hast not a key!\n");
+		return true;
+	}
+
+	if (tile != sg._castleKeyVal) {
+		writeString("Thou hast not\n");
+		writeString("the correct key!\n");
+		return true;
+	}
+
+	writeString("The door is open!\n");
+	sg._freeingPrincess = 1;
+
+	// Clear the barred cell above the player so the princess can follow out
+	_G(map)[pos.y - 1][pos.x] = Data::CTILE_GROUND;
+	redrawMap();
+
+	return true;
 }
 
 void CastleLogic::entering() {

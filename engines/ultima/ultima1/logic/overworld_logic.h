@@ -150,6 +150,11 @@ protected:
 	bool quit() override;
 
 	/**
+	 * eXit - dismount the current transport, dropping it on the map
+	 */
+	bool xit() override;
+
+	/**
 	 * Handle movement
 	 */
 	bool move(Data::Direction dir) override;

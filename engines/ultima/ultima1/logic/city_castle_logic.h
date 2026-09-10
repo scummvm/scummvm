@@ -125,6 +125,12 @@ protected:
 	bool steal() override;
 
 	/**
+	 * Unlock has no effect in a city ("Unlock what?"); CastleLogic
+	 * overrides it to open a princess's cell
+	 */
+	bool unlock() override;
+
+	/**
 	 * Checks the castle item allowance, consuming one use if available.
 	 * Denies with a message if there isn't one. Used by Get
 	 */
@@ -209,6 +215,12 @@ protected:
 	 * The Transact command opens the King view when standing at the throne
 	 */
 	bool transact() override;
+
+	/**
+	 * Unlocks the barred princess cell the player is standing at - needs
+	 * the castle key, and the lock tile must match the key this visit
+	 */
+	bool unlock() override;
 
 public:
 	CastleLogic();

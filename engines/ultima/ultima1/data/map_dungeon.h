@@ -133,6 +133,14 @@ public:
 	 */
 	void killMonster(int x, int y);
 
+	/**
+	 * Spawns a monster into a specific cell (the original's shiftCoffin) -
+	 * used when opening a coffin. Does nothing unless the cell is open
+	 * floor/a ladder and unoccupied. Unlike a kill, no slot is freed first,
+	 * so it will reuse an already-taken slot after enough tries
+	 */
+	void spawnMonsterAt(int x, int y);
+
 	void synchronize(Common::Serializer &s);
 };
 

@@ -187,6 +187,32 @@ void MapDungeon::dungeonSpawnMonster() {
 	_cells[y][x]._monsterHp = getRandomNumber(1, dungeonLevel * dungeonLevel + 1) + 10 + monsterId;
 }
 
+void MapDungeon::spawnMonsterAt(int x, int y) {
+	DungeonCell &cell = _cells[y][x];
+
+	if (cell._tileNum != DTILE_HALLWAY && cell._tileNum != DTILE_LADDER_UP &&
+			cell._tileNum != DTILE_LADDER_DOWN)
+		return;
+	if (cell._monsterId != DUNGEON_NO_MONSTER)
+		return;
+
+	// Prefer an unused slot, but a coffin doesn't free one up first the way
+	// a kill does, so fall back to any slot after 50 tries
+	int slot = 0;
+	for (int attempt = 0; attempt < 50; ++attempt) {
+		slot = getRandomNumber(0, 49) / 10;
+		if (!_monsterSlotUsed[slot])
+			break;
+	}
+	_monsterSlotUsed[slot] = true;
+
+	int dungeonLevel = _G(savegame)._dungeonLevel;
+	int monsterId = (dungeonLevel - 1) / 2 * DUNGEON_MONSTER_SLOTS + slot;
+
+	cell._monsterId = monsterId;
+	cell._monsterHp = getRandomNumber(1, dungeonLevel * dungeonLevel + 1) + 10 + monsterId;
+}
+
 void MapDungeon::killMonster(int x, int y) {
 	DungeonCell &cell = _cells[y][x];
 	_monsterSlotUsed[cell._monsterId % DUNGEON_MONSTER_SLOTS] = false;

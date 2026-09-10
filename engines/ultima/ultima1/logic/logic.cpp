@@ -81,7 +81,7 @@ void Logic::endOfTurn() {
 	redrawMap();
 	redrawStats();
 
-	if (_G(savegame)._hits == 0)
+	if (_G(savegame)._hits <= 0)
 		g_engine->addView("Dead");
 }
 
@@ -131,6 +131,12 @@ void Logic::action(int action) {
 		break;
 	case KEYBIND_EXIT:
 		doEndOfTurn = xit();
+		break;
+	case KEYBIND_UNLOCK:
+		doEndOfTurn = unlock();
+		break;
+	case KEYBIND_VIEW:
+		doEndOfTurn = view();
 		break;
 	case KEYBIND_FIRE:
 		doEndOfTurn = fire();
@@ -325,8 +331,23 @@ bool Logic::transact() {
 	return true;
 }
 
+bool Logic::unlock() {
+	// Overworld (and anywhere without its own handling) - nothing to unlock
+	writeString("Unlock?\n");
+	playFX(1);
+	return true;
+}
+
+bool Logic::view() {
+	writeString("View?\n");
+	playFX(1);
+	return true;
+}
+
 bool Logic::xit() {
-	writeString("Xit?\n");
+	// Only means anything on the overworld (dismount a transport); anywhere
+	// else it's just a prompt
+	writeString("X-it?\n");
 	playFX(1);
 	return true;
 }

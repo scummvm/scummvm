@@ -152,6 +152,8 @@ protected:
 	virtual bool ready();
 	virtual bool steal();
 	virtual bool transact();
+	virtual bool unlock();
+	virtual bool view();
 	virtual bool xit();
 	virtual bool zstats();
 	virtual bool move(Data::Direction dir) {

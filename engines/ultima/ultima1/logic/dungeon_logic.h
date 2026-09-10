@@ -176,6 +176,24 @@ protected:
 	bool climb() override;
 
 	/**
+	 * Unlocks a chest at the player's current cell - an agility check
+	 * (auto-passed by wizards); failure springs a trap for dungeonLevel
+	 * damage, success awards its coins
+	 */
+	bool unlock() override;
+
+	/**
+	 * Opens a coffin at the player's current cell - a chance something
+	 * springs out into the cell ahead, otherwise it yields coins
+	 */
+	bool open() override;
+
+	/**
+	 * Inform/search - reveals a secret door in the direction faced
+	 */
+	bool inform() override;
+
+	/**
 	 * Handles updating creatures/NPCs
 	 */
 	void updateCreatures() override;

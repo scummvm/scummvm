@@ -210,6 +210,57 @@ bool OverworldLogic::quit() {
 	return true;
 }
 
+bool OverworldLogic::xit() {
+	Data::Savegame &sg = _G(savegame);
+	const Common::Point &pos = sg._overworldPos;
+
+	if (sg._transportType == Data::TRANSPORT_FOOT) {
+		writeString("X-it what?\n");
+		playFX(1);
+		return true;
+	}
+
+	// The original compares the terrain tile straight against TRANSPORT_CART,
+	// which numerically just means "ocean, grass or woods" (tiles 0-2) - you
+	// can't step off onto mountains or a location tile. It also needs dry
+	// land within a couple of tiles
+	int terrain = _G(map).getMapTile(pos.x, pos.y);
+
+	bool landNearby = false;
+	for (int dy = -2; dy <= 2; ++dy) {
+		for (int dx = -2; dx <= 2; ++dx) {
+			if (_G(map).getMapTile(pos.x + dx, pos.y + dy) != Data::TILE_OCEAN)
+				landNearby = true;
+		}
+	}
+
+	if (terrain > Data::TILE_WOODS || !landNearby) {
+		writeString("Thy canst not leave it here!\n");
+		playFX(1);
+		return true;
+	}
+
+	// Drop the vehicle where the player stands as a re-boardable entity,
+	// then carry on afoot
+	int vehicleTile = sg._overworldEntities[0]._type;
+	if (_G(overworldEntityCount) < Data::OVERWORLD_ENTITY_COUNT - 1) {
+		++_G(overworldEntityCount);
+		auto &e = sg._overworldEntities[_G(overworldEntityCount)];
+		e._type = vehicleTile;
+		e._data = terrain;
+		e._x = pos.x;
+		e._y = pos.y;
+		e._hits = 0;
+	}
+
+	sg._overworldEntities[0]._data = vehicleTile;
+	sg._overworldEntities[0]._type = Data::TILE_PLAYER;
+	sg._transportType = Data::TRANSPORT_FOOT;
+
+	writeString("X-it\n");
+	return true;
+}
+
 bool OverworldLogic::move(Data::Direction dir) {
 	if (!moveCheck(dir))
 		return true;
@@ -603,12 +654,33 @@ void OverworldLogic::castPrayer() {
 		flag = true;
 
 	} else if (getRandomNumber(1, 100) < 25) {
-		// TODO
-		flag = true;
+		// A rarer answered prayer: the first monster close enough to strike
+		// at the player is whisked away
+		Data::Savegame &sg = _G(savegame);
+
+		for (int idx = 1; idx <= _G(overworldEntityCount); ++idx) {
+			Data::OverworldEntity &e = sg._overworldEntities[idx];
+			if (e._type < Data::TILE_FIRST_MONSTER)
+				continue;
+
+			int xDiff = sg._overworldPos.x - e._x;
+			int yDiff = sg._overworldPos.y - e._y;
+			if (Data::OverworldEntity::getMonsterAttackDistance(e._type, xDiff, yDiff) == 0)
+				continue;
+
+			showAttackTile(e._x, e._y, Data::TILE_SPELL_ATTACK);
+			writeString("Monster removed!\n");
+			playFX(5);
+			sg.removeOverworldCreatureAt(e._x, e._y);
+			--_G(creaturesCount);
+			flag = true;
+			break;
+		}
 	}
 
 	if (!flag) {
-		// TODO
+		writeString("Hmmmm... no effect!\n");
+		playFX(6);
 	}
 }
 
