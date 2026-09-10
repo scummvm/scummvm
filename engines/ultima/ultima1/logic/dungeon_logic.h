@@ -23,6 +23,7 @@
 #ifndef ULTIMA2_LOGIC_DUNGEON_LOGIC_H
 #define ULTIMA2_LOGIC_DUNGEON_LOGIC_H
 
+#include "ultima/ultima1/data/map_dungeon.h"
 #include "ultima/ultima1/logic/logic.h"
 
 namespace Ultima {
@@ -109,6 +110,25 @@ private:
 	 * monster there, awarding coins/experience on a kill
 	 */
 	void dungeonAttackAt(int effectNum, int agility, int strike, int x, int y);
+
+	/**
+	 * A dungeon monster's melee attack on the player, when it's in an
+	 * adjacent cell. deltaX/deltaY point from the monster to the player.
+	 * Some monster types have a special effect instead of (or as well as)
+	 * plain damage - the gelatinous cube destroys armour, the gremlin eats
+	 * food, the mind whipper drains intelligence, the thief pinches a
+	 * spare weapon
+	 */
+	void dungeonMonsterAttack(int deltaX, int deltaY);
+
+	/**
+	 * Tries to step the monster at (x, y) by (deltaX, deltaY). Fails on a
+	 * wall/secret door/beams tile or an occupied cell. On success the
+	 * destination is flagged in `moved` so the grid scan doesn't advance
+	 * the same monster again this turn
+	 */
+	bool dungeonCreatureMove(int x, int y, int deltaX, int deltaY,
+		bool moved[][Data::DUNGEON_WIDTH]);
 
 	/**
 	 * Returns the magic "strike" power of the currently readied weapon,

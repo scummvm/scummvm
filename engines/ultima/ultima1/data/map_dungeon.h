@@ -47,6 +47,12 @@ constexpr int UMONS_GELATINOUS_CUBE = 9;
 constexpr int UMONS_MIMIC = 11;
 constexpr int UMONS_INVISIBLE_SEEKER = 20;
 
+// Monster Ids with a special effect on a successful melee hit (see
+// DungeonLogic::dungeonMonsterAttack)
+constexpr int UMONS_THIEF = 2;
+constexpr int UMONS_GREMLIN = 16;
+constexpr int UMONS_MIND_WHIPPER = 21;
+
 // Dungeon monster names, indexed by DungeonCell::_monsterId (0-24)
 extern const char *UNDERWORLD_MONSTERS[];
 

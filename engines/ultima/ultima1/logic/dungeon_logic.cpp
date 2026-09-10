@@ -21,12 +21,17 @@
  */
 
 #include "ultima/ultima1/logic/dungeon_logic.h"
+#include "ultima/ultima1/core/strings.h"
 #include "ultima/ultima1/metaengine.h"
 #include "ultima/ultima1/ultima1.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
+
+static int sgn(int v) {
+	return (v > 0) - (v < 0);
+}
 
 DungeonLogic::DungeonLogic() {
 	_G(map)._mapType = Data::MAPTYPE_DUNGEON;
@@ -288,7 +293,164 @@ bool DungeonLogic::climb() {
 }
 
 void DungeonLogic::updateCreatures() {
-	// TODO
+	Data::Savegame &sg = _G(savegame);
+	Data::MapDungeon &dungeon = _G(dungeon);
+	const Common::Point &pos = sg._locationPosition;
+
+	// Cells a monster has already been stepped into this turn, so the grid
+	// sweep doesn't keep pushing the same monster along ahead of it (the
+	// original marks the destination cell's _itemId with a temporary +1000
+	// and clears it again in a second pass)
+	bool moved[Data::DUNGEON_HEIGHT][Data::DUNGEON_WIDTH] = {};
+
+	// The "did this monster take a step" result deliberately carries over
+	// between monsters, exactly as the original's shared local does: a
+	// monster already lined up with the player on one axis only tries the
+	// other axis when the previously processed monster didn't move
+	bool stepped = false;
+
+	for (int x = 1; x <= 9; ++x) {
+		for (int y = 1; y <= 9; ++y) {
+			const Data::DungeonCell &cell = dungeon._cells[y][x];
+			if (cell._monsterId == Data::DUNGEON_NO_MONSTER || moved[y][x])
+				continue;
+
+			int deltaX = pos.x - x;
+			int deltaY = pos.y - y;
+			int distance = ABS(deltaX) + ABS(deltaY);
+
+			if (distance == 1) {
+				dungeonMonsterAttack(deltaX, deltaY);
+			} else if (distance < 7) {
+				int sx = sgn(deltaX);
+				int sy = sgn(deltaY);
+
+				if (sx != 0)
+					stepped = dungeonCreatureMove(x, y, sx, 0, moved);
+				if (!stepped && sy != 0)
+					stepped = dungeonCreatureMove(x, y, 0, sy, moved);
+			}
+
+			if (sg._hits <= 0 || sg._food <= 0)
+				return;
+		}
+	}
+}
+
+void DungeonLogic::dungeonMonsterAttack(int deltaX, int deltaY) {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapDungeon &dungeon = _G(dungeon);
+	const Common::Point &pos = sg._locationPosition;
+
+	// Standing in the beams keeps every monster's melee off
+	if (dungeon._cells[pos.y][pos.x]._tileNum == Data::DTILE_BEAMS)
+		return;
+
+	int monsterX = pos.x - deltaX;
+	int monsterY = pos.y - deltaY;
+
+	// A monster attacking out of a doorway can't reach the player if the
+	// player's own tile is a door/wall/secret door
+	if (dungeon._cells[monsterY][monsterX]._tileNum == Data::DTILE_DOOR) {
+		Data::DungeonTileId hereTile = dungeon._cells[pos.y][pos.x]._tileNum;
+		if (hereTile == Data::DTILE_DOOR || hereTile == Data::DTILE_WALL ||
+				hereTile == Data::DTILE_SECRET_DOOR)
+			return;
+	}
+
+	int monsterId = dungeon._cells[monsterY][monsterX]._monsterId;
+
+	writeString("Attacked by ");
+	writeMonsterName(monsterId);
+	writeString("!\n");
+	playFX(3);
+
+	// As with the player's own weapon attacks, a higher stamina/armour
+	// actually *raises* this to-hit threshold in the original rather than
+	// lowering it
+	int hitThreshold = sg._stamina / 2 + (sg._equippedArmor << 3) + 56;
+	if (getRandomNumber(1, 255) > hitThreshold) {
+		writeString("Missed!\n");
+		return;
+	}
+
+	int specialRoll = getRandomNumber(1, 255);
+
+	int damage = sg._dungeonLevel + monsterId * monsterId;
+	if (damage > 255)
+		damage = getRandomNumber(monsterId + 1, 255);
+
+	bool dealDamage = true;
+
+	if (monsterId == Data::UMONS_GELATINOUS_CUBE && sg._equippedArmor != Data::ARMOR_NONE) {
+		writeString("Armor destroyed!\n");
+		--sg._armor[sg._equippedArmor];
+		sg._equippedArmor = Data::ARMOR_NONE;
+		dealDamage = false;
+
+	} else if (monsterId == Data::UMONS_GREMLIN) {
+		writeString("A gremlin stole some food!\n");
+		sg._food /= 2;
+		redrawStats();
+		dealDamage = false;
+
+	} else if (monsterId == Data::UMONS_MIND_WHIPPER && specialRoll < 128) {
+		writeString("Mental attack!\n");
+		sg._intelligence = sg._intelligence / 2 + 5;
+		dealDamage = false;
+
+	} else if (monsterId == Data::UMONS_THIEF) {
+		// Steals the first spare weapon that isn't the one readied - the
+		// thief still lands its hit as well
+		for (int w = Data::WEAPON_DAGGER; w < Data::WEAPON_COUNT; ++w) {
+			if (sg._weapons[w] != 0 && w != sg._equippedWeapon) {
+				const char *name = Data::WEAPON_NAMES[w];
+				writeString("Thief stole a");
+				writeString(isVowel(*name) ? "n " : " ");
+				if (Common::String(name).size() > 11)
+					writeString("\n");
+				writeString("%s\n", name);
+				--sg._weapons[w];
+				break;
+			}
+		}
+	}
+
+	if (dealDamage) {
+		playFX(2);
+		writeString("Hit! %d damage!\n", damage);
+		sg._hits -= damage;
+		redrawStats();
+	}
+}
+
+bool DungeonLogic::dungeonCreatureMove(int x, int y, int deltaX, int deltaY,
+		bool moved[][Data::DUNGEON_WIDTH]) {
+	Data::MapDungeon &dungeon = _G(dungeon);
+	int newX = x + deltaX;
+	int newY = y + deltaY;
+
+	Data::DungeonTileId destTile = dungeon._cells[newY][newX]._tileNum;
+	if (destTile == Data::DTILE_WALL || destTile == Data::DTILE_SECRET_DOOR ||
+			destTile == Data::DTILE_BEAMS)
+		return false;
+	if (dungeon._cells[newY][newX]._monsterId != Data::DUNGEON_NO_MONSTER)
+		return false;
+
+	Data::DungeonCell &src = dungeon._cells[y][x];
+	Data::DungeonCell &dest = dungeon._cells[newY][newX];
+
+	dest._monsterId = src._monsterId;
+	// The original moves only _monsterId, leaving a chasing monster with
+	// whatever hit points the destination cell held (0 for empty floor) -
+	// carrying _monsterHp across keeps a moving monster as tough as a
+	// stationary one
+	dest._monsterHp = src._monsterHp;
+	src._monsterId = Data::DUNGEON_NO_MONSTER;
+	src._monsterHp = 0;
+
+	moved[newY][newX] = true;
+	return true;
 }
 
 void DungeonLogic::showNearbyText() {
