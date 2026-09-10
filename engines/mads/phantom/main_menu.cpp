@@ -383,6 +383,17 @@ void menu_control() {
 	int anim;
 	int initial_reset = false;
 
+	current_eye = false;
+	eye_latch = false;
+	eye_message[LEFT_EYE] = 0;
+	eye_message[RIGHT_EYE] = 0;
+	eye_pokes = 0;
+	recent_eye = 0;
+	rebel_base = 0;
+	poke_count_message = -1;
+	poke_count = 0;
+	poke_counting = false;
+
 	menu_mode = MENU_APPEARING;
 	menu_state = MENU_HIGH_SPRITE;
 	menu_appear_state = 0;
