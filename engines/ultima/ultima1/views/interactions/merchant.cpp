@@ -276,6 +276,10 @@ int Merchant::overworldTransportCount() const {
 }
 
 void Merchant::chooseBuy() {
+	resetLine();
+	writeString("Transact-Buy: ");
+	showCursor();
+
 	switch (_shopType) {
 	case SHOP_ARMORY:
 	case SHOP_WEAPONS:
@@ -340,6 +344,10 @@ void Merchant::chooseBuy() {
 }
 
 void Merchant::chooseSell() {
+	resetLine();
+	writeString("Transact-Sell: ");
+	showCursor();
+
 	switch (_shopType) {
 	case SHOP_ARMORY: {
 		bool anyOwned = false;
@@ -482,8 +490,13 @@ void Merchant::armorySellKeypress(Common::KeyCode keycode) {
 
 void Merchant::weaponsRange(int &minIdx, int &maxIdx) const {
 	int base = (((_G(map)._mapStyle - 1) & 1) == 0) ? 1 : 2;
+
+	// The stock widens as the game goes on: one more weapon offered per 1500
+	// moves, up to a cap of 3 extra tiers (then a 4th once past 3000 moves).
+	// The original takes moveCtr % 0x7FFF before the /1500, but with the
+	// > 3000 branch forcing tier 3 that modulo never changes the result
 	uint32 moveCtr = _G(moveCtr);
-	int tier = (moveCtr <= 3000) ? MIN<uint32>(moveCtr % 1500, 3) : 3;
+	int tier = (moveCtr <= 3000) ? MIN<uint32>((moveCtr % 0x7FFF) / 1500, 3) : 3;
 
 	minIdx = base;
 	maxIdx = base + (tier + 1) * 2;

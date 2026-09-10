@@ -124,6 +124,7 @@ static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
 void CityCastleLogic::entering() {
 	loadEntities();
+	_G(savegame)._guardsHostile = false;
 }
 
 void CityCastleLogic::leaving() {
