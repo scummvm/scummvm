@@ -478,6 +478,11 @@ bool AudioPlayer::playMacMysterySound(uint num) {
 				resourceId);
 		return false;
 	}
+	// Some unused speech resources contain only a two-sample placeholder.
+	if (audioStream->getLength().msecs() == 0) {
+		delete audioStream;
+		return false;
+	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_spoolHandle,
 					   audioStream, -1, Audio::Mixer::kMaxChannelVolume,

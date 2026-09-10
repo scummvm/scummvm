@@ -210,7 +210,7 @@ public:
 	void setSiteHotspotCursorId(int cursorId);
 
 	/// `_DisplayClue @ 2404:05e6`. 
-	void displayClue(const byte *clueBlock);
+	void displayClue(const byte *clueBlock, uint maxEntries = 32);
 
 	/// EEM2/London `_DoPuzzle @ 2542:1482`. A clue entry can gate the rest of
 	/// itself behind a "check the manual / a real map" puzzle
@@ -364,6 +364,7 @@ private:
 	void floppyKDHint(uint kdSlot, const byte *kdIdx,
 					  const byte *bufBase, uint32 mysSize);
 	void displayScrapbookExtra(uint mysteryNum);
+	void displayMacPracticeScrapbook();
 	void accuseDrawGallery(int highlighted,
 						   Common::Array<Common::Rect> &rects,
 						   Common::Array<int> &suspects, uint8 num,
@@ -511,7 +512,7 @@ private:
 	bool startLondonTrainingMystery();
 	void showLondonEAKidsLogo();
 	void showStillPicture(uint picId, uint palId, uint holdMs,
-						bool playThunder = false);
+						  bool playThunder = false, bool holdLastFrame = false);
 	void showLondonCharSelect();
 	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 								 bool haveBriefingBg);

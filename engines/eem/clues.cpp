@@ -932,15 +932,16 @@ void EEMEngine::applyClueSideEffects(const byte *c) {
 //   +0..1: number (entry count; 0 = no briefing)
 //   +2..3: pic ID for entry 0; entry N>0 uses (entry-1).lastWord
 //   +4..:  array of 62-byte entries
-void EEMEngine::displayClue(const byte *clueBlock) {
+void EEMEngine::displayClue(const byte *clueBlock, uint maxEntries) {
 	if (!clueBlock || !_mystery.isLoaded())
 		return;
 
 	const uint16 number = READ_LE_UINT16(clueBlock);
-	debugC(1, kDebugScript, "displayClue: %u entries", number);
 	// number == 0 = no briefing (e.g. mystery 0 case-type 4); >32 = bad ptr.
 	if (number == 0 || number > 32)
 		return;
+	const uint count = MIN<uint>(number, maxEntries);
+	debugC(1, kDebugScript, "displayClue: %u entries", count);
 
 	const uint stride = isLondon() ? 0x54 : 62;
 	const bool mac = isMacintosh();
@@ -980,7 +981,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	//   EEM1 +0x30..+0x39 / EEM2 +0x3c..+0x45:
 	//       5 notebook entries (-1 terminated)
 	//   EEM1 +0x3a / EEM2 +0x4e: KD-anim number (-1 = none)
-	for (uint i = 0; i < number && !shouldQuit(); i++) {
+	for (uint i = 0; i < count && !shouldQuit(); i++) {
 		if (isMacCD() && _audio)
 			_audio->stopSpool();
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, sw, sh);
@@ -1254,7 +1255,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				g_system->delayMillis(10);
 			}
 			if (skipAll) {
-				for (uint k = i; k < number; k++)
+				for (uint k = i; k < count; k++)
 					applyClueSideEffects(clueBlock + 4 + k * stride);
 				return;
 			}

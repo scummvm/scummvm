@@ -255,6 +255,7 @@ constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, kScreenHei
 constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
 constexpr uint16 kFirstTryBadgePic = 0x205;
 constexpr Common::Point kFirstTryBadgePos(0x1e, 9);
+constexpr Common::Point kMacFirstTryBadgePos(43, 13);
 constexpr uint kMacMysteryDataTableOffset = 0x08cd;
 constexpr uint kMacMysteryDataMysteryCount = 55;
 constexpr uint kMacMysteryDataEndingCount = 55;
@@ -767,6 +768,15 @@ bool readScrapbookExtraText(Common::File &file, uint16 size,
 bool restoredContentVoiceAppliesTo(uint mysteryNum) {
 	return mysteryNum >= kRestoredContentFirstMystery &&
 		   mysteryNum <= kRestoredContentLastMystery;
+}
+
+Common::Point scrapbookExtraPosition(uint16 x, uint16 y, bool mac) {
+	if (!mac)
+		return Common::Point(x, y);
+	// Match the fixed-point conversion used by the Mac floppy scripts.
+	const uint32 xScale = (kMacScreenWidth << 16) / kScreenWidth;
+	const uint32 yScale = (kMacScreenHeight << 16) / kScreenHeight;
+	return Common::Point((x * xScale) >> 16, (y * yScale) >> 16);
 }
 
 bool gallerySlotAt(const Common::Array<Common::Rect> &rects,
@@ -1817,7 +1827,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 
 	const bool showFirstTryBadge =
 		num < sizeof(_mysteriesSolved) && _mysteriesSolved[num] == 2 &&
-		!macCDEnding && (floppyEnding || ConfMan.getBool("restored_content"));
+		(floppyEnding || ConfMan.getBool("restored_content"));
 	Picture firstTryBadge;
 	const bool haveFirstTryBadge =
 		showFirstTryBadge &&
@@ -1910,9 +1920,14 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			}
 
 			if (pageIdx == 0 && haveFirstTryBadge) {
-				const byte transp = (byte)(firstTryBadge.flags >> 8);
-				scratch.transBlitFrom(firstTryBadge.surface,
-									  kFirstTryBadgePos, transp);
+				if (macEnding) {
+					blitMacMaskedSurface(scratch.surfacePtr(), firstTryBadge,
+						kMacFirstTryBadgePos.x, kMacFirstTryBadgePos.y);
+				} else {
+					const byte transp = (byte)(firstTryBadge.flags >> 8);
+					scratch.transBlitFrom(firstTryBadge.surface,
+						kFirstTryBadgePos, transp);
+				}
 			}
 
 			const Common::String text = parseString(raw, _playerName, _partner);
@@ -4973,6 +4988,8 @@ void EEMEngine::doAccuse() {
 
 	{
 		const uint mn = _mystery.number();
+		const bool macRestored = isMacCD() && ConfMan.getBool("restored_content") &&
+			(mn == 0 || _restoredContentDataLoaded);
 		if (!isMacCD()) {
 			if (mn < sizeof(_mysteriesSolved))
 				_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
@@ -5046,7 +5063,9 @@ void EEMEngine::doAccuse() {
 				displayFloppyDialogRecords(records, count, 1);
 			}
 		} else if (solved) {
-			displayClue(solved);
+			const uint count = READ_LE_UINT16(solved);
+			// The practice CD script already includes the three scrapbook lines.
+			displayClue(solved, macRestored && mn == 0 && count > 3 ? count - 3 : count);
 		}
 		if (isMacCD()) {
 			setPartnerIdleAnim(false, 0, 0, 0);
@@ -5066,7 +5085,11 @@ void EEMEngine::doAccuse() {
 			displayScrapbookExtra(mn);
 		} else if (isMacCD()) {
 			fadeCurrentPaletteToBlack();
-			showStillPicture(0x20d, 0x25, 4000);
+			showStillPicture(0x20d, 0x25, 4000, false, macRestored);
+			if (!shouldQuit() && macRestored) {
+				displayScrapbookExtra(mn);
+				fadeCurrentPaletteToBlack();
+			}
 		}
 
 		if (!shouldQuit())
@@ -5155,11 +5178,49 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 	}
 }
 
+void EEMEngine::displayMacPracticeScrapbook() {
+	const byte *solved = _mystery.solvedClueBlock();
+	const uint count = solved ? READ_LE_UINT16(solved) : 0;
+	if (count <= 3 || count > 32)
+		return;
+
+	byte dialogue[4 + 3 * 62] = {};
+	WRITE_LE_UINT16(dialogue, 3);
+	memcpy(dialogue + 4, solved + 4 + (count - 3) * 62, 3 * 62);
+
+	// Keep the CD partner's text and speech, using the seated balloon positions.
+	const Common::Point position = _partner == kPartnerJake
+		? Common::Point(31, 32) : Common::Point(135, 28);
+	for (uint i = 0; i < 3; i++) {
+		byte *entry = dialogue + 4 + i * 62;
+		for (uint partner = 0; partner < 2; partner++) {
+			WRITE_LE_UINT16(entry + 12 + partner * 2, 0x98);
+			WRITE_LE_UINT16(entry + 16 + partner * 4, position.x);
+			WRITE_LE_UINT16(entry + 18 + partner * 4, position.y);
+		}
+		WRITE_LE_UINT16(entry + 58, 0xFFFF);
+		WRITE_LE_UINT16(entry + 60, 0);
+	}
+	displayClue(dialogue);
+}
+
 void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 	if (isFloppy() || !ConfMan.getBool("restored_content") ||
-		!_restoredContentDataLoaded ||
 		mysteryNum >= kScrapbookExtraCaseCount || !_font.isLoaded())
 		return;
+
+	if (isMacCD() && mysteryNum == 0) {
+		displayMacPracticeScrapbook();
+		return;
+	}
+	if (!_restoredContentDataLoaded)
+		return;
+
+	const bool mac = isMacCD();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	const EEMFont &dialogFont = mac && _dialogFont.isLoaded() ? _dialogFont : _font;
+	const MacSpritePaletteMap paletteMap = mac ? getMacSpritePaletteMap() : MacSpritePaletteMap();
 
 	Common::File file;
 	if (!file.open(Common::Path(kScrapbookExtraFilename))) {
@@ -5193,7 +5254,7 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 		!file.seek(recordsOffset))
 		return;
 
-	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface bg(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.clear();
 	if (Graphics::Surface *screen = g_system->lockScreen()) {
@@ -5215,6 +5276,8 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 		const uint16 voiceNancy = file.readUint16LE();
 		const uint16 jakeTextSize = file.readUint16LE();
 		const uint16 jennyTextSize = file.readUint16LE();
+		const Common::Point picPos = scrapbookExtraPosition(picX, picY, mac);
+		const Common::Point balloonPos = scrapbookExtraPosition(balloonX, balloonY, mac);
 
 		if (file.eos() || file.err())
 			return;
@@ -5231,18 +5294,21 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 		if (text.empty())
 			continue;
 
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(*bg.surfacePtr());
 
 		if (picId != 0 && picId != 0xFFFF) {
 			Picture pic;
 			if (_picsArchive.getPicture(picId, pic) &&
-				picX < kScreenWidth && picY < kScreenHeight) {
-				const byte transp = (byte)(pic.flags >> 8);
-				scratch.transBlitFrom(pic.surface,
-									  Common::Point(picX, picY),
-									  (uint32)transp);
+				picPos.x < sw && picPos.y < sh) {
+				if (mac) {
+					blitMacMaskedSurface(scratch.surfacePtr(), pic,
+						picPos.x, picPos.y, false, paletteMap);
+				} else {
+					const byte transp = (byte)(pic.flags >> 8);
+					scratch.transBlitFrom(pic.surface, picPos, (uint32)transp);
+				}
 			}
 		}
 
@@ -5258,20 +5324,27 @@ void EEMEngine::displayScrapbookExtra(uint mysteryNum) {
 		uint16 textYInset = 4;
 		uint16 textWidth = 155;
 		if (haveBalloon) {
-			const byte transp = (byte)(balloon.flags >> 8);
-			scratch.transBlitFrom(balloon.surface,
-								  Common::Point(balloonX, balloonY),
-								  (uint32)transp, flipBalloon);
+			if (mac) {
+				blitMacMaskedSurface(scratch.surfacePtr(), balloon,
+					balloonPos.x, balloonPos.y, flipBalloon, paletteMap);
+			} else {
+				const byte transp = (byte)(balloon.flags >> 8);
+				scratch.transBlitFrom(balloon.surface, balloonPos,
+					(uint32)transp, flipBalloon);
+			}
 			getBalloonInsets(balloonId, textXInset, textYInset, textWidth);
 		}
 
-		_font.drawWordWrapped(&scratch, balloonX + textXInset,
-							  balloonY + textYInset,
-							  MAX<int>(8, (int)textWidth), text,
-							  haveBalloon ? 0 : 0xF);
+		if (mac) {
+			dialogFont.drawMacWordWrapped(&scratch, balloonPos.x + textXInset,
+				balloonPos.y + textYInset, MAX<int>(8, textWidth), text, paletteMap.black);
+		} else {
+			dialogFont.drawWordWrapped(&scratch, balloonPos.x + textXInset,
+				balloonPos.y + textYInset, MAX<int>(8, textWidth), text, haveBalloon ? 0 : 0xF);
+		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
+								   0, 0, sw, sh);
 		g_system->updateScreen();
 
 		if (_audio && restoredContentVoiceAppliesTo(mysteryNum)) {

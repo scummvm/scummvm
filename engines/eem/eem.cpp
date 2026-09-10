@@ -1807,21 +1807,25 @@ void EEMEngine::showLondonEAKidsLogo() {
 }
 
 void EEMEngine::showStillPicture(uint picId, uint palId, uint holdMs,
-							   bool playThunder) {
+							   bool playThunder, bool holdLastFrame) {
 	Picture pic;
 	if (!_picsArchive.getPicture(picId, pic) || pic.surface.empty()) {
 		warning("PIC 0x%x load failed", picId);
 		return;
 	}
-	blitAt(pic, 0, 0);
-
 	byte target[kPalSize];
 	if (!getSitePalette(palId, target)) {
 		warning("Palette 0x%x load failed", palId);
 		return;
 	}
+	// Mac _LoadPalette puts white at 0 and black at 255.
+	if (isMacintosh() && target[0] == 0 && target[1] == 0 && target[2] == 0) {
+		for (uint i = 0; i < 3; i++)
+			SWAP(target[i], target[255 * 3 + i]);
+	}
 	byte black[kPalSize] = {};
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	blitAt(pic, 0, 0);
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
@@ -1831,7 +1835,8 @@ void EEMEngine::showStillPicture(uint picId, uint palId, uint holdMs,
 	waitForInput(holdMs);
 	if (_audio)
 		_audio->stopVoice();
-	fadeCurrentPaletteToBlack();
+	if (!holdLastFrame)
+		fadeCurrentPaletteToBlack();
 }
 
 bool EEMEngine::startLondonTrainingMystery() {
