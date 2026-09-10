@@ -108,6 +108,12 @@ protected:
 	void updateCreatures() override;
 
 	/**
+	 * Called after an action is done - checks for Mondain's defeat, on top
+	 * of the usual end of turn handling
+	 */
+	void endOfTurn() override;
+
+	/**
 	 * Resolves a wand attack - scans up to maxDistance tiles in the given
 	 * direction for Mondain, then rolls to hit and applies damage. Unlike
 	 * the main game's damage(), there's no city/castle branch here at all -

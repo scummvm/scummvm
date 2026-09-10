@@ -28,11 +28,13 @@
 #include "ultima/ultima1/views/interactions/entering_craft.h"
 #include "ultima/ultima1/views/interactions/king.h"
 #include "ultima/ultima1/views/interactions/liftoff.h"
+#include "ultima/ultima1/views/interactions/lose.h"
 #include "ultima/ultima1/views/interactions/merchant.h"
 #include "ultima/ultima1/views/interactions/operate_craft.h"
 #include "ultima/ultima1/views/interactions/pillar.h"
 #include "ultima/ultima1/views/interactions/princess_saved.h"
 #include "ultima/ultima1/views/interactions/ready.h"
+#include "ultima/ultima1/views/interactions/win.h"
 #include "ultima/ultima1/views/create_character.h"
 #include "ultima/ultima1/views/dungeon_map.h"
 #include "ultima/ultima1/views/game.h"
@@ -55,11 +57,13 @@ struct Views : public Shared::Views {
 	Interactions::EnteringCraft _enteringCraft;
 	Interactions::King _king;
 	Interactions::LiftOff _liftOff;
+	Interactions::Lose _lose;
 	Interactions::Merchant _merchant;
 	Interactions::OperateCraft _operateCraft;
 	Interactions::Pillar _pillar;
 	Interactions::PrincessSaved _princessSaved;
 	Interactions::Ready _ready;
+	Interactions::Win _win;
 	CreateCharacter _createCharacter;
 	DungeonMap _dungeonMap;
 	Game _game;

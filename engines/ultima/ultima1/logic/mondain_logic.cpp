@@ -394,6 +394,13 @@ void MondainLogic::updateCreatures() {
 	// TODO
 }
 
+void MondainLogic::endOfTurn() {
+	Logic::endOfTurn();
+
+	if (_G(savegame)._mondainDefeatedFlag)
+		g_engine->addView("Win");
+}
+
 bool MondainLogic::get() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("Get (Gem)");

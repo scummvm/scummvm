@@ -75,11 +75,13 @@ MODULE_OBJS += \
 	ultima1/views/interactions/entering_craft.o \
 	ultima1/views/interactions/king.o \
 	ultima1/views/interactions/liftoff.o \
+	ultima1/views/interactions/lose.o \
 	ultima1/views/interactions/merchant.o \
 	ultima1/views/interactions/operate_craft.o \
 	ultima1/views/interactions/pillar.o \
 	ultima1/views/interactions/princess_saved.o \
 	ultima1/views/interactions/ready.o \
+	ultima1/views/interactions/win.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \
 	ultima1/views/create_character.o \

@@ -33,6 +33,7 @@ constexpr int COLOR_NOTCH = 0;   // black - corner notch pixels
 
 void FullScreenDialog::draw() {
 	auto s = getSurface();
+	s.clear();
 
 	// Thick outer border band - each edge flush against both the screen edge
 	// and the inner highlight line drawn just inside it
