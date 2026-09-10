@@ -45,6 +45,8 @@
 
 namespace EEM {
 
+class TravisScrollBar;
+
 class AudioPlayer;
 class MusicPlayer;
 
@@ -318,7 +320,7 @@ private:
 	void screenDriver();
 
 	/// Re-render helpers for the corresponding `doX()` modal screens.
-	void drawNotebookFrame(int &page);
+	void drawNotebookFrame(int &page, TravisScrollBar *scrollBar = nullptr);
 
 	/// Resolve a single NoteIndex entry to displayable notebook text.
 	/// Handles the CD (4-byte) vs floppy (7-byte) entry strides.
@@ -345,6 +347,7 @@ private:
 		int pageBreaksCap;
 		int *numPages;
 		int *page;
+		TravisScrollBar *scrollBar = nullptr;
 	};
 
 	/// One NoteIndex entry as displayable accuse-screen text.
