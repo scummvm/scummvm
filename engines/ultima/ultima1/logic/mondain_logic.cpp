@@ -32,6 +32,10 @@ namespace Logic {
 static const int8 DELTA_X[5] = { 0, -1, 1, 0, 0 };
 static const int8 DELTA_Y[5] = { 0, 0, 0, -1, 1 };
 
+static int sgn(int v) {
+	return (v > 0) - (v < 0);
+}
+
 MondainLogic::MondainLogic() {
 	_G(map)._mapType = Data::MAPTYPE_MONDAIN;
 
@@ -359,6 +363,17 @@ void MondainLogic::tick() {
 
 	Data::Savegame &sg = _G(savegame);
 
+	// Advance the conjured-hazard flash. It plays 6 frames, then the cell
+	// it occupied is cleared back to open floor
+	if (sg._mondainHazardAnim >= 0) {
+		if (sg._mondainHazardAnim >= 6) {
+			_G(map)[sg._mondainHazardPos.y][sg._mondainHazardPos.x] = 0;
+			sg._mondainHazardAnim = -1;
+		} else {
+			++sg._mondainHazardAnim;
+		}
+	}
+
 	// Bounce the hit-reaction frame back and forth between 1 and 4
 	if (sg._mondainHitAnimFrame != 0) {
 		sg._mondainHitAnimFrame += sg._mondainHitAnimDir;
@@ -390,15 +405,250 @@ bool MondainLogic::isAdjacentToMondain() const {
 	return dx <= 1 && dy <= 1 && (dx != 0 || dy != 0);
 }
 
+void MondainLogic::updateMondainState() {
+	Data::Savegame &sg = _G(savegame);
+
+	// Once combat's underway, Mondain occasionally conjures a hazard tile
+	// onto a random empty cell that shares neither a row nor a column with
+	// him or the player. It flashes for a few frames (see tick()) and burns
+	// the player if they walk into it
+	if (sg._mondainCombatFlag && sg._mondainHazardAnim < 0 && getRandomNumber(1, 200) < 36) {
+		int hx = 0, hy = 0;
+		bool empty = false;
+
+		for (int attempt = 0; attempt < 100 && !empty; ++attempt) {
+			hx = (getRandomNumber(1, 255) + getRandomNumber(1, 255)) % Data::MONDAIN_WIDTH;
+			hy = (getRandomNumber(1, 255) + getRandomNumber(1, 255)) % Data::MONDAIN_HEIGHT;
+			empty = _G(map).getMapTile(hx, hy) == 0;
+		}
+
+		if (empty && hx != sg._mondainPos.x && hx != sg._locationPosition.x &&
+				hy != sg._mondainPos.y && hy != sg._locationPosition.y) {
+			sg._mondainHazardAnim = 0;
+			sg._mondainHazardPos = Common::Point(hx, hy);
+			_G(map)[hy][hx] = Data::MTILE_HAZARD;
+		}
+	}
+
+	// Step Mondain through his hit-point-driven phases
+	if (sg._mondainHits > 500) {
+		// Healthy - his aggressive phase
+		sg._mondainPhase = 2;
+		sg._mondainPhaseTimer = 20;
+	} else if (sg._mondainHits > 0) {
+		// Wounded - backs off and stops attacking
+		if (sg._mondainPhase != 11) {
+			sg._mondainPhase = 11;
+			sg._mondainPhaseTimer = 40;
+			sg._mondainPhaseAnimOffset = 0;
+		}
+	} else if (sg._mondainPhaseTimer != 30) {
+		// Hit points have just reached zero
+		writeString("Mondain is dead!");
+
+		if (!sg._gemDestroyedFlag) {
+			// The gem still stands, so this won't last - mondainTakeTurn
+			// will heal him back up
+			writeString("...or is he?\n");
+		} else {
+			writeString("\n");
+			sg._mondainDefeatedFlag = 1;
+		}
+
+		sg._mondainPhase = 4;
+		sg._mondainPhaseTimer = 30;
+		sg._mondainPhaseAnimOffset = 0;
+	}
+}
+
 void MondainLogic::updateCreatures() {
-	// TODO
+	mondainTakeTurn();
+}
+
+void MondainLogic::mondainTakeTurn() {
+	Data::Savegame &sg = _G(savegame);
+
+	if (!sg._mondainCombatFlag) {
+		// Combat hasn't been triggered yet - just an occasional hint that
+		// something's afoot
+		if (getRandomNumber(1, 200) < 17)
+			writeString("You hear a strange chanting!\n");
+		return;
+	}
+
+	if (sg._mondainPhase == 4) {
+		// Defeated for now, but the gem's intact - he steadily heals back
+		sg._mondainHits += 25;
+		return;
+	}
+
+	int dx = sg._mondainPos.x - sg._locationPosition.x;
+	int dy = sg._mondainPos.y - sg._locationPosition.y;
+	int dist = ABS(dx) + ABS(dy);
+
+	if (dist == 1 && sg._mondainPhaseTimer == 20) {
+		mondainMeleeAttack();
+		return;
+	}
+
+	if (dist < 7 && getRandomNumber(1, 255) < 128 && sg._mondainPhaseTimer == 20) {
+		mondainSpellAttack();
+		return;
+	}
+
+	// Otherwise he moves. When retreating (his wounded phase) and already
+	// lined up with the player on an axis, he picks that axis at random so
+	// he doesn't just sit in the firing line
+	if (sg._mondainPhaseTimer == 40) {
+		if (dx == 0)
+			dx = randomSign();
+		if (dy == 0)
+			dy = randomSign();
+	}
+
+	bool moved;
+	if (getRandomNumber(1, 255) & 1) {
+		moved = tryMoveMondain(0, sgn(dy));
+		if (!moved)
+			moved = tryMoveMondain(sgn(dx), 0);
+	} else {
+		moved = tryMoveMondain(sgn(dx), 0);
+		if (!moved)
+			moved = tryMoveMondain(0, sgn(dy));
+	}
+
+	// Boxed in while retreating - he burns a turn regenerating instead
+	if (!moved && sg._mondainPhaseTimer == 40)
+		sg._mondainHits += 5;
+}
+
+bool MondainLogic::tryMoveMondain(int dx, int dy) {
+	Data::Savegame &sg = _G(savegame);
+	int newX = sg._mondainPos.x + dx;
+	int newY = sg._mondainPos.y + dy;
+
+	if (newX < 0 || newY < 0 || newX >= Data::MONDAIN_WIDTH || newY >= Data::MONDAIN_HEIGHT)
+		return false;
+
+	// Anything non-empty blocks him - walls, barriers, a hazard, and the
+	// player (whose cell is kept marked with MTILE_PLAYER)
+	if (_G(map).getMapTile(newX, newY) != 0)
+		return false;
+
+	sg._mondainPos = Common::Point(newX, newY);
+	return true;
+}
+
+int MondainLogic::randomSign() {
+	return sgn(getRandomNumber(1, 255) - 128);
+}
+
+void MondainLogic::damagePlayer(int amount) {
+	Data::Savegame &sg = _G(savegame);
+
+	writeString("Hit! ");
+	writeString("%d damage!\n", amount);
+
+	sg._hits -= amount;
+	playFX(2);
+	redrawStats();
+}
+
+void MondainLogic::mondainMeleeAttack() {
+	Data::Savegame &sg = _G(savegame);
+
+	writeString("Attacked by Mondain!\n");
+	playFX(3);
+
+	// Note: as in the original, higher stamina/armour actually *raises* this
+	// threshold, so a well-equipped player is hit more often, not less
+	int roll = getRandomNumber(1, 255);
+	int threshold = 2 * (0xB9 - sg._stamina / 2 + (sg._equippedArmor << 3));
+
+	if (roll <= threshold)
+		damagePlayer(sg._hits / 32 + getRandomNumber(1, 20));
+	else
+		writeString("Missed!\n");
+}
+
+void MondainLogic::mondainSpellAttack() {
+	Data::Savegame &sg = _G(savegame);
+
+	int kind = getRandomNumber(1, 238) % 3;
+	writeString("Mondain casts ");
+
+	bool hit = false;
+
+	switch (kind) {
+	case 0:
+		// Magic missile - straightforward damage, dodged with high mental
+		// stats (the threshold goes negative once wisdom is high enough)
+		writeString("magic missile!\n");
+		playFX(5);
+
+		hit = getRandomNumber(1, 255) < 2 * (0xC3 - (sg._wisdom + sg._intelligence / 2));
+		if (hit)
+			damagePlayer(getRandomNumber(1, 100));
+		break;
+
+	case 1:
+		// Mind blaster - drains each of the six attributes
+		writeString("mind blaster!\n");
+		playFX(5);
+
+		hit = getRandomNumber(1, 200) > 140;
+		if (hit) {
+			writeString("Hit!  Stats are reduced!\n");
+
+			int16 *stats[6] = {
+				&sg._strength, &sg._agility, &sg._stamina,
+				&sg._charisma, &sg._wisdom, &sg._intelligence
+			};
+			for (int i = 0; i < 6; ++i) {
+				if (*stats[i] > 0x10)
+					*stats[i] -= *stats[i] / 8;
+				else if (*stats[i] >= 2)
+					*stats[i] -= 2;
+			}
+		}
+		break;
+
+	default:
+		// Psionic shock
+		writeString("psionic shock!\n");
+		playFX(5);
+
+		hit = getRandomNumber(1, 200) > 140;
+		if (hit) {
+			int amount = sg._hits / 32;
+			if (amount > 0xFF)
+				amount -= 0xFE;
+			damagePlayer(amount);
+		}
+		break;
+	}
+
+	if (!hit)
+		writeString("Missed!\n");
 }
 
 void MondainLogic::endOfTurn() {
-	Logic::endOfTurn();
+	// Not chaining to Logic::endOfTurn() on purpose
 
-	if (_G(savegame)._mondainDefeatedFlag)
+	updateMondainState();
+
+	if (_G(savegame)._mondainDefeatedFlag) {
+		redrawStats();
 		g_engine->addView("Win");
+		return;
+	}
+
+	updateCreatures();
+
+	redrawStats();
+
+	if (_G(savegame)._hits <= 0)
+		g_engine->addView("Lose");
 }
 
 bool MondainLogic::get() {

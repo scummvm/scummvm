@@ -151,6 +151,10 @@ public:
 	int16 _mondainDefeatedFlag = 0;
 	// Mondain's own hit points
 	int16 _mondainHits = 1000;
+	// Mondain's conjured-hazard flash: -1 when idle, otherwise its current
+	// animation frame (0..6). _mondainHazardPos is the cell it occupies
+	int16 _mondainHazardAnim = -1;
+	Common::Point _mondainHazardPos;
 
 	/**
 	 * Synchronize savegame data

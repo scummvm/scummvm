@@ -117,6 +117,9 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 		s.syncAsSint16LE(_mondainPhaseTimer);
 		s.syncAsSint16LE(_mondainDefeatedFlag);
 		s.syncAsSint16LE(_mondainHits);
+		s.syncAsSint16LE(_mondainHazardAnim);
+		s.syncAsSint16LE(_mondainHazardPos.x);
+		s.syncAsSint16LE(_mondainHazardPos.y);
 	}
 }
 

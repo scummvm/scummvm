@@ -98,6 +98,9 @@ enum LocationTileId {
 };
 
 enum MondainTileId {
+	// Tiles 14-19 are the 6 animation frames of a hazard Mondain briefly
+	// conjures onto an empty cell (see updateMondainState / MondainLogic::tick)
+	MTILE_HAZARD = 14,
 	MTILE_PLAYER = 20
 };
 

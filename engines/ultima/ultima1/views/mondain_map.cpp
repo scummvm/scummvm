@@ -76,9 +76,18 @@ void MondainMap::draw() {
 	}
 #endif
 
+	const auto &sg = _G(savegame);
+
+	// A hazard Mondain has conjured, mid-flash (the map cell already holds
+	// MTILE_HAZARD; this overlays the current animation frame on top)
+	if (sg._mondainHazardAnim >= 0 && sg._mondainHazardAnim < 6) {
+		const Graphics::ManagedSurface &hazImg = tiles[Data::MTILE_HAZARD + sg._mondainHazardAnim];
+		s.blitFrom(hazImg, Common::Point(sg._mondainHazardPos.x * TILE_WIDTH + 8,
+			sg._mondainHazardPos.y * TILE_HEIGHT + 8));
+	}
+
 	// Draw Mondain himself - his current pose, plus (while he's reacting to
 	// a hit) a small flash effect just to the left of him
-	const auto &sg = _G(savegame);
 	const auto &mondainPos = sg._mondainPos;
 
 	if (sg._mondainHitAnimFrame != 0) {

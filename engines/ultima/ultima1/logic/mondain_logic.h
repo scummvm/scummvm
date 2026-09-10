@@ -99,6 +99,53 @@ private:
 	 */
 	bool castMagicMissile(Data::Direction dir);
 
+	/**
+	 * End of turn housekeeping for Mondain himself (the original's
+	 * updateMondainState): occasionally conjures a short-lived hazard tile,
+	 * steps him through his hit-point-driven phases, and - once his hit
+	 * points reach zero - prints the "Mondain is dead!" message, setting
+	 * _mondainDefeatedFlag only if the gem has already been destroyed
+	 */
+	void updateMondainState();
+
+	/**
+	 * Mondain's own turn (the original's mondainTakeTurn) - he attacks if
+	 * adjacent or close and in his aggressive phase, otherwise moves toward
+	 * (or, when wounded, away from) the player
+	 */
+	void mondainTakeTurn();
+
+	/**
+	 * Mondain's melee attack, used when he's standing right next to the
+	 * player (the original's dungeonAttack)
+	 */
+	void mondainMeleeAttack();
+
+	/**
+	 * Mondain's ranged spell attack - magic missile, mind blaster (stat
+	 * drain), or psionic shock, picked at random (the original's
+	 * mondainSpecialAttack)
+	 */
+	void mondainSpellAttack();
+
+	/**
+	 * Applies a hit from Mondain to the player - prints "Hit! N damage!",
+	 * subtracts the hit points, and updates the stats display
+	 */
+	void damagePlayer(int amount);
+
+	/**
+	 * Tries to step Mondain by (dx, dy) - fails if that cell is off the map
+	 * or occupied. Returns true if he moved
+	 */
+	bool tryMoveMondain(int dx, int dy);
+
+	/**
+	 * Returns -1, 0, or +1 at random (the original's randomSign) - used to
+	 * pick a retreat direction on an axis the player shares with Mondain
+	 */
+	int randomSign();
+
 protected:
 	bool move(Data::Direction dir) override;
 
@@ -108,8 +155,12 @@ protected:
 	void updateCreatures() override;
 
 	/**
-	 * Called after an action is done - checks for Mondain's defeat, on top
-	 * of the usual end of turn handling
+	 * Called after an action is done. Deliberately does NOT chain to
+	 * Logic::endOfTurn(): the Mondain encounter runs its own loop with no
+	 * food upkeep, and dying to Mondain is final - none of the base class's
+	 * resurrection ("Dead") handling applies. Runs updateMondainState, then
+	 * (unless he's been defeated for good) gives Mondain his turn via
+	 * updateCreatures, then checks whether the player has been killed
 	 */
 	void endOfTurn() override;
 
