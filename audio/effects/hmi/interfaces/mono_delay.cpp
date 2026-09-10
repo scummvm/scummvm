@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "audio/effects/hmi/interfaces/mono_delay.h"
 
 namespace Audio {

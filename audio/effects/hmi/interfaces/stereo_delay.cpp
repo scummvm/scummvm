@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "audio/effects/hmi/interfaces/stereo_delay.h"
 
 namespace Audio {
