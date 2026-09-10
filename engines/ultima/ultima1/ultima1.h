@@ -77,6 +77,12 @@ public:
 	// The player's current galaxy sector while in outer space
 	int _sectorX = Data::SPACE_STATION_X;
 	int _sectorY = Data::SPACE_STATION_Y;
+	// Which of the current sector's ship slots the player is flying, and
+	// whether they're in the first-person cockpit view (vs the overhead
+	// sector map). _cockpitSpeed is the flight speed set while in cockpit
+	int _shipIndex = 2;
+	bool _cockpitView = false;
+	int _cockpitSpeed = 0;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
