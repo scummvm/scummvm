@@ -37,6 +37,7 @@
 #include "mads/core/player.h"
 #include "mads/core/quote.h"
 #include "mads/core/speech.h"
+#include "mads/phantom/mads/quotes.h"
 #include "mads/phantom/main_menu.h"
 #include "mads/phantom/menus.h"
 #include "mads/mads.h"
@@ -72,7 +73,8 @@ static void main_menu_main() {
 		picture_view_x = 0;
 		picture_view_y = 0;
 
-		quotes = quote_load(0, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+		quotes = quote_load(quote_mainmenu_phantom_1,
+			67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
 			77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
 			87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
 			97, 98, 99, 0);
