@@ -35,7 +35,6 @@
 #include "mads/core/mouse.h"
 #include "mads/core/pal.h"
 #include "mads/core/player.h"
-#include "mads/core/quote.h"
 #include "mads/core/speech.h"
 #include "mads/dragonsphere/main_menu.h"
 #include "mads/dragonsphere/menus.h"
@@ -46,8 +45,6 @@ namespace Dragonsphere {
 
 constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
-
-char *quotes;
 
 static void main_menu_main() {
 	auto &screen = *g_engine->getScreen();
@@ -105,7 +102,6 @@ static void main_menu_main() {
 			}
 		}
 
-		free(quotes);
 		kernel_unload_sound_driver();
 		kernel_game_shutdown();
 	}
