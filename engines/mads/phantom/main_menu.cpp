@@ -133,7 +133,6 @@ int  selected_item = -1;
 #define LEFT_EYE   0
 #define RIGHT_EYE  1
 
-extern char *quotes;
 int  eye_message[2];
 int  eye_pokes   = 0;
 int  recent_eye  = 0;
@@ -324,14 +323,14 @@ static void add_bonus_message() {
 
 	if (quote_ids[1] != 0) {
 		poke_count_message = kernel_message_add(
-			quote_string(quotes, quote_ids[0]), 160, 27,
+			quote_string(kernel.quotes, quote_ids[0]), 160, 27,
 			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
 		rebel_second_message = kernel_message_add(
-			quote_string(quotes, quote_ids[1]), 160, 40,
+			quote_string(kernel.quotes, quote_ids[1]), 160, 40,
 			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
 	} else {
 		poke_count_message = kernel_message_add(
-			quote_string(quotes, quote_ids[0]), 160, 40,
+			quote_string(kernel.quotes, quote_ids[0]), 160, 40,
 			MESSAGE_COLOR, 180, 0, KERNEL_MESSAGE_CENTER);
 	}
 
@@ -427,7 +426,7 @@ static void process_messages(int anim) {
 		y = 66;
 	}
 
-	eye_message[recent_eye] = kernel_message_add(quote_string(quotes, id), x, y,
+	eye_message[recent_eye] = kernel_message_add(quote_string(kernel.quotes, id), x, y,
 		MESSAGE_COLOR, 180, 0, flags);
 
 done:

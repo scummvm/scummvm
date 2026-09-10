@@ -31,6 +31,7 @@
 #include "mads/core/kernel.h"
 #include "mads/core/magic.h"
 #include "mads/core/matte.h"
+#include "mads/core/mem.h"
 #include "mads/core/mcga.h"
 #include "mads/core/mouse.h"
 #include "mads/core/pal.h"
@@ -47,8 +48,6 @@ namespace Phantom {
 
 constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
-
-char *quotes;
 
 static void main_menu_main() {
 	auto &screen = *g_engine->getScreen();
@@ -73,7 +72,7 @@ static void main_menu_main() {
 		picture_view_x = 0;
 		picture_view_y = 0;
 
-		quotes = quote_load(quote_mainmenu_phantom_1,
+		kernel.quotes = quote_load(quote_mainmenu_phantom_1,
 			67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
 			77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
 			87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
@@ -119,7 +118,8 @@ static void main_menu_main() {
 			}
 		}
 
-		free(quotes);
+		mem_free(kernel.quotes);
+		kernel.quotes = nullptr;
 		kernel_unload_sound_driver();
 		kernel_game_shutdown();
 	}
