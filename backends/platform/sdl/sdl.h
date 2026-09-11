@@ -59,6 +59,7 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 	void acquireImeCompositionControl() override;
+	void cancelImeComposition() override;
 	void releaseImeCompositionControl() override;
 
 	// Override functions from ModularBackend and OSystem

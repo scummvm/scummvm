@@ -282,7 +282,7 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 	const bool wasEditing = _editMode;
 	if (wasEditing && _caretVisible)
 		drawCaret(true);
-	clearImeComposition();
+	cancelImeComposition();
 
 	// Copy everything
 	copyListData(list);

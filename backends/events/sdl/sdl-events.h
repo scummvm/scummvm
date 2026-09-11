@@ -76,6 +76,9 @@ public:
 	 */
 	void acquireImeCompositionControl();
 
+	/** Cancel the native composition without disabling text input. */
+	void cancelImeComposition();
+
 	/**
 	 * Release explicit client-side control of IME composition.
 	 *

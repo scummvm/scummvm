@@ -90,7 +90,7 @@ void EditableWidget::reflowLayout() {
 void EditableWidget::setEditString(const Common::U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
-	clearImeComposition();
+	cancelImeComposition();
 	_editString = str;
 	clearSelection();
 	setCaretPos(caretVisualPos(str.size()));
@@ -189,7 +189,39 @@ bool EditableWidget::clearImeComposition() {
 	return true;
 }
 
+bool EditableWidget::cancelImeComposition() {
+	g_system->cancelImeComposition();
+	return clearImeComposition();
+}
+
+bool EditableWidget::commitImeComposition(const Common::U32String &text) {
+	int baseBegin;
+	int baseEnd;
+	getImeCompositionBaseRange(baseBegin, baseEnd);
+
+	Common::U32String acceptedText;
+	for (uint32 i = 0; i < text.size(); i++) {
+		if (isCharAllowed(text[i]))
+			acceptedText.insertChar(text[i], acceptedText.size());
+	}
+
+	clearImeComposition();
+	if (acceptedText.empty())
+		return false;
+
+	_editString.replace(baseBegin, baseEnd - baseBegin, acceptedText);
+	clearSelection();
+	setCaretPos(caretVisualPos(baseBegin + static_cast<int>(acceptedText.size())));
+	sendCommand(_cmd, 0);
+	return true;
+}
+
 void EditableWidget::handleImeComposition(const Common::ImeComposition &composition) {
+	if (composition.state == Common::ImeComposition::kComplete) {
+		commitImeComposition(composition.text);
+		return;
+	}
+
 	if (composition.state != Common::ImeComposition::kCompositing || composition.text.empty()) {
 		clearImeComposition();
 		return;
@@ -224,7 +256,7 @@ void EditableWidget::handleTickle() {
 void EditableWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
-	if (clearImeComposition())
+	if (cancelImeComposition())
 		markAsDirty();
 
 	_isDragging = true;
@@ -319,21 +351,16 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	if (!isEnabled())
 		return false;
-	const bool imeCompositionActive = hasImeComposition();
-	if (imeCompositionActive && state.keycode != Common::KEYCODE_INVALID) {
+	if (hasImeComposition()) {
 		// The native IME owns key interpretation until it completes or cancels
 		// the composition. Raw key events must not modify the committed text.
 		_shiftPressed = state.hasFlags(Common::KBD_SHIFT);
 		return true;
 	}
-	// SDL text input without a matching physical key uses KEYCODE_INVALID.
-	// Such an event commits the composition and is inserted below.
 
 	// First remove caret
 	if (_caretVisible)
 		drawCaret(true);
-	if (imeCompositionActive && clearImeComposition())
-		dirty = true;
 
 	_shiftPressed = state.hasFlags(Common::KBD_SHIFT);
 
@@ -555,28 +582,28 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch (evt.customType) {
 		case kActionHome:
-			if (clearImeComposition())
+			if (cancelImeComposition())
 				dirty = true;
 			moveCaretToStart(false);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionShiftHome:
-			if (clearImeComposition())
+			if (cancelImeComposition())
 				dirty = true;
 			moveCaretToStart(true);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionEnd:
-			if (clearImeComposition())
+			if (cancelImeComposition())
 				dirty = true;
 			moveCaretToEnd(false);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionShiftEnd:
-			if (clearImeComposition())
+			if (cancelImeComposition())
 				dirty = true;
 			moveCaretToEnd(true);
 			forcecaret = true;
@@ -584,7 +611,7 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 			break;
 		case kActionCut:
 			if (!getEditString().empty() && _selOffset != 0) {
-				if (clearImeComposition())
+				if (cancelImeComposition())
 					dirty = true;
 				int selBegin = _selCaretPos;
 				int selEnd = _selCaretPos + _selOffset;
@@ -614,7 +641,7 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 
 		case kActionPaste:
 			if (g_system->hasTextInClipboard()) {
-				if (clearImeComposition())
+				if (cancelImeComposition())
 					dirty = true;
 				Common::U32String text = g_system->getTextFromClipboard();
 				if (_selOffset != 0) {
