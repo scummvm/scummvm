@@ -697,6 +697,16 @@ public:
 	virtual void acquireImeCompositionControl() {}
 
 	/**
+	 * Cancel the native composition without disabling text input.
+	 *
+	 * The active input owner should call this before discarding its local
+	 * preedit state because of a caret move or another editing operation.
+	 * This is a no-op when controlled composition is not enabled or the backend
+	 * does not support native IME composition.
+	 */
+	virtual void cancelImeComposition() {}
+
+	/**
 	 * Release explicit client-side control of native IME composition.
 	 *
 	 * This restores the composition and general text-input states saved by the

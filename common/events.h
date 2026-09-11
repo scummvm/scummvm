@@ -126,7 +126,7 @@ enum EventType {
 	EVENT_HOTSPOTS_SHOW = 38,
 	EVENT_HOTSPOTS_HIDE = 39,
 
-	/** An input method editor changed its in-progress composition. */
+	/** An input method editor changed, completed, or cancelled a composition. */
 	EVENT_IME_COMPOSITION = 40,
 
 	/**
@@ -218,22 +218,17 @@ typedef uint32 CustomEventType;
 /**
  * Data supplied with an @ref EVENT_IME_COMPOSITION event.
  *
- * The state distinguishes an in-progress update, normal completion, and
+ * The state distinguishes an in-progress update, text commitment, and
  * cancellation. Start and length describe the selected range inside an
  * in-progress composition, or are negative when the backend does not provide
- * that range.
- *
- * Committed text is not stored in this structure. It is delivered separately
- * to engines through @ref EVENT_KEYDOWN.
+ * that range. A completed composition carries the entire committed string in
+ * @ref text instead of reducing it to a single @ref EVENT_KEYDOWN.
  */
 struct ImeComposition {
 	enum State {
 		/** The native input method is updating uncommitted text. */
 		kCompositing,
-		/**
-		 * The native composition ended normally.
-		 * Committed text is delivered separately to engines through @ref EVENT_KEYDOWN.
-		 */
+		/** The native composition ended normally, optionally committing @ref text. */
 		kComplete,
 		/** The native composition was cancelled (e.g. lost focus) */
 		kCancelled
@@ -242,8 +237,9 @@ struct ImeComposition {
 	/** Whether the composition is being updated, completed, or cancelled. */
 	State state;
 	/**
-	 * The current uncommitted composition.
-	 * The string is valid only while @ref state is @ref kCompositing.
+	 * The current uncommitted composition or the complete committed string.
+	 * The string is empty for cancellation and can be empty for completion
+	 * events that only signal the end of a preedit.
 	 */
 	U32String text;
 	/**

@@ -74,19 +74,31 @@ void SdlEventSource::setImeCompositionEnabled(bool enable) {
 	const bool textInputEnabledWithoutComposition =
 		!previousState.compositionEnabled && previousState.textInputEnabled;
 
-	// SDL has no portable composition-only stop operation across the supported
-	// SDL 2 versions. When ordinary text input must remain active, stop and
-	// restart the native text-input session once so disabling composition also
-	// discards its unfinished native text.
-	if (!enable && _imeCompositionEnabled && textInputEnabledWithoutComposition) {
-		_imeCompositionEnabled = false;
-		_textInputEnabled = false;
-		applyNativeTextInputState();
-	}
+	if (!enable && _imeCompositionEnabled)
+		cancelImeComposition();
 
 	_imeCompositionEnabled = enable;
 	_textInputEnabled = enable || textInputEnabledWithoutComposition;
 	applyNativeTextInputState();
+}
+
+void SdlEventSource::cancelImeComposition() {
+	if (!_imeCompositionEnabled || !_textInputEnabled)
+		return;
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+	if (window && !SDL_ClearComposition(window))
+		warning("Could not clear SDL text composition: %s", SDL_GetError());
+#elif SDL_VERSION_ATLEAST(2, 0, 22)
+	SDL_ClearComposition();
+#else
+	// Older SDL 2 releases can only cancel composition by restarting text input.
+	_textInputEnabled = false;
+	applyNativeTextInputState();
+	_textInputEnabled = true;
+	applyNativeTextInputState();
+#endif
 }
 
 void SdlEventSource::releaseImeCompositionControl() {
@@ -96,12 +108,9 @@ void SdlEventSource::releaseImeCompositionControl() {
 	const ImeCompositionControlState previousState = _imeCompositionControlStateStack.pop();
 
 	// Do not let an unfinished composition owned by the closing scope leak into
-	// an outer text-input session. Stop it before restoring an active session.
-	if (_imeCompositionEnabled && previousState.textInputEnabled) {
-		_imeCompositionEnabled = false;
-		_textInputEnabled = false;
-		applyNativeTextInputState();
-	}
+	// an outer text-input session.
+	if (_imeCompositionEnabled)
+		cancelImeComposition();
 
 	// Restore both parts of the saved state. The outermost pop therefore returns
 	// SDL to the native text-input state observed by the first acquisition.

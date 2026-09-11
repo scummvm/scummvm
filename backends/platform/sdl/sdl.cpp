@@ -295,6 +295,13 @@ void OSystem_SDL::acquireImeCompositionControl() {
 #endif
 }
 
+void OSystem_SDL::cancelImeComposition() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->cancelImeComposition();
+#endif
+}
+
 void OSystem_SDL::releaseImeCompositionControl() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_eventSource)
