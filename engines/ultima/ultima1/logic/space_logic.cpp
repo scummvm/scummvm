@@ -52,6 +52,11 @@ void SpaceLogic::entering() {
 	ship._shipType = Data::SHIP_SHUTTLE;
 	ship._fuel = _G(savegame)._shipFuel;
 	ship._shield = _G(savegame)._shipShield;
+	// setupSpaceMap docks the player's shuttle at a fixed point of its own,
+	// not relative to the station anchor like the two parked fighters
+	ship._x = 260;
+	ship._y = 90;
+	ship._facing = Data::FACING_LEFT;
 
 	redrawStats();
 }

@@ -24,6 +24,8 @@
 
 #include "ultima/ultima1/views/map.h"
 #include "ultima/ultima1/data/map.h"
+#include "ultima/ultima1/data/space_map.h"
+#include "ultima/shared/gfx/gfx_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,7 +33,36 @@ namespace Views {
 
 using namespace Shared::Messages;
 
+/**
+ * The overhead view of the player's current galaxy sector - the station
+ * and/or star hazard and/or docking anchor (if any are present), and every
+ * active ship, matching the original SPACE.EXE's setupView (overhead branch)
+ */
 class SpaceMap : public Map {
+private:
+	/**
+	 * Draws the station's raw bitmap (drawStationGraphic), only shown in
+	 * sector (3,3)
+	 */
+	void drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+
+	/**
+	 * Draws a sector's star/heat hazard raw bitmap (drawStarGraphic)
+	 */
+	void drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+
+	/**
+	 * Draws a sector's docking/encounter anchor raw bitmap (drawPlanetGraphic)
+	 */
+	void drawPlanetGraphic(Shared::Gfx::GfxSurface &s, int x, int y);
+
+	/**
+	 * XOR-blits a ship's glyph (egaspace.bin, via Data::Map::spaceShipTiles,
+	 * indexed by shipType*4+facing) at its current position
+	 * (blitShipSpriteXor)
+	 */
+	void drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship);
+
 public:
 	SpaceMap() : Map("SpaceMap") {}
 	~SpaceMap() override {}

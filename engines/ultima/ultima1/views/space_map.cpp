@@ -27,6 +27,89 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Views {
 
+// EGA-mode colors for the sector view's baked-in raw bitmaps and the ship
+// outlines - the disassembly's own hardcoded non-CGA fallback values for
+// drawStarGraphic/drawStationGraphic, and (for the ships) the closest
+// equivalents already established elsewhere in this port's space UI
+constexpr int STAR_COLOR_1 = 12;
+constexpr int STAR_COLOR_2 = 14;
+constexpr int ANCHOR_COLOR = 15;
+constexpr int STATION_COLOR_HILIGHT = 1;
+constexpr int STATION_COLOR_BORDER = 10;
+constexpr int STATION_COLOR_EDGE = 7;
+
+// Star/heat hazard bitmap (18 rows x 19 cols), matching SPACE.EXE's own raw
+// table for drawStarGraphic. 1 -> STAR_COLOR_1, 2 -> STAR_COLOR_2
+static const int8 STAR_BITMAP[18][19] = {
+	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
+	{ 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 1, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1 },
+	{ 0, 0, 1, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 1, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1, 0, 0 },
+	{ 1, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 },
+	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },
+};
+
+// Docking/encounter anchor bitmap (20 rows x 20 cols), matching SPACE.EXE's
+// own raw table for drawPlanetGraphic. Any nonzero value -> ANCHOR_COLOR
+static const int8 PLANET_BITMAP[20][20] = {
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1 },
+	{ 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
+	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
+	{ 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 },
+	{ 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
+	{ 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+};
+
+// Space station bitmap (18 rows x 21 cols), matching SPACE.EXE's own raw
+// table for drawStationGraphic. 1/2 -> STATION_COLOR_HILIGHT,
+// 4 -> STATION_COLOR_EDGE, 3 -> STATION_COLOR_BORDER
+static const int8 STATION_BITMAP[18][21] = {
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 4, 1, 1, 1, 2, 3, 2, 3, 2, 3, 1, 1, 4, 0, 0, 0, 0 },
+	{ 0, 0, 0, 4, 1, 1, 2, 3, 2, 2, 2, 3, 2, 3, 2, 1, 1, 4, 0, 0, 0 },
+	{ 0, 0, 4, 1, 1, 3, 2, 2, 2, 2, 2, 3, 2, 3, 2, 2, 1, 1, 4, 0, 0 },
+	{ 0, 4, 1, 1, 3, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 2, 1, 1, 4, 0 },
+	{ 0, 4, 1, 1, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3, 3, 3, 1, 1, 4, 0 },
+	{ 4, 1, 1, 2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 3, 3, 2, 1, 1, 4 },
+	{ 4, 1, 1, 1, 3, 2, 2, 3, 2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 1, 1, 4 },
+	{ 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 2, 1, 1, 4 },
+	{ 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 4 },
+	{ 0, 4, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 4, 0 },
+	{ 0, 4, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 4, 0 },
+	{ 0, 0, 4, 1, 1, 2, 2, 3, 2, 3, 3, 3, 3, 2, 2, 2, 1, 1, 4, 0, 0 },
+	{ 0, 0, 0, 4, 1, 1, 2, 3, 2, 3, 2, 3, 2, 2, 2, 1, 1, 4, 0, 0, 0 },
+	{ 0, 0, 0, 0, 4, 1, 1, 1, 2, 3, 2, 3, 2, 1, 1, 1, 4, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
+};
+
 bool SpaceMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_SPACE);
 	return Map::msgFocus(msg);
@@ -40,7 +123,79 @@ bool SpaceMap::msgUnfocus(const UnfocusMessage &msg) {
 void SpaceMap::draw() {
 	Map::draw();
 
-	// TODO
+	auto s = getSurface();
+	const Data::SpaceMapCell &cell =
+		_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
+
+	// The station graphic only ever appears in its own fixed sector, at the
+	// docking-bay entrance point
+	if (_G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y)
+		drawStationGraphic(s, 60, 75);
+
+	if (cell._hazardX != 0)
+		drawStarGraphic(s, cell._hazardX, cell._hazardY);
+
+	if (cell._anchorX != 0)
+		drawPlanetGraphic(s, cell._anchorX, cell._anchorY);
+
+	for (int i = 0; i < Data::SPACE_SHIPS_PER_SECTOR; ++i) {
+		const Data::SpaceMapShip &ship = cell._ships[i];
+		if (ship._shipType != Data::SHIP_NONE)
+			drawShipOutline(s, ship);
+	}
+}
+
+void SpaceMap::drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+	for (int row = 0; row < 18; ++row) {
+		for (int col = 0; col < 19; ++col) {
+			switch (STAR_BITMAP[row][col]) {
+			case 1:
+				s.setPixel(x + col, y + row, STAR_COLOR_1);
+				break;
+			case 2:
+				s.setPixel(x + col, y + row, STAR_COLOR_2);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void SpaceMap::drawPlanetGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+	for (int row = 0; row < 20; ++row) {
+		for (int col = 0; col < 20; ++col) {
+			if (PLANET_BITMAP[row][col] != 0)
+				s.setPixel(x + col, y + row, ANCHOR_COLOR);
+		}
+	}
+}
+
+void SpaceMap::drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
+	for (int row = 0; row < 18; ++row) {
+		for (int col = 0; col < 21; ++col) {
+			switch (STATION_BITMAP[row][col]) {
+			case 1:
+			case 2:
+				s.setPixel(x + col, y + row, STATION_COLOR_HILIGHT);
+				break;
+			case 4:
+				s.setPixel(x + col, y + row, STATION_COLOR_EDGE);
+				break;
+			case 3:
+				s.setPixel(x + col, y + row, STATION_COLOR_BORDER);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void SpaceMap::drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {
+	int tileIndex = ship._shipType * 4 + ship._facing;
+	const Graphics::ManagedSurface &tile = _G(map).spaceShipTiles()[tileIndex];
+	s.xorBlitFrom(tile, Common::Point(ship._x, ship._y));
 }
 
 } // namespace Views

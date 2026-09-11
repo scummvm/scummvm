@@ -66,6 +66,44 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 	delete[] data;
 }
 
+constexpr int SHIP_TILE_WIDTH = 32;
+constexpr int SHIP_TILE_HEIGHT = 19;
+constexpr int SHIP_TILE_ROW_BYTES = SHIP_TILE_WIDTH / 8;
+constexpr int SHIP_TILE_BYTES = SHIP_TILE_ROW_BYTES * SHIP_TILE_HEIGHT;
+constexpr int SHIP_TILE_SHIFT_VARIANTS = 8;
+constexpr int SHIP_TILE_SLOT_BYTES = SHIP_TILE_BYTES * SHIP_TILE_SHIFT_VARIANTS;
+constexpr byte SHIP_TILE_MASK_COLOR = 15;
+
+void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count) {
+	Common::File f;
+	if (!f.open(filename))
+		error("Could not open %s", filename);
+
+	byte data[SHIP_TILE_BYTES];
+
+	for (int tileNum = 0; tileNum < count; ++tileNum) {
+		f.seek(tileNum * SHIP_TILE_SLOT_BYTES);
+		if (f.read(data, SHIP_TILE_BYTES) != (uint32)SHIP_TILE_BYTES)
+			error("Unexpected end of %s", filename);
+
+		Graphics::ManagedSurface &tile = tiles[tileNum];
+		tile.create(SHIP_TILE_WIDTH, SHIP_TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		tile.clear(0);
+
+		for (int y = 0; y < SHIP_TILE_HEIGHT; ++y) {
+			const byte *row = &data[y * SHIP_TILE_ROW_BYTES];
+			byte *destRow = (byte *)tile.getBasePtr(0, y);
+
+			for (int x = 0; x < SHIP_TILE_WIDTH; ++x) {
+				int byteIdx = x / 8;
+				int bitMask = 0x80 >> (x % 8);
+				if (row[byteIdx] & bitMask)
+					destRow[x] = SHIP_TILE_MASK_COLOR;
+			}
+		}
+	}
+}
+
 } // namespace Data
 } // namespace Ultima1
 } // namespace Ultima

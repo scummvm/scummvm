@@ -32,6 +32,10 @@ constexpr int OVERWORLD_TILES_COUNT = 52;
 constexpr int CITY_TILES_COUNT = 51;
 constexpr int MONDAIN_TILES_COUNT = 19;
 
+// One outer-space ship glyph per shipType*4+facing combination (3 ship
+// types x 4 facings - see Data::SpaceShipType/SpaceShipFacing)
+constexpr int SPACE_SHIP_TILES_COUNT = 12;
+
 enum OverworldTileId {
 	TILE_OCEAN = 0,
 	TILE_GRASS = 1,
@@ -119,6 +123,20 @@ enum MondainTileId {
  * @param tileSize		Width/Height of individual tiles
  */
 extern void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count, int size);
+
+/**
+ * Loads the outer-space ship glyph sheet (egaspace.bin) into a
+ * caller-supplied array of SPACE_SHIP_TILES_COUNT surfaces, one 32x19
+ * 1-bit-per-pixel XOR mask glyph per shipType*4+facing combination
+ * (blitShipSpriteXor). Each glyph is followed in the file by 7 more
+ * byte-alignment-shifted copies of itself (for the original's hardware
+ * byte-aligned blitter) - only the first, unshifted copy is loaded, since a
+ * software blit isn't limited to byte-aligned X positions
+ * @param filename		Filename to load
+ * @param tiles			Tiles array to load into
+ * @param count			Number of glyphs
+ */
+extern void loadShipTiles(const char *filename, Graphics::ManagedSurface *tiles, int count);
 
 } // namespace Data
 } // namespace Ultima1

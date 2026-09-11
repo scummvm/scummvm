@@ -63,10 +63,27 @@ void SpaceMap::setup() {
 	station._anchorX = 200;
 	station._anchorY = 100;
 
-	// TODO: setupSpaceMap also parks two fighters (ships[0]/[1]) at the
-	// station and places the player's own shuttle (ships[3], fuel/shield
-	// from _savegame._shipFuel/_shipShield). Needed for docking and combat,
-	// not for the sector scan
+	// Two fighters are permanently parked at the station, docked at fixed
+	// offsets from the anchor (setupSpaceMap's own DELTA_X/DELTA_Y-derived
+	// positions for the bottom and left docking edges respectively)
+	SpaceMapShip &smallFighter = station._ships[0];
+	smallFighter._shipType = SHIP_SMALL_FIGHTER;
+	smallFighter._fuel = 2500;
+	smallFighter._shield = 5000;
+	smallFighter._x = (int16)(station._anchorX + 2);
+	smallFighter._y = (int16)(station._anchorY + 17);
+	smallFighter._facing = FACING_UP;
+
+	SpaceMapShip &largeFighter = station._ships[1];
+	largeFighter._shipType = SHIP_LARGE_FIGHTER;
+	largeFighter._fuel = 5000;
+	largeFighter._shield = 1000;
+	largeFighter._x = (int16)(station._anchorX - 15);
+	largeFighter._y = (int16)(station._anchorY + 1);
+	largeFighter._facing = FACING_RIGHT;
+
+	// The player's own shuttle (ships[2]) sits at a fixed dock position of
+	// its own, not derived from the anchor - see SpaceLogic::entering()
 }
 
 void SpaceMapShip::synchronize(Common::Serializer &s) {

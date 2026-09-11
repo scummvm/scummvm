@@ -158,6 +158,8 @@ void Map::init() {
 	_mondainTiles[0].create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
 	loadTiles("egamond.bin", &_mondainTiles[1], MONDAIN_TILES_COUNT, 16);
 	_mondainTiles[20] = _overworldTiles[TILE_PLAYER];
+
+	loadShipTiles("egaspace.bin", _spaceShipTiles, SPACE_SHIP_TILES_COUNT);
 }
 
 void Map::resetMondainMap() {

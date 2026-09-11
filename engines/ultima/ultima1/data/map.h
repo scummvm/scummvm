@@ -116,6 +116,7 @@ private:
 	Graphics::ManagedSurface _overworldTiles[OVERWORLD_TILES_COUNT];
 	Graphics::ManagedSurface _cityTiles[CITY_TILES_COUNT];
 	Graphics::ManagedSurface _mondainTiles[MONDAIN_TILES_COUNT + 2];
+	Graphics::ManagedSurface _spaceShipTiles[SPACE_SHIP_TILES_COUNT];
 
 	/**
 	 * Used to generate the dungeon.
@@ -175,6 +176,13 @@ public:
 	 */
 	const Graphics::ManagedSurface *tiles() const {
 		return _tiles;
+	}
+
+	/**
+	 * Get the outer-space ship glyph tiles, indexed by shipType*4+facing
+	 */
+	const Graphics::ManagedSurface *spaceShipTiles() const {
+		return _spaceShipTiles;
 	}
 
 	/**

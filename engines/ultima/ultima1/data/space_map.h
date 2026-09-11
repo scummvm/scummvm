@@ -53,6 +53,16 @@ enum SpaceShipType {
 	SHIP_SMALL_FIGHTER = 2		// "Fighter 2" - heavy shields
 };
 
+// A ship icon's facing in the overhead sector view (distinct from the
+// cockpit's Data::Direction) - also the order of drawShipSprite's own
+// per-facing jump table
+enum SpaceShipFacing {
+	FACING_LEFT = 0,
+	FACING_RIGHT = 1,
+	FACING_UP = 2,
+	FACING_DOWN = 3
+};
+
 /**
  * A single ship occupying one of a sector's ship slots
  */
