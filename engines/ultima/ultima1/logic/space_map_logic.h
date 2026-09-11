@@ -29,10 +29,14 @@ namespace Ultima1 {
 namespace Logic {
 
 /**
- * The overhead sector-map view of outer space: the ship drifts around the
- * current sector, the arrows nudge its heading (West/East/North/South), and
- * reaching an edge crosses into the neighbouring sector. This is the mode
- * take-off loads into
+ * The overhead sector-map view of outer space: the arrows nudge the ship's
+ * drift heading (West/East/North/South - handleOverheadArrows), and the
+ * drift itself is applied each frame (per_frame_logic), clamped to the
+ * sector's playable area. Flying into the viewport border bounces the ship
+ * back and drains shields ("Crunch!" - handleSectorBoundaryCollision);
+ * actually crossing into a neighbouring sector is a cockpit-only feature
+ * (hyperjump), not available from this view. This is the mode take-off
+ * loads into
  */
 class SpaceMapLogic : public SpaceLogic {
 protected:
@@ -44,6 +48,13 @@ public:
 	SpaceMapLogic() : SpaceLogic() {}
 	~SpaceMapLogic() override {
 	}
+
+	/**
+	 * Applies the current drift to the player's ship position, handling the
+	 * viewport-border bounce/shield-drain and advancing the exhaust trail
+	 * countdown (per_frame_logic, overhead branch)
+	 */
+	void tick() override;
 };
 
 } // namespace Logic

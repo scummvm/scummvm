@@ -78,6 +78,16 @@ void SpaceLogic::subtractFuel(int amount) {
 	redrawStats();
 }
 
+int SpaceLogic::shipShields() const {
+	return _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex]._shield;
+}
+
+void SpaceLogic::subtractShields(int amount) {
+	int16 &shield = _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex]._shield;
+	shield = (shield > amount) ? (int16)(shield - amount) : 0;
+	redrawStats();
+}
+
 void SpaceLogic::keypress(Common::KeyCode keycode) {
 	writeString("Huh?\n");
 	playFX(1);

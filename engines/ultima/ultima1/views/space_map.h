@@ -63,6 +63,16 @@ private:
 	 */
 	void drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship);
 
+	/**
+	 * Draws the player ship's engine exhaust trail while
+	 * _G(shipExhaustCountdown) is active, dispatching by ship type
+	 * (drawShipSprite, vector-plotted rather than a sprite tile)
+	 */
+	void drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship);
+	void drawShuttleExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
+	void drawLargeFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
+	void drawSmallFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing);
+
 public:
 	SpaceMap() : Map("SpaceMap") {}
 	~SpaceMap() override {}

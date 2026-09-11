@@ -37,6 +37,13 @@ constexpr int ANCHOR_COLOR = 15;
 constexpr int STATION_COLOR_HILIGHT = 1;
 constexpr int STATION_COLOR_BORDER = 10;
 constexpr int STATION_COLOR_EDGE = 7;
+constexpr int EXHAUST_COLOR_MAIN = 12;
+constexpr int EXHAUST_COLOR_HILIGHT = 14;
+
+// Bounds plotShipPixelBounded clips the exhaust trail's individual pixels to
+static bool withinShipView(int x, int y) {
+	return x > 20 && x < 300 && y > 18 && y < 141;
+}
 
 // Star/heat hazard bitmap (18 rows x 19 cols), matching SPACE.EXE's own raw
 // table for drawStarGraphic. 1 -> STAR_COLOR_1, 2 -> STAR_COLOR_2
@@ -143,6 +150,10 @@ void SpaceMap::draw() {
 		if (ship._shipType != Data::SHIP_NONE)
 			drawShipOutline(s, ship);
 	}
+
+	// Only the player's own ship thrusts, so only it ever trails exhaust
+	if (_G(shipExhaustCountdown) > 0)
+		drawShipExhaust(s, cell._ships[_G(savegame)._shipIndex]);
 }
 
 void SpaceMap::drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
@@ -196,6 +207,195 @@ void SpaceMap::drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapS
 	int tileIndex = ship._shipType * 4 + ship._facing;
 	const Graphics::ManagedSurface &tile = _G(map).spaceShipTiles()[tileIndex];
 	s.xorBlitFrom(tile, Common::Point(ship._x, ship._y));
+}
+
+void SpaceMap::drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {
+	switch (ship._shipType) {
+	case Data::SHIP_LARGE_FIGHTER:
+		drawLargeFighterExhaust(s, ship._x, ship._y, ship._facing);
+		break;
+	case Data::SHIP_SMALL_FIGHTER:
+		drawSmallFighterExhaust(s, ship._x, ship._y, ship._facing);
+		break;
+	case Data::SHIP_SHUTTLE:
+	default:
+		drawShuttleExhaust(s, ship._x, ship._y, ship._facing);
+		break;
+	}
+}
+
+void SpaceMap::drawShuttleExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+	auto plot = [&s](int px, int py, int color) {
+		if (withinShipView(px, py))
+			s.setPixel(px, py, color);
+	};
+
+	switch (facing) {
+	case Data::FACING_LEFT:
+		for (int i = 0; i < 3; ++i) {
+			plot(x + 19, y + 4 + i, EXHAUST_COLOR_MAIN);
+			plot(x + 19, y + 11 + i, EXHAUST_COLOR_MAIN);
+		}
+		plot(x + 20, y + 5, EXHAUST_COLOR_HILIGHT);
+		plot(x + 20, y + 6, EXHAUST_COLOR_HILIGHT);
+		plot(x + 20, y + 11, EXHAUST_COLOR_HILIGHT);
+		plot(x + 20, y + 12, EXHAUST_COLOR_HILIGHT);
+		plot(x + 21, y + 6, EXHAUST_COLOR_MAIN);
+		plot(x + 21, y + 11, EXHAUST_COLOR_MAIN);
+		break;
+
+	case Data::FACING_RIGHT:
+		for (int i = 0; i < 3; ++i) {
+			plot(x - 1, y + 4 + i, EXHAUST_COLOR_MAIN);
+			plot(x - 1, y + 11 + i, EXHAUST_COLOR_MAIN);
+		}
+		plot(x - 2, y + 5, EXHAUST_COLOR_HILIGHT);
+		plot(x - 2, y + 6, EXHAUST_COLOR_HILIGHT);
+		plot(x - 2, y + 11, EXHAUST_COLOR_HILIGHT);
+		plot(x - 2, y + 12, EXHAUST_COLOR_HILIGHT);
+		plot(x - 3, y + 6, EXHAUST_COLOR_MAIN);
+		plot(x - 3, y + 11, EXHAUST_COLOR_MAIN);
+		break;
+
+	case Data::FACING_UP:
+		for (int i = 0; i < 3; ++i) {
+			plot(x + 5 + i, y + 19, EXHAUST_COLOR_MAIN);
+			plot(x + 12 + i, y + 19, EXHAUST_COLOR_MAIN);
+		}
+		plot(x + 6, y + 20, EXHAUST_COLOR_HILIGHT);
+		plot(x + 7, y + 20, EXHAUST_COLOR_HILIGHT);
+		plot(x + 12, y + 20, EXHAUST_COLOR_HILIGHT);
+		plot(x + 13, y + 20, EXHAUST_COLOR_HILIGHT);
+		plot(x + 7, y + 21, EXHAUST_COLOR_MAIN);
+		plot(x + 12, y + 21, EXHAUST_COLOR_MAIN);
+		break;
+
+	case Data::FACING_DOWN:
+	default:
+		for (int i = 0; i < 3; ++i) {
+			plot(x + 5 + i, y - 1, EXHAUST_COLOR_MAIN);
+			plot(x + 12 + i, y - 1, EXHAUST_COLOR_MAIN);
+		}
+		plot(x + 6, y - 2, EXHAUST_COLOR_HILIGHT);
+		plot(x + 7, y - 2, EXHAUST_COLOR_HILIGHT);
+		plot(x + 12, y - 2, EXHAUST_COLOR_HILIGHT);
+		plot(x + 13, y - 2, EXHAUST_COLOR_HILIGHT);
+		plot(x + 7, y - 3, EXHAUST_COLOR_MAIN);
+		plot(x + 12, y - 3, EXHAUST_COLOR_MAIN);
+		break;
+	}
+}
+
+void SpaceMap::drawSmallFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+	auto plot = [&s](int px, int py) {
+		if (withinShipView(px, py))
+			s.setPixel(px, py, EXHAUST_COLOR_MAIN);
+	};
+
+	switch (facing) {
+	case Data::FACING_LEFT:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + 17 + i, y + 1);
+			plot(x + 17 + i, y + 2);
+			plot(x + 17 + i, y + 15);
+			plot(x + 17 + i, y + 16);
+		}
+		for (int i = 0; i < 4; ++i)
+			plot(x + 17, y + 7 + i);
+		plot(x + 18, y + 6);
+		plot(x + 18, y + 11);
+		break;
+
+	case Data::FACING_RIGHT:
+		for (int i = 0; i < 2; ++i) {
+			plot(x - 1 - i, y + 1);
+			plot(x - 1 - i, y + 2);
+			plot(x - 1 - i, y + 15);
+			plot(x - 1 - i, y + 16);
+		}
+		for (int i = 0; i < 4; ++i)
+			plot(x - 1, y + 7 + i);
+		plot(x - 2, y + 6);
+		plot(x - 2, y + 11);
+		break;
+
+	case Data::FACING_UP:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + i, y + 18);
+			plot(x + i, y + 19);
+			plot(x + 14 + i, y + 18);
+			plot(x + 14 + i, y + 19);
+		}
+		for (int i = 0; i < 4; ++i)
+			plot(x + 6 + i, y + 18);
+		plot(x + 5, y + 19);
+		plot(x + 10, y + 19);
+		break;
+
+	case Data::FACING_DOWN:
+	default:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + i, y);
+			plot(x + i, y - 1);
+			plot(x + 14 + i, y);
+			plot(x + 14 + i, y - 1);
+		}
+		for (int i = 0; i < 4; ++i)
+			plot(x + 6 + i, y);
+		plot(x + 5, y - 1);
+		plot(x + 10, y - 1);
+		break;
+	}
+}
+
+void SpaceMap::drawLargeFighterExhaust(Shared::Gfx::GfxSurface &s, int x, int y, int facing) {
+	auto plot = [&s](int px, int py) {
+		if (withinShipView(px, py))
+			s.setPixel(px, py, EXHAUST_COLOR_MAIN);
+	};
+
+	switch (facing) {
+	case Data::FACING_LEFT:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + 17, y + 7 + i);
+			plot(x + 17, y + 9 + i);
+			plot(x + 18, y + 8 + i);
+		}
+		for (int i = 0; i < 6; ++i)
+			plot(x + 19, y + 6 + i);
+		break;
+
+	case Data::FACING_RIGHT:
+		for (int i = 0; i < 2; ++i) {
+			plot(x - 1, y + 7 + i);
+			plot(x - 1, y + 9 + i);
+			plot(x - 2, y + 8 + i);
+		}
+		for (int i = 0; i < 6; ++i)
+			plot(x - 3, y + 6 + i);
+		break;
+
+	case Data::FACING_UP:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + 7 + i, y + 18);
+			plot(x + 9 + i, y + 18);
+			plot(x + 8 + i, y + 19);
+		}
+		for (int i = 0; i < 6; ++i)
+			plot(x + 6 + i, y + 20);
+		break;
+
+	case Data::FACING_DOWN:
+	default:
+		for (int i = 0; i < 2; ++i) {
+			plot(x + 7 + i, y);
+			plot(x + 9 + i, y);
+			plot(x + 8 + i, y - 1);
+		}
+		for (int i = 0; i < 6; ++i)
+			plot(x + 6 + i, y - 2);
+		break;
+	}
 }
 
 } // namespace Views

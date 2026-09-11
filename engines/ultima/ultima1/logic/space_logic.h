@@ -51,6 +51,18 @@ protected:
 	 */
 	void subtractFuel(int amount);
 
+	/**
+	 * Shields remaining in the ship the player is currently flying
+	 * (getShipShields)
+	 */
+	int shipShields() const;
+
+	/**
+	 * Drains shields from the current ship, clamped at zero
+	 * (subtractShields)
+	 */
+	void subtractShields(int amount);
+
 	void updateCreatures() override {
 	}
 
