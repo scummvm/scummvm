@@ -38,17 +38,17 @@ void SpaceLogic::entering() {
 	// The original re-launches SPACE.EXE each time, always starting fresh
 	// at the station sector with a newly rolled galaxy, flying the shuttle
 	// out of the docking bay
-	_G(sectorX) = Data::SPACE_STATION_X;
-	_G(sectorY) = Data::SPACE_STATION_Y;
-	_G(shipIndex) = 2;
+	_G(savegame)._sectorX = Data::SPACE_STATION_X;
+	_G(savegame)._sectorY = Data::SPACE_STATION_Y;
+	_G(savegame)._shipIndex = 2;
 	_G(cockpitSpeed) = 0;
-	_G(spaceMap).setup();
+	_G(savegame)._starmap.setup();
 
 	// Seed the player's own ship slot from the savegame. setupSpaceMap also
 	// parks two fighters at the station and positions everything - still
 	// TODO - but the fuel/shield are what the HUD and flight need
 	Data::SpaceMapShip &ship =
-		_G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)];
+		_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex];
 	ship._shipType = Data::SHIP_SHUTTLE;
 	ship._fuel = _G(savegame)._shipFuel;
 	ship._shield = _G(savegame)._shipShield;
@@ -64,11 +64,11 @@ void SpaceLogic::endOfTurn() {
 }
 
 int SpaceLogic::shipFuel() const {
-	return _G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)]._fuel;
+	return _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex]._fuel;
 }
 
 void SpaceLogic::subtractFuel(int amount) {
-	int16 &fuel = _G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)]._fuel;
+	int16 &fuel = _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex]._fuel;
 	fuel = (fuel > amount) ? (int16)(fuel - amount) : 0;
 	redrawStats();
 }

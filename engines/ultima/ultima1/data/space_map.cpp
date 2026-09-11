@@ -69,6 +69,32 @@ void SpaceMap::setup() {
 	// not for the sector scan
 }
 
+void SpaceMapShip::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_x);
+	s.syncAsSint16LE(_y);
+	s.syncAsSint16LE(_shipType);
+	s.syncAsSint16LE(_fuel);
+	s.syncAsSint16LE(_shield);
+	s.syncAsSint16LE(_facing);
+}
+
+void SpaceMapCell::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_enemyCount);
+	s.syncAsSint16LE(_hazardX);
+	s.syncAsSint16LE(_hazardY);
+	s.syncAsSint16LE(_anchorX);
+	s.syncAsSint16LE(_anchorY);
+
+	for (int i = 0; i < SPACE_SHIPS_PER_SECTOR; ++i)
+		_ships[i].synchronize(s);
+}
+
+void SpaceMap::synchronize(Common::Serializer &s) {
+	for (int x = 0; x < SPACE_SECTOR_COUNT; ++x)
+		for (int y = 0; y < SPACE_SECTOR_COUNT; ++y)
+			_sectors[x][y].synchronize(s);
+}
+
 void SpaceMap::setupSector(int x, int y) {
 	SpaceMapCell &cell = _sectors[x][y];
 

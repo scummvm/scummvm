@@ -23,6 +23,7 @@
 #define ULTIMA1_DATA_SPACE_MAP_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -61,6 +62,8 @@ struct SpaceMapShip {
 	int16 _fuel = 0;
 	int16 _shield = 0;
 	int16 _facing = 0;
+
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -78,6 +81,8 @@ struct SpaceMapCell {
 	int16 _anchorX = 0, _anchorY = 0;
 
 	SpaceMapShip _ships[SPACE_SHIPS_PER_SECTOR];
+
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -108,6 +113,13 @@ public:
 	 * (Re)generates the whole galaxy
 	 */
 	void setup();
+
+	/**
+	 * Synchronizes the current state of every sector - called from the
+	 * savegame while the player is actually in space, since the galaxy
+	 * isn't just regenerated from the seed once ships/fuel/hazards diverge
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 // The cockpit view's warp starfield holds this many stars

@@ -33,7 +33,7 @@ constexpr int COLOR_HIGHLIGHT = 12;		// light red - low shield/fuel warning
 void SpaceStats::draw() {
 	Data::Savegame &p = _G(savegame);
 	const Data::SpaceMapShip &ship =
-		_G(spaceMap)._sectors[_G(sectorX)][_G(sectorY)]._ships[_G(shipIndex)];
+		_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex];
 
 	auto s = getSurface();
 	s.clear();

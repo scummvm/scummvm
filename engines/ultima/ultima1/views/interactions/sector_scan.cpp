@@ -79,13 +79,13 @@ void SectorScan::draw() {
 	// Blink the player's current sector by blanking its glyph on the off
 	// beat
 	if (!_blipVisible) {
-		int px = cellX(_G(sectorX)), py = cellY(_G(sectorY));
+		int px = cellX(_G(savegame)._sectorX), py = cellY(_G(savegame)._sectorY);
 		s.fillRect(Rect(px, py, px + 8, py + 9), 0);
 	}
 }
 
 void SectorScan::drawSectorIcon(Shared::Gfx::GfxSurface &s, int sx, int sy) {
-	const Data::SpaceMapCell &cell = _G(spaceMap)._sectors[sx][sy];
+	const Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[sx][sy];
 	int px = cellX(sx), py = cellY(sy);
 
 	if (cell._enemyCount != 0)

@@ -26,6 +26,7 @@
 #include "common/serializer.h"
 #include "ultima/ultima1/data/data.h"
 #include "ultima/ultima1/data/entity.h"
+#include "ultima/ultima1/data/space_map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -126,6 +127,12 @@ public:
 	uint8 _dungeonLevel = 1;
 	uint8 _dungeonDirection = 4;
 	uint16 _dungeonExitHitPoints = 0;
+
+	// Outer space state - synchronized only while _mapNum == MAP_SPACE
+	int16 _sectorX = SPACE_STATION_X;
+	int16 _sectorY = SPACE_STATION_Y;
+	int16 _shipIndex = 2;
+	SpaceMap _starmap;
 
 	bool _gemDestroyedFlag = false;
 	Common::Point _mondainPos;

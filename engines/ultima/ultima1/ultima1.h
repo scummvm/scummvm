@@ -67,7 +67,6 @@ protected:
 public:
 	Data::Map _map;
 	Data::MapDungeon _dungeon;
-	Data::SpaceMap _spaceMap;
 	Data::SpaceStarfield _starfield;
 	Data::Savegame _savegame;
 	Common::SharedPtr<Logic::Logic> _logic;
@@ -75,13 +74,8 @@ public:
 	int _creaturesCount = 0;
 	uint32 _moveCtr = 0;
 	int _transportFoodCtr = 0;
-	// The player's current galaxy sector while in outer space
-	int _sectorX = Data::SPACE_STATION_X;
-	int _sectorY = Data::SPACE_STATION_Y;
-	// Which of the current sector's ship slots the player is flying, and
-	// the flight speed set while in the cockpit view (the overhead vs
+	// The flight speed set while in the cockpit view (the overhead vs
 	// cockpit distinction is carried by which SpaceLogic subclass is active)
-	int _shipIndex = 2;
 	int _cockpitSpeed = 0;
 
 public:

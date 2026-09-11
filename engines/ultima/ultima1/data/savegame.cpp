@@ -121,6 +121,13 @@ void Savegame::synchronizeExtra(Common::Serializer &s) {
 		s.syncAsSint16LE(_mondainHazardPos.x);
 		s.syncAsSint16LE(_mondainHazardPos.y);
 	}
+
+	if (_mapNum == MAP_SPACE) {
+		s.syncAsSint16LE(_sectorX);
+		s.syncAsSint16LE(_sectorY);
+		s.syncAsSint16LE(_shipIndex);
+		_starmap.synchronize(s);
+	}
 }
 
 void Savegame::synchronize(Common::Serializer &s) {
