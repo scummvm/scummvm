@@ -52,7 +52,8 @@ const Font *MacFontRun::getFont() {
 
 	MacFont macFont = MacFont(fontId, fontSize, textSlant);
 
-	font = wm->_fontMan->getFont(macFont);
+	font = wm->_fontMan->getFont(&macFont);
+	fontId = macFont.getId();
 
 	return font;
 }
