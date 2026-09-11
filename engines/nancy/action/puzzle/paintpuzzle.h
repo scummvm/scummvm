@@ -58,18 +58,13 @@ protected:
 	};
 
 	// A fillable region of the picture: an overlay shape drawn at a position,
-	// its current color index, and the target it must hold to be solved.
+	// its current color, and the target it must hold to be solved. Colors are
+	// 1-based palette indices; 0 means unpainted.
 	struct PaintRegion {
 		Common::Path name;
 		Common::Rect rect;
 		int16 currentColor = -1;
 		int16 targetColor = -1;
-	};
-
-	struct SceneOutcome {
-		int16 field0 = 0;
-		int16 sceneID = 0;
-		byte flag = 0;
 	};
 
 	int colorSwatchAtCursor(const Common::Point &mousePos) const;
@@ -82,7 +77,8 @@ protected:
 	void drawBrush();
 	void redraw();
 	bool isSolved() const;
-	void applyOutcome(const SceneOutcome &outcome);
+	void playSoundBlock(const RandomSoundBlock &block);
+	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
 
 	// -- File data --
 	Common::Path _imageName;		// 0x3d
@@ -93,10 +89,10 @@ protected:
 	Common::Array<PaintColor> _colors;		// 0x78
 	Common::Array<PaintRegion> _regions;	// 0x94
 
-	RandomSoundBlock _sounds[3];	// 0xa4/0xfa (before) + one after the outcome
+	RandomSoundBlock _sounds[2];	// 0xa4/0xfa
 
-	int16 _field1a6 = 0;		// 0x1a6
-	SceneOutcome _outcome;		// 0x1a8
+	SceneChangeWithFlag _solveScene;	// 0x1a6
+	RandomSoundBlock _solveSound;		// 0x150, plays before the solve scene change
 
 	// Give-up hotspot (count-prefixed 23-byte trailer): click to leave the puzzle.
 	Common::Rect _exitHotspot;
@@ -112,7 +108,6 @@ protected:
 	int _hoverRegion = -1;
 	int _hoverColor = -1;
 	bool _solved = false;
-	bool _outcomeApplied = false;
 	bool _exitRequested = false;
 };
 

@@ -19,11 +19,14 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/puzzle/paintpuzzle.h"
@@ -64,12 +67,15 @@ void PaintPuzzle::readData(Common::SeekableReadStream &stream) {
 	_sounds[0].readData(stream);	// 0xa4
 	_sounds[1].readData(stream);	// 0xfa
 
-	_field1a6 = stream.readSint16LE();		// 0x1a6
-	_outcome.field0 = stream.readSint16LE();	// 0x1a8
-	_outcome.sceneID = stream.readSint16LE();
-	_outcome.flag = stream.readByte();
+	// Shorter than the SceneChangeWithFlag::readData() formats: no vertical
+	// offset or scene sound field
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x1a6
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
-	_sounds[2].readData(stream);
+	_solveSound.readData(stream);			// 0x150
 
 	// Trailing count-prefixed array of 23-byte give-up hotspots
 	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
@@ -101,7 +107,6 @@ void PaintPuzzle::init() {
 	_hoverRegion = -1;
 	_hoverColor = -1;
 	_solved = false;
-	_outcomeApplied = false;
 
 	redraw();
 }
@@ -152,7 +157,7 @@ int PaintPuzzle::regionAtCursor(const Common::Point &mousePos) const {
 // Draws a painted region: its overlay shape recolored to the flat fill color.
 void PaintPuzzle::drawRegion(uint regionIndex) {
 	const PaintRegion &region = _regions[regionIndex];
-	int c = region.currentColor;
+	int c = region.currentColor - 1;
 	if (c < 0 || c >= (int)_colors.size() || regionIndex >= _regionImages.size()) {
 		return;
 	}
@@ -242,7 +247,7 @@ void PaintPuzzle::redraw() {
 	// Only painted regions are drawn on the overlay; the picture outline and
 	// palette come from the scene background.
 	for (uint i = 0; i < _regions.size(); ++i) {
-		if (_regions[i].currentColor >= 0) {
+		if (_regions[i].currentColor > 0) {
 			drawRegion(i);
 		}
 	}
@@ -265,18 +270,37 @@ bool PaintPuzzle::isSolved() const {
 }
 
 void PaintPuzzle::paintRegion(uint regionIndex, int colorIndex) {
-	_regions[regionIndex].currentColor = (int16)colorIndex;
+	// Region colors are 1-based palette indices; 0 means unpainted
+	_regions[regionIndex].currentColor = (int16)(colorIndex + 1);
 	if (isSolved()) {
 		_solved = true;
 	}
 	redraw();
 }
 
-void PaintPuzzle::applyOutcome(const SceneOutcome &outcome) {
-	SceneChangeDescription desc;
-	desc.sceneID = outcome.sceneID;
-	NancySceneState.changeScene(desc);
-	NancySceneState.setEventFlag(outcome.field0, outcome.flag);
+void PaintPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+	if (block.names.empty()) {
+		return;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return;
+	}
+
+	SoundDescription desc;
+	desc.name = name;
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+}
+
+bool PaintPuzzle::isSoundBlockPlaying(const RandomSoundBlock &block) const {
+	return !block.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)block.channel);
 }
 
 void PaintPuzzle::handleInput(NancyInput &input) {
@@ -338,15 +362,27 @@ void PaintPuzzle::execute() {
 		_state = kRun;
 		break;
 	case kRun:
+		if (_exitRequested || _solved) {
+			if (_solved) {
+				playSoundBlock(_solveSound);
+			}
+			_state = kActionTrigger;
+		}
+		break;
+	case kActionTrigger:
+		// The solve sound gets to finish first
+		if (!_exitRequested && isSoundBlockPlaying(_solveSound)) {
+			break;
+		}
+
 		if (_exitRequested) {
 			NancySceneState.setEventFlag(_exitFlag);
 			NancySceneState.changeScene(_exitScene);
-			break;
+		} else {
+			_solveScene.execute();
 		}
-		if (_solved && !_outcomeApplied) {
-			_outcomeApplied = true;
-			applyOutcome(_outcome);
-		}
+
+		finishExecution();
 		break;
 	default:
 		break;
