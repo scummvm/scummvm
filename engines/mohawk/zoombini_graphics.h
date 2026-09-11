@@ -84,8 +84,6 @@ public:
 	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
 
 	// [*] Screen captures
-	/** Create a host-compatible surface with the game screen format. */
-	void createScreen(Graphics::Surface &screen);
 	/** Copy one internal screen into a destination surface. */
 	void captureScreen(ScreenKind srcScreenKind, Graphics::Surface *destScreen);
 	/** Copy a source surface into one internal screen. */
