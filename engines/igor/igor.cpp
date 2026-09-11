@@ -194,6 +194,11 @@ Common::Error IgorEngine::run() {
 	readTableFile();
 	loadMainTexts();
 	loadIgorFrames();
+
+	drawVerbsPanel();
+	g_engine->_screen->markAllDirty();
+	g_engine->_screen->update();
+
 	_gameState.talkMode = kTalkModeTextOnly;
 	_gameState.talkSpeed = 3;
 
@@ -285,6 +290,7 @@ static void decodeMainString(const uint8 *src, char *dst) {
 
 void IgorEngine::loadMainTexts() {
 	loadData(IMG_VerbsPanel, _verbsPanelBuffer);
+	debugC(9, kDebugResource, "loadMainTexts()");
 	if (_game.version == kIdSpaCD) {
 		const struct {
 			int strId;
@@ -415,15 +421,11 @@ void IgorEngine::PART_05() {
 
 	//Enforce display of room
 	{
-		// g_system->getPaletteManager()->setPalette(_paletteBuffer, 0, 256);
-		// memcpy(_currentPalette, _paletteBuffer, 768);
-		// updatePalette(768);
-		// fadeInPalette(768);
-
 		memcpy(_screenVGA, _screenLayer1, 46080);
-		fadeInPalette(768);
-
+		drawVerbsPanel();
+		fadeInPalette(720);
 	}
+
 
 	setRoomWalkBounds(0, 0, 319, 143);
 	_walkDataLastIndex = 1;
@@ -720,8 +722,8 @@ void IgorEngine::setCursor(int num) {
 	memset(cursor, 0, 11 * 11);
 	const uint8 *mask = &_mouseCursorMask[num * 24];
 	for (int i = 0; i < 24; ++i) {
+		const int offset = ((int8)_mouseCursorData[i + 24] + 5) * 11 + ((int8)_mouseCursorData[i] + 5);
 		if (mask[i]) {
-			const int offset = ((int8)_mouseCursorData[i + 24] + 5) * 11 + ((int8)_mouseCursorData[i] + 5);
 			cursor[offset] = 255;
 		}
 	}
@@ -1698,6 +1700,28 @@ void IgorEngine::waitForTimer(int ticks) {
 	}
 }
 
+void IgorEngine::drawVerbsPanel() {
+	memcpy(_screenVGA + 320 * 156, _verbsPanelBuffer, 320 * 12);
+}
+
+void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
+	uint8 verbBitmap[44 * 12];
+	if (verb >= 2 && verb <= 8) {
+		verb -= 2;
+		for (int i = 0; i <= 11; ++i) {
+			for (int j = 0; j <= 43; ++j) {
+				uint8 color = _verbsPanelBuffer[i * 320 + verb * 46 + j];
+				if (highlight && color != 0) {
+					color += 8;
+				}
+				verbBitmap[i * 44 + j] = color;
+			}
+		}
+		for (int i = 0; i <= 11; ++i) {
+			memcpy(_screenVGA + 320 * 156 + verb * 46 + i * 320, verbBitmap + i * 44, 44);
+		}
+	}
+}
 
 void IgorEngine::handleRoomInput() {
 	if (_inputVars[kInputPause]) {
@@ -1720,6 +1744,43 @@ void IgorEngine::handleRoomInput() {
 	if (!_roomCursorOn || _gameState.dialogueTextRunning /*|| _scrollInventory*/) {
 		return;
 	}
+	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
+		if (_inputVars[kInputClick]) {
+			int verb = getVerbUnderCursor(_inputVars[kInputCursorXPos]);
+			if (verb != _currentAction.verb) {
+				redrawVerb(_currentAction.verb, false);
+				_currentAction.verb = verb;
+				redrawVerb(_currentAction.verb, true);
+			}
+			// reset action command
+			memset(&_currentAction, 0, sizeof(_currentAction));
+			_currentAction.verb = verb;
+			_currentAction.verbType = 0;
+			formatActionSentence(0);
+			_inputVars[kInputClick] = 0;
+		}
+		return;
+	}
+	// if (_inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+	// 	if (_inputVars[kInputClick]) {
+	// 		if (_inventoryInfo[72] > 1) {
+	// 			_inventoryInfo[72] -= 7;
+	// 			drawInventory(_inventoryInfo[72], 2);
+	// 		}
+	// 		_inputVars[kInputClick] = 0;
+	// 	}
+	// 	return;
+	// }
+	// if (_inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+	// 	if (_inputVars[kInputClick]) {
+	// 		if (_inventoryInfo[73] > _inventoryInfo[72] + 6) {
+	// 			_inventoryInfo[72] += 7;
+	// 			drawInventory(_inventoryInfo[72], 1);
+	// 		}
+	// 		_inputVars[kInputClick] = 0;
+	// 	}
+	// 	return;
+	// }
 
 	// if (_inputVars[kInputClick]) {
 	// 	if (_gameState.igorMoving) {

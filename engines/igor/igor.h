@@ -398,6 +398,12 @@ private:
 	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3);
 	void handleRoomIgorWalk();
 
+	void drawVerbsPanel();
+	void redrawVerb(uint8 verb, bool highlight);
+	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
+
+
+
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
