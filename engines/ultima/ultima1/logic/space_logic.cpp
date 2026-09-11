@@ -76,10 +76,11 @@ void SpaceLogic::subtractFuel(int amount) {
 void SpaceLogic::keypress(Common::KeyCode keycode) {
 	writeString("Huh?\n");
 	playFX(1);
+	prompt();
 }
 
 bool SpaceLogic::inform() {
-	writeString("Inform and Search\n");
+	writeString("Inform and Search");
 	g_engine->addView("SectorScan");
 	return false;
 }

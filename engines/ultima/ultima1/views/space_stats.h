@@ -35,7 +35,7 @@ namespace Views {
  */
 class SpaceStats : public Shared::UIElement {
 public:
-	SpaceStats(UIElement *parent) : Shared::UIElement("SpaceStats", parent) {}
+	SpaceStats(UIElement *parent) : Shared::UIElement("Stats", parent) {}
 	~SpaceStats() override {}
 
 	void draw() override;

@@ -30,8 +30,7 @@ namespace Views {
 constexpr int COLOR_BORDER = 1;  // blue - thick outer band
 constexpr int COLOR_EDGE = 15;   // white - thin inner highlight line
 
-SpaceGame::SpaceGame() : Shared::Gfx::View("SpaceGame"),
-		_commands(this, "SpaceCommands"), _stats(this) {
+SpaceGame::SpaceGame() : Shared::Gfx::View("SpaceGame"), _commands(this), _stats(this) {
 	setBounds(TextRect(0, 0, 39, 24));
 	_commands.setBounds(TextRect(0, 20, 29, 24));
 	_stats.setBounds(TextRect(31, 21, 39, 24));

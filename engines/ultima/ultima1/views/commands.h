@@ -51,12 +51,9 @@ private:
 	void space();
 
 public:
-	// name lets the space game frame register its own copy ("SpaceCommands")
-	// so it doesn't collide with the land frame's in findView
-	Commands(UIElement *parent, const Common::String &name = "Commands");
+	Commands(UIElement *parent);
 	~Commands() override {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 };

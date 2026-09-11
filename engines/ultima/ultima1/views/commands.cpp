@@ -30,12 +30,7 @@ namespace Views {
 constexpr int COLOR_TEXT = 11;      // light cyan - normal values
 constexpr int NEWLINE_DELAY = 50;	// Delay after a newline
 
-Commands::Commands(UIElement *parent, const Common::String &name) :
-		Shared::UIElement(name, parent), _textCursor("CommandsCursor", this) {
-}
-
-bool Commands::msgFocus(const FocusMessage &msg) {
-	return true;
+Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this) {
 }
 
 void Commands::draw() {

@@ -34,12 +34,12 @@ Interaction::Interaction(const Common::String &name) : View(name) {
 }
 
 bool Interaction::tick() {
-	g_engine->findView("Commands")->tick();
+	g_engine->baseView()->findView("Commands")->tick();
 	return Shared::Gfx::View::tick();
 }
 
 void Interaction::writeString(const Common::String &msg) {
-	g_engine->findView("Commands")->send(GameMessage("TEXT", msg));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("TEXT", msg));
 }
 
 void Interaction::writeString(const char *format, ...) {

@@ -381,6 +381,13 @@ public:
 	}
 
 	/**
+	 * Returns the earliest view on the view stack, if any
+	 */
+	UIElement *baseView() const {
+		return _views.empty() ? nullptr : _views[0];
+	}
+
+	/**
 	 * Returns true if a view of a given name is present
 	 * at all in the visible view stack
 	 */

@@ -39,6 +39,8 @@ void SpaceCockpitLogic::setSpeed(int speed) {
 		_G(cockpitSpeed) = speed;
 		subtractFuel(reqFuel);
 	}
+
+	prompt();
 }
 
 void SpaceCockpitLogic::keypress(Common::KeyCode keycode) {

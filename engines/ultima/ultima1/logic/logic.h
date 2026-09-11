@@ -48,15 +48,6 @@ protected:
 	// overrides it to 3 to match the Mondain encounter's own weaker curve
 	int _weaponDamageScale = 8;
 
-
-	/**
-	 * The message-log and stats-corner view names for the current map. The
-	 * land and outer-space game frames keep their own copies (their stats
-	 * corners show different things), so these route to the right one
-	 */
-	const char *commandsViewName() const;
-	const char *statsViewName() const;
-
 	/**
 	 * Dispatches some text to be shown in the Commands window
 	 */
