@@ -374,6 +374,17 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					}
 
 					EmbeddedSanFrame &frame = _rebelEmbeddedHud[userId];
+					// Transparent background patches update the existing scene in place.
+					if (_rebelHandler == 25 && userId == 4 && codec == SMUSH_CODEC_RLE &&
+							isValidEmbeddedFrame(frame) && left >= 0 && top >= 0 &&
+							width > 0 && height > 0 && left + width <= frame.width &&
+							top + height <= frame.height && stream.pos() < subDataEnd) {
+						smushDecodeRLE(frame.pixels, animData + stream.pos(), left, top,
+							width, height, frame.width);
+						renderEmbeddedFrame(renderBitmap, frame, userId);
+						return;
+					}
+
 					frame.valid = false;
 
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
