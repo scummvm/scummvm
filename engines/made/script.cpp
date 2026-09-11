@@ -755,9 +755,14 @@ void ScriptInterpreter::dumpObject(int16 objectIndex) {
 	} else {
 		debug(1, "Raw Data for object %04X (count1 = %d, count2 = %d)", objectIndex, obj->getCount1(), obj->getCount2());
 		Common::String bArray = "";
-		// NOTE: for 3.1 objects, use the commented line here instead
-		//for (byte *i = obj->getData(); i < obj->getData() + obj->getSize() * 4; i++)
-		for (byte *i = obj->getData(); i < obj->getData() + (obj->getCount1() + obj->getCount2()) * 2; i++)
+
+		byte *limit;
+		if (_vm->getVersion() == 3 && _vm->getSubVersion() == 1)
+			limit = obj->getData() + obj->getSize() * 4;
+		else
+			limit = obj->getData() + (obj->getCount1() + obj->getCount2()) * 2;
+
+		for (byte *i = obj->getData(); i < limit; i++)
 			bArray += Common::String::format("%02X", *i);
 		debug(1, "%s", bArray.c_str());
 	}
