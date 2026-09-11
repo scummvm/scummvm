@@ -122,7 +122,7 @@ Common::SeekableReadStream *depackAtariExecutable(Common::SeekableReadStream *fi
 				}
 				count += kAtariPackLiteralBase[i];
 			}
-			if (count + 1 > dst || in.pos < count + 1)
+			if (count + 1u > dst || in.pos < count + 1u)
 				break;
 			for (uint16 i = 0; i <= count; i++)
 				out[--dst] = data[--in.pos];
