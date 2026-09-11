@@ -22,6 +22,9 @@
 
 namespace Igor {
 
+static int VAR_CURRENT_TALKING_ACTOR;
+
+
 void IgorEngine::PART_85() {
 	// playMusic(2);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
@@ -38,6 +41,12 @@ void IgorEngine::PART_85() {
 	// Laura touching her hair
 	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(201, 3, 545);
+	ADD_DIALOGUE_TEXT(204, 1, 546);
+	SET_DIALOGUE_TEXT(1, 2);
+	startCutsceneDialogue(89, 56, 63, 63, 0);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
 
 	if (_inputVars[kInputEscape])
 		goto PART_85_EXIT;

@@ -205,6 +205,11 @@ struct RoomDataOffsets {
 		int matSize;
 	} dlg;
 };
+enum {
+	kUpdateDialogueAnimEndOfSentence = 1,
+	kUpdateDialogueAnimMiddleOfSentence,
+	kUpdateDialogueAnimStanding
+};
 
 enum ObjectType {
 	kObjectTypeInventory = 1,
@@ -229,6 +234,12 @@ enum {
 	kIdSpaFloppy,
 	kIdEngCD,
 	kIdSpaCD
+};
+
+struct DialogueText {
+	int num;
+	int count;
+	int sound;
 };
 
 struct WalkData {
@@ -294,6 +305,7 @@ class IgorEngine : public Engine {
 public:
 
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
+	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -344,6 +356,14 @@ private:
 	int _walkToObjectPosX, _walkToObjectPosY;
 
 	int16 _currentPart;
+	int _talkDelay;
+	int _talkSpeechCounter;
+	int _talkDelayCounter;
+	DialogueText _dialogueTextsTable[MAX_DIALOGUE_TEXTS];
+	int _dialogueTextsStart;
+	int _dialogueTextsCount;
+	int _dialogueDirtyRectY;
+	int _dialogueDirtyRectSize;
 
 
 	char _verbPrepositions[3][7];
@@ -358,6 +378,7 @@ private:
 
 	RoomWalkBounds _roomWalkBounds;
 	RoomDataOffsets _roomDataOffsets;
+	UpdateDialogueProc _updateDialogue;
 	UpdateRoomBackgroundProc _updateRoomBackground;
 
 	int _gameTicks;
@@ -379,6 +400,14 @@ private:
 	void loadMainTexts();
 	const char *getString(int id) const;
 	void loadIgorFrames();
+
+
+	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
+	void SET_DIALOGUE_TEXT(int start, int count);
+	void fixDialogueTextPosition(int num, int count, int *x, int *y);
+	void startCutsceneDialogue(int x, int y, int r, int g, int b);
+	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
+
 
 	void PART_MAIN();
 	void PART_05();
@@ -512,6 +541,7 @@ extern IgorEngine *g_engine;
 extern const uint8 _walkWidthScaleTable[];
 extern const uint8 _walkScaleTable[];
 extern const float _walkScaleSpeedTable[];
+extern const uint8 _talkDelays[];
 extern const uint8 _mouseCursorMask[];
 extern const uint8 _mouseCursorData[];
 extern const uint8 PAL_IGOR_1[];

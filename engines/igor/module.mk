@@ -14,7 +14,9 @@ MODULE_OBJS = \
 	static_cursor.o \
 	part_5.o \
 	part_85.o \
-	part_90.o
+	part_90.o \
+	text.o \
+	part_main.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IGOR), DYNAMIC_PLUGIN)

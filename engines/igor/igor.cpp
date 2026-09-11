@@ -64,7 +64,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.sfxFileName = "igor.dat";
 		_game.version = kIdSpaCD;
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
-		_currentPart = 900;
+		_currentPart = 850;
 	}
 
 	// if (_game.flags & kFlagFloppy) {
@@ -126,12 +126,12 @@ void IgorEngine::restart() {
 	_actionWalkPoint = 0;
 	memset(_inputVars, 0, sizeof(_inputVars));
 
-	// _talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
-	// memset(_dialogueTextsTable, 0, sizeof(_dialogueTextsTable));
-	// _dialogueTextsStart = 0;
-	// _dialogueTextsCount = 0;
-	// _dialogueDirtyRectY = 0;
-	// _dialogueDirtyRectSize = 0;
+	_talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
+	memset(_dialogueTextsTable, 0, sizeof(_dialogueTextsTable));
+	_dialogueTextsStart = 0;
+	_dialogueTextsCount = 0;
+	_dialogueDirtyRectY = 0;
+	_dialogueDirtyRectSize = 0;
 	// memset(_dialogueQuestions, 0, sizeof(_dialogueQuestions));
 	// memset(_dialogueReplies, 0, sizeof(_dialogueReplies));
 	// _dialogueEnded = false;
@@ -247,31 +247,6 @@ void IgorEngine::runPartLoop() {
 	waitForTimer();
 }
 
-void IgorEngine::PART_MAIN() {
-	while (!g_engine->shouldQuit() && !_eventQuitGame) {
-		switch (_currentPart) {
-
-		case 61:
-			PART_05(); // SpringRock
-			break;
-
-		case 850: // Intro cutscene
-			PART_85();
-			break;
-		case 900: // Logo slideshow
-		case 901:
-		case 902:
-		case 903:
-		case 904:
-			PART_90();
-			break;
-
-		default:
-			error("Unknown or unhandled room part %d", _currentPart);
-			break;
-		}
-	}
-}
 
 Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	// The Serializer has methods isLoading() and isSaving()
