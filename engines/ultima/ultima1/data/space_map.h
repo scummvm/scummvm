@@ -40,6 +40,22 @@ constexpr int SPACE_STATION_Y = 3;
 // player's own ship, spawned attackers)
 constexpr int SPACE_SHIPS_PER_SECTOR = 4;
 
+// The overhead sector view's playable area - a ship drifting past this
+// seamlessly wraps around to the opposite edge, Asteroids-style. Matches
+// the drawable viewport setupView itself clears each frame (its own inset
+// frame within the outer game border, not the outer border itself), so a
+// ship's sprite is only ever actually invisible right as it wraps rather
+// than jumping there from comfortably mid-screen
+constexpr int SPACE_SECTOR_MIN_X = 16, SPACE_SECTOR_MAX_X = 303;
+constexpr int SPACE_SECTOR_MIN_Y = 16, SPACE_SECTOR_MAX_Y = 143;
+constexpr int SPACE_SECTOR_WRAP_WIDTH = SPACE_SECTOR_MAX_X - SPACE_SECTOR_MIN_X + 1;
+constexpr int SPACE_SECTOR_WRAP_HEIGHT = SPACE_SECTOR_MAX_Y - SPACE_SECTOR_MIN_Y + 1;
+
+// The station's fixed screen position/size within its own sector (3,3) -
+// drawStationGraphic's (x,y) and the raw bitmap's dimensions
+constexpr int SPACE_STATION_SCREEN_X = 60, SPACE_STATION_SCREEN_Y = 75;
+constexpr int SPACE_STATION_WIDTH = 21, SPACE_STATION_HEIGHT = 18;
+
 // Direction names shown in the cockpit view, indexed by Data::Direction
 // (1-4): the arrow keys read as Left / Right / Climb / Dive rather than the
 // overhead view's West / East / North / South

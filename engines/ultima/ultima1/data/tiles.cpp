@@ -66,8 +66,8 @@ void loadTiles(const char *filename, Graphics::ManagedSurface *tiles, int count,
 	delete[] data;
 }
 
-constexpr int SHIP_TILE_WIDTH = 32;
-constexpr int SHIP_TILE_HEIGHT = 19;
+constexpr int SHIP_TILE_WIDTH = SPACE_SHIP_TILE_WIDTH;
+constexpr int SHIP_TILE_HEIGHT = SPACE_SHIP_TILE_HEIGHT;
 constexpr int SHIP_TILE_ROW_BYTES = SHIP_TILE_WIDTH / 8;
 constexpr int SHIP_TILE_BYTES = SHIP_TILE_ROW_BYTES * SHIP_TILE_HEIGHT;
 constexpr int SHIP_TILE_SHIFT_VARIANTS = 8;

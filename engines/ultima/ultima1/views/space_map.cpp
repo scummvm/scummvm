@@ -45,6 +45,56 @@ static bool withinShipView(int x, int y) {
 	return x > 20 && x < 300 && y > 18 && y < 141;
 }
 
+// The exhaust trail is plotted pixel-by-pixel (each already clipped to
+// withinShipView), so a second whole-shape pass at a shifted anchor is safe
+// - any pixels that land outside the viewport are simply skipped. Returns
+// the extra anchor position(s) needed (not including the ship's own true
+// position), up to 3 for a corner case where both axes overflow
+static int wrappedPositions(int x, int y, int w, int h, Common::Point extra[3]) {
+	int dxs[2] = { 0 }, dxCount = 1;
+	if (x < Data::SPACE_SECTOR_MIN_X)
+		dxs[dxCount++] = Data::SPACE_SECTOR_WRAP_WIDTH;
+	else if (x + w > Data::SPACE_SECTOR_MAX_X)
+		dxs[dxCount++] = -Data::SPACE_SECTOR_WRAP_WIDTH;
+
+	int dys[2] = { 0 }, dyCount = 1;
+	if (y < Data::SPACE_SECTOR_MIN_Y)
+		dys[dyCount++] = Data::SPACE_SECTOR_WRAP_HEIGHT;
+	else if (y + h > Data::SPACE_SECTOR_MAX_Y)
+		dys[dyCount++] = -Data::SPACE_SECTOR_WRAP_HEIGHT;
+
+	int count = 0;
+	for (int dyi = 0; dyi < dyCount; ++dyi) {
+		for (int dxi = 0; dxi < dxCount; ++dxi) {
+			if (dxi == 0 && dyi == 0)
+				continue;
+			extra[count++] = Common::Point(x + dxs[dxi], y + dys[dyi]);
+		}
+	}
+	return count;
+}
+
+// The ship tile is a single rectangular XOR blit, so (unlike the exhaust)
+// there's no per-pixel clipping to fall back on - xorBlitFrom doesn't clip
+// its rect either, so blitting the whole tile at a shifted, partly
+// off-surface position would corrupt unrelated pixels rather than just get
+// cropped. Instead, split the tile at the sector's wrap edge and draw each
+// piece at its own fully-in-bounds position, wrapping the clipped part
+// around to the opposite edge - up to 4 pieces at a corner
+static void drawWrappedTile(Shared::Gfx::GfxSurface &s, const Graphics::ManagedSurface &tile, int x, int y) {
+	int w = tile.w, h = tile.h;
+	int splitX = (x + w > Data::SPACE_SECTOR_MAX_X) ? (Data::SPACE_SECTOR_MAX_X - x) : w;
+	int splitY = (y + h > Data::SPACE_SECTOR_MAX_Y) ? (Data::SPACE_SECTOR_MAX_Y - y) : h;
+
+	s.xorBlitFrom(tile, Common::Rect(0, 0, splitX, splitY), Common::Point(x, y));
+	if (splitX < w)
+		s.xorBlitFrom(tile, Common::Rect(splitX, 0, w, splitY), Common::Point(Data::SPACE_SECTOR_MIN_X, y));
+	if (splitY < h)
+		s.xorBlitFrom(tile, Common::Rect(0, splitY, splitX, h), Common::Point(x, Data::SPACE_SECTOR_MIN_Y));
+	if (splitX < w && splitY < h)
+		s.xorBlitFrom(tile, Common::Rect(splitX, splitY, w, h), Common::Point(Data::SPACE_SECTOR_MIN_X, Data::SPACE_SECTOR_MIN_Y));
+}
+
 // Star/heat hazard bitmap (18 rows x 19 cols), matching SPACE.EXE's own raw
 // table for drawStarGraphic. 1 -> STAR_COLOR_1, 2 -> STAR_COLOR_2
 static const int8 STAR_BITMAP[18][19] = {
@@ -137,7 +187,7 @@ void SpaceMap::draw() {
 	// The station graphic only ever appears in its own fixed sector, at the
 	// docking-bay entrance point
 	if (_G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y)
-		drawStationGraphic(s, 60, 75);
+		drawStationGraphic(s, Data::SPACE_STATION_SCREEN_X, Data::SPACE_STATION_SCREEN_Y);
 
 	if (cell._hazardX != 0)
 		drawStarGraphic(s, cell._hazardX, cell._hazardY);
@@ -152,8 +202,20 @@ void SpaceMap::draw() {
 	}
 
 	// Only the player's own ship thrusts, so only it ever trails exhaust
-	if (_G(shipExhaustCountdown) > 0)
-		drawShipExhaust(s, cell._ships[_G(savegame)._shipIndex]);
+	if (_G(shipExhaustCountdown) > 0) {
+		const Data::SpaceMapShip &playerShip = cell._ships[_G(savegame)._shipIndex];
+		drawShipExhaust(s, playerShip);
+
+		Common::Point extra[3];
+		int count = wrappedPositions(playerShip._x, playerShip._y,
+			Data::SPACE_SHIP_TILE_WIDTH, Data::SPACE_SHIP_TILE_HEIGHT, extra);
+		for (int i = 0; i < count; ++i) {
+			Data::SpaceMapShip wrapped = playerShip;
+			wrapped._x = (int16)extra[i].x;
+			wrapped._y = (int16)extra[i].y;
+			drawShipExhaust(s, wrapped);
+		}
+	}
 }
 
 void SpaceMap::drawStarGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
@@ -206,7 +268,7 @@ void SpaceMap::drawStationGraphic(Shared::Gfx::GfxSurface &s, int x, int y) {
 void SpaceMap::drawShipOutline(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {
 	int tileIndex = ship._shipType * 4 + ship._facing;
 	const Graphics::ManagedSurface &tile = _G(map).spaceShipTiles()[tileIndex];
-	s.xorBlitFrom(tile, Common::Point(ship._x, ship._y));
+	drawWrappedTile(s, tile, ship._x, ship._y);
 }
 
 void SpaceMap::drawShipExhaust(Shared::Gfx::GfxSurface &s, const Data::SpaceMapShip &ship) {

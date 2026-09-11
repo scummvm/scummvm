@@ -29,11 +29,39 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
-// The overhead sector view's playable area (clampShipX/Y) - drifting past
-// this is what triggers the viewport-border "Crunch!" bounce
-constexpr int SECTOR_MIN_X = 20, SECTOR_MAX_X = 275;
-constexpr int SECTOR_MIN_Y = 10, SECTOR_MAX_Y = 130;
 constexpr int MAX_DRIFT = 9;
+
+// Rotating Left/Right cycles the ship's facing a quarter-turn counter-
+// clockwise/clockwise (word_17EA2), indexed by the ship's current facing
+constexpr Data::SpaceShipFacing ROTATE_CCW[4] = {
+	Data::FACING_DOWN, Data::FACING_UP, Data::FACING_LEFT, Data::FACING_RIGHT
+};
+constexpr Data::SpaceShipFacing ROTATE_CW[4] = {
+	Data::FACING_UP, Data::FACING_DOWN, Data::FACING_RIGHT, Data::FACING_LEFT
+};
+
+// Thrust (Up) is a unit nudge along whichever way the ship is currently
+// facing, not a fixed screen axis - so facing Left and thrusting builds up
+// leftward drift, and reversing facing then thrusting decelerates/reverses
+// whatever drift is already there rather than adding a second, unrelated one
+constexpr int FACING_DX[4] = { -1, 1, 0, 0 };
+constexpr int FACING_DY[4] = { 0, 0, -1, 1 };
+
+static int wrapCoord(int value, int minVal, int maxVal, int wrapSize) {
+	if (value < minVal)
+		return value + wrapSize;
+	if (value > maxVal)
+		return value - wrapSize;
+	return value;
+}
+
+// True if a ship of the usual sprite size at (x,y) would overlap the given
+// rect - used to detect running into the station or another ship (the only
+// thing that actually triggers "Crunch!"; the sector edges just wrap)
+static bool overlapsRect(int x, int y, int rx, int ry, int rw, int rh) {
+	return x < rx + rw && x + Data::SPACE_SHIP_TILE_WIDTH > rx &&
+		y < ry + rh && y + Data::SPACE_SHIP_TILE_HEIGHT > ry;
+}
 
 bool SpaceMapLogic::move(Data::Direction dir) {
 	writeString("%s\n", Data::DIRECTION_NAMES[dir]);
@@ -47,57 +75,31 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 	}
 	if (shipFuel() < fuelCost)
 		fuelCost = shipFuel();
-
-	// A ship sitting right on top of another counts as docked - thrusting
-	// into it (anything but Down, which just brakes) is a crunch rather
-	// than a move
-	Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
-	const Data::SpaceMapShip &ship = cell._ships[_G(savegame)._shipIndex];
-	bool docked = false;
-	for (int i = 0; i < Data::SPACE_SHIPS_PER_SECTOR && !docked; ++i) {
-		if (i == _G(savegame)._shipIndex)
-			continue;
-		const Data::SpaceMapShip &other = cell._ships[i];
-		docked = other._shipType != Data::SHIP_NONE && other._x == ship._x && other._y == ship._y;
-	}
-
-	if (docked && dir != Data::DIR_DOWN) {
-		writeString("Crunch!\n");
-		playFX(0);
-		subtractShields(shipShields() / 4 + 5);
-		// TODO: death in space - see SpaceLogic::endOfTurn
-		if (shipShields() == 0)
-			writeString("Thy shield is drained!\n");
-		return true;
-	}
-
 	subtractFuel(fuelCost);
 
-	if (dir == Data::DIR_DOWN) {
-		// Brake - stop drifting and clear the exhaust trail
-		_G(sectorDriftX) = 0;
-		_G(sectorDriftY) = 0;
-		_G(shipExhaustCountdown) = 0;
-		redrawMap();
-		return true;
-	}
-
-	if (dir == Data::DIR_LEFT || dir == Data::DIR_RIGHT) {
-		// A lateral nudge doesn't sustain the exhaust trail the way
-		// thrusting forward (Up) does
-		_G(shipExhaustCountdown) = 0;
-	}
+	Data::SpaceMapShip &ship =
+		_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex];
 
 	switch (dir) {
 	case Data::DIR_LEFT:
-		_G(sectorDriftX) = CLIP(_G(sectorDriftX) - 1, -MAX_DRIFT, MAX_DRIFT);
+		ship._facing = ROTATE_CCW[ship._facing];
+		_G(shipExhaustCountdown) = 0;
 		break;
 	case Data::DIR_RIGHT:
-		_G(sectorDriftX) = CLIP(_G(sectorDriftX) + 1, -MAX_DRIFT, MAX_DRIFT);
+		ship._facing = ROTATE_CW[ship._facing];
+		_G(shipExhaustCountdown) = 0;
 		break;
 	case Data::DIR_UP:
-		_G(sectorDriftY) = CLIP(_G(sectorDriftY) - 1, -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftX) = CLIP(_G(sectorDriftX) + FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftY) = CLIP(_G(sectorDriftY) + FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
 		_G(shipExhaustCountdown) += 10;
+		break;
+	case Data::DIR_DOWN:
+		// Brake - stop drifting and clear the exhaust trail. Rotating
+		// (Left/Right) leaves the drift untouched - only Down cancels it
+		_G(sectorDriftX) = 0;
+		_G(sectorDriftY) = 0;
+		_G(shipExhaustCountdown) = 0;
 		break;
 	default:
 		break;
@@ -112,13 +114,29 @@ void SpaceMapLogic::tick() {
 		return;
 
 	if (_G(sectorDriftX) != 0 || _G(sectorDriftY) != 0) {
-		Data::SpaceMapShip &ship =
-			_G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY]._ships[_G(savegame)._shipIndex];
+		Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
+		Data::SpaceMapShip &ship = cell._ships[_G(savegame)._shipIndex];
 
-		int newX = ship._x + _G(sectorDriftX);
-		int newY = ship._y + _G(sectorDriftY);
+		int newX = wrapCoord(ship._x + _G(sectorDriftX), Data::SPACE_SECTOR_MIN_X, Data::SPACE_SECTOR_MAX_X, Data::SPACE_SECTOR_WRAP_WIDTH);
+		int newY = wrapCoord(ship._y + _G(sectorDriftY), Data::SPACE_SECTOR_MIN_Y, Data::SPACE_SECTOR_MAX_Y, Data::SPACE_SECTOR_WRAP_HEIGHT);
 
-		if (newX < SECTOR_MIN_X || newX > SECTOR_MAX_X || newY < SECTOR_MIN_Y || newY > SECTOR_MAX_Y) {
+		// The only real obstacles are the station (in its own sector) and
+		// any other ship sitting in the sector - the sector edges themselves
+		// just wrap around
+		bool crunch = false;
+		if (_G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y) {
+			crunch = overlapsRect(newX, newY, Data::SPACE_STATION_SCREEN_X, Data::SPACE_STATION_SCREEN_Y,
+				Data::SPACE_STATION_WIDTH, Data::SPACE_STATION_HEIGHT);
+		}
+		for (int i = 0; !crunch && i < Data::SPACE_SHIPS_PER_SECTOR; ++i) {
+			if (i == _G(savegame)._shipIndex)
+				continue;
+			const Data::SpaceMapShip &other = cell._ships[i];
+			if (other._shipType != Data::SHIP_NONE)
+				crunch = overlapsRect(newX, newY, other._x, other._y, Data::SPACE_SHIP_TILE_WIDTH, Data::SPACE_SHIP_TILE_HEIGHT);
+		}
+
+		if (crunch) {
 			writeString("Crunch!\n");
 			playFX(0);
 			subtractShields(shipShields() / 4 + 5);
@@ -126,7 +144,7 @@ void SpaceMapLogic::tick() {
 			if (shipShields() == 0)
 				writeString("Thy shield is drained!\n");
 
-			// Bounce back off the border
+			// Bounce back rather than plough into it
 			_G(sectorDriftX) = -_G(sectorDriftX);
 			_G(sectorDriftY) = -_G(sectorDriftY);
 		} else {

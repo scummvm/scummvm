@@ -69,6 +69,7 @@ public:
 	}
 
 	void xorBlitFrom(const ManagedSurface &src, const Common::Point &destPos);
+	void xorBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos);
 };
 
 } // namespace Gfx

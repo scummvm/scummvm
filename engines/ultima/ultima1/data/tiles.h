@@ -35,6 +35,8 @@ constexpr int MONDAIN_TILES_COUNT = 19;
 // One outer-space ship glyph per shipType*4+facing combination (3 ship
 // types x 4 facings - see Data::SpaceShipType/SpaceShipFacing)
 constexpr int SPACE_SHIP_TILES_COUNT = 12;
+constexpr int SPACE_SHIP_TILE_WIDTH = 32;
+constexpr int SPACE_SHIP_TILE_HEIGHT = 19;
 
 enum OverworldTileId {
 	TILE_OCEAN = 0,

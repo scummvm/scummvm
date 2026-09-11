@@ -175,14 +175,21 @@ void GfxSurface::reverseColor() {
 }
 
 void GfxSurface::xorBlitFrom(const ManagedSurface &src, const Common::Point &destPos) {
-	Graphics::Surface area = getSubArea(Common::Rect(destPos.x, destPos.y,
-		destPos.x + src.w, destPos.y + src.h));
+	xorBlitFrom(src, Common::Rect(0, 0, src.w, src.h), destPos);
+}
 
-	for (int yCtr = 0; yCtr < src.h; ++yCtr) {
-		const byte *pSrc = (const byte *)src.getBasePtr(0, yCtr);
+void GfxSurface::xorBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Point &destPos) {
+	// Callers are responsible for keeping destPos/srcRect fully within this
+	// surface - getSubArea doesn't clip, so an out-of-bounds rect here would
+	// silently corrupt unrelated pixels rather than getting cropped
+	Graphics::Surface area = getSubArea(Common::Rect(destPos.x, destPos.y,
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()));
+
+	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
+		const byte *pSrc = (const byte *)src.getBasePtr(srcRect.left, srcRect.top + yCtr);
 		byte *pDest = (byte *)area.getBasePtr(0, yCtr);
 
-		for (int xCtr = 0; xCtr < src.w; ++xCtr, ++pSrc, ++pDest)
+		for (int xCtr = 0; xCtr < srcRect.width(); ++xCtr, ++pSrc, ++pDest)
 			*pDest ^= *pSrc;
 	}
 }
