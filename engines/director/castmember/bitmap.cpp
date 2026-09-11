@@ -196,7 +196,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
-		_updateFlags = stream.readByte();
+		if (stream.pos() < stream.size())
+			_updateFlags = stream.readByte();
 
 		// 22 bytes
 		// This is color image flag
