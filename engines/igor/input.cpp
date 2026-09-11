@@ -27,6 +27,8 @@
 
 namespace Igor {
 
+static const uint8 kSentenceColorIndex[] = { 0xFD, 0xFB, 0xF1 };
+
 void IgorEngine::waitForTimer(int ticks) {
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	_system->updateScreen();
@@ -308,7 +310,15 @@ void IgorEngine::formatActionSentence(uint8 color) {
 			}
 		}
 	}
-	drawActionSentence(actionSentence, _sentenceColorIndex[color]);
+	drawActionSentence(actionSentence, kSentenceColorIndex[color]);
+}
+
+void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
+	memset(_screenVGA + 144 * 320, 0, 11 * 320);
+	int w = _font.getStringWidth(sentence);
+	int x = (320 - w) / 2;
+	_font.drawString(_screenVGA, sentence, x, 144, color, 0, 0);
 }
 
 } // End of namespace Igor
+

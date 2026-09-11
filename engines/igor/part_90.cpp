@@ -48,7 +48,7 @@ void IgorEngine::PART_90() {
 		loadData(PAL_TitleScreen, _paletteBuffer);
 		loadData(IMG_TitleScreen, _screenVGA);
 		str = (_game.version == kIdEngDemo110) ? getString(STR_Copyright1994) : getString(STR_Copyright1995);
-		drawString(_screenVGA, str, 2, 187, 0xF5, 0, 0);
+		_font.drawString(_screenVGA, str, 2, 187, 0xF5, 0, 0);
 		break;
 	}
     fadeInPalette(768);
@@ -71,3 +71,4 @@ void IgorEngine::PART_90() {
 }
 
 } // End of namespace Igor
+

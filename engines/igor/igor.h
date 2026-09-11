@@ -39,6 +39,7 @@
 #include "audio/midiparser.h"
 
 #include "igor/detection.h"
+#include "igor/font.h"
 #include "igor/resource_ids.h"
 
 namespace Igor {
@@ -364,6 +365,8 @@ private:
 	int _soundOffsetsCount;
 	uint32 *_soundOffsets;
 
+	Font _font;
+
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
 
@@ -386,10 +389,7 @@ private:
 
 	void handleRoomInput();
 	void formatActionSentence(uint8 color);
-	int getStringWidth(const char *s) const;
 	void drawActionSentence(const char *sentence, uint8 color);
-	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3);
-	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3);
 	void handleRoomIgorWalk();
 
 	void drawVerbsPanel();
@@ -500,11 +500,7 @@ protected:
 extern IgorEngine *g_engine;
 #define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
 
-// Static data tables (defined in static_font.cpp, static_walk.cpp, static_cursor.cpp)
-extern const uint8 _fontCharIndex[];
-extern const uint8 _fontCharWidth[];
-extern const uint32 _fontData[];
-extern const uint8 _sentenceColorIndex[];
+// Static data tables (defined in static_walk.cpp, static_cursor.cpp)
 extern const uint8 _walkWidthScaleTable[];
 extern const uint8 _walkScaleTable[];
 extern const float _walkScaleSpeedTable[];

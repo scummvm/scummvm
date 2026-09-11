@@ -107,8 +107,8 @@ void IgorEngine::loadMainTexts() {
 		};
 		for (int i = 0; i < 7; ++i) {
 			const char *s = getString(verbTexts[i].strId);
-			int x = verbTexts[i].x - getStringWidth(s) / 2;
-			drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
+			int x = verbTexts[i].x - _font.getStringWidth(s) / 2;
+			_font.drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
 		}
 	}
 	int dataSize;
@@ -186,3 +186,4 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 }
 
 } // End of namespace Igor
+

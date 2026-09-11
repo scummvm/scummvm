@@ -19,11 +19,14 @@
  *
  */
 
-#include "igor/igor.h"
+#include "igor/font.h"
+#include "graphics/surface.h"
 
 namespace Igor {
 
-const uint8 _fontCharIndex[] = {
+// Static font data
+
+const uint8 Font::_charIndex[] = {
 	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
 	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
 	0x5F, 0x53, 0x51, 0x59, 0x5D, 0x5A, 0x5C, 0x63, 0x44, 0x45, 0x63, 0x47, 0x4D, 0x46, 0x4F, 0x4B,
@@ -42,7 +45,7 @@ const uint8 _fontCharIndex[] = {
 	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x5E, 0x63, 0x63, 0x63, 0x63, 0x63
 };
 
-const uint8 _fontCharWidth[] = {
+const uint8 Font::_charWidth[] = {
 	0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
 	0x07, 0x08, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x07, 0x08, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
 	0x06, 0x06, 0x05, 0x06, 0x07, 0x05, 0x08, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
@@ -52,9 +55,7 @@ const uint8 _fontCharWidth[] = {
 	0x00, 0x00, 0x00, 0x00
 };
 
-const uint8 _sentenceColorIndex[] = { 0xFD, 0xFB, 0xF1 };
-
-const uint32 _fontData[] = {
+const uint32 Font::_charData[] = {
 	0x000000, 0x000AA0, 0x002968, 0x00A55A, 0x0097D6, 0x00D6D6, 0x00D556, 0x00D7D6, 0x00D6D6, 0x00FAFA,
 	0x000000, 0x000000, 0x00AAAA, 0x029556, 0x025F5A, 0x035B58, 0x03D558, 0x025F58, 0x035B5A, 0x03D556,
 	0x00FFFA, 0x000000, 0x000000, 0x00AAA8, 0x02955A, 0x025FD6, 0x03E8D6, 0x0000D6, 0x02A8D6, 0x025AD6,
@@ -162,4 +163,98 @@ const uint32 _fontData[] = {
 	0x0355D6, 0x03FED6, 0x00A55A, 0x003FE8, 0x000000
 };
 
+Font::Font() {
+}
+
+int Font::getCharWidth(uint32 chr) const {
+	if (chr == ' ') {
+		return 5;
+	}
+	if (chr >= 256) {
+		return 0;
+	}
+	int idx = _charIndex[chr];
+	if (idx == 99) {
+		return 0;
+	}
+	return _charWidth[idx];
+}
+
+void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	if (!dst || dst->format.bytesPerPixel != 1 || chr >= 256) {
+		return;
+	}
+	int glyph = _charIndex[chr];
+	if (glyph == 99) {
+		return;
+	}
+	for (int j = 0; j < kFontHeight; ++j) {
+		uint32 chrLineMask = _charData[glyph * kFontHeight + j];
+		for (int i = 0; i < kMaxCharWidth; ++i, chrLineMask >>= 2) {
+			if ((chrLineMask & 3) != 0 && x + i >= 0 && y + j >= 0 && x + i < dst->w && y + j < dst->h) {
+				((byte *)dst->getBasePtr(x + i, y + j))[0] = (byte)color;
+			}
+		}
+	}
+}
+
+int Font::getStringWidth(const char *s) const {
+	int w = 0;
+	for (; *s; ++s) {
+		if (*s == ' ') {
+			w += 5;
+		} else {
+			int chr = _charIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			w += _charWidth[chr];
+		}
+	}
+	return w;
+}
+
+void Font::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) const {
+	for (; *s; ++s) {
+		if (*s == ' ') {
+			x += 5;
+		} else {
+			int chr = _charIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			if (x + _charWidth[chr] > 320) {
+				break;
+			}
+			drawChar(dst, chr, x, y, color1, color2, color3);
+			x += _charWidth[chr];
+		}
+	}
+}
+
+void Font::drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3) const {
+	dst += y * 320 + x;
+	for (int j = 0; j < kFontHeight; ++j, dst += 320) {
+		uint32 chrLineMask = _charData[chr * kFontHeight + j];
+		for (int i = 0; i < kMaxCharWidth; ++i, chrLineMask >>= 2) {
+			switch (chrLineMask & 3) {
+			case 1:
+				dst[i] = color1;
+				break;
+			case 2:
+				if (color2 != -1) {
+					dst[i] = color2;
+				}
+				break;
+			case 3:
+				if (color3 != -1) {
+					dst[i] = color3;
+				}
+				break;
+			}
+		}
+	}
+}
+
 } // End of namespace Igor
+

@@ -6,11 +6,10 @@ MODULE_OBJS = \
 	metaengine.o \
 	walk.o \
 	palette.o \
-	text.o \
+	font.o \
 	room.o \
 	resource.o \
 	input.o \
-	static_font.o \
 	static_walk.o \
 	static_cursor.o \
 	part_85.o \
