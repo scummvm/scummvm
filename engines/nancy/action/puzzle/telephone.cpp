@@ -198,15 +198,22 @@ void Telephone::execute() {
 				// Pressed a new button, check all numbers for match
 				// We do this before going to the ringing state to support nancy4's voice mail system,
 				// where call numbers can be 1 digit long
+				// Phones without automatic dialing leave it to the dial button to decide when
+				// to place a call, so the whole number gets matched, with digits that were
+				// never entered counting as zeroes
+				bool matchWholeNumber = !_dialAutomatically;
 				uint numberLength = (_calledNumber.size() && _calledNumber[0] == 1) ? _longDistanceNumberLength : _numberLength;
-				bool isNumberComplete = _calledNumber.size() >= numberLength;
+				bool isNumberComplete = matchWholeNumber || _calledNumber.size() >= numberLength;
 
 				for (uint i = 0; i < _calls.size(); ++i) {
 					auto &call = _calls[i];
 					bool invalid = false;
+					uint numDigits = matchWholeNumber ? call.phoneNumber.size() : _calledNumber.size();
 
-					for (uint j = 0; j < _calledNumber.size(); ++j) {
-						if (_calledNumber[j] != call.phoneNumber[j]) {
+					for (uint j = 0; j < numDigits; ++j) {
+						byte dialedDigit = j < _calledNumber.size() ? _calledNumber[j] : 0;
+
+						if (dialedDigit != call.phoneNumber[j]) {
 							// Invalid number, move onto next
 							invalid = true;
 							break;
@@ -414,6 +421,11 @@ void Telephone::handleInput(NancyInput &input) {
 			continue;
 		}
 
+		// So are the directory buttons when there is only a single entry to show
+		if ((i == _upDirButtonID || i == _downDirButtonID) && _calls.size() == 1) {
+			continue;
+		}
+
 		if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			buttonNr = i;
@@ -421,16 +433,21 @@ void Telephone::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (_callState != kWaiting && _callState != kRinging) {
-		return;
-	}
-
+	// The exit hotspot stays active for as long as the record is running, even
+	// while ringing, talking, or playing the bad number message. Only the
+	// buttons are limited to the states where the phone accepts input.
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			g_nancy->_sound->loadSound(_hangUpSound);
-			g_nancy->_sound->playSound(_hangUpSound);
+			if (_phoneType == kTelephone) {
+				g_nancy->_sound->loadSound(_hangUpSound);
+				g_nancy->_sound->playSound(_hangUpSound);
+			} else {
+				// The new phone hangs up without a sound, and without waiting for
+				// whatever is currently playing to finish
+				_state = kActionTrigger;
+			}
 
 			_callState = kHangUp;
 		}
