@@ -27,6 +27,7 @@
 #if defined(WIN32)
 
 #define WIN32_LEAN_AND_MEAN
+#include <process.h>
 #include <windows.h>
 
 #include "audio/musicplugin.h"
@@ -213,7 +214,7 @@ private:
 
 	DWORD _uiThreadId;
 	MusicDevices enumerateDevices() const;
-	static DWORD WINAPI enumerateDevicesThread(LPVOID parameter);
+	static unsigned __stdcall enumerateDevicesThread(void *parameter);
 };
 
 MusicDevices WindowsMusicPlugin::enumerateDevices() const {
@@ -271,7 +272,7 @@ MusicDevices WindowsMusicPlugin::enumerateDevices() const {
 	return devices;
 }
 
-DWORD WINAPI WindowsMusicPlugin::enumerateDevicesThread(LPVOID parameter) {
+unsigned __stdcall WindowsMusicPlugin::enumerateDevicesThread(void *parameter) {
 	EnumerationState *state = static_cast<EnumerationState *>(parameter);
 	state->devices = state->plugin->enumerateDevices();
 	return 0;
@@ -285,19 +286,13 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 	EnumerationState state;
 	state.plugin = this;
 
-	DWORD threadId;
-	HANDLE enumerationThread = CreateThread(nullptr, 0, enumerateDevicesThread, &state, 0, &threadId);
+	HANDLE enumerationThread = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, enumerateDevicesThread, &state, 0, nullptr));
 	if (enumerationThread == nullptr) {
 		warning("Could not create Windows MIDI device enumeration thread");
 		return enumerateDevices();
 	}
 
-	// This worker is a compatibility bridge around the synchronous music-plugin API.
-	// FIXME: Additional work is required to add a Windows MIDI Services backend.
-	// Select it at runtime when available, but retain WinMM as the fallback for older
-	// Windows versions and unavailable or failed Windows MIDI Services initialization.
-	// The new backend must initialize WinRT and COM on an MTA worker thread and keep
-	// endpoint state current with MidiEndpointDeviceWatcher.
+	// WinMM may block during its initial device scan, so run it outside the UI thread.
 	const DWORD dialogDelay = 100;
 	if (WaitForSingleObject(enumerationThread, dialogDelay) == WAIT_TIMEOUT) {
 		WindowsMidiDetectionDialog dialog(enumerationThread);
