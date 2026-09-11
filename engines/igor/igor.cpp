@@ -214,7 +214,7 @@ Common::Error IgorEngine::run() {
 void IgorEngine::PART_05() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
-
+	SET_PAL_240_48_1();
 
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	_updateRoomBackground = &IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND;
@@ -248,15 +248,15 @@ void IgorEngine::PART_05() {
 		runPartLoop();
 	}
 	leavePartLoop();
-	if (_currentPart == 255) {
-		fadeOutPalette(768);
-	} else if (_currentPart != 60) {
-		// if (_objectsState[63] == 0) {
-		// 	_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
-		// }
-		memcpy(_currentPalette, _paletteBuffer, 624);
-		fadeOutPalette(624);
-	}
+	// if (_currentPart == 255) {
+	// 	fadeOutPalette(768);
+	// } else if (_currentPart != 60) {
+	// 	// if (_objectsState[63] == 0) {
+	// 	// 	_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
+	// 	// }
+	// 	memcpy(_currentPalette, _paletteBuffer, 624);
+	// 	fadeOutPalette(624);
+	// }
 }
 
 void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {

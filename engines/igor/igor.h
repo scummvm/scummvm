@@ -422,6 +422,7 @@ private:
 	void setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b);
 	void setPaletteRange(int startColor, int endColor);
 	void updatePalette(int count);
+	void SET_PAL_240_48_1();
 
 	void fadeInPalette(int count);
 	void fadeOutPalette(int count);
@@ -507,6 +508,7 @@ extern const float _walkScaleSpeedTable[];
 extern const uint8 _mouseCursorMask[];
 extern const uint8 _mouseCursorData[];
 extern const uint8 PAL_IGOR_1[];
+extern const uint8 PAL_48_1[];
 
 } // End of namespace Igor
 

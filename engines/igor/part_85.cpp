@@ -23,6 +23,7 @@
 namespace Igor {
 
 void IgorEngine::PART_85() {
+	// playMusic(2);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	memcpy(_screenLayer2, _screenLayer1, 46080);
 	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);

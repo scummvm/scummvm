@@ -69,6 +69,18 @@ void IgorEngine::updatePalette(int count) {
 	g_system->getPaletteManager()->setPalette(pal, 0, count / 3);
 }
 
+void IgorEngine::SET_PAL_240_48_1() {
+
+	uint8 pal[48];
+	for (int j = 0, i = 0; i < 48; ++i) {
+		pal[j++] = (PAL_48_1[i] << 2);// | (_currentPalette[i] >> 4);
+	// 	// if (((i + 1) % 3) == 0) {
+	// 	// 	pal[j++] = 0;
+	// 	// }
+	}
+	g_system->getPaletteManager()->setPalette(pal, 240, 16);
+}
+
 void IgorEngine::fadeInPalette(int count) {
 	debugC(9, kDebugScreen, "fadeInPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
