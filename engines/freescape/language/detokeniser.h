@@ -29,7 +29,7 @@ namespace Freescape {
 // Classic games retain their byte-oriented dialect on DOS, Amiga and Atari ST.
 Common::String detokeniseFreescapeCondition(const Common::Array<uint16> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari);
 Common::String detokeniseKit8Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
-Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions);
+Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari);
 
 void normaliseKitOperands(FCLInstruction &instruction);
 

@@ -83,18 +83,25 @@ static const FCLOpcode kKitOpcodes[] = {
 	{0xff, Token::END, "END", 0, 0, 0}
 };
 
-Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions) {
+Common::String detokeniseKit16Condition(const Common::Array<byte> &tokenisedCondition, FCLInstructionVector &instructions, bool isAmigaAtari) {
 	Common::String detokenisedStream;
 	int loops = 0;
 	for (uint32 bytePointer = 0; bytePointer < tokenisedCondition.size();) {
 		if (tokenisedCondition.size() - bytePointer < 2)
 			error("Truncated 16-bit FCL instruction at %u", bytePointer);
 		byte count = tokenisedCondition[bytePointer], opcode = tokenisedCondition[bytePointer + 1];
-		if (tokenisedCondition.size() - bytePointer < 2U + 2U * count)
-			error("Truncated 16-bit FCL instruction at %u", bytePointer);
 		const FCLOpcode *entry = findFCLOpcode(kKitOpcodes, opcode);
+		if (!entry && isAmigaAtari) {
+			// The Atari runner aborts this condition when the command is reached.
+			FCLInstruction instruction(Token::UNKNOWN);
+			instruction.setSource(opcode, Token::CONSTANT);
+			instructions.push_back(instruction);
+			return detokenisedStream + Common::String::format("UNKNOWN (%02x)\n", opcode);
+		}
 		if (!entry)
 			error("Unknown 16-bit FCL opcode %02x at %u", opcode, bytePointer);
+		if (tokenisedCondition.size() - bytePointer < 2U + 2U * count)
+			error("Truncated 16-bit FCL instruction at %u", bytePointer);
 		if (count < entry->minArgs || count > entry->maxArgs)
 			error("Invalid argument count for 16-bit FCL opcode %02x at %u", opcode, bytePointer);
 

@@ -37,6 +37,7 @@ public:
 	void checkIfStillInArea() override;
 	bool checkIfGameEnded() override;
 	void borderScreen() override {}
+	void drawBackground() override;
 	void drawUI() override;
 	bool handleInput(const Common::Event &event) override;
 	void updatePlayerMovement(float deltaTime) override;
@@ -88,6 +89,8 @@ private:
 		Common::HashMap<uint16, ObjectData> objects;
 		Common::Array<uint16> objectOrder;
 		Common::Array<ConditionData> conditions;
+		byte palette[16 * 3] = {};
+		byte skyExtraColor = 0;
 	};
 
 	struct ScriptEntry {
@@ -96,6 +99,11 @@ private:
 		ScriptEntry(ScriptState *s, bool r) : script(s), resume(r) {}
 	};
 
+	void loadAssetsDOS();
+	void loadAssetsAtari();
+	void loadPaletteAtari(Common::SeekableReadStream &file, byte *palette);
+	void updateBorderAtari();
+	void splitColorAtari(byte &color, byte &extraColor);
 	void loadWorld(Common::SeekableReadStream &file);
 	void loadSounds(Common::SeekableReadStream &file);
 	void playPendingSound();
@@ -147,14 +155,14 @@ private:
 	void interact(bool shot);
 	void printMessage(uint16 indicator, const Common::String &message);
 	void updateIndicators();
-	uint32 indicatorColor(byte color) const;
+	uint32 indicatorColor(byte color, int y) const;
 
 	Common::HashMap<uint16, AreaData> _areaData;
 	Common::Array<ConditionData> _globalConditions;
 	Common::Array<uint16> _indicatorData;
 	Common::Array<uint16> _controlData;
 
-	byte _palette[256 * 3];
+	byte _palette[256 * 3] = {};
 	uint16 _initialPlayerHeight;
 	uint16 _initialCondition = 0, _timerInterval = 0, _activationRange = 0;
 	uint32 _kitVariables[256] = {};
@@ -169,6 +177,7 @@ private:
 	Common::Array<ScriptEntry> _scriptQueue;
 	Common::Array<ScriptState *> _suspendedScripts;
 	Graphics::ManagedSurface _scriptSurface;
+	Graphics::ManagedSurface _borderPixels;
 };
 
 } // namespace Freescape

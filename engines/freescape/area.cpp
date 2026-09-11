@@ -880,13 +880,18 @@ void Area::addGroupFromArea(int16 id, Area *global) {
 }
 
 
-void Area::addFloor() {
+void Area::addFloor(uint8 extraColor) {
 	_hasSyntheticFloor = true;
 	int id = 0;
 	assert(!_objectsByID->contains(id));
 	Common::Array<uint8> *gColors = new Common::Array<uint8>;
 	for (int i = 0; i < 6; i++)
 		gColors->push_back(_groundColor);
+	Common::Array<uint8> *extraColors = nullptr;
+	if (extraColor) {
+		extraColors = new Common::Array<uint8>();
+		extraColors->resize(6, extraColor);
+	}
 
 	int maxSize = 10000000 / 4;
 	Object *obj = (Object *)new GeometricObject(
@@ -896,7 +901,7 @@ void Area::addFloor() {
 		Math::Vector3d(-maxSize, -3, -maxSize),      // Position
 		Math::Vector3d(maxSize * 4, 3, maxSize * 4), // size
 		gColors,
-		nullptr,
+		extraColors,
 		nullptr,
 		FCLInstructionVector());
 	(*_objectsByID)[id] = obj;

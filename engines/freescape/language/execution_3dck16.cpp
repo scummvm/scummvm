@@ -319,6 +319,10 @@ FCLExecutionResult KitEngine::executeCode(ScriptState &script, uint &budget) {
 		uint32 ip = script.ip++;
 		const FCLInstruction &instruction = (*script.code)[ip];
 		switch (instruction.getType()) {
+		case Token::UNKNOWN:
+			warning("Unknown 16-bit FCL opcode %02x in area %u, object %u; stopping condition",
+				instruction._source, script.area, script.object ? script.object->id : 0);
+			return kFCLFinished;
 		case Token::NOP:
 		case Token::ENDIF:
 			break;

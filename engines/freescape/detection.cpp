@@ -1161,6 +1161,46 @@ const ADGameDescription gameDescriptions[] = {
 	// 3D Construction Kit games
 	{
 		"3dkit",
+		"The Maze",
+		AD_ENTRY2s("THEMAZE.DAT", "0925b7be5b3644cbf725a8ed747beecc", 85162,
+			"THEMAZE.BDR", "ecee4abd508e34df25be8607fb780771", 32128),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GUIO_NOMUSIC, GUIO_NOSFX, GUIO_RENDERATARIST)
+	},
+	{
+		"3dkit",
+		"Anarchy Academy",
+		AD_ENTRY2s("RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802,
+			"RUNNER.BDR", "2ae0a6e768595d8ef325f8ef14dc9525", 32128),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GUIO_NOMUSIC, GUIO_NOSFX, GUIO_RENDERATARIST)
+	},
+	{
+		"3dkit",
+		"Hysula",
+		AD_ENTRY2s("HYSULA.DAT", "6db092c4a6cc56d562b14e1c7219005b", 69472,
+			"HYSULA.BDR", "79e5b9ac9bb679278f64ef0568b50bfe", 32128),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GUIO_NOMUSIC, GUIO_NOSFX, GUIO_RENDERATARIST)
+	},
+	{
+		"3dkit",
+		"Supernova",
+		AD_ENTRY2s("SUPNOV.DAT", "a4049142da498339198eac4082f1616d", 72922,
+			"SUPNOV.BDR", "ffad88a56fd096de77edb976dd7d4825", 32128),
+		Common::EN_ANY,
+		Common::kPlatformAtariST,
+		ADGF_UNSTABLE,
+		GUIO4(GUIO_NOMIDI, GUIO_NOMUSIC, GUIO_NOSFX, GUIO_RENDERATARIST)
+	},
+	{
+		"3dkit",
 		"Dead by Dawn",
 		AD_ENTRY2s("3dkit.zx.data", "ec7ff343b0ba9f2e685bde2fb8f6d8d8", 13242,
 			"3dkit.zx.code", "1ef359f328832b77f0adead4d292f21f", 24575),
@@ -1423,16 +1463,6 @@ const ADGameDescription gameDescriptions[] = {
 		           "RUNNER.3WD", "cc0bfa95f695d2b7eadc1d6f3dd6e8f9", 62434),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"3dkit",
-		"Anarchy Academy",
-		AD_ENTRY2s("ANARCHY.PRG", "78d543be4aad9608093c1e91bc100307", 270,
-		           "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
-		Common::EN_ANY,
-		Common::kPlatformAtariST,
 		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
