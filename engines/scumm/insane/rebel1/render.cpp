@@ -75,6 +75,11 @@ int ra1GameplayWindowOffsetY(const InsaneRebel1 *rebel1) {
 	}
 }
 
+int getBankGlyphIndex(byte ch) {
+	// Localized RA1 fonts store the DOS sharp-s glyph at 0x7F.
+	return (ch == 0xE1 ? 0x7F : ch) - 0x21;
+}
+
 void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
 	int x, int y, const char *text) {
 	if (!dst || !text || bank.numSprites <= 0)
@@ -93,7 +98,7 @@ void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, 
 			x += 4;
 			continue;
 		}
-		const int fontIdx = (int)ch - 0x21;
+		const int fontIdx = getBankGlyphIndex(ch);
 		if (fontIdx < 0 || fontIdx >= bank.numSprites) {
 			x += 4;
 			continue;
@@ -144,7 +149,7 @@ const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
 	if ((byte)ch < 0x21)
 		return nullptr;
 
-	const int fontIdx = (int)(byte)ch - 0x21;
+	const int fontIdx = getBankGlyphIndex((byte)ch);
 	if (fontIdx < 0 || fontIdx >= bank.numSprites)
 		return nullptr;
 
@@ -186,7 +191,7 @@ int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 			w += 4;
 			continue;
 		}
-		const int fontIdx = (int)ch - 0x21;
+		const int fontIdx = getBankGlyphIndex(ch);
 		if (fontIdx < 0 || fontIdx >= bank.numSprites) {
 			w += 4;
 			continue;
