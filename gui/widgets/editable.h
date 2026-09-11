@@ -128,6 +128,10 @@ protected:
 	void getImeCompositionBaseRange(int &baseBegin, int &baseEnd) const;
 	/** Clear the uncommitted composition and return whether one was active. */
 	bool clearImeComposition();
+	/** Cancel the native composition and clear its uncommitted text. */
+	bool cancelImeComposition();
+	/** Replace the composition range with committed text. */
+	bool commitImeComposition(const Common::U32String &text);
 	/** Update the uncommitted composition from a native IME event. */
 	void handleImeComposition(const Common::ImeComposition &composition);
 

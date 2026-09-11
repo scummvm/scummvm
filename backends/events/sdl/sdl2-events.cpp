@@ -756,6 +756,13 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		if (!shouldDispatchTextInput())
 			return false;
 
+		if (isImeCompositionEnabled()) {
+			event.type = Common::EVENT_IME_COMPOSITION;
+			event.imeComposition = Common::ImeComposition(Common::ImeComposition::kComplete);
+			event.imeComposition.text = Common::U32String(ev.text.text);
+			return !event.imeComposition.text.empty();
+		}
+
 		// When we get a TEXTINPUT event it means we got some user input for
 		// which no KEYDOWN exists. SDL 1.2 introduces a "fake" key down+up
 		// in such cases. We will do the same to mimic it's behavior.
@@ -964,7 +971,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		mod = SDL_Keymod(mod | KMOD_NUM);
 	}
 #endif
-	event.kbd.ascii = mapKey(sdlKeycode, mod, obtainUnicode(ev.key));
+	event.kbd.ascii = isImeCompositionEnabled() ? 0 : mapKey(sdlKeycode, mod, obtainUnicode(ev.key));
 
 	event.kbdRepeat = ev.key.repeat;
 
@@ -996,7 +1003,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 		mod = SDL_Keymod(mod | KMOD_NUM);
 	}
 #endif
-	event.kbd.ascii = mapKey(sdlKeycode, mod, 0);
+	event.kbd.ascii = isImeCompositionEnabled() ? 0 : mapKey(sdlKeycode, mod, 0);
 
 	return true;
 }
