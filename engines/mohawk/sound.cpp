@@ -237,6 +237,10 @@ Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *str
 						scanAndFixAudioPops(dataChunk, dataSize, stream);
 				}
 
+				// Myst uses the loopCount variable but the loopStart and loopEnd are always 0 and the size of the sample.
+				// Myst ME doesn't use the Mohawk Sound format and just standard WAVE files and therefore does not contain
+				// any of this metadata and we have to specify whether or not to loop elsewhere.
+
 				dataChunk.audioData = stream->readStream(dataSize);
 				break;
 			default:
@@ -261,17 +265,14 @@ Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *str
 		else
 			flags |= Audio::FLAG_UNSIGNED;
 
-		// Publish only the verified raw 8-bit infinite-loop form.
-		// Available Zoombini looped SND resources use this form.
-		// Finite loops are not published because
-		// @ref Audio::SubLoopingAudioStream ends at the exclusive loop end
-		// after its final iteration instead of continuing through the tail.
-		// Validate after the optional pop fix so the exclusive loop end cannot
-		// exceed a truncated sample payload.
-		if (loopInfo && dataChunk.bitsPerSample == 8 &&
-			dataChunk.loopCount == 0xFFFF &&
-			dataChunk.loopStart < dataChunk.loopEnd &&
-			dataChunk.loopEnd <= dataChunk.sampleCount) {
+		// Export only the raw 8-bit infinite loops used by Zoombini. Filter out finite loops.
+		// @ref Mohawk::Sound::playSound() passes the range to @ref Audio::SubLoopingAudioStream.
+		// - Mohawk infnite loop: head -> loop chunk (repeat until stopped by game logic)
+		// - Mohawk finite loop: head -> loop chunk (N times) -> tail -> EOF
+		// - @ref Audio::SubLoopingAudioStream finite: head -> loop chunk (N times) -> EOF
+		// @ref Audio::SubLoopingAudioStream does not support finite loop semantics, so filter them as a safeguard.
+		// Validate against sampleCount after the optional pop truncation.
+		if (loopInfo && dataChunk.bitsPerSample == 8 && dataChunk.loopCount == 0xFFFF && dataChunk.loopStart < dataChunk.loopEnd && dataChunk.loopEnd <= dataChunk.sampleCount) {
 			loopInfo->start = dataChunk.loopStart;
 			loopInfo->end = dataChunk.loopEnd;
 		}
