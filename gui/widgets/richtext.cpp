@@ -76,9 +76,9 @@ static const Graphics::TTFMap *getTTFFamily() {
 		return ttfFamilyJapanese;
 	if (language == "ko")
 		return ttfFamilyKorean;
-	if (language == "zh_Hans" || language == "zh")
+	if (language == "zh_Hans")
 		return ttfFamilySimplifiedChinese;
-	if (language == "zh_Hant")
+	if (language == "zh_Hant" || language == "zh")
 		return ttfFamilyTraditionalChinese;
 #endif
 
