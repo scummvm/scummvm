@@ -28,7 +28,7 @@ namespace Ultima1 {
 namespace Views {
 
 bool SpaceMap::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
+	MetaEngine::setKeybindingMode(KBMODE_SPACE);
 	return Map::msgFocus(msg);
 }
 

@@ -40,8 +40,8 @@ enum KeybindingAction {
 enum KeybindingMode {
 	KBMODE_ALL,
 	KBMODE_MINIMAL,
-	KBMODE_MENUS,
-	KBMODE_GAMEPLAY
+	KBMODE_GAMEPLAY,
+	KBMODE_SPACE
 };
 
 class MetaEngine {

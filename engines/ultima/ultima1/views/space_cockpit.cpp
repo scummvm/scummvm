@@ -33,7 +33,7 @@ constexpr int STAR_COLOR = 15;		// white stars / crosshair
 constexpr int RIVET_COLOR = 0;		// black detail punched into the frame
 
 bool SpaceCockpit::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
+	MetaEngine::setKeybindingMode(KBMODE_SPACE);
 	_G(starfield).reset();
 	return Map::msgFocus(msg);
 }
