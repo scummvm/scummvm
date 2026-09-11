@@ -99,6 +99,27 @@ public:
 	bool tick() override;
 };
 
+/**
+ * Shown when the player dies in outer space (e.g. flying too close to a
+ * star). Unlike the overworld's Dead, there's no automatic resurrection
+ * sequence - the caller is expected to have already written the reason for
+ * death to the commands area (via SpaceLogic::death()) before this view goes
+ * up. Just shows the same skull glyph and waits for any key/action, then
+ * returns to the main menu
+ */
+class SpaceDead : public Interaction {
+public:
+	SpaceDead() : Interaction("SpaceDead") {
+	}
+	~SpaceDead() override {
+	}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+};
+
 } // namespace Interactions
 } // namespace Views
 } // namespace Ultima1

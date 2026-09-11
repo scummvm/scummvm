@@ -67,6 +67,7 @@ struct Views : public Shared::Views {
 	Interactions::PrincessSaved _princessSaved;
 	Interactions::Ready _ready;
 	Interactions::SectorScan _sectorScan;
+	Interactions::SpaceDead _spaceDead;
 	Interactions::Win _win;
 	CreateCharacter _createCharacter;
 	DungeonMap _dungeonMap;

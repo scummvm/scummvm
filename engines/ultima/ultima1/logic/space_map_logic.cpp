@@ -31,6 +31,10 @@ namespace Logic {
 
 constexpr int MAX_DRIFT = 9;
 
+// Flying within this many units (on both axes) of a sector's star/heat
+// hazard is fatal (checkStarProximity)
+constexpr int STAR_DEATH_RANGE = 25;
+
 // Rotating Left/Right cycles the ship's facing a quarter-turn counter-
 // clockwise/clockwise (word_17EA2), indexed by the ship's current facing
 constexpr Data::SpaceShipFacing ROTATE_CCW[4] = {
@@ -120,6 +124,12 @@ void SpaceMapLogic::tick() {
 		int newX = wrapCoord(ship._x + _G(sectorDriftX), Data::SPACE_SECTOR_MIN_X, Data::SPACE_SECTOR_MAX_X, Data::SPACE_SECTOR_WRAP_WIDTH);
 		int newY = wrapCoord(ship._y + _G(sectorDriftY), Data::SPACE_SECTOR_MIN_Y, Data::SPACE_SECTOR_MAX_Y, Data::SPACE_SECTOR_WRAP_HEIGHT);
 
+		if (cell._hazardX != 0 && ABS(newX - cell._hazardX) < STAR_DEATH_RANGE && ABS(newY - cell._hazardY) < STAR_DEATH_RANGE) {
+			writeString("Thy ship melts near the star!\n");
+			death();
+			return;
+		}
+
 		// The only real obstacles are the station (in its own sector) and
 		// any other ship sitting in the sector - the sector edges themselves
 		// just wrap around
@@ -140,9 +150,11 @@ void SpaceMapLogic::tick() {
 			writeString("Crunch!\n");
 			playFX(0);
 			subtractShields(shipShields() / 4 + 5);
-			// TODO: death in space - see SpaceLogic::endOfTurn
-			if (shipShields() == 0)
+			if (shipShields() == 0) {
 				writeString("Thy shield is drained!\n");
+				death();
+				return;
+			}
 
 			// Bounce back rather than plough into it
 			_G(sectorDriftX) = -_G(sectorDriftX);

@@ -100,6 +100,30 @@ static const uint8 DEATH_GRAPHIC_DATA[DEATH_GRAPHIC_HEIGHT * 8] = {
 	0x00, 0x00, 0x0f, 0x00, 0x00, 0xfc, 0x00, 0x00
 };
 
+// Shared by Dead and SpaceDead - both claim the map viewport area (inside
+// the game border, which is left drawn by whatever view was showing
+// underneath) and centre the same skull glyph within it
+static void drawSkullGraphic(Shared::Gfx::GfxSurface &s) {
+	// This view's own bounds start at absolute screen (8, 8), so convert
+	// down to the local coordinates its surface uses
+	int startX = DEATH_GRAPHIC_SCREEN_X - 8;
+	int startY = DEATH_GRAPHIC_SCREEN_Y - 8;
+
+	for (int row = 0; row < DEATH_GRAPHIC_HEIGHT; ++row) {
+		const uint8 *rowData = &DEATH_GRAPHIC_DATA[row * 8];
+		int x = startX;
+
+		for (int wordIdx = 0; wordIdx < 4; ++wordIdx) {
+			uint16 word = rowData[wordIdx * 2] | (rowData[wordIdx * 2 + 1] << 8);
+
+			for (int bit = 15; bit >= 0; --bit, ++x) {
+				if (word & (1 << bit))
+					s.setPixel(x, startY + row, EDGE_COLOR);
+			}
+		}
+	}
+}
+
 bool Dead::msgFocus(const FocusMessage &msg) {
 	// Claim the map viewport area (inside the game border, which is left
 	// drawn by whatever view was showing underneath)
@@ -132,25 +156,7 @@ void Dead::draw() {
 
 void Dead::drawDeathGraphic() {
 	auto s = getSurface();
-
-	// This view's own bounds start at absolute screen (8, 8), so convert
-	// down to the local coordinates its surface uses
-	int startX = DEATH_GRAPHIC_SCREEN_X - 8;
-	int startY = DEATH_GRAPHIC_SCREEN_Y - 8;
-
-	for (int row = 0; row < DEATH_GRAPHIC_HEIGHT; ++row) {
-		const uint8 *rowData = &DEATH_GRAPHIC_DATA[row * 8];
-		int x = startX;
-
-		for (int wordIdx = 0; wordIdx < 4; ++wordIdx) {
-			uint16 word = rowData[wordIdx * 2] | (rowData[wordIdx * 2 + 1] << 8);
-
-			for (int bit = 15; bit >= 0; --bit, ++x) {
-				if (word & (1 << bit))
-					s.setPixel(x, startY + row, EDGE_COLOR);
-			}
-		}
-	}
+	drawSkullGraphic(s);
 }
 
 bool Dead::tick() {
@@ -254,6 +260,32 @@ void Dead::finish() {
 	resetPlayerPosition();
 
 	_G(map).load(Data::MAP_OVERWORLD);
+}
+
+bool SpaceDead::msgFocus(const FocusMessage &msg) {
+	setBounds(Common::Rect(8, 8, 312, 152));
+
+	g_engine->playFX(2);
+	g_engine->playFX(2);
+	g_engine->playFX(2);
+
+	return true;
+}
+
+void SpaceDead::draw() {
+	auto s = getSurface();
+	s.clear();
+	drawSkullGraphic(s);
+}
+
+bool SpaceDead::msgAction(const ActionMessage &msg) {
+	g_engine->replaceView("MainMenu", true);
+	return true;
+}
+
+bool SpaceDead::msgKeypress(const KeypressMessage &msg) {
+	g_engine->replaceView("MainMenu", true);
+	return true;
 }
 
 } // namespace Interactions

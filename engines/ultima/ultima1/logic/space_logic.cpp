@@ -88,6 +88,10 @@ void SpaceLogic::subtractShields(int amount) {
 	redrawStats();
 }
 
+void SpaceLogic::death() {
+	g_engine->addView("SpaceDead");
+}
+
 void SpaceLogic::keypress(Common::KeyCode keycode) {
 	writeString("Huh?\n");
 	playFX(1);

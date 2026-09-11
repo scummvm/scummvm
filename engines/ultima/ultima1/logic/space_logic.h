@@ -63,6 +63,12 @@ protected:
 	 */
 	void subtractShields(int amount);
 
+	/**
+	 * Shows the SpaceDead view (death). The caller is expected to have
+	 * already written the reason for death to the commands area first
+	 */
+	void death();
+
 	void updateCreatures() override {
 	}
 
