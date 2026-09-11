@@ -107,6 +107,10 @@ public:
 	* NOTE: this property must be reset manually, and is not reset by a call to destroy().
 	*/
 	void setPixelPacking(const bool pixelPacking) { _pixelPacking = pixelPacking; }
+
+protected:
+	virtual void loadPBMBitmap(Common::SeekableReadStream &stream, byte *data, uint16 outPitch);
+
 private:
 
 	Header _header;
