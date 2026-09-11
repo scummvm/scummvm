@@ -21,6 +21,10 @@
 
 #include <cxxtest/TestSuite.h>
 
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #include "common/memstream.h"
 #include "graphics/surface.h"
 #include "image/codecs/cdtoons.h"
@@ -28,6 +32,7 @@
 class CDToonsDecoderTestSuite : public CxxTest::TestSuite {
 public:
 	void test_diff_entry_uses_its_declared_bounds() {
+#ifdef USE_CDTOONS
 		const byte frame[] = {
 			// Header with no cached blocks or actions and a full-surface dirty area.
 			0x00, 0x09, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
@@ -59,9 +64,11 @@ public:
 		const byte *pixels = static_cast<const byte *>(surface->getPixels());
 		TS_ASSERT_EQUALS(pixels[0], 0x33);
 		TS_ASSERT_EQUALS(pixels[1], 0x33);
+#endif
 	}
 
 	void test_decode_frame_with_ignored_marker() {
+#ifdef USE_CDTOONS
 		const byte frame[] = {
 			// Frame header with one background-clearing action.
 			0x00, 0x09, 0x00, 0x01, 0x00, 0x01, 0x00, 0x2a,
@@ -94,9 +101,11 @@ public:
 			for (uint x = 0; x < 2; x++)
 				TS_ASSERT_EQUALS(pixels[y * surface->pitch + x], 0x2a);
 		}
+#endif
 	}
 
 	void test_xfrm_retains_background_action_range() {
+#ifdef USE_CDTOONS
 		const byte firstFrame[] = {
 			// Header: two image blocks and three actions, with a full-frame dirty rectangle.
 			0x00, 0x09, 0x00, 0x01, 0x00, 0x01, 0x00, 0x05,
@@ -186,5 +195,6 @@ public:
 		pixels = static_cast<const byte *>(surface->getPixels());
 		TS_ASSERT_EQUALS(pixels[0], 0x11);
 		TS_ASSERT_EQUALS(pixels[1], 0x11);
+#endif
 	}
 };

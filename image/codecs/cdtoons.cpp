@@ -90,28 +90,6 @@ static Common::Rect readRect(Common::SeekableReadStream &stream) {
 	return rect;
 }
 
-static Common::Rect clipToSurface(const Common::Rect &rect, const Graphics::Surface &surface) {
-	Common::Rect clipped = rect;
-	clipped.clip(Common::Rect(0, 0, surface.w, surface.h));
-	return clipped;
-}
-
-static void fillSurfaceRect(Graphics::Surface &surface, const Common::Rect &rect, byte color) {
-	Common::Rect clipped = clipToSurface(rect, surface);
-	if (clipped.isEmpty())
-		return;
-
-	for (int y = clipped.top; y < clipped.bottom; y++)
-		memset(surface.getBasePtr(clipped.left, y), color, clipped.width());
-}
-
-static void copySurfaceRect(Graphics::Surface &dest, const Graphics::Surface &source, const Common::Rect &rect) {
-	Common::Rect clipped = clipToSurface(rect, dest);
-	clipped.clip(Common::Rect(0, 0, source.w, source.h));
-	if (!clipped.isEmpty())
-		dest.copyRectToSurface(source, clipped.left, clipped.top, clipped);
-}
-
 CDToonsDecoder::CDToonsDecoder(uint16 width, uint16 height) : _palette(256) {
 	debugN(5, "CDToons: width %d, height %d\n", width, height);
 
@@ -524,7 +502,7 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 
 	if (hasXFrm && xFrmCount && !xFrmRect.isEmpty()) {
 		if (!_backingSurfaceValid) {
-			fillSurfaceRect(*_backingSurface, Common::Rect(_backingSurface->w, _backingSurface->h), backgroundColor);
+			_backingSurface->fillRect(_backingSurface->getRect(), backgroundColor);
 			_backingSurfaceValid = true;
 		}
 
@@ -533,28 +511,33 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 		if (!(flags & kCDToonsFrameFlagPreservePreviousPixels)) {
 			if (!backgroundRects.empty()) {
 				for (const Common::Rect &rect : backgroundRects)
-					fillSurfaceRect(*_backingSurface, rect, backgroundColor);
+					_backingSurface->fillRect(rect, backgroundColor);
 			} else {
-				fillSurfaceRect(*_backingSurface, xFrmRect, backgroundColor);
+				_backingSurface->fillRect(xFrmRect, backgroundColor);
 			}
 		}
 		renderActions(actions, backgroundBegin, backgroundEnd, *_backingSurface, &xFrmRect);
 	} else if (frameId == 1 && !actions.empty() && actions[0].blockId && actions[0].blockId != 0xffff) {
 		if (!_backingSurfaceValid) {
-			fillSurfaceRect(*_backingSurface, Common::Rect(_backingSurface->w, _backingSurface->h), backgroundColor);
+			_backingSurface->fillRect(_backingSurface->getRect(), backgroundColor);
 			_backingSurfaceValid = true;
 		}
 		renderActions(actions, 0, 1, *_backingSurface, nullptr);
 	}
 
 	if (_backingSurfaceValid) {
-		copySurfaceRect(*_surface, *_backingSurface, dirtyRect);
+		const Common::Rect clippedDirtyRect = dirtyRect.findIntersectingRect(_surface->getRect());
+		if (!clippedDirtyRect.isEmpty()) {
+			Graphics::Surface outputArea = _surface->getSubArea(clippedDirtyRect);
+			const Graphics::Surface backingArea = _backingSurface->getSubArea(clippedDirtyRect);
+			outputArea.copyRectToSurface(backingArea, 0, 0, backingArea.getRect());
+		}
 	} else if (!(flags & kCDToonsFrameFlagPreservePreviousPixels)) {
 		if (!foregroundRects.empty()) {
 			for (const Common::Rect &rect : foregroundRects)
-				fillSurfaceRect(*_surface, rect, backgroundColor);
+				_surface->fillRect(rect, backgroundColor);
 		} else {
-			fillSurfaceRect(*_surface, dirtyRect, backgroundColor);
+			_surface->fillRect(dirtyRect, backgroundColor);
 		}
 	}
 
@@ -605,7 +588,7 @@ void CDToonsDecoder::renderBlock(Graphics::Surface &surface, byte *data, uint da
 		destX, destY, width, height);
 
 	Common::Rect drawRect(destX, destY, destX + static_cast<int>(width), destY + static_cast<int>(height));
-	drawRect.clip(Common::Rect(0, 0, surface.w, surface.h));
+	drawRect.clip(surface.getRect());
 	if (clipRect)
 		drawRect.clip(*clipRect);
 	if (drawRect.isEmpty())
