@@ -985,6 +985,27 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 	}
 }
 
+void AGOSEngine::simon2DjinniAnimationFix(uint speechId) {
+	switch (_language) {
+	case Common::EN_ANY:
+		if (speechId == 10524 || speechId == 10525) {
+			_videoLockOut |= 0x40;
+			animate(4, 134, 85, 20, 0, 2);
+			_videoLockOut &= ~0x40;
+		}
+		break;
+	case Common::DE_DEU:
+		if (speechId == 12024 || speechId == 12025) {
+			_videoLockOut |= 0x40;
+			animate(4, 134, 85, 20, 0, 2);
+			_videoLockOut &= ~0x40;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 int AGOSEngine::runScript() {
 	bool flag;
 
@@ -1031,6 +1052,17 @@ int AGOSEngine::runScript() {
 
 		if (_opcode > _numOpcodes)
 			error("Invalid opcode '%d' encountered", _opcode);
+
+		if (getGameType() == GType_SIMON2 && _opcode == 162) {
+			const byte *oldCodePtr = _codePtr;
+			getVarOrByte();
+			getVarOrByte();
+			getNextStringID();
+			uint speechId = (uint16)getNextWord();
+			_codePtr = oldCodePtr;
+			if (speechId != 0xFFFF)
+				simon2DjinniAnimationFix(speechId);
+		}
 
 		executeOpcode(_opcode);
 	} while (getScriptCondition() != flag && !getScriptReturn() && !shouldQuit());

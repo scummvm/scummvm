@@ -1847,6 +1847,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - English DOS CD with subtitles in dungeon when using map
+	{
+		{
+			"simon1",
+			"20th Anniversary",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", 7030377},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",		GAME_BASEFILE,	"a21272b3c51ebd18bcbfe88715340924", 36191},
+				{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO1(GUIO_NOSUBTITLES)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - English DOS CD  (Infocom)
 	{
 		{
@@ -1922,6 +1947,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - French DOS CD with subtitles in dungeon when using map
+	{
+		{
+			"simon1",
+			"20th Anniversary",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"638049fa5d41b81fb6fb11671721b871", 7041803},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",		GAME_BASEFILE,	"226e152e0d2333d46c091a0b71de84f0", 39354},
+				{ "stripped.txt",	GAME_STRFILE,	"ef51ac74c946881ae4d7ca66cc7a0d1e", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - German DOS CD
 	{
 		{
@@ -1965,6 +2015,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - Hebrew DOS CD with subtitles in dungeon when using map
+	{
+		{
+			"simon1",
+			"20th Anniversary",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"a34b2c8642f2e3676d7088b5c8b3e884", 6976948},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",		GAME_BASEFILE,	"c5a1fe539d96e22e12b7b6e2576090ad", 34376},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
 		},
 
 		GType_SIMON1,
@@ -2022,6 +2097,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - Italian DOS CD with subtitles in dungeon when using map
+	{
+		{
+			"simon1",
+			"20th Anniversary",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"52e315e0e02feca86d15cc82e3306b6c", 7035767},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",		GAME_BASEFILE,	"6fd37fefa04315fdd5889e52e4c01731", 37840},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - Italian DOS CD alternate
 	{
 		{
@@ -2066,6 +2166,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO3(GAMEOPTION_OPL3_MODE, GAMEOPTION_DOS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - Spanish DOS CD with subtitles in dungeon when using map
+	{
+		{
+			"simon1",
+			"20th Anniversary",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"eff2774a73890b9eac533db90cd1afa1", 7030485},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "gamepc",		GAME_BASEFILE,	"71adc00b0ee14a59ef4f969f2f52829d", 37877},
+				{ "stripped.txt",	GAME_STRFILE,	"9d31bef42db1a8abe4e9f368014df1d5", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
 		},
 
 		GType_SIMON1,
@@ -2520,7 +2645,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 		GType_SIMON2,
 		GID_SIMON2,
-		GF_TALKIE
+		GF_TALKIE | GF_WAVSFX
 	},
 
 	// Simon the Sorcerer 2 - German DOS CD
@@ -2598,6 +2723,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - Hebrew DOS CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"952a2b1be23c3c609ba8d988a9a1627d", 53366},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+				{ "simon2.gme",		GAME_GMEFILE,	"40ac2d4763d97a9268023dc6db17e2ce", 20017302},
+				{ "stripped.txt",	GAME_STRFILE,	"de9dbc24158660e153483fa0cf6c3172", 171},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
 	// Simon the Sorcerer 2 - Italian DOS CD
 	{
 		{
@@ -2622,6 +2772,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_SIMON2,
 		GID_SIMON2,
 		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Italian DOS CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+			
+			{
+				{ "gsptr30",        GAME_BASEFILE,    "3e11d400bea0638f360a724687005cd1", -1},
+				{ "icon.dat",       GAME_ICONFILE,    "72096a62d36e6034ea9fecc13b2dbdab", -1},
+				{ "simon2.gme",     GAME_GMEFILE,    "510d012bcc5775a8513923163ffe4458", 20066490},
+				{ "stripped.txt",   GAME_STRFILE,    "bea6843fb9f3b2144fcb146d62db0b9a", -1},
+				{ "tbllist",        GAME_TBLFILE,    "2082f8d02075e590300478853a91ffd9", -1},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
 	},
 
 	// Simon the Sorcerer 2 - Spanish DOS CD
@@ -2649,6 +2824,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - Spanish DOS CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"268dc322aa73bcf27bb016b8e8ceb889", -1},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+				{ "simon2.gme",		GAME_GMEFILE,	"2b997db3c677fb3d2174c73ba2cc53e1", 20049608},
+				{ "stripped.txt",	GAME_STRFILE,	"d13753796bd81bf313a2449f34d8b112", -1},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
 	// Simon the Sorcerer 2 - Russian DOS CD
 	{
 		{
@@ -2669,6 +2869,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Russian Fan Windows CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+			
+			{
+				{ "gsptr30",        GAME_BASEFILE, "e26d162e573587f4601b88701292212c", 58851 },
+				{ "icon.dat",       GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+				{ "simon2.gme",     GAME_GMEFILE, "f1727b15b3e389f0248363d890751ee7", 19695662 },
+				{ "stripped.txt",   GAME_STRFILE, "e229f84d46fa83f99b4a7115679f3fb6", 171 },
+				{ "tbllist",        GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		
 		GType_SIMON2,
 		GID_SIMON2,
 		GF_TALKIE
@@ -2697,6 +2922,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_SIMON2,
 		GID_SIMON2,
 		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Czech Windows CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"eb8217f9ec4628d12ca606033146c48c", -1},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+				{ "simon2.gme",		GAME_GMEFILE,	"50188f9fde0d063c824476972936a52f", 20054555},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+				AD_LISTEND
+			},
+			Common::CS_CZE,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
 	},
 
 	// Simon the Sorcerer 2 - English Windows CD
@@ -2797,6 +3047,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_SIMON2,
 		GID_SIMON2,
 		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Polish Windows CD with added MT-32 track for the intro
+	{
+		{
+			"simon2",
+			"20th Anniversary",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"657fd873f5d0637097ee02315b447e6f", -1},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+				{ "simon2.gme",		GAME_GMEFILE,	"212fa5638a76869537d092d4e76524c0", 20037221},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
 	},
 
 	// Simon the Sorcerer 2 - Polish Windows CD
