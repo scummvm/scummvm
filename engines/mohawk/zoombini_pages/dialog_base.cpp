@@ -37,13 +37,13 @@ ZoombiniDialog::ZoombiniDialog(MohawkEngine_Zoombini *vm, ZoombiniPageType pageT
 	_useFadeEffect = false;
 
 	// Backup current back screen
-	_vm->_gfx->createScreen(_capturedBackScreen);
 	_vm->_gfx->captureScreen(ZoombiniGraphics::kBackScreen, &_capturedBackScreen);
 }
 
 ZoombiniDialog::~ZoombiniDialog() {
 	// Restore captured back screen
 	_vm->_gfx->copyToScreen(ZoombiniGraphics::kBackScreen, _capturedBackScreen);
+	_capturedBackScreen.free();
 }
 
 ZoombiniDialog::DialogKeyAction ZoombiniDialog::classifyDialogKey(const Common::KeyState &kbd) {
