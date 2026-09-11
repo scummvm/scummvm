@@ -120,6 +120,9 @@ void Logic::action(int action) {
 	case KEYBIND_BOARD:
 		doEndOfTurn = board();
 		break;
+	case KEYBIND_CAST:
+		doEndOfTurn = cast();
+		break;
 	case KEYBIND_CLIMB:
 		doEndOfTurn = climb();
 		break;

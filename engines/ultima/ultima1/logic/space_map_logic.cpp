@@ -68,7 +68,7 @@ static bool overlapsRect(int x, int y, int rx, int ry, int rw, int rh) {
 }
 
 bool SpaceMapLogic::move(Data::Direction dir) {
-	writeString("%s\n", Data::DIRECTION_NAMES[dir]);
+	writeString("%s\n", Data::SPACE_DIRECTION_NAMES[dir]);
 
 	int fuelCost = (dir == Data::DIR_LEFT || dir == Data::DIR_RIGHT) ? 2 : 5;
 

@@ -36,6 +36,7 @@ namespace Ultima1 {
 namespace Data {
 
 const char *DIRECTION_NAMES[5] = { nullptr, "West", "East", "North", "South" };
+const char *SPACE_DIRECTION_NAMES[5] = { nullptr, "Counter-Clockwise", "Clockwise", "Thrust", "Retro" };
 
 static const byte LOCATION_POS_X[LOCATION_COUNT] = {
 	39, 66, 25, 46, 52, 18, 70, 64, 126, 128, 148, 115, 150, 121,

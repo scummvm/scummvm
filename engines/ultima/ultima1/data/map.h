@@ -70,6 +70,7 @@ enum MapType {
 typedef Common::Array< Common::Array<byte> > MapTiles;
 
 extern const char *DIRECTION_NAMES[5];
+extern const char *SPACE_DIRECTION_NAMES[5];
 extern const char *LOCATION_NAMES[LOCATION_COUNT];
 extern const char *CONTINENT_NAMES[4];
 
