@@ -157,8 +157,8 @@
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
-				<language id = 'zh_Hans' scalable_file = 'NotoSansTC-Regular.otf'/>
-				<language id = 'zh_Hant' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hans' scalable_file = 'NotoSansSC-Regular.otf'/>
+				<language id = 'zh_Hant' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = 'he'  scalable_file = 'NotoSansHebrew-Regular.ttf'/>
