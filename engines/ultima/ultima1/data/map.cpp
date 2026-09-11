@@ -167,7 +167,7 @@ void Map::resetMondainMap() {
 }
 
 void Map::load(int mapNum) {
-	_currentMap = mapNum;
+	_G(savegame)._mapNum = mapNum;
 
 	if (mapNum == MAP_OVERWORLD) {
 		_mapWidth = OVERWORLD_WIDTH;
@@ -276,7 +276,7 @@ int Map::getMapTile(int x, int y) const {
 	// draw time and never stored in the map itself. This doesn't apply
 	// to city/castle map data, which uses a completely different,
 	// contiguous tile ID space (see the Town.bin tile table)
-	if (_currentMap == MAP_OVERWORLD && tile > TILE_CASTLE1) {
+	if (_G(savegame)._mapNum == MAP_OVERWORLD && tile > TILE_CASTLE1) {
 		++tile;
 		if (tile == TILE_CITY2)
 			++tile;

@@ -642,7 +642,7 @@ void CityCastleLogic::guardAttack(int entityIndex) {
 
 CityLogic::CityLogic() {
 	_G(map)._tavernCtr = 0;
-	_G(map)._mapStyle = (_G(map)._currentMap - 1) % 8 + 2;
+	_G(map)._mapStyle = (_G(savegame)._mapNum - 1) % 8 + 2;
 	_G(map)._mapType = Data::MAPTYPE_CITY;
 }
 
@@ -676,8 +676,8 @@ bool CityLogic::transact() {
 /*-------------------------------------------------------------------*/
 
 CastleLogic::CastleLogic() {
-	_G(map)._castleNum = _G(map)._currentMap - 33;
-	_G(map)._mapStyle = (_G(map)._currentMap - 1) % 2;
+	_G(map)._castleNum = _G(savegame)._mapNum - 33;
+	_G(map)._mapStyle = (_G(savegame)._mapNum - 1) % 2;
 	_G(map)._castleNum2 = _G(map)._castleNum + 1;
 	_G(map)._mapType = Data::MAPTYPE_CASTLE;
 

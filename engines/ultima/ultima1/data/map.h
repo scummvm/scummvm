@@ -124,7 +124,6 @@ private:
 	void loadDungeonMap();
 
 public:
-	int _currentMap = -1;
 	byte _playerTileId = 0;
 	byte _tilePlayerCenter = 0;
 	byte _tilePlayerUp = 0, _tilePlayerDown = 0,
