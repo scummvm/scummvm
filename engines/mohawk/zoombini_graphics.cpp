@@ -500,14 +500,14 @@ void ZoombiniGraphics::drawBackground(int16 image) {
 void ZoombiniGraphics::drawBackground(ScreenKind screenKind, int16 image) {
 	MohawkSurface *imgSurface = findImage(ZmbResource(ZmbResource::kPage, image));
 	Graphics::Surface *rawSurface = findImage(ZmbResource(ZmbResource::kPage, image))->getSurface();
-	Common::Rect imageRect(0, 0, rawSurface->w, rawSurface->h);
+	Common::Rect imageRect = rawSurface->getRect();
 	drawImageSectionToScreen(screenKind, imgSurface, imageRect, _screenRect);
 }
 
 void ZoombiniGraphics::drawImage(ScreenKind screenKind, int16 image, const Common::Point &destPos) {
 	MohawkSurface *imgSurface = findImage(ZmbResource(ZmbResource::kPage, image));
 	Graphics::Surface *rawSurface = imgSurface->getSurface();
-	Common::Rect srcRect(0, 0, rawSurface->w, rawSurface->h);
+	Common::Rect srcRect = rawSurface->getRect();
 	Common::Rect dstRect(destPos, rawSurface->w, rawSurface->h);
 	drawImageSectionToScreen(screenKind, imgSurface, srcRect, dstRect);
 }
@@ -581,7 +581,7 @@ Common::Rect ZoombiniGraphics::drawSubImage(ScreenKind screenKind, ZmbResource i
 	if (destPos.x <= -1 * surface->w || destPos.y <= -1 * surface->h || kScreenWidth <= destPos.x || kScreenHeight <= destPos.y)
 		return Common::Rect();
 
-	Common::Rect srcRect(0, 0, surface->w, surface->h);
+	Common::Rect srcRect = surface->getRect();
 	Common::Rect dstRect(destPos, surface->w, surface->h);
 	return drawImageSectionToScreen(screenKind, rawSurface, srcRect, dstRect, clearBeforeRender, remapColorAssistPalette);
 }
@@ -602,7 +602,7 @@ Common::Rect ZoombiniGraphics::drawSubImage(ScreenKind screenKind, ZmbResource i
 		return Common::Rect();
 	}
 
-	Common::Rect srcRect(0, 0, surface->w, surface->h);
+	Common::Rect srcRect = surface->getRect();
 
 	// If the destRect is larger than shape's actual size, align to the center.
 	Common::Point startPos(destRect.left, destRect.top);
@@ -1035,16 +1035,9 @@ Common::Point ZoombiniGraphics::getTextLinesBounds(const Graphics::Font *font, b
 }
 
 void ZoombiniGraphics::copyTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect) {
-	const int localLeft = copyRect.left - destRect.left;
-	const int localTop = copyRect.top - destRect.top;
-	for (int rowIdx = 0; rowIdx < copyRect.height(); rowIdx++) {
-		const byte *src = reinterpret_cast<const byte *>(textSurface->getBasePtr(localLeft, localTop + rowIdx));
-		byte *dst = reinterpret_cast<byte *>(screen->getBasePtr(copyRect.left, copyRect.top + rowIdx));
-		for (int columnIdx = 0; columnIdx < copyRect.width(); columnIdx++) {
-			if (src[columnIdx] != kTransparentKey)
-				dst[columnIdx] = src[columnIdx];
-		}
-	}
+	Common::Rect sourceRect = copyRect;
+	sourceRect.translate(-destRect.left, -destRect.top);
+	screen->copyRectToSurfaceWithKey(*textSurface, copyRect.left, copyRect.top, sourceRect, kTransparentKey);
 }
 
 void ZoombiniGraphics::blendTextPixels(Graphics::Surface *textSurface, Graphics::Surface *screen, const Common::Rect &destRect, const Common::Rect &copyRect, uint32 palette) {
@@ -1383,7 +1376,7 @@ Common::Rect ZoombiniGraphics::getSubImageSize(ZmbResource imgResource, uint16 s
 		error("gfx: cannot get image surface from sub-image(%u) in image(%d)", subImage, imgResource._id);
 		return Common::Rect();
 	}
-	return Common::Rect(imgSurface->w, imgSurface->h);
+	return imgSurface->getRect();
 }
 
 uint32 ZoombiniGraphics::getShapeCount(ZmbResource imgResource) {
