@@ -185,5 +185,63 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 	return dst;
 }
 
+void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
+	if (loadOffset == 0) {
+		memset(_animFramesBuffer, 0, 65535);
+	}
+	while (*anm) {
+		int dataSize;
+		loadData(*anm++, &_animFramesBuffer[loadOffset], &dataSize);
+		loadOffset += dataSize;
+	}
+}
+
+const uint8 *IgorEngine::getAnimFrame(int baseOffset, int tableOffset, int frame) {
+	const uint8 *src = _animFramesBuffer + baseOffset;
+	assert(frame >= 1);
+	int frameOffset = READ_LE_UINT16(src + tableOffset + (frame - 1) * 2);
+	return src + frameOffset - 1;
+}
+
+void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText) {
+	int y = READ_LE_UINT16(src) * 320; src += 2;
+	int h = READ_LE_UINT16(src); src += 2;
+	while (h--) {
+		int w = *src++;
+		int pos = y;
+		while (w--) {
+			pos += *src++;
+			int len = *src++;
+			if (len & 0x80) {
+				uint8 color = *src++;
+				len = 256 - len;
+				if (preserveText) {
+					for (int i = pos; i < pos + len; ++i) {
+						if (dst[i] != kTalkColor && dst[i] != kTalkShadowColor) {
+							dst[i] = color;
+						}
+					}
+				} else {
+					memset(dst + pos, color, len);
+				}
+				pos += len;
+			} else {
+				if (preserveText) {
+					for (int i = pos; i < pos + len; ++i) {
+						if (dst[i] != kTalkColor && dst[i] != kTalkShadowColor) {
+							dst[i] = src[i - pos];
+						}
+					}
+				} else {
+					memcpy(dst + pos, src, len);
+				}
+				src += len;
+				pos += len;
+			}
+		}
+		y += 320;
+	}
+}
+
 } // End of namespace Igor
 

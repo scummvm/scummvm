@@ -382,10 +382,14 @@ private:
 
 	void PART_MAIN();
 	void PART_05();
+	void PART_05_UPDATE_ROOM_BACKGROUND();
+
 	void PART_85();
+	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
+	void PART_85_UPDATE_ROOM_BACKGROUND();
+
 	void PART_90();
 
-	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 	void handleRoomInput();
 	void formatActionSentence(uint8 color);
@@ -439,7 +443,10 @@ private:
 
 	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
+	void loadAnimData(const int *anm, int loadOffset = 0);
 	void loadRoomData(int pal, int img, int box, int msk, int txt);
+	const uint8 *getAnimFrame(int baseOffset, int tableOffset, int frame);
+	void decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText = false);
 
 	void setRoomWalkBounds(int x1, int y1, int x2, int y2);
 
