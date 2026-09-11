@@ -46,7 +46,11 @@ ZoombiniRandom::ZoombiniRandom(const Common::String &name) : _scummRnd(name) {
 void ZoombiniRandom::setSeed(uint32 seed) {
 	if (seed == 0)
 		seed += 1;
-	_randSeed = seed;
+
+	if (_useOriginal)
+		_randState = seed;
+	else
+		_scummRnd.setSeed(seed);
 }
 
 uint32 ZoombiniRandom::generateNewSeed() {
@@ -58,8 +62,8 @@ uint16 ZoombiniRandom::getOriginalRandomNumber(uint32 max) {
 	if (max == 0)
 		return 0;
 
-	_randSeed = 214013u * _randSeed + 2531011u;
-	return static_cast<uint16>((_randSeed >> 16) % (max + 1));
+	_randState = 214013u * _randState + 2531011u;
+	return static_cast<uint16>((_randState >> 16) % (max + 1));
 }
 
 int16 ZoombiniRandom::getRandomNumber(int16 max) {
