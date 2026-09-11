@@ -68,7 +68,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.sfxFileName = "igor.dat";
 		_game.version = kIdSpaCD;
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
-		_currentPart = 50;
+		_currentPart = 900;
 	}
 
 	// if (_game.flags & kFlagFloppy) {
@@ -286,6 +286,23 @@ static void decodeMainString(const uint8 *src, char *dst) {
 		}
 	}
 	dst[sz] = '\0';
+}
+
+void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent) {
+	uint8 *p = dst + dstOffset;
+	for (int y = 0; y < h; ++y) {
+		if (transparent) {
+			for (int x = 0; x < w; ++x) {
+				if (src[x] != 0) {
+					p[x] = src[x];
+				}
+			}
+		} else {
+			memcpy(p, src, w);
+		}
+		p += dstPitch;
+		src += srcPitch;
+	}
 }
 
 void IgorEngine::loadMainTexts() {
@@ -2071,8 +2088,18 @@ void IgorEngine::PART_MAIN() {
 	while (!g_engine->shouldQuit() && !_eventQuitGame) {
 		switch (_currentPart) {
 
-		case 50:
+		case 61:
 			PART_05(); // SpringRock
+			break;
+		case 850:
+			PART_85();
+			break;
+		case 900:
+		case 901:
+		case 902:
+		case 903:
+		case 904:
+			PART_90();
 			break;
 
 		default:

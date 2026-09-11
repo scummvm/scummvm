@@ -381,12 +381,15 @@ private:
 	void setupDefaultPalette();
 
 	void readTableFile();
+	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent);
 	void loadMainTexts();
 	const char *getString(int id) const;
 	void loadIgorFrames();
 
 	void PART_MAIN();
 	void PART_05();
+	void PART_85();
+	void PART_90();
 
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
