@@ -28,13 +28,17 @@
 namespace Mohawk {
 
 /**
- * Wraps the compatibility PRNG and ScummVM's default PRNG.
+ * Reimplement the original Z1 bounded generator or use ScummVM's default PRNG.
+ *
+ * The compatibility stream uses the MSVC LCG transition constants, but its
+ * game-owned bounded helper consumes all 16 high state bits rather than the
+ * 15-bit result returned by the MSVC CRT rand() function.
  * The active algorithm is selected by the "original_prng" config option.
  */
 class ZoombiniRandom {
 private:
 	/** Compatibility PRNG state used when original mode is enabled. */
-	uint32 _randSeed;
+	uint32 _randState;
 	/** ScummVM PRNG used when compatibility mode is disabled. */
 	Common::RandomSource _scummRnd;
 	/** Whether calls should use the original compatibility algorithm. */
@@ -42,7 +46,7 @@ private:
 
 	/**
 	 * Generate one inclusive bounded value with the compatibility algorithm.
-	 * A zero upper bound returns zero without advancing @ref ZoombiniRandom::_randSeed.
+	 * A zero upper bound returns zero without advancing @ref ZoombiniRandom::_randState.
 	 */
 	uint16 getOriginalRandomNumber(uint32 max);
 
@@ -59,10 +63,10 @@ public:
 
 	/** Generates new seed based on the current date/time */
 	static uint32 generateNewSeed();
-	/** Set the seed used to initialize the RNG. */
+	/** Seed both backing streams after applying the compatibility stream's zero normalization. */
 	void setSeed(uint32 seed);
-	/** Get a random seed that can be used to initialize the RNG. */
-	uint32 getSeed() const { return _randSeed; }
+	/** Return the current state of the selected stream. */
+	uint32 getSeed() const { return _useOriginal ? _randState : _scummRnd.getSeed(); }
 
 	/**
 	 * Generate a random signed integer in the interval [0, max].
