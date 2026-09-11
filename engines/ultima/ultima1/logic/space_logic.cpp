@@ -52,6 +52,8 @@ void SpaceLogic::entering() {
 	ship._shipType = Data::SHIP_SHUTTLE;
 	ship._fuel = _G(savegame)._shipFuel;
 	ship._shield = _G(savegame)._shipShield;
+
+	redrawStats();
 }
 
 void SpaceLogic::endOfTurn() {

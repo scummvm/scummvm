@@ -120,7 +120,7 @@ bool SpaceCockpitLogic::view() {
 	writeString("View\n");
 	_G(logic) = Common::SharedPtr<Logic>(new SpaceMapLogic());
 	g_engine->replaceView("SpaceMap");
-	return false;
+	return true;
 }
 
 } // namespace Logic

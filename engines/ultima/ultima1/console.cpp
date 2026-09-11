@@ -65,6 +65,11 @@ bool Console::cmdMap(int argc, const char **argv) {
 		if (location >= 41 && location < 49) {
 			g_engine->send("Pillar", Shared::Messages::GameMessage("PILLAR", location - 41));
 		} else {
+			if (location == Data::MAP_SPACE) {
+				_G(savegame)._shipFuel = 9999;
+				_G(savegame)._shipShield = 9999;
+			}
+
 			_G(map).load(location);
 			_G(logic)->entering();
 		}

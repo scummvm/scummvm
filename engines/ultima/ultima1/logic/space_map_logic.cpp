@@ -54,7 +54,7 @@ bool SpaceMapLogic::view() {
 	// drift
 	_G(logic) = Common::SharedPtr<Logic>(new SpaceCockpitLogic());
 	g_engine->replaceView("SpaceCockpit");
-	return false;
+	return true;
 }
 
 } // namespace Logic
