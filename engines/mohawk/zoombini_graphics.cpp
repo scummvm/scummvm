@@ -81,10 +81,6 @@ Graphics::Surface *ZoombiniGraphics::getScreen(ScreenKind screenKind) {
 	}
 }
 
-void ZoombiniGraphics::createScreen(Graphics::Surface &screen) {
-	screen.create(kScreenWidth, kScreenHeight, _pixelFormat);
-}
-
 void ZoombiniGraphics::captureScreen(ScreenKind srcScreenKind, Graphics::Surface *destScreen) {
 	assert(destScreen != nullptr);
 
