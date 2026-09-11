@@ -169,6 +169,8 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_ra2FrameObjectOriginalHeight = 0;
 	_ra2FrameObjectSurfaceWidth = 0;
 	_ra2FrameObjectSurfaceHeight = 0;
+	_ra2SpecialBufferWidth = 0;
+	_ra2SpecialBufferHeight = 0;
 	_ra2DeltaBlocksWidth = 0;
 	_ra2DeltaBlocksHeight = 0;
 	_ra2DeltaGlyphsWidth = 0;
@@ -223,6 +225,8 @@ void SmushPlayerRebel2::initGameVideoState() {
 	_loadPlaybackPending = (_curVideoFlags & 0x40) != 0;
 	_ra2PendingAnimHeaderPalette = false;
 	_ra2UsingGameplaySurface = false;
+	_ra2SpecialBufferWidth = 0;
+	_ra2SpecialBufferHeight = 0;
 	_smushAudioTable[100] = 0;
 
 	// Some menu videos inherit the previous SMUSH palette.
@@ -1025,6 +1029,8 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 		}
 		_width = surfaceWidth;
 		_height = surfaceHeight;
+		_ra2SpecialBufferWidth = surfaceWidth;
+		_ra2SpecialBufferHeight = surfaceHeight;
 	}
 
 	if (needsSpecialBuffer &&
@@ -1472,11 +1478,12 @@ void SmushPlayerRebel2::handleGameFrameStart() {
 
 	if (ra2IsHighResMode()) {
 		if (isRebel2GameplayActive(_insane)) {
-			if (_ra2UsingGameplaySurface && _specialBuffer != nullptr &&
-					_specialBufferSize >= kRebel2GameplaySurfaceWidth * kRebel2GameplaySurfaceHeight) {
+			// Restore the decode surface's pitch before drawing the background.
+			if (_specialBuffer != nullptr && _ra2SpecialBufferWidth > 0 && _ra2SpecialBufferHeight > 0 &&
+					(int64)_ra2SpecialBufferWidth * _ra2SpecialBufferHeight <= _specialBufferSize) {
 				_dst = _specialBuffer;
-				_width = kRebel2GameplaySurfaceWidth;
-				_height = kRebel2GameplaySurfaceHeight;
+				_width = _ra2SpecialBufferWidth;
+				_height = _ra2SpecialBufferHeight;
 			} else if (ra2EnsureLowResVideoBuffer()) {
 				_dst = _ra2LowResVideoBuffer;
 				_width = 320;

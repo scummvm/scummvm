@@ -106,6 +106,8 @@ private:
 	int _ra2FrameObjectOriginalHeight;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
+	int _ra2SpecialBufferWidth;
+	int _ra2SpecialBufferHeight;
 	int _ra2DeltaBlocksWidth;
 	int _ra2DeltaBlocksHeight;
 	int _ra2DeltaGlyphsWidth;
