@@ -4,7 +4,15 @@ MODULE_OBJS = \
 	igor.o \
 	console.o \
 	metaengine.o \
-	static.o \
+	walk.o \
+	palette.o \
+	text.o \
+	room.o \
+	resource.o \
+	input.o \
+	static_font.o \
+	static_walk.o \
+	static_cursor.o \
 	part_85.o \
 	part_90.o
 

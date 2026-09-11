@@ -367,17 +367,8 @@ private:
 	ResourceEntry *_resourceEntries;
 	Common::Array<StringEntry> _stringEntries;
 
-	static const uint8 _sentenceColorIndex[];
-	static const uint8 _fontCharIndex[];
-	static const uint8 _fontCharWidth[];
-	static const uint32 _fontData[];
-	static const uint8 _walkWidthScaleTable[];
-	static const uint8 _walkScaleTable[];
-	static const float _walkScaleSpeedTable[];
-	static const uint8 _mouseCursorMask[];
-	static const uint8 _mouseCursorData[];
-
 	void restart();
+
 	void setupDefaultPalette();
 
 	void readTableFile();
@@ -404,8 +395,6 @@ private:
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
-
-
 
 	void enterPartLoop();
 	void leavePartLoop();
@@ -506,14 +495,22 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-	static const uint8 PAL_48_1[];
-	static const uint8 PAL_96_1[];
-	static const uint8 PAL_IGOR_1[];
-	static const uint8 PAL_IGOR_2[];
 };
 
 extern IgorEngine *g_engine;
 #define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
+
+// Static data tables (defined in static_font.cpp, static_walk.cpp, static_cursor.cpp)
+extern const uint8 _fontCharIndex[];
+extern const uint8 _fontCharWidth[];
+extern const uint32 _fontData[];
+extern const uint8 _sentenceColorIndex[];
+extern const uint8 _walkWidthScaleTable[];
+extern const uint8 _walkScaleTable[];
+extern const float _walkScaleSpeedTable[];
+extern const uint8 _mouseCursorMask[];
+extern const uint8 _mouseCursorData[];
+extern const uint8 PAL_IGOR_1[];
 
 } // End of namespace Igor
 
