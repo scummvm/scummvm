@@ -1083,11 +1083,10 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 	Video::FlicDecoder flic;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		Common::MacResManager::openFileOrDataFork(path));
-	if (!stream || !flic.loadStream(stream.get())) {
+	if (!stream || !flic.loadStream(stream.release())) {
 		warning("playFlc: %s missing", path.toString().c_str());
 		return;
 	}
-	stream.release();
 
 	const int fw = flic.getWidth();
 	const int fh = flic.getHeight();

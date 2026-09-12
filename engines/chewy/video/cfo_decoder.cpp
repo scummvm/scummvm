@@ -59,8 +59,10 @@ enum CustomSubChunk {
 bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	if (stream->readUint32BE() != MKTAG('C', 'F', 'O', '\0'))
+	if (stream->readUint32BE() != MKTAG('C', 'F', 'O', '\0')) {
+		delete stream;
 		error("Corrupt video resource");
+	}
 
 	stream->readUint32LE();	// always 0
 

@@ -44,6 +44,7 @@ bool RLFDecoder::loadStream(Common::SeekableReadStream *stream) {
 		isValid = true;
 	} else {
 		warning("Invalid rlf stream");
+		delete stream;
 	}
 	debugC(5, kDebugVideo, "~loadStream()");	
 	return isValid;

@@ -55,10 +55,21 @@ MveDecoder::MveDecoder()
 
 MveDecoder::~MveDecoder() {
 	close();
+}
+
+void MveDecoder::close() {
+	VideoDecoder::close();
+
+	delete _s;
+	_s = nullptr;
 	delete _audioStream;
+	_audioStream = nullptr;
 	delete[] _frameData;
+	_frameData = nullptr;
 	delete[] _decodingMap;
+	_decodingMap = nullptr;
 	delete[] _skipMap;
+	_skipMap = nullptr;
 }
 
 static const char signature[] = "Interplay MVE File\x1A";
@@ -70,6 +81,7 @@ bool MveDecoder::loadStream(Common::SeekableReadStream *stream) {
 	stream->read(signature_buffer, sizeof(signature_buffer));
 	if (memcmp(signature_buffer, signature, sizeof(signature))) {
 		warning("MveDecoder::loadStream(): attempted to load non-MVE data");
+		delete stream;
 		return false;
 	}
 	_s = stream;
@@ -321,6 +333,7 @@ void MveDecoder::readNextPacket() {
 				assert((flags & 1) == 0);
 				assert((flags & 2) == 0);
 
+				delete _audioStream;
 				_audioStream = Audio::makeQueuingAudioStream(sampleRate, (flags & 2) != 0);
 				addTrack(new MveAudioTrack(this));
 

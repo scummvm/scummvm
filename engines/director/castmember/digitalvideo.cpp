@@ -70,10 +70,7 @@ public:
 			return false;
 		}
 
-		bool result = loadStream(file);
-		if (!result)
-			delete file;
-		return result;
+		return loadStream(file);
 	}
 
 	virtual bool loadStream(Common::SeekableReadStream *stream) override {

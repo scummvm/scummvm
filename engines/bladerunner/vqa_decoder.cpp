@@ -182,17 +182,23 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	uint32 type;
 
 	readIFFChunkHeader(s, &chd);
-	if (chd.id != kFORM || !chd.size)
+	if (chd.id != kFORM || !chd.size) {
+		close();
 		return false;
+	}
 
 	type = s->readUint32BE();
 
-	if (type != kWVQA)
+	if (type != kWVQA) {
+		close();
 		return false;
+	}
 
 	do {
-		if (!readIFFChunkHeader(_s, &chd))
+		if (!readIFFChunkHeader(_s, &chd)) {
+			close();
 			return false;
+		}
 
 		bool rc = false;
 		switch (chd.id) {
@@ -212,6 +218,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 
 		if (!rc) {
 			warning("failed to handle chunk %s", tag2str(chd.id));
+			close();
 			return false;
 		}
 	} while (chd.id != kFINF);
