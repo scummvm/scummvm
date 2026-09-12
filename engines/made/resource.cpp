@@ -253,7 +253,9 @@ SoundResource::~SoundResource() {
 }
 
 void SoundResource::load(byte *source, int size) {
-	uint16 chunkCount = READ_LE_UINT16(source + 8);
+	//uint32 iffType = READ_LE_UINT32(source);
+	//uint32 iffSize = READ_LE_UINT32(source + 4);
+	uint16 chunkCount = READ_LE_UINT16(source + 8); // perhaps should instead be UINT32?
 	uint16 chunkSize = READ_LE_UINT16(source + 12);
 
 	_soundSize = chunkCount * chunkSize;

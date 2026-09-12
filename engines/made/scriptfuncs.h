@@ -50,6 +50,9 @@ public:
 	void setupExternalsTable();
 	const char* getFuncName(int index) { return _externalFuncNames[index]; }
 	int getCount() const { return _externalFuncs.size(); }
+
+private:
+	void playSound(SoundResource *soundRes, bool externalFile);
 	void stopSound();
 
 protected:
@@ -59,6 +62,7 @@ protected:
 	SoundResource* _soundResource;
 	bool _soundStarted;
 	bool _soundWasPlaying;
+	bool _soundExternalFile;
 	// The sound length in milliseconds for purpose of checking if the sound is
 	// still playing.
 	int _soundCheckLength;
@@ -173,7 +177,9 @@ protected:
 	int16 sfSetSoundVolume(int16 argc, int16 *argv);
 	int16 sfGetSynthType(int16 argc, int16 *argv);
 	int16 sfIsSlowSystem(int16 argc, int16 *argv);
-
+	int16 sfMovieCall(int16 argc, int16 *argv);
+	int16 sfCursorXY(int16 argc, int16 *argv);
+	int16 sfSoundFile(int16 argc, int16 *argv);
 };
 
 } // End of namespace Made
