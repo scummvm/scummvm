@@ -23,6 +23,7 @@
 #define ULTIMA2_VIEWS_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima2/views/create_character.h"
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
 
@@ -31,6 +32,7 @@ namespace Ultima2 {
 namespace Views {
 
 struct Views : public Shared::Views {
+	CreateCharacter _createCharacter;
 	Startup _startup;
 	Title _title;
 };

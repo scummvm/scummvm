@@ -24,6 +24,7 @@
 #include "graphics/paletteman.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
+#include "ultima/ultima2/ultima2.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -224,10 +225,10 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 			showState(DEMO_OUT);
 			break;
 		case Common::KEYCODE_p:
-			// TODO: play a saved game -- needs the Savegame/data model, added in a later stage
+			g_engine->loadGameDialog();
 			break;
 		case Common::KEYCODE_c:
-			// TODO: create a new character -- needs the Savegame/data model, added in a later stage
+			replaceView("CreateCharacter");
 			break;
 		default:
 			break;

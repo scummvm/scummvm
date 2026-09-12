@@ -29,6 +29,7 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima2/data/savegame.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -51,6 +52,9 @@ protected:
 	}
 
 public:
+	Data::Savegame _savegame;
+
+public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima2Engine() override;
 
@@ -68,6 +72,7 @@ public:
 };
 
 extern Ultima2Engine *g_engine;
+#define _G(X) (Ultima2::g_engine->_##X)
 
 } // namespace Ultima2
 } // namespace Ultima
