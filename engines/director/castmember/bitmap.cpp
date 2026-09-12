@@ -952,10 +952,7 @@ Datum BitmapCastMember::getField(int field) {
 		d = _bitsPerPixel;
 		break;
 	case kTheRegPoint:
-		d.type = POINT;
-		d.u.farr = new FArray;
-		d.u.farr->arr.push_back(_regX);
-		d.u.farr->arr.push_back(_regY);
+		d = Datum(getRegistrationOffset());
 		break;
 	case kThePalette:
 		// D5 and below return an integer for this field
@@ -1031,8 +1028,8 @@ void BitmapCastMember::setField(int field, const Datum &d) {
 		if (d.type == POINT || (d.type == ARRAY && d.u.farr->arr.size() >= 2)) {
 			Score *score = g_director->getCurrentMovie()->getScore();
 			score->invalidateRectsForMember(this);
-			_regX = d.u.farr->arr[0].asInt();
-			_regY = d.u.farr->arr[1].asInt();
+			_regX = d.u.farr->arr[0].asInt() + _initialRect.left;
+			_regY = d.u.farr->arr[1].asInt() + _initialRect.top;
 			_modified = true;
 		} else {
 			warning("BitmapCastMember::setField(): Wrong Datum type %d for kTheRegPoint", d.type);
