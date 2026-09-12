@@ -210,6 +210,8 @@ FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 	_filename = nullptr;
 	_inStream = nullptr;
 	_outStream = nullptr;
+	_readWriteStream = nullptr;
+	_readWriteChanged = false;
 	_lastError = kErrorNone;
 }
 
@@ -218,6 +220,8 @@ FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 	_filename = nullptr;
 	_inStream = nullptr;
 	_outStream = nullptr;
+	_readWriteStream = nullptr;
+	_readWriteChanged = false;
 	_lastError = kErrorNone;
 }
 
@@ -237,12 +241,9 @@ Datum FileObject::getProp(const Common::String &propName) {
 }
 
 FileIOError FileObject::open(const Common::String &origpath, const Common::String &mode) {
-	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	Common::String path = origpath;
 	Common::String option = mode;
 	char dirSeparator = g_director->_dirSeparator;
-
-	Common::String prefix = savePrefix();
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
@@ -255,9 +256,33 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 		path += ".txt";
 	}
 
+	FileIOOpenMode openMode;
+	if (option.equalsIgnoreCase("read"))
+		openMode = kFileIORead;
+	else if (option.equalsIgnoreCase("write"))
+		openMode = kFileIOWrite;
+	else if (option.equalsIgnoreCase("append"))
+		openMode = kFileIOAppend;
+	else
+		error("Unsupported FileIO option: '%s'", option.c_str());
+
+	return open(origpath, path, openMode, dirSeparator);
+}
+
+FileIOError FileObject::open(const Common::String &origpath, FileIOOpenMode mode) {
+	Common::String path = origpath;
+	if (!path.hasSuffixIgnoreCase(".txt"))
+		path += ".txt";
+	return open(origpath, path, mode, g_director->_dirSeparator);
+}
+
+FileIOError FileObject::open(const Common::String &origpath, const Common::String &path, FileIOOpenMode mode, char dirSeparator) {
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	Common::String prefix = savePrefix();
+
 	// We pretend that drive E:\ is a read-only CD-ROM
 	// It helps with CD checks in many games
-	if (option.equalsIgnoreCase("write") || option.equalsIgnoreCase("append")) {
+	if (mode != kFileIORead) {
 		if (origpath.hasPrefixIgnoreCase("E:\\"))
 			return kErrorIO;
 	}
@@ -274,7 +299,7 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 	if (!filename.hasPrefixIgnoreCase(prefix))
 		filename = prefix + filenameOrig;
 
-	if (option.equalsIgnoreCase("read")) {
+	if (mode == kFileIORead) {
 		_inStream = saves->openForLoading(filename);
 		if (!_inStream) {
 			// Maybe we're trying to read one of the game files
@@ -285,11 +310,11 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 			}
 			_inStream = file;
 		}
-	} else if (option.equalsIgnoreCase("write")) {
+	} else if (mode == kFileIOWrite) {
 		// OutSaveFile is not seekable so create a separate seekable stream
 		// which will be written to the save file upon disposal
 		_outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-	} else if (option.equalsIgnoreCase("append")) {
+	} else if (mode == kFileIOAppend) {
 		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
 		if (!inFile) {
 			// Create file if it doesn't exist.
@@ -305,8 +330,22 @@ FileIOError FileObject::open(const Common::String &origpath, const Common::Strin
 			}
 			delete inFile;
 		}
-	} else {
-		error("Unsupported FileIO option: '%s'", option.c_str());
+	} else if (mode == kFileIOReadWrite) {
+		Common::SeekableReadStream *inFile = saves->openForLoading(filename);
+		if (!inFile) {
+			Common::Path location = findPath(origpath);
+			inFile = Common::MacResManager::openFileOrDataFork(location);
+		}
+
+		_readWriteStream = new Common::MemorySeekableReadWriteStreamDynamic(DisposeAfterUse::YES);
+		if (inFile)
+			_readWriteStream->writeStream(inFile);
+		_readWriteStream->seek(0);
+		delete inFile;
+		// These are non-owning views of _readWriteStream used by the existing
+		// FileIO read and write methods.
+		_inStream = _readWriteStream;
+		_outStream = _readWriteStream;
 	}
 
 	_filename = new Common::String(filename);
@@ -319,7 +358,7 @@ void FileObject::clear() {
 		// after the first write. In order to be compatible with the POSIX expectation that
 		// opening a write handle destroys the file, we need to defer the actual save operation
 		// until after we know data has been written.
-		if (_outStream->size()) {
+		if (_outStream->size() && (!_readWriteStream || _readWriteChanged)) {
 			Common::SaveFileManager *saves = g_system->getSavefileManager();
 			Common::OutSaveFile *outFile = saves->openForSaving(*_filename, false);
 			outFile->write(_outStream->getData(), _outStream->size());
@@ -328,17 +367,19 @@ void FileObject::clear() {
 			((SavedArchive *)SearchMan.getArchive(kSavedFilesArchive))->_addFile(*_filename);
 			delete outFile;
 		}
+	}
+	if (_readWriteStream) {
+		delete _readWriteStream;
+	} else {
 		delete _outStream;
-		_outStream = nullptr;
-	}
-	if (_filename) {
-		delete _filename;
-		_filename = nullptr;
-	}
-	if (_inStream) {
 		delete _inStream;
-		_inStream = nullptr;
 	}
+	delete _filename;
+	_readWriteStream = nullptr;
+	_readWriteChanged = false;
+	_outStream = nullptr;
+	_inStream = nullptr;
+	_filename = nullptr;
 }
 
 void FileObject::dispose() {
@@ -393,24 +434,24 @@ void FileIO::m_openFile(int nargs) {
 	Datum d2 = g_lingo->pop();
 
 	int mode = d1.asInt();
-	Common::String option;
+	FileIOOpenMode openMode;
 	switch (mode) {
 	case 0:
-		option = "append";
+		openMode = kFileIOReadWrite;
 		break;
 	case 1:
-		option = "read";
+		openMode = kFileIORead;
 		break;
 	case 2:
-		option = "write";
+		openMode = kFileIOWrite;
 		break;
 	default:
 		warning("FIXME: Mode %d not supported, falling back to read", mode);
-		option = "read";
+		openMode = kFileIORead;
 		break;
 	}
 	Common::String path = d2.asString();
-	me->_lastError = me->open(path, option);
+	me->_lastError = me->open(path, openMode);
 }
 
 void FileIO::m_closeFile(int nargs) {
@@ -580,6 +621,8 @@ void FileIO::m_writeChar(int nargs) {
 	}
 
 	me->_outStream->writeByte(ch);
+	if (me->_readWriteStream)
+		me->_readWriteChanged = true;
 	g_lingo->push(Datum(kErrorNone));
 }
 
@@ -595,6 +638,8 @@ void FileIO::m_writeString(int nargs) {
 	Common::U32String unicodeString = Common::U32String(d.asString(), Common::kUtf8);
 	Common::String encodedString = unicodeString.encode(g_director->getPlatformEncoding());
 	me->_outStream->writeString(encodedString);
+	if (me->_readWriteStream && !encodedString.empty())
+		me->_readWriteChanged = true;
 
 	g_lingo->push(Datum(kErrorNone));
 }
