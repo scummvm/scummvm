@@ -8,7 +8,7 @@ uniform UBOOL useTexture;
 uniform UBOOL enableFog;
 uniform vec4 fogColor;
 uniform vec4 ambient;
-uniform int effectId;
+uniform lowp int effectId;
 uniform UBOOL effectSecondPass;
 
 varying float fogFactor;

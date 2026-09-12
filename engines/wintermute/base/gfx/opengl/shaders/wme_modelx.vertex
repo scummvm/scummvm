@@ -13,7 +13,7 @@ uniform vec4 diffuse;
 uniform vec4 ambient;
 uniform vec4 shadowLightPos;
 
-uniform int effectId;
+uniform lowp int effectId;
 uniform UBOOL effectSecondPass;
 uniform float borderWidth;
 
