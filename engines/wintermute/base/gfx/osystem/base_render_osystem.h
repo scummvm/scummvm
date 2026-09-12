@@ -72,7 +72,7 @@ public:
 	bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) override;
 	bool forcedFlip() override;
 	bool clear() override;
-	Graphics::PixelFormat getPixelFormat() const override;
+	Graphics::PixelFormat getPixelFormat(bool hasAlpha) const override;
 	bool fade(uint16 alpha) override;
 	bool fadeToColor(byte r, byte g, byte b, byte a) override;
 

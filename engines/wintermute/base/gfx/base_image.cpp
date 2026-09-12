@@ -212,7 +212,7 @@ bool BaseImage::getImageInfoJPG(const Common::String &filename, int32 &width, in
 	return false;
 }
 
-bool BaseImage::loadFile(const Common::String &filename) {
+bool BaseImage::loadFile(const Common::String &filename, const Graphics::PixelFormat &format) {
 	_filename = filename;
 	_filename.toLowercase();
 	if (filename.hasPrefix("savegame:") || _filename.hasSuffix(".bmp")) {
@@ -230,7 +230,8 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		_decoder = new Image::TGADecoder();
 	} else if (_filename.hasSuffix(".jpg")) {
 		Image::JPEGDecoder *jpeg = new Image::JPEGDecoder();
-		jpeg->setOutputPixelFormat(BaseEngine::getRenderer()->getPixelFormat());
+		if (format.isValid())
+			jpeg->setOutputPixelFormat(format);
 		_decoder = jpeg;
 	} else {
 		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());

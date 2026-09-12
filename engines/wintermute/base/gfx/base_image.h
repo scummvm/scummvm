@@ -49,7 +49,7 @@ public:
 	~BaseImage();
 
 	bool getImageInfo(const Common::String &filename, int32 &width, int32 &height);
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const Common::String &filename, const Graphics::PixelFormat &format = Graphics::PixelFormat());
 	const Graphics::Surface *getSurface() const {
 		return _surface;
 	};
