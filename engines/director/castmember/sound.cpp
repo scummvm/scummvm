@@ -125,17 +125,18 @@ void SoundCastMember::load() {
 				Common::SeekableReadStreamEndian *sndData = _cast->getResource(it.tag, it.index);
 
 				int32 numCuePoints = sndData->readSint32BE();
-				char cuePointName[32];
+				byte cuePointNameData[32];
 
 				for (int i = 0; i < numCuePoints; i++) {
 					int32 cuePoint = sndData->readSint32BE();
 					_cuePoints.push_back(cuePoint);
 
-					sndData->read(cuePointName, 32);
-					cuePointName[31] = '\0';
+					sndData->read(cuePointNameData, sizeof(cuePointNameData));
+					uint nameLength = MIN<uint>(cuePointNameData[0], sizeof(cuePointNameData) - 1);
+					Common::String cuePointName((const char *)&cuePointNameData[1], nameLength);
 					_cuePointNames.push_back(cuePointName);
 
-					debugC(2, kDebugLoading, "    Cue point %d: %d (%s) in sound cast member %d", i, cuePoint, cuePointName, _castId);
+					debugC(2, kDebugLoading, "    Cue point %d: %d (%s) in sound cast member %d", i, cuePoint, cuePointName.c_str(), _castId);
 				}
 			} else {
 				debugC(2, kDebugLoading, "SoundCastMember::load(): Ignoring unknown tag '%s' in sound cast member %d", tag2str(it.tag), _castId);
