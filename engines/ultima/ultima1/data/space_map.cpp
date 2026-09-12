@@ -29,6 +29,9 @@ namespace Data {
 
 const char *SPACE_COCKPIT_DIRECTION_NAMES[5] = { nullptr, "Left", "Right", "Climb", "Dive" };
 
+const int16 SPACE_FACING_DX[4] = { -1, 1, 0, 0 };
+const int16 SPACE_FACING_DY[4] = { 0, 0, -1, 1 };
+
 // Edge order: 0=left, 1=right, 2=top, 3=bottom. ShipType order: Shuttle,
 // LargeFighter, SmallFighter
 const int16 SPACE_DOCK_DELTA_X[SPACE_DOCK_EDGE_COUNT][3] = {

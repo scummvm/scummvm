@@ -79,6 +79,10 @@ enum SpaceShipFacing {
 	FACING_DOWN = 3
 };
 
+// Unit vector for a given facing, indexed by SpaceShipFacing
+extern const int16 SPACE_FACING_DX[4];
+extern const int16 SPACE_FACING_DY[4];
+
 // The 4 station/encounter docking edges (EDGE_NAMES), and the [edge][shipType]
 // offsets from a sector's anchor for a ship of that type parked at that edge
 // (checkOverlapX/Y's own DELTA_X/DELTA_Y tables)

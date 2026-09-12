@@ -12,16 +12,17 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General Public License for more detailsvvvvv.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <htvvvtp://www.gnu.org/licenses/>.
  *
  */
 
 #include "common/util.h"
 #include "ultima/ultima1/views/space_cockpit.h"
 #include "ultima/ultima1/data/space_map.h"
+#include "ultima/ultima1/logic/space_cockpit_logic.h"
 #include "ultima/ultima1/ultima1.h"
 #include "ultima/ultima1/metaengine.h"
 
@@ -80,6 +81,104 @@ bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
 bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
 	_G(logic)->action(KEYBIND_FIRE);
 	return true;
+}
+
+// Ticks per +/-1 step while ramping the display speed up/down
+constexpr int HYPERJUMP_SPEED_STEP_TICKS = 2;
+// How long (in ticks) to hold at full warp, streaking the starfield
+constexpr int HYPERJUMP_WARP_TICKS = 30;
+// Extra starfield advances per tick while at full warp, on top of the
+// normal per-frame one - this is the "speeded up" part of the animation
+constexpr int HYPERJUMP_WARP_ADVANCES = 5;
+
+void SpaceCockpit::startHyperjump(int dx, int dy) {
+	_hyperjumpState = HYPERJUMP_RAMP_UP;
+	_hyperjumpTicks = 0;
+	_hyperjumpDX = dx;
+	_hyperjumpDY = dy;
+	_hyperjumpOrigSpeed = _G(cockpitSpeed);
+
+	// Stop any manual steering - the animation takes over the view
+	_G(starfield)._panX = 0;
+	_G(starfield)._panY = 0;
+}
+
+void SpaceCockpit::tickHyperjump() {
+	++_hyperjumpTicks;
+
+	switch (_hyperjumpState) {
+	case HYPERJUMP_RAMP_UP:
+		if (_hyperjumpTicks % HYPERJUMP_SPEED_STEP_TICKS == 0 && _G(cockpitSpeed) < 8)
+			++_G(cockpitSpeed);
+		if (_G(cockpitSpeed) >= 8) {
+			_hyperjumpState = HYPERJUMP_WARP;
+			_hyperjumpTicks = 0;
+
+			auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
+			if (logic)
+				logic->hyperjumpLightspeed();
+		}
+		break;
+
+	case HYPERJUMP_WARP:
+		for (int i = 0; i < HYPERJUMP_WARP_ADVANCES; ++i)
+			_G(starfield).advance();
+		if (_hyperjumpTicks >= HYPERJUMP_WARP_TICKS) {
+			_hyperjumpState = HYPERJUMP_RAMP_DOWN;
+			_hyperjumpTicks = 0;
+		}
+		break;
+
+	case HYPERJUMP_RAMP_DOWN:
+		if (_hyperjumpTicks % HYPERJUMP_SPEED_STEP_TICKS == 0 && _G(cockpitSpeed) > _hyperjumpOrigSpeed)
+			--_G(cockpitSpeed);
+		if (_G(cockpitSpeed) <= _hyperjumpOrigSpeed) {
+			_hyperjumpState = HYPERJUMP_IDLE;
+			auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
+			if (logic)
+				logic->completeHyperjump(_hyperjumpDX, _hyperjumpDY);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	redraw();
+}
+
+bool SpaceCockpit::tick() {
+	if (_hyperjumpState != HYPERJUMP_IDLE)
+		tickHyperjump();
+
+	return Map::tick();
+}
+
+static void abortHyperjumpAndNotify(int origSpeed) {
+	_G(cockpitSpeed) = origSpeed;
+	auto *logic = dynamic_cast<Logic::SpaceCockpitLogic *>(_G(logic).get());
+	if (logic)
+		logic->abortHyperjump();
+}
+
+bool SpaceCockpit::msgAction(const ActionMessage &msg) {
+	if (_hyperjumpState != HYPERJUMP_IDLE) {
+		_hyperjumpState = HYPERJUMP_IDLE;
+		abortHyperjumpAndNotify(_hyperjumpOrigSpeed);
+		return true;
+	}
+
+	return Map::msgAction(msg);
+}
+
+bool SpaceCockpit::msgKeypress(const KeypressMessage &msg) {
+	if (_hyperjumpState != HYPERJUMP_IDLE) {
+		_hyperjumpState = HYPERJUMP_IDLE;
+		abortHyperjumpAndNotify(_hyperjumpOrigSpeed);
+		return true;
+	}
+
+	return Map::msgKeypress(msg);
 }
 
 void SpaceCockpit::drawCockpitFrame(Shared::Gfx::GfxSurface &s) {

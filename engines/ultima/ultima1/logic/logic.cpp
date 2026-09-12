@@ -46,6 +46,10 @@ void Logic::writeString(const char *format, ...) {
 	writeString(msg);
 }
 
+void Logic::resetLine() {
+	g_engine->baseView()->findView("Commands")->send(GameMessage("RESET_LINE"));
+}
+
 void Logic::prompt() {
 	g_engine->baseView()->findView("Commands")->send(GameMessage("PROMPT"));
 }

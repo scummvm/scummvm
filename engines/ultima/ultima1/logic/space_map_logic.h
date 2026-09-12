@@ -51,6 +51,11 @@ protected:
 	 */
 	bool attack(Data::Direction dir) override;
 
+	/**
+	 * Hyperjump can only be done from the cockpit view (hyperjump)
+	 */
+	bool hyperjump() override;
+
 public:
 	SpaceMapLogic() : SpaceLogic() {}
 	~SpaceMapLogic() override {

@@ -55,6 +55,12 @@ protected:
 	void writeString(const char *format, ...);
 
 	/**
+	 * Clears the current line of the Commands window, ready for it to be
+	 * overwritten
+	 */
+	void resetLine();
+
+	/**
 	 * Triggers a prompt display in the Commands window
 	 */
 	void prompt();

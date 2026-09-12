@@ -52,6 +52,14 @@ protected:
 	bool pass() override;
 	bool view() override;
 
+	/**
+	 * Validates fuel/heading and, if both are fine, hands off to the
+	 * SpaceCockpit view's animated hyperjump sequence (hyperjump) - the
+	 * actual sector change happens later, in completeHyperjump(), once that
+	 * animation finishes
+	 */
+	bool hyperjump() override;
+
 public:
 	SpaceCockpitLogic() : SpaceLogic() {}
 	~SpaceCockpitLogic() override {
@@ -64,6 +72,28 @@ public:
 	 * cockpitPerFrame)
 	 */
 	void tick() override;
+
+	/**
+	 * Called by the SpaceCockpit view once its hyperjump animation ramps up
+	 * to full scrolling speed, to append " Lightspeed!" to the still-open
+	 * "HyperJump..." line
+	 */
+	void hyperjumpLightspeed();
+
+	/**
+	 * Called by the SpaceCockpit view once its hyperjump animation
+	 * completes - charges the fuel and actually moves the player's ship
+	 * into a free slot in the sector one over in the given direction
+	 * (dx/dy each -1/0/1), matching changeSector's own bookkeeping
+	 */
+	void completeHyperjump(int dx, int dy);
+
+	/**
+	 * Called by the SpaceCockpit view when a keypress/action interrupts an
+	 * in-progress hyperjump animation - no fuel was spent yet, so this just
+	 * reports it and lets the player carry on
+	 */
+	void abortHyperjump();
 };
 
 } // namespace Logic

@@ -40,10 +40,30 @@ using namespace Shared::Messages;
  */
 class SpaceCockpit : public Map {
 private:
+	enum HyperjumpState {
+		HYPERJUMP_IDLE,
+		HYPERJUMP_RAMP_UP,
+		HYPERJUMP_WARP,
+		HYPERJUMP_RAMP_DOWN
+	};
+
+	HyperjumpState _hyperjumpState = HYPERJUMP_IDLE;
+	int _hyperjumpTicks = 0;
+	int _hyperjumpDX = 0, _hyperjumpDY = 0;
+	int _hyperjumpOrigSpeed = 0;
+
 	/**
 	 * Draws the static cockpit frame around the viewport (drawCockpitFrame)
 	 */
 	void drawCockpitFrame(Shared::Gfx::GfxSurface &s);
+
+	/**
+	 * Advances whichever phase of the hyperjump animation is running -
+	 * ramping the display speed up to 8, streaking the starfield hard for
+	 * a bit, then ramping back down to the original speed and handing off
+	 * to SpaceCockpitLogic::completeHyperjump()
+	 */
+	void tickHyperjump();
 
 public:
 	SpaceCockpit() : Map("SpaceCockpit") {}
@@ -52,6 +72,14 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
+	bool tick() override;
+
+	/**
+	 * Any action/keypress while a hyperjump is in progress aborts it
+	 * instead of being handled normally
+	 */
+	bool msgAction(const ActionMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 
 	/**
 	 * Secret mouse-aiming shortcut (not part of the original): moving the
@@ -61,6 +89,13 @@ public:
 	 */
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
+
+	/**
+	 * Kicks off the animated hyperjump sequence heading towards the sector
+	 * at the given offset (dx/dy each -1/0/1) - called by
+	 * SpaceCockpitLogic::hyperjump() once fuel/heading are validated
+	 */
+	void startHyperjump(int dx, int dy);
 };
 
 } // namespace Views

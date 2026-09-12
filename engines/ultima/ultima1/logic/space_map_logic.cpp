@@ -44,13 +44,6 @@ constexpr Data::SpaceShipFacing ROTATE_CW[4] = {
 	Data::FACING_UP, Data::FACING_DOWN, Data::FACING_RIGHT, Data::FACING_LEFT
 };
 
-// Thrust (Up) is a unit nudge along whichever way the ship is currently
-// facing, not a fixed screen axis - so facing Left and thrusting builds up
-// leftward drift, and reversing facing then thrusting decelerates/reverses
-// whatever drift is already there rather than adding a second, unrelated one
-constexpr int FACING_DX[4] = { -1, 1, 0, 0 };
-constexpr int FACING_DY[4] = { 0, 0, -1, 1 };
-
 static int wrapCoord(int value, int minVal, int maxVal, int wrapSize) {
 	if (value < minVal)
 		return value + wrapSize;
@@ -107,8 +100,8 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 		_G(shipExhaustCountdown) = 0;
 		break;
 	case Data::DIR_UP:
-		_G(sectorDriftX) = CLIP(_G(sectorDriftX) + FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
-		_G(sectorDriftY) = CLIP(_G(sectorDriftY) + FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftX) = CLIP(_G(sectorDriftX) + Data::SPACE_FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftY) = CLIP(_G(sectorDriftY) + Data::SPACE_FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
 		_G(shipExhaustCountdown) += 10;
 		break;
 	case Data::DIR_DOWN:
@@ -118,8 +111,8 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 		// increment (mirrors Up, just subtracted instead of added). It does
 		// immediately clear any exhaust trail still showing from a
 		// previous Up, rather than extending it further
-		_G(sectorDriftX) = CLIP(_G(sectorDriftX) - FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
-		_G(sectorDriftY) = CLIP(_G(sectorDriftY) - FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftX) = CLIP(_G(sectorDriftX) - Data::SPACE_FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftY) = CLIP(_G(sectorDriftY) - Data::SPACE_FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
 		_G(shipExhaustCountdown) = 0;
 		break;
 	default:
@@ -159,6 +152,13 @@ bool SpaceMapLogic::attack(Data::Direction dir) {
 
 	g_engine->addView("SpaceStation");
 	return false;
+}
+
+bool SpaceMapLogic::hyperjump() {
+	writeString("HyperJump?\n");
+	writeString("Hyperjump can only be made\n");
+	writeString("from front view.\n");
+	return true;
 }
 
 void SpaceMapLogic::tick() {
