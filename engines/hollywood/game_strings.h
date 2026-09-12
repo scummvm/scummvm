@@ -40,6 +40,7 @@ enum {
 struct HollywoodGameStrings {
 	const char *actionCaptions[kGameActionCaptionCount];
 	const char *panelVerbLabels[kGameActionCaptionCount];
+	// Item names supply the space after these relation captions.
 	const char *relationTo;
 	const char *relationWith;
 	const char *inventoryCaption;

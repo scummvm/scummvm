@@ -26,8 +26,8 @@ namespace Hollywood {
 const HollywoodGameStrings kSpanishGameStrings = {
 	{ " a", "Ir a", "Hablar con", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar" },
 	{ "", "", "Hablar", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar" },
-	" a ",
-	" con ",
+	" a",
+	" con",
 	"Inventario",
 
 	"Salvar",
@@ -63,8 +63,8 @@ const HollywoodGameStrings kSpanishGameStrings = {
 const HollywoodGameStrings kItalianGameStrings = {
 	{ " a", "Andare a", "Parlare con", "Prendere", "Guardare", "Usare", "Aprire", "Chiudere", "Dare" },
 	{ "", "", "Parlare", "Prendere", "Guardare", "Usare", "Aprire", "Chiudere", "Dare" },
-	" a ",
-	" con ",
+	" a",
+	" con",
 	"Inventario",
 
 	"Salvare",
