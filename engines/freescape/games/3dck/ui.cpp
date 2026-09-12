@@ -19,12 +19,23 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "common/translation.h"
 #include "graphics/fonts/dosfont.h"
 #include "math/utils.h"
 
 #include "freescape/games/3dck/3dck.h"
 
 namespace Freescape {
+
+void KitEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+	Common::Action *act = new Common::Action("ACTIVATE", _("Activate"));
+	act->setCustomEngineActionEvent(kActionActivate);
+	act->addDefaultInputMapping(_useWASDControls ? "e" : "a");
+	engineKeyMap->addAction(act);
+}
 
 uint32 KitEngine::indicatorColor(byte color, int y) const {
 	const byte *palette = _palette;

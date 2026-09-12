@@ -31,6 +31,7 @@ class KitEngine : public FreescapeEngine {
 public:
 	KitEngine(OSystem *syst, const ADGameDescription *gd);
 
+	void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) override;
 	void loadAssets() override;
 	void initGameState() override;
 	void gotoArea(uint16 areaID, int entranceID) override;

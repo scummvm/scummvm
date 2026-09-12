@@ -1357,6 +1357,15 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"3dkit",
+		"Egyptman v2.3 (Shareware)",
+		AD_ENTRY1s("EGYPT.RUN", "548472dcf3fd012f3a901a38476f7444", 97634),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GUIO_RENDERVGA)
+	},
+	{
+		"3dkit",
 		"Funnyrace",
 		AD_ENTRY1s("FUNRACE.RUN", "a8643c6eb251802a9e27612d417592be", 99098),
 		Common::EN_ANY,
