@@ -41,6 +41,7 @@ namespace GUI {
 class EditableWidget : public Widget, public CommandSender {
 protected:
 	Common::U32String _editString;
+	Common::ImeComposition _imeComposition;
 
 	uint32		_cmd;
 
@@ -104,6 +105,8 @@ protected:
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
 	virtual int getSelectionCarretOffset() const;
+	Common::Rect getCaretRect(bool useRelativeCoordinates = false);
+	void updateImeCompositionArea();
 	void drawCaret(bool erase, bool useRelativeCoordinates = false);
 	bool adjustOffset();
 	void makeCaretVisible();
@@ -114,6 +117,25 @@ protected:
 
 	virtual bool isCharAllowed(Common::u32char_type_t c) const;
 	bool tryInsertChar(Common::u32char_type_t c, int pos);
+
+	/** Return the committed text with the current uncommitted composition inserted. */
+	Common::U32String getDisplayedEditString() const;
+	/** Return the caret position in the visual order of getDisplayedEditString(). */
+	int getDisplayedCaretPos() const;
+	/** Return the visual selection range used to draw the editable text. */
+	void getDisplayedSelection(int &selectionBegin, int &selectionEnd) const;
+	/** Return whether an uncommitted composition is currently displayed. */
+	bool hasImeComposition() const;
+	/** Return the logical range in the committed text replaced by the composition. */
+	void getImeCompositionBaseRange(int &baseBegin, int &baseEnd) const;
+	/** Clear the uncommitted composition and return whether one was active. */
+	bool clearImeComposition();
+	/** Cancel the native composition and clear its uncommitted text. */
+	bool cancelImeComposition();
+	/** Replace the composition range with committed text. */
+	bool commitImeComposition(const Common::U32String &text);
+	/** Update the uncommitted composition from a native IME event. */
+	void handleImeComposition(const Common::ImeComposition &composition);
 
 	int caretVisualPos(int logicalPos) const;
 	int caretLogicalPos() const;
