@@ -558,12 +558,6 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		font = FontMan.getFontByName(macFont->getName());
 	}
 
-	if (!font) {
-		debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
-
-		font = FontMan.getFontByName(MacFont(kMacFontSystem, 12).getName());
-	}
-
 #ifdef USE_FREETYPE2
 	if (!font && !(_mode & MacGUIConstants::kWMModeForceMacFonts)) {
 
@@ -600,6 +594,8 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 
 	// We found no font, so switching to a safe fallback
 	if (!font) {
+		debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
+
 		font = macFont->getFallback();
 
 		for (auto &it : _fontInfo) {
