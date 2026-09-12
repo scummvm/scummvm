@@ -56,6 +56,11 @@ private:
 	// not showing)
 	int _laserFlashTicks = 0;
 
+	// Ticks left to keep showing the incoming shot flash from
+	// alienFireFlash() (0 = not showing), and its endpoints
+	int _alienFlashTicks = 0;
+	int _alienFlashX1 = 0, _alienFlashY1 = 0, _alienFlashX2 = 0, _alienFlashY2 = 0;
+
 	/**
 	 * Draws the static cockpit frame around the viewport (drawCockpitFrame)
 	 */
@@ -107,6 +112,13 @@ public:
 	 * SpaceCockpitLogic::fire() for each shot
 	 */
 	void fireLaser();
+
+	/**
+	 * Briefly flashes a single laser-bolt line between the given points -
+	 * called by SpaceCockpitLogic::alienFiresBack() for the current
+	 * target's return shot
+	 */
+	void alienFireFlash(int x1, int y1, int x2, int y2);
 };
 
 } // namespace Views

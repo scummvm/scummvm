@@ -47,6 +47,16 @@ constexpr int TARGET_MIN_Y = 24, TARGET_MAX_Y = 125;
 constexpr int TARGET_APPROACH_TIMER_THRESHOLD = 15;
 constexpr int TARGET_APPROACH_ROLL_THRESHOLD = 20;
 
+// alienFiresBack's own odds: a ~1.5% chance per frame of a shot at all
+// (roll < ALIEN_FIRE_ROLL_THRESHOLD out of ALIEN_FIRE_ROLL_MAX), and then a
+// ~25% chance (reusing the SAME roll used to pick the shot's origin edge -
+// only a shot arriving from the bottom edge can actually hit) of it landing
+constexpr int ALIEN_FIRE_ROLL_MAX = 200;
+constexpr int ALIEN_FIRE_ROLL_THRESHOLD = 4;
+constexpr int ALIEN_FIRE_EDGE_ROLL_MAX = 255;
+constexpr int ALIEN_FIRE_HIT_THRESHOLD = 0x40;
+constexpr int ALIEN_FIRE_DAMAGE = 0x141;
+
 void SpaceCockpitLogic::setSpeed(int speed) {
 	writeString("Speed %d\n", speed);
 
@@ -102,19 +112,66 @@ void SpaceCockpitLogic::tickEncounter() {
 			_G(cockpitTargetY) < TARGET_MIN_Y || _G(cockpitTargetY) > TARGET_MAX_Y) {
 		// Passed by unengaged
 		setupSectorEnemies();
-		return;
-	}
-
-	if (_G(cockpitApproachTimer) <= TARGET_APPROACH_TIMER_THRESHOLD) {
+	} else if (_G(cockpitApproachTimer) <= TARGET_APPROACH_TIMER_THRESHOLD) {
 		++_G(cockpitApproachTimer);
-		return;
+	} else {
+		_G(cockpitApproachTimer) = 0;
+		if (getRandomNumber(1, (_G(cockpitSpeed) + 3) * 10) > TARGET_APPROACH_ROLL_THRESHOLD) {
+			if (++_G(cockpitTargetStage) >= Data::SPACE_TARGET_STAGE_COUNT)
+				setupSectorEnemies();
+		}
 	}
 
-	_G(cockpitApproachTimer) = 0;
-	if (getRandomNumber(1, (_G(cockpitSpeed) + 3) * 10) > TARGET_APPROACH_ROLL_THRESHOLD) {
-		if (++_G(cockpitTargetStage) >= Data::SPACE_TARGET_STAGE_COUNT)
-			setupSectorEnemies();
+	// Still runs even if the above just picked a fresh target (it starts at
+	// stage 0, which alienFiresBack's own gate always skips) or cleared it
+	alienFiresBack();
+}
+
+void SpaceCockpitLogic::alienFiresBack() {
+	if (getRandomNumber(1, ALIEN_FIRE_ROLL_MAX) >= ALIEN_FIRE_ROLL_THRESHOLD)
+		return;
+	if (_G(cockpitTargetStage) == 0 || _G(cockpitTargetX) == 0)
+		return;
+
+	writeString("Alien fires!\n");
+
+	// The same roll both picks which viewport edge the shot comes in from
+	// and (only the bottom-edge range) whether it actually lands
+	int roll = getRandomNumber(1, ALIEN_FIRE_EDGE_ROLL_MAX);
+	int originX, originY;
+	if (roll < 0x40) {
+		originX = 159; originY = 135;		// bottom edge
+	} else if (roll < 0x80) {
+		originX = 159; originY = 20;		// top edge
+	} else if (roll <= 0xC0) {
+		originX = 290; originY = 79;		// right edge
+	} else {
+		originX = 20; originY = 79;		// left edge
 	}
+
+	int stage = _G(cockpitTargetStage);
+	int endX = _G(cockpitTargetX) + Data::SPACE_TARGET_HIT_MAX_X[stage] / 2;
+	int endY = _G(cockpitTargetY) + Data::SPACE_TARGET_HIT_MAX_Y[stage];
+
+	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
+	assert(view);
+	view->alienFireFlash(originX, originY, endX, endY);
+	playFX(8);
+
+	if (roll < ALIEN_FIRE_HIT_THRESHOLD) {
+		playFX(2);
+		writeString("You've been hit!\n");
+
+		subtractShields(MIN(shipShields(), ALIEN_FIRE_DAMAGE));
+
+		if (shipShields() == 0) {
+			writeString("Thy shield is drained!\n");
+			death();
+			return;
+		}
+	}
+
+	prompt();
 }
 
 bool SpaceCockpitLogic::move(Data::Direction dir) {

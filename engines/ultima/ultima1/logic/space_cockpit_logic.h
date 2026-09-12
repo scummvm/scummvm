@@ -58,6 +58,15 @@ private:
 	 */
 	void tickEncounter();
 
+	/**
+	 * Called from tickEncounter() for each frame a target is being engaged:
+	 * a small chance of the target shooting back (alienFiresBack). Fires a
+	 * laser-bolt line in from a random viewport edge toward the target, and
+	 * a further chance of it actually hitting - draining shields (and
+	 * killing the player outright if that empties them)
+	 */
+	void alienFiresBack();
+
 protected:
 	bool move(Data::Direction dir) override;
 

@@ -81,6 +81,10 @@ void SpaceCockpit::draw() {
 		s.drawLine(LASER_ORIGIN_LEFT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
 		s.drawLine(LASER_ORIGIN_RIGHT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
 	}
+
+	// The brief laser-bolt flash from the current target firing back
+	if (_alienFlashTicks > 0)
+		s.drawLine(_alienFlashX1, _alienFlashY1, _alienFlashX2, _alienFlashY2, LASER_COLOR);
 }
 
 bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
@@ -100,6 +104,13 @@ bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
 
 void SpaceCockpit::fireLaser() {
 	_laserFlashTicks = LASER_FLASH_TICKS;
+	redraw();
+}
+
+void SpaceCockpit::alienFireFlash(int x1, int y1, int x2, int y2) {
+	_alienFlashTicks = LASER_FLASH_TICKS;
+	_alienFlashX1 = x1; _alienFlashY1 = y1;
+	_alienFlashX2 = x2; _alienFlashY2 = y2;
 	redraw();
 }
 
@@ -172,6 +183,8 @@ bool SpaceCockpit::tick() {
 		tickHyperjump();
 
 	if (_laserFlashTicks > 0 && --_laserFlashTicks == 0)
+		redraw();
+	if (_alienFlashTicks > 0 && --_alienFlashTicks == 0)
 		redraw();
 
 	return Map::tick();
