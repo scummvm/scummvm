@@ -713,7 +713,7 @@ bool Lingo::execute(int targetFrame) {
 			break;
 		}
 
-		if (!_abort && _state->pc >= (*_state->script).size()) {
+		if (!_abort && _state->pc >= _state->script->size()) {
 			warning("Lingo::execute(): Bad PC (%d)", _state->pc);
 			break;
 		}
