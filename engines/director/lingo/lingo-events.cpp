@@ -891,8 +891,13 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 		return Datum();
 	}
 
+	int callerDepth = g_lingo->_state->callstack.size();
 	g_lingo->push(scr);
 	LC::call("new", 1, true);
+	if ((int)g_lingo->_state->callstack.size() > callerDepth && !g_lingo->execute(callerDepth)) {
+		debugC(3, kDebugLingoExec, "Score::createScriptInstance(): Constructor suspended for behavior %s", behavior->toString().c_str());
+		return Datum();
+	}
 	Datum instance = g_lingo->pop();
 
 	if (instance.type != OBJECT) {
@@ -907,15 +912,19 @@ Datum Score::createScriptInstance(BehaviorElement *behavior) {
 		return instance;
 
 	// Evaluate the params
+	uint stackSize = g_lingo->_state->stack.size();
 	g_lingo->push(behavior->initializerParams);
 	LB::b_value(1);
-	g_lingo->execute();
+	if (!g_lingo->execute(callerDepth)) {
+		debugC(3, kDebugLingoExec, "Score::createScriptInstance(): Initializer suspended for behavior %s", behavior->toString().c_str());
+		return instance;
+	}
 
 	if (debugChannelSet(5, kDebugLingoExec)) {
 		g_lingo->printStack("  Parsed behavior parameters: ", 0);
 	}
 
-	if (g_lingo->_state->stack.size() == 0) {
+	if (g_lingo->_state->stack.size() <= stackSize) {
 		warning("Score::createScriptInstance(): Could not evaluate initializer params '%s' for behavior %s",
 			behavior->initializerParams.c_str(), behavior->toString().c_str());
 		return instance;
@@ -955,7 +964,12 @@ void Score::createScriptInstances(int frameNum) {
 				debugC(1, kDebugLingoExec, "Score::createScriptInstances(): Creating script instances for script channel, frames [%d-%d]",
 					_currentFrame->_mainChannels.scriptSpriteInfo.startFrame,
 					_currentFrame->_mainChannels.scriptSpriteInfo.endFrame);
+				uint savedSpriteNum = _movie->_currentSpriteNum;
+				_movie->_currentSpriteNum = 0;
 				_scriptChannelScriptInstance = createScriptInstance(&_currentFrame->_mainChannels.behaviors[0]);
+				_movie->_currentSpriteNum = savedSpriteNum;
+				if (_scriptChannelScriptInstance.type == OBJECT)
+					_scriptChannelScriptInstance.u.obj->setProp("spriteNum", Datum(0), true);
 			}
 		}
 	}
@@ -980,7 +994,10 @@ void Score::createScriptInstances(int frameNum) {
 			i + 1, sprite->_behaviors.size(), channel->_startFrame, channel->_endFrame);
 
 		for (uint j = 0; j < sprite->_behaviors.size(); j++) {
+			uint savedSpriteNum = _movie->_currentSpriteNum;
+			_movie->_currentSpriteNum = i;
 			Datum instance = createScriptInstance(&sprite->_behaviors[j]);
+			_movie->_currentSpriteNum = savedSpriteNum;
 
 			if (instance.type != OBJECT) {
 				if (!instance.isVoid())
@@ -989,6 +1006,7 @@ void Score::createScriptInstances(int frameNum) {
 				continue;
 			}
 
+			instance.u.obj->setProp("spriteNum", Datum(i), true);
 			channel->_scriptInstanceList.push_back(instance);
 		}
 
