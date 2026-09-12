@@ -343,6 +343,17 @@ scummvmAssertEqual(getProp(testList, 3), #c)
 
 
 -- listP
+scummvmAssertEqual(listP([1, 2]), 1)
+scummvmAssertEqual(listP([#a: 1]), 1)
+scummvmAssertEqual(listP(point(10, 20)), 1)
+scummvmAssertEqual(listP(rect(10, 20, 30, 40)), 1)
+scummvmAssertEqual(listP(10), 0)
+
+-- getPos
+scummvmAssertEqual(getPos(point(10, 20), 20), 2)
+scummvmAssertEqual(getPos(point(10, 20), 30), 0)
+scummvmAssertEqual(getPos(rect(10, 20, 30, 40), 30), 3)
+scummvmAssertEqual(getPos(rect(10, 20, 30, 40), 50), 0)
 
 
 -- max

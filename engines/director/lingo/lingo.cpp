@@ -1344,7 +1344,9 @@ Datum Datum::clone() const {
 	Datum result;
 	switch (type) {
 	case ARRAY:
-		result.type = ARRAY;
+	case POINT:
+	case RECT:
+		result.type = type;
 		result.u.farr = new FArray;
 		for (auto &it : u.farr->arr) {
 			result.u.farr->arr.push_back(it.clone());
