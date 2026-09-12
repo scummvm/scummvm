@@ -45,7 +45,9 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleLeftClick(const GameplayLoopCursorState &state) override;
 
+	void updateHeldRagHotspot();
 	void runDialogueMenuRow98();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void runSecondaryActorPoseIn();
@@ -56,6 +58,7 @@ private:
 	void advanceSecondaryActorAnimation(uint32 delta);
 
 	byte _cloakroomAttendantRepeatCount;
+	byte _recordDescriptionIndex;
 	RandomIdleAnimation _cloakroomAttendantAnimation;
 };
 

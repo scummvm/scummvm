@@ -76,6 +76,8 @@ public:
 	void setActionInteraction(byte itemId, const ScenePoint &interactionPoint, byte facing);
 	// Claims pixels even when the resource maps them to another item.
 	void addOverrideRectHotspot(byte itemId, const Common::Rect &bounds);
+	// Updates a moving hotspot; empty bounds remove it.
+	void setOverrideRectHotspot(byte itemId, const Common::Rect &bounds);
 	// Claims otherwise unassigned pixels without overriding resource hotspots.
 	void addFallbackRectHotspot(byte itemId, const Common::Rect &bounds);
 	void setVerbActionHandlerByGlobalRecordIndex(uint globalRecordIndex, uint16 actionHandlerId);

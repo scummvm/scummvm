@@ -248,6 +248,19 @@ void SceneHotspotTable::addOverrideRectHotspot(byte itemId, const Common::Rect &
 	_overrideRectHotspots.push_back(hotspot);
 }
 
+void SceneHotspotTable::setOverrideRectHotspot(byte itemId, const Common::Rect &bounds) {
+	for (uint i = 0; i < _overrideRectHotspots.size(); ++i) {
+		if (_overrideRectHotspots[i].itemId != itemId)
+			continue;
+		if (bounds.isEmpty())
+			_overrideRectHotspots.remove_at(i);
+		else
+			_overrideRectHotspots[i].bounds = bounds;
+		return;
+	}
+	addOverrideRectHotspot(itemId, bounds);
+}
+
 void SceneHotspotTable::addFallbackRectHotspot(byte itemId, const Common::Rect &bounds) {
 	if (itemId == 0 || bounds.isEmpty())
 		return;

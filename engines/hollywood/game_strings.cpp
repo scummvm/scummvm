@@ -53,6 +53,7 @@ const HollywoodGameStrings kSpanishGameStrings = {
 
 	" pasadizo",
 	" ata\xa3" "d ancho",
+	" discos",
 	" Cambiar bebida",
 	" Abrir grifo",
 	" Dejar de hacer cocteles",
@@ -90,6 +91,7 @@ const HollywoodGameStrings kItalianGameStrings = {
 
 	" passaggio",
 	" cassa da morto larga", // WORKAROUND: The Italian executable leaves this variant in Spanish.
+	" dischi",
 	" Cambiare bevanda",
 	" Aprire rubinetto",
 	" Smettere di fare cocktail",

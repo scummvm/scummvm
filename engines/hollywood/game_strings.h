@@ -68,6 +68,7 @@ struct HollywoodGameStrings {
 
 	const char *passageName;
 	const char *wideCoffinName;
+	const char *recordsName;
 	const char *changeDrink;
 	const char *openTap;
 	const char *stopMakingCocktails;

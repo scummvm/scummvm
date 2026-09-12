@@ -184,10 +184,10 @@ bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 314: // Mirar telefono (look at telephone).
 		beginSecondarySpeechLine(12, 0);
 		return true;
-	case 315: // Usar telefono (use telephone): no need to call.
+	case 315: // Mirar telefono (look at telephone): identical to the one on Taffy's desk.
 		beginSecondarySpeechLine(13, 0);
 		return true;
-	case 316: // Usar telefono (use telephone), duplicate scene action.
+	case 316: // Usar telefono (use telephone): Ron has no need to call anyone yet.
 		beginSecondarySpeechLine(14, 0);
 		return true;
 	default:

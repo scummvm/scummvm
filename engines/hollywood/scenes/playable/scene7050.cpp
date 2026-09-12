@@ -22,6 +22,7 @@
 #include "common/system.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene7050.h"
@@ -52,10 +53,28 @@ const byte kScene7050PrimarySpeechAltGroup = 8;
 const uint kScene7050DialogueChoiceRecordCount = 10 * 10 * 7;
 const uint kScene7050ColorToItemMapOffset = 0x100;
 const uint kScene7050ColorMapSize = 0x100;
+const byte kScene7050AttendantSceneItem = 2;
+const byte kScene7050RagSceneItem = 3;
+const byte kScene7050HeldRagSceneItem = 7;
+const byte kScene7050RecordsSceneItem = 8;
+const uint kScene7050HeldRagFirstDescriptor = 8;
 const byte kScene7050Chunk7FrameMap[] = {
 	0, 0, 1, 2, 3, 25, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
 	4, 18, 19, 20, 21, 22, 23, 24, 26, 20, 19, 18, 0
+};
+// World-space rag bounds for chunk 7 descriptors 8-17, including the reverse wipe.
+const int16 kScene7050HeldRagBounds[][4] = {
+	{442, 237, 458, 248},
+	{441, 225, 459, 247},
+	{437, 223, 455, 243},
+	{428, 241, 447, 257},
+	{419, 244, 448, 259},
+	{409, 247, 446, 259},
+	{420, 247, 455, 259},
+	{431, 247, 464, 259},
+	{442, 247, 476, 259},
+	{453, 247, 486, 259}
 };
 const uint kScene7050AttendantLayer = 0;
 const SceneLayerSpec kScene7050LayerSpecs[] = {
@@ -73,7 +92,8 @@ PlayableSceneConfig scene7050Config() {
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7050Config()),
-		_cloakroomAttendantRepeatCount(0) {
+		_cloakroomAttendantRepeatCount(0),
+		_recordDescriptionIndex(0) {
 	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);
 	_cloakroomAttendantAnimation.returnToIdleAfterLongSequence = false;
 	_sceneLayers.configure(kScene7050LayerSpecs);
@@ -87,6 +107,7 @@ void Scene7050::initializeCustomPreviewState() {
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_cloakroomAttendantRepeatCount = 0;
+	_recordDescriptionIndex = 0;
 	_cloakroomAttendantAnimation.reset();
 	_sceneLayers.reset();
 	setActiveActorPose(kScene7050EntryX, kScene7050EntryY, kScene7050EntryFacing);
@@ -105,6 +126,7 @@ void Scene7050::prepareCustomComposite(bool drawActors, byte activeFacing,
 	(void)actorDrawOrderMode;
 	_sceneLayers.setLayerFrame(kScene7050AttendantLayer,
 		_cloakroomAttendantAnimation.channel.frameIndex);
+	updateHeldRagHotspot();
 }
 
 void Scene7050::drawCustomForegroundComposite(int activeWorldX, int activeWorldY) {
@@ -131,6 +153,7 @@ void Scene7050::prepareCustomGameplayLoop() {
 void Scene7050::advanceCustomGameplayLoop(uint32 delta) {
 	if (!_primaryDialogueSpeechActive)
 		advanceSecondaryActorAnimation(delta);
+	updateHeldRagHotspot();
 }
 
 bool Scene7050::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
@@ -195,7 +218,58 @@ bool Scene7050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (textRowsChanged)
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 
+	if (_vm->restoredContentEnabled()) {
+		const SceneActionTarget target = _hotspots.actionTarget(kScene7050AttendantSceneItem);
+		_hotspots.setItemName(kScene7050HeldRagSceneItem, _hotspots.itemName(kScene7050RagSceneItem));
+		_hotspots.setItemDefaultStrip(kScene7050HeldRagSceneItem, 3);
+		_hotspots.setActionTarget(kScene7050HeldRagSceneItem, target.interactionPoint, target.approachPoint);
+		_hotspots.setActionInteraction(kScene7050HeldRagSceneItem, target.interactionPoint, target.facing);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 1, 1);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 1, 1);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 3, 306);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 3, 0);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 4, 305);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7050HeldRagSceneItem * 8 + 4, 0);
+
+		// Reconstruct the discarded record hotspot on the half-visible far-right box.
+		const ScenePoint recordsWalkPoint = {690, 400};
+		const ScenePoint recordsPoint = {728, 407};
+		_hotspots.setItemName(kScene7050RecordsSceneItem, getGameStrings(_vm->getLanguage()).recordsName);
+		_hotspots.setItemDefaultStrip(kScene7050RecordsSceneItem, 4);
+		_hotspots.setActionTarget(kScene7050RecordsSceneItem, recordsWalkPoint, recordsPoint);
+		_hotspots.setActionInteraction(kScene7050RecordsSceneItem, recordsWalkPoint, 2);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene7050RecordsSceneItem * 8 + 1, 1);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7050RecordsSceneItem * 8 + 1, 1);
+		_hotspots.setVerbActionHandlerByGlobalRecordIndex(kScene7050RecordsSceneItem * 8 + 4, 307);
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7050RecordsSceneItem * 8 + 4, 1);
+		_hotspots.addFallbackRectHotspot(kScene7050RecordsSceneItem, Common::Rect(709, 380, 800, 450));
+	}
+	updateHeldRagHotspot();
 	return true;
+}
+
+void Scene7050::updateHeldRagHotspot() {
+	Common::Rect bounds;
+	const byte frame = _cloakroomAttendantAnimation.channel.frameIndex;
+	if (_vm->restoredContentEnabled() && frame < ARRAYSIZE(kScene7050Chunk7FrameMap)) {
+		const uint descriptor = kScene7050Chunk7FrameMap[frame];
+		if (descriptor >= kScene7050HeldRagFirstDescriptor &&
+				descriptor - kScene7050HeldRagFirstDescriptor < ARRAYSIZE(kScene7050HeldRagBounds)) {
+			const int16 *rect = kScene7050HeldRagBounds[descriptor - kScene7050HeldRagFirstDescriptor];
+			bounds = Common::Rect(rect[0], rect[1], rect[2], rect[3]);
+		}
+	}
+	_hotspots.setOverrideRectHotspot(kScene7050HeldRagSceneItem, bounds);
+}
+
+void Scene7050::handleLeftClick(const GameplayLoopCursorState &state) {
+	GameplayLoopCursorState currentState = state;
+	if (_vm->restoredContentEnabled()) {
+		// Hover captions are throttled; hit-test again before acting on the moving rag.
+		currentState.resolvedItem = _hotspots.resolveItemAt(savedFramebuffer(),
+			state.cursorX, state.cursorY, viewportXOffset(), viewportYOffset());
+	}
+	PlayableScene::handleLeftClick(currentState);
 }
 
 byte Scene7050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
@@ -211,9 +285,6 @@ void Scene7050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 
 bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 306: // Unused G05 no-op slot.
-	case 307: // Unused G05 no-op slot.
-		return true;
 	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		return true;
@@ -229,6 +300,16 @@ bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 305: // Mirar trapo (look at rag)
 		beginSecondarySpeechLine(3, 0);
+		return true;
+	case 306: // Coger trapo de Charlie (take Charlie's cleaning rag, restored): Sue refuses.
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(4, _vm->gameState().spokenToCloakroomAttendant ? 1 : 0);
+		return true;
+	case 307: // Mirar discos (look at records, restored).
+		if (_vm->restoredContentEnabled()) {
+			beginSecondarySpeechLine(5, _recordDescriptionIndex);
+			_recordDescriptionIndex = (_recordDescriptionIndex + 1) % 4;
+		}
 		return true;
 	case 308: // Mirar caja (look at box): party horns / movement behind it.
 		beginSecondarySpeechLine(6, 0);
