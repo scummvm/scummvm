@@ -1048,6 +1048,13 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 	if (currentPalette.isNull())
 		return false;
 
+	// A movie switch clears the previous palette ID. Install the new palette
+	// without fading from the outgoing movie's frame.
+	if (_vm->_lastPalette.isNull()) {
+		_vm->setPalette(currentPalette);
+		return false;
+	}
+
 	if (!_currentFrame->_mainChannels.palette.colorCycling &&
 		!_currentFrame->_mainChannels.palette.overTime) {
 
