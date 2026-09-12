@@ -88,6 +88,8 @@ private:
 	void initializeAudio();
 	void releaseAudio();
 	void switchKeymaps(bool entering);
+	void initializeEnhancementCursor();
+	void releaseEnhancementCursor();
 	void resetEnhancementSession();
 	void updateEnhancementActionState(uint32 action, bool pressed);
 	void updateEnhancementInputArming(uint32 now);
@@ -95,12 +97,13 @@ private:
 	void openAutoplayMenu();
 	void closeNavigationMap();
 	void startSelectedAutoplay();
+	void updateEnhancementPointer(int x, int y);
+	bool handleEnhancementControlClick(int x, int y);
 	bool enhancementPanelVisible() const;
 	void pollInput();
 	void handleAction(uint32 action, bool pressed);
 	void openMainMenu();
 	void refreshPresentation();
-	void setAutoplayMenuMouseVisible(bool visible);
 	void processSoundEvents();
 	void renderFrame();
 	void setEngineActive(bool active);
@@ -130,9 +133,10 @@ private:
 	uint32 _wbaseAutoplayMenuOpenedAt;
 	int _wbaseForcedAutoplayPromptTicks;
 	bool _wbaseForcedAutoplayPromptIssued;
+	WBASEEnhancementControl _wbaseEnhancementHoveredControl;
 	bool _wbaseEnhancementInputArmed;
 	bool _wbaseAutoplayMenuInputArmed;
-	bool _wbaseEnhancementsAutoplayMouseVisible;
+	bool _wbaseEnhancementCursorPushed;
 	bool _quitRequested;
 };
 

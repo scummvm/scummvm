@@ -38,6 +38,15 @@ namespace Hopkins {
 
 namespace {
 
+static const int kMapButtonLeft = 244;
+static const int kMapButtonTop = 182;
+static const int kMapButtonRight = 279;
+static const int kMapButtonBottom = 197;
+static const int kAutoplayButtonLeft = 282;
+static const int kAutoplayButtonTop = 182;
+static const int kAutoplayButtonRight = 317;
+static const int kAutoplayButtonBottom = 197;
+
 static byte nearestPaletteColor(const byte *palette, int red, int green, int blue) {
 	int bestDistance = 0x7fffffff;
 	byte bestColor = 0;
@@ -88,6 +97,13 @@ static void fillRect(byte *framebuffer, int left, int top, int right, int bottom
 			drawPixel(framebuffer, x, y, color);
 }
 
+static void drawFrame(byte *framebuffer, int left, int top, int right, int bottom, byte color) {
+	fillRect(framebuffer, left, top, right, top, color);
+	fillRect(framebuffer, left, bottom, right, bottom, color);
+	fillRect(framebuffer, left, top, left, bottom, color);
+	fillRect(framebuffer, right, top, right, bottom, color);
+}
+
 static int triangleEdge(int x0, int y0, int x1, int y1, int x, int y) {
 	return (x - x0) * (y1 - y0) - (y - y0) * (x1 - x0);
 }
@@ -108,6 +124,33 @@ static void fillTriangle(byte *framebuffer, int x0, int y0, int x1, int y1,
 				drawPixel(framebuffer, x, y, color);
 		}
 	}
+}
+
+static void drawMapButtonGlyph(byte *framebuffer, int left, int top, byte color) {
+	const int x = left + 4;
+	const int y = top + 4;
+	drawLine(framebuffer, x, y, x + 4, y - 1, color);
+	drawLine(framebuffer, x + 4, y - 1, x + 8, y + 1, color);
+	drawLine(framebuffer, x + 8, y + 1, x + 12, y, color);
+	drawLine(framebuffer, x, y, x, y + 8, color);
+	drawLine(framebuffer, x + 4, y - 1, x + 4, y + 7, color);
+	drawLine(framebuffer, x + 8, y + 1, x + 8, y + 9, color);
+	drawLine(framebuffer, x + 12, y, x + 12, y + 8, color);
+	drawLine(framebuffer, x, y + 8, x + 4, y + 7, color);
+	drawLine(framebuffer, x + 4, y + 7, x + 8, y + 9, color);
+	drawLine(framebuffer, x + 8, y + 9, x + 12, y + 8, color);
+}
+
+static void drawAutoplayButtonGlyph(byte *framebuffer, int left, int top, byte color, bool locked) {
+	fillTriangle(framebuffer, left + 5, top + 4, left + 5, top + 11, left + 11, top + 7, color);
+	if (!locked)
+		return;
+	const int lockX = left + 27;
+	const int lockY = top + 4;
+	drawLine(framebuffer, lockX, lockY + 3, lockX, lockY + 1, color);
+	drawLine(framebuffer, lockX, lockY + 1, lockX + 4, lockY + 1, color);
+	drawLine(framebuffer, lockX + 4, lockY + 1, lockX + 4, lockY + 3, color);
+	fillRect(framebuffer, lockX - 1, lockY + 3, lockX + 5, lockY + 8, color);
 }
 
 static void drawPlayerArrow(const BaseData &data, byte *framebuffer, int centerX, int centerY,
@@ -198,7 +241,7 @@ static void drawOpaqueLegend(const BaseData &data, byte *framebuffer, byte backg
 	}
 	font->drawString(&surface, _("A: autoplay"), 226, 151, 92, textColor,
 			Graphics::kTextAlignCenter);
-	font->drawString(&surface, _("M/Esc: close map"), 0, 183, kBaseFrameWidth, textColor,
+	font->drawString(&surface, _("M/Esc: close map"), 76, 183, 160, textColor,
 			Graphics::kTextAlignCenter);
 }
 
@@ -295,6 +338,60 @@ void WBASEEnhancements::renderNavigationMap(const BaseData &data, const BaseEngi
 
 	const NavigationMapColors colors = navigationMapColors(data);
 	renderNavigationMapOpaque(data, engine, framebuffer, colors);
+}
+
+WBASEEnhancementControl WBASEEnhancements::controlAtPoint(int x, int y) const {
+	if (!controlsEnabled())
+		return kWBASEEnhancementControlNone;
+	if (x >= kMapButtonLeft && x <= kMapButtonRight &&
+			y >= kMapButtonTop && y <= kMapButtonBottom)
+		return kWBASEEnhancementControlNavigationMap;
+	if (x >= kAutoplayButtonLeft && x <= kAutoplayButtonRight &&
+			y >= kAutoplayButtonTop && y <= kAutoplayButtonBottom)
+		return kWBASEEnhancementControlAutoplay;
+	return kWBASEEnhancementControlNone;
+}
+
+void WBASEEnhancements::renderControls(const BaseData &data, WBASEEnhancementPanel panel,
+		WBASEEnhancementControl hoveredControl, bool autoplayActive, byte *framebuffer) const {
+	if (!controlsEnabled() || !framebuffer)
+		return;
+
+	Graphics::Surface surface;
+	surface.init(kBaseFrameWidth, kBaseFrameHeight, kBaseFrameWidth, framebuffer,
+			Graphics::PixelFormat::createFormatCLUT8());
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	if (!font)
+		return;
+
+	const byte *palette = data.palette();
+	const byte background = nearestPaletteColor(palette, 0, 0, 0);
+	const byte idle = nearestPaletteColor(palette, 105, 105, 105);
+	const byte hover = nearestPaletteColor(palette, 255, 255, 255);
+	const byte mapActive = nearestPaletteColor(palette, 0, 220, 255);
+	const byte chooserActive = nearestPaletteColor(palette, 255, 220, 0);
+	const byte autoplayRunning = nearestPaletteColor(palette, 40, 255, 60);
+
+	const byte mapColor = panel == kWBASEEnhancementPanelNavigationMap ? mapActive : idle;
+	const byte autoplayColor = panel == kWBASEEnhancementPanelAutoplay ? chooserActive :
+			(autoplayActive ? autoplayRunning : idle);
+	const byte mapBorder = hoveredControl == kWBASEEnhancementControlNavigationMap ? hover : mapColor;
+	const byte autoplayBorder = hoveredControl == kWBASEEnhancementControlAutoplay ? hover : autoplayColor;
+
+	fillRect(framebuffer, kMapButtonLeft, kMapButtonTop, kMapButtonRight, kMapButtonBottom, background);
+	drawFrame(framebuffer, kMapButtonLeft, kMapButtonTop, kMapButtonRight, kMapButtonBottom, mapBorder);
+	drawMapButtonGlyph(framebuffer, kMapButtonLeft, kMapButtonTop, mapColor);
+	font->drawString(&surface, Common::String("M"), kMapButtonLeft + 22, kMapButtonTop + 4, 9, mapColor,
+			Graphics::kTextAlignCenter);
+
+	fillRect(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
+			kAutoplayButtonRight, kAutoplayButtonBottom, background);
+	drawFrame(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
+			kAutoplayButtonRight, kAutoplayButtonBottom, autoplayBorder);
+	drawAutoplayButtonGlyph(framebuffer, kAutoplayButtonLeft, kAutoplayButtonTop,
+			autoplayColor, _forcedAutoplay);
+	font->drawString(&surface, Common::String("A"), kAutoplayButtonLeft + 15, kAutoplayButtonTop + 4, 9,
+			autoplayColor, Graphics::kTextAlignCenter);
 }
 
 } // End of namespace Hopkins

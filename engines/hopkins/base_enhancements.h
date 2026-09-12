@@ -40,6 +40,12 @@ enum WBASEEnhancementPanel {
 	kWBASEEnhancementPanelAutoplay
 };
 
+enum WBASEEnhancementControl {
+	kWBASEEnhancementControlNone,
+	kWBASEEnhancementControlNavigationMap,
+	kWBASEEnhancementControlAutoplay
+};
+
 class WBASEEnhancements {
 public:
 	explicit WBASEEnhancements(const Common::String &targetName);
@@ -49,6 +55,9 @@ public:
 	bool controlsEnabled() const { return _enabled || _forcedAutoplay; }
 	bool navigationMapEnabled() const { return controlsEnabled(); }
 	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
+	WBASEEnhancementControl controlAtPoint(int x, int y) const;
+	void renderControls(const BaseData &data, WBASEEnhancementPanel panel,
+			WBASEEnhancementControl hoveredControl, bool autoplayActive, byte *framebuffer) const;
 
 private:
 	bool _enabled;
