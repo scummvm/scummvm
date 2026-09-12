@@ -44,6 +44,13 @@ protected:
 	bool fire() override;
 	bool view() override;
 
+	/**
+	 * Repurposed as an "Autopilot" testing shortcut in the overhead view -
+	 * finds a free station docking port and instantly shifts the ship
+	 * there, then triggers docking directly (not part of the original)
+	 */
+	bool attack(Data::Direction dir) override;
+
 public:
 	SpaceMapLogic() : SpaceLogic() {}
 	~SpaceMapLogic() override {

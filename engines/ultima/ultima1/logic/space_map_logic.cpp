@@ -130,6 +130,37 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 	return true;
 }
 
+bool SpaceMapLogic::attack(Data::Direction dir) {
+	if (_G(savegame)._sectorX != Data::SPACE_STATION_X || _G(savegame)._sectorY != Data::SPACE_STATION_Y) {
+		writeString("Autopilot: only in home sector.\n");
+		return true;
+	}
+
+	Data::SpaceMapCell &cell = _G(savegame)._starmap._sectors[Data::SPACE_STATION_X][Data::SPACE_STATION_Y];
+	int freeEdge = -1;
+	for (int edge = 0; edge < Data::SPACE_DOCK_EDGE_COUNT; ++edge) {
+		if (cell.shipAtEdge(edge) == -1) {
+			freeEdge = edge;
+			break;
+		}
+	}
+	if (freeEdge == -1)
+		// Should never happen
+		return true;
+
+	Data::SpaceMapShip &ship = cell._ships[_G(savegame)._shipIndex];
+	ship._x = (int16)(cell._anchorX + Data::SPACE_DOCK_DELTA_X[freeEdge][ship._shipType]);
+	ship._y = (int16)(cell._anchorY + Data::SPACE_DOCK_DELTA_Y[freeEdge][ship._shipType]);
+	ship._facing = Data::SPACE_DOCK_EDGE_FACING[freeEdge];
+
+	_G(sectorDriftX) = 0;
+	_G(sectorDriftY) = 0;
+	_G(shipExhaustCountdown) = 0;
+
+	g_engine->addView("SpaceStation");
+	return false;
+}
+
 void SpaceMapLogic::tick() {
 	if (_G(sectorDriftX) == 0 && _G(sectorDriftY) == 0 && _G(shipExhaustCountdown) == 0)
 		return;
