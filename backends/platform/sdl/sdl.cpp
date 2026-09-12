@@ -659,12 +659,16 @@ void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
 		// ScummVM renders the transient composition text in its own editable
-		// widgets. Request editing events before SDL initializes the video
-		// backend, since SDL3 otherwise lets the native IME consume them.
+		// widgets. Candidate lists are the OS-provided popups of conversion
+		// choices, such as Hanja and symbols, which ScummVM does not render.
+		// Configure both responsibilities before SDL initializes video.
 #if SDL_VERSION_ATLEAST(3, 2, 0)
 		SDL_SetHintWithPriority(SDL_HINT_IME_IMPLEMENTED_UI, "composition", SDL_HINT_OVERRIDE);
 #elif SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_SetHintWithPriority(SDL_HINT_IME_INTERNAL_EDITING, "0", SDL_HINT_OVERRIDE);
+#ifdef SDL_HINT_IME_SHOW_UI
+		SDL_SetHintWithPriority(SDL_HINT_IME_SHOW_UI, "1", SDL_HINT_OVERRIDE);
+#endif
 #endif
 
 		// We always initialize the video subsystem because we will need it to
