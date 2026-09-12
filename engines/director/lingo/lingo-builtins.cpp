@@ -1880,21 +1880,27 @@ void LB::b_abort(int nargs) {
 	g_lingo->_abort = true;
 }
 
-// Helper: call a named handler on a single behavior instance with extra args.
-// extraArgs is stored in reverse order (as popped from stack).
-static Datum callBehaviorHandler(Datum &instance, const Common::String &msgName, const Common::Array<Datum> &extraArgs) {
+static bool addBehaviorHandler(Common::Array<LingoHandlerTarget> &targets, const Datum &instance, const Common::String &msgName) {
 	Symbol sym = instance.u.obj->getMethod(msgName);
 	if (sym.type == VOIDSYM)
-		return Datum();
+		return false;
 
-	g_lingo->push(instance);
-	for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
-		g_lingo->push(extraArgs[j]);
+	LingoHandlerTarget target;
+	target.handler = sym;
+	target.target = instance;
+	targets.push_back(target);
+	return true;
+}
 
-	int frame = g_lingo->_state->callstack.size();
-	LC::call(sym, 1 + (int)extraArgs.size(), true);
-	g_lingo->execute(frame);
-	return g_lingo->pop();
+static bool addGlobalHandler(Common::Array<LingoHandlerTarget> &targets, Movie *movie, const Common::String &msgName, uint16 castLibHint) {
+	Symbol sym = movie->getHandler(msgName, castLibHint);
+	if (sym.type == VOIDSYM)
+		return false;
+
+	LingoHandlerTarget target;
+	target.handler = sym;
+	targets.push_back(target);
+	return true;
 }
 
 void LB::b_call(int nargs) {
@@ -1916,21 +1922,20 @@ void LB::b_call(int nargs) {
 	Datum message = g_lingo->pop();
 	Common::String msgName = message.asString();
 
-	Datum result;
+	Common::Array<LingoHandlerTarget> targets;
 	if (script.type == OBJECT) {
-		result = callBehaviorHandler(script, msgName, extraArgs);
+		addBehaviorHandler(targets, script, msgName);
 	} else if (script.type == ARRAY) {
 		for (uint i = 0; i < script.u.farr->arr.size(); i++) {
 			Datum instance = script.u.farr->arr[i];
 			if (instance.type == OBJECT)
-				result = callBehaviorHandler(instance, msgName, extraArgs);
+				addBehaviorHandler(targets, instance, msgName);
 		}
 	} else {
 		warning("b_call: expected OBJECT or list for script argument");
 	}
 
-	if (allowRetVal)
-		g_lingo->push(result);
+	g_lingo->dispatchHandlers(targets, extraArgs, allowRetVal);
 }
 
 void LB::b_callAncestor(int nargs) {
@@ -1948,7 +1953,7 @@ void LB::b_continue(int nargs) {
 }
 
 void LB::b_dontPassEvent(int nargs) {
-	g_lingo->_passEvent = false;
+	g_lingo->setPassEvent(false);
 }
 
 void LB::b_nothing(int nargs) {
@@ -2076,7 +2081,7 @@ void LB::b_idleLoadDone(int nargs) {
 }
 
 void LB::b_pass(int nargs) {
-	g_lingo->_passEvent = true;
+	g_lingo->setPassEvent(true);
 }
 
 void LB::b_pause(int nargs) {
@@ -2367,10 +2372,7 @@ void LB::b_startTimer(int nargs) {
 }
 
 void LB::b_stopEvent(int nargs) {
-	warning("STUB: b_stopEvent");
-	// TEquivalent to the dontPassEvent command used in earlier
-	//versions of Director, this command also applies to sprite scripts.
-	g_lingo->_passEvent = false;
+	g_lingo->setPassEvent(false);
 }
 
 ///////////////////
@@ -3455,14 +3457,11 @@ void LB::b_sendAllSprites(int nargs) {
 	Datum message = g_lingo->pop();
 	Common::String msgName = message.asString();
 
-	Datum result;
+	Common::Array<LingoHandlerTarget> targets;
+	bool behaviorHandled = false;
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie ? movie->getScore() : nullptr;
 	if (score) {
-		score->createScriptInstances(score->getCurrentFrameNum());
-
-		bool anyHandled = false;
-		uint savedSpriteNum = movie->_currentSpriteNum;
 		for (uint ch = 1; ch < score->_channels.size(); ch++) {
 			Channel *channel = score->_channels[ch];
 			if (!channel)
@@ -3471,31 +3470,14 @@ void LB::b_sendAllSprites(int nargs) {
 				Datum instance = channel->_scriptInstanceList[i];
 				if (instance.type != OBJECT)
 					continue;
-				Symbol sym = instance.u.obj->getMethod(msgName);
-				if (sym.type == VOIDSYM)
-					continue;
-				movie->_currentSpriteNum = ch;
-				result = callBehaviorHandler(instance, msgName, extraArgs);
-				movie->_currentSpriteNum = savedSpriteNum;
-				anyHandled = true;
+				behaviorHandled |= addBehaviorHandler(targets, instance, msgName);
 			}
 		}
-
-		if (!anyHandled) {
-			Symbol h = g_lingo->getHandler(msgName);
-			if (h.type != VOIDSYM) {
-				for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
-					g_lingo->push(extraArgs[j]);
-				int frame = g_lingo->_state->callstack.size();
-				LC::call(h, numExtraArgs, true);
-				g_lingo->execute(frame);
-				result = g_lingo->pop();
-			}
-		}
+		if (!behaviorHandled)
+			addGlobalHandler(targets, movie, msgName, 0);
 	}
 
-	if (allowRetVal)
-		g_lingo->push(result);
+	g_lingo->dispatchHandlers(targets, extraArgs, allowRetVal, !behaviorHandled, true);
 }
 
 void LB::b_sendSprite(int nargs) {
@@ -3517,44 +3499,24 @@ void LB::b_sendSprite(int nargs) {
 	int spriteNum = g_lingo->pop().asInt();
 	Common::String msgName = message.asString();
 
-	Datum result;
+	Common::Array<LingoHandlerTarget> targets;
+	bool behaviorHandled = false;
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie ? movie->getScore() : nullptr;
 	Channel *channel = score ? score->getChannelById((uint16)spriteNum) : nullptr;
 	if (channel) {
-		if (channel->_scriptInstanceList.empty() && channel->_sprite && !channel->_sprite->_behaviors.empty())
-			score->createScriptInstances(score->getCurrentFrameNum());
-
-		bool handled = false;
-		uint savedSpriteNum = movie->_currentSpriteNum;
 		for (uint i = 0; i < channel->_scriptInstanceList.size(); i++) {
 			Datum instance = channel->_scriptInstanceList[i];
 			if (instance.type != OBJECT)
 				continue;
-			Symbol sym = instance.u.obj->getMethod(msgName);
-			if (sym.type == VOIDSYM)
-				continue;
-			movie->_currentSpriteNum = (uint)spriteNum;
-			result = callBehaviorHandler(instance, msgName, extraArgs);
-			movie->_currentSpriteNum = savedSpriteNum;
-			handled = true;
+			behaviorHandled |= addBehaviorHandler(targets, instance, msgName);
 		}
 
-		if (!handled) {
-			Symbol h = g_lingo->getHandler(msgName);
-			if (h.type != VOIDSYM) {
-				for (int j = (int)extraArgs.size() - 1; j >= 0; j--)
-					g_lingo->push(extraArgs[j]);
-				int frame = g_lingo->_state->callstack.size();
-				LC::call(h, numExtraArgs, true);
-				g_lingo->execute(frame);
-				result = g_lingo->pop();
-			}
-		}
+		if (!behaviorHandled)
+			addGlobalHandler(targets, movie, msgName, channel->_sprite ? channel->_sprite->_castId.castLib : 0);
 	}
 
-	if (allowRetVal)
-		g_lingo->push(result);
+	g_lingo->dispatchHandlers(targets, extraArgs, allowRetVal, !behaviorHandled, true);
 }
 
 void LB::b_spriteBox(int nargs) {

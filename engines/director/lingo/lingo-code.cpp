@@ -380,6 +380,7 @@ void Lingo::popContext(bool aborting) {
 	// Undo the pushContext window switch.
 	Window *retWindow = fp->retWindow;
 	int retSpriteNum = fp->retSpriteNum;
+	Common::SharedPtr<LingoHandlerChain> handlerChain = fp->handlerChain;
 
 	delete fp;
 
@@ -396,6 +397,79 @@ void Lingo::popContext(bool aborting) {
 		_vm->getCurrentMovie()->_currentSpriteNum = retSpriteNum;
 
 	g_debugger->popContextHook();
+
+	if (handlerChain) {
+		bool canceled = aborting || (handlerChain->stopOnDontPass && !handlerChain->passEvent);
+		if (!canceled && handlerChain->nextTarget < handlerChain->targets.size()) {
+			dispatchNextHandler(handlerChain);
+			return;
+		}
+
+		if (!aborting && handlerChain->allowRetVal) {
+			if (handlerChain->forceFalseResult)
+				push(Datum(0));
+			else if (canceled)
+				pushVoid();
+		}
+		if (handlerChain->stopOnDontPass)
+			_passEvent = handlerChain->savedPassEvent && handlerChain->passEvent;
+	}
+}
+
+void Lingo::dispatchHandlers(const Common::Array<LingoHandlerTarget> &targets, const Common::Array<Datum> &args,
+		bool allowRetVal, bool forceFalseResult, bool stopOnDontPass) {
+	if (targets.empty()) {
+		if (allowRetVal) {
+			if (forceFalseResult)
+				push(Datum(0));
+			else
+				pushVoid();
+		}
+		return;
+	}
+
+	Common::SharedPtr<LingoHandlerChain> chain(new LingoHandlerChain());
+	chain->targets = targets;
+	chain->args = args;
+	chain->allowRetVal = allowRetVal;
+	chain->forceFalseResult = forceFalseResult;
+	chain->stopOnDontPass = stopOnDontPass;
+	chain->savedPassEvent = _passEvent;
+	if (stopOnDontPass)
+		_passEvent = true;
+	dispatchNextHandler(chain);
+}
+
+void Lingo::dispatchNextHandler(const Common::SharedPtr<LingoHandlerChain> &chain) {
+	while (chain->nextTarget < chain->targets.size()) {
+		LingoHandlerTarget &target = chain->targets[chain->nextTarget++];
+		if (target.target.type == OBJECT)
+			push(target.target);
+		for (int i = (int)chain->args.size() - 1; i >= 0; i--)
+			push(chain->args[i]);
+
+		uint callDepth = _state->callstack.size();
+		bool finalTarget = chain->nextTarget == chain->targets.size();
+		LC::call(target.handler, chain->args.size() + (target.target.type == OBJECT ? 1 : 0),
+			finalTarget && chain->allowRetVal && !chain->forceFalseResult);
+		if (_state->callstack.size() > callDepth) {
+			_state->callstack.back()->handlerChain = chain;
+			return;
+		}
+		if (chain->stopOnDontPass && !chain->passEvent)
+			break;
+	}
+
+	if (chain->allowRetVal && chain->forceFalseResult)
+		push(Datum(0));
+	if (chain->stopOnDontPass)
+		_passEvent = chain->savedPassEvent && chain->passEvent;
+}
+
+void Lingo::setPassEvent(bool passEvent) {
+	_passEvent = passEvent;
+	if (!_state->callstack.empty() && _state->callstack.back()->handlerChain)
+		_state->callstack.back()->handlerChain->passEvent = passEvent;
 }
 
 void Lingo::freezeState() {
@@ -1825,6 +1899,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	if (funcSym.type != HANDLER) {
 		g_debugger->builtinHook(funcSym);
 		uint stackSizeBefore = g_lingo->_state->stack.size() - nargs;
+		uint callDepthBefore = g_lingo->_state->callstack.size();
 
 		if (target.type != VOID) {
 			// Only need to update the me obj
@@ -1851,6 +1926,8 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		}
 
 		uint stackSize = g_lingo->_state->stack.size();
+		if (g_lingo->_state->callstack.size() > callDepthBefore)
+			return;
 
 		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_value) {
 			if (stackSize == stackSizeBefore + 1) {

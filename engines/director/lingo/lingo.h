@@ -192,6 +192,22 @@ struct Datum {	/* interpreter stack type */
 	bool operator<=(const Datum &d) const;
 };
 
+struct LingoHandlerTarget {
+	Symbol handler;
+	Datum target;
+};
+
+struct LingoHandlerChain {
+	Common::Array<LingoHandlerTarget> targets;
+	Common::Array<Datum> args;
+	uint nextTarget = 0;
+	bool allowRetVal = false;
+	bool forceFalseResult = false;
+	bool stopOnDontPass = false;
+	bool savedPassEvent = false;
+	bool passEvent = true;
+};
+
 struct ChunkReference {
 	Datum source;
 	ChunkType type;
@@ -265,6 +281,7 @@ struct CFrame {	/* proc/func call stack frame */
 	Common::Array<Datum> paramList;		/* original argument list */
 	Window			*retWindow = nullptr;	/* window to restore on return */
 	int				retSpriteNum = -1;	/* sprite context to restore after a behavior call */
+	Common::SharedPtr<LingoHandlerChain> handlerChain;
 };
 
 struct LingoEvent {
@@ -428,6 +445,10 @@ public:
 
 public:
 	bool execute(int targetFrame = -1);
+	void dispatchHandlers(const Common::Array<LingoHandlerTarget> &targets, const Common::Array<Datum> &args,
+			bool allowRetVal, bool forceFalseResult = false, bool stopOnDontPass = false);
+	void dispatchNextHandler(const Common::SharedPtr<LingoHandlerChain> &chain);
+	void setPassEvent(bool passEvent);
 	void switchStateFromWindow();
 	void freezeState();
 	void freezePlayState();
