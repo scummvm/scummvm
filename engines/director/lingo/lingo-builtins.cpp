@@ -1032,7 +1032,7 @@ void LB::b_deleteProp(int nargs) {
 
 void LB::b_duplicateList(int nargs) {
 	Datum list = g_lingo->pop();
-	TYPECHECK2(list, ARRAY, PARRAY);
+	TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
 	g_lingo->push(list.clone());
 }
 
@@ -1200,10 +1200,12 @@ void LB::b_getOne(int nargs) {
 void LB::b_getPos(int nargs) {
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK2(list, ARRAY, PARRAY);
+	TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
 
 	switch (list.type) {
-	case ARRAY: {
+	case ARRAY:
+	case POINT:
+	case RECT: {
 		Datum d(0);
 		int index = LC::compareArrays(LC::eqDataStrict, list, val, true).u.i;
 		if (index > 0) {
@@ -1316,7 +1318,7 @@ void LB::b_list(int nargs) {
 void LB::b_listP(int nargs) {
 	Datum list = g_lingo->pop();
 	Datum d(0);
-	if (list.type == ARRAY || list.type == PARRAY) {
+	if (list.isArray() || list.type == PARRAY) {
 		d.u.i = 1;
 	}
 	g_lingo->push(d);
