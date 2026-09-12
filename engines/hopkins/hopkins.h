@@ -75,7 +75,8 @@ enum HOPKINSAction {
 	kActionBaseFire,
 	kActionBaseUse,
 	kActionBaseToggleTextures,
-	kActionBaseMenu
+	kActionBaseMenu,
+	kActionWBASEEnhancementsNavigationMap
 };
 
 enum HopkinsDebugChannels {

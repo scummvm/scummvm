@@ -68,7 +68,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_GORE_DEFAULT_ON, GUIO_NOMIDI)
+			GUIO3(GAMEOPTION_GORE_DEFAULT_ON, GAMEOPTION_WBASE_ENHANCEMENTS, GUIO_NOMIDI)
 		},
 	},
 	{
@@ -80,7 +80,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_GORE_DEFAULT_OFF, GUIO_NOMIDI)
+			GUIO3(GAMEOPTION_GORE_DEFAULT_OFF, GAMEOPTION_WBASE_ENHANCEMENTS, GUIO_NOMIDI)
 		},
 	},
 	{
@@ -92,7 +92,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_GORE_DEFAULT_ON, GUIO_NOMIDI)
+			GUIO3(GAMEOPTION_GORE_DEFAULT_ON, GAMEOPTION_WBASE_ENHANCEMENTS, GUIO_NOMIDI)
 		},
 	},
 	{
@@ -128,7 +128,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_GORE_DEFAULT_ON, GUIO_NOMIDI)
+			GUIO3(GAMEOPTION_GORE_DEFAULT_ON, GAMEOPTION_WBASE_ENHANCEMENTS, GUIO_NOMIDI)
 		},
 
 	},
@@ -141,7 +141,7 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO2(GAMEOPTION_GORE_DEFAULT_OFF, GUIO_NOMIDI)
+			GUIO3(GAMEOPTION_GORE_DEFAULT_OFF, GAMEOPTION_WBASE_ENHANCEMENTS, GUIO_NOMIDI)
 		},
 	},
 

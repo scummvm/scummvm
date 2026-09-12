@@ -19,21 +19,32 @@
  *
  */
 
-#ifndef HOPKINS_DETECTION_H
-#define HOPKINS_DETECTION_H
+#ifndef HOPKINS_BASE_ENHANCEMENTS_H
+#define HOPKINS_BASE_ENHANCEMENTS_H
+
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Hopkins {
 
-struct HopkinsGameDescription {
-	AD_GAME_DESCRIPTION_HELPERS(desc);
+class BaseData;
+class BaseEngine;
 
-	ADGameDescription desc;
+static const char *const kWBASEEnhancementsConfigKey = "wbase_enhancements";
+static const char *const kWBASEEnhancementsKeymapId = "hopkins-wbase-enhancements";
+
+class WBASEEnhancements {
+public:
+	explicit WBASEEnhancements(const Common::String &targetName);
+
+	bool enabled() const { return _enabled; }
+	bool navigationMapEnabled() const { return _enabled; }
+	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
+
+private:
+	bool _enabled;
 };
-
-#define GAMEOPTION_GORE_DEFAULT_ON  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_GORE_DEFAULT_OFF GUIO_GAMEOPTIONS2
-#define GAMEOPTION_WBASE_ENHANCEMENTS GUIO_GAMEOPTIONS3
 
 } // End of namespace Hopkins
 
-#endif // HOPKINS_DETECTION_H
+#endif // HOPKINS_BASE_ENHANCEMENTS_H

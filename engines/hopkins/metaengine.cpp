@@ -35,6 +35,7 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "hopkins/detection.h"
+#include "hopkins/base_enhancements.h"
 
 #define MAX_SAVES 99
 
@@ -60,6 +61,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Gore Mode when available"),
 			"enable_gore",
 			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_WBASE_ENHANCEMENTS,
+		{
+			_s("WBASE enhancements"),
+			_s("Enable navigation/usability enhancements for Windows base shooter"),
+			kWBASEEnhancementsConfigKey,
+			false,
 			0,
 			0
 		}
@@ -207,6 +220,8 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
 	Keymap *baseKeyMap = new Keymap(Keymap::kKeymapTypeGame, "hopkins-base", _("Underwater base shooter"));
 	baseKeyMap->setEnabled(false);
+	Keymap *wbaseEnhancementsKeyMap = new Keymap(Keymap::kKeymapTypeGame, kWBASEEnhancementsKeymapId, _("WBASE enhancements"));
+	wbaseEnhancementsKeyMap->setEnabled(false);
 
 	Action *act;
 
@@ -305,10 +320,16 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_BACK");
 	baseKeyMap->addAction(act);
 
-	KeymapArray keymaps(3);
+	act = new Action("WBASE_ENHANCEMENTS_MAP", _("WBASE enhancements: open navigation map"));
+	act->setCustomEngineActionEvent(kActionWBASEEnhancementsNavigationMap);
+	act->addDefaultInputMapping("m");
+	wbaseEnhancementsKeyMap->addAction(act);
+
+	KeymapArray keymaps(4);
 	keymaps[0] = engineKeyMap;
 	keymaps[1] = gameKeyMap;
 	keymaps[2] = baseKeyMap;
+	keymaps[3] = wbaseEnhancementsKeyMap;
 
 	return keymaps;
 }
