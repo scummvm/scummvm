@@ -285,7 +285,8 @@ static void renderNavigationMapOpaque(const BaseData &data, const BaseEngine &en
 } // End of anonymous namespace
 
 WBASEEnhancements::WBASEEnhancements(const Common::String &targetName) :
-		_enabled(ConfMan.getBool(kWBASEEnhancementsConfigKey, targetName)) {
+		_enabled(ConfMan.getBool(kWBASEEnhancementsConfigKey, targetName)),
+		_forcedAutoplay(ConfMan.getBool(kWBASEForcedAutoplayConfigKey, targetName)) {
 }
 
 void WBASEEnhancements::renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const {

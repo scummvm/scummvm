@@ -77,7 +77,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
-
+	{
+		GAMEOPTION_WBASE_FORCED_AUTOPLAY,
+		{
+			_s("WBASE Forced Autoplay"),
+			_s("Require an autoplay destination in Windows base shooter"),
+			kWBASEForcedAutoplayConfigKey,
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

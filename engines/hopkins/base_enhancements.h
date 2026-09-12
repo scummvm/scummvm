@@ -31,6 +31,7 @@ class BaseData;
 class BaseEngine;
 
 static const char *const kWBASEEnhancementsConfigKey = "wbase_enhancements";
+static const char *const kWBASEForcedAutoplayConfigKey = "wbase_forced_autoplay";
 static const char *const kWBASEEnhancementsKeymapId = "hopkins-wbase-enhancements";
 
 enum WBASEEnhancementPanel {
@@ -44,11 +45,14 @@ public:
 	explicit WBASEEnhancements(const Common::String &targetName);
 
 	bool enabled() const { return _enabled; }
-	bool navigationMapEnabled() const { return _enabled; }
+	bool forcedAutoplayEnabled() const { return _forcedAutoplay; }
+	bool controlsEnabled() const { return _enabled || _forcedAutoplay; }
+	bool navigationMapEnabled() const { return controlsEnabled(); }
 	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
 
 private:
 	bool _enabled;
+	bool _forcedAutoplay;
 };
 
 } // End of namespace Hopkins
