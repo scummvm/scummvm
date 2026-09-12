@@ -231,6 +231,21 @@ scummvmAssertEqual(testList, [5, "URGH", 3, 1])
 
 
 -- deleteProp
+set testList to [1, 2, 3, 4]
+deleteProp testList, 3
+scummvmAssertEqual(testList, [1, 2, 4])
+scummvmAssertEqual(the result, 1)
+deleteProp testList, 5
+scummvmAssertEqual(testList, [1, 2, 4])
+scummvmAssertEqual(the result, 0)
+
+set testList to [#a: 1, #b: 2, #c: 3]
+deleteProp testList, #b
+scummvmAssertEqual(testList, [#a: 1, #c: 3])
+scummvmAssertEqual(the result, 1)
+deleteProp testList, #missing
+scummvmAssertEqual(testList, [#a: 1, #c: 3])
+scummvmAssertEqual(the result, 0)
 
 
 -- findPos
