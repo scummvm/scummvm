@@ -1947,14 +1947,17 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 		_indexStart = listStart + 3 * 4;
 		_frameDataOffset = _indexStart + listSize * 4;
 
-		_spriteDetailOffsets.resize(numEntries);
+		// The final offset marks the end of the last detail.
+		const int numOffsets = numEntries + 1;
+		_spriteDetailOffsets.resize(numOffsets);
 		_spriteDetailAccessed.resize(numEntries);
 
 		int prevOff = 0;
-		for (int i = 0; i < numEntries; i++) {
+		for (int i = 0; i < numOffsets; i++) {
 			uint32 off = _framesStream->readUint32();
 			_spriteDetailOffsets[i] = _frameDataOffset + off;
-			_spriteDetailAccessed[i] = false;
+			if (i < numEntries)
+				_spriteDetailAccessed[i] = false;
 
 			if (i > 0) {
 				debugC(2, kDebugLoading, "  Detail entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
@@ -2040,7 +2043,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 	debugC(1, kDebugLoading, "Score::loadFrames(): Calculated, total number of frames %d", _numFrames);
 
 	if (_version >= kFileVer600) {
-		for (uint i = 0; i < _spriteDetailAccessed.size() - 1; i++) {
+		for (uint i = 0; i < _spriteDetailAccessed.size(); i++) {
 			int size = _spriteDetailOffsets[i + 1] - _spriteDetailOffsets[i];
 			if (!_spriteDetailAccessed[i] && size > 0) {
 				int type = i % 3;
