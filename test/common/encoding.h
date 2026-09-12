@@ -280,4 +280,12 @@ public:
 		result = Common::U32String((const char *) utf8_2, sizeof(utf8_2)-1, Common::kUtf8).encode(Common::kISO8859_2);
 		TS_ASSERT_EQUALS(memcmp(result.c_str(), iso_8859_2, sizeof(iso_8859_2)), 0);
 	}
+
+	void test_mac_roman_apple_logo() {
+		const Common::u32char_type_t appleLogo[] = { 0xF8FF, 0 };
+		const char macRomanAppleLogo[] = { (char)0xF0, 0 };
+
+		Common::String result = Common::U32String(appleLogo).encode(Common::kMacRoman);
+		TS_ASSERT_EQUALS(result, macRomanAppleLogo);
+	}
 };

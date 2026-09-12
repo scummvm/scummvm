@@ -975,9 +975,6 @@ encodeUTF16Template(BE, WRITE_BE_UINT16)
 encodeUTF16Template(LE, WRITE_LE_UINT16)
 encodeUTF16Template(Native, WRITE_UINT16)
 
-// Upper bound on unicode codepoint in any single-byte encoding. Must be divisible by 0x100 and be strictly above large codepoint
-static const int kMaxCharSingleByte = 0x3000;
-
 static const uint16 *
 getConversionTable(CodePage page) {
 	switch (page) {
@@ -1030,7 +1027,8 @@ getConversionTable(CodePage page) {
 }
 
 struct ReverseTablePrefixTreeLevel1 {
-	struct ReverseTablePrefixTreeLevel2 *next[kMaxCharSingleByte / 0x100];
+	struct ReverseTablePrefixTreeLevel2 **next;
+	uint16 pageCount;
 	bool valid;
 };
 
@@ -1051,10 +1049,19 @@ getReverseConversionTable(CodePage page) {
 	const uint16 *conversionTable = getConversionTable(page);
 	if (!conversionTable)
 		return nullptr;
+	uint pageCount = 0;
+	for (uint i = 0; i < 0x80; i++) {
+		uint16 c = conversionTable[i];
+		if (c != 0 && pageCount <= (c >> 8))
+			pageCount = (c >> 8) + 1;
+	}
+	if (pageCount != 0)
+		reverseTables[page].next = new ReverseTablePrefixTreeLevel2 *[pageCount]();
+	reverseTables[page].pageCount = pageCount;
 	reverseTables[page].valid = true;
 	for (uint i = 0; i < 0x80; i++) {
-		uint32 c = conversionTable[i];
-		if (c == 0 || c >= kMaxCharSingleByte)
+		uint16 c = conversionTable[i];
+		if (c == 0)
 			continue;
 		if (!reverseTables[page].next[c >> 8]) {
 			reverseTables[page].next[c >> 8] = new ReverseTablePrefixTreeLevel2();
@@ -1121,9 +1128,12 @@ StringEncodingResult String::encodeOneByte(const U32String &src, CodePage page, 
 			continue;
 		}
 
-		if (c >= kMaxCharSingleByte)
+		if (c > 0xFFFF)
 			continue;
-		ReverseTablePrefixTreeLevel2 *l2 = conversionTable->next[c>>8];
+		uint pageIndex = c >> 8;
+		ReverseTablePrefixTreeLevel2 *l2 = nullptr;
+		if (pageIndex < conversionTable->pageCount)
+			l2 = conversionTable->next[pageIndex];
 		unsigned char uc = l2 ? l2->end[c&0xff] : 0;
 		if (uc != 0) {
 			operator+=((char)uc);
