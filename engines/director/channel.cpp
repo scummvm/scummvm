@@ -298,18 +298,25 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	bool isDirtyFlag = _widgetDirty ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
-	if (_sprite && !_sprite->_puppet && !_sprite->_autoPuppet) {
-		// When puppet is set, the overall dirty flag should be set when sprite is
-		// modified.
-		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
-			_sprite->_ink != nextSprite->_ink || _sprite->_backColor != nextSprite->_backColor ||
-			_sprite->_foreColor != nextSprite->_foreColor ||
-			_sprite->_blendAmount != nextSprite->_blendAmount ||
+	if (_sprite && !_sprite->_puppet) {
+		if (!_sprite->getAutoPuppet(kAPCast))
+			isDirtyFlag |= _sprite->_castId != nextSprite->_castId;
+		if (!_sprite->getAutoPuppet(kAPInk))
+			isDirtyFlag |= _sprite->_ink != nextSprite->_ink;
+		if (!_sprite->getAutoPuppet(kAPBackColor))
+			isDirtyFlag |= _sprite->_backColor != nextSprite->_backColor;
+		if (!_sprite->getAutoPuppet(kAPForeColor))
+			isDirtyFlag |= _sprite->_foreColor != nextSprite->_foreColor;
+		isDirtyFlag |= _sprite->_blendAmount != nextSprite->_blendAmount ||
 			(_sprite->_thickness & kTThickness) != (nextSprite->_thickness & kTThickness);
-		if (!_sprite->_moveable)
+		if (!_sprite->_moveable && !_sprite->getAutoPuppet(kAPLoc))
 			isDirtyFlag |= _sprite->getPosition() != nextSprite->getPosition();
-		if (isStretched() && !hasTextCastMember(_sprite))
-			isDirtyFlag |= _sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height;
+		if (isStretched() && !hasTextCastMember(_sprite)) {
+			if (!_sprite->getAutoPuppet(kAPWidth))
+				isDirtyFlag |= _sprite->_width != nextSprite->_width;
+			if (!_sprite->getAutoPuppet(kAPHeight))
+				isDirtyFlag |= _sprite->_height != nextSprite->_height;
+		}
 	}
 
 	return isDirtyFlag;
@@ -472,11 +479,13 @@ void Channel::setCast(CastMemberID memberID) {
 
 	// Save bbox before swapping cast so we can restore visual position afterward.
 	Common::Rect oldBbox = getBbox();
+	int16 oldWidth = _sprite->_width;
+	int16 oldHeight = _sprite->_height;
 
 	// Replace the cast member in the sprite.
-	// Only change the dimensions if the "stretch" flag is set,
-	// indicating that the sprite has already been warped away from cast
-	// dimensions. In puppet mode Lingo can first change the
+	// Only change the dimensions if the "stretch" flag is clear,
+	// indicating that the sprite has not been warped away from cast dimensions.
+	// In puppet mode Lingo can first change the
 	// dimensions of the sprite, -then- change the cast ID, and expect
 	// those custom dimensions to stick around.
 	_sprite->setCast(memberID, !_sprite->_stretch);
@@ -510,6 +519,10 @@ void Channel::setCast(CastMemberID memberID) {
 
 	// Based on Director in a Nutshell, page 15
 	_sprite->setAutoPuppet(kAPCast, true);
+	if (_sprite->_width != oldWidth)
+		_sprite->setAutoPuppet(kAPWidth, true);
+	if (_sprite->_height != oldHeight)
+		_sprite->setAutoPuppet(kAPHeight, true);
 	setNeedsDraw();
 }
 
@@ -532,7 +545,7 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	if (nextSprite) {
 		// for the non-puppet QDShape, since we won't use isDirty to check whether the QDShape is changed.
 		// so we may always keep the sprite info because we need it to draw QDShape.
-		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
+		if (_sprite->_puppet || (!nextSprite->isQDShape() && partial)) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
 		} else {
@@ -640,7 +653,8 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	bool hasWidget = _sprite->_cast && _widget;
 	// release the widget, because we may having the new one
-	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
+	CastMemberID nextCastId = _sprite->getAutoPuppet(kAPCast) ? _sprite->_castId : nextSprite->_castId;
+	if (_sprite->_cast && !canKeepWidget(nextCastId)) {
 		_sprite->_cast->releaseWidget();
 		hasWidget = false;
 	}
