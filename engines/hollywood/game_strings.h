@@ -31,7 +31,7 @@ enum {
 };
 
 /**
- * Text stored in the localized game executables rather than RESOURCE.003.
+ * In-game text not supplied by RESOURCE.003, including localized executable strings.
  *
  * These strings follow the detected game language. ScummVM's translation
  * manager is reserved for launcher and engine UI that is independent of the
@@ -70,6 +70,7 @@ struct HollywoodGameStrings {
 	const char *changeDrink;
 	const char *openTap;
 	const char *stopMakingCocktails;
+	const char *mineDestinationLabels[9]; // Scenes 5020 through 5100.
 };
 
 const HollywoodGameStrings &getGameStrings(Common::Language language);

@@ -311,8 +311,8 @@ Common::String SceneHotspotTable::itemName(byte itemId) const {
 }
 
 SceneHoverCaption::SceneHoverCaption(Common::Language language) :
-		_language(language),
 		_timer(0),
+		_language(language),
 		_currentStrip(1),
 		_relationMode(0),
 		_primaryInventoryItem(0),

@@ -55,7 +55,9 @@ const HollywoodGameStrings kSpanishGameStrings = {
 	" ata\xa3" "d ancho",
 	" Cambiar bebida",
 	" Abrir grifo",
-	" Dejar de hacer cocteles"
+	" Dejar de hacer cocteles",
+	{ "T\xa3nel deteriorado", "Campamento", "Minero", "Vagoneta volcada",
+		"Grieta", "Caseta", "Escaleras", "Cascada", "Ascensor" }
 };
 
 const HollywoodGameStrings kItalianGameStrings = {
@@ -90,7 +92,9 @@ const HollywoodGameStrings kItalianGameStrings = {
 	" cassa da morto larga", // WORKAROUND: The Italian executable leaves this variant in Spanish.
 	" Cambiare bevanda",
 	" Aprire rubinetto",
-	" Smettere di fare cocktail"
+	" Smettere di fare cocktail",
+	{ "Galleria dissestata", "Accampamento", "Minatore", "Vagoncino rovesciato",
+		"Crepa", "Capanno", "Scale", "Cascata", "Ascensore" }
 };
 
 const HollywoodGameStrings &getGameStrings(Common::Language language) {

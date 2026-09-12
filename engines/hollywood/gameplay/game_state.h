@@ -47,6 +47,7 @@ struct GameplayState {
 		kTravelScreenDisabledSlot = 0xff,
 		kFrankensteinPartRewardCount = 3,
 		kScene2050MuralTilePermutationSize = 49,
+		kMineDestinationCount = 9,
 		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1,
 		kInventoryItemRelationTableEntryCount = kInventoryOwnerSlotStride * kInventoryOwnerSlotStride
 	};
@@ -329,6 +330,7 @@ struct GameplayState {
 		scene5010SwitchColumn = 0;
 		scene5010MineCartDeparted = false;
 		scene5010DestinationTableInitialized = false;
+		scene5010VisitedDestinations = 0;
 		for (uint i = 0; i < sizeof(scene5010DestinationStateBySwitchSlot) / sizeof(scene5010DestinationStateBySwitchSlot[0]); ++i)
 			scene5010DestinationStateBySwitchSlot[i] = 0;
 		scene5020ExplosivesCrateIdentified = false;
@@ -605,6 +607,16 @@ struct GameplayState {
 		// Hollywood and Hannover are available from the start.
 		travelScreenSlotIds[0] = 0;
 		travelScreenSlotIds[1] = 5;
+	}
+
+	void visitMineDestination(uint16 sceneId) {
+		if (sceneId >= 5020 && sceneId <= 5100 && sceneId % 10 == 0)
+			scene5010VisitedDestinations |= 1 << ((sceneId - 5020) / 10);
+	}
+
+	bool hasVisitedMineDestination(uint16 sceneId) const {
+		return sceneId >= 5020 && sceneId <= 5100 && sceneId % 10 == 0 &&
+			(scene5010VisitedDestinations & (1 << ((sceneId - 5020) / 10))) != 0;
 	}
 
 	bool hasTravelScreenDestination(byte destinationId) const {
@@ -1125,6 +1137,7 @@ struct GameplayState {
 	bool scene5010MineCartDeparted;
 	bool scene5010DestinationTableInitialized;
 	uint16 scene5010DestinationStateBySwitchSlot[9];
+	uint16 scene5010VisitedDestinations;
 	bool scene5020ExplosivesCrateIdentified;
 	bool scene5020WoodenPlankTaken;
 	bool scene5030EntryLineSeen;
