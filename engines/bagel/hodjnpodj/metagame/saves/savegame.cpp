@@ -494,7 +494,7 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		}
 
 		pItem = pPlayer->m_pInventory->FindItem(i == 0 ? MG_OBJ_HODJ_NOTEBOOK : MG_OBJ_PODJ_NOTEBOOK);
-		(*pItem).SetActionCode(ITEM_ACTION_NOTEBOOK);
+		pItem->SetActionCode(ITEM_ACTION_NOTEBOOK);
 
 		for (j = 0; j < NUMBER_OF_CLUES; j++) {
 

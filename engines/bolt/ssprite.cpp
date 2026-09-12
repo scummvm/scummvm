@@ -297,8 +297,8 @@ bool BoltEngine::sSpriteAlive(SSprite *sprite) {
 }
 
 void BoltEngine::getSSpriteLoc(SSprite *sprite, Common::Point *out) {
-	(*out).x = sprite->x;
-	(*out).y = sprite->y;
+	out->x = sprite->x;
+	out->y = sprite->y;
 }
 
 void BoltEngine::getSSpriteAccel(SSprite *sprite, int16 *out) {

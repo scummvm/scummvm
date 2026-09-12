@@ -156,7 +156,7 @@ CMnkWindow::CMnkWindow() {
 		return;
 	}      // ... and verify we got it
 
-	if (!(*xpDibDoc).OpenDocument("art\\MANKALA.BMP")) {
+	if (!xpDibDoc->OpenDocument("art\\MANKALA.BMP")) {
 		MFC::SetCursor(hOldCursor);
 		MFC::MessageBox(nullptr, "Cannot Open Background Bitmap. Please Check for file path and/or system resources. Terminating Game", "Open Error", MB_ICONEXCLAMATION | MB_OK) ;
 		delete xpDibDoc;
@@ -165,7 +165,7 @@ CMnkWindow::CMnkWindow() {
 	}
 
 	// next load in the actual DIB based artwork for screen
-	if (!(CMnkWindow::m_xpGamePalette = (*xpDibDoc).DetachPalette())) {
+	if (!(CMnkWindow::m_xpGamePalette = xpDibDoc->DetachPalette())) {
 		// grab its palette and save it for later use
 		MFC::SetCursor(hOldCursor);
 		MFC::MessageBox(nullptr, "Cannot acquire a non nullptr Palette. Game Terminated", "Palette Error", MB_OK | MB_ICONEXCLAMATION);
@@ -363,7 +363,7 @@ bool CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_SCROLL:
 			if (!m_bInMenu) {
 				OptionsDialog() ;     //bring up main menu.
-				(*this).SetFocus() ; // Reset focus back to the main window
+				(this)->SetFocus() ; // Reset focus back to the main window
 			}                           //end if !m_bInMenu
 			break ;                // ... to force a repaint
 		default :

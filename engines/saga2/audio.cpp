@@ -694,7 +694,7 @@ bool AudioInterface::saying(uint32 s) {
 		return true;
 
 	for (Common::List<SoundInstance>::iterator it = _speechQueue.begin(); it != _speechQueue.end(); ++it)
-		if ((*it).seg == s)
+		if (it->seg == s)
 			return true;
 
 	return false;

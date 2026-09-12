@@ -90,7 +90,7 @@ CPaintGram::CPaintGram(CDC *pDC)
 
 	for (i = 0; i < SYMBOLS ; i++) {         // Initialize master alphabet list
 		m_cAlphabet[i] = new CSprite();     // Initize the individual letter of the alphabet list
-		(*m_cAlphabet[i]).SharePalette(pGamePalette);
+		m_cAlphabet[i]->SharePalette(pGamePalette);
 		if ((i < ALPHABET)) {
 			pFontCel = ExtractBitmap(pDC, pFontSource, pGamePalette,
 			                         i * STANDARD_CHAR_WIDTH, ALPHA_ROW * STANDARD_CHAR_HEIGHT,
@@ -102,40 +102,40 @@ CPaintGram::CPaintGram(CDC *pDC)
 			                         nFontWidth[i - ALPHABET], STANDARD_CHAR_HEIGHT);
 			nExtraWidth += nFontWidth[i - ALPHABET];
 		}
-		bSuccess = (*m_cAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
+		bSuccess = m_cAlphabet[i]->LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cAlphabet[i]).SetMobile(true);
-		(*m_cAlphabet[i]).SetMasked(true);
-		(*m_cAlphabet[i]).SetTypeCode(IndexToChar(i));  // set user defined Type Code to corres to the letter
+		m_cAlphabet[i]->SetMobile(true);
+		m_cAlphabet[i]->SetMasked(true);
+		m_cAlphabet[i]->SetTypeCode(IndexToChar(i));  // set user defined Type Code to corres to the letter
 	}  // end for
 
 	for (i = 0; i < USED_SYMBOLS ; i++) {        // Initialize master alphabet-used list
 		m_cUsedAlphabet[i] = new CSprite();     // Initialize High-lighted chars
-		(*m_cUsedAlphabet[i]).SharePalette(pGamePalette);
+		m_cUsedAlphabet[i]->SharePalette(pGamePalette);
 		pFontCel = ExtractBitmap(pDC, pFontSource, pGamePalette,
 		                         i * STANDARD_CHAR_WIDTH, USED_ROW * STANDARD_CHAR_HEIGHT,
 		                         STANDARD_CHAR_WIDTH, STANDARD_CHAR_HEIGHT);
-		bSuccess = (*m_cUsedAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
+		bSuccess = m_cUsedAlphabet[i]->LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cUsedAlphabet[i]).SetMobile(true);
-		(*m_cUsedAlphabet[i]).SetMasked(true);
-		(*m_cUsedAlphabet[i]).SetTypeCode(SetAlphaType(IndexToChar(i)));    // set user defined Type Code to corres to the letter
+		m_cUsedAlphabet[i]->SetMobile(true);
+		m_cUsedAlphabet[i]->SetMasked(true);
+		m_cUsedAlphabet[i]->SetTypeCode(SetAlphaType(IndexToChar(i)));    // set user defined Type Code to corres to the letter
 	}  // end for
 
 	for (i = 0; i < REVEAL_SYMBOLS ; i++) {          // Initialize master alphabet-used list
 		m_cRevealAlphabet[i] = new CSprite();       // Initialize High-lighted chars
-		(*m_cRevealAlphabet[i]).SharePalette(pGamePalette);
+		m_cRevealAlphabet[i]->SharePalette(pGamePalette);
 		pFontCel = ExtractBitmap(pDC, pFontSource, pGamePalette,
 		                         i * STANDARD_CHAR_WIDTH, REVEAL_ROW * STANDARD_CHAR_HEIGHT,
 		                         STANDARD_CHAR_WIDTH, STANDARD_CHAR_HEIGHT);
-		bSuccess = (*m_cRevealAlphabet[i]).LoadSprite(pFontCel, pGamePalette);
+		bSuccess = m_cRevealAlphabet[i]->LoadSprite(pFontCel, pGamePalette);
 		ASSERT(bSuccess);
 
-		(*m_cRevealAlphabet[i]).SetMobile(true);
-		(*m_cRevealAlphabet[i]).SetMasked(true);
-		(*m_cRevealAlphabet[i]).SetTypeCode(SetAlphaType(IndexToChar(i)));  // set user defined Type Code to corres to the letter
+		m_cRevealAlphabet[i]->SetMobile(true);
+		m_cRevealAlphabet[i]->SetMasked(true);
+		m_cRevealAlphabet[i]->SetTypeCode(SetAlphaType(IndexToChar(i)));  // set user defined Type Code to corres to the letter
 	}  // end for
 
 	// Delete temporary font bitmaps
@@ -146,12 +146,12 @@ CPaintGram::CPaintGram(CDC *pDC)
 	}
 
 	m_cHiLite = new CSprite();              // HiLite box area
-	bSuccess = (*m_cHiLite).LoadResourceSprite(pDC, HILITE_RESOURCE_ID);
+	bSuccess = m_cHiLite->LoadResourceSprite(pDC, HILITE_RESOURCE_ID);
 	ASSERT(bSuccess);
 
-	(*m_cHiLite).SetMobile(true);
-	(*m_cHiLite).SetMasked(true);
-	(*m_cHiLite).SetTypeCode(SetHiLiteTypeOn(false));
+	m_cHiLite->SetMobile(true);
+	m_cHiLite->SetMasked(true);
+	m_cHiLite->SetTypeCode(SetHiLiteTypeOn(false));
 
 }
 
@@ -640,11 +640,11 @@ void CPaintGram::PaintAlphabet(CDC *pDC) {
 
 	for (i = 0; i < ALPHABET ; i++) {    // Initialize the displayed alphabet
 		//  list on bottom of screen
-		m_cDisplayLetters = (*m_cAlphabet[i]).DuplicateSprite(pDC);
-		(*m_cDisplayLetters).SetTypeCode(SetAlphaType(IndexToChar(i)));
-		cLetterDim = (*m_cDisplayLetters).GetSize();
-		(*m_cDisplayLetters).LinkSprite();
-		(*m_cDisplayLetters).PaintSprite(
+		m_cDisplayLetters = m_cAlphabet[i]->DuplicateSprite(pDC);
+		m_cDisplayLetters->SetTypeCode(SetAlphaType(IndexToChar(i)));
+		cLetterDim = m_cDisplayLetters->GetSize();
+		m_cDisplayLetters->LinkSprite();
+		m_cDisplayLetters->PaintSprite(
 		    pDC,
 		    m_cAlphaRegion.TopLeft().x + cLetterPos.cx, // Advances col pos
 		    (m_cAlphaRegion.TopLeft()).y +              // Advances row pos
@@ -741,7 +741,7 @@ void CPaintGram::PaintGram(CDC *pDC, const char *lpszCryptedGram) {
 		} // end if
 
 		if ((nIndexChar = SymbToIndex(lpszCryptedGram[i])) != false) {   // '.' thru ':'
-			nLineLength += ((*m_cAlphabet[nIndexChar]).GetSize()).cx + m_nGramLetterSpacing;
+			nLineLength += (m_cAlphabet[nIndexChar]->GetSize()).cx + m_nGramLetterSpacing;
 		} // end if
 	} // end for
 
@@ -797,11 +797,11 @@ void CPaintGram::PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, in
 
 		if (IsAlphaChar(lpszCryptedGram[j]) == true) {   // A - Z char?
 			nChar = CharToIndex(lpszCryptedGram[j]);
-			m_cDisplayLetters = (*m_cAlphabet[nChar]).DuplicateSprite(pDC);
+			m_cDisplayLetters = m_cAlphabet[nChar]->DuplicateSprite(pDC);
 			//(*m_cDisplayLetters).SetTypeCode(SetGramType(IndexToAlpha(i)));
 			//cLetterDim = (*m_cDisplayLetters).GetSize();
-			(*m_cDisplayLetters).LinkSprite();
-			(*m_cDisplayLetters).PaintSprite(pDC, cPos.cx, cPos.cy);
+			m_cDisplayLetters->LinkSprite();
+			m_cDisplayLetters->PaintSprite(pDC, cPos.cx, cPos.cy);
 			cPos.cx += m_nStandardCharWidth + m_nGramLetterSpacing;
 			continue;
 			//cLetterDim.cx + m_nGramLetterSpacing;
@@ -809,11 +809,11 @@ void CPaintGram::PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, in
 
 		if (IsSymbolChar(lpszCryptedGram[j]) == true) {      // '.' thru ':'
 			nChar = CharToIndex(lpszCryptedGram[j]);
-			m_cDisplayLetters = (*m_cAlphabet[nChar]).DuplicateSprite(pDC);
-			(*m_cDisplayLetters).LinkSprite();
-			(*m_cDisplayLetters).PaintSprite(pDC, cPos.cx, cPos.cy);
+			m_cDisplayLetters = m_cAlphabet[nChar]->DuplicateSprite(pDC);
+			m_cDisplayLetters->LinkSprite();
+			m_cDisplayLetters->PaintSprite(pDC, cPos.cx, cPos.cy);
 
-			cLetterDim = (*m_cDisplayLetters).GetSize();
+			cLetterDim = m_cDisplayLetters->GetSize();
 			cPos.cx += cLetterDim.cx + m_nGramLetterSpacing;
 		} // end if
 	}
@@ -836,8 +836,8 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 	int     nEstimate;
 	int     i;
 
-	lpszGram        = (*pRec).GetGram();
-	lpszSource      = (*pRec).GetSource();
+	lpszGram        = pRec->GetGram();
+	lpszSource      = pRec->GetSource();
 	nEstimate       = 0;
 
 	/****************************************************************
@@ -884,7 +884,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 		} // end if
 
 		if (IsSymbolChar(lpszGram[i])) {
-			nLineLength += (*m_cAlphabet[SymbToIndex(lpszGram[i])]).GetSize().cx + m_nGramLetterSpacing;
+			nLineLength += m_cAlphabet[SymbToIndex(lpszGram[i])]->GetSize().cx + m_nGramLetterSpacing;
 			//((*m_cAlphabet[nChar]).GetSize()).cx + m_nGramLetterSpacing;
 		} // end if
 	} // end for
@@ -929,7 +929,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 		} // end if
 
 		if (IsSymbolChar(lpszSource[i])) {
-			nLineLength += (*m_cAlphabet[SymbToIndex(lpszSource[i])]).GetSize().cx + m_nGramLetterSpacing;
+			nLineLength += m_cAlphabet[SymbToIndex(lpszSource[i])]->GetSize().cx + m_nGramLetterSpacing;
 			//((*m_cAlphabet[nChar]).GetSize()).cx + m_nGramLetterSpacing;
 		} // end if
 	} // end for
@@ -967,10 +967,10 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 bool CPaintGram::IsHiLiteOn() {
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 	while (m_cDisplayLetters != nullptr) {
-		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == true) {
+		if (IsHiLiteType(m_cDisplayLetters->GetTypeCode()) == true) {
 			return true;
 		}
-		m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
+		m_cDisplayLetters = m_cDisplayLetters->GetNextSprite();
 	}
 
 	return false;
@@ -1007,18 +1007,18 @@ int CPaintGram::GetHiLiteType(CDC *pDC) {
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 	while (m_cDisplayLetters != nullptr) {
-		if (IsHiLiteType((*m_cDisplayLetters).GetTypeCode()) == true) {
-			crectSprite = (*m_cDisplayLetters).GetRect();
-			m_cDisplayLetters = (*m_cDisplayLetters).Interception(&crectSprite);
-			nTypeCode = (*m_cDisplayLetters).GetTypeCode();
+		if (IsHiLiteType(m_cDisplayLetters->GetTypeCode()) == true) {
+			crectSprite = m_cDisplayLetters->GetRect();
+			m_cDisplayLetters = m_cDisplayLetters->Interception(&crectSprite);
+			nTypeCode = m_cDisplayLetters->GetTypeCode();
 
 			if (IsHiLiteType(nTypeCode) == true) {
-				return (*m_cDisplayLetters).Interception(&crectSprite, m_cDisplayLetters)->GetTypeCode();
+				return m_cDisplayLetters->Interception(&crectSprite, m_cDisplayLetters)->GetTypeCode();
 			} else {
 				return nTypeCode;
 			}
 		}
-		m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
+		m_cDisplayLetters = m_cDisplayLetters->GetNextSprite();
 	}
 
 	return false;
@@ -1060,17 +1060,17 @@ void CPaintGram::HiLiteOff(CDC *pDC) {
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 	while (m_cDisplayLetters != nullptr) {
-		nTypeCode = (*m_cDisplayLetters).GetTypeCode();         // Get sprite's Hilite Code
+		nTypeCode = m_cDisplayLetters->GetTypeCode();         // Get sprite's Hilite Code
 
 		if (IsHiLiteType(nTypeCode) == true) {               // Is this sprite hi-lited?
-			pSprite = (*m_cDisplayLetters).GetNextSprite();     // Yes - save current pos in sprite chain
-			(*m_cDisplayLetters).RefreshBackground(pDC);        // ...repaint background
-			(*m_cDisplayLetters).UnlinkSprite();                // ...unlink it from chain
+			pSprite = m_cDisplayLetters->GetNextSprite();     // Yes - save current pos in sprite chain
+			m_cDisplayLetters->RefreshBackground(pDC);        // ...repaint background
+			m_cDisplayLetters->UnlinkSprite();                // ...unlink it from chain
 			delete m_cDisplayLetters;
 
 			m_cDisplayLetters = pSprite;                        // faster than GetNextSprite call
 		} else {
-			m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
+			m_cDisplayLetters = m_cDisplayLetters->GetNextSprite();
 		}
 	}
 }
@@ -1113,20 +1113,20 @@ void CPaintGram::HiLiteOn(CDC *pDC, int nTypeCode) {
 
 	m_cDisplayLetters = CSprite::GetSpriteChain();  // Get entire sprite chain
 	while (m_cDisplayLetters != nullptr) {              // Hilite all matching chars
-		if (nTypeCode == (*m_cDisplayLetters).GetTypeCode()) {   // Is this a char to hilite?
-			cpointSprite = (*m_cDisplayLetters).GetPosition();      // Yes - get old sprite's position
-			pSprite = (*m_cDisplayLetters).GetNextSprite();         // save current pos in sprite chain
+		if (nTypeCode == m_cDisplayLetters->GetTypeCode()) {   // Is this a char to hilite?
+			cpointSprite = m_cDisplayLetters->GetPosition();      // Yes - get old sprite's position
+			pSprite = m_cDisplayLetters->GetNextSprite();         // save current pos in sprite chain
 
-			m_cDisplayLetters = (*m_cHiLite).DuplicateSprite(pDC);  // setup hilited sprite
-			(*m_cDisplayLetters).LinkSprite();
-			(*m_cDisplayLetters).PaintSprite(pDC, cpointSprite);
+			m_cDisplayLetters = m_cHiLite->DuplicateSprite(pDC);  // setup hilited sprite
+			m_cDisplayLetters->LinkSprite();
+			m_cDisplayLetters->PaintSprite(pDC, cpointSprite);
 
 			if (IsAlphabetType(nTypeCode) == true)               // Hilited char in alpha region?
 				break;                                              // Yes - break out
 
 			m_cDisplayLetters = pSprite;                            // faster than GetNextSprite call
 		} else {
-			m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
+			m_cDisplayLetters = m_cDisplayLetters->GetNextSprite();
 		} // end if
 	} // end while
 }
@@ -1170,29 +1170,29 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 	m_cDisplayLetters = CSprite::GetSpriteChain();
 
 	while (m_cDisplayLetters != nullptr) {
-		nTypeCode = (*m_cDisplayLetters).GetTypeCode();
+		nTypeCode = m_cDisplayLetters->GetTypeCode();
 		if (nOldType == nTypeCode) {                                 // Is this a char to change?
 
-			cpointSprite = (*m_cDisplayLetters).GetPosition();      // Yes - get old sprite's position
-			pSprite = (*m_cDisplayLetters).GetNextSprite();         // save current pos in sprite chain
+			cpointSprite = m_cDisplayLetters->GetPosition();      // Yes - get old sprite's position
+			pSprite = m_cDisplayLetters->GetNextSprite();         // save current pos in sprite chain
 
-			(*m_cDisplayLetters).RefreshBackground(pDC);            // ...repaint background
-			(*m_cDisplayLetters).UnlinkSprite();                    // ...unlink it from chain
+			m_cDisplayLetters->RefreshBackground(pDC);            // ...repaint background
+			m_cDisplayLetters->UnlinkSprite();                    // ...unlink it from chain
 			delete m_cDisplayLetters;
 
 			nIndexCode = CharToIndex(nNewType);
 			assert(nIndexCode < REVEAL_SYMBOLS);
 
 			if (IsRevealType(nNewType) == true) {
-				m_cDisplayLetters = (*m_cRevealAlphabet[nIndexCode]).DuplicateSprite(pDC);  // setup new sprite
+				m_cDisplayLetters = m_cRevealAlphabet[nIndexCode]->DuplicateSprite(pDC);  // setup new sprite
 			} else if (IsUsedType(nNewType) == true) {
-				m_cDisplayLetters = (*m_cUsedAlphabet[nIndexCode]).DuplicateSprite(pDC);    // setup new sprite
+				m_cDisplayLetters = m_cUsedAlphabet[nIndexCode]->DuplicateSprite(pDC);    // setup new sprite
 			} else {
-				m_cDisplayLetters = (*m_cAlphabet[nIndexCode]).DuplicateSprite(pDC);        // setup new sprite
-				(*m_cDisplayLetters).SetTypeCode(nNewType);                                 // save type code
+				m_cDisplayLetters = m_cAlphabet[nIndexCode]->DuplicateSprite(pDC);        // setup new sprite
+				m_cDisplayLetters->SetTypeCode(nNewType);                                 // save type code
 			}
-			(*m_cDisplayLetters).LinkSprite();
-			(*m_cDisplayLetters).PaintSprite(pDC, cpointSprite);
+			m_cDisplayLetters->LinkSprite();
+			m_cDisplayLetters->PaintSprite(pDC, cpointSprite);
 
 			if ((IsAlphabetType(nNewType) == true) ||
 			        (IsAlphabetType(nOldType) == true))                 // Replacing letter in the Alphabet region?
@@ -1200,7 +1200,7 @@ void CPaintGram::ReplaceLetter(CDC *pDC, int nOldType, int nNewType) {
 
 			m_cDisplayLetters = pSprite;                            // faster than GetNextSprite call
 		} else {
-			m_cDisplayLetters = (*m_cDisplayLetters).GetNextSprite();
+			m_cDisplayLetters = m_cDisplayLetters->GetNextSprite();
 		} // end if
 	} // end while
 }

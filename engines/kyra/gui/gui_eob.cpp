@@ -3263,9 +3263,9 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 
 	Common::StringArray::iterator ii = targets.begin();
 	for (int i = 0; i < _savegameListSize; ++i) {
-		int slsize = (*ii).size() + 1;
+		int slsize = ii->size() + 1;
 		_savegameList[i] = new char[slsize];
-		Common::strlcpy(_savegameList[i], (*ii++).c_str(), slsize);
+		Common::strlcpy(_savegameList[i], (ii++)->c_str(), slsize);
 	}
 
 	const ScreenDim *dm = _screen->getScreenDim(11);

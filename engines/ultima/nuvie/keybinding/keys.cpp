@@ -393,7 +393,7 @@ ActionType KeyBinder::get_ActionType(const Common::KeyState &key) {
 		ActionType actionType = {&doNothingAction, 0};
 		return actionType;
 	}
-	return (*sdlkey_index)._value;
+	return sdlkey_index->_value;
 }
 
 ActionKeyType KeyBinder::GetActionKeyType(ActionType a) {
@@ -426,7 +426,7 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 	key.flags &= ~Common::KBD_STICKY;
 	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
 	if (sdlkey_index != _bindings.end())
-		return DoAction((*sdlkey_index)._value);
+		return DoAction(sdlkey_index->_value);
 	// Avoid modifier keys being detected as invalid input
 	if (ev->kbd.keycode != Common::KEYCODE_LALT && ev->kbd.keycode != Common::KEYCODE_RALT
 	        && ev->kbd.keycode != Common::KEYCODE_LCTRL && ev->kbd.keycode != Common::KEYCODE_RCTRL
@@ -599,7 +599,7 @@ void KeyBinder::ParseLine(const char *line) {
 				ParseKeyMap::iterator key_index;
 				key_index = _keys.find(t);
 				if (key_index != _keys.end()) {
-					k.keycode = (*key_index)._value;
+					k.keycode = key_index->_value;
 				} else {
 					::error("Keybinder: unsupported key: %s", keycode.c_str());
 				}

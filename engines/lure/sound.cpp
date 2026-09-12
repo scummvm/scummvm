@@ -368,7 +368,7 @@ SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
 	SoundListIterator i;
 
 	for (i = _activeSounds.begin(); i != _activeSounds.end(); ++i) {
-		SoundDescResource *rec = (*i).get();
+		SoundDescResource *rec = i->get();
 
 		if (rec->soundNumber == soundNumber) {
 			debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "SoundManager::findSound - sound found");
@@ -462,7 +462,7 @@ void SoundManager::pause() {
 
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		(**i).pauseMusic();
+		(*i)->pauseMusic();
 	}
 
 	_soundMutex.unlock();
@@ -478,7 +478,7 @@ void SoundManager::resume() {
 
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		(**i).resumeMusic();
+		(*i)->resumeMusic();
 	}
 
 	_soundMutex.unlock();

@@ -141,7 +141,7 @@ bool C1ButtonDialog::OnInitDialog() {
 	);
 
 	if ((m_cTextMessage1 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage1).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage1->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
@@ -153,7 +153,7 @@ bool C1ButtonDialog::OnInitDialog() {
 	                 );
 
 	if ((m_cTextMessage2 = new CText()) != nullptr) {
-		bAssertCheck = (*m_cTextMessage2).SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
+		bAssertCheck = m_cTextMessage2->SetupText(pDC, m_pPalette, &statsRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	}
 
@@ -172,9 +172,9 @@ bool C1ButtonDialog::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	if ((m_pButton1 = new CColorButton) != nullptr) {            // build the first color button
-		(*m_pButton1).SetPalette(m_pPalette);                 // set the palette to use
-		(*m_pButton1).SetControl(IDOK, this);                 // tie to the dialog control
-		(*m_pButton1).SetWindowText(m_pszButton1Text);
+		m_pButton1->SetPalette(m_pPalette);                 // set the palette to use
+		m_pButton1->SetControl(IDOK, this);                 // tie to the dialog control
+		m_pButton1->SetWindowText(m_pszButton1Text);
 	}
 
 	return true;  // return true  unless you set the focus to a control
@@ -191,17 +191,17 @@ void C1ButtonDialog::OnPaint() {
 	pDC = GetDC();
 
 	if (m_pszMessage1 != nullptr) {
-		bAssertCheck = (*m_cTextMessage1).DisplayString(pDC, m_pszMessage1, 21, FW_BOLD, TEXT_COLOR);
+		bAssertCheck = m_cTextMessage1->DisplayString(pDC, m_pszMessage1, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
 	if (m_pszMessage2 != nullptr) {
-		bAssertCheck = (*m_cTextMessage2).DisplayString(pDC, m_pszMessage2, 21, FW_BOLD, TEXT_COLOR);
+		bAssertCheck = m_cTextMessage2->DisplayString(pDC, m_pszMessage2, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 
 	if (m_pszMessage3 != nullptr) {
-		bAssertCheck = (*m_cTextMessage3).DisplayString(pDC, m_pszMessage3, 21, FW_BOLD, TEXT_COLOR);
+		bAssertCheck = m_cTextMessage3->DisplayString(pDC, m_pszMessage3, 21, FW_BOLD, TEXT_COLOR);
 		ASSERT(bAssertCheck);
 	}
 

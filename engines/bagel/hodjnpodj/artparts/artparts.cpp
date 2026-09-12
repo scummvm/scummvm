@@ -172,9 +172,9 @@ CMainWindow::CMainWindow() {
 	tmpRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 	                SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 	                SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
-	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
+	bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, tmpRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pScrollButton).LoadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
+	bSuccess = m_pScrollButton->LoadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
 	ASSERT(bSuccess);
 	m_bIgnoreScrollClick = false;
 
@@ -191,7 +191,7 @@ CMainWindow::CMainWindow() {
 	tmpRect.SetRect(TIME_LOCATION_X, TIME_LOCATION_Y,
 	                TIME_LOCATION_X + TIME_WIDTH, TIME_LOCATION_Y + TIME_HEIGHT);
 	if ((m_pTimeText = new CText()) != nullptr) {
-		(*m_pTimeText).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
+		m_pTimeText->SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
 	}
 
 	ReleaseDC(pDC);
@@ -206,14 +206,14 @@ CMainWindow::CMainWindow() {
 		if (pGameInfo->bMusicEnabled) {
 			pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			if (pGameSound != nullptr) {
-				(*pGameSound).midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
+				pGameSound->midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
 			} // end if pGameSound
 		}
 	} else {
 		if (pGameInfo->bMusicEnabled) {
 			pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			if (pGameSound != nullptr) {
-				(*pGameSound).midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
+				pGameSound->midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
 			} // end if pGameSound
 		}
 		PostMessage(WM_COMMAND, IDC_SCROLL, BN_CLICKED);         // Activate the Options dialog
@@ -259,8 +259,8 @@ void CMainWindow::OnPaint() {
 	char        msg[64];
 
 	pDC = GetDC();                                                                  // Get screen DC
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
-	(*pDC).RealizePalette();                                                        // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);                            // Select Game Palette
+	pDC->RealizePalette();                                                        // Use it
 
 	InvalidateRect(nullptr, false);            // invalidate the entire window
 	BeginPaint(&lpPaint);
@@ -274,13 +274,13 @@ void CMainWindow::OnPaint() {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
+		m_pTimeText->DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 	} else {
 		PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 	}
 
 	EndPaint(&lpPaint);
-	(*pDC).SelectPalette(pPalOld, false);                                            // Select back old palette
+	pDC->SelectPalette(pPalOld, false);                                            // Select back old palette
 	ReleaseDC(pDC);                                                                 // Release the DC
 
 	if (bStartOkay && (bGameStarted == false)) {
@@ -321,12 +321,12 @@ void CMainWindow::SplashScratch() {
 	CPalette    *pPalOld = nullptr;                                                    // Old palette holder
 
 	pDC = GetDC();                                                                  // Get screen DC
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
-	(*pDC).RealizePalette();                                                        // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);                            // Select Game Palette
+	pDC->RealizePalette();                                                        // Use it
 
 	pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);     // Draw Scratch2
 
-	(*pDC).SelectPalette(pPalOld, false);                                                // Select back old palette
+	pDC->SelectPalette(pPalOld, false);                                                // Select back old palette
 	ReleaseDC(pDC);                                                                     // Release the DC
 
 	pScratch1DC->BitBlt(0, 0, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);        // Copy New parts locations
@@ -346,8 +346,8 @@ void CMainWindow::SplashScratchPaint() {
 	             *pOldBmp = nullptr;
 
 	pDC = GetDC();
-	pOldPalScreen = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
-	(*pDC).RealizePalette();                                                        // Use it
+	pOldPalScreen = pDC->SelectPalette(pGamePalette, false);                            // Select Game Palette
+	pDC->RealizePalette();                                                        // Use it
 
 	if (bFramed) {
 		pSourceDC = new CDC();
@@ -364,12 +364,12 @@ void CMainWindow::SplashScratchPaint() {
 			return;
 		}
 
-		(*pSourceDoc).OpenDocument(szCurrentArt);
+		pSourceDoc->OpenDocument(szCurrentArt);
 
 		pOldPalSource = pSourceDC->SelectPalette(pGamePalette, false);
 		pSourceDC->RealizePalette();
 
-		hDIB = (*pSourceDoc).GetHDIB();
+		hDIB = pSourceDoc->GetHDIB();
 
 		if (hDIB) {
 			rcDest.SetRect(0, 0, ART_WIDTH + (2 * FRAME_WIDTH), ART_HEIGHT + (2 * FRAME_HEIGHT));
@@ -392,7 +392,7 @@ void CMainWindow::SplashScratchPaint() {
 				rcDIB.top = 0;
 				rcDIB.bottom = cyDIB;
 			}
-			PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB(pSourceDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 			pSourceDC->BitBlt(FRAME_WIDTH, FRAME_HEIGHT, ART_WIDTH, ART_HEIGHT,      // Copy the Scrambled art to
 			                  pScratch2DC, 0, 0, SRCCOPY);                            //... the Frame + Art bitmap
 			pDC->BitBlt(SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,            // Copy the Frame + Scrambled
@@ -419,7 +419,7 @@ void CMainWindow::SplashScratchPaint() {
 
 	}                                                                                               //...on screen
 
-	(*pDC).SelectPalette(pOldPalScreen, false);                                                  // Select back old palette
+	pDC->SelectPalette(pOldPalScreen, false);                                                  // Select back old palette
 	ReleaseDC(pDC);
 
 	pScratch1DC->BitBlt(0, 0, ART_WIDTH, ART_HEIGHT, pScratch2DC, 0, 0, SRCCOPY);        // Copy New parts locations
@@ -448,7 +448,7 @@ void CMainWindow::SplashScreen() {
 		rcDIB.top = rcDIB.left = 0;
 		rcDIB.right = cxDIB;
 		rcDIB.bottom = cyDIB;
-		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 	}
 	ReleaseDC(pDC);
 }
@@ -487,23 +487,23 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			CSound::waitWaveSounds();
 
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 
 			RulesDlg.DoModal();
 			m_bIgnoreScrollClick = false;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 			break;
 
 		case IDC_SCROLL:
 
 			KillTimer(DISPLAY_TIMER);                                // Stop the Displayed Time timer
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
 
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 			m_bPlaying = false;                                     // Not playing the game
 			bSwitched = false;                                      // Prevent ability to Undo after Command is done
@@ -511,22 +511,22 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			CheckForWin();                                          // Get current score
 
 			if (bGameStarted) {
-				pPalOld = (*pDC).SelectPalette(pGamePalette, false);    // Select in the artwork's palette
-				(*pDC).RealizePalette();                                // Use it
+				pPalOld = pDC->SelectPalette(pGamePalette, false);    // Select in the artwork's palette
+				pDC->RealizePalette();                                // Use it
 
 				pBrushNew = new CBrush();                               // Construct a new brush object
 				if (pBrushNew != nullptr) {                                 // If the constructor was successful:
 					pBrushNew->CreateSolidBrush(PALETTERGB(128, 0, 0));           // Create my backdrop color brush
-					pBrushOld = (*pDC).SelectObject(pBrushNew);                  // Select into the DC my new brush
+					pBrushOld = pDC->SelectObject(pBrushNew);                  // Select into the DC my new brush
 					pDC->SetROP2(R2_COPYPEN);                                    // Set Draw mode to use the pen color
 					if (bFramed)
-						(*pDC).Rectangle(SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,
+						pDC->Rectangle(SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,
 						                 GAME_WIDTH - (SIDE_BORDER - FRAME_WIDTH),
 						                 GAME_HEIGHT - (BOTTOM_BORDER - FRAME_HEIGHT));
 					else
-						(*pDC).Rectangle(SIDE_BORDER, TOP_BORDER, GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER);
-					(*pDC).SelectObject(pBrushOld);                          // Select in the old brush
-					(*pDC).SelectPalette(pPalOld, false);                        // Select in the old palette
+						pDC->Rectangle(SIDE_BORDER, TOP_BORDER, GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER);
+					pDC->SelectObject(pBrushOld);                          // Select in the old brush
+					pDC->SelectPalette(pPalOld, false);                        // Select in the old palette
 					delete pBrushNew;                                           // Delete the new brush
 				}
 			} // end if bGameStarted
@@ -536,7 +536,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			switch (COptionsWind.DoModal()) {
 
 			case IDC_OPTIONS_NEWGAME:                           // Selected New Game
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 				if (!pGameInfo->bPlayingMetagame)
 					NewGame();
@@ -545,7 +545,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				break;
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 				m_bPlaying = true;
 				if (bGameStarted && (m_nTime != (nSeconds + (nMinutes * 60)))) {     // have started
@@ -572,18 +572,18 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
-						(*pGameSound).midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(2300, 32000, 0, FMT_MILLISEC);
 				} // end if pGameSound
 			}
 
-			(*pDC).SelectPalette(pPalOld, false);
+			pDC->SelectPalette(pPalOld, false);
 			InvalidateRect(nullptr, false);            // force a redraw of the entire window
 			//...and stop any other WM_PAINT messages
 		} //end switch(wParam)
 
 		ReleaseDC(pDC);
 	} // end if
-	(*this).SetFocus();                     // Reset focus back to the main window
+	(this)->SetFocus();                     // Reset focus back to the main window
 	return true;
 }
 
@@ -668,7 +668,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 					pEffect = new CSound((CWnd *)this, WIN_SOUND,
 					                     SOUND_WAVE | SOUND_ASYNCH |
 					                     SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
-					(*pEffect).play();                                                      //...play the narration
+					pEffect->play();                                                      //...play the narration
 				}
 				MSG lpmsg;
 				while (PeekMessage(&lpmsg, nullptr, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE | PM_NOYIELD)) ;
@@ -686,7 +686,7 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 					pEffect = new CSound((CWnd *)this, SWITCH_SOUND,
 					                     SOUND_WAVE | SOUND_ASYNCH |
 					                     SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
-					(*pEffect).play();                                                      //...play the narration
+					pEffect->play();                                                      //...play the narration
 				} // end if pGameInfo->bSoundEffectsEnabled
 			} // end else
 		}// end else if (m_bFirst)
@@ -745,7 +745,7 @@ void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 					pEffect = new CSound((CWnd *)this, PICK_SOUND,
 					                     SOUND_WAVE | SOUND_ASYNCH |
 					                     SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
-					(*pEffect).play();                                                      //...play the narration
+					pEffect->play();                                                      //...play the narration
 				}
 
 				Center.x = First.x + SIDE_BORDER + (OldRect.Width() / 2); // Center is in Screen coords
@@ -948,7 +948,7 @@ void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 				pEffect = new CSound((CWnd *)this, UNDO_SOUND,
 				                     SOUND_WAVE | SOUND_ASYNCH |
 				                     SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
-				(*pEffect).play();                                                      //...play the narration
+				pEffect->play();                                                      //...play the narration
 			}
 
 			if (m_bFirst) {                              // Deselect area
@@ -1097,7 +1097,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 		else {
 			Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 		}
-		(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
+		m_pTimeText->DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 		if (nMinutes == 0 && nSeconds == 0) {
 			char buf[64];
@@ -1110,7 +1110,7 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 				pEffect = new CSound((CWnd *)this, LOSE_SOUND,
 				                     SOUND_WAVE | SOUND_ASYNCH |
 				                     SOUND_QUEUE | SOUND_AUTODELETE);    //...Wave file, to delete itself
-				(*pEffect).play();                                          //...play the narration
+				pEffect->play();                                          //...play the narration
 			}
 			CheckForWin();                              // Update the score
 			MSG lpmsg;
@@ -1403,11 +1403,11 @@ bool CMainWindow::LoadArtWork() {
 	Common::sprintf_s(bufName, "art\\%s", ArtName);
 	Common::sprintf_s(szCurrentArt, "%s", bufName);                  // copy to a global for use in OnPaint
 
-	(*pSourceDoc).OpenDocument(bufName);
+	pSourceDoc->OpenDocument(bufName);
 
 	// Acquire the shared palette for our game from the art
 	if (!pGamePalette) {
-		pGamePalette = (*pSourceDoc).DetachPalette();
+		pGamePalette = pSourceDoc->DetachPalette();
 	} else {
 		// WORKAROUND: Keep a single pGamePalette, since there
 		// are UI elements that have pointers to it
@@ -1427,7 +1427,7 @@ bool CMainWindow::LoadArtWork() {
 		pSourceDC->RealizePalette();
 	}
 
-	hDIB = (*pSourceDoc).GetHDIB();
+	hDIB = pSourceDoc->GetHDIB();
 
 	if (hDIB) {
 		if (bFramed)
@@ -1454,11 +1454,11 @@ bool CMainWindow::LoadArtWork() {
 			rcDIB.bottom = cyDIB;
 		}
 		if (bFramed) {
-			PaintDIB((*pSourceDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB(pSourceDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 			pScratch1DC->BitBlt(0, 0, ART_WIDTH, ART_HEIGHT, pSourceDC,
 			                    FRAME_WIDTH, FRAME_HEIGHT, SRCCOPY);
 		} else {
-			PaintDIB((*pScratch1DC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+			PaintDIB(pScratch1DC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 
 		}
 	}
@@ -1602,24 +1602,24 @@ void CMainWindow::NewGame() {
 
 	pDC = GetDC();
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);            // Select in the artwork's palette
-	(*pDC).RealizePalette();                                        // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);            // Select in the artwork's palette
+	pDC->RealizePalette();                                        // Use it
 
 	PaintBitmap(pDC, pGamePalette, pLocaleBitmap, TIME_LOCATION_X, TIME_LOCATION_Y);
 
 	pBrushNew = new CBrush();                                       // Construct a new brush object
 	if (pBrushNew != nullptr) {                                         // If the constructor was successful:
 		pBrushNew->CreateSolidBrush(PALETTERGB(128, 0, 0));           // Create my backdrop color brush
-		pBrushOld = (*pDC).SelectObject(pBrushNew);                  // Select into the DC my new brush
+		pBrushOld = pDC->SelectObject(pBrushNew);                  // Select into the DC my new brush
 		pDC->SetROP2(R2_COPYPEN);                                    // Set Draw mode to use the pen color
 		if (bFramed)
-			(*pDC).Rectangle(SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,
+			pDC->Rectangle(SIDE_BORDER - FRAME_WIDTH, TOP_BORDER - FRAME_HEIGHT,
 			                 GAME_WIDTH - (SIDE_BORDER - FRAME_WIDTH),
 			                 GAME_HEIGHT - (BOTTOM_BORDER - FRAME_HEIGHT));
 		else
-			(*pDC).Rectangle(SIDE_BORDER, TOP_BORDER, GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER);
-		(*pDC).SelectObject(pBrushOld);                          // Select in the old brush
-		(*pDC).SelectPalette(pPalOld, false);                        // Select in the old palette
+			pDC->Rectangle(SIDE_BORDER, TOP_BORDER, GAME_WIDTH - SIDE_BORDER, GAME_HEIGHT - BOTTOM_BORDER);
+		pDC->SelectObject(pBrushOld);                          // Select in the old brush
+		pDC->SelectPalette(pPalOld, false);                        // Select in the old palette
 		delete pBrushNew;                                           // Delete the new brush
 	}
 	m_bNewGame = true;
@@ -1639,11 +1639,11 @@ void CMainWindow::NewGame() {
 	else {
 		Common::sprintf_s(msg, "Time Left: %02d:%02d", nMinutes, nSeconds);
 	}
-	(*m_pTimeText).DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
+	m_pTimeText->DisplayString(pDC, msg, FONT_SIZE, FW_SEMIBOLD, OPTIONS_COLOR);
 
 	EndWaitCursor();
 
-	(*pDC).SelectPalette(pPalOld, false);
+	pDC->SelectPalette(pPalOld, false);
 	ReleaseDC(pDC);
 
 	InvalidateRect(nullptr, false);                                     // force a redraw of the entire window
@@ -1787,8 +1787,8 @@ void CMainWindow::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
 	pMyPen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER, RGB(255, 255, 255));    // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
-	(*pDC).RealizePalette();                                // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);     // Select in game palette
+	pDC->RealizePalette();                                // Use it
 	pOldPen = pDC->SelectObject(pMyPen);         // Select the new pen & save old
 	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
 	OldDrawMode = pDC->SetROP2(nDrawMode);       // Set pen mode, saving old state
@@ -1796,7 +1796,7 @@ void CMainWindow::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	pDC->SelectObject(pOldPen);                  // Select the old pen
 	pDC->SelectObject(pOldBrush);                // Select the old brush
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
-	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
+	pDC->SelectPalette(pPalOld, false);           // Select back the old palette
 
 	pMyBrush->DeleteObject();
 	delete pMyBrush;
@@ -1860,7 +1860,7 @@ void CMainWindow::OnClose() {
 	pDC = GetDC();
 	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	myBrush.CreateStockObject(BLACK_BRUSH);
-	(*pDC).FillRect(&myRect, &myBrush);
+	pDC->FillRect(&myRect, &myBrush);
 	ReleaseDC(pDC);
 
 	// delete the game theme song

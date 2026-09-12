@@ -314,7 +314,7 @@ void IMuseDigiFilesHandler::closeAllSounds() {
 	ImuseDigiSndMgr::SoundDesc *s = _sound->getSounds();
 	for (int i = 0; i < MAX_IMUSE_SOUNDS; i++) {
 		if (s[i].inUse) {
-			closeSound((&s[i])->soundId);
+			closeSound(s[i].soundId);
 		}
 	}
 

@@ -119,12 +119,12 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 35, LEFT_SIDE + 185, 50);
 	if ((m_pScoreText = new CText()) != nullptr) {
-		(*m_pScoreText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pScoreText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 20, LEFT_SIDE + 185, 35);
 	if ((m_pSweepsText = new CText()) != nullptr) {
-		(*m_pSweepsText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pSweepsText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollSweeps.SetScrollRange(0, nSweepSets - 1, 0);
@@ -135,31 +135,31 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 70, LEFT_SIDE + 115, 88);
 	if ((m_pSpeedText = new CText()) != nullptr) {
-		(*m_pSpeedText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pSpeedText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollSpeed.SetScrollRange(MIN_SPEED, MAX_SPEED, 0);
 	m_ScrollSpeed.SetScrollPos(m_nSpeed, true);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 	if ((pAutoButton = new CCheckButton) != nullptr) {                 // build a color QUIT button to let us exit
-		(*pAutoButton).SetPalette(pSubOptionsPalette);                      // set the palette to use
-		(*pAutoButton).SetControl(IDC_AUTOMATIC, this);             // tie to the dialog control
+		pAutoButton->SetPalette(pSubOptionsPalette);                      // set the palette to use
+		pAutoButton->SetControl(IDC_AUTOMATIC, this);             // tie to the dialog control
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_AUTOMATIC, m_bAutomatic);         // Set the Auto option box
 
 	if ((pChangeButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pChangeButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pChangeButton).SetControl(IDC_CHANGE, this);              // tie to the dialog control
+		pChangeButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pChangeButton->SetControl(IDC_CHANGE, this);              // tie to the dialog control
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_CHANGE, m_bChangeAtTwelve);       // Set the Auto option box
 
@@ -252,7 +252,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
+		pScrollBar->SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();
@@ -300,14 +300,14 @@ void COptnDlg::UpdateScrollbars() {
 			Common::sprintf_s(msg, "Number of Sweeps: Unlimited");
 		else
 			Common::sprintf_s(msg, "Number of Sweeps: %d", m_nSweeps);
-		(*m_pSweepsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pSweepsText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_nSpeed;
 	m_nSpeed = m_ScrollSpeed.GetScrollPos();
 	if (OldValue != m_nSpeed) {
 		Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
-		(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pSpeedText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	ReleaseDC(pDC);
@@ -343,16 +343,16 @@ void COptnDlg::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(msg, "(Effective on New Game)");
-	(*m_pScoreText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pScoreText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	if (m_nSweeps == MAX_SWEEPS)
 		Common::sprintf_s(msg, "Number of Sweeps: Unlimited");
 	else
 		Common::sprintf_s(msg, "Number of Sweeps: %d", m_nSweeps);
-	(*m_pSweepsText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pSweepsText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	Common::sprintf_s(msg, "Speed:  %s", mSpeedTable[m_nSpeed].c_str());
-	(*m_pSpeedText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pSpeedText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	ReleaseDC(pDC);
 

@@ -328,7 +328,7 @@ int16 *GameDatabase::findObjectPropertyCached(int16 objectIndex, int16 propertyI
 	ObjectPropertyCacheMap::iterator iter = _objectPropertyCache.find(id);
 	int16 *propertyPtr = nullptr;
 	if (iter != _objectPropertyCache.end()) {
-		propertyPtr = (*iter)._value;
+		propertyPtr = iter->_value;
 	} else {
 		propertyPtr = findObjectProperty(objectIndex, propertyId, propertyFlag);
 		_objectPropertyCache[id] = propertyPtr;

@@ -408,14 +408,14 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 			//
 			// The value of at least 0.1 was chosen to fix a path finding issue
 			// in set pac when guybrush tried to reach the pile of rocks.
-			if (fabs(getProjectionToPlane((*it).begin()).y() - sector->getProjectionToPlane((*it).begin()).y()) > 0.1f ||
-			    fabs(getProjectionToPlane((*it).end()).y() - sector->getProjectionToPlane((*it).end()).y()) > 0.1f) {
+			if (fabs(getProjectionToPlane(it->begin()).y() - sector->getProjectionToPlane(it->begin()).y()) > 0.1f ||
+			    fabs(getProjectionToPlane(it->end()).y() - sector->getProjectionToPlane(it->end()).y()) > 0.1f) {
 				it = bridges.erase(it);
 				continue;
 			}
 		} else {
-			if (fabs(getProjectionToPlane((*it).begin()).z() - sector->getProjectionToPlane((*it).begin()).z()) > 0.01f ||
-			    fabs(getProjectionToPlane((*it).end()).z() - sector->getProjectionToPlane((*it).end()).z()) > 0.01f) {
+			if (fabs(getProjectionToPlane(it->begin()).z() - sector->getProjectionToPlane(it->begin()).z()) > 0.01f ||
+			    fabs(getProjectionToPlane(it->end()).z() - sector->getProjectionToPlane(it->end()).z()) > 0.01f) {
 				it = bridges.erase(it);
 				continue;
 			}

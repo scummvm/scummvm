@@ -199,9 +199,9 @@ void ComposerEngine::sync<Pipe *>(Common::Serializer &ser, Pipe *&data, Common::
 	} else {
 		ser.syncAsUint32LE(tmp);
 		for (Pipe::DelMap::iterator i = data->_bufferedResources.begin(); i != data->_bufferedResources.end(); i++) {
-			uint32 key = (*i)._key;
+			uint32 key = i->_key;
 			ser.syncAsUint32LE(key);
-			syncList<uint16>(ser, (*i)._value, minVersion, maxVersion);
+			syncList<uint16>(ser, i->_value, minVersion, maxVersion);
 		}
 	}
 }
@@ -299,7 +299,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	// Unload all Libraries
 	Common::Array<uint16> libIds;
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
-		libIds.push_back((*i)._id);
+		libIds.push_back(i->_id);
 	for (uint32 i = 0; i < libIds.size(); i++)
 		unloadLibrary(libIds[i]);
 

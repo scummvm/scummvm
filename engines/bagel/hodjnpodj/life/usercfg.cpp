@@ -136,7 +136,7 @@ bool CUserCfgDlg::OnInitDialog() {
 	);
 
 	if ((m_pVillages = new CText) != nullptr) {
-		bAssertCheck = (*m_pVillages).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
+		bAssertCheck = m_pVillages->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
@@ -154,7 +154,7 @@ bool CUserCfgDlg::OnInitDialog() {
 	);
 
 	if ((m_pSpeed = new CText) != nullptr) {
-		bAssertCheck = (*m_pSpeed).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
+		bAssertCheck = m_pSpeed->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
@@ -172,7 +172,7 @@ bool CUserCfgDlg::OnInitDialog() {
 	);
 
 	if ((m_pRounds = new CText) != nullptr) {
-		bAssertCheck = (*m_pRounds).SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
+		bAssertCheck = m_pRounds->SetupText(pDC, pGamePalette, &statsRect, JUSTIFY_LEFT);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
@@ -186,19 +186,19 @@ bool CUserCfgDlg::OnInitDialog() {
 	* Set up color buttons. *
 	************************/
 	if ((m_pPrePlaceButton = new CCheckButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*m_pPrePlaceButton).SetPalette(pGamePalette);                      // set the palette to use
-		(*m_pPrePlaceButton).SetControl(IDC_PREPLACE, this);            // tie to the dialog control
+		m_pPrePlaceButton->SetPalette(pGamePalette);                      // set the palette to use
+		m_pPrePlaceButton->SetControl(IDC_PREPLACE, this);            // tie to the dialog control
 	}
 	((CWnd *)this)->CheckDlgButton(IDC_PREPLACE, bPrePlaceColonies);             // Set the frame option box
 
 	if ((m_pOKButton = new CColorButton) != nullptr) {     // build a color OK button
-		(*m_pOKButton).SetPalette(pGamePalette);        // set the palette to use
-		(*m_pOKButton).SetControl(IDOK, this);          // tie to the dialog control
+		m_pOKButton->SetPalette(pGamePalette);        // set the palette to use
+		m_pOKButton->SetControl(IDOK, this);          // tie to the dialog control
 	} // end if
 
 	if ((m_pCancelButton = new CColorButton) != nullptr) { // build a color CANCEL button
-		(*m_pCancelButton).SetPalette(pGamePalette);
-		(*m_pCancelButton).SetControl(IDCANCEL, this);
+		m_pCancelButton->SetPalette(pGamePalette);
+		m_pCancelButton->SetControl(IDCANCEL, this);
 	} // end if
 
 	return true;  // return true  unless you set the focus to a control
@@ -248,7 +248,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 		if (nSpeedTemp != nOldSpeed) {                       //To prevent "flicker"
 			Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp].c_str());   //  only redraw if
 			//  m_nSpeedTemp has changed
-			bAssertCheck = (*m_pSpeed).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+			bAssertCheck = m_pSpeed->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);
 
 			pScrollBar->SetScrollPos(nSpeedTemp, true);
@@ -293,7 +293,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 			else
 				Common::sprintf_s(msg, "Villages: %d", m_nLife[nLifeTemp]);
 
-			bAssertCheck = (*m_pVillages).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+			bAssertCheck = m_pVillages->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 
 			pScrollBar->SetScrollPos(nLifeTemp, true);
@@ -338,7 +338,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar*
 			else
 				Common::sprintf_s(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
 
-			bAssertCheck = (*m_pRounds).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+			bAssertCheck = m_pRounds->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 
 			pScrollBar->SetScrollPos(nTurnCounterTemp, true);
@@ -432,14 +432,14 @@ void CUserCfgDlg::OnPaint() {
 	else
 		Common::sprintf_s(msg, "Villages: %d", m_nLife[nLifeTemp]);
 
-	bAssertCheck = (*m_pVillages).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	bAssertCheck = m_pVillages->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);
 
 
 	// Display Speed stats
 	Common::sprintf_s(msg, "Speed: %s", mSpeedTable[nSpeedTemp].c_str());
 
-	bAssertCheck = (*m_pSpeed).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	bAssertCheck = m_pSpeed->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// set up the rounds stat display box
@@ -448,7 +448,7 @@ void CUserCfgDlg::OnPaint() {
 	else
 		Common::sprintf_s(msg, "Years: %d", m_nTurns[nTurnCounterTemp]);
 
-	bAssertCheck = (*m_pRounds).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
+	bAssertCheck = m_pRounds->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, OPTIONS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	ReleaseDC(pDC);

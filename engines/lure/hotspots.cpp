@@ -228,7 +228,7 @@ void Hotspot::setAnimationIndex(int animIndex) {
 	HotspotAnimList::iterator a = r.animRecords().begin();
 	for (int i = 0; i < animIndex; i++)
 		++a;
-	HotspotAnimData *tempAnim = (*a).get();
+	HotspotAnimData *tempAnim = a->get();
 
 	_animId = tempAnim->animRecordId;
 	if (_data)
@@ -3513,7 +3513,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			if (i != entries.end()) ++i;
 
 		for (; i != entries.end(); ++i) {
-			entry = (*i).get();
+			entry = i->get();
 			uint8 flags = (uint8) (entry->descId >> 14);
 			if (flags == 3)
 				// Skip the entry

@@ -642,7 +642,7 @@ bool Debugger::cmdOpenLog(int argc, const char **argv) {
 #ifndef DISABLE_MD5
 struct ArchiveMemberLess {
 	bool operator()(const Common::ArchiveMemberPtr &x, const Common::ArchiveMemberPtr &y) const {
-		return (*x).getName().compareToIgnoreCase((*y).getName()) < 0;
+		return x->getName().compareToIgnoreCase(y->getName()) < 0;
 	}
 };
 

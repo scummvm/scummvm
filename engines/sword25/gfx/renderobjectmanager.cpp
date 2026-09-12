@@ -50,9 +50,9 @@ void RenderObjectQueue::add(RenderObject *renderObject) {
 
 bool RenderObjectQueue::exists(const RenderObjectQueueItem &renderObjectQueueItem) {
 	for (RenderObjectQueue::iterator it = begin(); it != end(); ++it)
-		if ((*it)._renderObject == renderObjectQueueItem._renderObject &&
-			(*it)._version == renderObjectQueueItem._version &&
-			(*it)._bbox == renderObjectQueueItem._bbox)
+		if (it->_renderObject == renderObjectQueueItem._renderObject &&
+			it->_version == renderObjectQueueItem._version &&
+			it->_bbox == renderObjectQueueItem._bbox)
 			return true;
 	return false;
 }
@@ -105,13 +105,13 @@ bool RenderObjectManager::render() {
 	// Add rectangles of objects which don't exist in this frame any more
 	for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it) {
 		if (!_currQueue->exists(*it))
-			_uta->addRect((*it)._bbox);
+			_uta->addRect(it->_bbox);
 	}
 
 	// Add rectangles of objects which are different from the previous frame
 	for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it) {
 		if (!_prevQueue->exists(*it))
-			_uta->addRect((*it)._bbox);
+			_uta->addRect(it->_bbox);
 	}
 
 	RectangleList *updateRects = _uta->getRectangles();
@@ -125,9 +125,9 @@ bool RenderObjectManager::render() {
 	for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
 		int minZ = 0;
 		for (RenderObjectQueue::iterator it = _currQueue->reverse_begin(); it != _currQueue->end(); --it) {
-			if ((*it)._renderObject->isVisible() && (*it)._renderObject->isSolid() &&
-				(*it)._renderObject->getBbox().contains(*rectIt)) {
-				minZ = (*it)._renderObject->getAbsoluteZ();
+			if (it->_renderObject->isVisible() && it->_renderObject->isSolid() &&
+				it->_renderObject->getBbox().contains(*rectIt)) {
+				minZ = it->_renderObject->getAbsoluteZ();
 				break;
 			}
 		}
@@ -138,10 +138,10 @@ bool RenderObjectManager::render() {
 		// Copy updated rectangles to the video screen
 		Graphics::ManagedSurface *backSurface = Kernel::getInstance()->getGfx()->getSurface();
 		for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
-			const int x = (*rectIt).left;
-			const int y = (*rectIt).top;
-			const int width = (*rectIt).width();
-			const int height = (*rectIt).height();
+			const int x = rectIt->left;
+			const int y = rectIt->top;
+			const int width = rectIt->width();
+			const int height = rectIt->height();
 			g_system->copyRectToScreen(backSurface->getBasePtr(x, y), backSurface->pitch, x, y, width, height);
 		}
 	}

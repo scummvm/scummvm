@@ -158,12 +158,12 @@ bool CMnkUsr::OnInitDialog() {
 	mLevelTable[4] =  "Invincible";         /*nish added 08/04/94*/
 	statRect.SetRect(LEFT_SIDE, 25, LEFT_SIDE + 100, 40);
 	if ((m_pShellText = new CText()) != nullptr) {
-		(*m_pShellText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
+		m_pShellText->SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 185, 80);
 	if ((m_pStrengthText = new CText()) != nullptr) {
-		(*m_pStrengthText).SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
+		m_pStrengthText->SetupText(pDC, m_xpGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_xpUScrShell = (CScrollBar *)GetDlgItem(IDC_USCRSHELL) ;
@@ -175,13 +175,13 @@ bool CMnkUsr::OnInitDialog() {
 	m_xpUScrStrength->SetScrollPos(m_iUStrength) ;
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(m_pPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(m_pPalette);                        // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(m_pPalette);                        // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 
@@ -327,14 +327,14 @@ void CMnkUsr::UpdateScrollbars() {
 	m_iUShells = m_xpUScrShell->GetScrollPos();
 	if (OldValue != m_iUShells) {
 		Common::sprintf_s(msg, "Shells per Pit: %d", m_iUShells);
-		(*m_pShellText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pShellText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	OldValue = m_iUStrength;
 	m_iUStrength = m_xpUScrStrength->GetScrollPos();
 	if (OldValue != m_iUStrength) {
 		Common::sprintf_s(msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str());
-		(*m_pStrengthText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+		m_pStrengthText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	ReleaseDC(pDC);
@@ -351,10 +351,10 @@ void CMnkUsr::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(msg, "Shells per Pit: %d", m_iUShells);
-	(*m_pShellText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pShellText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	Common::sprintf_s(msg, "Crab's Ability: %s", mLevelTable[m_iUStrength - 1].c_str());
-	(*m_pStrengthText).DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
+	m_pStrengthText->DisplayString(pDC, msg, 14, FW_BOLD, OPTIONS_COLOR);
 
 	ReleaseDC(pDC);
 

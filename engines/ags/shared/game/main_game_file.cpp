@@ -543,7 +543,7 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 		folder.getChildren(files, Common::FSNode::kListFilesOnly);
 
 		for (Common::FSList::iterator it = files.begin(); it != files.end(); ++it) {
-			Common::String name = (*it).getName();
+			Common::String name = it->getName();
 
 			if (name.hasPrefixIgnoreCase("music") || name.hasPrefixIgnoreCase("sound"))
 				assets.push_back(name.c_str());

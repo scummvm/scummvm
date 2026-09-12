@@ -68,13 +68,13 @@ bool CUserCfgDlg::OnInitDialog() {
 		bool    bAssertCheck;
 
 		tmpRect.SetRect(TEXT_LEFT, TEXT_TOP, TEXT_RIG, TEXT_BOT);
-		bAssertCheck = (*m_ctextBox).SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
+		bAssertCheck = m_ctextBox->SetupText(pDC, pGamePalette, &tmpRect, JUSTIFY_CENTER);
 		ASSERT(bAssertCheck);   // initialize the text objext
 	} // end if
 
 	if ((m_pOKButton = new CColorButton) != nullptr) {     // build a color OK button
-		(*m_pOKButton).SetPalette(pGamePalette);        // set the palette to use
-		(*m_pOKButton).SetControl(IDOK, this);          // tie to the dialog control
+		m_pOKButton->SetPalette(pGamePalette);        // set the palette to use
+		m_pOKButton->SetControl(IDOK, this);          // tie to the dialog control
 	} // end if
 
 	ReleaseDC(pDC);
@@ -99,7 +99,7 @@ void CUserCfgDlg::OnPaint() {
 	} // end if
 
 	Common::sprintf_s(msg, "Select a card back");   // top message
-	bAssertCheck = (*m_ctextBox).DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, RGBCOLOR_BLACK);
+	bAssertCheck = m_ctextBox->DisplayString(pDC, msg, FONT_SIZE, FW_BOLD, RGBCOLOR_BLACK);
 	ASSERT(bAssertCheck);
 
 	ReleaseDC(pDC);
@@ -206,8 +206,8 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pMyBrush->CreateBrushIndirect(&lb);              // Create a new brush
 	pMyPen->CreatePen(PS_INSIDEFRAME, DELTA, rgbColor); // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
-	(*pDC).RealizePalette();                                // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);     // Select in game palette
+	pDC->RealizePalette();                                // Use it
 
 	pOldPen = pDC->SelectObject(pMyPen);         // Select the new pen & save old
 	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
@@ -218,7 +218,7 @@ void CUserCfgDlg::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode, COLORREF rgbC
 	pDC->SelectObject(pOldPen);                  // Select the old pen
 	pDC->SelectObject(pOldBrush);                // Select the old brush
 	pDC->SetROP2(OldDrawMode);                   // Set pen mode back to old state
-	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
+	pDC->SelectPalette(pPalOld, false);           // Select back the old palette
 
 	pMyBrush->DeleteObject();
 	delete pMyBrush;

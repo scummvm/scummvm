@@ -217,15 +217,15 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 
 ItemID MenuSystem::findItemAt(int x, int y) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
-		if ((*iter).enabled && (*iter).rect.contains(x, y - _top))
-			return (*iter).id;
+		if (iter->enabled && iter->rect.contains(x, y - _top))
+			return iter->id;
 	}
 	return kItemIdNone;
 }
 
 MenuSystem::Item *MenuSystem::getItem(ItemID id) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
-		if ((*iter).id == id)
+		if (iter->id == id)
 			return &(*iter);
 	}
 	return NULL;
@@ -353,8 +353,8 @@ void MenuSystem::initMenu(MenuID menuID) {
 	}
 
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); ++iter) {
-		if ((*iter).enabled)
-			drawItem((*iter).id, false);
+		if (iter->enabled)
+			drawItem(iter->id, false);
 	}
 
 	// Check if the mouse is already over an item

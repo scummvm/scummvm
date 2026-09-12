@@ -174,9 +174,9 @@ bool kernel_load_room(int minPalEntry, int maxPalEntry, SceneDef *rdef, GrBuff *
 	}
 
 	if (*scr_orig_data) {
-		Buffer *scr_orig_data_buffer = (**scr_orig_data).get_buffer();
+		Buffer *scr_orig_data_buffer = (*scr_orig_data)->get_buffer();
 		RestoreEdgeList(scr_orig_data_buffer);
-		(**scr_orig_data).release();
+		(*scr_orig_data)->release();
 	} else
 		RestoreEdgeList(nullptr);
 
@@ -269,7 +269,7 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 
 	*loadBuffer = new GrBuff(file_x, file_y);
 
-	Buffer *theBuff = (**loadBuffer).get_buffer();
+	Buffer *theBuff = (*loadBuffer)->get_buffer();
 
 	for (int i = 0; i < num_y_tiles; i++) {
 		for (int j = 0; j < num_x_tiles; j++) {
@@ -289,7 +289,7 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 		}
 	}
 
-	(**loadBuffer).release();
+	(*loadBuffer)->release();
 	return true;
 }
 
@@ -351,19 +351,19 @@ static void recreate_animation_draw_screen(GrBuff **loadBuf) {
 		_G(gameDrawBuff) = nullptr;
 		_G(game_buff_ptr) = nullptr;
 	}
-	_G(gameDrawBuff) = new GrBuff((**loadBuf).w, (**loadBuf).h);
+	_G(gameDrawBuff) = new GrBuff((*loadBuf)->w, (*loadBuf)->h);
 	gui_GrBuff_register(_G(kernel).letter_box_x, _G(kernel).letter_box_y, _G(gameDrawBuff), SF_BACKGRND | SF_GET_ALL | SF_BLOCK_NONE, nullptr);
 	gui_buffer_activate((Buffer *)_G(gameDrawBuff));
 	vmng_screen_to_back((void *)_G(gameDrawBuff));
 	_G(game_buff_ptr) = vmng_screen_find(_G(gameDrawBuff), nullptr);
 
-	Buffer *theBuff = (**loadBuf).get_buffer();
-	Buffer *game_buff = (*_G(gameDrawBuff)).get_buffer();
+	Buffer *theBuff = (*loadBuf)->get_buffer();
+	Buffer *game_buff = (_G(gameDrawBuff))->get_buffer();
 	gr_buffer_rect_copy_2(theBuff, game_buff, 0, 0, 0, 0,
-		imath_min((**loadBuf).w, game_buff->w), imath_min((**loadBuf).h, game_buff->h));
+		imath_min((*loadBuf)->w, game_buff->w), imath_min((*loadBuf)->h, game_buff->h));
 
-	(**loadBuf).release();
-	(*_G(gameDrawBuff)).release();
+	(*loadBuf)->release();
+	(_G(gameDrawBuff))->release();
 }
 
 static void troll_for_colors(RGB8 *newPal, uint8 minPalEntry, uint8 maxPalEntry) {

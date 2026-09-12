@@ -160,9 +160,9 @@ CMainWindow::CMainWindow() {
 	ScrollRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
 	                   SCROLL_BUTTON_X + SCROLL_BUTTON_DX - 1,
 	                   SCROLL_BUTTON_Y + SCROLL_BUTTON_DY - 1);
-	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScrollRect, this, IDC_SCROLL);
+	bSuccess = m_pScrollButton->Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScrollRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
-	bSuccess = (*m_pScrollButton).LoadBitmaps(pGamePalette, pScrollUp, pScrollDown, nullptr, nullptr);
+	bSuccess = m_pScrollButton->LoadBitmaps(pGamePalette, pScrollUp, pScrollDown, nullptr, nullptr);
 	pScrollUp = nullptr;
 	pScrollDown = nullptr;
 
@@ -209,9 +209,9 @@ CMainWindow::CMainWindow() {
 		colorBlock[i].nColorIndex = BUTTON_ENTRY + i;
 
 		pMyBrush = new CBrush();                        // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
+		pMyBrush->CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
 
-		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
+		pArtDC->FillRect(colorBlock[i].rLocation, pMyBrush);
 
 		MyFocusRect(pArtDC, colorBlock[i].rLocation, false);     // standard highlight on button
 
@@ -226,15 +226,15 @@ CMainWindow::CMainWindow() {
 
 	statRect.SetRect(BLOCK_OFFSET_X + 5, TOP_BORDER + 5, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 25);
 	if ((m_pScoreTxt = new CText()) != nullptr) {
-		(*m_pScoreTxt).SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
+		m_pScoreTxt->SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(BLOCK_OFFSET_X + 5, TOP_BORDER + 25, GAME_WIDTH - SIDE_BORDER, TOP_BORDER + 45);
 	if ((m_pSweepTxt = new CText()) != nullptr) {
-		(*m_pSweepTxt).SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
+		m_pSweepTxt->SetupText(pDC, pGamePalette, &statRect, JUSTIFY_LEFT);
 	}
 
-	(*pDC).SelectPalette(pOldPal, false);           // Select back the old palette
+	pDC->SelectPalette(pOldPal, false);           // Select back the old palette
 	ReleaseDC(pDC);
 
 	//srand((unsigned) time(nullptr));         // seed the random number generator
@@ -243,7 +243,7 @@ CMainWindow::CMainWindow() {
 	if (pGameInfo->bMusicEnabled) {
 		pGameSound = new CSound(this, GAME_THEME, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 		if (pGameSound != nullptr) {
-			(*pGameSound).midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
+			pGameSound->midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
 		} // end if pGameSound
 	}
 
@@ -301,8 +301,8 @@ void CMainWindow::OnPaint() {
 	char    msg[64];
 
 	pDC = GetDC();
-	pOldPal = (*pDC).SelectPalette(pGamePalette, false);
-	(*pDC).RealizePalette();
+	pOldPal = pDC->SelectPalette(pGamePalette, false);
+	pDC->RealizePalette();
 
 	InvalidateRect(nullptr, false);            // invalidate the entire window
 	BeginPaint(&lpPaint);
@@ -317,17 +317,17 @@ void CMainWindow::OnPaint() {
 	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pArtDC, 0, 0, SRCCOPY);
 
 	Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
-	(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+	m_pScoreTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 	if ((m_nSweeps < MAX_SWEEPS) && bPlaying)
 		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
 	else
 		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
-	(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+	m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 	EndPaint(&lpPaint);
 
-	(*pDC).SelectPalette(pOldPal, false);
+	pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 }
 
@@ -347,8 +347,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 	int     radius;
 	float   degrees, x, y, radians, rads;
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
-	(*pDC).RealizePalette();                                // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);     // Select in game palette
+	pDC->RealizePalette();                                // Use it
 
 	pBigBmp = new CBitmap();
 	pBigDC = new CDC();
@@ -387,21 +387,21 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		StartPt.y = Center.y + (int)(y * radius);
 
 		pMyPen = new CPen();                            // Construct new pen
-		(*pMyPen).CreatePen(PS_SOLID, 1, PALETTEINDEX((uint16)(i + START_ENTRY)));
-		pOldPen = (*pBigDC).SelectObject(pMyPen);
+		pMyPen->CreatePen(PS_SOLID, 1, PALETTEINDEX((uint16)(i + START_ENTRY)));
+		pOldPen = pBigDC->SelectObject(pMyPen);
 		pMyBrush = new CBrush();                        // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(i + START_ENTRY)));
-		pOldBrush = (*pBigDC).SelectObject(pMyBrush);
+		pMyBrush->CreateSolidBrush(PALETTEINDEX((uint16)(i + START_ENTRY)));
+		pOldBrush = pBigDC->SelectObject(pMyBrush);
 
-		(*pBigDC).Pie(&rect, StartPt, EndPt);
+		pBigDC->Pie(&rect, StartPt, EndPt);
 
-		(*pBigDC).SelectObject(pOldPen);
+		pBigDC->SelectObject(pOldPen);
 
 		pMyPen->DeleteObject();
 		delete pMyPen;
 		pMyPen = nullptr;
 
-		(*pBigDC).SelectObject(pOldBrush);
+		pBigDC->SelectObject(pOldBrush);
 
 		pMyBrush->DeleteObject();
 		delete pMyBrush;
@@ -414,8 +414,8 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		EndPt.y = Center.y + (int)(y * radius);
 	}
 
-	(*pDC).BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pBigDC, ART_WIDTH / 2, ART_HEIGHT / 2, SRCCOPY);
-	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
+	pDC->BitBlt(SIDE_BORDER, TOP_BORDER, ART_WIDTH, ART_HEIGHT, pBigDC, ART_WIDTH / 2, ART_HEIGHT / 2, SRCCOPY);
+	pDC->SelectPalette(pPalOld, false);           // Select back the old palette
 
 	if (pBigBmpOld != nullptr)                         // Get rid of Big stuff
 		pBigDC->SelectObject(pBigBmpOld);
@@ -459,11 +459,11 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			CSound::waitWaveSounds();
 
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 
 			RulesDlg.DoModal();
 			m_bIgnoreScrollClick = false;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 
 			if (bPlaying) SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), nullptr);
 			SetBeamEntries(pDC);
@@ -471,12 +471,12 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_SCROLL:
 			if (m_bIgnoreScrollClick) {
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 				break;
 			}
 
 			m_bIgnoreScrollClick = true;
-			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
+			m_pScrollButton->SendMessage(BM_SETSTATE, true, 0L);
 			SendDlgItemMessage(IDC_SCROLL, BM_SETSTATE, true, 0L);
 
 			switch (COptionsWind.DoModal()) {
@@ -487,17 +487,17 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				NewGame();
 				char        msg[64];
 				Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
-				(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+				m_pScoreTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
-				(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+				m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 				break;
 
 			case IDC_OPTIONS_RETURN:
-				(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
+				m_pScrollButton->SendMessage(BM_SETSTATE, false, 0L);
 				m_bIgnoreScrollClick = false;
 				if (bPlaying)
 					SetTimer(BEACON_TIMER, SPEED_BASE - (m_nSpeed * SPEED_STEP), nullptr);
@@ -524,7 +524,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				}
 				if (pGameSound != nullptr) {
 					if (!pGameSound->playing())
-						(*pGameSound).midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
+						pGameSound->midiLoopPlaySegment(1300, 36500, 0, FMT_MILLISEC);
 				} // end if pGameSound
 			} // end else..musicenabled check
 
@@ -533,7 +533,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	} // end if
 
 	ReleaseDC(pDC);
-	(*this).SetFocus();                     // Reset focus back to the main window
+	(this)->SetFocus();                     // Reset focus back to the main window
 	return true;
 }
 
@@ -582,11 +582,11 @@ void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		NewGame();                          // Activate New Game
 		char        msg[64];
 		Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
-		(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+		m_pScoreTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 		if (m_nSweepCount < 0)  m_nSweepCount = 0;                          // Make sure it doesn't go neg
 		Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
-		(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+		m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 	}
 
 	ReleaseDC(pDC);
@@ -654,7 +654,7 @@ void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
 			else
 				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);                         // Update text on screen
-			(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+			m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 		}
 	}
 
@@ -789,14 +789,14 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount - 1);                     // Update text on screen
 			else
 				Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);                         // Update text on screen
-			(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+			m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 			m_Score = ((float) m_nRemoved / (float) m_nTotalSquares) * 100;         // Score is the percentage
 			if ((m_Score > 99.00) && (m_nRemoved < m_nTotalSquares))
 				Common::sprintf_s(msg, "Score: 99%%");
 			else
 				Common::sprintf_s(msg, "Score: %.0f %%", m_Score);                           // Update score on screen
-			(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+			m_pScoreTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 			if (m_bAutomatic) {                                                      // Game plays by itself
 				if (++nNextIndex >= (BUTTON_ENTRY + NUM_BUTTONS))                    // Step through colors
@@ -820,10 +820,10 @@ void CMainWindow::OnTimer(uintptr nIDEvent) {
 					NewGame();
 
 					Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
-					(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+					m_pScoreTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 
 					Common::sprintf_s(msg, "Sweeps: %d", m_nSweepCount);
-					(*m_pSweepTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
+					m_pSweepTxt->DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);
 				} else {
 					if (pGameInfo->bSoundEffectsEnabled)
 						sndPlaySound(WIN_SOUND, SND_ASYNC);              // Make a "you won" noise
@@ -891,28 +891,28 @@ void CMainWindow::MoveBeam() {
 	PALETTEENTRY    tempent[2];
 
 	pDC = GetDC();
-	pOldPal = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
+	pOldPal = pDC->SelectPalette(pGamePalette, false);     // Select in game palette
 
 	tempent[1].peRed = 255;                                 // Make entry [1] white
 	tempent[1].peGreen = 255;
 	tempent[1].peBlue = 254;
 	tempent[1].peFlags = PC_RESERVED;                       // Assign it the "changeable" flag
 
-	(*pGamePalette).GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)&tempent[0]);    // Entry [0] is the chosen
+	pGamePalette->GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)&tempent[0]);    // Entry [0] is the chosen
 	tempent[0].peFlags = PC_RESERVED;                                                   //...color & changeable
 
 	if (nSlice == START_ENTRY) {
-		(*pGamePalette).AnimatePalette(nSlice, 1, (LPPALETTEENTRY)&tempent[1]);
-		(*pGamePalette).AnimatePalette(NUM_BEAMS + START_ENTRY - 1, 1,
+		pGamePalette->AnimatePalette(nSlice, 1, (LPPALETTEENTRY)&tempent[1]);
+		pGamePalette->AnimatePalette(NUM_BEAMS + START_ENTRY - 1, 1,
 		                               (LPPALETTEENTRY)&tempent[0]);
 	} else
-		(*pGamePalette).AnimatePalette(nSlice - 1, 2, (LPPALETTEENTRY)tempent);
+		pGamePalette->AnimatePalette(nSlice - 1, 2, (LPPALETTEENTRY)tempent);
 
 	if (++nSlice >= (NUM_BEAMS + START_ENTRY)) {
 		nSlice = START_ENTRY;
 	}
 
-	(*pDC).SelectPalette(pOldPal, false);           // Select back the old palette
+	pDC->SelectPalette(pOldPal, false);           // Select back the old palette
 	ReleaseDC(pDC);
 
 } // end MoveBeam
@@ -1030,13 +1030,13 @@ bool CMainWindow::CompareColors(CDC *pDC, CPoint point) {
 	PALETTEENTRY    tempent[1];
 	unsigned int        index;
 
-	test = (*pDC).GetPixel(point);
+	test = pDC->GetPixel(point);
 
 	ar = GetRValue(test);
 	ag = GetGValue(test);
 	ab = GetBValue(test);
 
-	(*pGamePalette).GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)tempent);
+	pGamePalette->GetPaletteEntries(nCurrentIndex, 1, (LPPALETTEENTRY)tempent);
 
 	br = tempent[0].peRed;
 	bg = tempent[0].peGreen;
@@ -1055,7 +1055,7 @@ bool CMainWindow::CompareColors(CDC *pDC, CPoint point) {
 		return true;
 	}
 
-	index = (*pGamePalette).GetNearestPaletteIndex(test);        // get the nearest index of test color
+	index = pGamePalette->GetNearestPaletteIndex(test);        // get the nearest index of test color
 	if (((index < BUTTON_ENTRY) && (index >= START_ENTRY))       // if it's in the beam area
 	        && (index != nSlice))                               // and doesn't match the beam's index
 		return false;  //true );                                           //
@@ -1244,22 +1244,22 @@ bool CMainWindow::LoadArtWork(CDC *pDC) {
 	char bufName[MAX_FILE_LENGTH + 10];
 	Common::sprintf_s(bufName, "art\\%s", ArtName);
 
-	(*pSourceDoc).OpenDocument(bufName);
+	pSourceDoc->OpenDocument(bufName);
 
 	ASSERT(pTempPalette == nullptr);
-	pTempPalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
+	pTempPalette = pSourceDoc->DetachPalette();       // Acquire the shared palette for our game from the art
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);                            // Select Game Palette
-	(*pDC).RealizePalette();                                                        // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);                            // Select Game Palette
+	pDC->RealizePalette();                                                        // Use it
 
 	// Transfer the button colors to Game Palette
 	LPPALETTEENTRY  ButtonEntry[NUM_BUTTONS];
 
-	(*pTempPalette).GetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
-	(*pGamePalette).SetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
-	(*pDC).RealizePalette();
+	pTempPalette->GetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
+	pGamePalette->SetPaletteEntries(BUTTON_ENTRY, NUM_BUTTONS, (LPPALETTEENTRY)ButtonEntry);
+	pDC->RealizePalette();
 
-	hDIB = (*pSourceDoc).GetHDIB();
+	hDIB = pSourceDoc->GetHDIB();
 
 	if (hDIB) {
 		rcDest.SetRect(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
@@ -1290,7 +1290,7 @@ bool CMainWindow::LoadArtWork(CDC *pDC) {
 			rcDIB.bottom = ART_HEIGHT;  //cyDIB;
 		}
 
-		PaintDIB((*pDC).m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
+		PaintDIB(pDC->m_hDC, &rcDest, hDIB, &rcDIB, pGamePalette);
 
 	}
 
@@ -1301,9 +1301,9 @@ bool CMainWindow::LoadArtWork(CDC *pDC) {
 	for (i = 0; i < NUM_BUTTONS; i++) {
 		CBrush  *pMyBrush = nullptr;
 		pMyBrush = new CBrush();                                // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
+		pMyBrush->CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
 
-		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
+		pArtDC->FillRect(colorBlock[i].rLocation, pMyBrush);
 
 		MyFocusRect(pArtDC, colorBlock[i].rLocation, false);     // standard highlight on button
 
@@ -1314,7 +1314,7 @@ bool CMainWindow::LoadArtWork(CDC *pDC) {
 
 	pBeaconBitmap = FetchResourceBitmap(pDC, nullptr, IDB_BEACON_BMP);          // Add the lighthouse
 
-	(*pDC).SelectPalette(pPalOld, false);
+	pDC->SelectPalette(pPalOld, false);
 
 	pTempPalette->DeleteObject();
 	delete pTempPalette;
@@ -1440,8 +1440,8 @@ void MyFocusRect(CDC *pDC, CRect rect, bool nPressed) {
 	pDarkPen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER,
 	                    PALETTEINDEX((uint16)(DARK_TRIM)));        // Create a new pen
 
-	pPalOld = (*pDC).SelectPalette(pGamePalette, false);     // Select in game palette
-	(*pDC).RealizePalette();                                // Use it
+	pPalOld = pDC->SelectPalette(pGamePalette, false);     // Select in game palette
+	pDC->RealizePalette();                                // Use it
 	pOldBrush = pDC->SelectObject(pMyBrush);     // Select the new brush & save old
 
 	if (nPressed)
@@ -1464,7 +1464,7 @@ void MyFocusRect(CDC *pDC, CRect rect, bool nPressed) {
 	pDC->SelectObject(pOldPen);                  // Select the old pen
 	pDC->SelectObject(pOldBrush);                // Select the old brush
 
-	(*pDC).SelectPalette(pPalOld, false);           // Select back the old palette
+	pDC->SelectPalette(pPalOld, false);           // Select back the old palette
 
 	pMyBrush->DeleteObject();
 	delete pMyBrush;
@@ -1526,10 +1526,10 @@ void CMainWindow::NewGame() {
 	pBrushNew = new CBrush();                                       // Construct a new brush object
 	if (pBrushNew != nullptr) {                                         // If the constructor was successful:
 		pBrushNew->CreateSolidBrush(PALETTERGB(0, 0, 0));         // Create my backdrop color brush
-		pBrushOld = (*pDC).SelectObject(pBrushNew);                  // Select into the DC my new brush
-		(*pDC).Rectangle(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
-		(*pDC).SelectObject(pBrushOld);                          // Select in the old brush
-		(*pDC).SelectPalette(pOldPal, false);                        // Select in the old palette
+		pBrushOld = pDC->SelectObject(pBrushNew);                  // Select into the DC my new brush
+		pDC->Rectangle(SIDE_BORDER, TOP_BORDER, ART_WIDTH + SIDE_BORDER, ART_HEIGHT + TOP_BORDER);
+		pDC->SelectObject(pBrushOld);                          // Select in the old brush
+		pDC->SelectPalette(pOldPal, false);                        // Select in the old palette
 		delete pBrushNew;                                           // Delete the new brush
 	}
 
@@ -1584,7 +1584,7 @@ void CMainWindow::NewGame() {
 		MyFocusRect(pDC, colorBlock[nNextIndex - BUTTON_ENTRY].rLocation, true);     // draw hightlight on nNextIndex
 	}
 
-	(*pDC).SelectPalette(pOldPal, false);
+	pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 
 	bNewGame = true;
@@ -1606,7 +1606,7 @@ void CMainWindow::SetBeamEntries(CDC *pDC) {
 		entry[i].peFlags = PC_RESERVED;
 	}
 
-	(*pGamePalette).SetPaletteEntries(START_ENTRY, NUM_BEAMS, (LPPALETTEENTRY)entry);
+	pGamePalette->SetPaletteEntries(START_ENTRY, NUM_BEAMS, (LPPALETTEENTRY)entry);
 	pDC->RealizePalette();                              //...and realize it
 
 } // End SetBeamEntries
@@ -1622,7 +1622,7 @@ void CMainWindow::OnClose() {
 	pDC = GetDC();
 	myRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 	myBrush.CreateStockObject(BLACK_BRUSH);
-	(*pDC).FillRect(&myRect, &myBrush);
+	pDC->FillRect(&myRect, &myBrush);
 	ReleaseDC(pDC);
 
 	sndPlaySound(nullptr, SND_ASYNC);                                   // kill any wav that's playing

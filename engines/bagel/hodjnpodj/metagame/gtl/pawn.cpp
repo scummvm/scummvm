@@ -140,33 +140,33 @@ LRESULT PawnHookProc(int code, WPARAM wParam, LPARAM lParam) {
 				nFirstSlot -= (nItemsPerRow * nItemsPerColumn);
 				if (nFirstSlot < 0)
 					nFirstSlot = 0;
-				pDC = (*pPawnDialog).GetDC();
+				pDC = pPawnDialog->GetDC();
 			}
 			break;
 		case VK_DOWN:                               // go to next page of text
 		case VK_NUMPAD2:
 		case VK_NEXT:
-			if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount()) {
+			if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pInventory->ItemCount()) {
 				nFirstSlot += (nItemsPerRow * nItemsPerColumn);
-				pDC = (*pPawnDialog).GetDC();
+				pDC = pPawnDialog->GetDC();
 			}
 			break;
 		case VK_HOME:                               // go to first page of text
 			if (nFirstSlot != 0) {
 				nFirstSlot = 0;
-				pDC = (*pPawnDialog).GetDC();
+				pDC = pPawnDialog->GetDC();
 			}
 			break;
 		case VK_END:                                // go to last page of text
-			nFirstSlot = (*pInventory).ItemCount() - (nItemsPerRow * nItemsPerColumn);
+			nFirstSlot = pInventory->ItemCount() - (nItemsPerRow * nItemsPerColumn);
 			if (nFirstSlot < 0)
 				nFirstSlot = 0;
-			pDC = (*pPawnDialog).GetDC();
+			pDC = pPawnDialog->GetDC();
 		}
 
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CPawnShop::UpdatePage(pDC);
-		(*pPawnDialog).ReleaseDC(pDC);
+		pPawnDialog->ReleaseDC(pDC);
 		return true;
 	}
 
@@ -239,11 +239,11 @@ void CPawnShop::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {
-		(*pWorkDC).SelectObject(pWorkOld);
+		pWorkDC->SelectObject(pWorkOld);
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		pWorkDC->SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -263,9 +263,9 @@ void CPawnShop::OnDestroy() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pBackgroundBitmap;
 		pBackgroundBitmap = nullptr;
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
+		bUpdateNeeded = pParentWnd->GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			(*pParentWnd).ValidateRect(nullptr);
+			pParentWnd->ValidateRect(nullptr);
 	}
 
 	if (pItemText != nullptr) {
@@ -298,7 +298,7 @@ bool CPawnShop::OnInitDialog() {
 		m_pParentWnd = ((CWnd *) this)->GetParent();            // ... as passed to us or inquired about
 	assert(m_pParentWnd);
 
-	(*m_pParentWnd).GetWindowRect(&myRect);
+	m_pParentWnd->GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - PAWN_DX) >> 1);
 	y = myRect.top + (((myRect.bottom - myRect.top) - PAWN_DY) >> 1);
 	PawnRect.SetRect(0, 0, PAWN_DX, PAWN_DY);
@@ -306,20 +306,20 @@ bool CPawnShop::OnInitDialog() {
 
 	pButton = GetDlgItem((int) GetDefID());                     // get the window for the okay button
 	ASSERT(pButton != nullptr);                                    // ... and verify we have it
-	(*pButton).GetWindowRect(&myRect);                          // get the button's position and size
+	pButton->GetWindowRect(&myRect);                          // get the button's position and size
 
 	dx = myRect.right - myRect.left;                            // calculate where to place the button
 	x = (PawnRect.right - dx) >> 1;                             // ... centered at the bottom edge
 	dy = myRect.bottom - myRect.top;
 	y = PawnRect.bottom - dy - BUTTON_DY;
 
-	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
+	pButton->MoveWindow(x, y, dx, dy);                        // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
 	pOKButton = new CColorButton();                               // build a color OKAY button to let us exit
 	ASSERT(pOKButton != nullptr);
-	(*pOKButton).SetPalette(pBackgroundPalette);                // set the palette to use
-	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
+	pOKButton->SetPalette(pBackgroundPalette);                // set the palette to use
+	bSuccess = pOKButton->SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 
 	ScrollTopRect.SetRect(0, 0, PAWN_DX, PAWN_CURL_DY); // setup rectangles for scrolling areas
@@ -330,7 +330,7 @@ bool CPawnShop::OnInitDialog() {
 	bFirstTime = true;
 	nFirstSlot = 0;
 
-	if ((*pInventory).FindItem(MG_OBJ_HODJ_NOTEBOOK) != nullptr)   // see who is playing
+	if (pInventory->FindItem(MG_OBJ_HODJ_NOTEBOOK) != nullptr)   // see who is playing
 		bPlayingHodj = true;
 	else
 		bPlayingHodj = false;
@@ -376,26 +376,26 @@ void CPawnShop::UpdatePawn(CDC *pDC) {
 
 	ShowWaitCursor();                                             // put up the hourglass cursor
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false);      // setup the proper palette
-	(*pDC).RealizePalette();
+	pPalOld = pDC->SelectPalette(pBackgroundPalette, false);      // setup the proper palette
+	pDC->RealizePalette();
 
 	if (pWorkDC == nullptr) {                                      // if we don't have a work area
 		RefreshBackground();                                    // ... then update the screen directly
 		PaintMaskedBitmap(pDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pDC);
 		if (pTitleText != nullptr)
-			(*pTitleText).DisplayString(pDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
+			pTitleText->DisplayString(pDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
 	} else {
 		if (pBackgroundBitmap != nullptr)                                                      // ... otherwise revise work area
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pWorkDC);                                 // ... then zap it to the screen
 		if (pTitleText != nullptr)
-			(*pTitleText).DisplayString(pWorkDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
-		(*pDC).BitBlt(0, 0, PAWN_DX, PAWN_DY, pWorkDC, 0, 0, SRCCOPY);
+			pTitleText->DisplayString(pWorkDC, "Pawn Shop", 32, TEXT_HEAVY, PAWN_TEXT_COLOR);
+		pDC->BitBlt(0, 0, PAWN_DX, PAWN_DY, pWorkDC, 0, 0, SRCCOPY);
 	}
 
-	(*pDC).SelectPalette(pPalOld, false);                       // reset the palette
+	pDC->SelectPalette(pPalOld, false);                       // reset the palette
 
 	DoArrowCursor();                                            // return to an arrow cursor
 }
@@ -405,16 +405,16 @@ void CPawnShop::UpdatePage(CDC *pDC) {
 	CPalette    *pPalOld;
 
 	if (pWorkDC == nullptr)                                        // update everything if no work area
-		(*pPawnDialog).InvalidateRect(nullptr, false);
+		pPawnDialog->InvalidateRect(nullptr, false);
 	else {                                                      // otherwise just update central area
 		ShowWaitCursor();                                         // put up the hourglass cursor
-		pPalOld = (*pDC).SelectPalette(pBackgroundPalette, false); // setup the proper palette
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(pBackgroundPalette, false); // setup the proper palette
+		pDC->RealizePalette();
 		if (pBackgroundBitmap != nullptr)
 			PaintBitmap(pWorkDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		PaintMaskedBitmap(pWorkDC, pBackgroundPalette, pPawnBitmap, 0, 0, PAWN_DX, PAWN_DY);
 		UpdateContent(pWorkDC);                                 // zap it to the screen
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 		    0,
 		    PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
 		    PAWN_DX,
@@ -423,7 +423,7 @@ void CPawnShop::UpdatePage(CDC *pDC) {
 		    0,
 		    PAWN_BORDER_DY + PAWN_TITLEZONE_DY,
 		    SRCCOPY);
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 		    PAWN_DX - TEXT_MORE_DX,
 		    PAWN_DY - PAWN_CURL_DY,
 		    TEXT_MORE_DX,
@@ -432,7 +432,7 @@ void CPawnShop::UpdatePage(CDC *pDC) {
 		    PAWN_DX - TEXT_MORE_DX,
 		    PAWN_DY - PAWN_CURL_DY,
 		    SRCCOPY);
-		(*pDC).SelectPalette(pPalOld, false);                   // reset the palette
+		pDC->SelectPalette(pPalOld, false);                   // reset the palette
 		DoArrowCursor();
 	}                                                           // return to an arrow cursor
 }
@@ -446,7 +446,7 @@ void CPawnShop::UpdateContent(CDC *pDC) {
 	CSize   textInfo;                                               // font info about the text to be displayed
 	TEXTMETRIC  fontMetrics;
 
-	if ((*pInventory).ItemCount() <= 0)
+	if (pInventory->ItemCount() <= 0)
 		return;
 
 	nPawn_DX = PAWN_DX - (PAWN_BORDER_DX << 1);             // calculate the horizontal space we have available
@@ -467,26 +467,26 @@ void CPawnShop::UpdateContent(CDC *pDC) {
 		nItemsPerColumn -= 1;
 	}
 
-	pItem = (*pInventory).FetchItem(nFirstSlot);                // get first item on this page
+	pItem = pInventory->FetchItem(nFirstSlot);                // get first item on this page
 	for (i = 0; (i < (nItemsPerRow * nItemsPerColumn)) && (pItem != nullptr); i++) {                           // will thumb through all of them
 		x = (i % nItemsPerRow);                                 // calculate its horizontal position
 		x *= (PAWN_BITMAP_DX + nItem_DDX);                      // ... allowing proper spacing between items
 		y = (i / nItemsPerRow);                                 // calculate its vertical position
 		y *= (PAWN_BITMAP_DY + nItem_DDY);                      // ... allowing proper spacing between items
 		UpdateItem(pDC, pItem, x + PAWN_BORDER_DX, y + PAWN_BORDER_DY + PAWN_TITLEZONE_DY);     // now show the item
-		pItem = (*pItem).GetNext();
+		pItem = pItem->GetNext();
 	}
 
 	if (pPawnBitmap != nullptr) {
-		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);                              // make the text overlay transparently
-		(*pDC).GetTextMetrics(&fontMetrics);                        // show whether there are more notes
+		pFontOld = pDC->SelectObject(pFont);                  // select it into our context
+		pDC->SetBkMode(TRANSPARENT);                              // make the text overlay transparently
+		pDC->GetTextMetrics(&fontMetrics);                        // show whether there are more notes
 		x = PAWN_DX - TEXT_MORE_DX;                             // ... that can be scrolled through
 		y = PAWN_DY -
 		    PAWN_CURL_DY +
 		    ((PAWN_CURL_DY - fontMetrics.tmHeight) >> 1) -
 		    TEXT_MORE_DY;
-		textInfo = (*pDC).GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+		textInfo = pDC->GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		dx = textInfo.cx;
 		dy = fontMetrics.tmHeight;
 
@@ -494,10 +494,10 @@ void CPawnShop::UpdateContent(CDC *pDC) {
 			myRect.SetRect(x, y, x + dx, y + dy);
 			BltBitmap(pDC, pBackgroundPalette, pPawnBitmap, &myRect, &myRect, SRCCOPY);
 		} else {
-			(*pDC).SetTextColor(PAWN_MORE_COLOR);
-			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+			pDC->SetTextColor(PAWN_MORE_COLOR);
+			pDC->TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		(*pDC).SelectObject(pFontOld);                            // map out the font
+		pDC->SelectObject(pFontOld);                            // map out the font
 	}
 }
 
@@ -506,20 +506,20 @@ void CPawnShop::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 	CFont   *pFontOld = nullptr;               // font that was mapped to the context
 	char    chBuffer[32];
 
-	PaintMaskedDIB(pDC, pBackgroundPalette, (*pItem).GetArtSpec(), nX, nY, PAWN_BITMAP_DX, PAWN_BITMAP_DY);
+	PaintMaskedDIB(pDC, pBackgroundPalette, pItem->GetArtSpec(), nX, nY, PAWN_BITMAP_DX, PAWN_BITMAP_DY);
 
-	if (((*pItem).m_nQuantity == 0) ||
-	        ((*pItem).m_nQuantity > 1)) {
-		Common::sprintf_s(chBuffer, "%ld", (*pItem).m_nQuantity);
-		pFontOld = (*pDC).SelectObject(pFont);                  // select it into our context
-		(*pDC).SetBkMode(TRANSPARENT);                          // make the text overlay transparently
-		(*pDC).SetTextColor(PAWN_BLURB_COLOR);                      // set the color of the text
-		(*pDC).TextOut(                             // zap the text to the work area
+	if ((pItem->m_nQuantity == 0) ||
+	        (pItem->m_nQuantity > 1)) {
+		Common::sprintf_s(chBuffer, "%ld", pItem->m_nQuantity);
+		pFontOld = pDC->SelectObject(pFont);                  // select it into our context
+		pDC->SetBkMode(TRANSPARENT);                          // make the text overlay transparently
+		pDC->SetTextColor(PAWN_BLURB_COLOR);                      // set the color of the text
+		pDC->TextOut(                             // zap the text to the work area
 		    nX,
 		    nY,
 		    (const char *) chBuffer,
 		    strlen(chBuffer));
-		(*pDC).SelectObject(pFontOld);                     // map out the font
+		pDC->SelectObject(pFontOld);                     // map out the font
 	}
 }
 
@@ -528,20 +528,20 @@ void CPawnShop::UpdateCrowns(CDC *pDC) {
 	CItem   *pItem;
 	char    chBuffer[128];
 
-	pItem = (*pInventory).FindItem(MG_OBJ_CROWN);
+	pItem = pInventory->FindItem(MG_OBJ_CROWN);
 	if ((pItem == nullptr) ||
-	        ((*pItem).GetQuantity() < 1)) {
+	        (pItem->GetQuantity() < 1)) {
 		if (bPlayingHodj)
 			Common::strcpy_s(chBuffer, "Hodj has no Crowns");
 		else
 			Common::strcpy_s(chBuffer, "Podj has no Crowns");
 	} else {
 		if (bPlayingHodj)
-			Common::sprintf_s(chBuffer, "Hodj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Hodj has %ld Crowns", pItem->GetQuantity());
 		else
-			Common::sprintf_s(chBuffer, "Podj has %ld Crowns", (*pItem).GetQuantity());
+			Common::sprintf_s(chBuffer, "Podj has %ld Crowns", pItem->GetQuantity());
 	}
-	(*pItemCost).DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
+	pItemCost->DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
 }
 
 
@@ -554,7 +554,7 @@ void CPawnShop::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pOKButton;
 		pOKButton = nullptr;
-		(*pPawnDialog).ValidateRect(nullptr);
+		pPawnDialog->ValidateRect(nullptr);
 		RefreshBackground();
 	}
 }
@@ -564,9 +564,9 @@ void CPawnShop::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
-		pDC = (*pPawnDialog).GetDC();                       // get a context for our window
+		pDC = pPawnDialog->GetDC();                       // get a context for our window
 		PaintBitmap(pDC, pBackgroundPalette, pBackgroundBitmap, 0, 0, PAWN_DX, PAWN_DY);
-		(*pPawnDialog).ReleaseDC(pDC);                      // release the context
+		pPawnDialog->ReleaseDC(pDC);                      // release the context
 	}
 }
 
@@ -593,7 +593,7 @@ int CPawnShop::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != nullptr);
-	bSuccess = (*pFont).CreateFont(-14, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	bSuccess = pFont->CreateFont(-14, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
@@ -618,19 +618,19 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	(*pDC).SelectPalette(pBackgroundPalette, false);
-	(*pDC).RealizePalette();
+	pDC->SelectPalette(pBackgroundPalette, false);
+	pDC->RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 450000)) {
 		pWork = new CBitmap();
-		if ((*pWork).CreateCompatibleBitmap(pDC, PAWN_DX, PAWN_DY)) {
+		if (pWork->CreateCompatibleBitmap(pDC, PAWN_DX, PAWN_DY)) {
 			pWorkDC = new CDC();
 			if ((pWorkDC != nullptr) &&
-			        (*pWorkDC).CreateCompatibleDC(pDC)) {
-				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(*pWorkDC).RealizePalette();
-				pWorkOld = (*pWorkDC).SelectObject(pWork);
+			        pWorkDC->CreateCompatibleDC(pDC)) {
+				pWorkPalOld = pWorkDC->SelectPalette(pBackgroundPalette, false);
+				pWorkDC->RealizePalette();
+				pWorkOld = pWorkDC->SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
 			}
@@ -643,7 +643,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			pWorkDC->SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -655,7 +655,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(*pDC).SelectPalette(pWorkPalOld, false);
+	pDC->SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(PAWN_TEXTZONE_DX,
 	               PAWN_BORDER_DY + PAWN_TITLEZONE_DDY,
@@ -694,30 +694,30 @@ void CPawnShop::OnMouseMove(unsigned int nFlags, CPoint point) {
 	pMyApp = AfxGetApp();
 
 	if (OkayRect.PtInRect(point))                   // use standard arrow in buttons
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 	else if (ScrollTopRect.PtInRect(point)) {           // set cursor to scolling up okay or invalid
 		if (nFirstSlot == 0)                        // ... depending on current slot for page
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWUP);
 	} else if (ScrollBotRect.PtInRect(point)) {         // set cursor to scrolling down okay or invalid
-		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) >= (*pInventory).ItemCount())
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+		if (nFirstSlot + (nItemsPerRow * nItemsPerColumn) >= pInventory->ItemCount())
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWDN);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWDN);
 	} else {                                        // see if cursor is on an inventory item
 		i = SelectedItem(point);                    // ... and if so, then show the text blurb
 		if ((i >= 0) &&                             // ... for it at the base of the scroll
-		        ((i + nFirstSlot) < (*pInventory).ItemCount())) {
-			pItem = (*pInventory).FetchItem(i + nFirstSlot);
+		        ((i + nFirstSlot) < pInventory->ItemCount())) {
+			pItem = pInventory->FetchItem(i + nFirstSlot);
 			if (pItem != nullptr) {
-				hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+				hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 				pDC = GetDC();
-				nPrice = (*pItem).GetValue();
+				nPrice = pItem->GetValue();
 				if (nPrice == 0)
 					Common::strcpy_s(chBuffer, "That can't be sold here");
 				else {
-					if ((*pItem).GetQuantity() == 1) {
+					if (pItem->GetQuantity() == 1) {
 						if (nPrice == 1)
 							Common::strcpy_s(chBuffer, "It can be sold for 1 Crown");
 						else
@@ -726,19 +726,19 @@ void CPawnShop::OnMouseMove(unsigned int nFlags, CPoint point) {
 						Common::sprintf_s(chBuffer, "One can be sold for 1 Crown");
 					else
 						Common::sprintf_s(chBuffer, "One can be sold for %d Crowns", nPrice);
-					hNewCursor = (*pMyApp).LoadCursor(IDC_PAWN_DOLLAR);
+					hNewCursor = pMyApp->LoadCursor(IDC_PAWN_DOLLAR);
 				}
-				(*pItemText).DisplayString(pDC, (*pItem).GetDescription(), FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
-				(*pItemCost).DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
+				pItemText->DisplayString(pDC, pItem->GetDescription(), FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
+				pItemCost->DisplayString(pDC, chBuffer, FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
 				ReleaseDC(pDC);
 			}
 		}
 	}
 
 	if (hNewCursor == nullptr) {                       // use default cursor if not specified
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 		pDC = GetDC();
-		(*pItemText).DisplayString(pDC, "", FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
+		pItemText->DisplayString(pDC, "", FONT_SIZE, TEXT_BOLD, PAWN_TEXT_COLOR);
 		UpdateCrowns(pDC);
 		ReleaseDC(pDC);
 	}
@@ -768,30 +768,30 @@ void CPawnShop::OnLButtonDown(unsigned int nFlags, CPoint point) {
 		bNeedsUpdate = true;
 	} else                                          // if click is in lower curl, then
 		if (ScrollBotRect.PtInRect(point) &&            // ... scroll down if not show last item
-		        (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < (*pInventory).ItemCount())) {
+		        (nFirstSlot + (nItemsPerRow * nItemsPerColumn) < pInventory->ItemCount())) {
 			nFirstSlot += (nItemsPerRow * nItemsPerColumn);
 			bNeedsUpdate = true;
 		} else {                                        // see if cursor is on an inventory item
 			i = SelectedItem(point);                    // ... and if so, then show then dispatch
 			if ((i >= 0) &&                             // ... on its action code
-			        ((i + nFirstSlot) < (*pInventory).ItemCount())) {
-				pItem = (*pInventory).FetchItem(i + nFirstSlot);
+			        ((i + nFirstSlot) < pInventory->ItemCount())) {
+				pItem = pInventory->FetchItem(i + nFirstSlot);
 				if ((pItem != nullptr) &&
-				        ((*pItem).GetValue() > 0)) {
+				        (pItem->GetValue() > 0)) {
 					pSound = new CSound(this, (bPlayingHodj ? "sound\\gsps7.wav" : "sound\\gsps8.wav"), SOUND_WAVE | SOUND_QUEUE | SOUND_AUTODELETE);
-					(*pSound).setDrivePath(lpMetaGameStruct->m_chCDPath);
-					(*pSound).play();
+					pSound->setDrivePath(lpMetaGameStruct->m_chCDPath);
+					pSound->play();
 					pDC = GetDC();
-					(*pInventory).AddItem(MG_OBJ_CROWN, (*pItem).GetValue());
-					if ((*pItem).GetQuantity() > 1) {
-						(*pInventory).DiscardItem(pItem, 1);
-						(*pGeneralStore).AddItem((*pItem).GetID(), 1);
+					pInventory->AddItem(MG_OBJ_CROWN, pItem->GetValue());
+					if (pItem->GetQuantity() > 1) {
+						pInventory->DiscardItem(pItem, 1);
+						pGeneralStore->AddItem(pItem->GetID(), 1);
 					} else {
-						(*pInventory).RemoveItem(pItem);
-						(*pGeneralStore).AddItem(pItem);
+						pInventory->RemoveItem(pItem);
+						pGeneralStore->AddItem(pItem);
 					}
-					(*pItemText).DisplayString(pDC, "Thank you!!!", FONT_SIZE, TEXT_BOLD, PAWN_BLURB_COLOR);
-					(*pItemCost).RestoreBackground(pDC);
+					pItemText->DisplayString(pDC, "Thank you!!!", FONT_SIZE, TEXT_BOLD, PAWN_BLURB_COLOR);
+					pItemCost->RestoreBackground(pDC);
 					ReleaseDC(pDC);
 					bNeedsUpdate = true;
 				}
@@ -834,7 +834,7 @@ int CPawnShop::SelectedItem(CPoint point) {
 
 
 bool CPawnShop::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
-	if ((*pWnd).m_hWnd == (*this).m_hWnd)
+	if (pWnd->m_hWnd == (this)->m_hWnd)
 		return true;
 	else
 		return false;
@@ -846,7 +846,7 @@ void CPawnShop::ShowWaitCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).BeginWaitCursor();
+	pMyApp->BeginWaitCursor();
 }
 
 
@@ -855,7 +855,7 @@ void CPawnShop::DoArrowCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).EndWaitCursor();
+	pMyApp->EndWaitCursor();
 }
 
 } // namespace Gtl

@@ -124,17 +124,17 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 25, LEFT_SIDE + 70, 40);
 	if ((m_pTimeLeft = new CText()) != nullptr) {
-		(*m_pTimeLeft).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pTimeLeft->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 45, LEFT_SIDE + 80, 70);
 	if ((m_pDiffTitleText = new CText()) != nullptr) {
-		(*m_pDiffTitleText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pDiffTitleText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	statRect.SetRect(LEFT_SIDE, 65, LEFT_SIDE + 170, 80);
 	if ((m_pDifficultyText = new CText()) != nullptr) {
-		(*m_pDifficultyText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pDifficultyText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollDifficulty.SetScrollRange(MIN_DIFFICULTY, MAX_DIFFICULTY, 0);       //...last element is Max - 1
@@ -142,7 +142,7 @@ bool COptnDlg::OnInitDialog() {
 
 	statRect.SetRect(LEFT_SIDE, 115, LEFT_SIDE + 100, 130);
 	if ((m_pTimerText = new CText()) != nullptr) {
-		(*m_pTimerText).SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
+		m_pTimerText->SetupText(pDC, pSubOptionsPalette, &statRect, JUSTIFY_LEFT);
 	}
 
 	m_ScrollTime.SetScrollRange(TIMER_MIN, TIMER_MAX - 1, 0);
@@ -155,13 +155,13 @@ bool COptnDlg::OnInitDialog() {
 	ReleaseDC(pDC);
 
 	if ((pOKButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pOKButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pOKButton).SetControl(IDOK, this);            // tie to the dialog control
+		pOKButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pOKButton->SetControl(IDOK, this);            // tie to the dialog control
 	}
 
 	if ((pCancelButton = new CColorButton) != nullptr) {                   // build a color QUIT button to let us exit
-		(*pCancelButton).SetPalette(pSubOptionsPalette);                        // set the palette to use
-		(*pCancelButton).SetControl(IDCANCEL, this);            // tie to the dialog control
+		pCancelButton->SetPalette(pSubOptionsPalette);                        // set the palette to use
+		pCancelButton->SetControl(IDCANCEL, this);            // tie to the dialog control
 	}
 
 	return true;  // return true  unless you set the focus to a control
@@ -211,7 +211,7 @@ void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pS
 	if (NewPos > pMax) NewPos = pMax;
 
 	if (NewPos != OldPos) {                              //To prevent "flicker"
-		(*pScrollBar).SetScrollPos(NewPos, true);        //...only update when
+		pScrollBar->SetScrollPos(NewPos, true);        //...only update when
 	}                                                   //...changed
 
 	UpdateScrollbars();
@@ -264,14 +264,14 @@ void COptnDlg::UpdateScrollbars() {
 
 			Common::sprintf_s(msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs);
 		}
-		(*m_pTimerText).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+		m_pTimerText->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 	}
 
 	OldValue = _difficulty;
 	_difficulty = m_ScrollDifficulty.GetScrollPos();
 	if (OldValue != _difficulty) {
 		Common::sprintf_s(msg, "%s", mDifficultyTable[_difficulty - 1].c_str());
-		(*m_pDifficultyText).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+		m_pDifficultyText->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 	}
 
 	ReleaseDC(pDC);
@@ -299,13 +299,13 @@ void COptnDlg::OnPaint() {
 	pDC = GetDC();
 
 	Common::sprintf_s(msg, "Time: %02d:%02d", _minutes, _seconds);
-	(*m_pTimeLeft).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+	m_pTimeLeft->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 
 	Common::sprintf_s(msg, "Level:");
-	(*m_pDiffTitleText).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+	m_pDiffTitleText->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 
 	Common::sprintf_s(msg, "%s", mDifficultyTable[_difficulty - 1].c_str());
-	(*m_pDifficultyText).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+	m_pDifficultyText->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 
 	if (_time == m_nTimeScale[TIMER_MAX - 1])
 		Common::sprintf_s(msg, "Time Limit: None");
@@ -315,7 +315,7 @@ void COptnDlg::OnPaint() {
 
 		Common::sprintf_s(msg, "Time Limit: %02d:%02d", m_nMins, m_nSecs);
 	}
-	(*m_pTimerText).DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
+	m_pTimerText->DisplayString(pDC, msg, 14, TEXT_BOLD, RGB(0, 0, 0));
 
 	ReleaseDC(pDC);
 

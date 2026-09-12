@@ -598,7 +598,7 @@ void ConfigManager::set(const String &key, const String &value) {
 	// Write the new key/value pair into the active domain, resp. into
 	// the application domain if no game domain is active.
 	if (_activeDomain)
-		(*_activeDomain).setVal(key, value);
+		_activeDomain->setVal(key, value);
 	else
 		_appDomain.setVal(key, value);
 }
@@ -634,7 +634,7 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 	if (domName != kSessionDomain && domName != kTransientDomain)
 		_sessionDomain.erase(key);
 
-	(*domain).setVal(key, value);
+	domain->setVal(key, value);
 
 		// TODO/FIXME: We used to erase the given key from the transient domain
 	// here. Do we still want to do that?

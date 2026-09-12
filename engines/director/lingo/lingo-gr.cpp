@@ -2442,283 +2442,283 @@ yydestruct (const char *yymsg,
     {
     case YYSYMBOL_tVARID: /* tVARID  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2447 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_tSTRING: /* tSTRING  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2453 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_tSYMBOL: /* tSYMBOL  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2459 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_tENDCLAUSE: /* tENDCLAUSE  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2465 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_script: /* script  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2471 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_scriptpart: /* scriptpart  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2477 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_macro: /* macro  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2483 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_factory: /* factory  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2489 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_method: /* method  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2495 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_methodlistline: /* methodlistline  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2501 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_handler: /* handler  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2507 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_CMDID: /* CMDID  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2513 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_ID: /* ID  */
 #line 218 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).s); }
+            { delete (yyvaluep->s); }
 #line 2519 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_stmt: /* stmt  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2525 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_stmt_insideif: /* stmt_insideif  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2531 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_stmtoneliner: /* stmtoneliner  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2537 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_proc: /* proc  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2543 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_asgn: /* asgn  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2549 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_definevars: /* definevars  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2555 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_ifstmt: /* ifstmt  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2561 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_ifelsestmt: /* ifelsestmt  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2567 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_loop: /* loop  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2573 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_tell: /* tell  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2579 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_when: /* when  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2585 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_stmtlistline: /* stmtlistline  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2591 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_stmtlistline_insideif: /* stmtlistline_insideif  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2597 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_simpleexpr_nounarymath: /* simpleexpr_nounarymath  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2603 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_var: /* var  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2609 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_varorchunk: /* varorchunk  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2615 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_varorthe: /* varorthe  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2621 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_chunk: /* chunk  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2627 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_object: /* object  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2633 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_the: /* the  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2639 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_theobj: /* theobj  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2645 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_menu: /* menu  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2651 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_thedatetime: /* thedatetime  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2657 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_thenumberof: /* thenumberof  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2663 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_writablethe: /* writablethe  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2669 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_writabletheobj: /* writabletheobj  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2675 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_list: /* list  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2681 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_proppair: /* proppair  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2687 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_unarymath: /* unarymath  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2693 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_simpleexpr: /* simpleexpr  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2699 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_expr: /* expr  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2705 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_expr_nounarymath: /* expr_nounarymath  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2711 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_expr_noeq: /* expr_noeq  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2717 "engines/director/lingo/lingo-gr.cpp"
         break;
 
     case YYSYMBOL_sprite: /* sprite  */
 #line 219 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).node); }
+            { delete (yyvaluep->node); }
 #line 2723 "engines/director/lingo/lingo-gr.cpp"
         break;
 

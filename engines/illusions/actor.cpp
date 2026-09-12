@@ -38,7 +38,7 @@ namespace Illusions {
 
 uint32 DefaultSequences::use(uint32 sequenceId) {
 	ItemsIterator it = Common::find_if(_items.begin(), _items.end(), DefaultSequenceEqual(sequenceId));
-	return it != _items.end() ? (*it)._newSequenceId : sequenceId;
+	return it != _items.end() ? it->_newSequenceId : sequenceId;
 }
 
 void DefaultSequences::set(uint32 sequenceId, uint32 newSequenceId) {
@@ -48,7 +48,7 @@ void DefaultSequences::set(uint32 sequenceId, uint32 newSequenceId) {
 	else if (sequenceId == newSequenceId)
 		_items.remove_at(it - _items.begin());
 	else
-		(*it)._newSequenceId = newSequenceId;
+		it->_newSequenceId = newSequenceId;
 }
 
 // Actor

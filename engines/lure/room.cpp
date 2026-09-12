@@ -177,7 +177,7 @@ void Room::checkRoomHotspots() {
 	// Loop for each range of hotspot Ids
 	for (int ctr = 0; ctr < 4; ++ctr) {
 		for (i = list.begin(); i != list.end(); ++i) {
-			entry = (*i).get();
+			entry = i->get();
 			if ((entry->hotspotId < rangeStart[ctr]) || (entry->hotspotId > rangeEnd[ctr]))
 				// Hotspot outside range, so skip it
 				continue;
