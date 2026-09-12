@@ -134,37 +134,38 @@ void Scene3030::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene3030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Ir a camino anterior (go to previous forest area): return to scene 3020.
+	case 301: // Ir a escalera (go downstairs): return to scene 3020.
 		runExitToScene3020();
 		return true;
-	case 302: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 302: // Mirar escalera (look at stairs): they lead to the lower floor.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 303: // Coger piedra (take stone): it is trapped in the gears.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 304: // Mirar piedra (look at stone): it prevents the windmill from working.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Mirar/usar maquinaria (look/use machine), state-aware.
+	case 305: // Mirar maquinaria (look at machinery): stopped/running description.
 		beginSecondarySpeechLine(4, _vm->gameState().windmillBladesMoving ? 1 : 0);
 		return true;
-	case 307: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 307: // Mirar ventana (look at window): it is covered in dust.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 308: // Coger/usar escoba (take/use broom): it is in too poor a condition to be useful.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 309: // Mirar escoba (look at broom): it is so old that even a witch would not use it.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 310: // Coger calendario (take calendar): Ron does not want an outdated calendar.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Mirar maquinaria/zona del claro (look at machine/clearing).
+	case 311: // Mirar calendario (look at calendar): it still shows February 1905.
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 312: // Usar objeto 0x1f con maquinaria: activates the windmill machinery.
+	case 312: // Usar babas de mosca con piedra (use fly saliva on stone): clears the jam and starts the mill.
+		// Consumes the saliva and returns the empty perfume bottle.
 		runMachineActivationSequence();
 		return true;
 	default:

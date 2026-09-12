@@ -119,46 +119,47 @@ bool Scene3020::dispatchCustomSceneAction(uint16 handlerId) {
 	case 144: // Mirar maza (look at mace): scene metadata reuses Ron's inventory look handler.
 		beginStaticSecondarySpeechLine(0x85, 0);
 		return true;
-	case 301: // Ir a exterior del molino (go to windmill exterior): return to scene 3010.
+	case 301: // Ir a camino (go to path): return to scene 3010.
 		_vm->gameState().mainFlowStateId = kScene3010EntryFromScene3020State;
 		return true;
-	case 302: // Mirar camino/bosque (look at path/forest).
+	case 302: // Mirar camino (look at path): it leads to Frankie's house.
 		beginSecondarySpeechLine(0, 0);
 		return true;
 	case 303: // Coger maza (take mace): pickup inventory item 0x31.
 		runPickupMace();
 		return true;
-	case 304: // Ir a claro/maquinaria (go to next forest area): transition to scene 3030.
+	case 304: // Ir a escalera (go upstairs): transition to scene 3030.
 		_vm->gameState().mainFlowStateId = kScene3030State;
 		return true;
-	case 305: // Mirar zona del camino (look at scene object).
+	case 305: // Mirar escalera (look at stairs): they lead to the upper floor.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 306: // Mirar zona del camino (look at scene object).
+	case 306: // Mirar piedra (look at millstone): it grinds the grain.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 307: // Mirar zona del camino (look at scene object).
+	case 307: // Coger saco (take sack): it is too heavy.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 308: // Mirar zona del camino (look at scene object).
+	case 308: // Mirar saco (look at sack): it is not full yet.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 309: // Mirar zona del camino (look at scene object).
+	case 309: // Coger/usar cubo (take/use bucket, hotspot 6): Ron distrusts metal buckets.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 310: // Mirar zona del camino (look at scene object).
+	case 310: // Mirar cubo (look at bucket, hotspot 6): its metal construction is a bad sign.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 311: // Mirar zona del camino (look at scene object).
+	case 311: // Coger bote (take container): Ron is not interested.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 312: // Mirar zona del camino (look at scene object).
+	case 312: // Mirar bote (look at container): it appears to contain grease for the gears.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 313: // Mirar zona del camino (look at scene object).
+	case 313: // Coger/usar cubo (take/use bucket, hotspot 8): Ron says he cannot.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 314: // Mirar zona del camino (look at scene object).
+	case 314: // Mirar cubo (look at bucket, hotspot 8): Ron refuses to approach metal buckets.
+		// Also Usar iman con cubo (use magnet with either bucket, hotspots 6 and 8).
 		beginSecondarySpeechLine(10, 0);
 		return true;
 	default:
