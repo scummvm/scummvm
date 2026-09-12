@@ -204,6 +204,7 @@ public:
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void syncPalette();
 	void clearPalettes();
+	CastMemberID resolvePaletteId(CastMemberID id) const;
 	PaletteV4 *getPalette(CastMemberID id);
 	bool hasPalette(CastMemberID id);
 	void loadDefaultPalettes();
