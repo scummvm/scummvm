@@ -1010,23 +1010,30 @@ void LB::b_deleteProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(list, ARRAY, PARRAY);
+	bool deleted = false;
 
 	switch (list.type) {
-	case ARRAY:
-		g_lingo->push(list);
-		g_lingo->push(prop);
-		b_deleteAt(nargs);
+	case ARRAY: {
+		int index = prop.asInt();
+		if (index > 0 && index <= (int)list.u.farr->arr.size()) {
+			list.u.farr->arr.remove_at(index - 1);
+			deleted = true;
+		}
 		break;
+	}
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
 			list.u.parr->arr.remove_at(index - 1);
+			deleted = true;
 		}
 		break;
 	}
 	default:
 		break;
 	}
+
+	g_lingo->_theResult = deleted ? 1 : 0;
 }
 
 
