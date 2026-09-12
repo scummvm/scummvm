@@ -157,8 +157,7 @@ bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
 		runExitToScene3080();
 		return true;
 	case 302: // Mirar camino (look at path).
-		// TODO: The original uses speech row 0 (the path), not row 1 (the girl).
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 		return true;
 	case 303: // Hablar con niña (talk to girl by the river).
 		runCabinConversation();
