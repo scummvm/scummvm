@@ -95,6 +95,7 @@ bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (chunkFileFormat != 0x00020000 && chunkFileFormat != 0x00010000) {
 		warning("Unsupported version %d.%d found in AVF", chunkFileFormat >> 16, chunkFileFormat & 0xffff);
+		delete stream;
 		return false;
 	}
 
