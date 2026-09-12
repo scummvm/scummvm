@@ -245,16 +245,16 @@ protected:
 			windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
 			break;
 		case Common::kRotation90:
-			windowX = targetX + ((y - (sourceHeight - 1)) * targetWidth + sourceHeight / 2) / sourceHeight;
+			windowX = targetX + (((sourceHeight - 1) - y) * targetWidth + sourceHeight / 2) / sourceHeight;
 			windowY = targetY + (x * targetHeight + sourceWidth / 2) / sourceWidth;
 			break;
 		case Common::kRotation180:
-			windowX = targetX + ((x - (sourceWidth - 1)) * targetWidth + sourceWidth / 2) / sourceWidth;
-			windowY = targetY + ((y - (sourceHeight - 1)) * targetHeight + sourceHeight / 2) / sourceHeight;
+			windowX = targetX + (((sourceWidth - 1) - x) * targetWidth + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + (((sourceHeight - 1) - y) * targetHeight + sourceHeight / 2) / sourceHeight;
 			break;
 		case Common::kRotation270:
 			windowX = targetX + (y * targetWidth + sourceHeight / 2) / sourceHeight;
-			windowY = targetY + ((x - (sourceWidth - 1)) * targetHeight + sourceWidth / 2) / sourceWidth;
+			windowY = targetY + (((sourceWidth - 1) - x) * targetHeight + sourceWidth / 2) / sourceWidth;
 			break;
 		}
 
