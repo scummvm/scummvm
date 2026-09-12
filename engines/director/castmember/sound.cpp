@@ -104,6 +104,7 @@ void SoundCastMember::load() {
 				if (!sndFormat)
 					sndFormat = new MoaSoundFormatDecoder();
 				sndFormat->loadSampleStream(*sndData);
+				_size = sndData->size();
 				delete sndData;
 			} else if (it.tag == MKTAG('e', 'd', 'i', 'M')) {
 				Common::SeekableReadStreamEndian *sndData = _cast->getResource(it.tag, it.index);
@@ -112,6 +113,7 @@ void SoundCastMember::load() {
 				if (!_audio) {
 					if (format.equalsIgnoreCase("kMoaCfFormat_AIFF")) {
 						_audio = new MoaStreamDecoder(format, sndData);
+						_size = sndData->size();
 						_loaded = true;
 						return;
 					} else {
