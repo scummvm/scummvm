@@ -105,6 +105,8 @@ protected:
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
 	virtual int getSelectionCarretOffset() const;
+	Common::Rect getCaretRect(bool useRelativeCoordinates = false);
+	void updateImeCompositionArea();
 	void drawCaret(bool erase, bool useRelativeCoordinates = false);
 	bool adjustOffset();
 	void makeCaretVisible();

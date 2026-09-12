@@ -155,6 +155,7 @@ Common::U32String EditTextWidget::getSpokenDescription() const {
 
 void EditTextWidget::receivedFocusWidget() {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	updateImeCompositionArea();
 	g_system->setFeatureState(OSystem::kFeatureImeComposition, true);
 }
 

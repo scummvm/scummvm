@@ -25,7 +25,7 @@
 
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
@@ -62,6 +62,29 @@ void SdlEventSource::acquireImeCompositionControl() {
 	_imeCompositionEnabled = false;
 	_textInputEnabled = textInputEnabledWithoutComposition;
 	applyNativeTextInputState();
+}
+
+void SdlEventSource::setImeCompositionArea(const Common::Rect &area) {
+	if (!_graphicsManager)
+		return;
+
+	const Common::Rect windowArea = _graphicsManager->convertOverlayToSdlWindow(area);
+	if (windowArea.isEmpty())
+		return;
+
+	SDL_Rect nativeArea;
+	nativeArea.x = windowArea.left;
+	nativeArea.y = windowArea.top;
+	nativeArea.w = windowArea.width();
+	nativeArea.h = windowArea.height();
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager->getWindow()->getSDLWindow();
+	if (!SDL_SetTextInputArea(window, &nativeArea, 0))
+		warning("Could not set SDL text input area: %s", SDL_GetError());
+#else
+	SDL_SetTextInputRect(&nativeArea);
+#endif
 }
 
 void SdlEventSource::setImeCompositionEnabled(bool enable) {
