@@ -41,6 +41,7 @@ const uint kScene1040Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene1040SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene1040FrameMillis = 75;
 const uint kScene1040GorillaDescriptorCount = 8;
+const byte kScene1040GorillaSceneItem = 9;
 const uint kScene1040DoorOverlayDescriptorCount = 4;
 const uint kScene1040BalloonOverlayDescriptorCount = 0x0d;
 const uint kScene1040CordOverlayDescriptorCount = 0x19;
@@ -264,6 +265,13 @@ bool Scene1040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkablePaletteMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled()) {
+		Common::String gorillaName = _hotspots.itemName(kScene1040GorillaSceneItem);
+		if (gorillaName.hasPrefix(" emorme gorila")) {
+			gorillaName.setChar('n', 2);
+			_hotspots.setItemName(kScene1040GorillaSceneItem, gorillaName);
+		}
+	}
 	setCordActionTarget();
 	return true;
 }
