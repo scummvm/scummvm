@@ -19,13 +19,7 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "engines/util.h"
-#include "graphics/paletteman.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
@@ -40,7 +34,6 @@ Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 _gameDescription(gameDesc) {
 	g_engine = this;
 }
-
 
 Ultima2Engine::~Ultima2Engine() {
 }
@@ -67,26 +60,6 @@ Common::Error Ultima2Engine::run() {
 	runGame(views);
 
 	return Common::kNoError;
-}
-
-Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
-	return Common::kNoError;
-}
-
-bool Ultima2Engine::savegamesExist() const {
-	Common::String slotName = getSaveStateName(1);
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
-	bool result = saveFile != nullptr;
-
-	delete saveFile;
-	return result;
 }
 
 } // namespace Ultima2

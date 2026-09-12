@@ -25,15 +25,9 @@ namespace Ultima {
 namespace Ultima2 {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
 }
 
 Console::~Console() {
-}
-
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
 }
 
 } // namespace Ultima2

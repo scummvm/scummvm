@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -29,8 +28,6 @@ namespace Ultima {
 namespace Ultima2 {
 
 class Console : public GUI::Debugger {
-private:
-	bool Cmd_test(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

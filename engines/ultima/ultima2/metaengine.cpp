@@ -40,15 +40,11 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
-static const KeybindingRecord MENU_KEYS[] = {
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
-};
-
-static const KeybindingRecord OVERWORLD_KEYS[] = {
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
-};
-
-static const KeybindingRecord DUNGEON_KEYS[] = {
+static const KeybindingRecord GAMEPLAY_KEYS[] = {
+	{ KEYBIND_UP, "UP", _s("Up"), "UP", "JOY_UP"},
+	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
+	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
+	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -60,9 +56,7 @@ struct KeysRecord {
 
 static const KeysRecord ALL_RECORDS[] = {
 	{ "Ultima2", _s("Basic keys"), MINIMAL_KEYS },
-	{ "menu", _s("Menu keys"), MENU_KEYS },
-	{ "overworld", _s("Overworld keys"), OVERWORLD_KEYS },
-	{ "dungeon", _s("Dungeon keys"), DUNGEON_KEYS },
+	{ "gameplay", _s("Gameplay keys"), GAMEPLAY_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
@@ -71,30 +65,9 @@ static const KeysRecord MINIMAL_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord MENU_RECORDS[] = {
-	{ "Ultima2", _s("Basic keys"), MINIMAL_KEYS },
-	{ "menu", _s("Menu keys"), MENU_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord OVERWORLD_RECORDS[] = {
-	{ "Ultima2", _s("Basic keys"), MINIMAL_KEYS },
-	{ "overworld", _s("Overworld keys"), OVERWORLD_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord DUNGEON_RECORDS[] = {
-	{ "Ultima2", _s("Basic keys"), MINIMAL_KEYS },
-	{ "dungeon", _s("Dungeon keys"), DUNGEON_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
 static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
-	MINIMAL_RECORDS,
-	MENU_RECORDS,
-	OVERWORLD_RECORDS,
-	DUNGEON_RECORDS,
+	MINIMAL_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
@@ -119,12 +92,6 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
-			if (r->_action == KEYBIND_ENTER)
-				act->addDefaultInputMapping("x");	// x also works to eXit
-			else if (r->_action == KEYBIND_SELECT)
-				act->addDefaultInputMapping("RETURN");
-			else if (r->_action == KEYBIND_QUIT)
-				act->addDefaultInputMapping("p");	// Map "Pause" to Quit
 
 			if (r->_action == KEYBIND_UP || r->_action == KEYBIND_DOWN ||
 				r->_action == KEYBIND_LEFT || r->_action == KEYBIND_RIGHT)

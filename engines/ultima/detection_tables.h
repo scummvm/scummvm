@@ -140,7 +140,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima2",
 			0,
-			AD_ENTRY1s("mapx00", "86cd98e2f576cfab697a4cfd72dfd83e", 4224),
+			AD_ENTRY1s("monsters", "29160ad200758650d8a4a6af2474d075", 2176),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,

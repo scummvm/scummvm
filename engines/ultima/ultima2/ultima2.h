@@ -25,21 +25,10 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
-#include "common/fs.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-#include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
-#include "graphics/palette.h"
-#include "graphics/screen.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
-#include "ultima/ultima2/data/game.h"
-#include "ultima/ultima2/data/map.h"
-#include "ultima/ultima2/data/player.h"
-#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -62,12 +51,6 @@ protected:
 	}
 
 public:
-	Data::Game _game;
-	Data::Map _map;
-	Data::Player _player;
-	Graphics::ManagedSurface _tiles[Data::TILE_COUNT];
-
-public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima2Engine() override;
 
@@ -80,37 +63,8 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
-			(f == kSupportsLoadingDuringRuntime) ||
-			(f == kSupportsSavingDuringRuntime) ||
 			(f == kSupportsReturnToLauncher);
 	};
-
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
-	}
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
-	}
-
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
-
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
-
-	/**
-	 * Returns true if any savegames exist
-	 */
-	bool savegamesExist() const;
 };
 
 extern Ultima2Engine *g_engine;

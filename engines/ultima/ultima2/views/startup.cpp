@@ -19,56 +19,21 @@
  *
  */
 
-#include "common/file.h"
 #include "ultima/ultima2/views/startup.h"
-#include "ultima/ultima2/gfx/pic_decoder.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-#define DELAY_SECONDS 3
-
-bool Startup::msgFocus(const FocusMessage &msg) {
-	_pageCtr = 0;
-	delaySeconds(DELAY_SECONDS);
-	return View::msgFocus(msg);
-}
-
-void Startup::timeout() {
-	if (++_pageCtr == 3) {
-		showTitle();
-	} else {
-		redraw();
-		delaySeconds(DELAY_SECONDS);
-	}
-}
+#define COLOR_FOREGROUND 15 // white
 
 void Startup::draw() {
-	Gfx::PicDecoder decoder;
-	Common::File f;
 	auto s = getSurface();
 	s.clear();
 
-	switch (_pageCtr) {
-	case 0:
-		s.writeString(Common::Point(16, 10), "ORIGIN");
-		s.writeString(Common::Point(12, 11), "PROUDLY PRESENTS");
-		break;
-	case 1:
-		s.writeString(Common::Point(16, 8), "PART ][");
-		s.writeString(Common::Point(9, 10), "OF THE #1 BEST SELLING");
-		s.writeString(Common::Point(7, 12), "FANTASY ROLE-PLAYING GAME");
-		s.writeString(Common::Point(12, 14), "BY LORD BRITISH");
-		break;
-	case 2:
-		if (!f.open("PICDRA") || !decoder.loadStream(f))
-			error("Could not load bitmap");
-		s.blitFrom(*decoder.getSurface());
-		break;
-	case 3:
-		showTitle();
-	}
+	s.setColor(COLOR_FOREGROUND);
+	s.writeString(Common::Point(16, 8), "Ultima II");
+	s.writeString(Common::Point(8, 11), "The Revenge of the Enchantress");
 }
 
 } // namespace Views
