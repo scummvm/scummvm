@@ -96,7 +96,8 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 
 		// Map cast font ID to window manager font ID
 		FontMapEntry *entry = new FontMapEntry;
-		if (platform == Common::kPlatformWindows && _fontXPlatformMap.contains(name)) {
+		entry->remapChars = platform != Common::kPlatformUnknown && platform != _vm->getPlatform();
+		if (platform != Common::kPlatformUnknown && platform != _vm->getPlatform() && _fontXPlatformMap.contains(name)) {
 			FontXPlatformInfo *xinfo = _fontXPlatformMap[name];
 			entry->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont, id);
 			entry->remapChars = xinfo->remapChars;
@@ -418,16 +419,17 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 			tok = readFXmpToken(stream);
 		}
 
-		// TODO: We should fill _fontXPlatformMap with mappings matching the current platform.
-		// We only have Mac fonts right now, though, so we'll always use the Win => Mac mappings.
 		// We only handle one fontmap per fromFont (happens in Clone Ranger)
-		if (fromPlatform == Common::kPlatformWindows) {
+		Common::Platform toPlatform = fromPlatform == Common::kPlatformMacintosh
+				? Common::kPlatformWindows : Common::kPlatformMacintosh;
+		if (toPlatform == _vm->getPlatform()) {
 			if (_fontXPlatformMap.contains(fromFont)) {
 				warning("Cast::readFxmpLine: Skip second map for font '%s'", fromFont.c_str());
 				delete info;
 			} else {
 				_fontXPlatformMap[fromFont] = info;
-				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win font '%s' to Mac font '%s'", fromFont.c_str(), info->toFont.c_str());
+				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping %s font '%s' to %s font '%s'",
+					getPlatformAbbrev(fromPlatform), fromFont.c_str(), getPlatformAbbrev(toPlatform), info->toFont.c_str());
 				debugC(4, kDebugLoading, "  Remap characters: %d", info->remapChars);
 				for (auto &it : info->sizeMap) {
 					debugC(4, kDebugLoading, "  Mapping size %d to %d", it._key, it._value);

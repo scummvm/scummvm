@@ -148,6 +148,7 @@ public:
 
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
+	Common::U32String decodeStringWithFont(const Common::String &str, uint16 fontId);
 
 	// Script contexts keep a back-pointer to their owning cast.
 	void registerScriptContext(ScriptContext *ctx) { _liveScriptContexts.setVal(ctx, true); }
