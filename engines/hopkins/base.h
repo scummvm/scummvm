@@ -92,6 +92,8 @@ private:
 	void updateEnhancementActionState(uint32 action, bool pressed);
 	void updateEnhancementInputArming(uint32 now);
 	void setEnhancementPanel(WBASEEnhancementPanel panel);
+	void openAutoplayMenu();
+	void closeNavigationMap();
 	void startSelectedAutoplay();
 	bool enhancementPanelVisible() const;
 	void pollInput();
@@ -126,6 +128,8 @@ private:
 	WBASEEnhancementPanel _wbaseEnhancementPanel;
 	uint32 _wbaseEnhancementHeldActions;
 	uint32 _wbaseAutoplayMenuOpenedAt;
+	int _wbaseForcedAutoplayPromptTicks;
+	bool _wbaseForcedAutoplayPromptIssued;
 	bool _wbaseEnhancementInputArmed;
 	bool _wbaseAutoplayMenuInputArmed;
 	bool _wbaseEnhancementsAutoplayMouseVisible;

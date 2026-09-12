@@ -50,8 +50,9 @@ public:
 
 	/** Return the forced destination room, or -1, after updating input. */
 	int update(const BaseEngine &engine, BaseInputState &input);
-	void renderMenu(const BaseData &data, int returnRoomId, byte *framebuffer) const;
-	void renderStatus(const BaseData &data, byte *framebuffer) const;
+	void renderMenu(const BaseData &data, int returnRoomId, byte *framebuffer,
+			bool forcedMode) const;
+	void renderStatus(const BaseData &data, byte *framebuffer, bool forcedMode) const;
 
 	static int destinationCount();
 	static int destinationRoomId(int index);

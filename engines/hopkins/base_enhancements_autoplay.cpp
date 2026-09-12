@@ -632,7 +632,7 @@ int WBASEEnhancementsAutoplay::update(const BaseEngine &engine, BaseInputState &
 }
 
 void WBASEEnhancementsAutoplay::renderMenu(const BaseData &data, int returnRoomId,
-		byte *framebuffer) const {
+		byte *framebuffer, bool forcedMode) const {
 	if (!framebuffer)
 		return;
 
@@ -672,12 +672,15 @@ void WBASEEnhancementsAutoplay::renderMenu(const BaseData &data, int returnRoomI
 			kAutoplayMenuBottom - 25, 104, text);
 	font->drawString(&surface, _("Enter/Space: start"), kAutoplayMenuLeft + 116,
 			kAutoplayMenuBottom - 25, 111, text);
-	font->drawString(&surface, _("Esc/A: cancel"), kAutoplayMenuLeft + 4,
+	const Common::U32String footer = forcedMode ?
+			(_active ? _("A: resume / M: map") : _("Select a destination")) :
+			_("Esc/A: cancel");
+	font->drawString(&surface, footer, kAutoplayMenuLeft + 4,
 			kAutoplayMenuBottom - 13, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
 			text, Graphics::kTextAlignCenter);
 }
 
-void WBASEEnhancementsAutoplay::renderStatus(const BaseData &data, byte *framebuffer) const {
+void WBASEEnhancementsAutoplay::renderStatus(const BaseData &data, byte *framebuffer, bool forcedMode) const {
 	if (!framebuffer || !_active)
 		return;
 
@@ -694,7 +697,7 @@ void WBASEEnhancementsAutoplay::renderStatus(const BaseData &data, byte *framebu
 	const byte text = nearestPaletteColor(palette, 255, 255, 255);
 
 	const int secondsRemaining = MAX(0, (kAutoplayMaximumTicks - _activeTicks + 23) / 24);
-	const Common::String status = Common::String::format("To %s - %ds",
+	const Common::String status = Common::String::format(forcedMode ? "LOCKED AUTO: %s - %ds" : "AUTO: %s - %ds",
 			kAutoplayDestinations[_destination].label, secondsRemaining);
 	const int statusWidth = MIN(font->getStringWidth(status) + 10, kBaseFrameWidth - 8);
 	const int statusLeft = (kBaseFrameWidth - statusWidth) / 2;
