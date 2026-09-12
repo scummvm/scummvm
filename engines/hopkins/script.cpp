@@ -2651,6 +2651,7 @@ int ScriptManager::checkOpcode(const byte *dataP) {
 	case MKTAG24('P', 'E', 'R'):
 	case MKTAG24('S', 'O', 'U'):
 	case MKTAG24('S', 'P', 'E'):
+	case MKTAG24('S', 'T', 'P'):
 	case MKTAG24('T', 'X', 'T'):
 	case MKTAG24('V', 'A', 'L'):
 	case MKTAG24('V', 'O', 'F'):
