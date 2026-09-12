@@ -47,6 +47,13 @@ namespace {
 static const char *const kBaseKeymapId = "hopkins-base";
 static const char *const kDefaultKeymapId = "hopkins-default";
 static const char *const kShortcutKeymapId = "game-shortcuts";
+static const uint32 kAutoplayMenuInputDelayMs = 200;
+
+static uint32 enhancementActionMask(uint32 action) {
+	if (action < kActionBaseForward || action > kActionWBASEEnhancementsAutoplay)
+		return 0;
+	return 1U << (action - kActionBaseForward);
+}
 
 // WBASE renders a 320x200 frame through the original Hopkins 640x480
 // presentation: 2x pixels with 30-pixel top and bottom borders. Backend mouse
@@ -89,7 +96,7 @@ public:
 	}
 
 	~SessionGuard() {
-		_game._input = BaseInputState();
+		_game.resetEnhancementSession();
 		if (_keymapsReady)
 			_game.switchKeymaps(false);
 		if (_audioReady)
@@ -131,7 +138,9 @@ BaseGame::BaseGame(HopkinsEngine *vm) :
 		_shortcutKeymapWasEnabled(false), _baseKeymapWasEnabled(false), _wbaseEnhancementsKeymapWasEnabled(false),
 		_inputSuspended(false), _mainMenuRequested(false),
 		_presentationRefreshRequested(false), _timingResetRequested(false),
-		_wbaseEnhancementsNavigationMapVisible(false), _wbaseEnhancementsAutoplayMouseVisible(false),
+		_wbaseEnhancementPanel(kWBASEEnhancementPanelNone), _wbaseEnhancementHeldActions(0),
+		_wbaseAutoplayMenuOpenedAt(0), _wbaseEnhancementInputArmed(false),
+		_wbaseAutoplayMenuInputArmed(false), _wbaseEnhancementsAutoplayMouseVisible(false),
 		_quitRequested(false) {
 	_framebuffer.resize(kBaseFrameWidth * kBaseFrameHeight);
 	Common::fill(_audioLoaded, _audioLoaded + ARRAYSIZE(_audioLoaded), false);
@@ -197,14 +206,11 @@ BaseRunResult BaseGame::run(int entryId) {
 	if (!session.initialize())
 		return BaseRunResult(kBaseRunFallback);
 
-	_input = BaseInputState();
+	resetEnhancementSession();
 	_inputSuspended = false;
 	_mainMenuRequested = false;
 	_presentationRefreshRequested = false;
 	_timingResetRequested = false;
-	_wbaseEnhancementsNavigationMapVisible = false;
-	_wbaseEnhancementsAutoplay.reset();
-	_wbaseEnhancementsAutoplayMouseVisible = false;
 	_quitRequested = false;
 	_result = -1;
 	renderFrame();
@@ -224,18 +230,18 @@ BaseRunResult BaseGame::run(int entryId) {
 		}
 		if (_result != -1 || _quitRequested || _vm->shouldQuit())
 			break;
-		if (_inputSuspended || _wbaseEnhancementsNavigationMapVisible || _wbaseEnhancementsAutoplay.menuVisible()) {
+		if (_inputSuspended || enhancementPanelVisible()) {
 			previousTime = now;
 			accumulator = 0;
-			if (_wbaseEnhancementsAutoplay.menuChoicesVisible(now)) {
+			if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay && _wbaseAutoplayMenuInputArmed) {
 				const Common::Point mouse = presentationToWBASEPoint(g_system->getEventManager()->getMousePos());
 				_wbaseEnhancementsAutoplay.updateMenuPointer(mouse.x, mouse.y);
 				setAutoplayMenuMouseVisible(true);
 			}
-			if ((_wbaseEnhancementsNavigationMapVisible || _wbaseEnhancementsAutoplay.menuVisible()) && !_inputSuspended)
+			if (enhancementPanelVisible() && !_inputSuspended)
 				renderFrame();
 			_vm->_soundMan->checkSounds();
-			g_system->delayMillis((_wbaseEnhancementsNavigationMapVisible || _wbaseEnhancementsAutoplay.menuVisible()) ? 50 : 10);
+			g_system->delayMillis(enhancementPanelVisible() ? 50 : 10);
 			continue;
 		}
 		const uint32 elapsed = MIN<uint32>(now - previousTime, 250);
@@ -412,6 +418,71 @@ void BaseGame::switchKeymaps(bool entering) {
 	}
 }
 
+void BaseGame::resetEnhancementSession() {
+	_input = BaseInputState();
+	_wbaseEnhancementPanel = kWBASEEnhancementPanelNone;
+	_wbaseEnhancementHeldActions = 0;
+	_wbaseAutoplayMenuOpenedAt = 0;
+	_wbaseEnhancementInputArmed = !_wbaseEnhancements.enabled();
+	_wbaseAutoplayMenuInputArmed = false;
+	_wbaseEnhancementsAutoplay.reset();
+	setAutoplayMenuMouseVisible(false);
+}
+
+void BaseGame::updateEnhancementActionState(uint32 action, bool pressed) {
+	const uint32 mask = enhancementActionMask(action);
+	if (!mask)
+		return;
+	if (pressed)
+		_wbaseEnhancementHeldActions |= mask;
+	else
+		_wbaseEnhancementHeldActions &= ~mask;
+}
+
+void BaseGame::updateEnhancementInputArming(uint32 now) {
+	if (_inputSuspended)
+		return;
+	const bool mouseReleased = !(g_system->getEventManager()->getButtonState() & Common::EventManager::LBUTTON);
+	if (!_wbaseEnhancementInputArmed && !_wbaseEnhancementHeldActions && mouseReleased) {
+		_wbaseEnhancementInputArmed = true;
+		debug(2, "Hopkins WBASE enhancement input armed after entry boundary");
+	}
+	if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay &&
+			!_wbaseAutoplayMenuInputArmed &&
+			now - _wbaseAutoplayMenuOpenedAt >= kAutoplayMenuInputDelayMs &&
+			!_wbaseEnhancementHeldActions && mouseReleased) {
+		_wbaseAutoplayMenuInputArmed = true;
+		debug(2, "Hopkins WBASE autoplay menu input armed");
+	}
+}
+
+void BaseGame::setEnhancementPanel(WBASEEnhancementPanel panel) {
+	_wbaseEnhancementPanel = panel;
+	_input = BaseInputState();
+	_timingResetRequested = true;
+	_wbaseEnhancementsAutoplay.clearMenuPointer();
+	_wbaseAutoplayMenuInputArmed = false;
+	setAutoplayMenuMouseVisible(false);
+	if (panel == kWBASEEnhancementPanelAutoplay)
+		_wbaseAutoplayMenuOpenedAt = g_system->getMillis();
+	else
+		_wbaseAutoplayMenuOpenedAt = 0;
+	debug(2, "Hopkins WBASE enhancement panel changed to %d", panel);
+	if (_engine && _renderer)
+		renderFrame();
+}
+
+void BaseGame::startSelectedAutoplay() {
+	if (_wbaseEnhancementsAutoplay.startSelected(*_engine))
+		setEnhancementPanel(kWBASEEnhancementPanelNone);
+	else
+		renderFrame();
+}
+
+bool BaseGame::enhancementPanelVisible() const {
+	return _wbaseEnhancementPanel != kWBASEEnhancementPanelNone;
+}
+
 void BaseGame::pollInput() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -429,14 +500,23 @@ void BaseGame::pollInput() {
 			_presentationRefreshRequested = true;
 			_timingResetRequested = true;
 			break;
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			handleAction(event.customType, true);
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
+			updateEnhancementActionState(event.customType, true);
+			if (_wbaseEnhancementInputArmed)
+				handleAction(event.customType, true);
+			else
+				debug(2, "Hopkins WBASE suppressed entry-boundary action %u", event.customType);
 			break;
+		}
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			handleAction(event.customType, false);
+			updateEnhancementActionState(event.customType, false);
+			if (_wbaseEnhancementInputArmed)
+				handleAction(event.customType, false);
 			break;
 		case Common::EVENT_FOCUS_LOST:
 			_input = BaseInputState();
+			_wbaseEnhancementHeldActions = 0;
+			_wbaseAutoplayMenuInputArmed = false;
 			_inputSuspended = true;
 			_timingResetRequested = true;
 			break;
@@ -446,35 +526,31 @@ void BaseGame::pollInput() {
 			break;
 		case Common::EVENT_INPUT_CHANGED:
 			_input = BaseInputState();
+			_wbaseEnhancementHeldActions = 0;
 			_timingResetRequested = true;
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (_wbaseEnhancementsAutoplay.menuChoicesVisible(g_system->getMillis()) &&
+			if (_wbaseEnhancementInputArmed && _wbaseAutoplayMenuInputArmed &&
+					_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay &&
 					(event.kbd.keycode == Common::KEYCODE_RETURN ||
 					 event.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
-				_wbaseEnhancementsAutoplay.startSelected(*_engine);
-				setAutoplayMenuMouseVisible(false);
-				_input = BaseInputState();
-				_timingResetRequested = true;
-				renderFrame();
+				startSelectedAutoplay();
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_wbaseEnhancementsAutoplay.menuChoicesVisible(g_system->getMillis())) {
+			if (_wbaseEnhancementInputArmed && _wbaseAutoplayMenuInputArmed &&
+					_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay) {
 				const Common::Point mouse = presentationToWBASEPoint(event.mouse);
 				if (!_wbaseEnhancementsAutoplay.selectMenuPointer(mouse.x, mouse.y))
 					break;
-				_wbaseEnhancementsAutoplay.startSelected(*_engine);
-				setAutoplayMenuMouseVisible(false);
-				_input = BaseInputState();
-				_timingResetRequested = true;
-				renderFrame();
+				startSelectedAutoplay();
 			}
 			break;
 		default:
 			break;
 		}
 	}
+	updateEnhancementInputArming(g_system->getMillis());
 
 	if (_mainMenuRequested && _result == -1 && !_quitRequested && !_vm->shouldQuit())
 		openMainMenu();
@@ -483,8 +559,8 @@ void BaseGame::pollInput() {
 }
 
 void BaseGame::handleAction(uint32 action, bool pressed) {
-	if (_wbaseEnhancementsAutoplay.menuVisible()) {
-		if (!pressed)
+	if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay) {
+		if (!pressed || !_wbaseAutoplayMenuInputArmed)
 			return;
 		switch (action) {
 		case kActionBaseForward:
@@ -495,20 +571,37 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 			break;
 		case kActionBaseFire:
 		case kActionBaseUse:
-			_wbaseEnhancementsAutoplay.startSelected(*_engine);
-			setAutoplayMenuMouseVisible(false);
-			break;
+			startSelectedAutoplay();
+			return;
 		case kActionBaseMenu:
 		case kActionWBASEEnhancementsAutoplay:
-			_wbaseEnhancementsAutoplay.closeMenu();
-			setAutoplayMenuMouseVisible(false);
-			break;
+			setEnhancementPanel(kWBASEEnhancementPanelNone);
+			return;
+		case kActionWBASEEnhancementsNavigationMap:
+			setEnhancementPanel(kWBASEEnhancementPanelNavigationMap);
+			return;
 		default:
 			return;
 		}
 		_input = BaseInputState();
 		_timingResetRequested = true;
 		renderFrame();
+		return;
+	}
+	if (_wbaseEnhancementPanel == kWBASEEnhancementPanelNavigationMap) {
+		if (!pressed)
+			return;
+		switch (action) {
+		case kActionBaseMenu:
+		case kActionWBASEEnhancementsNavigationMap:
+			setEnhancementPanel(kWBASEEnhancementPanelNone);
+			break;
+		case kActionWBASEEnhancementsAutoplay:
+			setEnhancementPanel(kWBASEEnhancementPanelAutoplay);
+			break;
+		default:
+			break;
+		}
 		return;
 	}
 
@@ -553,34 +646,16 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 			_input.toggleTextures = true;
 		break;
 	case kActionBaseMenu:
-		if (pressed) {
-			if (_wbaseEnhancementsNavigationMapVisible) {
-				_wbaseEnhancementsNavigationMapVisible = false;
-				_input = BaseInputState();
-				_timingResetRequested = true;
-				renderFrame();
-			} else {
-				_mainMenuRequested = true;
-			}
-		}
+		if (pressed)
+			_mainMenuRequested = true;
 		break;
 	case kActionWBASEEnhancementsNavigationMap:
-		if (pressed && _wbaseEnhancements.navigationMapEnabled()) {
-			_wbaseEnhancementsNavigationMapVisible = !_wbaseEnhancementsNavigationMapVisible;
-			_input = BaseInputState();
-			_timingResetRequested = true;
-			renderFrame();
-		}
+		if (pressed && _wbaseEnhancements.navigationMapEnabled())
+			setEnhancementPanel(kWBASEEnhancementPanelNavigationMap);
 		break;
 	case kActionWBASEEnhancementsAutoplay:
-		if (pressed && _wbaseEnhancements.enabled()) {
-			_wbaseEnhancementsNavigationMapVisible = false;
-			setAutoplayMenuMouseVisible(false);
-			_wbaseEnhancementsAutoplay.openMenu(g_system->getMillis());
-			_input = BaseInputState();
-			_timingResetRequested = true;
-			renderFrame();
-		}
+		if (pressed && _wbaseEnhancements.enabled())
+			setEnhancementPanel(kWBASEEnhancementPanelAutoplay);
 		break;
 	default:
 		break;
@@ -638,12 +713,14 @@ void BaseGame::processSoundEvents() {
 void BaseGame::renderFrame() {
 	if (!_renderer || !_engine || _framebuffer.empty())
 		return;
-	if (_wbaseEnhancementsNavigationMapVisible)
+	_renderer->render(*_engine, _framebuffer.begin());
+	if (_wbaseEnhancementPanel == kWBASEEnhancementPanelNavigationMap) {
 		_wbaseEnhancements.renderNavigationMap(_data, *_engine, _framebuffer.begin());
-	else
-		_renderer->render(*_engine, _framebuffer.begin());
-	_wbaseEnhancementsAutoplay.render(_data, _engine->entryReturnId(), _framebuffer.begin(), g_system->getMillis(),
-			!_wbaseEnhancementsNavigationMapVisible);
+	} else if (_wbaseEnhancementPanel == kWBASEEnhancementPanelAutoplay) {
+		_wbaseEnhancementsAutoplay.renderMenu(_data, _engine->entryReturnId(), _framebuffer.begin());
+	} else {
+		_wbaseEnhancementsAutoplay.renderStatus(_data, _framebuffer.begin());
+	}
 	Common::copy(_framebuffer.begin(), _framebuffer.end(), _vm->_graphicsMan->_frontBuffer);
 	_vm->_graphicsMan->addDirtyRect(0, 0, kBaseFrameWidth, kBaseFrameHeight);
 	_vm->_graphicsMan->updateScreen();

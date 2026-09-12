@@ -38,22 +38,20 @@ public:
 
 	void reset();
 	bool active() const { return _active; }
-	bool menuVisible() const { return _menuVisible; }
-	bool menuChoicesVisible(uint32 now) const;
 
-	void openMenu(uint32 now);
-	void closeMenu();
+	void clearMenuPointer();
 	void selectPrevious();
 	void selectNext();
 	void updateMenuPointer(int x, int y);
 	bool selectMenuPointer(int x, int y);
-	void startSelected(const BaseEngine &engine);
+	bool startSelected(const BaseEngine &engine);
+	bool startDestination(const BaseEngine &engine, int destination);
 	void cancel();
 
 	/** Return the forced destination room, or -1, after updating input. */
 	int update(const BaseEngine &engine, BaseInputState &input);
-	void render(const BaseData &data, int returnRoomId,
-			byte *framebuffer, uint32 now, bool showStatus) const;
+	void renderMenu(const BaseData &data, int returnRoomId, byte *framebuffer) const;
+	void renderStatus(const BaseData &data, byte *framebuffer) const;
 
 	static int destinationCount();
 	static int destinationRoomId(int index);
@@ -71,8 +69,6 @@ private:
 	void updateRecovery(const BaseEngine &engine, BaseInputState &input);
 
 	bool _active;
-	bool _menuVisible;
-	uint32 _menuOpenedAt;
 	int _selectedDestination;
 	int _hoveredDestination;
 	int _destination;

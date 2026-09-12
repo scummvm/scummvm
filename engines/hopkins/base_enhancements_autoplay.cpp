@@ -74,7 +74,6 @@ static const int kAutoplayMaximumTicks = 100 * 24;
 static const int kAutoplayRecoveryReverseTicks = 6;
 static const int kAutoplayRecoveryTurnTicks = 12;
 static const int kAutoplayRecoveryAdvanceTicks = 8;
-static const uint32 kAutoplayMenuDelayMs = 1000;
 static const int kAutoplayMenuLeft = 42;
 static const int kAutoplayMenuTop = 25;
 static const int kAutoplayMenuRight = 277;
@@ -232,8 +231,6 @@ WBASEEnhancementsAutoplay::WBASEEnhancementsAutoplay() {
 
 void WBASEEnhancementsAutoplay::reset() {
 	_active = false;
-	_menuVisible = false;
-	_menuOpenedAt = 0;
 	_selectedDestination = 0;
 	_hoveredDestination = -1;
 	_destination = -1;
@@ -253,18 +250,7 @@ void WBASEEnhancementsAutoplay::reset() {
 	_recoveryTurnRight = true;
 }
 
-bool WBASEEnhancementsAutoplay::menuChoicesVisible(uint32 now) const {
-	return _menuVisible && now - _menuOpenedAt >= kAutoplayMenuDelayMs;
-}
-
-void WBASEEnhancementsAutoplay::openMenu(uint32 now) {
-	_menuVisible = true;
-	_menuOpenedAt = now;
-	_hoveredDestination = -1;
-}
-
-void WBASEEnhancementsAutoplay::closeMenu() {
-	_menuVisible = false;
+void WBASEEnhancementsAutoplay::clearMenuPointer() {
 	_hoveredDestination = -1;
 }
 
@@ -295,10 +281,18 @@ bool WBASEEnhancementsAutoplay::selectMenuPointer(int x, int y) {
 	return _hoveredDestination >= 0;
 }
 
-void WBASEEnhancementsAutoplay::startSelected(const BaseEngine &engine) {
+bool WBASEEnhancementsAutoplay::startSelected(const BaseEngine &engine) {
+	return startDestination(engine, _selectedDestination);
+}
+
+bool WBASEEnhancementsAutoplay::startDestination(const BaseEngine &engine, int destination) {
+	if (destination < 0 || destination >= kAutoplayDestinationCount) {
+		cancel();
+		return false;
+	}
+	_selectedDestination = destination;
 	_destination = _selectedDestination;
 	_active = true;
-	_menuVisible = false;
 	_lastPlayerX = engine.playerX();
 	_lastPlayerY = engine.playerY();
 	_stuckTicks = 0;
@@ -314,15 +308,16 @@ void WBASEEnhancementsAutoplay::startSelected(const BaseEngine &engine) {
 		warning("Hopkins WBASE enhancement autoplay: no route to room %d",
 				kAutoplayDestinations[_destination].roomId);
 		cancel();
+		return false;
 	} else {
 		debug(1, "Hopkins WBASE enhancement autoplay: room %d, route %u cells",
 				kAutoplayDestinations[_destination].roomId, _route.size());
 	}
+	return true;
 }
 
 void WBASEEnhancementsAutoplay::cancel() {
 	_active = false;
-	_menuVisible = false;
 	_hoveredDestination = -1;
 	_destination = -1;
 	_route.clear();
@@ -509,7 +504,7 @@ int WBASEEnhancementsAutoplay::update(const BaseEngine &engine, BaseInputState &
 	input = BaseInputState();
 	_routeBlocker = 0;
 	_movementBlocker = 0;
-	if (!_active || _menuVisible || _destination < 0 || _destination >= kAutoplayDestinationCount)
+	if (!_active || _destination < 0 || _destination >= kAutoplayDestinationCount)
 		return -1;
 
 	// Complete after 100 active seconds so forced autoplay cannot remain stuck.
@@ -636,9 +631,9 @@ int WBASEEnhancementsAutoplay::update(const BaseEngine &engine, BaseInputState &
 	return -1;
 }
 
-void WBASEEnhancementsAutoplay::render(const BaseData &data, int returnRoomId,
-		byte *framebuffer, uint32 now, bool showStatus) const {
-	if (!framebuffer || (!_menuVisible && (!_active || !showStatus)))
+void WBASEEnhancementsAutoplay::renderMenu(const BaseData &data, int returnRoomId,
+		byte *framebuffer) const {
+	if (!framebuffer)
 		return;
 
 	Graphics::Surface surface;
@@ -654,35 +649,49 @@ void WBASEEnhancementsAutoplay::render(const BaseData &data, int returnRoomId,
 	const byte text = nearestPaletteColor(palette, 255, 255, 255);
 	const byte selected = nearestPaletteColor(palette, 255, 220, 0);
 
-	if (_menuVisible) {
-		if (!menuChoicesVisible(now))
-			return;
-		fillRect(framebuffer, kAutoplayMenuLeft, kAutoplayMenuTop,
-				kAutoplayMenuRight, kAutoplayMenuBottom, background);
-		drawFrame(framebuffer, kAutoplayMenuLeft, kAutoplayMenuTop,
-				kAutoplayMenuRight, kAutoplayMenuBottom, border);
-		font->drawString(&surface, _("WBASE AUTOPLAY"), kAutoplayMenuLeft + 4,
-				kAutoplayMenuTop + 7, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
-				text, Graphics::kTextAlignCenter);
-		font->drawString(&surface, _("Fight your way to:"), kAutoplayMenuLeft + 4,
-				kAutoplayMenuTop + 21, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
-				text, Graphics::kTextAlignCenter);
-		for (int index = 0; index < kAutoplayDestinationCount; ++index) {
-			const Common::String label = menuDestinationLabel(index, returnRoomId);
-			const bool highlighted = index == (_hoveredDestination >= 0 ? _hoveredDestination : _selectedDestination);
-			font->drawString(&surface, Common::String::format("%c %s", highlighted ? '>' : ' ', label.c_str()),
-					kAutoplayMenuLeft + 14, kAutoplayMenuChoiceTop + index * kAutoplayMenuChoiceSpacing,
-					kAutoplayMenuRight - kAutoplayMenuLeft - 27, highlighted ? selected : text);
-		}
-		font->drawString(&surface, _("Up/Down: choose"), kAutoplayMenuLeft + 8,
-				kAutoplayMenuBottom - 25, 104, text);
-		font->drawString(&surface, _("Enter/Space: start"), kAutoplayMenuLeft + 116,
-				kAutoplayMenuBottom - 25, 111, text);
-		font->drawString(&surface, _("Esc/A: cancel"), kAutoplayMenuLeft + 4,
-				kAutoplayMenuBottom - 13, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
-				text, Graphics::kTextAlignCenter);
-		return;
+	fillRect(framebuffer, kAutoplayMenuLeft, kAutoplayMenuTop,
+			kAutoplayMenuRight, kAutoplayMenuBottom, background);
+	drawFrame(framebuffer, kAutoplayMenuLeft, kAutoplayMenuTop,
+			kAutoplayMenuRight, kAutoplayMenuBottom, border);
+	font->drawString(&surface, _("WBASE AUTOPLAY"), kAutoplayMenuLeft + 4,
+			kAutoplayMenuTop + 7, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
+			text, Graphics::kTextAlignCenter);
+	font->drawString(&surface, _("Fight your way to:"), kAutoplayMenuLeft + 4,
+			kAutoplayMenuTop + 21, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
+			text, Graphics::kTextAlignCenter);
+	for (int index = 0; index < kAutoplayDestinationCount; ++index) {
+		const Common::String label = menuDestinationLabel(index, returnRoomId);
+		const bool highlighted = index ==
+				(_hoveredDestination >= 0 ? _hoveredDestination : _selectedDestination);
+		font->drawString(&surface, Common::String::format("%c %s", highlighted ? '>' : ' ', label.c_str()),
+				kAutoplayMenuLeft + 14, kAutoplayMenuChoiceTop + index * kAutoplayMenuChoiceSpacing,
+				kAutoplayMenuRight - kAutoplayMenuLeft - 27,
+				highlighted ? selected : text);
 	}
+	font->drawString(&surface, _("Up/Down: choose"), kAutoplayMenuLeft + 8,
+			kAutoplayMenuBottom - 25, 104, text);
+	font->drawString(&surface, _("Enter/Space: start"), kAutoplayMenuLeft + 116,
+			kAutoplayMenuBottom - 25, 111, text);
+	font->drawString(&surface, _("Esc/A: cancel"), kAutoplayMenuLeft + 4,
+			kAutoplayMenuBottom - 13, kAutoplayMenuRight - kAutoplayMenuLeft - 7,
+			text, Graphics::kTextAlignCenter);
+}
+
+void WBASEEnhancementsAutoplay::renderStatus(const BaseData &data, byte *framebuffer) const {
+	if (!framebuffer || !_active)
+		return;
+
+	Graphics::Surface surface;
+	surface.init(kBaseFrameWidth, kBaseFrameHeight, kBaseFrameWidth, framebuffer,
+			Graphics::PixelFormat::createFormatCLUT8());
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	if (!font)
+		return;
+
+	const byte *palette = data.palette();
+	const byte background = nearestPaletteColor(palette, 0, 0, 0);
+	const byte border = nearestPaletteColor(palette, 190, 190, 190);
+	const byte text = nearestPaletteColor(palette, 255, 255, 255);
 
 	const int secondsRemaining = MAX(0, (kAutoplayMaximumTicks - _activeTicks + 23) / 24);
 	const Common::String status = Common::String::format("To %s - %ds",

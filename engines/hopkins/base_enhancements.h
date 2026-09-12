@@ -33,13 +33,18 @@ class BaseEngine;
 static const char *const kWBASEEnhancementsConfigKey = "wbase_enhancements";
 static const char *const kWBASEEnhancementsKeymapId = "hopkins-wbase-enhancements";
 
+enum WBASEEnhancementPanel {
+	kWBASEEnhancementPanelNone,
+	kWBASEEnhancementPanelNavigationMap,
+	kWBASEEnhancementPanelAutoplay
+};
+
 class WBASEEnhancements {
 public:
 	explicit WBASEEnhancements(const Common::String &targetName);
 
 	bool enabled() const { return _enabled; }
 	bool navigationMapEnabled() const { return _enabled; }
-	/** Render the readable opaque navigation-map presentation. */
 	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
 
 private:
