@@ -379,6 +379,7 @@ void Lingo::popContext(bool aborting) {
 
 	// Undo the pushContext window switch.
 	Window *retWindow = fp->retWindow;
+	int retSpriteNum = fp->retSpriteNum;
 
 	delete fp;
 
@@ -390,6 +391,9 @@ void Lingo::popContext(bool aborting) {
 		}
 		retWindow->decRefCount();
 	}
+
+	if (retSpriteNum >= 0 && _vm->getCurrentMovie())
+		_vm->getCurrentMovie()->_currentSpriteNum = retSpriteNum;
 
 	g_debugger->popContextHook();
 }
@@ -1872,6 +1876,15 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	}
 
 	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount, nargs);
+
+	if (target.type == OBJECT && (target.u.obj->getObjType() & kScriptObj)) {
+		ScriptContext *context = static_cast<ScriptContext *>(target.u.obj);
+		if (context->hasOwnProp("spriteNum") && g_director->getCurrentMovie()) {
+			CFrame *frame = g_lingo->_state->callstack.back();
+			frame->retSpriteNum = g_director->getCurrentMovie()->_currentSpriteNum;
+			g_director->getCurrentMovie()->_currentSpriteNum = context->getProp("spriteNum").asInt();
+		}
+	}
 }
 
 void LC::c_procret() {

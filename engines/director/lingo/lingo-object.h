@@ -246,6 +246,7 @@ public:
 	void setFactory(bool flag) { _objType = flag ? kFactoryObj : kScriptObj; }
 
 	const Common::Array<Common::String> &getPropertyNames() const { return _propertyNames; }
+	bool hasOwnProp(const Common::String &propName) const { return _properties.contains(propName); }
 
 	void setOnlyInLctxContexts() { _onlyInLctxContexts = true; }
 	bool getOnlyInLctxContexts() { return _onlyInLctxContexts; }

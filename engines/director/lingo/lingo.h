@@ -264,6 +264,7 @@ struct CFrame {	/* proc/func call stack frame */
 	int				paramCount;			/* original number of arguments submitted */
 	Common::Array<Datum> paramList;		/* original argument list */
 	Window			*retWindow = nullptr;	/* window to restore on return */
+	int				retSpriteNum = -1;	/* sprite context to restore after a behavior call */
 };
 
 struct LingoEvent {
