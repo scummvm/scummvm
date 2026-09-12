@@ -130,11 +130,25 @@ void SpaceMapLogic::tick() {
 			return;
 		}
 
-		// The only real obstacles are the station (in its own sector) and
-		// any other ship sitting in the sector - the sector edges themselves
-		// just wrap around
+		int oldX = ship._x, oldY = ship._y;
+		ship._x = (int16)newX;
+		ship._y = (int16)newY;
+
+		bool isStationSector = _G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y;
+
+		// Coming to rest exactly in one of the station's docking slots (the
+		// right position AND facing, for the ship's own type) docks safely;
+		// anything else that touches the station or another ship is a crunch
+		if (isStationSector && cell.dockedEdge(_G(savegame)._shipIndex) >= 0) {
+			_G(sectorDriftX) = 0;
+			_G(sectorDriftY) = 0;
+			g_engine->addView("SpaceStation");
+			redrawMap();
+			return;
+		}
+
 		bool crunch = false;
-		if (_G(savegame)._sectorX == Data::SPACE_STATION_X && _G(savegame)._sectorY == Data::SPACE_STATION_Y) {
+		if (isStationSector) {
 			crunch = overlapsRect(newX, newY, Data::SPACE_STATION_SCREEN_X, Data::SPACE_STATION_SCREEN_Y,
 				Data::SPACE_STATION_WIDTH, Data::SPACE_STATION_HEIGHT);
 		}
@@ -147,6 +161,10 @@ void SpaceMapLogic::tick() {
 		}
 
 		if (crunch) {
+			// Revert - stay where we were before this frame's drift
+			ship._x = (int16)oldX;
+			ship._y = (int16)oldY;
+
 			writeString("Crunch!\n");
 			playFX(0);
 			subtractShields(shipShields() / 4 + 5);
@@ -159,9 +177,6 @@ void SpaceMapLogic::tick() {
 			// Bounce back rather than plough into it
 			_G(sectorDriftX) = -_G(sectorDriftX);
 			_G(sectorDriftY) = -_G(sectorDriftY);
-		} else {
-			ship._x = (int16)newX;
-			ship._y = (int16)newY;
 		}
 	}
 

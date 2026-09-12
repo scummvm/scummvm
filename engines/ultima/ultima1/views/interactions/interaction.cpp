@@ -54,15 +54,15 @@ void Interaction::writeString(const char *format, ...) {
 }
 
 void Interaction::resetLine() {
-	g_engine->findView("Commands")->send(GameMessage("RESET_LINE"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("RESET_LINE"));
 }
 
 void Interaction::showCursor() {
-	g_engine->findView("Commands")->send(GameMessage("SHOW_CURSOR"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("SHOW_CURSOR"));
 }
 
 void Interaction::prompt() {
-	g_engine->findView("Commands")->send(GameMessage("PROMPT"));
+	g_engine->baseView()->findView("Commands")->send(GameMessage("PROMPT"));
 }
 
 } // namespace Interactions

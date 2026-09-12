@@ -79,6 +79,26 @@ enum SpaceShipFacing {
 	FACING_DOWN = 3
 };
 
+// The 4 station/encounter docking edges (EDGE_NAMES), and the [edge][shipType]
+// offsets from a sector's anchor for a ship of that type parked at that edge
+// (checkOverlapX/Y's own DELTA_X/DELTA_Y tables)
+constexpr int SPACE_DOCK_EDGE_COUNT = 4;
+extern const int16 SPACE_DOCK_DELTA_X[SPACE_DOCK_EDGE_COUNT][3];
+extern const int16 SPACE_DOCK_DELTA_Y[SPACE_DOCK_EDGE_COUNT][3];
+
+// The facing a ship parked at a given edge should have - always facing
+// inward toward the station/anchor (checkOverlapFacing)
+extern const SpaceShipFacing SPACE_DOCK_EDGE_FACING[SPACE_DOCK_EDGE_COUNT];
+
+// Edge names used in docking prompts/messages (EDGE_NAMES)
+extern const char *SPACE_DOCK_EDGE_NAMES[SPACE_DOCK_EDGE_COUNT];
+
+/**
+ * Max fuel/shield for a ship type (getShipFuelCapacity/getShipShieldCapacity)
+ */
+int16 shipFuelCapacity(int shipType);
+int16 shipShieldCapacity(int shipType);
+
 /**
  * A single ship occupying one of a sector's ship slots
  */
@@ -109,6 +129,19 @@ struct SpaceMapCell {
 	SpaceMapShip _ships[SPACE_SHIPS_PER_SECTOR];
 
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Returns which docking edge (0-3) the given ship slot is currently
+	 * sitting in - an exact position and inward-facing match for its own
+	 * ship type - or -1 if it isn't docked anywhere (collisionCheck)
+	 */
+	int dockedEdge(int shipIndex) const;
+
+	/**
+	 * Returns which ship slot (0-3) is currently docked at the given edge,
+	 * or -1 if none is (findDockedShipAtEdge)
+	 */
+	int shipAtEdge(int edge) const;
 };
 
 /**

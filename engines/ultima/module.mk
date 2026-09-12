@@ -85,6 +85,7 @@ MODULE_OBJS += \
 	ultima1/views/interactions/princess_saved.o \
 	ultima1/views/interactions/ready.o \
 	ultima1/views/interactions/sector_scan.o \
+	ultima1/views/interactions/space_station.o \
 	ultima1/views/interactions/win.o \
 	ultima1/views/view.o \
 	ultima1/views/commands.o \

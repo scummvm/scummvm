@@ -29,6 +29,67 @@ namespace Data {
 
 const char *SPACE_COCKPIT_DIRECTION_NAMES[5] = { nullptr, "Left", "Right", "Climb", "Dive" };
 
+// Edge order: 0=left, 1=right, 2=top, 3=bottom. ShipType order: Shuttle,
+// LargeFighter, SmallFighter
+const int16 SPACE_DOCK_DELTA_X[SPACE_DOCK_EDGE_COUNT][3] = {
+	{ -17, -15, -15 },
+	{ 18, 18, 18 },
+	{ 0, 1, 2 },
+	{ 0, 1, 2 }
+};
+const int16 SPACE_DOCK_DELTA_Y[SPACE_DOCK_EDGE_COUNT][3] = {
+	{ 1, 1, 1 },
+	{ 1, 1, 1 },
+	{ -17, -16, -16 },
+	{ 18, 17, 17 }
+};
+const SpaceShipFacing SPACE_DOCK_EDGE_FACING[SPACE_DOCK_EDGE_COUNT] = {
+	FACING_RIGHT, FACING_LEFT, FACING_DOWN, FACING_UP
+};
+const char *SPACE_DOCK_EDGE_NAMES[SPACE_DOCK_EDGE_COUNT] = { "left", "right", "top", "bottom" };
+
+int SpaceMapCell::dockedEdge(int shipIndex) const {
+	const SpaceMapShip &ship = _ships[shipIndex];
+	if (ship._shipType == SHIP_NONE)
+		return -1;
+
+	for (int edge = 0; edge < SPACE_DOCK_EDGE_COUNT; ++edge) {
+		int expectedX = _anchorX + SPACE_DOCK_DELTA_X[edge][ship._shipType];
+		int expectedY = _anchorY + SPACE_DOCK_DELTA_Y[edge][ship._shipType];
+		if (ship._x == expectedX && ship._y == expectedY && ship._facing == SPACE_DOCK_EDGE_FACING[edge])
+			return edge;
+	}
+
+	return -1;
+}
+
+int SpaceMapCell::shipAtEdge(int edge) const {
+	for (int i = 0; i < SPACE_SHIPS_PER_SECTOR; ++i) {
+		if (dockedEdge(i) == edge)
+			return i;
+	}
+
+	return -1;
+}
+
+int16 shipFuelCapacity(int shipType) {
+	switch (shipType) {
+	case SHIP_SHUTTLE: return 1000;
+	case SHIP_LARGE_FIGHTER: return 5000;
+	case SHIP_SMALL_FIGHTER: return 2500;
+	default: return 0;
+	}
+}
+
+int16 shipShieldCapacity(int shipType) {
+	switch (shipType) {
+	case SHIP_SHUTTLE: return 1000;
+	case SHIP_LARGE_FIGHTER: return 1000;
+	case SHIP_SMALL_FIGHTER: return 5000;
+	default: return 0;
+	}
+}
+
 int SpaceMap::getRandomNumber(int minVal, int maxVal) {
 	// seed = ror16(seed + 0x9248, 3)
 	_randomSeed = (uint16)(_randomSeed + 0x9248);
