@@ -26,8 +26,8 @@ namespace Hollywood {
 const HollywoodGameStrings kSpanishGameStrings = {
 	{ " a", "Ir a", "Hablar con", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar" },
 	{ "", "", "Hablar", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar" },
-	" a ",
-	" con ",
+	" a",
+	" con",
 	"Inventario",
 
 	"Salvar",
@@ -53,16 +53,19 @@ const HollywoodGameStrings kSpanishGameStrings = {
 
 	" pasadizo",
 	" ata\xa3" "d ancho",
+	" discos",
 	" Cambiar bebida",
 	" Abrir grifo",
-	" Dejar de hacer cocteles"
+	" Dejar de hacer cocteles",
+	{ "T\xa3nel deteriorado", "Campamento", "Minero", "Vagoneta volcada",
+		"Grieta", "Caseta", "Escaleras", "Cascada", "Ascensor" }
 };
 
 const HollywoodGameStrings kItalianGameStrings = {
 	{ " a", "Andare a", "Parlare con", "Prendere", "Guardare", "Usare", "Aprire", "Chiudere", "Dare" },
 	{ "", "", "Parlare", "Prendere", "Guardare", "Usare", "Aprire", "Chiudere", "Dare" },
-	" a ",
-	" con ",
+	" a",
+	" con",
 	"Inventario",
 
 	"Salvare",
@@ -88,9 +91,12 @@ const HollywoodGameStrings kItalianGameStrings = {
 
 	" passaggio",
 	" cassa da morto larga", // WORKAROUND: The Italian executable leaves this variant in Spanish.
+	" dischi",
 	" Cambiare bevanda",
 	" Aprire rubinetto",
-	" Smettere di fare cocktail"
+	" Smettere di fare cocktail",
+	{ "Galleria dissestata", "Accampamento", "Minatore", "Vagoncino rovesciato",
+		"Crepa", "Capanno", "Scale", "Cascata", "Ascensore" }
 };
 
 const HollywoodGameStrings &getGameStrings(Common::Language language) {

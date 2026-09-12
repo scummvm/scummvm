@@ -287,7 +287,8 @@ bool Scene5110::dispatchCustomSceneAction(uint16 handlerId) {
 	case 323: // Mirar tratamiento capilar, cuarta zona (look at hair treatment, fourth area).
 		beginSecondarySpeechLine(15, 0);
 		return true;
-	case 324: // Hablar con tratamiento capilar (talk to hair treatment customer).
+	case 324: // Hablar con chica del jacuzzi (talk to girls, hotspots 13-16).
+		// Ron calls out to a girl, but the werewolf answers instead.
 		runHairTreatmentTalk();
 		return true;
 	default:
