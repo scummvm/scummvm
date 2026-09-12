@@ -59,6 +59,7 @@ public:
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
 	void acquireImeCompositionControl() override;
+	void setImeCompositionArea(const Common::Rect &area) override;
 	void cancelImeComposition() override;
 	void releaseImeCompositionControl() override;
 
