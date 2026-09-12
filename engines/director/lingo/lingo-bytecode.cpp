@@ -1703,9 +1703,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		// Register this context's functions with the containing archive.
 		if (scriptType == kScoreScript || scriptType == kMovieScript) {
 			for (auto &it : _assemblyContext->_functionHandlers) {
-				if (!_assemblyArchive->functionHandlers.contains(it._key)) {
-					_assemblyArchive->functionHandlers[it._key] = it._value;
-				}
+				_assemblyArchive->registerGlobalHandler(it._key, it._value, scriptType);
 			}
 		}
 	}

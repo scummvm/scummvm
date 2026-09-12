@@ -374,7 +374,7 @@ void LingoArchive::patchCode(const Common::U32String &code, ScriptType type, uin
 		for (auto &it : sc->_functionHandlers) {
 			it._value.ctx = scriptContexts[type][id];
 			scriptContexts[type][id]->_functionHandlers[it._key] = it._value;
-			functionHandlers[it._key] = it._value;
+			registerGlobalHandler(it._key, it._value, type);
 			if (g_lingo->_eventHandlerTypeIds.contains(it._key)) {
 				scriptContexts[type][id]->_eventHandlers[g_lingo->_eventHandlerTypeIds[it._key]] = it._value;
 			}
@@ -382,6 +382,14 @@ void LingoArchive::patchCode(const Common::U32String &code, ScriptType type, uin
 		sc->_functionHandlers.clear();
 		delete sc;
 	}
+}
+
+void LingoArchive::registerGlobalHandler(const Common::String &name, const Symbol &handler, ScriptType type) {
+	if (type == kScoreScript && g_director->getVersion() >= 600)
+		return;
+
+	if (!functionHandlers.contains(name))
+		functionHandlers[name] = handler;
 }
 
 

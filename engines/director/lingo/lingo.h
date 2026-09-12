@@ -328,6 +328,7 @@ struct LingoArchive {
 	ScriptContext *findScriptContext(uint16 id);
 	Common::String getName(uint16 id);
 	Common::String formatFunctionList(const char *prefix);
+	void registerGlobalHandler(const Common::String &name, const Symbol &handler, ScriptType type);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr, uint32 preprocFlags = kLPPNone);
 	void patchCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr, uint32 preprocFlags = kLPPNone);
