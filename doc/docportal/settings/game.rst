@@ -289,6 +289,20 @@ Skip support
 
 	*skip_support*
 
+.. _subtitles:
+
+Subtitles
+	Enables subtitles for in-game dialog and voiceovers.
+
+	*subtitles*
+
+.. _subtitles_size:
+
+Subtitles size
+	Sets the font size used for displaying subtitles.
+
+	*subtitles_size*
+
 ,,,,,,,,,,
 
 .. _CGE:

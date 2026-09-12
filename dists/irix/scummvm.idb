@@ -20,6 +20,7 @@ f 0644 root sys usr/ScummVM/share/pixmaps/scummvm.xpm scummvm.xpm scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/access.dat access.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/achievements.dat achievements.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/bagel.dat bagel.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/buried_subtitles.dat buried_subtitles.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/classicmacfonts.dat classicmacfonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryo.dat cryo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw.eoe

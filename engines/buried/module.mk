@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	console.o \
 	credits.o \
 	death.o \
+	dialogs.o \
 	frame_window.o \
 	gameui.o \
 	graphics.o \
@@ -23,6 +24,7 @@ MODULE_OBJS = \
 	saveload.o \
 	scene_view.o \
 	sound.o \
+	subtitle_manager.o \
 	title_sequence.o \
 	video_window.o \
 	window.o \

@@ -33,6 +33,8 @@
 #include "buried/graphics.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
+#include "buried/window.h"
 
 namespace Buried {
 
@@ -345,6 +347,7 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	if (!_soundData[kAIVoiceIndex]->load(fileName))
 		return false;
 
+	_currentAIVoiceMediaId = fileName.getLastComponent().toString();
 	_soundData[kAIVoiceIndex]->_soundType = Audio::Mixer::kSpeechSoundType;
 
 	// Play the file
@@ -360,11 +363,25 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	// Now that is has been played, kill it here and now
 	delete _soundData[kAIVoiceIndex];
 	_soundData[kAIVoiceIndex] = new Sound();
+	_currentAIVoiceMediaId.clear();
+
+	_vm->_subtitles->markSubtitlesDirty();
 
 	_vm->enableCutsceneKeymap(false);
 
 	// Return success
 	return true;
+}
+
+// Extracts a normalized media ID string from a file path by stripping file extension and converting to uppercase.
+// Example: "DATA/DA_V2_01.RAW" -> "DA_V2_01"
+static Common::String extractMediaIdFromPath(const Common::Path &path) {
+	Common::String fileNameComponent = path.getLastComponent().toString();
+	if (fileNameComponent.contains(".")) {
+		fileNameComponent = fileNameComponent.substr(0, fileNameComponent.findLastOf('.'));
+	}
+	fileNameComponent.toUppercase();
+	return fileNameComponent;
 }
 
 bool SoundManager::playAsynchronousAIComment(const Common::Path &fileName) {
@@ -374,6 +391,8 @@ bool SoundManager::playAsynchronousAIComment(const Common::Path &fileName) {
 	// Load the sound file
 	if (!_soundData[kAIVoiceIndex]->load(fileName))
 		return false;
+
+	_currentAIVoiceMediaId = extractMediaIdFromPath(fileName);
 
 	// Set some parameters
 	_soundData[kAIVoiceIndex]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
@@ -385,15 +404,37 @@ bool SoundManager::playAsynchronousAIComment(const Common::Path &fileName) {
 }
 
 bool SoundManager::isAsynchronousAICommentPlaying() {
-	if (_paused)
+	if (_paused) {
 		return false;
+	}
+	return _soundData[kAIVoiceIndex]->isPlaying();
+}
+
+bool SoundManager::isAIVoicePlaying() {
+	if (_paused || !_soundData[kAIVoiceIndex]->_handle) {
+		return false;
+	}
 
 	return _soundData[kAIVoiceIndex]->isPlaying();
+}
+
+uint32 SoundManager::getAIVoicePlaybackPositionMillis() {
+	if (!isAIVoicePlaying()) {
+		return 0;
+	}
+
+	return g_system->getMixer()->getSoundElapsedTime(*_soundData[kAIVoiceIndex]->_handle);
+}
+
+Common::String SoundManager::getAIVoiceMediaId() {
+	return _currentAIVoiceMediaId;
 }
 
 void SoundManager::stopAsynchronousAIComment() {
 	if (isAsynchronousAICommentPlaying()) {
 		_soundData[kAIVoiceIndex]->stop();
+		_currentAIVoiceMediaId.clear();
+		_vm->_subtitles->markSubtitlesDirty();
 	}
 }
 
@@ -428,6 +469,10 @@ int SoundManager::playSoundEffect(const Common::Path &fileName, int volume, bool
 		_soundData[kEffectsIndexBase + effectChannel]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
 	_soundData[kEffectsIndexBase + effectChannel]->_soundType = Audio::Mixer::kSFXSoundType;
 
+	// Store normalized media ID for subtitle lookup
+	_sfxMediaId[effectChannel] = extractMediaIdFromPath(fileName);
+	_sfxStartTime[effectChannel] = g_system->getMillis();
+
 	// Play the file
 	_soundData[kEffectsIndexBase + effectChannel]->start();
 
@@ -435,17 +480,56 @@ int SoundManager::playSoundEffect(const Common::Path &fileName, int volume, bool
 	return effectChannel;
 }
 
+Common::String SoundManager::getSubtitledSoundEffectMediaId() const {
+	for (int i = 0; i < 2; ++i) {
+		if (!_sfxMediaId[i].empty() && _soundData[kEffectsIndexBase + i]->isPlaying()) {
+			if (_vm->_subtitles && _vm->_subtitles->hasSubtitleTrack(_sfxMediaId[i])) {
+				return _sfxMediaId[i];
+			}
+		}
+	}
+	return "";
+}
+
+uint32 SoundManager::getSubtitledSoundEffectPosition() const {
+	for (int i = 0; i < 2; ++i) {
+		if (!_sfxMediaId[i].empty() && _soundData[kEffectsIndexBase + i]->isPlaying()) {
+			if (_vm->_subtitles && _vm->_subtitles->hasSubtitleTrack(_sfxMediaId[i])) {
+				return g_system->getMillis() - _sfxStartTime[i];
+			}
+		}
+	}
+	return 0;
+}
+
+bool SoundManager::isSubtitledSoundEffectPlaying() const {
+	return !getSubtitledSoundEffectMediaId().empty();
+}
+
+uint32 SoundManager::getSyncSoundPlaybackPositionMillis() const {
+	if (_syncSoundMediaId.empty()) {
+		return 0;
+	}
+	return g_system->getMillis() - _syncSoundStartTime;
+}
+
 bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int volume) {
 	// Reset the cursor
 	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
 	g_system->updateScreen();
 
+	// Store normalized media ID for subtitle lookup
+	_syncSoundMediaId = extractMediaIdFromPath(fileName);
+	_syncSoundStartTime = g_system->getMillis();
+
 	// Attempt to start the sound playing using the standard sound effect playback function
 	int soundChannel = playSoundEffect(fileName, volume, false, true);
 
 	// If the sound channel passed to us was invalid, return false right now
-	if (soundChannel < 0)
+	if (soundChannel < 0) {
+		_syncSoundMediaId.clear();
 		return false;
+	}
 
 	_vm->enableCutsceneKeymap(true);
 
@@ -458,6 +542,11 @@ bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int 
 
 	// One last callback check
 	timerCallback();
+
+	_syncSoundMediaId.clear();
+
+	// Clear subtitle overlay when playback finishes
+	_vm->_subtitles->markSubtitlesDirty();
 
 	_vm->enableCutsceneKeymap(false);
 
@@ -550,6 +639,7 @@ bool SoundManager::playInterfaceSound(const Common::Path &fileName) {
 	if (!_soundData[kInterfaceIndex]->load(fileName))
 		return false;
 
+	_interfaceMediaId = extractMediaIdFromPath(fileName);
 	_soundData[kInterfaceIndex]->_flags = SOUND_FLAG_DESTROY_AFTER_COMPLETION;
 	_soundData[kInterfaceIndex]->_soundType = Audio::Mixer::kSFXSoundType;
 
@@ -564,6 +654,8 @@ bool SoundManager::stopInterfaceSound() {
 	// Stop the sound
 	delete _soundData[kInterfaceIndex];
 	_soundData[kInterfaceIndex] = new Sound();
+	_interfaceMediaId.clear();
+	_vm->_subtitles->markSubtitlesDirty();
 	return true;
 }
 
@@ -572,6 +664,17 @@ bool SoundManager::isInterfaceSoundPlaying() {
 		return false;
 
 	return _soundData[kInterfaceIndex]->isPlaying();
+}
+
+uint32 SoundManager::getInterfaceSoundPlaybackPositionMillis() {
+	if (_paused || !_soundData[kInterfaceIndex]->_handle)
+		return 0;
+
+	return g_system->getMixer()->getSoundElapsedTime(*_soundData[kInterfaceIndex]->_handle);
+}
+
+Common::String SoundManager::getInterfaceSoundMediaId() const {
+	return _interfaceMediaId;
 }
 
 bool SoundManager::startFootsteps(int footstepsID) {
@@ -702,6 +805,31 @@ void SoundManager::timerCallback() {
 					_soundData[i] = new Sound();
 				}
 			}
+		}
+	}
+
+
+	// For all sound types that can play asynchronously, see if they have stopped playing on this callback.
+	// If they have, clear tracking metadata and invalidate subtitles to hide any subtitle card currently showing.
+
+	// Interface sounds.
+	if (!_interfaceMediaId.empty() && !_soundData[kInterfaceIndex]->isPlaying()) {
+		_interfaceMediaId.clear();
+		_vm->_subtitles->markSubtitlesDirty();
+	}
+
+	// Async AI sounds.
+	if (!_currentAIVoiceMediaId.empty() && !_soundData[kAIVoiceIndex]->isPlaying()) {
+		_currentAIVoiceMediaId.clear();
+		_vm->_subtitles->markSubtitlesDirty();
+	}
+
+	// Special effects.
+	for (int channel = 0; channel < 2; ++channel) {
+		int index = kEffectsIndexBase + channel;
+		if (!_sfxMediaId[channel].empty() && !_soundData[index]->isPlaying()) {
+			_sfxMediaId[channel].clear();
+			_vm->_subtitles->markSubtitlesDirty();
 		}
 	}
 }
