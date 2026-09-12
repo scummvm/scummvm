@@ -53,18 +53,6 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	Common::String text = textStream.readString(0, strLen);
 	debugC(3, kDebugText, "Stxt init: offset: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
 
-	// TODO: Before applying formatting and decoding the text to a U32String,
-	// check if the following hold true:
-	// - The engine platform doesn't match the file platform
-	// - The movie has a valid font table (FXmp)
-	// - The font table has a mapping between the two platforms
-	// - The text has sections written in a font without a Map None qualifier
-	// If yes, then just those sections should be preprocessed by churning the
-	// bytes through the appropriate mapping (e.g. if running a Mac file on
-	// Windows, use the "Mac: => Win:" rules).
-	// Confirmed in real Director 4 that these sections are preprocessed in
-	// the cast member on startup and not faked at text render time.
-
 	uint16 formattingCount = textStream.readUint16();
 	uint32 prevPos = 0;
 
@@ -73,7 +61,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	Common::U32String logText;
 
 	while (formattingCount) {
-		uint16 currentFont = _style.fontId;
+		uint16 currentFont = _style.originalFontId;
 		_style.read(textStream, _cast);
 
 		assert(prevPos <= _style.formatStartOffset);  // If this is triggered, we have to implement sorting
@@ -90,8 +78,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 			prevPos++;
 		}
 		_rtext += textPart;
-		Common::CodePage encoding = detectFontEncoding(cast->_platform, currentFont);
-		Common::U32String u32TextPart(textPart, encoding);
+		Common::U32String u32TextPart = cast->decodeStringWithFont(textPart, currentFont);
 		_ptext += u32TextPart;
 		_ftext += u32TextPart;
 		logText += Common::toPrintable(u32TextPart);
@@ -104,8 +91,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	}
 
 	_rtext += text;
-	Common::CodePage encoding = detectFontEncoding(cast->_platform, _style.fontId);
-	Common::U32String u32Text(text, encoding);
+	Common::U32String u32Text = cast->decodeStringWithFont(text, _style.originalFontId);
 	_ptext += u32Text;
 	_ftext += u32Text;
 	logText += Common::toPrintable(u32Text);
@@ -118,7 +104,7 @@ FontStyle::FontStyle() {
 	height = 0;
 	ascent = 0;
 
-	fontId = 0;
+	originalFontId = fontId = 0;
 	textSlant = 0;
 
 	fontSize = 12;
@@ -131,7 +117,7 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 	uint16 originalHeight = height = stream.readUint16();
 	ascent = stream.readUint16();
 
-	uint16 originalFontId = fontId = stream.readUint16();
+	originalFontId = fontId = stream.readUint16();
 	textSlant = stream.readByte();
 	stream.readByte(); // padding
 	fontSize = stream.readUint16();

@@ -2289,6 +2289,32 @@ Common::U32String Cast::decodeString(const Common::String &str) {
 	return fixedStr.decode(encoding);
 }
 
+Common::U32String Cast::decodeStringWithFont(const Common::String &str, uint16 fontId) {
+	Common::Platform targetPlatform = _vm->getPlatform();
+	if (_platform == targetPlatform)
+		return str.decode(detectFontEncoding(_platform, fontId));
+
+	Common::String mapped = str;
+	bool remapChars = true;
+	uint16 targetFontId = fontId;
+	if (_fontMap.contains(fontId)) {
+		remapChars = _fontMap[fontId]->remapChars;
+		targetFontId = _fontMap[fontId]->toFont;
+	}
+
+	if (remapChars) {
+		const CharMap &charMap = _platform == Common::kPlatformMacintosh
+				? _macCharsToWin : _winCharsToMac;
+		for (uint i = 0; i < mapped.size(); i++) {
+			byte value = (byte)mapped[i];
+			if (charMap.contains(value))
+				mapped.setChar(charMap[value], i);
+		}
+	}
+
+	return mapped.decode(detectFontEncoding(targetPlatform, targetFontId));
+}
+
 // Score order, 'Sord' resource
 //
 // Enlists all cast members as they're used in the movie

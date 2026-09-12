@@ -96,6 +96,7 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 
 		// Map cast font ID to window manager font ID
 		FontMapEntry *entry = new FontMapEntry;
+		entry->remapChars = platform != Common::kPlatformUnknown && platform != _vm->getPlatform();
 		if (platform != Common::kPlatformUnknown && platform != _vm->getPlatform() && _fontXPlatformMap.contains(name)) {
 			FontXPlatformInfo *xinfo = _fontXPlatformMap[name];
 			entry->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont, id);

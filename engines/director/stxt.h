@@ -37,6 +37,7 @@ struct FontStyle {
 	uint16 ascent;
 
 	uint16 fontId;
+	uint16 originalFontId;
 	byte textSlant;
 
 	uint16 fontSize;
