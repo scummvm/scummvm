@@ -72,7 +72,7 @@ public:
 	/**
 	 * Load a video from a generic read stream. The ownership of the
 	 * stream object transfers to this VideoDecoder instance, which is
-	 * hence also responsible for eventually deleting it.
+	 * hence also responsible for eventually deleting it even in case of failure.
 	 *
 	 * Implementations of this function are required to call addTrack()
 	 * for each track in the video upon success.
