@@ -209,7 +209,11 @@ bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 313: // Usar semillas con planta (use seeds with plant).
-		beginSecondarySpeechLine(6, 0);
+		// Restore the scene's planting refusal; the original selects shared row 6.
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(6, 0);
+		else
+			beginStaticSecondarySpeechLine(6, 0);
 		return true;
 	default:
 		return false;
