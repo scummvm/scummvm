@@ -592,6 +592,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 InsaneRebel2::~InsaneRebel2() {
 	restoreIOSGamepadController();
 	setVirtualKeyboardVisible(false);
+	_savedPauseScreen.free();
 
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
@@ -638,10 +639,7 @@ void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
 	if (!splayer)
 		return;
 
-	if (_pauseOverlayActive) {
-		_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
-		_pauseOverlayActive = false;
-	}
+	hidePauseOverlay();
 
 	if (!splayer->_paused)
 		splayer->pause();
@@ -966,10 +964,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 		if (pressed && splayer && splayer->_paused && _gameState == kStateGameplay) {
 			debugC(DEBUG_INSANE, "Joystick action while paused - unpausing");
-			if (_pauseOverlayActive) {
-				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
-				_pauseOverlayActive = false;
-			}
+			hidePauseOverlay();
 			splayer->unpause();
 			return true;
 		}
@@ -1095,10 +1090,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
 			debugC(DEBUG_INSANE, "Key pressed while paused - unpausing");
-			if (_pauseOverlayActive) {
-				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
-				_pauseOverlayActive = false;
-			}
+			hidePauseOverlay();
 			splayer->unpause();
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
 				debugC(DEBUG_INSANE, "ESC during pause - opening global menu");

@@ -131,6 +131,13 @@ SmushPlayerRebel2::~SmushPlayerRebel2() {
 	destroyGamePlayerFields();
 }
 
+void SmushPlayerRebel2::unpause() {
+	// A modal dialog or focus change must not dismiss the in-game pause.
+	if (_insane && static_cast<InsaneRebel2 *>(_insane)->_pauseOverlayActive)
+		return;
+	SmushPlayer::unpause();
+}
+
 void SmushPlayerRebel2::initGamePlayerFields() {
 	_multiFont = nullptr;
 	_storedFobjData = nullptr;
@@ -244,6 +251,10 @@ void SmushPlayerRebel2::initGameVideoState() {
 }
 
 void SmushPlayerRebel2::releaseGameVideoState() {
+	if (_insane && static_cast<InsaneRebel2 *>(_insane)->_pauseOverlayActive) {
+		static_cast<InsaneRebel2 *>(_insane)->hidePauseOverlay();
+		unpause();
+	}
 	delete _loadContinuationStream;
 	_loadContinuationStream = nullptr;
 	_loadPlaybackPending = false;
