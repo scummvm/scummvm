@@ -602,6 +602,15 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	// The generic Engine::getSaveStateName() default ("target.990") does not
+	// match the filename SCUMM's own save/load internals use --
+	// makeSavegameName() produces "target.s990", with the 's'/'c' prefix
+	// character SCUMM has always used to tell real saves from temporary
+	// restart state. Nothing SCUMM-internal calls the generic accessor, so the
+	// mismatch is invisible in-tree; a caller locating a slot's file purely
+	// through the Engine interface gets "file not found" for a save that was
+	// in fact written correctly.
+	Common::String getSaveStateName(int slot) const override { return makeSavegameName(slot, false); }
 
 	void pauseEngineIntern(bool pause) override;
 
