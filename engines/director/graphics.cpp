@@ -138,13 +138,18 @@ void DirectorEngine::loadDefaultPalettes() {
 	_loaded4Palette = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale4Palette, 4);
 }
 
+CastMemberID DirectorEngine::resolvePaletteId(CastMemberID id) const {
+	if (id.member < 0)
+		id.castLib = -1;
+
+	return id;
+}
+
 PaletteV4 *DirectorEngine::getPalette(CastMemberID id) {
 	if (id.isNull())
 		return nullptr;
 
-	// Reference to internal palettes
-	if (id.member < 0)
-		id.castLib = -1; // Ensure we use the default palette set
+	id = resolvePaletteId(id);
 
 	if (!_loadedPalettes.contains(id)) {
 		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
@@ -155,9 +160,7 @@ PaletteV4 *DirectorEngine::getPalette(CastMemberID id) {
 }
 
 bool DirectorEngine::hasPalette(CastMemberID id) {
-	// Reference to internal palettes
-	if (id.member < 0)
-		id.castLib = -1; // Ensure we use the default palette set
+	id = resolvePaletteId(id);
 
 	return _loadedPalettes.contains(id);
 }

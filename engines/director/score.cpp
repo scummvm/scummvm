@@ -1044,7 +1044,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		return false;
 
 	// Skip this if we don't have a palette instruction
-	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
+	CastMemberID currentPalette = _vm->resolvePaletteId(_currentFrame->_mainChannels.palette.paletteId);
 	if (currentPalette.isNull())
 		return false;
 
@@ -1077,7 +1077,7 @@ bool Score::renderPrePaletteCycle(RenderMode mode) {
 		if (_currentFrame->_mainChannels.palette.normal) {
 			// If the target palette ID is the same as the previous palette ID,
 			// a normal fade is a no-op.
-			if (_currentFrame->_mainChannels.palette.paletteId == _vm->_lastPalette) {
+			if (currentPalette == _vm->_lastPalette) {
 				return false;
 			}
 
@@ -1161,7 +1161,7 @@ void Score::setLastPalette() {
 		return;
 
 	bool isCachedPalette = false;
-	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
+	CastMemberID currentPalette = _vm->resolvePaletteId(_currentFrame->_mainChannels.palette.paletteId);
 	// Director allows you to use palette IDs for cast members
 	// that have long since been erased. Check all of them.
 	if (!_vm->hasPalette(currentPalette))
@@ -1170,13 +1170,13 @@ void Score::setLastPalette() {
 	if (currentPalette.isNull()) {
 		// Use the score cached palette ID
 		isCachedPalette = true;
-		currentPalette = _currentFrame->_mainChannels.scoreCachedPaletteId;
+		currentPalette = _vm->resolvePaletteId(_currentFrame->_mainChannels.scoreCachedPaletteId);
 		if (!_vm->hasPalette(currentPalette))
 			currentPalette = CastMemberID();
 		// The cached ID is created before the cast gets loaded; if it's zero,
 		// this corresponds to the movie default palette.
 		if (currentPalette.isNull()) {
-			currentPalette = _vm->getCurrentMovie()->_defaultPalette;
+			currentPalette = _vm->resolvePaletteId(_vm->getCurrentMovie()->_defaultPalette);
 		}
 		// If for whatever reason this doesn't resolve, abort.
 		if (currentPalette.isNull())
@@ -1210,7 +1210,7 @@ void Score::renderPaletteCycle(RenderMode mode) {
 
 	// If the palette is defined in the frame and doesn't match
 	// the current one, set it
-	CastMemberID currentPalette = _currentFrame->_mainChannels.palette.paletteId;
+	CastMemberID currentPalette = _vm->resolvePaletteId(_currentFrame->_mainChannels.palette.paletteId);
 	if (currentPalette.isNull())
 		return;
 
