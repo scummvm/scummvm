@@ -602,6 +602,7 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::String getSaveStateName(int slot) const override { return makeSavegameName(slot, false); }
 
 	void pauseEngineIntern(bool pause) override;
 
