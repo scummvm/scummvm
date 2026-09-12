@@ -245,11 +245,11 @@ bool SpaceMapLogic::fire() {
 bool SpaceMapLogic::view() {
 	writeString("View\n");
 
-	// TODO: the original refuses the switch while enemies remain in the
-	// sector ("Thou must eliminate all enemy craft first!"), with no fuel,
-	// or while docked; and seeds the cockpit's heading from the current
-	// drift
-	_G(logic) = Common::SharedPtr<Logic>(new SpaceCockpitLogic());
+	// TODO: the original refuses the switch with no fuel or while docked,
+	// and seeds the cockpit's heading from the current drift
+	Common::SharedPtr<SpaceCockpitLogic> cockpitLogic(new SpaceCockpitLogic());
+	cockpitLogic->setupSectorEnemies();
+	_G(logic) = cockpitLogic;
 	g_engine->replaceView("SpaceCockpit");
 	return true;
 }

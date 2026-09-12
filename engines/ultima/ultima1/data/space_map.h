@@ -97,6 +97,20 @@ extern const SpaceShipFacing SPACE_DOCK_EDGE_FACING[SPACE_DOCK_EDGE_COUNT];
 // Edge names used in docking prompts/messages (EDGE_NAMES)
 extern const char *SPACE_DOCK_EDGE_NAMES[SPACE_DOCK_EDGE_COUNT];
 
+// Number of stages a cockpit-view combat encounter's target progresses
+// through as it closes in (targetApproachStage, 0..6)
+constexpr int SPACE_TARGET_STAGE_COUNT = 7;
+
+// Per-stage hit-test window for the Fire command (handleFireCommand): a
+// shot only registers as a hit if (viewCenterX - targetX) falls between
+// SPACE_TARGET_HIT_MIN_X[stage] and SPACE_TARGET_HIT_MAX_X[stage], and
+// likewise for Y - the window widens on X and tightens toward zero on Y
+// as the target closes in
+extern const int16 SPACE_TARGET_HIT_MIN_X[SPACE_TARGET_STAGE_COUNT];
+extern const int16 SPACE_TARGET_HIT_MAX_X[SPACE_TARGET_STAGE_COUNT];
+extern const int16 SPACE_TARGET_HIT_MIN_Y[SPACE_TARGET_STAGE_COUNT];
+extern const int16 SPACE_TARGET_HIT_MAX_Y[SPACE_TARGET_STAGE_COUNT];
+
 /**
  * Max fuel/shield for a ship type (getShipFuelCapacity/getShipShieldCapacity)
  */

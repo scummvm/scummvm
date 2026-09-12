@@ -51,6 +51,13 @@ const SpaceShipFacing SPACE_DOCK_EDGE_FACING[SPACE_DOCK_EDGE_COUNT] = {
 };
 const char *SPACE_DOCK_EDGE_NAMES[SPACE_DOCK_EDGE_COUNT] = { "left", "right", "top", "bottom" };
 
+// Recovered from the data segment (dseg+0x212/+0x1F6 and +0x220/+0x204
+// respectively)
+const int16 SPACE_TARGET_HIT_MIN_X[SPACE_TARGET_STAGE_COUNT] = { 1, 1, 1, 1, 0, 0, 0 };
+const int16 SPACE_TARGET_HIT_MAX_X[SPACE_TARGET_STAGE_COUNT] = { 5, 6, 8, 10, 12, 16, 18 };
+const int16 SPACE_TARGET_HIT_MIN_Y[SPACE_TARGET_STAGE_COUNT] = { 5, 5, 4, 4, 3, 2, 1 };
+const int16 SPACE_TARGET_HIT_MAX_Y[SPACE_TARGET_STAGE_COUNT] = { 4, 6, 8, 10, 12, 14, 18 };
+
 int SpaceMapCell::dockedEdge(int shipIndex) const {
 	const SpaceMapShip &ship = _ships[shipIndex];
 	if (ship._shipType == SHIP_NONE)

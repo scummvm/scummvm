@@ -46,8 +46,26 @@ private:
 	 */
 	void setSpeed(int speed);
 
+	/**
+	 * Per-frame update for the current encounter, if any (the target half
+	 * of cockpitPerFrame): the target drifts a pixel further from the
+	 * crosshair each frame unless the crosshair keeps tracking it, being
+	 * dropped (setupSectorEnemies picks the next one) if it drifts out of
+	 * the viewport; otherwise, on a speed-weighted random timer, advances
+	 * how close it's approached (targetApproachStage), which widens the
+	 * window fire() hit-tests shots against - past the last stage, it's
+	 * also dropped
+	 */
+	void tickEncounter();
+
 protected:
 	bool move(Data::Direction dir) override;
+
+	/**
+	 * The Fire command (handleFireCommand): spends fuel, flashes a laser
+	 * bolt from each side of the viewport to the crosshair, and hit-tests
+	 * it against the current encounter target, if any
+	 */
 	bool fire() override;
 	bool pass() override;
 	bool view() override;
@@ -72,6 +90,15 @@ public:
 	 * cockpitPerFrame)
 	 */
 	void tick() override;
+
+	/**
+	 * Picks a fresh encounter target (a random on-screen position within
+	 * the viewport) if this sector still has enemies remaining, or clears
+	 * the current one if not (setupSectorEnemies). Called on first entering
+	 * the cockpit view for a sector and again after each kill or hyperjump
+	 * arrival
+	 */
+	void setupSectorEnemies();
 
 	/**
 	 * Called by the SpaceCockpit view once its hyperjump animation ramps up

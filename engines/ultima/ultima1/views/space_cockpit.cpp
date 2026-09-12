@@ -33,6 +33,14 @@ namespace Views {
 constexpr int FRAME_COLOR = 7;		// light grey cockpit surround
 constexpr int STAR_COLOR = 15;		// white stars / crosshair
 constexpr int RIVET_COLOR = 0;		// black detail punched into the frame
+constexpr int LASER_COLOR = 12;	// light red laser-bolt flash
+
+// How many ticks the laser-bolt flash from fireLaser() stays on-screen
+constexpr int LASER_FLASH_TICKS = 3;
+
+// The two fixed points at the bottom corners of the viewport the laser
+// bolts converge in from (handleFireCommand's own (20,140)/(300,140))
+constexpr int LASER_ORIGIN_LEFT_X = 20, LASER_ORIGIN_RIGHT_X = 300, LASER_ORIGIN_Y = 140;
 
 bool SpaceCockpit::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_SPACE);
@@ -66,6 +74,13 @@ void SpaceCockpit::draw() {
 		if (Data::SpaceStarfield::withinView(x, y))
 			s.setPixel(x, y, STAR_COLOR);
 	}
+
+	// The brief laser-bolt flash from a shot just fired, converging on the
+	// crosshair from both bottom corners of the viewport
+	if (_laserFlashTicks > 0) {
+		s.drawLine(LASER_ORIGIN_LEFT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
+		s.drawLine(LASER_ORIGIN_RIGHT_X, LASER_ORIGIN_Y, sf._centerX, sf._centerY, LASER_COLOR);
+	}
 }
 
 bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
@@ -81,6 +96,11 @@ bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
 bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
 	_G(logic)->action(KEYBIND_FIRE);
 	return true;
+}
+
+void SpaceCockpit::fireLaser() {
+	_laserFlashTicks = LASER_FLASH_TICKS;
+	redraw();
 }
 
 // Ticks per +/-1 step while ramping the display speed up/down
@@ -150,6 +170,9 @@ void SpaceCockpit::tickHyperjump() {
 bool SpaceCockpit::tick() {
 	if (_hyperjumpState != HYPERJUMP_IDLE)
 		tickHyperjump();
+
+	if (_laserFlashTicks > 0 && --_laserFlashTicks == 0)
+		redraw();
 
 	return Map::tick();
 }

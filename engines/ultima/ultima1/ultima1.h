@@ -83,6 +83,15 @@ public:
 	int _sectorDriftX = 0;
 	int _sectorDriftY = 0;
 	int _shipExhaustCountdown = 0;
+	// The current cockpit-view combat encounter's screen position (0 = no
+	// enemy currently engaged), set up by SpaceCockpitLogic::setupSectorEnemies
+	int _cockpitTargetX = 0;
+	int _cockpitTargetY = 0;
+	// How far the current encounter has "closed in" (targetApproachStage,
+	// 0-6 - indexes the SPACE_TARGET_HIT_* tables), and the frame counter
+	// gating how often it advances (approachTimer)
+	int _cockpitTargetStage = 0;
+	int _cockpitApproachTimer = 0;
 
 public:
 	Ultima1Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

@@ -52,6 +52,10 @@ private:
 	int _hyperjumpDX = 0, _hyperjumpDY = 0;
 	int _hyperjumpOrigSpeed = 0;
 
+	// Ticks left to keep showing the laser-bolt flash from fireLaser() (0 =
+	// not showing)
+	int _laserFlashTicks = 0;
+
 	/**
 	 * Draws the static cockpit frame around the viewport (drawCockpitFrame)
 	 */
@@ -96,6 +100,13 @@ public:
 	 * SpaceCockpitLogic::hyperjump() once fuel/heading are validated
 	 */
 	void startHyperjump(int dx, int dy);
+
+	/**
+	 * Briefly flashes twin laser-bolt lines in from the bottom corners of
+	 * the viewport, converging on the crosshair - called by
+	 * SpaceCockpitLogic::fire() for each shot
+	 */
+	void fireLaser();
 };
 
 } // namespace Views

@@ -30,6 +30,23 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Logic {
 
+// The Fire command's fuel cost (handleFireCommand)
+constexpr int FIRE_FUEL_COST = 10;
+
+constexpr int FIRE_HIT_XP = 100;
+constexpr int SPACE_ACE_KILLS = 20;
+
+// The viewport window an encounter target must stay inside; drifting past
+// this (cockpitPerFrame) counts as passing by unengaged
+constexpr int TARGET_MIN_X = 30, TARGET_MAX_X = 280;
+constexpr int TARGET_MIN_Y = 24, TARGET_MAX_Y = 125;
+
+// How many frames an encounter waits between rolls to advance its approach
+// stage, and the roll range/threshold - both scale with cockpit speed
+// (cockpitPerFrame)
+constexpr int TARGET_APPROACH_TIMER_THRESHOLD = 15;
+constexpr int TARGET_APPROACH_ROLL_THRESHOLD = 20;
+
 void SpaceCockpitLogic::setSpeed(int speed) {
 	writeString("Speed %d\n", speed);
 
@@ -61,7 +78,43 @@ void SpaceCockpitLogic::tick() {
 	_tickCounter = 0;
 
 	_G(starfield).advance();
+	tickEncounter();
 	redrawMap();
+}
+
+void SpaceCockpitLogic::tickEncounter() {
+	if (_G(cockpitTargetX) == 0)
+		return;
+
+	Data::SpaceStarfield &sf = _G(starfield);
+	int deltaX = sf._centerX - _G(cockpitTargetX);
+	int deltaY = sf._centerY - _G(cockpitTargetY);
+
+	// The target only holds its screen position while the crosshair is
+	// actively tracking it - otherwise it drifts a further pixel away each
+	// frame, so lining up a shot means keeping the crosshair on it
+	int stepX = (deltaX > 0) - (deltaX < 0);
+	int stepY = (deltaY > 0) - (deltaY < 0);
+	_G(cockpitTargetX) -= stepX;
+	_G(cockpitTargetY) -= stepY;
+
+	if (_G(cockpitTargetX) < TARGET_MIN_X || _G(cockpitTargetX) > TARGET_MAX_X ||
+			_G(cockpitTargetY) < TARGET_MIN_Y || _G(cockpitTargetY) > TARGET_MAX_Y) {
+		// Passed by unengaged
+		setupSectorEnemies();
+		return;
+	}
+
+	if (_G(cockpitApproachTimer) <= TARGET_APPROACH_TIMER_THRESHOLD) {
+		++_G(cockpitApproachTimer);
+		return;
+	}
+
+	_G(cockpitApproachTimer) = 0;
+	if (getRandomNumber(1, (_G(cockpitSpeed) + 3) * 10) > TARGET_APPROACH_ROLL_THRESHOLD) {
+		if (++_G(cockpitTargetStage) >= Data::SPACE_TARGET_STAGE_COUNT)
+			setupSectorEnemies();
+	}
 }
 
 bool SpaceCockpitLogic::move(Data::Direction dir) {
@@ -101,14 +154,51 @@ bool SpaceCockpitLogic::move(Data::Direction dir) {
 }
 
 bool SpaceCockpitLogic::fire() {
-	// TODO: handleFireCommand - the actual enemy-ship combat
 	writeString("Fire!\n");
-	playFX(1);
+
+	if (shipFuel() < FIRE_FUEL_COST) {
+		writeString("Thou hast not enough fuel!\n");
+		return true;
+	}
+	subtractFuel(FIRE_FUEL_COST);
+
+	// Flash a laser bolt in from each side of the viewport, converging on
+	// the crosshair
+	Views::SpaceCockpit *view = dynamic_cast<Views::SpaceCockpit *>(g_engine->findView("SpaceCockpit"));
+	assert(view);
+	view->fireLaser();
+	playFX(8);
+
+	int stage = _G(cockpitTargetStage);
+	int deltaX = _G(starfield)._centerX - _G(cockpitTargetX);
+	int deltaY = _G(starfield)._centerY - _G(cockpitTargetY);
+	bool hit = _G(cockpitTargetX) != 0 &&
+		deltaX >= Data::SPACE_TARGET_HIT_MIN_X[stage] && deltaX <= Data::SPACE_TARGET_HIT_MAX_X[stage] &&
+		deltaY >= Data::SPACE_TARGET_HIT_MIN_Y[stage] && deltaY <= Data::SPACE_TARGET_HIT_MAX_Y[stage];
+
+	if (hit) {
+		playFX(2);
+		writeString("Hit!!!\n");
+		_G(savegame)._experience += FIRE_HIT_XP;
+		++_G(savegame)._enemyVessels;
+
+		if (_G(savegame)._enemyVessels == SPACE_ACE_KILLS)
+			writeString("Thou hast achieved the rank of Space Ace!\n");
+		else if (_G(savegame)._enemyVessels > SPACE_ACE_KILLS)
+			writeString("Thou art still a Space Ace!\n");
+
+		Data::SpaceMapCell &cell = _G(savegame)._starmap
+			._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
+		--cell._enemyCount;
+		setupSectorEnemies();
+		redrawStats();
+	}
+
 	return true;
 }
 
 bool SpaceCockpitLogic::pass() {
-	// Re-centres the starscape and stops any drift
+	// Re-centers the starscape and stops any drift
 	writeString("Center\n");
 
 	Data::SpaceStarfield &sf = _G(starfield);
@@ -146,6 +236,20 @@ bool SpaceCockpitLogic::hyperjump() {
 	// The animation owns the commands area until it finishes or is
 	// interrupted - suppress the usual immediate end-of-turn/prompt
 	return false;
+}
+
+void SpaceCockpitLogic::setupSectorEnemies() {
+	Data::SpaceMapCell &cell = _G(savegame)._starmap
+		._sectors[_G(savegame)._sectorX][_G(savegame)._sectorY];
+
+	if (cell._enemyCount > 0) {
+		_G(cockpitTargetX) = getRandomNumber(40, 280);
+		_G(cockpitTargetY) = getRandomNumber(40, 120);
+		_G(cockpitTargetStage) = 0;
+	} else {
+		_G(cockpitTargetX) = 0;
+		_G(cockpitTargetY) = 0;
+	}
 }
 
 void SpaceCockpitLogic::hyperjumpLightspeed() {
@@ -187,6 +291,7 @@ void SpaceCockpitLogic::completeHyperjump(int dx, int dy) {
 		_G(savegame)._sectorX = (int16)newSectorX;
 		_G(savegame)._sectorY = (int16)newSectorY;
 		_G(savegame)._shipIndex = (int16)freeSlot;
+		setupSectorEnemies();
 
 		writeString("\x10HyperJump completed.\n");
 	}
@@ -205,6 +310,10 @@ void SpaceCockpitLogic::abortHyperjump() {
 
 bool SpaceCockpitLogic::view() {
 	writeString("View\n");
+
+	// TODO: the original refuses this switch back to the overhead view
+	// while any enemies remain in the sector ("Thou must eliminate all
+	// enemy craft first!")
 	_G(logic) = Common::SharedPtr<Logic>(new SpaceMapLogic());
 	g_engine->replaceView("SpaceMap");
 	return true;
