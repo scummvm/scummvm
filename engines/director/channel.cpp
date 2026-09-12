@@ -535,6 +535,12 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
+			if (g_director->getVersion() >= 600) {
+				_sprite->_behaviors = nextSprite->_behaviors;
+				_sprite->_spriteInfo = nextSprite->_spriteInfo;
+				_startFrame = nextSprite->_spriteInfo.startFrame;
+				_endFrame = nextSprite->_spriteInfo.endFrame;
+			}
 		} else {
 			previousCastId = _sprite->_castId;
 			replaceSprite(nextSprite);
