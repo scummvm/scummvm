@@ -27,6 +27,7 @@
 #include "hopkins/base_data.h"
 #include "hopkins/base_engine.h"
 #include "hopkins/base_enhancements.h"
+#include "hopkins/base_enhancements_autoplay.h"
 
 #include "common/array.h"
 #include "common/scummsys.h"
@@ -91,12 +92,14 @@ private:
 	void handleAction(uint32 action, bool pressed);
 	void openMainMenu();
 	void refreshPresentation();
+	void setAutoplayMenuMouseVisible(bool visible);
 	void processSoundEvents();
 	void renderFrame();
 	void setEngineActive(bool active);
 
 	HopkinsEngine *_vm;
 	WBASEEnhancements _wbaseEnhancements;
+	WBASEEnhancementsAutoplay _wbaseEnhancementsAutoplay;
 	BaseData _data;
 	BaseEngine *_engine;
 	BaseRenderer *_renderer;
@@ -115,6 +118,7 @@ private:
 	bool _presentationRefreshRequested;
 	bool _timingResetRequested;
 	bool _wbaseEnhancementsNavigationMapVisible;
+	bool _wbaseEnhancementsAutoplayMouseVisible;
 	bool _quitRequested;
 };
 

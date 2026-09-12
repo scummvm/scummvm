@@ -70,7 +70,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_WBASE_ENHANCEMENTS,
 		{
 			_s("WBASE enhancements"),
-			_s("Enable navigation/usability enhancements for Windows base shooter"),
+			_s("Enable navigation map and autoplay options for Windows base shooter"),
 			kWBASEEnhancementsConfigKey,
 			false,
 			0,
@@ -323,6 +323,11 @@ Common::KeymapArray HopkinsMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("WBASE_ENHANCEMENTS_MAP", _("WBASE enhancements: open navigation map"));
 	act->setCustomEngineActionEvent(kActionWBASEEnhancementsNavigationMap);
 	act->addDefaultInputMapping("m");
+	wbaseEnhancementsKeyMap->addAction(act);
+
+	act = new Action("WBASE_ENHANCEMENTS_AUTOPLAY", _("WBASE enhancements: choose autoplay destination"));
+	act->setCustomEngineActionEvent(kActionWBASEEnhancementsAutoplay);
+	act->addDefaultInputMapping("a");
 	wbaseEnhancementsKeyMap->addAction(act);
 
 	KeymapArray keymaps(4);

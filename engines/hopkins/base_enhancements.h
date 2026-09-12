@@ -39,6 +39,7 @@ public:
 
 	bool enabled() const { return _enabled; }
 	bool navigationMapEnabled() const { return _enabled; }
+	/** Render the readable opaque navigation-map presentation. */
 	void renderNavigationMap(const BaseData &data, const BaseEngine &engine, byte *framebuffer) const;
 
 private:

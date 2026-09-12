@@ -39,27 +39,42 @@ public:
 	void reset();
 	bool active() const { return _active; }
 	bool menuVisible() const { return _menuVisible; }
+	bool menuChoicesVisible(uint32 now) const;
 
-	void openMenu();
+	void openMenu(uint32 now);
 	void closeMenu();
 	void selectPrevious();
 	void selectNext();
+	void updateMenuPointer(int x, int y);
+	bool selectMenuPointer(int x, int y);
 	void startSelected(const BaseEngine &engine);
 	void cancel();
 
-	/** Replace the next simulation tick's input with autopilot controls. */
-	void update(const BaseEngine &engine, BaseInputState &input);
-	void render(const BaseData &data, byte *framebuffer, bool showStatus) const;
+	/** Return the forced destination room, or -1, after updating input. */
+	int update(const BaseEngine &engine, BaseInputState &input);
+	void render(const BaseData &data, int returnRoomId,
+			byte *framebuffer, uint32 now, bool showStatus) const;
+
+	static int destinationCount();
+	static int destinationRoomId(int index);
+	static int destinationExitMapPos(int index);
+	static const char *destinationLabel(int index);
+	static const char *destinationMapLabel(int index);
+	static int destinationIndexForExitMapPos(int mapPos);
 
 private:
-	bool rebuildRoute(const BaseEngine &engine);
+	bool rebuildRoute(const BaseEngine &engine, bool avoidBlockingObjects);
 	int findVisibleGuard(const BaseEngine &engine) const;
 	bool aimAt(const BaseEngine &engine, int targetX, int targetY, BaseInputState &input) const;
 	void updateStuckState(const BaseEngine &engine, bool triedToMove);
+	void beginRecovery();
+	void updateRecovery(const BaseEngine &engine, BaseInputState &input);
 
 	bool _active;
 	bool _menuVisible;
+	uint32 _menuOpenedAt;
 	int _selectedDestination;
+	int _hoveredDestination;
 	int _destination;
 	Common::Array<int> _route;
 	uint _routeIndex;
@@ -67,6 +82,14 @@ private:
 	int _lastPlayerY;
 	int _stuckTicks;
 	bool _routeInvalidated;
+	int _blockedRouteCell;
+	int _routeBlocker;
+	int _movementBlocker;
+	int _activeTicks;
+	int _recoveryPhase;
+	int _recoveryTicks;
+	int _recoveryAttempts;
+	bool _recoveryTurnRight;
 };
 
 } // End of namespace Hopkins
