@@ -52,6 +52,15 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
+
+	/**
+	 * Secret mouse-aiming shortcut (not part of the original): moving the
+	 * mouse stops any keyboard-driven panning and snaps the crosshair
+	 * straight to the pointer, and clicking fires - a much easier way to
+	 * line up on enemy ships
+	 */
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
 } // namespace Views

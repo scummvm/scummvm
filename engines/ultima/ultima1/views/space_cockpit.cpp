@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "ultima/ultima1/views/space_cockpit.h"
 #include "ultima/ultima1/data/space_map.h"
 #include "ultima/ultima1/ultima1.h"
@@ -64,6 +65,21 @@ void SpaceCockpit::draw() {
 		if (Data::SpaceStarfield::withinView(x, y))
 			s.setPixel(x, y, STAR_COLOR);
 	}
+}
+
+bool SpaceCockpit::msgMouseMove(const MouseMoveMessage &msg) {
+	Data::SpaceStarfield &sf = _G(starfield);
+	sf._panX = 0;
+	sf._panY = 0;
+	sf._centerX = (int16)CLIP<int>(msg._pos.x, 21, 299);
+	sf._centerY = (int16)CLIP<int>(msg._pos.y, 21, 139);
+	redraw();
+	return true;
+}
+
+bool SpaceCockpit::msgMouseDown(const MouseDownMessage &msg) {
+	_G(logic)->action(KEYBIND_FIRE);
+	return true;
 }
 
 void SpaceCockpit::drawCockpitFrame(Shared::Gfx::GfxSurface &s) {

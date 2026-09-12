@@ -68,6 +68,11 @@ bool Console::cmdMap(int argc, const char **argv) {
 			if (location == Data::MAP_SPACE) {
 				_G(savegame)._shipFuel = 9999;
 				_G(savegame)._shipShield = 9999;
+
+				// Make sure docking at the station doesn't kill them outright
+				// for want of a vacuum suit
+				_G(savegame)._armor[Data::ARMOR_VACUUM_SUIT] = 1;
+				_G(savegame)._equippedArmor = Data::ARMOR_VACUUM_SUIT;
 			}
 
 			_G(map).load(location);
