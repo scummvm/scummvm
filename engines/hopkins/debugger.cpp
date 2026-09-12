@@ -54,7 +54,13 @@ bool Debugger::cmd_Teleport(int argc, const char **argv) {
 		debugPrintf("%s: [Room number]\n", argv[0]);
 		return true;
 	} else {
-		_vm->_globals->_exitId = atoi(argv[1]);
+		const int roomId = atoi(argv[1]);
+		if (!_vm->canTeleportToRoom(roomId)) {
+			debugPrintf("Room %d is not available in this game variant\n", roomId);
+			return true;
+		}
+
+		_vm->_globals->_exitId = roomId;
 		return false;
 	}
 }

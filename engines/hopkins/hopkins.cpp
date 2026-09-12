@@ -105,6 +105,37 @@ Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc,
 	return _saveLoad->saveGame(slot, desc);
 }
 
+bool HopkinsEngine::canTeleportToRoom(int roomId) const {
+	if (!getIsDemo()) {
+		return roomId == 1 ||
+				(roomId >= 3 && roomId <= 20) ||
+				(roomId >= 22 && roomId <= 41) ||
+				(roomId >= 50 && roomId <= 52) ||
+				(roomId >= 54 && roomId <= 71) ||
+				roomId == 73 || roomId == 75 ||
+				(roomId >= 77 && roomId <= 91) ||
+				(roomId >= 93 && roomId <= 100) ||
+				(roomId >= 111 && roomId <= 115) ||
+				(roomId >= 150 && roomId <= 152) ||
+				(roomId >= 194 && roomId <= 199);
+	}
+
+	if (getPlatform() == Common::kPlatformWindows) {
+		return roomId == 1 ||
+				(roomId >= 3 && roomId <= 17) ||
+				(roomId >= 24 && roomId <= 34) ||
+				(roomId >= 111 && roomId <= 115) ||
+				(roomId >= 150 && roomId <= 152);
+	}
+
+	return roomId == 1 ||
+			(roomId >= 3 && roomId <= 20) ||
+			(roomId >= 22 && roomId <= 35) ||
+			roomId == 38 ||
+			(roomId >= 111 && roomId <= 115) ||
+			(roomId >= 150 && roomId <= 152);
+}
+
 Common::Error HopkinsEngine::run() {
 	_globals->setConfig();
 	_fileIO->initCensorship();
