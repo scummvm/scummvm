@@ -32,6 +32,24 @@ enum {
 	kSaveVersion = 1
 };
 
+const uint32 kMineVisitsSaveTag = MKTAG('M', 'V', 'I', 'S');
+
+bool loadMineVisits(Common::SeekableReadStream &stream, uint16 &visits) {
+	// Version 1 saves may end here or continue with the extended save header.
+	const int64 start = stream.pos();
+	if (stream.size() - start < 4)
+		return true;
+	const uint32 tag = stream.readUint32BE();
+	if (stream.err() || stream.eos())
+		return false;
+	if (tag != kMineVisitsSaveTag)
+		return stream.seek(start);
+	if (stream.size() - stream.pos() < 2)
+		return false;
+	visits = stream.readUint16LE();
+	return !stream.err() && !stream.eos();
+}
+
 void syncStateBool(Common::Serializer &s, bool &value) {
 	byte rawValue = value ? 1 : 0;
 	s.syncAsByte(rawValue);
@@ -80,7 +98,8 @@ Common::Error HollywoodEngine::loadGameStream(Common::SeekableReadStream *stream
 	GameplayState previousState = _gameState;
 	_gameState.reset();
 	Common::Error result = syncGameStream(s);
-	if (result.getCode() != Common::kNoError || s.err()) {
+	if (result.getCode() != Common::kNoError || s.err() || stream->eos() ||
+			!loadMineVisits(*stream, _gameState.scene5010VisitedDestinations)) {
 		_gameState = previousState;
 		return result.getCode() == Common::kNoError ? Common::kReadingFailed : result;
 	}
@@ -107,7 +126,10 @@ Common::Error HollywoodEngine::saveGameStream(Common::WriteStream *stream, bool)
 	if (result.getCode() != Common::kNoError || s.err())
 		return Common::kWritingFailed;
 
-	return Common::kNoError;
+	// Keep the version 1 payload intact; older readers ignore this optional tail.
+	stream->writeUint32BE(kMineVisitsSaveTag);
+	stream->writeUint16LE(_gameState.scene5010VisitedDestinations);
+	return stream->err() ? Common::kWritingFailed : Common::kNoError;
 }
 
 Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
@@ -686,6 +708,7 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene5010SwitchRow = 0;
 	if (state.scene5010SwitchColumn > 2)
 		state.scene5010SwitchColumn = 0;
+	state.scene5010VisitedDestinations &= (1 << GameplayState::kMineDestinationCount) - 1;
 	for (uint slot = 0; slot < ARRAYSIZE(state.scene5010DestinationStateBySwitchSlot); ++slot) {
 		const uint16 destination = state.scene5010DestinationStateBySwitchSlot[slot];
 		if (destination == 0)

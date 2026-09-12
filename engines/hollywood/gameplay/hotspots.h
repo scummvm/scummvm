@@ -149,8 +149,8 @@ private:
 	Descriptor _descriptor;
 	Descriptor _lastDescriptor;
 	Common::String _captionText;
-	Common::Language _language;
 	uint32 _timer;
+	Common::Language _language;
 	byte _currentStrip;
 	byte _relationMode;
 	byte _primaryInventoryItem;

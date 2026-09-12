@@ -81,8 +81,8 @@ private:
 	Common::Array<byte> _dialogueMenuPanelBuffer;
 	Common::Array<byte> _objectPaletteTriples;
 	mutable Common::Array<Common::Array<byte> > _inventoryItemTilePages;
-	Common::Language _language;
 	uint32 _inventoryItemPageBaseOffset;
+	Common::Language _language;
 	bool _loaded;
 };
 

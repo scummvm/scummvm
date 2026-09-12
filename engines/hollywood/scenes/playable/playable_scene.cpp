@@ -454,6 +454,8 @@ bool PlayableScene::play() {
 
 	const bool resumeGameplayPose = hasSavedActiveActorPoseForCurrentState();
 	initializePreviewState();
+	// Retain visit history even when the restored-content labels are disabled.
+	_vm->gameState().visitMineDestination(_config.sceneId);
 	if (!resumeGameplayPose) {
 		drawPreviewComposite();
 		if (shouldPresentPreviewBeforeEntrySequence())

@@ -62,6 +62,7 @@ private:
 	void runSwitchPanel();
 	void drawSwitchPanelFrame();
 	void drawSwitchPanelOverlay();
+	void drawMineDestinationLabel();
 	byte switchPanelMaskPixelAt(uint16 screenX, uint16 screenY) const;
 	void handleSwitchPanelChoice(byte choice);
 	Common::Array<byte> buildSwitchPanelAnimation(byte currentValue, byte targetValue,
