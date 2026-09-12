@@ -233,7 +233,7 @@ static const MADSGameDescription gameDescriptions[] = {
 		// Return of the Phantom Spanish Fan Patch
 		{
 			"phantom",
-			"CD",
+			"Fanmade",
 			AD_ENTRY2s("section1.hag", "76e2d47a7aebafe48edc9884b3d91782", 1130939, "speech.idx", "1522ade02e7969187eab1acfa78b367c", 634),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
