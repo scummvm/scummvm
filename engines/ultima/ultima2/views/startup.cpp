@@ -25,7 +25,18 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
+#define DELAY_SECONDS 3
+
 #define COLOR_FOREGROUND 15 // white
+
+bool Startup::msgFocus(const FocusMessage &msg) {
+	delaySeconds(DELAY_SECONDS);
+	return View::msgFocus(msg);
+}
+
+void Startup::timeout() {
+	showTitle();
+}
 
 void Startup::draw() {
 	auto s = getSurface();

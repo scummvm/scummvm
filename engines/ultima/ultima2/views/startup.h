@@ -28,16 +28,37 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
+using namespace Shared::Messages;
+
 /**
- * Placeholder splash screen shown while the rest of the engine is being
- * built up. Will be replaced by the real title screen sequence.
+ * Brief ScummVM splash shown before handing off to the real attract-mode
+ * Title sequence.
  */
 class Startup : public Shared::Gfx::View {
+private:
+	void showTitle() {
+		replaceView("Title");
+	}
 public:
 	Startup() : View("Startup") {}
 	~Startup() override {}
 
 	void draw() override;
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void timeout() override;
+	bool msgKeypress(const KeypressMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgMouseDown(const MouseDownMessage &msg) override {
+		showTitle();
+		return true;
+	}
+	bool msgAction(const ActionMessage &msg) override {
+		showTitle();
+		return true;
+	}
 };
 
 } // namespace Views
