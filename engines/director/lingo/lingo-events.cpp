@@ -800,6 +800,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 }
 
 bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId, AbstractObject *obj) {
+	int callerDepth = _state->callstack.size();
 	_state->currentChannelId = channelId;
 
 	if (!_eventHandlerTypes.contains(event))
@@ -808,10 +809,9 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 
 	if (g_director->getVersion() >= 600 && st == kScoreScript && obj) {
 		if (obj->getMethod(_eventHandlerTypes[event]).type != VOIDSYM) {
-			g_director->getCurrentMovie()->_currentSpriteNum = channelId;
 			push(Datum(obj));
 			LC::call(_eventHandlerTypes[event], 1, false);
-			return execute();
+			return execute(callerDepth);
 		} else {
 			return true;
 		}
@@ -833,7 +833,7 @@ bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int
 		}
 
 		LC::call(script->_eventHandlers[event], nargs, false);
-		return execute();
+		return execute(callerDepth);
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %s): no handler", _eventHandlerTypes[event], scriptType2str(st), scriptId.asString().c_str());
 	}
