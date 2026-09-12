@@ -150,6 +150,7 @@ public:
 
 private:
 	void loadFileInfo(Common::SeekableReadStreamEndian &stream);
+	CastMemberID resolveCastMemberID(CastMemberID id) const;
 
 	void queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targetId = 0, Common::Point pos = Common::Point(-1, -1));
 	void queueSpriteEvent(Common::Queue<LingoEvent> &queue, LEvent event, int eventId, int spriteId);

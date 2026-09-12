@@ -121,6 +121,7 @@ public:
 	void setPattern(uint16 pattern);
 
 	void setCast(CastMemberID memberID, bool replaceDims = true);
+	void setCast(CastMemberID memberID, CastMember *cast, bool replaceDims = true);
 	bool isQDShape();
 	Graphics::Surface *getQDMatte();
 	void createQDMatte();

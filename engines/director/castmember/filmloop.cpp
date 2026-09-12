@@ -145,8 +145,8 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 		if (src._castId.isNull())
 			continue;
 
-		if (src._cast == nullptr && _cast != nullptr)
-			src.setCast(src._castId);
+		if (src._castId.castLib == -1 && _cast != nullptr)
+			src.setCast(src._castId, _cast->getCastMember(src._castId.member, true));
 
 		debugCN(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): sprite: %d - cast: %s, orig: %d,%d %dx%d",
 				iter, src._castId.asString().c_str(),
