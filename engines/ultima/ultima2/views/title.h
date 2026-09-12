@@ -25,6 +25,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "ultima/shared/gfx/view.h"
+#include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -38,8 +39,8 @@ using namespace Shared::Messages;
  * picture, then the main "ULTIMA ][ / REVENGE OF THE ENCHANTRESS" menu
  * (Demonstration / Play / Create character). Choosing Demonstration
  * cycles through the PICOUT..PICMIN slideshow before looping back to the
- * start; pressing Escape at any point before the menu jumps straight to
- * it.
+ * start; any keypress or action before the menu is reached jumps
+ * straight to it.
  */
 class Title : public Shared::Gfx::View {
 private:
@@ -54,12 +55,15 @@ private:
 	Graphics::ManagedSurface _pic;
 	Graphics::Palette _picPalette;
 
+	// Blinking cursor shown after "CHOICE:" while the menu is active
+	Gfx::TextCursor _cursor;
+
 	void loadPic(const Common::String &filename);
 	void showMenu();
 	void showState(State state);
 
 public:
-	Title() : View("Title") {}
+	Title();
 	~Title() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;

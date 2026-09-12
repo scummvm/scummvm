@@ -36,6 +36,12 @@ constexpr int COLOR_CAPTION = 3; // white, within CGA_PALETTE1
 
 constexpr int COLOR_TEXT = 15; // white, within the standard EGA palette
 
+Title::Title() : View("Title"), _cursor("Cursor", this) {
+	// Position the cursor right after "CHOICE:"
+	_cursor.setPosition(Common::Point(12, 19));
+	_cursor.hide();
+}
+
 void Title::loadPic(const Common::String &filename) {
 	Gfx::PicDecoder decoder;
 	Common::File f;
@@ -59,6 +65,7 @@ bool Title::msgUnfocus(const UnfocusMessage &msg) {
 
 void Title::showState(State state) {
 	_state = state;
+	_cursor.hide();
 
 	switch (state) {
 	case TEXT1:
@@ -93,6 +100,7 @@ void Title::showState(State state) {
 		break;
 	case MENU:
 		// No timeout; this state waits indefinitely for a keypress
+		_cursor.show();
 		break;
 	}
 
