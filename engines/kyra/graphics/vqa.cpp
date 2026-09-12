@@ -73,6 +73,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (_fileStream->readUint32BE() != MKTAG('F','O','R','M')) {
 		warning("VQADecoder::loadStream(): Cannot find `FORM' tag");
+		close();
 		return false;
 	}
 
@@ -82,6 +83,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (_fileStream->readUint32BE() != MKTAG('W','V','Q','A')) {
 		warning("VQADecoder::loadStream(): Cannot find `WVQA' tag");
+		close();
 		return false;
 	}
 
@@ -112,10 +114,12 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *stream) {
 		case MKTAG('F','I','N','F'):
 			if (!foundVQHD) {
 				warning("VQADecoder::loadStream(): Found `FINF' before `VQHD'");
+				close();
 				return false;
 			}
 			if (size != 4 * getFrameCount()) {
 				warning("VQADecoder::loadStream(): Expected size %d for `FINF' chunk, but got %u", 4 * getFrameCount(), size);
+				close();
 				return false;
 			}
 			handleFINF(_fileStream);
