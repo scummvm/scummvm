@@ -59,12 +59,25 @@ static int wrapCoord(int value, int minVal, int maxVal, int wrapSize) {
 	return value;
 }
 
-// True if a ship of the usual sprite size at (x,y) would overlap the given
+// The ship tile is a 32x19 canvas, but most of that is blank padding left
+// over from the original's byte-alignment pre-shift copies (see
+// loadShipTiles) - the actual ship silhouette drawn within it is much
+// smaller. Using the full tile as the collision box was triggering "Crunch!"
+// roughly a whole ship-width before the ship visually touched anything, so
+// use a smaller, roughly-centred box instead
+constexpr int SHIP_COLLISION_WIDTH = 16;
+constexpr int SHIP_COLLISION_HEIGHT = 10;
+constexpr int SHIP_COLLISION_OFFSET_X = (Data::SPACE_SHIP_TILE_WIDTH - SHIP_COLLISION_WIDTH) / 2;
+constexpr int SHIP_COLLISION_OFFSET_Y = (Data::SPACE_SHIP_TILE_HEIGHT - SHIP_COLLISION_HEIGHT) / 2;
+
+// True if a ship at (x,y) (its tile's top-left) would overlap the given
 // rect - used to detect running into the station or another ship (the only
 // thing that actually triggers "Crunch!"; the sector edges just wrap)
 static bool overlapsRect(int x, int y, int rx, int ry, int rw, int rh) {
-	return x < rx + rw && x + Data::SPACE_SHIP_TILE_WIDTH > rx &&
-		y < ry + rh && y + Data::SPACE_SHIP_TILE_HEIGHT > ry;
+	x += SHIP_COLLISION_OFFSET_X;
+	y += SHIP_COLLISION_OFFSET_Y;
+	return x < rx + rw && x + SHIP_COLLISION_WIDTH > rx &&
+		y < ry + rh && y + SHIP_COLLISION_HEIGHT > ry;
 }
 
 bool SpaceMapLogic::move(Data::Direction dir) {
@@ -99,10 +112,14 @@ bool SpaceMapLogic::move(Data::Direction dir) {
 		_G(shipExhaustCountdown) += 10;
 		break;
 	case Data::DIR_DOWN:
-		// Brake - stop drifting and clear the exhaust trail. Rotating
-		// (Left/Right) leaves the drift untouched - only Down cancels it
-		_G(sectorDriftX) = 0;
-		_G(sectorDriftY) = 0;
+		// Retro-thrust - a real thrust in the opposite direction, not a
+		// full stop. From rest it starts the ship moving backwards, and
+		// against existing forward drift it only decelerates it by one
+		// increment (mirrors Up, just subtracted instead of added). It does
+		// immediately clear any exhaust trail still showing from a
+		// previous Up, rather than extending it further
+		_G(sectorDriftX) = CLIP(_G(sectorDriftX) - FACING_DX[ship._facing], -MAX_DRIFT, MAX_DRIFT);
+		_G(sectorDriftY) = CLIP(_G(sectorDriftY) - FACING_DY[ship._facing], -MAX_DRIFT, MAX_DRIFT);
 		_G(shipExhaustCountdown) = 0;
 		break;
 	default:
@@ -157,7 +174,8 @@ void SpaceMapLogic::tick() {
 				continue;
 			const Data::SpaceMapShip &other = cell._ships[i];
 			if (other._shipType != Data::SHIP_NONE)
-				crunch = overlapsRect(newX, newY, other._x, other._y, Data::SPACE_SHIP_TILE_WIDTH, Data::SPACE_SHIP_TILE_HEIGHT);
+				crunch = overlapsRect(newX, newY, other._x + SHIP_COLLISION_OFFSET_X, other._y + SHIP_COLLISION_OFFSET_Y,
+					SHIP_COLLISION_WIDTH, SHIP_COLLISION_HEIGHT);
 		}
 
 		if (crunch) {
