@@ -117,12 +117,12 @@ private:
 };
 
 BaseGame::BaseGame(HopkinsEngine *vm) :
-		_vm(vm), _engine(nullptr), _renderer(nullptr), _entry(nullptr), _result(-1),
+		_vm(vm), _wbaseEnhancements(vm->getTargetName()), _engine(nullptr), _renderer(nullptr), _entry(nullptr), _result(-1),
 		_keymapsSwitched(false), _defaultKeymapWasEnabled(false),
-		_shortcutKeymapWasEnabled(false), _baseKeymapWasEnabled(false),
+		_shortcutKeymapWasEnabled(false), _baseKeymapWasEnabled(false), _wbaseEnhancementsKeymapWasEnabled(false),
 		_inputSuspended(false), _mainMenuRequested(false),
 		_presentationRefreshRequested(false), _timingResetRequested(false),
-		_quitRequested(false) {
+		_wbaseEnhancementsNavigationMapVisible(false), _quitRequested(false) {
 	_framebuffer.resize(kBaseFrameWidth * kBaseFrameHeight);
 	Common::fill(_audioLoaded, _audioLoaded + ARRAYSIZE(_audioLoaded), false);
 }
@@ -192,6 +192,7 @@ BaseRunResult BaseGame::run(int entryId) {
 	_mainMenuRequested = false;
 	_presentationRefreshRequested = false;
 	_timingResetRequested = false;
+	_wbaseEnhancementsNavigationMapVisible = false;
 	_quitRequested = false;
 	_result = -1;
 	renderFrame();
@@ -211,7 +212,7 @@ BaseRunResult BaseGame::run(int entryId) {
 		}
 		if (_result != -1 || _quitRequested || _vm->shouldQuit())
 			break;
-		if (_inputSuspended) {
+		if (_inputSuspended || _wbaseEnhancementsNavigationMapVisible) {
 			previousTime = now;
 			accumulator = 0;
 			_vm->_soundMan->checkSounds();
@@ -240,7 +241,6 @@ BaseRunResult BaseGame::run(int entryId) {
 
 	if (_quitRequested || _vm->shouldQuit())
 		return BaseRunResult(kBaseRunQuit);
-
 	return BaseRunResult(kBaseRunCompleted, _result);
 }
 
@@ -352,6 +352,7 @@ void BaseGame::switchKeymaps(bool entering) {
 	Common::Keymap *defaultKeymap = keymapper->getKeymap(kDefaultKeymapId);
 	Common::Keymap *shortcutKeymap = keymapper->getKeymap(kShortcutKeymapId);
 	Common::Keymap *baseKeymap = keymapper->getKeymap(kBaseKeymapId);
+	Common::Keymap *wbaseEnhancementsKeymap = keymapper->getKeymap(kWBASEEnhancementsKeymapId);
 
 	if (entering) {
 		if (_keymapsSwitched)
@@ -359,12 +360,15 @@ void BaseGame::switchKeymaps(bool entering) {
 		_defaultKeymapWasEnabled = defaultKeymap && defaultKeymap->isEnabled();
 		_shortcutKeymapWasEnabled = shortcutKeymap && shortcutKeymap->isEnabled();
 		_baseKeymapWasEnabled = baseKeymap && baseKeymap->isEnabled();
+		_wbaseEnhancementsKeymapWasEnabled = wbaseEnhancementsKeymap && wbaseEnhancementsKeymap->isEnabled();
 		if (defaultKeymap)
 			defaultKeymap->setEnabled(false);
 		if (shortcutKeymap)
 			shortcutKeymap->setEnabled(false);
 		if (baseKeymap)
 			baseKeymap->setEnabled(true);
+		if (wbaseEnhancementsKeymap)
+			wbaseEnhancementsKeymap->setEnabled(_wbaseEnhancements.enabled());
 		_keymapsSwitched = true;
 	} else if (_keymapsSwitched) {
 		if (defaultKeymap)
@@ -373,6 +377,8 @@ void BaseGame::switchKeymaps(bool entering) {
 			shortcutKeymap->setEnabled(_shortcutKeymapWasEnabled);
 		if (baseKeymap)
 			baseKeymap->setEnabled(_baseKeymapWasEnabled);
+		if (wbaseEnhancementsKeymap)
+			wbaseEnhancementsKeymap->setEnabled(_wbaseEnhancementsKeymapWasEnabled);
 		_keymapsSwitched = false;
 	}
 }
@@ -450,8 +456,24 @@ void BaseGame::handleAction(uint32 action, bool pressed) {
 			_input.toggleTextures = true;
 		break;
 	case kActionBaseMenu:
-		if (pressed)
-			_mainMenuRequested = true;
+		if (pressed) {
+			if (_wbaseEnhancementsNavigationMapVisible) {
+				_wbaseEnhancementsNavigationMapVisible = false;
+				_input = BaseInputState();
+				_timingResetRequested = true;
+				renderFrame();
+			} else {
+				_mainMenuRequested = true;
+			}
+		}
+		break;
+	case kActionWBASEEnhancementsNavigationMap:
+		if (pressed && _wbaseEnhancements.navigationMapEnabled()) {
+			_wbaseEnhancementsNavigationMapVisible = !_wbaseEnhancementsNavigationMapVisible;
+			_input = BaseInputState();
+			_timingResetRequested = true;
+			renderFrame();
+		}
 		break;
 	default:
 		break;
@@ -497,8 +519,12 @@ void BaseGame::processSoundEvents() {
 void BaseGame::renderFrame() {
 	if (!_renderer || !_engine || _framebuffer.empty())
 		return;
-	_renderer->render(*_engine, _framebuffer.begin());
-	Common::copy(_framebuffer.begin(), _framebuffer.end(), _vm->_graphicsMan->_frontBuffer);	_vm->_graphicsMan->addDirtyRect(0, 0, kBaseFrameWidth, kBaseFrameHeight);
+	if (_wbaseEnhancementsNavigationMapVisible)
+		_wbaseEnhancements.renderNavigationMap(_data, *_engine, _framebuffer.begin());
+	else
+		_renderer->render(*_engine, _framebuffer.begin());
+	Common::copy(_framebuffer.begin(), _framebuffer.end(), _vm->_graphicsMan->_frontBuffer);
+	_vm->_graphicsMan->addDirtyRect(0, 0, kBaseFrameWidth, kBaseFrameHeight);
 	_vm->_graphicsMan->updateScreen();
 }
 

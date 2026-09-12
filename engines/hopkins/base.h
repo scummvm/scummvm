@@ -26,6 +26,7 @@
 
 #include "hopkins/base_data.h"
 #include "hopkins/base_engine.h"
+#include "hopkins/base_enhancements.h"
 
 #include "common/array.h"
 #include "common/scummsys.h"
@@ -95,6 +96,7 @@ private:
 	void setEngineActive(bool active);
 
 	HopkinsEngine *_vm;
+	WBASEEnhancements _wbaseEnhancements;
 	BaseData _data;
 	BaseEngine *_engine;
 	BaseRenderer *_renderer;
@@ -107,10 +109,12 @@ private:
 	bool _defaultKeymapWasEnabled;
 	bool _shortcutKeymapWasEnabled;
 	bool _baseKeymapWasEnabled;
+	bool _wbaseEnhancementsKeymapWasEnabled;
 	bool _inputSuspended;
 	bool _mainMenuRequested;
 	bool _presentationRefreshRequested;
 	bool _timingResetRequested;
+	bool _wbaseEnhancementsNavigationMapVisible;
 	bool _quitRequested;
 };
 

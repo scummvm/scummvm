@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	base_data.o \
 	base_engine.o \
 	base_renderer.o \
+	base_enhancements.o \
 	computer.o \
 	debugger.o \
 	dialogs.o \
