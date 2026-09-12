@@ -31,6 +31,7 @@ void smushDecodeRA2RLE(byte *dst, const byte *src, int left, int top, int width,
 void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeRA2SkipRemap(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, const byte *remap, byte addColor);
+bool smushPrepareRA2BlurData(const byte *src, int dataSize, byte *palette, byte *lookup, const byte *&maskData, int &maskSize);
 void smushDecodeRA2Blur(byte *dst, const byte *src, int left, int top, int dstWidth, int dstHeight, int pitch, int dataSize, byte *palette, byte *lookup);
 void smushDecodeRA2BlurClip(byte *dst, const byte *src, int left, int top,
 		int clipLeft, int clipTop, int clipRight, int clipBottom,

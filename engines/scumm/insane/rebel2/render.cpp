@@ -3515,9 +3515,12 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 			int overlayDrawX = renderHiRes ? (nativeOverlayX - nativeViewX) * renderScale : nativeOverlayX;
 			int overlayDrawY = renderHiRes ? (nativeOverlayY - nativeViewY) * renderScale : nativeOverlayY;
 
-			renderNutSpriteScaledClipped(renderBitmap, pitch, width, renderHeight,
-				0, 0, width, renderHeight,
-				overlayDrawX, overlayDrawY, _grd005Sprite, overlayIdx, false, renderScale, false);
+			if (!drawRebel2Codec45Sprite(_grd005Sprite, renderBitmap, pitch, width, height,
+					Common::Rect(0, 0, width, renderHeight), overlayDrawX, overlayDrawY, overlayIdx, renderScale)) {
+				renderNutSpriteScaledClipped(renderBitmap, pitch, width, renderHeight,
+					0, 0, width, renderHeight,
+					overlayDrawX, overlayDrawY, _grd005Sprite, overlayIdx, false, renderScale, false);
+			}
 
 			debugC(DEBUG_INSANE, "Handler25 PRE: GRD005 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d scale=%d",
 				overlayDrawX, overlayDrawY, overlayXOffset, overlayYOffset,
