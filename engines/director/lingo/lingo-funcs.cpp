@@ -57,13 +57,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	}
 
 	stage->_skipFrameAdvance = true;
-
-	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
-	// freeze this script context. We'll return to it after entering the next frame.
-
-	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
-	if (!_playDone)
-		_freezeState = true;
+	setPassEvent(false);
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
@@ -100,6 +94,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		score->_defaultCursor.readFromResource(4);
 		score->renderCursor(stage->getMousePos());
 
+		if (!_playDone)
+			_freezeState = true;
 		return;
 	}
 
@@ -111,9 +107,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		score->setCurrentFrame(frame.asInt());
 	}
 
-	// Since the frames are not going to be consecutive, we might run into
-	// an endge case, so better kill behaviors proactively.
-	score->killScriptInstances(score->getNextFrame());
+	// Score::update() expires script instances when applying the jump.
+	if (!_playDone && score->getNextFrame() != score->getCurrentFrameNum())
+		_freezeState = true;
 }
 
 void Lingo::func_gotoloop() {
@@ -127,6 +123,7 @@ void Lingo::func_gotoloop() {
 	score->gotoLoop();
 
 	stage->_skipFrameAdvance = true;
+	setPassEvent(false);
 }
 
 void Lingo::func_gotonext() {
@@ -140,6 +137,9 @@ void Lingo::func_gotonext() {
 	debugC(3, kDebugLingoExec, "Lingo::func_gotonext(): going to next frame %d", score->getNextFrame());
 
 	stage->_skipFrameAdvance = true;
+	setPassEvent(false);
+	if (!_playDone)
+		_freezeState = true;
 }
 
 void Lingo::func_gotoprevious() {
@@ -153,6 +153,7 @@ void Lingo::func_gotoprevious() {
 	debugC(3, kDebugLingoExec, "Lingo::func_gotoprevious(): going to previous frame %d", score->getNextFrame());
 
 	stage->_skipFrameAdvance = true;
+	setPassEvent(false);
 }
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
