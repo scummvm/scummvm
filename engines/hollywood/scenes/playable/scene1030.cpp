@@ -497,21 +497,34 @@ void Scene1030::runFirstEntryConversation() {
 
 	beginPrimarySpeechLineWithAnimationGroup(0x0d, 0, 0x0e3, 0x084, 0x0d, 0x32, 0x3a,
 		kScene1030EntryLeftSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 0, 0x079, 0x086, 0x0a, 0x3f, 0,
 		kScene1030EntryRightSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 
 	runEntryGestureSequence();
+	if (animationPlaybackShouldStop())
+		return;
 
 	_entryActorsAlternatePose = true;
 	beginPrimarySpeechLineWithAnimationGroup(0x0d, 1, 0x0e3, 0x084, 0x0d, 0x32, 0x3a,
 		kScene1030EntryLeftSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x079, 0x086, 0x0a, 0x3f, 0,
 		kScene1030EntryRightSpeechGroup);
+	if (animationPlaybackShouldStop())
+		return;
 
 	runEntryOpenSequence();
+	if (animationPlaybackShouldStop())
+		return;
 
-	restoreNormalPalette();
 	finishConcurrentActorPath();
+	if (animationPlaybackShouldStop())
+		return;
 	if (_actorPathFrames.size() <= 1) {
 		setActiveActorPose(kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY,
 			kScene1030FirstEntryFacing);
@@ -520,6 +533,8 @@ void Scene1030::runFirstEntryConversation() {
 	_entryActorsAlternatePose = false;
 	_sceneLayers.setLayerVisible(kScene1030LeftEntryActorLayer, false);
 	_sceneLayers.setLayerVisible(kScene1030RightEntryActorLayer, false);
+	// The concurrent walk can still draw the entry actors with their own palette.
+	restoreNormalPalette();
 	_sceneLayers.setLayerFrame(kScene1030LargeForegroundLayer, 0x1c);
 	_largeForegroundMode = 1;
 	state.scene1030EntryConversationSeen = true;
@@ -529,25 +544,43 @@ void Scene1030::runFirstEntryConversation() {
 }
 
 void Scene1030::runEntryGestureSequence() {
-	for (uint i = 0; i < kTwoActorGestureFrameCount && !Engine::shouldQuit(); ++i) {
+	for (uint i = 0; i < kTwoActorGestureFrameCount && !animationPlaybackShouldStop(); ++i) {
 		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
 			kTwoActorGestureRightFrames[i]);
 		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
 			kTwoActorGestureLeftFrames[i]);
-		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
-			return;
+		if (waitSceneMillis(kScene1030ForegroundFrameMillis)) {
+			if (animationPlaybackShouldStop())
+				return;
+			consumeStepAdvanceRequest();
+			break;
+		}
 	}
+	if (animationPlaybackShouldStop())
+		return;
+	_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
+		kTwoActorGestureRightFrames[kTwoActorGestureFrameCount - 1]);
+	_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
+		kTwoActorGestureLeftFrames[kTwoActorGestureFrameCount - 1]);
 }
 
 void Scene1030::runEntryOpenSequence() {
-	for (uint i = 0; i <= 0x10 && !Engine::shouldQuit(); ++i) {
+	for (uint i = 0; i <= 0x10 && !animationPlaybackShouldStop(); ++i) {
 		_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer,
 			MIN<byte>(0x20, 0x10 + i));
 		_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer,
 			MIN<byte>(0x1a, 0x10 + i));
-		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
-			return;
+		if (waitSceneMillis(kScene1030ForegroundFrameMillis)) {
+			if (animationPlaybackShouldStop())
+				return;
+			consumeStepAdvanceRequest();
+			break;
+		}
 	}
+	if (animationPlaybackShouldStop())
+		return;
+	_sceneLayers.setLayerFrame(kScene1030RightEntryActorLayer, 0x20);
+	_sceneLayers.setLayerFrame(kScene1030LeftEntryActorLayer, 0x1a);
 }
 
 void Scene1030::drawEntryActors() {
