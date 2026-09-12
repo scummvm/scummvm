@@ -567,6 +567,10 @@ bool Sprite::checkSpriteType() {
 }
 
 void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
+	setCast(memberID, _movie->getCastMember(memberID), replaceDims);
+}
+
+void Sprite::setCast(CastMemberID memberID, CastMember *cast, bool replaceDims) {
 	/**
 	 * There are two things we need to take into account here:
 	 *   1. The cast member's type
@@ -584,7 +588,7 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 	if (_cast) {
 		_cast->decRefCount();
 	}
-	_cast = _movie->getCastMember(_castId);
+	_cast = cast;
 	//As QDShapes don't have an associated cast, we must not change their _SpriteType.
 	if (g_director->getVersion() >= 400 && !isQDShape() && _castId != CastMemberID(0, 0))
 		_spriteType = kCastMemberSprite;

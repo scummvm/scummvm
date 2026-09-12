@@ -564,8 +564,15 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 	return true;
 }
 
+CastMemberID Movie::resolveCastMemberID(CastMemberID id) const {
+	if (id.castLib == -1)
+		id.castLib = DEFAULT_CAST_LIB;
+	return id;
+}
+
 CastMember *Movie::getCastMember(CastMemberID memberID) {
 	CastMember *result = nullptr;
+	memberID = resolveCastMemberID(memberID);
 	if (memberID.castLib == SHARED_CAST_LIB) {
 		if (_sharedCast)
 			result = _sharedCast->getCastMember(memberID.member);
@@ -585,6 +592,7 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 }
 
 Cast *Movie::getCast(CastMemberID memberID) {
+	memberID = resolveCastMemberID(memberID);
 	if (memberID.castLib == SHARED_CAST_LIB)
 		return _sharedCast;
 
@@ -612,6 +620,7 @@ Cast *Movie::getCastByLibResourceID(uint32 libresourceID) {
 CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
 	warning("Movie::createOrReplaceCastMember: stubbed: functions only handles create");
 	CastMember *result = nullptr;
+	memberID = resolveCastMemberID(memberID);
 
 	if (_casts.contains(memberID.castLib)) {
 		// Delete existing cast member
@@ -624,6 +633,7 @@ CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* 
 }
 
 bool Movie::eraseCastMember(CastMemberID memberID) {
+	memberID = resolveCastMemberID(memberID);
 	if (_casts.contains(memberID.castLib)) {
 		bool result = _casts.getVal(memberID.castLib)->eraseCastMember(memberID.member);
 		_score->refreshPointersForCastMemberID(memberID);
@@ -636,6 +646,8 @@ bool Movie::eraseCastMember(CastMemberID memberID) {
 bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
 	Cast *sourceCast = nullptr;
 	Cast *targetCast = nullptr;
+	source = resolveCastMemberID(source);
+	target = resolveCastMemberID(target);
 	if (_casts.contains(source.castLib)) {
 		if (_casts[source.castLib]->getCastMember(source.member)) {
 			sourceCast = _casts[source.castLib];
@@ -760,6 +772,7 @@ CastMemberID Movie::getCastMemberIDByNameAndType(const Common::String &name, int
 
 CastMemberInfo *Movie::getCastMemberInfo(CastMemberID memberID) {
 	CastMemberInfo *result = nullptr;
+	memberID = resolveCastMemberID(memberID);
 	if (_casts.contains(memberID.castLib)) {
 		result = _casts.getVal(memberID.castLib)->getCastMemberInfo(memberID.member);
 		if (result == nullptr && _sharedCast) {
@@ -778,6 +791,7 @@ bool Movie::isValidCastMember(CastMemberID memberID, CastType type) {
 
 const Stxt *Movie::getStxt(CastMemberID memberID) {
 	const Stxt *result = nullptr;
+	memberID = resolveCastMemberID(memberID);
 	if (_casts.contains(memberID.castLib)) {
 		result = _casts.getVal(memberID.castLib)->getStxt(memberID.member);
 		if (result == nullptr && _sharedCast) {
@@ -810,6 +824,7 @@ LingoArchive *Movie::getSharedLingoArch() {
 
 ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 	ScriptContext *result = nullptr;
+	id = resolveCastMemberID(id);
 	if (_casts.contains(id.castLib)) {
 		result = _casts.getVal(id.castLib)->_lingoArchive->getScriptContext(type, id.member);
 		if (result == nullptr && _sharedCast) {
