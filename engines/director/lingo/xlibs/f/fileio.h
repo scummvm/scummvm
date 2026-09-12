@@ -27,6 +27,7 @@ class SeekableReadStream;
 typedef SeekableReadStream InSaveFile;
 class OutSaveFile;
 class MemoryWriteStreamDynamic;
+class MemorySeekableReadWriteStreamDynamic;
 class String;
 }
 
@@ -51,11 +52,20 @@ enum FileIOError {
 	kErrorDirectoryNotFound = -120
 };
 
+enum FileIOOpenMode {
+	kFileIORead,
+	kFileIOWrite,
+	kFileIOAppend,
+	kFileIOReadWrite
+};
+
 class FileObject : public Object<FileObject> {
 public:
 	Common::String *_filename;
 	Common::SeekableReadStream *_inStream;
 	Common::MemoryWriteStreamDynamic *_outStream;
+	Common::MemorySeekableReadWriteStreamDynamic *_readWriteStream;
+	bool _readWriteChanged;
 	FileIOError _lastError;
 
 public:
@@ -67,9 +77,13 @@ public:
 	Datum getProp(const Common::String &propName) override;
 
 	FileIOError open(const Common::String &origpath, const Common::String &mode);
+	FileIOError open(const Common::String &origpath, FileIOOpenMode mode);
 	void clear();
 	FileIOError saveFileError();
 	void dispose() override;
+
+private:
+	FileIOError open(const Common::String &origpath, const Common::String &path, FileIOOpenMode mode, char dirSeparator);
 };
 
 namespace FileIO {

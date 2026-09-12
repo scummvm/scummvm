@@ -278,6 +278,62 @@ public:
 };
 
 /**
+ * A dynamically growing memory stream with a shared read/write position.
+ */
+class MemorySeekableReadWriteStreamDynamic : public MemoryWriteStreamDynamic, public SeekableReadStream {
+public:
+	explicit MemorySeekableReadWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory)
+		: MemoryWriteStreamDynamic(disposeMemory), _eos(false) {}
+
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		uint32 readSize = MIN<uint32>(dataSize, _size - _pos);
+		if (readSize)
+			memcpy(dataPtr, _data + _pos, readSize);
+		_pos += readSize;
+		_ptr = _data ? _data + _pos : nullptr;
+		_eos = readSize < dataSize;
+		return readSize;
+	}
+
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		uint32 result = MemoryWriteStreamDynamic::write(dataPtr, dataSize);
+		_eos = false;
+		return result;
+	}
+
+	bool seek(int64 offset, int whence = SEEK_SET) override {
+		switch (whence) {
+		case SEEK_END:
+			offset += _size;
+			break;
+		case SEEK_CUR:
+			offset += _pos;
+			break;
+		case SEEK_SET:
+			break;
+		default:
+			return false;
+		}
+
+		if (offset < 0 || offset > _size)
+			return false;
+
+		_pos = offset;
+		_ptr = _data ? _data + _pos : nullptr;
+		_eos = false;
+		return true;
+	}
+
+	int64 pos() const override { return MemoryWriteStreamDynamic::pos(); }
+	int64 size() const override { return MemoryWriteStreamDynamic::size(); }
+	bool eos() const override { return _eos; }
+	void clearErr() override { _eos = false; }
+
+private:
+	bool _eos;
+};
+
+/**
 * MemoryStream based on RingBuffer. Grows if has insufficient buffer size.
 */
 class MemoryReadWriteStream : public SeekableReadStream, public SeekableWriteStream {
