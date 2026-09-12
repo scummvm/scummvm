@@ -50,10 +50,10 @@ struct ActorSpriteBank {
 
 struct ActorDepthTest {
 	bool enabled;
+	int actorWorldY;
 	const Graphics::Surface *savedFramebuffer;
 	const Common::Array<byte> *colorToDepthClassMap;
 	const Common::Array<uint16> *depthYThresholds;
-	int actorWorldY;
 };
 
 int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,

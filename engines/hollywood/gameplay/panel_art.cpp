@@ -144,8 +144,8 @@ const InventoryItemPageMapEntry kSueInventoryItemPageMap[] = {
 };
 
 GameplayPanelArt::GameplayPanelArt(Common::Language language) :
-		_language(language),
 		_inventoryItemPageBaseOffset(0),
+		_language(language),
 		_loaded(false) {
 }
 

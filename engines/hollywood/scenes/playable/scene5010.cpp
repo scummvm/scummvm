@@ -23,6 +23,8 @@
 #include "common/system.h"
 
 #include "hollywood/hollywood.h"
+#include "hollywood/font.h"
+#include "hollywood/game_strings.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/scenes/playable/scene5010.h"
@@ -53,6 +55,9 @@ const byte kScene5010AmbientMusicCueCount = 5;
 const byte kScene5010SwitchLeadFrameCounts[] = { 0x23, 0x13, 0x05 };
 const byte kScene5010SwitchCenterFrames[] = { 0x23, 0x32, 0x41 };
 const byte kScene5010SwitchTailFrames[] = { 0x00, 0x0f, 0x1e };
+const byte kScene5010DestinationLabelColor = 0xfc;
+const int kScene5010SwitchPanelCenterX = 218;
+const int kScene5010DestinationLabelY = 396;
 
 enum Scene5010LayerId {
 	kScene5010SwitchLayer,
@@ -581,6 +586,30 @@ void Scene5010::drawSwitchPanelOverlay() {
 			_sceneChunkTable.isValidChunk(columnChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[columnChunk], _sceneFramebuffer);
 	drawSceneLayer(kScene5010SwitchPanelAnimationLayer);
+	drawMineDestinationLabel();
+}
+
+void Scene5010::drawMineDestinationLabel() {
+	const GameplayState &state = _vm->gameState();
+	HollywoodFont *font = _vm->font();
+	if (!_vm->restoredContentEnabled() || !state.scene5010VisitedDestinations ||
+			!font || !font->isLoaded() ||
+			_switchPanelMovingSelector != kScene5010NoMovingSelector)
+		return;
+
+	const uint slot = _switchPanelDisplayedRow * 3 + _switchPanelDisplayedColumn;
+	const uint16 destination = state.scene5010DestinationStateBySwitchSlot[slot];
+	const char *label = "???";
+	if (state.scene5010DestinationTableInitialized && state.hasVisitedMineDestination(destination))
+		label = getGameStrings(_vm->getLanguage()).mineDestinationLabels[(destination - 5020) / 10];
+
+	font->setShadowColor(0);
+	setPaletteEntry6Bit(kScene5010DestinationLabelColor, 0x3f, 0x3f, 0x3f);
+	const int textWidth = font->getStringWidth(label) + 2;
+	const int x = MAX<int>(viewportXOffset() + 2, kScene5010SwitchPanelCenterX - textWidth / 2);
+	font->drawString(_sceneFramebuffer.surfacePtr(), label, x, kScene5010DestinationLabelY,
+		textWidth, kScene5010DestinationLabelColor,
+		Graphics::kTextAlignLeft, 0, false, true);
 }
 
 byte Scene5010::switchPanelMaskPixelAt(uint16 screenX, uint16 screenY) const {
