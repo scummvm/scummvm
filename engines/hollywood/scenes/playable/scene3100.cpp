@@ -153,36 +153,38 @@ void Scene3100::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 	switch (handlerId) {
-	case 301: // Ir a exterior de la cabaña (go outside): return to scene 3080.
+	case 301: // Ir a camino (go to path): return to scene 3080.
 		runExitToScene3080();
 		return true;
-	case 302: // Mirar niña (look at girl): state-aware girl description.
+	case 302: // Mirar camino (look at path).
+		// TODO: The original uses speech row 0 (the path), not row 1 (the girl).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303: // Hablar con ocupante de la cabaña (talk to cabin occupant).
+	case 303: // Hablar con niña (talk to girl by the river).
 		runCabinConversation();
 		_cabinChannel.frameIndex = 5;
 		_sceneLayers.setLayerFrame(kScene3100CabinLayer, 5);
 		return true;
-	case 304: // Mirar ocupante/estado de la cabaña (look at cabin occupant/state).
+	case 304: // Mirar niña (look at girl): description changes after the first conversation.
 		beginSecondarySpeechLine(1, state.scene3100GirlConversationState == 0 ? 0 : 1);
 		return true;
-	case 305: // Coger margarita revelada tras la conversacion (take revealed daisy): adds item 0x39.
+	case 305: // Coger margarita (take daisy): adds inventory item 0x39.
 		runObjectPickup();
 		return true;
-	case 306: // Mirar/coger margarita (look/take daisy): flower from the girl.
+	case 306: // Mirar margarita (look at daisy): one of the flowers the girl was throwing into the river.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 307: // Mirar planta (look at plant): living sap source.
+	case 307: // Mirar planta (look at plant): it is full of life.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 308: // Mirar tronco (look at log).
+	case 308: // Mirar tronco (look at log): it is old and rotten.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 309: // Mirar rio (look at river).
+	case 309: // Mirar río (look at river): it does not look very deep.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 310: // Coger savia de la planta (take plant sap): adds item 0x38.
+	case 310: // Usar jeringuilla con planta (use syringe on plant): collect sap.
+		// Replaces the empty syringe (0x08) with the sap-filled syringe (0x38).
 		runExchangePickup();
 		return true;
 	default:
