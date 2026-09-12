@@ -1766,9 +1766,15 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (int)(sprite->_colorcode & 0x7);
 		break;
 	case kTheScriptInstanceList:
-		warning("STUB: Getting the scriptInstanceList");
-		d.type = PARRAY;
-		d.u.parr = new PArray;
+		d.type = ARRAY;
+		d.u.farr = new FArray;
+		if (id == 0) {
+			if (score->_scriptChannelScriptInstance.type == OBJECT)
+				d.u.farr->arr.push_back(score->_scriptChannelScriptInstance);
+		} else {
+			for (const Datum &instance : channel->_scriptInstanceList)
+				d.u.farr->arr.push_back(instance);
+		}
 		break;
 	case kTheScriptNum:
 		if (g_director->getVersion() >= 600) {
@@ -2645,6 +2651,26 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		Common::String key = Common::String::format("%d%s", kTheSprite, propName.c_str());
 		if (_theEntityFields.contains(key)) {
 			d = getTheSprite(obj, _theEntityFields[key]->field);
+		} else {
+			Movie *movie = _vm->getCurrentMovie();
+			Score *score = movie ? movie->getScore() : nullptr;
+			if (score && obj.u.i == 0) {
+				Datum &instance = score->_scriptChannelScriptInstance;
+				if (instance.type == OBJECT && instance.u.obj->hasProp(propName))
+					d = instance.u.obj->getProp(propName);
+			} else if (score) {
+				Channel *channel = score->getChannelById(obj.u.i);
+				if (!channel) {
+					g_lingo->push(d);
+					return;
+				}
+				for (const Datum &instance : channel->_scriptInstanceList) {
+					if (instance.type == OBJECT && instance.u.obj->hasProp(propName)) {
+						d = instance.u.obj->getProp(propName);
+						break;
+					}
+				}
+			}
 		}
 		g_lingo->push(d);
 		return;
@@ -2770,6 +2796,27 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		Common::String key = Common::String::format("%d%s", kTheSprite, propName.c_str());
 		if (_theEntityFields.contains(key)) {
 			setTheSprite(obj, _theEntityFields[key]->field, val);
+		} else {
+			Movie *movie = _vm->getCurrentMovie();
+			Score *score = movie ? movie->getScore() : nullptr;
+			if (score && obj.u.i == 0) {
+				Datum &instance = score->_scriptChannelScriptInstance;
+				if (instance.type == OBJECT && instance.u.obj->hasProp(propName)) {
+					instance.u.obj->setProp(propName, val);
+					g_debugger->propWriteHook(propName);
+				}
+			} else if (score) {
+				Channel *channel = score->getChannelById(obj.u.i);
+				if (!channel)
+					return;
+				for (const Datum &instance : channel->_scriptInstanceList) {
+					if (instance.type == OBJECT && instance.u.obj->hasProp(propName)) {
+						instance.u.obj->setProp(propName, val);
+						g_debugger->propWriteHook(propName);
+						break;
+					}
+				}
+			}
 		}
 	} else {
 		g_lingo->lingoError("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
