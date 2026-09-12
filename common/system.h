@@ -697,6 +697,19 @@ public:
 	virtual void acquireImeCompositionControl() {}
 
 	/**
+	 * Set the native IME candidate area for a GUI overlay text caret.
+	 *
+	 * A native candidate list is the platform popup that presents possible
+	 * conversions for the current composition, such as Hanja and symbols.
+	 * The rectangle is expressed in overlay coordinates. A supporting backend
+	 * converts it to native window coordinates before forwarding it to the input
+	 * method. This should be called before enabling
+	 * @ref OSystem::kFeatureImeComposition and whenever the GUI caret moves.
+	 * This is a no-op on unsupported backends.
+	 */
+	virtual void setImeCompositionArea(const Common::Rect &area) {}
+
+	/**
 	 * Cancel the native composition without disabling text input.
 	 *
 	 * The active input owner should call this before discarding its local

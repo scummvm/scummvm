@@ -1045,6 +1045,7 @@ void ListWidget::startEditMode() {
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		updateImeCompositionArea();
 		g_system->setFeatureState(OSystem::kFeatureImeComposition, true);
 		sendCommand(kListItemEditModeStartedCmd, _selectedItem);
 	}

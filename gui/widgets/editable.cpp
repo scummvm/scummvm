@@ -72,6 +72,7 @@ EditableWidget::~EditableWidget() {
 void EditableWidget::drawWidget() {
 	if (_caretVisible) {
 		drawCaret(false, true);
+		updateImeCompositionArea();
 	}
 }
 
@@ -696,10 +697,10 @@ int EditableWidget::getSelectionCarretOffset() const {
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
-  void EditableWidget::drawCaret(bool erase, bool useRelativeCoordinates) {
-	// Only draw if item is visible
+Common::Rect EditableWidget::getCaretRect(bool useRelativeCoordinates) {
+	// Only calculate the caret area if the widget is visible.
 	if (!isVisible() || !_boss->isVisible())
-		return;
+		return Common::Rect();
 
 	Common::Rect editRect = getEditRect();
 
@@ -718,7 +719,6 @@ int EditableWidget::getSelectionCarretOffset() const {
 	int y = editRect.top;
 
 	const Common::U32String displayedText = getDisplayedEditString();
-	const int caretPos = getDisplayedCaretPos();
 
 	if (_align == Graphics::kTextAlignRight) {
 		int strVisibleWidth = g_gui.getStringWidth(displayedText, _font) - _editScrollOffset;
@@ -735,7 +735,7 @@ int EditableWidget::getSelectionCarretOffset() const {
 	x += caretOffset;
 
 	if (y < 0 || y + editRect.height() > _h)
-		return;
+		return Common::Rect();
 
 	if (g_gui.useRTL())
 		x += g_system->getOverlayWidth() - _w - xOff;
@@ -743,7 +743,31 @@ int EditableWidget::getSelectionCarretOffset() const {
 		x += xOff;
 	y += yOff;
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
+	return Common::Rect(x, y, x + 1, y + editRect.height());
+}
+
+void EditableWidget::updateImeCompositionArea() {
+	const Common::Rect caretRect = getCaretRect();
+	if (!caretRect.isEmpty())
+		g_system->setImeCompositionArea(caretRect);
+}
+
+void EditableWidget::drawCaret(bool erase, bool useRelativeCoordinates) {
+	const Common::Rect caretRect = getCaretRect(useRelativeCoordinates);
+	if (caretRect.isEmpty())
+		return;
+
+	const Common::Rect editRect = getEditRect();
+	const Common::U32String displayedText = getDisplayedEditString();
+	const int caretPos = getDisplayedCaretPos();
+	const int caretOffset = getCaretOffset();
+	int x = caretRect.left;
+	const int y = caretRect.top;
+
+	if (!erase && !useRelativeCoordinates)
+		g_system->setImeCompositionArea(caretRect);
+
+	g_gui.theme()->drawCaret(caretRect, erase);
 
 	if (erase) {
 		Common::U32String character;

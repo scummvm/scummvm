@@ -76,6 +76,9 @@ public:
 	 */
 	void acquireImeCompositionControl();
 
+	/** Set the native IME candidate area from GUI overlay coordinates. */
+	void setImeCompositionArea(const Common::Rect &area);
+
 	/** Cancel the native composition without disabling text input. */
 	void cancelImeComposition();
 
