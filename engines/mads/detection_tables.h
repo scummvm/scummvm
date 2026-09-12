@@ -230,6 +230,21 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return of the Phantom Spanish Fan Patch
+		{
+			"phantom",
+			"CD",
+			AD_ENTRY2s("section1.hag", "76e2d47a7aebafe48edc9884b3d91782", 1130939, "speech.idx", "1522ade02e7969187eab1acfa78b367c", 634),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_TESTING | ADGF_CD,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_PAS, GAMEOPTION_RESTORE_PHANTOM_MAIN_MENU_CONTENT)
+		},
+		GType_Phantom,
+		0
+	},
+
+	{
 		// Return of the Phantom DOS English Demo
 		{
 			"phantom",
