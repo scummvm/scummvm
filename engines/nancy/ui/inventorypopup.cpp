@@ -550,13 +550,16 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			if (item.keepItem == kInvItemNewSceneView) {
 				// Close-up view: stash the item and warp to its scene, which
-				// dismisses the popup. A normal pickup keeps the popup open.
+				// dismisses the popup.
 				g_nancy->_sound->playSound("BUOK");
 				NancySceneState.pushScene(itemID);
 				SceneChangeDescription sceneChange;
 				sceneChange.sceneID = item.sceneID;
 				sceneChange.continueSceneSound = item.sceneSoundFlag;
 				NancySceneState.changeScene(sceneChange);
+				close();
+			} else if (_uiivData->closeOnPickup) {
+				// Dismiss the popup so the held item can be used on the scene
 				close();
 			}
 
