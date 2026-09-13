@@ -37,10 +37,6 @@ namespace Logic {
  */
 class Logic {
 protected:
-	// Set while a yell()'d message is being typed in, echoing raw keypresses
-	// back out until Enter is pressed
-	bool _yelling = false;
-
 	/**
 	 * Dispatches some text to be shown in the Commands window
 	 */
@@ -59,6 +55,13 @@ protected:
 	void playerDied();
 
 	/**
+	 * Alerts nearby town guards after an attack or theft. A no-op outside
+	 * of towns/castles/villages (_mapNum2 == 0), which is the only mode
+	 * implemented so far
+	 */
+	void alertTownGuards();
+
+	/**
 	 * Signal the map to redraw
 	 */
 	void redrawMap();
@@ -73,6 +76,24 @@ protected:
 	 */
 	int getRandomNumber(int minNumber, int maxNumber);
 	int getRandomNumber(int maxNumber);
+
+	/**
+	 * Returns the next byte from the game's random number generator
+	 */
+	byte randByte();
+
+	/**
+	 * Has the currently focused map view briefly flash the attack sprite
+	 * over a map position - a hit indicator, pausing before returning.
+	 * See AttackTileMessage
+	 */
+	void showAttackTile(int x, int y);
+
+	/**
+	 * Plays a sound effect. Currently a no-op stub, mirroring ultima1's
+	 * own unimplemented playFX
+	 */
+	void playFX(int num);
 
 	/**
 	 * Handles end of turn logic
@@ -93,7 +114,6 @@ protected:
 	virtual bool move(Data::Direction dir) {
 		return false;
 	}
-	virtual bool attack();
 	virtual bool board();
 	virtual bool cast();
 	virtual bool descend();
@@ -129,6 +149,13 @@ public:
 	virtual void keypress(const Shared::Messages::KeypressMessage &msg);
 	virtual void entering() {
 	}
+
+	/**
+	 * Attacks in the given direction, or - if unspecified - starts the
+	 * Direction interaction to prompt for one. Public since the Direction
+	 * interaction calls back into it directly once a direction is chosen
+	 */
+	virtual bool attack(Data::Direction dir = Data::DIR_UNSPECIFIED);
 
 	/**
 	 * Called once per game frame for any logic updates

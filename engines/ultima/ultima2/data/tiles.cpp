@@ -29,9 +29,28 @@ namespace Data {
 // Byte offset of the first tile's data within ULTIMAII.EXE
 constexpr int32 TILE_DATA_OFFSET = 0x7C40;
 
+// Byte offset of the attack-flash sprite's data within ULTIMAII.EXE
+constexpr int32 ATTACK_SPRITE_OFFSET = 0x5488;
+
 // 2-byte header (row width in bytes, row count -- always 4 and 16) plus
 // 64 bytes of packed pixel data
 constexpr int TILE_RECORD_SIZE = 66;
+
+template<typename SurfaceT>
+static void decodeTileRecord(const byte record[TILE_RECORD_SIZE], SurfaceT &surf) {
+	surf.create(TILE_WIDTH, TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	byte *dst = (byte *)surf.getPixels();
+
+	for (int row = 0; row < TILE_HEIGHT; ++row) {
+		for (int b = 0; b < TILE_WIDTH / 4; ++b) {
+			byte v = record[2 + row * 4 + b];
+			dst[row * TILE_WIDTH + b * 4 + 0] = (v >> 6) & 3;
+			dst[row * TILE_WIDTH + b * 4 + 1] = (v >> 4) & 3;
+			dst[row * TILE_WIDTH + b * 4 + 2] = (v >> 2) & 3;
+			dst[row * TILE_WIDTH + b * 4 + 3] = v & 3;
+		}
+	}
+}
 
 void loadTiles(Graphics::Surface tiles[TILE_COUNT]) {
 	Common::File f;
@@ -45,19 +64,22 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT]) {
 		if (f.read(record, TILE_RECORD_SIZE) != (uint32)TILE_RECORD_SIZE)
 			error("Could not read tile %d", t);
 
-		tiles[t].create(TILE_WIDTH, TILE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
-		byte *dst = (byte *)tiles[t].getPixels();
-
-		for (int row = 0; row < TILE_HEIGHT; ++row) {
-			for (int b = 0; b < TILE_WIDTH / 4; ++b) {
-				byte v = record[2 + row * 4 + b];
-				dst[row * TILE_WIDTH + b * 4 + 0] = (v >> 6) & 3;
-				dst[row * TILE_WIDTH + b * 4 + 1] = (v >> 4) & 3;
-				dst[row * TILE_WIDTH + b * 4 + 2] = (v >> 2) & 3;
-				dst[row * TILE_WIDTH + b * 4 + 3] = v & 3;
-			}
-		}
+		decodeTileRecord(record, tiles[t]);
 	}
+}
+
+void loadAttackSprite(Graphics::ManagedSurface &sprite) {
+	Common::File f;
+	if (!f.open("ULTIMAII.EXE"))
+		error("Could not open ULTIMAII.EXE");
+
+	f.seek(ATTACK_SPRITE_OFFSET);
+
+	byte record[TILE_RECORD_SIZE];
+	if (f.read(record, TILE_RECORD_SIZE) != (uint32)TILE_RECORD_SIZE)
+		error("Could not read attack sprite");
+
+	decodeTileRecord(record, sprite);
 }
 
 } // namespace Data

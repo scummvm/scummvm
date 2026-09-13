@@ -33,10 +33,13 @@
 #endif
 #ifdef ENABLE_ULTIMA1
 #include "ultima/ultima1/ultima1.h"
+#include "ultima/ultima1/metaengine.h"
+#undef _G
 #endif
 #ifdef ENABLE_ULTIMA2
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/metaengine.h"
+#undef _G
 #endif
 #ifdef ENABLE_ULTIMA4
 #include "ultima/ultima4/ultima4.h"
@@ -271,6 +274,10 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 #ifdef ENABLE_AKALABETH
 	if (gameId == "akalabeth")
 		return Ultima::Ultima0::MetaEngine::initKeymaps();
+#endif
+#ifdef ENABLE_ULTIMA1
+	if (gameId == "ultima1")
+		return Ultima::Ultima1::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA2
 	if (gameId == "ultima2")

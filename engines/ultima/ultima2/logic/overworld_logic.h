@@ -39,10 +39,49 @@ private:
 	 */
 	bool isWalkable(Data::TileId tile) const;
 
+	/**
+	 * Returns -1/0/+1 matching the sign of the low byte of v, replicating
+	 * the original's byte-truncating "shortest step on a wrapping map" trick
+	 */
+	int signByte(int v) const;
+
+	/**
+	 * Returns the slot of the active monster at (x,y), or -1 if none
+	 */
+	int findTargetMonster(int x, int y) const;
+
+	/**
+	 * Returns true if a monster of the given type can move onto destTile
+	 * at (x,y) - not occupied by another monster, and matching its
+	 * water/land travel requirement
+	 */
+	bool monsterCanEnter(Data::TileId monsterTile, Data::TileId destTile, int x, int y) const;
+
+	/**
+	 * Attempts to move a monster by the given delta; returns false if blocked
+	 */
+	bool tryMoveMonster(int slot, int dx, int dy);
+
+	/**
+	 * Kills a monster - runs its type's kill-drop table, clears its slot,
+	 * and grants the standard gold/experience reward
+	 */
+	void killMonster(int slot);
+
+	/**
+	 * Rolls for and, on success, spawns a new monster in a free slot
+	 */
+	void trySpawnMonster();
+
+protected:
+	void updateCreatures() override;
+
 public:
 	~OverworldLogic() override {}
 
 	bool move(Data::Direction dir) override;
+	bool attack(Data::Direction dir) override;
+	bool fire() override;
 };
 
 } // namespace Logic

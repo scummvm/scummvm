@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_TILES_H
 
 #include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -55,6 +56,15 @@ constexpr int TILE_HEIGHT = 16;
  * CGA palette as the pic??? full-screen art (see Gfx::PicDecoder).
  */
 void loadTiles(Graphics::Surface tiles[TILE_COUNT]);
+
+/**
+ * Decodes the "sprite circle" graphic used to flash a hit indicator over
+ * the player's position during combat (xorSpriteDrawCenter in the
+ * original), in the same 16x16 CLUT8/CGA format as the map tiles. A
+ * ManagedSurface, unlike the plain map tiles, since it needs to be XOR-
+ * blitted (see GfxSurface::xorBlitFrom)
+ */
+void loadAttackSprite(Graphics::ManagedSurface &sprite);
 
 } // namespace Data
 } // namespace Ultima2

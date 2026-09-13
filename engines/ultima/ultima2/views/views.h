@@ -29,18 +29,31 @@
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/views/world_map_overview.h"
+#include "ultima/ultima2/views/zstats.h"
+#include "ultima/ultima2/views/interactions/direction.h"
+#include "ultima/ultima2/views/interactions/ready_spell.h"
+#include "ultima/ultima2/views/interactions/ready_weapon.h"
+#include "ultima/ultima2/views/interactions/wear_armor.h"
+#include "ultima/ultima2/views/interactions/yell.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
 struct Views : public Shared::Views {
+	Interactions::Direction _direction;
+	Interactions::ReadySpell _readySpell;
+	Interactions::ReadyWeapon _readyWeapon;
+	Interactions::WearArmor _wearArmor;
+	Interactions::Yell _yell;
+
 	CreateCharacter _createCharacter;
 	Game _game;
 	OverworldMap _overworldMap;
 	Startup _startup;
 	Title _title;
 	WorldMapOverview _worldMapOverview;
+	ZStats _zstats;
 };
 
 } // namespace Views

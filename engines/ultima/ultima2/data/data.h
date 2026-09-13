@@ -48,12 +48,14 @@ enum WeaponType {
 	WEAPON_SWORD = 5, WEAPON_GREAT_SWORD = 6, WEAPON_LIGHT_SWORD = 7, WEAPON_PHASER = 8,
 	WEAPON_QUICK_SWORD = 9, WEAPON_COUNT = 10
 };
+extern const char *const WEAPON_NAMES[WEAPON_COUNT];
 
 // Indexes into Savegame::_armorOwned
 enum ArmorType {
 	ARMOR_SKIN = 0, ARMOR_CLOTH = 1, ARMOR_LEATHER = 2, ARMOR_CHAIN = 3, ARMOR_PLATE = 4,
 	ARMOR_REFLECT = 5, ARMOR_POWER = 6, ARMOR_COUNT = 7
 };
+extern const char *const ARMOR_NAMES[ARMOR_COUNT];
 
 // Indexes into Savegame::_spellCharges
 enum SpellType {
@@ -61,6 +63,7 @@ enum SpellType {
 	SPELL_SURFACE = 5, SPELL_PRAYER = 6, SPELL_MAGIC_MISSILE = 7, SPELL_BLINK = 8, SPELL_KILL = 9,
 	SPELL_COUNT = 10
 };
+extern const char *const SPELL_NAMES[SPELL_COUNT];
 
 // Indexes into Savegame::_items
 enum ItemType {
@@ -69,6 +72,7 @@ enum ItemType {
 	ITEM_BRASS_BUTTON = 11, ITEM_BLUE_TASSLE = 12, ITEM_STRANGE_COIN = 13, ITEM_GREEN_IDOL = 14,
 	ITEM_TRI_LITHIUM = 15, ITEM_COUNT = 16
 };
+extern const char *const ITEM_NAMES[ITEM_COUNT];
 
 } // namespace Data
 } // namespace Ultima2

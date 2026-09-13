@@ -111,6 +111,7 @@ MODULE_OBJS += \
 	ultima2/ultima2.o \
 	ultima2/console.o \
 	ultima2/metaengine.o \
+	ultima2/data/data.o \
 	ultima2/data/map.o \
 	ultima2/data/map_dungeon.o \
 	ultima2/data/map_monsters.o \
@@ -128,7 +129,14 @@ MODULE_OBJS += \
 	ultima2/views/startup.o \
 	ultima2/views/stats.o \
 	ultima2/views/title.o \
-	ultima2/views/world_map_overview.o
+	ultima2/views/world_map_overview.o \
+	ultima2/views/zstats.o \
+	ultima2/views/interactions/interaction.o \
+	ultima2/views/interactions/direction.o \
+	ultima2/views/interactions/ready_spell.o \
+	ultima2/views/interactions/ready_weapon.o \
+	ultima2/views/interactions/wear_armor.o \
+	ultima2/views/interactions/yell.o
 endif
 
 ifdef ENABLE_ULTIMA4

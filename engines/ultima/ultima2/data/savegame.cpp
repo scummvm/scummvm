@@ -85,6 +85,7 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_sleepTurns);
 	s.syncAsSint16LE(_negateTimeTurns);
 	s.syncAsSint16LE(_lightTurns);
+	s.syncAsByte(_monsterSpawnCounter);
 }
 
 } // namespace Data

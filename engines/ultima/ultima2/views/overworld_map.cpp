@@ -39,11 +39,13 @@ constexpr int PLAYER_VIEWPORT_Y = 5;
 
 OverworldMap::OverworldMap() : Map("OverworldMap") {
 	Data::loadTiles(_tiles);
+	Data::loadAttackSprite(_attackSprite);
 }
 
 OverworldMap::~OverworldMap() {
 	for (int i = 0; i < Data::TILE_COUNT; ++i)
 		_tiles[i].free();
+	_attackSprite.free();
 }
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
@@ -57,11 +59,37 @@ bool OverworldMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
+bool OverworldMap::msgAttackTile(const AttackTileMessage &msg) {
+	Data::Savegame &sg = _G(savegame);
+	int mapLeft = sg._mapX - PLAYER_VIEWPORT_X;
+	int mapTop = sg._mapY - PLAYER_VIEWPORT_Y;
+	int ox = msg._x - mapLeft;
+	int oy = msg._y - mapTop;
+
+	if (ox < 0 || ox >= VIEWPORT_WIDTH || oy < 0 || oy >= VIEWPORT_HEIGHT)
+		return true;
+
+	Common::Point pt(ox * TILE_WIDTH, oy * TILE_HEIGHT);
+	auto s = getSurface();
+
+	// XOR-flash the hit indicator on, then off again - matches the
+	// original's xorSpriteDrawCenter-twice-with-a-pause-between pattern
+	s.xorBlitFrom(_attackSprite, pt);
+	g_engine->updateScreen();
+	g_engine->pauseMillis(80);
+
+	s.xorBlitFrom(_attackSprite, pt);
+	g_engine->updateScreen();
+
+	return true;
+}
+
 void OverworldMap::draw() {
 	auto s = getSurface();
 	s.clear();
 
 	Data::Savegame &sg = _G(savegame);
+	Data::MapMonsters &monsters = _G(map)._monsters;
 	int mapLeft = sg._mapX - PLAYER_VIEWPORT_X;
 	int mapTop = sg._mapY - PLAYER_VIEWPORT_Y;
 
@@ -70,6 +98,13 @@ void OverworldMap::draw() {
 			int x = (mapLeft + ox + Data::MAP_WIDTH) % Data::MAP_WIDTH;
 			int y = (mapTop + oy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
 			Data::TileId tileId = _G(map).tileAt(x, y);
+
+			for (int slot = 1; slot <= 31; ++slot) {
+				if (monsters.isActive(slot) && monsters._mapX[slot] == x && monsters._mapY[slot] == y) {
+					tileId = monsters.tileType(slot);
+					break;
+				}
+			}
 
 			if (ox == PLAYER_VIEWPORT_X && oy == PLAYER_VIEWPORT_Y)
 				tileId = (Data::TileId)(Data::TILE_FIGHTER + sg._class);

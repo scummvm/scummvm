@@ -36,6 +36,7 @@ namespace Views {
 class OverworldMap : public Map {
 private:
 	Graphics::Surface _tiles[Data::TILE_COUNT];
+	Graphics::ManagedSurface _attackSprite;
 
 public:
 	OverworldMap();
@@ -43,6 +44,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAttackTile(const AttackTileMessage &msg) override;
 	void draw() override;
 };
 

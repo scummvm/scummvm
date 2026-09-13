@@ -58,11 +58,28 @@ Common::Error Ultima2Engine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	byte seed = (byte)getRandomNumber(255);
+	for (int i = 0; i < 6; ++i)
+		_rngState[i] = seed;
+	_rngState[0]++;
+	_rngState[1]++;
+
 	Views::Views views;
 	addView("Startup");
 	runGame(views);
 
 	return Common::kNoError;
+}
+
+byte Ultima2Engine::randByte() {
+	byte newVal = (byte)(_rngState[1] + _rngState[4] + _rngState[5] + 1);
+	_rngState[5] = _rngState[4];
+	_rngState[4] = _rngState[3];
+	_rngState[3] = _rngState[2];
+	_rngState[2] = _rngState[1];
+	_rngState[1] = _rngState[0];
+	_rngState[0] = newVal;
+	return newVal;
 }
 
 bool Ultima2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
@@ -87,6 +104,10 @@ bool Ultima2Engine::savegamesExist() const {
 
 	delete saveFile;
 	return result;
+}
+
+void Ultima2Engine::playFX(int num) {
+	warning("TODO: playFX(%d)", num);
 }
 
 } // namespace Ultima2

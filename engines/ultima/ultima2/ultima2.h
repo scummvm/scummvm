@@ -56,6 +56,11 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+private:
+	// 6-byte lagged-Fibonacci-style state for randByte(), matching the
+	// original's rand_byte generator
+	byte _rngState[6] = {};
+
 public:
 	Data::Savegame _savegame;
 	Data::Map _map;
@@ -104,6 +109,18 @@ public:
 	 * Returns true if any savegames exist
 	 */
 	bool savegamesExist() const;
+
+	/**
+	 * Returns the next byte from the game's random number generator
+	 */
+	byte randByte();
+
+	/**
+	 * Plays a sound effect. Currently a no-op stub, mirroring ultima1's
+	 * own unimplemented playFX - Ultima II has no numbered sound-effect
+	 * table; each original sound is its own hardcoded PC-speaker tone-sweep
+	 */
+	void playFX(int num);
 };
 
 extern Ultima2Engine *g_engine;

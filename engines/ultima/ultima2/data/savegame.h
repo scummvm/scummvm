@@ -102,6 +102,10 @@ struct Savegame {
 	// dungeon renderer
 	int16 _lightTurns = 0;
 
+	// Incremented on every overworld monster spawn attempt; its lowest set
+	// bit selects the monster type rotation in OverworldLogic::trySpawnMonster
+	byte _monsterSpawnCounter = 0;
+
 	/**
 	 * Synchronize savegame data
 	 */
@@ -109,14 +113,17 @@ struct Savegame {
 
 	/**
 	 * Deducts an amount from HP. Returns false if this was fatal.
+	 * A survived hit costs one extra point beyond the amount given,
+	 * matching the original's borrow-based HP subtraction.
 	 */
 	bool deductHP(int amount) {
-		_hp -= amount;
-		if (_hp > 0)
-			return true;
+		if (_hp <= amount) {
+			_hp = 0;
+			return false;
+		}
 
-		_hp = 0;
-		return false;
+		_hp -= amount + 1;
+		return true;
 	}
 
 	/**

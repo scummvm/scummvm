@@ -68,12 +68,28 @@ void Logic::playerDied() {
 	g_engine->replaceView(g_engine->findView("Title"), true);
 }
 
+void Logic::alertTownGuards() {
+	// Only meaningful once towns/castles exist
+}
+
 int Logic::getRandomNumber(int minNumber, int maxNumber) {
 	return g_engine->getRandomNumber(minNumber, maxNumber);
 }
 
 int Logic::getRandomNumber(int maxNumber) {
 	return g_engine->getRandomNumber(maxNumber);
+}
+
+byte Logic::randByte() {
+	return g_engine->randByte();
+}
+
+void Logic::showAttackTile(int x, int y) {
+	g_engine->focusedView()->send(AttackTileMessage(x, y, 0));
+}
+
+void Logic::playFX(int num) {
+	g_engine->playFX(num);
 }
 
 void Logic::endOfTurn() {
@@ -205,24 +221,12 @@ void Logic::action(int action) {
 }
 
 void Logic::keypress(const Shared::Messages::KeypressMessage &msg) {
-	if (_yelling) {
-		if (msg.ascii == 13) {
-			writeString("\n");
-			_yelling = false;
-			MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-			resumeTurn();
-		} else if (msg.ascii >= 32 && msg.ascii < 127) {
-			writeString("%c", (char)msg.ascii);
-		}
-		return;
-	}
-
 	writeString("Huh?\n");
 	endOfTurn();
 	prompt();
 }
 
-bool Logic::attack() {
+bool Logic::attack(Data::Direction dir) {
 	writeString("Attack?\n");
 	return true;
 }
@@ -295,8 +299,8 @@ bool Logic::launch() {
 }
 
 bool Logic::magic() {
-	writeString("Magic?\n");
-	return true;
+	g_engine->addView("ReadySpell");
+	return false;
 }
 
 bool Logic::negateTime() {
@@ -320,8 +324,8 @@ bool Logic::quit() {
 }
 
 bool Logic::ready() {
-	writeString("Ready?\n");
-	return true;
+	g_engine->addView("ReadyWeapon");
+	return false;
 }
 
 bool Logic::steal() {
@@ -354,8 +358,8 @@ bool Logic::view() {
 }
 
 bool Logic::wearArmor() {
-	writeString("Wear Armor?\n");
-	return true;
+	g_engine->addView("WearArmor");
+	return false;
 }
 
 bool Logic::xit() {
@@ -364,15 +368,13 @@ bool Logic::xit() {
 }
 
 bool Logic::yell() {
-	writeString("YELL WHAT?\n");
-	_yelling = true;
-	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	g_engine->addView("Yell");
 	return false;
 }
 
 bool Logic::zstats() {
-	writeString("Zstats\n");
-	return true;
+	g_engine->addView("ZStats");
+	return false;
 }
 
 } // namespace Logic

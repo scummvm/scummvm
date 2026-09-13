@@ -26,6 +26,29 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Logic {
 
+namespace {
+
+struct SpawnEntry {
+	Data::TileId tile;
+	byte hp;
+	Data::TileId requiredTerrain;
+};
+
+// Indexed by the lowest set bit (0-7) of Savegame::_monsterSpawnCounter;
+// an all-zero counter spawns a Balron instead (see trySpawnMonster)
+const SpawnEntry SPAWN_TABLE[8] = {
+	{ Data::TILE_ORC,         0x10, Data::TILE_GRASS },
+	{ Data::TILE_THIEF,       0x20, Data::TILE_GRASS },
+	{ Data::TILE_DAEMON,      0x40, Data::TILE_GRASS },
+	{ Data::TILE_SEA_MONSTER, 0x40, Data::TILE_WATER },
+	{ Data::TILE_FIGHTER,     0x80, Data::TILE_GRASS },
+	{ Data::TILE_SHIP,        0xA0, Data::TILE_WATER },
+	{ Data::TILE_DEVIL,       0xC0, Data::TILE_GRASS },
+	{ Data::TILE_MAGE,        0xE0, Data::TILE_GRASS }
+};
+
+} // namespace
+
 bool OverworldLogic::isWalkable(Data::TileId tile) const {
 	switch (tile) {
 	case Data::TILE_WATER:
@@ -102,7 +125,7 @@ bool OverworldLogic::move(Data::Direction dir) {
 		return false;
 	}
 
-	if (!isWalkable(destTile)) {
+	if (!isWalkable(destTile) || findTargetMonster(newX, newY) >= 0) {
 		writeString("--INVALID MOVE!\n");
 		return true;
 	}
@@ -111,6 +134,286 @@ bool OverworldLogic::move(Data::Direction dir) {
 	sg._mapX = newX;
 	sg._mapY = newY;
 	return true;
+}
+
+int OverworldLogic::signByte(int v) const {
+	int8 b = (int8)(byte)(v & 0xFF);
+	return (b > 0) - (b < 0);
+}
+
+int OverworldLogic::findTargetMonster(int x, int y) const {
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	for (int slot = 31; slot >= 1; --slot) {
+		if (monsters.isActive(slot) && monsters._mapX[slot] == x && monsters._mapY[slot] == y)
+			return slot;
+	}
+
+	return -1;
+}
+
+bool OverworldLogic::monsterCanEnter(Data::TileId monsterTile, Data::TileId destTile, int x, int y) const {
+	if (monsterTile == Data::TILE_SEA_MONSTER || monsterTile == Data::TILE_SHIP)
+		return destTile == Data::TILE_WATER;
+
+	return isWalkable(destTile) && findTargetMonster(x, y) < 0;
+}
+
+bool OverworldLogic::tryMoveMonster(int slot, int dx, int dy) {
+	if (dx == 0 && dy == 0)
+		return false;
+
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	int newX = (monsters._mapX[slot] + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+	int newY = (monsters._mapY[slot] + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+
+	Data::TileId destTile = _G(map).tileAt(newX, newY);
+	if (!monsterCanEnter(monsters.tileType(slot), destTile, newX, newY))
+		return false;
+
+	monsters._mapX[slot] = newX;
+	monsters._mapY[slot] = newY;
+	return true;
+}
+
+void OverworldLogic::updateCreatures() {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	byte damageAccumulator = 0;
+	int engagedCount = 0, hitCount = 0;
+
+	for (int slot = 31; slot >= 1; --slot) {
+		if (!monsters.isActive(slot))
+			continue;
+
+		int dx = sg._mapX - monsters._mapX[slot];
+		int dy = sg._mapY - monsters._mapY[slot];
+		int sdx = signByte(dx * 4);
+		int sdy = signByte(dy * 4);
+
+		// Below 15 HP, a monster flees the player instead of approaching
+		if (monsters._spellHP[slot] < 15) {
+			sdx = -sdx;
+			sdy = -sdy;
+		}
+
+		int newX = (monsters._mapX[slot] + sdx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+		int newY = (monsters._mapY[slot] + sdy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+
+		if (newX == sg._mapX && newY == sg._mapY) {
+			++engagedCount;
+
+			if (monsters.tileType(slot) == Data::TILE_THIEF && randByte() < 0x40) {
+				int itemIdx = randByte() & 0xF;
+				if (sg._items[itemIdx] > 0) {
+					--sg._items[itemIdx];
+					writeString("A THIEF STOLE SOMETHING!\n");
+				}
+			}
+
+			int roll = randByte();
+			if (roll < 0x80 && (roll & 7) >= sg._readiedArmor) {
+				++hitCount;
+				int contribution = (monsters._spellHP[slot] >> 2) + 1 + damageAccumulator;
+				if (_G(map).tileAt(sg._mapX, sg._mapY) == Data::TILE_TOWN)
+					contribution *= 2;
+				damageAccumulator = (byte)contribution;
+			}
+		} else {
+			if (monsters._spellHP[slot] < 16)
+				++monsters._spellHP[slot];
+
+			// Try diagonal, then vertical-only, then horizontal-only
+			if (!tryMoveMonster(slot, sdx, sdy) && !tryMoveMonster(slot, 0, sdy))
+				tryMoveMonster(slot, sdx, 0);
+		}
+	}
+
+	// A cannon-ish sound plays for every monster occupying the player's
+	// tile this turn; the hit flash only for those that actually connected
+	for (int i = 0; i < engagedCount; ++i) {
+		playFX(1);
+		if (i < hitCount)
+			showAttackTile(sg._mapX, sg._mapY);
+	}
+
+	if (damageAccumulator != 0) {
+		int dmg = (randByte() & damageAccumulator & 0x77) + 1;
+		if (!sg.deductHP(dmg)) {
+			playerDied();
+			return;
+		}
+	}
+
+	trySpawnMonster();
+}
+
+void OverworldLogic::trySpawnMonster() {
+	Data::MapMonsters &monsters = _G(map)._monsters;
+
+	int slot = -1;
+	for (int i = 31; i >= 1; --i) {
+		if (!monsters.isActive(i)) {
+			slot = i;
+			break;
+		}
+	}
+	if (slot < 0)
+		return;
+
+	int r = randByte();
+	if (r >= 0x3F)
+		return;
+	int x = r;
+
+	int r2 = randByte();
+	if (r2 & 0x80)
+		return;
+	int y = r2 & 0x3F;
+
+	Data::Savegame &sg = _G(savegame);
+	Data::TileId terrain = _G(map).tileAt(x, y);
+
+	++sg._monsterSpawnCounter;
+	int bit = -1;
+	for (int i = 0; i < 8; ++i) {
+		if (sg._monsterSpawnCounter & (1 << i)) {
+			bit = i;
+			break;
+		}
+	}
+
+	Data::TileId newTile = Data::TILE_BALRON;
+	byte newHp = 0xFF;
+	Data::TileId requiredTerrain = Data::TILE_GRASS;
+	if (bit >= 0) {
+		newTile = SPAWN_TABLE[bit].tile;
+		newHp = SPAWN_TABLE[bit].hp;
+		requiredTerrain = SPAWN_TABLE[bit].requiredTerrain;
+	}
+
+	if (terrain != requiredTerrain) {
+		// A failed attempt doesn't advance the type rotation
+		--sg._monsterSpawnCounter;
+		return;
+	}
+
+	monsters._mapX[slot] = x;
+	monsters._mapY[slot] = y;
+	monsters._spellHP[slot] = newHp;
+	monsters._type[slot] = newTile * 4;
+	monsters._glyphTile[slot] = 0;
+	monsters._offerFlag[slot] = 0;
+	monsters._tempX[slot] = 0;
+	monsters._tempY[slot] = 0;
+}
+
+bool OverworldLogic::attack(Data::Direction dir) {
+	Data::Savegame &sg = _G(savegame);
+
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("ATTACK--");
+
+		if (sg._armParalysisTurns > 0) {
+			writeString("PARALIZED!\n");
+			return true;
+		}
+
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	int dx = 0, dy = 0;
+	switch (dir) {
+	case Data::DIR_UP: dy = -1; break;
+	case Data::DIR_DOWN: dy = 1; break;
+	case Data::DIR_LEFT: dx = -1; break;
+	case Data::DIR_RIGHT: dx = 1; break;
+	default: break;
+	}
+
+	int tx = (sg._mapX + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+	int ty = (sg._mapY + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+	int slot = findTargetMonster(tx, ty);
+
+	if (slot < 0 || (randByte() >> 1) >= sg._agility) {
+		writeString("--MISS\n");
+		resumeTurn();
+		return false;
+	}
+
+	writeString("--HIT!!!\n");
+	alertTownGuards();
+
+	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	byte &hp = monsters._spellHP[slot];
+
+	if (hp <= dmg) {
+		hp = 0;
+		killMonster(slot);
+	} else {
+		hp -= dmg + 1;
+	}
+
+	resumeTurn();
+	return false;
+}
+
+bool OverworldLogic::fire() {
+	// FIRE is the ship's cannon, gated on currently riding a Ship -
+	// there's no vehicle/boarding state yet (added in a later stage), so
+	// this is always the "not on a ship" failure case for now
+	writeString("FIRE WHAT?\n");
+	return true;
+}
+
+void OverworldLogic::killMonster(int slot) {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	Data::TileId monsterTile = monsters.tileType(slot);
+	monsters._type[slot] = 0;
+
+	if (monsterTile == Data::TILE_MINAX) {
+		writeString("MINAX IS DEAD!!\n");
+		return;
+	}
+
+	switch (monsterTile) {
+	case Data::TILE_GUARD:
+		sg._keys += 2;
+		break;
+
+	case Data::TILE_THIEF: {
+		if (randByte() < 0x40)
+			++sg._thievesTools;
+		int itemIdx = randByte() & 0xF;
+		if (itemIdx != 0)
+			++sg._items[itemIdx];
+		break;
+	}
+
+	case Data::TILE_FIGHTER:
+		if (randByte() < 0x40)
+			++sg._items[Data::ITEM_HELM];
+		sg._torches += (randByte() & 3) + 1;
+		break;
+
+	case Data::TILE_MAGE:
+		if ((randByte() & 1) == 0)
+			++sg._items[Data::ITEM_WAND];
+		else
+			++sg._items[Data::ITEM_STAFF];
+		break;
+
+	default:
+		break;
+	}
+
+	int goldAmt = (randByte() & 0x17) | 1;
+	int expAmt = (randByte() & 3) + 1;
+	sg._gold += goldAmt;
+	sg._experience += expAmt;
+	writeString("KILLED--GOLD+%d--EXP.+%d\n", goldAmt, expAmt);
 }
 
 } // namespace Logic
