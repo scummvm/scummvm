@@ -516,7 +516,7 @@ bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId,
 	return true;
 }
 
-bool ThemeEngine::addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, const int pointsize) {
+bool ThemeEngine::addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<ThemeFontFallback> &fallbackFonts, const int pointsize) {
 	if (textId == -1)
 		return false;
 
@@ -541,7 +541,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		_texts[textId]->_fontPtr = loadFont(file, scalableFile, fallbackFiles, pointsize, textId == kTextDataDefault);
+		_texts[textId]->_fontPtr = loadFont(file, scalableFile, fallbackFonts, pointsize, textId == kTextDataDefault);
 
 		if (!_texts[textId]->_fontPtr) {
 			warning("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.empty()? "(none)" : scalableFile.c_str());
@@ -595,7 +595,7 @@ Common::Array<Common::Language> getLangIdentifiers(const Common::String &languag
 	return result;
 }
 
-void ThemeEngine::storeFontNames(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, const int pointsize) {
+void ThemeEngine::storeFontNames(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<ThemeFontFallback> &fallbackFonts, const int pointsize) {
 	if (language.empty())
 		return;
 
@@ -605,9 +605,9 @@ void ThemeEngine::storeFontNames(TextData textId, const Common::String &language
 
 	Common::Array<LangExtraFont>::iterator entry = Common::find(_langExtraFonts.begin(), _langExtraFonts.end(), langs[0]);
 	if (entry == _langExtraFonts.end())
-		_langExtraFonts.push_back(LangExtraFont(textId, langs, file, scalableFile, fallbackFiles, pointsize));
+		_langExtraFonts.push_back(LangExtraFont(textId, langs, file, scalableFile, fallbackFonts, pointsize));
 	else
-		entry->storeFileNames(textId, file, scalableFile, fallbackFiles, pointsize);
+		entry->storeFileNames(textId, file, scalableFile, fallbackFonts, pointsize);
 }
 
 bool ThemeEngine::loadExtraFont(FontStyle style, Common::Language lang) {
@@ -618,7 +618,7 @@ bool ThemeEngine::loadExtraFont(FontStyle style, Common::Language lang) {
 	if (entry == _langExtraFonts.end())
 		return false;
 	TextData td = fontStyleToData(style);
-	return addFont(kTextDataExtraLang, Common::String(), entry->file(td), entry->sclFile(td), entry->fallbackFiles(td), entry->fntSize(td));
+	return addFont(kTextDataExtraLang, Common::String(), entry->file(td), entry->sclFile(td), entry->fallbackFonts(td), entry->fntSize(td));
 }
 
 bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
@@ -1895,19 +1895,19 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Comm
 	return nullptr;
 }
 
-const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::Array<Common::String> &fallbackFilenames, const int pointsize, const bool makeLocalizedFont) {
+const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::Array<ThemeFontFallback> &fallbackFonts, const int pointsize, const bool makeLocalizedFont) {
 	Common::String fontName;
 
 	const Graphics::Font *font = nullptr;
 
 	// Prefer scalable fonts over non-scalable fonts
 	if (!scalableFilename.empty()) {
-		if (fallbackFilenames.empty()) {
+		if (fallbackFonts.empty()) {
 			font = loadScalableFont(scalableFilename, pointsize, fontName);
 		} else {
 			fontName = Common::String::format("%s@%d", scalableFilename.c_str(), pointsize);
-			for (uint i = 0; i < fallbackFilenames.size(); i++)
-				fontName += Common::String::format(">%s@%d", fallbackFilenames[i].c_str(), pointsize);
+			for (uint i = 0; i < fallbackFonts.size(); i++)
+				fontName += Common::String::format(">%s@%d", fallbackFonts[i].filename.c_str(), pointsize);
 
 			font = FontMan.getFontByName(fontName);
 
@@ -1916,12 +1916,12 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 				if (primaryFont) {
 					Common::Array<Graphics::Font *> fonts;
 					fonts.push_back(primaryFont);
-					for (uint i = 0; i < fallbackFilenames.size(); i++) {
-						Graphics::Font *fallbackFont = loadScalableFontFile(fallbackFilenames[i], pointsize);
+					for (uint i = 0; i < fallbackFonts.size(); i++) {
+						Graphics::Font *fallbackFont = loadScalableFontFile(fallbackFonts[i].filename, pointsize);
 						if (fallbackFont)
 							fonts.push_back(fallbackFont);
-						else
-							warning("Couldn't load fallback font '%s'", fallbackFilenames[i].c_str());
+						else if (!fallbackFonts[i].optional)
+							warning("Couldn't load fallback font '%s'", fallbackFonts[i].filename.c_str());
 					}
 
 					if (1 < fonts.size()) {

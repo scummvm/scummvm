@@ -139,7 +139,7 @@
 	</bitmaps>
 
 	<fonts>
-		<fallback file = 'Unifont-Regular.otf'/>
+		<fallback file = 'Unifont-Regular.otf' optional = 'true'/>
 
 		<font	resolution = 'y>=H'
 				id = 'text_default'

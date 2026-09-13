@@ -25,10 +25,9 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/formats/xmlparser.h"
+#include "gui/ThemeEngine.h"
 
 namespace GUI {
-
-class ThemeEngine;
 
 class ThemeParser : public Common::XMLParser {
 public:
@@ -69,6 +68,7 @@ protected:
 			XML_KEY(fonts)
 				XML_KEY(fallback)
 					XML_PROP(file, true)
+					XML_PROP(optional, false)
 				KEY_END()
 
 				XML_KEY(font)
@@ -79,6 +79,7 @@ protected:
 					XML_PROP(point_size, false)
 					XML_KEY(fallback)
 						XML_PROP(file, true)
+						XML_PROP(optional, false)
 					KEY_END()
 					XML_KEY(language)
 						XML_PROP(id, true)
@@ -87,6 +88,7 @@ protected:
 						XML_PROP(point_size, false)
 						XML_KEY(fallback)
 							XML_PROP(file, true)
+							XML_PROP(optional, false)
 						KEY_END()
 					KEY_END()
 				KEY_END()
@@ -290,9 +292,9 @@ protected:
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;
-	Common::Array<Common::String> _globalFallbackFiles;
-	Common::Array<Common::String> _fontFallbackFiles;
-	Common::Array<Common::String> _languageFallbackFiles;
+	Common::Array<ThemeFontFallback> _globalFallbackFonts;
+	Common::Array<ThemeFontFallback> _fontFallbackFonts;
+	Common::Array<ThemeFontFallback> _languageFallbackFonts;
 
 	int16 _baseWidth, _baseHeight;
 	float _scaleFactor;
