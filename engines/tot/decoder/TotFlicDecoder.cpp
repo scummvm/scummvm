@@ -43,6 +43,7 @@ bool TotFlicDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Check FLC magic number
 	if (frameType != FLC_FILE_HEADER) {
 		warning("FlicDecoder::loadStream(): attempted to load non-FLC data (type = 0x%04X)", frameType);
+		delete stream;
 		return false;
 	}
 
@@ -52,6 +53,7 @@ bool TotFlicDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 colorDepth = stream->readUint16LE();
 	if (colorDepth != 8) {
 		warning("FlicDecoder::loadStream(): attempted to load an FLC with a palette of color depth %d. Only 8-bit color palettes are supported", colorDepth);
+		delete stream;
 		return false;
 	}
 

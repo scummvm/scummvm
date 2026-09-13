@@ -80,7 +80,7 @@ static void readColors(Common::SeekableReadStream &file, byte &first, byte &seco
 }
 
 KitEngine::KitEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd), _initialPlayerHeight(0) {
-	_renderMode = Common::kRenderVGA;
+	_renderMode = isAtariST() ? Common::kRenderAtariST : Common::kRenderVGA;
 	_screenW = 320;
 	_screenH = 200;
 	_fullscreenViewArea = Common::Rect(_screenW, _screenH);
@@ -92,6 +92,17 @@ KitEngine::KitEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngi
 }
 
 void KitEngine::loadAssets() {
+	if (isAtariST())
+		loadAssetsAtari();
+	else
+		loadAssetsDOS();
+	_gfx->_palette = _palette;
+	_gfx->_keyColor = 0;
+	_scriptSurface.create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	_scriptSurface.fillRect(_fullscreenViewArea, 0);
+}
+
+void KitEngine::loadAssetsDOS() {
 	Common::File file;
 	if (!file.open(_gameDescription->filesDescriptions[0].fileName))
 		error("Unable to open 3D Construction Kit RUN file");
@@ -129,10 +140,6 @@ void KitEngine::loadAssets() {
 	_border->setPalette(_palette, 0, 256);
 	// Preserve the full VGA palette during shared border processing.
 	_border->convertToInPlace(_gfx->_texturePixelFormat);
-	_gfx->_palette = _palette;
-	_gfx->_keyColor = 0;
-	_scriptSurface.create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	_scriptSurface.fillRect(_fullscreenViewArea, 0);
 	uint16 soundSize = readBlockSize(file);
 	Common::SeekableSubReadStream sounds(&file, file.pos(), file.pos() + soundSize);
 	loadSounds(sounds);
@@ -141,7 +148,9 @@ void KitEngine::loadAssets() {
 void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	requireBytes(file, 500);
 	uint32 signature = file.readUint32BE();
-	if (signature != MKTAG('C', 'P', 0, 0) && signature != MKTAG('C', 'P', '0', '1'))
+	bool validSignature = isAtariST() ? signature == MKTAG('A', 'M', '0', '1') :
+		signature == MKTAG('C', 'P', 0, 0) || signature == MKTAG('C', 'P', '0', '1');
+	if (!validSignature)
 		error("Unsupported 3D Construction Kit world format");
 	uint16 areaCount = file.readUint16BE();
 	uint32 globalConditions = 2 * file.readUint16BE();
@@ -155,15 +164,20 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	int top = _screenH - 1 - centerY - halfHeight;
 	_viewArea = Common::Rect(centerX - halfWidth, top, centerX + halfWidth, top + 2 * halfHeight);
 
-	// RUNVGA derives its projection scales from the viewport dimensions.
-	int xScale = 74 * (_viewArea.height() - 1) / 256;
-	int yScale = 55 * (_viewArea.width() - 1) / 256;
-	if (!xScale || !yScale)
+	int xScale = file.readUint16BE();
+	int yScale = file.readUint16BE();
+	int zScale = file.readUint16BE();
+	if (isDOS()) {
+		// RUNVGA derives its projection scales from the viewport dimensions.
+		xScale = 74 * (_viewArea.height() - 1) / 256;
+		yScale = 55 * (_viewArea.width() - 1) / 256;
+		zScale = 24;
+	}
+	if (!xScale || !yScale || !zScale)
 		error("3D Construction Kit viewport is too small");
-	_fieldOfView = 2.0f * Math::rad2deg(atan(24.0f / xScale));
+	_fieldOfView = 2.0f * Math::rad2deg(atan(float(zScale) / xScale));
 	_viewAspectRatio = float(yScale) / xScale;
 
-	file.skip(6);
 	_timerInterval = file.readUint16BE();
 	_activationRange = file.readUint16BE();
 	_maxFallingDistance = file.readUint16BE();
@@ -183,9 +197,10 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	_angleRotations.push_back(angle);
 	_angleRotationIndex = 0;
 
-	file.skip(2);
 	// DOS word offsets wrap at 64 KiB.
-	uint32 indicatorOffset = uint16(2 * file.readUint16BE());
+	uint32 indicatorOffset = 2 * file.readUint32BE();
+	if (isDOS())
+		indicatorOffset = uint16(indicatorOffset);
 	uint16 indicatorCount = file.readUint16BE();
 	_initialCondition = file.readUint16BE();
 	if (indicatorOffset > uint32(file.size()) || (!indicatorOffset && indicatorCount))
@@ -202,7 +217,9 @@ void KitEngine::loadWorld(Common::SeekableReadStream &file) {
 	requireBytes(file, uint32(areaCount) * 4);
 	Common::Array<uint32> areaOffsets;
 	for (uint i = 0; i < areaCount; i++) {
-		uint32 offset = uint16(2 * file.readUint32BE());
+		uint32 offset = 2 * file.readUint32BE();
+		if (isDOS())
+			offset = uint16(offset);
 		if (indicatorCount && offset >= indicatorOffset && offset < indicatorOffset + 2 * _indicatorData.size()) {
 			warning("Ignoring stale 3D Construction Kit area offset %u into indicator data", offset);
 			continue;
@@ -246,7 +263,7 @@ Common::Array<KitEngine::ConditionData> KitEngine::loadConditions(Common::Seekab
 		uint16 words = file.readUint16BE() & 0x7fff;
 		ConditionData condition;
 		condition.name = name;
-		Common::String source = detokeniseKit16Condition(readCode(file, 2 * words), condition.condition);
+		Common::String source = detokeniseKit16Condition(readCode(file, 2 * words), condition.condition, isAtariST());
 		debugC(1, kFreescapeDebugParser, "3DCK condition %s:\n%s", name, source.c_str());
 		conditions.push_back(condition);
 	}
@@ -261,8 +278,10 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	uint16 id = file.readUint16BE();
 	if (_areaMap.contains(id))
 		error("Duplicate 3D Construction Kit area %u", id);
-	file.skip(2);
-	uint32 conditions = start + 2 * file.readUint16BE();
+	uint32 conditionOffset = file.readUint32BE();
+	if (isDOS())
+		conditionOffset = uint16(conditionOffset);
+	uint32 conditions = start + 2 * conditionOffset;
 	uint16 scale = file.readUint16BE();
 	uint16 sky = file.readUint16BE();
 	uint16 ground = file.readUint16BE();
@@ -305,9 +324,14 @@ Area *KitEngine::loadArea(Common::SeekableReadStream &file) {
 	area->_groundColor = ((ground & 0xf) << 4) | ((ground >> 8) & 0xf);
 	area->_usualBackgroundColor = 0;
 	area->_underFireBackgroundColor = 0;
+	byte groundExtraColor = 0;
+	if (isAtariST()) {
+		splitColorAtari(area->_skyColor, data.skyExtraColor);
+		splitColorAtari(area->_groundColor, groundExtraColor);
+	}
 	// The runner supplies a default floor at Y=0.
 	if (id != 255)
-		area->addFloor();
+		area->addFloor(groundExtraColor);
 	return area;
 }
 
@@ -335,6 +359,7 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 
 	bool geometric = data.type >= kCubeType && data.type <= kHexagonType && data.type != kSensorType;
 	Common::Array<uint8> *colors = nullptr;
+	Common::Array<uint8> *extraColors = nullptr;
 	Common::Array<float> *ordinates = nullptr;
 	if (geometric) {
 		ObjectType type = ObjectType(data.type);
@@ -347,9 +372,18 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 			return nullptr;
 		}
 		colors = new Common::Array<uint8>();
+		if (isAtariST())
+			extraColors = new Common::Array<uint8>();
 		for (int i = 0; i < colorCount; i += 2) {
 			byte first, second;
 			readColors(payload, first, second);
+			if (extraColors) {
+				byte extraFirst, extraSecond;
+				splitColorAtari(first, extraFirst);
+				splitColorAtari(second, extraSecond);
+				extraColors->push_back(extraFirst);
+				extraColors->push_back(extraSecond);
+			}
 			colors->push_back(first);
 			colors->push_back(second);
 		}
@@ -358,6 +392,11 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 			const byte sides[] = {(*colors)[2], (*colors)[0], (*colors)[3], (*colors)[1]};
 			for (uint i = 0; i < ARRAYSIZE(sides); i++)
 				(*colors)[i] = sides[i];
+			if (extraColors) {
+				const byte extraSides[] = {(*extraColors)[2], (*extraColors)[0], (*extraColors)[3], (*extraColors)[1]};
+				for (uint i = 0; i < ARRAYSIZE(extraSides); i++)
+					(*extraColors)[i] = extraSides[i];
+			}
 		}
 		if (ordinateCount) {
 			requireBytes(payload, 2 * ordinateCount);
@@ -388,7 +427,7 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 		// Entrances can retain editor data after their header.
 		data.extra = readWords(payload, (payload.size() - payload.pos()) / 2);
 	} else {
-		Common::String source = detokeniseKit16Condition(readCode(payload, payload.size() - payload.pos()), data.condition);
+		Common::String source = detokeniseKit16Condition(readCode(payload, payload.size() - payload.pos()), data.condition, isAtariST());
 		debugC(1, kFreescapeDebugParser, "3DCK object %u condition:\n%s", data.id, source.c_str());
 	}
 	file.seek(end);
@@ -407,7 +446,7 @@ Object *KitEngine::loadObject(Common::SeekableReadStream &file, ObjectData &data
 			(*ordinates)[i] += data.initialOrigin.getValue(i % 3);
 	}
 	return new GeometricObject(type, data.id, (data.flags & kKitInitiallyInvisible) ? 0x80 : 0,
-		data.initialOrigin, data.size, colors, nullptr, ordinates, FCLInstructionVector());
+		data.initialOrigin, data.size, colors, extraColors, ordinates, FCLInstructionVector());
 }
 
 void KitEngine::initGameState() {
@@ -424,6 +463,10 @@ void KitEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (_currentArea)
 		_kitVariables[9] = _currentArea->getAreaID();
 	_currentArea = _areaMap[areaID];
+	if (isAtariST()) {
+		_gfx->_palette = _areaData[areaID].palette;
+		updateBorderAtari();
+	}
 	Entrance *entrance = static_cast<Entrance *>(_currentArea->entranceWithID(entranceID));
 	if (entrance) {
 		_position = entrance->getOrigin();

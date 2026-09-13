@@ -2614,7 +2614,8 @@ void EEMEngine::doActionScreen() {
 	const bool haveTier3 = mysteryTierRange(3, loT, hiT);
 	const bool anySolved3 = haveTier3 && anyMysterySolved(loT, hiT);
 
-	const bool chooseOn   = !isDemo() && _chainStage < 4;
+	const uint pendingBookUnlock = _pendingBookUnlock;
+	const bool chooseOn   = !isDemo() && (_chainStage < 4 || pendingBookUnlock != 0);
 	const bool practiceOn = isDemo() || _chainStage <= 1;
 	const bool scrap1On =
 		_chainStage >= 2 || (_chainStage == 1 && anySolved1);
@@ -2738,6 +2739,10 @@ void EEMEngine::doActionScreen() {
 				continue;
 			}
 		}
+		if (_pendingBookUnlock != pendingBookUnlock) {
+			_nextScreen = kScreenAction;
+			return;
+		}
 		if (confirmed) {
 			v.pick = pick;
 			drawActionMenuFrame(v);
@@ -2795,6 +2800,7 @@ void EEMEngine::doActionScreen() {
 // EEM2:  1abf:022a + 1cd3:0a9d)
 void EEMEngine::doCaseSelection() {
 	const uint kMaxMystery = isLondon() ? 50 : 54;
+	const uint pendingBookUnlock = _pendingBookUnlock;
 
 	CursorMan.showMouse(true);
 	setSitePalette(0);
@@ -2815,7 +2821,7 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimY = 0x50;
 
 	uint book;
-	switch (_chainStage) {
+	switch (pendingBookUnlock ? pendingBookUnlock : _chainStage) {
 	case 2:  book = 2; break;
 	case 3:  book = isLondon() ? 2 : 3; break;
 	default: book = 1; break;
@@ -3000,6 +3006,10 @@ void EEMEngine::doCaseSelection() {
 				continue;
 			}
 		}
+		if (_pendingBookUnlock != pendingBookUnlock) {
+			_nextScreen = kScreenChooseMystery;
+			return;
+		}
 		const uint32 now = g_system->getMillis();
 		const bool chooserTick = now - submenuLastTick >= kChooserCycleMillis;
 		if (chooserTick) {
@@ -3023,6 +3033,10 @@ void EEMEngine::doCaseSelection() {
 		warning("doCaseSelection: failed to load mystery %u", mn);
 		_mystery.clear();
 		return;
+	}
+	if (pendingBookUnlock) {
+		_chainStage = pendingBookUnlock;
+		_pendingBookUnlock = 0;
 	}
 	resetSiteArrivalState();
 	if (_audio && !isFloppy())

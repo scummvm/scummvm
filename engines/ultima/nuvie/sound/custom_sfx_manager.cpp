@@ -85,7 +85,7 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 
 	it = sfx_map.find((uint16)sfx_id);
 	if (it != sfx_map.end()) {
-		playSoundSample((*it)._value, handle, volume);
+		playSoundSample(it->_value, handle, volume);
 		return true;
 	}
 

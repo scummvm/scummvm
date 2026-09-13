@@ -124,6 +124,8 @@ constexpr Common::Rect kPdaPartnerFootMapRect   (Common::Point( 7, 177), 50, 23)
 constexpr Common::Rect kPdaPartnerHeadHintRect  (Common::Point( 5,  80), 39, 30);
 
 class EEMEngine : public Engine {
+	friend class Debugger;
+
 public:
 	EEMEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~EEMEngine() override;
@@ -624,6 +626,8 @@ private:
 	/// `_PlayerRecord.SolvedMysteries[55]`. 0=unsolved, 1=solved, 2=first-try.
 	uint8 _mysteriesSolved[55] = {};
 	uint8 _chainStage = 1;
+	// Applied on case selection to preserve the current case's difficulty.
+	uint8 _pendingBookUnlock = 0;
 
 	bool _voiceOn = true;
 	bool _musicOn = true;

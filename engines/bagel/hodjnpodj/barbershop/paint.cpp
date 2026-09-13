@@ -88,12 +88,12 @@ CPaint::CPaint(CDC *pDC) {
 			ASSERT(pCard);
 
 			m_cCardSet[(i * CARDS_PER_ROW) + j] = new OSpr();   // Initize the individual letter of the alphabet list
-			bSuccess = (*m_cCardSet[(i * CARDS_PER_ROW) + j]).LoadSprite(pCard, pGamePalette);
+			bSuccess = m_cCardSet[(i * CARDS_PER_ROW) + j]->LoadSprite(pCard, pGamePalette);
 			ASSERT(bSuccess);
 
-			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetHotspot(CARD_HOT_X, CARD_HOT_Y);
-			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMobile(true);
-			(*m_cCardSet[(i * CARDS_PER_ROW) + j]).SetMasked(true);
+			m_cCardSet[(i * CARDS_PER_ROW) + j]->SetHotspot(CARD_HOT_X, CARD_HOT_Y);
+			m_cCardSet[(i * CARDS_PER_ROW) + j]->SetMobile(true);
+			m_cCardSet[(i * CARDS_PER_ROW) + j]->SetMasked(true);
 		}  // end for
 
 		delete pBmpCardSet;
@@ -209,13 +209,13 @@ void CPaint::Board(CDC *pDC, CBoard *pBoard) {
 		if (pCard[j] == pCard[j]->m_pStack->Top()) {
 			m_cCardSet[pCard[j]->GetValue()]->DuplicateSprite(pDC, (CSprite*) m_pSprite);
 			m_pSprite->m_cCard = pCard[j];
-			(*m_pSprite).LinkSprite();
+			m_pSprite->LinkSprite();
 
 			pCard[j]->m_bIsBack = false;
 		} else {
 			m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) m_pSprite);
 			m_pSprite->m_cCard = pCard[j];
-			(*m_pSprite).LinkSprite();
+			m_pSprite->LinkSprite();
 
 			pCard[j]->m_bIsBack = true;
 		} // end if
@@ -233,7 +233,7 @@ void CPaint::Board(CDC *pDC, CBoard *pBoard) {
 	while (pCard[0] != nullptr) {
 		m_pSprite = new OSpr();             // set up visual sprite
 		m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) m_pSprite);
-		(*m_pSprite).LinkSprite();
+		m_pSprite->LinkSprite();
 
 		m_pSprite->m_cCard  = pCard[0];     // update internal card struct
 		pCard[0]->m_pSprite = m_pSprite;
@@ -338,10 +338,10 @@ void CPaint::FlipCard(CDC *pDC, CCard *pCard) {
 	******************************************************************/
 	pCard->m_pSprite = new OSpr();
 	if (pCard->m_bIsBack == true) {
-		(*m_cCardSet[pCard->GetValue()]).DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
+		m_cCardSet[pCard->GetValue()]->DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
 		pCard->m_bIsBack = false;
 	} else {
-		(*m_cCardSet[m_nCardBack]).DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
+		m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
 		pCard->m_bIsBack = true;
 	}
 
@@ -508,7 +508,7 @@ void CPaint::ChangeBack(CDC *pDC, CBoard *pBoard, int nBack) {
 			delete pCard->m_pSprite;
 
 			pCard->m_pSprite = new OSpr();
-			(*m_cCardSet[m_nCardBack]).DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
+			m_cCardSet[m_nCardBack]->DuplicateSprite(pDC, (CSprite*) pCard->m_pSprite);
 			pCard->m_pSprite->LinkSprite();
 			pCard->m_pSprite->SetPosition(pCard->m_cOrigin);
 			pCard->m_pSprite->m_cCard = pCard;                      // update internal rep

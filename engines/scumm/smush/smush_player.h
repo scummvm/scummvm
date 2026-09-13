@@ -258,7 +258,7 @@ public:
 	virtual ~SmushPlayer();
 
 	void pause();
-	void unpause();
+	virtual void unpause();
 
 	void play(const char *filename, int32 speed, int32 offset = 0, int32 startFrame = 0);
 	void release();

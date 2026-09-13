@@ -42,6 +42,7 @@
 #include "video/flic_decoder.h"
 
 #include "eem/audio.h"
+#include "eem/console.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/installer.h"
@@ -324,6 +325,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		_variant = kVariantLondonCD;
 	setAnimScripts(isLondon(), isMacTalkie());
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
+	setDebugger(new Debugger(this));
 }
 
 EEMEngine::~EEMEngine() {
@@ -1083,11 +1085,10 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 	Video::FlicDecoder flic;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(
 		Common::MacResManager::openFileOrDataFork(path));
-	if (!stream || !flic.loadStream(stream.get())) {
+	if (!stream || !flic.loadStream(stream.release())) {
 		warning("playFlc: %s missing", path.toString().c_str());
 		return;
 	}
-	stream.release();
 
 	const int fw = flic.getWidth();
 	const int fh = flic.getHeight();

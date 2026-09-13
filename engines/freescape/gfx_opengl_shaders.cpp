@@ -908,10 +908,8 @@ void OpenGLShaderRenderer::fillViewportStippled(uint8 r1, uint8 g1, uint8 b1, ui
 
 	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
 	glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-	glDisableVertexAttribArray(0);
 
 	useStipple(false);
 	glDepthMask(GL_TRUE);

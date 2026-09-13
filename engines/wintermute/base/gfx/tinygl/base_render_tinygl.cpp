@@ -156,7 +156,7 @@ bool BaseRenderTinyGL::flip() {
 
 	if (!dirtyAreas.empty()) {
 		for (Common::List<Common::Rect>::iterator itRect = dirtyAreas.begin(); itRect != dirtyAreas.end(); ++itRect) {
-			g_system->copyRectToScreen(glBuffer.getBasePtr((*itRect).left, (*itRect).top), glBuffer.pitch, (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
+			g_system->copyRectToScreen(glBuffer.getBasePtr(itRect->left, itRect->top), glBuffer.pitch, itRect->left, itRect->top, itRect->width(), itRect->height());
 		}
 	}
 

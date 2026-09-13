@@ -222,7 +222,7 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	lpPal->palVersion = PALVERSION;
 	lpPal->palNumEntries = (uint16)wNumColors;
 
-	(*pOrigPal).GetPaletteEntries(0, wNumColors - 1, &lpPal->palPalEntry[0]);
+	pOrigPal->GetPaletteEntries(0, wNumColors - 1, &lpPal->palPalEntry[0]);
 
 	/* create the palette and get handle to it */
 
@@ -268,7 +268,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 	HBITMAP hBitmap = nullptr;
 	CBitmap *pBitmap = nullptr;
 
-	hDC = (*pDC).m_hDC;
+	hDC = pDC->m_hDC;
 
 	// Get the palette, then select it into DC
 	if (pPal != nullptr) {
@@ -285,7 +285,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 	if (hBitmap != nullptr) {
 		pBitmap = new CBitmap();
 		if (pBitmap != nullptr)
-			(*pBitmap).Attach(hBitmap);
+			pBitmap->Attach(hBitmap);
 	}
 
 	/* Reselect old palette */

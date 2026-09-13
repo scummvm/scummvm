@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	animation.o \
 	audio.o \
 	clues.o \
+	console.o \
 	coords.o \
 	eem.o \
 	font.o \

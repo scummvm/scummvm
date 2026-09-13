@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/util.h"
+#include "graphics/blit.h"
 #include "graphics/paletteman.h"
 
 #include "audio/mixer.h"
@@ -368,78 +369,110 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 	drawMenuItems(renderBitmap, pitch, width, height, menuItems, 7, _menuSelection);
 }
 
-void pauseFillRect(byte *buf, int bufW, int bufH, int x, int y, int w, int h, byte color) {
-	if (x < 0) { w += x; x = 0; }
-	if (y < 0) { h += y; y = 0; }
-	if (x + w > bufW) w = bufW - x;
-	if (y + h > bufH) h = bufH - y;
-	if (w <= 0 || h <= 0) return;
-	for (int row = y; row < y + h; row++)
-		memset(buf + row * bufW + x, color, w);
+byte blendRebel2PausePixels(byte a, byte b) {
+	if (a > b)
+		SWAP(a, b);
+	if (a >= 16 && b < 80)
+		return (a + b) / 2;
+	if (b == 0 || b == 4 || (b >= 16 && b < 80))
+		return b;
+	return a;
+}
+
+void scaleRebel2PauseBackground(const Graphics::Surface &src, Graphics::Surface &dst) {
+	dst.create(src.w * 2, src.h * 2, src.format);
+	for (int y = 0; y < src.h; y++) {
+		const byte *srcRow = (const byte *)src.getBasePtr(0, y);
+		byte *dstRow = (byte *)dst.getBasePtr(0, y * 2);
+		for (int x = 0; x < src.w; x++) {
+			dstRow[x * 2] = srcRow[x];
+			const byte nextColor = x + 1 < src.w ? srcRow[x + 1] : 0;
+			dstRow[x * 2 + 1] = blendRebel2PausePixels(srcRow[x], nextColor);
+		}
+	}
+	for (int y = 1; y < dst.h - 1; y += 2) {
+		byte *row = (byte *)dst.getBasePtr(0, y);
+		for (int x = 0; x < dst.w; x++)
+			row[x] = blendRebel2PausePixels(row[x - dst.pitch], row[x + dst.pitch]);
+	}
+	memcpy(dst.getBasePtr(0, dst.h - 1), dst.getBasePtr(0, dst.h - 2), dst.w);
 }
 
 void InsaneRebel2::showPauseOverlay() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	if (!splayer)
+	if (!splayer || _pauseOverlayActive)
 		return;
 
-	byte *frameBuffer = splayer->_dst;
-	byte *palette = splayer->_pal;
-	int width = splayer->_width;
-	int height = splayer->_height;
-
-	if (!frameBuffer || !palette || width <= 0 || height <= 0)
+	// Capture the visible viewport without modifying the video decoder's buffers.
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	if (!screen)
 		return;
-
-	int screenW = MIN(width, (int)_vm->_screenWidth);
-	int screenH = MIN(height, (int)_vm->_screenHeight);
-
-	memcpy(_savedPausePalette, palette, 768);
+	_savedPauseScreen.copyFrom(*screen);
+	_vm->_system->unlockScreen();
+	_vm->_system->getPaletteManager()->grabPalette(_savedPausePalette, 0, 256);
 	_pauseOverlayActive = true;
 
-	byte dimPal[768];
-	memcpy(dimPal, palette, 768);
-	for (int i = 0; i < 768; i++)
-		dimPal[i] >>= 2;
+	Graphics::Surface background;
+	background.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	byte *pixels = (byte *)background.getPixels();
+	Graphics::scaleBlit(pixels, (const byte *)_savedPauseScreen.getPixels(),
+		background.pitch, _savedPauseScreen.pitch, background.w, background.h,
+		_savedPauseScreen.w, _savedPauseScreen.h, background.format);
 
-	dimPal[0x50 * 3 + 0] = 80; dimPal[0x50 * 3 + 1] = 80; dimPal[0x50 * 3 + 2] = 80;
-	dimPal[0x51 * 3 + 0] = 110; dimPal[0x51 * 3 + 1] = 110; dimPal[0x51 * 3 + 2] = 110;
-	dimPal[1 * 3 + 0] = 255; dimPal[1 * 3 + 1] = 255; dimPal[1 * 3 + 2] = 255;
-	dimPal[2 * 3 + 0] = 188; dimPal[2 * 3 + 1] = 188; dimPal[2 * 3 + 2] = 188;
-	dimPal[3 * 3 + 0] = 128; dimPal[3 * 3 + 1] = 128; dimPal[3 * 3 + 2] = 128;
-	dimPal[4 * 3 + 0] = 0;   dimPal[4 * 3 + 1] = 0;   dimPal[4 * 3 + 2] = 0;
-	dimPal[5 * 3 + 0] = 252; dimPal[5 * 3 + 1] = 252; dimPal[5 * 3 + 2] = 252;
+	// The original uses a 64-shade tint, then repeats the neighbouring film frames.
+	byte previousColor = pixels[0];
+	for (int i = 0; i < background.w * background.h; i++) {
+		const byte color = pixels[i];
+		pixels[i] = ((_savedPausePalette[previousColor * 3 + 1] + _savedPausePalette[color * 3 + 1]) >> 3) + 16;
+		previousColor = color;
+	}
+	memcpy(background.getBasePtr(0, 0), background.getBasePtr(0, 150), 25 * background.pitch);
+	memcpy(background.getBasePtr(0, 175), background.getBasePtr(0, 25), 25 * background.pitch);
 
-	_vm->_system->getPaletteManager()->setPalette(dimPal, 0, 256);
-
-	pauseFillRect(frameBuffer, width, height, 0, 0x17, 0x140, 2, 0x50);
-	pauseFillRect(frameBuffer, width, height, 0, 0xAF, 0x140, 2, 0x50);
-
-	pauseFillRect(frameBuffer, width, height, 0,     0, 0x28, 200, 0x50);
-	pauseFillRect(frameBuffer, width, height, 0x118, 0, 0x28, 200, 0x50);
-
-	for (int i = 0; i < 6; i++) {
-		int yOff = i * 0x24;  // i * 36
-		pauseFillRect(frameBuffer, width, height, 0x0C, yOff,     0x19, 0x11, 0x51);
-		pauseFillRect(frameBuffer, width, height, 0x0B, yOff + 1, 0x1B, 0x0F, 0x51);
-		pauseFillRect(frameBuffer, width, height, 0x0D, yOff,     0x17, 0x11, 4);
-		pauseFillRect(frameBuffer, width, height, 0x0B, yOff + 2, 0x1B, 0x0D, 4);
-		pauseFillRect(frameBuffer, width, height, 0x0C, yOff + 1, 0x19, 0x0F, 4);
+	background.fillRect(Common::Rect(0, 23, 320, 25), 80);
+	background.fillRect(Common::Rect(0, 175, 320, 177), 80);
+	background.fillRect(Common::Rect(0, 0, 40, 200), 80);
+	background.fillRect(Common::Rect(280, 0, 320, 200), 80);
+	for (int side = 0; side < 2; side++) {
+		const int x = side ? 282 : 11;
+		for (int i = 0; i < 6; i++) {
+			const int y = i * 36;
+			background.fillRect(Common::Rect(x + 1, y, x + 26, y + 17), 81);
+			background.fillRect(Common::Rect(x, y + 1, x + 27, y + 16), 81);
+			background.fillRect(Common::Rect(x + 2, y, x + 25, y + 17), 4);
+			background.fillRect(Common::Rect(x, y + 2, x + 27, y + 15), 4);
+			background.fillRect(Common::Rect(x + 1, y + 1, x + 26, y + 16), 4);
+		}
 	}
 
-	for (int i = 0; i < 6; i++) {
-		int yOff = i * 0x24;
-		int xBase = 0x11A;
-		pauseFillRect(frameBuffer, width, height, xBase,     yOff,     0x19, 0x11, 0x51);
-		pauseFillRect(frameBuffer, width, height, xBase - 1, yOff + 1, 0x1B, 0x0F, 0x51);
-		pauseFillRect(frameBuffer, width, height, xBase + 1, yOff,     0x17, 0x11, 4);
-		pauseFillRect(frameBuffer, width, height, xBase - 1, yOff + 2, 0x1B, 0x0D, 4);
-		pauseFillRect(frameBuffer, width, height, xBase,     yOff + 1, 0x19, 0x0F, 4);
+	byte pausePalette[768];
+	memcpy(pausePalette, _savedPausePalette, sizeof(pausePalette));
+	const byte textColors[] = {
+		0, 0, 0, 255, 255, 255, 188, 188, 188, 128, 128, 128, 0, 0, 0,
+		0, 255, 0, 0, 199, 0, 0, 147, 0, 0, 95, 0
+	};
+	memcpy(pausePalette, textColors, sizeof(textColors));
+	for (int i = 0; i < 64; i++) {
+		// Original HLS palette: hue 10, lightness 2*i, saturation 78.
+		const int m1 = 354 * i;
+		const int m2 = 666 * i;
+		pausePalette[(16 + i) * 3] = m2 / 255;
+		pausePalette[(16 + i) * 3 + 1] = (m1 + (m2 - m1) * 60 / 255) / 255;
+		pausePalette[(16 + i) * 3 + 2] = m1 / 255;
 	}
+	const byte filmColors[] = {65, 36, 39, 33, 18, 29, 49, 27, 34, 65, 36, 39};
+	memcpy(pausePalette + 80 * 3, filmColors, sizeof(filmColors));
+
+	Graphics::Surface overlay;
+	if (isHiRes())
+		scaleRebel2PauseBackground(background, overlay);
+	else
+		overlay.copyFrom(background);
+	background.free();
 
 	const char *pauseText = splayer->getString(0x78);
 	if (!pauseText || !pauseText[0])
-		pauseText = "Game Paused";
+		pauseText = "^f01^c005Game Paused";
 
 	SmushMultiFont *multiFont = splayer->getMultiFont();
 	if (!multiFont) {
@@ -447,12 +480,27 @@ void InsaneRebel2::showPauseOverlay() {
 		multiFont = splayer->getMultiFont();
 	}
 	if (multiFont) {
-		Common::Rect clipRect(0, 0, screenW, screenH);
-		multiFont->drawString(pauseText, frameBuffer, clipRect, 10, 10, width, 4, kStyleAlignLeft);
+		Common::Rect clipRect(overlay.w, overlay.h);
+		multiFont->drawString(pauseText, (byte *)overlay.getPixels(), clipRect,
+			10, isHiRes() ? 20 : 10, overlay.pitch, 1, kStyleAlignLeft);
 	}
 
-	_vm->_system->copyRectToScreen(frameBuffer, width, 0, 0, screenW, screenH);
+	_vm->_system->getPaletteManager()->setPalette(pausePalette, 0, 256);
+	_vm->_system->copyRectToScreen(overlay.getPixels(), overlay.pitch, 0, 0, overlay.w, overlay.h);
 	_vm->_system->updateScreen();
+	overlay.free();
+}
+
+void InsaneRebel2::hidePauseOverlay() {
+	if (!_pauseOverlayActive)
+		return;
+
+	_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
+	_vm->_system->copyRectToScreen(_savedPauseScreen.getPixels(), _savedPauseScreen.pitch,
+		0, 0, _savedPauseScreen.w, _savedPauseScreen.h);
+	_vm->_system->updateScreen();
+	_savedPauseScreen.free();
+	_pauseOverlayActive = false;
 }
 
 int InsaneRebel2::runMainMenu() {

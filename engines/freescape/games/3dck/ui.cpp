@@ -19,6 +19,9 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "common/translation.h"
 #include "graphics/fonts/dosfont.h"
 #include "math/utils.h"
 
@@ -26,9 +29,20 @@
 
 namespace Freescape {
 
-uint32 KitEngine::indicatorColor(byte color) const {
+void KitEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target) {
+	FreescapeEngine::initKeymaps(engineKeyMap, infoScreenKeyMap, target);
+	Common::Action *act = new Common::Action("ACTIVATE", _("Activate"));
+	act->setCustomEngineActionEvent(kActionActivate);
+	act->addDefaultInputMapping(_useWASDControls ? "e" : "a");
+	engineKeyMap->addAction(act);
+}
+
+uint32 KitEngine::indicatorColor(byte color, int y) const {
+	const byte *palette = _palette;
+	if (_renderMode == Common::kRenderAtariST && y >= _viewArea.top && y < _viewArea.bottom)
+		palette = _gfx->_palette;
 	return _scriptSurface.format.ARGBToColor(255,
-		_palette[3 * color], _palette[3 * color + 1], _palette[3 * color + 2]);
+		palette[3 * color], palette[3 * color + 1], palette[3 * color + 2]);
 }
 
 void KitEngine::printMessage(uint16 indicator, const Common::String &message) {
@@ -59,8 +73,8 @@ void KitEngine::printMessage(uint16 indicator, const Common::String &message) {
 		if (y >= surface.h)
 			break;
 		Common::Rect cell(x, y, MIN(x + 8, int(surface.w)), MIN(y + 8, int(surface.h)));
-		surface.fillRect(cell, indicatorColor(data[11]));
-		font.drawChar(&surface, chr, x, y, indicatorColor(data[10]));
+		surface.fillRect(cell, indicatorColor(data[11], rect.top + y));
+		font.drawChar(&surface, chr, x, y, indicatorColor(data[10], rect.top + y));
 		x += 8;
 		if (x >= surface.w) {
 			x = 0;
@@ -82,7 +96,7 @@ void KitEngine::updateIndicators() {
 		int32 first = int32((uint32(data[5]) << 16) | data[6]);
 		int32 last = int32((uint32(data[7]) << 16) | data[8]);
 		int32 value = CLIP<int32>(_kitVariables[data[9] & 0xff], MIN(first, last), MAX(first, last));
-		uint32 foreground = indicatorColor(data[10]), background = indicatorColor(data[11]);
+		uint32 foreground = indicatorColor(data[10], rect.top), background = indicatorColor(data[11], rect.top);
 		_scriptSurface.fillRect(rect, background);
 		if (data[0] == 2) {
 			int digits = MIN<int>(rect.width() / 8, 8);

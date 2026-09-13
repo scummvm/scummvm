@@ -101,9 +101,11 @@ public:
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
+
 		#if defined(__LIBRETRO__)
 		LINK_PLUGIN(LIBRETRO_MIDI)
 		#else
+
 		#if defined(WIN32)
 		LINK_PLUGIN(WINDOWS)
 		#endif
@@ -137,13 +139,14 @@ public:
 		#if defined(MACOSX) || defined(IPHONE) && !defined(IPHONE_TVOS)
 		LINK_PLUGIN(COREMIDI)
 		#endif
-		#endif
-		#ifdef USE_FLUIDSYNTH
-		LINK_PLUGIN(FLUIDSYNTH)
+		#if defined(EMSCRIPTEN)
+		LINK_PLUGIN(WEBMIDI)
 		#endif
 
-		#ifdef EMSCRIPTEN
-		LINK_PLUGIN(WEBMIDI)
+		#endif // defined(__LIBRETRO__)
+
+		#ifdef USE_FLUIDSYNTH
+		LINK_PLUGIN(FLUIDSYNTH)
 		#endif
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
@@ -432,7 +435,7 @@ void PluginManagerUncached::updateConfigWithFileName(const Common::String &engin
 
 		Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
 		assert(domain);
-		(*domain).setVal(engineId, (*_currentPlugin)->getFileName().toConfig());
+		domain->setVal(engineId, (*_currentPlugin)->getFileName().toConfig());
 
 		ConfMan.flushToDisk();
 	}

@@ -398,11 +398,11 @@ void RMGfxTargetBuffer::mergeDirtyRects() {
 		rInner = rOuter;
 		while (++rInner != _dirtyRects.end()) {
 
-			if ((*rOuter).intersects(*rInner)) {
+			if (rOuter->intersects(*rInner)) {
 				// these two rectangles overlap or
 				// are next to each other - merge them
 
-				(*rOuter).extend(*rInner);
+				rOuter->extend(*rInner);
 
 				// remove the inner rect from the list
 				_dirtyRects.erase(rInner);

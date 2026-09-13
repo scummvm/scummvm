@@ -189,21 +189,21 @@ LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		case VK_NUMPAD8:                            // ... deal with all the rest
 		case VK_PRIOR:                              // go to previous page of text
 			if (nHelpPage > 0)
-				(*pRulesDialog).UpdateScroll(nHelpPage - 1);
+				pRulesDialog->UpdateScroll(nHelpPage - 1);
 			return true;
 		case VK_DOWN:                               // go to next page of text
 		case VK_NUMPAD2:
 		case VK_NEXT:
 			if (!bHelpEOF)
-				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
+				pRulesDialog->UpdateScroll(nHelpPage + 1);
 			return true;
 		case VK_HOME:                               // go to first page of text
 			if (nHelpPage > 0)
-				(*pRulesDialog).UpdateScroll(0);
+				pRulesDialog->UpdateScroll(0);
 			return true;
 		case VK_END:                                // go to last page of text
 			while (!bHelpEOF) {
-				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
+				pRulesDialog->UpdateScroll(nHelpPage + 1);
 			}
 			return true;
 		}
@@ -254,7 +254,7 @@ void CRules::OnDestroy() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
-	hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+	hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 	//if (hNewCursor != nullptr);
 	SetCursor(hNewCursor);
 
@@ -266,14 +266,14 @@ void CRules::OnDestroy() {
 	delete pFont;
 	pFont = nullptr;
 
-	(*pHelpFile).Close();                           // close and release the rules file
+	pHelpFile->Close();                           // close and release the rules file
 	delete pHelpFile;
 	pHelpFile = nullptr;
 
 	if (pBackgroundBitmap != nullptr) {
-		bUpdateNeeded = (*pParentWnd).GetUpdateRect(nullptr, false);
+		bUpdateNeeded = pParentWnd->GetUpdateRect(nullptr, false);
 		if (bUpdateNeeded)
-			(*pParentWnd).ValidateRect(nullptr);
+			pParentWnd->ValidateRect(nullptr);
 	}
 
 	if (!bBruteForce) {
@@ -302,28 +302,28 @@ bool CRules::OnInitDialog() {
 	if (pParentWnd == nullptr)                         // get our parent window
 		pParentWnd = ((CWnd *) this)->GetParent();  // ... as passed to us or inquired about
 
-	(*pParentWnd).GetWindowRect(&myRect);
+	pParentWnd->GetWindowRect(&myRect);
 	x = myRect.left + (((myRect.right - myRect.left) - ScrollRect.right) >> 1);
 	y = myRect.top + (((myRect.bottom - myRect.top) - ScrollRect.bottom) >> 1);
 	MoveWindow(x, y, ScrollRect.right, ScrollRect.bottom);      // center the dialog box on the parent
 
 	pButton = GetDlgItem((int) GetDefID());         // get the window for the okay button
 	ASSERT(pButton != nullptr);                        // ... and verify we have it
-	(*pButton).GetWindowRect(&myRect);              // get the button's position and size
+	pButton->GetWindowRect(&myRect);              // get the button's position and size
 
 	dx = myRect.right - myRect.left;                // calculate where to place the button
 	x = (ScrollRect.right - dx) >> 1;               // ... centered at the bottom edge
 	dy = myRect.bottom - myRect.top;
 	y = ScrollRect.bottom - dy - BUTTON_DY;
 
-	(*pButton).MoveWindow(x, y, dx, dy);            // reposition the button
+	pButton->MoveWindow(x, y, dx, dy);            // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
 	#if COLOR_BUTTONS
 	pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(pOKButton != nullptr);
-	(*pOKButton).SetPalette(pScrollPalette);        // set the palette to use
-	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
+	pOKButton->SetPalette(pScrollPalette);        // set the palette to use
+	bSuccess = pOKButton->SetControl((int) GetDefID(), this); // tie to the dialog control
 	ASSERT(bSuccess);
 	#endif
 
@@ -376,7 +376,7 @@ void CRules::OnPaint() {
 		ReleaseCompatibleContext(pScrollBotMaskDC, pScrollBotMask, pScrollBotMaskOld, pScrollBotMaskPalOld);
 		if (pNarrative != nullptr)
 			// Play the narration
-			(*pNarrative).play();
+			pNarrative->play();
 
 	} else if (bBruteForce) {                           // need to paint directly to screen
 		pDibDoc = LoadScrollDIB(SCROLL_SPEC, nullptr);
@@ -426,11 +426,11 @@ void CRules::RefreshBackground() {
 	pDC = GetDC();                                  // get a context for our window
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
-		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
-		(*pDC).RealizePalette();              // .. and make the system use it
+		pPalOld = pDC->SelectPalette(pScrollPalette, false);
+		pDC->RealizePalette();              // .. and make the system use it
 	}
 
-	(*pDC).BitBlt(        // repaint the background as it was
+	pDC->BitBlt(        // repaint the background as it was
 	    0,
 	    0,
 	    ScrollRect.right,
@@ -441,7 +441,7 @@ void CRules::RefreshBackground() {
 	    SRCCOPY);
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);                                 // release the context
 }
@@ -475,7 +475,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		return;
 	}
 
-	(*pBackgroundDC).BitBlt(      // save the entire background
+	pBackgroundDC->BitBlt(      // save the entire background
 	    0, 0,
 	    ScrollRect.right,
 	    ScrollRect.bottom,
@@ -483,7 +483,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCCOPY);
 
-	(*pScrollDC).BitBlt(       // copy background to scroll context
+	pScrollDC->BitBlt(       // copy background to scroll context
 	    0, 0,                           // ... so we can construct the scroll
 	    ScrollRect.right,               // ... on top of it in a masked manner
 	    ScrollRect.bottom,
@@ -495,7 +495,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 
 	ScrollTopCurlRect = ScrollTopRect;              // record where we're putting the top curl
 
-	(*pScrollDC).BitBlt(       // mask out where the top curl goes
+	pScrollDC->BitBlt(       // mask out where the top curl goes
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -503,7 +503,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(*pScrollTopMaskDC).BitBlt(     // invert the top curl mask
+	pScrollTopMaskDC->BitBlt(     // invert the top curl mask
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -511,7 +511,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(*pScrollTopDC).BitBlt(      // remove transparent area from top curl
+	pScrollTopDC->BitBlt(      // remove transparent area from top curl
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -519,7 +519,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(*pScrollTopMaskDC).BitBlt(     // restore top curl mask
+	pScrollTopMaskDC->BitBlt(     // restore top curl mask
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -527,7 +527,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(*pScrollDC).BitBlt(       // paint top curl into the scroll
+	pScrollDC->BitBlt(       // paint top curl into the scroll
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -541,7 +541,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	dstRect.top += ScrollTopRect.bottom;            // ... mid section strip of the scroll
 	dstRect.bottom += ScrollTopRect.bottom;
 
-	(*pScrollMidMaskDC).BitBlt(     // invert the mid section mask
+	pScrollMidMaskDC->BitBlt(     // invert the mid section mask
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -549,7 +549,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(*pScrollMidDC).BitBlt(      // mask out transparent part of mid section
+	pScrollMidDC->BitBlt(      // mask out transparent part of mid section
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -557,7 +557,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(*pScrollMidMaskDC).BitBlt(     // reset the mid section mask
+	pScrollMidMaskDC->BitBlt(     // reset the mid section mask
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -566,7 +566,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    DSTINVERT);
 
 	for (i = 0; i < SCROLL_PIECES; i++) {           // build the scroll's mid section srip-wise
-		(*pScrollDC).BitBlt(
+		pScrollDC->BitBlt(
 		    dstRect.left,               // mask out where the image will go
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -575,7 +575,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(*pScrollDC).BitBlt(      // paint in the mid section image
+		pScrollDC->BitBlt(      // paint in the mid section image
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -591,7 +591,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	dstRect.bottom = dstRect.top + ScrollBotRect.bottom;
 	ScrollBotCurlRect = dstRect;
 
-	(*pScrollDC).BitBlt(       // mask out where the bottom curl image goes
+	pScrollDC->BitBlt(       // mask out where the bottom curl image goes
 	    dstRect.left,
 	    dstRect.top,
 	    ScrollBotRect.right,
@@ -600,7 +600,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(*pScrollBotMaskDC).BitBlt(     // invert the bottom curl mask
+	pScrollBotMaskDC->BitBlt(     // invert the bottom curl mask
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -608,7 +608,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(*pScrollBotDC).BitBlt(      // mask out transparent part of curl
+	pScrollBotDC->BitBlt(      // mask out transparent part of curl
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -616,7 +616,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(*pScrollBotMaskDC).BitBlt(     // reset the mask
+	pScrollBotMaskDC->BitBlt(     // reset the mask
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -624,7 +624,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(*pScrollDC).BitBlt(       // paint in the bottom curl
+	pScrollDC->BitBlt(       // paint in the bottom curl
 	    dstRect.left,
 	    dstRect.top,
 	    ScrollBotRect.right,
@@ -658,7 +658,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 
 		dst2Rect = dstRect;
 
-		(*pWorkDC).BitBlt(      // splat in the background for top curl
+		pWorkDC->BitBlt(      // splat in the background for top curl
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -667,7 +667,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    dst2Rect.top,
 		    SRCCOPY);
 
-		(*pWorkDC).BitBlt(      // mask out where the top curl goes
+		pWorkDC->BitBlt(      // mask out where the top curl goes
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -675,7 +675,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(*pWorkDC).BitBlt(      // insert the top curl background
+		pWorkDC->BitBlt(      // insert the top curl background
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -684,7 +684,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    SRCPAINT);
 
 		if (i == 0) {                               // if first time, just paint curl to display
-			(*pDC).BitBlt(
+			pDC->BitBlt(
 			    dst2Rect.left,
 			    dst2Rect.top,
 			    ScrollTopRect.right,
@@ -693,7 +693,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    0, 0,
 			    SRCCOPY);
 		} else {
-			(*pWorkDC).BitBlt(     // ... otherwise paint in a new piece of
+			pWorkDC->BitBlt(     // ... otherwise paint in a new piece of
 			    dst2Rect.left,          // ... the middle section
 			    ScrollTopRect.bottom,
 			    dst2Rect.right,
@@ -702,7 +702,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    dst2Rect.left,
 			    dst2Rect.top + ScrollTopRect.bottom,
 			    SRCCOPY);
-			(*pDC).BitBlt(      // ... then paint it and the curl, thus
+			pDC->BitBlt(      // ... then paint it and the curl, thus
 			    dst2Rect.left,          // ... causing the top to seemingly unfurl
 			    dst2Rect.top,           // ... by one more strip
 			    ScrollTopRect.right,
@@ -716,7 +716,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		dst2Rect.bottom = dstRect.bottom;
 
 		if ((i == 0) || ((i == 1) && (h == 1))) {   // if first time or doing last iteration
-			(*pWorkDC).BitBlt(                // ... just paint in the bottom curl
+			pWorkDC->BitBlt(                // ... just paint in the bottom curl
 			    0, 0,
 			    dst2Rect.right,
 			    scroll_delta,
@@ -725,7 +725,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    dst2Rect.top,
 			    SRCCOPY);
 		} else {                                    //
-			(*pWorkDC).BitBlt(
+			pWorkDC->BitBlt(
 			    0, 0,
 			    dst2Rect.right,
 			    scroll_delta,
@@ -735,7 +735,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    SRCCOPY);
 		}
 
-		(*pWorkDC).BitBlt(
+		pWorkDC->BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -745,7 +745,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    dst2Rect.top + scroll_delta,
 		    SRCCOPY);
 
-		(*pWorkDC).BitBlt(
+		pWorkDC->BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -754,7 +754,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(*pWorkDC).BitBlt(
+		pWorkDC->BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -763,7 +763,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCPAINT);
 
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 		    ScrollBotRect.left,
 		    dst2Rect.top,
 		    ScrollBotRect.right,
@@ -807,8 +807,8 @@ void CRules::UpdateScroll(int nPage) {
 	pDC = GetDC();
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
-		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
-		(*pDC).RealizePalette();              // .. and make the system use it
+		pPalOld = pDC->SelectPalette(pScrollPalette, false);
+		pDC->RealizePalette();              // .. and make the system use it
 	}
 
 	dstRect = ScrollMidRect;                        // setup initial destination for blts
@@ -816,7 +816,7 @@ void CRules::UpdateScroll(int nPage) {
 	dstRect.bottom += ScrollTopRect.bottom;
 
 	for (i = 0; i < SCROLL_PIECES; i++) {           // repaint the scroll midsection artwork
-		(*pScrollDC).BitBlt(      // ... mask out where artwork goes
+		pScrollDC->BitBlt(      // ... mask out where artwork goes
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -825,7 +825,7 @@ void CRules::UpdateScroll(int nPage) {
 		    0, 0,
 		    SRCAND);
 
-		(*pScrollDC).BitBlt(      // ... paint in the scroll artwork
+		pScrollDC->BitBlt(      // ... paint in the scroll artwork
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -837,7 +837,7 @@ void CRules::UpdateScroll(int nPage) {
 
 	WritePage(pScrollDC, nPage);                    // construct the new page of text
 
-	(*pDC).BitBlt(        // paint the result to the sceen
+	pDC->BitBlt(        // paint the result to the sceen
 	    TEXT_LEFT_MARGIN,
 	    ScrollTopRect.bottom + TEXT_TOP_MARGIN,
 	    TEXT_WIDTH,
@@ -850,7 +850,7 @@ void CRules::UpdateScroll(int nPage) {
 	UpdateMore(pDC);                                // update the "more" indicator
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -869,23 +869,23 @@ void CRules::WritePage(CDC *pDC, int nPage) {
 	nHelpPage = nPage;
 	bEOF = bHelpEOF = false;
 
-	(*pHelpFile).SeekToBegin();
+	pHelpFile->SeekToBegin();
 
 	if ((nHelpPage == 0) && (nPage == 0)) {
-		dwHelpPagePosition[nHelpPage] = (*pHelpFile).GetPosition();
+		dwHelpPagePosition[nHelpPage] = pHelpFile->GetPosition();
 		bEOL = dwHelpPageEOL[nHelpPage] = true;
 	} else {
-		(*pHelpFile).Seek(dwHelpPagePosition[nPage], CFile::begin);
+		pHelpFile->Seek(dwHelpPagePosition[nPage], CFile::begin);
 		bEOL = dwHelpPageEOL[nHelpPage];
 	}
 
 	dwHelpPagePosition[nHelpPage + 1] = dwHelpPagePosition[nHelpPage];
 
-	pFontOld = (*pDC).SelectObject(pFont);
+	pFontOld = pDC->SelectObject(pFont);
 
-	(*pDC).GetTextMetrics(&fontMetrics);
+	pDC->GetTextMetrics(&fontMetrics);
 
-	(*pDC).SetBkMode(TRANSPARENT);
+	pDC->SetBkMode(TRANSPARENT);
 
 	i = 0;
 	n = 1;
@@ -898,7 +898,7 @@ try_again:
 			if (bEOF)
 				break;
 			dwHelpPagePosition[nHelpPage + 1] += i + nCropped;
-			nCount = (*pHelpFile).Read(&chInBuf, TEXT_BUFFER_SIZE);
+			nCount = pHelpFile->Read(&chInBuf, TEXT_BUFFER_SIZE);
 			if (nCount < TEXT_BUFFER_SIZE)
 				bEOF = true;
 			i = 0;
@@ -929,7 +929,7 @@ try_again:
 					break;
 				dwHelpPagePosition[nHelpPage + 1] += i + nCropped;
 				strncpy(&chInBuf[0], &chInBuf[i], n);
-				nCount = (*pHelpFile).Read(&chInBuf[n], TEXT_BUFFER_SIZE - n);
+				nCount = pHelpFile->Read(&chInBuf[n], TEXT_BUFFER_SIZE - n);
 				nCount += n;
 				if (nCount < TEXT_BUFFER_SIZE)
 					bEOF = true;
@@ -961,7 +961,7 @@ crop_byte:
 				break;
 			}
 
-			textInfo = (*pDC).GetTextExtent(&chInBuf[i], n);
+			textInfo = pDC->GetTextExtent(&chInBuf[i], n);
 			if (textInfo.cx > TEXT_WIDTH - TEXT_LEFT_MARGIN) {
 				if ((chInBuf[i + n - 1] != ' ') &&
 				        (chInBuf[i + n - 1] != '\t'))
@@ -975,7 +975,7 @@ crop_byte:
 			n += 1;
 		}
 //		(*pDC).TextOut(x,y,(const char *) &chInBuf[i],n);
-		(*pDC).TabbedTextOut(x, y, (const char *) &chInBuf[i], n, 1, &tabstop, 0);
+		pDC->TabbedTextOut(x, y, (const char *) &chInBuf[i], n, 1, &tabstop, 0);
 		if (chInBuf[i + n] == '\r')
 			i += 2;
 		else if (chInBuf[i + n] == TEXT_NEWLINE)
@@ -987,7 +987,7 @@ crop_byte:
 			break;
 	}
 
-	(*pDC).SelectObject(pFontOld);
+	pDC->SelectObject(pFontOld);
 
 	dwHelpPagePosition[nPage + 1] += i + nCropped;
 	dwHelpPageEOL[nPage + 1] = bEOL;
@@ -996,7 +996,7 @@ crop_byte:
 		if (i >= (int) nCount) {
 			if (bEOF)
 				break;
-			nCount = (*pHelpFile).Read(&chInBuf, TEXT_BUFFER_SIZE);
+			nCount = pHelpFile->Read(&chInBuf, TEXT_BUFFER_SIZE);
 			if (nCount < TEXT_BUFFER_SIZE)
 				bEOF = true;
 			i = 0;
@@ -1016,7 +1016,7 @@ crop_byte:
 	if (bEOF && (i >= (int) nCount))
 		bHelpEOF = true;
 
-	(*pDC).SelectObject(pFontOld);
+	pDC->SelectObject(pFontOld);
 
 }
 
@@ -1027,21 +1027,21 @@ void CRules::UpdateMore(CDC *pDC) {
 	TEXTMETRIC  fontMetrics;
 	CSize       textInfo;
 
-	pFontOld = (*pDC).SelectObject(pFont);
+	pFontOld = pDC->SelectObject(pFont);
 
-	(*pDC).GetTextMetrics(&fontMetrics);
+	pDC->GetTextMetrics(&fontMetrics);
 
-	(*pDC).SetBkMode(TRANSPARENT);
+	pDC->SetBkMode(TRANSPARENT);
 
 	x = ScrollRect.right - TEXT_MORE_DX;
 	y = ((ScrollTopRect.bottom - fontMetrics.tmHeight) >> 1) +
 	    TEXT_MORE_DY - 3;
-	textInfo = (*pDC).GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+	textInfo = pDC->GetTextExtent(MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 	dx = textInfo.cx;
 	dy = fontMetrics.tmHeight;
 
 	if (nHelpPage == 0)
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 		    x,
 		    y,
 		    dx,
@@ -1051,7 +1051,7 @@ void CRules::UpdateMore(CDC *pDC) {
 		    y,
 		    SRCCOPY);
 	else
-		(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+		pDC->TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 
 	y = ScrollRect.bottom -
 	    ScrollBotRect.bottom +
@@ -1059,7 +1059,7 @@ void CRules::UpdateMore(CDC *pDC) {
 	    TEXT_MORE_DY;
 
 	if (bHelpEOF)
-		(*pDC).BitBlt(
+		pDC->BitBlt(
 		    x,
 		    y,
 		    dx,
@@ -1069,9 +1069,9 @@ void CRules::UpdateMore(CDC *pDC) {
 		    y,
 		    SRCCOPY);
 	else
-		(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
+		pDC->TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 
-	(*pDC).SelectObject(pFontOld);
+	pDC->SelectObject(pFontOld);
 }
 
 
@@ -1097,16 +1097,16 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 	pHelpFile = new CFile();
 	ASSERT(pHelpFile != nullptr);
-	bSuccess = (*pHelpFile).Open(chPathName, CFile::modeRead | CFile::typeBinary, nullptr);
+	bSuccess = pHelpFile->Open(chPathName, CFile::modeRead | CFile::typeBinary, nullptr);
 	ASSERT(bSuccess);
 	if (!bSuccess)
 		return -1;
-	nHelpFileSize = (*pHelpFile).GetLength();
+	nHelpFileSize = pHelpFile->GetLength();
 
 	AddFontResource("msserif.fon");
 	pFont = new CFont();
 	ASSERT(pFont != nullptr);
-	bSuccess = (*pFont).CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
+	bSuccess = pFont->CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	ASSERT(bSuccess);
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
@@ -1182,7 +1182,7 @@ bool CRules::CreateWorkAreas(CDC *pDC) {
 	pScrollBitmap = new CBitmap();
 	if (pScrollBitmap == nullptr)
 		return false;
-	bSuccess = (*pScrollBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
+	bSuccess = pScrollBitmap->CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
 		return false;
 	pScrollDC = SetupCompatibleContext(pDC, pScrollBitmap, pScrollBitmapOld, pScrollPalette, pScrollPalOld);
@@ -1192,7 +1192,7 @@ bool CRules::CreateWorkAreas(CDC *pDC) {
 	pBackgroundBitmap = new CBitmap();
 	if (pBackgroundBitmap == nullptr)
 		return false;
-	bSuccess = (*pBackgroundBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
+	bSuccess = pBackgroundBitmap->CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
 		return false;
 	pBackgroundDC = SetupCompatibleContext(pDC, pBackgroundBitmap, pBackgroundBitmapOld, pScrollPalette, pBackgroundPalOld);
@@ -1206,7 +1206,7 @@ bool CRules::CreateWorkAreas(CDC *pDC) {
 	pWorkBitmap = new CBitmap();
 	if (pWorkBitmap == nullptr)
 		return false;
-	bSuccess = (*pWorkBitmap).CreateCompatibleBitmap(pDC, WorkRect.right, WorkRect.bottom);
+	bSuccess = pWorkBitmap->CreateCompatibleBitmap(pDC, WorkRect.right, WorkRect.bottom);
 	if (!bSuccess)
 		return false;
 	pWorkDC = SetupCompatibleContext(pDC, pWorkBitmap, pWorkBitmapOld, pScrollPalette, pWorkPalOld);
@@ -1235,18 +1235,18 @@ bool CRules::CreateWorkAreas(CDC *pDC) {
 CDC *CRules::SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMaskOld, CRect *pRect) {
 	CDC *pNewDC = nullptr;
 
-	(*pMask).CreateBitmap((*pRect).right, (*pRect).bottom, 1, 1, nullptr);
+	pMask->CreateBitmap(pRect->right, pRect->bottom, 1, 1, nullptr);
 
 	pNewDC = new CDC();
 
 	if ((pNewDC != nullptr) &&
-	        (*pNewDC).CreateCompatibleDC(pDC)) {
-		pMaskOld = (*pNewDC).SelectObject(pMask);
+	        pNewDC->CreateCompatibleDC(pDC)) {
+		pMaskOld = pNewDC->SelectObject(pMask);
 		if (pMaskOld != nullptr) {
-			(*pNewDC).BitBlt(
+			pNewDC->BitBlt(
 			    0, 0,
-			    (*pRect).right,
-			    (*pRect).bottom,
+			    pRect->right,
+			    pRect->bottom,
 			    pBitmapDC,
 			    0, 0,
 			    SRCCOPY);
@@ -1266,13 +1266,13 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap,
 
 	if ((pDC != nullptr) &&
 	        (pNewDC != nullptr) &&
-	        (*pNewDC).CreateCompatibleDC(pDC)) {
+	        pNewDC->CreateCompatibleDC(pDC)) {
 		if (pPalette)
-			pPalOld = (*pNewDC).SelectPalette(pPalette, false);
+			pPalOld = pNewDC->SelectPalette(pPalette, false);
 		else
 			pPalOld = nullptr;
-		(*pNewDC).RealizePalette();
-		pBitmapOld = (*pNewDC).SelectObject(pBitmap);
+		pNewDC->RealizePalette();
+		pBitmapOld = pNewDC->SelectObject(pBitmap);
 		if (pBitmapOld != nullptr)
 			return (pNewDC);
 	}
@@ -1285,23 +1285,23 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap,
 
 void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld) {
 	if (pBitmapOld != nullptr) {
-		(*pDC).SelectObject(pBitmapOld);
+		pDC->SelectObject(pBitmapOld);
 		pBitmapOld = nullptr;
 	}
 
 	if (pPalOld != nullptr) {
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 		pPalOld = nullptr;
 	}
 
 	if (pBitmap != nullptr) {
-		(*pBitmap).DeleteObject();
+		pBitmap->DeleteObject();
 		delete pBitmap;
 		pBitmap = nullptr;
 	}
 
 	if (pDC != nullptr) {
-		(*pDC).DeleteDC();
+		pDC->DeleteDC();
 		delete pDC;
 		pDC = nullptr;
 	}
@@ -1319,9 +1319,9 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	pDibDoc = new CDibDoc();
 	ASSERT(pDibDoc != nullptr);
 
-	bSuccess = (*pDibDoc).OpenDocument(pszPathName);
+	bSuccess = pDibDoc->OpenDocument(pszPathName);
 	ASSERT(bSuccess);
-	hDIB = (*pDibDoc).GetHDIB();
+	hDIB = pDibDoc->GetHDIB();
 	ASSERT(hDIB != nullptr);
 	
 	dxDIB = (int) DIBWidth(hDIB);
@@ -1329,7 +1329,7 @@ CDibDoc *CRules::LoadScrollDIB(const char *pszPathName, CRect *pRect) {
 	
 
 	if (pRect != nullptr)
-		(*pRect).SetRect(0, 0, dxDIB, dyDIB);
+		pRect->SetRect(0, 0, dxDIB, dyDIB);
 
 	return (pDibDoc);
 }
@@ -1341,7 +1341,7 @@ bool CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 	int         dxDIB, dyDIB;
 	CRect       myRect;
 
-	hDIB = (*pDibDoc).GetHDIB();
+	hDIB = pDibDoc->GetHDIB();
 	ASSERT(hDIB != nullptr);
 	
 	dxDIB = (int) DIBWidth(hDIB);
@@ -1350,7 +1350,7 @@ bool CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 
 	myRect.SetRect(0, 0, dxDIB, dyDIB);
 
-	bSuccess = PaintDIB((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
+	bSuccess = PaintDIB(pDC->m_hDC, myRect, hDIB, myRect, pScrollPalette);
 
 	return bSuccess;
 }
@@ -1360,7 +1360,7 @@ CBitmap *CRules::CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalet
 	HDIB        hDIB;
 	CBitmap     *pBitmap = nullptr;
 
-	hDIB = (*pDibDoc).GetHDIB();
+	hDIB = pDibDoc->GetHDIB();
 	ASSERT(hDIB != nullptr);
 
 	pBitmap = ConvertDIB(pDC, hDIB, pPalette);
@@ -1394,19 +1394,19 @@ void CRules::OnMouseMove(unsigned int nFlags, CPoint point) {
 	pMyApp = AfxGetApp();
 
 	if (OkayRect.PtInRect(point))
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 	else if (ScrollTopCurlRect.PtInRect(point)) {
 		if (nHelpPage == 0)
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWUP);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWUP);
 	} else if (ScrollBotCurlRect.PtInRect(point)) {
 		if (bHelpEOF)
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_INVALID);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_INVALID);
 		else
-			hNewCursor = (*pMyApp).LoadCursor(IDC_RULES_ARROWDN);
+			hNewCursor = pMyApp->LoadCursor(IDC_RULES_ARROWDN);
 	} else
-		hNewCursor = (*pMyApp).LoadStandardCursor(IDC_ARROW);
+		hNewCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
 
 	//if (hNewCursor != nullptr);
 	SetCursor(hNewCursor);
@@ -1416,7 +1416,7 @@ void CRules::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 
 bool CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
-	if ((*pWnd).m_hWnd == (*this).m_hWnd)
+	if (pWnd->m_hWnd == (this)->m_hWnd)
 		return true;
 	else
 		return false;
@@ -1428,7 +1428,7 @@ void CRules::ShowWaitCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).BeginWaitCursor();
+	pMyApp->BeginWaitCursor();
 }
 
 
@@ -1437,7 +1437,7 @@ void CRules::DoArrowCursor() {
 
 	pMyApp = AfxGetApp();
 
-	(*pMyApp).EndWaitCursor();
+	pMyApp->EndWaitCursor();
 }
 
 } // namespace HodjNPodj

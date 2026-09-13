@@ -40,6 +40,8 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
+#include "graphics/surface.h"
+
 namespace Audio {
 class QueuingAudioStream;
 class SoundHandle;
@@ -388,6 +390,7 @@ public:
 	NutRenderer *_smush_povfontNut;
 
 	byte _savedPausePalette[768];
+	Graphics::Surface _savedPauseScreen;
 	bool _pauseOverlayActive;
 
 	bool _introCursorPushed;
@@ -918,6 +921,7 @@ public:
 	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);
 
 	void showPauseOverlay();
+	void hidePauseOverlay();
 
 	int _targetLockTimer;
 

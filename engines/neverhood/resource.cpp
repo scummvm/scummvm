@@ -558,7 +558,7 @@ MessageList *DataResource::getMessageListAtPos(int16 klaymenX, int16 klaymenY, i
 
 DataResource::DRDirectoryItem *DataResource::findDRDirectoryItem(uint32 nameHash, uint16 type) {
 	for (Common::Array<DRDirectoryItem>::iterator it = _directory.begin(); it != _directory.end(); it++)
-		if ((*it).nameHash == nameHash && (*it).type == type)
+		if (it->nameHash == nameHash && it->type == type)
 			return &(*it);
 	return nullptr;
 }

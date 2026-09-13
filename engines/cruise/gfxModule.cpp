@@ -251,7 +251,7 @@ static void mergeClipRects() {
 		rInner = rOuter;
 		while (++rInner != _vm->_dirtyRects.end()) {
 
-			if ((*rOuter).intersects(*rInner)) {
+			if (rOuter->intersects(*rInner)) {
 				// these two rectangles overlap, so translate it to a bigger rectangle
 				// that contains both of them
 				unionRectangle(*rOuter, *rOuter, *rInner);

@@ -59,11 +59,11 @@ bool CAnimate::Clown(CDC *pDC, CPoint point) {
 		return false;
 
 	m_pSprite = new CSprite;
-	(*m_pSprite).SharePalette(pGamePalette);
-	bSuccess = (*m_pSprite).LoadCels(pDC, CLOWN_BMP, CLOWN_FRAMES);
+	m_pSprite->SharePalette(pGamePalette);
+	bSuccess = m_pSprite->LoadCels(pDC, CLOWN_BMP, CLOWN_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(false);
-	(*m_pSprite).SetMobile(false);
+	m_pSprite->SetMasked(false);
+	m_pSprite->SetMobile(false);
 
 	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
@@ -74,9 +74,9 @@ bool CAnimate::Clown(CDC *pDC, CPoint point) {
 	} // end if
 
 	if (bSuccess == true) {
-		(*m_pSprite).SetCel(CLOWN_FRAMES);
+		m_pSprite->SetCel(CLOWN_FRAMES);
 		for (i = 0; i < CLOWN_FRAMES - 1; i++) {
-			(*m_pSprite).PaintSprite(
+			m_pSprite->PaintSprite(
 			    pDC,
 			    m_cClownRect.TopLeft()
 			);
@@ -100,11 +100,11 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 		return false;
 
 	m_pSprite = new CSprite;
-	(*m_pSprite).SharePalette(pGamePalette);
-	bSuccess = (*m_pSprite).LoadCels(pDC, UFOA_BMP, UFOA_FRAMES);
+	m_pSprite->SharePalette(pGamePalette);
+	bSuccess = m_pSprite->LoadCels(pDC, UFOA_BMP, UFOA_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(false);
-	(*m_pSprite).SetMobile(false);
+	m_pSprite->SetMasked(false);
+	m_pSprite->SetMobile(false);
 
 	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
@@ -116,10 +116,10 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 
 	if (bSuccess == true) {
 		int j;
-		(*m_pSprite).SetCel(UFOA_FRAMES);
+		m_pSprite->SetCel(UFOA_FRAMES);
 
 		for (i = 0; i < 8; i++) {
-			(*m_pSprite).PaintSprite(
+			m_pSprite->PaintSprite(
 			    pDC,
 			    m_cUFORect.TopLeft()
 			);
@@ -141,7 +141,7 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 		} // end if
 
 		for (j = i; j < UFOA_FRAMES - 1; j++) {
-			(*m_pSprite).PaintSprite(
+			m_pSprite->PaintSprite(
 			    pDC,
 			    m_cUFORect.TopLeft()
 			);
@@ -151,10 +151,10 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 
 	Sleep(UFO_PAUSE);                                    // pause for a few seconds between animations
 
-	bSuccess = (*m_pSprite).LoadCels(pDC, UFOB_BMP, UFOB_FRAMES);
+	bSuccess = m_pSprite->LoadCels(pDC, UFOB_BMP, UFOB_FRAMES);
 	ASSERT(bSuccess);
-	(*m_pSprite).SetMasked(false);
-	(*m_pSprite).SetMobile(false);
+	m_pSprite->SetMasked(false);
+	m_pSprite->SetMobile(false);
 
 	if (pGameParams->bSoundEffectsEnabled != false) {
 		m_pSound->initialize(
@@ -166,10 +166,10 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 
 	if (bSuccess == true) {
 		int j;
-		(*m_pSprite).SetCel(UFOB_FRAMES);
+		m_pSprite->SetCel(UFOB_FRAMES);
 
 		for (i = 0; i < 9; i++) {
-			(*m_pSprite).PaintSprite(
+			m_pSprite->PaintSprite(
 			    pDC,
 			    m_cUFORect.TopLeft()
 			);
@@ -191,7 +191,7 @@ bool CAnimate::UFO(CDC *pDC, CPoint point) {
 		} // end if
 
 		for (j = i; j < UFOB_FRAMES - 1; j++) {
-			(*m_pSprite).PaintSprite(
+			m_pSprite->PaintSprite(
 			    pDC,
 			    m_cUFORect.TopLeft()
 			);

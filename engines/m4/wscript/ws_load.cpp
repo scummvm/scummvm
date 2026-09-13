@@ -1427,7 +1427,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 
 	// *data contains header + offsets, therefore, we must scan ahead
 	// and find out how many cels are here...
-	if (!(*sysFile).seek_ahead((CELS_COUNT - CELS_SRC_SIZE - 1) << 2)) {
+	if (!sysFile->seek_ahead((CELS_COUNT - CELS_SRC_SIZE - 1) << 2)) {
 		ws_LogErrorMsg(FL, "Failed to seek ahead in the stream.");
 		return -1;
 	}
@@ -1441,7 +1441,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Now, seek backwards to where we left off
-	if (!(*sysFile).seek_ahead((CELS_SRC_SIZE - CELS_COUNT) * 4)) {
+	if (!sysFile->seek_ahead((CELS_SRC_SIZE - CELS_COUNT) * 4)) {
 		ws_LogErrorMsg(FL, "Failed to seek backwards in the stream.");
 		return -1;
 	}
@@ -1468,7 +1468,7 @@ static int32 GetSSHeaderInfo(SysFile *sysFile, uint32 **data, RGB8 *myPalette) {
 	}
 
 	// Find out how far into the stream we are, and return that value
-	const int32 dataOffset = (*sysFile).get_pos();
+	const int32 dataOffset = sysFile->get_pos();
 	return dataOffset;
 }
 

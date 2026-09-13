@@ -1367,8 +1367,8 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref, bool shiftPressed, bool isDoubleClick) {
 	ObjID child = 0;
 	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-		if (canBeSelected((*it).obj, clickRect, ref)) {
-			child = (*it).obj;
+		if (canBeSelected(it->obj, clickRect, ref)) {
+			child = it->obj;
 		}
 	}
 	if (child != 0 || data.refcon == kMainGameWindow) {
@@ -1460,8 +1460,8 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 			Common::Rect clickRect = calculateClickRect(_cursor->getPos() + data.scrollPos, win->getInnerDimensions());
 
 			for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
-				if (canBeSelected((*it).obj, clickRect, destinationWindow)) {
-					child = (*it).obj;
+				if (canBeSelected(it->obj, clickRect, destinationWindow)) {
+					child = it->obj;
 				}
 			}
 

@@ -2454,7 +2454,7 @@ void Actor::activateShadow(bool active, SetShadow *setShadow) {
 
 		Common::List<Common::String>::iterator it;
 		for (it = setShadow->_sectorNames.begin(); it != setShadow->_sectorNames.end(); ++it) {
-			addShadowPlane((*it).c_str(), g_grim->getCurrSet(), shadowId);
+			addShadowPlane(it->c_str(), g_grim->getCurrSet(), shadowId);
 		}
 	}
 }

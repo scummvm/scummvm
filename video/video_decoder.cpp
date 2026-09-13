@@ -84,10 +84,7 @@ bool VideoDecoder::loadFile(const Common::Path &filename) {
 		return false;
 	}
 
-	bool result = loadStream(file);
-	if (!result)
-		delete file;
-	return result;
+	return loadStream(file);
 }
 
 bool VideoDecoder::needsUpdate() const {

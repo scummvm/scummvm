@@ -245,7 +245,7 @@ void SoundSE::indexSpeechXSBFile() {
 		Common::String name = f->readString(0);
 		name.toLowercase();
 
-		if (index < (*audioIndex).size()) {
+		if (index < audioIndex->size()) {
 			(*audioIndex)[index].name = name;
 			_nameToIndexMISpeech[name] = index;
 			//debug("indexSpeechXSBFile: %s -> index %d", name.c_str(), index);
@@ -764,7 +764,7 @@ Audio::SeekableAudioStream *SoundSE::getAudioStreamFromIndex(int32 index, SoundS
 	AudioIndex *audioIndex = getAudioEntries(type);
 	AudioEntry audioEntry = {};
 
-	if (index < 0 || index >= (int32)(*audioIndex).size())
+	if (index < 0 || index >= (int32)audioIndex->size())
 		return nullptr;
 
 	audioEntry = (*audioIndex)[index];

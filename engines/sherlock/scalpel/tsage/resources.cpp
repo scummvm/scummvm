@@ -98,7 +98,7 @@ Common::SeekableReadStream *TLib::getResource(uint16 id, bool suppressErrors) {
 	ResourceEntry *re = nullptr;
 	ResourceList::iterator iter;
 	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
-		if ((*iter).id == id) {
+		if (iter->id == id) {
 			re = &(*iter);
 			break;
 		}
@@ -215,7 +215,7 @@ Common::SeekableReadStream *TLib::getResource(uint16 id, bool suppressErrors) {
  */
 Common::SeekableReadStream *TLib::getResource(ResourceType resType, uint16 resNum, uint16 rlbNum, bool suppressErrors) {
 	SectionList::iterator i = _sections.begin();
-	while ((i != _sections.end()) && ((*i).resType != resType || (*i).resNum != resNum))
+	while ((i != _sections.end()) && (i->resType != resType || i->resNum != resNum))
 		++i;
 	if (i == _sections.end()) {
 		if (suppressErrors)
@@ -223,7 +223,7 @@ Common::SeekableReadStream *TLib::getResource(ResourceType resType, uint16 resNu
 		error("Unknown resource type %d num %d", resType, resNum);
 	}
 
-	loadSection((*i).fileOffset);
+	loadSection(i->fileOffset);
 
 	return getResource(rlbNum, suppressErrors);
 }
@@ -234,20 +234,20 @@ Common::SeekableReadStream *TLib::getResource(ResourceType resType, uint16 resNu
 uint32 TLib::getResourceStart(ResourceType resType, uint16 resNum, uint16 rlbNum, ResourceEntry &entry) {
 	// Find the correct section
 	SectionList::iterator i = _sections.begin();
-	while ((i != _sections.end()) && ((*i).resType != resType || (*i).resNum != resNum))
+	while ((i != _sections.end()) && (i->resType != resType || i->resNum != resNum))
 		++i;
 	if (i == _sections.end()) {
 		error("Unknown resource type %d num %d", resType, resNum);
 	}
 
 	// Load in the section index
-	loadSection((*i).fileOffset);
+	loadSection(i->fileOffset);
 
 	// Scan for an entry for the given Id
 	ResourceEntry *re = nullptr;
 	ResourceList::iterator iter;
 	for (iter = _resources.begin(); iter != _resources.end(); ++iter) {
-		if ((*iter).id == rlbNum) {
+		if (iter->id == rlbNum) {
 			re = &(*iter);
 			break;
 		}

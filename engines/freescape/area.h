@@ -79,7 +79,7 @@ public:
 	void addObjectFromArea(int16 id, Area *global);
 	void addGroupFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
-	void addFloor();
+	void addFloor(uint8 extraColor = 0);
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 	void resetArea();

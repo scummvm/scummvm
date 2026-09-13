@@ -93,11 +93,11 @@ CText::~CText() {
 	ReleaseContexts();
 
 	if (m_pWork != nullptr) {
-		(*m_pWork).DeleteObject();
+		m_pWork->DeleteObject();
 		delete m_pWork;
 	}
 	if (m_pBackground != nullptr) {
-		(*m_pBackground).DeleteObject();
+		m_pBackground->DeleteObject();
 		delete m_pBackground;
 	}
 }
@@ -174,8 +174,8 @@ bool CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 	m_nJustify = nJustify;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(m_pPalette, false);
+		pDC->RealizePalette();
 	}
 
 	if (!m_bFontLoaded) {                       // load the font if we have not
@@ -189,16 +189,16 @@ bool CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 
 	m_pWork = new CBitmap();                    // create a bitmap to serve as our
 	if ((m_pWork == nullptr) ||                    // ... work area as we output text
-	        !(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
+	        !m_pWork->CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
 		return false;
 
 	m_pBackground = new CBitmap();              // create a bitmap to hold the
 	if ((m_pBackground == nullptr) ||              // ... background we overwrite
-	        !(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
+	        !m_pBackground->CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
 		return false;
 
 	if (m_pPalette != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	return true;                              // return status
 }
@@ -225,13 +225,13 @@ bool CText::RestoreBackground(CDC *pDC) {
 	CPalette *pPalOld = nullptr;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(m_pPalette, false);
+		pDC->RealizePalette();
 	}
 
 	if ((m_pBackground != nullptr) &&
 	        SetupContexts(pDC)) {
-		bSuccess = (*pDC).BitBlt(                   // simply splat the background art
+		bSuccess = pDC->BitBlt(                   // simply splat the background art
 		               m_cRect.left,           // ... back where it came from
 		               m_cRect.top,
 		               m_cSize.cx,
@@ -244,7 +244,7 @@ bool CText::RestoreBackground(CDC *pDC) {
 	}
 
 	if (m_pPalette != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	return bSuccess;
 }
@@ -341,15 +341,15 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	CPalette *pPalOld = nullptr;
 
 	if (m_pPalette != nullptr) {
-		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(*pDC).RealizePalette();
+		pPalOld = pDC->SelectPalette(m_pPalette, false);
+		pDC->RealizePalette();
 	}
 
 	if (!SetupContexts(pDC))                        // setup the device contexts and map in
 		return false;                             // ... the various bitmaps
 
 	if (!m_bHaveBackground) {
-		(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
+		m_pBackgroundDC->BitBlt(           // grab what the background looks like
 		    0,                      // ... putting it in the work area
 		    0,
 		    m_cSize.cx,
@@ -363,17 +363,17 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 
 	// Create an instance of the specified font
 	m_pFont = new CFont();
-	(*m_pFont).CreateFont(nSize, 0, 0, 0, nWeight,
+	m_pFont->CreateFont(nSize, 0, 0, 0, nWeight,
 		0, 0, 0, 0, OUT_RASTER_PRECIS, 0,
 		PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 
-	pFontOld = (*m_pWorkDC).SelectObject(m_pFont);  // select it into our context
-	(*m_pWorkDC).GetTextMetrics(&fontMetrics);      // get some info about the font
-	(*m_pWorkDC).SetBkMode(TRANSPARENT);            // make the text overlay transparently
+	pFontOld = m_pWorkDC->SelectObject(m_pFont);  // select it into our context
+	m_pWorkDC->GetTextMetrics(&fontMetrics);      // get some info about the font
+	m_pWorkDC->SetBkMode(TRANSPARENT);            // make the text overlay transparently
 
-	textInfo = (*m_pWorkDC).GetTextExtent(pszText, strlen(pszText));  // get the area spanned by the text
+	textInfo = m_pWorkDC->GetTextExtent(pszText, strlen(pszText));  // get the area spanned by the text
 
-	(*m_pWorkDC).BitBlt(                     // copy the saved background to the work area
+	m_pWorkDC->BitBlt(                     // copy the saved background to the work area
 	    0,
 	    0,
 	    m_cSize.cx,
@@ -399,8 +399,8 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	m_cPosition.y = MAX<int>(m_cPosition.y, 0);
 
 	if (bShadowed) {
-		(*m_pWorkDC).SetTextColor(m_cShadowColor);      // set the color of the shadow
-		(*m_pWorkDC).TabbedTextOut(                     // zap the shadow to the work area
+		m_pWorkDC->SetTextColor(m_cShadowColor);      // set the color of the shadow
+		m_pWorkDC->TabbedTextOut(                     // zap the shadow to the work area
 		    m_cPosition.x + m_nShadow_DX,
 		    m_cPosition.y + m_nShadow_DY,
 		    (const char *)pszText,
@@ -408,20 +408,20 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 		    1, &m_nTabStop, 0);
 	}
 
-	(*m_pWorkDC).SetTextColor(m_cTextColor);            // set the color of the text
-	(*m_pWorkDC).TabbedTextOut(                         // zap the text to the work area
+	m_pWorkDC->SetTextColor(m_cTextColor);            // set the color of the text
+	m_pWorkDC->TabbedTextOut(                         // zap the text to the work area
 	    m_cPosition.x,
 	    m_cPosition.y,
 	    (const char *)pszText,
 	    strlen(pszText),
 	    1, &m_nTabStop, 0);
 
-	(*m_pWorkDC).SelectObject(pFontOld);         // map out the font
+	m_pWorkDC->SelectObject(pFontOld);         // map out the font
 
 	delete m_pFont;                                     // release the font instance
 	m_pFont = nullptr;
 
-	(*pDC).BitBlt(                               // copy the result to the destination context
+	pDC->BitBlt(                               // copy the result to the destination context
 	    m_cRect.left,
 	    m_cRect.top,
 	    m_cSize.cx,
@@ -434,7 +434,7 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	ReleaseContexts();
 
 	if (m_pPalette != nullptr)
-		(*pDC).SelectPalette(pPalOld, false);
+		pDC->SelectPalette(pPalOld, false);
 
 	return true;
 }
@@ -461,13 +461,13 @@ bool CText::SetupContexts(CDC *pDC) {
 	if (m_pWorkDC == nullptr) {
 		m_pWorkDC = new CDC();
 		if ((m_pWorkDC == nullptr) ||
-		        !(*m_pWorkDC).CreateCompatibleDC(pDC))
+		        !m_pWorkDC->CreateCompatibleDC(pDC))
 			return false;
 		if (m_pPalette != nullptr) {
-			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, false);
-			(*m_pWorkDC).RealizePalette();
+			m_pPalWorkOld = m_pWorkDC->SelectPalette(m_pPalette, false);
+			m_pWorkDC->RealizePalette();
 		}
-		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
+		m_pWorkOld = m_pWorkDC->SelectObject(m_pWork);
 		if (m_pWorkOld == nullptr)
 			return false;
 	}
@@ -475,13 +475,13 @@ bool CText::SetupContexts(CDC *pDC) {
 	if (m_pBackgroundDC == nullptr) {
 		m_pBackgroundDC = new CDC();
 		if ((m_pBackgroundDC == nullptr) ||
-		        !(*m_pBackgroundDC).CreateCompatibleDC(pDC))
+		        !m_pBackgroundDC->CreateCompatibleDC(pDC))
 			return false;
 		if (m_pPalette != nullptr) {
-			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, false);
-			(*m_pBackgroundDC).RealizePalette();
+			m_pPalBackOld = m_pBackgroundDC->SelectPalette(m_pPalette, false);
+			m_pBackgroundDC->RealizePalette();
 		}
-		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
+		m_pBackgroundOld = m_pBackgroundDC->SelectObject(m_pBackground);
 		if (m_pBackgroundOld == nullptr)
 			return false;
 	}
@@ -505,30 +505,30 @@ bool CText::SetupContexts(CDC *pDC) {
 
 void CText::ReleaseContexts() {
 	if (m_pWorkOld != nullptr) {
-		(*m_pWorkDC).SelectObject(m_pWorkOld);
+		m_pWorkDC->SelectObject(m_pWorkOld);
 		m_pWorkOld = nullptr;
 	}
 	if (m_pBackgroundOld != nullptr) {
-		(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
+		m_pBackgroundDC->SelectObject(m_pBackgroundOld);
 		m_pBackgroundOld = nullptr;
 	}
 
 	if (m_pPalWorkOld != nullptr) {
-		(*m_pWorkDC).SelectPalette(m_pPalWorkOld, false);
+		m_pWorkDC->SelectPalette(m_pPalWorkOld, false);
 		m_pPalWorkOld = nullptr;
 	}
 	if (m_pPalBackOld != nullptr) {
-		(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, false);
+		m_pBackgroundDC->SelectPalette(m_pPalBackOld, false);
 		m_pPalBackOld = nullptr;
 	}
 
 	if (m_pWorkDC != nullptr) {
-		(*m_pWorkDC).DeleteDC();
+		m_pWorkDC->DeleteDC();
 		delete m_pWorkDC;
 		m_pWorkDC = nullptr;
 	}
 	if (m_pBackgroundDC != nullptr) {
-		(*m_pBackgroundDC).DeleteDC();
+		m_pBackgroundDC->DeleteDC();
 		delete m_pBackgroundDC;
 		m_pBackgroundDC = nullptr;
 	}

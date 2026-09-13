@@ -75,8 +75,10 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	uint32 id = stream->readUint32BE();
-	if ((id != kBIKfID) && (id != kBIKgID) && (id != kBIKhID) && (id != kBIKiID))
+	if ((id != kBIKfID) && (id != kBIKgID) && (id != kBIKhID) && (id != kBIKiID)) {
+		delete stream;
 		return false;
+	}
 
 	uint32 fileSize         = stream->readUint32LE() + 8;
 	uint32 frameCount       = stream->readUint32LE();
@@ -84,6 +86,7 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	if (largestFrameSize > fileSize) {
 		warning("Largest frame size greater than file size");
+		delete stream;
 		return false;
 	}
 
@@ -96,6 +99,7 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 frameRateDen = stream->readUint32LE();
 	if (frameRateNum == 0 || frameRateDen == 0) {
 		warning("Invalid frame rate (%d/%d)", frameRateNum, frameRateDen);
+		delete stream;
 		return false;
 	}
 

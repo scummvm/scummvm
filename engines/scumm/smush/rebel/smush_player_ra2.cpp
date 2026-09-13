@@ -131,6 +131,13 @@ SmushPlayerRebel2::~SmushPlayerRebel2() {
 	destroyGamePlayerFields();
 }
 
+void SmushPlayerRebel2::unpause() {
+	// A modal dialog or focus change must not dismiss the in-game pause.
+	if (_insane && static_cast<InsaneRebel2 *>(_insane)->_pauseOverlayActive)
+		return;
+	SmushPlayer::unpause();
+}
+
 void SmushPlayerRebel2::initGamePlayerFields() {
 	_multiFont = nullptr;
 	_storedFobjData = nullptr;
@@ -244,6 +251,10 @@ void SmushPlayerRebel2::initGameVideoState() {
 }
 
 void SmushPlayerRebel2::releaseGameVideoState() {
+	if (_insane && static_cast<InsaneRebel2 *>(_insane)->_pauseOverlayActive) {
+		static_cast<InsaneRebel2 *>(_insane)->hidePauseOverlay();
+		unpause();
+	}
 	delete _loadContinuationStream;
 	_loadContinuationStream = nullptr;
 	_loadPlaybackPending = false;
@@ -1388,7 +1399,8 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 	}
 
 	if (codec == SMUSH_CODEC_LINE_UPDATE || codec == SMUSH_CODEC_LINE_UPDATE2 ||
-			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_UNCOMPRESSED) {
+			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_UNCOMPRESSED ||
+			(_ra2FrameSourceSkipX > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT))) {
 		_ra2FrameSourceSkipY = sourceSkipY;
 		if (srcSkipY)
 			*srcSkipY = 0;
@@ -1405,6 +1417,13 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2) {
 	if (isRebel2FullFrameDeltaCodec(codec))
 		return ra2DecodePlacedDeltaCodec(codec, src, left, top, width, height, pitch, dataSize);
+
+	if (_ra2FrameSourceSkipX > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT)) {
+		const bool opaque = codec == SMUSH_CODEC_RLE_ALT || (_curVideoFlags & 0x100) != 0;
+		src = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
+		smushDecodeRA2RLE(_dst, src, left, top, width, height, pitch, dataSize, _ra2FrameSourceSkipX, opaque);
+		return true;
+	}
 
 	if (codec == SMUSH_CODEC_SKIP_RLE && parm2 >= 0x100) {
 		if (parm2 == 0x100 && dataSize >= 256) {
