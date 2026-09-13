@@ -29,6 +29,7 @@ namespace Ultima2 {
 Console::Console() : GUI::Debugger() {
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 	registerCmd("tiles", WRAP_METHOD(Console, cmdTiles));
+	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 }
 
 Console::~Console() {
@@ -110,6 +111,22 @@ bool Console::cmdTiles(int argc, const char **argv) {
 	for (int t = 0; t < Data::TILE_COUNT; ++t)
 		tiles[t].free();
 
+	return true;
+}
+
+bool Console::cmdTeleport(int argc, const char **argv) {
+	Data::Savegame &sg = _G(savegame);
+
+	if (argc == 3) {
+		sg._mapX = atoi(argv[1]);
+		sg._mapY = atoi(argv[2]);
+		g_engine->focusedView()->redraw();
+	} else if (argc != 1) {
+		debugPrintf("teleport [<x> <y>]\n");
+		return true;
+	}
+
+	debugPrintf("Position: (%d,%d)\n", sg._mapX, sg._mapY);
 	return true;
 }
 
