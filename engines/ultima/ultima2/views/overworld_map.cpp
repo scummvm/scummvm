@@ -38,7 +38,6 @@ constexpr int PLAYER_VIEWPORT_X = 9;
 constexpr int PLAYER_VIEWPORT_Y = 5;
 
 OverworldMap::OverworldMap() : Map("OverworldMap") {
-	setBounds(TextRect(0, 0, 39, 19));
 	Data::loadTiles(_tiles);
 }
 

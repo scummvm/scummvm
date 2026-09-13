@@ -22,6 +22,7 @@
 #ifndef ULTIMA2_DATA_SAVEGAME_H
 #define ULTIMA2_DATA_SAVEGAME_H
 
+#include "common/serializer.h"
 #include "ultima/ultima2/data/data.h"
 
 namespace Ultima {
@@ -91,6 +92,11 @@ struct Savegame {
 	int16 _weaponOwned[WEAPON_COUNT] = {};
 	int16 _spellCharges[SPELL_COUNT] = {};
 	int16 _items[ITEM_COUNT] = {};
+
+	/**
+	 * Synchronize savegame data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace Data

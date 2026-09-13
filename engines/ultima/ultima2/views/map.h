@@ -35,7 +35,9 @@ using namespace Shared::Messages;
  */
 class Map : public Shared::Gfx::View {
 public:
-	Map(const Common::String &name) : View(name) {}
+	Map(const Common::String &name) : View(name) {
+		setBounds(TextRect(0, 0, 39, 19));
+	}
 	~Map() override {}
 
 	bool msgAction(const ActionMessage &msg) override;
