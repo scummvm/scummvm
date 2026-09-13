@@ -35,8 +35,10 @@ namespace Action {
 // shown as a row of blanks; the player clicks the a-z letter tiles to guess.
 // A correct letter fills every matching blank; a wrong one draws the next
 // hang-stage piece. The word is fully revealed -> win; the hang figure is
-// completed (wrong guesses == number of hang pieces) -> lose. The chosen word
-// is remembered across visits so it is not immediately repeated.
+// completed (wrong guesses == number of hang pieces) -> lose. A record may also
+// carry a target letter sequence: playing exactly those letters, in order, takes
+// a third outcome regardless of the word. The chosen word is remembered across
+// visits so it is not immediately repeated.
 class HangmanPuzzle : public RenderActionRecord {
 public:
 	HangmanPuzzle() : RenderActionRecord(7) {}
@@ -80,8 +82,10 @@ protected:
 	Common::Rect glyphForLetter(char letter) const;	// glyph rect of the tile for this letter, or empty
 	int tileAtCursor(const Common::Point &mousePos) const;
 	void commitGuess(uint tileIndex);
+	void updateFeedback();
+	void checkOutcome();
 	void redraw();
-	void applyOutcome(const SceneOutcome &outcome);
+	void playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
 	Common::Path _puzzleImageName;		// 0x3d
@@ -95,16 +99,19 @@ protected:
 	Common::Array<Common::Rect> _guessedRowRects;	// 0xbe, guessed-letters row
 	Common::Array<LetterTile> _letters;				// 0x77, the a-z tiles
 
-	int16 _fieldCE = 0;			// 0xce
-	int32 _fieldD0 = 0;			// 0xd0
-	int16 _fieldD4 = 0;			// 0xd4
+	// Channel, loops and volume for the letter sound named by each tile
+	int16 _letterSoundChannel = 0;	// 0xce
+	int32 _letterSoundLoops = 0;	// 0xd0
+	int16 _letterSoundVolume = 0;	// 0xd4
 
-	RandomSoundBlock _sounds[3];	// 0x12c/0x182/0x1d8, feedback sound blocks
+	RandomSoundBlock _correctSound;	// 0x12c
+	RandomSoundBlock _wrongSound;	// 0x182
+	RandomSoundBlock _revealSound;	// 0x1d8, played when the word is revealed after losing
 
-	Common::Path _soundName;	// 0x236
-	SceneOutcome _winScene;		// 0x290
-	SceneOutcome _winScene2;	// 0x2f1
-	SceneOutcome _loseScene;	// 0x352
+	Common::String _targetSequence;	// 0x236, empty when unused
+	SceneOutcome _sequenceScene;	// 0x290
+	SceneOutcome _winScene;			// 0x2f1
+	SceneOutcome _loseScene;		// 0x352
 
 	// Give-up hotspot (count-prefixed 23-byte trailer): click to leave the puzzle.
 	Common::Rect _exitHotspot;
@@ -121,9 +128,15 @@ protected:
 	Common::Array<bool> _revealed;		// per word position
 	int _wrongCount = 0;
 	int _hoverTile = -1;
-	bool _solved = false;
 	bool _lost = false;
-	bool _outcomeApplied = false;
+	bool _sequenceComplete = false;	// as many letters played as the target sequence has
+
+	const RandomSoundBlock *_pendingFeedback = nullptr;
+	uint32 _feedbackTime = 0;	// when the pending correct/wrong sound starts
+	uint32 _revealEndTime = 0;	// when the lose reveal ends
+
+	SceneOutcome *_outcome = nullptr;
+	bool _outcomeSoundStarted = false;
 	bool _exitRequested = false;
 };
 

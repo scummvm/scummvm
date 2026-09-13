@@ -20,12 +20,14 @@
  */
 
 #include "common/random.h"
+#include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/puzzledata.h"
 
@@ -67,17 +69,17 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 		readFilename(stream, tile.name);
 	}
 
-	_fieldCE = stream.readSint16LE();	// 0xce
-	_fieldD0 = stream.readSint32LE();	// 0xd0
-	_fieldD4 = stream.readSint16LE();	// 0xd4
+	_letterSoundChannel = stream.readSint16LE();	// 0xce
+	_letterSoundLoops = stream.readSint32LE();		// 0xd0
+	_letterSoundVolume = stream.readSint16LE();		// 0xd4
 
-	for (uint i = 0; i < 3; ++i) {		// 0x12c/0x182/0x1d8
-		_sounds[i].readData(stream);
-	}
+	_correctSound.readData(stream);	// 0x12c
+	_wrongSound.readData(stream);	// 0x182
+	_revealSound.readData(stream);	// 0x1d8
 
-	readFilename(stream, _soundName);	// 0x236
+	readFilename(stream, _targetSequence);	// 0x236
 
-	SceneOutcome *outcomes[] = { &_winScene, &_winScene2, &_loseScene };
+	SceneOutcome *outcomes[] = { &_sequenceScene, &_winScene, &_loseScene };
 	for (SceneOutcome *outcome : outcomes) {
 		outcome->sceneID = stream.readSint16LE();
 		outcome->frameID = stream.readSint16LE();
@@ -156,9 +158,11 @@ void HangmanPuzzle::init() {
 	_revealed.resize(_word.size(), false);
 	_wrongCount = 0;
 	_hoverTile = -1;
-	_solved = false;
 	_lost = false;
-	_outcomeApplied = false;
+	_sequenceComplete = false;
+	_pendingFeedback = nullptr;
+	_outcome = nullptr;
+	_outcomeSoundStarted = false;
 
 	redraw();
 }
@@ -205,9 +209,9 @@ void HangmanPuzzle::redraw() {
 			Common::Point(_guessedRowRects[i].left, _guessedRowRects[i].top));
 	}
 
-	// Revealed word letters in their blanks.
+	// Revealed word letters in their blanks; after losing, the whole word.
 	for (uint i = 0; i < _revealed.size() && i < _letterSlotRects.size(); ++i) {
-		if (_revealed[i]) {
+		if (_revealed[i] || _lost) {
 			_drawSurface.blitFrom(_lettersImage, glyphForLetter(_word[i]),
 				Common::Point(_letterSlotRects[i].left, _letterSlotRects[i].top));
 		}
@@ -230,6 +234,13 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 	}
 	tile.used = true;
 
+	RandomSoundBlock letterSound;
+	letterSound.names.push_back(tile.name);
+	letterSound.channel = _letterSoundChannel;
+	letterSound.numLoops = _letterSoundLoops;
+	letterSound.volume = _letterSoundVolume;
+	playSoundBlock(letterSound);
+
 	char c = tile.letter;
 	_guessed.push_back(c);
 
@@ -245,6 +256,30 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 		++_wrongCount;
 	}
 
+	// The correct/wrong reaction follows the letter a second later
+	_pendingFeedback = correct ? &_correctSound : &_wrongSound;
+	_feedbackTime = g_system->getMillis() + 1000;
+
+	redraw();
+}
+
+void HangmanPuzzle::updateFeedback() {
+	if (_pendingFeedback && g_system->getMillis() >= _feedbackTime) {
+		playSoundBlock(*_pendingFeedback);
+		_pendingFeedback = nullptr;
+	} else if (!_targetSequence.empty() && _guessed.size() == _targetSequence.size()) {
+		_sequenceComplete = true;
+	}
+}
+
+void HangmanPuzzle::checkOutcome() {
+	bool sequenceMatched = _sequenceComplete;
+	for (uint i = 0; sequenceMatched && i < _guessed.size(); ++i) {
+		if (i >= _targetSequence.size() || _guessed[i] != _targetSequence[i]) {
+			sequenceMatched = false;
+		}
+	}
+
 	bool allRevealed = !_revealed.empty();
 	for (uint i = 0; i < _revealed.size(); ++i) {
 		if (!_revealed[i]) {
@@ -253,25 +288,58 @@ void HangmanPuzzle::commitGuess(uint tileIndex) {
 		}
 	}
 
-	if (allRevealed) {
-		_solved = true;
-	} else if (_wrongCount >= (int)_hangPieceRects.size()) {
+	if (_wrongCount >= (int)_hangPieceRects.size() && !_lost) {
 		_lost = true;
+		playSoundBlock(_revealSound);
+		_revealEndTime = g_system->getMillis() + 2000;
+		redraw();
 	}
 
-	redraw();
+	// A completed word beats the target sequence, which beats a completed hang figure
+	if (allRevealed) {
+		_outcome = &_winScene;
+	} else if (sequenceMatched) {
+		_outcome = &_sequenceScene;
+	} else if (_lost) {
+		_outcome = &_loseScene;
+	}
+
+	if (_outcome) {
+		_state = kActionTrigger;
+	}
 }
 
-void HangmanPuzzle::applyOutcome(const SceneOutcome &outcome) {
-	SceneChangeDescription desc;
-	desc.sceneID = outcome.sceneID;
-	desc.frameID = outcome.frameID;
-	NancySceneState.changeScene(desc);
-	NancySceneState.setEventFlag(outcome.flag);
+void HangmanPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+	if (block.names.empty()) {
+		return;
+	}
+
+	uint index = block.names.size() > 1 ?
+		g_nancy->_randomSource->getRandomNumber(block.names.size() - 1) : 0;
+	if (block.names[index].empty() || block.names[index] == "NO SOUND") {
+		return;
+	}
+
+	SoundDescription desc;
+	desc.name = block.names[index];
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+
+	Common::String caption = resolveSubtitleText(desc.name, Common::String(), "AUTOTEXT");
+	if (caption.empty()) {
+		caption = resolveSubtitleText(desc.name, Common::String(), "CONVO");
+	}
+	if (!caption.empty()) {
+		showSubtitle(caption);
+	}
 }
 
 void HangmanPuzzle::handleInput(NancyInput &input) {
-	if (_state != kRun || _solved || _lost) {
+	if (_state != kRun) {
 		return;
 	}
 
@@ -309,12 +377,32 @@ void HangmanPuzzle::execute() {
 			NancySceneState.changeScene(_exitScene);
 			break;
 		}
-		if ((_solved || _lost) && !_outcomeApplied) {
-			_outcomeApplied = true;
-			applyOutcome(_solved ? _winScene : _loseScene);
-		}
+		updateFeedback();
+		checkOutcome();
 		break;
-	default:
+	case kActionTrigger:
+		if (_lost && g_system->getMillis() < _revealEndTime) {
+			break;
+		}
+
+		// The outcome's line plays out before the scene changes
+		if (!_outcomeSoundStarted) {
+			playSoundBlock(_outcome->sound);
+			_outcomeSoundStarted = true;
+			break;
+		}
+		if (!_outcome->sound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_outcome->sound.channel)) {
+			break;
+		}
+
+		{
+			SceneChangeDescription desc;
+			desc.sceneID = _outcome->sceneID;
+			desc.frameID = _outcome->frameID;
+			NancySceneState.changeScene(desc);
+			NancySceneState.setEventFlag(_outcome->flag);
+		}
+		finishExecution();
 		break;
 	}
 }
