@@ -29,6 +29,8 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima2/data/map.h"
+#include "ultima/ultima2/data/map_dungeon.h"
 #include "ultima/ultima2/data/savegame.h"
 
 namespace Ultima {
@@ -53,6 +55,8 @@ protected:
 
 public:
 	Data::Savegame _savegame;
+	Data::Map _map;
+	Data::MapDungeon _dungeon;
 
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

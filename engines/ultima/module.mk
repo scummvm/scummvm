@@ -111,6 +111,10 @@ MODULE_OBJS += \
 	ultima2/ultima2.o \
 	ultima2/console.o \
 	ultima2/metaengine.o \
+	ultima2/data/map.o \
+	ultima2/data/map_dungeon.o \
+	ultima2/data/map_monsters.o \
+	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \
 	ultima2/views/create_character.o \

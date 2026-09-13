@@ -20,14 +20,97 @@
  */
 
 #include "ultima/ultima2/console.h"
+#include "ultima/ultima2/ultima2.h"
+#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
 
 Console::Console() : GUI::Debugger() {
+	registerCmd("map", WRAP_METHOD(Console, cmdMap));
+	registerCmd("tiles", WRAP_METHOD(Console, cmdTiles));
 }
 
 Console::~Console() {
+}
+
+bool Console::cmdMap(int argc, const char **argv) {
+	int mapNum1 = _G(savegame)._mapNum1;
+	int mapNum2 = _G(savegame)._mapNum2;
+
+	if (argc == 3) {
+		mapNum1 = atoi(argv[1]);
+		mapNum2 = atoi(argv[2]);
+	} else if (argc != 1) {
+		debugPrintf("map [<mapNum1> <mapNum2>]\n");
+		return true;
+	}
+
+	if (mapNum2 >= 4) {
+		_G(dungeon).load(mapNum1, mapNum2);
+		debugPrintf("Loaded dungeon MAPX%d%d\n", mapNum1, mapNum2);
+
+		for (int level = 0; level < Data::DUNGEON_LEVELS; ++level) {
+			debugPrintf("Level %d:\n", level);
+			for (int y = 0; y < Data::DUNGEON_HEIGHT; ++y) {
+				Common::String line;
+				for (int x = 0; x < Data::DUNGEON_WIDTH; ++x)
+					line += Common::String::format("%02x", _G(dungeon)._cells[level][y][x]);
+				debugPrintf("%s\n", line.c_str());
+			}
+		}
+	} else {
+		_G(map).load(mapNum1, mapNum2);
+		debugPrintf("Loaded map MAPX%d%d\n", mapNum1, mapNum2);
+
+		for (int y = 0; y < Data::MAP_HEIGHT; ++y) {
+			Common::String line;
+			for (int x = 0; x < Data::MAP_WIDTH; ++x)
+				line += Common::String::format("%02x", (int)_G(map).tileAt(x, y));
+			debugPrintf("%s\n", line.c_str());
+		}
+
+		for (int i = 0; i < Data::MAP_MONSTER_COUNT; ++i) {
+			if (_G(map)._monsters.isActive(i)) {
+				debugPrintf("Monster %d: type=%d pos=(%d,%d)\n", i,
+					_G(map)._monsters.tileType(i),
+					_G(map)._monsters._mapX[i], _G(map)._monsters._mapY[i]);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdTiles(int argc, const char **argv) {
+	Graphics::Surface tiles[Data::TILE_COUNT];
+	Data::loadTiles(tiles);
+
+	debugPrintf("Loaded %d tiles\n", Data::TILE_COUNT);
+	for (int t = 0; t < Data::TILE_COUNT; ++t) {
+		uint32 sum = 0;
+		const byte *pixels = (const byte *)tiles[t].getPixels();
+		for (int i = 0; i < Data::TILE_WIDTH * Data::TILE_HEIGHT; ++i)
+			sum += pixels[i];
+
+		debugPrintf("Tile %2d: pixel sum=%u\n", t, sum);
+	}
+
+	// Tile 6 (Town) has a distinctive twin-tower shape, useful as a
+	// visual sanity check that the decode is correct
+	debugPrintf("Tile %d (Town):\n", (int)Data::TILE_TOWN);
+	const byte *townPixels = (const byte *)tiles[Data::TILE_TOWN].getPixels();
+	for (int y = 0; y < Data::TILE_HEIGHT; ++y) {
+		Common::String line;
+		for (int x = 0; x < Data::TILE_WIDTH; ++x)
+			line += (char)('0' + townPixels[y * Data::TILE_WIDTH + x]);
+		debugPrintf("%s\n", line.c_str());
+	}
+
+	for (int t = 0; t < Data::TILE_COUNT; ++t)
+		tiles[t].free();
+
+	return true;
 }
 
 } // namespace Ultima2
