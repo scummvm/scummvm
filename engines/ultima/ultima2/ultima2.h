@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/ptr.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "ultima/detection.h"
@@ -32,6 +33,7 @@
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/data/map_dungeon.h"
 #include "ultima/ultima2/data/savegame.h"
+#include "ultima/ultima2/logic/logic.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -57,6 +59,7 @@ public:
 	Data::Savegame _savegame;
 	Data::Map _map;
 	Data::MapDungeon _dungeon;
+	Common::SharedPtr<Logic::Logic> _logic;
 
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);

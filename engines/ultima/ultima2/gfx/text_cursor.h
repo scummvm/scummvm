@@ -36,9 +36,10 @@ namespace Gfx {
 class TextCursor : public Shared::UIElement {
 private:
 	bool _visible = true;
+	byte _color;
 
 public:
-	TextCursor(const Common::String &name, UIElement *parent = nullptr);
+	TextCursor(const Common::String &name, UIElement *parent = nullptr, byte color = 15);
 	~TextCursor() override {}
 
 	void draw() override;

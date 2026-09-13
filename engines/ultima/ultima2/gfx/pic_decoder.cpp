@@ -29,8 +29,7 @@ namespace Gfx {
 constexpr int BANK_SIZE = 0x2000;  // reserved size of each interlaced CGA bank
 constexpr int BYTES_PER_ROW = 80;  // 320 pixels / 4 pixels-per-byte
 
-// CGA mode 4, palette 1, border/background color 0 (black)
-static const byte CGA_PALETTE1[4 * 3] = {
+const byte CGA_PALETTE1[4 * 3] = {
 	0x00, 0x00, 0x00, // 0: black
 	0x55, 0xff, 0xff, // 1: light cyan
 	0xff, 0x55, 0xff, // 2: light magenta

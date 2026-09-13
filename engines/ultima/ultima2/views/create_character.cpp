@@ -223,7 +223,7 @@ void CreateCharacter::drawDone(Shared::Gfx::GfxSurface &s) {
 	s.writeString(Common::Point(4, 8), "CHR:%d WIS:%d INT:%d", sg._charisma, sg._wisdom, sg._intelligence);
 	s.writeString(Common::Point(4, 10), "HP:%d FOOD:%d GOLD:%d", sg._hp, sg._food, sg._gold);
 
-	s.writeString(Common::Point(4, 13), "PRESS ANY KEY TO RETURN TO THE MENU");
+	s.writeString(Common::Point(4, 13), "PRESS ANY KEY TO ENTER THE WORLD");
 }
 
 bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
@@ -331,7 +331,7 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case DONE:
-		replaceView("Title");
+		_G(map).load(sg._mapNum1, sg._mapNum2);
 		break;
 	}
 

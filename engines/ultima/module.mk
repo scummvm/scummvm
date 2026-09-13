@@ -117,8 +117,14 @@ MODULE_OBJS += \
 	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \
+	ultima2/logic/logic.o \
+	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
+	ultima2/views/game.o \
+	ultima2/views/map.o \
+	ultima2/views/overworld_map.o \
 	ultima2/views/startup.o \
+	ultima2/views/stats.o \
 	ultima2/views/title.o
 endif
 

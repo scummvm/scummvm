@@ -28,9 +28,8 @@ namespace Gfx {
 
 #define DELAY_FRAMES 5
 
-constexpr int COLOR_CURSOR = 15; // white
-
-TextCursor::TextCursor(const Common::String &name, UIElement *parent) : UIElement(name, parent) {
+TextCursor::TextCursor(const Common::String &name, UIElement *parent, byte color) :
+		UIElement(name, parent), _color(color) {
 	setPosition(Common::Point(0, 0));
 	delayFrames(DELAY_FRAMES);
 }
@@ -56,7 +55,7 @@ void TextCursor::draw() {
 	s.clear();
 
 	if (_visible)
-		s.fillRect(Common::Rect(0, 7, 8, 8), COLOR_CURSOR);
+		s.fillRect(Common::Rect(0, 7, 8, 8), _color);
 }
 
 void TextCursor::timeout() {

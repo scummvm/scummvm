@@ -45,6 +45,32 @@ static const KeybindingRecord GAMEPLAY_KEYS[] = {
 	{ KEYBIND_DOWN, "DOWN", _s("Down"), "DOWN", "JOY_DOWN"},
 	{ KEYBIND_LEFT, "LEFT", _s("Left"), "LEFT", "JOY_LEFT"},
 	{ KEYBIND_RIGHT, "RIGHT", _s("Right"), "RIGHT", "JOY_RIGHT"},
+	{ KEYBIND_ATTACK, "ATTACK", _s("Attack"), "a", nullptr },
+	{ KEYBIND_BOARD, "BOARD", _s("Board"), "b", nullptr },
+	{ KEYBIND_CAST, "CAST", _s("Cast"), "c", nullptr },
+	{ KEYBIND_DESCEND, "DESCEND", _s("Descend"), "d", nullptr },
+	{ KEYBIND_ENTER, "ENTER", _s("Enter"), "e", nullptr },
+	{ KEYBIND_FIRE, "FIRE", _s("Fire"), "f", nullptr },
+	{ KEYBIND_GET, "GET", _s("Get"), "g", nullptr },
+	{ KEYBIND_HYPER, "HYPER", _s("Hyper"), "h", nullptr },
+	{ KEYBIND_IGNITE_TORCH, "IGNITE_TORCH", _s("Ignite torch"), "i", nullptr },
+	{ KEYBIND_JUMP, "JUMP", _s("Jump"), "j", nullptr },
+	{ KEYBIND_KLIMB, "KLIMB", _s("Klimb"), "k", nullptr },
+	{ KEYBIND_LAUNCH, "LAUNCH", _s("Launch"), "l", nullptr },
+	{ KEYBIND_MAGIC, "MAGIC", _s("Magic"), "m", nullptr },
+	{ KEYBIND_NEGATE_TIME, "NEGATE_TIME", _s("Negate time"), "n", nullptr },
+	{ KEYBIND_OFFER, "OFFER", _s("Offer"), "o", nullptr },
+	{ KEYBIND_PASS, "PASS", _s("Pass"), "p", nullptr },
+	{ KEYBIND_QUIT, "QUIT", _s("Quit"), "q", nullptr },
+	{ KEYBIND_READY, "READY", _s("Ready"), "r", nullptr },
+	{ KEYBIND_STEAL, "STEAL", _s("Steal"), "s", nullptr },
+	{ KEYBIND_TRANSACT, "TRANSACT", _s("Transact"), "t", nullptr },
+	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr },
+	{ KEYBIND_VIEW, "VIEW", _s("View"), "v", nullptr },
+	{ KEYBIND_WEAR_ARMOR, "WEAR_ARMOR", _s("Wear armor"), "w", nullptr },
+	{ KEYBIND_X_IT, "X_IT", _s("eXit"), "x", nullptr },
+	{ KEYBIND_YELL, "YELL", _s("Yell"), "y", nullptr },
+	{ KEYBIND_ZSTATS, "ZSTATS", _s("Ztats"), "z", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -65,9 +91,16 @@ static const KeysRecord MINIMAL_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord GAMEPLAY_RECORDS[] = {
+	{ "Ultima2", _s("Basic keys"), MINIMAL_KEYS },
+	{ "gameplay", _s("Gameplay keys"), GAMEPLAY_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
 static const KeysRecord *MODE_RECORDS[] = {
 	ALL_RECORDS,
-	MINIMAL_RECORDS
+	MINIMAL_RECORDS,
+	GAMEPLAY_RECORDS
 };
 
 Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
