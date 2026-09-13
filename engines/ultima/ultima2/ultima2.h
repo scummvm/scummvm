@@ -67,6 +67,10 @@ public:
 	Data::MapDungeon _dungeon;
 	Common::SharedPtr<Logic::Logic> _logic;
 
+	// Debug flag toggled by the "intangible" console command, allowing
+	// movement through normally impassable terrain
+	bool _intangible = false;
+
 public:
 	Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima2Engine() override;

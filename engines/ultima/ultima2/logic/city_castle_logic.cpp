@@ -84,7 +84,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 		return false;
 	}
 
-	if (!isWalkable(destTile) || findTargetMonster(newX, newY) >= 0) {
+	if ((!_G(intangible) && !isWalkable(destTile)) || findTargetMonster(newX, newY) >= 0) {
 		writeString("--INVALID MOVE!\n");
 		return true;
 	}

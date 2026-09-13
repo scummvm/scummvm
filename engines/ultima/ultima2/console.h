@@ -22,6 +22,8 @@
 #ifndef ULTIMA2_CONSOLE_H
 #define ULTIMA2_CONSOLE_H
 
+#include "common/array.h"
+#include "common/rect.h"
 #include "gui/debugger.h"
 
 namespace Ultima {
@@ -32,6 +34,11 @@ private:
 	bool cmdMap(int argc, const char **argv);
 	bool cmdTiles(int argc, const char **argv);
 	bool cmdTeleport(int argc, const char **argv);
+	bool cmdLocations(int argc, const char **argv);
+	bool cmdIntangible(int argc, const char **argv);
+	bool cmdHP(int argc, const char **argv);
+	bool cmdFood(int argc, const char **argv);
+	bool cmdGold(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;
