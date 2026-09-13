@@ -23,6 +23,7 @@
 #define THEME_PARSER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/formats/xmlparser.h"
 
 namespace GUI {
@@ -77,6 +78,9 @@ protected:
 						XML_PROP(file, false)
 						XML_PROP(scalable_file, false)
 						XML_PROP(point_size, false)
+						XML_KEY(fallback)
+							XML_PROP(file, true)
+						KEY_END()
 					KEY_END()
 				KEY_END()
 
@@ -240,6 +244,7 @@ protected:
 	bool parserCallback_text_color(ParserNode *node);
 	bool parserCallback_fonts(ParserNode *node);
 	bool parserCallback_language(ParserNode *node);
+	bool parserCallback_fallback(ParserNode *node);
 	bool parserCallback_text(ParserNode *node);
 	bool parserCallback_palette(ParserNode *node);
 	bool parserCallback_color(ParserNode *node);
@@ -268,6 +273,7 @@ protected:
 
 	Graphics::DrawStep *newDrawStep();
 	Graphics::DrawStep *defaultDrawStep();
+	bool parseLanguage(ParserNode *node);
 	bool parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawstep, bool functionSpecific);
 	bool parseCommonLayoutProps(ParserNode *node, const Common::String &var);
 
@@ -277,6 +283,7 @@ protected:
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;
+	Common::Array<Common::String> _fallbackFiles;
 
 	int16 _baseWidth, _baseHeight;
 	float _scaleFactor;

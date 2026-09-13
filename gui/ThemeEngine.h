@@ -180,14 +180,15 @@ struct TextColorData {
 
 class LangExtraFont {
 public:
-	LangExtraFont(TextData textId, Common::Array<Common::Language> &lngs, const Common::String &filename, const Common::String &scalableFile, int ps) : _langs(lngs) {
-		storeFileNames(textId, filename, scalableFile, ps);
+	LangExtraFont(TextData textId, Common::Array<Common::Language> &lngs, const Common::String &filename, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, int ps) : _langs(lngs) {
+		storeFileNames(textId, filename, scalableFile, fallbackFiles, ps);
 	}
 
-	void storeFileNames(TextData textId, const Common::String &filename, const Common::String &scalableFile, int ps) {
+	void storeFileNames(TextData textId, const Common::String &filename, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, int ps) {
 		assert(textId < kTextDataMAX);
 		_fontFilesStd[textId] = filename;
 		_fontFilesScalable[textId] = scalableFile;
+		_fontFilesFallback[textId] = fallbackFiles;
 		_fontSize[textId] = ps;
 	}
 
@@ -197,12 +198,14 @@ public:
 
 	Common::String file(TextData textId) const { return _fontFilesStd[textId]; }
 	Common::String sclFile(TextData textId) const { return _fontFilesScalable[textId]; }
+	const Common::Array<Common::String> &fallbackFiles(TextData textId) const { return _fontFilesFallback[textId]; }
 	int fntSize(TextData textId) const { return _fontSize[textId]; }
 
 private:
 	Common::Array<Common::Language> _langs;
 	Common::String _fontFilesStd[kTextDataMAX];
 	Common::String _fontFilesScalable[kTextDataMAX];
+	Common::Array<Common::String> _fontFilesFallback[kTextDataMAX];
 	int _fontSize[kTextDataMAX];
 };
 
@@ -578,17 +581,18 @@ public:
 	 * @param language          Wildcard for the language(s) to use.
 	 * @param file              Filename of the non-scalable font version.
 	 * @param scalableFile      Filename of the scalable version. (Optional)
+	 * @param fallbackFiles     Ordered filenames of fallback scalable fonts. (Optional)
 	 * @param pointsize         Point size for the scalable font. (Optional)
 	 */
-	bool addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const int pointsize);
+	bool addFont(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, const int pointsize);
 
 	/**
 	 * Store language specific font names for ingame GUI dialogs which might require
 	 * a different language than the current GUI setting
 	 *
-	 * @param textId, language, file, scalableFile, pointsize			All exactly the same as with addFont()
+	 * @param textId, language, file, scalableFile, fallbackFiles, pointsize	All exactly the same as with addFont()
 	*/
-	void storeFontNames(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const int pointsize);
+	void storeFontNames(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const Common::Array<Common::String> &fallbackFiles, const int pointsize);
 
 	/**
 	 * Load language specific font for ingame use
@@ -727,9 +731,10 @@ protected:
 	void unloadExtraFont();
 
 	const Graphics::Font *loadScalableFont(const Common::String &filename, const int pointsize, Common::String &name);
+	Graphics::Font *loadScalableFontFile(const Common::String &filename, const int pointsize);
 	const Graphics::Font *loadFont(const Common::String &filename, Common::String &name);
 	Common::String genCacheFilename(const Common::String &filename) const;
-	const Graphics::Font *loadFont(const Common::String &filename, const Common::String &scalableFilename, const int pointsize, const bool makeLocalizedFont);
+	const Graphics::Font *loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::Array<Common::String> &fallbackFilenames, const int pointsize, const bool makeLocalizedFont);
 
 	/**
 	 * Dirty Screen handling function.

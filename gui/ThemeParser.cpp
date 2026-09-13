@@ -209,6 +209,7 @@ void ThemeParser::cleanup() {
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = nullptr;
 	_palette.clear();
+	_fallbackFiles.clear();
 }
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
@@ -268,11 +269,25 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_language(ParserNode *node) {
+	_fallbackFiles.clear();
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
 
+	return true;
+}
+
+bool ThemeParser::parserCallback_fallback(ParserNode *node) {
+	if (node->values["file"].empty())
+		return parserError("Fallback font filename must not be empty.");
+
+	_fallbackFiles.push_back(node->values["file"]);
+	return true;
+}
+
+bool ThemeParser::parseLanguage(ParserNode *node) {
 	TextData textDataId = parseTextDataId(getParentNode(node)->values["id"]);
 
 	// Default to a point size of 12.
@@ -309,10 +324,9 @@ bool ThemeParser::parserCallback_language(ParserNode *node) {
 		scalableFile = getParentNode(node)->values["scalable_file"];
 	}
 
+	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, _fallbackFiles, pointsize);
 
-	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, pointsize);
-
-	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, pointsize))
+	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, _fallbackFiles, pointsize))
 		return parserError("Error loading localized Font in theme engine.");
 
 	return true;
@@ -962,7 +976,9 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 }
 
 bool ThemeParser::closedKeyCallback(ParserNode *node) {
-	if (node->name == "layout")
+	if (node->name == "language")
+		return parseLanguage(node);
+	else if (node->name == "layout")
 		_theme->getEvaluator()->closeLayout();
 	else if (node->name == "dialog")
 		_theme->getEvaluator()->closeDialog();
