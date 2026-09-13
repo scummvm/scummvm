@@ -230,23 +230,27 @@ void Logic::action(int action) {
 }
 
 void Logic::resolveDirection(Data::Direction dir) {
+	bool doEndOfTurn = false;
 	switch (_directionPurpose) {
 	case DirectionPurpose::ATTACK:
-		attack(dir);
+		doEndOfTurn = attack(dir);
 		break;
 	case DirectionPurpose::STEAL:
-		steal(dir);
+		doEndOfTurn = steal(dir);
 		break;
 	case DirectionPurpose::UNLOCK:
-		unlock(dir);
+		doEndOfTurn = unlock(dir);
 		break;
 	case DirectionPurpose::OFFER:
-		offer(dir);
+		doEndOfTurn = offer(dir);
 		break;
 	case DirectionPurpose::TRANSACT:
-		transact(dir);
+		doEndOfTurn = transact(dir);
 		break;
 	}
+
+	if (doEndOfTurn)
+		resumeTurn();
 }
 
 bool Logic::trySpendGold(int amount) {

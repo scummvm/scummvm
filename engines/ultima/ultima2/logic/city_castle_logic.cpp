@@ -454,6 +454,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 
 bool CityCastleLogic::transact(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("TRANSACT-");
 		_directionPurpose = DirectionPurpose::TRANSACT;
 		g_engine->addView("Direction");
 		return false;
@@ -461,13 +462,15 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 
 	Data::Savegame &sg = _G(savegame);
 	int dx = 0, dy = 0;
+	const char *dirName;
 	switch (dir) {
-	case Data::DIR_UP: dy = -1; break;
-	case Data::DIR_DOWN: dy = 1; break;
-	case Data::DIR_LEFT: dx = -1; break;
-	case Data::DIR_RIGHT: dx = 1; break;
-	default: break;
+	case Data::DIR_UP:    dy = -1; dirName = "NORTH"; break;
+	case Data::DIR_DOWN:  dy = 1;  dirName = "SOUTH"; break;
+	case Data::DIR_LEFT:  dx = -1; dirName = "WEST"; break;
+	case Data::DIR_RIGHT: dx = 1;  dirName = "EAST"; break;
+	default: dirName = ""; break;
 	}
+	writeString("%s\n", dirName);
 
 	int x1 = sg._mapX + dx, y1 = sg._mapY + dy;
 	int slot = (x1 >= 0 && x1 < Data::MAP_WIDTH && y1 >= 0 && y1 < Data::MAP_HEIGHT) ?
@@ -482,25 +485,25 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 		case Data::TILE_TITHE_ALTAR:
 			return tithe();
 		case Data::TILE_GUARD:
-			writeString("A GUARD SAYS: PAY YOUR TAXES!\n");
+			writeString("A GUARD SAYS:\nPAY YOUR TAXES!\n");
 			return true;
 		case Data::TILE_JESTER:
-			writeString("A JESTER SINGS: HO HO HO!\n");
+			writeString("A JESTER SINGS:\nHO HO HO!\n");
 			return true;
 		case Data::TILE_SHOPKEEP:
-			writeString("A MERCHANT SAYS: WILL YOU BUY MY APPLES?\n");
+			writeString("A MERCHANT SAYS:\nWILL YOU BUY MY APPLES?\n");
 			return true;
 		case Data::TILE_FIGHTER:
-			writeString("A FIGHTER SAYS: UGH, ME TOUGH!\n");
+			writeString("A FIGHTER SAYS:\nUGH, ME TOUGH!\n");
 			return true;
 		case Data::TILE_CLERIC:
-			writeString("A CLERIC SAYS: BELIEVE!\n");
+			writeString("A CLERIC SAYS:\nBELIEVE!\n");
 			return true;
 		case Data::TILE_MAGE:
-			writeString("A WIZARD SAYS: HEX-E-POO-HEX-ON-YOU!\n");
+			writeString("A WIZARD SAYS:\nHEX-E-POO-HEX-ON-YOU!\n");
 			return true;
 		case Data::TILE_THIEF:
-			writeString("A THIEF SAYS: PSST, WANNA BUY A WATCH?\n");
+			writeString("A THIEF SAYS:\nPSST, WANNA BUY A WATCH?\n");
 			return true;
 		default:
 			writeString("FUNNY, NO RESPONSE!\n");

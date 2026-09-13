@@ -164,7 +164,8 @@ public:
 
 	/**
 	 * Called by the Direction interaction once a direction has been chosen,
-	 * dispatching to whichever command requested it (see _directionPurpose)
+	 * dispatching to whichever command requested it (see _directionPurpose).
+	 * Resumes the turn if the command reports it's now complete.
 	 */
 	void resolveDirection(Data::Direction dir);
 
