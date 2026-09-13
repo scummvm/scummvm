@@ -136,6 +136,8 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 		if (!detectionResults.listRecognizedGames().empty()) {
 			res = TEST_GAME_OK_ID_AUTODETECTED;
 		}
+		if (detectionResults.foundUnknownGames())
+			logMessage(LogMessageType::kWarning, detectionResults.generateUnknownGameReport(false, 80).encode().c_str());
 
 	} else {
 
