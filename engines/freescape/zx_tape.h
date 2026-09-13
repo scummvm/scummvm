@@ -42,6 +42,7 @@ struct ZxTapeFile {
 
 typedef Common::Array<ZxTapeFile> ZxTapeFileList;
 
+Common::SeekableReadStream *openZxSpectrumFile(const Common::Path &name);
 bool extractZxSpectrumTapeFiles(Common::SeekableReadStream &stream, const char *prefix, ZxTapeFileList &files);
 bool matchZxSpectrumTapeFiles(const ZxTapeFileList &files, const ADGameDescription &desc, uint md5Bytes = 5000);
 Common::Archive *makeZxSpectrumTapeArchive(const ADGameDescription &desc, const Common::Path &gamePath);
