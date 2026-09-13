@@ -79,6 +79,12 @@ void Savegame::synchronize(Common::Serializer &s) {
 		s.syncAsSint16LE(_spellCharges[i]);
 	for (int i = 0; i < ITEM_COUNT; ++i)
 		s.syncAsSint16LE(_items[i]);
+
+	s.syncAsSint16LE(_legParalysisTurns);
+	s.syncAsSint16LE(_armParalysisTurns);
+	s.syncAsSint16LE(_sleepTurns);
+	s.syncAsSint16LE(_negateTimeTurns);
+	s.syncAsSint16LE(_lightTurns);
 }
 
 } // namespace Data

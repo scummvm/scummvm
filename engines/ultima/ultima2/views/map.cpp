@@ -32,7 +32,7 @@ bool Map::msgAction(const ActionMessage &msg) {
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
-	g_engine->_logic->keypress(msg.keycode);
+	g_engine->_logic->keypress(msg);
 	return true;
 }
 

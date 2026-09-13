@@ -23,18 +23,26 @@
 #define ULTIMA2_LOGIC_OVERWORLD_LOGIC_H
 
 #include "ultima/ultima2/logic/logic.h"
+#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Logic {
 
 /**
- * Command handling while on a planet's overworld. Movement and the rest
- * of the overworld-specific commands are added in a later stage.
+ * Command handling while on a planet's overworld.
  */
 class OverworldLogic : public Logic {
+private:
+	/**
+	 * Returns true if the given tile can be walked onto on foot
+	 */
+	bool isWalkable(Data::TileId tile) const;
+
 public:
 	~OverworldLogic() override {}
+
+	bool move(Data::Direction dir) override;
 };
 
 } // namespace Logic

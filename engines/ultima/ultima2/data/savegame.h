@@ -93,10 +93,45 @@ struct Savegame {
 	int16 _spellCharges[SPELL_COUNT] = {};
 	int16 _items[ITEM_COUNT] = {};
 
+	// Turn-based status counters, decremented once per turn in Logic::endOfTurn
+	int16 _legParalysisTurns = 0;
+	int16 _armParalysisTurns = 0;
+	int16 _sleepTurns = 0;
+	int16 _negateTimeTurns = 0;
+	// Torch/Light spell duration; only decremented by the (not yet implemented)
+	// dungeon renderer
+	int16 _lightTurns = 0;
+
 	/**
 	 * Synchronize savegame data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Deducts an amount from HP. Returns false if this was fatal.
+	 */
+	bool deductHP(int amount) {
+		_hp -= amount;
+		if (_hp > 0)
+			return true;
+
+		_hp = 0;
+		return false;
+	}
+
+	/**
+	 * Deducts an amount from food (stored as whole units in _food plus
+	 * hundredths in _foodTurnCtr). Returns false if food ran out.
+	 */
+	bool deductFood(int amount) {
+		int total = _food * 100 + _foodTurnCtr - amount;
+		if (total < 0)
+			return false;
+
+		_food = total / 100;
+		_foodTurnCtr = total % 100;
+		return true;
+	}
 };
 
 } // namespace Data

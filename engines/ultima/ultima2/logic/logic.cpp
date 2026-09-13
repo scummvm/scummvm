@@ -54,6 +54,20 @@ void Logic::redrawStats() {
 	g_engine->baseView()->findView("Stats")->draw();
 }
 
+void Logic::playerDied() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("\n%s IS DEAD!\n", sg._name);
+
+	sg._hp = 0;
+	sg._food = 0;
+	sg._foodTurnCtr = 0;
+	sg._experience = 0;
+	sg._gold = 0;
+
+	// UIElement* overload used directly since the string-name one drops replaceAllViews
+	g_engine->replaceView(g_engine->findView("Title"), true);
+}
+
 int Logic::getRandomNumber(int minNumber, int maxNumber) {
 	return g_engine->getRandomNumber(minNumber, maxNumber);
 }
@@ -64,6 +78,17 @@ int Logic::getRandomNumber(int maxNumber) {
 
 void Logic::endOfTurn() {
 	updateCreatures();
+
+	Data::Savegame &sg = _G(savegame);
+	if (sg._legParalysisTurns > 0)
+		--sg._legParalysisTurns;
+	if (sg._armParalysisTurns > 0)
+		--sg._armParalysisTurns;
+	if (sg._sleepTurns > 0)
+		--sg._sleepTurns;
+	if (sg._negateTimeTurns > 0)
+		--sg._negateTimeTurns;
+
 	redrawMap();
 	redrawStats();
 }
@@ -179,7 +204,19 @@ void Logic::action(int action) {
 	}
 }
 
-void Logic::keypress(Common::KeyCode keycode) {
+void Logic::keypress(const Shared::Messages::KeypressMessage &msg) {
+	if (_yelling) {
+		if (msg.ascii == 13) {
+			writeString("\n");
+			_yelling = false;
+			MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
+			resumeTurn();
+		} else if (msg.ascii >= 32 && msg.ascii < 127) {
+			writeString("%c", (char)msg.ascii);
+		}
+		return;
+	}
+
 	writeString("Huh?\n");
 	endOfTurn();
 	prompt();
@@ -226,7 +263,19 @@ bool Logic::hyper() {
 }
 
 bool Logic::igniteTorch() {
-	writeString("Ignite Torch?\n");
+	writeString("IGNITE TORCH\n");
+	Data::Savegame &sg = _G(savegame);
+
+	if (sg._mapNum2 < 4)
+		return true;
+
+	if (sg._torches == 0) {
+		writeString("NONE OWNED!\n");
+		return true;
+	}
+
+	--sg._torches;
+	sg._lightTurns = 150;
 	return true;
 }
 
@@ -261,7 +310,7 @@ bool Logic::offer() {
 }
 
 bool Logic::pass() {
-	writeString("Pass\n");
+	writeString("PASS\n");
 	return true;
 }
 
@@ -291,8 +340,17 @@ bool Logic::unlock() {
 }
 
 bool Logic::view() {
-	writeString("View?\n");
-	return true;
+	Data::Savegame &sg = _G(savegame);
+
+	if (sg._items[Data::ITEM_HELM] == 0 || sg._mapNum2 >= 4) {
+		writeString("VIEW WHAT?\n");
+		return true;
+	}
+
+	writeString("VIEW\nWITH MAGICAL HELM!\n");
+	--sg._items[Data::ITEM_HELM];
+	g_engine->addView("WorldMapOverview");
+	return false;
 }
 
 bool Logic::wearArmor() {
@@ -306,8 +364,10 @@ bool Logic::xit() {
 }
 
 bool Logic::yell() {
-	writeString("Yell?\n");
-	return true;
+	writeString("YELL WHAT?\n");
+	_yelling = true;
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	return false;
 }
 
 bool Logic::zstats() {

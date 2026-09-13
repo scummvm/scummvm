@@ -28,6 +28,7 @@
 #include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
+#include "ultima/ultima2/views/world_map_overview.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -39,6 +40,7 @@ struct Views : public Shared::Views {
 	OverworldMap _overworldMap;
 	Startup _startup;
 	Title _title;
+	WorldMapOverview _worldMapOverview;
 };
 
 } // namespace Views

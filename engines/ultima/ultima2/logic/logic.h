@@ -22,8 +22,8 @@
 #ifndef ULTIMA2_LOGIC_LOGIC_H
 #define ULTIMA2_LOGIC_LOGIC_H
 
-#include "common/events.h"
 #include "ultima/ultima2/data/data.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -37,6 +37,10 @@ namespace Logic {
  */
 class Logic {
 protected:
+	// Set while a yell()'d message is being typed in, echoing raw keypresses
+	// back out until Enter is pressed
+	bool _yelling = false;
+
 	/**
 	 * Dispatches some text to be shown in the Commands window
 	 */
@@ -47,6 +51,12 @@ protected:
 	 * Triggers a prompt display in the Commands window
 	 */
 	void prompt();
+
+	/**
+	 * Handles the player dying - clears their resources and returns to
+	 * the title screen
+	 */
+	void playerDied();
 
 	/**
 	 * Signal the map to redraw
@@ -116,7 +126,7 @@ public:
 	}
 
 	virtual void action(int action);
-	virtual void keypress(Common::KeyCode keycode);
+	virtual void keypress(const Shared::Messages::KeypressMessage &msg);
 	virtual void entering() {
 	}
 
@@ -124,6 +134,15 @@ public:
 	 * Called once per game frame for any logic updates
 	 */
 	virtual void tick() {
+	}
+
+	/**
+	 * Resumes end of turn processing after a command deferred it (returned
+	 * false from action()) to run some sub-interaction first
+	 */
+	void resumeTurn() {
+		endOfTurn();
+		prompt();
 	}
 };
 
