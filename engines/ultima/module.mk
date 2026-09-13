@@ -119,11 +119,13 @@ MODULE_OBJS += \
 	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \
+	ultima2/logic/city_castle_logic.o \
 	ultima2/logic/logic.o \
 	ultima2/logic/overworld_logic.o \
 	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
 	ultima2/views/game.o \
+	ultima2/views/location_map.o \
 	ultima2/views/map.o \
 	ultima2/views/overworld_map.o \
 	ultima2/views/startup.o \
@@ -133,8 +135,10 @@ MODULE_OBJS += \
 	ultima2/views/zstats.o \
 	ultima2/views/interactions/interaction.o \
 	ultima2/views/interactions/direction.o \
+	ultima2/views/interactions/offer_gold.o \
 	ultima2/views/interactions/ready_spell.o \
 	ultima2/views/interactions/ready_weapon.o \
+	ultima2/views/interactions/shop.o \
 	ultima2/views/interactions/wear_armor.o \
 	ultima2/views/interactions/yell.o
 endif

@@ -37,6 +37,10 @@ namespace Logic {
  */
 class Logic {
 protected:
+	// Which command is waiting on the Direction interaction's result
+	enum class DirectionPurpose { ATTACK, STEAL, UNLOCK, OFFER, TRANSACT };
+	DirectionPurpose _directionPurpose = DirectionPurpose::ATTACK;
+
 	/**
 	 * Dispatches some text to be shown in the Commands window
 	 */
@@ -55,11 +59,11 @@ protected:
 	void playerDied();
 
 	/**
-	 * Alerts nearby town guards after an attack or theft. A no-op outside
-	 * of towns/castles/villages (_mapNum2 == 0), which is the only mode
-	 * implemented so far
+	 * Alerts nearby town guards (slots 0-7, plus optionally the specific
+	 * slot just interacted with) after an attack or theft. A no-op on the
+	 * overworld (_mapNum2 == 0)
 	 */
-	void alertTownGuards();
+	void alertTownGuards(int extraSlot = -1);
 
 	/**
 	 * Signal the map to redraw
@@ -127,13 +131,9 @@ protected:
 	virtual bool launch();
 	virtual bool magic();
 	virtual bool negateTime();
-	virtual bool offer();
 	virtual bool pass();
 	virtual bool quit();
 	virtual bool ready();
-	virtual bool steal();
-	virtual bool transact();
-	virtual bool unlock();
 	virtual bool view();
 	virtual bool wearArmor();
 	virtual bool xit();
@@ -150,12 +150,29 @@ public:
 	virtual void entering() {
 	}
 
-	/**
-	 * Attacks in the given direction, or - if unspecified - starts the
-	 * Direction interaction to prompt for one. Public since the Direction
-	 * interaction calls back into it directly once a direction is chosen
-	 */
+	/*--- Commands needing a direction first read via the Direction
+	 * interaction. Each is called once with dir == DIR_UNSPECIFIED (from
+	 * action()'s dispatch) to kick off the prompt, then again with the
+	 * resolved direction once chosen - public since Direction calls back
+	 * into these directly ---*/
+
 	virtual bool attack(Data::Direction dir = Data::DIR_UNSPECIFIED);
+	virtual bool steal(Data::Direction dir = Data::DIR_UNSPECIFIED);
+	virtual bool unlock(Data::Direction dir = Data::DIR_UNSPECIFIED);
+	virtual bool offer(Data::Direction dir = Data::DIR_UNSPECIFIED);
+	virtual bool transact(Data::Direction dir = Data::DIR_UNSPECIFIED);
+
+	/**
+	 * Called by the Direction interaction once a direction has been chosen,
+	 * dispatching to whichever command requested it (see _directionPurpose)
+	 */
+	void resolveDirection(Data::Direction dir);
+
+	/**
+	 * Called once a digit has been chosen by the OfferGold interaction
+	 */
+	virtual void completeOffer(int goldHundreds) {
+	}
 
 	/**
 	 * Called once per game frame for any logic updates
@@ -171,6 +188,13 @@ public:
 		endOfTurn();
 		prompt();
 	}
+
+	/**
+	 * Attempts to deduct gold; prints a failure message and returns false
+	 * if the player can't afford it. Public since interactions (shop
+	 * purchases, offerings) call this directly
+	 */
+	bool trySpendGold(int amount);
 };
 
 } // namespace Logic

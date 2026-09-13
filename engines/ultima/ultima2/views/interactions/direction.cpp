@@ -48,7 +48,7 @@ bool Direction::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	close();
-	_G(logic)->attack(dir);
+	_G(logic)->resolveDirection(dir);
 	return true;
 }
 

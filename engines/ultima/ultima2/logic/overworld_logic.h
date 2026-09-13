@@ -35,6 +35,19 @@ namespace Logic {
 class OverworldLogic : public Logic {
 private:
 	/**
+	 * Rolls for and, on success, spawns a new monster in a free slot.
+	 * Overworld-only - CityCastleLogic doesn't spawn new monsters
+	 */
+	void trySpawnMonster();
+
+	/**
+	 * Stashes the current position as the overworld return point, then
+	 * loads the given local map type (1-3 for village/town/castle)
+	 */
+	void enterLocalMap(int mapNum2);
+
+protected:
+	/**
 	 * Returns true if the given tile can be walked onto on foot
 	 */
 	bool isWalkable(Data::TileId tile) const;
@@ -68,12 +81,6 @@ private:
 	 */
 	void killMonster(int slot);
 
-	/**
-	 * Rolls for and, on success, spawns a new monster in a free slot
-	 */
-	void trySpawnMonster();
-
-protected:
 	void updateCreatures() override;
 
 public:
@@ -82,6 +89,7 @@ public:
 	bool move(Data::Direction dir) override;
 	bool attack(Data::Direction dir) override;
 	bool fire() override;
+	bool enter() override;
 };
 
 } // namespace Logic

@@ -318,6 +318,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 			return true;
 		}
 
+		_directionPurpose = DirectionPurpose::ATTACK;
 		g_engine->addView("Direction");
 		return false;
 	}
@@ -342,7 +343,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	}
 
 	writeString("--HIT!!!\n");
-	alertTownGuards();
+	alertTownGuards(slot);
 
 	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
 	Data::MapMonsters &monsters = _G(map)._monsters;
@@ -414,6 +415,55 @@ void OverworldLogic::killMonster(int slot) {
 	sg._gold += goldAmt;
 	sg._experience += expAmt;
 	writeString("KILLED--GOLD+%d--EXP.+%d\n", goldAmt, expAmt);
+}
+
+void OverworldLogic::enterLocalMap(int mapNum2) {
+	Data::Savegame &sg = _G(savegame);
+	sg._overworldReturnX = sg._mapX;
+	sg._overworldReturnY = sg._mapY;
+	sg._mapX = 31;
+	sg._mapY = 62;
+	sg._mapNum2 = mapNum2;
+	_G(map).load(sg._mapNum1, sg._mapNum2);
+}
+
+bool OverworldLogic::enter() {
+	Data::Savegame &sg = _G(savegame);
+
+	if (sg._mapNum2 != 0) {
+		writeString(" WHAT?\n");
+		return true;
+	}
+
+	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
+	switch (tile) {
+	case Data::TILE_VILLAGE:
+		enterLocalMap(1);
+		return false;
+	case Data::TILE_TOWN:
+		enterLocalMap(2);
+		return false;
+	case Data::TILE_CASTLE:
+		enterLocalMap(3);
+		return false;
+	case Data::TILE_TOWER:
+	case Data::TILE_DUNGEON_ENTRANCE:
+		// Dungeon/tower first-person rendering isn't implemented yet
+		writeString("NOT YET IMPLEMENTED\n");
+		return true;
+	case Data::TILE_SIGNPOST: {
+		static const char *const ERA_TEXT[5] = {
+			"ANOS: LEGENDS!", "ANOS: 2112 A.D.", "ANOS: 9,000,000 B.C.",
+			"ANOS: 1423 B.C.", "ANOS: 1990 A.D."
+		};
+		int era = (sg._mapNum1 < 5) ? sg._mapNum1 : 4;
+		writeString("%s\n", ERA_TEXT[era]);
+		return true;
+	}
+	default:
+		writeString(" WHAT?\n");
+		return true;
+	}
 }
 
 } // namespace Logic

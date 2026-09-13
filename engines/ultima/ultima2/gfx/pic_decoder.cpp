@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/gfx/pic_decoder.h"
 
 namespace Ultima {
@@ -28,13 +29,6 @@ namespace Gfx {
 
 constexpr int BANK_SIZE = 0x2000;  // reserved size of each interlaced CGA bank
 constexpr int BYTES_PER_ROW = 80;  // 320 pixels / 4 pixels-per-byte
-
-const byte CGA_PALETTE1[4 * 3] = {
-	0x00, 0x00, 0x00, // 0: black
-	0x55, 0xff, 0xff, // 1: light cyan
-	0xff, 0x55, 0xff, // 2: light magenta
-	0xff, 0xff, 0xff  // 3: white
-};
 
 bool PicDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
@@ -59,7 +53,7 @@ bool PicDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_palette = Graphics::Palette(CGA_PALETTE1, 4);
+	_palette = Graphics::Palette(Data::CGA_PALETTE1, 4);
 	return true;
 }
 

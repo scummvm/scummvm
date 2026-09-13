@@ -68,8 +68,17 @@ void Logic::playerDied() {
 	g_engine->replaceView(g_engine->findView("Title"), true);
 }
 
-void Logic::alertTownGuards() {
-	// Only meaningful once towns/castles exist
+void Logic::alertTownGuards(int extraSlot) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._mapNum2 == 0)
+		return;
+
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	for (int slot = 0; slot <= 7; ++slot)
+		monsters._offerFlag[slot] = 1;
+
+	if (extraSlot >= 0)
+		monsters._offerFlag[extraSlot] = 1;
 }
 
 int Logic::getRandomNumber(int minNumber, int maxNumber) {
@@ -220,6 +229,37 @@ void Logic::action(int action) {
 	}
 }
 
+void Logic::resolveDirection(Data::Direction dir) {
+	switch (_directionPurpose) {
+	case DirectionPurpose::ATTACK:
+		attack(dir);
+		break;
+	case DirectionPurpose::STEAL:
+		steal(dir);
+		break;
+	case DirectionPurpose::UNLOCK:
+		unlock(dir);
+		break;
+	case DirectionPurpose::OFFER:
+		offer(dir);
+		break;
+	case DirectionPurpose::TRANSACT:
+		transact(dir);
+		break;
+	}
+}
+
+bool Logic::trySpendGold(int amount) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._gold < amount) {
+		writeString("YOU DONT HAVE THAT MUCH!\n");
+		return false;
+	}
+
+	sg._gold -= amount;
+	return true;
+}
+
 void Logic::keypress(const Shared::Messages::KeypressMessage &msg) {
 	writeString("Huh?\n");
 	endOfTurn();
@@ -257,7 +297,35 @@ bool Logic::fire() {
 }
 
 bool Logic::get() {
-	writeString("Get?\n");
+	Data::Savegame &sg = _G(savegame);
+
+	if (sg._mapNum2 >= 4) {
+		// Dungeon/tower chest handling - not yet implemented
+		writeString("Get?\n");
+		return true;
+	}
+
+	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
+	if (tile == Data::TILE_SWORD) {
+		int r = randByte() & 7;
+		if (r == 0)
+			writeString("EMPTY!\n");
+		else {
+			++sg._weaponOwned[r];
+			writeString("GOT %s!\n", Data::WEAPON_NAMES[r]);
+		}
+	} else if (tile == Data::TILE_SHIELD) {
+		int r = randByte() & 3;
+		if (r == 0)
+			writeString("EMPTY!\n");
+		else {
+			++sg._armorOwned[r];
+			writeString("GOT %s!\n", Data::ARMOR_NAMES[r]);
+		}
+	} else {
+		writeString("GET WHAT?\n");
+	}
+
 	return true;
 }
 
@@ -304,11 +372,20 @@ bool Logic::magic() {
 }
 
 bool Logic::negateTime() {
-	writeString("Negate Time?\n");
+	Data::Savegame &sg = _G(savegame);
+
+	if (sg._items[Data::ITEM_STRANGE_COIN] == 0) {
+		writeString(" HOW?  YOU'RE NOT EINSTEIN\n");
+		return true;
+	}
+
+	--sg._items[Data::ITEM_STRANGE_COIN];
+	writeString("YOU RUB A COIN...\n");
+	sg._negateTimeTurns = 20;
 	return true;
 }
 
-bool Logic::offer() {
+bool Logic::offer(Data::Direction dir) {
 	writeString("Offer?\n");
 	return true;
 }
@@ -328,17 +405,17 @@ bool Logic::ready() {
 	return false;
 }
 
-bool Logic::steal() {
+bool Logic::steal(Data::Direction dir) {
 	writeString("Steal?\n");
 	return true;
 }
 
-bool Logic::transact() {
+bool Logic::transact(Data::Direction dir) {
 	writeString("Transact?\n");
 	return true;
 }
 
-bool Logic::unlock() {
+bool Logic::unlock(Data::Direction dir) {
 	writeString("Unlock?\n");
 	return true;
 }

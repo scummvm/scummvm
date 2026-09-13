@@ -21,10 +21,11 @@
 
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "ultima/ultima2/data/data.h"
+#include "ultima/ultima2/gfx/pic_decoder.h"
 #include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/metaengine.h"
-#include "ultima/ultima2/gfx/pic_decoder.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -50,7 +51,7 @@ OverworldMap::~OverworldMap() {
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	g_system->getPaletteManager()->setPalette(Graphics::Palette(Gfx::CGA_PALETTE1, 4));
+	g_system->getPaletteManager()->setPalette(Graphics::Palette(Data::CGA_PALETTE1, 4));
 	return Map::msgFocus(msg);
 }
 

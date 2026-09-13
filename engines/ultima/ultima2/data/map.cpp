@@ -23,6 +23,7 @@
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/logic/overworld_logic.h"
+#include "ultima/ultima2/logic/city_castle_logic.h"
 #include "ultima/shared/gfx/view.h"
 
 namespace Ultima {
@@ -50,9 +51,12 @@ void Map::load(int mapNum1, int mapNum2) {
 
 	_monsters.load(mapNum1, mapNum2);
 
-	// TODO: only OverworldLogic exists so far -- villages/towns/castles
-	// (mapNum2 1-3) get their own CityCastleLogic in a later stage
-	_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
+	if (mapNum2 == 0)
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
+	else
+		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityCastleLogic());
+
+	Common::String mapViewName = (mapNum2 == 0) ? "OverworldMap" : "LocationMap";
 
 	if (!g_engine->isPresent("Game")) {
 		// Set up the game view and force it to draw immediately
@@ -60,10 +64,10 @@ void Map::load(int mapNum1, int mapNum2) {
 		g_engine->focusedView()->draw();
 
 		// Now open the map view on top of it
-		g_engine->addView("OverworldMap");
+		g_engine->addView(mapViewName);
 	} else {
 		// Just switching from one map view to another
-		g_engine->replaceView("OverworldMap");
+		g_engine->replaceView(mapViewName);
 	}
 }
 

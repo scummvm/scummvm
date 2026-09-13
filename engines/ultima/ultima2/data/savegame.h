@@ -61,6 +61,11 @@ struct Savegame {
 	byte _mapX = 0;
 	byte _mapY = 0;
 
+	// Overworld position to restore to when walking off the edge of a
+	// village/town/castle/tower/dungeon map back to the surface
+	byte _overworldReturnX = 0;
+	byte _overworldReturnY = 0;
+
 	// Currently readied items
 	WeaponType _readiedWeapon = WEAPON_HANDS;
 	ArmorType _readiedArmor = ARMOR_SKIN;
@@ -138,6 +143,31 @@ struct Savegame {
 		_food = total / 100;
 		_foodTurnCtr = total % 100;
 		return true;
+	}
+
+	/**
+	 * Computes a shop item's price: a repeated doubling (mod 100) ramp
+	 * keyed off the item index, discounted by the player's combined
+	 * Intelligence+Charisma (a haggling mechanic)
+	 */
+	int computeItemPrice(int itemIndex) const {
+		int sum = _intelligence + _charisma;
+		int discount = 0;
+		while (sum > 0) {
+			sum >>= 1;
+			++discount;
+		}
+		if (discount > 8)
+			discount = 8;
+
+		int effIndex = itemIndex + 8 - discount;
+		if (effIndex < 0)
+			effIndex = 0;
+
+		int price = 4;
+		for (int i = 0; i < effIndex; ++i)
+			price = (price * 2) % 100;
+		return price;
 	}
 };
 

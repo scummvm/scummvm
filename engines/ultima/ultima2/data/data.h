@@ -22,9 +22,15 @@
 #ifndef ULTIMA2_DATA_DATA_H
 #define ULTIMA2_DATA_DATA_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima2 {
 namespace Data {
+
+// CGA mode 4, palette 1 (black/light cyan/light magenta/white), the
+// palette used by both the pic??? art and the embedded tile graphics
+extern const byte CGA_PALETTE1[4 * 3];
 
 constexpr int MAX_NAME_LENGTH = 12;
 

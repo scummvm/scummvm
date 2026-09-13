@@ -25,6 +25,13 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Data {
 
+const byte CGA_PALETTE1[4 * 3] = {
+	0x00, 0x00, 0x00, // 0: black
+	0x55, 0xff, 0xff, // 1: light cyan
+	0xff, 0x55, 0xff, // 2: light magenta
+	0xff, 0xff, 0xff  // 3: white
+};
+
 const char *const WEAPON_NAMES[WEAPON_COUNT] = {
 	"HANDS", "DAGGER", "MACE", "AXE", "BOW", "SWORD",
 	"GREAT SWORD", "LIGHT SWORD", "PHASER", "QUICK SWORD"

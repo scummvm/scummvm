@@ -25,14 +25,17 @@
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima2/views/create_character.h"
 #include "ultima/ultima2/views/game.h"
+#include "ultima/ultima2/views/location_map.h"
 #include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/views/world_map_overview.h"
 #include "ultima/ultima2/views/zstats.h"
 #include "ultima/ultima2/views/interactions/direction.h"
+#include "ultima/ultima2/views/interactions/offer_gold.h"
 #include "ultima/ultima2/views/interactions/ready_spell.h"
 #include "ultima/ultima2/views/interactions/ready_weapon.h"
+#include "ultima/ultima2/views/interactions/shop.h"
 #include "ultima/ultima2/views/interactions/wear_armor.h"
 #include "ultima/ultima2/views/interactions/yell.h"
 
@@ -42,13 +45,19 @@ namespace Views {
 
 struct Views : public Shared::Views {
 	Interactions::Direction _direction;
+	Interactions::OfferGold _offerGold;
 	Interactions::ReadySpell _readySpell;
 	Interactions::ReadyWeapon _readyWeapon;
 	Interactions::WearArmor _wearArmor;
 	Interactions::Yell _yell;
+	Interactions::Shop _weaponShop{Interactions::Shop::WEAPON, "WeaponShop"};
+	Interactions::Shop _armorShop{Interactions::Shop::ARMOR, "ArmorShop"};
+	Interactions::Shop _clericSpellShop{Interactions::Shop::SPELL_CLERIC, "ClericSpellShop"};
+	Interactions::Shop _wizardSpellShop{Interactions::Shop::SPELL_WIZARD, "WizardSpellShop"};
 
 	CreateCharacter _createCharacter;
 	Game _game;
+	LocationMap _locationMap;
 	OverworldMap _overworldMap;
 	Startup _startup;
 	Title _title;

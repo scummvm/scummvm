@@ -48,6 +48,8 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_mapNum2);
 	s.syncAsByte(_mapX);
 	s.syncAsByte(_mapY);
+	s.syncAsByte(_overworldReturnX);
+	s.syncAsByte(_overworldReturnY);
 
 	s.syncAsByte(_readiedWeapon);
 	s.syncAsByte(_readiedArmor);
