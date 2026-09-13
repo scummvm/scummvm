@@ -1193,9 +1193,17 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint32LE((uint32 &)_flags.logicConditions[i].timestamp);
 	}
 
+	const uint numItems = g_nancy->getStaticData().numItems;
+	uint numSavedItems = numItems;
+	if (ser.getVersion() < 10 && (g_nancy->getGameType() == kGameTypeNancy14 || g_nancy->getGameType() == kGameTypeNancy15)) {
+		// Nancy14/15 saves made before version 10 were written with an item
+		// count of 50, before the correct count of 49 was established.
+		numSavedItems = 50;
+	}
+
 	auto &order = getInventoryBox().getOrder();
 	uint prevSize = order.size();
-	order.resize(g_nancy->getStaticData().numItems);
+	order.resize(numSavedItems);
 
 	if (ser.isSaving()) {
 		for (uint i = prevSize; i < order.size(); ++i) {
@@ -1203,7 +1211,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	ser.syncArray(order.data(), g_nancy->getStaticData().numItems, Common::Serializer::Sint16LE);
+	ser.syncArray(order.data(), numSavedItems, Common::Serializer::Sint16LE);
 
 	while (order.size() && order.back() == -1) {
 		order.pop_back();
@@ -1214,12 +1222,16 @@ void Scene::synchronize(Common::Serializer &ser) {
 		getInventoryBox().onReorder();
 	}
 
-	ser.syncArray(_flags.items.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
+	_flags.items.resize(numSavedItems, g_nancy->_false);
+	ser.syncArray(_flags.items.data(), numSavedItems, Common::Serializer::Byte);
+	_flags.items.resize(numItems);
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursor->setCursorItemID(_flags.heldItem);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy7) {
-		ser.syncArray(_flags.disabledItems.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
+		_flags.disabledItems.resize(numSavedItems, 0);
+		ser.syncArray(_flags.disabledItems.data(), numSavedItems, Common::Serializer::Byte);
+		_flags.disabledItems.resize(numItems);
 	}
 
 	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);

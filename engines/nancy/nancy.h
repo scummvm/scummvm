@@ -64,7 +64,8 @@ namespace Nancy {
 // - 7: Nancy10 unnamed notebook task event flags added
 // - 8: Nancy12 DrivingPuzzle fuel state persisted
 // - 9: RippedLetterPuzzle stores its scene ID and tried flag
-static const int kSavegameVersion = 9;
+// - 10: Nancy14/15 inventory arrays hold 49 items instead of 50
+static const int kSavegameVersion = 10;
 
 struct NancyGameDescription;
 
