@@ -209,7 +209,9 @@ void ThemeParser::cleanup() {
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = nullptr;
 	_palette.clear();
-	_fallbackFiles.clear();
+	_globalFallbackFiles.clear();
+	_fontFallbackFiles.clear();
+	_languageFallbackFiles.clear();
 }
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
@@ -260,6 +262,8 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_font(ParserNode *node) {
+	_fontFallbackFiles.clear();
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
@@ -269,7 +273,7 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_language(ParserNode *node) {
-	_fallbackFiles.clear();
+	_languageFallbackFiles.clear();
 
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
@@ -283,7 +287,16 @@ bool ThemeParser::parserCallback_fallback(ParserNode *node) {
 	if (node->values["file"].empty())
 		return parserError("Fallback font filename must not be empty.");
 
-	_fallbackFiles.push_back(node->values["file"]);
+	ParserNode *parentNode = getParentNode(node);
+	if (parentNode->name == "fonts")
+		_globalFallbackFiles.push_back(node->values["file"]);
+	else if (parentNode->name == "font")
+		_fontFallbackFiles.push_back(node->values["file"]);
+	else if (parentNode->name == "language")
+		_languageFallbackFiles.push_back(node->values["file"]);
+	else
+		return parserError("Fallback font key out of scope. Must be inside <fonts>, <font>, or <language> keys.");
+
 	return true;
 }
 
@@ -324,9 +337,15 @@ bool ThemeParser::parseLanguage(ParserNode *node) {
 		scalableFile = getParentNode(node)->values["scalable_file"];
 	}
 
-	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, _fallbackFiles, pointsize);
+	Common::Array<Common::String> fallbackFiles = _languageFallbackFiles;
+	for (uint i = 0; i < _fontFallbackFiles.size(); i++)
+		fallbackFiles.push_back(_fontFallbackFiles[i]);
+	for (uint i = 0; i < _globalFallbackFiles.size(); i++)
+		fallbackFiles.push_back(_globalFallbackFiles[i]);
 
-	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, _fallbackFiles, pointsize))
+	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, fallbackFiles, pointsize);
+
+	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, fallbackFiles, pointsize))
 		return parserError("Error loading localized Font in theme engine.");
 
 	return true;
@@ -351,6 +370,7 @@ bool ThemeParser::parserCallback_text_color(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_fonts(ParserNode *node) {
+	_globalFallbackFiles.clear();
 	return true;
 }
 

@@ -67,12 +67,19 @@ protected:
 			KEY_END()
 
 			XML_KEY(fonts)
+				XML_KEY(fallback)
+					XML_PROP(file, true)
+				KEY_END()
+
 				XML_KEY(font)
 					XML_PROP(id, true)
 					XML_PROP(file, false)
 					XML_PROP(resolution, false)
 					XML_PROP(scalable_file, false)
 					XML_PROP(point_size, false)
+					XML_KEY(fallback)
+						XML_PROP(file, true)
+					KEY_END()
 					XML_KEY(language)
 						XML_PROP(id, true)
 						XML_PROP(file, false)
@@ -283,7 +290,9 @@ protected:
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;
-	Common::Array<Common::String> _fallbackFiles;
+	Common::Array<Common::String> _globalFallbackFiles;
+	Common::Array<Common::String> _fontFallbackFiles;
+	Common::Array<Common::String> _languageFallbackFiles;
 
 	int16 _baseWidth, _baseHeight;
 	float _scaleFactor;
