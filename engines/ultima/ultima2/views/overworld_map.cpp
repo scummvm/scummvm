@@ -67,9 +67,9 @@ void OverworldMap::draw() {
 
 	for (int oy = 0; oy < VIEWPORT_HEIGHT; ++oy) {
 		for (int ox = 0; ox < VIEWPORT_WIDTH; ++ox) {
-			int x = mapLeft + ox, y = mapTop + oy;
-			Data::TileId tileId = (x >= 0 && x < Data::MAP_WIDTH && y >= 0 && y < Data::MAP_HEIGHT) ?
-				_G(map).tileAt(x, y) : Data::TILE_WATER;
+			int x = (mapLeft + ox + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+			int y = (mapTop + oy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+			Data::TileId tileId = _G(map).tileAt(x, y);
 
 			if (ox == PLAYER_VIEWPORT_X && oy == PLAYER_VIEWPORT_Y)
 				tileId = (Data::TileId)(Data::TILE_FIGHTER + sg._class);
