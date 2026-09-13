@@ -48,11 +48,6 @@ private:
 
 protected:
 	/**
-	 * Returns true if the given tile can be walked onto on foot
-	 */
-	bool isWalkable(Data::TileId tile) const;
-
-	/**
 	 * Returns -1/0/+1 matching the sign of the low byte of v, replicating
 	 * the original's byte-truncating "shortest step on a wrapping map" trick
 	 */
@@ -85,6 +80,11 @@ protected:
 
 public:
 	~OverworldLogic() override {}
+
+	/**
+	 * Returns true if the given tile can be walked onto on foot
+	 */
+	bool isWalkable(Data::TileId tile) const;
 
 	bool move(Data::Direction dir) override;
 	bool attack(Data::Direction dir) override;

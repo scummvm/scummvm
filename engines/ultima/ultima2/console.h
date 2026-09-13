@@ -36,6 +36,7 @@ private:
 	bool cmdTeleport(int argc, const char **argv);
 	bool cmdLocations(int argc, const char **argv);
 	bool cmdIntangible(int argc, const char **argv);
+	bool cmdEnemy(int argc, const char **argv);
 	bool cmdHP(int argc, const char **argv);
 	bool cmdFood(int argc, const char **argv);
 	bool cmdGold(int argc, const char **argv);

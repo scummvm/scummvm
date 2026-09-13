@@ -22,6 +22,7 @@
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/data/tiles.h"
+#include "ultima/ultima2/logic/overworld_logic.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -32,6 +33,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("locations", WRAP_METHOD(Console, cmdLocations));
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
+	registerCmd("enemy", WRAP_METHOD(Console, cmdEnemy));
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
@@ -184,6 +186,78 @@ bool Console::cmdLocations(int argc, const char **argv) {
 	for (uint i = 0; i < positions.size(); ++i)
 		debugPrintf("%2d: %-8s (%d,%d)\n", i, names[i], positions[i].x, positions[i].y);
 
+	return true;
+}
+
+bool Console::cmdEnemy(int argc, const char **argv) {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._mapNum2 != 0) {
+		debugPrintf("Only supported on the overworld map\n");
+		return true;
+	}
+
+	Logic::OverworldLogic *logic = dynamic_cast<Logic::OverworldLogic *>(_G(logic).get());
+	assert(logic);
+
+	Data::MapMonsters &monsters = _G(map)._monsters;
+
+	int slot = -1;
+	for (int i = 1; i <= 31; ++i) {
+		if (!monsters.isActive(i)) {
+			slot = i;
+			break;
+		}
+	}
+	if (slot < 0) {
+		slot = 1;
+		monsters._type[slot] = 0;
+		debugPrintf("No free monster slots; evicted the monster in slot %d\n", slot);
+	}
+
+	int spawnX = -1, spawnY = -1;
+	for (int radius = 1; radius <= 10 && spawnX < 0; ++radius) {
+		for (int dy = -radius; dy <= radius && spawnX < 0; ++dy) {
+			for (int dx = -radius; dx <= radius && spawnX < 0; ++dx) {
+				if (MAX(ABS(dx), ABS(dy)) != radius)
+					continue;
+
+				int x = (sg._mapX + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+				int y = (sg._mapY + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+				if (!logic->isWalkable(_G(map).tileAt(x, y)))
+					continue;
+
+				bool occupied = false;
+				for (int i = 1; i <= 31; ++i) {
+					if (monsters.isActive(i) && monsters._mapX[i] == x && monsters._mapY[i] == y) {
+						occupied = true;
+						break;
+					}
+				}
+				if (!occupied) {
+					spawnX = x;
+					spawnY = y;
+					break;
+				}
+			}
+		}
+	}
+
+	if (spawnX < 0) {
+		debugPrintf("Couldn't find a free tile nearby\n");
+		return true;
+	}
+
+	monsters._mapX[slot] = spawnX;
+	monsters._mapY[slot] = spawnY;
+	monsters._spellHP[slot] = 0x10;
+	monsters._type[slot] = Data::TILE_ORC * 4;
+	monsters._glyphTile[slot] = 0;
+	monsters._offerFlag[slot] = 0;
+	monsters._tempX[slot] = 0;
+	monsters._tempY[slot] = 0;
+
+	g_engine->focusedView()->redraw();
+	debugPrintf("Spawned enemy in slot %d at (%d,%d)\n", slot, spawnX, spawnY);
 	return true;
 }
 
