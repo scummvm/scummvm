@@ -97,6 +97,14 @@ UIObject::~UIObject() {
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::setText(const char *text) {
+	if (text == nullptr) {
+		// W/A for null text from diary text in 5MA game.
+		// Font drawing width is not the same as in original engine,
+		// this makes last page of diary empty and make text null from scripts.
+		if (_text)
+			_text[0] = '\0';
+		return;
+	}
 	if (_text) {
 		delete[] _text;
 	}
