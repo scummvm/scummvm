@@ -1069,43 +1069,46 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"zoombini",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
-			AD_ENTRY1s("ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146),
-			Common::EN_ANY,
+			"v1.1US Demo",
+			AD_ENTRY2s("DATA/ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146,
+					   "Zoombini", "ab6ba48edb4a93ca034c63905f615865", 4538864),
+			Common::EN_USA,
 			Common::kPlatformMacintosh,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
+			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		0,
+		GF_ZMB_11_US,
 		0
 	},
 	{
 		{
 			"zoombini",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
-			AD_ENTRY1s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112),
-			Common::EN_ANY,
+			"v1.0BR Demo",
+			AD_ENTRY2s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112,
+					   "ZOOMBINI.EXE", "a077ae209b1a8152ef73ead787e1f3b2", 932368),
+			Common::EN_GRB,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
+			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		0,
+		GF_ZMB_10_EU,
 		0
 	},
 	{
 		{
 			"zoombini",
-			MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Reason for being unsupported,
-			AD_ENTRY1s("ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603),
-			Common::EN_ANY,
+			"v1.1US Demo",
+			AD_ENTRY2s("DATA/ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603,
+					   "ZOOM.EXE", "951c5e7a3caa6a2afede16ff03433a1e", 936976),
+			Common::EN_USA,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DEMO,
+			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		0,
+		GF_ZMB_11_US,
 		0
 	},
 	{

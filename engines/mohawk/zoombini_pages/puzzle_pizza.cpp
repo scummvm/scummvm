@@ -2515,8 +2515,9 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 		spawnPostmanSnoid();
 		if (_allTrollOrdersMatched) {
 			setupQuestionRunners();
-			// The final active troll reaction has completed; retain the Go latch in the common button state.
-			setGoButtonsEnabled(true);
+			// The v1.0BR demo keeps Go disabled after its only order is accepted.
+			if (!_vm->isV10BrDemo())
+				setGoButtonsEnabled(true);
 			return;
 		}
 		// The acceptance SCRB has finished.
@@ -2621,8 +2622,9 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 	// Check what to do next
 	if (_allTrollOrdersMatched) {
 		setupQuestionRunners();
-		// The final active troll reaction has completed; retain the Go latch in the common button state.
-		setGoButtonsEnabled(true);
+		// The v1.0BR demo keeps Go disabled after its only order is accepted.
+		if (!_vm->isV10BrDemo())
+			setGoButtonsEnabled(true);
 		return;
 	}
 

@@ -94,6 +94,7 @@ static const char *const directoryGlobs[] = {
 	"data32",
 	"hd",
 	"install",
+	"pizza",
 	"program",
 	"setup",
 	"setup32",
@@ -160,12 +161,16 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	// Append the release label taken from the "extra" field so every build gets a stable, self-describing target such as "zoombini-win-fr-v11fr".
 	const Mohawk::MohawkGameDescription *mohawkDesc = (const Mohawk::MohawkGameDescription *)adGame.desc;
 	if (mohawkDesc->gameType == Mohawk::GType_ZOOMBINI
-			&& (mohawkDesc->features & (Mohawk::GF_ZMB_10_EU | Mohawk::GF_ZMB_11_EU | Mohawk::GF_ZMB_10_ESPT | Mohawk::GF_ZMB_11_US | Mohawk::GF_ZMB_20_US))
 			&& mohawkDesc->desc.extra && *mohawkDesc->desc.extra) {
+		static const Common::String kDemoSuffix = " Demo";
+		Common::String versionExtra = mohawkDesc->desc.extra;
+		if ((mohawkDesc->desc.flags & ADGF_DEMO) && versionExtra.hasSuffix(kDemoSuffix))
+			versionExtra.erase(versionExtra.size() - kDemoSuffix.size());
+
 		// Turn e.g. "v1.1FR_2002" into "v11fr-2002": lowercase, drop the dots
 		// of the version number, and use '-' as a word separator.
 		Common::String versionTag;
-		for (const char *c = mohawkDesc->desc.extra; *c; c++) {
+		for (const char *c = versionExtra.c_str(); *c; c++) {
 			if (Common::isAlnum(*c))
 				versionTag += *c;
 			else if (*c == '_')

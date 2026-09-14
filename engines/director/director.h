@@ -310,6 +310,7 @@ public:
 	uint32 _loadSlowdownCooldownTime;
 	int _fileIOType;
 	bool _vfwPaletteHack;
+	bool _stopMovieAtEnd;
 
 	uint16 _key;
 	int _keyCode;

@@ -108,12 +108,14 @@ public:
 		// RODMAP: (European-only) Journey-stat location descriptions.
 		// These are distinct from the page-name keys: STRL 2002 uses abbreviated stat labels,
 		// while STRL 2000 contains the full page names (for example, French Shelter Rock).
+		// v1.1US demo also use this layout.
 		kEuropeJourneyStatZoombiniIsle,
 		kEuropeJourneyStatShelterRock,
 		kEuropeJourneyStatShadeTree,
 		kEuropeJourneyStatZoombiniton,
 		// RODMAP: (European-only) Practice return-path descriptions.
 		// STRL 2002 has four progress-dependent four-line blocks (5-8, 9-12, 13-16, and 17-20).
+		// v1.1US demo also use this layout.
 		kEuropePracticeReturnInitial1,
 		kEuropePracticeReturnInitial2,
 		kEuropePracticeReturnInitial3,
@@ -505,6 +507,8 @@ private:
 	static const CreditLimits kV20PLCreditLimits;
 	/** Exact entry count of the Italian v1.0 STRL 2020 and 2021 credit source. */
 	static constexpr uint32 kV10ITCreditEntryCount = 278;
+	/** Exact entry count of the British v1.0 demo STRL 2020 and 2021 credit source. */
+	static constexpr uint32 kV10BRDemoCreditEntryCount = 282;
 	/** Anchor for flat v1.x executable credit string sequences. */
 	static constexpr const char *const kExeCreditParagraphsAnchor = "PRODUCT CONCEPT AND DESIGN";
 	/** Anchor for the Spanish v1.0 executable credit string sequence. */
@@ -515,6 +519,7 @@ private:
 	static const ResTextEntry kV10EU_ResTextEntries[];
 	/** v1.0BR NE Key-address-size map. */
 	static const ExeTextEntry kV10BR_NETextEntries[];
+	static const ExeTextEntry kV10BRDemo_NETextEntries[];
 	/** v1.1BR NE Key-address-size map. */
 	static const ExeTextEntry kV11BR_NETextEntries[];
 	/** v1.0FR NE Key-address-size map. */
@@ -535,6 +540,8 @@ private:
 	static const ExeTextEntry kV11US_PETextEntries[];
 	/** v1.1US NE Key-address-size map. */
 	static const ExeTextEntry kV11US_NETextEntries[];
+	/** v1.1US Win16 demo Key-address-size map. */
+	static const ExeTextEntry kV11USDemo_NETextEntries[];
 	/** v1.11KR PE32 Key-address-size map. */
 	static const ExeTextEntry kV111KR_PETextEntries[];
 	/** v1.11KR NE Key-address-size map. */

@@ -20,6 +20,7 @@
  */
 
 #include "common/compression/vise.h"
+#include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/platform.h"
@@ -27,6 +28,7 @@
 #include "common/tokenizer.h"
 #include "director/director.h"
 #include "director/movie.h"
+#include "director/score.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xtras/s/smacker.h"
 
@@ -196,6 +198,80 @@ static void quirkSmacker(const Common::String &whichDocument) {
 	SmackerXtra::playSmacker(videoFile, g_director->getCurrentMovie()->_movieRect, true);
 }
 
+static void quirkLingoZoombiniDemo(const Common::String &whichDocument) {
+	(void)whichDocument;
+
+	const Common::Path currentPath = ConfMan.getPath("path").normalize();
+	const Common::FSNode currentDir(currentPath);
+	const bool isV10BrDemo = g_director->getRawEXEName().hasSuffixIgnoreCase("_ZOOMDAT.EXE");
+	const Common::FSNode directDemoDir = currentDir;
+	const Common::FSNode nestedDemoDir = currentDir.getChild("PIZZA");
+	const bool hasV10DirectGame = directDemoDir.getChild("ZOOMBINI.EXE").exists() && directDemoDir.getChild("ENGLISH").getChild("ZOOMBINI.MHK").exists();
+	const bool hasV10NestedGame = nestedDemoDir.getChild("ZOOMBINI.EXE").exists() && nestedDemoDir.getChild("ENGLISH").getChild("ZOOMBINI.MHK").exists();
+	const bool hasV11Game = currentDir.getChild("ZOOM.EXE").exists() && currentDir.getChild("DATA").getChild("ZOOMBINI.MHK").exists();
+	if ((isV10BrDemo && !hasV10DirectGame && !hasV10NestedGame) || (!isV10BrDemo && !hasV11Game)) {
+		warning("quirkLingoZoombiniDemo(): The playable Zoombini demo component was not found");
+		return;
+	}
+	Common::Path componentPath = currentPath;
+	if (isV10BrDemo && !hasV10DirectGame)
+		componentPath = currentPath.appendComponent("PIZZA");
+
+	const Common::String returnTarget = ConfMan.getActiveDomainName();
+	Common::String target;
+	for (auto it = ConfMan.beginGameDomains(); it != ConfMan.endGameDomains(); ++it) {
+		Common::ConfigManager::Domain &domain = it->_value;
+		Common::String engineId;
+		Common::String gameId;
+		Common::String path;
+		Common::String returnTarget;
+		if (!domain.tryGetVal("engineid", engineId) || !domain.tryGetVal("gameid", gameId) || !domain.tryGetVal("path", path) ||
+			!domain.tryGetVal("zoombini_demo_return_target", returnTarget))
+			continue;
+		if (engineId != "mohawk" || gameId != "zoombini" || returnTarget != returnTarget)
+			continue;
+
+		const Common::Path targetPath = Common::Path::fromConfig(path).normalize();
+		if (targetPath.equalsIgnoreCase(componentPath)) {
+			target = it->_key;
+			break;
+		}
+	}
+
+	if (target.empty()) {
+		target = isV10BrDemo ? "zoombini-v10br-demo" : "zoombini-v11us-demo";
+		int suffix = 1;
+		while (ConfMan.hasGameDomain(target)) {
+			target = Common::String::format("%s-%d", target.c_str(), suffix);
+			suffix += 1;
+		}
+
+		ConfMan.addGameDomain(target);
+		ConfMan.set("engineid", "mohawk", target);
+		ConfMan.set("gameid", "zoombini", target);
+		ConfMan.setPath("path", componentPath, target);
+		ConfMan.set("language", isV10BrDemo ? "en_GB" : "en_US", target);
+		ConfMan.set("platform", "windows", target);
+		ConfMan.set("extra", isV10BrDemo ? "v1.0BR Demo" : "v1.1US Demo", target);
+		ConfMan.set("zoombini_demo_return_target", returnTarget, target);
+		ConfMan.setBool("id_came_from_command_line", true, target);
+	}
+
+	debug(1, "quirkLingoZoombiniDemo(): Chaining to ScummVM target '%s'", target.c_str());
+	ChainedGamesMan.push(target);
+	ConfMan.setBool("confirm_exit", false, Common::ConfigManager::kTransientDomain);
+
+	Common::Event event;
+	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+	g_system->getEventManager()->pushEvent(event);
+
+	// Consume the queued return event right away so the base run loop does not need a tail hook.
+	// This sets the return-to-launcher flag used by scummvm_main to pop the chained target.
+	g_director->processSysEvents();
+	if (g_director->getCurrentMovie() && g_director->getCurrentMovie()->getScore())
+		g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+}
+
 struct LingoOpenWrapper {
 	const char *target;
 	Common::Platform platform;
@@ -203,20 +279,24 @@ struct LingoOpenWrapper {
 	void (*quirk)(const Common::String &whichDocument);
 } const lingoOpenWrappers[] = {
 	{"noir", Common::kPlatformWindows, "C:\\SPLAY", quirkSmacker },
+	{"zoombini-demo-win-gb-v10br-launcher", Common::kPlatformWindows, "zoom.exe", quirkLingoZoombiniDemo },
+	{"zoombini-demo-win-us-v11us-launcher", Common::kPlatformWindows, "zoom.exe", quirkLingoZoombiniDemo },
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr }
 };
 
 bool DirectorEngine::lingoOpenWrapper(const char *target, Common::Platform platform, const Common::String &whichApplication, const Common::String &whichDocument) {
 	for (auto q = lingoOpenWrappers; q->target != nullptr; q++) {
-		if (q->platform == Common::kPlatformUnknown || q->platform == platform)
+		if (q->platform == Common::kPlatformUnknown || q->platform == platform) {
 			if (!strcmp(q->target, target) && whichApplication.equalsIgnoreCase(q->application)) {
 				q->quirk(whichDocument);
 				return true;
 				break;
 			}
+		}
 	}
 	return false;
 }
+
 
 static void quirkWarlock() {
 	g_director->_loadSlowdownFactor = 150000;  // emulate a 1x CD drive
@@ -241,6 +321,11 @@ static void quirkForceFileIOXtra() {
 
 static void quirkVideoForWindowsPalette() {
 	g_director->_vfwPaletteHack = true;
+}
+
+static void quirkZoombiniWin() {
+	if (g_director->getRawEXEName().equalsIgnoreCase("ZOOMBINI.EXE"))
+		g_director->_stopMovieAtEnd = true;
 }
 
 static void quirkHollywoodHigh() {
@@ -390,6 +475,9 @@ const struct Quirk {
 	// McKenzie & Co. uses a greyscale palette in 8-bit mode, along with the standard 16 colour Windows palette.
 	// Remove the 16-colours from the video decoder.
 	{"mckenzie", Common::kPlatformWindows, &quirkVideoForWindowsPalette },
+
+	// The v1.1 US Zoombinis demo projector launches its playable component from stopMovie.
+	{ "zoombini", Common::kPlatformWindows, &quirkZoombiniWin },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };

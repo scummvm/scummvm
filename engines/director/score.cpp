@@ -476,7 +476,7 @@ void Score::updateCurrentFrame() {
 			}
 			nextFrameNumberToLoad = ref.frameI;
 		} else {
-			if (debugChannelSet(-1, kDebugNoLoop)) {
+			if (debugChannelSet(-1, kDebugNoLoop) || _vm->_stopMovieAtEnd) {
 				_playState = kPlayStopped;
 				processFrozenScripts();
 				return;
