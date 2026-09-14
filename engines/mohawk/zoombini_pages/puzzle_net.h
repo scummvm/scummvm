@@ -98,6 +98,8 @@ protected:
 	bool debugSetChances(int16 remaining) override;
 	/** Process Snoid and slot animation callbacks. */
 	void onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode) override;
+	/** Preserve the v1.1 US demo's uphill exit-facing direction after a tracked walk completes. */
+	void onSnoidWalkCompleted(ZmbSnoid *snoid) override;
 	/** Advance column assignment and feedback after the current render. */
 	void onPostRenderFrame() override;
 	/** Start a Zoombini drag or handle a net control click. */
@@ -571,7 +573,7 @@ private:
 	int16 _subcolumnAxisRuleValues[125] = {};
 	/** Zoombinis launched by each unfired target; zero marks a miss and -1 a fired cell. */
 	int16 _targetLaunchCounts[125] = {};
-	/** Immutable generated launch counts retained for @ref debugGetAnswer(). */
+	/** Immutable generated launch counts retained for target rendering and @ref debugGetAnswer(). */
 	int16 _initialTargetLaunchCounts[125] = {};
 
 	/** Level-2/4 cascading rotation step applied to one axis grid, or zero when unused. */

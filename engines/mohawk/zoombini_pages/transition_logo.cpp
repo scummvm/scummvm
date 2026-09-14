@@ -53,13 +53,16 @@ ZoombiniTransitionLogo::~ZoombiniTransitionLogo() {
 }
 
 void ZoombiniTransitionLogo::loadFeatures() {
-	_vm->setNextPage(_vm->isDemo() ? ZoombiniPageType::kNet : ZoombiniPageType::kPicker);
+	ZoombiniPageType nextPage = ZoombiniPageType::kPicker;
+	if (_vm->isV20UsDemo())
+		nextPage = ZoombiniPageType::kNet;
+	_vm->setNextPage(nextPage);
 
 	// 1.x: LOGO025.MOV (CDToons)
 	// 2.0 retail: LOGO025.BIK (Bink)
 	// 2.0 demo: LOGODEMO.BIK (Bink)
 	if (_vm->isVersionFamilyTlcV2()) {
-		const char *videoFile = _vm->isDemo() ? ZMB_VIDEO_BINK_DEMO : ZMB_VIDEO_BINK;
+		const char *videoFile = _vm->isV20UsDemo() ? ZMB_VIDEO_BINK_DEMO : ZMB_VIDEO_BINK;
 		const Common::Path videoPath = Common::Path(_vm->getArchiveRoot()).append(videoFile);
 		if (!Common::File::exists(videoPath)) {
 			warning("Bink video file [%s] does not exist, skip", videoPath.toString().c_str());
