@@ -424,6 +424,17 @@ private:
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 
+	void PART_06();
+	void PART_06_UPDATE_ROOM_BACKGROUND();
+
+	void PART_06_HELPER_2();
+
+	void PART_06_HELPER_3();
+
+	void PART_06_HELPER_6(int num);
+
+	void PART_06_HELPER_1(int frame);
+
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
 	void PART_85_HELPER_2();
@@ -546,6 +557,7 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 };
 
 extern IgorEngine *g_engine;
@@ -561,6 +573,7 @@ extern const uint8 _mouseCursorData[];
 extern const uint8 PAL_IGOR_1[];
 extern const uint8 PAL_48_1[];
 extern const uint8 PAL_96_1[];
+
 
 } // End of namespace Igor
 

@@ -44,7 +44,7 @@ void IgorEngine::PART_MAIN() {
 		case 60:
 		case 61:
 		case 62:
-			PART_05();
+			PART_06();
 			break;
 
 		case 850: // Intro cutscene

@@ -189,4 +189,12 @@ const float _walkScaleSpeedTable[] = {
 	5.0000f, 5.2500f, 5.5000f, 5.6250f, 5.6250f, 5.6250f, 5.6250f, 5.6250f, 5.6250f,	5.6250f
 };
 
+const RoomDataOffsets IgorEngine::PART_06_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 75, 84 },
+	{ 87, 259, 3135, 151, 227, 80 },
+	{ 135, 30, 5158, 100, 60 }
+};
+
+
 } // End of namespace Igor
