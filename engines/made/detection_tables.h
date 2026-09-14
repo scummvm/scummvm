@@ -122,6 +122,42 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return to Zork - English ReelMagic MPEG version 1.00 5/25/94 (installed)
+		// This release replaces most of the animations with MPEG-1 video which was
+		// decoded by a Sigma Designs ReelMagic card.
+		{
+			"rtz",
+			"ReelMagic V1.00, 5/25/94, installed, CD",
+			AD_ENTRY1s("rtzrm.dat", "2cb1a9fa63536cf56f104a729aa72a91", 506368),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_INTRO_MUSIC_DIGITAL, GAMEOPTION_REELMAGIC_REDUCE)
+		},
+		GID_RTZ,
+		0,
+		GF_CD | GF_REELMAGIC,
+		3,
+	},
+
+	{
+		// Return to Zork - English ReelMagic MPEG version 1.00 5/25/94
+		{
+			"rtz",
+			"ReelMagic V1.00, 5/25/94, CD",
+			AD_ENTRY1s("rtzrm.red", "861470fa722260217127c7e5c1b1ff4a", 278708),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_INTRO_MUSIC_DIGITAL, GAMEOPTION_REELMAGIC_REDUCE)
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED | GF_REELMAGIC,
+		3,
+	},
+
+	{
 		// Return to Zork - English CD version 1.2 9/29/94 (installed)
 		// Supplied by Dark-Star in the ScummVM forums
 		{

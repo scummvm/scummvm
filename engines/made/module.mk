@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	database.o \
 	graphics.o \
 	made.o \
+	mpegplayer.o \
 	metaengine.o \
 	music.o \
 	pmvplayer.o \
@@ -16,6 +17,9 @@ MODULE_OBJS := \
 	scriptfuncs.o \
 	sound.o
 
+ifdef USE_MPEG2
+MODULE_OBJS += magical_mpeg.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MADE), DYNAMIC_PLUGIN)

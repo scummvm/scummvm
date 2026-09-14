@@ -37,7 +37,8 @@ enum MadeGameFeatures {
 	GF_DEMO				= 1 << 0,
 	GF_CD				= 1 << 1,
 	GF_CD_COMPRESSED	= 1 << 2,
-	GF_FLOPPY			= 1 << 3
+	GF_FLOPPY			= 1 << 3,
+	GF_REELMAGIC		= 1 << 4
 };
 
 struct MadeGameDescription {
@@ -54,6 +55,7 @@ struct MadeGameDescription {
 #define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
 #define GAMEOPTION_TTS                 GUIO_GAMEOPTIONS2
 #define GAMEOPTION_WINDOWS_CURSORS     GUIO_GAMEOPTIONS3
+#define GAMEOPTION_REELMAGIC_REDUCE    GUIO_GAMEOPTIONS4
 
 } // End of namespace Made
 

@@ -68,6 +68,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_REELMAGIC_REDUCE,
+		{
+			_s("Reduce ReelMagic video to 200 lines"),
+			_s("If selected, the 240-line MPEG video is reduced to the game's 200-line graphics height. "
+				"Otherwise, the graphics are stretched to preserve the full video frame."),
+			"reelmagic_video_reduce",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

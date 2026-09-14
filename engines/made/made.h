@@ -47,6 +47,7 @@ const uint32 kTimerResolution = 40;
 
 class ResourceReader;
 class PmvPlayer;
+class MpegPlayer;
 class Screen;
 class ScriptInterpreter;
 class GameDatabase;
@@ -89,6 +90,7 @@ public:
 
 public:
 	PmvPlayer *_pmvPlayer;
+	MpegPlayer *_mpegPlayer;
 	ResourceReader *_res;
 	Screen *_screen;
 	GameDatabase *_dat;
@@ -120,7 +122,6 @@ public:
 	bool _voiceText;
 	bool _forceVoiceText;
 	bool _forceQueueText;
-
 #ifdef USE_TTS
 	Common::String _rtzSaveLoadButtonText[2];
 	uint8 _rtzFirstSaveSlot;

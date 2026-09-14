@@ -22,6 +22,7 @@
 #include "made/made.h"
 #include "made/console.h"
 #include "made/pmvplayer.h"
+#include "made/mpegplayer.h"
 #include "made/resource.h"
 #include "made/screen.h"
 #include "made/database.h"
@@ -66,6 +67,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_system->getAudioCDManager()->open();
 
 	_pmvPlayer = new PmvPlayer(this, _mixer);
+	_mpegPlayer = (getFeatures() & GF_REELMAGIC) ? new MpegPlayer(this) : nullptr;
 	_res = new ResourceReader();
 	_screen = new Screen(this);
 
@@ -123,6 +125,7 @@ MadeEngine::~MadeEngine() {
 
 	delete _rnd;
 	delete _pmvPlayer;
+	delete _mpegPlayer;
 	delete _res;
 	delete _screen;
 	delete _dat;
@@ -297,7 +300,7 @@ void MadeEngine::handleEvents() {
 
 		case Common::EVENT_MOUSEMOVE:
 			_eventMouseX = event.mouse.x;
-			_eventMouseY = event.mouse.y;
+			_eventMouseY = _screen->screenToGameY(event.mouse.y);
 
 #ifdef USE_TTS
 			checkHoveringSaveLoadScreen();
@@ -342,19 +345,19 @@ void MadeEngine::handleEvents() {
 			switch (event.customType) {
 			case kActionCursorUp:
 				_eventMouseY = MAX<int16>(0, _eventMouseY - 1);
-				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				g_system->warpMouse(_eventMouseX, _screen->gameToScreenY(_eventMouseY));
 				break;
 			case kActionCursorDown:
 				_eventMouseY = MIN<int16>(199, _eventMouseY + 1);
-				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				g_system->warpMouse(_eventMouseX, _screen->gameToScreenY(_eventMouseY));
 				break;
 			case kActionCursorLeft:
 				_eventMouseX = MAX<int16>(0, _eventMouseX - 1);
-				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				g_system->warpMouse(_eventMouseX, _screen->gameToScreenY(_eventMouseY));
 				break;
 			case kActionCursorRight:
 				_eventMouseX = MIN<int16>(319, _eventMouseX + 1);
-				g_system->warpMouse(_eventMouseX, _eventMouseY);
+				g_system->warpMouse(_eventMouseX, _screen->gameToScreenY(_eventMouseY));
 				break;
 			case kActionMenu:
 				_eventNum = 5;
@@ -393,8 +396,21 @@ Common::Error MadeEngine::run() {
 		_music = new DOSMusicPlayer(this, getGameID() == GID_RTZ);
 	syncSoundSettings();
 
-	// Initialize backend
-	initGraphics(320, 200);
+	// Initialize backend. The ReelMagic release mixes its MPEG picture in under
+	// the paletted graphics, which needs a true colour screen to blend into.
+	if (getFeatures() & GF_REELMAGIC) {
+		Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		Common::List<Graphics::PixelFormat> formats = _system->getSupportedFormats();
+		for (Common::List<Graphics::PixelFormat>::const_iterator it = formats.begin(); it != formats.end(); ++it) {
+			if (it->bytesPerPixel == 2 || it->bytesPerPixel == 4) {
+				format = *it;
+				break;
+			}
+		}
+		initGraphics(320, _screen->getOutputHeight(), &format);
+	} else {
+		initGraphics(320, 200);
+	}
 
 	resetAllTimers();
 
@@ -419,6 +435,12 @@ Common::Error MadeEngine::run() {
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("demo.dat");
 			_res->open("demo.prj");
+		} else if (getFeatures() & GF_REELMAGIC) {
+			if (getFeatures() & GF_CD_COMPRESSED)
+				_dat->openFromRed("rtzrm.red", "rtzrm.dat");
+			else
+				_dat->open("rtzrm.dat");
+			_res->open("rtzrm.prj");
 		} else if (getFeatures() & GF_CD) {
 			_dat->open("rtzcd.dat");
 			_res->open("rtzcd.prj");
@@ -469,7 +491,10 @@ Common::Error MadeEngine::run() {
 		error ("Unknown MADE game");
 	}
 
-	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED)) {
+	// The ReelMagic disc has no audio tracks; its music comes from the XMIDI
+	// resources instead, since the MPEG assets take up the whole disc.
+	if (((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED)) &&
+		!(getFeatures() & GF_REELMAGIC)) {
 		if (!existExtractedCDAudioFiles()
 		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
