@@ -287,7 +287,8 @@ block2:
 	// paced by VGA retrace, while Macintosh fades use the 60 Hz TickCount.
 	// When Rex finishes fade preparation early, keep the remaining transition
 	// time black so the fade-in ends at the existing animation deadline.
-	matte_frame(runFx, 0, full_fade_in, fade_step_rate, fade_end_time);
+	matte_frame(runFx, 0, full_fade_in, fade_step_rate, fade_end_time,
+		boundaryLineColor);
 	mouse_hide();
 
 block3:

@@ -49,6 +49,17 @@ namespace Phantom {
 constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
+static void runAnimView(const char *resource) {
+	AnimView::Presentation presentation;
+	presentation.bufferHeight = 0;
+	presentation.boundaryLines = AnimView::kBoundaryLinesFromResource;
+	presentation.serviceFramesInline = false;
+	if (ConfMan.hasKey("animview_boundary_lines"))
+		presentation.boundaryLines = ConfMan.getBool("animview_boundary_lines") ?
+			AnimView::kBoundaryLinesShown : AnimView::kBoundaryLinesHidden;
+	AnimView::animview_main(resource, presentation);
+}
+
 static void main_menu_main() {
 	auto &screen = *g_engine->getScreen();
 	Palette palette;
@@ -267,7 +278,7 @@ void phantom_main() {
 			return;
 
 		case 3:
-			AnimView::animview_main("@phantom");
+			runAnimView("@phantom");
 			selected_item = -1;
 			break;
 
@@ -276,7 +287,7 @@ void phantom_main() {
 			return;
 
 		case 9:
-			AnimView::animview_main("@demodisk");
+			runAnimView("@demodisk");
 			selected_item = 0;
 			break;
 

@@ -525,8 +525,20 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 	} while (going);
 }
 
+static void matte_restore_boundary_lines(Buffer *work_screen,
+		int boundary_line_color) {
+	if (boundary_line_color < 0 || !viewing_at_y)
+		return;
+
+	g_engine->getScreen()->hLine(0, viewing_at_y - 2, video_x - 1,
+		boundary_line_color);
+	g_engine->getScreen()->hLine(0, viewing_at_y + work_screen->y + 1,
+		video_x - 1, boundary_line_color);
+}
+
 static void matte_special_effect(int special_effect, int full_screen,
-		bool full_fade_in, int fade_step_rate, long fade_end_time) {
+		bool full_fade_in, int fade_step_rate, long fade_end_time,
+		int boundary_line_color) {
 	int  count;
 	int  pixel_rate;
 	byte *background_swap;
@@ -572,6 +584,8 @@ static void matte_special_effect(int special_effect, int full_screen,
 		video_update(work_screen, 0, 0,
 			viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		if (special_effect == MATTE_FX_FADE_THRU_BLACK)
+			matte_restore_boundary_lines(work_screen, boundary_line_color);
 
 		if (full_fade_in)
 			magic_fade_from_grey(&special_pal[0], master_palette,
@@ -624,6 +638,9 @@ static void matte_special_effect(int special_effect, int full_screen,
 		buffer_fill(scr_live, 0);
 		video_update(work_screen, 0, 0, viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		matte_restore_boundary_lines(work_screen, boundary_line_color);
+		if (boundary_line_color >= 0)
+			g_engine->getScreen()->update();
 		mcga_setpal(&master_palette);
 		break;
 
@@ -644,7 +661,7 @@ static void matte_special_effect(int special_effect, int full_screen,
 }
 
 void matte_frame(int special_effect, int full_screen, bool full_fade_in,
-		int fade_step_rate, long fade_end_time) {
+		int fade_step_rate, long fade_end_time, int boundary_line_color) {
 	Matte *matte;
 	Image *image;
 	int id;
@@ -953,7 +970,7 @@ void matte_frame(int special_effect, int full_screen, bool full_fade_in,
 
 		} else {
 			matte_special_effect(special_effect, full_screen, full_fade_in,
-				fade_step_rate, fade_end_time);
+				fade_step_rate, fade_end_time, boundary_line_color);
 			sound_queue_flush();
 		}
 	}
