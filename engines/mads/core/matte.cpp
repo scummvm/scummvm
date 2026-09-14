@@ -467,8 +467,7 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 	byte increments[768];
 	long fade_clock;
 	long now_clock;
-	uint32 fade_base_time = 0;
-	uint32 fade_deadline = 0;
+	MagicFadePacer fade_pacer;
 
 	source = &master_palette[0].r;
 	special = increments;
@@ -483,17 +482,12 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 	}
 
 	if (fade_step_rate > 0)
-		fade_base_time = g_system->getMillis();
+		magic_fade_pacer_init(fade_pacer);
 
 	do {
 		going = false;
-		if (fade_step_rate > 0) {
-			fade_deadline = fade_base_time +
-				((step + 1) * 1000 + fade_step_rate - 1) /
-				fade_step_rate;
-		} else {
+		if (fade_step_rate <= 0)
 			fade_clock = timer_read_600() + ticks;
-		}
 
 		for (int i = 0; i < 768; i++) {
 			byte current = dest[i];  // current fading value (starts at black)
@@ -519,8 +513,7 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 			else
 				g_engine->getScreen()->update();
 
-			while (g_system->getMillis() < fade_deadline)
-				g_engine->hasPendingKey();
+			magic_fade_pacer_wait(fade_pacer, step, fade_step_rate);
 		} else {
 			do {
 				now_clock = timer_read_600();
