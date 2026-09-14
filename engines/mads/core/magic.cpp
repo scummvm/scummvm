@@ -82,7 +82,10 @@ void magic_fade_pacer_wait(MagicFadePacer &pacer, int step,
 	}
 
 	while (now < deadline) {
-		g_engine->hasPendingKey();
+		// The palette step was presented explicitly above. Service input and
+		// timers without presenting the same step again on the nominal 50 Hz
+		// MADS display schedule.
+		g_engine->hasPendingKey(false);
 		now = g_system->getMillis();
 	}
 }

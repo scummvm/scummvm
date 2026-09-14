@@ -248,11 +248,12 @@ void MADSEngine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(previous_room);
 }
 
-void MADSEngine::pollEvents() {
+void MADSEngine::pollEvents(bool presentScreen) {
 	// Check for screen update time
 	uint32 time = g_system->getMillis();
 	if (time >= _nextFrameTime) {
-		updateScreen();
+		if (presentScreen)
+			updateScreen();
 		_nextFrameTime = time + GAME_FRAME_TIME;
 		serviceMacintoshUI();
 	}
@@ -386,8 +387,8 @@ void MADSEngine::checkForTimerFunction() {
 	serviceMacintoshSound();
 }
 
-bool MADSEngine::hasPendingKey() {
-	pollEvents();
+bool MADSEngine::hasPendingKey(bool presentScreen) {
+	pollEvents(presentScreen);
 
 	return !_keyEvents.empty();
 }
