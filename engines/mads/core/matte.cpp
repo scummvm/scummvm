@@ -458,9 +458,11 @@ void filter_matte_list(MattePtr matte, int size, int base_index) {
 }
 
 static void matte_quick_from_black(byte *special_pal, int ticks,
-		int fade_step_rate) {
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks) {
 	int going;
 	int step = 0;
+	int fade_steps = 1;
 	byte *source;
 	byte *dest;
 	byte *special;
@@ -479,10 +481,16 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 		if (inc == 0)
 			inc = 1;
 		special[i] = inc;
+		if (source[i])
+			fade_steps = MAX(fade_steps,
+				((int)source[i] + inc - 1) / inc);
 	}
 
-	if (fade_step_rate > 0)
+	if (fade_step_rate > 0) {
+		magic_wait_for_fade_start(completion_deadline, fade_steps,
+			fade_step_rate, minimum_black_ticks);
 		magic_fade_pacer_init(fade_pacer);
+	}
 
 	do {
 		going = false;
@@ -537,8 +545,8 @@ static void matte_restore_boundary_lines(Buffer *work_screen,
 }
 
 static void matte_special_effect(int special_effect, int full_screen,
-		bool full_fade_in, int fade_step_rate, long fade_end_time,
-		int boundary_line_color) {
+		bool full_fade_in, int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	int  count;
 	int  pixel_rate;
 	byte *background_swap;
@@ -590,10 +598,11 @@ static void matte_special_effect(int special_effect, int full_screen,
 		if (full_fade_in)
 			magic_fade_from_grey(&special_pal[0], master_palette,
 				0, 256, 0, 1, 1, 16, fade_step_rate,
-				fade_end_time);
+				completion_deadline, minimum_black_ticks);
 		else
 			matte_quick_from_black(&special_pal[0].r, 1,
-				fade_step_rate);
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks);
 		break;
 
 	case MATTE_FX_CORNER_LOWER_LEFT:
@@ -661,7 +670,8 @@ static void matte_special_effect(int special_effect, int full_screen,
 }
 
 void matte_frame(int special_effect, int full_screen, bool full_fade_in,
-		int fade_step_rate, long fade_end_time, int boundary_line_color) {
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	Matte *matte;
 	Image *image;
 	int id;
@@ -970,7 +980,8 @@ void matte_frame(int special_effect, int full_screen, bool full_fade_in,
 
 		} else {
 			matte_special_effect(special_effect, full_screen, full_fade_in,
-				fade_step_rate, fade_end_time, boundary_line_color);
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks, boundary_line_color);
 			sound_queue_flush();
 		}
 	}
