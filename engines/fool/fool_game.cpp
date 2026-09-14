@@ -41,6 +41,7 @@ namespace Fool {
 
 // v1.1 - original release, single-density disks, different about menu
 // v2.0 - fixes full-screen rendering on higher-resolution displays, new about menu, can disable sounds
+// v2.0.1 - labelled as v2.0, but was recompiled and has slight changes. Has a "vers" tag in the resource fork and lowercase filenames.
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
 
@@ -52,6 +53,10 @@ static const int fool11ZStrOffset[] = {
 
 static const int fool20ZStrOffset[] = {
 	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 362, 345, 18, 22, 6, 3, 0, 0
+};
+
+static const int fool201ZStrOffset[] = {
+	102, 78, 103, 184, 200, 202, 206, 208, 216, 253, 272, 294, 329, 355, 338, 13, 17, 81, 3, 0, 0
 };
 
 static const int fool30ZStrOffset[] = {
@@ -167,6 +172,9 @@ void FoolGame::run() {
 		// v3.0 calls the font "Foolish Chicago" and changes the index
 		fontChicago = 255;
 		_cardsMaxScore = 666;
+		break;
+	case kFool201:
+		_zstrOffset = fool201ZStrOffset;
 		break;
 	case kFool20:
 	default:
