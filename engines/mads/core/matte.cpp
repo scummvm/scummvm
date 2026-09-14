@@ -526,7 +526,7 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 }
 
 static void matte_special_effect(int special_effect, int full_screen,
-		bool full_fade_in, int fade_step_rate) {
+		bool full_fade_in, int fade_step_rate, long fade_end_time) {
 	int  count;
 	int  pixel_rate;
 	byte *background_swap;
@@ -575,7 +575,8 @@ static void matte_special_effect(int special_effect, int full_screen,
 
 		if (full_fade_in)
 			magic_fade_from_grey(&special_pal[0], master_palette,
-				0, 256, 0, 1, 1, 16, fade_step_rate);
+				0, 256, 0, 1, 1, 16, fade_step_rate,
+				fade_end_time);
 		else
 			matte_quick_from_black(&special_pal[0].r, 1,
 				fade_step_rate);
@@ -643,7 +644,7 @@ static void matte_special_effect(int special_effect, int full_screen,
 }
 
 void matte_frame(int special_effect, int full_screen, bool full_fade_in,
-		int fade_step_rate) {
+		int fade_step_rate, long fade_end_time) {
 	Matte *matte;
 	Image *image;
 	int id;
@@ -952,7 +953,7 @@ void matte_frame(int special_effect, int full_screen, bool full_fade_in,
 
 		} else {
 			matte_special_effect(special_effect, full_screen, full_fade_in,
-				fade_step_rate);
+				fade_step_rate, fade_end_time);
 			sound_queue_flush();
 		}
 	}

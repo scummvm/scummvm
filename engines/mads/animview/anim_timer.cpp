@@ -86,6 +86,7 @@ void anim_timer() {
 	int sound, count;
 	bool full_fade_in;
 	int fade_step_rate;
+	long fade_end_time;
 
 	if (current_error_code || speechResourceId != -1)
 		goto done;
@@ -275,11 +276,18 @@ block2:
 		g_engine->getGameID() == GType_Phantom;
 	fade_step_rate = g_engine->hasMacintoshInterface() ?
 		MACINTOSH_FADE_STEP_RATE : DOS_FADE_STEP_RATE;
+	fade_end_time = -1;
+	if (g_engine->getGameID() == GType_RexNebular &&
+			(runFx == MATTE_FX_FADE_FROM_BLACK ||
+			runFx == MATTE_FX_FADE_THRU_BLACK))
+		fade_end_time = timer1;
 
 	// Rex and Phantom AnimView use the full 16-step fade-in. The later
 	// Dragonsphere executable uses the quick fade. DOS palette updates are
 	// paced by VGA retrace, while Macintosh fades use the 60 Hz TickCount.
-	matte_frame(runFx, 0, full_fade_in, fade_step_rate);
+	// When Rex finishes fade preparation early, keep the remaining transition
+	// time black so the fade-in ends at the existing animation deadline.
+	matte_frame(runFx, 0, full_fade_in, fade_step_rate, fade_end_time);
 	mouse_hide();
 
 block3:

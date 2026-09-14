@@ -87,9 +87,10 @@ extern void magic_fade_pacer_wait(MagicFadePacer &pacer, int step,
 extern void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int base_color, int num_colors, int base_grey, int num_greys,
 	int tick_delay, int steps, int fade_step_rate = 0);
+// fade_end_time is in timer_read() ticks; -1 leaves reveal timing unchanged.
 extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
 	int num_colors, int base_grey, int num_greys, int tick_delay, int steps,
-	int fade_step_rate = 0);
+	int fade_step_rate = 0, long fade_end_time = -1);
 
 /**
  * Picture-to-picture transition in which one of the screen
