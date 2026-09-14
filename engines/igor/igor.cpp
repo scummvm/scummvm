@@ -210,7 +210,6 @@ Common::Error IgorEngine::run() {
 
 
 void IgorEngine::enterPartLoop() {
-	// CursorMan.showMouse(true);
 	if (!_gameState.dialogueTextRunning) {
 		showCursor();
 	}
@@ -221,9 +220,9 @@ void IgorEngine::enterPartLoop() {
 }
 
 void IgorEngine::leavePartLoop() {
-	// hideCursor();
+	hideCursor();
 	// SET_EXEC_ACTION_FUNC(1, 0);
-	// _updateRoomBackground = 0;
+	_updateRoomBackground = 0;
 
 }
 

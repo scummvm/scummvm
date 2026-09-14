@@ -110,7 +110,7 @@ void IgorEngine::PART_85() {
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0, 0x7481, 18, 37, 20);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// PART_85_HELPER_2();
+	PART_85_HELPER_2();
 	// VAR_WATER_SOUND_PLAYING = false;
 	// stopSound();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
@@ -169,6 +169,22 @@ void IgorEngine::PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstF
 		if (_inputVars[kInputEscape]) return;
 		waitForTimer();
 	} while (firstFrame <= lastFrame);
+}
+
+void IgorEngine::PART_85_HELPER_2() {
+	int x = 1;
+	do {
+		if (compareGameTick(0, 16)) {
+			for (int y = 0; y <= 143; ++y) {
+				memcpy(_screenTextLayer + y * 320, _screenLayer1 + y * 320 + x * 8, 320 - x * 8);
+				memcpy(_screenTextLayer + y * 320 + 320 - x * 8, _screenLayer2 + y * 320 + 96, x * 8);
+			}
+			memcpy(_screenVGA, _screenTextLayer, 46080);
+			++x;
+		}
+		PART_85_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	} while (x != 29 && !_inputVars[kInputEscape]);
 }
 
 void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {

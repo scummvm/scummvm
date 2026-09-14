@@ -48,10 +48,13 @@ void IgorEngine::PART_MAIN() {
 			break;
 
 		case 850: // Intro cutscene
+            // Clear the entire screen buffer before starting the intro cutscene
             memset(_screenVGA, 0, 64000);
             _screenVGAVOffset = 24;
+            // copy the initial portion of the screen to the display, with the vertical offset
 			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
 			PART_85();
+            // Clears the bottom portion of the screen
             memset(_screenVGA + 46080, 0, 17920);
             _nextTimer = _system->getMillis() + 1000 / 60;
 			for (int y = _screenVGAVOffset; y >= 0; --y) {

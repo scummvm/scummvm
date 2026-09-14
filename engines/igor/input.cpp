@@ -156,12 +156,12 @@ void IgorEngine::handleRoomInput() {
 		// handleOptionsMenu();
 	}
 	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
-		// _talkDelayCounter = _talkDelay;
-		// if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
-		// 	stopSound();
-		// 	_talkSpeechCounter = -1;
-		// }
-		// _inputVars[kInputSkipDialogue] = 0;
+		_talkDelayCounter = _talkDelay;
+		if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
+			// stopSound();
+			_talkSpeechCounter = -1;
+		}
+		_inputVars[kInputSkipDialogue] = 0;
 	}
 
 	if (!_roomCursorOn || _gameState.dialogueTextRunning /*|| _scrollInventory*/) {
