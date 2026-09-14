@@ -145,7 +145,7 @@ static bool checkPresentationFiles(const char *resourceName,
 static void runAnimView(const char *resource) {
 	AnimView::Presentation presentation;
 	presentation.bufferHeight = 0;
-	presentation.boundaryLines = AnimView::kBoundaryLinesFromResource;
+	presentation.boundaryLines = AnimView::kBoundaryLinesHidden;
 	presentation.serviceFramesInline = false;
 	if (ConfMan.hasKey("animview_boundary_lines"))
 		presentation.boundaryLines = ConfMan.getBool("animview_boundary_lines") ?
