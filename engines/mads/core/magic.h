@@ -84,13 +84,18 @@ extern void magic_grey_ramp_palette(Palette &pal, int num_greys);
 extern void magic_fade_pacer_init(MagicFadePacer &pacer);
 extern void magic_fade_pacer_wait(MagicFadePacer &pacer, int step,
 	int fade_step_rate);
+extern void magic_wait_for_fade_start(long *completion_deadline, int steps,
+	int fade_step_rate, int minimum_black_ticks);
 extern void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int base_color, int num_colors, int base_grey, int num_greys,
 	int tick_delay, int steps, int fade_step_rate = 0);
-// fade_end_time is in timer_read() ticks; -1 leaves reveal timing unchanged.
+// completion_deadline uses timer_read() ticks and is updated when a minimum
+// black interval after palette preparation moves the reveal. nullptr leaves
+// reveal timing unchanged.
 extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
 	int num_colors, int base_grey, int num_greys, int tick_delay, int steps,
-	int fade_step_rate = 0, long fade_end_time = -1);
+	int fade_step_rate = 0, long *completion_deadline = nullptr,
+	int minimum_black_ticks = 0);
 
 /**
  * Picture-to-picture transition in which one of the screen
