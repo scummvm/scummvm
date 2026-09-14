@@ -925,8 +925,8 @@ void NancyEngine::populateStaticData() {
 		break;
 	case kGameTypeNancy14:
 	case kGameTypeNancy15:
-		_staticData.numItems = 50;
-		_staticData.numCursorTypes = 44;
+		_staticData.numItems = 49;
+		_staticData.numCursorTypes = 45;
 		break;
 	default:
 		_staticData.numItems = 50;

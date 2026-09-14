@@ -34,10 +34,10 @@
 namespace Nancy {
 namespace Action {
 
-// Maritime Flag matching puzzle in Nancy 8.
-// The player spots 3/4/5 flags of the same type in a row or column and clicks
-// one to score points and extend the timer.  After every match the board is
-// reshuffled.  The game ends when the score target is reached.
+// Tile matching puzzle. Nancy 8 uses it for a maritime flag game, Nancy 14 for
+// "Model Match". The player swaps two neighbouring tiles to line up 3/4/5 of the
+// same type in a row or column, which scores points and extends the timer. The
+// matched tiles are then replaced with fresh random ones.
 class MatchPuzzle : public RenderActionRecord {
 public:
 	MatchPuzzle() : RenderActionRecord(7) {}
@@ -56,8 +56,13 @@ protected:
 
 	// ---------- Inner types ----------
 
+	struct HighScore {
+		Common::String name;
+		int32 score = 0;
+	};
+
 	struct GridCell {
-		int16 flagType = 0;       // index into _flagSrcRects / _flagSoundNames
+		int16 tileType = 0;       // index into _tileSrcRects
 		bool  visible  = false;   // true once the cell has been shuffled in
 		bool  matched  = false;   // true while cell is part of an active match
 		Common::Rect destRect;    // viewport-relative draw destination
@@ -77,6 +82,20 @@ protected:
 	void eraseCell(int col, int row);
 	void redrawAllCells();
 	void drawScorePanel();
+	void drawText(const Common::String &str, const Common::Point &pos);
+	void playMatchSound();
+	bool isMatchSoundPlaying() const;
+
+	// Nancy14 helpers
+	void readDataNancy14(Common::SeekableReadStream &stream);
+	void handleInputNancy14(NancyInput &input, const Common::Point &localMouse);
+	void drawHighScoreScreen();
+	void drawBoardNancy14();
+	void playSoundBlock(const RandomSoundBlock &block);
+	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
+	void startRound();
+	void sortHighScores();
+	void insertHighScore();
 
 	// ---------- Data (read from stream) ----------
 
@@ -85,11 +104,11 @@ protected:
 
 	int16 _rows         = 0;             // data+0x42
 	int16 _cols         = 0;             // data+0x44
-	int16 _numFlagTypes = 0;             // data+0x46  (rand % (_numFlagTypes-1))
+	int16 _numTileTypes = 0;             // data+0x46  (rand % (_numTileTypes-1))
 
 	// data+0x48: source rect of the shuffle button within the sprite sheet
 	Common::Rect _shuffleButtonSrcRect;
-	Common::Array<Common::Rect> _flagSrcRects;   // 26 source rects in sprite sheet
+	Common::Array<Common::Rect> _tileSrcRects;   // 26 source rects in sprite sheet
 
 	// Script execution (data+0x238..0x23A); _execScript also gates flag-name display
 	bool  _execScript = false;
@@ -108,10 +127,10 @@ protected:
 	// Timing / scoring (from data+0x63E region)
 	int16 _timeLimitSecs     = 0;   // data+0x63E (0 = no timer)
 	int32 _scoreTarget       = 0;   // data+0x640
-	int16 _scorePerFlag      = 0;   // data+0x644 points per matched flag
+	int16 _scorePerTile      = 0;   // data+0x644 points per matched flag
 
 	// Source rect for highlighted (matched) flag overlay (data+0x646)
-	Common::Rect _matchedFlagSrcRect;
+	Common::Rect _matchedTileSrcRect;
 
 	int16 _timeBonusFor3     = 0;   // data+0x656 extra seconds for 3-match
 	int16 _scoreBonusFor4    = 0;   // data+0x658 extra points  for 4-match
@@ -153,6 +172,48 @@ protected:
 
 	Common::Rect _exitHotspot;             // data+0x7E2  bottom-strip exit hotspot
 
+	// ---------- Nancy14-only data ----------
+
+	// Second sprite sheet, holding the pressed-down graphics of the two buttons
+	Common::Path _buttonsImageName;
+	// Full-screen backdrop of the high score list
+	Common::Path _highScoreImageName;
+
+	// Set while the puzzle waits on the high score screen instead of playing
+	int16 _inProgressFlag = kEvNoEvent;
+	// When set, the board starts frozen on the high score screen
+	bool _startInactive = false;
+
+	Common::Rect _doneButtonSrcRect;
+	Common::Rect _doneButtonDestRect;
+
+	uint16 _fontID = 0;
+	// Picks between the two color variants baked into the font image
+	uint16 _fontColor = 0;
+
+	Common::String _timerSuffix;    // appended to the seconds left, e.g. "s"
+	Common::String _winString;      // replaces the timer once the target is beaten
+	Common::String _timeUpString;   // replaces the timer when time runs out
+
+	// Opens the high score screen mid-game
+	Common::Rect _highScoreButtonRect;
+
+	// Used when the high score list is empty
+	int32 _defaultScoreTarget = 0;
+
+	Common::String _playerName;                     // name stored alongside a new high score
+	Common::Array<Common::Rect> _highScoreRects;    // left/top = name pos, right/bottom = score pos
+
+	RandomSoundBlock _matchSound;     // repeats while a match is highlighted
+	RandomSoundBlock _selectSound;    // first click on a tile
+	RandomSoundBlock _swapSound;      // second click, and the shuffle button
+	RandomSoundBlock _winSound;
+	RandomSoundBlock _timeUpSound;
+	RandomSoundBlock _goButtonSound;
+
+	uint16 _exitCursorType = 0;
+	SceneChangeWithFlag _doneSceneChange;   // leaving through the button next to the board
+
 	// ---------- Runtime state ----------
 
 	enum GameSubState {
@@ -162,7 +223,12 @@ protected:
 		kShuffleDelay  = 3, // wait for _shuffleTimer before applying full shuffle
 		kWaitSound     = 4, // wait for win/time-up sound to finish, then go to kScoreDisplay
 		kWaitDelay     = 5, // wait for display-delay timer, then go to kWaitSound
-		kScoreDisplay  = 6  // show scores, insert into high-score list, then exit or reset
+		kScoreDisplay  = 6, // show scores, insert into high-score list, then exit or reset
+
+		// Nancy14 only
+		kButtonDown    = 7, // a button is held down; apply its action once the timer runs out
+		kEndDelay      = 8, // pause on the win/time-up message before the high score screen
+		kHighScores    = 9  // high score screen, waiting for the GO button
 	};
 
 	GameSubState _gameSubState = kPlaying;
@@ -202,13 +268,22 @@ protected:
 	int  _prevTimerSecs = -1;   // last rendered timer value (seconds), for change detection
 
 	// High scores (top 5, descending; stored in memory, not persisted)
-	int32 _highScores[5] = {0, 0, 0, 0, 0};
+	Common::Array<HighScore> _highScores;
+
+	// Nancy14 runtime state
+	bool _showHighScores = false;   // high score screen is up, waiting for the GO button
+	bool _canResumeGame = false;    // the GO button restarts the round instead of resuming
+	bool _shuffleButtonDown = false;
+	bool _doneButtonDown = false;
+	bool _leftThroughButton = false;
 
 	// Rendering
 	Common::Array<Common::Array<GridCell>> _grid; // _grid[col][row]
 
 	Graphics::ManagedSurface _image;            // loaded sprite sheet
 	Graphics::ManagedSurface _scorePanelImage;  // score-panel background
+	Graphics::ManagedSurface _buttonsImage;     // Nancy14 pressed-button graphics
+	Graphics::ManagedSurface _highScoreImage;   // Nancy14 high score backdrop
 };
 
 } // End of namespace Action

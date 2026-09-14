@@ -805,6 +805,8 @@ struct UIIV : public EngineData {
 	// of the inventory order instead of being inserted at the front (so the most
 	// recently dropped item ends up last). See Scene::addItemToInventory.
 	byte appendItemsWhileOpen = 0;
+	// When nonzero, picking up an item closes the popup so it can be used on the scene.
+	byte closeOnPickup = 0;
 	UIButtonSlot filters[kNumFilters];              // 6 entries
 	Common::Array<Common::Rect> tabCaptionSrcRects; // 6 entries
 	Common::Rect tabCaptionDestRect;                // on-screen target
