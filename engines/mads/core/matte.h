@@ -126,7 +126,8 @@ extern void matte_init(int init_series);
 extern int matte_map_work_screen();
 
 
-extern void matte_frame(int special_effect, int full_screen);
+extern void matte_frame(int special_effect, int full_screen,
+	bool full_fade_in = false, int fade_step_rate = 0);
 
 extern int matte_load_series(const char *name, int load_flags, int bonus_series_number);
 extern void matte_deallocate_series(int id, int free_memory);
