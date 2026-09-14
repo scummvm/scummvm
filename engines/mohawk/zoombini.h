@@ -345,6 +345,8 @@ public:
 	bool canOpenSaveLoadDialog() const;
 	/** Open the engine options dialog. */
 	void openOptionsDialog();
+	/** Finish the v1.0BR playable component, returning to its Director presentation when it was chained. */
+	bool finishV10BrDemoComponent();
 	/** Begin the deferred quit sequence, including any required save prompt. */
 	void requestQuit();
 	/** Defer a game-owned Save or Load dialog until the ScummVM main menu closes. */
@@ -421,12 +423,23 @@ public:
 	bool isVersionFamilyTlcV2() const;
 	/** Return whether the detected release belongs to either v1 family. */
 	bool isVersionFamilyV1() const;
+	/** 
+	 * Return whether the detected release uses the classic Eurpoe six-SCRB MAP.MHK route layout.
+	 * v1.1US Demo also use this layout.
+	 */
+	bool usesClassicEurpoeLayout() const;
 	/** Return whether the detected release stores per-route perfect counters. */
 	bool hasRoutePerfectCounterState() const;
 	/** Return the compact display name for the detected release family. */
 	const char *getVersionFamilyName() const;
 	/** Return whether the detected game is the limited demo release. */
 	bool isDemo() const;
+	/** Return whether the detected game is the Win16 v1.1 US demo. */
+	bool isV11UsDemo() const;
+	/** Return whether the detected game is the Win16 v1.0 British demo. */
+	bool isV10BrDemo() const;
+	/** Return whether the detected game is the TLC v2.0 US demo. */
+	bool isV20UsDemo() const;
 	/** Consume the one-shot demo startup-logo reveal request. */
 	bool consumeDemoStartupLogoReveal();
 

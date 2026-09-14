@@ -242,6 +242,8 @@ Lingo::~Lingo() {
 	for (auto &it : _openXtrasState) {
 		delete it._value;
 	}
+	if (g_lingo == this)
+		g_lingo = nullptr;
 }
 
 void Lingo::reloadBuiltIns() {

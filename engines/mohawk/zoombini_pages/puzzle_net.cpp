@@ -67,7 +67,7 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleNet::getScriptSound
 }
 
 void ZoombiniPuzzleNet::open() {
-	openArchive(_vm->isDemo() ? ZMB_MHK_NET_DEMO : ZMB_MHK_NET);
+	openArchive(_vm->isV20UsDemo() ? ZMB_MHK_NET_DEMO : ZMB_MHK_NET);
 }
 
 void ZoombiniPuzzleNet::setBackgroundMusic() {
@@ -237,6 +237,13 @@ void ZoombiniPuzzleNet::loadFeatures() {
 
 	// Lay out the initial Snoids with a 30-frame walk-in stagger.
 	layoutStaticAndWalkIn(0, false);
+	if (_vm->isV11UsDemo()) {
+		// The demo initializes every materialized Snoid facing right before any NET script can turn it.
+		for (ZmbFeatureList<ZmbSnoid>::const_iterator it = _snoidMap.begin(); it != _snoidMap.end(); it++) {
+			if ((*it)->isPackSnoid())
+				(*it)->setFacingLeft(false);
+		}
+	}
 	// Preserve the first sorted runner list, then switch NET to persistent manual links
 	// for the rest of the page lifetime.
 	renderFeatures();
@@ -248,7 +255,7 @@ void ZoombiniPuzzleNet::loadFeatures() {
 	// Buttons
 	// Set up Go/Map/Help buttons
 	configureStandardPuzzleControlRects();
-	if (_vm->isDemo())
+	if (_vm->isV20UsDemo())
 		setGoButtonsEnabled(true);
 	loadStandardPuzzleControlFeatures(kResBitmapShape6000_Snoid);
 }
@@ -258,7 +265,7 @@ void ZoombiniPuzzleNet::initHelpPrompt() {
 }
 
 void ZoombiniPuzzleNet::onGoButtonActivated() {
-	if (_vm->isDemo()) {
+	if (_vm->isV20UsDemo()) {
 		if (_vm->openMsgBoxDialog(ZoombiniMsgBoxType::kAskReallyQuit) == ZoombiniDialogResult::kYes)
 			Engine::quitGame();
 		return;
@@ -984,8 +991,8 @@ void ZoombiniPuzzleNet::slotPreRenderShape(ZmbFeature *feature, ZmbHotspotGroup 
 	// instead of appending another visible shape.
 
 	for (int16 i = 0; i < _totalSlotCount; i++) {
-		if (_targetSlotFeatures[i] == feature && 0 < _targetLaunchCounts[i]) {
-			int16 shapeOffset = _targetLaunchCounts[i] + ((kPuzzleLevel3 <= _difficultyLevel) ? 153 : 150);
+		if (_targetSlotFeatures[i] == feature && 0 < _initialTargetLaunchCounts[i]) {
+			int16 shapeOffset = _initialTargetLaunchCounts[i] + ((kPuzzleLevel3 <= _difficultyLevel) ? 153 : 150);
 			if (hotspots.empty()) {
 				error("net: malformed required slot SCRB hotspot table");
 				return;
@@ -1558,7 +1565,7 @@ void ZoombiniPuzzleNet::releaseSelectorGateAfterTraitAnimation() {
 // ---------------------------------------------------------------------------
 
 void ZoombiniPuzzleNet::onMapButtonActivated() {
-	if (!_vm->isDemo()) {
+	if (!_vm->isV20UsDemo()) {
 		ZoombiniPuzzle::onMapButtonActivated();
 		return;
 	}
@@ -1678,6 +1685,21 @@ void ZoombiniPuzzleNet::linkAcceptedSnoid(ZmbSnoid *snoid) {
 	_lastAcceptedSnoidId = snoid->getId();
 }
 
+void ZoombiniPuzzleNet::onSnoidWalkCompleted(ZmbSnoid *snoid) {
+	if (!_vm->isV11UsDemo() || !snoid)
+		return;
+
+	for (int16 exitPosIdx = 0; exitPosIdx < 16; exitPosIdx++) {
+		if (snoid->getAnimTargetPos() != kExitPositions[exitPosIdx])
+			continue;
+
+		// The demo leaves an accepted Snoid facing in its last uphill walking direction.
+		// Cancel the shared post-arrival turn before its first animation tick can normalize the final exit pose.
+		snoid->setAnimState(kSnoidAnimState000_Idle);
+		return;
+	}
+}
+
 void ZoombiniPuzzleNet::processSnoidAnimEvent(ZmbFeature *feature, int16 eventCode) {
 	// Snoid-specific events
 	ZmbSnoid *snoid = static_cast<ZmbSnoid *>(feature);
@@ -1732,7 +1754,7 @@ void ZoombiniPuzzleNet::processSnoidAnimEvent(ZmbFeature *feature, int16 eventCo
 				}
 			}
 		} else {
-			// Clear the matching walk slot and turn the departing Snoid left.
+			// Clear the matching walk slot and turn the departing Snoid toward its final resting direction.
 			for (int16 walkSlotIdx = 2; 0 <= walkSlotIdx; walkSlotIdx--) {
 				if (_travelingColumnSnoidIds[walkSlotIdx] == feature->getId()) {
 					ZmbSnoid *walkSnoid = getSnoid(_travelingColumnSnoidIds[walkSlotIdx]);

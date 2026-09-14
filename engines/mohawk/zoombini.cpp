@@ -216,18 +216,6 @@ Common::Error MohawkEngine_Zoombini::run() {
 	initSearchPaths();
 
 	_language = getLanguage();
-
-	_gfx = new ZoombiniGraphics(this);
-	_gfx->showDemoStartupLoadingScreen();
-	_video = new VideoManager(this);
-	_sound = new ZoombiniSound(this);
-	_midi = new ZoombiniMidiPlayer(this);
-	_rnd = new ZoombiniRandom(getGameId());
-	_state = new ZoombiniGameState(this, _saveFileMan);
-	_text = new ZoombiniText(this, _language);
-	applyGameSettings();
-
-	// Set MHK archive root based on game variant and language
 	_mhkArchiveRoot = ZMB_MHK_ROOT_GENERIC;
 	if (isVersionFamilyEuV1()) {
 		switch (_language) {
@@ -252,6 +240,16 @@ Common::Error MohawkEngine_Zoombini::run() {
 			break;
 		}
 	}
+
+	_gfx = new ZoombiniGraphics(this);
+	_gfx->showDemoStartupLoadingScreen();
+	_video = new VideoManager(this);
+	_sound = new ZoombiniSound(this);
+	_midi = new ZoombiniMidiPlayer(this);
+	_rnd = new ZoombiniRandom(getGameId());
+	_state = new ZoombiniGameState(this, _saveFileMan);
+	_text = new ZoombiniText(this, _language);
+	applyGameSettings();
 
 	// Load ZOOMBINI.MHK
 	_sysMhk = loadSystemArchive();
@@ -309,13 +307,25 @@ Common::Error MohawkEngine_Zoombini::run() {
 			warning("engine: ignoring unsupported boot_param %d (expected practicePage*100 + level, e.g. 401 for Basecamp 1)",
 					bootParam);
 		}
-		if (isDemo()) {
+		ZoombiniPageType startPage = ZoombiniPageType::kLogo;
+		if (isV10BrDemo()) {
+			_state->_practiceLevel = 1;
+			_state->beginPracticeState();
+			_state->generateRandomPack();
+			_state->markGameStateReady();
+			startPage = ZoombiniPageType::kPizza;
+		} else if (isV11UsDemo()) {
+			_state->_practiceLevel = 1;
+			_state->beginPracticeState();
+			_state->markGameStateReady();
+			startPage = ZoombiniPageType::kRodMap;
+		} else if (isV20UsDemo()) {
 			_state->_practiceLevel = 1;
 			_state->markGameStateReady();
 		} else if (_state->_r._nextSaveFileNameCounter == 0) {
 			_state->markGameStateReady();
 		}
-		setNextPage(ZoombiniPageType::kLogo);
+		setNextPage(startPage);
 	}
 	loadNextPage();
 
@@ -612,7 +622,8 @@ void MohawkEngine_Zoombini::processPendingQuitRequest() {
 	case kPendingQuitCloseOptions:
 		if (_dialogPageStack.empty()) {
 			_pendingQuitRequest = kPendingQuitFinalizing;
-			Engine::quitGame();
+			if (!finishV10BrDemoComponent())
+				Engine::quitGame();
 		} else {
 			_dialogPageStack.top()->close();
 			_pendingQuitRequest = kPendingQuitWaitForOptionsClose;
@@ -621,7 +632,8 @@ void MohawkEngine_Zoombini::processPendingQuitRequest() {
 	case kPendingQuitWaitForOptionsClose:
 		if (_dialogPageStack.empty()) {
 			_pendingQuitRequest = kPendingQuitFinalizing;
-			Engine::quitGame();
+			if (!finishV10BrDemoComponent())
+				Engine::quitGame();
 		}
 		break;
 	case kPendingQuitNone:
@@ -765,6 +777,14 @@ void MohawkEngine_Zoombini::delayRunningFrames(uint32 ms) {
 
 void MohawkEngine_Zoombini::initSearchPaths() {
 	Common::FSNode candidate(ConfMan.getPath("path"));
+	if (isV10BrDemo()) {
+		const Common::FSNode nestedComponent = candidate.getChild("PIZZA");
+		if (nestedComponent.getChild("ENGLISH").getChild("ZOOMBINI.MHK").exists())
+			candidate = nestedComponent;
+		addSearchDirectoryIfPresent(candidate, 0, 2);
+		return;
+	}
+
 	for (int depth = 0; depth < 4 && candidate.exists() && candidate.isDirectory(); depth++) {
 		if (tryAddZoombiniIsoRootSearchPath(candidate))
 			break;
@@ -1208,8 +1228,8 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		page = new ZoombiniPuzzleHotel(this);
 		break;
 	case ZoombiniPageType::kNet:
-		// Demo Net starts each page instance with a fresh active pack.
-		if (isDemo())
+		// The v2.0 demo Net starts each page instance with a fresh active pack.
+		if (isV20UsDemo())
 			_state->generateRandomPack();
 		page = new ZoombiniPuzzleNet(this);
 		break;
@@ -1314,6 +1334,10 @@ bool MohawkEngine_Zoombini::isVersionFamilyV1() const {
 	return isVersionFamilyEuV1() || isVersionFamilyUsV1();
 }
 
+bool MohawkEngine_Zoombini::usesClassicEurpoeLayout() const {
+	return isVersionFamilyEuV1() || isV11UsDemo();
+}
+
 bool MohawkEngine_Zoombini::hasRoutePerfectCounterState() const {
 	return isVersionFamilyUsV1() || isVersionFamilyTlcV2();
 }
@@ -1332,8 +1356,20 @@ bool MohawkEngine_Zoombini::isDemo() const {
 	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
 }
 
+bool MohawkEngine_Zoombini::isV11UsDemo() const {
+	return isDemo() && isVersionFamilyUsV1();
+}
+
+bool MohawkEngine_Zoombini::isV10BrDemo() const {
+	return isDemo() && isGameVariant(MohawkGameFeatures::GF_ZMB_10_EU);
+}
+
+bool MohawkEngine_Zoombini::isV20UsDemo() const {
+	return isDemo() && isVersionFamilyTlcV2();
+}
+
 bool MohawkEngine_Zoombini::consumeDemoStartupLogoReveal() {
-	if (!isDemo() || !_demoStartupLogoRevealPending)
+	if (!isV20UsDemo() || !_demoStartupLogoRevealPending)
 		return false;
 
 	_demoStartupLogoRevealPending = false;
@@ -1348,6 +1384,11 @@ Common::Language MohawkEngine_Zoombini::getLanguage() const {
 }
 
 void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {
+	// Practice pages in the v1.1 demo return to its route map instead of entering an archive that the demo does not ship.
+	if (isV11UsDemo() && _state->inPracticeMode() && _activePage && _activePage->getPageType() != ZoombiniPageType::kRodMap &&
+		type != ZoombiniPageType::kPicker && type != ZoombiniPageType::kLogo)
+		type = ZoombiniPageType::kRodMap;
+
 	// The transition option skips the XFER scene during normal progression.
 	if (type == ZoombiniPageType::kXfer &&
 		!_debugPreserveActivePackOnXferClose && !_state->getEnableTransitions()) {
@@ -1396,6 +1437,32 @@ bool MohawkEngine_Zoombini::hasSaveLoadDialogOpened() const {
 void MohawkEngine_Zoombini::openOptionsDialog() {
 	ZoombiniDialog *dialogPage = new ZoombiniDialogOptions(this);
 	loadModalDialog(dialogPage);
+}
+
+bool MohawkEngine_Zoombini::finishV10BrDemoComponent() {
+	if (!isV10BrDemo())
+		return false;
+	if (!ConfMan.hasKey("zoombini_demo_return_target")) {
+		debug(1, "MohawkEngine_Zoombini::finishV10BrDemoComponent(): Finishing the directly launched playable component");
+		Engine::quitGame();
+		return true;
+	}
+
+	const Common::String target = ConfMan.get("zoombini_demo_return_target");
+	if (!ConfMan.hasGameDomain(target) || ConfMan.get("engineid", target) != "director" || ConfMan.get("gameid", target) != "zoombini" ||
+		!ConfMan.hasKey("path", target)) {
+		warning("MohawkEngine_Zoombini::finishV10BrDemoComponent(): The v1.0BR Director return target is invalid; ending the playable component");
+		Engine::quitGame();
+		return true;
+	}
+
+	debug(1, "MohawkEngine_Zoombini::finishV10BrDemoComponent(): Returning to ScummVM target '%s'", target.c_str());
+	ChainedGamesMan.push(target);
+	ConfMan.setBool("confirm_exit", false, Common::ConfigManager::kTransientDomain);
+	Common::Event event;
+	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+	_system->getEventManager()->pushEvent(event);
+	return true;
 }
 
 void MohawkEngine_Zoombini::requestQuit() {
@@ -1550,9 +1617,8 @@ bool MohawkEngine_Zoombini::consumePickerUpdateHelpRequest() {
 }
 
 bool MohawkEngine_Zoombini::supportsOnScreenHelp() const {
-	// The Europe v1.x executables does not have the onscreen Help button and dialog.
-	// This feature was introduced since the US v1.1 version.
-	return !isVersionFamilyEuV1();
+	// European v1.x releases and the v1.1 US demo do not provide the on-screen Help button or dialog.
+	return !isVersionFamilyEuV1() && !isV11UsDemo();
 }
 
 void MohawkEngine_Zoombini::openDebugDialog(const ZoombiniDebugCommand &cmd) {

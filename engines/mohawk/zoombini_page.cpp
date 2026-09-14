@@ -538,6 +538,17 @@ void ZoombiniPage::playCurrentFrameSound(ZmbFeature *feature) {
 
 void ZoombiniPage::dispatchFeatureSound(ZmbFeature *feature, ZmbResource resource) {
 	const Audio::Mixer::SoundType soundType = getFeatureSoundType(feature, resource);
+	if (soundType == Audio::Mixer::kSpeechSoundType) {
+		const bool isZoombiniVoice = dynamic_cast<const ZmbSnoid *>(feature) && resource._archiveKind == ZmbResource::kSystem &&
+									 kSysResSound0100_ZoombiniVoiceBase <= resource._id && resource._id <= kSysResSound0499_ZoombiniVoiceLast;
+		// The v1.1 US demo leaves Zoombini voices silent while retaining page-local character speech.
+		if (_vm->isV11UsDemo() && isZoombiniVoice)
+			return;
+		// The v1.0 British demo retains script voice events whose system SND resources were removed.
+		if (_vm->isV10BrDemo() && !_vm->hasResource(ID_SND, resource))
+			return;
+	}
+
 	if (shouldQueueFeatureSound(feature)) {
 		const bool forcePriority = feature &&
 								   feature->getScriptSoundPolicy() ==
