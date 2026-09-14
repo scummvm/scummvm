@@ -557,8 +557,8 @@ void ZoombiniInteractive::setMapButton(const Common::Rect &rect, uint16 shapeNor
 }
 
 void ZoombiniInteractive::setHelpButton(const Common::Rect &rect) {
-	// Europe v1.x omits Help from both the common three-button layout and Basecamp 1's four-button variant.
-	// Do not register a rect or shape state on Europe v1.x releases
+	// Releases without on-screen Help omit it from both the common three-button layout and Basecamp 1's four-button variant.
+	// Do not register a rectangle or shape state when the release does not provide this control.
 	if (!_vm->supportsOnScreenHelp())
 		return;
 
@@ -867,14 +867,14 @@ void ZoombiniInteractive::executeDeparture() {
 	_departureState = ZmbDepartureState::kIdle;
 
 	if (_vm->_state->inPracticeMode()) {
-		// A completed practice puzzle discards its temporary pack and returns directly to RodMap;
-		// it must not save the pack, advance a route, or use Xfer.
+		// A completed practice puzzle discards its temporary pack without saving it, advancing a route, or using Xfer.
 		ZmbStateActivePack &activePack = _vm->_state->getCurrentState()._zmbPackActive;
 		activePack.clearEntries();
 		activePack.setSkipOccupiedEntries(true);
 		activePack.setSkipUnoccupiedEntries(true);
 
-		_vm->setNextPage(ZoombiniPageType::kRodMap);
+		if (!_vm->finishV10BrDemoComponent())
+			_vm->setNextPage(ZoombiniPageType::kRodMap);
 	} else {
 		// Write snoid runners back to active pack and route non-occupied to resting packs.
 		// BC1/BC2 override this with their own save+snapshot logic.
@@ -1130,7 +1130,8 @@ void ZoombiniInteractive::onMapButtonActivated() {
 	saveStateBeforeMapTransition();
 	_vm->_state->getCurrentState()._isDirty = true;
 
-	_vm->setNextPage(ZoombiniPageType::kRodMap);
+	if (!_vm->finishV10BrDemoComponent())
+		_vm->setNextPage(ZoombiniPageType::kRodMap);
 	close();
 }
 
@@ -1543,10 +1544,16 @@ void ZoombiniInteractive::runAmbientSoundDriver() {
 	// original cache-release pass has no additional resource to discard here.
 	ambientState._preloadCounter = (ambientState._preloadCounter + 1) % 16;
 
+	const ZmbResource ambientResource(ZmbResource::kSystem, sndId);
+	if (_vm->isDemo() && !_vm->hasResource(ID_SND, ambientResource)) {
+		ambientState._lastSoundId = sndId;
+		return;
+	}
+
 	// Keep ambient sounds as explicit ownerless queue candidates.
 	// Alone they play normally; while a feature has opted into shared arbitration,
 	// they compete with it instead of bypassing the queue through a parallel stream.
-	queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, sndId));
+	queueScriptSoundForNextRenderPass(ambientResource);
 	ambientState._lastSoundId = sndId;
 }
 

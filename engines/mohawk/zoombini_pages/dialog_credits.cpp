@@ -153,11 +153,14 @@ void ZoombiniDialogCredits::loadFeatures() {
 					ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
 					hooksBackground);
 
-	Audio::SoundHandle *creditsMusicHandle = _vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound20104_TownBGM),
-																	   Audio::Mixer::SoundType::kMusicSoundType, true);
-	if (creditsMusicHandle) {
-		_creditsMusicHandle = *creditsMusicHandle;
-		_hasCreditsMusicHandle = true;
+	const ZmbResource creditsMusic(ZmbResource::kSystem, kSysResSound20104_TownBGM);
+	// Some demos omit the authored Credits BGM and show this dialog in silence.
+	if (!_vm->isDemo() || _vm->hasResource(ID_SND, creditsMusic)) {
+		Audio::SoundHandle *creditsMusicHandle = _vm->_sound->playSound(creditsMusic, Audio::Mixer::SoundType::kMusicSoundType, true);
+		if (creditsMusicHandle) {
+			_creditsMusicHandle = *creditsMusicHandle;
+			_hasCreditsMusicHandle = true;
+		}
 	}
 }
 

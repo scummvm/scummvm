@@ -20,13 +20,18 @@
  */
 
 #include "common/compression/vise.h"
+#include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/platform.h"
 #include "common/savefile.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
+#include "gui/message.h"
 #include "director/director.h"
 #include "director/movie.h"
+#include "director/score.h"
+#include "director/util.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xtras/s/smacker.h"
 
@@ -190,29 +195,112 @@ struct SaveFilePath {
 	{ nullptr, Common::kPlatformUnknown, nullptr },
 };
 
-static void quirkSmacker(const Common::String &whichDocument) {
+static bool quirkSmacker(const Common::String &whichDocument) {
 	Common::StringTokenizer tok(whichDocument);
 	Common::String videoFile = tok.nextToken();
 	SmackerXtra::playSmacker(videoFile, g_director->getCurrentMovie()->_movieRect, true);
+	return true;
+}
+
+// The Director launcher opens the playable Mohawk target through Lingo.
+static bool quirkLingoZoombiniDemo(const Common::String &whichDocument) {
+	const char *launcherExtra = g_director->getExtra();
+	if (!launcherExtra) {
+		warning("quirkLingoZoombiniDemo(): Launcher variant is missing");
+		return false;
+	}
+
+	// Map the launcher variant to the playable Mohawk demo's detection label.
+	const bool isV10BrDemo = strstr(launcherExtra, "v1.0BR") != nullptr;
+	const bool isV11UsDemo = strstr(launcherExtra, "v1.1US") != nullptr;
+	const Common::Path demoExecPath = ConfMan.getPath("path").normalize();
+	Common::String demoExecExtra;
+	if (isV10BrDemo) {
+		// The v1.0BR's open call passes a path to "zoombini.exe".
+		if (!Common::Path(whichDocument, '\\').baseName().equalsIgnoreCase("zoombini.exe"))
+			return false;
+		demoExecExtra = "v1.0BR Demo";
+	} else if (isV11UsDemo) {
+		if (!whichDocument.empty())
+			return false;
+		demoExecExtra = "v1.1US Demo";
+	} else {
+		warning("quirkLingoZoombiniDemo(): Unsupported launcher variant '%s'", launcherExtra);
+		return false;
+	}
+
+	// The Director detection entry describes only the launcher.
+	// Find the related and registered Mohawk component to daisy-chain.
+	Common::String target;
+	for (const auto &entry : ConfMan.getGameDomains()) {
+		const Common::ConfigManager::Domain &domain = entry._value;
+		// Do not check command-line targets, they are not player-registered launcher entries.
+		if (domain.contains("id_came_from_command_line"))
+			continue;
+
+		Common::String engineId;
+		Common::String gameId;
+		Common::String extra;
+		Common::String platform;
+		Common::String path;
+		if (!domain.tryGetVal("engineid", engineId) || !domain.tryGetVal("gameid", gameId) ||
+			!domain.tryGetVal("extra", extra) || !domain.tryGetVal("platform", platform) || !domain.tryGetVal("path", path))
+			continue;
+		if (engineId != "mohawk" || gameId != "zoombini" || extra != demoExecExtra || Common::parsePlatform(platform) != g_director->getPlatform())
+			continue;
+		if (Common::Path::fromConfig(path).normalize().equalsIgnoreCase(demoExecPath)) {
+			target = entry._key;
+			break;
+		}
+	}
+
+	// The Director demo can continue only after its playable component has been added separately.
+	// If the target is not available, alert the user and return.
+	if (target.empty()) {
+		warning("quirkLingoZoombiniDemo(): No registered Mohawk demo target found at '%s'", demoExecPath.toString().c_str());
+		GUI::MessageDialog dialog(_("To continue, add the demo's Mohawk playable target in the ScummVM launcher."));
+		dialog.runModal();
+		return true;
+	}
+
+	// Daisy-chain
+	// v1.0BR: Director -> Mohawk -> Director
+	// v1.1US: Director -> Mohawk
+	debugC(1, kDebugLingoExec, "quirkLingoZoombiniDemo(): Chaining to ScummVM target '%s'", target.c_str());
+	ChainedGamesMan.push(target);
+	if (isV10BrDemo) // The queue runs Mohawk first, then resumes the v1.0BR Director launcher.
+		ChainedGamesMan.push(ConfMan.getActiveDomainName());
+	ConfMan.setBool("confirm_exit", false, Common::ConfigManager::kTransientDomain);
+
+	Common::Event event;
+	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+	g_system->getEventManager()->pushEvent(event);
+
+	// Consume the queued return event right away so the base run loop does not need a tail hook.
+	// This sets the return-to-launcher flag used by scummvm_main to pop the chained target.
+	g_director->processSysEvents();
+	if (g_director->getCurrentMovie() && g_director->getCurrentMovie()->getScore())
+		g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+	return true;
 }
 
 struct LingoOpenWrapper {
 	const char *target;
 	Common::Platform platform;
 	const char *application;
-	void (*quirk)(const Common::String &whichDocument);
+	bool (*quirk)(const Common::String &whichDocument);
 } const lingoOpenWrappers[] = {
 	{"noir", Common::kPlatformWindows, "C:\\SPLAY", quirkSmacker },
+	{"zoombini", Common::kPlatformWindows, "zoom.exe", quirkLingoZoombiniDemo },
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr }
 };
 
 bool DirectorEngine::lingoOpenWrapper(const char *target, Common::Platform platform, const Common::String &whichApplication, const Common::String &whichDocument) {
 	for (auto q = lingoOpenWrappers; q->target != nullptr; q++) {
+		// Target names are user-editable, so also check the detected game ID, which is consistent.
 		if (q->platform == Common::kPlatformUnknown || q->platform == platform)
-			if (!strcmp(q->target, target) && whichApplication.equalsIgnoreCase(q->application)) {
-				q->quirk(whichDocument);
-				return true;
-				break;
+			if ((!strcmp(q->target, target) || !strcmp(q->target, getGameId())) && whichApplication.equalsIgnoreCase(q->application)) {
+				return q->quirk(whichDocument);
 			}
 	}
 	return false;
@@ -241,6 +329,12 @@ static void quirkForceFileIOXtra() {
 
 static void quirkVideoForWindowsPalette() {
 	g_director->_vfwPaletteHack = true;
+}
+
+static void quirkZoombiniV11UsDemo() {
+	// Zoombinis v1.1US Demo requires stopMovie event to be fired precisely at movie's end frame.
+	if (strstr(g_director->getExtra(), "v1.1US") != nullptr)
+		g_director->_dispatchStopMovieAtEnd = true;
 }
 
 static void quirkHollywoodHigh() {
@@ -390,6 +484,9 @@ const struct Quirk {
 	// McKenzie & Co. uses a greyscale palette in 8-bit mode, along with the standard 16 colour Windows palette.
 	// Remove the 16-colours from the video decoder.
 	{"mckenzie", Common::kPlatformWindows, &quirkVideoForWindowsPalette },
+
+	// The v1.1 US Zoombinis demo opens its playable component from stopMovie after the last frame.
+	{ "zoombini", Common::kPlatformWindows, &quirkZoombiniV11UsDemo },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
