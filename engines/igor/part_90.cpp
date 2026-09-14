@@ -51,7 +51,7 @@ void IgorEngine::PART_90() {
 		_font.drawString(_screenVGA, str, 2, 187, 0xF5, 0, 0);
 		break;
 	}
-    fadeInPalette(768);
+    fadeIn(768);
     while (!_inputVars[kInputEscape]) {
 		waitForTimer();
 		if (_inputVars[kInputOptions]) {

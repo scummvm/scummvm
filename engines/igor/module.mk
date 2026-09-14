@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	part_90.o \
 	text.o \
 	part_main.o \
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_IGOR), DYNAMIC_PLUGIN)

@@ -33,7 +33,7 @@ void IgorEngine::PART_05() {
 	{
 		memcpy(_screenVGA, _screenLayer1, 46080);
 		drawVerbsPanel();
-		fadeInPalette(720);
+		fadeIn(720);
 	}
 
 

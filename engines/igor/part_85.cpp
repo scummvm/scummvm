@@ -23,6 +23,7 @@
 namespace Igor {
 
 static int VAR_CURRENT_TALKING_ACTOR;
+static bool VAR_WATER_SOUND_PLAYING;
 
 
 void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
@@ -43,7 +44,7 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 
 
 void IgorEngine::PART_85() {
-	// playMusic(2);
+	playMusic(2);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	memcpy(_screenLayer2, _screenLayer1, 46080);
 	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);
@@ -52,10 +53,10 @@ void IgorEngine::PART_85() {
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
 	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
-	// VAR_WATER_SOUND_PLAYING = true;
-	// playSound(17, 1);
+	VAR_WATER_SOUND_PLAYING = true;
+	playSound(17, 1);
 	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-	fadeInPalette(768);
+	fadeIn(768);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
@@ -111,8 +112,8 @@ void IgorEngine::PART_85() {
 	PART_85_HELPER_1(0, 0x7481, 18, 37, 20);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_2();
-	// VAR_WATER_SOUND_PLAYING = false;
-	// stopSound();
+	VAR_WATER_SOUND_PLAYING = false;
+	stopSound();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0x74CA, 0xA6C4, 1, 6, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
@@ -145,7 +146,7 @@ void IgorEngine::PART_85() {
 	PART_85_HELPER_1(0x74CA, 0xA6C4, 10, 24, 16);
 
 PART_85_EXIT:
-	// stopSound();
+	stopSound();
 	_gameState.dialogueTextRunning = false;
 	_inputVars[kInputEscape] = 0;
 	_walkData[0].setPos(155, 121, 4, 0);
@@ -204,12 +205,12 @@ void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {
 		scrollPalette(185, 191);
 		setPaletteRange(185, 191);
 	}
-	// if (!VAR_WATER_SOUND_PLAYING) {
-	// 	return;
-	// }
-	// if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
-	// 	playSound(17, 1);
-	// }
+	if (!VAR_WATER_SOUND_PLAYING) {
+		return;
+	}
+	if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
+		playSound(17, 1);
+	}
 }
 
 } // End of namespace Igor

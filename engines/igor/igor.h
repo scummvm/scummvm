@@ -37,6 +37,7 @@
 
 #include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
+#include "audio/mixer.h"
 
 #include "igor/detection.h"
 #include "igor/font.h"
@@ -312,6 +313,10 @@ private:
 	// MidiPlayer *_midiPlayer;
 
 	Common::File _ovlFile;
+	Common::File _sndFile;
+
+	Audio::SoundHandle _sfxHandle;
+	Audio::SoundHandle _speechHandle;
 
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
@@ -400,15 +405,19 @@ private:
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent);
 	void loadMainTexts();
 	const char *getString(int id) const;
-	void loadIgorFrames();
 
+	void startMusic(int cmf);
+	void playMusic(int num);
+	void updateMusic();
+	void playSound(int num, int type);
+	void stopSound();
+	void loadIgorFrames();
 
 	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
-
 
 	void PART_MAIN();
 	void PART_05();
@@ -462,7 +471,7 @@ private:
 	void SET_PAL_208_96_1();
 	void SET_PAL_240_48_1();
 
-	void fadeInPalette(int count);
+	void fadeIn(int count);
 	void fadeOutPalette(int count);
 
 	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);

@@ -78,7 +78,7 @@ void IgorEngine::SET_PAL_240_48_1() {
 	memcpy(_paletteBuffer + 240 * 3, PAL_48_1, 48);
 }
 
-void IgorEngine::fadeInPalette(int count) {
+void IgorEngine::fadeIn(int count) {
 	debugC(9, kDebugScreen, "fadeInPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	int m = 66;

@@ -63,6 +63,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.ovlFileName = "igor.exe";
 		_game.sfxFileName = "igor.dat";
 		_game.version = kIdSpaCD;
+
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 		_currentPart = 850;
 	}
@@ -76,7 +77,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 
 IgorEngine::~IgorEngine() {
 	free(_resourceEntries);
-	// free(_soundOffsets);
+	free(_soundOffsets);
 	free(_screenVGA);
 	for (int i = 0; i < 4; ++i) {
 		free(_facingIgorFrames[i]);
@@ -138,7 +139,7 @@ void IgorEngine::restart() {
 	// _dialogueChoiceSelected = 0;
 	// memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
-	// memset(_objectsState, 0, sizeof(_objectsState));
+	memset(_objectsState, 0, sizeof(_objectsState));
 	// memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	// memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
 	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));
@@ -159,7 +160,7 @@ void IgorEngine::restart() {
 	_roomCursorOn = true;
 	_currentCursor = 0;
 	// _dialogueCursorOn = true;
-	// _updateDialogue = 0;
+	_updateDialogue = 0;
 	_updateRoomBackground = 0;
 
 	_resourceEntriesCount = 0;
@@ -187,11 +188,15 @@ Common::Error IgorEngine::run() {
 		error("Unable to open '%s'", _game.ovlFileName);
 	}
 
+	if (!_sndFile.open(_game.sfxFileName)) {
+		error("Unable to open '%s'", _game.sfxFileName);
+	}
+
 	readTableFile();
 	loadMainTexts();
 	loadIgorFrames();
 
-	_gameState.talkMode = kTalkModeTextOnly;
+	_gameState.talkMode = kTalkModeSpeechAndText;
 	_gameState.talkSpeed = 3;
 	_talkSpeechCounter = 5;
 	_eventQuitGame = false;
@@ -203,7 +208,7 @@ Common::Error IgorEngine::run() {
 
 	PART_MAIN();
 	_ovlFile.close();
-	// _sndFile.close();
+	_sndFile.close();
 
 	return Common::kNoError;
 }

@@ -109,9 +109,9 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 		_talkDelay = -1;
 		_talkDelayCounter = 0;
 	}
-	// if (_gameState.talkMode == kTalkModeTextOnly) {
-	// 	playSound(24, 0);
-	// }
+	if (_gameState.talkMode != kTalkModeTextOnly) {
+		playSound(dt->sound, 0);
+	}
 	_gameState.dialogueTextRunning = true;
 	_inputVars[kInputSkipDialogue] = 0;
 }
