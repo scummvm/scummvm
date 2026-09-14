@@ -36,12 +36,11 @@ SpaceLogic::SpaceLogic() {
 
 void SpaceLogic::entering() {
 	// The original re-launches SPACE.EXE each time, always starting fresh
-	// at the station sector with a newly rolled galaxy, flying the shuttle
-	// out of the docking bay
+	// at the station sector with a newly rolled galaxy
 	_G(savegame)._sectorX = Data::SPACE_STATION_X;
 	_G(savegame)._sectorY = Data::SPACE_STATION_Y;
 	_G(savegame)._shipIndex = 2;
-	_G(cockpitSpeed) = 0;
+	_G(cockpitSpeed) = 5;
 	_G(savegame)._starmap.setup();
 
 	// Seed the player's own ship slot from the savegame. setupSpaceMap also

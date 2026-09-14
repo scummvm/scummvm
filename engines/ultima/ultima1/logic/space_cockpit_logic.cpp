@@ -259,8 +259,8 @@ bool SpaceCockpitLogic::pass() {
 	writeString("Center\n");
 
 	Data::SpaceStarfield &sf = _G(starfield);
-	sf._centerX = 0x9f;
-	sf._centerY = 0x4f;
+	sf._centerX = 320 / 2;
+	sf._centerY = 160 / 2;
 	sf._panX = sf._panY = 0;
 	redrawMap();
 	return true;
