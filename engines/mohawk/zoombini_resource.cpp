@@ -160,7 +160,7 @@ Common::String ZmbResource::toString() const {
 		archiveKind = '?';
 		break;
 	}
-	return Common::String::format("%c%d", archiveKind, _id);
+	return Common::String::format("%c:%d", archiveKind, _id);
 }
 
 } // End of namespace Mohawk
