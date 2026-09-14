@@ -67,6 +67,7 @@ int imageFrame;
 CycleList anim_cycle_list;
 bool has_cycles;
 int currentViewX, currentViewY;
+int boundaryLineColor;
 int concat_mode;
 bool stop_music_at_end;
 bool wait_for_music_at_end;
@@ -92,7 +93,7 @@ static int runVal1, runVal2, runVal3;
 static int runVal12;
 static int error_code;
 static int presentationBufferHeight;
-static bool presentationDrawBoundaryLines;
+static BoundaryLineMode presentationBoundaryLines;
 static bool presentationServiceFramesInline;
 
 /**
@@ -100,7 +101,9 @@ static bool presentationServiceFramesInline;
  */
 static void init_globals() {
 	anim_timer_init();
-	functions_init();
+	// The DOS viewers initialize the resource-controlled boundary flag on;
+	// Macintosh Rex uses a separate full-height presentation without lines.
+	functions_init(!g_engine->hasMacintoshInterface());
 	concat_mode = 0;
 	has_sound_file = false;
 	*sound_file_name = '\0';
@@ -114,6 +117,7 @@ static void init_globals() {
 	current_anim = nullptr;
 	current_anim_inter = nullptr;
 	has_cycles = false;
+	boundaryLineColor = -1;
 	viewing_at_y2 = 0;
 	hasSpeechAudio = false;
 	speechResourceId = -1;
@@ -190,14 +194,16 @@ static void run_animation(int animIndex) {
 		mouse_set_view_port(0, 0);
 	}
 
-	auto &screen = *g_engine->getScreen();
-	if (presentationDrawBoundaryLines && viewing_at_y &&
-			anim_list[animIndex].show_bars) {
-		screen.hLine(0, viewing_at_y - 2, 319, 253);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 253);
-	} else if (presentationDrawBoundaryLines && viewing_at_y) {
-		screen.hLine(0, viewing_at_y - 2, 319, 0);
-		screen.hLine(0, viewing_at_y + scr_work.y + 1, 319, 0);
+	boundaryLineColor = -1;
+	if (viewing_at_y) {
+		bool showLines = presentationBoundaryLines == kBoundaryLinesShown ||
+			(presentationBoundaryLines == kBoundaryLinesFromResource &&
+			anim_list[animIndex].show_bars);
+		boundaryLineColor = showLines ? 253 : 0;
+		g_engine->getScreen()->hLine(0, viewing_at_y - 2, 319,
+			boundaryLineColor);
+		g_engine->getScreen()->hLine(0, viewing_at_y + scr_work.y + 1,
+			319, boundaryLineColor);
 	}
 
 	buffer_fill(scr_work, 0);
@@ -635,18 +641,10 @@ done:
 	timer_remove();
 }
 
-void animview_main(const char *resName) {
-	Presentation presentation;
-	presentation.bufferHeight = 0;
-	presentation.drawBoundaryLines = true;
-	presentation.serviceFramesInline = false;
-	animview_main(resName, presentation);
-}
-
 void animview_main(const char *resName, const Presentation &presentation) {
 	char name[16];
 	presentationBufferHeight = presentation.bufferHeight;
-	presentationDrawBoundaryLines = presentation.drawBoundaryLines;
+	presentationBoundaryLines = presentation.boundaryLines;
 	presentationServiceFramesInline = presentation.serviceFramesInline;
 
 	init_globals();

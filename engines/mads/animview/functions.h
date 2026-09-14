@@ -50,7 +50,7 @@ extern bool do_not_clear_screen;
 /**
  * Initialize globals
  */
-extern void functions_init();
+extern void functions_init(bool showWhiteBars);
 
 /**
  * Adds an animation to the list of .aa files to show in sequence
