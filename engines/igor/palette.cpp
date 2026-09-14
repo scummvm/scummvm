@@ -69,16 +69,13 @@ void IgorEngine::updatePalette(int count) {
 	g_system->getPaletteManager()->setPalette(pal, 0, count / 3);
 }
 
-void IgorEngine::SET_PAL_240_48_1() {
 
-	uint8 pal[48];
-	for (int j = 0, i = 0; i < 48; ++i) {
-		pal[j++] = (PAL_48_1[i] << 2);// | (_currentPalette[i] >> 4);
-	// 	// if (((i + 1) % 3) == 0) {
-	// 	// 	pal[j++] = 0;
-	// 	// }
-	}
-	g_system->getPaletteManager()->setPalette(pal, 240, 16);
+void IgorEngine::SET_PAL_208_96_1() {
+	memcpy(_paletteBuffer + 208 * 3, PAL_96_1, 96);
+}
+
+void IgorEngine::SET_PAL_240_48_1() {
+	memcpy(_paletteBuffer + 240 * 3, PAL_48_1, 48);
 }
 
 void IgorEngine::fadeInPalette(int count) {

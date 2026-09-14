@@ -366,6 +366,7 @@ private:
 	int _dialogueDirtyRectSize;
 
 
+	uint8 _objectsState[112];
 	char _verbPrepositions[3][7];
 	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
 	char _globalObjectNames[35][MAX_OBJECT_NAME_LENGTH];
@@ -413,8 +414,10 @@ private:
 	void PART_05();
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
+
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
+	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();
 
 	void PART_90();
@@ -455,6 +458,7 @@ private:
 	void setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b);
 	void setPaletteRange(int startColor, int endColor);
 	void updatePalette(int count);
+	void SET_PAL_208_96_1();
 	void SET_PAL_240_48_1();
 
 	void fadeInPalette(int count);
@@ -546,6 +550,7 @@ extern const uint8 _mouseCursorMask[];
 extern const uint8 _mouseCursorData[];
 extern const uint8 PAL_IGOR_1[];
 extern const uint8 PAL_48_1[];
+extern const uint8 PAL_96_1[];
 
 } // End of namespace Igor
 

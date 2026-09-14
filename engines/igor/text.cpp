@@ -24,6 +24,10 @@ namespace Igor {
 
 const uint8 _talkDelays[] = { 0, 27, 22, 17, 12, 7, 0 };
 
+/**
+ * appends one DialogueText{num, count, sound} record into _dialogueTextsTable[] at index _dialogueTextsCount, then increments it.
+ * MAX_DIALOGUE_TEXTS = 6
+ */
 void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
 	assert(_dialogueTextsCount < MAX_DIALOGUE_TEXTS);
 	DialogueText *dt = &_dialogueTextsTable[_dialogueTextsCount];
@@ -78,8 +82,13 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	_dialogueDirtyRectY = talkY * 320;
 	_dialogueDirtyRectSize = dt->count * 11 * 320;
 	assert(_dialogueDirtyRectSize < 320 * 72);
+
+	/**
+	 * Clear previous text line
+	 */
 	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 	memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+
 	for (int i = 0; i < dt->count; ++i) {
 		const char *textLine = _globalDialogueTexts[dt->num + i];
 

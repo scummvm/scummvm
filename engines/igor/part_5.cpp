@@ -25,7 +25,6 @@ namespace Igor {
 void IgorEngine::PART_05() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
-	SET_PAL_240_48_1();
 
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	_updateRoomBackground = &IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND;

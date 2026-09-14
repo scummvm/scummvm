@@ -23,20 +23,50 @@
 namespace Igor {
 
 void IgorEngine::PART_MAIN() {
-	while (!g_engine->shouldQuit() && !_eventQuitGame) {
+	memset(_objectsState, 0, 112);
+	_objectsState[21] = 1;
+	_objectsState[49] = 1;
+
+    if (_currentPart != kStartupPart) { // boot param
+		SET_PAL_208_96_1();
+		SET_PAL_240_48_1();
+		drawVerbsPanel();
+		// drawInventory(1, 0);
+	}
+    do {
 		switch (_currentPart) {
 
         case 50:
         case 51:
         case 52:
-            PART_05();
+            PART_05();// SpringRock
             break;
+		case 60:
 		case 61:
-			PART_05(); // SpringRock
+		case 62:
+			PART_05();
 			break;
 
 		case 850: // Intro cutscene
+            memset(_screenVGA, 0, 64000);
+            _screenVGAVOffset = 24;
+			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
 			PART_85();
+            memset(_screenVGA + 46080, 0, 17920);
+            _nextTimer = _system->getMillis() + 1000 / 60;
+			for (int y = _screenVGAVOffset; y >= 0; --y) {
+				_system->copyRectToScreen(_screenVGA, 320, 0, y, 320, 145);
+				_system->updateScreen();
+				int diff = _nextTimer - _system->getMillis();
+				if (diff > 0) {
+					_system->delayMillis(diff);
+				}
+				_nextTimer = _system->getMillis() + 1000 / 60;
+			}
+            _screenVGAVOffset = 0;
+			_inputVars[kInputCursorXPos] = 160;
+			_inputVars[kInputCursorYPos] = 72;
+			_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
 			break;
 		case 900: // Logo slideshow
 		case 901:
@@ -50,7 +80,7 @@ void IgorEngine::PART_MAIN() {
 			error("Unknown or unhandled room part %d", _currentPart);
 			break;
 		}
-	}
+	} while (_currentPart != kInvalidPart && !_eventQuitGame);
 }
 
 } // End of namespace Igor

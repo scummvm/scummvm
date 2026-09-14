@@ -193,13 +193,14 @@ Common::Error IgorEngine::run() {
 
 	_gameState.talkMode = kTalkModeTextOnly;
 	_gameState.talkSpeed = 3;
+	_talkSpeechCounter = 5;
+	_eventQuitGame = false;
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	_eventQuitGame = false;
 	PART_MAIN();
 	_ovlFile.close();
 	// _sndFile.close();
