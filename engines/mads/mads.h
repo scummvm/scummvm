@@ -98,7 +98,7 @@ protected:
 
 	bool hasFeature(EngineFeature f) const override;
 
-	void pollEvents();
+	void pollEvents(bool presentScreen = true);
 	void checkForTimerFunction();
 
 public:
@@ -129,7 +129,7 @@ public:
 		return _screen;
 	}
 
-	bool hasPendingKey();
+	bool hasPendingKey(bool presentScreen = true);
 	int getKey();
 	void flushKeys();
 
