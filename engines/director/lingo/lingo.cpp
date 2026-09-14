@@ -242,6 +242,21 @@ Lingo::~Lingo() {
 	for (auto &it : _openXtrasState) {
 		delete it._value;
 	}
+
+	// Clear the global pointer while it still refers to this instance to prevent use-after-free.
+	//
+	// Some games round-trip between its own engine and Director engine.
+	// For example, Zoombini v1.0BR demo has a lifecycle of Director -> Mohawk -> Director.
+	// Failing to cleanup global Lingo instance causes the use-after-free crash:
+	// - In first Director session, g_lingo is set to a first Lingo instance.
+	// - When switching to a Mohawk session, the first Lingo instance is destroyed, leaving a dangling g_lingo.
+	// - When entering a second Director session, a Window event callback can be fired during stage setup,
+	//   while second Lingo instance is not yet created.
+	// - A dangling g_lingo would enter the Lingo-dependent event path at that point.
+	if (g_lingo == this)
+		g_lingo = nullptr;
+
+	debugC(1, kDebugLingoExec, "Lingo finalized");
 }
 
 void Lingo::reloadBuiltIns() {

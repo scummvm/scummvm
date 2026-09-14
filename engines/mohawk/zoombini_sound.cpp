@@ -47,6 +47,9 @@ Audio::SoundHandle *ZoombiniSound::playSound(ZmbResource resource, Audio::Mixer:
 		return nullptr;
 	}
 	if (!_vm->hasResource(ID_SND, resource)) {
+		// Demo scripts may retain requests for sounds omitted from their reduced archives.
+		if (_vm->isDemo())
+			return nullptr;
 		error("ZoombiniSound: required sound resource %s is missing", resource.toString().c_str());
 		return nullptr;
 	}

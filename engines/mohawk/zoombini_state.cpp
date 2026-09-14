@@ -3396,12 +3396,16 @@ int ZoombiniGameState::getAvailableSaveSlot() {
 
 void ZoombiniGameState::startNewGame(bool askSaveCurrentGame) {
 	ZoombiniPage *activePage = _vm->getActivePage();
-	if (!activePage || activePage->getPageCategory() != ZoombiniPageCategory::kInteractive || _journeyState._zmbGeneratedCount == 0)
+	if (!activePage || activePage->getPageCategory() != ZoombiniPageCategory::kInteractive)
+		return;
+
+	// Demos practice without a journey roster, so the generated-count gate applies to full releases only.
+	// This keeps the practice-mode alert reachable in demos while preserving the full-release guard.
+	if (!_vm->isDemo() && _journeyState._zmbGeneratedCount == 0)
 		return;
 
 	// Ctrl+N owns the save-current-game preflight. The Options New button does not.
-	if (askSaveCurrentGame &&
-		_vm->openMsgBoxDialog(ZoombiniMsgBoxType::kAskSaveCurrentGame) == ZoombiniDialogResult::kYes)
+	if (askSaveCurrentGame && _vm->openMsgBoxDialog(ZoombiniMsgBoxType::kAskSaveCurrentGame) == ZoombiniDialogResult::kYes)
 		_vm->openSaveDialog();
 
 	if (inPracticeMode()) {

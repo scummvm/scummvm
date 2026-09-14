@@ -46,10 +46,12 @@ public:
 	~ZoombiniInteractiveRodMap() override;
 	bool canOpenSaveLoadDialog() const override { return true; }
 
-	/** Initialize the current journey/practice map state. */
+	/** Open the route-map archive selected for the detected release. */
 	void open() override;
 	/** Select the map background bitmap for the detected release. */
 	void setBackgroundBitmap() override;
+	/** Initialize release-specific route-map state before loading its features. */
+	void initStates() override;
 	/** Load map, route, page-icon, and control features. */
 	void loadFeatures() override;
 	/** Return the original journey-map script-sound range priority. */
@@ -110,6 +112,8 @@ protected:
 	void clearHoveredPage(bool reloadPageIcons);
 	/** Return whether the route-map entry at the given index can be selected. */
 	bool isPageHoverable(uint32 pageIndex);
+	/** Return the fixed practice level for a v1.1 demo page, or zero when the page is unavailable. */
+	static uint16 getV11DemoPracticeLevel(ZoombiniPageType pageType);
 	/** Return whether practice mode may leave the map through the page type. */
 	bool isPracticeExitAvailable(ZoombiniPageType pageType) const;
 	/** Read the completed difficulty for a page from a saved state. */
