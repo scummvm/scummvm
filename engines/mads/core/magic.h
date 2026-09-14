@@ -78,9 +78,10 @@ extern void magic_map_to_grey_ramp(Palette *pal, int base_color, int num_colors,
 extern void magic_grey_ramp_palette(Palette &pal, int num_greys);
 extern void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int base_color, int num_colors, int base_grey, int num_greys,
-	int tick_delay, int steps);
+	int tick_delay, int steps, int fade_step_rate = 0);
 extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
-	int num_colors, int base_grey, int num_greys, int tick_delay, int steps);
+	int num_colors, int base_grey, int num_greys, int tick_delay, int steps,
+	int fade_step_rate = 0);
 
 /**
  * Picture-to-picture transition in which one of the screen

@@ -58,6 +58,14 @@ int magic_special_center_y = -1;
 int magic_low_fade_bound = 1;
 int magic_high_fade_bound = 252;
 
+static void magic_wait_for_fade_step(uint32 fade_base_time, int step,
+		int fade_step_rate) {
+	const uint32 deadline = fade_base_time +
+		((step + 1) * 1000 + fade_step_rate - 1) / fade_step_rate;
+	while (g_system->getMillis() < deadline)
+		g_engine->hasPendingKey();
+}
+
 
 void magic_get_grey_values(Palette *pal, byte *grey_value,
 	int base_color, int num_colors) {
@@ -200,7 +208,7 @@ void magic_grey_ramp_palette(Palette &pal, int num_greys) {
 void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int base_color, int num_colors,
 	int base_grey, int num_greys,
-	int tick_delay, int steps) {
+	int tick_delay, int steps, int fade_step_rate) {
 	int count;
 	int color;
 	int index;
@@ -210,6 +218,7 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int shift_sign;
 	long base_timing, now_timing;
 	long memory_needed;
+	uint32 fade_base_time = 0;
 	byte *work_memory = NULL;
 	Heap magic_heap;
 	byte *pal_index;
@@ -256,7 +265,10 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 		}
 	}
 
-	base_timing = timer_read_600();
+	if (fade_step_rate > 0)
+		fade_base_time = g_system->getMillis();
+	else
+		base_timing = timer_read_600();
 
 	for (step = 0; step < steps; step++) {
 		for (count = base_color; count < (base_color + num_colors); count++) {
@@ -275,12 +287,18 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 		if (g_engine->hasMacintoshInterface())
 			g_system->updateScreen();
 
-		do {
+		if (fade_step_rate > 0) {
 			if (!g_engine->hasMacintoshInterface())
 				g_engine->getScreen()->update();
-			now_timing = timer_read_600();
-		} while (now_timing < (base_timing + tick_delay));
-		base_timing = now_timing;
+			magic_wait_for_fade_step(fade_base_time, step, fade_step_rate);
+		} else {
+			do {
+				if (!g_engine->hasMacintoshInterface())
+					g_engine->getScreen()->update();
+				now_timing = timer_read_600();
+			} while (now_timing < (base_timing + tick_delay));
+			base_timing = now_timing;
+		}
 	}
 
 	if (map_pointer != NULL) {
@@ -299,7 +317,7 @@ done:
 void magic_fade_from_grey(RGBcolor *pal, Palette target,
 	int base_color, int num_colors,
 	int base_grey, int num_greys,
-	int tick_delay, int steps) {
+	int tick_delay, int steps, int fade_step_rate) {
 	int count;
 	int color;
 	int index;
@@ -309,6 +327,7 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 	int shift_sign;
 	long base_timing, now_timing;
 	long memory_needed;
+	uint32 fade_base_time = 0;
 	byte *work_memory = NULL;
 	Heap magic_heap;
 	byte *pal_index;
@@ -358,7 +377,10 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 		}
 	}
 
-	base_timing = timer_read_600();
+	if (fade_step_rate > 0)
+		fade_base_time = g_system->getMillis();
+	else
+		base_timing = timer_read_600();
 
 	for (step = 0; step < steps; step++) {
 		for (count = base_color; count < (base_color + num_colors); count++) {
@@ -377,12 +399,18 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 		if (g_engine->hasMacintoshInterface())
 			g_system->updateScreen();
 
-		do {
+		if (fade_step_rate > 0) {
 			if (!g_engine->hasMacintoshInterface())
 				g_engine->getScreen()->update();
-			now_timing = timer_read_600();
-		} while (now_timing < (base_timing + tick_delay));
-		base_timing = now_timing;
+			magic_wait_for_fade_step(fade_base_time, step, fade_step_rate);
+		} else {
+			do {
+				if (!g_engine->hasMacintoshInterface())
+					g_engine->getScreen()->update();
+				now_timing = timer_read_600();
+			} while (now_timing < (base_timing + tick_delay));
+			base_timing = now_timing;
+		}
 	}
 
 done:
