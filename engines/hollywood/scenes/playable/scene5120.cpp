@@ -51,7 +51,11 @@ const uint kScene5120ProjectorInstallDescriptorCount = 0x0c;
 const uint kScene5120ProjectorDescriptorCount = 0x31;
 const uint kScene5120ProjectorSpeechDescriptorCount = 5;
 const uint kScene5120TransformationDescriptorCount = 0x14;
+const byte kScene5120BottleSceneItem = 5;
+const byte kScene5120ShakerSceneItem = 6;
+const byte kScene5120IceBucketSceneItem = 12;
 const byte kScene5120TongsSceneItem = 13;
+const byte kScene5120LeverSceneItem = 15;
 const byte kScene5120CupSceneItem = 7;
 const byte kScene5120TongsInventoryItem = 0x56;
 const byte kScene5120FilmInventoryItem = 0x59;
@@ -214,13 +218,15 @@ bool Scene5120::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Usar boton inferior (use lower elevator button): exits back to mine elevator, scene 5100.
 		runElevatorExitToState(kScene5100ReturnState);
 		return true;
-	case 305: // Coger botella (take bottle): bottles stay on the bar.
+	case 305: // Coger botella (take bottle): Ron refuses to carry the bottles.
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 306: // Mirar botella (look at bottle): random fullness description.
 		beginSecondarySpeechLine(3, (byte)_random.getRandomNumber(2));
 		return true;
-	case 307: // Usar botella (use bottle): original no-op action slot.
+	case 307: // Usar botella (use bottle): restored refusal; originally silent.
+		if (_vm->restoredContentEnabled())
+			beginStaticSecondarySpeechLine(0x13, 0);
 		return true;
 	case 308: // Coger coctelera (take shaker): Ron leaves it for mixing drinks.
 		beginSecondarySpeechLine(5, 0);
@@ -255,9 +261,6 @@ bool Scene5120::dispatchCustomSceneAction(uint16 handlerId) {
 	case 318: // Mirar estanteria con peliculas (look at movie shelf): changes after projection.
 		beginSecondarySpeechLine(_vm->gameState().scene5110SalonTransformState < 2 ? 15 : 16, 0);
 		return true;
-	case 319: // Unreferenced callback-table gap: use the ice-bucket response if reached.
-		beginSecondarySpeechLine(18, 0);
-		return true;
 	case 320: // Mirar pantalla (look at screen).
 		beginSecondarySpeechLine(17, 0);
 		return true;
@@ -282,14 +285,17 @@ bool Scene5120::dispatchCustomSceneAction(uint16 handlerId) {
 	case 327: // Mirar hombre lobo (look at werewolf).
 		beginSecondarySpeechLine(22, 0);
 		return true;
-	case 328: // Coger palanca (take lever): fixed to the bottle shelf.
-		beginSecondarySpeechLine(23, 0);
+	case 328: // Coger palanca (take lever, restored).
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(23, 0);
 		return true;
-	case 329: // Usar palanca (use lever): describes its purpose.
-		beginSecondarySpeechLine(24, 0);
+	case 329: // Usar palanca (use lever, restored): same mixer entry as the shaker.
+		if (_vm->restoredContentEnabled())
+			runUseShaker();
 		return true;
-	case 330: // Mirar palanca (look at lever).
-		beginSecondarySpeechLine(24, 0);
+	case 330: // Mirar palanca (look at lever, restored).
+		if (_vm->restoredContentEnabled())
+			beginSecondarySpeechLine(24, 0);
 		return true;
 	case 331: // Usar pastillero/pastillero con iman con copa (use pillbox with glass): fills it with Nessie Boom.
 		runCocktailFillPillbox();
@@ -301,10 +307,12 @@ bool Scene5120::dispatchCustomSceneAction(uint16 handlerId) {
 		if (_vm->gameState().scene5110SalonTransformState >= 2)
 			beginSecondarySpeechLine(16, 0);
 		return true;
-	case 334: // Usar copa/pastillero variant: no extra effect.
+	case 334: // Usar pastillero bomba (con/sin iman) con copa.
+		// Both pillbox variants already contain Nessie Boom; Ron refuses to add more.
 		beginSecondarySpeechLine(25, 2);
 		return true;
-	case 335: // Usar copa/pastillero variant: asks to empty the pillbox first.
+	case 335: // Usar pastillero con copa.
+		// The unopened pillbox still contains Dr. Mabuse's pills; empty it first.
 		beginSecondarySpeechLine(25, 3);
 		return true;
 	default:
@@ -388,6 +396,23 @@ bool Scene5120::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	rebuildWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	if (_vm->restoredContentEnabled()) {
+		// The original maps the bottle to the armchair, leaving its actions unreachable.
+		const SceneActionTarget iceBucketTarget = _hotspots.actionTarget(kScene5120IceBucketSceneItem);
+		_hotspots.setActionTarget(kScene5120BottleSceneItem,
+			iceBucketTarget.interactionPoint, iceBucketTarget.approachPoint);
+		_hotspots.setActionInteraction(kScene5120BottleSceneItem,
+			iceBucketTarget.interactionPoint, iceBucketTarget.facing);
+		_hotspots.addOverrideRectHotspot(kScene5120BottleSceneItem, Common::Rect(414, 292, 429, 337));
+
+		// Give the machine's left handle its unused lever actions.
+		const SceneActionTarget shakerTarget = _hotspots.actionTarget(kScene5120ShakerSceneItem);
+		_hotspots.setActionTarget(kScene5120LeverSceneItem,
+			shakerTarget.interactionPoint, shakerTarget.approachPoint);
+		_hotspots.setActionInteraction(kScene5120LeverSceneItem,
+			shakerTarget.interactionPoint, shakerTarget.facing);
+		_hotspots.addOverrideRectHotspot(kScene5120LeverSceneItem, Common::Rect(312, 140, 323, 160));
+	}
 	updateElevatorButtonActionTargets(false);
 	return true;
 }
