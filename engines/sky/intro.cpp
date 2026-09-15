@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "engines/engine.h"
 
 #include "sky/disk.h"
 #include "sky/intro.h"
@@ -37,6 +38,8 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+
+#include "video/qt_decoder.h"
 
 namespace Sky {
 
@@ -689,6 +692,35 @@ bool Intro::doIntro(bool floppyIntro) {
 			return false;
 	}
 	return true;
+}
+
+void Intro::doIbassIntro(Common::String filename) {
+	Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
+	if (!qtDecoder->loadFile(Common::Path(filename)))
+		error("Couldn't open %s", filename.c_str());
+
+	bool continuePlaying = true;
+	qtDecoder->start();
+	int totalFrames = qtDecoder->getFrameCount();
+	while (!qtDecoder->endOfVideo() && !SkyEngine::shouldQuit() && continuePlaying) {
+		if (totalFrames > 0 && qtDecoder->getCurFrame() >= (totalFrames - 2))
+			break;
+		if (qtDecoder->needsUpdate()) {
+			const Graphics::Surface *frame = qtDecoder->decodeNextFrame();
+			if (frame) {
+				Graphics::Surface *convertedFrame = frame->convertTo(_system->getScreenFormat());
+				_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, 0, 0, convertedFrame->w, convertedFrame->h);
+				_system->updateScreen();
+				convertedFrame->free();
+			}
+		}
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event))
+			if (event.type == Common::EVENT_KEYDOWN)
+				continuePlaying = false;
+		_system->delayMillis(10);
+	}
+	delete qtDecoder;
 }
 
 bool Intro::nextPart(uint16 *&data) {
