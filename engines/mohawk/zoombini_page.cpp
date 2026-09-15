@@ -138,9 +138,11 @@ void ZoombiniPage::close() {
 }
 
 void ZoombiniPage::closeForQuit() {
+	if (_isClosed)
+		return;
+
 	restoreSnoidDragFidgets();
 	// Run the active page's palette cleanup after the save-before-quit prompt.
-	// Do not let an already-closed page suppress this shutdown-specific fade.
 	if (_pageCategory != ZoombiniPageCategory::kDialog)
 		_vm->_sound->releaseAllLoadedSounds();
 	onFadeOut();
