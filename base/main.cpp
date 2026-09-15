@@ -334,6 +334,10 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 	// Inform backend that the engine finished
 	system.engineDone();
 
+	// Purge queued input events that may remain from the engine (such as key-up)
+	system.getEventManager()->purgeKeyboardEvents();
+	system.getEventManager()->purgeMouseEvents();
+
 	// Clean up any game-specific keymaps
 	keymapper->cleanupGameKeymaps();
 
