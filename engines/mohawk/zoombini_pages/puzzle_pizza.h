@@ -22,6 +22,8 @@
 #ifndef MOHAWK_ZOOMBINI_PAGES_PUZZLE_PIZZA_H
 #define MOHAWK_ZOOMBINI_PAGES_PUZZLE_PIZZA_H
 
+#include "common/hashmap.h"
+
 #include "mohawk/zoombini_pages/puzzle_base.h"
 
 namespace Mohawk {
@@ -238,7 +240,6 @@ private:
 		kResSound7007_ToppingButton5 = 7007,
 		kResSound8000_ArnoSpeechBase = 8000,
 		kResSound8040_ArnoSpeechLast = 8040,
-		kResSound8040_DeliverySfx = 8040,
 		kResSound9000_WillaSpeechBase = 9000,
 		kResSound9033_WillaSpeechLast = 9033,
 		kResSound10000_ShylerSpeechBase = 10000,
@@ -525,7 +526,7 @@ private:
 	/** Link active topping runners into the authored display order. */
 	void linkToppingRunners();
 	/** Restore a seated troll's accepted-pizza stack. */
-	void linkSettledAcceptedToppingStack(int16 orderLine);
+	void linkSettledAcceptedToppingStack(TrollOrderLine orderLine);
 	/** Prepare topping runner hotspots for the current mask. */
 	void toppingRunner_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Prepare order feature hotspots for the current order state. */
@@ -542,10 +543,10 @@ private:
 	// --- Callback event handlers ---
 	/** Process question-runner and Willa delivery-result callbacks. */
 	void handleZmbExitEvent(ZmbFeature *feature, int16 eventCode);
-	/** Process a delivery Zoombini callback. */
-	void handleZmbDeliveryEvent(ZmbFeature *feature, int16 eventCode);
+	/** Process a Postman Zoombini callback. */
+	void handlePostmanDeliveryEvent(ZmbFeature *feature, int16 eventCode);
 	/** Mark an order line complete and advance its phase. */
-	void handleOrderLineComplete(int16 orderLine);
+	void handleOrderLineComplete(TrollOrderLine orderLine);
 	/** Restore active-pack Snoids before the shared departure writer runs. */
 	void resetActivePackForDeparture();
 
@@ -676,8 +677,12 @@ private:
 	// -----------------------------------------------------------------------
 	// Troll order state
 	// -----------------------------------------------------------------------
-	/** Lifecycle state of the Arno, Willa, and Shyler order lines. */
-	TrollOrderState _trollOrderStates[3] = {};
+	/** Hash functor for the @ref TrollOrderLine keys used by @ref _trollOrderStates. */
+	struct TrollOrderLineHash : public Common::UnaryFunction<TrollOrderLine, uint> {
+		uint operator()(const TrollOrderLine k) const { return static_cast<uint>(k); }
+	};
+	/** Lifecycle state keyed by troll order line; absent entries are @ref TrollOrderState::kInactive00. */
+	Common::HashMap<TrollOrderLine, TrollOrderState, TrollOrderLineHash> _trollOrderStates;
 
 	// -----------------------------------------------------------------------
 	// Delivery tracking
@@ -685,7 +690,7 @@ private:
 	/** Zero-based pack sequence index of the current deliverer. */
 	int16 _delivererSequenceIdx = -1;
 	/** Whether the latest non-exact attempt remained within the mistake allowance. */
-	bool _delivererSurvivedAttempt = false;
+	bool _postmanSurvivedAttempt = false;
 	/** Transient counter marking the attempt that consumed the final safe mistake. */
 	int16 _finalSafeAttemptCounter = 0;
 	/** Whether no pack Snoid remains available as a deliverer. */
