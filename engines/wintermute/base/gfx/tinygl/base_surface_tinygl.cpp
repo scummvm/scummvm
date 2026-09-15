@@ -182,8 +182,10 @@ bool BaseSurfaceTinyGL::loadImage() {
 	}
 	Common::String filename = _filename;
 
+	Graphics::PixelFormat format = _texture2D ? BaseEngine::getRenderer()->getPixelFormat(false) : Graphics::PixelFormat::createFormatRGBA32();
+
 	BaseImage img = BaseImage();
-	if (!img.loadFile(filename)) {
+	if (!img.loadFile(filename, format)) {
 		return false;
 	}
 
@@ -198,19 +200,6 @@ bool BaseSurfaceTinyGL::loadImage() {
 		_imageData->free();
 		delete _imageData;
 		_imageData = nullptr;
-	}
-
-	_imageData = img.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32(), img.getPalette(), img.getPaletteCount());
-
-	if (filename.matchString("savegame:*g", true)) {
-		uint8 r, g, b, a;
-		for (int x = 0; x < _imageData->w; x++) {
-			for (int y = 0; y < _imageData->h; y++) {
-				_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
-				uint8 grey = (uint8)((0.2126f * r + 0.7152f * g + 0.0722f * b) + 0.5f);
-				_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, grey, grey, grey));
-			}
-		}
 	}
 
 	if (filename.hasSuffix(".bmp")) {
@@ -229,6 +218,23 @@ bool BaseSurfaceTinyGL::loadImage() {
 	} else if (img.getSurface()->format.aBits() == 0) {
 		// generic WME Lite does not use colorkey for non-BMPs with transparency
 		needsColorKey = true;
+	}
+
+	if (_texture2D && (needsColorKey || _maskData)) {
+		_imageData = img.getSurface()->convertTo(BaseEngine::getRenderer()->getPixelFormat(true), img.getPalette(), img.getPaletteCount());
+	} else {
+		_imageData = img.getSurface()->convertTo(format, img.getPalette(), img.getPaletteCount());
+	}
+
+	if (filename.matchString("savegame:*g", true)) {
+		uint8 r, g, b, a;
+		for (int x = 0; x < _imageData->w; x++) {
+			for (int y = 0; y < _imageData->h; y++) {
+				_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
+				uint8 grey = (uint8)((0.2126f * r + 0.7152f * g + 0.0722f * b) + 0.5f);
+				_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, grey, grey, grey));
+			}
+		}
 	}
 
 	if (needsColorKey) {
@@ -422,7 +428,7 @@ bool BaseSurfaceTinyGL::setAlphaImage(const char *filename) {
 
 	Graphics::AlphaType type = alphaImage->getSurface()->detectAlpha();
 	if (type != Graphics::ALPHA_OPAQUE) {
-		_maskData = alphaImage->getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32());
+		_maskData = alphaImage->getSurface()->convertTo(BaseEngine::getRenderer()->getPixelFormat(true));
 	}
 
 	delete alphaImage;
