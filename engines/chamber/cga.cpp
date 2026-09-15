@@ -172,7 +172,7 @@ void CGARenderer::blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	if (!mainSurface) {
 		mainSurface = new Graphics::Surface();
 	}
-	if (g_vm->_renderMode == Common::kRenderCGA) {
+	if (g_vm->_renderMode != Common::kRenderHercG && g_vm->_renderMode != Common::kRenderHercA) {
 		if (mainSurface->w != g_vm->_screenW) {
 			mainSurface->free();
 			mainSurface->create(g_vm->_screenW, g_vm->_screenH, Graphics::PixelFormat::createFormatCLUT8());
