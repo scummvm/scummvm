@@ -21,8 +21,30 @@
 #include "igor/igor.h"
 
 namespace Igor {
+void IgorEngine::EXEC_MAIN_ACTION(int action) {
+	switch (action) {
+	case 0:
+	case 1:
+        break;
+    default:
+		warning("EXEC_MAIN_ACTION() Unhandled action %d", action);
+		break;
+    }
+}
+
+void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
+	switch (i) {
+	case 0:
+		_executeMainAction = p;
+		break;
+	case 1:
+		_executeRoomAction = p;
+		break;
+	}
+}
 
 void IgorEngine::PART_MAIN() {
+	SET_EXEC_ACTION_FUNC(0, &IgorEngine::EXEC_MAIN_ACTION);
 	memset(_objectsState, 0, 112);
 	_objectsState[21] = 1;
 	_objectsState[49] = 1;

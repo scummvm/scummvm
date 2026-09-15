@@ -305,6 +305,7 @@ struct WalkData {
 class IgorEngine : public Engine {
 public:
 
+	typedef void (IgorEngine::*ExecuteActionProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 private:
@@ -346,6 +347,8 @@ private:
 	RoomObjectArea _roomObjectAreasTable[MAX_ROOM_OBJECT_AREAS];
 	uint8 _roomActionsTable[0x2000];
 
+	ExecuteActionProc _executeMainAction;
+	ExecuteActionProc _executeRoomAction;
 
 	Action _currentAction;
 	uint8 _actionCode;
@@ -415,11 +418,14 @@ private:
 
 	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
 	void SET_DIALOGUE_TEXT(int start, int count);
+	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
+
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
 	void PART_MAIN();
+	void EXEC_MAIN_ACTION(int action);
 	void PART_05();
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
@@ -430,6 +436,8 @@ private:
 	void PART_06_HELPER_2();
 
 	void PART_06_HELPER_3();
+
+	void PART_06_HELPER_8(int frame);
 
 	void PART_06_HELPER_6(int num);
 
@@ -445,6 +453,9 @@ private:
 
 
 	void handleRoomInput();
+
+	void executeAction(int action);
+	void clearAction();
 	void formatActionSentence(uint8 color);
 	void drawActionSentence(const char *sentence, uint8 color);
 	void handleRoomIgorWalk();
@@ -460,6 +471,7 @@ private:
 	int lookupScale(int xOffset, int yOffset, int h) const;
 	void lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const;
 
+	void buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY);
 	void buildWalkPathArea(int srcX, int srcY, int dstX, int dstY);
 	int getVerticalStepsCount(int minX, int minY, int maxX, int maxY);
 	int getHorizontalStepsCount(int minX, int minY, int maxX, int maxY);
@@ -490,6 +502,7 @@ private:
 	void decodeRoomAreas(const uint8 *p, int count);
 	void decodeRoomMask(const uint8 *p);
 
+	int getPart() const { return _currentPart / 10; }
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
 
@@ -503,6 +516,7 @@ private:
 	void decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText = false);
 
 	void setRoomWalkBounds(int x1, int y1, int x2, int y2);
+	void fixWalkPosition(int *x, int *y);
 
 	void buildWalkPath(int srcX, int srcY, int dstX, int dstY);
 
@@ -539,6 +553,8 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
+
+	void handlePause();
 
 	/**
 	 * Uses a serializer to allow implementing savegame

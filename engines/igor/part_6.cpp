@@ -84,6 +84,13 @@ void IgorEngine::PART_06_HELPER_3() {
 	}
 }
 
+void IgorEngine::PART_06_HELPER_8(int frame) {
+	const int offset = 23521;
+	for (int i = 0; i <= 48; ++i) {
+		const uint8 *src = _animFramesBuffer + 0x95C7 + i * 23 + frame * 1127;
+		memcpy(_screenVGA + i * 320 + offset, src, 23);
+	}
+}
 
 void IgorEngine::PART_06() {
 	_gameState.enableLight = 1;
@@ -141,9 +148,9 @@ void IgorEngine::PART_06() {
 		// 	handleRoomLight();
 		// }
 		PART_06_UPDATE_ROOM_BACKGROUND();
-		// if (compareGameTick(61) && _gameState.unkF && getRandomNumber(10) == 0) {
-			// PART_06_HELPER_8(getRandomNumber(4));
-		// }
+		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(10) == 0) {
+			PART_06_HELPER_8(getRandomNumber(4));
+		}
 		waitForTimer();
 	}
 	leavePartLoop();

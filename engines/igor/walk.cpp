@@ -1028,4 +1028,59 @@ void IgorEngine::handleRoomIgorWalk() {
 	}
 }
 
+void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
+	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
+	if (srcX != dstX || srcY != dstY) {
+		_walkData[0] = _walkData[_walkDataLastIndex];
+		_walkDataLastIndex = 1;
+		buildWalkPathArea(srcX, srcY, dstX, dstY);
+		--_walkDataLastIndex;
+	}
+}
+
+void IgorEngine::fixWalkPosition(int *x, int *y) {
+	int xPos = *x;
+	if (xPos < _roomWalkBounds.x1) {
+		xPos = _roomWalkBounds.x1;
+	}
+	if (xPos > _roomWalkBounds.x2) {
+		xPos = _roomWalkBounds.x2;
+	}
+	if (getPart() == 22) {
+		*x = xPos;
+		*y = _roomWalkBounds.y1;
+		return;
+	}
+	int yPos = *y;
+	if (getPart() == 13) {
+		if (xPos >= 92 && xPos <= 186 && yPos > 127) {
+			*x = xPos;
+			*y = 127;
+			return;
+		}
+		if (xPos >= 191 && xPos <= 289 && yPos > 127) {
+			*x = xPos;
+			*y = 127;
+			return;
+		}
+	}
+	// skip areas from top to bottom
+	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos < _roomWalkBounds.y2) {
+		++yPos;
+	}
+	if (getPart() == 17) {
+		if (yPos != 143 || _roomObjectAreasTable[_screenLayer2[45760 + xPos]].area != 0) {
+			*x = xPos;
+			*y = yPos;
+			return;
+		}
+	}
+	// skip areas from bottom to top
+	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos > _roomWalkBounds.y1) {
+		--yPos;
+	}
+	*x = xPos;
+	*y = yPos;
+}
+
 } // End of namespace Igor

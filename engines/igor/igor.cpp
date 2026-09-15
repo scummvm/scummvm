@@ -152,8 +152,8 @@ void IgorEngine::restart() {
 
 	memset(_roomObjectAreasTable, 0, sizeof(_roomObjectAreasTable));
 	memset(_roomActionsTable, 0, sizeof(_roomActionsTable));
-	// _executeMainAction = 0;
-	// _executeRoomAction = 0;
+	_executeMainAction = 0;
+	_executeRoomAction = 0;
 	// _previousMusic = 0;
 	// _musicData = 0;
 	// _scrollInventory = false;
@@ -226,7 +226,7 @@ void IgorEngine::enterPartLoop() {
 
 void IgorEngine::leavePartLoop() {
 	hideCursor();
-	// SET_EXEC_ACTION_FUNC(1, 0);
+	SET_EXEC_ACTION_FUNC(1, 0);
 	_updateRoomBackground = 0;
 
 }
@@ -252,6 +252,24 @@ void IgorEngine::runPartLoop() {
 	waitForTimer();
 }
 
+void IgorEngine::executeAction(int action) {
+	debugC(9, kDebugEngine, "executeAction %d", action);
+	assert(action < 200);
+	if (action <= 100) {
+		(this->*_executeMainAction)(action);
+	} else {
+		(this->*_executeRoomAction)(action);
+	}
+}
+
+
+void IgorEngine::handlePause() {
+	drawActionSentence(getString(STR_GamePaused), 0xFB);
+	do {
+		waitForTimer();
+	} while (!_inputVars[kInputPause]);
+	memset(_inputVars, 0, sizeof(_inputVars));
+}
 
 Common::Error IgorEngine::syncGame(Common::Serializer &s) {
 	// The Serializer has methods isLoading() and isSaving()

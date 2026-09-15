@@ -149,7 +149,7 @@ void IgorEngine::redrawVerb(uint8 verb, bool highlight) {
 void IgorEngine::handleRoomInput() {
 	if (_inputVars[kInputPause]) {
 		_inputVars[kInputPause] = 0;
-		// handlePause();
+		handlePause();
 	}
 	if (_inputVars[kInputOptions]) {
 		_inputVars[kInputOptions] = 0;
@@ -158,7 +158,7 @@ void IgorEngine::handleRoomInput() {
 	if (_inputVars[kInputSkipDialogue] && _gameState.dialogueTextRunning) {
 		_talkDelayCounter = _talkDelay;
 		if (_gameState.talkMode != kTalkModeTextOnly && _talkSpeechCounter > 2) {
-			// stopSound();
+			stopSound();
 			_talkSpeechCounter = -1;
 		}
 		_inputVars[kInputSkipDialogue] = 0;
@@ -227,8 +227,31 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 
-	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
 
+	//Action previousAction = _currentAction;
+	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
+		// int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
+		// if (_currentAction.verbType == 0) {
+		// 	_currentAction.object1Num = object;
+		// 	_currentAction.object1Type = kObjectTypeInventory;
+		// 	if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 10 + _currentAction.object1Num] != 0) {
+		// 		formatActionSentence(0);
+		// 		if (!actionHovering) {
+		// 			_currentAction.verbType = 1;
+		// 		}
+		// 		return;
+		// 	}
+		// 	if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 10 + _currentAction.object1Num] != 0) {
+		// 		formatActionSentence(0);
+		// 		if (!actionHovering) {
+		// 			_currentAction.verbType = 2;
+		// 		}
+		// 		return;
+		// 	}
+		// } else {
+		// 	_currentAction.object2Num = object;
+		// 	_currentAction.object2Type = kObjectTypeInventory;
+		// }
 	} else if (_inputVars[kInputCursorYPos] < 144) {
 		int area = _screenLayer2[_inputVars[kInputCursorYPos] * 320 + _inputVars[kInputCursorXPos]];
 		int object = _roomObjectAreasTable[area].object;
@@ -283,7 +306,81 @@ void IgorEngine::handleRoomInput() {
 		_actionCode = 0;
 		return;
 	}
+	if (_actionCode == 0) {
+		clearAction();
+		return;
+	}
+	formatActionSentence(1);
+	if (_currentAction.verbType == 0) {
+		if (_currentAction.object1Type == kObjectTypeRoom) {
+			_actionWalkPoint = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20 + 1];
+			if (_actionWalkPoint > 0) {
+				if (_currentAction.object1Num == 0) {
+					// no object selected, just walk
+					_walkToObjectPosX = _inputVars[kInputCursorXPos];
+					_walkToObjectPosY = _inputVars[kInputCursorYPos];
+					if (_roomObjectAreasTable[_screenLayer2[_walkToObjectPosY * 320 + _walkToObjectPosX]].area == 0) {
+						fixWalkPosition(&_walkToObjectPosX, &_walkToObjectPosY);
+					}
+				} else {
+					// walk to object
+					int offset = READ_LE_UINT16(_roomActionsTable + _roomDataOffsets.obj.walkPoints + _currentAction.object1Num * 2);
+					_walkToObjectPosX = offset % 320;
+					_walkToObjectPosY = offset / 320;
+					debugC(9, kDebugEngine, "handleRoomInput() walkToObject offset %d (0x%X)", offset, _roomDataOffsets.obj.walkPoints);
+				}
+				if (_gameState.igorMoving) {
+					// stop igor at the current position
+					_walkDataLastIndex = _walkDataCurrentIndex - 1;
+					_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
+					_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
+					_walkCurrentFrame = _walkData[_walkDataLastIndex].frameNum;
+					_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
+					WalkData::setNextFrame(_walkCurrentPos, _walkCurrentFrame);
+				} else {
+					--_walkDataLastIndex;
+					_walkDataCurrentPosX = _walkData[_walkDataLastIndex].x;
+					_walkDataCurrentPosY = _walkData[_walkDataLastIndex].y;
+					_walkCurrentPos = _walkData[_walkDataLastIndex].posNum;
+					_walkCurrentFrame = 1;
+				}
+				if (_walkDataCurrentPosX != _walkToObjectPosX || _walkDataCurrentPosY != _walkToObjectPosY) {
+					if (_roomDataOffsets.area.boxSize == 0) {
+						buildWalkPathSimple(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
+					} else {
+						buildWalkPath(_walkDataCurrentPosX, _walkDataCurrentPosY, _walkToObjectPosX, _walkToObjectPosY);
+					}
+					if (_actionWalkPoint != 3) {
+						_walkCurrentFrame = 0;
+						_walkData[_walkDataLastIndex].frameNum = 0;
+					}
+					if (_actionWalkPoint == 1) {
+						_walkCurrentPos = _roomActionsTable[_roomDataOffsets.obj.walkFacingPosition + _currentAction.object1Num];
+						_walkData[_walkDataLastIndex].posNum = _walkCurrentPos;
+					}
+					_walkDataCurrentIndex = 1;
+					_gameState.igorMoving = true;
+				}
+				return;
+			}
+		}
+		hideCursor();
+		// executeAction(_actionCode);
+		if (!_gameState.dialogueTextRunning) {
+			showCursor();
+		}
+		clearAction();
+		return;
+	}
+}
 
+
+void IgorEngine::clearAction() {
+	redrawVerb(_currentAction.verb, false);
+	memset(&_currentAction, 0, sizeof(_currentAction));
+	_currentAction.verb = kVerbWalk;
+	_actionCode = 0;
+	_actionWalkPoint = 0;
 }
 
 void IgorEngine::formatActionSentence(uint8 color) {
