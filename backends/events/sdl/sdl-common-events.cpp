@@ -25,7 +25,7 @@
 
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
@@ -36,6 +36,153 @@
 SdlEventSource::~SdlEventSource() {
 	closeJoystick();
 }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SdlEventSource::acquireImeCompositionControl() {
+	// Synchronize the first controlled scope with the existing native text-input
+	// state. SDL text input is also used for non-IME text such as dead keys and
+	// non-English layouts, so an acquisition must not unconditionally stop it.
+	if (_imeCompositionControlStateStack.empty()) {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+		_textInputEnabled = window && SDL_TextInputActive(window);
+#else
+		_textInputEnabled = SDL_IsTextInputActive() == SDL_TRUE;
+#endif
+	}
+
+	// Every nested owner starts with composition disabled. Preserve ordinary
+	// text input only when it was already active without composition. If the
+	// outer owner was composing, stopping text input below also cancels that
+	// unfinished native composition.
+	const ImeCompositionControlState previousState(_imeCompositionEnabled, _textInputEnabled);
+	const bool textInputEnabledWithoutComposition =
+		!previousState.compositionEnabled && previousState.textInputEnabled;
+	_imeCompositionControlStateStack.push(previousState);
+	_imeCompositionEnabled = false;
+	_textInputEnabled = textInputEnabledWithoutComposition;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::setImeCompositionArea(const Common::Rect &area) {
+	if (!_graphicsManager)
+		return;
+
+	const Common::Rect windowArea = _graphicsManager->convertOverlayToSdlWindow(area);
+	if (windowArea.isEmpty())
+		return;
+
+	SDL_Rect nativeArea;
+	nativeArea.x = windowArea.left;
+	nativeArea.y = windowArea.top;
+	nativeArea.w = windowArea.width();
+	nativeArea.h = windowArea.height();
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager->getWindow()->getSDLWindow();
+	if (!SDL_SetTextInputArea(window, &nativeArea, 0))
+		warning("Could not set SDL text input area: %s", SDL_GetError());
+#else
+	SDL_SetTextInputRect(&nativeArea);
+#endif
+}
+
+void SdlEventSource::setImeCompositionEnabled(bool enable) {
+	// The feature state is meaningful only inside a controlled input scope.
+	// Enabling it does not acquire another scope.
+	if (_imeCompositionControlStateStack.empty())
+		return;
+
+	const ImeCompositionControlState &previousState = _imeCompositionControlStateStack.top();
+	const bool textInputEnabledWithoutComposition =
+		!previousState.compositionEnabled && previousState.textInputEnabled;
+
+	if (!enable && _imeCompositionEnabled)
+		cancelImeComposition();
+
+	_imeCompositionEnabled = enable;
+	_textInputEnabled = enable || textInputEnabledWithoutComposition;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::cancelImeComposition() {
+	if (!_imeCompositionEnabled || !_textInputEnabled)
+		return;
+
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+	if (window && !SDL_ClearComposition(window))
+		warning("Could not clear SDL text composition: %s", SDL_GetError());
+#elif SDL_VERSION_ATLEAST(2, 0, 22)
+	SDL_ClearComposition();
+#else
+	// Older SDL 2 releases can only cancel composition by restarting text input.
+	_textInputEnabled = false;
+	applyNativeTextInputState();
+	_textInputEnabled = true;
+	applyNativeTextInputState();
+#endif
+}
+
+void SdlEventSource::releaseImeCompositionControl() {
+	if (_imeCompositionControlStateStack.empty())
+		return;
+
+	const ImeCompositionControlState previousState = _imeCompositionControlStateStack.pop();
+
+	// Do not let an unfinished composition owned by the closing scope leak into
+	// an outer text-input session.
+	if (_imeCompositionEnabled)
+		cancelImeComposition();
+
+	// Restore both parts of the saved state. The outermost pop therefore returns
+	// SDL to the native text-input state observed by the first acquisition.
+	_imeCompositionEnabled = previousState.compositionEnabled;
+	_textInputEnabled = previousState.textInputEnabled;
+	applyNativeTextInputState();
+}
+
+void SdlEventSource::applyNativeTextInputState() {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_Window *window = _graphicsManager ? _graphicsManager->getWindow()->getSDLWindow() : nullptr;
+	if (!window)
+		return;
+
+	if (_textInputEnabled) {
+		if (!SDL_TextInputActive(window) && !SDL_StartTextInput(window)) {
+			warning("Could not start SDL text input: %s", SDL_GetError());
+			_textInputEnabled = false;
+			_imeCompositionEnabled = false;
+		}
+	} else {
+		if (SDL_TextInputActive(window) && !SDL_StopTextInput(window))
+			warning("Could not stop SDL text input: %s", SDL_GetError());
+		SDL_FlushEvent(SDL_EVENT_TEXT_INPUT);
+		SDL_FlushEvent(SDL_EVENT_TEXT_EDITING);
+	}
+#else
+	if (_textInputEnabled) {
+		if (!SDL_IsTextInputActive()) {
+			SDL_StartTextInput();
+			if (!SDL_IsTextInputActive()) {
+				warning("Could not start SDL text input: %s", SDL_GetError());
+				_textInputEnabled = false;
+				_imeCompositionEnabled = false;
+			}
+		}
+	} else {
+		if (SDL_IsTextInputActive())
+			SDL_StopTextInput();
+		SDL_FlushEvent(SDL_TEXTINPUT);
+		SDL_FlushEvent(SDL_TEXTEDITING);
+#if SDL_VERSION_ATLEAST(2, 0, 22)
+		SDL_FlushEvent(SDL_TEXTEDITING_EXT);
+#endif
+	}
+#endif
+}
+
+#endif
 
 bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
 	_mouseX = x;

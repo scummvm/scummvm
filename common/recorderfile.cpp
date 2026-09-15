@@ -407,6 +407,11 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 			event.kbd.ascii = _tmpPlaybackFile.readUint16BE();
 			event.kbd.flags = _tmpPlaybackFile.readByte();
 			break;
+		case EVENT_IME_COMPOSITION:
+			// Recorder format 1 stores unknown events as timestamp-only records.
+			// FIXME: Serialize the transient payload after a later format adds sized event payloads.
+			event.time = _tmpPlaybackFile.readUint32BE();
+			break;
 		case EVENT_MOUSEMOVE:
 		case EVENT_LBUTTONDOWN:
 		case EVENT_LBUTTONUP:
@@ -599,6 +604,11 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 			_tmpRecordFile.writeSint32BE(event.kbd.keycode);
 			_tmpRecordFile.writeUint16BE(event.kbd.ascii);
 			_tmpRecordFile.writeByte(event.kbd.flags);
+			break;
+		case EVENT_IME_COMPOSITION:
+			// Recorder format 1 stores unknown events as timestamp-only records.
+			// FIXME: Serialize the transient payload after a later format adds sized event payloads.
+			_tmpRecordFile.writeUint32BE(event.time);
 			break;
 		case EVENT_MOUSEMOVE:
 		case EVENT_LBUTTONDOWN:
