@@ -1,0 +1,71 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4110_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4110_H
+
+#include "hollywood/scenes/playable/playable_scene.h"
+
+namespace Hollywood {
+
+class HollywoodEngine;
+
+class Scene4110 : public PlayableScene {
+public:
+	Scene4110(HollywoodEngine *vm);
+
+private:
+	void initializeCustomPreviewState() override;
+	void runCustomEntrySequence() override;
+	void runExitSideEffectsAfterLoop() override;
+	void prepareCustomGameplayLoop() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
+
+	bool bridgeOpened() const;
+	bool revealEntryPose(int x, int y, byte facing);
+	void resetBackgroundLayer();
+	void advanceBackgroundLayer(uint32 delta);
+	void advanceBackgroundTick();
+	void resetAmbientSounds();
+	void advanceAmbientSounds(uint32 delta);
+	void updateAmbientLoopSound();
+	void beginConditionalSpeechLine(uint16 falseRow, byte falseFrame, uint16 trueRow, byte trueFrame);
+	void runExitToScene4010();
+	void takeStraw();
+	void runAlternateStateSequence();
+	void runBridgeOpeningOverlay();
+	void patchActionMovementModes();
+
+	TimedAnimationChannel _backgroundChannel;
+	byte _backgroundSequence;
+	byte _backgroundFrameInSequence;
+	byte _backgroundRepeatCounter;
+	uint32 _ambientSoundTimerAccumulator;
+	byte _lastAmbientLoopCue;
+	byte _previousAmbientSoundCue;
+};
+
+} // End of namespace Hollywood
+
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4110_H
