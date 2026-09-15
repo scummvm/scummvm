@@ -543,11 +543,11 @@ Common::String ZoombiniPuzzleNet::debugGetAnswer() const {
 			const int16 cellRow = slotIdx / 25;
 			const int16 cellColumn = slotIdx % 25 / 5;
 			const int16 cellSubColumn = slotIdx % 5;
-			s += Common::String::format("    Answer Cell (r=%d, c=%d, sc=%d)\n", cellRow + 1, cellColumn + 1, cellSubColumn + 1);
+			s += Common::String::format("    Answer Cell (r%d, c%d, sc=%d)\n", cellRow + 1, cellColumn + 1, cellSubColumn + 1);
 		} else {
 			const int16 cellRow = slotIdx / 5;
 			const int16 cellColumn = slotIdx % 5;
-			s += Common::String::format("    Answer Cell (r=%d, c=%d)\n", cellRow + 1, cellColumn + 1);
+			s += Common::String::format("    Answer Cell (r%d, c%d)\n", cellRow + 1, cellColumn + 1);
 		}
 
 		for (int16 bIdx = kMudballSelectButtonSubColor; bIdx <= kMudballSelectButtonColor; bIdx++) {
