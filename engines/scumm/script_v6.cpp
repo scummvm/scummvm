@@ -561,7 +561,6 @@ void ScummEngine_v6::o6_eq() {
 
 // BACKYARD BASEBALL 2001 ONLINE CHANGES
 #if defined(USE_ENET) && defined(USE_BASIC_NET)
-	int offset = _scriptPointer - _scriptOrgPointer;
 	// WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
 	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
 	// "no special rules" and "3 innings".  This is a script bug which assumed to be fixed in later post-retail updates, but

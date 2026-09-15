@@ -46,8 +46,9 @@ struct FoolGameDescription;
 enum FoolVersion {
 	kFool11 = 1,
 	kFool20 = 2,
-	kFool30 = 4,
-	kFoolDemo10 = 8,
+	kFool201 = 4,
+	kFool30 = 8,
+	kFoolDemo10 = 16,
 };
 
 class FoolEngine : public Engine {

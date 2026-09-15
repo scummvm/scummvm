@@ -68,7 +68,7 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_clipArea.destSurface = _workScreen;
 
 	// Screen mask is only needed in v2 games
-	if (_vm->getGameID() != GID_RTZ) {
+	if (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_RSBESTNDE && _vm->getGameID() != GID_RSBUSYNDE) {
 		_screenMask = new Graphics::Surface();
 		_screenMask->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 		_maskDrawCtx.clipRect = Common::Rect(320, 200);
@@ -123,7 +123,7 @@ Screen::~Screen() {
 
 	delete _backgroundScreen;
 	delete _workScreen;
-	if (_vm->getGameID() != GID_RTZ)
+	if (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_RSBESTNDE && _vm->getGameID() != GID_RSBUSYNDE)
 		delete _screenMask;
 	delete _fx;
 }
@@ -131,7 +131,7 @@ Screen::~Screen() {
 void Screen::clearScreen() {
 	_backgroundScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_workScreen->fillRect(Common::Rect(0, 0, 320, 200), 0);
-	if (_vm->getGameID() != GID_RTZ)
+	if (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_RSBESTNDE && _vm->getGameID() != GID_RSBUSYNDE)
 		_screenMask->fillRect(Common::Rect(0, 0, 320, 200), 0);
 	_mask = 0;
 	_needPalette = true;
@@ -202,7 +202,8 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 	source = (byte *)sourceSurface->getBasePtr(0, startY);
 	dest = (byte *)clipInfo.destSurface->getBasePtr(x, y);
-	if (_vm->getGameID() != GID_RTZ)
+	// only set up maskp if game uses masking and mask requested in f.call
+	if (mask && (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_RSBESTNDE && _vm->getGameID() != GID_RSBUSYNDE))
 		maskp = (byte *)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
 	int32 sourcePitch, linePtrAdd, sourceAdd;
@@ -226,16 +227,14 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	for (int16 yc = 0; yc < clipHeight; yc++) {
 		linePtr = source + sourceAdd;
 		for (int16 xc = 0; xc < clipWidth; xc++) {
-			if (*linePtr && (_vm->getGameID() == GID_RTZ || (mask == 0 || (maskp && maskp[xc] == 0)))) {
-				if (*linePtr)
-					dest[xc] = *linePtr;
-			}
+			if (*linePtr && (! maskp || maskp[xc] == 0))
+				dest[xc] = *linePtr;
 			linePtr += linePtrAdd;
 		}
 
 		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
-		if (_vm->getGameID() != GID_RTZ)
+		if (maskp)
 			maskp += _maskDrawCtx.destSurface->pitch;
 	}
 
@@ -907,7 +906,7 @@ void Screen::printTextEx(const char *text, int16 x, int16 y, int16 fontNum, int1
 	setFont(oldFontNum);
 	_fontDrawCtx = oldFontDrawCtx;
 
-	if (_vm->getGameID() != GID_RTZ && _vm->getGameID() != GID_LGOP2) {
+	if (_vm->getGameID() == GID_MANHOLE || _vm->getGameID() == GID_RODNEY) {
 		_vm->sayText(text);
 	}
 }
