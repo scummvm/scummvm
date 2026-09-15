@@ -129,15 +129,15 @@ void ZoombiniPuzzlePizza::setDifficultyParams() {
 	_initialMistakeAllowance = kMistakeAllowance[_difficultyLevel - 1];
 
 	// Order line activation
-	_trollOrderStates[0] = TrollOrderState::kActive01; // Arno always active
+	_trollOrderStates[TrollOrderLine::kArno00] = TrollOrderState::kActive01; // Arno is always active
 	if (kPuzzleLevel2 <= _difficultyLevel)
-		_trollOrderStates[1] = TrollOrderState::kActive01;
+		_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kActive01;
 	else
-		_trollOrderStates[1] = TrollOrderState::kInactive00;
+		_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kInactive00;
 	if (kPuzzleLevel3 <= _difficultyLevel)
-		_trollOrderStates[2] = TrollOrderState::kActive01;
+		_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kActive01;
 	else
-		_trollOrderStates[2] = TrollOrderState::kInactive00;
+		_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kInactive00;
 }
 
 void ZoombiniPuzzlePizza::initStates() {
@@ -488,11 +488,11 @@ bool ZoombiniPuzzlePizza::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 														   _submittedMealToppings[4], _submittedMealToppings[5], _submittedMealToppings[6], _submittedMealToppings[7]);
 
 		drawBuiltinDebugPanel(Common::Rect(400, 1, 600, 80));
-		if (_trollOrderStates[0] == TrollOrderState::kActive01)
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01)
 			drawBuiltinDebugPanelText(arno, Common::Rect(400, 1, 600, 20));
-		if (_trollOrderStates[1] == TrollOrderState::kActive01)
+		if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01)
 			drawBuiltinDebugPanelText(willa, Common::Rect(400, 21, 600, 40));
-		if (_trollOrderStates[2] == TrollOrderState::kActive01)
+		if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01)
 			drawBuiltinDebugPanelText(shyler, Common::Rect(400, 41, 600, 60));
 		drawBuiltinDebugPanelText(meal, Common::Rect(400, 61, 600, 80));
 		return false;
@@ -728,10 +728,11 @@ bool ZoombiniPuzzlePizza::debugDoPageCommand(int argc, const char **argv, Common
 		return true;
 	}
 
-	_trollOrderStates[0] = TrollOrderState::kInactive00;
-	_trollOrderStates[1] = TrollOrderState::kInactive00;
-	_trollOrderStates[2] = TrollOrderState::kInactive00;
-	_trollOrderStates[orderLine] = TrollOrderState::kActive01;
+	const TrollOrderLine order = static_cast<TrollOrderLine>(orderLine);
+	_trollOrderStates[TrollOrderLine::kArno00] = TrollOrderState::kInactive00;
+	_trollOrderStates[TrollOrderLine::kWilla01] = TrollOrderState::kInactive00;
+	_trollOrderStates[TrollOrderLine::kShyler02] = TrollOrderState::kInactive00;
+	_trollOrderStates[order] = TrollOrderState::kActive01;
 	_allTrollOrdersMatched = false;
 	_delivererPoolExhausted = false;
 	_acceptedOrdersThisMeal = 0;
@@ -1007,7 +1008,7 @@ void ZoombiniPuzzlePizza::distributeToppings() {
 	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: assigned level %d toppings; Arno=%d, Willa=%d, Shyler=%d", _difficultyLevel,
 		   arnoToppingCount, willaToppingCount, shylerToppingCount);
 
-	// At maximum difficulty, create the four reject examples already present in the pit when the page opens.
+	// At Level 4, create the four reject examples already present in the pit when the page opens.
 	// Pick two toppings from the largest order and one from each remaining order, then cross them into four distinct pairs.
 	if (_difficultyLevel == kPuzzleLevel4) {
 		TrollOrderLine dominantOrderLine = TrollOrderLine::kArno00;
@@ -1026,21 +1027,21 @@ void ZoombiniPuzzlePizza::distributeToppings() {
 			dominantOrderToppingB = pickRandomToppingFromOrderLine(dominantOrderLine);
 		} while (dominantOrderToppingB == dominantOrderToppingA);
 
-		TrollOrderLine otherOrderLineA = TrollOrderLine::kWilla01;
-		TrollOrderLine otherOrderLineB = TrollOrderLine::kShyler02;
+		TrollOrderLine willaOrderLine = TrollOrderLine::kWilla01;
+		TrollOrderLine shylerOrderLine = TrollOrderLine::kShyler02;
 		switch (dominantOrderLine) {
 		case TrollOrderLine::kArno00:
 			break;
 		case TrollOrderLine::kWilla01:
-			otherOrderLineA = TrollOrderLine::kArno00;
+			willaOrderLine = TrollOrderLine::kArno00;
 			break;
 		case TrollOrderLine::kShyler02:
-			otherOrderLineA = TrollOrderLine::kArno00;
-			otherOrderLineB = TrollOrderLine::kWilla01;
+			willaOrderLine = TrollOrderLine::kArno00;
+			shylerOrderLine = TrollOrderLine::kWilla01;
 			break;
 		}
-		const int16 otherOrderToppingA = pickRandomToppingFromOrderLine(otherOrderLineA);
-		const int16 otherOrderToppingB = pickRandomToppingFromOrderLine(otherOrderLineB);
+		const int16 otherOrderToppingA = pickRandomToppingFromOrderLine(willaOrderLine);
+		const int16 otherOrderToppingB = pickRandomToppingFromOrderLine(shylerOrderLine);
 
 		createLevel4RejectExamples(dominantOrderToppingA, dominantOrderToppingB, otherOrderToppingA, otherOrderToppingB);
 	}
@@ -1075,8 +1076,7 @@ int16 ZoombiniPuzzlePizza::pickRandomToppingFromOrderLine(TrollOrderLine orderLi
 // Page setup registers and renders these persistent two-topping runners so all four are already visible in the reject pit when the page opens.
 // Their masks are the four pairings between two toppings from the largest troll order and one topping selected from each remaining order.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::createLevel4RejectExamples(int16 dominantOrderToppingA, int16 dominantOrderToppingB, int16 otherOrderToppingA,
-													 int16 otherOrderToppingB) {
+void ZoombiniPuzzlePizza::createLevel4RejectExamples(int16 dominantOrderToppingA, int16 dominantOrderToppingB, int16 otherOrderToppingA, int16 otherOrderToppingB) {
 	const int16 rejectExampleToppings[4][2] = {
 		{dominantOrderToppingA, otherOrderToppingA},
 		{dominantOrderToppingB, otherOrderToppingA},
@@ -1254,10 +1254,9 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 	if (feature == _arnoFeature) {
 		if (eventCode == kAnimEventM1_End && _arnoPhase != kPhaseNone)
 			_trollFeatureCompletedThisFrame = true;
-		const bool receivesDeliveryEvents = _arnoPhase == kPhaseDeliveryEval ||
-											(_arnoPhase == kPhaseServeReaction && _finalSafeAttemptReplayPending);
+		const bool receivesDeliveryEvents = _arnoPhase == kPhaseDeliveryEval || (_arnoPhase == kPhaseServeReaction && _finalSafeAttemptReplayPending);
 		if (receivesDeliveryEvents && eventCode != kAnimEventM1_End) {
-			handleZmbDeliveryEvent(feature, eventCode);
+			handlePostmanDeliveryEvent(feature, eventCode);
 			return;
 		}
 		if (eventCode == kAnimEventM1_End) {
@@ -1287,14 +1286,14 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 					// the delivery callback. Complete the Postman's return before loading
 					// the troll's delivery-result SCRB.
 					_finalSafeAttemptReplayPending = false;
-					handleZmbDeliveryEvent(feature, kAnimEventM1_End);
+					handlePostmanDeliveryEvent(feature, kAnimEventM1_End);
 				} else {
-					handleOrderLineComplete(0);
+					handleOrderLineComplete(TrollOrderLine::kArno00);
 				}
 				break;
 			case kPhaseDeliveryEval:
 				_arnoPhase = kPhaseNone;
-				handleZmbDeliveryEvent(feature, kAnimEventM1_End);
+				handlePostmanDeliveryEvent(feature, kAnimEventM1_End);
 				break;
 			case kPhaseDeliveryResult:
 				// Advance to the next deliverer later, when the ready-flash completes in slot 40.
@@ -1331,7 +1330,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 			return;
 		}
 		if (_willaPhase == kPhaseDeliveryEval && eventCode != kAnimEventM1_End) {
-			handleZmbDeliveryEvent(feature, eventCode);
+			handlePostmanDeliveryEvent(feature, eventCode);
 			return;
 		}
 		if (eventCode == kAnimEventM1_End) {
@@ -1351,11 +1350,11 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 				break;
 			case kPhaseServeReaction:
 				_willaPhase = kPhaseNone;
-				handleOrderLineComplete(1);
+				handleOrderLineComplete(TrollOrderLine::kWilla01);
 				break;
 			case kPhaseDeliveryEval:
 				_willaPhase = kPhaseNone;
-				handleZmbDeliveryEvent(feature, kAnimEventM1_End);
+				handlePostmanDeliveryEvent(feature, kAnimEventM1_End);
 				break;
 			case kPhaseDeliveryResult:
 				// Advance after the ready-flash completion.
@@ -1374,7 +1373,7 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 		if (eventCode == kAnimEventM1_End && _shylerPhase != kPhaseNone)
 			_trollFeatureCompletedThisFrame = true;
 		if (_shylerPhase == kPhaseDeliveryEval && eventCode != kAnimEventM1_End) {
-			handleZmbDeliveryEvent(feature, eventCode);
+			handlePostmanDeliveryEvent(feature, eventCode);
 			return;
 		}
 		if (eventCode == kAnimEventM1_End) {
@@ -1394,11 +1393,11 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 				break;
 			case kPhaseServeReaction:
 				_shylerPhase = kPhaseNone;
-				handleOrderLineComplete(2);
+				handleOrderLineComplete(TrollOrderLine::kShyler02);
 				break;
 			case kPhaseDeliveryEval:
 				_shylerPhase = kPhaseNone;
-				handleZmbDeliveryEvent(feature, kAnimEventM1_End);
+				handlePostmanDeliveryEvent(feature, kAnimEventM1_End);
 				break;
 			case kPhaseDeliveryResult:
 				// Advance after the ready-flash completion.
@@ -1415,10 +1414,8 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 	// --- Topping overlay events ---
 	if (feature == _toppingOverlayFeature) {
 		if (eventCode == kAnimEventM1_End) {
-			if (feature->getScriptSoundPolicy() ==
-				ZmbFeature::ScriptSoundPolicy::kImmediate) {
+			if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kImmediate)
 				feature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kInheritPage);
-			}
 			if (_overlayPhase == kPhaseToppingDelivery) {
 				// Defer classification until the carry SCRS also finishes.
 				_overlayPhase = kPhaseNone;
@@ -1441,11 +1438,11 @@ void ZoombiniPuzzlePizza::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCod
 					// the ready flash advances the delivery chain.
 					ZmbFeature *firstToppingRunner = _toppingRunnerSlots[0].feature;
 					if (firstToppingRunner) {
-						if (_trollOrderStates[0] == TrollOrderState::kAccepted03)
+						if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kAccepted03)
 							manualLinkBefore(_arnoFeature, firstToppingRunner);
-						if (_trollOrderStates[1] == TrollOrderState::kAccepted03)
+						if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kAccepted03)
 							manualLinkBefore(_willaFeature, firstToppingRunner);
-						if (_trollOrderStates[2] == TrollOrderState::kAccepted03)
+						if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kAccepted03)
 							manualLinkBefore(_shylerFeature, firstToppingRunner);
 					}
 					spawnPostmanSnoid();
@@ -1740,7 +1737,7 @@ void ZoombiniPuzzlePizza::serveNextTopping(TrollOrderLine orderLine) {
 	_lastActivityFrame = getCurrentFrameCounter();
 	const int16 orderLineIndex = static_cast<int16>(orderLine);
 
-	if (_trollOrderStates[orderLineIndex] == TrollOrderState::kAccepted03)
+	if (_trollOrderStates[orderLine] == TrollOrderState::kAccepted03)
 		return;
 
 	const SubmittedMealClassification classification = classifySubmittedMeal(orderLine);
@@ -1891,7 +1888,7 @@ void ZoombiniPuzzlePizza::serveNextTopping(TrollOrderLine orderLine) {
 		if (orderLine != TrollOrderLine::kArno00 || classification != SubmittedMealClassification::kExactMatch02)
 			linkToppingRunners();
 		if (classification == SubmittedMealClassification::kExactMatch02)
-			_trollOrderStates[orderLineIndex] = TrollOrderState::kMatched02;
+			_trollOrderStates[orderLine] = TrollOrderState::kMatched02;
 
 		if (phase)
 			*phase = kPhaseServeReaction;
@@ -1908,13 +1905,9 @@ void ZoombiniPuzzlePizza::serveNextTopping(TrollOrderLine orderLine) {
 	}
 
 	// All orders are ready when every non-inactive order has reached matched or accepted state.
-	bool allReady = true;
-	for (int16 i = 0; i < 3; i++) {
-		if (_trollOrderStates[i] == TrollOrderState::kActive01) {
-			allReady = false;
-			break;
-		}
-	}
+	const bool allReady = _trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kActive01 &&
+						  _trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kActive01 &&
+						  _trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kActive01;
 	if (allReady) {
 		_allTrollOrdersMatched = true;
 		// Reserve one non-celebrating Snoid from the original loaded group.
@@ -1933,16 +1926,16 @@ void ZoombiniPuzzlePizza::evaluateDelivery() {
 	_acceptedOrdersThisMeal = 0;
 
 	_remainingMistakeAllowance -= 1;
-	_delivererSurvivedAttempt = 0 <= _remainingMistakeAllowance;
+	_postmanSurvivedAttempt = 0 <= _remainingMistakeAllowance;
 
 	// Mark the exact attempt that consumes the last safe mistake.
 	if (_remainingMistakeAllowance == 0)
 		_finalSafeAttemptCounter += 1;
 	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: evaluating delivery; allowance=%d, survives=%d, final-safe count=%d", _remainingMistakeAllowance,
-		   _delivererSurvivedAttempt ? 1 : 0, _finalSafeAttemptCounter);
+		   _postmanSurvivedAttempt ? 1 : 0, _finalSafeAttemptCounter);
 
 	// A surviving attempt before the final safe boundary skips the evaluation animation.
-	if (!_finalSafeAttemptCounter && _delivererSurvivedAttempt) {
+	if (!_finalSafeAttemptCounter && _postmanSurvivedAttempt) {
 		// Skip the delivery evaluation animation and load the result directly.
 		animatePostman();
 		_skipDeliveryScriptEvent = true;
@@ -1957,9 +1950,9 @@ void ZoombiniPuzzlePizza::evaluateDelivery() {
 	int16 evalScrbId = 0;
 	FeaturePhase *phase = nullptr;
 
-	if (_trollOrderStates[0] == TrollOrderState::kActive01) {
+	if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 		evalFeature = _arnoFeature;
-		evalScrbId = kResScrb8022_ArnoDeliveryEvalBase + _delivererSurvivedAttempt;
+		evalScrbId = kResScrb8022_ArnoDeliveryEvalBase + _postmanSurvivedAttempt;
 		phase = &_arnoPhase;
 
 		if (_finalSafeAttemptCounter) {
@@ -1969,14 +1962,14 @@ void ZoombiniPuzzlePizza::evaluateDelivery() {
 		} else {
 			*phase = kPhaseDeliveryEval;
 		}
-	} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 		evalFeature = _willaFeature;
-		evalScrbId = kResScrb9028_WillaDeliveryEvalBase + _delivererSurvivedAttempt;
+		evalScrbId = kResScrb9028_WillaDeliveryEvalBase + _postmanSurvivedAttempt;
 		phase = &_willaPhase;
 		*phase = kPhaseDeliveryEval;
-	} else if (_trollOrderStates[2] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 		evalFeature = _shylerFeature;
-		evalScrbId = kResScrb10032_ShylerDeliveryEvalBase + _delivererSurvivedAttempt;
+		evalScrbId = kResScrb10032_ShylerDeliveryEvalBase + _postmanSurvivedAttempt;
 		phase = &_shylerPhase;
 		*phase = kPhaseDeliveryEval;
 	}
@@ -2223,26 +2216,26 @@ void ZoombiniPuzzlePizza::runOrderFeatureAmbientIdleDriver() {
 		return;
 
 	if (_difficultyLevel == kPuzzleLevel1) {
-		if (_trollOrderStates[0] != TrollOrderState::kAccepted03)
+		if (_trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kAccepted03)
 			loadScrbOntoFeature(_arnoFeature, kResScrb8034_ArnoIdleBase + _vm->_rnd->getRandomNumber(1));
 		return;
 	}
 
 	if (_difficultyLevel == kPuzzleLevel2) {
-		if (_vm->_rnd->getRandomNumber(1000) < 500 && _trollOrderStates[0] == TrollOrderState::kActive01) {
+		if (_vm->_rnd->getRandomNumber(1000) < 500 && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 			loadScrbOntoFeature(_arnoFeature, kResScrb8034_ArnoIdleBase + _vm->_rnd->getRandomNumber(1));
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 			loadScrbOntoFeature(_willaFeature, kResScrb9019_WillaIdleBase + _vm->_rnd->getRandomNumber(1));
 		}
 		return;
 	}
 
 	const int16 orderSelector = _vm->_rnd->getRandomNumber(1000);
-	if (orderSelector < 300 && _trollOrderStates[0] == TrollOrderState::kActive01) {
+	if (orderSelector < 300 && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 		loadScrbOntoFeature(_arnoFeature, kResScrb8034_ArnoIdleBase + _vm->_rnd->getRandomNumber(1));
-	} else if (orderSelector < 600 && _trollOrderStates[1] == TrollOrderState::kActive01) {
+	} else if (orderSelector < 600 && _trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 		loadScrbOntoFeature(_willaFeature, kResScrb9019_WillaIdleBase + _vm->_rnd->getRandomNumber(1));
-	} else if (_trollOrderStates[2] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 		const int16 variant = _vm->_rnd->getRandomNumber(3);
 		const int16 scrbId = static_cast<int16>(kResScrb10000_ShylerOrderBase + (variant ? variant + 5 : 1));
 		loadScrbOntoFeature(_shylerFeature, scrbId);
@@ -2369,10 +2362,10 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 		// Select the first active order line.
 		int16 scrsId = 0;
 		int16 overlayScrbId = 0;
-		if (_trollOrderStates[0] == TrollOrderState::kActive01) {
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 			scrsId = kResScrs13005_DeliveryBase + traitIdx;
 			overlayScrbId = kResScrb12001_ToppingOverlayBase + traitIdx;
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 			scrsId = kResScrs13010_DeliveryBase + traitIdx;
 			overlayScrbId = kResScrb12006_ToppingOverlayBase + traitIdx;
 		} else {
@@ -2406,7 +2399,7 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 	case kWillaResultEventCode099_RelinkBehindArno:
 		// The terminal Willa frame omits its authored Arno occlusion layer.
 		// Restore the real active Arno as the foreground owner for that overlap.
-		if (feature == _willaFeature && _trollOrderStates[0] == TrollOrderState::kActive01)
+		if (feature == _willaFeature && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01)
 			manualLinkBefore(_willaFeature, _arnoFeature);
 		break;
 	default:
@@ -2422,12 +2415,13 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 //           otherwise return the same deliverer to the machine seat.
 // Event 0: toggle facing, handle pending body arrangement
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::handleZmbDeliveryEvent(ZmbFeature *feature, int16 eventCode) {
+void ZoombiniPuzzlePizza::handlePostmanDeliveryEvent(ZmbFeature *feature, int16 eventCode) {
 	(void)feature;
 
 	if (eventCode == kDeliveryEventCode061_StartSnoidScript) {
 		// The delivery evaluation reached its Postman marker.
-		// Start the survival-specific SCRS and play the delivery confirmation SFX.
+		// Start the survival-specific SCRS and enqueue the terminator SFX
+		// so that it replaces the movement loop SND 13000/13003 via priority queue arbitration.
 		if (_skipDeliveryScriptEvent) {
 			_skipDeliveryScriptEvent = false;
 			return;
@@ -2436,17 +2430,17 @@ void ZoombiniPuzzlePizza::handleZmbDeliveryEvent(ZmbFeature *feature, int16 even
 		// Determine SCRS ID and initial position based on active order
 		int16 scrsId = 0;
 		Common::Point initPos(180, 327);
-		if (_trollOrderStates[0] == TrollOrderState::kActive01) {
-			scrsId = kResScrs14000_DeliveryBase + _delivererSurvivedAttempt;
-			if (!_delivererSurvivedAttempt)
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
+			scrsId = kResScrs14000_DeliveryBase + _postmanSurvivedAttempt;
+			if (!_postmanSurvivedAttempt)
 				initPos = Common::Point(34, 59);
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
-			scrsId = kResScrs14002_DeliveryBase + _delivererSurvivedAttempt;
-			if (!_delivererSurvivedAttempt)
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
+			scrsId = kResScrs14002_DeliveryBase + _postmanSurvivedAttempt;
+			if (!_postmanSurvivedAttempt)
 				initPos = Common::Point(46, 46);
 		} else {
-			scrsId = kResScrs14004_DeliveryBase + _delivererSurvivedAttempt;
-			if (!_delivererSurvivedAttempt)
+			scrsId = kResScrs14004_DeliveryBase + _postmanSurvivedAttempt;
+			if (!_postmanSurvivedAttempt)
 				initPos = Common::Point(95, 27);
 		}
 
@@ -2454,21 +2448,25 @@ void ZoombiniPuzzlePizza::handleZmbDeliveryEvent(ZmbFeature *feature, int16 even
 		// The registered group determines the script state; the page helper also
 		// dirties both the interrupted pose and the synchronously materialized frame.
 		ZmbScrsCompletionMode completionMode;
-		if (_delivererSurvivedAttempt)
+		if (_postmanSurvivedAttempt)
 			completionMode = ZmbScrsCompletionMode::kReturnToIdle;
 		else
 			completionMode = ZmbScrsCompletionMode::kHide;
 		startSnoidScrs(_postmanSnoid, ZmbResource(ZmbResource::kPage, scrsId), completionMode, &initPos);
 
-		// Play delivery SFX
-		_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, kResSound8040_DeliverySfx), Audio::Mixer::kSFXSoundType);
+		// Always enqueue a terminator for infinite looping postman moving SFX.
+		// The SFX is a trolls-throwing-postman, but it is rarely audible.
+		// - Early safe attempts skip event 61 entirely via _skipDeliveryScriptEvent.
+		// - Postman-surviving SCRS variants enqueue SND 14000, so the terminator is masked.
+		// - Postman-lost SCRS variants playes the snoid-punching SFX properly.
+		_vm->_sound->enqueueScriptSound(ZmbResource(ZmbResource::kPage, kResSound8040_ArnoSpeechLast), Audio::Mixer::kSFXSoundType);
 
 	} else if (eventCode == kAnimEventM1_End) {
 		// Complete delivery evaluation, then load the result SCRB.
 		// Use @ref ZoombiniPuzzlePizza::kPhaseDeliveryResult
 		// instead of @ref ZoombiniPuzzlePizza::kPhaseDeliveryEval to avoid re-entering evaluation
 		// when the result SCRB completes.
-		if (!_delivererSurvivedAttempt) {
+		if (!_postmanSurvivedAttempt) {
 			// The rejecting SCRS already flung the deliverer away and hid it.
 			// Clear the runner and request the next pick.
 			_lostDelivererCount += 1;
@@ -2500,8 +2498,8 @@ void ZoombiniPuzzlePizza::handleZmbDeliveryEvent(ZmbFeature *feature, int16 even
 // Called when an order line's reaction animation finishes (event -1).
 // Handle matched-to-accepted transitions, serve chaining, and the evaluation trigger.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
-	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: completed reaction for order %d in state %d", orderLine, static_cast<int>(_trollOrderStates[orderLine]));
+void ZoombiniPuzzlePizza::handleOrderLineComplete(TrollOrderLine orderLine) {
+	debugC(3, MohawkEngine_Zoombini::kDebugPage02, "pizza: completed reaction for order %d in state %d", static_cast<int>(orderLine), static_cast<int>(_trollOrderStates[orderLine]));
 
 	// An already accepted order spawns its next Postman.
 	// When every order is satisfied, the completion chain starts the solved-order troll reactions, enables the Go button,
@@ -2526,17 +2524,17 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 		// Without the reset, those orders remain gated and the puzzle cannot progress.
 		if (_submittedMealAlreadyTried) {
 			_exactOrderMatchCount = 0;
-		} else if (orderLine == 0) {
-			if (_trollOrderStates[1] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal) {
-				if (_trollOrderStates[2] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal)
+		} else if (orderLine == TrollOrderLine::kArno00) {
+			if (_trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal) {
+				if (_trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal)
 					_acceptedOrdersThisMeal = 0;
 				else
 					serveNextTopping(TrollOrderLine::kShyler02);
 			} else {
 				serveNextTopping(TrollOrderLine::kWilla01);
 			}
-		} else if (orderLine == 1) {
-			if (_trollOrderStates[2] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal)
+		} else if (orderLine == TrollOrderLine::kWilla01) {
+			if (_trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kActive01 || _acceptedOrdersThisMeal)
 				_acceptedOrdersThisMeal = 0;
 			else
 				serveNextTopping(TrollOrderLine::kShyler02);
@@ -2561,11 +2559,11 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 		ZmbFeature *orderFeature;
 		int16 acceptScrbId;
 		FeaturePhase *acceptPhase;
-		if (orderLine == 0) {
+		if (orderLine == TrollOrderLine::kArno00) {
 			orderFeature = _arnoFeature;
 			acceptScrbId = kResScrb8021_ArnoDeliveryAccept;
 			acceptPhase = &_arnoPhase;
-		} else if (orderLine == 1) {
+		} else if (orderLine == TrollOrderLine::kWilla01) {
 			orderFeature = _willaFeature;
 			acceptScrbId = kResScrb9027_WillaDeliveryAccept;
 			acceptPhase = &_willaPhase;
@@ -2592,7 +2590,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 		// Shyler preserves the deliverer's existing chain position.
 		// On those two paths, the next delivery overlay links to the Postman
 		// and remains in front of the already-accepted troll.
-		if (_postmanSnoid && orderLine < 2)
+		if (_postmanSnoid && orderLine != TrollOrderLine::kShyler02)
 			manualLinkAfter(_postmanSnoid, orderFeature);
 
 		// The acceptance loads while this runner is already in the current pre-render pass.
@@ -2614,7 +2612,7 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 		// Record the pending order and restart delivery-slot selection.
 		_acceptedOrdersThisMeal += 1;
 		_pendingResultOrderSlot = 0;
-		debugC(2, MohawkEngine_Zoombini::kDebugPage02, "pizza: accepted order %d with SCRB %d", orderLine, acceptScrbId);
+		debugC(2, MohawkEngine_Zoombini::kDebugPage02, "pizza: accepted order %d with SCRB %d", static_cast<int>(orderLine), acceptScrbId);
 
 		return;
 	}
@@ -2639,16 +2637,16 @@ void ZoombiniPuzzlePizza::handleOrderLineComplete(int16 orderLine) {
 
 	// Chain to next active, non-accepted order line
 	bool foundNext = false;
-	if (orderLine == 0) {
-		if (_trollOrderStates[1] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
+	if (orderLine == TrollOrderLine::kArno00) {
+		if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
 			serveNextTopping(TrollOrderLine::kWilla01);
 			foundNext = true;
-		} else if (_trollOrderStates[2] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
+		} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
 			serveNextTopping(TrollOrderLine::kShyler02);
 			foundNext = true;
 		}
-	} else if (orderLine == 1) {
-		if (_trollOrderStates[2] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
+	} else if (orderLine == TrollOrderLine::kWilla01) {
+		if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
 			serveNextTopping(TrollOrderLine::kShyler02);
 			foundNext = true;
 		}
@@ -2685,17 +2683,17 @@ void ZoombiniPuzzlePizza::onToppingDelivered() {
 		// Place the topping on the first partial subset match and stop,
 		// so one delivery cannot be assigned to multiple orders.
 		bool placed = false;
-		if (_trollOrderStates[0] == TrollOrderState::kActive01 &&
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01 &&
 			classifySubmittedMeal(TrollOrderLine::kArno00) == SubmittedMealClassification::kMissingRequestedToppings01) {
 			placeTopping(1, 0);
 			placed = true;
 		}
-		if (!placed && _trollOrderStates[1] == TrollOrderState::kActive01 &&
+		if (!placed && _trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01 &&
 			classifySubmittedMeal(TrollOrderLine::kWilla01) == SubmittedMealClassification::kMissingRequestedToppings01) {
 			placeTopping(1, 1);
 			placed = true;
 		}
-		if (!placed && _trollOrderStates[2] == TrollOrderState::kActive01 &&
+		if (!placed && _trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01 &&
 			classifySubmittedMeal(TrollOrderLine::kShyler02) == SubmittedMealClassification::kMissingRequestedToppings01) {
 			placeTopping(1, 2);
 			placed = true;
@@ -2706,11 +2704,11 @@ void ZoombiniPuzzlePizza::onToppingDelivered() {
 		}
 	} else {
 		// Serve to first active order line
-		if (_trollOrderStates[0] == TrollOrderState::kActive01) {
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 			serveNextTopping(TrollOrderLine::kArno00);
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
 			serveNextTopping(TrollOrderLine::kWilla01);
-		} else if (_trollOrderStates[2] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
+		} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01 && !_acceptedOrdersThisMeal) {
 			serveNextTopping(TrollOrderLine::kShyler02);
 		}
 	}
@@ -2797,13 +2795,13 @@ void ZoombiniPuzzlePizza::animatePostman() {
 	// A completed answer already owns its Z-order; clear the marker without relinking it.
 	if (_preserveAcceptedTrollLinkCount) {
 		_preserveAcceptedTrollLinkCount = 0;
-	} else if (_trollOrderStates[0] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 		// Draw the Postman in front of active Arno.
 		manualLinkAfter(_postmanSnoid, _arnoFeature);
-	} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 		// Draw the Postman in front of active Willa.
 		manualLinkAfter(_postmanSnoid, _willaFeature);
-	} else if (_trollOrderStates[2] == TrollOrderState::kActive01) {
+	} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 		// Draw the Postman in front of active Shyler.
 		manualLinkAfter(_postmanSnoid, _shylerFeature);
 	}
@@ -2817,8 +2815,8 @@ void ZoombiniPuzzlePizza::animatePostman() {
 // Select reaction SCRBs from the active troll combination.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::setupQuestionRunners() {
-	const bool has1 = _trollOrderStates[1] != TrollOrderState::kInactive00;
-	const bool has2 = _trollOrderStates[2] != TrollOrderState::kInactive00;
+	const bool has1 = _trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kInactive00;
+	const bool has2 = _trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kInactive00;
 
 	// Arno always owns the base completion runner. Optional troll state zero means that runner is absent.
 	if (has1 && has2) {
@@ -2869,19 +2867,19 @@ void ZoombiniPuzzlePizza::placeTopping(int16 mode, int16 hintSlot) {
 	int16 targetSlot = hintSlot;
 	if (!mode || mode == 4) {
 		// Select among the active order lines.
-		if (_trollOrderStates[0] == TrollOrderState::kActive01) {
-			if (_trollOrderStates[1] != TrollOrderState::kActive01 && _trollOrderStates[2] != TrollOrderState::kActive01) {
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
+			if (_trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kActive01 && _trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kActive01) {
 				targetSlot = 0;
-			} else if (_trollOrderStates[1] == TrollOrderState::kActive01 && _trollOrderStates[2] != TrollOrderState::kActive01) {
+			} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01 && _trollOrderStates[TrollOrderLine::kShyler02] != TrollOrderState::kActive01) {
 				targetSlot = _vm->_rnd->getRandomNumber(0, 1);
-			} else if (_trollOrderStates[1] != TrollOrderState::kActive01 && _trollOrderStates[2] == TrollOrderState::kActive01) {
+			} else if (_trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kActive01 && _trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 				targetSlot = 2 * _vm->_rnd->getRandomNumber(0, 1);
 			} else {
 				// All three active -- picks 0 or 1
 				targetSlot = _vm->_rnd->getRandomNumber(0, 1);
 			}
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
-			if (_trollOrderStates[2] == TrollOrderState::kActive01)
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
+			if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01)
 				targetSlot = _vm->_rnd->getRandomNumber(0, 1) + 1;
 			else
 				targetSlot = 1;
@@ -3107,7 +3105,7 @@ void ZoombiniPuzzlePizza::linkToppingRunners() {
 		// Once Arno has accepted an order, place him behind the accepted-pizza stack
 		// so a new delivery remains visible over the seated troll.
 		// His acceptance animation has already completed before this overlay exists.
-		if (_trollOrderStates[0] == TrollOrderState::kAccepted03) {
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kAccepted03) {
 			ZmbFeature *parent;
 			if (_lastToppingRunnerSlotIdx < 0)
 				parent = _toppingOverlayFeature;
@@ -3119,21 +3117,21 @@ void ZoombiniPuzzlePizza::linkToppingRunners() {
 	if (_postmanSnoid) {
 		// Keep the Postman behind the serving stone by default.
 		manualLinkBefore(_postmanSnoid, _servingStoneFeature);
-		if (_trollOrderStates[0] == TrollOrderState::kActive01) {
+		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01) {
 			manualLinkBefore(_arnoFeature, _postmanSnoid);
-			if (_trollOrderStates[2] == TrollOrderState::kActive01) {
+			if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 				manualLinkBefore(_shylerFeature, _arnoFeature);
-				if (_trollOrderStates[1] != TrollOrderState::kActive01)
+				if (_trollOrderStates[TrollOrderLine::kWilla01] != TrollOrderState::kActive01)
 					return;
 				manualLinkBefore(_willaFeature, _shylerFeature);
-			} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+			} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 				manualLinkBefore(_willaFeature, _arnoFeature);
 			}
-		} else if (_trollOrderStates[2] == TrollOrderState::kActive01) {
+		} else if (_trollOrderStates[TrollOrderLine::kShyler02] == TrollOrderState::kActive01) {
 			manualLinkBefore(_shylerFeature, _postmanSnoid);
-			if (_trollOrderStates[1] == TrollOrderState::kActive01)
+			if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01)
 				manualLinkBefore(_willaFeature, _shylerFeature);
-		} else if (_trollOrderStates[1] == TrollOrderState::kActive01) {
+		} else if (_trollOrderStates[TrollOrderLine::kWilla01] == TrollOrderState::kActive01) {
 			manualLinkBefore(_willaFeature, _postmanSnoid);
 		}
 	}
@@ -3144,16 +3142,16 @@ void ZoombiniPuzzlePizza::linkToppingRunners() {
 // Arno and Shyler move behind their first current pizza.
 // Willa also restores the authored order of all three current pizza slots.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::linkSettledAcceptedToppingStack(int16 orderLine) {
+void ZoombiniPuzzlePizza::linkSettledAcceptedToppingStack(TrollOrderLine orderLine) {
 	ZmbFeature *orderFeature = nullptr;
 	ZmbFeature **slots = nullptr;
-	if (orderLine == 0) {
+	if (orderLine == TrollOrderLine::kArno00) {
 		orderFeature = _arnoFeature;
 		slots = _arnoToppingRunnerSlots;
-	} else if (orderLine == 1) {
+	} else if (orderLine == TrollOrderLine::kWilla01) {
 		orderFeature = _willaFeature;
 		slots = _willaToppingRunnerSlots;
-	} else if (orderLine == 2) {
+	} else if (orderLine == TrollOrderLine::kShyler02) {
 		orderFeature = _shylerFeature;
 		slots = _shylerToppingRunnerSlots;
 	}
@@ -3162,7 +3160,7 @@ void ZoombiniPuzzlePizza::linkSettledAcceptedToppingStack(int16 orderLine) {
 		return;
 
 	manualLinkBefore(orderFeature, slots[0]);
-	if (orderLine != 1)
+	if (orderLine != TrollOrderLine::kWilla01)
 		return;
 
 	ZmbFeature *previous = slots[0];
@@ -3437,7 +3435,7 @@ void ZoombiniPuzzlePizza::mealFilter_preRenderShape(ZmbFeature *feature, ZmbHots
 			keep = _submittedMealToppings[kMealIngredientCherry05] && kPuzzleLevel2 <= _difficultyLevel;
 		} else if (shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212) {
 			// Omit Willa's Arno-and-stone occlusion patch after Arno accepts.
-			keep = _trollOrderStates[0] != TrollOrderState::kAccepted03;
+			keep = _trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kAccepted03;
 		}
 
 		if (!keep)
@@ -3483,7 +3481,7 @@ void ZoombiniPuzzlePizza::orderFeature_preRenderShape(ZmbFeature *feature, ZmbHo
 
 	for (int hotspotIdx = static_cast<int>(hotspots.size()) - 1; 0 <= hotspotIdx; hotspotIdx--) {
 		const OrderFeatureShape shapeIdx = static_cast<OrderFeatureShape>(hotspots[hotspotIdx]._shapeIdx);
-		if (feature == _willaFeature && shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212 && _trollOrderStates[0] == TrollOrderState::kAccepted03) {
+		if (feature == _willaFeature && shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212 && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kAccepted03) {
 			// Omit Willa's Arno-and-stone occlusion patch after Arno accepts.
 			hotspots.remove_at(hotspotIdx);
 			continue;
