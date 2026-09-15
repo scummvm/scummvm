@@ -405,12 +405,12 @@ void CellPhonePopCellSceneFromStack::execute() {
 
 void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 	_relative = stream.readByte();
-	_hours = stream.readUint16LE();
-	_minutes = stream.readUint16LE();
+	_hours = stream.readSint16LE();
+	_minutes = stream.readSint16LE();
 }
 
 void BumpPlayerClock::execute() {
-	NancySceneState.setPlayerTime(_hours * 3600000 + _minutes * 60000, _relative);
+	NancySceneState.setPlayerTime((uint32)(_hours * 3600000 + _minutes * 60000), _relative);
 	finishExecution();
 }
 

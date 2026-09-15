@@ -51,40 +51,37 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readFilename(s, fontFilename, kGameTypeNancy12);
 	readFilename(s, flagsFilename, kGameTypeNancy12);
 
-	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical offsets
+	// Nancy16 went back to the pre-Nancy14 field order, and dropped both vertical
+	// offsets and the ad scene
 	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy16);
 	s.syncAsUint16LE(firstScene.frameID, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeHours, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeMinutes, kGameTypeNancy16);
-	s.skip(1, kGameTypeNancy16);	// Unknown
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy16);
-	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy16);
-	s.skip(2, kGameTypeNancy16);	// Unknown
+	s.skip(7, kGameTypeNancy16);	// End of day fields, disabled in the game data
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
-	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy15);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
 	s.syncAsUint16LE(firstScene.frameID, kGameTypeVampire, kGameTypeNancy15);
-	s.syncAsUint16LE(firstScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
-	s.skip(2, kGameTypeNancy14, kGameTypeNancy15); // Unknown
 	s.syncAsUint16LE(firstScene.verticalOffset, kGameTypeVampire, kGameTypeNancy15);
 
-	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy13);
-	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy13);
+	s.syncAsUint16LE(startTimeHours, kGameTypeVampire, kGameTypeNancy15);
+	s.syncAsUint16LE(startTimeMinutes, kGameTypeVampire, kGameTypeNancy15);
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(lateNightHour, kGameTypeNancy11, kGameTypeNancy13);
+	s.syncAsSint16LE(lateNightFlag, kGameTypeNancy11, kGameTypeNancy13);
 
-	s.skip(1, kGameTypeNancy14, kGameTypeNancy15);
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy13);
+	s.syncAsByte(dayValueIndex, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsSint16LE(endOfDayFlag, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(endOfDayHour, kGameTypeNancy14, kGameTypeNancy15);
+	s.syncAsUint16LE(wakeUpHour, kGameTypeNancy14, kGameTypeNancy15);
+
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7, kGameTypeNancy15);
 	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7, kGameTypeNancy15);
-	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy14, kGameTypeNancy15);
-	s.skip(2, kGameTypeNancy14, kGameTypeNancy15);	// Unknown
 	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7, kGameTypeNancy15);
 
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 
 	// Nancy15 added the studio URL, preceded by a few unknown values
-	s.skip(4, kGameTypeNancy15, kGameTypeNancy15);	// Unknown
 	s.skip(2, kGameTypeNancy15);					// Unknown
 	s.skip(256, kGameTypeNancy15);					// Studio URL
 
@@ -98,7 +95,6 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		s.skip(1);
 	}
 
-	s.skip(4, kGameTypeNancy11, kGameTypeNancy14);	// Unknown
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);
@@ -144,6 +140,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
+
+	s.skip(4, kGameTypeNancy9, kGameTypeNancy11); // Unknown
+	if (s.getVersion() >= kGameTypeNancy9 && s.getVersion() <= kGameTypeNancy11) {
+		timerDurations.resize(10);
+		for (uint i = 0; i < timerDurations.size(); ++i) {
+			s.syncAsUint16LE(timerDurations[i]);
+		}
+	}
 }
 
 VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

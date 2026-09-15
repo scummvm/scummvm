@@ -55,6 +55,20 @@ struct BSUM : public EngineData {
 	uint16 startTimeHours;
 	uint16 startTimeMinutes;
 
+	// Nancy11-13: on the day after the game starts, once the clock reaches
+	// lateNightHour, lateNightFlag gets raised
+	uint16 lateNightHour = 0;
+	int16 lateNightFlag = kEvNoEvent;
+
+	// Nancy14-15 end of day. Once the clock reaches endOfDayHour, endOfDayFlag
+	// is raised so the scripts can send the player to bed. Writing to the value
+	// at dayValueIndex puts the player to sleep: the next day starts at
+	// wakeUpHour, and the new day number gets copied into that value.
+	byte dayValueIndex = 0;
+	int16 endOfDayFlag = kEvNoEvent;
+	uint16 endOfDayHour = 0;
+	uint16 wakeUpHour = 0;
+
 	// More Nancy Drew! scene
 	SceneChangeDescription adScene;
 
@@ -90,6 +104,10 @@ struct BSUM : public EngineData {
 	byte overrideMovementTimeDeltas;
 	uint16 slowMovementTimeDelta;
 	uint16 fastMovementTimeDelta;
+
+	// Nancy9-11: timer dependencies with a seconds value of kTimerDurationIndexBase
+	// or above take their seconds from this table instead
+	Common::Array<uint16> timerDurations;
 };
 
 // Contains rects defining the in-game viewport

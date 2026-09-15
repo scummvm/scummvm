@@ -337,18 +337,40 @@ void Scene::finishUIPrepScene() {
 }
 
 void Scene::setPlayerTime(Time time, byte relative) {
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
 	if (relative == kRelativeClockBump) {
-		// Relative, add the specified time to current playerTime
+		// Relative, add the specified time to current playerTime. The originals wrap
+		// a negative time around to the previous day, which no game script needs.
+		if ((int64)(uint32)_timers.playerTime + (int32)(uint32)time < 0) {
+			warning("Moving the player time back past 00:00 is not supported");
+			return;
+		}
+
 		_timers.playerTime += time;
+	} else if (bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Absolute, the clock only holds the time of the current day
+		_timers.playerTime = time;
 	} else {
 		// Absolute, maintain days but replace hours and minutes
 		_timers.playerTime = _timers.playerTime.getDays() * 86400000 + time;
 	}
 
+	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + bootSummary->playerTimeMinuteLength;
+}
+
+uint Scene::getPlayerTimeMinutes() const {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + bootSummary->playerTimeMinuteLength;
+	if (bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day don't wrap the clock at midnight, so
+		// staying up late keeps counting past 24:00
+		return _timers.playerTime.getTotalHours() * 60 + _timers.playerTime.getMinutes();
+	}
+
+	return _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
 }
 
 byte Scene::getPlayerTOD() const {
@@ -372,9 +394,9 @@ byte Scene::getPlayerTOD() const {
 		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
-		uint16 minutes = _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
+		uint minutes = getPlayerTimeMinutes();
 
-		if (minutes >= bootSummary->dayStartMinutes && minutes < bootSummary->dayEndMinutes) {
+		if (minutes >= bootSummary->dayStartMinutes && minutes <= bootSummary->dayEndMinutes) {
 			return kPlayerDay;
 		} else {
 			return kPlayerNight;
@@ -1237,6 +1259,16 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);
 	ser.syncAsUint32LE((uint32 &)_timers.sceneTime);
 	ser.syncAsUint32LE((uint32 &)_timers.playerTime);
+	ser.syncAsSint16LE(_timers.playerDay, 11);
+
+	if (ser.isLoading() && ser.getVersion() < 11) {
+		auto *bootSummary = GetEngineData(BSUM);
+		if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+			// Older saves kept counting days into the clock. The day itself is
+			// restored from the day value once the puzzle data has been loaded.
+			_timers.playerTime = _timers.playerTime.getHours() * 3600000 + _timers.playerTime.getMinutes() * 60000;
+		}
+	}
 	ser.syncAsUint32LE((uint32 &)_timers.pushedPlayTime);
 	ser.syncAsUint32LE((uint32 &)_timers.timerTime);
 	ser.syncAsByte(_timers.timerIsActive);
@@ -1325,6 +1357,15 @@ void Scene::synchronize(Common::Serializer &ser) {
 			}
 		}
 
+		auto *bootSummary = GetEngineData(BSUM);
+		if (ser.getVersion() < 11 && bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+			// Older saves only have the day in the day value
+			TableData *table = (TableData *)getPuzzleData(TableData::getTag());
+			assert(table);
+			int16 day = table->getValue(bootSummary->dayValueIndex);
+			_timers.playerDay = day == kNoTableValue ? 0 : day;
+		}
+
 		// Restore the taskbar disable overrides now that the persisted
 		// TaskbarData is available. A disable can be set from an earlier
 		// scene's AR that won't re-run here, so it has to come from the save.
@@ -1389,12 +1430,18 @@ void Scene::init() {
 	g_nancy->_cursor->setCursorItemID(-1);
 
 	_timers.lastTotalTime = 0;
-	_timers.playerTime = bootSummary->startTimeHours * 3600000;
+	_timers.playerTime = bootSummary->startTimeHours * 3600000 + bootSummary->startTimeMinutes * 60000;
 	_timers.sceneTime = 0;
 	_timers.timerTime = 0;
 	_timers.timerIsActive = false;
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
+	_timers.sleepRequested = false;
+	_timers.playerDay = 0;
+
+	if (bootSummary->endOfDayFlag != kEvNoEvent) {
+		setPlayerDay(0);
+	}
 
 	if (ConfMan.hasKey("load_ad", Common::ConfigManager::kTransientDomain)) {
 		changeScene(bootSummary->adScene);
@@ -1659,6 +1706,8 @@ void Scene::run() {
 		_timers.playerTimeNextMinute = currentPlayTime + bootSummary->playerTimeMinuteLength;
 	}
 
+	updateEndOfDay();
+
 	handleInput();
 
 	if (g_nancy->getState() == NancyState::kMainMenu) {
@@ -1689,6 +1738,41 @@ void Scene::run() {
 	if (_state == kLoad) {
 		g_nancy->_graphics->suppressNextDraw();
 	}
+}
+
+void Scene::updateEndOfDay() {
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
+	if (bootSummary->lateNightFlag != kEvNoEvent) {
+		if (_timers.playerTime.getDays() == 1 && _timers.playerTime.getHours() >= bootSummary->lateNightHour) {
+			setEventFlag(bootSummary->lateNightFlag, g_nancy->_true);
+		}
+	}
+
+	if (bootSummary->endOfDayFlag == kEvNoEvent) {
+		return;
+	}
+
+	if (!getEventFlag(bootSummary->endOfDayFlag, g_nancy->_true) && _timers.playerTime.getTotalHours() >= bootSummary->endOfDayHour) {
+		setEventFlag(bootSummary->endOfDayFlag, g_nancy->_true);
+	} else if (_timers.sleepRequested) {
+		_timers.sleepRequested = false;
+		_timers.playerTime = bootSummary->wakeUpHour * 3600000;
+		setPlayerDay(_timers.playerDay + 1);
+		setEventFlag(bootSummary->endOfDayFlag, g_nancy->_false);
+	}
+}
+
+void Scene::setPlayerDay(int16 day) {
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
+	_timers.playerDay = day;
+
+	TableData *table = (TableData *)getPuzzleData(TableData::getTag());
+	assert(table);
+	table->setValue(bootSummary->dayValueIndex, day);
 }
 
 void Scene::tickSoftwareTimers(uint32 deltaMs) {

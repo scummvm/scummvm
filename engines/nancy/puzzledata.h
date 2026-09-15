@@ -231,12 +231,19 @@ struct TableData : public PuzzleData {
 	float getComboValue(uint16 index) const;
 
 	// The number of single (non-combo) values, i.e. the boundary between the
-	// single-value and combo-value index ranges: 20 up to nancy8, 30 afterwards.
+	// single-value and combo-value index ranges.
 	uint getNumSingleValues() const;
+	uint getNumComboValues() const;
+
+	// Index markers used inside SetValueCombo and ValueTest records: an entry
+	// to skip, and an entry whose payload is used as a literal number.
+	byte getNoIndex() const;
+	byte getLiteralIndex() const;
 
 	// Reads a value by its combined index (single values come first, then combos).
 	// Combo (float) values are rounded to the nearest integer.
 	int16 getValue(uint16 index) const;
+	void setValue(uint16 index, int16 value);
 
 	Common::Array<int16> singleValues;
 	Common::Array<float> comboValues;

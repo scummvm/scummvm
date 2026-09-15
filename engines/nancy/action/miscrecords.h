@@ -250,8 +250,8 @@ public:
 	void execute() override;
 
 	byte _relative;
-	uint16 _hours;
-	uint16 _minutes;
+	int16 _hours;
+	int16 _minutes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }

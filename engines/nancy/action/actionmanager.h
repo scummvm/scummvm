@@ -81,6 +81,9 @@ protected:
 
 	bool _previousRecordWasExecuted = false;
 	Common::Array<ActionRecord *> _activatedRecordsThisFrame;
+
+	// Nancy14+: which action record types have executed in the current scene
+	bool _executedRecordTypes[256] = {};
 };
 
 } // End of namespace Action

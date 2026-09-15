@@ -250,6 +250,26 @@ void TableData::synchronize(Common::Serializer &ser) {
 	}
 
 	ser.syncArray(comboValues.data(), num, Common::Serializer::FloatLE);
+
+	if (ser.isLoading() && ser.getVersion() < 11 && g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Older saves split the values at index 30 instead of 100, so everything
+		// from index 30 on was stored as a combo value
+		Common::Array<float> oldComboValues = comboValues;
+		comboValues.clear();
+
+		for (uint i = 0; i < oldComboValues.size(); ++i) {
+			if (oldComboValues[i] == (float)kNoTableValue) {
+				continue;
+			}
+
+			uint index = i + 30;
+			if (index < getNumSingleValues()) {
+				setSingleValue(index, (int16)oldComboValues[i]);
+			} else {
+				setComboValue(index - getNumSingleValues(), oldComboValues[i]);
+			}
+		}
+	}
 }
 
 static void syncInt16Array(Common::Serializer &ser, Common::Array<int16> &arr) {
@@ -318,6 +338,11 @@ void QuizPuzzleData::synchronize(Common::Serializer &ser) {
 }
 
 void TableData::setSingleValue(uint16 index, int16 value) {
+	if (index >= getNumSingleValues()) {
+		warning("TableData: single value index %u is out of range", index);
+		return;
+	}
+
 	if (singleValues.size() <= index) {
 		singleValues.resize(index + 1, kNoTableValue);
 	}
@@ -330,6 +355,11 @@ int16 TableData::getSingleValue(uint16 index) const {
 }
 
 void TableData::setComboValue(uint16 index, float value) {
+	if (index >= getNumComboValues()) {
+		warning("TableData: combo value index %u is out of range", index);
+		return;
+	}
+
 	if (comboValues.size() <= index) {
 		comboValues.resize(index + 1, kNoTableValue);
 	}
@@ -342,8 +372,31 @@ float TableData::getComboValue(uint16 index) const {
 }
 
 uint TableData::getNumSingleValues() const {
-	// nancy8 has 20 single & 20 combo values, later games have 30/10
-	return g_nancy->getGameType() <= kGameTypeNancy8 ? 20 : 30;
+	if (g_nancy->getGameType() <= kGameTypeNancy8) {
+		return 20;
+	} else if (g_nancy->getGameType() <= kGameTypeNancy11) {
+		return 30;
+	}
+
+	return 100;
+}
+
+uint TableData::getNumComboValues() const {
+	return g_nancy->getGameType() == kGameTypeNancy8 ? 20 : 10;
+}
+
+byte TableData::getNoIndex() const {
+	if (g_nancy->getGameType() <= kGameTypeNancy11) {
+		return kNoTableIndex;
+	} else if (g_nancy->getGameType() == kGameTypeNancy12) {
+		return 121;
+	}
+
+	return 255;
+}
+
+byte TableData::getLiteralIndex() const {
+	return g_nancy->getGameType() <= kGameTypeNancy11 ? 100 : 120;
 }
 
 int16 TableData::getValue(uint16 index) const {
@@ -354,6 +407,15 @@ int16 TableData::getValue(uint16 index) const {
 
 	float value = getComboValue(index - numSingleValues);
 	return (int16)(value + (value < 0 ? -0.5f : 0.5f));
+}
+
+void TableData::setValue(uint16 index, int16 value) {
+	uint numSingleValues = getNumSingleValues();
+	if (index < numSingleValues) {
+		setSingleValue(index, value);
+	} else {
+		setComboValue(index - numSingleValues, value);
+	}
 }
 
 void CellPhoneData::synchronize(Common::Serializer &ser) {

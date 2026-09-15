@@ -146,6 +146,7 @@ static const byte kIncrementTableValue				= 1;
 static const byte kDecrementTableValue				= 2;
 static const uint16 kNoTableIndex					= 99;
 static const int16 kNoTableValue					= 9999;
+static const int16 kTimerDurationIndexBase			= 5000;
 
 // Autotext ordering info
 static const uint16 kListLIFO						= 0;

@@ -115,7 +115,6 @@ public:
 		_isDone(false),
 		_hasHotspot(false),
 		_state(ExecutionState::kBegin),
-		_days(-1),
 		_cursorDependency(nullptr) {}
 	virtual ~ActionRecord() {}
 
@@ -162,7 +161,6 @@ public:
 	bool _hasHotspot;
 	Common::Rect _hotspot;
 	ExecutionState _state;
-	int16 _days;
 	DependencyRecord *_cursorDependency;
 };
 
