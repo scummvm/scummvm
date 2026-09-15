@@ -38,10 +38,12 @@
 #include "buried/video_window.h"
 #include "buried/environ/scene_base.h"
 
+#include "common/config-manager.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "buried/subtitle_manager.h"
 
 namespace Buried {
 
@@ -59,6 +61,7 @@ SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_asyncMovie = nullptr;
 	_asyncMovieStartFrame = 0;
 	_loopAsyncMovie = false;
+	_lastSubtitledAudioPlaying = false;
 	_paused = false;
 	_cycleEnabled = ((FrameWindow *)(_parent->getParent()))->isFrameCyclingDefault();
 	_forceCycleEnabled = false;
@@ -2412,6 +2415,8 @@ void SceneViewWindow::onPaint() {
 
 		if (_useScenePaint)
 			_currentScene->gdiPaint(this);
+
+		_vm->_subtitles->renderSubtitlesForActiveAudio(_vm->_gfx->getScreen());
 	}
 }
 
@@ -2439,6 +2444,19 @@ void SceneViewWindow::onTimer(uint timer) {
 
 	if (_currentScene && !_infoWindowDisplayed && !_bioChipWindowDisplayed && !_burnedLetterDisplayed)
 		_currentScene->timerCallback(this);
+
+	bool subtitledAudioPlaying = _vm->_subtitles->isSubtitledAudioPlaying();
+
+	// Subtitles need to be invalidated under three different circumstances:
+	// 1. Audio has begun playing and we need to show subtitles.
+	// 2. Audio was playing with subtitles and now we need to hide subtitles.
+	// 3. Audio playback is ongoing, but we need to change from one subtitle card to another.
+	// Due to the last condition, checking simply for a change in playback state is insufficient since we may need
+	// to redraw the subtitles even while audio playback is ongoing.
+	if (subtitledAudioPlaying || _lastSubtitledAudioPlaying) {
+		_vm->_subtitles->markSubtitlesDirty(this);
+		_lastSubtitledAudioPlaying = subtitledAudioPlaying;
+	}
 
 	sound->timerCallback();
 }

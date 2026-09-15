@@ -21,16 +21,16 @@
 
 #include "buried/buried.h"
 #include "buried/graphics.h"
+#include "buried/subtitle_manager.h"
 #include "buried/video_window.h"
 
 #include "common/system.h"
-#include "common/keyboard.h"
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
 namespace Buried {
 
-VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(nullptr), _mode(kModeClosed), _lastFrame(nullptr) {
+VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(nullptr), _mode(kModeClosed), _lastFrame(nullptr), _lastSubtitledPlaying(false) {
 	_vm->addVideo(this);
 	_needsPalConversion = false;
 	_ownedFrame = nullptr;
@@ -79,10 +79,18 @@ bool VideoWindow::seekToFrame(int frame) {
 }
 
 void VideoWindow::stopVideo() {
-	if (_video) {
-		_vm->_gfx->toggleCursor(true);
-		_video->stop();
-		_mode = kModeStopped;
+	if (!_video) {
+		return;
+	}
+	_vm->_gfx->toggleCursor(true);
+	_video->stop();
+	_mode = kModeStopped;
+	if (!_mediaId.empty()) {
+		_mediaId.clear();
+		if (_lastSubtitledPlaying) {
+			_lastSubtitledPlaying = false;
+			_vm->_subtitles->markSubtitlesDirty(getParent());
+		}
 	}
 }
 
@@ -104,6 +112,11 @@ bool VideoWindow::openVideo(const Common::Path &fileName) {
 	closeVideo();
 
 	_video = new Video::AVIDecoder();
+	_mediaId = fileName.getLastComponent().toString();
+	if (_mediaId.contains(".")) {
+		_mediaId = _mediaId.substr(0, _mediaId.findLastOf('.'));
+	}
+	_mediaId.toUppercase();
 
 	if (!_video->loadFile(fileName)) {
 		closeVideo();
@@ -130,6 +143,11 @@ bool VideoWindow::openVideo(const Common::Path &fileName) {
 
 void VideoWindow::closeVideo() {
 	if (_video) {
+		if (_lastSubtitledPlaying) {
+			_lastSubtitledPlaying = false;
+			_vm->_subtitles->markSubtitlesDirty(getParent());
+		}
+		_mediaId.clear();
 		delete _video;
 		_video = nullptr;
 		_vm->_gfx->toggleCursor(true);
@@ -178,12 +196,22 @@ void VideoWindow::updateVideo() {
 
 			// Invalidate the window so it gets updated
 			invalidateWindow(false);
+			if (_video->isPlaying() && !_mediaId.empty()) {
+				_vm->_subtitles->forceRepaintSubtitles(getParent());
+			}
 		}
 
 		if (_video->isPlaying() && _video->endOfVideo()) {
 			_video->stop();
 			_vm->_gfx->toggleCursor(true);
 			_mode = kModeStopped;
+			if (!_mediaId.empty()) {
+				_mediaId.clear();
+				if (_lastSubtitledPlaying) {
+					_lastSubtitledPlaying = false;
+					_vm->_subtitles->markSubtitlesDirty(getParent());
+				}
+			}
 		}
 	}
 }
@@ -196,6 +224,26 @@ void VideoWindow::onPaint() {
 			_vm->_gfx->blit(_lastFrame, absoluteRect.left, absoluteRect.top, absoluteRect.width(), absoluteRect.height());
 		else
 			_vm->_gfx->crossBlit(_vm->_gfx->getScreen(), absoluteRect.left + _dstRect.left, absoluteRect.top + _dstRect.top, _dstRect.width(), _dstRect.height(), _lastFrame, _srcRect.left, _srcRect.top);
+
+		bool isPlayingNow = (_video && _video->isPlaying() && !_mediaId.empty());
+		if (isPlayingNow) {
+			Common::Rect videoFrameRect;
+			if (_srcRect.isEmpty() && _dstRect.isEmpty()) {
+				videoFrameRect = absoluteRect;
+			} else {
+				videoFrameRect = Common::Rect(
+					absoluteRect.left + _dstRect.left,
+					absoluteRect.top + _dstRect.top,
+					absoluteRect.left + _dstRect.right,
+					absoluteRect.top + _dstRect.bottom
+				);
+			}
+			_vm->_subtitles->renderSubtitleForVideo(_vm->_gfx->getScreen(), this, _mediaId, _video->getTime(), videoFrameRect);
+		} else if (_lastSubtitledPlaying && !isPlayingNow) {
+			// Video playback has stopped; invalidate parent window to clear subtitle overlay from screen
+			_vm->_subtitles->markSubtitlesDirty(getParent());
+		}
+		_lastSubtitledPlaying = isPlayingNow;
 	}
 }
 
