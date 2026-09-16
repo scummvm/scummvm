@@ -559,6 +559,9 @@ void EventRecorder::applyPlaybackSettings() {
 	}
 	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
 	removeDifferentEntriesInDomain(ConfMan.getActiveDomain());
+
+	// Startup warning confirmations are not recorded, and playback blocks live input.
+	ConfMan.setBool("enable_unsupported_game_warning", false, ConfMan.kTransientDomain);
 }
 
 void EventRecorder::removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain) {
