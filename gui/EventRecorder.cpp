@@ -739,6 +739,10 @@ void EventRecorder::preDrawOverlayGui() {
 	if (isImGuiRecorderEnabled())
 		return;
 
+	// GUI dialogs own the overlay while recording is suspended.
+	if (_acquireCount > 0)
+		return;
+
 	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
@@ -757,6 +761,9 @@ void EventRecorder::preDrawOverlayGui() {
 
 void EventRecorder::postDrawOverlayGui() {
 	if (isImGuiRecorderEnabled())
+		return;
+
+	if (_acquireCount > 0)
 		return;
 
 	if ((_initialized) || (_needRedraw)) {
