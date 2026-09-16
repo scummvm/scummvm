@@ -58,8 +58,8 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.version = kIdSpaCD;
 
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
-		// _currentPart = 850;
-		_currentPart = 51;
+		_currentPart = 850;
+		// _currentPart = 61;
 	}
 
 	// if (_game.flags & kFlagFloppy) {

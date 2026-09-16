@@ -95,10 +95,63 @@ void IgorEngine::PART_06_HELPER_8(int frame) {
 void IgorEngine::PART_06_EXEC_ACTION(int action) {
 debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
 	switch (action) {
+        	case 102: // scroll right?
+		    PART_06_ACTION_102();
+		    break;
     default:
 		error("PART_06_EXEC_ACTION unhandled action %d", action);
 		break;
     }
+}
+
+void IgorEngine::PART_06_ACTION_102() {
+	uint8 *walkTable1 = loadData(WLK_Bridge1);
+	uint8 *walkTable2 = loadData(WLK_Bridge2);
+	int xPos = 323;
+	int yPos = 0;
+	int i = 1;
+	do {
+		if (compareGameTick(1, 16)) {
+			for (int y = 0; y <= 143; ++y) {
+				memcpy(_screenLayer2 + y * 320 + i * 8, _screenLayer1 + y * 320, 320 - i * 8);
+				memcpy(_screenLayer2 + y * 320, _animFramesBuffer + y * 224 + 224 - i * 8, i * 8);
+			}
+			if (i < 15) {
+				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
+				assert(xPos >= 205);
+				yPos = walkTable1[xPos - 205];
+				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
+			} else {
+				_walkCurrentFrame = 0;
+			}
+			int yOffset = (yPos - 50) * 320 + xPos - 239 + i * 8;
+			for (_gameState.counter[1] = 0; _gameState.counter[1] <= 49; ++_gameState.counter[1]) {
+				yOffset += 320;
+				_gameState.counter[0] = yPos - 49 + _gameState.counter[1];
+				for (_gameState.counter[2] = 0; _gameState.counter[2] <= 29; ++_gameState.counter[2]) {
+					_gameState.counter[3] = xPos - 15 + _gameState.counter[2];
+					const int offset = _gameState.counter[0] * 134 + _gameState.counter[3];
+					if (_gameState.counter[0] >= 92 && _gameState.counter[0] <= 110 && offset >= 12533 && walkTable2[offset - 12533] == 1) {
+						continue;
+					}
+					uint8 color = _facingIgorFrames[kFacingPositionLeft - 1][_walkCurrentFrame * 1500 + _gameState.counter[1] * 30 + _gameState.counter[2]];
+					if (color != 0) {
+						_screenLayer2[yOffset + _gameState.counter[2]] = color;
+					}
+				}
+			}
+			memcpy(_screenVGA, _screenLayer2, 46080);
+			++i;
+		}
+		PART_06_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	} while (i != 29);
+	free(walkTable1);
+	free(walkTable2);
+	WalkData *wd = &_walkData[0];
+	wd->setPos(xPos, yPos, 4, 0);
+	wd->setDefaultScale();
+	_currentPart = 51;
 }
 
 void IgorEngine::PART_06() {

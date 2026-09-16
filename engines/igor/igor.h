@@ -418,13 +418,18 @@ private:
 
 	void PART_MAIN();
 	void EXEC_MAIN_ACTION(int action);
+	void PART_05_HELPER_4(int num);
+	void PART_05_HELPER_5(int frame);
 	void PART_05();
+	void PART_05_EXEC_ACTION(int action);
+	void PART_05_ACTION_102();
 	void PART_05_UPDATE_ROOM_BACKGROUND();
-
 
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
 	void PART_06_EXEC_ACTION(int action);
+
+	void PART_06_ACTION_102();
 
 	void PART_06_HELPER_2();
 

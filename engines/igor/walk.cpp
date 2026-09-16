@@ -1015,6 +1015,7 @@ void IgorEngine::handleRoomIgorWalk() {
 		_walkDataLastIndex = _walkDataCurrentIndex;
 		if (_actionCode > 0) {
 			hideCursor();
+			debugC(9, kDebugEngine, "Executing action code %d", _actionCode);
 			executeAction(_actionCode);
 			if (!_gameState.dialogueTextRunning) {
 				showCursor();
