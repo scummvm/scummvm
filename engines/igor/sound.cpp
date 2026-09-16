@@ -40,7 +40,7 @@ void IgorEngine::playMusic(int num) {
 
 void IgorEngine::playSound(int num, int type) {
 	debugC(9, kDebugEngine, "playSound() %d", num);
-    --num;
+    // --num;
 	int soundOffset = -1;
 	Audio::Mixer::SoundType soundType;
 	Audio::SoundHandle *soundHandle = 0;

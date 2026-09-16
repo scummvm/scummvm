@@ -24,6 +24,10 @@ namespace Igor {
 
 const uint8 _talkDelays[] = { 0, 27, 22, 17, 12, 7, 0 };
 
+const uint8 IgorEngine::_dialogueColor[] = { 0x3F, 0x3F, 0x3F };
+
+const uint8 IgorEngine::_sentenceColorIndex[]= { 0xFD, 0xFB, 0xF1 };
+
 /**
  * appends one DialogueText{num, count, sound} record into _dialogueTextsTable[] at index _dialogueTextsCount, then increments it.
  * MAX_DIALOGUE_TEXTS = 6
@@ -166,6 +170,157 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		if (_inputVars[kInputEscape]) return;
 		waitForTimer();
 	} while (_gameState.dialogueTextRunning);
+}
+
+void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y) {
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	*x = wd->x;
+	*y = wd->y - wd->scaleWidth - 3;
+	fixDialogueTextPosition(num, count, x, y);
+}
+
+void IgorEngine::startIgorDialogue() {
+	debugC(9, kDebugEngine, "startIgorDialogue()");
+	--_dialogueTextsCount;
+	int talkX, talkY;
+	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
+	fixIgorDialogueTextPosition(dt->num, dt->count, &talkX, &talkY);
+	_dialogueDirtyRectY = talkY * 320;
+	_dialogueDirtyRectSize = dt->count * 11 * 320;
+	assert(_dialogueDirtyRectSize < 320 * 72);
+	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+
+	if (_currentPart == 690) {
+		memcpy(_screenTextLayer + 320 * 72, _screenLayer1 + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		if (_currentAction.verb == kVerbLook && _currentAction.object1Num == 15) {
+			memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		}
+		if (_currentAction.verb == kVerbLook && _currentAction.object1Num == 19) {
+			memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+		}
+	} else {
+		memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
+	}
+	for (int i = 0; i < dt->count; ++i) {
+		const char *textLine = _globalDialogueTexts[dt->num + i];
+		int textLineWidth = _font.getStringWidth(textLine);
+		int textX = talkX - textLineWidth / 2;
+		int textY = i * 10;
+		_font.drawString(_screenTextLayer, textLine, textX, textY, kTalkColor, kTalkShadowColor, kTalkShadowColor);
+	}
+	setPaletteColor(kTalkColor, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
+	setPaletteColor(kTalkShadowColor, 0, 0, 0);
+	if (_gameState.talkMode != kTalkModeSpeechOnly) {
+		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
+	}
+	if (_gameState.talkMode == kTalkModeTextOnly) {
+		_talkDelay = (2 * dt->count) * _talkDelays[_gameState.talkSpeed];
+		_talkDelayCounter = 0;
+	} else {
+		_talkDelay = -1;
+		_talkDelayCounter = 0;
+	}
+	if (_gameState.talkMode != kTalkModeTextOnly) {
+		playSound(dt->num, 0);
+	}
+	_gameState.dialogueTextRunning = true;
+	_inputVars[kInputSkipDialogue] = 0;
+}
+
+void IgorEngine::waitForEndOfIgorDialogue() {
+	do {
+		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
+			_talkDelayCounter = _talkDelay;
+			_inputVars[kInputSkipDialogue] = 0;
+		}
+		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
+			if (_talkSpeechCounter > 2) {
+				if (_gameState.talkMode != kTalkModeTextOnly) {
+					_talkDelayCounter = _talkDelay;
+				}
+				if (_talkDelay == _talkDelayCounter) {
+					animateIgorTalking(0);
+					memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+					if (_dialogueTextsCount == 0) {
+						_gameState.dialogueTextRunning = 0;
+					} else {
+						++_dialogueTextsStart;
+						if (_gameState.talkMode != kTalkModeTextOnly) {
+							if (_talkSpeechCounter != -1) {
+								_talkSpeechCounter = 0;
+							} else {
+								_talkSpeechCounter = 5;
+								startIgorDialogue();
+							}
+						} else {
+							startIgorDialogue();
+						}
+					}
+				} else {
+					animateIgorTalking(getRandomNumber(6));
+					++_talkDelayCounter;
+				}
+			} else {
+				if (_talkSpeechCounter == 2) {
+					startIgorDialogue();
+				}
+				++_talkSpeechCounter;
+			}
+		}
+		if (_updateRoomBackground) {
+			(this->*_updateRoomBackground)();
+		}
+		if (_inputVars[kInputEscape]) return;
+		waitForTimer();
+	} while (_gameState.dialogueTextRunning);
+}
+
+void IgorEngine::animateIgorTalking(int frame) {
+	if (getPart() == 4) {
+		return;
+	}
+	if (getPart() == 85) {
+		PART_85_HELPER_6(frame);
+		return;
+	}
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	int y = (wd->y - wd->scaleWidth + 1) * 320;
+	int delta = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
+	if (delta > 0) {
+		y += delta;
+	}
+	for (int yOffset = 0; yOffset < wd->scaleWidth; y += 320, ++yOffset) {
+		int index = READ_LE_UINT16(_walkScaleTable + 0x6CE + wd->scaleHeight * 2) + yOffset;
+		uint8 yScale = _walkScaleTable[index];
+		if (yScale >= 11) {
+			continue;
+		}
+		for (int x = 0, xOffset = wd->clipSkipX - 1; x < wd->clipWidth; ++x, ++xOffset) {
+			index = READ_LE_UINT16(_walkScaleTable + 0x734 + _walkWidthScaleTable[wd->scaleHeight - 1] * 2) + xOffset;
+			uint8 xScale = _walkScaleTable[0x4FC + index];
+			if (xScale < 8 || xScale > 21) {
+				continue;
+			}
+			uint8 screenColor = _screenVGA[y + x];
+			if (screenColor < kTalkColor || screenColor > kTalkShadowColor) {
+				int offset = yScale * 14 + frame * 154 + (wd->posNum - 1) * 924 + (xScale - 8);
+				uint8 srcColor = _igorHeadFrames[offset];
+				if (srcColor == 0) {
+					_screenVGA[y + x] = _screenLayer1[y + x];
+					continue;
+				}
+				RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[y + x]];
+				if (wd->y <= roa->y1Lum) {
+					_screenVGA[y + x] = _screenLayer1[y + x];
+					continue;
+				}
+				if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+					srcColor -= roa->deltaLum;
+				}
+				_screenVGA[y + x] = srcColor;
+			}
+		}
+	}
 }
 
 } // End of namespace Igor

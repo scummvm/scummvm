@@ -192,7 +192,9 @@ Common::Error IgorEngine::run() {
 	loadMainTexts();
 	loadIgorFrames();
 
-	_gameState.talkMode = kTalkModeTextOnly;
+	// _gameState.talkMode = kTalkModeTextOnly;
+	// _gameState.talkMode = kTalkModeSpeechOnly;
+	_gameState.talkMode = kTalkModeSpeechAndText;
 	_gameState.talkSpeed = 3;
 	_talkSpeechCounter = 5;
 	_eventQuitGame = false;

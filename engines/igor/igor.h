@@ -397,7 +397,8 @@ private:
 	void setupDefaultPalette();
 
 	void readTableFile();
-	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent);
+	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
+
 	void loadMainTexts();
 	const char *getString(int id) const;
 
@@ -412,6 +413,10 @@ private:
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
+	void animateIgorTalking(int frame);
+	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
+	void startIgorDialogue();
+	void waitForEndOfIgorDialogue();
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
@@ -446,6 +451,8 @@ private:
 	void PART_85_HELPER_2();
 	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();
+
+	void PART_85_HELPER_6(int frame);
 
 	void PART_90();
 
@@ -519,6 +526,10 @@ private:
 
 	void buildWalkPath(int srcX, int srcY, int dstX, int dstY);
 
+
+	static const uint8 _dialogueColor[];
+	static const uint8 _sentenceColorIndex[];
+
 public:
 	Graphics::Screen *_screen = nullptr;
 
@@ -580,6 +591,7 @@ extern IgorEngine *g_engine;
 #define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
 
 // Static data tables (defined in static_walk.cpp, static_cursor.cpp)
+
 extern const uint8 _walkWidthScaleTable[];
 extern const uint8 _walkScaleTable[];
 extern const float _walkScaleSpeedTable[];

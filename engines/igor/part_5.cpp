@@ -193,24 +193,24 @@ void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		// switch (getRandomNumber(200)) {
-		// case 0:
-		// 	playSound(18, 1);
-		// 	break;
-		// case 3:
-		// 	playSound(21, 1);
-		// 	break;
-		// case 9:
-		// 	playSound(22, 1);
-		// 	break;
-		// case 17:
-		// 	playSound(23, 1);
-		// 	break;
-		// }
+		switch (getRandomNumber(200)) {
+		case 0:
+			playSound(18, 1);
+			break;
+		case 3:
+			playSound(21, 1);
+			break;
+		case 9:
+			playSound(22, 1);
+			break;
+		case 17:
+			playSound(23, 1);
+			break;
+		}
 	}
-	// if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
-	// 	playSound(17, 1);
-	// }
+	if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
+		playSound(17, 1);
+	}
 }
 
 } // End of namespace Igor
