@@ -48,14 +48,6 @@ namespace Igor {
 struct IgorGameDescription;
 
 enum {
-	kDebugEngine   = 400 << 1,
-	kDebugResource = 400 << 2,
-	kDebugScreen   = 400 << 3,
-	kDebugWalk     = 400 << 4,
-	kDebugGame     = 400 << 5
-};
-
-enum {
 	kFlagDemo = 1 << 0,
 	kFlagFloppy = 1 << 1,
 	kFlagTalkie = 1 << 2
@@ -432,6 +424,7 @@ private:
 
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
+	void PART_06_EXEC_ACTION(int action);
 
 	void PART_06_HELPER_2();
 
@@ -511,6 +504,7 @@ private:
 	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void loadAnimData(const int *anm, int loadOffset = 0);
+	void loadActionData(int act);
 	void loadRoomData(int pal, int img, int box, int msk, int txt);
 	const uint8 *getAnimFrame(int baseOffset, int tableOffset, int frame);
 	void decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText = false);
@@ -573,6 +567,7 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 };
 

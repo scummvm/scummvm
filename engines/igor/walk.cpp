@@ -1013,14 +1013,14 @@ void IgorEngine::handleRoomIgorWalk() {
 	if (_walkDataCurrentIndex > _walkDataLastIndex) {
 		_gameState.igorMoving = false;
 		_walkDataLastIndex = _walkDataCurrentIndex;
-		// if (_actionCode > 0) {
-		// 	hideCursor();
-		// 	executeAction(_actionCode);
-		// 	if (!_gameState.dialogueTextRunning) {
-		// 		showCursor();
-		// 	}
-		// 	clearAction();
-		// }
+		if (_actionCode > 0) {
+			hideCursor();
+			executeAction(_actionCode);
+			if (!_gameState.dialogueTextRunning) {
+				showCursor();
+			}
+			clearAction();
+		}
 	}
 	if (_gameState.igorMoving) {
 		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);

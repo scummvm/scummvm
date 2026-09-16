@@ -32,6 +32,12 @@ enum IgorDebugChannels {
 	kDebugScan,
 	kDebugFilePath,
 	kDebugScript,
+
+	kDebugEngine   = 400 << 1,
+	kDebugResource = 400 << 2,
+	kDebugScreen   = 400 << 3,
+	kDebugWalk     = 400 << 4,
+	kDebugGame     = 400 << 5,
 };
 
 extern const PlainGameDescriptor igorGames[];

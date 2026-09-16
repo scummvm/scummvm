@@ -30,6 +30,11 @@
 #include "igor/detection_tables.h"
 
 const DebugChannelDef IgorMetaEngineDetection::debugFlagList[] = {
+	{ Igor::kDebugEngine, "Engine", "Engine debug level" },
+	{ Igor::kDebugResource, "Resource", "Resource debug level" },
+	{ Igor::kDebugScreen, "Screen", "Screen debug level" },
+	{ Igor::kDebugWalk, "Walk", "Walk debug level" },
+	{ Igor::kDebugGame, "Game", "Game debug level" },
 	{ Igor::kDebugGraphics, "Graphics", "Graphics debug level" },
 	{ Igor::kDebugPath, "Path", "Pathfinding debug level" },
 	{ Igor::kDebugFilePath, "FilePath", "File path debug level" },

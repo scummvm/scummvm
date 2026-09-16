@@ -92,6 +92,15 @@ void IgorEngine::PART_06_HELPER_8(int frame) {
 	}
 }
 
+void IgorEngine::PART_06_EXEC_ACTION(int action) {
+debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
+	switch (action) {
+    default:
+		error("PART_06_EXEC_ACTION unhandled action %d", action);
+		break;
+    }
+}
+
 void IgorEngine::PART_06() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
@@ -112,7 +121,7 @@ void IgorEngine::PART_06() {
 	static const int anm4[] = { FRM_SpringRock5, FRM_SpringRock6, 0 };
 	loadAnimData(anm4, 0xA763);
 	PART_06_HELPER_2();
-	// SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
     // PART_06_HELPER_6(255);
 	if (_objectsState[63] == 1) {
@@ -126,7 +135,7 @@ void IgorEngine::PART_06() {
 		memcpy(_paletteBuffer, _currentPalette, 624);
 		fadeIn(768);
 	}
-	// loadActionData(DAT_SpringBridge);
+	loadActionData(DAT_SpringBridge);
     _roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;

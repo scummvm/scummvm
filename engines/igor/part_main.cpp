@@ -49,6 +49,7 @@ void IgorEngine::PART_MAIN() {
 	_objectsState[21] = 1;
 	_objectsState[49] = 1;
 
+    // UPDATE_OBJECT_STATE(255);
     if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
@@ -56,6 +57,7 @@ void IgorEngine::PART_MAIN() {
 		// drawInventory(1, 0);
 	}
     do {
+        debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
 
         case 50:
@@ -102,7 +104,7 @@ void IgorEngine::PART_MAIN() {
 			break;
 
 		default:
-			error("Unknown or unhandled room part %d", _currentPart);
+			error("PART_MAIN() Unhandled part %d", _currentPart);
 			break;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);

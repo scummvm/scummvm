@@ -185,6 +185,13 @@ uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 	return dst;
 }
 
+void IgorEngine::loadActionData(int act) {
+	if (act != 0) {
+		assert(findData(act)->size <= 0x2000);
+		loadData(act, _roomActionsTable);
+	}
+}
+
 void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
 	if (loadOffset == 0) {
 		memset(_animFramesBuffer, 0, 65535);

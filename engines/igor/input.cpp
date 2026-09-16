@@ -220,6 +220,7 @@ void IgorEngine::handleRoomInput() {
 	// 	}
 	// 	_inputVars[kInputClick] = 0;
 	// }
+
 	bool actionHovering = !_inputVars[kInputClick];
 	_inputVars[kInputClick] = 0;
 
@@ -258,20 +259,20 @@ void IgorEngine::handleRoomInput() {
 		if (_currentAction.verbType == 0) {
 			_currentAction.object1Num = object;
 			_currentAction.object1Type = kObjectTypeRoom;
-			// if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 48 + _currentAction.object1Num] != 0) {
-			// 	formatActionSentence(0);
-			// 	if (!actionHovering) {
-			// 		_currentAction.verbType = 1;
-			// 	}
-			// 	return;
-			// }
-			// if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 48 + _currentAction.object1Num] != 0) {
-			// 	formatActionSentence(0);
-			// 	if (!actionHovering) {
-			// 		_currentAction.verbType = 2;
-			// 	}
-			// 	return;
-			// }
+			if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 48 + _currentAction.object1Num] != 0) {
+				formatActionSentence(0);
+				if (!actionHovering) {
+					_currentAction.verbType = 1;
+				}
+				return;
+			}
+			if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 48 + _currentAction.object1Num] != 0) {
+				formatActionSentence(0);
+				if (!actionHovering) {
+					_currentAction.verbType = 2;
+				}
+				return;
+			}
 		} else {
 			_currentAction.object2Num = object;
 			_currentAction.object2Type = kObjectTypeRoom;
@@ -281,13 +282,13 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 
-	// if (_currentAction.verbType == 0) {
-	// 	if (_currentAction.object1Type == kObjectTypeInventory) {
-	// 		_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
-	// 	} else {
-	// 		_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
-	// 	}
-	// }
+	if (_currentAction.verbType == 0) {
+		// if (_currentAction.object1Type == kObjectTypeInventory) {
+		// 	_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
+		// } else {
+			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
+		// }
+	}
 
 	if (_currentAction.verbType == 1) {
 		int offset = _roomActionsTable[_roomDataOffsets.action.object2 + _currentAction.object2Num + _currentAction.object2Type * 38] * 2;

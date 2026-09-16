@@ -40,6 +40,8 @@ void IgorEngine::PART_05() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
+	loadActionData(DAT_SpringRock);
+	_roomDataOffsets = PART_05_ROOM_DATA_OFFSETS;
 
 	{
 		_walkData[0].setPos(0, 141, 2, 0);

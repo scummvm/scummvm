@@ -52,20 +52,14 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_inventoryImagesBuffer = (uint8 *)malloc(48000);
 	_verbsPanelBuffer = (uint8 *)malloc(3840);
 
-	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
-	DebugMan.addDebugChannel(kDebugScreen,   "Screen",   "Screen debug level");
-	DebugMan.addDebugChannel(kDebugWalk,     "Walk",     "Walk debug level");
-	DebugMan.addDebugChannel(kDebugGame,     "Game",     "Game debug level");
-
-
 	{ // hardcoded now
 		_game.ovlFileName = "igor.exe";
 		_game.sfxFileName = "igor.dat";
 		_game.version = kIdSpaCD;
 
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
-		_currentPart = 850;
+		// _currentPart = 850;
+		_currentPart = 51;
 	}
 
 	// if (_game.flags & kFlagFloppy) {
@@ -177,6 +171,8 @@ Common::Error IgorEngine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
