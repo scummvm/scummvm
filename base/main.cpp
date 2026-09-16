@@ -219,6 +219,9 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 	if (err.getCode() == Common::kNoError) {
+		// Inform backend that the engine is about to be created
+		system.engineBeforeCreate();
+
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
@@ -252,6 +255,9 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 		}
 
 		metaEngine.deleteInstance(engine, game, meDescriptor);
+
+		// Inform backend that the engine has been deleted
+		system.engineAfterDelete();
 
 		return err;
 	}
@@ -339,6 +345,9 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 
 	// Free up memory
 	metaEngine.deleteInstance(engine, game, meDescriptor);
+
+	// Inform backend that the engine has been deleted
+	system.engineAfterDelete();
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
