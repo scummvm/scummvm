@@ -156,9 +156,15 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	_exitPos.y = stream.readUint16LE();
 
 	if (isNancy10) {
-		// Selects how the player piece leaves the board when it reaches the
-		// exit: zero makes it disappear at the hole, non-zero slides it off.
-		_pieceDisappearsAtExit = stream.readByte() == 0;
+		byte exitBehavior = stream.readByte();
+		if (exitBehavior <= kExitSlideRight) {
+			_exitBehavior = (ExitBehavior)exitBehavior;
+		} else {
+			// nancy14 keeps the piece in place for any other value
+			_exitBehavior = g_nancy->getGameType() >= kGameTypeNancy14 ? kExitStay : kExitSlideRight;
+		}
+	} else {
+		_exitBehavior = _exitPos.x == 0 ? kExitSlideLeft : kExitSlideRight;
 	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
@@ -235,17 +241,27 @@ void MazeChasePuzzle::execute() {
 		}
 
 		if (_pieces[0]._gridPos == _exitPos) {
-			if (_pieceDisappearsAtExit) {
-				// The piece vanishes at the hole instead of sliding past the edge
+			switch (_exitBehavior) {
+			case kExitDisappear:
 				_pieces[0].setVisible(false);
-			} else {
-				_pieces[0]._gridPos = _exitPos + Common::Point(_exitPos.x == 0 ? -1 : 1, 0);
+				break;
+			case kExitSlideLeft:
+			case kExitSlideRight:
+				_pieces[0]._gridPos = _exitPos + Common::Point(_exitBehavior == kExitSlideLeft ? -1 : 1, 0);
 				++_currentAnimFrame;
+				break;
+			case kExitStay:
+				break;
 			}
 
 			g_nancy->_sound->loadSound(_solveSound);
 			g_nancy->_sound->playSound(_solveSound);
 			_solved = true;
+
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				// The delay runs alongside the solve sound, in 3-second steps
+				_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 3000;
+			}
 			_state = kActionTrigger;
 		} else {
 			for (uint i = 1; i < _pieces.size(); ++i) {
