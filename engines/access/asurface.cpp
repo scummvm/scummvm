@@ -48,7 +48,7 @@ SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 
 	for (int i = 0; i < count; i++) {
 		uint32 offset = res->_stream->readUint32LE();
-		if ((int)offset > res->_size)
+		if (offset > (uint32)res->_size)
 			error("Corrupt sprite resource: offset %d (%d) is past end of file (%d)", i, offset, res->_size);
 		offsets.push_back(offset);
 	}

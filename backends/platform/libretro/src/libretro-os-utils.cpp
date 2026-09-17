@@ -32,6 +32,10 @@
 #include "backends/platform/libretro/include/libretro-options-widget.h"
 #include "backends/platform/libretro/include/libretro-fs.h"
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	uint32 curTime = (uint32)(cpu_features_get_time_usec() / 1000000);
 
@@ -117,6 +121,18 @@ bool OSystem_libretro::parseGameName(const Common::String &gameName, Common::Str
 	return false;
 }
 
+bool OSystem_libretro::openUrl(const Common::String &url) {
+#ifdef EMSCRIPTEN
+	// Called on the emu thread; window.open() only exists on the main thread.
+	static char s_url[2048];
+	Common::strlcpy(s_url, url.c_str(), sizeof(s_url));
+	MAIN_THREAD_ASYNC_EM_ASM({ window.open(UTF8ToString($0), "_blank"); }, s_url);
+	return true;
+#else
+	return false;
+#endif
+}
+
 int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 	Common::String game_id;
 	Common::String engine_id;
@@ -136,6 +152,8 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 		if (!detectionResults.listRecognizedGames().empty()) {
 			res = TEST_GAME_OK_ID_AUTODETECTED;
 		}
+		if (detectionResults.foundUnknownGames())
+			logMessage(LogMessageType::kWarning, detectionResults.generateUnknownGameReport(false, 80).encode().c_str());
 
 	} else {
 
