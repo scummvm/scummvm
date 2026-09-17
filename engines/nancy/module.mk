@@ -43,6 +43,7 @@ MODULE_OBJS = \
   action/puzzle/leverpuzzle.o \
   action/puzzle/magnetmazepuzzle.o \
   action/puzzle/mazechasepuzzle.o \
+  action/puzzle/magicboxpuzzle.o \
   action/puzzle/matchpuzzle.o \
   action/puzzle/memorypuzzle.o \
   action/puzzle/meterpuzzle.o \

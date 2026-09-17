@@ -55,7 +55,7 @@
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 //#include "engines/nancy/action/puzzle/escapegridpuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
-//#include "engines/nancy/action/puzzle/magicboxpuzzle.h"
+#include "engines/nancy/action/puzzle/magicboxpuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/hangmanpuzzle.h"
@@ -535,8 +535,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new DecoderPuzzle();
 	// -- Nancy15 new puzzles (types 183-185) --
 	case 183:
-		//return new MagicBoxPuzzle();
-		return nullptr;	// TODO
+		return new MagicBoxPuzzle();
 	case 184:
 		//return new EscapeGridPuzzle();
 		return nullptr;	// TODO
