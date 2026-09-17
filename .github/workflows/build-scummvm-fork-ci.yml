@@ -5,6 +5,9 @@ on:
     branches: [master]
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   # ---------------------------------------------------------------------
   # AppImage: due varianti, generic (SSE4.2) e avx2 (AVX2+FMA)
@@ -116,14 +119,13 @@ jobs:
             -i "$ICON_FILE" \
             --plugin gtk \
             --output appimage
-          mv ScummVM*.AppImage "ScummVM-x86_64-${{ matrix.variant }}-${{ github.sha }}.AppImage"
+          mv ScummVM*.AppImage "ScummVM-${{ matrix.variant }}.AppImage"
 
       - name: Verifica e aggiorna compatibilità runtime
         shell: bash
         run: |
           set -euo pipefail
-
-          APPIMAGE=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -type f -name "ScummVM-x86_64-${{ matrix.variant }}-*.AppImage" -print -quit)
+          APPIMAGE=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -type f -name "ScummVM-${{ matrix.variant }}.AppImage" -print -quit)
           test -n "$APPIMAGE"
 
           . /etc/os-release
@@ -164,7 +166,7 @@ jobs:
             exit 1
           fi
 
-          REPORT="$GITHUB_WORKSPACE/ScummVM-x86_64-${{ matrix.variant }}-${{ github.sha }}-compatibility.txt"
+          REPORT="$GITHUB_WORKSPACE/ScummVM-${{ matrix.variant }}-compat.txt"
           {
             echo "ScummVM AppImage compatibility report"
             echo "Generated automatically by GitHub Actions"
@@ -178,7 +180,6 @@ jobs:
             echo
             echo "This file is regenerated on every build; compatibility values are not maintained manually."
           } > "$REPORT"
-
           cat "$REPORT"
 
           {
@@ -195,7 +196,7 @@ jobs:
           name: appimage-${{ matrix.variant }}
           path: |
             ScummVM-*.AppImage
-            ScummVM-*-compatibility.txt
+            ScummVM-*-compat.txt
           retention-days: 7
 
   # ---------------------------------------------------------------------
@@ -243,7 +244,7 @@ jobs:
       - name: Rinomina e prepara artifact
         run: |
           PKG=$(find /build -maxdepth 1 -name "*.pkg.tar.zst" | head -n1)
-          cp "$PKG" "$GITHUB_WORKSPACE/scummvm-${{ github.sha }}-x86_64.pkg.tar.zst"
+          cp "$PKG" "$GITHUB_WORKSPACE/scummvm-x86_64.pkg.tar.zst"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -251,3 +252,33 @@ jobs:
           name: arch-package
           path: scummvm-*.pkg.tar.zst
           retention-days: 7
+
+  # ---------------------------------------------------------------------
+  # Pubblica gli artifact come GitHub Release "continua" (nightly)
+  # ---------------------------------------------------------------------
+  release:
+    name: Pubblica release continua
+    runs-on: ubuntu-latest
+    needs: [build-appimage, build-arch-pkg]
+    steps:
+      - name: Scarica tutti gli artifact della build
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Pubblica/aggiorna release "nightly"
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: "ScummVM fork — build continua (${{ github.sha }})"
+          body: |
+            Build automatica generata dal commit ${{ github.sha }}.
+            Questa release viene sovrascritta ad ogni push su `master`.
+          prerelease: true
+          make_latest: true
+          fail_on_unmatched_files: true
+          files: |
+            artifacts/**/ScummVM-generic.AppImage
+            artifacts/**/ScummVM-avx2.AppImage
+            artifacts/**/ScummVM-*-compat.txt
+            artifacts/**/scummvm-x86_64.pkg.tar.zst
