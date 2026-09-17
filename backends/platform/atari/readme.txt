@@ -568,6 +568,9 @@ Known issues
 - When using ExtenDOS for Audio CD, ScummVM requires a recent release (>= 4.11),
   otherwise playback could freeze the whole program.
 
+- When using SuperVidel, ScummVM requires a recent drivers release (>= 2026),
+  otherwise video wouldn't be restored correctly.
+
 Future plans
 ------------
 
