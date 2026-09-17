@@ -540,7 +540,7 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			break;
 		case DependencyType::kElapsedPlayerTime:
 			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
-				dep.condition == 0 ? "greater than" : (dep.condition == 1 ? "less than" : "equals"),
+				dep.condition == 0 ? "at or after" : (dep.condition == 1 ? "at or before" : (dep.condition == 2 ? "equals" : "between")),
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
@@ -594,6 +594,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			break;
 		case DependencyType::kRandom:
 			debugPrintf("kRandom, chance %i", dep.condition);
+			break;
+		case DependencyType::kDefaultAR:
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				debugPrintf("kDefaultAR, no record of this type (or types %i, %i, %i, %i) executed in this scene",
+					dep.hours, dep.minutes, dep.seconds, dep.milliseconds);
+			} else {
+				debugPrintf("kDefaultAR, previous record did not execute");
+			}
+
 			break;
 		default:
 			debugPrintf("unknown type %u", (uint)dep.type);
@@ -1014,6 +1023,13 @@ bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
 		time.getHours(),
 		time.getMinutes(),
 		(uint32)time);
+
+	auto *bootSummary = GetEngineData(BSUM);
+	if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		debugPrintf("Day: %d\n", NancySceneState._timers.playerDay);
+	}
+
 	return true;
 }
 
@@ -1030,9 +1046,15 @@ bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
 	}
 
 	Time &time = NancySceneState._timers.playerTime;
+	auto *bootSummary = GetEngineData(BSUM);
 
 	if (argc == 2) {
 		time = atoi(argv[1]);
+	} else if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		NancySceneState.setPlayerDay(atoi(argv[1]));
+		time = 	atoi(argv[2]) * 3600000 +	// hours
+				atoi(argv[3]) * 60000;		// minutes
 	} else {
 		time = 	atoi(argv[1]) * 86400000 +	// days
 				atoi(argv[2]) * 3600000 +	// hours
