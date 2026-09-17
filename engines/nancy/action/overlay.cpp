@@ -518,48 +518,103 @@ void TableIndexOverlay::execute() {
 	}
 }
 
+void TextLineOverlay::init() {
+	if (!_digitImageName.empty()) {
+		g_nancy->_resource->loadImage(_digitImageName, _digitImage);
+	}
+
+	RenderObject::init();
+}
+
 void TextLineOverlay::readData(Common::SeekableReadStream &stream) {
 	_fontID = stream.readUint16LE();
 	_textColor = stream.readUint16LE();
-	_position.x = stream.readSint16LE();
-	stream.skip(2);
-	_position.y = stream.readSint16LE();
-	stream.skip(2);
+	_position.x = stream.readSint32LE();
+	_position.y = stream.readSint32LE();
 	readFilename(stream, _textKey);
 	_tableIndex = stream.readSint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		_numDigits = stream.readSint16LE();
+
+		Common::String imageName;
+		readFilename(stream, imageName);
+		if (!imageName.empty() && imageName != "NO_FILE") {
+			_digitImageName = Common::Path(imageName);
+			_digitSpacing = stream.readUint16LE();
+			for (uint i = 0; i < 10; ++i) {
+				readRect(stream, _digitSrcRects[i]);
+			}
+		}
+	}
 }
 
 void TextLineOverlay::execute() {
-	if (_isDone) {
-		return;
+	switch (_state) {
+	case kBegin:
+		init();
+		_state = kRun;
+		// fall through
+	case kRun: {
+		// The table value can change while the scene is shown, so the text is
+		// re-evaluated every frame and only redrawn when it differs
+		Common::String text = getText();
+		if (text != _displayedText) {
+			_displayedText = text;
+			if (_digitImageName.empty()) {
+				drawText(text);
+			} else {
+				drawDigitImages(text);
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+Common::String TextLineOverlay::getText() const {
+	if (!_textKey.empty()) {
+		return _textKey;
 	}
 
+	int value = 0;
+	if (_tableIndex != kZeroTableIndex) {
+		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		assert(playerTable);
+
+		value = playerTable->getValue(_tableIndex);
+	}
+
+	// An unset value is displayed as zero
+	if (value == kNoTableValue) {
+		value = 0;
+	}
+
+	// Nancy14 keeps only the lowest _numDigits digits of the value
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		int modulus = 1;
+		for (int i = 0; i < _numDigits; ++i) {
+			modulus *= 10;
+		}
+
+		value = (int16)(value % modulus);
+	}
+
+	return Common::String::format("%d", value);
+}
+
+void TextLineOverlay::drawText(const Common::String &text) {
 	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
 	if (!font) {
 		return;
 	}
 
-	Common::String text;
-	if (!_textKey.empty()) {
-		text = _textKey;
-	} else {
-		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
-		assert(playerTable);
-
-		int16 value = playerTable->getValue(_tableIndex);
-
-		// An unset value is displayed as zero
-		if (value == kNoTableValue) {
-			value = 0;
-		}
-
-		text = Common::String::format("%d", value);
-	}
-
 	uint width = font->getStringWidth(text);
 	uint height = font->getFontHeight();
 	if (!width || !height) {
-		_isDone = true;
+		setVisible(false);
 		return;
 	}
 
@@ -573,8 +628,44 @@ void TextLineOverlay::execute() {
 	setTransparent(true);
 	setVisible(true);
 	registerGraphics();
+}
 
-	_isDone = true;
+void TextLineOverlay::drawDigitImages(const Common::String &text) {
+	// Each digit is drawn with its bottom row on the stored y; the next digit
+	// starts at the previous digit's last column plus the spacing
+	Common::Array<const Common::Rect *> srcRects;
+	Common::Array<int16> offsets;
+	int16 x = 0;
+	int16 width = 0;
+	int16 height = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] < '0' || text[i] > '9') {
+			continue;
+		}
+
+		const Common::Rect &src = _digitSrcRects[text[i] - '0'];
+		srcRects.push_back(&src);
+		offsets.push_back(x);
+		width = x + src.width();
+		height = MAX<int16>(height, src.height());
+		x += src.width() - 1 + _digitSpacing;
+	}
+
+	if (srcRects.empty() || !width || !height) {
+		setVisible(false);
+		return;
+	}
+
+	_drawSurface.create(width, height, g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	for (uint i = 0; i < srcRects.size(); ++i) {
+		_drawSurface.blitFrom(_digitImage, *srcRects[i], Common::Point(offsets[i], height - srcRects[i]->height()));
+	}
+
+	moveTo(Common::Rect(_position.x, _position.y - height + 1, _position.x + width, _position.y + 1));
+	setTransparent(true);
+	setVisible(true);
+	registerGraphics();
 }
 
 void RolloverOverlay::init() {
