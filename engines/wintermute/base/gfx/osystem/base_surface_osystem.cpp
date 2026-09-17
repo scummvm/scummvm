@@ -123,7 +123,7 @@ bool BaseSurfaceOSystem::loadImage() {
 	filename.toLowercase();
 
 	BaseImage *image = new BaseImage();
-	if (!image->loadFile(filename)) {
+	if (!image->loadFile(filename, BaseEngine::getRenderer()->getPixelFormat(false))) {
 		delete image;
 		return false;
 	}
