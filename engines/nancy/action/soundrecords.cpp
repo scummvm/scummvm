@@ -319,6 +319,28 @@ void PlaySound::applyAfterSoundAction() {
 	}
 }
 
+Common::String PlaySound::getRecordExtraInfo() const {
+	Common::String info = Common::String::format("Sound %s, channel %u, loops %u, volume %u, scene %d%s",
+		_sound.name.c_str(), _sound.channelID, _sound.numLoops, _sound.volume, _sceneChange.sceneID,
+		_changeSceneImmediately ? " (without waiting)" : "");
+
+	Common::Array<FlagDescription> flags = _flags;
+	if (flags.empty()) {
+		flags.push_back(_flag);
+	}
+
+	for (uint i = 0; i < flags.size(); ++i) {
+		if (flags[i].label == kFlagNoLabel) {
+			continue;
+		}
+
+		info += Common::String::format("; flag %d, %s -> %s", flags[i].label,
+			g_nancy->getEventFlagName(flags[i].label).c_str(), flags[i].flag == g_nancy->_true ? "true" : "false");
+	}
+
+	return info;
+}
+
 Common::String PlaySound::getRecordTypeName() const {
 	if (g_nancy->getGameType() <= kGameTypeNancy2) {
 		return "PlayDigiSoundAndDie";

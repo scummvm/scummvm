@@ -122,6 +122,8 @@ public:
 	MultiEventFlagDescription _flags;
 	FlagsType _flagsType;
 
+	Common::String getRecordExtraInfo() const override;
+
 protected:
 	Common::String getRecordTypeName() const override { return _flagsType == kEventFlagsTerse ? "EventFlagsTerse" : "EventFlags"; }
 };

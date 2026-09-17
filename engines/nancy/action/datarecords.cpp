@@ -339,6 +339,21 @@ void ValueTest::execute() {
 	finishExecution();
 }
 
+Common::String EventFlags::getRecordExtraInfo() const {
+	Common::String info;
+	for (uint i = 0; i < ARRAYSIZE(_flags.descs); ++i) {
+		const FlagDescription &desc = _flags.descs[i];
+		if (desc.label == kFlagNoLabel) {
+			continue;
+		}
+
+		info += Common::String::format("%sflag %d, %s -> %s", info.empty() ? "" : "; ", desc.label,
+			g_nancy->getEventFlagName(desc.label).c_str(), desc.flag == g_nancy->_true ? "true" : "false");
+	}
+
+	return info;
+}
+
 void EventFlags::readData(Common::SeekableReadStream &stream) {
 	if (_flagsType == kEventFlags) {
 		if (g_nancy->getGameType() >= kGameTypeNancy15) {
