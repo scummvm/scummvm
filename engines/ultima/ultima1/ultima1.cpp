@@ -79,6 +79,12 @@ bool Ultima1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;
 }
 
+bool Ultima1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveGameStateCurrently() ||
+		dynamic_cast<Views::Interactions::Dead *>(focusedView()) != nullptr ||
+		dynamic_cast<Views::Interactions::SpaceDead *>(focusedView()) != nullptr;
+}
+
 Common::Error Ultima1Engine::syncGame(Common::Serializer &s) {
 	if (s.isSaving())
 		_G(savegame)._moveCount = _moveCtr;
