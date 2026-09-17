@@ -239,6 +239,7 @@ void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
 	// scene ID (frame/vertical offset stay 0).
 	_changeSceneImmediately = stream.readByte();
 	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;	// sounds keep playing into the new scene
 	_afterSoundAction = stream.readByte();	// overlay-refresh control; unused
 
 	// The single event flag became a list of { label, value } pairs.
@@ -702,6 +703,7 @@ void ConcatMultiSound::execute() {
 		if (_exitSceneID != kNoScene) {
 			SceneChangeDescription desc;
 			desc.sceneID = _exitSceneID;
+			desc.continueSceneSound = kContinueSceneSound;
 			NancySceneState.changeScene(desc);
 		}
 
