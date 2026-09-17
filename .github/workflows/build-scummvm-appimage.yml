@@ -33,7 +33,6 @@ jobs:
         run: |
           UPSTREAM_SHA=$(git ls-remote https://github.com/${UPSTREAM_REPO}.git refs/heads/${UPSTREAM_BRANCH} | cut -f1)
           LAST_SHA=$(gh release view "$RELEASE_TAG" --repo "${{ github.repository }}" --json body -q .body 2>/dev/null | grep -oE '[0-9a-f]{40}' | head -n1 || true)
-
           if [ "$UPSTREAM_SHA" != "$LAST_SHA" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "should_build=true" >> "$GITHUB_OUTPUT"
           else
@@ -157,14 +156,13 @@ jobs:
             -i "$ICON_FILE" \
             --plugin gtk \
             --output appimage
-          mv ScummVM*.AppImage "ScummVM-x86_64-${{ matrix.variant }}-${{ needs.check-updates.outputs.short_sha }}.AppImage"
+          mv ScummVM*.AppImage "ScummVM-${{ matrix.variant }}.AppImage"
 
       - name: Verifica e aggiorna compatibilità runtime
         shell: bash
         run: |
           set -euo pipefail
-
-          APPIMAGE=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -type f -name "ScummVM-x86_64-${{ matrix.variant }}-*.AppImage" -print -quit)
+          APPIMAGE=$(find "$GITHUB_WORKSPACE" -maxdepth 1 -type f -name "ScummVM-${{ matrix.variant }}.AppImage" -print -quit)
           test -n "$APPIMAGE"
 
           . /etc/os-release
@@ -205,7 +203,7 @@ jobs:
             exit 1
           fi
 
-          REPORT="$GITHUB_WORKSPACE/ScummVM-x86_64-${{ matrix.variant }}-${{ needs.check-updates.outputs.short_sha }}-compatibility.txt"
+          REPORT="$GITHUB_WORKSPACE/ScummVM-${{ matrix.variant }}-compat.txt"
           {
             echo "ScummVM AppImage compatibility report"
             echo "Generated automatically by GitHub Actions"
@@ -219,7 +217,6 @@ jobs:
             echo
             echo "This file is regenerated on every build; compatibility values are not maintained manually."
           } > "$REPORT"
-
           cat "$REPORT"
 
           {
@@ -236,7 +233,7 @@ jobs:
           name: appimage-${{ matrix.variant }}
           path: |
             ScummVM-*.AppImage
-            ScummVM-*-compatibility.txt
+            ScummVM-*-compat.txt
 
   # ---------------------------------------------------------------------
   # 3) Pacchetto Arch/CachyOS (.pkg.tar.zst), mirato AVX2
@@ -277,7 +274,7 @@ jobs:
       - name: Rinomina e prepara artifact
         run: |
           PKG=$(find /build -maxdepth 1 -name "*.pkg.tar.zst" | head -n1)
-          cp "$PKG" "$GITHUB_WORKSPACE/scummvm-${{ needs.check-updates.outputs.short_sha }}-x86_64.pkg.tar.zst"
+          cp "$PKG" "$GITHUB_WORKSPACE/scummvm-x86_64.pkg.tar.zst"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -303,35 +300,29 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          REPORTS=(dist/ScummVM-*-compatibility.txt)
-
+          REPORTS=(dist/ScummVM-*-compat.txt)
           if [ ${#REPORTS[@]} -eq 0 ]; then
             echo "::error::Nessun report di compatibilità trovato"
             exit 1
           fi
-
           {
             echo "Build automatica di ScummVM da upstream master."
             echo "Tutti i motori, release mode, shader OpenGL abilitati."
             echo
             echo "### Compatibilità AppImage rilevata automaticamente"
             echo
-
             for REPORT in "${REPORTS[@]}"; do
               VARIANT=$(awk -F': ' '$1 == "Variant" {print $2}' "$REPORT")
               BUILD_BASELINE=$(sed -n 's/^Build baseline: //p' "$REPORT")
               MIN_GLIBC=$(sed -n 's/^Minimum GLIBC symbol version required by final AppImage payload: //p' "$REPORT")
               CPU_FLAGS=$(sed -n 's/^Compiler CPU flags: //p' "$REPORT")
-
               if [ -z "$VARIANT" ] || [ -z "$BUILD_BASELINE" ] || [ -z "$MIN_GLIBC" ] || [ -z "$CPU_FLAGS" ]; then
                 echo "::error::Report di compatibilità incompleto: $REPORT"
                 exit 1
               fi
-
               printf -- '- **%s**: GLIBC >= `%s`; builder `%s`; CPU flags `%s`\n' \
                 "$VARIANT" "$MIN_GLIBC" "$BUILD_BASELINE" "$CPU_FLAGS"
             done
-
             echo
             echo "I valori sopra sono rigenerati dal payload finale degli AppImage a ogni build: non sono mantenuti manualmente."
             echo
@@ -339,7 +330,6 @@ jobs:
             echo
             echo "Commit sorgente: ${{ needs.check-updates.outputs.upstream_sha }}"
           } > release-body.md
-
           cat release-body.md
           cat release-body.md >> "$GITHUB_STEP_SUMMARY"
 
