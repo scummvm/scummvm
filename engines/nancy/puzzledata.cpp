@@ -714,8 +714,19 @@ void DrivingData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(infiniteFuel, 8);
 }
 
+void BuildPuzzleData::synchronize(Common::Serializer &ser) {
+	ser.syncAsUint16LE(sceneID);
+	ser.syncAsSint16LE(placedCount);
+	ser.syncAsByte(solved);
+	ser.syncAsByte(wrongIngredient);
+	syncInt16Array(ser, pieces);
+	syncInt16Array(ser, zones);
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
+	case BuildPuzzleData::getTag():
+		return new BuildPuzzleData();
 	case DrivingData::getTag():
 		return new DrivingData();
 	case WordFindPuzzleData::getTag():

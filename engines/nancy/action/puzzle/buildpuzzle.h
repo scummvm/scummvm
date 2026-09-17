@@ -26,6 +26,9 @@
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
+
+struct BuildPuzzleData;
+
 namespace Action {
 
 // Nancy 14 reuses AR 166 for a rebuilt assembly puzzle (tea, cookies, parfait,
@@ -166,6 +169,11 @@ protected:
 	Common::Rect _startOverHotspot;
 	SoundDescription _startOverSound;
 
+	// With _saveState set, the board is saved after every drop. It is restored when
+	// the puzzle's scene runs again while _resumeFlag is set.
+	byte _saveState = 0;
+	int16 _resumeFlag = -1;
+
 	// Both cleared when the puzzle starts from scratch.
 	int16 _wrongIngredientFlag = -1;	// set once something not in a recipe is dropped in
 	int16 _solvedFlag = -1;
@@ -237,12 +245,19 @@ protected:
 	bool checkSolved() const;
 	// Also updates the shared item state that mirrors the count
 	void setPlacedCount(int16 count);
+	// A piece's shared item state holds how much of it went into the zones,
+	// which the scene's own value tests read once the puzzle is handed in.
+	void setItemValue(int16 itemID, int16 value);
+	void addItemValue(int16 itemID, int16 delta);
 	// Show a button pressed; it acts once its art has been up for a moment
 	void pressButton(HeldButton button);
 	// Hand the puzzle in: the solve scene, or the fail scene when a zone is short
 	void takeOutcome();
 	// Empty every zone and put all the pieces back
 	void resetPuzzle();
+	// Save the board, and put it back when the puzzle resumes
+	void saveState();
+	void restoreState(const BuildPuzzleData &data);
 
 	// The tea puzzle has four: backing away, plus the teapot, the recipe book
 	// and the sink.

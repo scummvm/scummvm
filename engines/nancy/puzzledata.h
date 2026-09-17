@@ -494,6 +494,24 @@ struct DrivingData : public PuzzleData {
 	bool infiniteFuel = false;	// cheat toggle, kept across building visits
 };
 
+// Nancy14 BuildPuzzle (AR 166). The board as it was after the last drop. A puzzle
+// scene that re-runs picks it back up, as long as it is still the last build
+// puzzle entered and its resume flag is set; otherwise the puzzle starts over.
+struct BuildPuzzleData : public PuzzleData {
+	BuildPuzzleData() {}
+	virtual ~BuildPuzzleData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('B', 'L', 'D', 'P'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	uint16 sceneID = kNoScene;
+	int16 placedCount = 0;
+	bool solved = false;
+	bool wrongIngredient = false;
+	Common::Array<int16> pieces;	// 6 per piece: sourceID, assignedZone, left, top, right, bottom
+	Common::Array<int16> zones;		// per zone: numWrong, then one count per ingredient
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy
