@@ -112,6 +112,7 @@ public:
 	void init() override;
 	void onPause(bool pause) override;
 	void registerGraphics() override;
+	void updateGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -353,6 +354,14 @@ protected:
 	// Show the foreground mask blit belonging to the given background frame,
 	// or hide it when the record doesn't describe one for that frame.
 	void updateMask(int viewportFrame);
+
+	// Place and show the movie for the current background frame, or hide it
+	// when the record doesn't describe one for that frame.
+	void updateViewportFrame();
+
+	// Crop the last decoded frame with the given video description and move
+	// the movie to its destination. -1 uses the whole frame at its current spot.
+	void applyVideoDesc(int descID);
 
 	Graphics::ManagedSurface _fullFrame;
 	Graphics::ManagedSurface _maskImage;
