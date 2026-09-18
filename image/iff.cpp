@@ -210,14 +210,18 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 		delete[] scanlines;
 	} else if (_type == TYPE_PBM) {
 		byte *data = (byte *)_surface->getPixels();
-		uint32 outSize = _header.width * _header.height;
+		loadPBMBitmap(stream, data, outPitch);
+	}
+}
 
-		if (_header.compression) {
-			Common::PackBitsReadStream packStream(stream);
-			packStream.read(data, outSize);
-		} else {
-			stream.read(data, outSize);
-		}
+void IFFDecoder::loadPBMBitmap(Common::SeekableReadStream &stream, byte *data, uint16) {
+	uint32 outSize = _header.width * _header.height;
+
+	if (_header.compression) {
+		Common::PackBitsReadStream packStream(stream);
+		packStream.read(data, outSize);
+	} else {
+		stream.read(data, outSize);
 	}
 }
 

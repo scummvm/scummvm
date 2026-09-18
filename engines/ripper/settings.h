@@ -1,0 +1,130 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef RIPPER_SETTINGS_H
+#define RIPPER_SETTINGS_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
+
+namespace Audio {
+class Mixer;
+}
+
+namespace Ripper {
+
+class RipperSettings {
+public:
+	static const uint kActionKeyCount = 9;
+	static const uint kDemoToggleCount = 6;
+	static const uint kDemoSliderCount = 3;
+
+	enum DemoToggle {
+		kDemoSubtitles = 0,
+		kDemoBufferedVideo,
+		kDemoToolbarHelp,
+		kDemoToolbarPermanent,
+		kDemoReservedToggle4,
+		kDemoReservedToggle5
+	};
+
+	enum DemoSlider {
+		kDemoSoundVolume = 0,
+		kDemoMusicVolume,
+		kDemoMouseSensitivity
+	};
+
+	enum Slider {
+		kMasterVolume = 0,
+		kAmbientVolume,
+		kSfxVolume,
+		kVideoVolume,
+		kBrightness,
+		kColor,
+		kContrast,
+		kTint,
+		kSliderCount
+	};
+
+	struct Descriptor {
+		int minimum;
+		int maximum;
+		int step;
+		int defaultValue;
+	};
+
+	RipperSettings(Audio::Mixer *mixer, bool demo);
+
+	void load();
+	void save();
+	void resetDefaults();
+	void setValue(Slider slider, int value);
+	int getValue(Slider slider) const { return _values[slider]; }
+	uint getFilledTickCount(Slider slider) const;
+	void applyVideoPalette(byte *palette, uint colorCount, bool rememberSource = true);
+	bool restoreVideoPalette();
+
+	bool getBufferedVideo() const { return _bufferedVideo; }
+	bool getSubtitles() const { return _subtitles; }
+	bool getSubtitleAutoScroll() const { return _subtitleAutoScroll; }
+	uint getVideoMode() const { return _videoMode; }
+	uint getCombatLevel() const { return _combatLevel; }
+	uint getPuzzleLevel() const { return _puzzleLevel; }
+	uint16 getActionKey(uint index) const;
+	bool getDemoToggle(DemoToggle toggle) const;
+	int getDemoSlider(DemoSlider slider) const;
+	void setBufferedVideo(bool enabled);
+	void setSubtitles(bool enabled);
+	void setSubtitleAutoScroll(bool enabled);
+	bool handlePresentationTextCommand(uint16 command, const char *source);
+	void setVideoMode(uint mode);
+	void setCombatLevel(uint level);
+	void setPuzzleLevel(uint level);
+	void setActionKey(uint index, uint16 key);
+	void setDemoToggle(DemoToggle toggle, bool enabled);
+	void setDemoSlider(DemoSlider slider, int value);
+
+	static const Descriptor &getDescriptor(Slider slider);
+
+private:
+	void applyAudioVolumes();
+	static int mixerToPercent(int volume);
+	static int percentToMixer(int volume);
+
+	Audio::Mixer *_mixer;
+	bool _demo;
+	int _values[kSliderCount];
+	uint16 _actionKeys[kActionKeyCount];
+	uint _videoMode;
+	uint _combatLevel;
+	uint _puzzleLevel;
+	bool _bufferedVideo;
+	bool _subtitles;
+	bool _subtitleAutoScroll;
+	bool _toolbarHelp;
+	bool _toolbarPermanent;
+	bool _demoReservedToggles[2];
+	int _mouseSensitivity;
+	Common::Array<byte> _videoPaletteSource;
+};
+
+} // End of namespace Ripper
+
+#endif // RIPPER_SETTINGS_H
