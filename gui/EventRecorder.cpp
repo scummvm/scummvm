@@ -811,7 +811,11 @@ void EventRecorder::setFileHeader() {
 
 SDL_Surface *EventRecorder::getSurface(int width, int height) {
 	// Create a RGB565 surface of the requested dimensions.
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	return SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGB565);
+#else
 	return SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16, 0xF800, 0x07E0, 0x001F, 0x0000);
+#endif
 }
 
 bool EventRecorder::switchMode() {
