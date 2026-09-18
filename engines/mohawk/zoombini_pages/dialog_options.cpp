@@ -93,20 +93,20 @@ void ZoombiniDialogOptions::loadFeatures() {
 	for (Common::StableMap<uint32, ToggleButtonState>::iterator it = _toggleButtonStateMap.begin(); it != _toggleButtonStateMap.end(); it++)
 		it->second.reset();
 	ZmbFeature::EventHooks hooks0002;
-	hooks0002.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniDialogOptions::redToggleButtons_onPreRenderShape));
-	hooks0002.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniDialogOptions::redToggleButtons_onPostRender));
-	hooks0002.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniDialogOptions::redToggleButtons_onLButtonDown));
-	hooks0002.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniDialogOptions::redToggleButtons_onKeyDown));
+	hooks0002.setPreRenderShapeFunc(&ZoombiniDialogOptions::redToggleButtons_onPreRenderShape);
+	hooks0002.setPostRenderFunc(&ZoombiniDialogOptions::redToggleButtons_onPostRender);
+	hooks0002.setLButtonDownFunc(&ZoombiniDialogOptions::redToggleButtons_onLButtonDown);
+	hooks0002.setKeyDownFunc(&ZoombiniDialogOptions::redToggleButtons_onKeyDown);
 	loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0001_Dialog), kSysResScrb0002_DialogOptionsSmallButtons, 1,
 					ZmbFeature::FLAG_04000000_OVERLAY,
 					hooks0002);
 
 	resetLongButtonStates();
 	ZmbFeature::EventHooks hooks0003;
-	hooks0003.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniDialogOptions::longButtons_onPreRenderShape));
-	hooks0003.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniDialogOptions::longButtons_onPostRender));
-	hooks0003.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniDialogOptions::longButtons_onLButtonDown));
-	hooks0003.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniDialogOptions::longButtons_onKeyDown));
+	hooks0003.setPreRenderShapeFunc(&ZoombiniDialogOptions::longButtons_onPreRenderShape);
+	hooks0003.setPostRenderFunc(&ZoombiniDialogOptions::longButtons_onPostRender);
+	hooks0003.setLButtonDownFunc(&ZoombiniDialogOptions::longButtons_onLButtonDown);
+	hooks0003.setKeyDownFunc(&ZoombiniDialogOptions::longButtons_onKeyDown);
 	loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0001_Dialog), kSysResScrb0003_DialogOptionsBigButtons, 9,
 					ZmbFeature::FLAG_04000000_OVERLAY,
 					hooks0003);

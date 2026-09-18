@@ -2973,7 +2973,7 @@ void ZoombiniPuzzleSlides::ensureCellFeature(int16 cellIdx) {
 		scrbId = kResScrb7000_CellBase;
 	ZmbFeature::EventHooks slotHooks;
 	if (scrbId == kResScrb7000_CellBase) {
-		slotHooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleSlides::filterHotspotScript));
+		slotHooks.setPreRenderShapeFunc(&ZoombiniPuzzleSlides::filterHotspotScript);
 	}
 
 	ZmbFeature *slotFeature = loadScrbFeature(
@@ -3133,7 +3133,7 @@ bool ZoombiniPuzzleSlides::debugSnoidsMatchTrait(int16 leftSnoidIdx, int16 right
 
 void ZoombiniPuzzleSlides::loadPlacementSlotFeatures() {
 	ZmbFeature::EventHooks slotHooks;
-	slotHooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleSlides::filterCommandByFlags));
+	slotHooks.setPreRenderShapeFunc(&ZoombiniPuzzleSlides::filterCommandByFlags);
 
 	for (int16 slotIdx = 0; slotIdx < _slotCount; slotIdx++) {
 		int16 cellIdx = _slotCellIndices[slotIdx];
@@ -3330,7 +3330,7 @@ void ZoombiniPuzzleSlides::syncCellFeatureScript(int16 cellIdx) {
 
 void ZoombiniPuzzleSlides::loadCellLinkOverlay() {
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleSlides::cellLinkOverlay_preRender));
+	hooks.setPreRenderFunc(&ZoombiniPuzzleSlides::cellLinkOverlay_preRender);
 
 	_cellLinkOverlayActive = true;
 	_cellLinkOverlayFeature = loadVirtualFeature(

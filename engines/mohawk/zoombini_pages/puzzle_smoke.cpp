@@ -1922,8 +1922,8 @@ void ZoombiniPuzzleSmoke::spawnStackRunners(int16 count, RunnerType runnerType) 
 		// and tBMP/REGS 10000 for the actual crystal shapes.
 		// A normal SCRB 11000 feature cannot represent this runner.
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleSmoke::smokeRunner_render));
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleSmoke::smokeRunner_preRenderShape));
+		hooks.setRenderFunc(&ZoombiniPuzzleSmoke::smokeRunner_render);
+		hooks.setPreRenderShapeFunc(&ZoombiniPuzzleSmoke::smokeRunner_preRenderShape);
 		ZmbFeature *runner = loadVirtualFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_Crystal), 0, 6,
 			ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00000002_TYPE_GRIDWALKER,

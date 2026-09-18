@@ -114,8 +114,8 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	{ // [*] Callback-only runner: Storage (refers to tBMP 2000)
 		// Register a resource-ID-0 runner for the stored-Zoombini grid viewer.
 		ZmbFeature::EventHooks hooksStorage;
-		hooksStorage.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniShelterBasecampOne::storage_render));
-		hooksStorage.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::storage_postRender));
+		hooksStorage.setRenderFunc(&ZoombiniShelterBasecampOne::storage_render);
+		hooksStorage.setPostRenderFunc(&ZoombiniShelterBasecampOne::storage_postRender);
 		ZmbFeature *storageFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 6,
 													 ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE | ZmbFeature::FLAG_00008000_LOOP_ANIM,
 													 hooksStorage);
@@ -132,11 +132,11 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	{ // [*] Callback-only runner: Storage Scroll Buttons (refers to tBMP 2100)
 		// Register a resource-ID-0 runner for scroll-button drawing and input.
 		ZmbFeature::EventHooks hooksScroll;
-		hooksScroll.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniShelterBasecampOne::scroll_preRenderShape));
-		hooksScroll.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::scroll_postRender));
-		hooksScroll.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::scroll_lButtonDown));
-		hooksScroll.setLButtonUpFunc(static_cast<ZmbFeature::OnLButtonUpFunc>(&ZoombiniShelterBasecampOne::scroll_lButtonUp));
-		hooksScroll.setMouseMoveFunc(static_cast<ZmbFeature::OnMouseMoveFunc>(&ZoombiniShelterBasecampOne::scroll_mouseMove));
+		hooksScroll.setPreRenderShapeFunc(&ZoombiniShelterBasecampOne::scroll_preRenderShape);
+		hooksScroll.setPostRenderFunc(&ZoombiniShelterBasecampOne::scroll_postRender);
+		hooksScroll.setLButtonDownFunc(&ZoombiniShelterBasecampOne::scroll_lButtonDown);
+		hooksScroll.setLButtonUpFunc(&ZoombiniShelterBasecampOne::scroll_lButtonUp);
+		hooksScroll.setMouseMoveFunc(&ZoombiniShelterBasecampOne::scroll_mouseMove);
 
 		Common::Array<ZmbHotspot> scrollHotspots;
 		scrollHotspots.push_back(ZmbHotspot(0, kShape2100_ScrollLeftFourNormal_07, 0, _scrollLeftFourButtonRect));
@@ -170,37 +170,37 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 
 	{ // [*] SCRB 1106, 1108, 1109, 1110, 1107: Easter Eggs
 		ZmbFeature::EventHooks hooksStoneMan;
-		hooksStoneMan.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::easterEggStoneMan_postRender));
-		hooksStoneMan.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggStoneMan_onLButtonDown));
+		hooksStoneMan.setPostRenderFunc(&ZoombiniShelterBasecampOne::easterEggStoneMan_postRender);
+		hooksStoneMan.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggStoneMan_onLButtonDown);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1106_EasterEggStoneMan, 6,
 						ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_01000000_DEFER_RENDER,
 						hooksStoneMan);
 
 		ZmbFeature::EventHooks hooksFish;
-		hooksFish.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::easterEggFish_postRender));
-		hooksFish.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggFish_onLButtonDown));
+		hooksFish.setPostRenderFunc(&ZoombiniShelterBasecampOne::easterEggFish_postRender);
+		hooksFish.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggFish_onLButtonDown);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1108_EasterEggFish, 6,
 						ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_01000000_DEFER_RENDER,
 						hooksFish);
 
 		ZmbFeature::EventHooks hooksBear;
-		hooksBear.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::easterEggBear_postRender));
-		hooksBear.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggBear_onLButtonDown));
+		hooksBear.setPostRenderFunc(&ZoombiniShelterBasecampOne::easterEggBear_postRender);
+		hooksBear.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggBear_onLButtonDown);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1109_EasterEggBear, 6,
 						ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE,
 						hooksBear);
 
 		ZmbFeature::EventHooks hooksStoneFace;
-		hooksStoneFace.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::easterEggStoneFace_postRender));
-		hooksStoneFace.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggStoneFace_onLButtonDown));
+		hooksStoneFace.setPostRenderFunc(&ZoombiniShelterBasecampOne::easterEggStoneFace_postRender);
+		hooksStoneFace.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggStoneFace_onLButtonDown);
 		// Both Z-sort barriers keep Snoids from being sorted in front of StoneFace.
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1110_EasterEggStoneFace, 6,
 						ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_10000000_ZSORT_RIGHT | ZmbFeature::FLAG_40000000_ZSORT_LEFT,
 						hooksStoneFace);
 
 		ZmbFeature::EventHooks hooksHollowBugs;
-		hooksHollowBugs.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampOne::easterEggHollowBugs_postRender));
-		hooksHollowBugs.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggHollowBugs_onLButtonDown));
+		hooksHollowBugs.setPostRenderFunc(&ZoombiniShelterBasecampOne::easterEggHollowBugs_postRender);
+		hooksHollowBugs.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggHollowBugs_onLButtonDown);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1107_EasterEggHollowBugs, 6,
 						ZmbFeature::FLAG_00001000_TOPMOST | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_01000000_DEFER_RENDER,
 						hooksHollowBugs);
@@ -213,8 +213,8 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	// One pre-render pass then applies the selected mushroom color before the skip-render flag deactivates it.
 	for (uint32 i = 0; i <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1; i++) {
 		ZmbFeature::EventHooks hooks;
-		hooks.setSelectRenderFrameFunc(static_cast<ZmbFeature::OnSelectRenderFrameFunc>(&ZoombiniShelterBasecampOne::easterEggMushroom_selectRenderFrame));
-		hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown));
+		hooks.setSelectRenderFrameFunc(&ZoombiniShelterBasecampOne::easterEggMushroom_selectRenderFrame);
+		hooks.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown);
 		ZmbFeature *feature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), i + kResScrb1111_EasterEggMushroom1, 0,
 											  ZmbFeature::FLAG_00020000_SKIP_RENDER,
 											  hooks);
@@ -223,7 +223,7 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 
 	{ // [*] SCRB 1104: Bonfire (randomly animates; clicking triggers Pod animation)
 		ZmbFeature::EventHooks hooks;
-		hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampOne::easterEggBonfire_onLButtonDown));
+		hooks.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggBonfire_onLButtonDown);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), kResScrb1104_Bonfire, 6,
 						ZmbFeature::FLAG_00040000_CHAIN_SCRIPT | ZmbFeature::FLAG_02000000_RANDOM_FRAME,
 						hooks);

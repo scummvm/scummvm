@@ -606,31 +606,67 @@ public:
 		 * Boolean gate that runs before standard pre-render logic.
 		 * Return false to skip @ref ZoombiniPage::preRenderFeature() entirely.
 		 */
-		void setPreRenderFunc(OnPreRenderFunc preRenderFunc) { _preRenderFunc = preRenderFunc; }
+		template<class PageType>
+		void setPreRenderFunc(bool (PageType::*preRenderFunc)(ZmbFeature *)) {
+			_preRenderFunc = static_cast<OnPreRenderFunc>(preRenderFunc);
+		}
 		/**
 		 * Frame selection hook.
 		 * The default performs the standard frame advance.
 		 */
-		void setSelectRenderFrameFunc(OnSelectRenderFrameFunc onSelectRenderFrameFunc) { _selectRenderFrameFunc = onSelectRenderFrameFunc; }
+		template<class PageType>
+		void setSelectRenderFrameFunc(int32 (PageType::*onSelectRenderFrameFunc)(ZmbFeature *)) {
+			_selectRenderFrameFunc = static_cast<OnSelectRenderFrameFunc>(onSelectRenderFrameFunc);
+		}
 		/** Called per-frame after hotspot data is parsed, before shape rendering. */
-		void setPreRenderShapeFunc(OnPreRenderShapeFunc preRenderShapeFunc) { _preRenderShapeFunc = preRenderShapeFunc; }
+		template<class PageType>
+		void setPreRenderShapeFunc(void (PageType::*preRenderShapeFunc)(ZmbFeature *, ZmbHotspotGroup *, Common::Array<ZmbHotspot> &)) {
+			_preRenderShapeFunc = static_cast<OnPreRenderShapeFunc>(preRenderShapeFunc);
+		}
 		/**
 		 * Shape blitting.
 		 * Use @ref ZoombiniPage::blitShapes() when no custom render callback is installed.
 		 */
-		void setRenderFunc(OnRenderFunc renderFunc) { _renderFunc = renderFunc; }
+		template<class PageType>
+		void setRenderFunc(ZmbRenderResult (PageType::*renderFunc)(ZmbFeature *)) {
+			_renderFunc = static_cast<OnRenderFunc>(renderFunc);
+		}
 		/** Additional processing after renderFunc completes successfully. */
-		void setPostRenderFunc(OnPostRenderFunc postRenderFunc) { _postRenderFunc = postRenderFunc; }
+		template<class PageType>
+		void setPostRenderFunc(void (PageType::*postRenderFunc)(ZmbFeature *)) {
+			_postRenderFunc = static_cast<OnPostRenderFunc>(postRenderFunc);
+		}
 
 		// -- Input event hook setters (ScummVM extensions) -------------
 
-		void setMouseMoveFunc(OnMouseMoveFunc mouseMoveFunc) { _mouseMoveFunc = mouseMoveFunc; }
-		void setLButtonDownFunc(OnLButtonDownFunc lButtonDownFunc) { _lButtonDownFunc = lButtonDownFunc; }
-		void setLButtonUpFunc(OnLButtonUpFunc lButtonUpFunc) { _lButtonUpFunc = lButtonUpFunc; }
-		void setKeyDownFunc(OnKeyDownFunc keyDownFunc) { _keyDownFunc = keyDownFunc; }
-		void setKeyUpFunc(OnKeyUpFunc keyUpFunc) { _keyUpFunc = keyUpFunc; }
-		void setWheelUpFunc(OnWheelUpFunc wheelUpFunc) { _wheelUpFunc = wheelUpFunc; }
-		void setWheelDownFunc(OnWheelDownFunc wheelDownFunc) { _wheelDownFunc = wheelDownFunc; }
+		template<class PageType>
+		void setMouseMoveFunc(ZmbEventHandleResult (PageType::*mouseMoveFunc)(ZmbFeature *, const Common::Point &, const Common::Point &)) {
+			_mouseMoveFunc = static_cast<OnMouseMoveFunc>(mouseMoveFunc);
+		}
+		template<class PageType>
+		void setLButtonDownFunc(ZmbEventHandleResult (PageType::*lButtonDownFunc)(ZmbFeature *, const Common::Point &, const Common::Point &)) {
+			_lButtonDownFunc = static_cast<OnLButtonDownFunc>(lButtonDownFunc);
+		}
+		template<class PageType>
+		void setLButtonUpFunc(ZmbEventHandleResult (PageType::*lButtonUpFunc)(ZmbFeature *, const Common::Point &, const Common::Point &)) {
+			_lButtonUpFunc = static_cast<OnLButtonUpFunc>(lButtonUpFunc);
+		}
+		template<class PageType>
+		void setKeyDownFunc(ZmbEventHandleResult (PageType::*keyDownFunc)(ZmbFeature *, const Common::KeyState &, bool)) {
+			_keyDownFunc = static_cast<OnKeyDownFunc>(keyDownFunc);
+		}
+		template<class PageType>
+		void setKeyUpFunc(ZmbEventHandleResult (PageType::*keyUpFunc)(ZmbFeature *, const Common::KeyState &, bool)) {
+			_keyUpFunc = static_cast<OnKeyUpFunc>(keyUpFunc);
+		}
+		template<class PageType>
+		void setWheelUpFunc(ZmbEventHandleResult (PageType::*wheelUpFunc)(ZmbFeature *, const Common::Point &)) {
+			_wheelUpFunc = static_cast<OnWheelUpFunc>(wheelUpFunc);
+		}
+		template<class PageType>
+		void setWheelDownFunc(ZmbEventHandleResult (PageType::*wheelDownFunc)(ZmbFeature *, const Common::Point &)) {
+			_wheelDownFunc = static_cast<OnWheelDownFunc>(wheelDownFunc);
+		}
 	};
 
 	/**
