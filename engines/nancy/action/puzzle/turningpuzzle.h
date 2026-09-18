@@ -36,6 +36,11 @@ namespace Action {
 // its own face count, turn-frame count and sprite geometry (instead of one global pair);
 // the links are a byte array; each object stores its own destination rect; and the
 // solution is given as up to three alternative face orders.
+//
+// Nancy14 added two things on top of that: a decorative overlay animation (a second image
+// whose frames cycle inside a set of fixed slots), and a time limit, after which the puzzle
+// plays its own sound and sends the player to a failure scene. Example: the pocket watch
+// puzzle in Dieter's house.
 class TurningPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForAnimation, kWaitBeforeSound, kWaitForSound };
@@ -67,6 +72,7 @@ protected:
 
 	void readDataNancy13(Common::SeekableReadStream &stream);
 	bool isSolved() const;
+	void drawOverlay(bool advanceFrames);
 	uint numFacesOf(uint objectID) const;
 	uint framesPerTurnOf(uint objectID) const;
 	void drawAllObjects();
@@ -119,6 +125,22 @@ protected:
 	RandomSoundBlock _turnSoundBlock;
 	RandomSoundBlock _solveSoundBlock;
 	bool _turnFlagSet = false;
+
+	// -- Nancy14 only --
+	Common::Path _overlayImageName;
+	Common::Array<Common::Rect> _overlaySrcRects;	// the frames of the overlay animation
+	Common::Array<Common::Rect> _overlayDestRects;	// the slots they play in
+	bool _randomizeOverlayStart = false;
+	uint16 _overlayFrameTime = 0;					// ms between overlay frames
+	uint16 _timeLimit = 0;							// seconds, 0 = no time limit
+	SceneChangeWithFlag _timeoutScene;
+	RandomSoundBlock _timeoutSoundBlock;
+
+	Graphics::ManagedSurface _overlayImage;
+	Common::Array<uint16> _overlayFrameIDs;			// one per slot
+	uint32 _nextOverlayFrameTime = 0;
+	uint32 _timeoutTime = 0;
+	bool _timedOut = false;
 
 	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _currentOrder;
