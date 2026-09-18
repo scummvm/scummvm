@@ -267,6 +267,7 @@ private:
 		kSmoothScrollCmd = 'SMSC'
 	};
 
+	GUI::CheckboxWidget *_c64SidTypeCheckbox = nullptr;
 	GUI::CheckboxWidget *_smoothScrollCheckbox = nullptr;
 	GUI::CheckboxWidget *_semiSmoothScrollCheckbox = nullptr;
 

@@ -731,6 +731,15 @@ static const ExtraGuiOption mmnesClassicPaletteOption = {
 	0
 };
 
+static const ExtraGuiOption c64SidTypeOption = {
+	_s("Use PAL timing for SID music"),
+	_s("This makes the music slower and lower pitched than how it was originally composed, but is how a lot of players outside the US would have experienced the game."),
+	"c64_sid_type",
+	false,
+	0,
+	0
+};
+
 static const ExtraGuiOption fmtownsTrimTo200 = {
 	_s("Trim FM-TOWNS games to 200 pixels height"),
 	_s("Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing using 'aspect ratio correction'"),
@@ -1016,6 +1025,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	if (target.empty() || platform == Common::kPlatformNES) {
 		options.push_back(mmnesClassicPaletteOption);
 	}
+	if (target.empty() || platform == Common::kPlatformC64) {
+		options.push_back(c64SidTypeOption);
+	}
 	if (target.empty() || platform == Common::kPlatformFMTowns) {
 		options.push_back(smoothScrolling);
 		if (target.empty() || gameid == "loom")
@@ -1066,7 +1078,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
 	for (uint i = 0; i < engineOptions.size(); i++) {
-		if (strcmp(engineOptions[i].configOption, "enhancements") == 0)
+		if (strcmp(engineOptions[i].configOption, "c64_sid_type") == 0)
+			ConfMan.registerDefault(engineOptions[i].configOption, "ntsc");
+		else if (strcmp(engineOptions[i].configOption, "enhancements") == 0)
 			ConfMan.registerDefault(engineOptions[i].configOption, kEnhGameBreakingBugFixes | kEnhGrp1);
 		else
 			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);

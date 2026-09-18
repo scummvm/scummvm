@@ -24,6 +24,10 @@
 
 #include "audio/chip.h"
 
+namespace Common {
+class String;
+}
+
 namespace SID {
 
 class SID;
@@ -39,6 +43,8 @@ public:
 	 * Creates a SID driver.
 	 */
 	static SID *create(SidType type);
+
+	static SidType parseSidType(const Common::String &str);
 };
 
 class SID : virtual public Audio::Chip {
