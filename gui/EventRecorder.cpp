@@ -194,6 +194,9 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	case kRecorderRecord:
 		updateSubsystems();
 		updateFakeTimer(millis);
+		// Engines that quantize absolute time need the same clock origin during
+		// recording and playback, not just the same elapsed intervals.
+		millis = _fakeTimer;
 		timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
 		timerEvent.time = _fakeTimer;
 		_recordFile->writeEvent(timerEvent);
