@@ -198,6 +198,7 @@ private:
 
 	bool pollEvent(Common::Event &ev) override;
 	bool notifyEvent(const Common::Event &event) override;
+	void notifyPoll() override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;
 	TimeDate _lastTimeDate;

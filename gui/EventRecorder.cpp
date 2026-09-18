@@ -315,6 +315,7 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeTimeDate
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate
+	 || _nextEvent.recordedtype == Common::kRecorderEventTypePoll
 	 || _nextEvent.type == Common::EVENT_INVALID) {
 		return false;
 	}
@@ -366,7 +367,7 @@ void EventRecorder::togglePause() {
 }
 
 void EventRecorder::RegisterEventSource() {
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, Common::EventManager::kEventRecorderPriority, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, Common::EventManager::kEventRecorderPriority, false, true);
 }
 
 uint32 EventRecorder::getRandomSeed(const Common::String &name) {
@@ -598,6 +599,25 @@ void EventRecorder::updateSubsystems() {
 	_recordMode = kPassthrough;
 	_fakeMixerManager->update();
 	_recordMode = oldRecordMode;
+}
+
+void EventRecorder::notifyPoll() {
+	if (!_initialized)
+		return;
+
+	// Preserve empty polls as well: input received during an audio wait must not
+	// be replayed by an earlier poll before the engine enters that wait.
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) &&
+			_nextEvent.recordedtype == Common::kRecorderEventTypePoll) {
+		_nextEvent = _playbackFile->getNextEvent();
+	}
+
+	if (_recordMode == kRecorderRecord || _recordMode == kRecorderUpdate) {
+		Common::RecorderEvent event;
+		event.recordedtype = Common::kRecorderEventTypePoll;
+		event.time = _fakeTimer;
+		_recordFile->writeEvent(event);
+	}
 }
 
 bool EventRecorder::notifyEvent(const Common::Event &ev) {

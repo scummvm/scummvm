@@ -29,7 +29,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 
-#define RECORD_VERSION 1
+#define RECORD_VERSION 2
 
 namespace Common {
 
@@ -136,6 +136,7 @@ bool PlaybackFile::checkPlaybackFileVersion() {
 	_version = _readStream->readUint32BE();
 	switch (_version) {
 	case 1:
+	case 2:
 		break;
 	default:
 		warning("Unknown playback file version %d. Maximum supported version is %d.", _version, RECORD_VERSION);
@@ -379,6 +380,7 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 	event.recordedtype = (RecorderEventType)_tmpPlaybackFile.readByte();
 	switch (event.recordedtype) {
 	case kRecorderEventTypeTimer:
+	case kRecorderEventTypePoll:
 		event.time = _tmpPlaybackFile.readUint32BE();
 		break;
 	case kRecorderEventTypeTimeDate:
@@ -572,6 +574,7 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 	_tmpRecordFile.writeByte(event.recordedtype);
 	switch (event.recordedtype) {
 	case kRecorderEventTypeTimer:
+	case kRecorderEventTypePoll:
 		_tmpRecordFile.writeUint32BE(event.time);
 		break;
 	case kRecorderEventTypeTimeDate:
