@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/frac.h"
 #include "common/tokenizer.h"
+#include "common/unicode-bidi.h"
 
 #include "gui/widgets/list.h"
 #include "gui/widgets/scrollbar.h"
@@ -281,8 +282,10 @@ void ListWidget::selectItemRange(int from, int to) {
 }
 
 void ListWidget::setList(const Common::U32StringArray &list) {
-	if (_editMode && _caretVisible)
+	const bool wasEditing = _editMode;
+	if (wasEditing && _caretVisible)
 		drawCaret(true);
+	cancelImeComposition();
 
 	// Copy everything
 	copyListData(list);
@@ -304,6 +307,8 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 	_lastSelectionStartItem = -1;
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (wasEditing)
+		g_system->setFeatureState(OSystem::kFeatureImeComposition, false);
 	scrollBarRecalc();
 }
 
@@ -858,11 +863,15 @@ void ListWidget::receivedFocusWidget() {
 }
 
 void ListWidget::lostFocusWidget() {
+	const bool wasEditing = _editMode;
 	_inversion = ThemeEngine::kTextInversion;
 	// If we lose focus, we simply forget the user changes
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	if (wasEditing)
+		g_system->setFeatureState(OSystem::kFeatureImeComposition, false);
 	drawCaret(true);
+	clearImeComposition();
 	markAsDirty();
 }
 
@@ -939,7 +948,7 @@ void ListWidget::drawWidget() {
 		ThemeEngine::FontColor color = ThemeEngine::kFontColorFormatting;
 
 		if (_selectedItem == pos && _editMode) {
-			buffer = _editString;
+			buffer = getDisplayedEditString();
 			color = _editColor;
 			adjustOffset();
 		} else {
@@ -999,7 +1008,19 @@ Common::Rect ListWidget::getEditRect() const {
 }
 
 int ListWidget::getCaretOffset() const {
-	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	// Preserve the original non-composition path exactly. In particular, list
+	// entries may contain GUI formatting that is stripped after selecting the
+	// committed substring.
+	if (!hasImeComposition()) {
+		Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+		Common::U32String stripped = stripGUIformatting(substr);
+		return g_gui.getStringWidth(stripped, _font) - _editScrollOffset;
+	}
+
+	const Common::U32String displayedText = getDisplayedEditString();
+	const Common::UnicodeBiDiText bidi(displayedText);
+	const int caretPos = getDisplayedCaretPos();
+	Common::U32String substr(bidi.visual.begin(), bidi.visual.begin() + caretPos);
 	Common::U32String stripped = stripGUIformatting(substr);
 	return g_gui.getStringWidth(stripped, _font) - _editScrollOffset;
 }
@@ -1045,6 +1066,8 @@ void ListWidget::startEditMode() {
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		updateImeCompositionArea();
+		g_system->setFeatureState(OSystem::kFeatureImeComposition, true);
 		sendCommand(kListItemEditModeStartedCmd, _selectedItem);
 	}
 }
@@ -1054,8 +1077,10 @@ void ListWidget::endEditMode() {
 		return;
 	// send a message that editing finished with a return/enter key press
 	_editMode = false;
+	clearImeComposition();
 	_list[_selectedItem] = _editString;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	g_system->setFeatureState(OSystem::kFeatureImeComposition, false);
 	sendCommand(kListItemActivatedCmd, _selectedItem);
 }
 
@@ -1063,7 +1088,9 @@ void ListWidget::abortEditMode() {
 	// undo any changes made
 	assert(_selectedItem >= 0);
 	_editMode = false;
+	clearImeComposition();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	g_system->setFeatureState(OSystem::kFeatureImeComposition, false);
 }
 
 void ListWidget::reflowLayout() {

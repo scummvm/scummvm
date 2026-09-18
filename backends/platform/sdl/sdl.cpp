@@ -205,6 +205,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureImeComposition) return true;
 	if (f == kFeatureCpuSSE41) return SDL_HasSSE41();
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 4)
@@ -249,6 +250,12 @@ bool OSystem_SDL::hasFeature(Feature f) {
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
+	case kFeatureImeComposition:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_eventSource)
+			_eventSource->setImeCompositionEnabled(enable);
+#endif
+		break;
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
@@ -263,6 +270,12 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_SDL::getFeatureState(Feature f) {
 	switch (f) {
+	case kFeatureImeComposition:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		return _eventSource && _eventSource->isImeCompositionEnabled();
+#else
+		return false;
+#endif
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
 		break;
@@ -273,6 +286,34 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 		return ModularGraphicsBackend::getFeatureState(f);
 		break;
 	}
+}
+
+void OSystem_SDL::acquireImeCompositionControl() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->acquireImeCompositionControl();
+#endif
+}
+
+void OSystem_SDL::setImeCompositionArea(const Common::Rect &area) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->setImeCompositionArea(area);
+#endif
+}
+
+void OSystem_SDL::cancelImeComposition() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->cancelImeComposition();
+#endif
+}
+
+void OSystem_SDL::releaseImeCompositionControl() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->releaseImeCompositionControl();
+#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -568,6 +609,10 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 #endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 void OSystem_SDL::engineInit() {
+	// GUI composition control applies only while a GUI text field owns input.
+	// An engine must acquire and enable its own scope after it starts.
+	releaseImeCompositionControl();
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_graphicsManager) {
 		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
@@ -606,12 +651,26 @@ void OSystem_SDL::engineDone() {
 	// Reset presence status
 	_presence->updateStatus("", "");
 #endif
+	releaseImeCompositionControl();
 	_eventSource->setEngineRunning(false);
 }
 
 void OSystem_SDL::initSDL() {
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
+		// ScummVM renders the transient composition text in its own editable
+		// widgets. Candidate lists are the OS-provided popups of conversion
+		// choices, such as Hanja and symbols, which ScummVM does not render.
+		// Configure both responsibilities before SDL initializes video.
+#if SDL_VERSION_ATLEAST(3, 2, 0)
+		SDL_SetHintWithPriority(SDL_HINT_IME_IMPLEMENTED_UI, "composition", SDL_HINT_OVERRIDE);
+#elif SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_SetHintWithPriority(SDL_HINT_IME_INTERNAL_EDITING, "0", SDL_HINT_OVERRIDE);
+#ifdef SDL_HINT_IME_SHOW_UI
+		SDL_SetHintWithPriority(SDL_HINT_IME_SHOW_UI, "1", SDL_HINT_OVERRIDE);
+#endif
+#endif
+
 		// We always initialize the video subsystem because we will need it to
 		// be initialized before the graphics managers to retrieve the desktop
 		// resolution, for example. WebOS also requires this initialization
