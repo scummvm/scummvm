@@ -85,13 +85,13 @@ void IgorEngine::PART_05() {
 	}
 	leavePartLoop();
 	if (_currentPart == 255) {
-		fadeOutPalette(768);
+		fadeOut(768);
 	} else if (_currentPart != 60) {
 		// if (_objectsState[63] == 0) {
 		// 	_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
 		// }
 		memcpy(_currentPalette, _paletteBuffer, 624);
-		fadeOutPalette(624);
+		fadeOut(624);
 	}
 }
 
@@ -115,9 +115,9 @@ void IgorEngine::PART_05_EXEC_ACTION(int action) {
 	// 	SET_DIALOGUE_TEXT(1, 1);
 	// 	startIgorDialogue();
 	// 	break;
-	// case 105:
-	// 	_currentPart = 40;
-	// 	break;
+	case 105:
+		_currentPart = 40;
+		break;
 	default:
 		error("PART_05_EXEC_ACTION unhandled action %d", action);
 		break;

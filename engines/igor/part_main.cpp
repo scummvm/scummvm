@@ -60,15 +60,18 @@ void IgorEngine::PART_MAIN() {
         debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
 
+        case 40:
+            PART_04(); // Map
+            break;
         case 50:
         case 51:
         case 52:
-            PART_05();// SpringRock
+            PART_05(); // SpringRock
             break;
 		case 60:
 		case 61:
 		case 62:
-			PART_06();
+			PART_06(); // Spring
 			break;
 
 		case 850: // Intro cutscene

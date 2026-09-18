@@ -423,6 +423,13 @@ private:
 
 	void PART_MAIN();
 	void EXEC_MAIN_ACTION(int action);
+
+	void PART_04_EXEC_ACTION(int action);
+
+	void PART_04_CLEAR_OBJECT_STATE_84(int num);
+
+	void PART_04();
+
 	void PART_05_HELPER_4(int num);
 	void PART_05_HELPER_5(int frame);
 	void PART_05();
@@ -500,7 +507,7 @@ private:
 	void SET_PAL_240_48_1();
 
 	void fadeIn(int count);
-	void fadeOutPalette(int count);
+	void fadeOut(int count);
 
 	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);
 	void decodeRoomText(const uint8 *p);
@@ -583,6 +590,7 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 };

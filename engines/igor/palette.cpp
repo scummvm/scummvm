@@ -41,7 +41,7 @@ void IgorEngine::scrollPalette(int startColor, int endColor) {
 }
 
 void IgorEngine::setPaletteRange(int startColor, int endColor) {
-	debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
+	// debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
 	assert(endColor - startColor + 1 <= 256);
 	for (int i = startColor; i <= endColor; ++i) {
 		setPaletteColor(i, _currentPalette[3 * i], _currentPalette[3 * i + 1], _currentPalette[3 * i + 2]);
@@ -99,7 +99,7 @@ void IgorEngine::fadeIn(int count) {
 	} while (m > 0);
 }
 
-void IgorEngine::fadeOutPalette(int count) {
+void IgorEngine::fadeOut(int count) {
 	debugC(9, kDebugScreen, "fadeOutPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	memcpy(_paletteBuffer, _currentPalette, 768);

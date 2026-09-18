@@ -366,7 +366,7 @@ void IgorEngine::handleRoomInput() {
 			}
 		}
 		hideCursor();
-		// executeAction(_actionCode);
+		executeAction(_actionCode);
 		if (!_gameState.dialogueTextRunning) {
 			showCursor();
 		}

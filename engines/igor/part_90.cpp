@@ -61,7 +61,7 @@ void IgorEngine::PART_90() {
 		}
 	}
     _inputVars[kInputEscape] = 0;
-	fadeOutPalette(768);
+	fadeOut(768);
 	if (_currentPart != kInvalidPart) {
 		++_currentPart;
 		if ((_game.version == kIdSpaCD && _currentPart == 904) || _currentPart == 905) {
