@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "scumm/players/player_sid.h"
 #include "scumm/scumm.h"
@@ -1270,9 +1271,15 @@ void Player_SID::initSID() {
 	// sound speed is slightly different on NTSC and PAL machines
 	// as the SID clock depends on the frame rate.
 	// ScummVM does not distinguish between NTSC and PAL targets
-	// so we use the NTSC timing here as the music was composed for
-	// NTSC systems (music on PAL systems is slower).
-	_sid = SID::Config::create(SID::Config::kSidNTSC);
+	// so we use the NTSC timing by default here as the music was composed
+	// for NTSC systems (music on PAL systems is slower).
+	// But who are we to argue with nostalgia, when there are players who
+	// originally experienced it in PAL mode and think that just adds to
+	// the mood of the game?
+
+	SID::Config::SidType sidType = SID::Config::parseSidType(ConfMan.get("c64_sid_type"));
+
+	_sid = SID::Config::create(sidType);
 	if (!_sid || !_sid->init())
 		error("Failed to initialise SID emulator");
 
@@ -1284,7 +1291,7 @@ void Player_SID::initSID() {
 	SID_Write(11, 0x00);
 	SID_Write(18, 0x00);
 
-	_sid->start(new Common::Functor0Mem<void, Player_SID>(this, &Player_SID::onTimer), 60);
+	_sid->start(new Common::Functor0Mem<void, Player_SID>(this, &Player_SID::onTimer), sidType == SID::Config::kSidNTSC ? 60 : 50);
 }
 
 void Player_SID::startSound(int nr) {
