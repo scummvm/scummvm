@@ -90,6 +90,17 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip((8 - numDials) * 16);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		// Nancy 14 added per-dial starting positions, stored in a fixed
+		// 8-byte slot before the solution
+		_startSequence.reserve(numDials);
+		for (uint i = 0; i < numDials; ++i) {
+			_startSequence.push_back(stream.readByte());
+		}
+
+		stream.skip(8 - numDials);
+	}
+
 	_correctSequence.reserve(numDials);
 	for (uint i = 0; i < numDials; ++i) {
 		_correctSequence.push_back(stream.readByte());
@@ -101,7 +112,13 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (isNancy10) {
 		// Nancy 10 added per-puzzle cursor types for the up/down hotspots,
 		// stored right after the sequence slot. A value of 0 means "use the
-		// default movement cursor".
+		// default movement cursor"; Nancy 13+ defaults to the blue puzzle
+		// up/down cursors instead.
+		if (g_nancy->getGameType() >= kGameTypeNancy13) {
+			_upCursorType = CursorManager::kNancy13PuzzleMoveUp;
+			_downCursorType = CursorManager::kNancy13PuzzleMoveDown;
+		}
+
 		int16 upType = stream.readSint16LE();
 		int16 downType = stream.readSint16LE();
 		if (upType != 0)
@@ -151,6 +168,12 @@ void RotatingLockPuzzle::execute() {
 		NancySceneState.setNoHeldItem();
 
 		for (uint i = 0; i < _correctSequence.size(); ++i) {
+			if (!_startSequence.empty() && _startSequence[i] != kRandomStart) {
+				_currentSequence.push_back(_startSequence[i]);
+				drawDial(i);
+				continue;
+			}
+
 			byte v = g_nancy->_randomSource->getRandomNumber(_iconsPerDial - 1);
 			// Nancy 10 rerolls until the starting value differs from the
 			// solution so the puzzle never appears already-solved.

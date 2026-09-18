@@ -31,6 +31,7 @@ namespace Action {
 class RotatingLockPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
+	static const byte kRandomStart = 99;
 	RotatingLockPuzzle() : RenderActionRecord(7) {}
 	virtual ~RotatingLockPuzzle() {}
 
@@ -45,6 +46,9 @@ public:
 	Common::Array<Common::Rect> _destRects;
 	Common::Array<Common::Rect> _upHotspots;
 	Common::Array<Common::Rect> _downHotspots;
+	// Nancy 14+: per-dial starting positions; kRandomStart picks a random
+	// position that differs from the solution
+	Common::Array<byte> _startSequence;
 	Common::Array<byte> _correctSequence;
 	uint16 _iconsPerDial = 10;
 	// Cursor types shown while hovering a dial's up/down hotspot. Nancy 10+
