@@ -278,6 +278,7 @@ MODULE_OBJS = \
 	engine/script/script_api.o \
 	engine/script/script_runtime.o \
 	engine/script/system_imports.o \
+	engine/util/ags_translator.o \
 	plugins/ags_plugin.o \
 	plugins/plugin_base.o \
 	plugins/core/core.o \

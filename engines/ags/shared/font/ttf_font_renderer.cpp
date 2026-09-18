@@ -20,14 +20,14 @@
  */
 
 #include "ags/shared/font/ttf_font_renderer.h"
-#include "ags/lib/alfont/alfont.h"
-#include "ags/shared/core/platform.h"
-#include "ags/shared/ac/game_version.h"
 #include "ags/globals.h"
-#include "ags/shared/core/asset_manager.h"
-#include "ags/shared/util/stream.h"
+#include "ags/lib/alfont/alfont.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/core/asset_manager.h"
+#include "ags/shared/core/platform.h"
 #include "ags/shared/font/fonts.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
@@ -56,7 +56,7 @@ int TTFFontRenderer::GetTextHeight(const char * /*text*/, int fontNumber) {
 }
 
 void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
-	if (y > destination->cb)  // optimisation
+	if (y > destination->cb) // optimisation
 		return;
 
 	// Y - 1 because it seems to get drawn down a bit
@@ -94,7 +94,8 @@ static ALFONT_FONT *LoadTTF(const String &filename, int fontSize, int alfont_fla
 		return nullptr;
 
 	const size_t lenof = reader->GetLength();
-	std::vector<char> buf; buf.resize(lenof);
+	std::vector<char> buf;
+	buf.resize(lenof);
 	reader->Read(&buf.front(), lenof);
 	reader.reset();
 
@@ -107,7 +108,7 @@ static ALFONT_FONT *LoadTTF(const String &filename, int fontSize, int alfont_fla
 
 // Fill the FontMetrics struct from the given ALFONT
 static void FillMetrics(ALFONT_FONT *alfptr, FontMetrics *metrics) {
-	metrics->NominalHeight  = alfont_get_font_height(alfptr);
+	metrics->NominalHeight = alfont_get_font_height(alfptr);
 	metrics->RealHeight = alfont_get_font_real_height(alfptr);
 	metrics->CompatHeight = metrics->NominalHeight; // just set to default here
 	alfont_get_font_real_vextent(alfptr, &metrics->VExtent.first, &metrics->VExtent.second);
@@ -118,23 +119,47 @@ static void FillMetrics(ALFONT_FONT *alfptr, FontMetrics *metrics) {
 
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, String *src_filename,
 									 const FontRenderParams *params, FontMetrics *metrics) {
-	String filename = String::FromFormat("agsfnt%d.ttf", fontNumber);
+	String baseName = String::FromFormat("agsfnt%d.ttf", fontNumber);
+	String overrideTTF = String::FromFormat("font_override_%d.ttf", fontNumber);
+	String overrideOTF = String::FromFormat("font_override_%d.otf", fontNumber);
+
 	if (fontSize <= 0)
 		fontSize = 8; // compatibility fix
-	assert(params);
+
 	FontRenderParams f_params = params ? *params : FontRenderParams();
 	if (f_params.SizeMultiplier > 1)
 		fontSize *= f_params.SizeMultiplier;
 
-	ALFONT_FONT *alfptr = LoadTTF(filename, fontSize,
-		GetAlfontFlags(f_params.LoadMode));
-	if (!alfptr)
-		return false;
+	const int flags = GetAlfontFlags(f_params.LoadMode);
+
+	ALFONT_FONT *alfptr = nullptr;
+	String usedName;
+
+	// The font loading order is as follows:
+	// 1. font_override_%d.ttf (User-provided TrueType font)
+	// 2. font_override_%d.otf (User-provided OpenType font)
+	// 3. agsfnt%d.ttf (Original game font)
+	alfptr = LoadTTF(overrideTTF, fontSize, flags);
+	if (alfptr) {
+		usedName = overrideTTF;
+	} else {
+		// Then try override OTF
+		alfptr = LoadTTF(overrideOTF, fontSize, flags);
+		if (alfptr) {
+			usedName = overrideOTF;
+		} else {
+			// Fallback to original
+			alfptr = LoadTTF(baseName, fontSize, flags);
+			if (!alfptr)
+				return false;
+			usedName = baseName;
+		}
+	}
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = f_params;
 	if (src_filename)
-		*src_filename = filename;
+		*src_filename = usedName;
 	if (metrics)
 		FillMetrics(alfptr, metrics);
 	return true;
