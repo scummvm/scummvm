@@ -42,7 +42,7 @@ Config::SidType Config::parseSidType(const Common::String &str) {
 		return kSidNTSC;
 	if (str.equalsIgnoreCase("pal"))
 		return kSidPAL;
-	error("parseSidType: Unknow SID type '%s'", str.c_str());
+	error("parseSidType: Unknown SID type '%s'", str.c_str());
 }
 
 bool SID::_hasInstance = false;
