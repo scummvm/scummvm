@@ -731,14 +731,16 @@ static const ExtraGuiOption mmnesClassicPaletteOption = {
 	0
 };
 
+#ifdef USE_SID_AUDIO
 static const ExtraGuiOption c64SidTypeOption = {
-	_s("Use PAL timing for SID music"),
-	_s("This makes the music slower and lower pitched than how it was originally composed, but is how a lot of players outside the US would have experienced the game."),
+	_s("Use PAL timing for SID audio"),
+	_s("This lowers the pitch and slows down playback compared to the original NTSC timing."),
 	"c64_sid_type",
 	false,
 	0,
 	0
 };
+#endif
 
 static const ExtraGuiOption fmtownsTrimTo200 = {
 	_s("Trim FM-TOWNS games to 200 pixels height"),
@@ -1025,9 +1027,11 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	if (target.empty() || platform == Common::kPlatformNES) {
 		options.push_back(mmnesClassicPaletteOption);
 	}
+#ifdef USE_SID_AUDIO
 	if (target.empty() || platform == Common::kPlatformC64) {
 		options.push_back(c64SidTypeOption);
 	}
+#endif
 	if (target.empty() || platform == Common::kPlatformFMTowns) {
 		options.push_back(smoothScrolling);
 		if (target.empty() || gameid == "loom")
