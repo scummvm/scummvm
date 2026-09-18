@@ -225,6 +225,7 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 	}
 
 	_videoFormat = format;
+	_frameAlpha = kAlphaUnchecked;
 
 	enableEdges(kUp | kDown | kLeft | kRight);
 
@@ -251,6 +252,21 @@ void Viewport::setFrame(uint frameNr) {
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down
 	GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+
+	// Some scene backgrounds are Bink videos carrying an alpha plane, e.g. Nancy14's
+	// PHO_WallOpn_ANIM_Last, whose whole wall opening is transparent. The original engine
+	// draws the viewport opaquely, so the alpha is never used; honoring it would punch a
+	// hole through the bottom-most layer and show the frame image behind the scene.
+	// Alpha is a property of the video file, so the first frame decides for all of them;
+	// panorama scenes decode a frame per scroll step and should not pay for the check.
+	if (_frameAlpha == kAlphaUnchecked) {
+		_frameAlpha = _fullFrame.format.aBits() && _fullFrame.rawSurface().detectAlpha() != Graphics::ALPHA_OPAQUE ?
+			kAlphaNeedsFlattening : kAlphaOpaque;
+	}
+
+	if (_frameAlpha == kAlphaNeedsFlattening) {
+		_fullFrame.surfacePtr()->setAlpha(0xFF);
+	}
 
 	_needsRedraw = true;
 	_currentFrame = frameNr;
