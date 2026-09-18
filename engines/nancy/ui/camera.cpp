@@ -56,17 +56,29 @@ Common::Rect Camera::viewfinderScreenRect() const {
 	const int16 w = MIN<int16>(_cameraData->viewRect.width(), vp.width());
 	const int16 h = MIN<int16>(_cameraData->viewRect.height(), vp.height());
 
+	const int16 cx = CLIP<int16>(_aimPoint.x, vp.left + w / 2, vp.right - w / 2);
+	const int16 cy = CLIP<int16>(_aimPoint.y, vp.top + h / 2, vp.bottom - h / 2);
+
 	Common::Rect box(w, h);
-	box.moveTo(vp.left + (vp.width() - w) / 2, vp.top + (vp.height() - h) / 2);
+	box.moveTo(cx - w / 2, cy - h / 2);
 	return box;
 }
 
-void Camera::activate() {
+void Camera::drawViewfinder() {
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	Common::Rect box = viewfinderScreenRect();
+	box.translate(-_screenPosition.left, -_screenPosition.top);
+	_drawSurface.blitFrom(_image, _cameraData->viewRect, box);
+	_needsRedraw = true;
+}
+
+void Camera::activate(int16 itemID) {
 	if (_isActive) {
 		return;
 	}
 
 	_isActive = true;
+	_itemID = itemID;
 
 	// The camera outlives every scene, so its surface is built on first use.
 	const Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
@@ -83,14 +95,13 @@ void Camera::activate() {
 
 	moveTo(vpBounds);
 
-	// The viewfinder is fixed, so it only needs drawing once.
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	Common::Rect box = viewfinderScreenRect();
-	box.translate(-_screenPosition.left, -_screenPosition.top);
-	_drawSurface.blitFrom(_image, _cameraData->viewRect, box);
+	// Start aimed at the middle of the viewport; the box follows the cursor
+	// from its first move.
+	const Common::Rect vp = NancySceneState.getViewport().getScreenPosition();
+	_aimPoint = Common::Point(vp.left + vp.width() / 2, vp.top + vp.height() / 2);
+	drawViewfinder();
 
 	setVisible(true);
-	_needsRedraw = true;
 }
 
 void Camera::deactivate() {
@@ -176,6 +187,27 @@ void Camera::takePicture() {
 	playSoundBlock(_cameraData->shutterSound);
 
 	deactivate();
+	returnToAlbum();
+}
+
+void Camera::returnToAlbum() {
+	if (_itemID == -1) {
+		return;
+	}
+
+	// Reopen the camera's close-up, just like viewing it from the inventory,
+	// so the album shows the new picture and later exits to this scene.
+	auto *inv = GetEngineData(INV);
+	assert(inv);
+	const INV::ItemDescription &item = inv->itemDescriptions[_itemID];
+
+	NancySceneState.pushScene(_itemID);
+	NancySceneState.removeItemFromInventory(_itemID, false);
+
+	SceneChangeDescription sceneChange;
+	sceneChange.sceneID = item.sceneID;
+	sceneChange.continueSceneSound = item.sceneSoundFlag;
+	NancySceneState.changeScene(sceneChange);
 }
 
 void Camera::handleInput(NancyInput &input) {
@@ -186,6 +218,11 @@ void Camera::handleInput(NancyInput &input) {
 
 	// The pointer is blanked so only the viewfinder shows.
 	g_nancy->_cursor->setCursorType(CursorManager::kNancy13Blank, true, false);
+
+	if (input.mousePos != _aimPoint) {
+		_aimPoint = input.mousePos;
+		drawViewfinder();
+	}
 
 	if (input.input & NancyInput::kLeftMouseButtonUp) {
 		takePicture();

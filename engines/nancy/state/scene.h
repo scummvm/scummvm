@@ -121,6 +121,7 @@ public:
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);
 	void popScene(bool inventory = false);
+	int16 getPushedInvItemID() const { return _sceneState.pushedInvItemID; }
 
 	// Nancy 11+ "UI prep scenes": opening a taskbar popup first runs a hidden,
 	// videoless scene whose event-flag-gated ARs populate the popup's content;
