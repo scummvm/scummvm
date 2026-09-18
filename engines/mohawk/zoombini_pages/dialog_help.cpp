@@ -77,10 +77,10 @@ void ZoombiniDialogHelp::loadFeatures() {
 	for (Common::StableMap<uint32, ButtonState>::iterator it = _helpDialogButtonStateMap.begin(); it != _helpDialogButtonStateMap.end(); it++)
 		it->second.reset();
 	ZmbFeature::EventHooks hooks0017;
-	hooks0017.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniDialogHelp::helpDialog_onPreRenderShape));
-	hooks0017.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniDialogHelp::helpDialog_onPostRender));
-	hooks0017.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniDialogHelp::helpDialog_onMouseLButtonDown));
-	hooks0017.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniDialogHelp::helpDialog_onKeyDown));
+	hooks0017.setPreRenderShapeFunc(&ZoombiniDialogHelp::helpDialog_onPreRenderShape);
+	hooks0017.setPostRenderFunc(&ZoombiniDialogHelp::helpDialog_onPostRender);
+	hooks0017.setLButtonDownFunc(&ZoombiniDialogHelp::helpDialog_onMouseLButtonDown);
+	hooks0017.setKeyDownFunc(&ZoombiniDialogHelp::helpDialog_onKeyDown);
 	loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0001_Dialog), kSysResScrb0017_DialogHelp, 0,
 					ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
 					hooks0017);

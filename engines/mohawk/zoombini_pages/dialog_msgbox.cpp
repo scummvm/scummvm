@@ -153,10 +153,10 @@ void ZoombiniDialogMsgBox::loadFeatures() {
 
 	resetLongButtonStates();
 	ZmbFeature::EventHooks hooksLongButtons;
-	hooksLongButtons.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniDialogMsgBox::longButtons_onPreRenderShape));
-	hooksLongButtons.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniDialogMsgBox::longButtons_onPostRender));
-	hooksLongButtons.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniDialogMsgBox::longButtons_onLButtonDown));
-	hooksLongButtons.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniDialogMsgBox::longButtons_onKeyDown));
+	hooksLongButtons.setPreRenderShapeFunc(&ZoombiniDialogMsgBox::longButtons_onPreRenderShape);
+	hooksLongButtons.setPostRenderFunc(&ZoombiniDialogMsgBox::longButtons_onPostRender);
+	hooksLongButtons.setLButtonDownFunc(&ZoombiniDialogMsgBox::longButtons_onLButtonDown);
+	hooksLongButtons.setKeyDownFunc(&ZoombiniDialogMsgBox::longButtons_onKeyDown);
 	loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0001_Dialog), kSysResScrb0011_DialogMsgBox, 15,
 					ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
 					hooksLongButtons);

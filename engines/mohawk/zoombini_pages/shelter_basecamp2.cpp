@@ -113,8 +113,8 @@ void ZoombiniShelterBasecampTwo::loadFeatures() {
 
 	{ // [*] Virtual Feature: Storage area (no SCRB; preRender=scroll SM, postRender=draw grid)
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniShelterBasecampTwo::storage_preRender));
-		hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampTwo::storage_postRender));
+		hooks.setPreRenderFunc(&ZoombiniShelterBasecampTwo::storage_preRender);
+		hooks.setPostRenderFunc(&ZoombiniShelterBasecampTwo::storage_postRender);
 		ZmbFeature *vf = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 6,
 										 ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE | ZmbFeature::FLAG_00008000_LOOP_ANIM,
 										 hooks);
@@ -124,8 +124,8 @@ void ZoombiniShelterBasecampTwo::loadFeatures() {
 
 	{ // [*] Virtual Feature: Scroll-button panel (postRender draws scroll arrows via SHPL 9000)
 		ZmbFeature::EventHooks hooks;
-		hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecampTwo::buttons_postRender));
-		hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecampTwo::scrollButton_onLButtonDown));
+		hooks.setPostRenderFunc(&ZoombiniShelterBasecampTwo::buttons_postRender);
+		hooks.setLButtonDownFunc(&ZoombiniShelterBasecampTwo::scrollButton_onLButtonDown);
 		_scrollButtonFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0,
 											   ZmbFeature::FLAG_00001000_TOPMOST | ZmbFeature::FLAG_00008000_LOOP_ANIM,
 											   hooks);

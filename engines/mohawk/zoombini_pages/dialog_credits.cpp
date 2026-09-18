@@ -145,10 +145,10 @@ void ZoombiniDialogCredits::loadFeatures() {
 	// while the single credits runner keeps the frame shapes on top.
 
 	ZmbFeature::EventHooks hooksBackground;
-	hooksBackground.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniDialogCredits::creditScreen_render));
-	hooksBackground.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniDialogCredits::creditScreen_onMouseLButtonDown));
-	hooksBackground.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniDialogCredits::creditScreen_onKeyDown));
-	hooksBackground.setKeyUpFunc(static_cast<ZmbFeature::OnKeyUpFunc>(&ZoombiniDialogCredits::creditScreen_onKeyUp));
+	hooksBackground.setRenderFunc(&ZoombiniDialogCredits::creditScreen_render);
+	hooksBackground.setLButtonDownFunc(&ZoombiniDialogCredits::creditScreen_onMouseLButtonDown);
+	hooksBackground.setKeyDownFunc(&ZoombiniDialogCredits::creditScreen_onKeyDown);
+	hooksBackground.setKeyUpFunc(&ZoombiniDialogCredits::creditScreen_onKeyUp);
 	loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap0020_Credits), kSysResScrb0020_DialogCredits, 0,
 					ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
 					hooksBackground);

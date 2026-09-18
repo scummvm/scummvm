@@ -384,8 +384,8 @@ void ZoombiniPuzzleFleens::spawnFleenCreatures() {
 	}
 
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleFleens::fleenCreature_preRender));
-	hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleFleens::fleenCreature_render));
+	hooks.setPreRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_preRender);
+	hooks.setRenderFunc(&ZoombiniPuzzleFleens::fleenCreature_render);
 
 	ZmbFeature *normalFeatures[kFleenPosCode16_LowerBranchFifth + 1] = {};
 	for (int16 i = 0; i < _activeFleenCount; i++) {

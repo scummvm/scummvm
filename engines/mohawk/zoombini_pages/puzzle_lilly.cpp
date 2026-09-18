@@ -215,7 +215,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	// so only invalidated regions actually change on screen.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleLilly::renderGridSprites));
+		hooks.setRenderFunc(&ZoombiniPuzzleLilly::renderGridSprites);
 		loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), 0, 0,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY,
@@ -225,7 +225,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	// The entry-cell cursor runner redraws the highlighted destination every five frames.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleLilly::renderCursorIndicator));
+		hooks.setRenderFunc(&ZoombiniPuzzleLilly::renderCursorIndicator);
 		_entryHighlightFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), 0, 5,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY,
@@ -237,7 +237,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	// Swap-cell blink runners (interval 4).
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleLilly::renderCellAnimA));
+		hooks.setRenderFunc(&ZoombiniPuzzleLilly::renderCellAnimA);
 		_firstSwapCellFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), 0, 4,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY,
@@ -247,7 +247,7 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	}
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleLilly::renderCellAnimB));
+		hooks.setRenderFunc(&ZoombiniPuzzleLilly::renderCellAnimB);
 		_secondSwapCellFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), 0, 4,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY,
@@ -306,8 +306,8 @@ void ZoombiniPuzzleLilly::loadFeatures() {
 	// after the first z-sort marks the entity runners as OVERLAY.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleLilly::padAnchorPreRender));
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleLilly::renderPadAnchor));
+		hooks.setPreRenderFunc(&ZoombiniPuzzleLilly::padAnchorPreRender);
+		hooks.setRenderFunc(&ZoombiniPuzzleLilly::renderPadAnchor);
 		for (int16 row = 0; row < 12; row++) {
 			_padRowAnchorFeatures[row] = loadVirtualFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape14000_FinalOverlay),
 															kResScrb14000_FinalBase, 0,
@@ -435,7 +435,7 @@ void ZoombiniPuzzleLilly::createZoombiniChildRunners() {
 	// The pre-render callback applies the sprite variant selected by the Snoid's hair trait.
 	for (int16 i = 0; i < _pageLoadedZmbCount && i < kToadBase; i++) {
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleLilly::childPreRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniPuzzleLilly::childPreRenderShape);
 		_runnerFeatures[i] = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), kResScrb10109_ChildEntryBase + i, 4,
 			ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY,
@@ -509,7 +509,7 @@ void ZoombiniPuzzleLilly::createToadRunners() {
 		// The frame interval remains fixed at 7.
 		_vm->_rnd->getRandomNumber(3, 6);
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleLilly::toadPreRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniPuzzleLilly::toadPreRenderShape);
 		_runnerFeatures[runnerIdx] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape10000_FeatureOverlay), kResScrb10043_EntryBase + toadRunnerIdx, 7,
 													 ZmbFeature::FLAG_00000002_TYPE_GRIDWALKER | ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA,
 													 hooks);
@@ -2157,7 +2157,7 @@ void ZoombiniPuzzleLilly::spawnCrab() {
 		return;
 
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzleLilly::crabPreRenderShape));
+	hooks.setPreRenderShapeFunc(&ZoombiniPuzzleLilly::crabPreRenderShape);
 	// Preserve the otherwise-unused 4..7 random draw to keep the deterministic RNG sequence aligned.
 	// The frame interval remains fixed at 8.
 	_vm->_rnd->getRandomNumber(4, 7);
