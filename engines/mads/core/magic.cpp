@@ -263,7 +263,7 @@ void magic_fade_to_grey(Palette &pal, byte *map_pointer,
 	int step;
 	int intensity;
 	int shift_sign;
-	long base_timing, now_timing;
+	long base_timing = 0, now_timing;
 	long memory_needed;
 	MagicFadePacer fade_pacer;
 	byte *work_memory = NULL;
@@ -373,7 +373,7 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 	int step;
 	int intensity;
 	int shift_sign;
-	long base_timing, now_timing;
+	long base_timing = 0, now_timing;
 	long memory_needed;
 	MagicFadePacer fade_pacer;
 	byte *work_memory = NULL;

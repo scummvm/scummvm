@@ -467,7 +467,7 @@ static void matte_quick_from_black(byte *special_pal, int ticks,
 	byte *dest;
 	byte *special;
 	byte increments[768];
-	long fade_clock;
+	long fade_clock = 0;
 	long now_clock;
 	MagicFadePacer fade_pacer;
 
