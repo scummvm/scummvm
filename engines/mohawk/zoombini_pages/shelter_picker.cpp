@@ -245,12 +245,12 @@ void ZoombiniShelterPicker::loadFeatures() {
 		pickerUI_resetHotspots();
 
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniShelterPicker::pickerUI_onPreRender));
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniShelterPicker::pickerUI_onRender));
-		hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterPicker::pickerUI_onPostRender));
-		hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterPicker::pickerUI_onLButtonDown));
-		hooks.setKeyDownFunc(static_cast<ZmbFeature::OnKeyDownFunc>(&ZoombiniShelterPicker::pickerButtons_onKeyDown));
-		hooks.setKeyUpFunc(static_cast<ZmbFeature::OnKeyUpFunc>(&ZoombiniShelterPicker::pickerButtons_onKeyUp));
+		hooks.setPreRenderFunc(&ZoombiniShelterPicker::pickerUI_onPreRender);
+		hooks.setRenderFunc(&ZoombiniShelterPicker::pickerUI_onRender);
+		hooks.setPostRenderFunc(&ZoombiniShelterPicker::pickerUI_onPostRender);
+		hooks.setLButtonDownFunc(&ZoombiniShelterPicker::pickerUI_onLButtonDown);
+		hooks.setKeyDownFunc(&ZoombiniShelterPicker::pickerButtons_onKeyDown);
+		hooks.setKeyUpFunc(&ZoombiniShelterPicker::pickerButtons_onKeyUp);
 
 		// The runner's own resource is tBMP 4200 because the shared button-shape selector bounds
 		// its hover shape against the owning feature's resource, and the right-panel buttons are
@@ -304,7 +304,7 @@ void ZoombiniShelterPicker::loadFeatures() {
 	// [*] Callback-only runner - open loadDialog if required
 	if (_mode == kPickerMode_LoadGame) {
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniShelterPicker::oneTimeLoadDialog_onRenderShape));
+		hooks.setRenderFunc(&ZoombiniShelterPicker::oneTimeLoadDialog_onRenderShape);
 
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0, ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST, hooks);
 	} else
