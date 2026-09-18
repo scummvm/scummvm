@@ -209,6 +209,9 @@ void ThemeParser::cleanup() {
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = nullptr;
 	_palette.clear();
+	_globalFallbackFonts.clear();
+	_fontFallbackFonts.clear();
+	_languageFallbackFonts.clear();
 }
 
 Graphics::DrawStep *ThemeParser::defaultDrawStep() {
@@ -259,6 +262,8 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_font(ParserNode *node) {
+	_fontFallbackFonts.clear();
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
@@ -268,11 +273,39 @@ bool ThemeParser::parserCallback_font(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_language(ParserNode *node) {
+	_languageFallbackFonts.clear();
+
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
 
+	return true;
+}
+
+bool ThemeParser::parserCallback_fallback(ParserNode *node) {
+	if (node->values["file"].empty())
+		return parserError("Fallback font filename must not be empty.");
+
+	bool optional = false;
+	if (node->values.contains("optional") && !Common::parseBool(node->values["optional"], optional))
+		return parserError("Fallback font 'optional' value must be either true or false.");
+
+	const ThemeFontFallback fallbackFont(node->values["file"], optional);
+	ParserNode *parentNode = getParentNode(node);
+	if (parentNode->name == "fonts")
+		_globalFallbackFonts.push_back(fallbackFont);
+	else if (parentNode->name == "font")
+		_fontFallbackFonts.push_back(fallbackFont);
+	else if (parentNode->name == "language")
+		_languageFallbackFonts.push_back(fallbackFont);
+	else
+		return parserError("Fallback font key out of scope. Must be inside <fonts>, <font>, or <language> keys.");
+
+	return true;
+}
+
+bool ThemeParser::parseLanguage(ParserNode *node) {
 	TextData textDataId = parseTextDataId(getParentNode(node)->values["id"]);
 
 	// Default to a point size of 12.
@@ -309,10 +342,15 @@ bool ThemeParser::parserCallback_language(ParserNode *node) {
 		scalableFile = getParentNode(node)->values["scalable_file"];
 	}
 
+	Common::Array<ThemeFontFallback> fallbackFonts = _languageFallbackFonts;
+	for (uint i = 0; i < _fontFallbackFonts.size(); i++)
+		fallbackFonts.push_back(_fontFallbackFonts[i]);
+	for (uint i = 0; i < _globalFallbackFonts.size(); i++)
+		fallbackFonts.push_back(_globalFallbackFonts[i]);
 
-	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, pointsize);
+	_theme->storeFontNames(textDataId, node->values["id"], file, scalableFile, fallbackFonts, pointsize);
 
-	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, pointsize))
+	if (!_theme->addFont(textDataId, node->values["id"], file, scalableFile, fallbackFonts, pointsize))
 		return parserError("Error loading localized Font in theme engine.");
 
 	return true;
@@ -337,6 +375,7 @@ bool ThemeParser::parserCallback_text_color(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_fonts(ParserNode *node) {
+	_globalFallbackFonts.clear();
 	return true;
 }
 
@@ -962,7 +1001,9 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 }
 
 bool ThemeParser::closedKeyCallback(ParserNode *node) {
-	if (node->name == "layout")
+	if (node->name == "language")
+		return parseLanguage(node);
+	else if (node->name == "layout")
 		_theme->getEvaluator()->closeLayout();
 	else if (node->name == "dialog")
 		_theme->getEvaluator()->closeDialog();
