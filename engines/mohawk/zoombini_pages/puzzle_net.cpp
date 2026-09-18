@@ -213,8 +213,8 @@ void ZoombiniPuzzleNet::loadFeatures() {
 	// Register virtual render feature for trait slot buttons
 	{
 		ZmbFeature::EventHooks traitSlotHooks;
-		traitSlotHooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleNet::traitSlots_preRender));
-		traitSlotHooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleNet::traitSlots_render));
+		traitSlotHooks.setPreRenderFunc(&ZoombiniPuzzleNet::traitSlots_preRender);
+		traitSlotHooks.setRenderFunc(&ZoombiniPuzzleNet::traitSlots_render);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0, ZmbFeature::FLAG_00001000_TOPMOST, traitSlotHooks);
 	}
 
@@ -718,8 +718,8 @@ void ZoombiniPuzzleNet::registerV2SelectorHoverRunners() {
 		return;
 
 	ZmbFeature::EventHooks hoverHooks;
-	hoverHooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleNet::selectorHover_preRender));
-	hoverHooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleNet::selectorHover_render));
+	hoverHooks.setPreRenderFunc(&ZoombiniPuzzleNet::selectorHover_preRender);
+	hoverHooks.setRenderFunc(&ZoombiniPuzzleNet::selectorHover_render);
 
 	const uint32 selectorFlags = ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_04000000_OVERLAY;
 	if (kPuzzleLevel3 <= _difficultyLevel) {

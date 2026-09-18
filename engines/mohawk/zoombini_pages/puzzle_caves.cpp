@@ -351,7 +351,7 @@ void ZoombiniPuzzleCaves::loadFeatures() {
 	// being promoted into the overlay bucket.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleCaves::renderEntranceGlyphs));
+		hooks.setRenderFunc(&ZoombiniPuzzleCaves::renderEntranceGlyphs);
 		_ruleGlyphRendererFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape6000_Entrance), 0, 0, ZmbFeature::FLAG_00008000_LOOP_ANIM, hooks);
 	}
 
@@ -1688,8 +1688,8 @@ void ZoombiniPuzzleCaves::registerSeatZOrderAnchor(int16 seatNumber) {
 		return;
 
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniPuzzleCaves::seatAnchor_preRender));
-	hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleCaves::seatAnchor_render));
+	hooks.setPreRenderFunc(&ZoombiniPuzzleCaves::seatAnchor_preRender);
+	hooks.setRenderFunc(&ZoombiniPuzzleCaves::seatAnchor_render);
 
 	_seatZOrderAnchors[seatNumber] = loadVirtualFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape6000_Entrance),
 														static_cast<int16>(kResScrb6000_EntranceBase), 0,

@@ -254,7 +254,7 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 	// would gate the callback that drives every cell.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniPuzzleMaze::renderGridCells));
+		hooks.setRenderFunc(&ZoombiniPuzzleMaze::renderGridCells);
 		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape5100_Creature), 0, 0,
 						ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY,
 						hooks);

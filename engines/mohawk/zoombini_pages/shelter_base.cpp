@@ -706,10 +706,10 @@ void ZoombiniShelterBasecamp::renderBasecampStorageEntries(ZmbStateStoredChunk &
 
 ZmbFeature *ZoombiniShelterBasecamp::loadBasecampControlFeature(const Common::Rect &clickRect) {
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniShelterBasecamp::basecampControls_preRender));
-	hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniShelterBasecamp::basecampControls_render));
-	hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterBasecamp::basecampControls_postRender));
-	hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterBasecamp::basecampControls_lButtonDown));
+	hooks.setPreRenderFunc(&ZoombiniShelterBasecamp::basecampControls_preRender);
+	hooks.setRenderFunc(&ZoombiniShelterBasecamp::basecampControls_render);
+	hooks.setPostRenderFunc(&ZoombiniShelterBasecamp::basecampControls_postRender);
+	hooks.setLButtonDownFunc(&ZoombiniShelterBasecamp::basecampControls_lButtonDown);
 
 	ZmbFeature *feature = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0, ZmbFeature::FLAG_00001000_TOPMOST, hooks);
 	feature->setClickRect(clickRect);

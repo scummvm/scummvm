@@ -594,10 +594,10 @@ void ZoombiniInteractive::loadGoMapButtonsFeature(int16 bitmapResId, bool separa
 	// (overlay03) with preRender/postRender for proceed/map/help button drawing.
 	ZmbFeature::EventHooks hooksGoMapButtons;
 	if (_goMapButtonsUseSeparateBitmapResources)
-		hooksGoMapButtons.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniInteractive::goMapButtons_renderSeparateBitmaps));
-	hooksGoMapButtons.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniInteractive::goMapButtons_preRenderShape));
-	hooksGoMapButtons.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniInteractive::goMapButtons_onPostRender));
-	hooksGoMapButtons.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniInteractive::goMapButtons_onLButtonDown));
+		hooksGoMapButtons.setRenderFunc(&ZoombiniInteractive::goMapButtons_renderSeparateBitmaps);
+	hooksGoMapButtons.setPreRenderShapeFunc(&ZoombiniInteractive::goMapButtons_preRenderShape);
+	hooksGoMapButtons.setPostRenderFunc(&ZoombiniInteractive::goMapButtons_onPostRender);
+	hooksGoMapButtons.setLButtonDownFunc(&ZoombiniInteractive::goMapButtons_onLButtonDown);
 
 	Common::Array<ZmbHotspot> hotspots;
 	// Use the enabled shapes as the initial hotspot shape.
@@ -719,9 +719,9 @@ void ZoombiniInteractive::loadHelpButtonFeature() {
 
 	// [*] Callback-only runner (tBMP c:0001) - Help Button
 	ZmbFeature::EventHooks hooksHelpMapButton;
-	hooksHelpMapButton.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniInteractive::helpButton_preRenderShape));
-	hooksHelpMapButton.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniInteractive::helpButton_onPostRender));
-	hooksHelpMapButton.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniInteractive::helpButton_onLButtonDown));
+	hooksHelpMapButton.setPreRenderShapeFunc(&ZoombiniInteractive::helpButton_preRenderShape);
+	hooksHelpMapButton.setPostRenderFunc(&ZoombiniInteractive::helpButton_onPostRender);
+	hooksHelpMapButton.setLButtonDownFunc(&ZoombiniInteractive::helpButton_onLButtonDown);
 
 	Common::Array<ZmbHotspot> hotspots;
 	hotspots.push_back(ZmbHotspot(kHotspotHelpButtonNormal, kSystemShape0001_24_HelpButtonNormal, 0, _helpButtonRect));
@@ -1256,8 +1256,8 @@ void ZoombiniInteractive::showNotiBox(const Common::U32String &ustr, bool isNoti
 	// Only register NotiBox feature if not yet registered.
 	if (!_notiBoxFeature) {
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniInteractive::notiBox_preRenderShape));
-		hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniInteractive::notiBox_onPostRender));
+		hooks.setPreRenderShapeFunc(&ZoombiniInteractive::notiBox_preRenderShape);
+		hooks.setPostRenderFunc(&ZoombiniInteractive::notiBox_onPostRender);
 
 		Common::Array<ZmbHotspot> hotspots;
 		hotspots.push_back(ZmbHotspot(kHotspotNotiBoxShort, kSystemShape3001_01_NotiBoxShort, 0, _notiBoxShortRect));

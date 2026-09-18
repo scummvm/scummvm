@@ -654,8 +654,8 @@ void ZoombiniTransitionXfer::loadFeatures() {
 		// SCRB 6100-6103 and 6106-6107 appear in front and are loaded below.
 		loadScrbFeature(xferShapes, kResScrb6108_Route5_FarBackgroundAnimation, 6, kEnvScrbFlags);
 		ZmbFeature::EventHooks townCountHooks;
-		townCountHooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniTransitionXfer::xfer5TownCount_render));
-		townCountHooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniTransitionXfer::xfer5TownCount_onPostRender));
+		townCountHooks.setRenderFunc(&ZoombiniTransitionXfer::xfer5TownCount_render);
+		townCountHooks.setPostRenderFunc(&ZoombiniTransitionXfer::xfer5TownCount_onPostRender);
 		loadScrbFeature(xferShapes, kResScrb6105_Route5_TownCount, 0, ZmbFeature::FLAG_00000000_TYPE_SHAPES, townCountHooks);
 		loadScrbFeature(xferShapes, kResScrb6104_Route5_MidBackground, 0, ZmbFeature::FLAG_00000000_TYPE_SHAPES);
 
@@ -707,12 +707,12 @@ void ZoombiniTransitionXfer::loadFeatures() {
 
 		// Main SCRB with route view shape remapping callback.
 		ZmbFeature::EventHooks mainScrbHooks;
-		mainScrbHooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniTransitionXfer::routeView_updateSlots));
+		mainScrbHooks.setPreRenderShapeFunc(&ZoombiniTransitionXfer::routeView_updateSlots);
 		loadScrbFeature(xferShapes, mainScrbId, 6, kMainScrbFlags, mainScrbHooks);
 
 		ZmbFeature::EventHooks routePathHooks;
-		routePathHooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniTransitionXfer::routePath_selectBand));
-		routePathHooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniTransitionXfer::routePath_onPostRender));
+		routePathHooks.setPreRenderShapeFunc(&ZoombiniTransitionXfer::routePath_selectBand);
+		routePathHooks.setRenderFunc(&ZoombiniTransitionXfer::routePath_onPostRender);
 		_routePathFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, routePathScrbId), routePathScrbId, 4, ZmbFeature::FLAG_04000000_OVERLAY, routePathHooks);
 		// Register this runner with a timed pre-render callback so it remains render-active
 		// while @ref ZoombiniTransitionXfer::routePath_onPostRender() mutates pixels.

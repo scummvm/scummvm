@@ -2320,7 +2320,7 @@ void ZoombiniPuzzlePizza::handleZmbExitEvent(ZmbFeature *feature, int16 eventCod
 		// The final overlay-after-stone link leaves every older pizza behind both runners.
 		if (!_toppingOverlayFeature) {
 			ZmbFeature::EventHooks overlayHooks;
-			overlayHooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzlePizza::toppingRunner_preRenderShape));
+			overlayHooks.setPreRenderShapeFunc(&ZoombiniPuzzlePizza::toppingRunner_preRenderShape);
 			_toppingOverlayFeature = loadScrbFeature(
 				ZmbResource(ZmbResource::kPage, kResBitmapShape12000_Topping), kResScrb12000_ToppingOverlay, 6,
 				ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE,
@@ -2723,7 +2723,7 @@ void ZoombiniPuzzlePizza::registerProduceButton() {
 		loadScrbOntoFeature(_produceButtonFeature, scrbId);
 	} else {
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzlePizza::produceButton_preRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniPuzzlePizza::produceButton_preRenderShape);
 		_produceButtonFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape7000_Order), scrbId, 6,
 			ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE,
@@ -3311,7 +3311,7 @@ ZmbFeature *ZoombiniPuzzlePizza::createToppingRunnerFeature(int16 scrbId, uint32
 	uint16 featureId = _nextDynamicFeatureId;
 	_nextDynamicFeatureId += 1;
 	ZmbFeature::EventHooks hooks;
-	hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniPuzzlePizza::toppingRunner_preRenderShape));
+	hooks.setPreRenderShapeFunc(&ZoombiniPuzzlePizza::toppingRunner_preRenderShape);
 
 	ZmbFeature *newFeature = loadVirtualFeature(
 		ZmbResource(ZmbResource::kPage, kResBitmapShape12000_Topping), featureId, frameInterval,
