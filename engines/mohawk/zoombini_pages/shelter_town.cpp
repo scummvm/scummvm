@@ -468,7 +468,7 @@ void ZoombiniShelterTown::loadFeatures() {
 
 	{ // [*] SCRB 1002: Overlay with REGS + pre-render shape callback
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniShelterTown::overlay_preRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniShelterTown::overlay_preRenderShape);
 		_overlayFeatures[1] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000_Overlay), kResScrb1002_Overlay, 0,
 											  ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE | ZmbFeature::FLAG_00008000_LOOP_ANIM |
 												  ZmbFeature::FLAG_00020000_SKIP_RENDER | ZmbFeature::FLAG_04000000_OVERLAY |
@@ -478,7 +478,7 @@ void ZoombiniShelterTown::loadFeatures() {
 
 	{ // [*] SCRB 1003: Overlay with REGS + pre-render shape callback
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniShelterTown::overlay_preRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniShelterTown::overlay_preRenderShape);
 		_overlayFeatures[2] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000_Overlay), kResScrb1003_Overlay, 0,
 											  ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE | ZmbFeature::FLAG_00008000_LOOP_ANIM |
 												  ZmbFeature::FLAG_00020000_SKIP_RENDER | ZmbFeature::FLAG_04000000_OVERLAY |
@@ -488,7 +488,7 @@ void ZoombiniShelterTown::loadFeatures() {
 
 	{ // [*] SCRB 1001: Memorial markers with saved-route gating
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniShelterTown::memorialMarkers_preRenderShape));
+		hooks.setPreRenderShapeFunc(&ZoombiniShelterTown::memorialMarkers_preRenderShape);
 		_overlayFeatures[3] = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000_Overlay), kResScrb1001_Overlay, 0,
 											  ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE | ZmbFeature::FLAG_00008000_LOOP_ANIM |
 												  ZmbFeature::FLAG_00020000_SKIP_RENDER | ZmbFeature::FLAG_04000000_OVERLAY |
@@ -603,10 +603,10 @@ void ZoombiniShelterTown::loadFeatures() {
 
 	{ // [*] One callback-only runner for Map and Help.
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniShelterTown::controls_preRender));
-		hooks.setRenderFunc(static_cast<ZmbFeature::OnRenderFunc>(&ZoombiniShelterTown::controls_render));
-		hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterTown::controls_postRender));
-		hooks.setLButtonDownFunc(static_cast<ZmbFeature::OnLButtonDownFunc>(&ZoombiniShelterTown::controls_lButtonDown));
+		hooks.setPreRenderFunc(&ZoombiniShelterTown::controls_preRender);
+		hooks.setRenderFunc(&ZoombiniShelterTown::controls_render);
+		hooks.setPostRenderFunc(&ZoombiniShelterTown::controls_postRender);
+		hooks.setLButtonDownFunc(&ZoombiniShelterTown::controls_lButtonDown);
 
 		ZmbFeature *feature = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0, ZmbFeature::FLAG_00001000_TOPMOST, hooks);
 		Common::Rect clickRect = _mapButtonRect;
@@ -627,8 +627,8 @@ void ZoombiniShelterTown::loadFeatures() {
 	// Town-wide scrolling and modal render-state updates.
 	{
 		ZmbFeature::EventHooks hooks;
-		hooks.setPreRenderFunc(static_cast<ZmbFeature::OnPreRenderFunc>(&ZoombiniShelterTown::clockHands_preRender));
-		hooks.setPreRenderShapeFunc(static_cast<ZmbFeature::OnPreRenderShapeFunc>(&ZoombiniShelterTown::clockHands_preRenderShape));
+		hooks.setPreRenderFunc(&ZoombiniShelterTown::clockHands_preRender);
+		hooks.setPreRenderShapeFunc(&ZoombiniShelterTown::clockHands_preRenderShape);
 		_clockHandsFeature = loadScrbFeature(
 			ZmbResource(ZmbResource::kPage, kResBitmapShape6000_ClockHands), kResScrb6000_ClockHands, kTownClockNormalFrameInterval,
 			ZmbFeature::FLAG_00000001_TYPE_SNOID | ZmbFeature::FLAG_00008000_LOOP_ANIM,
@@ -1450,7 +1450,7 @@ void ZoombiniShelterTown::showMemorialCard(int16 slotIdx) {
 
 	const int16 scrbId = static_cast<int16>(kResScrb1003_Overlay + kTownMemorialCardScrbTypeBySlot[slotIdx]);
 	ZmbFeature::EventHooks hooks;
-	hooks.setPostRenderFunc(static_cast<ZmbFeature::OnPostRenderFunc>(&ZoombiniShelterTown::memorialCard_onPostRender));
+	hooks.setPostRenderFunc(&ZoombiniShelterTown::memorialCard_onPostRender);
 	_memorialCardFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1000_Overlay), scrbId, 0,
 										   ZmbFeature::FLAG_00001000_TOPMOST | ZmbFeature::FLAG_00004000_NO_DIRTY_MERGE,
 										   hooks);
