@@ -202,10 +202,10 @@
 
 #include "backends/platform/android/portdefs.h"
 
+#define vsnprintf rpl_vsnprintf
 #include <errno.h>	/* For ERANGE and errno. */
 #include <limits.h>	/* For *_MAX. */
 #include <float.h>	/* For *DBL_{MIN,MAX}_10_EXP. */
-
 #if HAVE_INTTYPES_H
 #include <inttypes.h>	/* For intmax_t (if not defined in <stdint.h>). */
 #endif	/* HAVE_INTTYPES_H */
@@ -218,6 +218,14 @@
 #if HAVE_STDINT_H
 #include <stdint.h>	/* For intmax_t. */
 #endif	/* HAVE_STDINT_H */
+
+#if !HAVE_ASPRINTF
+#define asprintf rpl_asprintf
+#endif	/* !HAVE_ASPRINTF */
+
+#if !HAVE_SNPRINTF
+#define snprintf rpl_snprintf
+#endif	/* !HAVE_SNPRINTF */
 
 /* Support for unsigned long long int.  We may also need ULLONG_MAX. */
 #ifndef ULONG_MAX	/* We may need ULONG_MAX as a fallback. */
@@ -799,8 +807,8 @@ static void fmtstr(char *str, size_t *len, size_t size, const char *value, int w
 		value = "(null)";
 
 	/* If a precision was specified, don't read the string past it. */
-	for (strln = 0; value[strln] != '\0' &&
-	    (noprecision || strln < precision); strln++)
+	for (strln = 0; (noprecision || strln < precision) &&
+	    value[strln] != '\0'; strln++)
 		continue;
 
 	if ((padlen = width - strln) < 0)
@@ -812,7 +820,7 @@ static void fmtstr(char *str, size_t *len, size_t size, const char *value, int w
 		OUTCHAR(str, *len, size, ' ');
 		padlen--;
 	}
-	while (*value != '\0' && (noprecision || precision-- > 0)) {
+	while ((noprecision || precision-- > 0) && *value != '\0') {
 		OUTCHAR(str, *len, size, *value);
 		value++;
 	}
@@ -1299,6 +1307,9 @@ static UINTMAX_T cast(LDOUBLE value) {
 
 static UINTMAX_T myround(LDOUBLE value) {
 	UINTMAX_T intpart = cast(value);
+
+	if (intpart == UINTMAX_MAX)
+		return UINTMAX_MAX;
 
 	return ((value -= intpart) < 0.5) ? intpart : intpart + 1;
 }
