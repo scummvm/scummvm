@@ -45,6 +45,8 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	Common::U32String getSpokenDescription() const override;
+
 	void reflowLayout() override;
 
 protected:

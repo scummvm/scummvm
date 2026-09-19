@@ -273,6 +273,12 @@ void Widget::read(const Common::U32String &str) {
 	}
 }
 
+void Widget::readDescription() {
+	Common::U32String description = getSpokenDescription();
+	if (!description.empty())
+		read(description);
+}
+
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip, ThemeEngine::FontStyle font, Common::Language lang, bool useEllipsis)

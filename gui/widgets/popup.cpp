@@ -327,6 +327,14 @@ void PopUpDialog::setSelection(int item) {
 		// Draw new selection
 		if (item >= 0)
 			drawMenuEntry(item, true);
+
+		// Announce the new selection, so that it is not only the mouse that
+		// speaks. Updating _lastRead keeps handleMouseMoved() from repeating
+		// what was just said.
+		if (item >= 0 && item < (int)_entries.size() && _lastRead != item) {
+			read(_entries[item]);
+			_lastRead = item;
+		}
 	}
 }
 
