@@ -338,7 +338,7 @@ bool PlaybackFile::hasNextEvent() const {
 RecorderEvent PlaybackFile::getNextEvent() {
 	if (!hasNextEvent()) {
 		debug(3, "end of recorder file reached.");
-		RecorderEvent result;
+		RecorderEvent result = {};
 		result.type = EVENT_QUIT;
 		return result;
 	}
@@ -368,6 +368,12 @@ RecorderEvent PlaybackFile::getNextEvent() {
 				break;
 			}
 		}
+	}
+	if (isEventsBufferEmpty()) {
+		debug(3, "end of recorder file reached.");
+		RecorderEvent result = {};
+		result.type = EVENT_QUIT;
+		return result;
 	}
 	RecorderEvent result;
 	readEvent(result);
