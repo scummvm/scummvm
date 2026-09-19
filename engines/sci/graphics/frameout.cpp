@@ -84,7 +84,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
 		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21))) {
-			// Hoyle school house math
+			// Hoyle school house
 			_scriptWidth = 320;
 			_scriptHeight = 200;
 			break;

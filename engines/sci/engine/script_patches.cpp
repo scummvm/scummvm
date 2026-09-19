@@ -2978,7 +2978,7 @@ static const uint16 hoyle5PatchDisableGame[] = {
 	PATCH_END
 };
 
-// Hoyle School House Math is similar to the Children's Collection and Bridge
+// Hoyle School House is similar to the Children's Collection and Bridge
 //  versions above, where the individual card games were launched externally
 //  by passing a config file to the interpreter. The menus for this game are
 //  present, although they are still using Hoyle4 graphics, but they are missing
@@ -27279,7 +27279,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				break;
 			case GID_HOYLE5:
 				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21))) {
-					// Hoyle school house math
+					// Hoyle school house
 					enablePatch(signatureTable, "disable sierra logo");
 					enablePatch(signatureTable, "disable main menu buttons");
 					enablePatch(signatureTable, "disable Euchre and Bridge");
