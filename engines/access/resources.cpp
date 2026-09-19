@@ -29,11 +29,11 @@
 namespace Access {
 
 Resources *Resources::init(AccessEngine *vm) {
-	if (vm->getGameID() == kGameAmazon)
+	if (vm->gameIs(kGameAmazon))
 		return new Amazon::AmazonResources(vm);
-	else if (vm->getGameID() == kGameMartianMemorandum)
+	else if (vm->gameIs(kGameMartianMemorandum))
 		return new Martian::MartianResources(vm);
-	else if (vm->getGameID() == kGameNoctropolis)
+	else if (vm->gameIs(kGameNoctropolis))
 		return new Noctropolis::NoctropolisResources(vm);
 
 	error("Unknown game");
@@ -101,7 +101,7 @@ bool Resources::load(Common::U32String &errorMessage) {
 void Resources::load(Common::SeekableReadStream &s) {
 	uint count;
 
-	assert(_vm->getGameID() != kGameNoctropolis);
+	assert(!_vm->gameIs(kGameNoctropolis));
 
 	// Get the offset of the data for the game
 	uint entryOffset = findEntry(_vm->getGameID(), _vm->isCD() ? 1 : 0,

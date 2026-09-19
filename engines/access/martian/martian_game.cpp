@@ -243,9 +243,7 @@ void MartianEngine::doCredits() {
 	_screen->setDisplayScan();
 	_events->hideCursor();
 	_screen->forceFadeOut();
-	Resource *data = _files->loadFile(41, 1);
-	_objectsTable[41] = new SpriteResource(this, data);
-	delete data;
+	_objectsTable[41] = new SpriteResource(this, 41, 1);
 
 	_files->loadScreen(41, 0);
 	_buffer2.copyFrom(*_screen);

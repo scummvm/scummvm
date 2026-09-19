@@ -106,7 +106,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	ARRAYCLEAR(_ask);
 	ARRAYCLEAR(_asked);
 	_startAboutItem = _startAboutBox = 0;
-	_keepAskPosition = false;
 	_bcnt = 0;
 	_boxDataStart = 0;
 	_boxDataEnd = false;
@@ -251,10 +250,8 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 
 void AccessEngine::loadCells(const Common::Array<CellIdent> &cells) {
 	for (const auto &cell : cells) {
-		Resource *spriteData = _files->loadFile(cell);
 		assert(_objectsTable[cell._cell] == nullptr); // ensure no leaks
-		_objectsTable[cell._cell] = new SpriteResource(this, spriteData);
-		delete spriteData;
+		_objectsTable[cell._cell] = new SpriteResource(this, cell._fileNum, cell._subFile);
 	}
 }
 

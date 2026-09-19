@@ -241,9 +241,9 @@ public:
 	SpriteResource *_objectsTable[128];
 	bool _establishTable[128];
 	bool _establishFlag;
-	int _establishMode;
-	int _establishGroup;
-	int _establishCtrlTblOfs;
+	int _establishMode;			// Amazon only?
+	int _establishGroup;		// Amazon only?
+	int _establishCtrlTblOfs;	// Amazon only?
 	TimerList _timers;
 	DeathList _deaths;
 	FontManager _fonts;
@@ -254,10 +254,11 @@ public:
 	int _mouseMode;
 
 	uint8 _playerDataCount;
-	int _currentManOld;
-	int _converseMode;
+	int _currentManOld;		// Amazon only
+	int _converseMode;		// Set but never read?
 	bool _currentCharFlag;
 	bool _boxSelect;
+
 	int _scale;
 	int _scaleH1, _scaleH2;
 	int _scaleN1;
@@ -269,11 +270,11 @@ public:
 	bool _canSaveLoad;
 
 	Resource *_establish;
-	int _printEnd;
-	int _txtPages;
-	int _narateFile;
-	int _sndSubFile;
-	int _countTbl[6];
+	int _printEnd;		// Amazon only
+	int _txtPages;		// Amazon only
+	int _narateFile;	// Used in speakText, only called in Amazon?
+	int _sndSubFile;	// Used in speakText, only called in Amazon?
+	int _countTbl[6];	// Used in speakText, only called in Amazon?
 
 	// Fields that are included in savegames
 	int _conversation;
@@ -292,8 +293,6 @@ public:
 	int _startAboutItem;
 	int _startAboutBox;
 
-	Common::Point _askBase; // Noctropolis only
-	bool _keepAskPosition;  // Noctropolis only
 	int _boxDataStart;
 	bool _boxDataEnd;
 	int _boxSelectY;
@@ -313,7 +312,7 @@ public:
 	int &_useItem;
 	int &_startup;
 	int &_manScaleOff;
-	int &_pictureTaken;
+	int &_pictureTaken;		// Only used in MM
 
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
@@ -328,6 +327,7 @@ public:
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
 	AccessGameType getGameID() const;
+	bool gameIs(AccessGameType game) const;
 	uint32 getGameFeatures() const;
 	bool shouldQuitOrRestart();
 

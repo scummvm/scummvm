@@ -59,9 +59,7 @@ void AmazonScripts::mWhile1() {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 
-	Resource *spriteData = _vm->_files->loadFile(14, 6);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[0] = new SpriteResource(_vm, 14, 6);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -77,9 +75,7 @@ void AmazonScripts::mWhile1() {
 
 	_game->establish(-1, 14);
 
-	spriteData = _vm->_files->loadFile(14, 7);
-	_vm->_objectsTable[1] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[1] = new SpriteResource(_vm, 14, 7);
 
 	_vm->_sound->playSound(0);
 	_vm->_screen->setDisplayScan();
@@ -115,9 +111,7 @@ void AmazonScripts::mWhile1() {
 	_vm->_screen->setIconPalette();
 	_vm->freeCells();
 
-	spriteData = _vm->_files->loadFile(14, 8);
-	_vm->_objectsTable[2] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[2] = new SpriteResource(_vm, 14, 8);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -130,9 +124,7 @@ void AmazonScripts::mWhile1() {
 	} while (_vm->_flags[52] == 3);
 
 	_vm->freeCells();
-	spriteData = _vm->_files->loadFile(14, 9);
-	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[3] = new SpriteResource(_vm, 14, 9);
 
 	_vm->_screen->setDisplayScan();
 	_vm->_events->hideCursor();
@@ -167,9 +159,7 @@ void AmazonScripts::mWhile2() {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 
-	Resource *spriteData = _vm->_files->loadFile(14, 6);
-	_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[0] = new SpriteResource(_vm, 14, 6);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
@@ -182,9 +172,7 @@ void AmazonScripts::mWhile2() {
 
 	_vm->_screen->fadeOut();
 	_vm->freeCells();
-	spriteData = _vm->_files->loadFile(14, 9);
-	_vm->_objectsTable[3] = new SpriteResource(_vm, spriteData);
-	delete spriteData;
+	_vm->_objectsTable[3] = new SpriteResource(_vm, 14, 9);
 
 	_vm->_screen->setDisplayScan();
 	_vm->_events->hideCursor();

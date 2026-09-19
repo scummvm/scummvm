@@ -111,12 +111,12 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = (_vm->getGameID() == kGameMartianMemorandum) ? 247 : 29;
-	_vm->_fonts._charFor._hi = (_vm->getGameID() == kGameMartianMemorandum) ? 255 : 32;
+	_vm->_fonts._charFor._lo = (_vm->gameIs(kGameMartianMemorandum) ? 247 : 29);
+	_vm->_fonts._charFor._hi = (_vm->gameIs(kGameMartianMemorandum) ? 255 : 32);
 
 	calcBubble(msg);
 
-	if (_vm->getGameID() != kGameNoctropolis) {
+	if (!_vm->gameIs(kGameNoctropolis)) {
 		// Noctropolis bounds are different and might have the extra box
 		// decoration, so we save them during the render step (in doBox_v3)
 		Common::Rect r = _bubbles[0];

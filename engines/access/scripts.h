@@ -42,6 +42,14 @@ class Scripts : public Manager {
 
 private:
 	int _specialFunction;
+	int _scriptCommand;
+	int _choice;
+	int32 _choiceStart;
+
+	// Game variables only ever used from inside scripts
+	Common::Point _askBase; // Noctropolis only
+	bool _keepAskPosition;  // Noctropolis only
+	Common::Point _charsOrg, _texsOrg;
 
 	void clearWatch();
 	void printWatch();
@@ -182,10 +190,6 @@ public:
 	int _sequence;
 	bool _endFlag;
 	int _returnCode;
-	int _scriptCommand;
-	int _choice;
-	int32 _choiceStart;
-	Common::Point _charsOrg, _texsOrg;
 
 	int _continuenceType;  // Only used in Noctropolis
 	bool _continuenceFlag; // Only set in Noctropolis (always false otherwise). See also room->_conFlag which is used in earlier games.

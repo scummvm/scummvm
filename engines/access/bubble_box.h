@@ -57,6 +57,16 @@ private:
 	int _bIconStartX, _bIconStartY;
 	int _boxPStartX, _boxPStartY;
 
+	int _btnId1;
+	int _btnX1;
+	int _btnId2;
+	int _btnX2;
+	int _btnId3;
+	int _btnX3;
+
+	Common::Rect _btnUpPos;
+	Common::Rect _btnDownPos;
+
 	void displayBoxData();
 	void drawSelectBox();
 	/**
@@ -74,14 +84,6 @@ public:
 	Common::String _bubbleDisplStr; // the title that will be drawn on the next bubble
 	Common::String _tempList[60];
 	int _tempListIdx[60];
-	int _btnId1;
-	int _btnX1;
-	int _btnId2;
-	int _btnX2;
-	int _btnId3;
-	int _btnX3;
-	Common::Rect _btnUpPos;
-	Common::Rect _btnDownPos;
 	Common::Array<Common::Rect> _bubbles;
 public:
 	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title);

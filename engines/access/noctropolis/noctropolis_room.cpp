@@ -77,10 +77,8 @@ void NoctropolisRoom::loadPlayer1() {
 		_vm->_player->loadNoctPalette(fileNum, _palIntensity + palOffset);
 		((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
 
-		for (int i = subFileBase; i <= numSubFiles; i++) {
-			Resource *data = _vm->_files->loadFile(fileNum, i);
-			_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
-		}
+		for (int i = subFileBase; i <= numSubFiles; i++)
+			_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, fileNum, i);
 	}
 }
 

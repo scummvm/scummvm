@@ -49,6 +49,10 @@ AccessGameType AccessEngine::getGameID() const {
 	return (AccessGameType)(_gameDescription->gameID);
 }
 
+bool AccessEngine::gameIs(AccessGameType game) const {
+	return getGameID() == game;
+}
+
 uint32 AccessEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }

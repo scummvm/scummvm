@@ -148,11 +148,15 @@ public:
 	Common::Array<SpriteFrame *> _frames;
 public:
 	SpriteResource(const AccessEngine *vm, Resource *res);
+	SpriteResource(const AccessEngine *vm, int fileNum, int subfile);
 	~SpriteResource();
 
 	int getCount() const { return _frames.size(); }
 
 	const SpriteFrame *getFrame(int idx) const { return _frames[idx]; }
+
+private:
+	void loadFromResource(const AccessEngine *vm, Resource *res);
 };
 
 enum ImageFlag {

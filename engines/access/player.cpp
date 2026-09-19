@@ -136,7 +136,7 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		if (_vm->getGameID() == kGameNoctropolis) {
+		if (_vm->gameIs(kGameNoctropolis)) {
 			//if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
 			//	Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
 			//}
@@ -200,7 +200,7 @@ void Player::removeSprite1() {
 
 bool Player::isMMHover() const {
 	// Whether or not this is MM and the player is on the hoverboard.
-	return (_vm->getGameID() == kGameMartianMemorandum &&
+	return (_vm->gameIs(kGameMartianMemorandum) &&
 		_vm->_flags[174] == 1);
 }
 
@@ -211,7 +211,7 @@ void Player::calcManScale() {
 		_vm->_screen->setScaleTable(_vm->_scale);
 
 		_playerOffset.x = _vm->_screen->_scaleTable1[20];
-		_playerOffset.y = _vm->_screen->_scaleTable1[(_vm->getGameID() == kGameMartianMemorandum) ? 62 : 67];
+		_playerOffset.y = _vm->_screen->_scaleTable1[(_vm->gameIs(kGameMartianMemorandum)) ? 62 : 67];
 		_inactiveYOff = _playerOffset.y;
 	}
 }
@@ -260,7 +260,7 @@ void Player::jetpack() {
 void Player::walk() {
 	_collideFlag = false;
 
-	if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[173] == 1) {
+	if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[173] == 1) {
 		// Special case for MM Jetpack
 		jetpack();
 		return;
@@ -344,9 +344,10 @@ void Player::walkUp() {
 
 		calcManScale();
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
+		// Note: Flag 174 is Hoverboard.
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _upWalkMax)
@@ -375,9 +376,9 @@ void Player::walkDown() {
 
 		calcManScale();
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _downWalkMax)
@@ -417,9 +418,9 @@ void Player::walkLeft() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		if (_frame > _sideWalkMax)
@@ -459,9 +460,9 @@ void Player::walkRight() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
 			_vm->_sound->playSound(0);
-		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+		else if (_vm->gameIs(kGameAmazon) && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		// Useless check removed
@@ -749,11 +750,11 @@ void Player::plotCom(int flags) {
 }
 
 void Player::plotCom0() {
-	plotCom(_vm->getGameID() == kGameAmazon ? 0 : IMGFLAG_BACKWARDS);
+	plotCom(_vm->gameIs(kGameAmazon) ? 0 : IMGFLAG_BACKWARDS);
 }
 
 void Player::plotCom1() {
-	plotCom(_vm->getGameID() == kGameAmazon ? IMGFLAG_BACKWARDS : 0);
+	plotCom(_vm->gameIs(kGameAmazon) ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {

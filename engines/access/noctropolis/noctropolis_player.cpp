@@ -64,9 +64,7 @@ void NoctropolisPlayer::load() {
 void NoctropolisPlayer::loadAnimation(int fileNum, int subFile) {
 	if (!_animManager)
 		_animManager = new AnimationManager(_vm);
-	Resource *data = _vm->_files->loadFile(fileNum, subFile);
-	_animManager->loadAnimations(data);
-	delete data;
+	_animManager->loadAnimations(fileNum, subFile);
 }
 
 /*

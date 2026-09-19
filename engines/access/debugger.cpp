@@ -244,10 +244,10 @@ bool Debugger::Cmd_Travel(int argc, const char **argv) {
 		for (int i = 0; i < ARRAYSIZE(_vm->_travel); ++i) {
 			const char *label = "UNKNOWN";
 
-			if (_vm->getGameID() == kGameMartianMemorandum) {
+			if (_vm->gameIs(kGameMartianMemorandum)) {
 				if (!Martian::TRAVDATA[i])
 					break;
-			} else if (_vm->getGameID() == kGameNoctropolis) {
+			} else if (_vm->gameIs(kGameNoctropolis)) {
 				int j = 0;
 				while (Noctropolis::TRAV_ROOMS[j]) {
 					if (Noctropolis::TRAV_ROOMS[j] == i)
@@ -378,7 +378,7 @@ bool Debugger::Cmd_Everything(int argc, const char **argv) {
 		12, // LOVE SCENE
 	};
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		for (uint i = 0; i < ARRAYSIZE(MM_INVALID_TRAVEL_LOCATIONS); ++i)
 			_vm->_travel[MM_INVALID_TRAVEL_LOCATIONS[i]] = 0;
 	}

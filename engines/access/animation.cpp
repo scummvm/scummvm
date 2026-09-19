@@ -56,7 +56,7 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 	// WORKAROUND: In Amazon floppy English, there's an animation associated with
 	// the librarian that isn't used, and has junk data. Luckily, it's animation
 	// type is also invalid, so if the _type isn't in range, exit immediately
-	if (_type > 7 && _vm->getGameID() == kGameAmazon) {
+	if (_type > 7 && _vm->gameIs(kGameAmazon)) {
 		_scaling = -1;
 		_frameNumber = -1;
 		_initialTicks = _countdownTicks = 0;
@@ -440,6 +440,13 @@ void AnimationManager::freeAnimationData() {
 
 void AnimationManager::clearTimers() {
 	_animationTimers.clear();
+}
+
+
+void AnimationManager::loadAnimations(int fileNum, int subfile) {
+	Resource *res = _vm->_files->loadFile(fileNum, subfile);
+	loadAnimations(res);
+	delete res;
 }
 
 void AnimationManager::loadAnimations(Resource *res) {

@@ -30,7 +30,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() != kGameAmazon || !vm->isCD()) {
+	if (!vm->gameIs(kGameAmazon) || !vm->isCD()) {
 		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
@@ -40,7 +40,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 
 	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
-	if (vm->getGameID() == kGameMartianMemorandum) {
+	if (vm->gameIs(kGameMartianMemorandum)) {
 		int lastColor = s.readUint16LE();
 		_numColors = lastColor - _startColor;
 	} else
@@ -91,7 +91,7 @@ void CharManager::loadChar(int charId) {
 
 	// Amazon calls "establish" before loading the screen, but MM does it after.
 	_vm->_establishFlag = false;
-	if (_vm->getGameID() == kGameAmazon && ce._estabIndex != -1) {
+	if (_vm->gameIs(kGameAmazon) && ce._estabIndex != -1) {
 		_vm->_establishFlag = true;
 		if (!_vm->_establishTable[ce._estabIndex]) {
 			_vm->_establishTable[ce._estabIndex] = true;
@@ -113,7 +113,7 @@ void CharManager::loadChar(int charId) {
 	_vm->_buffer2.blitFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();
 
-	if (_vm->getGameID() == kGameMartianMemorandum && ce._estabIndex != -1) {
+	if (_vm->gameIs(kGameMartianMemorandum) && ce._estabIndex != -1) {
 		_vm->_establishFlag = true;
 		if (!_vm->_establishTable[ce._estabIndex]) {
 			_vm->_establishTable[ce._estabIndex] = true;
@@ -129,7 +129,7 @@ void CharManager::loadChar(int charId) {
 	_vm->_screen->_startColor = ce._startColor;
 	_vm->_screen->_numColors = ce._numColors;
 	if (ce._paletteFile._fileNum != -1) {
-		int srcOffset = (_vm->getGameID() == kGameMartianMemorandum ? ce._startColor * 3 : 0);
+		int srcOffset = (_vm->gameIs(kGameMartianMemorandum) ? ce._startColor * 3 : 0);
 		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subFile, srcOffset);
 	}
 	_vm->_screen->setIconPalette();
@@ -137,9 +137,7 @@ void CharManager::loadChar(int charId) {
 
 	_vm->loadCells(ce._cells);
 	if (ce._animFile._fileNum != -1) {
-		Resource *data = _vm->_files->loadFile(ce._animFile);
-		_vm->_animation->loadAnimations(data);
-		delete data;
+		_vm->_animation->loadAnimations(ce._animFile._fileNum, ce._animFile._subFile);
 	}
 
 	// Load script data
@@ -162,10 +160,10 @@ void CharManager::charMenu() {
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		screen.plotImage(icons, 17, Common::Point(0, 184));
 		screen.plotImage(icons, 18, Common::Point(193, 184));
-	} else if (_vm->getGameID() == kGameAmazon) {
+	} else if (_vm->gameIs(kGameAmazon)) {
 		screen.plotImage(icons, 17, Common::Point(0, 176));
 		screen.plotImage(icons, 18, Common::Point(155, 176));
 	} else

@@ -44,6 +44,7 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
+	_keepAskPosition = false;
 	setOpcodes();
 }
 
@@ -326,7 +327,7 @@ void Scripts::cmdObject() {
 void Scripts::cmdEndObject() {
 	const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
 	debugC(1, kDebugScripts, "cmdEndObject(msg=\"%s\")", msg);
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		doCmdPrint_v1(msg);
 		cmdRetPos();
 	} else {
@@ -487,7 +488,7 @@ void Scripts::cmdPrint_v2() {
 	Common::String msg = _data->readString();
 	debugC(1, kDebugScripts, "cmdPrint_v2(msg=\"%s\")", msg.c_str());
 	printString(msg);
-	//if (_vm->getGameID() == kGameNoctropolis) ??
+	//if (_vm->gameIs(kGameNoctropolis)) ??
 	//	_continuenceFlag = true;
 }
 
@@ -509,7 +510,7 @@ void Scripts::cmdPrint_v1() {
 }
 
 void Scripts::printString(const Common::String &msg, Common::Point pt) {
-	if (_vm->getGameID() == kGameNoctropolis) {
+	if (_vm->gameIs(kGameNoctropolis)) {
 		if (pt.x == -1)
 			pt = Common::Point(320, 200);
 		_vm->_screen->_printOrg = _vm->_screen->_printStart = pt;
@@ -604,7 +605,7 @@ void Scripts::cmdSetInventory() {
 	_vm->_inventory->_startInvBox = 0;
 	_vm->_inventory->_invChangeFlag = true;
 
-	if (itemVal == 1 && _vm->getGameID() == kGameNoctropolis) {
+	if (itemVal == 1 && _vm->gameIs(kGameNoctropolis)) {
 		((Noctropolis::NoctropolisEngine *)_vm)->playInventoryStinger();
 	}
 }
@@ -664,7 +665,7 @@ void Scripts::cmdNewRoom() {
 
 	_vm->_room->_function = FN_CLEAR1;
 	_vm->freeChar();
-	if (_vm->getGameID() == kGameNoctropolis) {
+	if (_vm->gameIs(kGameNoctropolis)) {
 		_vm->_room->_selectCommand = 0;
 		_vm->_events->setCursor(CURSOR_ARROW);
 	}
@@ -777,7 +778,7 @@ void Scripts::cmdDispInv_v1() {
 	debugC(1, kDebugScripts, "cmdDispInv_v1()");
 	_vm->_inventory->displayInv();
 
-	if (_vm->getGameID() == kGameNoctropolis)
+	if (_vm->gameIs(kGameNoctropolis))
 		_continuenceFlag = true;
 }
 
@@ -829,7 +830,7 @@ void Scripts::cmdCheckTimer() {
 	if (_endFlag)
 		return;
 
-	if (_vm->getGameID() == kGameAmazon && idx == 9 && _vm->_events->isKeyActionPending()) {
+	if (_vm->gameIs(kGameAmazon) && idx == 9 && _vm->_events->isKeyActionPending()) {
 		_vm->_events->zeroKeysActions();
 		_vm->_timers[9]._timer = 0;
 		_vm->_timers[9]._flag = 0;
@@ -934,7 +935,7 @@ void Scripts::cmdSetVideo_v3() {
 void Scripts::cmdPlayVideo() {
 	debugC(1, kDebugScripts, "cmdPlayVideo()");
 	_vm->_video->playVideo();
-	if (_vm->getGameID() == kGameNoctropolis)
+	if (_vm->gameIs(kGameNoctropolis))
 		_continuenceFlag = true;
 }
 
@@ -1076,29 +1077,31 @@ void Scripts::cmdDoTravel_Noct() {
 
 void Scripts::cmdHelp_v1() {
 	debugC(1, kDebugScripts, "cmdHelp_v1()");
+	
+	BubbleBox &helpBox = *_vm->_helpBox;
 	int idx = 0;
 	for (int i = 0; i < 40; i++) {
 		byte c = _data->readByte();
 		if (c != 0xFF) {
 			Common::String tmpStr = c + _data->readString();
 			if (Martian::HELP[i]) {
-				_vm->_helpBox->_tempList[idx] = tmpStr;
-				_vm->_helpBox->_tempListIdx[idx] = i;
+				helpBox._tempList[idx] = tmpStr;
+				helpBox._tempListIdx[idx] = i;
 				++idx;
 			}
 		} else
 			break;
 	}
-	_vm->_helpBox->_tempList[idx] = "";
+	helpBox._tempList[idx] = "";
 
 	int btnSelected = 0;
-	int boxX = _vm->_helpBox->doBox_v1(0, 0, btnSelected);
+	int boxX = helpBox.doBox_v1(0, 0, btnSelected);
 
 	if (boxX == -1)
 		btnSelected = 2;
 
 	if (btnSelected != 2)
-		_vm->_useItem = _vm->_helpBox->_tempListIdx[boxX];
+		_vm->_useItem = helpBox._tempListIdx[boxX];
 	else
 		_vm->_useItem = -1;
 }
@@ -1129,7 +1132,7 @@ void Scripts::cmdSpecial() {
 	AccessGameType game = _vm->getGameID();
 
 	if ((game == kGameAmazon && _specialFunction == 1) || game == kGameMartianMemorandum) {
-		if (_vm->getGameID() == kGameAmazon && _vm->_establishTable[p2])
+		if (_vm->gameIs(kGameAmazon) && _vm->_establishTable[p2])
 			return;
 
 		_vm->_screen->savePalette();
@@ -1143,7 +1146,7 @@ void Scripts::cmdSpecial() {
 
 		// WORKAROUND: This fixes scene establishment being re-shown
 		// when restoring savegames in rooms which have one
-		if (_vm->getGameID() == kGameAmazon && !_vm->isCD())
+		if (_vm->gameIs(kGameAmazon) && !_vm->isCD())
 			_vm->_establishTable[p2] = true;
 	}
 }
@@ -1220,7 +1223,7 @@ void Scripts::cmdPlayerSpeak() {
 
 void Scripts::cmdPlayerChoice() {
 	// This is similar to cmdTexChoice but used in Noctropolis
-	assert(_vm->getGameID() == kGameNoctropolis);
+	assert(_vm->gameIs(kGameNoctropolis));
 
 	int16 x = _data->readUint16LE();
 	int16 startY = _data->readUint16LE();
@@ -1274,7 +1277,7 @@ void Scripts::cmdPlayerChoice() {
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
-	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 23 : 20;
+	_vm->_screen->_maxChars = (_vm->gameIs(kGameMartianMemorandum)) ? 23 : 20;
 
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdTexSpeak(str=\"%s\")", str.c_str());
@@ -1293,7 +1296,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._hi = 255;
 
-	if (_vm->getGameID() == kGameMartianMemorandum) {
+	if (_vm->gameIs(kGameMartianMemorandum)) {
 		_vm->_fonts._charFor._lo = 247;
 		_vm->_screen->_maxChars = 23;
 	} else {
@@ -1312,7 +1315,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->calcBubble(tmpStr);
 	_vm->_bubbleBox->printBubble(tmpStr);
 
-	const int responseYOff = (_vm->getGameID() == kGameMartianMemorandum) ? 20 : 11;
+	const int responseYOff = (_vm->gameIs(kGameMartianMemorandum)) ? 20 : 11;
 
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -1355,7 +1358,7 @@ void Scripts::cmdTexChoice() {
 
 		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
-			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == kGameMartianMemorandum) ? 23 : 22)) {
+			if (_vm->_events->_mouseRow >= ((_vm->gameIs(kGameMartianMemorandum)) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
 				choice = _vm->_res->inButtonXRange(x);
@@ -1390,7 +1393,7 @@ void Scripts::cmdWait() {
 
 	_vm->_events->debounceLeft();
 	_vm->_events->zeroKeysActions();
-	if (_vm->getGameID() == kGameNoctropolis)
+	if (_vm->gameIs(kGameNoctropolis))
 		_continuenceFlag = true;
 }
 
@@ -1453,7 +1456,7 @@ void Scripts::cmdFreeSound() {
 	if (sound.hasSounds()) {
 		// Keep doing char display loop if playing sound for it
 		do {
-			if (_vm->getGameID() == kGameAmazon && _vm->_flags[236] == 1)
+			if (_vm->gameIs(kGameAmazon) && _vm->_flags[236] == 1)
 				charLoop();
 
 			_vm->_events->pollEvents();
@@ -1540,20 +1543,20 @@ void Scripts::cmdDispAbout_v3() {
 	SpriteResource *askSprites = new SpriteResource(_vm, spriteData);
 	delete spriteData;
 
-	if (!_vm->_keepAskPosition) {
+	if (!_keepAskPosition) {
 		for (int i = 0; i < 40; i++)
 			_vm->_asked[i] = false;
 
 		int16 warpMouseX, warpMouseY;
-		_vm->_askBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 226, 640, warpMouseX);
-		_vm->_askBase.y = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.y, 145, 400, warpMouseY);
+		_askBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 226, 640, warpMouseX);
+		_askBase.y = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.y, 145, 400, warpMouseY);
 
-		_vm->_keepAskPosition = true;
+		_keepAskPosition = true;
 		if (warpMouseX != _vm->_events->_mousePos.x || warpMouseY != _vm->_events->_mousePos.y)
 			g_system->warpMouse(warpMouseX, warpMouseY);
 	}
 
-	const Common::Point base = _vm->_askBase;
+	const Common::Point base = _askBase;
 
 	// Build the list of available ask items
 	for (int i = 0; i < 40; i++) {
@@ -1656,7 +1659,7 @@ void Scripts::cmdDispAbout_v3() {
 		} else if (_vm->_events->_rightButton) {
 			_vm->_events->debounceRight();
 			selectedItem = 255;
-			_vm->_keepAskPosition = false;
+			_keepAskPosition = false;
 		}
 
 		_vm->_events->pollEventsAndWait();

@@ -40,7 +40,17 @@ namespace Access {
 
 static constexpr int TRANSPARENCY = 0;
 
+SpriteResource::SpriteResource(const AccessEngine *vm, int fileNum, int subfile) {
+	Resource *res = vm->_files->loadFile(fileNum, subfile);
+	loadFromResource(vm, res);
+	delete res;
+}
+
 SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
+	loadFromResource(vm, res);
+}
+
+void SpriteResource::loadFromResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
 	if (count > 4096)
@@ -73,7 +83,7 @@ SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *str
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 
-	if (vm->getGameID() == kGameMartianMemorandum) {
+	if (vm->gameIs(kGameMartianMemorandum)) {
 		int size = stream->readUint16LE();
 		if (size != frameSize)
 			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);

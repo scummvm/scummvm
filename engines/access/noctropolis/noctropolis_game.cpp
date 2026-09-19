@@ -327,15 +327,13 @@ void NoctropolisEngine::doIntro() {
 
 	_midi->loadMusic(98, 1);
 	_midi->midiPlay();
-	_room->loadPlayField(1, 0);
+	_room->loadPlayField(FileIdent(1, 0));
 
 	// This ignores window values, but we know that's ok here.
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
 
-	Resource *spriteRes = _files->loadFile(1, 1);
-	SpriteResource *sprites = new SpriteResource(this, spriteRes);
-	delete spriteRes;
+	SpriteResource *sprites = new SpriteResource(this, 1, 1);
 
 	// TODO: Check these fades
 	_screen->setPalette();
@@ -438,7 +436,7 @@ void NoctropolisEngine::doTravel() {
 	_buffer1.clear();
 	_buffer2.clear();
 	_screen->clearScreen();
-	_room->loadPlayField(0, 0); // MAP.AP
+	_room->loadPlayField(FileIdent(0, 0)); // MAP.AP
 	_screen->setPalette();
 	_screen->setIconPalette();
 	_scrollRow = _travScrollRow;
@@ -446,9 +444,7 @@ void NoctropolisEngine::doTravel() {
 	_scrollX = _travScrollX;
 	_scrollY = _travScrollY;
 	// Load MAP.AP
-	Resource *spriteData = _files->loadFile(0, 1);
-	_objectsTable[0] = new SpriteResource(this, spriteData);
-	delete spriteData;
+	_objectsTable[0] = new SpriteResource(this, 0, 1);
 
 	// This section is "state 1" in NoctTravelEngine::ticker
 	((NoctropolisRoom *)_room)->buildScreenXScroll();

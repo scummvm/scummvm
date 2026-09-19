@@ -60,8 +60,7 @@ void MartianDuct::doDuct() {
 
 	_vm->_events->hideCursor();
 	_vm->_files->loadScreen(20, 0);
-	Resource *res = _vm->_files->loadFile(20, 1);
-	_vm->_objectsTable[20] = new SpriteResource(_vm, res);
+	_vm->_objectsTable[20] = new SpriteResource(_vm, 20, 1);
 	if (_vm->_inventory->_inv[40]._value == ITEM_IN_INVENTORY) {
 		// Show map if we have it.
 		_vm->_screen->plotImage(_vm->_objectsTable[20], 8, Common::Point(140, 10));

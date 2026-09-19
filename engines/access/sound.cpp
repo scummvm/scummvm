@@ -318,8 +318,8 @@ MusicManagerMIDI::MusicManagerMIDI(AccessEngine *vm) : MusicManager(vm), Audio::
 	//
 	switch (musicType) {
 	case MT_ADLIB: {
-		if (_vm->getGameID() == kGameAmazon && !_vm->isDemo()) {
-			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
+		if (_vm->gameIs(kGameAmazon) && !_vm->isDemo()) {
+			Resource *midiDrvResource = _vm->_files->loadFile(92, 1);
 			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 
 			_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
@@ -477,7 +477,7 @@ void MusicManagerMIDI::newMusic(int musicId, int mode) {
 		_isLooping = (mode == 2);
 		_tempMusic = _music;
 		stopSong();
-		int musicFile = (_vm->getGameID() == kGameAmazon ? 97 : 98);
+		int musicFile = (_vm->gameIs(kGameAmazon) ? 97 : 98);
 		loadMusic(musicFile, musicId);
 	}
 
