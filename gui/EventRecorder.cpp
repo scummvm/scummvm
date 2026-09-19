@@ -273,11 +273,15 @@ void EventRecorder::processScreenUpdate() {
 		break;
 	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
+		if (_nextEvent.type == Common::EVENT_QUIT)
+			return;
 		// if the next event isn't a screen update, fast forward until we find one.
 		if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
 			int numSkipped = 0;
 			while (true) {
 				_nextEvent = _playbackFile->getNextEvent();
+				if (_nextEvent.type == Common::EVENT_QUIT)
+					return;
 				numSkipped += 1;
 				if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
 					warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
