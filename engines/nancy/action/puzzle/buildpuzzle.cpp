@@ -63,7 +63,8 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _startOverSrcRect);
 	readRect(stream, _startOverHotspot);
 	readSoundBlock(stream, _startOverSound);
-	stream.skip(32);						// 0x8e: the "done" overlay gate and its rect
+	readRect(stream, _doneSrcRect);
+	readRect(stream, _doneDestRect);
 
 	readFilename(stream, _anim1Name);
 	readRect(stream, _anim1Rect);
@@ -286,6 +287,18 @@ void BuildPuzzle::init() {
 	_buttonPress.setTransparent(true);
 	_buttonPress.setVisible(false);
 
+	if (!_doneSrcRect.isEmpty()) {
+		_doneOverlay._drawSurface.create(_altImage, _doneSrcRect);
+		_doneOverlay.setTransparent(true);
+		_doneOverlay.moveTo(_doneDestRect);
+		// Above the pieces in the zones, below a close-up
+		_doneOverlay.setZOrder(_z + (uint16)_pieces.size() + 1);
+	}
+
+	_doneOverlay.setVisible(false);
+	_counter.setTransparent(true);
+	_counter.setVisible(false);
+
 	if (resume) {
 		restoreState(*data);
 	} else {
@@ -300,6 +313,8 @@ void BuildPuzzle::init() {
 	}
 
 	_isInitialized = true;
+	updateDoneOverlay();
+	updateCounter();
 }
 
 void BuildPuzzle::registerGraphics() {
@@ -317,6 +332,8 @@ void BuildPuzzle::registerGraphics() {
 
 	_cursorItem.registerGraphics();
 	_buttonPress.registerGraphics();
+	_doneOverlay.registerGraphics();
+	_counter.registerGraphics();
 }
 
 byte BuildPuzzle::carriedAmount() const {
@@ -517,6 +534,9 @@ void BuildPuzzle::openCloseup(int16 pieceIdx) {
 	piece.moveTo(dest);
 	piece.setVisible(true);
 	_pieces[pieceIdx].setZOrder((uint16)(_z + _pieces.size() + 2));
+
+	_closeupDest = dest;
+	updateCounter();
 }
 
 void BuildPuzzle::closeCloseup() {
@@ -528,6 +548,7 @@ void BuildPuzzle::closeCloseup() {
 	_closeupPiece = -1;
 	_pieces[pieceIdx].setZOrder((uint16)(_z + pieceIdx + 1));
 	updatePieceRender(pieceIdx);
+	updateCounter();
 }
 
 void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
@@ -540,6 +561,7 @@ void BuildPuzzle::pickUpPiece(int16 pieceIdx) {
 		addItemValue(piece.itemID, -1);
 		setPlacedCount(_placedCount - 1);
 		piece.assignedZone = -1;
+		updateDoneOverlay();
 
 		if (pieceIdx >= (int16)_numDefined) {
 			piece.inUse = false;
@@ -583,6 +605,7 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 		}
 
 		_pieces[placedIdx].assignedZone = zoneIdx;
+		_pieces[placedIdx].locked = zone.marksPlaced != 0;
 	}
 
 	Piece &piece = _pieces[placedIdx];
@@ -624,6 +647,7 @@ void BuildPuzzle::placePiece(int16 pieceIdx, int16 zoneIdx, const Common::Point 
 	updatePieceRender(placedIdx);
 
 	setPlacedCount(_placedCount + 1);
+	updateDoneOverlay();
 
 	bool solved = checkSolved();
 	setFlagOnChange(_solvedFlag, solved, _lastSolvedFlag);
@@ -738,6 +762,7 @@ void BuildPuzzle::resetPuzzle() {
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &piece = _pieces[i];
 		piece.assignedZone = -1;
+		piece.locked = false;
 
 		// The copies made while filling the zones go away again.
 		if (i >= _numDefined) {
@@ -755,9 +780,75 @@ void BuildPuzzle::resetPuzzle() {
 	_closeupPiece = -1;
 	_activeHold = -1;
 	setPlacedCount(0);
+	updateDoneOverlay();
 
 	setFlagOnChange(_solvedFlag, false, _lastSolvedFlag);
 	setFlagOnChange(_wrongIngredientFlag, false, _lastWrongFlag);
+}
+
+void BuildPuzzle::updateCounter() {
+	if (_counterItemID == 255 || !_isInitialized) {
+		return;
+	}
+
+	_counter.setVisible(_closeupPiece == -1 || !_closeupDest.contains(_counterPos));
+
+	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	int16 value = table ? table->getValue(_counterItemID) : 0;
+	if (value == kNoTableValue || value < 0) {
+		value = 0;
+	}
+
+	if (value == _shownCounterValue) {
+		return;
+	}
+
+	_shownCounterValue = value;
+	Common::String digits = Common::String::format("%d", value);
+
+	// The digits hang from the counter position, each the spacing past the last.
+	int16 width = 0;
+	int16 height = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &src = _digitSrcRects[digits[i] - '0'];
+		if (i > 0) {
+			width += (int16)_counterSpacing;
+		}
+
+		width += src.width();
+		height = MAX<int16>(height, src.height());
+	}
+
+	const uint32 transColor = g_nancy->_graphics->getTransColor();
+	_counter._drawSurface.create(width, height, _image.format);
+	_counter._drawSurface.clear(transColor);
+	_counter._drawSurface.setTransparentColor(transColor);
+
+	int16 x = 0;
+	for (uint i = 0; i < digits.size(); ++i) {
+		const Common::Rect &src = _digitSrcRects[digits[i] - '0'];
+		_counter._drawSurface.blitFrom(_image, src, Common::Point(x, 0));
+		x += src.width() + (int16)_counterSpacing;
+	}
+
+	_counter.moveTo(Common::Rect(_counterPos.x, _counterPos.y, _counterPos.x + width, _counterPos.y + height));
+	_counter.setNeedsRedraw(true);
+}
+
+void BuildPuzzle::updateDoneOverlay() {
+	if (_doneSrcRect.isEmpty()) {
+		return;
+	}
+
+	bool allFull = true;
+	for (uint i = 0; i < _zones.size(); ++i) {
+		if (_zones[i].numHeld < (int16)_zones[i].capacity) {
+			allFull = false;
+			break;
+		}
+	}
+
+	_doneOverlay.setVisible(allFull);
 }
 
 void BuildPuzzle::saveState() {
@@ -813,6 +904,8 @@ void BuildPuzzle::restoreState(const BuildPuzzleData &data) {
 
 		Piece &piece = _pieces[pieceIdx];
 		piece.assignedZone = data.pieces[i + 1];
+		piece.locked = piece.assignedZone >= 0 && piece.assignedZone < (int16)_zones.size() &&
+						_zones[piece.assignedZone].marksPlaced != 0;
 		piece.liveRect = Common::Rect(data.pieces[i + 2], data.pieces[i + 3], data.pieces[i + 4], data.pieces[i + 5]);
 		updatePieceRender(pieceIdx);
 	}
@@ -842,6 +935,8 @@ void BuildPuzzle::execute() {
 		_state = kRun;
 		break;
 	case kRun:
+		updateCounter();
+
 		if (_heldButton != kNoButton && g_system->getMillis() >= _buttonTimerEnd) {
 			HeldButton button = _heldButton;
 			_heldButton = kNoButton;
@@ -987,7 +1082,7 @@ void BuildPuzzle::handleInput(NancyInput &input) {
 	int16 hovered = -1;
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		const Piece &piece = _pieces[i];
-		if (!piece.inUse || !piece.liveRect.contains(mouseVP)) {
+		if (!piece.inUse || piece.locked || !piece.liveRect.contains(mouseVP)) {
 			continue;
 		}
 

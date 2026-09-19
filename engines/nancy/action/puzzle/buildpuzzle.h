@@ -37,7 +37,7 @@ namespace Action {
 // being assigned a zone index rather than by matching a rect.
 class BuildPuzzle : public RenderActionRecord {
 public:
-	BuildPuzzle() : RenderActionRecord(7), _buttonPress(98), _cursorItem(99) {}
+	BuildPuzzle() : RenderActionRecord(7), _doneOverlay(0), _counter(97), _buttonPress(98), _cursorItem(99) {}
 	virtual ~BuildPuzzle() {}
 
 	void init() override;
@@ -123,6 +123,7 @@ protected:
 		int16 sourceID = -1;		// index of the definition this piece was cloned from
 		int16 assignedZone = -1;
 		bool inUse = false;			// false for the spare slots kept for clones
+		bool locked = false;		// kept by a zone that marks its pieces placed
 	};
 
 	Common::Path _imageName;
@@ -169,6 +170,10 @@ protected:
 	Common::Rect _startOverHotspot;
 	SoundDescription _startOverSound;
 
+	// Drawn over the zones once every one of them is full.
+	Common::Rect _doneSrcRect;
+	Common::Rect _doneDestRect;
+
 	// With _saveState set, the board is saved after every drop. It is restored when
 	// the puzzle's scene runs again while _resumeFlag is set.
 	byte _saveState = 0;
@@ -206,6 +211,10 @@ protected:
 	};
 	HeldButton _heldButton = kNoButton;
 	uint32 _buttonTimerEnd = 0;
+	RenderObject _doneOverlay;
+	RenderObject _counter;
+	int16 _shownCounterValue = -1;
+	Common::Rect _closeupDest;
 	RenderObject _buttonPress;
 
 	int16 _placedCount = 0;
@@ -255,6 +264,9 @@ protected:
 	void takeOutcome();
 	// Empty every zone and put all the pieces back
 	void resetPuzzle();
+	// Redraw the count when its value changes; a close-up over it hides it
+	void updateCounter();
+	void updateDoneOverlay();
 	// Save the board, and put it back when the puzzle resumes
 	void saveState();
 	void restoreState(const BuildPuzzleData &data);
