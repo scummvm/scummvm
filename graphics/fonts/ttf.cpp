@@ -936,10 +936,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool bold, bool italic) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
+	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, bold, italic)) {
 		delete font;
 		return 0;
 	}

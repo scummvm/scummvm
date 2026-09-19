@@ -102,9 +102,11 @@ enum TTFSizeMode {
  *                   loading fails in case no glyph for it is found. When this
  *                   is non-null only characters given in the mapping are
  *                   supported.
+ * @param faceIndex  The index of face to load when loading a TTC file.
+ *                   Otherwise, always set to 0.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false);
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false, int32 faceIndex = 0, bool bold = false, bool italic = false);
 
 /**
  * Loads a TTF font file from the common fonts archive.
@@ -155,4 +157,3 @@ void shutdownTTF();
 #endif
 
 #endif
-

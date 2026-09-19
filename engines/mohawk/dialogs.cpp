@@ -45,6 +45,11 @@
 #include "mohawk/riven_metaengine.h"
 #endif
 
+#ifdef ENABLE_ZOOMBINI
+#include "mohawk/zoombini.h"
+#include "mohawk/zoombini_metaengine.h"
+#endif
+
 namespace Mohawk {
 
 // This used to have GUI::Dialog("MohawkDummyDialog"), but that doesn't work with the gui branch merge :P (Sorry, Tanoku!)
@@ -470,12 +475,58 @@ void MohawkDefaultOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 }
 
 void MohawkDefaultOptionsWidget::load() {
-	_audioPopFixCheckbox->setState(ConfMan.getBool("fix_audio_pops", _domain));
+	_audioPopFixCheckbox->setState(ConfMan.getBool(Mohawk::MohawkMetaEngine_Zoombini::kOptionFixAudioPops, _domain));
 }
 
 bool MohawkDefaultOptionsWidget::save() {
 	ConfMan.setBool("fix_audio_pops", _audioPopFixCheckbox->getState(), _domain);
 	return true;
 }
+
+#ifdef ENABLE_ZOOMBINI
+
+ZoombiniMenuDialog::ZoombiniMenuDialog(Engine *engine) : MainMenuDialog(engine) {
+}
+
+ZoombiniMenuDialog::~ZoombiniMenuDialog() {
+}
+
+void ZoombiniMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	MohawkEngine_Zoombini *vm = static_cast<MohawkEngine_Zoombini *>(_engine);
+	assert(vm);
+
+	if (cmd == kSaveCmd || cmd == kLoadCmd) {
+		if (!vm->canOpenSaveLoadDialog()) {
+			if (cmd == kSaveCmd)
+				vm->openSaveDialog();
+			else
+				vm->openLoadDialog();
+			return;
+		}
+		if (vm->hasSaveLoadDialogOpened())
+			return;
+
+		// Zoombini owns a separate save/load dialog. Close the ScummVM menu
+		// and defer the game dialog until the ScummVM modal loop has unwound.
+		close();
+		vm->requestMainMenuSaveLoadDialog(cmd == kLoadCmd);
+		return;
+	}
+
+	if (cmd == kOptionsCmd) {
+		GUI::ConfigDialog configDialog;
+		configDialog.runModal();
+
+		// Apply ScummVM and Zoombini settings as soon as the options dialog
+		// closes, while the main menu remains open.
+		vm->applyGameSettings();
+		vm->syncSoundSettings();
+		return;
+	}
+
+	MainMenuDialog::handleCommand(sender, cmd, data);
+}
+
+#endif
 
 } // End of namespace Mohawk

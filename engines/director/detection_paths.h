@@ -29,6 +29,7 @@ const char *const directoryGlobs[] = {
 	"win_data",						// L-ZONE
 	"data",
 	"program",						// Arc Media products
+	"pizza",						// Logical Journey of the Zoombinis v1.0BR demo
 	"media",						// Gundam
 	"mvm",							// Master of the Elements
 	"datas",						// O!KAY! subscription from Domino Verlag

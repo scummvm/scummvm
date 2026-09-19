@@ -76,6 +76,7 @@ public:
 	// findImage will search the cache to find the image.
 	// If not found, it will call decodeImage to get a new one.
 	MohawkSurface *findImage(uint16 id);
+	MohawkSurface *findSubImage(uint16 image, uint16 subimage);
 
 	void preloadImage(uint16 image);
 	virtual void setPalette(uint16 id);
@@ -84,6 +85,7 @@ public:
 	void copyAnimSubImageToScreen(uint16 image, uint16 subimage, int left = 0, int top = 0);
 
 	void getSubImageSize(uint16 image, uint16 subimage, uint16 &width, uint16 &height);
+	uint32 getSubImageCount(uint16 image);
 
 protected:
 	void copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect src, Common::Rect dest);

@@ -444,6 +444,13 @@ DetectedGame DirectorMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	if (!(desc->desc.flags & Director::GF_TRUECOLOR))
 		game.appendGUIOptions(Common::getGameGUIOptionsDescription(GAMEOPTION_TRUE_COLOR));
 
+	if (game.gameId == "zoombini") {
+		if (game.extra == "v1.0BR Demo, Launcher")
+			game.preferredTarget += "-v10br-launcher";
+		else if (game.extra == "v1.1US Demo, Launcher")
+			game.preferredTarget += "-v11us-launcher";
+	}
+
 	return game;
 }
 
