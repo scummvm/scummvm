@@ -1,0 +1,52 @@
+diff --git a/engines/ags/engine/ac/route_finder_jps.h b/engines/ags/engine/ac/route_finder_jps.h
+index 42ea3689841..6752a1bea5c 100644
+--- a/engines/ags/engine/ac/route_finder_jps.h
++++ b/engines/ags/engine/ac/route_finder_jps.h
+@@ -19,8 +19,8 @@
+  *
+  */
+
+-#ifndef AGS_ENGINE_AC_ROUTE_FINDER_JPS_H
+-#define AGS_ENGINE_AC_ROUTE_FINDER_JPS_H
++#ifndef AGS_ROUTE_FINDER_JPS_H
++#define AGS_ROUTE_FINDER_JPS_H
+
+ #include "common/std/queue.h"
+ #include "common/std/vector.h"
+@@ -196,4 +196,4 @@ inline bool Navigation::Walkable(int x, int y) const {
+
+ } // namespace AGS3
+
+-#endif
++#endif // AGS_ROUTE_FINDER_JPS_H
+
+diff --git a/engines/ags/engine/platform/base/sys_main.h b/engines/ags/engine/platform/base/sys_main.h
+index 40d7f5955ac..e808d02c253 100644
+--- a/engines/ags/engine/platform/base/sys_main.h
++++ b/engines/ags/engine/platform/base/sys_main.h
+@@ -19,6 +19,9 @@
+  *
+  */
+
++#ifndef AGS_SYS_MAIN_H
++#define AGS_SYS_MAIN_H
++
+ //=============================================================================
+ //
+ // The main backend interface.
+@@ -27,9 +30,6 @@
+ //
+ //=============================================================================
+
+-#ifndef AGS_ENGINE_PLATFORM_BASE_SYS_MAIN_H
+-#define AGS_ENGINE_PLATFORM_BASE_SYS_MAIN_H
+-
+ #include "ags/shared/core/platform.h"
+ #include "ags/shared/util/string.h"
+ #include "common/std/vector.h"
+@@ -104,4 +104,4 @@ void *sys_win_get_window();
+
+ } // namespace AGS3
+
+-#endif
++#endif // AGS_SYS_MAIN_H
