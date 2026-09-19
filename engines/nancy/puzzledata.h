@@ -337,7 +337,13 @@ struct TimerData : public PuzzleData {
 		void reset() { *this = Timer(); }
 	};
 
-	static const uint kNumTimers = 10;
+	// Nancy11-13 have 10 timers, and Nancy14+ have 20. However, only Nancy15+
+	// save all 20: Nancy14 has 20 timers, but its scripts never use any past
+	// the first 10, so its saves keep storing 10 timers. Since the TimerData chunk isn't
+	// length-prefixed, storing more timers for Nancy14 would break existing
+	// saves unless the savegame version is bumped.
+	static const uint kNumTimers = 20;
+	static const uint kNumSavedTimers = 10;		// Timers stored in saves before Nancy15
 	static const uint kNumTriggers = 20;
 
 	TimerData() {}

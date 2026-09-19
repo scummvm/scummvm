@@ -141,8 +141,8 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
 
-	s.skip(4, kGameTypeNancy9, kGameTypeNancy11); // Unknown
-	if (s.getVersion() >= kGameTypeNancy9 && s.getVersion() <= kGameTypeNancy11) {
+	s.skip(4, kGameTypeNancy9, kGameTypeNancy15); // Unknown
+	if (s.getVersion() >= kGameTypeNancy9 && s.getVersion() <= kGameTypeNancy15) {
 		timerDurations.resize(10);
 		for (uint i = 0; i < timerDurations.size(); ++i) {
 			s.syncAsUint16LE(timerDurations[i]);

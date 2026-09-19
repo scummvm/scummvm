@@ -106,7 +106,8 @@ struct BSUM : public EngineData {
 	uint16 fastMovementTimeDelta;
 
 	// Nancy9-11: timer dependencies with a seconds value of kTimerDurationIndexBase
-	// or above take their seconds from this table instead
+	// or above take their seconds from this table instead. Nancy12+ timer
+	// triggers (AR 104) use it for seconds values above kTimerDurationIndexBase
 	Common::Array<uint16> timerDurations;
 };
 

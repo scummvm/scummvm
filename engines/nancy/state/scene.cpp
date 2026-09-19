@@ -1844,6 +1844,12 @@ bool Scene::isSoftwareTimerActive(uint16 index) const {
 	}
 
 	const TimerData::Timer &timer = ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index];
+
+	// Nancy12+ also counts a paused timer as active
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		return timer.state != TimerData::Timer::kIdle;
+	}
+
 	return timer.state == TimerData::Timer::kRunning ||
 		timer.state == TimerData::Timer::kOneShot ||
 		timer.state == TimerData::Timer::kRepeating;

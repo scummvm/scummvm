@@ -523,6 +523,37 @@ static void addTimerTrigger(TimerData::Timer &timer, TimerData::Trigger::Type ty
 	timer.triggers.push_back(trigger);
 }
 
+// Nancy 12-13 add to, subtract from or set the elapsed time's hours, minutes and
+// seconds separately (clamping each at 0 when subtracting), dropping any
+// fraction of a second
+static void adjustTimerComponents(TimerData::Timer &timer, int16 command, int16 hours, int16 minutes, int16 seconds) {
+	int32 h = timer.currentTimeMs / 3600000;
+	int32 m = (timer.currentTimeMs / 60000) % 60;
+	int32 s = (timer.currentTimeMs / 1000) % 60;
+
+	switch (command) {
+	case ResetAndStartTimer::kAddTime:
+		h += hours;
+		m += minutes;
+		s += seconds;
+		break;
+	case ResetAndStartTimer::kSubtractTime:
+		h = MAX<int32>(h - hours, 0);
+		m = MAX<int32>(m - minutes, 0);
+		s = MAX<int32>(s - seconds, 0);
+		break;
+	case ResetAndStartTimer::kSetTime:
+		h = hours;
+		m = minutes;
+		s = seconds;
+		break;
+	default:
+		return;
+	}
+
+	timer.currentTimeMs = MAX<int32>((h * 60 + m) * 60 + s, 0) * 1000;
+}
+
 // Reads exactly size bytes from the stream, returning the text up to the first
 // null byte. Used for the fixed-size string fields inside a TimerControl chunk.
 static Common::String readFixedSizeString(Common::SeekableReadStream &stream, uint size) {
@@ -554,17 +585,17 @@ void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 	case kAddTime:
 	case kSubtractTime:
 	case kSetTime:
-		_hours = stream.readSint16LE();      // 0x04
-		_minutes = stream.readSint16LE();    // 0x06
-		_seconds = stream.readSint16LE();    // 0x08
-		stream.skip(2);                      // 0x0a, unused
+		_hours = stream.readSint16LE();          // 0x04
+		_minutes = stream.readSint16LE();        // 0x06
+		_seconds = stream.readSint16LE();        // 0x08
+		_milliseconds = stream.readSint16LE();   // 0x0a
 		break;
 	case kConfigOneShot:
 	case kConfigRepeating: {
 		_hours = stream.readSint16LE();          // 0x04
 		_minutes = stream.readSint16LE();        // 0x06
 		_seconds = stream.readSint16LE();        // 0x08
-		stream.skip(2);                          // 0x0a, unused
+		_milliseconds = stream.readSint16LE();   // 0x0a
 		_sound.volume = stream.readUint16LE();   // 0x0c
 		_sound.channelID = stream.readUint16LE(); // 0x0e
 		_sound.numLoops = 1;
@@ -611,7 +642,7 @@ void ResetAndStartTimer::execute() {
 			}
 		}
 
-		_isDone = true;
+		finishExecution();
 		return;
 	}
 
@@ -622,7 +653,22 @@ void ResetAndStartTimer::execute() {
 		if (_command == kStart) {
 			timer->state = TimerData::Timer::kRunning;
 		} else if (timer->state == TimerData::Timer::kRunning) {
-			const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)_seconds) * 1000;
+			const bool isNancy14 = g_nancy->getGameType() >= kGameTypeNancy14;
+
+			// Seconds from kTimerDurationIndexBase (Nancy14+: above it) index
+			// the BSUM duration table
+			int16 seconds = _seconds;
+			if (isNancy14 ? seconds > kTimerDurationIndexBase : seconds >= kTimerDurationIndexBase) {
+				auto *bootSummary = GetEngineData(BSUM);
+				uint index = seconds - kTimerDurationIndexBase;
+				if (bootSummary && index < bootSummary->timerDurations.size()) {
+					seconds = bootSummary->timerDurations[index];
+				}
+			}
+
+			// Only Nancy14+ uses the milliseconds field
+			const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)seconds) * 1000 +
+				(isNancy14 ? _milliseconds : 0);
 
 			switch (_command) {
 			case kClear:
@@ -632,13 +678,31 @@ void ResetAndStartTimer::execute() {
 				timer->state = TimerData::Timer::kPaused;
 				break;
 			case kAddTime:
-				timer->currentTimeMs += durationMs;
+				if (!isNancy14) {
+					adjustTimerComponents(*timer, _command, _hours, _minutes, seconds);
+				} else {
+					timer->currentTimeMs += durationMs;
+				}
+
 				break;
 			case kSubtractTime:
-				timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
-				break;
 			case kSetTime:
-				timer->currentTimeMs = durationMs;
+				if (!isNancy14) {
+					adjustTimerComponents(*timer, _command, _hours, _minutes, seconds);
+				} else if (_command == kSubtractTime) {
+					timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
+				} else {
+					timer->currentTimeMs = durationMs;
+				}
+
+				// Reset triggers whose target time is now later than the
+				// elapsed time, so they fire again once the timer reaches them
+				for (TimerData::Trigger &trigger : timer->triggers) {
+					if (timer->currentTimeMs < trigger.durationMs) {
+						trigger.hasFired = false;
+					}
+				}
+
 				break;
 			case kConfigOneShot:
 			case kConfigRepeating:
@@ -652,7 +716,8 @@ void ResetAndStartTimer::execute() {
 		}
 	}
 
-	_isDone = true;
+	// Repeating records (e.g. gradually refilling a timer) run again next frame
+	finishExecution();
 }
 
 void StopTimer::readData(Common::SeekableReadStream &stream) {
@@ -669,7 +734,7 @@ void StopTimer::execute() {
 		}
 	}
 
-	_isDone = true;
+	finishExecution();
 }
 
 void TimerControl::readData(Common::SeekableReadStream &stream) {
@@ -704,7 +769,7 @@ void TimerControl::readData(Common::SeekableReadStream &stream) {
 void TimerControl::execute() {
 	TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
 	if (!timer) {
-		_isDone = true;
+		finishExecution();
 		return;
 	}
 
@@ -751,7 +816,7 @@ void TimerControl::execute() {
 		break;
 	}
 
-	_isDone = true;
+	finishExecution();
 }
 
 void StopPlayerScrolling::readData(Common::SeekableReadStream &stream) {

@@ -333,6 +333,7 @@ public:
 	int16 _hours = 0;
 	int16 _minutes = 0;
 	int16 _seconds = 0;
+	int16 _milliseconds = 0;
 	SoundDescription _sound;               // Played on expiry when configured
 	Common::Array<FlagDescription> _flags; // Fired on expiry when configured
 

@@ -67,7 +67,7 @@ enum struct DependencyType : int16 {
 	kCloseParenthesis				= 19,
 	kRandom							= 20,
 	kDefaultAR						= 21,
-	kTimerIsActive					= 22,	// Nancy11+ software-timer slot is running/counting
+	kTimerIsActive					= 22,	// Nancy11+ software-timer slot is running (or paused, in Nancy12+)
 	kTimerEqualsDependencyTime		= 23,	// The next three compare a running software
 	kTimerBelowDependencyTime		= 24,	// timer's elapsed time against the dependency's
 	kTimerAboveDependencyTime		= 25,	// own time, and only while that slot is running

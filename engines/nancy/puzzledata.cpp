@@ -510,7 +510,9 @@ void CellPhonePictureData::synchronize(Common::Serializer &ser) {
 }
 
 void TimerData::synchronize(Common::Serializer &ser) {
-	for (uint i = 0; i < kNumTimers; ++i) {
+	// Nancy14 only saves 10 of its 20 timers, see kNumSavedTimers
+	const uint numTimers = g_nancy->getGameType() >= kGameTypeNancy15 ? kNumTimers : kNumSavedTimers;
+	for (uint i = 0; i < numTimers; ++i) {
 		Timer &t = timers[i];
 		ser.syncAsSint32LE(t.state);
 		ser.syncAsUint32LE(t.currentTimeMs);

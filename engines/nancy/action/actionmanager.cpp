@@ -672,7 +672,7 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kTimerIsActive:
-			// Nancy11+ only: satisfied while the software-timer slot is running/counting
+			// Nancy11+ only: satisfied while the software-timer slot is active
 			dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label);
 
 			break;
