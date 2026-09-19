@@ -118,6 +118,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved Sound Blaster sample playback
    - Sound is properly paused when the engine is paused
 
+ V-Cruise:
+   - Fixed time-based puzzles sometimes getting stuck after restarting ScummVM.
+
  Voyeur:
    - Match original first person movement with mouse when looking at mansion
 
