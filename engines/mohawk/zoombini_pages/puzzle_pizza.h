@@ -473,7 +473,7 @@ private:
 	/** Serve the next topping required by an order line. */
 	void serveNextTopping(TrollOrderLine orderLine);
 	/** Place one topping according to the current machine mode. */
-	void placeTopping(int16 mode, int16 hintSlot);
+	void placeTopping(int16 mode, TrollOrderLine hintOrderLine);
 	/** Evaluate the prepared pizza against the active order. */
 	void evaluateDelivery();
 	/** Load the SCRB matching the current delivery result. */
@@ -557,6 +557,10 @@ private:
 	bool checkToppingMaskMatch() const;
 
 	// --- Helpers ---
+	/** Return the phase state belonging to one troll order line. */
+	FeaturePhase &getTrollPhase(TrollOrderLine orderLine);
+	/** Return one of two troll order lines selected at random. */
+	TrollOrderLine getRandomTargetOrderLine(TrollOrderLine firstOrderLine, TrollOrderLine secondOrderLine);
 	/** Return whether the current difficulty provides a machine button for an ingredient. */
 	bool hasToppingButtonForIngredient(int16 ingredientIdx) const;
 	/** Return the current difficulty's off/on SCRB ID for an ingredient, or -1 when it has no button. */
@@ -731,6 +735,10 @@ private:
 	uint32 _lastActivityFrame = 0;
 	/** Whether an order runner completed during the current render pass. */
 	bool _trollFeatureCompletedThisFrame = false;
+	/** Order runner completions keyed by troll order line, awaiting the page controller after rendering. */
+	Common::HashMap<TrollOrderLine, bool, TrollOrderLineHash> _orderFeatureCompletionPending;
+	/** Current destination-pizza runner awaiting its completion link after rendering. */
+	ZmbFeature *_pendingSettledToppingRunner = nullptr;
 
 	// -----------------------------------------------------------------------
 	// @ref ZoombiniPuzzlePizza::onEveryFrame() polls these deliverer-walk and delivery-chain watchers.
@@ -897,8 +905,8 @@ private:
 	uint16 _nextDynamicFeatureId = 30000;
 	/** Pizza debug state advanced by R, O, and D. */
 	int16 _builtinDebugUnlockLevel = 0;
-	/** Built-in debug SCRB cycle indices for Arno, Willa, and Shyler. */
-	int16 _builtinDebugScrbCycle[3] = {};
+	/** Built-in debug SCRB cycle indices keyed by troll order line. */
+	Common::HashMap<TrollOrderLine, int16, TrollOrderLineHash> _builtinDebugScrbCycle;
 
 	/** Create a topping runner with its initial SCRB and frame interval. */
 	ZmbFeature *createToppingRunnerFeature(int16 scrbId, uint32 frameInterval);
