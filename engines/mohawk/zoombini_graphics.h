@@ -22,6 +22,7 @@
 #ifndef MOHAWK_ZOOMBINI_GRAPHICS_H
 #define MOHAWK_ZOOMBINI_GRAPHICS_H
 
+#include "common/array.h"
 #include "common/stack.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -605,8 +606,8 @@ private:
 	void recordDirtyRect(ScreenKind screenKind, const Common::Rect &rect);
 	/** Copy pixels using the requested Color Assist palette remap. */
 	void copyRectToSurfaceWithColorAssistPaletteRemap(Graphics::Surface *screen, Graphics::Surface *source, int destX, int destY, const Common::Rect &sourceRect, PaletteRemapMode remapMode);
-	/** Remap one palette index for Color Assist rendering. */
-	byte remapColorAssistPaletteIndex(byte paletteIndex, PaletteRemapMode remapMode) const;
+	/** Fill one Color Assist remap table from the static index mapping. */
+	static void fillColorAssistPaletteRemapTable(Common::Array<uint32> &paletteMap, PaletteRemapMode remapMode);
 	/** Read and optionally brighten one SHPL palette into a caller buffer. */
 	bool readPaletteInternal(int16 id, byte *destBuf, size_t destBufSize, bool applyBrightness);
 
@@ -619,6 +620,10 @@ private:
 	byte _unmodifiedPaletteBytes[3 * 256];
 	/** Palette bytes currently applied to the renderer. */
 	byte _paletteBytes[3 * 256];
+	/** Fixed index maps used by Color Assist blits, independent of palette RGB values. */
+	Common::Array<uint32> _colorAssistNoseNetRemapTable = Common::Array<uint32>(256);
+	/** Fixed index maps used by Color Assist blits, independent of palette RGB values. */
+	Common::Array<uint32> _colorAssistMazePurpleRemapTable = Common::Array<uint32>(256);
 	/** Cached nearest-color lookups used by antialiased CLUT8 text blending. */
 	Graphics::PaletteLookup _textPaletteLookup;
 

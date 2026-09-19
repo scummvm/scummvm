@@ -359,7 +359,7 @@ void ZoombiniShelterPicker::pickerUI_drawGroup(const Common::Array<ZmbHotspot> &
 		const ZmbHotspot &hs = hotspots[hotspotIdx];
 		if (hs._shapeIdx <= ZmbHotspot::kShapeNone)
 			continue;
-		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, imgResource, static_cast<uint16>(hs._shapeIdx), hs.getPos());
+		_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, imgResource, &hs);
 	}
 }
 
