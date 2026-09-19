@@ -1314,14 +1314,13 @@ void ScummGameOptionsWidget::load() {
 #ifdef USE_SID_AUDIO
 		if (_checkboxes[i] == _c64SidTypeCheckbox) {
 			isChecked = SID::Config::parseSidType(ConfMan.get(_options[i].configOption, _domain)) == SID::Config::kSidPAL;
-		} else {
+		} else
 #endif
+		{
 			isChecked = _options[i].defaultState;
 			if (ConfMan.hasKey(_options[i].configOption, _domain))
 				isChecked = ConfMan.getBool(_options[i].configOption, _domain);
-#ifdef USE_SID_AUDIO
 		}
-#endif
 		_checkboxes[i]->setState(isChecked);
 	}
 
