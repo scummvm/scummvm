@@ -46,7 +46,6 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_btnUpPos = Common::Rect(0, 0, 0, 0);
 	_btnDownPos = Common::Rect(0, 0, 0, 0);
 	_startItem = _startBox = 0;
-	_charCol = 0;
 	_rowOff = 0;
 }
 
@@ -455,11 +454,10 @@ void BubbleBox::doBox_v2(int item, int box) {
 	_startBox = box;
 
 	// Save state information
-	FontVal charSet = fonts._charSet;
-	FontVal charFor = fonts._charFor;
+	const FontVal charSet = fonts._charSet;
+	const FontVal charFor = fonts._charFor;
 	const Common::Point printOrg = screen._printOrg;
 	const Common::Point printStart = screen._printStart;
-	int charCol = _charCol;
 	int rowOff = _rowOff;
 
 	_vm->_screen->saveScreen();
@@ -541,7 +539,6 @@ void BubbleBox::doBox_v2(int item, int box) {
 	fonts._charFor = charFor;
 	screen._printOrg = printOrg;
 	screen._printStart = printStart;
-	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();
 }

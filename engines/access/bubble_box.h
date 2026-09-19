@@ -49,7 +49,7 @@ enum BoxType {
 class BubbleBox : public Manager {
 private:
 	int _startItem, _startBox;
-	int _charCol, _rowOff;
+	int _rowOff;
 	Common::Point _fileStart;
 	Common::Point _fileOff;
 	int _boxStartX, _boxStartY;
