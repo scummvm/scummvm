@@ -101,6 +101,7 @@ SkyEngine::SkyEngine(OSystem *syst)
 	_skyDisk    = nullptr;
 	_skyControl = nullptr;
 	_skyCompact = nullptr;
+	_skyIntro	= nullptr;
 
 	_curScreen = 0xFFFF;
 }
@@ -116,6 +117,7 @@ SkyEngine::~SkyEngine() {
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
+	delete _skyIntro;
 
 	for (int i = 0; i < 300; i++)
 		if (_itemList[i])
@@ -223,8 +225,11 @@ Common::Error SkyEngine::go() {
 			bool floppyIntro = ConfMan.getBool("alt_intro");
 			introSkipped = !skyIntro->doIntro(floppyIntro);
 			delete skyIntro;
-		} else if (SkyEngine::isIbass())
-			introSkipped = true;
+		} else if (SkyEngine::isIbass()) {
+			Intro *ibassIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
+			ibassIntro->doIbassIntro("intro.mov");
+			delete ibassIntro;
+		}
 
 		if (!shouldQuit()) {
 			_skyScreen->clearScreen(true);
@@ -362,7 +367,7 @@ bool SkyEngine::loadChineseTraditional() {
 Common::Error SkyEngine::init() {
 	if (SkyEngine::isIbass()) {
 		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		initGraphics(320, 200, &format);
+		initGraphics(480, 320, &format);
 	} else {
 		initGraphics(320, 200);
 	}
@@ -408,12 +413,13 @@ Common::Error SkyEngine::init() {
 	_skyCompact = new SkyCompact();
 	_skyText = new Text(this, _skyDisk, _skyCompact);
 	_skyScreen = new Screen(_system, _skyDisk, _skyCompact);
+	_skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact, _skyScreen);
 
 	initVirgin();
 	initItemList();
 	loadFixedItems();
-	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound);
+	_skyLogic = new Logic(_skyCompact, _skyScreen, _skyDisk, _skyText, _skyMusic, _skyMouse, _skySound, _skyIntro);
 	_skyMouse->useLogicInstance(_skyLogic);
 
 	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();

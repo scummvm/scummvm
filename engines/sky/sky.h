@@ -69,6 +69,7 @@ class Control;
 class MusicBase;
 class Debugger;
 class SkyCompact;
+class Intro;
 
 enum SkyAction {
 	kSkyActionNone,
@@ -95,6 +96,7 @@ protected:
 	Control *_skyControl;
 	SkyCompact *_skyCompact;
 	Debugger *_debugger;
+	Intro *_skyIntro;
 
 	MusicBase *_skyMusic;
 
