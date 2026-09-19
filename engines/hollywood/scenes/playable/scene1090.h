@@ -1,0 +1,64 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE1090_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE1090_H
+
+#include "hollywood/scenes/playable/playable_scene.h"
+
+namespace Hollywood {
+
+class HollywoodEngine;
+
+class Scene1090 : public PlayableScene {
+public:
+	Scene1090(HollywoodEngine *vm);
+
+private:
+	void runCustomEntrySequence() override;
+	void runExitSideEffectsAfterLoop() override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
+
+	bool copyArenaChunkToFramebuffer(uint chunkIndex);
+	bool copyArenaChunkToFixedArray(uint chunkIndex, Common::Array<byte> &destination, uint destinationSize);
+	bool copyArenaChunkToVariableArray(uint chunkIndex, Common::Array<byte> &destination);
+	void rememberLitResourceSet();
+	void applyActiveLightResourceSet();
+	void applyActorLightPaletteAdjustments();
+	void rebuildPantryWalkableMask();
+	void applyWrappedBrainPatch();
+	void runSwitchAction();
+	void revealWrappedBrain();
+	void takeWrappedBrain();
+
+	Common::Array<byte> _litPaletteResource;
+};
+
+} // End of namespace Hollywood
+
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE1090_H
