@@ -59,6 +59,7 @@
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/hangmanpuzzle.h"
+#include "engines/nancy/action/puzzle/lettergridpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
@@ -471,7 +472,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy13)
 			return new PlaySoundTerse();
 		else
-			return new GridMapPuzzle();	// Moved from 244
+			return new LetterGridPuzzle();
 	case 160:
 		if (g_nancy->getGameType() <= kGameTypeNancy11)
 			return new HintSystem();

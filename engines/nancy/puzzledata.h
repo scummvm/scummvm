@@ -156,8 +156,9 @@ struct MagnetMazePuzzleData : public PuzzleData {
 	Common::Array<int16> magnetState;
 };
 
-// Per-item (inMap, inItems, mapRow, mapCol, itemsRow, itemsCol) packed as
-// 6 int16s.
+// Nancy10 GridMapPuzzle: per-item (inMap, inItems, mapRow, mapCol, itemsRow,
+// itemsCol) packed as 6 int16s.
+// Nancy14 LetterGridPuzzle: the marked column of each row, -1 = unmarked.
 struct GridMapPuzzleData : public PuzzleData {
 	GridMapPuzzleData() {}
 	virtual ~GridMapPuzzleData() {}
