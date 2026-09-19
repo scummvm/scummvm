@@ -62,27 +62,56 @@ void MeterPuzzle::init() {
 	redraw();
 }
 
-int32 MeterPuzzle::sampleValue() const {
-	// Modes 1/2 track value-table entry _modeParam; mode 0's source is unused here.
-	if ((_mode == 1 || _mode == 2) && _modeParam != 0xff) {
+double MeterPuzzle::sampleFraction() const {
+	if (_mode == kTimer) {
+		// The elapsed time of software timer _modeParam
+		if (_modeParam < 0 || (uint)_modeParam >= TimerData::kNumTimers) {
+			return 0.0;
+		}
+
+		TimerData *timerData = (TimerData *)NancySceneState.getPuzzleData(TimerData::getTag());
+		if (!timerData) {
+			return 0.0;
+		}
+
+		const TimerData::Timer &timer = timerData->timers[_modeParam];
+		int32 fullScale = _modeValue;
+		if (fullScale == -1) {
+			// Full scale is the time of the timer's first one-shot trigger
+			fullScale = 1;
+			for (const TimerData::Trigger &trigger : timer.triggers) {
+				if (trigger.type == TimerData::Trigger::kOneShot) {
+					if (trigger.durationMs > 0) {
+						fullScale = trigger.durationMs;
+					}
+					break;
+				}
+			}
+		}
+
+		return fullScale ? (double)timer.currentTimeMs / fullScale : 0.0;
+	}
+
+	// Modes 1/2 track value-table entry _modeParam
+	int32 value = _value;
+	if (_modeParam != 0xff) {
 		TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 		if (table) {
-			int16 value = table->getValue(_modeParam);
-			return value == kNoTableValue ? 0 : value;	// unset reads as empty
+			int16 tableValue = table->getValue(_modeParam);
+			value = tableValue == kNoTableValue ? 0 : tableValue;	// unset reads as empty
 		}
 	}
 
-	return _value;
+	return _modeValue ? (double)value / _modeValue : 0.0;
 }
 
 int MeterPuzzle::computeFrame() const {
 	int frameCount = _animation.getFrameCount();
-	if (frameCount <= 0 || _modeValue == 0) {
+	if (frameCount <= 0) {
 		return 0;
 	}
 
-	// frame = round(frameCount * value / modeValue).
-	int frame = (int)((double)frameCount * (double)sampleValue() / (double)_modeValue + 0.5);
+	int frame = (int)((double)frameCount * sampleFraction() + 0.5);
 	return CLIP(frame, 0, frameCount - 1);
 }
 
