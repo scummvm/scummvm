@@ -574,7 +574,7 @@ void BubbleBox::displayBoxData() {
 		return;
 
 	int idx = 0;
-	if ((_type == TYPE_1) || (_type == TYPE_3)) {
+	if ((_type == kBoxTypeList) || (_type == kBoxTypeFileList)) {
 		_vm->_bcnt = 0;
 
 		if (_tempList[idx].size() == 0) {
@@ -622,7 +622,7 @@ void BubbleBox::drawSelectBox() {
 	if (_tempList[0].size() == 0)
 		return;
 
-	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->_bcnt)
+	if (((_type != kBoxTypeList) && (_type != kBoxTypeFileList)) || !_vm->_bcnt)
 		return;
 
 	if (_vm->_boxSelectYOld != -1) {
@@ -645,7 +645,7 @@ void BubbleBox::drawSelectBox() {
 	_vm->_screen->_lColor = 0xFE;
 	_vm->_screen->drawBox();
 
-	if (_type == TYPE_3)
+	if (_type == kBoxTypeFileList)
 		warning("TODO: List filenames");
 }
 
@@ -676,7 +676,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	_vm->_destIn = _vm->_screen;	// TODO: Redundant
 
-	if (_type != TYPE_2) {
+	if (_type != kBoxTypeNormal) {
 		Common::Rect r = _bounds;
 		r.left -= 2;
 		screen.saveBlock(r);
@@ -722,13 +722,13 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	int tmpX = 0;
 	int tmpY = 0;
-	if (_type != TYPE_2) {
+	if (_type != kBoxTypeNormal) {
 		// Draw the button background at the bottom
 		oldY = screen._orgY1;
 		// Original does this here, but we need bottom/right offset by 1.
 		//--screen._orgY2;
 		screen._orgY1 = screen._orgY2 - 8;
-		if (_type == TYPE_3)
+		if (_type == kBoxTypeFileList)
 			screen._orgY1 -= 8;
 		screen.drawRect();
 		tmpX = _bIconStartX = screen._orgX1;
@@ -736,12 +736,12 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_boxStartX = tmpX + 1;
 		tmpY = _boxEndY = screen._orgY1;
 
-		if (_type == TYPE_3)
+		if (_type == kBoxTypeFileList)
 			_bIconStartY = tmpY + 9;
 		else
 			_bIconStartY = tmpY + 1;
 
-		if (_type == TYPE_3) {
+		if (_type == kBoxTypeFileList) {
 			_fileStart = Common::Point((tmpX + 2) >> 3, (tmpY + 2) >> 3);
 			int rowOff = tmpY - (_fileStart.y << 3) + 1;
 			if (rowOff == 8) {
@@ -758,9 +758,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		screen._orgY1 = oldY;
 	}
 
-	if ((_type != TYPE_0) && (_type != TYPE_2)) {
+	if ((_type != kBoxTypeNone) && (_type != kBoxTypeNormal)) {
 		screen._orgY1 += 8;
-		if (_type == TYPE_3)
+		if (_type == kBoxTypeFileList)
 			screen._orgY2 -= 8;
 
 		screen._orgY2 -= 8;
@@ -828,7 +828,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	Font::_fontColors[1] = _vm->_fonts._charFor._lo = 0xFF;
 	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, screen._printOrg);
 
-	if (_type == TYPE_2) {
+	if (_type == kBoxTypeNormal) {
 		events.showCursor();
 		screen._printStart = origPrintStart;
 		screen._printOrg = origPrintOrg;
@@ -871,7 +871,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_vm->_boxSelectY = _startBox;
 
 	_vm->_numLines = (_bounds.height() / 8) - 2;
-	if (_type == TYPE_3)
+	if (_type == kBoxTypeFileList)
 		--_vm->_numLines;
 
 	events.showCursor();
@@ -887,7 +887,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		// Slight enhancement from original - we also allow mouse wheel and
 		// keyboard events to scroll up/down.
 		//
-		if (((_type == TYPE_1) || (_type == TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
+		if (((_type == kBoxTypeList) || (_type == kBoxTypeFileList)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
 
 			Common::CustomEventType action = kActionNone;
@@ -933,7 +933,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			if (val > _vm->_bcnt)
 				continue;
 			--val;
-			if (_type == TYPE_3)
+			if (_type == kBoxTypeFileList)
 				_vm->_boxSelect = val;
 			else {
 				btnSelected = 1;
@@ -962,7 +962,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 				break;
 			}
 
-			if (_type != TYPE_3)
+			if (_type != kBoxTypeFileList)
 				continue;
 
 			if ((events._mousePos.x < tmpX) || (events._mousePos.x > tmpX + 144))

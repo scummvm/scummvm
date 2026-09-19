@@ -35,12 +35,14 @@ namespace Access {
 
 class AccessEngine;
 
+// MM/Amazon uses an enum, Noctropolis uses flags.
 enum BoxType {
-	TYPE_0 = 0,
-	TYPE_1 = 1,
-	TYPE_2 = 2,
-	TYPE_3 = 3,
+	kBoxTypeNone = 0,
+	kBoxTypeList = 1,
+	kBoxTypeNormal = 2,
+	kBoxTypeFileList = 3,
 	kBoxTypeFileDialog = 4,
+
 	kTextBoxNoctPlain = 1,
 	kTextBoxNoctCaption = 2,
 	kTextBoxNoctCenter = 4,
@@ -99,11 +101,6 @@ public:
 	 * Calculate the size of a bubble needed to hold a given string
 	 */
 	void calcBubble(const Common::String &msg);
-
-	/**
-	 * Noctropolis version of bubble calculation
-	 */
-	//void calcBubble_v3(const Common::String &msg);
 
 	/**
 	 * Prints a text bubble and it's contents
