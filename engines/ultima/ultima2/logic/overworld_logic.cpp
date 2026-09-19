@@ -417,20 +417,20 @@ void OverworldLogic::killMonster(int slot) {
 	writeString("KILLED--GOLD+%d--EXP.+%d\n", goldAmt, expAmt);
 }
 
-void OverworldLogic::enterLocalMap(int mapNum2) {
+void OverworldLogic::enterLocalMap(int mapType) {
 	Data::Savegame &sg = _G(savegame);
 	sg._overworldReturnX = sg._mapX;
 	sg._overworldReturnY = sg._mapY;
 	sg._mapX = 31;
 	sg._mapY = 62;
-	sg._mapNum2 = mapNum2;
-	_G(map).load(sg._mapNum1, sg._mapNum2);
+	sg._mapType = mapType;
+	_G(map).load(sg._mapEra, sg._mapType);
 }
 
 bool OverworldLogic::enter() {
 	Data::Savegame &sg = _G(savegame);
 
-	if (sg._mapNum2 != 0) {
+	if (sg._mapType != 0) {
 		writeString(" WHAT?\n");
 		return true;
 	}
@@ -456,7 +456,7 @@ bool OverworldLogic::enter() {
 			"ANOS: LEGENDS!", "ANOS: 2112 A.D.", "ANOS: 9,000,000 B.C.",
 			"ANOS: 1423 B.C.", "ANOS: 1990 A.D."
 		};
-		int era = (sg._mapNum1 < 5) ? sg._mapNum1 : 4;
+		int era = (sg._mapEra < 5) ? sg._mapEra : 4;
 		writeString("%s\n", ERA_TEXT[era]);
 		return true;
 	}

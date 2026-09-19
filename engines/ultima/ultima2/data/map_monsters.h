@@ -46,7 +46,7 @@ struct MapMonsters {
 	byte _tempX[MAP_MONSTER_COUNT] = {};
 	byte _tempY[MAP_MONSTER_COUNT] = {};
 
-	void load(int mapNum1, int mapNum2);
+	void load(int mapEra, int mapType);
 
 	bool isActive(int slot) const {
 		return _type[slot] != 0;

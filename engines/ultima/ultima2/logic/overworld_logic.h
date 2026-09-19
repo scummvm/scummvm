@@ -44,7 +44,7 @@ private:
 	 * Stashes the current position as the overworld return point, then
 	 * loads the given local map type (1-3 for village/town/castle)
 	 */
-	void enterLocalMap(int mapNum2);
+	void enterLocalMap(int mapType);
 
 protected:
 	/**

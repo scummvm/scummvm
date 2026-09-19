@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/data/tiles.h"
@@ -43,20 +44,24 @@ Console::~Console() {
 }
 
 bool Console::cmdMap(int argc, const char **argv) {
-	int mapNum1 = _G(savegame)._mapNum1;
-	int mapNum2 = _G(savegame)._mapNum2;
-
-	if (argc == 3) {
-		mapNum1 = atoi(argv[1]);
-		mapNum2 = atoi(argv[2]);
-	} else if (argc != 1) {
-		debugPrintf("map [<mapNum1> <mapNum2>]\n");
+	if (argc != 3) {
+		debugPrintf("map <era> <map type>\n");
 		return true;
 	}
 
-	if (mapNum2 >= 4) {
-		_G(dungeon).load(mapNum1, mapNum2);
-		debugPrintf("Loaded dungeon MAPX%d%d\n", mapNum1, mapNum2);
+	Data::Savegame &sg = _G(savegame);
+	int mapEra = atoi(argv[1]);
+	int mapType = atoi(argv[2]);
+
+	if (!Common::File::exists(Data::mapFilename(mapEra, mapType).c_str())) {
+		debugPrintf("No such map: %s\n", Data::mapFilename(mapEra, mapType).c_str());
+		return true;
+	}
+
+	if (mapType >= 4) {
+		// Towers and dungeons have no view yet, so just dump the loaded cells
+		_G(dungeon).load(mapEra, mapType);
+		debugPrintf("Loaded dungeon MAPX%d%d\n", mapEra, mapType);
 
 		for (int level = 0; level < Data::DUNGEON_LEVELS; ++level) {
 			debugPrintf("Level %d:\n", level);
@@ -67,27 +72,23 @@ bool Console::cmdMap(int argc, const char **argv) {
 				debugPrintf("%s\n", line.c_str());
 			}
 		}
-	} else {
-		_G(map).load(mapNum1, mapNum2);
-		debugPrintf("Loaded map MAPX%d%d\n", mapNum1, mapNum2);
-
-		for (int y = 0; y < Data::MAP_HEIGHT; ++y) {
-			Common::String line;
-			for (int x = 0; x < Data::MAP_WIDTH; ++x)
-				line += Common::String::format("%02x", (int)_G(map).tileAt(x, y));
-			debugPrintf("%s\n", line.c_str());
-		}
-
-		for (int i = 0; i < Data::MAP_MONSTER_COUNT; ++i) {
-			if (_G(map)._monsters.isActive(i)) {
-				debugPrintf("Monster %d: type=%d pos=(%d,%d)\n", i,
-					_G(map)._monsters.tileType(i),
-					_G(map)._monsters._mapX[i], _G(map)._monsters._mapY[i]);
-			}
-		}
+		return true;
 	}
 
-	return true;
+	if (sg._mapType == 0) {
+		sg._overworldReturnX = sg._mapX;
+		sg._overworldReturnY = sg._mapY;
+	}
+	if (mapType != 0) {
+		sg._mapX = 31;
+		sg._mapY = 62;
+	}
+
+	sg._mapEra = mapEra;
+	sg._mapType = mapType;
+	_G(map).load(mapEra, mapType);
+	_G(logic)->entering();
+	return false;
 }
 
 bool Console::cmdTiles(int argc, const char **argv) {
@@ -191,7 +192,7 @@ bool Console::cmdLocations(int argc, const char **argv) {
 
 bool Console::cmdEnemy(int argc, const char **argv) {
 	Data::Savegame &sg = _G(savegame);
-	if (sg._mapNum2 != 0) {
+	if (sg._mapType != 0) {
 		debugPrintf("Only supported on the overworld map\n");
 		return true;
 	}

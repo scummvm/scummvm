@@ -34,8 +34,8 @@ constexpr int MAP_WIDTH = 64;
 constexpr int MAP_HEIGHT = 64;
 
 // Both build "MAPXnn"/"MONXnn" from the same two map-number digits
-Common::String mapFilename(int mapNum1, int mapNum2);
-Common::String monsterFilename(int mapNum1, int mapNum2);
+Common::String mapFilename(int mapEra, int mapType);
+Common::String monsterFilename(int mapEra, int mapType);
 
 /**
  * A planet, village, town, or castle's map: a flat 64x64 grid of tiles,
@@ -47,7 +47,7 @@ struct Map {
 	TileId _tiles[MAP_HEIGHT][MAP_WIDTH] = {};
 	MapMonsters _monsters;
 
-	void load(int mapNum1, int mapNum2);
+	void load(int mapEra, int mapType);
 
 	TileId tileAt(int x, int y) const {
 		return _tiles[y][x];

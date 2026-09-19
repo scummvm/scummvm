@@ -54,10 +54,10 @@ struct Savegame {
 	int16 _experience = 0;
 	int16 _gold = 0;
 
-	// Position - _mapNum1/_mapNum2 select the current mapX??/monX??/tlkX???
+	// Position - _mapEra/_mapType select the current mapX??/monX??/tlkX???
 	// file; _mapX/_mapY are the player's position within it
-	byte _mapNum1 = 0;
-	byte _mapNum2 = 0;
+	byte _mapEra = 0;
+	byte _mapType = 0;
 	byte _mapX = 0;
 	byte _mapY = 0;
 

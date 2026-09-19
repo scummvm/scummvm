@@ -70,7 +70,7 @@ void Logic::playerDied() {
 
 void Logic::alertTownGuards(int extraSlot) {
 	Data::Savegame &sg = _G(savegame);
-	if (sg._mapNum2 == 0)
+	if (sg._mapType == 0)
 		return;
 
 	Data::MapMonsters &monsters = _G(map)._monsters;
@@ -303,7 +303,7 @@ bool Logic::fire() {
 bool Logic::get() {
 	Data::Savegame &sg = _G(savegame);
 
-	if (sg._mapNum2 >= 4) {
+	if (sg._mapType >= 4) {
 		// Dungeon/tower chest handling - not yet implemented
 		writeString("Get?\n");
 		return true;
@@ -342,7 +342,7 @@ bool Logic::igniteTorch() {
 	writeString("IGNITE TORCH\n");
 	Data::Savegame &sg = _G(savegame);
 
-	if (sg._mapNum2 < 4)
+	if (sg._mapType < 4)
 		return true;
 
 	if (sg._torches == 0) {
@@ -427,7 +427,7 @@ bool Logic::unlock(Data::Direction dir) {
 bool Logic::view() {
 	Data::Savegame &sg = _G(savegame);
 
-	if (sg._items[Data::ITEM_HELM] == 0 || sg._mapNum2 >= 4) {
+	if (sg._items[Data::ITEM_HELM] == 0 || sg._mapType >= 4) {
 		writeString("VIEW WHAT?\n");
 		return true;
 	}

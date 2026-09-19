@@ -91,7 +91,7 @@ Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
 	if (s.isLoading()) {
-		_G(map).load(_G(savegame)._mapNum1, _G(savegame)._mapNum2);
+		_G(map).load(_G(savegame)._mapEra, _G(savegame)._mapType);
 	}
 
 	return Common::kNoError;

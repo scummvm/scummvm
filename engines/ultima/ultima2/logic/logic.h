@@ -61,7 +61,7 @@ protected:
 	/**
 	 * Alerts nearby town guards (slots 0-7, plus optionally the specific
 	 * slot just interacted with) after an attack or theft. A no-op on the
-	 * overworld (_mapNum2 == 0)
+	 * overworld (_mapType == 0)
 	 */
 	void alertTownGuards(int extraSlot = -1);
 

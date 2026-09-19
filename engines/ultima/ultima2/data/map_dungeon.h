@@ -53,7 +53,7 @@ enum DungeonTerrain {
 struct MapDungeon {
 	byte _cells[DUNGEON_LEVELS][DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
-	void load(int mapNum1, int mapNum2);
+	void load(int mapEra, int mapType);
 
 	DungeonTerrain terrainAt(int level, int x, int y) const {
 		return (DungeonTerrain)(_cells[level][y][x] & 0xF0);

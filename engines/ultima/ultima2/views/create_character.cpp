@@ -322,8 +322,8 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 			sg._gold = 400;
 			sg._mapX = 20;
 			sg._mapY = 20;
-			sg._mapNum1 = 2;
-			sg._mapNum2 = 0;
+			sg._mapEra = 2;
+			sg._mapType = 0;
 			_state = DONE;
 			positionCursor();
 			redraw();
@@ -331,7 +331,7 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case DONE:
-		_G(map).load(sg._mapNum1, sg._mapNum2);
+		_G(map).load(sg._mapEra, sg._mapType);
 		break;
 	}
 

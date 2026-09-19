@@ -30,8 +30,8 @@ void CityCastleLogic::exitToOverworld() {
 	Data::Savegame &sg = _G(savegame);
 	sg._mapX = sg._overworldReturnX;
 	sg._mapY = sg._overworldReturnY;
-	sg._mapNum2 = 0;
-	_G(map).load(sg._mapNum1, sg._mapNum2);
+	sg._mapType = 0;
+	_G(map).load(sg._mapEra, sg._mapType);
 }
 
 bool CityCastleLogic::move(Data::Direction dir) {
@@ -221,7 +221,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 		return true;
 	}
 
-	switch (sg._mapNum2) {
+	switch (sg._mapType) {
 	case 1: // Village
 		if (sg._mapY < 32 && sg._mapX >= 32) {
 			writeString("STEAL FOOD!\n");
@@ -330,7 +330,7 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 
 	Data::MapMonsters &monsters = _G(map)._monsters;
 	byte flag = monsters.isActive(_offerTargetSlot) ? monsters._offerFlag[_offerTargetSlot] : 0;
-	bool wrongMap = !(sg._mapNum2 == 2 && sg._mapNum1 == 3);
+	bool wrongMap = !(sg._mapType == 2 && sg._mapEra == 3);
 
 	if ((int8)flag >= 0 || wrongMap) {
 		writeString("THANK YOU VERY MUCH!\n");
@@ -405,7 +405,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 	Data::Savegame &sg = _G(savegame);
 	bool top = sg._mapY < 32;
 	bool left = sg._mapX < 32;
-	bool isTown = sg._mapNum2 == 2;
+	bool isTown = sg._mapType == 2;
 
 	if (top && left) {
 		if (isTown) {

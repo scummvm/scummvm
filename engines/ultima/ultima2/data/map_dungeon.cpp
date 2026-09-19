@@ -27,9 +27,9 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Data {
 
-void MapDungeon::load(int mapNum1, int mapNum2) {
+void MapDungeon::load(int mapEra, int mapType) {
 	Common::File f;
-	Common::String filename = mapFilename(mapNum1, mapNum2);
+	Common::String filename = mapFilename(mapEra, mapType);
 	if (!f.open(filename.c_str()))
 		error("Could not open %s", filename.c_str());
 

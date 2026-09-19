@@ -44,8 +44,8 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_experience);
 	s.syncAsSint16LE(_gold);
 
-	s.syncAsByte(_mapNum1);
-	s.syncAsByte(_mapNum2);
+	s.syncAsByte(_mapEra);
+	s.syncAsByte(_mapType);
 	s.syncAsByte(_mapX);
 	s.syncAsByte(_mapY);
 	s.syncAsByte(_overworldReturnX);

@@ -30,17 +30,17 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Data {
 
-Common::String mapFilename(int mapNum1, int mapNum2) {
-	return Common::String::format("MAPX%c%c", '0' + mapNum1, '0' + mapNum2);
+Common::String mapFilename(int mapEra, int mapType) {
+	return Common::String::format("MAPX%c%c", '0' + mapEra, '0' + mapType);
 }
 
-Common::String monsterFilename(int mapNum1, int mapNum2) {
-	return Common::String::format("MONX%c%c", '0' + mapNum1, '0' + mapNum2);
+Common::String monsterFilename(int mapEra, int mapType) {
+	return Common::String::format("MONX%c%c", '0' + mapEra, '0' + mapType);
 }
 
-void Map::load(int mapNum1, int mapNum2) {
+void Map::load(int mapEra, int mapType) {
 	Common::File f;
-	Common::String filename = mapFilename(mapNum1, mapNum2);
+	Common::String filename = mapFilename(mapEra, mapType);
 	if (!f.open(filename.c_str()))
 		error("Could not open %s", filename.c_str());
 
@@ -49,14 +49,14 @@ void Map::load(int mapNum1, int mapNum2) {
 			_tiles[y][x] = (TileId)(f.readByte() / 4);
 	}
 
-	_monsters.load(mapNum1, mapNum2);
+	_monsters.load(mapEra, mapType);
 
-	if (mapNum2 == 0)
+	if (mapType == 0)
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
 	else
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityCastleLogic());
 
-	Common::String mapViewName = (mapNum2 == 0) ? "OverworldMap" : "LocationMap";
+	Common::String mapViewName = (mapType == 0) ? "OverworldMap" : "LocationMap";
 
 	if (!g_engine->isPresent("Game")) {
 		// Set up the game view and force it to draw immediately
