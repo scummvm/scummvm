@@ -338,7 +338,9 @@ bool PlaybackFile::hasNextEvent() const {
 RecorderEvent PlaybackFile::getNextEvent() {
 	if (!hasNextEvent()) {
 		debug(3, "end of recorder file reached.");
-		g_system->quit();
+		RecorderEvent result;
+		result.type = EVENT_QUIT;
+		return result;
 	}
 
 	assert(_mode == kRead);
