@@ -148,6 +148,7 @@ protected:
 
 public:
 	Common::String _description;
+	Common::String _includeSource; // the included file this record came from, empty for the scene's own
 	byte _type;
 	ExecutionType _execType;
 	// 0x32 data

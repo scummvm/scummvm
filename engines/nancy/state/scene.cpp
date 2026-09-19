@@ -1606,7 +1606,7 @@ void Scene::load(bool fromSaveFile) {
 
 	uint numRecords = 0;
 	while (actionRecordChunk = sceneIFF->getChunkStream("ACT", numRecords), actionRecordChunk != nullptr) {
-		_actionManager.addNewActionRecord(*actionRecordChunk);
+		_actionManager.addNewActionRecord(*actionRecordChunk, sceneIFF->getChunkSource("ACT", numRecords));
 		delete actionRecordChunk;
 		++numRecords;
 	}

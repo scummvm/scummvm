@@ -59,7 +59,7 @@ public:
 	void processActionRecords();
 	void processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor);
 
-	void addNewActionRecord(Common::SeekableReadStream &inputData);
+	void addNewActionRecord(Common::SeekableReadStream &inputData, const Common::String &includeSource = Common::String());
 	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
 	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
 	void clearActionRecords(bool nextIsNoArt = false);
