@@ -28,6 +28,10 @@
 #include "common/translation.h"
 #include "common/ustr.h"
 
+#ifdef USE_SID_AUDIO
+#include "audio/sid.h"
+#endif
+
 #include "graphics/scaler.h"
 
 #include "gui/gui-manager.h"
@@ -1289,6 +1293,10 @@ ScummGameOptionsWidget::ScummGameOptionsWidget(GuiObject *boss, const Common::St
 				_smoothScrollCheckbox->setCmd(kSmoothScrollCmd);
 			} else if (strcmp(_options[i].configOption, "semi_smooth_scroll") == 0) {
 				_semiSmoothScrollCheckbox = checkbox;
+#ifdef USE_SID_AUDIO
+			} else if (strcmp(_options[i].configOption, "c64_sid_type") == 0) {
+				_c64SidTypeCheckbox = checkbox;
+#endif
 			}
 		}
 		_checkboxes.push_back(checkbox);
@@ -1302,9 +1310,17 @@ void ScummGameOptionsWidget::load() {
 		if (!_checkboxes[i])
 			continue;
 
-		bool isChecked = _options[i].defaultState;
-		if (ConfMan.hasKey(_options[i].configOption, _domain))
-			isChecked = ConfMan.getBool(_options[i].configOption, _domain);
+		bool isChecked;
+#ifdef USE_SID_AUDIO
+		if (_checkboxes[i] == _c64SidTypeCheckbox) {
+			isChecked = SID::Config::parseSidType(ConfMan.get(_options[i].configOption, _domain)) == SID::Config::kSidPAL;
+		} else
+#endif
+		{
+			isChecked = _options[i].defaultState;
+			if (ConfMan.hasKey(_options[i].configOption, _domain))
+				isChecked = ConfMan.getBool(_options[i].configOption, _domain);
+		}
 		_checkboxes[i]->setState(isChecked);
 	}
 
@@ -1316,8 +1332,15 @@ bool ScummGameOptionsWidget::save() {
 	ScummOptionsContainerWidget::save();
 
 	for (uint i = 0; i < _options.size(); i++) {
-		if (_checkboxes[i])
-			ConfMan.setBool(_options[i].configOption, _checkboxes[i]->isEnabled() && _checkboxes[i]->getState(), _domain);
+		if (_checkboxes[i]) {
+			bool isChecked = _checkboxes[i]->isEnabled() && _checkboxes[i]->getState();
+#ifdef USE_SID_AUDIO
+			if (_checkboxes[i] == _c64SidTypeCheckbox)
+				ConfMan.set(_options[i].configOption, isChecked ? "pal" : "ntsc", _domain);
+			else
+#endif
+				ConfMan.setBool(_options[i].configOption, isChecked, _domain);
+		}
 	}
 
 	return true;
