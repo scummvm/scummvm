@@ -108,7 +108,7 @@ void OverworldMap::draw() {
 			}
 
 			if (ox == PLAYER_VIEWPORT_X && oy == PLAYER_VIEWPORT_Y)
-				tileId = (Data::TileId)(Data::TILE_FIGHTER + sg._class);
+				tileId = sg.playerTile();
 
 			s.blitFrom(_tiles[tileId], Common::Point(ox * TILE_WIDTH, oy * TILE_HEIGHT));
 		}

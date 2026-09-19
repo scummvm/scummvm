@@ -36,6 +36,7 @@
 #include "ultima/ultima2/views/interactions/ready_spell.h"
 #include "ultima/ultima2/views/interactions/ready_weapon.h"
 #include "ultima/ultima2/views/interactions/shop.h"
+#include "ultima/ultima2/views/interactions/transport.h"
 #include "ultima/ultima2/views/interactions/wear_armor.h"
 #include "ultima/ultima2/views/interactions/yell.h"
 
@@ -48,6 +49,7 @@ struct Views : public Shared::Views {
 	Interactions::OfferGold _offerGold;
 	Interactions::ReadySpell _readySpell;
 	Interactions::ReadyWeapon _readyWeapon;
+	Interactions::Transport _transport;
 	Interactions::WearArmor _wearArmor;
 	Interactions::Yell _yell;
 	Interactions::Shop _weaponShop{Interactions::Shop::WEAPON, "WeaponShop"};

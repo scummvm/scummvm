@@ -24,6 +24,7 @@
 
 #include "common/serializer.h"
 #include "ultima/ultima2/data/data.h"
+#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -65,6 +66,9 @@ struct Savegame {
 	// village/town/castle/tower/dungeon map back to the surface
 	byte _overworldReturnX = 0;
 	byte _overworldReturnY = 0;
+
+	// Tile of the vehicle the player is riding (horse, ship, ...), or 0 on foot
+	byte _mount = 0;
 
 	// Currently readied items
 	WeaponType _readiedWeapon = WEAPON_HANDS;
@@ -117,6 +121,13 @@ struct Savegame {
 	void synchronize(Common::Serializer &s);
 
 	/**
+	 * Returns the tile the player is drawn with
+	 */
+	TileId playerTile() const {
+		return _mount ? (TileId)_mount : (TileId)(TILE_FIGHTER + _class);
+	}
+
+	/**
 	 * Deducts an amount from HP. Returns false if this was fatal.
 	 * A survived hit costs one extra point beyond the amount given,
 	 * matching the original's borrow-based HP subtraction.
@@ -146,27 +157,26 @@ struct Savegame {
 	}
 
 	/**
-	 * Computes a shop item's price: a repeated doubling (mod 100) ramp
-	 * keyed off the item index, discounted by the player's combined
-	 * Intelligence+Charisma (a haggling mechanic)
+	 * Computes a shop item's price: a Fibonacci-style ramp (each step adds
+	 * the previous two prices, starting from 4 and 4) whose length grows
+	 * with the item index and shrinks by the bit length of the player's
+	 * combined Intelligence+Charisma (a haggling mechanic)
 	 */
 	int computeItemPrice(int itemIndex) const {
 		int sum = _intelligence + _charisma;
-		int discount = 0;
+		int bits = 0;
 		while (sum > 0) {
 			sum >>= 1;
-			++discount;
+			++bits;
 		}
-		if (discount > 8)
-			discount = 8;
 
-		int effIndex = itemIndex + 8 - discount;
-		if (effIndex < 0)
-			effIndex = 0;
-
-		int price = 4;
-		for (int i = 0; i < effIndex; ++i)
-			price = (price * 2) % 100;
+		int steps = itemIndex + 8 - bits;
+		int prev = 4, price = 4;
+		for (int i = 0; i < steps; ++i) {
+			int next = (prev + price) % 10000;
+			prev = price;
+			price = next;
+		}
 		return price;
 	}
 };

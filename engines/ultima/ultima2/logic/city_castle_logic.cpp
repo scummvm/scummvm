@@ -447,9 +447,8 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 
 	// bottom-right
 	if (isTown) {
-		writeString("RIDE SWIFTLY!\n");
-		trySpendGold(sg.computeItemPrice(4));
-		return true;
+		g_engine->addView("Transport");
+		return false;
 	}
 	if (sg._class != Data::CLASS_CLERIC) {
 		writeString(" YOU ARE NOT A CLERIC!\n");
