@@ -26,6 +26,7 @@
 #include "common/translation.h"
 
 #include "engines/util.h"
+#include "graphics/blit.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/paletteman.h"
@@ -49,6 +50,9 @@ ZoombiniGraphics::ZoombiniGraphics(MohawkEngine_Zoombini *vm) : GraphicsManager(
 	clearPalette();
 
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+
+	fillColorAssistPaletteRemapTable(_colorAssistNoseNetRemapTable, kPaletteRemapNoseNet);
+	fillColorAssistPaletteRemapTable(_colorAssistMazePurpleRemapTable, kPaletteRemapMazePurple);
 
 	// Initialize the drawing surfaces.
 	_backScreen = new Graphics::Surface();
@@ -643,6 +647,10 @@ Common::Rect ZoombiniGraphics::drawImageSectionToScreen(ScreenKind screenKind, M
 	if (clipDstRect.right <= 0 || clipDstRect.bottom <= 0 || screen->w <= clipDstRect.left || screen->h <= clipDstRect.top)
 		return Common::Rect();
 
+	// The shared @ref Graphics::Surface::clip() cannot be used here.
+	// It trims both bounds by the same pixel counts, which assumes equal-sized one-to-one bounds.
+	// Callers of this function pass unequal bounds.
+
 	// Left/top clipping: when dstRect extends beyond the left or top screen edge,
 	// advance srcRect by the same amount so we skip the off-screen source pixels.
 	// Without this, sprites at negative coordinates (e.g. walk-in snoids at x=-50)
@@ -722,56 +730,53 @@ Common::Rect ZoombiniGraphics::drawImageSectionToScreen(ScreenKind screenKind, M
 }
 
 void ZoombiniGraphics::copyRectToSurfaceWithColorAssistPaletteRemap(Graphics::Surface *screen, Graphics::Surface *source, int destX, int destY, const Common::Rect &sourceRect, PaletteRemapMode remapMode) {
-	for (int rowIdx = 0; rowIdx < sourceRect.height(); rowIdx++) {
-		const byte *sourceRow = static_cast<const byte *>(source->getBasePtr(sourceRect.left, sourceRect.top + rowIdx));
-		byte *destRow = static_cast<byte *>(screen->getBasePtr(destX, destY + rowIdx));
+	assert(source->format == Graphics::PixelFormat::createFormatCLUT8());
+	assert(screen->format == source->format);
 
-		for (int columnIdx = 0; columnIdx < sourceRect.width(); columnIdx++) {
-			const byte paletteIndex = sourceRow[columnIdx];
-			if (paletteIndex != static_cast<byte>(kTransparentKey))
-				destRow[columnIdx] = remapColorAssistPaletteIndex(paletteIndex, remapMode);
-		}
+	const uint32 *remapTable = nullptr;
+	if (remapMode == kPaletteRemapNoseNet)
+		remapTable = _colorAssistNoseNetRemapTable.data();
+	else if (remapMode == kPaletteRemapMazePurple)
+		remapTable = _colorAssistMazePurpleRemapTable.data();
+	else {
+		screen->copyRectToSurfaceWithKey(*source, destX, destY, sourceRect, kTransparentKey);
+		return;
 	}
+
+	Graphics::crossKeyBlitMap(static_cast<byte *>(screen->getBasePtr(destX, destY)), static_cast<const byte *>(source->getBasePtr(sourceRect.left, sourceRect.top)),
+		screen->pitch, source->pitch, sourceRect.width(), sourceRect.height(), 1, remapTable, kTransparentKey);
 }
 
-byte ZoombiniGraphics::remapColorAssistPaletteIndex(byte paletteIndex, PaletteRemapMode remapMode) const {
-	if (remapMode == kPaletteRemapNoseNet) {
-		switch (paletteIndex) {
-		case kColor23_DarkOrange:
-			return static_cast<byte>(kColor0C_DarkGray);
-		case kColor24_Orange:
-		case kColor25_LightOrange:
-		case kColor2B_Yellow:
-			return static_cast<byte>(kColor0A_White);
-		case kColor18_DarkMagenta:
-			return static_cast<byte>(kColor10_DarkCyan);
-		case kColor19_Magenta:
-			return static_cast<byte>(kColor12_SkyBlue);
-		case kColor1A_DarkPink:
-			return static_cast<byte>(kColor13_LightBlue);
-		case kColor1B_Pink:
-			return static_cast<byte>(kColor14_PastelBlue);
-		default:
-			return paletteIndex;
-		}
-	} else if (remapMode == kPaletteRemapMazePurple) {
-		switch (paletteIndex) {
-		case 0xA4:
-		case 0xAA:
-			return static_cast<byte>(kColor1E_LightAzure);
-		case 0xA5:
-		case 0xA6:
-		case 0xA8:
-			return static_cast<byte>(kColor1D_Azure);
-		case 0xA7:
-		case 0xA9:
-			return static_cast<byte>(kColor1C_DarkAzure);
-		default:
-			return paletteIndex;
-		}
-	}
+void ZoombiniGraphics::fillColorAssistPaletteRemapTable(Common::Array<uint32> &paletteMap, PaletteRemapMode remapMode) {
+	assert(paletteMap.size() == 256);
+	
+	for (uint32 i = 0; i < paletteMap.size(); i += 1)
+		paletteMap[i] = i;
 
-	return paletteIndex;
+	switch (remapMode) {
+	case kPaletteRemapNoseNet:
+		paletteMap[kColor23_DarkOrange] = kColor0C_DarkGray;
+		paletteMap[kColor24_Orange] = kColor0A_White;
+		paletteMap[kColor25_LightOrange] = kColor0A_White;
+		paletteMap[kColor2B_Yellow] = kColor0A_White;
+		paletteMap[kColor18_DarkMagenta] = kColor10_DarkCyan;
+		paletteMap[kColor19_Magenta] = kColor12_SkyBlue;
+		paletteMap[kColor1A_DarkPink] = kColor13_LightBlue;
+		paletteMap[kColor1B_Pink] = kColor14_PastelBlue;
+		break;
+	case kPaletteRemapMazePurple:
+		paletteMap[0xA4] = kColor1E_LightAzure;
+		paletteMap[0xAA] = kColor1E_LightAzure;
+		paletteMap[0xA5] = kColor1D_Azure;
+		paletteMap[0xA6] = kColor1D_Azure;
+		paletteMap[0xA8] = kColor1D_Azure;
+		paletteMap[0xA7] = kColor1C_DarkAzure;
+		paletteMap[0xA9] = kColor1C_DarkAzure;
+		break;
+	case kPaletteRemapNone:
+	default:
+		break;
+	}
 }
 
 void ZoombiniGraphics::drawLine(ScreenKind screenKind, const Common::Point &start, const Common::Point &end, uint32 color) {
