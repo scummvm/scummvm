@@ -19,6 +19,8 @@
  *
  */
 
+
+
 //=============================================================================
 //
 // The main backend interface.
@@ -27,8 +29,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_PLATFORM_BASE_SYS_MAIN_H
-#define AGS_ENGINE_PLATFORM_BASE_SYS_MAIN_H
+#ifndef AGS_SYS_MAIN_H
+#define AGS_SYS_MAIN_H
 
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
@@ -104,4 +106,4 @@ void *sys_win_get_window();
 
 } // namespace AGS3
 
-#endif
+#endif // AGS_SYS_MAIN_H
