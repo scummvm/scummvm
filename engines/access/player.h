@@ -96,7 +96,7 @@ public:
 	Common::Point *_walkOffDR;
 	Common::Point *_walkOffUL;
 	Common::Point *_walkOffDL;
-	byte _rawTempL;
+	byte _rawXTempL;
 	int _rawXTemp;
 	byte _rawYTempL;
 	int _rawYTemp;

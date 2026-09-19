@@ -52,7 +52,7 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
-	_rawTempL = 0;
+	_rawXTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
 	_rawYTemp = 0;
@@ -403,7 +403,7 @@ void Player::walkLeft() {
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -415,7 +415,7 @@ void Player::walkLeft() {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		++_frame;
 
 		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
@@ -445,7 +445,7 @@ void Player::walkRight() {
 	if (flag) {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
 		int tempL = _rawPlayerLow.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -457,7 +457,7 @@ void Player::walkRight() {
 		plotCom2();
 	} else {
 		_rawPlayer.x = _rawXTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		++_frame;
 
 		if (_vm->gameIs(kGameMartianMemorandum) && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
@@ -489,7 +489,7 @@ void Player::walkUpLeft() {
 	if (flag) {
 		walkOffset = _walkOffUL[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -507,7 +507,7 @@ void Player::walkUpLeft() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -539,7 +539,7 @@ void Player::walkDownLeft() {
 	if (flag) {
 		walkOffset = _walkOffDL[_frame - _sideWalkMin].x;
 		tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
 			(tempL < 0 ? 1 : 0);
 	} else {
@@ -557,7 +557,7 @@ void Player::walkDownLeft() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -589,7 +589,7 @@ void Player::walkUpRight() {
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagUpWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -607,7 +607,7 @@ void Player::walkUpRight() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		++_frame;
@@ -639,7 +639,7 @@ void Player::walkDownRight() {
 	if (flag) {
 		walkOffset = _walkOffUR[_frame - _diagDownWalkMin].x;
 		tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
-		_rawTempL = (byte)tempL;
+		_rawXTempL = (byte)tempL;
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
@@ -657,7 +657,7 @@ void Player::walkDownRight() {
 	} else {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayer.y = _rawYTemp;
-		_rawPlayerLow.x = _rawTempL;
+		_rawPlayerLow.x = _rawXTempL;
 		_rawPlayerLow.y = _rawYTempL;
 
 		calcManScale();
