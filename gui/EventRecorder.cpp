@@ -84,6 +84,7 @@ EventRecorder::EventRecorder() {
 	_screenshotPeriod = 0;
 	_playbackFile = nullptr;
 	_recordFile = nullptr;
+	_playbackQuitPosted = false;
 }
 
 EventRecorder::~EventRecorder() {
@@ -138,6 +139,10 @@ void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
 	if (!_initialized) {
 		return;
 	}
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) && _nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
+		return;
+	}
 	if (skipRecord) {
 		td = _lastTimeDate;
 		return;
@@ -182,6 +187,10 @@ void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
 
 void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	if (!_initialized) {
+		return;
+	}
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) && _nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
 		return;
 	}
 	if (skipRecord || _processingMillis) {
@@ -273,15 +282,19 @@ void EventRecorder::processScreenUpdate() {
 		break;
 	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
-		if (_nextEvent.type == Common::EVENT_QUIT)
+		if (_nextEvent.type == Common::EVENT_QUIT) {
+			postPlaybackQuit();
 			return;
+		}
 		// if the next event isn't a screen update, fast forward until we find one.
 		if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
 			int numSkipped = 0;
 			while (true) {
 				_nextEvent = _playbackFile->getNextEvent();
-				if (_nextEvent.type == Common::EVENT_QUIT)
+				if (_nextEvent.type == Common::EVENT_QUIT) {
+					postPlaybackQuit();
 					return;
+				}
 				numSkipped += 1;
 				if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
 					warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
@@ -322,6 +335,10 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 		!_initialized)
 		return false;
 
+	if (_nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
+		return false;
+	}
 	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeTimeDate
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate
@@ -346,6 +363,18 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 		break;
 	}
 	return true;
+}
+
+void EventRecorder::postPlaybackQuit() {
+	if (_playbackQuitPosted)
+		return;
+
+	Common::Event quitEvent;
+	quitEvent.type = Common::EVENT_QUIT;
+	g_system->getEventManager()->pushEvent(quitEvent);
+	_playbackQuitPosted = true;
+	_nextEvent.type = Common::EVENT_INVALID;
+	debugC(1, kDebugLevelEventRec, "playback:action=post-quit reason=EOF");
 }
 
 void EventRecorder::switchFastMode() {
@@ -413,6 +442,7 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
+	_playbackQuitPosted = false;
 	_lastMillis = g_system->getMillis();
 	_lastScreenshotTime = 0;
 	_recordMode = mode;

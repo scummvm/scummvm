@@ -258,11 +258,13 @@ private:
 	void checkRecordedMD5();
 	void deleteTemporarySave();
 	void updateFakeTimer(uint32 millis);
+	void postPlaybackQuit();
 	volatile RecordMode _recordMode;
 	Common::String _recordFileName;
 	bool _fastPlayback;
 	bool _needRedraw;
 	bool _processingMillis;
+	bool _playbackQuitPosted;
 };
 
 } // End of namespace GUI
