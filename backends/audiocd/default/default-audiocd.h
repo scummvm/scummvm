@@ -79,7 +79,6 @@ protected:
 	bool _emulating;
 
 	Status _cd;
-	Audio::Mixer *_mixer;
 };
 
 #endif
