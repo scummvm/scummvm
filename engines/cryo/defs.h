@@ -32,6 +32,13 @@ namespace Cryo {
 ///////////////// Game defs
 
 #define FONT_HEIGHT 9
+// The subtitle view is 60 rows tall, so at most 6 lines fit in it
+#define MAX_SUBTITLE_LINES 6
+
+// _gameLipsync holds the animation table followed by the lipsync data area
+#define LIPSYNC_ANIM_TABLE_SIZE 7260
+#define LIPSYNC_DATA_SIZE 1024
+#define LIPSYNC_BUFFER_SIZE (LIPSYNC_ANIM_TABLE_SIZE + LIPSYNC_DATA_SIZE)
 
 /*
 Glossary
@@ -397,8 +404,12 @@ struct Follower {      // Characters on Mirror screen
 	int16       ex;
 	int16       ey;
 	int16       _spriteBank;
-	int16       ff_C;
-	int16       ff_E;
+	/**
+	 * The corner of the background to magnify when this character is being
+	 * spoken to, so that one background can stand behind several of them.
+	 */
+	int16       _zoomX;
+	int16       _zoomY;
 };
 
 struct Icon {
