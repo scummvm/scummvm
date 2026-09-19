@@ -1112,6 +1112,10 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/stark/shaders/stark_shadow.vertex");
 		}
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_WINTERMUTE")) {
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_julia.vertex");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.fragment");
+			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_brightness_oknytt.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment");
