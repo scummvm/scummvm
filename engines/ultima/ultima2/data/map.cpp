@@ -38,6 +38,41 @@ Common::String monsterFilename(int mapEra, int mapType) {
 	return Common::String::format("MONX%c%c", '0' + mapEra, '0' + mapType);
 }
 
+Common::String talkFilename(int mapEra, int mapType) {
+	return Common::String::format("TLKX%c%c", '0' + mapEra, '0' + mapType);
+}
+
+void Map::loadTalk(int mapEra, int mapType) {
+	_talk.clear();
+
+	Common::File f;
+	if (!f.open(talkFilename(mapEra, mapType).c_str()))
+		return;
+
+	// Zero-terminated strings with the high bit set on every character,
+	// after a leading zero, so line 1 is the first string
+	byte buffer[256] = {};
+	f.read(buffer, sizeof(buffer));
+
+	Common::String line;
+	_talk.push_back(line);
+	for (int i = 1; i < 256; ++i) {
+		if (buffer[i] == 0) {
+			_talk.push_back(line);
+			line.clear();
+		} else {
+			line += (char)(buffer[i] & 0x7F);
+		}
+	}
+
+	for (uint i = 0; i < _talk.size(); ++i) {
+		for (uint j = 0; j < _talk[i].size(); ++j) {
+			if (_talk[i][j] == '\r')
+				_talk[i].setChar('\n', j);
+		}
+	}
+}
+
 void Map::load(int mapEra, int mapType) {
 	Common::File f;
 	Common::String filename = mapFilename(mapEra, mapType);
@@ -50,6 +85,7 @@ void Map::load(int mapEra, int mapType) {
 	}
 
 	_monsters.load(mapEra, mapType);
+	loadTalk(mapEra, mapType);
 
 	// The files store each monster's tile baked into the map; restore the
 	// terrain underneath, since monsters are tracked and drawn separately

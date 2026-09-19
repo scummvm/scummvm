@@ -21,6 +21,7 @@
 
 #include "ultima/ultima2/views/interactions/shop.h"
 #include "ultima/ultima2/ultima2.h"
+#include "ultima/ultima2/metaengine.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -30,72 +31,144 @@ namespace Interactions {
 Shop::Shop(Kind kind, const Common::String &name) : Interaction(name), _kind(kind) {
 }
 
-int Shop::priceIndexForDigit(int digit) const {
+bool Shop::isValidChoice(int digit) const {
 	switch (_kind) {
-	case ARMOR:
-		return digit * 2;
-	case SPELL_WIZARD:
-		return (digit >= 4) ? digit + 3 : digit;
+	case WEAPON:
+		return digit >= 1 && digit <= 8;
 	default:
-		return digit;
+		return digit >= 1 && digit <= 6;
 	}
 }
 
 bool Shop::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	_state = CHOOSE;
+	Data::Savegame &sg = _G(savegame);
+
 	switch (_kind) {
 	case WEAPON:
-		writeString("WEAPON SHOPPE\n1-DA,2-MA,3-AX,4-BO,5-SW,6-GR,7-LI,8-PH\nWHICH? ");
+		writeString("  THE WEAPONS SHOPPE:\n1-DA, 2-MA, 3-AX, 4-BO,\n5-SW, 6-GR, 7-LI, 8-PH.\nYOUR INTEREST? ");
 		break;
 	case ARMOR:
-		writeString("ARMOUR SHOPPE\n1-CLOTH,2-LEATHER,3-CHAIN,\n4-PLATE,5-REFLECT,6-POWER\nWHICH? ");
+		writeString("     THE ARMOUR SHOPPE:\n1-CLOTH, 2-LEATHER, 3-CHAIN,\n4-PLATE, 5-REFLECT, 6-POWER,\nYOUR INTEREST? ");
 		break;
 	case SPELL_CLERIC:
-		writeString("MAGIC SHOPPE\n1-LIGHT,2-L.D.,3-L.U.,\n4-PASS,5-SURFACE,6-PRAYER\nWHICH? ");
+		writeString("WELCOME %s%s\n1-LIGHT, 2-L.D., 3-L.U.,\n4-PASS 5-SURFACE, 6-PRAYER.\nYOUR INTEREST? ",
+			sg._sex == Data::SEX_FEMALE ? "SISTER " : "BROTHER ", sg._name);
 		break;
 	case SPELL_WIZARD:
-		writeString("MAGIC SHOPPE\n1-LIGHT,2-L.D.,3-L.U.,\n4-M.M.,5-BLINK,6-KILL\nWHICH? ");
+		writeString("%s MUSERREF OLDUM!\n1-LIGHT, 2-L.D., 3-L.U.,\n4-M.M., 5-BLINK, 6-KILL,\nBIR IKI UC...? ", sg._name);
 		break;
 	}
 
 	return Interaction::msgFocus(msg);
 }
 
-bool Shop::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii < '0' || msg.ascii > '9')
-		return true;
+void Shop::finish(const char *message) {
+	close();
+	writeString("%s\n", message);
+	_G(logic)->resumeTurn();
+}
 
-	int digit = msg.ascii - '0';
+void Shop::chooseItem(int digit) {
+	writeString("%d\n", digit);
+
+	if (!isValidChoice(digit)) {
+		switch (_kind) {
+		case WEAPON:
+		case ARMOR:
+			finish("THANKS FOR COMING BY...");
+			break;
+		case SPELL_CLERIC:
+			finish("FOLLOW THE LIGHT, FRIEND!");
+			break;
+		case SPELL_WIZARD:
+			finish("\nUGURLA OLSUN!");
+			break;
+		}
+		return;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	switch (_kind) {
+	case WEAPON:
+		_item = digit;
+		_price = sg.computeItemPrice(_item);
+		writeString("AH! YES! A %s\nFOR YOU ONLY %.4d\nHOW 'BOUT IT? ", Data::WEAPON_NAMES[_item], _price);
+		break;
+	case ARMOR:
+		_item = digit;
+		_price = sg.computeItemPrice(_item * 2);
+		writeString("AH! YES! %s\nFOR YOU ONLY %.4d\nHOW 'BOUT IT? ", Data::ARMOR_NAMES[_item], _price);
+		break;
+	case SPELL_CLERIC:
+	case SPELL_WIZARD:
+		_item = (_kind == SPELL_WIZARD && digit >= 4) ? digit + 3 : digit;
+		_price = sg.computeItemPrice(_item);
+		writeString("FIVE %sS FOR %.4d\n%s ", Data::SPELL_NAMES[_item], _price,
+			_kind == SPELL_CLERIC ? "YES, FRIEND?" : "LUTFEN EVET?");
+		break;
+	}
+
+	_state = CONFIRM;
+}
+
+void Shop::confirm(char key) {
+	Data::Savegame &sg = _G(savegame);
+	bool yes = key == 'Y';
 	close();
 
-	if (digit != 0 && digit <= 6) {
-		Data::Savegame &sg = _G(savegame);
-		int price = sg.computeItemPrice(priceIndexForDigit(digit));
+	switch (_kind) {
+	case WEAPON:
+	case ARMOR:
+		writeString("%c\n", key);
+		if (!yes) {
+			writeString("OH, WELL.\n");
+		} else if (_G(logic)->trySpendGold(_price)) {
+			if (_kind == WEAPON)
+				++sg._weaponOwned[_item];
+			else
+				++sg._armorOwned[_item];
+			writeString("SOLD!\n");
+		}
+		break;
 
-		if (_G(logic)->trySpendGold(price)) {
-			switch (_kind) {
-			case WEAPON:
-				++sg._weaponOwned[digit];
-				writeString("%s READY.\n", Data::WEAPON_NAMES[digit]);
-				break;
-			case ARMOR:
-				++sg._armorOwned[digit];
-				writeString("%s READY.\n", Data::ARMOR_NAMES[digit]);
-				break;
-			case SPELL_CLERIC:
-				sg._spellCharges[digit] += 5;
-				writeString("%s CHARGED.\n", Data::SPELL_NAMES[digit]);
-				break;
-			case SPELL_WIZARD: {
-				int spellIdx = (digit >= 4) ? digit + 3 : digit;
-				sg._spellCharges[spellIdx] += 5;
-				writeString("%s CHARGED.\n", Data::SPELL_NAMES[spellIdx]);
-				break;
-			}
+	case SPELL_CLERIC:
+		if (!yes) {
+			writeString("NO\nI'M SORRY, GOOD DAY.\n");
+		} else {
+			writeString("YES,\nI WILL TAKE 5!");
+			if (_G(logic)->trySpendGold(_price)) {
+				sg._spellCharges[_item] += 5;
+				writeString("\n");
 			}
 		}
+		break;
+
+	case SPELL_WIZARD:
+		if (!yes) {
+			writeString("NO!\nUGURLA OLSUN!\n");
+		} else {
+			writeString("YES\n");
+			if (_G(logic)->trySpendGold(_price)) {
+				sg._spellCharges[_item] += 5;
+				writeString("GULE GULE!\n");
+			}
+		}
+		break;
 	}
 
 	_G(logic)->resumeTurn();
+}
+
+bool Shop::msgKeypress(const KeypressMessage &msg) {
+	if (_state == CHOOSE) {
+		if (msg.ascii >= '0' && msg.ascii <= '9')
+			chooseItem(msg.ascii - '0');
+	} else if (msg.ascii != 0) {
+		confirm(toupper(msg.ascii));
+	}
+
 	return true;
 }
 

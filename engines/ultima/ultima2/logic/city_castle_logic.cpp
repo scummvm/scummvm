@@ -232,7 +232,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 	case 1: // Village
 		if (sg._mapY < 32 && sg._mapX >= 32) {
 			writeString("STEAL FOOD!\n");
-			++sg._food;
+			sg._food = MIN(sg._food + 100, 9999);
 		} else {
 			noLuck();
 		}
@@ -392,19 +392,15 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 
 bool CityCastleLogic::tithe() {
 	Data::Savegame &sg = _G(savegame);
-	if (sg._class != Data::CLASS_CLERIC) {
-		writeString(" YOU ARE NOT A CLERIC!\n");
-		return true;
-	}
-
-	writeString("WELCOME %s\n", sg._name);
-	writeString("FIRST MY 50 G.P. TRIBUTE!\n");
+	writeString("WELCOME MY CHILD %s\nFIRST MY 50 G.P. TRIBUTE!\n", sg._name);
 	if (!trySpendGold(50))
 		return true;
 
-	int heal = (sg._hp < 50) ? 3 : (sg._hp < 75) ? 2 : (sg._hp < 99) ? 1 : 0;
-	sg._hp += heal;
-	writeString("AND FOR IT I RAISE THEE %d\n", heal);
+	// The raise is in hundreds of hit points, and shrinks as HP grows
+	int hundreds = sg._hp / 100;
+	int heal = (hundreds < 50) ? 3 : (hundreds < 75) ? 2 : (hundreds < 99) ? 1 : 0;
+	sg._hp = MIN(sg._hp + heal * 100, 9999);
+	writeString("AND FOR IT I RAISE THEE %.4d\n", heal * 100);
 	return true;
 }
 
@@ -425,7 +421,11 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 
 	if (!top && left) {
 		if (isTown) {
-			writeString("WELCOME TO THE PUB!\n");
+			g_engine->addView("Pub");
+			return false;
+		}
+		if (sg._class != Data::CLASS_WIZARD) {
+			writeString("%s YOU ARE NOT A WIZARD!\n", sg._name);
 			return true;
 		}
 		g_engine->addView("WizardSpellShop");
@@ -437,12 +437,8 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 			g_engine->addView("ArmorShop");
 			return false;
 		}
-		writeString("PER 100, WANT ONE? ");
-		if (!trySpendGold(sg.computeItemPrice(3)))
-			return true;
-		++sg._food;
-		writeString("\nOK!\n");
-		return true;
+		g_engine->addView("FoodShop");
+		return false;
 	}
 
 	// bottom-right
@@ -451,7 +447,7 @@ bool CityCastleLogic::openShopForCurrentQuadrant() {
 		return false;
 	}
 	if (sg._class != Data::CLASS_CLERIC) {
-		writeString(" YOU ARE NOT A CLERIC!\n");
+		writeString("%s YOU ARE NOT A CLERIC!\n", sg._name);
 		return true;
 	}
 	g_engine->addView("ClericSpellShop");
@@ -484,8 +480,13 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 
 	if (slot > 0) {
 		Data::MapMonsters &monsters = _G(map)._monsters;
-		if ((int8)monsters._offerFlag[slot] < 0)
-			return openShopForCurrentQuadrant();
+		byte flag = monsters._offerFlag[slot];
+		if (flag >= 0x80) {
+			writeString("%s\n", _G(map).talkString(flag - 0x80).c_str());
+			if (sg._orbitTarget == 9 && sg._mapType == 3 && flag == 0x81)
+				sg._ringQuestFlag = true;
+			return true;
+		}
 
 		switch (monsters.tileType(slot)) {
 		case Data::TILE_TITHE_ALTAR:

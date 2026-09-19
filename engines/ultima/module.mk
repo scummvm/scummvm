@@ -134,8 +134,11 @@ MODULE_OBJS += \
 	ultima2/views/world_map_overview.o \
 	ultima2/views/zstats.o \
 	ultima2/views/interactions/interaction.o \
+	ultima2/views/interactions/clue_seller.o \
 	ultima2/views/interactions/direction.o \
+	ultima2/views/interactions/food_shop.o \
 	ultima2/views/interactions/offer_gold.o \
+	ultima2/views/interactions/pub.o \
 	ultima2/views/interactions/ready_spell.o \
 	ultima2/views/interactions/ready_weapon.o \
 	ultima2/views/interactions/shop.o \

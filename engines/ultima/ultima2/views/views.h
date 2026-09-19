@@ -31,8 +31,11 @@
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/views/world_map_overview.h"
 #include "ultima/ultima2/views/zstats.h"
+#include "ultima/ultima2/views/interactions/clue_seller.h"
 #include "ultima/ultima2/views/interactions/direction.h"
+#include "ultima/ultima2/views/interactions/food_shop.h"
 #include "ultima/ultima2/views/interactions/offer_gold.h"
+#include "ultima/ultima2/views/interactions/pub.h"
 #include "ultima/ultima2/views/interactions/ready_spell.h"
 #include "ultima/ultima2/views/interactions/ready_weapon.h"
 #include "ultima/ultima2/views/interactions/shop.h"
@@ -45,8 +48,11 @@ namespace Ultima2 {
 namespace Views {
 
 struct Views : public Shared::Views {
+	Interactions::ClueSeller _clueSeller;
 	Interactions::Direction _direction;
+	Interactions::FoodShop _foodShop;
 	Interactions::OfferGold _offerGold;
+	Interactions::Pub _pub;
 	Interactions::ReadySpell _readySpell;
 	Interactions::ReadyWeapon _readyWeapon;
 	Interactions::Transport _transport;

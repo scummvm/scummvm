@@ -22,6 +22,7 @@
 #ifndef ULTIMA2_DATA_MAP_H
 #define ULTIMA2_DATA_MAP_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "ultima/ultima2/data/tiles.h"
 #include "ultima/ultima2/data/map_monsters.h"
@@ -36,6 +37,7 @@ constexpr int MAP_HEIGHT = 64;
 // Both build "MAPXnn"/"MONXnn" from the same two map-number digits
 Common::String mapFilename(int mapEra, int mapType);
 Common::String monsterFilename(int mapEra, int mapType);
+Common::String talkFilename(int mapEra, int mapType);
 
 /**
  * A planet, village, town, or castle's map: a flat 64x64 grid of tiles,
@@ -46,8 +48,21 @@ Common::String monsterFilename(int mapEra, int mapType);
 struct Map {
 	TileId _tiles[MAP_HEIGHT][MAP_WIDTH] = {};
 	MapMonsters _monsters;
+	Common::Array<Common::String> _talk;
 
+private:
+	void loadTalk(int mapEra, int mapType);
+
+public:
 	void load(int mapEra, int mapType);
+
+	/**
+	 * Returns the given line of the map's NPC dialogue, or an empty string
+	 * if there isn't one
+	 */
+	Common::String talkString(int index) const {
+		return (index >= 0 && index < (int)_talk.size()) ? _talk[index] : Common::String();
+	}
 
 	TileId tileAt(int x, int y) const {
 		return _tiles[y][x];

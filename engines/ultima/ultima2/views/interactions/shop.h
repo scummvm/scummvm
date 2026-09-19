@@ -30,20 +30,28 @@ namespace Views {
 namespace Interactions {
 
 /**
- * A generic numbered-menu shop: prints an item list, reads a digit, and
- * on a nonzero digit computes the price (Savegame::computeItemPrice),
- * charges gold, and grants the item. Covers the weapon/armour/cleric-
- * spell/wizard-spell shoppes, which all share this exact shape and only
- * differ in their item list, price-index mapping, and target array
+ * A numbered-menu shop: prints an item list, reads a digit, quotes a price
+ * (Savegame::computeItemPrice) and, if the player agrees, charges gold and
+ * grants the item. Covers the weapon, armour, cleric-spell and wizard-spell
+ * shoppes, which share this shape and differ in their wording, item list,
+ * price-index mapping and target array
  */
 class Shop : public Interaction {
 public:
 	enum Kind { WEAPON, ARMOR, SPELL_CLERIC, SPELL_WIZARD };
 
 private:
-	Kind _kind;
+	enum State { CHOOSE, CONFIRM };
 
-	int priceIndexForDigit(int digit) const;
+	Kind _kind;
+	State _state = CHOOSE;
+	int _item = 0;
+	int _price = 0;
+
+	bool isValidChoice(int digit) const;
+	void finish(const char *message);
+	void chooseItem(int digit);
+	void confirm(char key);
 
 public:
 	Shop(Kind kind, const Common::String &name);
