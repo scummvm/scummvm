@@ -1,0 +1,34 @@
+name: Close PRs if the author has not read and followed AI-GUIDELINES.md
+
+on:
+  pull_request:
+    types:
+      - edited
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  scan-commits:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Check for co-authored-by AI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          COMMIT_MESSAGES=$(gh api repos/$GH_REPO/pulls/$PR_NUMBER/commits --jq '.[].commit.message')
+          COAUTHOR_REGEX="Co-Authored-By: .*\(Claude .*anthropic.com\|Copilot \|Cursor \|Codex \)"
+
+          if echo "$COMMIT_MESSAGES" | grep -q "$COAUTHOR_REGEX"; then
+            echo "Found AI co-author in commit messages."
+            gh pr comment $PR_NUMBER --body "Please read [our AI guidelines](https://github.com/scummvm/scummvm/blob/master/AI-GUIDELINES.md)."
+            gh pr close $PR_NUMBER
+            exit 1
+          else
+            echo "No AI co-authors found"
+          fi

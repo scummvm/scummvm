@@ -13,6 +13,7 @@
 #include "mads/nebular/bonus/bonus.h"
 
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/func.h"
 #include "common/path.h"
@@ -141,6 +142,17 @@ static bool checkPresentationFiles(const char *resourceName,
 	return reportMissingFiles(action, missingFiles);
 }
 
+static void runAnimView(const char *resource) {
+	AnimView::Presentation presentation;
+	presentation.bufferHeight = 0;
+	presentation.boundaryLines = AnimView::kBoundaryLinesHidden;
+	presentation.serviceFramesInline = false;
+	if (ConfMan.hasKey("animview_boundary_lines"))
+		presentation.boundaryLines = ConfMan.getBool("animview_boundary_lines") ?
+			AnimView::kBoundaryLinesShown : AnimView::kBoundaryLinesHidden;
+	AnimView::animview_main(resource, presentation);
+}
+
 class BonusApplication {
 public:
 	explicit BonusApplication(Sound::RexSoundManager &soundManager) :
@@ -160,15 +172,15 @@ public:
 			switch (_ui.runMainMenu(_mainSelection)) {
 			case BonusTextUI::kDeathScenes:
 				if (checkPresentationFiles("death.res", "show the death scenes"))
-					AnimView::animview_main("@death");
+					runAnimView("@death");
 				break;
 			case BonusTextUI::kEvolution:
 				if (checkPresentationFiles("evolve.res", "show the evolution sequence"))
-					AnimView::animview_main("@evolve");
+					runAnimView("@evolve");
 				break;
 			case BonusTextUI::kSets:
 				if (checkPresentationFiles("sets.res", "show the Rex Nebular sets"))
-					AnimView::animview_main("@sets");
+					runAnimView("@sets");
 				break;
 			case BonusTextUI::kMusic:
 				runMusicMenu();

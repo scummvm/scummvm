@@ -121,6 +121,7 @@ public:
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);
 	void popScene(bool inventory = false);
+	int16 getPushedInvItemID() const { return _sceneState.pushedInvItemID; }
 
 	// Nancy 11+ "UI prep scenes": opening a taskbar popup first runs a hidden,
 	// videoless scene whose event-flag-gated ARs populate the popup's content;
@@ -139,7 +140,12 @@ public:
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
 	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
+	uint getPlayerTimeMinutes() const;
 	byte getPlayerTOD() const;
+	// Nancy14-15. The day is kept separately from the clock, and copied into the
+	// day value so the scripts can read it.
+	void requestSleep() { _timers.sleepRequested = true; }
+	void setPlayerDay(int16 day);
 
 	void addItemToInventory(int16 id);
 	void removeItemFromInventory(int16 id, bool pickUp = true);
@@ -285,6 +291,8 @@ public:
 		bool timerIsActive = false;
 		Time playerTime;           // In-game time of day, adds a minute every 5 seconds
 		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
+		bool sleepRequested = false; // Nancy14-15: start the next day on the following frame
+		int16 playerDay = 0;         // Nancy14-15: the current day, also copied into the day value
 	};
 
 	Timers _timers;
@@ -300,6 +308,11 @@ private:
 	// Nancy 11+ AR 69. Advances all running software timers (stored as TimerData
 	// puzzle data) and fires any whose configured duration has just elapsed.
 	void tickSoftwareTimers(uint32 deltaMs);
+
+	// Raises the late night flag (Nancy11-13) or the end-of-day flag (Nancy14-15)
+	// once it gets late. In Nancy14-15, also starts the next day at the wake-up
+	// hour after the player has been sent to sleep.
+	void updateEndOfDay();
 	void fireSoftwareTimer(TimerData::Timer &timer);
 	void fireTimerTrigger(TimerData::Trigger &trigger);
 

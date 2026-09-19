@@ -25,7 +25,7 @@ extern retro_input_state_t retro_input_cb;
 extern struct retro_midi_interface *retro_midi_interface;
 
 bool retro_get_input_bitmask_supported(void);
-void retro_osd_notification(const char *msg);
+void retro_osd_notification(const char *msg, enum retro_log_level level = RETRO_LOG_INFO);
 int retro_get_input_device(void);
 const char *retro_get_core_dir(void);
 const char *retro_get_system_dir(void);

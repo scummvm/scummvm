@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef FREESCAPE_C64_MUSIC_H
+#define FREESCAPE_C64_MUSIC_H
+
 #include "audio/sid.h"
 #include "common/debug.h"
 #include "freescape/music.h"
@@ -243,3 +246,5 @@ private:
 	};
 
 } // namespace Freescape
+
+#endif // FREESCAPE_C64_MUSIC_H

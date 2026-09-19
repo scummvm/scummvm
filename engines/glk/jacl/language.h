@@ -18,6 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef GLK_JACL_LANGUAGE_H
+#define GLK_JACL_LANGUAGE_H
+
 namespace Glk {
 namespace JACL {
 
@@ -568,3 +572,5 @@ namespace JACL {
 
 } // End of namespace JACL
 } // End of namespace Glk
+
+#endif // GLK_JACL_LANGUAGE_H

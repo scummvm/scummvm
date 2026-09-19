@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef ULTIMA_U6_OBJECT_TYPES_H
+#define ULTIMA_U6_OBJECT_TYPES_H
+
 namespace Ultima {
 namespace Nuvie {
 
@@ -191,3 +194,5 @@ const U6ObjectType U6ObjectTypes[] = {
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
+
+#endif // ULTIMA_U6_OBJECT_TYPES_H

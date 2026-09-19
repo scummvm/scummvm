@@ -22,6 +22,9 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "image/bmp.h"
@@ -60,6 +63,8 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
 	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
+	registerCmd("list_includes", WRAP_METHOD(NancyConsole, Cmd_listIncludes));
+	registerCmd("find_include", WRAP_METHOD(NancyConsole, Cmd_findInclude));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
 	registerCmd("get_inventory", WRAP_METHOD(NancyConsole, Cmd_getInventory));
@@ -540,7 +545,7 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 			break;
 		case DependencyType::kElapsedPlayerTime:
 			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
-				dep.condition == 0 ? "greater than" : (dep.condition == 1 ? "less than" : "equals"),
+				dep.condition == 0 ? "at or after" : (dep.condition == 1 ? "at or before" : (dep.condition == 2 ? "equals" : "between")),
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
@@ -595,6 +600,15 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 		case DependencyType::kRandom:
 			debugPrintf("kRandom, chance %i", dep.condition);
 			break;
+		case DependencyType::kDefaultAR:
+			if (g_nancy->getGameType() >= kGameTypeNancy14) {
+				debugPrintf("kDefaultAR, no record of this type (or types %i, %i, %i, %i) executed in this scene",
+					dep.hours, dep.minutes, dep.seconds, dep.milliseconds);
+			} else {
+				debugPrintf("kDefaultAR, previous record did not execute");
+			}
+
+			break;
 		default:
 			debugPrintf("unknown type %u", (uint)dep.type);
 			break;
@@ -620,21 +634,29 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 
 		for (uint i = 0; i < records.size(); ++i) {
 			ActionRecord *rec = records[i];
-			debugPrintf("Record %u:\n", i);
+			if (rec->_includeSource.empty()) {
+				debugPrintf("Record %u:\n", i);
+			} else {
+				debugPrintf("Record %u (from %s):\n", i, rec->_includeSource.c_str());
+			}
 			printActionRecord(rec);
 			debugPrintf("\n\n");
 		}
 	} else if (argc == 2) {
-		// Print a different scene. We need to load all records into a temporary array and read from it
+		// Print a different scene, or an included script given by name. We need to
+		// load all records into a temporary array and read from it
 		Common::String s = argv[1];
+		if (Common::isDigit(s.firstChar())) {
+			s = "S" + s;
+		}
 
 		Common::Array<ActionRecord *> records;
 		Common::Queue<uint> unknownTypes;
 		Common::Queue<Common::String> unknownDescs;
 		Common::SeekableReadStream *chunk;
-		IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path("S" + s));
+		IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(s));
 		if (!sceneIFF) {
-			debugPrintf("Invalid scene S%s\n", argv[1]);
+			debugPrintf("Invalid scene or script %s\n", s.c_str());
 			return true;
 		}
 
@@ -655,7 +677,12 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 
 		for (uint i = 0; i < records.size(); ++i) {
 			ActionRecord *rec = records[i];
-			debugPrintf("Record %u:\n", i);
+			Common::String source = sceneIFF->getChunkSource("ACT", i);
+			if (source.empty()) {
+				debugPrintf("Record %u:\n", i);
+			} else {
+				debugPrintf("Record %u (from %s):\n", i, source.c_str());
+			}
 
 			if (rec == nullptr) {
 				// For unknown record types, we want to print the typeID and description
@@ -741,6 +768,40 @@ bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
 	return true;
 }
 
+// The name of an IFF, without any .iff extension
+static Common::String getIFFName(const Common::Path &path) {
+	Common::String name = path.baseName();
+	if (name.hasSuffixIgnoreCase(".iff")) {
+		name = name.substr(0, name.size() - 4);
+	}
+
+	return name;
+}
+
+// Lists all scene IFFs (S#, S##, ...) in the ciftree, the promotree, and loose .iff files
+static void listSceneIFFs(Common::Array<Common::Path> &sceneList) {
+	Common::Array<Common::Path> list;
+	// Action records only appear in the ciftree and promotree
+	g_nancy->_resource->list("ciftree", list, CifInfo::kResTypeScript);
+	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
+
+	Common::ArchiveMemberList searchManList;
+	SearchMan.listMatchingMembers(searchManList, "*.iff");
+	for (auto &i : searchManList) {
+		list.push_back(i->getPathInArchive());
+	}
+
+	for (Common::Path &path : list) {
+		Common::String name = getIFFName(path);
+		if (name.matchString("S#") ||
+			name.matchString("S##") ||
+			name.matchString("S###") ||
+			name.matchString("S####")) {
+			sceneList.push_back(path);
+		}
+	}
+}
+
 bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	if (argc < 2 || argc % 2) {
 		debugPrintf("Scans all IFFs for ActionRecords of the provided type\n");
@@ -777,63 +838,151 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	}
 
 	Common::Array<Common::Path> list;
-	// Action records only appear in the ciftree and promotree
-	g_nancy->_resource->list("ciftree", list, CifInfo::kResTypeScript);
-	g_nancy->_resource->list("promotree", list, CifInfo::kResTypeScript);
+	listSceneIFFs(list);
 
 	char descBuf[0x30];
 
-	Common::ArchiveMemberList searchManList;
-	SearchMan.listMatchingMembers(searchManList, "*.iff");
-	for (auto &i : searchManList) {
-		list.push_back(i->getPathInArchive());
-	}
-
 	for (Common::Path &cifName : list) {
-		Common::String name = cifName.baseName();
-		if (name.hasSuffixIgnoreCase(".iff")) {
-			name = name.substr(0, name.size() - 4);
+		IFF *iff = g_nancy->_resource->loadIFF(cifName);
+		if (!iff) {
+			continue;
 		}
 
-		// Only check inside scenes
-		if (name.matchString("S#") ||
-			name.matchString("S##") ||
-			name.matchString("S###") ||
-			name.matchString("S####")) {
-
-			IFF *iff = g_nancy->_resource->loadIFF(cifName);
-			if (iff) {
-				uint num = 0;
-				Common::SeekableReadStream *chunk = nullptr;
-				while (chunk = iff->getChunkStream("ACT", num), chunk != nullptr) {
-					bool isSatisfied = true;
-					for (uint i = 0; i < vals.size(); i += 2) {
-						if ((int64)vals[i] >= chunk->size()) {
-							isSatisfied = false;
-							break;
-						}
-
-						chunk->seek(vals[i]);
-						if (chunk->readByte() != vals[i + 1]) {
-							isSatisfied = false;
-							break;
-						}
-					}
-
-					if (isSatisfied) {
-						chunk->seek(0);
-						chunk->read(descBuf, 0x30);
-						descBuf[0x2F] = '\0';
-						debugPrintf("%s: ACT chunk %u, %s\n", cifName.toString().c_str(), num, descBuf);
-					}
-
-					++num;
-					delete chunk;
+		uint num = 0;
+		Common::SeekableReadStream *chunk = nullptr;
+		while (chunk = iff->getChunkStream("ACT", num), chunk != nullptr) {
+			bool isSatisfied = true;
+			for (uint i = 0; i < vals.size(); i += 2) {
+				if ((int64)vals[i] >= chunk->size()) {
+					isSatisfied = false;
+					break;
 				}
 
-				delete iff;
+				chunk->seek(vals[i]);
+				if (chunk->readByte() != vals[i + 1]) {
+					isSatisfied = false;
+					break;
+				}
+			}
+
+			if (isSatisfied) {
+				chunk->seek(0);
+				chunk->read(descBuf, 0x30);
+				descBuf[0x2F] = '\0';
+
+				Common::String source = iff->getChunkSource("ACT", num);
+				if (source.empty()) {
+					debugPrintf("%s: ACT chunk %u, %s\n", cifName.toString().c_str(), num, descBuf);
+				} else {
+					debugPrintf("%s: ACT chunk %u, %s (from %s)\n", cifName.toString().c_str(), num, descBuf, source.c_str());
+				}
+			}
+
+			++num;
+			delete chunk;
+		}
+
+		delete iff;
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_listIncludes(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Lists the files included (via USE chunks) by the current or a specified scene\n");
+		debugPrintf("Usage: %s [sceneID]\n", argv[0]);
+		return true;
+	}
+
+	uint sceneID = 0;
+	if (argc == 2) {
+		sceneID = atoi(argv[1]);
+	} else if (g_nancy->getState() == NancyState::kScene) {
+		sceneID = NancySceneState.getSceneInfo().sceneID;
+	} else {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(Common::String::format("S%u", sceneID)));
+	if (!sceneIFF) {
+		debugPrintf("Invalid scene S%u\n", sceneID);
+		return true;
+	}
+
+	const Common::Array<Common::String> &includes = sceneIFF->getIncludes();
+	if (includes.empty()) {
+		debugPrintf("Scene S%u has no includes\n", sceneID);
+	} else {
+		debugPrintf("Scene S%u includes:\n", sceneID);
+		for (const Common::String &include : includes) {
+			debugPrintf("\t%s\n", include.c_str());
+		}
+	}
+
+	delete sceneIFF;
+	return true;
+}
+
+bool NancyConsole::Cmd_findInclude(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Lists the scenes that include (via USE chunks) the given file,\n");
+		debugPrintf("or every included file and the scenes using it if none is given\n");
+		debugPrintf("Warning: can be quite slow, especially on archived game versions\n");
+		debugPrintf("Usage: %s [filename]\n", argv[0]);
+		return true;
+	}
+
+	Common::Array<Common::Path> list;
+	listSceneIFFs(list);
+
+	// Included file name -> including scenes, in first-seen order
+	Common::Array<Common::String> includeNames;
+	Common::HashMap<Common::String, Common::Array<Common::String>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> users;
+
+	for (Common::Path &cifName : list) {
+		IFF *iff = g_nancy->_resource->loadIFF(cifName);
+		if (!iff) {
+			continue;
+		}
+
+		for (const Common::String &include : iff->getIncludes()) {
+			if (argc == 2 && !include.equalsIgnoreCase(argv[1])) {
+				continue;
+			}
+
+			if (!users.contains(include)) {
+				includeNames.push_back(include);
+			}
+
+			users[include].push_back(getIFFName(cifName));
+		}
+
+		delete iff;
+	}
+
+	if (includeNames.empty()) {
+		if (argc == 2) {
+			debugPrintf("No scene includes %s\n", argv[1]);
+		} else {
+			debugPrintf("No scene includes any files\n");
+		}
+
+		return true;
+	}
+
+	for (const Common::String &include : includeNames) {
+		const Common::Array<Common::String> &scenes = users[include];
+		debugPrintf("%s is included by %u scene(s):\n", include.c_str(), scenes.size());
+		for (uint i = 0; i < scenes.size(); ++i) {
+			debugPrintf("%-7s", scenes[i].c_str());
+			if ((i % 10) == 9 && i + 1 != scenes.size()) {
+				debugPrintf("\n");
 			}
 		}
+
+		debugPrintf("\n\n");
 	}
 
 	return true;
@@ -1014,6 +1163,13 @@ bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
 		time.getHours(),
 		time.getMinutes(),
 		(uint32)time);
+
+	auto *bootSummary = GetEngineData(BSUM);
+	if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		debugPrintf("Day: %d\n", NancySceneState._timers.playerDay);
+	}
+
 	return true;
 }
 
@@ -1030,9 +1186,15 @@ bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
 	}
 
 	Time &time = NancySceneState._timers.playerTime;
+	auto *bootSummary = GetEngineData(BSUM);
 
 	if (argc == 2) {
 		time = atoi(argv[1]);
+	} else if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent) {
+		// Games with an end of day keep the day separately from the clock
+		NancySceneState.setPlayerDay(atoi(argv[1]));
+		time = 	atoi(argv[2]) * 3600000 +	// hours
+				atoi(argv[3]) * 60000;		// minutes
 	} else {
 		time = 	atoi(argv[1]) * 86400000 +	// days
 				atoi(argv[2]) * 3600000 +	// hours

@@ -40,9 +40,11 @@ MODULE_OBJS = \
   action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/hangmanpuzzle.o \
+  action/puzzle/lettergridpuzzle.o \
   action/puzzle/leverpuzzle.o \
   action/puzzle/magnetmazepuzzle.o \
   action/puzzle/mazechasepuzzle.o \
+  action/puzzle/magicboxpuzzle.o \
   action/puzzle/matchpuzzle.o \
   action/puzzle/memorypuzzle.o \
   action/puzzle/meterpuzzle.o \

@@ -42,6 +42,8 @@ public:
 	uint16 channel = 0;
 	byte volume = 0;
 
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Channel %u, volume %u", channel, volume); }
+
 protected:
 	Common::String getRecordTypeName() const override { return "SetVolume"; }
 };
@@ -139,7 +141,7 @@ public:
 	// it explicitly in the closed-caption records below.
 	Common::String _ccText;
 
-	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+	Common::String getRecordExtraInfo() const override;
 
 protected:
 	Common::String getRecordTypeName() const override;

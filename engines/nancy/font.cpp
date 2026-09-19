@@ -74,10 +74,12 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_slashOffset						= stream.readUint16LE();
 
 	if (g_nancy->getGameLanguage() == Common::RU_RUS && g_nancy->getGameType() >= kGameTypeNancy5 && g_nancy->getGameType() != kGameTypeNancy6) {
-		// Only extract the lowercase/uppercase offsets, since the letters are in order in the FONT data
-		_cyrillicLowercaseOffset 		= stream.readUint16LE();
-		stream.skip(72);
+		// Only extract the uppercase offset, since the letters are in order in the FONT data,
+		// with lowercase directly following uppercase. The first offset can't be used for
+		// lowercase letters: in nancy8 it still points to a Latin glyph
+		stream.skip(74);
 		_cyrillicUppercaseOffset 		= stream.readUint16LE();
+		_cyrillicLowercaseOffset 		= _cyrillicUppercaseOffset + 32;
 		stream.skip(2);
 
 		numCharacters = 179;

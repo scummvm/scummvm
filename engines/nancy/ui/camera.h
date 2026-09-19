@@ -32,9 +32,9 @@ struct NancyInput;
 namespace UI {
 
 // The standalone camera introduced in Nancy14 (UICM), switched on by its photo
-// album (CameraAction). While it is on, a viewfinder box sits at the centre of
-// the viewport and the scene's hotspots and panning are suppressed; a click
-// photographs every subject the box frames.
+// album (CameraAction). While it is on, a viewfinder box follows the cursor
+// and the scene's hotspots and panning are suppressed; a click photographs
+// every subject the box frames.
 class Camera : public RenderObject {
 public:
 	Camera() : RenderObject(9) {}
@@ -42,7 +42,8 @@ public:
 
 	void init() override;
 
-	void activate();
+	// itemID is the inventory item whose close-up is the photo album, or -1.
+	void activate(int16 itemID = -1);
 	void deactivate();
 	bool isActive() const { return _isActive; }
 
@@ -56,12 +57,16 @@ public:
 	static void playSoundBlock(const RandomSoundBlock &block);
 
 protected:
-	// UICM's picture size, centred in the viewport.
+	// UICM's picture size, centred on the cursor and kept inside the viewport.
 	Common::Rect viewfinderScreenRect() const;
+	void drawViewfinder();
 	void takePicture();
+	void returnToAlbum();
 
 	const UICM *_cameraData = nullptr;
 	Graphics::ManagedSurface _image;
+	Common::Point _aimPoint;
+	int16 _itemID = -1;
 	bool _isActive = false;
 };
 

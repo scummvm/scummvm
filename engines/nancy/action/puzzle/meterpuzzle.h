@@ -30,9 +30,10 @@ namespace Nancy {
 namespace Action {
 
 // A meter/gauge display, new in Nancy14 (AR 179): shows one frame of a bar
-// animation. In modes 1/2 the value is a shared value table entry, driven by
-// BlockingPuzzle (AR 180). In Nancy14, it handles the health meters for the
-// final fight.
+// animation. In mode 0 the bar tracks a software timer's elapsed time (e.g.
+// Nancy14's oxygen meter while diving in the sewer). In modes 1/2 the value is
+// a shared value table entry, driven by BlockingPuzzle (AR 180), used by
+// Nancy14's health meters in the final fight.
 class MeterPuzzle : public RenderActionRecord {
 public:
 	MeterPuzzle() : RenderActionRecord(7) {}
@@ -49,13 +50,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "MeterPuzzle"; }
 
 	void redraw();
-	int32 sampleValue() const;	// the tracked value (a value-table entry in modes 1/2)
-	int computeFrame() const;	// the frame for the current value
+	double sampleFraction() const;	// the tracked value, divided by its full-scale value
+	int computeFrame() const;		// the frame for the current value
+
+	// Mode 2 behaves the same as kTableValue
+	enum Mode {
+		kTimer = 0,
+		kTableValue = 1
+	};
 
 	// -- File data --
-	int16 _mode = 0;			// 0x00 - mode (0/1/2)
-	int16 _modeParam = 0;		// 0x02
-	int32 _modeValue = 0;		// 0x04
+	int16 _mode = kTimer;		// 0x00
+	int16 _modeParam = 0;		// 0x02 - timer slot or value-table index
+	int32 _modeValue = 0;		// 0x04 - full-scale value; -1 = the timer's one-shot trigger time
 
 	Common::Path _animName;		// 0x08 - the bar animation
 	uint16 _videoFormat = 0;	// 0x29

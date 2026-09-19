@@ -308,10 +308,18 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		} else if (_puzzleType == kKeypadTerse) {
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
 
+			// Nancy 12 added the button and exit hover cursors, same as the non-terse keypad
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				_buttonCursorID = stream.readUint16LE();
+				_exitCursorID = stream.readUint16LE();
+			}
+
 			// In Nancy 11 the grid block is preceded by the scene to advance to on solving, which
 			// overrides the solve scene's target (the rest of the solve scene change is reused).
 			// 0 and 9999 mean "none", falling back to the solve scene read earlier.
-			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// From Nancy 12 on, this scene is only taken when the puzzle ends unsolved with no
+			// buttons pressed, so it doesn't override the solve scene.
+			if (g_nancy->getGameType() == kGameTypeNancy11) {
 				uint16 advanceSceneID = stream.readUint16LE();
 
 				// HACK: In Nancy11, in the Betty automaton scene, this is set to scene 2721, but
@@ -325,6 +333,8 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				if (advanceSceneID != 0 && advanceSceneID != kNoScene) {
 					_solveExitScene._sceneChange.sceneID = advanceSceneID;
 				}
+			} else if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				stream.skip(2); // advance scene
 			}
 
 			uint16 columns = stream.readUint16LE();
@@ -374,11 +384,6 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				dest.setWidth(width + 1);
 				dest.setHeight(height + 1);
 			}
-		}
-
-		if (g_nancy->getGameType() >= kGameTypeNancy12 && _puzzleType == kKeypadTerse) {
-			// Nancy 12 keypad-terse grew by 4 bytes (exact layout not yet mapped).
-			stream.skip(4);
 		}
 
 		_hotspots = _destRects;

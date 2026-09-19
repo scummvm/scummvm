@@ -65,7 +65,10 @@ namespace Nancy {
 // - 8: Nancy12 DrivingPuzzle fuel state persisted
 // - 9: RippedLetterPuzzle stores its scene ID and tried flag
 // - 10: Nancy14/15 inventory arrays hold 49 items instead of 50
-static const int kSavegameVersion = 10;
+// - 11: Nancy12+ TableData holds 100 single values instead of 30, and
+//       the Nancy14/15 player clock only holds the time of the current
+//       day, with the day itself stored separately
+static const int kSavegameVersion = 11;
 
 struct NancyGameDescription;
 

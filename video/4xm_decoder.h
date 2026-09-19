@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef VIDEO_4XM_DECODER_H
+#define VIDEO_4XM_DECODER_H
+
 #include "common/ptr.h"
 #include "video/video_decoder.h"
 
@@ -64,3 +67,5 @@ private:
 };
 
 } // namespace Video
+
+#endif // VIDEO_4XM_DECODER_H

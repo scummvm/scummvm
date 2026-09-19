@@ -19,4 +19,9 @@
  *
  */
 
+#ifndef BAGEL_BGEN_STDAFX_H
+#define BAGEL_BGEN_STDAFX_H
+
 #include "bagel/afxwin.h"
+
+#endif // BAGEL_BGEN_STDAFX_H

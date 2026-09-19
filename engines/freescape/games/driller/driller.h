@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef FREESCAPE_DRILLER_H
+#define FREESCAPE_DRILLER_H
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -162,3 +165,5 @@ enum DrillerReleaseFlags {
 };
 
 }
+
+#endif // FREESCAPE_DRILLER_H

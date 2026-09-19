@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef DIRECTOR_BLANK_SCORE_H
+#define DIRECTOR_BLANK_SCORE_H
+
 static const byte kBlankScoreD2[] = {
 	0x00, 0x00, 0x00, 0x06, // _framesStreamSize
 	0x00, 0x02              // frame with empty channel information
@@ -33,3 +36,5 @@ static const byte kBlankScoreD4[] = {
 	0x00, 0x00,             // skipped
 	0x00, 0x02              // frame with empty channel information
 };
+
+#endif // DIRECTOR_BLANK_SCORE_H

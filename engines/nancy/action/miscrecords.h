@@ -250,8 +250,8 @@ public:
 	void execute() override;
 
 	byte _relative;
-	uint16 _hours;
-	uint16 _minutes;
+	int16 _hours;
+	int16 _minutes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }
@@ -333,6 +333,7 @@ public:
 	int16 _hours = 0;
 	int16 _minutes = 0;
 	int16 _seconds = 0;
+	int16 _milliseconds = 0;
 	SoundDescription _sound;               // Played on expiry when configured
 	Common::Array<FlagDescription> _flags; // Fired on expiry when configured
 

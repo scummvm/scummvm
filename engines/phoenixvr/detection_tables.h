@@ -35,7 +35,7 @@ const PlainGameDescriptor phoenixvrGames[] = {
 	{"amerzone", "Amerzone: The Explorer's Legacy"},
 	// V2 games
 	{"mysteryofmummy", "Sherlock Holmes: The Mystery of the Mummy"},
-	{"pharaoncurse", "The Cameron Files: Pharaoh's Curse"},
+	{"pharaohcurse", "The Cameron Files: Pharaoh's Curse"},
 	{0, 0}
 };
 
@@ -311,7 +311,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -321,7 +321,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -332,18 +332,18 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
 	{"dracula1",
-		"1.1 Dreamcatcher",
+		"Dreamcatcher, v1.1",
 		AD_ENTRY3s("Install/script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
 				   "Data/Logo.vr", "43f7b756cb11c691d0eb21003af64e90", 50366,
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -353,7 +353,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "70362765ee83bb822d5bb08948317f23", 98844),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -363,7 +363,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "195a7b2b6185245b64145f3e43e4f508", 90805),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -373,7 +373,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -383,7 +383,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -394,7 +394,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -404,7 +404,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -415,7 +415,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "195a7b2b6185245b64145f3e43e4f508", 90805),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -425,17 +425,28 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
 	{"dracula1",
-		"7 Wolf",
+		"7 Wolf, v1.1",
 		AD_ENTRY2s("Install/script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
 				   "Interface.vr", "61c68db8bb7a9e22387d3f27fb24bad4", 107904),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+
+	{"dracula1",
+		"7 Wolf, v1.0",
+		AD_ENTRY2s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
+				   "Interface.vr", "61c68db8bb7a9e22387d3f27fb24bad4", 107904),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -446,7 +457,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "InsertCD.vr", "54d1ea71f27a849a4a088cf21ca64aff", 53817),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -458,7 +469,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "First.exe", "403417a28a11a08deb8443dc08a2213c", 31770),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -469,7 +480,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "InsertCD.vr", "0bc196a016845e99d99a0bc634f51e9d", 53670),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -480,7 +491,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "InsertCD.vr", "699f7519cc1caa740fe27434f6ca9766", 54394),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -491,7 +502,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "InsertCD.vr", "21b1cb64d71010799368a8e7097c133b", 54210),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -502,7 +513,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "InsertCD.vr", "2d5d17124caeebad668661abaff0c8fc", 54442),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -514,7 +525,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "First.exe", "4b106f5fffb4b3c033edcdaa0893d616", 16384),
 		Common::PL_POL,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -526,7 +537,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "First.exe", "403417a28a11a08deb8443dc08a2213c", 31770),
 		Common::PT_PRT,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -537,7 +548,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Install/InsertCD.vr", "bd73f26480428507118d9a9b7a047f4a", 53851),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -641,7 +652,7 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | PHOENIXVR_V2 | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
-	{"pharaoncurse",
+	{"pharaohcurse",
 		"USA CD release",
 		AD_ENTRY3s(
 			"Level_1/script.lst", "1bacc45e3ca6eea715ba5abd73986577", 211816,
@@ -653,7 +664,7 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
-	{"pharaoncurse",
+	{"pharaohcurse",
 		"Retail CD release",
 		AD_ENTRY2s(
 			"script.lst", "559f73dabf49f60afa5983b75ed7a317", 850,
@@ -664,7 +675,7 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM | ADGF_CD | PHOENIXVR_V2 | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
-	{"pharaoncurse",
+	{"pharaohcurse",
 		"Demo",
 		AD_ENTRY2s(
 			"script.lst", "5a80c5ba5d3223dd14553964e96f1613", 45038,

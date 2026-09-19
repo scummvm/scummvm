@@ -58,6 +58,8 @@ private:
 	bool Cmd_listActionRecords(int argc, const char **argv);
 	bool Cmd_actionRecordExport(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
+	bool Cmd_listIncludes(int argc, const char **argv);
+	bool Cmd_findInclude(int argc, const char **argv);
 	bool Cmd_getEventFlags(int argc, const char **argv);
 	bool Cmd_setEventFlags(int argc, const char **argv);
 	bool Cmd_getInventory(int argc, const char **argv);

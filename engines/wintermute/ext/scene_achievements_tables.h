@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef WINTERMUTE_SCENE_ACHIEVEMENTS_TABLES_H
+#define WINTERMUTE_SCENE_ACHIEVEMENTS_TABLES_H
+
 /*
  * This file is based on WME Lite.
  * http://dead-code.org/redir.php?target=wmelite
@@ -79,3 +82,5 @@ static const AchievementsList achievementsList[] = {
 };
 
 } // End of namespace Wintermute
+
+#endif // WINTERMUTE_SCENE_ACHIEVEMENTS_TABLES_H

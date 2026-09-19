@@ -39,6 +39,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Rhiannon: Curse of the Four Branches.
    - Added support for Shadows on the Vatican series.
    - Added support for other Wintermute engine games, over 140 titles.
+   - Added support for Der Schatz im Silbersee (Treasure of the Silver Lake).
 
  General:
    - Optimised mixing and rate converters, for better performance.
@@ -116,6 +117,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added General MIDI and MT-32 support to the games
    - Improved Sound Blaster sample playback
    - Sound is properly paused when the engine is paused
+
+ V-Cruise:
+   - Fixed time-based puzzles sometimes getting stuck after restarting ScummVM.
 
  Voyeur:
    - Match original first person movement with mouse when looking at mansion

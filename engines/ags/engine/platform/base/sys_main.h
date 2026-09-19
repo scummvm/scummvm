@@ -19,7 +19,8 @@
  *
  */
 
-
+#ifndef AGS_SYS_MAIN_H
+#define AGS_SYS_MAIN_H
 
 //=============================================================================
 //
@@ -28,9 +29,6 @@
 // TODO: split up later if it gets filled with functions in all categories.
 //
 //=============================================================================
-
-#ifndef AGS_SYS_MAIN_H
-#define AGS_SYS_MAIN_H
 
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"

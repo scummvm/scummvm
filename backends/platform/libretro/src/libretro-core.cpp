@@ -184,7 +184,7 @@ static void setup_hw_rendering(void) {
 	if ((video_hw_mode & VIDEO_GRAPHIC_MODE_REQUEST_HW) && !retro_gl_context_handoff_available()) {
 		if (retro_log_cb)
 			retro_log_cb(RETRO_LOG_WARN, "No GL context handoff backend available, falling back to software.\n");
-		retro_osd_notification("HW rendering unavailable on this platform.");
+		retro_osd_notification("HW rendering unavailable on this platform.", RETRO_LOG_WARN);
 		video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
 	}
 
@@ -205,7 +205,7 @@ static void setup_hw_rendering(void) {
 #endif
 		if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render)) {
 			retro_log_cb(RETRO_LOG_WARN, "Failed to set up hardware rendering, falling back to software.\n");
-			retro_osd_notification("Failed to set up HW rendering.");
+			retro_osd_notification("Failed to set up HW rendering.", RETRO_LOG_ERROR);
 			video_hw_mode = VIDEO_GRAPHIC_MODE_REQUEST_SW;
 		}
 	}
@@ -312,13 +312,16 @@ static void audio_run(void) {
 	}
 }
 
-void retro_osd_notification(const char *msg) {
+void retro_osd_notification(const char *msg, enum retro_log_level level) {
 	if (!msg || *msg == '\0')
 		return;
-	struct retro_message_ext retro_msg;
+	struct retro_message_ext retro_msg = {};
 	retro_msg.type = RETRO_MESSAGE_TYPE_NOTIFICATION;
 	retro_msg.target = RETRO_MESSAGE_TARGET_OSD;
 	retro_msg.duration = 3000;
+	retro_msg.priority = (level >= RETRO_LOG_WARN) ? 3 : 1;
+	retro_msg.level = level;
+	retro_msg.progress = -1;
 	retro_msg.msg = msg;
 	environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
 }
@@ -1067,7 +1070,7 @@ void retro_init(void) {
 	if (retro_setting_get_browsing_mode_authorized() && !LibRetroFilesystemNode::hasAuthorizedLocations()) {
 		if (retro_log_cb)
 			retro_log_cb(RETRO_LOG_WARN, "Browsing mode set to 'Authorized storage' but no authorized locations are available; falling back to local filesystem. Authorize folders from the frontend and restart the core.\n");
-		retro_osd_notification("No authorized storage available, using local filesystem.");
+		retro_osd_notification("No authorized storage available, using local filesystem.", RETRO_LOG_WARN);
 	}
 
 	max_width = gui_width > max_width ? gui_width : max_width;
@@ -1227,12 +1230,12 @@ bool retro_load_game(const struct retro_game_info *game) {
 			break;
 		case TEST_GAME_KO_MULTIPLE_RESULTS:
 			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Multiple targets found for '%s' in scummvm.ini\n", target_id);
-			retro_osd_notification("Multiple targets found");
+			retro_osd_notification("Multiple targets found", RETRO_LOG_WARN);
 			break;
 		case TEST_GAME_KO_NOT_FOUND:
 		default:
 			retro_log_cb(RETRO_LOG_WARN, "[scummvm] Game not found. Check path and content of '%s'\n", game->path);
-			retro_osd_notification("Game not found");
+			retro_osd_notification("Game not found", RETRO_LOG_ERROR);
 		}
 
 		parse_command_params(buffer);

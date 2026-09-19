@@ -236,12 +236,12 @@ void OSystem_libretro::applyBackendSettings() {
 	//Check current path settings
 	if (!checkPathSetting("savepath", s_saveDir)) {
 		ConfMan.setAndFlush("savepath", s_systemDir);
-		retro_osd_notification("ScummVM save folder not found.");
+		retro_osd_notification("ScummVM save folder not found.", RETRO_LOG_WARN);
 	}
 	if (!checkPathSetting("themepath", s_themeDir))
-		retro_osd_notification("ScummVM theme folder not found.");
+		retro_osd_notification("ScummVM theme folder not found.", RETRO_LOG_WARN);
 	if (!checkPathSetting("extrapath", s_extraDir))
-		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
+		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.", RETRO_LOG_WARN);
 	checkPathSetting("soundfont", s_soundfontPath, false);
 	{
 		Common::String lastPath;

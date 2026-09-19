@@ -125,8 +125,15 @@ extern TileResource  picture_resource, depth_resource; /* Tile resources    */
 extern void matte_init(int init_series);
 extern int matte_map_work_screen();
 
-
-extern void matte_frame(int special_effect, int full_screen);
+// completion_deadline uses timer_read() ticks and is updated when a minimum
+// black interval after palette preparation moves the reveal. nullptr leaves
+// reveal timing unchanged.
+// boundary_line_color restores AnimView rows after a through-black clear;
+// -1 leaves boundary pixels unmanaged.
+extern void matte_frame(int special_effect, int full_screen,
+	bool full_fade_in = false, int fade_step_rate = 0,
+	long *completion_deadline = nullptr, int minimum_black_ticks = 0,
+	int boundary_line_color = -1);
 
 extern int matte_load_series(const char *name, int load_flags, int bonus_series_number);
 extern void matte_deallocate_series(int id, int free_memory);

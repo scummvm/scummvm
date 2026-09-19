@@ -698,14 +698,15 @@ void PlaySecondaryMovie::readDataNancy13(Common::Serializer &ser, Common::Seekab
 }
 
 // Nancy14 compacted the non-random layout: the videoSceneChange 5/6 flag is
-// gone (a scene change is now requested via the sceneID sentinel), playDirection
-// moved after lastFrame, and a "hide on finish" flag was added. AR 44 matches
-// AR 41 plus a trailing movie-volume byte.
+// gone (a scene change is now requested via the sceneID sentinel), a loop count
+// and a "hide on finish" flag were added, and the play direction follows from
+// the frame range, as in Nancy13. AR 44 matches AR 41 plus a trailing
+// movie-volume byte.
 //
 // Nancy15 adds two things on top: AR 44 gained a "play style" u16 (1/3) after
-// the hide-on-finish flag, and the firstFrame field can be -1 (LOOP_RANDOM),
-// in which case a min/max loop-count pair follows and a random value in that
-// range is chosen.
+// the hide-on-finish flag, and the loop count can be -1 (LOOP_RANDOM), in which
+// case a min/max loop-count pair follows and a random value in that range is
+// chosen.
 void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::SeekableReadStream &stream) {
 	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
 
@@ -724,20 +725,25 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 		ser.syncAsUint16LE(_playStyle);
 	}
 
-	ser.syncAsUint16LE(_firstFrame);
+	// 0 loops forever
+	ser.syncAsUint16LE(_numLoops);
 
-	if (isNancy15 && (int16)_firstFrame == -1) {
-		// LOOP_RANDOM: firstFrame -1 is followed by a min/max loop count; the
-		// game picks a random value in [min, max) (min must be < max).
+	if (isNancy15 && (int16)_numLoops == -1) {
+		// LOOP_RANDOM: a min/max loop count follows; the game picks a random
+		// value in [min, max) (min must be < max).
 		uint16 minLoops = 0, maxLoops = 0;
 		ser.syncAsUint16LE(minLoops);
 		ser.syncAsUint16LE(maxLoops);
-		_firstFrame = maxLoops > minLoops ?
+		_numLoops = maxLoops > minLoops ?
 			(uint16)(minLoops + g_nancy->_randomSource->getRandomNumber(maxLoops - minLoops - 1)) : minLoops;
 	}
 
+	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_lastFrame);
-	ser.syncAsUint16LE(_playDirection);
+
+	_playDirection = orderSentinelFrame(_lastFrame) < orderSentinelFrame(_firstFrame) ?
+		kPlayMovieReverse : kPlayMovieForward;
+
 	ser.syncAsSint16LE(_sceneChange.sceneID);
 	ser.syncAsUint16LE(_sceneChange.frameID);
 
@@ -989,6 +995,94 @@ void PlaySecondaryMovie::updateMask(int viewportFrame) {
 	_mask.setVisible(false);
 }
 
+void PlaySecondaryMovie::updateGraphics() {
+	// A movie that played to its end keeps its last frame on screen after the
+	// record is done, and one whose dependencies stopped holding isn't executed
+	// anymore. Neither follows the viewport through execute(), so keep them
+	// attached to their background frame here. Records that never got to show a
+	// frame, or random movies that were stopped, have nothing to keep on screen.
+	if (_fullFrame.empty() || _randomStopRequested) {
+		return;
+	}
+
+	if (_isDone || !_isActive) {
+		updateViewportFrame();
+	}
+}
+
+void PlaySecondaryMovie::updateViewportFrame() {
+	int newFrame = NancySceneState.getSceneInfo().frameID;
+	if (newFrame == _curViewportFrame) {
+		return;
+	}
+
+	_curViewportFrame = newFrame;
+	int activeFrame = -1;
+	for (uint i = 0; i < _videoDescs.size(); ++i) {
+		if (newFrame == _videoDescs[i].frameID) {
+			activeFrame = i;
+			break;
+		}
+	}
+
+	if (activeFrame != -1) {
+		if (_fullFrame.empty()) {
+			moveTo(_videoDescs[activeFrame].destRect);
+		} else {
+			// Crop the last decoded frame for the new background frame, since a
+			// finished or paused movie won't decode another one.
+			applyVideoDesc(activeFrame);
+		}
+
+		setVisible(true);
+
+		// Nancy13 talkable characters: the character's on-screen box
+		// doubles as a clickable hotspot that opens its conversation.
+		if (_talkSceneID != kNoScene) {
+			_hotspot = _screenPosition;
+			_hasHotspot = true;
+		}
+	} else if (isRandom() && _videoDescs.empty()) {
+		// A random movie with no descriptors isn't tied to a specific
+		// background frame: play it across the full viewport.
+		moveTo(NancySceneState.getViewport().getBounds());
+		setVisible(true);
+		_hasHotspot = false;
+	} else {
+		setVisible(false);
+		_hasHotspot = false;
+	}
+
+	updateMask(newFrame);
+}
+
+void PlaySecondaryMovie::applyVideoDesc(int descID) {
+	// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
+	Common::Rect srcRect = descID != -1 ? _videoDescs[descID].srcRect : Common::Rect();
+	if (srcRect.isEmpty()) {
+		srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
+	}
+
+	Common::Rect destRect = descID != -1 ? _videoDescs[descID].destRect : _screenPosition;
+
+	// The videoDesc's size might be larger than the decoded video (for example, nancy10's
+	// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
+	// reading out-of-bounds during draw. (Adjust destRect too: avoid stretching)
+	const int16 decodedWidth = (int16)_decoder.getWidth();
+	if (srcRect.width() > decodedWidth) {
+		srcRect.setWidth(decodedWidth);
+		destRect.setWidth(decodedWidth);
+	}
+	const int16 decodedHeight = (int16)_decoder.getHeight();
+	if (srcRect.height() > decodedHeight) {
+		srcRect.setHeight(decodedHeight);
+		destRect.setHeight(decodedHeight);
+	}
+
+	_drawSurface.create(_fullFrame, srcRect);
+	moveTo(destRect);
+}
+
 void PlaySecondaryMovie::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
 	RenderActionRecord::onPause(pause);
@@ -1079,41 +1173,7 @@ void PlaySecondaryMovie::execute() {
 			}
 		}
 
-		int newFrame = NancySceneState.getSceneInfo().frameID;
-
-		if (newFrame != _curViewportFrame) {
-			_curViewportFrame = newFrame;
-			int activeFrame = -1;
-			for (uint i = 0; i < _videoDescs.size(); ++i) {
-				if (newFrame == _videoDescs[i].frameID) {
-					activeFrame = i;
-					break;
-				}
-			}
-
-			if (activeFrame != -1) {
-				_screenPosition = _videoDescs[activeFrame].destRect;
-				setVisible(true);
-
-				// Nancy13 talkable characters: the character's on-screen box
-				// doubles as a clickable hotspot that opens its conversation.
-				if (_talkSceneID != kNoScene) {
-					_hotspot = _screenPosition;
-					_hasHotspot = true;
-				}
-			} else if (isRandom() && _videoDescs.empty()) {
-				// A random movie with no descriptors isn't tied to a specific
-				// background frame: play it across the full viewport.
-				_screenPosition = NancySceneState.getViewport().getBounds();
-				setVisible(true);
-				_hasHotspot = false;
-			} else {
-				setVisible(false);
-				_hasHotspot = false;
-			}
-
-			updateMask(newFrame);
-		}
+		updateViewportFrame();
 
 		// We update the decoder here instead of in updateGraphics() to avoid an
 		// edge case in nancy4 (scene 3180) where the very last frame has a frameFlag that should trigger
@@ -1145,31 +1205,7 @@ void PlaySecondaryMovie::execute() {
 			}
 
 			GraphicsManager::copyToManaged(*decodedFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
-
-			// Nancy14 stores an all -1 srcRect to mean "use the whole frame".
-			Common::Rect srcRect = descID != -1 ? _videoDescs[descID].srcRect : Common::Rect();
-			if (srcRect.isEmpty()) {
-				srcRect = Common::Rect(_fullFrame.w, _fullFrame.h);
-			}
-
-			Common::Rect destRect = descID != -1 ? _videoDescs[descID].destRect : _screenPosition;
-
-			// The videoDesc's size might be larger than the decoded video (for example, nancy10's
-			// COR_AceFidgetEars_ANIM, and nancy12's PAR_ArcadeAnimationB); clamp here to avoid
-			// reading out-of-bounds during draw. (Adjust destRect too: avoid stretching)
-			const int16 decodedWidth = (int16)_decoder.getWidth();
-			if (srcRect.width() > decodedWidth) {
-				srcRect.setWidth(decodedWidth);
-				destRect.setWidth(decodedWidth);
-			}
-			const int16 decodedHeight = (int16)_decoder.getHeight();
-			if (srcRect.height() > decodedHeight) {
-				srcRect.setHeight(decodedHeight);
-				destRect.setHeight(decodedHeight);
-			}
-
-			_drawSurface.create(_fullFrame, srcRect);
-			moveTo(destRect);
+			applyVideoDesc(descID);
 
 			_needsRedraw = true;
 

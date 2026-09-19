@@ -26,6 +26,9 @@
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
+
+struct BuildPuzzleData;
+
 namespace Action {
 
 // Nancy 14 reuses AR 166 for a rebuilt assembly puzzle (tea, cookies, parfait,
@@ -34,7 +37,7 @@ namespace Action {
 // being assigned a zone index rather than by matching a rect.
 class BuildPuzzle : public RenderActionRecord {
 public:
-	BuildPuzzle() : RenderActionRecord(7), _buttonPress(98), _cursorItem(99) {}
+	BuildPuzzle() : RenderActionRecord(7), _doneOverlay(0), _counter(97), _buttonPress(98), _cursorItem(99) {}
 	virtual ~BuildPuzzle() {}
 
 	void init() override;
@@ -120,6 +123,7 @@ protected:
 		int16 sourceID = -1;		// index of the definition this piece was cloned from
 		int16 assignedZone = -1;
 		bool inUse = false;			// false for the spare slots kept for clones
+		bool locked = false;		// kept by a zone that marks its pieces placed
 	};
 
 	Common::Path _imageName;
@@ -166,6 +170,15 @@ protected:
 	Common::Rect _startOverHotspot;
 	SoundDescription _startOverSound;
 
+	// Drawn over the zones once every one of them is full.
+	Common::Rect _doneSrcRect;
+	Common::Rect _doneDestRect;
+
+	// With _saveState set, the board is saved after every drop. It is restored when
+	// the puzzle's scene runs again while _resumeFlag is set.
+	byte _saveState = 0;
+	int16 _resumeFlag = -1;
+
 	// Both cleared when the puzzle starts from scratch.
 	int16 _wrongIngredientFlag = -1;	// set once something not in a recipe is dropped in
 	int16 _solvedFlag = -1;
@@ -198,6 +211,10 @@ protected:
 	};
 	HeldButton _heldButton = kNoButton;
 	uint32 _buttonTimerEnd = 0;
+	RenderObject _doneOverlay;
+	RenderObject _counter;
+	int16 _shownCounterValue = -1;
+	Common::Rect _closeupDest;
 	RenderObject _buttonPress;
 
 	int16 _placedCount = 0;
@@ -237,12 +254,22 @@ protected:
 	bool checkSolved() const;
 	// Also updates the shared item state that mirrors the count
 	void setPlacedCount(int16 count);
+	// A piece's shared item state holds how much of it went into the zones,
+	// which the scene's own value tests read once the puzzle is handed in.
+	void setItemValue(int16 itemID, int16 value);
+	void addItemValue(int16 itemID, int16 delta);
 	// Show a button pressed; it acts once its art has been up for a moment
 	void pressButton(HeldButton button);
 	// Hand the puzzle in: the solve scene, or the fail scene when a zone is short
 	void takeOutcome();
 	// Empty every zone and put all the pieces back
 	void resetPuzzle();
+	// Redraw the count when its value changes; a close-up over it hides it
+	void updateCounter();
+	void updateDoneOverlay();
+	// Save the board, and put it back when the puzzle resumes
+	void saveState();
+	void restoreState(const BuildPuzzleData &data);
 
 	// The tea puzzle has four: backing away, plus the teapot, the recipe book
 	// and the sink.

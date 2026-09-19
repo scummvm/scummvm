@@ -153,12 +153,15 @@ protected:
 
 // Draws a single line of text on top of the scene background. The text is a
 // value looked up from the player-data table (used by the nancy12 minigolf
-// scorecard, where each hole's score is a separate record).
+// scorecard, where each hole's score is a separate record). Nancy14 added a
+// digit count that the value is truncated to, and an optional image holding
+// the glyphs for digits 0-9, which replaces the font when present.
 class TextLineOverlay : public RenderActionRecord {
 public:
 	TextLineOverlay() : RenderActionRecord(8) {}
 	virtual ~TextLineOverlay() {}
 
+	void init() override;
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
@@ -167,11 +170,26 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "TextLineOverlay"; }
 
+	Common::String getText() const;
+	void drawText(const Common::String &text);
+	void drawDigitImages(const Common::String &text);
+
+	// Table index that always displays zero
+	static const int16 kZeroTableIndex = 255;
+
 	uint16 _fontID = 0;
 	uint16 _textColor = 0;
 	Common::Point _position;
 	Common::String _textKey;
 	int16 _tableIndex = 0;
+
+	int16 _numDigits = 0;
+	Common::Path _digitImageName;
+	uint16 _digitSpacing = 0;
+	Common::Rect _digitSrcRects[10];
+
+	Graphics::ManagedSurface _digitImage;
+	Common::String _displayedText;
 };
 
 // Nancy14 AR 53. A rollover label: an image that is only drawn while the mouse

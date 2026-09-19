@@ -82,6 +82,9 @@ public:
 	void enableEdges(byte edges);
 
 protected:
+	// Whether the frames of the loaded video need their alpha flattened, see setFrame()
+	enum FrameAlpha { kAlphaUnchecked, kAlphaOpaque, kAlphaNeedsFlattening };
+
 	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 
 	Common::Rect _nonScrollZone;
@@ -96,6 +99,7 @@ protected:
 	uint16 _currentFrame;
 	uint16 _videoFormat;
 	Graphics::ManagedSurface _fullFrame;
+	FrameAlpha _frameAlpha = kAlphaUnchecked;
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
 	Common::Point _stickyCursorPos;

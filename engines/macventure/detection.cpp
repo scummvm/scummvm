@@ -72,8 +72,8 @@ static const DebugChannelDef debugFlagList[] = {
 
 static const PlainGameDescriptor macventureGames[] = {
 	{ "shadowgate", "Shadowgate" },
-	{ "deja_vu", "Deja Vu"},
-	{ "deja_vu2", "Deja Vu II"},
+	{ "deja_vu", "Deja Vu: A Nightmare Comes True!!"},
+	{ "deja_vu2", "Deja Vu II: Lost in Last Vegas"},
 	{ "uninvited", "Uninvited."},
 	{ nullptr, nullptr }
 };

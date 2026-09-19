@@ -45,7 +45,42 @@ void TurningPuzzle::init() {
 	moveTo(screenBounds);
 
 	g_nancy->_resource->loadImage(_imageName, _image);
+
+	if (!_overlaySrcRects.empty() && !_overlayDestRects.empty()) {
+		g_nancy->_resource->loadImage(_overlayImageName, _overlayImage);
+		_overlayFrameIDs.resize(_overlayDestRects.size(), 0);
+
+		if (_randomizeOverlayStart) {
+			for (uint i = 0; i < _overlayFrameIDs.size(); ++i) {
+				_overlayFrameIDs[i] = g_nancy->_randomSource->getRandomNumber(_overlaySrcRects.size() - 1);
+			}
+		}
+
+		_nextOverlayFrameTime = g_nancy->getTotalPlayTime() + _overlayFrameTime;
+	}
+
+	if (_timeLimit) {
+		_timeoutTime = g_nancy->getTotalPlayTime() + (_timeLimit * 1000);
+	}
+
 	registerGraphics();
+}
+
+// Every slot plays the same frames, but each starts wherever init() left it.
+void TurningPuzzle::drawOverlay(bool advanceFrames) {
+	for (uint i = 0; i < _overlayDestRects.size(); ++i) {
+		_drawSurface.blitFrom(_overlayImage, _overlaySrcRects[_overlayFrameIDs[i]], _overlayDestRects[i]);
+
+		if (advanceFrames) {
+			if ((uint)_overlayFrameIDs[i] + 1 < _overlaySrcRects.size()) {
+				++_overlayFrameIDs[i];
+			} else {
+				_overlayFrameIDs[i] = 0;
+			}
+		}
+	}
+
+	_needsRedraw = true;
 }
 
 void TurningPuzzle::updateGraphics() {
@@ -54,6 +89,11 @@ void TurningPuzzle::updateGraphics() {
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		if (!_overlayFrameIDs.empty() && g_nancy->getTotalPlayTime() >= _nextOverlayFrameTime) {
+			drawOverlay(true);
+			_nextOverlayFrameTime = g_nancy->getTotalPlayTime() + _overlayFrameTime;
+		}
+
 		if (_objectCurrentlyTurning == -1 || g_nancy->getTotalPlayTime() <= _nextTurnTime) {
 			return;
 		}
@@ -225,8 +265,32 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 		_hotspots[i].grow(-(int16)_hitInset);
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		Common::String overlayName;
+		readFilename(stream, overlayName);
+
+		if (!overlayName.empty() && overlayName != "NO_FILE") {
+			_overlayImageName = Common::Path(overlayName);
+			readRectArray(stream, _overlaySrcRects, stream.readUint16LE());
+			_randomizeOverlayStart = stream.readByte();
+			_overlayFrameTime = stream.readUint16LE();
+			readRectArray(stream, _overlayDestRects, stream.readUint16LE());
+		}
+	}
+
 	_turnSoundBlock.readData(stream);
 	_solveSoundBlock.readData(stream);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		_timeLimit = stream.readUint16LE();
+
+		if (_timeLimit) {
+			_timeoutScene._sceneChange.sceneID = stream.readUint16LE();
+			_timeoutScene._flag.label = stream.readSint16LE();
+			_timeoutScene._flag.flag = stream.readByte();
+			_timeoutSoundBlock.readData(stream);
+		}
+	}
 }
 
 uint TurningPuzzle::numFacesOf(uint objectID) const {
@@ -384,6 +448,10 @@ void TurningPuzzle::execute() {
 		_currentOrder = _startPositions;
 		drawAllObjects();
 
+		if (!_overlayFrameIDs.empty()) {
+			drawOverlay(false);
+		}
+
 		NancySceneState.setNoHeldItem();
 
 		_state = kRun;
@@ -404,6 +472,14 @@ void TurningPuzzle::execute() {
 				_solveState = kWaitForSound;
 				_shouldSetSolveFlag = true;
 			}
+			_objectCurrentlyTurning = -1;
+			_turnFrameID = 0;
+		} else if (_timeLimit && g_nancy->getTotalPlayTime() > _timeoutTime) {
+			// Out of time: the puzzle plays its own sound, then sends the player elsewhere.
+			_timedOut = true;
+			_state = kActionTrigger;
+			_solveSound = playSoundBlock(_timeoutSoundBlock);
+			_solveState = kWaitForSound;
 			_objectCurrentlyTurning = -1;
 			_turnFrameID = 0;
 		}
@@ -440,7 +516,9 @@ void TurningPuzzle::execute() {
 			// the flag is only set here: setting it as soon as the puzzle is solved can
 			// invalidate this record's own dependencies, which stops it from being executed
 			// again before it ever reaches this point.
-			if (g_nancy->getGameType() >= kGameTypeNancy13 || _shouldSetSolveFlag) {
+			if (_timedOut) {
+				_timeoutScene.execute();
+			} else if (g_nancy->getGameType() >= kGameTypeNancy13 || _shouldSetSolveFlag) {
 				_solveScene.execute();
 			} else {
 				NancySceneState.changeScene(_solveScene._sceneChange);

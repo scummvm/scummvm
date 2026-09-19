@@ -132,6 +132,8 @@ public:
 		kNancy13PuzzleRotateCCW		= 26,
 		kNancy13PuzzleDragHand		= 28,
 		kNancy13PuzzleDropHand		= 29,
+		kNancy13PuzzleMoveUp		= 30,
+		kNancy13PuzzleMoveDown		= 31,
 		kNancy13PuzzleArrow			= 34
 	};
 

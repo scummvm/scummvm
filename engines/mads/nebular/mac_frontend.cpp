@@ -45,7 +45,7 @@ static void runAnimViewContent(RexNebularEngine &engine,
 		const char *resource) {
 	AnimView::Presentation presentation;
 	presentation.bufferHeight = 200;
-	presentation.drawBoundaryLines = false;
+	presentation.boundaryLines = AnimView::kBoundaryLinesHidden;
 	presentation.serviceFramesInline = true;
 
 	engine.getScreen()->clear();

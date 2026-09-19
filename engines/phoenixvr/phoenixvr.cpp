@@ -317,7 +317,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 		_levels.push_back({"level4", "Level 4"});
 		_levels.push_back({"level5", "Level 5"});
 		setNextLevel();
-	} else if (gameIdMatches("pharaoncurse")) {
+	} else if (gameIdMatches("pharaohcurse")) {
 		Common::INIFile file;
 		Common::String filename((_gameDescription->flags & ADGF_DEMO) ? "demo.wbm" : "pharaohs.wbm");
 		Common::ScopedPtr<Common::SeekableReadStream> stream(open(filename));
@@ -452,7 +452,7 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 Common::String PhoenixVREngine::getLevelScript(const Level &level) const {
 	auto mainScript = gameIdMatches("amerzone") ? "amerzone" : "script";
 	Common::String script = Common::String::format("%s\\%s.lst", level.path.c_str(), mainScript);
-	if (!gameIdMatches("pharaoncurse") || SearchMan.hasFile(Common::Path(script, '\\')))
+	if (!gameIdMatches("pharaohcurse") || SearchMan.hasFile(Common::Path(script, '\\')))
 		return script;
 
 	if (level.name.equalsIgnoreCase("Menu"))

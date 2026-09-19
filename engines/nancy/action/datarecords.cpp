@@ -129,6 +129,12 @@ void SetValue::execute() {
 
 	uint numSingleValues = playerTable->getNumSingleValues();
 
+	auto *bootSummary = GetEngineData(BSUM);
+	if (bootSummary && bootSummary->endOfDayFlag != kEvNoEvent && _index == bootSummary->dayValueIndex) {
+		// Writing to the day value sends the player to bed
+		NancySceneState.requestSleep();
+	}
+
 	if (_index < numSingleValues) {
 		// Single values
 		int16 curValue = playerTable->getSingleValue(_index);
@@ -170,10 +176,10 @@ void SetValueCombo::execute() {
 	playerTable->setComboValue(_valueIndex - numSingleValues, 0);
 
 	for (uint i = 0; i < _indices.size(); ++i) {
-		if (_indices[i] != kNoTableIndex) {
+		if (_indices[i] != playerTable->getNoIndex()) {
 			float valueToAdd = 0;
 
-			if (_indices[i] == 100) { // ACTUAL_VALUE
+			if (_indices[i] == playerTable->getLiteralIndex()) {
 				valueToAdd = _percentages[i];
 			} else {
 				if (_indices[i] < numSingleValues) {
@@ -240,6 +246,12 @@ void ValueTest::execute() {
 		testedValue = playerTable->getComboValue(_valueIndex - numSingleValues);
 	}
 
+	if (testedValue == (float)kNoTableValue) {
+		// Nothing to test until the value gets set
+		finishExecution();
+		return;
+	}
+
 	// Pick which values we will test against, depending on the _testType param
 	Common::Array<byte> testedIndices;
 	switch (_testType) {
@@ -251,7 +263,7 @@ void ValueTest::execute() {
 
 		break;
 	case kTestAllCombo:
-		testedIndices.resize(g_nancy->getGameType() == kGameTypeNancy8 ? 20 : 10);
+		testedIndices.resize(playerTable->getNumComboValues());
 		for (uint i = 0; i < testedIndices.size(); ++i) {
 			testedIndices[i] = i + numSingleValues;
 		}
@@ -266,7 +278,12 @@ void ValueTest::execute() {
 	bool satisfied = false;
 
 	for (uint i = 0; i < testedIndices.size(); ++i) {
-		if (testedIndices[i] == kNoTableIndex) {
+		if (testedIndices[i] == playerTable->getNoIndex()) {
+			continue;
+		}
+
+		if ((_testType == kTestAllSingle || _testType == kTestAllCombo) && testedIndices[i] == _valueIndex) {
+			// Don't test the value against itself
 			continue;
 		}
 
@@ -320,6 +337,21 @@ void ValueTest::execute() {
 	}
 
 	finishExecution();
+}
+
+Common::String EventFlags::getRecordExtraInfo() const {
+	Common::String info;
+	for (uint i = 0; i < ARRAYSIZE(_flags.descs); ++i) {
+		const FlagDescription &desc = _flags.descs[i];
+		if (desc.label == kFlagNoLabel) {
+			continue;
+		}
+
+		info += Common::String::format("%sflag %d, %s -> %s", info.empty() ? "" : "; ", desc.label,
+			g_nancy->getEventFlagName(desc.label).c_str(), desc.flag == g_nancy->_true ? "true" : "false");
+	}
+
+	return info;
 }
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {

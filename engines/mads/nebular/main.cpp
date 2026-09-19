@@ -304,8 +304,16 @@ static void run_full_frame_animview(RexNebularEngine *engine,
 		const char *resource) {
 	if (g_engine->getPlatform() == Common::kPlatformMacintosh)
 		MacFrontend::runAnimView(*engine, resource);
-	else
-		AnimView::animview_main(resource);
+	else {
+		AnimView::Presentation presentation;
+		presentation.bufferHeight = 0;
+		presentation.boundaryLines = AnimView::kBoundaryLinesHidden;
+		presentation.serviceFramesInline = false;
+		if (ConfMan.hasKey("animview_boundary_lines"))
+			presentation.boundaryLines = ConfMan.getBool("animview_boundary_lines") ?
+				AnimView::kBoundaryLinesShown : AnimView::kBoundaryLinesHidden;
+		AnimView::animview_main(resource, presentation);
+	}
 }
 
 static void run_full_frame_textview(RexNebularEngine *engine,

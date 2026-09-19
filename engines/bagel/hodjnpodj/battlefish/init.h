@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef BAGEL_INIT_H
+#define BAGEL_INIT_H
+
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 
@@ -31,3 +34,5 @@ extern HWND FAR PASCAL RunBFish(HWND hParentWnd, LPGAMESTRUCT lpGameInfo);
 } // namespace Battlefish
 } // namespace HodjNPodj
 } // namespace Bagel
+
+#endif // BAGEL_INIT_H

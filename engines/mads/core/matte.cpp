@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "mads/core/general.h"
 #include "mads/core/sprite.h"
 #include "mads/core/buffer.h"
@@ -456,14 +457,19 @@ void filter_matte_list(MattePtr matte, int size, int base_index) {
 	}
 }
 
-static void matte_quick_from_black(byte *special_pal, int ticks) {
+static void matte_quick_from_black(byte *special_pal, int ticks,
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks) {
 	int going;
+	int step = 0;
+	int fade_steps = 1;
 	byte *source;
 	byte *dest;
 	byte *special;
 	byte increments[768];
-	long fade_clock;
+	long fade_clock = 0;
 	long now_clock;
+	MagicFadePacer fade_pacer;
 
 	source = &master_palette[0].r;
 	special = increments;
@@ -475,11 +481,21 @@ static void matte_quick_from_black(byte *special_pal, int ticks) {
 		if (inc == 0)
 			inc = 1;
 		special[i] = inc;
+		if (source[i])
+			fade_steps = MAX(fade_steps,
+				((int)source[i] + inc - 1) / inc);
+	}
+
+	if (fade_step_rate > 0) {
+		magic_wait_for_fade_start(completion_deadline, fade_steps,
+			fade_step_rate, minimum_black_ticks);
+		magic_fade_pacer_init(fade_pacer);
 	}
 
 	do {
 		going = false;
-		fade_clock = timer_read_600() + ticks;
+		if (fade_step_rate <= 0)
+			fade_clock = timer_read_600() + ticks;
 
 		for (int i = 0; i < 768; i++) {
 			byte current = dest[i];  // current fading value (starts at black)
@@ -499,14 +515,38 @@ static void matte_quick_from_black(byte *special_pal, int ticks) {
 
 		mcga_setpal((Palette *)special_pal);
 
-		do {
-			now_clock = timer_read_600();
-		} while (now_clock < fade_clock);
+		if (fade_step_rate > 0) {
+			if (g_engine->hasMacintoshInterface())
+				g_system->updateScreen();
+			else
+				g_engine->getScreen()->update();
+
+			magic_fade_pacer_wait(fade_pacer, step, fade_step_rate);
+		} else {
+			do {
+				now_clock = timer_read_600();
+			} while (now_clock < fade_clock);
+		}
+
+		++step;
 
 	} while (going);
 }
 
-static void matte_special_effect(int special_effect, int full_screen) {
+static void matte_restore_boundary_lines(Buffer *work_screen,
+		int boundary_line_color) {
+	if (boundary_line_color < 0 || !viewing_at_y)
+		return;
+
+	g_engine->getScreen()->hLine(0, viewing_at_y - 2, video_x - 1,
+		boundary_line_color);
+	g_engine->getScreen()->hLine(0, viewing_at_y + work_screen->y + 1,
+		video_x - 1, boundary_line_color);
+}
+
+static void matte_special_effect(int special_effect, int full_screen,
+		bool full_fade_in, int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	int  count;
 	int  pixel_rate;
 	byte *background_swap;
@@ -541,7 +581,8 @@ static void matte_special_effect(int special_effect, int full_screen) {
 
 		if (special_effect == MATTE_FX_FADE_THRU_BLACK) {
 			mcga_getpal(&special_pal);
-			magic_fade_to_grey(special_pal, NULL, 0, 256, 0, 1, 1, 16);
+			magic_fade_to_grey(special_pal, NULL, 0, 256, 0, 1,
+				1, 16, fade_step_rate);
 			buffer_fill(scr_live, 0);
 		}
 
@@ -551,8 +592,17 @@ static void matte_special_effect(int special_effect, int full_screen) {
 		video_update(work_screen, 0, 0,
 			viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		if (special_effect == MATTE_FX_FADE_THRU_BLACK)
+			matte_restore_boundary_lines(work_screen, boundary_line_color);
 
-		matte_quick_from_black(&special_pal[0].r, 1);
+		if (full_fade_in)
+			magic_fade_from_grey(&special_pal[0], master_palette,
+				0, 256, 0, 1, 1, 16, fade_step_rate,
+				completion_deadline, minimum_black_ticks);
+		else
+			matte_quick_from_black(&special_pal[0].r, 1,
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks);
 		break;
 
 	case MATTE_FX_CORNER_LOWER_LEFT:
@@ -597,6 +647,9 @@ static void matte_special_effect(int special_effect, int full_screen) {
 		buffer_fill(scr_live, 0);
 		video_update(work_screen, 0, 0, viewing_at_x, viewing_at_y,
 			work_screen->x, work_screen->y);
+		matte_restore_boundary_lines(work_screen, boundary_line_color);
+		if (boundary_line_color >= 0)
+			g_engine->getScreen()->update();
 		mcga_setpal(&master_palette);
 		break;
 
@@ -616,7 +669,9 @@ static void matte_special_effect(int special_effect, int full_screen) {
 	}
 }
 
-void matte_frame(int special_effect, int full_screen) {
+void matte_frame(int special_effect, int full_screen, bool full_fade_in,
+		int fade_step_rate, long *completion_deadline,
+		int minimum_black_ticks, int boundary_line_color) {
 	Matte *matte;
 	Image *image;
 	int id;
@@ -924,7 +979,9 @@ void matte_frame(int special_effect, int full_screen) {
 			}
 
 		} else {
-			matte_special_effect(special_effect, full_screen);
+			matte_special_effect(special_effect, full_screen, full_fade_in,
+				fade_step_rate, completion_deadline,
+				minimum_black_ticks, boundary_line_color);
 			sound_queue_flush();
 		}
 	}

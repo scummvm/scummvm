@@ -23,6 +23,7 @@
 #define NANCY_IFF_H
 
 #include "common/array.h"
+#include "common/str.h"
 
 namespace Common {
 struct IFFChunk;
@@ -41,20 +42,29 @@ public:
 
 	void list(Common::Array<Common::String> &nameList) const;
 
+	// The files named in this IFF's USE chunks
+	const Common::Array<Common::String> &getIncludes() const { return _includes; }
+	// The included file a chunk came from; empty for the IFF's own chunks
+	Common::String getChunkSource(const Common::String &id, uint index = 0) const;
+
 private:
 	static Common::String idToString(uint32 id);
 	static uint32 stringToId(const Common::String &s);
 
 	bool callback(Common::IFFChunk &chunk);
+	void resolveIncludes();
 
 	struct Chunk {
 		uint32 id;
 		byte *buf;
 		uint32 size;
+		double key;				// ordering key, see resolveIncludes()
+		Common::String source;
 	};
 
 	const Common::SeekableReadStream *_stream;
 	Common::Array<Chunk> _chunks;
+	Common::Array<Common::String> _includes;
 	uint32 _nextDATAChunk;
 };
 
