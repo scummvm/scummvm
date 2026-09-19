@@ -48,6 +48,7 @@
 #include "buried/resources.h"
 #include "buried/scene_view.h"
 #include "buried/sound.h"
+#include "buried/subtitle_manager.h"
 #include "buried/video_window.h"
 #include "buried/window.h"
 
@@ -58,6 +59,7 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_mainEXE = nullptr;
 	_library = nullptr;
 	_sound = nullptr;
+	_subtitles = nullptr;
 	_timerSeed = 0;
 	_mainWindow = nullptr;
 	_focusedWindow = nullptr;
@@ -82,6 +84,7 @@ BuriedEngine::~BuriedEngine() {
 	delete _mainEXE;
 	delete _library;
 	delete _sound;
+	delete _subtitles;
 
 	// The queue should be empty since all windows destroy their messages
 }
@@ -90,6 +93,7 @@ Common::Error BuriedEngine::run() {
 	setDebugger(new BuriedConsole(this));
 
 	ConfMan.registerDefault("skip_support", true);
+	ConfMan.registerDefault("subtitles", false);
 	_allowVideoSkip = ConfMan.getBool("skip_support");
 
 	if (isTrueColor()) {
@@ -130,6 +134,7 @@ Common::Error BuriedEngine::run() {
 
 	_gfx = new GraphicsManager(this);
 	_sound = new SoundManager(this);
+	_subtitles = new SubtitleManager(this);
 	_mainWindow = new FrameWindow(this);
 	_mainWindow->showWindow(Window::kWindowShow);
 
@@ -462,6 +467,10 @@ void BuriedEngine::yield(VideoWindow *video, int soundId) {
 		processAudioVideoSkipMessages(video, soundId);
 
 	_gfx->updateScreen();
+	// Sometimes, the game yields while a character is speaking to block UI interaction. Subtitles must be updated
+	// here if the dialog that caused the yield requires more than just one subtitle card. Otherwise, only the first
+	// card would be shown.
+	_subtitles->forceRepaintSubtitles();
 	_system->delayMillis(10);
 
 	_yielding = false;
