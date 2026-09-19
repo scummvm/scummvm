@@ -284,10 +284,10 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 
 		// Set font colors
-		font2._fontColors[0] = 0;
-		font2._fontColors[1] = 27;
-		font2._fontColors[2] = 28;
-		font2._fontColors[3] = 29;
+		Font::_fontColors[0] = 0;
+		Font::_fontColors[1] = 27;
+		Font::_fontColors[2] = 28;
+		Font::_fontColors[3] = 29;
 
 		int xp = _vm->_screen->_printOrg.x;
 		if (_type == kBoxTypeFileDialog)
@@ -527,10 +527,10 @@ void BubbleBox::doBox_v2(int item, int box) {
 	// Handle drawing title
 	int titleWidth = _vm->_fonts._font2->stringWidth(_bubbleDisplStr);
 	const Font &font2 = *_vm->_fonts._font2;
-	font2._fontColors[0] = 0;
-	font2._fontColors[1] = 3;
-	font2._fontColors[2] = 2;
-	font2._fontColors[3] = 1;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 3;
+	Font::_fontColors[2] = 2;
+	Font::_fontColors[3] = 1;
 	font2.drawString(_vm->_screen, _bubbleDisplStr, Common::Point(
 		_bounds.left + (_bounds.width() / 2) - (titleWidth / 2), _bounds.top + 1));
 

@@ -282,10 +282,10 @@ void InventoryManager::outlineIcon(int itemIndex) {
 	const Font &font = *_vm->_fonts._font2;
 	int strWidth = font.stringWidth(s);
 
-	font._fontColors[0] = 0;
-	font._fontColors[1] = 10;
-	font._fontColors[2] = 11;
-	font._fontColors[3] = 12;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 10;
+	Font::_fontColors[2] = 11;
+	Font::_fontColors[3] = 12;
 	font.drawString(&screen, s, Common::Point((screen.w - strWidth) / 2, 184));
 }
 

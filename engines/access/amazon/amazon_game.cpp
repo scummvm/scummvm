@@ -401,18 +401,18 @@ void AmazonEngine::helpTitle() {
 	AmazonResources &res = *(AmazonResources *)_res;
 	int width = _fonts._font2->stringWidth(_bubbleBox->_bubbleTitle);
 	int posX = 160 - (width / 2);
-	_fonts._font2->_fontColors[0] = 0;
-	_fonts._font2->_fontColors[1] = 33;
-	_fonts._font2->_fontColors[2] = 34;
-	_fonts._font2->_fontColors[3] = 35;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 33;
+	Font::_fontColors[2] = 34;
+	Font::_fontColors[3] = 35;
 	_fonts._font2->drawString(_screen, _bubbleBox->_bubbleTitle, Common::Point(posX, 24));
 
 	width = _fonts._font2->stringWidth(res.HELPLVLTXT[_helpLevel]);
 	posX = 160 - (width / 2);
-	_fonts._font2->_fontColors[0] = 0;
-	_fonts._font2->_fontColors[1] = 10;
-	_fonts._font2->_fontColors[2] = 11;
-	_fonts._font2->_fontColors[3] = 12;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 10;
+	Font::_fontColors[2] = 11;
+	Font::_fontColors[3] = 12;
 	_fonts._font2->drawString(_screen, res.HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
 
 	Common::String iqText = "IQ: ";
@@ -433,10 +433,10 @@ void AmazonEngine::helpTitle() {
 
 	width = _fonts._font2->stringWidth(iqText);
 	posX = 160 - (width / 2);
-	_fonts._font2->_fontColors[0] = 0;
-	_fonts._font2->_fontColors[1] = 10;
-	_fonts._font2->_fontColors[2] = 11;
-	_fonts._font2->_fontColors[3] = 12;
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 10;
+	Font::_fontColors[2] = 11;
+	Font::_fontColors[3] = 12;
 	_fonts._font2->drawString(_screen, iqText, Common::Point(posX, 44));
 }
 
@@ -453,10 +453,10 @@ void AmazonEngine::drawHelpText(const Common::String &msg) {
 		lastLine = _fonts._font2->getLine(lines, _screen->_maxChars * 6, line, width);
 
 		// Set font colors
-		_fonts._font2->_fontColors[0] = 0;
-		_fonts._font2->_fontColors[1] = 27;
-		_fonts._font2->_fontColors[2] = 28;
-		_fonts._font2->_fontColors[3] = 29;
+		Font::_fontColors[0] = 0;
+		Font::_fontColors[1] = 27;
+		Font::_fontColors[2] = 28;
+		Font::_fontColors[3] = 29;
 
 		_fonts._font2->drawString(_screen, line, _screen->_printOrg);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 8);
@@ -600,7 +600,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_fonts._charSet._lo = 1;
 	_fonts._charSet._hi = 10;
 	_fonts._charFor._lo = 55;
-	_fonts._charFor._hi = 0xFF;
+	_fonts._charFor._hi = 255;
 	_screen->_maxChars = 43;
 	_screen->_printOrg = Common::Point(31, 77);
 	_screen->_printStart = Common::Point(31, 77);

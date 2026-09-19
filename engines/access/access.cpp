@@ -363,10 +363,10 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 		bool lastLine = _fonts._font2->getLine(lines, s->_maxChars * 6, line, width);
 
 		// Set font colors
-		_fonts._font2->_fontColors[0] = 0;
-		_fonts._font2->_fontColors[1] = 28;
-		_fonts._font2->_fontColors[2] = 29;
-		_fonts._font2->_fontColors[3] = 30;
+		Font::_fontColors[0] = 0;
+		Font::_fontColors[1] = 28;
+		Font::_fontColors[2] = 29;
+		Font::_fontColors[3] = 30;
 		_fonts._font2->drawString(s, line, s->_printOrg);
 
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
