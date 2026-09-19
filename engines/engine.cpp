@@ -829,7 +829,13 @@ void Engine::openMainMenuDialog() {
 	if (hasVKeyb)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.setRecordModalDialog(true);
+#endif
 	runDialog(*_mainMenuDialog);
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.setRecordModalDialog(false);
+#endif
 
 	if (hasVKeyb)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);

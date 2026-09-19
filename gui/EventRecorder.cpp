@@ -73,6 +73,7 @@ EventRecorder::EventRecorder() {
 	_fakeTimer = 0;
 	_savedState = false;
 	_acquireCount = 0;
+	_recordModalDialog = false;
 	_needcontinueGame = false;
 	_temporarySlot = 0;
 	_realSaveManager = nullptr;
@@ -90,7 +91,7 @@ EventRecorder::~EventRecorder() {
 }
 
 void EventRecorder::deinit() {
-	if (!_initialized) {
+	if (!_initialized && !_playbackFile && !_recordFile) {
 		return;
 	}
 	setFileHeader();
@@ -112,10 +113,12 @@ void EventRecorder::deinit() {
 	if (_playbackFile) {
 		_playbackFile->close();
 		delete _playbackFile;
+		_playbackFile = nullptr;
 	}
 	if (_recordFile) {
 		_recordFile->close();
 		delete _recordFile;
+		_recordFile = nullptr;
 	}
 	switchMixer();
 	switchTimerManagers();
@@ -1000,4 +1003,3 @@ void EventRecorder::showImGui() {
 } // End of namespace GUI
 
 #endif // ENABLE_EVENTRECORDER
-
