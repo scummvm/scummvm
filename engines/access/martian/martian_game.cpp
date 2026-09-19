@@ -401,22 +401,6 @@ Common::Error MartianEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_ask[i]);
 	}
 
-	/*
-	TODO: Do any of these need to be synchronized here?
-	Mostly involved in modal dialogs.
-	_startTravelItem
-	_startTravelBox
-	_startAboutItem
-	_startAboutBox
-	_byte26CB5
-	_bcnt
-	_boxDataStart
-	_boxDataEnd
-	_boxSelectY
-	_boxSelectYOld
-	_numLines
-	*/
-
 	return Common::kNoError;
 }
 

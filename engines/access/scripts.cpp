@@ -237,15 +237,12 @@ void Scripts::charLoop() {
 }
 
 void Scripts::clearWatch() {
-	_vm->_events->hideCursor();
 	_vm->_screen->_orgX1 = 128;
 	_vm->_screen->_orgY1 = 57;
 	_vm->_screen->_orgX2 = 228;
 	_vm->_screen->_orgY2 = 106 + 1;
 	_vm->_screen->_lColor = 0;
 	_vm->_screen->drawRect();
-
-	_vm->_events->showCursor();
 }
 
 void Scripts::printWatch() {
@@ -497,9 +494,7 @@ void Scripts::doCmdPrint_v1(const Common::String &msg) {
 	_vm->_screen->_printStart = Common::Point(20, 32);
 	_vm->_bubbleBox->placeBubble(msg);
 	_vm->_events->waitKeyActionMouse();
-	_vm->_events->hideCursor();
 	_vm->_screen->restoreBlock();
-	_vm->_events->showCursor();
 	findNull();
 }
 

@@ -132,12 +132,10 @@ void MartianDuct::drawArrowSprites() {
 }
 
 void MartianDuct::drawArrowSprites2() {
-	_vm->_events->hideCursor();
 	_vm->_screen->plotImage(_vm->_objectsTable[20], 14, Common::Point(16, 0x58));
 	if (_mapLoc > 3 && _mapLoc < 13) {
 		_vm->_screen->plotImage(_vm->_objectsTable[20], 13, Common::Point(17, 0x59));
 	}
-	_vm->_events->showCursor();
 }
 
 void MartianDuct::clearWorkScreenArea() {

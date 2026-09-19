@@ -69,7 +69,6 @@ void Room::freeTileData() {
 
 void Room::clearCamera() {
 	_vm->_player->_scrollFlag = true;
-	_vm->_events->hideCursor();
 
 	_vm->_screen->_orgX1 = 48;
 	_vm->_screen->_orgY1 = 24;
@@ -77,8 +76,6 @@ void Room::clearCamera() {
 	_vm->_screen->_orgY2 = 152;
 	_vm->_screen->_lColor = 0;
 	_vm->_screen->drawRect();
-
-	_vm->_events->showCursor();
 
 	_vm->_events->_vbCount = 4;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
