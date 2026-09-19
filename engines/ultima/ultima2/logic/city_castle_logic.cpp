@@ -26,6 +26,14 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Logic {
 
+bool CityCastleLogic::shopkeeperAt(int x, int y) const {
+	if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT)
+		return false;
+
+	int slot = findTargetMonster(x, y);
+	return slot >= 0 && _G(map)._monsters.tileType(slot) == Data::TILE_SHOPKEEP;
+}
+
 void CityCastleLogic::exitToOverworld() {
 	Data::Savegame &sg = _G(savegame);
 	sg._mapX = sg._overworldReturnX;
@@ -193,8 +201,7 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 		(_G(map).tileAt(x1, y1) >= Data::TILE_A || _G(map).tileAt(x1, y1) == Data::TILE_EMPTY_COUNTER);
 
 	int x2 = sg._mapX + dx * 2, y2 = sg._mapY + dy * 2;
-	bool foundShopkeep = counterFound && x2 >= 0 && x2 < Data::MAP_WIDTH && y2 >= 0 && y2 < Data::MAP_HEIGHT &&
-		_G(map).tileAt(x2, y2) == Data::TILE_SHOPKEEP;
+	bool foundShopkeep = counterFound && shopkeeperAt(x2, y2);
 
 	auto noLuck = [this]() {
 		writeString("NO LUCK!\n");
@@ -519,10 +526,7 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 		return true;
 	}
 
-	int x2 = sg._mapX + dx * 2, y2 = sg._mapY + dy * 2;
-	Data::TileId t2 = (x2 >= 0 && x2 < Data::MAP_WIDTH && y2 >= 0 && y2 < Data::MAP_HEIGHT) ?
-		_G(map).tileAt(x2, y2) : Data::TILE_WATER;
-	if (t2 != Data::TILE_SHOPKEEP) {
+	if (!shopkeeperAt(sg._mapX + dx * 2, sg._mapY + dy * 2)) {
 		writeString("FUNNY, NO RESPONSE!\n");
 		return true;
 	}

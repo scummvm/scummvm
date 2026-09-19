@@ -51,6 +51,17 @@ void Map::load(int mapEra, int mapType) {
 
 	_monsters.load(mapEra, mapType);
 
+	// The files store each monster's tile baked into the map; restore the
+	// terrain underneath, since monsters are tracked and drawn separately
+	for (int slot = 0; slot < MAP_MONSTER_COUNT; ++slot) {
+		if (!_monsters.isActive(slot))
+			continue;
+
+		int x = _monsters._mapX[slot], y = _monsters._mapY[slot];
+		if (x < MAP_WIDTH && y < MAP_HEIGHT && _tiles[y][x] == _monsters.tileType(slot))
+			_tiles[y][x] = (TileId)(_monsters._glyphTile[slot] / 4);
+	}
+
 	if (mapType == 0)
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::OverworldLogic());
 	else

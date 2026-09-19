@@ -43,6 +43,11 @@ private:
 	int _offerTargetSlot = -1;
 
 	/**
+	 * Returns true if a shopkeeper is currently standing at (x,y)
+	 */
+	bool shopkeeperAt(int x, int y) const;
+
+	/**
 	 * Returns to the overworld position saved when this local map was entered
 	 */
 	void exitToOverworld();
