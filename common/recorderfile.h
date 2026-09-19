@@ -44,6 +44,7 @@ enum RecorderEventType {
 	kRecorderEventTypeTimer = 1,
 	kRecorderEventTypeTimeDate = 2,
 	kRecorderEventTypeScreenUpdate = 3,
+	kRecorderEventTypePoll = 4,
 };
 
 struct RecorderEvent : Event {

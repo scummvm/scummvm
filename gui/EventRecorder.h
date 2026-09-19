@@ -144,6 +144,9 @@ public:
 	void setRedraw(bool redraw) {
 		_needRedraw = redraw;
 	}
+	void setRecordModalDialog(bool record) {
+		_recordModalDialog = record;
+	}
 
 	void registerMixerManager(MixerManager *mixerManager);
 	void registerTimerManager(DefaultTimerManager *timerManager);
@@ -158,7 +161,8 @@ public:
 		assert(_acquireCount >= 0);
 		if (_acquireCount == 0) {
 			_savedState = _initialized;
-			_initialized = false;
+			if (!_recordModalDialog)
+				_initialized = false;
 		}
 		_acquireCount += 1;
 	}
@@ -198,11 +202,13 @@ private:
 
 	bool pollEvent(Common::Event &ev) override;
 	bool notifyEvent(const Common::Event &event) override;
+	void notifyPoll() override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;
 	TimeDate _lastTimeDate;
 	bool _savedState;
 	int _acquireCount;
+	bool _recordModalDialog;
 	bool _needcontinueGame;
 	int _temporarySlot;
 	Common::String _author;
@@ -252,11 +258,13 @@ private:
 	void checkRecordedMD5();
 	void deleteTemporarySave();
 	void updateFakeTimer(uint32 millis);
+	void postPlaybackQuit();
 	volatile RecordMode _recordMode;
 	Common::String _recordFileName;
 	bool _fastPlayback;
 	bool _needRedraw;
 	bool _processingMillis;
+	bool _playbackQuitPosted;
 };
 
 } // End of namespace GUI
