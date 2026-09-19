@@ -29,9 +29,9 @@
 namespace Nancy {
 namespace Action {
 
-// Light-reflection puzzle introduced in Nancy12 (AR 163). The player rotates a
-// set of mirrors within their angle limits to route a beam of light from a
-// source to a target.
+// Light-reflection puzzle introduced in Nancy12 (AR 163). The player turns a set
+// of mirrors within their angle limits to route a beam of light from a source to
+// a target zone.
 class MirrorLightPuzzle : public RenderActionRecord {
 public:
 	MirrorLightPuzzle() : RenderActionRecord(7) {}
@@ -55,6 +55,17 @@ protected:
 		double angle = 0.0;		// current angle (radians)
 		double minAngle = 0.0;	// rotation limits (min == max == fixed mirror)
 		double maxAngle = 0.0;
+		double step = 0.0;		// signed turn per tick; flips when a turn would cross a limit
+
+		bool isRotatable() const { return minAngle != maxAngle; }
+	};
+
+	// An overlay zone's looping animation, drawn while the beam ends inside the zone.
+	struct ZoneOverlay {
+		uint zoneIndex = 0;
+		Graphics::ManagedSurface image;
+		uint frame = 0;
+		uint32 nextFrameTime = 0;
 	};
 
 	// File data
@@ -63,7 +74,10 @@ protected:
 	int16 _beamAngle = 0;		// initial beam angle (degrees)
 	int32 _beamOriginX = 0;
 	int32 _beamOriginY = 0;
-	int16 _glowRadius = 0;		// beam-glow half-width in pixels
+	byte _beamColor[3] = {};	// r, g, b
+	int16 _beamHalfWidth = 0;	// the beam is drawn this many pixels to each side of its center line
+	double _beamCenterOpacity = 0.0;
+	double _beamEdgeOpacity = 0.0;
 
 	// Mirror sprite frames - the mirror appearance at each of kNumFrames angles
 	// (full turn split evenly), indexed by angle.
@@ -73,25 +87,31 @@ protected:
 
 	Common::Array<ActionZone> _zones;
 
-	// Derived from the detector zone (the SpecialEffect zone at the bulb): its
-	// rect is the target the beam must reach, its specialEffectId is the win scene.
-	Common::Rect _detectorRect;
-	SceneChangeDescription _winScene;
-
 	// Runtime state
-	int16 _pickedUpMirror = -1;
+	int16 _hoveredMirror = -1;
+	int _rotateDir = 0;					// +1 while the left button turns a mirror, -1 for the right one
+	uint32 _nextRotateTime = 0;
+	Common::Array<bool> _zoneOccupied;	// per zone: the beam currently ends inside it
+	int _winZone = -1;					// the scene-change zone the beam reached
 	bool _solved = false;
-	uint32 _solvedTime = 0;					// ms timestamp when solved, for the win hold
 	Common::Array<Common::Point> _beamPath;	// traced beam polyline, in viewport coords
+	Common::Array<ZoneOverlay> _overlays;
 
 	Graphics::ManagedSurface _image;
 
+	bool isAngleWithinLimits(const Mirror &m, double angle) const;
 	uint frameForAngle(double angle) const;
 	void drawMirror(uint index);
-	void rotateMirror(uint index, bool clockwise);
+	void rotateMirror(uint index, int dir);
+	void saveMirrorAngles();
 	void traceBeam();
-	void drawBeamGlow();
+	void updateZones();
+	void blendBeamPixel(int x, int y, double opacity);
+	void drawBeamLine(Common::Point p0, Common::Point p1, double opacity);
+	void drawBeam();
+	void drawOverlays();
 	void redraw();
+	void playSoundBlock(const RandomSoundBlock &block);
 };
 
 } // End of namespace Action

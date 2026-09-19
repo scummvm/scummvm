@@ -171,7 +171,7 @@ void ActionZone::readOverlayZone(Common::SeekableReadStream &stream, bool isNanc
 		stream.skip(4);	// extra int32 vs Nancy12
 	}
 	stream.skip(4);		// int32
-	stream.skip(1);		// byte (loop/play mode)
+	overlayPlayMode = stream.readByte();
 	overlayLayer = stream.readSint32LE();
 }
 
