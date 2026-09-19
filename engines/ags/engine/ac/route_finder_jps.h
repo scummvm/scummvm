@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_ROUTE_FINDER_JPS_H
-#define AGS_ENGINE_AC_ROUTE_FINDER_JPS_H
+#ifndef AGS_ROUTE_FINDER_JPS_H
+#define AGS_ROUTE_FINDER_JPS_H
 
 #include "common/std/queue.h"
 #include "common/std/vector.h"
@@ -196,4 +196,4 @@ inline bool Navigation::Walkable(int x, int y) const {
 
 } // namespace AGS3
 
-#endif
+#endif // AGS_ROUTE_FINDER_JPS_H
