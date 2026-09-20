@@ -92,7 +92,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 		return false;
 	}
 
-	if ((!_G(intangible) && !isWalkable(destTile)) || findTargetMonster(newX, newY) >= 0) {
+	if ((!_G(intangible) && !isWalkable(destTile)) || isOccupied(newX, newY)) {
 		writeString("--INVALID MOVE!\n");
 		return true;
 	}
@@ -123,6 +123,12 @@ void CityCastleLogic::updateCreatures() {
 			int dy = sg._mapY - monsters._mapY[slot];
 			sdx = signByte(dx * 4);
 			sdy = signByte(dy * 4);
+
+			// Hostile monsters below 15 HP flee instead of approaching
+			if (flag == 1 && monsters._spellHP[slot] < 15) {
+				sdx = -sdx;
+				sdy = -sdy;
+			}
 		} else {
 			// Wander: 75% chance to pick a fresh random direction, else
 			// keep going the way it was already headed (kept in _tempX/Y)
@@ -143,7 +149,9 @@ void CityCastleLogic::updateCreatures() {
 		int newX = (monsters._mapX[slot] + sdx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
 		int newY = (monsters._mapY[slot] + sdy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
 
-		if (flag <= 2 && newX == sg._mapX && newY == sg._mapY) {
+		// Only hostile monsters (1) attack; the others (2) merely follow the
+		// player around and stop short of their square
+		if (flag == 1 && newX == sg._mapX && newY == sg._mapY) {
 			++engagedCount;
 
 			int roll = randByte();

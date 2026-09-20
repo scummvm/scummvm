@@ -59,6 +59,11 @@ protected:
 	int findTargetMonster(int x, int y) const;
 
 	/**
+	 * Returns true if any monster, including slot 0, stands at (x,y)
+	 */
+	bool isOccupied(int x, int y) const;
+
+	/**
 	 * Returns true if a monster of the given type can move onto destTile
 	 * at (x,y) - not occupied by another monster, and matching its
 	 * water/land travel requirement

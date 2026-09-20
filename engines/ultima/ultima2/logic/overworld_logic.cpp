@@ -125,7 +125,7 @@ bool OverworldLogic::move(Data::Direction dir) {
 		return false;
 	}
 
-	if ((!_G(intangible) && !isWalkable(destTile)) || findTargetMonster(newX, newY) >= 0) {
+	if ((!_G(intangible) && !isWalkable(destTile)) || isOccupied(newX, newY)) {
 		writeString("--INVALID MOVE!\n");
 		return true;
 	}
@@ -155,7 +155,17 @@ bool OverworldLogic::monsterCanEnter(Data::TileId monsterTile, Data::TileId dest
 	if (monsterTile == Data::TILE_SEA_MONSTER || monsterTile == Data::TILE_SHIP)
 		return destTile == Data::TILE_WATER;
 
-	return isWalkable(destTile) && findTargetMonster(x, y) < 0;
+	return isWalkable(destTile) && !isOccupied(x, y);
+}
+
+bool OverworldLogic::isOccupied(int x, int y) const {
+	Data::MapMonsters &monsters = _G(map)._monsters;
+	for (int slot = 0; slot < Data::MAP_MONSTER_COUNT; ++slot) {
+		if (monsters.isActive(slot) && monsters._mapX[slot] == x && monsters._mapY[slot] == y)
+			return true;
+	}
+
+	return false;
 }
 
 bool OverworldLogic::tryMoveMonster(int slot, int dx, int dy) {
