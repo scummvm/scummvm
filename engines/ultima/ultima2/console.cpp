@@ -38,6 +38,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("hp", WRAP_METHOD(Console, cmdHP));
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
+	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 }
 
 Console::~Console() {
@@ -279,6 +280,48 @@ bool Console::cmdGold(int argc, const char **argv) {
 	_G(savegame)._gold = 9999;
 	g_engine->baseView()->findView("Stats")->draw();
 	debugPrintf("Gold set to 9999\n");
+	return true;
+}
+
+bool Console::cmdInventory(int argc, const char **argv) {
+	Data::Savegame &sg = _G(savegame);
+
+	for (int i = 1; i < Data::ARMOR_COUNT; ++i)
+		sg._armorOwned[i] = 9;
+	for (int i = 1; i < Data::WEAPON_COUNT; ++i)
+		sg._weaponOwned[i] = 9;
+	for (int i = 1; i < Data::SPELL_COUNT; ++i)
+		sg._spellCharges[i] = 99;
+	for (int i = 0; i < Data::ITEM_COUNT; ++i)
+		sg._items[i] = 9;
+
+	sg._torches = 99;
+	sg._keys = 99;
+	sg._thievesTools = 99;
+	sg._enilnoOwned = true;
+	sg._hp = sg._food = sg._gold = 9999;
+	sg._foodTurnCtr = 0;
+
+	// Equip the best that the character's strength and agility allow
+	sg._readiedWeapon = Data::WEAPON_HANDS;
+	for (int i = Data::WEAPON_COUNT - 1; i > 0; --i) {
+		if (i * 8 < sg._agility) {
+			sg._readiedWeapon = (Data::WeaponType)i;
+			break;
+		}
+	}
+
+	sg._readiedArmor = Data::ARMOR_SKIN;
+	for (int i = Data::ARMOR_COUNT - 1; i > 0; --i) {
+		if (i * 8 < sg._strength) {
+			sg._readiedArmor = (Data::ArmorType)i;
+			break;
+		}
+	}
+
+	g_engine->baseView()->findView("Stats")->draw();
+	debugPrintf("Full inventory given; readied %s and %s armour\n",
+		Data::WEAPON_NAMES[sg._readiedWeapon], Data::ARMOR_NAMES[sg._readiedArmor]);
 	return true;
 }
 
