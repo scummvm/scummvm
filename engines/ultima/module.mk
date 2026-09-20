@@ -139,6 +139,7 @@ MODULE_OBJS += \
 	ultima2/views/interactions/direction.o \
 	ultima2/views/interactions/food_shop.o \
 	ultima2/views/interactions/offer_gold.o \
+	ultima2/views/interactions/plane_flight.o \
 	ultima2/views/interactions/pub.o \
 	ultima2/views/interactions/ready_spell.o \
 	ultima2/views/interactions/ready_weapon.o \

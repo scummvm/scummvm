@@ -445,10 +445,13 @@ bool Logic::launch() {
 
 	if (sg._mount == Data::TILE_AIRPLANE) {
 		writeString("LAUNCH--PLANE");
-		if (sg._items[Data::ITEM_BRASS_BUTTON] == 0)
+		if (sg._items[Data::ITEM_BRASS_BUTTON] == 0) {
 			writeString("\nFUNNY THIS PLANE IS\nMISSING A BRASS BUTTON!\n");
-		else
-			writeString("\nNOT YET IMPLEMENTED\n");
+			return true;
+		}
+
+		g_engine->addView("PlaneFlight");
+		return false;
 	} else if (sg._mount == Data::TILE_ROCKET) {
 		writeString("LAUNCH--ROCKET");
 		if (sg._items[Data::ITEM_TRI_LITHIUM] == 0)
