@@ -31,8 +31,13 @@ OfferGold::OfferGold() : Interaction("OfferGold") {
 }
 
 bool OfferGold::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii < '0' || msg.ascii > '9')
+	// Any other key withdraws the offer
+	if (msg.ascii < '0' || msg.ascii > '9') {
+		close();
+		writeString("\n");
+		_G(logic)->resumeTurn();
 		return true;
+	}
 
 	int digit = msg.ascii - '0';
 	writeString("%d\n", digit);

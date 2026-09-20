@@ -59,8 +59,13 @@ void Pub::barkeepSays(int hint) {
 }
 
 bool Pub::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii < '0' || msg.ascii > '9')
+	// Any other key walks out of the pub
+	if (msg.ascii < '0' || msg.ascii > '9') {
+		close();
+		writeString("\n");
+		_G(logic)->resumeTurn();
 		return true;
+	}
 
 	int digit = msg.ascii - '0';
 	writeString("%d\n", digit);

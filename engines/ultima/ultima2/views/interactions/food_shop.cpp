@@ -43,9 +43,6 @@ bool FoodShop::msgFocus(const FocusMessage &msg) {
 }
 
 bool FoodShop::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii == 0)
-		return true;
-
 	close();
 	if (toupper(msg.ascii) != 'Y') {
 		writeString("NO\n");

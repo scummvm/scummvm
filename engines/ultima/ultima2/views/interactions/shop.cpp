@@ -71,7 +71,8 @@ void Shop::finish(const char *message) {
 }
 
 void Shop::chooseItem(int digit) {
-	writeString("%d\n", digit);
+	if (digit >= 0)
+		writeString("%d\n", digit);
 
 	if (!isValidChoice(digit)) {
 		switch (_kind) {
@@ -121,7 +122,9 @@ void Shop::confirm(char key) {
 	switch (_kind) {
 	case WEAPON:
 	case ARMOR:
-		writeString("%c\n", key);
+		if (key >= ' ')
+			writeString("%c", key);
+		writeString("\n");
 		if (!yes) {
 			writeString("OH, WELL.\n");
 		} else if (_G(logic)->trySpendGold(_price)) {
@@ -163,9 +166,9 @@ void Shop::confirm(char key) {
 
 bool Shop::msgKeypress(const KeypressMessage &msg) {
 	if (_state == CHOOSE) {
-		if (msg.ascii >= '0' && msg.ascii <= '9')
-			chooseItem(msg.ascii - '0');
-	} else if (msg.ascii != 0) {
+		// Any non-digit key leaves the shop, the same as an invalid choice
+		chooseItem((msg.ascii >= '0' && msg.ascii <= '9') ? msg.ascii - '0' : -1);
+	} else {
 		confirm(toupper(msg.ascii));
 	}
 

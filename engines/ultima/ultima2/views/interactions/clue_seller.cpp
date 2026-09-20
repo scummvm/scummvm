@@ -52,15 +52,18 @@ bool ClueSeller::msgFocus(const FocusMessage &msg) {
 }
 
 bool ClueSeller::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii < '0' || msg.ascii > '9')
-		return true;
-
-	int digit = msg.ascii - '0';
-	writeString("%d\n", digit);
 	close();
 
-	if (_G(logic)->trySpendGold(digit * 100))
-		writeString("%s\n", CLUES[digit]);
+	// Any other key walks away
+	if (msg.ascii < '0' || msg.ascii > '9') {
+		writeString("\n");
+	} else {
+		int digit = msg.ascii - '0';
+		writeString("%d\n", digit);
+
+		if (_G(logic)->trySpendGold(digit * 100))
+			writeString("%s\n", CLUES[digit]);
+	}
 
 	_G(logic)->resumeTurn();
 	return true;

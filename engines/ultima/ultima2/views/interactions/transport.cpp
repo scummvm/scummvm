@@ -42,11 +42,10 @@ bool Transport::msgFocus(const FocusMessage &msg) {
 }
 
 bool Transport::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii == 0)
-		return true;
-
 	char key = toupper(msg.ascii);
-	writeString("%c\n", key);
+	if (key >= ' ')
+		writeString("%c", key);
+	writeString("\n");
 	close();
 
 	if (key != 'Y') {
