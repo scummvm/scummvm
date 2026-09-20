@@ -92,7 +92,7 @@ EventRecorder::~EventRecorder() {
 }
 
 void EventRecorder::deinit() {
-	if (!_initialized && !_playbackFile && !_recordFile) {
+	if (!_initialized) {
 		return;
 	}
 	setFileHeader();
