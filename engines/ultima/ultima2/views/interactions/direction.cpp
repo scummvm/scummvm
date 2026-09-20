@@ -39,10 +39,10 @@ bool Direction::msgFocus(const FocusMessage &msg) {
 bool Direction::msgKeypress(const KeypressMessage &msg) {
 	Data::Direction dir;
 	switch (msg.keycode) {
-	case Common::KEYCODE_UP: dir = Data::DIR_UP; break;
-	case Common::KEYCODE_DOWN: dir = Data::DIR_DOWN; break;
-	case Common::KEYCODE_LEFT: dir = Data::DIR_LEFT; break;
-	case Common::KEYCODE_RIGHT: dir = Data::DIR_RIGHT; break;
+	case Common::KEYCODE_UP: dir = Data::DIR_UP; writeString("NORTH"); break;
+	case Common::KEYCODE_DOWN: dir = Data::DIR_DOWN; writeString("SOUTH"); break;
+	case Common::KEYCODE_LEFT: dir = Data::DIR_LEFT; writeString("WEST"); break;
+	case Common::KEYCODE_RIGHT: dir = Data::DIR_RIGHT; writeString("EAST"); break;
 	default:
 		return true;
 	}

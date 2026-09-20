@@ -188,12 +188,13 @@ void CityCastleLogic::updateCreatures() {
 
 bool CityCastleLogic::steal(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
-		writeString("STEAL--");
+		writeString("STEAL DIRECT-");
 		_directionPurpose = DirectionPurpose::STEAL;
 		g_engine->addView("Direction");
 		return false;
 	}
 
+	writeString("\n");
 	Data::Savegame &sg = _G(savegame);
 	int dx = 0, dy = 0;
 	switch (dir) {
@@ -266,51 +267,42 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 
 bool CityCastleLogic::unlock(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("UNLOCK DIRECTION-");
 		_directionPurpose = DirectionPurpose::UNLOCK;
 		g_engine->addView("Direction");
 		return false;
 	}
 
+	// The original only looks east or west of the player for a door
 	Data::Savegame &sg = _G(savegame);
-	int dx = 0, dy = 0;
-	switch (dir) {
-	case Data::DIR_UP: dy = -1; break;
-	case Data::DIR_DOWN: dy = 1; break;
-	case Data::DIR_LEFT: dx = -1; break;
-	case Data::DIR_RIGHT: dx = 1; break;
-	default:
-		writeString("NO DOOR THERE!\n");
-		return true;
-	}
-
-	int x = sg._mapX + dx, y = sg._mapY + dy;
-	if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT ||
-			_G(map).tileAt(x, y) != Data::TILE_I_DOOR) {
-		writeString("NO DOOR THERE!\n");
+	int x = sg._mapX + (dir == Data::DIR_LEFT ? -1 : dir == Data::DIR_RIGHT ? 1 : 0);
+	if (x == sg._mapX || x < 0 || x >= Data::MAP_WIDTH ||
+			_G(map).tileAt(x, sg._mapY) != Data::TILE_I_DOOR) {
+		writeString("\nNO DOOR THERE!\n");
 		return true;
 	}
 
 	if (sg._keys == 0) {
-		writeString("NO KEYS THAT FIT!\n");
+		writeString("\nNO KEYS THAT FIT!\n");
 		return true;
 	}
 
 	--sg._keys;
-	// The door tile is replaced by whatever tile the player is currently
-	// standing on - matches the original exactly, though it's an odd way
-	// to clear a door; worth confirming visually during playtest
-	_G(map)._tiles[y][x] = _G(map).tileAt(sg._mapX, sg._mapY);
-	writeString("UNLOCKED!\n");
+	// The door is replaced by the tile the player is standing on
+	_G(map)._tiles[sg._mapY][x] = _G(map).tileAt(sg._mapX, sg._mapY);
+	writeString("\n");
 	return true;
 }
 
 bool CityCastleLogic::offer(Data::Direction dir) {
 	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("OFFER GOLD DIRECT-");
 		_directionPurpose = DirectionPurpose::OFFER;
 		g_engine->addView("Direction");
 		return false;
 	}
 
+	writeString("\n");
 	Data::Savegame &sg = _G(savegame);
 	int dx = 0, dy = 0;
 	switch (dir) {
@@ -331,7 +323,7 @@ bool CityCastleLogic::offer(Data::Direction dir) {
 	}
 
 	_offerTargetSlot = slot;
-	writeString("HOW MUCH (*100)? ");
+	writeString("HOW MUCH (*100) ? ");
 	g_engine->addView("OfferGold");
 	return false;
 }
@@ -382,14 +374,16 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 	}
 
 	default:
-		if ((randByte() & 7) >= 6) {
+		int stat = randByte() & 7;
+		if (stat >= 6) {
 			writeString("THANK YOU VERY MUCH!\n");
 		} else {
 			int16 *attrs[6] = {
 				&sg._strength, &sg._agility, &sg._stamina,
 				&sg._charisma, &sg._wisdom, &sg._intelligence
 			};
-			*attrs[randByte() % 6] += 4 * goldHundreds;
+			// Attributes are two BCD digits, so a big boost wraps around
+			*attrs[stat] = (*attrs[stat] + 4 * goldHundreds) % 100;
 			writeString("ALAKAZAM!\n");
 		}
 		break;
@@ -472,15 +466,14 @@ bool CityCastleLogic::transact(Data::Direction dir) {
 
 	Data::Savegame &sg = _G(savegame);
 	int dx = 0, dy = 0;
-	const char *dirName;
 	switch (dir) {
-	case Data::DIR_UP:    dy = -1; dirName = "NORTH"; break;
-	case Data::DIR_DOWN:  dy = 1;  dirName = "SOUTH"; break;
-	case Data::DIR_LEFT:  dx = -1; dirName = "WEST"; break;
-	case Data::DIR_RIGHT: dx = 1;  dirName = "EAST"; break;
-	default: dirName = ""; break;
+	case Data::DIR_UP:    dy = -1; break;
+	case Data::DIR_DOWN:  dy = 1;  break;
+	case Data::DIR_LEFT:  dx = -1; break;
+	case Data::DIR_RIGHT: dx = 1;  break;
+	default: break;
 	}
-	writeString("%s\n", dirName);
+	writeString("\n");
 
 	int x1 = sg._mapX + dx, y1 = sg._mapY + dy;
 	int slot = (x1 >= 0 && x1 < Data::MAP_WIDTH && y1 >= 0 && y1 < Data::MAP_HEIGHT) ?

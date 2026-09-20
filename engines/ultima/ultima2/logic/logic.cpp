@@ -372,15 +372,17 @@ bool Logic::magic() {
 
 bool Logic::negateTime() {
 	Data::Savegame &sg = _G(savegame);
+	writeString("Negate time");
 
 	if (sg._items[Data::ITEM_STRANGE_COIN] == 0) {
-		writeString(" HOW?  YOU'RE NOT EINSTEIN\n");
-		return true;
+		writeString(" how?\nYou're not Einstein\n");
+
+	} else {
+		--sg._items[Data::ITEM_STRANGE_COIN];
+		writeString("\nYou rub a coin...\n");
+		sg._negateTimeTurns = 20;
 	}
 
-	--sg._items[Data::ITEM_STRANGE_COIN];
-	writeString("YOU RUB A COIN...\n");
-	sg._negateTimeTurns = 20;
 	return true;
 }
 
