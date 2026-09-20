@@ -251,7 +251,10 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 			// The dial cursors use the idle (non-highlighted) sprite variant
 			g_nancy->_cursor->setCursorType(_upCursorType, true, false);
 
-			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
+			// The dials accept clicks as fast as they come in; the click sound
+			// restarts with every one
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				g_nancy->_sound->loadSound(_clickSound, nullptr, true);
 				g_nancy->_sound->playSound(_clickSound);
 
 				int n = _currentSequence[i] + 1;
@@ -269,7 +272,8 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_downHotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursor->setCursorType(_downCursorType, true, false);
 
-			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				g_nancy->_sound->loadSound(_clickSound, nullptr, true);
 				g_nancy->_sound->playSound(_clickSound);
 
 				int n = (int)_currentSequence[i] - 1;
