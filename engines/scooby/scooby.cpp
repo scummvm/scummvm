@@ -29,12 +29,15 @@
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
+#include "graphics/tile_scene.h"
 #include "offsets.h"
+#include "raylib_host.h"
 #include "scooby/console.h"
 #include "scooby/detection.h"
 #include "scooby/file.h"
 #include "scooby/gfx.h"
 #include "scooby/md/vdp.h"
+#include "startup/application_loop.h"
 
 namespace Scooby {
 
@@ -58,14 +61,33 @@ Common::String ScoobyEngine::getGameId() const {
 }
 
 Common::Error ScoobyEngine::run() {
-	_file = new File(this);
-	_vdp = new VDP();
-	_gfx = new Gfx(_vdp);
-	_limiter = new Graphics::FrameLimiter(g_system, 60);
+	Common::String loadError;
+	Common::ScopedPtr<Scooby::ScoobyDooRom> rom =
+		Scooby::ScoobyDooRom::load("scooby.md", loadError);
+	if (!rom) {
+		// ScoobyDooRom::load already formats outError as a complete, self-sufficient message
+		// (mirroring both the original IOException and UnsupportedRomException text that
+		// Program.cs printed with and without an added prefix, respectively).
+		error("%s\n", loadError.c_str());
+		return Common::kUnknownError;
+	}
 
-	setupInitialVdpRegisters();
+	initGraphics(320, 240);
+
+	Common::ScopedPtr<Scooby::RaylibHost> host = Scooby::RaylibHost::create();
+	if (!host) {
+		error("Could not open the raylib host window.\n");
+		return Common::kUnknownError;
+	}
+
+	// _file = new File(this);
+	// _vdp = new VDP();
+	// _gfx = new Gfx(_vdp);
+	// _limiter = new Graphics::FrameLimiter(g_system, 60);
+
+	// setupInitialVdpRegisters();
 	// // Initialize 320x200 paletted graphics mode
-	// initGraphics(320, 200);
+
 	// _screen = new Graphics::Screen();
 
 	// Set the engine's debugger console
@@ -76,8 +98,15 @@ Common::Error ScoobyEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	introSequence();
-	mainMenu();
+	Graphics::Screen screen;
+
+	Scooby::TileScene scene;
+	Scooby::IndexedFrame frame(screen);
+
+	Scooby::ApplicationLoop(*rom, scene, frame, *host).run();
+
+	// introSequence();
+	// mainMenu();
 
 	// // Draw a series of boxes on screen as a sample
 	// for (int i = 0; i < 100; ++i)
@@ -103,14 +132,14 @@ Common::Error ScoobyEngine::run() {
 		// to prevent the system being unduly loaded
 		_limiter->delayBeforeSwap();
 		// _screen->update();
-		_gfx->drawFrame();
+		// _gfx->drawFrame();
 		_limiter->startFrame();
 	}
 
 	delete _limiter;
-	delete _gfx;
-	delete _vdp;
-	delete _file;
+	// delete _gfx;
+	// delete _vdp;
+	// delete _file;
 
 	return Common::kNoError;
 }
@@ -127,169 +156,169 @@ Common::Error ScoobyEngine::syncGame(Common::Serializer &s) {
 }
 
 void ScoobyEngine::setupInitialVdpRegisters() {
-	_file->offsetFromStart(data_initialVdpRegisters);
-
-	for (uint16 i = 0; i <= 0x12; i++) {
-		uint16 command = 0x8000u | (uint16)(i << 8u) | _file->readByte();
-		debug("VDP init %d %04X", i, command);
-		_vdp->control_port_w(command);
-	}
+	// _file->offsetFromStart(data_initialVdpRegisters);
+	//
+	// for (uint16 i = 0; i <= 0x12; i++) {
+	// 	uint16 command = 0x8000u | (uint16)(i << 8u) | _file->readByte();
+	// 	debug("VDP init %d %04X", i, command);
+	// 	_vdp->control_port_w(command);
+	// }
 }
 
 void ScoobyEngine::loadPalette(uint32 offset, uint16 *palette) {
-	_file->offsetFromStart(offset);
-	for (int i = 0; i < 64; i++) {
-		palette[i] = _file->readUint16();
-	}
+	// _file->offsetFromStart(offset);
+	// for (int i = 0; i < 64; i++) {
+	// 	palette[i] = _file->readUint16();
+	// }
 }
 
 void ScoobyEngine::waitForFrames(uint16 numFrames) {
 	for (uint16 i = 0; i < numFrames && !Engine::shouldQuit(); i++) {
 		_limiter->delayBeforeSwap();
-		_gfx->drawFrame();
+		// _gfx->drawFrame();
 		_limiter->startFrame();
 		// TODO poll for updates here.
 	}
 }
 
 void ScoobyEngine::introSequence() {
-	//SEGA Logo
-	byte buf[0x8000];
-	uint16 palette[64];
-
-	_file->offsetFromStart(data_SegaLogoTilemap);
-	_file->read(buf, 48 * 2);
-
-	_gfx->loadTilemap(VDP::PlaneA, buf, 10, 11, 0xc, 4);
-
-	uint16 size = _file->decompressBytes(data_SegaLogoTiles_packed, buf, sizeof(buf));
-	debug("Size: %d", size);
-	_vdp->writeVRAM(0, buf, size);
-
-	loadPalette(data_SegaLogoPalette, palette);
-
-	fadeFromBlack(palette);
-
-	waitForFrames(0x32);
-
-	/* shine anim on sega logo */
-	for (int i = 0; i < 9; i++) {
-		uint16 temp = palette[10];
-		for (int j = 0; j < 8; j++) {
-			palette[10 - j] = palette[10 - j - 1];
-			_vdp->writePalette(10 - j, palette[10 - j]);
-		}
-		palette[10 - 8] = temp;
-		_vdp->writePalette(10 - 8, temp);
-		waitForFrames(3);
-	}
-
-	waitForFrames(100);
-
-	fadeToBlack();
-	_vdp->zeroVRAM(0, 0x8000);
-
-	/* VDP: Mode Register 4
-   320 pixel (40 cell) wide mode.
-   Progressive mode. */
-	_vdp->control_port_w(0x8c81);
-
-	// Scooby title
-	_file->offsetFromStart(data_ScoobyLogoTilemap);
-	_file->read(buf, 0x28 * 0x1c * 2);
-	_gfx->loadTilemap(VDP::PlaneA, buf, 0, 0, 0x28, 0x1c);
-
-	_file->offsetFromStart(data_ScoobyLogoTiles);
-	_file->read(buf, 0x20e0 * 2);
-	_vdp->writeVRAM(0, buf, 0x20e0 * 2);
-
-	loadPalette(data_ScoobyLogoPalette, palette);
-
-	fadeFromBlack(palette);
-
-	waitForFrames(300);
-
-	fadeToBlack();
-	_vdp->zeroVRAM(0, 0x8000);
-
-	/* VDP: Mode Register 4
-   256 pixel (32 cell) wide mode.
-   Progressive mode. */
-	_vdp->control_port_w(0x8c00);
-
-	_DAT_00ff09eb_flags |= 2u;
-	_DAT_00ff07f8 = 0;
-
-	// Acclaim logo
-	_file->offsetFromStart(data_AcclaimLogoBgTilemap);
-	_file->read(buf, 0x20 * 0x6 * 2);
-	_gfx->loadTilemap(VDP::PlaneA, buf, 0, 9, 0x20, 0x6);
-
-	_file->offsetFromStart(data_AcclaimLogoFgTilemap);
-	_file->read(buf, 0x180 * 2);
-	_vdp->writeVRAM(0xe480, buf, 0x180 * 2);
-
-	size = _file->decompressBytes(data_AcclaimLogoTiles, buf, sizeof(buf));
-	_vdp->writeVRAM(0, buf, size);
-
-	loadPalette(data_AcclaimLogoPalette, palette);
-
-	_SHORT_00ff07fa = -0x100;
-	_vdp->writeVRAMWord(0xdc00, 0);
-	_vdp->writeVRAMWord(0xdc02, _SHORT_00ff07fa);
-
-	fadeFromBlack(palette);
-
-	//TODO this was done in vblank handler in original game
-	do {
-		waitForFrames(1);
-		_SHORT_00ff07fa += 4;
-		_vdp->writeVRAMWord(0xdc00, 0);
-		_vdp->writeVRAMWord(0xdc02, _SHORT_00ff07fa);
-	} while (_SHORT_00ff07fa < 0x30);
-
-	waitForFrames(200);
-
-	fadeToBlack();
-	_vdp->zeroVRAM(0, 0x8000);
-
-	// Sunsoft logo
-	_file->offsetFromStart(data_SunSoftLogoTilemap);
-	_file->read(buf, 0x1a * 0x9 * 2);
-	_gfx->loadTilemap(VDP::PlaneA, buf, 3, 8, 0x1a, 0x9);
-
-	size = _file->decompressBytes(data_SunSoftLogoTiles, buf, sizeof(buf));
-	_vdp->writeVRAM(0, buf, size);
-	loadPalette(data_SunSoftLogoPalette, palette);
-
-	fadeFromBlack(palette);
-	waitForFrames(300);
-	fadeToBlack();
-	_vdp->zeroVRAM(0, 0x8000);
-
-	//Illusions logo animation
-	size = _file->decompressBytes(data_IllusionsLogoTiles, buf, sizeof(buf));
-	_vdp->writeVRAM(0, buf, size);
-
-	_file->decompressBytes(data_IllusionsLogoAnimTilemap, buf, sizeof(buf));
-	_gfx->loadTilemap(VDP::PlaneA, buf, 8, 8, 0x14, 0x5);
-	loadPalette(data_IllusionsLogoPalette, palette);
-
-	fadeFromBlack(palette);
-
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 15; j++) {
-			waitForFrames(2);
-			_gfx->loadTilemap(VDP::PlaneA, buf + j * 200, 8, 8, 0x14, 0x5);
-		}
-	}
-
-	_file->decompressBytes(data_IllusionsLogoFullTilemap, buf, sizeof(buf));
-	_gfx->loadTilemap(VDP::PlaneA, buf, 4, 5, 0x19, 0xf);
-
-	waitForFrames(200);
-	fadeToBlack();
-	_vdp->zeroVRAM(0, 0x8000);
+	// //SEGA Logo
+	// byte buf[0x8000];
+	// uint16 palette[64];
+ //
+	// _file->offsetFromStart(data_SegaLogoTilemap);
+	// _file->read(buf, 48 * 2);
+ //
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 10, 11, 0xc, 4);
+ //
+	// uint16 size = _file->decompressBytes(data_SegaLogoTiles_packed, buf, sizeof(buf));
+	// debug("Size: %d", size);
+	// _vdp->writeVRAM(0, buf, size);
+ //
+	// loadPalette(data_SegaLogoPalette, palette);
+ //
+	// fadeFromBlack(palette);
+ //
+	// waitForFrames(0x32);
+ //
+	// /* shine anim on sega logo */
+	// for (int i = 0; i < 9; i++) {
+	// 	uint16 temp = palette[10];
+	// 	for (int j = 0; j < 8; j++) {
+	// 		palette[10 - j] = palette[10 - j - 1];
+	// 		_vdp->writePalette(10 - j, palette[10 - j]);
+	// 	}
+	// 	palette[10 - 8] = temp;
+	// 	_vdp->writePalette(10 - 8, temp);
+	// 	waitForFrames(3);
+	// }
+ //
+	// waitForFrames(100);
+ //
+	// fadeToBlack();
+	// _vdp->zeroVRAM(0, 0x8000);
+ //
+	// /* VDP: Mode Register 4
+ //   320 pixel (40 cell) wide mode.
+ //   Progressive mode. */
+	// _vdp->control_port_w(0x8c81);
+ //
+	// // Scooby title
+	// _file->offsetFromStart(data_ScoobyLogoTilemap);
+	// _file->read(buf, 0x28 * 0x1c * 2);
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 0, 0, 0x28, 0x1c);
+ //
+	// _file->offsetFromStart(data_ScoobyLogoTiles);
+	// _file->read(buf, 0x20e0 * 2);
+	// _vdp->writeVRAM(0, buf, 0x20e0 * 2);
+ //
+	// loadPalette(data_ScoobyLogoPalette, palette);
+ //
+	// fadeFromBlack(palette);
+ //
+	// waitForFrames(300);
+ //
+	// fadeToBlack();
+	// _vdp->zeroVRAM(0, 0x8000);
+ //
+	// /* VDP: Mode Register 4
+ //   256 pixel (32 cell) wide mode.
+ //   Progressive mode. */
+	// _vdp->control_port_w(0x8c00);
+ //
+	// _DAT_00ff09eb_flags |= 2u;
+	// _DAT_00ff07f8 = 0;
+ //
+	// // Acclaim logo
+	// _file->offsetFromStart(data_AcclaimLogoBgTilemap);
+	// _file->read(buf, 0x20 * 0x6 * 2);
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 0, 9, 0x20, 0x6);
+ //
+	// _file->offsetFromStart(data_AcclaimLogoFgTilemap);
+	// _file->read(buf, 0x180 * 2);
+	// _vdp->writeVRAM(0xe480, buf, 0x180 * 2);
+ //
+	// size = _file->decompressBytes(data_AcclaimLogoTiles, buf, sizeof(buf));
+	// _vdp->writeVRAM(0, buf, size);
+ //
+	// loadPalette(data_AcclaimLogoPalette, palette);
+ //
+	// _SHORT_00ff07fa = -0x100;
+	// _vdp->writeVRAMWord(0xdc00, 0);
+	// _vdp->writeVRAMWord(0xdc02, _SHORT_00ff07fa);
+ //
+	// fadeFromBlack(palette);
+ //
+	// //TODO this was done in vblank handler in original game
+	// do {
+	// 	waitForFrames(1);
+	// 	_SHORT_00ff07fa += 4;
+	// 	_vdp->writeVRAMWord(0xdc00, 0);
+	// 	_vdp->writeVRAMWord(0xdc02, _SHORT_00ff07fa);
+	// } while (_SHORT_00ff07fa < 0x30);
+ //
+	// waitForFrames(200);
+ //
+	// fadeToBlack();
+	// _vdp->zeroVRAM(0, 0x8000);
+ //
+	// // Sunsoft logo
+	// _file->offsetFromStart(data_SunSoftLogoTilemap);
+	// _file->read(buf, 0x1a * 0x9 * 2);
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 3, 8, 0x1a, 0x9);
+ //
+	// size = _file->decompressBytes(data_SunSoftLogoTiles, buf, sizeof(buf));
+	// _vdp->writeVRAM(0, buf, size);
+	// loadPalette(data_SunSoftLogoPalette, palette);
+ //
+	// fadeFromBlack(palette);
+	// waitForFrames(300);
+	// fadeToBlack();
+	// _vdp->zeroVRAM(0, 0x8000);
+ //
+	// //Illusions logo animation
+	// size = _file->decompressBytes(data_IllusionsLogoTiles, buf, sizeof(buf));
+	// _vdp->writeVRAM(0, buf, size);
+ //
+	// _file->decompressBytes(data_IllusionsLogoAnimTilemap, buf, sizeof(buf));
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 8, 8, 0x14, 0x5);
+	// loadPalette(data_IllusionsLogoPalette, palette);
+ //
+	// fadeFromBlack(palette);
+ //
+	// for (int i = 0; i < 4; i++) {
+	// 	for (int j = 0; j < 15; j++) {
+	// 		waitForFrames(2);
+	// 		_gfx->loadTilemap(VDP::PlaneA, buf + j * 200, 8, 8, 0x14, 0x5);
+	// 	}
+	// }
+ //
+	// _file->decompressBytes(data_IllusionsLogoFullTilemap, buf, sizeof(buf));
+	// _gfx->loadTilemap(VDP::PlaneA, buf, 4, 5, 0x19, 0xf);
+ //
+	// waitForFrames(200);
+	// fadeToBlack();
+	// _vdp->zeroVRAM(0, 0x8000);
 }
 
 void ScoobyEngine::fadeFromBlack(const uint16 *palette) {
@@ -334,95 +363,95 @@ void ScoobyEngine::fadeToBlack() {
 }
 
 void ScoobyEngine::mainMenu() {
-	byte buf[0x10000];
-	uint16 palette[0x40];
-
-	// fadeToBlack();
-	// DAT_00ff09ed = DAT_00ff09ed & 235;
-	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 127;
-
-	/* VDP: Window Plane Horizontal Position
-	   Draw window from HP to left edge of screen.
-	   Position: 0x0 (in units of 8 pixels). */
-	_vdp->control_port_w(0x9100);
-	/* VDP: Window Plane Vertical Position
-	   Draw window from VP to top edge of screen.
-	   Position: 0x0 (in units of 8 pixels). */
-	_vdp->control_port_w(0x9200);
-
-	// DAT_00ff0016 = 0;
-	// DAT_00ff001c = 0;
-	// DAT_00ff001a = 0;
-	// DAT_00ff000a = currentRoomId;
-	// _DAT_00ff0010 = 224;
-	// DAT_00ff0012 = 224;
-	_vdp->writeVRAMWord(0xdc00,0);
-	_vdp->writeVRAMWord(0xdc02,0);
-
-	// _vdp->control_port_w(0x4000);
-	// _vdp->control_port_w(0x0010);
-	// _vdp->data_port_w16(0);
-	// _vdp->data_port_w16(0);
-	uint32 b = 0;
-	_vdp->writeVSRAM(0, reinterpret_cast<byte *>(&b), 4);
-
-	// DAT_00ff000c = 0;
-	// DAT_00ff000e = 3;
-	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 247;
-	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 16;
-
-	_vdp->zeroVRAM(0xdc00, 0x1c0);
-	_vdp->zeroVRAM(0, 0x8000);
-	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 2;
-	_vdp->control_port_w(0x7c00);
-	_vdp->control_port_w(0x0003);
-	/* VDP: Sprite Table
-   Location - 0xfc00 */
-	_vdp->control_port_w(0x857e);
-	_vdp->data_port_w16(0);
-
-	_vdp->control_port_w(0x857e);
-//	write_volatile_4(0xc00000,0);
-//	vBlankFunctionPtr = FUN_0000a38c_mainmenu_vblank;
-//	hBlankFunctionPtr = noOp_hblank;
-	/* VDP: Window Plane Horizontal Position
-	   Draw window from HP to left edge of screen.
-	   Position: 0x0 (in units of 8 pixels). */
-	_vdp->control_port_w(0x9100);
-	/* VDP: Window Plane Vertical Position
-	   Draw window from VP to top edge of screen.
-	   Position: 0x0 (in units of 8 pixels). */
-	_vdp->control_port_w(0x9200);
-	/* VDP: Plane Size
-	   Width - 256 pixels (32 cells)
-	   Height - 256 pixels (32 cells) */
-	_vdp->control_port_w(0x9000);
-
-	uint32 size = _file->decompressBytes(data_MainMenuTiles, buf, sizeof(buf));
-	_vdp->writeVRAM(0, buf, size);
-
-	byte src[0x132];
-	byte dest[0x200];
-	_file->offsetFromStart(0x16d38);
-	_file->read(src, 0x132);
-
-	unpackRLE(src, dest);
-	// FUN_00009c64(src, dest);
-
-	// printBuf(dest, 512);
-
-	_vdp->writeVRAM(size, dest, 0x200);
-
-	_file->offsetFromStart(data_MainMenuBackgroundTilemap);
-	_file->read(buf, 0x380 * 2);
-	_vdp->writeVRAM(0xe000, buf, 0x380 * 2);
-
-	_file->offsetFromStart(0x85f8);
-	_file->read(buf, 0x34 * 2);
-	_vdp->writeVRAM(0xfc00, buf, 0x34 * 2);
-
-	loadPalette(0x16cb8, palette);
-	fadeFromBlack(palette);
+// 	byte buf[0x10000];
+// 	uint16 palette[0x40];
+//
+// 	// fadeToBlack();
+// 	// DAT_00ff09ed = DAT_00ff09ed & 235;
+// 	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 127;
+//
+// 	/* VDP: Window Plane Horizontal Position
+// 	   Draw window from HP to left edge of screen.
+// 	   Position: 0x0 (in units of 8 pixels). */
+// 	_vdp->control_port_w(0x9100);
+// 	/* VDP: Window Plane Vertical Position
+// 	   Draw window from VP to top edge of screen.
+// 	   Position: 0x0 (in units of 8 pixels). */
+// 	_vdp->control_port_w(0x9200);
+//
+// 	// DAT_00ff0016 = 0;
+// 	// DAT_00ff001c = 0;
+// 	// DAT_00ff001a = 0;
+// 	// DAT_00ff000a = currentRoomId;
+// 	// _DAT_00ff0010 = 224;
+// 	// DAT_00ff0012 = 224;
+// 	_vdp->writeVRAMWord(0xdc00,0);
+// 	_vdp->writeVRAMWord(0xdc02,0);
+//
+// 	// _vdp->control_port_w(0x4000);
+// 	// _vdp->control_port_w(0x0010);
+// 	// _vdp->data_port_w16(0);
+// 	// _vdp->data_port_w16(0);
+// 	uint32 b = 0;
+// 	_vdp->writeVSRAM(0, reinterpret_cast<byte *>(&b), 4);
+//
+// 	// DAT_00ff000c = 0;
+// 	// DAT_00ff000e = 3;
+// 	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 247;
+// 	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 16;
+//
+// 	_vdp->zeroVRAM(0xdc00, 0x1c0);
+// 	_vdp->zeroVRAM(0, 0x8000);
+// 	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 2;
+// 	_vdp->control_port_w(0x7c00);
+// 	_vdp->control_port_w(0x0003);
+// 	/* VDP: Sprite Table
+//    Location - 0xfc00 */
+// 	_vdp->control_port_w(0x857e);
+// 	_vdp->data_port_w16(0);
+//
+// 	_vdp->control_port_w(0x857e);
+// //	write_volatile_4(0xc00000,0);
+// //	vBlankFunctionPtr = FUN_0000a38c_mainmenu_vblank;
+// //	hBlankFunctionPtr = noOp_hblank;
+// 	/* VDP: Window Plane Horizontal Position
+// 	   Draw window from HP to left edge of screen.
+// 	   Position: 0x0 (in units of 8 pixels). */
+// 	_vdp->control_port_w(0x9100);
+// 	/* VDP: Window Plane Vertical Position
+// 	   Draw window from VP to top edge of screen.
+// 	   Position: 0x0 (in units of 8 pixels). */
+// 	_vdp->control_port_w(0x9200);
+// 	/* VDP: Plane Size
+// 	   Width - 256 pixels (32 cells)
+// 	   Height - 256 pixels (32 cells) */
+// 	_vdp->control_port_w(0x9000);
+//
+// 	uint32 size = _file->decompressBytes(data_MainMenuTiles, buf, sizeof(buf));
+// 	_vdp->writeVRAM(0, buf, size);
+//
+// 	byte src[0x132];
+// 	byte dest[0x200];
+// 	_file->offsetFromStart(0x16d38);
+// 	_file->read(src, 0x132);
+//
+// 	unpackRLE(src, dest);
+// 	// FUN_00009c64(src, dest);
+//
+// 	// printBuf(dest, 512);
+//
+// 	_vdp->writeVRAM(size, dest, 0x200);
+//
+// 	_file->offsetFromStart(data_MainMenuBackgroundTilemap);
+// 	_file->read(buf, 0x380 * 2);
+// 	_vdp->writeVRAM(0xe000, buf, 0x380 * 2);
+//
+// 	_file->offsetFromStart(0x85f8);
+// 	_file->read(buf, 0x34 * 2);
+// 	_vdp->writeVRAM(0xfc00, buf, 0x34 * 2);
+//
+// 	loadPalette(0x16cb8, palette);
+// 	fadeFromBlack(palette);
 }
 
 // void ScoobyEngine::FUN_00009c64(uint8 *src,uint8 *dest)
