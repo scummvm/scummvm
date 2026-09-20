@@ -117,6 +117,13 @@ void Logic::action(int action) {
 	Common::SharedPtr<Logic> currLogic = _G(logic);
 	bool doEndOfTurn = true;
 
+	// Sleeping players lose the command they were about to give
+	if (_G(savegame)._sleepTurns > 0) {
+		writeString("ZZZZZZZZZZZZZZZZZZZZ\n");
+		resumeTurn();
+		return;
+	}
+
 	if (action != KEYBIND_UP && action != KEYBIND_DOWN && action != KEYBIND_LEFT && action != KEYBIND_RIGHT)
 		_monstersSkipTurn = false;
 
@@ -487,7 +494,15 @@ bool Logic::negateTime() {
 }
 
 bool Logic::offer(Data::Direction dir) {
-	writeString("Offer?\n");
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("OFFER GOLD DIRECT-");
+		_directionPurpose = DirectionPurpose::OFFER;
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	// Outside a settlement there's never anyone to give gold to
+	writeString("\nOFFER TO WHOM?\n");
 	return true;
 }
 
@@ -520,17 +535,42 @@ bool Logic::ready() {
 }
 
 bool Logic::steal(Data::Direction dir) {
-	writeString("Steal?\n");
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("STEAL DIRECT-");
+		_directionPurpose = DirectionPurpose::STEAL;
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	// Outside a settlement there's nothing to steal
+	writeString("\nNO LUCK!\n");
+	if ((randByte() & 7) == 0)
+		alertTownGuards();
 	return true;
 }
 
 bool Logic::transact(Data::Direction dir) {
-	writeString("Transact?\n");
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("TRANSACT-");
+		_directionPurpose = DirectionPurpose::TRANSACT;
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	writeString("\nFUNNY, NO RESPONSE!\n");
 	return true;
 }
 
 bool Logic::unlock(Data::Direction dir) {
-	writeString("Unlock?\n");
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("UNLOCK DIRECTION-");
+		_directionPurpose = DirectionPurpose::UNLOCK;
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	// Outside a settlement there are no doors
+	writeString("\nNO DOOR THERE!\n");
 	return true;
 }
 
