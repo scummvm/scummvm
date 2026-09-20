@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_MAP_DUNGEON_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -54,6 +55,10 @@ struct MapDungeon {
 	byte _cells[DUNGEON_LEVELS][DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
 	void load(int mapEra, int mapType);
+
+	void synchronize(Common::Serializer &s) {
+		s.syncBytes(&_cells[0][0][0], sizeof(_cells));
+	}
 
 	/**
 	 * Returns the cell at the given position on a level. Addresses it the

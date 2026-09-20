@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_MAP_MONSTERS_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
@@ -47,6 +48,8 @@ struct MapMonsters {
 	byte _tempY[MAP_MONSTER_COUNT] = {};
 
 	void load(int mapEra, int mapType);
+
+	void synchronize(Common::Serializer &s);
 
 	bool isActive(int slot) const {
 		return _type[slot] != 0;

@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_MAP_H
 
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "ultima/ultima2/data/tiles.h"
 #include "ultima/ultima2/data/map_monsters.h"
@@ -66,6 +67,13 @@ private:
 
 public:
 	void load(int mapEra, int mapType);
+
+	/**
+	 * Saves or restores the current map's contents and monsters as they
+	 * are now, including changes made during play. Loading expects the
+	 * map to have been loaded first
+	 */
+	void synchronize(Common::Serializer &s, bool isDungeon);
 
 	/**
 	 * Returns the given line of the map's NPC dialogue, or an empty string

@@ -97,9 +97,14 @@ bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
-	if (s.isLoading()) {
+	if (s.isLoading())
 		_G(map).load(_G(savegame)._mapEra, _G(savegame)._mapType);
-	}
+
+	_G(map).synchronize(s, _G(savegame)._mapType >= 4);
+
+	// The views were drawn from the freshly loaded map, before its saved state was applied
+	if (s.isLoading())
+		focusedView()->redraw();
 
 	return Common::kNoError;
 }

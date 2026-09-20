@@ -43,6 +43,17 @@ void MapMonsters::load(int mapEra, int mapType) {
 	f.read(_tempY, MAP_MONSTER_COUNT);
 }
 
+void MapMonsters::synchronize(Common::Serializer &s) {
+	s.syncBytes(_mapX, MAP_MONSTER_COUNT);
+	s.syncBytes(_mapY, MAP_MONSTER_COUNT);
+	s.syncBytes(_spellHP, MAP_MONSTER_COUNT);
+	s.syncBytes(_type, MAP_MONSTER_COUNT);
+	s.syncBytes(_glyphTile, MAP_MONSTER_COUNT);
+	s.syncBytes(_offerFlag, MAP_MONSTER_COUNT);
+	s.syncBytes(_tempX, MAP_MONSTER_COUNT);
+	s.syncBytes(_tempY, MAP_MONSTER_COUNT);
+}
+
 } // namespace Data
 } // namespace Ultima2
 } // namespace Ultima

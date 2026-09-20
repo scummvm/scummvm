@@ -112,6 +112,22 @@ void Map::load(int mapEra, int mapType) {
 	showMapView(mapType == 0 ? "OverworldMap" : "LocationMap");
 }
 
+void Map::synchronize(Common::Serializer &s, bool isDungeon) {
+	_monsters.synchronize(s);
+
+	if (isDungeon) {
+		_G(dungeon).synchronize(s);
+	} else {
+		for (int y = 0; y < MAP_HEIGHT; ++y) {
+			for (int x = 0; x < MAP_WIDTH; ++x) {
+				byte tile = _tiles[y][x];
+				s.syncAsByte(tile);
+				_tiles[y][x] = (TileId)tile;
+			}
+		}
+	}
+}
+
 void Map::loadDungeon(int mapEra, int mapType) {
 	_G(dungeon).load(mapEra, mapType);
 	_monsters.load(mapEra, mapType);
