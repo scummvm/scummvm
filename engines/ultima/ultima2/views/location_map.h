@@ -40,6 +40,11 @@ private:
 	Graphics::Surface _tiles[Data::TILE_COUNT];
 	Graphics::ManagedSurface _attackSprite;
 
+protected:
+	Graphics::Surface *tileGraphics() override {
+		return _tiles;
+	}
+
 public:
 	LocationMap();
 	~LocationMap() override;

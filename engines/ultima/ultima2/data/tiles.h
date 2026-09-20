@@ -66,6 +66,12 @@ void loadTiles(Graphics::Surface tiles[TILE_COUNT]);
  */
 void loadAttackSprite(Graphics::ManagedSurface &sprite);
 
+/**
+ * Scrolls a tile's rows upwards with wraparound, which is how the water and
+ * forcefield tiles animate
+ */
+void scrollTileRows(Graphics::Surface &tile, int rows);
+
 } // namespace Data
 } // namespace Ultima2
 } // namespace Ultima

@@ -82,6 +82,15 @@ void loadAttackSprite(Graphics::ManagedSurface &sprite) {
 	decodeTileRecord(record, sprite);
 }
 
+void scrollTileRows(Graphics::Surface &tile, int rows) {
+	byte copy[TILE_WIDTH * TILE_HEIGHT];
+	byte *pixels = (byte *)tile.getPixels();
+	memcpy(copy, pixels, sizeof(copy));
+
+	for (int y = 0; y < TILE_HEIGHT; ++y)
+		memcpy(pixels + y * TILE_WIDTH, copy + ((y + rows) % TILE_HEIGHT) * TILE_WIDTH, TILE_WIDTH);
+}
+
 } // namespace Data
 } // namespace Ultima2
 } // namespace Ultima

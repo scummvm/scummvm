@@ -23,6 +23,7 @@
 #define ULTIMA2_VIEWS_MAP_H
 
 #include "ultima/shared/gfx/view.h"
+#include "ultima/ultima2/data/tiles.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -35,6 +36,16 @@ using namespace Shared::Messages;
  */
 class Map : public Shared::Gfx::View {
 public:
+private:
+	uint32 _lastAnimation = 0;
+
+protected:
+	/**
+	 * Returns the view's TILE_COUNT tile graphics
+	 */
+	virtual Graphics::Surface *tileGraphics() = 0;
+
+public:
 	Map(const Common::String &name) : View(name) {
 		setBounds(TextRect(0, 0, 39, 19));
 	}
@@ -42,6 +53,7 @@ public:
 
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool tick() override;
 };
 
 } // namespace Views

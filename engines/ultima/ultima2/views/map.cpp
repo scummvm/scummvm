@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "ultima/ultima2/views/map.h"
 #include "ultima/ultima2/ultima2.h"
 
@@ -26,9 +27,29 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
+// The original animates while waiting for a command: the water tile scrolls
+// four rows and the forcefield tile one row per step
+constexpr uint32 ANIMATION_DELAY = 150;
+constexpr int WATER_SCROLL_ROWS = 4;
+constexpr int FORCEFIELD_SCROLL_ROWS = 1;
+
 bool Map::msgAction(const ActionMessage &msg) {
 	g_engine->_logic->action(msg._action);
 	return true;
+}
+
+bool Map::tick() {
+	uint32 now = g_system->getMillis();
+	if (now - _lastAnimation >= ANIMATION_DELAY) {
+		_lastAnimation = now;
+
+		Graphics::Surface *tiles = tileGraphics();
+		Data::scrollTileRows(tiles[Data::TILE_WATER], WATER_SCROLL_ROWS);
+		Data::scrollTileRows(tiles[Data::TILE_FORCEFIELD], FORCEFIELD_SCROLL_ROWS);
+		redraw();
+	}
+
+	return View::tick();
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
