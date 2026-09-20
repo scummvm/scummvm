@@ -83,6 +83,19 @@ void Events::runGame(Views &views) {
 bool Events::processEvent(Common::Event &ev) {
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
+		if (ev.kbd.flags == 0) {
+			switch (ev.kbd.keycode) {
+			case Common::KEYCODE_F5:
+				g_engine->saveGameDialog();
+				return true;
+			case Common::KEYCODE_F7:
+				g_engine->loadGameDialog();
+				return true;
+			default:
+				break;
+			}
+		}
+
 		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
 			msgKeypress(KeypressMessage(ev.kbd));
 		break;

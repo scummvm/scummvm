@@ -89,7 +89,9 @@ bool Ultima2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 }
 
 bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return canSaveGameStateCurrently() || dynamic_cast<Views::Interactions::Dead *>(focusedView()) != nullptr;
+	return canSaveGameStateCurrently() ||
+		dynamic_cast<Views::Interactions::Dead *>(focusedView()) != nullptr ||
+		dynamic_cast<Views::Title *>(focusedView()) != nullptr;
 }
 
 Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
