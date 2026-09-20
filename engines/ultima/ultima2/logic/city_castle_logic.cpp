@@ -109,7 +109,7 @@ void CityCastleLogic::updateCreatures() {
 	byte damageAccumulator = 0;
 	int engagedCount = 0, hitCount = 0;
 
-	for (int slot = 31; slot >= 1; --slot) {
+	for (int slot = 31; slot >= 0; --slot) {
 		if (!monsters.isActive(slot))
 			continue;
 

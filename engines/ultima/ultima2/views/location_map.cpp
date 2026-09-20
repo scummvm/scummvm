@@ -103,7 +103,7 @@ void LocationMap::draw() {
 			} else {
 				tileId = _G(map).tileAt(x, y);
 
-				for (int slot = 1; slot <= 31; ++slot) {
+				for (int slot = 0; slot < Data::MAP_MONSTER_COUNT; ++slot) {
 					if (monsters.isActive(slot) && monsters._mapX[slot] == x && monsters._mapY[slot] == y) {
 						tileId = monsters.tileType(slot);
 						break;
