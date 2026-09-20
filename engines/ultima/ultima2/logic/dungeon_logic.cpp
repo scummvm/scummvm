@@ -491,6 +491,7 @@ bool DungeonLogic::monsterAttacks(int slot) {
 	if ((roll & 0x80) != 0 || (roll & 7) < sg._readiedArmor)
 		return true;
 
+	showAttackTile(0, 0);
 	int dmg = Data::bcdValue((byte)((randByte() & 0x77) + ((level * 4) & 0x77)));
 	if (sg._hp < dmg) {
 		sg._hp = 0;

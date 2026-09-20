@@ -394,6 +394,27 @@ bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 	return Map::msgUnfocus(msg);
 }
 
+bool DungeonMap::msgAttackTile(const AttackTileMessage &msg) {
+	// Being hit inverts the whole view, briefly
+	for (int i = 0; i < 2; ++i) {
+		auto s = getSurface();
+		for (int y = 0; y < s.h; ++y) {
+			byte *pixels = (byte *)s.getBasePtr(0, y);
+			for (int x = 0; x < s.w; ++x)
+				pixels[x] ^= 3;
+		}
+
+		s.markAllDirty();
+		g_engine->updateScreen();
+
+		if (i == 0)
+			// Pause briefly after initial inversion
+			g_engine->pauseMillis(80);
+	}
+
+	return true;
+}
+
 bool DungeonMap::tick() {
 	// There's no water or forcefield to animate here
 	checkIdle();
