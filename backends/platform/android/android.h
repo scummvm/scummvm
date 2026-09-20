@@ -24,7 +24,6 @@
 
 #include <android/log.h>
 
-#include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/mutex.h"

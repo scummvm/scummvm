@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	android.o \
 	events.o \
 	options.o \
-	snprintf.o \
 	touchcontrols.o
 
 ifdef NEED_ANDROID_CPUFEATURES
