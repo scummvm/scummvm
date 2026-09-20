@@ -396,6 +396,7 @@ bool DungeonMap::msgUnfocus(const UnfocusMessage &msg) {
 
 bool DungeonMap::tick() {
 	// There's no water or forcefield to animate here
+	checkIdle();
 	return Shared::Gfx::View::tick();
 }
 

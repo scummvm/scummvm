@@ -35,11 +35,15 @@ namespace Interactions {
  * arrow keypress arrives raw instead of as a movement action
  */
 class Direction : public Interaction {
+private:
+	uint32 _startTime = 0;
+
 public:
 	Direction();
 	~Direction() override {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool tick() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 

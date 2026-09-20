@@ -38,6 +38,7 @@ class Map : public Shared::Gfx::View {
 public:
 private:
 	uint32 _lastAnimation = 0;
+	uint32 _lastInput = 0;
 
 protected:
 	/**
@@ -45,12 +46,18 @@ protected:
 	 */
 	virtual Graphics::Surface *tileGraphics() = 0;
 
+	/**
+	 * Passes the turn if no command has been given for a while
+	 */
+	void checkIdle();
+
 public:
 	Map(const Common::String &name) : View(name) {
 		setBounds(TextRect(0, 0, 39, 19));
 	}
 	~Map() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool tick() override;

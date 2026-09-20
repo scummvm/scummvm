@@ -28,12 +28,27 @@ namespace Ultima2 {
 namespace Views {
 namespace Interactions {
 
+constexpr uint32 TIMEOUT = 5000;
+
 Direction::Direction() : Interaction("Direction") {
 }
 
 bool Direction::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+	_startTime = g_system->getMillis();
 	return Interaction::msgFocus(msg);
+}
+
+bool Direction::tick() {
+	// If no direction is given in time, the command is abandoned and a turn passes
+	if (g_system->getMillis() - _startTime >= TIMEOUT) {
+		writeString("PASS\n");
+		close();
+		_G(logic)->resumeTurn();
+		return true;
+	}
+
+	return Interaction::tick();
 }
 
 bool Direction::msgKeypress(const KeypressMessage &msg) {

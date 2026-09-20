@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "ultima/ultima2/views/map.h"
 #include "ultima/ultima2/ultima2.h"
+#include "ultima/ultima2/metaengine.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -31,11 +32,28 @@ namespace Views {
 // four rows and the forcefield tile one row per step
 constexpr uint32 ANIMATION_DELAY = 150;
 constexpr int WATER_SCROLL_ROWS = 4;
+
+// Without a command for this long, the original passes the turn for you
+constexpr uint32 IDLE_DELAY = 5000;
 constexpr int FORCEFIELD_SCROLL_ROWS = 1;
 
+bool Map::msgFocus(const FocusMessage &msg) {
+	_lastInput = g_system->getMillis();
+	return View::msgFocus(msg);
+}
+
 bool Map::msgAction(const ActionMessage &msg) {
+	_lastInput = g_system->getMillis();
 	g_engine->_logic->action(msg._action);
 	return true;
+}
+
+void Map::checkIdle() {
+	uint32 now = g_system->getMillis();
+	if (now - _lastInput >= IDLE_DELAY) {
+		_lastInput = now;
+		g_engine->_logic->action(KEYBIND_PASS);
+	}
 }
 
 bool Map::tick() {
@@ -49,10 +67,12 @@ bool Map::tick() {
 		redraw();
 	}
 
+	checkIdle();
 	return View::tick();
 }
 
 bool Map::msgKeypress(const KeypressMessage &msg) {
+	_lastInput = g_system->getMillis();
 	g_engine->_logic->keypress(msg);
 	return true;
 }
