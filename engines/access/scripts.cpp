@@ -26,7 +26,6 @@
 #include "access/asurface.h"
 #include "access/martian/martian_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
-#include "access/noctropolis/noctropolis_resources.h"
 
 namespace Access {
 
@@ -44,7 +43,6 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
-	_keepAskPosition = false;
 	setOpcodes();
 }
 
@@ -53,139 +51,87 @@ Scripts::~Scripts() {
 }
 
 void Scripts::setOpcodes() {
-	COMMAND_LIST[0] = &Scripts::cmdObject;
-	COMMAND_LIST[1] = &Scripts::cmdEndObject;
-	COMMAND_LIST[2] = &Scripts::cmdJumpLook;
-	COMMAND_LIST[3] = &Scripts::cmdJumpOpen;
-	COMMAND_LIST[4] = &Scripts::cmdJumpGet;
-	COMMAND_LIST[5] = &Scripts::cmdJumpMove;
-	COMMAND_LIST[6] = &Scripts::cmdJumpUse;
-	COMMAND_LIST[7] = &Scripts::cmdJumpTalk;
-	COMMAND_LIST[8] = &Scripts::cmdNull;
-	COMMAND_LIST[9] = &Scripts::cmdPrint_v1;
-	COMMAND_LIST[10] = &Scripts::cmdRetPos;
-	COMMAND_LIST[11] = &Scripts::cmdAnim;
-	COMMAND_LIST[12] = &Scripts::cmdSetFlag;
-	COMMAND_LIST[13] = &Scripts::cmdCheckFlag;
-	COMMAND_LIST[14] = &Scripts::cmdGoto;
-	COMMAND_LIST[15] = &Scripts::cmdAddScore;
-	COMMAND_LIST[16] = &Scripts::cmdSetInventory;
-	COMMAND_LIST[17] = &Scripts::cmdCheckInventory;
-	COMMAND_LIST[18] = &Scripts::cmdSetPlayerCoords;
-	COMMAND_LIST[19] = &Scripts::cmdNewRoom;
-	COMMAND_LIST[20] = &Scripts::cmdConverse;
-	COMMAND_LIST[21] = &Scripts::cmdCheckFrame;
-	COMMAND_LIST[22] = &Scripts::cmdCheckAnim;
-	COMMAND_LIST[23] = &Scripts::cmdSnd;
-	COMMAND_LIST[24] = &Scripts::cmdRetNeg;
-	COMMAND_LIST[25] = &Scripts::cmdRetPos;
-	COMMAND_LIST[26] = &Scripts::cmdCheckLoc;
-	COMMAND_LIST[27] = &Scripts::cmdSetAnim;
-	COMMAND_LIST[28] = &Scripts::cmdDispInv_v1;
-	COMMAND_LIST[29] = &Scripts::cmdSetAbout;
-	COMMAND_LIST[30] = &Scripts::cmdSetTimer;
-	COMMAND_LIST[31] = &Scripts::cmdCheckTimer;
-	COMMAND_LIST[32] = &Scripts::cmdSetTravel;
-	COMMAND_LIST[33] = &Scripts::cmdJumpGoto;
-	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v1;
-	COMMAND_LIST[35] = &Scripts::cmdPlayVideo;
-	COMMAND_LIST[36] = &Scripts::cmdPlotImage;
-	COMMAND_LIST[37] = &Scripts::cmdSetDisplay;
-	COMMAND_LIST[38] = &Scripts::cmdSetBuffer;
-	COMMAND_LIST[39] = &Scripts::cmdSetScroll;
-	COMMAND_LIST[40] = &Scripts::cmdSaveRect;
-	COMMAND_LIST[41] = &Scripts::cmdVideoEnded; // aka CheckVid
-	COMMAND_LIST[42] = &Scripts::cmdSetBufVid;
-	COMMAND_LIST[43] = &Scripts::cmdPlayBufVid;
-	COMMAND_LIST[44] = &Scripts::cmdRemoveLast;
-	COMMAND_LIST[45] = &Scripts::cmdDoTravel;
-	COMMAND_LIST[46] = &Scripts::cmdCheckAbout;
-	COMMAND_LIST[47] = &Scripts::cmdSpecial;
-	COMMAND_LIST[48] = &Scripts::cmdSetCycle;
-	COMMAND_LIST[49] = &Scripts::cmdCycle;
-	COMMAND_LIST[50] = &Scripts::cmdCharSpeak;
-	COMMAND_LIST[51] = &Scripts::cmdTexSpeak;
-	COMMAND_LIST[52] = &Scripts::cmdTexChoice;
-	COMMAND_LIST[53] = &Scripts::cmdWait;
-	COMMAND_LIST[54] = &Scripts::cmdSetConPos;
-	COMMAND_LIST[55] = &Scripts::cmdCheckVFrame;
-	COMMAND_LIST[56] = &Scripts::cmdJumpChoice;
-	COMMAND_LIST[57] = &Scripts::cmdReturnChoice;
-	COMMAND_LIST[58] = &Scripts::cmdClearBlock;
-	COMMAND_LIST[59] = &Scripts::cmdLoadSound;
-	COMMAND_LIST[60] = &Scripts::cmdFreeSound;
-	COMMAND_LIST[61] = &Scripts::cmdSetVideoSound;
-	COMMAND_LIST[62] = &Scripts::cmdPlayVideoSound;
-	COMMAND_LIST[63] = &Scripts::cmdPrintWatch;
-	COMMAND_LIST[64] = &Scripts::cmdDispAbout;
-	COMMAND_LIST[65] = &Scripts::cmdPushLocation_v1;
-	COMMAND_LIST[66] = &Scripts::cmdCheckTravel;
-	COMMAND_LIST[67] = &Scripts::cmdBlock;
-	COMMAND_LIST[68] = &Scripts::cmdPlayerOff;
-	COMMAND_LIST[69] = &Scripts::cmdPlayerOn;
-	COMMAND_LIST[70] = &Scripts::cmdDead;
-	COMMAND_LIST[71] = &Scripts::cmdFadeOut;
-	COMMAND_LIST[72] = &Scripts::cmdEndVideo;
-	COMMAND_LIST[73] = &Scripts::cmdHelp_v1;
+	#define Opcode(func) Common::SharedPtr<Common::Functor0<void>>( \
+		new Common::Functor0Mem<void, Scripts>(this, &Scripts::func))
+
+	_opcodes.resize(74);
+	// This is the default list used in MM.
+	_opcodes[0] = Opcode(cmdObject);
+	_opcodes[1] = Opcode(cmdEndObject);
+	_opcodes[2] = Opcode(cmdJumpLook);
+	_opcodes[3] = Opcode(cmdJumpOpen);
+	_opcodes[4] = Opcode(cmdJumpGet);
+	_opcodes[5] = Opcode(cmdJumpMove);
+	_opcodes[6] = Opcode(cmdJumpUse);
+	_opcodes[7] = Opcode(cmdJumpTalk);
+	_opcodes[8] = Opcode(cmdNull);
+	_opcodes[9] = Opcode(cmdPrint_v1);
+	_opcodes[10] = Opcode(cmdRetPos);
+	_opcodes[11] = Opcode(cmdAnim);
+	_opcodes[12] = Opcode(cmdSetFlag);
+	_opcodes[13] = Opcode(cmdCheckFlag);
+	_opcodes[14] = Opcode(cmdGoto);
+	_opcodes[15] = Opcode(cmdAddScore);
+	_opcodes[16] = Opcode(cmdSetInventory);
+	_opcodes[17] = Opcode(cmdCheckInventory);
+	_opcodes[18] = Opcode(cmdSetPlayerCoords);
+	_opcodes[19] = Opcode(cmdNewRoom);
+	_opcodes[20] = Opcode(cmdConverse);
+	_opcodes[21] = Opcode(cmdCheckFrame);
+	_opcodes[22] = Opcode(cmdCheckAnim);
+	_opcodes[23] = Opcode(cmdSnd);
+	_opcodes[24] = Opcode(cmdRetNeg);
+	_opcodes[25] = Opcode(cmdRetPos);
+	_opcodes[26] = Opcode(cmdCheckLoc);
+	_opcodes[27] = Opcode(cmdSetAnim);
+	_opcodes[28] = Opcode(cmdDispInv_v1);
+	_opcodes[29] = Opcode(cmdSetAbout);
+	_opcodes[30] = Opcode(cmdSetTimer);
+	_opcodes[31] = Opcode(cmdCheckTimer);
+	_opcodes[32] = Opcode(cmdSetTravel);
+	_opcodes[33] = Opcode(cmdJumpGoto);
+	_opcodes[34] = Opcode(cmdSetVideo_v1);
+	_opcodes[35] = Opcode(cmdPlayVideo);
+	_opcodes[36] = Opcode(cmdPlotImage);
+	_opcodes[37] = Opcode(cmdSetDisplay);
+	_opcodes[38] = Opcode(cmdSetBuffer);
+	_opcodes[39] = Opcode(cmdSetScroll);
+	_opcodes[40] = Opcode(cmdSaveRect);
+	_opcodes[41] = Opcode(cmdVideoEnded); // aka CheckVid
+	_opcodes[42] = Opcode(cmdSetBufVid);
+	_opcodes[43] = Opcode(cmdPlayBufVid);
+	_opcodes[44] = Opcode(cmdRemoveLast);
+	_opcodes[45] = Opcode(cmdDoTravel);
+	_opcodes[46] = Opcode(cmdCheckAbout);
+	_opcodes[47] = Opcode(cmdSpecial);
+	_opcodes[48] = Opcode(cmdSetCycle);
+	_opcodes[49] = Opcode(cmdCycle);
+	_opcodes[50] = Opcode(cmdCharSpeak);
+	_opcodes[51] = Opcode(cmdTexSpeak);
+	_opcodes[52] = Opcode(cmdTexChoice);
+	_opcodes[53] = Opcode(cmdWait);
+	_opcodes[54] = Opcode(cmdSetConPos);
+	_opcodes[55] = Opcode(cmdCheckVFrame);
+	_opcodes[56] = Opcode(cmdJumpChoice);
+	_opcodes[57] = Opcode(cmdReturnChoice);
+	_opcodes[58] = Opcode(cmdClearBlock);
+	_opcodes[59] = Opcode(cmdLoadSound);
+	_opcodes[60] = Opcode(cmdFreeSound);
+	_opcodes[61] = Opcode(cmdSetVideoSound);
+	_opcodes[62] = Opcode(cmdPlayVideoSound);
+	_opcodes[63] = Opcode(cmdPrintWatch);
+	_opcodes[64] = Opcode(cmdDispAbout);
+	_opcodes[65] = Opcode(cmdPushLocation_v1);
+	_opcodes[66] = Opcode(cmdCheckTravel);
+	_opcodes[67] = Opcode(cmdBlock);
+	_opcodes[68] = Opcode(cmdPlayerOff);
+	_opcodes[69] = Opcode(cmdPlayerOn);
+	_opcodes[70] = Opcode(cmdDead);
+	_opcodes[71] = Opcode(cmdFadeOut);
+	_opcodes[72] = Opcode(cmdEndVideo);
+	_opcodes[73] = Opcode(cmdHelp_v1);
 }
 
-void Scripts::setOpcodes_v2() {
-	// Modify command list for Amazon
-	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
-	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
-	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
-	COMMAND_LIST[28] = &Scripts::cmdDispInv_v2;
-	COMMAND_LIST[29] = &Scripts::cmdSetTimer;
-	COMMAND_LIST[32] = &Scripts::cmdJumpGoto;
-	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
-	COMMAND_LIST[45] = COMMAND_LIST[46] = &Scripts::cmdSpecial;
-	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[65] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
-}
-
-void Scripts::setOpcodes_v3() {
-	// Modify command list for Noctropolis
-	COMMAND_LIST[1] = &Scripts::cmdEndObject_v3;
-	COMMAND_LIST[6] = &Scripts::cmdJumpUse_v3;
-	COMMAND_LIST[7] = &Scripts::cmdJumpTalk_v3;
-	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
-	COMMAND_LIST[18] = &Scripts::cmdSetCoords;
-	COMMAND_LIST[33] = &Scripts::cmdJumpGoto_v3;
-	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
-	COMMAND_LIST[45] = &Scripts::cmdDoTravel_Noct;
-	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
-	COMMAND_LIST[51] = &Scripts::cmdPlayerSpeak;
-	COMMAND_LIST[52] = &Scripts::cmdPlayerChoice;
-	// 52 to 57 unchanged
-	COMMAND_LIST[57] = &Scripts::cmdDigitalPlay;
-	COMMAND_LIST[60] = &Scripts::cmdFillSound;
-	COMMAND_LIST[61] = &Scripts::cmdBD;
-	COMMAND_LIST[62] = &Scripts::cmdPlayVid1;
-	COMMAND_LIST[63] = &Scripts::cmdNull; // empty function CmdPRINTWITHOUT
-	COMMAND_LIST[64] = &Scripts::cmdDispAbout_v3;
-	COMMAND_LIST[71] = &Scripts::cmdFadeOut_v3;
-	COMMAND_LIST[74] = &Scripts::cmdCharWait;
-	COMMAND_LIST[75] = &Scripts::cmdUndoText;
-	COMMAND_LIST[76] = &Scripts::cmdResetAnim;
-	COMMAND_LIST[77] = &Scripts::cmdWalkTo;
-	COMMAND_LIST[78] = &Scripts::cmdWalkCheck;
-	COMMAND_LIST[79] = &Scripts::cmdSoundEnd;
-	COMMAND_LIST[80] = &Scripts::cmdFadeWhite;
-	COMMAND_LIST[81] = &Scripts::cmdGotoFrame;
-	COMMAND_LIST[82] = &Scripts::cmdPlayerScale;
-	COMMAND_LIST[83] = &Scripts::cmdRestoreBlock;
-	COMMAND_LIST[84] = &Scripts::cmdCopyScnBuf;
-	COMMAND_LIST[85] = &Scripts::cmdStilWalkTo;
-	COMMAND_LIST[86] = &Scripts::cmdStilWalkCheck;
-	COMMAND_LIST[87] = &Scripts::cmdStilOff;
-	COMMAND_LIST[88] = &Scripts::cmdStilOn;
-	COMMAND_LIST[89] = &Scripts::cmdReturnExit;
-	COMMAND_LIST[90] = &Scripts::cmdSetStilCoords;
-	COMMAND_LIST[91] = &Scripts::cmdSetPlayerDir;
-	COMMAND_LIST[92] = &Scripts::cmdSetStilDir;
-	COMMAND_LIST[93] = &Scripts::cmdStilScale;
-	COMMAND_LIST[94] = &Scripts::cmdLockInterface;
-	COMMAND_LIST[95] = &Scripts::cmdUnlockInterface;
-}
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
 	debugC(1, kDebugScripts, "setScript(res=%p (%s), restartFlag=%d)", (void *)res, res->getFileName(), restartFlag);
@@ -313,7 +259,7 @@ int Scripts::executeScript() {
 }
 
 void Scripts::executeCommand(int commandIndex) {
-	(this->*COMMAND_LIST[commandIndex])();
+	(*_opcodes[commandIndex])();
 }
 
 void Scripts::cmdObject() {
@@ -332,48 +278,6 @@ void Scripts::cmdEndObject() {
 	}
 }
 
-
-void Scripts::cmdEndObject_v3() {
-	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdTalk && _vm->_boxSelectY == 0x62) {
-
-		// Note: removed "DARK/" from these..
-		const char *vidfile = "VID/A4IN00.VID";
-		if (_vm->_flags[91] == 2) {
-			vidfile = "VID/A4IN26.VID";
-		}
-
-		if (_vm->_textFlag) {
-			Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
-			const char *subtitle = res->getEndMessage();
-			if (_vm->_flags[91] == 2) {
-				subtitle = res->getStilMessage();
-			}
-			_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-			_vm->_bubbleBox->placeBubble(subtitle);
-		}
-
-		debug("cmdEndObject_v3: TODO: duck music volume to 50%% here.");
-
-		VideoPlayer_v2 vidPlayer(_vm);
-		vidPlayer.VideoPlayer::setVideo(_vm->_screen, Common::Point(100, 100), Common::Path(vidfile), 0);
-		vidPlayer.playToEnd();
-
-		_vm->_bubbleBox->clearBubbles();
-
-	} else {
-		const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
-		debugC(1, kDebugScripts, "cmdEndObject_v3(msg=\"%s\")", msg);
-
-		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctCenter);
-		if (_vm->_player->_roomNumber <= 4)
-			_vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
-
-		printString(msg);
-	}
-	_continuenceFlag = true;
-	_endFlag = true;
-	_returnCode = 0;
-}
 
 void Scripts::cmdJumpLook() {
 	debugCN(1, kDebugScripts, "cmdJumpLook(selectCommand=%d)", _vm->_room->_selectCommand);
@@ -441,31 +345,9 @@ void Scripts::cmdJumpUse() {
 	}
 }
 
-void Scripts::cmdJumpUse_v3() {
-	debugCN(1, kDebugScripts, "cmdJumpUse_v3(selectCommand=%d)", _vm->_room->_selectCommand);
-	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdUse) {
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
 void Scripts::cmdJumpTalk() {
 	debugCN(1, kDebugScripts, "cmdJumpTalk(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 6) {
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
-void Scripts::cmdJumpTalk_v3() {
-	debugCN(1, kDebugScripts, "cmdJumpTalk_v3(selectCommand=%d)", _vm->_room->_selectCommand);
-	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdTalk) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -777,12 +659,6 @@ void Scripts::cmdDispInv_v1() {
 		_continuenceFlag = true;
 }
 
-void Scripts::cmdDispInv_v2() {
-	debugC(1, kDebugScripts, "cmdDispInv_v2()");
-	_vm->_inventory->displayInv();
-	_vm->_events->forceSetCursor(CURSOR_ARROW);
-}
-
 void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	byte val = _data->readByte();
@@ -864,17 +740,6 @@ void Scripts::cmdJumpGoto() {
 	}
 }
 
-void Scripts::cmdJumpGoto_v3() {
-	debugCN(1, kDebugScripts, "cmdJumpGoto_v3(selectCommand=%d)", _vm->_room->_selectCommand);
-	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdGoto) {
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
 void Scripts::cmdSetVideo_v1() {
 	Common::Point pt;
 	pt.x = _data->readSint16LE();
@@ -883,48 +748,6 @@ void Scripts::cmdSetVideo_v1() {
 	int rate = _data->readUint16LE();
 	debugC(1, kDebugScripts, "cmdSetVideo_v1(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
 	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
-}
-
-void Scripts::cmdSetVideo_v3() {
-	Common::Point pt;
-	short rawx = _data->readSint16LE();
-	pt.y = _data->readSint16LE();
-	int cellIndex = _data->readUint16LE();
-	int noFrame = _data->readUint16LE();
-
-	if (cellIndex > 0x3f)
-		error("Invalid room video number %d", cellIndex);
-
-	const int roomNum = _vm->_player->_roomNumber;
-#if 0
-	bool flag;
-
-	if ((roomNum == 0x1e && cellIndex == 0) || roomNum == 0x21 || (roomNum == 0x36 && cellIndex < 32))
-		flag = true;
-	else
-		flag = false;
-#endif
-
-	if (roomNum == 0x1b || roomNum == 0x1e)
-		pt.x = rawx + -5;
-	else
-		pt.x = rawx;
-
-	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, noFrame=%d)", pt.x, pt.y, cellIndex, noFrame);
-
-	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename);
-	if (!_vm->_files->existFile(vidpath)) {
-		// Try removing "DARK/" from video file names -
-		// for the demo the are in DEMO/
-		Common::StringArray parts = vidpath.splitComponents();
-		vidpath = Common::Path::joinComponents(parts.begin() + 1, parts.end());
-	}
-	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
-
-	((VideoPlayer_v2 *)_vm->_video)->setDrawBorder(noFrame == 0);
-
-	if (cellIndex == 1 && roomNum == 0x36)
-		_vm->_screen->setIconPalette();
 }
 
 void Scripts::cmdPlayVideo() {
@@ -1065,11 +888,6 @@ void Scripts::cmdDoTravel() {
 	}
 }
 
-void Scripts::cmdDoTravel_Noct() {
-	((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
-	cmdRetPos();
-}
-
 void Scripts::cmdHelp_v1() {
 	debugC(1, kDebugScripts, "cmdHelp_v1()");
 	
@@ -1168,105 +986,6 @@ void Scripts::cmdCharSpeak() {
 	debugC(1, kDebugScripts, "cmdCharSpeak(str=\"%s\")", str.c_str());
 	_vm->_bubbleBox->placeBubble(str);
 	findNull();
-}
-
-void Scripts::cmdCharSpeak_v3() {
-	int16 x = _data->readUint16LE();
-	int16 y = _data->readUint16LE();
-	_charsOrg = Common::Point(x, y);
-	_vm->_screen->_printOrg = _charsOrg;
-	_vm->_screen->_printStart = _charsOrg;
-
-	//debug("cmdCharSpeak_v3: duck music volume to 50%% here.");
-
-	Common::String str = _data->readString();
-	debugC(1, kDebugScripts, "cmdCharSpeak(%d, %d, str=\"%s\")", x, y, str.c_str());
-	if (_vm->_textFlag) {
-		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-		_vm->_bubbleBox->placeBubble(str);
-	}
-	findNull();
-}
-
-void Scripts::cmdPlayerSpeak() {
-	int16 x = _data->readUint16LE();
-	int16 y = _data->readUint16LE();
-
-	const char *title = _vm->_res->getEgoName();
-	Common::String str = _data->readString();
-	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d, \"%s\", \"%s\")", x, y, title, str.c_str());
-
-	_charsOrg = Common::Point(x, y);
-	_vm->_screen->_printOrg = _charsOrg;
-	_vm->_screen->_printStart = _charsOrg;
-	_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-	_vm->_bubbleBox->_bubbleDisplStr = title;
-
-	_vm->_bubbleBox->placeBubble(str);
-	_continuenceFlag = true;
-	findNull();
-
-	while (!_vm->shouldQuitOrRestart() && !_vm->_events->isKeyActionMousePressed()) {
-		_vm->_events->pollEventsAndWait();
-	}
-
-	_vm->_events->debounceLeft();
-	_vm->_events->zeroKeysActions();
-	_vm->_bubbleBox->clearBubbles();
-}
-
-
-void Scripts::cmdPlayerChoice() {
-	// This is similar to cmdTexChoice but used in Noctropolis
-	assert(_vm->gameIs(kGameNoctropolis));
-
-	int16 x = _data->readUint16LE();
-	int16 startY = _data->readUint16LE();
-
-	Common::Array<Common::String> choiceStrs;
-	for (int i = 0; i < 6; i++) {
-		Common::String tmpStr;
-		tmpStr = _data->readString();
-		if (!tmpStr.empty())
-			choiceStrs.push_back(tmpStr);
-	}
-
-	debugC(1, kDebugScripts, "cmdPlayerChoice(%d, %d, ..(%d choices)..)", x, startY, choiceStrs.size());
-
-	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point(x, startY);
-
-	_vm->_events->setCursor(CURSOR_ARROW);
-	const char *respTitle = ((Noctropolis::NoctropolisResources *)_vm->_res)->getResponseTitle();
-	Common::Array<Common::Rect> responseCoords;
-
-	for (uint i = 0; i < choiceStrs.size(); i++) {
-		_vm->_bubbleBox->_bubbleDisplStr = Common::String::format(respTitle, i + 1);
-		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-		_vm->_bubbleBox->calcBubble(choiceStrs[i]);
-		_vm->_bubbleBox->printBubble(choiceStrs[i]);
-		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 10;
-		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
-	}
-
-	_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
-
-	int choice = -1;
-	do {
-		_vm->_events->pollEvents();
-		if (_vm->shouldQuit())
-			return;
-
-		if (_vm->_events->_leftButton) {
-			_vm->_events->debounceLeft();
-			choice = _vm->_events->checkMouseBox1(responseCoords);
-		}
-	} while (choice == -1);
-
-	_choice = choice + 1;
-	_vm->_bubbleBox->clearBubbles();
-
-	_continuenceFlag = true;
 }
 
 void Scripts::cmdTexSpeak() {
@@ -1509,165 +1228,6 @@ void Scripts::cmdDispAbout() {
 
 }
 
-void Scripts::cmdDispAbout_v3() {
-	// Graphical ask box for Noctropolis
-	debugC(1, kDebugScripts, "cmdDispAbout_v3()");
-
-	static constexpr struct { int16 x1, y1, x2, y2; } askItemPos[] = {
-		{84, 0, 126, 48},
-		{42, 24, 84, 72},
-		{126, 24, 168, 72},
-		{0, 48, 42, 96},
-		{84, 48, 126, 96},
-		{168, 48, 210, 96},
-		{42, 72, 84, 120},
-		{126, 72, 168, 120},
-		{18, 102, 40, 120},
-		{186, 102, 208, 120}
-	};
-	bool menuUpArrow = false;
-	bool menuDownArrow = false;
-	int hoveredItem = -1, slotIndex;
-	byte slotItems[20];
-	Common::Array<byte> items;
-	int selectedItem = -2;
-	bool needRedraw = true;
-
-	Common::Path path = ((Noctropolis::NoctropolisResources *)_vm->_res)->translatePath("DARK/ASK.AP");
-	Resource *spriteData = _vm->_files->loadRawFile(path);
-	SpriteResource *askSprites = new SpriteResource(_vm, spriteData);
-	delete spriteData;
-
-	if (!_keepAskPosition) {
-		for (int i = 0; i < 40; i++)
-			_vm->_asked[i] = false;
-
-		int16 warpMouseX, warpMouseY;
-		_askBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 226, 640, warpMouseX);
-		_askBase.y = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.y, 145, 400, warpMouseY);
-
-		_keepAskPosition = true;
-		if (warpMouseX != _vm->_events->_mousePos.x || warpMouseY != _vm->_events->_mousePos.y)
-			g_system->warpMouse(warpMouseX, warpMouseY);
-	}
-
-	const Common::Point base = _askBase;
-
-	// Build the list of available ask items
-	for (int i = 0; i < 40; i++) {
-		if (_vm->_ask[i] == 1)
-			items.push_back(i);
-	}
-
-	// Grab screen background
-	_vm->_screen->saveBlock(Common::Rect(base, 226, 145));
-	// Draw ask panel
-	_vm->_screen->plotImage(askSprites, 0, Common::Point(base.x, base.y + 96));
-
-	_vm->_events->setCursor(CURSOR_ARROW);
-
-	const Font *font = _vm->_fonts.getFont(1);
-	Font::_fontColors[0] = 246;
-	Font::_fontColors[1] = 238;
-
-	Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
-
-	while (selectedItem == -2 && !_vm->shouldQuitOrRestart()) {
-		int item = -1;
-
-		if (needRedraw) {
-			hoveredItem = -1;
-			menuUpArrow = false;
-			menuDownArrow = false;
-			slotIndex = 0;
-			if (items.size() > 0) {
-				// Draw "Up" arrow if required
-				menuUpArrow = _vm->_startAboutItem > 0;
-				_vm->_screen->plotImage(askSprites, menuUpArrow ? 1 : 3, Common::Point(base.x + 18, base.y + 102));
-				// Draw ask items
-				for (uint i = 0; i < 8 && _vm->_startAboutItem + i < items.size(); i++) {
-					slotItems[slotIndex] = items[_vm->_startAboutItem + i];
-					_vm->_screen->plotImage(askSprites, slotItems[slotIndex] + 6, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
-					if (_vm->_asked[slotItems[slotIndex]]) {
-						_vm->_screen->plotImage(askSprites, 5, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
-					}
-					slotIndex++;
-				}
-				// Draw "Down" arrow if required
-				menuDownArrow = (int)items.size() > _vm->_startAboutItem + 8;
-				_vm->_screen->plotImage(askSprites, menuDownArrow ? 2 : 3, Common::Point(base.x + 186, base.y + 102));
-			}
-			// Draw remaining empty slots if any
-			while (slotIndex < 8) {
-				slotItems[slotIndex] = 0;
-				_vm->_screen->plotImage(askSprites, 4, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
-				slotIndex++;
-			}
-			needRedraw = false;
-		}
-
-		// Find at which slot the mouse is
-		for (int i = 0; i < 10; i++) {
-			if (_vm->_events->_mousePos.x >= base.x + askItemPos[i].x1 && _vm->_events->_mousePos.x <= base.x + askItemPos[i].x2 &&
-				_vm->_events->_mousePos.y >= base.y + askItemPos[i].y1 && _vm->_events->_mousePos.y <= base.y + askItemPos[i].y2) {
-				item = i;
-				break;
-			}
-		}
-
-		if (hoveredItem != item) {
-			_vm->_screen->fillRect(Common::Rect(Common::Point(base.x + 41, base.y + 128), 150, 8), 246);
-			if ((item == 8 && menuUpArrow) || (item == 9 && menuDownArrow)) {
-				font->drawString(_vm->_screen, res->getMoreItemsText(), Common::Point(base.x + 41, base.y + 128));
-			} else if (item >= 0 && item < 8) {
-				font->drawString(_vm->_screen, res->getAskItem(slotItems[item]), Common::Point(base.x + 41, base.y + 128));
-			}
-			hoveredItem = item;
-		}
-
-		// Support the mouse wheel for scrolling through the ask items
-		if (menuUpArrow && _vm->_events->_wheelUp) {
-			_vm->_startAboutItem--;
-			needRedraw = true;
-		} else if (menuDownArrow && _vm->_events->_wheelDown) {
-			_vm->_startAboutItem++;
-			needRedraw = true;
-		}
-
-		if (_vm->_events->_leftButton) {
-			_vm->_events->debounceLeft();
-			if (hoveredItem == 8 && menuUpArrow) {
-				_vm->_startAboutItem--;
-				needRedraw = true;
-			} else if (hoveredItem == 9 && menuDownArrow) {
-				_vm->_startAboutItem++;
-				needRedraw = true;
-			} else if (hoveredItem >= 0 && hoveredItem < 8) {
-				if (_vm->_startAboutItem + hoveredItem > (int)items.size()) {
-					// An empty slot was clicked
-					selectedItem = -1;
-				} else {
-					selectedItem = slotItems[hoveredItem];
-					_vm->_asked[selectedItem] = true;
-				}
-			}
-		} else if (_vm->_events->_rightButton) {
-			_vm->_events->debounceRight();
-			selectedItem = 255;
-			_keepAskPosition = false;
-		}
-
-		_vm->_events->pollEventsAndWait();
-	}
-
-	_vm->_flags[99] = selectedItem;
-
-	// Restore screen background
-	_vm->_screen->restoreBlock();
-
-	_continuenceFlag = true;
-}
-
 
 void Scripts::cmdPushLocation_v1() {
 	// MM only
@@ -1676,12 +1236,6 @@ void Scripts::cmdPushLocation_v1() {
 	cmdGoto();
 }
 
-void Scripts::cmdPushLocation() {
-	// TODO: Double-check this code.  It doesn't seem to match function
-	// sub13BC0 in Amazon?
-	debugC(1, kDebugScripts, "cmdPushLocation()");
-	_choiceStart = _data->pos() - 1;
-}
 
 void Scripts::cmdCheckTravel() {
 	int idx = _data->readSint16LE();
@@ -1736,279 +1290,10 @@ void Scripts::cmdFadeOut() {
 	_vm->_screen->forceFadeOut();
 }
 
-void Scripts::cmdFadeOut_v3() {
-	byte flag = _data->readByte();
-	debugC(1, kDebugScripts, "cmdFadeOut_v3(%d)", flag);
-	if (flag)
-		_vm->_screen->forceFadeIn();
-	else
-		_vm->_screen->forceFadeOut();
-	_continuenceFlag = true;
-}
-
 void Scripts::cmdEndVideo() {
 	debugC(1, kDebugScripts, "cmdEndVideo()");
 	_vm->_video->closeVideo();
 	_vm->_video->_videoEnd = true;
 }
-
-void Scripts::cmdDigitalPlay() {
-	// Wait until the current sound has finished playing, then
-	// if subtitles are enabled wait for input
-	debugC(1, kDebugScripts, "cmdDigitalPlay()");
-	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
-		_vm->_events->pollEventsAndWait();
-	}
-
-	_continuenceFlag = true;
-}
-
-void Scripts::cmdFillSound() {
-	debugC(1, kDebugScripts, "cmdFillSound()");
-	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
-		_vm->_events->pollEventsAndWait();
-		Common::CustomEventType action;
-		if (_vm->_events->getAction(action) && action == kActionSkip) {
-			_vm->_sound->stopSound();
-			_vm->_events->zeroKeysActions();
-			break;
-		}
-	}
-	_continuenceFlag = true;
-}
-
-void Scripts::cmdPlayVid1() {
-	// TODO: should this mark the video finished if it's not loaded?
-	_vm->_video->playVideo();
-	_continuenceFlag = true;
-}
-
-void Scripts::cmdCharWait() {
-	int x = _data->readSint16LE();
-	int y = _data->readUint16LE();
-	Common::String msg = _data->readString();
-	debugC(1, kDebugScripts, "cmdCharWait(%d, %d, '%s')", x, y, msg.c_str());
-
-	printString(msg);
-	_continuenceFlag = true;
-}
-
-void Scripts::cmdUndoText() {
-	debugC(1, kDebugScripts, "cmdUndoText()");
-
-	// TODO: Restore music volume to 100%
-
-	if (_vm->_textFlag)
-		_vm->_bubbleBox->clearBubbles();
-}
-
-void Scripts::cmdResetAnim() {
-	byte animNum = _data->readByte();
-	debugC(1, kDebugScripts, "cmdResetAnim(%d)", animNum);
-	Animation *anim = _vm->_animation->findAnimation(animNum);
-	if (!anim)
-		error("cmdResetAnim: Invalid anim num %d", animNum);
-
-	anim->_countdownTicks = anim->_initialTicks;
-	anim->_frameNumber = 0;
-	if (anim->_type == 3 || anim->_type == 4) {
-		anim->_currentLoopCount = anim->_loopCount;
-	} else {
-		anim->_currentLoopCount = 0;
-	}
-}
-
-void Scripts::cmdWalkTo() {
-	int16 x = _data->readSint16LE();
-	int16 y = _data->readSint16LE();
-	int16 dir = _data->readSint16LE();
-	debugC(1, kDebugScripts, "cmdWalkTo(%d, %d, %d)", x, y, dir);
-
-	_vm->_player->_moveTo.x = x;
-	_vm->_player->_moveTo.y = y;
-	_vm->_player->setDirFromScript(dir);
-	_vm->_player->_move = (Direction)dir;
-	_vm->_player->_playerMove = true;
-}
-
-void Scripts::cmdWalkCheck() {
-	debugCN(1, kDebugScripts, "cmdWalkCheck()");
-	if (!_vm->_player->_playerMove) {
-		// Walk is done
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
-void Scripts::cmdSoundEnd() {
-	debugCN(1, kDebugScripts, "cmdSoundEnd()");
-	if (!_vm->_sound->isSFXPlaying()) {
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
-void Scripts::cmdFadeWhite() {
-	debugC(1, kDebugScripts, "cmdFadeWhite()");
-	_vm->_screen->forceFadeWhite();
-	_continuenceFlag = true;
-}
-
-void Scripts::cmdGotoFrame() {
-	uint16 animNum = _data->readUint16LE();
-	uint16 frameNum = _data->readUint16LE();
-	debugC(1, kDebugScripts, "cmdGotoFrame(%d, %d)", animNum, frameNum);
-	Animation *anim = _vm->_animation->findAnimation(animNum);
-	if (!anim)
-		error("cmdGotoFrame: Invalid anim num %d", animNum);
-	anim->_frameNumber = frameNum;
-}
-
-void Scripts::cmdPlayerScale() {
-	_vm->_manScaleOff = _data->readUint16LE();
-	debugC(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_manScaleOff);
-}
-
-void Scripts::cmdRestoreBlock() {
-	int16 x = _data->readSint16LE();
-	int16 y = _data->readSint16LE();
-	int16 w = _data->readSint16LE();
-	int16 h = _data->readSint16LE();
-	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
-	Common::Rect r(Common::Point(x, y), w, h);
-	r.translate(-_vm->_screen->_windowXAdd, -_vm->_screen->_windowYAdd);
-	r.clip(_vm->_screen->w, _vm->_screen->h);
-	_vm->_screen->copyBlock(&_vm->_buffer2, r);
-
-	// Remake does this, but it doesn't use same buffer setup..
-	//_vm->clearPlotImagesIn(x, y, w, h);
-	//_vm->clearPlotVidsIn(x, y, w, h);
-}
-
-void Scripts::cmdCopyScnBuf() {
-	debugC(1, kDebugScripts, "cmdCopyScnBuf()");
-
-	// Copy the screen to the buffer, applying windowing offsets
-
-	//
-	// WORKAROUND: This causes double-drawing in the noct credits?
-	// Just skip for now which causes a small graphical glitch after
-	// showing the colored bars video.
-	//
-	if (_vm->_player->_roomNumber == 0x61)
-		return;
-
-	Common::Rect src(_vm->_screen->w, _vm->_screen->h);
-	const Common::Rect screenSize = src;
-	src.translate(_vm->_screen->_windowXAdd, _vm->_screen->_windowYAdd + _vm->_screen->_screenYOff);
-	src.clip(screenSize);
-	Common::Rect dest = src;
-	dest.translate(-dest.left, -dest.top);
-	_vm->_buffer2.blitFrom(*_vm->_screen, src, dest);
-}
-
-void Scripts::cmdStilWalkTo() {
-	int16 x = _data->readSint16LE();
-	int16 y = _data->readSint16LE();
-	int16 dir = _data->readSint16LE();
-	debugC(1, kDebugScripts, "cmdStilWalkTo(%d, %d, %d)", x, y, dir);
-
-	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.x = x;
-	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.y = y;
-	((Noctropolis::NoctropolisEngine*)_vm)->_stil->setDirFromScript(dir);
-	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_move = (Direction)dir;
-	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_playerMove = true;
-}
-
-void Scripts::cmdStilWalkCheck() {
-	debugCN(1, kDebugScripts, "cmdStilWalkCheck()");
-	if (!((Noctropolis::NoctropolisEngine*)_vm)->_stil->_playerMove) {
-		debugC(1, kDebugScripts, " -> True");
-		cmdGoto();
-	} else {
-		debugC(1, kDebugScripts, " -> False");
-		_data->skip(2);
-	}
-}
-
-void Scripts::cmdStilOff() {
-	debugC(1, kDebugScripts, "cmdStilOff()");
-	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = true;
-}
-
-void Scripts::cmdStilOn() {
-	debugC(1, kDebugScripts, "cmdStilOn()");
-	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = false;
-}
-
-void Scripts::cmdReturnExit() {
-	debugC(1, kDebugScripts, "cmdReturnExit()");
-	_vm->_exitBox = true;
-	_endFlag = true;
-	_returnCode = 0;
-}
-
-void Scripts::cmdSetCoords() {
-	const int x = _data->readSint16LE();
-	const int y = _data->readSint16LE();
-	debugC(1, kDebugScripts, "cmdSetCoords(x=%d, y=%d)", x, y);
-	_vm->_player->_rawPlayer.x = x;
-	_vm->_player->_moveTo.x = x;
-	_vm->_player->checkScroll();
-	bool hscroll = _vm->_player->_scrollFlag;
-	_vm->_player->_rawPlayer.y = y;
-	_vm->_player->_moveTo.y = y;
-	_vm->_player->checkScroll();
-	_vm->_player->_scrollFlag |= hscroll;
-}
-
-void Scripts::cmdSetStilCoords() {
-	const int x = _data->readSint16LE();
-	const int y = _data->readSint16LE();
-	debugC(1, kDebugScripts, "cmdSetStilCoords(x=%d, y=%d)", x, y);
-	Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;
-	stil->_rawPlayer.x = x;
-	stil->_moveTo.x = x;
-	stil->_rawPlayer.y = y;
-	stil->_moveTo.y = y;
-}
-
-void Scripts::cmdSetPlayerDir() {
-	byte dir = _data->readByte();
-	debugC(1, kDebugScripts, "cmdSetPlayerDir(%d)", dir);
-	_vm->_player->setDirFromScript(dir);
-}
-
-void Scripts::cmdSetStilDir() {
-	byte dir = _data->readByte();
-	debugC(1, kDebugScripts, "cmdSetStilDir(%d)", dir);
-	((Noctropolis::NoctropolisEngine *)_vm)->_stil->setDirFromScript(dir);
-}
-
-void Scripts::cmdStilScale() {
-	short scale = _data->readUint16LE();
-	debugC(1, kDebugScripts, "cmdStilScale(%d)", scale);
-	_vm->_stilScaleOff = scale;
-}
-
-void Scripts::cmdLockInterface() {
-	debugC(1, kDebugScripts, "cmdLockInterface()");
-	_vm->_events->_interfaceOff = true;
-	_vm->_events->setCursor(CURSOR_DARK_ANKH);
-}
-
-void Scripts::cmdUnlockInterface() {
-	debugC(1, kDebugScripts, "cmdUnlockInterface()");
-	_vm->_events->_interfaceOff = false;
-	debug("TODO: cmdUnlockInterface - restore cursor");
-	_vm->_events->setCursor(CURSOR_ARROW);
-}
-
 
 } // End of namespace Access

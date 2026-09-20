@@ -35,8 +35,9 @@ class AmazonScripts : public Scripts {
 private:
 	AmazonEngine *_game;
 protected:
+	void setOpcodes() override;
+
 	bool executeSpecial(int commandIndex, int param1, int param2) override;
-	void executeCommand(int commandIndex) override;
 
 	void cLoop();
 	void mWhile1();
@@ -48,13 +49,15 @@ protected:
 	void setInactive();
 	void boatWalls(int param1, int param2);
 
+	void cmdDispInv_v2();
+	void cmdPushLocation_v2();
 	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdChapter();
 	void cmdSetHelp();
 	void cmdCenterPanel();
 	void cmdMainPanel();
-	void CMDRETFLASH();
+	void cmdRetFlash();
 public:
 	AmazonScripts(AccessEngine *vm);
 };

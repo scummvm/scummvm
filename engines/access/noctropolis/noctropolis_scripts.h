@@ -38,8 +38,55 @@ public:
 
 	void searchForSequence() override;
 
+protected:
+	virtual void setOpcodes() override;
+
+	void cmdJumpUse_v3();
+	void cmdJumpTalk_v3();
+	void cmdJumpGoto_v3();
+	void cmdSetVideo_v3();
+	void cmdDispAbout_v3();
+	void cmdFadeOut_v3();
+	void cmdEndObject_v3();
+	void cmdCharSpeak_v3();
+
+	void cmdDoTravel_Noct();
+	void cmdDigitalPlay();
+	void cmdFillSound();
+	void cmdPlayVid1();
+	void cmdCharWait();
+	void cmdUndoText();
+	void cmdResetAnim();
+	void cmdWalkTo();
+	void cmdWalkCheck();
+
+	void cmdSoundEnd();
+	void cmdFadeWhite();
+	void cmdGotoFrame();
+	void cmdPlayerScale();
+	void cmdRestoreBlock();
+	void cmdCopyScnBuf();
+	void cmdStilWalkTo();
+	void cmdStilWalkCheck();
+	void cmdStilOff();
+	void cmdStilOn();
+	void cmdReturnExit();
+	void cmdSetCoords();
+	void cmdSetStilCoords();
+	void cmdSetPlayerDir();
+	void cmdSetStilDir();
+	void cmdStilScale();
+	void cmdLockInterface();
+	void cmdUnlockInterface();
+	void cmdPlayerSpeak();
+	void cmdPlayerChoice();
+
 private:
 	void skipCommand(byte cmd);
+
+	Common::Point _askBase;
+	bool _keepAskPosition;
+
 };
 
 } // end namespace Noctropolis

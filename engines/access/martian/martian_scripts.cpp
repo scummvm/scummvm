@@ -365,11 +365,6 @@ bool MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	return false;
 }
 
-typedef void(MartianScripts::*MartianScriptMethodPtr)();
-
-void MartianScripts::executeCommand(int commandIndex) {
-	Scripts::executeCommand(commandIndex);
-}
 
 } // End of namespace Martian
 
