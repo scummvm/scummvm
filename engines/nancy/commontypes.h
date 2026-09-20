@@ -76,6 +76,12 @@ static const byte kInvItemKeepAlways				= 1;
 static const byte kInvItemReturn					= 2;
 static const byte kInvItemNewSceneView				= 3;
 
+// Nancy15 EnableDisableInventory records can name a whole group of items
+// instead of a single one
+static const uint16 kInvItemGroupAll				= 100;
+static const uint16 kInvItemGroupViewable			= 101;
+static const uint16 kInvItemGroupPortable			= 102;
+
 // Inventory item sound override commands
 static const byte kInvSoundOverrideCommandNoSound	= 0;
 static const byte kInvSoundOverrideCommandTurnOff	= 1;

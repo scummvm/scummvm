@@ -532,10 +532,10 @@ void Scene::addItemToCharacterInventory(uint characterIndex, int16 id) {
 	inventory.order.insert_at(0, id);
 }
 
-void Scene::removeItemFromCharacterInventory(uint characterIndex, int16 id) {
+void Scene::removeItemFromCharacterInventory(uint characterIndex, int16 id, bool pickUp) {
 	if (characterIndex == g_nancy->getPlayerCharacter()) {
 		if (hasItem(id) == g_nancy->_true) {
-			removeItemFromInventory(id, false);
+			removeItemFromInventory(id, pickUp);
 		}
 
 		return;
@@ -563,8 +563,109 @@ void Scene::removeItemFromCharacterInventory(uint characterIndex, int16 id) {
 		}
 	}
 
-	if (inventory.heldItem == id) {
+	if (pickUp) {
+		inventory.heldItem = id;
+	} else if (inventory.heldItem == id) {
 		inventory.heldItem = -1;
+	}
+}
+
+int16 Scene::getCharacterHeldItem(uint characterIndex) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		return getHeldItem();
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	return playerChar ? playerChar->getInventory(characterIndex).heldItem : -1;
+}
+
+void Scene::setCharacterHeldItem(uint characterIndex, int16 id) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		setHeldItem(id);
+		return;
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return;
+	}
+
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+	inventory.heldItem = id;
+
+	if (id != -1) {
+		// An item waiting in a character's hand makes their inventory real
+		inventory.isValid = true;
+	}
+}
+
+void Scene::returnCharacterHeldItem(uint characterIndex) {
+	const int16 heldItem = getCharacterHeldItem(characterIndex);
+	if (heldItem == -1) {
+		return;
+	}
+
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		addItemToInventory(heldItem);
+		return;
+	}
+
+	setCharacterHeldItem(characterIndex, -1);
+	addItemToCharacterInventory(characterIndex, heldItem);
+}
+
+void Scene::giveItemToCharacter(uint characterIndex, int16 id, bool intoHand, bool forceIntoHand) {
+	if (id == -1) {
+		return;
+	}
+
+	if (!intoHand) {
+		addItemToCharacterInventory(characterIndex, id);
+		return;
+	}
+
+	const int16 heldItem = getCharacterHeldItem(characterIndex);
+	if (heldItem == id) {
+		// Already holding the item, e.g. when the scene reloads itself
+		return;
+	}
+
+	if (heldItem != -1) {
+		if (!forceIntoHand) {
+			// Their hand is full and the record doesn't insist
+			addItemToCharacterInventory(characterIndex, id);
+			return;
+		}
+
+		returnCharacterHeldItem(characterIndex);
+	}
+
+	// Into the hand, out of the inventory if that is where the item was
+	if (hasCharacterItem(characterIndex, id) == g_nancy->_true) {
+		removeItemFromCharacterInventory(characterIndex, id, true);
+	} else {
+		setCharacterHeldItem(characterIndex, id);
+	}
+}
+
+void Scene::setCharacterItemDisabledState(uint characterIndex, int16 id, byte state) {
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		setItemDisabledState(id, state);
+		return;
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar || id < 0) {
+		return;
+	}
+
+	// Unlike an item, a disabled state doesn't make a character's inventory
+	// real: one who has never been played is set up from scratch when they are
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+	inventory.disabledItems.resize(g_nancy->getStaticData().numItems, 0);
+
+	if ((uint)id < inventory.disabledItems.size()) {
+		inventory.disabledItems[id] = state;
 	}
 }
 
@@ -630,8 +731,15 @@ int32 Scene::getCharacterUIResource(uint characterIndex, uint index) {
 	return index < characterSet.size() ? characterSet[index] : 0;
 }
 
-void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID) {
+void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound,
+		const Common::String &caption, uint16 itemID, byte characterIndex) {
 	InventorySoundOverride newOverride;
+
+	// An override can be installed on a character who isn't being played, so it
+	// waits in their own set until they are
+	uint targetCharacter = characterIndex < kMaxPlayerCharacters ?
+		characterIndex : MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1);
+	Common::HashMap<uint16, InventorySoundOverride> &overrides = _inventorySoundOverrides[targetCharacter];
 
 	switch (command) {
 	case kInvSoundOverrideCommandNoSound :
@@ -639,21 +747,21 @@ void Scene::installInventorySoundOverride(byte command, const SoundDescription &
 		newOverride.sound = sound;
 		newOverride.sound.name = "NO SOUND";
 		newOverride.caption = caption; // Assumes the caption will be empty
-		_inventorySoundOverrides.setVal(itemID, newOverride);
+		overrides.setVal(itemID, newOverride);
 		break;
 	case kInvSoundOverrideCommandNewSound :
 		newOverride.sound = sound;
 		newOverride.caption = caption;
-		_inventorySoundOverrides.setVal(itemID, newOverride);
+		overrides.setVal(itemID, newOverride);
 		break;
 	case kInvSoundOverrideCommandICant :
 		// Make the sound the default "I can't use that here"
 		newOverride.isDefault = true;
-		_inventorySoundOverrides.setVal(itemID, newOverride);
+		overrides.setVal(itemID, newOverride);
 		break;
 	case kInvSoundOverrideCommandTurnOff :
 		// Remove any previous override
-		_inventorySoundOverrides.erase(itemID);
+		overrides.erase(itemID);
 		break;
 	default :
 		return;
@@ -685,6 +793,10 @@ static Common::String getSoundSubtitle(const Common::String &soundName, const Co
 	}
 
 	return fallback;
+}
+
+Common::HashMap<uint16, Scene::InventorySoundOverride> &Scene::activeSoundOverrides() {
+	return _inventorySoundOverrides[MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1)];
 }
 
 // Nancy15 moved the "can't" responses out of the inventory data and into the
@@ -731,8 +843,8 @@ void Scene::playPlayerCantSound(int16 itemID) {
 	SoundDescription sound;
 	Common::String caption;
 
-	if (itemID >= 0 && _inventorySoundOverrides.contains(itemID)) {
-		InventorySoundOverride &override = _inventorySoundOverrides[itemID];
+	if (itemID >= 0 && activeSoundOverrides().contains(itemID)) {
+		InventorySoundOverride &override = activeSoundOverrides()[itemID];
 
 		if (override.isDefault) {
 			// Back to the character's generic response
@@ -810,9 +922,9 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 			g_nancy->_sound->playSound("CANT");
 		}
 	} else if ((uint)itemID < _flags.items.size()) {
-		if (_inventorySoundOverrides.contains(itemID)) {
+		if (activeSoundOverrides().contains(itemID)) {
 			// We have an override installed
-			InventorySoundOverride &override = _inventorySoundOverrides[itemID];
+			InventorySoundOverride &override = activeSoundOverrides()[itemID];
 			if (!override.isDefault) {
 				// Not set to the default sound, play the override
 				g_nancy->_sound->loadSound(override.sound);
@@ -1788,10 +1900,12 @@ void Scene::load(bool fromSaveFile) {
 		}
 	}
 
-	for (auto &override : _inventorySoundOverrides) {
-		g_nancy->_sound->stopSound(override._value.sound);
+	for (uint i = 0; i < kMaxPlayerCharacters; ++i) {
+		for (auto &override : _inventorySoundOverrides[i]) {
+			g_nancy->_sound->stopSound(override._value.sound);
+		}
+		_inventorySoundOverrides[i].clear();
 	}
-	_inventorySoundOverrides.clear();
 
 	_timers.sceneTime = 0;
 	g_nancy->_sound->clearListenerPositionOverride();
