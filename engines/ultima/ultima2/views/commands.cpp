@@ -75,7 +75,7 @@ void Commands::writeString(const Common::String &msg) {
 }
 
 void Commands::resetLine() {
-	_surface.fillRect(TextRect(0, PROMPT_ROW, 28, PROMPT_ROW), 0);
+	_surface.fillRect(TextRect(0, PROMPT_ROW, 29, PROMPT_ROW), 0);
 	_surface.setTextPos(Common::Point(0, PROMPT_ROW));
 }
 

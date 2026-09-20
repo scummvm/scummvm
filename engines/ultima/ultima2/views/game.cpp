@@ -28,7 +28,7 @@ namespace Views {
 
 Game::Game() : Shared::Gfx::View("Game"), _commands(this), _stats(this) {
 	setBounds(TextRect(0, 0, 39, 24));
-	_commands.setBounds(TextRect(0, 20, 28, 23));
+	_commands.setBounds(TextRect(0, 20, 29, 23));
 	_stats.setBounds(TextRect(30, 20, 39, 23));
 }
 
