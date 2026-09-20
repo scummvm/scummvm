@@ -112,6 +112,7 @@ private:
 		kMessageScreen    = 17   // a transient message tile (SENT / DELETED / FULL)
 	};
 
+	Common::Rect zoomedChromeSrc() const;
 	void drawChrome();
 	void drawScreenContent();
 	void drawStatusIcons(bool includeSignal = true);

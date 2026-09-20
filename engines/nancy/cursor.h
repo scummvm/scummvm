@@ -188,6 +188,8 @@ private:
 
 	Common::Point _warpedMousePos;
 	CursorType _curCursorType;
+	bool _curSetFromScript;
+	bool _curHotspotVariant;
 	int16 _curItemID;
 	uint _curCursorID;
 	uint _lastCursorID;

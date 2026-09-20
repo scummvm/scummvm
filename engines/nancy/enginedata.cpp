@@ -161,6 +161,11 @@ PCAL::PCAL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		readNancy15(*chunkStream);
+		return;
+	}
+
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
@@ -263,6 +268,39 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			item.cantText = item.cantTexts[0]; // Default text is the first one
 			item.cantSound.name = item.cantSounds[0].name;
 		}
+	}
+}
+
+// Nancy15 cut the inventory chunk down: the per-item "can't" sounds and captions
+// moved into the per-character PUIV bank, the item count is now stored in the
+// chunk itself, and the highlighted icon rect is no longer written out - every
+// item's highlighted icon sits at the same offset from its normal one.
+void INV::readNancy15(Common::SeekableReadStream &stream) {
+	captionAutoClearTime = stream.readUint16LE();
+	readFilename(stream, inventoryBoxIconsImageName);
+
+	int32 highlightOffsetX = stream.readSint32LE();
+	int32 highlightOffsetY = stream.readSint32LE();
+
+	uint16 numItems = stream.readUint16LE();
+	itemDescriptions.resize(numItems);
+
+	char textBuf[49];
+
+	for (uint i = 0; i < numItems; ++i) {
+		ItemDescription &item = itemDescriptions[i];
+
+		stream.read(textBuf, 48);
+		textBuf[48] = '\0';
+		item.name = textBuf;
+
+		item.keepItem = (byte)stream.readUint16LE();
+		item.sceneID = stream.readUint16LE();
+		item.sceneSoundFlag = stream.readUint16LE();
+
+		readRect(stream, item.sourceRect);
+		item.highlightedSourceRect = item.sourceRect;
+		item.highlightedSourceRect.translate(highlightOffsetX, highlightOffsetY);
 	}
 }
 

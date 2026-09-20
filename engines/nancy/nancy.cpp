@@ -651,6 +651,16 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(VIEW)
 	LOAD_BOOT(PCAL)
 	LOAD_BOOT(INV)
+
+	if (getGameType() >= kGameTypeNancy15) {
+		// Nancy15 stores the number of inventory items in the INV chunk, so the
+		// hardcoded count is only a fallback for the chunks read before this one
+		const INV *invData = (const INV *)getEngineData("INV");
+		if (invData && invData->itemDescriptions.size()) {
+			_staticData.numItems = invData->itemDescriptions.size();
+		}
+	}
+
 	LOAD_BOOT(TBOX)
 	LOAD_BOOT(HELP)
 	LOAD_BOOT(CRED)

@@ -148,6 +148,7 @@ struct INV : public EngineData {
 	};
 
 	INV(Common::SeekableReadStream *chunkStream);
+	void readNancy15(Common::SeekableReadStream &stream);
 
 	Common::Rect scrollbarSrcBounds;
 	Common::Point scrollbarDefaultPos;

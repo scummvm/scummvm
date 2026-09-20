@@ -576,11 +576,21 @@ void Telephone::handleInput(NancyInput &input) {
 
 					_displayedDirectory += dirEntryDelta;
 				} while (_displayedDirectory != start);
+
+				// The display follows the button press immediately, and does not
+				// wait for the button sound to finish
+				if (_isShowingDirectory) {
+					_drawSurface.blitFrom(_image, _calls[_displayedDirectory].displaySrc, _displayDest);
+				}
 			}
 
 			_genericButtonSound.name = _buttonSoundNames[buttonNr];
-			g_nancy->_sound->loadSound(_genericButtonSound);
-			g_nancy->_sound->playSound(_genericButtonSound);
+
+			// Buttons without a sound do not hold up the keypad
+			if (!_genericButtonSound.name.empty() && _genericButtonSound.name != "NO SOUND") {
+				g_nancy->_sound->loadSound(_genericButtonSound);
+				g_nancy->_sound->playSound(_genericButtonSound);
+			}
 
 			_drawSurface.blitFrom(_image, _srcRects[buttonNr], _destRects[buttonNr]);
 			_needsRedraw = true;

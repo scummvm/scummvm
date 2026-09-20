@@ -120,8 +120,8 @@ public:
 	bool getIsFinished() const { return _isFinished; }
 
 	// Enhancement: jump a cinematic straight to its end, as if it had finished
-	// playing on its own. Only movies that hide the player cursor are skipped;
-	// the rest are background animations the player isn't waiting on.
+	// playing on its own. Only cinematics are skipped; background animations
+	// the player isn't waiting on keep playing.
 	void skip();
 
 	Common::Path _videoName;
@@ -183,6 +183,10 @@ public:
 	MovieType _movieType;
 
 	bool isRandom() const { return _movieType == kRandomMovie; }
+
+	// Whether skip() applies: a movie the player is waiting through, either
+	// because it hides the cursor or because it covers the whole viewport.
+	bool isSkippable();
 
 	// Random-movie state (only populated for kRandomMovie).
 	// "RandomMovie" picks any sequence; otherwise it names the starting one.

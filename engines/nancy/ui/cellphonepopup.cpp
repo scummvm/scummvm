@@ -533,15 +533,28 @@ void CellPhonePopup::updateGraphics() {
 // Drawing
 // --------------------------------------------------------------------
 
+// The keypad-less chrome variant, stored to the right of the normal one in the
+// same image and used by the browser, list and e-mail screens.
+Common::Rect CellPhonePopup::zoomedChromeSrc() const {
+	const Common::Rect &normal = _uiclData->header.normalSrcRect;
+	const Common::Rect &full = _uiclData->fullEmptyScreenSrc;
+
+	// Nancy15 enlarged the phone graphic without updating fullEmptyScreenSrc,
+	// leaving it ten pixels off. Both layouts are the same size, so derive the
+	// rect whenever the chunk disagrees with the normal one.
+	if (!full.isEmpty() && (full.width() != normal.width() || full.height() != normal.height())) {
+		Common::Rect derived = normal;
+		derived.translate((int16)(normal.width() + 2), 0);
+		return derived;
+	}
+
+	return full.isEmpty() ? normal : full;
+}
+
 void CellPhonePopup::drawChrome() {
-	// The chrome image holds two layouts side-by-side: the normal
-	// phone-with-keypad and a zoomed-in "full screen" variant with the
-	// keypad hidden. fullEmptyScreenSrc (chunk+0x10b5) points at the
-	// latter; the original swaps to it for browser/list/email-content
-	// modes so the LCD can extend down into the keypad area.
-	const Common::Rect &chromeSrc =
-		isZoomedChromeState() && !isHelpContentView() && !_uiclData->fullEmptyScreenSrc.isEmpty()
-			? _uiclData->fullEmptyScreenSrc
+	const Common::Rect chromeSrc =
+		isZoomedChromeState() && !isHelpContentView()
+			? zoomedChromeSrc()
 			: _uiclData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, chromeSrc, Common::Point(0, 0));
 	drawCloseButton(_closeButtonHovered);
@@ -996,11 +1009,19 @@ Common::Array<uint> CellPhonePopup::listVisibleIndices() const {
 			out.push_back(i);
 		}
 	} else if (_screenState == kEmailList) {
-		// "Old Email Only" (no-signal) hides messages not yet read.
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		for (uint i = 0; i < cellData->emailMessages.size(); ++i) {
-			if (!_noSignal || cellData->emailMessages[i].read) {
-				out.push_back(i);
+			// "Old Email Only" (no-signal) hides messages not yet read.
+			if (_noSignal && !cellData->emailMessages[i].read) {
+				continue;
 			}
+			// A subject with no text drops the whole row, letting the next
+			// message move up. Nancy15 reuses Nancy14's UICL chunk, whose
+			// initial e-mail has no text in Nancy15.
+			if (!autotext || !autotext->texts.contains(cellData->emailMessages[i].key)) {
+				continue;
+			}
+			out.push_back(i);
 		}
 	}
 	return out;
@@ -1045,10 +1066,10 @@ void CellPhonePopup::drawLinkList() {
 				? _uiclData->emailIconSelected
 				: _uiclData->emailIconUnread;
 			if (!icon.isEmpty()) {
-				const int iconX = MAX(0, rowRect.left - icon.width() - 2);
+				// The icon opens the row, the subject follows it.
 				_drawSurface.blitFrom(_spritesImage, icon,
-										Common::Point(iconX, rowRect.top));
-				textX = MAX(textX, iconX + icon.width() + 2);
+										Common::Point(rowRect.left, rowRect.top));
+				textX = rowRect.left + icon.width();
 			}
 		}
 

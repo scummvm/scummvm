@@ -1306,8 +1306,28 @@ void PlaySecondaryMovie::execute() {
 	}
 }
 
+bool PlaySecondaryMovie::isSkippable() {
+	// Interactive videos (AR 47) wait for the player to click their hotspots,
+	// so they must play out in full.
+	if (isRandom() || _movieType == kInteractiveMovie || _state != kRun) {
+		return false;
+	}
+
+	// Movies that hide the player cursor are cinematics by definition.
+	if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
+		return true;
+	}
+
+	// Some records (Nancy14's AR 44 in particular) leave the cursor enabled
+	// while still playing a cutscene over the whole viewport. Those count as
+	// cinematics as well, as long as they are not looping forever - an endless
+	// loop is an ambient animation the player isn't waiting on.
+	return _numLoops != 0 &&
+		Common::Rect(_decoder.getWidth(), _decoder.getHeight()) == NancySceneState.getViewport().getBounds();
+}
+
 void PlaySecondaryMovie::skip() {
-	if (isRandom() || _state != kRun || _playerCursorAllowed != kNoPlayerCursorAllowed) {
+	if (!isSkippable()) {
 		return;
 	}
 
