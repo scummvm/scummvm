@@ -94,6 +94,11 @@ struct Savegame {
 	bool _enilnoOwned = false;
 	byte _patrolWaypoint = 0;
 
+	// Turns until the moongate hops to its next waypoint, and the terrain
+	// tile it's currently covering
+	byte _patrolTimer = 0;
+	byte _patrolTerrain = 0;
+
 	byte _offerRewardItems[9] = {};
 
 	// Inventory quantities/charges, indexed by the enums in data.h

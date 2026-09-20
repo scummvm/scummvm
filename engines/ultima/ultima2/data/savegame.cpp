@@ -95,6 +95,8 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_ringQuestFlag);
 	s.syncAsByte(_enilnoOwned);
 	s.syncAsByte(_patrolWaypoint);
+	s.syncAsByte(_patrolTimer);
+	s.syncAsByte(_patrolTerrain);
 
 	for (int i = 0; i < 9; ++i)
 		s.syncAsByte(_offerRewardItems[i]);

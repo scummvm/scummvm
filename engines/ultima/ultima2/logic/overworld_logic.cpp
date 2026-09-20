@@ -47,6 +47,15 @@ const SpawnEntry SPAWN_TABLE[8] = {
 	{ Data::TILE_MAGE,        0xE0, Data::TILE_GRASS }
 };
 
+// The moongate's four waypoints in each era
+const byte MOONGATE_WAYPOINTS[5][4][2] = {
+	{ { 29, 56 }, { 31, 56 }, { 33, 56 }, { 35, 56 } },
+	{ { 34, 8 }, { 47, 28 }, { 36, 56 }, { 20, 37 } },
+	{ { 16, 16 }, { 48, 24 }, { 42, 24 }, { 19, 52 } },
+	{ { 56, 52 }, { 28, 12 }, { 33, 23 }, { 20, 52 } },
+	{ { 18, 23 }, { 50, 34 }, { 52, 24 }, { 8, 11 } }
+};
+
 } // namespace
 
 bool OverworldLogic::isWalkable(Data::TileId tile) const {
@@ -109,6 +118,17 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 		return STEP_BLOCKED;
 	}
 
+	if (sg._mapType == 0 && dest == Data::TILE_MOONGATE &&
+			sg._mount != Data::TILE_SHIP && sg._mount != Data::TILE_ROCKET) {
+		int cost = (sg._mount == Data::TILE_HORSE || sg._mount == Data::TILE_AIRPLANE) ? 50 : 25;
+		if (!sg.deductFood(cost)) {
+			playerDied();
+			return STEP_DIED;
+		}
+
+		return STEP_MOONGATE;
+	}
+
 	// Ships and rockets don't eat; horses and planes eat twice as much
 	int foodCost = 25;
 	if (sg._mount == Data::TILE_SHIP || sg._mount == Data::TILE_ROCKET)
@@ -161,6 +181,10 @@ bool OverworldLogic::move(Data::Direction dir) {
 	case STEP_BLOCKED:
 		writeString("--INVALID MOVE!\n");
 		return true;
+	case STEP_MOONGATE:
+		writeString("\n");
+		enterMoongate(newX, newY);
+		return true;
 	default:
 		break;
 	}
@@ -170,6 +194,51 @@ bool OverworldLogic::move(Data::Direction dir) {
 	sg._mapY = newY;
 	_monstersSkipTurn = !_monstersSkipTurn;
 	return true;
+}
+
+void OverworldLogic::enterMoongate(int x, int y) {
+	Data::Savegame &sg = _G(savegame);
+	_G(map)._tiles[y][x] = (Data::TileId)sg._patrolTerrain;
+
+	// Each waypoint leads to a different one of the other eras, arriving
+	// at that era's moongate for the same waypoint
+	int waypoint = sg._patrolWaypoint >> 1;
+	int era = waypoint;
+	if (era >= sg._mapEra)
+		++era;
+
+	sg._mapEra = era;
+	_G(map).load(era, 0);
+
+	sg._mapX = MOONGATE_WAYPOINTS[era][waypoint][0];
+	sg._mapY = MOONGATE_WAYPOINTS[era][waypoint][1];
+	redrawMap();
+}
+
+void OverworldLogic::updatePatrolMarker() {
+	Data::Savegame &sg = _G(savegame);
+	if (sg._saveDisabled || --sg._patrolTimer != 0)
+		return;
+
+	auto moongateAt = [&](int waypoint) -> Data::TileId & {
+		const byte *pos = MOONGATE_WAYPOINTS[sg._mapEra][waypoint];
+		return _G(map)._tiles[pos[1]][pos[0]];
+	};
+
+	Data::TileId &oldTile = moongateAt(sg._patrolWaypoint >> 1);
+	if (oldTile == Data::TILE_MOONGATE)
+		oldTile = (Data::TileId)sg._patrolTerrain;
+
+	sg._patrolTimer = 8;
+	sg._patrolWaypoint = (sg._patrolWaypoint + 2) & 7;
+
+	// Only bare terrain (water up to mountains) can host it
+	Data::TileId &newTile = moongateAt(sg._patrolWaypoint >> 1);
+	if (newTile > Data::TILE_MOUNTAIN)
+		return;
+
+	sg._patrolTerrain = newTile;
+	newTile = Data::TILE_MOONGATE;
 }
 
 int OverworldLogic::signByte(int v) const {
@@ -297,6 +366,7 @@ void OverworldLogic::updateCreatures() {
 	}
 
 	trySpawnMonster();
+	updatePatrolMarker();
 }
 
 void OverworldLogic::trySpawnMonster() {

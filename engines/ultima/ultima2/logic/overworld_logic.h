@@ -46,8 +46,19 @@ private:
 	 */
 	void enterLocalMap(int mapType);
 
+	/**
+	 * Counts down the moongate's hop timer, moving it to its next waypoint
+	 * when it expires
+	 */
+	void updatePatrolMarker();
+
+	/**
+	 * Steps onto the moongate at (x,y), moving the player to another era
+	 */
+	void enterMoongate(int x, int y);
+
 protected:
-	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED };
+	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED, STEP_MOONGATE };
 
 	/**
 	 * Applies the terrain damage, food cost and mount rules for stepping
