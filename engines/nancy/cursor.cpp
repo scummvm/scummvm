@@ -34,6 +34,8 @@ CursorManager::CursorManager() :
 	_isInitialized(false),
 	_curItemID(-1),
 	_curCursorType(kNormal),
+	_curSetFromScript(false),
+	_curHotspotVariant(true),
 	_curCursorID(0),
 	_lastCursorID(10000), // nonsense default value to ensure cursor is drawn the first time
 	_hasItem(false),
@@ -263,11 +265,17 @@ void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript,
 
 	const GameType gameType = g_nancy->getGameType();
 
-	if (type == _curCursorType && itemID == _curItemID)
+	// A script-set cursor resolves to a different slot than the same type set by
+	// the engine (e.g. type 0 picks the highlighted eyeglass instead of the plain
+	// one), so both flags take part in the comparison below
+	if (type == _curCursorType && itemID == _curItemID &&
+			setFromScript == _curSetFromScript && hotspotVariant == _curHotspotVariant)
 		return;
 
 	_curCursorType = type;
 	_curItemID = itemID;
+	_curSetFromScript = setFromScript;
+	_curHotspotVariant = hotspotVariant;
 	_hasItem = false;
 
 	if (gameType >= kGameTypeNancy13) {
