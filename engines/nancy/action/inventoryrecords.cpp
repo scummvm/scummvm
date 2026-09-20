@@ -42,7 +42,9 @@ void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 
 void AddInventoryNoHS::execute() {
 	if (_setCursor) {
-		if (NancySceneState.getHeldItem() != -1) {
+		if (NancySceneState.getHeldItem() == _itemID) {
+			// Already holding the item, e.g. when the scene reloads itself
+		} else if (NancySceneState.getHeldItem() != -1) {
 			// Currently holding another item
 			if (_forceCursor) {
 				NancySceneState.addItemToInventory(NancySceneState.getHeldItem());

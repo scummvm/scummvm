@@ -716,6 +716,15 @@ void DrivingData::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(infiniteFuel, 8);
 }
 
+void MirrorLightData::synchronize(Common::Serializer &ser) {
+	uint16 num = (uint16)angles.size();
+	ser.syncAsUint16LE(num);
+	if (ser.isLoading())
+		angles.resize(num);
+	for (uint i = 0; i < num; ++i)
+		ser.syncAsDoubleLE(angles[i]);
+}
+
 void BuildPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(sceneID);
 	ser.syncAsSint16LE(placedCount);
@@ -729,6 +738,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case BuildPuzzleData::getTag():
 		return new BuildPuzzleData();
+	case MirrorLightData::getTag():
+		return new MirrorLightData();
 	case DrivingData::getTag():
 		return new DrivingData();
 	case WordFindPuzzleData::getTag():

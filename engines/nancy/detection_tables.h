@@ -790,6 +790,23 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy10
 	},
+	{	// MD5 by bluegr
+		{
+			"nancy10", nullptr,
+			{
+				{ "data1.hdr", 0, "7abaa03cb0cf1a064c0e729ca42792a8", 421564 },
+				{ "data1.cab", 0, "897a74f32eb8720685f53f7cbbab3456", 3204160 },
+				{ "data2.cab", 0, "45ec22fa05a0b80589bca9bcde8f2196", 612636835 },
+				{"is:data1.cab:ciftree.dat", 0, "A:67dcb5e1e4c92fc0676fd388dac54a3a", 30400802},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DROPPLATFORM,
+			NANCY8_GUIOPTIONS
+		},
+		kGameTypeNancy10
+	},
 	{
 		{
 			"nancy11", nullptr,

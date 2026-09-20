@@ -501,6 +501,19 @@ struct DrivingData : public PuzzleData {
 	bool infiniteFuel = false;	// cheat toggle, kept across building visits
 };
 
+// Nancy12 MirrorLightPuzzle (AR 163). The angle of each mirror, so a mirror stays
+// where the player turned it when the puzzle scene is left and re-entered.
+// An angle of -1 marks a mirror that was never saved, which keeps its initial angle.
+struct MirrorLightData : public PuzzleData {
+	MirrorLightData() {}
+	virtual ~MirrorLightData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('M', 'I', 'R', 'L'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<double> angles;	// radians, indexed by mirror
+};
+
 // Nancy14 BuildPuzzle (AR 166). The board as it was after the last drop. A puzzle
 // scene that re-runs picks it back up, as long as it is still the last build
 // puzzle entered and its resume flag is set; otherwise the puzzle starts over.

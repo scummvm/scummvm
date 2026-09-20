@@ -135,7 +135,6 @@ void InventoryBox::handleInput(NancyInput &input) {
 					if (!disabled) {
 						// Item is not disabled
 						NancySceneState.removeItemFromInventory(itemID, item.keepItem != kInvItemNewSceneView);
-						_highlightedHotspot = -1;
 						hoveredHotspot = -1;
 
 						if (item.keepItem == kInvItemNewSceneView) {
@@ -198,6 +197,8 @@ void InventoryBox::removeItem(const int16 itemID) {
 }
 
 void InventoryBox::onReorder() {
+	// Every slot gets redrawn without highlighting below
+	_highlightedHotspot = -1;
 	onScrollbarMove();
 
 	_fullInventorySurface.clear();
@@ -249,6 +250,12 @@ void InventoryBox::onScrollbarMove() {
 	Common::Rect sourceRect = _screenPosition;
 	sourceRect.moveTo(0, curPage * (sourceRect.height() - 1));
 	_drawSurface.create(_fullInventorySurface, sourceRect);
+
+	// The hotspots are about to point at different items
+	if (_highlightedHotspot != -1) {
+		drawItemInSlot(_itemHotspots[_highlightedHotspot].itemID, _itemHotspots[_highlightedHotspot].itemOrder, false);
+		_highlightedHotspot = -1;
+	}
 
 	setHotspots(curPage);
 

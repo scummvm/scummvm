@@ -193,6 +193,13 @@ void DecoderPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 
 	g_nancy->_sound->loadSound(desc);
 	g_nancy->_sound->playSound(desc);
+
+	// Voice lines carry no inline caption; it's keyed by the sound's name
+	Common::String caption = resolveSubtitleText(name, Common::String(), "AUTOTEXT");
+	if (caption.empty()) {
+		caption = resolveSubtitleText(name, Common::String(), "CONVO");
+	}
+	showSubtitle(caption);
 }
 
 bool DecoderPuzzle::isSoundBlockPlaying(const RandomSoundBlock &block) const {

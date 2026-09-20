@@ -72,7 +72,7 @@ public:
 	uint16 getMaxScroll() const;
 
 	// The currently-visible scene background, in viewport-local coords. Used by
-	// puzzles that composite additively over the background (e.g. MirrorLight).
+	// puzzles that blend over the background (e.g. MirrorLight).
 	const Graphics::ManagedSurface &getBackground() const { return _drawSurface; }
 
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
