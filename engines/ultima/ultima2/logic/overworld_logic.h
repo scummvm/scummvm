@@ -47,6 +47,20 @@ private:
 	void enterLocalMap(int mapType);
 
 protected:
+	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED };
+
+	/**
+	 * Applies the terrain damage, food cost and mount rules for stepping
+	 * onto (x,y), printing any resulting messages. Doesn't move the player
+	 */
+	StepResult stepOnto(int x, int y);
+
+	/**
+	 * Returns true if the current mount (or the player on foot) can enter
+	 * the given terrain
+	 */
+	bool mountCanEnter(Data::TileId dest) const;
+
 	/**
 	 * Returns -1/0/+1 matching the sign of the low byte of v, replicating
 	 * the original's byte-truncating "shortest step on a wrapping map" trick
@@ -93,7 +107,7 @@ public:
 
 	bool move(Data::Direction dir) override;
 	bool attack(Data::Direction dir) override;
-	bool fire() override;
+	bool fire(Data::Direction dir) override;
 	bool enter() override;
 };
 

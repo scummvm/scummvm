@@ -38,8 +38,12 @@ namespace Logic {
 class Logic {
 protected:
 	// Which command is waiting on the Direction interaction's result
-	enum class DirectionPurpose { ATTACK, STEAL, UNLOCK, OFFER, TRANSACT };
+	enum class DirectionPurpose { ATTACK, FIRE, STEAL, UNLOCK, OFFER, TRANSACT };
 	DirectionPurpose _directionPurpose = DirectionPurpose::ATTACK;
+
+	// Flips on every successful step and clears on any other command; while
+	// set and riding a horse, most monsters skip their turn
+	bool _monstersSkipTurn = false;
 
 	/**
 	 * Dispatches some text to be shown in the Commands window
@@ -122,7 +126,6 @@ protected:
 	virtual bool cast();
 	virtual bool descend();
 	virtual bool enter();
-	virtual bool fire();
 	virtual bool get();
 	virtual bool hyper();
 	virtual bool igniteTorch();
@@ -157,6 +160,7 @@ public:
 	 * into these directly ---*/
 
 	virtual bool attack(Data::Direction dir = Data::DIR_UNSPECIFIED);
+	virtual bool fire(Data::Direction dir = Data::DIR_UNSPECIFIED);
 	virtual bool steal(Data::Direction dir = Data::DIR_UNSPECIFIED);
 	virtual bool unlock(Data::Direction dir = Data::DIR_UNSPECIFIED);
 	virtual bool offer(Data::Direction dir = Data::DIR_UNSPECIFIED);

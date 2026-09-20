@@ -57,49 +57,26 @@ bool CityCastleLogic::move(Data::Direction dir) {
 
 	writeString("%s", dirName);
 
-	if (sg._legParalysisTurns > 0) {
-		writeString("--PARALIZED!--INVALID MOVE!\n");
-		return true;
-	}
-
 	if (newX < 0 || newX >= Data::MAP_WIDTH || newY < 0 || newY >= Data::MAP_HEIGHT) {
 		writeString("\n");
 		exitToOverworld();
+		return true;
+	}
+
+	switch (stepOnto(newX, newY)) {
+	case STEP_DIED:
 		return false;
-	}
-
-	Data::TileId destTile = _G(map).tileAt(newX, newY);
-
-	if (destTile == Data::TILE_SWAMP) {
-		if (!sg.deductHP(5)) {
-			playerDied();
-			return false;
-		}
-	} else if (destTile == Data::TILE_FORCEFIELD) {
-		if (sg._items[Data::ITEM_RING] != 0) {
-			writeString("\nRING PROTECTS FROM FIELD!\n");
-		} else {
-			writeString("\nFIELD CAUSES 1000 DAMAGE!\n");
-			if (!sg.deductHP(1000)) {
-				playerDied();
-				return false;
-			}
-		}
-	}
-
-	if (!sg.deductFood(25)) {
-		playerDied();
-		return false;
-	}
-
-	if ((!_G(intangible) && !isWalkable(destTile)) || isOccupied(newX, newY)) {
+	case STEP_BLOCKED:
 		writeString("--INVALID MOVE!\n");
 		return true;
+	default:
+		break;
 	}
 
 	writeString("\n");
 	sg._mapX = newX;
 	sg._mapY = newY;
+	_monstersSkipTurn = !_monstersSkipTurn;
 	return true;
 }
 

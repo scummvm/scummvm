@@ -68,6 +68,65 @@ bool OverworldLogic::isWalkable(Data::TileId tile) const {
 	}
 }
 
+bool OverworldLogic::mountCanEnter(Data::TileId dest) const {
+	switch (_G(savegame)._mount) {
+	case Data::TILE_ROCKET:
+		return false;
+	case Data::TILE_SHIP:
+		return dest == Data::TILE_WATER;
+	case Data::TILE_HORSE:
+		return isWalkable(dest) && dest != Data::TILE_SWAMP;
+	case Data::TILE_AIRPLANE:
+		return isWalkable(dest) && dest != Data::TILE_SWAMP && dest != Data::TILE_FOREST;
+	default:
+		return isWalkable(dest);
+	}
+}
+
+OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
+	Data::Savegame &sg = _G(savegame);
+	Data::TileId dest = _G(map).tileAt(x, y);
+
+	if (dest == Data::TILE_SWAMP) {
+		if (!sg.deductHP(5)) {
+			playerDied();
+			return STEP_DIED;
+		}
+	} else if (dest == Data::TILE_FORCEFIELD) {
+		if (sg._items[Data::ITEM_RING] != 0) {
+			writeString("\nRING PROTECTS FROM FIELD!");
+		} else {
+			writeString("\nFIELD CAUSES 1000 DAMAGE!");
+			if (!sg.deductHP(1000)) {
+				playerDied();
+				return STEP_DIED;
+			}
+		}
+	}
+
+	if (sg._legParalysisTurns > 0) {
+		writeString("--PARALIZED!\n");
+		return STEP_BLOCKED;
+	}
+
+	// Ships and rockets don't eat; horses and planes eat twice as much
+	int foodCost = 25;
+	if (sg._mount == Data::TILE_SHIP || sg._mount == Data::TILE_ROCKET)
+		foodCost = 0;
+	else if (sg._mount == Data::TILE_HORSE || sg._mount == Data::TILE_AIRPLANE)
+		foodCost = 50;
+
+	if (foodCost != 0 && !sg.deductFood(foodCost)) {
+		playerDied();
+		return STEP_DIED;
+	}
+
+	if ((!_G(intangible) && !mountCanEnter(dest)) || isOccupied(x, y))
+		return STEP_BLOCKED;
+
+	return STEP_OK;
+}
+
 bool OverworldLogic::move(Data::Direction dir) {
 	Data::Savegame &sg = _G(savegame);
 
@@ -96,43 +155,20 @@ bool OverworldLogic::move(Data::Direction dir) {
 
 	writeString("%s", dirName);
 
-	if (sg._legParalysisTurns > 0) {
-		writeString("--PARALIZED!--INVALID MOVE!\n");
-		return true;
-	}
-
-	Data::TileId destTile = _G(map).tileAt(newX, newY);
-
-	if (destTile == Data::TILE_SWAMP) {
-		if (!sg.deductHP(5)) {
-			playerDied();
-			return false;
-		}
-	} else if (destTile == Data::TILE_FORCEFIELD) {
-		if (sg._items[Data::ITEM_RING] != 0) {
-			writeString("\nRING PROTECTS FROM FIELD!\n");
-		} else {
-			writeString("\nFIELD CAUSES 1000 DAMAGE!\n");
-			if (!sg.deductHP(1000)) {
-				playerDied();
-				return false;
-			}
-		}
-	}
-
-	if (!sg.deductFood(25)) {
-		playerDied();
+	switch (stepOnto(newX, newY)) {
+	case STEP_DIED:
 		return false;
-	}
-
-	if ((!_G(intangible) && !isWalkable(destTile)) || isOccupied(newX, newY)) {
+	case STEP_BLOCKED:
 		writeString("--INVALID MOVE!\n");
 		return true;
+	default:
+		break;
 	}
 
 	writeString("\n");
 	sg._mapX = newX;
 	sg._mapY = newY;
+	_monstersSkipTurn = !_monstersSkipTurn;
 	return true;
 }
 
@@ -193,6 +229,12 @@ void OverworldLogic::updateCreatures() {
 
 	for (int slot = 31; slot >= 1; --slot) {
 		if (!monsters.isActive(slot))
+			continue;
+
+		// Riding a horse, everything but sea creatures and Balrons moves every other step
+		Data::TileId monsterTile = monsters.tileType(slot);
+		if (sg._mount == Data::TILE_HORSE && _monstersSkipTurn && monsterTile != Data::TILE_SHIP &&
+				monsterTile != Data::TILE_BALRON && monsterTile != Data::TILE_SEA_MONSTER)
 			continue;
 
 		int dx = sg._mapX - monsters._mapX[slot];
@@ -370,11 +412,53 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	return false;
 }
 
-bool OverworldLogic::fire() {
-	// FIRE is the ship's cannon, gated on currently riding a Ship -
-	// there's no vehicle/boarding state yet (added in a later stage), so
-	// this is always the "not on a ship" failure case for now
-	writeString("FIRE WHAT?\n");
+bool OverworldLogic::fire(Data::Direction dir) {
+	Data::Savegame &sg = _G(savegame);
+
+	if (dir == Data::DIR_UNSPECIFIED) {
+		writeString("FIRE");
+
+		if (sg._mount != Data::TILE_SHIP) {
+			writeString(" WHAT?\n");
+			return true;
+		}
+
+		writeString(" DIRECT-");
+		_directionPurpose = DirectionPurpose::FIRE;
+		g_engine->addView("Direction");
+		return false;
+	}
+
+	int dx = 0, dy = 0;
+	switch (dir) {
+	case Data::DIR_UP: dy = -1; break;
+	case Data::DIR_DOWN: dy = 1; break;
+	case Data::DIR_LEFT: dx = -1; break;
+	case Data::DIR_RIGHT: dx = 1; break;
+	default: break;
+	}
+
+	int tx = (sg._mapX + dx + Data::MAP_WIDTH) % Data::MAP_WIDTH;
+	int ty = (sg._mapY + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
+	int slot = findTargetMonster(tx, ty);
+
+	if (slot < 0) {
+		writeString("--MISS\n");
+		return true;
+	}
+
+	// The cannon always hits, for 32-255 damage
+	int dmg = randByte() | 0x20;
+	byte &hp = _G(map)._monsters._spellHP[slot];
+
+	writeString("\n");
+	if (hp <= dmg) {
+		hp = 0;
+		killMonster(slot);
+	} else {
+		hp -= dmg + 1;
+	}
+
 	return true;
 }
 
@@ -439,35 +523,46 @@ void OverworldLogic::enterLocalMap(int mapType) {
 
 bool OverworldLogic::enter() {
 	Data::Savegame &sg = _G(savegame);
+	writeString("ENTER");
 
 	if (sg._mapType != 0) {
 		writeString(" WHAT?\n");
 		return true;
 	}
 
+	if (sg._mount != 0) {
+		writeString("-ONLY ON FOOT!\n");
+		return true;
+	}
+
 	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
 	switch (tile) {
 	case Data::TILE_VILLAGE:
+		writeString("-VILLAGE\n");
 		enterLocalMap(1);
-		return false;
+		return true;
 	case Data::TILE_TOWN:
+		writeString("-TOWN\n");
 		enterLocalMap(2);
-		return false;
+		return true;
 	case Data::TILE_CASTLE:
+		writeString("-CASTLE\n");
 		enterLocalMap(3);
-		return false;
+		return true;
 	case Data::TILE_TOWER:
-	case Data::TILE_DUNGEON_ENTRANCE:
 		// Dungeon/tower first-person rendering isn't implemented yet
-		writeString("NOT YET IMPLEMENTED\n");
+		writeString("-TOWER\nNOT YET IMPLEMENTED\n");
+		return true;
+	case Data::TILE_DUNGEON_ENTRANCE:
+		writeString("-DUNGEON\nNOT YET IMPLEMENTED\n");
 		return true;
 	case Data::TILE_SIGNPOST: {
 		static const char *const ERA_TEXT[5] = {
-			"ANOS: LEGENDS!", "ANOS: 2112 A.D.", "ANOS: 9,000,000 B.C.",
-			"ANOS: 1423 B.C.", "ANOS: 1990 A.D."
+			"ANOS: LEGENDS!", "ANOS: 9,000,000 B.C.", "ANOS: 1423 B.C.",
+			"ANOS: 1990 A.D.", "ANOS: 2112 A.D."
 		};
 		int era = (sg._mapEra < 5) ? sg._mapEra : 4;
-		writeString("%s\n", ERA_TEXT[era]);
+		writeString("-THE SIGN READS:\n%s\n", ERA_TEXT[era]);
 		return true;
 	}
 	default:
