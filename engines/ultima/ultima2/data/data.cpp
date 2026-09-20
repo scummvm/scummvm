@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/system.h"
+#include "graphics/paletteman.h"
 #include "ultima/ultima2/data/data.h"
 
 namespace Ultima {
@@ -31,6 +33,15 @@ const byte CGA_PALETTE1[4 * 3] = {
 	0xff, 0x55, 0xff, // 2: light magenta
 	0xff, 0xff, 0xff  // 3: white
 };
+
+void setCGAPalette() {
+	Graphics::Palette palette(PALETTE_PLAYER_MARKER + 1);
+	palette.set(CGA_PALETTE1, 0, 4);
+
+	const byte green[3] = { 0x55, 0xff, 0x55 };
+	palette.set(green, PALETTE_PLAYER_MARKER, 1);
+	g_system->getPaletteManager()->setPalette(palette);
+}
 
 const char *const WEAPON_NAMES[WEAPON_COUNT] = {
 	"HANDS", "DAGGER", "MACE", "AXE", "BOW", "SWORD",

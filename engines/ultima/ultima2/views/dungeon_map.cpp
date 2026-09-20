@@ -46,9 +46,6 @@ constexpr int MINIMAP_LADDER = 1;
 constexpr int MINIMAP_MONSTER = 2;
 constexpr int MINIMAP_WALL = 3;
 
-// An extra palette entry beyond the game's four, just for the player marker
-constexpr int MINIMAP_PLAYER = 4;
-const byte MINIMAP_PLAYER_RGB[3] = { 0x55, 0xff, 0x55 };
 
 // Cell terrain bits
 constexpr byte TERRAIN_WALL = 0x80;
@@ -396,10 +393,6 @@ DungeonMap::DungeonMap() : Map("DungeonMap") {
 
 bool DungeonMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	Graphics::Palette palette(5);
-	palette.set(Data::CGA_PALETTE1, 0, 4);
-	palette.set(MINIMAP_PLAYER_RGB, MINIMAP_PLAYER, 1);
-	g_system->getPaletteManager()->setPalette(palette);
 	return Map::msgFocus(msg);
 }
 
@@ -453,7 +446,7 @@ void DungeonMap::drawMinimap(Shared::Gfx::GfxSurface &s) {
 			int color = MINIMAP_PASSAGE;
 
 			if (x == sg._mapX && y == sg._mapY)
-				color = MINIMAP_PLAYER;
+				color = Data::PALETTE_PLAYER_MARKER;
 			else if (cell & 7)
 				color = MINIMAP_MONSTER;
 			else if (cell & TERRAIN_WALL)

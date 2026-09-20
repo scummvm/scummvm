@@ -32,6 +32,16 @@ namespace Data {
 // palette used by both the pic??? art and the embedded tile graphics
 extern const byte CGA_PALETTE1[4 * 3];
 
+// An extra bright green entry after the four CGA colors, used by the
+// dungeon minimap's player marker
+constexpr int PALETTE_PLAYER_MARKER = 4;
+
+/**
+ * Switches the screen to the CGA palette that the game itself, the tile
+ * graphics and the pic??? art all use
+ */
+void setCGAPalette();
+
 constexpr int MAX_NAME_LENGTH = 12;
 
 enum Direction {

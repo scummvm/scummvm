@@ -27,7 +27,7 @@ namespace Views {
 
 #define DELAY_SECONDS 3
 
-#define COLOR_FOREGROUND 15 // white
+#define COLOR_FOREGROUND 3 // white, within CGA_PALETTE1
 
 bool Startup::msgFocus(const FocusMessage &msg) {
 	delaySeconds(DELAY_SECONDS);

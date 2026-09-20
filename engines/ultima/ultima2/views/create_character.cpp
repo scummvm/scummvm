@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-constexpr int COLOR_TEXT = 15; // white
+constexpr int COLOR_TEXT = 3; // white, within CGA_PALETTE1
 
 constexpr int STARTING_POINTS = 90;
 constexpr int MIN_ATTRIBUTE = 10;

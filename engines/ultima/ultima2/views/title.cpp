@@ -30,12 +30,7 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
-// Color used for the picture-caption text, an index into the picture's
-// own 4-color CGA palette (see Gfx::PicDecoder) rather than the engine's
-// standard 16-color EGA one used for the plain text screens/menu
-constexpr int COLOR_CAPTION = 3; // white, within CGA_PALETTE1
-
-constexpr int COLOR_TEXT = 15; // white, within the standard EGA palette
+constexpr int COLOR_TEXT = 3; // white, within CGA_PALETTE1
 
 Title::Title() : View("Title"), _cursor("Cursor", this) {
 	// Position the cursor right after "CHOICE:"
@@ -51,7 +46,6 @@ void Title::loadPic(const Common::String &filename) {
 
 	_pic.create(320, 200);
 	_pic.blitFrom(*decoder.getSurface());
-	_picPalette = decoder.getPalette();
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {
@@ -117,11 +111,9 @@ void Title::draw() {
 	bool hasPicture = _state == PICDRA || _state >= DEMO_OUT;
 
 	if (hasPicture) {
-		g_system->getPaletteManager()->setPalette(_picPalette);
 		s.blitFrom(_pic);
-		s.setColor(COLOR_CAPTION);
+		s.setColor(COLOR_TEXT);
 	} else {
-		g_system->getPaletteManager()->setPalette(Graphics::Palette::createEGAPalette());
 		s.clear();
 		s.setColor(COLOR_TEXT);
 	}

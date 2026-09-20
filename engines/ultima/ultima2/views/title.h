@@ -53,7 +53,6 @@ private:
 
 	// The single picture currently on screen, if any (loaded lazily per state)
 	Graphics::ManagedSurface _pic;
-	Graphics::Palette _picPalette;
 
 	// Blinking cursor shown after "CHOICE:" while the menu is active
 	Gfx::TextCursor _cursor;

@@ -51,7 +51,6 @@ OverworldMap::~OverworldMap() {
 
 bool OverworldMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	g_system->getPaletteManager()->setPalette(Graphics::Palette(Data::CGA_PALETTE1, 4));
 	return Map::msgFocus(msg);
 }
 

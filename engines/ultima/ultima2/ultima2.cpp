@@ -55,6 +55,7 @@ Common::Error Ultima2Engine::run() {
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
+	Data::setCGAPalette();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());

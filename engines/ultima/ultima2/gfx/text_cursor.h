@@ -39,7 +39,7 @@ private:
 	byte _color;
 
 public:
-	TextCursor(const Common::String &name, UIElement *parent = nullptr, byte color = 15);
+	TextCursor(const Common::String &name, UIElement *parent = nullptr, byte color = 3);
 	~TextCursor() override {}
 
 	void draw() override;
