@@ -410,10 +410,12 @@ void EventRecorder::RegisterEventSource() {
 }
 
 uint32 EventRecorder::getRandomSeed(const Common::String &name) {
+	// Consume the same date and timer queries as recording before restoring
+	// the saved seed, otherwise they block subsequent playback events.
+	uint32 result = Common::RandomSource::generateNewSeed();
 	if (_recordMode == kRecorderPlayback) {
 		return _playbackFile->getHeader().randomSourceRecords[name];
 	}
-	uint32 result = Common::RandomSource::generateNewSeed();
 	if (_recordMode == kRecorderRecord) {
 		_recordFile->getHeader().randomSourceRecords[name] = result;
 	}
