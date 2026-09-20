@@ -58,23 +58,6 @@ bool Console::cmdMap(int argc, const char **argv) {
 		return true;
 	}
 
-	if (mapType >= 4) {
-		// Towers and dungeons have no view yet, so just dump the loaded cells
-		_G(dungeon).load(mapEra, mapType);
-		debugPrintf("Loaded dungeon MAPX%d%d\n", mapEra, mapType);
-
-		for (int level = 0; level < Data::DUNGEON_LEVELS; ++level) {
-			debugPrintf("Level %d:\n", level);
-			for (int y = 0; y < Data::DUNGEON_HEIGHT; ++y) {
-				Common::String line;
-				for (int x = 0; x < Data::DUNGEON_WIDTH; ++x)
-					line += Common::String::format("%02x", _G(dungeon)._cells[level][y][x]);
-				debugPrintf("%s\n", line.c_str());
-			}
-		}
-		return true;
-	}
-
 	if (!sg.hasCharacter())
 		sg.setupDummyCharacter();
 
@@ -82,7 +65,13 @@ bool Console::cmdMap(int argc, const char **argv) {
 		sg._overworldReturnX = sg._mapX;
 		sg._overworldReturnY = sg._mapY;
 	}
-	if (mapType != 0) {
+	if (mapType >= 4) {
+		sg._mapX = 5;
+		sg._mapY = 5;
+		sg._dungeonLevel = 0;
+		sg._facingX = 1;
+		sg._facingY = 0;
+	} else if (mapType != 0) {
 		sg._mapX = 31;
 		sg._mapY = 62;
 	}

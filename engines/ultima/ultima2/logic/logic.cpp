@@ -352,14 +352,17 @@ bool Logic::cast() {
 	}
 
 	--sg._spellCharges[sg._readiedSpell];
+	return castSpell(sg._readiedSpell);
+}
 
-	// Spells only work in dungeons and towers, which aren't implemented yet
+bool Logic::castSpell(Data::SpellType spell) {
+	// Spells only work in towers and dungeons
 	writeString("-FAILED!\n");
 	return true;
 }
 
 bool Logic::descend() {
-	// Ladders only exist in dungeons and towers, which aren't implemented yet
+	// Ladders only exist in towers and dungeons
 	writeString("DESCEND-WHAT?\n");
 	return true;
 }
@@ -377,12 +380,6 @@ bool Logic::fire(Data::Direction dir) {
 bool Logic::get() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("GET");
-
-	// Chests only exist in dungeons and towers, which aren't implemented yet
-	if (sg._mapType >= 4) {
-		writeString(" WHAT?\n");
-		return true;
-	}
 
 	Data::TileId tile = _G(map).tileAt(sg._mapX, sg._mapY);
 	if (tile != Data::TILE_SWORD && tile != Data::TILE_SHIELD) {
@@ -442,7 +439,7 @@ bool Logic::jump() {
 }
 
 bool Logic::klimb() {
-	// Ladders only exist in dungeons and towers, which aren't implemented yet
+	// Ladders only exist in towers and dungeons
 	writeString("KLIMB-WHAT?\n");
 	return true;
 }

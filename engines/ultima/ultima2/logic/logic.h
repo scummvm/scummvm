@@ -124,6 +124,12 @@ protected:
 	}
 	virtual bool board();
 	virtual bool cast();
+
+	/**
+	 * Applies the effect of a spell that's just been cast
+	 */
+	virtual bool castSpell(Data::SpellType spell);
+
 	virtual bool descend();
 	virtual bool enter();
 	virtual bool get();

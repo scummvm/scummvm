@@ -98,6 +98,10 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_patrolTimer);
 	s.syncAsByte(_patrolTerrain);
 
+	s.syncAsByte(_dungeonLevel);
+	s.syncAsSByte(_facingX);
+	s.syncAsSByte(_facingY);
+
 	for (int i = 0; i < 9; ++i)
 		s.syncAsByte(_offerRewardItems[i]);
 

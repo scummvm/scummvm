@@ -67,6 +67,12 @@ struct Savegame {
 	byte _overworldReturnX = 0;
 	byte _overworldReturnY = 0;
 
+	// Position within a tower or dungeon: the level (0-15) and the compass
+	// direction faced, as an x/y step
+	byte _dungeonLevel = 0;
+	int8 _facingX = 1;
+	int8 _facingY = 0;
+
 	// Tile of the vehicle the player is riding (horse, ship, ...), or 0 on foot
 	byte _mount = 0;
 
@@ -112,8 +118,7 @@ struct Savegame {
 	int16 _armParalysisTurns = 0;
 	int16 _sleepTurns = 0;
 	int16 _negateTimeTurns = 0;
-	// Torch/Light spell duration; only decremented by the (not yet implemented)
-	// dungeon renderer
+	// Torch/Light spell duration in a tower or dungeon
 	int16 _lightTurns = 0;
 
 	// Incremented on every overworld monster spawn attempt; its lowest set

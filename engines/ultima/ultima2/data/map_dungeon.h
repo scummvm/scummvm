@@ -55,6 +55,24 @@ struct MapDungeon {
 
 	void load(int mapEra, int mapType);
 
+	/**
+	 * Returns the cell at the given position on a level. Addresses it the
+	 * way the original does - a byte index within the level's 256-byte
+	 * page - so positions just outside the 16x16 grid alias into
+	 * neighbouring cells rather than being out of range
+	 */
+	byte &cell(int level, int x, int y) {
+		byte row = (byte)y;
+		int carry = 0;
+		for (int i = 0; i < 4; ++i) {
+			carry = row >> 7;
+			row = (byte)(row << 1);
+		}
+
+		int index = (row + (byte)x + carry) & 0xFF;
+		return _cells[level & 0xF][index / DUNGEON_WIDTH][index % DUNGEON_WIDTH];
+	}
+
 	DungeonTerrain terrainAt(int level, int x, int y) const {
 		return (DungeonTerrain)(_cells[level][y][x] & 0xF0);
 	}

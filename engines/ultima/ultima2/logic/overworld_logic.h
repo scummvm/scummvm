@@ -47,6 +47,12 @@ private:
 	void enterLocalMap(int mapType);
 
 	/**
+	 * Stashes the current position as the overworld return point, then
+	 * enters a tower (4) or dungeon (5) at its first level
+	 */
+	void enterDungeon(int mapType);
+
+	/**
 	 * Counts down the moongate's hop timer, moving it to its next waypoint
 	 * when it expires
 	 */

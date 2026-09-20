@@ -53,6 +53,17 @@ struct Map {
 private:
 	void loadTalk(int mapEra, int mapType);
 
+	/**
+	 * Loads a tower or dungeon and its monsters, and enters it
+	 */
+	void loadDungeon(int mapEra, int mapType);
+
+	/**
+	 * Switches to the given map view, first setting up the game view if
+	 * that isn't already showing
+	 */
+	void showMapView(const Common::String &mapViewName);
+
 public:
 	void load(int mapEra, int mapType);
 

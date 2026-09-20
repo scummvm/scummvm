@@ -592,6 +592,20 @@ void OverworldLogic::enterLocalMap(int mapType) {
 	_G(map).load(sg._mapEra, sg._mapType);
 }
 
+void OverworldLogic::enterDungeon(int mapType) {
+	Data::Savegame &sg = _G(savegame);
+	sg._overworldReturnX = sg._mapX;
+	sg._overworldReturnY = sg._mapY;
+	sg._mapX = 5;
+	sg._mapY = 5;
+	sg._dungeonLevel = 0;
+	sg._facingX = 1;
+	sg._facingY = 0;
+	sg._mapType = mapType;
+	_G(map).load(sg._mapEra, sg._mapType);
+	_G(logic)->entering();
+}
+
 bool OverworldLogic::enter() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("ENTER");
@@ -621,11 +635,12 @@ bool OverworldLogic::enter() {
 		enterLocalMap(3);
 		return true;
 	case Data::TILE_TOWER:
-		// Dungeon/tower first-person rendering isn't implemented yet
-		writeString("-TOWER\nNOT YET IMPLEMENTED\n");
+		writeString("-TOWER\n");
+		enterDungeon(4);
 		return true;
 	case Data::TILE_DUNGEON_ENTRANCE:
-		writeString("-DUNGEON\nNOT YET IMPLEMENTED\n");
+		writeString("-DUNGEON\n");
+		enterDungeon(5);
 		return true;
 	case Data::TILE_SIGNPOST: {
 		static const char *const ERA_TEXT[5] = {

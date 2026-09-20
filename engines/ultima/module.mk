@@ -120,10 +120,12 @@ MODULE_OBJS += \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \
 	ultima2/logic/city_castle_logic.o \
+	ultima2/logic/dungeon_logic.o \
 	ultima2/logic/logic.o \
 	ultima2/logic/overworld_logic.o \
 	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
+	ultima2/views/dungeon_map.o \
 	ultima2/views/game.o \
 	ultima2/views/location_map.o \
 	ultima2/views/map.o \

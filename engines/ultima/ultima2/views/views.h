@@ -24,6 +24,7 @@
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima2/views/create_character.h"
+#include "ultima/ultima2/views/dungeon_map.h"
 #include "ultima/ultima2/views/game.h"
 #include "ultima/ultima2/views/location_map.h"
 #include "ultima/ultima2/views/overworld_map.h"
@@ -68,6 +69,7 @@ struct Views : public Shared::Views {
 	Interactions::Shop _wizardSpellShop{Interactions::Shop::SPELL_WIZARD, "WizardSpellShop"};
 
 	CreateCharacter _createCharacter;
+	DungeonMap _dungeonMap;
 	Game _game;
 	LocationMap _locationMap;
 	OverworldMap _overworldMap;

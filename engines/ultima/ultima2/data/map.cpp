@@ -24,6 +24,7 @@
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/logic/overworld_logic.h"
 #include "ultima/ultima2/logic/city_castle_logic.h"
+#include "ultima/ultima2/logic/dungeon_logic.h"
 #include "ultima/shared/gfx/view.h"
 
 namespace Ultima {
@@ -74,6 +75,11 @@ void Map::loadTalk(int mapEra, int mapType) {
 }
 
 void Map::load(int mapEra, int mapType) {
+	if (mapType >= 4) {
+		loadDungeon(mapEra, mapType);
+		return;
+	}
+
 	Common::File f;
 	Common::String filename = mapFilename(mapEra, mapType);
 	if (!f.open(filename.c_str()))
@@ -103,8 +109,27 @@ void Map::load(int mapEra, int mapType) {
 	else
 		_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::CityCastleLogic());
 
-	Common::String mapViewName = (mapType == 0) ? "OverworldMap" : "LocationMap";
+	showMapView(mapType == 0 ? "OverworldMap" : "LocationMap");
+}
 
+void Map::loadDungeon(int mapEra, int mapType) {
+	_G(dungeon).load(mapEra, mapType);
+	_monsters.load(mapEra, mapType);
+	_talk.clear();
+
+	// Each dungeon monster is also flagged in the low bits of its cell
+	for (int slot = 0; slot < MAP_MONSTER_COUNT; ++slot) {
+		if (_monsters.isActive(slot)) {
+			_G(dungeon).cell(_monsters._glyphTile[slot], _monsters._mapX[slot],
+				_monsters._mapY[slot]) |= _monsters._type[slot] & 7;
+		}
+	}
+
+	_G(logic) = Common::SharedPtr<Logic::Logic>(new Logic::DungeonLogic());
+	showMapView("DungeonMap");
+}
+
+void Map::showMapView(const Common::String &mapViewName) {
 	if (!g_engine->isPresent("Game")) {
 		// Set up the game view and force it to draw immediately
 		g_engine->replaceView("Game", true);
