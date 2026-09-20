@@ -51,21 +51,16 @@ void Logic::redrawMap() {
 }
 
 void Logic::redrawStats() {
-	g_engine->baseView()->findView("Stats")->draw();
+	auto *view = g_engine->baseView()->findView("Stats");
+	if (view)
+		view->draw();
 }
 
 void Logic::playerDied() {
 	Data::Savegame &sg = _G(savegame);
 	writeString("\n%s IS DEAD!\n", sg._name);
 
-	sg._hp = 0;
-	sg._food = 0;
-	sg._foodTurnCtr = 0;
-	sg._experience = 0;
-	sg._gold = 0;
-
-	// UIElement* overload used directly since the string-name one drops replaceAllViews
-	g_engine->replaceView(g_engine->findView("Title"), true);
+	g_engine->replaceView("Dead", true);
 }
 
 void Logic::alertTownGuards(int extraSlot) {

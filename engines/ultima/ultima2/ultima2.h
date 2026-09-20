@@ -89,10 +89,8 @@ public:
 			(f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
-	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Uses a serializer to allow implementing savegame

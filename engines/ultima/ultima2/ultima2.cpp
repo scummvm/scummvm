@@ -27,6 +27,7 @@
 #include "ultima/ultima2/metaengine.h"
 #include "ultima/ultima2/views/views.h"
 #include "ultima/ultima2/views/map.h"
+#include "ultima/ultima2/views/interactions/dead.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -85,6 +86,10 @@ byte Ultima2Engine::randByte() {
 bool Ultima2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Only allow saving when any of the different map views are active
 	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;
+}
+
+bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveGameStateCurrently() || dynamic_cast<Views::Interactions::Dead *>(focusedView()) != nullptr;
 }
 
 Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {

@@ -135,6 +135,7 @@ MODULE_OBJS += \
 	ultima2/views/zstats.o \
 	ultima2/views/interactions/interaction.o \
 	ultima2/views/interactions/clue_seller.o \
+	ultima2/views/interactions/dead.o \
 	ultima2/views/interactions/direction.o \
 	ultima2/views/interactions/food_shop.o \
 	ultima2/views/interactions/offer_gold.o \

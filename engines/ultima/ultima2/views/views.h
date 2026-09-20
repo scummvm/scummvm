@@ -32,6 +32,7 @@
 #include "ultima/ultima2/views/world_map_overview.h"
 #include "ultima/ultima2/views/zstats.h"
 #include "ultima/ultima2/views/interactions/clue_seller.h"
+#include "ultima/ultima2/views/interactions/dead.h"
 #include "ultima/ultima2/views/interactions/direction.h"
 #include "ultima/ultima2/views/interactions/food_shop.h"
 #include "ultima/ultima2/views/interactions/offer_gold.h"
@@ -49,6 +50,7 @@ namespace Views {
 
 struct Views : public Shared::Views {
 	Interactions::ClueSeller _clueSeller;
+	Interactions::Dead _dead;
 	Interactions::Direction _direction;
 	Interactions::FoodShop _foodShop;
 	Interactions::OfferGold _offerGold;

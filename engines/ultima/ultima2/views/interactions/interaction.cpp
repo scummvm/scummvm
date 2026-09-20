@@ -32,7 +32,10 @@ Interaction::Interaction(const Common::String &name) : View(name) {
 }
 
 bool Interaction::tick() {
-	g_engine->baseView()->findView("Commands")->tick();
+	auto *view = g_engine->baseView()->findView("Commands");
+	if (view)
+		view->tick();
+
 	return Shared::Gfx::View::tick();
 }
 
