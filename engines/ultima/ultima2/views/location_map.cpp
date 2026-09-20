@@ -97,9 +97,8 @@ void LocationMap::draw() {
 			Data::TileId tileId;
 
 			if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT) {
-				// Local maps don't wrap - anything off the edge shows as
-				// Mountain, giving villages/towns/castles a walled border
-				tileId = Data::TILE_MOUNTAIN;
+				// Local maps don't wrap - anything off the edge shows as grass
+				tileId = Data::TILE_GRASS;
 			} else {
 				tileId = _G(map).tileAt(x, y);
 

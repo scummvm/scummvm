@@ -32,7 +32,7 @@ namespace Views {
 /**
  * Renders the 20x10-tile viewport centered on the player for a village,
  * town, or castle map. Like OverworldMap, but cells outside the map's
- * 0-63 bounds show as Mountain (there's no wraparound - walking off the
+ * 0-63 bounds show as grass (there's no wraparound - walking off the
  * edge instead exits back to the overworld, see CityCastleLogic::move)
  */
 class LocationMap : public Map {
