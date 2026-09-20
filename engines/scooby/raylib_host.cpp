@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "graphics/screen.h"
 #include "rendering/frame_viewport.h"
+#include "scooby.h"
 
 namespace Scooby {
 RaylibHost::RaylibHost() : _rgbaPixels(static_cast<std::size_t>(IndexedFrame::Width) *
@@ -82,6 +83,19 @@ RaylibHost::~RaylibHost() {
 	// 	CloseWindow();
 	// 	_windowOpen = false;
 	// }
+}
+
+bool RaylibHost::shouldClose() const {
+	return g_engine->shouldQuit();
+}
+bool RaylibHost::isIntroSkipPressed() const {
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			return true;
+		}
+	}
+	return false;
 }
 
 ControllerButtons RaylibHost::getControllerButtons(ControllerButtons backButton) {

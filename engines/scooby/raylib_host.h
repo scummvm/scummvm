@@ -54,11 +54,11 @@ public:
 	RaylibHost &operator=(const RaylibHost &) = delete;
 
 	// Gets whether the native close control requested process shutdown.
-	bool shouldClose() const { return false; } // WindowShouldClose(); }
+	bool shouldClose() const;
 
 	// Consumes one Escape press used to skip exactly one current intro
 	// presentation. True only on the key-down edge reported by raylib.
-	bool isIntroSkipPressed() const { return false; } // IsKeyPressed(KEY_ESCAPE); }
+	bool isIntroSkipPressed() const;
 
 	// Samples the backend-neutral player controls from keyboard, mouse
 	// buttons, and gamepad zero.
