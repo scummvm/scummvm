@@ -574,11 +574,12 @@ void OverworldLogic::killMonster(int slot) {
 		break;
 	}
 
-	int goldAmt = (randByte() & 0x17) | 1;
+	// The original keeps and prints these as two BCD digits
+	int goldAmt = Data::bcdValue((randByte() & 0x17) | 1);
 	int expAmt = (randByte() & 3) + 1;
 	sg._gold += goldAmt;
 	sg._experience += expAmt;
-	writeString("KILLED--GOLD+%d--EXP.+%d\n", goldAmt, expAmt);
+	writeString("KILLED--GOLD+%.2d--EXP.+%.2d\n", goldAmt, expAmt);
 }
 
 void OverworldLogic::enterLocalMap(int mapType) {

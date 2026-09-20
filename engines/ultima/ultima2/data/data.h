@@ -80,6 +80,21 @@ enum ItemType {
 };
 extern const char *const ITEM_NAMES[ITEM_COUNT];
 
+/**
+ * The original keeps amounts as packed BCD bytes: each nibble is a decimal
+ * digit. Converts such a byte to the number it represents
+ */
+inline int bcdValue(byte v) {
+	return (v >> 4) * 10 + (v & 0xF);
+}
+
+/**
+ * Converts a number below 100 to a packed BCD byte
+ */
+inline byte toBcd(int v) {
+	return (byte)(((v / 10) << 4) | (v % 10));
+}
+
 } // namespace Data
 } // namespace Ultima2
 } // namespace Ultima
