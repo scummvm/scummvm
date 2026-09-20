@@ -121,6 +121,19 @@ struct Savegame {
 	void synchronize(Common::Serializer &s);
 
 	/**
+	 * Returns true if a character has been created or loaded
+	 */
+	bool hasCharacter() const {
+		return _name[0] != '\0';
+	}
+
+	/**
+	 * Replaces the savegame with a default character on the starting
+	 * overworld, for testing without going through character creation
+	 */
+	void setupDummyCharacter();
+
+	/**
 	 * Returns the tile the player is drawn with
 	 */
 	TileId playerTile() const {

@@ -25,6 +25,32 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Data {
 
+void Savegame::setupDummyCharacter() {
+	*this = Savegame();
+
+	Common::strlcpy(_name, "DUMMY", sizeof(_name));
+	_sex = SEX_MALE;
+	_race = RACE_HUMAN;
+	_class = CLASS_FIGHTER;
+
+	// Even spread of the starting points, plus the male, human and fighter bonuses
+	_strength = 15 + 5 + 21;
+	_agility = 15;
+	_stamina = 15;
+	_charisma = 15;
+	_wisdom = 15;
+	_intelligence = 15 + 5;
+
+	_hp = 400;
+	_food = 400;
+	_gold = 400;
+
+	_mapEra = 2;
+	_mapType = 0;
+	_mapX = 20;
+	_mapY = 20;
+}
+
 void Savegame::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, MAX_NAME_LENGTH + 1);
 	s.syncAsByte(_sex);

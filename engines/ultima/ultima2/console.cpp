@@ -75,6 +75,9 @@ bool Console::cmdMap(int argc, const char **argv) {
 		return true;
 	}
 
+	if (!sg.hasCharacter())
+		sg.setupDummyCharacter();
+
 	if (sg._mapType == 0) {
 		sg._overworldReturnX = sg._mapX;
 		sg._overworldReturnY = sg._mapY;
