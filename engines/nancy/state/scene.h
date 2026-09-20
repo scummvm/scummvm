@@ -319,6 +319,11 @@ private:
 	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
 	Common::Rect activePopupConfinement() const;
 
+	// Nancy15's "can't" responses live in the active player character's PUIV
+	// bank instead of the inventory data
+	bool getPlayerCantSound(int16 itemID, SoundDescription &sound) const;
+	void playPlayerCantSound(int16 itemID);
+
 	void initStaticData();
 
 	void clearSceneData(bool nextIsNoArt = false);

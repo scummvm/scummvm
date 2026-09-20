@@ -642,10 +642,101 @@ static Common::String getSoundSubtitle(const Common::String &soundName, const Co
 	return fallback;
 }
 
+// Nancy15 moved the "can't" responses out of the inventory data and into the
+// active player character's PUIV bank: one group of interchangeable sounds per
+// item, keyed by item ID, plus the character's generic response, which is the
+// one the InventorySoundOverride record installs for its default command. They
+// all share the bank's channel and volume.
+bool Scene::getPlayerCantSound(int16 itemID, SoundDescription &sound) const {
+	auto *puivData = GetEngineData(PUIV);
+	if (!puivData) {
+		return false;
+	}
+
+	Common::String name;
+
+	if (itemID < 0) {
+		name = puivData->name;
+	} else {
+		for (uint i = 0; i < puivData->soundGroups.size(); ++i) {
+			const PUIV::SoundGroup &group = puivData->soundGroups[i];
+			if (group.tag == itemID && group.variants.size()) {
+				// The variants are interchangeable, so one is picked at random
+				name = group.variants[g_nancy->_randomSource->getRandomNumber(group.variants.size() - 1)];
+				break;
+			}
+		}
+	}
+
+	if (name.empty() || name.equalsIgnoreCase("NO SOUND")) {
+		return false;
+	}
+
+	sound.name = name;
+	sound.channelID = puivData->channelID;
+	sound.volume = puivData->volume;
+
+	return true;
+}
+
+void Scene::playPlayerCantSound(int16 itemID) {
+	auto *inventoryData = GetEngineData(INV);
+	assert(inventoryData);
+
+	SoundDescription sound;
+	Common::String caption;
+
+	if (itemID >= 0 && _inventorySoundOverrides.contains(itemID)) {
+		InventorySoundOverride &override = _inventorySoundOverrides[itemID];
+
+		if (override.isDefault) {
+			// Back to the character's generic response
+			if (!getPlayerCantSound(-1, sound)) {
+				return;
+			}
+		} else {
+			sound = override.sound;
+			caption = override.caption;
+		}
+	} else if (!getPlayerCantSound(itemID, sound)) {
+		// An item with no response of its own stays silent
+		return;
+	}
+
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND")) {
+		// Silenced by an override
+		return;
+	}
+
+	// One response at a time: if the bank's channel is busy, the sound (and its
+	// caption) are left alone instead of being restarted or overlapped
+	if (g_nancy->_sound->isSoundPlaying(sound.channelID)) {
+		return;
+	}
+
+	if (ConfMan.getBool("subtitles")) {
+		_textbox.clear();
+	}
+
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+
+	if (ConfMan.getBool("subtitles")) {
+		_textbox.addTextLine(getSoundSubtitle(sound.name, caption), inventoryData->captionAutoClearTime);
+	}
+}
+
 void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	// Improvement: nancy2 never shows the caption text, even though it exists in the data; we show it
 	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
+
+	// Nancy15 keeps no "can't" sounds in the inventory data; they come from the
+	// player character's own bank instead
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		playPlayerCantSound(itemID);
+		return;
+	}
 
 	// Nancy9 and newer play every "can't" sound on the same dedicated sound-effects
 	// channel as the default "can't" sound. If one is already playing, leave it (and
