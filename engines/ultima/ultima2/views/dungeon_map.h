@@ -36,6 +36,12 @@ namespace Views {
 class DungeonMap : public Map {
 private:
 	byte _monsterSprites[2048] = {};
+	bool _showMinimap = false;
+
+	/**
+	 * Draws a small map of the current level in the top right corner
+	 */
+	void drawMinimap(Shared::Gfx::GfxSurface &s);
 
 	/**
 	 * Draws the corridor ahead. Returns the depth it was drawn out to
@@ -59,6 +65,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgAttackTile(const AttackTileMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 	bool tick() override;
 };

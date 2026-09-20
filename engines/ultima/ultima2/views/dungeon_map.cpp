@@ -39,6 +39,17 @@ constexpr int VIEW_OFFSET = 16;
 constexpr int COLOR_LINE = 3;
 constexpr int MAX_DEPTH = 8;
 
+// The minimap draws each cell as a square of this many pixels
+constexpr int MINIMAP_SCALE = 2;
+constexpr int MINIMAP_PASSAGE = 0;
+constexpr int MINIMAP_LADDER = 1;
+constexpr int MINIMAP_MONSTER = 2;
+constexpr int MINIMAP_WALL = 3;
+
+// An extra palette entry beyond the game's four, just for the player marker
+constexpr int MINIMAP_PLAYER = 4;
+const byte MINIMAP_PLAYER_RGB[3] = { 0x55, 0xff, 0x55 };
+
 // Cell terrain bits
 constexpr byte TERRAIN_WALL = 0x80;
 constexpr byte TERRAIN_DOOR = 0x40;
@@ -385,7 +396,10 @@ DungeonMap::DungeonMap() : Map("DungeonMap") {
 
 bool DungeonMap::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KBMODE_GAMEPLAY);
-	g_system->getPaletteManager()->setPalette(Graphics::Palette(Data::CGA_PALETTE1, 4));
+	Graphics::Palette palette(5);
+	palette.set(Data::CGA_PALETTE1, 0, 4);
+	palette.set(MINIMAP_PLAYER_RGB, MINIMAP_PLAYER, 1);
+	g_system->getPaletteManager()->setPalette(palette);
 	return Map::msgFocus(msg);
 }
 
@@ -413,6 +427,46 @@ bool DungeonMap::msgAttackTile(const AttackTileMessage &msg) {
 	}
 
 	return true;
+}
+
+bool DungeonMap::msgKeypress(const KeypressMessage &msg) {
+	// Secret debugging aid: minmap toggle
+	if (msg.keycode == Common::KEYCODE_BACKQUOTE || msg.keycode == Common::KEYCODE_TILDE) {
+		_showMinimap = !_showMinimap;
+		redraw();
+		return true;
+	}
+
+	return Map::msgKeypress(msg);
+}
+
+void DungeonMap::drawMinimap(Shared::Gfx::GfxSurface &s) {
+	Data::Savegame &sg = _G(savegame);
+	Data::MapDungeon &dungeon = _G(dungeon);
+	const int left = 320 - (Data::DUNGEON_WIDTH + 2) * MINIMAP_SCALE;
+
+	// Runs one cell past each edge, since the edge of the level acts as a wall
+	for (int y = -1; y <= Data::DUNGEON_HEIGHT; ++y) {
+		for (int x = -1; x <= Data::DUNGEON_WIDTH; ++x) {
+			bool outside = x < 0 || y < 0 || x >= Data::DUNGEON_WIDTH || y >= Data::DUNGEON_HEIGHT;
+			byte cell = outside ? TERRAIN_WALL : dungeon.cell(sg._dungeonLevel, x, y);
+			int color = MINIMAP_PASSAGE;
+
+			if (x == sg._mapX && y == sg._mapY)
+				color = MINIMAP_PLAYER;
+			else if (cell & 7)
+				color = MINIMAP_MONSTER;
+			else if (cell & TERRAIN_WALL)
+				color = MINIMAP_WALL;
+			else if (cell & (TERRAIN_LADDER_UP | TERRAIN_LADDER_DOWN))
+				color = MINIMAP_LADDER;
+
+			for (int py = 0; py < MINIMAP_SCALE; ++py) {
+				for (int px = 0; px < MINIMAP_SCALE; ++px)
+					s.setPixel(left + (x + 1) * MINIMAP_SCALE + px, (y + 1) * MINIMAP_SCALE + py, color);
+			}
+		}
+	}
 }
 
 bool DungeonMap::tick() {
@@ -537,6 +591,9 @@ void DungeonMap::draw() {
 	// Nothing can be seen without a light
 	if (_G(savegame)._lightTurns > 0)
 		drawCorridor(s);
+
+	if (_showMinimap)
+		drawMinimap(s);
 }
 
 } // namespace Views
