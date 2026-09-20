@@ -153,6 +153,7 @@ public:
 	// Nancy15+ inventory action records and dependencies pick the character to
 	// act on, which needn't be the one being played. Anyone else is served from
 	// their parked inventory instead of the live one.
+	void addItemToCharacterInventory(uint characterIndex, int16 id);
 	void removeItemFromCharacterInventory(uint characterIndex, int16 id);
 	byte hasCharacterItem(uint characterIndex, int16 id);
 	int32 getCharacterUIResource(uint characterIndex, uint index);

@@ -487,6 +487,51 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 	}
 }
 
+void Scene::addItemToCharacterInventory(uint characterIndex, int16 id) {
+	if (id == -1) {
+		return;
+	}
+
+	if (characterIndex == g_nancy->getPlayerCharacter()) {
+		if (hasItem(id) == g_nancy->_false) {
+			addItemToInventory(id);
+		}
+
+		return;
+	}
+
+	auto *playerChar = (PlayerCharacterData *)getPuzzleData(PlayerCharacterData::getTag());
+	if (!playerChar) {
+		return;
+	}
+
+	PlayerCharacterData::Inventory &inventory = playerChar->getInventory(characterIndex);
+
+	const uint numItems = g_nancy->getStaticData().numItems;
+	inventory.items.resize(numItems, g_nancy->_false);
+	inventory.disabledItems.resize(numItems, 0);
+
+	if ((uint)id >= inventory.items.size() || inventory.items[id] == g_nancy->_true ||
+			inventory.heldItem == id) {
+		return;
+	}
+
+	inventory.items[id] = g_nancy->_true;
+
+	// Handing an item to a character who hasn't been played yet makes their
+	// inventory real; it would be thrown away on the next switch otherwise
+	inventory.isValid = true;
+
+	for (uint i = 0; i < inventory.order.size(); ++i) {
+		if (inventory.order[i] == id) {
+			inventory.order.remove_at(i);
+			break;
+		}
+	}
+
+	inventory.order.insert_at(0, id);
+}
+
 void Scene::removeItemFromCharacterInventory(uint characterIndex, int16 id) {
 	if (characterIndex == g_nancy->getPlayerCharacter()) {
 		if (hasItem(id) == g_nancy->_true) {
