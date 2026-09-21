@@ -210,6 +210,11 @@ const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-
+const RoomDataOffsets IgorEngine::PART_100_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },       // cseg175:17F9-1829: DAT+45, 3 records, 6-byte source, 2-byte destination
+	{ 77, 90 },            // cseg175:1E22-1E68 and cseg175:1FBB-1FD3
+	{ 95, 303, 3319, 199, 275, 84 }, // cseg175:1C41-1CA7, 1CE9-1D4F, 2C8B-2DEA
+	{ 0, 0, 0, 0, 0 }
+};
 
 } // End of namespace Igor

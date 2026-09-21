@@ -480,6 +480,8 @@
 // they can never collide with a real table id.
 //   A = left  panel, PART100_bg  (scrolled in towards the map; ANM slot 0x0)
 //   B = right panel, C1 arrival  (what part 100 shows on entry)
+// TXT A/B include the original walk-scale tables, names, and dialogue strings
+// loaded by cseg179:0002 and cseg178:0002 respectively.
 #define PAL_DecanatoA 900
 #define IMG_DecanatoA 901
 #define MSK_DecanatoA 902

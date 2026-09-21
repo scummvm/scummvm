@@ -460,7 +460,8 @@ private:
 
 
 	void PART_100();
-	void PART_100_DRAW_IGOR();
+	void PART_100_EXEC_ACTION(int action);
+	void PART_100_SCROLL_LEFT();
 
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -611,6 +612,7 @@ protected:
 	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
 };
 
 extern IgorEngine *g_engine;

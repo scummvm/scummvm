@@ -74,6 +74,12 @@ void IgorEngine::PART_MAIN() {
 			PART_06(); // Spring
 			break;
 
+		case 100:
+		case 101:
+		case 102:
+			PART_100(); // OutsideAdministrationBuilding street
+			break;
+
 		case 850: // Intro cutscene
             // Clear the entire screen buffer before starting the intro cutscene
             memset(_screenVGA, 0, 64000);

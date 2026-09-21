@@ -1,0 +1,266 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+#include "igor/igor.h"
+
+namespace Igor {
+
+namespace {
+
+const uint32 kPart100PanelLeft = 0x0000; // cseg175:2809-2818
+const uint32 kPart100Frm1 = 0xB400;      // cseg177:0002
+const uint32 kPart100Frm2 = 0xBC0A;      // cseg177:0002
+const uint32 kPart100Frm3 = 0xC5E2;      // cseg177:0002
+const uint32 kPart100Frm4 = 0xC786;      // cseg177:0002
+const uint32 kPart100Frm5 = 0xC8AE;      // cseg177:0002
+
+} // End of anonymous namespace
+
+void IgorEngine::PART_100_EXEC_ACTION(int action) {
+	// The action-to-function table is constructed at cseg175:08B2-09EA;
+	// its order differs from the disassembler's function listing order.
+	switch (action) {
+	case 101: // cseg175:08BC-08DA -> sub_175_00F2
+		ADD_DIALOGUE_TEXT(201, 1, 626);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 102:
+		// TODO: port the scripted door exit from cseg175:0770-087C.
+		// Its dispatch-table assignment is cseg175:08DE-08FC.
+		warning("PART_100 action 102 is not implemented (cseg175:0770-087C)");
+		break;
+	case 103: // cseg175:0900-091E -> sub_175_011F
+		ADD_DIALOGUE_TEXT(202, 1, 627);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 104:
+		// TODO: port the state-dependent bin animation exactly from
+		// cseg175:014C-026E. It must remain disabled until the s3:0x862
+		// object-state mapping and all four FRM1 frames are wired. Its
+		// dispatch-table assignment is cseg175:0922-0940.
+		warning("PART_100 action 104 is not implemented (cseg175:014C-026E)");
+		break;
+	case 105: // cseg175:0944-0962 -> sub_175_026F
+		ADD_DIALOGUE_TEXT(206, 1, 630);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 106: // cseg175:0966-0984 -> sub_175_02C9
+		ADD_DIALOGUE_TEXT(208, 1, 632);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 107: // cseg175:0988-09A6 -> sub_175_029C
+		ADD_DIALOGUE_TEXT(207, 1, 631);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		break;
+	case 108:
+		// TODO: port the 41-step, eight-pixels-per-step horizontal pan and
+		// Igor compositing from cseg175:02F6-055A. Its dispatch assignment
+		// is cseg175:09AA-09C8. Do not jump to part 110 without the pan.
+		warning("PART_100 action 108 is not implemented (cseg175:02F6-055A)");
+		break;
+	case 109: // cseg175:09CC-09EA -> sub_175_055B
+		_currentPart = 40;
+		break;
+	default:
+		warning("PART_100_EXEC_ACTION unhandled action %d", action);
+		break;
+	}
+}
+
+
+// Scroll to the LEFT: the left panel (PART100_bg) slides in from the left edge,
+// the active right panel (C1) exits right. Mirrors PART_06_ACTION_102
+// (part_6.cpp); the incoming strip is read straight from the stashed left panel
+// in the ANM buffer (row stride 320). layer1 is untouched by the pan, so it
+// still holds the outgoing right panel afterwards and can be kept for a later
+// scroll back.
+// void IgorEngine::PART_100_SCROLL_LEFT_ACTION() {
+// 	for (int i = 1; i < 29; ++i) {
+// 		if (compareGameTick(1, 16)) {
+// 			for (int y = 0; y <= 143; ++y) {
+// 				memcpy(_screenLayer2 + y * 320 + i * 8, _screenLayer1 + y * 320, 320 - i * 8);
+// 				memcpy(_screenLayer2 + y * 320, _animFramesBuffer + ANM_PANEL_A + y * 320, i * 8);
+// 			}
+// 			memcpy(_screenVGA, _screenLayer2, 46080);
+// 		}
+// 		// PART_100_UPDATE_ROOM_BACKGROUND();
+// 		waitForTimer();
+// 	}
+// 	// Cut over: the left panel becomes the active room (sub_175_066B position).
+// 	PART_100_STASH_FAR_PANEL();			// keep the outgoing right panel for the way back
+// 	_currentPart = 101;
+// 	loadRoomData(PAL_OutsideAdministrationBuildingA, IMG_OutsideAdministrationBuildingA,
+// 				 BOX_OutsideAdministrationBuildingA, MSK_OutsideAdministrationBuildingA, 0);
+// 	_walkDataCurrentIndex = 1;
+// 	_walkDataLastIndex = 1;
+// 	_walkData[1].setPos(136, 86, kFacingPositionRight, 0);
+// 	_walkData[1].setDefaultScale();
+// 	memcpy(_screenVGA, _screenLayer1, 46080);
+// 	PART_100_DRAW_IGOR();
+// }
+
+// // Scroll to the RIGHT (back to C1 / the arrival panel): the active left panel
+// // slides left while the right panel's strip enters from the right edge (mirrors
+// // PART_05_ACTION_102, part_5.cpp), sourced from the stashed far panel.
+// void IgorEngine::PART_100_SCROLL_RIGHT_ACTION() {
+// 	for (int i = 1; i < 29; ++i) {
+// 		if (compareGameTick(1, 16)) {
+// 			for (int y = 0; y <= 143; ++y) {
+// 				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + i * 8, 320 - i * 8);
+// 				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, g_part100FarPanel + y * 320 + 320 - i * 8, i * 8);
+// 			}
+// 			memcpy(_screenVGA, _screenLayer2, 46080);
+// 		}
+// 		PART_100_UPDATE_ROOM_BACKGROUND();
+// 		waitForTimer();
+// 	}
+// 	// Cut over: back on the arrival panel (sub_175_056D position).
+// 	_currentPart = 100;
+// 	loadRoomData(PAL_OutsideAdministrationBuildingB, IMG_OutsideAdministrationBuildingB,
+// 				 BOX_OutsideAdministrationBuildingB, MSK_OutsideAdministrationBuildingB, 0);
+// 	_walkDataCurrentIndex = 1;
+// 	_walkDataLastIndex = 1;
+// 	_walkData[1].setPos(319, 79, kFacingPositionLeft, 0);
+// 	_walkData[1].setDefaultScale();
+// 	memcpy(_screenVGA, _screenLayer1, 46080);
+// 	PART_100_DRAW_IGOR();
+// }
+void IgorEngine::PART_100_SCROLL_LEFT() {
+	uint8 *walkTable3 = loadData(WLK_);
+	uint8 *walkTable4 = loadData(WLK_Bridge4);
+	int xPos = 220;
+	int yPos = 0;
+	int i = 1;
+	do {
+		if (compareGameTick(1, 16)) {
+			for (int y = 0; y <= 143; ++y) {
+				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + i * 8, 320 - i * 8);
+				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, _animFramesBuffer + y * 224, i * 8);
+			}
+			if (i < 15) {
+				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
+				assert(xPos >= 205);
+				yPos = walkTable3[xPos - 205];
+				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
+			} else {
+				_walkCurrentFrame = 0;
+			}
+			int yOffset = (yPos - 50) * 320 + xPos - 15 - i * 8;
+			for (_gameState.counter[1] = 0; _gameState.counter[1] <= 49; ++_gameState.counter[1]) {
+				yOffset += 320;
+				_gameState.counter[0] = yPos - 49 + _gameState.counter[1];
+				for (_gameState.counter[2] = 0; _gameState.counter[2] <= 29; ++_gameState.counter[2]) {
+					_gameState.counter[3] = xPos - 15 + _gameState.counter[2];
+					const int offset = _gameState.counter[0] * 134 + _gameState.counter[3];
+					if (_gameState.counter[0] >= 92 && _gameState.counter[0] <= 110 && offset >= 12533 && walkTable4[offset - 12533] == 1) {
+						continue;
+					}
+					uint8 color = _facingIgorFrames[kFacingPositionRight - 1][_walkCurrentFrame * 1500 + _gameState.counter[1] * 30 + _gameState.counter[2]];
+					if (color != 0) {
+						_screenLayer2[yOffset + _gameState.counter[2]] = color;
+					}
+				}
+			}
+			memcpy(_screenVGA, _screenLayer2, 46080);
+			++i;
+		}
+		PART_05_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	} while (i != 29);
+	free(walkTable3);
+	free(walkTable4);
+	WalkData *wd = &_walkData[0];
+	wd->setPos(xPos - 224, yPos, 2, 0);
+	wd->setDefaultScale();
+	_currentPart = 60;
+}
+
+void IgorEngine::PART_100() {
+	_gameState.enableLight = 1;
+
+	// cseg175:27C3-27D6 copies the 0x18C9-byte DAT; cseg175:27DB then
+	// loads the left panel, and cseg175:27E0 loads all five frame blobs.
+	loadActionData(DAT_Decanato);
+	loadRoomData(PAL_DecanatoA, IMG_DecanatoA, BOX_DecanatoA, MSK_DecanatoA, TXT_DecanatoA);
+	static const int frames1[] = { FRM_Decanato1, 0 };
+	static const int frames2[] = { FRM_Decanato2, 0 };
+	static const int frames3[] = { FRM_Decanato3, 0 };
+	static const int frames4[] = { FRM_Decanato4, 0 };
+	static const int frames5[] = { FRM_Decanato5, 0 };
+	loadAnimData(frames1, kPart100Frm1);
+	loadAnimData(frames2, kPart100Frm2);
+	loadAnimData(frames3, kPart100Frm3);
+	loadAnimData(frames4, kPart100Frm4);
+	loadAnimData(frames5, kPart100Frm5);
+
+	// Preserve the complete left panel at ANM+0, then make the right panel
+	// active. This load order is unconditional in cseg175:27DB-2845.
+	memcpy(_animFramesBuffer + kPart100PanelLeft, _screenLayer1, 46080); // cseg175:2809-2818
+	loadRoomData(PAL_DecanatoB, IMG_DecanatoB, BOX_DecanatoB, MSK_DecanatoB, TXT_DecanatoB);
+
+	SET_PAL_240_48_1();
+	SET_PAL_208_96_1();
+
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_100_EXEC_ACTION);
+	_roomDataOffsets = PART_100_ROOM_DATA_OFFSETS;
+	setRoomWalkBounds(0, 0, 319, 143); // cseg175 room mask is 320x144
+
+	memcpy(_screenVGA, _screenLayer1, 46080); // cseg175:28EA-28F9
+	_currentAction.verb = kVerbWalk;           // cseg175:2944-2952
+	_walkDataLastIndex = 1;                   // cseg175:295F
+	_walkDataCurrentIndex = 1;                // cseg175:2964
+	fadeIn(768);                              // cseg175:2957-295A
+
+	if (_currentPart == 100) {
+		// sub_175_056D: enter at (319,79), facing left, walk to (288,84).
+		_walkData[0].setPos(319, 79, kFacingPositionLeft, 0); // cseg175:0580-05B2
+		_walkData[0].setDefaultScale();
+		_walkDataLastIndex = 0;
+		buildWalkPath(319, 79, 288, 84); // cseg175:05C1-05CB
+		_walkData[_walkDataLastIndex].frameNum = 0; // cseg175:05D0-05DB
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true; // cseg175:05E2
+		waitForIgorMove();
+	} else if (_currentPart == 101) {
+		// sub_175_066B: enter at (136,86), facing right, walk to (171,97).
+		_walkData[0].setPos(136, 86, kFacingPositionRight, 0); // cseg175:0686-06B7
+		_walkData[0].setDefaultScale();
+		_walkDataLastIndex = 0;
+		buildWalkPath(136, 86, 171, 97); // cseg175:06C6-06D0
+		_walkData[_walkDataLastIndex].frameNum = 0; // cseg175:06D5-06E0
+		_walkDataCurrentIndex = 1;
+		_gameState.igorMoving = true; // cseg175:06E7
+		waitForIgorMove();
+	} else {
+		// Part 102 deliberately has no entry-position assignment in
+		// cseg175:2969-297C; it reuses the existing walk state.
+		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
+	}
+
+	enterPartLoop();
+	while (_currentPart >= 100 && _currentPart <= 102) { // cseg175:29AA-29B5
+		runPartLoop();
+	}
+	leavePartLoop();
+}
+
+} // End of namespace Igor

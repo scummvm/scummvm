@@ -294,6 +294,12 @@ void IgorEngine::handleRoomInput() {
 		// } else {
 			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		// }
+		// The original only exposes a room object when this action byte is
+		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC.
+		if (_currentPart >= 100 && _currentPart <= 102 && // cseg175:29AA-29B5
+				_actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
+			_currentAction.object1Num = 0;
+		}
 	}
 
 	if (_currentAction.verbType == 1) {
