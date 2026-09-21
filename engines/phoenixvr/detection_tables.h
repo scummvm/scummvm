@@ -74,6 +74,18 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+    {"necrono",
+		nullptr,
+		AD_ENTRY4s("script.pak", "da42a18dd02fc01f116228d5c219b2fd", 215,
+				   "textes.txt", "839362e45a668dc6c0031444ec4123aa", 5373,
+				   "cd1/Data/Script1.pak", "626cac1db5160142313fdcf483fda2bf", 57410,
+				   "cd2/Data/Script3.pak", "5d2a675dd314ccce7635ed5b16816f10", 64113),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
+
 	{"necrono",
 		"GOG/Steam release",
 		AD_ENTRY2s("script.pak", "86294b9c445c3e06e24269c84036a207", 223,
@@ -302,6 +314,41 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ZH_TWN,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		"Retail version",
+		AD_ENTRY5s("script.pak", "0c9c4b2bfa3b1399b89f6b62063a2e80", 210,
+                   "textes.txt", "b2e470f0f004587ee89d9de1b25942d9", 5519,
+				   "cd1/Data/interface.vr", "fb2e331301cb4b1861834fcda8aa6555", 205179,
+				   "cd1/Data/Script.pak", "a110be7a25afd32077c70730d521fc56", 54908,
+				   "cd2/Data/Script2.pak", "b7162c682cd1edf80271f05fd745ded1", 82066),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		"Retail version",
+		AD_ENTRY5s("script.pak", "0c9c4b2bfa3b1399b89f6b62063a2e80", 210,
+                   "textes.txt", "8b1385940f5ebb4a9c60a02bfe53d054", 5559,
+				   "cd1/Data/interface.vr", "7f6c75887a394be51c7d995baaac4d34", 196503,
+				   "cd1/Data/Script.pak", "0387741c115b90d42f46ea15bfcfdd47", 54904,
+				   "cd2/Data/Script2.pak", "41de2c534143fa4a9772cb783e229ef7", 82060),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		"The game uses an unsupported engine",
+		AD_ENTRY1s("MESSENGER1.DAT", "87cac299b35582245ac9d73add52b89d", 101769216),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
 
