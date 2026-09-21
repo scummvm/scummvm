@@ -31,6 +31,9 @@ static const uint8 kSentenceColorIndex[] = { 0xFD, 0xFB, 0xF1 };
 
 void IgorEngine::waitForTimer(int ticks) {
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+	if (_debugOverlayMode != kOverlayOff) {
+		debugApplyOverlay();
+	}
 	_system->updateScreen();
 
 	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay;

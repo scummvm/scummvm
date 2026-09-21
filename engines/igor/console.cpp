@@ -20,11 +20,15 @@
  */
 
 #include "igor/console.h"
+#include "igor/igor.h"
 
 namespace Igor {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("paint_walk",     WRAP_METHOD(Console, Cmd_paintWalk));
+	registerCmd("paint_hotspots", WRAP_METHOD(Console, Cmd_paintHotspots));
+	registerCmd("paint_off",      WRAP_METHOD(Console, Cmd_paintOff));
 }
 
 Console::~Console() {
@@ -32,6 +36,36 @@ Console::~Console() {
 
 bool Console::Cmd_test(int argc, const char **argv) {
 	debugPrintf("Test\n");
+	return true;
+}
+
+bool Console::Cmd_paintWalk(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	debugPrintf("Overlay: walk areas (BOX .area != 0); colours are the area id\n");
+	g_engine->debugPaintWalkAreas();
+	return true;
+}
+
+bool Console::Cmd_paintHotspots(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	debugPrintf("Overlay: hotspots (BOX .object != 0); colours are the object id\n");
+	g_engine->debugPaintHotspots();
+	return true;
+}
+
+bool Console::Cmd_paintOff(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Engine not running\n");
+		return true;
+	}
+	g_engine->debugClearOverlay();
+	debugPrintf("Overlay off\n");
 	return true;
 }
 

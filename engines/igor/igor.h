@@ -220,6 +220,12 @@ enum Verb {
 	kVerbGive
 };
 
+enum DebugOverlay {
+	kOverlayOff = 0,
+	kOverlayWalkAreas,
+	kOverlayHotspots
+};
+
 enum {
 	kIdEngDemo100,
 	kIdEngDemo110,
@@ -323,6 +329,9 @@ private:
 	uint8 *_inventoryImagesBuffer;
 	uint8 *_verbsPanelBuffer;
 	int _screenVGAVOffset;
+
+	uint8 *_debugOverlayBuffer;
+	int _debugOverlayMode;
 
 	bool _eventQuitGame;
 	GameStateData _gameState;
@@ -442,18 +451,16 @@ private:
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
 	void PART_06_EXEC_ACTION(int action);
-
 	void PART_06_ACTION_102();
-
 	void PART_06_HELPER_2();
-
 	void PART_06_HELPER_3();
-
 	void PART_06_HELPER_8(int frame);
-
 	void PART_06_HELPER_6(int num);
-
 	void PART_06_HELPER_1(int frame);
+
+
+	void PART_100();
+	void PART_100_DRAW_IGOR();
 
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -516,6 +523,8 @@ private:
 	void decodeRoomAreas(const uint8 *p, int count);
 	void decodeRoomMask(const uint8 *p);
 
+	void debugApplyOverlay();
+
 	int getPart() const { return _currentPart / 10; }
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
@@ -574,6 +583,13 @@ public:
 	}
 
 	void handlePause();
+
+	// Debug overlays (console: paint_walk / paint_hotspots / paint_off).
+	// Paint the mask regions whose BOX record has a non-zero walk area or
+	// object; applied on top of the presented frame until cleared.
+	void debugPaintWalkAreas();
+	void debugPaintHotspots();
+	void debugClearOverlay();
 
 	/**
 	 * Uses a serializer to allow implementing savegame

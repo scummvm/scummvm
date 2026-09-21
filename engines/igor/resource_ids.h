@@ -367,12 +367,12 @@
 #define PAL_Park 343
 #define MSK_Park 344
 #define BOX_Park 345
-#define DAT_OutsideAdministrationBuilding 346
-#define FRM_OutsideAdministrationBuilding1 347
-#define FRM_OutsideAdministrationBuilding2 348
-#define FRM_OutsideAdministrationBuilding3 349
-#define FRM_OutsideAdministrationBuilding4 350
-#define FRM_OutsideAdministrationBuilding5 351
+#define DAT_Decanato 346
+#define FRM_Decanato1 347
+#define FRM_Decanato2 348
+#define FRM_Decanato3 349
+#define FRM_Decanato4 350
+#define FRM_Decanato5 351
 #define DAT_DeanPepperOffice 352
 #define DAT_AdministrationSecretaryRoom 353
 #define TXT_AdministrationSecretaryRoom 354
@@ -470,5 +470,25 @@
 #define STR_SharewarePenduloAddress4 446
 #define STR_SharewarePenduloAddress5 447
 #define STR_SharewarePenduloAddress6 448
+
+// OutsideAdministrationBuilding street panels. Not in the original CD table (it
+// jumps from FRM_OutsideAdministrationBuilding5=351 straight to
+// DAT_DeanPepperOffice=352). They are added to the generator's CD catalog
+// (reference/scummvm-create-igortbl/resource_sp_cdrom.h) and shipped inside
+// IGOR.TBL, so the engine loads them through the regular findData()/loadData()
+// path like every other room. The ids are far above the original max (~448) so
+// they can never collide with a real table id.
+//   A = left  panel, PART100_bg  (scrolled in towards the map; ANM slot 0x0)
+//   B = right panel, C1 arrival  (what part 100 shows on entry)
+#define PAL_DecanatoA 900
+#define IMG_DecanatoA 901
+#define MSK_DecanatoA 902
+#define BOX_DecanatoA 903
+#define PAL_DecanatoB 904
+#define IMG_DecanatoB 905
+#define MSK_DecanatoB 906
+#define BOX_DecanatoB 907
+#define TXT_DecanatoA 908
+#define TXT_DecanatoB 909
 
 #endif // IGOR_RESOURCE_IDS

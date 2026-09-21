@@ -67,17 +67,6 @@ void IgorEngine::PART_05() {
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 
-	// {
-	// 	_walkData[0].setPos(0, 141, 2, 0);
-	// 	_walkData[0].setDefaultScale();
-	// 	_walkDataLastIndex = 0;
-	// 	_walkDataCurrentIndex = 1;
-	// 	buildWalkPath(0, 141, 51, 123);
-	// 	_walkData[_walkDataLastIndex].frameNum = 0;
-	// 	_walkDataCurrentIndex = 1;
-	// 	_gameState.igorMoving = true;
-	// 	waitForIgorMove();
-	// }
 
 	enterPartLoop();
 	while (_currentPart >= 50 && _currentPart <= 52) {
