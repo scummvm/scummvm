@@ -41,6 +41,8 @@ private:
 	bool cmdFood(int argc, const char **argv);
 	bool cmdGold(int argc, const char **argv);
 	bool cmdInventory(int argc, const char **argv);
+	bool cmdSpace(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override;

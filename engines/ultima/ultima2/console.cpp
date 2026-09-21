@@ -24,6 +24,7 @@
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/data/tiles.h"
 #include "ultima/ultima2/logic/overworld_logic.h"
+#include "ultima/ultima2/logic/space_logic.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -39,6 +40,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
+	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
 }
 
 Console::~Console() {
@@ -323,6 +325,24 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	debugPrintf("Full inventory given; readied %s and %s armour\n",
 		Data::WEAPON_NAMES[sg._readiedWeapon], Data::ARMOR_NAMES[sg._readiedArmor]);
 	return true;
+}
+
+bool Console::cmdSpace(int argc, const char **argv) {
+	// The first launch from Earth remembers where to come back to
+	Data::Savegame &sg = _G(savegame);
+	if (sg._orbitTarget == 0 && sg._mapType == 0) {
+		sg._launchMapX = sg._mapX;
+		sg._launchMapY = sg._mapY;
+		sg._inSpace = true;
+	}
+
+	// Ensure we have necessary equipment
+	sg._readiedArmor = Data::ARMOR_REFLECT;
+	sg._items[Data::ITEM_TRI_LITHIUM] = 9;
+
+	Logic::SpaceLogic::takeOff();
+
+	return false;
 }
 
 } // namespace Ultima2
