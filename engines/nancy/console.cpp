@@ -498,6 +498,35 @@ void NancyConsole::printActionRecord(const Action::ActionRecord *record, bool no
 	}
 }
 
+// Nancy15 gives every playable character their own inventory, so the console
+// has to name the one it reports on. The PCUI chunk holds the image names the
+// characters are known by, e.g. "PUI_CRE_Nancy".
+static Common::String playerCharacterName(uint characterIndex) {
+	const PCUI *pcui = GetEngineData(PCUI);
+	if (pcui && characterIndex < pcui->characters.size()) {
+		const Common::String &imageName = pcui->characters[characterIndex].imageName;
+		size_t lastSeparator = imageName.findLastOf('_');
+		if (lastSeparator != Common::String::npos) {
+			return imageName.substr(lastSeparator + 1);
+		}
+
+		if (!imageName.empty()) {
+			return imageName;
+		}
+	}
+
+	return Common::String::format("character %u", characterIndex);
+}
+
+static uint numPlayerCharacters() {
+	if (g_nancy->getGameType() < kGameTypeNancy15) {
+		return 1;
+	}
+
+	const PCUI *pcui = GetEngineData(PCUI);
+	return pcui ? MIN<uint>(pcui->characters.size(), kMaxPlayerCharacters) : 1;
+}
+
 void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &record) {
 	using namespace Action;
 
@@ -517,6 +546,13 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 					inventoryData->itemDescriptions[dep.label].name.c_str() :
 					"Invalid",
 				dep.condition == g_nancy->_true ? "true" : "false");
+
+			// Nancy15+ can ask about a character other than the one being played
+			if (g_nancy->getGameType() >= kGameTypeNancy15 && dep.hours >= 0 &&
+					dep.hours != kPlayerCharacterActive) {
+				debugPrintf(", %s", playerCharacterName(dep.hours).c_str());
+			}
+
 			break;
 		case DependencyType::kEvent:
 			debugPrintf("kEvent, flag %u, %s, %s",
@@ -1067,6 +1103,31 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 	return cmdExit(0, nullptr);
 }
 
+void NancyConsole::printInventoryItem(uint itemID) {
+	auto *inventoryData = GetEngineData(INV);
+	assert(inventoryData);
+
+	byte keep = inventoryData->itemDescriptions[itemID].keepItem;
+	debugPrintf("\nItem %u, %s, %s",
+		itemID,
+		inventoryData->itemDescriptions[itemID].name.c_str(),
+		keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : keep == 2 ? "ReturnToInventory" : "NewSceneView");
+
+	uint numCharacters = numPlayerCharacters();
+	if (numCharacters == 1) {
+		debugPrintf(", %s", NancySceneState.hasItem(itemID) == g_nancy->_true ? "true" : "false");
+		return;
+	}
+
+	// Every character keeps their own copy of the item flags, and scene
+	// dependencies can ask about any of them, so list them all
+	for (uint i = 0; i < numCharacters; ++i) {
+		debugPrintf(", %s: %s",
+			playerCharacterName(i).c_str(),
+			NancySceneState.hasCharacterItem(i, itemID) == g_nancy->_true ? "true" : "false");
+	}
+}
+
 bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	if (g_nancy->getState() != NancyState::kScene) {
 		debugPrintf("Not in the kScene state\n");
@@ -1074,34 +1135,26 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	}
 
 	uint numItems = g_nancy->getStaticData().numItems;
-	auto *inventoryData = GetEngineData(INV);
-	assert(inventoryData);
 
 	debugPrintf("Total number of inventory items: %u\n", numItems);
 
+	if (numPlayerCharacters() > 1) {
+		debugPrintf("Playing as %s\n", playerCharacterName(g_nancy->getPlayerCharacter()).c_str());
+	}
+
 	if (argc == 1) {
 		for (uint i = 0; i < numItems; ++i) {
-			byte keep = inventoryData->itemDescriptions[i].keepItem;
-			debugPrintf("\nItem %u, %s, %s, %s",
-				i,
-				inventoryData->itemDescriptions[i].name.c_str(),
-				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : keep == 2 ? "ReturnToInventory" : "NewSceneView",
-				NancySceneState.hasItem(i) == g_nancy->_true ? "true" : "false");
+			printInventoryItem(i);
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
-			int flagID = atoi(argv[i]);
-			if (flagID < 0 || flagID >= (int)numItems) {
-				debugPrintf("\nInvalid flag %s", argv[i]);
+			int itemID = atoi(argv[i]);
+			if (itemID < 0 || itemID >= (int)numItems) {
+				debugPrintf("\nInvalid item %s", argv[i]);
 				continue;
 			}
-			byte keep = inventoryData->itemDescriptions[flagID].keepItem;
-			debugPrintf("\nItem %u, %s, %s, %s",
-				flagID,
-				inventoryData->itemDescriptions[flagID].name.c_str(),
-				keep == 0 ? "UseThenLose" : keep == 1 ? "KeepAlways" : keep == 2 ? "ReturnToInventory" : "NewSceneView",
-				NancySceneState.hasItem(flagID) == g_nancy->_true ? "true" : "false");
 
+			printInventoryItem(itemID);
 		}
 	}
 
@@ -1119,13 +1172,39 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 		return true;
 	}
 
-	if (argc < 2 || argc % 2 == 0) {
+	// Without -c the items go to whoever is being played, which is the only
+	// inventory the games before Nancy15 have
+	uint characterIndex = g_nancy->getPlayerCharacter();
+	int firstItemArg = 1;
+
+	if (argc > 1 && Common::String(argv[1]).equalsIgnoreCase("-c")) {
+		if (argc < 3) {
+			debugPrintf("Missing character index after -c\n");
+			return true;
+		}
+
+		int requestedCharacter = atoi(argv[2]);
+		if (requestedCharacter < 0 || requestedCharacter >= (int)numPlayerCharacters()) {
+			debugPrintf("Invalid character %s\n", argv[2]);
+			return true;
+		}
+
+		characterIndex = requestedCharacter;
+		firstItemArg = 3;
+	}
+
+	if (argc < firstItemArg + 2 || (argc - firstItemArg) % 2 != 0) {
 		debugPrintf("Sets one or more inventory items to the provided value.\n");
-		debugPrintf("Usage: %s <itemID> <true/false>...\n", argv[0]);
+		debugPrintf("Usage: %s [-c <characterIndex>] <itemID> <true/false>...\n", argv[0]);
+		debugPrintf("-c picks the player character to give the items to (Nancy15+); the character being played is the default.\n");
 		return true;
 	}
 
-	for (int i = 1; i < argc; i += 2) {
+	Common::String targetDescription = numPlayerCharacters() > 1 ?
+		Common::String::format("the inventory of %s", playerCharacterName(characterIndex).c_str()) :
+		Common::String("inventory");
+
+	for (int i = firstItemArg; i < argc; i += 2) {
 		int itemID = atoi(argv[i]);
 		if (itemID < 0 || itemID >= (int)g_nancy->getStaticData().numItems) {
 			debugPrintf("Invalid item %s\n", argv[i]);
@@ -1133,15 +1212,17 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 		}
 
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
-			NancySceneState.addItemToInventory(itemID);
-			debugPrintf("Added item %i, %s, to inventory\n",
+			NancySceneState.addItemToCharacterInventory(characterIndex, itemID);
+			debugPrintf("Added item %i, %s, to %s\n",
 				itemID,
-				inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str(),
+				targetDescription.c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
-			NancySceneState.removeItemFromInventory(itemID, false);
-			debugPrintf("Removed item %i, %s, from inventory\n",
+			NancySceneState.removeItemFromCharacterInventory(characterIndex, itemID);
+			debugPrintf("Removed item %i, %s, from %s\n",
 				itemID,
-				inventoryData->itemDescriptions[itemID].name.c_str());
+				inventoryData->itemDescriptions[itemID].name.c_str(),
+				targetDescription.c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;

@@ -174,10 +174,29 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 	}
 	#endif
 
-	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
+	if (info.depth == 24 && surf.format.bpp() == 32) {
+		// Nancy13+ uses 32bpp surfaces for 24bpp images, so we need to convert the data
+		// to 32bpp before copying it into the surface
+		uint32 newBufSize = info.width * info.height * 4;
+		byte *newBuf = new byte[newBufSize];
+		for (uint y = 0; y < info.height; ++y) {
+			for (uint x = 0; x < info.width; ++x) {
+				uint32 srcIndex = y * info.pitch + x * 3;
+				uint32 destIndex = y * info.width * 4 + x * 4;
+				newBuf[destIndex + 0] = buf[srcIndex + 0];
+				newBuf[destIndex + 1] = buf[srcIndex + 1];
+				newBuf[destIndex + 2] = buf[srcIndex + 2];
+				newBuf[destIndex + 3] = 0xFF; // alpha channel
+			}
+		}
+		delete[] buf;
+		buf = newBuf;
+		bufSize = newBufSize;
+		info.pitch = info.width * 4;
+		info.depth = 32;
+	}
 
-	if (info.depth == 24)
-		surf.convertToInPlace(g_nancy->_graphics->getInputPixelFormat(32));
+	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
 
 	delete[] buf;
 	delete stream;
@@ -213,10 +232,8 @@ IFF *ResourceManager::loadIFF(const Common::Path &name) {
 bool ResourceManager::readCifTree(const Common::String &name, const Common::String &ext, int priority) {
 	// Nancy15+ asks for a player character's tree again on every switch back
 	// to that character, so make sure each tree is only ever added once
-	for (const Common::String &loaded : _cifTreeNames) {
-		if (loaded.equalsIgnoreCase(name)) {
-			return true;
-		}
+	if (hasCifTree(name)) {
+		return true;
 	}
 
 	CifTree *tree = CifTree::makeCifTreeArchive(name, ext);
@@ -232,6 +249,16 @@ bool ResourceManager::readCifTree(const Common::String &name, const Common::Stri
 	SearchMan.add(treePrefix + upper, tree, priority, true);
 	_cifTreeNames.push_back(name);
 	return true;
+}
+
+bool ResourceManager::hasCifTree(const Common::String &name) const {
+	for (const Common::String &loaded : _cifTreeNames) {
+		if (loaded.equalsIgnoreCase(name)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void ResourceManager::setCifTreePriority(const Common::String &name, int priority) {

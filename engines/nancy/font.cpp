@@ -125,6 +125,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 
 		if (g_nancy->getGameType() >= kGameTypeNancy10) {
 			// Nancy10 added even more characters to its fonts
+			_underscoreOffset				= stream.readUint16LE();
 			if (g_nancy->getGameLanguage() == Common::FR_FRA) {
 				_oeLigatureOffset			= stream.readUint16LE();
 				_iWithDiaeresisOffset		= stream.readUint16LE();
@@ -132,7 +133,6 @@ void Font::read(Common::SeekableReadStream &stream) {
 				_uppercaseAWithDotOffset	= stream.readUint16LE();
 				_aWithDotOffset				= stream.readUint16LE();
 			}
-			_underscoreOffset				= stream.readUint16LE();
 			_hashOffset						= stream.readUint16LE();
 			_dollarOffset					= stream.readUint16LE();
 			_lessThanOffset					= stream.readUint16LE();
@@ -145,9 +145,9 @@ void Font::read(Common::SeekableReadStream &stream) {
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy15) {
-			// Nancy15 added two more characters. Their glyphs are only present in a
-			// few of the fonts, and it is not yet known which characters they are
-			stream.skip(4);
+			// Nancy15 added two more characters. Their glyphs are only present in a few of the fonts
+			_caretOffset					= stream.readUint16LE();
+			_atSignOffset					= stream.readUint16LE();
 
 			numCharacters = 117;
 		}
@@ -392,9 +392,15 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			case '\x80':
 				offset = _euroOffset;
 				break;
-			// TODO: _uppercaseAWithDotOffset
-			// TODO: _aWithDotOffset
-			// TODO: _oeLigatureOffset
+			case '\xc5':
+				offset = _uppercaseAWithDotOffset;
+				break;
+			case '\xe5':
+				offset = _aWithDotOffset;
+				break;
+			case '\x9c':
+				offset = _oeLigatureOffset;
+				break;
 			default:
 				offset = -1;
 				break;
@@ -484,6 +490,13 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			break;
 		case '}':
 			offset = _rightCurlyBracketOffset;
+			break;
+		// ASCII punctuation whose glyphs were added in nancy15
+		case '^':
+			offset = _caretOffset;
+			break;
+		case '@':
+			offset = _atSignOffset;
 			break;
 		default:
 			offset = -1;

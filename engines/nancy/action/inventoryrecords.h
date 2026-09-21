@@ -34,6 +34,8 @@ public:
 	void execute() override;
 
 	uint16 _itemID = 0;
+	// Nancy15+, kPlayerCharacterActive means the character being played
+	byte _characterIndex = kPlayerCharacterActive;
 	bool _setCursor = false;
 	bool _forceCursor = false;
 
@@ -95,6 +97,8 @@ public:
 
 	byte _command = 0;
 	uint16 _itemID = 0;
+	// Nancy15+, kPlayerCharacterActive means the character being played
+	byte _characterIndex = kPlayerCharacterActive;
 	SoundDescription _sound;
 	Common::String _caption;
 
@@ -109,6 +113,8 @@ public:
 	void execute() override;
 
 	uint16 _itemID = 0;
+	// Nancy15+, kPlayerCharacterActive means the character being played
+	byte _characterIndex = kPlayerCharacterActive;
 	byte _disabledState = 0;
 
 protected:

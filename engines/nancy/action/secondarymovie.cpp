@@ -1344,6 +1344,14 @@ void PlaySecondaryMovie::skip() {
 // --- PlayRandomMovieControl --------------------------------------------
 
 void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// Nancy15 names the movie to control. The literal "RandomMovie" keeps the
+		// old behavior of addressing the scene's random movie; any other name is
+		// a movie file, which is looked up among the loaded movies.
+		readFilename(stream, _movieName);
+		_isRandomMovie = _movieName.baseName().equalsIgnoreCase("RandomMovie");
+	}
+
 	_mode = stream.readByte();
 
 	_hasSceneChange = g_nancy->getGameType() < kGameTypeNancy13;
@@ -1353,24 +1361,62 @@ void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlayRandomMovieControl::execute() {
-	PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
-	if (target && target->isRandom()) {
-		if (_hasSceneChange) {
-			target->stopRandom();
-		} else {
+	if (_isRandomMovie) {
+		PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
+		if (target && target->isRandom()) {
+			if (_hasSceneChange) {
+				target->stopRandom();
+			} else {
+				switch (_mode) {
+				case kStopNow:
+					target->stopRandomNow();
+					break;
+				case kPauseMovie:
+					target->pauseRandom(true);
+					break;
+				case kResumeMovie:
+					target->pauseRandom(false);
+					break;
+				case kStopAtEnd:
+					target->stopRandom();
+					break;
+				case kPauseAtEnd:
+					// The original defers the pause until the movie reaches its
+					// end; nothing in the shipped data uses it
+					warning("Unimplemented PlayRandomMovieControl mode kPauseAtEnd");
+					break;
+				default:
+					warning("Unknown PlayRandomMovieControl mode %u", _mode);
+					break;
+				}
+			}
+		}
+	} else {
+		MoviePlayer *movie = MoviePlayer::findLoadedMovie(_movieName);
+		if (movie) {
 			switch (_mode) {
 			case kStopNow:
-				target->stopRandomNow();
+				movie->stop();
 				break;
 			case kPauseMovie:
-				target->pauseRandom(true);
+				movie->pauseVideo(true);
 				break;
 			case kResumeMovie:
-				target->pauseRandom(false);
+				movie->pauseVideo(false);
+				break;
+			case kStopAtEnd:
+			case kPauseAtEnd:
+				warning("Unimplemented deferred PlayRandomMovieControl mode %u for movie %s",
+					_mode, _movieName.toString().c_str());
 				break;
 			default:
+				warning("Unknown PlayRandomMovieControl mode %u", _mode);
 				break;
 			}
+		} else if (_mode == kResumeMovie) {
+			// The original loads the movie and starts playing it here
+			warning("PlayRandomMovieControl can't play movie %s, it is not loaded",
+				_movieName.toString().c_str());
 		}
 	}
 

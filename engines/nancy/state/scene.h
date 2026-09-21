@@ -153,8 +153,15 @@ public:
 	// Nancy15+ inventory action records and dependencies pick the character to
 	// act on, which needn't be the one being played. Anyone else is served from
 	// their parked inventory instead of the live one.
-	void removeItemFromCharacterInventory(uint characterIndex, int16 id);
+	void addItemToCharacterInventory(uint characterIndex, int16 id);
+	void removeItemFromCharacterInventory(uint characterIndex, int16 id, bool pickUp = false);
 	byte hasCharacterItem(uint characterIndex, int16 id);
+	void setCharacterItemDisabledState(uint characterIndex, int16 id, byte state);
+
+	// AddInventoryNoHS (AR 120): hand the item over, into the character's hand
+	// when the record asks for it and their hand is free or forceIntoHand is set
+	void giveItemToCharacter(uint characterIndex, int16 id, bool intoHand, bool forceIntoHand);
+
 	int32 getCharacterUIResource(uint characterIndex, uint index);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
@@ -166,7 +173,10 @@ public:
 			_flags.disabledItems[id] = state;
 	}
 
-	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
+	// Nancy15 records name the player character the override belongs to;
+	// kPlayerCharacterActive (and every earlier game) means whoever is played
+	void installInventorySoundOverride(byte command, const SoundDescription &sound,
+		const Common::String &caption, uint16 itemID, byte characterIndex = kPlayerCharacterActive);
 	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
 
 	void setEventFlag(int16 label, byte flag);
@@ -182,8 +192,10 @@ public:
 	// coin purse amount in cents. Backed by the lazily-created, saved
 	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by
 	// AR 132 (ResourceUse). Non-const because the first access creates/seeds it.
-	int32 getUIResource(uint index);
-	void setUIResource(uint index, int32 value);
+	// Nancy15 records name the protagonist whose resources they change;
+	// kPlayerCharacterActive (and every earlier game) means whoever is played.
+	int32 getUIResource(uint index, byte characterIndex = kPlayerCharacterActive);
+	void setUIResource(uint index, int32 value, byte characterIndex = kPlayerCharacterActive);
 
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;
@@ -319,6 +331,15 @@ private:
 	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
 	Common::Rect activePopupConfinement() const;
 
+	int16 getCharacterHeldItem(uint characterIndex);
+	void setCharacterHeldItem(uint characterIndex, int16 id);
+	void returnCharacterHeldItem(uint characterIndex);
+
+	// Nancy15's "can't" responses live in the active player character's PUIV
+	// bank instead of the inventory data
+	bool getPlayerCantSound(int16 itemID, SoundDescription &sound) const;
+	void playPlayerCantSound(int16 itemID);
+
 	void initStaticData();
 
 	void clearSceneData(bool nextIsNoArt = false);
@@ -376,6 +397,9 @@ private:
 		Common::String caption;
 	};
 
+	// The overrides of the character being played
+	Common::HashMap<uint16, InventorySoundOverride> &activeSoundOverrides();
+
 	// UI
 	UI::FullScreenImage _frame;
 	UI::Viewport _viewport;
@@ -412,7 +436,9 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
-	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides;
+	// One set of overrides per player character; everything before Nancy15 only
+	// ever touches the first
+	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides[kMaxPlayerCharacters];
 
 	Misc::Lightning *_lightning;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;

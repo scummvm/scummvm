@@ -376,7 +376,9 @@ protected:
 
 // Companion AR for the random-movie variant of PlaySecondaryMovie. When
 // executed it stops the currently-active random PlaySecondaryMovie and
-// optionally performs a scene change / event-flag set.
+// optionally performs a scene change / event-flag set. From Nancy15 on the
+// record names the movie it controls, so it can also address an already-loaded
+// movie by filename.
 class PlayRandomMovieControl : public ActionRecord {
 public:
 	PlayRandomMovieControl() {}
@@ -387,7 +389,9 @@ public:
 	enum RandomMovieControlMode : byte {
 		kStopNow = 0,
 		kPauseMovie = 1,
-		kResumeMovie = 2
+		kResumeMovie = 2,
+		kStopAtEnd = 3,
+		kPauseAtEnd = 4
 	};
 
 protected:
@@ -398,6 +402,9 @@ protected:
 	// Nancy13's record is the mode byte alone; earlier games append a scene
 	// change to it.
 	bool _hasSceneChange = true;
+	// Nancy15 prefixes the mode with the name of the movie to control.
+	Common::Path _movieName;
+	bool _isRandomMovie = true;
 };
 
 } // End of namespace Action

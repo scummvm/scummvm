@@ -989,9 +989,13 @@ void HintSystem::selectHint() {
 }
 
 void ResourceUse::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_characterIndex = stream.readByte();     // whose resources are changed
+	}
+
 	_resourceIndex = stream.readSint16LE();      // which UIRC resource to change
-	_amount = stream.readSint16LE();             // value / delta
-	_mode = stream.readByte();                   // 0 = set, non-zero = add
+	_amount = stream.readSint16LE();             // value / delta, or a table index
+	_mode = stream.readByte();                   // see ResourceUseMode
 	_flag.label = stream.readSint16LE();         // event flag set on success
 	_flag.flag = stream.readByte();
 
@@ -1011,6 +1015,10 @@ void ResourceUse::readData(Common::SeekableReadStream &stream) {
 	_drawResourceValue = stream.readByte() != 0;
 	_valueDest.x = stream.readSint32LE();
 	_valueDest.y = stream.readSint32LE();
+}
+
+byte ResourceUse::getCharacterIndex() const {
+	return _characterIndex == kPlayerCharacterActive ? (byte)g_nancy->getPlayerCharacter() : _characterIndex;
 }
 
 void ResourceUse::init() {
@@ -1040,7 +1048,7 @@ void ResourceUse::init() {
 		const Font *font = g_nancy->_graphics->getFont(item.fontID);
 		if (font && item.numDecimals >= 0) {
 			const Common::String text =
-				formatUIResourceValue(item, NancySceneState.getUIResource(_resourceIndex));
+				formatUIResourceValue(item, NancySceneState.getUIResource(_resourceIndex, getCharacterIndex()));
 			font->drawString(&_drawSurface, text, _valueDest.x, _valueDest.y, screenBounds.width() - _valueDest.x, 0);
 		}
 	}
@@ -1050,18 +1058,31 @@ void ResourceUse::init() {
 }
 
 void ResourceUse::applyChange() {
-	if (_mode == 0) {
+	const byte characterIndex = getCharacterIndex();
+
+	if (_mode > kSetTableValue) {
+		warning("Unknown ResourceUse mode %u, treating it as an addition", _mode);
+	}
+
+	// In the table modes the amount is a table index, not the amount itself.
+	int32 amount = _amount;
+	if (_mode == kAddTableValue || _mode == kSetTableValue) {
+		auto *tableData = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		amount = (tableData && _amount != tableData->getNoIndex()) ? tableData->getValue(_amount) : 0;
+	}
+
+	if (_mode == kSetValue || _mode == kSetTableValue) {
 		// Set the resource outright.
-		NancySceneState.setUIResource(_resourceIndex, _amount);
+		NancySceneState.setUIResource(_resourceIndex, amount, characterIndex);
 		NancySceneState.setEventFlag(_flag);
 		_paymentApplied = true;
 	} else {
 		// Add the (signed) amount, but never let the resource go negative —
 		// the original skips the change (e.g. when Nancy can't afford it).
-		const int32 result = NancySceneState.getUIResource(_resourceIndex) + _amount;
+		const int32 result = NancySceneState.getUIResource(_resourceIndex, characterIndex) + amount;
 		_paymentApplied = result >= 0;
 		if (_paymentApplied) {
-			NancySceneState.setUIResource(_resourceIndex, result);
+			NancySceneState.setUIResource(_resourceIndex, result, characterIndex);
 			NancySceneState.setEventFlag(_flag);
 		}
 	}

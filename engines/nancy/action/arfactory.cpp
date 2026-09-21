@@ -70,6 +70,7 @@
 #include "engines/nancy/action/puzzle/mirrorlightpuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 #include "engines/nancy/action/puzzle/multibuildpuzzle.h"
+#include "engines/nancy/action/puzzle/necklacepuzzle.h"
 #include "engines/nancy/action/puzzle/onebuildpuzzle.h"
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
@@ -627,7 +628,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 242:
 		return new MagnetMazePuzzle();
 	case 243:
-		return new BeadPuzzle();
+		if (g_nancy->getGameType() <= kGameTypeNancy14)
+			return new BeadPuzzle();
+		else
+			return new NecklacePuzzle();
 	case 244:
 		return new GridMapPuzzle();
 	// -- Nancy 11 and up --

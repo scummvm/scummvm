@@ -34,40 +34,22 @@ namespace Action {
 void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
 
-	if (g_nancy->getGameType() >= kGameTypeNancy6) {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// The character the item goes to took the first half of the cursor flag
+		_characterIndex = stream.readByte();
+		_setCursor = stream.readByte();
+		_forceCursor = stream.readUint16LE();
+	} else if (g_nancy->getGameType() >= kGameTypeNancy6) {
 		_setCursor = stream.readUint16LE();
 		_forceCursor = stream.readUint16LE();
 	}
 }
 
 void AddInventoryNoHS::execute() {
-	if (_setCursor) {
-		if (NancySceneState.getHeldItem() == _itemID) {
-			// Already holding the item, e.g. when the scene reloads itself
-		} else if (NancySceneState.getHeldItem() != -1) {
-			// Currently holding another item
-			if (_forceCursor) {
-				NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
-				if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
-					NancySceneState.removeItemFromInventory(_itemID, true);
-				} else {
-					NancySceneState.setHeldItem(_itemID);
-				}
-			} else {
-				NancySceneState.addItemToInventory(_itemID);
-			}
-		} else {
-			if (NancySceneState.hasItem(_itemID) == g_nancy->_true) {
-				NancySceneState.removeItemFromInventory(_itemID, true);
-			} else {
-				NancySceneState.setHeldItem(_itemID);
-			}
-		}
-	} else {
-		if (NancySceneState.hasItem(_itemID) == g_nancy->_false) {
-			NancySceneState.addItemToInventory(_itemID);
-		}
-	}
+	uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+		g_nancy->getPlayerCharacter() : _characterIndex;
+
+	NancySceneState.giveItemToCharacter(characterIndex, _itemID, _setCursor, _forceCursor);
 
 	_isDone = true;
 }
@@ -166,7 +148,14 @@ void ShowInventoryItem::execute() {
 void InventorySoundOverride::readData(Common::SeekableReadStream &stream) {
 	_command = stream.readByte();
 	_itemID = stream.readUint16LE();
-	stream.skip(2);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_characterIndex = stream.readByte();
+		stream.skip(1);
+	} else {
+		stream.skip(2);
+	}
+
 	char buf[61];
 	stream.read(buf, 60);
 	buf[60] = '\0';
@@ -175,12 +164,17 @@ void InventorySoundOverride::readData(Common::SeekableReadStream &stream) {
 }
 
 void InventorySoundOverride::execute() {
-	NancySceneState.installInventorySoundOverride(_command, _sound, _caption, _itemID);
+	NancySceneState.installInventorySoundOverride(_command, _sound, _caption, _itemID, _characterIndex);
 	_isDone = true;
 }
 
 void EnableDisableInventory::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_characterIndex = stream.readByte();
+	}
+
 	bool disabled = stream.readUint16LE();
 	bool playSound = stream.readUint16LE();
 
@@ -193,7 +187,29 @@ void EnableDisableInventory::readData(Common::SeekableReadStream &stream) {
 }
 
 void EnableDisableInventory::execute() {
-	NancySceneState.setItemDisabledState(_itemID, _disabledState);
+	uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+		g_nancy->getPlayerCharacter() : _characterIndex;
+
+	if (g_nancy->getGameType() >= kGameTypeNancy15 &&
+			_itemID >= kInvItemGroupAll && _itemID <= kInvItemGroupPortable) {
+		// Nancy15 can enable or disable a whole group of items at once
+		auto *inventoryData = GetEngineData(INV);
+		assert(inventoryData);
+
+		for (uint i = 0; i < inventoryData->itemDescriptions.size(); ++i) {
+			bool isViewable = inventoryData->itemDescriptions[i].keepItem == kInvItemNewSceneView;
+
+			if ((_itemID == kInvItemGroupViewable && !isViewable) ||
+					(_itemID == kInvItemGroupPortable && isViewable)) {
+				continue;
+			}
+
+			NancySceneState.setCharacterItemDisabledState(characterIndex, i, _disabledState);
+		}
+	} else {
+		NancySceneState.setCharacterItemDisabledState(characterIndex, _itemID, _disabledState);
+	}
+
 	_isDone = true;
 }
 
