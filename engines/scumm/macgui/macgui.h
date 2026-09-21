@@ -65,6 +65,8 @@ public:
 	void drawBanner(char *message);
 	void undrawBanner();
 
+	void queryQuit(bool returnToLauncher);
+
 	bool runQuitDialog();
 	bool runRestartDialog();
 

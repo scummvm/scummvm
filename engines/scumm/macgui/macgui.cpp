@@ -123,6 +123,10 @@ Graphics::Surface *MacGui::textArea() const {
 	return _impl->textArea();
 }
 
+void MacGui::queryQuit(bool returnToLauncher) {
+	return _impl->queryQuit(returnToLauncher);
+}
+
 bool MacGui::runQuitDialog() {
 	return _impl->runQuitDialog();
 }

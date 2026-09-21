@@ -822,6 +822,8 @@ public:
 	virtual void resetAfterLoad() = 0;
 	virtual void update(int delta) = 0;
 
+	void queryQuit(bool returnToLauncher);
+
 	virtual bool runQuitDialog();
 	virtual bool runRestartDialog();
 
