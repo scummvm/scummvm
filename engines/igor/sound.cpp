@@ -39,12 +39,13 @@ void IgorEngine::playMusic(int num) {
 }
 
 void IgorEngine::playSound(int num, int type) {
-	debugC(9, kDebugEngine, "playSound() %d", num);
-    // --num;
+
+	--num;
 	int soundOffset = -1;
 	Audio::Mixer::SoundType soundType;
 	Audio::SoundHandle *soundHandle = 0;
 	if (type == 1) {
+		debugC(9, kDebugEngine, "playSound() %d -> sfx offset %d", num + 1, num);
 		if (_mixer->isSoundHandleActive(_sfxHandle)) {
 			return;
 		}
@@ -53,10 +54,15 @@ void IgorEngine::playSound(int num, int type) {
 		soundType = Audio::Mixer::kSFXSoundType;
 		soundHandle = &_sfxHandle;
 	} else if (type == 0 && (_game.flags & kFlagTalkie) != 0 && num != kNoSpeechSound) {
+        debugC(9, kDebugEngine, "playSound() %d on speech handle", num);
 		if (_mixer->isSoundHandleActive(_speechHandle)) {
+            debugC(9, kDebugEngine, "stopping previous handle");
 			_mixer->stopHandle(_speechHandle);
 		}
-		num += 100;
+		if (_mixer->isSoundHandleActive(_sfxHandle)) {
+			_mixer->stopHandle(_sfxHandle);
+		}
+		num += 101;
 		assert(num >= 0 && num < _soundOffsetsCount);
 		soundOffset = _soundOffsets[num];
 		soundType = Audio::Mixer::kSpeechSoundType;

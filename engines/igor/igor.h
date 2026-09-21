@@ -421,6 +421,8 @@ private:
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
 
+	bool isDialogueSpeechPlaying() const;
+
 	void PART_MAIN();
 	void EXEC_MAIN_ACTION(int action);
 

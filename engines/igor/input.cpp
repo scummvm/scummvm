@@ -69,6 +69,9 @@ void IgorEngine::waitForTimer(int ticks) {
 							_inputVars[kInputClick] = 1;
 							_inputVars[kInputCursorXPos] = ev.mouse.x;
 							_inputVars[kInputCursorYPos] = ev.mouse.y;
+							if (_gameState.dialogueTextRunning) {
+								_inputVars[kInputSkipDialogue] = 1;
+							}
 							break;
 			default:
 				break;

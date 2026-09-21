@@ -123,10 +123,13 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
 	do {
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
+			if (_mixer->isSoundHandleActive(_speechHandle)) {
+				_mixer->stopHandle(_speechHandle);
+			}
 			_talkDelayCounter = _talkDelay;
 			_inputVars[kInputSkipDialogue] = 0;
 		}
-		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
+		if (!isDialogueSpeechPlaying() && compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
 				if (_gameState.talkMode != kTalkModeTextOnly) {
 					_talkDelayCounter = _talkDelay;
@@ -179,6 +182,10 @@ void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y)
 	fixDialogueTextPosition(num, count, x, y);
 }
 
+bool IgorEngine::isDialogueSpeechPlaying() const {
+	return _gameState.talkMode != kTalkModeTextOnly && _mixer->isSoundHandleActive(_speechHandle);
+}
+
 void IgorEngine::startIgorDialogue() {
 	debugC(9, kDebugEngine, "startIgorDialogue()");
 	--_dialogueTextsCount;
@@ -221,7 +228,7 @@ void IgorEngine::startIgorDialogue() {
 		_talkDelayCounter = 0;
 	}
 	if (_gameState.talkMode != kTalkModeTextOnly) {
-		playSound(dt->num, 0);
+		playSound(dt->sound, 0);
 	}
 	_gameState.dialogueTextRunning = true;
 	_inputVars[kInputSkipDialogue] = 0;
@@ -230,10 +237,13 @@ void IgorEngine::startIgorDialogue() {
 void IgorEngine::waitForEndOfIgorDialogue() {
 	do {
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
+			if (_mixer->isSoundHandleActive(_speechHandle)) {
+				_mixer->stopHandle(_speechHandle);
+			}
 			_talkDelayCounter = _talkDelay;
 			_inputVars[kInputSkipDialogue] = 0;
 		}
-		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
+		if (!isDialogueSpeechPlaying() && compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
 				if (_gameState.talkMode != kTalkModeTextOnly) {
 					_talkDelayCounter = _talkDelay;

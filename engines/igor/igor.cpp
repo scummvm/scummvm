@@ -56,6 +56,7 @@ IgorEngine::IgorEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 		_game.ovlFileName = "igor.exe";
 		_game.sfxFileName = "igor.dat";
 		_game.version = kIdSpaCD;
+		_game.flags = kFlagTalkie;
 
 		_game.language = Common::ES_ESP; // Assuming 0 represents the default language
 		_currentPart = 850;
