@@ -793,10 +793,7 @@ static Raw4XMCacheEntry &raw4XMFindCacheEntry(Common::Array<Raw4XMCacheEntry> &c
 Audio::PacketizedAudioStream *makeAudioStream(byte audioType, uint audioChannels, uint sampleRate) {
 	switch (audioType) {
 	case 0: {
-		byte flags = Audio::FLAG_16BITS;
-#ifdef SCUMM_LITTLE_ENDIAN
-		flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
+		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 		if (audioChannels > 1)
 			flags |= Audio::FLAG_STEREO;
 		return Audio::makePacketizedRawStream(sampleRate, flags);
@@ -852,7 +849,7 @@ public:
 			return;
 
 		Common::copy(payload + 4, payload + payloadSize, data);
-		_output->queueBuffer(data, payloadSize - 4, DisposeAfterUse::YES, audioFlags());
+		_output->queueBuffer(data, payloadSize - 4, DisposeAfterUse::YES, audioFlags() | Audio::FLAG_LITTLE_ENDIAN);
 	}
 
 	void queueADPCM(const byte *payload, uint32 payloadSize) {
@@ -894,12 +891,16 @@ public:
 			}
 		}
 
-		_output->queueBuffer(out, decodedBytes, DisposeAfterUse::YES, audioFlags());
+		byte flags = audioFlags();
+#ifdef SCUMM_LITTLE_ENDIAN
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+		_output->queueBuffer(out, decodedBytes, DisposeAfterUse::YES, flags);
 	}
 
 private:
 	byte audioFlags() const {
-		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		byte flags = Audio::FLAG_16BITS;
 		if (_channels == 2)
 			flags |= Audio::FLAG_STEREO;
 		return flags;
