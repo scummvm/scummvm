@@ -213,10 +213,8 @@ IFF *ResourceManager::loadIFF(const Common::Path &name) {
 bool ResourceManager::readCifTree(const Common::String &name, const Common::String &ext, int priority) {
 	// Nancy15+ asks for a player character's tree again on every switch back
 	// to that character, so make sure each tree is only ever added once
-	for (const Common::String &loaded : _cifTreeNames) {
-		if (loaded.equalsIgnoreCase(name)) {
-			return true;
-		}
+	if (hasCifTree(name)) {
+		return true;
 	}
 
 	CifTree *tree = CifTree::makeCifTreeArchive(name, ext);
@@ -232,6 +230,16 @@ bool ResourceManager::readCifTree(const Common::String &name, const Common::Stri
 	SearchMan.add(treePrefix + upper, tree, priority, true);
 	_cifTreeNames.push_back(name);
 	return true;
+}
+
+bool ResourceManager::hasCifTree(const Common::String &name) const {
+	for (const Common::String &loaded : _cifTreeNames) {
+		if (loaded.equalsIgnoreCase(name)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void ResourceManager::setCifTreePriority(const Common::String &name, int priority) {

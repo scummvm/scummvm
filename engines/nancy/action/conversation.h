@@ -185,6 +185,7 @@ public:
 	void init() override;
 	void registerGraphics() override;
 	void updateGraphics() override;
+	void onPause(bool pause) override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 
@@ -204,6 +205,9 @@ protected:
 	public:
 		RenderedCel() : RenderObject(9) {}
 		bool isViewportRelative() const override { return true; }
+
+		// Nancy15 head movies: show a decoded movie frame instead of a cel
+		void setMovieFrame(const Graphics::Surface &frame);
 	};
 
 	static const byte kCelOverrideTreeRectsOff	= 1;
@@ -228,6 +232,12 @@ protected:
 
 	Common::Array<Common::Rect> _overrideRectSrcs;
 	Common::Array<Common::Rect> _overrideRectDests;
+
+	// Nancy15 gave every cel tree a destination rect inside the XSheet. A tree that
+	// names a movie instead of a loaded cel archive (the character's head) is played
+	// into that rect; _treeMovies holds one player per such tree, null for cel trees.
+	Common::Array<Common::Rect> _treeRects;
+	Common::Array<Common::SharedPtr<MoviePlayer>> _treeMovies;
 
 	uint _curFrame = 0;
 	uint32 _nextFrameTime = 0;
