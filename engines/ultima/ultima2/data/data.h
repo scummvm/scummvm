@@ -36,6 +36,14 @@ extern const byte CGA_PALETTE1[4 * 3];
 // dungeon minimap's player marker
 constexpr int PALETTE_PLAYER_MARKER = 4;
 
+// Names of the worlds that can be orbited, indexed by Savegame::_orbitTarget
+constexpr int PLANET_COUNT = 9;
+extern const char *const PLANET_NAMES[PLANET_COUNT];
+
+// Hyperwarp coordinates (XENO, YAKO, ZABO) of each world, indexed the same
+// way, with a tenth entry for planet X
+extern const byte PLANET_COORDS[PLANET_COUNT + 1][3];
+
 /**
  * Switches the screen to the CGA palette that the game itself, the tile
  * graphics and the pic??? art all use

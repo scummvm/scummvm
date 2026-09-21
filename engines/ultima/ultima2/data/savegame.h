@@ -91,10 +91,9 @@ struct Savegame {
 	byte _launchMapX = 0;
 	byte _launchMapY = 0;
 
-	bool _saveDisabled = false;
-	// -1 when not orbiting/in deep space; 0-8 selects a planet being
-	// orbited; 9 gates a one-off castle NPC interaction
-	int16 _orbitTarget = -1;
+	// The world the player is on or orbiting: 0 is Earth, 1-8 the other
+	// planets, 9 planet X and 10 deep space. Saving only works on Earth
+	int16 _orbitTarget = 0;
 
 	bool _ringQuestFlag = false;
 	bool _enilnoOwned = false;
@@ -129,6 +128,14 @@ struct Savegame {
 	 * Synchronize savegame data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Returns true if the game can't be saved here, which is anywhere
+	 * but Earth
+	 */
+	bool saveDisabled() const {
+		return _orbitTarget != 0;
+	}
 
 	/**
 	 * Returns true if a character has been created or loaded

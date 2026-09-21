@@ -123,6 +123,7 @@ MODULE_OBJS += \
 	ultima2/logic/dungeon_logic.o \
 	ultima2/logic/logic.o \
 	ultima2/logic/overworld_logic.o \
+	ultima2/logic/space_logic.o \
 	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
 	ultima2/views/dungeon_map.o \
@@ -130,6 +131,7 @@ MODULE_OBJS += \
 	ultima2/views/location_map.o \
 	ultima2/views/map.o \
 	ultima2/views/overworld_map.o \
+	ultima2/views/space_map.o \
 	ultima2/views/startup.o \
 	ultima2/views/stats.o \
 	ultima2/views/title.o \
@@ -140,11 +142,13 @@ MODULE_OBJS += \
 	ultima2/views/interactions/dead.o \
 	ultima2/views/interactions/direction.o \
 	ultima2/views/interactions/food_shop.o \
+	ultima2/views/interactions/hyperwarp_target.o \
 	ultima2/views/interactions/offer_gold.o \
 	ultima2/views/interactions/plane_flight.o \
 	ultima2/views/interactions/pub.o \
 	ultima2/views/interactions/ready_spell.o \
 	ultima2/views/interactions/ready_weapon.o \
+	ultima2/views/interactions/rocket_landing.o \
 	ultima2/views/interactions/shop.o \
 	ultima2/views/interactions/transport.o \
 	ultima2/views/interactions/wear_armor.o \

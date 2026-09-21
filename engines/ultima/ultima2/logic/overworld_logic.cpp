@@ -217,7 +217,7 @@ void OverworldLogic::enterMoongate(int x, int y) {
 
 void OverworldLogic::updatePatrolMarker() {
 	Data::Savegame &sg = _G(savegame);
-	if (sg._saveDisabled || --sg._patrolTimer != 0)
+	if (sg.saveDisabled() || --sg._patrolTimer != 0)
 		return;
 
 	auto moongateAt = [&](int waypoint) -> Data::TileId & {

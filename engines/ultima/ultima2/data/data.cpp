@@ -34,6 +34,15 @@ const byte CGA_PALETTE1[4 * 3] = {
 	0xff, 0xff, 0xff  // 3: white
 };
 
+const char *const PLANET_NAMES[PLANET_COUNT] = {
+	"EARTH", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"
+};
+
+const byte PLANET_COORDS[PLANET_COUNT + 1][3] = {
+	{ 6, 6, 6 }, { 5, 4, 5 }, { 3, 3, 4 }, { 6, 2, 3 }, { 1, 3, 4 },
+	{ 2, 8, 5 }, { 9, 4, 6 }, { 4, 0, 5 }, { 0, 1, 4 }, { 9, 9, 9 }
+};
+
 void setCGAPalette() {
 	Graphics::Palette palette(PALETTE_PLAYER_MARKER + 1);
 	palette.set(CGA_PALETTE1, 0, 4);

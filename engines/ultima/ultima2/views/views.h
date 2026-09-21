@@ -28,6 +28,7 @@
 #include "ultima/ultima2/views/game.h"
 #include "ultima/ultima2/views/location_map.h"
 #include "ultima/ultima2/views/overworld_map.h"
+#include "ultima/ultima2/views/space_map.h"
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/views/world_map_overview.h"
@@ -36,11 +37,13 @@
 #include "ultima/ultima2/views/interactions/dead.h"
 #include "ultima/ultima2/views/interactions/direction.h"
 #include "ultima/ultima2/views/interactions/food_shop.h"
+#include "ultima/ultima2/views/interactions/hyperwarp_target.h"
 #include "ultima/ultima2/views/interactions/offer_gold.h"
 #include "ultima/ultima2/views/interactions/plane_flight.h"
 #include "ultima/ultima2/views/interactions/pub.h"
 #include "ultima/ultima2/views/interactions/ready_spell.h"
 #include "ultima/ultima2/views/interactions/ready_weapon.h"
+#include "ultima/ultima2/views/interactions/rocket_landing.h"
 #include "ultima/ultima2/views/interactions/shop.h"
 #include "ultima/ultima2/views/interactions/transport.h"
 #include "ultima/ultima2/views/interactions/wear_armor.h"
@@ -55,11 +58,13 @@ struct Views : public Shared::Views {
 	Interactions::Dead _dead;
 	Interactions::Direction _direction;
 	Interactions::FoodShop _foodShop;
+	Interactions::HyperwarpTarget _hyperwarpTarget;
 	Interactions::OfferGold _offerGold;
 	Interactions::PlaneFlight _planeFlight;
 	Interactions::Pub _pub;
 	Interactions::ReadySpell _readySpell;
 	Interactions::ReadyWeapon _readyWeapon;
+	Interactions::RocketLanding _rocketLanding;
 	Interactions::Transport _transport;
 	Interactions::WearArmor _wearArmor;
 	Interactions::Yell _yell;
@@ -73,6 +78,7 @@ struct Views : public Shared::Views {
 	Game _game;
 	LocationMap _locationMap;
 	OverworldMap _overworldMap;
+	SpaceMap _spaceMap;
 	Startup _startup;
 	Title _title;
 	WorldMapOverview _worldMapOverview;

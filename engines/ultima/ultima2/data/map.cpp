@@ -31,16 +31,21 @@ namespace Ultima {
 namespace Ultima2 {
 namespace Data {
 
+// The other planets' files are named with a G rather than the usual X
+static char filePrefix() {
+	return _G(savegame)._orbitTarget == 0 ? 'X' : 'G';
+}
+
 Common::String mapFilename(int mapEra, int mapType) {
-	return Common::String::format("MAPX%c%c", '0' + mapEra, '0' + mapType);
+	return Common::String::format("MAP%c%c%c", filePrefix(), '0' + mapEra, '0' + mapType);
 }
 
 Common::String monsterFilename(int mapEra, int mapType) {
-	return Common::String::format("MONX%c%c", '0' + mapEra, '0' + mapType);
+	return Common::String::format("MON%c%c%c", filePrefix(), '0' + mapEra, '0' + mapType);
 }
 
 Common::String talkFilename(int mapEra, int mapType) {
-	return Common::String::format("TLKX%c%c", '0' + mapEra, '0' + mapType);
+	return Common::String::format("TLK%c%c%c", filePrefix(), '0' + mapEra, '0' + mapType);
 }
 
 void Map::loadTalk(int mapEra, int mapType) {

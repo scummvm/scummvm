@@ -89,7 +89,6 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_launchMapX);
 	s.syncAsByte(_launchMapY);
 
-	s.syncAsByte(_saveDisabled);
 	s.syncAsSint16LE(_orbitTarget);
 
 	s.syncAsByte(_ringQuestFlag);

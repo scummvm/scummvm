@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima2/logic/logic.h"
+#include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/metaengine.h"
 
@@ -458,10 +459,22 @@ bool Logic::launch() {
 		return false;
 	} else if (sg._mount == Data::TILE_ROCKET) {
 		writeString("LAUNCH--ROCKET");
-		if (sg._items[Data::ITEM_TRI_LITHIUM] == 0)
+		if (sg._items[Data::ITEM_TRI_LITHIUM] == 0) {
 			writeString("\nA METALLIC VOICE SAYS:\nSHIP INCAPABLE OF LAUNCH!\n");
-		else
-			writeString("\nNOT YET IMPLEMENTED\n");
+			return true;
+		}
+
+		writeString("\nPREPARE FOR LAUNCH!\n");
+
+		// The first launch from Earth remembers where to come back to
+		if (sg._orbitTarget == 0 && sg._mapType == 0) {
+			sg._launchMapX = sg._mapX;
+			sg._launchMapY = sg._mapY;
+			sg._inSpace = true;
+		}
+
+		SpaceLogic::takeOff();
+		return false;
 	} else {
 		writeString("LAUNCH WHAT?\n");
 	}
@@ -522,7 +535,7 @@ bool Logic::quit() {
 
 	if (sg._mapType != 0)
 		writeString("\nONLY OUTDOORS!\n");
-	else if (sg._saveDisabled)
+	else if (sg.saveDisabled())
 		writeString("\nONLY ON EARTH!\n");
 	else if (sg._mount != 0)
 		writeString("\nONLY ON FOOT!\n");

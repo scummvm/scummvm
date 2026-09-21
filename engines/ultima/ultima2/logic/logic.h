@@ -57,12 +57,6 @@ protected:
 	void prompt();
 
 	/**
-	 * Handles the player dying - clears their resources and returns to
-	 * the title screen
-	 */
-	void playerDied();
-
-	/**
 	 * Alerts nearby town guards (slots 0-7, plus optionally the specific
 	 * slot just interacted with) after an attack or theft. A no-op on the
 	 * overworld (_mapType == 0)
@@ -190,6 +184,12 @@ public:
 	 */
 	virtual void tick() {
 	}
+
+	/**
+	 * Handles the player dying - clears their resources and returns to
+	 * the title screen
+	 */
+	void playerDied();
 
 	/**
 	 * Resumes end of turn processing after a command deferred it (returned
