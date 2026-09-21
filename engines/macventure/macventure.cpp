@@ -1367,6 +1367,8 @@ bool MacVentureEngine::loadTextHuffman() {
 			// For some reason there are one lass mask than entries
 			masks[i] = res->readUint16BE();
 		}
+		// make sure array is fully initialized
+		masks[numEntries-1] = (0x10000);
 
 		uint32 *lengths = new uint32[numEntries];
 		for (uint i = 0; i < numEntries; i++) {
