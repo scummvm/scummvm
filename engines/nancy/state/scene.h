@@ -192,8 +192,10 @@ public:
 	// coin purse amount in cents. Backed by the lazily-created, saved
 	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by
 	// AR 132 (ResourceUse). Non-const because the first access creates/seeds it.
-	int32 getUIResource(uint index);
-	void setUIResource(uint index, int32 value);
+	// Nancy15 records name the protagonist whose resources they change;
+	// kPlayerCharacterActive (and every earlier game) means whoever is played.
+	int32 getUIResource(uint index, byte characterIndex = kPlayerCharacterActive);
+	void setUIResource(uint index, int32 value, byte characterIndex = kPlayerCharacterActive);
 
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;

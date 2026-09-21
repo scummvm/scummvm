@@ -507,9 +507,23 @@ protected:
 	// flag and starts the matching outcome sound.
 	void applyChange();
 
+	// The protagonist whose resources this record changes
+	byte getCharacterIndex() const;
+
+	enum ResourceUseMode : byte {
+		kSetValue = 0,			// set the resource to _amount
+		kAddValue = 1,			// add _amount, if the resource can cover it
+		kAddTableValue = 2,		// same, with the amount taken from the table
+		kSetTableValue = 3		// set to the table value at _amount
+	};
+
+	// Nancy15 pays from a named protagonist's resources; kPlayerCharacterActive
+	// (and every earlier game) means whoever is being played.
+	byte _characterIndex = kPlayerCharacterActive;
+
 	int16 _resourceIndex = 0;
-	int16 _amount = 0;
-	byte _mode = 0;        // 0 = set the resource, non-zero = add (clamped to >= 0)
+	int16 _amount = 0;     // an amount, or a table index in the table modes
+	byte _mode = kSetValue;
 	FlagDescription _flag; // event flag set when the change is applied
 
 	Common::String _failSoundName;    // played when the change can't be applied

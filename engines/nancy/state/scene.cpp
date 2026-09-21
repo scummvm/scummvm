@@ -1079,19 +1079,53 @@ static void seedUIResourceData(UIResourceData *data) {
 	}
 }
 
-int32 Scene::getUIResource(uint index) {
-	UIResourceData *data = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
-	seedUIResourceData(data);
-	if (!data || index >= data->values.size()) {
-		return 0;
+// The character being played keeps their resources in `values`; the other
+// protagonists' sets are parked in `characterValues` until they are played.
+// A character who has never been played starts from the UIRC starting values.
+static Common::Array<int32> *characterResourceValues(UIResourceData *data, byte characterIndex) {
+	if (!data) {
+		return nullptr;
 	}
-	return data->values[index];
+
+	if (characterIndex == kPlayerCharacterActive || characterIndex == g_nancy->getPlayerCharacter()) {
+		return &data->values;
+	}
+
+	if (characterIndex >= kMaxPlayerCharacters) {
+		warning("UI resource change for unknown player character %u, using the active one", characterIndex);
+		return &data->values;
+	}
+
+	Common::Array<int32> &stored = data->getCharacterValues(characterIndex);
+	if (stored.empty()) {
+		stored.resize(data->values.size(), 0);
+
+		const UIRC *uirc = GetEngineData(UIRC)
+		if (uirc) {
+			for (uint i = 0; i < stored.size() && i < uirc->items.size(); ++i) {
+				stored[i] = uirc->items[i].startingValue;
+			}
+		}
+	}
+
+	return &stored;
 }
 
-void Scene::setUIResource(uint index, int32 value) {
+int32 Scene::getUIResource(uint index, byte characterIndex) {
 	UIResourceData *data = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
 	seedUIResourceData(data);
-	if (!data || index >= data->values.size()) {
+	Common::Array<int32> *values = characterResourceValues(data, characterIndex);
+	if (!values || index >= values->size()) {
+		return 0;
+	}
+	return (*values)[index];
+}
+
+void Scene::setUIResource(uint index, int32 value, byte characterIndex) {
+	UIResourceData *data = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
+	seedUIResourceData(data);
+	Common::Array<int32> *values = characterResourceValues(data, characterIndex);
+	if (!values || index >= values->size()) {
 		return;
 	}
 
@@ -1105,7 +1139,7 @@ void Scene::setUIResource(uint index, int32 value) {
 		}
 	}
 
-	data->values[index] = MAX<int32>(value, 0);
+	(*values)[index] = MAX<int32>(value, 0);
 }
 
 // Nancy 11+ AR 30/31 store the "player scrolling disabled" state in an event
