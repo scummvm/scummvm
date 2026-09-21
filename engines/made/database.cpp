@@ -20,7 +20,8 @@
  */
 
 #include "made/database.h"
-#include "made/redreader.h"
+
+#include "common/compression/kd_red.h"
 
 #include "common/endian.h"
 #include "common/stream.h"
@@ -328,7 +329,7 @@ void GameDatabase::openFromRed(const char *redFilename, const char *filename) {
 	_isRedSource = true;
 	_filename = filename;
 	_redFilename = redFilename;
-	Common::SeekableReadStream *fileS = RedReader::loadFromRed(redFilename, filename);
+	Common::SeekableReadStream *fileS = Common::RedReader::loadFromRed(redFilename, filename);
 	if (!fileS)
 		error("GameDatabase::openFromRed() Could not load %s from %s", filename, redFilename);
 	load(*fileS);
@@ -342,7 +343,7 @@ void GameDatabase::reload() {
 			error("GameDatabase::reload() Could not open %s", _filename.c_str());
 		reloadFromStream(fd);
 	} else {
-		Common::SeekableReadStream *fileS = RedReader::loadFromRed(_redFilename.c_str(), _filename.c_str());
+		Common::SeekableReadStream *fileS = Common::RedReader::loadFromRed(_redFilename.c_str(), _filename.c_str());
 		if (!fileS)
 			error("GameDatabase::openFromRed() Could not load %s from %s", _filename.c_str(), _redFilename.c_str());
 		reloadFromStream(*fileS);
