@@ -110,6 +110,8 @@ void Room504::init() {
 void Room504::daemon() {
 	int frame;
 
+	debug(0, "Room 504:daemon() - _G(kernel).trigger: %",_G(kernel).trigger);
+
 	switch (_G(kernel).trigger) {
 	case 501:
 		player_update_info();
