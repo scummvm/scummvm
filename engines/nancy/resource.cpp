@@ -174,10 +174,29 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 	}
 	#endif
 
-	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
+	if (info.depth == 24 && surf.format.bpp() == 32) {
+		// Nancy13+ uses 32bpp surfaces for 24bpp images, so we need to convert the data
+		// to 32bpp before copying it into the surface
+		uint32 newBufSize = info.width * info.height * 4;
+		byte *newBuf = new byte[newBufSize];
+		for (uint y = 0; y < info.height; ++y) {
+			for (uint x = 0; x < info.width; ++x) {
+				uint32 srcIndex = y * info.pitch + x * 3;
+				uint32 destIndex = y * info.width * 4 + x * 4;
+				newBuf[destIndex + 0] = buf[srcIndex + 0];
+				newBuf[destIndex + 1] = buf[srcIndex + 1];
+				newBuf[destIndex + 2] = buf[srcIndex + 2];
+				newBuf[destIndex + 3] = 0xFF; // alpha channel
+			}
+		}
+		delete[] buf;
+		buf = newBuf;
+		bufSize = newBufSize;
+		info.pitch = info.width * 4;
+		info.depth = 32;
+	}
 
-	if (info.depth == 24)
-		surf.convertToInPlace(g_nancy->_graphics->getInputPixelFormat(32));
+	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphics->getInputPixelFormat(info.depth));
 
 	delete[] buf;
 	delete stream;
