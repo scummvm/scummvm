@@ -34,6 +34,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("food", WRAP_METHOD(Console, cmdFood));
 	registerCmd("coins", WRAP_METHOD(Console, cmdCoins));
 	registerCmd("fuel", WRAP_METHOD(Console, cmdFuel));
+	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
 }
 
 Console::~Console() {
@@ -119,6 +120,21 @@ bool Console::cmdFuel(int argc, const char **argv) {
 	_G(savegame)._shipShield = 9999;
 
 	g_engine->baseView()->findView("Stats")->draw();
+	return false;
+}
+
+bool Console::cmdSpace(int argc, const char **argv) {
+	_G(savegame)._shipFuel = 9999;
+	_G(savegame)._shipShield = 9999;
+
+	// Make sure docking at the station doesn't kill them outright
+	// for want of a vacuum suit
+	_G(savegame)._armor[Data::ARMOR_VACUUM_SUIT] = 1;
+	_G(savegame)._equippedArmor = Data::ARMOR_VACUUM_SUIT;
+
+	_G(map).load(Data::MAP_SPACE);
+	_G(logic)->entering();
+
 	return false;
 }
 

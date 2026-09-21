@@ -36,6 +36,7 @@ private:
 	bool cmdFood(int argc, const char **argv);
 	bool cmdCoins(int argc, const char **argv);
 	bool cmdFuel(int argc, const char **argv);
+	bool cmdSpace(int argc, const char **argv);
 
 public:
 	Console();
