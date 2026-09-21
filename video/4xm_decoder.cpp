@@ -793,10 +793,7 @@ static Raw4XMCacheEntry &raw4XMFindCacheEntry(Common::Array<Raw4XMCacheEntry> &c
 Audio::PacketizedAudioStream *makeAudioStream(byte audioType, uint audioChannels, uint sampleRate) {
 	switch (audioType) {
 	case 0: {
-		byte flags = Audio::FLAG_16BITS;
-#ifdef SCUMM_LITTLE_ENDIAN
-		flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
+		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 		if (audioChannels > 1)
 			flags |= Audio::FLAG_STEREO;
 		return Audio::makePacketizedRawStream(sampleRate, flags);
@@ -852,7 +849,7 @@ public:
 			return;
 
 		Common::copy(payload + 4, payload + payloadSize, data);
-		_output->queueBuffer(data, payloadSize - 4, DisposeAfterUse::YES, audioFlags());
+		_output->queueBuffer(data, payloadSize - 4, DisposeAfterUse::YES, audioFlags() | Audio::FLAG_LITTLE_ENDIAN);
 	}
 
 	void queueADPCM(const byte *payload, uint32 payloadSize) {
@@ -894,12 +891,16 @@ public:
 			}
 		}
 
-		_output->queueBuffer(out, decodedBytes, DisposeAfterUse::YES, audioFlags());
+		byte flags = audioFlags();
+#ifdef SCUMM_LITTLE_ENDIAN
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+		_output->queueBuffer(out, decodedBytes, DisposeAfterUse::YES, flags);
 	}
 
 private:
 	byte audioFlags() const {
-		byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		byte flags = Audio::FLAG_16BITS;
 		if (_channels == 2)
 			flags |= Audio::FLAG_STEREO;
 		return flags;
@@ -1339,6 +1340,13 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 
 namespace {
 
+static inline void addMCDCPair(uint16 *dst, const uint16 *src, uint32 dc) {
+	uint32 pixels = src[0] | (uint32(src[1]) << 16);
+	pixels += dc;
+	dst[0] = pixels;
+	dst[1] = pixels >> 16;
+}
+
 template<bool Scale>
 void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int log2h, int stride, uint dc) {
@@ -1348,14 +1356,14 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		for (int i = 0; i < h; ++i) {
 			switch (log2w) {
 			case 3:
-				WRITE_UINT32(dst + 4, READ_UINT32(src + 4) + dc);
-				WRITE_UINT32(dst + 6, READ_UINT32(src + 6) + dc);
+				addMCDCPair(dst + 4, src + 4, dc);
+				addMCDCPair(dst + 6, src + 6, dc);
 				// fall through
 			case 2:
-				WRITE_UINT32(dst + 2, READ_UINT32(src + 2) + dc);
+				addMCDCPair(dst + 2, src + 2, dc);
 				// fall through
 			case 1:
-				WRITE_UINT32(dst, READ_UINT32(src) + dc);
+				addMCDCPair(dst, src, dc);
 				break;
 			case 0:
 				*dst = *src + dc;
