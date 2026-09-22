@@ -42,6 +42,8 @@ private:
 	bool cmdGold(int argc, const char **argv);
 	bool cmdInventory(int argc, const char **argv);
 	bool cmdSpace(int argc, const char **argv);
+	bool cmdLoad(int argc, const char **argv);
+	bool cmdSave(int argc, const char **argv);
 
 public:
 	Console();

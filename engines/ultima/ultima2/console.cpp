@@ -41,6 +41,8 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("gold", WRAP_METHOD(Console, cmdGold));
 	registerCmd("inventory", WRAP_METHOD(Console, cmdInventory));
 	registerCmd("space", WRAP_METHOD(Console, cmdSpace));
+	registerCmd("load", WRAP_METHOD(Console, cmdLoad));
+	registerCmd("save", WRAP_METHOD(Console, cmdSave));
 }
 
 Console::~Console() {
@@ -343,6 +345,66 @@ bool Console::cmdSpace(int argc, const char **argv) {
 	Logic::SpaceLogic::takeOff();
 
 	return false;
+}
+
+bool Console::cmdLoad(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("load [<filename>]  - imports an original DOS PLAYER save; defaults to \"PLAYER\"\n");
+		return true;
+	}
+
+	Common::String filename = (argc == 2) ? argv[1] : "PLAYER";
+	Common::File f;
+	if (!f.open(filename.c_str())) {
+		debugPrintf("Could not open %s\n", filename.c_str());
+		return true;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	bool success = sg.importOriginal(f);
+	f.close();
+
+	if (!success) {
+		debugPrintf("%s is too short to be a PLAYER save\n", filename.c_str());
+		return true;
+	}
+
+	if (!Common::File::exists(Data::mapFilename(sg._mapEra, sg._mapType).c_str())) {
+		debugPrintf("Imported %s, but no map file for era %d type %d\n",
+			filename.c_str(), sg._mapEra, sg._mapType);
+		return true;
+	}
+
+	_G(map).load(sg._mapEra, sg._mapType);
+	_G(logic)->entering();
+	debugPrintf("Imported %s: %s, HP=%d food=%d gold=%d, at (%d,%d) era %d type %d\n",
+		filename.c_str(), sg._name, sg._hp, sg._food, sg._gold, sg._mapX, sg._mapY, sg._mapEra, sg._mapType);
+	return false;
+}
+
+bool Console::cmdSave(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("save [<filename>]  - exports an original DOS PLAYER save; defaults to \"PLAYER\"\n");
+		return true;
+	}
+
+	Data::Savegame &sg = _G(savegame);
+	if (!sg.hasCharacter()) {
+		debugPrintf("No character to save\n");
+		return true;
+	}
+
+	Common::String filename = (argc == 2) ? argv[1] : "PLAYER";
+	Common::DumpFile f;
+	if (!f.open(Common::Path(filename), true)) {
+		debugPrintf("Could not create %s\n", filename.c_str());
+		return true;
+	}
+
+	sg.exportOriginal(f);
+	f.close();
+	debugPrintf("Exported %s\n", filename.c_str());
+	return true;
 }
 
 } // namespace Ultima2

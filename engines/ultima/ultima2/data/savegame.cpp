@@ -124,6 +124,189 @@ void Savegame::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_mount);
 }
 
+namespace {
+
+// Byte offsets into the original 256-byte PLAYER struct. Most of these are
+// confirmed directly from the disassembly's own struct definition; a few
+// small gaps between them were only ever described in prose and turned
+// out to be one byte short - re-measured here against a real captured
+// PLAYER file (every attribute/resource decodes to a plausible value,
+// and the gap sizes below place them so that mapX/mapY, and the later
+// _disableSave field the disassembly does give an exact offset for, both
+// land in exactly the right place)
+enum {
+	OFS_NAME = 0x00,
+	OFS_SEX = 0x10,
+	OFS_CLASS = 0x11,
+	OFS_RACE = 0x12,
+	OFS_MAP_ERA = 0x13,
+	OFS_MAP_TYPE = 0x14,
+	OFS_STRENGTH = 0x15,
+	OFS_AGILITY = 0x16,
+	OFS_STAMINA = 0x17,
+	OFS_CHARISMA = 0x18,
+	OFS_WISDOM = 0x19,
+	OFS_INTELLIGENCE = 0x1A,
+	OFS_HP = 0x1B,          // 2 bytes, hi/lo BCD digit pairs
+	OFS_FOOD = 0x1D,        // 2 bytes
+	OFS_FOOD_TURN_CTR = 0x1F,
+	OFS_EXPERIENCE = 0x20,  // 2 bytes
+	OFS_GOLD = 0x22,        // 2 bytes
+	OFS_MAP_X = 0x24,
+	OFS_MAP_Y = 0x25,
+	OFS_READIED_WEAPON = 0x2A,
+	OFS_READIED_ARMOR = 0x2B,
+	OFS_READIED_SPELL = 0x2C,
+	OFS_TORCHES = 0x2D,
+	OFS_KEYS = 0x2E,
+	OFS_THIEVES_TOOLS = 0x2F,
+	OFS_IN_SPACE = 0x30,
+	OFS_LAUNCH_MAP_X = 0x34,
+	OFS_LAUNCH_MAP_Y = 0x35,
+	OFS_RING_QUEST_FLAG = 0x36,
+	OFS_ORBIT_TARGET = 0x37,
+	OFS_PATROL_WAYPOINT = 0x38,
+	OFS_OFFER_REWARD_ITEMS = 0x40, // 9 bytes
+	OFS_ENILNO_OWNED = 0x49,
+	OFS_ARMOR_OWNED = 0x60,  // ARMOR_COUNT bytes, BCD
+	OFS_WEAPON_OWNED = 0x76, // WEAPON_COUNT bytes, BCD
+	OFS_SPELL_CHARGES = 0x80, // SPELL_COUNT bytes, BCD
+	OFS_ITEMS = 0xA0,        // ITEM_COUNT bytes, BCD
+
+	PLAYER_SIZE = 0x100
+};
+
+} // namespace
+
+bool Savegame::importOriginal(Common::SeekableReadStream &stream) {
+	byte buf[PLAYER_SIZE];
+	if (stream.read(buf, sizeof(buf)) != sizeof(buf))
+		return false;
+
+	*this = Savegame();
+
+	Common::strlcpy(_name, (const char *)&buf[OFS_NAME], sizeof(_name));
+
+	_sex = (buf[OFS_SEX] == 'M') ? SEX_MALE : SEX_FEMALE;
+	_class = (CharClass)CLIP<int>(buf[OFS_CLASS], 0, CLASS_COUNT - 1);
+	_race = (Race)CLIP<int>(buf[OFS_RACE], 0, RACE_COUNT - 1);
+	_mapEra = buf[OFS_MAP_ERA];
+	_mapType = buf[OFS_MAP_TYPE];
+
+	_strength = bcdValue(buf[OFS_STRENGTH]);
+	_agility = bcdValue(buf[OFS_AGILITY]);
+	_stamina = bcdValue(buf[OFS_STAMINA]);
+	_charisma = bcdValue(buf[OFS_CHARISMA]);
+	_wisdom = bcdValue(buf[OFS_WISDOM]);
+	_intelligence = bcdValue(buf[OFS_INTELLIGENCE]);
+
+	_hp = bcdValue(buf[OFS_HP]) * 100 + bcdValue(buf[OFS_HP + 1]);
+	_food = bcdValue(buf[OFS_FOOD]) * 100 + bcdValue(buf[OFS_FOOD + 1]);
+	_foodTurnCtr = bcdValue(buf[OFS_FOOD_TURN_CTR]);
+	_experience = bcdValue(buf[OFS_EXPERIENCE]) * 100 + bcdValue(buf[OFS_EXPERIENCE + 1]);
+	_gold = bcdValue(buf[OFS_GOLD]) * 100 + bcdValue(buf[OFS_GOLD + 1]);
+
+	_mapX = buf[OFS_MAP_X];
+	_mapY = buf[OFS_MAP_Y];
+
+	_readiedWeapon = (WeaponType)CLIP<int>(buf[OFS_READIED_WEAPON], 0, WEAPON_COUNT - 1);
+	_readiedArmor = (ArmorType)CLIP<int>(buf[OFS_READIED_ARMOR], 0, ARMOR_COUNT - 1);
+	_readiedSpell = (SpellType)CLIP<int>(buf[OFS_READIED_SPELL], 0, SPELL_COUNT - 1);
+	_torches = bcdValue(buf[OFS_TORCHES]);
+	_keys = bcdValue(buf[OFS_KEYS]);
+	_thievesTools = bcdValue(buf[OFS_THIEVES_TOOLS]);
+
+	_inSpace = buf[OFS_IN_SPACE] != 0;
+	_launchMapX = buf[OFS_LAUNCH_MAP_X];
+	_launchMapY = buf[OFS_LAUNCH_MAP_Y];
+	_ringQuestFlag = buf[OFS_RING_QUEST_FLAG] != 0;
+	_orbitTarget = buf[OFS_ORBIT_TARGET];
+	_patrolWaypoint = buf[OFS_PATROL_WAYPOINT];
+
+	for (int i = 0; i < 9; ++i)
+		_offerRewardItems[i] = buf[OFS_OFFER_REWARD_ITEMS + i];
+	_enilnoOwned = buf[OFS_ENILNO_OWNED] != 0;
+
+	for (int i = 0; i < ARMOR_COUNT; ++i)
+		_armorOwned[i] = bcdValue(buf[OFS_ARMOR_OWNED + i]);
+	for (int i = 0; i < WEAPON_COUNT; ++i)
+		_weaponOwned[i] = bcdValue(buf[OFS_WEAPON_OWNED + i]);
+	for (int i = 0; i < SPELL_COUNT; ++i)
+		_spellCharges[i] = bcdValue(buf[OFS_SPELL_CHARGES + i]);
+	for (int i = 0; i < ITEM_COUNT; ++i)
+		_items[i] = bcdValue(buf[OFS_ITEMS + i]);
+
+	// The rest (overworldReturn, dungeon position, moongate timer,
+	// hyperwarp coordinates, in-flight flag, ...) are all ScummVM-only
+	// additions with nothing to import - left at Savegame()'s defaults
+	return true;
+}
+
+void Savegame::exportOriginal(Common::WriteStream &stream) const {
+	byte buf[PLAYER_SIZE] = {};
+
+	Common::strlcpy((char *)&buf[OFS_NAME], _name, MAX_NAME_LENGTH + 1);
+
+	buf[OFS_SEX] = (_sex == SEX_MALE) ? 'M' : 'F';
+	buf[OFS_CLASS] = _class;
+	buf[OFS_RACE] = _race;
+	buf[OFS_MAP_ERA] = _mapEra;
+	buf[OFS_MAP_TYPE] = _mapType;
+
+	buf[OFS_STRENGTH] = toBcd(_strength);
+	buf[OFS_AGILITY] = toBcd(_agility);
+	buf[OFS_STAMINA] = toBcd(_stamina);
+	buf[OFS_CHARISMA] = toBcd(_charisma);
+	buf[OFS_WISDOM] = toBcd(_wisdom);
+	buf[OFS_INTELLIGENCE] = toBcd(_intelligence);
+
+	buf[OFS_HP] = toBcd(_hp / 100);
+	buf[OFS_HP + 1] = toBcd(_hp % 100);
+	buf[OFS_FOOD] = toBcd(_food / 100);
+	buf[OFS_FOOD + 1] = toBcd(_food % 100);
+	buf[OFS_FOOD_TURN_CTR] = toBcd(_foodTurnCtr);
+	buf[OFS_EXPERIENCE] = toBcd(_experience / 100);
+	buf[OFS_EXPERIENCE + 1] = toBcd(_experience % 100);
+	buf[OFS_GOLD] = toBcd(_gold / 100);
+	buf[OFS_GOLD + 1] = toBcd(_gold % 100);
+
+	buf[OFS_MAP_X] = _mapX;
+	buf[OFS_MAP_Y] = _mapY;
+
+	buf[OFS_READIED_WEAPON] = _readiedWeapon;
+	buf[OFS_READIED_ARMOR] = _readiedArmor;
+	buf[OFS_READIED_SPELL] = _readiedSpell;
+	buf[OFS_TORCHES] = toBcd(_torches);
+	buf[OFS_KEYS] = toBcd(_keys);
+	buf[OFS_THIEVES_TOOLS] = toBcd(_thievesTools);
+
+	buf[OFS_IN_SPACE] = _inSpace ? 1 : 0;
+	buf[OFS_LAUNCH_MAP_X] = _launchMapX;
+	buf[OFS_LAUNCH_MAP_Y] = _launchMapY;
+	buf[OFS_RING_QUEST_FLAG] = _ringQuestFlag ? 1 : 0;
+	buf[OFS_ORBIT_TARGET] = (byte)_orbitTarget;
+	buf[OFS_PATROL_WAYPOINT] = _patrolWaypoint;
+
+	for (int i = 0; i < 9; ++i)
+		buf[OFS_OFFER_REWARD_ITEMS + i] = _offerRewardItems[i];
+	buf[OFS_ENILNO_OWNED] = _enilnoOwned ? 1 : 0;
+
+	for (int i = 0; i < ARMOR_COUNT; ++i)
+		buf[OFS_ARMOR_OWNED + i] = toBcd(_armorOwned[i]);
+	for (int i = 0; i < WEAPON_COUNT; ++i)
+		buf[OFS_WEAPON_OWNED + i] = toBcd(_weaponOwned[i]);
+	for (int i = 0; i < SPELL_COUNT; ++i)
+		buf[OFS_SPELL_CHARGES + i] = toBcd(_spellCharges[i]);
+	for (int i = 0; i < ITEM_COUNT; ++i)
+		buf[OFS_ITEMS + i] = toBcd(_items[i]);
+
+	// The original leaves this at 0xFF once the game's speed calibration
+	// has run once; harmless either way since nothing reads it back in
+	buf[0x3E] = 0xFF;
+
+	stream.write(buf, sizeof(buf));
+}
+
 } // namespace Data
 } // namespace Ultima2
 } // namespace Ultima

@@ -23,6 +23,7 @@
 #define ULTIMA2_DATA_SAVEGAME_H
 
 #include "common/serializer.h"
+#include "common/stream.h"
 #include "ultima/ultima2/data/data.h"
 #include "ultima/ultima2/data/tiles.h"
 
@@ -136,6 +137,31 @@ struct Savegame {
 	 * Synchronize savegame data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Replaces the character with one imported from the original DOS
+	 * game's binary PLAYER file format (its first 256 bytes; real files
+	 * on disk have a 128-byte stale duplicate tail, same as monx??/
+	 * tlkx???, which is ignored here). Returns false if the stream is
+	 * too short to be a real PLAYER file.
+	 *
+	 * Debug/testing use only, via the "load" console command. Fields
+	 * ScummVM's own save format added that the original never had
+	 * (dungeon position, moongate timer, hyperwarp coordinates, the
+	 * mid-flight flag, ...) are reset to their defaults, since there's
+	 * nothing in the file to recover them from - a character saved by
+	 * the original is also always standing on a map (villages/towns/
+	 * castles auto-save too), never mid-dungeon-corridor or mid-flight.
+	 */
+	bool importOriginal(Common::SeekableReadStream &stream);
+
+	/**
+	 * Writes the character out in the original DOS game's binary PLAYER
+	 * file format (256 bytes, no stale tail), so it can be loaded back
+	 * with "load", or dropped into a real DOS install for DOSBox.
+	 * Debug/testing use only, via the "save" console command.
+	 */
+	void exportOriginal(Common::WriteStream &stream) const;
 
 	/**
 	 * Returns true if the game can't be saved here, which is anywhere
