@@ -302,10 +302,11 @@ bool DungeonLogic::attack(Data::Direction dir) {
 	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
 	byte &hp = monsters._spellHP[slot];
 
-	if (hp < dmg) {
+	if (hp <= dmg) {
+		hp = 0;
 		killMonster(slot);
 	} else {
-		hp -= dmg;
+		hp -= dmg + 1;
 		writeString("\n");
 	}
 
@@ -371,13 +372,11 @@ bool DungeonLogic::castSpell(Data::SpellType spell) {
 			int exp = Data::toBcd((sg._experience / 100) % 100);
 			int sum = exp + exp;
 			int carry = sum >> 8;
-			sum = (sum & 0xFF) + 0x1E + carry;
-			int dmg = sum & 0xFF;
-			int borrow = (sum >> 8) ? 0 : 1;
+			int dmg = ((sum & 0xFF) + 0x1E + carry) & 0xFF;
 
 			byte &hp = monsters._spellHP[slot];
-			if (hp >= dmg + borrow) {
-				hp -= dmg + borrow;
+			if (hp > dmg) {
+				hp -= dmg + 1;
 				writeString("\n");
 				return true;
 			}
@@ -485,13 +484,11 @@ bool DungeonLogic::monsterAttacks(int slot) {
 
 	showAttackTile(0, 0);
 	int dmg = Data::bcdValue((byte)((randByte() & 0x77) + ((level * 4) & 0x77)));
-	if (sg._hp < dmg) {
-		sg._hp = 0;
+	if (!sg.deductHP(dmg)) {
 		playerDied();
 		return false;
 	}
 
-	sg._hp -= dmg;
 	return true;
 }
 
