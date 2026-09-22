@@ -476,6 +476,8 @@ bool OverworldLogic::attack(Data::Direction dir) {
 		killMonster(slot);
 	} else {
 		hp -= dmg + 1;
+		if (monsters.tileType(slot) == Data::TILE_MINAX)
+			minaxFlees(slot);
 	}
 
 	resumeTurn();
@@ -527,9 +529,45 @@ bool OverworldLogic::fire(Data::Direction dir) {
 		killMonster(slot);
 	} else {
 		hp -= dmg + 1;
+		if (_G(map)._monsters.tileType(slot) == Data::TILE_MINAX)
+			minaxFlees(slot);
 	}
 
 	return true;
+}
+
+void OverworldLogic::minaxFlees(int slot) {
+	Data::MapMonsters &monsters = _G(map)._monsters;
+
+	// She reappears at the mirror image of her current position, and never
+	// budges again short of being killed
+	byte oldX = monsters._mapX[slot], oldY = monsters._mapY[slot];
+	monsters._mapX[slot] = oldY;
+	monsters._mapY[slot] = oldX;
+	monsters._offerFlag[slot] = 0x84;
+
+	writeString("\nSHE'S GONE!!!\n");
+}
+
+void OverworldLogic::minaxDeathSequence() {
+	writeString("\n\n     MINAX IS DEAD!!\nALL HER WORKS SHALL DIE!\n");
+
+	// The castle crumbles into rubble before the screen hands off to the
+	// endless victory pan
+	Shared::UIElement *curView = g_engine->focusedView();
+	for (int step = 0; step < 64; ++step) {
+		for (int i = 0; i < 64; ++i) {
+			int x = randByte() & 0x3F, y = randByte() & 0x3F;
+			_G(map)._tiles[y][x] = Data::TILE_EMPTY;
+		}
+
+		curView->draw();
+		g_engine->updateScreen();
+		g_engine->pauseMillis(30);
+	}
+
+	writeString("\nYOU FEEL A STRANGE FORCE!\n");
+	g_engine->addView("Ending");
 }
 
 void OverworldLogic::killMonster(int slot) {
@@ -539,7 +577,7 @@ void OverworldLogic::killMonster(int slot) {
 	monsters._type[slot] = 0;
 
 	if (monsterTile == Data::TILE_MINAX) {
-		writeString("MINAX IS DEAD!!\n");
+		minaxDeathSequence();
 		return;
 	}
 

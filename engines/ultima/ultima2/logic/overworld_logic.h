@@ -63,6 +63,17 @@ private:
 	 */
 	void enterMoongate(int x, int y);
 
+	/**
+	 * Minax survives a hit - she swaps to the mirror position of her
+	 * current spot and becomes permanently passive
+	 */
+	void minaxFlees(int slot);
+
+	/**
+	 * Minax is slain - the endgame victory sequence
+	 */
+	void minaxDeathSequence();
+
 protected:
 	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED, STEP_MOONGATE };
 

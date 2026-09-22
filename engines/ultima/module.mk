@@ -127,6 +127,7 @@ MODULE_OBJS += \
 	ultima2/views/commands.o \
 	ultima2/views/create_character.o \
 	ultima2/views/dungeon_map.o \
+	ultima2/views/ending.o \
 	ultima2/views/game.o \
 	ultima2/views/location_map.o \
 	ultima2/views/map.o \
