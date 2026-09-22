@@ -283,28 +283,16 @@ bool DungeonLogic::attack(Data::Direction dir) {
 		return true;
 	}
 
-	// The search for the monster gives up at the first empty slot it meets
-	int slot = 31, last;
-	bool found = false;
-	while (slot >= 0) {
-		last = monsters._mapX[slot];
-		if (last == x) {
-			last = monsters._mapY[slot];
-			if (last == y) {
-				last = monsters._glyphTile[slot];
-				if (last == sg._dungeonLevel) {
-					found = true;
-					break;
-				}
-			}
-		}
-
-		--slot;
-		if (last == 0)
+	int slot = -1;
+	for (int i = 31; i >= 0; --i) {
+		if (monsters.isActive(i) && monsters._mapX[i] == x && monsters._mapY[i] == y &&
+				monsters._glyphTile[i] == sg._dungeonLevel) {
+			slot = i;
 			break;
+		}
 	}
 
-	if (!found || (randByte() >> 1) >= sg._agility) {
+	if (slot < 0 || (randByte() >> 1) >= sg._agility) {
 		writeString("MISS\n");
 		return true;
 	}
