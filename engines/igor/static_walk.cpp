@@ -217,4 +217,11 @@ const RoomDataOffsets IgorEngine::PART_100_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0 }
 };
 
+const RoomDataOffsets IgorEngine::PART_110_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 }, // cseg176 routes walks through the room mask; no area matrix
+	{ 35, 52 }, // cseg176:1EE5-1F15, 207C
+	{ 60, 309, 3255, 203, 279, 82 }, // cseg176:1E7B, 2DA6, 2E16, 2D60, 2D8A
+	{ 0, 0, 0, 0, 0 }
+};
+
 } // End of namespace Igor

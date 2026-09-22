@@ -462,6 +462,13 @@ private:
 	void PART_100();
 	void PART_100_EXEC_ACTION(int action);
 	void PART_100_ACTION_108();
+	void PART_110();
+	void PART_110_EXEC_ACTION(int action);
+	void PART_110_ACTION_105();
+	void PART_110_ACTION_107();
+	void PART_110_ACTION_108();
+	void PART_110_ACTION_112();
+	void PART_110_APPLY_OBJECT_STATE(int num);
 
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -613,6 +620,7 @@ protected:
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_110_ROOM_DATA_OFFSETS;
 };
 
 extern IgorEngine *g_engine;

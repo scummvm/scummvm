@@ -142,50 +142,42 @@ void IgorEngine::PART_100_EXEC_ACTION(int action) {
 // 	PART_100_DRAW_IGOR();
 // }
 void IgorEngine::PART_100_ACTION_108() {
-	// sub_175_02F6 (cseg175:02F6-055A): the 41-step, eight-pixels-per-step
-	// horizontal pan that carries Igor leftward out of the decanato street and
-	// into part 110. Mirrors PART_06_ACTION_102 (part_6.cpp); the composite has
-	// no occlusion check and the incoming strip is read from the stashed left
-	// panel in the ANM buffer with a 320-pixel row stride.
-	uint8 *walkTable = loadData(WLK_DecanatoA); // cseg175:03E7-0409 walk line
-	int xPos = 329;                            // cseg175:030C r5-2 = 0x149
+	uint8 *walkTable = loadData(WLK_DecanatoA); // cseg175:03E7-0409
+	int xPos = 329; // cseg175:030D
 	int yPos = 0;
-	int i = 1;                                 // cseg175:0310 r5-7
+	int i = 1; // cseg175:0312
 	do {
-		if (compareGameTick(1, 16)) {          // cseg175:031B frame gate ((EACA+1) % 16 == 0)
-			for (int y = 0; y <= 143; ++y) {
+		if (compareGameTick(1, 16)) { // cseg175:0316-032C
+			for (int y = 0; y <= 143; ++y) { // cseg175:032F-03C4
 				memcpy(_screenLayer2 + y * 320 + i * 8, _screenLayer1 + y * 320, 320 - i * 8);
-				// blit2: cseg175:0353 src = ANM + kPart100PanelLeft + y*320 + (0x140 - i*8)
 				memcpy(_screenLayer2 + y * 320, _animFramesBuffer + kPart100PanelLeft + y * 320 + 320 - i * 8, i * 8);
 			}
-			if (i < 9) {                       // cseg175:03C7-03CB, walk update while i < 9
-				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame]; // cseg175:03CD-03E1 (s3:0x121D+frame)
+			if (i < 9) { // cseg175:03C7-0421
+				xPos -= _walkScaleTable[0x8F9 + _walkCurrentFrame];
 				assert(xPos >= 260);
-				yPos = walkTable[xPos - 260];  // cseg175:03E7-0409 (index base 0x104)
-				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame); // cseg175:0413-0421 (wrap 8 -> 1)
+				yPos = walkTable[xPos - 260];
+				WalkData::setNextFrame(kFacingPositionLeft, _walkCurrentFrame);
 			} else {
-				_walkCurrentFrame = 0;         // cseg175:0427
+				_walkCurrentFrame = 0; // cseg175:0427
 			}
-			int yOffset = (yPos - 50) * 320 + xPos - 330 + i * 8; // cseg175:042C (r5-6)
-			for (int row = 0; row <= 49; ++row) {
-				yOffset += 320;
+			int dstOffset = (yPos - 50) * 320 + xPos - 330 + i * 8; // cseg175:042C-0448
+			for (int row = 0; row <= 49; ++row) { // cseg175:044B-04CB
+				dstOffset += 320;
 				for (int col = 0; col <= 29; ++col) {
-					uint8 color = _facingIgorFrames[kFacingPositionLeft - 1][_walkCurrentFrame * 1500 + row * 30 + col];
-					if (color != 0) {
-						_screenLayer2[yOffset + col] = color;
-					}
+					const uint8 color = _facingIgorFrames[kFacingPositionLeft - 1][_walkCurrentFrame * 1500 + row * 30 + col];
+					if (color != 0)
+						_screenLayer2[dstOffset + col] = color;
 				}
 			}
-			memcpy(_screenVGA, _screenLayer2, 46080); // cseg175:04D6-04E0 repz movsw (see part_05/06)
+			memcpy(_screenVGA, _screenLayer2, 46080); // cseg175:04CD-04E2
 			++i;
 		}
-		waitForTimer();                        // cseg175:04E6-04F5 busy wait + EACA wrap
-	} while (i != 41);                        // cseg175:0507 exit when i == 0x29
+		waitForTimer(); // cseg175:04E6-0505
+	} while (i != 41); // cseg175:0507-050D
 	free(walkTable);
-	WalkData *wd = &_walkData[0];
-	wd->setPos(xPos + 5, yPos, kFacingPositionLeft, 0); // cseg175:0513-0538 (D168 = xPos+5, D16A = yPos, D16C = 4)
-	wd->setDefaultScale();
-	_currentPart = 101;                        // cseg175:0543-054B (s3:0x321A = 0x6E)
+	_walkData[0].setPos(xPos + 5, yPos, kFacingPositionLeft, 0); // cseg175:0510-053A
+	_walkData[0].setDefaultScale();
+	_currentPart = 110; // cseg175:0553
 }
 
 void IgorEngine::PART_100() {
@@ -205,6 +197,17 @@ void IgorEngine::PART_100() {
 	loadAnimData(frames3, kPart100Frm3);
 	loadAnimData(frames4, kPart100Frm4);
 	loadAnimData(frames5, kPart100Frm5);
+	if (_objectsState[67] == 1) { // cseg175:27E5-27EC; s3:0x865
+		for (int y = 0; y <= 7; ++y)
+			memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart100Frm4 + y * 37, 37); // cseg175:0002-0051
+	}
+	if (_objectsState[68] == 1) { // cseg175:27F1-27F8; s3:0x866
+		for (int y = 0; y <= 14; ++y)
+			memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart100Frm3 + y * 14, 14); // cseg175:0052-00A1
+	} else if (_objectsState[68] == 2) { // cseg175:27FD-2804
+		for (int y = 0; y <= 14; ++y)
+			memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart100Frm3 + 210 + y * 14, 14); // cseg175:00A2-00F1
+	}
 
 	// Preserve the complete left panel at ANM+0, then make the right panel
 	// active. This load order is unconditional in cseg175:27DB-2845.

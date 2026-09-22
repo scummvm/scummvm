@@ -79,6 +79,9 @@ void IgorEngine::PART_MAIN() {
 		case 102:
 			PART_100(); // OutsideAdministrationBuilding street
 			break;
+		case 110:
+			PART_110(); // OutsideAdministrationBuilding street, left panel
+			break;
 
 		case 850: // Intro cutscene
             // Clear the entire screen buffer before starting the intro cutscene

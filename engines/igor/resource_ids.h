@@ -498,5 +498,6 @@
 // resource_sp_cdrom.h rows for the byte sources (A/B are byte-identical).
 #define WLK_DecanatoA 910
 #define WLK_DecanatoB 911
+#define DAT_DecanatoPart110 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
 
 #endif // IGOR_RESOURCE_IDS
