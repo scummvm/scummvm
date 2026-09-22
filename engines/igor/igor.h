@@ -474,6 +474,7 @@ private:
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
 	void PART_85_HELPER_2();
+	void displayLogo();
 	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();
 

@@ -500,4 +500,10 @@
 #define WLK_DecanatoB 911
 #define DAT_DecanatoPart110 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
 
+// CD-only end card shown by part 850. All three resources are contiguous in
+// NE segment 209 immediately after the intro code.
+#define FRM_IgorIntroLogo 913 // cseg209:13BE; IGOR.EXE:0x7C09BE, 206x13
+#define IMG_IgorIntroLogo 914 // cseg209:1E34; IGOR.EXE:0x7C1434, 320x122
+#define PAL_IgorIntroLogo 915 // cseg209:B6B4; IGOR.EXE:0x7CACB4, 768 bytes
+
 #endif // IGOR_RESOURCE_IDS

@@ -56,63 +56,63 @@ void IgorEngine::PART_85() {
 	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
 	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
 	VAR_WATER_SOUND_PLAYING = true;
-	playSound(17, 1);
+	// playSound(17, 1);
 	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
 	fadeIn(768);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(201, 3, 545);
-	ADD_DIALOGUE_TEXT(204, 1, 546);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(89, 56, 63, 63, 0);
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(205, 3, 547);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(113, 59, 63, 0, 38);
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(208, 1, 548);
-	SET_DIALOGUE_TEXT(1, 1);
-	startCutsceneDialogue(89, 56, 63, 63, 0);
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(209, 2, 549);
-	ADD_DIALOGUE_TEXT(211, 1, 550);
-	ADD_DIALOGUE_TEXT(212, 1, 551);
-	ADD_DIALOGUE_TEXT(213, 1, 552);
-	ADD_DIALOGUE_TEXT(214, 1, 553);
-	SET_DIALOGUE_TEXT(1, 5);
-	startCutsceneDialogue(113, 59, 63, 0, 38);
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(215, 1, 554);
-	ADD_DIALOGUE_TEXT(216, 2, 555);
-	ADD_DIALOGUE_TEXT(218, 1, 556);
-	SET_DIALOGUE_TEXT(1, 3);
-	startCutsceneDialogue(89, 56, 63, 63, 0);
-	VAR_CURRENT_TALKING_ACTOR = 0;
-	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	ADD_DIALOGUE_TEXT(219, 2, 557);
-	ADD_DIALOGUE_TEXT(221, 2, 558);
-	SET_DIALOGUE_TEXT(1, 2);
-	startCutsceneDialogue(113, 59, 63, 0, 38);
-	VAR_CURRENT_TALKING_ACTOR = 1;
-	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0, 0x7481, 18, 37, 20);
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(201, 3, 545);
+	// ADD_DIALOGUE_TEXT(204, 1, 546);
+	// SET_DIALOGUE_TEXT(1, 2);
+	// startCutsceneDialogue(89, 56, 63, 63, 0);
+	// VAR_CURRENT_TALKING_ACTOR = 0;
+	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(205, 3, 547);
+	// SET_DIALOGUE_TEXT(1, 1);
+	// startCutsceneDialogue(113, 59, 63, 0, 38);
+	// VAR_CURRENT_TALKING_ACTOR = 1;
+	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(208, 1, 548);
+	// SET_DIALOGUE_TEXT(1, 1);
+	// startCutsceneDialogue(89, 56, 63, 63, 0);
+	// VAR_CURRENT_TALKING_ACTOR = 0;
+	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(209, 2, 549);
+	// ADD_DIALOGUE_TEXT(211, 1, 550);
+	// ADD_DIALOGUE_TEXT(212, 1, 551);
+	// ADD_DIALOGUE_TEXT(213, 1, 552);
+	// ADD_DIALOGUE_TEXT(214, 1, 553);
+	// SET_DIALOGUE_TEXT(1, 5);
+	// startCutsceneDialogue(113, 59, 63, 0, 38);
+	// VAR_CURRENT_TALKING_ACTOR = 1;
+	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(215, 1, 554);
+	// ADD_DIALOGUE_TEXT(216, 2, 555);
+	// ADD_DIALOGUE_TEXT(218, 1, 556);
+	// SET_DIALOGUE_TEXT(1, 3);
+	// startCutsceneDialogue(89, 56, 63, 63, 0);
+	// VAR_CURRENT_TALKING_ACTOR = 0;
+	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// ADD_DIALOGUE_TEXT(219, 2, 557);
+	// ADD_DIALOGUE_TEXT(221, 2, 558);
+	// SET_DIALOGUE_TEXT(1, 2);
+	// startCutsceneDialogue(113, 59, 63, 0, 38);
+	// VAR_CURRENT_TALKING_ACTOR = 1;
+	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+	// PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	// PART_85_HELPER_1(0, 0x7481, 18, 37, 20);
+	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_2();
 	VAR_WATER_SOUND_PLAYING = false;
 	stopSound();
@@ -146,6 +146,9 @@ void IgorEngine::PART_85() {
 	waitForEndOfIgorDialogue();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0x74CA, 0xA6C4, 10, 24, 16);
+	if (_game.version == kIdSpaCD) {
+		displayLogo(); // cseg209:0x12B5
+	}
 
 PART_85_EXIT:
 	stopSound();
@@ -160,6 +163,85 @@ PART_85_EXIT:
 	_currentPart = 61;
 	_updateDialogue = 0;
 	_updateRoomBackground = 0;
+}
+
+void IgorEngine::displayLogo() {
+	// The CD executable preserves the last intro frame while it displays a
+	// 320x122 title card, then restores that frame before entering part 61.
+	memcpy(_screenTextLayer, _screenVGA, 46080); // cseg209:0x03EE-0x0400
+	playSound(65, 1); // cseg209:0x041C-0x0420
+
+	memcpy(_paletteBuffer, _currentPalette, 768); // cseg209:0x0425-0x0432
+	loadData(PAL_IgorIntroLogo, _currentPalette); // cseg209:0x0437-0x0460
+	_currentPalette[765] = 63; // cseg209:0x0465
+	_currentPalette[766] = 63; // cseg209:0x046A
+	_currentPalette[767] = 63; // cseg209:0x046F
+	updatePalette(768); // cseg209:0x0474-0x0486
+	loadData(IMG_IgorIntroLogo, _screenVGA); // cseg209:0x048B-0x04B8
+
+	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) { // cseg209:0x04BD-0x04F2
+		PART_85_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	}
+
+	uint8 *subtitle = loadData(FRM_IgorIntroLogo); // cseg209:0x0002
+	for (int y = 0; y < 13; ++y) {
+		for (int x = 0; x < 206; ++x) {
+			const uint8 color = subtitle[y * 206 + x];
+			if (color != 255) {
+				_screenVGA[(130 + y) * 320 + 57 + x] = (color == 241) ? 0 : 255;
+			}
+		}
+	}
+	free(subtitle);
+
+	// Update the stored palette while exposing only color 255 to VGA.
+	// cseg209:0x04F9-0x05CB
+	for (int threshold = 63; threshold >= 0; threshold -= 3) {
+		for (int i = 0; i < 768; ++i) {
+			if (_paletteBuffer[i] >= threshold) {
+				const int color = _currentPalette[i] + 3;
+				_currentPalette[i] = MIN<int>(color, _paletteBuffer[i]);
+			}
+		}
+		setPaletteRange(255, 255); // cseg209:0x05BB-0x05BF
+		waitForTimer();
+	}
+
+	// The original counter runs in DOS timer units; waitForTimer() advances by
+	// kTimerTicksCount units. cseg209:0x05CE-0x0635
+	for (int i = 0; i <= 1500 / kTimerTicksCount; ++i) {
+		PART_85_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+		if (_inputVars[kInputClick] || _inputVars[kInputEscape] || _inputVars[kInputOptions]) {
+			_inputVars[kInputClick] = 0;
+			_inputVars[kInputEscape] = 0;
+			_inputVars[kInputOptions] = 0;
+			break;
+		}
+	}
+
+	memcpy(_screenVGA, _screenTextLayer, 39040); // cseg209:0x0637-0x0649
+	memcpy(_currentPalette, _paletteBuffer, 765); // cseg209:0x064E-0x065B
+	setPaletteRange(0, 255); // cseg209:0x0660-0x0664
+
+	// // The original updates only color 255 here. The other palette changes stay
+	// // internal and therefore do not produce a visible fade. cseg209:0x0669-0x0705
+	// for (int threshold = 0; threshold <= 63; threshold += 3) {
+	// 	for (int i = 0; i < 768; ++i) {
+	// 		if (_paletteBuffer[i] >= threshold) {
+	// 			_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
+	// 		}
+	// 	}
+	// 	setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
+	// 	waitForTimer();
+	// }
+
+	memcpy(_screenVGA, _screenTextLayer, 46080); // cseg209:0x0708-0x071A
+	_currentPalette[765] = 63; // cseg209:0x071F
+	_currentPalette[766] = 63; // cseg209:0x0724
+	_currentPalette[767] = 63; // cseg209:0x0729
+	setPaletteRange(255, 255); // cseg209:0x072E-0x0740
 }
 
 void IgorEngine::PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
@@ -210,7 +292,7 @@ void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {
 	if (!VAR_WATER_SOUND_PLAYING) {
 		return;
 	}
-	if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
+	if (_gameState.talkMode == kTalkModeTextOnly /*|| !_gameState.dialogueTextRunning*/) {
 		playSound(17, 1);
 	}
 }
