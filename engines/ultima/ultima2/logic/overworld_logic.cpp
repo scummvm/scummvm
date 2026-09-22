@@ -309,6 +309,28 @@ void OverworldLogic::updateCreatures() {
 
 		int dx = sg._mapX - monsters._mapX[slot];
 		int dy = sg._mapY - monsters._mapY[slot];
+
+		// Daemons, Devils, Mages and Balrons within 2 tiles have a small
+		// chance each turn of casting a proximity trap on the player
+		if (ABS(dx) < 3 && ABS(dy) < 3 && randByte() < 0x20) {
+			switch (monsterTile) {
+			case Data::TILE_DAEMON:
+				legParalysisTrap();
+				break;
+			case Data::TILE_DEVIL:
+				armParalysisTrap();
+				break;
+			case Data::TILE_MAGE:
+				magicMissileTrap();
+				break;
+			case Data::TILE_BALRON:
+				sleepTrap();
+				break;
+			default:
+				break;
+			}
+		}
+
 		int sdx = signByte(dx * 4);
 		int sdy = signByte(dy * 4);
 
@@ -572,6 +594,55 @@ void OverworldLogic::minaxDeathSequence() {
 
 	writeString("\nYOU FEEL A STRANGE FORCE!\n");
 	g_engine->addView("Ending");
+}
+
+void OverworldLogic::legParalysisTrap() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("LEGS PARALIZED!\n");
+	playFX(Data::SFX_MAGIC);
+	showAttackTile(sg._mapX, sg._mapY);
+
+	if (sg._items[Data::ITEM_BOOTS] != 0 && randByte() >= 0x40) {
+		writeString("SAVED BY MAGICAL BOOTS!\n");
+		return;
+	}
+
+	sg._legParalysisTurns = randByte() & 0xF;
+}
+
+void OverworldLogic::armParalysisTrap() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("ARMS PARALIZED!\n");
+	playFX(Data::SFX_MAGIC);
+	showAttackTile(sg._mapX, sg._mapY);
+
+	if (sg._items[Data::ITEM_CLOAK] != 0 && randByte() >= 0x40) {
+		writeString("SAVED BY MAGICAL CLOAK\n");
+		return;
+	}
+
+	sg._armParalysisTurns = randByte() & 0xF;
+}
+
+void OverworldLogic::magicMissileTrap() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("MAGIC MISSILE!\n");
+	playFX(Data::SFX_MAGIC);
+	showAttackTile(sg._mapX, sg._mapY);
+}
+
+void OverworldLogic::sleepTrap() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("SLEEP SPELL!\n");
+	playFX(Data::SFX_MAGIC);
+	showAttackTile(sg._mapX, sg._mapY);
+
+	if (sg._items[Data::ITEM_GREEN_IDOL] != 0 && randByte() >= 0x40) {
+		writeString("SAVED BY IDOL!\n");
+		return;
+	}
+
+	sg._sleepTurns = randByte() & 0xF;
 }
 
 void OverworldLogic::killMonster(int slot) {

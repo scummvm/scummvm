@@ -74,6 +74,28 @@ private:
 	 */
 	void minaxDeathSequence();
 
+	/**
+	 * A nearby Daemon paralyzes the player's legs, blocking movement until
+	 * it wears off, unless the boots resist it
+	 */
+	void legParalysisTrap();
+
+	/**
+	 * A nearby Devil paralyzes the player's arms, blocking attacks until
+	 * it wears off, unless the cloak resists it
+	 */
+	void armParalysisTrap();
+
+	/**
+	 * A nearby Mage fires a magic missile
+	 */
+	void magicMissileTrap();
+
+	/**
+	 * A nearby Balron puts the player to sleep, unless the idol resists it
+	 */
+	void sleepTrap();
+
 protected:
 	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED, STEP_MOONGATE };
 
