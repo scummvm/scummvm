@@ -132,8 +132,8 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		// Speech completion ends the sentence; active speech does not suspend
 		// character animation. See cseg209:0x0802-0x0843.
 		if (_gameState.dialogueTextRunning && _gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
-					_talkDelayCounter = _talkDelay;
-				}
+			_talkDelayCounter = _talkDelay;
+		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
 				if (_talkDelay == _talkDelayCounter) {
@@ -248,8 +248,8 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 		// Speech completion ends the sentence; active speech does not suspend
 		// Igor's head animation. See cseg209:0x0B3D-0x0B7E.
 		if (_gameState.dialogueTextRunning && _gameState.talkMode != kTalkModeTextOnly && !isDialogueSpeechPlaying()) {
-					_talkDelayCounter = _talkDelay;
-				}
+			_talkDelayCounter = _talkDelay;
+		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
 				if (_talkDelay == _talkDelayCounter) {
@@ -290,6 +290,7 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
+	debug("Animating Igor talking with frame: %d", frame);
 	if (getPart() == 4) {
 		return;
 	}

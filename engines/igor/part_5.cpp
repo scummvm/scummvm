@@ -182,7 +182,7 @@ void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		switch (getRandomNumber(200)) {
+		switch (getRandomNumber(199)) {
 		case 0:
 			playSound(18, 1);
 			break;

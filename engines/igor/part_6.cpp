@@ -41,7 +41,7 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 		setPaletteRange(185, 191);
 	}
 	if (compareGameTick(1)) {
-		switch (getRandomNumber(20)) {
+		switch (getRandomNumber(19)) {
 		case 0:
 			playSound(18, 1);
 			break;
@@ -210,8 +210,8 @@ void IgorEngine::PART_06() {
 		// 	handleRoomLight();
 		// }
 		PART_06_UPDATE_ROOM_BACKGROUND();
-		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(10) == 0) {
-			PART_06_HELPER_8(getRandomNumber(4));
+		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(9) == 0) {
+			PART_06_HELPER_8(getRandomNumber(3));
 		}
 		waitForTimer();
 	}

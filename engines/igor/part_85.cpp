@@ -33,9 +33,9 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 		break;
 	case kUpdateDialogueAnimMiddleOfSentence:
 		if (VAR_CURRENT_TALKING_ACTOR != 0) {
-			_gameState.counter[0] = getRandomNumber(5) + 8;
+			_gameState.counter[0] = getRandomNumber(4) + 8;
 		} else {
-			_gameState.counter[0] = getRandomNumber(5) + 13;
+			_gameState.counter[0] = getRandomNumber(4) + 13;
 		}
 		decodeAnimFrame(getAnimFrame(0, 0x7480, _gameState.counter[0]), _screenVGA, true);
 		break;
