@@ -390,6 +390,26 @@ void MadeEngine::handleEvents() {
 
 }
 
+void MadeEngine::loadWin16Cursor(Common::String basename) {
+	// Try to open the EXE and get the hand cursor out
+	Common::WinResources *exe = Common::WinResources::createFromEXE(Common::Path(basename + "w.exe")); // Win16 executable
+	if (!exe)
+		exe = Common::WinResources::createFromEXE(Common::Path(basename + "v.exe")); // Tandy VIS executable
+
+	if (exe) {
+		Graphics::WinCursorGroup *_winCursor = Graphics::WinCursorGroup::createCursorGroup(exe, Common::WinResourceID("HANDCURSOR"));
+		if (_winCursor) {
+			if (_winCursor->cursors.size() > 0) {
+				_screen->setMouseCursor(_winCursor->cursors[0].cursor);
+				_useWinCursors = true;
+			}
+			delete _winCursor;
+		}
+
+		delete exe;
+	}
+}
+
 Common::Error MadeEngine::run() {
 	if (getPlatform() == Common::kPlatformMacintosh)
 		_music = nullptr; // TODO: Macintosh music player
@@ -443,6 +463,10 @@ Common::Error MadeEngine::run() {
 		} else {
 			_res->openResourceBlocks();
 		}
+
+		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
+			loadWin16Cursor("manhole");
+
 	} else if (getGameID() == GID_LGOP2) {
 		_dat->open("lgop2.dat");
 		_res->open("lgop2.prj");
@@ -450,25 +474,9 @@ Common::Error MadeEngine::run() {
 		_dat->open("rodneys.dat");
 		_res->open("rodneys.prj");
 
-		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors")) {
-			// Try to open the EXE and get the hand cursor out
-			Common::WinResources *exe = Common::WinResources::createFromEXE("rodneysw.exe"); // Win16 executable
-			if (!exe)
-				exe = Common::WinResources::createFromEXE("rodneysv.exe"); // Tandy VIS executable
+		if (ConfMan.hasKey("windows_cursors") && ConfMan.getBool("windows_cursors"))
+			loadWin16Cursor("rodneys");
 
-			if (exe) {
-				Graphics::WinCursorGroup *_winCursor = Graphics::WinCursorGroup::createCursorGroup(exe, Common::WinResourceID("HANDCURSOR"));
-				if (_winCursor) {
-					if (_winCursor->cursors.size() > 0) {
-						_screen->setMouseCursor(_winCursor->cursors[0].cursor);
-						_useWinCursors = true;
-					}
-					delete _winCursor;
-				}
-
-				delete exe;
-			}
-		}
 	} else if (getGameID() == GID_RSBESTNDE) {
 		if (getFeatures() & GF_DEMO) {
 			_dat->open("bestdemo.dat");

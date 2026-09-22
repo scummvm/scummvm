@@ -156,6 +156,7 @@ public:
 	void handleEvents();
 
 protected:
+	void loadWin16Cursor(Common::String basename);
 	void pauseEngineIntern(bool pause) override;
 };
 
