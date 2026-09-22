@@ -21,12 +21,17 @@
 
 #include "ultima/ultima2/views/stats.h"
 #include "ultima/ultima2/ultima2.h"
+#include "ultima/shared/gfx/rect.h"
 
 namespace Ultima {
 namespace Ultima2 {
 namespace Views {
 
 constexpr int COLOR_TEXT = 3; // white, within the game's 4-color CGA palette
+
+Stats::Stats(UIElement *parent) : Shared::UIElement("Stats", parent) {
+	setBounds(TextRect(30, 20, 39, 23));
+}
 
 void Stats::draw() {
 	Data::Savegame &sg = _G(savegame);

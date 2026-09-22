@@ -109,19 +109,6 @@ void SpaceMap::setShip(byte x, byte y) {
 	drawMarker(s, COLOR_STAR);
 }
 
-void SpaceMap::drawHud(Shared::Gfx::GfxSurface &s) {
-	auto *logic = dynamic_cast<Logic::SpaceLogic *>(_G(logic).get());
-	if (!logic)
-		return;
-
-	s.fillRect(TextRect(30, 20, 39, 23), 0);
-	s.setColor(COLOR_STAR);
-	s.writeString(Common::Point(30, 20), "  FUEL=%.2d", _G(savegame)._items[Data::ITEM_TRI_LITHIUM] % 100);
-	s.writeString(Common::Point(30, 21), "  XENO=%.2d", logic->coords()[0]);
-	s.writeString(Common::Point(30, 22), "  YAKO=%.2d", logic->coords()[1]);
-	s.writeString(Common::Point(30, 23), "  ZABO=%.2d", logic->coords()[2]);
-}
-
 void SpaceMap::draw() {
 	auto s = getSurface();
 	s.fillRect(Common::Rect(0, 0, 320, 160), 0);
@@ -129,7 +116,9 @@ void SpaceMap::draw() {
 	for (int i = 0; i < STAR_COUNT; ++i)
 		plot(s, _starX[i], _starY[i], COLOR_STAR);
 	drawMarker(s, COLOR_STAR);
-	drawHud(s);
+
+	// Draw the HUD stats
+	View::draw();
 }
 
 void SpaceMap::animate() {
@@ -223,7 +212,7 @@ bool SpaceMap::tick() {
 				auto s = getSurface();
 				_counter = 0x80;
 				_speed = 1;
-				drawHud(s);
+				_stats.draw();
 				seedStars();
 				_phase = PHASE_WARP_ACCELERATE;
 			}

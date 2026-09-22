@@ -23,6 +23,7 @@
 #define ULTIMA2_VIEWS_SPACE_MAP_H
 
 #include "ultima/shared/gfx/view.h"
+#include "ultima/ultima2/views/space_stats.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -45,6 +46,7 @@ private:
 
 	static const int STAR_COUNT = 64;
 
+	SpaceStats _stats = SpaceStats(this);
 	byte _starX[STAR_COUNT] = {};
 	byte _starY[STAR_COUNT] = {};
 	byte _seedA = 0, _seedB = 0;
@@ -56,7 +58,6 @@ private:
 	void seedStars();
 	void plot(Shared::Gfx::GfxSurface &s, int x, int y, int color);
 	void drawMarker(Shared::Gfx::GfxSurface &s, int color);
-	void drawHud(Shared::Gfx::GfxSurface &s);
 
 	/**
 	 * Moves every star one step away from the ship's steering position

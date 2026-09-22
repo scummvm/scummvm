@@ -33,6 +33,7 @@ constexpr int PROMPT_ROW = 3; // last of the 4 rows within Commands' own bounds
 constexpr int PROMPT_ABSOLUTE_ROW = 23;
 
 Commands::Commands(UIElement *parent) : Shared::UIElement("Commands", parent), _textCursor("CommandsCursor", this, COLOR_TEXT) {
+	setBounds(TextRect(0, 20, 29, 23));
 }
 
 void Commands::draw() {
