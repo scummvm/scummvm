@@ -30,6 +30,218 @@ namespace Made {
 
 static const MadeGameDescription gameDescriptions[] = {
 
+	/* ************* The Manhole ************* */
+
+	{
+		// The Manhole (EGA, 5.25")
+		{
+			"manhole",
+			"",
+			AD_ENTRY1s("manhole.dat", "2b1658292599a861c4cd3cf6cdb3c581", 127541),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		GF_FLOPPY,
+		1, 0,
+	},
+
+	{
+		// The Manhole (EGA, CD-ROM)
+		//  Bugreport #5855
+		{
+			"manhole",
+			"CD",
+			AD_ENTRY1s("manhole.dat", "df77ad5232757d7149342fb6471de4ed", 99317),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		GF_CD,
+		1, 0,
+	},
+
+	{
+		// The Manhole (PC-98, 5.25")
+		{
+			"manhole",
+			"",
+			AD_ENTRY1s("manhole.dat", "d99dd0a92c09ff313e92feb49ab64115", 102285),
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		GF_FLOPPY,
+		1, 0,
+	},
+
+	{
+		// The Manhole (FM Towns, CD-ROM) 1990
+		//  In fact, this is the NE version, but not labeled as such
+		{
+			"manhole",
+			"",
+			AD_ENTRY1s("manhole.dat", "2f14b5d87a862aad25701514dc282475", 119667),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_CD | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		GF_CD,
+		1, 0,
+	},
+
+	{
+		// The Manhole: New and Enhanced (MS-DOS) 1992
+		// MS-DOS, Win16 and Tandy VIS all share the same resource but a different player.
+		{
+			"manholene",
+			"",
+			AD_ENTRY1s("manhole.dat", "cb21e31ed35c963208343bc995225b73", 107028),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_WINDOWS_CURSORS)
+		},
+		GID_MANHOLE_NE,
+		GF_CD,
+		2, 0,
+	},
+
+	{
+		// The Manhole: NE, DOS/V, file dates 2/21/1992
+		// Platform: IBM PS-55, Sega TeraDrive or DOS/V-compatibles
+		// MADE v2.00a JAPAN PC - Copyright (c) 1990, MEDIAGENIC
+		{
+			"manholene",
+			"DOS-V",
+			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
+			Common::JA_JPN,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE_NE,
+		GF_FLOPPY,
+		1, 0,
+	},
+
+	// The Manhole: Masterpiece Edition is not a MADE engine and cannot be
+	// supported by MADE. It is a HyperCard-like engine
+	{
+		// The Manhole: Masterpiece Edition (GOG/CD)
+		{
+			"manholeme",
+			_s("The game is using an unsupported engine"),
+			AD_ENTRY1s("manhole.dat", "e8cec9bf21e4c50a7ebc193a4e0b48f5", 181390),
+			// AD_ENTRY1s("manhole.dat", "4141a19a4a51e8b96bf26255fcee6fa9", 181394),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_NONE,
+		0,
+		0, 0,
+	},
+
+	/* ************* Rodney's Funscreen ************* */
+
+	{
+		// Rodney's Funscreen
+		// MS-DOS, Win16 and Tandy VIS all share the same resource but a different player.
+		{
+			"rodney",
+			"",
+			AD_ENTRY1s("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a", 92990),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_WINDOWS_CURSORS)
+		},
+		GID_RODNEY,
+		GF_FLOPPY,
+		2, 0,
+	},
+
+	/* ************* Leather Goddesses of Phobos 2 ************* */
+
+	{
+		// Leather Goddesses of Phobos 2 (English)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "8137996db200ff67e8f172ff106f2e48", 280280),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_LGOP2,
+		GF_FLOPPY,
+		2, 0,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (German)
+		// Supplied by windlepoons (bug tracker #4218)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "a0ffea6a3b7e39bd861edd00c397641c", 299466),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_LGOP2,
+		GF_FLOPPY,
+		2, 0,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (French)
+		// Supplied by goodoldgeorg (bug tracker #4219)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "f9e974087af7cf4b7ec2d8dc45d01e0c", 295366),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_LGOP2,
+		GF_FLOPPY,
+		2, 0,
+	},
+
+	{
+		// Leather Goddesses of Phobos 2 (Spanish)
+		// Supplied by goodoldgeorg (bug tracker #4219)
+		{
+			"lgop2",
+			"",
+			AD_ENTRY1s("lgop2.dat", "96eb95b4d75b9a3da0b0d67e3b4a787d", 288984),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_LGOP2,
+		GF_FLOPPY,
+		2, 0,
+	},
+
+	/* ************* Return to Zork ************* */
+
 	{
 		// NOTE: Return to Zork entries with *.dat are used to detect the game via rtzcd.dat,
 		// which is packed inside rtzcd.red. Entries with *.red refer to the packed file
@@ -47,7 +259,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -65,7 +276,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -82,7 +292,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -99,7 +308,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -116,7 +324,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -134,7 +341,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -155,7 +361,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -173,7 +378,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -191,7 +395,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -209,7 +412,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -227,7 +429,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -245,7 +446,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -263,7 +463,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -286,7 +485,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -303,7 +501,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GID_RTZ,
-		0,
 		GF_FLOPPY,
 		3, 0,
 	},
@@ -324,7 +521,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_RTZ,
-		0,
 		GF_DEMO,
 		3, 0,
 	},
@@ -341,7 +537,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
 	},
@@ -359,9 +554,24 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
 		3, 0,
+	},
+
+	{
+		// Return to Zork - English MacOS CD version 1.1.1? 8/20/93
+		{
+			"rtz",
+			"V1.1.1, 8/20/93, CD",
+			AD_ENTRY1s("rtz.dat", "f5488cf4156603e25ebf21786ea51a98", 606720),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_CD,
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
+		},
+		GID_RTZ,
+		GF_CD,
+		3, 1,
 	},
 
 	{
@@ -378,9 +588,8 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
-		0,
 		GF_CD_COMPRESSED,
-		3, 0,
+		3, 1,
 	},
 
 	{
@@ -396,7 +605,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -414,7 +622,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
@@ -432,205 +639,11 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_RTZ,
-		0,
 		GF_CD,
 		3, 0,
 	},
 
-	// The Manhole: Masterpiece Edition is not a MADE engine and cannot be
-	// supported by MADE. It is a HyperCard-like engine
-	{
-		// The Manhole: Masterpiece Edition (GOG/CD)
-		{
-			"manhole",
-			_s("The game is using unsupported engine"),
-			AD_ENTRY1("manhole.dat", "e8cec9bf21e4c50a7ebc193a4e0b48f5"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE,
-		0,
-		GF_CD,
-		2, 0,
-	},
-
-	// Bugreport #5855
-	{
-		{
-			"manhole",
-			_s("The game is using unsupported engine"),
-			AD_ENTRY1s("manhole.dat", "df77ad5232757d7149342fb6471de4ed", 99317),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE,
-		0,
-		GF_CD,
-		2, 0,
-	},
-
-	{
-		// The Manhole: New and Enhanced
-		{
-			"manhole",
-			"",
-			AD_ENTRY1("manhole.dat", "cb21e31ed35c963208343bc995225b73"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GAMEOPTION_WINDOWS_CURSORS)
-		},
-		GID_MANHOLE,
-		0,
-		GF_CD,
-		2, 0,
-	},
-
-	{
-		// The Manhole (EGA, 5.25")
-		{
-			"manhole",
-			"EGA",
-			AD_ENTRY1("manhole.dat", "2b1658292599a861c4cd3cf6cdb3c581"),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE,
-		0,
-		GF_FLOPPY,
-		1, 0,
-	},
-
-	{
-		// The Manhole
-		{
-			"manhole",
-			"",
-			AD_ENTRY1s("manhole.dat", "2f14b5d87a862aad25701514dc282475", 119667),
-			Common::JA_JPN,
-			Common::kPlatformFMTowns,
-			ADGF_CD | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE,
-		0,
-		GF_CD,
-		3, 0,
-	},
-
-	{
-		// The Manhole DOS/V
-		// Platform: IBM PS-55, Sega TeraDrive or DOS/V-compatibles
-		// MADE v2.00a JAPAN PC - Copyright (c) 1990, MEDIAGENIC
-		{
-			"manhole",
-			"DOS-V",
-			AD_ENTRY1s("manhole.dat", "14522ee9139ca0823ac0cc15805e1fcc", 112303),
-			Common::JA_JPN,
-			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_MANHOLE,
-		0,
-		GF_FLOPPY,
-		3, 0,
-	},
-
-	{
-		// Leather Goddesses of Phobos 2 (English)
-		{
-			"lgop2",
-			"",
-			AD_ENTRY1s("lgop2.dat", "8137996db200ff67e8f172ff106f2e48", 280280),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_LGOP2,
-		0,
-		GF_FLOPPY,
-		2, 0,
-	},
-
-	{
-		// Leather Goddesses of Phobos 2 (German)
-		// Supplied by windlepoons (bug tracker #4218)
-		{
-			"lgop2",
-			"",
-			AD_ENTRY1s("lgop2.dat", "a0ffea6a3b7e39bd861edd00c397641c", 299466),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_LGOP2,
-		0,
-		GF_FLOPPY,
-		2, 0,
-	},
-
-	{
-		// Leather Goddesses of Phobos 2 (French)
-		// Supplied by goodoldgeorg (bug tracker #4219)
-		{
-			"lgop2",
-			"",
-			AD_ENTRY1s("lgop2.dat", "f9e974087af7cf4b7ec2d8dc45d01e0c", 295366),
-			Common::FR_FRA,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_LGOP2,
-		0,
-		GF_FLOPPY,
-		2, 0,
-	},
-
-	{
-		// Leather Goddesses of Phobos 2 (Spanish)
-		// Supplied by goodoldgeorg (bug tracker #4219)
-		{
-			"lgop2",
-			"",
-			AD_ENTRY1s("lgop2.dat", "96eb95b4d75b9a3da0b0d67e3b4a787d", 288984),
-			Common::ES_ESP,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
-		},
-		GID_LGOP2,
-		0,
-		GF_FLOPPY,
-		2, 0,
-	},
-
-	{
-		// Rodney's Funscreen
-		// MS-DOS, Win16 and Tandy VIS all share the same resource but a different player.
-		{
-			"rodney",
-			"",
-			AD_ENTRY1s("rodneys.dat", "a79887dbaa47689facd7c6f09258ba5a", 92990),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GAMEOPTION_WINDOWS_CURSORS)
-		},
-		GID_RODNEY,
-		0,
-		GF_FLOPPY,
-		2, 0,
-	},
+	/* ************* Richard Scarry's Best... ************* */
 
 	{
 		// Richard Scarry's Best Neighborhood Disc Ever!
@@ -645,7 +658,6 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_RSBESTNDE,
-		0,
 		0,
 		3, 1,
 	},
@@ -663,10 +675,11 @@ static const MadeGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_RSBESTNDE,
-		0,
 		GF_DEMO,
 		3, 1,
 	},
+
+	/* ************* Richard Scarry's Busiest... ************* */
 
 	{
 		// Richard Scarry's Busiest Neighborhood Disc Ever!
@@ -682,11 +695,10 @@ static const MadeGameDescription gameDescriptions[] = {
 		},
 		GID_RSBUSYNDE,
 		0,
-		0,
 		3, 1,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, GID_NONE, 0, 0, 0 }
 };
 
 /**
@@ -703,8 +715,7 @@ static MadeGameDescription g_fallbackDesc = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
-	0,
-	0,
+	GID_NONE,
 	0,
 	0, 0,
 };
