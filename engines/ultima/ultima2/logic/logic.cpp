@@ -93,11 +93,12 @@ void Logic::showAttackTile(int x, int y) {
 	g_engine->focusedView()->send(AttackTileMessage(x, y, 0));
 }
 
-void Logic::playFX(int num) {
-	g_engine->playFX(num);
+void Logic::playFX(Data::SoundEffect fx) {
+	g_engine->playFX(fx);
 }
 
 void Logic::endOfTurn() {
+	playFX(Data::SFX_TICK);
 	updateCreatures();
 
 	Data::Savegame &sg = _G(savegame);
@@ -338,6 +339,7 @@ bool Logic::cast() {
 	writeString("CAST-%s", Data::SPELL_NAMES[sg._readiedSpell]);
 
 	if (sg._items[Data::ITEM_WAND] + sg._items[Data::ITEM_STAFF] == 0) {
+		playFX(Data::SFX_FAIL);
 		writeString("\nNEED WAND OR STAFF!\n");
 		return true;
 	}
@@ -348,6 +350,7 @@ bool Logic::cast() {
 	}
 
 	if (sg._spellCharges[sg._readiedSpell] == 0) {
+		playFX(Data::SFX_FAIL);
 		writeString("\nNO SPELL!\n");
 		return true;
 	}
@@ -358,6 +361,7 @@ bool Logic::cast() {
 
 bool Logic::castSpell(Data::SpellType spell) {
 	// Spells only work in towers and dungeons
+	playFX(Data::SFX_FAIL);
 	writeString("-FAILED!\n");
 	return true;
 }

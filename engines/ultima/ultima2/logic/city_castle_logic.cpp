@@ -55,6 +55,7 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	default: return true;
 	}
 
+	playFX(Data::SFX_STEP);
 	writeString("%s", dirName);
 
 	if (newX < 0 || newX >= Data::MAP_WIDTH || newY < 0 || newY >= Data::MAP_HEIGHT) {
@@ -147,7 +148,7 @@ void CityCastleLogic::updateCreatures() {
 	}
 
 	for (int i = 0; i < engagedCount; ++i) {
-		playFX(1);
+		playFX(Data::SFX_CANNON);
 		if (i < hitCount)
 			showAttackTile(sg._mapX, sg._mapY);
 	}

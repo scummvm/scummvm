@@ -173,6 +173,7 @@ bool OverworldLogic::move(Data::Direction dir) {
 		return true;
 	}
 
+	playFX(Data::SFX_STEP);
 	writeString("%s", dirName);
 
 	switch (stepOnto(newX, newY)) {
@@ -352,7 +353,7 @@ void OverworldLogic::updateCreatures() {
 	// A cannon-ish sound plays for every monster occupying the player's
 	// tile this turn; the hit flash only for those that actually connected
 	for (int i = 0; i < engagedCount; ++i) {
-		playFX(1);
+		playFX(Data::SFX_CANNON);
 		if (i < hitCount)
 			showAttackTile(sg._mapX, sg._mapY);
 	}
@@ -445,6 +446,8 @@ bool OverworldLogic::attack(Data::Direction dir) {
 		return false;
 	}
 
+	playFX(Data::SFX_ATTACK);
+
 	int dx = 0, dy = 0;
 	switch (dir) {
 	case Data::DIR_UP: dy = -1; break;
@@ -464,6 +467,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 		return false;
 	}
 
+	playFX(Data::SFX_HIT);
 	writeString("--HIT!!!\n");
 	alertTownGuards(slot);
 

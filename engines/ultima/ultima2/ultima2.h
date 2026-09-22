@@ -36,6 +36,10 @@
 #include "ultima/ultima2/data/savegame.h"
 #include "ultima/ultima2/logic/logic.h"
 
+namespace Audio {
+class PCSpeaker;
+}
+
 namespace Ultima {
 namespace Ultima2 {
 
@@ -60,6 +64,21 @@ private:
 	// 6-byte lagged-Fibonacci-style state for randByte(), matching the
 	// original's rand_byte generator
 	byte _rngState[6] = {};
+
+	Audio::PCSpeaker *_pcSpeaker = nullptr;
+	bool _pcSpeakerReady = false;
+
+	/**
+	 * Queues a single square-wave note. divisor is the original's PIT
+	 * timer divisor (frequency = ~1193182/divisor), matching how each
+	 * original sound is specified
+	 */
+	void queueTone(int divisor, uint32 lengthMs);
+
+	/**
+	 * Queues a moment of silence
+	 */
+	void queueSilence(uint32 lengthMs);
 
 public:
 	Data::Savegame _savegame;
@@ -118,11 +137,11 @@ public:
 	byte randByte();
 
 	/**
-	 * Plays a sound effect. Currently a no-op stub, mirroring ultima1's
-	 * own unimplemented playFX - Ultima II has no numbered sound-effect
-	 * table; each original sound is its own hardcoded PC-speaker tone-sweep
+	 * Plays a short PC speaker sound effect. Ultima II has no numbered
+	 * sound-effect table of its own - each original sound is its own
+	 * hardcoded tone sweep, reproduced here as a short note sequence
 	 */
-	void playFX(int num);
+	void playFX(Data::SoundEffect fx);
 };
 
 extern Ultima2Engine *g_engine;

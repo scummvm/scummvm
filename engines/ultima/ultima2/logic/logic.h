@@ -92,10 +92,9 @@ protected:
 	void showAttackTile(int x, int y);
 
 	/**
-	 * Plays a sound effect. Currently a no-op stub, mirroring ultima1's
-	 * own unimplemented playFX
+	 * Plays a short PC speaker sound effect
 	 */
-	void playFX(int num);
+	void playFX(Data::SoundEffect fx);
 
 	/**
 	 * Handles end of turn logic

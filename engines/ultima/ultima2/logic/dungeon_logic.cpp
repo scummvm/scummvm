@@ -96,6 +96,7 @@ bool DungeonLogic::advance() {
 	}
 
 	sg._lightTurns = 0;
+	playFX(Data::SFX_TRAP);
 	writeString("\nARGH! A TRAP!\n");
 
 	if (sg._thievesTools == 0) {
@@ -273,6 +274,7 @@ void DungeonLogic::killMonster(int slot) {
 bool DungeonLogic::attack(Data::Direction dir) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapMonsters &monsters = _G(map)._monsters;
+	playFX(Data::SFX_ATTACK);
 	writeString("ATTACK--");
 
 	byte x = sg._mapX + sg._facingX, y = sg._mapY + sg._facingY;
@@ -307,6 +309,7 @@ bool DungeonLogic::attack(Data::Direction dir) {
 		return true;
 	}
 
+	playFX(Data::SFX_HIT);
 	writeString("HIT!");
 	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
 	byte &hp = monsters._spellHP[slot];
@@ -412,6 +415,7 @@ bool DungeonLogic::castSpell(Data::SpellType spell) {
 		break;
 	}
 
+	playFX(Data::SFX_FAIL);
 	writeString("-FAILED!\n");
 	return true;
 }
@@ -486,7 +490,7 @@ bool DungeonLogic::monsterAttacks(int slot) {
 	if (monsters._glyphTile[slot] != level)
 		return true;
 
-	playFX(1);
+	playFX(Data::SFX_CANNON);
 	byte roll = randByte();
 	if ((roll & 0x80) != 0 || (roll & 7) < sg._readiedArmor)
 		return true;

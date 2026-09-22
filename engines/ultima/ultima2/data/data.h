@@ -98,6 +98,11 @@ enum ItemType {
 };
 extern const char *const ITEM_NAMES[ITEM_COUNT];
 
+// Short PC speaker effects, played through Ultima2Engine::playFX
+enum SoundEffect {
+	SFX_TICK, SFX_STEP, SFX_ATTACK, SFX_HIT, SFX_CANNON, SFX_TRAP, SFX_FAIL, SFX_BEEP, SFX_MAGIC
+};
+
 /**
  * The original keeps amounts as packed BCD bytes: each nibble is a decimal
  * digit. Converts such a byte to the number it represents

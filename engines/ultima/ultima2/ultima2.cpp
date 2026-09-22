@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "engines/util.h"
+#include "audio/softsynth/pcspk.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
@@ -39,9 +40,11 @@ Ultima2Engine *g_engine;
 Ultima2Engine::Ultima2Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst),
 _gameDescription(gameDesc) {
 	g_engine = this;
+	_pcSpeaker = new Audio::PCSpeaker();
 }
 
 Ultima2Engine::~Ultima2Engine() {
+	delete _pcSpeaker;
 }
 
 uint32 Ultima2Engine::getFeatures() const {
@@ -58,6 +61,7 @@ Common::Error Ultima2Engine::run() {
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	Data::setCGAPalette();
+	_pcSpeakerReady = _pcSpeaker->init();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -132,8 +136,87 @@ bool Ultima2Engine::savegamesExist() const {
 	return result;
 }
 
-void Ultima2Engine::playFX(int num) {
-	warning("TODO: playFX(%d)", num);
+namespace {
+
+// The original's PIT timer runs at ~1193182Hz; a note's pitch is that
+// divided by the divisor value the game hands to the timer chip
+constexpr double PIT_BASE_FREQUENCY = 1193182.0;
+
+} // namespace
+
+void Ultima2Engine::queueTone(int divisor, uint32 lengthMs) {
+	if (_pcSpeakerReady && divisor > 0)
+		_pcSpeaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, PIT_BASE_FREQUENCY / divisor, lengthMs * 1000);
+}
+
+void Ultima2Engine::queueSilence(uint32 lengthMs) {
+	if (_pcSpeakerReady)
+		_pcSpeaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, lengthMs * 1000);
+}
+
+void Ultima2Engine::playFX(Data::SoundEffect fx) {
+	if (!_pcSpeakerReady)
+		return;
+
+	_pcSpeaker->stop();
+
+	switch (fx) {
+	case Data::SFX_TICK:
+		// A short, unobtrusive click - played every single turn
+		queueTone(1280, 8);
+		break;
+
+	case Data::SFX_STEP:
+		// An even quieter, lower thud for each step taken
+		queueTone(0x4000, 12);
+		break;
+
+	case Data::SFX_ATTACK:
+		// A brief falling whoosh as a weapon swings
+		queueTone(1024, 60);
+		queueTone(1280, 60);
+		queueTone(1535, 80);
+		break;
+
+	case Data::SFX_HIT:
+		// A short, buzzy warble for a connecting blow
+		for (int i = 0; i < 6; ++i)
+			queueTone((i & 1) ? 512 : 1400, 20);
+		break;
+
+	case Data::SFX_CANNON:
+		// A quick descending-pitch blast
+		queueTone(768, 40);
+		queueTone(1280, 40);
+		queueTone(1790, 40);
+		break;
+
+	case Data::SFX_TRAP:
+		// A longer falling alarm
+		for (int i = 0; i < 8; ++i)
+			queueTone(256 + i * ((4351 - 256) / 7), 90);
+		break;
+
+	case Data::SFX_FAIL:
+		// A short, rapidly rising buzz for a failed action
+		for (int i = 0; i < 12; ++i)
+			queueTone(2048 - i * 160, 15);
+		break;
+
+	case Data::SFX_BEEP:
+		// A narrow, high-pitched double-blip confirmation chime
+		queueTone(760, 60);
+		queueTone(800, 60);
+		queueTone(760, 60);
+		break;
+
+	case Data::SFX_MAGIC:
+		// A narrow, softer chime for a successful spell
+		queueTone(1170, 60);
+		queueTone(1216, 60);
+		queueTone(1170, 60);
+		break;
+	}
 }
 
 } // namespace Ultima2
