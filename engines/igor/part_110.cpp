@@ -33,25 +33,29 @@ void IgorEngine::PART_110_APPLY_OBJECT_STATE(int num) {
 		if (_objectsState[67] == 1) { // cseg176:09DE-0A0E; s3:0x865
 			for (int y = 0; y <= 7; ++y)
 				memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart110Frm4 + y * 37, 37); // cseg176:0002-0051
-			_roomObjectAreasTable[11].object = 7;
+			for (int area = 10; area <= 11; ++area)
+				_roomObjectAreasTable[area].object = 7; // cseg176:09EA-0A0C; s3:[area*5-9129]
 		} else {
-			_roomObjectAreasTable[11].object = 0;
+			for (int area = 10; area <= 11; ++area)
+				_roomObjectAreasTable[area].object = 0; // cseg176:0A10-0A32; s3:[area*5-9129]
 		}
 	}
 
 	if (num == 3 || num == 255) { // cseg176:0A34-0A3E
-		if (_objectsState[68] == 1) { // cseg176:0A40-0AAA; s3:0x866
+		if (_objectsState[68] == 0) { // cseg176:0A40-0A6B; s3:0x866
+			for (int area = 7; area <= 8; ++area)
+				_roomObjectAreasTable[area].object = 0; // cseg176:0A47-0A69; s3:[area*5-9129]
+		} else if (_objectsState[68] == 1) { // cseg176:0A6D-0A9A
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart110Frm3 + y * 14, 14); // cseg176:0052-00A1
-			_roomObjectAreasTable[8].object = 6;
+			for (int area = 7; area <= 8; ++area)
+				_roomObjectAreasTable[area].object = 6; // cseg176:0A76-0A98; s3:[area*5-9129]
 		} else if (_objectsState[68] == 2) {
 			for (int y = 0; y <= 14; ++y)
 				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart110Frm3 + 210 + y * 14, 14); // cseg176:00A2-00F1
-		} else {
-			_roomObjectAreasTable[8].object = 0;
+			_roomObjectAreasTable[7].object = 6; // cseg176:0AA5; s3:0xDC7A
+			_roomObjectAreasTable[8].object = 8; // cseg176:0AAA; s3:0xDC7F
 		}
-		_roomObjectAreasTable[7].object = 6; // cseg176:0AA5; s3:0xDC7A = object field 7
-		_roomObjectAreasTable[8].object = 8; // cseg176:0AAA; s3:0xDC7F = object field 8
 	}
 }
 

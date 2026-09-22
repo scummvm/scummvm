@@ -461,6 +461,7 @@ private:
 
 	void PART_100();
 	void PART_100_EXEC_ACTION(int action);
+	void PART_100_ACTION_104();
 	void PART_100_ACTION_108();
 	void PART_110();
 	void PART_110_EXEC_ACTION(int action);

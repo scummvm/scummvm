@@ -295,8 +295,10 @@ void IgorEngine::handleRoomInput() {
 			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		// }
 		// The original only exposes a room object when this action byte is
-		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC.
-		if (_currentPart >= 100 && _currentPart <= 102 && // cseg175:29AA-29B5
+		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC;
+		// cseg176:2CBC-2CED.
+		if (((_currentPart >= 100 && _currentPart <= 102) || // cseg175:29AA-29B5
+				_currentPart == 110) && // cseg176:29DF-29E6
 				_actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
 			_currentAction.object1Num = 0;
 		}
@@ -431,4 +433,3 @@ void IgorEngine::drawActionSentence(const char *sentence, uint8 color) {
 }
 
 } // End of namespace Igor
-

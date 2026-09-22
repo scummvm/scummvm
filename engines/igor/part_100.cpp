@@ -36,9 +36,16 @@ void IgorEngine::PART_100_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 102:
-		// TODO: port the scripted door exit from cseg175:0770-087C.
-		// Its dispatch-table assignment is cseg175:08DE-08FC.
-		warning("PART_100 action 102 is not implemented (cseg175:0770-087C)");
+		_roomObjectAreasTable[7].deltaLum = 3; // cseg175:077A; s3:0xDC7E
+		for (int area = 11; area <= 12; ++area)
+			_roomObjectAreasTable[area].area = 3; // cseg175:077F-07A1; s3:[area*5-9130]
+		--_walkDataLastIndex; // cseg175:07CA
+		buildWalkPath(170, 97, 100, 73); // cseg175:07CE-07D7
+		_walkData[_walkDataLastIndex].frameNum = 0; // cseg175:07DC-07E7
+		_walkDataCurrentIndex = 1; // cseg175:07E9
+		_gameState.igorMoving = true; // cseg175:07EE
+		waitForIgorMove(); // cseg175:07F3-0873
+		_currentPart = 70; // cseg175:0875
 		break;
 	case 103: // cseg175:0900-091E -> sub_175_011F
 		ADD_DIALOGUE_TEXT(202, 1, 627);
@@ -47,11 +54,7 @@ void IgorEngine::PART_100_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 104:
-		// TODO: port the state-dependent bin animation exactly from
-		// cseg175:014C-026E. It must remain disabled until the s3:0x862
-		// object-state mapping and all four FRM1 frames are wired. Its
-		// dispatch-table assignment is cseg175:0922-0940.
-		warning("PART_100 action 104 is not implemented (cseg175:014C-026E)");
+		PART_100_ACTION_104(); // cseg175:0922-0940 -> sub_175_014C
 		break;
 	case 105: // cseg175:0944-0962 -> sub_175_026F
 		ADD_DIALOGUE_TEXT(206, 1, 630);
@@ -81,6 +84,36 @@ void IgorEngine::PART_100_EXEC_ACTION(int action) {
 		warning("PART_100_EXEC_ACTION unhandled action %d", action);
 		break;
 	}
+}
+
+void IgorEngine::PART_100_ACTION_104() {
+	if (_objectsState[64] == 1) { // cseg175:015A; s3:0x862
+		ADD_DIALOGUE_TEXT(205, 1, 629); // cseg175:0161-017D
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		waitForEndOfIgorDialogue();
+		return;
+	}
+
+	ADD_DIALOGUE_TEXT(203, 2, 628); // cseg175:0185-01A1
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue(); // cseg175:01A6
+
+	static const uint8 frameSelectors[] = { 0, 1, 0, 2 }; // cseg175:01CE-01D8; s3:0x1D2-0x1D5
+	for (int frame = 0; frame < 4; ++frame) { // cseg175:01AB-021B
+		for (int y = 0; y < 49; ++y) { // cseg175:01BC-0208
+			memcpy(_screenVGA + 0x595F + y * 320, // cseg175:01B7-01F7
+					_animFramesBuffer + kPart100Frm1 + frameSelectors[frame] * 0x682 + y * 34, // cseg175:01C7-01E4
+					34); // cseg175:01FC-01FE
+		}
+		waitForTimer(31); // cseg175:020A-0214
+	}
+
+	// TODO: add inventory object 17 at slot s3:0x90E; the fork has no
+	// inventory-state API (cseg175:021D-024E).
+	playSound(51, 1); // cseg175:0253-0257
+	_objectsState[64] = 1; // cseg175:0261; s3:0x862
 }
 
 
@@ -221,11 +254,17 @@ void IgorEngine::PART_100() {
 	_roomDataOffsets = PART_100_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143); // cseg175 room mask is 320x144
 
-	memcpy(_screenVGA, _screenLayer1, 46080); // cseg175:28EA-28F9
-	_currentAction.verb = kVerbWalk;           // cseg175:2944-2952
+	// A normal entry presents the freshly loaded right panel. On the part 102
+	// handoff, the original jumps directly to the walk-index setup instead,
+	// preserving the completed pan (including Igor) already in screen VGA.
+	// cseg175:285B-2869, cseg175:295F.
+	if (_currentPart != 102) {
+		memcpy(_screenVGA, _screenLayer1, 46080); // cseg175:28EA-28F9
+		_currentAction.verb = kVerbWalk;           // cseg175:2944-2952
+		fadeIn(768);                              // cseg175:2957-295A
+	}
 	_walkDataLastIndex = 1;                   // cseg175:295F
 	_walkDataCurrentIndex = 1;                // cseg175:2964
-	fadeIn(768);                              // cseg175:2957-295A
 
 	if (_currentPart == 100) {
 		// sub_175_056D: enter at (319,79), facing left, walk to (288,84).
@@ -247,11 +286,14 @@ void IgorEngine::PART_100() {
 		_walkDataCurrentIndex = 1;
 		_gameState.igorMoving = true; // cseg175:06E7
 		waitForIgorMove();
-	} else {
-		// Part 102 deliberately has no entry-position assignment in
-		// cseg175:2969-297C; it reuses the existing walk state.
-		moveIgor(_walkData[_walkDataCurrentIndex].posNum, _walkData[_walkDataCurrentIndex].frameNum);
 	}
+	// Part 102 deliberately performs no entry redraw: the completed pan has
+	// already drawn Igor and stored his state in walk record 0.
+	// cseg175:2969-2981; cseg176:06AD-06F0.
+
+	_roomObjectAreasTable[7].deltaLum = 0; // cseg175:087D-0887; s3:0xDC7E
+	for (int area = 11; area <= 12; ++area)
+		_roomObjectAreasTable[area].area = 0; // cseg175:088C-08AE; s3:[area*5-9130]
 
 	enterPartLoop();
 	while (_currentPart >= 100 && _currentPart <= 102) { // cseg175:29AA-29B5
