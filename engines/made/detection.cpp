@@ -28,9 +28,11 @@
 
 static const PlainGameDescriptor madeGames[] = {
 	{"manhole", "The Manhole"},
-	{"rtz", "Return to Zork"},
-	{"lgop2", "Leather Goddesses of Phobos 2"},
+	{"manholene", "The Manhole: New and Enhanced!"},
+	{"manholeme", "The Manhole: Masterpiece Edition"},
 	{"rodney", "Rodney's Funscreen"},
+	{"lgop2", "Leather Goddesses of Phobos 2"},
+	{"rtz", "Return to Zork"},
 	{"rsbestnde", "Richard Scarry's Best Neighborhood Disc Ever!"},
 	{"rsbusynde", "Richard Scarry's Busiest Neighborhood Disc Ever!"},
 	{nullptr, nullptr}
