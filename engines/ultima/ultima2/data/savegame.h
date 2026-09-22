@@ -95,6 +95,14 @@ struct Savegame {
 	// planets, 9 planet X and 10 deep space. Saving only works on Earth
 	int16 _orbitTarget = 0;
 
+	// The XENO/YAKO/ZABO coordinates being hyperwarped to, or last reached
+	byte _hyperwarpCoords[3] = {};
+
+	// True while SpaceMap is the active view (flying between worlds, not yet
+	// landed) - lets a save made mid-flight resume back into it. Distinct
+	// from the original's own _inSpace flag below
+	bool _inFlight = false;
+
 	bool _ringQuestFlag = false;
 	bool _enilnoOwned = false;
 	byte _patrolWaypoint = 0;

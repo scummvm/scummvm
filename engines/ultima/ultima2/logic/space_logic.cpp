@@ -43,41 +43,63 @@ constexpr int SAFE_ARMOR = Data::ARMOR_REFLECT;
 
 } // namespace
 
+void SpaceLogic::showSpaceView() {
+	if (!g_engine->isPresent("Game")) {
+		// Set up the game view and force it to draw immediately
+		g_engine->replaceView("Game", true);
+		g_engine->focusedView()->draw();
+
+		// Now open the space view on top of it
+		g_engine->addView("SpaceMap");
+	} else {
+		g_engine->replaceView("SpaceMap");
+	}
+}
+
 void SpaceLogic::takeOff() {
 	Data::Savegame &sg = _G(savegame);
-	SpaceLogic *logic = new SpaceLogic();
 
 	int world = MIN<int>(sg._orbitTarget, PLANET_X);
 	for (int i = 0; i < 3; ++i)
-		logic->_coords[i] = Data::PLANET_COORDS[world][i];
+		sg._hyperwarpCoords[i] = Data::PLANET_COORDS[world][i];
 
 	--sg._items[Data::ITEM_TRI_LITHIUM];
-	logic->_launching = true;
+	sg._inFlight = true;
 
+	SpaceLogic *logic = new SpaceLogic();
+	logic->_launching = true;
 	_G(logic) = Common::SharedPtr<Logic>(logic);
-	g_engine->replaceView("SpaceMap");
+
+	showSpaceView();
+}
+
+void SpaceLogic::resume() {
+	_G(logic) = Common::SharedPtr<Logic>(new SpaceLogic());
+	showSpaceView();
 }
 
 void SpaceLogic::hyperwarpTo(int xeno, int yako, int zabo) {
-	_coords[0] = xeno;
-	_coords[1] = yako;
-	_coords[2] = zabo;
+	Data::Savegame &sg = _G(savegame);
+	sg._hyperwarpCoords[0] = xeno;
+	sg._hyperwarpCoords[1] = yako;
+	sg._hyperwarpCoords[2] = zabo;
 
 	static_cast<Views::SpaceMap *>(g_engine->findView("SpaceMap"))->startSpinDown();
 }
 
 bool SpaceLogic::announceOrbit() {
 	Data::Savegame &sg = _G(savegame);
+	const byte *coords = sg._hyperwarpCoords;
 
-	if (_coords[0] == 4 && _coords[1] == 4 && _coords[2] == 4) {
+	if (coords[0] == 4 && coords[1] == 4 && coords[2] == 4) {
 		writeString("\n\nYOU HIT THE SUN!\n");
 		playerDied();
 		return false;
 	}
 
 	for (int world = PLANET_X; world >= 0; --world) {
-		if (_coords[0] == Data::PLANET_COORDS[world][0] && _coords[1] == Data::PLANET_COORDS[world][1] &&
-				_coords[2] == Data::PLANET_COORDS[world][2]) {
+		if (coords[0] == Data::PLANET_COORDS[world][0] && coords[1] == Data::PLANET_COORDS[world][1] &&
+				coords[2] == Data::PLANET_COORDS[world][2]) {
 			sg._orbitTarget = world;
 			writeString("YOU ARE ORBITING %s.\n", world == PLANET_X ? "X" : Data::PLANET_NAMES[world]);
 			return true;
@@ -97,7 +119,7 @@ void SpaceLogic::warpFinished() {
 	if ((Data::toBcd(sg._items[Data::ITEM_TRI_LITHIUM] % 100) & 3) == 3) {
 		writeString("SHIP OFF COURSE!\n");
 		for (int i = 0; i < 3; ++i)
-			_coords[i] = view->nextStarCoord() & 7;
+			sg._hyperwarpCoords[i] = view->nextStarCoord() & 7;
 	}
 
 	if (!announceOrbit())
@@ -156,6 +178,7 @@ void SpaceLogic::land() {
 	// Keep hold of this logic until the map load replaces it
 	Common::SharedPtr<Logic> hold = _G(logic);
 
+	sg._inFlight = false;
 	sg._mapEra = era;
 	sg._mapType = 0;
 	sg._mapX = 0;

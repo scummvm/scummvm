@@ -20,7 +20,6 @@
  */
 
 #include "ultima/ultima2/views/space_stats.h"
-#include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/shared/gfx/rect.h"
 
@@ -38,15 +37,12 @@ void SpaceStats::draw() {
 	auto s = getSurface();
 	s.clear();
 
-	auto *logic = dynamic_cast<Logic::SpaceLogic *>(_G(logic).get());
-	if (!logic)
-		return;
-
+	Data::Savegame &sg = _G(savegame);
 	s.setColor(COLOR_TEXT);
-	s.writeString(Common::Point(0, 0), "  FUEL=%.2d", _G(savegame)._items[Data::ITEM_TRI_LITHIUM] % 100);
-	s.writeString(Common::Point(0, 1), "  XENO=%.2d", logic->coords()[0]);
-	s.writeString(Common::Point(0, 2), "  YAKO=%.2d", logic->coords()[1]);
-	s.writeString(Common::Point(0, 3), "  ZABO=%.2d", logic->coords()[2]);
+	s.writeString(Common::Point(0, 0), "  FUEL=%.2d", sg._items[Data::ITEM_TRI_LITHIUM] % 100);
+	s.writeString(Common::Point(0, 1), "  XENO=%.2d", sg._hyperwarpCoords[0]);
+	s.writeString(Common::Point(0, 2), "  YAKO=%.2d", sg._hyperwarpCoords[1]);
+	s.writeString(Common::Point(0, 3), "  ZABO=%.2d", sg._hyperwarpCoords[2]);
 }
 
 } // namespace Views

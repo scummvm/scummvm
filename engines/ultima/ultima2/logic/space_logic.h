@@ -36,9 +36,6 @@ namespace Logic {
  */
 class SpaceLogic : public Logic {
 private:
-	// The coordinates being flown to, or that were last reached
-	byte _coords[3] = {};
-
 	// Set until the first hyperwarp after launch completes
 	bool _launching = false;
 
@@ -58,6 +55,12 @@ private:
 	 */
 	void land();
 
+	/**
+	 * Pushes or swaps in the SpaceMap view, bootstrapping the Game view
+	 * first if needed - mirrors Data::Map::showMapView
+	 */
+	static void showSpaceView();
+
 public:
 	~SpaceLogic() override {}
 
@@ -66,9 +69,10 @@ public:
 	 */
 	static void takeOff();
 
-	const byte *coords() const {
-		return _coords;
-	}
+	/**
+	 * Resumes flight after loading a save made mid-flight
+	 */
+	static void resume();
 
 	/**
 	 * Called with the coordinates the player chose to hyperwarp to

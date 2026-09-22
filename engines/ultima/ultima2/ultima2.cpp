@@ -25,8 +25,10 @@
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
+#include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/views/views.h"
 #include "ultima/ultima2/views/map.h"
+#include "ultima/ultima2/views/space_map.h"
 #include "ultima/ultima2/views/interactions/dead.h"
 
 namespace Ultima {
@@ -85,8 +87,13 @@ byte Ultima2Engine::randByte() {
 }
 
 bool Ultima2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
-	// Only allow saving when any of the different map views are active
-	return dynamic_cast<Views::Map *>(focusedView()) != nullptr;
+	// Only allow saving when any of the different map views are active, or
+	// flying in space and not in the middle of a hyperwarp animation
+	if (dynamic_cast<Views::Map *>(focusedView()) != nullptr)
+		return true;
+
+	auto *spaceMap = dynamic_cast<Views::SpaceMap *>(focusedView());
+	return spaceMap != nullptr && !spaceMap->busy();
 }
 
 bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
@@ -98,10 +105,16 @@ bool Ultima2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 Common::Error Ultima2Engine::syncGame(Common::Serializer &s) {
 	_savegame.synchronize(s);
 
-	if (s.isLoading())
-		_G(map).load(_G(savegame)._mapEra, _G(savegame)._mapType);
+	if (s.isLoading()) {
+		if (_G(savegame)._inFlight)
+			Logic::SpaceLogic::resume();
+		else
+			_G(map).load(_G(savegame)._mapEra, _G(savegame)._mapType);
+	}
 
-	_G(map).synchronize(s, _G(savegame)._mapType >= 4);
+	// While flying, there's no current map to save/restore the state of
+	if (!_G(savegame)._inFlight)
+		_G(map).synchronize(s, _G(savegame)._mapType >= 4);
 
 	// The views were drawn from the freshly loaded map, before its saved state was applied
 	if (s.isLoading())
