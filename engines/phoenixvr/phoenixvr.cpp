@@ -1844,6 +1844,8 @@ void PhoenixVREngine::tick(float dt) {
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
 	int messengerInventoryHover = -1;
+	int hoverIndex = -1;
+	int hoverLeaveIndex = -1;
 	int regionCount = _regSet ? _regSet->size() : 0;
 	for (int i = 0, n = MAX<int>(regionCount, cursors.size()); i != n; ++i) {
 		auto *region = getRegion(i);
@@ -1857,24 +1859,33 @@ void PhoenixVREngine::tick(float dt) {
 				messengerInventoryHover = i;
 
 			auto test = _warp->getTest(i);
-			if (test && test->hover == 1 && _hoverIndex < 0) {
-				debug("executing hover test %d", i);
-				_hoverIndex = i;
-				executeTest(i);
+			if (test) {
+				if (test->hover == 1)
+					hoverIndex = i;
+				else if (test->hover == 2)
+					hoverLeaveIndex = i;
 			}
 
 			if (!cursor && validTestIdx) {
 				cursor = loadCursor(cursors[i].name);
 			}
-		} else if (i == _hoverIndex) {
-			debug("leaving hover region");
-			auto leave = _warp->getTest(i - 1);
-			if (!leave || leave->hover != 2)
-				leave = _warp->getTest(i + 1);
-			if (leave && leave->hover == 2) {
-				executeTest(leave->idx);
-			}
-			_hoverIndex = -1;
+		}
+	}
+
+	if (hoverLeaveIndex != _hoverLeaveIndex) {
+		int prevHoverLeaveIndex = _hoverLeaveIndex;
+		_hoverLeaveIndex = hoverLeaveIndex;
+		if (prevHoverLeaveIndex >= 0) {
+			debug("executing hover leave test %d", prevHoverLeaveIndex);
+			executeTest(prevHoverLeaveIndex);
+		}
+	}
+
+	if (hoverIndex != _hoverIndex) {
+		_hoverIndex = hoverIndex;
+		if (hoverIndex >= 0) {
+			debug("executing hover test %d", hoverIndex);
+			executeTest(hoverIndex);
 		}
 	}
 
