@@ -63,7 +63,7 @@ void EoBEngine::gui_drawPlayField(bool refresh, bool screenUpdt) {
 	_txt->clearDim(0);
 	_screen->sega_getAnimator()->clearSprites();
 	_screen->sega_getAnimator()->update();
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 
@@ -110,7 +110,7 @@ void EoBEngine::gui_drawPlayField(bool refresh, bool screenUpdt) {
 	_screen->copyRegionToBuffer(0, 173, 0, 6, 120, _shakeBackBuffer1);
 	_screen->copyRegionToBuffer(0, 0, 117, 179, 6, _shakeBackBuffer2);
 
-	// Since we're not going to draw the character portrait boxes with the SegaRenderer but rather with our "normal" code, we have to backup
+	// Since we're not going to draw the character portrait boxes with the SCDRenderer but rather with our "normal" code, we have to backup
 	// some parts of the background between the character portraits. Unlike in the other versions the red splat shapes overlaps with that space.
 	for (int i = 0; i < 6; ++i) {
 		delete[] _redSplatBG[i];
@@ -137,7 +137,7 @@ void EoBEngine::gui_setupPlayFieldHelperPages(bool keepText) {
 	if (!keepText)
 		_txt->clearDim(0);
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->loadToVRAM(_scrYellow, 4992, 0x3CE0);
 	r->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0);
@@ -149,11 +149,11 @@ void EoBEngine::gui_setupPlayFieldHelperPages(bool keepText) {
 	// r->fillRectWithTiles(0, 0, 1, 22, 14, 0xE295, true, true);
 	// Text field tiles
 	r->fillRectWithTiles(0, 1, 22, 35, 3, 0x2597, true);
-	r->render(0);
+	r->renderToPage(0);
 	r->fillRectWithTiles(1, 22, 0, 18, 21, 0x6444, true, true, _invPattern);
-	r->render(2);
+	r->renderToPage(2);
 	r->fillRectWithTiles(1, 22, 0, 18, 21, 0x6444, true, true, _statsPattern);
-	r->render(Screen_EoB::kSegaRenderPage);
+	r->renderToPage(Screen_EoB::kSegaRenderPage);
 	_screen->copyRegion(184, 1, 176, 168, guiSettings()->charBoxCoords.boxWidth, 24, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(184, 25, 240, 168, guiSettings()->charBoxCoords.boxWidth, guiSettings()->charBoxCoords.boxHeight - 24, 0, 2, Screen::CR_NO_P_CHECK);
 }
@@ -187,7 +187,7 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 		return;
 	}
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	EoBCharacter *c = &_characters[_updateCharNum];
 
 	memset(_tempPattern, 0, 792);
@@ -225,7 +225,7 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 	}
 
 	r->fillRectWithTiles(0, 22, 0, 18, 21, 0, true, true, _tempPattern);
-	r->render(2, 22, 5, 18, 16);
+	r->renderToPage(2, 22, 5, 18, 16);
 }
 
 void EoBEngine::gui_displayMap() {
@@ -243,7 +243,7 @@ void EoBEngine::gui_displayMap() {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0);
 	_screen->sega_getAnimator()->clearSprites();
@@ -276,7 +276,7 @@ void EoBEngine::gui_displayMap() {
 	r->fillRectWithTiles(0, 31, 16, 8, 2, 0x63E1, true);
 
 	drawMapPage(_currentLevel);
-	r->render(0);
+	r->renderToPage(0);
 	_screen->sega_fadeToNeutral(3);
 
 	gui_resetButtonList();
@@ -303,7 +303,7 @@ void EoBEngine::gui_displayMap() {
 		}
 
 		if (needupdate) {
-			r->render(0);
+			r->renderToPage(0);
 			_screen->updateScreen();
 		}
 		delayUntil(del);
@@ -327,7 +327,7 @@ void EoBEngine::gui_drawSpellbook() {
 		return;
 	}
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 10, 15, 12, 7, 0);
 	r->fillRectWithTiles(1, 10, 15, 12, 7, 0x6429);
 	memset(_tempPattern, 0, 168);
@@ -347,7 +347,7 @@ void EoBEngine::gui_drawSpellbook() {
 	}
 
 	r->fillRectWithTiles(0, 10, 15, 12, 7, 0, true, false, _tempPattern);
-	r->render(Screen_EoB::kSegaRenderPage, 10, 15, 12, 7);
+	r->renderToPage(Screen_EoB::kSegaRenderPage, 10, 15, 12, 7);
 
 	// The original SegaCD version actually doesn't disable the spell book after use but closes it instead.
 	if (!_closeSpellbookAfterUse) {
@@ -415,7 +415,7 @@ void EoBEngine::gui_updateAnimations() {
 	}
 	if (redrawCompass) {
 		_screen->sega_getRenderer()->loadToVRAM(_compassData + (_compassAnimPhase & 0x0F) * 0x500, 0x500, 0xEE00);
-		_screen->sega_getRenderer()->render(0, 11, 15, 10, 6);
+		_screen->sega_getRenderer()->renderToPage(0, 11, 15, 10, 6);
 		updScreen = true;
 	}
 
@@ -510,7 +510,7 @@ void EoBEngine::makeNameShapes(int charId) {
 	}
 	delete[] in;
 
-	_screen->sega_getRenderer()->render(_screen->_curPage, 0, 0, 8, 12);
+	_screen->sega_getRenderer()->renderToPage(_screen->_curPage, 0, 0, 8, 12);
 	for (int i = first; i <= last; ++i) {
 		if (!_characters[i].flags)
 			continue;
@@ -609,7 +609,7 @@ void EoBEngine::drawMapPage(int level) {
 	_txt->printShadedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7920, 384);
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->fillRectWithTiles(0, 23, 8, 6, 2, 0x63C9, true);
 
 	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(hasLevelMap(level) ? 2 + level : 2);
@@ -663,7 +663,7 @@ void EoBEngine::drawDialogueButtons() {
 	}
 
 	_screen->sega_loadTextBufferToVRAM(0, 0xA380, 7296);
-	_screen->sega_getRenderer()->render(0);
+	_screen->sega_getRenderer()->renderToPage(0);
 }
 
 GUI_EoB_SegaCD::GUI_EoB_SegaCD(EoBEngine *vm) : GUI_EoB(vm), _vm(vm), _clickableCharactersNumPages(vm->_textInputCharacterLinesSize) {
@@ -706,7 +706,7 @@ void GUI_EoB_SegaCD::initMemorizePrayMenu(int spellType) {
 	_screen->sega_clearTextBuffer(0);
 	_vm->_txt->printShadedText(_vm->_menuStringsSpells[spellType ? 17 : 14], 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
-	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
+	_screen->sega_getRenderer()->renderToPage(0, 1, 4, 20, 2);
 }
 
 void GUI_EoB_SegaCD::initScribeScrollMenu() {
@@ -716,7 +716,7 @@ void GUI_EoB_SegaCD::initScribeScrollMenu() {
 	_screen->sega_clearTextBuffer(0);
 	_vm->_txt->printShadedText(getMenuString(48), 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
-	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
+	_screen->sega_getRenderer()->renderToPage(0, 1, 4, 20, 2);
 }
 
 void GUI_EoB_SegaCD::printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight) {
@@ -725,7 +725,7 @@ void GUI_EoB_SegaCD::printScribeScrollSpellString(const int16 *menuItems, int id
 	memset(buf, 0, sizeof(buf));
 	_vm->printSpellbookString(&buf[1], _vm->_mageSpellList[menuItems[id]], highlight ? 0x6223 : 0x63C9);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 10 + id, 20, 1, 0,  true, false, buf);
-	_screen->sega_getRenderer()->render(0, 1, 10 + id, 20, 1);
+	_screen->sega_getRenderer()->renderToPage(0, 1, 10 + id, 20, 1);
 }
 
 void GUI_EoB_SegaCD::drawSaveSlotDialog(int x, int y, int id) {
@@ -742,7 +742,7 @@ void GUI_EoB_SegaCD::drawSaveSlotDialog(int x, int y, int id) {
 	_vm->_txt->printShadedText(_vm->_saveLoadStrings[2 + id], 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 1280);
-	_screen->sega_getRenderer()->render(0, x >> 3, (y >> 3) + 1, 22, 21);
+	_screen->sega_getRenderer()->renderToPage(0, x >> 3, (y >> 3) + 1, 22, 21);
 }
 
 bool GUI_EoB_SegaCD::confirmDialogue(int id) {
@@ -761,7 +761,7 @@ bool GUI_EoB_SegaCD::confirmDialogue(int id) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 10240);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 0, 20, 20, 0);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 5, 20, 8, 0x6283, true);
-	_screen->sega_getRenderer()->render(0, 1, 0, 22, 20);
+	_screen->sega_getRenderer()->renderToPage(0, 1, 0, 22, 20);
 	_screen->updateScreen();
 
 	Button *buttonList = initMenu(5);
@@ -828,7 +828,7 @@ void GUI_EoB_SegaCD::displayTextBox(int id, int textColor, bool wait) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 3200);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 6, 20, 5, 0x6283, true);
-	_screen->sega_getRenderer()->render(0, 0, 1, 22, 19);
+	_screen->sega_getRenderer()->renderToPage(0, 0, 1, 22, 19);
 	_screen->updateScreen();
 	if (!wait)
 		return;
@@ -849,7 +849,7 @@ void GUI_EoB_SegaCD::drawMenuButton(Button *b, bool clicked, bool highlight, boo
 
 	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[(0x1CE + t.srcOffs + (clicked ? 1 : 0) * ((b->width * b->height) >> 6)) << 5], (b->width * b->height) >> 1, t.nameTbl << 5);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, b->x >> 3, b->y >> 3, b->width >> 3, b->height >> 3, 0x4000 + t.nameTbl, true);
-	_screen->sega_getRenderer()->render(0, b->x >> 3, b->y >> 3, b->width >> 3, b->height >> 3);
+	_screen->sega_getRenderer()->renderToPage(0, b->x >> 3, b->y >> 3, b->width >> 3, b->height >> 3);
 }
 
 void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
@@ -890,7 +890,7 @@ void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight)
 	}
 
 	_screen->sega_loadTextBufferToVRAM(0, 0x5560, 4800);
-	_screen->sega_getRenderer()->render(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 21, 2);
+	_screen->sega_getRenderer()->renderToPage(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 21, 2);
 }
 
 int GUI_EoB_SegaCD::getHighlightSlot() {
@@ -936,14 +936,14 @@ void GUI_EoB_SegaCD::memorizePrayMenuPrintString(int spellId, int bookPageIndex,
 	} else {
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 10 + bookPageIndex, 20, 1, 0);
 	}
-	_screen->sega_getRenderer()->render(0, 1, 10 + bookPageIndex, 20, 1);
+	_screen->sega_getRenderer()->renderToPage(0, 1, 10 + bookPageIndex, 20, 1);
 }
 
 void GUI_EoB_SegaCD::updateOptionsStrings() {
 	uint16 ntblInputMode[3] = { 0x34C, 0x360, 0x30C };
 	int speed = _vm->_configMouse ? _vm->_mouseSpeed : _vm->_padSpeed;
 
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMouse ? 0x240 : 0x24C)) << 5], 0x180, 0x42E0);
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configMusic ? 0x258 : 0x264)) << 5], 0x180, 0x4460);
 	r->loadToVRAM(&_campMenu[(0x1CE + (_vm->_configSounds ? 0x258 : 0x264)) << 5], 0x180, 0x45E0);
@@ -958,7 +958,7 @@ void GUI_EoB_SegaCD::updateOptionsStrings() {
 }
 
 void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
-	SegaRenderer *r = _screen->sega_getRenderer();
+	SCDRenderer *r = _screen->sega_getRenderer();
 	if (init)
 		r->fillRectWithTiles(0, 1, 4, 20, 17, 0);
 	_screen->sega_clearTextBuffer(0);
@@ -972,7 +972,7 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 5120);
 	r->fillRectWithTiles(0, 1, 4, 20, 2, 0x6000);
 	r->fillRectWithTiles(0, 1, 6, 20, 6, 0x6283, true);
-	r->render(0, 0, 0, 22, 17);
+	r->renderToPage(0, 0, 0, 22, 17);
 	_screen->updateScreen();
 	_vm->delay(160);
 }
@@ -1004,7 +1004,7 @@ uint16 GUI_EoB_SegaCD::checkClickableCharactersSelection() {
 		printClickableCharacters(_clickableCharactersPage);
 		if (highlight != -1)
 			printClickableCharacter(highlight, 0x55);
-		_screen->sega_getRenderer()->render(0, 18, 10, 20, 14);
+		_screen->sega_getRenderer()->renderToPage(0, 18, 10, 20, 14);
 		_menuCur = highlight;
 	}
 
@@ -1047,7 +1047,7 @@ void GUI_EoB_SegaCD::printClickableCharacters(int page) {
 		printClickableCharacter(i, 0xFF);
 	for (int i = 200; i < 203; ++i)
 		printClickableCharacter(i, 0xFF);
-	_screen->sega_getRenderer()->render(0, 18, 10, 20, 14);
+	_screen->sega_getRenderer()->renderToPage(0, 18, 10, 20, 14);
 }
 
 void GUI_EoB_SegaCD::printClickableCharacter(int id, int col) {

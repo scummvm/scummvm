@@ -48,6 +48,7 @@ void PCMChannel_Base::updateOutput() {
 	_pos += _step;
 
 	if (_pos >= _dataEnd) {
+		dataEndHandler();
 		if (_loopStart != _dataEnd) {
 			_pos = _loopStart;
 			_dataEnd = _loopStart + _loopLen;

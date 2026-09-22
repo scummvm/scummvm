@@ -1,0 +1,824 @@
+/* ScummVM - Graphic Adventure Engine
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
+#include "snatcher/action.h"
+#include "snatcher/graphics.h"
+#include "snatcher/memory.h"
+#include "snatcher/mem_mapping.h"
+#include "snatcher/resource.h"
+#include "snatcher/saveload.h"
+#include "snatcher/script.h"
+#include "snatcher/snatcher.h"
+#include "snatcher/sound.h"
+#include "snatcher/text.h"
+#include "snatcher/ui.h"
+#include "snatcher/util.h"
+#include "common/config-manager.h"
+#include "common/endian.h"
+#include "common/events.h"
+#include "common/list.h"
+#include "common/system.h"
+#include "graphics/cursorman.h"
+#include "graphics/pixelformat.h"
+#include "engines/util.h"
+
+// Snatcher makes use of horizontal interrupts. These can be invoked after any given count of rendered scan lines.
+// These interrupts are mostly used for changing vertical scroll offsets, but some effects also change the colors.
+// In ScummVM, this can only work if we use at least 16bit color depth. 8 bit rendering will not allow the already
+// rendered pixels to keep their colors. So the following setting may cause color glitches and is just there for
+// backends that can't handle the required color depth.
+#define			SNATCHER_GFXMODE_8BIT			false
+
+namespace Snatcher {
+
+SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(0),
+		_updateGameSettings(false), _memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+	assert(system);
+}
+
+SnatcherEngine::~SnatcherEngine() {
+	delete _aseq;
+	delete _cmdQueue;
+	delete _fio;
+	delete _gfx;
+	delete _memHandler;
+	delete _module;
+	delete _saveMan;
+	delete _scd;
+	delete _scriptEngine;
+	delete _snd;
+	delete _ui;
+}
+
+Common::Error SnatcherEngine::run() {
+	if (!initResource())
+		return Common::Error(Common::kReadingFailed);
+
+	if (!initSound(_system->getMixer(),	_game.platform, _game.soundOptions))
+		return Common::Error(Common::kAudioDeviceInitFailed);
+
+	if (!initGfx(_game.platform, SNATCHER_GFXMODE_8BIT))
+		return Common::Error(Common::kUnsupportedColorMode);
+
+	if (!initSaveLoad())
+		return Common::Error(Common::kUnknownError);
+
+	if (!initScriptEngine())
+		return Common::Error(Common::kUnknownError);
+
+	bool result = true;
+	while (result && !shouldQuit()) {
+		reset();
+		result = start();
+	}
+
+	return result ? Common::kNoError : Common::kUnknownError;
+}
+
+bool SnatcherEngine::initResource() {
+	_fio = new FIO(this, _game.isBigEndian);
+	if (!_fio)
+		return false;
+
+	uint32 size = 0;
+	uint8 *data = _fio->fileData(96, &size);
+	if (!data)
+		return false;
+	_scd = new ResourcePointer(data, 0, 0xD400, true);
+	if (!_scd)
+		return false;
+
+	MemMapping::initMapping(_game.usePALTiming ? 1 : 0);
+
+	return true;
+}
+
+bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
+	Graphics::PixelFormat pxf;
+
+	// Currently, the animation code needs access to the sound engine. Maybe this can be improved later...
+	assert(_snd);
+
+	if (use8BitColorMode) {
+		pxf = Graphics::PixelFormat::createFormatCLUT8();
+	} else {
+		Graphics::PixelFormat pxf16bit;
+		Common::List<Graphics::PixelFormat> modes = _system->getSupportedFormats();
+		for (Common::List<Graphics::PixelFormat>::const_iterator g = modes.begin(); g != modes.end() && pxf.bytesPerPixel == 0; ++g) {
+			if (g->aBits())
+				continue;
+			if (g->bytesPerPixel == 4)
+				pxf = *g;
+			else if (g->bytesPerPixel == 2)
+				pxf16bit = *g;
+		}
+		if (pxf.bytesPerPixel == 0)
+			pxf = pxf16bit;
+		if (pxf.bytesPerPixel == 0)
+			error("%s(): No suitable color mode found", __FUNCTION__);
+	}
+
+	_gfx = new GraphicsEngine(&pxf, _system, platform, _gfxInfo, _snd, ConfMan.getBool("aspect_ratio"));
+
+	if (_gfx) {
+		initGraphics(_gfx->realScreenWidth(), _gfx->realScreenHeight(), &pxf);
+		assert(_scd);
+		_gfx->setTextFont(_scd->makePtr(MemMapping::MEM_RAWDATA_04)(), 816, _scd->makePtr(MemMapping::MEM_RAWDATA_05)(), 102);
+		_gfx->createMouseCursor();
+		return true;
+	}
+
+	return false;
+}
+
+bool SnatcherEngine::initSaveLoad() {
+	_saveMan = new SaveLoadManager(this);
+	return (_saveMan != nullptr);
+}
+
+bool SnatcherEngine::initSound(Audio::Mixer *mixer, Common::Platform platform, int soundOptions) {
+	assert(_mixer);
+	assert(_fio);
+
+	_snd = new SoundEngine(_fio, platform, soundOptions);
+	if (!_snd || !_snd->init(mixer))
+		return false;
+
+	syncSoundSettings();
+
+	return true;
+}
+
+bool SnatcherEngine::initScriptEngine() {
+	_cmdQueue = new CmdQueue(this);
+	if (!_cmdQueue)
+		return false;
+
+	assert(_scd);
+	_ui = new UI(_gfx, _cmdQueue, _scd);
+	if (!_ui)
+		return false;
+
+	_aseq = new ActionSequenceHandler(this, _scd, _game.usePALTiming);
+	if (!_aseq)
+		return false;
+
+	_memHandler = new MemAccessHandler(this, _ui, _aseq, _saveMan);
+	assert(_memHandler);
+
+	_scriptEngine = new ScriptEngine(_cmdQueue, _ui, _aseq, _memHandler, _scd);
+	if (!_scriptEngine)
+		return false;
+
+	return true;
+}
+
+void SnatcherEngine::reset() {
+	_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations | GraphicsEngine::kResetCopyCmds | GraphicsEngine::kResetScrollState);
+	_snd->fmSendCommand(0xF1, 1);
+	_snd->pcmSendCommand(0xFF, -1);
+	_snd->cdaStop();
+}
+
+void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
+	if (!_reset && ConfMan.hasKey("save_slot"))
+		return; // Skip logo animation when loading a savegame from the launcher
+
+	uint32 frameTimer = 0;
+	int curSeqState = 0;
+	_snd->fmSendCommand(0xF2, -1);
+
+	while (curSeqState != -1 && !shouldQuit()) {
+		frameTimer += _frameLen;
+		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
+		frameTimer &= 0x3FFF;
+
+		int nextState = _gfx->displayBootLogoFrame(curSeqState);
+		if (curSeqState == 6 && nextState == 7)
+			_snd->fmSendCommand(63, -1);
+		curSeqState = nextState;
+
+		checkEvents(state);
+		_snd->update();
+		delayUntil(nextFrame);
+	}
+}
+
+bool SnatcherEngine::start() {
+	Util::rngReset();
+	GameState state;
+	_saveMan->loadSettings(state.conf);
+	_saveMan->updateSaveSlotsStatus(state);
+	_saveMan->enableSaving(false);
+	_memHandler->setGameState(&state);
+
+	playBootLogoAnimation(state);
+
+	_reset = 0;
+	uint32 frameTimer = 0;
+	uint32 playTimer = 0;
+
+	int16 countTo5 = 0;
+	int16 runspeed = 0;
+
+	while (!shouldQuit() && _reset != 1) {
+		frameTimer += _frameLen;
+		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
+		frameTimer &= 0x3FFF;
+
+		updateMainState(state);
+
+		_gfxInfo.audioSync = _snd->cdaIsPlaying() ? _snd->cdaGetTime() : 0;
+		Util::rngMakeNumber();
+
+		_gfx->setVar(3, 0);
+		_gfx->setVar(10, 0);
+		countTo5 += runspeed;
+		int numLoops = (countTo5 == 5) ? 2 : 1;
+
+		for (int i = 0; i < numLoops; ++i) {
+			_ui->moveFlashLight();
+
+			if (!_gfx->busy(0)) {
+				bool blockedMod = _cmdQueue->enabled();
+				if (_cmdQueue->enabled()) {
+					_cmdQueue->run(state);
+					blockedMod = _gfx->busy(0);
+				}
+				if (!blockedMod) {
+					updateModuleState(state);
+					_gfx->updateAnimations();
+				}
+			}
+
+			_gfx->updateText();
+
+			if (numLoops == 2) {
+				if (_gfx->busy(1)) {
+					--countTo5;
+					numLoops = 1;
+				} else {
+					countTo5 = 0;
+					_gfx->setVar(10, 1);
+				}
+			}
+		}
+
+		_saveMan->enableSaving(state.phase == 2 && state.modPhaseTop == 5);
+
+		checkEvents(state);
+
+		_saveMan->handleSaveLoad(state);
+
+		if (_updateGameSettings) {
+			_updateGameSettings = false;
+			_saveMan->loadSettings(state.conf);
+		}
+
+		_gfx->nextFrame();
+		_snd->update();
+
+		if (state.modPhaseTop == 5) {
+			playTimer += _frameLen;
+			if (playTimer >= (1000 << 14)) {
+				playTimer -= (1000 << 14);
+				++state.totalPlayTime;
+			}
+		}
+		if (_reset)
+			--_reset;
+
+		delayUntil(nextFrame);
+	}
+
+	return true;
+}
+
+void SnatcherEngine::delayUntil(uint32 end) {
+	uint32 cur = _system->getMillis();
+	_gfxInfo.dropFrames = cur > end ? ((cur - end) << 14) / _frameLen : 0;
+	if (cur < end)
+		_system->delayMillis(end - cur);
+}
+
+struct InputEvent {
+	Common::EventType pressType;
+	Common::EventType releaseType;
+	Common::KeyCode kc;
+	uint16 kFlag;
+	uint16 internalEvent;
+	bool updateCoords;
+};
+
+static const InputEvent _defaultKeyEvents[] = {
+	// Arrow buttons
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_UP, 0x00, 0x01, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP8, 0x00, 0x01, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_DOWN, 0x00, 0x02, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP2, 0x00, 0x02, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_LEFT, 0x00, 0x04, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP4, 0x00, 0x04, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RIGHT, 0x00, 0x08, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP6, 0x00, 0x08, false},
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP7, 0x00, 0x05, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP9, 0x00, 0x09, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP3, 0x00, 0x0A, false },
+	{ Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_KP1, 0x00, 0x06, false },
+	{ Common::EVENT_WHEELUP, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x01, false },
+	{ Common::EVENT_WHEELDOWN, Common::EVENT_INVALID, Common::KEYCODE_INVALID, 0x00, 0x02, false },
+
+	// A, B, C buttons
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_a, 0x00, 0x10, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_b, 0x00, 0x20, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_c, 0x00, 0x40, false},
+
+	{ Common::EVENT_MBUTTONDOWN, Common::EVENT_MBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x20, false },
+
+	// Start button
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_RETURN, 0x00, 0x80, false},
+	{Common::EVENT_KEYDOWN, Common::EVENT_KEYUP, Common::KEYCODE_SPACE, 0x00, 0x80, false},
+
+	// Lightgun
+	{ Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x100, true },
+
+	// Lightgun Start button
+	{ Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP, Common::KEYCODE_INVALID, 0x00, 0x200, false },
+};
+
+static const uint8 _scdKeyConfigs[6][3] = {
+	{ 6, 4, 5 }, { 6, 5, 4 },
+	{ 4, 6, 5 }, { 4, 5, 6 },
+	{ 5, 4, 6 }, { 5, 6, 4 }
+};
+
+void SnatcherEngine::checkEvents(const GameState &state) {
+	Common::Event evt;
+	_lastKeys &= ~_releaseKeys;
+	_releaseKeys = 0;
+	_input.singleFrameControllerFlags = _input.singleFrameControllerFlagsRemapped = 0;
+
+	while (_eventMan->pollEvent(evt)) {
+		for (const InputEvent &k : _defaultKeyEvents) {
+			if (evt.type == k.pressType && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
+				if (k.kc != Common::KEYCODE_INVALID && k.releaseType != Common::EVENT_INVALID) {
+					_input.sustainedControllerFlags |= k.internalEvent;
+					// The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.sustainedControllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.sustainedControllerFlagsRemapped |= (k.internalEvent & ~0x70);
+				}
+
+				if (!(_lastKeys & k.internalEvent)) {
+					_input.singleFrameControllerFlags |= k.internalEvent;
+					// The A, B and C buttons can be reconfigured in the main menu. This applies the setting.
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.singleFrameControllerFlagsRemapped |= (1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.singleFrameControllerFlagsRemapped |= (k.internalEvent & ~0x70);
+					_lastKeys |= k.internalEvent;
+					if (_keyRepeat || k.releaseType == Common::EVENT_INVALID)
+						_releaseKeys |= k.internalEvent;
+					if (k.updateCoords) {
+						_realLightGunPos = evt.mouse;
+						// Revert aspect ratio correction, if necessary.
+						_realLightGunPos.x = (_realLightGunPos.x * _gfx->screenWidth()) / _gfx->realScreenWidth();
+						_realLightGunPos.y = (_realLightGunPos.y * _gfx->screenHeight()) / _gfx->realScreenHeight();
+						// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
+						// the screen center. I solve this by always adding the diff to the y-bias.
+						_input.lightGunPos.x = CLIP<int>(_realLightGunPos.x - state.conf.lightGunBias.x, 0, 255);
+						_input.lightGunPos.y = CLIP<int>(_realLightGunPos.y - state.conf.lightGunBias.y, 0, 255);
+					}
+				}
+
+			} else if ((evt.type == k.releaseType) && (k.kc == Common::KEYCODE_INVALID || evt.kbd.keycode == k.kc) && (k.kFlag == 0 || (evt.kbd.flags & k.kFlag))) {
+				_lastKeys &= ~k.internalEvent;
+				if (k.kc != Common::KEYCODE_INVALID && k.releaseType != Common::EVENT_INVALID) {
+					_input.sustainedControllerFlags &= ~k.internalEvent;
+					for (int f = 0; f < 3; ++f) {
+						if (k.internalEvent & ((1 << f) << 4))
+							_input.sustainedControllerFlagsRemapped &= ~(1 << _scdKeyConfigs[state.conf.controllerSetup][f]);
+					}
+					_input.sustainedControllerFlagsRemapped &= ~(k.internalEvent & ~0x70);
+				}
+			}
+		}
+	}
+
+	if (_enableLightGun && _input.singleFrameControllerFlags & 0x100)
+		_gfx->setVar(7, _gfx->getVar(7) | 4);
+}
+
+void SnatcherEngine::updateMainState(GameState &state) {
+	// The updateFlags variable is an invention to emulate the interaction between the main thread and the
+	// vertical interrupt handlers in the original code. It may complicate things a bit (e. g. I have to
+	// provide means to drop out of several involved functions and continue with them later), but I still
+	// like this better than making the code multi-threaded (using a timer proc as vint handler replacment).
+
+	if (state.updateFlags & 0x80) {
+		if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus().statusBits & 7)))
+			state.updateFlags &= ~0x80;
+		else
+			return;
+	}
+
+	switch (state.phase) {
+	case 0:
+		// Intro and main menu
+		if (state.prologue != -1)
+			break;
+
+		if (state.menuSelect == 0)
+			_gfx->setVar(1, _gfx->getVar(1) | 2);
+		else
+			_gfx->setVar(5, 1);
+
+		_cmdQueue->reset();
+		_cmdQueue->writeUInt16(0x16);
+		_cmdQueue->writeUInt16(0x03);
+		_cmdQueue->writeUInt32(0xECB6);
+		_cmdQueue->writeUInt16(0x03);
+		_cmdQueue->writeUInt32(0xECC4);
+		_cmdQueue->writeUInt16(0x01);
+		_cmdQueue->writeUInt32(0xED0E);
+		_cmdQueue->start();
+
+		++state.phase;
+		state.updateFlags |= 0x80;
+
+		break;
+
+	case 1:
+		// Init first scene or load savegame
+		_cmdQueue->writeUInt16(0x11);
+		_cmdQueue->writeUInt32(0x1A800);
+		if (state.menuSelect == 0) {
+			// Enter first scene
+			_cmdQueue->writeUInt16(0x3F);
+			_cmdQueue->writeUInt16(0x0F);
+		} else {
+			// Restore saved state
+			_cmdQueue->writeUInt16(state.script.curFileNo);
+			_cmdQueue->writeUInt16(0x0F);
+			_cmdQueue->writeUInt16(0x11);
+			_cmdQueue->writeUInt32(0x28000);
+			_cmdQueue->writeUInt16(state.script.curGfxScript >> 8);
+			if (_snd->pcmGetStatus().resourceId2 != -1) {
+				_cmdQueue->writeUInt16(0x0D);
+				_cmdQueue->writeUInt16(_snd->pcmGetStatus().resourceId2);
+				_cmdQueue->writeUInt16(0x0A);
+			}
+			_cmdQueue->writeUInt16(0x20);
+			_cmdQueue->writeUInt16(state.script.curGfxScript & 0xFF);
+			_cmdQueue->writeUInt16(0x07);
+			_cmdQueue->writeUInt16(_snd->fmGetStatus().music);
+			_snd->pcmBlock(_snd->pcmGetStatus().blocked);
+			_snd->reduceVolume2(_snd->fmGetStatus().reduceVol2);
+		}
+
+		_ui->setControllerConfig(state.conf.controllerSetup);
+
+		_cmdQueue->start();
+		++state.phase;
+		state.updateFlags |= 0x80;
+		break;
+
+	case 2:
+		// Ingame logic
+		if (state.updateFlags & 0x40) {
+			if (_scriptEngine->postProcess(state.script)) {
+				for (int i = 5; i < 15; ++i)
+					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
+				_cmdQueue->writeUInt16(0x22);
+				_cmdQueue->writeUInt32(0x139D0);
+				_cmdQueue->start();
+				state.updateFlags |= 0xA0;
+			}
+			state.updateFlags &= ~0x40;
+		} else if (state.updateFlags & 0x20) {
+			_gfx->setVar(11, 0xFF);
+			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input)) {
+				state.updateFlags |= 0x80;
+			} else {
+				_scriptEngine->processInput();
+				state.updateFlags &= ~0x20;
+			}
+		} else if (state.updateFlags == 0) {
+			_scriptEngine->run(state.script);
+			_cmdQueue->start();
+			state.updateFlags |= 0xC0;
+		}
+		break;
+
+	case 3:
+		// Ending sequence
+		state.phase = 5;
+		state.modFinish = 1;
+		break;
+
+	case 4:
+		// Reset
+		_cmdQueue->writeUInt16(0x02);
+		_cmdQueue->start();
+		_reset = 100;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void SnatcherEngine::updateModuleState(GameState &state) {
+	++_gfxInfo.frameCounter;
+
+	switch (state.modPhaseTop) {
+	case -1:
+		_snd->cdaStop();
+		state.modPhaseTop = 0;
+		break;
+	case 0:
+		switch (state.modPhaseSub) {
+		case 0:
+			++state.modPhaseSub;
+			break;
+		case 1:
+			if (!_snd->cdaIsPlaying()) {
+				delete _module;
+				_module = _fio->loadModule(4);
+				assert(_module);
+				++state.modPhaseSub;
+			}
+			break;
+		case 2:
+			++state.modPhaseSub;
+			break;
+		case 3:
+			state.modPhaseSub = 0;
+			state.modFinish = 0;
+			++state.modPhaseTop;
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (state.modPhaseSub) {
+		case 0:
+			state.frameNo = 0;
+			++state.modPhaseSub;
+			_snd->pcmInitSound(30);
+			break;
+		case 1:
+			if (!(_snd->pcmGetStatus().statusBits & 0x0F))
+				++state.modPhaseSub;
+			break;
+		case 2:
+			if (_module)
+				_module->run(state);
+			if (state.modFinish) {
+				_saveMan->saveSettings(state.conf);
+				state.modPhaseSub = 0;
+				state.modFinish = 0;
+				state.modPhaseTop = state.menuSelect ? 7 : state.modPhaseTop + 1;
+				state.modIndex = 0;
+				state.prologue = 1;
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		switch (state.modPhaseSub) {
+		case 0:
+			if (!(_gfx->frameCount() & 0x1F)) {
+				if (!_snd->cdaIsPlaying()) {
+					static const uint8 scids[] = { 3, 2 };
+					delete _module;
+					assert(state.modIndex < ARRAYSIZE(scids));
+					_module = _fio->loadModule(scids[state.modIndex]);
+					assert(_module);
+					++state.modPhaseSub;
+				} else {
+					_snd->cdaStop();
+				}
+			}
+			break;
+		case 1:
+			if (!(_gfx->frameCount() & 0x1F)) {
+				// We don't really check if the file has finished loading here (which it obviously has),
+				// we just try to emulate the original timing, since the original's delays are not always
+				// sufficient to match the desired total delay correctly.
+				if (!_fio->loadingCompleted())
+					break;
+				state.frameNo = -1;
+				++state.modPhaseSub;
+			}
+			break;
+		case 2:
+			if (_module)
+				_module->run(state);
+			if (state.modFinish < 0) {
+				state.modFinish = 0;
+				state.counter = 10;
+				++state.modPhaseSub;
+				_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_06));
+			} else if (state.modFinish) {
+				if (state.modIndex == 0) {
+					++state.modIndex;
+					state.modFinish = 0;
+				}
+				_gfx->reset(GraphicsEngine::kResetAnimations);
+				state.modPhaseSub = 0;
+			}
+			break;
+		case 3:
+			if (--state.counter == 1) {
+				_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_05));
+			} else if (state.counter == 0) {
+				state.modFinish = -1;
+				state.modPhaseSub = 0;
+				_gfx->reset(GraphicsEngine::kResetSetDefaultsExt);
+			}
+			break;
+		default:
+			break;
+		}
+		if (state.modFinish) {
+			state.modFinish = 0;
+			state.modPhaseTop = 7;
+			state.modPhaseSub = 0;
+			_gfx->transitionCommand(0xFF);
+			_gfx->setVar(9, 1);
+			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations);
+		}
+		break;
+	case 3:
+		state.modFinish = 0;
+		state.modPhaseTop = 0;
+		state.modPhaseSub = 0;
+		_gfx->reset(GraphicsEngine::kResetScrollState);
+		break;
+	case 5:
+		if (state.modFinish) {
+			++state.modPhaseTop;
+			state.modPhaseSub = 0;
+			state.modFinish = 0;
+		}
+		break;
+	case 6:
+		switch (state.modPhaseSub) {
+		case 0:
+			if (!_gfx->getAnimParameter(31, GraphicsEngine::kAnimParaEnable)) {
+				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetAnimations);
+				_gfx->setVar(11, 0xFF);
+				++state.modPhaseSub;
+				state.frameNo = -1;
+				state.frameState = 0;
+			}
+			break;
+		case 1:
+			if (!_snd->cdaIsPlaying()) {
+				delete _module;
+				_module = _fio->loadModule(52);
+				assert(_module);
+				++state.modPhaseSub;
+			}
+			break;
+		case 2:
+			// We don't really check if the file has finished loading here (which it obviously has),
+			// we just try to emulate the original timing, since the original's delays are not always
+			// sufficient to match the desired total delay correctly.
+			if (!_fio->loadingCompleted())
+				break;
+			++state.modPhaseSub;
+			break;
+		case 3:
+			if (_module)
+				_module->run(state);
+			if (state.modFinish) {
+				_reset = 100;
+				++state.modPhaseSub;
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case 7:
+		switch (state.modPhaseSub) {
+		case 0:
+			_snd->cdaStop();
+			// original: start load PCMLT_01.BIN
+			++state.modPhaseSub;
+			break;
+		case 1:
+		case 3:
+			// original: check if file loaded
+			++state.modPhaseSub;
+			break;
+		case 2:
+			// original: start load PCMDRMDT.BIN
+			++state.modPhaseSub;
+			break;
+		case 4:
+			state.modPhaseTop = 5;
+			state.modPhaseSub = 0;
+			state.prologue = -1;
+			break;
+		default:
+			break;
+		}
+	default:
+		break;
+	}
+}
+
+void SnatcherEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	if (!_snd)
+		return;
+
+	int volMusic = 192;
+	int volSFX = 192;
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	if (!mute) {
+	if (ConfMan.hasKey("music_volume"))
+		volMusic = ConfMan.getInt("music_volume");
+	if (ConfMan.hasKey("sfx_volume"))
+		volSFX = ConfMan.getInt("sfx_volume");
+	} else {
+		volMusic = 0;
+		volSFX = 0;
+	}
+
+	_snd->setMusicVolume(volMusic);
+	_snd->setSoundEffectVolume(volSFX);
+}
+
+void SnatcherEngine::applyGameSettings() {
+	_updateGameSettings = true;
+}
+
+void SnatcherEngine::pauseEngineIntern(bool pause) {
+	_snd->pause(pause);
+}
+
+bool SnatcherEngine::canLoadGameStateCurrently(Common::U32String*) {
+	return true;
+}
+
+bool SnatcherEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return _saveMan->isSavingEnabled();
+}
+
+Common::Error SnatcherEngine::loadGameState(int slot) {
+	_saveMan->requestLoad(slot);
+	return Common::kNoError;
+}
+
+Common::Error SnatcherEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	_saveMan->requestSave(slot, desc);
+	return Common::kNoError;
+}
+
+void SnatcherEngine::calibrateLightGun(GameState &state) {
+	state.conf.lightGunBias.x = _realLightGunPos.x - (_gfx->screenWidth() / 2);
+	state.conf.lightGunBias.y = _realLightGunPos.y - (_gfx->screenHeight() / 2);
+	// The lightgun coordinates are supposed to be based on a 256 x 256 system, with 128 being
+	// the screen center. I just add the diff to the y-bias...
+	state.conf.lightGunBias.y -= ((256 - _gfx->screenHeight()) / 2);
+}
+
+void SnatcherEngine::allowLightGunInput(bool enable) {
+	_enableLightGun = enable;
+	_gfx->createMouseCursor();
+	CursorMan.showMouse(enable);
+}
+
+} // End of namespace Snatcher

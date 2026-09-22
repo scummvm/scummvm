@@ -42,6 +42,7 @@ public:
 	bool isActive() const;
 	void activate();
 	void deactivate();
+	uint16 pos() const;
 
 protected:
 	void setData(const int8 *data, uint32 dataEnd, uint32 dataStart = 0);
@@ -52,6 +53,7 @@ protected:
 
 private:
 	virtual void stopInternal() = 0;
+	virtual void dataEndHandler() {}
 
 	uint8 _panLeft;
 	uint8 _panRight;
