@@ -645,6 +645,19 @@ void OverworldLogic::sleepTrap() {
 	sg._sleepTurns = randByte() & 0xF;
 }
 
+bool OverworldLogic::minaxCurseTrap() {
+	Data::Savegame &sg = _G(savegame);
+	writeString("MINAX CRIES: DIE FOOL!\n");
+	showAttackTile(sg._mapX, sg._mapY);
+
+	if (!sg.deductHP(1)) {
+		playerDied();
+		return true;
+	}
+
+	return false;
+}
+
 void OverworldLogic::killMonster(int slot) {
 	Data::Savegame &sg = _G(savegame);
 	Data::MapMonsters &monsters = _G(map)._monsters;

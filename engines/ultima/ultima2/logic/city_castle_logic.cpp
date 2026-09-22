@@ -91,6 +91,15 @@ void CityCastleLogic::updateCreatures() {
 		if (!monsters.isActive(slot))
 			continue;
 
+		// Minax curses the player for 1 HP if she's nearby, whether she's
+		// still hostile or has already fled and gone permanently passive
+		if (monsters.tileType(slot) == Data::TILE_MINAX) {
+			int dx = sg._mapX - monsters._mapX[slot];
+			int dy = sg._mapY - monsters._mapY[slot];
+			if (ABS(dx) < 4 && ABS(dy) < 4 && minaxCurseTrap())
+				return;
+		}
+
 		int8 flag = (int8)monsters._offerFlag[slot];
 		if (flag <= 0)
 			continue; // at rest (0), or a shop/quest NPC (negative/high-bit) - never moves

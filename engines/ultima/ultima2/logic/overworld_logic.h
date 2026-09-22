@@ -97,6 +97,12 @@ private:
 	void sleepTrap();
 
 protected:
+	/**
+	 * A nearby Minax curses the player for 1 HP, active or fled, hostile or
+	 * not. Returns true if this killed the player
+	 */
+	bool minaxCurseTrap();
+
 	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED, STEP_MOONGATE };
 
 	/**
