@@ -800,6 +800,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		_nextWarp = _script->getWarp(warp);
 
 	_hoverIndex = -1;
+	_hoverLeaveIndex = -1;
 	_messengerInventoryHover = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
@@ -1783,6 +1784,8 @@ void PhoenixVREngine::tick(float dt) {
 		_rolloverText = TextState();
 		_archiveImages.clear();
 		_archiveTexts.clear();
+		_hoverIndex = -1;
+		_hoverLeaveIndex = -1;
 		_warpIdx = _nextWarp;
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
@@ -1860,9 +1863,9 @@ void PhoenixVREngine::tick(float dt) {
 
 			auto test = _warp->getTest(i);
 			if (test) {
-				if (test->hover == 1)
+				if (test->hover == 1 && hoverIndex < 0)
 					hoverIndex = i;
-				else if (test->hover == 2)
+				else if (test->hover == 2 && hoverLeaveIndex < 0)
 					hoverLeaveIndex = i;
 			}
 
@@ -2220,7 +2223,7 @@ void PhoenixVREngine::captureContext() {
 			ms.writeByte(0);
 	};
 
-    ms.writeSint32LE(fromAngle(-(_angleY.angle() + kPi2)));
+	ms.writeSint32LE(fromAngle(kPi2 - _angleY.angle()));
 	ms.writeSint32LE(fromAngle(_angleX.angle()));
 	ms.writeSint32LE(0);
 	ms.writeSint32LE(0);
