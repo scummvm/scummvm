@@ -56,10 +56,9 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	}
 
 	playFX(Data::SFX_STEP);
-	writeString("%s", dirName);
+	writeString("%s\n", dirName);
 
 	if (newX < 0 || newX >= Data::MAP_WIDTH || newY < 0 || newY >= Data::MAP_HEIGHT) {
-		writeString("\n");
 		exitToOverworld();
 		return true;
 	}
@@ -67,6 +66,8 @@ bool CityCastleLogic::move(Data::Direction dir) {
 	switch (stepOnto(newX, newY)) {
 	case STEP_DIED:
 		return false;
+	case STEP_PARALYZED:
+		return true;
 	case STEP_BLOCKED:
 		writeString("--INVALID MOVE!\n");
 		return true;
@@ -74,7 +75,6 @@ bool CityCastleLogic::move(Data::Direction dir) {
 		break;
 	}
 
-	writeString("\n");
 	sg._mapX = newX;
 	sg._mapY = newY;
 	_monstersSkipTurn = !_monstersSkipTurn;

@@ -103,7 +103,10 @@ protected:
 	 */
 	bool minaxCurseTrap();
 
-	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_DIED, STEP_MOONGATE };
+	// STEP_BLOCKED prints no message of its own - the caller shows a
+	// generic "--INVALID MOVE!". STEP_PARALYZED already printed its own
+	// complete message, so the caller adds nothing further
+	enum StepResult { STEP_OK, STEP_BLOCKED, STEP_PARALYZED, STEP_DIED, STEP_MOONGATE };
 
 	/**
 	 * Applies the terrain damage, food cost and mount rules for stepping

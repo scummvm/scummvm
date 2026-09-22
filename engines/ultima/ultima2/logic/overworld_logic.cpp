@@ -103,9 +103,9 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 		}
 	} else if (dest == Data::TILE_FORCEFIELD) {
 		if (sg._items[Data::ITEM_RING] != 0) {
-			writeString("\nRING PROTECTS FROM FIELD!");
+			writeString("RING PROTECTS FROM FIELD!\n");
 		} else {
-			writeString("\nFIELD CAUSES 1000 DAMAGE!");
+			writeString("FIELD CAUSES 1000 DAMAGE!\n");
 			if (!sg.deductHP(1000)) {
 				playerDied();
 				return STEP_DIED;
@@ -115,7 +115,7 @@ OverworldLogic::StepResult OverworldLogic::stepOnto(int x, int y) {
 
 	if (sg._legParalysisTurns > 0) {
 		writeString("--PARALIZED!\n");
-		return STEP_BLOCKED;
+		return STEP_PARALYZED;
 	}
 
 	if (sg._mapType == 0 && dest == Data::TILE_MOONGATE &&
@@ -174,23 +174,23 @@ bool OverworldLogic::move(Data::Direction dir) {
 	}
 
 	playFX(Data::SFX_STEP);
-	writeString("%s", dirName);
+	writeString("%s\n", dirName);
 
 	switch (stepOnto(newX, newY)) {
 	case STEP_DIED:
 		return false;
+	case STEP_PARALYZED:
+		return true;
 	case STEP_BLOCKED:
 		writeString("--INVALID MOVE!\n");
 		return true;
 	case STEP_MOONGATE:
-		writeString("\n");
 		enterMoongate(newX, newY);
 		return true;
 	default:
 		break;
 	}
 
-	writeString("\n");
 	sg._mapX = newX;
 	sg._mapY = newY;
 	_monstersSkipTurn = !_monstersSkipTurn;
