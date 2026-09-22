@@ -20,6 +20,7 @@
  */
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
+#include "backends/audiocd/audiocd.h"
 
 #include "igor/igor.h"
 
@@ -35,6 +36,8 @@ void IgorEngine::playMusic(int num) {
 		// startMusic(cmf[num]);
 	} else {
 		// TODO: play CD track
+		g_system->getAudioCDManager()->stop();
+		g_system->getAudioCDManager()->play(num, -1, 0, 0);
 	}
 }
 

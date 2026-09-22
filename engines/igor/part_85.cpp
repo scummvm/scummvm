@@ -44,7 +44,9 @@ void IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action) {
 
 
 void IgorEngine::PART_85() {
-	playMusic(2);
+	if(_game.flags & kFlagFloppy) {
+		playMusic(2);
+	} else playMusic(11);
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	memcpy(_screenLayer2, _screenLayer1, 46080);
 	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);
