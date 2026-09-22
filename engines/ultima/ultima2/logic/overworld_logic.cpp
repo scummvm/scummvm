@@ -249,7 +249,7 @@ int OverworldLogic::signByte(int v) const {
 
 int OverworldLogic::findTargetMonster(int x, int y) const {
 	Data::MapMonsters &monsters = _G(map)._monsters;
-	for (int slot = 31; slot >= 1; --slot) {
+	for (int slot = 31; slot >= 0; --slot) {
 		if (monsters.isActive(slot) && monsters._mapX[slot] == x && monsters._mapY[slot] == y)
 			return slot;
 	}
