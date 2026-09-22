@@ -212,7 +212,7 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 	for (uint i = 0; i < blockCount; i++) {
 		// (0x00) Block ID used by palette and action references.
 		uint16 blockId = stream.readUint16BE();
-		if (maxBlockId < blockId)
+		if (blockId > maxBlockId)
 			error("CDToons: block ID %d exceeded declared maximum %d", blockId, maxBlockId);
 		if (_blocks.contains(blockId))
 			error("CDToons: new block %d was already seen", blockId);
