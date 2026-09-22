@@ -49,9 +49,7 @@ namespace Ultima {
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "akalabeth", "Akalabeth: World of Doom" },
-#ifndef RELEASE_BUILD
 	{ "ultima1", "Ultima I: The First Age of Darkness" },
-#endif
 	{ "ultima2", "Ultima II: Revenge of the Enchantress" },
 	{ "ultima4", "Ultima IV: Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },

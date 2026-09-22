@@ -267,7 +267,7 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
-#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA2) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
+#if defined(ENABLE_AKALABETH) || defined(ENABLE_ULTIMA1) || defined(ENABLE_ULTIMA2) || defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA6) || defined(ENABLE_ULTIMA8)
 	const Common::String gameId = getGameId(target);
 #endif
 
