@@ -260,11 +260,19 @@ bool CityCastleLogic::unlock(Data::Direction dir) {
 		return false;
 	}
 
-	// The original only looks east or west of the player for a door
 	Data::Savegame &sg = _G(savegame);
-	int x = sg._mapX + (dir == Data::DIR_LEFT ? -1 : dir == Data::DIR_RIGHT ? 1 : 0);
-	if (x == sg._mapX || x < 0 || x >= Data::MAP_WIDTH ||
-			_G(map).tileAt(x, sg._mapY) != Data::TILE_I_DOOR) {
+	int dx = 0, dy = 0;
+	switch (dir) {
+	case Data::DIR_UP: dy = -1; break;
+	case Data::DIR_DOWN: dy = 1; break;
+	case Data::DIR_LEFT: dx = -1; break;
+	case Data::DIR_RIGHT: dx = 1; break;
+	default: break;
+	}
+
+	int x = sg._mapX + dx, y = sg._mapY + dy;
+	if (x < 0 || x >= Data::MAP_WIDTH || y < 0 || y >= Data::MAP_HEIGHT ||
+			_G(map).tileAt(x, y) != Data::TILE_I_DOOR) {
 		writeString("\nNO DOOR THERE!\n");
 		return true;
 	}
@@ -276,8 +284,8 @@ bool CityCastleLogic::unlock(Data::Direction dir) {
 
 	--sg._keys;
 	// The door is replaced by the tile the player is standing on
-	_G(map)._tiles[sg._mapY][x] = _G(map).tileAt(sg._mapX, sg._mapY);
-	writeString("\n");
+	_G(map)._tiles[y][x] = _G(map).tileAt(sg._mapX, sg._mapY);
+	writeString("\nDOOR UNLOCKED!\n");
 	return true;
 }
 
