@@ -430,24 +430,26 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				auto animChunkSize = s.readUint32LE();
 				debug("animation frame at %08x: %08x %u", (uint32)animChunkPos, animChunkId, animChunkSize);
 				assert(animChunkSize >= 8);
-				Animation::Frame frame;
 				if (animChunkId == CHUNK_ANIMATION_BLOCK || animChunkId == V2_CHUNK_ANIMATION_BLOCK) {
+					Animation::Frame frame;
 					frame.blockData.resize(animChunkSize - 8);
 					s.read(frame.blockData.data(), frame.blockData.size());
+					animation.frames.push_back(Common::move(frame));
 				} else if (animChunkId == CHUNK_ANIMATION_RESTART || animChunkId == V2_CHUNK_ANIMATION_RESTART) {
 					assert(animChunkSize - 8 == 4);
 					byte buf[4] = {};
 					s.read(buf, sizeof(buf));
-					frame.restartAtFrame = READ_LE_INT32(buf);
-					debug("animation loop, frame: %d", frame.restartAtFrame);
+					animation.restartAtFrame = READ_LE_INT32(buf);
+					debug("animation loop, frame: %d", animation.restartAtFrame);
 				} else {
 					Common::Array<byte> buf(animChunkSize - 8);
 					s.read(buf.data(), buf.size());
 					warning("unknown frame type %08x", animChunkId);
 				}
-				animation.frames.push_back(Common::move(frame));
 				s.seek(animChunkPos + animChunkSize);
 			}
+			if (animation.frames.size() != numFrames)
+				warning("animation %s has %u frames, expected %u", animation.name.c_str(), animation.frames.size(), numFrames);
 			vr._animations.push_back(Common::move(animation));
 		}
 		s.seek(chunkPos + chunkSize);
@@ -553,7 +555,10 @@ void VR::playAnimation(const Common::String &name, const Common::String &variabl
 		return;
 	}
 	auto &animation = *it;
+	if (animation.active)
+		return;
 	animation.active = true;
+	animation.stopRequested = false;
 	animation.frameIndex = 0;
 	animation.t = 0;
 	animation.speed = speed;
@@ -571,23 +576,30 @@ void VR::stopAnimation(const Common::String &name) {
 		return;
 	}
 	auto &animation = *it;
-	animation.active = false;
-	g_engine->setVariable(animation.variable, animation.variableValue);
+	if (!animation.active)
+		return;
+	if (_v2) {
+		animation.active = false;
+		g_engine->setVariable(animation.variable, animation.variableValue);
+	} else {
+		animation.stopRequested = true;
+	}
 }
 
 void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
 	assert(active);
 	if (frameIndex < frames.size()) {
-		auto &frame = frames[frameIndex++];
-		frame.render(pic);
-		if (frame.restartAtFrame >= 0) {
-			frameIndex = frame.restartAtFrame;
-			t = 1;
-		}
+		frames[frameIndex++].render(pic);
 	}
 	if (frameIndex >= frames.size()) {
-		active = false;
-		g_engine->setVariable(variable, variableValue);
+		if (!stopRequested && restartAtFrame >= 0 && restartAtFrame < static_cast<int>(frames.size())) {
+			frameIndex = restartAtFrame;
+		} else {
+			active = false;
+			stopRequested = false;
+			frameIndex = 0;
+			g_engine->setVariable(variable, variableValue);
+		}
 	}
 }
 
