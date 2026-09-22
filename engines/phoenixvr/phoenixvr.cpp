@@ -2220,7 +2220,7 @@ void PhoenixVREngine::captureContext() {
 			ms.writeByte(0);
 	};
 
-	ms.writeSint32LE(fromAngle(_angleY.angle() + kPi2));
+    ms.writeSint32LE(fromAngle(-(_angleY.angle() + kPi2)));
 	ms.writeSint32LE(fromAngle(_angleX.angle()));
 	ms.writeSint32LE(0);
 	ms.writeSint32LE(0);
