@@ -221,7 +221,7 @@ void Logic::action(int action) {
 		doEndOfTurn = zstats();
 		break;
 	default:
-		writeString("Huh?\n");
+		writeString("-ILLEGAL COMMAND!\n");
 		break;
 	}
 
@@ -275,7 +275,7 @@ bool Logic::trySpendGold(int amount) {
 }
 
 void Logic::keypress(const Shared::Messages::KeypressMessage &msg) {
-	writeString("Huh?\n");
+	writeString("-ILLEGAL COMMAND!\n");
 	endOfTurn();
 	prompt();
 }

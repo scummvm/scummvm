@@ -71,8 +71,7 @@ void CreateCharacter::reset() {
 }
 
 void CreateCharacter::rejectEntry() {
-	// TODO: play the original's triple-beep failure sound once sound
-	// effects are implemented
+	g_engine->playFX(Data::SFX_FAIL);
 	reset();
 }
 
