@@ -492,5 +492,11 @@
 #define BOX_DecanatoB 907
 #define TXT_DecanatoA 908
 #define TXT_DecanatoB 909
+// Pan walk line used by sub_175_02F6 (cseg175:03E7-0409) and the part 110 pan
+// (cseg176:05A6): yPos = line[xPos - 260]. Recovered from the uncatalogued
+// CD gap between DAT_OutsideAdministrationBuilding and FRM_..._1; see the
+// resource_sp_cdrom.h rows for the byte sources (A/B are byte-identical).
+#define WLK_DecanatoA 910
+#define WLK_DecanatoB 911
 
 #endif // IGOR_RESOURCE_IDS

@@ -461,7 +461,7 @@ private:
 
 	void PART_100();
 	void PART_100_EXEC_ACTION(int action);
-	void PART_100_SCROLL_LEFT();
+	void PART_100_ACTION_108();
 
 	void PART_85();
 	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
