@@ -55,6 +55,9 @@ private:
 	// slot's 27-byte text buffer, with room left for the cursor character.
 	static const uint kMaxTypedLengthNancy15 = 24;
 	static const uint kMaxTypedLength = 16;
+	// From Nancy 9 to Nancy 14 a character is only accepted while the text
+	// still clears this margin at the right edge of its box
+	static const int kBoxTextMargin = 20;
 
 	// One answer box: its screen rect, the answers accepted for it (matched
 	// case-insensitively), the flags it drives, and the text typed into it.
@@ -89,10 +92,13 @@ private:
 	void drawText();
 	void advanceToNextBox();
 	bool checkAllSolved() const;
-	bool checkAnswerForCurrentBox();	// checks, marks correct, sets event flag
+	// Scores the current box. A silent check only marks the box solved, as the
+	// original does after every keystroke; otherwise the box's flag is set too.
+	bool checkAnswerForCurrentBox(bool silent = false);
 	char getCursorChar() const;
 	uint getMaxTypedLength() const;
 	bool acceptsChar(char c) const;
+	bool fitsInBox(const Box &box, const Common::String &text) const;
 
 	// Picks one name out of `block` at random and starts it, tracking it in
 	// _activeBoxSound so the state machine can wait for it. Returns false when
