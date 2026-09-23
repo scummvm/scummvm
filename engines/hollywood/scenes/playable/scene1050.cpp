@@ -699,7 +699,7 @@ void Scene1050::advanceLargeOverlay(uint32 delta, bool forceFinish) {
 				largeOverlayLayer.setFrame(largeOverlayLayer.frameIndex + 1);
 			}
 		} else if (_largeOverlayMode == 6) {
-			if (largeOverlayLayer.frameIndex > 100) {
+			if (largeOverlayLayer.frameIndex >= ARRAYSIZE(kScene1050LargeOverlayFrameMap) - 1) {
 				largeOverlayLayer.setFrame(0);
 				_largeOverlayMode = 0;
 			} else {
