@@ -67,7 +67,7 @@ const uint kPalStormLogo       = 0x26;  // Floppy FUN_23d2_0605
 const uint kMacPicEAKidsLogo   = 0x213; // FUN_000092be
 // PIC 0x20d is the clubhouse scene; the title sequence (FUN_000096fa) omits it.
 const uint kMacPicTitleDark    = 0x20e;
-const uint kMacPicTitleFinal   = 0x20f;
+const uint kMacPicTitleLit     = 0x20f;
 const uint kMacPicTitleIn0     = 0x210;
 const uint kMacPicTitleIn1     = 0x211;
 const uint kMacPicTitleIn2     = 0x212;
@@ -1463,6 +1463,27 @@ static void blitNativeTransparent(Graphics::ManagedSurface &dst,
 	dst.transBlitFrom(pic.surface, Common::Point(x, y), transparent);
 }
 
+static void blitMacTitleSpotlight(Graphics::ManagedSurface &dst,
+		const Graphics::ManagedSurface &lit, const Graphics::ManagedSurface &mask,
+		int x, int y) {
+	Common::Rect area(x, y, x + mask.w, y + mask.h);
+	area.clip(Common::Rect(dst.w, dst.h));
+	area.clip(Common::Rect(lit.w, lit.h));
+	if (area.isEmpty())
+		return;
+
+	// Mac CD CODE 6:3d1c copies the lit background wherever the mask is zero.
+	for (int row = area.top; row < area.bottom; row++) {
+		byte *out = (byte *)dst.getBasePtr(area.left, row);
+		const byte *src = (const byte *)lit.getBasePtr(area.left, row);
+		const byte *maskRow = (const byte *)mask.getBasePtr(area.left - x, row - y);
+		for (int col = 0; col < area.width(); col++) {
+			if (maskRow[col] == 0)
+				out[col] = src[col];
+		}
+	}
+}
+
 bool EEMEngine::waitIntroDelay(uint32 maxMs) {
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
@@ -1569,12 +1590,20 @@ void EEMEngine::showMacTitleIntro() {
 		return;
 	}
 
-	// FUN_000096fa uses only the dark-eye (0x20e) and lit-eye (0x20f) frames; the
-	// eye "powers up" from one to the other (PIC 0x20d, the clubhouse, isn't used).
-	Picture titleDark, titleFinal;
+	// Mac CD CODE 6:3ff2 moves a spotlight over the dark title, revealing
+	// the lit picture through the mask stored in BIGMAP's second entry.
+	Picture titleDark, titleLit;
 	if (!_picsArchive.getPicture(kMacPicTitleDark, titleDark) ||
-		!_picsArchive.getPicture(kMacPicTitleFinal, titleFinal)) {
+		!_picsArchive.getPicture(kMacPicTitleLit, titleLit)) {
 		warning("Mac title base pictures failed to load");
+		return;
+	}
+
+	DBDArchive bigMapArchive;
+	Picture spotlight;
+	if (!bigMapArchive.open(Common::Path("BIGMAP.DBD"), Common::Path("BIGMAP.DBX"), true) ||
+		!bigMapArchive.loadEntry(1, spotlight)) {
+		warning("Mac title spotlight mask failed to load");
 		return;
 	}
 
@@ -1607,73 +1636,76 @@ void EEMEngine::showMacTitleIntro() {
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
-	for (int i = 0; i < 0x2c && !shouldQuit() && !_skipIntro; i++) {
-		frame.blitFrom(titleDark.surface, Common::Point(0, 0));
-		const int revealW = (i + 1) * kMacScreenWidth / 0x2c;
-		if (revealW > 0) {
-			const Common::Rect src(0, 0, revealW, kMacScreenHeight);
-			frame.blitFrom(titleFinal.surface, src, Common::Point(0, 0));
+	// The original repeats both sweeps, waiting four TickCount ticks per frame.
+	const uint32 frameDelayMs = 4 * 1000 / 60;
+	while (!shouldQuit() && !_skipIntro) {
+		for (int i = 0; i < 0x2c && !shouldQuit() && !_skipIntro; i++) {
+			const uint32 startMs = g_system->getMillis();
+			frame.blitFrom(titleDark.surface, Common::Point(0, 0));
+			blitMacTitleSpotlight(frame, titleLit.surface, spotlight.surface,
+							  -110 + i * 15, 60 - i * 3);
+
+			switch (i) {
+			case 15:
+			case 19:
+				blitNativeTransparent(frame, in[0], 0xb9, 0x29);
+				break;
+			case 16:
+			case 18:
+				blitNativeTransparent(frame, in[1], 0xb9, 0x29);
+				break;
+			case 17:
+				blitNativeTransparent(frame, in[2], 0xb9, 0x29);
+				break;
+			default:
+				break;
+			}
+
+			copyNativeSurfaceToScreen(frame);
+			const uint32 elapsed = g_system->getMillis() - startMs;
+			if (waitIntroDelay(elapsed < frameDelayMs ? frameDelayMs - elapsed : 1))
+				return;
 		}
 
-		switch (i) {
-		case 15:
-		case 19:
-			blitNativeTransparent(frame, in[0], 0xb9, 0x29);
-			break;
-		case 16:
-		case 18:
-			blitNativeTransparent(frame, in[1], 0xb9, 0x29);
-			break;
-		case 17:
-			blitNativeTransparent(frame, in[2], 0xb9, 0x29);
-			break;
-		default:
-			break;
-		}
+		for (int i = 0x2a; i >= -1 && !shouldQuit() && !_skipIntro; i--) {
+			const uint32 startMs = g_system->getMillis();
+			frame.blitFrom(titleDark.surface, Common::Point(0, 0));
+			blitMacTitleSpotlight(frame, titleLit.surface, spotlight.surface,
+							  512 - (0x2a - i) * 15, 145);
 
-		copyNativeSurfaceToScreen(frame);
-		if (waitIntroDelay(40))
-			return;
+			switch (i) {
+			case 7:
+			case 11:
+				blitNativeTransparent(frame, left[0], 0x39, 0xb1);
+				break;
+			case 8:
+			case 10:
+				blitNativeTransparent(frame, left[1], 0x39, 0xb1);
+				break;
+			case 9:
+				blitNativeTransparent(frame, left[2], 0x39, 0xb1);
+				break;
+			case 24:
+			case 28:
+				blitNativeTransparent(frame, right[0], 0x131, 0xb1);
+				break;
+			case 25:
+			case 27:
+				blitNativeTransparent(frame, right[1], 0x131, 0xb1);
+				break;
+			case 26:
+				blitNativeTransparent(frame, right[2], 0x131, 0xb1);
+				break;
+			default:
+				break;
+			}
+
+			copyNativeSurfaceToScreen(frame);
+			const uint32 elapsed = g_system->getMillis() - startMs;
+			if (waitIntroDelay(elapsed < frameDelayMs ? frameDelayMs - elapsed : 1))
+				return;
+		}
 	}
-
-	for (int i = 0x2a; i >= 0 && !shouldQuit() && !_skipIntro; i--) {
-		frame.blitFrom(titleFinal.surface, Common::Point(0, 0));
-
-		switch (i) {
-		case 7:
-		case 11:
-			blitNativeTransparent(frame, left[0], 0x39, 0xb1);
-			break;
-		case 8:
-		case 10:
-			blitNativeTransparent(frame, left[1], 0x39, 0xb1);
-			break;
-		case 9:
-			blitNativeTransparent(frame, left[2], 0x39, 0xb1);
-			break;
-		case 24:
-		case 28:
-			blitNativeTransparent(frame, right[0], 0x131, 0xb1);
-			break;
-		case 25:
-		case 27:
-			blitNativeTransparent(frame, right[1], 0x131, 0xb1);
-			break;
-		case 26:
-			blitNativeTransparent(frame, right[2], 0x131, 0xb1);
-			break;
-		default:
-			break;
-		}
-
-		copyNativeSurfaceToScreen(frame);
-		if (waitIntroDelay(40))
-			return;
-	}
-
-	frame.blitFrom(titleFinal.surface, Common::Point(0, 0));
-	copyNativeSurfaceToScreen(frame);
-	waitIntroDelay(0xFFFFFFFFu);
 }
 
 void EEMEngine::playMacCDIntro() {
