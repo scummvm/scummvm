@@ -57,7 +57,7 @@ private:
 	bool hasActiveCharacterAnimation() const;
 	void waitForGhostMode(byte mode);
 	void waitForSpencerMode(byte mode);
-	void beginSpencerPrimarySpeechLine(byte frameIndex, byte openFrame);
+	void beginSpencerPrimarySpeechLine(byte frameIndex);
 	void beginQuasimodoPrimarySpeechLine(byte frameIndex);
 	void drawForegroundBlocks(int activeWorldX, int activeWorldY);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
