@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-09-21 22:11+0000\n"
+"POT-Creation-Date: 2026-09-23 09:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,8 +121,8 @@ msgstr ""
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:608
-#: dists/android.strings.xml.cpp:43 engines/engine.cpp:872
-#: engines/engine.cpp:897 backends/dialogs/gtk/gtk-dialogs.cpp:65
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:878
+#: engines/engine.cpp:903 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:207
 #: backends/events/default/default-events.cpp:231
 #: backends/platform/android/options.cpp:293
@@ -372,7 +372,7 @@ msgstr ""
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2422 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:675 base/main.cpp:700
-#: engines/engine.cpp:918 backends/platform/wii/options.cpp:46
+#: engines/engine.cpp:924 backends/platform/wii/options.cpp:46
 #: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
@@ -1522,7 +1522,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:742 engines/engine.cpp:1316
+#: gui/launcher.cpp:742 engines/engine.cpp:1322
 msgid "Unknown variant"
 msgstr ""
 
@@ -3542,34 +3542,34 @@ msgstr ""
 msgid "Error occurred making autosave"
 msgstr ""
 
-#: engines/engine.cpp:844
+#: engines/engine.cpp:850
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/engine.cpp:868
+#: engines/engine.cpp:874
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:868
+#: engines/engine.cpp:874
 msgid " Shall we still run the game?"
 msgstr ""
 
-#: engines/engine.cpp:869
+#: engines/engine.cpp:875
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:872 engines/engine.cpp:897
+#: engines/engine.cpp:878 engines/engine.cpp:903
 #: engines/wintermute/wintermute.cpp:174
 msgid "Start anyway"
 msgstr ""
 
-#: engines/engine.cpp:891
+#: engines/engine.cpp:897
 #, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
@@ -3577,14 +3577,14 @@ msgid ""
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:917
+#: engines/engine.cpp:923
 msgid ""
 "WARNING: The game you are about to start is newly supported and is in "
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
 
-#: engines/engine.cpp:933
+#: engines/engine.cpp:939
 #, c-format
 msgid ""
 "The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
@@ -3592,32 +3592,32 @@ msgid ""
 "the base game, and start the base game itself."
 msgstr ""
 
-#: engines/engine.cpp:950
+#: engines/engine.cpp:956
 msgid "This game is not supported."
 msgstr ""
 
-#: engines/engine.cpp:950
+#: engines/engine.cpp:956
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
 
-#: engines/engine.cpp:1096
+#: engines/engine.cpp:1102
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:1125
+#: engines/engine.cpp:1131
 msgid "Saving game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:1294
+#: engines/engine.cpp:1300
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
 
-#: engines/engine.cpp:1322
+#: engines/engine.cpp:1328
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""
