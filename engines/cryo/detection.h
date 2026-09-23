@@ -19,29 +19,23 @@
  *
  */
 
-#ifndef CRYO_DEBUGGER_H
-#define CRYO_DEBUGGER_H
+#ifndef CRYO_DETECTION_H
+#define CRYO_DETECTION_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "common/debug.h"
 
 namespace Cryo {
 
-class CryoEngine;
+enum CryoDebugChannels {
+	kDebugResource = 1,	///< What is read out of the game's own files
+	kDebugGraphics,		///< Rooms, sprites and the pictures behind them
+	kDebugScript,		///< Conditions, dialogs and the turns the game takes
+	kDebugMovie			///< Movies and the subtitles which caption them
+};
 
-class Debugger : public GUI::Debugger {
-private:
-	CryoEngine *_vm;
-
-public:
-	Debugger(CryoEngine *vm);
-	~Debugger() override {}
-
-protected:
-	bool Cmd_ShowHotspots(int argc, const char **argv);
-	bool Cmd_FullInventory(int argc, const char **argv);
-	bool Cmd_Phase(int argc, const char **argv);
-	bool Cmd_PlayVideo(int argc, const char **argv);
+enum CryoGameFlags {
+	/** A release with no game data, only loose movies and a list to walk */
+	GF_MOVIE_REEL = (1 << 0)
 };
 
 } // End of namespace Cryo
