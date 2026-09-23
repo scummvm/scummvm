@@ -356,6 +356,9 @@ private:
 	uint8 _actionWalkPoint;
 
 	int16 _inputVars[kInputVarCount];
+
+	bool _scrollInventory;
+	int _scrollInventoryStartY, _scrollInventoryEndY, _scrollInventoryDy;
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;
 	uint8 _walkDataLastIndex;
@@ -376,6 +379,8 @@ private:
 
 
 	uint8 _objectsState[112];
+	uint8 _inventoryImages[36];
+	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
 	char _roomObjectNames[20][MAX_OBJECT_NAME_LENGTH];
 	char _globalObjectNames[35][MAX_OBJECT_NAME_LENGTH];
@@ -422,6 +427,8 @@ private:
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
+	void UPDATE_OBJECT_STATE(int num);
+
 	void animateIgorTalking(int frame);
 	void fixIgorDialogueTextPosition(int num, int count, int *x, int *y);
 	void startIgorDialogue();
@@ -454,10 +461,10 @@ private:
 	void PART_06_EXEC_ACTION(int action);
 	void PART_06_ACTION_102();
 	void PART_06_HELPER_2();
-	void PART_06_HELPER_3();
-	void PART_06_HELPER_8(int frame);
+	void PART_06_HELPER_3_drawTripod();
+	void PART_06_HELPER_8_animatePhotographer(int frame);
 	void PART_06_HELPER_6(int num);
-	void PART_06_HELPER_1(int frame);
+	void PART_06_HELPER_1_drawPieceOfPaper(int frame);
 
 
 	void PART_100();
@@ -479,7 +486,7 @@ private:
 	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();
 
-	void PART_85_HELPER_6(int frame);
+	void PART_85_HELPER_6_animateIgorHead(int frame);
 
 	void PART_90();
 
@@ -495,6 +502,7 @@ private:
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
+	void drawInventory(int start, int mode);
 
 	void enterPartLoop();
 	void leavePartLoop();
@@ -624,6 +632,7 @@ protected:
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_110_ROOM_DATA_OFFSETS;
+	static const uint8 INVENTORY_IMG_INIT[];
 };
 
 extern IgorEngine *g_engine;

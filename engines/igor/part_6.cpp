@@ -58,7 +58,7 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_1(int frame) {
+void IgorEngine::PART_06_HELPER_1_drawPieceOfPaper(int frame) {
 	const int offset = 41926;
 	for (int i = 0; i <= 2; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 12 + i * 4;
@@ -75,7 +75,7 @@ void IgorEngine::PART_06_HELPER_2() {
 }
 
 
-void IgorEngine::PART_06_HELPER_3() {
+void IgorEngine::PART_06_HELPER_3_drawTripod() {
 	const int offset = 28668;
 	for (int i = 0; i <= 32; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E54 + i * 23;
@@ -84,13 +84,17 @@ void IgorEngine::PART_06_HELPER_3() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_8(int frame) {
+void IgorEngine::PART_06_HELPER_8_animatePhotographer(int frame) {
 	const int offset = 23521;
 	for (int i = 0; i <= 48; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x95C7 + i * 23 + frame * 1127;
 		memcpy(_screenVGA + i * 320 + offset, src, 23);
 	}
 }
+
+// void IgorEngine::PART_06_HELPER_6(int num) {
+
+// }
 
 void IgorEngine::PART_06_EXEC_ACTION(int action) {
 debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
@@ -158,32 +162,39 @@ void IgorEngine::PART_06() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
+	// loads from offset 32256
 	loadAnimData(anm1, 0x7E00);
 	if (_objectsState[60] == 0) {
-		PART_06_HELPER_1(0);
+		PART_06_HELPER_1_drawPieceOfPaper(0);
 	}
+	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
+	// then it loads the actual current scene, SpringRock
     for (int i = 0; i <= 143; ++i) {
 		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320, 224);
 	}
     loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	SET_PAL_240_48_1();
+
 	static const int anm2[] = { FRM_SpringRock1, FRM_SpringRock2, 0 };
 	loadAnimData(anm2, 0x7E00);
 	static const int anm3[] = { FRM_SpringRock3, FRM_SpringRock4, 0 };
 	loadAnimData(anm3, 0x81AE);
 	static const int anm4[] = { FRM_SpringRock5, FRM_SpringRock6, 0 };
 	loadAnimData(anm4, 0xA763);
+
 	PART_06_HELPER_2();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
     // PART_06_HELPER_6(255);
+
 	if (_objectsState[63] == 1) {
-		PART_06_HELPER_3();
+		PART_06_HELPER_3_drawTripod();
 	}
+
 	if (_currentPart == 61) {
 		SET_PAL_208_96_1();
 		drawVerbsPanel();
-		// drawInventory(1, 0);
+		drawInventory(1, 0);
 		_currentAction.verb = kVerbWalk;
 		memcpy(_paletteBuffer, _currentPalette, 624);
 		fadeIn(768);
@@ -211,7 +222,7 @@ void IgorEngine::PART_06() {
 		// }
 		PART_06_UPDATE_ROOM_BACKGROUND();
 		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(9) == 0) {
-			PART_06_HELPER_8(getRandomNumber(3));
+			PART_06_HELPER_8_animatePhotographer(getRandomNumber(3));
 		}
 		waitForTimer();
 	}

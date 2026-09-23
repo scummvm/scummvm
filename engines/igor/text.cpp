@@ -317,7 +317,7 @@ void IgorEngine::animateIgorTalking(int frame) {
 		return;
 	}
 	if (getPart() == 85) {
-		PART_85_HELPER_6(frame);
+		PART_85_HELPER_6_animateIgorHead(frame);
 		return;
 	}
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];

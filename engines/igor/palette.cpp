@@ -61,10 +61,7 @@ void IgorEngine::updatePalette(int count) {
 	assert(count <= 768);
 	uint8 pal[768];
 	for (int j = 0, i = 0; i < count; ++i) {
-		pal[j++] = (_currentPalette[i] << 2);// | (_currentPalette[i] >> 4);
-		// if (((i + 1) % 3) == 0) {
-		// 	pal[j++] = 0;
-		// }
+		pal[j++] = (_currentPalette[i] << 2);
 	}
 	g_system->getPaletteManager()->setPalette(pal, 0, count / 3);
 }

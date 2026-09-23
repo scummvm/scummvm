@@ -43,18 +43,86 @@ void IgorEngine::SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p) {
 	}
 }
 
+void IgorEngine::UPDATE_OBJECT_STATE(int num) {
+	if (num == 1 || num == 255) {
+		switch (_objectsState[0]) {
+		case 0:
+			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWhisky),sizeof(_globalObjectNames[23]));
+			break;
+		case 1:
+			Common::strlcpy(_globalObjectNames[23], getString(STR_EmptyBottle),sizeof(_globalObjectNames[23]));
+			break;
+		case 2:
+			Common::strlcpy(_globalObjectNames[23], getString(STR_BottleOfWater),sizeof(_globalObjectNames[23]));
+			break;
+		}
+	}
+	if (num == 2 || num == 255) {
+		switch (_objectsState[1]) {
+		case 0:
+			_inventoryImages[23] = 27;
+			Common::strlcpy(_globalObjectNames[24], getString(STR_Lizard), sizeof(_globalObjectNames[24]));
+			break;
+		default:
+			_inventoryImages[23] = 35;
+			Common::strlcpy(_globalObjectNames[24], getString(STR_FatLizard), sizeof(_globalObjectNames[24]));
+			break;
+		}
+	}
+	if (num == 4 || num == 255) {
+		switch (_objectsState[3]) {
+		case 0:
+			Common::strlcpy(_globalObjectNames[22], getString(STR_CarolineFolder), sizeof(_globalObjectNames[22]));
+			break;
+		case 1:
+			Common::strlcpy(_globalObjectNames[22], getString(STR_PhilipFolder), sizeof(_globalObjectNames[22]));
+			break;
+		}
+	}
+	if (num == 7 || num == 255) {
+		switch (_objectsState[6]) {
+		case 0:
+			_inventoryImages[33] = 21;
+			break;
+		case 1:
+			_inventoryImages[33] = 14;
+			break;
+		case 2:
+			_inventoryImages[33] = 7;
+			break;
+		}
+	}
+	if (num == 8 || num == 255) {
+		if (_objectsState[7] == 0) {
+			Common::strlcpy(_globalObjectNames[25], getString(STR_Statuette), sizeof(_globalObjectNames[25]));
+			_inventoryImages[24] = 29;
+		} else {
+			Common::strlcpy(_globalObjectNames[25], getString(STR_Reward), sizeof(_globalObjectNames[25]));
+			_inventoryImages[24] = 39;
+		}
+	}
+}
+
 void IgorEngine::PART_MAIN() {
 	SET_EXEC_ACTION_FUNC(0, &IgorEngine::EXEC_MAIN_ACTION);
 	memset(_objectsState, 0, 112);
 	_objectsState[21] = 1;
 	_objectsState[49] = 1;
-
+	memset(_inventoryInfo, 0, 36);
+	_inventoryInfo[0] = 1; // ordering
+	_inventoryInfo[1] = 2;
+	_inventoryInfo[2] = 4;
+	_inventoryInfo[36] = 1;
+	_inventoryInfo[37] = 2;
+	_inventoryInfo[39] = 3;
+	_inventoryInfo[72] = 1; // first object
+	_inventoryInfo[73] = 3; // last object
     // UPDATE_OBJECT_STATE(255);
     if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
 		drawVerbsPanel();
-		// drawInventory(1, 0);
+		drawInventory(1, 0);
 	}
     do {
         debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
@@ -66,12 +134,12 @@ void IgorEngine::PART_MAIN() {
         case 50:
         case 51:
         case 52:
-            PART_05(); // SpringRock
+            PART_05(); // SpringBridge
             break;
 		case 60:
 		case 61:
 		case 62:
-			PART_06(); // Spring
+			PART_06(); // SpringRock
 			break;
 
 		case 100:

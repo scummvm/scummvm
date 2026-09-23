@@ -197,7 +197,7 @@ void IgorEngine::PART_05_UPDATE_ROOM_BACKGROUND() {
 			break;
 		}
 	}
-	if (_gameState.talkMode == kTalkModeTextOnly || !_gameState.dialogueTextRunning) {
+	if (_game.flags & kFlagFloppy) {
 		playSound(17, 1);
 	}
 }

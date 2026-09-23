@@ -139,8 +139,8 @@ void IgorEngine::restart() {
 	// memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
 	memset(_objectsState, 0, sizeof(_objectsState));
-	// memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
-	// memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
+	memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
+	memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
 	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));
 	memset(_globalObjectNames, 0, sizeof(_globalObjectNames));
 	memset(_globalDialogueTexts, 0, sizeof(_globalDialogueTexts));
@@ -155,7 +155,7 @@ void IgorEngine::restart() {
 	_executeRoomAction = 0;
 	// _previousMusic = 0;
 	// _musicData = 0;
-	// _scrollInventory = false;
+	_scrollInventory = false;
 	_roomCursorOn = true;
 	_currentCursor = 0;
 	// _dialogueCursorOn = true;
@@ -253,6 +253,99 @@ void IgorEngine::runPartLoop() {
 	}
 
 	waitForTimer();
+}
+
+
+void IgorEngine::drawInventory(int start, int mode) {
+	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
+	loadData(IMG_Objects, _inventoryImagesBuffer);
+	int y, i;
+	int end = start + 6;
+	int x = 1;
+	// Paint inventory icons
+	for (y = start; y != end; ++y) {
+		if (_inventoryInfo[y - 1] == 0) {
+			for (i = 1; i <= 30; ++i) {
+				memset(_inventoryPanelBuffer + x * 40 - 20 + (i - 1) * 320, 0, 40);
+			}
+		} else {
+			for (i = 1; i <= 30; ++i) {
+				int img = _inventoryInfo[y - 1];
+				assert(img >= 1);
+				memcpy(_inventoryPanelBuffer + x * 40 - 20 + i * 320 - 321, _inventoryImagesBuffer + (i - 1) * 40 + (_inventoryImages[img - 1] - 1) * 1200, 40);
+			}
+		}
+		++x;
+	}
+	// Hide arrows
+	if (_inventoryInfo[72] == 1) {
+		// 'hide' scroll up
+		for (y = 5; y <= 11; ++y) {
+			for (x = 4; x <= 12; ++x) {
+				uint8 *p = _inventoryPanelBuffer + y * 320 + x - 321;
+				if (*p == 0xF2) {
+					*p = 0xF3;
+					p = _inventoryPanelBuffer + y * 320 + x + 305 - 321;
+					*p = 0xF3;
+				}
+			}
+		}
+	}
+	if (_inventoryInfo[73] <= _inventoryInfo[72] + 6 || _inventoryInfo[72] >= _inventoryInfo[73] - 6) {
+		// 'hide' scroll down
+		for (y = 19; y <= 25; ++y) {
+			for (x = 4; x <= 12; ++x) {
+				uint8 *p = _inventoryPanelBuffer + y * 320 + x - 321;
+				if (*p == 0xF2) {
+					*p = 0xF3;
+					p = _inventoryPanelBuffer + y * 320 + x + 305 - 321;
+					*p = 0xF3;
+				}
+			}
+		}
+	}
+	switch (mode) {
+	case 0:
+		memcpy(_screenVGA + 54400, _inventoryPanelBuffer, 9600);
+		_scrollInventory = false;
+		break;
+	case 1:
+		for (y = 0; y <= 11; ++y) {
+			for (x = 0; x <= 14; ++x) {
+				uint8 *p = _screenVGA + x + y * 320 + 59520;
+				if ((*p & 0x80) != 0) {
+					*p += 8;
+					p = _screenVGA + x + y * 320 + 59825;
+					*p += 8;
+				}
+			}
+		}
+		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
+		memcpy(_inventoryPanelBuffer, _screenVGA + 54400, 9600);
+		_scrollInventoryStartY = 7;
+		_scrollInventoryEndY = 31;
+		_scrollInventoryDy = 6;
+		_scrollInventory = true;
+		break;
+	case 2:
+		for (y = 0; y <= 11; ++y) {
+			for (x = 0; x <= 14; ++x) {
+				uint8 *p = _screenVGA + x + y * 320 + 55040;
+				if ((*p & 0x80) != 0) {
+					*p += 8;
+					p = _screenVGA + x + y * 320 + 55345;
+					*p += 8;
+				}
+			}
+		}
+		memmove(_inventoryPanelBuffer + 9600, _inventoryPanelBuffer, 9600);
+		memcpy(_inventoryPanelBuffer + 9600, _screenVGA + 54400, 9600);
+		_scrollInventoryStartY = 25;
+		_scrollInventoryEndY = 1;
+		_scrollInventoryDy = -6;
+		_scrollInventory = true;
+		break;
+	}
 }
 
 void IgorEngine::executeAction(int action) {

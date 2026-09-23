@@ -82,6 +82,7 @@ void IgorEngine::playSound(int num, int type) {
 
 void IgorEngine::stopSound() {
 	_mixer->stopHandle(_sfxHandle);
+	_mixer->stopHandle(_speechHandle);
 }
 
 } // End of namespace Igor

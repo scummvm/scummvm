@@ -147,7 +147,7 @@ void IgorEngine::PART_85() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	if (_inputVars[kInputEscapae]) goto PART_85_EXIT;
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 7, 9, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	_walkData[0].x = 250;
@@ -172,6 +172,7 @@ PART_85_EXIT:
 	_walkData[0].setDefaultScale();
 	copyArea(_screenLayer2, 23180, 320, _facingIgorFrames[3], 30, 30, 50, true);
 	memcpy(_screenVGA, _screenLayer2, 46080);
+	// sets all colors after 624 as black
 	memset(_currentPalette + 0x270, 0, 0x8D);
 	setPaletteRange(208, 254);
 	_currentPart = 61;
@@ -239,16 +240,16 @@ void IgorEngine::displayLogo() {
 	memcpy(_currentPalette, _paletteBuffer, 765); // cseg209:0x064E-0x065B
 	setPaletteRange(0, 255); // cseg209:0x0660-0x0664
 
-	// // The original updates only color 255 here. The other palette changes stay
-	// // internal and therefore do not produce a visible fade. cseg209:0x0669-0x0705
+	// The original updates only color 255 here. The other palette changes stay
+	// internal and therefore do not produce a visible fade. cseg209:0x0669-0x0705
 	// for (int threshold = 0; threshold <= 63; threshold += 3) {
-	// 	for (int i = 0; i < 768; ++i) {
-	// 		if (_paletteBuffer[i] >= threshold) {
-	// 			_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
-	// 		}
-	// 	}
-	// 	setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
-	// 	waitForTimer();
+	// 	// for (int i = 0; i < 768; ++i) {
+	// 	// 	if (_paletteBuffer[i] >= threshold) {
+	// 	// 		_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
+	// 	// 	}
+	// 	// }
+	// 	// setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
+	// 	// waitForTimer();
 	// }
 
 	memcpy(_screenVGA, _screenTextLayer, 46080); // cseg209:0x0708-0x071A
@@ -306,13 +307,14 @@ void IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND() {
 	if (!VAR_WATER_SOUND_PLAYING) {
 		return;
 	}
-	if (_gameState.talkMode == kTalkModeTextOnly /*|| !_gameState.dialogueTextRunning*/) {
+	if (_game.flags & kFlagFloppy /*|| !_gameState.dialogueTextRunning*/) {
 		playSound(17, 1);
 	}
 }
 
-void IgorEngine::PART_85_HELPER_6(int frame) {
+void IgorEngine::PART_85_HELPER_6_animateIgorHead(int frame) {
 	const int offset = (_walkCurrentPos == 4) ? 24564 : 22643;
+	// Animate Igor's head by copying the relevant area from the screen and overlaying the head frame.
 	copyArea(_screenVGA, offset, 320, _screenLayer2 + offset, 320, 14, 8);
 	copyArea(_screenVGA, offset, 320, _igorHeadFrames + (_walkCurrentPos - 1) * 924 + frame * 154, 14, 14, 8, true);
 }
