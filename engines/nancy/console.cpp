@@ -69,6 +69,8 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
 	registerCmd("get_inventory", WRAP_METHOD(NancyConsole, Cmd_getInventory));
 	registerCmd("set_inventory", WRAP_METHOD(NancyConsole, Cmd_setInventory));
+	registerCmd("get_money", WRAP_METHOD(NancyConsole, Cmd_getMoney));
+	registerCmd("set_money", WRAP_METHOD(NancyConsole, Cmd_setMoney));
 	registerCmd("get_player_time", WRAP_METHOD(NancyConsole, Cmd_getPlayerTime));
 	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
@@ -1227,6 +1229,123 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;
 		}
+	}
+
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_getMoney(int argc, const char **argv) {
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (!hasMoneyResource()) {
+		debugPrintf("This game doesn't have a coin purse\n");
+		return true;
+	}
+
+	auto *resourceData = GetEngineData(UIRC);
+	if (!resourceData || resourceData->items.empty()) {
+		debugPrintf("No UI resource data loaded\n");
+		return true;
+	}
+
+	// Money is UI resource 0; the purse formats it using that record's settings
+	const UIRC::ItemRecord &item = resourceData->items[0];
+	uint numCharacters = numPlayerCharacters();
+
+	if (numCharacters == 1) {
+		int32 value = NancySceneState.getUIResource(0);
+		debugPrintf("Money: %s (%d)\n", formatUIResourceValue(item, value).c_str(), value);
+		return true;
+	}
+
+	// From Nancy15 every player character carries their own money
+	debugPrintf("Playing as %s\n", playerCharacterName(g_nancy->getPlayerCharacter()).c_str());
+
+	for (uint i = 0; i < numCharacters; ++i) {
+		int32 value = NancySceneState.getUIResource(0, (byte)i);
+		debugPrintf("%s: %s (%d)\n",
+			playerCharacterName(i).c_str(),
+			formatUIResourceValue(item, value).c_str(),
+			value);
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_setMoney(int argc, const char **argv) {
+	if (g_nancy->getState() != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (!hasMoneyResource()) {
+		debugPrintf("This game doesn't have a coin purse\n");
+		return true;
+	}
+
+	auto *resourceData = GetEngineData(UIRC);
+	if (!resourceData || resourceData->items.empty()) {
+		debugPrintf("No UI resource data loaded\n");
+		return true;
+	}
+
+	// Without -c the money goes to whoever is being played, which is the only
+	// purse the games before Nancy15 have
+	uint characterIndex = g_nancy->getPlayerCharacter();
+	int valueArg = 1;
+
+	if (argc > 1 && Common::String(argv[1]).equalsIgnoreCase("-c")) {
+		if (argc < 3) {
+			debugPrintf("Missing character index after -c\n");
+			return true;
+		}
+
+		int requestedCharacter = atoi(argv[2]);
+		if (requestedCharacter < 0 || requestedCharacter >= (int)numPlayerCharacters()) {
+			debugPrintf("Invalid character %s\n", argv[2]);
+			return true;
+		}
+
+		characterIndex = requestedCharacter;
+		valueArg = 3;
+	}
+
+	const UIRC::ItemRecord &item = resourceData->items[0];
+
+	if (argc != valueArg + 1) {
+		debugPrintf("Sets the money a player character carries.\n");
+		debugPrintf("Usage: %s [-c <characterIndex>] <value>\n", argv[0]);
+		debugPrintf("-c picks the player character to give the money to (Nancy15+); the character being played is the default.\n");
+		debugPrintf("The value is a whole number in the purse's smallest unit, so 1234 means %s\n",
+			formatUIResourceValue(item, 1234).c_str());
+		return true;
+	}
+
+	int32 value = atoi(argv[valueArg]);
+
+	if (value < 0) {
+		debugPrintf("Invalid value %s\n", argv[valueArg]);
+		return true;
+	}
+
+	// Nancy14 added a maximum that empties the purse instead of capping it,
+	// so setting a value above it would leave the character with nothing
+	if (g_nancy->getGameType() >= kGameTypeNancy14 && value > (int32)item.maxValue) {
+		debugPrintf("Value %d is above the maximum of %u, which would empty the purse\n", value, item.maxValue);
+		return true;
+	}
+
+	NancySceneState.setUIResource(0, value, (byte)characterIndex);
+
+	if (numPlayerCharacters() > 1) {
+		debugPrintf("Set the money %s carries to %s\n",
+			playerCharacterName(characterIndex).c_str(),
+			formatUIResourceValue(item, value).c_str());
+	} else {
+		debugPrintf("Set money to %s\n", formatUIResourceValue(item, value).c_str());
 	}
 
 	return cmdExit(0, nullptr);
