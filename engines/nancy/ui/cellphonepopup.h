@@ -276,6 +276,10 @@ private:
 	// needs an in-LCD title row.
 	uint listTitleRows() const { return 0; }
 
+	// Whether the phone itself takes and shows pictures, i.e. whether the Menu
+	// screen offers "View Pictures" and the top row carries the Cam label.
+	bool hasCameraFeature() const;
+
 	// Layout for the two clickable labels on the Online hub.
 	Common::Rect hubEmailRect() const;
 	Common::Rect hubWebRect() const;
