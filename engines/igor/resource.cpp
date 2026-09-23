@@ -168,6 +168,10 @@ ResourceEntry *IgorEngine::findData(int id) {
 	return re;
 }
 
+/**
+ * Will load resource identified with id from the contents of IGOR.TBL.
+ * IGOR.TBL is produced externally using the same ids pointing to a given resource.
+ */
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 	debugC(9, kDebugResource, "loadData() id %d", id);
 	ResourceEntry *re = findData(id);
@@ -194,6 +198,8 @@ void IgorEngine::loadActionData(int act) {
 
 void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
 	if (loadOffset == 0) {
+		//clears the entire animation buffer which is big enough to hold screen
+		//and animations
 		memset(_animFramesBuffer, 0, 65535);
 	}
 	while (*anm) {
@@ -210,6 +216,9 @@ const uint8 *IgorEngine::getAnimFrame(int baseOffset, int tableOffset, int frame
 	return src + frameOffset - 1;
 }
 
+/**
+ * extracts from src a frame and draws it into dst, optionally preserving text
+ */
 void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText) {
 	int y = READ_LE_UINT16(src) * 320; src += 2;
 	int h = READ_LE_UINT16(src); src += 2;

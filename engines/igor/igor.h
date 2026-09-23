@@ -433,6 +433,7 @@ private:
 	bool isDialogueSpeechPlaying() const;
 
 	void PART_MAIN();
+	void moveScreenUp(int offset);
 	void EXEC_MAIN_ACTION(int action);
 
 	void PART_04_EXEC_ACTION(int action);
@@ -472,8 +473,8 @@ private:
 	void PART_110_APPLY_OBJECT_STATE(int num);
 
 	void PART_85();
-	void PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
-	void PART_85_HELPER_2();
+	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
+	void PART_85_HELPER_2_SCROLL_RIGHT();
 	void displayLogo();
 	void PART_85_UPDATE_DIALOGUE_PHILIP_LAURA(int action);
 	void PART_85_UPDATE_ROOM_BACKGROUND();

@@ -47,77 +47,91 @@ void IgorEngine::PART_85() {
 	if(_game.flags & kFlagFloppy) {
 		playMusic(2);
 	} else playMusic(11);
+	// loads part5 room into memory
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
+	// copies current screenLayer1 into screenLayer2 to hold a copy
 	memcpy(_screenLayer2, _screenLayer1, 46080);
+	// loads part6 room into memory, intro starts there
 	loadRoomData(PAL_SpringBridgeIntro, IMG_SpringBridgeIntro, 0, 0, TXT_SpringBridgeIntro);
 	static const int anm[] = { ANM_PhilipLauraIntro, AOF_PhilipLauraIntro, ANM_LauraIntro, AOF_LauraIntro, 0 };
 	loadAnimData(anm);
+	// copies part6 into screen buffer
 	memcpy(_screenVGA, _screenLayer1, 46080);
+
 	_updateDialogue = &IgorEngine::PART_85_UPDATE_DIALOGUE_PHILIP_LAURA;
 	_updateRoomBackground = &IgorEngine::PART_85_UPDATE_ROOM_BACKGROUND;
-	VAR_WATER_SOUND_PLAYING = true;
-	// playSound(17, 1);
-	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+	// In the CD version the water sound is embedded in the CD track
+	if(_game.flags & kFlagFloppy) {
+		VAR_WATER_SOUND_PLAYING = true;
+		playSound(17, 1);
+	}
 	fadeIn(768);
+	//decode first frame and paint it
+	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(201, 3, 545);
-	// ADD_DIALOGUE_TEXT(204, 1, 546);
-	// SET_DIALOGUE_TEXT(1, 2);
-	// startCutsceneDialogue(89, 56, 63, 63, 0);
-	// VAR_CURRENT_TALKING_ACTOR = 0;
-	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(205, 3, 547);
-	// SET_DIALOGUE_TEXT(1, 1);
-	// startCutsceneDialogue(113, 59, 63, 0, 38);
-	// VAR_CURRENT_TALKING_ACTOR = 1;
-	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(208, 1, 548);
-	// SET_DIALOGUE_TEXT(1, 1);
-	// startCutsceneDialogue(89, 56, 63, 63, 0);
-	// VAR_CURRENT_TALKING_ACTOR = 0;
-	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(209, 2, 549);
-	// ADD_DIALOGUE_TEXT(211, 1, 550);
-	// ADD_DIALOGUE_TEXT(212, 1, 551);
-	// ADD_DIALOGUE_TEXT(213, 1, 552);
-	// ADD_DIALOGUE_TEXT(214, 1, 553);
-	// SET_DIALOGUE_TEXT(1, 5);
-	// startCutsceneDialogue(113, 59, 63, 0, 38);
-	// VAR_CURRENT_TALKING_ACTOR = 1;
-	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(215, 1, 554);
-	// ADD_DIALOGUE_TEXT(216, 2, 555);
-	// ADD_DIALOGUE_TEXT(218, 1, 556);
-	// SET_DIALOGUE_TEXT(1, 3);
-	// startCutsceneDialogue(89, 56, 63, 63, 0);
-	// VAR_CURRENT_TALKING_ACTOR = 0;
-	// waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// ADD_DIALOGUE_TEXT(219, 2, 557);
-	// ADD_DIALOGUE_TEXT(221, 2, 558);
-	// SET_DIALOGUE_TEXT(1, 2);
-	// startCutsceneDialogue(113, 59, 63, 0, 38);
-	// VAR_CURRENT_TALKING_ACTOR = 1;
-	// waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
-	// PART_85_HELPER_1(0, 0x7481, 2, 7, 32);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	// PART_85_HELPER_1(0, 0x7481, 18, 37, 20);
-	// if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_2();
+	//Laura does her hair
+	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+
+	// 3 lines of text
+	ADD_DIALOGUE_TEXT(201, 3, 545);
+	// 1 line in a new screen
+	ADD_DIALOGUE_TEXT(204, 1, 546);
+	SET_DIALOGUE_TEXT(1, 2);
+	startCutsceneDialogue(89, 56, 63, 63, 0);
+
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(205, 3, 547);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(113, 59, 63, 0, 38);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(208, 1, 548);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(89, 56, 63, 63, 0);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(209, 2, 549);
+	ADD_DIALOGUE_TEXT(211, 1, 550);
+	ADD_DIALOGUE_TEXT(212, 1, 551);
+	ADD_DIALOGUE_TEXT(213, 1, 552);
+	ADD_DIALOGUE_TEXT(214, 1, 553);
+	SET_DIALOGUE_TEXT(1, 5);
+	startCutsceneDialogue(113, 59, 63, 0, 38);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(215, 1, 554);
+	ADD_DIALOGUE_TEXT(216, 2, 555);
+	ADD_DIALOGUE_TEXT(218, 1, 556);
+	SET_DIALOGUE_TEXT(1, 3);
+	startCutsceneDialogue(89, 56, 63, 63, 0);
+	VAR_CURRENT_TALKING_ACTOR = 0;
+	waitForEndOfCutsceneDialogue(89, 56, 63, 63, 0);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	ADD_DIALOGUE_TEXT(219, 2, 557);
+	ADD_DIALOGUE_TEXT(221, 2, 558);
+	SET_DIALOGUE_TEXT(1, 2);
+	startCutsceneDialogue(113, 59, 63, 0, 38);
+	VAR_CURRENT_TALKING_ACTOR = 1;
+	waitForEndOfCutsceneDialogue(113, 59, 63, 0, 38);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	decodeAnimFrame(getAnimFrame(0, 0x7480, 1), _screenVGA, true);
+	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 2, 7, 32);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_1_PLAY_ANIM(0, 0x7481, 18, 37, 20);
+	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
+	PART_85_HELPER_2_SCROLL_RIGHT();
 	VAR_WATER_SOUND_PLAYING = false;
 	stopSound();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0x74CA, 0xA6C4, 1, 6, 32);
+	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 1, 6, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) {
 		PART_85_UPDATE_ROOM_BACKGROUND();
@@ -133,8 +147,8 @@ void IgorEngine::PART_85() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0x74CA, 0xA6C4, 7, 9, 32);
+	if (_inputVars[kInputEscapae]) goto PART_85_EXIT;
+	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 7, 9, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	_walkData[0].x = 250;
 	_walkData[0].y = 119;
@@ -145,7 +159,7 @@ void IgorEngine::PART_85() {
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	PART_85_HELPER_1(0x74CA, 0xA6C4, 10, 24, 16);
+	PART_85_HELPER_1_PLAY_ANIM(0x74CA, 0xA6C4, 10, 24, 16);
 	if (_game.version == kIdSpaCD) {
 		displayLogo(); // cseg209:0x12B5
 	}
@@ -244,7 +258,7 @@ void IgorEngine::displayLogo() {
 	setPaletteRange(255, 255); // cseg209:0x072E-0x0740
 }
 
-void IgorEngine::PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
+void IgorEngine::PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay) {
 	do {
 		if (compareGameTick(0, delay)) {
 			decodeAnimFrame(_animFramesBuffer + frameOffset2 - 1 + READ_LE_UINT16(_animFramesBuffer + frameOffset1 + firstFrame * 2 - 3), _screenVGA, true);
@@ -256,7 +270,7 @@ void IgorEngine::PART_85_HELPER_1(int frameOffset2, int frameOffset1, int firstF
 	} while (firstFrame <= lastFrame);
 }
 
-void IgorEngine::PART_85_HELPER_2() {
+void IgorEngine::PART_85_HELPER_2_SCROLL_RIGHT() {
 	int x = 1;
 	do {
 		if (compareGameTick(0, 16)) {

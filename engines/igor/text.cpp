@@ -31,6 +31,10 @@ const uint8 IgorEngine::_sentenceColorIndex[]= { 0xFD, 0xFB, 0xF1 };
 /**
  * appends one DialogueText{num, count, sound} record into _dialogueTextsTable[] at index _dialogueTextsCount, then increments it.
  * MAX_DIALOGUE_TEXTS = 6
+ * Game accumulates texts in _dialogeTextsTable, then displays them during dialogues.
+ *
+ * each call to ADD_DIALOGUE_TEXT is one screen of dialogue. Each dialogue
+ * can have multiple lines.
  */
 void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
 	assert(_dialogueTextsCount < MAX_DIALOGUE_TEXTS);
@@ -41,11 +45,18 @@ void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
 	++_dialogueTextsCount;
 }
 
+/**
+ * Set start and end of dialogue to be displayed
+ * start page of dialogues, count of dialogue screens
+ */
 void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
 	_dialogueTextsStart = start - 1;
 	_dialogueTextsCount = count;
 }
 
+/**
+ * sets the positional state of the text to be displayed
+ */
 void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
     int textLineWidth = 0;
 	for (int i = 0; i < count; ++i) {
@@ -76,6 +87,9 @@ void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
 	*y = textY;
 }
 
+/**
+ * Paints the text on the screen buffer
+ */
 void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	debugC(9, kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
 	--_dialogueTextsCount;
@@ -88,7 +102,8 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	assert(_dialogueDirtyRectSize < 320 * 72);
 
 	/**
-	 * Clear previous text line
+	 * Clear previous text line from the screen text layer by copying the corresponding
+	 * portion from the VGA screen buffer.
 	 */
 	memcpy(_screenTextLayer, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
 	memcpy(_screenTextLayer + 320 * 72, _screenVGA + _dialogueDirtyRectY, _dialogueDirtyRectSize);
@@ -103,9 +118,11 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 	}
 	setPaletteColor(kTalkColor, r, g, b);
 	setPaletteColor(kTalkShadowColor, 0, 0, 0);
+	// Only update the VGA screen buffer if not in spech-only mode
 	if (_gameState.talkMode != kTalkModeSpeechOnly) {
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
 	}
+	// If on text mode, the game has a text delay
 	if (_gameState.talkMode == kTalkModeTextOnly) {
 		_talkDelay = (2 * dt->count) * _talkDelays[_gameState.talkSpeed];
 		_talkDelayCounter = 0;
@@ -114,14 +131,19 @@ void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
 		_talkDelayCounter = 0;
 	}
 	if (_gameState.talkMode != kTalkModeTextOnly) {
+		// Play speech
 		playSound(dt->sound, 0);
 	}
 	_gameState.dialogueTextRunning = true;
 	_inputVars[kInputSkipDialogue] = 0;
 }
 
+/**
+ * Loop for character talking
+ */
 void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b) {
 	do {
+		// stop speech if skip dialogue hit
 		if (_gameState.dialogueTextRunning && _inputVars[kInputSkipDialogue]) {
 			if (_mixer->isSoundHandleActive(_speechHandle)) {
 				_mixer->stopHandle(_speechHandle);

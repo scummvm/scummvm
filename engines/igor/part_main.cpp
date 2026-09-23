@@ -86,23 +86,16 @@ void IgorEngine::PART_MAIN() {
 		case 850: // Intro cutscene
             // Clear the entire screen buffer before starting the intro cutscene
             memset(_screenVGA, 0, 64000);
+			g_engine->_screen->updateScreen();
             _screenVGAVOffset = 24;
             // copy the initial portion of the screen to the display, with the vertical offset
 			_system->copyRectToScreen(_screenVGA, 320, 0, 0, 320, _screenVGAVOffset);
+			g_engine->_screen->updateScreen();
 			PART_85();
             // Clears the bottom portion of the screen
             memset(_screenVGA + 46080, 0, 17920);
-            _nextTimer = _system->getMillis() + 1000 / 60;
-			for (int y = _screenVGAVOffset; y >= 0; --y) {
-				_system->copyRectToScreen(_screenVGA, 320, 0, y, 320, 145);
-				_system->updateScreen();
-				int diff = _nextTimer - _system->getMillis();
-				if (diff > 0) {
-					_system->delayMillis(diff);
-				}
-				_nextTimer = _system->getMillis() + 1000 / 60;
-			}
-            _screenVGAVOffset = 0;
+			moveScreenUp(_screenVGAVOffset);
+			_screenVGAVOffset = 0;
 			_inputVars[kInputCursorXPos] = 160;
 			_inputVars[kInputCursorYPos] = 72;
 			_system->warpMouse(_inputVars[kInputCursorXPos], _inputVars[kInputCursorYPos]);
@@ -120,6 +113,22 @@ void IgorEngine::PART_MAIN() {
 			break;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
+}
+
+/**
+ * Moves the screen up line by line from the selected offset down to 0
+ */
+void IgorEngine::moveScreenUp(int offset) {
+	_nextTimer = _system->getMillis() + 1000 / 60;
+	for (int y = offset; y >= 0; --y) {
+		_system->copyRectToScreen(_screenVGA, 320, 0, y, 320, 145);
+		_system->updateScreen();
+		int diff = _nextTimer - _system->getMillis();
+		if (diff > 0) {
+			_system->delayMillis(diff);
+		}
+		_nextTimer = _system->getMillis() + 1000 / 60;
+	}
 }
 
 } // End of namespace Igor

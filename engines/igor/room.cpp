@@ -137,6 +137,11 @@ void IgorEngine::decodeRoomText(const uint8 *p) {
 	decodeRoomStrings(p);
 }
 
+/**
+ * Loads room palette into _paletteBuffer, pixels into _screenLayer1, boxes into
+ * _roomObjectAreasTable, mask into _screenLayer2, text into (_walkXScaleRoom, _walkYScaleRoom)
+ * _roomObjectNames & _globalDialogueTexts.
+ */
 void IgorEngine::loadRoomData(int pal, int img, int box, int msk, int txt) {
 	if (pal != 0) {
 		loadData(pal, _paletteBuffer);
