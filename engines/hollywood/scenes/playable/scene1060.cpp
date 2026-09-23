@@ -253,9 +253,11 @@ void Scene1060::advanceCustomGameplayLoop(uint32 delta) {
 	advanceLargeBackground(delta);
 	if (!_pocketPaperPickupSequenceActive)
 		advanceFlyDoctorModeAndInvisibleMan(delta);
-	if (!_primaryDialogueSpeechActive && _ticketPickupSequenceActive) {
+	const bool doctorSpeaking = _primaryDialogueSpeechActive &&
+		_primaryDialogueSpeechGroup == kScene1060DoctorSpeechGroup;
+	if (!doctorSpeaking && _ticketPickupSequenceActive) {
 		advanceTicketPickupFrame(delta);
-	} else if (!_primaryDialogueSpeechActive) {
+	} else if (!doctorSpeaking) {
 		advanceFlyDoctor(delta);
 	}
 }
@@ -351,9 +353,6 @@ bool Scene1060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		replaceColorMapItem(8, 3);
 
 	if (state.scene1060DrMoscaState < 2 && !state.scene1060FlySlimeHotspotActive)
-		replaceColorMapItem(7, 4);
-
-	if (state.scene1060PocketPaperTaken)
 		replaceColorMapItem(7, 4);
 
 	rebuildWalkablePaletteMask();
@@ -1018,8 +1017,8 @@ void Scene1060::beginInvisibleManPrimarySpeech(byte frameIndex, bool allowRandom
 
 void Scene1060::finishCharacterConversation() {
 	_additionalAmbientSoundBank0Slots[1].stop();
-	_flyDoctorMode = _random.getRandomNumber(1) == 0 ?
-		kScene1060FlyDoctorModeIdle : kScene1060FlyDoctorModeDripReady;
+	_flyDoctorMode = _vm->gameState().scene1060FlySlimeHotspotActive || _random.getRandomNumber(1) != 0 ?
+		kScene1060FlyDoctorModeDripReady : kScene1060FlyDoctorModeIdle;
 }
 
 void Scene1060::handlePocketPaperPickup() {

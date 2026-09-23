@@ -393,6 +393,7 @@ void Scene9100::runRonEntryConversation() {
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		uint32 elapsed = 0;
+		uint32 continuationDelayElapsed = 0;
 
 		if (!pathPresented) {
 			memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
@@ -404,8 +405,12 @@ void Scene9100::runRonEntryConversation() {
 
 		while (!_skipRequested && !Engine::shouldQuit()) {
 			const bool speechActive = _speech.isPlaying();
-			if (!speechActive && elapsed >= fallbackMillis)
-				break;
+			if (!speechActive && elapsed >= fallbackMillis) {
+				if (segmentIndex + 1 == segmentCount || continuationDelayElapsed >= 375)
+					break;
+				// Keep Ron in the composite while the chief pauses between segments.
+				continuationDelayElapsed += 10;
+			}
 
 			const uint32 slice = 10;
 			if (delay(slice)) {
@@ -442,9 +447,6 @@ void Scene9100::runRonEntryConversation() {
 			}
 		}
 		_speech.stop();
-
-		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
-			delayFrame(375, kTalkingOverlayNone, 0, true, true);
 	}
 	clearSubtitle();
 
