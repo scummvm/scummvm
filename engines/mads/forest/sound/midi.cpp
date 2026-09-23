@@ -69,10 +69,14 @@ int MidiPlayer::open() {
 	if (_deviceType == MT_GM && ConfMan.getBool("native_mt32"))
 		_deviceType = MT_MT32;
 
+	MidiParser_HMP::HmiDevice hmiDevice = MidiParser_HMP::kHmiDeviceNone;
 	OPL::Config::OplType oplType;
 	switch (_deviceType) {
 	case MT_ADLIB:
 		oplType = MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+		hmiDevice = oplType == OPL::Config::kOpl3 ?
+				MidiParser_HMP::kHmiDeviceOpl3 :
+				MidiParser_HMP::kHmiDeviceAdLib;
 		MidiDriver_ADLIB_HMISOS *adLibDriver;
 		adLibDriver = new MidiDriver_ADLIB_HMISOS(oplType);
 		_driver = adLibDriver;
@@ -86,15 +90,21 @@ int MidiPlayer::open() {
 
 		break;
 	case MT_GM:
-	case MT_MT32:
+		hmiDevice = MidiParser_HMP::kHmiDeviceMpu401;
 		_driver = new MidiDriver_MT32GM(MusicType::MT_GM);
+		break;
+	case MT_MT32:
+		hmiDevice = MidiParser_HMP::kHmiDeviceMt32;
+		_driver = new MidiDriver_MT32GM(MusicType::MT_MT32);
 		break;
 	default:
 		_driver = new MidiDriver_NULL_Multisource();
 		break;
 	}
 
-	_parser = new MidiParser_HMP(0);
+	MidiParser_HMP *parser = new MidiParser_HMP(0);
+	parser->setHmiDevice(hmiDevice);
+	_parser = parser;
 	_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
 	_parser->property(MidiParser::mpDisableAutoStartPlayback, true);
 

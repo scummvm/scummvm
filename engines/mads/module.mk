@@ -374,6 +374,7 @@ MODULE_OBJS := \
 	dragonsphere/sound/rsound_dragonsphere.o \
 	dragonsphere/sound/sound.o \
 	forest/forest.o \
+	forest/console.o \
 	forest/extra.o \
 	forest/global.o \
 	forest/inventory.o \

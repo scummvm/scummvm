@@ -72,7 +72,9 @@ void DigiPlayer::play(const char *name, int slot) {
 	int vol = (_initialVolume == MAX_DIGI_VOLUME) ? 255 : _initialVolume * 255 / 327 / 100;
 	_initialVolume = MAX_DIGI_VOLUME;
 
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &c._soundHandle, audioStream, -1, vol);
+	const Audio::Mixer::SoundType soundType = (name[0] == 's' || name[0] == 'S') ?
+		Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+	_mixer->playStream(soundType, &c._soundHandle, audioStream, -1, vol);
 	c._isPlaying = true;
 }
 
