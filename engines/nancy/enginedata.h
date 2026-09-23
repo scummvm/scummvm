@@ -545,10 +545,11 @@ enum TaskButton {
 	kTaskButtonInventory = 1,
 	kTaskButtonNotebook = 2,
 	kTaskButtonCellphone = 3,
-	// Nancy12 only: a non-clickable coin purse that shows Nancy's money on
-	// hover, inserted before HELP. HELP is therefore always the last taskbar
-	// button (index 4 in games without the coin purse, index 5 in Nancy12) and
-	// has no fixed constant.
+	// Nancy12, Nancy14 and Nancy15: a non-clickable coin purse (a wallet for
+	// the Hardy boys) that shows the played character's money on hover,
+	// inserted before HELP. HELP is therefore always the last taskbar button
+	// (index 4 in games without the coin purse, index 5 in the others) and has
+	// no fixed constant.
 	kTaskButtonCoinPurse = 4
 };
 
@@ -892,6 +893,10 @@ struct UIRC : public EngineData {
 // Renders a UI resource's value the way the games' UI does: a currency symbol
 // followed by the value, split into whole units and decimals as the record asks.
 Common::String formatUIResourceValue(const UIRC::ItemRecord &item, int32 value);
+
+// True in the games that keep the played character's money in UI resource 0 and
+// show it on the taskbar's coin purse (a wallet for the Hardy boys).
+bool hasMoneyResource();
 
 // Music mix table. Introduced in Nancy 13. Each record maps a short location
 // code (e.g. "BRI", "CAM", "TUT") to the set of music / ambience tracks that

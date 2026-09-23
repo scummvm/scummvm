@@ -1044,12 +1044,17 @@ void ResourceUse::init() {
 	}
 
 	if (haveItem && _drawResourceValue) {
+		// Unlike the taskbar coin purse, the overlay prints the bare number:
+		// no currency symbol and no decimal point, whatever the record says
 		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
 		const Font *font = g_nancy->_graphics->getFont(item.fontID);
-		if (font && item.numDecimals >= 0) {
+		if (font) {
 			const Common::String text =
-				formatUIResourceValue(item, NancySceneState.getUIResource(_resourceIndex, getCharacterIndex()));
-			font->drawString(&_drawSurface, text, _valueDest.x, _valueDest.y, screenBounds.width() - _valueDest.x, 0);
+				Common::String::format("%d", NancySceneState.getUIResource(_resourceIndex, getCharacterIndex()));
+
+			// The record's y is the bottom row the glyphs are aligned on
+			const int y = _valueDest.y - font->getFontHeight() + 1;
+			font->drawString(&_drawSurface, text, _valueDest.x, y, screenBounds.width() - _valueDest.x, 0);
 		}
 	}
 
