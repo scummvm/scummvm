@@ -143,16 +143,16 @@ void SimplePuzzleData::synchronize(Common::Serializer &ser) {
 
 // PCUI has room for more characters than any game actually ships, so the
 // active one is kept inside the journals we keep
-static uint activeJournalSlot() {
+static uint activePlayerCharacterSlot() {
 	return MIN<uint>(g_nancy->getPlayerCharacter(), kMaxPlayerCharacters - 1);
 }
 
 Common::Array<JournalData::Entry> &JournalData::entries(uint16 surfaceID) {
-	return journalEntries[activeJournalSlot()][surfaceID];
+	return journalEntries[activePlayerCharacterSlot()][surfaceID];
 }
 
 bool JournalData::hasEntries(uint16 surfaceID) const {
-	return journalEntries[activeJournalSlot()].contains(surfaceID);
+	return journalEntries[activePlayerCharacterSlot()].contains(surfaceID);
 }
 
 void JournalData::inheritEntries(uint from, uint to) {
@@ -298,20 +298,26 @@ void GridMapPuzzleData::synchronize(Common::Serializer &ser) {
 }
 
 void QuizPuzzleData::synchronize(Common::Serializer &ser) {
-	// Serialize as: numScenes, then for each scene: sceneID, numBoxes, box data
-	uint16 numScenes = (uint16)boxCorrect.size();
-	ser.syncAsUint16LE(numScenes);
+	// Serialize as: numSlots, then for each slot: key, numBoxes, box data
+	uint16 numSlots = (uint16)boxCorrect.size();
+	ser.syncAsUint16LE(numSlots);
 
 	if (ser.isLoading()) {
 		boxCorrect.clear();
 		typedText.clear();
-		for (uint16 s = 0; s < numScenes; ++s) {
-			uint16 sceneID = 0;
-			ser.syncAsUint16LE(sceneID);
+		for (uint16 s = 0; s < numSlots; ++s) {
+			uint32 key = 0;
+			if (ser.getVersion() >= 12) {
+				ser.syncAsUint32LE(key);
+			} else {
+				uint16 sceneID = 0;
+				ser.syncAsUint16LE(sceneID);
+				key = sceneID;
+			}
 			byte num = 0;
 			ser.syncAsByte(num);
-			auto &bc = boxCorrect[sceneID];
-			auto &tt = typedText[sceneID];
+			auto &bc = boxCorrect[key];
+			auto &tt = typedText[key];
 			bc.resize(num, false);
 			tt.resize(num);
 			for (uint i = 0; i < num; ++i) {
@@ -323,11 +329,11 @@ void QuizPuzzleData::synchronize(Common::Serializer &ser) {
 		}
 	} else {
 		for (auto &entry : boxCorrect) {
-			uint16 sceneID = entry._key;
-			ser.syncAsUint16LE(sceneID);
+			uint32 key = entry._key;
+			ser.syncAsUint32LE(key);
 			byte num = (byte)entry._value.size();
 			ser.syncAsByte(num);
-			auto &tt = typedText[sceneID];
+			auto &tt = typedText[key];
 			for (uint i = 0; i < num; ++i) {
 				byte b = entry._value[i] ? 1 : 0;
 				ser.syncAsByte(b);
@@ -418,11 +424,32 @@ void TableData::setValue(uint16 index, int16 value) {
 	}
 }
 
-void CellPhoneData::synchronize(Common::Serializer &ser) {
-	ser.syncAsByte(noSignal);
-	ser.syncAsByte(batteryLow);
-	ser.syncAsByte(seeded);
+CellPhoneData::Phone &CellPhoneData::active() {
+	return phones[activePlayerCharacterSlot()];
+}
 
+const CellPhoneData::Phone &CellPhoneData::active() const {
+	return phones[activePlayerCharacterSlot()];
+}
+
+void CellPhoneData::synchronize(Common::Serializer &ser) {
+	syncPhone(ser, phones[0]);
+
+	// Nancy15+ protagonists each carry their own phone. Only their slots are
+	// written, so the save format of every earlier game is untouched.
+	if (g_nancy->getGameType() >= kGameTypeNancy15 && ser.getVersion() >= 12) {
+		for (uint i = 1; i < kMaxPlayerCharacters; ++i) {
+			syncPhone(ser, phones[i]);
+		}
+	}
+}
+
+void CellPhoneData::syncPhone(Common::Serializer &ser, Phone &phone) {
+	ser.syncAsByte(phone.noSignal);
+	ser.syncAsByte(phone.batteryLow);
+	ser.syncAsByte(phone.seeded);
+
+	Common::Array<UICL::Contact> &contacts = phone.contacts;
 	uint16 numContacts = (uint16)contacts.size();
 	ser.syncAsUint16LE(numContacts);
 
@@ -457,8 +484,8 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	syncLinkArray(ser, emailMessages);
-	syncLinkArray(ser, searchLinks);
+	syncLinkArray(ser, phone.emailMessages);
+	syncLinkArray(ser, phone.searchLinks);
 }
 
 void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<SearchLink> &arr) {
