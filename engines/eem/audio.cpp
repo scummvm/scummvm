@@ -43,6 +43,25 @@ AudioPlayer::AudioPlayer(EEMEngine *vm) :
 	_isMacintosh(vm && vm->isMacintosh()) {
 }
 
+static Audio::SeekableAudioStream *makeMacSoundStream(Common::SeekableReadStream *stream) {
+	Audio::SeekableAudioStream *audio = Audio::makeMacSndStream(stream, DisposeAfterUse::YES);
+	if (!audio || audio->isStereo() || audio->getLength().totalNumberOfFrames() == 0)
+		return audio;
+
+	// The original Mac speech/SFX resources include a trailing 0x00 sample
+	// in their PCM length. In unsigned 8-bit audio this is full negative
+	// amplitude, not silence, and causes a pop at the end (bug #17223).
+	// Trim it here so both snd and decoded csnd are handled, without
+	// changing the shared decoder or the music instrument resources.
+	const Audio::Timestamp end = audio->getLength().addFrames(-1);
+	int16 lastSample;
+	if (audio->seek(end) && audio->readBuffer(&lastSample, 1) == 1 && lastSample == -32768)
+		return new Audio::SubSeekableAudioStream(audio, Audio::Timestamp(0, audio->getRate()), end);
+
+	audio->rewind();
+	return audio;
+}
+
 struct MacSndResource {
 	const char *name;
 	uint16 id;
@@ -275,7 +294,7 @@ void AudioPlayer::playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
 	}
 
 	Audio::SeekableAudioStream *audioStream =
-		Audio::makeMacSndStream(stream, DisposeAfterUse::YES);
+		makeMacSoundStream(stream);
 	if (!audioStream) {
 		delete stream;
 		warning("AudioPlayer: Mac snd resource %u is not playable", resourceId);
@@ -475,7 +494,7 @@ bool AudioPlayer::playMacMysterySound(uint num) {
 	}
 
 	Audio::SeekableAudioStream *audioStream = stream
-		? Audio::makeMacSndStream(stream, DisposeAfterUse::YES) : nullptr;
+		? makeMacSoundStream(stream) : nullptr;
 	if (!audioStream) {
 		delete stream;
 		warning("AudioPlayer: Mac mystery sound resource %u is not playable",

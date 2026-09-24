@@ -126,6 +126,124 @@ void ZxRecordingDecoder::finish() {
 	_sync = false;
 }
 
+bool unpackZxSpectrumBlock(Common::Array<byte> &data) {
+	// Recognize the self-extracting LZ/RLE loader before reading its operands.
+	const byte loader[] = { 0x01, 0x34, 0x00, 0x11, 0xc6, 0x5b, 0xd5, 0xed, 0xb0, 0xb7, 0xc9, 0x11 };
+	const byte lzPrefix[] = { 0x2b, 0x7e, 0x1b, 0x12, 0xd6 };
+	const byte lzSuffix[] = {
+		0x20, 0xf8, 0x2b, 0xb6, 0x28, 0x14, 0x2b, 0xe5, 0x6e, 0x4f, 0xe6, 0x07, 0x67, 0x23, 0x19, 0xa9,
+		0x0f, 0x0f, 0x0f, 0xc6, 0x03, 0x4f, 0xed, 0xb8, 0x13, 0xe1, 0xed, 0x52, 0x19, 0x20, 0xdb, 0xc3
+	};
+	if (data.size() < 66 || data[0] != 0x21 || memcmp(data.data() + 3, loader, sizeof(loader)) ||
+			data[17] != 0x01 || READ_BE_UINT32(data.data() + 20) != 0xedb0eb11 ||
+			memcmp(data.data() + 26, lzPrefix, sizeof(lzPrefix)) || memcmp(data.data() + 32, lzSuffix, sizeof(lzSuffix)))
+		return true;
+
+	int base = READ_LE_UINT16(data.data() + 15);
+	uint16 packedSize = READ_LE_UINT16(data.data() + 18);
+	int end = READ_LE_UINT16(data.data() + 24);
+	int entry = READ_LE_UINT16(data.data() + 64);
+	byte marker = data[31];
+	if (READ_LE_UINT16(data.data() + 1) != base + 14 || !packedSize || packedSize + 66U != data.size() ||
+			base + data.size() > 0x10000 || base + packedSize >= end)
+		return false;
+
+	Common::Array<byte> memory;
+	memory.resize(0x10000);
+	memcpy(memory.data() + base, data.data() + 66, packedSize);
+	int src = base + packedSize;
+	int dst = end;
+
+	// The first stage expands backward until its input and output pointers meet.
+	do {
+		if (src <= base || src >= dst)
+			return false;
+		byte value = memory[--src];
+		memory[--dst] = value;
+		if (value != marker)
+			continue;
+		if (src <= base)
+			return false;
+		byte code = memory[--src];
+		if (code) {
+			if (src <= base)
+				return false;
+			int offset = ((code & 7) << 8) | memory[--src];
+			int count = (code >> 3) + 3;
+			int copy = dst + offset + 1;
+			if (copy >= end || dst - count + 1 < src)
+				return false;
+			while (count--)
+				memory[dst--] = memory[copy--];
+			++dst;
+		}
+	} while (src != dst);
+
+	if (entry < base || entry + 4 > end)
+		return false;
+	bool screen = memory[entry] == 0x21 && READ_LE_UINT16(memory.data() + entry + 1) == base && memory[entry + 3] == 0xe5;
+	if (screen)
+		entry += 4;
+
+	const byte rleLoader[] = { 0x01, 0x12, 0x00, 0xd5, 0xed, 0xb0, 0x21 };
+	const byte rleCode[] = { 0x7e, 0x07, 0xcb, 0x3f, 0x2b, 0xed, 0xa8, 0xe0, 0x3d, 0xcb, 0xbf, 0x28, 0xf3, 0x30, 0xf6, 0x23, 0x18, 0xf3 };
+	if (entry + 40 > end || memory[entry] != 0x21 || READ_LE_UINT16(memory.data() + entry + 1) != entry + 22 ||
+			memory[entry + 3] != 0x11 || memcmp(memory.data() + entry + 6, rleLoader, sizeof(rleLoader)) ||
+			memory[entry + 15] != 0x11 || memory[entry + 18] != 0x01 || memory[entry + 21] != 0xc9 ||
+			memcmp(memory.data() + entry + 22, rleCode, sizeof(rleCode)))
+		return false;
+
+	src = READ_LE_UINT16(memory.data() + entry + 13);
+	dst = READ_LE_UINT16(memory.data() + entry + 16);
+	int remaining = READ_LE_UINT16(memory.data() + entry + 19);
+	int start = dst + 1 - remaining;
+	if (!remaining || start < base || src < start || src >= entry || src > dst)
+		return false;
+	end = dst + 1;
+
+	// The second stage uses the high bit for repeated runs; a zero count means 128.
+	while (remaining) {
+		if (src < start || src > dst)
+			return false;
+		byte control = memory[src--];
+		int count = MIN<int>((control & 0x7f) ? (control & 0x7f) : 128, remaining);
+		remaining -= count;
+		while (count--) {
+			if (src < start || src > dst)
+				return false;
+			memory[dst--] = memory[src];
+			if (!(control & 0x80))
+				--src;
+		}
+		if (control & 0x80)
+			--src;
+	}
+
+	if (screen) {
+		// Discard the screen-copy routine preceding the SCR image.
+		if (start != base + 12 || end - start != 6912 || memory[base] != 0x21 ||
+				READ_LE_UINT16(memory.data() + base + 1) != start || READ_BE_UINT32(memory.data() + base + 3) != 0x11004001 ||
+				READ_LE_UINT16(memory.data() + base + 7) != 6912 || memory[base + 9] != 0xed ||
+				memory[base + 10] != 0xb0 || memory[base + 11] != 0xc9)
+			return false;
+		base = start;
+	}
+	data.assign(memory.begin() + base, memory.begin() + end);
+	return true;
+}
+
+Common::SeekableReadStream *openZxSpectrumFile(const Common::Path &name) {
+	Common::File file;
+	if (!file.open(name) || file.size() <= 0 || file.size() > 0x10000)
+		return nullptr;
+	Common::Array<byte> data;
+	data.resize(file.size());
+	if (file.read(data.data(), data.size()) != data.size() || !unpackZxSpectrumBlock(data))
+		return nullptr;
+	Common::MemoryReadStream stream(data.data(), data.size());
+	return stream.readStream(stream.size());
+}
+
 bool extractZxSpectrumTapeFiles(Common::SeekableReadStream &stream, const char *prefix, ZxTapeFileList &files) {
 	files.clear();
 
@@ -156,6 +274,8 @@ bool extractZxSpectrumTapeFiles(Common::SeekableReadStream &stream, const char *
 		if (block.tap.size() >= 2) {
 			Common::Array<byte> body;
 			body.assign(block.tap.begin() + 1, block.tap.end() - 1);
+			if (!unpackZxSpectrumBlock(body))
+				return false;
 			if (body.size() >= 160 && READ_BE_UINT32(body.data()) == MKTAG('K', 'I', 'T', 'S') &&
 					READ_LE_UINT16(body.data() + 4) == body.size()) {
 				kitData = body;

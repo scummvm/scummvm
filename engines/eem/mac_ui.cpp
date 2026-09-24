@@ -35,7 +35,7 @@ namespace EEM {
 
 namespace {
 
-struct MacPuzzleItem {
+struct MacDialogItem {
 	Common::Rect rect;
 	byte type;
 	uint16 picture;
@@ -50,15 +50,16 @@ Common::Rect readPuzzleRect(Common::SeekableReadStream &stream) {
 	return Common::Rect(left, top, right, bottom);
 }
 
-bool loadPuzzleDialog(uint16 id, Common::Rect &rect, Common::Array<MacPuzzleItem> &items) {
+bool loadMacDialog(const Common::Path &application, uint16 id, Common::Rect &rect,
+				   Common::Array<MacDialogItem> &items) {
 	Common::ScopedPtr<Common::SeekableReadStream> dialog(
-		openMacResource(Common::Path("EEM London CD"), MKTAG('D', 'L', 'O', 'G'), id));
+		openMacResource(application, MKTAG('D', 'L', 'O', 'G'), id));
 	if (!dialog || dialog->size() < 20)
 		return false;
 	rect = readPuzzleRect(*dialog);
 	dialog->seek(18);
 	Common::ScopedPtr<Common::SeekableReadStream> list(
-		openMacResource(Common::Path("EEM London CD"), MKTAG('D', 'I', 'T', 'L'), dialog->readUint16BE()));
+		openMacResource(application, MKTAG('D', 'I', 'T', 'L'), dialog->readUint16BE()));
 	if (!list || list->size() < 2)
 		return false;
 	const uint count = list->readUint16BE() + 1;
@@ -66,7 +67,7 @@ bool loadPuzzleDialog(uint16 id, Common::Rect &rect, Common::Array<MacPuzzleItem
 		if (list->size() - list->pos() < 14)
 			return false;
 		list->skip(4);
-		MacPuzzleItem item;
+		MacDialogItem item;
 		item.rect = readPuzzleRect(*list);
 		item.rect.translate(rect.left, rect.top);
 		item.type = list->readByte();
@@ -119,7 +120,117 @@ void drawPuzzleButton(Graphics::ManagedSurface &surface, const Common::Rect &rec
 	surface.drawLine(rect.right - 4, rect.bottom - 1, rect.right - 1, rect.bottom - 4, color);
 }
 
+// Mac EEM1 CODE 2:3248 opens DLOG/DITL 131 and returns true for item 1.
+bool runMacQuitDialog(const Common::Path &application) {
+	Common::Rect dialogRect;
+	Common::Array<MacDialogItem> items;
+	if (!loadMacDialog(application, 131, dialogRect, items) || items.size() < 3 ||
+			items[0].type != 4 || items[1].type != 4) {
+		warning("Unable to load Mac quit dialog");
+		return true;
+	}
+
+	Graphics::ManagedSurface saved;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return false;
+	saved.copyFrom(*screen);
+	g_system->unlockScreen();
+	byte colors[kPalSize];
+	getPaletteManager()->grabPalette(colors, 0, 256);
+	const Graphics::Palette palette(colors, 256);
+	const byte black = palette.findBestColor(0, 0, 0);
+	const byte white = palette.findBestColor(255, 255, 255);
+	Graphics::MacFontManager fontManager(0, Common::EN_ANY);
+	const Graphics::Font *font = fontManager.getFont(Graphics::MacFont(Graphics::kMacFontSystem, 12));
+	const int lineHeight = font->getFontHeight();
+
+	Graphics::ManagedSurface base;
+	base.copyFrom(saved);
+	Common::Rect border = dialogRect;
+	border.grow(5);
+	base.fillRect(border, white);
+	base.frameRect(border, black);
+	border.grow(-3);
+	base.frameRect(border, black);
+	border.grow(-1);
+	base.frameRect(border, black);
+	for (const MacDialogItem &item : items) {
+		if ((item.type & 0x7f) != 8)
+			continue;
+		Common::Array<Common::String> lines;
+		font->wordWrapText(item.text, item.rect.width(), lines);
+		for (uint i = 0; i < lines.size(); ++i)
+			font->drawString(base.surfacePtr(), lines[i], item.rect.left,
+				item.rect.top + i * lineHeight, item.rect.width(), black);
+	}
+
+	Graphics::ManagedSurface frame;
+	auto drawDialog = [&](int pressed) {
+		frame.copyFrom(base);
+		for (uint i = 0; i < 2; ++i) {
+			const Common::Rect &r = items[i].rect;
+			if ((int)i == pressed)
+				frame.drawRoundRect(r, 4, black, true);
+			drawPuzzleButton(frame, r, black);
+			font->drawString(frame.surfacePtr(), items[i].text, r.left,
+				r.top + (r.height() - lineHeight) / 2, r.width(),
+				(int)i == pressed ? white : black, Graphics::kTextAlignCenter);
+			if (i == 0) {
+				Common::Rect ring = r;
+				ring.grow(3);
+				drawPuzzleButton(frame, ring, black);
+			}
+		}
+		g_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
+		g_system->updateScreen();
+	};
+
+	drawDialog(-1);
+	int pressed = -1;
+	int choice = -1;
+	while (choice < 0 && !Engine::shouldQuit()) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				choice = 0;
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+					choice = 0;
+				else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					choice = 1;
+			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+				for (uint i = 0; i < 2; ++i) {
+					if (items[i].rect.contains(event.mouse))
+						pressed = i;
+				}
+				drawDialog(pressed);
+			} else if (event.type == Common::EVENT_MOUSEMOVE && pressed >= 0) {
+				drawDialog(items[pressed].rect.contains(event.mouse) ? pressed : -1);
+			} else if (event.type == Common::EVENT_LBUTTONUP && pressed >= 0) {
+				if (items[pressed].rect.contains(event.mouse))
+					choice = pressed;
+				pressed = -1;
+				drawDialog(-1);
+			}
+			if (choice >= 0)
+				break;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, saved.w, saved.h);
+	g_system->updateScreen();
+	return choice == 0 || Engine::shouldQuit();
+}
+
 } // namespace
+
+bool EEMEngine::areYouSureMac() {
+	const Common::Path application(isLondon() ? "EEM London CD" :
+		isMacCD() ? "Eagle Eye Mysteries CD" : "Eagle Eye Mysteries");
+	return runMacQuitDialog(application);
+}
 
 // Mac London CODE 6:5554/5a1a; the Mac release has no TRAVEL*.ANM files.
 bool EEMEngine::playMacLondonTravelAnimation(uint8 travelKind) {
@@ -278,8 +389,8 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 		}
 	}
 	Common::Rect dialogRect;
-	Common::Array<MacPuzzleItem> items;
-	if (stream.err() || !loadPuzzleDialog(dialogId, dialogRect, items) || items.size() < 5) {
+	Common::Array<MacDialogItem> items;
+	if (stream.err() || !loadMacDialog(Common::Path("EEM London CD"), dialogId, dialogRect, items) || items.size() < 5) {
 		warning("Unable to load Mac London puzzle dialog %u", dialogId);
 		return false;
 	}
@@ -287,7 +398,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 		selectionRects[i].translate(dialogRect.left, dialogRect.top);
 
 	byte oldPalette[kPalSize];
-	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+	getPaletteManager()->grabPalette(oldPalette, 0, 256);
 	Graphics::Palette palette(oldPalette, 256);
 	Graphics::ManagedSurface background;
 	if (!loadPuzzlePicture(backgroundId, background, palette, true)) {
@@ -341,7 +452,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 	bool accepted = false;
 	bool done = false;
 	setInteractiveMouseCursor(false);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
+	getPaletteManager()->setPalette(palette.data(), 0, 256);
 	if (type == 0)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	while (!done && !shouldQuit()) {
@@ -351,7 +462,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 			frame.blitFrom(selectionPictures[selected], Common::Rect(selectionPictures[selected].w,
 				selectionPictures[selected].h), selectionRects[selected]);
 		for (uint i = 0; i < items.size(); ++i) {
-			const MacPuzzleItem &item = items[i];
+			const MacDialogItem &item = items[i];
 			const byte itemType = item.type & 0x7f;
 			const Common::Rect &r = item.rect;
 			if (itemType == 4) {
@@ -442,7 +553,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 	}
 	if (type == 0)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-	g_system->getPaletteManager()->setPalette(oldPalette, 0, 256);
+	getPaletteManager()->setPalette(oldPalette, 0, 256);
 	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, saved.w, saved.h);
 	input.trim();
 	input.toUppercase();

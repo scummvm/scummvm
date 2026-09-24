@@ -388,7 +388,7 @@ void EEMEngine::playMacLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 	byte pal[kPalSize];
 	const bool havePalette = getSitePalette(0x39, pal);
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	const uint16 music[] = { 27, 36, 28, 29, 36 };
 	bool firstFrame = true;
 
@@ -486,7 +486,7 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 	byte pal[kPalSize];
 	const bool havePal = getSitePalette(0x39, pal);
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 
 	bool skip = false;
@@ -784,7 +784,7 @@ void EEMEngine::doInitClues() {
 	const bool haveDemoPalette = demo && getSitePalette(0x22, demoPalette);
 	if (demo && haveDemoPalette) {
 		byte black[kPalSize] = {};
-		g_system->getPaletteManager()->setPalette(black, 0, 256);
+		getPaletteManager()->setPalette(black, 0, 256);
 	} else {
 		setSitePalette(isLondon() ? 0x39 : 0x22);
 	}
@@ -1752,6 +1752,9 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 }
 
 bool EEMEngine::areYouSure() {
+	if (isMacintosh())
+		return areYouSureMac();
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::ManagedSurface saved(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());

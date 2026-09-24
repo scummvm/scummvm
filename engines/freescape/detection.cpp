@@ -625,6 +625,15 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
 	},
 	{
+		"totaleclipse2",
+		"",
+		AD_ENTRY1s("totaleclipse2.zx.data", "1be6a1747decb1f788e3c277dccb1ac4", 28916),
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_NO_FLAGS,
+		GUIO5(GUIO_NOMIDI, GUIO_RENDERZX, GAMEOPTION_MODERN_MOVEMENT, GAMEOPTION_WASD_CONTROLS, GAMEOPTION_AY_MUSIC)
+	},
+	{
 		"totaleclipse",
 		"",
 		{

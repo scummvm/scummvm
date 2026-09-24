@@ -174,14 +174,16 @@ void CellPhonePopup::init() {
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getScreenPixelFormat());
 
-	// Persistent state lives in CellPhoneData (saved across the game).
-	// First-time init seeds the runtime contact list from the chunk;
-	// subsequent inits (e.g. after a load) restore the saved state.
+	// Persistent state lives in CellPhoneData (saved across the game), one
+	// phone per player character. First-time init seeds the runtime contact
+	// list from the chunk of whoever is being played; subsequent inits (e.g.
+	// after a load or a character switch) restore the saved state.
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
-		if (!cellData->seeded) {
-			cellData->contacts = _uiclData->contacts;
-			cellData->seeded = true;
+		CellPhoneData::Phone &phone = cellData->active();
+		if (!phone.seeded) {
+			phone.contacts = _uiclData->contacts;
+			phone.seeded = true;
 
 			// The UICL chunk can ship one initial email and one initial
 			// web-search entry, populated at new-game start (an empty key
@@ -193,9 +195,9 @@ void CellPhonePopup::init() {
 				addSearchLink(1, _uiclData->initialSearch);
 			}
 		}
-		_contacts = cellData->contacts;
-		_noSignal = cellData->noSignal;
-		_batteryLow = cellData->batteryLow;
+		_contacts = phone.contacts;
+		_noSignal = phone.noSignal;
+		_batteryLow = phone.batteryLow;
 	} else {
 		_contacts = _uiclData->contacts;
 	}
@@ -227,7 +229,7 @@ void CellPhonePopup::setNoSignal(bool noSignal) {
 	_noSignal = noSignal;
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
-		cellData->noSignal = noSignal;
+		cellData->active().noSignal = noSignal;
 	}
 	if (_isVisible) {
 		drawScreenContent();
@@ -238,7 +240,7 @@ void CellPhonePopup::setBatteryLow(bool low) {
 	_batteryLow = low;
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
-		cellData->batteryLow = low;
+		cellData->active().batteryLow = low;
 	}
 	if (_isVisible) {
 		drawScreenContent();
@@ -255,7 +257,7 @@ void CellPhonePopup::addSearchLink(int16 mode, const SearchLink &link) {
 	// vs anything else (search) — not specifically mode == 1.
 	const bool isSearch = (mode != 0);
 	Common::Array<SearchLink> &list =
-		isSearch ? cellData->searchLinks : cellData->emailMessages;
+		isSearch ? cellData->active().searchLinks : cellData->active().emailMessages;
 
 	// Skip duplicates (matched by key) so re-running the scene doesn't
 	// pile up the same entries.
@@ -293,7 +295,7 @@ void CellPhonePopup::upsertContact(const UICL::Contact &c) {
 
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
-		cellData->contacts = _contacts;
+		cellData->active().contacts = _contacts;
 	}
 
 	if (_isVisible && _screenState == kDirectory) {
@@ -308,10 +310,11 @@ void CellPhonePopup::open() {
 
 	// Re-pull persistent state in case a save was loaded after init().
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
-	if (cellData && cellData->seeded) {
-		_contacts = cellData->contacts;
-		_noSignal = cellData->noSignal;
-		_batteryLow = cellData->batteryLow;
+	if (cellData && cellData->active().seeded) {
+		const CellPhoneData::Phone &phone = cellData->active();
+		_contacts = phone.contacts;
+		_noSignal = phone.noSignal;
+		_batteryLow = phone.batteryLow;
 		Common::sort(_contacts.begin(), _contacts.end(), contactNameLess);
 	}
 
@@ -618,7 +621,9 @@ void CellPhonePopup::drawScreenContent() {
 			// Nancy 13's top row is Cam / Menu / Dir; drawWebDirLabels() paints
 			// Menu + Dir, so add the Cam label. The "Welcome / River Heights
 			// Wireless" picture sits over the plain keyboard background.
-			drawRibbonLabel(_uiclData->dialLabel);
+			if (hasCameraFeature()) {
+				drawRibbonLabel(_uiclData->dialLabel);
+			}
 			if (!_noSignal) {
 				drawLcdTile(kN13MsgWelcome);
 			}
@@ -700,7 +705,10 @@ void CellPhonePopup::drawScreenContent() {
 		// the removed web browser was subButtons[5].
 		if (g_nancy->getGameType() >= kGameTypeNancy13) {
 			drawHubButton(kN13SubEmail);
-			drawHubButton(kN13SubViewPics);
+			// A phone without a camera leaves E-mail as the only option.
+			if (hasCameraFeature()) {
+				drawHubButton(kN13SubViewPics);
+			}
 		} else {
 			drawHubButton(kSubEmail);
 			// No cellular signal locks the phone to "Old Email Only", so the
@@ -1004,21 +1012,23 @@ Common::Array<uint> CellPhonePopup::listVisibleIndices() const {
 		return out;
 	}
 
+	const CellPhoneData::Phone &phone = cellData->active();
+
 	if (_screenState == kWebList) {
-		for (uint i = 0; i < cellData->searchLinks.size(); ++i) {
+		for (uint i = 0; i < phone.searchLinks.size(); ++i) {
 			out.push_back(i);
 		}
 	} else if (_screenState == kEmailList) {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-		for (uint i = 0; i < cellData->emailMessages.size(); ++i) {
+		for (uint i = 0; i < phone.emailMessages.size(); ++i) {
 			// "Old Email Only" (no-signal) hides messages not yet read.
-			if (_noSignal && !cellData->emailMessages[i].read) {
+			if (_noSignal && !phone.emailMessages[i].read) {
 				continue;
 			}
 			// A subject with no text drops the whole row, letting the next
 			// message move up. Nancy15 reuses Nancy14's UICL chunk, whose
 			// initial e-mail has no text in Nancy15.
-			if (!autotext || !autotext->texts.contains(cellData->emailMessages[i].key)) {
+			if (!autotext || !autotext->texts.contains(phone.emailMessages[i].key)) {
 				continue;
 			}
 			out.push_back(i);
@@ -1032,8 +1042,9 @@ void CellPhonePopup::drawLinkList() {
 	if (!cellData) {
 		return;
 	}
+	const CellPhoneData::Phone &phone = cellData->active();
 	const Common::Array<SearchLink> &list =
-		_screenState == kWebList ? cellData->searchLinks : cellData->emailMessages;
+		_screenState == kWebList ? phone.searchLinks : phone.emailMessages;
 	const Common::Array<uint> visible = listVisibleIndices();
 	if (visible.empty()) {
 		return;
@@ -1984,6 +1995,14 @@ bool CellPhonePopup::isContactVisible(const UICL::Contact &c) const {
 	return NancySceneState.getEventFlag((int16)c.visibility, g_nancy->_true);
 }
 
+bool CellPhonePopup::hasCameraFeature() const {
+	// Nancy 13 and 14 keep the camera inside the phone. Nancy 15 moved it out
+	// to the standalone camera device and never raises the flag its phone
+	// checks before showing the Cam label or the Menu's "View Pictures"
+	// option, so both stay hidden even though the chunk still describes them.
+	return g_nancy->getGameType() < kGameTypeNancy15;
+}
+
 Common::Rect CellPhonePopup::hubEmailRect() const {
 	// The Email option button: subButtons[3] before Nancy 13, [4] in Nancy 13.
 	const uint slot = g_nancy->getGameType() >= kGameTypeNancy13 ? kN13SubEmail : kSubEmail;
@@ -2401,9 +2420,10 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		// Highlight whichever option button the cursor is over.
 		const bool n13Hub = g_nancy->getGameType() >= kGameTypeNancy13;
-		// No signal removes the Internet Browser option (the Nancy 13 "view
-		// pictures" option in the same slot is not signal-gated).
-		const bool webDisabled = _noSignal && !n13Hub;
+		// No signal removes the Internet Browser option; the Nancy 13 "view
+		// pictures" option in the same slot is not signal-gated, but it is
+		// absent on a phone with no camera of its own.
+		const bool webDisabled = n13Hub ? !hasCameraFeature() : _noSignal;
 		const int emailSlot = n13Hub ? kN13SubEmail : kSubEmail;
 		const int webSlot = n13Hub ? kN13SubViewPics : kSubWeb;
 		const int newHubHover = emailR.contains(popupMouse) ? emailSlot
@@ -2618,8 +2638,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 			Common::Array<SearchLink> *list = nullptr;
 			if (cellData) {
-				list = (_screenState == kWebList) ? &cellData->searchLinks
-												  : &cellData->emailMessages;
+				list = (_screenState == kWebList) ? &cellData->active().searchLinks
+												  : &cellData->active().emailMessages;
 			}
 			// Map the visible row through the active filter to a real index.
 			const Common::Array<uint> visible = listVisibleIndices();
@@ -2813,7 +2833,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			playDialPadSound(_uiclData->dialPadSlots[UICL::kDialKeyTalk].soundName);
-			if (g_nancy->getGameType() >= kGameTypeNancy13 &&
+			if (g_nancy->getGameType() >= kGameTypeNancy13 && hasCameraFeature() &&
 					(_screenState == kWelcome || _screenState == kDialing)) {
 				// The Talk key doubles as the camera button on the welcome /
 				// dialing screen; in the directory it dials, so fall through.

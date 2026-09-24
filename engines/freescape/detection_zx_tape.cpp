@@ -19,34 +19,6 @@
  *
  */
 
-#ifndef FREESCAPE_ZX_TAPE_H
-#define FREESCAPE_ZX_TAPE_H
-
-#include "common/array.h"
-#include "common/path.h"
-
-namespace Common {
-class Archive;
-class FSNode;
-class SeekableReadStream;
-}
-
-struct ADGameDescription;
-
-namespace Freescape {
-
-struct ZxTapeFile {
-	Common::Path name;
-	Common::Array<byte> data;
-};
-
-typedef Common::Array<ZxTapeFile> ZxTapeFileList;
-
-Common::SeekableReadStream *openZxSpectrumFile(const Common::Path &name);
-bool extractZxSpectrumTapeFiles(Common::SeekableReadStream &stream, const char *prefix, ZxTapeFileList &files);
-bool matchZxSpectrumTapeFiles(const ZxTapeFileList &files, const ADGameDescription &desc, uint md5Bytes = 5000);
-Common::Archive *makeZxSpectrumTapeArchive(const ADGameDescription &desc, const Common::Path &gamePath);
-
-} // End of namespace Freescape
-
-#endif
+// Use a separate object for detection to avoid parallel builds writing to the
+// same object file as the engine plugin.
+#include "freescape/zx_tape.cpp"

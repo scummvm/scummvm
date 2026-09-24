@@ -1415,25 +1415,33 @@ UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 Common::String formatUIResourceValue(const UIRC::ItemRecord &item, int32 value) {
 	// Nancy 12 counts cents and shows a dollar amount, Nancy 14 counts whole
-	// euros. 0x80 is the euro sign in the games' extended ASCII character set.
-	const char currencySymbol = g_nancy->getGameType() >= kGameTypeNancy14 ? '\x80' : '$';
+	// euros, and Nancy 15 is back to dollars. 0x80 is the euro sign in the
+	// games' extended ASCII character set.
+	const char currencySymbol = g_nancy->getGameType() == kGameTypeNancy14 ? '\x80' : '$';
 
-	int32 divisor = 1;
-	for (int16 i = 0; i < item.numDecimals; ++i) {
-		divisor *= 10;
+	// The value is simply printed, then split so that its last numDecimals
+	// digits become the fraction; an amount below one unit is zero-padded to
+	// that many digits and printed without a leading zero (".05", not "0.05").
+	const uint numDecimals = MAX<int16>(item.numDecimals, 0);
+	Common::String digits = Common::String::format("%d", value);
+	while (digits.size() < numDecimals) {
+		digits = "0" + digits;
 	}
 
-	Common::String ret = Common::String::format("%c%d", currencySymbol, value / divisor);
+	const uint split = digits.size() - numDecimals;
+	Common::String ret(currencySymbol);
+	ret += Common::String(digits.c_str(), split);
 
-	if (item.numDecimals > 0) {
-		Common::String decimals = Common::String::format("%d", value % divisor);
-		while ((int16)decimals.size() < item.numDecimals) {
-			decimals = "0" + decimals;
-		}
-		ret += "." + decimals;
+	if (numDecimals > 0) {
+		ret += "." + Common::String(digits.c_str() + split);
 	}
 
 	return ret;
+}
+
+bool hasMoneyResource() {
+	const GameType gameType = g_nancy->getGameType();
+	return gameType == kGameTypeNancy12 || gameType == kGameTypeNancy14 || gameType == kGameTypeNancy15;
 }
 
 MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

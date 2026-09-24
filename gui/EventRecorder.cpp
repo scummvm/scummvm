@@ -73,6 +73,7 @@ EventRecorder::EventRecorder() {
 	_fakeTimer = 0;
 	_savedState = false;
 	_acquireCount = 0;
+	_recordModalDialog = false;
 	_needcontinueGame = false;
 	_temporarySlot = 0;
 	_realSaveManager = nullptr;
@@ -83,6 +84,7 @@ EventRecorder::EventRecorder() {
 	_screenshotPeriod = 0;
 	_playbackFile = nullptr;
 	_recordFile = nullptr;
+	_playbackQuitPosted = false;
 }
 
 EventRecorder::~EventRecorder() {
@@ -112,10 +114,12 @@ void EventRecorder::deinit() {
 	if (_playbackFile) {
 		_playbackFile->close();
 		delete _playbackFile;
+		_playbackFile = nullptr;
 	}
 	if (_recordFile) {
 		_recordFile->close();
 		delete _recordFile;
+		_recordFile = nullptr;
 	}
 	switchMixer();
 	switchTimerManagers();
@@ -133,6 +137,10 @@ void EventRecorder::updateFakeTimer(uint32 millis) {
 
 void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
 	if (!_initialized) {
+		return;
+	}
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) && _nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
 		return;
 	}
 	if (skipRecord) {
@@ -181,6 +189,10 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	if (!_initialized) {
 		return;
 	}
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) && _nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
+		return;
+	}
 	if (skipRecord || _processingMillis) {
 		millis = _fakeTimer;
 		return;
@@ -194,6 +206,9 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	case kRecorderRecord:
 		updateSubsystems();
 		updateFakeTimer(millis);
+		// Engines that quantize absolute time need the same clock origin during
+		// recording and playback, not just the same elapsed intervals.
+		millis = _fakeTimer;
 		timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
 		timerEvent.time = _fakeTimer;
 		_recordFile->writeEvent(timerEvent);
@@ -267,11 +282,19 @@ void EventRecorder::processScreenUpdate() {
 		break;
 	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
+		if (_nextEvent.type == Common::EVENT_QUIT) {
+			postPlaybackQuit();
+			return;
+		}
 		// if the next event isn't a screen update, fast forward until we find one.
 		if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
 			int numSkipped = 0;
 			while (true) {
 				_nextEvent = _playbackFile->getNextEvent();
+				if (_nextEvent.type == Common::EVENT_QUIT) {
+					postPlaybackQuit();
+					return;
+				}
 				numSkipped += 1;
 				if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
 					warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
@@ -312,9 +335,14 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 		!_initialized)
 		return false;
 
+	if (_nextEvent.type == Common::EVENT_QUIT) {
+		postPlaybackQuit();
+		return false;
+	}
 	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeTimeDate
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate
+	 || _nextEvent.recordedtype == Common::kRecorderEventTypePoll
 	 || _nextEvent.type == Common::EVENT_INVALID) {
 		return false;
 	}
@@ -335,6 +363,18 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 		break;
 	}
 	return true;
+}
+
+void EventRecorder::postPlaybackQuit() {
+	if (_playbackQuitPosted)
+		return;
+
+	Common::Event quitEvent;
+	quitEvent.type = Common::EVENT_QUIT;
+	g_system->getEventManager()->pushEvent(quitEvent);
+	_playbackQuitPosted = true;
+	_nextEvent.type = Common::EVENT_INVALID;
+	debugC(1, kDebugLevelEventRec, "playback:action=post-quit reason=EOF");
 }
 
 void EventRecorder::switchFastMode() {
@@ -366,14 +406,16 @@ void EventRecorder::togglePause() {
 }
 
 void EventRecorder::RegisterEventSource() {
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, Common::EventManager::kEventRecorderPriority, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, Common::EventManager::kEventRecorderPriority, false, true);
 }
 
 uint32 EventRecorder::getRandomSeed(const Common::String &name) {
+	// Consume the same date and timer queries as recording before restoring
+	// the saved seed, otherwise they block subsequent playback events.
+	uint32 result = Common::RandomSource::generateNewSeed();
 	if (_recordMode == kRecorderPlayback) {
 		return _playbackFile->getHeader().randomSourceRecords[name];
 	}
-	uint32 result = Common::RandomSource::generateNewSeed();
 	if (_recordMode == kRecorderRecord) {
 		_recordFile->getHeader().randomSourceRecords[name] = result;
 	}
@@ -402,6 +444,7 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	_fakeMixerManager->init();
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
+	_playbackQuitPosted = false;
 	_lastMillis = g_system->getMillis();
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
@@ -559,6 +602,9 @@ void EventRecorder::applyPlaybackSettings() {
 	}
 	removeDifferentEntriesInDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
 	removeDifferentEntriesInDomain(ConfMan.getActiveDomain());
+
+	// Startup warning confirmations are not recorded, and playback blocks live input.
+	ConfMan.setBool("enable_unsupported_game_warning", false, ConfMan.kTransientDomain);
 }
 
 void EventRecorder::removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain) {
@@ -595,6 +641,25 @@ void EventRecorder::updateSubsystems() {
 	_recordMode = kPassthrough;
 	_fakeMixerManager->update();
 	_recordMode = oldRecordMode;
+}
+
+void EventRecorder::notifyPoll() {
+	if (!_initialized)
+		return;
+
+	// Preserve empty polls as well: input received during an audio wait must not
+	// be replayed by an earlier poll before the engine enters that wait.
+	if ((_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate) &&
+			_nextEvent.recordedtype == Common::kRecorderEventTypePoll) {
+		_nextEvent = _playbackFile->getNextEvent();
+	}
+
+	if (_recordMode == kRecorderRecord || _recordMode == kRecorderUpdate) {
+		Common::RecorderEvent event;
+		event.recordedtype = Common::kRecorderEventTypePoll;
+		event.time = _fakeTimer;
+		_recordFile->writeEvent(event);
+	}
 }
 
 bool EventRecorder::notifyEvent(const Common::Event &ev) {
@@ -739,6 +804,10 @@ void EventRecorder::preDrawOverlayGui() {
 	if (isImGuiRecorderEnabled())
 		return;
 
+	// GUI dialogs own the overlay while recording is suspended.
+	if (_acquireCount > 0)
+		return;
+
 	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
@@ -757,6 +826,9 @@ void EventRecorder::preDrawOverlayGui() {
 
 void EventRecorder::postDrawOverlayGui() {
 	if (isImGuiRecorderEnabled())
+		return;
+
+	if (_acquireCount > 0)
 		return;
 
 	if ((_initialized) || (_needRedraw)) {
@@ -801,7 +873,11 @@ void EventRecorder::setFileHeader() {
 
 SDL_Surface *EventRecorder::getSurface(int width, int height) {
 	// Create a RGB565 surface of the requested dimensions.
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	return SDL_CreateSurface(width, height, SDL_PIXELFORMAT_RGB565);
+#else
 	return SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16, 0xF800, 0x07E0, 0x001F, 0x0000);
+#endif
 }
 
 bool EventRecorder::switchMode() {
@@ -963,4 +1039,3 @@ void EventRecorder::showImGui() {
 } // End of namespace GUI
 
 #endif // ENABLE_EVENTRECORDER
-

@@ -26,6 +26,7 @@
 #include "freescape/games/eclipse/ay.music.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/variables.h"
+#include "freescape/zx_tape.h"
 
 namespace Freescape {
 
@@ -91,21 +92,21 @@ void EclipseEngine::loadAssetsZXFullGame() {
 	Common::Path borderFile(Common::String::format("%s.zx.border", prefix));
 	Common::Path dataFile(Common::String::format("%s.zx.data", prefix));
 
-	file.open(titleFile);
+	file.open(openZxSpectrumFile(titleFile), titleFile.toString());
 	if (file.isOpen()) {
 		_title = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find %s", titleFile.toString().c_str());
 
 	file.close();
-	file.open(borderFile);
+	file.open(openZxSpectrumFile(borderFile), borderFile.toString());
 	if (file.isOpen()) {
 		_border = loadAndConvertScrImage(&file);
 	} else
 		error("Unable to find %s", borderFile.toString().c_str());
 	file.close();
 
-	file.open(dataFile);
+	file.open(openZxSpectrumFile(dataFile), dataFile.toString());
 	if (!file.isOpen())
 		error("Failed to open %s", dataFile.toString().c_str());
 

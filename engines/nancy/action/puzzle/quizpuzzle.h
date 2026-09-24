@@ -24,13 +24,14 @@
 
 #include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/util.h"
 
 namespace Nancy {
 namespace Action {
 
-// Text-entry quiz with multiple text boxes.
-// Different implementation for Nancy 8 vs Nancy 9+ (which has more
-// features and a different data format)
+// Text-entry quiz with multiple text boxes. Three data formats: Nancy 8,
+// Nancy 9 - Nancy 14, and Nancy 15, which rewrote the record around
+// count-prefixed answer lists and RandomSoundBlocks.
 class QuizPuzzle : public RenderActionRecord {
 public:
 	QuizPuzzle() : RenderActionRecord(7) {}
@@ -47,72 +48,110 @@ protected:
 	Common::String getRecordTypeName() const override { return "QuizPuzzle"; }
 
 private:
-	static const int kMaxBoxes = 13;
+	// Sanity cap. Nancy 8 and Nancy 9 store a fixed five boxes; Nancy 15 keeps
+	// 30 slots of 27 bytes per save slot, so 30 is the engine's own maximum.
+	static const uint kMaxBoxes = 30;
+	// Nancy 15 rejects a keystroke once the typed text no longer fits a save
+	// slot's 27-byte text buffer, with room left for the cursor character.
+	static const uint kMaxTypedLengthNancy15 = 24;
+	static const uint kMaxTypedLength = 16;
+	// From Nancy 9 to Nancy 14 a character is only accepted while the text
+	// still clears this margin at the right edge of its box
+	static const int kBoxTextMargin = 20;
 
-	// Format-specific read/execute implementations
-	void readDataOld(Common::SeekableReadStream &stream); // Nancy 8
-	void readDataNew(Common::SeekableReadStream &stream); // Nancy 9+
-	void executeOld(); // Nancy 8 state machine
-	void executeNew(); // Nancy 9+ state machine
+	// One answer box: its screen rect, the answers accepted for it (matched
+	// case-insensitively), the flags it drives, and the text typed into it.
+	struct Box {
+		Common::Rect rect;
+		Common::Array<Common::String> answers;
+		int16 correctFlag = -1;		// set when this box is answered correctly
+		int16 nonEmptyFlag = -1;	// Nancy 15: mirrors "this box has text"
 
-	// Helpers (shared by Nancy 8 and Nancy 9)
+		RandomSoundBlock correctSound;	// Nancy 9+
+		RandomSoundBlock wrongSound;	// Nancy 9+
+		Common::String correctText;		// Nancy 9 - Nancy 14 per-box caption
+		Common::String wrongText;
+
+		uint16 maxAnswerLength = 0;		// longest answer, used in auto-check mode
+
+		// -- Runtime state --
+		Common::String typedText;	// may end with the cursor character
+		bool correct = false;
+	};
+
+	// Format-specific read implementations
+	void readDataNancy8(Common::SeekableReadStream &stream);
+	void readDataNancy9(Common::SeekableReadStream &stream);
+	void readDataNancy15(Common::SeekableReadStream &stream);
+
+	// Format-specific state machines
+	void executeNancy8();
+	void executeNancy9();
+
+	// Helpers
 	void drawText();
 	void advanceToNextBox();
 	bool checkAllSolved() const;
-	bool checkAnswerForCurrentBox(); // checks, marks correct, sets event flag
+	// Scores the current box. A silent check only marks the box solved, as the
+	// original does after every keystroke; otherwise the box's flag is set too.
+	bool checkAnswerForCurrentBox(bool silent = false);
+	char getCursorChar() const;
+	uint getMaxTypedLength() const;
+	bool acceptsChar(char c) const;
+	bool fitsInBox(const Box &box, const Common::String &text) const;
 
-	// ---- Data (Nancy 8) ----
+	// Picks one name out of `block` at random and starts it, tracking it in
+	// _activeBoxSound so the state machine can wait for it. Returns false when
+	// the block is empty or names no sound.
+	bool playSoundBlock(const RandomSoundBlock &block);
+	void showBoxSubtitle(const Common::String &perBoxText, const Common::String &perRecordText);
+
+	uint32 getSaveKey();
+	void loadSavedAnswers();
+	void saveAnswer(uint boxIndex);
+
+	Common::Array<Box> _boxes;
+
+	// ---- Data (all formats) ----
 	uint16 _fontID = 0;
 	uint16 _cursorBlinkInterval = 500;
-	uint16 _numBoxes = 0;
 
-	// Text-box screen rects (viewport-relative), up to kMaxBoxes stored
-	Common::Rect _boxRects[kMaxBoxes];
+	SoundDescription _doneSound;		// Nancy 8 - Nancy 14 solve sound
+	Common::String _doneText;
+	RandomSoundBlock _doneSoundBlock;	// Nancy 15 solve sound
 
-	// Per-box answer data: up to 3 valid answers (case-insensitive match), plus
-	// an optional event flag to set when that box is answered correctly.
-	Common::String _answers[kMaxBoxes][3];
-	int16 _answerFlags[kMaxBoxes] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	SceneChangeWithFlag _solveScene;	// entered when all boxes are solved
+	SceneChangeWithFlag _cancelScene;	// entered when the puzzle is given up on
+	Common::Rect _exitHotspot;			// Nancy 9+: viewport-relative give-up hotspot
+	uint16 _exitCursorType = 0;			// Nancy 15
 
-	SoundDescription _correctSound;  // Nancy 8: global correct sound
+	// ---- Data (Nancy 8) ----
+	SoundDescription _correctSound;		// one sound shared by every box
 	Common::String _correctText;
-	SoundDescription _wrongSound;    // Nancy 8: global wrong sound
+	SoundDescription _wrongSound;
 	Common::String _wrongText;
 
-	SoundDescription _doneSound;     // done sound (both Nancy 8 and Nancy 9)
-	Common::String _doneText;
-
-	SceneChangeWithFlag _solveScene;   // scene to go to when all boxes are solved
-	SceneChangeWithFlag _cancelScene;  // scene to go to on cancel
-	Common::Rect _exitHotspot;         // Nancy 9+: viewport-relative cancel hotspot
-
 	// ---- Data (Nancy 9+) ----
-	char _cursorChar = '-';              // cursor character (configurable in Nancy 9)
-	Common::String _allowedChars;        // allowed typing chars (empty = all allowed)
-	bool _autoCheck = false;             // check answer after each char typed
-	bool _skipEmptyOnEnter = false;      // if true, Enter on empty box does nothing
+	char _cursorChar = '-';			// cursor character (configurable from Nancy 9)
+	Common::String _allowedChars;	// typeable characters (empty = all allowed)
+	bool _autoCheck = false;		// check the answer after each character typed
+	bool _skipEmptyOnEnter = false;	// if true, Enter on an empty box does nothing
 
-	uint16 _correctSoundChannel = 0;    // global channel for per-box correct sounds
-	uint16 _wrongSoundChannel = 0;      // global channel for per-box wrong sounds
+	// ---- Data (Nancy 15) ----
+	int16 _restoreFlag = -1;			// when set, previous answers are restored
+	bool _keepBoxOnWrongAnswer = false;	// don't move on after a wrong answer
+	bool _cycleSolvedBoxes = false;		// cycling also stops on solved boxes
+	uint16 _displaySourceScene = kNoScene;	// see _isDisplayOnly
+	bool _isDisplayOnly = false;		// no cursor character: shows another quiz's answers
+	Common::String _recordCorrectText;	// captions shared by every box
+	Common::String _recordWrongText;
+	RandomSoundBlock _invalidKeySound;	// played when a character is not allowed
+	Common::Array<ExitHotspot> _hotspots;	// flag-setting regions around the boxes
 
-	// Per-box sounds for Nancy 9 (name + volume; channel from global above)
-	Common::String _boxCorrectSoundName[kMaxBoxes];
-	uint16 _boxCorrectSoundVolume[kMaxBoxes] = {};
-	Common::String _boxCorrectText[kMaxBoxes];
-
-	Common::String _boxWrongSoundName[kMaxBoxes];
-	uint16 _boxWrongSoundVolume[kMaxBoxes] = {};
-	Common::String _boxWrongText[kMaxBoxes];
-
-	// Per-box max answer length (computed from answer strings, used in auto-check mode)
-	uint16 _boxMaxLen[kMaxBoxes] = {};
-
-	// ---- Runtime state (shared) ----
-	Common::String _typedText[kMaxBoxes]; // current text in each box (may end with cursor char)
-	bool _boxCorrect[kMaxBoxes] = {};     // true when box i has been answered correctly
-	uint16 _currentBox = 0;              // which box currently receives keyboard input
-	bool _solved = false;                 // all boxes answered correctly
-	bool _cancelled = false;             // user cancelled
+	// ---- Runtime state ----
+	uint _currentBox = 0;		// which box currently receives keyboard input
+	bool _solved = false;		// all boxes answered correctly
+	bool _cancelled = false;	// user gave up
 
 	enum SolveState {
 		kTyping          = 0, // waiting for key input; cursor blinks
@@ -137,7 +176,7 @@ private:
 
 	Time _nextBlinkTime = 0;
 
-	// Runtime: assembled sound description for current per-box sound (Nancy 9)
+	// The per-box sound currently playing, so it can be waited on and stopped
 	SoundDescription _activeBoxSound;
 };
 

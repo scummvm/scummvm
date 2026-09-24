@@ -999,7 +999,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				if (flic.hasDirtyPalette()) {
 					const byte *fpal = flic.getPalette();
 					if (fpal)
-						g_system->getPaletteManager()->setPalette(fpal, 0, 256);
+						getPaletteManager()->setPalette(fpal, 0, 256);
 				}
 				g_system->updateScreen();
 

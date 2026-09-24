@@ -38,6 +38,8 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
+#include "graphics/paletteman.h"
+
 #include "eem/animation.h"
 #include "eem/font.h"
 #include "eem/mystery.h"
@@ -52,6 +54,19 @@ class MusicPlayer;
 
 /// VGA palette size in bytes (256 colours × RGB)
 const uint kPalSize = 768;
+
+// Keep game colors uncorrected for fades and color matching. Apply the Mac
+// monitor gamma curve only when sending a palette to the backend.
+class MacPaletteManager : public PaletteManager {
+public:
+	void setPalette(const byte *colors, uint start, uint num) override;
+	void grabPalette(byte *colors, uint start, uint num) const override;
+
+private:
+	byte _colors[kPalSize] = {};
+};
+
+PaletteManager *getPaletteManager();
 
 void fadeCurrentPaletteToBlack(uint delayMs = 8);
 void fadePaletteFromBlack(const byte *target, uint delayMs = 8);
@@ -131,6 +146,7 @@ public:
 	~EEMEngine() override;
 
 	Common::Error run() override;
+	PaletteManager *getPaletteManager();
 
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
@@ -302,6 +318,7 @@ public:
 
 private:
 	void applyStartupTestOverrides();
+	bool areYouSureMac();
 	bool areMysteriesSolved(uint lo, uint hi) const;
 
 	/// True if *any* mystery in the inclusive 1-based range [lo, hi] is
@@ -649,6 +666,7 @@ private:
 	EEMFont    _newspaperFont;
 
 	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
+	MacPaletteManager _macPaletteManager;
 
 	uint16 _lastScreen;  ///< `_LastScreen @ 2d5d:3f24`.
 	uint16 _nextScreen;  ///< `_NextScreen @ 2d5d:3f26`.

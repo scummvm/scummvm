@@ -176,10 +176,12 @@ struct QuizPuzzleData : public PuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('Q', 'U', 'I', 'Z'); }
 	virtual void synchronize(Common::Serializer &ser);
 
-	// Keyed by solve-scene ID so that multiple QuizPuzzle instances
-	// (e.g. a two-page Nancy 9 puzzle) each maintain their own state.
-	Common::HashMap<uint16, Common::Array<bool>> boxCorrect;
-	Common::HashMap<uint16, Common::Array<Common::String>> typedText;
+	// Keyed by solve-scene ID up to Nancy 14, so that multiple QuizPuzzle
+	// instances (e.g. a two-page Nancy 9 puzzle) each maintain their own state.
+	// Nancy 15 keys by (scene ID << 16 | record index), as the original does,
+	// since one scene can hold several quiz records sharing a solve scene.
+	Common::HashMap<uint32, Common::Array<bool>> boxCorrect;
+	Common::HashMap<uint32, Common::Array<Common::String>> typedText;
 };
 
 struct JournalData : public PuzzleData {
@@ -260,21 +262,34 @@ struct CellPhoneData : public PuzzleData {
 	static constexpr uint32 getTag() { return MKTAG('C', 'E', 'L', 'L'); }
 	virtual void synchronize(Common::Serializer &ser);
 
-	bool noSignal = false;
-	bool batteryLow = false;
-	// Loaded set to true once the popup has seeded the contact list from
-	// the UICL chunk; we then own it as runtime data.
-	bool seeded = false;
-	Common::Array<UICL::Contact> contacts;
+	// Everything one handset holds. From Nancy15 each protagonist carries
+	// their own phone, with their own contacts, mail and reception, so the
+	// state is kept per player character. Earlier games have a single
+	// character and only ever touch slot 0.
+	struct Phone {
+		bool noSignal = false;
+		bool batteryLow = false;
+		// Set to true once the popup has seeded the contact list from the
+		// UICL chunk; we then own it as runtime data.
+		bool seeded = false;
+		Common::Array<UICL::Contact> contacts;
 
-	// Populated by AR 131 (AddSearchLink). Mode 0 → emailMessages (each
-	// with a body-text CVTX key + read flag); any non-zero mode →
-	// searchLinks (web search topics).
-	Common::Array<SearchLink> emailMessages;
-	Common::Array<SearchLink> searchLinks;
+		// Populated by AR 131 (AddSearchLink). Mode 0 → emailMessages (each
+		// with a body-text CVTX key + read flag); any non-zero mode →
+		// searchLinks (web search topics).
+		Common::Array<SearchLink> emailMessages;
+		Common::Array<SearchLink> searchLinks;
+	};
+
+	// The phone belonging to the character currently being played.
+	Phone &active();
+	const Phone &active() const;
+
+	Phone phones[kMaxPlayerCharacters];
 
 private:
-	void syncLinkArray(Common::Serializer &ser, Common::Array<SearchLink> &arr);
+	static void syncPhone(Common::Serializer &ser, Phone &phone);
+	static void syncLinkArray(Common::Serializer &ser, Common::Array<SearchLink> &arr);
 };
 
 // A cell-phone camera snapshot (Nancy 13). Stored as raw BGRA32 pixels so it

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
@@ -27,6 +29,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/puzzle/quizpuzzle.h"
 #include "engines/nancy/puzzledata.h"
 
@@ -51,7 +54,7 @@ void QuizPuzzle::init() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 
-	g_nancy->_input->setVKEnabled(true);
+	g_nancy->_input->setVKEnabled(!_isDisplayOnly);
 	RenderActionRecord::init();
 }
 
@@ -70,23 +73,29 @@ void QuizPuzzle::init() {
 // 0x243   49    doneSound (readNormal)
 // 0x274   30    done subtitle (skip)
 // 0x292   25    cancelScene
-void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
+// 0x2AB   16    unused; the record is a fixed 699 bytes
+void QuizPuzzle::readDataNancy8(Common::SeekableReadStream &stream) {
 	_fontID            = stream.readUint16LE();
 	_cursorBlinkInterval = stream.readUint16LE();
-	_numBoxes          = stream.readUint16LE();
+	uint16 numBoxes    = stream.readUint16LE();
 
-	for (int i = 0; i < 5; ++i) {
-		readRect(stream, _boxRects[i]);
+	_boxes.resize(5);
+
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		readRect(stream, _boxes[i].rect);
 	}
 
 	char answerBuf[20];
-	for (int i = 0; i < 5; ++i) {
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		Box &box = _boxes[i];
 		for (int j = 0; j < 3; ++j) {
 			stream.read(answerBuf, 20);
 			answerBuf[19] = '\0';
-			_answers[i][j] = answerBuf;
+			if (answerBuf[0]) {
+				box.answers.push_back(answerBuf);
+			}
 		}
-		_answerFlags[i] = stream.readSint16LE();
+		box.correctFlag = stream.readSint16LE();
 	}
 
 	_correctSound.readNormal(stream);
@@ -100,9 +109,17 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 	_doneText = readSubtitleText(stream);
 
 	_cancelScene.readData(stream);
+
+	// The record is a fixed 699 bytes and nothing reads this tail. Leaving it
+	// unread would make the action record loader mistake it for a dependency.
+	stream.skip(16);
+
+	if (numBoxes < _boxes.size()) {
+		_boxes.resize(numBoxes);
+	}
 }
 
-// ---- Nancy 9+ data format ----
+// ---- Nancy 9 - Nancy 14 data format ----
 // Header (0xB2 bytes):
 // 0x00  2   fontID
 // 0x02  2   blinkInterval
@@ -128,7 +145,7 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 // +0x8F  33  wrong sound name
 // +0xB0  2   wrong sound volume
 // +0xB2  30  wrong subtitle (skip)
-void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
+void QuizPuzzle::readDataNancy9(Common::SeekableReadStream &stream) {
 	_fontID            = stream.readUint16LE();
 	_cursorBlinkInterval = stream.readUint16LE();
 	_cursorChar        = stream.readByte();
@@ -145,67 +162,228 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 	_cancelScene.readData(stream);
 	readRect(stream, _exitHotspot);
 
-	_correctSoundChannel = stream.readUint16LE();
-	_wrongSoundChannel   = stream.readUint16LE();
+	uint16 correctSoundChannel = stream.readUint16LE();
+	uint16 wrongSoundChannel   = stream.readUint16LE();
 	_skipEmptyOnEnter    = (stream.readByte() != 0);
 	_autoCheck           = (stream.readByte() == 0); // 0 = auto-check ON
-	_numBoxes            = stream.readUint16LE();
+	uint16 numBoxes      = stream.readUint16LE();
 
-	if (_numBoxes > (uint16)kMaxBoxes) {
-		warning("QuizPuzzle: numBoxes %d exceeds maximum %d, clamping", _numBoxes, kMaxBoxes);
-		_numBoxes = kMaxBoxes;
+	if (numBoxes > kMaxBoxes) {
+		warning("QuizPuzzle: numBoxes %d exceeds maximum %d, clamping", numBoxes, (int)kMaxBoxes);
+		numBoxes = kMaxBoxes;
 	}
 
-	char soundNameBuf[33];
+	_boxes.resize(numBoxes);
+
 	char answerBuf[20];
-	for (int i = 0; i < _numBoxes; ++i) {
-		readRect(stream, _boxRects[i]);
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		Box &box = _boxes[i];
+		readRect(stream, box.rect);
 
 		for (int j = 0; j < 3; ++j) {
 			stream.read(answerBuf, 20);
 			answerBuf[19] = '\0';
-			_answers[i][j] = answerBuf;
+			if (answerBuf[0]) {
+				box.answers.push_back(answerBuf);
+				box.maxAnswerLength = MAX<uint16>(box.maxAnswerLength, box.answers.back().size());
+			}
 		}
 
-		_answerFlags[i] = stream.readSint16LE();
+		box.correctFlag = stream.readSint16LE();
 
-		stream.read(soundNameBuf, 33);
-		soundNameBuf[32] = '\0';
-		_boxCorrectSoundName[i] = soundNameBuf;
-		_boxCorrectSoundVolume[i] = stream.readUint16LE();
-		_boxCorrectText[i] = readSubtitleText(stream);
+		// The per-box sounds name a single file and take their channel from the
+		// record-wide channels read above, so they fold into a RandomSoundBlock.
+		box.correctSound.names.resize(1);
+		readFilename(stream, box.correctSound.names[0]);
+		box.correctSound.channel = correctSoundChannel;
+		box.correctSound.numLoops = 1;
+		box.correctSound.volume = stream.readUint16LE();
+		box.correctText = readSubtitleText(stream);
 
-		stream.read(soundNameBuf, 33);
-		soundNameBuf[32] = '\0';
-		_boxWrongSoundName[i] = soundNameBuf;
-		_boxWrongSoundVolume[i] = stream.readUint16LE();
-		_boxWrongText[i] = readSubtitleText(stream);
+		box.wrongSound.names.resize(1);
+		readFilename(stream, box.wrongSound.names[0]);
+		box.wrongSound.channel = wrongSoundChannel;
+		box.wrongSound.numLoops = 1;
+		box.wrongSound.volume = stream.readUint16LE();
+		box.wrongText = readSubtitleText(stream);
+	}
+}
 
-		// Precompute max answer length for auto-check mode
-		_boxMaxLen[i] = 0;
-		for (int j = 0; j < 3; ++j) {
-			uint16 len = (uint16)_answers[i][j].size();
-			if (len > _boxMaxLen[i])
-				_boxMaxLen[i] = len;
+// ---- Nancy 15 data format ----
+// Header (99 bytes, copied into the record in one go):
+// 0x00  2   fontID
+// 0x02  2   blinkInterval
+// 0x04  1   cursor char (0 = display-only record)
+// 0x05  1   unused
+// 0x06  2   restore flag (int16)
+// 0x08  1   0 = move on to the next box after a wrong answer
+// 0x09  1   0 = check the answer after every keystroke
+// 0x0A  1   non-zero = box cycling also stops on solved boxes
+//           (with no cursor char, 0x08/0x09 are a source scene id instead)
+// 0x0B  33  AUTOTEXT key for the "right answer" caption
+// 0x2C  33  AUTOTEXT key for the "wrong answer" caption
+// 0x4D  20  allowed chars (null-terminated)
+// 0x61  2   unused
+// Then: invalid-key sound block, solve scene (terse) + solve sound block,
+// the give-up hotspot, the flag-setting hotspot array, and the boxes.
+void QuizPuzzle::readDataNancy15(Common::SeekableReadStream &stream) {
+	_fontID              = stream.readUint16LE();
+	_cursorBlinkInterval = stream.readUint16LE();
+	_cursorChar          = stream.readByte();
+	stream.skip(1);
+	_restoreFlag         = stream.readSint16LE();
+
+	byte flagA = stream.readByte();
+	byte flagB = stream.readByte();
+	_cycleSolvedBoxes = (stream.readByte() != 0);
+
+	_isDisplayOnly = (_cursorChar == 0);
+	if (_isDisplayOnly) {
+		_displaySourceScene = flagA | (flagB << 8);
+	} else {
+		_keepBoxOnWrongAnswer = (flagA != 0);
+		_autoCheck = (flagB == 0); // 0 = auto-check ON
+	}
+
+	Common::String captionKey;
+	readFilename(stream, captionKey);
+	_recordCorrectText = resolveSubtitleText(captionKey, Common::String());
+	readFilename(stream, captionKey);
+	_recordWrongText = resolveSubtitleText(captionKey, Common::String());
+
+	char allowedBuf[20];
+	stream.read(allowedBuf, 20);
+	allowedBuf[19] = '\0';
+	_allowedChars = allowedBuf;
+	stream.skip(2);
+
+	_invalidKeySound.readData(stream);
+
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+	_doneSoundBlock.readData(stream);
+
+	// The give-up hotspot is stored inline here, not as one of the count-prefixed
+	// records the other puzzles use, and its flag is always set to true.
+	readRect(stream, _exitHotspot);
+	_exitCursorType = stream.readUint16LE();
+	_cancelScene._sceneChange.sceneID = stream.readUint16LE();
+	_cancelScene._flag.label = stream.readSint16LE();
+	_cancelScene._flag.flag = g_nancy->_true;
+
+	readExitHotspots(stream, _hotspots);
+
+	// The box count is stored doubled
+	uint16 numBoxes = stream.readUint16LE() / 2;
+
+	if (numBoxes > kMaxBoxes) {
+		warning("QuizPuzzle: numBoxes %d exceeds maximum %d, clamping", numBoxes, (int)kMaxBoxes);
+		numBoxes = kMaxBoxes;
+	}
+
+	_boxes.resize(numBoxes);
+
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		Box &box = _boxes[i];
+		readRect(stream, box.rect);
+
+		uint16 numAnswers = stream.readUint16LE();
+		box.answers.resize(numAnswers);
+		for (uint j = 0; j < numAnswers; ++j) {
+			readFilename(stream, box.answers[j]);
+			box.maxAnswerLength = MAX<uint16>(box.maxAnswerLength, box.answers[j].size());
 		}
+
+		box.correctFlag = stream.readSint16LE();
+		box.nonEmptyFlag = stream.readSint16LE();
+
+		box.correctSound.readData(stream);
+		box.wrongSound.readData(stream);
 	}
 }
 
 void QuizPuzzle::readData(Common::SeekableReadStream &stream) {
-	if (g_nancy->getGameType() == kGameTypeNancy8)
-		readDataOld(stream);
-	else
-		readDataNew(stream);
+	if (g_nancy->getGameType() == kGameTypeNancy8) {
+		readDataNancy8(stream);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		readDataNancy15(stream);
+	} else {
+		readDataNancy9(stream);
+	}
+}
+
+char QuizPuzzle::getCursorChar() const {
+	return g_nancy->getGameType() == kGameTypeNancy8 ? '-' : _cursorChar;
+}
+
+uint QuizPuzzle::getMaxTypedLength() const {
+	return g_nancy->getGameType() >= kGameTypeNancy15 ? kMaxTypedLengthNancy15 : kMaxTypedLength;
+}
+
+bool QuizPuzzle::acceptsChar(char c) const {
+	if (_allowedChars.empty()) {
+		return true;
+	}
+
+	for (uint i = 0; i < _allowedChars.size(); ++i) {
+		if (_allowedChars[i] == c) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// From Nancy 9 to Nancy 14 the original measures the text already in the box
+// and refuses the keystroke unless it still leaves a margin at the right edge.
+bool QuizPuzzle::fitsInBox(const Box &box, const Common::String &text) const {
+	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
+	if (!font) {
+		return true;
+	}
+
+	return font->getStringWidth(text) < box.rect.width() - kBoxTextMargin;
+}
+
+bool QuizPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+	if (block.names.empty()) {
+		return false;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return false;
+	}
+
+	_activeBoxSound.name = name;
+	_activeBoxSound.channelID = block.channel;
+	_activeBoxSound.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	_activeBoxSound.volume = block.volume;
+	_activeBoxSound.playCommands = 1;
+
+	g_nancy->_sound->loadSound(_activeBoxSound);
+	g_nancy->_sound->playSound(_activeBoxSound);
+	return true;
+}
+
+void QuizPuzzle::showBoxSubtitle(const Common::String &perBoxText, const Common::String &perRecordText) {
+	// Nancy 15 moved the captions out of the boxes and into the record
+	showSubtitle(g_nancy->getGameType() >= kGameTypeNancy15 ? perRecordText : perBoxText);
 }
 
 // ---- Nancy 8 state machine ----
-void QuizPuzzle::executeOld() {
+void QuizPuzzle::executeNancy8() {
+	Box &box = _boxes[_currentBox];
+
 	switch (_internalState) {
 	case kTyping: {
 		if (_hasNewKey) {
 			_hasNewKey = false;
 
-			Common::String &text = _typedText[_currentBox];
+			Common::String &text = box.typedText;
 			bool hadCursor = !text.empty() && text.lastChar() == '-';
 			if (hadCursor)
 				text.deleteLastChar();
@@ -225,7 +403,7 @@ void QuizPuzzle::executeOld() {
 				}
 				_pendingReturn = false;
 			} else if (_pendingChar != 0) {
-				if (text.size() < 16)
+				if (text.size() < kMaxTypedLength)
 					text += _pendingChar;
 				drawText();
 				_pendingChar = 0;
@@ -236,7 +414,7 @@ void QuizPuzzle::executeOld() {
 		Time now = g_nancy->getTotalPlayTime();
 		if (now >= _nextBlinkTime) {
 			_nextBlinkTime = now + _cursorBlinkInterval;
-			Common::String &text = _typedText[_currentBox];
+			Common::String &text = _boxes[_currentBox].typedText;
 			if (!text.empty() && text.lastChar() == '-')
 				text.deleteLastChar();
 			else
@@ -283,7 +461,7 @@ void QuizPuzzle::executeOld() {
 		break;
 
 	case kStartWrong: {
-		_typedText[_currentBox].clear();
+		box.typedText.clear();
 		drawText();
 
 		if (_wrongSound.name == "NO SOUND") {
@@ -331,13 +509,33 @@ void QuizPuzzle::executeOld() {
 }
 
 // ---- Nancy 9+ state machine ----
-void QuizPuzzle::executeNew() {
+void QuizPuzzle::executeNancy9() {
+	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
+	Box &box = _boxes[_currentBox];
+
+	// A Nancy 15 record without a give-up hotspot completes as soon as every box
+	// is right, and keeps its solve flag in step with that. With a give-up
+	// hotspot, that hotspot doubles as the submit button instead.
+	if (isNancy15 && _internalState == kTyping && _exitHotspot.isEmpty()) {
+		bool allSolved = checkAllSolved();
+		if (allSolved != _solved) {
+			_solved = allSolved;
+			if (!allSolved && _solveScene._flag.label != -1) {
+				NancySceneState.setEventFlag(_solveScene._flag.label, g_nancy->_false);
+			}
+		}
+
+		if (_solved) {
+			_internalState = kStartDone;
+		}
+	}
+
 	switch (_internalState) {
 	case kTyping: {
 		if (_hasNewKey) {
 			_hasNewKey = false;
 
-			Common::String &text = _typedText[_currentBox];
+			Common::String &text = box.typedText;
 			bool hadCursor = !text.empty() && text.lastChar() == _cursorChar;
 			if (hadCursor)
 				text.deleteLastChar();
@@ -345,42 +543,57 @@ void QuizPuzzle::executeNew() {
 			if (_pendingBackspace) {
 				if (!text.empty())
 					text.deleteLastChar();
+
+				// Nancy 15 re-checks the shortened answer, and clears the flag
+				// of a box that is no longer right
+				if (isNancy15) {
+					saveAnswer(_currentBox);
+					if (_autoCheck && checkAnswerForCurrentBox()) {
+						_internalState = kStartCorrect;
+					}
+				}
+
 				drawText();
 				_pendingBackspace = false;
 			} else if (_pendingReturn) {
-				if (text.empty()) {
-					if (hadCursor) text += _cursorChar;
-					if (!_skipEmptyOnEnter)
-						advanceToNextBox();
-				} else {
-					if (hadCursor) text += _cursorChar;
+				if (hadCursor) text += _cursorChar;
+
+				if (isNancy15 || !text.empty()) {
+					// Nancy 15 checks the box whatever it holds, empty included
 					_internalState = kCheckAnswer;
+				} else if (!_skipEmptyOnEnter) {
+					advanceToNextBox();
 				}
 				_pendingReturn = false;
 			} else if (_pendingChar != 0) {
-				bool charAllowed = _allowedChars.empty();
-				if (!charAllowed) {
-					for (uint ci = 0; ci < _allowedChars.size(); ++ci) {
-						if (_allowedChars[ci] == _pendingChar) {
-							charAllowed = true;
-							break;
-						}
-					}
-				}
-				if (charAllowed && text.size() < 16) {
+				if (!acceptsChar(_pendingChar)) {
+					// Nancy 15 buzzes at characters the record does not allow
+					playSoundBlock(_invalidKeySound);
+				} else if (text.size() < getMaxTypedLength() &&
+						(isNancy15 || fitsInBox(box, text))) {
 					text += _pendingChar;
 
+					if (isNancy15) {
+						saveAnswer(_currentBox);
+					}
+
 					if (_autoCheck) {
-						bool correct = checkAnswerForCurrentBox();
-						if (correct) {
+						if (checkAnswerForCurrentBox()) {
 							_internalState = kStartCorrect;
-						} else if ((uint16)text.size() >= _boxMaxLen[_currentBox]) {
+						} else if (!isNancy15 && text.size() >= box.maxAnswerLength) {
 							_internalState = kStartWrong;
 						}
 					}
 				}
 				drawText();
 				_pendingChar = 0;
+			}
+
+			// Nancy 15 re-scores the box the cursor is still in after every key,
+			// so a box that is filled in and then left with the mouse - by
+			// clicking the submit hotspot, say - has already been graded
+			if (isNancy15 && _internalState == kTyping) {
+				checkAnswerForCurrentBox(true);
 			}
 		}
 
@@ -389,7 +602,7 @@ void QuizPuzzle::executeNew() {
 			Time now = g_nancy->getTotalPlayTime();
 			if (now >= _nextBlinkTime) {
 				_nextBlinkTime = now + _cursorBlinkInterval;
-				Common::String &text = _typedText[_currentBox];
+				Common::String &text = _boxes[_currentBox].typedText;
 				if (!text.empty() && text.lastChar() == _cursorChar)
 					text.deleteLastChar();
 				else
@@ -407,23 +620,23 @@ void QuizPuzzle::executeNew() {
 	}
 
 	case kStartCorrect: {
-		_activeBoxSound.name         = _boxCorrectSoundName[_currentBox];
-		_activeBoxSound.channelID    = _correctSoundChannel;
-		_activeBoxSound.volume       = _boxCorrectSoundVolume[_currentBox];
-		_activeBoxSound.playCommands = 1;
-		_activeBoxSound.numLoops     = 1;
+		bool playing = playSoundBlock(box.correctSound);
+		if (playing) {
+			showBoxSubtitle(box.correctText, _recordCorrectText);
+		}
 
-		if (_activeBoxSound.name == "NO SOUND") {
-			advanceToNextBox();
+		advanceToNextBox();
+
+		// Nancy 15 does not wait for the feedback sound before carrying on
+		if (isNancy15) {
+			_internalState = kTyping;
+		} else if (!playing) {
 			_solved = checkAllSolved();
 			_internalState = _solved ? kStartDone : kTyping;
 		} else {
-			g_nancy->_sound->loadSound(_activeBoxSound);
-			g_nancy->_sound->playSound(_activeBoxSound);
-			showSubtitle(_boxCorrectText[_currentBox]);
-			advanceToNextBox();
 			_internalState = kWaitCorrect;
 		}
+
 		_nextBlinkTime = 0;
 		drawText();
 		break;
@@ -440,22 +653,26 @@ void QuizPuzzle::executeNew() {
 		break;
 
 	case kStartWrong: {
-		_typedText[_currentBox].clear();
+		// Nancy 15 leaves the wrong answer in place for the player to correct
+		if (!isNancy15) {
+			box.typedText.clear();
+		}
 		drawText();
 
-		_activeBoxSound.name         = _boxWrongSoundName[_currentBox];
-		_activeBoxSound.channelID    = _wrongSoundChannel;
-		_activeBoxSound.volume       = _boxWrongSoundVolume[_currentBox];
-		_activeBoxSound.playCommands = 1;
-		_activeBoxSound.numLoops     = 1;
+		bool playing = playSoundBlock(box.wrongSound);
+		if (playing) {
+			showBoxSubtitle(box.wrongText, _recordWrongText);
+		}
 
-		if (_activeBoxSound.name == "NO SOUND") {
+		if (isNancy15) {
+			if (!_keepBoxOnWrongAnswer) {
+				advanceToNextBox();
+				drawText();
+			}
 			_internalState = kTyping;
+			_nextBlinkTime = 0;
 		} else {
-			g_nancy->_sound->loadSound(_activeBoxSound);
-			g_nancy->_sound->playSound(_activeBoxSound);
-			showSubtitle(_boxWrongText[_currentBox]);
-			_internalState = kWaitWrong;
+			_internalState = playing ? kWaitWrong : kTyping;
 		}
 		break;
 	}
@@ -469,7 +686,9 @@ void QuizPuzzle::executeNew() {
 		break;
 
 	case kStartDone: {
-		if (_doneSound.name == "NO SOUND") {
+		if (isNancy15) {
+			_internalState = playSoundBlock(_doneSoundBlock) ? kWaitDone : kFinish;
+		} else if (_doneSound.name == "NO SOUND") {
 			_internalState = kFinish;
 		} else {
 			g_nancy->_sound->loadSound(_doneSound);
@@ -480,12 +699,14 @@ void QuizPuzzle::executeNew() {
 		break;
 	}
 
-	case kWaitDone:
-		if (!g_nancy->_sound->isSoundPlaying(_doneSound)) {
-			g_nancy->_sound->stopSound(_doneSound);
+	case kWaitDone: {
+		SoundDescription &sound = isNancy15 ? _activeBoxSound : _doneSound;
+		if (!g_nancy->_sound->isSoundPlaying(sound)) {
+			g_nancy->_sound->stopSound(sound);
 			_internalState = kFinish;
 		}
 		break;
+	}
 
 	case kFinish:
 		_state = kActionTrigger;
@@ -503,26 +724,16 @@ void QuizPuzzle::execute() {
 			g_nancy->_sound->loadSound(_correctSound);
 			g_nancy->_sound->loadSound(_wrongSound);
 		}
-		g_nancy->_sound->loadSound(_doneSound);
 
-		// Restore previously correct boxes from persistent puzzle data
-		QuizPuzzleData *qpd = (QuizPuzzleData *)NancySceneState.getPuzzleData(QuizPuzzleData::getTag());
-		if (qpd) {
-			uint16 key = _solveScene._sceneChange.sceneID;
-			if (qpd->boxCorrect.contains(key)) {
-				const auto &bc = qpd->boxCorrect[key];
-				const auto &tt = qpd->typedText[key];
-				for (uint i = 0; i < _numBoxes && i < bc.size(); ++i) {
-					if (bc[i]) {
-						_boxCorrect[i] = true;
-						_typedText[i] = tt[i];
-					}
-				}
-			}
+		if (g_nancy->getGameType() < kGameTypeNancy15) {
+			g_nancy->_sound->loadSound(_doneSound);
 		}
-		// Start cursor on first unsolved box
-		for (uint i = 0; i < _numBoxes; ++i) {
-			if (!_boxCorrect[i]) {
+
+		loadSavedAnswers();
+
+		// Start the cursor on the first unsolved box
+		for (uint i = 0; i < _boxes.size(); ++i) {
+			if (!_boxes[i].correct) {
 				_currentBox = i;
 				break;
 			}
@@ -533,17 +744,24 @@ void QuizPuzzle::execute() {
 	}
 		// fall through
 	case kRun:
-		if (g_nancy->getGameType() == kGameTypeNancy8)
-			executeOld();
-		else
-			executeNew();
+		if (_boxes.empty() || _isDisplayOnly) {
+			// Nothing to type into; the record only draws
+			break;
+		}
+
+		if (g_nancy->getGameType() == kGameTypeNancy8) {
+			executeNancy8();
+		} else {
+			executeNancy9();
+		}
 		break;
 
 	case kActionTrigger:
-		if (_cancelled)
+		if (_cancelled) {
 			_cancelScene.execute();
-		else if (_solved)
+		} else if (_solved) {
 			_solveScene.execute();
+		}
 
 		g_nancy->_input->setVKEnabled(false);
 		finishExecution();
@@ -552,30 +770,75 @@ void QuizPuzzle::execute() {
 }
 
 void QuizPuzzle::handleInput(NancyInput &input) {
-	if (_internalState != kTyping)
+	if (_internalState != kTyping || _isDisplayOnly || _boxes.empty()) {
 		return;
+	}
 
-	char cursorChar = (g_nancy->getGameType() == kGameTypeNancy8) ? '-' : _cursorChar;
+	const char cursorChar = getCursorChar();
+	const bool isNancy15 = g_nancy->getGameType() >= kGameTypeNancy15;
+	bool mouseOverHotspot = false;
 
-	// Nancy 9+: exit hotspot at chunk +0x9A. Click cancels the puzzle.
+	// Nancy 9+: give-up hotspot. Clicking it cancels the puzzle.
 	if (g_nancy->getGameType() != kGameTypeNancy8 && !_exitHotspot.isEmpty()) {
 		Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
 		if (exitScreen.contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				_cancelled = true;
-				_state = kActionTrigger;
+			if (_exitCursorType != 0) {
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+			} else {
+				g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 			}
-			return;
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				// From Nancy 15 the give-up hotspot submits the quiz: with every
+				// box answered it leads to the solve scene instead
+				if (isNancy15 && checkAllSolved()) {
+					_solved = true;
+					_internalState = kStartDone;
+				} else {
+					_cancelled = true;
+					_state = kActionTrigger;
+				}
+				return;
+			}
+
+			mouseOverHotspot = true;
 		}
 	}
 
-	// Hover over an unsolved text box: show the hotspot cursor and, on click,
-	// move the typing focus to that box.
-	for (uint i = 0; i < _numBoxes; ++i) {
-		if (_boxCorrect[i])
+	// Nancy 15: regions around the boxes that only set an event flag when clicked
+	if (!mouseOverHotspot) {
+		for (uint i = 0; i < _hotspots.size(); ++i) {
+			const ExitHotspot &hotspot = _hotspots[i];
+			if (hotspot.hotspot.isEmpty() ||
+					!NancySceneState.getViewport().convertViewportToScreen(hotspot.hotspot).contains(input.mousePos)) {
+				continue;
+			}
+
+			if (hotspot.cursorType != 0) {
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)hotspot.cursorType, true);
+			} else {
+				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			}
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				NancySceneState.setEventFlag(hotspot.flag);
+				if (hotspot.scene.sceneID != kNoScene) {
+					NancySceneState.changeScene(hotspot.scene);
+					return;
+				}
+			}
+
+			mouseOverHotspot = true;
+			break;
+		}
+	}
+
+	// Hover over a text box: show the hotspot cursor and, on click, move the
+	// typing focus to that box. From Nancy 15 an answered box can be edited again.
+	for (uint i = 0; i < _boxes.size() && !mouseOverHotspot; ++i) {
+		if (_boxes[i].correct && !isNancy15)
 			continue;
-		Common::Rect screenRect = NancySceneState.getViewport().convertViewportToScreen(_boxRects[i]);
+		Common::Rect screenRect = NancySceneState.getViewport().convertViewportToScreen(_boxes[i].rect);
 		if (!screenRect.contains(input.mousePos))
 			continue;
 
@@ -583,9 +846,16 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (i != _currentBox) {
-				Common::String &oldText = _typedText[_currentBox];
+				Common::String &oldText = _boxes[_currentBox].typedText;
 				if (!oldText.empty() && oldText.lastChar() == cursorChar)
 					oldText.deleteLastChar();
+
+				if (isNancy15) {
+					// Nancy 15 scores the box being left, so a form filled in by
+					// clicking from box to box is graded like a tabbed one
+					checkAnswerForCurrentBox(true);
+				}
+
 				_currentBox = i;
 				_nextBlinkTime = 0;
 				drawText();
@@ -594,18 +864,18 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 		break;
 	}
 
+	// The keyboard is read whatever the mouse happens to be over
 	for (auto &key : input.otherKbdInput) {
 		if (key.keycode == Common::KEYCODE_BACKSPACE) {
 			_pendingBackspace = true;
 			_hasNewKey = true;
 		} else if (key.keycode == Common::KEYCODE_TAB) {
-			// Tab: advance to next unsolved box without submitting
-			Common::String &oldText = _typedText[_currentBox];
-			if (!oldText.empty() && oldText.lastChar() == cursorChar)
-				oldText.deleteLastChar();
-			advanceToNextBox();
-			_nextBlinkTime = 0;
-			drawText();
+			// Nancy 15 submits the box on Tab, exactly as it does on Enter. The
+			// earlier games have no Tab handling at all, so it does nothing there.
+			if (isNancy15) {
+				_pendingReturn = true;
+				_hasNewKey = true;
+			}
 		} else if (key.keycode == Common::KEYCODE_RETURN ||
 		           key.keycode == Common::KEYCODE_KP_ENTER) {
 			_pendingReturn = true;
@@ -613,8 +883,8 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 		} else if (key.ascii != 0 && key.ascii != (byte)cursorChar) {
 			bool accept = false;
 			if (g_nancy->getGameType() == kGameTypeNancy8) {
-				accept = Common::isAlnum(key.ascii) || key.ascii == '.' || key.ascii == '-' ||
-				         key.ascii == '\'' || Common::isSpace(key.ascii);
+				// Nancy 8 takes letters, digits and the space bar, nothing else
+				accept = Common::isAlnum(key.ascii) || key.ascii == ' ';
 			} else {
 				accept = key.ascii >= 0x20 && key.ascii < 0x7f;
 			}
@@ -627,7 +897,7 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 }
 
 void QuizPuzzle::onPause(bool paused) {
-	g_nancy->_input->setVKEnabled(!paused);
+	g_nancy->_input->setVKEnabled(!paused && !_isDisplayOnly);
 	RenderActionRecord::onPause(paused);
 }
 
@@ -635,79 +905,178 @@ void QuizPuzzle::drawText() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
 	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
-	if (!font)
+	if (!font) {
+		warning("QuizPuzzle: font %u is missing, no answer text will be drawn", _fontID);
 		return;
+	}
 
-	for (uint i = 0; i < _numBoxes; ++i) {
-		const Common::String &text = _typedText[i];
+	// Nancy 15 draws a box's text into its rect widened by the cursor character
+	const int extraWidth = g_nancy->getGameType() >= kGameTypeNancy15 ? 8 : 0;
+
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		const Common::String &text = _boxes[i].typedText;
 		if (text.empty())
 			continue;
 
-		Common::Rect bounds = _boxRects[i];
+		Common::Rect bounds = _boxes[i].rect;
 		bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
 		bounds = convertToLocal(bounds);
 
 		int y = bounds.bottom - font->getFontHeight();
-		font->drawString(&_drawSurface, text, bounds.left - 1, y, bounds.width(), 0);
+		font->drawString(&_drawSurface, text, bounds.left - 1, y, bounds.width() + extraWidth, 0);
 	}
 
 	_needsRedraw = true;
 }
 
 void QuizPuzzle::advanceToNextBox() {
-	for (uint n = 0; n < _numBoxes; ++n) {
-		_currentBox = (_currentBox + 1) % _numBoxes;
-		if (!_boxCorrect[_currentBox])
+	for (uint n = 0; n < _boxes.size(); ++n) {
+		_currentBox = (_currentBox + 1) % _boxes.size();
+		if (_cycleSolvedBoxes || !_boxes[_currentBox].correct)
 			return;
 	}
 }
 
 bool QuizPuzzle::checkAllSolved() const {
-	for (uint i = 0; i < _numBoxes; ++i) {
-		if (!_boxCorrect[i])
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		if (!_boxes[i].correct)
 			return false;
 	}
+
+	// A record with no boxes counts as solved, as it does in the original
 	return true;
 }
 
-bool QuizPuzzle::checkAnswerForCurrentBox() {
-	Common::String input = _typedText[_currentBox];
-	char cursorChar = (g_nancy->getGameType() == kGameTypeNancy8) ? '-' : _cursorChar;
+bool QuizPuzzle::checkAnswerForCurrentBox(bool silent) {
+	Box &box = _boxes[_currentBox];
+	const char cursorChar = getCursorChar();
+
+	Common::String input = box.typedText;
 	if (!input.empty() && input.lastChar() == cursorChar)
 		input.deleteLastChar();
 
 	bool correct = false;
-	for (int j = 0; j < 3; ++j) {
-		if (!_answers[_currentBox][j].empty() &&
-		        input.equalsIgnoreCase(_answers[_currentBox][j])) {
+	for (uint j = 0; j < box.answers.size(); ++j) {
+		if (!box.answers[j].empty() && input.equalsIgnoreCase(box.answers[j])) {
 			correct = true;
 			break;
 		}
 	}
 
 	if (correct) {
-		// Strip cursor from actual buffer (matches original game state-1 behaviour)
-		if (!_typedText[_currentBox].empty() && _typedText[_currentBox].lastChar() == cursorChar)
-			_typedText[_currentBox].deleteLastChar();
-		_boxCorrect[_currentBox] = true;
-		if (_answerFlags[_currentBox] != -1)
-			NancySceneState.setEventFlag(_answerFlags[_currentBox], g_nancy->_true);
+		// Strip the cursor from the actual buffer, as the original does
+		if (!box.typedText.empty() && box.typedText.lastChar() == cursorChar)
+			box.typedText.deleteLastChar();
+		box.correct = true;
 
-		// Persist so the answered box survives scene re-entry
-		QuizPuzzleData *qpd = (QuizPuzzleData *)NancySceneState.getPuzzleData(QuizPuzzleData::getTag());
-		if (qpd) {
-			uint16 key = _solveScene._sceneChange.sceneID;
-			auto &bc = qpd->boxCorrect[key];
-			auto &tt = qpd->typedText[key];
-			if (bc.size() < _numBoxes) {
-				bc.resize(_numBoxes, false);
-				tt.resize(_numBoxes);
-			}
-			bc[_currentBox] = true;
-			tt[_currentBox] = _typedText[_currentBox];
+		// A silent check only scores the box; its flag is set by the Enter/Tab path
+		if (!silent && box.correctFlag != -1)
+			NancySceneState.setEventFlag(box.correctFlag, g_nancy->_true);
+
+		saveAnswer(_currentBox);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		// Nancy 15 clears the flag of a box that is no longer right
+		box.correct = false;
+		if (box.correctFlag != -1)
+			NancySceneState.setEventFlag(box.correctFlag, g_nancy->_false);
+	}
+
+	if (box.nonEmptyFlag != -1) {
+		NancySceneState.setEventFlag(box.nonEmptyFlag, box.typedText.empty() ? g_nancy->_false : g_nancy->_true);
+	}
+
+	return correct;
+}
+
+uint32 QuizPuzzle::getSaveKey() {
+	if (g_nancy->getGameType() < kGameTypeNancy15) {
+		return _solveScene._sceneChange.sceneID;
+	}
+
+	// Nancy 15 keys its save slots by scene and record index, so that the several
+	// quiz records a scene may carry each keep their own answers.
+	const Common::Array<ActionRecord *> &records = NancySceneState.getActionManager().getActionRecords();
+	uint index = 0;
+	for (uint i = 0; i < records.size(); ++i) {
+		if (records[i] == this) {
+			index = i;
+			break;
 		}
 	}
-	return correct;
+
+	return ((uint32)NancySceneState.getSceneInfo().sceneID << 16) | index;
+}
+
+void QuizPuzzle::loadSavedAnswers() {
+	QuizPuzzleData *data = (QuizPuzzleData *)NancySceneState.getPuzzleData(QuizPuzzleData::getTag());
+	if (!data) {
+		return;
+	}
+
+	uint32 key = getSaveKey();
+
+	if (_isDisplayOnly) {
+		// A display-only record shows the answers typed into the quiz of another
+		// scene, whichever of that scene's records they came from
+		key = 0;
+		for (auto &entry : data->typedText) {
+			if ((entry._key >> 16) == _displaySourceScene) {
+				key = entry._key;
+				break;
+			}
+		}
+	} else if (g_nancy->getGameType() >= kGameTypeNancy15 &&
+			(_restoreFlag == -1 || !NancySceneState.getEventFlag(_restoreFlag, g_nancy->_true))) {
+		// Without the restore flag set the puzzle starts over
+		data->boxCorrect.erase(key);
+		data->typedText.erase(key);
+		return;
+	}
+
+	if (!data->typedText.contains(key)) {
+		return;
+	}
+
+	const Common::Array<Common::String> &saved = data->typedText[key];
+	for (uint i = 0; i < _boxes.size() && i < saved.size(); ++i) {
+		_boxes[i].typedText = saved[i];
+	}
+
+	if (_isDisplayOnly) {
+		// Another quiz's answers are only shown, never scored
+		return;
+	}
+
+	// The original re-checks every restored answer instead of trusting the slot
+	uint currentBox = _currentBox;
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		_currentBox = i;
+		checkAnswerForCurrentBox(true);
+	}
+	_currentBox = currentBox;
+}
+
+void QuizPuzzle::saveAnswer(uint boxIndex) {
+	if (_isDisplayOnly) {
+		return;
+	}
+
+	QuizPuzzleData *data = (QuizPuzzleData *)NancySceneState.getPuzzleData(QuizPuzzleData::getTag());
+	if (!data) {
+		return;
+	}
+
+	uint32 key = getSaveKey();
+	Common::Array<bool> &boxCorrect = data->boxCorrect[key];
+	Common::Array<Common::String> &typedText = data->typedText[key];
+
+	if (boxCorrect.size() < _boxes.size()) {
+		boxCorrect.resize(_boxes.size(), false);
+		typedText.resize(_boxes.size());
+	}
+
+	boxCorrect[boxIndex] = _boxes[boxIndex].correct;
+	typedText[boxIndex] = _boxes[boxIndex].typedText;
 }
 
 } // End of namespace Action

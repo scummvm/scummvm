@@ -1146,7 +1146,13 @@ void Scene::setUIResource(uint index, int32 value, byte characterIndex) {
 // flag (eventData[0x21] in the original). It persists across scenes and is
 // saved/restored together with the rest of the event flags. Nancy12 shifted the
 // engine's generic flag numbering up by 10, moving this flag from 1033 to 1043.
+// Nancy15 widened the scene-cleared generic block over 1043 and moved the flag
+// to 1002.
 static int16 playerScrollingDisabledFlag() {
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		return 1002;
+	}
+
 	return g_nancy->getGameType() >= kGameTypeNancy12 ? 1043 : 1033;
 }
 
@@ -1290,7 +1296,8 @@ void Scene::inheritBrotherProgress(uint characterIndex) {
 	// The Hardy boys work the case as a team, so whichever brother is played
 	// second takes over the notes the other has already made instead of
 	// starting a fresh journal. Nancy always keeps her own. Their resources
-	// (the money they carry) pass over the same way; their items don't.
+	// (the money they carry) and their shared phone pass over the same way;
+	// their items don't.
 	const uint brother = characterIndex == kPlayerCharacterFrank ? kPlayerCharacterJoe : kPlayerCharacterFrank;
 	if (!playerChar->getInventory(characterIndex).isValid && playerChar->getInventory(brother).isValid) {
 		journalData->inheritEntries(brother, characterIndex);
@@ -1298,6 +1305,11 @@ void Scene::inheritBrotherProgress(uint characterIndex) {
 		auto *resourceData = (UIResourceData *)getPuzzleData(UIResourceData::getTag());
 		if (resourceData) {
 			resourceData->getCharacterValues(characterIndex) = resourceData->getCharacterValues(brother);
+		}
+
+		auto *cellData = (CellPhoneData *)getPuzzleData(CellPhoneData::getTag());
+		if (cellData) {
+			cellData->phones[characterIndex] = cellData->phones[brother];
 		}
 	}
 }

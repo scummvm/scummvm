@@ -133,5 +133,5 @@ DETECT_OBJS += $(MODULE)/detection.o
 # module is enabled, because it already has the contents.
 ifneq ($(ENABLE_FREESCAPE), STATIC_PLUGIN)
 # External dependencies for detection.
-DETECT_OBJS += $(MODULE)/zx_tape.o
+DETECT_OBJS += $(MODULE)/detection_zx_tape.o
 endif
