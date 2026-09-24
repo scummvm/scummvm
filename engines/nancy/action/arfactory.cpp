@@ -100,7 +100,7 @@
 #include "engines/nancy/action/puzzle/turningpuzzle.h"
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
 #include "engines/nancy/action/puzzle/typingquizpuzzle.h"
-//#include "engines/nancy/action/puzzle/weightsortpuzzle.h"
+#include "engines/nancy/action/puzzle/weightsortpuzzle.h"
 #include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
 #include "engines/nancy/action/puzzle/wordfindpuzzle.h"
 
@@ -542,8 +542,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		//return new EscapeGridPuzzle();
 		return nullptr;	// TODO
 	case 185:
-		// return new WeightSortPuzzle();
-		return nullptr;	// TODO
+		return new WeightSortPuzzle();
 	case 200:
 		return new SoundEqualizerPuzzle();
 	case 201:
