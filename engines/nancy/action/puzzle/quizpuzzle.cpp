@@ -520,12 +520,15 @@ void QuizPuzzle::executeNancy9() {
 		bool allSolved = checkAllSolved();
 		if (allSolved != _solved) {
 			_solved = allSolved;
-			if (!allSolved && _solveScene._flag.label != -1) {
-				NancySceneState.setEventFlag(_solveScene._flag.label, g_nancy->_false);
+			if (_solveScene._flag.label != -1) {
+				NancySceneState.setEventFlag(_solveScene._flag.label,
+					allSolved ? _solveScene._flag.flag : g_nancy->_false);
 			}
 		}
 
-		if (_solved) {
+		// A record whose solve scene is the one it already runs in never
+		// finishes: it only sets its flag, so its hotspots stay clickable.
+		if (_solved && _solveScene._sceneChange.sceneID != NancySceneState.getSceneInfo().sceneID) {
 			_internalState = kStartDone;
 		}
 	}
