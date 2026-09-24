@@ -136,7 +136,7 @@ bool ActionMenuController::updateActionMenu() {
 	} else {
 		int16 adjustedCommand = command > 4 ? static_cast<int16>(command - 1) : command;
 		int menuIndex = _state.MenuPage * 4 + adjustedCommand;
-		int16 interaction = menuIndex > static_cast<int>(_state.InteractionMenuItems.size())
+		int16 interaction = menuIndex > static_cast<int>(_state.InteractionMenuItems.size()) || _state.InteractionMenuItems.size() == 0
 								? static_cast<int16>(0)
 								: static_cast<int16>(_state.InteractionMenuItems[static_cast<std::size_t>(
 														 menuIndex - 1)] +
@@ -307,6 +307,7 @@ void ActionMenuController::refreshActionPrompts() {
 	queueRightActionPrompt(rightMode);
 }
 
+// highlight an action that can be taken for this object in room
 void ActionMenuController::drawSelectedActionIcon(int mode) {
 	// Ghidra 0x00005BDC-0x00005BE5: a zero pending identity leaves every interface cell unchanged.
 	if (_state.PendingActionIcon == 0) {
