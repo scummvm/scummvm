@@ -27,6 +27,7 @@
 #include "common/queue.h"
 #include "common/rect.h"
 #include "common/noncopyable.h"
+#include "common/ustr.h"
 
 #include "common/list.h"
 #include "common/singleton.h"
@@ -125,6 +126,9 @@ enum EventType {
 	EVENT_HOTSPOTS_SHOW = 38,
 	EVENT_HOTSPOTS_HIDE = 39,
 
+	/** An input method editor changed, completed, or cancelled a composition. */
+	EVENT_IME_COMPOSITION = 40,
+
 	/**
 	 * We reserve some event ids for custom events.
 	 * 
@@ -212,6 +216,48 @@ enum MouseButton {
 typedef uint32 CustomEventType;
 
 /**
+ * Data supplied with an @ref EVENT_IME_COMPOSITION event.
+ *
+ * The state distinguishes an in-progress update, text commitment, and
+ * cancellation. Start and length describe the selected range inside an
+ * in-progress composition, or are negative when the backend does not provide
+ * that range. A completed composition carries the entire committed string in
+ * @ref text instead of reducing it to a single @ref EVENT_KEYDOWN.
+ */
+struct ImeComposition {
+	enum State {
+		/** The native input method is updating uncommitted text. */
+		kCompositing,
+		/** The native composition ended normally, optionally committing @ref text. */
+		kComplete,
+		/** The native composition was cancelled (e.g. lost focus) */
+		kCancelled
+	};
+
+	/** Whether the composition is being updated, completed, or cancelled. */
+	State state;
+	/**
+	 * The current uncommitted composition or the complete committed string.
+	 * The string is empty for cancellation and can be empty for completion
+	 * events that only signal the end of a preedit.
+	 */
+	U32String text;
+	/**
+	 * The start of the selected range inside the composition,
+	 * or negative when the backend does not provide that range.
+	 */
+	int32 start;
+	/**
+	 * The length of the selected range inside the composition,
+	 * or negative when the backend does not provide that range.
+	 */
+	int32 length;
+
+	explicit ImeComposition(State compositionState = kComplete) : state(compositionState), start(-1), length(-1) {
+	}
+};
+
+/**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
  */
@@ -257,6 +303,9 @@ struct Event {
 	 * EVENT_JOYBUTTON_DOWN and EVENT_JOYBUTTON_UP).
 	 */
 	JoystickState joystick;
+
+	/** IME composition data; only valid for @ref EVENT_IME_COMPOSITION events. */
+	ImeComposition imeComposition;
 
 	Event() : type(EVENT_INVALID), kbdRepeat(false), customType(0) {
 	}
