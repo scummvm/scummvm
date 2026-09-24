@@ -78,7 +78,7 @@ private:
 	static const uint8 kDisplayInterfaceMask = 0x08;
 	static const uint8 kDisplayRightInterfaceMask = 0x10;
 	static const uint8 kDisplayTransitionMask = 0x80;
-	static const uint8 kInterfaceTransitionButtonMask = 0x20;
+	static const uint8 kInterfaceTransitionButtonMask = 0x20; // inventory show/hide - c button.
 	static const uint8 kInteractionMenuSuppressionMask = 0x04;
 	static const uint8 kLeadActorMask = 0x01;
 	static const int kLeadActorSlot = 0;

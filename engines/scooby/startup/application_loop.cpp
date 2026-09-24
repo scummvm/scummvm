@@ -52,6 +52,7 @@ void ApplicationLoop::run() {
 		}
 
 		SessionController session(_rom, _scene, _frame, _host, clock, state, random);
+		_scene.setInterfaceScroll(0);
 		if (session.runGame() == SessionExit::HostClosed) {
 			return;
 		}

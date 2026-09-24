@@ -130,7 +130,7 @@ bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
 			return false;
 		}
 
-		if (isNewPress(kInterfaceTransitionButtonMask)) {
+		if (isNewPress(kInterfaceTransitionButtonMask)) { // button C pressed
 			publishLowerInterfaceCells(kLowerInterfaceClosingCellsOffset);
 			_state.RoomInterfaceTransitionCountdown = 0x10;
 		}
@@ -154,17 +154,17 @@ bool RoomActorUpdater::updateInterfaceTransitionAndCursor() {
 	return true;
 }
 
+// transition to/from inventory
 void RoomActorUpdater::advanceRoomInterfaceTransition() {
 	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) != 0) {
-		_state.RoomInterfaceHorizontalScroll = static_cast<int16>(
-			_state.RoomInterfaceHorizontalScroll + 0x10);
+		_state.RoomInterfaceHorizontalScroll += 16;
 	} else {
-		_state.RoomInterfaceHorizontalScroll = static_cast<int16>(
-			_state.RoomInterfaceHorizontalScroll - 0x10);
+		_state.RoomInterfaceHorizontalScroll -= 16;
 	}
 
-	_state.RoomInterfaceTransitionCountdown = static_cast<int8>(
-		_state.RoomInterfaceTransitionCountdown - 1);
+	_scene.setInterfaceScroll(_state.RoomInterfaceHorizontalScroll);
+
+	_state.RoomInterfaceTransitionCountdown--;
 	if (_state.RoomInterfaceTransitionCountdown != 0) {
 		return;
 	}

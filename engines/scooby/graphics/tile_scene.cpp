@@ -37,7 +37,7 @@ TileScene::TileScene()
 	  _foregroundHorizontalOffset(0), _foregroundVerticalOffset(0), _layerColumns(kDefaultLayerColumns),
 	  _layerRows(kDefaultLayerRows), _roomInterfaceVisible(false), _spriteVerticalOffset(0),
 	  _spritesVisible(true),
-	  _windowVerticalPositionBits(0) {
+	  _windowVerticalPositionBits(0), _interfaceHorizontalScroll(0) {
 	Common::fill(_palette.begin(), _palette.end(), PaletteColor());
 }
 
@@ -136,7 +136,8 @@ TileScene::ContentReplacementGuard::ContentReplacementGuard(TileScene *scene)
 	  _roomInterfaceVisible(scene->_roomInterfaceVisible),
 	  _spriteVerticalOffset(scene->_spriteVerticalOffset), _spritesVisible(scene->_spritesVisible),
 	  _tilePixels(scene->_tilePixels), _windowLayer(scene->_windowLayer),
-	  _windowVerticalPositionBits(scene->_windowVerticalPositionBits) {
+	  _windowVerticalPositionBits(scene->_windowVerticalPositionBits),
+	  _interfaceHorizontalScroll(scene->_interfaceHorizontalScroll) {
 	scene->_spritesVisible = false;
 }
 
@@ -155,7 +156,8 @@ TileScene::ContentReplacementGuard::ContentReplacementGuard(ContentReplacementGu
 	  _roomInterfaceVisible(other._roomInterfaceVisible),
 	  _spriteVerticalOffset(other._spriteVerticalOffset), _spritesVisible(other._spritesVisible),
 	  _tilePixels(std::move(other._tilePixels)), _windowLayer(std::move(other._windowLayer)),
-	  _windowVerticalPositionBits(other._windowVerticalPositionBits) {
+	  _windowVerticalPositionBits(other._windowVerticalPositionBits),
+	  _interfaceHorizontalScroll(other._interfaceHorizontalScroll) {
 	other._scene = nullptr;
 }
 
@@ -182,6 +184,7 @@ TileScene::ContentReplacementGuard &TileScene::ContentReplacementGuard::operator
 		_tilePixels = std::move(other._tilePixels);
 		_windowLayer = std::move(other._windowLayer);
 		_windowVerticalPositionBits = other._windowVerticalPositionBits;
+		_interfaceHorizontalScroll = other._interfaceHorizontalScroll;
 		other._scene = nullptr;
 	}
 	return *this;
@@ -211,6 +214,7 @@ TileScene::ContentReplacementGuard::~ContentReplacementGuard() {
 	_scene->_tilePixels = _tilePixels;
 	_scene->_windowLayer = _windowLayer;
 	_scene->_windowVerticalPositionBits = _windowVerticalPositionBits;
+	_scene->_interfaceHorizontalScroll = _interfaceHorizontalScroll;
 	_scene = nullptr;
 }
 
@@ -400,7 +404,7 @@ void TileScene::render(IndexedFrame &frame) {
 			  roomBottom);
 	drawForegroundAndWindow(frame, false, roomBottom);
 	if (_roomInterfaceVisible) {
-		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, 0,
+		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, _interfaceHorizontalScroll,
 				  Span<const int16>(),
 				  0, false, kRoomInterfaceSplitY, IndexedFrame::Height);
 	}
@@ -414,7 +418,7 @@ void TileScene::render(IndexedFrame &frame) {
 			  roomBottom);
 	drawForegroundAndWindow(frame, true, roomBottom);
 	if (_roomInterfaceVisible) {
-		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, 0,
+		drawLayer(frame, _interfaceLayer, kDefaultLayerColumns, kDefaultLayerRows, _interfaceHorizontalScroll,
 				  Span<const int16>(),
 				  0, true, kRoomInterfaceSplitY, IndexedFrame::Height);
 	}

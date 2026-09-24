@@ -85,7 +85,10 @@ public:
 		Common::Array<uint8> _tilePixels;
 		Common::Array<TileCell> _windowLayer;
 		uint8 _windowVerticalPositionBits;
+		int16 _interfaceHorizontalScroll;
 	};
+
+	void setInterfaceScroll(int16 newScroll) { _interfaceHorizontalScroll = newScroll; }
 
 	// Starts a blank scene in the specified authored horizontal display mode.
 	void reset(HorizontalDisplayMode horizontalDisplayMode);
@@ -232,6 +235,7 @@ private:
 	bool _spritesVisible;
 	Common::Array<uint8> _tilePixels;
 	uint8 _windowVerticalPositionBits;
+	int16 _interfaceHorizontalScroll; // controls whether the action buttons or inventory are displayed.
 };
 } // namespace Scooby
 
