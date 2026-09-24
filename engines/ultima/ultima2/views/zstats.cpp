@@ -68,6 +68,16 @@ ZStats::ZStats() : View("ZStats") {
 	setBounds(TextRect(0, 0, 39, 24));
 }
 
+bool ZStats::msgFocus(const FocusMessage &msg) {
+	// Clear the entire screen
+	setBounds(TextRect(0, 0, 39, 24));
+	getSurface().clear();
+
+	// Set up a slightly reduced bounds to exclude columns 0 and 39
+	setBounds(TextRect(1, 0, 38, 24));
+	return Shared::Gfx::View::msgFocus(msg);
+}
+
 void ZStats::draw() {
 	auto s = getSurface();
 	s.clear();
@@ -85,22 +95,22 @@ void ZStats::draw() {
 	s.writeString(Common::Point(2, 5), "ARMOUR-%s", armorName(sg._readiedArmor));
 	s.writeString(Common::Point(2, 6), " SPELL-%s", spellName(sg._readiedSpell));
 
-	s.writeString(Common::Point(39, 4), Common::String::format("TORCHES-%.2d", sg._torches), Graphics::kTextAlignRight);
-	s.writeString(Common::Point(39, 5), Common::String::format("KEYS-%.2d", sg._keys), Graphics::kTextAlignRight);
-	s.writeString(Common::Point(39, 6), Common::String::format("TOOLS-%.2d", sg._thievesTools), Graphics::kTextAlignRight);
+	s.writeString(Common::Point(38, 4), Common::String::format("TORCHES-%.2d", sg._torches), Graphics::kTextAlignRight);
+	s.writeString(Common::Point(38, 5), Common::String::format("KEYS-%.2d", sg._keys), Graphics::kTextAlignRight);
+	s.writeString(Common::Point(38, 6), Common::String::format("TOOLS-%.2d", sg._thievesTools), Graphics::kTextAlignRight);
 
 	s.writeString(Common::Point(0, 7), "STRENGTH-%.2d", sg._strength);
 	s.writeString(Common::Point(14, 7), " STAMINA-%.2d", sg._stamina);
-	s.writeString(Common::Point(29, 7), " WISDOM-%.2d", sg._wisdom);
+	s.writeString(Common::Point(38, 7), Common::String::format(" WISDOM-%.2d", sg._wisdom), Graphics::kTextAlignRight);
 	s.writeString(Common::Point(0, 8), " AGILITY-%.2d", sg._agility);
 	s.writeString(Common::Point(14, 8), "CHARISMA-%.2d", sg._charisma);
-	s.writeString(Common::Point(29, 8), "INTELL.-%.2d", sg._intelligence);
+	s.writeString(Common::Point(38, 8), Common::String::format("INTELL.-%.2d", sg._intelligence), Graphics::kTextAlignRight);
 
 	int row = 10;
 	Common::String line = "WEAPONS: ";
 	for (int i = 0; i < Data::WEAPON_COUNT; ++i) {
 		if (sg._weaponOwned[i] != 0)
-			line += Common::String::format("%sS-%d ", weaponName((Data::WeaponType)i), sg._weaponOwned[i]);
+			line += Common::String::format("%sS-%.2d ", weaponName((Data::WeaponType)i), sg._weaponOwned[i]);
 	}
 	s.writeString(Common::Point(0, row), line);
 	row += 3; // two blank rows below WEAPONS
@@ -108,7 +118,7 @@ void ZStats::draw() {
 	line = "ARMOUR: ";
 	for (int i = 0; i < Data::ARMOR_COUNT; ++i) {
 		if (sg._armorOwned[i] != 0)
-			line += Common::String::format("%s-%d ", armorName((Data::ArmorType)i), sg._armorOwned[i]);
+			line += Common::String::format("%s-%.2d ", armorName((Data::ArmorType)i), sg._armorOwned[i]);
 	}
 	s.writeString(Common::Point(0, row), line);
 	row += 2; // one blank row below ARMOUR
@@ -116,7 +126,7 @@ void ZStats::draw() {
 	line = "SPELLS: ";
 	for (int i = 0; i < Data::SPELL_COUNT; ++i) {
 		if (sg._spellCharges[i] != 0)
-			line += Common::String::format("%sS-%d ", spellName((Data::SpellType)i), sg._spellCharges[i]);
+			line += Common::String::format("%sS-%.2d ", spellName((Data::SpellType)i), sg._spellCharges[i]);
 	}
 	s.writeString(Common::Point(0, row), line);
 	row += 3; // two blank rows below SPELLS
@@ -124,7 +134,7 @@ void ZStats::draw() {
 	line = "ITEMS: ";
 	for (int i = 0; i < Data::ITEM_COUNT; ++i) {
 		if (sg._items[i] != 0) {
-			line += Common::String::format("%s%s-%d ", itemName(i),
+			line += Common::String::format("%s%s-%.2d ", itemName(i),
 				i == Data::ITEM_BOOTS ? "" : "S", sg._items[i]);
 		}
 	}

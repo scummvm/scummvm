@@ -39,6 +39,7 @@ public:
 	ZStats();
 	~ZStats() override {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
