@@ -606,7 +606,7 @@ bool Logic::view() {
 
 	writeString("VIEW\nWITH MAGICAL HELM!\n");
 	--sg._items[Data::ITEM_HELM];
-	g_engine->addView("WorldMapOverview");
+	g_engine->addView("HelmMap");
 	return false;
 }
 

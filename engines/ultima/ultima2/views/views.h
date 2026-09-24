@@ -27,12 +27,12 @@
 #include "ultima/ultima2/views/dungeon_map.h"
 #include "ultima/ultima2/views/ending.h"
 #include "ultima/ultima2/views/game.h"
+#include "ultima/ultima2/views/helm_map.h"
 #include "ultima/ultima2/views/location_map.h"
 #include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/views/space_map.h"
 #include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
-#include "ultima/ultima2/views/world_map_overview.h"
 #include "ultima/ultima2/views/zstats.h"
 #include "ultima/ultima2/views/interactions/clue_seller.h"
 #include "ultima/ultima2/views/interactions/dead.h"
@@ -83,7 +83,7 @@ struct Views : public Shared::Views {
 	SpaceMap _spaceMap;
 	Startup _startup;
 	Title _title;
-	WorldMapOverview _worldMapOverview;
+	HelmMap _helmMap;
 	ZStats _zstats;
 };
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima2/views/world_map_overview.h"
+#include "ultima/ultima2/views/helm_map.h"
 #include "ultima/ultima2/data/map.h"
 #include "ultima/ultima2/ultima2.h"
 
@@ -38,11 +38,11 @@ static const Common::Point ICON_SWAMP[] = { {0, 1}, {3, 1} };
 static const Common::Point ICON_ROAD[] = { {0, 0}, {3, 0}, {0, 1}, {3, 1} };
 static const Common::Point ICON_OTHER[] = { {1, 0}, {2, 0}, {1, 1}, {2, 1} };
 
-WorldMapOverview::WorldMapOverview() : View("WorldMapOverview") {
-	setBounds(TextRect(0, 0, 39, 24));
+HelmMap::HelmMap() : Shared::Gfx::View("HelmMap") {
+	setBounds(TextRect(0, 0, 39, 19));
 }
 
-void WorldMapOverview::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile) {
+void HelmMap::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile) {
 	const Common::Point *points;
 	int count;
 
@@ -73,7 +73,7 @@ void WorldMapOverview::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY
 		s.setPixel(px + points[i].x, py + points[i].y, COLOR_ICON);
 }
 
-void WorldMapOverview::draw() {
+void HelmMap::draw() {
 	auto s = getSurface();
 	s.clear();
 
@@ -83,7 +83,7 @@ void WorldMapOverview::draw() {
 	}
 }
 
-bool WorldMapOverview::msgKeypress(const KeypressMessage &msg) {
+bool HelmMap::msgKeypress(const KeypressMessage &msg) {
 	close();
 	_G(logic)->resumeTurn();
 	return true;

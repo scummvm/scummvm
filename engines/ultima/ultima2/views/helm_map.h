@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ULTIMA2_VIEWS_WORLD_MAP_OVERVIEW_H
-#define ULTIMA2_VIEWS_WORLD_MAP_OVERVIEW_H
+#ifndef ULTIMA2_VIEWS_HELM_MAP_H
+#define ULTIMA2_VIEWS_HELM_MAP_H
 
 #include "ultima/shared/gfx/view.h"
 #include "ultima/ultima2/data/tiles.h"
@@ -32,16 +32,16 @@ namespace Views {
 using namespace Shared::Messages;
 
 /**
- * The "view" command's full-map overview, shown as a small icon per world
+ * The "view" command's full-map overview, shown as a small icon per world/location
  * cell. Closes and resumes the turn on any keypress.
  */
-class WorldMapOverview : public Shared::Gfx::View {
+class HelmMap : public Shared::Gfx::View {
 private:
 	void plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile);
 
 public:
-	WorldMapOverview();
-	~WorldMapOverview() override {}
+	HelmMap();
+	~HelmMap() override {}
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;

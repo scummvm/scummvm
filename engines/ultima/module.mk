@@ -128,6 +128,7 @@ MODULE_OBJS += \
 	ultima2/views/dungeon_map.o \
 	ultima2/views/ending.o \
 	ultima2/views/game.o \
+	ultima2/views/helm_map.o \
 	ultima2/views/location_map.o \
 	ultima2/views/map.o \
 	ultima2/views/overworld_map.o \
@@ -136,7 +137,6 @@ MODULE_OBJS += \
 	ultima2/views/startup.o \
 	ultima2/views/stats.o \
 	ultima2/views/title.o \
-	ultima2/views/world_map_overview.o \
 	ultima2/views/zstats.o \
 	ultima2/views/interactions/interaction.o \
 	ultima2/views/interactions/clue_seller.o \
