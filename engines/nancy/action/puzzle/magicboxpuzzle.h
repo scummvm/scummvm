@@ -29,15 +29,8 @@
 namespace Nancy {
 namespace Action {
 
-// Number-square puzzle, new in Nancy15 (AR 183). A grid of numbered cells has a few of
-// its cells left blank; the matching number of loose tiles waits in a tray beside the
-// board. A tile is picked up by clicking it, carried on the cursor and dropped into a
-// blank cell (or back into the tray). The board is solved once every row and every
-// column adds up to the target printed beside it.
-//
-// The record is loaded through the shared GridFlow factory, whose leading type word must
-// be zero for this puzzle. The grid is also divided into equal subgrids, which is what
-// spaces the cell rects out into blocks on screen.
+// Number-square puzzle, new in Nancy15 (AR 183). Loose numbered tiles are carried from a
+// tray into the blank cells of a grid, until every row and column adds up to its target.
 class MagicBoxPuzzle : public RenderActionRecord {
 public:
 	MagicBoxPuzzle() : RenderActionRecord(7) {}
@@ -54,7 +47,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "MagicBoxPuzzle"; }
 
-	// The board slots are the blank cells, in row-major order; one dest rect per slot.
 	int slotAtCursor(const Common::Point &mousePos) const;
 	int trayPieceAtCursor(const Common::Point &mousePos) const;
 
@@ -62,7 +54,7 @@ protected:
 	int32 colSum(int col) const;
 	bool isSolved() const;
 
-	// Lifts the given piece onto the cursor, or sets the carried one down for an index of -1.
+	// An index of -1 sets the carried piece back down.
 	void carryPiece(int piece, NancyInput &input);
 	Common::Rect tileSrc(int32 value) const;
 
@@ -73,21 +65,21 @@ protected:
 	static const uint kNumSounds = 10;
 
 	// -- File data --
-	uint16 _gridFlowType = 0;			// 0x00, validated as 0 by the factory
-	int32 _numCols = 0;					// 0x02
-	int32 _numRows = 0;					// 0x06
-	int32 _subgridCols = 0;				// 0x0a
-	int32 _subgridRows = 0;				// 0x0e
-	byte _allCellsBlank = 0;			// 0x12, forces every cell to be a droppable slot
-	byte _unknown13 = 0;				// 0x13
-	byte _allowTakeBack = 0;			// 0x14, lets a placed tile be picked up again
+	uint16 _gridFlowType = 0;
+	int32 _numCols = 0;
+	int32 _numRows = 0;
+	int32 _subgridCols = 0;				// the grid is drawn in blocks of this size
+	int32 _subgridRows = 0;
+	byte _allCellsBlank = 0;			// every cell becomes a droppable slot
+	byte _unknown13 = 0;
+	byte _allowTakeBack = 0;			// a placed tile can be picked up again
 
 	Common::Array<int32> _cellValues;			// row-major, 0 marks a blank cell
 	Common::Array<Common::Rect> _slotDests;		// one per blank cell, in row-major order
-	Common::Array<int32> _pieceValues;			// the loose tiles
+	Common::Array<int32> _pieceValues;
 	Common::Path _tileImageName;
 	Common::Array<Common::Rect> _tileSrcs;		// indexed by tile value - 1
-	Common::Array<Common::Rect> _trayDests;		// resting place of each loose tile
+	Common::Array<Common::Rect> _trayDests;
 	Common::Path _indicatorImageName;
 	Common::Array<Common::Rect> _indicatorSrcs;
 	Common::Array<Common::Rect> _indicatorDests;	// _numRows row markers, then _numCols column ones
@@ -101,8 +93,6 @@ protected:
 	SceneChangeDescription _solveScene;
 	FlagDescription _solveFlag;
 	RandomSoundBlock _solveSound;
-	// The second outcome of the record. Neither of the shipped Nancy15 boards can be
-	// failed, so nothing reaches it.
 	SceneChangeDescription _failScene;
 	FlagDescription _failFlag;
 	RandomSoundBlock _failSound;
@@ -115,7 +105,7 @@ protected:
 	// -- Runtime state --
 	Common::Array<int> _slotCells;		// board cell index of each slot
 	Common::Array<int> _slotContents;	// piece in each slot, or -1
-	Common::Array<int> _piecePlacement;	// slot each piece sits in, or -1 while in its tray spot
+	Common::Array<int> _piecePlacement;	// slot each piece sits in, or -1 while in the tray
 	int _carriedPiece = -1;
 	Misc::MouseFollowObject _carriedObject;
 	bool _solved = false;
