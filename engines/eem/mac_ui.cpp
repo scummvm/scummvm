@@ -137,7 +137,7 @@ bool runMacQuitDialog(const Common::Path &application) {
 	saved.copyFrom(*screen);
 	g_system->unlockScreen();
 	byte colors[kPalSize];
-	g_system->getPaletteManager()->grabPalette(colors, 0, 256);
+	getPaletteManager()->grabPalette(colors, 0, 256);
 	const Graphics::Palette palette(colors, 256);
 	const byte black = palette.findBestColor(0, 0, 0);
 	const byte white = palette.findBestColor(255, 255, 255);
@@ -398,7 +398,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 		selectionRects[i].translate(dialogRect.left, dialogRect.top);
 
 	byte oldPalette[kPalSize];
-	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+	getPaletteManager()->grabPalette(oldPalette, 0, 256);
 	Graphics::Palette palette(oldPalette, 256);
 	Graphics::ManagedSurface background;
 	if (!loadPuzzlePicture(backgroundId, background, palette, true)) {
@@ -452,7 +452,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 	bool accepted = false;
 	bool done = false;
 	setInteractiveMouseCursor(false);
-	g_system->getPaletteManager()->setPalette(palette.data(), 0, 256);
+	getPaletteManager()->setPalette(palette.data(), 0, 256);
 	if (type == 0)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	while (!done && !shouldQuit()) {
@@ -553,7 +553,7 @@ bool EEMEngine::doMacLondonPuzzle(Common::SeekableReadStream &stream) {
 	}
 	if (type == 0)
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-	g_system->getPaletteManager()->setPalette(oldPalette, 0, 256);
+	getPaletteManager()->setPalette(oldPalette, 0, 256);
 	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, saved.w, saved.h);
 	input.trim();
 	input.toUppercase();

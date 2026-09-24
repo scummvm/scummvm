@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgamma.h"
 #include "graphics/managed_surface.h"
 
 #include "eem/audio.h"
@@ -38,6 +39,28 @@
 #include "eem/site.h"
 
 namespace EEM {
+
+void MacPaletteManager::setPalette(const byte *colors, uint start, uint num) {
+	assert(start <= 256 && num <= 256 - start);
+	memcpy(_colors + start * 3, colors, num * 3);
+	byte corrected[kPalSize];
+	for (uint i = 0; i < num * 3; ++i)
+		corrected[i] = Graphics::macGammaCorrectionLookUp[colors[i]];
+	g_system->getPaletteManager()->setPalette(corrected, start, num);
+}
+
+void MacPaletteManager::grabPalette(byte *colors, uint start, uint num) const {
+	assert(start <= 256 && num <= 256 - start);
+	memcpy(colors, _colors + start * 3, num * 3);
+}
+
+PaletteManager *EEMEngine::getPaletteManager() {
+	return isMacintosh() ? &_macPaletteManager : g_system->getPaletteManager();
+}
+
+PaletteManager *getPaletteManager() {
+	return static_cast<EEMEngine *>(g_engine)->getPaletteManager();
+}
 
 const uint16 kHelpPics[][2] = {
 	{ 0x0063, 0x01ae },

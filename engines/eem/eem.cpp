@@ -36,6 +36,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
+#include "graphics/macgamma.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/paletteman.h"
 
@@ -155,12 +156,12 @@ Common::String londonProfileKeyFromDisplayName(const Common::String &name) {
 void fadeCurrentPaletteToBlack(uint delayMs) {
 	byte start[kPalSize];
 	byte stepPal[kPalSize];
-	g_system->getPaletteManager()->grabPalette(start, 0, 256);
+	getPaletteManager()->grabPalette(start, 0, 256);
 
 	for (int step = 15; step >= 0; step--) {
 		for (uint i = 0; i < kPalSize; i++)
 			stepPal[i] = (byte)((uint)start[i] * step / 16);
-		g_system->getPaletteManager()->setPalette(stepPal, 0, 256);
+		getPaletteManager()->setPalette(stepPal, 0, 256);
 		g_system->updateScreen();
 		if (delayMs)
 			g_system->delayMillis(delayMs);
@@ -173,7 +174,7 @@ void fadePaletteFromBlack(const byte *target, uint delayMs) {
 	for (uint step = 1; step <= 16; step++) {
 		for (uint i = 0; i < kPalSize; i++)
 			stepPal[i] = (byte)((uint)target[i] * step / 16);
-		g_system->getPaletteManager()->setPalette(stepPal, 0, 256);
+		getPaletteManager()->setPalette(stepPal, 0, 256);
 		g_system->updateScreen();
 		if (delayMs)
 			g_system->delayMillis(delayMs);
@@ -247,7 +248,10 @@ bool installMacCursor(uint16 resourceId, bool london) {
 			Graphics::MacCursor macCursor;
 			if (macCursor.readFromStream(*crsrStream)) {
 				CursorMan.replaceCursor(&macCursor);
-				CursorMan.replaceCursorPalette(macCursor.getPalette(), 0, 256);
+				byte palette[kPalSize];
+				for (uint color = 0; color < kPalSize; ++color)
+					palette[color] = Graphics::macGammaCorrectionLookUp[macCursor.getPalette()[color]];
+				CursorMan.replaceCursorPalette(palette, 0, 256);
 				return true;
 			}
 		}
@@ -599,7 +603,7 @@ Common::Error EEMEngine::run() {
 
 	// _AllBlack @ 172b:0d4b.
 	byte black[3 * 256] = { 0 };
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 
 	debugC(1, kDebugGeneral, "EEM engine starting");
 
@@ -1050,7 +1054,7 @@ void EEMEngine::setSitePalette(uint num) {
 		warning("setSitePalette: index %u out of range", num);
 		return;
 	}
-	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
+	getPaletteManager()->setPalette(expanded, 0, 256);
 }
 
 bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
@@ -1067,7 +1071,7 @@ bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
 	byte expanded[kPalSize];
 	for (uint i = 0; i < kPalSize; i++)
 		expanded[i] = (byte)(raw[i] << 2);
-	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
+	getPaletteManager()->setPalette(expanded, 0, 256);
 	return true;
 }
 
@@ -1099,7 +1103,7 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 	const int h = MIN(fh, screenHeight() - oy);
 
 	byte black[3 * 256] = { 0 };
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	if (Graphics::Surface *screen = g_system->lockScreen()) {
 		screen->fillRect(Common::Rect(screen->w, screen->h), 0);
 		g_system->unlockScreen();
@@ -1118,7 +1122,7 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
 					if (fadeIn && !paletteApplied)
 						fadePaletteFromBlack(flic.getPalette());
 					else
-						g_system->getPaletteManager()->setPalette(
+						getPaletteManager()->setPalette(
 							flic.getPalette(), 0, 256);
 					paletteApplied = true;
 				}
@@ -1182,7 +1186,7 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 			if (fadeIn)
 				fadePaletteFromBlack(palette);
 			else
-				g_system->getPaletteManager()->setPalette(palette, 0, 256);
+				getPaletteManager()->setPalette(palette, 0, 256);
 			paletteApplied = true;
 		}
 		g_system->updateScreen();
@@ -1337,8 +1341,7 @@ void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
 	fpal[start * 3 + 1] = savedG;
 	fpal[start * 3 + 2] = savedB;
 	if (show) {
-		g_system->getPaletteManager()->setPalette(fpal + start * 3, start,
-												   end - start);
+		getPaletteManager()->setPalette(fpal + start * 3, start, end - start);
 	}
 }
 // _ShowEAKids @ 2520:05f0:
@@ -1428,7 +1431,7 @@ void EEMEngine::showHighScoreLogo() {
 		return;
 	}
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
@@ -1570,7 +1573,7 @@ void EEMEngine::showMacStillLogo(uint picId, uint palId, uint holdMs,
 	}
 
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
@@ -1632,7 +1635,7 @@ void EEMEngine::showMacTitleIntro() {
 	copyNativeSurfaceToScreen(frame);
 
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
@@ -1744,7 +1747,7 @@ void EEMEngine::playMacCDIntro() {
 		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0,
 			MIN<int>(frame->w, screenWidth()), MIN<int>(frame->h, screenHeight()));
 		if (flic.hasDirtyPalette())
-			g_system->getPaletteManager()->setPalette(flic.getPalette(), 0, 256);
+			getPaletteManager()->setPalette(flic.getPalette(), 0, 256);
 		g_system->updateScreen();
 		lastFrameMs = g_system->getMillis();
 
@@ -1857,7 +1860,7 @@ void EEMEngine::showStillPicture(uint picId, uint palId, uint holdMs,
 			SWAP(target[i], target[255 * 3 + i]);
 	}
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	blitAt(pic, 0, 0);
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
@@ -1996,7 +1999,7 @@ void EEMEngine::showLondonCharSelect() {
 
 	byte pal[kPalSize];
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 	const bool havePal = getSitePalette(0, pal);
 	if (!havePal)
@@ -2216,7 +2219,7 @@ void EEMEngine::showFloppyStormLogo() {
 		return;
 	}
 	byte black[kPalSize] = {};
-	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 
 	if (_audio && !isDemo())
