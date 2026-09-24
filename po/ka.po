@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-08-27 09:22+0000\n"
+"PO-Revision-Date: 2026-09-24 09:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -754,7 +754,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:341
 msgid "Point"
-msgstr ""
+msgstr "წერტილი"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -12745,7 +12745,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
 msgid "Cover"
-msgstr ""
+msgstr "ყდა"
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
