@@ -29,21 +29,24 @@ namespace Views {
 
 constexpr int COLOR_ICON = 3;
 
+// Matches the screen offset used by every other full-screen point/line renderer
+constexpr int VIEW_OFFSET = 16;
+
 // Each world cell maps to a 4-wide x 2-tall block of plot points; the
 // points lit within that block form a small per-terrain-category icon
-static const Common::Point ICON_MOUNTAIN_OR_SPRITE[] = { {0, 0}, {1, 0}, {0, 1}, {1, 1} };
-static const Common::Point ICON_GRASS[] = { {1, 0}, {2, 0} };
-static const Common::Point ICON_FOREST[] = { {1, 1}, {2, 1} };
-static const Common::Point ICON_SWAMP[] = { {0, 1}, {3, 1} };
-static const Common::Point ICON_ROAD[] = { {0, 0}, {3, 0}, {0, 1}, {3, 1} };
-static const Common::Point ICON_OTHER[] = { {1, 0}, {2, 0}, {1, 1}, {2, 1} };
+static const byte ICON_GRASS[][2] = { {1, 0}, {3, 1} };
+static const byte ICON_FOREST[][2] = { {1, 1}, {3, 0}, {1, 0}, {3, 1} };
+static const byte ICON_MOUNTAIN_OR_SPRITE[][2] = { {0, 0}, {0, 1}, {2, 1}, {2, 0}, {1, 1}, {3, 0}, {1, 0}, {3, 1} };
+static const byte ICON_SWAMP[][2] = { {1, 0}, {3, 0} };
+static const byte ICON_ROAD[][2] = { {0, 0}, {0, 1}, {2, 0}, {2, 1} };
+static const byte ICON_OTHER[][2] = { {1, 0}, {2, 0}, {2, 1}, {1, 1} };
 
 HelmMap::HelmMap() : Shared::Gfx::View("HelmMap") {
 	setBounds(TextRect(0, 0, 39, 19));
 }
 
 void HelmMap::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::TileId tile) {
-	const Common::Point *points;
+	const byte (*points)[2];
 	int count;
 
 	if (tile == Data::TILE_WATER) {
@@ -68,9 +71,9 @@ void HelmMap::plotIcon(Shared::Gfx::GfxSurface &s, int cellX, int cellY, Data::T
 		count = ARRAYSIZE(ICON_OTHER);
 	}
 
-	int px = cellX * 4, py = cellY * 2;
+	int px = cellX * 4 + VIEW_OFFSET, py = cellY * 2 + VIEW_OFFSET;
 	for (int i = 0; i < count; ++i)
-		s.setPixel(px + points[i].x, py + points[i].y, COLOR_ICON);
+		s.setPixel(px + points[i][0], py + points[i][1], COLOR_ICON);
 }
 
 void HelmMap::draw() {
