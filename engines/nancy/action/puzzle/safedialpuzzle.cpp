@@ -327,6 +327,11 @@ void SafeDialPuzzle::turnDial(bool forwards) {
 }
 
 void SafeDialPuzzle::drawDialFrame(uint frame) {
+	// Some dials have no in-between frames, and leave their slots empty
+	if (_dialSrcs[frame].isEmpty()) {
+		return;
+	}
+
 	if (frame >= _dialSrcs.size() / 2 && !_imageName2.empty()) {
 		_drawSurface.blitFrom(_image2, _dialSrcs[frame], _dialDest);
 	} else {
