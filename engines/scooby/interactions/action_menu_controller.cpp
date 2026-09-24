@@ -82,7 +82,7 @@ void ActionMenuController::synchronizeActionIcon() {
 
 bool ActionMenuController::updateActionMenu() {
 	int16 command = _state.MenuCommand;
-	if ((_state.DisplayFlags & kMenuDisplayMask) == 0) {
+	if ((_state.DisplayFlags & kMenuDisplayMask) == 0) { // action menu
 		if (command == 0) {
 			return true;
 		}
@@ -108,7 +108,8 @@ bool ActionMenuController::updateActionMenu() {
 		return _waitForRoomVerticalBlank();
 	}
 
-	if (command == 5 || command == 10) {
+	// inventory mode
+	if (command == 5 || command == 10) { // inventory page up/down buttons
 		if ((_state.InteractionFlags & kAlternateInteractionMask) == 0) {
 			_state.CurrentInteraction = 0;
 		} else {
@@ -116,16 +117,16 @@ bool ActionMenuController::updateActionMenu() {
 		}
 
 		if ((_state.ControllerOneInput & 0x10) == 0) {
-			if (command == 10) {
-				int16 lastPage = _state.InteractionMenuItems.empty()
+			if (command == 10) { // down button
+				int16 lastPage = _state.InventoryObjectIndices.empty()
 									 ? static_cast<int16>(0)
-									 : static_cast<int16>((static_cast<int>(_state.InteractionMenuItems.size()) - 1) >> 2);
-				if (!_state.InteractionMenuItems.empty() && lastPage != _state.MenuPage) {
+									 : static_cast<int16>((static_cast<int>(_state.InventoryObjectIndices.size()) - 1) >> 2);
+				if (!_state.InventoryObjectIndices.empty() && lastPage != _state.MenuPage) {
 					_state.MenuPage++;
 					queueRightActionPrompt(1);
 					commitActionPromptUpdate();
 				}
-			} else if (_state.MenuPage != 0) {
+			} else if (_state.MenuPage != 0) { // up button
 				_state.MenuPage--;
 				queueLeftActionPrompt(1);
 				commitActionPromptUpdate();
@@ -136,9 +137,9 @@ bool ActionMenuController::updateActionMenu() {
 	} else {
 		int16 adjustedCommand = command > 4 ? static_cast<int16>(command - 1) : command;
 		int menuIndex = _state.MenuPage * 4 + adjustedCommand;
-		int16 interaction = menuIndex > static_cast<int>(_state.InteractionMenuItems.size()) || _state.InteractionMenuItems.size() == 0
+		int16 interaction = _state.InventoryObjectIndices.empty() || menuIndex > static_cast<int>(_state.InventoryObjectIndices.size())
 								? static_cast<int16>(0)
-								: static_cast<int16>(_state.InteractionMenuItems[static_cast<std::size_t>(
+								: static_cast<int16>(_state.InventoryObjectIndices[static_cast<std::size_t>(
 														 menuIndex - 1)] +
 													 3);
 		if ((_state.InteractionFlags & kAlternateInteractionMask) == 0) {
