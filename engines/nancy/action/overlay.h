@@ -194,7 +194,8 @@ protected:
 
 // Nancy14 AR 53. A rollover label: an image that is only drawn while the mouse
 // is inside its hotspot. Entering the hotspot plays a sound and sets an event
-// flag, and clicking it plays a second sound before changing the scene.
+// flag, and clicking it plays a second sound before setting another event flag
+// and changing the scene.
 class RolloverOverlay : public RenderActionRecord {
 public:
 	RolloverOverlay() : RenderActionRecord(7) {}
@@ -231,6 +232,8 @@ protected:
 	uint16 _hoverSoundOnce = 0;
 	RandomSoundBlock _hoverSound;
 	SceneChangeDescription _sceneChange;
+	// Set when the click sound finishes, even when there's no scene change
+	FlagDescription _flagOnClick;
 	RandomSoundBlock _clickSound;
 
 	bool _isHovered = false;

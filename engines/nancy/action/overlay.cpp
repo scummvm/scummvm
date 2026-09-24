@@ -693,10 +693,10 @@ void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
 
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();
-	int16 verticalOffset = stream.readSint16LE();
-	_sceneChange.verticalOffset = verticalOffset >= 0 ? verticalOffset : 0;
+	_sceneChange.continueSceneSound = kContinueSceneSound;
 
-	_sceneChange.continueSceneSound = stream.readByte();
+	_flagOnClick.label = stream.readSint16LE();
+	_flagOnClick.flag = stream.readByte();
 
 	_clickSound.readData(stream);
 }
@@ -778,6 +778,8 @@ void RolloverOverlay::execute() {
 
 		setVisible(false);
 		_hasHotspot = false;
+
+		NancySceneState.setEventFlag(_flagOnClick);
 
 		if (_sceneChange.sceneID != kNoScene) {
 			NancySceneState.changeScene(_sceneChange);
