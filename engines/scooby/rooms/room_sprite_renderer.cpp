@@ -209,24 +209,24 @@ void RoomSpriteRenderer::appendCursorOrLowerInterfaceSprite(Common::Array<Sprite
 	if (_state.CursorY >= 0x00C0) {
 		packedY = 0x0140;
 	} else if ((_state.DisplayFlags & 0x10) == 0) {
-		packedY = static_cast<int16>(packedY + 8);
+		packedY += 8;
 	}
 
 	int16 remainingX = _state.CursorX;
 	int16 snappedX = 0;
 	while (true) {
-		remainingX = static_cast<int16>(remainingX - 0x28);
+		remainingX -= 0x28;
 		if (remainingX < 0) {
 			break;
 		}
 
-		snappedX = static_cast<int16>(snappedX + 0x28);
+		snappedX += 0x28;
 	}
 
 	uint16 sizeAttributes;
 	uint16 tileAttributes;
 	if ((_state.DisplayFlags & 0x10) == 0) {
-		snappedX = static_cast<int16>(snappedX + 8);
+		snappedX += 8;
 		if (snappedX > 0x00A8) {
 			snappedX = 0x00A8;
 		}
@@ -272,8 +272,7 @@ void RoomSpriteRenderer::appendScriptedCoordinateSprite(Common::Array<SpriteInst
 		_state.ScriptedCoordinateSprite._coordinateOffset -= static_cast<int32>(sizeof(uint16));
 	}
 
-	_state.ScriptedCoordinateSprite._frameDelay =
-		static_cast<int8>(_state.ScriptedCoordinateSprite._frameDelay - 1);
+	_state.ScriptedCoordinateSprite._frameDelay--;
 	if (_state.ScriptedCoordinateSprite._frameDelay < 0) {
 		_state.ScriptedCoordinateSprite._frameDelay = 7;
 		_state.RoomBehaviorFlags ^= 0x40;
@@ -299,7 +298,7 @@ void RoomSpriteRenderer::appendInteractionStripSprites(Common::Array<SpriteInsta
 	uint16 sizeAttributes = static_cast<uint16>(0x0C00 | _state.InteractionStripHeightAttributes);
 	for (int sprite = 0; sprite < 8; sprite++) {
 		addPackedSprite(sprites, packedX, packedY, sizeAttributes, _state.TallInterfaceSpriteTileIndex);
-		packedX = static_cast<uint16>(packedX + 0x20);
+		packedX += 0x20;
 	}
 }
 
@@ -392,14 +391,11 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 	int16 packedX = static_cast<int16>(relativeX + 0x80);
 	int16 packedY = static_cast<int16>(relativeY + 0x90);
 	if ((_state.ActorCompactFrameFlags & actorMask) != 0) {
-		packedX = static_cast<int16>(packedX -
-									 _state.ActorPublishedFrameAnchorX[static_cast<std::size_t>(actor)]);
-		packedY = static_cast<int16>(packedY -
-									 _state.ActorPublishedFrameAnchorY[static_cast<std::size_t>(actor)]);
+		packedX -= _state.ActorPublishedFrameAnchorX[static_cast<std::size_t>(actor)];
+		packedY -= _state.ActorPublishedFrameAnchorY[static_cast<std::size_t>(actor)];
 	} else {
-		packedX = static_cast<int16>(packedX - _rom.readInt16(frameDataOffset));
-		packedY =
-			static_cast<int16>(packedY - _rom.readInt16(frameDataOffset + static_cast<int>(sizeof(int16))));
+		packedX -= _rom.readInt16(frameDataOffset);
+		packedY -= _rom.readInt16(frameDataOffset + static_cast<int>(sizeof(int16)));
 	}
 
 	// Ghidra 0x0000ADB0-0x0000AEEB: preserve all six dimension families, including the nested 0x20 height split
@@ -421,7 +417,7 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 		if (frameHeight == 0x50) {
 			layout = &kActorSpriteLayout20x50;
 		} else {
-			packedY = static_cast<int16>(packedY - 0x4C);
+			packedY -= 0x4C;
 			layout = &kActorSpriteLayout20;
 		}
 
@@ -443,13 +439,13 @@ void RoomSpriteRenderer::appendRoomActorSprites(Common::Array<SpriteInstance> &s
 	// combine slot tile base, authored tile offset, frame attributes, and actor priority, and append in order.
 	for (int part = 0; part < layout->PartCount; part++) {
 		int tableByteOffset = part * static_cast<int>(sizeof(uint16));
-		packedX = static_cast<int16>(packedX + _rom.readInt16(xOffsetTableOffset + tableByteOffset));
-		packedY = static_cast<int16>(packedY + _rom.readInt16(layout->YOffset + tableByteOffset));
+		packedX += _rom.readInt16(xOffsetTableOffset + tableByteOffset);
+		packedY += _rom.readInt16(layout->YOffset + tableByteOffset);
 		uint16 tileAttributes =
 			static_cast<uint16>(baseTileIndex + _rom.readUInt16(layout->TileOffset + tableByteOffset));
-		tileAttributes = static_cast<uint16>(tileAttributes | frameAttributes);
+		tileAttributes |= frameAttributes;
 		if ((_state.ActorHighPriorityFlags & actorMask) != 0) {
-			tileAttributes = static_cast<uint16>(tileAttributes | 0x8000);
+			tileAttributes |= 0x8000;
 		}
 
 		addPackedSprite(sprites, static_cast<uint16>(packedX), static_cast<uint16>(packedY),

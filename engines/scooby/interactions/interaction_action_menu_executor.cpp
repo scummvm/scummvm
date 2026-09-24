@@ -143,11 +143,11 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 				lineCounts[actionIndex] = _dialogue.drawTimedInteractionText(
 					DialogueTextSource(_state.InteractionActions[actionIndex].LabelTextOffset), visibleRow,
 					horizontalOffset);
-				visibleRow = static_cast<int16>(visibleRow + lineCounts[actionIndex]);
+				visibleRow += lineCounts[actionIndex];
 			}
 
 			actionIndex++;
-			remainingActions = static_cast<int16>(remainingActions - 1);
+			remainingActions--;
 			if (remainingActions <= 0 || visibleRow >= InteractionActionRegistry::Capacity) {
 				break;
 			}
@@ -176,12 +176,12 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 				(_state.PreviousControllerOneInput & kUpDirectionMask) != 0 && selectedIndex != 0) {
 				int16 candidate = static_cast<int16>(selectedIndex - 1);
 				while (candidate >= 0 && (currentFrame.UsedFlags & (1 << candidate)) != 0) {
-					candidate = static_cast<int16>(candidate - 1);
+					candidate--;
 				}
 
 				if (candidate >= 0) {
 					selectedIndex = candidate;
-					selectedRow = static_cast<int16>(selectedRow - lineCounts[candidate]);
+					selectedRow -= lineCounts[candidate];
 					movedUp = true;
 				}
 			}
@@ -192,14 +192,14 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 				if (candidate < _state.InteractionActions.count() && candidate <
 																		 InteractionActionRegistry::Capacity) {
 					while ((currentFrame.UsedFlags & (1 << candidate)) != 0) {
-						candidate = static_cast<int16>(candidate + 1);
+						candidate++;
 						if (candidate == InteractionActionRegistry::Capacity) {
 							break;
 						}
 					}
 
 					if (candidate != InteractionActionRegistry::Capacity) {
-						selectedRow = static_cast<int16>(selectedRow + lineCounts[selectedIndex]);
+						selectedRow += lineCounts[selectedIndex];
 						selectedIndex = candidate;
 					}
 				}
@@ -227,7 +227,7 @@ Optional<SessionExit> InteractionActionMenuExecutor::runInteractionActionMenu() 
 
 		// Ghidra 0x00001E7A-0x00001EF5: mark the exact selected bit, preserve the separate fill, mask,
 		// text, random-animation, and dismissal boundaries, then restart actor zero at position plus four.
-		currentFrame.UsedFlags = static_cast<uint8>(currentFrame.UsedFlags | (1 << selectedIndex));
+		currentFrame.UsedFlags |= 1 << selectedIndex;
 		const InteractionAction &selectedAction = _state.InteractionActions[selectedIndex];
 		fillInteractionTextWindow(interfaceStartColumn);
 		_state.InterfaceTileAttributes &= kInterfacePaletteClearMask;

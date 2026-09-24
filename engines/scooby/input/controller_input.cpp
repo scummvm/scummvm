@@ -27,8 +27,6 @@ void ControllerInput::pollControllers() {
 	_state.PreviousControllerOneInput = _state.ControllerOneInput;
 	_state.ControllerOneInput =
 		static_cast<uint8>(~static_cast<uint8>(_host.getControllerButtons(_backButton)));
-	_state.ControllerOneAccumulatedChanges = static_cast<uint8>(
-		_state.ControllerOneAccumulatedChanges |
-		(_state.ControllerOneChangeBaseline ^ _state.ControllerOneInput));
+	_state.ControllerOneAccumulatedChanges |= _state.ControllerOneChangeBaseline ^ _state.ControllerOneInput;
 }
 } // namespace Scooby

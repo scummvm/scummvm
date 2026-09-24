@@ -52,7 +52,7 @@ void TransferPasswordBitsToAccumulator(uint16 &sourceBits, uint16 &symbolAccumul
 	// proved zero-through-five count and 16-bit source-replacement lifecycle.
 	do {
 		bool sourceHighBit = (sourceBits & 0x8000) != 0;
-		sourceBits = static_cast<uint16>(sourceBits << 1);
+		sourceBits <<= 1;
 		symbolAccumulator = static_cast<uint16>((symbolAccumulator << 1) | (sourceHighBit ? 1 : 0));
 		bitCount--;
 	} while (bitCount != 0);
@@ -83,7 +83,7 @@ void BuildPasswordChecksumAndPrefixXor(Span<uint8> packedPassword) {
 	// Ghidra 0x00008756-0x0000875F: select the 29-byte state range and its inclusive DBF bound.
 	// Ghidra 0x00008760-0x00008769: XOR every source byte with the preceding encoded value in place.
 	for (std::size_t index = 2; index < packedPassword.size(); index++) {
-		prefixXor = static_cast<uint8>(prefixXor ^ packedPassword[index]);
+		prefixXor ^= packedPassword[index];
 		packedPassword[index] = prefixXor;
 	}
 
@@ -135,8 +135,7 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 													 packedSourceOffset)]
 												 << 8);
 				if (packedSourceOffset + 1 < static_cast<int>(packedBytes.size())) {
-					sourceBits = static_cast<uint16>(
-						sourceBits | packedBytes[static_cast<std::size_t>(packedSourceOffset + 1)]);
+					sourceBits |= packedBytes[static_cast<std::size_t>(packedSourceOffset + 1)];
 				}
 
 				packedSourceOffset += static_cast<int>(sizeof(uint16));

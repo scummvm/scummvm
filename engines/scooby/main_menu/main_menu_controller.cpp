@@ -109,7 +109,7 @@ bool MainMenuController::runMenuReveal() {
 			wideRowMaskOffset = _wideRevealOffset;
 			wideColumnMaskOffset = _wideRevealOffset;
 			if (_wideRevealOffset != 0) {
-				_wideRevealOffset = static_cast<int16>(_wideRevealOffset - 0x20);
+				_wideRevealOffset -= 0x20;
 			}
 		} else {
 			wideRowMaskOffset = _menuPresentation.animatedRowMaskOffset();
@@ -126,7 +126,7 @@ bool MainMenuController::runMenuReveal() {
 				if (_narrowRevealOffset == 0) {
 					_state.InitializationFlags |= kRevealCompleteMask;
 				} else {
-					_narrowRevealOffset = static_cast<int16>(_narrowRevealOffset - 0x20);
+					_narrowRevealOffset -= 0x20;
 				}
 			} else {
 				narrowRowMaskOffset = _menuPresentation.animatedRowMaskOffset();

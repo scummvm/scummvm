@@ -56,12 +56,10 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLa
 			uint16 packedHighWord = 0;
 			uint16 packedLowWord = 0;
 			for (int pixel = 0; pixel < 4; ++pixel) {
-				packedHighWord = static_cast<uint16>(packedHighWord << 4);
-				packedHighWord = static_cast<uint16>(
-					packedHighWord | decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)]);
-				packedLowWord = static_cast<uint16>(packedLowWord << 4);
-				packedLowWord = static_cast<uint16>(
-					packedLowWord | decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)]);
+				packedHighWord <<= 4;
+				packedHighWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)];
+				packedLowWord <<= 4;
+				packedLowWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)];
 			}
 
 			int destinationOffset = sourceRow < 32
@@ -91,12 +89,10 @@ Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite80UsingSecondary
 			uint16 packedHighWord = 0;
 			uint16 packedLowWord = 0;
 			for (int pixel = 0; pixel < 4; ++pixel) {
-				packedHighWord = static_cast<uint16>(packedHighWord << 4);
-				packedHighWord = static_cast<uint16>(
-					packedHighWord | decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)]);
-				packedLowWord = static_cast<uint16>(packedLowWord << 4);
-				packedLowWord = static_cast<uint16>(
-					packedLowWord | decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)]);
+				packedHighWord <<= 4;
+				packedHighWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + pixel)];
+				packedLowWord <<= 4;
+				packedLowWord |= decodedPixels[static_cast<std::size_t>(sourceLongwordOffset + 4 + pixel)];
 			}
 
 			int destinationOffset =

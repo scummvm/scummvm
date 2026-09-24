@@ -41,7 +41,7 @@ void RoomScriptCameraPanExecutor::executeRoomScriptAction0F() {
 
 	// Ghidra 0x000043C8-0x000043EF: clear only camera-X bit zero, then preserve the separate signed 16-bit
 	// next-tile comparison and its early return.
-	_state.CameraX = static_cast<int16>(_state.CameraX & 0xFFFE);
+	_state.CameraX &= 0xFFFE;
 	int16 alignedNextTileX = static_cast<int16>((_state.CameraX + 8) & 0xFFF8);
 	int16 cameraTargetX = static_cast<int16>((_state.RoomWidthTiles - 32) << 3);
 	if (alignedNextTileX >= cameraTargetX) {
@@ -75,7 +75,7 @@ void RoomScriptCameraPanExecutor::executeRoomScriptAction10() {
 	_state.RoomBehaviorFlags |= 0x02;
 
 	// Ghidra 0x00004430-0x00004445: align camera X to an even pixel and preserve the zero early return.
-	_state.CameraX = static_cast<int16>(_state.CameraX & 0xFFFE);
+	_state.CameraX &= 0xFFFE;
 	if (_state.CameraX == 0) {
 		return;
 	}

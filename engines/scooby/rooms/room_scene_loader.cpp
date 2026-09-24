@@ -101,7 +101,7 @@ void RoomSceneLoader::loadRoomScene() {
 		static_cast<uint16>(((_state.InterfaceTileAttributes & 0x07FF) + 0x20) << 5);
 	Common::Array<uint8> dialogueMaskTiles = generate(_rom, 0x0F, 0x01);
 	_scene.overwritePackedPatternBytes(MakeSpan(dialogueMaskTiles), maskTileByteOffset);
-	patternByteOffset = static_cast<uint16>(patternByteOffset + kMaskTileByteCount);
+	patternByteOffset += kMaskTileByteCount;
 	_state.ActionPromptTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
 															kPriorityAttribute);
 
@@ -115,22 +115,21 @@ void RoomSceneLoader::loadRoomScene() {
 	_scene.overwritePackedPatternBytes(
 		MakeSpan(actionPromptTiles).slice(0, static_cast<std::size_t>(actionPromptByteCount)),
 		patternByteOffset);
-	patternByteOffset = static_cast<uint16>(patternByteOffset + actionPromptWordCount +
-											actionPromptWordCount);
+	patternByteOffset += actionPromptWordCount + actionPromptWordCount;
 	_state.CursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |
 															kPriorityAttribute);
 	_scene.overwritePackedPatternBytes(_rom.readBytes(kCursorSpriteTilesOffset, kCursorSpriteTileByteCount),
 									   patternByteOffset);
-	patternByteOffset = static_cast<uint16>(patternByteOffset + kCursorSpriteTileByteCount);
+	patternByteOffset += kCursorSpriteTileByteCount;
 	_state.TallInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
 	_scene.overwritePackedPatternBytes(
 		_rom.readBytes(kTallInterfaceSpriteTilesOffset, kTallInterfaceSpriteTileByteCount), patternByteOffset);
-	patternByteOffset = static_cast<uint16>(patternByteOffset + kTallInterfaceSpriteAdvanceByteCount);
+	patternByteOffset += kTallInterfaceSpriteAdvanceByteCount;
 	_state.ShortInterfaceSpriteTileIndex = static_cast<uint16>(patternByteOffset >> 5);
 	_scene.overwritePackedPatternBytes(
 		_rom.readBytes(kShortInterfaceSpriteTilesOffset, kShortInterfaceSpriteTileByteCount),
 		patternByteOffset);
-	patternByteOffset = static_cast<uint16>(patternByteOffset + kShortInterfaceSpriteTileByteCount);
+	patternByteOffset += kShortInterfaceSpriteTileByteCount;
 	_state.BlankTileCell = static_cast<uint16>((patternByteOffset >> 5) | kPriorityAttribute);
 
 	// Ghidra 0x0000773C-0x00007759: materialize the all-one blank tile and reserve the following tile as
@@ -258,13 +257,13 @@ void RoomSceneLoader::loadRoomScene() {
 	int16 horizontalOverflow =
 		static_cast<int16>(cameraTileX + kViewportWidthTiles - _state.RoomWidthTiles);
 	if (horizontalOverflow > 0) {
-		cameraTileX = static_cast<int16>(cameraTileX - horizontalOverflow);
+		cameraTileX -= horizontalOverflow;
 	}
 
 	int16 verticalOverflow =
 		static_cast<int16>(cameraTileY + kViewportHeightTiles - _state.RoomHeightTiles);
 	if (verticalOverflow > 0) {
-		cameraTileY = static_cast<int16>(cameraTileY - verticalOverflow);
+		cameraTileY -= verticalOverflow;
 	}
 
 	_state.CameraX = static_cast<int16>(cameraTileX << 3);

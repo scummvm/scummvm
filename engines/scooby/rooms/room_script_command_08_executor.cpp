@@ -95,14 +95,14 @@ void RoomScriptCommand08Executor::executeRoomScriptCommand08(int mode) {
 			}
 			// Ghidra 0x00002D3A-0x00002D47: flag bit five subtracts with original word wrapping.
 			else if ((flags & 0x20) != 0) {
-				destinationValue = static_cast<uint16>(destinationValue - sourceValue);
+				destinationValue -= sourceValue;
 			}
 			// Ghidra 0x00002D48-0x00002D53: flag bit six ORs both complete word bit patterns.
 			else if ((flags & 0x40) != 0) {
 				destinationValue |= sourceValue;
 			} else {
 				// Ghidra 0x00002D54-0x00002D57: the remaining operation adds with word wrapping.
-				destinationValue = static_cast<uint16>(destinationValue + sourceValue);
+				destinationValue += sourceValue;
 			}
 
 			destination.TargetRoomObject.writeCommandWord(destination.ByteOffset, destinationValue);

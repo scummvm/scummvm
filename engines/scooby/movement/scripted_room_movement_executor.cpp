@@ -79,7 +79,7 @@ bool ScriptedRoomMovementExecutor::moveRoomObjectToPosition(uint16 objectIdentit
 	if (repeatCounter >= 0) {
 		do {
 			horizontalStep = horizontalStep + baseHorizontalStep;
-			repeatCounter = static_cast<int16>(repeatCounter - 1);
+			repeatCounter--;
 		} while (repeatCounter != -1);
 	}
 
@@ -332,7 +332,7 @@ ScriptedRoomMovementExecutor::computeMovementVelocityFromStagedOrigin(
 		static_cast<int16>(targetX - static_cast<int16>(originXFixed >> 16));
 	int16 verticalDelta = static_cast<int16>(targetY - static_cast<int16>(originYFixed >>
 																		  16));
-	verticalDelta = static_cast<int16>(verticalDelta << 1);
+	verticalDelta <<= 1;
 	uint16 horizontalMagnitude =
 		static_cast<uint16>(horizontalDelta < 0 ? -horizontalDelta : horizontalDelta);
 	uint16 verticalMagnitude = static_cast<uint16>(verticalDelta < 0
@@ -399,8 +399,8 @@ ScriptedRoomMovementExecutor::computeMovementVelocityFromStagedOrigin(
 
 	// Ghidra 0x00005564-0x00005589: restore the original scale, retain signed-word multiplication and
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
-	horizontalStep = static_cast<int16>(horizontalStep * movementScale);
-	verticalStep = static_cast<int16>(verticalStep * movementScale);
+	horizontalStep *= movementScale;
+	verticalStep *= movementScale;
 	_state.LeadActorHorizontalMovementStep = horizontalStep;
 	_state.LeadActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);
@@ -455,7 +455,7 @@ uint16 ScriptedRoomMovementExecutor::classifyLeadWaypointVisibility() {
 		int16 targetY = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))
 										   << 3);
 		if (!traceLeadPathToTarget(targetX, targetY)) {
-			visibility = static_cast<uint16>(visibility | (1 << waypointIndex));
+			visibility |= 1 << waypointIndex;
 		}
 
 		// Ghidra 0x0000535A-0x00005363: advance one four-byte pair and retain both DBF iterations.
@@ -878,7 +878,7 @@ uint16 ScriptedRoomMovementExecutor::classifyCompanionWaypointVisibility() {
 		int16 targetY = static_cast<int16>(_rom.readInt16(waypointOffset + sizeof(int16))
 										   << 3);
 		if (!traceCompanionPathToTarget(targetX, targetY)) {
-			visibility = static_cast<uint16>(visibility | (1 << waypointIndex));
+			visibility |= 1 << waypointIndex;
 		}
 
 		// Ghidra 0x000059A6-0x000059AF: advance one four-byte pair and retain both DBF iterations.
@@ -914,7 +914,7 @@ ScriptedRoomMovementExecutor::computeCompanionVelocityFromStagedOrigin(
 		static_cast<int16>(targetX - static_cast<int16>(originXFixed >> 16));
 	int16 verticalDelta = static_cast<int16>(targetY - static_cast<int16>(originYFixed >>
 																		  16));
-	verticalDelta = static_cast<int16>(verticalDelta << 1);
+	verticalDelta <<= 1;
 	uint16 horizontalMagnitude =
 		static_cast<uint16>(horizontalDelta < 0 ? -horizontalDelta : horizontalDelta);
 	uint16 verticalMagnitude = static_cast<uint16>(verticalDelta < 0
@@ -981,8 +981,8 @@ ScriptedRoomMovementExecutor::computeCompanionVelocityFromStagedOrigin(
 
 	// Ghidra 0x00005AB2-0x00005AD7: restore the original scale, retain signed-word multiplication and
 	// truncation, publish both steps, and return the D4.w/D5.w/D6.w outputs to the route builder.
-	horizontalStep = static_cast<int16>(horizontalStep * movementScale);
-	verticalStep = static_cast<int16>(verticalStep * movementScale);
+	horizontalStep *= movementScale;
+	verticalStep *= movementScale;
 	_state.CompanionActorHorizontalMovementStep = horizontalStep;
 	_state.CompanionActorVerticalMovementStep = verticalStep;
 	return VelocityResult(horizontalStep, verticalStep, positionIndex);

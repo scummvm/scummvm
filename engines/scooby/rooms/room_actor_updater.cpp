@@ -75,8 +75,7 @@ void RoomActorUpdater::updateLeadActorPath() {
 		return;
 	}
 
-	_state.ActorPathCadenceCountdowns[kLeadActorSlot] = static_cast<int8>(
-		_state.ActorPathCadenceCountdowns[kLeadActorSlot] - 1);
+	_state.ActorPathCadenceCountdowns[kLeadActorSlot]--;
 	if (_state.ActorPathCadenceCountdowns[kLeadActorSlot] >= 0) {
 		return;
 	}
@@ -225,14 +224,14 @@ void RoomActorUpdater::updateInteractionCursor() {
 	}
 
 	if ((_state.ControllerOneInput & kCursorLeftMask) == 0) {
-		_state.CursorX = static_cast<int16>(_state.CursorX - _state.CursorHorizontalStep);
+		_state.CursorX -= _state.CursorHorizontalStep;
 		if (_state.CursorX < -8) {
 			_state.CursorX = -8;
 		}
 	}
 
 	if ((_state.ControllerOneInput & kCursorRightMask) == 0) {
-		_state.CursorX = static_cast<int16>(_state.CursorX + _state.CursorHorizontalStep);
+		_state.CursorX += _state.CursorHorizontalStep;
 		if (_state.CursorX > 0xF7) {
 			_state.CursorX = 0xF7;
 		}
@@ -242,7 +241,7 @@ void RoomActorUpdater::updateInteractionCursor() {
 		if (_state.CursorY >= 0xC0) {
 			_state.CursorY = 0xBF;
 		} else {
-			_state.CursorY = static_cast<int16>(_state.CursorY - _state.CursorVerticalStep);
+			_state.CursorY -= _state.CursorVerticalStep;
 			if (_state.CursorY < 0) {
 				_state.CursorY = 0;
 			}
@@ -256,7 +255,7 @@ void RoomActorUpdater::updateInteractionCursor() {
 			}
 		}
 
-		_state.CursorY = static_cast<int16>(_state.CursorY + _state.CursorVerticalStep);
+		_state.CursorY += _state.CursorVerticalStep;
 		if (_state.CursorY > 0xCF) {
 			_state.CursorY = 0xCF;
 		}
@@ -299,13 +298,13 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 	int16 command = 1;
 	int16 remainingX = _state.CursorX;
 	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) == 0) {
-		remainingX = static_cast<int16>(remainingX - 8);
+		remainingX -= 8;
 	}
 
 	do {
-		remainingX = static_cast<int16>(remainingX - 0x28);
+		remainingX -= 0x28;
 		if (remainingX >= 0) {
-			command = static_cast<int16>(command + 1);
+			command++;
 		}
 	} while (remainingX >= 0);
 
@@ -314,22 +313,22 @@ void RoomActorUpdater::updateMenuCommandFromCursor() {
 	}
 
 	if (_state.CursorY > 0xC0) {
-		command = static_cast<int16>(command + 6);
+		command += 6;
 	}
 
 	if ((_state.DisplayFlags & kDisplayRightInterfaceMask) == 0) {
 		if (command > 5) {
-			command = static_cast<int16>(command - 1);
+			command--;
 			if (command > 10) {
-				command = static_cast<int16>(command - 1);
+				command--;
 			}
 		}
 	} else {
 		if (command > 7) {
-			command = static_cast<int16>(command - 1);
+			command--;
 		}
 
-		command = static_cast<int16>(command - 1);
+		command--;
 	}
 
 	_state.MenuCommand = command;
@@ -612,7 +611,7 @@ void RoomActorUpdater::moveLeadDown(int &candidateY, uint32 movementMagnitude, i
 }
 
 void RoomActorUpdater::updateLeadIdleAnimation() {
-	_state.LeadActorIdleAnimationTimer = static_cast<int16>(_state.LeadActorIdleAnimationTimer - 1);
+	_state.LeadActorIdleAnimationTimer--;
 	if (_state.LeadActorIdleAnimationTimer < 0) {
 		_state.LeadActorIdleAnimationTimer = 300;
 		requestActorAnimation(kLeadActorSlot, static_cast<int16>(
@@ -756,7 +755,7 @@ void RoomActorUpdater::advanceLeadScriptedMovement() {
 	}
 
 	if (_state.LeadActorMovementPointIndex >= 0) {
-		_state.LeadActorMovementPointIndex = static_cast<int16>(_state.LeadActorMovementPointIndex - 1);
+		_state.LeadActorMovementPointIndex--;
 		if (_state.LeadActorMovementPointIndex >= 0) {
 			beginNextLeadMovementPoint(_state.LeadActorMovementPoints[_state.LeadActorMovementPointIndex]);
 			return;
@@ -927,7 +926,7 @@ void RoomActorUpdater::updateCompanionActor() {
 		int16 animationOffset = _state.ActorPositionIndices[kLeadActorSlot];
 		if ((_state.ControllerOneInput & kDirectionMask) != kDirectionMask ||
 			(_state.DisplayFlags & kDisplayInterfaceMask) != 0) {
-			animationOffset = static_cast<int16>(animationOffset + 4);
+			animationOffset += 4;
 		}
 
 		if (_state.ActorAnimationOffsets[kCompanionActorSlot] != animationOffset) {
@@ -944,7 +943,7 @@ void RoomActorUpdater::updateCompanionActor() {
 
 	if ((_state.ActorMovementFlags & kCompanionActorMask) == 0) {
 		if (_state.RandomMoveTimer >= 0) {
-			_state.RandomMoveTimer = static_cast<int16>(_state.RandomMoveTimer - 1);
+			_state.RandomMoveTimer--;
 		}
 
 		return;
@@ -1011,8 +1010,7 @@ void RoomActorUpdater::advanceCompanionScriptedMovement() {
 	}
 
 	if (_state.CompanionActorMovementPointIndex >= 0) {
-		_state.CompanionActorMovementPointIndex = static_cast<int16>(
-			_state.CompanionActorMovementPointIndex - 1);
+		_state.CompanionActorMovementPointIndex--;
 		if (_state.CompanionActorMovementPointIndex >= 0) {
 			beginNextCompanionMovementPoint(
 				_state.CompanionActorMovementPoints[_state.CompanionActorMovementPointIndex]);
@@ -1222,7 +1220,7 @@ void RoomActorUpdater::advanceDynamicActorMovement(int actor) {
 }
 
 void RoomActorUpdater::updateStandardActorPath(int actor) {
-	_state.ActorPathCadenceCountdowns[actor] = static_cast<int8>(_state.ActorPathCadenceCountdowns[actor] - 1);
+	_state.ActorPathCadenceCountdowns[actor]--;
 	if (_state.ActorPathCadenceCountdowns[actor] >= 0) {
 		return;
 	}
@@ -1274,7 +1272,7 @@ void RoomActorUpdater::endActorPathAtTerminal(int actor) {
 
 RoomActorUpdater::PathRecord RoomActorUpdater::readAndAdvancePathRecord(int actor) {
 	int16 recordOffset = static_cast<int16>(_state.ActorPathRecordOffsets[actor]);
-	_state.ActorPathRecordOffsets[actor] = static_cast<uint16>(_state.ActorPathRecordOffsets[actor] + 4);
+	_state.ActorPathRecordOffsets[actor] += 4;
 	int32 sourceOffset = _state.ActorPathStreamOffsets[actor] + recordOffset;
 	PathRecord record;
 	record.X = _rom.readInt16(sourceOffset);

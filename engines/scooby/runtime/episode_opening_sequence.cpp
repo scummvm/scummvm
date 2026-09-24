@@ -137,8 +137,7 @@ bool EpisodeOpeningSequence::runEpisodeOpeningSequence() {
 		writeEpisodeOpeningSpriteTable();
 		_sequenceState.AnimationCountdown--;
 		if (_sequenceState.AnimationCountdown < 0) {
-			_sequenceState.AnimationTileOffset =
-				static_cast<int16>(_sequenceState.AnimationTileOffset ^ kAnimationTileBankStride);
+			_sequenceState.AnimationTileOffset ^= kAnimationTileBankStride;
 			_sequenceState.AnimationCountdown = 1;
 			_sequenceState.HorizontalOffset++;
 		}
@@ -170,8 +169,7 @@ void EpisodeOpeningSequence::advanceVerticalPhase() {
 	_sequenceState.VerticalPhase =
 		kVerticalPhases[static_cast<std::size_t>(_state.ScrollAnimationPhaseOffset / static_cast<int>(sizeof(
 																						 int16)))];
-	_state.ScrollAnimationPhaseOffset =
-		static_cast<int16>(_state.ScrollAnimationPhaseOffset + static_cast<int>(sizeof(int16)));
+	_state.ScrollAnimationPhaseOffset += static_cast<int>(sizeof(int16));
 	if (_state.ScrollAnimationPhaseOffset ==
 		static_cast<int>(kVerticalPhases.size()) * static_cast<int>(sizeof(int16))) {
 		_state.ScrollAnimationPhaseOffset = 0;
@@ -182,8 +180,7 @@ void EpisodeOpeningSequence::advanceVerticalPhase() {
 	}
 
 	_state.ScrollAnimationDelay = kScrollDelays[static_cast<std::size_t>(_state.ScrollAnimationDelayCursor)];
-	_state.ScrollAnimationDelayCursor =
-		static_cast<int16>(_state.ScrollAnimationDelayCursor + 1);
+	_state.ScrollAnimationDelayCursor++;
 	if (_state.ScrollAnimationDelayCursor == static_cast<int>(kScrollDelays.size())) {
 		_state.ScrollAnimationDelayCursor = 0;
 	}
@@ -281,14 +278,12 @@ void EpisodeOpeningSequence::writeEpisodeOpeningSpriteGroup(Span<SpriteInstance>
 	// with six decoded logical sprites while preserving cumulative word arithmetic and the packed-X zero case.
 	for (int index = 0; index < kSpriteGroupSize; index++) {
 		int sourceOffset = index * static_cast<int>(sizeof(int16));
-		packedY = static_cast<int16>(packedY + _rom.readInt16(
-												   kSpriteGroupYOffsetTableOffset + sourceOffset));
+		packedY += _rom.readInt16(kSpriteGroupYOffsetTableOffset + sourceOffset);
 		uint16 shape = _rom.readUInt16(kSpriteGroupShapeTableOffset + sourceOffset);
 		uint16 attributes =
 			static_cast<uint16>(tileIndex + _rom.readUInt16(
 												kSpriteGroupTileOffsetTableOffset + sourceOffset));
-		packedX = static_cast<int16>(packedX + _rom.readInt16(
-												   kSpriteGroupXOffsetTableOffset + sourceOffset));
+		packedX += _rom.readInt16(kSpriteGroupXOffsetTableOffset + sourceOffset);
 		uint16 publishedX = packedX == 0
 								? static_cast<uint16>(0xFFFF)
 								: static_cast<uint16>(packedX);

@@ -68,7 +68,7 @@ void RoomTileStreamer::updateScrollingAndStreamTiles() {
 		// Ghidra 0x0000FA84-0x0000FAE3: retain both inactive-pan and active-pan paths, word wrapping, crossing
 		// detection, signed direction selection, and equality-only completion.
 		if ((_state.TransitionFlags & kCameraPanActiveMask) != 0) {
-			_state.CameraX = static_cast<int16>(_state.CameraX + _state.CameraPanStep);
+			_state.CameraX += _state.CameraPanStep;
 			int cameraRemainder = _state.CameraX & 0x07;
 			int crossingRemainder = static_cast<int16>(8 + _state.CameraPanStep) & 0x07;
 			if (cameraRemainder == crossingRemainder) {
@@ -107,7 +107,7 @@ void RoomTileStreamer::updateScrollingAndStreamTiles() {
 		if ((_state.RoomBehaviorFlags & kRoomScrollAnimationMask) != 0) {
 			bool applyPhaseOffsets = true;
 			if (_state.ScrollAnimationPhaseOffset < 0) {
-				_state.ScrollAnimationDelay = static_cast<int8>(_state.ScrollAnimationDelay - 1);
+				_state.ScrollAnimationDelay--;
 				if (_state.ScrollAnimationDelay >= 0) {
 					applyPhaseOffsets = false;
 				} else {
@@ -135,13 +135,8 @@ void RoomTileStreamer::updateScrollingAndStreamTiles() {
 					_state.ScrollAnimationPhaseOffset = -1;
 				}
 
-				_state.ForegroundVerticalScroll = static_cast<int16>(
-					_state.ForegroundVerticalScroll + _rom.readInt16(
-														  kRoomScrollPhaseOffsetsOffset + phaseOffset));
-				_state.BackgroundVerticalScroll = static_cast<int16>(
-					_state.BackgroundVerticalScroll +
-					_rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset +
-								   static_cast<int>(sizeof(uint16))));
+				_state.ForegroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset);
+				_state.BackgroundVerticalScroll += _rom.readInt16(kRoomScrollPhaseOffsetsOffset + phaseOffset + static_cast<int>(sizeof(uint16)));
 			}
 		}
 

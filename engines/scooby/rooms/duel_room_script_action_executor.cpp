@@ -233,14 +233,14 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			(_state.ActorAnimationHoldFlags & 0x04) != 0) {
 			int16 candidateFacing = _state.ActorAnimationOffsets[kDuelSecondActorSlot];
 			if ((_state.DuelStateFlags & 0x08) != 0) {
-				candidateFacing = static_cast<int16>(candidateFacing + 1);
+				candidateFacing++;
 			}
 
 			if ((_state.DuelStateFlags & 0x10) != 0) {
-				candidateFacing = static_cast<int16>(candidateFacing - 1);
+				candidateFacing--;
 			}
 
-			candidateFacing = static_cast<int16>(candidateFacing & 0x07);
+			candidateFacing &= 0x07;
 			int16 targetFacing = lookupDuelFacingDirection();
 			if (targetFacing != candidateFacing && _duelTurnCooldown == 0) {
 				_duelTurnCooldown = 0x14;
@@ -277,22 +277,22 @@ void DuelRoomScriptActionExecutor::executeRoomScriptAction32() {
 			(_state.ActorAnimationHoldFlags & 0x01) != 0) {
 			int16 candidateFacing = _state.ActorAnimationOffsets[kDuelFirstActorSlot];
 			if ((_state.DuelStateFlags & 0x02) != 0) {
-				candidateFacing = static_cast<int16>(candidateFacing + 1);
+				candidateFacing++;
 			}
 
 			if ((_state.ControllerOneInput & 0x08) == 0) {
-				candidateFacing = static_cast<int16>(candidateFacing + 1);
+				candidateFacing++;
 			}
 
 			if ((_state.DuelStateFlags & 0x04) != 0) {
-				candidateFacing = static_cast<int16>(candidateFacing - 1);
+				candidateFacing--;
 			}
 
 			if ((_state.ControllerOneInput & 0x04) == 0) {
-				candidateFacing = static_cast<int16>(candidateFacing - 1);
+				candidateFacing--;
 			}
 
-			candidateFacing = static_cast<int16>(candidateFacing & 0x07);
+			candidateFacing &= 0x07;
 			if (candidateFacing != _state.ActorAnimationOffsets[kDuelFirstActorSlot]) {
 				_duelMomentum[kDuelFirstActor]--;
 				if (_duelMomentum[kDuelFirstActor] < 0) {
@@ -580,7 +580,7 @@ void DuelRoomScriptActionExecutor::buildDuelHealthTiles(Span<uint8> tiles, int16
 
 			packedRow |= pixel;
 			pixel >>= 4;
-			health = static_cast<int16>(health - 1);
+			health--;
 		}
 
 		Span<uint8> tile = tiles.slice(static_cast<std::size_t>(tileIndex * 0x20), 0x20);
@@ -615,15 +615,15 @@ int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
 		getIntegerCoordinate(_state.ActorYFixedCoordinates[kDuelFirstActorSlot]));
 	if (verticalMagnitude < 0) {
 		verticalMagnitude = static_cast<int16>(-verticalMagnitude);
-		sector = static_cast<int16>(sector + 1);
+		sector++;
 	}
 
 	// Ghidra 0x00003AA4-0x00003AC1: normalize the quadrant and apply the first signed magnitude threshold.
 	if ((sector & 0x02) == 0) {
-		sector = static_cast<int16>(sector ^ 0x01);
+		sector ^= 0x01;
 	}
 
-	sector = static_cast<int16>(sector + sector);
+	sector += sector;
 	int16 horizontalThresholdMagnitude = horizontalMagnitude;
 	int16 verticalThresholdMagnitude = verticalMagnitude;
 	if ((sector & 0x02) != 0) {
@@ -631,20 +631,18 @@ int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
 	}
 
 	if (horizontalMagnitude >= verticalMagnitude) {
-		sector = static_cast<int16>(sector + 1);
+		sector++;
 	}
 
 	// Ghidra 0x00003AC2-0x00003AE3: select and double one original magnitude, orient it, and apply the
 	// second threshold.
 	int16 thresholdSelector = sector;
-	sector = static_cast<int16>(sector + sector);
+	sector += sector;
 	thresholdSelector = static_cast<int16>((thresholdSelector + 1) & 0x02);
 	if (thresholdSelector == 0) {
-		horizontalThresholdMagnitude =
-			static_cast<int16>(horizontalThresholdMagnitude + horizontalThresholdMagnitude);
+		horizontalThresholdMagnitude += horizontalThresholdMagnitude;
 	} else {
-		verticalThresholdMagnitude =
-			static_cast<int16>(verticalThresholdMagnitude + verticalThresholdMagnitude);
+		verticalThresholdMagnitude += verticalThresholdMagnitude;
 	}
 
 	if ((sector & 0x04) != 0) {
@@ -652,7 +650,7 @@ int16 DuelRoomScriptActionExecutor::computeDuelRelativeDirection() {
 	}
 
 	if (horizontalThresholdMagnitude >= verticalThresholdMagnitude) {
-		sector = static_cast<int16>(sector + 1);
+		sector++;
 	}
 
 	// Ghidra 0x00003AE4-0x00003AEF: wrap the sector accumulator and return its logical half in D0w.
@@ -681,8 +679,7 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 		secondActorDamage = halveWordLogically(secondActorDamage);
 	}
 
-	_duelHealth[kDuelSecondActor] = static_cast<int16>(_duelHealth[kDuelSecondActor] -
-													   secondActorDamage);
+	_duelHealth[kDuelSecondActor] -= secondActorDamage;
 
 	// Ghidra 0x00003B42-0x00003B89: mirror the facing weights for second-actor momentum, subtract first
 	// health, and distinguish unequal impacts with authored audio commands 0x25 and 0x28.
@@ -697,7 +694,7 @@ void DuelRoomScriptActionExecutor::resolveDuelActorCollision() {
 		firstActorDamage = halveWordLogically(firstActorDamage);
 	}
 
-	_duelHealth[kDuelFirstActor] = static_cast<int16>(_duelHealth[kDuelFirstActor] - firstActorDamage);
+	_duelHealth[kDuelFirstActor] -= firstActorDamage;
 	if (secondActorDamage != firstActorDamage) {
 		playAudioCommand(secondActorDamage < firstActorDamage ? 0x28 : 0x25);
 	}
@@ -740,7 +737,7 @@ void DuelRoomScriptActionExecutor::resolveDuelFirstActorImpact() {
 
 	// Ghidra 0x00003C7A-0x00003C97: consume an armed first-impact group by charging its prior knockback.
 	if ((_state.DuelStateFlags & 0x40) != 0) {
-		_duelHealth[kDuelFirstActor] = static_cast<int16>(_duelHealth[kDuelFirstActor] - _duelKnockback[kDuelFirstActor]);
+		_duelHealth[kDuelFirstActor] -= _duelKnockback[kDuelFirstActor];
 		_state.DuelStateFlags &= 0xBF;
 	}
 
@@ -764,8 +761,7 @@ void DuelRoomScriptActionExecutor::resolveDuelSecondActorImpact() {
 
 	// Ghidra 0x00003D08-0x00003D25: consume an armed second-impact group by charging its prior knockback.
 	if ((_state.DuelStateFlags & 0x80) != 0) {
-		_duelHealth[kDuelSecondActor] = static_cast<int16>(_duelHealth[kDuelSecondActor] - _duelKnockback
-																							   [kDuelSecondActor]);
+		_duelHealth[kDuelSecondActor] -= _duelKnockback[kDuelSecondActor];
 		_state.DuelStateFlags &= 0x7F;
 	}
 

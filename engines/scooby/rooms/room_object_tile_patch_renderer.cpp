@@ -91,11 +91,11 @@ void RoomObjectTilePatchRenderer::copyAuthoredPatch(const RoomShapePatch &patch,
 				cellValue);
 			sourceOffset += static_cast<int>(sizeof(uint16));
 			destinationByteOffset += static_cast<int>(sizeof(uint16));
-			remainingColumns = static_cast<int16>(remainingColumns - 1);
+			remainingColumns--;
 		} while (remainingColumns != -1);
 
 		destinationByteOffset += rowGapByteCount;
-		remainingRows = static_cast<int16>(remainingRows - 1);
+		remainingRows--;
 	} while (remainingRows != -1);
 }
 
@@ -115,12 +115,12 @@ void RoomObjectTilePatchRenderer::restorePatch(Common::Array<uint8> &workingCell
 				snapshotCells[static_cast<std::size_t>(sourceByteOffset + 1)];
 			sourceByteOffset += static_cast<int>(sizeof(uint16));
 			destinationByteOffset += static_cast<int>(sizeof(uint16));
-			remainingColumns = static_cast<int16>(remainingColumns - 1);
+			remainingColumns--;
 		} while (remainingColumns != -1);
 
 		sourceByteOffset += rowGapByteCount;
 		destinationByteOffset += rowGapByteCount;
-		remainingRows = static_cast<int16>(remainingRows - 1);
+		remainingRows--;
 	} while (remainingRows != -1);
 }
 
@@ -158,13 +158,13 @@ void RoomObjectTilePatchRenderer::publishPatchCells(const RoomShapePatch &patch,
 			}
 
 			sourceByteOffset += static_cast<int>(sizeof(uint16));
-			currentColumn = static_cast<int16>(currentColumn + 1);
+			currentColumn++;
 		} while (currentColumn != endColumn);
 
 		// Ghidra 0x00007E7E-0x00007E93: advance through the complete width, apply the source row gap, reset
 		// the horizontal coordinate, and retain the wrapped exclusive vertical bound.
 		sourceByteOffset += rowGapByteCount;
-		currentRow = static_cast<int16>(currentRow + 1);
+		currentRow++;
 	} while (currentRow != endRow);
 }
 
@@ -216,9 +216,8 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 			publishDirectPatchRow(_rom.readBytes(sourceByteOffset, rowByteCount), patch.Layer,
 								  destinationRowByteOffset, static_cast<uint16>(patch.Width));
 			sourceByteOffset += rowByteCount;
-			destinationRowByteOffset = static_cast<uint16>(
-				destinationRowByteOffset + (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16)));
-			remainingRows = static_cast<int16>(remainingRows - 1);
+			destinationRowByteOffset += (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16));
+			remainingRows--;
 		} while (remainingRows != -1);
 
 		// Ghidra 0x00007CDA-0x00007CDF: restore preserved registers after the completed positive transfer.
@@ -242,11 +241,9 @@ void RoomObjectTilePatchRenderer::transferRoomObjectTilePatch(int16 tilePatchInd
 		publishDirectPatchRow(
 			MakeSpan(snapshotCells).slice(static_cast<std::size_t>(snapshotByteOffset), rowByteCount),
 			patch.Layer, destinationRowByteOffset, static_cast<uint16>(patch.Width));
-		snapshotByteOffset = static_cast<int16>(
-			snapshotByteOffset + kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16)));
-		destinationRowByteOffset = static_cast<uint16>(
-			destinationRowByteOffset + (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16)));
-		remainingRows = static_cast<int16>(remainingRows - 1);
+		snapshotByteOffset += kDirectTransferSnapshotColumnCount * static_cast<int>(sizeof(uint16));
+		destinationRowByteOffset += (kLayerColumnMask + 1) * static_cast<int>(sizeof(uint16));
+		remainingRows--;
 	} while (remainingRows != -1);
 
 	// Ghidra 0x00007D4E-0x00007D53: restore preserved registers after the completed negative transfer.

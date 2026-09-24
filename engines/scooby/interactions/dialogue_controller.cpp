@@ -51,15 +51,15 @@ void DialogueController::drawDialogueText(const DialogueTextSource &source) {
 		int searchIndex = kCenteringWidth + 1;
 		while (source.readByte(_rom, sourceIndex + --searchIndex) != kSpace &&
 			   source.readByte(_rom, sourceIndex + searchIndex + 1) != kHyphen) {
-			distanceFromWidth = static_cast<int16>(distanceFromWidth + 1);
+			distanceFromWidth++;
 		}
 
 		int16 lineLength = static_cast<int16>(
 			-static_cast<int16>(distanceFromWidth - kCenteringWidth));
-		remainingLength = static_cast<int16>(remainingLength - lineLength);
+		remainingLength -= lineLength;
 		writeCenteredLine(source, sourceIndex, lineLength, row);
 		row++;
-		windowPositionBits = static_cast<uint8>(windowPositionBits + 1);
+		windowPositionBits++;
 	}
 
 	// Ghidra 0x0000A0E0-0x0000A10F: zero skips the final write loop; every other signed-word bit pattern
@@ -75,7 +75,7 @@ void DialogueController::drawDialogueText(const DialogueTextSource &source) {
 
 	// Ghidra 0x0000A120-0x0000A12F: reload the originally measured length, shift its word left four,
 	// and retain the wrapped countdown used by dialogue dismissal.
-	_state.TextDisplayCountdown = static_cast<int16>(_state.TextDisplayCountdown << 4);
+	_state.TextDisplayCountdown <<= 4;
 }
 
 int16 DialogueController::drawTimedInteractionText(const DialogueTextSource &source, int16 row,
@@ -95,15 +95,15 @@ int16 DialogueController::drawTimedInteractionText(const DialogueTextSource &sou
 		int searchIndex = kInteractionLineWidth + 1;
 		while (source.readByte(_rom, sourceIndex + --searchIndex) != kSpace &&
 			   source.readByte(_rom, sourceIndex + searchIndex + 1) != kHyphen) {
-			distanceFromWidth = static_cast<int16>(distanceFromWidth + 1);
+			distanceFromWidth++;
 		}
 
 		int16 lineLength = static_cast<int16>(
 			-static_cast<int16>(distanceFromWidth - kInteractionLineWidth));
-		remainingLength = static_cast<int16>(remainingLength - lineLength);
+		remainingLength -= lineLength;
 		writeInteractionLine(source, sourceIndex, lineLength, destinationAddress);
-		destinationAddress = static_cast<uint16>(destinationAddress + kInterfaceRowByteStride);
-		lineCount = static_cast<int16>(lineCount + 1);
+		destinationAddress += kInterfaceRowByteStride;
+		lineCount++;
 	}
 
 	// Ghidra 0x0000A018-0x0000A041: zero skips the final loop; every other signed-word bit pattern uses
@@ -131,8 +131,8 @@ void DialogueController::writeInteractionLine(const DialogueTextSource &source, 
 							 TileLayer::Interface,
 							 cellOffset % kInterfacePlaneColumnCount, cellOffset / kInterfacePlaneColumnCount,
 							 1, 1);
-		destinationAddress = static_cast<uint16>(destinationAddress + sizeof(uint16));
-		characterCounter = static_cast<int16>(characterCounter - 1);
+		destinationAddress += sizeof(uint16);
+		characterCounter--;
 	} while (characterCounter != -1);
 }
 
@@ -149,8 +149,8 @@ void DialogueController::writeCenteredLine(const DialogueTextSource &source, int
 			static_cast<int>(sizeof(uint16)));
 		_scene.setWindowCell(decodeTileCell(packedCell), cellOffset % 32,
 							 cellOffset / 32);
-		destinationAddress = static_cast<uint16>(destinationAddress + sizeof(uint16));
-		characterCounter = static_cast<int16>(characterCounter - 1);
+		destinationAddress += sizeof(uint16);
+		characterCounter--;
 	} while (characterCounter != -1);
 }
 
@@ -163,7 +163,7 @@ int16 DialogueController::measureNullTerminatedString(const DialogueTextSource &
 	// Ghidra 0x0000A23A-0x0000A243: test and advance every byte, incrementing only the low word for each
 	// nonzero value. The unchecked cast retains addq.w wrapping instead of widening the original count.
 	while (source.readByte(_rom, sourceIndex++) != 0) {
-		length = static_cast<int16>(length + 1);
+		length++;
 	}
 
 	// Ghidra 0x0000A244-0x0000A247: restoring A0 is inherent in the value input; return the exact D0 word.

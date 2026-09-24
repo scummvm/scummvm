@@ -90,7 +90,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 			continue;
 		}
 
-		verticalScroll = static_cast<int16>(verticalScroll + 1);
+		verticalScroll++;
 		if ((verticalScroll & (kScrollRowInterval - 1)) != 0) {
 			continue;
 		}

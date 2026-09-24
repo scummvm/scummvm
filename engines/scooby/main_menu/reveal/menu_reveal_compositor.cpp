@@ -56,7 +56,7 @@ void PackRow(const ScoobyDooRom &rom, Span<const uint8> selectedPixels,
 		uint32 packedPixels = 0;
 		int firstPixel = group * 8;
 		for (int pixel = 0; pixel < 8; pixel++) {
-			packedPixels = static_cast<uint32>(packedPixels << 4);
+			packedPixels <<= 4;
 			int selectedIndex = firstPixel + pixel;
 			if (selectedIndex < selectedPixelCount) {
 				packedPixels |= selectedPixels[static_cast<std::size_t>(selectedIndex)];

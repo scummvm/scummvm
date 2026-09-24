@@ -72,8 +72,7 @@ void MainMenuVBlankHandler::advanceLightning() {
 		_presentation.loadLightningPalette(
 			kLightningPaletteOffsets[static_cast<std::size_t>(_lightningFrameByteOffset /
 															  static_cast<int>(sizeof(uint32)))]);
-		_lightningFrameByteOffset =
-			static_cast<int16>(_lightningFrameByteOffset - static_cast<int>(sizeof(uint32)));
+		_lightningFrameByteOffset -= static_cast<int>(sizeof(uint32));
 		if (_lightningFrameByteOffset >= 0) {
 			return;
 		}

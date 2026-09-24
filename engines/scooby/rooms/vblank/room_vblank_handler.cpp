@@ -103,9 +103,7 @@ void RoomVBlankHandler::rotateAnimatedPaletteRanges() {
 
 		// Ghidra 0x0000A7DE-0x0000A7F1: decrement with word wrapping, skip nonnegative results, and
 		// reload the matching interval only after the live countdown becomes negative.
-		_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] = static_cast<
-			int16>(
-			_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] - 1);
+		_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)]--;
 		if (_state.AnimatedPaletteRangeCountdowns[static_cast<std::size_t>(rangeIndex)] >= 0) {
 			continue;
 		}
@@ -158,7 +156,7 @@ void RoomVBlankHandler::updateActionPromptTimers() {
 	// Ghidra 0x0000A71C-0x0000A72D: decrement a nonnegative signed left countdown through -1, while a
 	// previously negative value remains unchanged.
 	if (_state.LeftActionPromptCountdown >= 0) {
-		_state.LeftActionPromptCountdown = static_cast<int8>(_state.LeftActionPromptCountdown - 1);
+		_state.LeftActionPromptCountdown--;
 	}
 
 	// Ghidra 0x0000A72E-0x0000A773: publish all six left cells even when its countdown was already negative.
@@ -167,7 +165,7 @@ void RoomVBlankHandler::updateActionPromptTimers() {
 
 	// Ghidra 0x0000A774-0x0000A785: retain the separate signed right-countdown branch.
 	if (_state.RightActionPromptCountdown >= 0) {
-		_state.RightActionPromptCountdown = static_cast<int8>(_state.RightActionPromptCountdown - 1);
+		_state.RightActionPromptCountdown--;
 	}
 
 	// Ghidra 0x0000A786-0x0000A7CB: publish the independent six-cell right block unconditionally.
@@ -209,7 +207,7 @@ void RoomVBlankHandler::updateRoomObjectAnimations() {
 		// Ghidra 0x00007C16-0x00007C31: leave a previously negative countdown and bit two unchanged.
 		// Otherwise decrement with word wrapping and set bit two only when the result becomes negative.
 		if (roomObject.AnimationCountdown >= 0) {
-			roomObject.AnimationCountdown = static_cast<int16>(roomObject.AnimationCountdown - 1);
+			roomObject.AnimationCountdown--;
 			if (roomObject.AnimationCountdown < 0) {
 				roomObject.Flags |= kRoomObjectAnimationExpiredMask;
 			} else {

@@ -360,7 +360,7 @@ void InteractionController::refreshInteractionDisplay() {
 				while (_rom.readByte(actionTextOffset++) != 0) {
 				}
 
-				remainingPrefixes = static_cast<int16>(remainingPrefixes - 1);
+				remainingPrefixes--;
 			} while (remainingPrefixes != -1);
 		}
 
@@ -420,14 +420,14 @@ int InteractionController::resolveInteractionLabelAddress(int16 interaction) {
 	}
 
 	// Ghidra 0x00005B7A-0x00005B85: a second wrapping decrement selects Scooby only on exact zero.
-	selector = static_cast<int16>(selector - 1);
+	selector--;
 	if (selector == 0) {
 		return kScoobyInteractionLabelOffset;
 	}
 
 	// Ghidra 0x00005B86-0x00005B91: every remaining word pattern receives the third decrement, a
 	// wrapping low-word shift by three, and the record's unsigned longword displacement added to the base.
-	selector = static_cast<int16>(selector - 1);
+	selector--;
 	int16 tableByteOffset = static_cast<int16>(selector << kObjectLabelRecordShift);
 	int relativeLabelOffset = static_cast<int>(
 		_rom.readUInt32(labelTableOffset + kObjectLabelDisplacementField + tableByteOffset));

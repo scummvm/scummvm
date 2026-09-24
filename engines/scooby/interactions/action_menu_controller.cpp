@@ -234,7 +234,7 @@ void ActionMenuController::composeInventoryGrid() {
 				}
 
 				composedSlotCount++;
-				remainingLastIndex = static_cast<int16>(remainingLastIndex - 1);
+				remainingLastIndex--;
 			} while (remainingLastIndex >= 0 && composedSlotCount != kInventorySlotCount);
 		}
 	}
@@ -288,7 +288,7 @@ void ActionMenuController::refreshActionPrompts() {
 	for (std::size_t index = 0; index < _state.RoomObjects.size(); index++) {
 		const RoomObject &roomObject = _state.RoomObjects[index];
 		if (roomObject.RoomId == 1) {
-			inventoryObjectCount = static_cast<int16>(inventoryObjectCount + 1);
+			inventoryObjectCount++;
 		}
 	}
 

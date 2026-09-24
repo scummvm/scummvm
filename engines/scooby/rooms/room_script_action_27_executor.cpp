@@ -104,7 +104,7 @@ void RoomScriptAction27Executor::executeRoomScriptAction27() {
 			return;
 		}
 
-		movingActorY = static_cast<int16>(movingActorY + 2);
+		movingActorY += 2;
 	} while (movingActorY < kTargetY);
 	setIntegerWord(_state.ActorYFixedCoordinates, kMovingActorSlot, kTargetY);
 

@@ -143,7 +143,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 			cameraToggleCounter--;
 			if (cameraToggleCounter < 0) {
 				cameraToggleCounter = 3;
-				_state.CameraX = static_cast<int16>(_state.CameraX ^ 0x0100);
+				_state.CameraX ^= 0x0100;
 			}
 
 			if (!_waitForRoomVerticalBlank()) {
