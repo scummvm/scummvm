@@ -126,14 +126,8 @@ void Savegame::synchronize(Common::Serializer &s) {
 
 namespace {
 
-// Byte offsets into the original 256-byte PLAYER struct. Most of these are
-// confirmed directly from the disassembly's own struct definition; a few
-// small gaps between them were only ever described in prose and turned
-// out to be one byte short - re-measured here against a real captured
-// PLAYER file (every attribute/resource decodes to a plausible value,
-// and the gap sizes below place them so that mapX/mapY, and the later
-// _disableSave field the disassembly does give an exact offset for, both
-// land in exactly the right place)
+// Byte offsets into the original 256-byte PLAYER struct, verified against a
+// real ScummVM -> PLAYER -> DOSBox round-trip
 enum {
 	OFS_NAME = 0x00,
 	OFS_SEX = 0x10,
@@ -154,13 +148,15 @@ enum {
 	OFS_GOLD = 0x22,        // 2 bytes
 	OFS_MAP_X = 0x24,
 	OFS_MAP_Y = 0x25,
-	OFS_READIED_WEAPON = 0x2A,
-	OFS_READIED_ARMOR = 0x2B,
-	OFS_READIED_SPELL = 0x2C,
-	OFS_TORCHES = 0x2D,
-	OFS_KEYS = 0x2E,
-	OFS_THIEVES_TOOLS = 0x2F,
-	OFS_IN_SPACE = 0x30,
+	// 0x26-0x2A unused
+	OFS_READIED_WEAPON = 0x2B,
+	OFS_READIED_ARMOR = 0x2C,
+	OFS_READIED_SPELL = 0x2D,
+	OFS_TORCHES = 0x2E,
+	OFS_KEYS = 0x2F,
+	OFS_THIEVES_TOOLS = 0x30,
+	// 0x31-0x32 unused
+	OFS_IN_SPACE = 0x33,
 	OFS_LAUNCH_MAP_X = 0x34,
 	OFS_LAUNCH_MAP_Y = 0x35,
 	OFS_RING_QUEST_FLAG = 0x36,
