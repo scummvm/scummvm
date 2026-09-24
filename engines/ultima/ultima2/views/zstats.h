@@ -23,6 +23,7 @@
 #define ULTIMA2_VIEWS_ZSTATS_H
 
 #include "ultima/shared/gfx/view.h"
+#include "ultima/ultima2/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima2 {
@@ -35,6 +36,9 @@ using namespace Shared::Messages;
  * keypress.
  */
 class ZStats : public Shared::Gfx::View {
+private:
+	Gfx::TextCursor _textCursor = Gfx::TextCursor("ZStatsCursor", this);
+
 public:
 	ZStats();
 	~ZStats() override {}

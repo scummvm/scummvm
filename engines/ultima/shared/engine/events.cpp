@@ -360,6 +360,32 @@ int UIElement::getRandomNumber(int maxNumber) {
 	return g_events->getRandomNumber(maxNumber);
 }
 
+void UIElement::setBounds(const Common::Rect &r) {
+	// If the element has any children, convert the screen bounds to relative bounds against our old bounds
+	Common::Array<Common::Rect> oldBounds;
+	oldBounds.reserve(_children.size());
+	for (const UIElement *child : _children) {
+		Common::Rect childRect = child->getBounds();
+		childRect.translate(-_bounds.left, -_bounds.top);
+		oldBounds.push_back(childRect);
+	}
+
+	// Set the new bounds. If we have a parent, it's relative to that
+	if (_parent) {
+		Common::Rect temp = r;
+		temp.translate(_parent->_bounds.left, _parent->_bounds.top);
+		temp.constrain(_parent->_bounds);
+		_bounds = temp;
+	} else {
+		_bounds = r;
+	}
+
+	// Reset the bounds of any children. Since setBounds sets relative to the parent,
+	// this will set them relative to the new bounds we set
+	for (uint i = 0; i < _children.size(); ++i)
+		_children[i]->setBounds(oldBounds[i]);
+}
+
 void UIElement::delaySeconds(uint seconds) {
 	_timeoutCtr = seconds * FRAME_RATE;
 }

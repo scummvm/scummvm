@@ -139,6 +139,10 @@ void ZStats::draw() {
 		}
 	}
 	s.writeString(Common::Point(0, row), line);
+
+	// Show the blinking cursor
+	_textCursor.setPosition(s.getTextPos());
+	_textCursor.show();
 }
 
 bool ZStats::msgKeypress(const KeypressMessage &msg) {

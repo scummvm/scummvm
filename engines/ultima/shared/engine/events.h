@@ -203,10 +203,7 @@ public:
 	/**
 	 * Sets the element's bounds
 	 */
-	virtual void setBounds(const Common::Rect &r) {
-		_bounds = r;
-	}
-
+	virtual void setBounds(const Common::Rect &r);
 	/**
 	 * Gets the element's bounds
 	 */
