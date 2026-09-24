@@ -632,10 +632,10 @@ void Scene1070::waitForSpencerMode(byte mode) {
 	}
 }
 
-void Scene1070::beginSpencerPrimarySpeechLine(byte frameIndex, byte openFrame) {
+void Scene1070::beginSpencerPrimarySpeechLine(byte frameIndex) {
 	_suppressRandomLayerStarts = true;
 	_spencerMode = 4;
-	_sceneLayers.setLayerFrame(kScene1070SpencerLayer, openFrame);
+	_sceneLayers.setLayerFrame(kScene1070SpencerLayer, 0x17);
 	waitForSpencerMode(5);
 	beginPrimarySpeechLineWithAnimationGroup(kScene1070SpencerPrimaryDialogueRow, frameIndex,
 		0x0f1, 0x0b8, 0x3f, 0x0d, 0x0d, kScene1070SpencerSpeechGroup);
@@ -701,7 +701,7 @@ void Scene1070::runSpencerConversation() {
 	const byte line = state.scene1070SpencerConversationSeen ? 1 : 0;
 	beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, line);
 	settleCharacterAnimations();
-	beginSpencerPrimarySpeechLine(line, 0x17);
+	beginSpencerPrimarySpeechLine(line);
 	state.scene1070SpencerConversationSeen = true;
 
 	byte depthIndex = 0;
@@ -713,7 +713,7 @@ void Scene1070::runSpencerConversation() {
 			records, depthIndex, nodeIndex);
 		if (selectedChoice == DialogueMenu::kCancelledChoice) {
 			beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, 7);
-			beginSpencerPrimarySpeechLine(7, 0x16);
+			beginSpencerPrimarySpeechLine(7);
 			finishSpencerConversation();
 			return;
 		}
@@ -725,7 +725,7 @@ void Scene1070::runSpencerConversation() {
 		DialogueChoiceRecord &record = records[recordIndex];
 		beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, record.playerTextRowId);
 		if (record.responseFrameIndex != kScene1070DialogueNoResponseFrame)
-			beginSpencerPrimarySpeechLine(record.responseFrameIndex, 0x16);
+			beginSpencerPrimarySpeechLine(record.responseFrameIndex);
 
 		handleSpencerDialogueEffect(record.disableAfterUse, records, recordIndex);
 
