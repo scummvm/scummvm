@@ -2903,8 +2903,13 @@ void EEMEngine::doCaseSelection() {
 					break;
 				}
 				if (kChooserExitRect.contains(mouse.x, mouse.y)) {
-					_mystery.clear();
-					return;
+					if (areYouSure()) {
+						_mystery.clear();
+						_nextScreen = kScreenInvalid;
+						return;
+					}
+					dirty = true;
+					continue;
 				}
 				if (kChooserHelpRect.contains(mouse.x, mouse.y)) {
 					saveProfile(_playerName);

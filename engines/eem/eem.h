@@ -302,6 +302,7 @@ public:
 
 private:
 	void applyStartupTestOverrides();
+	bool areYouSureMac();
 	bool areMysteriesSolved(uint lo, uint hi) const;
 
 	/// True if *any* mystery in the inclusive 1-based range [lo, hi] is

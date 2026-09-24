@@ -1752,6 +1752,9 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 }
 
 bool EEMEngine::areYouSure() {
+	if (isMacintosh())
+		return areYouSureMac();
+
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::ManagedSurface saved(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
