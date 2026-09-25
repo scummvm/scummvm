@@ -291,12 +291,10 @@ const TheEntityField fields[] = {
 	{ kTheCast,		"pausedAtStart",kThePausedAtStart,400 },//				D4 p
 	{ kTheCast,		"preLoad",		kThePreLoad,	300 },//		D3.1 p
 	{ kTheCast,		"scale",		kTheScale,		700 },//							D7 p
-	{ kTheSprite,	"setTrackEnabled",kTheSetTrackEnabled, 500 },//				D5 p
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	300 },//		D3.1 p
 	{ kTheCast,		"timeScale",	kTheTimeScale,	500 },//					D5 p
-	{ kTheSprite,	"trackEnabled",	kTheTrackEnabled, 500 },//					D5 p
 	{ kTheSprite,	"trackNextKeyTime",	kTheTrackNextKeyTime, 500 },//			D5 p
 	{ kTheSprite,	"trackNextSampleTime",	kTheTrackNextSampleTime, 500 },//	D5 p
 	{ kTheSprite,	"trackPreviousKeyTime",	kTheTrackPreviousKeyTime, 500 },//	D5 p
