@@ -1369,10 +1369,10 @@ bool MacVentureEngine::loadTextHuffman() {
 		}
 		// make sure array is fully initialized
 		masks[numEntries - 1] = 0x10000;
-		// by setting the 'last' enttry to 0x10000 (max 16 bit integer + 1) we makem sure that the 
-		// interation in TextAsset::decodeHuffmann never fails. This iteration will search for a
+		// by setting the 'last' enttry to 0x10000 (max 16 bit integer + 1) we make sure that the 
+		// iteration in TextAsset::decodeHuffmann never fails. This iteration will search for a
 		// 16 bit value < mask[i]. If array is not properly set up, we either get a random value for 
-		// mask[numEntries - 1] (0 on optimized code). Depending on value NO entry is found in 
+		// mask[numEntries - 1] (0 on optimized code). Depending on value, NO entry is found in 
 		// huffman table resulting in an out of bounds index. That will ultimately result in assert 
 		// failure when accessing an element in _textHuffman.
 
