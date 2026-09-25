@@ -82,7 +82,9 @@ public:
 		kBath,
 		kMars,
 		kBeamMe,
-		kDave
+		kDave,
+		kSwish,
+		kEnd
 	};
 
 private:
@@ -94,7 +96,7 @@ private:
 
 	void playPCSpeaker(int soundID);
 	bool playMacSound(int soundID, bool loop);
-	bool playResource(int resID, bool loop);
+	bool playResource(int resID, bool loop, int sampleRate = 11127);
 };
 
 } // End of namespace Colony

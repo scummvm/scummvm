@@ -914,6 +914,8 @@ private:
 	bool makeStars(const Common::Rect &r, int btn);
 	bool makeBlackHole();
 	bool makePlanet();
+	bool leavePlanet();
+	bool explodePlanet();
 	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr, bool gameOver = false);
 	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);

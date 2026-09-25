@@ -1053,6 +1053,218 @@ bool ColonyEngine::makePlanet() {
 	return false;
 }
 
+// leaveplanet() and explodeplanet() retain their XOR drawing between frames.
+// Keep that image in software: an OpenGL back buffer need not retain its pixels
+// after copyToScreen(), and the explosion deliberately accumulates dot trails.
+class PlanetAnimation {
+public:
+	PlanetAnimation(int width, int height, const int *sint, const int *cost, Common::RandomSource &random)
+		: _surface(width, height, Graphics::PixelFormat::createFormatRGBA32()),
+		  _sint(sint), _cost(cost), _center(width / 2, height / 2) {
+		const uint32 black = _surface.format.RGBToColor(0, 0, 0);
+		_color = _surface.format.RGBToColor(255, 255, 255);
+		_xorMask = _color ^ black;
+		_surface.clear(black);
+
+		for (int distance = 800; distance > 32; distance -= 16) {
+			const int32 radius = (160 * 128) / distance;
+			for (int i = 0; i < 4; i++) {
+				const int angle = random.getRandomNumber(255);
+				_stars[_remainingStars++] = Common::Point(
+					_center.x + ((radius * _sint[angle]) >> 7),
+					_center.y + ((radius * _cost[angle]) >> 7));
+			}
+		}
+	}
+
+	void revealStars(int count) {
+		// Pre-decrement and stop at zero: the original reads an uninitialized
+		// star first, then runs below zero at the end of takeoff.
+		while (count-- > 0 && _remainingStars > 0)
+			plot(_stars[--_remainingStars]);
+	}
+
+	void drawPlanet(int distance, bool erasePrevious) {
+		const int32 radius = (160 * 128) / distance;
+		const int sintheta = _sint[210];
+		const int costheta = _cost[210];
+		int point = 0;
+
+		for (int j = 0; j < 256; j += 16) {
+			for (int k = _phase; k < 128; k += 16, point++) {
+				if (erasePrevious && _visible[point])
+					plot(_points[point]);
+
+				const int x = (((radius * _sint[j]) >> 7) * _cost[k]) >> 7;
+				const int z = (((radius * _sint[j]) >> 7) * _sint[k]) >> 7;
+				_visible[point] = ((_cost[j] * sintheta + z * costheta) >> 7) >= 0;
+				if (_visible[point]) {
+					const int y = ((((radius * _cost[j]) >> 7) * costheta - z * sintheta) >> 7);
+					_points[point] = Common::Point(_center.x + x, _center.y + y);
+					plot(_points[point]);
+				}
+			}
+		}
+		_phase = (_phase + 1) % 16;
+	}
+
+	void invert() {
+		for (int y = 0; y < _surface.h; y++) {
+			uint32 *pixels = (uint32 *)_surface.getBasePtr(0, y);
+			for (int x = 0; x < _surface.w; x++)
+				pixels[x] ^= _xorMask;
+		}
+	}
+
+	void setXorMode(bool enable) { _xorMode = enable; }
+
+	void setColor(byte r, byte g, byte b) {
+		_color = _surface.format.RGBToColor(r, g, b);
+	}
+
+	void present(Renderer *gfx) {
+		gfx->setXorMode(false);
+		gfx->clear(gfx->black());
+		gfx->drawSurface(&_surface.rawSurface(), 0, 0);
+		gfx->copyToScreen();
+	}
+
+private:
+	void plot(const Common::Point &p) {
+		if (p.x < 0 || p.y < 0 || p.x >= _surface.w || p.y >= _surface.h)
+			return;
+
+		uint32 *pixel = (uint32 *)_surface.getBasePtr(p.x, p.y);
+		if (_xorMode)
+			*pixel ^= _xorMask;
+		else
+			*pixel = _color;
+	}
+
+	Graphics::ManagedSurface _surface;
+	const int *_sint;
+	const int *_cost;
+	Common::Point _center;
+	Common::Point _stars[((800 - 32) / 16) * 4];
+	Common::Point _points[(256 / 16) * (128 / 16)];
+	bool _visible[(256 / 16) * (128 / 16)] = {};
+	int _remainingStars = 0;
+	int _phase = 0;
+	uint32 _color;
+	uint32 _xorMask;
+	bool _xorMode = true;
+};
+
+bool ColonyEngine::leavePlanet() {
+	PlanetAnimation planet(_width, _height, _sint, _cost, _randomSource);
+	planet.drawPlanet(32, false);
+	planet.present(_gfx);
+
+	// intro.c / IBM_INTR.C leaveplanet(): rotate close to the surface, then
+	// recede into the starfield, reversing the introductory planet approach.
+	for (int frame = 0; frame < 25; frame++) {
+		if (checkSkipRequested())
+			return true;
+		planet.drawPlanet(32, true);
+		planet.present(_gfx);
+		_system->delayMillis(33);
+	}
+	for (int distance = 32; distance <= 800; distance += 16) {
+		if (checkSkipRequested())
+			return true;
+		planet.revealStars(4);
+		planet.drawPlanet(distance, true);
+		planet.present(_gfx);
+		_system->delayMillis(16);
+	}
+
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		while (_sound->isPlaying()) {
+			if (checkSkipRequested())
+				return true;
+			planet.present(_gfx);
+			_system->delayMillis(10);
+		}
+	}
+	return false;
+}
+
+bool ColonyEngine::explodePlanet() {
+	const bool isMac = getPlatform() == Common::kPlatformMacintosh;
+	PlanetAnimation planet(_width, _height, _sint, _cost, _randomSource);
+	_sound->play(Sound::kPShot);
+	planet.revealStars(192);
+	planet.drawPlanet(800, false);
+	planet.present(_gfx);
+
+	// DOS rotates until PlanetShot finishes (100 frames without sound).
+	// Mac instead rotates for 30 frames, inverting the last eight of them.
+	const bool waitForShot = !isMac && _sound->isPlaying();
+	const int rotationFrames = isMac ? 30 : 100;
+	for (int frame = 0; waitForShot ? _sound->isPlaying() : frame < rotationFrames; frame++) {
+		if (checkSkipRequested())
+			return true;
+		if (isMac && frame > 21) {
+			planet.invert();
+			if (!_sound->isPlaying())
+				_sound->play(Sound::kExplode);
+		}
+		planet.drawPlanet(800, true);
+		planet.present(_gfx);
+		_system->delayMillis(33);
+	}
+
+	if (!isMac) {
+		_sound->play(Sound::kExplode);
+		const int flashes = _renderMode == Common::kRenderEGA ? 2 : 4;
+		for (int i = 0; i < flashes; i++) {
+			if (checkSkipRequested())
+				return true;
+			planet.invert();
+			planet.present(_gfx);
+			_system->delayMillis(50);
+		}
+		while (_sound->isPlaying()) {
+			if (checkSkipRequested())
+				return true;
+			planet.present(_gfx);
+			_system->delayMillis(10);
+		}
+		_sound->play(Sound::kExplode);
+	}
+
+	// Stop erasing the old points: the globe fills in and then bursts into
+	// expanding trails. Mac switches to patCopy and shades blue toward red;
+	// DOS keeps drawing the white points in XOR mode.
+	for (int frame = 0; frame < (isMac ? 15 : 25); frame++) {
+		if (checkSkipRequested())
+			return true;
+		if (isMac && !_sound->isPlaying())
+			_sound->play(Sound::kExplode);
+		planet.drawPlanet(800, false);
+		planet.present(_gfx);
+		_system->delayMillis(33);
+	}
+
+	if (isMac) {
+		_sound->play(Sound::kEnd);
+		planet.setXorMode(false);
+	}
+	uint16 red = 0, blue = 0xFFFF;
+	for (int distance = 800; distance > 32; distance -= 16) {
+		if (checkSkipRequested())
+			return true;
+		red += 1024;
+		blue -= 1024;
+		if (isMacColorMode())
+			planet.setColor(red >> 8, 0, blue >> 8);
+		planet.drawPlanet(distance, false);
+		planet.present(_gfx);
+		_system->delayMillis(16);
+	}
+	return false;
+}
+
 bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont, bool gameOver) {
 	// Original: TimeSquare() in intro.c
 	// Mac and DOS use different presentation here. DOS is a monochrome/gray
@@ -1423,17 +1635,19 @@ void ColonyEngine::takeOff() {
 	_centerY = _height / 2;
 
 	debugC(1, kColonyDebugUI, "takeOff()");
+	const bool cursorWasVisible = CursorMan.isVisible();
+	CursorMan.showMouse(false);
 
 	_sound->stop();
 	_gfx->clear(_gfx->black());
 	_gfx->copyToScreen();
 
 	if (getPlatform() == Common::kPlatformMacintosh)
-		_sound->play(Sound::kMars);
+		_sound->play(Sound::kSwish);
 	else
 		_sound->play(Sound::kStars1);
 
-	makeStars(_screenR, 0);
+	leavePlanet();
 	_sound->stop();
 
 	_gfx->clear(_gfx->black());
@@ -1443,6 +1657,7 @@ void ColonyEngine::takeOff() {
 	_clip = savedClip;
 	_centerX = savedCenterX;
 	_centerY = savedCenterY;
+	CursorMan.showMouse(cursorWasVisible);
 }
 
 // Touching the monolith (the SCREEN object) blacks the screen out and runs the
@@ -1516,7 +1731,7 @@ void ColonyEngine::gameOver(bool kill, int savedCryos) {
 	_mouseLocked = false;
 	_system->lockMouse(false);
 	CursorMan.setDefaultArrowCursor(true);
-	CursorMan.showMouse(true);
+	CursorMan.showMouse(false);
 
 	int textEntry;
 
@@ -1532,23 +1747,22 @@ void ColonyEngine::gameOver(bool kill, int savedCryos) {
 	_gfx->copyToScreen();
 
 	if (kill) {
-		_sound->play(Sound::kPShot);
-		makeStars(_screenR, 0);
-		_sound->stop();
-		_sound->play(Sound::kExplode);
-		for (int i = 0; i < 4; i++) {
-			_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-		}
-	} else {
-		_sound->play(Sound::kStars4);
-		makeStars(_screenR, 0);
-		_sound->stop();
+		explodePlanet();
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+	} else if (getPlatform() == Common::kPlatformMacintosh) {
+		_sound->play(Sound::kSwish);
 	}
+	if (getPlatform() != Common::kPlatformMacintosh)
+		_sound->play(Sound::kStars4);
+	makeStars(_screenR, 0);
+	// Mac lets the ending sound finish over the text; DOS stops Stars4 here.
+	if (getPlatform() != Common::kPlatformMacintosh)
+		_sound->stop();
 
 	_gfx->clear(_gfx->black());
 	_gfx->copyToScreen();
+	CursorMan.showMouse(true);
 	doText(textEntry, 2);
 
 	auto playFinalExplosion = [&]() {
