@@ -53,7 +53,7 @@
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
-//#include "engines/nancy/action/puzzle/escapegridpuzzle.h"
+#include "engines/nancy/action/puzzle/escapegridpuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/magicboxpuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
@@ -539,8 +539,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 183:
 		return new MagicBoxPuzzle();
 	case 184:
-		//return new EscapeGridPuzzle();
-		return nullptr;	// TODO
+		return new EscapeGridPuzzle();
 	case 185:
 		return new WeightSortPuzzle();
 	case 200:

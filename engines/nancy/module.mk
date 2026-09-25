@@ -37,6 +37,7 @@ MODULE_OBJS = \
   action/puzzle/dotconnectpuzzle.o \
   action/puzzle/drivingpuzzle.o \
   action/puzzle/dropsortpuzzle.o \
+  action/puzzle/escapegridpuzzle.o \
   action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/hangmanpuzzle.o \
