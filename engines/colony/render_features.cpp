@@ -585,33 +585,28 @@ float stairStepHeight(const float *vf, const float *vc, int d, int s) {
 	return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
 }
 
-void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
-	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
-	if (!map || map[0] == kWallFeatureNone)
-		return;
-
+bool ColonyEngine::isWallFeatureFacingCamera(int cellX, int cellY, int direction) const {
 	// Backface culling: only draw features for the side facing the camera.
 	// This prevents backside decorations (like Level 2 lines) from bleeding through.
-	// We use non-inclusive comparisons so features remain visible while standing on the boundary.
+	// Keep features visible while standing on the boundary.
 	switch (direction) {
 	case kDirNorth:
-		if (_me.yloc > (cellY + 1) * 256)
-			return;
-		break;
+		return _me.yloc <= (cellY + 1) * 256;
 	case kDirSouth:
-		if (_me.yloc < cellY * 256)
-			return;
-		break;
+		return _me.yloc >= cellY * 256;
 	case kDirWest:
-		if (_me.xloc < cellX * 256)
-			return;
-		break;
+		return _me.xloc >= cellX * 256;
 	case kDirEast:
-		if (_me.xloc > (cellX + 1) * 256)
-			return;
-		break;
-	default: break;
+		return _me.xloc <= (cellX + 1) * 256;
+	default:
+		return true;
 	}
+}
+
+void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
+	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
+	if (!map || map[0] == kWallFeatureNone || !isWallFeatureFacingCamera(cellX, cellY, direction))
+		return;
 
 	float corners[4][3];
 	getWallFace3D(cellX, cellY, direction, corners);
@@ -647,6 +642,20 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		const uint32 outline = setupDOSMaterial(_gfx, colorIdx, _level);
 		recessQuad(nearC, farC, u, v, d, cnt, outline);
 		_gfx->setStippleData(nullptr);
+	};
+
+	auto fillStairwellSides = [&](const float farC[4][3], float nearD, float farD, float bottomV, float topV) {
+		if (!macMode && _wireframe)
+			return;
+		const float sideV[4] = {topV, bottomV, bottomV, topV};
+		const float sideD[4] = {nearD, nearD, farD, farD};
+		const float leftU[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+		const float rightU[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		_gfx->setStippleData(nullptr);
+		_gfx->setWireframe(false);
+		recessQuad(corners, farC, leftU, sideV, sideD, 4, wallFeatureFill);
+		recessQuad(corners, farC, rightU, sideV, sideD, 4, wallFeatureFill);
+		_gfx->setWireframe(true, wallFeatureFill);
 	};
 
 	switch (map[0]) {
@@ -813,7 +822,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			hgt[i] = (float)(i + 1) / 8.0f;
 		}
 
-		// ColorWall(), now the back of the hole.
+		// The original ColorWall() hid the corridor behind the entire opening.
+		// A recessed staircase also needs opaque sides to enclose the well.
+		fillStairwellSides(farC, 0.0f, 1.0f, 0.0f, 1.0f);
+
+		// Back of the well.
 		if (isMacRenderMode()) {
 			const float uw[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 			const float vw[4] = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -904,22 +917,13 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			hgt[i] = -(float)(i + 1) / 32.0f;
 		}
 
-		// Fill the shaft sides without framing each panel, so their shared edges
-		// form one continuous wall rather than a row of transparent-looking bars.
-		if (isMacRenderMode() || !_wireframe) {
-			_gfx->setStippleData(nullptr);
-			_gfx->setWireframe(false);
-			for (int i = 1; i <= 7; i++) {
-				const float nearD = dep[i - 1];
-				const float farD = (i < 7) ? dep[i] : 1.0f;
-				const float bottomV = hgt[i - 1];
-				const float sideV[4] = {0.0f, bottomV, bottomV, 0.0f};
-				const float sideD[4] = {nearD, nearD, farD, farD};
-				const float leftU[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-				const float rightU[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-				recessQuad(corners, farC, leftU, sideV, sideD, 4, wallFeatureFill);
-				recessQuad(corners, farC, rightU, sideV, sideD, 4, wallFeatureFill);
-			}
+		// Enclose the well above the floor, then extend its sides down to each
+		// tread. Leave the panels unframed so their shared edges stay invisible.
+		fillStairwellSides(farC, 0.0f, 1.0f, 0.0f, 1.0f);
+		for (int i = 1; i <= 7; i++) {
+			const float nearD = dep[i - 1];
+			const float farD = (i < 7) ? dep[i] : 1.0f;
+			fillStairwellSides(farC, nearD, farD, hgt[i - 1], 0.0f);
 		}
 
 		if (isMacRenderMode()) {

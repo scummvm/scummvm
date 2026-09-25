@@ -436,19 +436,23 @@ uint8 ColonyEngine::wallAt(int x, int y) const {
 	return _wall[x][y];
 }
 
-bool ColonyEngine::isRecessFeature(int x, int y, int direction) const {
+bool ColonyEngine::isVisibleRecessFeature(int x, int y, int direction) const {
 	const uint8 *map = mapFeatureAt(x, y, direction);
 	if (!map)
 		return false;
-	return map[0] == kWallFeatureUpStairs || map[0] == kWallFeatureDnStairs;
+	return (map[0] == kWallFeatureUpStairs || map[0] == kWallFeatureDnStairs)
+		&& _visibleCell[x][y] && isWallFeatureFacingCamera(x, y, direction);
 }
 
-// Bit 0x01 spans (x,y-1)/(x,y); bit 0x02 spans (x-1,y)/(x,y). Either side may
-// record the well.
+// Only remove a wall when drawWallFeatures3D() will replace it with a well.
+// Bit 0x01 spans (x,y-1)/(x,y); bit 0x02 spans (x-1,y)/(x,y).
 bool ColonyEngine::wallSegmentIsOpenWell(int x, int y, uint8 bit) const {
+	if (_corePower[_coreIndex] == 0)
+		return false;
+
 	if (bit == 0x01)
-		return isRecessFeature(x, y, kDirSouth) || isRecessFeature(x, y - 1, kDirNorth);
-	return isRecessFeature(x, y, kDirWest) || isRecessFeature(x - 1, y, kDirEast);
+		return isVisibleRecessFeature(x, y, kDirSouth) || isVisibleRecessFeature(x, y - 1, kDirNorth);
+	return isVisibleRecessFeature(x, y, kDirWest) || isVisibleRecessFeature(x - 1, y, kDirEast);
 }
 
 const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
