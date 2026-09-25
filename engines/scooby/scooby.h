@@ -35,6 +35,7 @@
 #include "graphics/framelimiter.h"
 
 #include "scooby/detection.h"
+#include "startup/application_loop.h"
 
 namespace Scooby {
 class Gfx;
@@ -52,6 +53,7 @@ private:
 	Gfx *_gfx;
 	VDP *_vdp;
 	Graphics::FrameLimiter *_limiter;
+	ApplicationLoop *_applicationLoop;
 
 	uint32 _nextUpdatetime;
 

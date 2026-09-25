@@ -30,33 +30,51 @@ namespace Scooby {
 
 void ApplicationLoop::run() {
 	while (!_host.shouldClose()) {
-		RuntimeState state;
+		 _state = RuntimeState{};
 		DeterministicRandom random;
-		initializeRuntimeState(state, random);
-		IntroSequence intro(_rom, _scene);
+		initializeRuntimeState(_state, random);
 		FrameClock clock;
-		while (!_host.shouldClose() && !intro.isComplete()) {
-			clock.waitForNextFrame();
-			if (_host.isIntroSkipPressed()) {
-				intro.skipCurrentStep();
-			} else {
-				intro.advanceFrame();
-			}
+		if (!_state._saveGameData.shouldLoadGameData) {
+			IntroSequence intro(_rom, _scene);
+			while (!_host.shouldClose() && !intro.isComplete()) {
+				clock.waitForNextFrame();
+				if (_host.isIntroSkipPressed()) {
+					intro.skipCurrentStep();
+				} else {
+					intro.advanceFrame();
+				}
 
-			_scene.render(_frame);
-			_host.present(_frame);
+				_scene.render(_frame);
+				_host.present(_frame);
+			}
 		}
 
 		if (_host.shouldClose()) {
 			return;
 		}
 
-		SessionController session(_rom, _scene, _frame, _host, clock, state, random);
+		SessionController session(_rom, _scene, _frame, _host, clock, _state, random);
 		_scene.setInterfaceScroll(0);
 		if (session.runGame() == SessionExit::HostClosed) {
 			return;
 		}
 	}
+}
+
+Common::Error ApplicationLoop::syncGame(Common::Serializer &s) {
+	if (s.isLoading()) {
+		_loadGameData.shouldLoadGameData = true;
+		_state._saveGameData.shouldLoadGameData = true;
+		s.syncAsUint16LE(_loadGameData.episodeIdx);
+		s.syncAsUint16LE(_loadGameData.roomId);
+		s.syncBytes(_loadGameData.data.data(), 29);
+	} else {
+		// save here.
+		s.syncAsUint16LE(_state.EpisodeIndex);
+		s.syncAsUint16LE(_state.RoomId);
+		s.syncBytes(_state.ProgressStateBytes.data(), 29);
+	}
+	return Common::kNoError;
 }
 
 void ApplicationLoop::initializeRuntimeState(RuntimeState &state,
@@ -78,5 +96,13 @@ void ApplicationLoop::initializeRuntimeState(RuntimeState &state,
 	// Native control then falls through to the separately recovered ResetRuntimeState entry at
 	// 0x0000A27A.
 	state.resetRuntimeState(_rom);
+
+	if (_loadGameData.shouldLoadGameData) {
+		state._saveGameData.shouldLoadGameData = true;
+		state._saveGameData.episodeIdx = _loadGameData.episodeIdx;
+		state._saveGameData.roomId = _loadGameData.roomId;
+		state._saveGameData.data = _loadGameData.data;
+		_loadGameData.shouldLoadGameData = false;
+	}
 }
 } // namespace Scooby

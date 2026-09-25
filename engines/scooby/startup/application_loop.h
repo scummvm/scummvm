@@ -22,6 +22,8 @@
 #ifndef SCOOBY_APPLICATION_LOOP_H
 #define SCOOBY_APPLICATION_LOOP_H
 
+#include "common/error.h"
+#include "common/serializer.h"
 #include "scooby/assets/rom.h"
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/graphics/tile_scene.h"
@@ -48,6 +50,8 @@ public:
 	// Executes the ported startup path and then enters Ghidra RunAdventure at 0x00000BF4.
 	void run();
 
+	Common::Error syncGame(Common::Serializer &s);
+
 private:
 	// Initializes the shared state lifecycle before any startup presentation can run.
 	// state: runtime state retained through the following adventure session.
@@ -62,6 +66,8 @@ private:
 	TileScene &_scene;
 	IndexedFrame &_frame;
 	RaylibHost &_host;
+	RuntimeState _state;
+	SaveGameData _loadGameData;
 };
 } // namespace Scooby
 

@@ -55,10 +55,19 @@
 
 namespace Scooby {
 
+struct SaveGameData {
+	bool shouldLoadGameData = false;
+	uint16 episodeIdx;
+	uint16 roomId;
+	Common::Array<uint8> data = Common::Array<uint8>(29);
+};
+
 class RuntimeState {
 public:
 	RuntimeState() {
 	}
+
+	SaveGameData _saveGameData;
 
 	// The active action icon from Ghidra g_wActiveActionIcon at 0xFF06C0–0xFF06C1. Original RAM has no image-
 	// backed value; runtime setup clears it before interaction updates. Command 0x09 queues any nonzero value

@@ -335,13 +335,26 @@ void SessionController::initializeRoomRuntimeState() {
 }
 
 SessionExit SessionController::runGame() {
-	if (!_studioLogos.run()) {
-		return SessionExit::HostClosed;
-	}
+	if (_state._saveGameData.shouldLoadGameData) {
+		_state.EpisodeIndex = _state._saveGameData.episodeIdx;
+		Common::copy(_state._saveGameData.data.begin(), _state._saveGameData.data.begin() + 29,
+				  _state.ProgressStateBytes.begin());
+		_state.InitialRoomId = _state._saveGameData.roomId;
+		_state.InitializationFlags |= 0x01;
+		_state.InitializationFlags |= 4; // resume game
+		_state.InitialRoomPositionCoordinateOffset = 0;
 
-	Optional<SessionExit> initialMenuExit = runMainMenu();
-	if (initialMenuExit.hasValue()) {
-		return initialMenuExit.value();
+		_state.VideoFlags &= 0xFD;
+		_state._saveGameData.shouldLoadGameData = false;
+	} else {
+		if (!_studioLogos.run()) {
+			return SessionExit::HostClosed;
+		}
+
+		Optional<SessionExit> initialMenuExit = runMainMenu();
+		if (initialMenuExit.hasValue()) {
+			return initialMenuExit.value();
+		}
 	}
 
 	initializeAudioDriver();
@@ -383,6 +396,10 @@ SessionExit SessionController::runGame() {
 	_roomInterfaceTransitions.finishRoomStartup();
 
 	while (!_host.shouldClose()) {
+		if (_state._saveGameData.shouldLoadGameData) {
+			return SessionExit::RestartRequested;
+		}
+
 		// Native VBLANK can preempt every pass through Ghidra 0x00000D38-0x000013B9. The managed loop
 		// services that installed callback and presents one clocked frame before consuming its state.
 		if (!waitForRoomVerticalBlank()) {

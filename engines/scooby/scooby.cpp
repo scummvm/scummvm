@@ -45,6 +45,7 @@ ScoobyEngine::ScoobyEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 ScoobyEngine::~ScoobyEngine() {
+	delete _applicationLoop;
 }
 
 uint32 ScoobyEngine::getFeatures() const {
@@ -75,29 +76,27 @@ Common::Error ScoobyEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	Graphics::Screen screen;
+
+	TileScene scene;
+	IndexedFrame frame(screen);
+
+	_applicationLoop = new ApplicationLoop(*rom, scene, frame, *host);
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	Graphics::Screen screen;
-
-	Scooby::TileScene scene;
-	Scooby::IndexedFrame frame(screen);
-
-	Scooby::ApplicationLoop(*rom, scene, frame, *host).run();
+	_applicationLoop->run();
 
 	return Common::kNoError;
 }
 
 Common::Error ScoobyEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
+	if (_applicationLoop) {
+		return _applicationLoop->syncGame(s);
+	}
 	return Common::kNoError;
 }
 
