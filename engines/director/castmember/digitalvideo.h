@@ -72,6 +72,8 @@ public:
 	void setMovieTime(int units);
 	void setMovieRate(double rate);
 	void setFrameRate(int rate);
+	bool getTrackEnabled(int track);
+	void setTrackEnabled(int track, bool value);
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;

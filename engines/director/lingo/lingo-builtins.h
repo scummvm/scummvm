@@ -230,6 +230,8 @@ void b_trackCount(int nargs);
 void b_trackStartTime(int nargs);
 void b_trackStopTime(int nargs);
 void b_trackType(int nargs);
+void b_trackEnabled(int nargs);
+void b_setTrackEnabled(int nargs);
 
 void b_isPastCuePoint(int nargs);
 

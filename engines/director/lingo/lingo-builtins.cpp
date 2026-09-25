@@ -41,6 +41,7 @@
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
+#include "director/castmember/digitalvideo.h"
 #include "director/castmember/palette.h"
 #include "director/castmember/text.h"
 #include "director/castmember/transition.h"
@@ -270,6 +271,8 @@ static const BuiltinProto builtins[] = {
 	{ "trackStartTime",	LB::b_trackStartTime,1,1, 500, FBLTIN },	//				D5 f
 	{ "trackStopTime",	LB::b_trackStopTime,1, 1, 500, FBLTIN },	//				D5 f
 	{ "trackType",		LB::b_trackType,	1, 1, 500, FBLTIN },	//				D5 f
+	{ "trackEnabled",	LB::b_trackEnabled,	2, 2, 500, FBLTIN },	//				D5 f
+	{ "setTrackEnabled",LB::b_setTrackEnabled,	3, 3, 500, CBLTIN },	//				D5 f
 
 	// Save session
 	{ "beginRecording", LB::b_beginRecording,0, 1, 500, CBLTIN },	//				D5 c
@@ -4389,6 +4392,47 @@ void LB::b_trackType(int nargs) {
 	Datum result("video");
 	result.type = SYMBOL;
 	g_lingo->push(result);
+}
+
+void LB::b_trackEnabled(int nargs) {
+	Datum whichTrack = g_lingo->pop();
+	Datum whichSprite = g_lingo->pop();
+	TYPECHECK(whichSprite, SPRITEREF);
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	Sprite *sprite = score->getSpriteById(whichSprite.u.i);
+	if (!sprite) {
+		g_lingo->push(0);
+		g_lingo->lingoError("b_trackEnabled: invalid sprite reference received");
+		return;
+	}
+	if (!sprite->_cast || (sprite->_cast->_type != kCastDigitalVideo)) {
+		g_lingo->push(0);
+		g_lingo->lingoError("b_trackEnabled: non-digital-video sprite reference received");
+		return;
+	}
+
+	g_lingo->push(((DigitalVideoCastMember *)(sprite->_cast))->getTrackEnabled(whichTrack.asInt()));
+}
+
+void LB::b_setTrackEnabled(int nargs) {
+	Datum trueOrFalse = g_lingo->pop();
+	Datum whichTrack = g_lingo->pop();
+	Datum whichSprite = g_lingo->pop();
+	TYPECHECK(whichSprite, SPRITEREF);
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	Sprite *sprite = score->getSpriteById(whichSprite.u.i);
+	if (!sprite) {
+		g_lingo->lingoError("b_setTrackEnabled: invalid sprite reference received");
+		return;
+	}
+	if (!sprite->_cast || (sprite->_cast->_type != kCastDigitalVideo)) {
+		g_lingo->lingoError("b_setTrackEnabled: non-digital-video sprite reference received");
+		return;
+	}
+
+	((DigitalVideoCastMember *)(sprite->_cast))->setTrackEnabled(whichTrack.asInt(), trueOrFalse.asInt());
 }
 
 void LB::b_scummvmassert(int nargs) {

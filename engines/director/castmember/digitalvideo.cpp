@@ -699,6 +699,21 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
 }
 
+bool DigitalVideoCastMember::getTrackEnabled(int track) {
+	if (!_video)
+		return false;
+
+	return !_video->getAudioTrackMute(track);
+}
+
+void DigitalVideoCastMember::setTrackEnabled(int track, bool value) {
+	if (!_video)
+		return;
+
+	_video->setAudioTrackMute(track, !value);
+}
+
+
 Common::String DigitalVideoCastMember::formatInfo() {
 	return Common::String::format(
 		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, filename: \"%s\", duration: %d, enableVideo: %d, enableSound: %d, looping: %d, crop: %d, center: %d, showControls: %d",
