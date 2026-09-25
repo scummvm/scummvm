@@ -171,7 +171,7 @@ void ColonyEngine::loadMap(int mnum) {
 	_coreIndex = (mnum == 1) ? 0 : 1;
 	_me.type = kMeNum;
 
-	getWall();  // restore saved wall state changes (airlocks)
+	getWall();  // restore saved door and airlock states
 	doPatch();  // apply object relocations from patch table
 	initRobots();  // spawn robot objects for this level
 
@@ -357,11 +357,37 @@ void ColonyEngine::saveWall(int x, int y, int direction) {
 	ld.size++;
 }
 
-// PATCH.C: getwall()  restore saved wall bytes into _mapData after level load.
+void ColonyEngine::saveOpenDoors() {
+	if (_level < 1 || _level > 8)
+		return;
+
+	// Ordinary doors stay open after passage. Keep their state separately from
+	// the original ten-entry wall patch table, which only had room for airlocks.
+	LevelData &ld = _levelData[_level - 1];
+	for (int x = 0; x < 31; x++) {
+		for (int y = 0; y < 31; y++) {
+			ld.openDoors[x][y] = 0;
+			for (int dir = 0; dir < 4; dir++) {
+				if (_mapData[x][y][dir][0] == kWallFeatureDoor && _mapData[x][y][dir][1] == 0)
+					ld.openDoors[x][y] |= 1 << dir;
+			}
+		}
+	}
+}
+
+// Restore saved door states and the original PATCH.C wall patches after loading a level.
 void ColonyEngine::getWall() {
 	if (_level < 1 || _level > 8)
 		return;
 	const LevelData &ld = _levelData[_level - 1];
+	for (int x = 0; x < 31; x++) {
+		for (int y = 0; y < 31; y++) {
+			for (int dir = 0; dir < 4; dir++) {
+				if ((ld.openDoors[x][y] & (1 << dir)) && _mapData[x][y][dir][0] == kWallFeatureDoor)
+					_mapData[x][y][dir][1] = 0;
+			}
+		}
+	}
 	for (int i = 0; i < ld.size; i++) {
 		int x = ld.location[i][0];
 		int y = ld.location[i][1];

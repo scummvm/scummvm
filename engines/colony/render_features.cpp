@@ -189,6 +189,12 @@ void ColonyEngine::clipToWallFace(const float corners[4][3]) {
 void ColonyEngine::macFillRecess(const float nearC[4][3], const float farC[4][3],
 		const float *u, const float *v, const float *d, int count, int macIdx, bool macColors) {
 	if (macColors) {
+		if (_corePower[_coreIndex] == 0) {
+			_gfx->setWireframe(true, 0);
+			recessQuad(nearC, farC, u, v, d, count, 0);
+			return;
+		}
+
 		uint32 fg = packMacColor(_macColors[macIdx].fg);
 		uint32 bg = packMacColor(_macColors[macIdx].bg);
 		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
@@ -208,7 +214,6 @@ void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float
 	float p1[3], p2[3];
 	wallPoint(corners, u1, v1, p1);
 	wallPoint(corners, u2, v2, p2);
-	// We assume this is only called when lit (handled in drawWallFeatures3D)
 	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
 }
 
@@ -370,7 +375,8 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 
 	const bool macMode = isMacRenderMode();
 	const bool macColors = isMacColorMode();
-	const uint32 fillColor = macColors ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
+	const bool lit = (_corePower[_coreIndex] > 0);
+	const uint32 fillColor = macColors && lit ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
 	const uint32 lineColor = macColors ? (uint32)0xFF000000 : 0;
 
 	auto drawFilledCharPolygon = [&](const float *u, const float *v, int count) {
@@ -471,8 +477,8 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 
 	if (macMode) {
 		const uint32 wallFill = macColors
-			? packMacColor(_macColors[8 + _level - 1].fg)
-			: (uint32)255;
+			? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
+			: (lit ? 255u : 0u);
 		_gfx->setWireframe(true, wallFill);
 	}
 }
@@ -515,6 +521,12 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	// Helper lambda: draw a filled hole polygon with the platform material.
 	auto drawHolePoly = [&](const float *u, const float *v, int cnt, int macIdx) {
 		if (macColors) {
+			if (!lit) {
+				_gfx->setWireframe(true, 0);
+				wallPolygon(corners, u, v, cnt, 0);
+				return;
+			}
+
 			uint32 fg = packMacColor(_macColors[macIdx].fg);
 			uint32 bg = packMacColor(_macColors[macIdx].bg);
 			int pat = _macColors[macIdx].pattern;
@@ -576,8 +588,8 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 
 	_gfx->setStippleData(nullptr);
 	const uint32 wallFill = macColors
-		? packMacColor(_macColors[8 + _level - 1].fg)
-		: (macMode ? 255u : 7u);
+		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
+		: (lit ? (macMode ? 255u : 7u) : 0u);
 	_gfx->setWireframe(true, wallFill);
 }
 
@@ -617,11 +629,18 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
 		: (lit ? (macMode ? 255u : 7u) : 0u);
 
-	// Wall faces are already filled with level-specific color (c_char0+level-1.fg)
-	// by the wall grid in renderCorridor3D(). Features are drawn on top.
+	// Wall faces are already filled by the wall grid in renderCorridor3D().
+	// Features are drawn on top, including silhouettes when the power is off.
 
 	// Helper lambda: Mac color fill for a wall feature polygon
 	auto macFillPoly = [&](const float *u, const float *v, int cnt, int macIdx) {
+		// Mac SuperPoly() fills features with black when the power is off.
+		if (!lit) {
+			_gfx->setWireframe(true, 0);
+			wallPolygon(corners, u, v, cnt, 0);
+			return;
+		}
+
 		uint32 fg = packMacColor(_macColors[macIdx].fg);
 		uint32 bg = packMacColor(_macColors[macIdx].bg);
 		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
@@ -1141,7 +1160,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 						// BLACK: solid black fill
 						_gfx->setWireframe(true, (uint32)0xFF000000);
 						wallPolygon(corners, ub, vb4, 4, 0xFF000000);
-						_gfx->setWireframe(true, packMacColor(_macColors[8 + _level - 1].fg));
+						_gfx->setWireframe(true, wallFeatureFill);
 					} else {
 						macFillPoly(ub, vb4, 4, 26 + val); // c_color0 + val
 					}
@@ -1234,7 +1253,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 }
 
 void ColonyEngine::drawWallFeatures3D() {
-	if (_corePower[_coreIndex] == 0)
+	// The Mac color version draws features as black silhouettes without power.
+	if (!isMacColorMode() && _corePower[_coreIndex] == 0)
 		return;
 
 	for (int y = 0; y < 31; y++) {

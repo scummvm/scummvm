@@ -390,7 +390,7 @@ struct PassPatch {
 	uint8 ang;
 };
 
-// Per-level persistence: wall state changes (airlock locks) and visit flags.
+// Per-level persistence: door and airlock states, and visit flags.
 struct LevelData {
 	uint8 visit;
 	uint8 queen;
@@ -399,6 +399,7 @@ struct LevelData {
 	uint8 size;            // number of saved wall changes (max 10)
 	uint8 location[10][3]; // [x, y, direction] of each changed wall
 	uint8 data[10][5];     // saved wall feature bytes (5 per location)
+	uint8 openDoors[31][31]; // direction bits for open ordinary doors
 };
 
 struct MacColor {
@@ -788,6 +789,7 @@ private:
 	void resetObjectSlot(int slot, int type, int xloc, int yloc, uint8 ang);
 	bool createObject(int type, int xloc, int yloc, uint8 ang);
 	void saveLevelState();
+	void saveOpenDoors();
 	void doPatch();
 	void saveWall(int x, int y, int direction);
 	void getWall();

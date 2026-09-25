@@ -447,7 +447,7 @@ bool ColonyEngine::isVisibleRecessFeature(int x, int y, int direction) const {
 // Only remove a wall when drawWallFeatures3D() will replace it with a well.
 // Bit 0x01 spans (x,y-1)/(x,y); bit 0x02 spans (x-1,y)/(x,y).
 bool ColonyEngine::wallSegmentIsOpenWell(int x, int y, uint8 bit) const {
-	if (_corePower[_coreIndex] == 0)
+	if (!isMacColorMode() && _corePower[_coreIndex] == 0)
 		return false;
 
 	if (bit == 0x01)

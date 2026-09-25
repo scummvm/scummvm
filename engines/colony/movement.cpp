@@ -704,6 +704,9 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 			_mapData[nx][ny][opposite][1] = (uint8)state;
 	}
 
+	if (wallType == kWallFeatureDoor)
+		saveOpenDoors();
+
 	// Persist airlock state changes across level loads
 	if (wallType == kWallFeatureAirlock) {
 		if (oldState != state && _level >= 1 && _level <= 8) {

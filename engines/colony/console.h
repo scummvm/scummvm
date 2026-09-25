@@ -50,6 +50,7 @@ private:
 	bool cmdGoals(int argc, const char **argv);
 	bool cmdWin(int argc, const char **argv);
 	bool cmdRobots(int argc, const char **argv);
+	bool cmdEradicate(int argc, const char **argv);
 	bool cmdMap(int argc, const char **argv);
 	bool cmdGive(int argc, const char **argv);
 	bool cmdPower(int argc, const char **argv);
