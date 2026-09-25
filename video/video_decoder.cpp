@@ -896,6 +896,31 @@ bool VideoDecoder::setAudioTrack(int index) {
 	return true;
 }
 
+bool VideoDecoder::getAudioTrackMute(int index) {
+	if (!supportsAudioTrackSwitching())
+		return true;
+
+	AudioTrack *audioTrack = getAudioTrack(index);
+
+	if (!audioTrack)
+		return true;
+
+	return audioTrack->getMute();
+}
+
+bool VideoDecoder::setAudioTrackMute(int index, bool muted) {
+	AudioTrack *audioTrack = getAudioTrack(index);
+	if (!supportsAudioTrackSwitching())
+		return false;
+
+	if (!audioTrack)
+		return false;
+
+	audioTrack->setMute(muted);
+	return true;
+}
+
+
 uint VideoDecoder::getAudioTrackCount() const {
 	uint count = 0;
 
