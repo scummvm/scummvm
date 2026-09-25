@@ -141,12 +141,18 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 		return false;
 
 	Common::String line;
+	bool NemesisDVD = false;
 
-	// Skip first block
+	// Process first block
 	while (!zixFile.eos()) {
 		line = zixFile.readLine();
 		if (line.matchString("----------*", true))
 			break;
+		// WORKAROUND: Detect buggy DVD .zix file for Zork Nemesis
+		else if (line.matchString("005131*", true)) {
+			debugC(1, kDebugFile, "Nemesis DVD ZIX file detected.");
+			NemesisDVD = true;
+		}
 	}
 
 	if (zixFile.eos())
@@ -198,6 +204,11 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 				}
 			}
 			else {
+				// WORKAROUND for missing line in DVD version of Zork Nemesis
+				if(NemesisDVD && path.getLastComponent().toString().hasSuffixIgnoreCase("global")) {
+					debugC(1, kDebugFile, "Adding directory %s to search manager.", path.getParent().toString().c_str());
+					SearchMan.addSubDirectoryMatching(gameDataDir,path.getParent().toString());
+				}
 				debugC(1, kDebugFile, "Adding directory %s to search manager.", path.toString().c_str());
 				SearchMan.addSubDirectoryMatching(gameDataDir,path.toString());
 			}
