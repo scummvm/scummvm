@@ -442,16 +442,20 @@ struct CastMemberID {
 
 	uint hash() const { return ((castLib & 0xffff) << 16) + (member & 0xffff); }
 
+	// Multiplex IDs are basically member + castLib * 0x10000.
+	// castLib 1 is equivalent to castLib 0; the range repeats twice, and
+	// "the number of (member (65536+1))" returns 1.
 	CastMemberID fromMultiplex(int multiplexID) {
 		if (multiplexID < 0)
 			return CastMemberID(multiplexID, -1);
-		return CastMemberID(multiplexID % 0x20000, 1 + (multiplexID >> 17));
+		int lib = multiplexID >> 16;
+		return CastMemberID(multiplexID % 0x10000, lib ? lib : 1);
 	}
 
 	int toMultiplex() {
-		if (castLib < 0)
+		if (castLib <= 1)
 			return member;
-		return (member % 0x20000) + ((castLib - 1) << 17);
+		return (member % 0x10000) + (castLib << 16);
 	}
 };
 
