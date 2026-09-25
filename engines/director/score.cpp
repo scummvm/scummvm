@@ -782,7 +782,7 @@ void Score::update() {
 	bool sound1Changed = true;
 	bool sound2Changed = true;
 
-	if (_version >= kFileVer600 && !_firstRun) {
+	if (_version >= kFileVer500 && !_firstRun) {
 		// We check if the sound channels have changed, and only restart
 		// the sound if they have. Even if the sound was stopped
 		//
@@ -1864,9 +1864,10 @@ void Score::playSoundChannel(bool puppetOnly, bool sound1Changed, bool sound2Cha
 		}
 	}
 
-	debugC(5, kDebugSound, "Score::playSoundChannel(): Sound1: %s puppet: %d type: %d, volume: %d, Sound2: %s puppet: %d, type: %d, volume: %d",
-			sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
-			sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
+	debugC(5, kDebugSound, "Score::playSoundChannel(): movie: %s, frame: %d, Sound1: %s [changed: %d, puppet: %d, type: %d, volume: %d], Sound2: %s [changed: %d, puppet: %d, type: %d, volume: %d]",
+			_movie->getMacName().c_str(), _curFrameNumber,
+			sound1.asString().c_str(), sound1Changed, sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
+			sound2.asString().c_str(), sound2Changed, sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
