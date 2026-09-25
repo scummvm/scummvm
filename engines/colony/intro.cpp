@@ -1329,14 +1329,16 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	_gfx->copyToScreen();
 
 	// Phase 1: Scroll text in from the right to center.
-	// DOS uses 16-pixel blits of a black text box; Mac scrolls smoothly.
+	// Original steps are one pixel on Mac and 16 on DOS. Double the intro's
+	// distance per frame so it also scrolls twice as fast with VSync enabled.
 	int targetX = (_width - swidth) / 2;
 	const int startX = macStyle ? _width : (_width + 16);
-	const int stepX = macStyle ? 1 : 16;
+	const int stepX = (macStyle ? 1 : 16) * (gameOver ? 1 : 2);
 	const int endX = macStyle ? -swidth : (-swidth - 16);
 	const uint32 scrollDelayMs = macStyle ? 8 : (1000 / 60);
 
-	for (int x = startX; x > targetX; x -= stepX) {
+	for (int x = startX; x > targetX;) {
+		x = MAX(targetX, x - stepX);
 		_gfx->fillRect(textBand, 0);
 		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
