@@ -432,6 +432,42 @@ void IgorEngine::drawInventory(int start, int mode) {
 	}
 }
 
+
+void IgorEngine::addObjectToInventory(int object, int index) {
+	++_inventoryInfo[73];
+	_inventoryInfo[_inventoryInfo[73] - 1] = object;
+	_inventoryInfo[index] = _inventoryInfo[73];
+	_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	drawInventory(_inventoryInfo[72], 0);
+	playSound(51, 1);
+}
+
+void IgorEngine::removeObjectFromInventory(int index) {
+	_inventoryInfo[_inventoryInfo[index] - 1] = 0;
+	_inventoryInfo[index] = 0;
+	packInventory();
+	if (_inventoryInfo[72] > _inventoryInfo[73]) {
+		_inventoryInfo[72] = _inventoryOffsetTable[(_inventoryInfo[73] - 1) / 7];
+	}
+	drawInventory(_inventoryInfo[72], 0);
+	playSound(63, 1);
+}
+
+void IgorEngine::packInventory() {
+	for (int i = 1; i <= _inventoryInfo[73]; ++i) {
+		if (_inventoryImages[i - 1] != 0) {
+			continue;
+		}
+		int count = _inventoryInfo[73] - 1;
+		for (int index = i; index <= count; ++index) {
+			_inventoryImages[index - 1] = _inventoryImages[index];
+			_inventoryImages[_inventoryImages[index - 1] - 1] = index;
+		}
+		_inventoryImages[_inventoryInfo[73] - 1] = 0;
+		--_inventoryInfo[73];
+	}
+}
+
 void IgorEngine::executeAction(int action) {
 	debugC(9, kDebugEngine, "executeAction %d", action);
 	assert(action < 200);

@@ -170,7 +170,6 @@ struct Action {
 	uint8 object2Type;
 };
 
-
 struct RoomDataOffsets {
 	struct {
 		int box;
@@ -299,13 +298,12 @@ struct WalkData {
 	}
 };
 
-
 class IgorEngine : public Engine {
 public:
-
 	typedef void (IgorEngine::*ExecuteActionProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
+
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -376,7 +374,6 @@ private:
 	int _dialogueTextsCount;
 	int _dialogueDirtyRectY;
 	int _dialogueDirtyRectSize;
-
 
 	uint8 _objectsState[112];
 	bool _part70FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
@@ -460,13 +457,20 @@ private:
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
 	void PART_06_EXEC_ACTION(int action);
+	void PART_06_ACTION_103();
+	void PART_06_ACTION_105();
+	void PART_06_ACTION_107();
+	void PART_06_ACTION_108();
 	void PART_06_ACTION_102();
 	void PART_06_HELPER_2();
 	void PART_06_HELPER_3_drawTripod();
-	void PART_06_HELPER_8_animatePhotographer(int frame);
 	void PART_06_HELPER_6(int num);
+	void PART_06_HELPER_8_animatePhotographer(int frame);
+	void PART_06_HELPER_12();
+	void PART_06_HELPER_13(int frame);
+	void PART_06_HELPER_14();
+	void PART_06_HELPER_15(int frame);
 	void PART_06_HELPER_1_drawPieceOfPaper(int frame);
-
 
 	void PART_100();
 	void PART_100_EXEC_ACTION(int action);
@@ -498,7 +502,6 @@ private:
 
 	void PART_90();
 
-
 	void handleRoomInput();
 
 	void executeAction(int action);
@@ -513,6 +516,10 @@ private:
 	void handleRoomInventoryScroll();
 	void scrollInventory();
 	void drawInventory(int start, int mode);
+	void addObjectToInventory(int object, int index);
+	void removeObjectFromInventory(int index);
+
+	void packInventory();
 
 	void enterPartLoop();
 	void leavePartLoop();
@@ -560,7 +567,7 @@ private:
 
 	int getPart() const { return _currentPart / 10; }
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
-	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
+	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); }                          // { return _gameTicks == eq; }
 
 	void waitForTimer(int ticks = -1);
 
@@ -576,7 +583,6 @@ private:
 	void fixWalkPosition(int *x, int *y);
 
 	void buildWalkPath(int srcX, int srcY, int dstX, int dstY);
-
 
 	static const uint8 _dialogueColor[];
 	static const uint8 _sentenceColorIndex[];
@@ -638,6 +644,7 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -648,23 +655,24 @@ protected:
 	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_110_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
+	static const uint8 _inventoryOffsetTable[];
+	static const uint8 _inventoryActionsTable[];
+
+	static const uint8 _walkWidthScaleTable[];
+	static const uint8 _walkScaleTable[];
+	static const float _walkScaleSpeedTable[];
+	static const uint8 _talkDelays[];
+	static const uint8 _mouseCursorMask[];
+	static const uint8 _mouseCursorData[];
+	static const uint8 PAL_IGOR_1[];
+	static const uint8 PAL_48_1[];
+	static const uint8 PAL_96_1[];
 };
 
 extern IgorEngine *g_engine;
 #define SHOULD_QUIT ::Igor::g_engine->shouldQuit()
 
 // Static data tables (defined in static_walk.cpp, static_cursor.cpp)
-
-extern const uint8 _walkWidthScaleTable[];
-extern const uint8 _walkScaleTable[];
-extern const float _walkScaleSpeedTable[];
-extern const uint8 _talkDelays[];
-extern const uint8 _mouseCursorMask[];
-extern const uint8 _mouseCursorData[];
-extern const uint8 PAL_IGOR_1[];
-extern const uint8 PAL_48_1[];
-extern const uint8 PAL_96_1[];
-
 
 } // End of namespace Igor
 

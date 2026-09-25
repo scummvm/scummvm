@@ -22,7 +22,6 @@
 
 namespace Igor {
 
-
 void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 	if (compareGameTick(61)) {
 		scrollPalette(160, 167);
@@ -74,7 +73,6 @@ void IgorEngine::PART_06_HELPER_2() {
 	}
 }
 
-
 void IgorEngine::PART_06_HELPER_3_drawTripod() {
 	const int offset = 28668;
 	for (int i = 0; i <= 32; ++i) {
@@ -92,20 +90,153 @@ void IgorEngine::PART_06_HELPER_8_animatePhotographer(int frame) {
 	}
 }
 
-// void IgorEngine::PART_06_HELPER_6(int num) {
-
-// }
 
 void IgorEngine::PART_06_EXEC_ACTION(int action) {
-debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
+	debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
 	switch (action) {
-        	case 102: // scroll right?
-		    PART_06_ACTION_102();
-		    break;
-    default:
+	case 101:
+		ADD_DIALOGUE_TEXT(201, 2);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		break;
+	case 102:
+		PART_06_ACTION_102();
+		break;
+	case 103:
+		PART_06_ACTION_103();
+		break;
+	case 104:
+		ADD_DIALOGUE_TEXT(203, 1);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		break;
+	case 105:
+		PART_06_ACTION_105();
+		break;
+	case 106:
+		ADD_DIALOGUE_TEXT(204, 1);
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		break;
+	case 107:
+		PART_06_ACTION_107();
+		break;
+	case 108:
+		PART_06_ACTION_108();
+		break;
+	default:
 		error("PART_06_EXEC_ACTION unhandled action %d", action);
 		break;
-    }
+	}
+}
+void IgorEngine::PART_06_ACTION_103() {
+	ADD_DIALOGUE_TEXT(215, 1);
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
+	PART_06_HELPER_8_animatePhotographer(0);
+	ADD_DIALOGUE_TEXT(216, 1);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(170, 69, 55, 37, 63);
+	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+	// PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
+	PART_06_HELPER_6(255);
+}
+
+void IgorEngine::PART_06_HELPER_6(int num) {
+	if (num == 2 || num == 255) {
+		if (_objectsState[61] == 1) {
+			PART_06_HELPER_14();
+			_roomObjectAreasTable[3].object = 0;
+			_roomObjectAreasTable[13].area = 0;
+			_roomObjectAreasTable[15].area = 0;
+			_roomObjectAreasTable[17].area = 0;
+			_roomObjectAreasTable[18].area = 0;
+		} else {
+			PART_06_HELPER_12();
+			_roomObjectAreasTable[2].object = 0;
+			_roomObjectAreasTable[15].object = 0;
+			_roomObjectAreasTable[18].object = 0;
+			_roomObjectAreasTable[3].object = 0;
+			_roomObjectAreasTable[13].area = 3;
+			_roomObjectAreasTable[15].area = 3;
+			_roomObjectAreasTable[17].area = 3;
+			_roomObjectAreasTable[18].area = 3;
+		}
+	}
+	if (num == 3 || num == 255) {
+		if (_objectsState[62] == 1) {
+			PART_06_HELPER_13(0);
+		} else {
+			PART_06_HELPER_13(1);
+			_roomObjectAreasTable[3].object = 0;
+		}
+	}
+}
+
+void IgorEngine::PART_06_ACTION_105() {
+	_gameTicks = 0;
+	for (int i = 0; i <= 3; ++i) {
+		if (compareGameTick(1)) {
+			const int offset = 22568;
+			for (int j = 0; j <= 48; ++j) {
+				const uint8 *src = _animFramesBuffer + 0x81AE + i * 1715 + j * 35;
+				memcpy(_screenVGA + 320 * j + offset, src, 35);
+			}
+		}
+		PART_06_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	}
+	addObjectToInventory(36, 71);
+	_objectsState[62] = 0;
+	PART_06_HELPER_6(255);
+}
+
+void IgorEngine::PART_06_ACTION_107() {
+	PART_06_HELPER_8_animatePhotographer(0);
+	ADD_DIALOGUE_TEXT(205, 1);
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
+	ADD_DIALOGUE_TEXT(206, 2);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(170, 69, 55, 37, 63);
+	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+}
+
+void IgorEngine::PART_06_ACTION_108() {
+	PART_06_HELPER_8_animatePhotographer(0);
+	ADD_DIALOGUE_TEXT(208, 2);
+	ADD_DIALOGUE_TEXT(210, 2);
+	SET_DIALOGUE_TEXT(1, 2);
+	startIgorDialogue();
+	waitForEndOfIgorDialogue();
+	ADD_DIALOGUE_TEXT(212, 1);
+	SET_DIALOGUE_TEXT(1, 1);
+	startCutsceneDialogue(170, 69, 55, 37, 63);
+	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
+	int i = 7;
+	_gameTicks = 0;
+	do {
+		if (compareGameTick(1, 32)) {
+			const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + i * 2) - 1;
+			decodeAnimFrame(src, _screenVGA, true);
+			++i;
+		}
+		PART_06_UPDATE_ROOM_BACKGROUND();
+		if (i == 7) {
+			stopSound();
+			playSound(19, 1);
+		}
+		waitForTimer();
+	} while (i != 28);
+	removeObjectFromInventory(61);
+	_objectsState[61] = 0;
+	PART_06_HELPER_6(255);
+	_gameState.unkF = false;
+	ADD_DIALOGUE_TEXT(213, 2);
+	SET_DIALOGUE_TEXT(1, 1);
+	startIgorDialogue();
 }
 
 void IgorEngine::PART_06_ACTION_102() {
@@ -158,6 +289,36 @@ void IgorEngine::PART_06_ACTION_102() {
 	_currentPart = 51;
 }
 
+void IgorEngine::PART_06_HELPER_12() {
+
+	const int offset = 23521;
+	for (int i = 0; i <= 48; ++i) {
+		const uint8 *src = _animFramesBuffer + 0xDEA7 + i * 23;
+		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
+	}
+}
+
+void IgorEngine::PART_06_HELPER_13(int frame) {
+	const int offset = 26756;
+	for (int i = 0; i <= 5; ++i) {
+		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
+		memcpy(_screenLayer1 + i * 320 + offset, src, 7);
+	}
+}
+
+void IgorEngine::PART_06_HELPER_14() {
+	const int offset = 23521;
+	for (int i = 0; i <= 48; ++i) {
+		const uint8 *src = _animFramesBuffer + 0x95C7 + i * 23;
+		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
+	}
+}
+
+void IgorEngine::PART_06_HELPER_15(int frame) {
+	const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + frame * 2) - 1;
+	decodeAnimFrame(src, _screenVGA, true);
+}
+
 void IgorEngine::PART_06() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
@@ -169,23 +330,23 @@ void IgorEngine::PART_06() {
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringRock
-    for (int i = 0; i <= 143; ++i) {
+	for (int i = 0; i <= 143; ++i) {
 		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320, 224);
 	}
-    loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
+	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
 	SET_PAL_240_48_1();
 
-	static const int anm2[] = { FRM_SpringRock1, FRM_SpringRock2, 0 };
+	static const int anm2[] = {FRM_SpringRock1, FRM_SpringRock2, 0};
 	loadAnimData(anm2, 0x7E00);
-	static const int anm3[] = { FRM_SpringRock3, FRM_SpringRock4, 0 };
+	static const int anm3[] = {FRM_SpringRock3, FRM_SpringRock4, 0};
 	loadAnimData(anm3, 0x81AE);
-	static const int anm4[] = { FRM_SpringRock5, FRM_SpringRock6, 0 };
+	static const int anm4[] = {FRM_SpringRock5, FRM_SpringRock6, 0};
 	loadAnimData(anm4, 0xA763);
 
 	PART_06_HELPER_2();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
-    // PART_06_HELPER_6(255);
+	// PART_06_HELPER_6(255);
 
 	if (_objectsState[63] == 1) {
 		PART_06_HELPER_3_drawTripod();
@@ -200,12 +361,13 @@ void IgorEngine::PART_06() {
 		fadeIn(768);
 	}
 	loadActionData(DAT_SpringBridge);
-    _roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
+	_roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 	_gameState.unkF = (_objectsState[61] == 1);
 	enterPartLoop();
-    while (_currentPart >= 60 && _currentPart <= 61) {
+
+	while (_currentPart >= 60 && _currentPart <= 61) {
 		setRoomWalkBounds(0, 0, _objectsState[61] == 0 ? 234 : 142, 143);
 		handleRoomInput();
 		if (compareGameTick(1, 16)) {
@@ -214,20 +376,21 @@ void IgorEngine::PART_06() {
 		// if (compareGameTick(19, 32)) {
 		// 	handleRoomDialogue();
 		// }
-		// if (compareGameTick(4, 8)) {
-		// 	handleRoomInventoryScroll();
-		// }
-		// if (compareGameTick(1)) {
-		// 	handleRoomLight();
-		// }
+		if (compareGameTick(4, 8)) {
+			handleRoomInventoryScroll();
+		}
+		if (compareGameTick(1)) {
+			handleRoomLight();
+		}
 		PART_06_UPDATE_ROOM_BACKGROUND();
+
 		if (compareGameTick(61) && _gameState.unkF && getRandomNumber(9) == 0) {
 			PART_06_HELPER_8_animatePhotographer(getRandomNumber(3));
 		}
+
 		waitForTimer();
 	}
 	leavePartLoop();
 }
-
 
 } // End of namespace Igor

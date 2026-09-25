@@ -19,23 +19,27 @@
  *
  */
 
-#include "igor/igor.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "igor/igor.h"
 
 namespace Igor {
 
-static const uint8 kSentenceColorIndex[] = { 0xFD, 0xFB, 0xF1 };
+static const uint8 kSentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
 
 void IgorEngine::waitForTimer(int ticks) {
+
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
+
 	if (_debugOverlayMode != kOverlayOff) {
 		debugApplyOverlay();
 	}
+
 	_system->updateScreen();
 
+	// wait till next timer if no param is passed, ticks if not
 	uint32 endTicks = (ticks == -1) ? _nextTimer : _system->getMillis() + ticks * 1000 / kTickDelay;
 	do {
 		Common::Event ev;
@@ -46,36 +50,38 @@ void IgorEngine::waitForTimer(int ticks) {
 				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;
-						case Common::EVENT_KEYDOWN:
-							if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-								_inputVars[kInputEscape] = 1;
-							} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
-								_inputVars[kInputOptions] = 1;
-							} else if (ev.kbd.keycode == Common::KEYCODE_p) {
-								_inputVars[kInputPause] = 1;
-							}
-							// else if (ev.kbd.keycode == Common::KEYCODE_F11) {
-							// 	sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
-							// 	saveGameState(kQuickSaveSlot);
-							// } else if (ev.kbd.keycode == Common::KEYCODE_F12) {
-							// 	loadGameState(kQuickSaveSlot);
-							// }
-							break;
-						case Common::EVENT_MOUSEMOVE:
-							_inputVars[kInputCursorXPos] = ev.mouse.x;
-							_inputVars[kInputCursorYPos] = ev.mouse.y;
-							break;
-						case Common::EVENT_RBUTTONDOWN:
-							_inputVars[kInputSkipDialogue] = 1;
-							break;
-						case Common::EVENT_LBUTTONDOWN:
-							_inputVars[kInputClick] = 1;
-							_inputVars[kInputCursorXPos] = ev.mouse.x;
-							_inputVars[kInputCursorYPos] = ev.mouse.y;
-							if (_gameState.dialogueTextRunning) {
-								_inputVars[kInputSkipDialogue] = 1;
-							}
-							break;
+			case Common::EVENT_KEYDOWN:
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_inputVars[kInputEscape] = 1;
+				} else if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
+					_inputVars[kInputOptions] = 1;
+				} else if (ev.kbd.keycode == Common::KEYCODE_p) {
+					_inputVars[kInputPause] = 1;
+				}
+				// else if (ev.kbd.keycode == Common::KEYCODE_F11) {
+				// 	sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
+				// 	saveGameState(kQuickSaveSlot);
+				// } else if (ev.kbd.keycode == Common::KEYCODE_F12) {
+				// 	loadGameState(kQuickSaveSlot);
+				// }
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				_inputVars[kInputCursorXPos] = ev.mouse.x;
+				_inputVars[kInputCursorYPos] = ev.mouse.y;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				if (_gameState.dialogueTextRunning) {
+					_inputVars[kInputSkipDialogue] = 1;
+				}
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_inputVars[kInputClick] = 1;
+				_inputVars[kInputCursorXPos] = ev.mouse.x;
+				_inputVars[kInputCursorYPos] = ev.mouse.y;
+				if (_gameState.dialogueTextRunning) {
+					_inputVars[kInputSkipDialogue] = 1;
+				}
+				break;
 			default:
 				break;
 			}
@@ -91,6 +97,8 @@ void IgorEngine::waitForTimer(int ticks) {
 		return;
 	}
 	_gameTicks += kTimerTicksCount;
+
+	// Update cursor mask
 	if ((_gameTicks & 31) == 0) {
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
@@ -126,7 +134,6 @@ void IgorEngine::hideCursor() {
 	debugC(9, kDebugEngine, "hideCursor()");
 	_roomCursorOn = false;
 	CursorMan.showMouse(_roomCursorOn);
-
 }
 
 void IgorEngine::drawVerbsPanel() {
@@ -220,8 +227,7 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 
-
-	//Action previousAction = _currentAction;
+	// Action previousAction = _currentAction;
 	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
 		// int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
 		// if (_currentAction.verbType == 0) {
@@ -269,8 +275,7 @@ void IgorEngine::handleRoomInput() {
 			_currentAction.object2Num = object;
 			_currentAction.object2Type = kObjectTypeRoom;
 		}
-	}
-	else {
+	} else {
 		return;
 	}
 
@@ -278,14 +283,15 @@ void IgorEngine::handleRoomInput() {
 		// if (_currentAction.object1Type == kObjectTypeInventory) {
 		// 	_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
 		// } else {
-			_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
+		_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
 		// }
 		// The original only exposes a room object when this action byte is
 		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC;
 		// cseg176:2CBC-2CED.
 		if (((_currentPart >= 100 && _currentPart <= 102) || // cseg175:29AA-29B5
-				_currentPart == 110) && // cseg176:29DF-29E6
-				_actionCode == 0 && _currentAction.object1Type == kObjectTypeRoom) {
+			 _currentPart == 110) &&                         // cseg176:29DF-29E6
+			_actionCode == 0 &&
+			_currentAction.object1Type == kObjectTypeRoom) {
 			_currentAction.object1Num = 0;
 		}
 	}
@@ -374,7 +380,6 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 }
-
 
 void IgorEngine::clearAction() {
 	redrawVerb(_currentAction.verb, false);

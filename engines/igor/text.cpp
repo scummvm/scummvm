@@ -22,7 +22,9 @@
 
 namespace Igor {
 
-const uint8 _talkDelays[] = { 0, 27, 22, 17, 12, 7, 0 };
+const uint8 IgorEngine::_talkDelays[] = { 0, 27, 22, 17, 12, 7, 0 };
+
+const uint8 IgorEngine::_inventoryOffsetTable[] = { 1, 8, 15, 22, 29, 36, 42, 0 };
 
 const uint8 IgorEngine::_dialogueColor[] = { 0x3F, 0x3F, 0x3F };
 
