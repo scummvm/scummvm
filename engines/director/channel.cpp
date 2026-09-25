@@ -140,6 +140,10 @@ DirectorPlotData Channel::getPlotData() {
 		// Add override flag for 1-bit images
 		pd.oneBitImage = true;
 	}
+	// Videos are rendered as an overlay, ink doesn't affect them.
+	if (_sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		pd.ink = kInkTypeCopy;
+	}
 
 	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
