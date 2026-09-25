@@ -235,7 +235,12 @@ void FrameTextBox::execute() {
 }
 
 void ControlUIItems::readData(Common::SeekableReadStream &stream) {
-	_uiButton = stream.readUint16LE();
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_uiButton = stream.readByte();
+		_characterIndex = stream.readByte();
+	} else {
+		_uiButton = stream.readUint16LE();
+	}
 	_autoOpenOrBadgeSound = stream.readByte();
 	_flagB  = stream.readByte();
 	_startScene = stream.readSint16LE();
@@ -287,8 +292,12 @@ void ControlUIItems::execute() {
 		// (kNoScene). _flagB != 0 also sets the disabled button's rejection-sound
 		// mode from _autoOpenOrBadgeSound (which clickSoundName line plays when
 		// the button is clicked while its popup is unavailable).
+		// Nancy15 keeps separate overrides per player character. Only the
+		// active character's taskbar is modeled, so skip the others'.
+		uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+			g_nancy->getPlayerCharacter() : _characterIndex;
 		UI::Taskbar *taskbar = NancySceneState.getTaskbar();
-		if (taskbar) {
+		if (taskbar && characterIndex == g_nancy->getPlayerCharacter()) {
 			if (_flagB != 0) {
 				int16 start = _startScene;
 				int16 end = _endScene;

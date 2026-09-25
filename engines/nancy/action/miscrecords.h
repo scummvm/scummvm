@@ -153,14 +153,15 @@ public:
 	void execute() override;
 
 	uint16 _uiButton = 0;
+	byte _characterIndex = kPlayerCharacterActive; // Nancy15+: whose taskbar the disable applies to
 	byte _autoOpenOrBadgeSound = 0; // 1 = auto-open popup; 0/10 = notification-badge click-sound selector
 	byte _flagB = 0;    // 0 = clear, 1 = enable+remember scene
 	int16 _startScene = 0; // start scene id (9999 = none); also the auto-open cell phone's call target
 	int16 _endScene = 0;   // end scene id (9999 = none)
 
 	Common::String getRecordExtraInfo() const override {
-		return Common::String::format("uiButton: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
-									  _uiButton, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
+		return Common::String::format("uiButton: %d, character: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
+									  _uiButton, _characterIndex, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
 	}
 
 protected:
