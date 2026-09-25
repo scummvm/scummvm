@@ -379,6 +379,7 @@ private:
 
 
 	uint8 _objectsState[112];
+	bool _part70FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
@@ -471,6 +472,13 @@ private:
 	void PART_100_EXEC_ACTION(int action);
 	void PART_100_ACTION_104();
 	void PART_100_ACTION_108();
+	void PART_70();
+	void PART_70_EXEC_ACTION(int action);
+	void PART_70_DRAW_DOOR_STATE(int num);
+	void PART_70_ANIMATE_DOOR(int door, bool open);
+	void PART_70_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
+	void PART_70_ENTER_FROM_OUTSIDE();
+	void PART_70_EXIT_TO_OUTSIDE();
 	void PART_110();
 	void PART_110_EXEC_ACTION(int action);
 	void PART_110_ACTION_105();
@@ -630,6 +638,7 @@ protected:
 	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_110_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];

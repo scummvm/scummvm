@@ -141,6 +141,11 @@ void IgorEngine::PART_MAIN() {
 		case 62:
 			PART_06(); // SpringRock
 			break;
+		case 70:
+		case 71:
+		case 72:
+			PART_70(); // Administration corridor; cseg197:28D4
+			break;
 
 		case 100:
 		case 101:

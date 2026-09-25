@@ -203,6 +203,13 @@ const RoomDataOffsets IgorEngine::PART_06_ROOM_DATA_OFFSETS = {
 	{ 135, 30, 5158, 100, 60 }
 };
 
+const RoomDataOffsets IgorEngine::PART_70_ROOM_DATA_OFFSETS = {
+	{ 80, 4, 12, 3 }, // cseg197:194E-199C; DAT+80, 4 records, 12-byte source, 3-byte destination
+	{ 161, 173 }, // cseg197:07AF-07F2 and cseg197:2E1D-2E24
+	{ 175, 419, 3575, 319, 395, 88 }, // cseg197:2E4C-2F19 and cseg197:2F23-2F62
+	{ 0, 0, 0, 0, 0 } // cseg197 has no room-specific question/reply matrix
+};
+
 const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 0, 0 },

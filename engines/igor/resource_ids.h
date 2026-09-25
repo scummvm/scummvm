@@ -506,4 +506,14 @@
 #define IMG_IgorIntroLogo 914 // cseg209:1E34; IGOR.EXE:0x7C1434, 320x122
 #define PAL_IgorIntroLogo 915 // cseg209:B6B4; IGOR.EXE:0x7CACB4, 768 bytes
 
+// Administration corridor used by parts 70-72. These CD resources live in
+// NE segments 197-199 and were absent from the historical TBL catalog.
+#define DAT_AdministrationCorridor 916 // cseg197:3732; IGOR.EXE:0x748B32, 0x1A59 bytes
+#define ANM_AdministrationCorridor 917 // cseg198:00D6; IGOR.EXE:0x74C8D6, 0x2B4D bytes
+#define TXT_AdministrationCorridor 918 // cseg199:06A2; IGOR.EXE:0x74FBA2, 0x5EE bytes
+#define IMG_AdministrationCorridor 919 // cseg199:0C90; IGOR.EXE:0x750190, 0xB400 bytes
+#define PAL_AdministrationCorridor 920 // cseg199:C090; IGOR.EXE:0x75B590, 0x270 bytes
+#define MSK_AdministrationCorridor 921 // cseg199:C300; IGOR.EXE:0x75B800, 0x954 bytes
+#define BOX_AdministrationCorridor 922 // cseg199:CC54; IGOR.EXE:0x75C154, 0x500 bytes
+
 #endif // IGOR_RESOURCE_IDS

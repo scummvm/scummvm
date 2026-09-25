@@ -139,6 +139,7 @@ void IgorEngine::restart() {
 	// memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
 	memset(_objectsState, 0, sizeof(_objectsState));
+	_part70FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
 	memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
 	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));
@@ -305,11 +306,11 @@ void IgorEngine::drawInventory(int start, int mode) {
 		}
 	}
 	switch (mode) {
-	case 0:
+	case 0: // normal inventory rendering
 		memcpy(_screenVGA + 54400, _inventoryPanelBuffer, 9600);
 		_scrollInventory = false;
 		break;
-	case 1:
+	case 1: // animation scrolling up
 		for (y = 0; y <= 11; ++y) {
 			for (x = 0; x <= 14; ++x) {
 				uint8 *p = _screenVGA + x + y * 320 + 59520;
@@ -327,7 +328,7 @@ void IgorEngine::drawInventory(int start, int mode) {
 		_scrollInventoryDy = 6;
 		_scrollInventory = true;
 		break;
-	case 2:
+	case 2: // animation scrolling down
 		for (y = 0; y <= 11; ++y) {
 			for (x = 0; x <= 14; ++x) {
 				uint8 *p = _screenVGA + x + y * 320 + 55040;

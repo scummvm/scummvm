@@ -170,7 +170,7 @@ void IgorEngine::handleRoomInput() {
 		_inputVars[kInputSkipDialogue] = 0;
 	}
 
-	if (!_roomCursorOn || _gameState.dialogueTextRunning /*|| _scrollInventory*/) {
+	if (!_roomCursorOn || _gameState.dialogueTextRunning || _scrollInventory) {
 		return;
 	}
 	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
@@ -190,42 +190,28 @@ void IgorEngine::handleRoomInput() {
 		}
 		return;
 	}
-	// if (_inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
-	// 	if (_inputVars[kInputClick]) {
-	// 		if (_inventoryInfo[72] > 1) {
-	// 			_inventoryInfo[72] -= 7;
-	// 			drawInventory(_inventoryInfo[72], 2);
-	// 		}
-	// 		_inputVars[kInputClick] = 0;
-	// 	}
-	// 	return;
-	// }
-	// if (_inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
-	// 	if (_inputVars[kInputClick]) {
-	// 		if (_inventoryInfo[73] > _inventoryInfo[72] + 6) {
-	// 			_inventoryInfo[72] += 7;
-	// 			drawInventory(_inventoryInfo[72], 1);
-	// 		}
-	// 		_inputVars[kInputClick] = 0;
-	// 	}
-	// 	return;
-	// }
-
-	// if (_inputVars[kInputClick]) {
-	// 	if (_gameState.igorMoving) {
-	// 		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex - 1].x;
-	// 		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex - 1].y;
-	// 		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX].area == 0) {
-	// 			return;
-	// 		}
-	// 		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex + 1].x;
-	// 		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex + 1].y;
-	// 		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX].area == 0) {
-	// 			return;
-	// 		}
-	// 	}
-	// 	_inputVars[kInputClick] = 0;
-	// }
+	// Inventory arrows
+	if (_inputVars[kInputCursorYPos] >= 172 && _inputVars[kInputCursorYPos] <= 183 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+		if (_inputVars[kInputClick]) {
+			if (_inventoryInfo[72] > 1) {
+				_inventoryInfo[72] -= 7;
+				drawInventory(_inventoryInfo[72], 2);
+			}
+			_inputVars[kInputClick] = 0;
+		}
+		return;
+	}
+	// Inventory arrows
+	if (_inputVars[kInputCursorYPos] >= 186 && _inputVars[kInputCursorYPos] <= 197 && (_inputVars[kInputCursorXPos] < 15 || _inputVars[kInputCursorXPos] > 304)) {
+		if (_inputVars[kInputClick]) {
+			if (_inventoryInfo[73] > _inventoryInfo[72] + 6) {
+				_inventoryInfo[72] += 7;
+				drawInventory(_inventoryInfo[72], 1);
+			}
+			_inputVars[kInputClick] = 0;
+		}
+		return;
+	}
 
 	bool actionHovering = !_inputVars[kInputClick];
 	_inputVars[kInputClick] = 0;
