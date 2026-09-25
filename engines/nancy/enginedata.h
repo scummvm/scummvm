@@ -260,6 +260,7 @@ struct CRED : public EngineData {
 
 	Common::Path imageName;
 	Common::Array<Common::Path> textNames;
+	Common::String textKey;
 	Common::Rect textScreenPosition;
 	uint16 updateTime;
 	uint16 pixelsToScroll;

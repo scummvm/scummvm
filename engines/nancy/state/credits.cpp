@@ -27,6 +27,8 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/misc/hypertext.h"
+
 #include "engines/nancy/state/credits.h"
 
 #include "common/events.h"
@@ -38,6 +40,35 @@ DECLARE_SINGLETON(Nancy::State::Credits);
 
 namespace Nancy {
 namespace State {
+
+// Renders the Nancy 14+ credits, which are stored as hypertext in the AUTOTEXT chunk
+class CreditsTextRenderer : public Misc::HypertextParser {
+public:
+	void render(const Common::String &text, uint width, Graphics::ManagedSurface &image);
+};
+
+void CreditsTextRenderer::render(const Common::String &text, uint width, Graphics::ManagedSurface &image) {
+	// Default font and maximum surface height of the credits text
+	const uint fontID = 2;
+	const uint maxHeight = 5020;
+
+	_fullSurface.create(width, maxHeight, g_nancy->_graphics->getInputPixelFormat());
+	_fullSurface.clear(g_nancy->_graphics->getTransColor());
+
+	const Font *font = g_nancy->_graphics->getFont(fontID);
+	assert(font);
+	uint margin = (font->getFontHeight() + 1) / 2 + 1;
+
+	Common::Rect textBounds = _fullSurface.getBounds();
+	textBounds.grow(-(int)margin);
+
+	addTextLine(text);
+	drawAllText(textBounds, 0, fontID, fontID);
+
+	uint height = MIN<uint>(_drawnTextHeight + textBounds.top, maxHeight);
+	image.create(width, height, _fullSurface.format);
+	image.blitFrom(_fullSurface, Common::Rect(width, height), Common::Point());
+}
 
 void Credits::process() {
 	switch (_state) {
@@ -137,7 +168,16 @@ void Credits::run() {
 void Credits::drawTextSurface(uint id) {
 	Graphics::ManagedSurface image;
 	uint surfaceHeight = _textSurface.getBounds().height();
-	g_nancy->_resource->loadImage(_creditsData->textNames[id], image);
+	if (!_creditsData->textKey.empty()) {
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		assert(autotext);
+
+		CreditsTextRenderer renderer;
+		renderer.render(autotext->texts[_creditsData->textKey], _textSurface.getBounds().width(), image);
+	} else {
+		g_nancy->_resource->loadImage(_creditsData->textNames[id], image);
+	}
+
 	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphics->getInputPixelFormat());
 	_fullTextSurface.setTransparentColor(g_nancy->_graphics->getTransColor());
 	_fullTextSurface.clear(_fullTextSurface.getTransparentColor());

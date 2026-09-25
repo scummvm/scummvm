@@ -474,14 +474,21 @@ CRED::CRED(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
 	readFilename(*chunkStream, imageName);
 
-	textNames.resize(isVampire ? 7 : 1);
-	for (Common::Path &str : textNames) {
-		readFilename(*chunkStream, str);
-	}
+	if (g_nancy->getGameType() >= kGameTypeNancy14) {
+		// The credits text is a key into the AUTOTEXT chunk instead of an image
+		readFilename(*chunkStream, textKey);
+		chunkStream->skip(0x10);
+		readRect(*chunkStream, textScreenPosition);
+	} else {
+		textNames.resize(isVampire ? 7 : 1);
+		for (Common::Path &str : textNames) {
+			readFilename(*chunkStream, str);
+		}
 
-	chunkStream->skip(0x20);
-	readRect(*chunkStream, textScreenPosition);
-	chunkStream->skip(0x10);
+		chunkStream->skip(0x20);
+		readRect(*chunkStream, textScreenPosition);
+		chunkStream->skip(0x10);
+	}
 
 	updateTime = chunkStream->readUint16LE();
 	pixelsToScroll = chunkStream->readUint16LE();
