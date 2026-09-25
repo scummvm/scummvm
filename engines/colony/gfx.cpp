@@ -66,7 +66,7 @@ Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &
 // primitive coverage up to parity. Note that the generic preference order
 // in graphics/renderer.cpp:122 picks shaders for the Default case, so we
 // must override it here.
-static Graphics::RendererType pickRendererType() {
+Graphics::RendererType pickRendererType() {
 	const Common::String configured = ConfMan.get("renderer");
 	const Graphics::RendererType desired = Graphics::Renderer::parseTypeCode(configured);
 

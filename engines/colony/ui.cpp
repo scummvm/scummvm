@@ -51,7 +51,7 @@ enum MacTextPopupStyle {
 	kMacInformWindow
 };
 
-static Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int width, int height) {
+Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int width, int height) {
 	if (!gfx)
 		return nullptr;
 
@@ -67,7 +67,7 @@ static Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int wid
 	return saved;
 }
 
-static void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *saved) {
+void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *saved) {
 	if (!saved)
 		return;
 	if (gfx) {
@@ -78,7 +78,7 @@ static void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *sa
 	delete saved;
 }
 
-static void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &from, const Common::Rect &to) {
+void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &from, const Common::Rect &to) {
 	if (!gfx || !system || from.isEmpty() || to.isEmpty())
 		return;
 
@@ -102,7 +102,7 @@ static void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &f
 	CursorMan.showMouse(cursorWasVisible);
 }
 
-static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
+bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		int screenWidth, int screenHeight, int centerX, int centerY,
 		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor,
 		int visibleLineCount = -1, Common::Rect *popupBounds = nullptr,
@@ -483,7 +483,7 @@ void ColonyEngine::updateViewportLayout() {
 }
 
 // DASHBOAR.C qlog(): bit-length of x (equivalent to floor(log2(x))+1)
-int ColonyEngine::qlog(int32 x) {
+int qlog(int32 x) {
 	int i = 0;
 	while (x > 0) {
 		x >>= 1;
@@ -1326,7 +1326,7 @@ void ColonyEngine::loadForkliftIcons() {
 	_flIconsLoaded = true;
 
 	// c_box1, c_cryo, c_teleport, c_ccore
-	static const int kBgColorIdx[5] = { -1, 84, 90, 93, 111 };
+	const int kBgColorIdx[5] = { -1, 84, 90, 93, 111 };
 	const uint32 white = packRGB(255, 255, 255);
 	const uint32 black = packRGB(0, 0, 0);
 
@@ -1412,7 +1412,7 @@ void ColonyEngine::drawForkliftOverlay() {
 	} else {
 		// IBM_DISP.C: framed white box at the bottom center naming the
 		// fork state, black text on vINTWHITE.
-		static const char *fltext[5] = { "EMPTY", "BOX", "CRYO", "TELEPORT", "REACTOR" };
+		const char *const fltext[5] = { "EMPTY", "BOX", "CRYO", "TELEPORT", "REACTOR" };
 		Graphics::DosFont font;
 		const int half = 4 + font.getStringWidth(fltext[fnum]) / 2;
 		const Common::Rect r(_centerX - half, _screenR.bottom - 15, _centerX + half, _screenR.bottom - 1);

@@ -61,9 +61,8 @@ class Sound;
 // with the high byte == 0xFF as direct ARGB (R=bits 16-23, G=8-15, B=0-7) and
 // values with high byte 0 as palette indices. The PixelFormat below matches
 // that direct-ARGB layout exactly so we can build colors via ARGBToColor.
-inline const Graphics::PixelFormat &renderColorFormat() {
-	static const Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 16, 8, 0, 24);
-	return fmt;
+inline Graphics::PixelFormat renderColorFormat() {
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 }
 
 inline uint32 packRGB(byte r, byte g, byte b) {
@@ -155,7 +154,7 @@ enum RobotType {
 // Capped at 112 so the robot keeps at least 32 units of movement freedom
 // within a 256-unit cell (256 - 2*112 = 32).
 inline int robotWallPad(int robotType) {
-	static const int kMaxPad = 112;
+	const int kMaxPad = 112;
 	switch (robotType) {
 	case kRobEye:      return 66;
 	case kRobPyramid:
@@ -338,8 +337,8 @@ enum MenuIndex {
 uint8 objWorldAng(uint8 objectAng);
 uint8 objAngFromPlayer(uint8 playerAng);
 
-static const int kBaseObject = 20;
-static const int kMeNum = 101;
+const int kBaseObject = 20;
+const int kMeNum = 101;
 
 struct Locate {
 	uint8 ang = 0;
@@ -630,6 +629,7 @@ private:
 	int _mountains[256];          // mountain height profile
 	int _battledx = 0;            // mountain parallax divisor (Width/59)
 	int _battleRound = 0;         // AI round-robin counter
+	bool _battleSendFarX = false; // alternate robot respawn axis
 	Locate *_battlePwh[100] = {};  // visible object pointers (for hit detection)
 	int _battleMaxP = 0;          // count of visible objects
 	Locate _pyramids[4][4][15];   // pyramid obstacles: 4x4 quadrants, 15 each
@@ -814,7 +814,6 @@ private:
 	void drawDashboardMac();
 	void drawDOSBarGraph(int x, int y, int height);
 	void updateDOSPowerBars();
-	static int qlog(int32 x);
 	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip = nullptr);
 	bool hasRobotAt(int x, int y) const;
 	bool hasFoodAt(int x, int y) const;

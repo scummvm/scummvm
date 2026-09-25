@@ -1017,7 +1017,7 @@ void ColonyEngine::loadCoderTiles() {
 		delete imgs[i];
 }
 
-static void drawCoderTile(Graphics::ManagedSurface &s, const Image *img, int x, int y, uint32 fg, uint32 bg) {
+void drawCoderTile(Graphics::ManagedSurface &s, const Image *img, int x, int y, uint32 fg, uint32 bg) {
 	if (!img || !img->data)
 		return;
 	for (int r = 0; r < img->height; r++) {

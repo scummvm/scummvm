@@ -452,6 +452,7 @@ void ColonyEngine::battleInit() {
 	_battleShip.look = _battleShip.ang = 32;
 
 	_battleRound = 0;
+	_battleSendFarX = false;
 	_projon = false;
 	_pcount = 0;
 
@@ -1073,8 +1074,6 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 }
 
 void ColonyEngine::battleShoot() {
-	static bool s_sendFarX = false;
-
 	if (_me.power[0] <= 0 || _weapons <= 0 || _fl)
 		return;
 
@@ -1113,14 +1112,14 @@ void ColonyEngine::battleShoot() {
 	target->power[1] -= battlePowerLevel(_me.power[0]);
 	if (target->power[1] < 0) {
 		target->power[1] = 15 + (_randomSource.getRandomNumber(0x0F) & 0x0F);
-		if (s_sendFarX) {
+		if (_battleSendFarX) {
 			target->xloc = battleNormalizeCoord(_me.xloc + 16000);
 			target->yloc = battleNormalizeCoord(_me.yloc + _randomSource.getRandomNumber(0x7FFF));
 		} else {
 			target->xloc = battleNormalizeCoord(_me.xloc + _randomSource.getRandomNumber(0x7FFF));
 			target->yloc = battleNormalizeCoord(_me.yloc + 16000);
 		}
-		s_sendFarX = !s_sendFarX;
+		_battleSendFarX = !_battleSendFarX;
 		_sound->play(Sound::kExplode);
 	}
 }

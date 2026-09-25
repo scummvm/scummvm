@@ -543,7 +543,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	// waits for click, then scrolls it off the top.
 	// Mac original: TextFont(190 = Commando); TextSize(12);
 	// Text blue starts at 0xFFFF and fades by -4096 per visible line.
-	static const char *const kDosStory[] = {
+	const char *const kDosStory[] = {
 		"Mankind has left the",
 		"cradle of earth and",
 		"is beginning to eye",
@@ -558,7 +558,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 		"Press any key to begin",
 		"the Adventure..."
 	};
-	static const char *const kMacStory[] = {
+	const char *const kMacStory[] = {
 		"",
 		"Mankind has left the",
 		"cradle of earth and",

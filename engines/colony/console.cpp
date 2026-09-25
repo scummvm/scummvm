@@ -441,7 +441,7 @@ bool Debugger::cmdGoals(int argc, const char **argv) {
 }
 
 bool Debugger::cmdWin(int argc, const char **argv) {
-	static const char *const endingDescriptions[] = {
+	const char *const endingDescriptions[] = {
 		"planet destroyed, all 6 cryos recovered",
 		"planet destroyed, some cryos recovered",
 		"planet destroyed, no cryos recovered",

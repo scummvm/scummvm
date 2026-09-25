@@ -194,14 +194,14 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	for (int i = 0; i < 256 * 3; i++)
 		_palette[i] = 255;
 
-	static const char *solidAttribs[] = { "position", nullptr };
+	const char *const solidAttribs[] = { "position", nullptr };
 	_solidShader = OpenGL::Shader::fromFiles("colony_solid", solidAttribs);
 	_solidVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
 		sizeof(float) * 2 * kSolidVertexCapacity, nullptr, GL_DYNAMIC_DRAW);
 	_solidShader->enableVertexAttribute("position", _solidVBO, 2, GL_FLOAT, GL_FALSE,
 		2 * sizeof(float), 0);
 
-	static const char *bitmapAttribs[] = { "position", "texcoord", nullptr };
+	const char *const bitmapAttribs[] = { "position", "texcoord", nullptr };
 	_bitmapShader = OpenGL::Shader::fromFiles("colony_bitmap", bitmapAttribs);
 	// Per-draw vec2 position + vec2 texcoord, 4 vertices for a quad.
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
@@ -214,7 +214,7 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	// 3D solid: vec3 vertex consuming mvpMatrix; the fragment shader has
 	// its own stipple-emulation branch (Freescape pattern, GLES2 safe),
 	// so we use a dedicated colony_solid_3d.{vertex,fragment} pair.
-	static const char *solid3dAttribs[] = { "position", nullptr };
+	const char *const solid3dAttribs[] = { "position", nullptr };
 	_solid3dShader = OpenGL::Shader::fromFiles("colony_solid_3d", solid3dAttribs);
 	_solid3dVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
 		sizeof(float) * 3 * kSolid3DVertexCapacity, nullptr, GL_DYNAMIC_DRAW);

@@ -60,28 +60,28 @@ const uint32 kRestDivider = 0;
 // Ambient DOS intro phrases from COLDAT.ASM.
 // These are sparse note patterns with long rests; exact VSP note decoding
 // is not available here, so we map them to stable PC speaker dividers.
-static const MelodyStep kStars1Phrase[] = {
+const MelodyStep kStars1Phrase[] = {
 	{ 4831, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 },
 	{ 4063, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 },
 	{ 1811, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 },
 	{ 1715, 3 }, { kRestDivider, 3 }
 };
 
-static const MelodyStep kStars2Phrase[] = {
+const MelodyStep kStars2Phrase[] = {
 	{ 4831, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { 2712, 3 },
 	{ 4063, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { 2032, 3 },
 	{ 1811, 3 }, { kRestDivider, 3 }, { kRestDivider, 3 }, { 9121, 3 },
 	{ 1715, 3 }, { kRestDivider, 3 }
 };
 
-static const MelodyStep kStars3Phrase[] = {
+const MelodyStep kStars3Phrase[] = {
 	{ 4831, 3 }, { kRestDivider, 3 }, { 9121, 3 }, { 2712, 3 },
 	{ 4063, 3 }, { kRestDivider, 3 }, { 7670, 3 }, { 2032, 3 },
 	{ 1811, 3 }, { kRestDivider, 3 }, { 4560, 3 }, { 9121, 3 },
 	{ 1715, 3 }, { kRestDivider, 3 }
 };
 
-static const MelodyStep kStars4Phrase[] = {
+const MelodyStep kStars4Phrase[] = {
 	{ 4831, 3 }, { 1524, 3 }, { 9121, 3 }, { 2712, 3 },
 	{ 4063, 3 }, { 4831, 3 }, { 7670, 3 }, { 2032, 3 },
 	{ 1811, 3 }, { 3044, 3 }, { 4560, 3 }, { 9121, 3 },
