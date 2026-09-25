@@ -510,11 +510,17 @@ private:
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
 	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
+	void handleRoomInventoryScroll();
+	void scrollInventory();
 	void drawInventory(int start, int mode);
 
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
+
+	void handleRoomLight();
+
+	void updateRoomLight(int fl);
 
 	int lookupScale(int xOffset, int yOffset, int h) const;
 	void lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const;

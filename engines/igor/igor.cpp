@@ -243,12 +243,12 @@ void IgorEngine::runPartLoop() {
 	// if (compareGameTick(19, 32)) {
 	// 	handleRoomDialogue();
 	// }
-	// if (compareGameTick(4, 8)) {
-	// 	handleRoomInventoryScroll();
-	// }
-	// if (compareGameTick(1)) {
-	// 	handleRoomLight();
-	// }
+	if (compareGameTick(4, 8)) {
+		handleRoomInventoryScroll();
+	}
+	if (compareGameTick(1)) {
+		handleRoomLight();
+	}
 	if (_updateRoomBackground) {
 		(this->*_updateRoomBackground)();
 	}
@@ -256,6 +256,89 @@ void IgorEngine::runPartLoop() {
 	waitForTimer();
 }
 
+void IgorEngine::handleRoomLight() {
+	if (_gameState.dialogueTextRunning || _gameState.igorMoving) {
+		_gameState.updateLight = false;
+	} else if (_gameState.updateLight) {
+		updateRoomLight(0);
+		_gameState.updateLight = 0;
+	} else if (getRandomNumber(10) == 0) {
+		updateRoomLight(1);
+		_gameState.updateLight = true;
+	}
+}
+
+void IgorEngine::updateRoomLight(int fl) {
+	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
+	if (wd->scaleHeight != 50 || _gameState.dialogueTextRunning) {
+		return;
+	}
+	int offset = 320 * (wd->y + 1 - wd->scaleWidth);
+	int x = wd->x - _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
+	if (x <= 0) {
+		return;
+	}
+	offset += x;
+	RoomObjectArea *roa;
+	int color = (fl == 0) ? 196 : 195;
+	switch (wd->posNum) {
+	case 2:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1298]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
+			}
+			_screenVGA[offset + 1298] = color;
+		}
+		break;
+	case 3:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1293]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
+			}
+			_screenVGA[offset + 1293] = color;
+		}
+		color = (fl == 0) ? 196 : 195;
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1296]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
+			}
+			_screenVGA[offset + 1296] = color;
+		}
+		break;
+	case 4:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1291]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
+			}
+			_screenVGA[offset + 1291] = color;
+		}
+		break;
+	}
+}
+
+void IgorEngine::handleRoomInventoryScroll() {
+	if (_scrollInventory) {
+		scrollInventory();
+	}
+}
+
+void IgorEngine::scrollInventory() {
+	if (_scrollInventoryStartY == _scrollInventoryEndY) {
+		memcpy(_screenVGA + 54400, _inventoryPanelBuffer + (_scrollInventoryStartY - 1) * 320, 9600);
+		_scrollInventory = false;
+	} else {
+		int offset = 54420;
+		for (int y = _scrollInventoryStartY; y < _scrollInventoryStartY + 29; ++y) {
+			memcpy(_screenVGA + offset, _inventoryPanelBuffer + 320 * y - 300, 280);
+			offset += 320;
+		}
+		_scrollInventoryStartY += _scrollInventoryDy;
+	}
+}
 
 void IgorEngine::drawInventory(int start, int mode) {
 	loadData(IMG_InventoryPanel, _inventoryPanelBuffer);
