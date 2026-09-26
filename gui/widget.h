@@ -189,6 +189,22 @@ public:
 
 	void read(const Common::U32String &str);
 
+	/**
+	 * Describe this widget for text-to-speech, for when it gains focus.
+	 *
+	 * The default implementation falls back on the tooltip, so that widgets
+	 * which have not overridden this still say something rather than leaving
+	 * the user with silence. Widgets which carry a label or a value should
+	 * override this to report it.
+	 *
+	 * @return A human readable description, or an empty string if the widget
+	 *         has nothing meaningful to say.
+	 */
+	virtual Common::U32String getSpokenDescription() const { return _tooltip; }
+
+	/** Speak this widget's description, if text-to-speech is enabled. */
+	void readDescription();
+
 protected:
 	void updateState(int oldFlags, int newFlags);
 
