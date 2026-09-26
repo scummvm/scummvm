@@ -1,0 +1,168 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/hollywood.h"
+#include "hollywood/scenes/intro/scene9000.h"
+
+namespace Hollywood {
+
+const char *const kIntroArchiveName = "RESOURCE.I00";
+
+Scene9000::Scene9000(HollywoodEngine *vm) :
+		PresentationScene(vm, "intro scene 9000", kSceneBufferByteCount, 0),
+		_music() {
+	_paletteSource.resize(kPaletteSize);
+	_frameDecodeBuffer.resize(kSceneBufferByteCount);
+}
+
+bool Scene9000::play() {
+	if (!load())
+		return false;
+
+	_music.playIntroMusic();
+
+	for (uint chunkIndex = 0; chunkIndex < kIntroChunkCount && !_skipRequested && !Engine::shouldQuit(); ++chunkIndex) {
+		if (!loadChunk(chunkIndex)) {
+			_music.stop();
+			return false;
+		}
+		if (!runChunk()) {
+			_music.stop();
+			return false;
+		}
+	}
+
+	while (_music.isPlaying() && !_skipRequested && !Engine::shouldQuit()) {
+		if (delay(10))
+			break;
+	}
+
+	_music.stop();
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	presentFrame();
+	return true;
+}
+
+bool Scene9000::load() {
+	return _resources.loadChunkTable(kIntroArchiveName) &&
+		_resources.validateChunkRange(kIntroArchiveName, _debugName,
+			0, kIntroChunkCount * 2 - 1);
+}
+
+bool Scene9000::loadChunk(uint chunkIndex) {
+	const uint paletteChunk = chunkIndex * 2;
+	const uint spriteChunk = paletteChunk + 1;
+
+	if (!loadFixedChunk(paletteChunk, _paletteSource, kPaletteSize) ||
+			!loadVariableChunk(spriteChunk, _spriteResource))
+		return false;
+
+	resetChunkState();
+	return true;
+}
+
+bool Scene9000::runChunk() {
+	byte frameIndex = 0;
+	byte fadeThreshold = 63;
+	bool fadeInComplete = false;
+	bool fadeOutComplete = false;
+
+	presentFrame();
+
+	while ((frameIndex < kIntroFrameDescriptorCount || !fadeInComplete) && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return true;
+
+		if (frameIndex < kIntroFrameDescriptorCount) {
+			frameIndex++;
+			drawAnimationFrame(frameIndex - 1);
+		}
+
+		if (!fadeInComplete) {
+			for (uint i = 0; i < kAnimatedPaletteByteCount; ++i) {
+				if (_paletteSource[i] >= fadeThreshold)
+					_paletteCurrent[i] = MIN<byte>(_paletteSource[i], _paletteCurrent[i] + 3);
+			}
+
+			if (fadeThreshold == 0)
+				fadeInComplete = true;
+			else
+				fadeThreshold = fadeThreshold > 3 ? fadeThreshold - 3 : 0;
+		}
+
+		presentFrame();
+		if (delay(kFrameStepMillis))
+			return true;
+	}
+
+	for (uint holdStep = 0; holdStep < kHoldStepCount && !_skipRequested && !Engine::shouldQuit(); ++holdStep) {
+		if (delay(kHoldStepMillis))
+			return true;
+	}
+
+	fadeThreshold = 0;
+	while ((frameIndex > 1 || !fadeOutComplete) && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return true;
+
+		if (frameIndex > 1) {
+			frameIndex--;
+			drawAnimationFrame(frameIndex - 1);
+		}
+
+		if (!fadeOutComplete) {
+			for (uint i = 0; i < kAnimatedPaletteByteCount; ++i) {
+				if (_paletteSource[i] >= fadeThreshold)
+					_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
+			}
+
+			if (fadeThreshold == 63)
+				fadeOutComplete = true;
+			else
+				fadeThreshold = MIN<byte>(63, fadeThreshold + 3);
+		}
+
+		presentFrame();
+		if (delay(kPaletteStepMillis))
+			return true;
+	}
+
+	return true;
+}
+
+void Scene9000::stopAudio() {
+	_music.stop();
+}
+
+void Scene9000::resetChunkState() {
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	memset(_frameDecodeBuffer.data(), 0, _frameDecodeBuffer.size());
+	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
+}
+
+void Scene9000::drawAnimationFrame(uint16 descriptorIndex) {
+	restoreSpriteBackground(_spriteResource, 0, 0, kIntroFrameDescriptorCount,
+		descriptorIndex, _frameDecodeBuffer.surface(), _sceneFramebuffer.surface());
+	drawStripSpriteFrame(_spriteResource, 0, 0, kIntroFrameDescriptorCount,
+		descriptorIndex, _sceneFramebuffer.surface());
+}
+
+} // End of namespace Hollywood
