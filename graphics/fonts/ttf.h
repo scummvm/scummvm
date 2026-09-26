@@ -104,9 +104,11 @@ enum TTFSizeMode {
  *                   supported.
  * @param faceIndex  The index of face to load when loading a TTC file.
  *                   Otherwise, always set to 0.
+ * @param fakeBold   Fake bold when the bold face is not available.
+ * @param fakeItalic Fake italic when the italic face is not available.
  * @return 0 in case loading fails, otherwise a pointer to the Font object.
  */
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false, int32 faceIndex = 0, bool bold = false, bool italic = false);
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode = kTTFSizeModeCharacter, uint xdpi = 0, uint ydpi = 0, TTFRenderMode renderMode = kTTFRenderModeLight, const uint32 *mapping = 0, bool stemDarkening = false, int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 
 /**
  * Loads a TTF font file from the common fonts archive.

@@ -251,7 +251,7 @@ TTFFont::~TTFFont() {
 
 bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode,
 				   uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening,
-				   int32 faceIndex, bool bold, bool italic) {
+				   int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
@@ -312,9 +312,9 @@ bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag di
 	}
 
 	bool fontBold = ((_face->style_flags & FT_STYLE_FLAG_BOLD) != 0);
-	_fakeBold = bold && !fontBold;
+	_fakeBold = fakeBold && !fontBold;
 	bool fontItalic = ((_face->style_flags & FT_STYLE_FLAG_ITALIC) != 0);
-	_fakeItalic = italic && !fontItalic;
+	_fakeItalic = fakeItalic && !fontItalic;
 
 	switch (renderMode) {
 	case kTTFRenderModeNormal:
@@ -936,10 +936,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool bold, bool italic) {
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening, int32 faceIndex, bool fakeBold, bool fakeItalic) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, bold, italic)) {
+	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening, faceIndex, fakeBold, fakeItalic)) {
 		delete font;
 		return 0;
 	}
