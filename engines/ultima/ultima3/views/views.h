@@ -23,12 +23,18 @@
 #define ULTIMA3_VIEWS_H
 
 #include "ultima/shared/engine/events.h"
+#include "ultima/ultima3/views/main_menu.h"
+#include "ultima/ultima3/views/startup.h"
+#include "ultima/ultima3/views/title.h"
 
 namespace Ultima {
 namespace Ultima3 {
 namespace Views {
 
-struct Views : public Shared::Views {
+struct Views {
+	MainMenu _mainMenu;
+	Startup _startup;
+	Title _title;
 };
 
 } // namespace Views

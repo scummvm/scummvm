@@ -26,6 +26,7 @@
 #include "ultima/ultima3/ultima3.h"
 #include "ultima/ultima3/console.h"
 #include "ultima/ultima3/metaengine.h"
+#include "ultima/ultima3/data/data.h"
 #include "ultima/ultima3/views/views.h"
 
 namespace Ultima {
@@ -56,6 +57,7 @@ Common::Error Ultima3Engine::run() {
 
 	// Initialize 320x200 graphics mode
 	initGraphics(320, 200);
+	Data::setCGAPalette();
 	_pcSpeakerReady = _pcSpeaker->init();
 
 	// Set the engine's debugger console
@@ -63,7 +65,8 @@ Common::Error Ultima3Engine::run() {
 
 	Views::Views views;
 	addView("Startup");
-	runGame(views);
+	runGame();
+	(void)views;		// Suppress any warnings of unused local
 
 	return Common::kNoError;
 }

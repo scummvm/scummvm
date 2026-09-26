@@ -161,7 +161,12 @@ ifdef ENABLE_ULTIMA3
 MODULE_OBJS += \
 	ultima3/ultima3.o \
 	ultima3/console.o \
-	ultima3/metaengine.o
+	ultima3/metaengine.o \
+	ultima3/data/data.o \
+	ultima3/gfx/pic_decoder.o \
+	ultima3/views/main_menu.o \
+	ultima3/views/startup.o \
+	ultima3/views/title.o
 endif
 
 ifdef ENABLE_ULTIMA4
