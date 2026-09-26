@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MULTIBUILDPUZZLE_H
 #define NANCY_ACTION_MULTIBUILDPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/renderobject.h"
 
@@ -37,9 +37,9 @@ namespace Action {
 //   are bad and lead to food poisoning (win condition is checked on exit)
 // - sand castle building: free placement of sand pieces (no win condition)
 // - Nancy 13 burger counter: assemble an order, then ring it up at a hotspot
-class MultiBuildPuzzle : public RenderActionRecord {
+class MultiBuildPuzzle : public PuzzleRecord {
 public:
-	MultiBuildPuzzle() : RenderActionRecord(7) {}
+	MultiBuildPuzzle() : PuzzleRecord(7) {}
 	virtual ~MultiBuildPuzzle();
 
 	void init() override;
@@ -50,6 +50,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	bool isViewportRelative() const override { return true; }
+
 
 protected:
 	Common::String getRecordTypeName() const override { return "MultiBuildPuzzle"; }
@@ -96,7 +97,8 @@ protected:
 		bool hasSurface[4] = {};
 		Graphics::ManagedSurface image;
 
-		bool isViewportRelative() const override { return true; }
+		bool isViewportRelat
+ive() const override { return true; }
 	};
 
 	Common::Path _primaryImageName;
@@ -141,12 +143,9 @@ protected:
 	int16 _exitCursorID1 = -1;  // -1: use _puzzleExitCursor
 	int16 _exitCursorID2 = -1;
 
-	SceneChangeWithFlag _solveScene;
-	SoundDescription _solveSound;
 	Common::String _solveTextKey;  // Looked up in CONVO chunk first
-	Common::String _solveText;     // Raw fallback used if key missing
-
-	SceneChangeWithFlag _cancelScene;
+	Common::String _solveText;     // Raw fa
+llback used if key missing
 
 	// "Enough pieces placed" flag; its own field in Nancy 13, the cancel scene's before.
 	FlagDescription _minCountFlag;
@@ -158,7 +157,6 @@ protected:
 	Common::String _submitTextKey;
 	Common::String _submitText;
 
-	Common::Rect _exitHotspot;
 	Common::Rect _exitHotspot2;
 	Common::Rect _targetZone;      // Valid drop area (drawer/plate/...)
 
@@ -201,7 +199,8 @@ protected:
 	AnimRender _animRender;
 	uint16 _animFrameCounter = 0;
 	uint16 _animRowCounter = 0;
-	uint32 _animFrameWaitEnd = 0;
+	uint32 _an
+imFrameWaitEnd = 0;
 	Common::Rect _animSrcRect;
 	bool _animActive = false;
 	bool _animEnded = false;

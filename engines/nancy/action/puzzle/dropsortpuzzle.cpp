@@ -56,6 +56,7 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _conveyorRect);			// 0x77
 	_totalItems = stream.readUint32LE();		// 0x87
 
+
 	// Belt path (left/right ends) and speed.
 	readRect(stream, _beltLeft);
 	readRect(stream, _beltRight);
@@ -94,12 +95,12 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_hornSound.readData(stream);
 
 	// Win scene + flag. frameID 0xffff means "no specific frame" (target may be a video) - keep 0.
-	_winScene.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
 	uint16 winFrame = stream.readUint16LE();
-	_winScene.frameID = (winFrame == 0xffff) ? 0 : winFrame;
-	_winScene.continueSceneSound = kContinueSceneSound;
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag = stream.readByte();
+	_solveScene._sceneChange.frameID = (winFrame == 0xffff) ? 0 : winFrame;
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_winSound.readData(stream);
 
@@ -110,22 +111,17 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_loseFlag.label = stream.readSint16LE();
 	_loseFlag.flag = stream.readByte();
 
-	_loseSound.readData(stream);
+	_loseSound.readData(strea
+m);
 
 	// Count-prefixed 23-byte hotspot records; the first is the "give up / exit" hotspot.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void DropSortPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Both animations loop for the whole puzzle.
 	if (_conveyorMovie.loadFile(_conveyorMovieName)) {
@@ -178,7 +174,8 @@ int DropSortPuzzle::itemAtCursor(const Common::Point &mousePos) const {
 	uint32 now = g_nancy->getTotalPlayTime();
 	// Oldest (front-most) candy first, so overlapping sprites pick the one nearest the bins.
 	for (uint i = 0; i < _items.size(); ++i) {
-		float progress = (float)(now - _items[i].spawnTime) / (float)_travelDuration;
+		float progress
+ = (float)(now - _items[i].spawnTime) / (float)_travelDuration;
 		Common::Rect dest = itemDestAt(beltPosition(progress), _items[i].type);
 		if (NancySceneState.getViewport().convertViewportToScreen(dest).contains(mousePos)) {
 			return (int)i;
@@ -248,7 +245,8 @@ void DropSortPuzzle::redraw() {
 
 	// The candies riding the belt, drawn on top of the belt.
 	for (uint i = 0; i < _items.size(); ++i) {
-		float progress = (float)(now - _items[i].spawnTime) / (float)_travelDuration;
+		flo
+at progress = (float)(now - _items[i].spawnTime) / (float)_travelDuration;
 		Common::Rect dest = itemDestAt(beltPosition(progress), _items[i].type);
 		_drawSurface.blitFrom(_image, _itemSrcRects[_items[i].type], Common::Point(dest.left, dest.top));
 	}
@@ -298,28 +296,6 @@ void DropSortPuzzle::drawCounter() {
 	font->drawString(&_drawSurface, str, _counterX, _counterY, w + 4, 0);
 }
 
-SoundDescription DropSortPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
 void DropSortPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
@@ -340,7 +316,8 @@ void DropSortPuzzle::execute() {
 				_conveyorMovie.playRange(0, _conveyorMovie.getFrameCount() - 1);
 			}
 			if (_hoseMovie.isVideoLoaded() && !_hoseMovie.isRangePlaying()) {
-				_hoseMovie.playRange(0, _hoseMovie.getFrameCount() - 1);
+				_hoseMovie.playRange(0, _hoseMovie.getFrameCo
+unt() - 1);
 			}
 			bool moviesUpdated = false;
 			if (_conveyorMovie.isVideoLoaded() && _conveyorMovie.update()) {
@@ -403,13 +380,12 @@ void DropSortPuzzle::execute() {
 	}
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else if (_solved) {
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_loseFlag);
+			NancySceneState.setEventFlag(_
+loseFlag);
 			NancySceneState.changeScene(_loseScene);
 		}
 
@@ -458,9 +434,7 @@ void DropSortPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

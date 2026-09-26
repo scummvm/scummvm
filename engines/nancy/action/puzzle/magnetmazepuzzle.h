@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MAGNETMAZEPUZZLE_H
 #define NANCY_ACTION_MAGNETMAZEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -35,9 +35,9 @@ namespace Action {
 // Called in Nancy10 from scenes 3280 (normal mode, with overlaid pieces) and
 // 3281 (easy mode, without overlaid pieces, triggered as a cheat mode when
 // visiting the puzzle multiple times).
-class MagnetMazePuzzle : public RenderActionRecord {
+class MagnetMazePuzzle : public PuzzleRecord {
 public:
-	MagnetMazePuzzle() : RenderActionRecord(7) {}
+	MagnetMazePuzzle() : PuzzleRecord(7) {}
 	virtual ~MagnetMazePuzzle() {}
 
 	void init() override;
@@ -49,7 +49,8 @@ public:
 	bool isViewportRelative() const override { return true; }
 
 protected:
-	Common::String getRecordTypeName() const override { return "MagnetMazePuzzle"; }
+	Common::String getRecordTypeName() const override { return "MagnetMazePuzzle";
+ }
 
 	static const int kNumMagnets  = 4;
 	static const int kNumOverlays = 6;
@@ -77,16 +78,6 @@ protected:
 	SoundDescription _placeSound;
 	SoundDescription _resetSound;
 	SoundDescription _bumpSound;
-
-	SceneChangeDescription _winScene;
-	FlagDescription        _winFlag;
-	uint16                 _winDelaySec = 0;
-	SoundDescription       _winSound;
-
-	SceneChangeDescription _cancelScene;
-	FlagDescription        _cancelFlag;
-
-	Common::Rect _exitHotspot;
 
 	// Runtime state
 

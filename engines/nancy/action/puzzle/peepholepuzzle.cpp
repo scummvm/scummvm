@@ -50,7 +50,8 @@ void PeepholePuzzle::init() {
 
 	if (_buttonsImageName.empty()) {
 		// Empty image name for buttons, use other image as source
-		_buttonsImage.create(_innerImage, _innerImage.getBounds());
+		_bu
+ttonsImage.create(_innerImage, _innerImage.getBounds());
 	} else {
 		g_nancy->_resource->loadImage(_buttonsImageName, _buttonsImage);
 	}
@@ -107,9 +108,7 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 
 	bool justReleased = false;
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -125,7 +124,8 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 		if (_currentSrc.top < _innerBounds.top) {
 			_currentSrc.translate(0, _innerBounds.top - _currentSrc.top);
 		} else if (_currentSrc.bottom > _innerBounds.bottom) {
-			_currentSrc.translate(0, _innerBounds.bottom - _currentSrc.bottom);
+			_currentSrc.translate(0, _innerBounds.bot
+tom - _currentSrc.bottom);
 		}
 
 		input.eatMouseWheelInput();
@@ -177,7 +177,8 @@ void PeepholePuzzle::handleInput(NancyInput &input) {
 						if (_pressedButton == -1) {
 							// Just pressed
 							_pressedButton = i;
-							_pressStart = g_nancy->getTotalPlayTime();
+							_pressSt
+art = g_nancy->getTotalPlayTime();
 						}
 					}
 				}
@@ -264,7 +265,8 @@ void PeepholePuzzle::checkButtons() {
 
 		if (!_buttonDests[i].isEmpty()) {
 			if (*srcCoord == *innerCoord) {
-				if (_disabledButtons[i] == false) {
+				if (_disabledButt
+ons[i] == false) {
 					_disabledButtons[i] = true;
 					if (!_buttonDisabledSrcs[i].isEmpty()) {
 						_drawSurface.blitFrom(_buttonsImage, _buttonDisabledSrcs[i], _buttonDests[i]);
@@ -332,7 +334,8 @@ void TextScroll::init() {
 void TextScroll::readData(Common::SeekableReadStream &stream) {
 	Autotext::readData(stream);
 
-	PeepholePuzzle::_transparency = Autotext::_transparency;
+	PeepholePuzzle::_transparency = Autotext::_transpare
+ncy;
 }
 
 void TextScroll::readExtraData(Common::SeekableReadStream &stream) {

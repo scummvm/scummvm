@@ -23,7 +23,7 @@
 #define NANCY_ACTION_NECKLACEPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -38,9 +38,9 @@ namespace Action {
 // How many of each shell are left is not kept in the record; it lives in the
 // shared table values, so the box counts survive leaving and re-entering. Shells
 // left on a strand are handed back when the puzzle is abandoned unsolved.
-class NecklacePuzzle : public RenderActionRecord {
+class NecklacePuzzle : public PuzzleRecord {
 public:
-	NecklacePuzzle() : RenderActionRecord(7) {}
+	NecklacePuzzle() : PuzzleRecord(7) {}
 	virtual ~NecklacePuzzle();
 
 	void init() override;
@@ -48,7 +48,8 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
-	void handleInput(NancyInput &input) override;
+	void
+ handleInput(NancyInput &input) override;
 
 	bool isViewportRelative() const override { return true; }
 
@@ -109,7 +110,8 @@ protected:
 	int stackTop(const Strand &strand) const;
 	int stackTopBelow(const Strand &strand) const;
 
-	Hover hitTest(const Common::Point &mousePos) const;
+	Hover hitTes
+t(const Common::Point &mousePos) const;
 
 	int16 beadCount(const Bead &bead) const;
 	void adjustBeadCount(const Bead &bead, int16 delta);
@@ -120,7 +122,6 @@ protected:
 	void checkSolved();
 	void refundBeads();
 
-	void playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 	void drawBeadCount(const Bead &bead);
 
@@ -148,18 +149,12 @@ protected:
 	RandomSoundBlock _putDownSound;
 	RandomSoundBlock _unknownSound;	// no known trigger; "NO SOUND" in the shipped record
 
-	SceneChangeDescription _solvedScene;
 	RandomSoundBlock _solvedSound;
 
 	// Played when the puzzle is left unfinished. Its scene is 9999 in the shipped
 	// record, so the exit hotspot's own scene is what the player ends up in.
 	SceneChangeDescription _unsolvedScene;
 	RandomSoundBlock _unsolvedSound;
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Common::Array<Graphics::ManagedSurface> _images;

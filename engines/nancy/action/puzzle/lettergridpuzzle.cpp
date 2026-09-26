@@ -58,7 +58,8 @@ void LetterGridPuzzle::readData(Common::SeekableReadStream &stream) {
 	_spacingY = stream.readSint16LE();
 	_spacingX = stream.readSint16LE();
 
-	int16 numColumns = stream.readSint16LE();
+	
+int16 numColumns = stream.readSint16LE();
 	for (int16 i = 0; i < numColumns; ++i) {
 		Column column;
 		readRect(stream, column.letterSrc);
@@ -80,16 +81,16 @@ void LetterGridPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_clickSound.readData(stream);
 
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
-	_solveSound.readData(stream);
+	_solveSoundBlock.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 
 	// The marks live in a fixed-size global grid
 	if (_columns.size() > kMaxColumns) {
@@ -120,7 +121,8 @@ void LetterGridPuzzle::init() {
 	GridMapPuzzleData *data = (GridMapPuzzleData *)NancySceneState.getPuzzleData(GridMapPuzzleData::getTag());
 	assert(data);
 	if (data->itemState.size() != kMaxRows) {
-		data->itemState.resize(kMaxRows);
+		data->itemSt
+ate.resize(kMaxRows);
 		for (uint i = 0; i < kMaxRows; ++i) {
 			data->itemState[i] = -1;
 		}
@@ -199,34 +201,14 @@ void LetterGridPuzzle::checkSolved() {
 			continue;
 		}
 
-		int16 marked = _markedColumn[row];
+		int16 marked = _mark
+edColumn[row];
 		if (marked == -1 ? target != kNoColumn : marked != target) {
 			return;
 		}
 	}
 
 	_solved = true;
-}
-
-void LetterGridPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
 }
 
 void LetterGridPuzzle::redraw() {
@@ -268,25 +250,23 @@ void LetterGridPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			finishExecution();
 			break;
 		}
 
 		// The solve sound plays out before the scene changes
 		if (!_solveSoundStarted) {
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			_solveSoundStarted = true;
 			break;
 		}
 
-		if (!_solveSound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_solveSound.channel)) {
+		if (!_solveSoundBlock.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_solveSoundBlock.channel)) {
 			break;
 		}
 
-		NancySceneState.setEventFlag(_solveFlag);
-		NancySceneState.changeScene(_solveScene);
+		_solveScene.execute();
 		finishExecution();
 		break;
 	}
@@ -297,9 +277,7 @@ void LetterGridPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitRequested = true;
 		}
@@ -308,7 +286,8 @@ void LetterGridPuzzle::handleInput(NancyInput &input) {
 	}
 
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
-	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
+	Common::P
+oint mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
 	uint column = 0, row = 0;
 	if (!cellAt(mouseVP, column, row)) {

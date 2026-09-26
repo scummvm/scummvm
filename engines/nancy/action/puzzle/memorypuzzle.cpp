@@ -58,7 +58,8 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	// 0x411: tab rect (screen destination for the active tab indicator)
 	readRect(stream, _tabRect);
 
-	// 0x421: tab hotspot rects - 3 tabs x 3 slots x 16 bytes
+	// 0x4
+21: tab hotspot rects - 3 tabs x 3 slots x 16 bytes
 	for (int tab = 0; tab < kNumTabs; ++tab)
 		for (int slot = 0; slot < 3; ++slot)
 			readRect(stream, _tabHotspots[tab][slot]);
@@ -83,12 +84,12 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	_noMatchSound.readNormal(stream);
 
 	// 0x521: win scene + flag
-	_winScene.readData(stream);
+	_solveScene.readData(stream);
 
 	stream.skip(1); // 0x53a: unknown
 
 	// 0x53b: win sound
-	_winSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 }
 
 // Nancy 11 reworked the layout: fewer (12) face rects, a configurable grid/page count,
@@ -111,7 +112,8 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 
 	_flipDelay = stream.readUint32LE();     // 0x331
 	int32 pairsPercent   = stream.readSint32LE(); // 0x335 (percentage of the faces to deal out)
-	int32 requirePercent = stream.readSint32LE(); // 0x339 (-1 = use the fixed count below)
+	in
+t32 requirePercent = stream.readSint32LE(); // 0x339 (-1 = use the fixed count below)
 	int32 requireCount   = stream.readSint32LE(); // 0x33d
 	stream.skip(4);                         // 0x341 (unused)
 
@@ -149,14 +151,15 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 	stream.skip(16 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
 	_matchSound.readNormal(stream);                // block 17
 	stream.skip((27 - 17) * 0xb6 - 0x31);          // advance to the scenes @ 0x168e
-	// Nancy 11 has no win sound; _winSound keeps its default "NO SOUND".
+	// Nancy 11 h
+as no win sound; _solveSound keeps its default "NO SOUND".
 
 	// Solve scene (0x168e), then an alternate-outcome scene (0x16a8, unused). The event flags
 	// store a 16-bit value rather than a simple on/off.
-	_winScene._sceneChange.readData(stream);
-	_winScene._sceneChange.continueSceneSound = stream.readUint16LE();
-	_winScene._flag.label = stream.readSint16LE();
-	_winScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
+	_solveScene._sceneChange.readData(stream);
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
 	stream.skip(g_nancy->getGameType() >= kGameTypeNancy12 ? 24 : 26);	// alternate scene
 }
 
@@ -210,7 +213,8 @@ void MemoryPuzzle::initCards() {
 	if (!_shuffleGlobal) {
 		// By-tab: pairs are always within the same tab.
 		for (int tab = 0; tab < _numTabs; ++tab) {
-			int base = tab * _cardsPerTab;
+		
+	int base = tab * _cardsPerTab;
 			for (int i = 0; i < _cardsPerTab; ++i) {
 				if (_cards[base + i].typeId != -1)
 					continue;
@@ -254,8 +258,7 @@ void MemoryPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_currentTab = 0;
 	initCards();
@@ -267,6 +270,7 @@ void MemoryPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		if (_firstFlipSound.name != "NO SOUND")
 			g_nancy->_sound->loadSound(_firstFlipSound);
 		if (_secondFlipSound.name != "NO SOUND")
@@ -283,16 +287,16 @@ void MemoryPuzzle::execute() {
 		case kPlaying:
 			// Flip-back timer: hide non-matching cards when timer expires
 			if (_flipTimerActive && g_system->getMillis() >= _flipTimerEnd)
-				flipBackCards();
+				flipBack
+Cards();
 			checkIfSolved();
 			if (_isSolved)
 				_solveSubState = kPlayWinSound;
 			break;
 
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_solveSubState = kWaitWinSound;
 			} else {
 				_state = kActionTrigger;
@@ -300,8 +304,8 @@ void MemoryPuzzle::execute() {
 			break;
 
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;
@@ -313,8 +317,8 @@ void MemoryPuzzle::execute() {
 		g_nancy->_sound->stopSound(_secondFlipSound);
 		g_nancy->_sound->stopSound(_matchSound);
 		g_nancy->_sound->stopSound(_noMatchSound);
-		g_nancy->_sound->stopSound(_winSound);
-		_winScene.execute();
+		g_nancy->_sound->stopSound(_solveSound);
+		_solveScene.execute();
 		finishExecution();
 		break;
 	}
@@ -356,7 +360,8 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 
 		// Unassigned or already matched or face-up: ignore
 		if (card.typeId == -1 || card.matchState != 0 || card.flipState != 0)
-			return;
+			return
+;
 
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 
@@ -431,7 +436,8 @@ void MemoryPuzzle::redrawCards() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
 	// Draw the active tab indicator over the corresponding tab button.
-	// The scene background shows inactive tab visuals; the overlay only marks the active one.
+	// The scene background shows inactive tab visuals; the overlay onl
+y marks the active one.
 	if (_currentTab < _numTabs && !_tabSrcRects[_currentTab].isEmpty())
 		_drawSurface.blitFrom(_image, _tabSrcRects[_currentTab],
 			Common::Point(_tabRect.left, _tabRect.top));

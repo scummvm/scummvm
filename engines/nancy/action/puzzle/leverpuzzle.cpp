@@ -58,7 +58,8 @@ void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 	_destRects.reserve(3);
 	for (uint leverID = 0; leverID < 3; ++leverID) {
 		_destRects.push_back(Common::Rect());
-		readRect(stream, _destRects.back());
+		r
+eadRect(stream, _destRects.back());
 
 		if (leverID == 0) {
 			_screenPosition = _destRects.back();
@@ -81,7 +82,7 @@ void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_moveSound.readNormal(stream);
 	_noMoveSound.readNormal(stream);
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
 	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
@@ -121,12 +122,11 @@ void LeverPuzzle::execute() {
 				break;
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -144,8 +144,9 @@ void LeverPuzzle::execute() {
 		} else {
 			// The flag is only set here: setting it as soon as the puzzle is solved can
 			// invalidate this record's own dependencies, which stops it from being executed
-			// again before it ever reaches this point.
-			_solveExitScene.execute();
+			// again
+ before it ever reaches this point.
+			_solveScene.execute();
 		}
 
 		finishExecution();
@@ -157,9 +158,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

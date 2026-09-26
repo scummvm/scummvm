@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_ORDERINGPUZZLE_H
 #define NANCY_ACTION_ORDERINGPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -36,11 +36,12 @@ namespace Action {
 //		- KeypadPuzzle: Buttons may auto-depress, stay down, and can be depressed manually by player.
 //			Adds an optional button for manually checking for correct solution, number of possible buttons is 30.
 //		- KeypadPuzzleTerse: Same as above, but data format is shorter, and supports up to 100 buttons
-class OrderingPuzzle : public RenderActionRecord {
+class OrderingPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound, kStageBlink };
-	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad, kKeypadTerse };
-	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
+	enum PuzzleT
+ype { kOrdering, kPiano, kOrderItems, kKeypad, kKeypadTerse };
+	OrderingPuzzle(PuzzleType type) : PuzzleRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
 
 	void init() override;
@@ -63,7 +64,6 @@ protected:
 	bool enteredKeysMatchStage() const;
 	bool enteredKeysMatchDangerRecipe() const;
 
-	Common::Path _imageName;
 	bool _hasSecondState = false;
 	bool _itemsStayDown = true;
 	bool _needButtonToCheckSuccess = false;
@@ -92,7 +92,8 @@ protected:
 	Common::Array<Common::Rect> _mixedListDests;
 	Common::Array<Common::Rect> _currentRecipeSrcs;
 	Common::Array<Common::Rect> _currentRecipeDests;
-	bool _stageDisplayBlink = false;
+	bool
+ _stageDisplayBlink = false;
 	bool _stageSymbolVisible = true;
 	Time _stageBlinkEndTime;
 	Time _stageBlinkNextToggle;
@@ -125,14 +126,7 @@ protected:
 	SoundDescription _itemSound;
 	SoundDescription _popUpSound;
 
-	SceneChangeWithFlag _solveExitScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
 	SolveState _solveState = kNotSolved;
-	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _clickedSequence;
 	Common::Array<bool> _downItems;
 	Common::Array<bool> _secondStateItems;

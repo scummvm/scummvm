@@ -49,7 +49,8 @@ static const double kDrag = 12.0;				// px/s per second
 // so they collide as circles at the drawn pin + ball radii.
 static const double kPinRadius = 4.0;
 static const double kBallRadius = 5.0;
-static const int kPhysicsSubsteps = 4;			// per frame, to avoid tunnelling the pins
+static const int kPhysicsSubsteps = 4;			
+// per frame, to avoid tunnelling the pins
 
 static const uint32 kHoleLitMs = 400;			// how long a hole stays lit after a catch
 
@@ -107,8 +108,9 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	// The bumpers / walls / overlays, in the Nancy13 zone layout.
 	readActionZoneArray(stream, _zones, true);
 
-	// The base trailer's hotspot records; the first is the give-up exit.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	// The base trailer's hotspot records; t
+he first is the give-up exit.
+	readExitHotspot(stream);
 }
 
 void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m) {
@@ -177,7 +179,8 @@ void PachinkoPuzzle::buildHoles() {
 				break;
 			}
 		}
-		if (!climber) {
+		if (!cl
+imber) {
 			continue;
 		}
 
@@ -225,15 +228,9 @@ Common::Point PachinkoPuzzle::climberAnchor(const Machine &m) const {
 }
 
 void PachinkoPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 	if (!_ballImageName.empty()) {
 		g_nancy->_resource->loadImage(_ballImageName, _ballImage);
 		_ballImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -252,36 +249,11 @@ void PachinkoPuzzle::init() {
 	}
 
 	_pzState = kRunning;
-	_lastUpdate = g_nancy->getTotalPlayTime();
+	
+_lastUpdate = g_nancy->getTotalPlayTime();
 
 	redraw();
 	registerGraphics();
-}
-
-SoundDescription PachinkoPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
-void PachinkoPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
 }
 
 void PachinkoPuzzle::spawnBall() {
@@ -334,7 +306,8 @@ bool PachinkoPuzzle::collidePins(Ball &ball) const {
 		double nxn = dx / d;
 		double nyn = dy / d;
 		double vx = cos(ball.angle) * ball.speed;
-		double vy = -sin(ball.angle) * ball.speed;
+		double vy = -sin(ball.angle) * ball.spe
+ed;
 		double dot = vx * nxn + vy * nyn;
 		vx -= 2.0 * dot * nxn;
 		vy -= 2.0 * dot * nyn;
@@ -403,7 +376,8 @@ void PachinkoPuzzle::stepBall(Ball &ball, double dt) {
 	}
 }
 
-void PachinkoPuzzle::advanceMachine(Machine &m, uint32 now) {
+void PachinkoPuzzle::advance
+Machine(Machine &m, uint32 now) {
 	if (m.frames.empty() || m.animRate <= 0) {
 		return;
 	}
@@ -469,7 +443,8 @@ void PachinkoPuzzle::execute() {
 		// fall through
 	case kRun: {
 		uint32 now = g_nancy->getTotalPlayTime();
-		double dt = (now - _lastUpdate) / 1000.0;
+		double dt = 
+(now - _lastUpdate) / 1000.0;
 		_lastUpdate = now;
 		if (dt > 0.1) {
 			dt = 0.1;	// clamp long stalls
@@ -543,7 +518,8 @@ void PachinkoPuzzle::execute() {
 			redraw();
 			break;
 		}
-		case kWaitResult: {
+		case kWaitRes
+ult: {
 			bool movieDone = !_resultMovie.isVideoLoaded() ||
 				(!_resultMovie.isRangePlaying());
 			if (_resultMovie.isVideoLoaded() && _resultMovie.update()) {
@@ -573,8 +549,7 @@ void PachinkoPuzzle::execute() {
 			NancySceneState.setEventFlag(_activeMachine->resultFlag);
 			NancySceneState.changeScene(_activeMachine->resultScene);
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -606,15 +581,14 @@ void PachinkoPuzzle::handleInput(NancyInput &input) {
 		if (click) {
 			// One launcher click queues one ball.
 			_spawnPending = true;
-			_spawnClickTime = g_nancy->getTotalPlayTime();
+			_spawnClickTime = g_nancy->getT
+otalPlayTime();
 		}
 		input.eatMouseInput();
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

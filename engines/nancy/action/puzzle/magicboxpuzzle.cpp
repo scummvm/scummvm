@@ -44,28 +44,26 @@ static void readRectList(Common::SeekableReadStream &stream, Common::Array<Commo
 }
 
 void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
-	_gridFlowType = stream.readUint16LE();	// 0x00
+	_gridFlowType = stream.readUint16LE();
 
-	_numCols = stream.readSint32LE();		// 0x02
-	_numRows = stream.readSint32LE();		// 0x06
-	_subgridCols = stream.readSint32LE();	// 0x0a
-	_subgridRows = stream.readSint32LE();	// 0x0e
+	_numCols = stream.readSint32LE();
+	_numRows = stream.readSint32LE();
+	_subgridCols = stream.readSint32LE();
+	_subgridRows = stream.readSint32LE();
 
-	_allCellsBlank = stream.readByte();		// 0x12
-	_unknown13 = stream.readByte();			// 0x13
-	_allowTakeBack = stream.readByte();		// 0x14
+	_allCellsBlank = stream.readByte();
+	_unknown13 = stream.readByte();
+	_allowTakeBack = stream.readByte();
 
-	// The board, row by row. Each cell is a single int; 0 leaves the cell blank.
 	uint numCells = (uint)MAX<int32>(0, _numRows) * (uint)MAX<int32>(0, _numCols);
 	_cellValues.resize(numCells);
-	for (uint i = 0; i < numCells; ++i) {
+	for (uint i = 0
+; i < numCells; ++i) {
 		_cellValues[i] = stream.readSint32LE();
 	}
 
-	// One destination rect per blank cell, in the order the cells were read.
 	readRectList(stream, _slotDests);
 
-	// The loose tiles waiting in the tray.
 	uint16 numPieces = stream.readUint16LE();
 	_pieceValues.resize(numPieces);
 	for (uint16 i = 0; i < numPieces; ++i) {
@@ -75,7 +73,6 @@ void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _tileImageName);
 	readRectList(stream, _tileSrcs);
 
-	// The tray spots. There is at least one per loose tile.
 	readRectList(stream, _trayDests);
 
 	readFilename(stream, _indicatorImageName);
@@ -93,18 +90,18 @@ void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_hoverCursorType = stream.readUint16LE();
 	_dragCursorType = stream.readUint16LE();
-	stream.skip(8); // speed and step of the original's tile-slide animation
+	stream.skip(8); // tile-slide animation speed and step
 
 	for (uint i = 0; i < kNumSounds; ++i) {
 		_sounds[i].readData(stream);
 	}
 
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
-	_solveSound.readData(stream);
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+	_solveSoundBlock.readData(stream);
 
 	_failScene.sceneID = stream.readUint16LE();
 	_failScene.frameID = stream.readUint16LE();
@@ -113,27 +110,23 @@ void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
 	_failFlag.flag = stream.readByte();
 	_failSound.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 void MagicBoxPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_tileImageName, _tileImage);
 	_tileImage.setTransparentColor(_drawSurface.getTransparentColor());
 
 	if (_indicatorImageName != _tileImageName) {
 		g_nancy->_resource->loadImage(_indicatorImageName, _indicatorImage);
-		_indicatorImage.setTransparentColor(_drawSurface.getTransparentColor());
+		_indicatorImage.setTransp
+arentColor(_drawSurface.getTransparentColor());
 	}
 
-	// The slots are the blank cells, taken in the same order as their dest rects.
+	// Slots are the blank cells, in the same order as their dest rects.
 	_slotCells.clear();
 	for (uint i = 0; i < _cellValues.size(); ++i) {
 		if (_allCellsBlank || _cellValues[i] == 0) {
@@ -205,7 +198,8 @@ int32 MagicBoxPuzzle::colSum(int col) const {
 		sum += _cellValues[row * _numCols + col];
 	}
 	for (uint i = 0; i < _slotContents.size(); ++i) {
-		if (_slotContents[i] != -1 && _slotCells[i] % _numCols == col) {
+		if (_slotContents[i] != -1 && _slotCel
+ls[i] % _numCols == col) {
 			sum += _pieceValues[_slotContents[i]];
 		}
 	}
@@ -242,36 +236,10 @@ void MagicBoxPuzzle::carryPiece(int piece, NancyInput &input) {
 	}
 }
 
-void MagicBoxPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
-}
-
-SoundDescription MagicBoxPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
 void MagicBoxPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
-	// The fixed cells are part of the scene background; only the loose tiles are drawn.
+	// The fixed cells are part of the scene background.
 	for (uint i = 0; i < _piecePlacement.size(); ++i) {
 		if (i == (uint)_carriedPiece) {
 			continue;
@@ -290,7 +258,7 @@ void MagicBoxPuzzle::redraw() {
 		_drawSurface.blitFrom(_tileImage, src, Common::Point(dest.left, dest.top));
 	}
 
-	// A marker lights up next to every row and column that already adds up.
+	// A marker lights up beside every row and column that already adds up.
 	if (!_indicatorSrcs.empty() && !_indicatorSrcs[0].isEmpty()) {
 		const Graphics::ManagedSurface &image = _indicatorImage.empty() ? _tileImage : _indicatorImage;
 		for (uint i = 0; i < _indicatorDests.size(); ++i) {
@@ -298,7 +266,8 @@ void MagicBoxPuzzle::redraw() {
 				(colSum(i - _numRows) == _colTargets[i - _numRows]);
 			if (lit) {
 				_drawSurface.blitFrom(image, _indicatorSrcs[0],
-					Common::Point(_indicatorDests[i].left, _indicatorDests[i].top));
+					Common::Point(_indicatorDests[i].left, _indica
+torDests[i].top));
 			}
 		}
 	}
@@ -327,11 +296,9 @@ void MagicBoxPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		}
 
 		finishExecution();
@@ -346,7 +313,7 @@ void MagicBoxPuzzle::handleInput(NancyInput &input) {
 
 	const bool click = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
-	// -- Carrying a tile: drop it into a free slot, or put it back in its tray spot. --
+	// Carrying a tile: drop it into a free slot, or put it back in the tray.
 	if (_carriedPiece >= 0) {
 		setDataCursor(_dragCursorType);
 		_carriedObject.handleInput(input);
@@ -366,7 +333,7 @@ void MagicBoxPuzzle::handleInput(NancyInput &input) {
 
 			if (isSolved()) {
 				_solved = true;
-				_endSound = playSoundBlock(_solveSound);
+				_endSound = playSoundBlock(_solveSoundBlock);
 			}
 		}
 
@@ -374,7 +341,7 @@ void MagicBoxPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	// -- Not carrying: pick a tile up from the tray or off the board. --
+	// Not carrying: pick a tile up from the tray or off the board.
 	int piece = trayPieceAtCursor(input.mousePos);
 	if (piece == -1 && _allowTakeBack) {
 		int slot = slotAtCursor(input.mousePos);
@@ -399,11 +366,10 @@ void MagicBoxPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
-			_exitRequested = true;
+			_exitRequested
+ = true;
 		}
 	}
 }

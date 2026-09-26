@@ -60,7 +60,8 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 	char buf[33];
 	uint fieldSize = s.getVersion() <= kGameTypeNancy5 ? 20 : 33; // nancy6 changed the size of text fields to 33
 
-	s.syncAsUint16LE(numNames, kGameTypeNancy4);
+	s.syncAsUint16L
+E(numNames, kGameTypeNancy4);
 	_names.resize(numNames);
 	for (uint i = 0; i < numNames; ++i) {
 		stream.read(buf, fieldSize);
@@ -84,7 +85,7 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_maxStringLength = g_nancy->getGameType() < kGameTypeNancy6 ? 12 : 31;
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 	_failExitScene.readData(stream);
 	_failSound.readNormal(stream);
@@ -123,7 +124,8 @@ void PasswordPuzzle::execute() {
 					// (e.g. answer "Xoc" is matched by typing "Lady Xoc").
 					Common::String inputLower = activeField;
 					inputLower.toLowercase();
-					for (uint i = 0; i < correctAnswers.size(); ++i) {
+					for (uint i = 0; i < correctAnswers.size(); ++
+i) {
 						Common::String answerLower = correctAnswers[i];
 						answerLower.toLowercase();
 						if (inputLower.contains(answerLower)) {
@@ -137,8 +139,7 @@ void PasswordPuzzle::execute() {
 
 				if (solvedCurrentInput) {
 					if (_passwordFieldIsActive || _passwords.size() == 0) {
-						g_nancy->_sound->loadSound(_solveSound);
-						g_nancy->_sound->playSound(_solveSound);
+						playSolveSound();
 						_solveState = kSolved;
 					} else {
 						_passwordFieldIsActive = true;
@@ -170,7 +171,7 @@ void PasswordPuzzle::execute() {
 
 			break;
 		case kSolved:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -188,7 +189,7 @@ void PasswordPuzzle::execute() {
 			_failExitScene.execute();
 			break;
 		case kSolved:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			break;
 		}
 
@@ -199,7 +200,7 @@ void PasswordPuzzle::execute() {
 
 void PasswordPuzzle::onPause(bool paused) {
 	g_nancy->_input->setVKEnabled(!paused);
-	RenderActionRecord::onPause(paused);
+	PuzzleRecord::onPause(paused);
 }
 
 void PasswordPuzzle::handleInput(NancyInput &input) {
@@ -207,9 +208,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -217,7 +216,8 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 
 	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
 		Common::KeyState &key = input.otherKbdInput[i];
-		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _pla
+yerNameInput;
 		uint maxStringLength = _maxStringLength;
 		if (g_nancy->getGameType() >= kGameTypeNancy8)
 			maxStringLength = _passwordFieldIsActive ? _maxPassLength : _maxNameLength;

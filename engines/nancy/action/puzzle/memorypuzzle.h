@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MEMORYPUZZLE_H
 #define NANCY_ACTION_MEMORYPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -32,9 +32,9 @@ namespace Action {
 // It has three tabs, each containing 24 cards(6x4 grid).
 // The player flips cards to find matching pairs; matching pairs stay face-up.
 // Player wins when matchedPairs >= requiredPairs.
-class MemoryPuzzle : public RenderActionRecord {
+class MemoryPuzzle : public PuzzleRecord {
 public:
-	MemoryPuzzle() : RenderActionRecord(7) {}
+	MemoryPuzzle() : PuzzleRecord(7) {}
 	virtual ~MemoryPuzzle() {}
 
 	void init() override;
@@ -51,11 +51,10 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	static const int kMaxTypes    = 36; // 3 tabs x 12 pairs each
 	static const int kCardsPerTab = 24; // hardcoded in original
-	static const int kNumTabs     = 3;  // hardcoded in original
+	static const int kNumTabs     = 3;  // hardcoded in origina
+l
 
 	Common::Rect _faceSrcRects[kMaxTypes];   // [type] -> face src rect on image
 	Common::Rect _tabSrcRects[kNumTabs];     // [tab]  -> tab indicator src rect (drawn for active tab)
@@ -82,8 +81,6 @@ protected:
 	SoundDescription _secondFlipSound;
 	SoundDescription _matchSound;    // played when a matching pair is found
 	SoundDescription _noMatchSound;  // pre-Nancy 11: played when a pair doesn't match
-	SceneChangeWithFlag _winScene;
-	SoundDescription _winSound;
 
 	// Runtime state
 
@@ -97,10 +94,9 @@ protected:
 	CardState _cards[kNumTabs * kCardsPerTab];
 	bool _typeUsed[kMaxTypes];  // faces already handed out while filling _cards
 
-	Graphics::ManagedSurface _image;
-
 	int    _currentTab      = 0;
-	int    _firstFlip       = -1;   // absolute card index of first face-up unmatched card
+	int    _firstFlip       = -1;   // absolute card index of first face-up unm
+atched card
 	int    _secondFlip      = -1;   // absolute card index of second (timer pending)
 	bool   _flipTimerActive = false;
 	uint32 _flipTimerEnd    = 0;

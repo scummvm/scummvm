@@ -57,7 +57,8 @@ void NecklacePuzzle::readData(Common::SeekableReadStream &stream) {
 	_countFontID = stream.readUint16LE();
 	_unknownA0 = stream.readUint16LE();
 	_countTextExtraY = stream.readUint16LE();
-	_countTextX = stream.readSint32LE();
+	
+_countTextX = stream.readSint32LE();
 	_countTextY = stream.readSint32LE();
 
 	uint16 numTypes = stream.readUint16LE();
@@ -129,13 +130,14 @@ void NecklacePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_pickUpSound.readData(stream);
 	_putDownSound.readData(stream);
-	_unknownSound.readData(stream);
+	_unknownSound.readData(st
+ream);
 
-	_solvedScene.sceneID = stream.readUint16LE();
-	_solvedScene.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
 	int16 solvedOffset = stream.readSint16LE();
-	_solvedScene.verticalOffset = solvedOffset >= 0 ? solvedOffset : 0;
-	_solvedScene.continueSceneSound = stream.readByte();
+	_solveScene._sceneChange.verticalOffset = solvedOffset >= 0 ? solvedOffset : 0;
+	_solveScene._sceneChange.continueSceneSound = stream.readByte();
 	_solvedSound.readData(stream);
 
 	_unsolvedScene.sceneID = stream.readUint16LE();
@@ -145,16 +147,11 @@ void NecklacePuzzle::readData(Common::SeekableReadStream &stream) {
 	_unsolvedScene.continueSceneSound = stream.readByte();
 	_unsolvedSound.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void NecklacePuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
 	_images.resize(_imageNames.size());
 	for (uint i = 0; i < _imageNames.size(); ++i) {
@@ -210,7 +207,8 @@ int NecklacePuzzle::stackTopBelow(const Strand &strand) const {
 
 int16 NecklacePuzzle::beadCount(const Bead &bead) const {
 	if (bead.tableIndex == kNoTableIndex) {
-		return 0;
+		ret
+urn 0;
 	}
 
 	TableData *table = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
@@ -286,7 +284,8 @@ NecklacePuzzle::Hover NecklacePuzzle::hitTest(const Common::Point &mousePos) con
 		if (_beads[i].boxDest.contains(mousePos) && beadCount(_beads[i]) > 0) {
 			hover.bead = (int)i;
 			return hover;
-		}
+	
+	}
 	}
 
 	return hover;
@@ -346,7 +345,8 @@ void NecklacePuzzle::dropBeadOn(int strandIndex) {
 	const int fullDrop = strand.strandRect.height();
 	uint32 duration = 0;
 	if (fullDrop > 0) {
-		duration = (uint32)(strand.dropSeconds * (float)(restOn - strand.strandRect.top) * 1000.0f / (float)fullDrop);
+		duration = (uint32)(strand.dropSeconds * (float)(restOn - strand.strandRect.top) * 1
+000.0f / (float)fullDrop);
 	}
 
 	strand.placed.push_back(placed);
@@ -402,27 +402,6 @@ void NecklacePuzzle::refundBeads() {
 	_fallingStrand = -1;
 }
 
-void NecklacePuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-}
-
 void NecklacePuzzle::execute() {
 	switch (_state) {
 	case kBegin:
@@ -445,7 +424,8 @@ void NecklacePuzzle::execute() {
 			int y = _fallingEndY;
 			if (elapsed < _fallDuration) {
 				y = _fallingStartY + (int)((int64)(_fallingEndY - _fallingStartY) * elapsed / _fallDuration);
-			}
+			
+}
 
 			if (y != falling.rect.top) {
 				falling.rect.moveTo(falling.rect.left, y);
@@ -466,13 +446,13 @@ void NecklacePuzzle::execute() {
 
 		if (_solved) {
 			playSoundBlock(_solvedSound);
-			if (_solvedScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_solvedScene);
+			if (_solveScene._sceneChange.sceneID != kNoScene) {
+				NancySceneState.changeScene(_solveScene._sceneChange);
 			}
 		} else {
 			playSoundBlock(_unsolvedSound);
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_unsolvedScene.sceneID != kNoScene ? _unsolvedScene : _exitScene);
+			NancySceneState.setEventFlag(_exitScene._flag);
+			NancySceneState.changeScene(_unsolvedScene.sceneID != kNoScene ? _unsolvedScene : _exitScene._sceneChange);
 		}
 
 		finishExecution();
@@ -523,7 +503,8 @@ void NecklacePuzzle::handleInput(NancyInput &input) {
 				holdBead(displaced, &input);
 			}
 		} else {
-			// Take the top shell back off the strand.
+			// Take the top shell back off the strand
+.
 			int16 bead = strand.placed.back().bead;
 			strand.placed.pop_back();
 			holdBead(bead, &input);
@@ -562,8 +543,7 @@ void NecklacePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}
@@ -608,7 +588,8 @@ void NecklacePuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-// How many of this shell are still in the box, drawn next to its box slot.
+// How man
+y of this shell are still in the box, drawn next to its box slot.
 void NecklacePuzzle::drawBeadCount(const Bead &bead) {
 	if (bead.tableIndex == kNoTableIndex) {
 		return;

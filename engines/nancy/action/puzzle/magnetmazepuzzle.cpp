@@ -55,6 +55,7 @@ void MagnetMazePuzzle::readData(Common::SeekableReadStream &stream) {
 	for (int i = 0; i < kNumMagnets; ++i)
 		readRect(stream, _magnetHomeRects[i]);
 	for (int i = 0; i < kNumMagnets; ++i)
+
 		readRect(stream, _magnetTargetRects[i]);
 
 	// CUIButton block at AR+0x1c7 (239 bytes). Internal layout: 15-byte
@@ -80,18 +81,18 @@ void MagnetMazePuzzle::readData(Common::SeekableReadStream &stream) {
 	_bumpSound.readNormal(stream);
 
 	stream.seek(start + 0x48a);
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4a0);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winDelaySec   = stream.readUint16LE();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSoundDelay   = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 
 	stream.seek(start + 0x4d6);
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4ec);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 }
@@ -117,6 +118,7 @@ void MagnetMazePuzzle::init() {
 	_boardImage.setTransparentColor(_drawSurface.getTransparentColor());
 
 	g_nancy->_resource->loadImage(_mazeImageName, _mazeImage);
+
 
 	MagnetMazePuzzleData *mmd = (MagnetMazePuzzleData *)NancySceneState.getPuzzleData(MagnetMazePuzzleData::getTag());
 	bool restored = false;
@@ -157,9 +159,8 @@ void MagnetMazePuzzle::execute() {
 			break;
 		case kWaitWinDelay:
 			if (g_system->getMillis() >= _winDelayEndTime) {
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
+				if (hasSolveSound()) {
+					playSolveSound();
 					_subState = kWaitWinSound;
 				} else {
 					_subState = kExitToWin;
@@ -167,8 +168,8 @@ void MagnetMazePuzzle::execute() {
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -184,16 +185,14 @@ void MagnetMazePuzzle::execute() {
 		g_nancy->_sound->stopSound(_placeSound);
 		g_nancy->_sound->stopSound(_resetSound);
 		g_nancy->_sound->stopSound(_bumpSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			MagnetMazePuzzleData *mmd = (MagnetMazePuzzleData *)NancySceneState.getPuzzleData(MagnetMazePuzzleData::getTag());
 			if (mmd)
 				mmd->magnetState.clear();
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -201,7 +200,8 @@ void MagnetMazePuzzle::execute() {
 }
 
 bool MagnetMazePuzzle::collidesAt(const Common::Rect &r) const {
-	if (_mazeImage.empty() || _mazeImage.w == 0 || _mazeImage.h == 0)
+	if (_mazeImage.empty() || _mazeImage.w == 0 || _mazeImage.h ==
+ 0)
 		return false;
 
 	const int mazeW = _mazeImage.w;
@@ -264,7 +264,8 @@ void MagnetMazePuzzle::stepMagnetToward(Common::Rect &cur, const Common::Rect &t
 		if (sy != 0) {
 			Common::Rect cand(cur.left, cur.top + sy, cur.right, cur.bottom + sy);
 			if (!collidesAt(cand)) {
-				cur = cand;
+				cur = c
+and;
 				dy -= sy;
 				continue;
 			}
@@ -302,8 +303,7 @@ void MagnetMazePuzzle::handleInput(NancyInput &input) {
 			redraw();
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_subState = kExitToCancel;
 		return;
@@ -331,7 +331,8 @@ void MagnetMazePuzzle::handleInput(NancyInput &input) {
 				continue;
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				if (_requiredItem != -1 && NancySceneState.getHeldItem() != _requiredItem) {
+				
+if (_requiredItem != -1 && NancySceneState.getHeldItem() != _requiredItem) {
 					if (!_cantPlayed[i]) {
 						NancySceneState.playItemCantSound(_requiredItem);
 						_cantPlayed[i] = true;
@@ -392,7 +393,7 @@ void MagnetMazePuzzle::checkSolved() {
 	}
 	_isSolved = true;
 	_subState = kWaitWinDelay;
-	_winDelayEndTime = g_system->getMillis() + (uint32)_winDelaySec * 1000;
+	_winDelayEndTime = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 }
 
 void MagnetMazePuzzle::redraw() {
@@ -403,7 +404,8 @@ void MagnetMazePuzzle::redraw() {
 		const Common::Rect &dst = _magnetPos[i];
 		if (src.isEmpty() || dst.isEmpty())
 			continue;
-		_drawSurface.blitFrom(_boardImage, src, Common::Point(dst.left, dst.top));
+		_drawSurface.blitFrom(_boardImage, src, Common::Poin
+t(dst.left, dst.top));
 	}
 
 	if (!_hideOverlays) {

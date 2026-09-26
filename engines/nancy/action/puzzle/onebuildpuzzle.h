@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_ONEBUILDPUZZLE_H
 #define NANCY_ACTION_ONEBUILDPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
@@ -33,9 +33,9 @@ namespace Action {
 // Left-clicking an unplaced piece picks it up; right-clicking any piece rotates it.
 // If a piece is dropped (left-click) near its correct slot with correct rotation, it snaps in.
 // Otherwise it returns to its previous position (or home in free placement mode).
-class OneBuildPuzzle : public RenderActionRecord {
+class OneBuildPuzzle : public PuzzleRecord {
 public:
-	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99), _counterDisplay(99), _closeupDisplay(99) {}
+	OneBuildPuzzle() : PuzzleRecord(7), _finalAnimOverlay(99), _counterDisplay(99), _closeupDisplay(99) {}
 	virtual ~OneBuildPuzzle() {}
 
 	void init() override;
@@ -47,6 +47,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	bool isViewportRelative() const override { return true; }
+
 
 protected:
 	Common::String getRecordTypeName() const override { return "OneBuildPuzzle"; }
@@ -102,7 +103,8 @@ protected:
 		bool hasCloseupSound = false;
 
 		// Runtime
-		Common::Rect gameRect;      // Current viewport-space rect
+		Common::Rect gameRect;      // Current
+ viewport-space rect
 		int curRotation = 0;
 		bool placed = false;
 
@@ -118,7 +120,6 @@ protected:
 
 	// --- File data ---
 
-	Common::Path _imageName;
 	uint16 _numPieces = 0;         // Number of piece descriptions in the puzzle data
 	uint16 _totalPieces = 0;       // Number of pieces on screen; see init() for the extra ones
 	bool _freePlacement = false;   // Wrong drop restores to previous position, not home
@@ -150,7 +151,8 @@ protected:
 	Common::String _extraSoundName;
 
 	// Cursor type shown while hovering a piece (Nancy 10+), and the one shown
-	// while carrying it (Nancy 12+; the older games reuse the hover cursor).
+	// while carrying it (Nancy 12+; the older games reuse the ho
+ver cursor).
 	int16 _pieceCursorType = 0;
 	int16 _heldPieceCursorType = 0;
 
@@ -199,26 +201,17 @@ protected:
 	Common::String _goodAlt2Filename;
 	Common::Array<Common::String> _goodTexts;    // 3 entries
 
-	SoundDescription _badPlacementSound;
+	S
+oundDescription _badPlacementSound;
 	Common::String _badAlt1Filename;
 	Common::String _badAlt2Filename;
 	Common::Array<Common::String> _badTexts;     // 3 entries
 
-	SceneChangeWithFlag _solveScene;
-	SoundDescription _completionSound;
 	Common::String _completionText;
 
 	SoundDescription _closeupSound;
 
-	SceneChangeWithFlag _cancelScene;
-	Common::Rect _exitHotspot;
-	// Nancy13 stores this in the exit hotspot record; earlier games use
-	// _puzzleExitCursor.
-	uint16 _exitCursorType = 0;
-
 	// --- Runtime state ---
-
-	Graphics::ManagedSurface _image;
 
 	int16 _pickedUpPiece = -1;   // Index of currently dragged piece, -1 if none
 	bool _isDragging = false;    // True while a piece is attached to the cursor
@@ -247,7 +240,8 @@ protected:
 	int16 _animFrameCounter = 0;         // 0..framesPerStep-1, the X index within the current row.
 	int16 _animRowCounter = 0;           // 0..totalRows-1, how many cycles have completed.
 
-	RenderObject _counterDisplay;        // Digit sprites showing the running count.
+	RenderObject _counterDisplay;        // Digit sprites showing t
+he running count.
 
 	RenderObject _closeupDisplay;        // Nancy13 blown-up view of a single piece.
 	int16 _closeupPiece = -1;            // Piece whose close-up is showing, -1 if none.
@@ -294,7 +288,8 @@ protected:
 	// Redraw the counter with the value the puzzle's count mode calls for
 	void updateCounter();
 	void rotatePiece(int pieceIdx);
-	void updateDragPosition(Common::Point mouseVP);
+	void updateDragPosition(Common::Point
+ mouseVP);
 	// Update the render object for a piece (set _drawSurface and moveTo gameRect)
 	void updatePieceRender(int pieceIdx);
 	// Rotate a surface 90 degrees clockwise into dst (dst is allocated here)

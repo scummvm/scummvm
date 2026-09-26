@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_LEVERPUZZLE_H
 #define NANCY_ACTION_LEVERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class LeverPuzzle : public RenderActionRecord {
+class LeverPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	LeverPuzzle() : RenderActionRecord(7) {}
+	LeverPuzzle() : PuzzleRecord(7) {}
 	virtual ~LeverPuzzle() {}
 
 	void init() override;
@@ -39,21 +39,14 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::Path _imageName;
 	Common::Array<Common::Array<Common::Rect>> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	Common::Array<byte> _correctSequence;
 	SoundDescription _moveSound;
 	SoundDescription _noMoveSound;
-	SceneChangeWithFlag _solveExitScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Common::Array<byte> _playerSequence;
 	Common::Array<bool> _leverDirection;
-	Graphics::ManagedSurface _image;
 	Time _solveSoundPlayTime;
 	SolveState _solveState = kNotSolved;
 

@@ -22,16 +22,16 @@
 #ifndef NANCY_ACTION_HAMRADIOPUZZLE_H
 #define NANCY_ACTION_HAMRADIOPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // A puzzle that has the player input radio frequencies, and
 // send morse code data via ham radio. Used in nancy6.
-class HamRadioPuzzle : public RenderActionRecord {
+class HamRadioPuzzle : public PuzzleRecord {
 public:
-	HamRadioPuzzle() : RenderActionRecord(7) {}
+	HamRadioPuzzle() : PuzzleRecord(7) {}
 	virtual ~HamRadioPuzzle() {}
 
 	void init() override;
@@ -60,14 +60,13 @@ protected:
 	};
 
 	struct Frequency {
-		Common::Array<uint16> frequency;
+		Common::Arra
+y<uint16> frequency;
 		CCSound sound;
 		FlagDescription flag;
 
 		void readData(Common::SeekableReadStream &stream, uint16 numDigits);
 	};
-
-	Common::Path _imageName;
 
 	uint16 _numDigits = 0;
 
@@ -99,20 +98,15 @@ protected:
 	CCSound _longMorseSound;
 	Common::Array<CCSound> _badFrequencySounds;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0; // not used
-	CCSound _solveSound;
+	CCSound _solveCCSound;
 
 	Common::Rect _exitButtonDest;
 	Common::Rect _exitButtonSrc;
 
-	SceneChangeWithFlag _exitScene;
 	uint16 _exitSoundDelay = 0; // not used
 	SoundDescription _exitSound; // not used
 
 	Common::Array<Frequency> _otherFrequencies;
-
-	Graphics::ManagedSurface _image;
 
 	// Frequency display data
 	bool _digitsRolling = true;

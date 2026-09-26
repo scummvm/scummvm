@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_DOTCONNECTPUZZLE_H
 #define NANCY_ACTION_DOTCONNECTPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -32,9 +32,9 @@ namespace Action {
 // re-clicking the current tip pops the last line. Wins once kNumEdges lines
 // have been drawn that match the solution either forward or fully reversed.
 // Called from scene 6243 in Nancy10.
-class DotConnectPuzzle : public RenderActionRecord {
+class DotConnectPuzzle : public PuzzleRecord {
 public:
-	DotConnectPuzzle() : RenderActionRecord(7) {}
+	DotConnectPuzzle() : PuzzleRecord(7) {}
 	virtual ~DotConnectPuzzle() {}
 
 	void init() override;
@@ -58,10 +58,9 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	Common::Rect _dotSrcRects[kNumDots];
-	Common::Rect _dotHighlightSrcRects[kNumDots];
+	Common::Rect _dotHighlightSrcRects[kNum
+Dots];
 
 	byte _lineColorR  = 0;
 	byte _lineColorG  = 0;
@@ -75,16 +74,6 @@ protected:
 	SoundDescription _startHint;
 	SoundDescription _tooManyLinesSound;
 	SoundDescription _allCoveredSound;
-
-	SceneChangeDescription _winScene;
-	FlagDescription _winFlag;
-	uint16 _winDelaySec = 0;
-	SoundDescription _winSound;
-
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
-
-	Common::Rect _exitHotspot;
 
 	// Runtime state
 
@@ -109,8 +98,6 @@ protected:
 	bool _tooManyPlayed       = false;
 
 	uint32 _winDelayEndTime = 0;
-
-	Graphics::ManagedSurface _image;
 
 	void redraw();
 	bool dotAlreadyUsed(int dot) const;

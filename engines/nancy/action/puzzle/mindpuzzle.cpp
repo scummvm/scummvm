@@ -41,14 +41,15 @@ void MindPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(0x25 - 0x21);				// 0x21: two count fields
 	readRect(stream, _exitHotspot);			// 0x25: give-up / leave hotspot
-	_winScene.readData(stream);				// 0x35: scene reached on a solved code (25 bytes)
+	_solveScene.readData(stream);				// 0x35: scene reached on a solved code (25 bytes)
 	_numGuesses = stream.readUint16LE();	// 0x4e
 
 	_loseScene.readData(stream);			// 0x50: out-of-guesses / exit scene (25 bytes)
 	stream.skip(0x79 - 0x69);				// 0x69: unused rect
 	stream.skip(16);						// 0x79: tall right-edge rect (answer-reveal area), not a hotspot
 
-	stream.skip(0xd9 - 0x89);				// answer-reveal positions (unused)
+	stream.skip(0xd9 - 0x89);				// answer-re
+veal positions (unused)
 	readRect(stream, _feedbackSrcRects[0]);	// 0xd9, right-color-wrong-slot peg (plain pole)
 	readRect(stream, _feedbackSrcRects[1]);	// 0xe9, right-color-and-slot peg (flag pole)
 
@@ -111,7 +112,8 @@ void MindPuzzle::generateSecret() {
 
 void MindPuzzle::scoreRow(int row) {
 	// Standard Mastermind scoring with duplicate-aware white pegs.
-	Common::Array<int16> matched(_numColors, 0);
+	Common::Array<int16> matched(
+_numColors, 0);
 
 	// Black pegs: exact color + position.
 	for (uint s = 0; s < _codeLength; ++s) {
@@ -189,7 +191,8 @@ void MindPuzzle::holdBall(int color, NancyInput &input) {
 }
 
 void MindPuzzle::redraw() {
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	_drawSurface.clear(g_nancy->_graphics->
+getTransColor());
 
 	for (uint r = 0; r < _rows.size(); ++r) {
 		for (uint s = 0; s < _codeLength; ++s) {
@@ -241,8 +244,7 @@ void MindPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint r = 0; r < kMaxRows; ++r) {
 		for (uint s = 0; s < kSlotsPerRow; ++s) {
@@ -266,6 +268,7 @@ void MindPuzzle::execute() {
 		init();
 		registerGraphics();
 		_heldBall.registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun:
@@ -274,7 +277,8 @@ void MindPuzzle::execute() {
 		}
 		break;
 	case kActionTrigger:
-		if (_solved) {
+		i
+f (_solved) {
 			// Win: play the applause cue, wait for it to finish, then move to the win scene.
 			if (!_outcomeStarted) {
 				_outcomeStarted = true;
@@ -294,8 +298,7 @@ void MindPuzzle::execute() {
 			}
 
 			g_nancy->_sound->stopSound(_outcomeSound);
-			NancySceneState.setEventFlag(_winScene._flag);
-			NancySceneState.changeScene(_winScene._sceneChange);
+			_solveScene.execute();
 		} else {
 			// Out of guesses, or the player left via the exit hotspot.
 			NancySceneState.setEventFlag(_loseScene._flag);
@@ -338,7 +341,8 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	// Pick up a ball from the bottom palette.
 	int color = paletteHit(mouseVP);
 	if (color != -1) {
-		g_nancy->_cursor->setCursorType(CursorManager::kDragHand);
+		g_nancy->_cursor->setCursorType(CursorMa
+nager::kDragHand);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			holdBall(color, input);
 		}
@@ -384,8 +388,7 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Leave the puzzle (give up) via the exit hotspot; this reports a loss.
-	if (_exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

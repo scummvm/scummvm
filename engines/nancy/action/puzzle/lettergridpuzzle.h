@@ -23,7 +23,7 @@
 #define NANCY_ACTION_LETTERGRIDPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -38,16 +38,17 @@ namespace Action {
 //
 // The marks are global game state: they survive leaving the puzzle and are only
 // reset by a new game. They are kept in GridMapPuzzleData.
-class LetterGridPuzzle : public RenderActionRecord {
+class LetterGridPuzzle : public PuzzleRecord {
 public:
-	LetterGridPuzzle() : RenderActionRecord(7) {}
+	LetterGridPuzzle() : PuzzleRecord(7) {}
 	virtual ~LetterGridPuzzle() {}
 
 	void init() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
-	void handleInput(NancyInput &input) override;
+	void handleInput(NancyInput &input)
+ override;
 
 	bool isViewportRelative() const override { return true; }
 
@@ -71,7 +72,6 @@ protected:
 	bool cellAt(const Common::Point &point, uint &column, uint &row) const;
 	void toggleCell(uint column, uint row);
 	void checkSolved();
-	void playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 
 	// -- File data --
@@ -93,14 +93,7 @@ protected:
 
 	RandomSoundBlock _clickSound;
 
-	SceneChangeDescription _solveScene;
-	FlagDescription _solveFlag;
-	RandomSoundBlock _solveSound;	// plays out before the scene change
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
+	RandomSoundBlock _solveSoundBlock;	// plays out before the scene change
 
 	// -- Runtime state --
 	Graphics::ManagedSurface _letterImage;

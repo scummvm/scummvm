@@ -34,15 +34,9 @@ namespace Nancy {
 namespace Action {
 
 void MazeChasePuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < _startLocations.size(); ++i) {
 		_pieces.push_back(Piece(_z + i + 1));
@@ -67,7 +61,8 @@ void MazeChasePuzzle::registerGraphics() {
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		_pieces[i].registerGraphics();
 	}
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGra
+phics();
 }
 
 void MazeChasePuzzle::updateGraphics() {
@@ -138,7 +133,8 @@ void MazeChasePuzzle::updateGraphics() {
 				_needsRedraw = true;
 			} else if (_currentAnimFrame >= _framesPerMove + 1) {
 				_currentAnimFrame = -1;
-			}
+		
+	}
 		}
 	}
 }
@@ -210,7 +206,8 @@ void MazeChasePuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _upButtonDest);
 	readRect(stream, _rightButtonDest);
 	readRect(stream, _downButtonDest);
-	readRect(stream, _leftButtonDest);
+	readRec
+t(stream, _leftButtonDest);
 	readRect(stream, _resetButtonDest);
 
 	_lineWidth = stream.readUint16LE();
@@ -231,6 +228,7 @@ void MazeChasePuzzle::execute() {
 	switch (_state) {
 	case kBegin :
 		init();
+		NancySceneState.setNoHeldItem();
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_failSound);
 		_state = kRun;
@@ -254,8 +252,7 @@ void MazeChasePuzzle::execute() {
 				break;
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solved = true;
 
 			if (g_nancy->getGameType() >= kGameTypeNancy14) {
@@ -276,7 +273,7 @@ void MazeChasePuzzle::execute() {
 		return;
 	case kActionTrigger :
 		if (_solved) {
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 
@@ -293,7 +290,8 @@ void MazeChasePuzzle::execute() {
 		}
 
 		g_nancy->_sound->stopSound(_solveSound);
-		g_nancy->_sound->stopSound(_moveSound);
+		g_nancy->_sound->stopSound(_moveSou
+nd);
 		g_nancy->_sound->stopSound(_failSound);
 
 		finishExecution();
@@ -305,9 +303,7 @@ void MazeChasePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -376,7 +372,8 @@ void MazeChasePuzzle::handleInput(NancyInput &input) {
 	}
 
 	buttonHotspot = _leftButtonDest;
-	buttonHotspot.grow(-10);
+	buttonHotspot.grow(-10
+);
 
 	if (NancySceneState.getViewport().convertViewportToScreen(buttonHotspot).contains(input.mousePos)) {
 		if (canMove(0, kWallLeft)) {
@@ -447,7 +444,8 @@ void MazeChasePuzzle::drawGrid() {
 			}
 
 			if (cell == kWallDown || cell == kWallUpDown) {
-				_drawSurface.blitFrom(_image, _horizontalWallSrc, dest + Common::Point(0, cellRect.height() - 1));
+				_drawSurface.blitFrom(_image, _horizontalWall
+Src, dest + Common::Point(0, cellRect.height() - 1));
 			}
 
 			if (cell == kWallLeft || cell == kWallLeftRight) {
@@ -522,7 +520,8 @@ bool MazeChasePuzzle::canMove(uint pieceID, WallType direction) {
 
 		if (pieceID != 0) {
 			for (uint i = 1; i < _pieces.size(); ++i) {
-				if (piece._gridPos + Common::Point(-1, 0) == _pieces[i]._gridPos) {
+				if (piece._gridPos + Common::Point(-1, 0) == _pieces[i]._
+gridPos) {
 					return false;
 				}
 			}
@@ -596,7 +595,8 @@ void MazeChasePuzzle::reset() {
 
 	Common::Rect fill = _upButtonDest;
 	fill.extend(_downButtonDest);
-	fill.extend(_leftButtonDest);
+	fill.extend(_leftBu
+ttonDest);
 	fill.extend(_rightButtonDest);
 	fill.extend(_resetButtonDest);
 	_drawSurface.fillRect(fill, _drawSurface.getTransparentColor());

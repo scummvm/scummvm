@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/action/actionzone.h"
 
 namespace Nancy {
@@ -37,9 +37,9 @@ namespace Action {
 // zones, until it drops into one of four holes. Each hole feeds one of two climbers racing
 // up the mountain to the pot: the Miner (a win) or the Yeti (a loss). The first to reach
 // the pot plays its result animation, then exits through its own scene and event flag.
-class PachinkoPuzzle : public RenderActionRecord {
+class PachinkoPuzzle : public PuzzleRecord {
 public:
-	PachinkoPuzzle() : RenderActionRecord(7) {}
+	PachinkoPuzzle() : PuzzleRecord(7) {}
 	virtual ~PachinkoPuzzle() {}
 
 	void init() override;
@@ -48,7 +48,8 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	bool isViewportRelative() const override { return true; }
+	bool isViewportRelative() const overr
+ide { return true; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "PachinkoPuzzle"; }
@@ -97,7 +98,8 @@ protected:
 		uint32 litUntil = 0;			// keep it lit until this time
 	};
 
-	void readMachine(Common::SeekableReadStream &stream, Machine &m);
+	void readMachine(Common::
+SeekableReadStream &stream, Machine &m);
 	void loadMachineImage(Machine &m);
 	void buildHoles();
 	Common::Point climberAnchor(const Machine &m) const;
@@ -108,12 +110,8 @@ protected:
 	bool collidePins(Ball &ball) const;
 	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
 	void advanceMachine(Machine &m, uint32 now);
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	// -- File data --
-	Common::Path _imageName;				// board overlay
 
 	Common::Rect _ballSrc;					// ball sprite source
 	Common::Rect _ballEntry;				// top-right entry chute (where balls appear)
@@ -140,12 +138,6 @@ protected:
 	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays
 	Common::Array<Hole> _holes;				// the four catch holes (built from _zones)
 
-	// The give-up / exit hotspot.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
-
 	// -- Runtime state --
 	enum State {
 		kRunning,		// launcher live, balls in flight
@@ -158,14 +150,14 @@ protected:
 	Common::Array<Ball> _balls;
 	bool _spawnPending = false;				// a launcher click awaiting a spawn
 	uint32 _spawnClickTime = 0;
-	Machine *_activeMachine = nullptr;		// the climber that reached the pot
+	Machine *_activeMachin
+e = nullptr;		// the climber that reached the pot
 	bool _exitRequested = false;
 	uint32 _lastUpdate = 0;
 	uint32 _resultTime = 0;
 	SoundDescription _resultSoundDesc;
 
 	Common::Path _litImageName;				// "lit" board overlay (hole highlights)
-	Graphics::ManagedSurface _image;		// board overlay
 	Graphics::ManagedSurface _ballImage;	// ball sprite sheet
 	Graphics::ManagedSurface _litImage;		// lit-hole sprites
 	MoviePlayer _resultMovie;

@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MINDPUZZLE_H
 #define NANCY_ACTION_MINDPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
@@ -33,9 +33,9 @@ namespace Action {
 // color code over a number of rows, by placing colored balls in each row. Each
 // submitted guess is scored with flag poles (right color, right slot) and plain
 // poles (right color, wrong slot).
-class MindPuzzle : public RenderActionRecord {
+class MindPuzzle : public PuzzleRecord {
 public:
-	MindPuzzle() : RenderActionRecord(7) {}
+	MindPuzzle() : PuzzleRecord(7) {}
 	virtual ~MindPuzzle() {}
 
 	void init() override;
@@ -50,7 +50,8 @@ public:
 	static const uint kApplauseSound = 4;	// index into _sounds: the win cue
 	static const uint kMaxRows = 10;
 	static const uint kMaxColors = 10;	// fixed palette array size in the data
-	static const uint kSlotsPerRow = 5;	// physical slots per row record (code length <= this)
+	static const uint kSlotsPerRow = 5;	// physical slots per row 
+record (code length <= this)
 
 	enum Feedback { kFeedbackNone = -1, kFeedbackWhite = 0, kFeedbackBlack = 1 };
 
@@ -63,7 +64,6 @@ protected:
 	};
 
 	// File data
-	Common::Path _imageName;
 
 	uint16 _numColors = 0;
 	uint16 _codeLength = 0;
@@ -75,10 +75,8 @@ protected:
 	Common::Array<Common::Rect> _ballHitRects;	// bottom-row clickable ball positions, one per color
 	Common::Rect _feedbackSrcRects[2];	// [0] right color, wrong slot (plain pole); [1] right color + slot (flag pole)
 	Common::Rect _submitButtonRect;		// golf-club button: submit the current row
-	Common::Rect _exitHotspot;			// give-up / leave hotspot
 	Common::Array<Row> _rows;
 
-	SceneChangeWithFlag _winScene;		// reached on a solved code
 	SceneChangeWithFlag _loseScene;		// reached when out of guesses or when leaving via the exit hotspot
 
 	RandomSoundBlock _sounds[kNumSounds];	// click / wall / wood / ball / applause / coin
@@ -98,8 +96,6 @@ protected:
 
 	SoundDescription _outcomeSound;		// applause cue played once on a win
 	bool _outcomeStarted = false;
-
-	Graphics::ManagedSurface _image;
 
 	void generateSecret();
 	void scoreRow(int row);

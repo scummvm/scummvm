@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MAZECHASEPUZZLE_H
 #define NANCY_ACTION_MAZECHASEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -32,9 +32,9 @@ namespace Action {
 // is performed via buttons, and both player and enemy navigate one
 // tile at a time. Has some similarities to CollisionPuzzle, but was
 // different enough to warrant its own class.
-class MazeChasePuzzle : public RenderActionRecord {
+class MazeChasePuzzle : public PuzzleRecord {
 public:
-	MazeChasePuzzle() : RenderActionRecord(7) {}
+	MazeChasePuzzle() : PuzzleRecord(7) {}
 	virtual ~MazeChasePuzzle() {}
 
 	void init() override;
@@ -52,7 +52,8 @@ protected:
 
 	class Piece : public RenderObject {
 	public:
-		Piece(uint z) : RenderObject(z) {}
+		Piece(uint 
+z) : RenderObject(z) {}
 		virtual ~Piece() {}
 
 		Piece(Piece &&) = default;
@@ -71,8 +72,6 @@ protected:
 	void enemyMovement(uint enemyID);
 	bool canMove(uint pieceID, WallType direction);
 	void reset();
-
-	Common::Path _imageName;
 
 	Common::Point _exitPos = Common::Point(-1, -1);
 
@@ -107,14 +106,6 @@ protected:
 	SoundDescription _failSound;
 	SoundDescription _moveSound;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 
 	int _currentAnimFrame = -1;

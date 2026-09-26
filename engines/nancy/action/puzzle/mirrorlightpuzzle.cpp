@@ -48,7 +48,8 @@ void MirrorLightPuzzle::readData(Common::SeekableReadStream &stream) {
 	_beamAngle = stream.readSint16LE();
 	_beamOriginX = stream.readSint32LE();
 	_beamOriginY = stream.readSint32LE();
-	stream.skip(1);							// designer debug flag (shows the hovered mirror's angle)
+	stream.skip(1);							// designer debug flag (shows the hovered mir
+ror's angle)
 	_beamColor[2] = stream.readByte();		// stored as b, g, r
 	_beamColor[1] = stream.readByte();
 	_beamColor[0] = stream.readByte();
@@ -117,7 +118,8 @@ uint MirrorLightPuzzle::frameForAngle(double angle) const {
 
 void MirrorLightPuzzle::drawMirror(uint index) {
 	const Mirror &m = _mirrors[index];
-	if (m.destRect.isEmpty()) {
+	if (m.destRect.
+isEmpty()) {
 		return;
 	}
 
@@ -178,7 +180,8 @@ void MirrorLightPuzzle::traceBeam() {
 			// so the beam visually meets each mirror at its middle.
 			const Common::Rect &mr = _mirrors[hit].destRect;
 			px = (mr.left + mr.right) / 2.0;
-			py = (mr.top + mr.bottom) / 2.0;
+			py = (mr.top + mr
+.bottom) / 2.0;
 			_beamPath.push_back(Common::Point((int16)px, (int16)py));
 
 			// Reflect about the mirror's surface normal (its stored angle).
@@ -243,7 +246,8 @@ void MirrorLightPuzzle::blendBeamPixel(int x, int y, double opacity) {
 	uint32 pixel = _drawSurface.getPixel(x, y);
 	byte r, g, b;
 	if (pixel == _drawSurface.getTransparentColor()) {
-		const Graphics::ManagedSurface &bg = NancySceneState.getViewport().getBackground();
+		const Graphics::ManagedSurface &bg 
+= NancySceneState.getViewport().getBackground();
 		if (x < bg.w && y < bg.h) {
 			bg.format.colorToRGB(bg.getPixel(x, y), r, g, b);
 		} else {
@@ -312,7 +316,8 @@ void MirrorLightPuzzle::drawOverlays() {
 		}
 
 		const ActionZone &z = _zones[overlay.zoneIndex];
-		_drawSurface.blitFrom(overlay.image, z.overlaySrcRects[overlay.frame],
+		_drawSurface
+.blitFrom(overlay.image, z.overlaySrcRects[overlay.frame],
 			Common::Point(z.overlayDestRect.left, z.overlayDestRect.top));
 	}
 }
@@ -358,27 +363,6 @@ void MirrorLightPuzzle::saveMirrorAngles() {
 	}
 }
 
-void MirrorLightPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-}
-
 void MirrorLightPuzzle::init() {
 	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
 	_drawSurface.create(vpBounds.width(), vpBounds.height(),
@@ -388,8 +372,7 @@ void MirrorLightPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Mirrors keep the angle the player last left them at.
 	MirrorLightData *data = (MirrorLightData *)NancySceneState.getPuzzleData(MirrorLightData::getTag());
@@ -406,7 +389,8 @@ void MirrorLightPuzzle::init() {
 	// Each overlay zone draws from its own image.
 	uint numOverlays = 0;
 	for (const ActionZone &z : _zones) {
-		if (z.type == kZoneOverlay && !z.overlayName.empty() && !z.overlaySrcRects.empty()) {
+		if (z.type == kZoneOverlay && !z.overlayName.empty(
+) && !z.overlaySrcRects.empty()) {
 			++numOverlays;
 		}
 	}
@@ -477,7 +461,8 @@ void MirrorLightPuzzle::execute() {
 			if (z.hasSpecialEffect) {
 				NancySceneState.specialEffect(z.seType, z.seTotalTime, z.seFadeToBlackTime, z.seRect);
 			}
-			SceneChangeDescription sceneChange;
+			SceneChangeDescription sceneCha
+nge;
 			sceneChange.sceneID = z.specialEffectId;
 			NancySceneState.changeScene(sceneChange);
 		}

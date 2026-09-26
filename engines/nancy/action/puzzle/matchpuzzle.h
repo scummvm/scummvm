@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MATCHPUZZLE_H
 #define NANCY_ACTION_MATCHPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -38,9 +38,9 @@ namespace Action {
 // "Model Match". The player swaps two neighbouring tiles to line up 3/4/5 of the
 // same type in a row or column, which scores points and extends the timer. The
 // matched tiles are then replaced with fresh random ones.
-class MatchPuzzle : public RenderActionRecord {
+class MatchPuzzle : public PuzzleRecord {
 public:
-	MatchPuzzle() : RenderActionRecord(7) {}
+	MatchPuzzle() : PuzzleRecord(7) {}
 	virtual ~MatchPuzzle() {}
 
 	void init() override;
@@ -57,7 +57,8 @@ protected:
 	// ---------- Inner types ----------
 
 	struct HighScore {
-		Common::String name;
+		Common::
+String name;
 		int32 score = 0;
 	};
 
@@ -91,8 +92,6 @@ protected:
 	void handleInputNancy14(NancyInput &input, const Common::Point &localMouse);
 	void drawHighScoreScreen();
 	void drawBoardNancy14();
-	void playSoundBlock(const RandomSoundBlock &block);
-	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
 	void startRound();
 	void sortHighScores();
 	void insertHighScore();
@@ -114,7 +113,8 @@ protected:
 	bool  _execScript = false;
 	int16 _scriptID   = 0;
 
-	// Score-panel display font and label (data+0x23C..0x25E)
+	// Score-panel display font and label (data+0
+x23C..0x25E)
 	//uint16 _scorePanelFontID    = 0;     // data+0x23C
 	Common::String _displayLabelString;  // data+0x23E (33 bytes)
 
@@ -150,7 +150,8 @@ protected:
 	Common::Rect _timerValueRect;       // data+0x6A8 — where to draw timer
 	Common::Rect _flagNameRect;         // data+0x6B8 — where to draw matched flag name
 	Common::Rect _flagImageRect;        // data+0x6C8 — where to draw matched flag image
-	// data+0x6D8 (16 bytes): high-score display positions — skipped
+	// data+0x6D8 (16 byt
+es): high-score display positions — skipped
 
 	// High-score display positions (data+0x6D8, 4 × int32 packed as a rect):
 	//   left  = x-coord for the "final score" value
@@ -166,11 +167,6 @@ protected:
 	SoundDescription _shuffleSound;      // data+0x71B
 	SoundDescription _cardPlaceSound;    // data+0x74C
 	SoundDescription _matchSuccessSound; // data+0x798 — played on win/time-up
-
-	SceneChangeWithFlag _solveSceneChange; // data+0x77D  win  scene
-	SceneChangeWithFlag _exitSceneChange;  // data+0x7C9  quit scene
-
-	Common::Rect _exitHotspot;             // data+0x7E2  bottom-strip exit hotspot
 
 	// ---------- Nancy14-only data ----------
 
@@ -205,13 +201,13 @@ protected:
 	Common::Array<Common::Rect> _highScoreRects;    // left/top = name pos, right/bottom = score pos
 
 	RandomSoundBlock _matchSound;     // repeats while a match is highlighted
-	RandomSoundBlock _selectSound;    // first click on a tile
+	RandomSoundBlock
+ _selectSound;    // first click on a tile
 	RandomSoundBlock _swapSound;      // second click, and the shuffle button
 	RandomSoundBlock _winSound;
 	RandomSoundBlock _timeUpSound;
 	RandomSoundBlock _goButtonSound;
 
-	uint16 _exitCursorType = 0;
 	SceneChangeWithFlag _doneSceneChange;   // leaving through the button next to the board
 
 	// ---------- Runtime state ----------
@@ -254,7 +250,8 @@ protected:
 
 	// Match results from checkForMatch
 	int  _matchRowStart = 0, _matchRowEnd = 0;   // vertical run bounds (row indices)
-	int  _matchColStart = 0, _matchColEnd = 0;   // horizontal run bounds (col indices)
+	int  _mat
+chColStart = 0, _matchColEnd = 0;   // horizontal run bounds (col indices)
 	bool _hasVMatch = false;  // vertical   run >= 3
 	bool _hasHMatch = false;  // horizontal run >= 3
 	int16 _matchedFlagType = 0; // flag type of the matched run (for sound)
@@ -280,7 +277,6 @@ protected:
 	// Rendering
 	Common::Array<Common::Array<GridCell>> _grid; // _grid[col][row]
 
-	Graphics::ManagedSurface _image;            // loaded sprite sheet
 	Graphics::ManagedSurface _scorePanelImage;  // score-panel background
 	Graphics::ManagedSurface _buttonsImage;     // Nancy14 pressed-button graphics
 	Graphics::ManagedSurface _highScoreImage;   // Nancy14 high score backdrop

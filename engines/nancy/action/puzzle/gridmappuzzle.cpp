@@ -52,7 +52,8 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 	_mapSpacingX    = stream.readUint16LE();
 	_itemsOriginX   = stream.readUint16LE();
 	_itemsOriginY   = stream.readUint16LE();
-	_itemsSpacingY  = stream.readUint16LE();
+	_itemsSpacingY  = stream.r
+eadUint16LE();
 	_itemsSpacingX  = stream.readUint16LE();
 	_resultsOriginX  = stream.readUint16LE();
 	_resultsOriginY  = stream.readUint16LE();
@@ -94,16 +95,16 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 	_pickupSound.readNormal(stream);
 	_placeSound.readNormal(stream);
 
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSound.readNormal(stream);
 
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 	stream.skip(18); // trailing cursor type + unused fields
@@ -112,7 +113,8 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (_mapRows > kMaxMapRows) _mapRows = kMaxMapRows;
 	if (_mapCols > kMaxMapCols) _mapCols = kMaxMapCols;
 	if (_itemsRows > kMaxItemsRows) _itemsRows = kMaxItemsRows;
-	if (_itemsCols > kMaxItemsCols) _itemsCols = kMaxItemsCols;
+	if (_i
+temsCols > kMaxItemsCols) _itemsCols = kMaxItemsCols;
 
 	_mapCellW     = _mapItemSrcRects[0].width();
 	_mapCellH     = _mapItemSrcRects[0].height();
@@ -165,7 +167,8 @@ void GridMapPuzzle::persistState() {
 	for (int i = 0; i < (int)_numItems; ++i) {
 		gmd->itemState.push_back(_items[i].inMap   ? 1 : 0);
 		gmd->itemState.push_back(_items[i].inItems ? 1 : 0);
-		gmd->itemState.push_back(_items[i].mapRow);
+		gmd->itemState.push_back(_items[i].mapR
+ow);
 		gmd->itemState.push_back(_items[i].mapCol);
 		gmd->itemState.push_back(_items[i].itemsRow);
 		gmd->itemState.push_back(_items[i].itemsCol);
@@ -210,17 +213,16 @@ void GridMapPuzzle::execute() {
 		case kPlaying:
 			break;
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_subState = kWaitWinSound;
 			} else {
 				_subState = kExitToWin;
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -236,23 +238,22 @@ void GridMapPuzzle::execute() {
 		g_nancy->_cursor->showCursor(true);
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_placeSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			GridMapPuzzleData *gmd = (GridMapPuzzleData *)NancySceneState.getPuzzleData(GridMapPuzzleData::getTag());
 			if (gmd)
 				gmd->itemState.clear();
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
 	}
 }
 
-Common::Rect GridMapPuzzle::mapCellRect(int row, int col) const {
+C
+ommon::Rect GridMapPuzzle::mapCellRect(int row, int col) const {
 	// Sprite destination. Stride uses the raw src-rect dimensions (right - left,
 	// before readRect's inclusive→exclusive +1). Blits read the rect's top-left.
 	int strideX = (int)_mapSpacingX + _mapCellW - 1;
@@ -306,7 +307,8 @@ bool GridMapPuzzle::hitTestMap(const Common::Point &p, int &outRow, int &outCol)
 
 bool GridMapPuzzle::hitTestItems(const Common::Point &p, int &outRow, int &outCol) const {
 	for (int r = 0; r < (int)_itemsRows; ++r) {
-		for (int c = 0; c < (int)_itemsCols; ++c) {
+		for (i
+nt c = 0; c < (int)_itemsCols; ++c) {
 			if (itemsCellHitRect(r, c).contains(p)) {
 				outRow = r;
 				outCol = c;
@@ -363,13 +365,13 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 	g_nancy->_cursor->showCursor(_heldItem == -1);
 
 	if (!hitMap && !hitItems) {
-		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
 		} else {
 			g_nancy->_cursor->setCursorType(CursorManager::kNormal);
-		}
+	
+	}
 		return;
 	}
 
@@ -440,7 +442,8 @@ void GridMapPuzzle::handleInput(NancyInput &input) {
 
 void GridMapPuzzle::checkSolved() {
 	for (int s = 0; s < (int)_numSolutions; ++s) {
-		bool match = true;
+		bool match =
+ true;
 		for (int i = 0; i < (int)_numItems && match; ++i) {
 			if (!_items[i].inMap) {
 				match = false;
@@ -502,7 +505,8 @@ void GridMapPuzzle::redraw() {
 	}
 
 	// Each item placed in the map contributes two letter halves to the results
-	// bar at the item's fixed slot. The letters themselves are looked up from
+	// bar at the item's fixed slot. The letter
+s themselves are looked up from
 	// the placement coordinates: column picks the left half, row the right.
 	// When the right items end up at the right cells the strip spells out
 	// the solution sentence.

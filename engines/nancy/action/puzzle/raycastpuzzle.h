@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_RAYCASTPUZZLE_H
 #define NANCY_ACTION_RAYCASTPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -34,10 +34,10 @@ class RaycastDeferredLoader;
 class RaycastLevelBuilder;
 
 // Action record implementing nancy3's maze minigame
-class RaycastPuzzle : public RenderActionRecord {
+class RaycastPuzzle : public PuzzleRecord {
 	friend class RaycastDeferredLoader;
 public:
-	RaycastPuzzle() : RenderActionRecord(7), _map(7) {}
+	RaycastPuzzle() : PuzzleRecord(7), _map(7) {}
 	~RaycastPuzzle() override;
 
 	void init() override;
@@ -66,7 +66,8 @@ protected:
 	void checkSwitch();
 	void checkExit();
 
-	uint16 _mapWidth = 0;
+	uint1
+6 _mapWidth = 0;
 	uint16 _mapHeight = 0;
 	byte _wallHeight = 0;
 
@@ -75,9 +76,6 @@ protected:
 	Common::String _unknownSoundName;
 	uint16 _unknownSoundChannelID = 0;
 	SoundDescription _dummySound;
-
-	SceneChangeWithFlag _solveScene;
-	SoundDescription _solveSound;
 
 	Common::Array<uint32> _wallMap, _infoMap;
 	Common::Array<int16> _floorMap, _ceilingMap;
@@ -126,7 +124,8 @@ protected:
 
 	Common::Array<byte> _lightSwitchIDs;
 	Common::Array<Common::Point> _lightSwitchPositions;
-	Common::Array<bool> _lightSwitchStates;
+	Comm
+on::Array<bool> _lightSwitchStates;
 	int _lightSwitchPlayerIsOn = -1;
 
 	const RCPR *_puzzleData = nullptr;

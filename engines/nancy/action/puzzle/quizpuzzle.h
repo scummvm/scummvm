@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_QUIZPUZZLE_H
 #define NANCY_ACTION_QUIZPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/util.h"
 
@@ -32,9 +32,9 @@ namespace Action {
 // Text-entry quiz with multiple text boxes. Three data formats: Nancy 8,
 // Nancy 9 - Nancy 14, and Nancy 15, which rewrote the record around
 // count-prefixed answer lists and RandomSoundBlocks.
-class QuizPuzzle : public RenderActionRecord {
+class QuizPuzzle : public PuzzleRecord {
 public:
-	QuizPuzzle() : RenderActionRecord(7) {}
+	QuizPuzzle() : PuzzleRecord(7) {}
 	virtual ~QuizPuzzle();
 
 	void init() override;
@@ -52,7 +52,8 @@ private:
 	// 30 slots of 27 bytes per save slot, so 30 is the engine's own maximum.
 	static const uint kMaxBoxes = 30;
 	// Nancy 15 rejects a keystroke once the typed text no longer fits a save
-	// slot's 27-byte text buffer, with room left for the cursor character.
+	// slot's 27-byte text buffer, with roo
+m left for the cursor character.
 	static const uint kMaxTypedLengthNancy15 = 24;
 	static const uint kMaxTypedLength = 16;
 	// From Nancy 9 to Nancy 14 a character is only accepted while the text
@@ -103,7 +104,8 @@ private:
 	// Picks one name out of `block` at random and starts it, tracking it in
 	// _activeBoxSound so the state machine can wait for it. Returns false when
 	// the block is empty or names no sound.
-	bool playSoundBlock(const RandomSoundBlock &block);
+	bool playBoxSo
+undBlock(const RandomSoundBlock &block);
 	void showBoxSubtitle(const Common::String &perBoxText, const Common::String &perRecordText);
 
 	uint32 getSaveKey();
@@ -116,14 +118,8 @@ private:
 	uint16 _fontID = 0;
 	uint16 _cursorBlinkInterval = 500;
 
-	SoundDescription _doneSound;		// Nancy 8 - Nancy 14 solve sound
 	Common::String _doneText;
 	RandomSoundBlock _doneSoundBlock;	// Nancy 15 solve sound
-
-	SceneChangeWithFlag _solveScene;	// entered when all boxes are solved
-	SceneChangeWithFlag _cancelScene;	// entered when the puzzle is given up on
-	Common::Rect _exitHotspot;			// Nancy 9+: viewport-relative give-up hotspot
-	uint16 _exitCursorType = 0;			// Nancy 15
 
 	// ---- Data (Nancy 8) ----
 	SoundDescription _correctSound;		// one sound shared by every box
@@ -156,7 +152,8 @@ private:
 	enum SolveState {
 		kTyping          = 0, // waiting for key input; cursor blinks
 		kCheckAnswer     = 1, // Enter pressed (or auto-check triggered); evaluate typed text
-		kStartCorrect    = 2, // answer correct: play correct sound, advance box
+		kStartCorrect    = 2, // an
+swer correct: play correct sound, advance box
 		kWaitCorrect     = 3, // waiting for correct sound to finish
 		kStartWrong      = 4, // answer wrong: clear text, play wrong sound
 		kWaitWrong       = 5, // waiting for wrong sound to finish
