@@ -60,6 +60,7 @@ private:
 	Audio::PCSpeaker *_pcSpeaker = nullptr;
 	bool _pcSpeakerReady = false;
 
+public:
 	/**
 	 * Queues a single square-wave note. divisor is the original's PIT
 	 * timer divisor (frequency = ~1193182/divisor), matching how each
@@ -72,12 +73,10 @@ private:
 	 */
 	void queueSilence(uint32 lengthMs);
 
-public:
 	// Debug flag toggled by the "intangible" console command, allowing
 	// movement through normally impassable terrain
 	bool _intangible = false;
 
-public:
 	Ultima3Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima3Engine() override;
 

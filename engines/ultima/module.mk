@@ -165,7 +165,6 @@ MODULE_OBJS += \
 	ultima3/data/data.o \
 	ultima3/gfx/pic_decoder.o \
 	ultima3/views/main_menu.o \
-	ultima3/views/startup.o \
 	ultima3/views/title.o
 endif
 

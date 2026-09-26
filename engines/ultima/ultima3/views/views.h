@@ -24,7 +24,6 @@
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima3/views/main_menu.h"
-#include "ultima/ultima3/views/startup.h"
 #include "ultima/ultima3/views/title.h"
 
 namespace Ultima {
@@ -33,7 +32,6 @@ namespace Views {
 
 struct Views {
 	MainMenu _mainMenu;
-	Startup _startup;
 	Title _title;
 };
 

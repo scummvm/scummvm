@@ -64,7 +64,7 @@ Common::Error Ultima3Engine::run() {
 	setDebugger(new Console());
 
 	Views::Views views;
-	addView("Startup");
+	addView("Title");
 	runGame();
 	(void)views;		// Suppress any warnings of unused local
 
@@ -83,6 +83,21 @@ Common::Error Ultima3Engine::syncGame(Common::Serializer &s) {
 	// TODO
 
 	return Common::kNoError;
+}
+
+void Ultima3Engine::queueTone(int divisor, uint32 lengthMs) {
+	if (!_pcSpeakerReady)
+		return;
+
+	float freq = divisor > 0 ? 1193182.0f / divisor : 0.0f;
+	_pcSpeaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, freq, lengthMs * 1000);
+}
+
+void Ultima3Engine::queueSilence(uint32 lengthMs) {
+	if (!_pcSpeakerReady)
+		return;
+
+	_pcSpeaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0.0f, lengthMs * 1000);
 }
 
 bool Ultima3Engine::savegamesExist() const {
