@@ -466,23 +466,13 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int originalStartY = 0x1d4;
 	const int targetX = 0xc0;
 	const int targetY = 0x191;
-	const uint startDescriptorIndex = kI10SceneActorDescriptorBase + 1;
-	if (startDescriptorIndex >= _actorBankI10Ron.descriptors.size())
-		return;
 
-	const ActorSpriteDescriptor &startDescriptor = _actorBankI10Ron.descriptors[startDescriptorIndex];
-	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
-	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
-
-	const int visibleStartY = originalStartY +
-		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
+	// Start outside the viewport so the walking sprite enters through its right edge.
 	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
 	const int sceneX = originalStartX +
 		((targetX - originalStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int sceneY = originalStartY +
 		((targetY - originalStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
-	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
-	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
@@ -490,7 +480,7 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
 	if (playFootstep)
 		playActorFootstepIfDue(sceneX, sceneY, cel);
-	drawActorFrame(_actorBankI10Ron, facing, cel, x, y);
+	drawActorFrame(_actorBankI10Ron, facing, cel, sceneX, sceneY);
 }
 
 void Scene9100::runSueEntrySequence() {
@@ -563,23 +553,13 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int originalStartY = 0x1b5;
 	const int targetX = 0x11b;
 	const int targetY = 0x16e;
-	const uint startDescriptorIndex = kI10SceneActorDescriptorBase + 1;
-	if (startDescriptorIndex >= _actorBankI10Sue.descriptors.size())
-		return;
 
-	const ActorSpriteDescriptor &startDescriptor = _actorBankI10Sue.descriptors[startDescriptorIndex];
-	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
-	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
-
-	const int visibleStartY = originalStartY +
-		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
+	// Start outside the viewport so the walking sprite enters through its right edge.
 	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
 	const int sceneX = originalStartX +
 		((targetX - originalStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
 	const int sceneY = originalStartY +
 		((targetY - originalStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
-	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
-	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
 	const byte facing = kI10SceneActorFacing;
@@ -587,12 +567,14 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 		(byte)(1 + ((clampedElapsed / kEntryPathFrameIntervalMillis) % 12));
 	if (playFootstep)
 		playActorFootstepIfDue(sceneX, sceneY, cel);
-	drawActorFrame(_actorBankI10Sue, facing, cel, x, y);
+	drawActorFrame(_actorBankI10Sue, facing, cel, sceneX, sceneY);
 }
 
 void Scene9100::drawActorFrame(const ActorSpriteBank &bank, byte facing, byte cel, int worldX, int worldY) {
 	drawActorSpriteFrame(bank, facing, cel, worldX, worldY, -1,
 		_sceneFramebuffer.surface(), _presentationPaletteRemapTable);
+	// The foreground plant covers the actors as they enter the office.
+	drawResourceBlockListToSceneFramebuffer(_resources._chunkOffsets[6]);
 }
 
 void Scene9100::playActorFootstepIfDue(int worldX, int worldY, byte cel) {
@@ -974,7 +956,7 @@ void Scene9100::drawPersistentDeskActors() {
 void Scene9100::drawOfficeCompositeLayers() {
 	drawForegroundActorLayer();
 	drawPersistentDeskActors();
-	drawClockLayers(false);
+	drawClockLayers();
 }
 
 void Scene9100::syncOfficeRestoreBaseFromSaved() {
@@ -1018,7 +1000,6 @@ void Scene9100::advanceClockFrame() {
 			_clockChunk7CarryGate = 0;
 		}
 	}
-	restoreClockAreaBackground();
 	drawOfficeCompositeLayers();
 	_clockSound.playSample(kScene9100ClockSoundCue, kScene9100ClockMixerVolume);
 }
@@ -1031,12 +1012,12 @@ void Scene9100::restoreClockAreaBackground() {
 	}
 }
 
-void Scene9100::drawClockLayers(bool restoreBackground) {
+void Scene9100::drawClockLayers() {
 	if (!_clockVisible)
 		return;
 
-	if (restoreBackground)
-		restoreClockAreaBackground();
+	// Actor movement can restore a composite containing older clock hands.
+	restoreClockAreaBackground();
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
 	drawStripSpriteFrame(_resources._arena, _resources._chunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
