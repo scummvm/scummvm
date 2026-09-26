@@ -366,6 +366,7 @@ void BulPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rollSound);
 		g_nancy->_sound->loadSound(_resetSound);

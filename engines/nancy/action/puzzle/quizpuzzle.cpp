@@ -721,6 +721,7 @@ void QuizPuzzle::execute() {
 	case kBegin: {
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkInterval;
 		if (g_nancy->getGameType() == kGameTypeNancy8) {
 			g_nancy->_sound->loadSound(_correctSound);

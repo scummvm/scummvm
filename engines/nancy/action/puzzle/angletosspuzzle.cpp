@@ -108,6 +108,7 @@ void AngleTossPuzzle::execute() {
 
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_powerSound);
 		g_nancy->_sound->loadSound(_squeakSound);

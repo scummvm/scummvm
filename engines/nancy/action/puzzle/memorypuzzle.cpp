@@ -267,6 +267,7 @@ void MemoryPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		if (_firstFlipSound.name != "NO SOUND")
 			g_nancy->_sound->loadSound(_firstFlipSound);
 		if (_secondFlipSound.name != "NO SOUND")

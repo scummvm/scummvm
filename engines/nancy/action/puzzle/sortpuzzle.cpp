@@ -323,6 +323,7 @@ void SortPuzzle::execute() {
 		init();
 		registerGraphics();
 		_heldObject.registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 

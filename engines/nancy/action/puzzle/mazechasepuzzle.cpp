@@ -231,6 +231,7 @@ void MazeChasePuzzle::execute() {
 	switch (_state) {
 	case kBegin :
 		init();
+		NancySceneState.setNoHeldItem();
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_failSound);
 		_state = kRun;

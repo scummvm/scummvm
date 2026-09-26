@@ -256,6 +256,7 @@ void HamRadioPuzzle::execute() {
 	case kBegin :
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_digitRollSound);
 		setFrequency(_startFreq.frequency);

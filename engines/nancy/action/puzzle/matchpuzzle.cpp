@@ -363,6 +363,7 @@ void MatchPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		if (_slotWinSound.name != "NO SOUND")
 			g_nancy->_sound->loadSound(_slotWinSound);

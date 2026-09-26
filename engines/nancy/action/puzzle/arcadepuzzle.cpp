@@ -481,6 +481,7 @@ void ArcadePuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Load sounds
 		for (int i = 0; i < 6; ++i)

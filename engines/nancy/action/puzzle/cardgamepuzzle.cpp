@@ -548,6 +548,7 @@ void CardGamePuzzle::execute() {
 	if (_state == kBegin) {
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Kick off the first turn. When the AI is dealt the opening move, it asks first.
 		if (_startPlayer == 0) {

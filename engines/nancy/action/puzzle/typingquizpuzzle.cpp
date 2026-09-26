@@ -396,6 +396,7 @@ void TypingQuizPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun: {

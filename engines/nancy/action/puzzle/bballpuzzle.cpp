@@ -149,6 +149,7 @@ void BBallPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_plusSound);
 		g_nancy->_sound->loadSound(_minusSound);

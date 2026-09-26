@@ -102,6 +102,7 @@ void CubePuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);

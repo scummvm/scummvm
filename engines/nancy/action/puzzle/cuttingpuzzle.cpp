@@ -183,6 +183,11 @@ void CuttingPuzzle::execute() {
 		init();
 		registerGraphics();
 
+		// The item the puzzle requires stays in hand
+		if (!_itemCheckByte || NancySceneState.getHeldItem() != _itemID) {
+			NancySceneState.setNoHeldItem();
+		}
+
 		g_nancy->_sound->loadSound(_latheSound);
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_startStopSound);

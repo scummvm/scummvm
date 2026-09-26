@@ -266,6 +266,7 @@ void MindPuzzle::execute() {
 		init();
 		registerGraphics();
 		_heldBall.registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun:
