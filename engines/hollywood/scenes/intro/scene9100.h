@@ -119,7 +119,7 @@ private:
 	void animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame);
 	void advanceClockFrame();
 	void restoreClockAreaBackground();
-	void drawClockLayers(bool restoreBackground);
+	void drawClockLayers();
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
