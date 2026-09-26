@@ -254,8 +254,7 @@ void MazeChasePuzzle::execute() {
 				break;
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solved = true;
 
 			if (g_nancy->getGameType() >= kGameTypeNancy14) {
@@ -276,7 +275,7 @@ void MazeChasePuzzle::execute() {
 		return;
 	case kActionTrigger :
 		if (_solved) {
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 

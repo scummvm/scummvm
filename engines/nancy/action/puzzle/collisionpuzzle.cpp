@@ -397,13 +397,12 @@ void CollisionPuzzle::execute() {
 					return;
 				}
 
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
+				playSolveSound();
 				NancySceneState.setEventFlag(_solveScene._flag);
 				_solveSoundPlayTime = 0;
 				return;
 			} else {
-				if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				if (isSolveSoundPlaying()) {
 					return;
 				}
 

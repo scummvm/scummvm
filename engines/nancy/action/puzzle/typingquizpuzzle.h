@@ -123,8 +123,6 @@ private:
 	SoundDescription _wrongSound;                  // 0x497 wrong key
 	SoundDescription _escapeSound;                 // 0x4c8 balloon floated away
 
-	SoundDescription _winSound;                    // 0x511 played when the target is met
-
 	SceneChangeDescription _defaultScene;          // 0x542 (did not reach the target)
 	int16 _flagThreshold = -1;                     // 0x558 set if the partial threshold was reached
 	int16 _flagFail = -1;                          // 0x55a set otherwise

@@ -57,8 +57,6 @@ public:
 	CursorManager::CursorType _upCursorType = CursorManager::kMoveUp;
 	CursorManager::CursorType _downCursorType = CursorManager::kMoveDown;
 	SoundDescription _clickSound;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
 
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;

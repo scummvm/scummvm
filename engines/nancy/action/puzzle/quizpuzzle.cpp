@@ -40,7 +40,7 @@ QuizPuzzle::~QuizPuzzle() {
 	g_nancy->_input->setVKEnabled(false);
 	g_nancy->_sound->stopSound(_correctSound);
 	g_nancy->_sound->stopSound(_wrongSound);
-	g_nancy->_sound->stopSound(_doneSound);
+	g_nancy->_sound->stopSound(_solveSound);
 	g_nancy->_sound->stopSound(_activeBoxSound);
 }
 
@@ -105,7 +105,7 @@ void QuizPuzzle::readDataNancy8(Common::SeekableReadStream &stream) {
 	_wrongText = readSubtitleText(stream);
 
 	_solveScene.readData(stream);
-	_doneSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 	_doneText = readSubtitleText(stream);
 
 	_exitScene.readData(stream);
@@ -156,7 +156,7 @@ void QuizPuzzle::readDataNancy9(Common::SeekableReadStream &stream) {
 	_allowedChars = allowedBuf;
 
 	_solveScene.readData(stream);
-	_doneSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 	_doneText = readSubtitleText(stream);
 
 	_exitScene.readData(stream);
@@ -485,11 +485,10 @@ void QuizPuzzle::executeNancy8() {
 		break;
 
 	case kStartDone: {
-		if (_doneSound.name == "NO SOUND") {
+		if (!hasSolveSound()) {
 			_internalState = kFinish;
 		} else {
-			g_nancy->_sound->loadSound(_doneSound);
-			g_nancy->_sound->playSound(_doneSound);
+			playSolveSound();
 			showSubtitle(_doneText);
 			_internalState = kWaitDone;
 		}
@@ -497,8 +496,8 @@ void QuizPuzzle::executeNancy8() {
 	}
 
 	case kWaitDone:
-		if (!g_nancy->_sound->isSoundPlaying(_doneSound)) {
-			g_nancy->_sound->stopSound(_doneSound);
+		if (!isSolveSoundPlaying()) {
+			g_nancy->_sound->stopSound(_solveSound);
 			_internalState = kFinish;
 		}
 		break;
@@ -692,11 +691,10 @@ void QuizPuzzle::executeNancy9() {
 	case kStartDone: {
 		if (isNancy15) {
 			_internalState = playSoundBlock(_doneSoundBlock) ? kWaitDone : kFinish;
-		} else if (_doneSound.name == "NO SOUND") {
+		} else if (!hasSolveSound()) {
 			_internalState = kFinish;
 		} else {
-			g_nancy->_sound->loadSound(_doneSound);
-			g_nancy->_sound->playSound(_doneSound);
+			playSolveSound();
 			showSubtitle(_doneText);
 			_internalState = kWaitDone;
 		}
@@ -704,7 +702,7 @@ void QuizPuzzle::executeNancy9() {
 	}
 
 	case kWaitDone: {
-		SoundDescription &sound = isNancy15 ? _activeBoxSound : _doneSound;
+		SoundDescription &sound = isNancy15 ? _activeBoxSound : _solveSound;
 		if (!g_nancy->_sound->isSoundPlaying(sound)) {
 			g_nancy->_sound->stopSound(sound);
 			_internalState = kFinish;
@@ -730,7 +728,7 @@ void QuizPuzzle::execute() {
 		}
 
 		if (g_nancy->getGameType() < kGameTypeNancy15) {
-			g_nancy->_sound->loadSound(_doneSound);
+			g_nancy->_sound->loadSound(_solveSound);
 		}
 
 		loadSavedAnswers();

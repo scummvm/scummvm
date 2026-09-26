@@ -88,7 +88,7 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1); // 0x53a: unknown
 
 	// 0x53b: win sound
-	_winSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 }
 
 // Nancy 11 reworked the layout: fewer (12) face rects, a configurable grid/page count,
@@ -149,7 +149,7 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 	stream.skip(16 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
 	_matchSound.readNormal(stream);                // block 17
 	stream.skip((27 - 17) * 0xb6 - 0x31);          // advance to the scenes @ 0x168e
-	// Nancy 11 has no win sound; _winSound keeps its default "NO SOUND".
+	// Nancy 11 has no win sound; _solveSound keeps its default "NO SOUND".
 
 	// Solve scene (0x168e), then an alternate-outcome scene (0x16a8, unused). The event flags
 	// store a 16-bit value rather than a simple on/off.
@@ -290,9 +290,8 @@ void MemoryPuzzle::execute() {
 			break;
 
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_solveSubState = kWaitWinSound;
 			} else {
 				_state = kActionTrigger;
@@ -300,8 +299,8 @@ void MemoryPuzzle::execute() {
 			break;
 
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;
@@ -313,7 +312,7 @@ void MemoryPuzzle::execute() {
 		g_nancy->_sound->stopSound(_secondFlipSound);
 		g_nancy->_sound->stopSound(_matchSound);
 		g_nancy->_sound->stopSound(_noMatchSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		_solveScene.execute();
 		finishExecution();
 		break;

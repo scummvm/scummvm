@@ -377,7 +377,7 @@ void StepObjectsPuzzle::execute() {
 
 			break;
 		case kSolved:
-			if (_solveSound.name.empty() || !g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 

@@ -99,8 +99,7 @@ protected:
 	CCSound _longMorseSound;
 	Common::Array<CCSound> _badFrequencySounds;
 
-	uint16 _solveSoundDelay = 0; // not used
-	CCSound _solveSound;
+	CCSound _solveCCSound;
 
 	Common::Rect _exitButtonDest;
 	Common::Rect _exitButtonSrc;

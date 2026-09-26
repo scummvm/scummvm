@@ -76,9 +76,6 @@ protected:
 	SoundDescription _tooManyLinesSound;
 	SoundDescription _allCoveredSound;
 
-	uint16 _winDelaySec = 0;
-	SoundDescription _winSound;
-
 	// Runtime state
 
 	enum SubState {

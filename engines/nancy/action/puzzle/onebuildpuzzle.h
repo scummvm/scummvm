@@ -204,7 +204,6 @@ protected:
 	Common::String _badAlt2Filename;
 	Common::Array<Common::String> _badTexts;     // 3 entries
 
-	SoundDescription _completionSound;
 	Common::String _completionText;
 
 	SoundDescription _closeupSound;

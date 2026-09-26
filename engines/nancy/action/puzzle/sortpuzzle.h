@@ -114,8 +114,6 @@ protected:
 	SoundDescription _pickupSound;
 	SoundDescription _dropSound;
 
-	SoundDescription       _winSound;
-
 	// Runtime state
 
 	enum SubState {

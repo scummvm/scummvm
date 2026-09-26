@@ -247,7 +247,7 @@ protected:
 	Common::Array<Character> _characters;
 	Common::Array<Actor> _actors;
 
-	RandomSoundBlock _solveSound;
+	RandomSoundBlock _solveSoundBlock;
 	SceneChangeDescription _failScene;	// an opponent got there first
 	FlagDescription _failFlag;
 	RandomSoundBlock _failSound;

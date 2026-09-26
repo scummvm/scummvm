@@ -98,7 +98,7 @@ void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag  = stream.readByte();
-	_winSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 
 	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
@@ -210,17 +210,16 @@ void GridMapPuzzle::execute() {
 		case kPlaying:
 			break;
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_subState = kWaitWinSound;
 			} else {
 				_subState = kExitToWin;
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -236,7 +235,7 @@ void GridMapPuzzle::execute() {
 		g_nancy->_cursor->showCursor(true);
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_placeSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			GridMapPuzzleData *gmd = (GridMapPuzzleData *)NancySceneState.getPuzzleData(GridMapPuzzleData::getTag());
 			if (gmd)

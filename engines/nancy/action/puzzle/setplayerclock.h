@@ -74,8 +74,6 @@ protected:
 	Common::Rect _alarmLightSrc;
 
 	SoundDescription _buttonSound;
-	uint16 _alarmSoundDelay = 0;
-	SoundDescription _alarmSetSound; // NO SOUND in MHM
 
 	Graphics::ManagedSurface _image;
 

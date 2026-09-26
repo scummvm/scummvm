@@ -61,7 +61,7 @@ void RiddlePuzzle::readData(Common::SeekableReadStream &stream) {
 	_eraseSound.readNormal(stream);
 	_enterSound.readNormal(stream);
 	_solveScene.readData(stream);
-	_successSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 	_exitSound.readNormal(stream);
 	readRect(stream, _exitHotspot);
@@ -175,8 +175,7 @@ void RiddlePuzzle::execute() {
 
 						if (_puzzleState->solvedRiddleIDs.size() == _riddles.size()) {
 							// Solved all riddles
-							g_nancy->_sound->loadSound(_successSound);
-							g_nancy->_sound->playSound(_successSound);
+							playSolveSound();
 							_solveState = kSolvedAll;
 							_state = kActionTrigger;
 
@@ -242,7 +241,7 @@ void RiddlePuzzle::execute() {
 
 			break;
 		case kSolvedAll:
-			sound = &_successSound;
+			sound = &_solveSound;
 			sceneChange = &_solveScene;
 
 			break;

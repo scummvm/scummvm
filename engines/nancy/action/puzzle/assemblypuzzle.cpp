@@ -135,8 +135,7 @@ void AssemblyPuzzle::execute() {
 			return;
 		}
 
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		showSubtitle(_solveText);
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
@@ -144,7 +143,7 @@ void AssemblyPuzzle::execute() {
 		_state = kActionTrigger;
 		break;
 	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 
@@ -160,7 +159,7 @@ void AssemblyPuzzle::execute() {
 }
 
 void AssemblyPuzzle::handleInput(NancyInput &input) {
-	if (_state == kActionTrigger && _completed && g_nancy->_sound->isSoundPlaying(_solveSound)) {
+	if (_state == kActionTrigger && _completed && isSolveSoundPlaying()) {
 		return;
 	}
 

@@ -1119,7 +1119,7 @@ void RaycastPuzzle::execute() {
 
 		break;
 	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 
@@ -2078,8 +2078,7 @@ void RaycastPuzzle::checkExit() {
 	Common::Point gridPos(((uint)_playerY) >> 7, ((uint)_playerX) >> 7);
 
 	if (_infoMap[gridPos.y * _mapFullWidth + gridPos.x] == 1) {
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 
 		_state = kActionTrigger;
 	}

@@ -156,7 +156,6 @@ private:
 	SoundDescription _sound5;        // 0x9ea - unused (silence)
 
 	SceneChangeWithFlag _lossScene;  // 0xa1b
-	SoundDescription    _winSound;   // 0xa35
 
 	SoundDescription _gameOverSound; // 0xa80
 	SoundDescription _tryAgainSound; // 0xab1

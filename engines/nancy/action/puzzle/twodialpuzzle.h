@@ -81,9 +81,6 @@ protected:
 
 	SoundDescription _rotateSounds[2];
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 
 	int16 _currentPositions[2] = { 0, 0 };

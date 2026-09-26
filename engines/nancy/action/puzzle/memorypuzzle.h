@@ -82,7 +82,6 @@ protected:
 	SoundDescription _secondFlipSound;
 	SoundDescription _matchSound;    // played when a matching pair is found
 	SoundDescription _noMatchSound;  // pre-Nancy 11: played when a pair doesn't match
-	SoundDescription _winSound;
 
 	// Runtime state
 

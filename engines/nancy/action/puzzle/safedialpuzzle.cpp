@@ -192,13 +192,12 @@ void SafeDialPuzzle::execute() {
 	case kActionTrigger :
 		if (_solved) {
 			if (_nextAnim == 0) {
-				if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				if (isSolveSoundPlaying()) {
 					break;
 				}
 			} else {
 				if (_nextAnim < g_nancy->getTotalPlayTime()) {
-					g_nancy->_sound->loadSound(_solveSound);
-					g_nancy->_sound->playSound(_solveSound);
+					playSolveSound();
 					_nextAnim = 0;
 				}
 				break;

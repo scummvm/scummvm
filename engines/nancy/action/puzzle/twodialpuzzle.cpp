@@ -152,12 +152,11 @@ void TwoDialPuzzle::execute() {
 				}
 
 				_solveSoundDelayTime = 0;
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
+				playSolveSound();
 				NancySceneState.setEventFlag(_solveScene._flag);
 				return;
 			} else {
-				if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				if (isSolveSoundPlaying()) {
 					return;
 				}
 
@@ -225,13 +224,12 @@ void TwoDialPuzzle::runNancy12() {
 		break;
 	}
 	case kPlaySolveSound:
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		_solveState = kWaitForSounds;
 		break;
 	case kWaitForSounds:
 		if (_isSolved) {
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}

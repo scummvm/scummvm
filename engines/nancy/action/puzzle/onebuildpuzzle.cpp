@@ -257,7 +257,7 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 
 	SoundDescription *sounds[kNumSoundsNancy13] = { &_pickupSound, &_rotateSound, &_dropSound,
 													&_goodPlacementSound, &_badPlacementSound,
-													&_completionSound, &_closeupSound };
+													&_solveSound, &_closeupSound };
 	for (uint i = 0; i < numSoundBlocks; ++i) {
 		SoundDescription &s = *sounds[i];
 		s.name = blocks[i].names.empty() ? "NO SOUND" : blocks[i].names[0];
@@ -430,7 +430,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_pieceCursorType = stream.readSint16LE();
 	stream.skip(2);
 	_solveScene.readData(stream);
-	_completionSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 
 	// Completion caption. Only an AUTOTEXT key produces a textbox caption; the
 	// trailing inline string is a sound subtitle (e.g. "High pitched sound" for
@@ -456,7 +456,7 @@ void OneBuildPuzzle::execute() {
 		g_nancy->_sound->loadSound(_dropSound);
 		g_nancy->_sound->loadSound(_goodPlacementSound);
 		g_nancy->_sound->loadSound(_badPlacementSound);
-		g_nancy->_sound->loadSound(_completionSound);
+		g_nancy->_sound->loadSound(_solveSound);
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
 			g_nancy->_sound->loadSound(_closeupSound);
 		_state = kRun;
@@ -496,14 +496,13 @@ void OneBuildPuzzle::execute() {
 			break;
 		case kWaitCompletion:
 			// Waiting for completion sound to finish before scene change
-			if (!g_nancy->_sound->isSoundPlaying(_completionSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 			break;
 		case kTriggerCompletion:
 			// Play completion sound/text, then wait for it to finish
-			g_nancy->_sound->loadSound(_completionSound);
-			g_nancy->_sound->playSound(_completionSound);
+			playSolveSound();
 			showSubtitle(_completionText);
 			_solveState = kWaitCompletion;
 			break;

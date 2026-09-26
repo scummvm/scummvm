@@ -316,7 +316,7 @@ void MultiBuildPuzzle::execute() {
 			break;
 
 		case kWaitSolveSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}

@@ -22,6 +22,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
@@ -83,6 +84,23 @@ bool PuzzleRecord::hoverExitHotspot(const NancyInput &input) const {
 
 	setExitCursor();
 	return true;
+}
+
+bool PuzzleRecord::hasSolveSound() const {
+	return !_solveSound.name.empty() && _solveSound.name != "NO SOUND";
+}
+
+void PuzzleRecord::playSolveSound() {
+	if (!hasSolveSound()) {
+		return;
+	}
+
+	g_nancy->_sound->loadSound(_solveSound);
+	g_nancy->_sound->playSound(_solveSound);
+}
+
+bool PuzzleRecord::isSolveSoundPlaying() const {
+	return hasSolveSound() && g_nancy->_sound->isSoundPlaying(_solveSound);
 }
 
 } // End of namespace Action

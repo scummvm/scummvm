@@ -91,8 +91,6 @@ protected:
 	SoundDescription _putDownSound;
 	SoundDescription _rotateSound;
 
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _tileImage;
 	Graphics::ManagedSurface _maskImage;
 	byte *_zBuffer = nullptr;

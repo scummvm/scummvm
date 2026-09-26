@@ -59,7 +59,7 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE();		// 0x27
 	_solveScene._flag.flag = stream.readByte();			// 0x29
 
-	_solveSound.readData(stream);				// played once the puzzle comes out solved
+	_solveSoundBlock.readData(stream);				// played once the puzzle comes out solved
 
 	// The figures to match this scene: a required coin count, the figure's number, its
 	// open-latch sprite and destination rects, and the sound played when it lights.
@@ -360,7 +360,7 @@ void ScalePuzzle::execute() {
 		} else {
 			// Solved: play the sound, set the solve flag, change scene (9999 = stay). The puzzle
 			// keeps running afterwards, so the player can still leave through the exit hotspot.
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			_solveScene.execute();
 			_solveTriggered = true;
 			_state = kRun;

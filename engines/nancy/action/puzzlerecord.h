@@ -48,8 +48,16 @@ protected:
 	// Shows the exit cursor and returns true while the mouse is over the give-up hotspot
 	bool hoverExitHotspot(const NancyInput &input) const;
 
+	// A solve sound named "NO SOUND" or left empty counts as absent: it never plays,
+	// and is never reported as playing.
+	bool hasSolveSound() const;
+	void playSolveSound();
+	bool isSolveSoundPlaying() const;
+
 	// Scene the puzzle moves to when solved; its flag is set on solve
 	SceneChangeWithFlag _solveScene;
+	SoundDescription _solveSound;
+	uint16 _solveSoundDelay = 0; // units differ per puzzle
 
 	// Scene the puzzle moves to when left unsolved, e.g. via the give-up hotspot
 	SceneChangeWithFlag _exitScene;

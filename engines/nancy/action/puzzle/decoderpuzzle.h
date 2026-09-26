@@ -96,7 +96,7 @@ protected:
 	Common::Rect _resetMovieRect;		// 0x11f
 	RandomSoundBlock _resetSound;		// 0x12f, plays while it runs
 
-	RandomSoundBlock _solveSound;		// 0x185, plays before the scene change
+	RandomSoundBlock _solveSoundBlock;		// 0x185, plays before the scene change
 
 	// -- Runtime state --
 	MoviePlayer _resetMovie;

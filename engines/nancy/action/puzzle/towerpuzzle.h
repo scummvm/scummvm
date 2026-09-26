@@ -62,8 +62,6 @@ protected:
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _heldRing;
 	int8 _heldRingID = -1;

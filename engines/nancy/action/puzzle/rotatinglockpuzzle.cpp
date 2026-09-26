@@ -208,7 +208,7 @@ void RotatingLockPuzzle::execute() {
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 

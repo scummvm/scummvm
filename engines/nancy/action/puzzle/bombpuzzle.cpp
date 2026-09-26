@@ -213,8 +213,7 @@ void BombPuzzle::execute() {
 		if (_playerOrder.size() == _solveOrder.size()) {
 			_failed = false;
 			_state = kActionTrigger;
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 		}
 
 		break;
@@ -228,7 +227,7 @@ void BombPuzzle::execute() {
 			g_nancy->_sound->stopSound(_failSound);
 			_failSceneChange.execute();
 		} else {
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 

@@ -84,9 +84,6 @@ protected:
 	SoundDescription _selectSound;
 	SoundDescription _resetSound;
 
-	uint _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image1, _image2, _resetImage;
 
 	uint _numInbetweens = 1;

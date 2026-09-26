@@ -45,8 +45,6 @@ public:
 	Common::Array<byte> _correctSequence;
 	SoundDescription _moveSound;
 	SoundDescription _noMoveSound;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
 
 	Common::Array<byte> _playerSequence;
 	Common::Array<bool> _leverDirection;

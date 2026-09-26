@@ -141,7 +141,6 @@ protected:
 	int16 _exitCursorID1 = -1;  // -1: use _puzzleExitCursor
 	int16 _exitCursorID2 = -1;
 
-	SoundDescription _solveSound;
 	Common::String _solveTextKey;  // Looked up in CONVO chunk first
 	Common::String _solveText;     // Raw fallback used if key missing
 

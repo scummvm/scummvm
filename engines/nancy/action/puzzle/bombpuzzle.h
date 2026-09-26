@@ -56,7 +56,6 @@ protected:
 	SoundDescription _snipSound;
 	SoundDescription _noToolSound;
 	uint16 _toolID = 0;
-	SoundDescription _solveSound;
 	SceneChangeWithFlag _failSceneChange;
 	SoundDescription _failSound;
 

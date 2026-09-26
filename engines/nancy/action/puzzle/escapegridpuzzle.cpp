@@ -153,7 +153,7 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
-	_solveSound.readData(stream);
+	_solveSoundBlock.readData(stream);
 
 	_failScene.sceneID = stream.readUint16LE();
 	_failScene.frameID = stream.readUint16LE();
@@ -814,7 +814,7 @@ int EscapeGridPuzzle::checkOutcome() const {
 
 void EscapeGridPuzzle::endPuzzle(int outcome) {
 	_outcome = outcome;
-	_endSound = playSoundBlock(outcome == 0 ? _solveSound : _failSound);
+	_endSound = playSoundBlock(outcome == 0 ? _solveSoundBlock : _failSound);
 }
 
 bool EscapeGridPuzzle::tileRefColor(const Common::Point &cell, const Common::Point &pos, byte &r, byte &g, byte &b) const {

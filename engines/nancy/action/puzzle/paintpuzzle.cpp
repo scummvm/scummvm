@@ -92,7 +92,7 @@ void PaintPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
 
-	_solveSound.readData(stream);			// 0x150
+	_solveSoundBlock.readData(stream);			// 0x150
 
 	readExitHotspots(stream, _exitHotspots);
 }
@@ -473,18 +473,18 @@ void PaintPuzzle::execute() {
 			// No scene change: set the flag and keep the puzzle on screen, so
 			// the scene's own records can react to it.
 			_solveHandled = true;
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			NancySceneState.setEventFlag(_solveScene._flag);
 		} else if (_takenExit >= 0 || (_solved && !_solveHandled)) {
 			if (_solved) {
-				playSoundBlock(_solveSound);
+				playSoundBlock(_solveSoundBlock);
 			}
 			_state = kActionTrigger;
 		}
 		break;
 	case kActionTrigger:
 		// The solve sound gets to finish first
-		if (_takenExit < 0 && isSoundBlockPlaying(_solveSound)) {
+		if (_takenExit < 0 && isSoundBlockPlaying(_solveSoundBlock)) {
 			break;
 		}
 

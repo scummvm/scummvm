@@ -138,7 +138,6 @@ protected:
 
 	bool _solved = false;
 	bool _exitRequested = false;
-	SoundDescription _solveSound;		// the cue we wait on before changing scene
 
 	Graphics::ManagedSurface _image;
 };

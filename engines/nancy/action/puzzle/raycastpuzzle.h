@@ -76,8 +76,6 @@ protected:
 	uint16 _unknownSoundChannelID = 0;
 	SoundDescription _dummySound;
 
-	SoundDescription _solveSound;
-
 	Common::Array<uint32> _wallMap, _infoMap;
 	Common::Array<int16> _floorMap, _ceilingMap;
 	Common::Array<uint16> _wallLightMap, _floorCeilingLightMap, _heightMap;

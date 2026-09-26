@@ -80,7 +80,6 @@ protected:
 
 	// Multiple solve scenes, one for each cube orientation
 	Common::Array<uint> _solveSceneIDs;
-	SoundDescription _solveSound;
 
 	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _curPiece;

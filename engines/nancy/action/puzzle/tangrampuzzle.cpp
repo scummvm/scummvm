@@ -168,8 +168,7 @@ void TangramPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solved = true;
 			_state = kActionTrigger;
 		}
@@ -177,7 +176,7 @@ void TangramPuzzle::execute() {
 		break;
 	case kActionTrigger :
 		if (_solved) {
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				break;
 			}
 

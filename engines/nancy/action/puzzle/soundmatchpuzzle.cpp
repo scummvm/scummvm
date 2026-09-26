@@ -42,7 +42,7 @@ void SoundMatchPuzzle::readData(Common::SeekableReadStream &stream) {
 	_resetOnWrong = stream.readByte() != 0;
 
 	_solveScene.readData(stream);	// 0x084
-	_winSound.readNormal(stream);	// 0x09d
+	_solveSound.readNormal(stream);	// 0x09d
 	_exitScene.readData(stream);	// 0x0ce
 
 	readRect(stream, _exitHotspot);	// 0x0e7
@@ -139,10 +139,7 @@ void SoundMatchPuzzle::execute() {
 				if (_feedbackSoundRight.name == "NO SOUND" ||
 				    !g_nancy->_sound->isSoundPlaying(_feedbackSoundRight)) {
 					if (_matchedPairs >= _requiredPairs) {
-						if (_winSound.name != "NO SOUND") {
-							g_nancy->_sound->loadSound(_winSound);
-							g_nancy->_sound->playSound(_winSound);
-						}
+						playSolveSound();
 						_solveSubState = kWinSound;
 					} else {
 						_selectedSoundButton = -1;
@@ -160,9 +157,8 @@ void SoundMatchPuzzle::execute() {
 			break;
 
 		case kWinSound:
-			if (_winSound.name == "NO SOUND" ||
-			    !g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;
@@ -174,7 +170,7 @@ void SoundMatchPuzzle::execute() {
 		g_nancy->_sound->stopSound(_feedbackSoundRight);
 		if (_selectedSoundButton >= 0)
 			g_nancy->_sound->stopSound(_soundButtons[_selectedSoundButton].sound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_isExiting)
 			_exitScene.execute();
 		else

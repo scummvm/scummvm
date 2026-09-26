@@ -116,7 +116,6 @@ private:
 	uint16 _fontID = 0;
 	uint16 _cursorBlinkInterval = 500;
 
-	SoundDescription _doneSound;		// Nancy 8 - Nancy 14 solve sound
 	Common::String _doneText;
 	RandomSoundBlock _doneSoundBlock;	// Nancy 15 solve sound
 

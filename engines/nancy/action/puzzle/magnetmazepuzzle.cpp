@@ -84,8 +84,8 @@ void MagnetMazePuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.seek(start + 0x4a0);
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag  = stream.readByte();
-	_winDelaySec   = stream.readUint16LE();
-	_winSound.readNormal(stream);
+	_solveSoundDelay   = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 
 	stream.seek(start + 0x4d6);
 	_exitScene._sceneChange.readData(stream);
@@ -157,9 +157,8 @@ void MagnetMazePuzzle::execute() {
 			break;
 		case kWaitWinDelay:
 			if (g_system->getMillis() >= _winDelayEndTime) {
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
+				if (hasSolveSound()) {
+					playSolveSound();
 					_subState = kWaitWinSound;
 				} else {
 					_subState = kExitToWin;
@@ -167,8 +166,8 @@ void MagnetMazePuzzle::execute() {
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -184,7 +183,7 @@ void MagnetMazePuzzle::execute() {
 		g_nancy->_sound->stopSound(_placeSound);
 		g_nancy->_sound->stopSound(_resetSound);
 		g_nancy->_sound->stopSound(_bumpSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			MagnetMazePuzzleData *mmd = (MagnetMazePuzzleData *)NancySceneState.getPuzzleData(MagnetMazePuzzleData::getTag());
 			if (mmd)
@@ -389,7 +388,7 @@ void MagnetMazePuzzle::checkSolved() {
 	}
 	_isSolved = true;
 	_subState = kWaitWinDelay;
-	_winDelayEndTime = g_system->getMillis() + (uint32)_winDelaySec * 1000;
+	_winDelayEndTime = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 }
 
 void MagnetMazePuzzle::redraw() {

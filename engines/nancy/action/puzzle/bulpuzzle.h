@@ -110,9 +110,6 @@ protected:
 	SoundDescription _passSound;
 	SoundDescription _resetSound;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	uint16 _loseSoundDelay = 0;
 	SoundDescription _loseSound;
 	SceneChangeWithFlag _giveUpScene; // nancy11: separate scene reached by giving up via the exit hotspot

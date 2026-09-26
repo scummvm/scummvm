@@ -56,7 +56,6 @@ protected:
 
 	SoundDescription _feedbackSoundWrong;  // played on incorrect whale click
 	SoundDescription _feedbackSoundRight;  // played on correct whale click
-	SoundDescription _winSound;            // played when all pairs are matched
 
 	uint16 _requiredPairs = kNumButtons;   // how many matches needed to win
 

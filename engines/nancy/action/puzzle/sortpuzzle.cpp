@@ -107,7 +107,7 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag  = stream.readByte();
-	_winSound.readNormal(stream);
+	_solveSound.readNormal(stream);
 
 	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
@@ -168,7 +168,7 @@ void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag  = stream.readByte();
-	_winSound.readNormal(stream);             // 0x8bd
+	_solveSound.readNormal(stream);             // 0x8bd
 
 	_exitScene._sceneChange.readData(stream);            // 0x8ee
 	stream.skip(2);
@@ -331,17 +331,16 @@ void SortPuzzle::execute() {
 		case kPlaying:
 			break;
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_subState = kWaitWinSound;
 			} else {
 				_subState = kExitToWin;
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -355,7 +354,7 @@ void SortPuzzle::execute() {
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_dropSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			SortPuzzleData *spd = (SortPuzzleData *)NancySceneState.getPuzzleData(SortPuzzleData::getTag());
 			if (spd) {

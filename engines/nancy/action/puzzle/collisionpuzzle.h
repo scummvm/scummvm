@@ -111,9 +111,6 @@ protected:
 	SoundDescription _wallHitSound;
 	SoundDescription _exitButtonSound;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 

@@ -93,7 +93,7 @@ protected:
 
 	RandomSoundBlock _clickSound;
 
-	RandomSoundBlock _solveSound;	// plays out before the scene change
+	RandomSoundBlock _solveSoundBlock;	// plays out before the scene change
 
 	// -- Runtime state --
 	Graphics::ManagedSurface _letterImage;

@@ -116,15 +116,14 @@ void CubePuzzle::execute() {
 			}
 		}
 
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
 
 		_state = kActionTrigger;
 		break;
 	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 

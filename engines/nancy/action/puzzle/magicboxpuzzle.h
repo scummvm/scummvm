@@ -90,7 +90,7 @@ protected:
 
 	RandomSoundBlock _sounds[kNumSounds];
 
-	RandomSoundBlock _solveSound;
+	RandomSoundBlock _solveSoundBlock;
 	SceneChangeDescription _failScene;
 	FlagDescription _failFlag;
 	RandomSoundBlock _failSound;

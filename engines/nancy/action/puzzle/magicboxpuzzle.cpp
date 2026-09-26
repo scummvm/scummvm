@@ -100,7 +100,7 @@ void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
-	_solveSound.readData(stream);
+	_solveSoundBlock.readData(stream);
 
 	_failScene.sceneID = stream.readUint16LE();
 	_failScene.frameID = stream.readUint16LE();
@@ -360,7 +360,7 @@ void MagicBoxPuzzle::handleInput(NancyInput &input) {
 
 			if (isSolved()) {
 				_solved = true;
-				_endSound = playSoundBlock(_solveSound);
+				_endSound = playSoundBlock(_solveSoundBlock);
 			}
 		}
 

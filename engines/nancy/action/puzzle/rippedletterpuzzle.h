@@ -72,8 +72,6 @@ public:
 	SoundDescription _dropSound;
 	SoundDescription _rotateSound;
 
-	SoundDescription _solveSound;
-
 	int16 _customCursorID = -1;
 
 	Misc::MouseFollowObject _pickedUpPiece;

@@ -444,8 +444,7 @@ void OrderingPuzzle::execute() {
 				_needsRedraw = true;
 
 				if (enteredKeysMatchStage()) {
-					g_nancy->_sound->loadSound(_solveSound);
-					g_nancy->_sound->playSound(_solveSound);
+					playSolveSound();
 					_stageBlinkEndTime = g_nancy->getTotalPlayTime() + 400 + _solveSoundDelay * 1000;
 					_stageBlinkNextToggle = g_nancy->getTotalPlayTime() + 100;
 					_stageSymbolVisible = !_stageDisplayBlink;
@@ -638,12 +637,11 @@ void OrderingPuzzle::execute() {
 				break;
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 
@@ -657,7 +655,7 @@ void OrderingPuzzle::execute() {
 				drawStageDisplay();
 			}
 
-			if (g_nancy->getTotalPlayTime() < _stageBlinkEndTime || g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (g_nancy->getTotalPlayTime() < _stageBlinkEndTime || isSolveSoundPlaying()) {
 				break;
 			}
 

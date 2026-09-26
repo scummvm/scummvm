@@ -111,7 +111,7 @@ protected:
 
 	RandomSoundBlock _sounds[2];	// 0xa4/0xfa
 
-	RandomSoundBlock _solveSound;		// 0x150, plays before the solve scene change
+	RandomSoundBlock _solveSoundBlock;		// 0x150, plays before the solve scene change
 
 	Common::Array<ExitHotspot> _exitHotspots;
 

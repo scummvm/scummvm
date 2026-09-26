@@ -308,7 +308,7 @@ void BlocksPuzzle::execute() {
 			_solveSound = playSoundBlock(_sounds[kSuccessSound]);
 			_puzzleState = kWaitSolved;
 
-			if (_solveSound.name.empty()) {
+			if (!hasSolveSound()) {
 				_state = kActionTrigger;
 			}
 
@@ -356,7 +356,7 @@ void BlocksPuzzle::execute() {
 
 			break;
 		case kWaitSolved:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 

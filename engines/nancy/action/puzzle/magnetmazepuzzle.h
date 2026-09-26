@@ -78,9 +78,6 @@ protected:
 	SoundDescription _resetSound;
 	SoundDescription _bumpSound;
 
-	uint16                 _winDelaySec = 0;
-	SoundDescription       _winSound;
-
 	// Runtime state
 
 	enum SubState {

@@ -128,7 +128,7 @@ void DecoderPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
 
-	_solveSound.readData(stream);		// 0x185
+	_solveSoundBlock.readData(stream);		// 0x185
 
 	readExitHotspot(stream);
 	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
@@ -292,7 +292,7 @@ void DecoderPuzzle::execute() {
 		if (_solved) {
 			_resetMovie.close();
 			_resetting = false;
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			_state = kActionTrigger;
 			break;
 		}
@@ -342,7 +342,7 @@ void DecoderPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		// The solve voiceover gets to finish first
-		if (!_exitRequested && isSoundBlockPlaying(_solveSound)) {
+		if (!_exitRequested && isSoundBlockPlaying(_solveSoundBlock)) {
 			break;
 		}
 

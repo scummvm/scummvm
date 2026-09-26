@@ -137,8 +137,7 @@ void PasswordPuzzle::execute() {
 
 				if (solvedCurrentInput) {
 					if (_passwordFieldIsActive || _passwords.size() == 0) {
-						g_nancy->_sound->loadSound(_solveSound);
-						g_nancy->_sound->playSound(_solveSound);
+						playSolveSound();
 						_solveState = kSolved;
 					} else {
 						_passwordFieldIsActive = true;
@@ -170,7 +169,7 @@ void PasswordPuzzle::execute() {
 
 			break;
 		case kSolved:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}

@@ -105,9 +105,6 @@ protected:
 	SoundDescription _depthSound;     // data+0x46f  depth adjust sound
 	SoundDescription _cutSound;       // data+0x4a0  groove-cutting sound
 
-	uint16 _doneSoundDelaySecs = 0;        // data+0x4ea  wait before playing done sound (seconds)
-	SoundDescription _doneSound;           // data+0x4ec
-
 	byte  _itemCheckByte = 0;              // data+0x51d  0=no check, nonzero=require inventory item
 	int16 _itemID        = -1;             // data+0x51e
 

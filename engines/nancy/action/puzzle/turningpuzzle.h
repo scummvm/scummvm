@@ -105,9 +105,6 @@ protected:
 
 	Common::Array<uint16> _correctOrder;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	// -- Nancy13 only --
 	Common::Array<PieceType> _pieceTypes;
 	Common::Array<uint16> _pieceTypeIDs;					// per object

@@ -100,7 +100,7 @@ void TypingQuizPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE(); // 0x50f
 	_solveScene._flag.flag = g_nancy->_true;
 
-	_winSound.readNormal(stream);              // 0x511
+	_solveSound.readNormal(stream);              // 0x511
 
 	_defaultScene.readData(stream);            // 0x542 (20 bytes)
 	_defaultScene.continueSceneSound = stream.readUint16LE(); // 0x556
@@ -412,10 +412,7 @@ void TypingQuizPuzzle::execute() {
 		case kEvaluate:
 			if (_score >= (int)_effectiveTarget) {
 				_reachedTarget = true;
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
-				}
+				playSolveSound();
 			} else {
 				_reachedTarget    = false;
 				_reachedThreshold = _score >= (int)_scoreThreshold;
@@ -440,7 +437,7 @@ void TypingQuizPuzzle::execute() {
 		g_nancy->_sound->stopSound(_popSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_escapeSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 
 		triggerSceneChange();
 		finishExecution();

@@ -73,9 +73,9 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_cutSound.readNormal(stream);                    // +0x4a0 (49 bytes)
 
 	_solveScene.readData(stream);                 // +0x4d1 (25 bytes)
-	_doneSoundDelaySecs = stream.readUint16LE();     // +0x4ea
+	_solveSoundDelay = stream.readUint16LE();     // +0x4ea
 
-	_doneSound.readNormal(stream);                   // +0x4ec (49 bytes)
+	_solveSound.readNormal(stream);                   // +0x4ec (49 bytes)
 
 	_itemCheckByte = stream.readByte();              // +0x51d
 	_itemID        = stream.readSint16LE();          // +0x51e
@@ -206,7 +206,7 @@ void CuttingPuzzle::execute() {
 				}
 				if (allMatch) {
 					_solved = true;
-					_timerDeadline = g_system->getMillis() + (uint32)_doneSoundDelaySecs * 1000;
+					_timerDeadline = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 					_subState = kWaitTimer;
 					break;
 				}
@@ -275,8 +275,7 @@ void CuttingPuzzle::execute() {
 		case kLatheFinished:
 			if (_solved) {
 				// Load and play the completion sound, then wait for it to finish.
-				g_nancy->_sound->loadSound(_doneSound);
-				g_nancy->_sound->playSound(_doneSound);
+				playSolveSound();
 				_subState = kWaitDoneSound;
 			} else {
 				// Not solved: finish this AR (will process outcome in kActionTrigger).
@@ -295,8 +294,8 @@ void CuttingPuzzle::execute() {
 			break;
 
 		case kWaitDoneSound:
-			if (!g_nancy->_sound->isSoundPlaying(_doneSound)) {
-				g_nancy->_sound->stopSound(_doneSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;

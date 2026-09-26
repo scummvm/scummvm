@@ -88,8 +88,8 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 	_buttonSound.readNormal(stream);
 	_solveScene.readData(stream);
-	_alarmSoundDelay = stream.readUint16LE();
-	_alarmSetSound.readNormal(stream);
+	_solveSoundDelay = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 }
 
@@ -160,14 +160,13 @@ void SetPlayerClock::execute() {
 				// Alarm has been set, wait for timer
 				if (g_system->getMillis() > _sceneChangeTime) {
 					_sceneChangeTime = 0;
-					g_nancy->_sound->loadSound(_alarmSetSound);
-					g_nancy->_sound->playSound(_alarmSetSound);
+					playSolveSound();
 				}
 			}
 			if (_sceneChangeTime == 0) {
-				if (!g_nancy->_sound->isSoundPlaying(_alarmSetSound)) {
+				if (!isSolveSoundPlaying()) {
 					g_nancy->_sound->stopSound(_buttonSound);
-					g_nancy->_sound->stopSound(_alarmSetSound);
+					g_nancy->_sound->stopSound(_solveSound);
 					NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
 					_solveScene.execute();
 					finishExecution();
@@ -282,7 +281,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 				_clearButton = true;
 				_state = kActionTrigger;
 				_alarmState = kWait;
-				_sceneChangeTime = g_system->getMillis() + (_alarmSoundDelay * 1000);
+				_sceneChangeTime = g_system->getMillis() + (_solveSoundDelay * 1000);
 				return;
 			}
 		}

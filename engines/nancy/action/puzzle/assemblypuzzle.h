@@ -84,7 +84,6 @@ protected:
 	Common::Array<SoundDescription> _wrongPieceSounds;
 	Common::Array<Common::String> _wrongPieceTexts;
 
-	SoundDescription _solveSound;
 	Common::String _solveText;
 
 	Graphics::ManagedSurface _image;

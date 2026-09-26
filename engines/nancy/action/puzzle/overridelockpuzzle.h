@@ -69,8 +69,6 @@ protected:
 
 	Time _buttonPopTime;
 
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 
 	Common::Array<byte> _buttonOrder;

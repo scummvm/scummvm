@@ -53,7 +53,6 @@ public:
 	Common::Array<Common::Array<int16>> _startTileOrder;
 	Common::Array<Common::Array<int16>> _correctTileOrder;
 	SoundDescription _clickSound;
-	SoundDescription _solveSound;
 
 	bool _retainState = true;
 

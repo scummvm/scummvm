@@ -107,9 +107,6 @@ protected:
 	SoundDescription _failSound;
 	SoundDescription _moveSound;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 

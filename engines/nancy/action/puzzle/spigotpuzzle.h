@@ -72,9 +72,6 @@ protected:
 	SoundDescription _letterSound;
 	SoundDescription _spigotSound;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	Graphics::ManagedSurface _image;
 
 	Common::Array<uint16> _currentOrder;

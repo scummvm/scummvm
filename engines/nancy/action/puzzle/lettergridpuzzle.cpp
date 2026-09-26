@@ -86,7 +86,7 @@ void LetterGridPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag = stream.readByte();
 
-	_solveSound.readData(stream);
+	_solveSoundBlock.readData(stream);
 
 	readExitHotspot(stream);
 	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
@@ -275,12 +275,12 @@ void LetterGridPuzzle::execute() {
 
 		// The solve sound plays out before the scene changes
 		if (!_solveSoundStarted) {
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			_solveSoundStarted = true;
 			break;
 		}
 
-		if (!_solveSound.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_solveSound.channel)) {
+		if (!_solveSoundBlock.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)_solveSoundBlock.channel)) {
 			break;
 		}
 

@@ -66,7 +66,6 @@ protected:
 	SoundDescription _typeSound;
 	SoundDescription _eraseSound;
 	SoundDescription _enterSound;
-	SoundDescription _successSound;
 	SoundDescription _exitSound;
 	Common::Array<Riddle> _riddles;
 

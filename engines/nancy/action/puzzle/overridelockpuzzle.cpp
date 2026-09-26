@@ -136,8 +136,7 @@ void OverrideLockPuzzle::execute() {
 
 			if (_playerOrder.size() == _buttonOrder.size()) {
 				// Solved the puzzle
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
+				playSolveSound();
 				_state = kActionTrigger;
 				_solveState = kSolved;
 			}
@@ -150,7 +149,7 @@ void OverrideLockPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kSolved:
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 

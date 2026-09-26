@@ -231,7 +231,7 @@ void HamRadioPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.readData(stream);
+	_solveCCSound.readData(stream);
 
 	readRect(stream, _exitButtonDest);
 	readRect(stream, _exitButtonSrc);
@@ -355,7 +355,7 @@ void HamRadioPuzzle::execute() {
 							_solvedCodeword = true;
 							_curCharString.clear();
 
-							_solveSound.loadAndPlay(); // Sound delay is ignored
+							_solveCCSound.loadAndPlay(); // Sound delay is ignored
 						}
 					}
 				}

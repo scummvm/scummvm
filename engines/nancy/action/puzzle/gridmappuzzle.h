@@ -109,7 +109,6 @@ protected:
 
 	SoundDescription _pickupSound;
 	SoundDescription _placeSound;
-	SoundDescription _winSound;
 
 	// Runtime state
 

@@ -47,7 +47,6 @@ public:
 	// _screenPosition 0x24
 	Common::Array<Common::String> _names;
 	Common::Array<Common::String> _passwords;
-	SoundDescription _solveSound;
 	SceneChangeWithFlag _failExitScene;
 	SoundDescription _failSound;
 

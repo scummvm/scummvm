@@ -131,7 +131,6 @@ protected:
 	bool _lastStepCorrect = false;
 	bool _solved = false;
 	bool _exitRequested = false;
-	SoundDescription _solveSound;
 
 	Graphics::ManagedSurface _image;
 };

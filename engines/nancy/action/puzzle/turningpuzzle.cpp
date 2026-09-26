@@ -496,15 +496,14 @@ void TurningPuzzle::execute() {
 			if (_solveSoundDelayTime == 0) {
 				_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
 			} else if (g_nancy->getTotalPlayTime() > _solveSoundDelayTime) {
-				g_nancy->_sound->loadSound(_solveSound);
-				g_nancy->_sound->playSound(_solveSound);
+				playSolveSound();
 				_shouldSetSolveFlag = true;
 				_solveState = kWaitForSound;
 			}
 
 			return;
 		case kWaitForSound :
-			if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (isSolveSoundPlaying()) {
 				return;
 			}
 

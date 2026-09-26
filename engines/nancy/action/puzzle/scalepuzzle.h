@@ -106,7 +106,7 @@ protected:
 	Common::Path _imageName;				// 0x00
 	uint16 _hoverCursorType = 0;			// 0x21 - raw Nancy13 cursor type over a coin
 	uint16 _dragCursorType = 0;				// 0x23 - raw Nancy13 cursor type while carrying
-	RandomSoundBlock _solveSound;			// the first sound block; played once solved
+	RandomSoundBlock _solveSoundBlock;			// the first sound block; played once solved
 
 	Common::Array<Target> _targets;			// the figures to match in this scene
 	Common::Array<Coin> _coins;				// the coin definitions

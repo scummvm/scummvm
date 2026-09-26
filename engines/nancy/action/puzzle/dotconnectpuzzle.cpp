@@ -61,8 +61,8 @@ void DotConnectPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	_solveScene._flag.label = stream.readSint16LE();
 	_solveScene._flag.flag  = stream.readByte();
-	_winDelaySec = stream.readUint16LE();
-	_winSound.readNormal(stream);
+	_solveSoundDelay = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 
 	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
@@ -118,9 +118,8 @@ void DotConnectPuzzle::execute() {
 			break;
 		case kWaitWinDelay:
 			if (g_system->getMillis() >= _winDelayEndTime) {
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
+				if (hasSolveSound()) {
+					playSolveSound();
 					_subState = kWaitWinSound;
 				} else {
 					_subState = kExitToWin;
@@ -131,8 +130,8 @@ void DotConnectPuzzle::execute() {
 			_subState = kWaitWinSound;
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -149,7 +148,7 @@ void DotConnectPuzzle::execute() {
 		g_nancy->_sound->stopSound(_startHint);
 		g_nancy->_sound->stopSound(_tooManyLinesSound);
 		g_nancy->_sound->stopSound(_allCoveredSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			_solveScene.execute();
 		} else {
@@ -281,7 +280,7 @@ void DotConnectPuzzle::checkWin() {
 
 	if (allMatch) {
 		_subState = kWaitWinDelay;
-		_winDelayEndTime = g_system->getMillis() + (uint32)_winDelaySec * 1000;
+		_winDelayEndTime = g_system->getMillis() + (uint32)_solveSoundDelay * 1000;
 		return;
 	}
 

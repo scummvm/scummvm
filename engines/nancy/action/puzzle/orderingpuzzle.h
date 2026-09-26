@@ -125,9 +125,6 @@ protected:
 	SoundDescription _itemSound;
 	SoundDescription _popUpSound;
 
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _clickedSequence;
