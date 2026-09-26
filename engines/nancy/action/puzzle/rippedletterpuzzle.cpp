@@ -37,12 +37,7 @@ namespace Nancy {
 namespace Action {
 
 void RippedLetterPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_imageName, _image);
 
@@ -65,7 +60,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
 	byte maxWidth = 6;
-	byte maxHeight = g_nancy->getGameType() <= kGameTypeNancy6 ? 4 : 5;
+	byte maxHeight = g_nancy->getGameType() <=
+ kGameTypeNancy6 ? 4 : 5;
 	byte width = maxWidth;
 	byte height = maxHeight;
 
@@ -118,7 +114,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy9) {
-		uint16 numDoubledElements = stream.readUint16LE();	// 0 in Nancy 12
+		uint16 numDoub
+ledElements = stream.readUint16LE();	// 0 in Nancy 12
 		_doubles.resize(numDoubledElements > 0 ? numDoubledElements : 20);
 		uint i = 0;
 		for (uint j = 0; j < 20; ++j) {
@@ -170,7 +167,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 			for (uint j = 0; j < width; ++j) {
 				_solveOrderAlt[i * width + j] = (elemSize == 1 ? stream.readByte() : stream.readSint16LE());
 			}
-			stream.skip(maxWidth > width ? (maxWidth - width) * elemSize : 0);
+			stream.skip(maxWidth > width ? (maxWidth - width) * e
+lemSize : 0);
 		}
 		stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
@@ -193,7 +191,7 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	_dropSound.readNormal(stream);
 	_rotateSound.readNormal(stream);
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 
 	_exitScene.readData(stream);
@@ -228,7 +226,8 @@ void RippedLetterPuzzle::execute() {
 		if (!_puzzleState->playerHasTriedPuzzle || _puzzleState->sceneId != sceneId) {
 			_puzzleState->order = _initOrder;
 			_puzzleState->rotations = _initRotations;
-			_puzzleState->playerHasTriedPuzzle = true;
+			_puzzleState->playerHasTriedP
+uzzle = true;
 			_puzzleState->pickedUpPieceID = -1;
 			_puzzleState->pickedUpPieceLastPos = -1;
 			_puzzleState->pickedUpPieceRot = 0;
@@ -269,12 +268,11 @@ void RippedLetterPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound :
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -289,17 +287,18 @@ void RippedLetterPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			if (_solveExitScene._sceneChange.sceneID == NancySceneState.getSceneInfo().sceneID) {
+			if (_solveScene._sceneChange.sceneID == NancySceneState.getSceneInfo().sceneID) {
 				// nancy9 scene 2484 is auto-solved for you, but has a valid scene change back to itself
 				return;
 			}
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			break;
 		}
 
 		g_nancy->_sound->stopSound(_takeSound);
-		g_nancy->_sound->stopSound(_dropSound);
+		g_nancy->_sound->stopS
+ound(_dropSound);
 		g_nancy->_sound->stopSound(_rotateSound);
 		finishExecution();
 	}
@@ -351,7 +350,8 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 					g_nancy->_cursor->setCursorType(takeCursor);
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
-						// Player has clicked, take the piece
+						// 
+Player has clicked, take the piece
 
 						// First, copy the graphic from the full drawSurface...
 						if (!_useCustomPickUpTile) {
@@ -410,7 +410,8 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						}
 
 						SWAP<int8>(_puzzleState->order[i], _puzzleState->pickedUpPieceID);
-						SWAP<byte>(_puzzleState->rotations[i], _puzzleState->pickedUpPieceRot);
+						SWAP<byte>(_puzzleState->rotations[i], _puzzleState->pickedUpPiec
+eRot);
 
 						// Draw the newly placed piece
 						drawPiece(i, _puzzleState->rotations[i], _puzzleState->order[i]);
@@ -428,7 +429,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 	if (_puzzleState->pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
-		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+		if (isExitHotspotHovered(input)) {
 			if (_customCursorID != -1)
 				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_customCursorID, true);
 			else
@@ -472,7 +473,8 @@ Common::Rect RippedLetterPuzzle::getPieceHotspot(const Common::Rect &hotspot, co
 	return ret;
 }
 
-bool RippedLetterPuzzle::checkOrder(bool useAlt) {
+bool RippedLetterPuzzle::checkOrder(bool 
+useAlt) {
 	auto &current = _puzzleState->order;
 	auto &correct = useAlt ? _solveOrderAlt : _solveOrder;
 

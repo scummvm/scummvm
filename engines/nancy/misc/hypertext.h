@@ -25,6 +25,9 @@
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
+
+class Font;
+
 namespace Misc {
 
 // Base class for handling the engine's custom hypertext format
@@ -44,14 +47,25 @@ public:
 	bool hasBeenDrawn() const { return !_needsTextRedraw; }
 
 protected:
+	enum Justification { kJustifyLeft, kJustifyRight, kJustifyCenter };
+
+	// Image embedded in the text via the <iNAME,left,top,right,bottom> tag
+	struct InlineImage {
+		Common::Path name;
+		Common::Rect src; // empty means the whole image
+	};
+
 	void initSurfaces(uint width, uint height, const struct Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor);
 
 	void addTextLine(const Common::String &text);
 	void addImage(uint16 lineID, const Common::Rect &src);
-	void setImageName(const Common::Path &name);
+	void setImageName(const Comm
+on::Path &name);
 
 	void drawAllText(const Common::Rect &textBounds, uint leftOffsetNonNewline, uint fontID, uint highlightFontID);
 	virtual void clear();
+
+	void drawInlineImage(const InlineImage &inlineImage, const Common::Rect &textBounds, uint horizontalOffset, uint justification, const Font *font);
 
 	Graphics::ManagedSurface _fullSurface; 			// Contains all rendered text (may be cropped)
 	Graphics::ManagedSurface _textHighlightSurface; // Same as above, but drawn with the highlight font

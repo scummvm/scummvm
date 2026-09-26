@@ -51,7 +51,8 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	                  ConfMan.getBool("audio_popfix_enabled");
 }
 
-reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
+reg_t GameFeatures::getDetectionAddr
+(const Common::String &objName, Selector slc, int methodNum) {
 	// Get address of target object
 	reg_t objAddr = _segMan->findObjectByName(objName, 0);
 	reg_t addr;
@@ -114,7 +115,8 @@ bool GameFeatures::autoDetectSoundType() {
 				// method of the Sound object
 				switch (intParam) {
 				case 1:
-					_doSoundType = SCI_VERSION_0_EARLY;
+					_doSoundType = SCI_VERSION_0_EARL
+Y;
 					break;
 				case 7:
 					_doSoundType = SCI_VERSION_1_EARLY;
@@ -169,7 +171,8 @@ SciVersion GameFeatures::detectDoSoundType() {
 
 				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
 					_doSoundType = SCI_VERSION_1_LATE;
-				else if (getSciVersion() > SCI_VERSION_01)
+				else if
+ (getSciVersion() > SCI_VERSION_01)
 					_doSoundType = SCI_VERSION_1_EARLY;
 			}
 		}
@@ -220,7 +223,8 @@ SciVersion GameFeatures::detectSetCursorType() {
 				// the Windows interpreter contained the old. The scripts tested
 				// the platform to see which version to call.
 				if (g_sci->getGameId() == GID_KQ5 && _useWindowsCursors) {
-					_setCursorType = SCI_VERSION_0_EARLY;
+					_setCur
+sorType = SCI_VERSION_0_EARLY;
 				} else {
 					_setCursorType = SCI_VERSION_1_1;
 				}
@@ -292,7 +296,8 @@ SciVersion GameFeatures::detectLofsType() {
 			// SCI1.1 type, i.e. we compensate for the fact that the heap is attached
 			// to the end of the script
 			_lofsType = SCI_VERSION_1_1;
-			return _lofsType;
+			return _
+lofsType;
 		}
 
 		if (getSciVersion() == SCI_VERSION_3) {
@@ -360,7 +365,8 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
 				// If kDrawPic is called with 3 parameters from the overlay
-				// method then the game is using old graphics functions.
+				// method then the gam
+e is using old graphics functions.
 				// If instead it's called with 4 parameters then it's using
 				// the newer ones. (KQ4 late, SQ3 1.018)
 				// Ignore other arg counts as those are unrelated to overlays
@@ -415,7 +421,8 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 					searchRoomObj = true;
 				}
 			} else {
-				// The game doesn't have an overlay selector, so search for it
+				// The g
+ame doesn't have an overlay selector, so search for it
 				// manually
 				searchRoomObj = true;
 			}
@@ -479,7 +486,8 @@ SciVersion GameFeatures::detectMessageFunctionType() {
 		_messageFunctionType = SCI_VERSION_1_1;
 
 	debugC(1, kDebugLevelVM, "Detected message function type: %s", getSciVersionDesc(_messageFunctionType));
-	return _messageFunctionType;
+	return _messageFunctionTyp
+e;
 }
 
 #ifdef ENABLE_SCI32
@@ -534,7 +542,8 @@ bool GameFeatures::autoDetectSci21KernelType() {
 			// Finding 0x40 as kDoSound in the Sound::play() function means the
 			// game is using the modified SCI2 kernel table found in some older
 			// SCI2.1 games (GK2 demo, KQ7 v1.4).
-			// Finding 0x75 as kDoSound means the game is using the regular
+			// Finding 0x75 as kDoSound means the game is usi
+ng the regular
 			// SCI2.1 kernel table.
 			if (kFuncNum == 0x40) {
 				_sci21KernelType = SCI_VERSION_2;
@@ -598,7 +607,7 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	case GID_TORIN:
 		return true;
 	case GID_HOYLE5:
-		// Hoyle school house math does not use a volume global
+		// Hoyle school house does not use a volume global
 		return !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 21));
 	default:
 		return false;
@@ -625,7 +634,8 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	case GID_LSL7:
 	case GID_MOTHERGOOSEHIRES:
 	case GID_PHANTASMAGORIA:
-	case GID_TORIN:
+	case GI
+D_TORIN:
 		return kMessageTypeSyncStrategyDefault;
 
 	case GID_LSL6HIRES:
@@ -703,7 +713,8 @@ MoveCountType GameFeatures::detectMoveCountType() {
 		if (getSciVersion() <= SCI_VERSION_01) {
 			_moveCountType = kIncrementMoveCount;
 		} else if (getSciVersion() >= SCI_VERSION_1_1) {
-			// SCI1.1 and newer games always ignore move count
+			// SCI1.1 a
+nd newer games always ignore move count
 			_moveCountType = kIgnoreMoveCount;
 		} else {
 			if (!autoDetectMoveCountType()) {
@@ -770,7 +781,8 @@ bool GameFeatures::generalMidiOnly() {
 // Fairy Tales uses the new way.
 // X-Mas 1990 uses the old way, no PseudoMouse class.
 // Space Quest 4 floppy (1.1) uses the new way.
-// Mixed Up Mother Goose uses the old way, no PseudoMouse class.
+// Mixed Up Mother Goose uses the old way, no PseudoMouse clas
+s.
 //
 // SCI1MIDDLE:
 // Leisure Suit Larry 5 demo uses the new way.
@@ -814,7 +826,8 @@ PseudoMouseAbilityType GameFeatures::detectPseudoMouseAbility() {
 //  edge case, a corresponding script change to allow autodetection hasn't been found.
 //
 // The Japanese interpreters have their own versions of GetLongest() to support
-//  double byte characters which seems to be how QFG1 Japanese reintroduced it
+//  double byte characters which seems 
+to be how QFG1 Japanese reintroduced it
 //  even though its interpreter is later than SQ3/LSL3 multilingual versions.
 bool GameFeatures::useEarlyGetLongestTextCalculations() const {
 	switch (getSciVersion()) {
@@ -895,7 +908,8 @@ bool GameFeatures::canSaveFromGMM() const {
 	case GID_MOTHERGOOSE256:
 	case GID_MOTHERGOOSEHIRES:
 	case GID_PHANTASMAGORIA:
-	case GID_RAMA:
+	ca
+se GID_RAMA:
 	case GID_SLATER:
 		return false;
 	default:

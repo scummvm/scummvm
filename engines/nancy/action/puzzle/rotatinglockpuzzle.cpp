@@ -57,7 +57,8 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	_srcRects.reserve(numSrcRects);
 	for (uint i = 0; i < numSrcRects; ++i) {
 		_srcRects.push_back(Common::Rect());
-		readRect(stream, _srcRects.back());
+		readRect(stream, _srcRects.ba
+ck());
 	}
 
 	_destRects.reserve(numDials);
@@ -130,13 +131,14 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	_clickSound.readNormal(stream);
 
 	if (isNancy10) {
-		// Nancy 10 splits the old SceneChangeWithFlag (25 bytes with embedded
+		// Nancy 10 sp
+lits the old SceneChangeWithFlag (25 bytes with embedded
 		// flag) into a 20-byte SceneChangeDescription + 2-byte pause tail,
 		// with the event flag stored as a separate (label, value) pair.
-		_solveExitScene._sceneChange.readData(stream);
+		_solveScene._sceneChange.readData(stream);
 		stream.skip(2);
-		_solveExitScene._flag.label = stream.readSint16LE();
-		_solveExitScene._flag.flag  = stream.readByte();
+		_solveScene._flag.label = stream.readSint16LE();
+		_solveScene._flag.flag  = stream.readByte();
 
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
@@ -148,7 +150,7 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		readRect(stream, _exitHotspot);
 	} else {
-		_solveExitScene.readData(stream);
+		_solveScene.readData(stream);
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
 
@@ -196,7 +198,8 @@ void RotatingLockPuzzle::execute() {
 				}
 			}
 
-			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
+			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay
+ * 1000;
 			_solveState = kPlaySound;
 			// fall through
 		case kPlaySound:
@@ -208,7 +211,7 @@ void RotatingLockPuzzle::execute() {
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 
@@ -225,7 +228,7 @@ void RotatingLockPuzzle::execute() {
 		if (_solveState == kNotSolved)
 			_exitScene.execute();
 		else
-			_solveExitScene.execute();
+			_solveScene.execute();
 
 		finishExecution();
 	}
@@ -236,9 +239,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -272,7 +273,8 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_downHotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursor->setCursorType(_downCursorType, true, false);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (input.input & Nan
+cyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->loadSound(_clickSound, nullptr, true);
 				g_nancy->_sound->playSound(_clickSound);
 

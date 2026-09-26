@@ -55,21 +55,16 @@ public:
 };
 
 SoundEqualizerPuzzle::~SoundEqualizerPuzzle() {
-	for (auto *scrollbar : _sliders) {
+	for (a
+uto *scrollbar : _sliders) {
 		delete scrollbar;
 	}
 }
 
 void SoundEqualizerPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
 	assert(viewportData);
@@ -101,7 +96,7 @@ void SoundEqualizerPuzzle::registerGraphics() {
 		scrollbar->registerGraphics();
 	}
 
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void SoundEqualizerPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -135,7 +130,8 @@ void SoundEqualizerPuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < 3; ++i) {
 		// Only read the data for the current difficulty and skip over the rest
 		if (i == difficulty) {
-			for (uint j = 0; j < 6; ++j) {
+			for (uint j = 0; j < 
+6; ++j) {
 				_sliderInitialPositions[j] = stream.readUint16LE();
 			}
 		} else {
@@ -181,12 +177,12 @@ void SoundEqualizerPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	_exitScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
 	_exitSound.readNormal(stream);
 
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 }
 
 void SoundEqualizerPuzzle::execute() {
@@ -222,8 +218,9 @@ void SoundEqualizerPuzzle::execute() {
 			g_nancy->_sound->stopSound(_sounds[i]);
 		}
 
-		NancySceneState.changeScene(_exitScene);
+		NancySceneState.changeScene(_exitScene._sceneChange);
 		finishExecution();
+
 	}
 }
 
@@ -282,9 +279,10 @@ void SoundEqualizerPuzzle::updateSlider(uint sliderID) {
 
 				// Since the rate for the "solve" sound never actually changes,
 				// we only need the volume to be correct.
-				NancySceneState.setEventFlag(_solveFlag);
+				NancySceneState.setEventFlag(_solveScene._flag);
 			} else {
-				g_nancy->_sound->setVolume(_sounds[sliderID - 3], _minVolume[sliderID - 3]);
+				g_nancy->_sound->setVolume(_sounds[sliderID - 3], _minVolume
+[sliderID - 3]);
 			}
 		}
 	}

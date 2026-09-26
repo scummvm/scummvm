@@ -35,12 +35,7 @@ namespace Nancy {
 namespace Action {
 
 void Telephone::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_imageName, _image);
 	g_nancy->_resource->loadImage(_displayAnimName, _animImage);
@@ -64,7 +59,8 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	uint16 maxNumButtons = _phoneType == kNewPhone ? 20 : 12;
 
 	if (_phoneType == kNewPhone) {
-		_hasDisplay = stream.readByte();
+		_h
+asDisplay = stream.readByte();
 		_displayFont = stream.readUint16LE();
 		readFilename(stream, _displayAnimName);
 		_displayAnimFrameTime = stream.readUint32LE();
@@ -133,7 +129,8 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		_longDistanceNumberLength = stream.readUint16LE();
 	}
 
-	uint numCalls = stream.readUint16LE();
+	uint numCalls = stream.readU
+int16LE();
 
 	_calls.resize(numCalls);
 	for (uint i = 0; i < numCalls; ++i) {
@@ -202,7 +199,8 @@ void Telephone::execute() {
 				// to place a call, so the whole number gets matched, with digits that were
 				// never entered counting as zeroes
 				bool matchWholeNumber = !_dialAutomatically;
-				uint numberLength = (_calledNumber.size() && _calledNumber[0] == 1) ? _longDistanceNumberLength : _numberLength;
+				uint numberLength = (_calledNu
+mber.size() && _calledNumber[0] == 1) ? _longDistanceNumberLength : _numberLength;
 				bool isNumberComplete = matchWholeNumber || _calledNumber.size() >= numberLength;
 
 				for (uint i = 0; i < _calls.size(); ++i) {
@@ -271,7 +269,8 @@ void Telephone::execute() {
 		case kButtonPress:
 			if (!g_nancy->_sound->isSoundPlaying(_genericButtonSound)) {
 				g_nancy->_sound->stopSound(_genericButtonSound);
-				_drawSurface.fillRect(_destRects[_buttonLastPushed], g_nancy->_graphics->getTransColor());
+				_dra
+wSurface.fillRect(_destRects[_buttonLastPushed], g_nancy->_graphics->getTransColor());
 				_needsRedraw = true;
 
 				if (_isShowingDirectory) {
@@ -335,7 +334,8 @@ void Telephone::execute() {
 
 			break;
 		case kPreCall:
-			if (!g_nancy->_sound->isSoundPlaying(_preCallSound)) {
+			if (!g_nancy->_sound->
+isSoundPlaying(_preCallSound)) {
 				g_nancy->_sound->stopSound(_preCallSound);
 
 				if (!_calls[_selected].text.empty()) {
@@ -415,7 +415,8 @@ void Telephone::execute() {
 void Telephone::handleInput(NancyInput &input) {
 	int buttonNr = -1;
 	// Cursor gets changed regardless of state
-	for (int i = 0; i < (int)_destRects.size(); ++i) {
+	for (int i = 0; i < (int
+)_destRects.size(); ++i) {
 		// Dial button is an exception
 		if (i == _dialButtonID && !_calledNumber.size() && !_isShowingDirectory) {
 			continue;
@@ -436,9 +437,7 @@ void Telephone::handleInput(NancyInput &input) {
 	// The exit hotspot stays active for as long as the record is running, even
 	// while ringing, talking, or playing the bad number message. Only the
 	// buttons are limited to the states where the phone accepts input.
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (_phoneType == kTelephone) {
 				g_nancy->_sound->loadSound(_hangUpSound);
@@ -483,7 +482,8 @@ void Telephone::handleInput(NancyInput &input) {
 				_drawSurface.blitFrom(_image, _dialHighlightSrc, _destRects[_dialButtonID]);
 
 				if (_dirButtonID != -1) {
-					_drawSurface.fillRect(_destRects[_dirButtonID], _drawSurface.getTransparentColor());
+					_drawSurface.fillRec
+t(_destRects[_dirButtonID], _drawSurface.getTransparentColor());
 				}
 
 				_animIsStopped = true;
@@ -551,7 +551,8 @@ void Telephone::handleInput(NancyInput &input) {
 
 			if (directorySwitch) {
 				// Handle switch to directory mode
-				_isShowingDirectory = true;
+				_isShowi
+ngDirectory = true;
 				changeDirectoryEntry = true;
 				_calledNumber.clear();
 			}

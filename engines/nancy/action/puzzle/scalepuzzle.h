@@ -23,7 +23,7 @@
 #define NANCY_ACTION_SCALEPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -42,9 +42,10 @@ namespace Action {
 // number. Figures must be matched in order, the lights stay on once lit,
 // and clearing the pans resets them. The puzzle is solved once every
 // figure of the current scene is lit.
-class ScalePuzzle : public RenderActionRecord {
+class ScalePuzzle : public PuzzleRecord {
 public:
-	ScalePuzzle() : RenderActionRecord(7) {}
+	ScalePuzzle() : PuzzleRecord
+(7) {}
 	virtual ~ScalePuzzle() {}
 
 	void init() override;
@@ -92,23 +93,18 @@ protected:
 	SlotGroup &group(SlotRegion region);
 	// The slot whose rect contains the cursor. When wantEmpty is set only empty slots match
 	// (used while carrying), otherwise only occupied slots match (used while picking up).
-	bool slotAtCursor(const Common::Point &mousePos, bool wantEmpty, SlotRegion &outRegion, uint &outIndex) const;
+	bool slotAtCursor(const Common::Point &mou
+sePos, bool wantEmpty, SlotRegion &outRegion, uint &outIndex) const;
 	void recomputeBalance();
 	// Draws the image region src centred inside slot (the original centres coins in their
 	// slots, FUN_004b6660 case 0).
 	void blitCentered(const Common::Rect &src, const Common::Rect &slot);
 	void redraw();
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	void playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
-	Common::Path _imageName;				// 0x00
 	uint16 _hoverCursorType = 0;			// 0x21 - raw Nancy13 cursor type over a coin
 	uint16 _dragCursorType = 0;				// 0x23 - raw Nancy13 cursor type while carrying
-	SceneChangeDescription _solveScene;		// 0x25 - applied when solved (9999 => none)
-	FlagDescription _solveFlag;				// 0x27 - set when solved
-	RandomSoundBlock _solveSound;			// the first sound block; played once solved
+	RandomSoundBlock _solveSoundBlock;			// the first sound block; played once solved
 
 	Common::Array<Target> _targets;			// the figures to match in this scene
 	Common::Array<Coin> _coins;				// the coin definitions
@@ -128,13 +124,6 @@ protected:
 	RandomSoundBlock _dropTraySound;		// 0x218 - coin dropped back into the tray
 	RandomSoundBlock _dropPanSound;			// 0x1c4 - coin dropped onto a pan
 
-	// The clickable "give up / exit" hotspot (the base-class hotspot record). Clicking it
-	// always jumps to the scene's first frame and sets an event flag.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
-
 	// -- Runtime state --
 	int _indicatorZeroFrame = 0;			// the "0" frame (frames.size() / 2)
 	int _tilt = 0;							// the indicator value: sum(right) - sum(left)
@@ -144,10 +133,10 @@ protected:
 	Common::Point _dragPos;					// cursor position (viewport space) while carrying
 
 	bool _solved = false;
-	bool _solveTriggered = false;			// the solve flag/scene are applied only once
+	bo
+ol _solveTriggered = false;			// the solve flag/scene are applied only once
 	bool _exitRequested = false;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

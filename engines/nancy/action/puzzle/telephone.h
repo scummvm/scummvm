@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TELEPHONE_H
 #define NANCY_ACTION_TELEPHONE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -30,7 +30,7 @@ class Font;
 
 namespace Action {
 
-class Telephone : public RenderActionRecord {
+class Telephone : public PuzzleRecord {
 public:
 	struct PhoneCall {
 		Common::Array<byte> phoneNumber;
@@ -47,7 +47,7 @@ public:
 	enum PhoneType { kTelephone, kNewPhone };
 
 	Telephone(PhoneType phoneType) :
-		RenderActionRecord(7),
+		PuzzleRecord(7),
 		_callState(kWaiting),
 		_buttonLastPushed(-1),
 		_selected(-1),
@@ -66,9 +66,9 @@ public:
 	bool isViewportRelative() const override { return true; }
 
 protected:
-	Common::String getRecordTypeName() const override { return _phoneType == kNewPhone ? "NewPhone" : "Telephone"; }
+	Common::String getRecordTypeName() const override { return _phoneType 
+== kNewPhone ? "NewPhone" : "Telephone"; }
 
-	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	SoundDescription _genericDialogueSound;
@@ -81,8 +81,6 @@ protected:
 	Common::String _addressBookString;
 	Common::String _dialAgainString;
 	SceneChangeWithFlag _reloadScene;
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 	Common::Array<PhoneCall> _calls;
 
 	// Number of digits a number needs before the phone starts dialing. Numbers
@@ -113,7 +111,6 @@ protected:
 	SoundDescription _preCallSound;
 
 	Common::Array<byte> _calledNumber;
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _animImage;
 	CallState _callState;
 	int _buttonLastPushed;

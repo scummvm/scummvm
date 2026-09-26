@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TURNINGPUZZLE_H
 #define NANCY_ACTION_TURNINGPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -41,10 +41,11 @@ namespace Action {
 // whose frames cycle inside a set of fixed slots), and a time limit, after which the puzzle
 // plays its own sound and sends the player to a failure scene. Example: the pocket watch
 // puzzle in Dieter's house.
-class TurningPuzzle : public RenderActionRecord {
+class TurningPuzzle : public PuzzleRecord {
 public:
-	enum SolveState { kNotSolved, kWaitForAnimation, kWaitBeforeSound, kWaitForSound };
-	TurningPuzzle() : RenderActionRecord(7) {}
+	en
+um SolveState { kNotSolved, kWaitForAnimation, kWaitBeforeSound, kWaitForSound };
+	TurningPuzzle() : PuzzleRecord(7) {}
 	virtual ~TurningPuzzle() {}
 
 	void init() override;
@@ -76,12 +77,9 @@ protected:
 	uint numFacesOf(uint objectID) const;
 	uint framesPerTurnOf(uint objectID) const;
 	void drawAllObjects();
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	void drawObject(uint objectID, uint faceID, uint frameID);
 	void turnLogic(uint objectID);
-
-	Common::Path _imageName;
 
 	uint16 _numFaces = 0;
 	uint16 _numFramesPerTurn = 0;
@@ -105,23 +103,16 @@ protected:
 
 	Common::Array<uint16> _correctOrder;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
 	// -- Nancy13 only --
 	Common::Array<PieceType> _pieceTypes;
 	Common::Array<uint16> _pieceTypeIDs;					// per object
 	Common::Array<Common::Array<uint16>> _correctOrders;	// up to three alternative solutions
 	uint16 _turnDelay = 0;			// header 0x21 - length of a whole turn, in ms
-	uint16 _hoverCursorType = 0;	// header 0x23 - raw Nancy13 cursor id (a turn cursor)
+	uint16 _hoverCursorType = 0;	// header 0x23 - raw Nancy13 cursor id (a turn curso
+r)
 	uint16 _hitInset = 0;			// header 0x25 - hotspots are the dest rect shrunk by this
 	int16 _turnFlagLabel = -1;		// header 0x27 - set once the player turns anything
 	byte _turnFlagValue = 0;		// header 0x29
-	uint16 _exitCursorType = 0;		// from the exit hotspot record
 	RandomSoundBlock _turnSoundBlock;
 	RandomSoundBlock _solveSoundBlock;
 	bool _turnFlagSet = false;
@@ -142,7 +133,6 @@ protected:
 	uint32 _timeoutTime = 0;
 	bool _timedOut = false;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _currentOrder;
 
 	uint32 _solveSoundDelayTime = 0;

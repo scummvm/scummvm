@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TYPINGQUIZPUZZLE_H
 #define NANCY_ACTION_TYPINGQUIZPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -36,9 +36,9 @@ namespace Action {
 // a typing rate (characters per minute). If the final rate meets the target, the win
 // scene fires; otherwise a default scene fires (with a different event flag depending on
 // whether a partial threshold was reached). Unrelated to the text-entry QuizPuzzle (231).
-class TypingQuizPuzzle : public RenderActionRecord {
+class TypingQuizPuzzle : public PuzzleRecord {
 public:
-	TypingQuizPuzzle() : RenderActionRecord(7) {}
+	TypingQuizPuzzle() : PuzzleRecord(7) {}
 	virtual ~TypingQuizPuzzle() {}
 
 	void init() override;
@@ -49,7 +49,8 @@ public:
 
 	bool isViewportRelative() const override { return true; }
 
-protected:
+prot
+ected:
 	Common::String getRecordTypeName() const override { return "TypingQuizPuzzle"; }
 
 private:
@@ -90,7 +91,6 @@ private:
 	void triggerSceneChange();
 
 	// ---- File data ----
-	Common::Path _imageName;                       // 0x000 puzzle sprite sheet
 	uint16 _numImageRects = 0;                     // 0x021
 	Common::Rect _balloonSrcRects[kMaxImageRects]; // 0x023
 	Common::Rect _poppedSrcRect;                   // 0x163 burst sprite
@@ -101,7 +101,8 @@ private:
 	Common::Rect _timerDigitRects[kNumDigits];     // 0x355
 	Common::Point _scoreDest;                      // 0x405 viewport-relative
 	Common::Point _timerDest;                      // 0x40d viewport-relative
-	Common::Rect _passedMsgSrcRect;                // 0x41d result message sprite
+	Common::R
+ect _passedMsgSrcRect;                // 0x41d result message sprite
 	uint32 _passedMsgDuration = 0;                 // 0x42d ms
 
 	bool _caseSensitive = false;                   // 0x431 (0 = case-insensitive)
@@ -123,17 +124,11 @@ private:
 	SoundDescription _wrongSound;                  // 0x497 wrong key
 	SoundDescription _escapeSound;                 // 0x4c8 balloon floated away
 
-	SceneChangeDescription _winScene;              // 0x4f9 (9999 = none)
-	int16 _winFlag = -1;                           // 0x50f
-
-	SoundDescription _winSound;                    // 0x511 played when the target is met
-
 	SceneChangeDescription _defaultScene;          // 0x542 (did not reach the target)
 	int16 _flagThreshold = -1;                     // 0x558 set if the partial threshold was reached
 	int16 _flagFail = -1;                          // 0x55a set otherwise
 
 	// ---- Runtime state ----
-	Graphics::ManagedSurface _image;
 	uint16 _fontID = 0;	// game default font for the balloon characters
 
 	Balloon _balloons[kMaxBalloons];
@@ -148,7 +143,8 @@ private:
 
 	uint32 _startTime = 0;
 	int _pops = 0;          // number of balloons popped
-	int _score = 0;         // displayed typing rate (characters per minute)
+	int _score = 0;         // displayed typing rate (chara
+cters per minute)
 	uint16 _effectiveTarget = 0;
 	bool _reachedTarget = false;
 	bool _reachedThreshold = false;

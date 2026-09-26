@@ -52,7 +52,8 @@ void SewingMachinePuzzle::readData(Common::SeekableReadStream &stream) {
 	_directionVector.x = stream.readSint32LE();	// blob 0x41
 	_directionVector.y = stream.readSint32LE();	// blob 0x45
 	_extentVector.x = stream.readSint32LE();	// blob 0x49
-	_extentVector.y = stream.readSint32LE();	// blob 0x4d
+	_ext
+entVector.y = stream.readSint32LE();	// blob 0x4d
 	for (int i = 0; i < 3; ++i) {
 		_params[i] = stream.readSint16LE();		// blob 0x51 / 0x53 / 0x55
 	}
@@ -79,34 +80,6 @@ void SewingMachinePuzzle::classifyZones() {
 			break;
 		}
 	}
-}
-
-void SewingMachinePuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-
-	// The mistake lines carry no inline caption; look the subtitle up by sound name,
-	// first in the Autotext table, then in the conversation table.
-	Common::String text = resolveSubtitleText(name);
-	if (text.empty())
-		text = resolveSubtitleText(name, Common::String(), "CONVO");
-	showSubtitle(text);
 }
 
 Common::Point SewingMachinePuzzle::needleInStrip() const {
@@ -144,7 +117,8 @@ void SewingMachinePuzzle::drawCloth() {
 
 void SewingMachinePuzzle::feedCloth(const Common::Point &delta) {
 	// Dragging moves the cloth: vertical feeds it, horizontal steers it.
-	Common::Point newOffset(CLIP<int>(_offset.x + delta.x, _minOffsetX, _maxOffsetX),
+	Common::Point newO
+ffset(CLIP<int>(_offset.x + delta.x, _minOffsetX, _maxOffsetX),
 		CLIP<int>(_offset.y + delta.y, _minOffsetY, _maxOffsetY));
 
 	int moved = ABS(newOffset.x - _offset.x) + ABS(newOffset.y - _offset.y);
@@ -204,6 +178,7 @@ void SewingMachinePuzzle::checkSeam() {
 	int my = (int)((needle.y - _maskOrigin.y) * _maskScaleY);
 
 	// The needle strays off the seam when, while inside the collision region, it lands
+
 	// on the mask's background instead of the marked corridor.
 	bool off = mx >= 0 && my >= 0 && mx < _seamMask.w && my < _seamMask.h &&
 		_seamMask.getPixel(mx, my) == _offSeamColor;
@@ -228,8 +203,7 @@ void SewingMachinePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// The needle's fixed sewing point = the bottom-center of the needle overlay's
 	// dest rect (167,0,285,170).
@@ -258,7 +232,8 @@ void SewingMachinePuzzle::init() {
 	if (region.width() <= 0 || region.height() <= 0) {
 		return;
 	}
-	_maskOrigin = Common::Point(region.left, region.top);
+	_maskOrigin = Common::Point(reg
+ion.left, region.top);
 	_maskScaleX = (double)_seamMask.w / region.width();
 	_maskScaleY = (double)_seamMask.h / region.height();
 
@@ -318,7 +293,8 @@ void SewingMachinePuzzle::execute() {
 		}
 
 		if (sceneZone && sceneZone->specialEffectId >= 1000) {
-			if (sceneZone->hasSpecialEffect) {
+			if (sceneZone->hasS
+pecialEffect) {
 				NancySceneState.specialEffect(sceneZone->seType, sceneZone->seTotalTime, sceneZone->seFadeToBlackTime, sceneZone->seRect);
 			}
 			SceneChangeDescription scene;

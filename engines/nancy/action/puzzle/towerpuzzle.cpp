@@ -34,15 +34,9 @@ namespace Nancy {
 namespace Action {
 
 void TowerPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void TowerPuzzle::registerGraphics() {
@@ -70,7 +64,8 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_destRects.resize(6);
 	for (uint ringID = 0; ringID < 6; ++ringID) {
-		_destRects[ringID].resize(3);
+		_destRects[ringID].r
+esize(3);
 		for (uint poleID = 0; poleID < 3; ++poleID) {
 			// Biggest ring can only be in bottom position,
 			// so it only has one rect per pole; second-biggest can
@@ -83,11 +78,11 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 	_takeSound.readNormal(stream);
 	_dropSound.readNormal(stream);
 
-	_solveExitScene._sceneChange.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
 	_solveSound.readNormal(stream);
-	_solveExitScene._flag.label = stream.readSint16LE();
-	_solveExitScene._flag.flag = stream.readByte();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -139,12 +134,12 @@ void TowerPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound :
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -159,7 +154,7 @@ void TowerPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			_puzzleState->order.clear();
 			_puzzleState->order.resize(3, Common::Array<int8>(6, -1));
@@ -195,9 +190,7 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 		// Not holding a ring
 
 		// First, check the exit hotspot
-		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit
 				_state = kActionTrigger;
@@ -224,7 +217,8 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 			}
 
 			// Redraw so the ring isn't visible anymore
-			drawRing(hoveredPoleID, ringPos, _puzzleState->order[hoveredPoleID][ringPos], true);
+			drawRing(hoveredPoleI
+D, ringPos, _puzzleState->order[hoveredPoleID][ringPos], true);
 
 			if (ringPos > 0) {
 				drawRing(hoveredPoleID, ringPos - 1, _puzzleState->order[hoveredPoleID][ringPos - 1]);
@@ -293,7 +287,8 @@ void TowerPuzzle::drawRing(uint poleID, uint position, uint ringID, bool clear) 
 
 	if (clear) {
 		// Just clear the ring, leaving a hole in the surface
-		// that needs to be filled by redrawing the ring below
+		// that ne
+eds to be filled by redrawing the ring below
 		_drawSurface.fillRect(_destRects[ringID][poleID][position], _drawSurface.getTransparentColor());
 		return;
 	}

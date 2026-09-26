@@ -41,15 +41,9 @@ SetPlayerClock::~SetPlayerClock() {
 }
 
 void SetPlayerClock::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
@@ -69,7 +63,8 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _minutesSrc, 4);
 	readRectArray(stream, _hoursSrc, 12);
 
-	readRect(stream, _AMSrc);
+	readRect(stream, _A
+MSrc);
 	readRect(stream, _PMSrc);
 	readRect(stream, _timeButtonSrc);
 	readRect(stream, _alarmButtonSrc);
@@ -87,9 +82,9 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 	}
 
 	_buttonSound.readNormal(stream);
-	_alarmSetScene.readData(stream);
-	_alarmSoundDelay = stream.readUint16LE();
-	_alarmSetSound.readNormal(stream);
+	_solveScene.readData(stream);
+	_solveSoundDelay = stream.readUint16LE();
+	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 }
 
@@ -135,7 +130,8 @@ void SetPlayerClock::execute() {
 				_drawSurface.fillRect(_alarmButtonDest, _drawSurface.getTransparentColor());
 				_drawSurface.fillRect(_upButtonDest, _drawSurface.getTransparentColor());
 				_drawSurface.fillRect(_downButtonDest, _drawSurface.getTransparentColor());
-				_drawSurface.fillRect(_modeLightDest, _drawSurface.getTransparentColor());
+				_dra
+wSurface.fillRect(_modeLightDest, _drawSurface.getTransparentColor());
 				_drawSurface.blitFrom(_image, _alarmLightSrc, _modeLightDest);
 				drawTime(_alarmHours, 0);
 				_clearButton = false;
@@ -160,16 +156,15 @@ void SetPlayerClock::execute() {
 				// Alarm has been set, wait for timer
 				if (g_system->getMillis() > _sceneChangeTime) {
 					_sceneChangeTime = 0;
-					g_nancy->_sound->loadSound(_alarmSetSound);
-					g_nancy->_sound->playSound(_alarmSetSound);
+					playSolveSound();
 				}
 			}
 			if (_sceneChangeTime == 0) {
-				if (!g_nancy->_sound->isSoundPlaying(_alarmSetSound)) {
+				if (!isSolveSoundPlaying()) {
 					g_nancy->_sound->stopSound(_buttonSound);
-					g_nancy->_sound->stopSound(_alarmSetSound);
+					g_nancy->_sound->stopSound(_solveSound);
 					NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
-					_alarmSetScene.execute();
+					_solveScene.execute();
 					finishExecution();
 				}
 			}
@@ -207,7 +202,8 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 	if (_alarmState == kTimeMode) {
 		// Alarm button is active only in time mode
 		if (NancySceneState.getViewport().convertViewportToScreen(_alarmButtonDest).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursor->setCursorType(C
+ursorManager::kHotspot);
 
 			if (!_clearButton && input.input & NancyInput::kLeftMouseButtonUp) {
 				// Alarm button pressed
@@ -263,7 +259,8 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 				_needsRedraw = true;
 
 				g_nancy->_sound->playSound(_buttonSound);
-				_alarmHours = _alarmHours - 1 < 0 ? 23 : _alarmHours - 1;
+				_alarmHours = _alarmHours - 1 < 0 ? 23 : _alarmHours -
+ 1;
 
 				_clearButton = true;
 				return;
@@ -282,7 +279,7 @@ void SetPlayerClock::handleInput(NancyInput &input) {
 				_clearButton = true;
 				_state = kActionTrigger;
 				_alarmState = kWait;
-				_sceneChangeTime = g_system->getMillis() + (_alarmSoundDelay * 1000);
+				_sceneChangeTime = g_system->getMillis() + (_solveSoundDelay * 1000);
 				return;
 			}
 		}

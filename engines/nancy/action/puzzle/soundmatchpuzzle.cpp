@@ -41,8 +41,8 @@ void SoundMatchPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_resetOnWrong = stream.readByte() != 0;
 
-	_winScene.readData(stream);	// 0x084
-	_winSound.readNormal(stream);	// 0x09d
+	_solveScene.readData(stream);	// 0x084
+	_solveSound.readNormal(stream);	// 0x09d
 	_exitScene.readData(stream);	// 0x0ce
 
 	readRect(stream, _exitHotspot);	// 0x0e7
@@ -51,7 +51,8 @@ void SoundMatchPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// 0x119: per-button entries (kNumButtons x 0x15c bytes each)
 	// NOTE: The original tangled the sound button and whale button
-	// data together, but we read them into separate structures for clarity.
+	// dat
+a together, but we read them into separate structures for clarity.
 	for (int i = 0; i < kNumButtons; ++i) {
 		SoundButtonEntry &soundButton = _soundButtons[i];
 		WhaleButtonEntry &whaleButton = _whaleButtons[i];
@@ -120,7 +121,8 @@ void SoundMatchPuzzle::execute() {
 			break;
 
 		case kSoundPlaying:
-			// Per-button (whale call) sound is playing. If it stops naturally
+			// Per-button (whale call) sound 
+is playing. If it stops naturally
 			// before the player picks a whale, deselect and return to idle.
 			if (!g_nancy->_sound->isSoundPlaying(_soundButtons[_selectedSoundButton].sound)) {
 				g_nancy->_sound->stopSound(_soundButtons[_selectedSoundButton].sound);
@@ -139,10 +141,7 @@ void SoundMatchPuzzle::execute() {
 				if (_feedbackSoundRight.name == "NO SOUND" ||
 				    !g_nancy->_sound->isSoundPlaying(_feedbackSoundRight)) {
 					if (_matchedPairs >= _requiredPairs) {
-						if (_winSound.name != "NO SOUND") {
-							g_nancy->_sound->loadSound(_winSound);
-							g_nancy->_sound->playSound(_winSound);
-						}
+						playSolveSound();
 						_solveSubState = kWinSound;
 					} else {
 						_selectedSoundButton = -1;
@@ -160,9 +159,8 @@ void SoundMatchPuzzle::execute() {
 			break;
 
 		case kWinSound:
-			if (_winSound.name == "NO SOUND" ||
-			    !g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;
@@ -174,11 +172,11 @@ void SoundMatchPuzzle::execute() {
 		g_nancy->_sound->stopSound(_feedbackSoundRight);
 		if (_selectedSoundButton >= 0)
 			g_nancy->_sound->stopSound(_soundButtons[_selectedSoundButton].sound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_isExiting)
 			_exitScene.execute();
 		else
-			_winScene.execute();
+			_solveScene.execute();
 		finishExecution();
 		break;
 	}
@@ -190,6 +188,7 @@ void SoundMatchPuzzle::handleInput(NancyInput &input) {
 
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
+
 
 	// Numbered button clicks — accepted only when idle. While a sound
 	// is playing, these buttons are disabled
@@ -248,7 +247,8 @@ void SoundMatchPuzzle::handleInput(NancyInput &input) {
 					_soundButtons[_selectedSoundButton].matched = true;
 					_whaleButtons[whaleButton].matched = true;
 					++_matchedPairs;
-					if (_feedbackSoundRight.name != "NO SOUND")
+					if (_feedbackSoundRight.name != "N
+O SOUND")
 						g_nancy->_sound->playSound(_feedbackSoundRight);
 				} else {
 					// Wrong whale. If the chunk's "reset on wrong"
@@ -272,8 +272,7 @@ void SoundMatchPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (_exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_isExiting = true;
 			_state = kActionTrigger;

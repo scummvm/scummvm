@@ -53,7 +53,8 @@ static void packGrid(const SortPuzzle::Cell grid[][SortPuzzle::kMaxCols], uint16
 	}
 }
 
-static bool unpackGrid(const Common::Array<int16> &in, SortPuzzle::Cell grid[][SortPuzzle::kMaxCols], uint16 expectedRows, uint16 expectedCols) {
+static bool unpackGrid(const Common::Array<int16> &in, SortPuzzle::Cell grid[
+][SortPuzzle::kMaxCols], uint16 expectedRows, uint16 expectedCols) {
 	if (in.size() < 2 || in[0] != (int16)expectedRows || in[1] != (int16)expectedCols)
 		return false;
 	uint32 need = 2 + (uint32)expectedRows * expectedCols * 4;
@@ -103,16 +104,16 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_pickupSound.readNormal(stream);
 	_dropSound.readNormal(stream);
 
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winSound.readNormal(stream);
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSound.readNormal(stream);
 
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 	stream.skip(2); // exit cursor type id
@@ -120,7 +121,8 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (_rows > kMaxRows) _rows = kMaxRows;
 	if (_cols > kMaxCols) _cols = kMaxCols;
 	if (_groupDivisor == 0) _groupDivisor = 1;
-	if (_valueRange == 0) _valueRange = 1;
+	if (_valueR
+ange == 0) _valueRange = 1;
 
 	_cellWidth  = _cellSrcRects[0][0].width();
 	_cellHeight = _cellSrcRects[0][0].height();
@@ -164,16 +166,17 @@ void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_pickupSound.readNormal(stream);          // 0x842
 	_dropSound.readNormal(stream);            // 0x873
 
-	_winScene.readData(stream);               // 0x8a4
+	_solveScene._sceneChange.readData(stream);               // 0x8a4
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
-	_winSound.readNormal(stream);             // 0x8bd
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
+	_solveSound.readNormal(stream);             // 0x8bd
 
-	_cancelScene.readData(stream);            // 0x8ee
+	_exitScene._sceneC
+hange.readData(stream);            // 0x8ee
 	stream.skip(2);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);           // 0x907
 	stream.skip(2); // exit cursor type id
@@ -227,7 +230,8 @@ Common::Rect SortPuzzle::heldSprite(const Cell &cell) const {
 	return cellSprite(cell);
 }
 
-void SortPuzzle::initState() {
+void Sort
+Puzzle::initState() {
 	SortPuzzleData *spd = (SortPuzzleData *)NancySceneState.getPuzzleData(SortPuzzleData::getTag());
 	if (_retainState && spd && !spd->currentState.empty() && !spd->solvedState.empty()) {
 		if (unpackGrid(spd->currentState, _current, _rows, _cols) &&
@@ -294,7 +298,8 @@ void SortPuzzle::init() {
 	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
 	_drawSurface.create(vpBounds.width(), vpBounds.height(),
 		g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	_dr
+awSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
 	setVisible(true);
 	moveTo(vpBounds);
@@ -323,6 +328,7 @@ void SortPuzzle::execute() {
 		init();
 		registerGraphics();
 		_heldObject.registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 
@@ -331,17 +337,16 @@ void SortPuzzle::execute() {
 		case kPlaying:
 			break;
 		case kPlayWinSound:
-			if (_winSound.name != "NO SOUND") {
-				g_nancy->_sound->loadSound(_winSound);
-				g_nancy->_sound->playSound(_winSound);
+			if (hasSolveSound()) {
+				playSolveSound();
 				_subState = kWaitWinSound;
 			} else {
 				_subState = kExitToWin;
 			}
 			break;
 		case kWaitWinSound:
-			if (!g_nancy->_sound->isSoundPlaying(_winSound)) {
-				g_nancy->_sound->stopSound(_winSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_subState = kExitToWin;
 			}
 			break;
@@ -355,18 +360,16 @@ void SortPuzzle::execute() {
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_pickupSound);
 		g_nancy->_sound->stopSound(_dropSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 		if (_subState == kExitToWin) {
 			SortPuzzleData *spd = (SortPuzzleData *)NancySceneState.getPuzzleData(SortPuzzleData::getTag());
 			if (spd) {
 				spd->currentState.clear();
 				spd->solvedState.clear();
 			}
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -376,7 +379,8 @@ void SortPuzzle::execute() {
 Common::Rect SortPuzzle::cellRect(int row, int col) const {
 	// Original uses inclusive-coordinate width (right_raw - left_raw) for the
 	// per-col / per-row step, which is cellWidth-1 in our exclusive convention.
-	int x = (int)_originX + col * ((int)_spacingX + _cellWidth  - 1);
+	int x = (int)_origi
+nX + col * ((int)_spacingX + _cellWidth  - 1);
 	int y = (int)_originY + row * ((int)_spacingY + _cellHeight - 1);
 	return Common::Rect(x, y, x + _cellWidth, y + _cellHeight);
 }
@@ -440,8 +444,8 @@ void SortPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (!hitCell) {
-		if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+		if (
+hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp)
 				_subState = kExitToCancel;
 		} else if (_hasHeld && useNewCursors) {
@@ -521,7 +525,8 @@ void SortPuzzle::checkSolved() {
 			}
 
 			// Puzzles that pair their cells up two at a time accept a pair sorted
-			// the other way around
+			// the other w
+ay around
 			if (!_allowSwappedPairs || groupSize != 2 || c >= (int)_cols - 1) {
 				return;
 			}
@@ -587,7 +592,8 @@ void SortPuzzle::redraw() {
 
 	for (int r = 0; r < (int)_rows; ++r) {
 		for (int c = 0; c < (int)_cols; ++c) {
-			const Cell &cell = _current[r][c];
+			const Cell &cell = _current[r]
+[c];
 			if (cell.isEmpty)
 				continue;
 			Common::Rect src = cellSprite(cell);

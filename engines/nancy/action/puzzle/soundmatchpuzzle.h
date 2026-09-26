@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_SOUNDMATCHPUZZLE_H
 #define NANCY_ACTION_SOUNDMATCHPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -32,9 +32,9 @@ namespace Action {
 // The player hears a whale call by clicking one of 5 numbered buttons, then
 // clicks the matching whale image. Correct pairs stay lit. Player wins when
 // all the required pairs have been matched.
-class SoundMatchPuzzle : public RenderActionRecord {
+class SoundMatchPuzzle : public PuzzleRecord {
 public:
-	SoundMatchPuzzle() : RenderActionRecord(7) {}
+	SoundMatchPuzzle() : PuzzleRecord(7) {}
 	virtual ~SoundMatchPuzzle() {}
 
 	void init() override;
@@ -55,12 +55,8 @@ protected:
 	static const int kNumButtons = 5;
 
 	SoundDescription _feedbackSoundWrong;  // played on incorrect whale click
-	SoundDescription _feedbackSoundRight;  // played on correct whale click
-	SceneChangeWithFlag _winScene;
-	SoundDescription _winSound;            // played when all pairs are matched
-	SceneChangeWithFlag _exitScene;
-
-	Common::Rect _exitHotspot;
+	SoundDescription _feedbackSoundRight;  
+// played on correct whale click
 
 	uint16 _requiredPairs = kNumButtons;   // how many matches needed to win
 
@@ -122,4 +118,5 @@ protected:
 } // End of namespace Action
 } // End of namespace Nancy
 
-#endif // NANCY_ACTION_SOUNDMATCHPUZZLE_H
+#endif // NANCY_ACT
+ION_SOUNDMATCHPUZZLE_H

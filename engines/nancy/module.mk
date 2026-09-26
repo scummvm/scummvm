@@ -15,6 +15,7 @@ MODULE_OBJS = \
   action/conversation.o \
   action/interactivevideo.o \
   action/overlay.o \
+  action/puzzlerecord.o \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/puzzle/adjustpuzzle.o \
@@ -37,6 +38,7 @@ MODULE_OBJS = \
   action/puzzle/dotconnectpuzzle.o \
   action/puzzle/drivingpuzzle.o \
   action/puzzle/dropsortpuzzle.o \
+  action/puzzle/escapegridpuzzle.o \
   action/puzzle/gridmappuzzle.o \
   action/puzzle/hamradiopuzzle.o \
   action/puzzle/hangmanpuzzle.o \
@@ -60,7 +62,8 @@ MODULE_OBJS = \
   action/puzzle/pachinkopuzzle.o \
   action/puzzle/paintpuzzle.o \
   action/puzzle/passwordpuzzle.o \
-  action/puzzle/peepholepuzzle.o \
+  ac
+tion/puzzle/peepholepuzzle.o \
   action/puzzle/pegspuzzle.o \
   action/puzzle/quizpuzzle.o \
   action/puzzle/raycastpuzzle.o \
@@ -83,6 +86,7 @@ MODULE_OBJS = \
   action/puzzle/turningpuzzle.o \
   action/puzzle/twodialpuzzle.o \
   action/puzzle/typingquizpuzzle.o \
+  action/puzzle/weightsortpuzzle.o \
   action/puzzle/whalesurvivorpuzzle.o \
   action/puzzle/wordfindpuzzle.o \
   ui/fullscreenimage.o \
@@ -145,4 +149,5 @@ endif
 include $(srcdir)/rules.mk
 
 # Detection objects
-DETECT_OBJS += $(MODULE)/detection.o
+DETECT_OBJS += $(MO
+DULE)/detection.o

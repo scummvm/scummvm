@@ -54,7 +54,8 @@ Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 			debugC(5, kDebugFile,"File %s opened", fileName.c_str());
 	}
 
-	if (allowSrc) {
+	if (allowSrc
+) {
 		Common::File *altFile = new Common::File();
 		Common::String altName = fileName;
 		altName.setChar('s', altName.size() - 3);
@@ -127,7 +128,8 @@ bool FileManager::exists(Common::Path filePath, bool allowSrc) {
 	return false;
 }
 
-Common::Path FileManager::srcPath(Common::Path filePath) {
+Common::Path FileManager::srcPath(Common::Path fil
+ePath) {
 		Common::String name = filePath.baseName();
 		name.setChar('s', name.size() - 3);
 		name.setChar('r', name.size() - 2);
@@ -141,12 +143,18 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 		return false;
 
 	Common::String line;
+	bool NemesisDVD = false;
 
-	// Skip first block
+	// Process first block
 	while (!zixFile.eos()) {
 		line = zixFile.readLine();
 		if (line.matchString("----------*", true))
 			break;
+		// WORKAROUND: Detect buggy DVD .zix file for Zork Nemesis
+		else if (line.matchString("005131*", true)) {
+			debugC(1, kDebugFile, "Nemesis DVD ZIX file detected.");
+			NemesisDVD = true;
+		}
 	}
 
 	if (zixFile.eos())
@@ -181,7 +189,8 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 
 			if (line.size() && line[0] == '.')
 				line.deleteChar(0);
-			if (line.size() && line[0] == '/')
+			if
+ (line.size() && line[0] == '/')
 				line.deleteChar(0);
 			if (line.size() && line.hasSuffix("/"))
 				line.deleteLastChar();
@@ -198,6 +207,11 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 				}
 			}
 			else {
+				// WORKAROUND for missing line in DVD version of Zork Nemesis
+				if(NemesisDVD && path.getLastComponent().toString().hasSuffixIgnoreCase("global")) {
+					debugC(1, kDebugFile, "Adding directory %s to search manager.", path.getParent().toString().c_str());
+					SearchMan.addSubDirectoryMatching(gameDataDir,path.getParent().toString());
+				}
 				debugC(1, kDebugFile, "Adding directory %s to search manager.", path.toString().c_str());
 				SearchMan.addSubDirectoryMatching(gameDataDir,path.toString());
 			}
@@ -233,7 +247,8 @@ bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gam
 				if (!exclude) {
 					Common::Path path(name);
 					// No need to add file, just verify that it exists
-					if (allowSrc) {
+					if (al
+lowSrc) {
 						Common::Path altPath = srcPath(path);
 						if (!SearchMan.hasFile(path) && !SearchMan.hasFile(altPath))
 							warning("Missing files %s and/or %s", path.toString().c_str(), altPath.toString().c_str());

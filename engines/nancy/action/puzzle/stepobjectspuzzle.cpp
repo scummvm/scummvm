@@ -48,12 +48,13 @@ void StepObjectsPuzzle::readData(Common::SeekableReadStream &stream) {
 	_numCols = stream.readUint16LE();
 	_pitchY = stream.readUint16LE();
 	_pitchX = stream.readUint16LE();
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 	_numSteps = stream.readUint16LE();
 
-	_solution.resize(_numSteps);
+	_solut
+ion.resize(_numSteps);
 	for (uint i = 0; i < _numSteps; ++i) {
 		_solution[i].objectID = stream.readByte();
 		_solution[i].row = stream.readSint16LE();
@@ -77,7 +78,7 @@ void StepObjectsPuzzle::readData(Common::SeekableReadStream &stream) {
 		object.startCol = stream.readUint16LE();
 	}
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 
 	_sounds.resize(kNumSounds);
 	for (uint i = 0; i < kNumSounds; ++i) {
@@ -116,7 +117,8 @@ bool StepObjectsPuzzle::isHovered(const Common::Rect &viewportRect, const Common
 		NancySceneState.getViewport().convertViewportToScreen(viewportRect).contains(mousePos);
 }
 
-bool StepObjectsPuzzle::cellAtCursor(const StepObject &object, const Common::Point &mousePos, int &outRow, int &outCol) const {
+bool StepOb
+jectsPuzzle::cellAtCursor(const StepObject &object, const Common::Point &mousePos, int &outRow, int &outCol) const {
 	for (int row = 0; row < _numRows; ++row) {
 		for (int col = 0; col < _numCols; ++col) {
 			if (isHovered(getCellRect(object, row, col), mousePos)) {
@@ -193,7 +195,8 @@ void StepObjectsPuzzle::pickUp(uint objectID) {
 
 	_carriedID = objectID;
 
-	// The sprite starts out on the cell it was picked up from, until the cursor moves it
+	// The sprite starts out on the cell it was picked up from, un
+til the cursor moves it
 	_carriedObject._drawSurface.create(object.srcRect.width(), object.srcRect.height(),
 		g_nancy->_graphics->getTransparentPixelFormat());
 	_carriedObject._drawSurface.clear(0);
@@ -262,7 +265,8 @@ void StepObjectsPuzzle::drawSprite(Graphics::ManagedSurface &dest, const Common:
 
 	for (int y = 0; y < srcRect.height(); ++y) {
 		int destY = destPos.y + y;
-		if (destY < 0 || destY >= dest.h) {
+		if (destY < 0 
+|| destY >= dest.h) {
 			continue;
 		}
 
@@ -317,34 +321,6 @@ void StepObjectsPuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void StepObjectsPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
-	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
-	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
-}
-
-SoundDescription StepObjectsPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
 void StepObjectsPuzzle::execute() {
 	switch (_state) {
 	case kBegin:
@@ -367,7 +343,8 @@ void StepObjectsPuzzle::execute() {
 
 			break;
 		case kStepping:
-			if (g_nancy->getTotalPlayTime() >= _stepSoundEnd) {
+			if (g_nancy->getTotalPlayTime() >= _stepSoundEnd
+) {
 				if (_lastStepWasDrop) {
 					playSoundBlock(_sounds[_lastStepCorrect ? kSoundCorrectStep : kSoundWrongStep]);
 				}
@@ -377,7 +354,7 @@ void StepObjectsPuzzle::execute() {
 
 			break;
 		case kSolved:
-			if (_solveSound.name.empty() || !g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				_state = kActionTrigger;
 			}
 
@@ -387,11 +364,9 @@ void StepObjectsPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_solved) {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 
 		finishExecution();
@@ -452,8 +427,7 @@ void StepObjectsPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (isHovered(_exitHotspot, input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

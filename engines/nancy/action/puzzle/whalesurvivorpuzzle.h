@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_WHALESURVIVORPUZZLE_H
 #define NANCY_ACTION_WHALESURVIVORPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -34,9 +34,9 @@ namespace Action {
 // The player controls Dolly the dall's porpoise, eating fish while avoiding hazards
 // (sharks, octopuses, orcas, pollution) and periodically surfacing to breathe.
 // Win by reaching the score target. Two difficulty levels (easy/hard).
-class WhaleSurvivorPuzzle : public RenderActionRecord {
+class WhaleSurvivorPuzzle : public PuzzleRecord {
 public:
-	WhaleSurvivorPuzzle() : RenderActionRecord(7) {}
+	WhaleSurvivorPuzzle() : PuzzleRecord(7) {}
 	virtual ~WhaleSurvivorPuzzle() {}
 
 	void init() override;
@@ -53,7 +53,8 @@ protected:
 private:
 	// ---- Constants ----
 	static const int kNumEntityTypes  = 6;
-	static const int kNumSubSprites   = 4;   // sub-sprite entries per entity type
+	static const int kNumSubSprites
+   = 4;   // sub-sprite entries per entity type
 	static const int kMaxLives        = 3;
 	static const int kOxygenStages    = 8;
 	static const int kMaxEntities     = 32;
@@ -103,7 +104,8 @@ private:
 	Common::Rect _oxygenSrcRects[kOxygenStages];  // 0x684..0x703
 
 	// Bubble/breath animation: 8 frame source rects (one per breathFrame step)
-	Common::Rect _bubbleSrcRects[kOxygenStages];  // 0x704..0x783
+	Common::Rect _bubbleSrcRects[kOxygenS
+tages];  // 0x704..0x783
 
 	// Screen positions for UI buttons (viewport-relative)
 	Common::Rect _startButtonDestRect;	// 0x7ec
@@ -152,12 +154,11 @@ private:
 	SoundDescription _eatSound;      // 0x926 - fish eaten
 	SoundDescription _hurtSound;     // 0x957 - hit by hazard
 	SoundDescription _breatheSound;  // 0x988 - surface/breathe
-	SoundDescription _sound4;        // 0x9b9 - unused (silence)
+	So
+undDescription _sound4;        // 0x9b9 - unused (silence)
 	SoundDescription _sound5;        // 0x9ea - unused (silence)
 
 	SceneChangeWithFlag _lossScene;  // 0xa1b
-	SoundDescription    _winSound;   // 0xa35
-	SceneChangeWithFlag _winScene;   // 0xa66
 
 	SoundDescription _gameOverSound; // 0xa80
 	SoundDescription _tryAgainSound; // 0xab1
@@ -215,7 +216,8 @@ private:
 	};
 	PorpoiseAnim _porpoiseAnim = kPorpoiseSwim;
 
-	uint32 _inputFlags          = 0;     // cached NancyInput::input flags from handleInput
+	uint32 _inputFlags          
+= 0;     // cached NancyInput::input flags from handleInput
 	uint32 _nextBubbleMs        = 0;     // next bubble animation tick
 	int    _breathFrame         = 0;     // current breath animation frame (0..7)
 	bool   _firstHitFrame       = false; // true on the first frame after taking a hit

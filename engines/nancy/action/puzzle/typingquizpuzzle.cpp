@@ -57,7 +57,8 @@ void TypingQuizPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_numPositions = stream.readUint16LE();     // 0x173
 	for (uint i = 0; i < kMaxBalloons; ++i)
-		readRect(stream, _positionRects[i]);   // 0x175
+		r
+eadRect(stream, _positionRects[i]);   // 0x175
 
 	for (uint i = 0; i < kNumDigits; ++i)
 		readRect(stream, _scoreDigitRects[i]); // 0x2b5
@@ -95,13 +96,15 @@ void TypingQuizPuzzle::readData(Common::SeekableReadStream &stream) {
 	_wrongSound.readNormal(stream);            // 0x497
 	_escapeSound.readNormal(stream);           // 0x4c8
 
-	_winScene.readData(stream);                // 0x4f9 (20 bytes)
-	_winScene.continueSceneSound = stream.readUint16LE(); // 0x50d
-	_winFlag = stream.readSint16LE();          // 0x50f
+	_solveScene._sceneChange.readData(stream);   // 0x4f9 (20 bytes)
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE(); // 0x50d
+	_solveScene._flag.label = stream.readSint16LE(); // 0x50f
+	_solveScene._flag.flag = g_nancy->_true;
 
-	_winSound.readNormal(stream);              // 0x511
+	_solveSound.readNormal(stream);              // 0x511
 
-	_defaultScene.readData(stream);            // 0x542 (20 bytes)
+	_defaultScene.readData(stream);            // 0x542 (20 
+bytes)
 	_defaultScene.continueSceneSound = stream.readUint16LE(); // 0x556
 	_flagThreshold = stream.readSint16LE();    // 0x558
 	_flagFail      = stream.readSint16LE();    // 0x55a
@@ -167,7 +170,8 @@ bool TypingQuizPuzzle::isValidChar(byte c) const {
 	return false;
 }
 
-char TypingQuizPuzzle::pickRandomChar() {
+char TypingQuizPuzzle:
+:pickRandomChar() {
 	Common::RandomSource &rnd = *g_nancy->_randomSource;
 	int maxChar = (_keyboardMode != 0) ? 0x100 : (_allowedChars[0] != 0 ? 0x7f : 0x7b);
 
@@ -235,7 +239,8 @@ void TypingQuizPuzzle::respawnBalloons(int maxToAdd) {
 		target = _minBalloons;
 	} else {
 		int add = (int)rnd.getRandomNumber(maxToAdd);
-		while (_activeCount + add < _minBalloons || _activeCount + add > _maxBalloons)
+		while (_activeCoun
+t + add < _minBalloons || _activeCount + add > _maxBalloons)
 			add = (int)rnd.getRandomNumber(maxToAdd);
 		target = _activeCount + add;
 	}
@@ -313,7 +318,8 @@ void TypingQuizPuzzle::updateScore(uint32 now) {
 
 	// Score is a typing rate (characters per minute)
 	if (elapsedSec > 0 && _pops > 0)
-		_score = (int)((float)_pops * 60.0f / (float)elapsedSec);
+		_score = (int)((float)_pops * 60.0f / (float)elapsedS
+ec);
 
 	if (elapsedSec >= _timeLimit)
 		_gameState = kEvaluate;
@@ -375,13 +381,13 @@ void TypingQuizPuzzle::redraw() {
 
 	uint32 elapsedSec = (g_nancy->getTotalPlayTime() - _startTime) / 1000;
 	int remaining = (int)_timeLimit - (int)elapsedSec;
-	drawNumber(remaining, _timerDigitRects, _timerDest.x, _timerDest.y);
+	drawNumber(remaining, _timerDigitRe
+cts, _timerDest.x, _timerDest.y);
 }
 
 void TypingQuizPuzzle::triggerSceneChange() {
 	if (_reachedTarget) {
-		NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
-		NancySceneState.changeScene(_winScene);
+		_solveScene.execute();
 	} else {
 		if (_reachedThreshold && _flagThreshold != -1)
 			NancySceneState.setEventFlag(_flagThreshold, g_nancy->_true);
@@ -396,6 +402,7 @@ void TypingQuizPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun: {
@@ -412,10 +419,7 @@ void TypingQuizPuzzle::execute() {
 		case kEvaluate:
 			if (_score >= (int)_effectiveTarget) {
 				_reachedTarget = true;
-				if (_winSound.name != "NO SOUND") {
-					g_nancy->_sound->loadSound(_winSound);
-					g_nancy->_sound->playSound(_winSound);
-				}
+				playSolveSound();
 			} else {
 				_reachedTarget    = false;
 				_reachedThreshold = _score >= (int)_scoreThreshold;
@@ -440,7 +444,7 @@ void TypingQuizPuzzle::execute() {
 		g_nancy->_sound->stopSound(_popSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_escapeSound);
-		g_nancy->_sound->stopSound(_winSound);
+		g_nancy->_sound->stopSound(_solveSound);
 
 		triggerSceneChange();
 		finishExecution();

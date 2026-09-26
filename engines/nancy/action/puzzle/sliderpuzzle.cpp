@@ -58,7 +58,8 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((6 - _height) * 6 * 16);
 
-	_destRects.resize(_height);
+	_destRects.resize(_hei
+ght);
 	for (uint y = 0; y < _height; ++y) {
 		readRectArray(stream, _destRects[y], _width, 6);
 	}
@@ -100,7 +101,7 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip((6 - _height) * 6 * 2);
 
 	_clickSound.readNormal(stream);
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -133,7 +134,8 @@ void SliderPuzzle::execute() {
 	case kRun:
 		switch (_solveState) {
 		case kNotSolved:
-			for (uint y = 0; y < _height; ++y) {
+			for (uint y = 0; y < _height; ++y) 
+{
 				for (uint x = 0; x < _width; ++x) {
 					if (_puzzleState->playerTileOrder[y][x] != _correctTileOrder[y][x]) {
 						return;
@@ -141,12 +143,11 @@ void SliderPuzzle::execute() {
 				}
 			}
 
-			g_nancy->_sound->loadSound(_solveSound);
-			g_nancy->_sound->playSound(_solveSound);
+			playSolveSound();
 			_solveState = kWaitForSound;
 			break;
 		case kWaitForSound:
-			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+			if (!isSolveSoundPlaying()) {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
@@ -161,7 +162,7 @@ void SliderPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			break;
 		}
@@ -176,9 +177,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -216,7 +215,8 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 					shouldBreak = true;
 					break;
 				}
-			} else if ((int)y < _height - 1 && _puzzleState->playerTileOrder[y + 1][x] < 0) {
+			} else if ((int)y < _height - 1 && _puzzl
+eState->playerTileOrder[y + 1][x] < 0) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
 					currentTileX = x;
 					currentTileY = y;
@@ -268,6 +268,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 				undrawTile(currentTileX, currentTileY);
 				_puzzleState->playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
 				_puzzleState->playerTileOrder[currentTileY][currentTileX] = -10;
+
 				break;
 			}
 			}
