@@ -1158,6 +1158,7 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	_fluidScroller->setPosition(_scrollPos);
 	_selectedItem = -1;
 	_lastSelectionStartItem = -1;
+	clearSelection();
 
 	if (redraw) {
 		scrollBarRecalc();
