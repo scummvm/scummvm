@@ -72,12 +72,8 @@ protected:
 	void doJump(int fromCol, int fromRow, int destCol, int destRow);
 
 	void carryPeg(int col, int row, NancyInput &input);
-	// The puzzle's cursors are raw Nancy13 cursor type ids stored in the AR data.
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	void redraw();
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data (96-byte header) --
 	Common::Path _imageName;			// 0x00

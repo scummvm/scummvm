@@ -153,7 +153,6 @@ protected:
 	int cellAtPoint(const Common::Point &mousePos) const;
 	int resolveBlock(int attackCell, int blockCell, Common::Point &recoil) const;
 	void applyDamage(const Common::Point &recoil);
-	void playSoundBlock(const RandomSoundBlock &block);
 
 	MoviePlayer _moviePlayer;
 	Graphics::ManagedSurface _overlayImage;	// MOU_Fight_OVL sprite sheet

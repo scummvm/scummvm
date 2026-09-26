@@ -82,7 +82,6 @@ protected:
 
 	void redraw();
 	void drawCounter();
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
 	Common::Path _imageName;			// 0x00 - overlay sprite sheet (candies, strikes)

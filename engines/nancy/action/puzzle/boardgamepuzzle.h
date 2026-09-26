@@ -111,7 +111,7 @@ protected:
 	void redraw();
 	void drawCard(uint index);
 	void resolveMove(int button);
-	void playSoundBlock(uint index);
+	void playSoundByIndex(uint index);
 	int framePosition(int position) const { return _framesPerPosition * position + 1; }
 };
 

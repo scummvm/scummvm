@@ -461,38 +461,5 @@ void BlockingPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 	}
 }
-
-void BlockingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	// Pick a random one of the block's names.
-	uint index = block.names.size() > 1 ?
-		g_nancy->_randomSource->getRandomNumber(block.names.size() - 1) : 0;
-	if (block.names[index].empty() || block.names[index] == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = block.names[index];
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-
-	// The fighters' lines are CVTX captions keyed by the played sound's name
-	// (autotext searched first, then convo), shown as the fight goes on.
-	Common::String caption = resolveSubtitleText(desc.name, Common::String(), "AUTOTEXT");
-	if (caption.empty()) {
-		caption = resolveSubtitleText(desc.name, Common::String(), "CONVO");
-	}
-	if (!caption.empty()) {
-		showSubtitle(caption);
-	}
-}
-
 } // End of namespace Action
 } // End of namespace Nancy

@@ -103,7 +103,7 @@ private:
 	// Picks one name out of `block` at random and starts it, tracking it in
 	// _activeBoxSound so the state machine can wait for it. Returns false when
 	// the block is empty or names no sound.
-	bool playSoundBlock(const RandomSoundBlock &block);
+	bool playBoxSoundBlock(const RandomSoundBlock &block);
 	void showBoxSubtitle(const Common::String &perBoxText, const Common::String &perRecordText);
 
 	uint32 getSaveKey();

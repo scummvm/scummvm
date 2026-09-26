@@ -54,8 +54,6 @@ protected:
 
 	// Sorts the ActionZone array into its gameplay roles.
 	void classifyZones();
-	// Plays one entry of a random-sound block (needle/stitch cues).
-	void playSoundBlock(const RandomSoundBlock &block);
 	// Draws the visible part of the cloth strip plus the stitches sewn so far.
 	void drawCloth();
 

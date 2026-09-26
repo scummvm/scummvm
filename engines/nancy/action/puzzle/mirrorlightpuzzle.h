@@ -111,7 +111,6 @@ protected:
 	void drawBeam();
 	void drawOverlays();
 	void redraw();
-	void playSoundBlock(const RandomSoundBlock &block);
 };
 
 } // End of namespace Action

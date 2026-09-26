@@ -317,34 +317,6 @@ void StepObjectsPuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void StepObjectsPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
-	// The ids in the AR data are raw Nancy13 cursor types, which is exactly what the
-	// "set from script" path expects.
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
-}
-
-SoundDescription StepObjectsPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
-}
-
 void StepObjectsPuzzle::execute() {
 	switch (_state) {
 	case kBegin:

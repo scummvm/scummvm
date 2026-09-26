@@ -176,12 +176,7 @@ void WordFindPuzzle::loadWord() {
 }
 
 void WordFindPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
 	// The active word carries over from earlier visits to this puzzle.
 	WordFindPuzzleData *data = getPuzzleData();

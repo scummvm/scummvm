@@ -40,12 +40,7 @@ void SafeDialPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName2, _image2);
 	g_nancy->_resource->loadImage(_resetImageName, _resetImage);
 
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
 	registerGraphics();
 }

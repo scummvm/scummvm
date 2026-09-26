@@ -312,27 +312,6 @@ void MinigolfPuzzle::redraw() {
 	_needsRedraw = true;
 }
 
-void MinigolfPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-}
-
 void MinigolfPuzzle::aimToVelocity(double aimX, double aimY, double &vx, double &vy) const {
 	// Struck speed is proportional to the drag length (clamped to maxSpeed), aimed
 	// along the drag vector: speed = drag * kPowerScale * maxSpeed.

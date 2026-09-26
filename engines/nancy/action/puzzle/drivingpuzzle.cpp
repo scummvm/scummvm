@@ -206,7 +206,7 @@ void DrivingPuzzle::classifyZones(const Common::Array<ActionZone> &zones) {
 	}
 }
 
-void DrivingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+void DrivingPuzzle::playSoundBlockRawLoops(const RandomSoundBlock &block) {
 	if (block.names.empty()) {
 		return;
 	}
@@ -658,7 +658,7 @@ void DrivingPuzzle::updatePhysics(int throttle, double cursorDist) {
 			if (_tireDamage >= kTireFlatThreshold) {
 				_tireDamage = 0;
 				_flatTirePending = true;
-				playSoundBlock(_soundBlocks[0]);	// tire blowout
+				playSoundBlockRawLoops(_soundBlocks[0]);	// tire blowout
 			}
 		}
 		hole.carInside = nowInside;
@@ -712,7 +712,7 @@ void DrivingPuzzle::execute() {
 		if (_variant == kChase) {
 			classifyZones(_zones2);
 		}
-		playSoundBlock(_soundBlocks[2]);	// looping engine ambience
+		playSoundBlockRawLoops(_soundBlocks[2]);	// looping engine ambience
 		drawScene();
 		_state = kRun;
 		break;

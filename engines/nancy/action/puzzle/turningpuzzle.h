@@ -76,7 +76,6 @@ protected:
 	uint numFacesOf(uint objectID) const;
 	uint framesPerTurnOf(uint objectID) const;
 	void drawAllObjects();
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	void drawObject(uint objectID, uint faceID, uint frameID);
 	void turnLogic(uint objectID);

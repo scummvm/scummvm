@@ -36,14 +36,7 @@ namespace Nancy {
 namespace Action {
 
 void OverrideLockPuzzle::init() {
-	Common::Rect bounds = NancySceneState.getViewport().getBounds();
-
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-
-	setTransparent(true);
-	setVisible(true);
-	moveTo(bounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());

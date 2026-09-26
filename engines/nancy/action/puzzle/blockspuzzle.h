@@ -101,9 +101,6 @@ protected:
 	void updateCarried(NancyInput *input);
 	void startTurn();
 	void redraw();
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data (111-byte header) --
 	Common::Path _imageName;			// 0x00

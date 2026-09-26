@@ -93,8 +93,6 @@ protected:
 	void updateColorFlags();
 	void redraw();
 	bool isSolved() const;
-	void playSoundBlock(const RandomSoundBlock &block);
-	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
 
 	// -- File data --
 	Common::Path _imageName;		// 0x3d

@@ -192,8 +192,8 @@ protected:
 	// boundary zones), decoding the destination scenes and their transition effects.
 	void classifyZones(const Common::Array<ActionZone> &zones);
 
-	// Plays one (randomly chosen) entry of a random-sound block.
-	void playSoundBlock(const RandomSoundBlock &block);
+	// Like playSoundBlock(), but a loop count of 0 keeps looping (the engine ambience)
+	void playSoundBlockRawLoops(const RandomSoundBlock &block);
 
 	// Arms a pending exit (applied in kActionTrigger): from a destination zone (keeping
 	// its fade), or from a raw scene id plus an optional event flag to set.

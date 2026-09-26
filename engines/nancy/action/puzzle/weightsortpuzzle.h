@@ -123,8 +123,6 @@ protected:
 	int reachedOutcome() const;
 
 	void carryObject(int object, NancyInput &input);
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 
 	// -- File data --

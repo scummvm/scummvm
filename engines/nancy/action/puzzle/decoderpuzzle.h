@@ -68,8 +68,6 @@ protected:
 	static bool isAcceptedKey(byte key);
 
 	DecoderData *getPuzzleData() const;
-	void playSoundBlock(const RandomSoundBlock &block);
-	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
 
 	// Consumes the pending sequence. True if it produced output; sets noMatch
 	// when the sequence cannot lead to any substitution.

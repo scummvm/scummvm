@@ -98,9 +98,6 @@ protected:
 	// slots, FUN_004b6660 case 0).
 	void blitCentered(const Common::Rect &src, const Common::Rect &slot);
 	void redraw();
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	void playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
 	Common::Path _imageName;				// 0x00

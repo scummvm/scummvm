@@ -71,7 +71,6 @@ protected:
 	bool cellAt(const Common::Point &point, uint &column, uint &row) const;
 	void toggleCell(uint column, uint row);
 	void checkSolved();
-	void playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 
 	// -- File data --

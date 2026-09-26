@@ -114,12 +114,7 @@ void MagicBoxPuzzle::readData(Common::SeekableReadStream &stream) {
 }
 
 void MagicBoxPuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
 	g_nancy->_resource->loadImage(_tileImageName, _tileImage);
 	_tileImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -236,32 +231,6 @@ void MagicBoxPuzzle::carryPiece(int piece, NancyInput &input) {
 		_carriedObject.setVisible(false);
 		_carriedObject.putDown();
 	}
-}
-
-void MagicBoxPuzzle::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
-	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
-}
-
-SoundDescription MagicBoxPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	SoundDescription desc;
-	if (block.names.empty()) {
-		return desc;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return desc;
-	}
-
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-	return desc;
 }
 
 void MagicBoxPuzzle::redraw() {

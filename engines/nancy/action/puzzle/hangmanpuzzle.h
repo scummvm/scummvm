@@ -85,7 +85,6 @@ protected:
 	void updateFeedback();
 	void checkOutcome();
 	void redraw();
-	void playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data --
 	Common::Path _puzzleImageName;		// 0x3d

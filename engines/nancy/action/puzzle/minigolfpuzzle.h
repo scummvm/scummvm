@@ -54,7 +54,6 @@ protected:
 	void drawBall();
 	void drawGhostBall(const Common::Rect &src, const Common::Point &dest);
 	void drawAimPreview();
-	void playSoundBlock(const RandomSoundBlock &block);
 	void launchBall(const Common::Point &maskCursor);
 	void writeStrokeCount();			// mirror _strokes into the scorecard's TableData slot
 	void aimToVelocity(double aimX, double aimY, double &vx, double &vy) const;

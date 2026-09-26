@@ -58,8 +58,6 @@ protected:
 	void carryPiece(int piece, NancyInput &input);
 	Common::Rect tileSrc(int32 value) const;
 
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 
 	static const uint kNumSounds = 10;

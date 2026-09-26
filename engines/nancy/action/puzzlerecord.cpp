@@ -19,8 +19,11 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
@@ -57,6 +60,52 @@ Common::String PuzzleRecord::getRecordExtraInfo() const {
 	return info;
 }
 
+void PuzzleRecord::initViewportSurface() {
+	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
+	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphics->getTransColor());
+	setTransparent(true);
+	setVisible(true);
+	moveTo(vpBounds);
+}
+
+void PuzzleRecord::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
+	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
+}
+
+SoundDescription PuzzleRecord::playSoundBlock(const RandomSoundBlock &block) {
+	SoundDescription desc;
+	if (block.names.empty()) {
+		return desc;
+	}
+
+	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
+	const Common::String &name = block.names[idx];
+	if (name.empty() || name == "NO SOUND") {
+		return desc;
+	}
+
+	desc.name = name;
+	desc.channelID = block.channel;
+	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.volume = block.volume;
+
+	g_nancy->_sound->loadSound(desc);
+	g_nancy->_sound->playSound(desc);
+
+	Common::String caption = resolveSubtitleText(name);
+	if (caption.empty()) {
+		caption = resolveSubtitleText(name, Common::String(), "CONVO");
+	}
+	showSubtitle(caption);
+
+	return desc;
+}
+
+bool PuzzleRecord::isSoundBlockPlaying(const RandomSoundBlock &block) const {
+	return !block.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)block.channel);
+}
+
 void PuzzleRecord::readExitHotspot(Common::SeekableReadStream &stream) {
 	Nancy::readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene._sceneChange, _exitScene._flag);
 	_exitCursorFromData = true;
@@ -70,8 +119,7 @@ bool PuzzleRecord::isExitHotspotHovered(const NancyInput &input) const {
 void PuzzleRecord::setExitCursor() const {
 	if (_exitCursorFromData) {
 		// Zone cursors use the idle sprite in Nancy13, and the hotspot sprite from Nancy14 on
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true,
-										g_nancy->getGameType() >= kGameTypeNancy14);
+		setDataCursor(_exitCursorType, g_nancy->getGameType() >= kGameTypeNancy14);
 	} else {
 		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 	}

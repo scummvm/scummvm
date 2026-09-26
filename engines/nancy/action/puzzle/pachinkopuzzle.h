@@ -108,9 +108,6 @@ protected:
 	bool collidePins(Ball &ball) const;
 	int catchInHole(const Ball &ball) const;	// hole index the ball fell into, or -1
 	void advanceMachine(Machine &m, uint32 now);
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
 	// -- File data --
 	Common::Path _imageName;				// board overlay

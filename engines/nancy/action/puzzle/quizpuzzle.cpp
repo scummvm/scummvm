@@ -348,7 +348,7 @@ bool QuizPuzzle::fitsInBox(const Box &box, const Common::String &text) const {
 	return font->getStringWidth(text) < box.rect.width() - kBoxTextMargin;
 }
 
-bool QuizPuzzle::playSoundBlock(const RandomSoundBlock &block) {
+bool QuizPuzzle::playBoxSoundBlock(const RandomSoundBlock &block) {
 	if (block.names.empty()) {
 		return false;
 	}
@@ -571,7 +571,7 @@ void QuizPuzzle::executeNancy9() {
 			} else if (_pendingChar != 0) {
 				if (!acceptsChar(_pendingChar)) {
 					// Nancy 15 buzzes at characters the record does not allow
-					playSoundBlock(_invalidKeySound);
+					playBoxSoundBlock(_invalidKeySound);
 				} else if (text.size() < getMaxTypedLength() &&
 						(isNancy15 || fitsInBox(box, text))) {
 					text += _pendingChar;
@@ -623,7 +623,7 @@ void QuizPuzzle::executeNancy9() {
 	}
 
 	case kStartCorrect: {
-		bool playing = playSoundBlock(box.correctSound);
+		bool playing = playBoxSoundBlock(box.correctSound);
 		if (playing) {
 			showBoxSubtitle(box.correctText, _recordCorrectText);
 		}
@@ -662,7 +662,7 @@ void QuizPuzzle::executeNancy9() {
 		}
 		drawText();
 
-		bool playing = playSoundBlock(box.wrongSound);
+		bool playing = playBoxSoundBlock(box.wrongSound);
 		if (playing) {
 			showBoxSubtitle(box.wrongText, _recordWrongText);
 		}
@@ -690,7 +690,7 @@ void QuizPuzzle::executeNancy9() {
 
 	case kStartDone: {
 		if (isNancy15) {
-			_internalState = playSoundBlock(_doneSoundBlock) ? kWaitDone : kFinish;
+			_internalState = playBoxSoundBlock(_doneSoundBlock) ? kWaitDone : kFinish;
 		} else if (!hasSolveSound()) {
 			_internalState = kFinish;
 		} else {

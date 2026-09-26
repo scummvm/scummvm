@@ -215,7 +215,6 @@ protected:
 	bool isCellPixel(const Common::Point &cell, const Common::Point &pos) const;
 	bool findHoveredCell(const Common::Point &mousePos, Common::Point &outCell) const;
 
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 	void drawAnimFrame(const Graphics::ManagedSurface &image, const Animation &anim, int32 elapsed,
 		const Common::Point &pos);
 	void drawJump(uint actor, const ActorAnim &anim);

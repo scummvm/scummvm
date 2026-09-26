@@ -286,29 +286,6 @@ void MatchPuzzle::init() {
 	redrawAllCells();
 }
 
-void MatchPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty())
-		return;
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND")
-		return;
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-}
-
-bool MatchPuzzle::isSoundBlockPlaying(const RandomSoundBlock &block) const {
-	return !block.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)block.channel);
-}
-
 void MatchPuzzle::playMatchSound() {
 	if (g_nancy->getGameType() >= kGameTypeNancy14) {
 		playSoundBlock(_matchSound);

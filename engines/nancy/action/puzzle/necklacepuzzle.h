@@ -120,7 +120,6 @@ protected:
 	void checkSolved();
 	void refundBeads();
 
-	void playSoundBlock(const RandomSoundBlock &block);
 	void redraw();
 	void drawBeadCount(const Bead &bead);
 

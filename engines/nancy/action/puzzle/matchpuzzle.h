@@ -91,8 +91,6 @@ protected:
 	void handleInputNancy14(NancyInput &input, const Common::Point &localMouse);
 	void drawHighScoreScreen();
 	void drawBoardNancy14();
-	void playSoundBlock(const RandomSoundBlock &block);
-	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
 	void startRound();
 	void sortHighScores();
 	void insertHighScore();

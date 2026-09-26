@@ -38,6 +38,18 @@ public:
 	Common::String getRecordExtraInfo() const override;
 
 protected:
+	// Creates a transparent, viewport-sized draw surface and shows it over the viewport
+	void initViewportSurface();
+
+	// The ids in the AR data are raw cursor types, which is what the "set from script" path expects
+	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
+
+	// Plays a random sound from the block and shows its caption, looked up by the sound's
+	// name, first in AUTOTEXT, then in CONVO. Returns the sound's description, which is
+	// left as "NO SOUND" when the block has nothing to play.
+	SoundDescription playSoundBlock(const RandomSoundBlock &block);
+	bool isSoundBlockPlaying(const RandomSoundBlock &block) const;
+
 	// Reads the Nancy 13+ count-prefixed give-up hotspot array into the exit fields,
 	// keeping only the first record.
 	void readExitHotspot(Common::SeekableReadStream &stream);
