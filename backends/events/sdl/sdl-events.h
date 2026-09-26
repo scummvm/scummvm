@@ -26,6 +26,7 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 
 #include "common/events.h"
+#include "common/stack.h"
 
 // Type names which changed between SDL 1.2 and SDL 2.
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
@@ -61,11 +62,79 @@ public:
 	/** Sets whether a game is currently running */
 	void setEngineRunning(bool value);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Acquire explicit client-side control of native IME composition.
+	 *
+	 * Control is nested because more than one client can need the controlled
+	 * text-input lifetime at the same time. For example, a game can hold control
+	 * for its lifetime while a GUI dialog acquires it temporarily. Each
+	 * acquisition saves the current composition and general text-input states,
+	 * then starts its scope with composition disabled. Each acquisition must be
+	 * paired with one call to @ref SdlEventSource::releaseImeCompositionControl().
+	 * Its IME-specific behavior is a no-op on systems without native IME support.
+	 */
+	void acquireImeCompositionControl();
+
+	/**
+	 * Release explicit client-side control of IME composition.
+	 *
+	 * This restores the composition and text-input states saved by the matching
+	 * acquisition. The native text-input state captured by the first acquisition
+	 * is restored only when the outermost scope releases control. Releasing
+	 * without an outstanding acquisition is ignored.
+	 */
+	void releaseImeCompositionControl();
+
+	/**
+	 * Enable or disable native IME composition processing after acquisition.
+	 *
+	 * This has no effect until @ref SdlEventSource::acquireImeCompositionControl()
+	 * has acquired explicit client-side control. This changes the current
+	 * scope's composition state; it does not acquire or release a scope.
+	 */
+	void setImeCompositionEnabled(bool enable);
+
+	/** Return whether native IME composition processing is enabled. */
+	bool isImeCompositionEnabled() const { return _imeCompositionEnabled; }
+#endif
+
 protected:
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
 
 	bool _engineRunning;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/** Desired state of the SDL native text-input session. */
+	bool _textInputEnabled = false;
+	struct ImeCompositionControlState {
+		ImeCompositionControlState(bool composition, bool textInput) :
+			compositionEnabled(composition), textInputEnabled(textInput) {
+		}
+
+		bool compositionEnabled;
+		bool textInputEnabled;
+	};
+	/**
+	 * Composition and general text-input state saved for each nested scope.
+	 *
+	 * A boolean or a reference count cannot restore whether an outer input
+	 * owner had composition enabled before a nested GUI took control. General
+	 * SDL text input must be tracked separately because it can already be active
+	 * for dead keys, non-English layouts, and other non-IME text entry. The stack
+	 * preserves both states. An empty stack means native SDL behavior is not
+	 * controlled. The first push captures the existing native text-input state,
+	 * and the last pop restores it.
+	 */
+	Common::Stack<ImeCompositionControlState> _imeCompositionControlStateStack;
+	/** Whether SDL text-editing events are converted to IME events. */
+	bool _imeCompositionEnabled = false;
+	/** Return whether committed SDL text input should enter the ScummVM event queue. */
+	bool shouldDispatchTextInput() const { return _imeCompositionControlStateStack.empty() || _textInputEnabled; }
+	/** Apply the desired native SDL text input session state. */
+	void applyNativeTextInputState();
+#endif
 
 	int _mouseX;
 	int _mouseY;

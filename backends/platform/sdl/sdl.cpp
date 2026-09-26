@@ -205,6 +205,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureImeComposition) return true;
 	if (f == kFeatureCpuSSE41) return SDL_HasSSE41();
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 4)
@@ -249,6 +250,12 @@ bool OSystem_SDL::hasFeature(Feature f) {
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
+	case kFeatureImeComposition:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_eventSource)
+			_eventSource->setImeCompositionEnabled(enable);
+#endif
+		break;
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
@@ -263,6 +270,12 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 
 bool OSystem_SDL::getFeatureState(Feature f) {
 	switch (f) {
+	case kFeatureImeComposition:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		return _eventSource && _eventSource->isImeCompositionEnabled();
+#else
+		return false;
+#endif
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
 		break;
@@ -273,6 +286,20 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 		return ModularGraphicsBackend::getFeatureState(f);
 		break;
 	}
+}
+
+void OSystem_SDL::acquireImeCompositionControl() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->acquireImeCompositionControl();
+#endif
+}
+
+void OSystem_SDL::releaseImeCompositionControl() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_eventSource)
+		_eventSource->releaseImeCompositionControl();
+#endif
 }
 
 void OSystem_SDL::initBackend() {
@@ -606,6 +633,7 @@ void OSystem_SDL::engineDone() {
 	// Reset presence status
 	_presence->updateStatus("", "");
 #endif
+	releaseImeCompositionControl();
 	_eventSource->setEngineRunning(false);
 }
 

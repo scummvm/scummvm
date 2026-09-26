@@ -110,6 +110,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_loadSlowdownCooldownTime = 0;
 	_fileIOType = 0;
 	_vfwPaletteHack = false;
+	_stopMovieAtEnd = false;
 
 	_key = 0;
 	_keyCode = 0;

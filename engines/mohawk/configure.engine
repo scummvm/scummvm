@@ -1,7 +1,9 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps] [components]
-add_engine mohawk "Mohawk" yes "cstime myst mystme riven" "Living Books" "highres" ""
+add_engine mohawk "Mohawk" yes "cstime myst mystme riven zoombini zoombini_tlc" "Living Books" "highres" ""
 add_engine cstime "Where in Time is Carmen Sandiego?" no "" "" "" "cdtoons"
 add_engine riven "Riven: The Sequel to Myst" yes "" "" "16bit"
 add_engine myst "Myst" yes
 add_engine mystme "Myst ME" yes "" "" "16bit jpeg" "qdm2 svq1"
+add_engine zoombini "Logical Journey of Zoombinis" yes "" "" "freetype2" "cdtoons midi"
+add_engine zoombini_tlc "Logical Journey of Zoombinis - The Learning Company v2.0 (Re-release)" yes "" "" "freetype2 bink"
