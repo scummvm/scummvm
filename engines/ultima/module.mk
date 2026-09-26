@@ -157,6 +157,13 @@ MODULE_OBJS += \
 	ultima2/views/interactions/yell.o
 endif
 
+ifdef ENABLE_ULTIMA3
+MODULE_OBJS += \
+	ultima3/ultima3.o \
+	ultima3/console.o \
+	ultima3/metaengine.o
+endif
+
 ifdef ENABLE_ULTIMA4
 MODULE_OBJS += \
 	ultima4/controllers/alpha_action_controller.o \

@@ -51,6 +51,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "akalabeth", "Akalabeth: World of Doom" },
 	{ "ultima1", "Ultima I: The First Age of Darkness" },
 	{ "ultima2", "Ultima II: Revenge of the Enchantress" },
+	{ "ultima3", "Ultima III: Exodus" },
 	{ "ultima4", "Ultima IV: Quest of the Avatar" },
 	{ "ultima4_enh", "Ultima IV: Quest of the Avatar - Enhanced" },
 	{ "ultima6", "Ultima VI: The False Prophet" },
@@ -145,6 +146,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			GUI_OPTIONS_ULTIMA2
 		},
 		GAME_ULTIMA2,
+		0
+	},
+
+	{
+		// Ultima III - Exodus
+		{
+			"ultima3",
+			0,
+			AD_ENTRY1s("exod.ibm", "525bbaf8dd45a9bf737852f7719ae864", 16384),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA2
+		},
+		GAME_ULTIMA3,
 		0
 	},
 

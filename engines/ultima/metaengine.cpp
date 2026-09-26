@@ -41,6 +41,11 @@
 #include "ultima/ultima2/metaengine.h"
 #undef _G
 #endif
+#ifdef ENABLE_ULTIMA3
+#include "ultima/ultima3/ultima3.h"
+#include "ultima/ultima3/metaengine.h"
+#undef _G
+#endif
 #ifdef ENABLE_ULTIMA4
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/metaengine.h"
@@ -207,6 +212,11 @@ Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 		*engine = new Ultima::Ultima2::Ultima2Engine(syst, gd);
 		break;
 #endif
+#ifdef ENABLE_ULTIMA3
+	case Ultima::GAME_ULTIMA3:
+		*engine = new Ultima::Ultima3::Ultima3Engine(syst, gd);
+		break;
+#endif
 #ifdef ENABLE_ULTIMA4
 	case Ultima::GAME_ULTIMA4:
 		*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
@@ -282,6 +292,10 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 #ifdef ENABLE_ULTIMA2
 	if (gameId == "ultima2")
 		return Ultima::Ultima2::MetaEngine::initKeymaps();
+#endif
+#ifdef ENABLE_ULTIMA3
+	if (gameId == "ultima3")
+		return Ultima::Ultima3::MetaEngine::initKeymaps();
 #endif
 #ifdef ENABLE_ULTIMA4
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
