@@ -615,7 +615,7 @@ void MinigolfPuzzle::updateBall() {
 			_sunkTime = now;
 			playSoundBlock(cup._sound);
 
-			_winScene.sceneID = cup.specialEffectId;
+			_solveScene._sceneChange.sceneID = cup.specialEffectId;
 			if (cup.type == kZoneSceneChange && cup.tailId != -1) {
 				NancySceneState.setEventFlag(cup.tailId, cup.tailFlag ? g_nancy->_true : g_nancy->_false);
 			}
@@ -661,11 +661,11 @@ void MinigolfPuzzle::execute() {
 		// zone's special effect is the fade that covers the change, so start it just
 		// before the scene change (it captures the current frame, then dissolves to
 		// the new scene).
-		if (_solved && _winScene.sceneID >= 1000 && _winScene.sceneID != kNoScene) {
+		if (_solved && _solveScene._sceneChange.sceneID >= 1000 && _solveScene._sceneChange.sceneID != kNoScene) {
 			if (_winHasFade) {
 				NancySceneState.specialEffect(_winFadeType, _winFadeTotalTime, _winFadeToBlackTime, _winFadeRect);
 			}
-			NancySceneState.changeScene(_winScene);
+			NancySceneState.changeScene(_solveScene._sceneChange);
 		}
 		finishExecution();
 		break;

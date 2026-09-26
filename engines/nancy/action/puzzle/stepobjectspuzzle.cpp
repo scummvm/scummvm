@@ -48,9 +48,9 @@ void StepObjectsPuzzle::readData(Common::SeekableReadStream &stream) {
 	_numCols = stream.readUint16LE();
 	_pitchY = stream.readUint16LE();
 	_pitchX = stream.readUint16LE();
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 	_numSteps = stream.readUint16LE();
 
 	_solution.resize(_numSteps);
@@ -77,7 +77,7 @@ void StepObjectsPuzzle::readData(Common::SeekableReadStream &stream) {
 		object.startCol = stream.readUint16LE();
 	}
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 
 	_sounds.resize(kNumSounds);
 	for (uint i = 0; i < kNumSounds; ++i) {
@@ -387,11 +387,9 @@ void StepObjectsPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_solved) {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 
 		finishExecution();
@@ -452,8 +450,7 @@ void StepObjectsPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (isHovered(_exitHotspot, input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

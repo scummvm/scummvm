@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MATCHPUZZLE_H
 #define NANCY_ACTION_MATCHPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -38,9 +38,9 @@ namespace Action {
 // "Model Match". The player swaps two neighbouring tiles to line up 3/4/5 of the
 // same type in a row or column, which scores points and extends the timer. The
 // matched tiles are then replaced with fresh random ones.
-class MatchPuzzle : public RenderActionRecord {
+class MatchPuzzle : public PuzzleRecord {
 public:
-	MatchPuzzle() : RenderActionRecord(7) {}
+	MatchPuzzle() : PuzzleRecord(7) {}
 	virtual ~MatchPuzzle() {}
 
 	void init() override;
@@ -167,11 +167,6 @@ protected:
 	SoundDescription _cardPlaceSound;    // data+0x74C
 	SoundDescription _matchSuccessSound; // data+0x798 — played on win/time-up
 
-	SceneChangeWithFlag _solveSceneChange; // data+0x77D  win  scene
-	SceneChangeWithFlag _exitSceneChange;  // data+0x7C9  quit scene
-
-	Common::Rect _exitHotspot;             // data+0x7E2  bottom-strip exit hotspot
-
 	// ---------- Nancy14-only data ----------
 
 	// Second sprite sheet, holding the pressed-down graphics of the two buttons
@@ -211,7 +206,6 @@ protected:
 	RandomSoundBlock _timeUpSound;
 	RandomSoundBlock _goButtonSound;
 
-	uint16 _exitCursorType = 0;
 	SceneChangeWithFlag _doneSceneChange;   // leaving through the button next to the board
 
 	// ---------- Runtime state ----------

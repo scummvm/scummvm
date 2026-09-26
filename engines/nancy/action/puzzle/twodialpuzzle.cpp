@@ -248,9 +248,7 @@ void TwoDialPuzzle::handleInput(NancyInput &input) {
 	bool canClick = (_state == kRun) && !_isSolved &&
 		!g_nancy->_sound->isSoundPlaying(_rotateSounds[0]) && !g_nancy->_sound->isSoundPlaying(_rotateSounds[1]);
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

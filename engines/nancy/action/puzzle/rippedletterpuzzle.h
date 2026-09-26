@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_RIPPEDLETTERPUZZLE_H
 #define NANCY_ACTION_RIPPEDLETTERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -31,11 +31,11 @@ struct RippedLetterPuzzleData;
 
 namespace Action {
 
-class RippedLetterPuzzle : public RenderActionRecord {
+class RippedLetterPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
 	enum RotationType { kRotationNone = 0, kRotation90 = 1, kRotation180 = 2 };
-	RippedLetterPuzzle() : RenderActionRecord(7) {}
+	RippedLetterPuzzle() : PuzzleRecord(7) {}
 	virtual ~RippedLetterPuzzle() {}
 
 	void init() override;
@@ -72,11 +72,7 @@ public:
 	SoundDescription _dropSound;
 	SoundDescription _rotateSound;
 
-	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	int16 _customCursorID = -1;
 

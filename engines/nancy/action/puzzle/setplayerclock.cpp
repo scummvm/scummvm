@@ -87,7 +87,7 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 	}
 
 	_buttonSound.readNormal(stream);
-	_alarmSetScene.readData(stream);
+	_solveScene.readData(stream);
 	_alarmSoundDelay = stream.readUint16LE();
 	_alarmSetSound.readNormal(stream);
 	_exitScene.readData(stream);
@@ -169,7 +169,7 @@ void SetPlayerClock::execute() {
 					g_nancy->_sound->stopSound(_buttonSound);
 					g_nancy->_sound->stopSound(_alarmSetSound);
 					NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
-					_alarmSetScene.execute();
+					_solveScene.execute();
 					finishExecution();
 				}
 			}

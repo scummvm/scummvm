@@ -174,9 +174,7 @@ void AngleTossPuzzle::handleInput(NancyInput &input) {
 	localMousePos -= Common::Point(vpPos.left, vpPos.top);
 
 	// Exit button
-	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitPressed = true;
 			_state = kActionTrigger;

@@ -41,7 +41,7 @@ void MindPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(0x25 - 0x21);				// 0x21: two count fields
 	readRect(stream, _exitHotspot);			// 0x25: give-up / leave hotspot
-	_winScene.readData(stream);				// 0x35: scene reached on a solved code (25 bytes)
+	_solveScene.readData(stream);				// 0x35: scene reached on a solved code (25 bytes)
 	_numGuesses = stream.readUint16LE();	// 0x4e
 
 	_loseScene.readData(stream);			// 0x50: out-of-guesses / exit scene (25 bytes)
@@ -294,8 +294,7 @@ void MindPuzzle::execute() {
 			}
 
 			g_nancy->_sound->stopSound(_outcomeSound);
-			NancySceneState.setEventFlag(_winScene._flag);
-			NancySceneState.changeScene(_winScene._sceneChange);
+			_solveScene.execute();
 		} else {
 			// Out of guesses, or the player left via the exit hotspot.
 			NancySceneState.setEventFlag(_loseScene._flag);
@@ -384,8 +383,7 @@ void MindPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Leave the puzzle (give up) via the exit hotspot; this reports a loss.
-	if (_exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

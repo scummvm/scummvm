@@ -243,11 +243,10 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 
 	if (isNancy13) {
 		// The give-up hotspot replaces the header's cancel scene.
-		readExitHotspot(stream, _exitHotspot, _exitCursorType,
-						_cancelScene._sceneChange, _cancelScene._flag);
-		_cancelScene._sceneChange.continueSceneSound = kContinueSceneSound;
+		readExitHotspot(stream);
+		_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 	} else {
-		_cancelScene.readData(stream);      // 0x1e8 (ends the 513-byte blob)
+		_exitScene.readData(stream);      // 0x1e8 (ends the 513-byte blob)
 	}
 
 	// --- Random-sound blocks: pickup, rotate, drop, good, bad, completion, close-up ---
@@ -443,7 +442,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.read(textBuf, 200);
 	_completionText = resolveSubtitleText(completionKey);
 
-	_cancelScene.readData(stream);
+	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
 }
 
@@ -517,10 +516,9 @@ void OneBuildPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_isCancelled) {
-			_cancelScene.execute();
+			_exitScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_solveScene._flag);
-			NancySceneState.changeScene(_solveScene._sceneChange);
+			_solveScene.execute();
 		}
 		break;
 	}
@@ -777,12 +775,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		return;
 
 	// Check exit hotspot
-	Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
-	if (exitScreen.contains(input.mousePos)) {
-		if (_exitCursorType != 0)
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
-		else
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_isCancelled = true;
 			_state = kActionTrigger;

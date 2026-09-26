@@ -108,7 +108,7 @@ void PachinkoPuzzle::readData(Common::SeekableReadStream &stream) {
 	readActionZoneArray(stream, _zones, true);
 
 	// The base trailer's hotspot records; the first is the give-up exit.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void PachinkoPuzzle::readMachine(Common::SeekableReadStream &stream, Machine &m) {
@@ -573,8 +573,7 @@ void PachinkoPuzzle::execute() {
 			NancySceneState.setEventFlag(_activeMachine->resultFlag);
 			NancySceneState.changeScene(_activeMachine->resultScene);
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -612,9 +611,7 @@ void PachinkoPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

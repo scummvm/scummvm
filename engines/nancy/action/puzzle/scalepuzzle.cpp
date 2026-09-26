@@ -54,10 +54,10 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// Applied when the puzzle comes out solved. Several scenes use 9999 (no scene) and
 	// leave the transition to whatever watches the solve flag.
-	_solveScene.sceneID = stream.readUint16LE();	// 0x25
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();		// 0x27
-	_solveFlag.flag = stream.readByte();			// 0x29
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x25
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();		// 0x27
+	_solveScene._flag.flag = stream.readByte();			// 0x29
 
 	_solveSound.readData(stream);				// played once the puzzle comes out solved
 
@@ -104,7 +104,7 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot, with the exit cursor type.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void ScalePuzzle::init() {
@@ -355,15 +355,13 @@ void ScalePuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			finishExecution();
 		} else {
 			// Solved: play the sound, set the solve flag, change scene (9999 = stay). The puzzle
 			// keeps running afterwards, so the player can still leave through the exit hotspot.
 			playSoundBlock(_solveSound);
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 			_solveTriggered = true;
 			_state = kRun;
 		}
@@ -426,9 +424,7 @@ void ScalePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

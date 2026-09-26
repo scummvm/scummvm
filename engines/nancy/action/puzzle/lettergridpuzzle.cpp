@@ -80,16 +80,16 @@ void LetterGridPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_clickSound.readData(stream);
 
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_solveSound.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 
 	// The marks live in a fixed-size global grid
 	if (_columns.size() > kMaxColumns) {
@@ -268,8 +268,7 @@ void LetterGridPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			finishExecution();
 			break;
 		}
@@ -285,8 +284,7 @@ void LetterGridPuzzle::execute() {
 			break;
 		}
 
-		NancySceneState.setEventFlag(_solveFlag);
-		NancySceneState.changeScene(_solveScene);
+		_solveScene.execute();
 		finishExecution();
 		break;
 	}
@@ -297,9 +295,7 @@ void LetterGridPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitRequested = true;
 		}

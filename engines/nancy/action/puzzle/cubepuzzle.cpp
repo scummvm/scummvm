@@ -55,7 +55,7 @@ void CubePuzzle::init() {
 
 void CubePuzzle::registerGraphics() {
 	_curPiece.registerGraphics();
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void CubePuzzle::readData(Common::SeekableReadStream &stream) {
@@ -149,9 +149,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (_pickedUpPiece == -1 && hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_completed = false;

@@ -41,7 +41,7 @@ void SoundMatchPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_resetOnWrong = stream.readByte() != 0;
 
-	_winScene.readData(stream);	// 0x084
+	_solveScene.readData(stream);	// 0x084
 	_winSound.readNormal(stream);	// 0x09d
 	_exitScene.readData(stream);	// 0x0ce
 
@@ -178,7 +178,7 @@ void SoundMatchPuzzle::execute() {
 		if (_isExiting)
 			_exitScene.execute();
 		else
-			_winScene.execute();
+			_solveScene.execute();
 		finishExecution();
 		break;
 	}
@@ -272,8 +272,7 @@ void SoundMatchPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (_exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_isExiting = true;
 			_state = kActionTrigger;

@@ -80,18 +80,18 @@ void MagnetMazePuzzle::readData(Common::SeekableReadStream &stream) {
 	_bumpSound.readNormal(stream);
 
 	stream.seek(start + 0x48a);
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4a0);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
 	_winDelaySec   = stream.readUint16LE();
 	_winSound.readNormal(stream);
 
 	stream.seek(start + 0x4d6);
-	_cancelScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.seek(start + 0x4ec);
-	_cancelFlag.label = stream.readSint16LE();
-	_cancelFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 }
@@ -189,11 +189,9 @@ void MagnetMazePuzzle::execute() {
 			MagnetMazePuzzleData *mmd = (MagnetMazePuzzleData *)NancySceneState.getPuzzleData(MagnetMazePuzzleData::getTag());
 			if (mmd)
 				mmd->magnetState.clear();
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_cancelFlag);
-			NancySceneState.changeScene(_cancelScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -302,8 +300,7 @@ void MagnetMazePuzzle::handleInput(NancyInput &input) {
 			redraw();
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_subState = kExitToCancel;
 		return;

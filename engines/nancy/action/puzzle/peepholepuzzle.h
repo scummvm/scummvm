@@ -23,15 +23,16 @@
 #define NANCY_ACTION_PEEPHOLEPUZZLE_H
 
 #include "engines/nancy/action/autotext.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // Action record that, despite what its name suggests, is mostly used
 // to render Nancy's diary in nancy6 and up.
-class PeepholePuzzle : public RenderActionRecord {
+class PeepholePuzzle : public PuzzleRecord {
 public:
-	PeepholePuzzle() : RenderActionRecord(7) {}
+	PeepholePuzzle() : PuzzleRecord(7) {}
 	virtual ~PeepholePuzzle() {}
 
 	void init() override;
@@ -63,9 +64,6 @@ protected:
 	Common::Array<Common::Rect> _buttonDisabledSrcs;
 
 	byte _pixelsToScroll = 0;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _innerImage;
 	Graphics::ManagedSurface _buttonsImage;

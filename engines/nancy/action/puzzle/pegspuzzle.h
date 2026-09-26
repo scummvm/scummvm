@@ -23,7 +23,7 @@
 #define NANCY_ACTION_PEGSPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -39,9 +39,9 @@ namespace Action {
 // Pegs are dragged and dropped: clicking a movable peg picks it up (the hand/drag
 // cursor carries the piece) and dropping it on a hole it can reach performs the jump.
 // Cell state matches the original: 0 = peg, 1 = empty hole, 2 = blocked (no hole).
-class PegsPuzzle : public RenderActionRecord {
+class PegsPuzzle : public PuzzleRecord {
 public:
-	PegsPuzzle() : RenderActionRecord(7) {}
+	PegsPuzzle() : PuzzleRecord(7) {}
 	virtual ~PegsPuzzle() {}
 
 	void init() override;
@@ -86,7 +86,6 @@ protected:
 	byte _startEmptyFlag = 0;			// 0x25 - 0 => mark _startEmptyPos empty at init
 	byte _startEmptyPos = 0;			// 0x26 - the initially-empty hole (usually the centre)
 	byte _targetPegCount = 0;			// 0x27 - win when pegs remaining <= this
-	SceneChangeDescription _winScene;	// 0x28 - shown when solved (9999 => none)
 	SceneChangeDescription _loseScene;	// 0x2d - shown when no move remains and unsolved
 	Common::Rect _pegSrc;				// 0x32 - normal peg sprite (viewport image)
 	Common::Rect _selectedSrc;			// 0x42 - highlight sprite (selected peg / target holes)
@@ -99,12 +98,6 @@ protected:
 	uint16 _numBlocked = 0;				// 0x5e - count of blocked-corner positions
 
 	Common::Array<byte> _blockedPositions;
-
-	// The clickable "give up / exit" hotspot (the base-class hotspot record).
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;			// the record's leading field is its cursor type
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	Common::Array<RandomSoundBlock> _sounds;	// 5 blocks: select / jump / pulse / win / lose
 

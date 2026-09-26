@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -35,9 +35,9 @@ namespace Action {
 // its target color. A filled region is its shape recolored to the chosen color.
 // Nancy15 adds per-color objects (paint jars) drawn at the swatches, per-color
 // event flags, order-independent solutions and single-paint regions.
-class PaintPuzzle : public RenderActionRecord {
+class PaintPuzzle : public PuzzleRecord {
 public:
-	PaintPuzzle() : RenderActionRecord(7) {}
+	PaintPuzzle() : PuzzleRecord(7) {}
 	virtual ~PaintPuzzle() {}
 
 	void init() override;
@@ -111,7 +111,6 @@ protected:
 
 	RandomSoundBlock _sounds[2];	// 0xa4/0xfa
 
-	SceneChangeWithFlag _solveScene;	// 0x1a6
 	RandomSoundBlock _solveSound;		// 0x150, plays before the solve scene change
 
 	Common::Array<ExitHotspot> _exitHotspots;

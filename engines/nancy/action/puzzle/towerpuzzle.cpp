@@ -83,11 +83,11 @@ void TowerPuzzle::readData(Common::SeekableReadStream &stream) {
 	_takeSound.readNormal(stream);
 	_dropSound.readNormal(stream);
 
-	_solveExitScene._sceneChange.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
 	_solveSound.readNormal(stream);
-	_solveExitScene._flag.label = stream.readSint16LE();
-	_solveExitScene._flag.flag = stream.readByte();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
@@ -159,7 +159,7 @@ void TowerPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			_puzzleState->order.clear();
 			_puzzleState->order.resize(3, Common::Array<int8>(6, -1));
@@ -195,9 +195,7 @@ void TowerPuzzle::handleInput(NancyInput &input) {
 		// Not holding a ring
 
 		// First, check the exit hotspot
-		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit
 				_state = kActionTrigger;

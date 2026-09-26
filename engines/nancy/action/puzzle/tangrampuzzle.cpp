@@ -108,7 +108,7 @@ void TangramPuzzle::registerGraphics() {
 		tile.registerGraphics();
 	}
 
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void TangramPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -234,9 +234,7 @@ void TangramPuzzle::handleInput(NancyInput &input) {
 		}
 
 		// No tile under cursor, check exit hotspot
-		if (_exitHotspot.contains(mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;
 			}

@@ -22,16 +22,16 @@
 #ifndef NANCY_ACTION_TWODIALPUZZLE_H
 #define NANCY_ACTION_TWODIALPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // Puzzle with two circular dials overlaid on top of each other. Each dial has one correct
 // position, and can only be rotated in one direction.
-class TwoDialPuzzle : public RenderActionRecord {
+class TwoDialPuzzle : public PuzzleRecord {
 public:
-	TwoDialPuzzle() : RenderActionRecord(7) {}
+	TwoDialPuzzle() : PuzzleRecord(7) {}
 	virtual ~TwoDialPuzzle() {}
 
 	void init() override;
@@ -81,12 +81,8 @@ protected:
 
 	SoundDescription _rotateSounds[2];
 
-	SceneChangeWithFlag _solveScene;
 	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _image;
 

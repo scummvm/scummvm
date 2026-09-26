@@ -148,11 +148,11 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 		actor.isPlayer = (stream.readByte() == 1);
 	}
 
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 	_solveSound.readData(stream);
 
 	_failScene.sceneID = stream.readUint16LE();
@@ -162,8 +162,8 @@ void EscapeGridPuzzle::readData(Common::SeekableReadStream &stream) {
 	_failFlag.flag = stream.readByte();
 	_failSound.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 static void loadPuzzleImage(const Common::Path &name, Graphics::ManagedSurface &surface, uint32 transColor) {
@@ -1071,11 +1071,9 @@ void EscapeGridPuzzle::execute() {
 	}
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else if (_outcome == 0) {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		} else {
 			NancySceneState.setEventFlag(_failFlag);
 			NancySceneState.changeScene(_failScene);
@@ -1108,10 +1106,9 @@ void EscapeGridPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_busyCursorType, true, false);
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+	if (isExitHotspotHovered(input)) {
 		if (playerToMove) {
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+			setExitCursor();
 		}
 		if (click) {
 			_exitRequested = true;

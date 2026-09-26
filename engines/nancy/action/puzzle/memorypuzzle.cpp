@@ -83,7 +83,7 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	_noMatchSound.readNormal(stream);
 
 	// 0x521: win scene + flag
-	_winScene.readData(stream);
+	_solveScene.readData(stream);
 
 	stream.skip(1); // 0x53a: unknown
 
@@ -153,10 +153,10 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 
 	// Solve scene (0x168e), then an alternate-outcome scene (0x16a8, unused). The event flags
 	// store a 16-bit value rather than a simple on/off.
-	_winScene._sceneChange.readData(stream);
-	_winScene._sceneChange.continueSceneSound = stream.readUint16LE();
-	_winScene._flag.label = stream.readSint16LE();
-	_winScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
+	_solveScene._sceneChange.readData(stream);
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
 	stream.skip(g_nancy->getGameType() >= kGameTypeNancy12 ? 24 : 26);	// alternate scene
 }
 
@@ -314,7 +314,7 @@ void MemoryPuzzle::execute() {
 		g_nancy->_sound->stopSound(_matchSound);
 		g_nancy->_sound->stopSound(_noMatchSound);
 		g_nancy->_sound->stopSound(_winSound);
-		_winScene.execute();
+		_solveScene.execute();
 		finishExecution();
 		break;
 	}

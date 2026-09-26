@@ -261,9 +261,7 @@ void SpigotPuzzle::handleInput(NancyInput &input) {
 	Common::Point mousePos = input.mousePos;
 	mousePos -= { vpScreenPos.left, vpScreenPos.top };
 
-	if (_exitHotspot.contains(mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

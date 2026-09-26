@@ -72,7 +72,7 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_depthSound.readNormal(stream);                  // +0x46f (49 bytes)
 	_cutSound.readNormal(stream);                    // +0x4a0 (49 bytes)
 
-	_puzzleSolvedScene.readData(stream);                 // +0x4d1 (25 bytes)
+	_solveScene.readData(stream);                 // +0x4d1 (25 bytes)
 	_doneSoundDelaySecs = stream.readUint16LE();     // +0x4ea
 
 	_doneSound.readNormal(stream);                   // +0x4ec (49 bytes)
@@ -84,7 +84,7 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_missingGogglesScene.readData(stream);                    // +0x520 (20 bytes)
 	stream.skip(2);                                  // +0x534 skip
 
-	_cancelScene.readData(stream);                   // +0x536 (25 bytes)
+	_exitScene.readData(stream);                   // +0x536 (25 bytes)
 	readRect(stream, _exitHotspot);
 }
 
@@ -323,10 +323,10 @@ void CuttingPuzzle::execute() {
 				}
 			}
 			if (anyGroove)
-				NancySceneState.setEventFlag(_cancelScene._flag);
-			NancySceneState.changeScene(_cancelScene._sceneChange);
+				NancySceneState.setEventFlag(_exitScene._flag);
+			NancySceneState.changeScene(_exitScene._sceneChange);
 		} else if (_solved) {
-			_puzzleSolvedScene.execute();
+			_solveScene.execute();
 		} else if (_gogglesMissing) {
 			NancySceneState.changeScene(_missingGogglesScene);
 		}
@@ -368,7 +368,7 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 	if (_latheRunning)
 		return;
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(localMouse)) {
+	if (isExitHotspotHovered(input)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kMoveBackward);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_cancelled = true;

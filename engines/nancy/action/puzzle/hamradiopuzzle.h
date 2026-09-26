@@ -22,16 +22,16 @@
 #ifndef NANCY_ACTION_HAMRADIOPUZZLE_H
 #define NANCY_ACTION_HAMRADIOPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // A puzzle that has the player input radio frequencies, and
 // send morse code data via ham radio. Used in nancy6.
-class HamRadioPuzzle : public RenderActionRecord {
+class HamRadioPuzzle : public PuzzleRecord {
 public:
-	HamRadioPuzzle() : RenderActionRecord(7) {}
+	HamRadioPuzzle() : PuzzleRecord(7) {}
 	virtual ~HamRadioPuzzle() {}
 
 	void init() override;
@@ -99,14 +99,12 @@ protected:
 	CCSound _longMorseSound;
 	Common::Array<CCSound> _badFrequencySounds;
 
-	SceneChangeWithFlag _solveScene;
 	uint16 _solveSoundDelay = 0; // not used
 	CCSound _solveSound;
 
 	Common::Rect _exitButtonDest;
 	Common::Rect _exitButtonSrc;
 
-	SceneChangeWithFlag _exitScene;
 	uint16 _exitSoundDelay = 0; // not used
 	SoundDescription _exitSound; // not used
 

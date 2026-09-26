@@ -114,14 +114,15 @@ void MatchPuzzle::readDataNancy14(Common::SeekableReadStream &stream) {
 	_timeUpSound.readData(stream);
 	_goButtonSound.readData(stream);
 
-	_solveSceneChange._sceneChange.sceneID = stream.readUint16LE();
-	_solveSceneChange._sceneChange.frameID = stream.readUint16LE();
-	_solveSceneChange._flag.label = stream.readSint16LE();
-	_solveSceneChange._flag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_exitCursorType = stream.readUint16LE();
-	_exitSceneChange._sceneChange.sceneID = stream.readUint16LE();
-	_exitSceneChange._sceneChange.frameID = stream.readUint16LE();
+	_exitCursorFromData = true;
+	_exitScene._sceneChange.sceneID = stream.readUint16LE();
+	_exitScene._sceneChange.frameID = stream.readUint16LE();
 
 	readRect(stream, _exitHotspot);
 
@@ -205,12 +206,12 @@ void MatchPuzzle::readData(Common::SeekableReadStream &stream) {
 	_shuffleSound.readNormal(stream);           // data+0x71B..0x74B
 	_cardPlaceSound.readNormal(stream);         // data+0x74C..0x77C
 
-	_solveSceneChange.readData(stream);         // data+0x77D..0x795  win scene
+	_solveScene.readData(stream);         // data+0x77D..0x795  win scene
 	stream.skip(2);                             // data+0x796..0x797 pre-result delay (unused)
 
 	_matchSuccessSound.readNormal(stream);      // data+0x798..0x7C8  win/time-up sound
 
-	_exitSceneChange.readData(stream);          // data+0x7C9..0x7E1  quit/exit scene
+	_exitScene.readData(stream);          // data+0x7C9..0x7E1  quit/exit scene
 
 	readRect(stream, _exitHotspot);             // data+0x7E2..0x7F1 exit hotspot
 }
@@ -626,11 +627,11 @@ void MatchPuzzle::execute() {
 		g_nancy->_sound->stopSound(_matchSuccessSound);
 
 		if (_wonGame)
-			_solveSceneChange.execute();
+			_solveScene.execute();
 		else if (_leftThroughButton)
 			_doneSceneChange.execute();
 		else
-			_exitSceneChange.execute();
+			_exitScene.execute();
 
 		finishExecution();
 		break;
@@ -645,9 +646,9 @@ void MatchPuzzle::handleInput(NancyInput &input) {
 	Common::Point localMouse = input.mousePos;
 	localMouse -= Common::Point(vpPos.left, vpPos.top);
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(localMouse)) {
+	if (isExitHotspotHovered(input)) {
 		if (g_nancy->getGameType() >= kGameTypeNancy14)
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+			setExitCursor();
 		else
 			g_nancy->_cursor->setCursorType(CursorManager::kMoveBackward);
 

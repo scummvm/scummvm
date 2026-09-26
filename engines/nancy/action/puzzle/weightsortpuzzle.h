@@ -23,7 +23,7 @@
 #define NANCY_ACTION_WEIGHTSORTPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -38,9 +38,9 @@ namespace Action {
 //
 // A board whose containers do not count towards either outcome never ends on its own and
 // is left through the give-up hotspot, which is what the Nancy15 sort screen does.
-class WeightSortPuzzle : public RenderActionRecord {
+class WeightSortPuzzle : public PuzzleRecord {
 public:
-	WeightSortPuzzle() : RenderActionRecord(7) {}
+	WeightSortPuzzle() : PuzzleRecord(7) {}
 	virtual ~WeightSortPuzzle() {}
 
 	void init() override;
@@ -141,11 +141,6 @@ protected:
 
 	RandomSoundBlock _rejectSound;		// a container refusing an object
 	Outcome _outcomes[kNumOutcomes];
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Common::Array<Object> _objects;

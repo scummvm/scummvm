@@ -23,7 +23,7 @@
 #define NANCY_ACTION_SCALEPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -42,9 +42,9 @@ namespace Action {
 // number. Figures must be matched in order, the lights stay on once lit,
 // and clearing the pans resets them. The puzzle is solved once every
 // figure of the current scene is lit.
-class ScalePuzzle : public RenderActionRecord {
+class ScalePuzzle : public PuzzleRecord {
 public:
-	ScalePuzzle() : RenderActionRecord(7) {}
+	ScalePuzzle() : PuzzleRecord(7) {}
 	virtual ~ScalePuzzle() {}
 
 	void init() override;
@@ -106,8 +106,6 @@ protected:
 	Common::Path _imageName;				// 0x00
 	uint16 _hoverCursorType = 0;			// 0x21 - raw Nancy13 cursor type over a coin
 	uint16 _dragCursorType = 0;				// 0x23 - raw Nancy13 cursor type while carrying
-	SceneChangeDescription _solveScene;		// 0x25 - applied when solved (9999 => none)
-	FlagDescription _solveFlag;				// 0x27 - set when solved
 	RandomSoundBlock _solveSound;			// the first sound block; played once solved
 
 	Common::Array<Target> _targets;			// the figures to match in this scene
@@ -127,13 +125,6 @@ protected:
 	RandomSoundBlock _pickupSound;			// 0x170 - coin picked up
 	RandomSoundBlock _dropTraySound;		// 0x218 - coin dropped back into the tray
 	RandomSoundBlock _dropPanSound;			// 0x1c4 - coin dropped onto a pan
-
-	// The clickable "give up / exit" hotspot (the base-class hotspot record). Clicking it
-	// always jumps to the scene's first frame and sets an event flag.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	int _indicatorZeroFrame = 0;			// the "0" frame (frames.size() / 2)

@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TURNINGPUZZLE_H
 #define NANCY_ACTION_TURNINGPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -41,10 +41,10 @@ namespace Action {
 // whose frames cycle inside a set of fixed slots), and a time limit, after which the puzzle
 // plays its own sound and sends the player to a failure scene. Example: the pocket watch
 // puzzle in Dieter's house.
-class TurningPuzzle : public RenderActionRecord {
+class TurningPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForAnimation, kWaitBeforeSound, kWaitForSound };
-	TurningPuzzle() : RenderActionRecord(7) {}
+	TurningPuzzle() : PuzzleRecord(7) {}
 	virtual ~TurningPuzzle() {}
 
 	void init() override;
@@ -105,12 +105,8 @@ protected:
 
 	Common::Array<uint16> _correctOrder;
 
-	SceneChangeWithFlag _solveScene;
 	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	// -- Nancy13 only --
 	Common::Array<PieceType> _pieceTypes;
@@ -121,7 +117,6 @@ protected:
 	uint16 _hitInset = 0;			// header 0x25 - hotspots are the dest rect shrunk by this
 	int16 _turnFlagLabel = -1;		// header 0x27 - set once the player turns anything
 	byte _turnFlagValue = 0;		// header 0x29
-	uint16 _exitCursorType = 0;		// from the exit hotspot record
 	RandomSoundBlock _turnSoundBlock;
 	RandomSoundBlock _solveSoundBlock;
 	bool _turnFlagSet = false;

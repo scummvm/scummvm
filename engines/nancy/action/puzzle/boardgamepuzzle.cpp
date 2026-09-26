@@ -58,7 +58,7 @@ void BoardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 		_moves[i].jumpFrameEnd = stream.readSint16LE();
 	}
 
-	_winScene.readData(stream);				// 0x2e2, SceneChangeWithFlag
+	_solveScene.readData(stream);				// 0x2e2, SceneChangeWithFlag
 	_loseScene.readData(stream);			// 0x2fb, SceneChangeWithFlag
 
 	// Six random-sound blocks (button/click/clank/slide/key/beep).
@@ -240,7 +240,7 @@ void BoardGamePuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_solved) {
-			_winScene.execute();
+			_solveScene.execute();
 		} else if (_lost) {
 			_loseScene.execute();
 		}

@@ -223,9 +223,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
 	localMousePos -= { vpPos.left, vpPos.top };
 
-	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (!_pressedButton &&input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

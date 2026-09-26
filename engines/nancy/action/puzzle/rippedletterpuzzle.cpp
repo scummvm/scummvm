@@ -193,7 +193,7 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	_dropSound.readNormal(stream);
 	_rotateSound.readNormal(stream);
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 
 	_exitScene.readData(stream);
@@ -289,11 +289,11 @@ void RippedLetterPuzzle::execute() {
 			_exitScene.execute();
 			break;
 		case kWaitForSound:
-			if (_solveExitScene._sceneChange.sceneID == NancySceneState.getSceneInfo().sceneID) {
+			if (_solveScene._sceneChange.sceneID == NancySceneState.getSceneInfo().sceneID) {
 				// nancy9 scene 2484 is auto-solved for you, but has a valid scene change back to itself
 				return;
 			}
-			_solveExitScene.execute();
+			_solveScene.execute();
 			_puzzleState->playerHasTriedPuzzle = false;
 			break;
 		}
@@ -428,7 +428,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 	if (_puzzleState->pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
-		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+		if (isExitHotspotHovered(input)) {
 			if (_customCursorID != -1)
 				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_customCursorID, true);
 			else

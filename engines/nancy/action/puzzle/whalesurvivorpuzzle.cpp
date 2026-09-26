@@ -180,7 +180,7 @@ void WhaleSurvivorPuzzle::readData(Common::SeekableReadStream &stream) {
 	_sound5.readNormal(stream);       // 0x9ea (unused/silence)
 
 	// Scenes and remaining sounds
-	_winScene.readData(stream);       // 0xa1b  (25 bytes)
+	_solveScene.readData(stream);       // 0xa1b  (25 bytes)
 	stream.skip(1);                // 0xa34  padding byte
 	_winSound.readNormal(stream);     // 0xa35
 	_lossScene.readData(stream);      // 0xa66  (25 bytes)
@@ -464,7 +464,7 @@ void WhaleSurvivorPuzzle::execute() {
 		g_nancy->_sound->stopSound(_gameOverSound);
 
 		if (_executeWin)
-			_winScene.execute();
+			_solveScene.execute();
 		else
 			_lossScene.execute();
 

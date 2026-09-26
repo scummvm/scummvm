@@ -23,7 +23,7 @@
 #define NANCY_ACTION_ADJUSTPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -34,9 +34,9 @@ namespace Action {
 // table of combinations to pick a result; hitting the "perfect" result solves
 // the puzzle, any other shows a result overlay (Perfect-Vert / -Hor / -Mirror /
 // -Lite, ...) and fails.
-class AdjustPuzzle : public RenderActionRecord {
+class AdjustPuzzle : public PuzzleRecord {
 public:
-	AdjustPuzzle() : RenderActionRecord(7) {}
+	AdjustPuzzle() : PuzzleRecord(7) {}
 	virtual ~AdjustPuzzle() {}
 
 	void init() override;
@@ -104,12 +104,6 @@ protected:
 	byte _perfectResult = 0;	// 0x1c5
 	Outcome _winScene;			// 0x21c (field0), scene at 0x21e
 	Outcome _loseScene;			// 0x27d (field0), scene at 0x27f
-
-	// Give-up hotspot (count-prefixed 23-byte trailer): click to leave the puzzle.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Graphics::ManagedSurface _image;

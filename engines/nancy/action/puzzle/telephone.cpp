@@ -436,9 +436,7 @@ void Telephone::handleInput(NancyInput &input) {
 	// The exit hotspot stays active for as long as the record is running, even
 	// while ringing, talking, or playing the bad number message. Only the
 	// buttons are limited to the states where the phone accepts input.
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (_phoneType == kTelephone) {
 				g_nancy->_sound->loadSound(_hangUpSound);

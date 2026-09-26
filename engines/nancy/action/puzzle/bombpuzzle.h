@@ -22,14 +22,14 @@
 #ifndef NANCY_ACTION_BOMBPUZZLE_H
 #define NANCY_ACTION_BOMBPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
-class BombPuzzle : public RenderActionRecord {
+class BombPuzzle : public PuzzleRecord {
 public:
-	BombPuzzle() : RenderActionRecord(7) {}
+	BombPuzzle() : PuzzleRecord(7) {}
 	virtual ~BombPuzzle() {}
 
 	void init() override;
@@ -56,7 +56,6 @@ protected:
 	SoundDescription _snipSound;
 	SoundDescription _noToolSound;
 	uint16 _toolID = 0;
-	SceneChangeWithFlag _solveSceneChange;
 	SoundDescription _solveSound;
 	SceneChangeWithFlag _failSceneChange;
 	SoundDescription _failSound;

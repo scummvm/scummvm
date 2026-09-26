@@ -23,7 +23,7 @@
 #define NANCY_ACTION_ESCAPEGRIDPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -36,9 +36,9 @@ namespace Action {
 // Landing on a hex slides the whole line of hexes through it one step in the direction
 // of the jump, carrying anyone standing on it, with the front hex wrapping around to the
 // back; which hexes are solid and which are missing shifts along with it.
-class EscapeGridPuzzle : public RenderActionRecord {
+class EscapeGridPuzzle : public PuzzleRecord {
 public:
-	EscapeGridPuzzle() : RenderActionRecord(7) {}
+	EscapeGridPuzzle() : PuzzleRecord(7) {}
 	virtual ~EscapeGridPuzzle();
 
 	void init() override;
@@ -247,17 +247,10 @@ protected:
 	Common::Array<Character> _characters;
 	Common::Array<Actor> _actors;
 
-	SceneChangeDescription _solveScene;
-	FlagDescription _solveFlag;
 	RandomSoundBlock _solveSound;
 	SceneChangeDescription _failScene;	// an opponent got there first
 	FlagDescription _failFlag;
 	RandomSoundBlock _failSound;
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Common::Array<Common::Point> _actorCells;

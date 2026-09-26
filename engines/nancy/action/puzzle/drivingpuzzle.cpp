@@ -228,23 +228,23 @@ void DrivingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 }
 
 void DrivingPuzzle::armExit(const DestinationZone &dest) {
-	_exitScene = dest.scene;
+	_exitScene._sceneChange = dest.scene;
+	_exitScene._flag.label = dest.eventFlag;
+	_exitScene._flag.flag = dest.eventFlagValue ? g_nancy->_true : g_nancy->_false;
 	_exitHasFade = dest.hasFade;
 	_exitFadeType = dest.fadeType;
 	_exitFadeTotalTime = dest.fadeTotalTime;
 	_exitFadeToBlackTime = dest.fadeToBlackTime;
 	_exitFadeRect = dest.fadeRect;
-	_exitFlag = dest.eventFlag;
-	_exitFlagValue = dest.eventFlagValue;
 	_state = kActionTrigger;
 }
 
 void DrivingPuzzle::armExitScene(uint16 sceneID, int16 flag, byte flagValue) {
-	_exitScene = SceneChangeDescription();
-	_exitScene.sceneID = sceneID;
+	_exitScene._sceneChange = SceneChangeDescription();
+	_exitScene._sceneChange.sceneID = sceneID;
+	_exitScene._flag.label = flag;
+	_exitScene._flag.flag = flagValue ? g_nancy->_true : g_nancy->_false;
 	_exitHasFade = false;
-	_exitFlag = flag;
-	_exitFlagValue = flagValue;
 	_state = kActionTrigger;
 }
 
@@ -720,10 +720,9 @@ void DrivingPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		g_nancy->_sound->stopSound(_soundBlocks[2].channel);	// stop the engine ambience
-		NancySceneState.setEventFlag(_exitFlag, _exitFlagValue ? g_nancy->_true : g_nancy->_false);
 		if (_exitHasFade)
 			NancySceneState.specialEffect(_exitFadeType, _exitFadeTotalTime, _exitFadeToBlackTime, _exitFadeRect);
-		NancySceneState.changeScene(_exitScene);
+		_exitScene.execute();
 		finishExecution();
 		break;
 	}

@@ -48,9 +48,9 @@ void PegsPuzzle::readData(Common::SeekableReadStream &stream) {
 	// Win / lose scene changes, each {uint16 sceneID, uint16 frameID, byte}. A frameID of
 	// 0xffff means "no specific frame" (the target scene may be a video, so seeking to
 	// 65535 must be avoided) - keep the default frame 0.
-	_winScene.sceneID = stream.readUint16LE();	// 0x28
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x28
 	uint16 winFrame = stream.readUint16LE();	// 0x2a
-	_winScene.frameID = (winFrame == 0xffff) ? 0 : winFrame;
+	_solveScene._sceneChange.frameID = (winFrame == 0xffff) ? 0 : winFrame;
 	stream.skip(1);								// 0x2c
 	_loseScene.sceneID = stream.readUint16LE();	// 0x2d
 	uint16 loseFrame = stream.readUint16LE();	// 0x2f
@@ -76,7 +76,7 @@ void PegsPuzzle::readData(Common::SeekableReadStream &stream) {
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot (leave the puzzle unsolved), with the exit cursor type.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 
 	// Five random-sound blocks: [0] peg select, [1] jump, [2] selection pulse, [3] win, [4] lose.
 	_sounds.resize(5);
@@ -337,10 +337,9 @@ void PegsPuzzle::execute() {
 	}
 	case kActionTrigger: {
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
-			NancySceneState.changeScene(_solved ? _winScene : _loseScene);
+			NancySceneState.changeScene(_solved ? _solveScene._sceneChange : _loseScene);
 		}
 
 		finishExecution();
@@ -393,9 +392,7 @@ void PegsPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

@@ -216,7 +216,7 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 
 	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle);
 	// the first one is the "give up" hotspot.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene._sceneChange, _exitScene._flag);
+	readExitHotspot(stream);
 
 	uint16 numTypes = stream.readUint16LE();
 	_pieceTypes.resize(numTypes);
@@ -538,13 +538,7 @@ void TurningPuzzle::execute() {
 void TurningPuzzle::handleInput(NancyInput &input) {
 	const bool isNancy13 = g_nancy->getGameType() >= kGameTypeNancy13;
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		if (isNancy13)
-			// Zone cursors use the idle sprite of their type, unlike the hover cursor below.
-			g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
-		else
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_state = kActionTrigger;
 

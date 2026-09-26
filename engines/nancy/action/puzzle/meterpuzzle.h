@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -34,9 +34,9 @@ namespace Action {
 // Nancy14's oxygen meter while diving in the sewer). In modes 1/2 the value is
 // a shared value table entry, driven by BlockingPuzzle (AR 180), used by
 // Nancy14's health meters in the final fight.
-class MeterPuzzle : public RenderActionRecord {
+class MeterPuzzle : public PuzzleRecord {
 public:
-	MeterPuzzle() : RenderActionRecord(7) {}
+	MeterPuzzle() : PuzzleRecord(7) {}
 	virtual ~MeterPuzzle() {}
 
 	void init() override;

@@ -85,9 +85,9 @@ void BeadPuzzle::readData(Common::SeekableReadStream &stream) {
 	_perfectFlag.label = stream.readSint16LE();
 	_perfectFlag.flag  = stream.readByte();
 
-	_defaultScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_solvedScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
 
 	readRect(stream, _exitHotspot);
@@ -200,7 +200,7 @@ void BeadPuzzle::execute() {
 		g_nancy->_sound->stopSound(_partialSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_perfectSound);
-		NancySceneState.changeScene(_subState == kExitToSolved ? _solvedScene : _defaultScene);
+		NancySceneState.changeScene(_subState == kExitToSolved ? _solveScene._sceneChange : _exitScene._sceneChange);
 		finishExecution();
 		break;
 	}
@@ -304,8 +304,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_subState = kExitToDefault;
 	}

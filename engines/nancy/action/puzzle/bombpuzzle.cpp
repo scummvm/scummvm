@@ -45,7 +45,7 @@ void BombPuzzle::init() {
 	setTransparent(true);
 
 	g_nancy->_resource->loadImage(_imageName, _image);
-	RenderActionRecord::init();
+	PuzzleRecord::init();
 }
 
 void BombPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -68,7 +68,7 @@ void BombPuzzle::readData(Common::SeekableReadStream &stream) {
 	_noToolSound.readNormal(stream);
 	_toolID = stream.readUint16LE();
 
-	_solveSceneChange.readData(stream);
+	_solveScene.readData(stream);
 	stream.skip(2);
 	_solveSound.readNormal(stream);
 
@@ -233,7 +233,7 @@ void BombPuzzle::execute() {
 			}
 
 			g_nancy->_sound->stopSound(_solveSound);
-			_solveSceneChange.execute();
+			_solveScene.execute();
 		}
 
 		g_nancy->_sound->stopSound(_snipSound);

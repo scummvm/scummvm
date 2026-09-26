@@ -159,11 +159,11 @@ void BuildPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_wrongIngredientFlag = stream.readSint16LE();
 	_solvedFlag = stream.readSint16LE();
-	_solveScene.sceneID = stream.readUint16LE();
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	SoundDescription unused;
 	readSoundBlock(stream, unused);
@@ -735,7 +735,7 @@ void BuildPuzzle::pressButton(HeldButton button) {
 
 void BuildPuzzle::takeOutcome() {
 	if (checkSolved()) {
-		if (_solveScene.sceneID != kNoScene) {
+		if (_solveScene._sceneChange.sceneID != kNoScene) {
 			_isSolved = true;
 			_state = kActionTrigger;
 		}
@@ -951,8 +951,7 @@ void BuildPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_isSolved) {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		} else if (_isFailed) {
 			NancySceneState.setEventFlag(_failFlag);
 			NancySceneState.changeScene(_failScene);

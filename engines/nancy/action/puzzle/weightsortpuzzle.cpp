@@ -128,8 +128,8 @@ void WeightSortPuzzle::readData(Common::SeekableReadStream &stream) {
 		outcome.sound.readData(stream);
 	}
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 // Drops the object at a random spot fully inside its container.
@@ -439,8 +439,7 @@ void WeightSortPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
 			NancySceneState.setEventFlag(_outcomes[_outcome].flag);
 			NancySceneState.changeScene(_outcomes[_outcome].scene);
@@ -533,9 +532,7 @@ void WeightSortPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

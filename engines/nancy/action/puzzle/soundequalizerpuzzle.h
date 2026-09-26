@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_SOUNDEQUALIZERPUZZLE_H
 #define NANCY_ACTION_SOUNDEQUALIZERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace UI {
 class Scrollbar;
@@ -36,9 +36,9 @@ namespace Action {
 
 class ViewportScrollbar;
 
-class SoundEqualizerPuzzle: public RenderActionRecord {
+class SoundEqualizerPuzzle: public PuzzleRecord {
 public:
-	SoundEqualizerPuzzle() : RenderActionRecord(7) {}
+	SoundEqualizerPuzzle() : PuzzleRecord(7) {}
 	virtual ~SoundEqualizerPuzzle();
 
 	void init() override;
@@ -76,10 +76,7 @@ public:
 	uint16 _solveMinRate = 0;
 	uint16 _solveMaxRate = 0;
 
-	SceneChangeDescription _exitScene;
 	SoundDescription _exitSound;
-
-	FlagDescription _solveFlag;
 
 	Graphics::ManagedSurface _image;
 	Common::Array<ViewportScrollbar *> _sliders;

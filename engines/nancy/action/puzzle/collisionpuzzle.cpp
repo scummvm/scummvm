@@ -131,7 +131,7 @@ void CollisionPuzzle::registerGraphics() {
 		_pieces[i].registerGraphics();
 	}
 
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void CollisionPuzzle::updateGraphics() {
@@ -654,9 +654,7 @@ void CollisionPuzzle::handleInput(NancyInput &input) {
 			return;
 		}
 	} else {
-		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;
 			}

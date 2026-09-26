@@ -67,7 +67,7 @@ void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_buttonPopTime = stream.readUint16LE();
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 
 	_exitScene.readData(stream);
@@ -154,7 +154,7 @@ void OverrideLockPuzzle::execute() {
 				return;
 			}
 
-			_solveExitScene.execute();
+			_solveScene.execute();
 			g_nancy->_sound->stopSound(_solveSound);
 		}
 
@@ -170,9 +170,7 @@ void OverrideLockPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Check the exit hotspot
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

@@ -67,7 +67,7 @@ void MazeChasePuzzle::registerGraphics() {
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		_pieces[i].registerGraphics();
 	}
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void MazeChasePuzzle::updateGraphics() {
@@ -305,9 +305,7 @@ void MazeChasePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

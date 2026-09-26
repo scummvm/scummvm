@@ -84,7 +84,7 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_maxStringLength = g_nancy->getGameType() < kGameTypeNancy6 ? 12 : 31;
 
-	_solveExitScene.readData(stream);
+	_solveScene.readData(stream);
 	_solveSound.readNormal(stream);
 	_failExitScene.readData(stream);
 	_failSound.readNormal(stream);
@@ -188,7 +188,7 @@ void PasswordPuzzle::execute() {
 			_failExitScene.execute();
 			break;
 		case kSolved:
-			_solveExitScene.execute();
+			_solveScene.execute();
 			break;
 		}
 
@@ -199,7 +199,7 @@ void PasswordPuzzle::execute() {
 
 void PasswordPuzzle::onPause(bool paused) {
 	g_nancy->_input->setVKEnabled(!paused);
-	RenderActionRecord::onPause(paused);
+	PuzzleRecord::onPause(paused);
 }
 
 void PasswordPuzzle::handleInput(NancyInput &input) {
@@ -207,9 +207,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

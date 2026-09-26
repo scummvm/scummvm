@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_TOWERPUZZLE_H
 #define NANCY_ACTION_TOWERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -31,10 +31,10 @@ struct TowerPuzzleData;
 
 namespace Action {
 
-class TowerPuzzle : public RenderActionRecord {
+class TowerPuzzle : public PuzzleRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	TowerPuzzle() : RenderActionRecord(7) {}
+	TowerPuzzle() : PuzzleRecord(7) {}
 	virtual ~TowerPuzzle() {}
 
 	void init() override;
@@ -62,11 +62,7 @@ protected:
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 
-	SceneChangeWithFlag _solveExitScene;
 	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _heldRing;

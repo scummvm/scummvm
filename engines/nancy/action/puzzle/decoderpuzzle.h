@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 
@@ -42,9 +42,9 @@ namespace Action {
 // Each scene using it holds two records, one with the substitution table and one
 // with none (every keystroke emits a random letter); they share the decoded line
 // through the puzzle data.
-class DecoderPuzzle : public RenderActionRecord {
+class DecoderPuzzle : public PuzzleRecord {
 public:
-	DecoderPuzzle() : RenderActionRecord(7) {}
+	DecoderPuzzle() : PuzzleRecord(7) {}
 	virtual ~DecoderPuzzle() {}
 
 	void init() override;
@@ -96,15 +96,7 @@ protected:
 	Common::Rect _resetMovieRect;		// 0x11f
 	RandomSoundBlock _resetSound;		// 0x12f, plays while it runs
 
-	SceneChangeDescription _solveScene;	// 0x1db
-	FlagDescription _solveFlag;
 	RandomSoundBlock _solveSound;		// 0x185, plays before the scene change
-
-	// Give-up hotspot, from the count-prefixed 23-byte trailer
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	MoviePlayer _resetMovie;

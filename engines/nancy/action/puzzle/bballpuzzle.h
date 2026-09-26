@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_BBALLPUZZLE_H
 #define NANCY_ACTION_BBALLPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
 
-class BBallPuzzle : public RenderActionRecord {
+class BBallPuzzle : public PuzzleRecord {
 public:
-	BBallPuzzle() : RenderActionRecord(7) {}
+	BBallPuzzle() : PuzzleRecord(7) {}
 	virtual ~BBallPuzzle() {}
 
 	void init() override;
@@ -80,9 +80,6 @@ protected:
 	Common::Array<int16> _playerPositionFlags;
 
 	int16 _winFlag = 0;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _image;
 

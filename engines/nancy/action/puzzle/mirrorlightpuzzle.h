@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MIRRORLIGHTPUZZLE_H
 #define NANCY_ACTION_MIRRORLIGHTPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionzone.h"
 
@@ -32,9 +32,9 @@ namespace Action {
 // Light-reflection puzzle introduced in Nancy12 (AR 163). The player turns a set
 // of mirrors within their angle limits to route a beam of light from a source to
 // a target zone.
-class MirrorLightPuzzle : public RenderActionRecord {
+class MirrorLightPuzzle : public PuzzleRecord {
 public:
-	MirrorLightPuzzle() : RenderActionRecord(7) {}
+	MirrorLightPuzzle() : PuzzleRecord(7) {}
 	virtual ~MirrorLightPuzzle() {}
 
 	void init() override;

@@ -218,12 +218,12 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	if (ser.getVersion() == kGameTypeVampire) {
-		_solveExitScene._sceneChange.readData(stream, true);
+		_solveScene._sceneChange.readData(stream, true);
 		ser.skip(2); // shouldStopRendering
-		ser.syncAsSint16LE(_solveExitScene._flag.label);
-		ser.syncAsByte(_solveExitScene._flag.flag);
+		ser.syncAsSint16LE(_solveScene._flag.label);
+		ser.syncAsByte(_solveScene._flag.flag);
 	} else {
-		_solveExitScene.readData(stream);
+		_solveScene.readData(stream);
 	}
 
 	ser.syncAsUint16LE(_solveSoundDelay);
@@ -327,11 +327,11 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				// to gain the needed token to proceed.
 				// TODO: What is the correct way to handle this?
 				if (g_nancy->getGameType() == kGameTypeNancy11 && advanceSceneID == 2721 &&
-					_solveExitScene._sceneChange.sceneID == 2720)
+					_solveScene._sceneChange.sceneID == 2720)
 					advanceSceneID = 2720;
 
 				if (advanceSceneID != 0 && advanceSceneID != kNoScene) {
-					_solveExitScene._sceneChange.sceneID = advanceSceneID;
+					_solveScene._sceneChange.sceneID = advanceSceneID;
 				}
 			} else if (g_nancy->getGameType() >= kGameTypeNancy12) {
 				stream.skip(2); // advance scene
@@ -697,9 +697,9 @@ void OrderingPuzzle::execute() {
 			// The flag is only set here: setting it as soon as the solution is entered can
 			// invalidate this record's own dependencies, which stops it from being executed
 			// again before it ever reaches this point.
-			_solveExitScene.execute();
+			_solveScene.execute();
 		} else {
-			NancySceneState.changeScene(_solveExitScene._sceneChange);
+			NancySceneState.changeScene(_solveScene._sceneChange);
 		}
 
 		finishExecution();
@@ -724,7 +724,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+	if (isExitHotspotHovered(input)) {
 		setHoverCursor(_exitCursorID, g_nancy->_cursor->_puzzleExitCursor);
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {

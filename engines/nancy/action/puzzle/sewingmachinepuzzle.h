@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_SEWINGMACHINEPUZZLE_H
 #define NANCY_ACTION_SEWINGMACHINEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/navigationrecords.h"
 #include "engines/nancy/action/actionzone.h"
@@ -36,9 +36,9 @@ namespace Action {
 // the end cross-dissolves to the trigger zone's win scene.
 // TODO: the needle spot comes from the scene's needle-overlay rect, not from this
 // record's own data.
-class SewingMachinePuzzle : public RenderActionRecord {
+class SewingMachinePuzzle : public PuzzleRecord {
 public:
-	SewingMachinePuzzle() : RenderActionRecord(7) {}
+	SewingMachinePuzzle() : PuzzleRecord(7) {}
 	virtual ~SewingMachinePuzzle() {}
 
 	void init() override;

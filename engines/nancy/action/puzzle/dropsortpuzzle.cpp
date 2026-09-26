@@ -94,12 +94,12 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_hornSound.readData(stream);
 
 	// Win scene + flag. frameID 0xffff means "no specific frame" (target may be a video) - keep 0.
-	_winScene.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
 	uint16 winFrame = stream.readUint16LE();
-	_winScene.frameID = (winFrame == 0xffff) ? 0 : winFrame;
-	_winScene.continueSceneSound = kContinueSceneSound;
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag = stream.readByte();
+	_solveScene._sceneChange.frameID = (winFrame == 0xffff) ? 0 : winFrame;
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
 	_winSound.readData(stream);
 
@@ -113,7 +113,7 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 	_loseSound.readData(stream);
 
 	// Count-prefixed 23-byte hotspot records; the first is the "give up / exit" hotspot.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void DropSortPuzzle::init() {
@@ -403,11 +403,9 @@ void DropSortPuzzle::execute() {
 	}
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else if (_solved) {
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
 			NancySceneState.setEventFlag(_loseFlag);
 			NancySceneState.changeScene(_loseScene);
@@ -458,9 +456,7 @@ void DropSortPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

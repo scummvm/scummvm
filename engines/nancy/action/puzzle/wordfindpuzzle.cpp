@@ -45,7 +45,7 @@ void WordFindPuzzle::readData(Common::SeekableReadStream &stream) {
 	_cellGapX = stream.readUint16LE();		// 0x06
 	_cellGapY = stream.readUint16LE();		// 0x08
 	stream.skip(0x20);						// 0x0a
-	_solveScene.sceneID = stream.readUint16LE();	// 0x2a - shown once every word is found
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x2a - shown once every word is found
 	stream.skip(3);							// 0x2c
 	readFilename(stream, _solutionImageName);	// 0x2f
 	uint16 numWords = stream.readUint16LE();	// 0x50
@@ -70,7 +70,7 @@ void WordFindPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 
 	// The shared 23-byte exit-hotspot record.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 
 	_sounds.resize(4);
 	for (uint i = 0; i < 4; ++i) {
@@ -306,9 +306,9 @@ void WordFindPuzzle::execute() {
 	}
 	case kActionTrigger: {
 		if (!_allFound) {
-			NancySceneState.setEventFlag(_exitFlag);
+			NancySceneState.setEventFlag(_exitScene._flag);
 		}
-		NancySceneState.changeScene(_allFound ? _solveScene : _exitScene);
+		NancySceneState.changeScene(_allFound ? _solveScene._sceneChange : _exitScene._sceneChange);
 
 		finishExecution();
 		break;
@@ -376,9 +376,7 @@ void WordFindPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

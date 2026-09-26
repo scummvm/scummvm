@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_BULPUZZLE_H
 #define NANCY_ACTION_BULPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // A puzzle based around a simplified version of the Mayan game Bul
-class BulPuzzle : public RenderActionRecord {
+class BulPuzzle : public PuzzleRecord {
 public:
-	BulPuzzle() : RenderActionRecord(7) {}
+	BulPuzzle() : PuzzleRecord(7) {}
 	virtual ~BulPuzzle() {}
 
 	void init() override;
@@ -110,15 +110,12 @@ protected:
 	SoundDescription _passSound;
 	SoundDescription _resetSound;
 
-	SceneChangeWithFlag _solveScene;
 	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
 
-	SceneChangeWithFlag _exitScene; // when losing (Nancy 11 shares the win scene, set apart by the flag)
 	uint16 _loseSoundDelay = 0;
 	SoundDescription _loseSound;
 	SceneChangeWithFlag _giveUpScene; // nancy11: separate scene reached by giving up via the exit hotspot
-	Common::Rect _exitHotspot;
 
 	// Nancy 11 voice clips: two players, seven tables each (entry counts 1,1,4,4,4,4,4).
 	// Table 0 = opening line, 2 = turn line, 5 = end-of-game line.

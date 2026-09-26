@@ -131,11 +131,11 @@ void NecklacePuzzle::readData(Common::SeekableReadStream &stream) {
 	_putDownSound.readData(stream);
 	_unknownSound.readData(stream);
 
-	_solvedScene.sceneID = stream.readUint16LE();
-	_solvedScene.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
 	int16 solvedOffset = stream.readSint16LE();
-	_solvedScene.verticalOffset = solvedOffset >= 0 ? solvedOffset : 0;
-	_solvedScene.continueSceneSound = stream.readByte();
+	_solveScene._sceneChange.verticalOffset = solvedOffset >= 0 ? solvedOffset : 0;
+	_solveScene._sceneChange.continueSceneSound = stream.readByte();
 	_solvedSound.readData(stream);
 
 	_unsolvedScene.sceneID = stream.readUint16LE();
@@ -145,7 +145,7 @@ void NecklacePuzzle::readData(Common::SeekableReadStream &stream) {
 	_unsolvedScene.continueSceneSound = stream.readByte();
 	_unsolvedSound.readData(stream);
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void NecklacePuzzle::init() {
@@ -466,13 +466,13 @@ void NecklacePuzzle::execute() {
 
 		if (_solved) {
 			playSoundBlock(_solvedSound);
-			if (_solvedScene.sceneID != kNoScene) {
-				NancySceneState.changeScene(_solvedScene);
+			if (_solveScene._sceneChange.sceneID != kNoScene) {
+				NancySceneState.changeScene(_solveScene._sceneChange);
 			}
 		} else {
 			playSoundBlock(_unsolvedSound);
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_unsolvedScene.sceneID != kNoScene ? _unsolvedScene : _exitScene);
+			NancySceneState.setEventFlag(_exitScene._flag);
+			NancySceneState.changeScene(_unsolvedScene.sceneID != kNoScene ? _unsolvedScene : _exitScene._sceneChange);
 		}
 
 		finishExecution();
@@ -562,8 +562,7 @@ void NecklacePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

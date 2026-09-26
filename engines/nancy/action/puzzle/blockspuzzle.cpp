@@ -52,15 +52,15 @@ void BlocksPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	// The scene change and flag applied once the board comes out solved. The frame is
 	// always the scene's first, and its sound carries over.
-	_solveScene.sceneID = stream.readUint16LE();	// 0x6a
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();		// 0x6c
-	_solveFlag.flag = stream.readByte();			// 0x6e
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x6a
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();		// 0x6c
+	_solveScene._flag.flag = stream.readByte();			// 0x6e
 
 	// A count-prefixed array of fixed 23-byte hotspot records:
 	// {rect, u16 cursorType, u16 sceneID, u16 frameID, byte}. The sample carries one - the
 	// "give up / exit" hotspot (leave the puzzle unsolved), with the exit cursor type.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 
 	// The block shapes, each a 13-byte descriptor of its row in the atlas image.
 	int16 numBlocks = stream.readSint16LE();
@@ -366,11 +366,9 @@ void BlocksPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		}
 
 		finishExecution();
@@ -453,9 +451,7 @@ void BlocksPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		setDataCursor(_exitCursorType, false);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}

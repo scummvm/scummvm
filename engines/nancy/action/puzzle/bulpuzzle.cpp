@@ -325,7 +325,7 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
 
-		_exitScene.readData(stream);
+		_exitScene.readData(stream); // when losing (Nancy 11 shares the win scene, set apart by the flag)
 		_loseSoundDelay = stream.readUint16LE();
 		_loseSound.readNormal(stream);
 	}
@@ -491,9 +491,7 @@ void BulPuzzle::doAiTurn() {
 }
 
 void BulPuzzle::handleInput(NancyInput &input) {
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_nextMoveTime = 0;

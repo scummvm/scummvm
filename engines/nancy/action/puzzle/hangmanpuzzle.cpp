@@ -91,7 +91,7 @@ void HangmanPuzzle::readData(Common::SeekableReadStream &stream) {
 	// Trailing count-prefixed array of 23-byte give-up hotspots
 	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
 	// The exit always jumps to the scene's first frame.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 HangmanData *HangmanPuzzle::getPuzzleData() const {
@@ -344,9 +344,7 @@ void HangmanPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Give-up hotspot: leave the puzzle.
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitRequested = true;
 		}
@@ -373,8 +371,7 @@ void HangmanPuzzle::execute() {
 		break;
 	case kRun:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			break;
 		}
 		updateFeedback();

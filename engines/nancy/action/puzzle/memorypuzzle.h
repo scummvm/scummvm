@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_MEMORYPUZZLE_H
 #define NANCY_ACTION_MEMORYPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 namespace Nancy {
@@ -32,9 +32,9 @@ namespace Action {
 // It has three tabs, each containing 24 cards(6x4 grid).
 // The player flips cards to find matching pairs; matching pairs stay face-up.
 // Player wins when matchedPairs >= requiredPairs.
-class MemoryPuzzle : public RenderActionRecord {
+class MemoryPuzzle : public PuzzleRecord {
 public:
-	MemoryPuzzle() : RenderActionRecord(7) {}
+	MemoryPuzzle() : PuzzleRecord(7) {}
 	virtual ~MemoryPuzzle() {}
 
 	void init() override;
@@ -82,7 +82,6 @@ protected:
 	SoundDescription _secondFlipSound;
 	SoundDescription _matchSound;    // played when a matching pair is found
 	SoundDescription _noMatchSound;  // pre-Nancy 11: played when a pair doesn't match
-	SceneChangeWithFlag _winScene;
 	SoundDescription _winSound;
 
 	// Runtime state

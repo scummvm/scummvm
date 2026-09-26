@@ -23,7 +23,7 @@
 #define NANCY_ACTION_STEPOBJECTSPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -35,9 +35,9 @@ namespace Action {
 // shoe visits, so each cell can only be stepped on once, and the overall
 // dance has to be done in one go. The puzzle is solved once the sequence
 // of dance steps matches the scripted one.
-class StepObjectsPuzzle : public RenderActionRecord {
+class StepObjectsPuzzle : public PuzzleRecord {
 public:
-	StepObjectsPuzzle() : RenderActionRecord(7) {}
+	StepObjectsPuzzle() : PuzzleRecord(7) {}
 	virtual ~StepObjectsPuzzle() {}
 
 	void init() override;
@@ -113,18 +113,10 @@ protected:
 	uint16 _numCols = 0;
 	uint16 _pitchY = 0;
 	uint16 _pitchX = 0;
-	SceneChangeDescription _solveScene;
-	FlagDescription _solveFlag;
 	uint16 _numSteps = 0;
 
 	Common::Array<Step> _solution;
 	Common::Array<StepObject> _objects;
-
-	// The clickable "give up / leave" hotspot.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	Common::Array<RandomSoundBlock> _sounds;
 

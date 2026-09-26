@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -35,9 +35,9 @@ namespace Action {
 // random from an idle-dominated sequence, with sound effects layered on top. Each
 // fighter's health is a value-table entry (shown by a Meter puzzle, AR 179); a
 // ValueTest scene change ends the fight when one is depleted.
-class BlockingPuzzle : public RenderActionRecord {
+class BlockingPuzzle : public PuzzleRecord {
 public:
-	BlockingPuzzle() : RenderActionRecord(7) {}
+	BlockingPuzzle() : PuzzleRecord(7) {}
 	virtual ~BlockingPuzzle();
 
 	void init() override;

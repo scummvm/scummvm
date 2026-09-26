@@ -24,7 +24,7 @@
 
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/action/actionzone.h"
 
 namespace Nancy {
@@ -37,9 +37,9 @@ namespace Action {
 // zones, until it drops into one of four holes. Each hole feeds one of two climbers racing
 // up the mountain to the pot: the Miner (a win) or the Yeti (a loss). The first to reach
 // the pot plays its result animation, then exits through its own scene and event flag.
-class PachinkoPuzzle : public RenderActionRecord {
+class PachinkoPuzzle : public PuzzleRecord {
 public:
-	PachinkoPuzzle() : RenderActionRecord(7) {}
+	PachinkoPuzzle() : PuzzleRecord(7) {}
 	virtual ~PachinkoPuzzle() {}
 
 	void init() override;
@@ -139,12 +139,6 @@ protected:
 	Common::Array<Common::Rect> _pins;		// static pin collision rects
 	Common::Array<ActionZone> _zones;		// bumpers / walls / overlays
 	Common::Array<Hole> _holes;				// the four catch holes (built from _zones)
-
-	// The give-up / exit hotspot.
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	// -- Runtime state --
 	enum State {

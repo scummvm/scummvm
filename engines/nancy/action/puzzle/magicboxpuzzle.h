@@ -23,7 +23,7 @@
 #define NANCY_ACTION_MAGICBOXPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -31,9 +31,9 @@ namespace Action {
 
 // Number-square puzzle, new in Nancy15 (AR 183). Loose numbered tiles are carried from a
 // tray into the blank cells of a grid, until every row and column adds up to its target.
-class MagicBoxPuzzle : public RenderActionRecord {
+class MagicBoxPuzzle : public PuzzleRecord {
 public:
-	MagicBoxPuzzle() : RenderActionRecord(7) {}
+	MagicBoxPuzzle() : PuzzleRecord(7) {}
 	virtual ~MagicBoxPuzzle() {}
 
 	void init() override;
@@ -90,17 +90,10 @@ protected:
 
 	RandomSoundBlock _sounds[kNumSounds];
 
-	SceneChangeDescription _solveScene;
-	FlagDescription _solveFlag;
 	RandomSoundBlock _solveSound;
 	SceneChangeDescription _failScene;
 	FlagDescription _failFlag;
 	RandomSoundBlock _failSound;
-
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;
 
 	// -- Runtime state --
 	Common::Array<int> _slotCells;		// board cell index of each slot

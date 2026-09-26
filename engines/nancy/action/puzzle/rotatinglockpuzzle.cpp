@@ -133,10 +133,10 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 		// Nancy 10 splits the old SceneChangeWithFlag (25 bytes with embedded
 		// flag) into a 20-byte SceneChangeDescription + 2-byte pause tail,
 		// with the event flag stored as a separate (label, value) pair.
-		_solveExitScene._sceneChange.readData(stream);
+		_solveScene._sceneChange.readData(stream);
 		stream.skip(2);
-		_solveExitScene._flag.label = stream.readSint16LE();
-		_solveExitScene._flag.flag  = stream.readByte();
+		_solveScene._flag.label = stream.readSint16LE();
+		_solveScene._flag.flag  = stream.readByte();
 
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
@@ -148,7 +148,7 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		readRect(stream, _exitHotspot);
 	} else {
-		_solveExitScene.readData(stream);
+		_solveScene.readData(stream);
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
 
@@ -225,7 +225,7 @@ void RotatingLockPuzzle::execute() {
 		if (_solveState == kNotSolved)
 			_exitScene.execute();
 		else
-			_solveExitScene.execute();
+			_solveScene.execute();
 
 		finishExecution();
 	}
@@ -236,9 +236,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}

@@ -57,17 +57,17 @@ void DotConnectPuzzle::readData(Common::SeekableReadStream &stream) {
 	_tooManyLinesSound.readNormal(stream);
 	_allCoveredSound.readNormal(stream);
 
-	_winScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_winFlag.label = stream.readSint16LE();
-	_winFlag.flag  = stream.readByte();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag  = stream.readByte();
 	_winDelaySec = stream.readUint16LE();
 	_winSound.readNormal(stream);
 
-	_exitScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_exitFlag.label = stream.readSint16LE();
-	_exitFlag.flag  = stream.readByte();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag  = stream.readByte();
 
 	readRect(stream, _exitHotspot);
 }
@@ -151,11 +151,9 @@ void DotConnectPuzzle::execute() {
 		g_nancy->_sound->stopSound(_allCoveredSound);
 		g_nancy->_sound->stopSound(_winSound);
 		if (_subState == kExitToWin) {
-			NancySceneState.setEventFlag(_winFlag);
-			NancySceneState.changeScene(_winScene);
+			_solveScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		}
 		finishExecution();
 		break;
@@ -169,8 +167,7 @@ void DotConnectPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_subState = kExitToCancel;
 		}

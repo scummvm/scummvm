@@ -95,9 +95,10 @@ void TypingQuizPuzzle::readData(Common::SeekableReadStream &stream) {
 	_wrongSound.readNormal(stream);            // 0x497
 	_escapeSound.readNormal(stream);           // 0x4c8
 
-	_winScene.readData(stream);                // 0x4f9 (20 bytes)
-	_winScene.continueSceneSound = stream.readUint16LE(); // 0x50d
-	_winFlag = stream.readSint16LE();          // 0x50f
+	_solveScene._sceneChange.readData(stream);   // 0x4f9 (20 bytes)
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE(); // 0x50d
+	_solveScene._flag.label = stream.readSint16LE(); // 0x50f
+	_solveScene._flag.flag = g_nancy->_true;
 
 	_winSound.readNormal(stream);              // 0x511
 
@@ -380,8 +381,7 @@ void TypingQuizPuzzle::redraw() {
 
 void TypingQuizPuzzle::triggerSceneChange() {
 	if (_reachedTarget) {
-		NancySceneState.setEventFlag(_winFlag, g_nancy->_true);
-		NancySceneState.changeScene(_winScene);
+		_solveScene.execute();
 	} else {
 		if (_reachedThreshold && _flagThreshold != -1)
 			NancySceneState.setEventFlag(_flagThreshold, g_nancy->_true);

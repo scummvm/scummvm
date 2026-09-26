@@ -55,7 +55,7 @@ void QuizPuzzle::init() {
 	setTransparent(true);
 
 	g_nancy->_input->setVKEnabled(!_isDisplayOnly);
-	RenderActionRecord::init();
+	PuzzleRecord::init();
 }
 
 // ---- Nancy 8 data format ----
@@ -108,7 +108,7 @@ void QuizPuzzle::readDataNancy8(Common::SeekableReadStream &stream) {
 	_doneSound.readNormal(stream);
 	_doneText = readSubtitleText(stream);
 
-	_cancelScene.readData(stream);
+	_exitScene.readData(stream);
 
 	// The record is a fixed 699 bytes and nothing reads this tail. Leaving it
 	// unread would make the action record loader mistake it for a dependency.
@@ -159,7 +159,7 @@ void QuizPuzzle::readDataNancy9(Common::SeekableReadStream &stream) {
 	_doneSound.readNormal(stream);
 	_doneText = readSubtitleText(stream);
 
-	_cancelScene.readData(stream);
+	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
 
 	uint16 correctSoundChannel = stream.readUint16LE();
@@ -269,9 +269,10 @@ void QuizPuzzle::readDataNancy15(Common::SeekableReadStream &stream) {
 	// records the other puzzles use, and its flag is always set to true.
 	readRect(stream, _exitHotspot);
 	_exitCursorType = stream.readUint16LE();
-	_cancelScene._sceneChange.sceneID = stream.readUint16LE();
-	_cancelScene._flag.label = stream.readSint16LE();
-	_cancelScene._flag.flag = g_nancy->_true;
+	_exitCursorFromData = true;
+	_exitScene._sceneChange.sceneID = stream.readUint16LE();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag = g_nancy->_true;
 
 	readExitHotspots(stream, _hotspots);
 
@@ -761,7 +762,7 @@ void QuizPuzzle::execute() {
 
 	case kActionTrigger:
 		if (_cancelled) {
-			_cancelScene.execute();
+			_exitScene.execute();
 		} else if (_solved) {
 			_solveScene.execute();
 		}
@@ -782,15 +783,8 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 	bool mouseOverHotspot = false;
 
 	// Nancy 9+: give-up hotspot. Clicking it cancels the puzzle.
-	if (g_nancy->getGameType() != kGameTypeNancy8 && !_exitHotspot.isEmpty()) {
-		Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
-		if (exitScreen.contains(input.mousePos)) {
-			if (_exitCursorType != 0) {
-				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
-			} else {
-				g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-			}
-
+	if (g_nancy->getGameType() != kGameTypeNancy8) {
+		if (hoverExitHotspot(input)) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// From Nancy 15 the give-up hotspot submits the quiz: with every
 				// box answered it leads to the solve scene instead
@@ -901,7 +895,7 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 
 void QuizPuzzle::onPause(bool paused) {
 	g_nancy->_input->setVKEnabled(!paused && !_isDisplayOnly);
-	RenderActionRecord::onPause(paused);
+	PuzzleRecord::onPause(paused);
 }
 
 void QuizPuzzle::drawText() {

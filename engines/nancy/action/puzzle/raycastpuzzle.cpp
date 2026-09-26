@@ -1088,7 +1088,7 @@ void RaycastPuzzle::init() {
 
 void RaycastPuzzle::registerGraphics() {
 	_map.registerGraphics();
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void RaycastPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -1132,7 +1132,7 @@ void RaycastPuzzle::execute() {
 }
 
 void RaycastPuzzle::onPause(bool pause) {
-	RenderActionRecord::onPause(pause);
+	PuzzleRecord::onPause(pause);
 	g_nancy->_input->setKeymapEnabled(InputManager::_mazeKeymapID, !pause);
 }
 
