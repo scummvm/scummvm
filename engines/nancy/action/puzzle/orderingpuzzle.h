@@ -63,7 +63,6 @@ protected:
 	bool enteredKeysMatchStage() const;
 	bool enteredKeysMatchDangerRecipe() const;
 
-	Common::Path _imageName;
 	bool _hasSecondState = false;
 	bool _itemsStayDown = true;
 	bool _needButtonToCheckSuccess = false;
@@ -126,7 +125,6 @@ protected:
 	SoundDescription _popUpSound;
 
 	SolveState _solveState = kNotSolved;
-	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _clickedSequence;
 	Common::Array<bool> _downItems;
 	Common::Array<bool> _secondStateItems;

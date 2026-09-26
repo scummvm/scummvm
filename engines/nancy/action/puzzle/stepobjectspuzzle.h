@@ -102,7 +102,6 @@ protected:
 	void drawSprite(Graphics::ManagedSurface &dest, const Common::Rect &srcRect, const Common::Point &destPos, byte alpha);
 
 	// File data
-	Common::Path _imageName;
 	// The puzzle carries its own cursor as a raw Nancy13 cursor type id; the same
 	// one is used for hovering and for carrying an object.
 	uint16 _cursorType = 0;
@@ -129,7 +128,6 @@ protected:
 	bool _solved = false;
 	bool _exitRequested = false;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

@@ -63,7 +63,6 @@ protected:
 	};
 
 	// File data
-	Common::Path _imageName;
 
 	uint16 _numColors = 0;
 	uint16 _codeLength = 0;
@@ -96,8 +95,6 @@ protected:
 
 	SoundDescription _outcomeSound;		// applause cue played once on a win
 	bool _outcomeStarted = false;
-
-	Graphics::ManagedSurface _image;
 
 	void generateSecret();
 	void scoreRow(int row);

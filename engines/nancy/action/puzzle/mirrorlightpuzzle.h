@@ -69,7 +69,6 @@ protected:
 	};
 
 	// File data
-	Common::Path _imageName;
 
 	int16 _beamAngle = 0;		// initial beam angle (degrees)
 	int32 _beamOriginX = 0;
@@ -96,8 +95,6 @@ protected:
 	bool _solved = false;
 	Common::Array<Common::Point> _beamPath;	// traced beam polyline, in viewport coords
 	Common::Array<ZoneOverlay> _overlays;
-
-	Graphics::ManagedSurface _image;
 
 	bool isAngleWithinLimits(const Mirror &m, double angle) const;
 	uint frameForAngle(double angle) const;

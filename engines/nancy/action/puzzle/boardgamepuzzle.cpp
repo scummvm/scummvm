@@ -76,8 +76,7 @@ void BoardGamePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_moviePlayer.loadFile(_movieName);
 	_buttonUsed.clear();

@@ -44,7 +44,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "BombPuzzle"; }
 
-	Common::Path _imageName;
 	Common::Array<Common::Rect> _wireSrcs;
 	Common::Array<Common::Rect> _wireDests;
 	Common::Array<Common::Rect> _digitSrcs;
@@ -59,7 +58,6 @@ protected:
 	SceneChangeWithFlag _failSceneChange;
 	SoundDescription _failSound;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<byte> _playerOrder;
 
 	Time _timerTotalTime;

@@ -68,7 +68,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return _phoneType == kNewPhone ? "NewPhone" : "Telephone"; }
 
-	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	SoundDescription _genericDialogueSound;
@@ -111,7 +110,6 @@ protected:
 	SoundDescription _preCallSound;
 
 	Common::Array<byte> _calledNumber;
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _animImage;
 	CallState _callState;
 	int _buttonLastPushed;

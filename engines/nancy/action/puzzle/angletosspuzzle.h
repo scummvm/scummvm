@@ -58,8 +58,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "AngleTossPuzzle"; }
 
-	Common::Path _imageName;
-
 	// data+0x21..0x2c: 6 × uint16.
 	// _initialPower/_initialAngle: starting player selection (copied to object+0x24/0x26 in original).
 	// _numPowers/_numAngles: UI control bounds (always 5 in practice).
@@ -112,8 +110,6 @@ protected:
 	int16 _angleTooRightFlag = -1;	// 0x23c
 
 	int16 _winFlag = -1;	// 0x23e
-
-	Graphics::ManagedSurface _image;
 
 	uint16 _curPower = 0;
 	uint16 _curAngle = 0;

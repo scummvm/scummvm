@@ -25,6 +25,7 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
 
@@ -55,9 +56,18 @@ static void appendSceneInfo(Common::String &info, const char *name, const SceneC
 
 Common::String PuzzleRecord::getRecordExtraInfo() const {
 	Common::String info;
+	if (!_imageName.empty()) {
+		info = "Image " + _imageName.toString();
+	}
+
 	appendSceneInfo(info, "Solve", _solveScene);
 	appendSceneInfo(info, "Exit", _exitScene);
 	return info;
+}
+
+void PuzzleRecord::loadImage() {
+	g_nancy->_resource->loadImage(_imageName, _image);
+	_image.setTransparentColor(_drawSurface.getTransparentColor());
 }
 
 void PuzzleRecord::initViewportSurface() {

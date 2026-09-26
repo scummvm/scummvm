@@ -66,8 +66,6 @@ protected:
 		int curRotation = 0;
 	};
 
-	Common::Path _imageName;
-
 	uint16 _height = 0;
 
 	Common::Rect _cwCursorDest;
@@ -85,8 +83,6 @@ protected:
 	Common::Array<Common::String> _wrongPieceTexts;
 
 	Common::String _solveText;
-
-	Graphics::ManagedSurface _image;
 
 	int _pickedUpPiece = -1;
 	int _curRotation = 0;

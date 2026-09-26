@@ -110,7 +110,6 @@ protected:
 	void advanceMachine(Machine &m, uint32 now);
 
 	// -- File data --
-	Common::Path _imageName;				// board overlay
 
 	Common::Rect _ballSrc;					// ball sprite source
 	Common::Rect _ballEntry;				// top-right entry chute (where balls appear)
@@ -156,7 +155,6 @@ protected:
 	SoundDescription _resultSoundDesc;
 
 	Common::Path _litImageName;				// "lit" board overlay (hole highlights)
-	Graphics::ManagedSurface _image;		// board overlay
 	Graphics::ManagedSurface _ballImage;	// ball sprite sheet
 	Graphics::ManagedSurface _litImage;		// lit-hole sprites
 	MoviePlayer _resultMovie;

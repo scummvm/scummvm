@@ -110,8 +110,7 @@ void ScalePuzzle::readData(Common::SeekableReadStream &stream) {
 void ScalePuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// The indicator reads zero at the middle frame of its strip; the running total shifts it.
 	_indicatorZeroFrame = _indicatorFrames.size() / 2;

@@ -84,7 +84,6 @@ protected:
 	void drawCounter();
 
 	// -- File data --
-	Common::Path _imageName;			// 0x00 - overlay sprite sheet (candies, strikes)
 	Common::Path _hoseMovieName;		// 0x21 - hose (dispenser) animation
 	Common::Rect _hoseRect;				// 0x42
 	uint32 _dispenseFrame = 0;			// 0x52 - unused in this port
@@ -144,7 +143,6 @@ protected:
 	MoviePlayer _conveyorMovie;
 	MoviePlayer _hoseMovie;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

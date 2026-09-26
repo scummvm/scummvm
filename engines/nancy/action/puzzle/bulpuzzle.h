@@ -57,8 +57,6 @@ protected:
 
 	Common::String getRecordTypeName() const override { return "BulPuzzle"; }
 
-	Common::Path _imageName;
-
 	uint16 _numCells = 0;
 	uint16 _numPieces = 0;
 	uint16 _numRolls = 0;
@@ -126,8 +124,6 @@ protected:
 	bool _playAgainstComputer = false;
 	// Nancy 11: the computer passes strategically (based on piece positions) rather than randomly
 	bool _aiPassStrategy = false;
-
-	Graphics::ManagedSurface _image;
 
 	int16 _playerPos = 0;
 	int16 _playerPieces = 0;

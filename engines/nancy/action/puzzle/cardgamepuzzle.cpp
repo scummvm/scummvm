@@ -505,8 +505,7 @@ void CardGamePuzzle::playVoice(const Common::String &name) {
 void CardGamePuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Reset board state and the shared deck (every table cell starts available)
 	for (int side = 0; side < 2; ++side) {

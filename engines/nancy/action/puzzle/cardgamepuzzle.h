@@ -82,8 +82,6 @@ protected:
 	void startMoveAnimation(const bool beforeGrid[kMaxRows][kMaxCols]);
 	void playVoice(const Common::String &name); // play a voiced line / SFX on the card-game channel
 
-	Common::Path _imageName;
-
 	// Header flags / dimensions
 	byte _unknown21 = 0;
 	byte _switchTurnRule = 0; // data+0x22: how the turn passes after a play
@@ -155,7 +153,6 @@ protected:
 	uint32 _aiDelayUntil = 0;
 
 	// Runtime board state
-	Graphics::ManagedSurface _image;
 	PlayerBoard _board[2];
 	byte _availMap[kMaxRows][kMaxCols]; // shared deck: 1 = card still on the table
 	int _deckRemaining = 0;

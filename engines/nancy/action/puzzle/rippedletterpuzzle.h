@@ -44,8 +44,6 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::Path _imageName;
-
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 
@@ -76,7 +74,6 @@ public:
 
 	Misc::MouseFollowObject _pickedUpPiece;
 
-	Graphics::ManagedSurface _image;
 	SolveState _solveState = kNotSolved;
 	RippedLetterPuzzleData *_puzzleState = nullptr;
 

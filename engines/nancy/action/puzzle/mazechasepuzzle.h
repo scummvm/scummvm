@@ -72,8 +72,6 @@ protected:
 	bool canMove(uint pieceID, WallType direction);
 	void reset();
 
-	Common::Path _imageName;
-
 	Common::Point _exitPos = Common::Point(-1, -1);
 
 	Common::Array<Common::Array<uint16>> _grid;
@@ -107,7 +105,6 @@ protected:
 	SoundDescription _failSound;
 	SoundDescription _moveSound;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 
 	int _currentAnimFrame = -1;

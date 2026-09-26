@@ -90,7 +90,6 @@ private:
 	void triggerSceneChange();
 
 	// ---- File data ----
-	Common::Path _imageName;                       // 0x000 puzzle sprite sheet
 	uint16 _numImageRects = 0;                     // 0x021
 	Common::Rect _balloonSrcRects[kMaxImageRects]; // 0x023
 	Common::Rect _poppedSrcRect;                   // 0x163 burst sprite
@@ -128,7 +127,6 @@ private:
 	int16 _flagFail = -1;                          // 0x55a set otherwise
 
 	// ---- Runtime state ----
-	Graphics::ManagedSurface _image;
 	uint16 _fontID = 0;	// game default font for the balloon characters
 
 	Balloon _balloons[kMaxBalloons];

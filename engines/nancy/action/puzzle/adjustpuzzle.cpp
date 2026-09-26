@@ -112,8 +112,7 @@ void AdjustPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_overlayImages.resize(_overlayNames.size());
 	for (uint i = 0; i < _overlayNames.size(); ++i) {

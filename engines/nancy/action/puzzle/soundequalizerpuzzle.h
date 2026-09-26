@@ -48,8 +48,6 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::Path _imageName;
-
 	Common::Rect _buttonSrc;
 	Common::Rect _buttonDest;
 	Common::Rect _sliderSrc;
@@ -78,7 +76,6 @@ public:
 
 	SoundDescription _exitSound;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<ViewportScrollbar *> _sliders;
 
 	SoundEqualizerPuzzleData *_puzzleState = nullptr;

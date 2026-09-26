@@ -101,7 +101,6 @@ protected:
 	void drawYouWin();     // shown during the kLevelClear / kGameOverWin wait states
 
 	// ---------- Data (read from stream) ----------
-	Common::Path _imageName;
 
 	uint32 _numLevelsToWin = 0;
 
@@ -284,7 +283,6 @@ protected:
 	bool _launchBall = false;
 
 	// Surfaces
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _backgroundCache; // copy of initial draw surface for erasing
 };
 

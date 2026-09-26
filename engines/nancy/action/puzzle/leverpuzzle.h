@@ -39,7 +39,6 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::Path _imageName;
 	Common::Array<Common::Array<Common::Rect>> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	Common::Array<byte> _correctSequence;
@@ -48,7 +47,6 @@ public:
 
 	Common::Array<byte> _playerSequence;
 	Common::Array<bool> _leverDirection;
-	Graphics::ManagedSurface _image;
 	Time _solveSoundPlayTime;
 	SolveState _solveState = kNotSolved;
 

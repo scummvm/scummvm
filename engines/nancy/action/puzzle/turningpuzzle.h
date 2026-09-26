@@ -80,8 +80,6 @@ protected:
 	void drawObject(uint objectID, uint faceID, uint frameID);
 	void turnLogic(uint objectID);
 
-	Common::Path _imageName;
-
 	uint16 _numFaces = 0;
 	uint16 _numFramesPerTurn = 0;
 
@@ -133,7 +131,6 @@ protected:
 	uint32 _timeoutTime = 0;
 	bool _timedOut = false;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<uint16> _currentOrder;
 
 	uint32 _solveSoundDelayTime = 0;

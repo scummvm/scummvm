@@ -200,8 +200,7 @@ void SewingMachinePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// The needle's fixed sewing point = the bottom-center of the needle overlay's
 	// dest rect (167,0,285,170).

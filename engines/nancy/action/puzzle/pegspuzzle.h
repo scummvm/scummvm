@@ -76,7 +76,6 @@ protected:
 	void redraw();
 
 	// -- File data (96-byte header) --
-	Common::Path _imageName;			// 0x00
 	uint16 _hoverCursorType = 0;		// 0x21 - cursor while hovering a movable peg (open hand)
 	uint16 _dragCursorType = 0;			// 0x23 - cursor while carrying a peg (pointing finger)
 	byte _startEmptyFlag = 0;			// 0x25 - 0 => mark _startEmptyPos empty at init
@@ -109,7 +108,6 @@ protected:
 	uint32 _endTime = 0;
 	SoundDescription _endSound;			// the win/lose cue we wait on before changing scene
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

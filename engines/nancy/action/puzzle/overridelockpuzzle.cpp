@@ -38,8 +38,7 @@ namespace Action {
 void OverrideLockPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void OverrideLockPuzzle::readData(Common::SeekableReadStream &stream) {

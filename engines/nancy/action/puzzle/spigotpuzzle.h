@@ -45,8 +45,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "SpigotPuzzle"; }
 
-	Common::Path _imageName;
-
 	uint _numSpigots = 0;
 	uint _numLetters = 0;
 	uint _numInbetweens = 0;
@@ -71,8 +69,6 @@ protected:
 	SoundDescription _buttonSound;
 	SoundDescription _letterSound;
 	SoundDescription _spigotSound;
-
-	Graphics::ManagedSurface _image;
 
 	Common::Array<uint16> _currentOrder;
 	Common::Array<uint16> _currentAnimOrder;

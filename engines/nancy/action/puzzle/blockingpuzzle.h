@@ -105,7 +105,6 @@ protected:
 	int16 _field6 = 0;				// 0x154 - unknown
 	byte _field8 = 0;				// 0x153 - combat gate flag (gates block input in the original); unused here
 	byte _field9 = 0;				// 0x152 - combat gate flag; unused here
-	Common::Path _imageName;		// MOU_Fight_OVL sprite sheet
 	Common::Rect _controlRects[4];	// [0] = the attack-telegraph box sprite (cell-sized); [1-3] other UI
 	Common::Point _point;			// 0x1b3 - unknown
 	int16 _field51 = 0;				// 0x51 - unknown

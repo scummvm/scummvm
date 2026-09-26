@@ -51,8 +51,6 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	static const int kMaxTypes    = 36; // 3 tabs x 12 pairs each
 	static const int kCardsPerTab = 24; // hardcoded in original
 	static const int kNumTabs     = 3;  // hardcoded in original
@@ -94,8 +92,6 @@ protected:
 	// _cards[tab * kCardsPerTab + i] = state of card i on tab `tab`
 	CardState _cards[kNumTabs * kCardsPerTab];
 	bool _typeUsed[kMaxTypes];  // faces already handed out while filling _cards
-
-	Graphics::ManagedSurface _image;
 
 	int    _currentTab      = 0;
 	int    _firstFlip       = -1;   // absolute card index of first face-up unmatched card

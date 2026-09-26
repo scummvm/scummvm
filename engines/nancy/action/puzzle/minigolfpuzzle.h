@@ -134,7 +134,6 @@ protected:
 	double _pipeInVy = 0.0;
 	bool _ballHidden = false;			// ball is inside a pipe (not drawn)
 
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _boundaryMask;
 
 	// Cosmetic overlay sprite (ActionZone type 0xd), e.g. hole 6a's broken wall.

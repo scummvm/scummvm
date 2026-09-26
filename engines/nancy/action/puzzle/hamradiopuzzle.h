@@ -67,8 +67,6 @@ protected:
 		void readData(Common::SeekableReadStream &stream, uint16 numDigits);
 	};
 
-	Common::Path _imageName;
-
 	uint16 _numDigits = 0;
 
 	Frequency _startFreq;
@@ -108,8 +106,6 @@ protected:
 	SoundDescription _exitSound; // not used
 
 	Common::Array<Frequency> _otherFrequencies;
-
-	Graphics::ManagedSurface _image;
 
 	// Frequency display data
 	bool _digitsRolling = true;

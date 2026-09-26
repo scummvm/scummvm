@@ -241,8 +241,7 @@ void MindPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint r = 0; r < kMaxRows; ++r) {
 		for (uint s = 0; s < kSlotsPerRow; ++s) {

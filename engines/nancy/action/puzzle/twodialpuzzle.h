@@ -48,8 +48,6 @@ protected:
 	void runPreNancy12();
 	void runNancy12();
 
-	Common::Path _imageName;
-
 	bool _isClockwise[2] = { false, false };
 	uint16 _startPositions[2] = { 0, 0 };
 
@@ -80,8 +78,6 @@ protected:
 	uint32 _dwellEndTime = 0;
 
 	SoundDescription _rotateSounds[2];
-
-	Graphics::ManagedSurface _image;
 
 	int16 _currentPositions[2] = { 0, 0 };
 

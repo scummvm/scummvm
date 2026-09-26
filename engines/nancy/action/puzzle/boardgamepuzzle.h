@@ -63,7 +63,6 @@ protected:
 	};
 
 	// File data
-	Common::Path _imageName;
 	Common::Path _movieName;		// the board-game Bink movie ("..._ANIM")
 	Common::Rect _movieRect;		// movie source/params rect (buf+0x244)
 	Common::Rect _boardRect;		// board area within the viewport (buf+0x254)
@@ -105,8 +104,6 @@ protected:
 	bool _solved = false;				// reached the target exactly
 	bool _lost = false;					// overshot the target
 	uint32 _resultTime = 0;				// ms timestamp when the game ended, for the result hold
-
-	Graphics::ManagedSurface _image;
 
 	void redraw();
 	void drawCard(uint index);

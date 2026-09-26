@@ -58,8 +58,6 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	Common::Rect _dotSrcRects[kNumDots];
 	Common::Rect _dotHighlightSrcRects[kNumDots];
 
@@ -99,8 +97,6 @@ protected:
 	bool _tooManyPlayed       = false;
 
 	uint32 _winDelayEndTime = 0;
-
-	Graphics::ManagedSurface _image;
 
 	void redraw();
 	bool dotAlreadyUsed(int dot) const;

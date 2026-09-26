@@ -45,7 +45,6 @@ public:
 
 	SliderPuzzleData *_puzzleState = nullptr;
 
-	Common::Path _imageName;
 	uint16 _width = 0;
 	uint16 _height = 0;
 	Common::Array<Common::Array<Common::Rect>> _srcRects;
@@ -57,7 +56,6 @@ public:
 	bool _retainState = true;
 
 	SolveState _solveState = kNotSolved;
-	Graphics::ManagedSurface _image;
 
 	bool isViewportRelative() const override { return true; }
 

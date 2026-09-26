@@ -50,7 +50,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "MouseLightPuzzle"; }
 
-	Common::Path _imageName;
 	byte _radius = 0;
 	bool _smoothEdges = false;
 

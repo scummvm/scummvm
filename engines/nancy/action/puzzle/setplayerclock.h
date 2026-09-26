@@ -47,8 +47,6 @@ protected:
 
 	void drawTime(uint16 hours, uint16 minutes);
 
-	Common::Path _imageName;
-
 	Common::Rect _minutesDest;
 	Common::Rect _hoursDest;
 	Common::Rect _AMPMDest;
@@ -74,8 +72,6 @@ protected:
 	Common::Rect _alarmLightSrc;
 
 	SoundDescription _buttonSound;
-
-	Graphics::ManagedSurface _image;
 
 	int8 _lastDrawnHours = -1;
 	int8 _lastDrawnMinutes = -1;

@@ -95,7 +95,6 @@ protected:
 	bool isSolved() const;
 
 	// -- File data --
-	Common::Path _imageName;		// 0x3d
 	Common::Path _objectsImageName;
 	uint16 _hoverCursorType = 0;	// 0x5e - raw Nancy14 cursor type, shown over a color swatch
 	Common::Point _offset;			// 0x60 (two int32) - brush sprite offset from the cursor
@@ -114,7 +113,6 @@ protected:
 	Common::Array<ExitHotspot> _exitHotspots;
 
 	// -- Runtime state --
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _objectsImage;
 	Common::Array<Graphics::ManagedSurface> _regionImages;
 	int _heldColor = -1;

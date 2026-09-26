@@ -126,7 +126,6 @@ protected:
 		bool locked = false;		// kept by a zone that marks its pieces placed
 	};
 
-	Common::Path _imageName;
 	Common::Path _altImageName;		// empty means the main image is used for both
 
 	// Selects where a piece that is not in a zone, and any close-up, is drawn
@@ -195,7 +194,6 @@ protected:
 
 	// --- Runtime ---
 
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _altImage;
 	Graphics::ManagedSurface _pieceImage;	// a kind 3 piece's own close-up art
 	Common::Path _pieceImageName;

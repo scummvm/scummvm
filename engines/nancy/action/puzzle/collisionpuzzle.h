@@ -76,8 +76,6 @@ protected:
 	Common::Rect getScreenPosition(Common::Point gridPos);
 	void drawGrid();
 
-	Common::Path _imageName;
-
 	Common::Array<Common::Array<uint16>> _grid;
 	Common::Array<Common::Point> _startLocations;
 
@@ -111,7 +109,6 @@ protected:
 	SoundDescription _wallHitSound;
 	SoundDescription _exitButtonSound;
 
-	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 
 	int _currentlyAnimating = -1;

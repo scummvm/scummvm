@@ -118,7 +118,6 @@ protected:
 
 	// --- File data ---
 
-	Common::Path _imageName;
 	uint16 _numPieces = 0;         // Number of piece descriptions in the puzzle data
 	uint16 _totalPieces = 0;       // Number of pieces on screen; see init() for the extra ones
 	bool _freePlacement = false;   // Wrong drop restores to previous position, not home
@@ -209,8 +208,6 @@ protected:
 	SoundDescription _closeupSound;
 
 	// --- Runtime state ---
-
-	Graphics::ManagedSurface _image;
 
 	int16 _pickedUpPiece = -1;   // Index of currently dragged piece, -1 if none
 	bool _isDragging = false;    // True while a piece is attached to the cursor

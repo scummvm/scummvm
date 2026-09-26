@@ -119,8 +119,7 @@ void DropSortPuzzle::readData(Common::SeekableReadStream &stream) {
 void DropSortPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Both animations loop for the whole puzzle.
 	if (_conveyorMovie.loadFile(_conveyorMovieName)) {

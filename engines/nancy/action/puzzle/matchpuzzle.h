@@ -272,7 +272,6 @@ protected:
 	// Rendering
 	Common::Array<Common::Array<GridCell>> _grid; // _grid[col][row]
 
-	Graphics::ManagedSurface _image;            // loaded sprite sheet
 	Graphics::ManagedSurface _scorePanelImage;  // score-panel background
 	Graphics::ManagedSurface _buttonsImage;     // Nancy14 pressed-button graphics
 	Graphics::ManagedSurface _highScoreImage;   // Nancy14 high score backdrop

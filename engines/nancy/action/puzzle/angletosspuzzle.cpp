@@ -35,8 +35,7 @@ namespace Action {
 void AngleTossPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Draw the initial angle and power indicators.
 	// The throw button sprite is NOT drawn here — the static background already shows the

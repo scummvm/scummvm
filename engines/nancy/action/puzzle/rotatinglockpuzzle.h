@@ -41,7 +41,6 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
-	Common::Path _imageName;
 	Common::Array<Common::Rect> _srcRects;
 	Common::Array<Common::Rect> _destRects;
 	Common::Array<Common::Rect> _upHotspots;
@@ -59,7 +58,6 @@ public:
 	SoundDescription _clickSound;
 
 	SolveState _solveState = kNotSolved;
-	Graphics::ManagedSurface _image;
 	Common::Array<byte> _currentSequence;
 	Time _solveSoundPlayTime;
 

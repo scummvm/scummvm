@@ -36,8 +36,7 @@ namespace Action {
 void MazeChasePuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < _startLocations.size(); ++i) {
 		_pieces.push_back(Piece(_z + i + 1));

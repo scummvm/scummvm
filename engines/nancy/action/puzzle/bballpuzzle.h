@@ -44,8 +44,6 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "BBallPuzzle"; }
 
-	Common::Path _imageName;
-
 	uint16 _positions = 0;
 	uint16 _powers = 0;
 	uint16 _angles = 0;
@@ -80,8 +78,6 @@ protected:
 	Common::Array<int16> _playerPositionFlags;
 
 	int16 _winFlag = 0;
-
-	Graphics::ManagedSurface _image;
 
 	uint _curAngle = 0;
 	uint _curPower = 0;

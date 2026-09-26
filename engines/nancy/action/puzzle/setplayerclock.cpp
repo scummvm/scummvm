@@ -43,8 +43,7 @@ SetPlayerClock::~SetPlayerClock() {
 void SetPlayerClock::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void SetPlayerClock::readData(Common::SeekableReadStream &stream) {

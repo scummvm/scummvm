@@ -63,8 +63,7 @@ SoundEqualizerPuzzle::~SoundEqualizerPuzzle() {
 void SoundEqualizerPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
 	assert(viewportData);

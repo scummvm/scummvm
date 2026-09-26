@@ -227,8 +227,7 @@ Common::Point PachinkoPuzzle::climberAnchor(const Machine &m) const {
 void PachinkoPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 	if (!_ballImageName.empty()) {
 		g_nancy->_resource->loadImage(_ballImageName, _ballImage);
 		_ballImage.setTransparentColor(_drawSurface.getTransparentColor());

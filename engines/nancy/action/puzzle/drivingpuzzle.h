@@ -246,7 +246,6 @@ protected:
 	Variant _variant;
 
 	// Three filenames decoded from the header blob.
-	Common::Path _imageName;			// visible town map ("MAP_Titusville")
 	Common::Path _collisionName;		// collision mask ("MAP_TitusvilleCollision")
 	Common::Path _carSpriteName;		// car rotation atlas ("MAP_Roadster_OVL")
 
@@ -327,7 +326,6 @@ protected:
 	double _chaserY = 0.0;
 	double _chaserHeading = 0.0;
 
-	Graphics::ManagedSurface _image;			// the town map
 	Graphics::ManagedSurface _carImage;			// the player car rotation atlas
 	Graphics::ManagedSurface _chaseCarImage;	// the chaser car rotation atlas
 	Graphics::ManagedSurface _collisionMask;	// road/off-road mask ("MAP_TitusvilleCollision")

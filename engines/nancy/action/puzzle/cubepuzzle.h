@@ -50,8 +50,6 @@ protected:
 
 	void rotateBase(int dir);
 
-	Common::Path _imageName;
-
 	Common::Rect _cwCursorDest;
 	Common::Rect _ccwCursorDest;
 
@@ -81,7 +79,6 @@ protected:
 	// Multiple solve scenes, one for each cube orientation
 	Common::Array<uint> _solveSceneIDs;
 
-	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _curPiece;
 
 	Common::Array<bool> _placedPieces;

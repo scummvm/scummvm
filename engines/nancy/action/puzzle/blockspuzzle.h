@@ -103,7 +103,6 @@ protected:
 	void redraw();
 
 	// -- File data (111-byte header) --
-	Common::Path _imageName;			// 0x00
 	uint16 _turnDuration = 0;			// 0x21 - total ms of one rotation's tween
 	uint16 _carryCursorType = 0;		// 0x23 - raw Nancy13 cursor types
 	uint16 _turnCursorType = 0;			// 0x25
@@ -136,7 +135,6 @@ protected:
 	bool _solved = false;
 	bool _exitRequested = false;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

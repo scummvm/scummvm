@@ -36,8 +36,7 @@ namespace Action {
 void CubePuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < 5; ++i) {
 		_drawSurface.blitFrom(_image, _pieceSrcs[i], _pieceDests[i]);

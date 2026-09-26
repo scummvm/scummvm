@@ -22,6 +22,10 @@
 #ifndef NANCY_ACTION_PUZZLERECORD_H
 #define NANCY_ACTION_PUZZLERECORD_H
 
+#include "common/path.h"
+
+#include "graphics/managed_surface.h"
+
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionrecord.h"
 
@@ -38,6 +42,9 @@ public:
 	Common::String getRecordExtraInfo() const override;
 
 protected:
+	// Loads _imageName into _image, keyed to the draw surface's transparent color
+	void loadImage();
+
 	// Creates a transparent, viewport-sized draw surface and shows it over the viewport
 	void initViewportSurface();
 
@@ -65,6 +72,10 @@ protected:
 	bool hasSolveSound() const;
 	void playSolveSound();
 	bool isSolveSoundPlaying() const;
+
+	// The puzzle's sprite sheet
+	Common::Path _imageName;
+	Graphics::ManagedSurface _image;
 
 	// Scene the puzzle moves to when solved; its flag is set on solve
 	SceneChangeWithFlag _solveScene;

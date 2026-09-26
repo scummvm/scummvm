@@ -49,8 +49,7 @@ static const char *morseCodeTable[] = {
 void HamRadioPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 }
 
 void HamRadioPuzzle::updateGraphics() {

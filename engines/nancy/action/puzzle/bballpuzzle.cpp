@@ -36,8 +36,7 @@ namespace Action {
 void BBallPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Set up flags
 	if (NancySceneState.getEventFlag(_goodShootFlag, g_nancy->_true)) {

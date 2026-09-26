@@ -81,7 +81,6 @@ protected:
 	void applyOutcome(const Outcome &outcome);
 
 	// -- File data --
-	Common::Path _imageName;			// 0x1c0
 	uint16 _testCursorType = 0;			// 0x3d - raw Nancy14 cursor type, shown over the test control
 	Common::Array<Piece> _pieces;		// 0x3f
 
@@ -106,7 +105,6 @@ protected:
 	Outcome _loseScene;			// 0x27d (field0), scene at 0x27f
 
 	// -- Runtime state --
-	Graphics::ManagedSurface _image;
 	Common::Array<Graphics::ManagedSurface> _overlayImages;
 	byte _resultIndex = 0;
 	bool _showResult = false;

@@ -70,9 +70,6 @@ protected:
 	// mistake line and sets the zone's flag (edge-triggered, once per excursion).
 	void checkSeam();
 
-	// Background image ("BED_Sewing_OVL").
-	Common::Path _imageName;
-
 	// 87-byte PuzzleBase header blob: image name + two cloth regions + a direction
 	// vector + an extent vector (its magnitude = the seam length) + three params
 	// (_params[1] = stitch distance threshold, _params[2] = its hysteresis).
@@ -113,7 +110,6 @@ protected:
 	bool _hasSeamMask = false;
 	bool _offSeam = false;				// the needle was off the seam last check
 
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _seamMask;
 };
 

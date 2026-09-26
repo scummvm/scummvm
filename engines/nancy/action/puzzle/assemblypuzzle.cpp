@@ -34,8 +34,7 @@ namespace Nancy {
 namespace Action {
 
 void AssemblyPuzzle::init() {
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &piece = _pieces[i];

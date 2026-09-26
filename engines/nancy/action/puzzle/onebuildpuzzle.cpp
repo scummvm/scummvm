@@ -43,8 +43,7 @@ static bool rectFitsIn(const Common::Rect &inner, const Common::Rect &outer, int
 }
 
 void OneBuildPuzzle::init() {
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Post-placement animation atlas (e.g. music-box handle "GHO_SlnMBoxHandle_OVL"
 	// in scene 3637). Loaded only when the puzzle defines _animRectA;

@@ -53,8 +53,6 @@ protected:
 
 	enum SolveState { kNotSolved, kSolved };
 
-	Common::Path _imageName;
-
 	byte _popButtons = kButtonsStayDown;
 	byte _randomizeLights = kLightsCircular;
 
@@ -68,8 +66,6 @@ protected:
 	SoundDescription _wrongSound;
 
 	Time _buttonPopTime;
-
-	Graphics::ManagedSurface _image;
 
 	Common::Array<byte> _buttonOrder;
 	Common::Array<byte> _lightsOrder;

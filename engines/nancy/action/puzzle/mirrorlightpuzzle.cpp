@@ -367,8 +367,7 @@ void MirrorLightPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Mirrors keep the angle the player last left them at.
 	MirrorLightData *data = (MirrorLightData *)NancySceneState.getPuzzleData(MirrorLightData::getTag());

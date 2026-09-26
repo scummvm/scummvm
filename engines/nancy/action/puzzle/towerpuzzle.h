@@ -50,7 +50,6 @@ protected:
 
 	void drawRing(uint poleID, uint position, uint ringID, bool clear = false);
 
-	Common::Path _imageName;
 	Common::Array<uint16> _numRingsByDifficulty;
 
 	Common::Array<Common::Rect> _droppedRingSrcs;
@@ -62,7 +61,6 @@ protected:
 	SoundDescription _takeSound;
 	SoundDescription _dropSound;
 
-	Graphics::ManagedSurface _image;
 	Misc::MouseFollowObject _heldRing;
 	int8 _heldRingID = -1;
 	int8 _heldRingPoleID = -1;

@@ -100,7 +100,6 @@ protected:
 	void redraw();
 
 	// -- File data --
-	Common::Path _imageName;				// 0x00
 	uint16 _hoverCursorType = 0;			// 0x21 - raw Nancy13 cursor type over a coin
 	uint16 _dragCursorType = 0;				// 0x23 - raw Nancy13 cursor type while carrying
 	RandomSoundBlock _solveSoundBlock;			// the first sound block; played once solved
@@ -135,7 +134,6 @@ protected:
 	bool _solveTriggered = false;			// the solve flag/scene are applied only once
 	bool _exitRequested = false;
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

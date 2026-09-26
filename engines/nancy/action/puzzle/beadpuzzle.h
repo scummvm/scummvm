@@ -54,8 +54,6 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	uint16 _numSlots     = 0;
 	uint16 _numBeadTypes = 0;
 
@@ -112,8 +110,6 @@ protected:
 
 	uint32 _perfectExitTime = 0;
 	bool   _resultSoundPlayed = false;
-
-	Graphics::ManagedSurface _image;
 
 	void redraw();
 	void holdBead(int16 bead, NancyInput *input);

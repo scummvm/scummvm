@@ -159,8 +159,7 @@ void ArcadePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Determine game field bounds within viewport
 	int vpDataWidth  = (vpBounds.right  - vpBounds.left);

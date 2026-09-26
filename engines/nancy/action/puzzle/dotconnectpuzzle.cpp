@@ -81,8 +81,7 @@ void DotConnectPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (int i = 0; i < kNumDots; ++i)
 		_isActiveDot[i] = false;

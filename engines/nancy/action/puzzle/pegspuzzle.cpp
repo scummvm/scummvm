@@ -88,8 +88,7 @@ void PegsPuzzle::readData(Common::SeekableReadStream &stream) {
 void PegsPuzzle::init() {
 	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Build the board: every hole starts with a peg, the cut-out corners are blocked,
 	// and one hole (usually the centre) starts empty.
