@@ -270,6 +270,7 @@ void IgorEngine::PART_100() {
 		// sub_175_056D: enter at (319,79), facing left, walk to (288,84).
 		_walkData[0].setPos(319, 79, kFacingPositionLeft, 0); // cseg175:0580-05B2
 		_walkData[0].setDefaultScale();
+		_walkData[0].clipWidth = 15; // cseg175:058D-0598; clip the off-screen half at x=319
 		_walkDataLastIndex = 0;
 		buildWalkPath(319, 79, 288, 84); // cseg175:05C1-05CB
 		_walkData[_walkDataLastIndex].frameNum = 0; // cseg175:05D0-05DB
@@ -300,6 +301,8 @@ void IgorEngine::PART_100() {
 		runPartLoop();
 	}
 	leavePartLoop();
+	if (_currentPart != 110)
+		fadeOut(624); // cseg175:356A-3595; Part 110 keeps the completed pan palette
 }
 
 } // End of namespace Igor

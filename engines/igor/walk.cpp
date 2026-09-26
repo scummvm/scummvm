@@ -127,7 +127,7 @@ void IgorEngine::moveIgor(int pos, int frame) {
 	}
 	uint16 screenIgorDrawOffset = _walkDataDrawOffset;
 	uint16 igorScaledWidth = _walkDxPos + _walkClipWidth;
-	uint16 igorScaledHeight = _walkHeightScale + _walkDyPos;
+	uint16 igorScaledHeight = _walkScaleWidth + _walkDyPos; // cseg229:4B48-4B4F
 	uint16 igorBodyScanLine = 0;
 	if (_walkYPosChanged != 0) {
 		for (int i = 1; i <= _walkDyPos; ++i) {
@@ -705,7 +705,7 @@ void IgorEngine::buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, i
 		wd->setScale(scale, scale);
 		wd->yPosChanged = 0;
 		wd->dyPos = _walkData[_walkDataLastIndex - 1].y - wd->y;
-		int x = xScale - xScale / 2 - 1;
+		int x = xScale - xScale / 2 + dstX - 1; // cseg229:0A49-0A78
 		if (x > 319) {
 			wd->clipSkipX = 1;
 			wd->clipWidth = 319 - (x - xScale);
