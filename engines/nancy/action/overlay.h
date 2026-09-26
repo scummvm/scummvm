@@ -45,7 +45,8 @@ class Overlay : public RenderActionRecord {
 public:
 	enum AnimationType { kStaticAnimation, kInterruptibleAnimation };
 
-	Overlay(AnimationType animationType) : RenderActionRecord(7), _animationType(animationType), _usesAutotext(false) {}
+	Overlay(AnimationType animationType) : RenderActionRec
+ord(7), _animationType(animationType), _usesAutotext(false) {}
 	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
@@ -106,7 +107,8 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 
-protected:
+prote
+cted:
 	Common::String getRecordTypeName() const override { return "OverlayStaticTerse"; }
 };
 
@@ -162,7 +164,8 @@ public:
 	virtual ~TextLineOverlay() {}
 
 	void init() override;
-	void readData(Common::SeekableReadStream &stream) override;
+	void readData(Common::SeekableReadStream &strea
+m) override;
 	void execute() override;
 
 	bool isViewportRelative() const override { return true; }
@@ -194,7 +197,8 @@ protected:
 
 // Nancy14 AR 53. A rollover label: an image that is only drawn while the mouse
 // is inside its hotspot. Entering the hotspot plays a sound and sets an event
-// flag, and clicking it plays a second sound before changing the scene.
+// flag, and clicking it plays a second sound before setting another event flag
+// and changing the scene.
 class RolloverOverlay : public RenderActionRecord {
 public:
 	RolloverOverlay() : RenderActionRecord(7) {}
@@ -221,7 +225,8 @@ protected:
 	Common::Path _imageName;
 	uint16 _transparency = kPlayOverlayPlain;
 	uint16 _hoverCursor = 0;
-	Common::Rect _hotspotRect;
+	Co
+mmon::Rect _hotspotRect;
 	Common::Rect _srcRect;
 	Common::Rect _destRect;
 	// Set every time the mouse enters the hotspot
@@ -231,6 +236,8 @@ protected:
 	uint16 _hoverSoundOnce = 0;
 	RandomSoundBlock _hoverSound;
 	SceneChangeDescription _sceneChange;
+	// Set when the click sound finishes, even when there's no scene change
+	FlagDescription _flagOnClick;
 	RandomSoundBlock _clickSound;
 
 	bool _isHovered = false;

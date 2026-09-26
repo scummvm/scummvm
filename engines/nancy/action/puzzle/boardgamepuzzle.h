@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_BOARDGAMEPUZZLE_H
 #define NANCY_ACTION_BOARDGAMEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/movieplayer.h"
 
@@ -32,9 +32,9 @@ namespace Action {
 // Movie-driven board game introduced in Nancy12 (AR 164) - the "Mother Clock"
 // puzzle. The board states are pre-rendered frames of a Bink movie the game
 // navigates between as moves are made.
-class BoardGamePuzzle : public RenderActionRecord {
+class BoardGamePuzzle : public PuzzleRecord {
 public:
-	BoardGamePuzzle() : RenderActionRecord(7) {}
+	BoardGamePuzzle() : PuzzleRecord(7) {}
 	virtual ~BoardGamePuzzle() {}
 
 	void init() override;
@@ -53,7 +53,8 @@ protected:
 	static const uint kNumMoves = 12;
 
 	// One turn's scripted move: advance by _amount; landing on _jumpFrom warps
-	// to _jumpTo playing movie frames [_jumpFrameStart, _jumpFrameEnd].
+	// to _jumpTo playing movie frames [_jumpFrameStart, _jumpFrameE
+nd].
 	struct MoveRecord {
 		int16 amount = 0;
 		int16 jumpFrom = 0;
@@ -63,7 +64,6 @@ protected:
 	};
 
 	// File data
-	Common::Path _imageName;
 	Common::Path _movieName;		// the board-game Bink movie ("..._ANIM")
 	Common::Rect _movieRect;		// movie source/params rect (buf+0x244)
 	Common::Rect _boardRect;		// board area within the viewport (buf+0x254)
@@ -78,7 +78,6 @@ protected:
 	int16 _winTarget = 0;			// land here exactly to win; overshoot loses
 	Common::Array<MoveRecord> _moves;	// 12 scripted turn records (buf+0x26a)
 
-	SceneChangeWithFlag _winScene;	// buf+0x2e2
 	SceneChangeWithFlag _loseScene;	// buf+0x2fb (also the exit/quit target)
 
 	RandomSoundBlock _sounds[kNumSounds];	// button / click / clank / slide / key / beep
@@ -100,19 +99,18 @@ protected:
 	int16 _position = 0;				// current track position (0.._winTarget)
 	Common::Array<bool> _buttonUsed;	// a move button may be pressed once
 	int16 _activeCard = -1;				// card currently being played (white sprite)
-	bool _resetPressed = false;			// reset button showing its pressed sprite
+	bool _resetPressed = false;			/
+/ reset button showing its pressed sprite
 	uint32 _resetPressedTime = 0;
 	BoardState _boardState = kBoardWaiting;
 	bool _solved = false;				// reached the target exactly
 	bool _lost = false;					// overshot the target
 	uint32 _resultTime = 0;				// ms timestamp when the game ended, for the result hold
 
-	Graphics::ManagedSurface _image;
-
 	void redraw();
 	void drawCard(uint index);
 	void resolveMove(int button);
-	void playSoundBlock(uint index);
+	void playSoundByIndex(uint index);
 	int framePosition(int position) const { return _framesPerPosition * position + 1; }
 };
 

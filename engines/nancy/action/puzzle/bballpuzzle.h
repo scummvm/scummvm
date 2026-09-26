@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_BBALLPUZZLE_H
 #define NANCY_ACTION_BBALLPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 namespace Action {
 
-class BBallPuzzle : public RenderActionRecord {
+class BBallPuzzle : public PuzzleRecord {
 public:
-	BBallPuzzle() : RenderActionRecord(7) {}
+	BBallPuzzle() : PuzzleRecord(7) {}
 	virtual ~BBallPuzzle() {}
 
 	void init() override;
@@ -43,8 +43,6 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "BBallPuzzle"; }
-
-	Common::Path _imageName;
 
 	uint16 _positions = 0;
 	uint16 _powers = 0;
@@ -66,7 +64,8 @@ protected:
 	Common::Rect _plusButtonSrc;
 
 	Common::Array<Common::Rect> _playerSrcs;
-	Common::Array<Common::Rect> _powerSrcs;
+	Common::Array<Common::Rect> _
+powerSrcs;
 	Common::Array<Common::Rect> _anglesSrcs;
 
 	SoundDescription _shootSound;
@@ -80,11 +79,6 @@ protected:
 	Common::Array<int16> _playerPositionFlags;
 
 	int16 _winFlag = 0;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 
 	uint _curAngle = 0;
 	uint _curPower = 0;

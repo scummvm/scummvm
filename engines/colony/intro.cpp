@@ -52,6 +52,7 @@ public:
 		: Graphics::MacDialog(screen, wm, width, mactext, maxTextWidth, buttons, defaultButton) {}
 
 	int runWithRenderer(Renderer *gfx) {
+
 		if (!_screen || !gfx)
 			return Graphics::kMacDialogQuitRequested;
 
@@ -129,7 +130,8 @@ public:
 };
 
 void ColonyEngine::runMacAbout() {
-	// gmain.c About(): a black full-screen window with three click-through
+	
+// gmain.c About(): a black full-screen window with three click-through
 	// starfield stages — empty, the title PICT, then the credits. about0[]
 	// ("The Colony" / "By David A. Smith" / "Copyright \xA9 1989") is declared
 	// alongside but never drawn; PICT -32564 carries that text.
@@ -189,7 +191,8 @@ int ColonyEngine::runMacSaveQuery() {
 	_menuSurface->fillRect(Common::Rect(0, 0, _menuSurface->w, _menuSurface->h),
 		_menuSurface->format.ARGBToColor(0, 0, 0, 0));
 	if (_macMenu)
-		_macMenu->draw(_menuSurface, true);
+		_macMenu->dr
+aw(_menuSurface, true);
 
 	const Common::String yesLabel = _("Yes");
 	const Common::String noLabel = _("No");
@@ -230,7 +233,8 @@ int ColonyEngine::runMacSaveQuery() {
 }
 
 int ColonyEngine::runMacEndgameDialog(const Common::String &message) {
-	if (!isMacRenderMode() || !_wm || !_menuSurface || !_gfx)
+	if (!isMacRenderMode(
+) || !_wm || !_menuSurface || !_gfx)
 		return Graphics::kMacDialogQuitRequested;
 
 	if (_macMenu && _wm->isMenuActive())
@@ -266,7 +270,8 @@ int ColonyEngine::runMacEndgameDialog(const Common::String &message) {
 	Graphics::MacDialogButtonArray buttons;
 	buttons.push_back(new Graphics::MacDialogButton(newGameLabel.c_str(), startX, buttonY, buttonW1, buttonH));
 	buttons.push_back(new Graphics::MacDialogButton(loadGameLabel.c_str(), startX + buttonW1 + buttonGap, buttonY, buttonW2, buttonH));
-	buttons.push_back(new Graphics::MacDialogButton(quitLabel.c_str(), startX + buttonW1 + buttonGap + buttonW2 + buttonGap, buttonY, buttonW3, buttonH));
+	buttons.push_back(new Graphics::MacDialogButton(quitLabel.c_str(), startX + buttonW1 + button
+Gap + buttonW2 + buttonGap, buttonY, buttonW3, buttonH));
 
 	ColonyMacDialog dialog(_menuSurface, _wm, dialogW, &prompt, maxTextWidth, &buttons, 0);
 	return dialog.runWithRenderer(_gfx);
@@ -314,7 +319,8 @@ void ColonyEngine::playIntro() {
 
 		// 2. Wait for BeamMe sound to finish
 		// Original: if(!qt) while(!SoundDone());
-		while (!qt && !shouldQuit() && _sound->isPlaying())
+		while (!qt && !sh
+ouldQuit() && _sound->isPlaying())
 			_system->delayMillis(10);
 
 		// Original: if(Button()) qt=OptionKey();  check for skip
@@ -380,7 +386,8 @@ void ColonyEngine::playIntro() {
 				_gfx->clear(_gfx->black());
 				_gfx->copyToScreen();
 				qt = makePlanet();
-				_sound->stop(); // EndCSound()
+	
+			_sound->stop(); // EndCSound()
 			}
 		}
 
@@ -436,7 +443,8 @@ void ColonyEngine::playIntro() {
 		Common::Rect savedScreenR = _screenR;
 		_screenR = Common::Rect(0, 0, _width, _height);
 		_centerX = _width / 2;
-		_centerY = _height / 2;
+		_
+centerY = _height / 2;
 		bool qt = scrollInfo();
 
 		if (!qt) {
@@ -519,7 +527,8 @@ void ColonyEngine::playIntro() {
 		const uint32 crashFlashStepMs = 200;
 		const uint32 crashStart = _system->getMillis();
 		int frame = 0;
-		while (!shouldQuit() && _system->getMillis() - crashStart < crashFlashDurationMs) {
+		while (!shouldQuit() && _sys
+tem->getMillis() - crashStart < crashFlashDurationMs) {
 			_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
 			_gfx->copyToScreen();
 			_system->delayMillis(crashFlashStepMs);
@@ -543,7 +552,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	// waits for click, then scrolls it off the top.
 	// Mac original: TextFont(190 = Commando); TextSize(12);
 	// Text blue starts at 0xFFFF and fades by -4096 per visible line.
-	static const char *const kDosStory[] = {
+	const char *const kDosStory[] = {
 		"Mankind has left the",
 		"cradle of earth and",
 		"is beginning to eye",
@@ -558,7 +567,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 		"Press any key to begin",
 		"the Adventure..."
 	};
-	static const char *const kMacStory[] = {
+	const char *const kMacStory[] = {
 		"",
 		"Mankind has left the",
 		"cradle of earth and",
@@ -589,7 +598,8 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	const bool macStyle = (macFont != nullptr);
 
 	// Mac and DOS use different title layouts here.
-	int lineHeight = macStyle ? 19 : 15;
+	int lineHeight = macStyle 
+? 19 : 15;
 	int totalHeight = lineHeight * storyLength;
 	int ht = (_height - totalHeight) / 2;
 
@@ -650,7 +660,8 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	}
 
 	// Wait for click (original: while(!Button()); while(Button()&&!qt);)
-	if (!qt)
+	if (!qt
+)
 		qt = waitForInput();
 
 	// Phase 2: Scroll text off the top of the screen
@@ -714,7 +725,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 	// Initialize moving stars  original uses PenMode(patXor) so stars
 	// don't damage the logo underneath (XOR drawing the same line twice
-	// restores the original pixels).
+	// resto
+res the original pixels).
 	int xang[NSTARS], yang[NSTARS], dist[NSTARS];
 	int xsave1[NSTARS], ysave1[NSTARS], xsave2[NSTARS], ysave2[NSTARS];
 
@@ -779,7 +791,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			ysave2[i] = centerY + (int)(((int64)c * rr) >> 7);
 
 			// Draw new star position
-			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
+			_gfx->drawLine(xsave1[i], ysa
+ve1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 		}
 		_gfx->copyToScreen();
 		_system->delayMillis(16);
@@ -848,7 +861,8 @@ bool ColonyEngine::makeBlackHole() {
 
 		for (int i = 1000; i > 32; i -= dec) {
 			// Mac original subtracts from color channels (wrapping as uint16);
-			// We simulate this as a gradient from dark to bright
+			// We simulate this as
+ a gradient from dark to bright
 			// Since Mac uses unsigned wrap: 0 - 4096 = 0xF000 = bright.
 			// After one full cycle (16 steps), the colors cycle.
 			// Map to palette entry based on step
@@ -912,6 +926,7 @@ bool ColonyEngine::makePlanet() {
 
 	const int centerx = _width / 2;
 	const int centery = _height / 2;
+
 	const int sintheta = _sint[210];
 	const int costheta = _cost[210];
 
@@ -973,7 +988,8 @@ bool ColonyEngine::makePlanet() {
 
 		save = 0;
 		for (int j = 0; j < 256; j += PDELTA) {
-			for (int k = start, l = dstart; k < 128; k += PDELTA, l += PDELTA) {
+			for (int k = start, l = dstart; k < 128; k +=
+ PDELTA, l += PDELTA) {
 				if (save >= MAX_POINTS)
 					break;
 				// Erase old point
@@ -998,628 +1014,6 @@ bool ColonyEngine::makePlanet() {
 			start = 0;
 		dstart++;
 		if (dstart == PDELTA)
-			dstart = 0;
-		_gfx->copyToScreen();
-		_system->delayMillis(33);
-	}
+			
 
-	// Phase 3: planet approaches camera (zoom from dist 800 to 32)
-	starcnt = 0;
-	for (int i = 800; i > 32; i -= 16) {
-		if (checkSkipRequested()) {
-			_gfx->setXorMode(false);
-			return true;
-		}
-
-		// Erase stars as planet passes them
-		for (int m = 0; m < 4 && starcnt < STAR_COUNT; m++) {
-			_gfx->setPixel(xstars[starcnt], ystars[starcnt], 0xFFFFFFFF);
-			starcnt++;
-		}
-
-		save = 0;
-		for (int j = 0; j < 256; j += PDELTA) {
-			for (int k = start, l = dstart; k < 128; k += PDELTA, l += PDELTA) {
-				if (save >= MAX_POINTS)
-					break;
-				// Erase old
-				if (zsave[save])
-					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
-
-				rt = rtable[i];
-				int xx = (int)(((rt * _sint[j]) >> 7) * _cost[l] >> 7);
-				int zz = (int)(((rt * _sint[j]) >> 7) * _sint[l] >> 7);
-				int z = (int)(((int32)_cost[j] * sintheta + (int32)zz * costheta) >> 7);
-				zsave[save] = (z >= 0);
-				if (zsave[save]) {
-					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (int32)costheta - (int32)zz * sintheta) >> 7);
-					xsave[save] = xx + centerx;
-					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
-				}
-				save++;
-			}
-		}
-		start++;
-		if (start == PDELTA)
-			start = 0;
-		dstart++;
-		if (dstart == PDELTA)
-			dstart = 0;
-		_gfx->copyToScreen();
-		_system->delayMillis(16);
-	}
-
-	_gfx->setXorMode(false);
-	return false;
-}
-
-bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont, bool gameOver) {
-	// Original: TimeSquare() in intro.c
-	// Mac and DOS use different presentation here. DOS is a monochrome/gray
-	// warning band with 16-pixel blits and white text; Mac uses the colorful
-	// gradient treatment.
-
-	_gfx->clear(_gfx->black());
-
-	Graphics::DosFont dosFont;
-	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
-	const bool macStyle = isMacRenderMode();
-	const Graphics::Font *fallbackMacFont = macStyle && _wm && _wm->_fontMan ?
-		_wm->_fontMan->getFont(systemFont) : nullptr;
-	const Graphics::Font *font = macStyle ? (macFont ? macFont : fallbackMacFont) : nullptr;
-	if (!font)
-		font = &dosFont;
-	int swidth = font->getStringWidth(str);
-
-	int centery = _height / 2 - 10;
-
-	const bool bwMac = macStyle && !isMacColorMode();
-	const uint32 grayIndex = 160;
-	const uint32 textIndex = 176;
-	const Common::Rect textBand(0, centery + 1, _width, centery + 16);
-
-	if (macStyle) {
-		// Mac original: blue starts at 0xFFFF and decreases by 4096 per line pair.
-		for (int i = 0; i < 16; i++) {
-			int val = 255 - i * 16; // 255, 239, 223, ... 15
-			if (val < 0)
-				val = 0;
-			byte pal[3] = { (byte)(bwMac ? val : 0), (byte)(bwMac ? val : 0), (byte)val };
-			_gfx->setPalette(pal, 160 + i, 1);
-		}
-
-		// Text is red in color, white in B&W.
-		{
-			byte pal[3] = { 255, (byte)(bwMac ? 255 : 0), (byte)(bwMac ? 255 : 0) };
-			_gfx->setPalette(pal, textIndex, 1);
-		}
-
-		// Draw the blue gradient bands above/below the center band — each
-		// iteration is a 2-pixel-tall stripe in palette index 160+i.
-		for (int i = 0; i < 16; i++) {
-			_gfx->fillRect(Common::Rect(0, centery - 3 - i * 2, _width, centery - 1 - i * 2), 160 + i);
-			_gfx->fillRect(Common::Rect(0, centery + 16 + i * 2, _width, centery + 18 + i * 2), 160 + i);
-		}
-	} else {
-		// DOS warning band: white outer lines, gray inner lines, white text.
-		const byte grayPal[3] = { 170, 170, 170 };
-		const byte whitePal[3] = { 255, 255, 255 };
-		_gfx->setPalette(grayPal, grayIndex, 1);
-		_gfx->setPalette(whitePal, textIndex, 1);
-
-		_gfx->drawLine(0, centery - 3, _width, centery - 3, textIndex);
-		_gfx->drawLine(0, centery - 2, _width, centery - 2, grayIndex);
-		_gfx->drawLine(0, centery - 1, _width, centery - 1, textIndex);
-		_gfx->drawLine(0, centery + 17, _width, centery + 17, textIndex);
-		_gfx->drawLine(0, centery + 18, _width, centery + 18, grayIndex);
-		_gfx->drawLine(0, centery + 19, _width, centery + 19, textIndex);
-	}
-	_gfx->copyToScreen();
-
-	// Phase 1: Scroll text in from the right to center.
-	// DOS uses 16-pixel blits of a black text box; Mac scrolls smoothly.
-	int targetX = (_width - swidth) / 2;
-	const int startX = macStyle ? _width : (_width + 16);
-	const int stepX = macStyle ? 1 : 16;
-	const int endX = macStyle ? -swidth : (-swidth - 16);
-	const uint32 scrollDelayMs = macStyle ? 8 : (1000 / 60);
-
-	for (int x = startX; x > targetX; x -= stepX) {
-		_gfx->fillRect(textBand, 0);
-		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
-		_gfx->copyToScreen();
-
-		if (checkSkipRequested())
-			return true;
-		_system->delayMillis(scrollDelayMs);
-	}
-
-	// Wait for each cue before the next flash.
-	_sound->stop();
-	_gfx->setXorMode(true);
-	const int klaxonCount = macStyle ? 6 : 4;
-	for (int i = 0; i < klaxonCount; i++) {
-		while (_sound->isPlaying() && !shouldQuit()) {
-			if (checkSkipRequested()) {
-				_gfx->setXorMode(false);
-				return true;
-			}
-			_system->delayMillis(10);
-		}
-		_sound->stop();
-
-		_sound->play(macStyle && gameOver ? Sound::kChime : Sound::kKlaxon);
-		_gfx->fillRect(textBand, 0xFFFFFFFF);
-		_gfx->copyToScreen();
-		if (!_sound->isPlaying())
-			_system->delayMillis(100);
-	}
-	while (_sound->isPlaying() && !shouldQuit()) {
-		if (checkSkipRequested()) {
-			_gfx->setXorMode(false);
-			return true;
-		}
-		_system->delayMillis(10);
-	}
-	_gfx->setXorMode(false);
-	_sound->stop();
-
-	// Phase 3: Mac resumes Mars here; DOS scrolls out silently.
-	// Original intro.c TimeSquare line 323: PlayMars() restarts the loop.
-	if (macStyle)
-		_sound->play(Sound::kMars, true);
-	for (int x = targetX; x > endX; x -= stepX) {
-		_gfx->fillRect(textBand, 0);
-		_gfx->drawString(font, str, x, centery + 2, textIndex, Graphics::kTextAlignLeft);
-		_gfx->copyToScreen();
-
-		if (checkSkipRequested())
-			return true;
-		_system->delayMillis(scrollDelayMs);
-	}
-
-	return false;
-}
-
-bool ColonyEngine::drawPict(int resID) {
-	// Original: DoPicture() in intro.c, lines 861-886
-	// Loads a PICT resource, centers it in the screen rect, draws with srcCopy.
-	// Original applies clip rect inset by 1 pixel on all sides.
-	Common::SeekableReadStream *pictStream = nullptr;
-
-	// Try Color Colony resource fork first
-	if (_colorResMan && _colorResMan->hasResFork())
-		pictStream = _colorResMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
-
-	// Fall back to B&W Colony resource fork
-	if (!pictStream && _resMan && (_resMan->isMacFile() || _resMan->hasResFork()))
-		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
-
-	if (!pictStream) {
-		debugC(1, kColonyDebugUI, "drawPict: PICT %d not found", resID);
-		return false;
-	}
-
-	::Image::PICTDecoder decoder;
-	if (decoder.loadStream(*pictStream)) {
-		const Graphics::Surface *surface = decoder.getSurface();
-		if (surface) {
-			// Center PICT on screen (original: locate = centered within rScreen)
-			int x = (_width - surface->w) / 2;
-			int y = (_height - surface->h) / 2;
-			bool isCLUT8 = (surface->format == Graphics::PixelFormat::createFormatCLUT8());
-			const Graphics::Palette &pictPal = decoder.getPalette();
-
-			// Original DoPicture clips 1 pixel inset from locate rect
-			// clip.top = locate.top+1, clip.left = locate.left+1, etc.
-			int clipX1 = x + 1;
-			int clipY1 = y + 1;
-			int clipX2 = x + surface->w - 1;
-			int clipY2 = y + surface->h - 1;
-
-			debugC(1, kColonyDebugUI, "drawPict(%d): %dx%d at (%d,%d), format=%dbpp, palette=%d entries",
-				resID, surface->w, surface->h, x, y,
-				surface->format.bytesPerPixel * 8, pictPal.size());
-
-			// Draw PICT pixels using direct RGB (packRGB) for full color support.
-			for (int iy = 0; iy < surface->h; iy++) {
-				int sy = y + iy;
-				if (sy < clipY1 || sy >= clipY2)
-					continue;
-				for (int ix = 0; ix < surface->w; ix++) {
-					int sx = x + ix;
-					if (sx < clipX1 || sx >= clipX2)
-						continue;
-					byte r, g, b;
-					if (isCLUT8) {
-						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
-						if (pictPal.size() > 0 && idx < (int)pictPal.size()) {
-							pictPal.get(idx, r, g, b);
-						} else {
-							// B&W PICT: 0=white, 1=black
-							r = g = b = (idx == 0) ? 255 : 0;
-						}
-					} else {
-						uint32 pixel = surface->getPixel(ix, iy);
-						surface->format.colorToRGB(pixel, r, g, b);
-					}
-					_gfx->setPixel(sx, sy, packRGB(r, g, b));
-				}
-			}
-			_gfx->copyToScreen();
-			delete pictStream;
-			return true;
-		}
-	} else {
-		warning("drawPict: failed to decode PICT %d", resID);
-	}
-	delete pictStream;
-	return false;
-}
-
-void ColonyEngine::terminateGame(bool blowup) {
-	Common::Rect savedScreenR = _screenR;
-	Common::Rect savedClip = _clip;
-	int savedCenterX = _centerX;
-	int savedCenterY = _centerY;
-	const bool savedMouseLocked = _mouseLocked;
-
-	_screenR = Common::Rect(0, 0, _width, _height);
-	_clip = _screenR;
-	_centerX = _width / 2;
-	_centerY = _height / 2;
-
-	_animationRunning = false;
-	_mouseLocked = false;
-	_system->lockMouse(false);
-	CursorMan.setDefaultArrowCursor(true);
-	CursorMan.showMouse(true);
-
-	debugC(1, kColonyDebugUI, "terminateGame(blowup=%d)", blowup);
-
-	_sound->stop();
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	_sound->play(blowup ? Sound::kExplode : Sound::kOuch);
-
-	if (_sound->isPlaying()) {
-		bool inverted = false;
-		while (_sound->isPlaying() && !shouldQuit()) {
-			_gfx->clear(inverted ? _gfx->white() : _gfx->black());
-			_gfx->copyToScreen();
-			inverted = !inverted;
-			_system->delayMillis(50);
-		}
-	} else {
-		for (int i = 0; i < (blowup ? 8 : 4); i++) {
-			_gfx->clear((i & 1) ? _gfx->white() : _gfx->black());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-		}
-	}
-
-	_sound->stop();
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	_screenR = savedScreenR;
-	_clip = savedClip;
-	_centerX = savedCenterX;
-	_centerY = savedCenterY;
-
-	if (isMacRenderMode()) {
-		while (!shouldQuit()) {
-			switch (runMacEndgameDialog(_("You have been terminated."))) {
-			case 0:
-				startNewGame();
-				_mouseLocked = savedMouseLocked;
-				updateMouseCapture(true);
-				return;
-			case 1:
-				if (loadGameDialog()) {
-					_mouseLocked = savedMouseLocked;
-					updateMouseCapture(true);
-					return;
-				}
-				break;
-			default:
-				quitGame();
-				return;
-			}
-		}
-		return;
-	}
-
-	const char *msg[] = {
-		"   YOU HAVE BEEN TERMINATED!   ",
-		" Type 'n' to start a new game. ",
-		" Type 'l' to load a game.      ",
-		" Type 'q' to quit the game.    ",
-		nullptr
-	};
-	Common::EventManager *eventMan = _system->getEventManager();
-
-	while (!shouldQuit()) {
-		printMessage(msg, false);
-		eventMan->purgeKeyboardEvents();
-		int choice = 0;
-		while (!choice && !shouldQuit()) {
-			Common::Event event;
-			while (eventMan->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RETURN_TO_LAUNCHER:
-					choice = 'q';
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_n)
-						choice = 'n';
-					else if (event.kbd.keycode == Common::KEYCODE_l)
-						choice = 'l';
-					else if (event.kbd.keycode == Common::KEYCODE_q)
-						choice = 'q';
-					break;
-				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-					// Q is mapped to rotate left.
-					if (event.customType == kActionRotateLeft || event.customType == kActionEscape)
-						choice = 'q';
-					break;
-				case Common::EVENT_SCREEN_CHANGED:
-					_gfx->computeScreenViewport();
-					printMessage(msg, false);
-					break;
-				default:
-					break;
-				}
-			}
-			_system->updateScreen();
-			_system->delayMillis(10);
-		}
-
-		switch (choice) {
-		case 'n':
-			inform("New Game!", false);
-			startNewGame();
-			_mouseLocked = savedMouseLocked;
-			updateMouseCapture(true);
-			return;
-		case 'l':
-			if (loadGameDialog()) {
-				_mouseLocked = savedMouseLocked;
-				updateMouseCapture(true);
-				return;
-			}
-			break;
-		case 'q':
-			quitGame();
-			return;
-		default:
-			break;
-		}
-	}
-}
-
-int ColonyEngine::countSavedCryos() const {
-	int saved = 0;
-
-	for (uint i = 0; i < _patches.size(); i++) {
-		if (_patches[i].type == kObjCryo && _patches[i].to.level == 1)
-			saved++;
-	}
-
-	return saved;
-}
-
-void ColonyEngine::takeOff() {
-	Common::Rect savedScreenR = _screenR;
-	Common::Rect savedClip = _clip;
-	int savedCenterX = _centerX;
-	int savedCenterY = _centerY;
-
-	_screenR = Common::Rect(0, 0, _width, _height);
-	_clip = _screenR;
-	_centerX = _width / 2;
-	_centerY = _height / 2;
-
-	debugC(1, kColonyDebugUI, "takeOff()");
-
-	_sound->stop();
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	if (getPlatform() == Common::kPlatformMacintosh)
-		_sound->play(Sound::kMars);
-	else
-		_sound->play(Sound::kStars1);
-
-	makeStars(_screenR, 0);
-	_sound->stop();
-
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	_screenR = savedScreenR;
-	_clip = savedClip;
-	_centerX = savedCenterX;
-	_centerY = savedCenterY;
-}
-
-// Touching the monolith (the SCREEN object) blacks the screen out and runs the
-// star gate. Mac intro.c FullOfStars() plays the digitized "Dave" clip over it;
-// DOS IBM_INTR.C reaches the same effect through Pause(), which is silent and
-// instead leaves the starfield up until the player clicks.
-void ColonyEngine::fullOfStars() {
-	Common::Rect savedScreenR = _screenR;
-	Common::Rect savedClip = _clip;
-	int savedCenterX = _centerX;
-	int savedCenterY = _centerY;
-
-	// Both releases run the effect over the whole screen (Mac rScreen, DOS sR),
-	// not over the 3D viewport.
-	_screenR = Common::Rect(0, 0, _width, _height);
-	_clip = _screenR;
-	_centerX = _width / 2;
-	_centerY = _height / 2;
-
-	debugC(1, kColonyDebugUI, "fullOfStars()");
-
-	const bool isMac = (getPlatform() == Common::kPlatformMacintosh);
-
-	// Pause(): drop queued input so the click that triggered the monolith does
-	// not immediately end the starfield.
-	Common::Event event;
-	while (_system->getEventManager()->pollEvent(event)) {} // ignore events
-
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	// DoDaveSound() stops whatever is playing and starts the clip; Pause() on
-	// DOS touches no sound at all, so nothing is cut short there.
-	if (isMac)
-		_sound->play(Sound::kDave);
-
-	// Mac makestars(rScreen, 0) times itself out; DOS makestars(sR, TRUE) keeps
-	// streaking until the player clicks.
-	makeStars(_screenR, isMac ? 0 : 1);
-
-	// EraseRect(&sR) / CloseWindow(). The dashboard and the view come back on
-	// the next frame of the main loop, which is what DOS drewDashBoard=0 forces.
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	// No stop() here: KillTSound() waits for the clip to finish before freeing
-	// it, so the tail of "Dave" plays on over the restored view. The mixer does
-	// that for us without blocking.
-
-	_screenR = savedScreenR;
-	_clip = savedClip;
-	_centerX = savedCenterX;
-	_centerY = savedCenterY;
-}
-
-void ColonyEngine::gameOver(bool kill) {
-	gameOver(kill, countSavedCryos());
-}
-
-void ColonyEngine::gameOver(bool kill, int savedCryos) {
-	Common::Rect savedScreenR = _screenR;
-	Common::Rect savedClip = _clip;
-	int savedCenterX = _centerX;
-	int savedCenterY = _centerY;
-
-	_screenR = Common::Rect(0, 0, _width, _height);
-	_clip = _screenR;
-	_centerX = _width / 2;
-	_centerY = _height / 2;
-
-	_mouseLocked = false;
-	_system->lockMouse(false);
-	CursorMan.setDefaultArrowCursor(true);
-	CursorMan.showMouse(true);
-
-	int textEntry;
-
-	if (kill)
-		textEntry = (savedCryos == 6) ? 256 : (savedCryos > 0 ? 257 : 258);
-	else
-		textEntry = (savedCryos == 6) ? 259 : (savedCryos > 0 ? 260 : 261);
-
-	debugC(1, kColonyDebugUI, "gameOver(kill=%d, savedCryos=%d, text=%d)", kill, savedCryos, textEntry);
-
-	_sound->stop();
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-
-	if (kill) {
-		_sound->play(Sound::kPShot);
-		makeStars(_screenR, 0);
-		_sound->stop();
-		_sound->play(Sound::kExplode);
-		for (int i = 0; i < 4; i++) {
-			_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-		}
-	} else {
-		_sound->play(Sound::kStars4);
-		makeStars(_screenR, 0);
-		_sound->stop();
-	}
-
-	_gfx->clear(_gfx->black());
-	_gfx->copyToScreen();
-	doText(textEntry, 2);
-
-	auto playFinalExplosion = [&]() {
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		_sound->play(Sound::kExplode);
-		if (_sound->isPlaying()) {
-			while (_sound->isPlaying() && !shouldQuit()) {
-				_gfx->clear(_gfx->white());
-				_gfx->copyToScreen();
-				_system->delayMillis(50);
-				_gfx->clear(_gfx->black());
-				_gfx->copyToScreen();
-				_system->delayMillis(50);
-			}
-		} else {
-			for (int i = 0; i < 4; i++) {
-				_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
-				_gfx->copyToScreen();
-				_system->delayMillis(50);
-			}
-		}
-		_sound->stop();
-	};
-
-	if (isMacRenderMode()) {
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		_sound->play(Sound::kMars, true);
-		makeStars(_screenR, 0);
-
-		Graphics::MacFONTFont *macFont = nullptr;
-		if (_resMan) {
-			const uint16 fontResID = 24332; // FOND 190, 12pt
-			Common::SeekableReadStream *fontStream = _resMan->getResource(MKTAG('N', 'F', 'N', 'T'), fontResID);
-			if (!fontStream)
-				fontStream = _resMan->getResource(MKTAG('F', 'O', 'N', 'T'), fontResID);
-			if (fontStream) {
-				macFont = new Graphics::MacFONTFont();
-				if (!macFont->loadFont(*fontStream)) {
-					delete macFont;
-					macFont = nullptr;
-				}
-				delete fontStream;
-			}
-		}
-		timeSquare("...THE END...", macFont, true);
-		delete macFont;
-
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		makeStars(_screenR, 0);
-		_sound->stop();
-		playFinalExplosion();
-	} else {
-		// DOS uses Inform here, not TimeSquare.
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		_sound->play(Sound::kStars4);
-		makeStars(_screenR, 0);
-		_sound->stop();
-		playFinalExplosion();
-		inform("THE END", true);
-	}
-
-	_screenR = savedScreenR;
-	_clip = savedClip;
-	_centerX = savedCenterX;
-	_centerY = savedCenterY;
-
-	_system->quit();
-}
-
-} // End of namespace Colony
+... [Content truncated]

@@ -34,8 +34,7 @@ namespace Nancy {
 namespace Action {
 
 void AssemblyPuzzle::init() {
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &piece = _pieces[i];
@@ -59,7 +58,8 @@ void AssemblyPuzzle::registerGraphics() {
 
 void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 	_puzzleState = (AssemblyPuzzleData *)NancySceneState.getPuzzleData(AssemblyPuzzleData::getTag());
-	assert(_puzzleState);
+	assert(_
+puzzleState);
 
 	readFilename(stream, _imageName);
 
@@ -106,7 +106,7 @@ void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 		assembleTextLine(buf, _wrongPieceTexts[i], 200);
 	}
 
-	_solveScene.readData(stream);
+	_solveScene.readData(stream); // has 9999 in nancy6, so the puzzle doesn't auto-exit
 	_solveSound.readNormal(stream);
 	stream.read(buf, 200);
 	assembleTextLine(buf, _solveText, 200);
@@ -123,6 +123,7 @@ void AssemblyPuzzle::execute() {
 
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);
@@ -135,16 +136,16 @@ void AssemblyPuzzle::execute() {
 			return;
 		}
 
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		showSubtitle(_solveText);
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
 
 		_state = kActionTrigger;
 		break;
-	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+	case kActionT
+rigger:
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 
@@ -160,13 +161,11 @@ void AssemblyPuzzle::execute() {
 }
 
 void AssemblyPuzzle::handleInput(NancyInput &input) {
-	if (_state == kActionTrigger && _completed && g_nancy->_sound->isSoundPlaying(_solveSound)) {
+	if (_state == kActionTrigger && _completed && isSolveSoundPlaying()) {
 		return;
 	}
 
-	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (_pickedUpPiece == -1 && hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_completed = false;
@@ -215,7 +214,8 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 
 				if (_pickedUpPiece != (int)i && !_pieces[i].placed) {
 					// Clicked on another piece while holding, swap them
-					_pickedUpPiece = i;
+					
+_pickedUpPiece = i;
 					_pieces[i].pickUp();
 					g_nancy->_sound->playSound(_pickUpSound);
 
@@ -275,7 +275,8 @@ void AssemblyPuzzle::handleInput(NancyInput &input) {
 					} else if (_allowWrongPieceHotspot) {
 						// Wrong place, play a sound
 						g_nancy->_sound->loadSound(_wrongPieceSounds[_curRotation]);
-						g_nancy->_sound->playSound(_wrongPieceSounds[_curRotation]);
+						g_nancy->_sound->playSound(_w
+rongPieceSounds[_curRotation]);
 						if (!_wrongPieceTexts[_curRotation].empty()) {
 							NancySceneState.getTextbox().addTextLine(_wrongPieceTexts[_curRotation], 4000); // check
 						}

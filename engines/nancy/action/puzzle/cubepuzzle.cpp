@@ -34,15 +34,9 @@ namespace Nancy {
 namespace Action {
 
 void CubePuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	for (uint i = 0; i < 5; ++i) {
 		_drawSurface.blitFrom(_image, _pieceSrcs[i], _pieceDests[i]);
@@ -55,7 +49,7 @@ void CubePuzzle::init() {
 
 void CubePuzzle::registerGraphics() {
 	_curPiece.registerGraphics();
-	RenderActionRecord::registerGraphics();
+	PuzzleRecord::registerGraphics();
 }
 
 void CubePuzzle::readData(Common::SeekableReadStream &stream) {
@@ -71,7 +65,8 @@ void CubePuzzle::readData(Common::SeekableReadStream &stream) {
 	_pieceDests.resize(5);
 	for (uint i = 0; i < 5; ++i) {
 		readRect(stream, _pieceSrcs[i]);
-		readRect(stream, _pieceDests[i]);
+		readRect(stream, _p
+ieceDests[i]);
 	}
 
 	_placedSrcs.resize(4);
@@ -102,6 +97,7 @@ void CubePuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rotateSound);
 		g_nancy->_sound->loadSound(_pickUpSound);
@@ -116,15 +112,14 @@ void CubePuzzle::execute() {
 			}
 		}
 
-		g_nancy->_sound->loadSound(_solveSound);
-		g_nancy->_sound->playSound(_solveSound);
+		playSolveSound();
 		NancySceneState.setEventFlag(_solveScene._flag);
 		_completed = true;
 
 		_state = kActionTrigger;
 		break;
 	case kActionTrigger:
-		if (g_nancy->_sound->isSoundPlaying(_solveSound)) {
+		if (isSolveSoundPlaying()) {
 			return;
 		}
 
@@ -149,9 +144,7 @@ void CubePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (_pickedUpPiece == -1 && hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_completed = false;
@@ -162,7 +155,8 @@ void CubePuzzle::handleInput(NancyInput &input) {
 	if (_pickedUpPiece == -1 && NancySceneState.getViewport().convertViewportToScreen(_cwCursorDest).contains(input.mousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kRotateCW);
 
-		if (input.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
+		if (i
+nput.input & NancyInput::kLeftMouseButtonUp && !g_nancy->_sound->isSoundPlaying(_rotateSound)) {
 			g_nancy->_sound->playSound(_rotateSound);
 			rotateBase(-1);
 			return;
@@ -217,7 +211,8 @@ void CubePuzzle::handleInput(NancyInput &input) {
 					_curPiece._drawSurface.create(_image, _pieceSrcs[i]);
 					_curPiece.setVisible(true);
 				} else {
-					// Clicked the dest of the picked up piece, or an already placed one; simply put it down
+					// Clicked the dest of the picked up piece, or an already placed on
+e; simply put it down
 					_pickedUpPiece = -1;
 				}
 			}
@@ -301,7 +296,8 @@ void CubePuzzle::rotateBase(int dir) {
 					// Draw right & back piece
 					srcSelect = 7;
 				} else {
-					// Draw right piece only
+		
+			// Draw right piece only
 					srcSelect = 4;
 				}
 			} else if (_placedPieces[backIndex + 1]) {

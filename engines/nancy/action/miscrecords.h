@@ -62,7 +62,8 @@ protected:
 class LightningOn : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
+	void exe
+cute() override;
 
 	int16 _distance;
 	uint16 _pulseTime;
@@ -129,7 +130,8 @@ protected:
 
 // Nancy 10+ replacement for TextBoxWrite. Pushes a line of conversation
 // text into the new (UICO-driven) textbox
-class FrameTextBox : public ActionRecord {
+class FrameTextBox : public ActionRec
+ord {
 public:
 	enum BoxMode { kNormalBox, kFullBox };
 
@@ -153,14 +155,15 @@ public:
 	void execute() override;
 
 	uint16 _uiButton = 0;
+	byte _characterIndex = kPlayerCharacterActive; // Nancy15+: whose taskbar the disable applies to
 	byte _autoOpenOrBadgeSound = 0; // 1 = auto-open popup; 0/10 = notification-badge click-sound selector
 	byte _flagB = 0;    // 0 = clear, 1 = enable+remember scene
 	int16 _startScene = 0; // start scene id (9999 = none); also the auto-open cell phone's call target
 	int16 _endScene = 0;   // end scene id (9999 = none)
 
 	Common::String getRecordExtraInfo() const override {
-		return Common::String::format("uiButton: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
-									  _uiButton, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
+		return Common::String::format("uiButton: %d, character: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
+									  _uiButton, _characterIndex, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
 	}
 
 protected:
@@ -185,7 +188,8 @@ protected:
 class AddSearchLink : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
+	void execute
+() override;
 
 	int16 _mode = 0;
 	SearchLink _link;
@@ -246,7 +250,8 @@ protected:
 // Changes the in-game time. Used prior to the introduction of SetPlayerClock.
 class BumpPlayerClock : public ActionRecord {
 public:
-	void readData(Common::SeekableReadStream &stream) override;
+	void r
+eadData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	byte _relative;
@@ -308,7 +313,8 @@ protected:
 };
 
 // Starts the timer. Used in combination with Dependency types that check for
-// how much time has passed since the timer was started. Nancy 11 also carries a
+// how much t
+ime has passed since the timer was started. Nancy 11 also carries a
 // software-timer slot index (see TimerControl). From Nancy 12 the record became
 // a general "Control a Timer" command: a slot index plus a command whose value
 // selects a variable-size payload.
@@ -357,7 +363,8 @@ protected:
 // software-timer slots (see TimerData::Timer). The fixed-size chunk
 // (0xc4 header + count*4 flag entries) carries a slot index, a command, a
 // target duration, an optional sound + caption, and the event flags to fire
-// when the timer expires.
+// when the timer expir
+es.
 class TimerControl : public ActionRecord {
 public:
 	enum Command {
@@ -420,7 +427,8 @@ protected:
 };
 
 // Stops the game and boots the player back to the Menu screen, while also making sure
-// they can't Continue. The devs took care to add Second Chance saves before every one
+// they 
+can't Continue. The devs took care to add Second Chance saves before every one
 // of these, to make sure the player can return to a state just before the dangerous part.
 class LoseGame : public ActionRecord {
 public:
@@ -471,7 +479,8 @@ protected:
 class HintSystem : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
+	void 
+execute() override;
 
 	byte _characterID; // 0x00
 	SoundDescription _genericSound; // 0x01
@@ -528,6 +537,7 @@ protected:
 
 	Common::String _failSoundName;    // played when the change can't be applied
 	Common::String _successSoundName; // played when it is applied
+
 
 	// When this rect is non-degenerate the change is interactive: the player
 	// clicks it (e.g. a coin slot) to pay. A degenerate rect applies at once.

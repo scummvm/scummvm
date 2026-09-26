@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_CARDGAMEPUZZLE_H
 #define NANCY_ACTION_CARDGAMEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -30,9 +30,9 @@ namespace Action {
 // A "Go fish!" card game, new in Nancy 11 (Curse of Blackmoor Manor, AR 246).
 // There are two variants, one with the cards placed in a grid vs a human NPC, and
 // one with the cards placed in columns vs an automaton.
-class CardGamePuzzle : public RenderActionRecord {
+class CardGamePuzzle : public PuzzleRecord {
 public:
-	CardGamePuzzle() : RenderActionRecord(7) {}
+	CardGamePuzzle() : PuzzleRecord(7) {}
 	virtual ~CardGamePuzzle() {}
 
 	void init() override;
@@ -52,7 +52,8 @@ protected:
 	// Per-side board: a grid of dealt cards, per-column counts (capped at 3), per-column "complete"
 	// flags (a full column of 3 scores a set) and the running score.
 	struct PlayerBoard {
-		int grid[kMaxRows][kMaxCols];
+		int grid[kM
+axRows][kMaxCols];
 		int colCount[kMaxCols];
 		int colComplete[kMaxCols];
 		int score;
@@ -82,11 +83,10 @@ protected:
 	void startMoveAnimation(const bool beforeGrid[kMaxRows][kMaxCols]);
 	void playVoice(const Common::String &name); // play a voiced line / SFX on the card-game channel
 
-	Common::Path _imageName;
-
 	// Header flags / dimensions
 	byte _unknown21 = 0;
-	byte _switchTurnRule = 0; // data+0x22: how the turn passes after a play
+	byte _switchTurnRule = 0;
+ // data+0x22: how the turn passes after a play
 	byte _startPlayer = 0;    // data+0x23: which side plays first (also the human side)
 	byte _dealMode = 0;       // data+0x24: deal/scoring variant (0, 2 or 0xff)
 	uint16 _numCols = 0;      // data+0x25
@@ -102,7 +102,6 @@ protected:
 	Common::Rect _cardDisplayDest[2];         // data+0x633
 	Common::Array<Common::Rect> _columnButtons; // data+0x653, one per column
 	Common::Array<Common::Rect> _faceDownSrc; // data+0x723, 3 rows
-	Common::Rect _exitHotspot;                // data+0x1336
 
 	// Animation timing (data+0x62b)
 	uint16 _moveAnimSteps = 0;
@@ -118,15 +117,13 @@ protected:
 	Common::Rect _deliverDest[2];               // where the hand sprite is drawn, by side
 
 	// Outcome scenes (data+0x1304 / 0x1320). The win block has two scene ids that share one set of
-	// transition params (frame/scroll/sound), held in _winScene; the id is chosen by the result.
+	// transition params (frame/scroll/sound), held in _solveScene; the id is chosen by the result.
 	uint16 _winSceneStartPlayer = 0; // data+0x1304
 	uint16 _winSceneStartEnemy = 0;  // data+0x1306
-	SceneChangeDescription _winScene;
 	int16 _winFlagPlayer = -1;       // data+0x131c
 	int16 _winFlagEnemy = -1;        // data+0x131e
-	uint16 _exitScene = 0;           // data+0x1320
-	SceneChangeDescription _exitSceneChange;
-	bool _gaveUp = false;            // left via the exit hotspot rather than playing out
+	bool _gaveUp = false;            // left via t
+he exit hotspot rather than playing out
 
 	// Voiced lines / SFX (all on the card-game channel). Read selectively from the 0xba3..0x1304 block.
 	Common::String _moveVoiceName;         // data+0xbc4 (card-move SFX)
@@ -159,10 +156,10 @@ protected:
 	uint32 _aiDelayUntil = 0;
 
 	// Runtime board state
-	Graphics::ManagedSurface _image;
 	PlayerBoard _board[2];
 	byte _availMap[kMaxRows][kMaxCols]; // shared deck: 1 = card still on the table
-	int _deckRemaining = 0;
+	int _deckRemainin
+g = 0;
 	int _currentTurn = 0;               // side owning the turn highlight (mirrors _mover)
 	int _lastAiColumn = -1;             // the AI avoids immediately repeating its previous column
 	bool _gameOver = false;

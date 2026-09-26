@@ -50,12 +50,14 @@ private:
 	bool cmdGoals(int argc, const char **argv);
 	bool cmdWin(int argc, const char **argv);
 	bool cmdRobots(int argc, const char **argv);
+	bool cmdEradicate(int argc, const char **argv);
 	bool cmdMap(int argc, const char **argv);
 	bool cmdGive(int argc, const char **argv);
 	bool cmdPower(int argc, const char **argv);
 	bool cmdCore(int argc, const char **argv);
 	bool cmdBattle(int argc, const char **argv);
-	bool cmdColony(int argc, const char **argv);
+	bool cmdColony(int argc,
+ const char **argv);
 	bool cmdForklift(int argc, const char **argv);
 	bool cmdSpawn(int argc, const char **argv);
 	bool getTeleporterLocation(int number, int &level, int &x, int &y) const;

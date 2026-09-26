@@ -57,7 +57,8 @@ void BlockingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_playerHealthIndex = stream.readSint16LE();
 	_field4 = stream.readSint16LE();
 	_field6 = stream.readSint16LE();
-	_field8 = stream.readByte();
+	_field8 = 
+stream.readByte();
 	_field9 = stream.readByte();
 	readFilename(stream, _imageName);
 	for (uint i = 0; i < 4; ++i) {
@@ -122,7 +123,8 @@ void BlockingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void BlockingPuzzle::init() {
 	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(),
+	_drawSurface.create(vpBounds.width(), vpBoun
+ds.height(),
 		g_nancy->_graphics->getInputPixelFormat());
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
@@ -184,7 +186,8 @@ int BlockingPuzzle::findMoveByMovie(const Common::Path &name) const {
 	return -1;
 }
 
-const BlockingPuzzle::RuntimeCell *BlockingPuzzle::cellByID(int id) const {
+const BlockingPuzzle::RuntimeCell *BlockingPuzzle::cellByID(int id) 
+const {
 	for (uint i = 0; i < _cells.size(); ++i) {
 		if (_cells[i].id == id) {
 			return &_cells[i];
@@ -261,6 +264,7 @@ int BlockingPuzzle::resolveBlock(int attackCell, int blockCell, Common::Point &r
 
 	const RuntimeCell *attack = nullptr;
 	const RuntimeCell *block = nullptr;
+
 	for (uint i = 0; i < _cells.size(); ++i) {
 		if (_cells[i].id == attackCell) {
 			attack = &_cells[i];
@@ -334,7 +338,8 @@ void BlockingPuzzle::drawTelegraph(const Common::Rect &srcRect, const Common::Po
 		if (destY < 0 || destY >= _drawSurface.h) {
 			continue;
 		}
-		for (int x = 0; x < srcRect.width(); ++x) {
+		for (int x = 0
+; x < srcRect.width(); ++x) {
 			int destX = destPos.x + x;
 			if (destX < 0 || destX >= _drawSurface.w) {
 				continue;
@@ -396,7 +401,8 @@ void BlockingPuzzle::execute() {
 		registerGraphics();
 		_state = kRun;
 		// fall through
-	case kRun: {
+	ca
+se kRun: {
 		updateRecoil();
 
 		if (!_moviePlayer.isVideoLoaded()) {
@@ -461,38 +467,5 @@ void BlockingPuzzle::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 	}
 }
-
-void BlockingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	// Pick a random one of the block's names.
-	uint index = block.names.size() > 1 ?
-		g_nancy->_randomSource->getRandomNumber(block.names.size() - 1) : 0;
-	if (block.names[index].empty() || block.names[index] == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = block.names[index];
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-
-	// The fighters' lines are CVTX captions keyed by the played sound's name
-	// (autotext searched first, then convo), shown as the fight goes on.
-	Common::String caption = resolveSubtitleText(desc.name, Common::String(), "AUTOTEXT");
-	if (caption.empty()) {
-		caption = resolveSubtitleText(desc.name, Common::String(), "CONVO");
-	}
-	if (!caption.empty()) {
-		showSubtitle(caption);
-	}
-}
-
 } // End of namespace Action
 } // End of namespace Nancy

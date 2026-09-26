@@ -22,15 +22,15 @@
 #ifndef NANCY_ACTION_BULPUZZLE_H
 #define NANCY_ACTION_BULPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
 
 // A puzzle based around a simplified version of the Mayan game Bul
-class BulPuzzle : public RenderActionRecord {
+class BulPuzzle : public PuzzleRecord {
 public:
-	BulPuzzle() : RenderActionRecord(7) {}
+	BulPuzzle() : PuzzleRecord(7) {}
 	virtual ~BulPuzzle() {}
 
 	void init() override;
@@ -57,11 +57,10 @@ protected:
 
 	Common::String getRecordTypeName() const override { return "BulPuzzle"; }
 
-	Common::Path _imageName;
-
 	uint16 _numCells = 0;
 	uint16 _numPieces = 0;
-	uint16 _numRolls = 0;
+	uint16 _nu
+mRolls = 0;
 
 	uint16 _playerStart = 0;
 	uint16 _enemyStart = 0;
@@ -110,15 +109,9 @@ protected:
 	SoundDescription _passSound;
 	SoundDescription _resetSound;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene; // when losing (Nancy 11 shares the win scene, set apart by the flag)
 	uint16 _loseSoundDelay = 0;
 	SoundDescription _loseSound;
 	SceneChangeWithFlag _giveUpScene; // nancy11: separate scene reached by giving up via the exit hotspot
-	Common::Rect _exitHotspot;
 
 	// Nancy 11 voice clips: two players, seven tables each (entry counts 1,1,4,4,4,4,4).
 	// Table 0 = opening line, 2 = turn line, 5 = end-of-game line.
@@ -131,9 +124,8 @@ protected:
 	// Nancy 11: when true the opponent is computer-controlled and takes its own turns
 	bool _playAgainstComputer = false;
 	// Nancy 11: the computer passes strategically (based on piece positions) rather than randomly
-	bool _aiPassStrategy = false;
-
-	Graphics::ManagedSurface _image;
+	bool _aiPassStrategy = fal
+se;
 
 	int16 _playerPos = 0;
 	int16 _playerPieces = 0;

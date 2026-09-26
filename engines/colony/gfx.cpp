@@ -50,7 +50,8 @@ Common::Point windowToCanvas(const Common::Rect &viewport, const Common::Point &
 		(int)((int64)y * canvasH / viewport.height()));
 }
 
-Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &p, int canvasW, int canvasH) {
+Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Po
+int &p, int canvasW, int canvasH) {
 	if (viewport.isEmpty() || canvasW <= 0 || canvasH <= 0)
 		return p;
 
@@ -66,7 +67,7 @@ Common::Point canvasToWindow(const Common::Rect &viewport, const Common::Point &
 // primitive coverage up to parity. Note that the generic preference order
 // in graphics/renderer.cpp:122 picks shaders for the Default case, so we
 // must override it here.
-static Graphics::RendererType pickRendererType() {
+Graphics::RendererType pickRendererType() {
 	const Common::String configured = ConfMan.get("renderer");
 	const Graphics::RendererType desired = Graphics::Renderer::parseTypeCode(configured);
 
@@ -102,7 +103,8 @@ Renderer *createRenderer(OSystem *system, int width, int height) {
 	// The DOS widescreen canvas keeps its original 350-line EGA coordinate
 	// system, but its display aspect is still 16:9 after pixel-aspect
 	// correction. Request a 16:9 window instead of the raw 853:350 canvas.
-	const int displayHeight = ConfMan.getBool("widescreen_mod") ? (width * 9 + 8) / 16 : height;
+	const int displayHeight = ConfMan.getBool("widescreen_mod") ? (width * 9 + 8)
+ / 16 : height;
 	initGraphics3d(width, displayHeight);
 
 #if defined(USE_OPENGL_SHADERS)

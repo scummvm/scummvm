@@ -54,7 +54,8 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 	void drawRect(const Common::Rect &rect, uint32 color) override;
 	void fillRect(const Common::Rect &rect, uint32 color) override;
-	void drawString(const Graphics::Font *font, const Common::String &str, int x, int y,
+	void drawString(const Graphics::Font *font, const Common
+::String &str, int x, int y,
 			uint32 color, Graphics::TextAlign align) override;
 	void drawEllipse(int x, int y, int rx, int ry, uint32 color) override;
 	void fillEllipse(int x, int y, int rx, int ry, uint32 color) override;
@@ -89,7 +90,8 @@ public:
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
 	Graphics::PixelFormat getPixelFormat() override {
-		return Graphics::PixelFormat::createFormatRGBA32();
+		return Graphics::PixelFormat::createFormatRGB
+A32();
 	}
 
 private:
@@ -138,7 +140,8 @@ private:
 	Math::Matrix4 _mvpMatrix;
 
 	// Cached "color" uniform values per shader. Uniforms persist with the
-	// program object across glUseProgram cycles, so once we've uploaded a
+	// program object acro
+ss glUseProgram cycles, so once we've uploaded a
 	// color, subsequent draws can skip glUniform4fv when the color matches.
 	// Adjacent walls / dashboard primitives commonly share colors, so this
 	// elides a lot of uniform writes per frame.
@@ -178,7 +181,8 @@ private:
 	// Solid VBO holds vec2 position only. Sized for the worst-case 2D
 	// primitive — the dither overlay can stream up to width*height/2 dots,
 	// so leave room for typical screens (≈170k floats for an 800×600 split).
-	enum { kSolidVertexCapacity = 320 * 1024 };
+	enum { kSolidVertexCapacity = 320 * 10
+24 };
 	// 3D VBO holds vec3 positions. Corridor polygons are typically <16
 	// vertices but a few features (sprite billboards, stairs) push higher.
 	enum { kSolid3DVertexCapacity = 1024 };
@@ -194,14 +198,14 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	for (int i = 0; i < 256 * 3; i++)
 		_palette[i] = 255;
 
-	static const char *solidAttribs[] = { "position", nullptr };
+	const char *const solidAttribs[] = { "position", nullptr };
 	_solidShader = OpenGL::Shader::fromFiles("colony_solid", solidAttribs);
 	_solidVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
 		sizeof(float) * 2 * kSolidVertexCapacity, nullptr, GL_DYNAMIC_DRAW);
 	_solidShader->enableVertexAttribute("position", _solidVBO, 2, GL_FLOAT, GL_FALSE,
 		2 * sizeof(float), 0);
 
-	static const char *bitmapAttribs[] = { "position", "texcoord", nullptr };
+	const char *const bitmapAttribs[] = { "position", "texcoord", nullptr };
 	_bitmapShader = OpenGL::Shader::fromFiles("colony_bitmap", bitmapAttribs);
 	// Per-draw vec2 position + vec2 texcoord, 4 vertices for a quad.
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
@@ -214,10 +218,11 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(OSystem *system, int width, int heigh
 	// 3D solid: vec3 vertex consuming mvpMatrix; the fragment shader has
 	// its own stipple-emulation branch (Freescape pattern, GLES2 safe),
 	// so we use a dedicated colony_solid_3d.{vertex,fragment} pair.
-	static const char *solid3dAttribs[] = { "position", nullptr };
+	const char *const solid3dAttribs[] = { "position", nullptr };
 	_solid3dShader = OpenGL::Shader::fromFiles("colony_solid_3d", solid3dAttribs);
 	_solid3dVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER,
-		sizeof(float) * 3 * kSolid3DVertexCapacity, nullptr, GL_DYNAMIC_DRAW);
+		sizeof(float) * 3 * kSolid3D
+VertexCapacity, nullptr, GL_DYNAMIC_DRAW);
 	_solid3dShader->enableVertexAttribute("position", _solid3dVBO, 3, GL_FLOAT, GL_FALSE,
 		3 * sizeof(float), 0);
 	// Initial stipple state: disabled. The fragment shader takes the
@@ -268,7 +273,8 @@ OpenGLShaderRenderer::~OpenGLShaderRenderer() {
 // Color resolution and matrix setup
 // ---------------------------------------------------------------------------
 
-void OpenGLShaderRenderer::resolveColor(uint32 color, float rgba[4]) const {
+void OpenGLShaderRenderer::resolveColor(uint32 color, float rgba[4]) 
+const {
 	// Same convention as the fixed-function renderer: high byte 0xFF →
 	// direct ARGB, otherwise palette index (low byte).
 	if (color & 0xFF000000) {
@@ -324,7 +330,8 @@ void OpenGLShaderRenderer::uploadSolid(const float *positions, int vertCount) {
 	// glBufferData (orphan) instead of glBufferSubData: tells the driver
 	// the previous contents are dead, so it can hand us fresh storage
 	// without waiting for the GPU to finish reading the old data. This
-	// matches Freescape's per-draw pattern (gfx_opengl_shaders.cpp:695,
+	// matches Freescape
+'s per-draw pattern (gfx_opengl_shaders.cpp:695,
 	// 717) and avoids implicit CPU/GPU sync stalls on Mac drivers.
 	glBindBuffer(GL_ARRAY_BUFFER, _solidVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * vertCount, positions, GL_DYNAMIC_DRAW);
@@ -371,7 +378,8 @@ void OpenGLShaderRenderer::drawSolid(GLenum mode, const float *positions, int ve
 	if (rgba[0] != _solidLastColor[0] || rgba[1] != _solidLastColor[1]
 			|| rgba[2] != _solidLastColor[2] || rgba[3] != _solidLastColor[3]) {
 		_solidShader->setUniform("color",
-			Math::Vector4d(rgba[0], rgba[1], rgba[2], rgba[3]));
+			Math::Vector4d(rgba[0], rgba[1], rgba[2], rgba[3]))
+;
 		_solidLastColor[0] = rgba[0]; _solidLastColor[1] = rgba[1];
 		_solidLastColor[2] = rgba[2]; _solidLastColor[3] = rgba[3];
 	}
@@ -435,7 +443,8 @@ void OpenGLShaderRenderer::drawQuad(int x1, int y1, int x2, int y2,
 		(float)x3, (float)y3,
 		(float)x4, (float)y4
 	};
-	drawSolid(GL_TRIANGLE_FAN, fanVerts, 4, rgba);
+	drawSo
+lid(GL_TRIANGLE_FAN, fanVerts, 4, rgba);
 
 	// Match the fixed-function renderer's white outline overlay.
 	const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -500,7 +509,8 @@ void OpenGLShaderRenderer::fillDitherRect(const Common::Rect &rect, uint32 c1, u
 		return;
 
 	// 50% checkerboard: place a dot on every other pixel, alternating per row.
-	// Capacity guard — fall back to solid c2 if the rect is larger than our
+	// Capacity guard — fall back to so
+lid c2 if the rect is larger than our
 	// streaming buffer (very rare: only the dashboard background hits this
 	// path, and it is much smaller than kSolidVertexCapacity).
 	const int maxDots = kSolidVertexCapacity;
@@ -558,7 +568,8 @@ void OpenGLShaderRenderer::drawString(const Graphics::Font *font, const Common::
 		uint32 *dst = rgbaBuf + py * w;
 		for (int px = 0; px < w; px++) {
 			if (src[px] == 1)
-				dst[px] = ((uint32)cr) | ((uint32)cg << 8) | ((uint32)cb << 16) | (0xFFu << 24);
+				dst[px] = ((uint32
+)cr) | ((uint32)cg << 8) | ((uint32)cb << 16) | (0xFFu << 24);
 			else
 				dst[px] = 0;
 		}
@@ -615,7 +626,8 @@ void OpenGLShaderRenderer::drawTexturedQuad(int x, int y, int w, int h) {
 	// "projection" and "tex" are set once at init / on resolution change;
 	// they persist in the program object so we don't re-upload here.
 	_bitmapShader->use();
-	glActiveTexture(GL_TEXTURE0);
+	g
+lActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _bitmapTexture);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -662,7 +674,8 @@ void OpenGLShaderRenderer::computeScreenViewport() {
 		_screenViewport = Common::Rect(vpW, vpH);
 		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
 	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
-		const int32 vpW = MIN<int32>(screenWidth, screenHeight * 4 / 3);
+		const int32 vpW = MIN<int32>(screenWidth, screenHeig
+ht * 4 / 3);
 		const int32 vpH = MIN<int32>(screenHeight, screenWidth * 3 / 4);
 		_screenViewport = Common::Rect(vpW, vpH);
 		_screenViewport.translate((screenWidth - vpW) / 2, (screenHeight - vpH) / 2);
@@ -720,7 +733,8 @@ void OpenGLShaderRenderer::setStippleData(const byte *data) {
 	_stippleActive = nowActive;
 }
 
-void OpenGLShaderRenderer::setMacColors(uint32 fg, uint32 bg) {
+void OpenGLShaderRen
+derer::setMacColors(uint32 fg, uint32 bg) {
 	if (_stippleFg != fg || _stippleBg != bg) {
 		_stippleFg = fg;
 		_stippleBg = bg;
@@ -781,7 +795,8 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Map the engine's logical viewport into system pixels (matches
+	// Map the engin
+e's logical viewport into system pixels (matches
 	// OpenGLRenderer::begin3D in renderer_opengl.cpp:246-257).
 	const float scaleX = (float)_screenViewport.width() / (float)_width;
 	const float scaleY = (float)_screenViewport.height() / (float)_height;
@@ -823,7 +838,8 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	// View transform: replicate the fixed-function chain
 	//   Rx(pitch) * Rx(-90) * Rz(yaw) * T(-cam)
 	// applied to column vectors (renderer_opengl.cpp:280-292).
-	Math::Matrix4 pitch;
+	Math::Matrix4 pitch
+;
 	pitch.buildAroundX((float)angleY * 360.0f / 256.0f);
 	Math::Matrix4 minus90;
 	minus90.buildAroundX(-90.0f);
@@ -843,180 +859,6 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 	_solid3dShader->setUniform("mvpMatrix", _mvpMatrix);
 }
 
-void OpenGLShaderRenderer::end3D() {
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	setGLDepthRange(0.0f, 1.0f);
-	glDisable(GL_SCISSOR_TEST);
+void OpenGLShaderRenderer::end3D(
 
-	// Restore the 2D viewport so subsequent overlay draws (dashboard, menu,
-	// crosshair, automap) land in the right spot.
-	const int sysW = _system->getWidth();
-	const int sysH = _system->getHeight();
-	glViewport(0, 0, sysW, sysH);
-	glScissor(0, 0, sysW, sysH);
-	computeScreenViewport();
-}
-
-void OpenGLShaderRenderer::uploadSolid3D(const float *positions, int vertCount) {
-	// See uploadSolid for the orphan-via-glBufferData rationale.
-	glBindBuffer(GL_ARRAY_BUFFER, _solid3dVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * vertCount, positions, GL_DYNAMIC_DRAW);
-}
-
-void OpenGLShaderRenderer::drawSolid3D(GLenum mode, const float *positions, int vertCount,
-		const float rgba[4], bool allowStipple) {
-	if (vertCount <= 0)
-		return;
-	uploadSolid3D(positions, vertCount);
-	// "mvpMatrix" is set in begin3D and persists in the program object.
-	_solid3dShader->use();
-
-	// Toggle the shader's stipple branch only when the effective state
-	// changes. allowStipple=false short-circuits stipple for line passes.
-	const bool wantStipple = allowStipple && _stippleActive;
-	if (wantStipple != _solid3dStippleEnabled) {
-		_solid3dShader->setUniform("useStipple", wantStipple ? 1u : 0u);
-		_solid3dStippleEnabled = wantStipple;
-	}
-
-	if (wantStipple) {
-		// Pattern + fg/bg colors are uploaded only when they change.
-		if (_stipplePatternDirty) {
-			_solid3dShader->setUniform("stipple", 128, _stippleShaderArray);
-			_stipplePatternDirty = false;
-		}
-		if (_stippleColorsDirty) {
-			float fgRgba[4], bgRgba[4];
-			resolveColor(_stippleFg, fgRgba);
-			resolveColor(_stippleBg, bgRgba);
-			_solid3dShader->setUniform("stippleFg",
-				Math::Vector4d(fgRgba[0], fgRgba[1], fgRgba[2], fgRgba[3]));
-			_solid3dShader->setUniform("stippleBg",
-				Math::Vector4d(bgRgba[0], bgRgba[1], bgRgba[2], bgRgba[3]));
-			_stippleColorsDirty = false;
-		}
-		// "color" uniform isn't sampled when useStipple is set — skip the
-		// upload entirely. Invalidate the cache so a later non-stipple
-		// draw with the same rgba still uploads.
-		_solid3dLastColor[0] = -1.0f;
-	} else {
-		// Skip the color upload when it matches the previous draw —
-		// adjacent corridor walls/quads commonly share a color.
-		if (rgba[0] != _solid3dLastColor[0] || rgba[1] != _solid3dLastColor[1]
-				|| rgba[2] != _solid3dLastColor[2] || rgba[3] != _solid3dLastColor[3]) {
-			_solid3dShader->setUniform("color",
-				Math::Vector4d(rgba[0], rgba[1], rgba[2], rgba[3]));
-			_solid3dLastColor[0] = rgba[0]; _solid3dLastColor[1] = rgba[1];
-			_solid3dLastColor[2] = rgba[2]; _solid3dLastColor[3] = rgba[3];
-		}
-	}
-	applyLineWidth(mode);
-	glDrawArrays(mode, 0, vertCount);
-}
-
-void OpenGLShaderRenderer::drawWireframeable3D(const float *positions, int vertCount,
-		uint32 color) {
-	if (vertCount < 3) {
-		// Degenerate — render the line directly so callers don't have to
-		// special-case 2-vertex inputs.
-		float rgba[4];
-		resolveColor(color, rgba);
-		drawSolid3D(GL_LINE_STRIP, positions, vertCount, rgba);
-		return;
-	}
-
-	if (_wireframe) {
-		// Fill pass: stipple beats wireframeFillColor when active. Pass
-		// allowStipple=true so drawSolid3D picks up _stippleActive and
-		// uses the fg/bg uniforms; the fill color is ignored in that case.
-		if (_stippleActive || _wireframeFillColor != -1) {
-			glEnable(GL_POLYGON_OFFSET_FILL);
-			glPolygonOffset(1.1f, 4.0f);
-			float fillRgba[4];
-			resolveColor(_stippleActive ? 0u : (uint32)_wireframeFillColor, fillRgba);
-			drawSolid3D(GL_TRIANGLE_FAN, positions, vertCount, fillRgba, true);
-			glDisable(GL_POLYGON_OFFSET_FILL);
-		}
-		// Edges: lines are never stippled in the fixed-function path.
-		float edgeRgba[4];
-		resolveColor(color, edgeRgba);
-		drawSolid3D(GL_LINE_LOOP, positions, vertCount, edgeRgba, false);
-	} else {
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.1f, 4.0f);
-		float rgba[4];
-		resolveColor(color, rgba);
-		drawSolid3D(GL_TRIANGLE_FAN, positions, vertCount, rgba, true);
-		glDisable(GL_POLYGON_OFFSET_FILL);
-	}
-}
-
-void OpenGLShaderRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
-	// 256× scale and ±160 height match renderer_opengl.cpp:295-298.
-	const float fx1 = x1 * 256.0f, fy1 = y1 * 256.0f;
-	const float fx2 = x2 * 256.0f, fy2 = y2 * 256.0f;
-	const float verts[12] = {
-		fx1, fy1, -160.0f,
-		fx2, fy2, -160.0f,
-		fx2, fy2,  160.0f,
-		fx1, fy1,  160.0f,
-	};
-	drawWireframeable3D(verts, 4, color);
-}
-
-void OpenGLShaderRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2,
-		float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) {
-	const float verts[12] = {
-		x1, y1, z1,
-		x2, y2, z2,
-		x3, y3, z3,
-		x4, y4, z4,
-	};
-	drawWireframeable3D(verts, 4, color);
-}
-
-void OpenGLShaderRenderer::draw3DPolygon(const float *x, const float *y, const float *z,
-		int count, uint32 color) {
-	if (count < 3)
-		return;
-	if (count > kSolid3DVertexCapacity)
-		count = kSolid3DVertexCapacity;
-
-	float stack[3 * 32];
-	float *verts = (count <= 32) ? stack : new float[3 * count];
-	for (int i = 0; i < count; i++) {
-		verts[i * 3 + 0] = x[i];
-		verts[i * 3 + 1] = y[i];
-		verts[i * 3 + 2] = z[i];
-	}
-	drawWireframeable3D(verts, count, color);
-	if (verts != stack)
-		delete[] verts;
-}
-
-void OpenGLShaderRenderer::draw3DLine(float x1, float y1, float z1, float x2, float y2, float z2,
-		uint32 color) {
-	const float verts[6] = { x1, y1, z1, x2, y2, z2 };
-	float rgba[4];
-	resolveColor(color, rgba);
-	drawSolid3D(GL_LINES, verts, 2, rgba);
-}
-
-// ---------------------------------------------------------------------------
-// Factory
-// ---------------------------------------------------------------------------
-
-Renderer *createOpenGLShaderRenderer(OSystem *system, int width, int height) {
-	return new OpenGLShaderRenderer(system, width, height);
-}
-
-} // End of namespace Colony
-
-#else
-
-namespace Colony {
-Renderer *createOpenGLShaderRenderer(OSystem *system, int width, int height) { return nullptr; }
-}
-
-#endif
+... [Content truncated]

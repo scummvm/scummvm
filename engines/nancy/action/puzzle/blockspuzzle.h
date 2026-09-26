@@ -23,7 +23,7 @@
 #define NANCY_ACTION_BLOCKSPUZZLE_H
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
@@ -39,14 +39,15 @@ namespace Action {
 // Turning happens in one of two places. Boards that declare a turntable area have blocks
 // carried onto it and turned there; boards without one (the turntable rect is empty) turn
 // the carried block in hand instead, on a right click.
-class BlocksPuzzle : public RenderActionRecord {
+class BlocksPuzzle : public PuzzleRecord {
 public:
-	BlocksPuzzle() : RenderActionRecord(7) {}
+	BlocksPuzzle() : PuzzleRecord(7) {}
 	virtual ~BlocksPuzzle() {}
 
 	void init() override;
 
-	void readData(Common::SeekableReadStream &stream) override;
+	void readData(C
+ommon::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
@@ -97,16 +98,13 @@ protected:
 	bool isSolved() const;
 	void pickUp(int16 cell, NancyInput &input);
 	void drop(int16 cell, NancyInput &input);
-	// Syncs the block riding the cursor with _carriedBlock / _carriedSrc
+	// Syncs the block riding the cursor with _carriedBlock 
+/ _carriedSrc
 	void updateCarried(NancyInput *input);
 	void startTurn();
 	void redraw();
-	// Zone cursors take the idle sprite of their type, hover/drag cursors the hotspot one.
-	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
-	SoundDescription playSoundBlock(const RandomSoundBlock &block);
 
 	// -- File data (111-byte header) --
-	Common::Path _imageName;			// 0x00
 	uint16 _turnDuration = 0;			// 0x21 - total ms of one rotation's tween
 	uint16 _carryCursorType = 0;		// 0x23 - raw Nancy13 cursor types
 	uint16 _turnCursorType = 0;			// 0x25
@@ -115,17 +113,9 @@ protected:
 	Common::Rect _overlayDest;			// 0x3a
 	Common::Rect _turntableDest;		// 0x4a - empty when the board has no turntable
 	Common::Rect _turntableHotspot;		// 0x5a - click to turn the block on the turntable
-	SceneChangeDescription _solveScene;	// 0x6a
-	FlagDescription _solveFlag;			// 0x6c
 
 	Common::Array<Block> _blocks;
 	Common::Array<Cell> _cells;
-
-	// The clickable "give up / exit" hotspot (the base-class hotspot record).
-	Common::Rect _exitHotspot;
-	uint16 _exitCursorType = 0;
-	SceneChangeDescription _exitScene;
-	FlagDescription _exitFlag;			// set on give-up
 
 	RandomSoundBlock _sounds[kNumSounds];	// turn / handle / success
 
@@ -146,9 +136,7 @@ protected:
 
 	bool _solved = false;
 	bool _exitRequested = false;
-	SoundDescription _solveSound;		// the cue we wait on before changing scene
 
-	Graphics::ManagedSurface _image;
 };
 
 } // End of namespace Action

@@ -36,15 +36,9 @@ namespace Nancy {
 namespace Action {
 
 void BulPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	reset(false);
 
@@ -71,7 +65,8 @@ void BulPuzzle::updateGraphics() {
 				--_playerPieces;
 			}
 
-			if (_playerPieces && _enemyPieces) {
+			if (_playerPieces
+ && _enemyPieces) {
 				reset(true);
 			}
 		}
@@ -128,7 +123,8 @@ void BulPuzzle::updateGraphics() {
 				_drawSurface.fillRect(_passButtonDest, _drawSurface.getTransparentColor());
 
 				if (isPlayer) {
-					_drawSurface.fillRect(_playerLightDest, _drawSurface.getTransparentColor());
+					_drawSurface.fillRect(_playerLightDest, _drawSurface.getTransparentCo
+lor());
 					_drawSurface.blitFrom(_image, _enemyLightSrc, _enemyLightDest);
 					_turn = _numRolls;
 				} else {
@@ -190,7 +186,8 @@ void BulPuzzle::updateGraphics() {
 				// Capturing
 				SoundDescription &sound = isPlayer ? _enemyCapturedSound : _playerCapturedSound;
 				g_nancy->_sound->loadSound(sound);
-				g_nancy->_sound->playSound(sound);
+				g_nancy->_sound->pl
+aySound(sound);
 				_drawSurface.fillRect(_cellDests[_playerPos], _drawSurface.getTransparentColor());
 				_drawSurface.blitFrom(_image, isPlayer ? _enemyCapturedSrc : _playerCapturedSrc, _cellDests[_playerPos]);
 				_currentAction = kCapture;
@@ -258,7 +255,8 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRect(stream, _playerSrc);
 	readRect(stream, _enemySrc);
-	readRect(stream, _enemyCapturedSrc);
+	readRect(strea
+m, _enemyCapturedSrc);
 	readRect(stream, _playerCapturedSrc);
 
 	readRect(stream, _playerBarracksSrc);
@@ -308,7 +306,8 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 		_exitScene._flag.label = stream.readSint16LE();
 		_exitScene._flag.flag = stream.readByte();
 
-		// Giving up via the exit hotspot changes to its own scene
+		// Giving up via the exit hotspot changes to its own 
+scene
 		_giveUpScene._sceneChange.readData(stream);
 		_giveUpScene._sceneChange.continueSceneSound = stream.readUint16LE();
 		_giveUpScene._flag.label = stream.readSint16LE();
@@ -325,7 +324,7 @@ void BulPuzzle::readData(Common::SeekableReadStream &stream) {
 		_solveSoundDelay = stream.readUint16LE();
 		_solveSound.readNormal(stream);
 
-		_exitScene.readData(stream);
+		_exitScene.readData(stream); // when losing (Nancy 11 shares the win scene, set apart by the flag)
 		_loseSoundDelay = stream.readUint16LE();
 		_loseSound.readNormal(stream);
 	}
@@ -366,6 +365,7 @@ void BulPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_rollSound);
 		g_nancy->_sound->loadSound(_resetSound);
@@ -374,7 +374,8 @@ void BulPuzzle::execute() {
 
 		if (g_nancy->getGameType() >= kGameTypeNancy11) {
 			_prevSide = (_numRolls > 0 && _turn >= _numRolls) ? 1 : 0;
-			playVoiceLine(1, 0); // opponent's opening line
+			playVoiceLine(1, 0); // opponen
+t's opening line
 		}
 
 		_state = kRun;
@@ -455,7 +456,8 @@ void BulPuzzle::doAiTurn() {
 		return;
 	}
 
-	// Wait until the board is idle before the computer acts. Note _nextMoveTime is deliberately
+	// Wait until the board is idle
+ before the computer acts. Note _nextMoveTime is deliberately
 	// not checked: it keeps a stale value after a move completes, so the same conditions the
 	// player's canClick uses (no action in flight, move sound finished) apply here too.
 	if (_currentAction != kNone || _pushedButton || _changeLight ||
@@ -491,9 +493,7 @@ void BulPuzzle::doAiTurn() {
 }
 
 void BulPuzzle::handleInput(NancyInput &input) {
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 			_nextMoveTime = 0;
@@ -518,7 +518,8 @@ void BulPuzzle::handleInput(NancyInput &input) {
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _rollButtonSrc, _rollButtonDest);
 			_needsRedraw = true;
-			g_nancy->_sound->playSound(_rollSound);
+			g_nancy->_sound->
+playSound(_rollSound);
 			_currentAction = kRoll;
 			_pushedButton = true;
 			_nextMoveTime = g_nancy->getTotalPlayTime() + 250;
@@ -582,7 +583,8 @@ void BulPuzzle::reset(bool capture) {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
 	// Reset dice
-	for (uint i = 0; i < _diceDestsPlayer.size(); ++i) {
+	for (uint i = 0; i < _diceDestsPlay
+er.size(); ++i) {
 		_drawSurface.blitFrom(_image, _diceCleanSrcs[i], _diceDestsPlayer[i]);
 		_drawSurface.blitFrom(_image, _diceCleanSrcs[i], _diceDestsEnemy[i]);
 	}

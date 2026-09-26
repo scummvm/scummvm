@@ -60,6 +60,7 @@ void BeadPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRect(stream, _slotDestRects[i]);
 
 	for (int i = 0; i < kMaxSlots; ++i)
+
 		readRect(stream, _resultDestRects[i]);
 
 	// Solution stores beadType+1 per slot; 0 marks unused tail entries.
@@ -85,9 +86,9 @@ void BeadPuzzle::readData(Common::SeekableReadStream &stream) {
 	_perfectFlag.label = stream.readSint16LE();
 	_perfectFlag.flag  = stream.readByte();
 
-	_defaultScene.readData(stream);
+	_exitScene._sceneChange.readData(stream);
 	stream.skip(2);
-	_solvedScene.readData(stream);
+	_solveScene._sceneChange.readData(stream);
 	stream.skip(2);
 
 	readRect(stream, _exitHotspot);
@@ -107,8 +108,7 @@ void BeadPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_placed.clear();
 	BeadPuzzleData *bpd = getBeadData();
@@ -146,7 +146,8 @@ void BeadPuzzle::execute() {
 	case kRun:
 		switch (_subState) {
 		case kPlaying:
-			if ((int)_placed.size() >= (int)_numSlots && _heldBead == -1)
+			if ((int)_placed.siz
+e() >= (int)_numSlots && _heldBead == -1)
 				evaluate();
 			break;
 
@@ -200,7 +201,7 @@ void BeadPuzzle::execute() {
 		g_nancy->_sound->stopSound(_partialSound);
 		g_nancy->_sound->stopSound(_wrongSound);
 		g_nancy->_sound->stopSound(_perfectSound);
-		NancySceneState.changeScene(_subState == kExitToSolved ? _solvedScene : _defaultScene);
+		NancySceneState.changeScene(_subState == kExitToSolved ? _solveScene._sceneChange : _exitScene._sceneChange);
 		finishExecution();
 		break;
 	}
@@ -218,7 +219,8 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
-	_heldBeadObject.handleInput(input);
+	_heldBeadObject.han
+dleInput(input);
 
 	if (_subState == kShowingResult) {
 		if (!_resultHotspot.isEmpty() && _resultHotspot.contains(mouseVP)) {
@@ -279,7 +281,8 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 					g_nancy->_sound->loadSound(_placeSound);
 					g_nancy->_sound->playSound(_placeSound);
 				}
-				// The bead leaves the cursor and slides from the bottom of the
+				// The bead leaves the
+ cursor and slides from the bottom of the
 				// thread up to the next free slot before it is committed.
 				_subState = kDroppingBead;
 				_heldBeadObject.setVisible(false);
@@ -304,8 +307,7 @@ void BeadPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(mouseVP)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp)
 			_subState = kExitToDefault;
 	}
@@ -349,7 +351,8 @@ void BeadPuzzle::holdBead(int16 bead, NancyInput *input) {
 	_heldBead = bead;
 
 	if (_heldBead >= 0 && _heldBead < (int16)_numBeadTypes &&
-			_image.getBounds().contains(_beadSrcRects[_heldBead])) {
+			_image.getBo
+unds().contains(_beadSrcRects[_heldBead])) {
 		_heldBeadObject._drawSurface.create(_image, _beadSrcRects[_heldBead]);
 		_heldBeadObject.setTransparent(true);
 		_heldBeadObject.setVisible(true);

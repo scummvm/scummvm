@@ -48,7 +48,8 @@ const float ArcadePuzzle::_wallNormals[17][3] = {
 	{ -1.0f,  0.0f, 0.0f }, // 5  right wall
 	{  0.0f,  1.0f, 0.0f }, // 6  bottom wall (wallBounceMode)
 	{ -1.0f,  0.0f, 0.0f }, // 7  brick left face
-	{  0.0f,  1.0f, 0.0f }, // 8  brick top face
+	{  0.0f,  1.0
+f, 0.0f }, // 8  brick top face
 	{  1.0f,  0.0f, 0.0f }, // 9  brick right face
 	{  0.0f, -1.0f, 0.0f }, // 10 brick bottom face
 	{  0.7071068f, -0.7071068f, 0.0f }, // 0xb top-left corner
@@ -98,7 +99,8 @@ void ArcadePuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _timerColonSrc);              // 16 bytes, +0x265 (colon glyph source)
 	readRect(stream, _textSrc[0]);                 // 16 bytes, +0x275
 	readRect(stream, _textSrc[1]);                 // 16 bytes, +0x285
-	readRect(stream, _textSrc[2]);                 // 16 bytes, +0x295
+	readRect(stream, _textSrc[2]);                 // 16 bytes, +0x
+295
 
 	_stateDelayMs = stream.readUint32LE();               // 4 bytes,  +0x2a5
 
@@ -135,13 +137,14 @@ void ArcadePuzzle::readData(Common::SeekableReadStream &stream) {
 	_scoreStepSize    = stream.readSint32LE();           // +0x305 (score-tick sound interval)
 	_timeBonusMax     = stream.readSint32LE();           // +0x309
 	_timeLimitSec     = stream.readSint32LE();           // +0x30d
-	_pointsPerBrick   = stream.readSint32LE();           // +0x311 (per-brick score multiplier)
+	_pointsPerBrick   = stream.re
+adSint32LE();           // +0x311 (per-brick score multiplier)
 
 	for (int i = 0; i < 6; ++i)                          // 6×49 = 294 bytes, +0x315..+0x43a
 		_sounds[i].readNormal(stream);
 
 	_levelClearSound.readNormal(stream);              // 49 bytes, +0x43b..+0x46b
-	_winScene.readData(stream);                       // 25 bytes, +0x46c..+0x484
+	_solveScene.readData(stream);                       // 25 bytes, +0x46c..+0x484
 	stream.skip(1);                                // 1-byte gap, +0x485
 
 	_gameOverSound.readNormal(stream);                // 49 bytes, +0x486..+0x4b6
@@ -159,8 +162,7 @@ void ArcadePuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Determine game field bounds within viewport
 	int vpDataWidth  = (vpBounds.right  - vpBounds.left);
@@ -192,7 +194,8 @@ void ArcadePuzzle::init() {
 	_brickWidth  = _brickTypeSrc[0].width();
 	_brickHeight = _brickTypeSrc[0].height();
 
-	// Derived speeds (pixels per ms) — pixPerStep is float from data, steps is integer
+	// Derived speeds (
+pixels per ms) — pixPerStep is float from data, steps is integer
 	_paddleSpeedPerMs = (_paddleSteps > 0)
 	    ? _paddlePixPerStep / (float)_paddleSteps : 1.0f;
 	_ballSpeedPerMs   = (_ballSteps > 0)
@@ -249,7 +252,8 @@ void ArcadePuzzle::buildAngleTable() {
 		_angleTable[right * 6 + 1] = dy;
 		_angleTable[right * 6 + 2] = 0.0f;
 
-		// sub-entry 1: reflect across y-axis: (-dx, dy)
+		// sub-entry 1: reflect across y
+-axis: (-dx, dy)
 		// Reflection with no-negate: result = 2*(v·n)*n - v
 		// n=(0,1), v=(dx,dy): result = (-dx, dy)
 		float dot  = dx * mirrorNx + dy * mirrorNy; // = dy
@@ -323,7 +327,8 @@ void ArcadePuzzle::generateBricks() {
 	while (!ok) {
 		int filled = 0;
 		for (int i = 0; i < _totalBricks; ++i) {
-			int r = g_nancy->_randomSource->getRandomNumber(4); // 0..4
+			int r = g_nancy->_randomSource->getRandomNumber(4); // 0..
+4
 			if (r == 4) {
 				_bricks[i].type = -1; // empty
 			} else {
@@ -383,7 +388,8 @@ void ArcadePuzzle::initSublevel() {
 	_ballY = (float)_ballTop;
 	_ballPrevLeft = _ballLeft; _ballPrevTop = _ballTop;
 	_ballPrevRight= _ballRight;_ballPrevBottom=_ballBottom;
-	_ballState    = kOnPaddle;
+	_ballState   
+ = kOnPaddle;
 	_ballNeedsRedraw = false;
 	_collisionType   = -2;
 
@@ -462,7 +468,8 @@ void ArcadePuzzle::initSublevel() {
 	// Draw initial state
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
-	for (int i = 0; i < _totalBricks; ++i)
+	for (int i = 0; i < 
+_totalBricks; ++i)
 		if (_bricks[i].alive)
 			drawBrick(i);
 
@@ -481,6 +488,7 @@ void ArcadePuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Load sounds
 		for (int i = 0; i < 6; ++i)
@@ -548,7 +556,8 @@ void ArcadePuzzle::execute() {
 			initSublevel();
 			drawScore();
 			drawTimer();
-			_gameSubState = kPlaying;
+			_gameSubState =
+ kPlaying;
 			break;
 
 		case kGameOverWin:
@@ -594,7 +603,7 @@ void ArcadePuzzle::execute() {
 		// forever until they clear the required level(s). So
 		// kActionTrigger is only ever reached via kGameOverWin, and
 		// we just execute the win scene change + flag set.
-		_winScene.execute();
+		_solveScene.execute();
 
 		finishExecution();
 		break;
@@ -626,7 +635,8 @@ void ArcadePuzzle::handleInput(NancyInput &input) {
 	}
 }
 
-// ---- paddleMovement ---------------------------------------------------------
+// ---- paddleMovement ---------------------------------------------
+------------
 
 void ArcadePuzzle::paddleMovement() {
 	// Paddle stops when game is halted or ball is dying
@@ -694,7 +704,8 @@ void ArcadePuzzle::ballAndCollision() {
 		_ballBottom  = _paddleTop;
 		_ballTop     = _paddleTop - _ballHeight + 1;
 		_ballCenterX = _ballLeft + _ballHalfW;
-		_ballCenterY = _ballTop  + _ballHalfH;
+		_ballCenterY = _ball
+Top  + _ballHalfH;
 		_ballX = (float)_ballLeft;
 		_ballY = (float)_ballTop;
 
@@ -753,7 +764,8 @@ void ArcadePuzzle::ballAndCollision() {
 		}
 
 		// Apply position (unless no-move types)
-		if (_collisionType != 0xf && _collisionType != -1 && _collisionType != 0x10) {
+		if (_collisionType != 0xf && _collisionType != -1 && _collisionTyp
+e != 0x10) {
 			_ballLeft   = ballLeft;
 			_ballTop    = ballTop;
 			_ballRight  = ballRight;
@@ -817,7 +829,8 @@ void ArcadePuzzle::ballAndCollision() {
 		Common::Rect prevBallRect(_ballPrevLeft, _ballPrevTop, _ballPrevRight + 1, _ballPrevBottom + 1);
 		eraseBall();
 
-		// Restore any brick pixels the ball erase may have cleared.
+		// Restore any brick pixels the ball erase may have c
+leared.
 		for (int i = 0; i < _totalBricks; ++i) {
 			if (_bricks[i].alive && _bricks[i].vpRect.intersects(prevBallRect))
 				drawBrick(i);
@@ -871,7 +884,8 @@ void ArcadePuzzle::wallAndPaddleCollision(int &ballLeft, int &ballTop, int &ball
 		ballTop  = (ballBottom - _ballHeight) + 1;
 		ballCenterX  = ballLeft + _ballHalfW;
 		ballCenterY  = ballTop + _ballHalfH;
-		_collisionType = _wallBounceMode ? 0xe : -1;
+		_collisionType = _wallBounceMode ? 0x
+e : -1;
 	}
 	// Top-left corner
 	else if (ballLeft < _fieldLeft && ballTop < _fieldTop) {
@@ -936,7 +950,8 @@ void ArcadePuzzle::wallAndPaddleCollision(int &ballLeft, int &ballTop, int &ball
 		_collisionType = 4;
 	}
 	// Brick area
-	else if (_brickAreaLeft <= ballCenterX && ballCenterX <= _brickAreaRight &&
+	else if (_brickAreaLef
+t <= ballCenterX && ballCenterX <= _brickAreaRight &&
 	         _brickAreaTop  <= ballCenterY && ballCenterY <= _brickAreaBottom) {
 		brickCollision(ballLeft, ballTop, ballRight, ballBottom, ballCenterX, ballCenterY);
 	}
@@ -981,7 +996,8 @@ bool ArcadePuzzle::brickCollision(int &ballLeft, int &ballTop, int &ballRight, i
 	int i   = row * _brickCols + col;
 
 	// Out of bounds or dead/pending -> ball passes through freely (leave collisionType = -2)
-	if (i < 0 || i >= _totalBricks)
+	if (i < 0 || i >= _totalBri
+cks)
 		return false;
 	Brick &b = _bricks[i];
 	if (!b.alive || b.pendingExplosion)
@@ -1001,471 +1017,6 @@ bool ArcadePuzzle::brickCollision(int &ballLeft, int &ballTop, int &ballRight, i
 		ballCenterY = ballTop + _ballHalfH;
 		_collisionType = 8;
 	} else if (b.neighborDown == -1 &&
-	           segmentsCross(prevCX, prevCY, ballCenterX, ballCenterY,
-	                         b.vpRect.left, b.vpRect.bottom, b.vpRect.right, b.vpRect.bottom)) {
-		ballTop = b.vpRect.bottom;
-		ballBottom = ballTop + _ballHeight - 1;
-		ballCenterY = ballTop + _ballHalfH;
-		_collisionType = 10;
-	} else if (b.neighborLeft == -1 &&
-	           segmentsCross(prevCX, prevCY, ballCenterX, ballCenterY,
-	                         b.vpRect.left, b.vpRect.top, b.vpRect.left, b.vpRect.bottom)) {
-		ballRight = b.vpRect.left;
-		ballLeft = (ballRight - _ballWidth) + 1;
-		ballCenterX = ballLeft + _ballHalfW;
-		_collisionType = 7;
-	} else if (b.neighborRight == -1 &&
-	           segmentsCross(prevCX, prevCY, ballCenterX, ballCenterY,
-	                         b.vpRect.right, b.vpRect.top, b.vpRect.right, b.vpRect.bottom)) {
-		ballLeft = b.vpRect.right;
-		ballRight = ballLeft + _ballWidth - 1;
-		ballCenterX = ballLeft + _ballHalfW;
-		_collisionType = 9;
-	} else {
-		// Alive brick but all faces blocked by neighbors (or trajectory didn't cross any face)
-		_collisionType = 0xf;
-	}
+	 
 
-	// Queue brick for removal and accumulate score.
-	addToExplosionList(i, 125);
-
-	const float newScore = (float)_levelScore[_currentLevel]
-			+ (float)_pointsPerBrick * _timeBonusMultiplier;
-	_levelScore[_currentLevel] = (int32)newScore;
-	if (_cumulativeScore)
-		_score = _totalLevelScore + _levelScore[_currentLevel];
-	else
-		_score = _levelScore[_currentLevel];
-
-	_needsRedraw = true;
-	return true;
-}
-
-// ---- applyCollision ---------------------------------------------------------
-// Changes ball velocity based on current _collisionType.
-
-void ArcadePuzzle::applyCollision() {
-	switch (_collisionType) {
-	case 0: {
-		// Paddle-center bounce.
-		int hitPos = _ballCenterX - _paddleLeft;
-		hitPos = CLIP(hitPos, 0, _paddleWidth - 1);
-
-		int subEntry = -1;
-		if (_ballDX > 0.0f && _ballDY < 0.0f)
-			subEntry = 0;
-		else if (_ballDX < 0.0f && _ballDY < 0.0f)
-			subEntry = 1;
-
-		// Reflect over paddle normal (0, 1): dx unchanged, dy negated.
-		_ballDY = -_ballDY;
-
-		if (subEntry == 0) {
-			_ballDX += _angleTable[hitPos * 6 + 0];
-			_ballDY += _angleTable[hitPos * 6 + 1];
-			_ballSpin = _angleTable[hitPos * 6 + 2];
-		} else if (subEntry == 1) {
-			_ballDX += _angleTable[hitPos * 6 + 3];
-			_ballDY += _angleTable[hitPos * 6 + 4];
-			_ballSpin = _angleTable[hitPos * 6 + 5];
-		}
-
-		const float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
-		if (len > 0.0f) {
-			_ballDX /= len;
-			_ballDY /= len;
-		}
-
-		g_nancy->_sound->playSound(_sounds[0]); // bounce sound
-		break;
-	}
-
-	case 1: case 2:
-		// Paddle edge: negate both components
-		_ballDX = -_ballDX;
-		_ballDY = -_ballDY;
-		break;
-
-	case 3: case 4: case 5: case 6: {
-		// Wall: reflect with negation, then play wall sound
-		float dx = -_ballDX, dy = -_ballDY;
-		const float *n = _wallNormals[_collisionType];
-		float dot = dx * n[0] + dy * n[1];
-		_ballDX = 2.0f * dot * n[0] - dx;
-		_ballDY = 2.0f * dot * n[1] - dy;
-		float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
-		if (len > 0.0f) { _ballDX /= len; _ballDY /= len; }
-		g_nancy->_sound->playSound(_sounds[0]); // wall bounce sound (same as paddle)
-		break;
-	}
-
-	case 7: case 8: case 9: case 10: {
-		// Brick face: reflect with negation, then play brick hit sound
-		float dx = -_ballDX, dy = -_ballDY;
-		const float *n = _wallNormals[_collisionType];
-		float dot = dx * n[0] + dy * n[1];
-		_ballDX = 2.0f * dot * n[0] - dx;
-		_ballDY = 2.0f * dot * n[1] - dy;
-		float len = (float)sqrt(_ballDX * _ballDX + _ballDY * _ballDY);
-		if (len > 0.0f) { _ballDX /= len; _ballDY /= len; }
-		playBrickHitSound();
-		break;
-	}
-
-	case 0xb: case 0xc: case 0xd: case 0xe:
-		// Corner: set velocity directly from precomputed normal
-		_ballDX = _wallNormals[_collisionType][0];
-		_ballDY = _wallNormals[_collisionType][1];
-		break;
-
-	case 0xf:
-		// Stuck in brick area: negate and play brick hit sound
-		_ballDX = -_ballDX;
-		_ballDY = -_ballDY;
-		playBrickHitSound();
-		break;
-
-	case 0x10:
-		// Catch-all out-of-bounds: negate
-		_ballDX = -_ballDX;
-		_ballDY = -_ballDY;
-		break;
-
-	case -1:
-		// Ball died — handled in ballAndCollision
-		break;
-
-	default:
-		break;
-	}
-}
-
-// ---- ballExited -------------------------------------------------------------
-// Returns true if the dead ball has completely exited the field.
-// Updates _deadBall* rects to the visible clipped portion while still on screen.
-
-bool ArcadePuzzle::ballExited(int ballLeft, int ballTop, int ballRight, int ballBottom, int &, int &) {
-	// Check if any part of ball is still within field
-	if (ballLeft < _fieldRight && ballRight > _fieldLeft &&
-	    ballTop < _fieldBottom && ballBottom > _fieldTop) {
-		// Clamp visible portion
-		_deadBallTop    = ballTop;
-		_deadBallSrcTop = _ballSrc.top;
-
-		if (ballLeft < _fieldLeft) {
-			_deadBallLeft    = _fieldLeft;
-			_deadBallSrcLeft = _ballSrc.left + (_fieldLeft - ballLeft);
-		} else {
-			_deadBallLeft    = ballLeft;
-			_deadBallSrcLeft = _ballSrc.left;
-		}
-		if (_fieldBottom < ballBottom) {
-			_deadBallBottom    = _fieldBottom;
-			_deadBallSrcBottom = _ballSrc.bottom - (ballBottom - _fieldBottom);
-		} else {
-			_deadBallBottom    = ballBottom;
-			_deadBallSrcBottom = _ballSrc.bottom;
-		}
-		if (_fieldRight < ballRight) {
-			_deadBallRight    = _fieldRight;
-			_deadBallSrcRight = _ballSrc.right - (ballRight - _fieldRight);
-		} else {
-			_deadBallRight    = ballRight;
-			_deadBallSrcRight = _ballSrc.right;
-		}
-		return false; // still visible
-	}
-
-	// Completely outside
-	_deadBallLeft = _deadBallTop = _deadBallRight = _deadBallBottom = 0;
-	_deadBallSrcLeft = _deadBallSrcTop = _deadBallSrcRight = _deadBallSrcBottom = 0;
-	return true;
-}
-
-void ArcadePuzzle::processExplosions() {
-	if (_explosionList.empty())
-		return;
-
-	uint32 now = g_system->getMillis();
-	for (auto it = _explosionList.begin(); it != _explosionList.end(); ++it) {
-		int i = *it;
-		if (now >= _bricks[i].explosionTimer) {
-			// Erase brick from draw surface
-			eraseBrick(i);
-
-			// If ball was overlapping this brick, force a ball redraw so it isn't erased
-			{
-				Common::Rect ballRect(_ballLeft, _ballTop, _ballRight + 1, _ballBottom + 1);
-				if (_bricks[i].vpRect.intersects(ballRect))
-					_ballNeedsRedraw = true;
-			}
-
-			// Mark dead
-			_bricks[i].alive            = false;
-			_bricks[i].pendingExplosion = false;
-
-			// Unlink from neighbors
-			int uIdx = _bricks[i].neighborUp;
-			int dIdx = _bricks[i].neighborDown;
-			int lIdx = _bricks[i].neighborLeft;
-			int rIdx = _bricks[i].neighborRight;
-
-			if (uIdx != -1)
-				_bricks[uIdx].neighborDown  = -1;
-			if (dIdx != -1)
-				_bricks[dIdx].neighborUp    = -1;
-			if (lIdx != -1)
-				_bricks[lIdx].neighborRight = -1;
-			if (rIdx != -1)
-				_bricks[rIdx].neighborLeft  = -1;
-
-			_needsRedraw = true;
-			it = _explosionList.erase(it);
-		}
-	}
-
-	// If explosion list is now empty, check whether all bricks are gone
-	if (_explosionList.empty()) {
-		bool allGone = true;
-		for (int i = 0; i < _totalBricks; ++i) {
-			if (_bricks[i].alive) {
-				allGone = false;
-				break;
-			}
-		}
-		if (allGone)
-			_levelClear = true;
-	}
-}
-
-void ArcadePuzzle::addToExplosionList(int brickIdx, uint32 delay) {
-	// Don't add the same brick twice
-	for (int i : _explosionList)
-		if (i == brickIdx)
-			return;
-
-	_explosionList.push_back(brickIdx);
-
-	Brick &b = _bricks[brickIdx];
-	b.explosionTimer    = g_system->getMillis() + delay;
-	b.pendingExplosion  = true;
-
-	// Dissolve animation: swap the brick's `srcRect` over to the
-	// companion "exploded" sprite (`brickTypeSrc[4 + type]`) for the
-	// duration of the pending-explosion window. Doing this — instead of
-	// only blitting once here — means the brief pause where the dissolve
-	// sprite is visible survives any subsequent drawBrick() calls
-	// triggered by the ball-redraw / brick-restore path (which still
-	// treats the brick as alive until the explosion timer expires).
-	// processExplosions() then erases the brick rect to transparent,
-	// matching the original engine's two-step dissolve.
-	if (b.type >= 0 && b.type < 4) {
-		const int explosionIdx = 4 + b.type;
-		if (!_brickTypeSrc[explosionIdx].isEmpty()) {
-			b.srcRect = _brickTypeSrc[explosionIdx];
-			_drawSurface.blitFrom(_image, b.srcRect,
-									Common::Point(b.vpRect.left, b.vpRect.top));
-			_needsRedraw = true;
-		}
-	}
-}
-
-void ArcadePuzzle::playBrickHitSound() {
-	// Rotates through sounds[2], sounds[3], sounds[4] (brick hit A/B/C)
-	int slot = _brickSoundRotator + 2; // maps 0->2, 1->3, 2->4
-	g_nancy->_sound->playSound(_sounds[slot]);
-	_brickSoundRotator = (_brickSoundRotator + 1) % 3;
-}
-
-void ArcadePuzzle::updateTimer() {
-	uint32 now = g_system->getMillis();
-	_timerElapsedMs = now - _timerStartMs;
-
-	uint32 totalSecs = _timerElapsedMs / 1000;
-	uint32 mins = totalSecs / 60;
-	uint32 secs = totalSecs % 60;
-	if (mins > 59) mins = 59;
-
-	if (mins != _timerMins || secs != _timerSecs) {
-		_timerMins = mins;
-		_timerSecs = secs;
-		drawTimer();
-	}
-}
-
-void ArcadePuzzle::updateScore() {
-	// Score-change branch — cap and redraw only when the displayed score
-	// actually moved.
-	if (_score != _prevScore) {
-		if (_score > 12000000)
-			_score = 12000000;
-		drawScore();
-		_prevScore = _score;
-	}
-
-	const uint32 elapsedSecs = _timerElapsedMs / 1000;
-	if ((int32)elapsedSecs < _timeLimitSec) {
-		_timeBonusMultiplier =
-		    ((float)(_timeLimitSec - (int32)elapsedSecs)) *
-		    ((float)_timeBonusMax / (float)_timeLimitSec);
-	} else {
-		_timeBonusMultiplier = 1.0f;
-	}
-}
-
-// ---- Drawing helpers --------------------------------------------------------
-
-void ArcadePuzzle::drawBrick(int idx) {
-	const Brick &b = _bricks[idx];
-	if (!b.alive || b.type < 0) return;
-	_drawSurface.blitFrom(_image, b.srcRect, Common::Point(b.vpRect.left, b.vpRect.top));
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawBanner(const Common::Rect &srcRect) {
-	if (srcRect.isEmpty())
-		return;
-	const int x = _fieldLeft + (_fieldWidth  - srcRect.width())  / 2;
-	const int y = _fieldTop  + (_fieldHeight - srcRect.height()) / 2;
-	_drawSurface.blitFrom(_image, srcRect, Common::Point(x, y));
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawTryAgain() {
-	drawBanner(_textSrc[2]);
-}
-
-void ArcadePuzzle::drawYouWin() {
-	drawBanner(_textSrc[1]);
-}
-
-void ArcadePuzzle::eraseBrick(int idx) {
-	_drawSurface.fillRect(_bricks[idx].vpRect, _drawSurface.getTransparentColor());
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawPaddle() {
-	_drawSurface.blitFrom(_image, _paddleSrcCur,
-	                       Common::Point(_paddleLeft, _paddleTop));
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::erasePaddle() {
-	Common::Rect r(_paddlePrevLeft, _paddlePrevTop,
-	               _paddlePrevRight + 1, _paddlePrevBottom + 1);
-	_drawSurface.fillRect(r, _drawSurface.getTransparentColor());
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawBall() {
-	if (_ballState == kDying) {
-		// Draw dead ball clipped rect
-		if (_deadBallRight > _deadBallLeft && _deadBallBottom > _deadBallTop) {
-			Common::Rect src(_deadBallSrcLeft, _deadBallSrcTop,
-			                 _deadBallSrcRight, _deadBallSrcBottom);
-			_drawSurface.blitFrom(_image, src,
-			                      Common::Point(_deadBallLeft, _deadBallTop));
-			_needsRedraw = true;
-		}
-	} else {
-		_drawSurface.blitFrom(_image, _ballSrc,
-		                       Common::Point(_ballLeft, _ballTop));
-		_needsRedraw = true;
-	}
-}
-
-void ArcadePuzzle::eraseBall() {
-	Common::Rect r(_ballPrevLeft, _ballPrevTop,
-	               _ballPrevRight + 1, _ballPrevBottom + 1);
-	if (!r.isEmpty())
-		_drawSurface.fillRect(r, _drawSurface.getTransparentColor());
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawDigit(const Common::Rect &destRect, int digit,
-                              bool useTimerRects) {
-	if (digit < 0 || digit > 9)
-		return;
-	const Common::Rect &src = useTimerRects ? _timerDigitSrc[digit]
-	                                        : _scoreDigitSrc[digit];
-	_drawSurface.blitFrom(_image, src, Common::Point(destRect.left, destRect.top));
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawScore() {
-	if (_scoreDigitSrc[0].isEmpty())
-		return;
-
-	int digitW = _scoreDigitSrc[0].width();
-	int digitH = _scoreDigitSrc[0].height();
-	int baseX  = _scoreDisplayX + _fieldLeft;
-	int baseY  = _scoreDisplayY + _fieldTop;
-
-	// Collect digits least-significant first
-	int digits[7];
-	int nDigits = 0;
-	int val = ABS(_score);
-	do {
-		digits[nDigits++] = val % 10;
-		val /= 10;
-	} while (val != 0 && nDigits < 7);
-
-	// Erase old digits
-	Common::Rect eraseR(baseX, baseY, baseX + 7 * digitW, baseY + digitH);
-	_drawSurface.fillRect(eraseR, _drawSurface.getTransparentColor());
-
-	// Draw digits left-to-right (most-significant first)
-	for (int i = nDigits - 1; i >= 0; --i) {
-		int col = (nDigits - 1 - i);
-		Common::Rect dest(baseX + col * digitW, baseY,
-		                  baseX + col * digitW + digitW, baseY + digitH);
-		drawDigit(dest, digits[i], false);
-	}
-	_needsRedraw = true;
-}
-
-void ArcadePuzzle::drawTimer() {
-	if (_timerDigitSrc[0].isEmpty())
-		return;
-
-	const int digitW = _timerDigitSrc[0].width();
-	const int digitH = _timerDigitSrc[0].height();
-	const int colonW = _timerColonSrc.isEmpty() ? 0 : _timerColonSrc.width();
-	const int colonH = _timerColonSrc.isEmpty() ? 0 : _timerColonSrc.height();
-	const int baseX  = _timerDisplayX + _fieldLeft;
-	const int baseY  = _timerDisplayY + _fieldTop;
-
-	// Total layout: [MM tens][MM ones][:][SS tens][SS ones]
-	const int totalW = 4 * digitW + colonW;
-	Common::Rect eraseR(baseX, baseY, baseX + totalW, baseY + digitH);
-	_drawSurface.fillRect(eraseR, _drawSurface.getTransparentColor());
-
-	const uint32 mins = _timerMins;
-	const uint32 secs = _timerSecs;
-
-	int x = baseX;
-	Common::Rect d3(x, baseY, x + digitW, baseY + digitH);
-	drawDigit(d3, mins / 10, true);
-	x += digitW;
-	Common::Rect d2(x, baseY, x + digitW, baseY + digitH);
-	drawDigit(d2, mins % 10, true);
-	x += digitW;
-
-	// Colon between minutes and seconds.
-	if (colonW > 0) {
-		const int colonY = baseY + (digitH - colonH) / 2;
-		_drawSurface.blitFrom(_image, _timerColonSrc, Common::Point(x, colonY));
-		x += colonW;
-	}
-
-	Common::Rect d1(x, baseY, x + digitW, baseY + digitH);
-	drawDigit(d1, secs / 10, true);
-	x += digitW;
-	Common::Rect d0(x, baseY, x + digitW, baseY + digitH);
-	drawDigit(d0, secs % 10, true);
-
-	_needsRedraw = true;
-}
-
-} // End of namespace Action
-} // End of namespace Nancy
+... [Content truncated]

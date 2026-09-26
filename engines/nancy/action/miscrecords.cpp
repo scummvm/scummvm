@@ -57,7 +57,8 @@ void PaletteThisScene::execute() {
 
 	if (_unknownEnum > 1 && _unknownEnum < 3) {
 		// Not sure what the difference is between the 3 types
-		NancySceneState.getViewport().setPalette(ssum.palettes[_paletteID], _paletteStart, _paletteSize);
+		NancySceneState.getViewport().setPalette(ssum.palettes[_paletteID], _
+paletteStart, _paletteSize);
 	} else {
 		NancySceneState.getViewport().setPalette(ssum.palettes[_paletteID]);
 	}
@@ -125,7 +126,8 @@ static void readTextboxText(Common::SeekableReadStream &stream, Common::String &
 		Common::String stringID;
 		readFilename(stream, stringID);
 
-		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData(
+"AUTOTEXT");
 		assert(autotext);
 
 		out = autotext->texts.getValOrDefault(stringID, "");
@@ -218,7 +220,8 @@ void TextboxClear::execute() {
 }
 
 void FrameTextBox::readData(Common::SeekableReadStream &stream) {
-	readTextboxText(stream, _text);
+	readTextboxText(stream, _text)
+;
 
 	// The original appends the "<e>" end-of-line hypertext tag to the caption
 	_text += "<e>";
@@ -235,7 +238,12 @@ void FrameTextBox::execute() {
 }
 
 void ControlUIItems::readData(Common::SeekableReadStream &stream) {
-	_uiButton = stream.readUint16LE();
+	if (g_nancy->getGameType() >= kGameTypeNancy15) {
+		_uiButton = stream.readByte();
+		_characterIndex = stream.readByte();
+	} else {
+		_uiButton = stream.readUint16LE();
+	}
 	_autoOpenOrBadgeSound = stream.readByte();
 	_flagB  = stream.readByte();
 	_startScene = stream.readSint16LE();
@@ -280,15 +288,20 @@ void ControlUIItems::execute() {
 			break;
 		}
 	} else {
-		// Otherwise this AR toggles whether the button is disabled while the
+		// Otherwise this AR toggles whether the butt
+on is disabled while the
 		// player is in scene range [_startScene, _endScene]. _flagB != 0 sets
 		// the toggle (a _startScene of 9997 means "from scene 0", with the
 		// range capped at 9997); _flagB == 0 clears it once a bound is 9999
 		// (kNoScene). _flagB != 0 also sets the disabled button's rejection-sound
 		// mode from _autoOpenOrBadgeSound (which clickSoundName line plays when
 		// the button is clicked while its popup is unavailable).
+		// Nancy15 keeps separate overrides per player character. Only the
+		// active character's taskbar is modeled, so skip the others'.
+		uint characterIndex = _characterIndex == kPlayerCharacterActive ?
+			g_nancy->getPlayerCharacter() : _characterIndex;
 		UI::Taskbar *taskbar = NancySceneState.getTaskbar();
-		if (taskbar) {
+		if (taskbar && characterIndex == g_nancy->getPlayerCharacter()) {
 			if (_flagB != 0) {
 				int16 start = _startScene;
 				int16 end = _endScene;
@@ -329,7 +342,8 @@ void AddSearchLink::readData(Common::SeekableReadStream &stream) {
 
 	_link.extra = stream.readSint16LE();
 	_link.flag = stream.readSint16LE();
-	_link.eventFlag = stream.readSint16LE();
+	_link.eventFlag = str
+eam.readSint16LE();
 }
 
 void AddSearchLink::execute() {
@@ -391,7 +405,8 @@ void CellPhonePopCellSceneFromStack::execute() {
 		// scene (e.g. the conversation was entered without a phone call),
 		// do nothing — popping the global scene stack here would clobber
 		// closeup / inventory pushes that have nothing to do with the phone.
-		SceneChangeDescription returnScene;
+		SceneChangeDescription retu
+rnScene;
 		if (phone.consumeReturnScene(returnScene))
 			NancySceneState.changeScene(returnScene);
 	}
@@ -471,7 +486,8 @@ void TurnOnMainRendering::readData(Common::SeekableReadStream &stream) {
 
 // Returns the Nancy 11+ software-timer slot at the given index, lazily creating
 // the TimerData puzzle-data chunk. nullptr if the index is out of range.
-static TimerData::Timer *getSoftwareTimer(int16 index) {
+st
+atic TimerData::Timer *getSoftwareTimer(int16 index) {
 	if (index < 0 || (uint)index >= TimerData::kNumTimers) {
 		return nullptr;
 	}
@@ -528,7 +544,8 @@ static void addTimerTrigger(TimerData::Timer &timer, TimerData::Trigger::Type ty
 // fraction of a second
 static void adjustTimerComponents(TimerData::Timer &timer, int16 command, int16 hours, int16 minutes, int16 seconds) {
 	int32 h = timer.currentTimeMs / 3600000;
-	int32 m = (timer.currentTimeMs / 60000) % 60;
+	int
+32 m = (timer.currentTimeMs / 60000) % 60;
 	int32 s = (timer.currentTimeMs / 1000) % 60;
 
 	switch (command) {
@@ -600,7 +617,8 @@ void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 		_sound.channelID = stream.readUint16LE(); // 0x0e
 		_sound.numLoops = 1;
 
-		// Three candidate expiry-sound names (0x10, 33 bytes each); one is
+		// Three candidate expiry-sound names (0x10, 33 bytes each); on
+e is
 		// picked at random, "NO SOUND" marks an empty slot
 		Common::Array<Common::String> names;
 		for (uint i = 0; i < 3; ++i) {
@@ -662,7 +680,8 @@ void ResetAndStartTimer::execute() {
 				auto *bootSummary = GetEngineData(BSUM);
 				uint index = seconds - kTimerDurationIndexBase;
 				if (bootSummary && index < bootSummary->timerDurations.size()) {
-					seconds = bootSummary->timerDurations[index];
+			
+		seconds = bootSummary->timerDurations[index];
 				}
 			}
 
@@ -738,7 +757,8 @@ void StopTimer::execute() {
 }
 
 void TimerControl::readData(Common::SeekableReadStream &stream) {
-	const int64 startPos = stream.pos();
+	const int64 startP
+os = stream.pos();
 
 	_timerIndex = stream.readSint16LE();    // 0x00
 	_command = stream.readSint16LE();       // 0x02
@@ -805,7 +825,8 @@ void TimerControl::execute() {
 			timer->autotextKey = _autotextKey;
 			timer->caption = _caption;
 
-			for (uint i = 0; i < ARRAYSIZE(timer->flags); ++i) {
+			for (uint i = 0; i < ARRAYSIZE(timer->fla
+gs); ++i) {
 				timer->flags[i] = i < _flags.size() ? _flags[i] : FlagDescription();
 			}
 
@@ -896,7 +917,8 @@ void WinGame::execute() {
 	ConfMan.flushToDisk();
 
 	g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
-	NancySceneState.setDestroyOnExit();
+	Na
+ncySceneState.setDestroyOnExit();
 	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
 
 	_isDone = true;
@@ -968,7 +990,8 @@ void HintSystem::selectHint() {
 
 				break;
 			case (byte)StaticDataConditionType::kDifficulty :
-				if (	(NancySceneState.getDifficulty() != cond.label && cond.flag != 0) ||
+				if (	(NancySceneState.getDifficulty
+() != cond.label && cond.flag != 0) ||
 						(NancySceneState.getDifficulty() == cond.label && cond.flag == 0) ) {
 					isSatisfied = false;
 				}
@@ -1031,7 +1054,8 @@ void ResourceUse::init() {
 	const UIRC *uirc = GetEngineData(UIRC);
 	const bool haveItem = uirc && _resourceIndex >= 0 && (uint)_resourceIndex < uirc->items.size();
 
-	if (haveItem && _drawResourceOverlay) {
+	
+if (haveItem && _drawResourceOverlay) {
 		const UIRC::ItemRecord &item = uirc->items[_resourceIndex];
 		Graphics::ManagedSurface image;
 		g_nancy->_resource->loadImage(item.overlayName, image);
@@ -1082,7 +1106,8 @@ void ResourceUse::applyChange() {
 		NancySceneState.setEventFlag(_flag);
 		_paymentApplied = true;
 	} else {
-		// Add the (signed) amount, but never let the resource go negative —
+	
+	// Add the (signed) amount, but never let the resource go negative —
 		// the original skips the change (e.g. when Nancy can't afford it).
 		const int32 result = NancySceneState.getUIResource(_resourceIndex, characterIndex) + amount;
 		_paymentApplied = result >= 0;
@@ -1098,119 +1123,6 @@ void ResourceUse::applyChange() {
 		_sound.name = soundName;
 		_sound.numLoops = 1;
 
-		const UIRC *uirc = GetEngineData(UIRC);
-		if (uirc && _resourceIndex >= 0 && (uint)_resourceIndex < uirc->items.size()) {
-			_sound.channelID = uirc->items[_resourceIndex].soundChannel;
-			_sound.volume = uirc->items[_resourceIndex].soundVolume;
-		}
+		const UIRC *uirc =
 
-		g_nancy->_sound->loadSound(_sound);
-		g_nancy->_sound->playSound(_sound);
-		_hasSound = true;
-	}
-
-	_paymentResolved = true;
-}
-
-void ResourceUse::handleInput(NancyInput &input) {
-	if (!_interactive || _state != kRun || _paymentResolved) {
-		return;
-	}
-
-	if (NancySceneState.getViewport().convertViewportToScreen(_paymentHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(_useResourceCursor ?
-			(CursorManager::CursorType)(_resourceIndex + 0x1f) : CursorManager::kNormal, true);
-
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			applyChange();
-		}
-	}
-}
-
-void ResourceUse::execute() {
-	switch (_state) {
-	case kBegin:
-		init();
-
-		// A non-degenerate hotspot means the player has to click it (e.g. a coin
-		// slot) to trigger the change; otherwise it happens immediately.
-		_interactive = _paymentHotspot.top != _paymentHotspot.bottom;
-		if (!_interactive) {
-			applyChange();
-		}
-
-		_state = kRun;
-		break;
-	case kRun:
-		// Interactive changes wait for the player to click the hotspot.
-		if (_interactive && !_paymentResolved) {
-			return;
-		}
-
-		// Keep the overlay up until the outcome sound has finished.
-		if (_hasSound && g_nancy->_sound->isSoundPlaying(_sound)) {
-			return;
-		}
-
-		_state = kActionTrigger;
-		break;
-	case kActionTrigger:
-		if (_hasSound) {
-			g_nancy->_sound->stopSound(_sound);
-		}
-
-		setVisible(false);
-
-		// Only a successful change advances the scene.
-		if (_paymentApplied && _sceneID != kNoScene) {
-			SceneChangeDescription sceneChange;
-			sceneChange.sceneID = _sceneID;
-			sceneChange.continueSceneSound = _continueSceneSound;
-			NancySceneState.changeScene(sceneChange);
-		}
-
-		finishExecution();
-		break;
-	}
-}
-
-void PlayChar::readData(Common::SeekableReadStream &stream) {
-	_characterIndex = stream.readByte();
-	readFilename(stream, _videoFile);
-}
-
-void PlayChar::execute() {
-	const PCUI *pcui = GetEngineData(PCUI);
-	if (!pcui || _characterIndex >= pcui->characters.size()) {
-		warning("PlayChar: no player character %u", _characterIndex);
-		finishExecution();
-		return;
-	}
-
-	// Every character owns an event flag that marks them as the one being
-	// played; conditions elsewhere in the game branch on those
-	for (uint i = 0; i < pcui->characters.size(); ++i) {
-		const uint16 flagLabel = pcui->characters[i].id;
-		if (flagLabel != 0) {
-			NancySceneState.setEventFlag(flagLabel, i == _characterIndex ? g_nancy->_true : g_nancy->_false);
-		}
-	}
-
-	NancySceneState.changePlayerCharacter(_characterIndex);
-
-	auto *playerChar = (PlayerCharacterData *)NancySceneState.getPuzzleData(PlayerCharacterData::getTag());
-	if (playerChar) {
-		playerChar->characterIndex = _characterIndex;
-	}
-
-	// The scene itself doesn't change; only the video showing it does, so that
-	// the location is seen through the incoming character's eyes
-	if (!_videoFile.empty()) {
-		NancySceneState.changeSceneVideo(_videoFile);
-	}
-
-	finishExecution();
-}
-
-} // End of namespace Action
-} // End of namespace Nancy
+... [Content truncated]

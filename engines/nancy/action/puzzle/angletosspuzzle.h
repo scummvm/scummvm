@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_ANGLETOSSPUZZLE_H
 #define NANCY_ACTION_ANGLETOSSPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -42,9 +42,10 @@ namespace Action {
 // based on which of the four fail flags is set (too strong/weak, too left/right). After the
 // separate AR instances (each with their own target) implement the 3-round mechanic.
 
-class AngleTossPuzzle : public RenderActionRecord {
+class AngleTossPuzzle : public PuzzleRecord {
 public:
-	AngleTossPuzzle() : RenderActionRecord(7) {}
+
+	AngleTossPuzzle() : PuzzleRecord(7) {}
 	virtual ~AngleTossPuzzle() {}
 
 	void init() override;
@@ -57,8 +58,6 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "AngleTossPuzzle"; }
-
-	Common::Path _imageName;
 
 	// data+0x21..0x2c: 6 × uint16.
 	// _initialPower/_initialAngle: starting player selection (copied to object+0x24/0x26 in original).
@@ -88,7 +87,8 @@ protected:
 	//   Rects 12-16 — data+0xed..0x12d  _powerHotspots[5]  (power-select click areas)
 	//   Rects 17-21 — data+0x13d..0x17d  _powerSprites[5]  (5 power images in sprite sheet)
 
-	Common::Rect _throwHotspot;						// Rect  0 — clickable area for LAUNCH
+	Common::Rect _throwHotspot;						// Rect  0 — c
+lickable area for LAUNCH
 	Common::Rect _throwDisplay;						// Rect  1 — sprite dest on screen
 	Common::Rect _throwSprite;						// Rect  2 — source in image
 	Common::Rect _aimLeftHotspot;					// Rect  3
@@ -112,11 +112,6 @@ protected:
 	int16 _angleTooRightFlag = -1;	// 0x23c
 
 	int16 _winFlag = -1;	// 0x23e
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 
 	uint16 _curPower = 0;
 	uint16 _curAngle = 0;

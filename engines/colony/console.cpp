@@ -59,7 +59,8 @@ const char *robotTypeName(int type) {
 	case kRobDrone: return "Drone";
 	case kRobSoldier: return "Soldier";
 	case kRobSnoop: return "Snoop";
-	default: return "Unknown";
+	defau
+lt: return "Unknown";
 	}
 }
 
@@ -116,13 +117,15 @@ Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("goals", WRAP_METHOD(Debugger, cmdGoals));
 	registerCmd("win", WRAP_METHOD(Debugger, cmdWin));
 	registerCmd("robots", WRAP_METHOD(Debugger, cmdRobots));
+	registerCmd("eradicate", WRAP_METHOD(Debugger, cmdEradicate));
 	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
 	registerCmd("give", WRAP_METHOD(Debugger, cmdGive));
 	registerCmd("power", WRAP_METHOD(Debugger, cmdPower));
 	registerCmd("core", WRAP_METHOD(Debugger, cmdCore));
 	registerCmd("battle", WRAP_METHOD(Debugger, cmdBattle));
 	registerCmd("colony", WRAP_METHOD(Debugger, cmdColony));
-	registerCmd("forklift", WRAP_METHOD(Debugger, cmdForklift));
+	registerCmd("forklift", WRAP_METHOD(Debugg
+er, cmdForklift));
 	registerCmd("spawn", WRAP_METHOD(Debugger, cmdSpawn));
 }
 
@@ -188,7 +191,8 @@ bool Debugger::cmdTeleporter(int argc, const char **argv) {
 
 	char *end = nullptr;
 	const long number = strtol(argv[1], &end, 10);
-	if (!argv[1][0] || *end != '\0' || number < 1 || number > (long)ARRAYSIZE(kNumberedTeleporters)) {
+	if (!argv[1][0] || *end != '\0' || number < 1 || number > 
+(long)ARRAYSIZE(kNumberedTeleporters)) {
 		debugPrintf("Invalid teleporter number '%s' (must be 1-4)\n", argv[1]);
 		return true;
 	}
@@ -244,7 +248,8 @@ bool Debugger::cmdTeleporter(int argc, const char **argv) {
 	}
 
 	if (!relocated && _vm->_patches.size() >= 100) {
-		debugPrintf("Cannot recall teleporter %ld: relocation table is full\n", number);
+		debugPrintf("Cannot recall teleporter %ld: relocat
+ion table is full\n", number);
 		return true;
 	}
 
@@ -317,7 +322,8 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 		debugPrintf("Usage: teleport <level> [<x> <y>]\n");
 		debugPrintf("  level: floor number (1-8)\n");
 		debugPrintf("  x, y:  cell coordinates (0-31). If omitted, finds an entry point.\n");
-		return true;
+		ret
+urn true;
 	}
 
 	int level = atoi(argv[1]);
@@ -388,6 +394,7 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 	debugPrintf("Cell:  (%d, %d)\n", _vm->_me.xindex, _vm->_me.yindex);
 	debugPrintf("Exact: (%d, %d)\n", _vm->_me.xloc, _vm->_me.yloc);
 	debugPrintf("Angle: %d  Look: %d\n", _vm->_me.ang, _vm->_me.look);
+
 	return true;
 }
 
@@ -440,10 +447,11 @@ bool Debugger::cmdGoals(int argc, const char **argv) {
 }
 
 bool Debugger::cmdWin(int argc, const char **argv) {
-	static const char *const endingDescriptions[] = {
+	const char *const endingDescriptions[] = {
 		"planet destroyed, all 6 cryos recovered",
 		"planet destroyed, some cryos recovered",
-		"planet destroyed, no cryos recovered",
+		"planet d
+estroyed, no cryos recovered",
 		"planet spared, all 6 cryos recovered",
 		"planet spared, some cryos recovered",
 		"planet spared, no cryos recovered"
@@ -485,6 +493,53 @@ bool Debugger::cmdRobots(int argc, const char **argv) {
 		debugPrintf("No active robots on level %d\n", _vm->_level);
 	else
 		debugPrintf("Total: %d active robots\n", count);
+	return true;
+}
+
+bool Debugger::cmdEradicate(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: eradicate\n");
+		debugPrintf("Kills all monsters and eggs on every level.\n");
+		return true;
+	}
+
+	auto isCreature = [this](uint objectNum) {
+		if (objectNum == 0 || objectNum == kMeNum || objectNum > _vm->_objects.size())
+			return false;
+		const int type = _vm->_objects[objectNum - 1].type;
+		return type >= kRobEye && type <= kRobSnoop;
+	};
+
+	for (uint i = 0; i < _vm->_objects.size(); i++) {
+		if (isCreature(i + 1)) {
+			_vm->_objects[i].alive = 0;
+			_vm->_objects[i].visible = 0;
+		}
+	}
+	for (int x = 0; x < 32; x++) {
+		for (int y = 0; y < 32; y++) {
+			if (isCreature(_vm->_robotArray[x][y]))
+			
+	_vm->_robotArray[x][y] = 0;
+			if (isCreature(_vm->_foodArray[x][y]))
+				_vm->_foodArray[x][y] = 0;
+		}
+	}
+	if (isCreature(_vm->_bumpedObject))
+		_vm->_bumpedObject = 0;
+	_vm->_insight = false;
+	_vm->_allGrow = false;
+
+	// Restore empty populations on later visits, including the first visit to
+	// a level. Keep the saved wall and airlock state in each LevelData intact.
+	for (uint i = 0; i < ARRAYSIZE(_vm->_levelData); i++) {
+		LevelData &ld = _vm->_levelData[i];
+		ld.visit = 1;
+		ld.queen = 0;
+		memset(ld.object, 0, sizeof(ld.object));
+	}
+
+	debugPrintf("Eradicated all monsters and eggs from all levels.\n");
 	return true;
 }
 
@@ -538,7 +593,8 @@ bool Debugger::cmdGive(int argc, const char **argv) {
 	} else if (item == "armor") {
 		_vm->_armor = 3;
 		debugPrintf("Granted full armor (3)\n");
-	} else if (item == "all") {
+	} else if (item =
+= "all") {
 		_vm->_hasKeycard = true;
 		_vm->_weapons = 3;
 		_vm->_armor = 3;
@@ -603,7 +659,8 @@ bool Debugger::cmdCore(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdBattle(int argc, const char **argv) {
+bool Debugger::cmdBattle(int ar
+gc, const char **argv) {
 	auto prepareBattleDebugState = [&](int xloc, int yloc, int ang) {
 		_vm->battleInit();
 		_vm->battleSet();
@@ -672,7 +729,8 @@ bool Debugger::cmdColony(int argc, const char **argv) {
 
 	// Place player just outside the colony entrance (Enter is at 16000, 16000).
 	// Original BattleCommand entrance check: x in [Enter.xloc-2*BSIZE, Enter.xloc).
-	prepareBattleDebugState(16000 - 500, 16000, 96);
+	prepareBattleDebugState(16000 - 500, 16000, 96)
+;
 
 	debugPrintf("Entered battle mode outside the colony at (%d, %d) ang=%d\n",
 		_vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
@@ -738,7 +796,8 @@ bool Debugger::cmdSpawn(int argc, const char **argv) {
 		{"feye",      kRobFEye},
 		{"fpyramid",  kRobFPyramid},
 		{"fcube",     kRobFCube},
-		{"fupyramid", kRobFUPyramid},
+		{"fupyramid", kRobFUPy
+ramid},
 		{"seye",      kRobSEye},
 		{"spyramid",  kRobSPyramid},
 		{"scube",     kRobSCube},
@@ -803,7 +862,8 @@ bool Debugger::cmdSpawn(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Spawned %s (type %d) at cell (%d,%d) facing player\n",
+	debugPrintf("Spawned %s (type %d) at cell (%d
+,%d) facing player\n",
 		robotTypeName(type), type, targetX, targetY);
 	return false;
 }

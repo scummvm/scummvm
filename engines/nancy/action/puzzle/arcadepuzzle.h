@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_ARCADEPUZZLE_H
 #define NANCY_ACTION_ARCADEPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/commontypes.h"
 
 #include "graphics/managed_surface.h"
@@ -36,9 +36,9 @@ namespace Action {
 // The player controls a paddle at the bottom of the screen, bouncing a ball
 // to destroy bricks. The player needs to beat 2 levels to get the full prize.
 // Data file is 0x4e8 (1256) bytes.
-class ArcadePuzzle : public RenderActionRecord {
+class ArcadePuzzle : public PuzzleRecord {
 public:
-	ArcadePuzzle() : RenderActionRecord(7) {}
+	ArcadePuzzle() : PuzzleRecord(7) {}
 	virtual ~ArcadePuzzle();
 
 	void init() override;
@@ -56,7 +56,8 @@ protected:
 
 	struct Brick {
 		Common::Rect srcRect;           // source in _image (brick type sprite)
-		Common::Rect vpRect;            // viewport-relative position (for collision and rendering)
+		Common::Rect vpRect;            // v
+iewport-relative position (for collision and rendering)
 		int type = -1;                  // -1=empty, 0-3=brick types
 		int neighborLeft  = -1;         // indices of live neighbors (-1=none)
 		int neighborUp    = -1;
@@ -101,7 +102,6 @@ protected:
 	void drawYouWin();     // shown during the kLevelClear / kGameOverWin wait states
 
 	// ---------- Data (read from stream) ----------
-	Common::Path _imageName;
 
 	uint32 _numLevelsToWin = 0;
 
@@ -109,7 +109,8 @@ protected:
 	uint32 _levelCols[6] = {};
 	uint32 _levelRows[6] = {};
 
-	// Per-level grid offsets within viewport (0x55): [xOff0, yOff0, ...]
+	// 
+Per-level grid offsets within viewport (0x55): [xOff0, yOff0, ...]
 	int32 _levelXOff[6] = {};
 	int32 _levelYOff[6] = {};
 
@@ -151,7 +152,8 @@ protected:
 
 	bool _randomBallStart = false; // random ball starting offset (0x301)
 	bool _wallBounceMode  = false; // true=ball bounces off bottom, false=dies (0x302)
-	bool _cumulativeScore = false; // true=score accumulates across levels (0x303)
+	bool _cumulativeScore = false; // true=score accumulate
+s across levels (0x303)
 
 	int32 _scoreStepSize  = 1;    // score-milestone interval used for the score-tick sound (0x305)
 	int32 _timeBonusMax   = 100;  // max time bonus (0x309)
@@ -164,9 +166,6 @@ protected:
 	SoundDescription _levelClearSound;   // 0x43b
 	SoundDescription _gameOverSound;     // 0x486
 	SoundDescription _lifeLostSound;     // 0x4b7
-
-	// Win scene (0x46c, 25 bytes)
-	SceneChangeWithFlag _winScene;
 
 	// ---------- Runtime state ----------
 
@@ -206,7 +205,8 @@ protected:
 	uint32 _winFlags[6] = {};    // 0x270..0x284
 	int32 _levelScore[6] = {};   // 0x254..0x268 (accumulated score per level)
 	int32 _totalLevelScore = 0;  // 0x26c
-	int32 _score    = 0;         // 0xb4 (displayed score)
+	int32 _score    
+= 0;         // 0xb4 (displayed score)
 	int32 _prevScore = -1;       // 0x298 (to detect changes)
 
 	// Brick grid for current sublevel
@@ -252,7 +252,8 @@ protected:
 	float _ballDX = 0.0f, _ballDY = 1.0f; // velocity direction; 0xe8, 0xec
 	float _ballSpin = 0.0f; // 0xf0
 	int _ballLeft = 0, _ballTop = 0, _ballRight = 0, _ballBottom = 0;   // 0x118..0x124
-	int _ballPrevLeft = 0, _ballPrevTop = 0, _ballPrevRight = 0, _ballPrevBottom = 0; // 0x150..0x15c
+	int _ballPrevLeft =
+ 0, _ballPrevTop = 0, _ballPrevRight = 0, _ballPrevBottom = 0; // 0x150..0x15c
 	int _ballCenterX = 0, _ballCenterY = 0; // 0x148, 0x14c
 	int _ballInitOffset = 0;  // offset from paddle left for initial position; 0x174
 	int _ballWidth = 0, _ballHeight = 0, _ballHalfW = 0, _ballHalfH = 0; // 0x164..0x170
@@ -287,7 +288,6 @@ protected:
 	bool _launchBall = false;
 
 	// Surfaces
-	Graphics::ManagedSurface _image;
 	Graphics::ManagedSurface _backgroundCache; // copy of initial draw surface for erasing
 };
 

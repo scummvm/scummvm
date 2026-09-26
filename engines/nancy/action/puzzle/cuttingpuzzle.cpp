@@ -49,7 +49,8 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _bladeDest, 8);   // +0x178..0x1f7
 	readRect(stream, _animFrameDest);       // +0x1f8
 
-	// Source rects (from sprite sheet)
+	// So
+urce rects (from sprite sheet)
 	readRect(stream, _noAnimSrc);                    // +0x208
 	readRectArray(stream, _leverSrc, 3);             // +0x218..0x247  depths 1..3
 	readRect(stream, _switchOnSrc);                  // +0x248
@@ -72,10 +73,10 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_depthSound.readNormal(stream);                  // +0x46f (49 bytes)
 	_cutSound.readNormal(stream);                    // +0x4a0 (49 bytes)
 
-	_puzzleSolvedScene.readData(stream);                 // +0x4d1 (25 bytes)
-	_doneSoundDelaySecs = stream.readUint16LE();     // +0x4ea
+	_solveScene.readData(stream);                 // +0x4d1 (25 bytes)
+	_solveSoundDelay = stream.readUint16LE();     // +0x4ea
 
-	_doneSound.readNormal(stream);                   // +0x4ec (49 bytes)
+	_solveSound.readNormal(stream);                   // +0x4ec (49 bytes)
 
 	_itemCheckByte = stream.readByte();              // +0x51d
 	_itemID        = stream.readSint16LE();          // +0x51e
@@ -84,13 +85,14 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_missingGogglesScene.readData(stream);                    // +0x520 (20 bytes)
 	stream.skip(2);                                  // +0x534 skip
 
-	_cancelScene.readData(stream);                   // +0x536 (25 bytes)
+	_exitScene.readData(stream);                   // +0x536 (25 bytes)
 	readRect(stream, _exitHotspot);
 }
 
 void CuttingPuzzle::init() {
 	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(),
+	_drawSurface.create(
+screenBounds.width(), screenBounds.height(),
 	                    g_nancy->_graphics->getInputPixelFormat());
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 	setTransparent(true);
@@ -149,7 +151,8 @@ void CuttingPuzzle::redrawSurface() {
 	} else {
 		// Lathe running: show the on-switch sprite and the current animation frame.
 		_drawSurface.blitFrom(_image1, _switchOnSrc, _switchDest);
-		if (_numAnimFrames > 0 && _animFrame < _animSrc.size())
+		if (_numAnimFrames
+ > 0 && _animFrame < _animSrc.size())
 			_drawSurface.blitFrom(_image2, _animSrc[_animFrame], _animFrameDest);
 	}
 
@@ -183,6 +186,11 @@ void CuttingPuzzle::execute() {
 		init();
 		registerGraphics();
 
+		// The item the puzzle requires stays in hand
+		if (!_itemCheckByte || NancySceneState.getHeldItem() != _itemID) {
+			NancySceneState.setNoHeldItem();
+		}
+
 		g_nancy->_sound->loadSound(_latheSound);
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_startStopSound);
@@ -206,7 +214,8 @@ void CuttingPuzzle::execute() {
 				}
 				if (allMatch) {
 					_solved = true;
-					_timerDeadline = g_system->getMillis() + (uint32)_doneSoundDelaySecs * 1000;
+					_timerDeadline = g_system->getMillis() + (uint32)_solveSoundD
+elay * 1000;
 					_subState = kWaitTimer;
 					break;
 				}
@@ -269,14 +278,14 @@ void CuttingPuzzle::execute() {
 
 			// Set the frame-advance timer and move to kWaitTimer.
 			_timerDeadline = g_system->getMillis() + _frameDelayMs;
+
 			_subState = kWaitTimer;
 			break;
 
 		case kLatheFinished:
 			if (_solved) {
 				// Load and play the completion sound, then wait for it to finish.
-				g_nancy->_sound->loadSound(_doneSound);
-				g_nancy->_sound->playSound(_doneSound);
+				playSolveSound();
 				_subState = kWaitDoneSound;
 			} else {
 				// Not solved: finish this AR (will process outcome in kActionTrigger).
@@ -295,8 +304,8 @@ void CuttingPuzzle::execute() {
 			break;
 
 		case kWaitDoneSound:
-			if (!g_nancy->_sound->isSoundPlaying(_doneSound)) {
-				g_nancy->_sound->stopSound(_doneSound);
+			if (!isSolveSoundPlaying()) {
+				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
 			break;
@@ -323,10 +332,10 @@ void CuttingPuzzle::execute() {
 				}
 			}
 			if (anyGroove)
-				NancySceneState.setEventFlag(_cancelScene._flag);
-			NancySceneState.changeScene(_cancelScene._sceneChange);
+				NancySceneState.setEventFlag(_exitScene._flag);
+			NancySceneState.changeScene(_exitScene._sceneChange);
 		} else if (_solved) {
-			_puzzleSolvedScene.execute();
+			_solveScene.execute();
 		} else if (_gogglesMissing) {
 			NancySceneState.changeScene(_missingGogglesScene);
 		}
@@ -346,7 +355,8 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 	// Convert mouse position to viewport-local coordinates.
 	Common::Point localMouse = input.mousePos;
 	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
-	localMouse -= Common::Point(vpPos.left, vpPos.top);
+	localMouse -= Common::Point
+(vpPos.left, vpPos.top);
 
 	// Allow stopping the lathe by clicking on the on/off switch hotspot.
 
@@ -368,7 +378,7 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 	if (_latheRunning)
 		return;
 
-	if (!_exitHotspot.isEmpty() && _exitHotspot.contains(localMouse)) {
+	if (isExitHotspotHovered(input)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kMoveBackward);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_cancelled = true;
@@ -405,7 +415,8 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 		if (goLeft && _currentMarkerPos > 0) {
 			g_nancy->_cursor->setCursorType(CursorManager::kMoveLeft);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				--_currentMarkerPos;
+				--_currentMar
+kerPos;
 				g_nancy->_sound->playSound(_moveSound);
 				redrawSurface();
 			}

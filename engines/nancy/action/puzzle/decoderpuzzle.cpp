@@ -50,7 +50,8 @@ static const byte kAcceptedSymbols[] = {
 // Accented characters accepted alongside them
 static const byte kAcceptedHighKeys[] = {
 	0x80, 0x9c, 0xa1, 0xbf, 0xc0, 0xc4, 0xc7, 0xc9, 0xd1, 0xd6, 0xdc, 0xdf,
-	0xe0, 0xe1, 0xe2, 0xe4, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xed, 0xee, 0xef,
+	0xe0, 0xe1, 0xe2, 0xe4, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xed, 0xee
+, 0xef,
 	0xf1, 0xf3, 0xf4, 0xf6, 0xf9, 0xfa, 0xfb, 0xfc
 };
 
@@ -114,7 +115,8 @@ void DecoderPuzzle::readData(Common::SeekableReadStream &stream) {
 		sub.output = readFixedString(stream, kSubstitutionSize);
 	}
 
-	_typeSound.readData(stream);		// 0x6f
+	_typeSound.readData(stream);	
+	// 0x6f
 	_decodeSound.readData(stream);		// 0xc5
 
 	readFilename(stream, _resetMovieName);	// 0x11b
@@ -122,16 +124,16 @@ void DecoderPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_resetSound.readData(stream);		// 0x12f
 
-	_solveScene.sceneID = stream.readUint16LE();	// 0x1db
-	_solveScene.frameID = stream.readUint16LE();
-	_solveScene.continueSceneSound = kContinueSceneSound;
-	_solveFlag.label = stream.readSint16LE();
-	_solveFlag.flag = stream.readByte();
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x1db
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._sceneChange.continueSceneSound = kContinueSceneSound;
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
 
-	_solveSound.readData(stream);		// 0x185
+	_solveSoundBlock.readData(stream);		// 0x185
 
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
-	_exitScene.continueSceneSound = kContinueSceneSound;
+	readExitHotspot(stream);
+	_exitScene._sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 void DecoderPuzzle::init() {
@@ -171,39 +173,7 @@ void DecoderPuzzle::init() {
 
 void DecoderPuzzle::onPause(bool paused) {
 	g_nancy->_input->setVKEnabled(!paused);
-	RenderActionRecord::onPause(paused);
-}
-
-void DecoderPuzzle::playSoundBlock(const RandomSoundBlock &block) {
-	if (block.names.empty()) {
-		return;
-	}
-
-	uint idx = block.names.size() == 1 ? 0 : g_nancy->_randomSource->getRandomNumber(block.names.size() - 1);
-	const Common::String &name = block.names[idx];
-	if (name.empty() || name == "NO SOUND") {
-		return;
-	}
-
-	SoundDescription desc;
-	desc.name = name;
-	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
-	desc.volume = block.volume;
-
-	g_nancy->_sound->loadSound(desc);
-	g_nancy->_sound->playSound(desc);
-
-	// Voice lines carry no inline caption; it's keyed by the sound's name
-	Common::String caption = resolveSubtitleText(name, Common::String(), "AUTOTEXT");
-	if (caption.empty()) {
-		caption = resolveSubtitleText(name, Common::String(), "CONVO");
-	}
-	showSubtitle(caption);
-}
-
-bool DecoderPuzzle::isSoundBlockPlaying(const RandomSoundBlock &block) const {
-	return !block.names.empty() && g_nancy->_sound->isSoundPlaying((uint16)block.channel);
+	PuzzleRecord::onPause(paused);
 }
 
 bool DecoderPuzzle::decodePending(bool &noMatch) {
@@ -218,7 +188,8 @@ bool DecoderPuzzle::decodePending(bool &noMatch) {
 
 	for (uint i = 0; i < _substitutions.size(); ++i) {
 		if (_substitutions[i].keys == _pending) {
-			_output += _substitutions[i].output;
+			_output += _subst
+itutions[i].output;
 			_pending.clear();
 			return true;
 		}
@@ -292,7 +263,7 @@ void DecoderPuzzle::execute() {
 		if (_solved) {
 			_resetMovie.close();
 			_resetting = false;
-			playSoundBlock(_solveSound);
+			playSoundBlock(_solveSoundBlock);
 			_state = kActionTrigger;
 			break;
 		}
@@ -310,7 +281,8 @@ void DecoderPuzzle::execute() {
 				_resetting = false;
 				redraw();
 			}
-		} else if (_hasPendingKey) {
+		} els
+e if (_hasPendingKey) {
 			_hasPendingKey = false;
 
 			bool reset = (int)_output.size() > _maxLength || _pendingKey == kEnterKey;
@@ -342,16 +314,14 @@ void DecoderPuzzle::execute() {
 		break;
 	case kActionTrigger:
 		// The solve voiceover gets to finish first
-		if (!_exitRequested && isSoundBlockPlaying(_solveSound)) {
+		if (!_exitRequested && isSoundBlockPlaying(_solveSoundBlock)) {
 			break;
 		}
 
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 		} else {
-			NancySceneState.setEventFlag(_solveFlag);
-			NancySceneState.changeScene(_solveScene);
+			_solveScene.execute();
 		}
 
 		finishExecution();
@@ -364,10 +334,7 @@ void DecoderPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitRequested = true;
 			_state = kActionTrigger;

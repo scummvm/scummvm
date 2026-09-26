@@ -33,15 +33,9 @@ namespace Nancy {
 namespace Action {
 
 void AngleTossPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Draw the initial angle and power indicators.
 	// The throw button sprite is NOT drawn here — the static background already shows the
@@ -57,7 +51,8 @@ void AngleTossPuzzle::readData(Common::SeekableReadStream &stream) {
 	// data+0x21..0x2c: 6 × uint16.
 	// _initialPower/_initialAngle: starting player position (copied to object+0x24/0x26 in original).
 	// _numPowers/_numAngles: UI control bounds.
-	// _targetPower/_targetAngle: the correct answer for this round.
+	// _targetPower/_targetAngle
+: the correct answer for this round.
 	_initialPower = stream.readUint16LE();
 	_initialAngle = stream.readUint16LE();
 	_numPowers    = stream.readUint16LE();
@@ -108,8 +103,10 @@ void AngleTossPuzzle::execute() {
 
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
-		g_nancy->_sound->loadSound(_powerSound);
+		g_nancy->_sound->loadSound(
+_powerSound);
 		g_nancy->_sound->loadSound(_squeakSound);
 		g_nancy->_sound->loadSound(_chainSound);
 
@@ -169,14 +166,13 @@ void AngleTossPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// All rects are in viewport-local coordinates.
-	Common::Point localMousePos = input.mousePos;
+	Common::Point localMousePos = input.mouse
+Pos;
 	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
 	localMousePos -= Common::Point(vpPos.left, vpPos.top);
 
 	// Exit button
-	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_exitPressed = true;
 			_state = kActionTrigger;
@@ -228,7 +224,8 @@ void AngleTossPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	// LAUNCH button — hotspot is rect 0 (_throwHotspot), sprite is drawn at rect 1 (_throwDisplay)
+	// LAUNCH button — hotspot 
+is rect 0 (_throwHotspot), sprite is drawn at rect 1 (_throwDisplay)
 	if (_throwHotspot.contains(localMousePos)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 

@@ -73,6 +73,7 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_nextFrameTime = 0;
 
 	debug("MacVenture::MacVentureEngine()");
+
 }
 
 MacVentureEngine::~MacVentureEngine() {
@@ -156,6 +157,7 @@ Common::Error MacVentureEngine::run() {
 	_soundManager = new SoundManager(this, _mixer);
 
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
+
 	if (directSaveSlotLoading >= 0) {
 		if (loadGameState(directSaveSlotLoading).getCode() != Common::kNoError) {
 			error("ENGINE: Could not load game from slot '%d'", directSaveSlotLoading);
@@ -247,7 +249,8 @@ void MacVentureEngine::setInitialFlags(GameState gameState) {
 void MacVentureEngine::setNewGameState() {
 	_cmdReady = true;
 	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
-	_currentSelection.push_back(playerParent);// Push the parent of the player
+	_currentSelection.push_back(playerParent);// Push the parent of th
+e player
 	_world->setObjAttr(playerParent, kAttrContainerOpen, 1);
 }
 
@@ -346,7 +349,8 @@ void MacVentureEngine::loseGame() {
 void MacVentureEngine::clickToContinue() {
 	uint rowCount = _gui->getConsoleRowCount();
 
-	_gui->scrollConsoleToRow(rowCount > _consoleRowsSincePause ? rowCount - _consoleRowsSincePause : 0);
+	
+_gui->scrollConsoleToRow(rowCount > _consoleRowsSincePause ? rowCount - _consoleRowsSincePause : 0);
 	_clickToContinue = true;
 	_enginePaused = true;
 }
@@ -416,7 +420,8 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
 			if (objID == 0) {
-				selectPrimaryObject(windata.objRef);
+				selectPrimaryObject
+(windata.objRef);
 			} else {
 				selectPrimaryObject(objID);
 			}
@@ -497,7 +502,8 @@ Common::Path MacVentureEngine::getDiplomaFileName() {
 	if (!res)
 		return "";
 
-	byte length = res->readByte();
+	byte length = res
+->readByte();
 	char *fileName = new char[length + 1];
 	res->read(fileName, length);
 	fileName[length] = '\0';
@@ -586,7 +592,8 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	if (_selectedControl == 1) {
 		_gameChanged = false;
 	} else if (isGameRunning()) {
-		if (_scriptEngine->runControl(kTick, _selectedControl, _destObject, _deltaPoint)) {
+		if (_scriptEngine->runCon
+trol(kTick, _selectedControl, _destObject, _deltaPoint)) {
 			_haltedAtEnd = true;
 			return true;
 		}
@@ -678,7 +685,8 @@ void MacVentureEngine::printTexts() {
 			break;
 		}
 		case kTextPlain:
-			_currentConsoleText += _world->getText(text.asset, text.source, text.destination);
+			_currentConsoleText += _worl
+d->getText(text.asset, text.source, text.destination);
 			gameChanged();
 			break;
 		default:
@@ -760,6 +768,7 @@ void MacVentureEngine::cleanUp(WindowReference reference) {
 	for (int i = data.children.size() - 1; i >= 0; i--) {
 		DrawableObject child = data.children[i];
 		Common::Rect childBounds = getObjBounds(child.obj);
+
 		if (childBounds.bottom > windowBounds.bottom || childBounds.top < windowBounds.top) {
 			offScreen.append(Item{child.obj, childBounds});
 		} else if (16 + childBounds.width() > windowBounds.width()) {
@@ -825,7 +834,8 @@ void MacVentureEngine::cleanUp(WindowReference reference) {
 			} else if (line.width() + 8 + outlier.bounds.width() <= windowBounds.width()) {
 				// Adjust line height
 				if (height < outlier.bounds.height())
-					height = outlier.bounds.height();
+					height =
+ outlier.bounds.height();
 				line.append(outlier);
 			} else {
 				overflow.append(outlier);
@@ -892,7 +902,8 @@ void MacVentureEngine::moveItems(Common::Array<Item> &items, WindowReference ref
 		Common::Point pt = _gui->getObjMeasures(item.id);
 		if (pt.y != item.bounds.top || pt.x != item.bounds.left) {
 			_world->setObjAttr(item.id, kAttrPosX, item.bounds.left);
-			_world->setObjAttr(item.id, kAttrPosY, item.bounds.top);
+			_world->setObjAttr(item.id, kA
+ttrPosY, item.bounds.top);
 		}
 	}
 
@@ -978,7 +989,8 @@ uint MacVentureEngine::getPrefixNdx(ObjID obj) {
 	return _world->getObjAttr(obj, kAttrPrefixes);
 }
 
-Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
+Common::String M
+acVentureEngine::getPrefixString(uint flag, ObjID obj) {
 	uint ndx = getPrefixNdx(obj);
 	ndx = ((ndx) >> flag) & 3;
 	return _decodingNamingArticles->getString(ndx);
@@ -1046,7 +1058,8 @@ void MacVentureEngine::openObject(ObjID objID) {
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
-		updateExits();
+		updateExits(
+);
 		_gui->setWindowTitle(kMainGameWindow, capitalize(_world->getText(objID, objID, objID))); // it ignores source and target in the original
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
@@ -1101,7 +1114,8 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 	if (_world->getObjAttr(id, kAttrIsExit)) {
 		if (hasChanged ||
 			old.hidden != !!_world->getObjAttr(id, kAttrHiddenExit) ||
-			old.exitx != _world->getObjAttr(id, kAttrExitX) ||
+			old.exi
+tx != _world->getObjAttr(id, kAttrExitX) ||
 			old.exity != _world->getObjAttr(id, kAttrExitY))
 			_gui->updateExit(id);
 	}
@@ -1178,7 +1192,8 @@ bool MacVentureEngine::isGameRunning() {
 	return (_gameState == kGameStateInit || _gameState == kGameStatePlaying);
 }
 
-ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlType id) {
+ControlActi
+on MacVenture::MacVentureEngine::referenceToAction(ControlType id) {
 	switch (id) {
 	case MacVenture::kControlExitBox:
 		return kActivateObject;//?? Like this in the original
@@ -1252,7 +1267,8 @@ bool MacVentureEngine::isObjClickable(ObjID objID) {
 }
 
 bool MacVentureEngine::isObjDraggable(ObjID objID) {
-	return _world->isObjDraggable(objID);
+	retu
+rn _world->isObjDraggable(objID);
 }
 
 bool MacVentureEngine::isObjSelected(ObjID objID) {
@@ -1279,183 +1295,6 @@ ObjID MacVentureEngine::getParent(ObjID objID) {
 }
 
 Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
-	Common::Point pos = getObjPosition(objID);
+	Common::Point pos = ge
 
-	Common::Point measures = _gui->getObjMeasures(objID);
-	uint w = measures.x;
-	uint h = measures.y;
-	return Common::Rect(pos.x, pos.y, pos.x + w, pos.y + h);
-}
-
-uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
-	// If it's not the same parent, there's 0 overlap
-	if (_world->getObjAttr(one, kAttrParentObject) !=
-		_world->getObjAttr(other, kAttrParentObject))
-		return 0;
-
-	Common::Rect oneBounds = getObjBounds(one);
-	Common::Rect otherBounds = getObjBounds(other);
-	if (otherBounds.intersects(oneBounds) ||
-		oneBounds.intersects(otherBounds)) {
-		uint areaOne = oneBounds.width() * oneBounds.height();
-		uint areaOther = otherBounds.width() * otherBounds.height();
-		return (areaOne != 0) ? (areaOther * 100 / areaOne) : 0;
-	}
-	return 0;
-}
-
-WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
-	return _gui->getObjWindow(objID);
-}
-
-WindowReference MacVentureEngine::findParentWindow(ObjID objID) {
-	if (objID == 1) {
-		return kSelfWindow;
-	}
-	ObjID parent = _world->getObjAttr(objID, kAttrParentObject);
-	if (parent == 0) {
-		return kNoWindow;
-	}
-	return getObjWindow(parent);
-}
-
-Common::Point MacVentureEngine::getDeltaPoint() {
-	return _deltaPoint;
-}
-
-ObjID MacVentureEngine::getDestObject() {
-	return _destObject;
-}
-
-ControlAction MacVentureEngine::getSelectedControl() {
-	return _selectedControl;
-}
-
-// Data loading
-
-bool MacVentureEngine::loadGlobalSettings() {
-	Common::MacResIDArray resArray;
-
-	if ((resArray = _resourceManager->getResIDArray(MKTAG('G', 'N', 'R', 'L'))).size() == 0)
-		return false;
-
-	Common::SeekableReadStream *res;
-	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kGlobalSettingsID);
-	if (res) {
-		_globalSettings = new GlobalSettings();
-		_globalSettings->loadSettings(res);
-		delete res;
-		return true;
-	}
-	return false;
-}
-
-bool MacVentureEngine::loadTextHuffman() {
-	Common::MacResIDArray resArray;
-	Common::SeekableReadStream *res;
-
-	if ((resArray = _resourceManager->getResIDArray(MKTAG('G', 'N', 'R', 'L'))).size() == 0)
-		return false;
-
-	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kTextHuffmanTableID);
-	if (res) {
-		uint32 numEntries = res->readUint16BE();
-		res->readUint16BE(); // Skip
-
-		uint32 *masks = new uint32[numEntries];
-		for (uint i = 0; i < numEntries - 1; i++) {
-			// For some reason there are one lass mask than entries
-			masks[i] = res->readUint16BE();
-		}
-		// make sure array is fully initialized
-		masks[numEntries-1] = (0x10000);
-
-		uint32 *lengths = new uint32[numEntries];
-		for (uint i = 0; i < numEntries; i++) {
-			lengths[i] = res->readByte();
-		}
-
-		uint32 *values = new uint32[numEntries];
-		for (uint i = 0; i < numEntries; i++) {
-			values[i] = res->readByte();
-		}
-
-		_textHuffman = new HuffmanLists(numEntries, lengths, masks, values);
-		debugC(4, kMVDebugMain, "Text is huffman-encoded");
-
-		delete res;
-		delete[] masks;
-		delete[] lengths;
-		delete[] values;
-		return true;
-	}
-	return false;
-}
-
-Common::String MacVentureEngine::capitalize(const Common::String &str) const {
-	Common::String out(str);
-	bool shouldCapitalize = true;
-
-	for (char &c : out) {
-		if (shouldCapitalize) {
-			c = toupper(c);
-			shouldCapitalize = false;
-		} else {
-			if (c == ' ')
-				shouldCapitalize = true;
-		}
-	}
-
-	return out;
-}
-
-// Global Settings
-GlobalSettings::GlobalSettings() {
-}
-
-GlobalSettings::~GlobalSettings() {
-
-}
-
-void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {
-	_numObjects = dataStream->readUint16BE();
-	_numGlobals = dataStream->readUint16BE();
-	_numCommands = dataStream->readUint16BE();
-	_numAttributes = dataStream->readUint16BE();
-	_numGroups = dataStream->readUint16BE();
-	dataStream->readUint16BE(); // unknown
-	_invTop = dataStream->readUint16BE();
-	_invLeft = dataStream->readUint16BE();
-	_invHeight = dataStream->readUint16BE();
-	_invWidth = dataStream->readUint16BE();
-	_invOffsetY = dataStream->readUint16BE();
-	_invOffsetX = dataStream->readSint16BE();
-	_defaultFont = dataStream->readUint16BE();
-	_defaultSize = dataStream->readUint16BE();
-
-	uint8 *attrIndices = new uint8[_numAttributes];
-	dataStream->read(attrIndices, _numAttributes);
-	_attrIndices = Common::Array<uint8>(attrIndices, _numAttributes);
-	delete[] attrIndices;
-
-	for (int i = 0; i < _numAttributes; i++) {
-		_attrMasks.push_back(dataStream->readUint16BE());
-	}
-
-	uint8 *attrShifts = new uint8[_numAttributes];
-	dataStream->read(attrShifts, _numAttributes);
-	_attrShifts = Common::Array<uint8>(attrShifts, _numAttributes);
-	delete[] attrShifts;
-
-	uint8 *cmdArgCnts = new uint8[_numCommands];
-	dataStream->read(cmdArgCnts, _numCommands);
-	_cmdArgCnts = Common::Array<uint8>(cmdArgCnts, _numCommands);
-	delete[] cmdArgCnts;
-
-	uint8 *commands = new uint8[_numCommands];
-	dataStream->read(commands, _numCommands);
-	_commands = Common::Array<uint8>(commands, _numCommands);
-	delete[] commands;
-}
-
-} // End of namespace MacVenture
+... [Content truncated]

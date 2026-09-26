@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_BEADPUZZLE_H
 #define NANCY_ACTION_BEADPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 #include "engines/nancy/misc/mousefollow.h"
 #include "engines/nancy/commontypes.h"
 
@@ -33,9 +33,9 @@ namespace Action {
 // them onto a thread; when all slots are filled the sequence is scored against
 // the solution, yielding perfect / partial / wrong results.
 // Called from scene 6251 in Nancy10.
-class BeadPuzzle : public RenderActionRecord {
+class BeadPuzzle : public PuzzleRecord {
 public:
-	BeadPuzzle() : RenderActionRecord(7) {}
+	BeadPuzzle() : PuzzleRecord(7) {}
 	virtual ~BeadPuzzle() {}
 
 	void init() override;
@@ -54,14 +54,13 @@ protected:
 
 	// File data
 
-	Common::Path _imageName;
-
 	uint16 _numSlots     = 0;
 	uint16 _numBeadTypes = 0;
 
 	Common::Rect _beadSrcRects[kMaxBeadTypes];
 
-	Common::Rect _threadSrc;
+	Common::Rect _threa
+dSrc;
 	Common::Rect _threadDest;
 
 	Common::Rect _removeHotspot;
@@ -86,11 +85,6 @@ protected:
 	FlagDescription _partialFlag;
 	SoundDescription _perfectSound;
 	FlagDescription _perfectFlag;
-
-	SceneChangeDescription _defaultScene;
-	SceneChangeDescription _solvedScene;
-
-	Common::Rect _exitHotspot;
 
 	// Runtime state
 
@@ -117,8 +111,6 @@ protected:
 
 	uint32 _perfectExitTime = 0;
 	bool   _resultSoundPlayed = false;
-
-	Graphics::ManagedSurface _image;
 
 	void redraw();
 	void holdBead(int16 bead, NancyInput *input);

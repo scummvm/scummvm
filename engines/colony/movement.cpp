@@ -63,7 +63,8 @@ const int kTunnelST[] = {
 
 const int kTunnelStraight[60] = {0};
 
-void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
+void fillTunnelPattern(Renderer *gfx, const
+ Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
 	if (rect.isEmpty())
 		return;
 
@@ -161,7 +162,8 @@ struct ObjectFootprint {
 // Fills fp with the object's collision box in its own rotated space. Returning
 // false means "no footprint" — the caller then blocks the whole cell, the way
 // CHCKWALL.C did for every object.
-bool objectFootprintForType(int type, ObjectFootprint &fp) {
+bool objectFoo
+tprintForType(int type, ObjectFootprint &fp) {
 	fp.centerX = 0;
 	fp.centerY = 0;
 	fp.halfX = 128;
@@ -256,6 +258,7 @@ bool objectFootprintForType(int type, ObjectFootprint &fp) {
 		fp.halfY = 75;
 		return true;
 	case kObjTeleport:
+
 		fp.halfX = 105;
 		fp.halfY = 105;
 		return true;
@@ -341,7 +344,8 @@ void ColonyEngine::setPlayerCellMarker() {
 	const int rnum = _robotArray[_me.xindex][_me.yindex];
 	if (rnum > 0 && rnum != kMeNum && rnum <= (int)_objects.size()) {
 		const Thing &obj = _objects[rnum - 1];
-		if (obj.alive && obj.where.xindex == _me.xindex && obj.where.yindex == _me.yindex)
+		if (obj.aliv
+e && obj.where.xindex == _me.xindex && obj.where.yindex == _me.yindex)
 			return;
 	}
 
@@ -394,7 +398,8 @@ int ColonyEngine::occupiedObjectAt(int xnew, int ynew, int x, int y, const Locat
 	return rnum;
 }
 
-bool ColonyEngine::hasInteractiveWallFeature(int cx, int cy, int dir) const {
+bool Colo
+nyEngine::hasInteractiveWallFeature(int cx, int cy, int dir) const {
 	if (cx < 0 || cx >= 31 || cy < 0 || cy >= 31)
 		return false;
 	uint8 type = _mapData[cx][cy][dir][0];
@@ -436,7 +441,8 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 	// below; fwall sits on lx+ly=0 with rooms on both sides.
 	const int kCWallLimit = 112 - 8; // face minus clearance
 	const int kFWallClearance = 20;
-	for (uint i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i 
+< _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive)
 			continue;
@@ -494,7 +500,8 @@ int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Loca
 	pobject->dy = ynew - pobject->yloc;
 	pobject->xloc = xnew;
 	pobject->yloc = ynew;
-	clampToWalls(pobject);
+	cl
+ampToWalls(pobject);
 	if (pobject == &_me)
 		clampToDiagonalWalls(pobject);
 	return 0;
@@ -563,7 +570,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					return rnum;
 			}
 			pobject->dx = xnew - pobject->xloc;
-			pobject->dy = ynew - pobject->yloc;
+			p
+object->dy = ynew - pobject->yloc;
 			pobject->xloc = xnew;
 			pobject->yloc = ynew;
 			clampToWalls(pobject);
@@ -634,7 +642,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	// Diagonal
 	if (xind2 > pobject->xindex) {
 		if (yind2 > pobject->yindex) {
-			if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xind2][yind2] & 3)) {
+			if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xin
+d2][yind2] & 3)) {
 				debugC(1, kColonyDebugMove, "Collision Diagonal SE");
 				return -1;
 			}
@@ -704,8 +713,12 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 			_mapData[nx][ny][opposite][1] = (uint8)state;
 	}
 
+	if (wallType == kWallFeatureDoor)
+		saveOpenDoors();
+
 	// Persist airlock state changes across level loads
-	if (wallType == kWallFeatureAirlock) {
+	if (w
+allType == kWallFeatureAirlock) {
 		if (oldState != state && _level >= 1 && _level <= 8) {
 			LevelData &ld = _levelData[_level - 1];
 			if (state == 0)
@@ -791,7 +804,8 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 
 		const int xmod = pobject->xloc - (pobject->xindex << 8);
 		const int ymod = pobject->yloc - (pobject->yindex << 8);
-		_robotArray[pobject->xindex][pobject->yindex] = 0;
+		_robotArray[pobject->xindex][pobject->
+yindex] = 0;
 		pobject->xloc = (targetX << 8) + xmod;
 		pobject->xindex = targetX;
 		pobject->yloc = (targetY << 8) + ymod;
@@ -854,7 +868,8 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			_animationResult = 0;
 			_airlockX = fromX;
 			_airlockY = fromY;
-			_airlockDirection = direction;
+			_airlockDirection = direct
+ion;
 			_airlockTerminate = false;
 			_doorOpen = (map[1] == 0);
 			if (getPlatform() == Common::kPlatformMacintosh) {
@@ -882,16 +897,19 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		if (pobject != &_me)
 			return 0; // robots don't use stairs
 
+		// goToDestination() can load another level and overwrite map.
+		const bool goingDown = (map[0] == kWallFeatureDnStairs);
+
 		// UpStairs(): the forklift cannot be driven up a staircase.
-		if (map[0] == kWallFeatureUpStairs && _fl)
+		if (!goingDown && _fl)
 			return 0;
 
 		const int result = goToDestination(map, pobject);
-		if (map[0] == kWallFeatureDnStairs && _fl)
+		if (goingDown && _fl)
 			doDnStairs();
 		if (result == 2) {
 			debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
-				map[0] == kWallFeatureUpStairs ? "upstairs" : "downstairs",
+				goingDown ? "downstairs" : "upstairs",
 				_level, pobject->xindex, pobject->yindex);
 		}
 		return result;
@@ -929,6 +947,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		playAnimation();
 
 		bool entered = (_animationResult >= 2);
+
 		if (entered && _elevatorFloor + 1 != _level) {
 			// Player selected a different floor
 			int targetMap = _elevatorFloor + 1;
@@ -996,7 +1015,8 @@ void ColonyEngine::playTunnelAirlockEffect() {
 		int rox = -150;
 		int roy = troy;
 
-		for (int i = 0; i < remaining; ++i) {
+		for (int i = 0; i < r
+emaining; ++i) {
 			int dl[2];
 			int dr[2];
 			projectTunnelPoint(effectRect, dl, rox, roy);
@@ -1056,7 +1076,8 @@ void ColonyEngine::playTunnelAirlockEffect() {
 		troy -= spd;
 		counter--;
 		if (counter == 0) {
-			troy = 180;
+			troy =
+ 180;
 			counter = 4;
 			remaining--;
 		}
@@ -1125,7 +1146,8 @@ void ColonyEngine::playTunnelEffect(bool falling) {
 			int left[3] = {
 				dl[0],
 				dl[1] + ty,
-				effectRect.bottom - 1 - (dl[1] - effectRect.top) + ty
+				effectRect.bottom - 1 - (dl[1] - effectRe
+ct.top) + ty
 			};
 			int right[3] = {
 				dr[0],
@@ -1148,384 +1170,6 @@ void ColonyEngine::playTunnelEffect(bool falling) {
 			}
 
 			if (i > 0) {
-				drawTunnelLine(_gfx, clipRect, left[0], left[1], prevDL[0], prevDL[1], lineColor);
-				drawTunnelLine(_gfx, clipRect, right[0], right[1], prevDR[0], prevDR[1], lineColor);
-				drawTunnelLine(_gfx, clipRect, right[0], right[2], prevDR[0], prevDR[2], lineColor);
-				drawTunnelLine(_gfx, clipRect, left[0], left[2], prevDL[0], prevDL[2], lineColor);
-				if (!falling) {
-					drawTunnelLine(_gfx, clipRect, prevLT, prevDL[2], lt, left[2], lineColor);
-					drawTunnelLine(_gfx, clipRect, lt, left[2], rt, right[2], lineColor);
-					drawTunnelLine(_gfx, clipRect, rt, right[2], prevRT, prevDR[2], lineColor);
-				}
-			}
+				drawTunnelLine(_gfx, clipRect, left[0], left[1], prevDL[0], prevDL[1], lineCo
 
-			if (clipRect.bottom < right[2])
-				drawTunnelLine(_gfx, clipRect, clipRect.left, clipRect.bottom - 1, clipRect.right - 1, clipRect.bottom - 1, lineColor);
-
-			clipRect.left = MAX<int>(clipRect.left, left[0]);
-			clipRect.right = MIN<int>(clipRect.right, right[0]);
-			clipRect.top = MAX<int>(clipRect.top, left[1]);
-			clipRect.bottom = MIN<int>(clipRect.bottom, right[2]);
-			if (clipRect.bottom <= clipRect.top || clipRect.left >= clipRect.right)
-				break;
-
-			prevDL[0] = left[0];
-			prevDL[1] = left[1];
-			prevDL[2] = left[2];
-			prevDR[0] = right[0];
-			prevDR[1] = right[1];
-			prevDR[2] = right[2];
-			prevLT = lt;
-			prevRT = rt;
-			roy += 256;
-		}
-
-		_gfx->copyToScreen();
-		_system->delayMillis(50);
-
-		counter--;
-		troy -= spd;
-		if (counter == 0) {
-			troy = 180;
-			cnt++;
-			counter = falling ? 2 : kTunnelST[cnt];
-			spd = 256 / counter;
-			remaining--;
-		}
-	}
-
-	_sound->stop();
-	_sound->play(Sound::kTunnel2);
-}
-
-// TUNNEL.C tunnel(FALSE): ride the subway, then arrive at the far station.
-int ColonyEngine::rideTunnel(const uint8 *map, Locate *pobject) {
-	const bool hasDestination = (map[2] || map[3] || map[4]);
-
-	playTunnelEffect(false);
-	const int result = goToDestination(map, pobject);
-
-	if (!hasDestination) {
-		terminateGame(false);
-		return 0;
-	}
-	return result;
-}
-
-// DoDnStairs(): only the forklift clatters down the steps.
-void ColonyEngine::doDnStairs() {
-	_sound->play(Sound::kClatter);
-	_gfx->fillRect(_screenR, _gfx->black());
-	_gfx->copyToScreen();
-}
-
-void ColonyEngine::fallThroughHole() {
-	// DOS/Mac tunnel(TRUE, mapdata) + GoTo(mapdata)
-	// Called when player falls through a floor hole (SMHOLEFLR or LGHOLEFLR)
-	const uint8 *mapdata = _mapData[_me.xindex][_me.yindex][4];
-	int targetMap = mapdata[2];
-	int targetX = mapdata[3];
-	int targetY = mapdata[4];
-	const bool deadFall = (targetMap == 0 && targetX == 0 && targetY == 0);
-
-	// Original tunnel(TRUE): damage the player's three power bars.
-	int damage = -(_level << 7);
-	debugC(1, kColonyDebugCombat,
-		"fallThroughHole: level=%d from=(%d,%d) deadFall=%d delta=[%d,%d,%d]",
-		_level, _me.xindex, _me.yindex, deadFall ? 1 : 0, damage, damage, damage);
-	setPower(damage, damage, damage);
-	playTunnelEffect(true);
-
-	if (deadFall) {
-		terminateGame(false); // original tunnel(TRUE) still animates before death
-		return;
-	}
-
-	// DOS GoTo(): preserve sub-cell offset, move to destination
-	if (targetX > 0 && targetY > 0) {
-		// Don't go if destination is occupied on same level (DOS: (!map) && robotarray check)
-		if (targetMap == 0 && _robotArray[targetX][targetY] != 0)
-			return;
-
-		clearPlayerCellMarker();
-
-		// Preserve sub-cell offset (DOS: xmod = xloc - (xindex<<8))
-		int xmod = _me.xloc - (_me.xindex << 8);
-		int ymod = _me.yloc - (_me.yindex << 8);
-		_me.xloc = (targetX << 8) + xmod;
-		_me.xindex = targetX;
-		_me.yloc = (targetY << 8) + ymod;
-		_me.yindex = targetY;
-
-		setPlayerCellMarker();
-	}
-
-	// DOS: if(map) load_mapnum(map, TRUE)  always reload when map != 0
-	if (targetMap > 0)
-		loadMap(targetMap);
-
-	debugC(1, kColonyDebugMove, "Fell through hole: level=%d pos=(%d,%d)", _level, _me.xindex, _me.yindex);
-}
-
-void ColonyEngine::checkCenter() {
-	// DOS CCenter(): check if player is standing on a floor hole or hotfoot.
-	// Called every render frame at 60fps for responsive hole/egg detection.
-	// HOTFOOT damage is time-gated via _hotfootAccum to match the original
-	// Mac Display() cadence (~8fps). The original had no throttle — damage
-	// fired once per Display() call, which was hardware-limited to ~5-8fps
-	// on a Mac Plus.
-	if (_me.xindex < 0 || _me.xindex >= 31 || _me.yindex < 0 || _me.yindex >= 31)
-		return;
-
-	const uint8 cellType = _mapData[_me.xindex][_me.yindex][4][0];
-	if (cellType != 0) {
-		debugC(2, kColonyDebugMove,
-			"checkCenter: cellType=%d at (%d,%d) dest=[%d,%d,%d] level=%d",
-			cellType, _me.xindex, _me.yindex,
-			_mapData[_me.xindex][_me.yindex][4][2],
-			_mapData[_me.xindex][_me.yindex][4][3],
-			_mapData[_me.xindex][_me.yindex][4][4], _level);
-		switch (cellType) {
-		case 1: { // SMHOLEFLR  small floor hole, must be near center
-			int xcheck = ABS(_me.xloc - (_me.xindex << 8));
-			int ycheck = ABS(_me.yloc - (_me.yindex << 8));
-			if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
-				fallThroughHole();
-			break;
-		}
-		case 2: // LGHOLEFLR  large floor hole, full cell
-			fallThroughHole();
-			break;
-		case 5: { // HOTFOOT  electric floor, damages power
-			// Time-gate damage: accumulate ms, fire at ~8fps (125ms intervals)
-			uint32 now = _system->getMillis();
-			uint32 elapsed = now - _lastHotfootTime;
-			if (elapsed >= 125) {
-				_lastHotfootTime = now;
-				_sound->play(Sound::kBzzz);
-				debugC(1, kColonyDebugCombat,
-					"hotfoot: level=%d cell=(%d,%d) delta=[%d,%d,%d]",
-					_level, _me.xindex, _me.yindex,
-					-(5 << _level), -(5 << _level), -(5 << _level));
-				setPower(-(5 << _level), -(5 << _level), -(5 << _level));
-			}
-			break;
-		}
-		default:
-			break;
-		}
-	}
-
-	if (!_fl && _me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32) {
-		const uint8 foodNum = _foodArray[_me.xindex][_me.yindex];
-		if (foodNum > 0 && foodNum <= _objects.size() && _objects[foodNum - 1].type < kBaseObject) {
-			const int xcheck = ABS(_me.xloc - (_me.xindex << 8));
-			const int ycheck = ABS(_me.yloc - (_me.yindex << 8));
-			if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
-				meEat();
-		}
-	}
-}
-
-void ColonyEngine::playCollisionSound() {
-	if (_suppressCollisionSound)
-		return;
-
-	const uint32 now = _system->getMillis();
-	if (_lastCollisionSoundTime != 0 && now - _lastCollisionSoundTime < 175)
-		return;
-
-	_lastCollisionSoundTime = now;
-	_sound->play(Sound::kBonk);
-}
-
-void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
-	clearPlayerCellMarker();
-
-	const int oldXIndex = _me.xindex;
-	const int oldYIndex = _me.yindex;
-	const bool sameCellAttempt = ((xnew >> 8) == oldXIndex && (ynew >> 8) == oldYIndex);
-	const int robot = checkwall(xnew, ynew, &_me);
-	if (robot > 0 && allowInteraction) {
-		// CCommand() ran once per key event; movement here is continuous, so latch
-		// the object until contact breaks or its message reopens every frame.
-		if (robot != _bumpedObject) {
-			_bumpedObject = robot;
-			interactWithObject(robot);
-		} else {
-			playCollisionSound();
-		}
-	} else {
-		_bumpedObject = 0;
-		if (robot)
-			playCollisionSound();
-		else if (sameCellAttempt && _me.xindex == oldXIndex && _me.yindex == oldYIndex &&
-				(_me.xloc != xnew || _me.yloc != ynew))
-			playCollisionSound();
-	}
-
-	setPlayerCellMarker();
-
-	_suppressCollisionSound = false;
-}
-
-// DOS Forward(), ExitFL() and DropFL(): leave the current cell.
-bool ColonyEngine::stepOutOfCell(uint8 angle, bool backwards) {
-	const int xindex = _me.xindex;
-	const int yindex = _me.yindex;
-	const int direction = backwards ? -1 : 1;
-	clearPlayerCellMarker();
-
-	// clampToWalls() can pin the player short of the boundary, so cap the walk.
-	int guard = 16;
-	_me.type = 2; // temporary small collision type
-	while (_me.xindex == xindex && _me.yindex == yindex) {
-		const int xnew = _me.xloc + direction * _cost[angle];
-		const int ynew = _me.yloc + direction * _sint[angle];
-		if (--guard < 0 || checkwall(xnew, ynew, &_me)) {
-			_sound->play(Sound::kChime);
-			_me.type = kMeNum;
-			setPlayerCellMarker();
-			return false;
-		}
-	}
-	_me.type = kMeNum;
-	setPlayerCellMarker();
-	return true;
-}
-
-// DOS ExitTeleport(): walk clear of the arrival booth, trying each quarter turn,
-// then leave a booth behind. False = all four directions blocked.
-bool ColonyEngine::exitTeleport() {
-	const int xloc = _me.xloc;
-	const int yloc = _me.yloc;
-	const int xindex = _me.xindex;
-	const int yindex = _me.yindex;
-
-	_me.ang = 48;
-	bool out = false;
-	for (int tries = 0; tries < 4 && !out; tries++) {
-		out = stepOutOfCell(_me.ang);
-		if (!out) {
-			_me.xloc = xloc;
-			_me.yloc = yloc;
-			_me.xindex = xindex;
-			_me.yindex = yindex;
-			_me.ang += 64;
-		}
-	}
-	if (!out)
-		return false;
-
-	if (xindex < 0 || xindex >= 32 || yindex < 0 || yindex >= 32)
-		return true;
-
-	// The original always rebuilds the booth because it reloads the map; the port
-	// keeps its object table, so relink an existing one instead of duplicating it.
-	if (_robotArray[xindex][yindex] != 0)
-		return true;
-
-	for (uint i = 0; i < _objects.size() && i < 255; i++) {
-		const Thing &obj = _objects[i];
-		if (obj.alive && obj.type == kObjTeleport &&
-				obj.where.xindex == xindex && obj.where.yindex == yindex) {
-			_robotArray[xindex][yindex] = (uint8)(i + 1);
-			return true;
-		}
-	}
-
-	createObject(kObjTeleport, (xindex << 8) + 128, (yindex << 8) + 128, 0);
-	return true;
-}
-
-// DOS ExitFL(): step back one cell and drop the forklift.
-void ColonyEngine::exitForklift() {
-	if (_fl != 1)
-		return;
-
-	int xloc = _me.xloc;
-	int yloc = _me.yloc;
-	int xindex = _me.xindex;
-	int yindex = _me.yindex;
-
-	if (!stepOutOfCell(_me.look, true))
-		return;
-
-	// Snap to cell center for the dropped forklift
-	xloc = (xloc >> 8);
-	xloc = (xloc << 8) + 128;
-	yloc = (yloc >> 8);
-	yloc = (yloc << 8) + 128;
-
-	if (!createObject(kObjForkLift, xloc, yloc, _me.ang)) {
-		warning("exitForklift: failed to place forklift on level %d at (%d,%d)", _level, xindex, yindex);
-		return;
-	}
-
-	PassPatch to;
-	to.level = _level;
-	to.xindex = xindex;
-	to.yindex = yindex;
-	to.xloc = xloc;
-	to.yloc = yloc;
-	to.ang = _me.ang;
-	newPatch(kObjForkLift, _carryPatch[0], to, nullptr);
-
-	_fl = 0;
-}
-
-// DOS DropFL(): step back one cell and drop the carried object, then return to fl=1.
-void ColonyEngine::dropCarriedObject() {
-	if (_fl != 2)
-		return;
-
-	if (!loadLiftAnimation(_carryType))
-		return;
-	_animationResult = 0;
-	playAnimation();
-	if (!_animationResult)
-		return;
-
-	// DropFL(): lowering a core onto the floor destroys it.
-	if (_carryType == kObjReactor) {
-		_sound->play(Sound::kGlass);
-		_carryType = 0;
-		_fl = 1;
-		return;
-	}
-
-	int xloc = _me.xloc;
-	int yloc = _me.yloc;
-	int xindex = _me.xindex;
-	int yindex = _me.yindex;
-
-	if (!stepOutOfCell(_me.look, true))
-		return;
-
-	// DOS: teleport always drops at ang=0; other objects use player's angle
-	uint8 ang = (_carryType == kObjTeleport) ? 0 : _me.ang;
-
-	xloc = (xloc >> 8);
-	xloc = (xloc << 8) + 128;
-	yloc = (yloc >> 8);
-	yloc = (yloc << 8) + 128;
-
-	if (!createObject(_carryType, xloc, yloc, ang)) {
-		warning("dropCarriedObject: failed to place type %d on level %d at (%d,%d)",
-			_carryType, _level, xindex, yindex);
-		return;
-	}
-
-	PassPatch to;
-	to.level = _level;
-	to.xindex = xindex;
-	to.yindex = yindex;
-	to.xloc = xloc;
-	to.yloc = yloc;
-	to.ang = _me.ang;
-	newPatch(_carryType, _carryPatch[1], to, nullptr);
-
-	_fl = 1;
-}
-
-} // End of namespace Colony
+... [Content truncated]

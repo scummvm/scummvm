@@ -22,7 +22,7 @@
 #ifndef NANCY_ACTION_COLLISIONPUZZLE_H
 #define NANCY_ACTION_COLLISIONPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/action/puzzlerecord.h"
 
 namespace Nancy {
 namespace Action {
@@ -35,10 +35,10 @@ namespace Action {
 // - TileMovePuzzle: Many differently-sized tiles, one of which must reach the exit.
 //		Rectangular tiles can only move in the directions parallel to their longer sides.
 //		Exit is outside of the tile grid.
-class CollisionPuzzle : public RenderActionRecord {
+class CollisionPuzzle : public PuzzleRecord {
 public:
 	enum PuzzleType { kCollision, kTileMove };
-	CollisionPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
+	CollisionPuzzle(PuzzleType type) : PuzzleRecord(7), _puzzleType(type) {}
 	virtual ~CollisionPuzzle() {}
 
 	void init() override;
@@ -48,6 +48,7 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 	void handleInput(NancyInput &input) override;
+
 
 	bool isViewportRelative() const override { return true; }
 
@@ -75,8 +76,6 @@ protected:
 	Common::Point movePiece(uint pieceID, WallType direction);
 	Common::Rect getScreenPosition(Common::Point gridPos);
 	void drawGrid();
-
-	Common::Path _imageName;
 
 	Common::Array<Common::Array<uint16>> _grid;
 	Common::Array<Common::Point> _startLocations;
@@ -111,14 +110,6 @@ protected:
 	SoundDescription _wallHitSound;
 	SoundDescription _exitButtonSound;
 
-	SceneChangeWithFlag _solveScene;
-	uint16 _solveSoundDelay = 0;
-	SoundDescription _solveSound;
-
-	SceneChangeWithFlag _exitScene;
-	Common::Rect _exitHotspot;
-
-	Graphics::ManagedSurface _image;
 	Common::Array<Piece> _pieces;
 
 	int _currentlyAnimating = -1;
@@ -134,7 +125,8 @@ protected:
 	PuzzleType _puzzleType;
 };
 
-} // End of namespace Action
+} // End of namespac
+e Action
 } // End of namespace Nancy
 
 #endif // NANCY_ACTION_COLLISIONPUZZLE_H

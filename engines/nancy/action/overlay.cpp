@@ -58,6 +58,7 @@ void Overlay::init() {
 	// Autotext overlays need special handling when blitting
 	if (_imageName.baseName().hasPrefix("USE_")) {
 		_usesAutotext = true;
+
 	}
 
 	g_nancy->_resource->loadImage(_imageName, _fullSurface);
@@ -104,7 +105,8 @@ void Overlay::updateGraphics() {
 	}
 
 	// Update inactive animated overlays
-	if (!_isActive && _state == kRun && !_blitDescriptions.empty() && _overlayType == kPlayOverlayAnimated) {
+	if (!_isActive && _state == kRun && !_bli
+tDescriptions.empty() && _overlayType == kPlayOverlayAnimated) {
 		uint16 newFrame = NancySceneState.getSceneInfo().frameID;
 		if (_currentViewportFrame == newFrame)
 			return;
@@ -173,7 +175,8 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	_blitDescriptions.resize(numViewportFrames);
 	for (auto &bm : _blitDescriptions) {
-		bm.readData(stream, ser.getVersion() >= kGameTypeNancy2);
+		bm.readDa
+ta(stream, ser.getVersion() >= kGameTypeNancy2);
 	}
 }
 
@@ -241,7 +244,8 @@ void Overlay::execute() {
 					}
 				}
 
-				uint16 frameDiff = 1;
+				uint16 frameDiff 
+= 1;
 				uint16 nextFrame = _currentFrame;
 
 				if (_nextFrameTime == 0) {
@@ -290,7 +294,8 @@ void Overlay::execute() {
 			}
 		} else {
 			// Check if we've moved the viewport
-			uint16 newFrame = NancySceneState.getSceneInfo().frameID;
+			uint16 newFrame = NancySceneState.getSceneInfo().frame
+ID;
 
 			if (_currentViewportFrame != newFrame) {
 				_currentViewportFrame = newFrame;
@@ -338,7 +343,8 @@ void Overlay::execute() {
 						} else {
 							// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
 							// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
-							// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
+					
+		// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
 							// inside the blit description below were used for blitting from that intermediate surface to the screen.
 							// We can achieve the same results by doung the calculations below
 							srcRect.translate(staticBounds.left, staticBounds.top);
@@ -390,7 +396,8 @@ void Overlay::execute() {
 		break;
 	}
 	case kActionTrigger:
-		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		if (g_nancy
+->getGameType() <= kGameTypeNancy9) {
 			// This isn't done by the original engine, but it's here
 			// to fix Nancy1's safe lock light not turning off. Removing
 			// it for Nancy 10, to fix the animated label showing correctly,
@@ -457,7 +464,8 @@ void OverlayMultiframeTerse::readData(Common::SeekableReadStream &stream) {
 	}
 
 	// Every blit description carries its own source rect, so the single general
-	// source rect they all point to is left empty; execute() then takes both the
+	// source re
+ct they all point to is left empty; execute() then takes both the
 	// position and the size from the description itself.
 	_srcRects.push_back(Common::Rect());
 
@@ -520,7 +528,8 @@ void TableIndexOverlay::execute() {
 
 void TextLineOverlay::init() {
 	if (!_digitImageName.empty()) {
-		g_nancy->_resource->loadImage(_digitImageName, _digitImage);
+		g_nancy->_resource->loadImage(_digitImageName,
+ _digitImage);
 	}
 
 	RenderObject::init();
@@ -606,7 +615,8 @@ Common::String TextLineOverlay::getText() const {
 }
 
 void TextLineOverlay::drawText(const Common::String &text) {
-	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
+	const Graphics::Font *font = g
+_nancy->_graphics->getFont(_fontID);
 	if (!font) {
 		return;
 	}
@@ -669,7 +679,8 @@ void TextLineOverlay::drawDigitImages(const Common::String &text) {
 }
 
 void RolloverOverlay::init() {
-	g_nancy->_resource->loadImage(_imageName, _fullSurface);
+	g_nancy->_resource->loadImage(_imageName, _fullSurface)
+;
 
 	RenderObject::init();
 }
@@ -693,10 +704,10 @@ void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
 
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();
-	int16 verticalOffset = stream.readSint16LE();
-	_sceneChange.verticalOffset = verticalOffset >= 0 ? verticalOffset : 0;
+	_sceneChange.continueSceneSound = kContinueSceneSound;
 
-	_sceneChange.continueSceneSound = stream.readByte();
+	_flagOnClick.label = stream.readSint16LE();
+	_flagOnClick.flag = stream.readByte();
 
 	_clickSound.readData(stream);
 }
@@ -753,7 +764,8 @@ void RolloverOverlay::execute() {
 		init();
 
 		_drawSurface.create(_fullSurface, _srcRect);
-		setTransparent(_transparency >= kPlayOverlayTransparent);
+		setTransparent(_transparency >= kPlayOverlayTran
+sparent);
 		moveTo(_destRect);
 		setVisible(false);
 		registerGraphics();
@@ -778,6 +790,8 @@ void RolloverOverlay::execute() {
 
 		setVisible(false);
 		_hasHotspot = false;
+
+		NancySceneState.setEventFlag(_flagOnClick);
 
 		if (_sceneChange.sceneID != kNoScene) {
 			NancySceneState.changeScene(_sceneChange);

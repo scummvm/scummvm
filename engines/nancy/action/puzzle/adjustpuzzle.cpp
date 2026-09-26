@@ -59,7 +59,8 @@ void AdjustPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_testSound.readData(stream);			// 0xc5
 
-	readFilename(stream, _adjustName);		// 0x11b
+	readFilename(stream, _adjust
+Name);		// 0x11b
 	if (!_adjustName.empty()) {
 		_hasAdjustRect = true;
 		readRect(stream, _adjustRect);		// 0x11f
@@ -100,7 +101,7 @@ void AdjustPuzzle::readData(Common::SeekableReadStream &stream) {
 	// Trailing count-prefixed array of 23-byte give-up hotspots
 	// {Rect, uint16 cursorType, uint16 sceneID, int16 flagLabel, byte flagValue}.
 	// The exit always jumps to the scene's first frame.
-	readExitHotspot(stream, _exitHotspot, _exitCursorType, _exitScene, _exitFlag);
+	readExitHotspot(stream);
 }
 
 void AdjustPuzzle::init() {
@@ -112,8 +113,7 @@ void AdjustPuzzle::init() {
 	setVisible(true);
 	moveTo(vpBounds);
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	_overlayImages.resize(_overlayNames.size());
 	for (uint i = 0; i < _overlayNames.size(); ++i) {
@@ -124,7 +124,8 @@ void AdjustPuzzle::init() {
 	}
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
-		_pieces[i].state = _pieces[i].initialState;
+		_pieces[i]
+.state = _pieces[i].initialState;
 	}
 
 	_resultIndex = 0;
@@ -194,7 +195,8 @@ void AdjustPuzzle::redraw() {
 	if (_showResult && !_solved && _resultIndex >= 1 && (uint)(_resultIndex - 1) < _overlayImages.size()) {
 		// Result screen: the matched result overlay (a full-frame _TXT overlay).
 		const Graphics::ManagedSurface &overlay = _overlayImages[_resultIndex - 1];
-		_drawSurface.blitFrom(overlay, Common::Rect(overlay.w, overlay.h), Common::Point(0, 0));
+		_drawSurfac
+e.blitFrom(overlay, Common::Rect(overlay.w, overlay.h), Common::Point(0, 0));
 	} else {
 		// Levels run 1..5; level 1 is the default (from the scene background), and
 		// levels 2..5 show the sheet sprite subRects[level - 2] at the piece's
@@ -228,9 +230,7 @@ void AdjustPuzzle::handleInput(NancyInput &input) {
 	const bool click = (input.input & NancyInput::kLeftMouseButtonUp) != 0;
 
 	// Give-up hotspot: leave the puzzle.
-	if (!_exitHotspot.isEmpty() &&
-			NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType((CursorManager::CursorType)_exitCursorType, true);
+	if (hoverExitHotspot(input)) {
 		if (click) {
 			_exitRequested = true;
 		}
@@ -266,15 +266,15 @@ void AdjustPuzzle::handleInput(NancyInput &input) {
 
 void AdjustPuzzle::execute() {
 	switch (_state) {
-	case kBegin:
+	case
+ kBegin:
 		init();
 		registerGraphics();
 		_state = kRun;
 		break;
 	case kRun:
 		if (_exitRequested) {
-			NancySceneState.setEventFlag(_exitFlag);
-			NancySceneState.changeScene(_exitScene);
+			_exitScene.execute();
 			break;
 		}
 		if ((_solved || _lost) && !_outcomeApplied) {

@@ -49,7 +49,8 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 	_dealRounds     = stream.readUint16LE();  // 0x029
 
 	readRect(stream, _turnHighlightSrc[0]);   // 0x02b
-	readRect(stream, _turnHighlightSrc[1]);
+	re
+adRect(stream, _turnHighlightSrc[1]);
 	readRect(stream, _turnHighlightDest[0]);  // 0x04b
 	readRect(stream, _turnHighlightDest[1]);
 
@@ -91,7 +92,8 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 	_dealFrameCount[0] = stream.readUint16LE();    // 0xa9b
 	stream.skip(2);                                // 0xa9d
 	_dealFrameDelay[0] = stream.readUint32LE();    // 0xa9f
-	_dealFrames[0].resize(15);                     // 0xaa3
+	_dealFrames[0].resize(15);                
+     // 0xaa3
 	for (uint i = 0; i < _dealFrames[0].size(); ++i)
 		readRect(stream, _dealFrames[0][i]);
 	readRect(stream, _deliverDest[0]);             // 0xb93
@@ -125,16 +127,17 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_winSceneStartPlayer = stream.readUint16LE();        // 0x1304
 	_winSceneStartEnemy  = stream.readUint16LE();        // 0x1306
-	_winScene.frameID          = stream.readUint16LE();  // 0x1308
-	_winScene.verticalOffset   = stream.readUint16LE();  // 0x130a
-	_winScene.continueSceneSound = stream.readUint16LE();// 0x130c
+	_solveScene._sceneChange.fr
+ameID          = stream.readUint16LE();  // 0x1308
+	_solveScene._sceneChange.verticalOffset   = stream.readUint16LE();  // 0x130a
+	_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();// 0x130c
 	stream.skip(0x131c - 0x130e);                        // listener vector + frame id
 	_winFlagPlayer = stream.readSint16LE();              // 0x131c
 	_winFlagEnemy  = stream.readSint16LE();              // 0x131e
-	_exitScene     = stream.readUint16LE();              // 0x1320
-	_exitSceneChange.frameID          = stream.readUint16LE(); // 0x1322
-	_exitSceneChange.verticalOffset   = stream.readUint16LE(); // 0x1324
-	_exitSceneChange.continueSceneSound = stream.readUint16LE();// 0x1326
+	_exitScene._sceneChange.sceneID            = stream.readUint16LE(); // 0x1320
+	_exitScene._sceneChange.frameID            = stream.readUint16LE(); // 0x1322
+	_exitScene._sceneChange.verticalOffset     = stream.readUint16LE(); // 0x1324
+	_exitScene._sceneChange.continueSceneSound = stream.readUint16LE(); // 0x1326
 	stream.skip(0x1336 - 0x1328);                        // listener vector + flag
 
 	readRect(stream, _exitHotspot);                      // 0x1336 (ends at 0x1346)
@@ -171,7 +174,8 @@ int CardGamePuzzle::dealOne(int player) {
 	return -1;
 }
 
-void CardGamePuzzle::drawBoard() {
+void CardGamePuzz
+le::drawBoard() {
 	_drawSurface.clear(_drawSurface.getTransparentColor());
 
 	// The visible tableau is side 1's grid; a present card is drawn face up, an empty cell shows
@@ -219,7 +223,8 @@ void CardGamePuzzle::drawBoard() {
 
 	// Automaton variant: the mover's hand-delivery sprite for the current frame.
 	if (_handAnimActive && _handFrame < _dealFrames[_handAnimSide].size()) {
-		const Common::Rect &src = _dealFrames[_handAnimSide][_handFrame];
+		const Common::Rect &src = _dealFram
+es[_handAnimSide][_handFrame];
 		const Common::Rect &dest = _deliverDest[_handAnimSide];
 		_drawSurface.blitFrom(_image, src, Common::Point(dest.left, dest.top));
 	}
@@ -285,7 +290,8 @@ void CardGamePuzzle::resolveAsk() {
 
 		_goAgain = true; // the opponent had the rank: ask again
 	} else {
-		playVoice(_noMoveVoice[_mover]); // "go fish"
+		playV
+oice(_noMoveVoice[_mover]); // "go fish"
 		int drawnCol = dealOne(_mover);
 		_goAgain = (drawnCol != -1 && _switchTurnRule != 0 && drawnCol == _askedCol);
 		if (drawnCol == -1) {
@@ -360,7 +366,8 @@ int CardGamePuzzle::aiPickColumn() {
 	Common::Array<int> strong, any;
 	for (int col = 0; col < (int)_numCols; ++col) {
 		int count = _board[0].colCount[col];
-		if (count <= 0 || count >= 3 || col == _lastAiColumn) {
+		if (count <= 0
+ || count >= 3 || col == _lastAiColumn) {
 			continue;
 		}
 
@@ -429,7 +436,8 @@ void CardGamePuzzle::updateGraphics() {
 	if (_animating && now >= _animNextStep) {
 		--_animStep;
 		_animNextStep = now + _moveAnimDelay;
-		if (_animStep <= 0) {
+		if 
+(_animStep <= 0) {
 			_animating = false;
 		}
 		changed = true;
@@ -503,15 +511,9 @@ void CardGamePuzzle::playVoice(const Common::String &name) {
 }
 
 void CardGamePuzzle::init() {
-	Common::Rect vpBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(vpBounds.width(), vpBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(vpBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Reset board state and the shared deck (every table cell starts available)
 	for (int side = 0; side < 2; ++side) {
@@ -519,7 +521,8 @@ void CardGamePuzzle::init() {
 	}
 	for (int row = 0; row < kMaxRows; ++row)
 		for (int col = 0; col < kMaxCols; ++col)
-			_availMap[row][col] = (row < _numRows && col < _numCols) ? 1 : 0;
+			_availMap[
+row][col] = (row < _numRows && col < _numCols) ? 1 : 0;
 
 	_deckRemaining = _numCols * _numRows;
 	_mover = _startPlayer;
@@ -548,6 +551,7 @@ void CardGamePuzzle::execute() {
 	if (_state == kBegin) {
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		// Kick off the first turn. When the AI is dealt the opening move, it asks first.
 		if (_startPlayer == 0) {
@@ -567,10 +571,9 @@ void CardGamePuzzle::execute() {
 		SceneChangeDescription sceneChange;
 
 		if (_gaveUp) {
-			sceneChange = _exitSceneChange;
-			sceneChange.sceneID = _exitScene;
+			sceneChange = _exitScene._sceneChange;
 		} else {
-			sceneChange = _winScene;
+			sceneChange = _solveScene._sceneChange;
 
 			const int playerScore = _board[1].score;
 			const int aiScore = _board[0].score;
@@ -590,7 +593,8 @@ void CardGamePuzzle::execute() {
 				flag.label = _winFlagPlayer;
 				flag.flag = g_nancy->_true;
 				NancySceneState.setEventFlag(flag);
-			} else if (tie && _winFlagEnemy != -1) {
+			} else if (tie && _winFlagEnemy != -1
+) {
 				FlagDescription flag;
 				flag.label = _winFlagEnemy;
 				flag.flag = g_nancy->_true;
@@ -644,8 +648,7 @@ void CardGamePuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Exit hotspot is always available; leaving this way is "giving up" (goes to the exit scene)
-	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+	if (hoverExitHotspot(input)) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_gaveUp = true;
 			_state = kActionTrigger;
@@ -664,7 +667,8 @@ void CardGamePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+	g_nancy->_cursor->setCursorType(
+CursorManager::kHotspot);
 
 	if (input.input & NancyInput::kLeftMouseButtonUp) {
 		beginAsk(1, col);

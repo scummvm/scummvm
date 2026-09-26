@@ -51,7 +51,7 @@ enum MacTextPopupStyle {
 	kMacInformWindow
 };
 
-static Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int width, int height) {
+Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int width, int height) {
 	if (!gfx)
 		return nullptr;
 
@@ -61,13 +61,14 @@ static Graphics::ManagedSurface *captureMessageBackground(Renderer *gfx, int wid
 
 	Graphics::ManagedSurface *saved = new Graphics::ManagedSurface();
 	saved->create(width, height, screenshot->format);
-	saved->blitFrom(*screenshot, Common::Rect(screenshot->w, screenshot->h), Common::Rect(width, height));
+	saved->b
+litFrom(*screenshot, Common::Rect(screenshot->w, screenshot->h), Common::Rect(width, height));
 	screenshot->free();
 	delete screenshot;
 	return saved;
 }
 
-static void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *saved) {
+void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *saved) {
 	if (!saved)
 		return;
 	if (gfx) {
@@ -78,7 +79,7 @@ static void restoreMessageBackground(Renderer *gfx, Graphics::ManagedSurface *sa
 	delete saved;
 }
 
-static void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &from, const Common::Rect &to) {
+void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &from, const Common::Rect &to) {
 	if (!gfx || !system || from.isEmpty() || to.isEmpty())
 		return;
 
@@ -102,7 +103,7 @@ static void animateMacZoom(Renderer *gfx, OSystem *system, const Common::Rect &f
 	CursorMan.showMouse(cursorWasVisible);
 }
 
-static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
+bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		int screenWidth, int screenHeight, int centerX, int centerY,
 		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor,
 		int visibleLineCount = -1, Common::Rect *popupBounds = nullptr,
@@ -118,7 +119,8 @@ static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 	if (!font)
 		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!font)
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		font = FontMan.getFontB
+yUsage(Graphics::FontManager::kBigGUIFont);
 	if (!font)
 		return false;
 
@@ -162,7 +164,8 @@ static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 			if (popupBounds)
 				*popupBounds = r;
 			if (measureOnly)
-				return true;
+				return t
+rue;
 
 			Graphics::ManagedSurface popup;
 			popup.create(popupWidth, popupHeight, wm->_pixelformat);
@@ -218,7 +221,8 @@ static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 	const int textLeft = r.left + sidePad;
 	const int textRight = r.right - sidePad;
 	const int textCenter = (textLeft + textRight) / 2;
-	const int startY = style == kMacInformWindow ?
+	const int startY = style == kMa
+cInformWindow ?
 		r.top + (r.height() - fontHeight) / 2 : r.top + MAX<int>(0, 14 - fontHeight);
 	for (uint i = 0; i < visibleLines; ++i) {
 		const int y = startY + (int)i * lineStep;
@@ -265,7 +269,8 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 			// (0-2 entries, typical of 1-bit PICTs) and invert.
 			bool invert1bit = false;
 			if (src->format == Graphics::PixelFormat::createFormatCLUT8()) {
-				const Graphics::Palette &checkPal = decoder.getPalette();
+				c
+onst Graphics::Palette &checkPal = decoder.getPalette();
 				invert1bit = ((int)checkPal.size() <= 2);
 			}
 
@@ -331,6 +336,7 @@ void ColonyEngine::updateViewportLayout() {
 	if (_showDashBoard) {
 		if (isMac)
 			dashWidth = MIN(96, _width / 2);
+
 		else
 			dashWidth = 4 * _pQx + 2; // DASHBOAR.C: DashBoard.right = 4*pix_per_Qinch_x+2
 		if (_width - dashWidth < 160)
@@ -379,7 +385,8 @@ void ColonyEngine::updateViewportLayout() {
 
 			Common::Rect r = fallback;
 			if (windStream->size() >= 8) {
-				const int top = windStream->readSint16BE();
+				const int top = windStream->r
+eadSint16BE();
 				const int left = windStream->readSint16BE();
 				const int bottom = windStream->readSint16BE();
 				const int right = windStream->readSint16BE();
@@ -430,7 +437,8 @@ void ColonyEngine::updateViewportLayout() {
 			moveLeft + 2 * CCENTER - 8, moveTop + 2 * CCENTER - 8);
 
 		// _compassRect = entire moveWindow (used for compass dish drawing)
-		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, moveTop + moveH);
+		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, mov
+eTop + moveH);
 
 		int infoLeft = infoWindow.left;
 		int infoTop = infoWindow.top;
@@ -477,13 +485,14 @@ void ColonyEngine::updateViewportLayout() {
 		const int pBottom = _height - 2 * (4 * _pQy + 8);
 		_powerHeight = (pBottom - pTop) / 32;
 		_powerHeight = MIN(_powerHeight, 5);
-		const int pBottomAdj = pTop + _powerHeight * 32;
+		const int pBottomAdj = pTop + _powerHeight
+ * 32;
 		_powerRect = makeSafeRect(powerLeft, pTop, powerLeft + totalBarWidth, pBottomAdj);
 	}
 }
 
 // DASHBOAR.C qlog(): bit-length of x (equivalent to floor(log2(x))+1)
-int ColonyEngine::qlog(int32 x) {
+int qlog(int32 x) {
 	int i = 0;
 	while (x > 0) {
 		x >>= 1;
@@ -544,7 +553,8 @@ void ColonyEngine::drawDashboardStep1() {
 	// _compassRect stores the post-shrink compOval (inner erasable area)
 	if (_compassRect.width() > 2 && _compassRect.height() > 2) {
 		// Original DOS draws a solid black outer oval, shrinks the rect by 2px on
-		// each side, then erases the inner oval to white, leaving a black annulus.
+		// each side, then erases the inner oval to white, 
+leaving a black annulus.
 		const int cx = (_compassRect.left + _compassRect.right) >> 1;
 		const int cy = (_compassRect.top + _compassRect.bottom) >> 1;
 		const int outerRx = (_compassRect.width() + 4) >> 1;
@@ -585,7 +595,8 @@ void ColonyEngine::drawDashboardStep1() {
 
 		// Symbol 1: triangle (weapon power)
 		_gfx->drawLine(pl + 2, _powerRect.bottom - 2, pl + _powerWidth - 2, _powerRect.bottom - 2, 0);
-		_gfx->drawLine(pl + _powerWidth - 2, _powerRect.bottom - 2, pl + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 2), 0);
+		_gfx->drawLine(pl + _powerWidth - 2, _powerRect.bottom - 2, pl +
+ (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 2), 0);
 		_gfx->drawLine(pl + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 2), pl + 2, _powerRect.bottom - 2, 0);
 
 		// Symbol 2: diamond (life power)
@@ -617,7 +628,8 @@ void ColonyEngine::drawDashboardMac() {
 	const bool macColor = isMacColorMode();
 	const uint32 colBlack = packRGB(0, 0, 0);
 	const uint32 colWhite = packRGB(255, 255, 255);
-	const uint32 colWinBg = macColor ? packMacColor(_macColors[7].bg) : colWhite;
+	const 
+uint32 colWinBg = macColor ? packMacColor(_macColors[7].bg) : colWhite;
 	// power.c: ForeColor(blueColor)  on 1-bit display, blue maps to black
 	const uint32 colBlue = macColor ? packRGB(0, 0, 255) : colBlack;
 
@@ -666,7 +678,8 @@ void ColonyEngine::drawDashboardMac() {
 			_pictPower = loadPictSurface(wantPictID);
 			if (!_pictPower && _armor > 0 && wantPictID != -32755)
 				_pictPower = loadPictSurface(-32755);
-			_pictPowerID = wantPictID;
+			_pictPowerID = wa
+ntPictID;
 		}
 
 		// power.c: SetRect(&info, -2, -2, xSize-2, ySize-2); DrawPicture(inf, &info)
@@ -706,7 +719,8 @@ void ColonyEngine::drawDashboardMac() {
 			// the PICT rect. GL line rasterization does not cover the same pixels,
 			// so draw the observed bar strips explicitly.
 			if (macColor) {
-				// Color power.c DrawInfo(): lft = 3 + info.left + i*23 with the
+				// Color power
+.c DrawInfo(): lft = 3 + info.left + i*23 with the
 				// shifted info rect's local origin at engine x = _powerRect.left
 				// (PICT blitted at -2); strips MoveTo(lft+1)..LineTo(lft+16) = 16px.
 				const int infoLeft = _powerRect.left;
@@ -757,7 +771,8 @@ void ColonyEngine::drawDashboardMac() {
 
 		// Floor map (compass.c lines 72-213):
 		// floorRect = (8,8)-(62,62)  clipped to _headsUpRect
-		// Eye icon at center (CCENTER,CCENTER) = (35,35)
+		// Eye icon at center (CCENTER,
+CCENTER) = (35,35)
 		drawMiniMap(colBlack);
 
 		// Eye icon (compass.c lines 84-88)
@@ -816,7 +831,8 @@ bool ColonyEngine::hasFoodAt(int x, int y) const {
 	return true;
 }
 
-// Draws the mini floor map into _headsUpRect (shared by Mac and DOS paths)
+// Draw
+s the mini floor map into _headsUpRect (shared by Mac and DOS paths)
 void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	if (_gameMode != kModeColony)
 		return;
@@ -835,1044 +851,6 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	if (isMac) {
 		// compass.c: CSIZE=64, CCENTER=35
 		// xloc = ((Me.xindex << 8) - Me.xloc) >> 2
-		// Center at (CCENTER, CCENTER) relative to moveWindow
-		lExt = 64; // CSIZE
-		sExt = 32; // CSIZE/2
-		xloc = ((_me.xindex << 8) - _me.xloc) >> 2;
-		yloc = ((_me.yindex << 8) - _me.yloc) >> 2;
-		ccenterx = _compassRect.left + 35; // CCENTER in screen coords
-		ccentery = _compassRect.top + 35;
-	} else {
-		const int lExtBase = _dashBoardRect.width() >> 1;
-		lExt = lExtBase + (lExtBase >> 1);
-		if (lExt & 1)
-			lExt--;
-		sExt = lExt >> 1;
-		xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
-		yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
-		ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
-		ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
-	}
-	const uint8 mapAngle = _me.look;
-	const int tsin = _sint[mapAngle];
-	const int tcos = _cost[mapAngle];
+		// Center at
 
-	int xcorner[6];
-	int ycorner[6];
-	xcorner[0] = ccenterx + (((int32)xloc * tsin - (int32)yloc * tcos) >> 8);
-	ycorner[0] = ccentery - (((int32)yloc * tsin + (int32)xloc * tcos) >> 8);
-	xcorner[1] = ccenterx + (((int32)(xloc + lExt) * tsin - (int32)yloc * tcos) >> 8);
-	ycorner[1] = ccentery - (((int32)yloc * tsin + (int32)(xloc + lExt) * tcos) >> 8);
-	xcorner[2] = ccenterx + (((int32)(xloc + lExt) * tsin - (int32)(yloc + lExt) * tcos) >> 8);
-	ycorner[2] = ccentery - (((int32)(yloc + lExt) * tsin + (int32)(xloc + lExt) * tcos) >> 8);
-	xcorner[3] = ccenterx + (((int32)xloc * tsin - (int32)(yloc + lExt) * tcos) >> 8);
-	ycorner[3] = ccentery - (((int32)(yloc + lExt) * tsin + (int32)xloc * tcos) >> 8);
-	xcorner[4] = ccenterx + (((int32)(xloc + sExt) * tsin - (int32)(yloc + sExt) * tcos) >> 8);
-	ycorner[4] = ccentery - (((int32)(yloc + sExt) * tsin + (int32)(xloc + sExt) * tcos) >> 8);
-	xcorner[5] = ccenterx + (((int32)(xloc + sExt) * tsin - (int32)yloc * tcos) >> 8);
-	ycorner[5] = ccentery - (((int32)yloc * tsin + (int32)(xloc + sExt) * tcos) >> 8);
-
-	const int dx = xcorner[1] - xcorner[0];
-	const int dy = ycorner[0] - ycorner[1];
-	drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, lineColor);
-	drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, lineColor);
-	drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, lineColor);
-	drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, lineColor);
-
-	// compass.c: food markers use FrameOval ±3px, robot markers ±5px.
-	const int foodR = isMac ? 3 : 1;
-	const int robotR = isMac ? 5 : 2;
-
-	if (hasFoodAt(_me.xindex, _me.yindex))
-		drawMiniMapMarker(xcorner[4], ycorner[4], foodR, lineColor, isMac);
-
-	if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
-		if (hasFoodAt(_me.xindex, _me.yindex - 1))
-			drawMiniMapMarker(xcorner[4] + dy, ycorner[4] + dx, foodR, lineColor, isMac);
-		if (hasRobotAt(_me.xindex, _me.yindex - 1))
-			drawMiniMapMarker(xcorner[4] + dy, ycorner[4] + dx, robotR, lineColor, isMac);
-	}
-	if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
-		if (hasFoodAt(_me.xindex - 1, _me.yindex))
-			drawMiniMapMarker(xcorner[4] - dx, ycorner[4] + dy, foodR, lineColor, isMac);
-		if (hasRobotAt(_me.xindex - 1, _me.yindex))
-			drawMiniMapMarker(xcorner[4] - dx, ycorner[4] + dy, robotR, lineColor, isMac);
-	}
-	if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
-		if (hasFoodAt(_me.xindex, _me.yindex + 1))
-			drawMiniMapMarker(xcorner[4] - dy, ycorner[4] - dx, foodR, lineColor, isMac);
-		if (hasRobotAt(_me.xindex, _me.yindex + 1))
-			drawMiniMapMarker(xcorner[4] - dy, ycorner[4] - dx, robotR, lineColor, isMac);
-	}
-	if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
-		if (hasFoodAt(_me.xindex + 1, _me.yindex))
-			drawMiniMapMarker(xcorner[4] + dx, ycorner[4] - dy, foodR, lineColor, isMac);
-		if (hasRobotAt(_me.xindex + 1, _me.yindex))
-			drawMiniMapMarker(xcorner[4] + dx, ycorner[4] - dy, robotR, lineColor, isMac);
-	}
-
-	// DASHBOAR.C DrawHeadsUp(): player eye icon at minimap center
-	// Outer oval: FrameOval ±(pQx/2, pQy/4) = ±(12, 4) for EGA
-	// Inner oval (pupil): FillOval ±(pQx/4, pQy/4) = ±(6, 4) for EGA
-	if (!isMac) {
-		const int px = _pQx >> 1;  // 12
-		const int py = _pQy >> 2;  // 4
-		_gfx->drawEllipse(ccenterx, ccentery, px, py, lineColor);
-		const int px2 = _pQx >> 2; // 6
-		_gfx->fillEllipse(ccenterx, ccentery, px2, py, lineColor);
-	}
-}
-
-void ColonyEngine::markVisited() {
-	if (_level < 1 || _level > 8)
-		return;
-	const int lv = _level - 1;
-	const int cx = _me.xindex;
-	const int cy = _me.yindex;
-	if (cx < 0 || cx >= 32 || cy < 0 || cy >= 32)
-		return;
-
-	// Always mark the player's own cell
-	_visited[lv][cx][cy] = true;
-
-	// Check cardinal neighbors: blocked by wall bit OR door/airlock feature
-	bool canN = false, canS = false, canE = false, canW = false;
-
-	// North: wall at south edge of cell (cx, cy+1)
-	if (cy + 1 < 32) {
-		canN = !(_wall[cx][cy + 1] & 0x01);
-		if (canN && cx < 31 && cy < 31 &&
-			(_mapData[cx][cy][kDirNorth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirNorth][0] == kWallFeatureAirlock))
-			canN = false;
-	}
-	// South: wall at south edge of cell (cx, cy)
-	if (cy - 1 >= 0) {
-		canS = !(_wall[cx][cy] & 0x01);
-		if (canS && cx < 31 && cy < 31 &&
-			(_mapData[cx][cy][kDirSouth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirSouth][0] == kWallFeatureAirlock))
-			canS = false;
-	}
-	// East: wall at west edge of cell (cx+1, cy)
-	if (cx + 1 < 32) {
-		canE = !(_wall[cx + 1][cy] & 0x02);
-		if (canE && cx < 31 && cy < 31 &&
-			(_mapData[cx][cy][kDirEast][0] == kWallFeatureDoor || _mapData[cx][cy][kDirEast][0] == kWallFeatureAirlock))
-			canE = false;
-	}
-	// West: wall at west edge of cell (cx, cy)
-	if (cx - 1 >= 0) {
-		canW = !(_wall[cx][cy] & 0x02);
-		if (canW && cx < 31 && cy < 31 &&
-			(_mapData[cx][cy][kDirWest][0] == kWallFeatureDoor || _mapData[cx][cy][kDirWest][0] == kWallFeatureAirlock))
-			canW = false;
-	}
-
-	if (canN) _visited[lv][cx][cy + 1] = true;
-	if (canS) _visited[lv][cx][cy - 1] = true;
-	if (canE) _visited[lv][cx + 1][cy] = true;
-	if (canW) _visited[lv][cx - 1][cy] = true;
-
-	// Diagonal neighbors: visible only if both adjacent cardinal directions are open
-	if (canN && canE && cx + 1 < 32 && cy + 1 < 32) _visited[lv][cx + 1][cy + 1] = true;
-	if (canN && canW && cx - 1 >= 0 && cy + 1 < 32) _visited[lv][cx - 1][cy + 1] = true;
-	if (canS && canE && cx + 1 < 32 && cy - 1 >= 0) _visited[lv][cx + 1][cy - 1] = true;
-	if (canS && canW && cx - 1 >= 0 && cy - 1 >= 0) _visited[lv][cx - 1][cy - 1] = true;
-}
-
-bool isPassableFeature(int feat) {
-	return feat == kWallFeatureDoor || feat == kWallFeatureAirlock ||
-		feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
-		feat == kWallFeatureTunnel || feat == kWallFeatureElevator;
-}
-
-void ColonyEngine::automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy) {
-	const int32 ox = xloc + (int32)dx * lExt;
-	const int32 oy = yloc + (int32)dy * lExt;
-	sx = ccx + (int)((ox * tsin - oy * tcos) >> 8);
-	sy = ccy - (int)((oy * tsin + ox * tcos) >> 8);
-}
-
-void ColonyEngine::automapDrawWall(const Common::Rect &vp, int x1, int y1, int x2, int y2, uint32 color) {
-	if (clipLineToRect(x1, y1, x2, y2, vp)) {
-		_gfx->drawLine(x1, y1, x2, y2, color);
-		// Thicker wall: offset by 1 pixel perpendicular
-		int ox = y2 - y1, oy = x1 - x2;
-		int len = (int)sqrtf((float)(ox * ox + oy * oy));
-		if (len > 0) {
-			ox = ox / len;
-			oy = oy / len;
-			int ax1 = x1 + ox, ay1 = y1 + oy, ax2 = x2 + ox, ay2 = y2 + oy;
-			if (clipLineToRect(ax1, ay1, ax2, ay2, vp))
-				_gfx->drawLine(ax1, ay1, ax2, ay2, color);
-		}
-	}
-}
-
-// Own side only: a feature opens from the cell that records it, so the far side
-// is a plain wall with nothing to use.
-int ColonyEngine::automapWallFeature(int fx, int fy, int dir) {
-	if (fx < 0 || fx >= 31 || fy < 0 || fy >= 31)
-		return 0;
-
-	const int feat = _mapData[fx][fy][dir][0];
-	return isPassableFeature(feat) ? feat : 0;
-}
-
-void ColonyEngine::automapDrawWallWithFeature(const Common::Rect &vp, int wx1, int wy1, int wx2, int wy2, int feat, int lExt, uint32 color) {
-	automapDrawWall(vp, wx1, wy1, wx2, wy2, color);
-
-	if (isPassableFeature(feat)) {
-		const int ppx = (wy2 - wy1);
-		const int ppy = (wx1 - wx2);
-		const int tickLen = MAX(2, lExt / 8);
-		const int plen = (int)sqrtf((float)(ppx * ppx + ppy * ppy));
-		if (plen > 0) {
-			const int tx = (ppx * tickLen) / plen;
-			const int ty = (ppy * tickLen) / plen;
-			if (feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs) {
-				// A flight of steps, as on a floor plan.
-				const int mx = (wx1 + wx2) / 2;
-				const int my = (wy1 + wy2) / 2;
-				const int hx = (wx2 - wx1) / 4;
-				const int hy = (wy2 - wy1) / 4;
-				for (int i = -2; i <= 2; i++) {
-					if (i == 0)
-						continue;
-					const int ox = mx + tx * i;
-					const int oy = my + ty * i;
-					automapDrawWall(vp, ox - hx, oy - hy, ox + hx, oy + hy, color);
-				}
-				return;
-			}
-			const int ax = wx1 + (wx2 - wx1) / 4;
-			const int ay = wy1 + (wy2 - wy1) / 4;
-			const int bx = wx1 + 3 * (wx2 - wx1) / 4;
-			const int by = wy1 + 3 * (wy2 - wy1) / 4;
-			automapDrawWall(vp, ax - tx, ay - ty, ax + tx, ay + ty, color);
-			automapDrawWall(vp, bx - tx, by - ty, bx + tx, by + ty, color);
-		}
-	}
-}
-
-void ColonyEngine::changeAutomapZoom(bool zoomIn) {
-	_automapZoom = CLIP<float>(zoomIn ? _automapZoom * 1.25f : _automapZoom / 1.25f, 0.25f, 4.0f);
-}
-
-void ColonyEngine::drawAutomapCryoMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 2);
-	const int dx[4] = { x, x + r, x, x - r };
-	const int dy[4] = { y - r, y, y + r, y };
-	for (int i = 0; i < 4; i++) {
-		int x1 = dx[i], y1 = dy[i];
-		int x2 = dx[(i + 1) & 3], y2 = dy[(i + 1) & 3];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	}
-
-	const int cr = MAX(r / 3, 1);
-	if (x - cr >= clip.left && x + cr < clip.right && y - cr >= clip.top && y + cr < clip.bottom)
-		_gfx->fillEllipse(x, y, cr, cr, color);
-}
-
-// Octagon with a waistband, echoing the booth shape drawn in the 3D view.
-void ColonyEngine::drawAutomapTeleportMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 3);
-	const int k = MAX(r * 2 / 5, 1);
-	const int dx[8] = { -k,  k,  r,  r,  k, -k, -r, -r };
-	const int dy[8] = { -r, -r, -k,  k,  r,  r,  k, -k };
-	for (int i = 0; i < 8; i++) {
-		int x1 = x + dx[i], y1 = y + dy[i];
-		int x2 = x + dx[(i + 1) & 7], y2 = y + dy[(i + 1) & 7];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	}
-
-	int bx1 = x - r, by1 = y, bx2 = x + r, by2 = y;
-	if (clipLineToRect(bx1, by1, bx2, by2, clip))
-		_gfx->drawLine(bx1, by1, bx2, by2, color);
-}
-
-// Open-topped carriage: the only marker with a gap, so it reads at any zoom.
-void ColonyEngine::drawAutomapForkliftMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 3);
-	const int seg[4][4] = {
-		{ -r, -r, -r,  r },
-		{  r, -r,  r,  r },
-		{ -r,  r,  r,  r },
-		{ -r,  0,  r,  0 }
-	};
-	for (int i = 0; i < 4; i++) {
-		int x1 = x + seg[i][0], y1 = y + seg[i][1];
-		int x2 = x + seg[i][2], y2 = y + seg[i][3];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	}
-}
-
-// display.c: the queen's glyph is a box with one side left open.
-void ColonyEngine::drawAutomapQueenMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 2);
-	const int seg[3][4] = {
-		{ -r, -r,  r, -r },
-		{ -r,  r,  r,  r },
-		{ -r, -r, -r,  r }
-	};
-	for (int i = 0; i < 3; i++) {
-		int x1 = x + seg[i][0], y1 = y + seg[i][1];
-		int x2 = x + seg[i][2], y2 = y + seg[i][3];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	}
-}
-
-// display.c: the snoop is the one robot plotted at its exact position and with
-// a whisker showing where it is headed.
-void ColonyEngine::drawAutomapSnoopMarker(int x, int y, int halfSize, int dirX, int dirY, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 2);
-	const int dx[4] = { 0,  r, 0, -r };
-	const int dy[4] = { -r, 0, r,  0 };
-	for (int i = 0; i < 4; i++) {
-		int x1 = x + dx[i], y1 = y + dy[i];
-		int x2 = x + dx[(i + 1) & 3], y2 = y + dy[(i + 1) & 3];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	}
-
-	int hx1 = x, hy1 = y, hx2 = x + dirX, hy2 = y + dirY;
-	if (clipLineToRect(hx1, hy1, hx2, hy2, clip))
-		_gfx->drawLine(hx1, hy1, hx2, hy2, color);
-}
-
-// display.c drawmap(): drones and soldiers are an X, every other robot a cross.
-void ColonyEngine::drawAutomapDroneMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 2);
-	int x1 = x - r, y1 = y - r, x2 = x + r, y2 = y + r;
-	if (clipLineToRect(x1, y1, x2, y2, clip))
-		_gfx->drawLine(x1, y1, x2, y2, color);
-	x1 = x - r; y1 = y + r; x2 = x + r; y2 = y - r;
-	if (clipLineToRect(x1, y1, x2, y2, clip))
-		_gfx->drawLine(x1, y1, x2, y2, color);
-}
-
-void ColonyEngine::drawAutomapRobotMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 2);
-	int x1 = x - r, y1 = y, x2 = x + r, y2 = y;
-	if (clipLineToRect(x1, y1, x2, y2, clip))
-		_gfx->drawLine(x1, y1, x2, y2, color);
-	x1 = x; y1 = y - r; x2 = x; y2 = y + r;
-	if (clipLineToRect(x1, y1, x2, y2, clip))
-		_gfx->drawLine(x1, y1, x2, y2, color);
-}
-
-// Furniture is the most numerous mark, so it stays a quiet solid pip rather than
-// another outline competing with the robot and vehicle glyphs.
-void ColonyEngine::drawAutomapObjectMarker(int x, int y, int halfSize, uint32 color, const Common::Rect &clip) {
-	if (x < clip.left || x >= clip.right || y < clip.top || y >= clip.bottom)
-		return;
-
-	const int r = MAX(halfSize, 1);
-	const int l = MAX<int>(clip.left, x - r);
-	const int t = MAX<int>(clip.top, y - r);
-	const int rt = MIN<int>(clip.right, x + r + 1);
-	const int b = MIN<int>(clip.bottom, y + r + 1);
-	if (l < rt && t < b)
-		_gfx->fillRect(Common::Rect(l, t, rt, b), color);
-}
-
-void ColonyEngine::drawAutomap() {
-	if (_level < 1 || _level > 8)
-		return;
-
-	const int lv = _level - 1;
-	const bool isMac = isMacRenderMode();
-	const bool macColor = isMacColorMode();
-
-	const Common::Rect vp(0, _menuBarHeight, _width, _height);
-	const int vpW = vp.width();
-	const int vpH = vp.height();
-	if (vpW <= 0 || vpH <= 0)
-		return;
-
-	// Match the minimap: B&W Mac is white background + black lines, like the
-	// compass area; color Mac keeps its tinted background.
-	_gfx->fillRect(vp, macColor ? 0xFFA0D0FF : (isMac ? packRGB(255, 255, 255) : 15));
-	_gfx->drawRect(vp, 0);
-
-	const int baseExt = MIN(vpW, vpH) / 12;
-	if (baseExt < 8)
-		return;
-
-	// Cells are projected relative to the player, so scaling lExt zooms about him.
-	const int lExt = CLIP<int>((int)(baseExt * _automapZoom + 0.5f), 4, MIN(vpW, vpH));
-
-	const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
-	const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
-	const int ccx = (vp.left + vp.right) >> 1;
-	const int ccy = (vp.top + vp.bottom) >> 1;
-	const uint8 mapAngle = _me.look;
-	const int tsin = _sint[mapAngle];
-	const int tcos = _cost[mapAngle];
-	const uint32 lineColor = 0;
-
-	const int radius = MIN(31, (int)(sqrtf((float)(vpW * vpW + vpH * vpH)) / (2.0f * lExt)) + 2);
-	const int px = _me.xindex;
-	const int py = _me.yindex;
-	auto scaleR = [&](int r, int minR) { return CLIP<int>(r * lExt / baseExt, minR, r * 2); };
-	const int markerR = scaleR(isMac ? 5 : 3, 2);
-	const int foodR = scaleR(isMac ? 3 : 2, 1);
-	const int cryoR = scaleR(isMac ? 7 : 5, 3);
-	const int teleR = scaleR(isMac ? 6 : 4, 3);
-	const int forkR = scaleR(isMac ? 6 : 4, 3);
-	const int queenR = scaleR(isMac ? 5 : 3, 2);
-	const int snoopR = scaleR(isMac ? 4 : 3, 2);
-	const int objR = scaleR(isMac ? 2 : 2, 1);
-
-	for (int dy = -radius; dy <= radius; dy++) {
-		for (int dx = -radius; dx <= radius; dx++) {
-			const int cx = px + dx;
-			const int cy = py + dy;
-			if (cx < 0 || cx >= 32 || cy < 0 || cy >= 32)
-				continue;
-			if (!_visited[lv][cx][cy])
-				continue;
-
-			int x0, y0, x1, y1, x2, y2, x3, y3;
-			automapCellCorner(dx, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x0, y0);
-			automapCellCorner(dx + 1, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x1, y1);
-			automapCellCorner(dx + 1, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x2, y2);
-			automapCellCorner(dx, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x3, y3);
-
-			if (_wall[cx][cy] & 0x01)
-				automapDrawWallWithFeature(vp, x0, y0, x1, y1, automapWallFeature(cx, cy, kDirSouth), lExt, lineColor);
-			if (_wall[cx][cy] & 0x02)
-				automapDrawWallWithFeature(vp, x0, y0, x3, y3, automapWallFeature(cx, cy, kDirWest), lExt, lineColor);
-			if (cy + 1 < 32 && (_wall[cx][cy + 1] & 0x01))
-				automapDrawWallWithFeature(vp, x3, y3, x2, y2, automapWallFeature(cx, cy, kDirNorth), lExt, lineColor);
-			if (cx + 1 < 32 && (_wall[cx + 1][cy] & 0x02))
-				automapDrawWallWithFeature(vp, x1, y1, x2, y2, automapWallFeature(cx, cy, kDirEast), lExt, lineColor);
-
-			const int mx = (x0 + x2) >> 1;
-			const int my = (y0 + y2) >> 1;
-			const bool inRadar = (ABS(dx) <= 6 && ABS(dy) <= 6);
-			const uint8 rnum = _robotArray[cx][cy];
-			if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive) {
-				const Thing &mapObj = _objects[rnum - 1];
-				// Robots and eggs are radar contacts; furniture never moves, so it
-				// keeps its mark in every cell already visited.
-				const bool isRobot = mapObj.type >= kRobEye && mapObj.type <= kRobSnoop;
-				if (!isRobot || inRadar) {
-					if (mapObj.type == kObjCryo)
-						drawAutomapCryoMarker(mx, my, cryoR, lineColor, vp);
-					else if (mapObj.type == kObjTeleport)
-						drawAutomapTeleportMarker(mx, my, teleR, lineColor, vp);
-					else if (mapObj.type == kObjForkLift)
-						drawAutomapForkliftMarker(mx, my, forkR, lineColor, vp);
-					else if (mapObj.type == kRobQueen)
-						drawAutomapQueenMarker(mx, my, queenR, lineColor, vp);
-					else if (mapObj.type == kRobSnoop) {
-						const int32 sox = xloc + ((((int32)dx << 8) + (mapObj.where.xloc - (cx << 8))) * lExt >> 8);
-						const int32 soy = yloc + ((((int32)dy << 8) + (mapObj.where.yloc - (cy << 8))) * lExt >> 8);
-						const int sx = ccx + (int)((sox * tsin - soy * tcos) >> 8);
-						const int sy = ccy - (int)((soy * tsin + sox * tcos) >> 8);
-						const uint8 sa = (uint8)(mapObj.where.ang + 32);
-						const int ux = (_cost[sa] * tsin - _sint[sa] * tcos) >> 8;
-						const int uy = -((_sint[sa] * tsin + _cost[sa] * tcos) >> 8);
-						const int len = MAX(snoopR * 4 / 3, 2);
-						drawAutomapSnoopMarker(sx, sy, snoopR, ux * len / 64, uy * len / 64, lineColor, vp);
-					} else if (mapObj.type == kRobDrone || mapObj.type == kRobSoldier)
-						drawAutomapDroneMarker(mx, my, markerR, lineColor, vp);
-					else if (isRobot)
-						drawAutomapRobotMarker(mx, my, markerR, lineColor, vp);
-					else
-						drawAutomapObjectMarker(mx, my, objR, lineColor, vp);
-				}
-			}
-			if (inRadar && _foodArray[cx][cy] > 0)
-				drawMiniMapMarker(mx, my, foodR, lineColor, isMac, &vp);
-		}
-	}
-
-	// Player eye icon at center
-	const int eyeRx = lExt >> 2;
-	const int eyeRy = lExt >> 3;
-	_gfx->drawEllipse(ccx, ccy, eyeRx, eyeRy, lineColor);
-	_gfx->fillEllipse(ccx, ccy, eyeRx >> 1, eyeRy, lineColor);
-}
-// inits.c: fl_icon[i] = GetIcon(i+1) — 32x32 1-bit ICON resources 1-5.
-// display.c PlotIcon: 1-bits are drawn black, 0-bits take the RGBBackColor —
-// white for the empty fork, the carried object's body color otherwise.
-void ColonyEngine::loadForkliftIcons() {
-	_flIconsLoaded = true;
-
-	// c_box1, c_cryo, c_teleport, c_ccore
-	static const int kBgColorIdx[5] = { -1, 84, 90, 93, 111 };
-	const uint32 white = packRGB(255, 255, 255);
-	const uint32 black = packRGB(0, 0, 0);
-
-	for (int i = 0; i < 5; i++) {
-		Common::SeekableReadStream *s = nullptr;
-		if (_colorResMan && _colorResMan->hasResFork())
-			s = _colorResMan->getResource(MKTAG('I', 'C', 'O', 'N'), i + 1);
-		if (!s && _resMan)
-			s = _resMan->getResource(MKTAG('I', 'C', 'O', 'N'), i + 1);
-		if (!s || s->size() < 128) {
-			delete s;
-			continue;
-		}
-
-		byte bits[128];
-		s->read(bits, 128);
-		delete s;
-
-		uint32 bg = white;
-		if (kBgColorIdx[i] >= 0 && isMacColorMode())
-			bg = packMacColor(_macColors[kBgColorIdx[i]].bg);
-
-		Graphics::Surface *surf = new Graphics::Surface();
-		surf->create(32, 32, renderColorFormat());
-		for (int y = 0; y < 32; y++) {
-			for (int x = 0; x < 32; x++) {
-				const bool on = (bits[y * 4 + (x >> 3)] >> (7 - (x & 7))) & 1;
-				surf->setPixel(x, y, on ? black : bg);
-			}
-		}
-		_flIconSurf[i] = surf;
-	}
-}
-
-void ColonyEngine::drawForkliftOverlay() {
-	if (_fl <= 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
-		return;
-
-	// Original display.c: two diagonal fork arm lines when fl > 0.
-	// Left arm:  (centerX/4, 0) to (centerX/2, Height)
-	// Right arm: (Width - centerX/4, 0) to (Width - centerX/2, Height)
-	// Drawn with PenSize(2,2) in black (white pen pattern in battle mode).
-	const int left = _screenR.left;
-	const int top = _screenR.top;
-	const int w = _screenR.width();
-	const int h = _screenR.height();
-	const int cx = w / 2;
-	const bool isMac = isMacRenderMode();
-	const bool battle = (_gameMode == kModeBattle);
-	const uint32 color = isMac ? (battle ? packRGB(255, 255, 255) : packRGB(0, 0, 0))
-		: (battle ? 15 : 0);
-
-	const int tx2 = cx >> 2;  // centerX/4
-	const int tx1 = cx >> 1;  // centerX/2
-
-	// Left fork arm
-	_gfx->drawLine(left + tx2, top, left + tx1, top + h - 1, color);
-	_gfx->drawLine(left + tx2 + 1, top, left + tx1 + 1, top + h - 1, color);
-	// Right fork arm
-	_gfx->drawLine(left + w - tx2, top, left + w - tx1, top + h - 1, color);
-	_gfx->drawLine(left + w - tx2 - 1, top, left + w - tx1 - 1, top + h - 1, color);
-
-	// Fork status: fl==1 → empty fork, fl==2 → carried object type.
-	int fnum = 0;
-	if (_fl != 1) {
-		switch (_carryType) {
-		case kObjBox1:
-		case kObjBox2:     fnum = 1; break;
-		case kObjCryo:     fnum = 2; break;
-		case kObjTeleport: fnum = 3; break;
-		case kObjReactor:  fnum = 4; break;
-		default: break;
-		}
-	}
-
-	if (isMac) {
-		// display.c: PlotIcon(&fl_rect, fl_icon[fnum]);
-		// inits.c: fl_rect = (32, Height-64)-(64, Height-32), window-local.
-		if (!_flIconsLoaded)
-			loadForkliftIcons();
-		if (_flIconSurf[fnum])
-			_gfx->drawSurface(_flIconSurf[fnum], left + 32, _screenR.bottom - 64);
-	} else {
-		// IBM_DISP.C: framed white box at the bottom center naming the
-		// fork state, black text on vINTWHITE.
-		static const char *fltext[5] = { "EMPTY", "BOX", "CRYO", "TELEPORT", "REACTOR" };
-		Graphics::DosFont font;
-		const int half = 4 + font.getStringWidth(fltext[fnum]) / 2;
-		const Common::Rect r(_centerX - half, _screenR.bottom - 15, _centerX + half, _screenR.bottom - 1);
-		_gfx->fillRect(r, 15);
-		_gfx->drawRect(r, 0);
-		_gfx->drawString(&font, fltext[fnum], _centerX,
-			_screenR.bottom - 8 - font.getFontHeight() / 2, 0, Graphics::kTextAlignCenter);
-	}
-}
-
-void ColonyEngine::drawCrosshair() {
-	// display.c / IBM_DISP.C: "if(fl){...} else if(crosshair)" — no aim
-	// crosshair while driving the forklift (you cannot shoot from it).
-	if (!_crosshair || _fl > 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
-		return;
-
-	const bool isMac = isMacRenderMode();
-	if (isMac && _cursorShoot && !_mouseLocked && _weapons > 0)
-		return;
-
-	uint32 color;
-	if (isMac) {
-		// Mac: black when powered, gray when no weapons, white when armed but no power
-		// B&W: no gray, so powered=black, else white
-		if (isMacColorMode())
-			color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0)
-				: (_weapons > 0) ? packRGB(255, 255, 255) : packRGB(128, 128, 128);
-		else
-			color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0) : packRGB(255, 255, 255);
-	} else {
-		// IBM_DISP.C: powered → color_cursor=realcolor[vBLACK]=0
-		//             unpowered → color_cursor=realcolor[vWHITE]=15
-		color = (_corePower[_coreIndex] > 0) ? 0 : 15;
-	}
-
-	const int cx = _centerX;
-	const int cy = _centerY;
-
-	// Mac display.c: fixed ±20/±30 pixel crosshair.
-	// DOS IBM_DISP.C: uses pix_per_Qinch (24/18) and pix_per_Finch (36/27).
-	const int qx = isMac ? 20 : _pQx;
-	const int qy = isMac ? 20 : _pQy;
-	const int fx = isMac ? 30 : ((_pQx * 3) >> 1);
-	const int fy = isMac ? 30 : ((_pQy * 3) >> 1);
-	auto drawCrossLine = [&](int x1, int y1, int x2, int y2) {
-		if (clipLineToRect(x1, y1, x2, y2, _screenR))
-			_gfx->drawLine(x1, y1, x2, y2, color);
-	};
-
-	if (_weapons > 0) {
-		// Original IBM_DISP.C: two bracket shapes (left + right)
-		// insight: inner edge at pQx, outer edge at pFinch_x, height pQy..pFinch_y
-		// normal: inner edge at pQx, outer edge at pFinch_x, height pFinch_y
-		const int yTop = _insight ? (cy - qy) : (cy - fy);
-		const int yBottom = _insight ? (cy + qy) : (cy + fy);
-
-		// Left bracket: top-left corner down to bottom-left
-		drawCrossLine(cx - qx, yTop, cx - fx, yTop);
-		drawCrossLine(cx - fx, yTop, cx - fx, yBottom);
-		drawCrossLine(cx - fx, yBottom, cx - qx, yBottom);
-		// Right bracket: top-right corner down to bottom-right
-		drawCrossLine(cx + qx, yTop, cx + fx, yTop);
-		drawCrossLine(cx + fx, yTop, cx + fx, yBottom);
-		drawCrossLine(cx + fx, yBottom, cx + qx, yBottom);
-		_insight = false;
-	} else {
-		// Original IBM_DISP.C: simple cross ±pix_per_Qinch from center
-		drawCrossLine(cx - qx, cy, cx + qx, cy);
-		drawCrossLine(cx, cy - qy, cx, cy + qy);
-	}
-}
-
-void ColonyEngine::inform(const char *text, bool hold) {
-	if (isMacRenderMode()) {
-		Common::Array<Common::String> lines;
-		lines.push_back(text);
-		Graphics::ManagedSurface *background = hold ? captureMessageBackground(_gfx, _width, _height) : nullptr;
-		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY, lines,
-				Graphics::kTextAlignCenter, isMacColorMode(), -1, nullptr, false, kMacInformWindow)) {
-			if (hold) {
-				waitForMessageInput();
-				restoreMessageBackground(_gfx, background);
-			}
-			return;
-		}
-		restoreMessageBackground(_gfx, background);
-		background = nullptr;
-	}
-
-	const char *msg[3];
-	msg[0] = text;
-	msg[1] = hold ? "-Press Any Key to Continue-" : nullptr;
-	msg[2] = nullptr;
-	printMessage(msg, hold);
-}
-
-void ColonyEngine::printMessage(const char *text[], bool hold) {
-	int numLines = 0;
-	int width = 0;
-	Graphics::DosFont font;
-	Common::Array<Common::String> lines;
-
-	while (text[numLines] != nullptr) {
-		lines.push_back(text[numLines]);
-		int w = font.getStringWidth(text[numLines]);
-		if (w > width)
-			width = w;
-		numLines++;
-	}
-
-	Graphics::ManagedSurface *background = hold ? captureMessageBackground(_gfx, _width, _height) : nullptr;
-	if (isMacRenderMode() && drawMacTextPopup(_wm, _gfx,
-			_width, _height, _centerX, _centerY, lines, Graphics::kTextAlignCenter, isMacColorMode())) {
-		if (hold) {
-			waitForMessageInput();
-			restoreMessageBackground(_gfx, background);
-		}
-		return;
-	}
-
-	Common::Rect rr;
-	rr.top = _centerY - (numLines + 1) * _pQy;
-	rr.bottom = _centerY + (numLines + 1) * _pQy;
-	rr.left = _centerX - width / 2 - 2 * _pQx;
-	rr.right = _centerX + width / 2 + 2 * _pQx;
-
-	_gfx->fillDitherRect(_screenR, 0, 15);
-	makeMessageRect(rr);
-
-	int start;
-	int step;
-	if (numLines > 1) {
-		start = rr.top + _pQy * 2;
-		step = (rr.height() - _pQy * 4) / (numLines - 1);
-	} else {
-		start = (rr.top + rr.bottom) / 2;
-		step = 0;
-	}
-
-	for (int i = 0; i < numLines; i++) {
-		_gfx->drawString(&font, text[i], (rr.left + rr.right) / 2, start + i * step, 0, Graphics::kTextAlignCenter);
-	}
-
-	_gfx->copyToScreen();
-
-	if (hold) {
-		waitForMessageInput();
-		restoreMessageBackground(_gfx, background);
-	}
-}
-
-void ColonyEngine::makeMessageRect(Common::Rect &rr) {
-	_gfx->fillRect(rr, 15);
-	_gfx->drawRect(rr, 0);
-	Common::Rect inner = rr;
-	inner.grow(-2);
-	_gfx->drawRect(inner, 0);
-}
-
-void ColonyEngine::doText(int entry, int center) {
-	Common::Rect messageSource = _messageSourceRect;
-	_messageSourceRect = Common::Rect();
-	if (messageSource.isEmpty())
-		messageSource = _screenR;
-
-	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path("T.DAT"));
-	if (!file)
-		file = Common::MacResManager::openFileOrDataFork(Common::Path("Tdata"));
-	if (!file) {
-		warning("doText: Could not open text file");
-		return;
-	}
-
-	uint32 entries = file->readUint32BE();
-	if (entry < 0 || (uint32)entry >= entries) {
-		warning("doText: Entry %d out of range (max %d)", entry, entries);
-		delete file;
-		return;
-	}
-
-	file->seek(4 + entry * 8);
-	uint32 offset = file->readUint32BE();
-	uint16 ch = file->readUint16BE();
-	uint16 textLineCount = file->readUint16BE();
-
-	if (ch == 0) {
-		delete file;
-		return;
-	}
-
-	byte *page = new byte[ch + 1];
-	file->seek(offset);
-	file->read(page, ch);
-	delete file;
-	page[ch] = 0;
-
-	// Decode: Chain XOR starting from end with '\'
-	page[ch - 1] ^= '\\';
-	for (int n = ch - 2; n >= 0; n--)
-		page[n] ^= page[n + 1];
-
-	Common::Array<Common::String> lineArray;
-	char *p = (char *)page;
-	int start = 0;
-	for (int i = 0; i < ch; i++) {
-		if (p[i] == '\r' || p[i] == '\n') {
-			lineArray.push_back(Common::String(&p[start], i - start));
-			if (p[i] == '\r' && i + 1 < ch && p[i + 1] == '\n')
-				i++;
-			start = i + 1;
-		}
-	}
-	if (start < ch)
-		lineArray.push_back(Common::String(&p[start], ch - start));
-
-	// Preserve indexed blank lines without adding a trailing empty field.
-	if (textLineCount > 0) {
-		lineArray.resize(textLineCount);
-	}
-
-	Graphics::ManagedSurface *background = captureMessageBackground(_gfx, _width, _height);
-	auto restoreBackground = [&]() {
-		if (background) {
-			restoreMessageBackground(_gfx, background);
-			background = nullptr;
-		} else {
-			_gfx->fillRect(_screenR, 0);
-			_gfx->copyToScreen();
-		}
-	};
-
-	auto waitForLineSound = [&]() {
-		while (_sound->isPlaying() && !shouldQuit()) {
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RETURN_TO_LAUNCHER:
-					quitGame();
-					return false;
-				case Common::EVENT_SCREEN_CHANGED:
-					_gfx->computeScreenViewport();
-					break;
-				default:
-					break;
-				}
-			}
-			_system->updateScreen();
-			_system->delayMillis(10);
-		}
-		return !shouldQuit();
-	};
-
-	if (isMacRenderMode()) {
-		const Graphics::TextAlign align = center == 1 ?
-			Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-		Common::Rect popupBounds;
-
-		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
-				lineArray, align, isMacColorMode(), 0, &popupBounds, true)) {
-			animateMacZoom(_gfx, _system, messageSource, popupBounds);
-
-			if (center == 2) {
-				// PlayDiDit waits for the previous cue before each line.
-				drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
-					lineArray, align, isMacColorMode(), 0);
-				for (uint i = 0; i < lineArray.size(); ++i) {
-					if (!waitForLineSound()) {
-						restoreBackground();
-						delete[] page;
-						return;
-					}
-					_sound->play(Sound::kDiDit);
-					drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
-						lineArray, align, isMacColorMode(), i + 1);
-				}
-			} else {
-				drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY,
-					lineArray, align, isMacColorMode());
-			}
-
-			waitForMessageInput();
-			restoreBackground();
-			if (!shouldQuit())
-				animateMacZoom(_gfx, _system, popupBounds, messageSource);
-			delete[] page;
-			return;
-		}
-	}
-
-	const bool cursorWasVisible = CursorMan.isVisible();
-	CursorMan.showMouse(false);
-	auto finishDosMessage = [&]() {
-		restoreBackground();
-		CursorMan.showMouse(cursorWasVisible);
-	};
-
-	Graphics::DosFont font;
-	int width = 0;
-	for (uint i = 0; i < lineArray.size(); i++) {
-		int w = font.getStringWidth(lineArray[i]);
-		if (w > width)
-			width = w;
-	}
-	const char *kpress = "-Press Any Key to Continue-";
-	int kw = font.getStringWidth(kpress);
-	if (kw > width)
-		width = kw;
-	width += 12;
-
-	int lineheight = 14;
-	int maxlines = MAX(1, (_screenR.height() / lineheight) - 1);
-	if (maxlines > (int)lineArray.size())
-		maxlines = lineArray.size();
-
-	// DOS DOTEXT.C: r positioned at (cX ± wdth, cY ± ((maxlines+1)*7 + 4))
-	// then offset by (+3,+3) for shadow. 3 nested FrameRects shrinking by 1.
-	const int halfH = ((maxlines + 1) * (lineheight / 2)) + 4;
-	Common::Rect r;
-	r.left = _centerX - (width / 2) + 3;
-	r.right = _centerX + (width / 2) + 3;
-	r.top = _centerY - halfH + 3;
-	r.bottom = _centerY + halfH + 3;
-
-	// DoGray(): dither the viewport background
-	_gfx->fillDitherRect(_screenR, 0, 15);
-
-	// 3 nested FrameRects (shadow), then erase interior + final frame
-	for (int i = 0; i < 3; i++) {
-		_gfx->drawRect(r, 0);
-		r.translate(-1, -1);
-	}
-	_gfx->fillRect(r, 15);
-	_gfx->drawRect(r, 0);
-	if (center == 2)
-		_gfx->copyToScreen();
-
-	// Draw first page of text
-	for (int i = 0; i < maxlines; i++) {
-		_gfx->drawString(&font, lineArray[i], r.left + 3, r.top + 4 + i * lineheight, 0);
-		if (center == 2) {
-			_gfx->copyToScreen();
-			_sound->play(Sound::kDit);
-			if (!waitForLineSound()) {
-				finishDosMessage();
-				delete[] page;
-				return;
-			}
-		}
-	}
-
-	// Show "More" or "Press Any Key" prompt
-	const bool hasMore = ((int)lineArray.size() > maxlines);
-	_gfx->drawString(&font, hasMore ? "-Press Any Key For More...-" : kpress,
-		(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
-	_gfx->copyToScreen();
-	if (!waitForMessageInput()) {
-		finishDosMessage();
-		delete[] page;
-		return;
-	}
-
-	// Second page: if text was truncated, show remainder
-	// DOS DOTEXT.C: starts from maxlines-1 (repeats last line of page 1 for context)
-	if (hasMore) {
-		_gfx->fillRect(r, 15);
-		_gfx->drawRect(r, 0);
-		if (center == 2)
-			_gfx->copyToScreen();
-		int pageStart = maxlines - 1;
-		for (int i = pageStart; i < (int)lineArray.size() && (i - pageStart) < maxlines; i++) {
-			_gfx->drawString(&font, lineArray[i], r.left + 3,
-				r.top + 6 + (1 + i - pageStart) * lineheight, 0);
-			if (center == 2) {
-				_gfx->copyToScreen();
-				_sound->play(Sound::kDit);
-				if (!waitForLineSound()) {
-					finishDosMessage();
-					delete[] page;
-					return;
-				}
-			}
-		}
-		_gfx->drawString(&font, kpress,
-			(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
-		_gfx->copyToScreen();
-		if (!waitForMessageInput()) {
-			finishDosMessage();
-			delete[] page;
-			return;
-		}
-	}
-
-	finishDosMessage();
-	delete[] page;
-}
-
-bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const {
-	if (clip.left >= clip.right || clip.top >= clip.bottom)
-		return false;
-	const int l = clip.left;
-	const int r = clip.right - 1;
-	const int t = clip.top;
-	const int b = clip.bottom - 1;
-	auto outCode = [&](int x, int y) {
-		int code = 0;
-		if (x < l)
-			code |= (1 << 0);
-		else if (x > r)
-			code |= (1 << 1);
-		if (y < t)
-			code |= (1 << 2);
-		else if (y > b)
-			code |= (1 << 3);
-		return code;
-	};
-
-	int c1 = outCode(x1, y1);
-	int c2 = outCode(x2, y2);
-	while (true) {
-		if ((c1 | c2) == 0)
-			return true;
-		if (c1 & c2)
-			return false;
-
-		const int cOut = c1 ? c1 : c2;
-		int x = 0;
-		int y = 0;
-		if (cOut & 8) {
-			if (y2 == y1)
-				return false;
-			x = x1 + (x2 - x1) * (b - y1) / (y2 - y1);
-			y = b;
-		} else if (cOut & 4) {
-			if (y2 == y1)
-				return false;
-			x = x1 + (x2 - x1) * (t - y1) / (y2 - y1);
-			y = t;
-		} else if (cOut & 2) {
-			if (x2 == x1)
-				return false;
-			y = y1 + (y2 - y1) * (r - x1) / (x2 - x1);
-			x = r;
-		} else {
-			if (x2 == x1)
-				return false;
-			y = y1 + (y2 - y1) * (l - x1) / (x2 - x1);
-			x = l;
-		}
-
-		if (cOut == c1) {
-			x1 = x;
-			y1 = y;
-			c1 = outCode(x1, y1);
-		} else {
-			x2 = x;
-			y2 = y;
-			c2 = outCode(x2, y2);
-		}
-	}
-}
-
-} // End of namespace Colony
+... [Content truncated]

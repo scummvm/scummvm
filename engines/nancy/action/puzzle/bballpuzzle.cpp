@@ -34,15 +34,9 @@ namespace Nancy {
 namespace Action {
 
 void BBallPuzzle::init() {
-	Common::Rect screenBounds = NancySceneState.getViewport().getBounds();
-	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphics->getInputPixelFormat());
-	_drawSurface.clear(g_nancy->_graphics->getTransColor());
-	setTransparent(true);
-	setVisible(true);
-	moveTo(screenBounds);
+	initViewportSurface();
 
-	g_nancy->_resource->loadImage(_imageName, _image);
-	_image.setTransparentColor(_drawSurface.getTransparentColor());
+	loadImage();
 
 	// Set up flags
 	if (NancySceneState.getEventFlag(_goodShootFlag, g_nancy->_true)) {
@@ -67,7 +61,8 @@ void BBallPuzzle::init() {
 
 		NancySceneState.setEventFlag(_playerPositionFlags[_curPosition], g_nancy->_true);
 	} else {
-		// Last shot did not enter the hoop, reset to initial position
+		// Last shot 
+did not enter the hoop, reset to initial position
 		NancySceneState.setEventFlag(_playerPositionFlags[0], g_nancy->_true);
 
 		for (uint i = 1; i < _playerPositionFlags.size(); ++i) {
@@ -141,7 +136,8 @@ void BBallPuzzle::readData(Common::SeekableReadStream &stream) {
 	_winFlag = stream.readUint16LE();
 
 	_exitScene.readData(stream);
-	readRect(stream, _exitHotspot);
+	readR
+ect(stream, _exitHotspot);
 }
 
 void BBallPuzzle::execute() {
@@ -149,6 +145,7 @@ void BBallPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+		NancySceneState.setNoHeldItem();
 
 		g_nancy->_sound->loadSound(_plusSound);
 		g_nancy->_sound->loadSound(_minusSound);
@@ -212,7 +209,8 @@ void BBallPuzzle::execute() {
 
 		g_nancy->_sound->stopSound(_plusSound);
 		g_nancy->_sound->stopSound(_minusSound);
-		g_nancy->_sound->stopSound(_shootSound);
+		g_nancy->_sound->stopSound(_s
+hootSound);
 
 		finishExecution();
 	}
@@ -223,9 +221,7 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpPos = NancySceneState.getViewport().getScreenPosition();
 	localMousePos -= { vpPos.left, vpPos.top };
 
-	if (_exitHotspot.contains(localMousePos)) {
-		g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
-
+	if (hoverExitHotspot(input)) {
 		if (!_pressedButton &&input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;
 		}
@@ -285,7 +281,8 @@ void BBallPuzzle::handleInput(NancyInput &input) {
 
 		if (!_pressedButton && input.input & NancyInput::kLeftMouseButtonUp) {
 			_drawSurface.blitFrom(_image, _shootButtonSrc, _shootButtonDest);
-			g_nancy->_sound->playSound(_shootSound);
+			g_nancy->_sound->playSou
+nd(_shootSound);
 			_pressedButton = true;
 			_needsRedraw = true;
 			_state = kActionTrigger;
