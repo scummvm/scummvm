@@ -1,0 +1,27 @@
+name: Restore AGS engine to upstream
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Replace engines/ags with upstream version
+        run: |
+          git config user.name "Paolo86cripple"
+          git config user.email "Paolo86cripple@users.noreply.github.com"
+          git remote add upstream https://github.com/scummvm/scummvm.git
+          git fetch upstream master
+          git rm -rq engines/ags
+          git checkout upstream/master -- engines/ags
+          git add engines/ags
+          if git diff --cached --quiet; then
+            echo "AGS already identical to upstream - nothing to do"
+          else
+            git commit -m "AGS: restore engine to upstream master (remove local custom AGS work)"
+            git push origin master
+          fi
