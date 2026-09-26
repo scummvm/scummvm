@@ -731,8 +731,10 @@ Common::Error AGOSEngine::init() {
 			if (_language == Common::EN_ANY || _language == Common::DE_DEU)
 				_subtitles = false;
 			// Other versions require speech to be enabled
-			else
+			else if (!_speech) {
 				_speech = true;
+				_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, 0);
+			}
 		}
 
 		// Default to speech only, if both speech and subtitles disabled
