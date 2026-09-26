@@ -59,7 +59,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 	  _command0AFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0A),
 	  _command0CFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0C),
 	  _command0DFunctor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand0D),
-	  _command11Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand11),
+	  _command11Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom),
 	  _command12Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand12),
 	  _command13Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand13),
 	  _command14Functor(this, &RoomScriptCommandExecutor::executeRoomScriptCommand14),
@@ -144,6 +144,7 @@ RoomScriptCommandExecutor::RoomScriptCommandExecutor(
 Optional<SessionExit> RoomScriptCommandExecutor::execute(uint16 command, int mode,
 														 int16 interactionModeSnapshot) {
 	_interactionModeSnapshot = interactionModeSnapshot;
+	// debug("executing command: %x, mode: %d", command, mode);
 	(*_handlers[static_cast<std::size_t>(command)])(mode);
 	return _requestedSessionExit;
 }
@@ -396,7 +397,7 @@ void RoomScriptCommandExecutor::stopAudioPlayback(int command) {
 	(void)command;
 }
 
-void RoomScriptCommandExecutor::executeRoomScriptCommand11(int mode) {
+void RoomScriptCommandExecutor::executeRoomScriptCommand11ChangeRoom(int mode) {
 	int commandOffset = _state.RoomScriptStartOffset;
 
 	// Ghidra 0x00004F0E-0x00004F11: scan mode skips every state and presentation effect.

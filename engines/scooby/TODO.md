@@ -3,6 +3,8 @@ Scooby-Doo Mystery Todo List
 
 - [ ] Verify both games are completable
   - [ ] Blake's Hotel
+    - [ ] flashlight maze not working
+    - [ ] mine cart loses wheels after descending into mine
   - [ ] Ha Ha carnival
 - [ ] Mouse only control scheme
 - [ ] Add Music and Sfx support
