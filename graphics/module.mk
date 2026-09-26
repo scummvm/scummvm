@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	fonts/bgifont.o \
 	fonts/consolefont.o \
 	fonts/dosfont.o \
+	fonts/fallbackfont.o \
 	fonts/freetype.o \
 	fonts/macfont.o \
 	fonts/newfont_big.o \

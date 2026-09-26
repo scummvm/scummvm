@@ -62,6 +62,13 @@ enum WordWrapMode {
 	kWordWrapAllowTrailingWhitespace = 1 << 2 	///< Allow any amount of trailing whitespace before wrapping as it won't be drawn.
 };
 
+/** Results of querying whether a font contains a glyph. */
+enum class GlyphPresence {
+	kUnknown, ///< The font cannot report whether the glyph is present.
+	kAbsent,  ///< The font does not contain the glyph.
+	kPresent  ///< The font contains the glyph.
+};
+
 /**
  * Convert virtual text alignments (start + end)
  * to actual text alignment (left + right + center) for drawing.
@@ -129,6 +136,16 @@ public:
 	 * @return Maximum font width in pixels.
 	 */
 	virtual int getMaxCharWidth() const = 0;
+
+	/**
+	 * Return whether the font contains a glyph for a character.
+	 *
+	 * @param chr  The character to query.
+	 *
+	 * @return The glyph presence reported by the font.
+	 * If it is unknown a value of @ref GlyphPresence::kUnknown is returned.
+	 */
+	virtual GlyphPresence hasGlyph(uint32 chr) const;
 
 	/**
 	 * Return the width of a specific character.
