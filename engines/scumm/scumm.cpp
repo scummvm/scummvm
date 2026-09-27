@@ -1069,8 +1069,10 @@ Common::Error ScummEngine::init() {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	}
 
-	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh)
+	if (_game.id == GID_REBEL1 && _game.platform == Common::kPlatformMacintosh) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "REBEL", 0, 2);
+		SearchMan.addSubDirectoryMatching(gameDataDir, "REBELMAC", 0, 2);
+	}
 #endif
 
 	// Extra directories needed for the Steam versions

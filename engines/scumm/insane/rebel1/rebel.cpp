@@ -300,6 +300,9 @@ const char *InsaneRebel1::uiStr(int id) const {
 // local order across builds. Extract them anchored on those neighbors; anything
 // that fails validation keeps its English fallback.
 void InsaneRebel1::loadLocalizedUiStrings() {
+	if (!_release.executable)
+		return;
+
 	Common::File f;
 	if (!f.open(_release.executable))
 		return;

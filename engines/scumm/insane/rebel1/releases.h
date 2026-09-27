@@ -50,6 +50,7 @@ struct Rebel1Release {
 	enum { kNumLevels = 15 };
 
 	const char *variant;
+	// DOS executable supplying UI strings/tuning; null uses built-in defaults.
 	const char *executable;
 	const char *logo;
 	const char *introNotice;
