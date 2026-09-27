@@ -899,6 +899,20 @@ void GotoMenu::execute() {
 	_isDone = true;
 }
 
+HideCursor::~HideCursor() {
+	if (_isHiding) {
+		g_nancy->setMouseEnabled(true);
+	}
+}
+
+void HideCursor::execute() {
+	if (_state == kBegin) {
+		g_nancy->setMouseEnabled(false);
+		_isHiding = true;
+		_state = kRun;
+	}
+}
+
 void LoseGame::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }

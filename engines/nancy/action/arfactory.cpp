@@ -235,7 +235,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new HotMultiframeInvTypeSceneChange();
 		else
-			return nullptr;	//return new HideCursor();	// TODO
+			return new HideCursor();
 	case 28:	// Nancy10
 		return new InteractiveVideo();	// Moved from 26
 	case 29:	// Nancy10

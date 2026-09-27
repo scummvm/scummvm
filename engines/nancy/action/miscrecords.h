@@ -432,6 +432,20 @@ protected:
 	Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
+// Nancy16+. Hides the cursor and blocks mouse input for as long as the record exists.
+class HideCursor : public ActionRecord {
+public:
+	~HideCursor() override;
+
+	void readData(Common::SeekableReadStream &stream) override {}
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "HideCursor"; }
+
+	bool _isHiding = false;
+};
+
 // Nancy16 fade of the viewport to a solid color and back, covering the next scene
 // change. The fade itself is owned by the scene; the record only arms it, waiting
 // for any previous fade to end first.
