@@ -272,7 +272,7 @@ Audio::SeekableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *str
 		// - @ref Audio::SubLoopingAudioStream finite: head -> loop chunk (N times) -> EOF
 		// @ref Audio::SubLoopingAudioStream does not support finite loop semantics, so filter them as a safeguard.
 		// Validate against sampleCount after the optional pop truncation.
-		if (loopInfo && dataChunk.bitsPerSample == 8 && dataChunk.loopCount == 0xFFFF && dataChunk.loopStart < dataChunk.loopEnd && dataChunk.loopEnd <= dataChunk.sampleCount) {
+		if (loopInfo && dataChunk.loopCount == 0xFFFF && dataChunk.loopStart < dataChunk.loopEnd && dataChunk.loopEnd <= dataChunk.sampleCount) {
 			loopInfo->start = dataChunk.loopStart;
 			loopInfo->end = dataChunk.loopEnd;
 		}
