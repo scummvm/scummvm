@@ -115,6 +115,13 @@ void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlo
 		const char *bonusLabel1, const char *detailText1, int bonusValue1,
 		const char *bonusLabel2, const char *detailText2, int bonusValue2,
 		int passwordIndex) {
+	if (!_release.passcodes)
+		passwordIndex = 0;
+	if (!(_release.chapterBonusMask & (1u << (unlockedChapter - 1)))) {
+		bonusLabel1 = bonusLabel2 = nullptr;
+		detailText1 = detailText2 = nullptr;
+		bonusValue1 = bonusValue2 = 0;
+	}
 	beginChapterSummaryOverlay(revealOffsetFromEnd, stopOffsetFromEnd,
 		bonusLabel1, detailText1, bonusValue1,
 		bonusLabel2, detailText2, bonusValue2,
@@ -255,6 +262,11 @@ void InsaneRebel1::clearVideoBuffer() {
 void InsaneRebel1::playIntroSequence() {
 	if (_release.logo)
 		playCinematic(_release.logo);
+	if (shouldAbortGameFlow())
+		return;
+
+	if (_release.introNotice)
+		playCinematic(_release.introNotice);
 	if (shouldAbortGameFlow())
 		return;
 
@@ -623,8 +635,10 @@ bool InsaneRebel1::runLevel6() {
 
 		if (_health >= 0) {
 			char accuracyText[80];
-			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x27, true);
-			const int bonus = calculateThresholdBonus(_killCount, 0x26, 0x0C, _tuning.bonus);
+			const bool tieredBonus = _release.tieredAsteroidChaseBonus;
+			formatTargetAccuracy(accuracyText, sizeof(accuracyText), _killCount, 0x27, !tieredBonus);
+			const int bonus = tieredBonus ? (_killCount >= 30 ? 3 : _killCount >= 20 ? 1 : 0) * _tuning.bonus :
+				calculateThresholdBonus(_killCount, 0x26, 0x0C, _tuning.bonus);
 			playChapterCompleteCinematic("LVL6/L6END.ANM", 6, 0x4B, 5,
 				" ", accuracyText, bonus, nullptr, nullptr, 0, _difficulty + 4);
 			return !shouldAbortGameFlow();

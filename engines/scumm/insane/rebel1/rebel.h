@@ -334,7 +334,7 @@ public:
 private:
 
 	ScummEngine_v7 *_vm;
-	const Rebel1Release &_release;
+	const Rebel1Release _release;
 
 	// Sprite and font banks.
 	RA1SpriteBank _shipBank;
@@ -502,7 +502,9 @@ private:
 		int16 flags;
 	};
 	TuningParams _tuning;
+	Rebel1TuningTable _tuningTable;
 
+	void loadTuningData();
 	void loadTuningForLevel(int level);
 	void resetGameplayFlagsFromTuning();
 
@@ -721,11 +723,6 @@ private:
 	int16 _walkerTimer;
 	int16 _walkerBranchChoice;
 	bool _walkerRoundReplay;
-
-	// Attack window frame numbers per route.
-	static const int16 kWalkerAttackWindow1[3];
-	static const int16 kWalkerAttackWindow2[3];
-	static const int16 kWalkerAttackWindow3[3];
 
 	static const int kFrameObjectStateBytes = 300;
 	byte _frameObjectState[kFrameObjectStateBytes];

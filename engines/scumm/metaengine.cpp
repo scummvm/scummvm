@@ -958,6 +958,15 @@ const ExtraGuiOption enableRebel1NoDamage = {
 	0
 };
 
+const ExtraGuiOption enableRebel1RestoredContent = {
+	_s("Restored content"),
+	_s("Play extra chapters included in the demo's game data but omitted from its original sequence"),
+	"rebel1_restored_content",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -1016,6 +1025,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_NO_DAMAGE)) {
 		options.push_back(enableRebel1NoDamage);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_RESTORED_CONTENT)) {
+		options.push_back(enableRebel1RestoredContent);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

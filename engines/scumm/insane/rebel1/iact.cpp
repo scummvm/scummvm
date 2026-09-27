@@ -461,9 +461,10 @@ inline bool isLevel14Phase2DamageLatch(uint16 code) {
 	}
 }
 
-inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY) {
+inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY, bool earlyShot) {
 	switch (frame) {
 	case 0x00CD:
+		return earlyShot && viewX <= 0x28;
 	case 0x00EF:
 		return viewX <= 0x28;
 	case 0x0294:
@@ -512,10 +513,10 @@ inline bool hasLevel8WalkerHazardRoute2(uint16 frame, int16 viewX, int16 viewY) 
 	}
 }
 
-inline bool hasLevel8WalkerPlayerHit(int route, uint16 frame, int16 viewX, int16 viewY) {
+inline bool hasLevel8WalkerPlayerHit(int route, uint16 frame, int16 viewX, int16 viewY, bool earlyShot) {
 	switch (CLIP<int>(route, 0, 2)) {
 	case 0:
-		return hasLevel8WalkerHazardRoute0(frame, viewX, viewY);
+		return hasLevel8WalkerHazardRoute0(frame, viewX, viewY, earlyShot);
 	case 1:
 		return hasLevel8WalkerHazardRoute1(frame, viewX, viewY);
 	case 2:
@@ -1517,7 +1518,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	if (_currentLevel == 7) {
 		const uint16 walkerFrame = (uint16)_currentSmushFrame;
 		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
-			_perspectiveX, _perspectiveY);
+			_perspectiveX, _perspectiveY, _release.walker->earlyShot);
 		// Player collision and boss damage are tracked separately.
 		if (level8WalkerPlayerHit)
 			_damageFlags |= 0x20;

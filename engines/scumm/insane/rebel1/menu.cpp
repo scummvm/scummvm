@@ -297,15 +297,19 @@ static void drawRebel1MenuFrame(byte *dst, int pitch, int width, int height, int
 }
 
 int InsaneRebel1::getMainMenuItemCount() const {
-	return _unlockAllLevels ? kRA1MainMenuItemCount : kRA1MainMenuItemCount - 1;
+	return kRA1MainMenuItemCount - (_unlockAllLevels ? 0 : 1) - (_release.passcodes ? 0 : 1);
 }
 
 int InsaneRebel1::getMainMenuResultForSelection(int selection) const {
 	if (selection < 0 || selection >= getMainMenuItemCount())
 		return kRA1MainMenuItemCount;
-	if (_unlockAllLevels || selection < 3)
-		return selection + 1;
-	return selection + 2;
+	for (int result = 1; result <= kRA1MainMenuItemCount; ++result) {
+		if ((result == 3 && !_release.passcodes) || (result == 4 && !_unlockAllLevels))
+			continue;
+		if (selection-- == 0)
+			return result;
+	}
+	return kRA1MainMenuItemCount;
 }
 
 void InsaneRebel1::setVirtualKeyboardVisible(bool visible) {
@@ -1129,14 +1133,6 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 		uiStr(kR1StrMenuContinueDemo),
 		uiStr(kR1StrMenuExitToDos)
 	};
-	const char *kMenuItemsLocked[kRA1MainMenuItemCount - 1] = {
-		uiStr(kR1StrMenuNewGame),
-		uiStr(kR1StrMenuGameOptions),
-		uiStr(kR1StrMenuEnterPasscode),
-		uiStr(kR1StrMenuContinueDemo),
-		uiStr(kR1StrMenuExitToDos)
-	};
-	const char *const *menuItems = _unlockAllLevels ? kMenuItems : kMenuItemsLocked;
 	const int mainMenuItemCount = getMainMenuItemCount();
 
 	const char *menuTitle = uiStr(kR1StrMainMenuTitle);
@@ -1145,11 +1141,12 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 	drawMenuTitleText(dst, pitch, width, height, titleX, 30, menuTitle);
 
 	for (int i = 0; i < mainMenuItemCount; i++) {
-		const int textW = getMenuTalkTextWidth(menuItems[i]);
+		const char *text = kMenuItems[getMainMenuResultForSelection(i) - 1];
+		const int textW = getMenuTalkTextWidth(text);
 		const int textX = getRebel1MenuCenteredX(textW);
 		const int y = 0x3c + i * kRA1MenuRowH;
 
-		drawMenuTalkText(dst, pitch, width, height, textX, y, menuItems[i]);
+		drawMenuTalkText(dst, pitch, width, height, textX, y, text);
 
 		if (i == _menuSelection)
 			drawRebel1MenuFrame(dst, pitch, width, height,

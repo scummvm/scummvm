@@ -647,6 +647,11 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (gfp->genMethod == kGenRoomNumSteam || gfp->genMethod == kGenDiskNumSteam)
 			continue;
 
+		// REBEL.EXE is also the launcher for retail Rebel Assault and other
+		// demos. Require a known executable before using a demo's embedded tables.
+		if (!scumm_stricmp(gfp->gameid, "rebel1") && file.equalsIgnoreCase("REBEL.EXE"))
+			continue;
+
 		//  ____            _     ____
 		// |  _ \ __ _ _ __| |_  |___ \ *
 		// | |_) / _` | '__| __|   __) |

@@ -19,23 +19,46 @@
  *
  */
 
+#include "common/stream.h"
 #include "common/textconsole.h"
 #include "scumm/insane/rebel1/releases.h"
 
 namespace Scumm {
 
+static const Rebel1WalkerData kRetailWalker = {
+	{ { 2588, 2323, 877 }, { 1709, 1444, -2 }, { 262, -2, -2 } },
+	2, true
+};
+
+static const Rebel1WalkerData kDemo940413Walker = {
+	{ { 2591, 2324, 878 }, { 1712, 1445, -1 }, { 265, -1, -1 } },
+	1, false
+};
+
+static const byte kDemo940413RestoredLevels[Rebel1Release::kNumLevels] = { 3, 6, 8, 10 };
+
 // Variants match detection_tables.h. Keep release-specific resources and chapter
 // order here so menus, progression and saves use the same content description.
 static const Rebel1Release kReleases[] = {
 	{
-		"", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1OPEN.ANM", "FIN/FNFINAL.ANM", true,
-		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }
+		"", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", nullptr, "OPEN/O1OPEN.ANM", "FIN/FNFINAL.ANM", true, true,
+		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }, nullptr,
+		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
 	},
 	{
 		// CD-ROM Demo v1.51: the original dispatcher skips chapters 3-9 and
 		// 11-15, their transitions, and the retail ending.
-		"Demo v1.51", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1OPEN.ANM", nullptr, false,
-		{ 1, 2, 10 }
+		"Demo v1.51", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", nullptr, "OPEN/O1OPEN.ANM", nullptr, false, true,
+		{ 1, 2, 10 }, nullptr,
+		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
+	},
+	{
+		// The dispatcher at 0x3466 starts at chapter 8, skips 9, and returns
+		// to the menu after 10. Chapters 3 and 6 have complete resources and
+		// handlers, but are only reachable through the original debug keys.
+		"Demo 1994-04-13", "REBEL.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1DEMO.ANM", "OPEN/O1OPEN.ANM", nullptr, false, false,
+		{ 8, 10 }, kDemo940413RestoredLevels,
+		1 << (6 - 1), true, { 0x289dc, 0x1a, 0x222 }, &kDemo940413Walker
 	}
 };
 
@@ -57,7 +80,7 @@ int Rebel1Release::findLevel(int level) const {
 int Rebel1Release::resolvePasscodeLevel(int level) const {
 	// The original sampler advances passcodes past omitted chapters. A code
 	// beyond its last chapter returns to the menu instead of playing the ending.
-	if (level < 1 || level > kNumLevels + 1)
+	if (!passcodes || level < 1 || level > kNumLevels + 1)
 		return 0;
 	for (; level <= kNumLevels; ++level) {
 		if (findLevel(level) >= 0)
@@ -66,12 +89,36 @@ int Rebel1Release::resolvePasscodeLevel(int level) const {
 	return ending ? kNumLevels + 1 : 0;
 }
 
-const Rebel1Release &getRebel1Release(const char *variant) {
+bool Rebel1Release::readTuningData(Common::SeekableReadStream &in, Rebel1TuningTable &table) const {
+	const int64 requiredSize = (int64)tuning.offset +
+		(ARRAYSIZE(table) - 1) * tuning.levelStride +
+		(ARRAYSIZE(table[0]) - 1) * tuning.difficultyStride + sizeof(table[0][0]);
+	if (!tuning.offset || in.size() < requiredSize)
+		return false;
+
+	for (uint level = 0; level < ARRAYSIZE(table); ++level) {
+		for (uint difficulty = 0; difficulty < ARRAYSIZE(table[level]); ++difficulty) {
+			const int64 offset = (int64)tuning.offset +
+				level * tuning.levelStride + difficulty * tuning.difficultyStride;
+			if (!in.seek(offset))
+				return false;
+			for (uint field = 0; field < ARRAYSIZE(table[level][difficulty]); ++field)
+				table[level][difficulty][field] = in.readSint16LE();
+		}
+	}
+	return !in.err() && !in.eos();
+}
+
+Rebel1Release getRebel1Release(const char *variant, bool restoredContent) {
 	if (!variant)
 		variant = "";
 	for (const Rebel1Release &release : kReleases) {
-		if (!strcmp(variant, release.variant))
-			return release;
+		if (!strcmp(variant, release.variant)) {
+			Rebel1Release result = release;
+			if (restoredContent && release.restoredLevels)
+				memcpy(result.levels, release.restoredLevels, sizeof(result.levels));
+			return result;
+		}
 	}
 	error("Unknown Rebel Assault release '%s'", variant);
 }
