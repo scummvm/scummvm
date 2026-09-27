@@ -4,7 +4,9 @@ Thank you for contributing to ScummVM. Please read the following carefully befor
 
 ATTENTION TO AI USERS:
 
-EVERY WORD of your code, comments, commit log messages, PR description, must be re-read by a human and checked for sanity, correctness and common sense. At any sight of AI slop, including lengthy LLM-oriented explanations, your PR will be closed.
+The PR description and commit log messages MUST be written by a human.
+
+EVERY WORD of your code and comments, must be re-read by a human and checked for sanity, correctness and common sense. At any sight of AI slop, including lengthy LLM-oriented explanations, your PR will be closed.
 
 On top of that, we created AI-specific guidelines https://github.com/scummvm/scummvm/blob/master/AI-GUIDELINES.md
 
