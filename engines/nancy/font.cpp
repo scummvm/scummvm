@@ -248,11 +248,31 @@ void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Commo
 
 		temp += *c;
 		int size = getStringWidth(temp) + (lines.size() == 0 ? initWidth : 0);
-		if (size >= maxWidth) {
-			do {
+		if (size > maxWidth) {
+			// Roll back to the previous space so the wrap falls on a word
+			// boundary. The character that overflowed is dropped from temp
+			// and `c` is rewound so the outer ++c re-reads it on the next
+			// line.
+			temp.deleteLastChar();
+			--c;
+			int rewound = 1;
+			while (temp.size() && temp.lastChar() != ' ') {
 				temp.deleteLastChar();
 				--c;
-			} while (temp.size() && temp.lastChar() != ' ');
+				++rewound;
+			}
+
+			if (temp.empty()) {
+				// Word longer than the line width — break at the character
+				// before the overflow so we make forward progress instead
+				// of looping forever on the same char.
+				for (int i = 0; i < rewound; ++i) {
+					++c;
+					temp += *c;
+				}
+				temp.deleteLastChar();
+				--c;
+			}
 
 			lines.push_back(temp);
 			temp.clear();
