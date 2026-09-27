@@ -267,7 +267,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 45:	// Nancy11
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kRandomMovie);
 	case 44:	// Nancy14
-	case 48:	// Nancy16, with a random position
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kMovieWithVolume);
 	case 46:	// Nancy11
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
@@ -279,6 +278,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return new PlaySecondaryMovie(PlaySecondaryMovie::kInteractiveMovie);
 		else
 			return nullptr;	// TODO
+	case 48:	// Nancy16
+		return new PlaySecondaryMovie(PlaySecondaryMovie::kMovieWithRandomPosition);
 	case 50:
 		return new ConversationVideo();
 	case 51:

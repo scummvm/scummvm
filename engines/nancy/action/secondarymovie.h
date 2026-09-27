@@ -103,7 +103,8 @@ public:
 		kSecondaryMovieTerse,	// AR 41, Nancy13 and up
 		kRandomMovie,			// ARs 42, 43, 45
 		kMovieWithVolume,		// AR 44
-		kInteractiveMovie		// AR 47
+		kInteractiveMovie,		// AR 47
+		kMovieWithRandomPosition	// AR 48, Nancy16: AR 44 at a random spot inside its dest rect
 	};
 
 	PlaySecondaryMovie(MovieType movieType);
@@ -121,8 +122,8 @@ public:
 
 	// Enhancement: jump a cinematic straight to its end, as if it had finished
 	// playing on its own. Only cinematics are skipped; background animations
-	// the player isn't waiting on keep playing.
-	void skip();
+	// the player isn't waiting on keep playing. Returns true when skipped.
+	bool skip();
 
 	Common::Path _videoName;
 	Common::Path _paletteName;
@@ -152,6 +153,16 @@ public:
 	// AR 44/47 only; every other record plays at full volume. SetMovieVolume
 	// (AR 150) can change it later.
 	byte _movieVolume = 100;
+
+	// How a kMovieWithRandomPosition movie picks its spot
+	enum RandomPosition : byte {
+		kFixedPosition			= 0,
+		kRandomPositionOnce		= 1,
+		kRandomPositionPerLoop	= 2
+	};
+
+	byte _randomPosition = kFixedPosition;
+	Common::Point _randomOffset;
 
 	// AR 47 "InteractiveVideo" (a PlaySecondaryMovie subclass): the movie's
 	// clickable areas live in an external .iv file, which lists them per movie
@@ -366,6 +377,8 @@ protected:
 	// Crop the last decoded frame with the given video description and move
 	// the movie to its destination. -1 uses the whole frame at its current spot.
 	void applyVideoDesc(int descID);
+	Common::Rect getVideoDescDest(int descID) const;
+	void pickRandomPosition();
 
 	Graphics::ManagedSurface _fullFrame;
 	Graphics::ManagedSurface _maskImage;
