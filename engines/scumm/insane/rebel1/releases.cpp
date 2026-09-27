@@ -67,6 +67,14 @@ static const Rebel1Release kReleases[] = {
 		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
 	},
 	{
+		// PC Media 1 preview: the dispatcher at 0x1496e redirects every
+		// chapter and transition to the intro/menu at 0x151f2. No chapter
+		// assets are supplied; the demo notice precedes the preview movie.
+		"Demo v1.7", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1DEMO.ANM", "OPEN/O1OPEN.ANM", nullptr, false, false,
+		{ 0 }, nullptr,
+		0, false, { 0, 0, 0 }, &kRetailWalker
+	},
+	{
 		// The dispatcher at 0x3466 starts at chapter 8, skips 9, and returns
 		// to the menu after 10. Chapters 3 and 6 have complete resources and
 		// handlers, but are only reachable through the original debug keys.
