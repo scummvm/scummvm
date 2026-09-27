@@ -532,8 +532,8 @@ static uint numPlayerCharacters() {
 void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &record) {
 	using namespace Action;
 
+	// Nancy16 has no item descriptions
 	auto *inventoryData = GetEngineData(INV);
-	assert(inventoryData);
 
 	for (const DependencyRecord &dep : record.children) {
 		debugPrintf("\n\t\t");
@@ -544,7 +544,7 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 		case DependencyType::kInventory:
 			debugPrintf("kInventory, item %u, %s, %s",
 				dep.label,
-				(uint16)dep.label < inventoryData->itemDescriptions.size() ?
+				inventoryData && (uint16)dep.label < inventoryData->itemDescriptions.size() ?
 					inventoryData->itemDescriptions[dep.label].name.c_str() :
 					"Invalid",
 				dep.condition == g_nancy->_true ? "true" : "false");
@@ -601,7 +601,9 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 		case DependencyType::kCursorType:
 			debugPrintf("kCursorType, item %u, %s",
 				dep.label,
-				inventoryData->itemDescriptions[dep.label].name.c_str());
+				inventoryData && (uint16)dep.label < inventoryData->itemDescriptions.size() ?
+					inventoryData->itemDescriptions[dep.label].name.c_str() :
+					"Invalid");
 			break;
 		case DependencyType::kPlayerTOD:
 			debugPrintf("kPlayerTOD, %s",
