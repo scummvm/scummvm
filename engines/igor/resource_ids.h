@@ -471,17 +471,8 @@
 #define STR_SharewarePenduloAddress5 447
 #define STR_SharewarePenduloAddress6 448
 
-// OutsideAdministrationBuilding street panels. Not in the original CD table (it
-// jumps from FRM_OutsideAdministrationBuilding5=351 straight to
-// DAT_DeanPepperOffice=352). They are added to the generator's CD catalog
-// (reference/scummvm-create-igortbl/resource_sp_cdrom.h) and shipped inside
-// IGOR.TBL, so the engine loads them through the regular findData()/loadData()
-// path like every other room. The ids are far above the original max (~448) so
-// they can never collide with a real table id.
-//   A = left  panel, PART100_bg  (scrolled in towards the map; ANM slot 0x0)
-//   B = right panel, C1 arrival  (what part 100 shows on entry)
-// TXT A/B include the original walk-scale tables, names, and dialogue strings
-// loaded by cseg179:0002 and cseg178:0002 respectively.
+
+// Decanato panels
 #define PAL_DecanatoA 900
 #define IMG_DecanatoA 901
 #define MSK_DecanatoA 902
@@ -492,21 +483,18 @@
 #define BOX_DecanatoB 907
 #define TXT_DecanatoA 908
 #define TXT_DecanatoB 909
-// Pan walk line used by sub_175_02F6 (cseg175:03E7-0409) and the part 110 pan
-// (cseg176:05A6): yPos = line[xPos - 260]. Recovered from the uncatalogued
-// CD gap between DAT_OutsideAdministrationBuilding and FRM_..._1; see the
-// resource_sp_cdrom.h rows for the byte sources (A/B are byte-identical).
+// Walk line used for scroll
 #define WLK_DecanatoA 910
 #define WLK_DecanatoB 911
-#define DAT_DecanatoPart110 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
+#define DAT_DecanatoPart11 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
 
-// CD-only end card shown by part 850. All three resources are contiguous in
+// CD-only intro card shown by state 850. All three resources are contiguous in
 // NE segment 209 immediately after the intro code.
 #define FRM_IgorIntroLogo 913 // cseg209:13BE; IGOR.EXE:0x7C09BE, 206x13
 #define IMG_IgorIntroLogo 914 // cseg209:1E34; IGOR.EXE:0x7C1434, 320x122
 #define PAL_IgorIntroLogo 915 // cseg209:B6B4; IGOR.EXE:0x7CACB4, 768 bytes
 
-// Administration corridor used by parts 70-72. These CD resources live in
+// Administration corridor used by PART_07 states 70-72. These CD resources live in
 // NE segments 197-199 and were absent from the historical TBL catalog.
 #define DAT_AdministrationCorridor 916 // cseg197:3732; IGOR.EXE:0x748B32, 0x1A59 bytes
 #define ANM_AdministrationCorridor 917 // cseg198:00D6; IGOR.EXE:0x74C8D6, 0x2B4D bytes

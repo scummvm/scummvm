@@ -19,7 +19,7 @@ const uint32 kDoor2Open = 0x28DD;   // cseg197:00CB
 
 } // End of anonymous namespace
 
-void IgorEngine::PART_70_DRAW_DOOR_STATE(int num) {
+void IgorEngine::PART_07_DRAW_DOOR_STATE(int num) {
 	_roomActionsTable[297] = 109; // cseg197:0B0C-0B17
 	if (num == 1 || num == 255) { // cseg197:0B1D-0B27
 		const uint32 srcOffset = _objectsState[52] == 0 ? kDoor1Closed : kDoor1Open; // cseg197:0B29-0B58; s3:0x856
@@ -35,7 +35,7 @@ void IgorEngine::PART_70_DRAW_DOOR_STATE(int num) {
 	}
 }
 
-void IgorEngine::PART_70_ANIMATE_DOOR(int door, bool open) {
+void IgorEngine::PART_07_ANIMATE_DOOR(int door, bool open) {
 	const int stateIndex = door == 1 ? 52 : 53; // cseg197:0150 and cseg197:029E; s3:0x856-0x857
 	if ((_objectsState[stateIndex] != 0) == open) {
 		const int text = open ? 19 : 23; // cseg222:2C5A-2C86 and cseg222:2CF6-2D22
@@ -63,10 +63,10 @@ void IgorEngine::PART_70_ANIMATE_DOOR(int door, bool open) {
 		waitForTimer(127); // cseg197:01C8-01D2,026F-0279,031A-0324,03C5-03CF (wait while tick <= 0x7E)
 	}
 	_objectsState[stateIndex] = open ? 1 : 0; // cseg197:01DB,0282,032D,03D8
-	PART_70_DRAW_DOOR_STATE(door); // cseg197:01E0-01E2,0287-0289,0332-0334,03DD-03DF
+	PART_07_DRAW_DOOR_STATE(door); // cseg197:01E0-01E2,0287-0289,0332-0334,03DD-03DF
 }
 
-void IgorEngine::PART_70_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos) {
+void IgorEngine::PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos) {
 	WalkData &wd = _walkData[0]; // cseg197:06F6 and cseg197:0884; s3:0xD94A = 0
 	wd.setPos(109, 143, facing, frame); // cseg197:070B-071F and cseg197:089A-08BA
 	wd.clipSkipX = 1;                   // cseg197:0734 and cseg197:08CF
@@ -81,20 +81,20 @@ void IgorEngine::PART_70_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, 
 	moveIgor(facing, frame);             // cseg197:0767-076F and cseg197:0903-090B
 }
 
-void IgorEngine::PART_70_ENTER_FROM_OUTSIDE() {
-	PART_70_DRAW_DOOR_STATE(255); // cseg197:06EA-06EC
+void IgorEngine::PART_07_ENTER_FROM_OUTSIDE() {
+	PART_07_DRAW_DOOR_STATE(255); // cseg197:06EA-06EC
 	for (int area = 11; area <= 13; ++area)
 		_roomObjectAreasTable[area].area = 0; // cseg197:092E-095D
 
 	int frame = 1; // cseg197:06FB
 	for (int step = 0; step <= 9; ++step) { // cseg197:0700-0785
-		PART_70_DRAW_SCALED_IGOR(step, kFacingPositionBack, frame, 0);
+		PART_07_DRAW_SCALED_IGOR(step, kFacingPositionBack, frame, 0);
 		frame = frame == 6 ? 1 : frame + 1; // cseg197:0722-0730
 		waitForTimer(15); // cseg197:0774-077E
 	}
 
 	_walkDataLastIndex = 0; // cseg197:0787-0791
-	if (!_part70FirstVisitDone) { // cseg197:0795; s3:0xED2E
+	if (!_part07FirstVisitDone) { // cseg197:0795; s3:0xED2E
 		buildWalkPath(109, 143, 180, 129); // cseg197:079F-07D5; DAT+161 = 0xA1F4
 		_walkData[_walkDataLastIndex].frameNum = 0; // cseg197:07DA-07E2
 		_walkData[_walkDataLastIndex].posNum = kFacingPositionRight; // cseg197:07E7-07FF; DAT+173 = 2
@@ -106,7 +106,7 @@ void IgorEngine::PART_70_ENTER_FROM_OUTSIDE() {
 		SET_DIALOGUE_TEXT(1, 2); // cseg197:0836-083B
 		startIgorDialogue();
 		waitForEndOfIgorDialogue();
-		_part70FirstVisitDone = true; // cseg197:0845; s3:0xED2E
+		_part07FirstVisitDone = true; // cseg197:0845; s3:0xED2E
 	} else {
 		buildWalkPath(109, 143, 129, 138); // cseg197:084C-0857
 		_walkData[_walkDataLastIndex].frameNum = 0; // cseg197:085C-0864
@@ -116,19 +116,19 @@ void IgorEngine::PART_70_ENTER_FROM_OUTSIDE() {
 	}
 }
 
-void IgorEngine::PART_70_EXIT_TO_OUTSIDE() {
+void IgorEngine::PART_07_EXIT_TO_OUTSIDE() {
 	int frame = 1; // cseg197:0889
 	for (int step = 9; step >= 0; --step) { // cseg197:088E-0923
 		if (step == 9)
 			frame = 0; // cseg197:08AB-08B2
-		PART_70_DRAW_SCALED_IGOR(step, kFacingPositionFront, frame, 3);
+		PART_07_DRAW_SCALED_IGOR(step, kFacingPositionFront, frame, 3);
 		frame = frame == 6 ? 1 : frame + 1; // cseg197:08BD-08CB
 		waitForTimer(15); // cseg197:0910-091A
 	}
 	_currentPart = 101; // cseg197:0926
 }
 
-void IgorEngine::PART_70_EXEC_ACTION(int action) {
+void IgorEngine::PART_07_EXEC_ACTION(int action) {
 	switch (action) { // cseg197:095E-0B01
 	case 101:
 		ADD_DIALOGUE_TEXT(201, 1, 140); // cseg197:03F0-03FC
@@ -143,16 +143,16 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 103:
-		PART_70_ANIMATE_DOOR(1, true); // cseg197:09AC-09CA
+		PART_07_ANIMATE_DOOR(1, true); // cseg197:09AC-09CA
 		break;
 	case 104:
-		PART_70_ANIMATE_DOOR(1, false); // cseg197:09CE-09EC
+		PART_07_ANIMATE_DOOR(1, false); // cseg197:09CE-09EC
 		break;
 	case 105:
-		PART_70_ANIMATE_DOOR(2, true); // cseg197:09F0-0A0E
+		PART_07_ANIMATE_DOOR(2, true); // cseg197:09F0-0A0E
 		break;
 	case 106:
-		PART_70_ANIMATE_DOOR(2, false); // cseg197:0A12-0A30
+		PART_07_ANIMATE_DOOR(2, false); // cseg197:0A12-0A30
 		break;
 	case 107:
 		ADD_DIALOGUE_TEXT(204, 1, 142); // cseg197:044A-0456
@@ -193,7 +193,7 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 110:
-		PART_70_EXIT_TO_OUTSIDE(); // cseg197:0A9A-0AB8
+		PART_07_EXIT_TO_OUTSIDE(); // cseg197:0A9A-0AB8
 		break;
 	case 111:
 		if (_objectsState[52] != 0) { // cseg197:05A2-05A9; s3:0x856
@@ -221,22 +221,22 @@ void IgorEngine::PART_70_EXEC_ACTION(int action) {
 		}
 		break;
 	default:
-		warning("PART_70_EXEC_ACTION unhandled action %d", action);
+		warning("PART_07_EXEC_ACTION unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_70() {
+void IgorEngine::PART_07() {
 	_gameState.enableLight = 1; // cseg197:290F
 	loadActionData(DAT_AdministrationCorridor); // cseg197:2920-2943
 	loadRoomData(PAL_AdministrationCorridor, IMG_AdministrationCorridor,
 			BOX_AdministrationCorridor, MSK_AdministrationCorridor, TXT_AdministrationCorridor); // cseg199:0002-06A0
 	static const int anim[] = { ANM_AdministrationCorridor, 0 }; // cseg198:0002-00D5
 	loadAnimData(anim);
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_70_EXEC_ACTION); // cseg197:095E-0B01
-	_roomDataOffsets = PART_70_ROOM_DATA_OFFSETS;
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_07_EXEC_ACTION); // cseg197:095E-0B01
+	_roomDataOffsets = PART_07_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143); // cseg199 room mask is 320x144
-	PART_70_DRAW_DOOR_STATE(255); // cseg197:2957-2959
+	PART_07_DRAW_DOOR_STATE(255); // cseg197:2957-2959
 	memcpy(_screenVGA, _screenLayer1, 46080); // cseg197:295E-2970
 	SET_PAL_240_48_1(); // cseg197:29F0-29F4
 	SET_PAL_208_96_1(); // cseg197:29F9-29FF
@@ -259,7 +259,7 @@ void IgorEngine::PART_70() {
 	_walkDataCurrentIndex = 1; // cseg197:2AA9 and cseg197:2B08
 	fadeIn(768); // cseg197:2B0D-2B10
 	if (_currentPart == 70)
-		PART_70_ENTER_FROM_OUTSIDE(); // cseg197:2B15-2B1C
+		PART_07_ENTER_FROM_OUTSIDE(); // cseg197:2B15-2B1C
 
 	enterPartLoop();
 	while (_currentPart >= 70 && _currentPart <= 72) // cseg197:2B4C-2B55

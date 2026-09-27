@@ -376,7 +376,7 @@ private:
 	int _dialogueDirtyRectSize;
 
 	uint8 _objectsState[112];
-	bool _part70FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
+	bool _part07FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
 	uint8 _inventoryImages[36];
 	uint8 _inventoryInfo[74];
 	char _verbPrepositions[3][7];
@@ -472,24 +472,24 @@ private:
 	void PART_06_HELPER_15(int frame);
 	void PART_06_HELPER_1_drawPieceOfPaper(int frame);
 
-	void PART_100();
-	void PART_100_EXEC_ACTION(int action);
-	void PART_100_ACTION_104();
-	void PART_100_ACTION_108();
-	void PART_70();
-	void PART_70_EXEC_ACTION(int action);
-	void PART_70_DRAW_DOOR_STATE(int num);
-	void PART_70_ANIMATE_DOOR(int door, bool open);
-	void PART_70_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
-	void PART_70_ENTER_FROM_OUTSIDE();
-	void PART_70_EXIT_TO_OUTSIDE();
-	void PART_110();
-	void PART_110_EXEC_ACTION(int action);
-	void PART_110_ACTION_105();
-	void PART_110_ACTION_107();
-	void PART_110_ACTION_108();
-	void PART_110_ACTION_112();
-	void PART_110_APPLY_OBJECT_STATE(int num);
+	void PART_07();
+	void PART_07_EXEC_ACTION(int action);
+	void PART_07_DRAW_DOOR_STATE(int num);
+	void PART_07_ANIMATE_DOOR(int door, bool open);
+	void PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
+	void PART_07_ENTER_FROM_OUTSIDE();
+	void PART_07_EXIT_TO_OUTSIDE();
+	void PART_10();
+	void PART_10_EXEC_ACTION(int action);
+	void PART_10_ACTION_104();
+	void PART_10_ACTION_108();
+	void PART_11();
+	void PART_11_EXEC_ACTION(int action);
+	void PART_11_ACTION_105();
+	void PART_11_ACTION_107();
+	void PART_11_ACTION_108();
+	void PART_11_ACTION_112();
+	void PART_11_APPLY_OBJECT_STATE(int num);
 
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -651,9 +651,9 @@ protected:
 	static const RoomDataOffsets PART_04_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_05_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_06_ROOM_DATA_OFFSETS;
-	static const RoomDataOffsets PART_70_ROOM_DATA_OFFSETS;
-	static const RoomDataOffsets PART_100_ROOM_DATA_OFFSETS;
-	static const RoomDataOffsets PART_110_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_07_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_10_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_11_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];

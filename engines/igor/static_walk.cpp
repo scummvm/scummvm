@@ -203,7 +203,7 @@ const RoomDataOffsets IgorEngine::PART_06_ROOM_DATA_OFFSETS = {
 	{ 135, 30, 5158, 100, 60 }
 };
 
-const RoomDataOffsets IgorEngine::PART_70_ROOM_DATA_OFFSETS = {
+const RoomDataOffsets IgorEngine::PART_07_ROOM_DATA_OFFSETS = {
 	{ 80, 4, 12, 3 }, // cseg197:194E-199C; DAT+80, 4 records, 12-byte source, 3-byte destination
 	{ 151, 168 }, // cseg197:1F87-1FCF and cseg197:2124-213D
 	{ 175, 419, 3575, 319, 395, 88 }, // cseg197:2E4C-2F19 and cseg197:2F23-2F62
@@ -217,14 +217,14 @@ const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-const RoomDataOffsets IgorEngine::PART_100_ROOM_DATA_OFFSETS = {
+const RoomDataOffsets IgorEngine::PART_10_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },       // cseg175:17F9-1829: DAT+45, 3 records, 6-byte source, 2-byte destination
 	{ 77, 90 },            // cseg175:1E22-1E68 and cseg175:1FBB-1FD3
 	{ 95, 303, 3319, 199, 275, 84 }, // cseg175:1C41-1CA7, 1CE9-1D4F, 2C8B-2DEA
 	{ 0, 0, 0, 0, 0 }
 };
 
-const RoomDataOffsets IgorEngine::PART_110_ROOM_DATA_OFFSETS = {
+const RoomDataOffsets IgorEngine::PART_11_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 }, // cseg176 routes walks through the room mask; no area matrix
 	{ 35, 52 }, // cseg176:1EE5-1F15, 207C
 	{ 59, 309, 3255, 203, 279, 82 }, // cseg176:2CBC-2CE5 (action); +60 is its walk behavior at 1E7B,2026,2061

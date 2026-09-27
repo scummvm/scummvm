@@ -139,7 +139,7 @@ void IgorEngine::restart() {
 	// memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
 	memset(_objectsState, 0, sizeof(_objectsState));
-	_part70FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
+	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
 	memcpy(_inventoryImages, INVENTORY_IMG_INIT, 36);
 	memset(_inventoryInfo, 0, sizeof(_inventoryInfo));
 	memset(_verbPrepositions, 0, sizeof(_verbPrepositions));

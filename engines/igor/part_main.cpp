@@ -144,16 +144,16 @@ void IgorEngine::PART_MAIN() {
 		case 70:
 		case 71:
 		case 72:
-			PART_70(); // Administration corridor; cseg197:28D4
+			PART_07(); // Administration corridor; cseg197:28D4
 			break;
 
 		case 100:
 		case 101:
 		case 102:
-			PART_100(); // OutsideAdministrationBuilding street
+			PART_10(); // OutsideAdministrationBuilding street
 			break;
 		case 110:
-			PART_110(); // OutsideAdministrationBuilding street, left panel
+			PART_11(); // OutsideAdministrationBuilding street, left panel
 			break;
 
 		case 850: // Intro cutscene

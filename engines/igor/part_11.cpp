@@ -16,23 +16,23 @@ namespace Igor {
 
 namespace {
 
-const uint32 kPart110PanelRight = 0x0000; // cseg176:288C-289B
-const uint32 kPart110Frm1 = 0xB400;       // cseg177:0002
-const uint32 kPart110Frm2 = 0xBC0A;       // cseg177:0002
-const uint32 kPart110Frm3 = 0xC5E2;       // cseg177:0002
-const uint32 kPart110Frm4 = 0xC786;       // cseg177:0002
-const uint32 kPart110Frm5 = 0xC8AE;       // cseg177:0002
+const uint32 kPart11PanelRight = 0x0000; // cseg176:288C-289B
+const uint32 kPart11Frm1 = 0xB400;       // cseg177:0002
+const uint32 kPart11Frm2 = 0xBC0A;       // cseg177:0002
+const uint32 kPart11Frm3 = 0xC5E2;       // cseg177:0002
+const uint32 kPart11Frm4 = 0xC786;       // cseg177:0002
+const uint32 kPart11Frm5 = 0xC8AE;       // cseg177:0002
 
 } // End of anonymous namespace
 
-void IgorEngine::PART_110_APPLY_OBJECT_STATE(int num) {
+void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) // cseg176:09B3-09BD
 		_roomObjectAreasTable[13].object = _objectsState[66] == 0 ? 4 : 3; // cseg176:09BF-09D2; s3:0xDC98 = object field 13
 
 	if (num == 2 || num == 255) { // cseg176:09D2-09DC
 		if (_objectsState[67] == 1) { // cseg176:09DE-0A0E; s3:0x865
 			for (int y = 0; y <= 7; ++y)
-				memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart110Frm4 + y * 37, 37); // cseg176:0002-0051
+				memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart11Frm4 + y * 37, 37); // cseg176:0002-0051
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7; // cseg176:09EA-0A0C; s3:[area*5-9129]
 		} else {
@@ -47,43 +47,43 @@ void IgorEngine::PART_110_APPLY_OBJECT_STATE(int num) {
 				_roomObjectAreasTable[area].object = 0; // cseg176:0A47-0A69; s3:[area*5-9129]
 		} else if (_objectsState[68] == 1) { // cseg176:0A6D-0A9A
 			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart110Frm3 + y * 14, 14); // cseg176:0052-00A1
+				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart11Frm3 + y * 14, 14); // cseg176:0052-00A1
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 6; // cseg176:0A76-0A98; s3:[area*5-9129]
 		} else if (_objectsState[68] == 2) {
 			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart110Frm3 + 210 + y * 14, 14); // cseg176:00A2-00F1
+				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart11Frm3 + 210 + y * 14, 14); // cseg176:00A2-00F1
 			_roomObjectAreasTable[7].object = 6; // cseg176:0AA5; s3:0xDC7A
 			_roomObjectAreasTable[8].object = 8; // cseg176:0AAA; s3:0xDC7F
 		}
 	}
 }
 
-void IgorEngine::PART_110_ACTION_105() {
+void IgorEngine::PART_11_ACTION_105() {
 	for (int frame = 0; frame <= 1; ++frame) { // cseg176:06F8-076D
 		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenVGA + 0x6167 + y * 320, _animFramesBuffer + kPart110Frm1 + frame * 0x405 + y * 21, 21);
+			memcpy(_screenVGA + 0x6167 + y * 320, _animFramesBuffer + kPart11Frm1 + frame * 0x405 + y * 21, 21);
 		waitForTimer(127); // cseg176:075C-0766
 	}
 	// TODO: add inventory object 18 at slot 0x90F; the fork has no inventory-state API (cseg176:076F-07A9).
 	playSound(51, 1); // cseg176:07A5-07A9
 	_objectsState[66] = 1; // cseg176:07B3; s3:0x864
-	PART_110_APPLY_OBJECT_STATE(255); // cseg176:07B8-07BA
+	PART_11_APPLY_OBJECT_STATE(255); // cseg176:07B8-07BA
 }
 
-void IgorEngine::PART_110_ACTION_107() {
+void IgorEngine::PART_11_ACTION_107() {
 	for (int frame = 0; frame <= 2; ++frame) { // cseg176:01C7-023C
 		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart110Frm5 + frame * 0x348 + y * 30, 30);
+			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart11Frm5 + frame * 0x348 + y * 30, 30);
 		waitForTimer(61); // cseg176:022B-0235
 	}
 	// TODO: remove the inventory object indexed by s3:0x904; the fork has no inventory-state API (cseg176:023E-0281).
 	playSound(63, 1); // cseg176:027D-0281
 	_objectsState[68] = 1; // cseg176:0286; s3:0x866
-	PART_110_APPLY_OBJECT_STATE(255); // cseg176:0290-0292
+	PART_11_APPLY_OBJECT_STATE(255); // cseg176:0290-0292
 }
 
-void IgorEngine::PART_110_ACTION_108() {
+void IgorEngine::PART_11_ACTION_108() {
 	uint8 *walkTable = loadData(WLK_DecanatoB); // cseg176:0584-05A6
 	int xPos = 310; // cseg176:04AE
 	int yPos = 0;
@@ -92,7 +92,7 @@ void IgorEngine::PART_110_ACTION_108() {
 		if (compareGameTick(1, 16)) { // cseg176:04B7-04CD
 			for (int y = 0; y <= 143; ++y) { // cseg176:04D0-0565
 				memcpy(_screenLayer2 + y * 320, _screenLayer1 + y * 320 + i * 8, 320 - i * 8);
-				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, _animFramesBuffer + kPart110PanelRight + y * 320, i * 8);
+				memcpy(_screenLayer2 + y * 320 + 320 - i * 8, _animFramesBuffer + kPart11PanelRight + y * 320, i * 8);
 			}
 			if (i < 9) { // cseg176:0568-05BE
 				xPos += _walkScaleTable[0x8F9 + _walkCurrentFrame];
@@ -122,20 +122,20 @@ void IgorEngine::PART_110_ACTION_108() {
 	_currentPart = 102; // cseg176:06F0
 }
 
-void IgorEngine::PART_110_ACTION_112() {
+void IgorEngine::PART_11_ACTION_112() {
 	for (int frame = 0; frame <= 2; ++frame) { // cseg176:00F2-0167
 		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart110Frm2 + frame * 0x348 + y * 30, 30);
+			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart11Frm2 + frame * 0x348 + y * 30, 30);
 		waitForTimer(61); // cseg176:0156-0160
 	}
 	// TODO: add inventory object 23 at slot 0x914; the fork has no inventory-state API (cseg176:0169-01A3).
 	playSound(51, 1); // cseg176:019F-01A3
 	_objectsState[68] = 1; // cseg176:01AD; s3:0x866
 	_objectsState[26] = 1; // cseg176:01B9; s3:0x83C
-	PART_110_APPLY_OBJECT_STATE(3); // cseg176:01B2-01B4
+	PART_11_APPLY_OBJECT_STATE(3); // cseg176:01B2-01B4
 }
 
-void IgorEngine::PART_110_EXEC_ACTION(int action) {
+void IgorEngine::PART_11_EXEC_ACTION(int action) {
 	switch (action) { // cseg176:07C1-09A8
 	case 101: // sub_176_0362
 		ADD_DIALOGUE_TEXT(201, 2, 616); // cseg176:036C-0388
@@ -163,7 +163,7 @@ void IgorEngine::PART_110_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 105:
-		PART_110_ACTION_105();
+		PART_11_ACTION_105();
 		break;
 	case 106: // sub_176_043D
 		ADD_DIALOGUE_TEXT(73, 1, 50); // cseg176:0447-0463
@@ -172,10 +172,10 @@ void IgorEngine::PART_110_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 107:
-		PART_110_ACTION_107();
+		PART_11_ACTION_107();
 		break;
 	case 108:
-		PART_110_ACTION_108();
+		PART_11_ACTION_108();
 		break;
 	case 109: // sub_176_046A
 		ADD_DIALOGUE_TEXT(207, 1, 621); // cseg176:0474-0490
@@ -196,7 +196,7 @@ void IgorEngine::PART_110_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	case 112:
-		PART_110_ACTION_112();
+		PART_11_ACTION_112();
 		break;
 	case 113: // sub_176_0335
 		ADD_DIALOGUE_TEXT(211, 1, 625); // cseg176:033F-035B
@@ -211,16 +211,16 @@ void IgorEngine::PART_110_EXEC_ACTION(int action) {
 		waitForEndOfIgorDialogue();
 		break;
 	default:
-		warning("PART_110_EXEC_ACTION unhandled action %d", action);
+		warning("PART_11_EXEC_ACTION unhandled action %d", action);
 		break;
 	}
 }
 
-void IgorEngine::PART_110() {
+void IgorEngine::PART_11() {
 	_gameState.enableLight = 1;
-	loadActionData(DAT_DecanatoPart110); // cseg176:286F-2882
+	loadActionData(DAT_DecanatoPart11); // cseg176:286F-2882
 	loadRoomData(PAL_DecanatoB, IMG_DecanatoB, BOX_DecanatoB, MSK_DecanatoB, TXT_DecanatoB); // cseg176:2887
-	memcpy(_animFramesBuffer + kPart110PanelRight, _screenLayer1, 46080); // cseg176:288C-289B
+	memcpy(_animFramesBuffer + kPart11PanelRight, _screenLayer1, 46080); // cseg176:288C-289B
 	loadRoomData(PAL_DecanatoA, IMG_DecanatoA, BOX_DecanatoA, MSK_DecanatoA, TXT_DecanatoA); // cseg176:28C8
 
 	static const int frames1[] = { FRM_Decanato1, 0 };
@@ -228,16 +228,16 @@ void IgorEngine::PART_110() {
 	static const int frames3[] = { FRM_Decanato3, 0 };
 	static const int frames4[] = { FRM_Decanato4, 0 };
 	static const int frames5[] = { FRM_Decanato5, 0 };
-	loadAnimData(frames1, kPart110Frm1); // cseg176:28CD; cseg177:0002
-	loadAnimData(frames2, kPart110Frm2);
-	loadAnimData(frames3, kPart110Frm3);
-	loadAnimData(frames4, kPart110Frm4);
-	loadAnimData(frames5, kPart110Frm5);
+	loadAnimData(frames1, kPart11Frm1); // cseg176:28CD; cseg177:0002
+	loadAnimData(frames2, kPart11Frm2);
+	loadAnimData(frames3, kPart11Frm3);
+	loadAnimData(frames4, kPart11Frm4);
+	loadAnimData(frames5, kPart11Frm5);
 
-	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_110_EXEC_ACTION); // cseg176:28D2; sub_176_07C1
-	_roomDataOffsets = PART_110_ROOM_DATA_OFFSETS;
+	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_11_EXEC_ACTION); // cseg176:28D2; sub_176_07C1
+	_roomDataOffsets = PART_11_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(0, 0, 319, 143); // cseg176 room mask is 320x144
-	PART_110_APPLY_OBJECT_STATE(255); // cseg176:28D7-28D9; sub_176_09A9(-1)
+	PART_11_APPLY_OBJECT_STATE(255); // cseg176:28D7-28D9; sub_176_09A9(-1)
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();
 	_walkDataLastIndex = 1; // cseg176:29B6
