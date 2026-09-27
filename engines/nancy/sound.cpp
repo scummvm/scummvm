@@ -434,6 +434,11 @@ void SoundManager::playSound(const SoundDescription &description) {
 }
 
 void SoundManager::playSound(const Common::String &chunkName) {
+	// Nancy16 has no menu sound
+	if (!_commonSounds.contains(chunkName)) {
+		return;
+	}
+
 	const SoundDescription &desc = _commonSounds[chunkName];
 
 	if (!isSoundPlaying(desc)) {
