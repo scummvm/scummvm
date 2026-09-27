@@ -57,6 +57,11 @@ public:
 
 	void setHasMoved(bool hasMoved) { _hasMoved = hasMoved; }
 
+	// Nancy16 scales the game up to fit the screen; these objects get drawn at the
+	// screen's own resolution instead, and are positioned in screen coordinates
+	bool isNativeResolution() const { return _isNativeResolution; }
+	void setNativeResolution(bool isNative) { _isNativeResolution = isNative; }
+
 	// Only used by The Vampire Diaries
 	void grabPalette(byte *colors, uint paletteStart = 0, uint paletteSize = 256);
 	void setPalette(const Common::Path &paletteName, uint paletteStart = 0, uint paletteSize = 256);
@@ -89,6 +94,7 @@ protected:
 	bool _needsRedraw;
 	bool _isVisible;
 	bool _hasMoved;
+	bool _isNativeResolution = false;
 	uint16 _z;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;

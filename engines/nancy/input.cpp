@@ -29,6 +29,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/graphics.h"
 
 namespace Nancy {
 
@@ -154,7 +155,8 @@ NancyInput InputManager::getInput() const {
 	}
 
 	if (_mouseEnabled || g_nancy->getState() == NancyState::kCredits) {
-		ret.mousePos = g_nancy->getEventManager()->getMousePos();
+		ret.screenMousePos = g_nancy->getEventManager()->getMousePos();
+		ret.mousePos = g_nancy->_graphics->screenToGame(ret.screenMousePos);
 	} else {
 		ret.eatMouseInput();
 	}

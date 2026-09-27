@@ -61,11 +61,12 @@ struct NancyInput {
 		kMouseWheel				= kMouseWheelUp | kMouseWheelDown
 	};
 
-	Common::Point mousePos;
+	Common::Point mousePos;			// in game coordinates
+	Common::Point screenMousePos;	// Nancy16: for what gets drawn at the screen's own resolution
 	uint16 input;
 	Common::Array<Common::KeyState> otherKbdInput;
 
-	void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton | kMouseWheel); }
+	void eatMouseInput() { mousePos.x = -1; screenMousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton | kMouseWheel); }
 
 	// Consumes just the wheel input, leaving the mouse position and buttons alone,
 	// so a widget that scrolls can still keep updating its hover state

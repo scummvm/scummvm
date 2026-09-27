@@ -437,7 +437,8 @@ void CursorManager::applyCursor() {
 	}
 
 	if (_warpedMousePos.x != -500 && _warpedMousePos.y != -500) {
-		g_system->warpMouse(_warpedMousePos.x, _warpedMousePos.y);
+		Common::Point screenPos = g_nancy->_graphics->gameToScreen(_warpedMousePos);
+		g_system->warpMouse(screenPos.x, screenPos.y);
 		_warpedMousePos.x = -500;
 		_warpedMousePos.y = -500;
 	}

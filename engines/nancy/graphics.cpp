@@ -42,7 +42,7 @@ GraphicsManager::GraphicsManager() :
 	_screenPixelFormat32(Graphics::PixelFormat::createFormatBGRA32()),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
 	_transparentPixelFormat(Graphics::PixelFormat::createFormatBGRA32()),
-	_screen(640, 480, getScreenPixelFormat()),
+	_screen(getScreenBounds().width(), getScreenBounds().height(), getScreenPixelFormat()),
 	_isSuppressed(false){}
 void GraphicsManager::init() {
 	auto *bsum = GetEngineData(BSUM);
@@ -58,9 +58,20 @@ void GraphicsManager::init() {
 					  (bsum->bTrans << format.bShift);
 	}
 
-	initGraphics(640, 480, &getScreenPixelFormat());
+	initGraphics(_screen.w, _screen.h, &getScreenPixelFormat());
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
+
+	// Nancy16 runs at a higher resolution than the game was made for. The
+	// viewport's chunk holds the resolution the game gets drawn at.
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		auto *viewportData = GetEngineData(VIEW);
+		assert(viewportData);
+
+		_gameSurface.create(viewportData->bounds.width(), viewportData->bounds.height(), getScreenPixelFormat());
+		_gameSurface.setTransparentColor(getTransColor());
+		_gameSurface.clear();
+	}
 
 	// OB0 has been dropped in Nancy16+
 	const ImageChunk *ob0 = (const ImageChunk *)g_nancy->getEngineData("OB0");
@@ -87,14 +98,14 @@ void GraphicsManager::draw(bool updateScreen) {
 			if (current.isVisible()) {
 				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
 					// Object moved to a new location on screen, update the previous one
-					_dirtyRects.push_back(current.getPreviousScreenPosition());
+					addDirtyRect(current, current.getPreviousScreenPosition());
 				}
 
 				// Redraw the current location
-				_dirtyRects.push_back(current.getScreenPosition());
+				addDirtyRect(current, current.getScreenPosition());
 			} else if (!current.getPreviousScreenPosition().isEmpty()) {
 				// Object just turned invisible, redraw the last location
-				_dirtyRects.push_back(current.getPreviousScreenPosition());
+				addDirtyRect(current, current.getPreviousScreenPosition());
 			}
 		}
 
@@ -103,23 +114,74 @@ void GraphicsManager::draw(bool updateScreen) {
 		current.updatePreviousScreenPosition();
 	}
 
-	// Filter out dirty rects that are completely inside others to reduce overdraw
-	for (auto outer = _dirtyRects.begin(); outer != _dirtyRects.end(); ++outer) {
-		for (auto inner = _dirtyRects.begin(); inner != _dirtyRects.end(); ++inner) {
+	filterDirtyRects(_dirtyRects);
+
+	if (!isGameScaled()) {
+		drawObjects(_screen, _dirtyRects, kLayerAll);
+	} else {
+		// The game gets drawn at its own resolution, and the changed parts get scaled
+		// onto the screen, where the objects at the screen's resolution go over them
+		drawObjects(_gameSurface, _dirtyRects, kLayerGame);
+
+		for (const Common::Rect &rect : _dirtyRects) {
+			// Filtering blends each screen pixel with its game pixel's neighbors
+			Common::Rect screenRect = gameToScreen(rect);
+			screenRect.grow(2);
+			screenRect.clip(Common::Rect(_screen.w, _screen.h));
+			_nativeDirtyRects.push_back(screenRect);
+		}
+
+		filterDirtyRects(_nativeDirtyRects);
+
+		for (const Common::Rect &rect : _nativeDirtyRects) {
+			blitGameToScreen(rect);
+		}
+
+		drawObjects(_screen, _nativeDirtyRects, kLayerNative);
+	}
+
+	// Draw the screen
+	if (updateScreen) {
+		_screen.update();
+	}
+
+	// Remove all dirty rects for the next frame
+	_dirtyRects.clear();
+	_nativeDirtyRects.clear();
+}
+
+void GraphicsManager::addDirtyRect(const RenderObject &object, const Common::Rect &rect) {
+	if (isGameScaled() && object.isNativeResolution()) {
+		_nativeDirtyRects.push_back(rect);
+	} else {
+		_dirtyRects.push_back(rect);
+	}
+}
+
+bool GraphicsManager::isInLayer(const RenderObject &object, Layer layer) const {
+	return layer == kLayerAll || object.isNativeResolution() == (layer == kLayerNative);
+}
+
+// Filter out dirty rects that are completely inside others to reduce overdraw
+void GraphicsManager::filterDirtyRects(Common::List<Common::Rect> &rects) {
+	for (auto outer = rects.begin(); outer != rects.end(); ++outer) {
+		for (auto inner = rects.begin(); inner != rects.end(); ++inner) {
 			if (inner != outer && outer->contains(*inner)) {
-				_dirtyRects.erase(inner);
+				rects.erase(inner);
 				break;
 			}
 		}
 	}
+}
 
-	// Perform the actual drawing. This checks for cases where something would be fully obscured,
-	// and skips them (e.g. redrawing the Viewport won't also redraw the background)
-	for (Common::Rect rect : _dirtyRects) {
+// Perform the actual drawing. This checks for cases where something would be fully obscured,
+// and skips them (e.g. redrawing the Viewport won't also redraw the background)
+void GraphicsManager::drawObjects(Graphics::ManagedSurface &target, const Common::List<Common::Rect> &rects, Layer layer) {
+	for (const Common::Rect &rect : rects) {
 		for (RenderObject **it = _objects.begin(); it < _objects.end(); ++it) {
 			RenderObject &current = **it;
 
-			if (!current.isVisible() || current.getScreenPosition().isEmpty()) {
+			if (!isInLayer(current, layer) || !current.isVisible() || current.getScreenPosition().isEmpty()) {
 				continue;
 			}
 
@@ -132,7 +194,7 @@ void GraphicsManager::draw(bool updateScreen) {
 				for (auto it2 = it + 1; it2 < _objects.end(); ++it2) {
 					RenderObject &other = **it2;
 
-					if (!other.isVisible() || other.getScreenPosition().isEmpty()) {
+					if (!isInLayer(other, layer) || !other.isVisible() || other.getScreenPosition().isEmpty()) {
 						continue;
 					}
 
@@ -153,18 +215,93 @@ void GraphicsManager::draw(bool updateScreen) {
 					continue;
 				}
 
-				blitToScreen(current, rect.findIntersectingRect(current.getScreenPosition()));
+				blitObject(target, current, rect.findIntersectingRect(current.getScreenPosition()));
+			}
+		}
+	}
+}
+
+// The game pixel a screen pixel's center falls on, in 1/256ths of a pixel, as texture
+// sampling puts it; the fraction is how much of the next game pixel gets blended in
+static int getBilinearPosition(int screenPos, int screenSize, int gameSize) {
+	int pos = (2 * screenPos + 1) * gameSize * 128 / screenSize - 128;
+	return CLIP<int>(pos, 0, (gameSize - 1) * 256);
+}
+
+// The game gets scaled onto the screen with bilinear filtering, like the original's
+// Direct3D texture sampling does
+void GraphicsManager::blitGameToScreen(Common::Rect screenRect) {
+	screenRect.clip(Common::Rect(_screen.w, _screen.h));
+	if (screenRect.isEmpty()) {
+		return;
+	}
+
+	assert(_screen.format.bytesPerPixel == 4 && _gameSurface.format == _screen.format);
+
+	// Where each column samples the game, and how much of the next game pixel it takes
+	Common::Array<int> srcColumns(screenRect.width());
+	Common::Array<int> columnWeights(screenRect.width());
+	for (int x = screenRect.left; x < screenRect.right; ++x) {
+		int pos = getBilinearPosition(x, _screen.w, _gameSurface.w);
+		srcColumns[x - screenRect.left] = pos >> 8;
+		columnWeights[x - screenRect.left] = pos & 0xFF;
+	}
+
+	for (int y = screenRect.top; y < screenRect.bottom; ++y) {
+		int pos = getBilinearPosition(y, _screen.h, _gameSurface.h);
+		int srcY = pos >> 8;
+		int rowWeight = pos & 0xFF;
+
+		const byte *row0 = (const byte *)_gameSurface.getBasePtr(0, srcY);
+		const byte *row1 = (const byte *)_gameSurface.getBasePtr(0, MIN<int>(srcY + 1, _gameSurface.h - 1));
+		byte *dest = (byte *)_screen.getBasePtr(screenRect.left, y);
+
+		for (int i = 0; i < screenRect.width(); ++i) {
+			int x0 = srcColumns[i] * 4;
+			int x1 = MIN<int>(srcColumns[i] + 1, _gameSurface.w - 1) * 4;
+			int colWeight = columnWeights[i];
+
+			for (int channel = 0; channel < 4; ++channel) {
+				int top = row0[x0 + channel] * (256 - colWeight) + row0[x1 + channel] * colWeight;
+				int bottom = row1[x0 + channel] * (256 - colWeight) + row1[x1 + channel] * colWeight;
+				*dest++ = (top * (256 - rowWeight) + bottom * rowWeight + (1 << 15)) >> 16;
 			}
 		}
 	}
 
-	// Draw the screen
-	if (updateScreen) {
-		_screen.update();
+	_screen.addDirtyRect(screenRect);
+}
+
+Common::Rect GraphicsManager::getGameBounds() const {
+	return isGameScaled() ? Common::Rect(_gameSurface.w, _gameSurface.h) : Common::Rect(_screen.w, _screen.h);
+}
+
+Common::Point GraphicsManager::screenToGame(const Common::Point &pos) const {
+	if (!isGameScaled()) {
+		return pos;
 	}
 
-	// Remove all dirty rects for the next frame
-	_dirtyRects.clear();
+	return Common::Point(pos.x * _gameSurface.w / _screen.w, pos.y * _gameSurface.h / _screen.h);
+}
+
+Common::Point GraphicsManager::gameToScreen(const Common::Point &pos) const {
+	if (!isGameScaled()) {
+		return pos;
+	}
+
+	return Common::Point(pos.x * _screen.w / _gameSurface.w, pos.y * _screen.h / _gameSurface.h);
+}
+
+// The screen area covering every pixel the game rect gets scaled onto
+Common::Rect GraphicsManager::gameToScreen(const Common::Rect &rect) const {
+	if (!isGameScaled()) {
+		return rect;
+	}
+
+	return Common::Rect(rect.left * _screen.w / _gameSurface.w,
+		rect.top * _screen.h / _gameSurface.h,
+		(rect.right * _screen.w + _gameSurface.w - 1) / _gameSurface.w,
+		(rect.bottom * _screen.h + _gameSurface.h - 1) / _gameSurface.h);
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
@@ -270,7 +407,7 @@ void GraphicsManager::removeObject(RenderObject *object) {
 	for (auto &r : _objects) {
 		if (r == object) {
 			// Make sure the object gets properly cleared
-			_dirtyRects.push_back(r->getPreviousScreenPosition());
+			addDirtyRect(*r, r->getPreviousScreenPosition());
 			_objects.erase(&r);
 			break;
 		}
@@ -476,6 +613,10 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat(uint bpp) {
 	}
 }
 
+Common::Rect GraphicsManager::getScreenBounds() {
+	return (g_nancy->getGameType() >= kGameTypeNancy16) ? Common::Rect(800, 600) : Common::Rect(640, 480);
+}
+
 const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
 	return (g_nancy->getGameType() >= kGameTypeNancy13) ? _screenPixelFormat32 : _screenPixelFormat16;
 }
@@ -502,9 +643,9 @@ void GraphicsManager::screenshotScreen(Graphics::ManagedSurface &inSurf) {
 	inSurf.copyFrom(_screen);
 }
 
-// Draw a given screen-space rectangle to the screen
-void GraphicsManager::blitToScreen(const RenderObject &src, Common::Rect screenRect) {
-	_screen.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
+// Draw a given screen-space rectangle of an object
+void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect screenRect) {
+	target.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
 }
 
 int GraphicsManager::objectComparator(const void *a, const void *b) {

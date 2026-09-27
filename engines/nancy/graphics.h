@@ -69,6 +69,16 @@ public:
 	int getFontID(const Common::String &name) const;
 	uint32 getFontColor(uint id, const Graphics::PixelFormat &format, FontColorState state = kFontColorNormal) const;
 	const Graphics::Screen *getScreen() { return &_screen; }
+	static Common::Rect getScreenBounds();
+
+	// Nancy16 draws the game at a lower resolution than the screen's, and scales it up.
+	// Objects and the mouse are in game coordinates, unless they are at the screen's
+	// resolution. For the other games the two are the same.
+	bool isGameScaled() const { return !_gameSurface.empty(); }
+	Common::Rect getGameBounds() const;
+	Common::Point screenToGame(const Common::Point &pos) const;
+	Common::Point gameToScreen(const Common::Point &pos) const;
+	Common::Rect gameToScreen(const Common::Rect &rect) const;
 
 	const Graphics::PixelFormat &getInputPixelFormat(uint bpp = 0);
 	const Graphics::PixelFormat &getScreenPixelFormat();
@@ -97,7 +107,18 @@ public:
 
 
 private:
-	void blitToScreen(const RenderObject &src, Common::Rect dest);
+	enum Layer {
+		kLayerAll,		// the game isn't scaled
+		kLayerGame,
+		kLayerNative
+	};
+
+	void addDirtyRect(const RenderObject &object, const Common::Rect &rect);
+	bool isInLayer(const RenderObject &object, Layer layer) const;
+	static void filterDirtyRects(Common::List<Common::Rect> &rects);
+	void drawObjects(Graphics::ManagedSurface &target, const Common::List<Common::Rect> &rects, Layer layer);
+	void blitObject(Graphics::ManagedSurface &target, const RenderObject &src, Common::Rect dest);
+	void blitGameToScreen(Common::Rect screenRect);
 
 	static int objectComparator(const void *a, const void *b);
 
@@ -116,7 +137,10 @@ private:
 
 	Common::Array<FontColor> _fontColors;
 
-	Common::List<Common::Rect> _dirtyRects;
+	Graphics::ManagedSurface _gameSurface;		// empty unless the game is scaled
+
+	Common::List<Common::Rect> _dirtyRects;			// in game coordinates
+	Common::List<Common::Rect> _nativeDirtyRects;	// in screen coordinates
 
 	Common::HashMap<uint16, Graphics::ManagedSurface> _autotextSurfaces;
 	Common::HashMap<uint16, Common::Rect> _autotextSurfaceBounds;
