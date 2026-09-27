@@ -587,6 +587,8 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");	// Nancy16+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");	// Nancy16+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
