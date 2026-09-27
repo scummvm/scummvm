@@ -164,6 +164,7 @@ MODULE_OBJS += \
 	insane/rebel2/audio.o \
 	insane/rebel2/iact.o \
 	insane/rebel2/levels.o \
+	insane/rebel2/mac_archive.o \
 	insane/rebel2/menu.o \
 	insane/rebel2/render.o \
 	insane/rebel2/runlevels.o \

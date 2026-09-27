@@ -55,6 +55,7 @@ struct Rebel2Release {
 	enum { kNumLevels = 15, kFinale = 16 };
 
 	const char *variant;
+	const char *container;
 	const char *strings;
 	const char *nonInteractiveVideo;
 	const char *completionVideo;
@@ -62,7 +63,7 @@ struct Rebel2Release {
 	byte levels[kNumLevels];
 	bool ending;
 	bool unlockAvailableLevels;
-	// The DA1.06 demo starts chapter 6 at the attack on the reactor.
+	// The chapter-6 demos start at the attack on the reactor.
 	bool skipMiningFacilityAttack;
 	bool advanceCompletionPasswords;
 	const Rebel2DifficultyOverride *difficultyOverrides;

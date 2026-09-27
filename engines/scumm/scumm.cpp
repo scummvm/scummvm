@@ -1188,6 +1188,9 @@ Common::Error ScummEngine::init() {
 			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2) {
 			_fileHandle = new ScummFile(this);
+			// RA2 must disable the SCUMM GUI before Mac screen initialization.
+			if (_game.id == GID_REBEL2)
+				_useOriginalGUI = false;
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
 			// special meta (container) file format to store the actual SCUMM data
@@ -1875,8 +1878,6 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		_numActors = 0;
 
 		setupScummVars();
-
-		_useOriginalGUI = false;
 
 		_sound = new Sound(this, _mixer, false);
 		// Rebel Assault 2 doesn't use iMUSE for audio.

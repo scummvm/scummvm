@@ -22,6 +22,7 @@
 
 
 #include "engines/engine.h"
+#include "common/archive.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -45,6 +46,7 @@
 #include "scumm/smush/rebel/font_rebel2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
+#include "scumm/insane/rebel2/mac_archive.h"
 #include "scumm/insane/rebel2/shared.h"
 
 #include "common/config-manager.h"
@@ -162,6 +164,13 @@ bool InsaneRebel2::isSkippableVideoState() const {
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
 		_release(getRebel2Release(scumm->_game.variant, ConfMan.getBool("rebel2_restored_content"))) {
 	_vm = scumm;
+	if (_release.container) {
+		Common::Archive *archive = createRebel2MacArchive(_vm, _release.container);
+		if (!archive)
+			error("Cannot open Rebel Assault II data bundle '%s'", _release.container);
+		SearchMan.add("rebel2-mac-data", archive, 1);
+	}
+
 	// Rebel Assault II skips ScummEngine::resetScumm(), which normally clears this state.
 	for (int i = 0; i < kScummActionCount; i++)
 		_vm->_actionMap[i] = false;
@@ -627,6 +636,9 @@ InsaneRebel2::~InsaneRebel2() {
 		free(_rebelEmbeddedHud[i].pixels);
 		_rebelEmbeddedHud[i].pixels = nullptr;
 	}
+
+	if (_release.container)
+		SearchMan.remove("rebel2-mac-data");
 }
 
 bool InsaneRebel2::isHiRes() const {

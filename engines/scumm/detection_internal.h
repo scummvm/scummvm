@@ -653,8 +653,9 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			continue;
 
 		// RA2.EXE is shared by retail and several playable demos. Only a
-		// known executable identifies the available chapters and tuning.
-		if (!scumm_stricmp(gfp->gameid, "rebel2") && file.equalsIgnoreCase("RA2.EXE"))
+		// known executable or Mac bundle identifies the chapters and tuning.
+		if (!scumm_stricmp(gfp->gameid, "rebel2") &&
+			(baseFile.equalsIgnoreCase("RA2.EXE") || platform == Common::kPlatformMacintosh))
 			continue;
 
 		//  ____            _     ____

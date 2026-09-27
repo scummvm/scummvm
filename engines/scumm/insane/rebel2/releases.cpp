@@ -28,7 +28,9 @@ namespace Scumm {
 // DA1.06's difficulty table starts at offset 0x4798 in LE object 3.
 // Rows have 17 words; each difficulty occupies 0x242 bytes. Types 5 and 6
 // cover the shield attack and reactor attack respectively.
-static const Rebel2DifficultyOverride kDemoDA106Difficulty[] = {
+// Mac v1.0 has the same combat values at 0x5a70 in its unpacked PEF data
+// section. Its unused flight columns are -1; neither section uses flight controls.
+static const Rebel2DifficultyOverride kChapter6DemoDifficulty[] = {
 	{ 5, {
 		{ 5, 5, -1, 19, 2, 15, 75, 25, 50, 2, 500, -1, 8, -1, -1, -1, -1 },
 		{ 5, 3, -1, 25, 4, 15, 75, 50, 100, 4, 1000, -1, 16, -1, -1, -1, -1 },
@@ -51,26 +53,32 @@ static const Rebel2DifficultyOverride kDemoDA106Difficulty[] = {
 // saved pilot progress and the unlock-all option.
 static const Rebel2Release kReleases[] = {
 	{
-		"", "SYSTM/GAME.TRS", nullptr, nullptr,
+		"", nullptr, "SYSTM/GAME.TRS", nullptr, nullptr,
 		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
 		true, false, false, false, nullptr, 0
 	},
 	{
-		"Demo", "SYSTM/GAME.TRS", "OPEN/O_DEMO.SAN", nullptr, { 0 },
+		"Demo", nullptr, "SYSTM/GAME.TRS", "OPEN/O_DEMO.SAN", nullptr, { 0 },
 		false, false, false, false, nullptr, 0
 	},
 	{
 		// RBL2DEMO.EXE selects GAME_E.TRS. The original chapter-6 handler
 		// (LE object 1, 0x10d10) skips the shield attack and uses 06END_B.
-		"Demo DA1.06", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
-		false, true, true, false, kDemoDA106Difficulty, ARRAYSIZE(kDemoDA106Difficulty)
+		"Demo DA1.06", nullptr, "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
+		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty)
 	},
 	{
 		// GAME.TRS selects chapters 1, 2 and 4 in playable-demo mode.
 		// LE object 1, 0xf860 advances passwords past missing chapters;
 		// 0x12eb0 plays O_PLAYDE instead of the retail finale.
-		"Demo DG1.15", "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 4 },
+		"Demo DG1.15", nullptr, "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 4 },
 		false, false, false, true, nullptr, 0
+	},
+	{
+		// Macintosh v1.0's chapter-6 handler (PEF code section, 0x17fe8)
+		// also skips the shield attack in demo mode and uses 06END_B.
+		"Demo v1.0", "Rebel Assault II Demo Data", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
+		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty)
 	}
 };
 
