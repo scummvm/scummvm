@@ -333,6 +333,11 @@ void InsaneRebel2::prepareLevelEndStats(int levelId, int accuracy, int flightErr
 	}
 
 	Rebel2LevelEndParams p = kRebel2LevelEndParams[levelId];
+	const Rebel2AccuracyOverride *accuracyOverride = _release.getAccuracyOverride(levelId);
+	if (accuracyOverride) {
+		p.accLow = accuracyOverride->low;
+		p.accHigh = accuracyOverride->high;
+	}
 	if (levelId == 6 && _release.skipMiningFacilityAttack) {
 		p.titleStartBeforeEnd = 120;
 		p.titleEndBeforeEnd = 10;
@@ -814,7 +819,10 @@ void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename;
 
-	if ((levelId == 3 || levelId == 6) && phase == 2) {
+	// Chapter-6 demos use the regular retry movie for their reactor-only run.
+	const bool secondPhaseRetry = phase == 2 &&
+		(levelId == 3 || (levelId == 6 && !_release.skipMiningFacilityAttack));
+	if (secondPhaseRetry) {
 		filename = Common::String::format("%s/%sRETRYB.SAN", dir.c_str(), prefix.c_str());
 	} else {
 		filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());

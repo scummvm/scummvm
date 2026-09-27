@@ -51,6 +51,12 @@ struct Rebel2DifficultyOverride {
 	Rebel2DifficultyParams difficulty[6];
 };
 
+struct Rebel2AccuracyOverride {
+	byte chapter;
+	int16 low;
+	int16 high;
+};
+
 struct Rebel2DemoVideo {
 	const char *filename;
 	int16 flags;
@@ -71,9 +77,13 @@ struct Rebel2Release {
 	bool unlockAvailableLevels;
 	// The chapter-6 demos start at the attack on the reactor.
 	bool skipMiningFacilityAttack;
+	// Some demos omit the shield-attack resources entirely.
+	bool canRestoreMiningFacilityAttack;
 	bool advanceCompletionPasswords;
 	const Rebel2DifficultyOverride *difficultyOverrides;
 	uint difficultyOverrideCount;
+	// Optional chapter-completion thresholds, terminated by chapter zero.
+	const Rebel2AccuracyOverride *accuracyOverrides;
 	// Optional null-terminated list replacing the retail movie fonts.
 	const char *const *fontFiles;
 
@@ -81,6 +91,7 @@ struct Rebel2Release {
 	int getNextChapter(int chapter) const;
 	int getCompletionPasswordChapter(int chapter) const;
 	const Rebel2DifficultyParams *getDifficultyOverride(int difficulty, int levelType) const;
+	const Rebel2AccuracyOverride *getAccuracyOverride(int chapter) const;
 	int getFontCount() const;
 	const char *getFontFile(int font, bool highRes) const;
 };
