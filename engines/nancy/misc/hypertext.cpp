@@ -23,6 +23,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/font.h"
 
 #include "engines/nancy/misc/hypertext.h"
 
@@ -60,7 +61,39 @@ void HypertextParser::setImageName(const Common::Path &name) {
 	_imageName = name;
 }
 
+void HypertextParser::setDefaultTextRGB(byte r, byte g, byte b) {
+	_defaultTextRGB[0] = r;
+	_defaultTextRGB[1] = g;
+	_defaultTextRGB[2] = b;
+	_hasDefaultTextRGB = true;
+}
+
+void HypertextParser::drawTextRun(Graphics::ManagedSurface &surface, const Font *font, const Common::String &text, int x, int y, int width, int colorID) const {
+	if (font->getSystemFont()) {
+		font->getSystemFont()->drawString(&surface, text, x, y, width, getColorPixel(font, colorID));
+	} else {
+		font->drawString(&surface, text, x, y, width, colorID);
+	}
+}
+
+uint32 HypertextParser::getColorPixel(const Font *font, int colorID) const {
+	if (colorID == kDefaultRGB) {
+		return _fullSurface.format.ARGBToColor(255, _defaultTextRGB[0], _defaultTextRGB[1], _defaultTextRGB[2]);
+	}
+
+	if (font->getSystemFont()) {
+		return g_nancy->_graphics->getFontColor(colorID, _fullSurface.format, _fontColorState);
+	}
+
+	return font->getColorPixel(colorID);
+}
+
 static uint lineStep(const Font *font) {
+	// Nancy16+ system fonts put their lines right under each other
+	if (font->getSystemFont()) {
+		return font->getFontHeight();
+	}
+
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
 		const uint h = font->getLineHeight();
 		return h + h / 9;
@@ -311,8 +344,8 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		// Go through the wrapped lines and draw them, making sure to
 		// respect color tokens
 		uint totalCharsDrawn = 0;
-		byte colorID = _defaultTextColor;
-		uint justification = kJustifyLeft;
+		int colorID = _hasDefaultTextRGB ? kDefaultRGB : (int)_defaultTextColor;
+		uint justification = _defaultJustification;
 		bool underline = false;
 		uint numNewlineTokens = 0;
 		uint horizontalOffset = 0;
@@ -322,11 +355,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			horizontalOffset = 0;
 			newLineStart = false;
 
-			// Draw images
-			if (newlineTokens.empty()) {
-				warning("HypertextParser::drawAllText():: newlineTokens list was empty at line %u out of %u wrapped lines", lineNumber+1, wrappedLines.size());
-			}
-
+			// Draw images. Lines wrapped past the last newline token don't start a new line.
 			if (!newlineTokens.empty() && newlineTokens.front() <= totalCharsDrawn) {
 				newlineTokens.pop();
 				newLineStart = true;
@@ -495,29 +524,22 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 				// Draw the normal text
 				const int drawX = textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline);
 				const int drawY = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset;
-				font->drawString(				&_fullSurface,
-												stringToDraw,
-												drawX,
-												drawY,
-												textBounds.width(),
-												colorID);
+				drawTextRun(_fullSurface, font, stringToDraw, drawX, drawY, textBounds.width(), colorID);
 
 				// Underline the segment (the <u> markup toggle) in the text color.
 				if (underline && !stringToDraw.empty()) {
 					const int underlineWidth = font->getStringWidth(stringToDraw);
 					const int underlineY = drawY + font->getFontHeight() - 1;
 					_fullSurface.fillRect(Common::Rect(drawX, underlineY, drawX + underlineWidth, underlineY + 1),
-											font->getColorPixel(colorID));
+											getColorPixel(font, colorID));
 				}
 
 				// Then, draw the highlight
 				if (hasHotspot && !_textHighlightSurface.empty()) {
-					highlightFont->drawString(	&_textHighlightSurface,
-												stringToDraw,
-												textBounds.left + horizontalOffset + (newLineStart ? leftOffsetNonNewline : 0),
-												textBounds.top + _numDrawnLines * lineStep(highlightFont) + _imageVerticalOffset,
-												textBounds.width(),
-												colorID);
+					drawTextRun(_textHighlightSurface, highlightFont, stringToDraw,
+								textBounds.left + horizontalOffset + (newLineStart ? leftOffsetNonNewline : 0),
+								textBounds.top + _numDrawnLines * lineStep(highlightFont) + _imageVerticalOffset,
+								textBounds.width(), colorID);
 				}
 
 				// Count number of non-space characters drawn. Used for color.
