@@ -416,6 +416,12 @@ void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 	_relative = stream.readByte();
 	_hours = stream.readSint16LE();
 	_minutes = stream.readSint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Value table indices to take the hours and minutes from instead,
+		// never used in the game data
+		stream.skip(4);
+	}
 }
 
 void BumpPlayerClock::execute() {
@@ -437,8 +443,10 @@ void MakeScreenFile::readData(Common::SeekableReadStream &stream) {
 
 	readRect(stream, _cropRect);
 
-	// Image format selector, unused
-	stream.skip(1);
+	if (g_nancy->getGameType() <= kGameTypeNancy15) {
+		// Image format selector, unused
+		stream.skip(1);
+	}
 }
 
 void MakeScreenFile::execute() {
@@ -605,17 +613,34 @@ void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 		_minutes = stream.readSint16LE();        // 0x06
 		_seconds = stream.readSint16LE();        // 0x08
 		_milliseconds = stream.readSint16LE();   // 0x0a
-		_sound.volume = stream.readUint16LE();   // 0x0c
-		_sound.channelID = stream.readUint16LE(); // 0x0e
-		_sound.numLoops = 1;
 
-		// Three candidate expiry-sound names (0x10, 33 bytes each); one is
-		// picked at random, "NO SOUND" marks an empty slot
 		Common::Array<Common::String> names;
-		for (uint i = 0; i < 3; ++i) {
-			Common::String name = readFixedSizeString(stream, 0x21);
-			if (!name.empty() && !name.equalsIgnoreCase("NO SOUND")) {
-				names.push_back(name);
+		if (g_nancy->getGameType() >= kGameTypeNancy16) {
+			// Up to three expiry-sound names, preceded by their count and
+			// followed by the sound settings
+			uint16 numNames = stream.readUint16LE();
+			for (uint i = 0; i < numNames; ++i) {
+				Common::String name = readFixedSizeString(stream, 0x21);
+				if (!name.empty() && !name.equalsIgnoreCase("NO SOUND")) {
+					names.push_back(name);
+				}
+			}
+
+			_sound.channelID = stream.readUint16LE();
+			_sound.numLoops = stream.readUint32LE();
+			_sound.volume = stream.readUint16LE();
+		} else {
+			_sound.volume = stream.readUint16LE();   // 0x0c
+			_sound.channelID = stream.readUint16LE(); // 0x0e
+			_sound.numLoops = 1;
+
+			// Three candidate expiry-sound names (0x10, 33 bytes each); one is
+			// picked at random, "NO SOUND" marks an empty slot
+			for (uint i = 0; i < 3; ++i) {
+				Common::String name = readFixedSizeString(stream, 0x21);
+				if (!name.empty() && !name.equalsIgnoreCase("NO SOUND")) {
+					names.push_back(name);
+				}
 			}
 		}
 
