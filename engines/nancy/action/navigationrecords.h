@@ -30,6 +30,14 @@ namespace Action {
 // Simply changes the scene
 class SceneChange : public ActionRecord {
 public:
+	// Nancy16: whether the record also names the frame to open the scene at
+	enum FrameType {
+		kWithFrame,
+		kWithoutFrame
+	};
+
+	SceneChange(FrameType frameType = kWithFrame) : _frameType(frameType) {}
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
@@ -41,6 +49,8 @@ protected:
 	Common::String getRecordTypeName() const override { return "SceneChange"; }
 
 	void readDataNancy16(Common::SeekableReadStream &stream);
+
+	FrameType _frameType;
 };
 
 // Changes the scene when clicked

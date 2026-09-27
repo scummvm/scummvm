@@ -150,12 +150,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveForward);
 		else
-			return new SceneChange();
+			return new SceneChange(SceneChange::kWithoutFrame);
 	case 16:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveBackward);
 		else
-			return new SceneChange();	// With frame
+			return new SceneChange(SceneChange::kWithFrame);
 	case 17:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Hot1FrSceneChange(CursorManager::kMoveUp);

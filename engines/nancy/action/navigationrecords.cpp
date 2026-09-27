@@ -44,7 +44,7 @@ void SceneChange::readData(Common::SeekableReadStream &stream) {
 // vector from its scene changes, and widened the frame ID to 32 bits
 void SceneChange::readDataNancy16(Common::SeekableReadStream &stream) {
 	_sceneChange.sceneID = stream.readUint16LE();
-	if (_type != 15) {
+	if (_frameType == kWithFrame) {
 		_sceneChange.frameID = stream.readUint32LE();
 	}
 
