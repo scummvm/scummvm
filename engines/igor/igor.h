@@ -518,12 +518,15 @@ private:
 	void drawInventory(int start, int mode);
 	void addObjectToInventory(int object, int index);
 	void removeObjectFromInventory(int index);
+	int getObjectFromInventory(int x) const;
 
 	void packInventory();
 
 	void enterPartLoop();
 	void leavePartLoop();
 	void runPartLoop();
+
+	void handleRoomDialogue();
 
 	void handleRoomLight();
 

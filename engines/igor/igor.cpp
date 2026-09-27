@@ -240,9 +240,9 @@ void IgorEngine::runPartLoop() {
 	if (compareGameTick(1, 16)) {
 		handleRoomIgorWalk();
 	}
-	// if (compareGameTick(19, 32)) {
-	// 	handleRoomDialogue();
-	// }
+	if (compareGameTick(19, 32)) {
+		handleRoomDialogue();
+	}
 	if (compareGameTick(4, 8)) {
 		handleRoomInventoryScroll();
 	}
@@ -255,6 +255,26 @@ void IgorEngine::runPartLoop() {
 
 	waitForTimer();
 }
+
+void IgorEngine::handleRoomDialogue() {
+	if (_gameState.dialogueTextRunning) {
+		if (_talkDelayCounter == _talkDelay) {
+			animateIgorTalking(0);
+			memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer + 23040, _dialogueDirtyRectSize);
+			if (_dialogueTextsCount == 0) {
+				_gameState.dialogueTextRunning = false;
+				showCursor();
+			} else {
+				++_dialogueTextsStart;
+				startIgorDialogue();
+			}
+		} else {
+			animateIgorTalking(getRandomNumber(6));
+			++_talkDelayCounter;
+		}
+	}
+}
+
 
 void IgorEngine::handleRoomLight() {
 	if (_gameState.dialogueTextRunning || _gameState.igorMoving) {
@@ -451,6 +471,16 @@ void IgorEngine::removeObjectFromInventory(int index) {
 	}
 	drawInventory(_inventoryInfo[72], 0);
 	playSound(63, 1);
+}
+
+int IgorEngine::getObjectFromInventory(int x) const {
+	if (x >= 20 && x <= 299) {
+		int i = (x - 20) / 40 + _inventoryInfo[72];
+		if (i <= _inventoryInfo[73]) {
+			return _inventoryInfo[i - 1];
+		}
+	}
+	return 0;
 }
 
 void IgorEngine::packInventory() {

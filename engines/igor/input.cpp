@@ -229,28 +229,28 @@ void IgorEngine::handleRoomInput() {
 
 	// Action previousAction = _currentAction;
 	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
-		// int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
-		// if (_currentAction.verbType == 0) {
-		// 	_currentAction.object1Num = object;
-		// 	_currentAction.object1Type = kObjectTypeInventory;
-		// 	if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 10 + _currentAction.object1Num] != 0) {
-		// 		formatActionSentence(0);
-		// 		if (!actionHovering) {
-		// 			_currentAction.verbType = 1;
-		// 		}
-		// 		return;
-		// 	}
-		// 	if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 10 + _currentAction.object1Num] != 0) {
-		// 		formatActionSentence(0);
-		// 		if (!actionHovering) {
-		// 			_currentAction.verbType = 2;
-		// 		}
-		// 		return;
-		// 	}
-		// } else {
-		// 	_currentAction.object2Num = object;
-		// 	_currentAction.object2Type = kObjectTypeInventory;
-		// }
+		int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
+		if (_currentAction.verbType == 0) {
+			_currentAction.object1Num = object;
+			_currentAction.object1Type = kObjectTypeInventory;
+			if (_currentAction.verb == kVerbUse && _roomActionsTable[_roomDataOffsets.action.useVerb + 10 + _currentAction.object1Num] != 0) {
+				formatActionSentence(0);
+				if (!actionHovering) {
+					_currentAction.verbType = 1;
+				}
+				return;
+			}
+			if (_currentAction.verb == kVerbGive && _roomActionsTable[_roomDataOffsets.action.giveVerb + 10 + _currentAction.object1Num] != 0) {
+				formatActionSentence(0);
+				if (!actionHovering) {
+					_currentAction.verbType = 2;
+				}
+				return;
+			}
+		} else {
+			_currentAction.object2Num = object;
+			_currentAction.object2Type = kObjectTypeInventory;
+		}
 	} else if (_inputVars[kInputCursorYPos] < 144) {
 		int area = _screenLayer2[_inputVars[kInputCursorYPos] * 320 + _inputVars[kInputCursorXPos]];
 		int object = _roomObjectAreasTable[area].object;
@@ -280,11 +280,11 @@ void IgorEngine::handleRoomInput() {
 	}
 
 	if (_currentAction.verbType == 0) {
-		// if (_currentAction.object1Type == kObjectTypeInventory) {
-		// 	_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
-		// } else {
+		if (_currentAction.object1Type == kObjectTypeInventory) {
+			_actionCode = _inventoryActionsTable[(_currentAction.verb - 1) * 2 + _currentAction.object1Num * 20];
+		} else {
 		_actionCode = _roomActionsTable[_roomDataOffsets.action.defaultVerb + _currentAction.verb * 2 + _currentAction.object1Num * 20];
-		// }
+		}
 		// The original only exposes a room object when this action byte is
 		// non-zero; otherwise hover text is verb-only. cseg175:2C8B-2CBC;
 		// cseg176:2CBC-2CED.
