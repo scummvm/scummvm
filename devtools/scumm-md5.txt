@@ -460,6 +460,7 @@ rebel1	Star Wars: Rebel Assault
 	6bb0fe2d7816c5528c773f2898e4e0ff	212915	en	DOS	-	v1.7	-	-
 	02236dcfb0cac59457153fc296233825	213171	fr	DOS	-	v1.7	-	-
 	b978b92affdfe5744711ca0cb3548720	213115	de	DOS	-	v1.7	-	-
+	2f258cec59ae69fb451d82d0881208db	212915	en	DOS	-	v1.8	Official patch	-
 	bb1d02798011e5906c4c726be4d63544	1908	en	3DO	-	-	-	-
 	d77be4d8a3e609092703508e09f1ed5d	132904	ja	SEGA	-	-	-	-
 	62543831f454b46ef8d0f50b9e1c063c	560453	en	Mac	-	-	68k application	-
