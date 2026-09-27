@@ -38,11 +38,11 @@ bool Yell::msgFocus(const FocusMessage &msg) {
 }
 
 bool Yell::msgKeypress(const KeypressMessage &msg) {
-	if (msg.ascii == 13) {
+	if (msg.keycode == Common::KEYCODE_RETURN) {
 		writeString("\n");
 		close();
 		_G(logic)->resumeTurn();
-	} else if (msg.ascii >= 32 && msg.ascii < 127) {
+	} else if (Common::isPrint(msg.ascii)) {
 		writeString("%c", (char)msg.ascii);
 	}
 
