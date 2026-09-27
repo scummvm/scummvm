@@ -57,7 +57,8 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint16LE(firstScene.frameID, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeHours, kGameTypeNancy16);
 	s.syncAsUint16LE(startTimeMinutes, kGameTypeNancy16);
-	s.skip(7, kGameTypeNancy16);	// End of day fields, disabled in the game data
+	s.syncAsByte(dayValueIndex, kGameTypeNancy16);
+	s.skip(6, kGameTypeNancy16);	// End of day fields, disabled in the game data
 
 	s.syncAsUint16LE(firstScene.sceneID, kGameTypeVampire, kGameTypeNancy15);
 	s.skip(0xC, kGameTypeVampire, kGameTypeVampire); // Palette name + unknown 2 bytes
@@ -153,6 +154,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, screenPosition);
 	readRect(*chunkStream, bounds);
+
+	// Nancy16's rects aren't inclusive; the viewport is exactly as large as the video
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		--screenPosition.right;
+		--screenPosition.bottom;
+		--bounds.right;
+		--bounds.bottom;
+	}
 }
 
 PCAL::PCAL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

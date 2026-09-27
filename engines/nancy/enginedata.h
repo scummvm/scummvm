@@ -64,6 +64,7 @@ struct BSUM : public EngineData {
 	// is raised so the scripts can send the player to bed. Writing to the value
 	// at dayValueIndex puts the player to sleep: the next day starts at
 	// wakeUpHour, and the new day number gets copied into that value.
+	// Nancy16 only keeps the day value, which goes up by one at midnight.
 	byte dayValueIndex = 0;
 	int16 endOfDayFlag = kEvNoEvent;
 	uint16 endOfDayHour = 0;
