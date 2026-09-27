@@ -46,6 +46,13 @@ static const Rebel1Release kReleases[] = {
 		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
 	},
 	{
+		// CD-ROM Demo v1.5: the original dispatcher at 0x1478d redirects
+		// chapter 1 to 2, chapter 3 to 10, and returns to the menu after 10.
+		"Demo v1.5", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1DEMO.ANM", "OPEN/O1OPEN.ANM", nullptr, false, true,
+		{ 2, 10 }, nullptr,
+		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
+	},
+	{
 		// CD-ROM Demo v1.51: the original dispatcher skips chapters 3-9 and
 		// 11-15, their transitions, and the retail ending.
 		"Demo v1.51", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", nullptr, "OPEN/O1OPEN.ANM", nullptr, false, true,

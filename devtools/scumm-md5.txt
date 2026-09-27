@@ -450,6 +450,7 @@ ft	Full Throttle
 	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
 rebel1	Star Wars: Rebel Assault
+	a29730a42dfcff7bc2e10acfca1e76a2	212951	en	DOS	Demo v1.5	Demo v1.5	CD-ROM demo (chapters 2 and 10)	-
 	274f6026d41fa2a2990a6d6b7a561dc2	217559	en	DOS	Demo v1.51	Demo v1.51	CD-ROM demo	-
 	551a7c06bf5098b32d5fe7641d695df8	226750	en	DOS	Demo 1994-04-13	Demo 1994-04-13	CD-ROM demo (chapters 8 and 10)	-
 	4e9f4571f5859ea50f1e505a1f15c408	451096	en	Mac	Demo v1.02c	Demo v1.02c	68k demo application (chapters 6 and 9)	-
