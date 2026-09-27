@@ -139,9 +139,6 @@ void CreateCharacter::positionCursor() {
 	case CONFIRM:
 		_cursor.setPosition(Common::Point(29, 16));
 		break;
-	case DONE:
-		_cursor.hide();
-		return;
 	}
 
 	_cursor.show();
@@ -151,11 +148,6 @@ void CreateCharacter::draw() {
 	auto s = getSurface();
 	s.clear();
 	s.setColor(COLOR_TEXT);
-
-	if (_state == DONE) {
-		drawDone(s);
-		return;
-	}
 
 	Data::Savegame &sg = _G(savegame);
 
@@ -209,20 +201,6 @@ void CreateCharacter::draw() {
 	s.writeString(Common::Point(9, 20), "2-ELF          2-CLERIC");
 	s.writeString(Common::Point(9, 21), "3-DWARF        3-WIZARD");
 	s.writeString(Common::Point(9, 22), "4-HOBBIT       4-THIEF");
-}
-
-void CreateCharacter::drawDone(Shared::Gfx::GfxSurface &s) {
-	Data::Savegame &sg = _G(savegame);
-
-	s.writeString(Common::Point(10, 2), "CHARACTER CREATED");
-	s.writeString(Common::Point(4, 4), "NAME: %s", sg._name);
-	s.writeString(Common::Point(4, 5), "%s %s %s",
-		sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE", raceName(sg._race), className(sg._class));
-	s.writeString(Common::Point(4, 7), "STR:%d AGL:%d STA:%d", sg._strength, sg._agility, sg._stamina);
-	s.writeString(Common::Point(4, 8), "CHR:%d WIS:%d INT:%d", sg._charisma, sg._wisdom, sg._intelligence);
-	s.writeString(Common::Point(4, 10), "HP:%d FOOD:%d GOLD:%d", sg._hp, sg._food, sg._gold);
-
-	s.writeString(Common::Point(4, 13), "PRESS ANY KEY TO ENTER THE WORLD");
 }
 
 bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
@@ -323,14 +301,8 @@ bool CreateCharacter::msgKeypress(const KeypressMessage &msg) {
 			sg._mapY = 20;
 			sg._mapEra = 2;
 			sg._mapType = 0;
-			_state = DONE;
-			positionCursor();
-			redraw();
+			_G(map).load(sg._mapEra, sg._mapType);
 		}
-		break;
-
-	case DONE:
-		_G(map).load(sg._mapEra, sg._mapType);
 		break;
 	}
 

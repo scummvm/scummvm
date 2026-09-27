@@ -31,7 +31,6 @@
 #include "ultima/ultima2/views/location_map.h"
 #include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/views/space_map.h"
-#include "ultima/ultima2/views/startup.h"
 #include "ultima/ultima2/views/title.h"
 #include "ultima/ultima2/views/zstats.h"
 #include "ultima/ultima2/views/interactions/clue_seller.h"
@@ -81,7 +80,6 @@ struct Views : public Shared::Views {
 	LocationMap _locationMap;
 	OverworldMap _overworldMap;
 	SpaceMap _spaceMap;
-	Startup _startup;
 	Title _title;
 	HelmMap _helmMap;
 	ZStats _zstats;

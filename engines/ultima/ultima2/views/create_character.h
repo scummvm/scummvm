@@ -43,7 +43,7 @@ class CreateCharacter : public Shared::Gfx::View {
 private:
 	enum State {
 		STRENGTH, AGILITY, STAMINA, CHARISMA, WISDOM, INTELLIGENCE,
-		SEX, RACE, CLASS, NAME, CONFIRM, DONE
+		SEX, RACE, CLASS, NAME, CONFIRM
 	};
 	State _state = STRENGTH;
 
@@ -59,7 +59,6 @@ private:
 	void rejectEntry();
 	void enterStat(int value);
 	void positionCursor();
-	void drawDone(Shared::Gfx::GfxSurface &s);
 
 public:
 	CreateCharacter();

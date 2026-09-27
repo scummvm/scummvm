@@ -134,7 +134,6 @@ MODULE_OBJS += \
 	ultima2/views/overworld_map.o \
 	ultima2/views/space_map.o \
 	ultima2/views/space_stats.o \
-	ultima2/views/startup.o \
 	ultima2/views/stats.o \
 	ultima2/views/title.o \
 	ultima2/views/zstats.o \

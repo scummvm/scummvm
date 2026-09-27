@@ -73,7 +73,7 @@ Common::Error Ultima2Engine::run() {
 	_rngState[1]++;
 
 	Views::Views views;
-	addView("Startup");
+	addView("Title");
 	runGame(views);
 
 	return Common::kNoError;
