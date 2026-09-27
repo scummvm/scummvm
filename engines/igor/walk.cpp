@@ -46,26 +46,70 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
 		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
 		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
-		// for (int i = 1; dstArea != currentArea; ++i) {
-		// 	const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
-		// 	int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
-			// debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
-		// 	int nextPosX, nextPosY;
-		// 	if (dstArea != nextArea) {
-		// 		getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
-		// 	} else {
-		// 		getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
-		// 	}
-			// debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
-		// 	buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
-		// 	srcX = nextPosX;
-		// 	srcY = nextPosY;
-		// 	currentArea = nextArea;
-		// }
+		int currentArea = srcArea;
+		for (int i = 1; dstArea != currentArea; ++i) {
+			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
+			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
+			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
+			int nextPosX, nextPosY;
+			if (dstArea != nextArea) {
+				getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
+			} else {
+				getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
+			}
+			debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
+			buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
+			srcX = nextPosX;
+			srcY = nextPosY;
+			currentArea = nextArea;
+		}
 		buildWalkPathArea(srcX, srcY, dstX, dstY);
 		--_walkDataLastIndex;
 	}
 	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
+}
+
+
+void IgorEngine::getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y = srcY - yPos;
+		int x = srcX - xPos;
+		int sqrDist = y * y + x * x;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+}
+
+void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2) {
+	int minSqrDist = -1;
+	assert(dstArea >= 1 && srcArea >= 1);
+	const uint8 *p = _roomActionsTable + ((dstArea - 1) + (srcArea - 1) * _roomDataOffsets.area.boxSize) * 6;
+	for (int i = 0; i < 3; ++i) {
+		const uint16 offset = READ_LE_UINT16(p + i * 2);
+		const int yPos = offset / 320;
+		const int xPos = offset % 320;
+		int y1 = srcY1 - yPos;
+		int x1 = srcX1 - xPos;
+		int y2 = srcY2 - yPos;
+		int x2 = srcX2 - xPos;
+		int sqrDist = y1 * y1 + x1 * x1 + y2 * y2 + x2 * x2;
+		if (minSqrDist == -1 || sqrDist < minSqrDist) {
+			*dstY = yPos;
+			*dstX = xPos;
+			minSqrDist = sqrDist;
+		}
+	}
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
 }
 
 int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {

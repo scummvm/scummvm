@@ -95,7 +95,8 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 1, 480); // cseg180:05B6-05CC (sub_180_05B6)
+		//Look at water
+		ADD_DIALOGUE_TEXT(201, 2, 480); // cseg180:05B6-05CC (sub_180_05B6)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -346,7 +347,7 @@ void IgorEngine::PART_06() {
 	PART_06_HELPER_2();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
-	// PART_06_HELPER_6(255);
+	PART_06_HELPER_6(255);
 
 	if (_objectsState[63] == 1) {
 		PART_06_HELPER_3_drawTripod();
@@ -373,9 +374,9 @@ void IgorEngine::PART_06() {
 		if (compareGameTick(1, 16)) {
 			handleRoomIgorWalk();
 		}
-		// if (compareGameTick(19, 32)) {
-		// 	handleRoomDialogue();
-		// }
+		if (compareGameTick(19, 32)) {
+			handleRoomDialogue();
+		}
 		if (compareGameTick(4, 8)) {
 			handleRoomInventoryScroll();
 		}

@@ -26,6 +26,7 @@ namespace Igor {
 	debugC(9, kDebugGame, "PART_05_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101: {
+		// Look at water
 		ADD_DIALOGUE_TEXT(201, 2, 478); // cseg182:0552-055E (sub_182_0548)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
@@ -39,11 +40,13 @@ namespace Igor {
 		PART_05_ACTION_103_pickPaper();
 		break;
 	case 104:
+		// Look at photographers
 		ADD_DIALOGUE_TEXT(203, 2, 479); // cseg182:0575-058B (sub_182_0575)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
 	case 105:
+		// go to map
 		_currentPart = 40;
 		break;
 	default:

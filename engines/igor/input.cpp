@@ -220,6 +220,21 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 
+	if (_inputVars[kInputClick] && _gameState.igorMoving) {
+		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex - 1].x;
+		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex - 1].y;
+		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX]].area == 0) {
+			// cseg180:0x23B2-0x23F8 / cseg182:0x1A10-0x1A56
+			return;
+		}
+		_walkDataCurrentPosX = _walkData[_walkDataCurrentIndex + 1].x;
+		_walkDataCurrentPosY = _walkData[_walkDataCurrentIndex + 1].y;
+		if (_roomObjectAreasTable[_screenLayer2[_walkDataCurrentPosY * 320 + _walkDataCurrentPosX]].area == 0) {
+			// cseg180:0x23FB-0x2441 / cseg182:0x1A59-0x1A9F
+			return;
+		}
+	}
+
 	bool actionHovering = !_inputVars[kInputClick];
 	_inputVars[kInputClick] = 0;
 

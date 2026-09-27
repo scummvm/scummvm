@@ -533,6 +533,9 @@ private:
 
 	void updateRoomLight(int fl);
 
+	void getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX);
+	void getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2);
+
 	int lookupScale(int xOffset, int yOffset, int h) const;
 	void lookupScale(int curX, int curY, uint8 &scale, uint8 &xScale, uint8 &yScale) const;
 

@@ -269,7 +269,7 @@ void IgorEngine::handleRoomDialogue() {
 				startIgorDialogue();
 			}
 		} else {
-			animateIgorTalking(getRandomNumber(6));
+			animateIgorTalking(getRandomNumber(5));
 			++_talkDelayCounter;
 		}
 	}

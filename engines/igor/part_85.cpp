@@ -191,6 +191,9 @@ void IgorEngine::displayLogo() {
 	_currentPalette[765] = 63; // cseg209:0x0465
 	_currentPalette[766] = 63; // cseg209:0x046A
 	_currentPalette[767] = 63; // cseg209:0x046F
+	uint8 logoColor255[3];
+	memcpy(logoColor255, _currentPalette + 765, 3);
+	memset(_currentPalette + 765, 0, 3); // cseg209:0x0474-0x047D
 	updatePalette(768); // cseg209:0x0474-0x0486
 	loadData(IMG_IgorIntroLogo, _screenVGA); // cseg209:0x048B-0x04B8
 
@@ -210,13 +213,12 @@ void IgorEngine::displayLogo() {
 	}
 	free(subtitle);
 
-	// Update the stored palette while exposing only color 255 to VGA.
-	// cseg209:0x04F9-0x05CB
+	// Fade color 255 from black to the logo's white. cseg209:0x04F9-0x05CB
 	for (int threshold = 63; threshold >= 0; threshold -= 3) {
-		for (int i = 0; i < 768; ++i) {
-			if (_paletteBuffer[i] >= threshold) {
+		for (int i = 765; i < 768; ++i) { // cseg209:0x0504-0x05B8
+			if (logoColor255[i - 765] >= threshold) {
 				const int color = _currentPalette[i] + 3;
-				_currentPalette[i] = MIN<int>(color, _paletteBuffer[i]);
+				_currentPalette[i] = MIN<int>(color, logoColor255[i - 765]);
 			}
 		}
 		setPaletteRange(255, 255); // cseg209:0x05BB-0x05BF
@@ -240,17 +242,17 @@ void IgorEngine::displayLogo() {
 	memcpy(_currentPalette, _paletteBuffer, 765); // cseg209:0x064E-0x065B
 	setPaletteRange(0, 255); // cseg209:0x0660-0x0664
 
-	// The original updates only color 255 here. The other palette changes stay
-	// internal and therefore do not produce a visible fade. cseg209:0x0669-0x0705
-	// for (int threshold = 0; threshold <= 63; threshold += 3) {
-	// 	// for (int i = 0; i < 768; ++i) {
-	// 	// 	if (_paletteBuffer[i] >= threshold) {
-	// 	// 		_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
-	// 	// 	}
-	// 	// }
-	// 	// setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
-	// 	// waitForTimer();
-	// }
+	// Fade the subtitle, which remains below the 122 restored rows and uses
+	// palette color 255. cseg209:0x0669-0x0705
+	for (int threshold = 0; threshold <= 63; threshold += 3) {
+		for (int i = 765; i < 768; ++i) { // cseg209:0x066E-0x06E6
+			if (logoColor255[i - 765] >= threshold) {
+				_currentPalette[i] = (_currentPalette[i] < 3) ? 0 : _currentPalette[i] - 3;
+			}
+		}
+		setPaletteRange(255, 255); // cseg209:0x06F0-0x06F4
+		waitForTimer();
+	}
 
 	memcpy(_screenVGA, _screenTextLayer, 46080); // cseg209:0x0708-0x071A
 	_currentPalette[765] = 63; // cseg209:0x071F

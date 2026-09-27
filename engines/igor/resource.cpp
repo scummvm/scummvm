@@ -173,7 +173,7 @@ ResourceEntry *IgorEngine::findData(int id) {
  * IGOR.TBL is produced externally using the same ids pointing to a given resource.
  */
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
-	debugC(9, kDebugResource, "loadData() id %d", id);
+	// debugC(9, kDebugResource, "loadData() id %d", id);
 	ResourceEntry *re = findData(id);
 	if (!dst) {
 		dst = (uint8 *)malloc(re->size);
