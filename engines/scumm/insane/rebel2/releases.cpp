@@ -75,6 +75,13 @@ static const Rebel2Release kReleases[] = {
 		false, false, false, true, nullptr, 0
 	},
 	{
+		// GAME.TRS selects chapters 1, 2 and 3 in playable-demo mode.
+		// LE object 1, 0x12e70 plays O_PLAYDE after the last chapter;
+		// 0xf840 retains retail completion passwords, unlike DG1.15.
+		"Demo Special Edition", nullptr, "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 3 },
+		false, false, false, false, nullptr, 0
+	},
+	{
 		// Macintosh v1.0's chapter-6 handler (PEF code section, 0x17fe8)
 		// also skips the shield attack in demo mode and uses 06END_B.
 		"Demo v1.0", "Rebel Assault II Demo Data", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
