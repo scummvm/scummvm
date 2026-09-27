@@ -105,6 +105,8 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	splayer->setCurVideoFlags(0x420);
 	splayer->setFastForwardFromFrame(0);
 	splayer->setFastForwardToFrame(startFrame > 0 ? startFrame : 0);
+	// A missing movie must not retain the previous movie's completion status.
+	splayer->_endOfFile = false;
 	splayer->play(filename, 15);
 
 	_introTextActive = false;
@@ -1372,6 +1374,14 @@ bool InsaneRebel1::runLevel15() {
 }
 
 void InsaneRebel1::runGame() {
+	if (!hasPlayableLevels()) {
+		playIntroSequence();
+		// Only restart after natural completion; skipping the preview exits.
+		while (_release.intro && !shouldAbortGameFlow() && _vm->_splayer->_endOfFile)
+			playCinematic(_release.intro);
+		return;
+	}
+
 	typedef bool (InsaneRebel1::*RunLevelMethod)();
 	const RunLevelMethod kLevelRunners[] = {
 		&InsaneRebel1::runLevel1,

@@ -46,6 +46,13 @@ static const Rebel1Release kReleases[] = {
 		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
 	},
 	{
+		// v0.67: the original at 0x28ac plays the logo once, then loops the
+		// preview. Neither the menu movie nor any chapter assets are supplied.
+		"Demo v0.67", "REBEL.EXE", "OPEN/O1LOGO.ANM", nullptr, "OPEN/O1OPEN.ANM", nullptr, false, false,
+		{ 0 }, nullptr,
+		0, false, { 0, 0, 0 }, &kRetailWalker
+	},
+	{
 		// CD-ROM Demo v1.5: the original dispatcher at 0x1478d redirects
 		// chapter 1 to 2, chapter 3 to 10, and returns to the menu after 10.
 		"Demo v1.5", "ASSAULT.EXE", "OPEN/O1LOGO.ANM", "OPEN/O1DEMO.ANM", "OPEN/O1OPEN.ANM", nullptr, false, true,

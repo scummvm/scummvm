@@ -184,6 +184,7 @@ public:
 	void resetFrameObjectState();
 
 	void runGame();
+	bool hasPlayableLevels() const { return _release.getLevelCount() != 0; }
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 	Common::Error loadGameState(int slot, bool startupLoad = false);
 	bool shouldAbortGameFlow() const { return _vm->shouldQuit() || _loadRequested; }

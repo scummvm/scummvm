@@ -59,6 +59,7 @@ struct Rebel1Release {
 	bool chapterTransitions;
 	bool passcodes;
 	// Chapter numbers in playback order. Unused entries are zero.
+	// An empty list denotes a non-interactive demo that loops the intro.
 	byte levels[kNumLevels];
 	// Optional replacement chapter order when restored content is enabled.
 	const byte *restoredLevels;

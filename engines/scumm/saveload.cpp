@@ -104,7 +104,11 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		return false;
 
 #ifdef ENABLE_SCUMM_7_8
-	if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2)
+	if (_game.id == GID_REBEL1) {
+		const InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		return rebel && rebel->hasPlayableLevels();
+	}
+	if (_game.id == GID_REBEL2)
 		return true;
 #endif
 
@@ -184,8 +188,10 @@ bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 		return false;
 
 #ifdef ENABLE_SCUMM_7_8
-	if (_game.id == GID_REBEL1)
-		return true;
+	if (_game.id == GID_REBEL1) {
+		const InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
+		return rebel && rebel->hasPlayableLevels();
+	}
 
 	// No save interface: progress is written as levels are completed.
 	if (_game.id == GID_REBEL2) {
