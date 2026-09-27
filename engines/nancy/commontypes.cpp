@@ -123,8 +123,8 @@ void MultiEventFlagDescription::readData(Common::SeekableReadStream &stream) {
 }
 
 void MultiEventFlagDescription::execute() {
-	for (uint i = 0; i < 10; ++i) {
-		NancySceneState.setEventFlag(descs[i]);
+	for (const FlagDescription &desc : descs) {
+		NancySceneState.setEventFlag(desc);
 	}
 }
 

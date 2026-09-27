@@ -229,9 +229,12 @@ struct FrameBlitDescription {
 	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
 };
 
-// Describes 10 event flag changes to be executed when an action is triggered
+// Describes event flag changes to be executed when an action is triggered.
+// There are always 10, except in Nancy15+ event flag records, which list any number.
 struct MultiEventFlagDescription {
-	FlagDescription descs[10];
+	MultiEventFlagDescription() : descs(10) {}
+
+	Common::Array<FlagDescription> descs;
 
 	void readData(Common::SeekableReadStream &stream);
 	void execute();

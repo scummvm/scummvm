@@ -60,15 +60,22 @@ public:
 	void execute() override;
 
 	Common::String getRecordExtraInfo() const override {
-		return Common::String::format("Value %d -> %d (should set is %d)", _index, _value, _shouldSet);
+		return Common::String::format("Value %d -> %d (mode %d)", _index, _value, _mode);
 	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "SetValue"; }
 
+	enum SetMode : byte {
+		kAdd		= 0,
+		kSet		= 1,
+		kSetRandom	= 2		// Nancy16+
+	};
+
 	byte _index = 0;
-	bool _shouldSet = false;
+	SetMode _mode = kAdd;
 	int16 _value = kNoTableValue;
+	int16 _randomMax = 0;
 };
 
 class SetValueCombo : public ActionRecord {

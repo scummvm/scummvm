@@ -119,8 +119,13 @@ void TableIndexSetValueHS::execute() {
 
 void SetValue::readData(Common::SeekableReadStream &stream) {
 	_index = stream.readByte();
-	_shouldSet = stream.readByte();
+	_mode = (SetMode)stream.readByte();
 	_value = stream.readSint16LE();
+
+	// Nancy16 can set a random value in [_value, _randomMax)
+	if (g_nancy->getGameType() >= kGameTypeNancy16 && _mode == kSetRandom) {
+		_randomMax = stream.readSint16LE();
+	}
 }
 
 void SetValue::execute() {
@@ -135,21 +140,26 @@ void SetValue::execute() {
 		NancySceneState.requestSleep();
 	}
 
+	int16 value = _value;
+	if (_mode == kSetRandom && _randomMax > _value) {
+		value += g_nancy->_randomSource->getRandomNumber(_randomMax - _value - 1);
+	}
+
 	if (_index < numSingleValues) {
 		// Single values
 		int16 curValue = playerTable->getSingleValue(_index);
-		if (_shouldSet || curValue == kNoTableValue) {
-			playerTable->setSingleValue(_index, _value);
+		if (_mode != kAdd || curValue == kNoTableValue) {
+			playerTable->setSingleValue(_index, value);
 		} else {
-			playerTable->setSingleValue(_index, curValue + _value);
+			playerTable->setSingleValue(_index, curValue + value);
 		}
 	} else {
 		// Combo values
 		float curValue = playerTable->getComboValue(_index - numSingleValues);
-		if (_shouldSet || curValue == (float)kNoTableValue) {
-			playerTable->setComboValue(_index - numSingleValues, _value);
+		if (_mode != kAdd || curValue == (float)kNoTableValue) {
+			playerTable->setComboValue(_index - numSingleValues, value);
 		} else {
-			playerTable->setComboValue(_index - numSingleValues, curValue + _value);
+			playerTable->setComboValue(_index - numSingleValues, curValue + value);
 		}
 	}
 
@@ -341,8 +351,7 @@ void ValueTest::execute() {
 
 Common::String EventFlags::getRecordExtraInfo() const {
 	Common::String info;
-	for (uint i = 0; i < ARRAYSIZE(_flags.descs); ++i) {
-		const FlagDescription &desc = _flags.descs[i];
+	for (const FlagDescription &desc : _flags.descs) {
 		if (desc.label == kFlagNoLabel) {
 			continue;
 		}
@@ -360,15 +369,11 @@ void EventFlags::readData(Common::SeekableReadStream &stream) {
 			// Nancy15 writes only the flags it actually sets, preceded by their
 			// number, instead of a fixed block of 10 descriptions
 			uint16 numFlags = stream.readUint16LE();
+			_flags.descs.resize(numFlags);
 
-			for (uint i = 0; i < numFlags; ++i) {
-				int16 label = stream.readSint16LE();
-				uint16 flag = stream.readUint16LE();
-
-				if (i < ARRAYSIZE(_flags.descs)) {
-					_flags.descs[i].label = label;
-					_flags.descs[i].flag = flag;
-				}
+			for (FlagDescription &desc : _flags.descs) {
+				desc.label = stream.readSint16LE();
+				desc.flag = stream.readUint16LE();
 			}
 		} else {
 			_flags.readData(stream);
@@ -391,7 +396,11 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	EventFlags::readData(stream);
 
 	if (_hotspotType != kMultiHS) {
-		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+		if (g_nancy->getGameType() >= kGameTypeNancy16) {
+			_hoverCursor = (CursorManager::CursorType)stream.readUint32LE();
+		} else {
+			_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+		}
 	}
 
 	uint16 numHotspots = stream.readUint16LE();
