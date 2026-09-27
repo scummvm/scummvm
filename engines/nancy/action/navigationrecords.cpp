@@ -32,7 +32,25 @@ namespace Nancy {
 namespace Action {
 
 void SceneChange::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readDataNancy16(stream);
+		return;
+	}
+
 	_sceneChange.readData(stream);
+}
+
+// Nancy16 dropped the vertical offset, sound continuation flag and listener
+// vector from its scene changes, and widened the frame ID to 32 bits
+void SceneChange::readDataNancy16(Common::SeekableReadStream &stream) {
+	_sceneChange.sceneID = stream.readUint16LE();
+	if (_type != 15) {
+		_sceneChange.frameID = stream.readUint32LE();
+	}
+
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+	_sceneChange.listenerFrontVector.set(0, 0, 1);
+	_sceneChange.frontVectorFrameID = _sceneChange.frameID;
 }
 
 void SceneChange::execute() {
@@ -134,6 +152,13 @@ void HotSingleFrameSceneChange::execute() {
 }
 
 void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy16 && !_isTerse) {
+		readDataNancy16(stream);
+		_hoverCursor = (CursorManager::CursorType)stream.readUint32LE();
+		readRect(stream, _hotspotDesc.coords);
+		return;
+	}
+
 	if (_dynamicCursor)
 		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
 

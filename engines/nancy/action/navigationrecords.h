@@ -39,6 +39,8 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "SceneChange"; }
+
+	void readDataNancy16(Common::SeekableReadStream &stream);
 };
 
 // Changes the scene when clicked
