@@ -2020,8 +2020,13 @@ void Scene::run() {
 		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
+		uint16 day = _timers.playerTime.getDays();
 		_timers.playerTime += 60000; // Add a minute
 		_timers.playerTimeNextMinute = currentPlayTime + bootSummary->playerTimeMinuteLength;
+
+		if (g_nancy->getGameType() >= kGameTypeNancy16 && _timers.playerTime.getDays() != day) {
+			advanceDayValue();
+		}
 	}
 
 	updateEndOfDay();
@@ -2080,6 +2085,19 @@ void Scene::updateEndOfDay() {
 		setPlayerDay(_timers.playerDay + 1);
 		setEventFlag(bootSummary->endOfDayFlag, g_nancy->_false);
 	}
+}
+
+void Scene::advanceDayValue() {
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
+	TableData *playerTable = (TableData *)getPuzzleData(TableData::getTag());
+	if (!playerTable) {
+		return;
+	}
+
+	int16 day = playerTable->getValue(bootSummary->dayValueIndex);
+	playerTable->setValue(bootSummary->dayValueIndex, day == kNoTableValue ? 1 : day + 1);
 }
 
 void Scene::setPlayerDay(int16 day) {

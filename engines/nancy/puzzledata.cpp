@@ -388,6 +388,11 @@ uint TableData::getNumSingleValues() const {
 }
 
 uint TableData::getNumComboValues() const {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Every byte index is a valid value
+		return 256 - getNumSingleValues();
+	}
+
 	return g_nancy->getGameType() == kGameTypeNancy8 ? 20 : 10;
 }
 

@@ -327,6 +327,7 @@ private:
 	// once it gets late. In Nancy14-15, also starts the next day at the wake-up
 	// hour after the player has been sent to sleep.
 	void updateEndOfDay();
+	void advanceDayValue();
 	void fireSoftwareTimer(TimerData::Timer &timer);
 	void fireTimerTrigger(TimerData::Trigger &trigger);
 
