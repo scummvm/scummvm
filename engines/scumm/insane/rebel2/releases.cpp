@@ -81,6 +81,10 @@ static const Rebel2DemoVideo kDemoVideos[] = {
 	{ nullptr, 0 }
 };
 
+static const char *const kDemoFonts[] = {
+	"SYSTM/TALKFONT.NUT", "SYSTM/SMALFONT.NUT", nullptr
+};
+
 static const Rebel2DemoVideo kWindowsDemoVideos[] = {
 	{ "RA2VID/O_OPEN_A.SAN", 0x28 },
 	{ "RA2VID/O_OPEN_B.SAN", 0x28 },
@@ -100,8 +104,10 @@ static const Rebel2Release kReleases[] = {
 		true, false, false, false, false, nullptr, 0, nullptr, nullptr
 	},
 	{
-		"Demo", nullptr, "SYSTM/GAME.TRS", kDemoVideos, nullptr, { 0 },
-		false, false, false, false, false, nullptr, 0, nullptr, nullptr
+		// REBEL2.EXE (LE object 1, 0x10) loads two fonts and DEFAULT.TRS
+		// for the release announcement at the end of O_DEMO.SAN.
+		"Demo", nullptr, "SYSTM/DEFAULT.TRS", kDemoVideos, nullptr, { 0 },
+		false, false, false, false, false, nullptr, 0, nullptr, kDemoFonts
 	},
 	{
 		// LUCASDMO.EXE (0x401340/0x401610) plays both intro movies, using
