@@ -31,26 +31,6 @@ constexpr int COLOR_TEXT = 3; // white, within CGA_PALETTE1
 constexpr int STARTING_POINTS = 90;
 constexpr int MIN_ATTRIBUTE = 10;
 
-static const char *raceName(Data::Race race) {
-	switch (race) {
-	case Data::RACE_HUMAN: return "HUMAN";
-	case Data::RACE_ELF: return "ELF";
-	case Data::RACE_DWARF: return "DWARF";
-	case Data::RACE_HOBBIT: return "HOBBIT";
-	default: return "";
-	}
-}
-
-static const char *className(Data::CharClass charClass) {
-	switch (charClass) {
-	case Data::CLASS_FIGHTER: return "FIGHTER";
-	case Data::CLASS_CLERIC: return "CLERIC";
-	case Data::CLASS_WIZARD: return "WIZARD";
-	case Data::CLASS_THIEF: return "THIEF";
-	default: return "";
-	}
-}
-
 CreateCharacter::CreateCharacter() : View("CreateCharacter"), _cursor("Cursor", this) {
 }
 
@@ -188,9 +168,9 @@ void CreateCharacter::draw() {
 	if (_state > SEX)
 		s.writeString(Common::Point(20, 11), sg._sex == Data::SEX_MALE ? "MALE" : "FEMALE");
 	if (_state > RACE)
-		s.writeString(Common::Point(20, 12), raceName(sg._race));
+		s.writeString(Common::Point(20, 12), Data::raceName(sg._race));
 	if (_state > CLASS)
-		s.writeString(Common::Point(20, 13), className(sg._class));
+		s.writeString(Common::Point(20, 13), Data::className(sg._class));
 	if (_state >= NAME)
 		s.writeString(Common::Point(20, 14), _name);
 

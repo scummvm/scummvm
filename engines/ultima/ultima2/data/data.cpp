@@ -52,6 +52,14 @@ void setCGAPalette() {
 	g_system->getPaletteManager()->setPalette(palette);
 }
 
+const char *const RACE_NAMES[RACE_COUNT] = {
+	"HUMAN", "ELF", "DWARF", "HOBBIT"
+};
+
+const char *const CLASS_NAMES[CLASS_COUNT] = {
+	"FIGHTER", "CLERIC", "WIZARD", "THIEF"
+};
+
 const char *const WEAPON_NAMES[WEAPON_COUNT] = {
 	"HANDS", "DAGGER", "MACE", "AXE", "BOW", "SWORD",
 	"GREAT SWORD", "LIGHT SWORD", "PHASER", "QUICK SWORD"
@@ -71,6 +79,30 @@ const char *const ITEM_NAMES[ITEM_COUNT] = {
 	"RED GEM", "SKULL KEY", "GREEN GEM", "BRASS BUTTON", "BLUE TASSLE",
 	"STRANGE COIN", "GREEN IDOL", "TRI LITHIUM"
 };
+
+const char *raceName(Race race) {
+	return (race >= 0 && race < RACE_COUNT) ? RACE_NAMES[race] : "";
+}
+
+const char *className(CharClass charClass) {
+	return (charClass >= 0 && charClass < CLASS_COUNT) ? CLASS_NAMES[charClass] : "";
+}
+
+const char *weaponName(WeaponType weapon) {
+	return (weapon >= 0 && weapon < WEAPON_COUNT) ? WEAPON_NAMES[weapon] : "";
+}
+
+const char *armorName(ArmorType armor) {
+	return (armor >= 0 && armor < ARMOR_COUNT) ? ARMOR_NAMES[armor] : "";
+}
+
+const char *spellName(SpellType spell) {
+	return (spell >= 0 && spell < SPELL_COUNT) ? SPELL_NAMES[spell] : "";
+}
+
+const char *itemName(int item) {
+	return (item >= 0 && item < ITEM_COUNT) ? ITEM_NAMES[item] : "";
+}
 
 } // namespace Data
 } // namespace Ultima2

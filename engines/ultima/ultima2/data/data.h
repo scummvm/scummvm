@@ -62,9 +62,12 @@ enum Sex {
 enum Race {
 	RACE_HUMAN = 0, RACE_ELF = 1, RACE_DWARF = 2, RACE_HOBBIT = 3, RACE_COUNT = 4
 };
+extern const char *const RACE_NAMES[RACE_COUNT];
+
 enum CharClass {
 	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 2, CLASS_THIEF = 3, CLASS_COUNT = 4
 };
+extern const char *const CLASS_NAMES[CLASS_COUNT];
 
 // Indexes into Savegame::_weaponOwned
 enum WeaponType {
@@ -97,6 +100,15 @@ enum ItemType {
 	ITEM_TRI_LITHIUM = 15, ITEM_COUNT = 16
 };
 extern const char *const ITEM_NAMES[ITEM_COUNT];
+
+// Bounds-checked lookups into the *_NAMES arrays above, the single shared
+// implementation for what used to be separately duplicated per view
+const char *raceName(Race race);
+const char *className(CharClass charClass);
+const char *weaponName(WeaponType weapon);
+const char *armorName(ArmorType armor);
+const char *spellName(SpellType spell);
+const char *itemName(int item);
 
 // Short PC speaker effects, played through Ultima2Engine::playFX
 enum SoundEffect {
