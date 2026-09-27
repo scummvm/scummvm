@@ -74,6 +74,7 @@ public:
 
 protected:
 	static ActionRecord *createActionRecord(uint16 type, Common::SeekableReadStream *recordStream = nullptr);
+	static void readDependencies(Common::SeekableReadStream &inputData, ActionRecord &record, uint numDependencies, uint singleDepSize);
 
 	void synchronizeMovieWithSound();
 
