@@ -304,6 +304,7 @@ void IgorEngine::startIgorDialogue() {
 		_talkDelayCounter = 0;
 	}
 	if (_gameState.talkMode != kTalkModeTextOnly) {
+		debug("Playing sound for igor dialogue text: %d", dt->sound);
 		playSound(dt->sound, 0);
 	}
 	_gameState.dialogueTextRunning = true;

@@ -22,6 +22,36 @@
 
 namespace Igor {
 
+	void IgorEngine::PART_05_EXEC_ACTION(int action) {
+	debugC(9, kDebugGame, "PART_05_EXEC_ACTION %d", action);
+	switch (action) {
+	case 101: {
+		ADD_DIALOGUE_TEXT(201, 2, 478); // cseg182:0552-055E (sub_182_0548)
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		break;
+	}
+	case 102:
+		//scrolling action for Igor on the bridge
+		PART_05_ACTION_102_scrollRight();
+		break;
+	case 103:
+		PART_05_ACTION_103_pickPaper();
+		break;
+	case 104:
+		ADD_DIALOGUE_TEXT(203, 2, 479); // cseg182:0575-058B (sub_182_0575)
+		SET_DIALOGUE_TEXT(1, 1);
+		startIgorDialogue();
+		break;
+	case 105:
+		_currentPart = 40;
+		break;
+	default:
+		error("PART_05_EXEC_ACTION unhandled action %d", action);
+		break;
+	}
+}
+
 void IgorEngine::PART_05_HELPER_4(int num) {
 	if (_objectsState[60] == 0) {
 		PART_05_HELPER_5(0);
@@ -76,44 +106,39 @@ void IgorEngine::PART_05() {
 	if (_currentPart == 255) {
 		fadeOut(768);
 	} else if (_currentPart != 60) {
-		// if (_objectsState[63] == 0) {
-		// 	_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
-		// }
+		if (_objectsState[63] == 0) {
+			_objectsState[61] = _objectsState[62] = _objectsState[63] = 1;
+		}
 		memcpy(_currentPalette, _paletteBuffer, 624);
 		fadeOut(624);
 	}
 }
 
-void IgorEngine::PART_05_EXEC_ACTION(int action) {
-	debugC(9, kDebugGame, "PART_05_EXEC_ACTION %d", action);
-	switch (action) {
-	// case 101:
-	// 	ADD_DIALOGUE_TEXT(201, 2);
-	// 	SET_DIALOGUE_TEXT(1, 1);
-	// 	startIgorDialogue();
-	// 	break;
-	case 102:
-		//scrolling action for Igor on the bridge
-		PART_05_ACTION_102();
-		break;
-	// case 103:
-	// 	PART_05_ACTION_103();
-	// 	break;
-	// case 104:
-	// 	ADD_DIALOGUE_TEXT(203, 2);
-	// 	SET_DIALOGUE_TEXT(1, 1);
-	// 	startIgorDialogue();
-	// 	break;
-	case 105:
-		_currentPart = 40;
-		break;
-	default:
-		error("PART_05_EXEC_ACTION unhandled action %d", action);
-		break;
-	}
+
+
+void IgorEngine::PART_05_ACTION_103_pickPaper() {
+	int i = 0;
+	do {
+		if (compareGameTick(1)) {
+			const int offset = 27526;
+			for (int j = 0; j <= 48; ++j) {
+				const uint8 *src = _animFramesBuffer + 0x7E18 + i * 1470 + j * 30;
+				memcpy(_screenVGA + j * 320 + offset, src, 30);
+			}
+			++i;
+		}
+		PART_05_UPDATE_ROOM_BACKGROUND();
+		waitForTimer();
+	} while (i != 3);
+	addObjectToInventory(21, 56);
+	_objectsState[60] = 1;
+	// if (_game.version == kIdEngDemo110) {
+	// 	++_demoActionsCounter;
+	// }
+	PART_05_HELPER_4(255);
 }
 
-void IgorEngine::PART_05_ACTION_102() {
+void IgorEngine::PART_05_ACTION_102_scrollRight() {
 	uint8 *walkTable3 = loadData(WLK_Bridge3);
 	uint8 *walkTable4 = loadData(WLK_Bridge4);
 	int xPos = 220;

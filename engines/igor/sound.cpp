@@ -73,8 +73,17 @@ void IgorEngine::playSound(int num, int type) {
 	} else {
 		return;
 	}
-	_sndFile.seek(soundOffset);
-	Audio::AudioStream *stream = Audio::makeVOCStream(&_sndFile, Audio::FLAG_UNSIGNED);
+
+	// two streams must never share one Common::File: the second stream's seek would
+	// clobber the first one's cursor and the running sound would come out as
+	// noise. Give each stream its own handle and let the stream dispose of it.
+	Common::File *sndFile = new Common::File;
+	if (!sndFile->open(_game.sfxFileName)) {
+		delete sndFile;
+		return;
+	}
+	sndFile->seek(soundOffset);
+	Audio::AudioStream *stream = Audio::makeVOCStream(sndFile, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	if (stream) {
 		_mixer->playStream(soundType, soundHandle, stream);
 	}

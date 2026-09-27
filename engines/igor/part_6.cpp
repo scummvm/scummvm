@@ -95,7 +95,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_06_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
-		ADD_DIALOGUE_TEXT(201, 2);
+		ADD_DIALOGUE_TEXT(201, 1, 480); // cseg180:05B6-05CC (sub_180_05B6)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -106,7 +106,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		PART_06_ACTION_103();
 		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(203, 1);
+		ADD_DIALOGUE_TEXT(203, 1, 481); // cseg180:05E3-05F9 (sub_180_05E3)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -114,7 +114,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		PART_06_ACTION_105();
 		break;
 	case 106:
-		ADD_DIALOGUE_TEXT(204, 1);
+		ADD_DIALOGUE_TEXT(204, 1, 482); // cseg180:0610-0626 (sub_180_0610)
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -130,12 +130,12 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 	}
 }
 void IgorEngine::PART_06_ACTION_103() {
-	ADD_DIALOGUE_TEXT(215, 1);
+	ADD_DIALOGUE_TEXT(215, 1, 489); // cseg180:0D10-0D26 (sub_180_0D10)
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(216, 1);
+	ADD_DIALOGUE_TEXT(216, 1, 490); // cseg180:0D40-0D53 (sub_180_0D10)
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(170, 69, 55, 37, 63);
 	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
@@ -194,11 +194,11 @@ void IgorEngine::PART_06_ACTION_105() {
 
 void IgorEngine::PART_06_ACTION_107() {
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(205, 1);
+	ADD_DIALOGUE_TEXT(205, 1, 483); // cseg180:0D90-0DAD (sub_180_0D90)
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(206, 2);
+	ADD_DIALOGUE_TEXT(206, 2, 484); // cseg180:0DC2-0DD3 (sub_180_0D90)
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(170, 69, 55, 37, 63);
 	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
@@ -206,12 +206,12 @@ void IgorEngine::PART_06_ACTION_107() {
 
 void IgorEngine::PART_06_ACTION_108() {
 	PART_06_HELPER_8_animatePhotographer(0);
-	ADD_DIALOGUE_TEXT(208, 2);
-	ADD_DIALOGUE_TEXT(210, 2);
+	ADD_DIALOGUE_TEXT(208, 2, 485); // cseg180:0E09-0E1C (sub_180_0DFF)
+	ADD_DIALOGUE_TEXT(210, 2, 486); // cseg180:0E22-0E2E (sub_180_0DFF)
 	SET_DIALOGUE_TEXT(1, 2);
 	startIgorDialogue();
 	waitForEndOfIgorDialogue();
-	ADD_DIALOGUE_TEXT(212, 1);
+	ADD_DIALOGUE_TEXT(212, 1, 487); // cseg180:0E43-0E54 (sub_180_0DFF)
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(170, 69, 55, 37, 63);
 	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
@@ -234,7 +234,7 @@ void IgorEngine::PART_06_ACTION_108() {
 	_objectsState[61] = 0;
 	PART_06_HELPER_6(255);
 	_gameState.unkF = false;
-	ADD_DIALOGUE_TEXT(213, 2);
+	ADD_DIALOGUE_TEXT(213, 2, 488); // cseg180:1240-1256 (sub_180_0DFF)
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }

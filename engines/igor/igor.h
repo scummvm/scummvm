@@ -421,7 +421,7 @@ private:
 	void stopSound();
 	void loadIgorFrames();
 
-	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
+	void ADD_DIALOGUE_TEXT(int num, int count, int sound /*= kNoSpeechSound*/);
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
@@ -451,7 +451,8 @@ private:
 	void PART_05_HELPER_5(int frame);
 	void PART_05();
 	void PART_05_EXEC_ACTION(int action);
-	void PART_05_ACTION_102();
+	void PART_05_ACTION_103_pickPaper();
+	void PART_05_ACTION_102_scrollRight();
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
 	void PART_06();
