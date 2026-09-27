@@ -259,7 +259,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		else if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new SpecialEffect();
 		else
-			return nullptr;	//return new Fader();	// TODO
+			return new Fader();
 	case 41:	// Nancy13
 		return new PlaySecondaryMovie(PlaySecondaryMovie::kSecondaryMovieTerse);
 	case 42:	// Nancy14

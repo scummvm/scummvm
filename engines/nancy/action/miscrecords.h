@@ -432,6 +432,21 @@ protected:
 	Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
+// Nancy16 fade of the viewport to a solid color and back, covering the next scene
+// change. The fade itself is owned by the scene; the record only arms it, waiting
+// for any previous fade to end first.
+class Fader : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "Fader"; }
+
+	uint32 _holdTime = 0;	// ms
+	uint32 _color = 0;		// RGB
+};
+
 // Adds a scene to the "stack" (which is just a single value). Used in combination with PopScene.
 class PushScene : public ActionRecord {
 public:

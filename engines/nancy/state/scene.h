@@ -60,6 +60,7 @@ class PlaySecondaryMovie;
 namespace Misc {
 class Lightning;
 class SpecialEffect;
+class ViewportFader;
 }
 
 namespace UI {
@@ -273,6 +274,7 @@ public:
 
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
+	Misc::ViewportFader *getViewportFader() { return _viewportFader; }
 
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
@@ -441,6 +443,7 @@ private:
 	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides[kMaxPlayerCharacters];
 
 	Misc::Lightning *_lightning;
+	Misc::ViewportFader *_viewportFader;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;
 
 	Common::HashMap<uint32, PuzzleData *> _puzzleData;

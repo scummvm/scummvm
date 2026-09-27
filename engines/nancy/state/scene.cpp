@@ -47,6 +47,7 @@
 
 #include "engines/nancy/misc/lightning.h"
 #include "engines/nancy/misc/specialeffect.h"
+#include "engines/nancy/misc/viewportfader.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -138,6 +139,7 @@ Scene::Scene() :
 		_activeMovie(nullptr),
 		_activeConversation(nullptr),
 		_lightning(nullptr),
+		_viewportFader(nullptr),
 		_destroyOnExit(false),
 		_isRunningAd(false),
 		_hotspotDebug(50) {}
@@ -152,6 +154,7 @@ Scene::~Scene() {
 	delete _clock;
 	delete _camera;
 	delete _lightning;
+	delete _viewportFader;
 
 	clearPuzzleData();
 }
@@ -167,6 +170,12 @@ void Scene::process() {
 
 		// fall through
 	case kLoad:
+		// The current scene keeps running under the fade that covers the change
+		if (_viewportFader && _viewportFader->holdsSceneChange()) {
+			run();
+			break;
+		}
+
 		load();
 		// fall through
 	case kStartSound:
@@ -249,6 +258,10 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
+
+	if (_viewportFader) {
+		_viewportFader->onSceneChange();
+	}
 }
 
 void Scene::pushScene(int16 itemID) {
@@ -1255,6 +1268,10 @@ void Scene::registerGraphics() {
 		_inventoryBoxOrnaments->setVisible(true);
 	}
 
+	if (_viewportFader) {
+		_viewportFader->registerGraphics();
+	}
+
 	if (_clock) {
 		_clock->registerGraphics();
 	}
@@ -1780,6 +1797,11 @@ void Scene::init() {
 		_lightning = new Misc::Lightning();
 	}
 
+	if (g_nancy->getGameType() >= kGameTypeNancy16 && !_viewportFader) {
+		_viewportFader = new Misc::ViewportFader();
+		_viewportFader->init();
+	}
+
 	Common::Rect vpPos = _viewport.getScreenPosition();
 	_hotspotDebug._drawSurface.create(vpPos.width(), vpPos.height(), g_nancy->_graphics->getScreenPixelFormat());
 	_hotspotDebug.moveTo(vpPos);
@@ -2031,7 +2053,7 @@ void Scene::run() {
 
 	g_nancy->_sound->soundEffectMaintenance();
 
-	if (_state == kLoad) {
+	if (_state == kLoad && !(_viewportFader && _viewportFader->holdsSceneChange())) {
 		g_nancy->_graphics->suppressNextDraw();
 	}
 }

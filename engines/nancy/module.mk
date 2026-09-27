@@ -118,6 +118,7 @@ MODULE_OBJS = \
   misc/hypertext.o \
   misc/lightning.o \
   misc/specialeffect.o \
+  misc/viewportfader.o \
   cif.o \
   commontypes.o \
   console.o \

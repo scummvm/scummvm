@@ -29,6 +29,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/miscrecords.h"
+#include "engines/nancy/misc/viewportfader.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -427,6 +428,22 @@ void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 void BumpPlayerClock::execute() {
 	NancySceneState.setPlayerTime((uint32)(_hours * 3600000 + _minutes * 60000), _relative);
 	finishExecution();
+}
+
+void Fader::readData(Common::SeekableReadStream &stream) {
+	stream.skip(4);	// fade time, unused: the fade speed is fixed
+	_holdTime = stream.readUint32LE();
+	_color = stream.readUint32BE() & 0xFFFFFF;
+}
+
+void Fader::execute() {
+	Misc::ViewportFader *fader = NancySceneState.getViewportFader();
+	assert(fader);
+
+	if (fader->isIdle()) {
+		fader->arm(_color, _holdTime);
+		finishExecution();
+	}
 }
 
 void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
