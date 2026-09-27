@@ -151,8 +151,11 @@ void InsaneRebel2::runGame() {
 
 					if (result == kLevelNextLevel) {
 						selectedLevel = _release.getNextChapter(selectedLevel);
-						if (!selectedLevel)
+						if (!selectedLevel) {
+							if (_release.completionVideo && !_vm->shouldQuit())
+								playCinematic(_release.completionVideo, 0x08);
 							break;
+						}
 						updatePilotProgress(selectedLevel - 1,
 							_playerScore, _playerLives, 0, _playerRating);
 						if (selectedLevel == 16) {
@@ -200,7 +203,7 @@ void InsaneRebel2::playMissionBriefing() {
 	splayer->play("OPEN/O_LEVEL.SAN", 15);
 }
 
-void InsaneRebel2::playCinematic(const char *filename) {
+void InsaneRebel2::playCinematic(const char *filename, int16 flags) {
 	restoreDamageFlashPalette();
 	resetVideoAudio();
 	_gameplaySectionActive = false;
@@ -208,7 +211,7 @@ void InsaneRebel2::playCinematic(const char *filename) {
 	_rebelStatusBarSprite = 0;
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x28);
+	splayer->setCurVideoFlags(flags);
 	splayer->play(filename, 15);
 }
 

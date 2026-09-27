@@ -51,19 +51,26 @@ static const Rebel2DifficultyOverride kDemoDA106Difficulty[] = {
 // saved pilot progress and the unlock-all option.
 static const Rebel2Release kReleases[] = {
 	{
-		"", "SYSTM/GAME.TRS", nullptr,
+		"", "SYSTM/GAME.TRS", nullptr, nullptr,
 		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
-		true, false, false, nullptr, 0
+		true, false, false, false, nullptr, 0
 	},
 	{
-		"Demo", "SYSTM/GAME.TRS", "OPEN/O_DEMO.SAN", { 0 },
-		false, false, false, nullptr, 0
+		"Demo", "SYSTM/GAME.TRS", "OPEN/O_DEMO.SAN", nullptr, { 0 },
+		false, false, false, false, nullptr, 0
 	},
 	{
 		// RBL2DEMO.EXE selects GAME_E.TRS. The original chapter-6 handler
 		// (LE object 1, 0x10d10) skips the shield attack and uses 06END_B.
-		"Demo DA1.06", "SYSTM/GAME_E.TRS", nullptr, { 6 },
-		false, true, true, kDemoDA106Difficulty, ARRAYSIZE(kDemoDA106Difficulty)
+		"Demo DA1.06", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
+		false, true, true, false, kDemoDA106Difficulty, ARRAYSIZE(kDemoDA106Difficulty)
+	},
+	{
+		// GAME.TRS selects chapters 1, 2 and 4 in playable-demo mode.
+		// LE object 1, 0xf860 advances passwords past missing chapters;
+		// 0x12eb0 plays O_PLAYDE instead of the retail finale.
+		"Demo DG1.15", "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 4 },
+		false, false, false, true, nullptr, 0
 	}
 };
 
@@ -88,6 +95,16 @@ int Rebel2Release::getNextChapter(int chapter) const {
 		}
 	}
 	return 0;
+}
+
+int Rebel2Release::getCompletionPasswordChapter(int chapter) const {
+	if (!advanceCompletionPasswords || !isChapterAvailable(chapter))
+		return chapter;
+
+	// Passwords unlock the chapter following their retail chapter number.
+	// DG1.15 shows the finale password after its last included chapter.
+	const int nextChapter = getNextChapter(chapter);
+	return nextChapter ? nextChapter - 1 : kNumLevels;
 }
 
 const Rebel2DifficultyParams *Rebel2Release::getDifficultyOverride(int difficulty, int levelType) const {

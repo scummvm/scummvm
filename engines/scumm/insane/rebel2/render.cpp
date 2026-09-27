@@ -2707,7 +2707,8 @@ void InsaneRebel2::renderLevelEndStatsOverlay(byte *renderBitmap, int pitch, int
 	if (!titleFmt || !titleFmt[0])
 		titleFmt = getRebel2LevelEndFallbackString(190);
 
-	Common::String password = getChapterPassword(_levelEndStats.levelId, _difficulty);
+	const int passwordChapter = _release.getCompletionPasswordChapter(_levelEndStats.levelId);
+	Common::String password = getChapterPassword(passwordChapter, _difficulty);
 	Common::String titleText = Common::String::format(titleFmt, password.c_str());
 	int visibleChars = curFrame + 10 - titleStart;
 	if (visibleChars > 0xbe)

@@ -470,6 +470,7 @@ rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 
 	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
 	967409fc4c12b39fb3cf47f45de2623c	646373	en	DOS	Demo DA1.06	Demo DA1.06	Playable demo (chapter 6)	-
+	8e0788210af982fbbc43c244ac6f9581	663561	en	DOS	Demo DG1.15	Demo DG1.15	The Dreighton Encounter (chapters 1, 2 and 4)	-
 
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin

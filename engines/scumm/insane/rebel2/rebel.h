@@ -335,7 +335,7 @@ public:
 
 	int getRandomVariant(int max);
 	Common::String selectDeathVideoVariant(int levelId, int phase, int frame);
-	void playCinematic(const char *filename);
+	void playCinematic(const char *filename, int16 flags = 0x28);
 
 	// Text is progressively revealed during [fadeInFrame, fadeOutFrame)
 	void playVideoWithText(const char *filename, int textID, int textX, int textY,

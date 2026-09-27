@@ -57,17 +57,20 @@ struct Rebel2Release {
 	const char *variant;
 	const char *strings;
 	const char *nonInteractiveVideo;
+	const char *completionVideo;
 	// Chapter numbers in playback order; unused entries are zero.
 	byte levels[kNumLevels];
 	bool ending;
 	bool unlockAvailableLevels;
 	// The DA1.06 demo starts chapter 6 at the attack on the reactor.
 	bool skipMiningFacilityAttack;
+	bool advanceCompletionPasswords;
 	const Rebel2DifficultyOverride *difficultyOverrides;
 	uint difficultyOverrideCount;
 
 	bool isChapterAvailable(int chapter) const;
 	int getNextChapter(int chapter) const;
+	int getCompletionPasswordChapter(int chapter) const;
 	const Rebel2DifficultyParams *getDifficultyOverride(int difficulty, int levelType) const;
 };
 
