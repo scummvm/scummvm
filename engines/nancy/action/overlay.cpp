@@ -675,6 +675,11 @@ void RolloverOverlay::init() {
 }
 
 void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readDataNancy16(stream);
+		return;
+	}
+
 	readFilename(stream, _imageName);
 	_transparency = stream.readUint16LE();
 	_z = stream.readUint16LE();
@@ -690,6 +695,32 @@ void RolloverOverlay::readData(Common::SeekableReadStream &stream) {
 
 	_hoverSound.readData(stream);
 	_hoverSoundOnce = stream.readUint16LE();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.frameID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+
+	_flagOnClick.label = stream.readSint16LE();
+	_flagOnClick.flag = stream.readByte();
+
+	_clickSound.readData(stream);
+}
+
+// Nancy16 dropped the transparency field and widened the z value
+void RolloverOverlay::readDataNancy16(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_z = stream.readUint32LE();
+	_hoverCursor = stream.readUint16LE();
+
+	readRect(stream, _hotspotRect);
+	readRect(stream, _srcRect);
+	readRect(stream, _destRect);
+
+	_flagOnHover.label = stream.readSint16LE();
+	_flagOnHover.flag = stream.readByte();
+
+	_hoverSound.readData(stream);
+	_hoverSoundOnce = stream.readByte();
 
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();

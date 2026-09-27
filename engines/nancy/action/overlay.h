@@ -217,6 +217,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "RolloverOverlay"; }
 
+	void readDataNancy16(Common::SeekableReadStream &stream);
 	void playSoundBlock(const RandomSoundBlock &block);
 
 	Common::Path _imageName;
