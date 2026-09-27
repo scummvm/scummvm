@@ -162,6 +162,32 @@ bool ResourceManager::loadImage(const Common::Path &name, Graphics::ManagedSurfa
 		*outDest = info.dest;
 	}
 
+	// Nancy16 stores its images as uncompressed, top-down TGA files. Only the header
+	// needs skipping; the image's size and depth come from the CIF info.
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		byte idLength = stream->readByte();
+		byte colorMapType = stream->readByte();
+		byte imageType = stream->readByte();
+		stream->skip(9); // color map spec, origin
+		uint16 width = stream->readUint16LE();
+		uint16 height = stream->readUint16LE();
+		byte bpp = stream->readByte();
+		byte descriptor = stream->readByte();
+
+		const byte kTGATrueColor = 2;
+		const byte kTGATopDown = 0x20;
+
+		if (colorMapType != 0 || imageType != kTGATrueColor || !(descriptor & kTGATopDown) ||
+				bpp != info.depth || width != info.width || height != info.height) {
+			warning("Image '%s' is an unsupported TGA (type %u, color map %u, %u bpp, descriptor 0x%02x, %ux%u)",
+				name.toString().c_str(), imageType, colorMapType, bpp, descriptor, width, height);
+			delete stream;
+			return false;
+		}
+
+		stream->skip(idLength);
+	}
+
 	// Finally, copy the data into the surface
 	uint32 bufSize = info.pitch * info.height;
 	byte *buf = new byte[bufSize];
