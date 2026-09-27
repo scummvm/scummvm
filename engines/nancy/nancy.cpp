@@ -750,7 +750,13 @@ void NancyEngine::bootGameEngine() {
 		IFF *fontIFF = _resource->loadIFF("font");
 		if (!fontIFF)
 			error("Failed to load font IFF");
-		_graphics->loadFonts(fontIFF->getChunkStream("FONT"));
+
+		if (getGameType() >= kGameTypeNancy16) {
+			_graphics->loadSystemFonts(*fontIFF);
+		} else {
+			_graphics->loadFonts(fontIFF->getChunkStream("FONT"));
+		}
+
 		delete fontIFF;
 	}
 

@@ -25,6 +25,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/iff.h"
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/cursor.h"
@@ -178,6 +179,65 @@ void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
 	}
 
 	delete chunkStream;
+}
+
+// Fonts get placed at their IDs, which font tags in text refer to. The bold versions
+// follow them, and can only be found by name.
+void GraphicsManager::loadSystemFonts(const IFF &fontIFF) {
+	Common::SeekableReadStream *chunkStream = nullptr;
+	for (uint i = 0; (chunkStream = fontIFF.getChunkStream("FONT", i)); ++i) {
+		uint32 id = chunkStream->readUint32LE();
+		if (id >= _fonts.size()) {
+			_fonts.resize(id + 1);
+		}
+
+		_fonts[id].readSystemFont(*chunkStream, false);
+		delete chunkStream;
+	}
+
+	for (uint i = 0; (chunkStream = fontIFF.getChunkStream("FONT", i)); ++i) {
+		chunkStream->skip(4);
+		_fonts.resize(_fonts.size() + 1);
+		_fonts.back().readSystemFont(*chunkStream, true);
+		delete chunkStream;
+	}
+
+	for (uint i = 0; (chunkStream = fontIFF.getChunkStream("COLR", i)); ++i) {
+		uint32 id = chunkStream->readUint32LE();
+		if (id >= _fontColors.size()) {
+			_fontColors.resize(id + 1);
+		}
+
+		// ARGB colors for the normal, disabled, mouse over and pressed states. The
+		// focused state looks normal, and the hidden one is transparent.
+		FontColor &color = _fontColors[id];
+		color.colors[kFontColorNormal] = chunkStream->readUint32BE();
+		color.colors[kFontColorFocus] = color.colors[kFontColorNormal];
+		color.colors[kFontColorDisabled] = chunkStream->readUint32BE();
+		color.colors[kFontColorMouseOver] = chunkStream->readUint32BE();
+		color.colors[kFontColorPressed] = chunkStream->readUint32BE();
+		delete chunkStream;
+	}
+}
+
+const Font *GraphicsManager::getFont(const Common::String &name) const {
+	int id = getFontID(name);
+	return id >= 0 ? &_fonts[id] : nullptr;
+}
+
+int GraphicsManager::getFontID(const Common::String &name) const {
+	for (uint i = 0; i < _fonts.size(); ++i) {
+		if (_fonts[i].getName().equalsIgnoreCase(name)) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+uint32 GraphicsManager::getFontColor(uint id, const Graphics::PixelFormat &format, FontColorState state) const {
+	uint32 argb = id < _fontColors.size() ? _fontColors[id].colors[state] : 0xFFFFFFFF;
+	return format.ARGBToColor(argb >> 24, (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
 }
 
 void GraphicsManager::addObject(RenderObject *object) {

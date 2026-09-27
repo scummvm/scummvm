@@ -19,6 +19,9 @@
  *
  */
 
+#include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
+
 #include "engines/nancy/font.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -175,15 +178,56 @@ void Font::read(Common::SeekableReadStream &stream) {
 	assert(_textboxData);
 }
 
+void Font::readSystemFont(Common::SeekableReadStream &stream, bool bold) {
+	const int32 kBoldExtraWeight = 300;
+
+	Common::String faceName;
+	readFilename(stream, _description);
+	readFilename(stream, faceName);
+	int32 height = stream.readSint32LE();
+	int32 weight = stream.readSint32LE();
+
+	if (bold) {
+		_description += "_Bold";
+		weight += kBoldExtraWeight;
+	}
+
+	// None of the Windows fonts the game asks for (Tahoma, Arial, Lucida Handwriting)
+	// ship with ScummVM, so they all get replaced with the same sans-serif font
+#ifdef USE_FREETYPE2
+	const int32 kBoldWeight = 700;
+	const char *substitute = weight >= kBoldWeight ? "LiberationSans-Bold.ttf" : "LiberationSans-Regular.ttf";
+	_systemFont.reset(Graphics::loadTTFFontFromArchive(substitute, height, Graphics::kTTFSizeModeCell), DisposeAfterUse::YES);
+#endif
+
+	if (!_systemFont) {
+		warning("Could not load a substitute for font %s (%s, height %d, weight %d)", _description.c_str(), faceName.c_str(), height, weight);
+		_systemFont.reset(FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont), DisposeAfterUse::NO);
+	}
+}
+
 int Font::getCharWidth(uint32 chr) const {
+	if (_systemFont) {
+		return _systemFont->getCharWidth(chr);
+	}
+
 	return getCharacterSourceRect(chr).width() + _charSpace;
 }
 
 int Font::getLineHeight() const {
+	if (_systemFont) {
+		return _systemFont->getFontHeight();
+	}
+
 	return _characterRects.empty() ? getFontHeight() : _characterRects[0].height();
 }
 
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	if (_systemFont) {
+		_systemFont->drawChar(dst, chr, x, y, g_nancy->_graphics->getFontColor(color, dst->format));
+		return;
+	}
+
 	Common::Rect srcRect = getCharacterSourceRect(chr);
 	if (color == 0) {
 		srcRect.translate(_color0CoordsOffset.x, _color0CoordsOffset.y);
@@ -209,6 +253,10 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 }
 
 uint32 Font::getColorPixel(uint color) const {
+	if (_systemFont) {
+		return g_nancy->_graphics->getFontColor(color, g_nancy->_graphics->getInputPixelFormat());
+	}
+
 	// The glyphs are pre-colored in the atlas (two color variants selected by
 	// the color-coordinate offsets, mirroring drawChar). Scan a solid glyph for
 	// the first non-transparent pixel to recover the color an underline should

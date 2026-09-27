@@ -30,7 +30,19 @@
 
 namespace Nancy {
 
+class IFF;
 class RenderObject;
+
+// Nancy16+ font colors have one color for each state of a UI control
+enum FontColorState {
+	kFontColorNormal		= 0,
+	kFontColorDisabled		= 1,
+	kFontColorHidden		= 2,
+	kFontColorFocus			= 3,
+	kFontColorMouseOver		= 4,
+	kFontColorPressed		= 5,
+	kNumFontColorStates		= 6
+};
 
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {
@@ -41,6 +53,7 @@ public:
 	void draw(bool updateScreen = true);
 
 	void loadFonts(Common::SeekableReadStream *chunkStream);
+	void loadSystemFonts(const IFF &fontIFF);
 
 	void addObject(RenderObject *object);
 	void removeObject(RenderObject *object);
@@ -52,6 +65,9 @@ public:
 	void suppressNextDraw();
 
 	const Font *getFont(uint id) const { return id < _fonts.size() ? &_fonts[id] : nullptr; }
+	const Font *getFont(const Common::String &name) const;
+	int getFontID(const Common::String &name) const;
+	uint32 getFontColor(uint id, const Graphics::PixelFormat &format, FontColorState state = kFontColorNormal) const;
 	const Graphics::Screen *getScreen() { return &_screen; }
 
 	const Graphics::PixelFormat &getInputPixelFormat(uint bpp = 0);
@@ -94,6 +110,11 @@ private:
 
 	Graphics::Screen _screen;
 	Common::Array<Font> _fonts;
+	struct FontColor {
+		uint32 colors[kNumFontColorStates] = {};
+	};
+
+	Common::Array<FontColor> _fontColors;
 
 	Common::List<Common::Rect> _dirtyRects;
 
