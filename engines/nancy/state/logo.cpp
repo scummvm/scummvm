@@ -49,6 +49,9 @@ void Logo::process() {
 	case kRun:
 		run();
 		break;
+	case kShowScreens:
+		runScreens();
+		break;
 	case kStop:
 		stop();
 	}
@@ -59,6 +62,8 @@ void Logo::onStateEnter(const NancyState::NancyState prevState) {
 	if (prevState == NancyState::kPause) {
 		if (_state == kPlayIntroVideo) {
 			_tvdVideoDecoder.pauseVideo(false);
+		} else if (_state == kShowScreens) {
+			_screenMovie.pauseVideo(false);
 		} else if (_state == kRun) {
 			g_nancy->_sound->pauseSound("MSND", false);
 		}
@@ -70,6 +75,8 @@ bool Logo::onStateExit(const NancyState::NancyState nextState) {
 	if (nextState == NancyState::kPause) {
 		if (_state == kPlayIntroVideo) {
 			_tvdVideoDecoder.pauseVideo(true);
+		} else if (_state == kShowScreens) {
+			_screenMovie.pauseVideo(true);
 		} else if (_state == kRun) {
 			g_nancy->_sound->pauseSound("MSND", true);
 		}
@@ -81,6 +88,16 @@ bool Logo::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Logo::init() {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// The logo screens are made for the screen's resolution, not the game's
+		_logoImage.setNativeResolution(true);
+		_videoObj.setNativeResolution(true);
+		_screenID = 0;
+		_state = kShowScreens;
+		startScreen();
+		return;
+	}
+
 	const ImageChunk *lg0 = (const ImageChunk *)g_nancy->getEngineData("LG0");
 	const ImageChunk *plg0 = (const ImageChunk *)g_nancy->getEngineData("PLG0");
 	if (!plg0) {
@@ -151,12 +168,67 @@ void Logo::run() {
 	}
 }
 
+void Logo::startScreen() {
+	const LogoScreen *screen = (const LogoScreen *)g_nancy->getEngineData(Common::String::format("LG%u", _screenID));
+	if (!screen) {
+		_state = kStop;
+		return;
+	}
+
+	_logoImage.init(screen->imageName);
+	_logoImage.moveTo(screen->position);
+	_logoImage.registerGraphics();
+
+	_screenMovie.close();
+	_videoObj.setVisible(false);
+	if (!screen->movieName.empty() && _screenMovie.loadFile(screen->movieName)) {
+		_videoObj.moveTo(Common::Rect(screen->position.x, screen->position.y,
+			screen->position.x + _screenMovie.getWidth(), screen->position.y + _screenMovie.getHeight()));
+		_videoObj.registerGraphics();
+		_screenMovie.start();
+	}
+
+	_startTicks = g_nancy->getTotalPlayTime();
+}
+
+// A screen lasts until its movie ends, or for a while when it has none; a click skips it
+void Logo::runScreens() {
+	bool isDone = false;
+	if (_screenMovie.isVideoLoaded()) {
+		if (_screenMovie.needsUpdate()) {
+			const Graphics::Surface *frame = _screenMovie.decodeNextFrame();
+			if (frame) {
+				GraphicsManager::copyToManaged(*frame, _videoObj._drawSurface);
+				_videoObj.setVisible(true);
+			}
+		}
+
+		isDone = _screenMovie.endOfVideo();
+	} else {
+		isDone = g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getStaticData().logoEndAfter;
+	}
+
+	if (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown) {
+		isDone = true;
+	}
+
+	if (isDone) {
+		++_screenID;
+		startScreen();
+	}
+}
+
 void Logo::stop() {
+	_screenMovie.close();
+
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
+	// Nancy16 has no main menu state; its logos lead straight into the first scene
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		g_nancy->setState(NancyState::kScene);
+	} else if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
 		g_nancy->setState(NancyState::kMainMenu);
 	} else {
 		g_nancy->setState(NancyState::kScene);

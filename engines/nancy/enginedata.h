@@ -499,6 +499,16 @@ struct ImageChunk : public EngineData {
 	uint16 height;
 };
 
+// Nancy16 logo screen, one per LGx chunk: an image, with an optional movie on top.
+// The screens are shown one after another before the game starts.
+struct LogoScreen : public EngineData {
+	LogoScreen(Common::SeekableReadStream *chunkStream);
+
+	Common::Path imageName;
+	Common::Path movieName;
+	Common::Point position;
+};
+
 // Contains text data. Every string is tagged with a key via which
 // it can be accessed. Used to store dialogue and journal (autotext) strings.
 // NOT found inside BOOT; these are stored in their own cifs, the names of which

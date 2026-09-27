@@ -647,11 +647,18 @@ void NancyEngine::bootGameEngine() {
 	if (getGameType() <= kGameTypeNancy15) {
 		LOAD_BOOT_L(ImageChunk, "LG0")
 	} else {
-		// Nancy16 shifted the logo chunks by one: LG0 now holds the HeR logo that used to
-		// be in PLGO, while LG1 holds the intro splash that used to be in LG0. Load them
-		// under the keys the logo state expects.
-		LOAD_BOOT_L2(ImageChunk, "LG1", "LG0")
-		LOAD_BOOT_L2(ImageChunk, "LG0", "PLGO")
+		// Nancy16 has a list of logo screens, starting with the HeR logo, which used
+		// to be in PLGO
+		for (uint i = 0; ; ++i) {
+			Common::String name = Common::String::format("LG%u", i);
+			chunkStream = iff->getChunkStream(name);
+			if (!chunkStream) {
+				break;
+			}
+
+			_engineData.setVal(name, new LogoScreen(chunkStream));
+			delete chunkStream;
+		}
 	}
 
 	// One weird version of nancy3 has a partner logo implemented the same way as the other image chunks

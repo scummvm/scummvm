@@ -922,6 +922,16 @@ ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) : EngineData(chu
 	height = chunkStream->readUint16LE();
 }
 
+LogoScreen::LogoScreen(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	readFilename(*chunkStream, imageName);
+	readFilename(*chunkStream, movieName);
+	chunkStream->skip(8);
+	position.x = chunkStream->readSint16LE();
+	position.y = chunkStream->readSint16LE();
+
+	// Followed by a sound, which is always "NO SOUND"
+}
+
 CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	uint16 numEntries = chunkStream->readUint16LE();
 

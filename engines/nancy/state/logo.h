@@ -26,6 +26,7 @@
 #include "video/avi_decoder.h"
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/state/state.h"
 #include "engines/nancy/ui/fullscreenimage.h"
 
@@ -49,11 +50,16 @@ private:
 	void run();
 	void stop();
 
+	// Nancy16 shows a list of logo screens instead
+	void startScreen();
+	void runScreens();
+
 	enum State {
 		kInit,
 		kPlayIntroVideo,
 		kStartSound,
 		kRun,
+		kShowScreens,
 		kStop
 	};
 
@@ -64,6 +70,9 @@ private:
 	SoundDescription _msnd;
 	Video::AVIDecoder _tvdVideoDecoder;
 	RenderObject _videoObj;
+
+	uint _screenID = 0;
+	MoviePlayer _screenMovie;
 };
 
 #define NancyLogoState State::Logo::instance()
