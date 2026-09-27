@@ -231,6 +231,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"ft",   "Demo", 0, GID_FT,  7, 0, MDT_NONE, GF_DEMO, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
 
 	{"rebel1", "", 0, GID_REBEL1, 7, 0, MDT_NONE, GF_TESTING, Common::kPlatformDOS, GUIO3(GUIO_NOMIDI, GAMEOPTION_REBEL1_UNLOCK_ALL, GAMEOPTION_REBEL1_NO_DAMAGE)},
+	{"rebel1", "Demo v1.51", 0, GID_REBEL1, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformDOS, GUIO3(GUIO_NOMIDI, GAMEOPTION_REBEL1_UNLOCK_ALL, GAMEOPTION_REBEL1_NO_DAMAGE)},
 
 	{"rebel2", "", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_TESTING, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
 	{"rebel2", "Demo", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
@@ -505,6 +506,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
 
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
+	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo v1.51" },
 	{ "rebel1", "Rebel Assault", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "" },
 	{ "rebel1", "O1LOGO.AAA", kGenUnchanged, UNK_LANG, Common::kPlatform3DO, "" },
 	{ "rebel1", "SUB_AP.BIN", kGenUnchanged, UNK_LANG, Common::kPlatformSegaCD, "" },

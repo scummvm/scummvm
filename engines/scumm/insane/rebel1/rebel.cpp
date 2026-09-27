@@ -288,7 +288,7 @@ const char *InsaneRebel1::uiStr(int id) const {
 // that fails validation keeps its English fallback.
 void InsaneRebel1::loadLocalizedUiStrings() {
 	Common::File f;
-	if (!f.open("ASSAULT.EXE"))
+	if (!f.open(_release.executable))
 		return;
 
 	int32 size = (int32)f.size();
@@ -457,10 +457,10 @@ void InsaneRebel1::loadLocalizedUiStrings() {
 	for (int i = 0; i < kR1StrUiCount; i++)
 		if (!_uiStrings[i].empty())
 			loaded++;
-	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from ASSAULT.EXE", loaded, kR1StrUiCount);
+	debugC(DEBUG_INSANE, "InsaneRebel1: %d/%d UI strings loaded from %s", loaded, kR1StrUiCount, _release.executable);
 }
 
-InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
+InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm), _release(getRebel1Release(scumm->_game.variant)) {
 	Insane::_vm = scumm;
 	// Rebel Assault skips ScummEngine::resetScumm(), which normally clears this state.
 	for (int i = 0; i < kScummActionCount; i++)
@@ -524,7 +524,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;
-	_resumeLevel = 1;
+	_resumeLevel = _release.levels[0];
 	_activeSaveSlot = -1;
 	_loadRequested = false;
 	_flyControlMode = 0;
@@ -576,6 +576,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_level7WarningFrames = 0;
 	_level7WarningThreshold = 0;
 	_levelGameplayPhase = 0;
+	_level9PathLoopOffset = -1;
+	_level9SelectedPath = -1;
 	_level14Play2BSplicePending = false;
 	_level14Play2BSpliced = false;
 	_level14Play2BSpliceFrame = 0;
@@ -594,7 +596,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optionsSel = 0;
 	_levelSelectActive = false;
 	_levelSelectSel = 0;
-	_startLevel = 1;
+	_startLevel = _release.levels[0];
 
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);

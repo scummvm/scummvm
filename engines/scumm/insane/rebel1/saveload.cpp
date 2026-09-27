@@ -159,7 +159,11 @@ bool InsaneRebel1::readSaveState(int slot, SaveState &state, Common::String *des
 		return false;
 	}
 
-	state.resumeLevel = CLIP<int>(in->readSint16LE(), 1, kNumLevels);
+	state.resumeLevel = in->readSint16LE();
+	if (_release.findLevel(state.resumeLevel) < 0) {
+		warning("RA1: chapter %d is not available in this release", state.resumeLevel);
+		return false;
+	}
 	state.lives = MAX<int>(in->readSint16LE(), 0);
 	state.score = in->readSint32LE();
 	state.prevScore = in->readSint32LE();
@@ -236,7 +240,7 @@ void InsaneRebel1::autosaveProgress() {
 	SaveState oldState;
 	Common::String oldDesc;
 	if (readSaveState(slot, oldState, &oldDesc)) {
-		if (oldState.resumeLevel > state.resumeLevel ||
+		if (_release.findLevel(oldState.resumeLevel) > _release.findLevel(state.resumeLevel) ||
 				(oldState.resumeLevel == state.resumeLevel && oldState.lives >= state.lives)) {
 			debugC(DEBUG_INSANE, "skipping autosave slot=%d level=%d lives=%d; existing level=%d lives=%d",
 				slot, state.resumeLevel, state.lives, oldState.resumeLevel, oldState.lives);

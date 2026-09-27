@@ -35,9 +35,8 @@
 namespace Scumm {
 
 const int kRA1MainMenuItemCount = 6;
-const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
 const int kRA1LevelSelectRowsPerCol = 8;
-const int kRA1NumLevels = 15;
+const int kRA1NumLevels = Rebel1Release::kNumLevels;
 const int kRA1MenuAxisThreshold = Common::JOYAXIS_MAX / 2;
 const int kRA1MenuLogicalWidth = 0x140;
 const int kRA1MenuFrameX = 0x32;
@@ -457,16 +456,18 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 		return false;
 
 	if (_levelSelectActive) {
+		const int itemCount = _release.getLevelCount() + 1; // Chapters + BACK
 		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
 		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
+		const int rowsInColumn = MIN(kRA1LevelSelectRowsPerCol, itemCount - col * kRA1LevelSelectRowsPerCol);
 
 		switch (command) {
 		case kRA1MenuCommandUp:
-			row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
+			row = (row + rowsInColumn - 1) % rowsInColumn;
 			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
 			return true;
 		case kRA1MenuCommandDown:
-			row = (row + 1) % kRA1LevelSelectRowsPerCol;
+			row = (row + 1) % rowsInColumn;
 			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
 			return true;
 		case kRA1MenuCommandLeft:
@@ -474,11 +475,11 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 				_levelSelectSel -= kRA1LevelSelectRowsPerCol;
 			return true;
 		case kRA1MenuCommandRight:
-			if (col < 1)
-				_levelSelectSel += kRA1LevelSelectRowsPerCol;
+			if ((col + 1) * kRA1LevelSelectRowsPerCol < itemCount)
+				_levelSelectSel = MIN(_levelSelectSel + kRA1LevelSelectRowsPerCol, itemCount - 1);
 			return true;
 		case kRA1MenuCommandCancel:
-			_levelSelectSel = kRA1LevelSelectItemCount - 1; // Back
+			_levelSelectSel = itemCount - 1; // Back
 			// fall through
 		case kRA1MenuCommandAccept:
 			_menuConfirmed = true;
@@ -626,7 +627,7 @@ bool InsaneRebel1::handleMenuMouse(const Common::Event &event) {
 
 	if (_levelSelectActive) {
 		selection = &_levelSelectSel;
-		for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
+		for (int i = 0; i <= _release.getLevelCount(); i++) {
 			const int col = i / kRA1LevelSelectRowsPerCol;
 			const int row = i % kRA1LevelSelectRowsPerCol;
 			const int frameX = (col == 0) ? kRA1LevelSelectLeftX : kRA1LevelSelectRightX;
@@ -1095,18 +1096,19 @@ void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int
 	const int leftFrameX = kRA1LevelSelectLeftX;
 	const int rightFrameX = kRA1LevelSelectRightX;
 	const int columnW = kRA1LevelSelectColW;
+	const int levelCount = _release.getLevelCount();
 	int levelTextW = 0;
 
-	for (int i = 0; i < kRA1NumLevels; i++)
-		levelTextW = MAX(levelTextW, getMenuTalkTextWidth(kLevelItems[i]));
+	for (int i = 0; i < levelCount; i++)
+		levelTextW = MAX(levelTextW, getMenuTalkTextWidth(kLevelItems[_release.levels[i] - 1]));
 
-	for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
+	for (int i = 0; i <= levelCount; i++) {
 		const int col = i / kRA1LevelSelectRowsPerCol;
 		const int row = i % kRA1LevelSelectRowsPerCol;
 		const int frameX = (col == 0) ? leftFrameX : rightFrameX;
 		const int y = menuY + row * kRA1MenuRowH;
-		const bool levelItem = i < kRA1NumLevels;
-		const char *text = levelItem ? kLevelItems[i] : kBackItem;
+		const bool levelItem = i < levelCount;
+		const char *text = levelItem ? kLevelItems[_release.levels[i] - 1] : kBackItem;
 		const int textW = levelItem ? levelTextW : getMenuTalkTextWidth(text);
 		const int textX = frameX + (columnW - textW) / 2;
 
@@ -1267,7 +1269,7 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 	for (int i = 1; i <= kRA1NumLevels; i++) {
 		const char *password = getChapterCompletePassword(i);
 		if (password && !scumm_stricmp(_textEntryBuffer, password)) {
-			const int targetLevel = getRebel1PasscodeStartLevel(i);
+			const int targetLevel = _release.resolvePasscodeLevel(getRebel1PasscodeStartLevel(i));
 			if (targetLevel == 0)
 				return 0;
 
@@ -1284,7 +1286,7 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 	for (int i = 1; i <= (int)ARRAYSIZE(kRebel1ThreeDOPasswords); i++) {
 		const char *password = kRebel1ThreeDOPasswords[i - 1];
 		if (!scumm_stricmp(_textEntryBuffer, password)) {
-			const int targetLevel = getRebel1ThreeDOPasscodeStartLevel(i);
+			const int targetLevel = _release.resolvePasscodeLevel(getRebel1ThreeDOPasscodeStartLevel(i));
 			if (targetLevel == 0)
 				return 0;
 
@@ -1384,7 +1386,7 @@ int InsaneRebel1::runLevelSelectMenu() {
 	if (!_unlockAllLevels)
 		return 0;
 
-	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1NumLevels - 1);
+	_levelSelectSel = MAX(_release.findLevel(_startLevel), 0);
 	_levelSelectActive = true;
 
 	while (!shouldAbortGameFlow()) {
@@ -1394,9 +1396,9 @@ int InsaneRebel1::runLevelSelectMenu() {
 			break;
 
 		if (_menuConfirmed) {
-			if (_levelSelectSel < kRA1NumLevels) {
+			if (_levelSelectSel < _release.getLevelCount()) {
 				_levelSelectActive = false;
-				return _levelSelectSel + 1;  // 1-based level number
+				return _release.levels[_levelSelectSel];
 			}
 			// BACK
 			_levelSelectActive = false;

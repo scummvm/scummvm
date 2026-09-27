@@ -151,6 +151,7 @@ MODULE_OBJS += \
 	insane/rebel/rebel_gamepad.o \
 	insane/rebel/rebel_touch.o \
 	insane/rebel1/rebel.o \
+	insane/rebel1/releases.o \
 	insane/rebel1/audio.o \
 	insane/rebel1/iact.o \
 	insane/rebel1/levels.o \

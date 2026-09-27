@@ -630,10 +630,14 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		shotOverlayHandled = _gameOp0BOverlayRenderedThisFrame;
 		drawGameOp0BTargetingAfterFetch = _gameOp0BOverlayRenderedThisFrame;
 	} else if (onFootMode) {
-		if (_currentLevel == 8 && onFootAimMode && !onFootSequenceMode && _killCount > 0) {
-			_fireCooldown = _playerFired ? 1 : 0;
-			_vm->_smushVideoShouldFinish = true;
-			return;
+		if (_currentLevel == 8 && onFootAimMode && !onFootSequenceMode) {
+			if (_level9PathLoopOffset >= 0) {
+				updateLevel9PathSelector(curFrame, maxFrame);
+			} else if (_killCount > 0) {
+				_fireCooldown = _playerFired ? 1 : 0;
+				_vm->_smushVideoShouldFinish = true;
+				return;
+			}
 		}
 
 		if (onFootSequenceMode)
@@ -897,6 +901,25 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	_prevTargetProx = _targetProximity;
 	_targetProximity = 0;
 	_lastHitTarget = 0;
+}
+
+void InsaneRebel1::updateLevel9PathSelector(int32 curFrame, int32 maxFrame) {
+	if (_level9SelectedPath >= 0)
+		return;
+
+	if (_killCount > 0) {
+		// The DOS L9 loop reveals object 8 for the left tunnel (target 3),
+		// or object 7 for the right tunnel (target 4), then hides both targets.
+		// Remember the target hit before further mouse movement can change it.
+		_level9SelectedPath = isFrameObjectPrimarySet(4) ? 1 : 0;
+		clearFrameObjectPrimaryBits(0, _level9SelectedPath == 0 ? 0x01 : 0x02);
+		_frameObjectState[0] |= 0x30;
+		_gameplayFlags75fe |= 4;
+	} else if (maxFrame >= 9 && curFrame >= maxFrame + 1 - 10) {
+		// The original loops ten frames before the end until a path is chosen.
+		// Keep the stored background and input state when seeking back to frame 1.
+		_player->seekSan(nullptr, _level9PathLoopOffset - 8, 1);
+	}
 }
 
 void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
