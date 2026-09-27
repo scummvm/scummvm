@@ -761,6 +761,14 @@ void NancyEngine::bootGameEngine() {
 
 	delete iff;
 
+	// Load convo texts and autotext. This has to happen before a player character's
+	// tree gets added: Nancy16's has a UI file with the same name as the convo texts.
+	auto *bsum = GetEngineData(BSUM);
+	if (bsum && !bsum->conversationTextsFilename.empty() && !bsum->autotextFilename.empty()) {
+		LOAD_CHUNK(bsum->conversationTextsFilename.toString().c_str(), CVTX, "CVTX", "CONVO")
+		LOAD_CHUNK(bsum->autotextFilename.toString().c_str(), CVTX, "CVTX", "AUTOTEXT")
+	}
+
 	if (getGameType() >= kGameTypeNancy15) {
 		// The default player character is Nancy, who always occupies the first PCUI slot
 		setPlayerCharacter(0);
@@ -776,13 +784,6 @@ void NancyEngine::bootGameEngine() {
 		if (evnt) {
 			_staticData.numEventFlags = (uint16)(kNumGenericEventFlags + evnt->numRecords);
 		}
-	}
-
-	// Load convo texts and autotext
-	auto *bsum = GetEngineData(BSUM);
-	if (bsum && !bsum->conversationTextsFilename.empty() && !bsum->autotextFilename.empty()) {
-		LOAD_CHUNK(bsum->conversationTextsFilename.toString().c_str(), CVTX, "CVTX", "CONVO")
-		LOAD_CHUNK(bsum->autotextFilename.toString().c_str(), CVTX, "CVTX", "AUTOTEXT")
 	}
 
 	#undef LOAD_BOOT_L2
@@ -950,6 +951,8 @@ void NancyEngine::populateStaticData() {
 		break;
 	case kGameTypeNancy14:
 	case kGameTypeNancy15:
+	case kGameTypeNancy16:
+		// Nancy16 has 40 items, but its cursor table still has room for 49
 		_staticData.numItems = 49;
 		_staticData.numCursorTypes = 45;
 		break;
