@@ -477,7 +477,7 @@ bool SmushPlayerRebel2::handleGameTextResource(uint32 subType, int32 subSize, Co
 	}
 
 	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
-	if (ConfMan.getBool("subtitles"))
+	if (static_cast<InsaneRebel2 *>(_insane)->_release.nonInteractiveVideos || ConfMan.getBool("subtitles"))
 		ra2HandleTextResource(str, fontId, color, posX, posY, left, top, width, height, flg);
 
 	free(text);
@@ -493,27 +493,9 @@ bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int
 }
 
 SmushFont *SmushPlayerRebel2::getGameFont(int font) {
-	const char *ra2FontsLo[] = {
-		"SYSTM/TALKFONT.NUT",
-		"SYSTM/SMALFONT.NUT",
-		"SYSTM/TITLFONT.NUT",
-		"SYSTM/POVFONT.NUT"
-	};
-	const char *ra2FontsHi[] = {
-		"SYSTM/TKHIFONT.NUT",
-		"SYSTM/SMHIFONT.NUT",
-		"SYSTM/TIHIFONT.NUT",
-		"SYSTM/POHIFONT.NUT"
-	};
+	const Rebel2Release &release = static_cast<InsaneRebel2 *>(_insane)->_release;
 	const bool highRes = _vm->_screenWidth >= 640 && _vm->_screenHeight >= 400;
-	const char **ra2Fonts = highRes ? ra2FontsHi : ra2FontsLo;
-	int numFonts = ARRAYSIZE(ra2FontsLo);
-	if (font >= 0 && font < numFonts) {
-		_sf[font] = new SmushFont(_vm, ra2Fonts[font], true);
-	} else {
-		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::getGameFont: RA2 unknown font %d, using TALKFONT", font);
-		_sf[font] = new SmushFont(_vm, ra2Fonts[0], true);
-	}
+	_sf[font] = new SmushFont(_vm, release.getFontFile(font, highRes), true);
 	return _sf[font];
 }
 
@@ -530,9 +512,11 @@ class StringResourceRA2 : public StringResource {
 	int _ra2NbStrings;
 	int _ra2LastId;
 	const char *_ra2LastString;
+	bool _ignoreMissingStrings;
 
 public:
-	StringResourceRA2() : _ra2NbStrings(0), _ra2LastId(-1), _ra2LastString(nullptr) {
+	StringResourceRA2(bool ignoreMissingStrings) :
+			_ra2NbStrings(0), _ra2LastId(-1), _ra2LastString(nullptr), _ignoreMissingStrings(ignoreMissingStrings) {
 		for (int i = 0; i < RA2_MAX_STRINGS; i++) {
 			_ra2Strings[i].id = 0;
 			_ra2Strings[i].string = nullptr;
@@ -623,6 +607,10 @@ public:
 				return _ra2LastString;
 			}
 		}
+		// Preview TRS files can omit dialogue subtitles still referenced by
+		// the movies. LUCASDMO.EXE's 0x40e790/0x4016d0 skips those entries.
+		if (_ignoreMissingStrings)
+			return "";
 		warning("StringResourceRA2: invalid string id : %d", id);
 		_ra2LastId = -1;
 		_ra2LastString = "unknown string";
@@ -652,7 +640,8 @@ bool SmushPlayerRebel2::handleGameSetupStrings() {
 		filebuffer[length] = '\0';
 	}
 
-	StringResourceRA2 *sr = new StringResourceRA2;
+	StringResourceRA2 *sr = new StringResourceRA2(
+		static_cast<InsaneRebel2 *>(_insane)->_release.nonInteractiveVideos != nullptr);
 	sr->init(filebuffer, length);
 	delete[] filebuffer;
 	_strings = sr;

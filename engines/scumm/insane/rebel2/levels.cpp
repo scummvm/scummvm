@@ -84,10 +84,12 @@ Common::String InsaneRebel2::getLevelPrefix(int levelId) {
 }
 
 void InsaneRebel2::runGame() {
-	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-
-	if (_release.nonInteractiveVideo) {
-		splayer->play(_release.nonInteractiveVideo, 15);
+	if (_release.nonInteractiveVideos) {
+		// Cinematics must not run the main menu's input or inactivity timer.
+		_gameState = kStateIntro;
+		for (const Rebel2DemoVideo *video = _release.nonInteractiveVideos;
+				video->filename && !_vm->shouldQuit(); ++video)
+			playCinematic(video->filename, video->flags);
 		return;
 	}
 

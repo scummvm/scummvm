@@ -471,6 +471,7 @@ rebel2	Star Wars: Rebel Assault II: The Hidden Empire
 	ae607f6ed270311d7dbc033d3e943d3e	750723120	us	PSX	PlayStation	-	Disc 1 raw image	-
 
 	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
+	d738db94e852d8a0e2405b0bc4f4d4fb	126976	en	Windows	Demo Windows 95	Demo Windows 95	LucasArts non-interactive demo bundle	-
 	967409fc4c12b39fb3cf47f45de2623c	646373	en	DOS	Demo DA1.06	Demo DA1.06	Playable demo (chapter 6)	-
 	8e0788210af982fbbc43c244ac6f9581	663561	en	DOS	Demo DG1.15	Demo DG1.15	The Dreighton Encounter (chapters 1, 2 and 4)	-
 	ca546c05ec7be680bb7d97675dc9ba59	662441	en	DOS	Demo Special Edition	Demo Special Edition	Special Edition (chapters 1, 2 and 3)	-

@@ -188,8 +188,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
 	_smush_bensgoggNut = nullptr;
 
 	const bool highRes = isHiRes();
+	const bool playable = !_release.nonInteractiveVideos;
 
-	_smush_iconsNut = new NutRenderer(_vm, highRes ? "SYSTM/CPITIMHI.NUT" : "SYSTM/CPITIMAG.NUT");
+	_smush_iconsNut = playable ? new NutRenderer(_vm, highRes ? "SYSTM/CPITIMHI.NUT" : "SYSTM/CPITIMAG.NUT") : nullptr;
 	_smush_icons2Nut = nullptr;
 
 	_laserTexture.pixels = nullptr;
@@ -201,14 +202,15 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
 
 	initEdgeTable(nullptr);
 	_rebelDetailMode = 1;
-	_smush_cockpitNut = new NutRenderer(_vm, highRes ? "SYSTM/DIHIFONT.NUT" : "SYSTM/DISPFONT.NUT");
+	_smush_cockpitNut = playable ? new NutRenderer(_vm, highRes ? "SYSTM/DIHIFONT.NUT" : "SYSTM/DISPFONT.NUT") : nullptr;
 
-	_rebelMsgFont = makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT");
+	_rebelMsgFont = playable ? makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT") : nullptr;
 
-	_smush_talkfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TKHIFONT.NUT" : "SYSTM/TALKFONT.NUT");
-	_smush_smalfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/SMHIFONT.NUT" : "SYSTM/SMALFONT.NUT");
-	_smush_titlefontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TIHIFONT.NUT" : "SYSTM/TITLFONT.NUT");
-	_smush_povfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/POHIFONT.NUT" : "SYSTM/POVFONT.NUT");
+	// Non-interactive demos load their movie fonts through the SMUSH player.
+	_smush_talkfontNut = playable ? makeRebel2Font(_vm, _release.getFontFile(0, highRes)) : nullptr;
+	_smush_smalfontNut = playable ? makeRebel2Font(_vm, _release.getFontFile(1, highRes)) : nullptr;
+	_smush_titlefontNut = playable ? makeRebel2Font(_vm, _release.getFontFile(2, highRes)) : nullptr;
+	_smush_povfontNut = playable ? makeRebel2Font(_vm, _release.getFontFile(3, highRes)) : nullptr;
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
@@ -502,7 +504,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
 		_sfxData[i] = nullptr;
 		_sfxSize[i] = 0;
 	}
-	loadSfx();
+	if (playable)
+		loadSfx();
 
 	for (i = 0; i < kRA2NumAuxSfx; i++) {
 		_auxSfxData[i] = (byte *)calloc(kRA2AuxBufSize, 1);
@@ -539,7 +542,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
 	for (i = 0; i < kMaxPilots; i++) {
 		_pilots[i].init();
 	}
-	loadPilots();
+	if (playable)
+		loadPilots();
 	updateChapterUnlocks();
 
 	_levelSelection = 0;

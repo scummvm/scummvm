@@ -49,45 +49,87 @@ static const Rebel2DifficultyOverride kChapter6DemoDifficulty[] = {
 	} }
 };
 
+static const Rebel2DemoVideo kDemoVideos[] = {
+	{ "OPEN/O_DEMO.SAN", 0 },
+	{ nullptr, 0 }
+};
+
+static const Rebel2DemoVideo kWindowsDemoVideos[] = {
+	{ "RA2VID/O_OPEN_A.SAN", 0x28 },
+	{ "RA2VID/O_OPEN_B.SAN", 0x28 },
+	{ nullptr, 0 }
+};
+
+static const char *const kWindowsDemoFonts[] = {
+	"RA2VID/TALKFONT.NUT", "RA2VID/SMALFONT.NUT", "RA2VID/TITLFONT.NUT", nullptr
+};
+
 // Variants match detection_tables.h. Availability also limits passwords,
 // saved pilot progress and the unlock-all option.
 static const Rebel2Release kReleases[] = {
 	{
 		"", nullptr, "SYSTM/GAME.TRS", nullptr, nullptr,
 		{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
-		true, false, false, false, nullptr, 0
+		true, false, false, false, nullptr, 0, nullptr
 	},
 	{
-		"Demo", nullptr, "SYSTM/GAME.TRS", "OPEN/O_DEMO.SAN", nullptr, { 0 },
-		false, false, false, false, nullptr, 0
+		"Demo", nullptr, "SYSTM/GAME.TRS", kDemoVideos, nullptr, { 0 },
+		false, false, false, false, nullptr, 0, nullptr
+	},
+	{
+		// LUCASDMO.EXE (0x401340/0x401610) plays both intro movies, using
+		// three fonts and a TRS containing only credits and the demo notice.
+		"Demo Windows 95", nullptr, "RA2VID/REBEL2.TRS", kWindowsDemoVideos, nullptr, { 0 },
+		false, false, false, false, nullptr, 0, kWindowsDemoFonts
 	},
 	{
 		// RBL2DEMO.EXE selects GAME_E.TRS. The original chapter-6 handler
 		// (LE object 1, 0x10d10) skips the shield attack and uses 06END_B.
 		"Demo DA1.06", nullptr, "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
-		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty)
+		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty), nullptr
 	},
 	{
 		// GAME.TRS selects chapters 1, 2 and 4 in playable-demo mode.
 		// LE object 1, 0xf860 advances passwords past missing chapters;
 		// 0x12eb0 plays O_PLAYDE instead of the retail finale.
 		"Demo DG1.15", nullptr, "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 4 },
-		false, false, false, true, nullptr, 0
+		false, false, false, true, nullptr, 0, nullptr
 	},
 	{
 		// GAME.TRS selects chapters 1, 2 and 3 in playable-demo mode.
 		// LE object 1, 0x12e70 plays O_PLAYDE after the last chapter;
 		// 0xf840 retains retail completion passwords, unlike DG1.15.
 		"Demo Special Edition", nullptr, "SYSTM/GAME.TRS", nullptr, "OPEN/O_PLAYDE.SAN", { 1, 2, 3 },
-		false, false, false, false, nullptr, 0
+		false, false, false, false, nullptr, 0, nullptr
 	},
 	{
 		// Macintosh v1.0's chapter-6 handler (PEF code section, 0x17fe8)
 		// also skips the shield attack in demo mode and uses 06END_B.
 		"Demo v1.0", "Rebel Assault II Demo Data", "SYSTM/GAME_E.TRS", nullptr, nullptr, { 6 },
-		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty)
+		false, true, true, false, kChapter6DemoDifficulty, ARRAYSIZE(kChapter6DemoDifficulty), nullptr
 	}
 };
+
+int Rebel2Release::getFontCount() const {
+	if (!fontFiles)
+		return 4;
+	int count = 0;
+	while (fontFiles[count])
+		++count;
+	return count;
+}
+
+const char *Rebel2Release::getFontFile(int font, bool highRes) const {
+	static const char *const kFontsLo[] = {
+		"SYSTM/TALKFONT.NUT", "SYSTM/SMALFONT.NUT", "SYSTM/TITLFONT.NUT", "SYSTM/POVFONT.NUT"
+	};
+	static const char *const kFontsHi[] = {
+		"SYSTM/TKHIFONT.NUT", "SYSTM/SMHIFONT.NUT", "SYSTM/TIHIFONT.NUT", "SYSTM/POHIFONT.NUT"
+	};
+	if (font < 0 || font >= getFontCount())
+		font = 0;
+	return fontFiles ? fontFiles[font] : (highRes ? kFontsHi[font] : kFontsLo[font]);
+}
 
 bool Rebel2Release::isChapterAvailable(int chapter) const {
 	if (chapter == kFinale)

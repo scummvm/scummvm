@@ -412,7 +412,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else if (_game.id == GID_REBEL2 && _game.platform == Common::kPlatformPSX) {
 		_screenHeight = 240;
 #endif
-	} else if (_game.id == GID_REBEL2 && ConfMan.getBool("rebel2_hires")) {
+	} else if (_game.id == GID_REBEL2 &&
+			Common::checkGameGUIOption(GAMEOPTION_REBEL2_HIRES, _game.guioptions) && ConfMan.getBool("rebel2_hires")) {
 		_screenWidth = 640;
 		_screenHeight = 400;
 	} else if (_game.version == 8 || _game.heversion >= 71) {

@@ -108,8 +108,10 @@ bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 		const InsaneRebel1 *rebel = (InsaneRebel1 *)((ScummEngine_v7 *)this)->getInsane();
 		return rebel && rebel->hasPlayableLevels();
 	}
-	if (_game.id == GID_REBEL2)
-		return true;
+	if (_game.id == GID_REBEL2) {
+		const InsaneRebel2 *rebel = (InsaneRebel2 *)((ScummEngine_v7 *)this)->getInsane();
+		return rebel && !rebel->_release.nonInteractiveVideos;
+	}
 #endif
 
 	// FIXME: For now always allow loading in V0-V3 games

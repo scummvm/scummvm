@@ -51,13 +51,19 @@ struct Rebel2DifficultyOverride {
 	Rebel2DifficultyParams difficulty[6];
 };
 
+struct Rebel2DemoVideo {
+	const char *filename;
+	int16 flags;
+};
+
 struct Rebel2Release {
 	enum { kNumLevels = 15, kFinale = 16 };
 
 	const char *variant;
 	const char *container;
 	const char *strings;
-	const char *nonInteractiveVideo;
+	// Null-terminated playlist for non-interactive demos.
+	const Rebel2DemoVideo *nonInteractiveVideos;
 	const char *completionVideo;
 	// Chapter numbers in playback order; unused entries are zero.
 	byte levels[kNumLevels];
@@ -68,11 +74,15 @@ struct Rebel2Release {
 	bool advanceCompletionPasswords;
 	const Rebel2DifficultyOverride *difficultyOverrides;
 	uint difficultyOverrideCount;
+	// Optional null-terminated list replacing the retail movie fonts.
+	const char *const *fontFiles;
 
 	bool isChapterAvailable(int chapter) const;
 	int getNextChapter(int chapter) const;
 	int getCompletionPasswordChapter(int chapter) const;
 	const Rebel2DifficultyParams *getDifficultyOverride(int difficulty, int levelType) const;
+	int getFontCount() const;
+	const char *getFontFile(int font, bool highRes) const;
 };
 
 Rebel2Release getRebel2Release(const char *variant, bool restoredContent = false);
