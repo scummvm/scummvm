@@ -940,6 +940,15 @@ static const ExtraGuiOption enableRebel2YodaMode = {
 	0
 };
 
+static const ExtraGuiOption enableRebel2RestoredContent = {
+	_s("Restored content"),
+	_s("Play additional sections included in the demo's game data but omitted from its original sequence"),
+	"rebel2_restored_content",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOption enableRebel1UnlockAll = {
 	_s("Unlock all levels"),
 	_s("All levels will be available without requiring passwords"),
@@ -1019,6 +1028,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_YODA_MODE)) {
 		options.push_back(enableRebel2YodaMode);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_RESTORED_CONTENT)) {
+		options.push_back(enableRebel2RestoredContent);
 	}
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL1_UNLOCK_ALL)) {
 		options.push_back(enableRebel1UnlockAll);

@@ -51,6 +51,7 @@ static const char *const directoryGlobs[] = {
 	"Resources", // Mac SE/Remastered versions
 	"OPEN",     // 3DO version of rebel1
 	"Rebel Assault PowerPC", // Mac version of rebel1
+	"LAUNCH",   // DOS versions of rebel2
 	0
 };
 
@@ -237,6 +238,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"rebel2", "", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_TESTING, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
 	{"rebel2", "Demo", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
+	{"rebel2", "Demo DA1.06", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformDOS, GUIO6(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE, GAMEOPTION_REBEL2_RESTORED_CONTENT)},
 	{"rebel2", "PlayStation", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_UNSTABLE | GF_16BIT_COLOR, Common::kPlatformPSX, GUIO5(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
 
 	{"dig",  "", 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
@@ -516,6 +518,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
 	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo" },
+	{ "rebel2", "RA2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo DA1.06" },
 	{ "rebel2", "SLUS_003.81", kGenUnchanged, Common::EN_USA, Common::kPlatformPSX, "PlayStation" },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },

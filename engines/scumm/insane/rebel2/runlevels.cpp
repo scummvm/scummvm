@@ -894,7 +894,7 @@ int InsaneRebel2::runLevel5() {
 }
 
 int InsaneRebel2::runLevel6() {
-	int phase1Score = 0;
+	int phase1Score = _playerScore;
 	int phase1FlightErrors = 0;
 
 	playLevelBegin(6);
@@ -907,56 +907,57 @@ int InsaneRebel2::runLevel6() {
 
 		_rebelPhaseState = 0xffffffff;
 
-		_rebelLevelType = 5;
-		_currentPhase = 1;
-		_rebelKillCounter = 0;
-		_rebelHitCounter = 0;
+		if (!_release.skipMiningFacilityAttack) {
+			_rebelLevelType = 5;
+			_currentPhase = 1;
+			_rebelKillCounter = 0;
+			_rebelHitCounter = 0;
 
-		debugC(DEBUG_INSANE, "Level 6 Phase 1 (shield attack run)");
-		resetShieldGauge();
-		_rebelShieldGateActive = true;
-
-		if (!playLevelSegment("LEV06/06PLAY1.SAN", 0x28)) {
-			_rebelShieldGateActive = false;
-			return kLevelQuit;
-		}
-
-		while (_playerShield > 0 && !_rebelShieldDestroyed && !_vm->shouldQuit()) {
+			debugC(DEBUG_INSANE, "Level 6 Phase 1 (shield attack run)");
 			resetShieldGauge();
-			if (!playLevelSegment("LEV06/06PLAY1B.SAN", 0x468)) {
+			_rebelShieldGateActive = true;
+
+			if (!playLevelSegment("LEV06/06PLAY1.SAN", 0x28)) {
 				_rebelShieldGateActive = false;
 				return kLevelQuit;
 			}
-		}
-		_rebelShieldGateActive = false;
 
-		if (_playerShield <= 0) {
-			debugC(DEBUG_INSANE, "Level 6 Phase 1 death at frame %d", _deathFrame);
-			playLevelDeathVariant(6, 1, _deathFrame);
-			if (_vm->shouldQuit())
-				return kLevelQuit;
+			while (_playerShield > 0 && !_rebelShieldDestroyed && !_vm->shouldQuit()) {
+				resetShieldGauge();
+				if (!playLevelSegment("LEV06/06PLAY1B.SAN", 0x468)) {
+					_rebelShieldGateActive = false;
+					return kLevelQuit;
+				}
+			}
+			_rebelShieldGateActive = false;
 
-			_playerLives--;
-			if (_playerLives <= 0) {
-				playLevelGameOver(6);
-				return kLevelGameOver;
+			if (_playerShield <= 0) {
+				debugC(DEBUG_INSANE, "Level 6 Phase 1 death at frame %d", _deathFrame);
+				playLevelDeathVariant(6, 1, _deathFrame);
+				if (_vm->shouldQuit())
+					return kLevelQuit;
+
+				_playerLives--;
+				if (_playerLives <= 0) {
+					playLevelGameOver(6);
+					return kLevelGameOver;
+				}
+
+				playLevelRetryVariant(6, 1);
+				if (_vm->shouldQuit())
+					return kLevelQuit;
+				_playerShield = 255;  // full shield on retry (original resets damage before replaying)
+				_playerDamage = 0;
+				continue;
 			}
 
-			playLevelRetryVariant(6, 1);
-			if (_vm->shouldQuit())
+			phase1Score = _playerScore;
+			phase1FlightErrors = _rebelHitCounter;
+			_rebelHandler = 0;
+			_rebelStatusBarSprite = 0;
+			if (!playLevelSegment("LEV06/06POST1.SAN", 0x28, false))
 				return kLevelQuit;
-			_playerShield = 255;  // full shield on retry (original resets damage before replaying)
-			_playerDamage = 0;
-			continue;
 		}
-
-		phase1Score = _playerScore;
-		phase1FlightErrors = _rebelHitCounter;
-
-		_rebelHandler = 0;
-		_rebelStatusBarSprite = 0;
-		if (!playLevelSegment("LEV06/06POST1.SAN", 0x28, false))
-			return kLevelQuit;
 
 		while (!_vm->shouldQuit()) {
 			_rebelLevelType = 6;
@@ -973,7 +974,7 @@ int InsaneRebel2::runLevel6() {
 
 			if (_playerShield > 0) {
 				int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
-				int flightErrors = phase1FlightErrors + _rebelHitCounter;
+				int flightErrors = _release.skipMiningFacilityAttack ? -1 : phase1FlightErrors + _rebelHitCounter;
 				debugC(DEBUG_INSANE, "Level 6 completed!");
 				playLevelEnd(6, accuracy, flightErrors, false);
 				_levelUnlocked[6] = true;

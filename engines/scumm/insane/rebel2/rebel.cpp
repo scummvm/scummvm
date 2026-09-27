@@ -159,7 +159,8 @@ bool InsaneRebel2::isSkippableVideoState() const {
 	return _gameState != kStateGameplay || _rebelHandler == 0;
 }
 
-InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
+InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) :
+		_release(getRebel2Release(scumm->_game.variant, ConfMan.getBool("rebel2_restored_content"))) {
 	_vm = scumm;
 	// Rebel Assault II skips ScummEngine::resetScumm(), which normally clears this state.
 	for (int i = 0; i < kScummActionCount; i++)
@@ -508,7 +509,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
 	for (i = 0; i < 16; i++) {
-		_levelUnlocked[i] = (i == 0);
+		_levelUnlocked[i] = (i + 1 == _release.levels[0]);
 	}
 
 	_chapterSelection = 0;
@@ -520,10 +521,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_noDamage = ConfMan.getBool("rebel2_no_damage");
 	_rebelYodaMode = ConfMan.getBool("rebel2_yoda_mode");
 
-	for (i = 0; i < 16; i++) {
-		_chapterUnlocked[i] = _debugUnlockAll || (i == 0);
-	}
-
 	_previewOffsetX = -90;
 	_previewOffsetY = 75;
 
@@ -534,10 +531,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_pilots[i].init();
 	}
 	loadPilots();
+	updateChapterUnlocks();
 
 	_levelSelection = 0;
 	_levelItemCount = _numPilots + 4;
-	_selectedLevel = 1;
+	_selectedLevel = _release.levels[0];
 	_difficultySelection = 2;
 	_pilotMenuMode = kPilotModeSelect;
 	_pilotNameInput = "";
@@ -1327,7 +1325,10 @@ int InsaneRebel2::getDifficultyRow() const {
 }
 
 InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
-	return kDifficultyTable[CLIP(_difficulty, 0, 5)][getDifficultyRow()];
+	const int difficulty = CLIP(_difficulty, 0, 5);
+	const int levelType = getDifficultyRow();
+	const LevelDifficultyParams *params = _release.getDifficultyOverride(difficulty, levelType);
+	return params ? *params : kDifficultyTable[difficulty][levelType];
 }
 
 bool InsaneRebel2::applyPlayerDamage(int damage) {
@@ -1547,7 +1548,7 @@ int InsaneRebel2::createNewPilot() {
 		return -1;
 
 	int idx = _numPilots;
-	_pilots[idx].init();
+	_pilots[idx].init(_release.levels[0], _release.unlockAvailableLevels ? 3 : 4);
 	_numPilots++;
 	return idx;
 }
@@ -1587,6 +1588,8 @@ void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives,
 		return;
 	if (levelIndex < 0 || levelIndex >= kNumLevels)
 		return;
+	if (!_release.isChapterAvailable(levelIndex + 1))
+		return;
 
 	PilotData &pilot = _pilots[_activePilot];
 
@@ -1613,9 +1616,7 @@ bool InsaneRebel2::selectPilot(int index) {
 	_activePilot = index;
 	_difficulty = _pilots[_activePilot].difficulty;
 
-	// 0xFF is PilotData::init()'s "never played" marker.
-	for (int i = 0; i < 16; i++)
-		_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
+	updateChapterUnlocks();
 
 	return true;
 }

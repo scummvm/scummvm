@@ -632,7 +632,7 @@ public:
 
 bool SmushPlayerRebel2::handleGameSetupStrings() {
 	ScummFile *theFile = _vm->instantiateScummFile();
-	_vm->openFile(*theFile, "SYSTM/GAME.TRS");
+	_vm->openFile(*theFile, static_cast<InsaneRebel2 *>(_insane)->_release.strings);
 	if (!theFile->isOpen()) {
 		delete theFile;
 		return true; // handled (no strings available)

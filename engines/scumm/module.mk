@@ -160,6 +160,7 @@ MODULE_OBJS += \
 	insane/rebel1/runlevels.o \
 	insane/rebel1/saveload.o \
 	insane/rebel2/rebel.o \
+	insane/rebel2/releases.o \
 	insane/rebel2/audio.o \
 	insane/rebel2/iact.o \
 	insane/rebel2/levels.o \

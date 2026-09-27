@@ -30,6 +30,7 @@
 #include "scumm/insane/rebel/rebel_audio.h"
 #include "scumm/insane/rebel/rebel_gamepad.h"
 #include "scumm/insane/rebel/rebel_touch.h"
+#include "scumm/insane/rebel2/releases.h"
 
 #include "common/keyboard.h"
 #include "common/list.h"
@@ -54,6 +55,8 @@ class InsaneRebel2 : public Insane, public Common::EventObserver {
 public:
 	InsaneRebel2(ScummEngine_v7 *scumm);
 	~InsaneRebel2();
+
+	const Rebel2Release _release;
 
 	bool notifyEvent(const Common::Event &event) override;
 
@@ -131,6 +134,7 @@ public:
 	bool _noDamage;
 
 	void unlockAllChapters();
+	void updateChapterUnlocks();
 	int runChapterSelect();
 	void drawChapterSelectOverlay(byte *renderBitmap, int pitch, int width, int height);
 	int processChapterSelectInput();
@@ -195,17 +199,18 @@ public:
 		int16 rating[kNumLevels];
 		int16 difficulty;
 
-		void init() {
+		void init(int firstLevel = 1, int initialLives = 4) {
 			memset(name, 0, sizeof(name));
 			memset(rating, 0, sizeof(rating));
 			difficulty = 2;
-			score[0] = 0;
-			lives[0] = 4;
-			damage[0] = 0;
-			for (int i = 1; i < kNumLevels; i++) {
+			for (int i = 0; i < kNumLevels; i++) {
 				score[i] = 0;
 				lives[i] = 0xFF;
 				damage[i] = 0xFF;
+			}
+			if (firstLevel >= 1 && firstLevel <= kNumLevels) {
+				lives[firstLevel - 1] = initialLives;
+				damage[firstLevel - 1] = 0;
 			}
 		}
 	};
@@ -890,25 +895,7 @@ public:
 	int _difficulty;
 
 	// Per-level difficulty parameters.
-	struct LevelDifficultyParams {
-		int16 laserDelay;
-		int16 snapDistance;
-		int16 missDamage;
-		int16 dodgeDamage;
-		int16 shotDamage;
-		int16 specialDamage;
-		int16 shotAccuracy;
-		int16 hitPoints;
-		int16 dodgePoints;
-		int16 timePoints;
-		int16 levelPoints;
-		int16 specialPoints;
-		int16 flags;
-		int16 rollRate;
-		int16 liftRate;
-		int16 slideRate;
-		int16 driftRate;
-	};
+	typedef Rebel2DifficultyParams LevelDifficultyParams;
 
 	static const LevelDifficultyParams kDifficultyTable[6][17];
 
