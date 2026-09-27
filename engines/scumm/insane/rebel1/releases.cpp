@@ -83,6 +83,13 @@ static const Rebel1Release kReleases[] = {
 		1 << (6 - 1), true, { 0x289dc, 0x1a, 0x222 }, &kDemo940413Walker
 	},
 	{
+		// Macintosh v1.0: CODE 3 at 0x38c uses the same chapter order as
+		// v1.02c below. The supplied chapter assets and tuning also match.
+		"Demo v1.0", nullptr, "OPEN/O1LOGO.ANM", nullptr, "OPEN/O1OPEN.ANM", nullptr, false, false,
+		{ 6, 9 }, nullptr,
+		0x7fff, false, { 0, 0, 0 }, &kRetailWalker
+	},
+	{
 		// Macintosh v1.02c: CODE 3's dispatcher redirects chapters 1-5 to 6,
 		// 7-8 to 9, and 10-15 to the menu. The included ending is not played.
 		// Chapter assets and the tuning rows for 6/9 match the retail defaults.

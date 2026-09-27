@@ -456,6 +456,7 @@ rebel1	Star Wars: Rebel Assault
 	5a76a7967ae1d87b43c3e8c6ba9773a0	217559	en	DOS	Demo v1.51	Demo Special Edition	Dark Forces and Rebel Assault Special Editions CD	-
 	0d6b6e42fffc11c4c7957951d3601b80	218075	en	DOS	Demo v1.7	Demo v1.7	PC Media 1 non-interactive demo	-
 	551a7c06bf5098b32d5fe7641d695df8	226750	en	DOS	Demo 1994-04-13	Demo 1994-04-13	CD-ROM demo (chapters 8 and 10)	-
+	f3207ec861b0e0db9b5117c339c734ad	453724	en	Mac	Demo v1.0	Demo v1.0	MacFormat 18 68k demo (chapters 6 and 9)	-
 	4e9f4571f5859ea50f1e505a1f15c408	451096	en	Mac	Demo v1.02c	Demo v1.02c	68k demo application (chapters 6 and 9)	-
 	b9ac90e4411da1b6f7dd075cc4b03c2a	214435	en	DOS	-	v1.0	-	-
 	e210a57b756473be705d24b9378a8233	212383	en	DOS	-	v1.3	-	-
