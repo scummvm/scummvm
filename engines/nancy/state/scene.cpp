@@ -182,8 +182,12 @@ void Scene::process() {
 		_state = kRun;
 		if (_sceneState.currentScene.continueSceneSound == kLoadSceneSound) {
 			g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
-			g_nancy->_sound->loadSound(_sceneState.summary.sound);
-			g_nancy->_sound->playSound(_sceneState.summary.sound);
+
+			// Nancy16 keeps the name of the scene's area there instead of a sound
+			if (g_nancy->getGameType() <= kGameTypeNancy15) {
+				g_nancy->_sound->loadSound(_sceneState.summary.sound);
+				g_nancy->_sound->playSound(_sceneState.summary.sound);
+			}
 		}
 		// fall through
 	case kRun:
