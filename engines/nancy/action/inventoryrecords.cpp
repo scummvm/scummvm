@@ -38,7 +38,11 @@ void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 		// The character the item goes to took the first half of the cursor flag
 		_characterIndex = stream.readByte();
 		_setCursor = stream.readByte();
-		_forceCursor = stream.readUint16LE();
+
+		// Nancy16 dropped the force cursor field
+		if (g_nancy->getGameType() == kGameTypeNancy15) {
+			_forceCursor = stream.readUint16LE();
+		}
 	} else if (g_nancy->getGameType() >= kGameTypeNancy6) {
 		_setCursor = stream.readUint16LE();
 		_forceCursor = stream.readUint16LE();
