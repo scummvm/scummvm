@@ -89,6 +89,87 @@ static void decodeMainString(const uint8 *src, char *dst) {
 	dst[sz] = '\0';
 }
 
+static void decodeRoomString(const uint8 *src, char *dst, int sz) {
+	for (int i = 0; i < sz; ++i) {
+		uint8 code = *src++;
+		if ((code >= 0xAE && code <= 0xC7) || (code >= 0xCE && code <= 0xE7)) {
+			code -= 0x6D;
+		} else if (code > 0xE7) {
+			switch (code) {
+			case 0xE8:
+				code = 0xA0;
+				break;
+			case 0xE9:
+				code = 0x82;
+				break;
+			case 0xEA:
+				code = 0xA1;
+				break;
+			case 0xEB:
+				code = 0xA2;
+				break;
+			case 0xEC:
+				code = 0xA3;
+				break;
+			case 0xED:
+				code = 0xA4;
+				break;
+			case 0xEE:
+				code = 0xA5;
+				break;
+			}
+		}
+		*dst++ = (char)code;
+	}
+}
+
+void IgorEngine::loadDialogueData(int dlg) {
+	int dataSize;
+	uint8 *p = loadData(dlg, 0, &dataSize);
+	int dialogueDataSize = _roomDataOffsets.dlg.questionsOffset + 164 + 41;
+	assert(dialogueDataSize <= 500);
+	memcpy(_gameState.dialogueData, p, dialogueDataSize);
+	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
+	// The original keeps both 1-based speech tables at the end of the DLG
+	// resource. Part 12 loads 0x14C2 bytes and indexes its question table at
+	// DLG+5230+question*2. See cseg172:0D41-0D54 and cseg172:043B-0452.
+	const int questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 2) * 2;
+	assert(questionSoundsOffset >= 0);
+	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
+		_dialogueQuestionSounds[i] = READ_LE_UINT16(p + questionSoundsOffset + (i + 1) * 2);
+	}
+	const int replySoundsOffset = questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2;
+	assert(_roomDataOffsets.dlg.repliesSize <= MAX_DIALOGUE_REPLIES);
+	for (int i = 0; i < _roomDataOffsets.dlg.repliesSize; ++i) {
+		_dialogueReplySounds[i] = READ_LE_UINT16(p + replySoundsOffset + (i + 1) * 2); // cseg172:0A59-0A82
+	}
+	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
+		for (int n = 0; n < 2; ++n) {
+			const uint8 *src = p + _roomDataOffsets.dlg.questionsOffset + (i + 1) * 164 + _language * 82 + (n + 1) * 41;
+			int len = *src++;
+			if (len != 0) {
+				decodeRoomString(src, _dialogueQuestions[i][n], len);
+				_dialogueQuestions[i][n][len] = '\0';
+				debugC(9, kDebugResource, "loadDialogueData() _dialogueQuestions[%d][%d] '%s'", i, n, _dialogueQuestions[i][n]);
+			} else {
+				_dialogueQuestions[i][n][0] = '\0';
+			}
+		}
+	}
+	for (int i = 0; i < _roomDataOffsets.dlg.repliesSize; ++i) {
+		const uint8 *src = p + _roomDataOffsets.dlg.repliesOffset + (i + 1) * 102 + _language * 51;
+		int len = *src++;
+		if (len != 0) {
+			decodeRoomString(src, _dialogueReplies[i], len);
+			_dialogueReplies[i][len] = '\0';
+			debugC(9, kDebugResource, "loadDialogueData() _dialogueReplies[%d] '%s'", i, _dialogueReplies[i]);
+		} else {
+			_dialogueReplies[i][0] = '\0';
+		}
+	}
+	free(p);
+}
+
 void IgorEngine::loadMainTexts() {
 	loadData(IMG_VerbsPanel, _verbsPanelBuffer);
 	debugC(9, kDebugResource, "loadMainTexts()");
@@ -260,4 +341,3 @@ void IgorEngine::decodeAnimFrame(const uint8 *src, uint8 *dst, bool preserveText
 }
 
 } // End of namespace Igor
-

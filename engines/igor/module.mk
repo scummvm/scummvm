@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	part_7.o \
 	part_10.o \
 	part_11.o \
+	part_12.o \
 	text.o \
 	part_main.o \
 	sound.o

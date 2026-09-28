@@ -374,6 +374,13 @@ private:
 	int _dialogueTextsCount;
 	int _dialogueDirtyRectY;
 	int _dialogueDirtyRectSize;
+	char _dialogueQuestions[MAX_DIALOGUE_QUESTIONS][2][41];
+	uint16 _dialogueQuestionSounds[MAX_DIALOGUE_QUESTIONS]; // cseg172:043B-0460
+	char _dialogueReplies[MAX_DIALOGUE_REPLIES][51];
+	uint16 _dialogueReplySounds[MAX_DIALOGUE_REPLIES]; // cseg172:0A59-0A82
+	bool _dialogueEnded;
+	int _dialogueChoiceSelected;
+	uint8 _dialogueInfo[6];
 
 	uint8 _objectsState[112];
 	bool _part07FirstVisitDone; // cseg197:0795-0845; original global s3:0xED2E
@@ -411,6 +418,8 @@ private:
 	void readTableFile();
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
 
+
+	void loadDialogueData(int dlg);
 	void loadMainTexts();
 	const char *getString(int id) const;
 
@@ -441,12 +450,12 @@ private:
 	void moveScreenUp(int offset);
 	void EXEC_MAIN_ACTION(int action);
 
+	// map
 	void PART_04_EXEC_ACTION(int action);
-
 	void PART_04_CLEAR_OBJECT_STATE_84(int num);
-
 	void PART_04();
 
+	// spring bridge
 	void PART_05_HELPER_4(int num);
 	void PART_05_HELPER_5(int frame);
 	void PART_05();
@@ -455,6 +464,7 @@ private:
 	void PART_05_ACTION_102_scrollRight();
 	void PART_05_UPDATE_ROOM_BACKGROUND();
 
+	// spring rock
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
 	void PART_06_EXEC_ACTION(int action);
@@ -480,10 +490,14 @@ private:
 	void PART_07_DRAW_SCALED_IGOR(int scaleStep, int facing, int frame, int dyPos);
 	void PART_07_ENTER_FROM_OUTSIDE();
 	void PART_07_EXIT_TO_OUTSIDE();
+
+	// Decanato right
 	void PART_10();
 	void PART_10_EXEC_ACTION(int action);
 	void PART_10_ACTION_104_pickHamburger();
 	void PART_10_ACTION_108();
+
+	// Decanato left
 	void PART_11();
 	void PART_11_EXEC_ACTION(int action);
 	void PART_11_ACTION_105();
@@ -491,6 +505,26 @@ private:
 	void PART_11_ACTION_108();
 	void PART_11_ACTION_112();
 	void PART_11_APPLY_OBJECT_STATE(int num);
+
+	// outside church
+	void PART_12_EXEC_ACTION(int action);
+	void PART_12_ACTION_101();
+	void PART_12_ACTION_104();
+	void PART_12_ACTION_105();
+	void PART_12_ACTION_108();
+	void PART_12_UPDATE_ROOM_BACKGROUND();
+	void PART_12_UPDATE_DIALOGUE_CHURCHMAN(int action);
+	void PART_12_HANDLE_DIALOGUE_CHURCHMAN();
+	void PART_12_HELPER_1(int num);
+	void PART_12_HELPER_2();
+	void PART_12_HELPER_3();
+	void PART_12_HELPER_4();
+	void PART_12_HELPER_5();
+	void PART_12_HELPER_6();
+	void PART_12_HELPER_8();
+	void PART_12_HELPER_9();
+	void PART_12_HELPER_10(int frame);
+	void PART_12();
 
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -588,6 +622,12 @@ private:
 
 	void setRoomWalkBounds(int x1, int y1, int x2, int y2);
 	void fixWalkPosition(int *x, int *y);
+	void recolorDialogueChoice(int num, bool highlight);
+	void handleDialogue(int x, int y, int r, int g, int b);
+	void drawDialogueChoices();
+	int selectDialogue();
+	void dialogueAskQuestion();
+	void dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply = 0);
 
 	void buildWalkPath(int srcX, int srcY, int dstX, int dstY);
 
@@ -661,6 +701,7 @@ protected:
 	static const RoomDataOffsets PART_07_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_10_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_11_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_12_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];
