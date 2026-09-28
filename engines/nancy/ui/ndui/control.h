@@ -1,0 +1,136 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef NANCY_UI_NDUI_CONTROL_H
+#define NANCY_UI_NDUI_CONTROL_H
+
+#include "common/array.h"
+
+#include "engines/nancy/ui/ndui/element.h"
+
+namespace Nancy {
+namespace UI {
+namespace NDUI {
+
+class Panel;
+
+// A widget inside a panel, drawn with its elements. The player's clicks, drags and key
+// presses turn into events, and each event fires the actions bound to it in the NDUI
+// data; the panel hands the control the actions that name it.
+class Control {
+public:
+	Control(Panel *panel) : _panel(panel) {}
+	virtual ~Control() {}
+
+	void read(Common::SeekableReadStream &stream);
+
+	// Returns true when the action was meant for this control
+	bool takeAction(const Action &action);
+
+	// Advances the color blending; returns true when the control looks different
+	virtual bool update(float seconds) = 0;
+	virtual void draw(Graphics::ManagedSurface &surface, const Common::Point &offset) const = 0;
+
+	// The mouse, in the coordinates of the panel's controls. A control that returns
+	// true from onMouseDown() keeps getting the mouse until the button is released.
+	virtual bool containsPoint(const Common::Point &pos) const { return false; }
+	virtual void onMouseHover(const Common::Point &pos) {}
+	virtual bool onMouseDown(const Common::Point &pos) { return false; }
+	virtual void onMouseMove(const Common::Point &pos) {}
+	virtual void onMouseUp(const Common::Point &pos) {}
+	virtual bool onWheel(int notches) { return false; }
+
+	void setVisible(bool visible);
+	void setEnabled(bool enabled);
+	void setText(const Common::String &text);
+
+	const Common::String &getName() const { return _name; }
+	void setName(const Common::String &name) { _name = name; }
+	bool isVisible() const { return _visible; }
+	bool isEnabled() const { return _enabled; }
+
+	// Fires the actions bound to an event; the ones without a value of their own
+	// get the given one
+	void fireEvents(int32 eventType, bool isOwnEvent, double value, const Common::String &text);
+
+	int _id = 0;
+	Common::Rect _bounds;		// relative to the panel
+	bool _isMouseOver = false;
+	bool _isPressed = false;
+
+protected:
+	virtual void readExtra(Common::SeekableReadStream &stream) {}
+	virtual bool doAction(const Action &action);
+
+	// Fires the events for something the player did to the control
+	void sendEvent(int32 eventType);
+	virtual bool getValue(int32 eventType, double &value, Common::String &text) const { return false; }
+	virtual bool isOwnEvent(int32 eventType) const { return false; }
+
+	ControlState getState() const;
+	void drawSprite(Graphics::ManagedSurface &surface, uint element, const Common::Rect &dest) const;
+	void drawSprite(Graphics::ManagedSurface &surface, uint element, const Common::Rect &src, const Common::Rect &dest) const;
+
+	// The width the text gets wrapped to
+	virtual int getTextWidth() const { return _bounds.width(); }
+	virtual int getMinHeight() const { return 0; }
+	void fitHeightToText();
+
+	Panel *_panel;
+	Common::String _name;
+	Common::String _text;
+	bool _visible = true;
+	bool _enabled = true;
+	bool _autoHeight = false;	// controls without a height are as tall as their text
+	Common::Array<Action> _events;
+	Common::Array<Element> _elements;
+};
+
+// Draws its element and text while visible; used for panel backgrounds, labels and pictures
+class Static : public Control {
+public:
+	Static(Panel *panel) : Control(panel) {}
+
+	bool update(float seconds) override;
+	void draw(Graphics::ManagedSurface &surface, const Common::Point &offset) const override;
+
+protected:
+	bool doAction(const Action &action) override;
+};
+
+// A static that shows a number
+class VarStatic : public Static {
+public:
+	VarStatic(Panel *panel) : Static(panel) {}
+
+protected:
+	void readExtra(Common::SeekableReadStream &stream) override;
+	bool doAction(const Action &action) override;
+
+	int32 _width = 0;
+	int32 _precision = 0;
+};
+
+} // End of namespace NDUI
+} // End of namespace UI
+} // End of namespace Nancy
+
+#endif // NANCY_UI_NDUI_CONTROL_H

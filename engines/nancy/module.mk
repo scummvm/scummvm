@@ -99,7 +99,10 @@ MODULE_OBJS = \
   ui/inventorybox.o \
   ui/inventorypopup.o \
   ui/ndui/common.o \
+  ui/ndui/control.o \
   ui/ndui/element.o \
+  ui/ndui/manager.o \
+  ui/ndui/panel.o \
   ui/notebookpopup.o \
   ui/ornaments.o \
   ui/scrollbar.o \
