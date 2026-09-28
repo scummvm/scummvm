@@ -152,15 +152,13 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 VIEW::VIEW(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	readRect(*chunkStream, screenPosition);
-	readRect(*chunkStream, bounds);
-
-	// Nancy16's rects aren't inclusive; the viewport is exactly as large as the video
+	// Nancy16's viewport is exactly as large as the video
 	if (g_nancy->getGameType() >= kGameTypeNancy16) {
-		--screenPosition.right;
-		--screenPosition.bottom;
-		--bounds.right;
-		--bounds.bottom;
+		readExclusiveRect(*chunkStream, screenPosition);
+		readExclusiveRect(*chunkStream, bounds);
+	} else {
+		readRect(*chunkStream, screenPosition);
+		readRect(*chunkStream, bounds);
 	}
 }
 

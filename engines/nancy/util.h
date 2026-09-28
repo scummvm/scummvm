@@ -34,6 +34,8 @@ namespace Nancy {
 struct CapturedPicture;
 
 void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
+// Nancy16 stores rects whose right and bottom edges are already exclusive
+void readExclusiveRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
 void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum = 0);
 void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, uint totalNum = 0, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
