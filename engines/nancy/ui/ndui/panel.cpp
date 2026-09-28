@@ -27,6 +27,10 @@
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
 #include "engines/nancy/ui/ndui/button.h"
+#include "engines/nancy/ui/ndui/slider.h"
+#include "engines/nancy/ui/ndui/scrollbar.h"
+#include "engines/nancy/ui/ndui/listbox.h"
+#include "engines/nancy/ui/ndui/editbox.h"
 #include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
@@ -111,6 +115,9 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	case kControlStatic:
 		control = new Static(this);
 		break;
+	case kControlSlider:
+		control = new Slider(this);
+		break;
 	case kControlRadioGroup:
 		control = new RadioGroup(this);
 		break;
@@ -120,6 +127,12 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 		addRadioButton(button);
 		return button;
 	}
+	case kControlListBox:
+		control = new ListBox(this);
+		break;
+	case kControlScrollBar:
+		control = new ScrollBar(this);
+		break;
 	case kControlCheckBox:
 		control = new CheckBox(this);
 		break;
@@ -129,6 +142,12 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	case kControlVarStatic:
 		control = new VarStatic(this);
 		break;
+	case kControlEditBox: {
+		EditBox *editBox = new EditBox(this);
+		_editBoxes.push_back(editBox);
+		control = editBox;
+		break;
+	}
 	default:
 		error("Unknown NDUI control type %d", type);
 	}
@@ -342,6 +361,13 @@ bool Panel::removeControl(const Common::String &name) {
 			}
 		}
 
+		for (uint j = 0; j < _editBoxes.size(); ++j) {
+			if (_editBoxes[j] == control) {
+				_editBoxes.remove_at(j);
+				break;
+			}
+		}
+
 		if (_capture == control) {
 			_capture = nullptr;
 		}
@@ -352,6 +378,20 @@ bool Panel::removeControl(const Common::String &name) {
 	}
 
 	return false;
+}
+
+EditBox *Panel::getKeyboardFocus() const {
+	if (!isVisible() || !_enabled) {
+		return nullptr;
+	}
+
+	for (EditBox *editBox : _editBoxes) {
+		if (editBox->isVisible() && editBox->isEnabled()) {
+			return editBox;
+		}
+	}
+
+	return nullptr;
 }
 
 void Panel::uncheckRadioGroup(const Common::String &group) {

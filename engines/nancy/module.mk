@@ -101,6 +101,7 @@ MODULE_OBJS = \
   ui/ndui/button.o \
   ui/ndui/common.o \
   ui/ndui/control.o \
+  ui/ndui/editbox.o \
   ui/ndui/element.o \
   ui/ndui/listbox.o \
   ui/ndui/manager.o \

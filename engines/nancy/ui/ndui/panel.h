@@ -37,6 +37,7 @@ class Manager;
 class Control;
 class Static;
 class RadioButton;
+class EditBox;
 
 // A window of the UI, like the inventory, the journal or the bars around the viewport.
 // Each NDUI chunk describes one panel: its background, which is a Static that also gives
@@ -73,6 +74,9 @@ public:
 	Control *addNewControl(int32 type, Common::SeekableReadStream &stream);
 	bool removeControl(const Common::String &name);
 
+	// The edit box that gets typed into, when the panel is up
+	EditBox *getKeyboardFocus() const;
+
 	// Places the visible controls one after another, when the panel asks for it
 	void arrangeControls();
 
@@ -108,6 +112,7 @@ private:
 	Common::Array<Control *> _controls;
 	Common::Array<Control *> _arrangeOrder;
 	Common::Array<RadioButton *> _radioButtons;
+	Common::Array<EditBox *> _editBoxes;
 	int _nextID = 1;
 
 	Arrangement _arrangement = kArrangeNone;

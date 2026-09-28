@@ -32,6 +32,7 @@
 #include "engines/nancy/ui/ndui/manager.h"
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
+#include "engines/nancy/ui/ndui/editbox.h"
 
 namespace Nancy {
 namespace UI {
@@ -165,6 +166,19 @@ Panel *Manager::findPanel(const Common::String &name) const {
 }
 
 void Manager::handleInput(NancyInput &input) {
+	// The dialog on top gets what gets typed
+	for (int i = _panels.size() - 1; i >= 0; --i) {
+		EditBox *editBox = _panels[i]->getKeyboardFocus();
+		if (editBox) {
+			for (const Common::KeyState &key : input.otherKbdInput) {
+				editBox->handleKey(key);
+			}
+
+			input.otherKbdInput.clear();
+			break;
+		}
+	}
+
 	// The panels drawn on top get the mouse first
 	bool isOverUI = false;
 	bool isOverControl = false;
