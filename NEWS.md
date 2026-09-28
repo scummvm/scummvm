@@ -17,6 +17,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dracula 2: The Last Sanctuary.
    - Added support for Nancy Drew: The Secret of Shadow Ranch.
    - Added support for Nancy Drew: Curse of Blackmoor Manor.
+   - Added support for Nancy Drew: Secret of the Old Clock.
+   - Added support for Nancy Drew: Last Train to Blue Moon Canyon.
+   - Added support for Nancy Drew: Danger by Design.
+   - Added support for Nancy Drew: The Creature of Kapu Cave.
    - Added support for Chamber of the Sci-Mutant Priestess.
    - Added support for Star Wars: Rebel Assault.
    - Added support for Star Wars: Rebel Assault II: The Hidden Empire.
