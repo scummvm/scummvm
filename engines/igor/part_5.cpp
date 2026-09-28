@@ -27,7 +27,7 @@ namespace Igor {
 	switch (action) {
 	case 101: {
 		// Look at water
-		ADD_DIALOGUE_TEXT(201, 2, 478); // cseg182:0552-055E (sub_182_0548)
+		ADD_DIALOGUE_TEXT(201, 2, 478);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -40,8 +40,8 @@ namespace Igor {
 		PART_05_ACTION_103_pickPaper();
 		break;
 	case 104:
-		// Look at photographers
-		ADD_DIALOGUE_TEXT(203, 2, 479); // cseg182:0575-058B (sub_182_0575)
+		// Look at photographer
+		ADD_DIALOGUE_TEXT(203, 2, 479);
 		SET_DIALOGUE_TEXT(1, 1);
 		startIgorDialogue();
 		break;
@@ -74,6 +74,7 @@ void IgorEngine::PART_05_HELPER_5(int frame) {
 		memcpy(_screenLayer1 + i * 320 + offset, src, 4);
 	}
 }
+
 void IgorEngine::PART_05() {
 	_gameState.enableLight = 1;
 	loadRoomData(PAL_SpringRock, IMG_SpringRock, BOX_SpringRock, MSK_SpringRock, TXT_SpringRock);
@@ -88,6 +89,7 @@ void IgorEngine::PART_05() {
 	for (int i = 0; i <= 143; ++i) {
 		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320 + 96, 224);
 	}
+
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
 	loadAnimData(anm1, 0x7E00);
@@ -99,7 +101,6 @@ void IgorEngine::PART_05() {
 	setRoomWalkBounds(0, 0, 319, 143);
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-
 
 	enterPartLoop();
 	while (_currentPart >= 50 && _currentPart <= 52) {

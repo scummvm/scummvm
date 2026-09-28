@@ -482,7 +482,7 @@ private:
 	void PART_07_EXIT_TO_OUTSIDE();
 	void PART_10();
 	void PART_10_EXEC_ACTION(int action);
-	void PART_10_ACTION_104();
+	void PART_10_ACTION_104_pickHamburger();
 	void PART_10_ACTION_108();
 	void PART_11();
 	void PART_11_EXEC_ACTION(int action);

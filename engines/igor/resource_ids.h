@@ -504,4 +504,7 @@
 #define MSK_AdministrationCorridor 921 // cseg199:C300; IGOR.EXE:0x75B800, 0x954 bytes
 #define BOX_AdministrationCorridor 922 // cseg199:CC54; IGOR.EXE:0x75C154, 0x500 bytes
 
+// Hamburger pickup animation loaded over ANM+0xB400 in PART_10.
+#define ANM_DecanatoHamburger 932 // cseg134:21AF-21ED; IGOR.EXE:0x4EFCEE, 0x1386 bytes
+
 #endif // IGOR_RESOURCE_IDS
