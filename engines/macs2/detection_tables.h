@@ -25,7 +25,7 @@
 namespace Macs2 {
 
 const PlainGameDescriptor macs2Games[] = {
-	{"sis", "Schatz im Silbersee"},
+	{"sis", "Der Schatz im Silbersee"},
 	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
