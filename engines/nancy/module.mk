@@ -98,6 +98,8 @@ MODULE_OBJS = \
   ui/conversationpopup.o \
   ui/inventorybox.o \
   ui/inventorypopup.o \
+  ui/ndui/common.o \
+  ui/ndui/element.o \
   ui/notebookpopup.o \
   ui/ornaments.o \
   ui/scrollbar.o \

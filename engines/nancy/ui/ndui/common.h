@@ -1,0 +1,127 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef NANCY_UI_NDUI_COMMON_H
+#define NANCY_UI_NDUI_COMMON_H
+
+#include "common/str.h"
+#include "common/stream.h"
+
+namespace Nancy {
+namespace UI {
+namespace NDUI {
+
+// Nancy16 replaced the per-widget UI chunks with a small widget toolkit. The UI is a
+// set of panels, each holding a list of controls, described by NDUI chunks spread
+// over one IFF per widget. Controls react to the player by firing events, each of
+// which performs an action on a named panel or control, or hands it to the engine.
+
+enum ControlType {
+	kControlButton		= 1,
+	kControlStatic		= 2,
+	kControlSlider		= 3,
+	kControlRadioGroup	= 5,
+	kControlRadioButton	= 6,
+	kControlEditBox		= 7,
+	kControlListBox		= 8,
+	kControlScrollBar	= 9,
+	kControlCheckBox	= 10,
+	kControlInvButton	= 12,
+	kControlVarStatic	= 14
+};
+
+// The kinds of objects an NDUI chunk describes
+enum ObjectKind {
+	kObjectPanel		= 0,
+	kObjectScrollPanel	= 11,
+	kObjectInvPanel		= 13,
+	kObjectTemplate		= 40	// a control the engine creates copies of at runtime
+};
+
+// The states a control can be drawn in; every element carries a color for each
+enum ControlState {
+	kStateNormal		= 0,
+	kStateDisabled		= 1,
+	kStateHidden		= 2,
+	kStateFocus			= 3,
+	kStateMouseOver		= 4,
+	kStatePressed		= 5,
+	kNumStates			= 6
+};
+
+enum EventType {
+	kEventOwn			= -1,	// whatever the control itself reports: a click, a new value...
+	kEventClicked		= 1,
+	kEventRadioChanged	= 3,
+	kEventChecked		= 4,
+	kEventUnchecked		= 5,
+	kEventSliderChanged	= 6,
+	kEventTextEntered	= 8,	// the player pressed Enter in an edit box
+	kEventTextChanged	= 9,
+	kEventListSelected	= 11,
+	kEventScrolled		= 15,
+	kEventShow			= 16,	// the panel holding the control was shown
+	kEventHide			= 17,	// the panel holding the control was hidden
+	kEventUpdate		= 18,	// sent every frame while the panel is visible
+	kEventActionRecord	= 100	// sent by a scene's action record
+};
+
+enum ActionType {
+	kActionShow				= 1,
+	kActionHide				= 2,
+	kActionToggle			= 3,
+	kActionSetRange			= 5,	// scroll bars
+	kActionEnable			= 8,
+	kActionDisable			= 9,
+	kActionToggleEnabled	= 10,
+	kActionAddText			= 11,	// also adds a list box item
+	kActionSetText			= 12,	// also empties a list box
+	kActionSetValue			= 13,
+	kActionSetTexture		= 14,
+	kActionQuery			= 30,	// asks the engine to send its value back with kActionSetValue
+	kActionShowItem			= 40,	// inventory panels
+	kActionHideItem			= 41
+};
+
+struct Action {
+	void read(Common::SeekableReadStream &stream);
+
+	int32 eventType = 0;		// only for actions bound to a control's event
+	int32 type = 0;
+	Common::String target;		// a panel, a control, or an "Engine_" handler
+	bool hasValue = false;
+	double value = 0;
+	Common::String text;
+	Common::String sender;		// the control that fired the event
+};
+
+// How quickly colors move toward the ones of a new state; a lower rate is faster
+static const float kStaticBlendRate = 0.7f;
+static const float kControlBlendRate = 0.8f;
+
+// The lines a notch of the mouse wheel scrolls
+static const int kWheelLines = 3;
+
+} // End of namespace NDUI
+} // End of namespace UI
+} // End of namespace Nancy
+
+#endif // NANCY_UI_NDUI_COMMON_H
