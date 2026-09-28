@@ -36,6 +36,7 @@ namespace NDUI {
 class Manager;
 class Control;
 class Static;
+class RadioButton;
 
 // A window of the UI, like the inventory, the journal or the bars around the viewport.
 // Each NDUI chunk describes one panel: its background, which is a Static that also gives
@@ -65,6 +66,7 @@ public:
 	Manager *getManager() const { return _manager; }
 
 	void addControl(Control *control);
+	void addRadioButton(RadioButton *button);
 	void setDirty() { _isDirty = true; }
 
 	// Reads a control of the given type and adds it
@@ -73,6 +75,9 @@ public:
 
 	// Places the visible controls one after another, when the panel asks for it
 	void arrangeControls();
+
+	void uncheckRadioGroup(const Common::String &group);
+	int getCheckedRadioIndex(const Common::String &group) const;
 
 private:
 	enum Arrangement {
@@ -93,6 +98,7 @@ private:
 	void fireEvent(int32 eventType);
 	void redraw();
 	Control *getControlAt(const Common::Point &pos) const;
+	void showItem(int16 itemID, bool show);
 
 	Manager *_manager;
 	byte _kind;
@@ -101,6 +107,7 @@ private:
 	Static *_background = nullptr;
 	Common::Array<Control *> _controls;
 	Common::Array<Control *> _arrangeOrder;
+	Common::Array<RadioButton *> _radioButtons;
 	int _nextID = 1;
 
 	Arrangement _arrangement = kArrangeNone;

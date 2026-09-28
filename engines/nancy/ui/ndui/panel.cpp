@@ -26,11 +26,15 @@
 
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
+#include "engines/nancy/ui/ndui/button.h"
 #include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
 namespace UI {
 namespace NDUI {
+
+// Inventory buttons are numbered after their items
+static const int kInvButtonFirstID = 10;
 
 Panel::Panel(Manager *manager, uint16 z, byte kind) : RenderObject(z), _manager(manager), _kind(kind) {
 	setNativeResolution(true);
@@ -101,8 +105,26 @@ void Panel::readControl(Common::SeekableReadStream &stream) {
 Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	Control *control = nullptr;
 	switch (type) {
+	case kControlButton:
+		control = new Button(this);
+		break;
 	case kControlStatic:
 		control = new Static(this);
+		break;
+	case kControlRadioGroup:
+		control = new RadioGroup(this);
+		break;
+	case kControlRadioButton: {
+		RadioButton *button = new RadioButton(this);
+		button->read(stream);
+		addRadioButton(button);
+		return button;
+	}
+	case kControlCheckBox:
+		control = new CheckBox(this);
+		break;
+	case kControlInvButton:
+		control = new InvButton(this);
 		break;
 	case kControlVarStatic:
 		control = new VarStatic(this);
@@ -116,11 +138,22 @@ Control *Panel::addNewControl(int32 type, Common::SeekableReadStream &stream) {
 	return control;
 }
 
-// Controls are numbered in the order they get added
+// Controls are numbered in the order they get added; inventory buttons after their item
 void Panel::addControl(Control *control) {
-	control->_id = _nextID++;
+	if (_kind == kObjectInvPanel) {
+		InvButton *button = (InvButton *)control;
+		control->_id = button->getItemID() + kInvButtonFirstID;
+	} else {
+		control->_id = _nextID++;
+	}
+
 	_controls.push_back(control);
 	_arrangeOrder.push_back(control);
+}
+
+void Panel::addRadioButton(RadioButton *button) {
+	addControl(button);
+	_radioButtons.push_back(button);
 }
 
 const Common::String &Panel::getName() const {
@@ -221,12 +254,39 @@ bool Panel::takeAction(const Action &action) {
 
 		_scrollOffset = ((int)action.value + _scrollStep / 2) / _scrollStep * _scrollStep;
 		break;
+	case kActionShowItem:
+	case kActionHideItem:
+		if (_kind != kObjectInvPanel) {
+			return false;
+		}
+
+		showItem((int16)action.value, action.type == kActionShowItem);
+		break;
 	default:
 		return false;
 	}
 
 	_isDirty = true;
 	return true;
+}
+
+// The newest item goes first
+void Panel::showItem(int16 itemID, bool show) {
+	for (uint i = 0; i < _arrangeOrder.size(); ++i) {
+		Control *control = _arrangeOrder[i];
+		if (((InvButton *)control)->getItemID() != itemID) {
+			continue;
+		}
+
+		if (show) {
+			_arrangeOrder.remove_at(i);
+			_arrangeOrder.insert_at(0, control);
+		}
+
+		control->setVisible(show);
+		arrangeControls();
+		return;
+	}
 }
 
 // Every show needs a matching hide before the panel goes away
@@ -275,6 +335,13 @@ bool Panel::removeControl(const Common::String &name) {
 			}
 		}
 
+		for (uint j = 0; j < _radioButtons.size(); ++j) {
+			if (_radioButtons[j] == control) {
+				_radioButtons.remove_at(j);
+				break;
+			}
+		}
+
 		if (_capture == control) {
 			_capture = nullptr;
 		}
@@ -285,6 +352,33 @@ bool Panel::removeControl(const Common::String &name) {
 	}
 
 	return false;
+}
+
+void Panel::uncheckRadioGroup(const Common::String &group) {
+	for (RadioButton *button : _radioButtons) {
+		if (button->getGroup().equalsIgnoreCase(group)) {
+			button->setChecked(false);
+		}
+	}
+
+	_isDirty = true;
+}
+
+int Panel::getCheckedRadioIndex(const Common::String &group) const {
+	int index = 0;
+	for (RadioButton *button : _radioButtons) {
+		if (!button->getGroup().equalsIgnoreCase(group)) {
+			continue;
+		}
+
+		if (button->isChecked()) {
+			return index;
+		}
+
+		++index;
+	}
+
+	return -1;
 }
 
 void Panel::updateGraphics() {

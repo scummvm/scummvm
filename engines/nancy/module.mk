@@ -98,6 +98,7 @@ MODULE_OBJS = \
   ui/conversationpopup.o \
   ui/inventorybox.o \
   ui/inventorypopup.o \
+  ui/ndui/button.o \
   ui/ndui/common.o \
   ui/ndui/control.o \
   ui/ndui/element.o \
