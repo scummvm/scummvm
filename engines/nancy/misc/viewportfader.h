@@ -58,19 +58,12 @@ private:
 		kFadingOut
 	};
 
-	struct Color {
-		float a = 0;
-		float r = 0;
-		float g = 0;
-		float b = 0;
-	};
-
-	bool blendTowards(const Color &target, float seconds);
+	bool blendTowards(uint32 target, float seconds);
 	void redraw();
 
 	State _state = kIdle;
-	Color _current;
-	Color _target;
+	float _current[4] = {};		// ARGB channels, starting at transparent black
+	uint32 _target = 0;			// ARGB
 	uint32 _holdTime = 0;
 	uint32 _holdEndTime = 0;
 	uint32 _lastUpdateTime = 0;

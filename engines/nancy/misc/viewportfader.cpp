@@ -29,12 +29,8 @@
 namespace Nancy {
 namespace Misc {
 
-// Each 1/30 of a second, the color keeps this much of its distance to the target
+// How quickly the color moves toward the target; a lower rate is faster
 static const float kBlendRate = 0.9f;
-
-static byte toByte(float channel) {
-	return (byte)(CLIP(channel, 0.0f, 1.0f) * 255 + 0.5f);
-}
 
 void ViewportFader::init() {
 	Common::Rect bounds = NancySceneState.getViewport().getScreenPosition();
@@ -45,10 +41,7 @@ void ViewportFader::init() {
 }
 
 void ViewportFader::arm(uint32 color, uint32 holdTime) {
-	_target.a = 1.0f;
-	_target.r = ((color >> 16) & 0xFF) / 255.0f;
-	_target.g = ((color >> 8) & 0xFF) / 255.0f;
-	_target.b = (color & 0xFF) / 255.0f;
+	_target = color | 0xFF000000;
 	_holdTime = holdTime;
 
 	_state = kArmed;
@@ -65,15 +58,9 @@ void ViewportFader::onSceneChange() {
 }
 
 // Returns true once the color has reached the target
-bool ViewportFader::blendTowards(const Color &target, float seconds) {
-	float amount = 1.0f - powf(kBlendRate, 30.0f * seconds);
-	_current.a += (target.a - _current.a) * amount;
-	_current.r += (target.r - _current.r) * amount;
-	_current.g += (target.g - _current.g) * amount;
-	_current.b += (target.b - _current.b) * amount;
-
-	return toByte(_current.a) == toByte(target.a) && toByte(_current.r) == toByte(target.r) &&
-		toByte(_current.g) == toByte(target.g) && toByte(_current.b) == toByte(target.b);
+bool ViewportFader::blendTowards(uint32 target, float seconds) {
+	blendColor(_current, target, getBlendAmount(seconds, kBlendRate));
+	return channelsToArgb(_current) == target;
 }
 
 void ViewportFader::updateGraphics() {
@@ -102,7 +89,7 @@ void ViewportFader::updateGraphics() {
 		break;
 	case kFadingOut:
 		// The fade goes back to transparent black
-		if (blendTowards(Color(), seconds)) {
+		if (blendTowards(0, seconds)) {
 			_state = kIdle;
 		}
 
@@ -115,10 +102,11 @@ void ViewportFader::updateGraphics() {
 }
 
 void ViewportFader::redraw() {
-	byte alpha = toByte(_current.a);
-	setVisible(alpha != 0);
-	if (alpha != 0) {
-		_drawSurface.clear(_drawSurface.format.ARGBToColor(alpha, toByte(_current.r), toByte(_current.g), toByte(_current.b)));
+	uint32 color = channelsToArgb(_current);
+	bool isVisible = (color >> 24) != 0;
+	setVisible(isVisible);
+	if (isVisible) {
+		_drawSurface.clear(argbToColor(_drawSurface.format, color));
 	}
 
 	_needsRedraw = true;

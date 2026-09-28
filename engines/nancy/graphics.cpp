@@ -33,6 +33,71 @@
 
 namespace Nancy {
 
+// The ARGB colors in the game data are 32-bit ARGB pixels
+static const Graphics::PixelFormat kARGBFormat = Graphics::PixelFormat::createFormatARGB32();
+
+uint32 argbToColor(const Graphics::PixelFormat &format, uint32 argb) {
+	byte a, r, g, b;
+	kARGBFormat.colorToARGB(argb, a, r, g, b);
+	return format.ARGBToColor(a, r, g, b);
+}
+
+void blendPixel(Graphics::ManagedSurface &surface, int x, int y, byte a, byte r, byte g, byte b) {
+	if (x < 0 || y < 0 || x >= surface.w || y >= surface.h) {
+		return;
+	}
+
+	byte destA, destR, destG, destB;
+	surface.format.colorToARGB(surface.getPixel(x, y), destA, destR, destG, destB);
+
+	uint destWeight = destA * (255 - a) / 255;
+	uint outA = a + destWeight;
+	if (outA == 0) {
+		return;
+	}
+
+	surface.setPixel(x, y, surface.format.ARGBToColor(outA,
+		(r * a + destR * destWeight) / outA,
+		(g * a + destG * destWeight) / outA,
+		(b * a + destB * destWeight) / outA));
+}
+
+byte colorChannelToByte(float channel) {
+	return (byte)(CLIP(channel, 0.0f, 1.0f) * 255 + 0.5f);
+}
+
+void argbToChannels(uint32 argb, float *channels) {
+	byte a, r, g, b;
+	kARGBFormat.colorToARGB(argb, a, r, g, b);
+	channels[0] = a / 255.0f;
+	channels[1] = r / 255.0f;
+	channels[2] = g / 255.0f;
+	channels[3] = b / 255.0f;
+}
+
+uint32 channelsToArgb(const float *channels) {
+	return kARGBFormat.ARGBToColor(colorChannelToByte(channels[0]), colorChannelToByte(channels[1]),
+		colorChannelToByte(channels[2]), colorChannelToByte(channels[3]));
+}
+
+float getBlendAmount(float seconds, float rate) {
+	return 1.0f - powf(rate, 30.0f * seconds);
+}
+
+bool blendColor(float *current, uint32 target, float amount) {
+	float targetChannels[4];
+	argbToChannels(target, targetChannels);
+
+	bool changed = false;
+	for (uint i = 0; i < 4; ++i) {
+		byte before = colorChannelToByte(current[i]);
+		current[i] += (targetChannels[i] - current[i]) * amount;
+		changed |= colorChannelToByte(current[i]) != before;
+	}
+
+	return changed;
+}
+
 GraphicsManager::GraphicsManager() :
 	_objects(objectComparator),
 	_inputPixelFormat16(2, 5, 5, 5, 0, 10, 5, 0, 0),
@@ -373,8 +438,7 @@ int GraphicsManager::getFontID(const Common::String &name) const {
 }
 
 uint32 GraphicsManager::getFontColor(uint id, const Graphics::PixelFormat &format, FontColorState state) const {
-	uint32 argb = id < _fontColors.size() ? _fontColors[id].colors[state] : 0xFFFFFFFF;
-	return format.ARGBToColor(argb >> 24, (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
+	return argbToColor(format, id < _fontColors.size() ? _fontColors[id].colors[state] : 0xFFFFFFFF);
 }
 
 void GraphicsManager::addObject(RenderObject *object) {

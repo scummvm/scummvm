@@ -199,31 +199,10 @@ void PaintPuzzle::drawRegion(uint regionIndex) {
 		for (int x = 0; x < img.w && dst.left + x < _drawSurface.w; ++x) {
 			byte a = shapeAlpha(img, x, y);
 			if (a != 0) {
-				blendPixel(dst.left + x, dst.top + y, a, color.r, color.g, color.b);
+				blendPixel(_drawSurface, dst.left + x, dst.top + y, a, color.r, color.g, color.b);
 			}
 		}
 	}
-}
-
-// Composites a pixel over what is already drawn at (x,y).
-void PaintPuzzle::blendPixel(int x, int y, byte a, byte r, byte g, byte b) {
-	if (x < 0 || y < 0 || x >= _drawSurface.w || y >= _drawSurface.h) {
-		return;
-	}
-
-	if (a != 255) {
-		byte da, dr, dg, db;
-		_drawSurface.format.colorToARGB(_drawSurface.getPixel(x, y), da, dr, dg, db);
-
-		uint destAlpha = da * (255 - a) / 255;
-		uint outAlpha = a + destAlpha;
-		r = (r * a + dr * destAlpha) / outAlpha;
-		g = (g * a + dg * destAlpha) / outAlpha;
-		b = (b * a + db * destAlpha) / outAlpha;
-		a = outAlpha;
-	}
-
-	_drawSurface.setPixel(x, y, _drawSurface.format.ARGBToColor(a, r, g, b));
 }
 
 // Draws a sprite from img, skipping transparent pixels and compositing
@@ -254,7 +233,7 @@ void PaintPuzzle::drawSprite(const Graphics::ManagedSurface &img, const Common::
 				continue;
 			}
 
-			blendPixel(dx, dy, a, r, g, b);
+			blendPixel(_drawSurface, dx, dy, a, r, g, b);
 		}
 	}
 }

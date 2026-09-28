@@ -33,6 +33,25 @@ namespace Nancy {
 class IFF;
 class RenderObject;
 
+// An ARGB color, as a pixel of the given format
+uint32 argbToColor(const Graphics::PixelFormat &format, uint32 argb);
+
+// Draws a pixel with straight alpha over what the surface already holds
+void blendPixel(Graphics::ManagedSurface &surface, int x, int y, byte a, byte r, byte g, byte b);
+
+// Nancy16 blends its colors as ARGB channels from 0 to 1, in that order. These convert
+// between a channel and the byte it gets drawn with, and between channels and colors.
+byte colorChannelToByte(float channel);
+void argbToChannels(uint32 argb, float *channels);
+uint32 channelsToArgb(const float *channels);
+
+// How much of the way toward a new color gets covered in the given time. Each 1/30
+// of a second, the color keeps the given rate of its distance to the target.
+float getBlendAmount(float seconds, float rate);
+
+// Moves an ARGB color toward the target; returns true when its bytes changed
+bool blendColor(float *current, uint32 target, float amount);
+
 // Nancy16+ font colors have one color for each state of a UI control
 enum FontColorState {
 	kFontColorNormal		= 0,

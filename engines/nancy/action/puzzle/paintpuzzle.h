@@ -86,7 +86,6 @@ protected:
 	void paintRegion(uint regionIndex, int colorIndex);
 	void dropColor();
 	void drawRegion(uint regionIndex);
-	void blendPixel(int x, int y, byte a, byte r, byte g, byte b);
 	void drawSprite(const Graphics::ManagedSurface &img, const Common::Rect &src, const Common::Point &dest);
 	void drawObjects();
 	void drawBrush();
