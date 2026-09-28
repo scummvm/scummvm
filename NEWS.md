@@ -106,6 +106,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Improved cursor scale in early Windows HE games.
+   - Added option to use PAL timing for SID audio in C64 games. This slows
+     down the music, but that's how many non-US players would have heard it.
 
  Sherlock:
    - Vertical movement delta fix for Rose Tattoo.
