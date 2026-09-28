@@ -102,8 +102,11 @@ MODULE_OBJS = \
   ui/ndui/common.o \
   ui/ndui/control.o \
   ui/ndui/element.o \
+  ui/ndui/listbox.o \
   ui/ndui/manager.o \
   ui/ndui/panel.o \
+  ui/ndui/scrollbar.o \
+  ui/ndui/slider.o \
   ui/notebookpopup.o \
   ui/ornaments.o \
   ui/scrollbar.o \
