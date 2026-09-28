@@ -34,6 +34,9 @@ namespace Interactions {
  * Enter is pressed, with no gameplay effect at all
  */
 class Yell : public Interaction {
+private:
+	Common::String _text;
+
 public:
 	Yell();
 	~Yell() override {}

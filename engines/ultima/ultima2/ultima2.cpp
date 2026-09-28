@@ -26,6 +26,7 @@
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/console.h"
 #include "ultima/ultima2/metaengine.h"
+#include "ultima/ultima2/data/secret_archive.h"
 #include "ultima/ultima2/logic/space_logic.h"
 #include "ultima/ultima2/views/views.h"
 #include "ultima/ultima2/views/map.h"
@@ -72,6 +73,10 @@ Common::Error Ultima2Engine::run() {
 	_rngState[0]++;
 	_rngState[1]++;
 
+	// Set up secret map
+	SearchMan.add("Secret", new Data::SecretMapArchive());
+
+	// Create all the views and run the game
 	Views::Views views;
 	addView("Title");
 	runGame(views);

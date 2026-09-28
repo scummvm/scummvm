@@ -115,6 +115,7 @@ MODULE_OBJS += \
 	ultima2/data/map_dungeon.o \
 	ultima2/data/map_monsters.o \
 	ultima2/data/savegame.o \
+	ultima2/data/secret_archive.o \
 	ultima2/data/tiles.o \
 	ultima2/gfx/pic_decoder.o \
 	ultima2/gfx/text_cursor.o \

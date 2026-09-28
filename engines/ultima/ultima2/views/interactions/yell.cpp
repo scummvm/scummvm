@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima2/views/interactions/yell.h"
+#include "ultima/ultima2/views/overworld_map.h"
 #include "ultima/ultima2/ultima2.h"
 #include "ultima/ultima2/metaengine.h"
 
@@ -41,9 +42,30 @@ bool Yell::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_RETURN) {
 		writeString("\n");
 		close();
+
+		Data::Savegame &sg = _G(savegame);
+		if (_text.equalsIgnoreCase("scummvm") && dynamic_cast<Views::OverworldMap *>(g_engine->focusedView()) != nullptr &&
+				sg._mount == 0) {
+			writeString("The universe whisks you away.\n");
+
+			// A parting gift; items are stored as two BCD digits, so 99 is the highest they can go
+			if (sg._items[Data::ITEM_HELM] < 99)
+				++sg._items[Data::ITEM_HELM];
+
+			// Show the ScummVM secret map
+			sg._overworldReturnX = sg._mapX;
+			sg._overworldReturnY = sg._mapY;
+			sg._mapX = 31;
+			sg._mapY = 62;
+			sg._mapType = 2;
+			_G(map).load(sg._mapEra, 9);
+			_G(logic)->entering();
+		}
+
 		_G(logic)->resumeTurn();
 	} else if (Common::isPrint(msg.ascii)) {
 		writeString("%c", (char)msg.ascii);
+		_text += msg.ascii;
 	}
 
 	return true;

@@ -80,7 +80,7 @@ void Map::loadTalk(int mapEra, int mapType) {
 }
 
 void Map::load(int mapEra, int mapType) {
-	if (mapType >= 4) {
+	if (mapType >= 4 && mapType != 9) {
 		loadDungeon(mapEra, mapType);
 		return;
 	}
