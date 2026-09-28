@@ -136,6 +136,9 @@ protected:
 
 	byte _conditionalResponseCharacterID;
 	byte _goodbyeResponseCharacterID;
+	// Nancy16 names the conditional dialogue and goodbye scenes directly
+	Common::String _conditionalResponseScene;
+	Common::String _goodbyeResponseScene;
 	byte _defaultNextScene = kDefaultNextSceneEnabled;
 	byte _popNextScene = kNoPopNextScene;
 	SceneChangeDescription _sceneChange;

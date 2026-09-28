@@ -200,8 +200,21 @@ void ConversationSound::readDataNancy13(Common::SeekableReadStream &stream) {
 
 	readCelDataNancy13(stream);
 
-	_conditionalResponseCharacterID = stream.readByte();
-	_goodbyeResponseCharacterID = stream.readByte();
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readFilename(stream, _conditionalResponseScene);
+		readFilename(stream, _goodbyeResponseScene);
+
+		if (_conditionalResponseScene.equalsIgnoreCase("NO_INFOCHECK")) {
+			_conditionalResponseScene.clear();
+		}
+
+		if (_goodbyeResponseScene.equalsIgnoreCase("NO_BYE")) {
+			_goodbyeResponseScene.clear();
+		}
+	} else {
+		_conditionalResponseCharacterID = stream.readByte();
+		_goodbyeResponseCharacterID = stream.readByte();
+	}
 
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();
@@ -398,11 +411,11 @@ void ConversationSound::execute() {
 			uint numRegularResponses = _responses.size();
 
 			// Add responses when conditions have been satisfied
-			if (_conditionalResponseCharacterID != _noResponse) {
+			if (_conditionalResponseCharacterID != _noResponse || !_conditionalResponseScene.empty()) {
 				addConditionalDialogue();
 			}
 
-			if (_goodbyeResponseCharacterID != _noResponse) {
+			if (_goodbyeResponseCharacterID != _noResponse || !_goodbyeResponseScene.empty()) {
 				addGoodbye();
 			}
 
@@ -721,7 +734,8 @@ void ConversationSound::addGoodbye() {
 
 void ConversationSound::addConditionalDialogueNancy12() {
 	// Every action record in scene S<800 + charID> is one conditional response
-	Common::Path sceneName(Common::String::format("S%u", 800 + _conditionalResponseCharacterID));
+	Common::Path sceneName(_conditionalResponseScene.empty() ?
+		Common::String::format("S%u", 800 + _conditionalResponseCharacterID) : _conditionalResponseScene);
 	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
 	if (!iff) {
 		warning("Could not load conditional dialogue scene %s", sceneName.toString().c_str());
@@ -770,7 +784,8 @@ void ConversationSound::addConditionalDialogueNancy12() {
 
 void ConversationSound::addGoodbyeNancy12() {
 	// Use the first satisfied goodbye record in scene S<900 + charID>
-	Common::Path sceneName(Common::String::format("S%u", 900 + _goodbyeResponseCharacterID));
+	Common::Path sceneName(_goodbyeResponseScene.empty() ?
+		Common::String::format("S%u", 900 + _goodbyeResponseCharacterID) : _goodbyeResponseScene);
 	IFF *iff = g_nancy->_resource->loadIFF(sceneName);
 	if (!iff) {
 		warning("Could not load goodbye scene %s", sceneName.toString().c_str());
