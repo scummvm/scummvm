@@ -35,6 +35,7 @@ TextCursor::TextCursor(const Common::String &name, UIElement *parent, byte color
 }
 
 void TextCursor::show() {
+	_active = true;
 	_visible = true;
 	redraw();
 	delayFrames(DELAY_FRAMES);
@@ -43,7 +44,9 @@ void TextCursor::show() {
 void TextCursor::hide() {
 	_visible = false;
 	cancelDelay();
-	redraw();
+	draw();
+
+	_active = false;
 }
 
 void TextCursor::setPosition(const Common::Point &pt) {
@@ -51,11 +54,13 @@ void TextCursor::setPosition(const Common::Point &pt) {
 }
 
 void TextCursor::draw() {
-	auto s = getSurface();
-	s.clear();
+	if (_active) {
+		auto s = getSurface();
+		s.clear();
 
-	if (_visible)
-		s.fillRect(Common::Rect(0, 7, 8, 8), _color);
+		if (_visible)
+			s.fillRect(Common::Rect(0, 7, 8, 8), _color);
+	}
 }
 
 void TextCursor::timeout() {

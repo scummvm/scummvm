@@ -35,6 +35,7 @@ namespace Gfx {
  */
 class TextCursor : public Shared::UIElement {
 private:
+	bool _active = false;
 	bool _visible = true;
 	byte _color;
 
