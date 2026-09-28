@@ -31,36 +31,30 @@ namespace Hollywood {
 class HollywoodEngine;
 
 struct DialogueChoiceRecord {
-	DialogueChoiceRecord();
-
-	byte enabled; // Visible in the menu.
-	byte nextNodeIndex;
-	byte transitionMode;
-	byte playerTextRowId;
-	byte responseFrameIndex;
-	byte disableAfterUse;
-	byte selectable; // Clickable/selectable when visible.
+	byte enabled = 0; // Visible in the menu.
+	byte nextNodeIndex = 0;
+	byte transitionMode = 0;
+	byte playerTextRowId = 0;
+	byte responseFrameIndex = 0;
+	byte disableAfterUse = 0;
+	byte selectable = 1; // Clickable/selectable when visible.
 };
 
 struct DialogueMenuLine {
-	DialogueMenuLine();
-
 	Common::String text;
-	byte choiceIndex;
-	bool firstLineOfChoice;
-	bool selectable;
+	byte choiceIndex = 0;
+	bool firstLineOfChoice = false;
+	bool selectable = true;
 };
 
 struct DialogueMenuState {
-	DialogueMenuState();
-
 	void clear();
 	bool visible() const { return lineCount != 0; }
 	byte choiceForLine(byte lineIndex) const;
 
 	Common::Array<DialogueMenuLine> lines;
-	byte lineCount;
-	byte highlightedLineIndex;
+	byte lineCount = 0;
+	byte highlightedLineIndex = 0xff;
 };
 
 /**

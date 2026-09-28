@@ -39,27 +39,6 @@ const uint kDialogueMenuMaxCharsPerLine = 100;
 const uint32 kDialogueMenuChoiceRedirectStepMillis = 40;
 const uint32 kDialogueMenuChoiceRedirectPauseMillis = 1000;
 
-DialogueChoiceRecord::DialogueChoiceRecord() :
-		enabled(0),
-		nextNodeIndex(0),
-		transitionMode(0),
-		playerTextRowId(0),
-		responseFrameIndex(0),
-		disableAfterUse(0),
-		selectable(1) {
-}
-
-DialogueMenuLine::DialogueMenuLine() :
-		choiceIndex(0),
-		firstLineOfChoice(false),
-		selectable(true) {
-}
-
-DialogueMenuState::DialogueMenuState() :
-		lineCount(0),
-		highlightedLineIndex(0xff) {
-}
-
 void DialogueMenuState::clear() {
 	lines.clear();
 	lineCount = 0;
