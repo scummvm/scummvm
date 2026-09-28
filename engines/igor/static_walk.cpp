@@ -238,4 +238,144 @@ const RoomDataOffsets IgorEngine::PART_12_ROOM_DATA_OFFSETS = {
 	{ -85, 15, 2478, 25, 30 }
 };
 
+const RoomDataOffsets IgorEngine::PART_13_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 31, 40 },
+	{ 43, 215, 3091, 107, 183, 80 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_14_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 32, 43 },
+	{ 47, 237, 3183, 131, 207, 82 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_15_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 3, 12 },
+	{ 15, 187, 3063, 79, 155, 80 },
+	{ 45, 22, 3756, 66, 60 }
+};
+
+const RoomDataOffsets IgorEngine::PART_16_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 29, 34 },
+	{ 35, 171, 2907, 59, 135, 76 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_17_ROOM_DATA_OFFSETS = {
+	{ 320, 8, 56, 7 },
+	{ 835, 844 },
+	{ 847, 1019, 3895, 911, 987, 80 },
+	{ -174, 5, 257, 1, 30 }
+};
+
+const RoomDataOffsets IgorEngine::PART_18_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 34, 49 },
+	{ 55, 281, 3367, 179, 255, 86 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_19_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 33, 46 },
+	{ 51, 259, 3359, 155, 231, 84 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_21_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 5, 18 },
+	{ 23, 231, 3247, 127, 203, 84 },
+	{ -85, 10, 1658, 50, 30 }
+};
+
+const RoomDataOffsets IgorEngine::PART_22_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 1, 6 },
+	{ 7, 143, 2879, 31, 107, 76 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_23_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 4, 15 },
+	{ 19, 209, 3155, 103, 179, 82 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_24_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 5, 18 },
+	{ 23, 235, 3111, 127, 203, 80 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_25_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 31, 40 },
+	{ 43, 215, 3091, 107, 183, 80 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_26_ROOM_DATA_OFFSETS = {
+	{ 20, 2, 2, 1 },
+	{ 32, 43 },
+	{ 47, 237, 3183, 131, 207, 82 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_27_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 },
+	{ 6, 21 },
+	{ 27, 253, 3339, 151, 227, 86 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_28_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 78, 93 },
+	{ 99, 325, 3411, 223, 299, 86 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 75, 84 },
+	{ 87, 259, 3135, 151, 227, 80 },
+	{ -90, 9, 1489, 11, 30 }
+};
+
+const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 79, 96 },
+	{ 103, 351, 3367, 247, 323, 84 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_33_ROOM_DATA_OFFSETS = {
+	{ 180, 6, 30, 5 },
+	{ 405, 426 },
+	{ 435, 715, 4011, 619, 695, 92 },
+	{ -46, 9, 1533, 19, 60 }
+};
+
+const RoomDataOffsets IgorEngine::PART_36_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 77, 90 },
+	{ 95, 303, 3319, 199, 275, 84 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_37_ROOM_DATA_OFFSETS = {
+	{ 45, 3, 6, 2 },
+	{ 75, 84 },
+	{ 87, 259, 3135, 151, 227, 80 },
+	{ 0, 0, 0, 0, 0 }
+};
+
 } // End of namespace Igor
