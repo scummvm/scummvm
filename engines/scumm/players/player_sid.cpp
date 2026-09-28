@@ -1277,7 +1277,7 @@ void Player_SID::initSID() {
 	// originally experienced it in PAL mode and think that just adds to
 	// the mood of the game?
 
-	SID::Config::SidType sidType = SID::Config::parseSidType(ConfMan.get("c64_sid_type"));
+	SID::Config::SidType sidType = _vm->_isC64PALSystem ? SID::Config::kSidPAL : SID::Config::kSidNTSC;
 
 	_sid = SID::Config::create(sidType);
 	if (!_sid || !_sid->init())

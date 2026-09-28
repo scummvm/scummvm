@@ -208,6 +208,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 	}
 
+#ifdef USE_SID_AUDIO
+	if (_game.platform == Common::kPlatformC64) {
+		ConfMan.registerDefault("c64_sid_type", "ntsc");
+		if (ConfMan.hasKey("c64_sid_type", _targetName)) {
+			_isC64PALSystem = SID::Config::parseSidType(ConfMan.get("c64_sid_type")) == SID::Config::kSidPAL;
+		}
+	}
+#endif
+
 	if (_game.platform == Common::kPlatformMacintosh) {
 		ConfMan.registerDefault("mac_graphics_smoothing", true);
 		ConfMan.registerDefault("gamma_correction", true);
@@ -3055,6 +3064,8 @@ void ScummEngine::setTimerAndShakeFrequency() {
 			}
 		} else if (_game.platform == Common::kPlatformAmiga && _game.id != GID_MONKEY_VGA) {
 			_shakeTimerRate = _timerFrequency = _isAmigaPALSystem ? AMIGA_PAL_VBLANK_RATE : AMIGA_NTSC_VBLANK_RATE;
+		} else if (_game.platform == Common::kPlatformC64) {
+			_shakeTimerRate = _timerFrequency = _isC64PALSystem ? C64_PAL_VBLANK_RATE : C64_NTSC_VBLANK_RATE;
 		}
 	} else {
 		if (_game.heversion < 70 && _game.platform == Common::kPlatformDOS) {
