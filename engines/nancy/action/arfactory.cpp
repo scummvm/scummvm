@@ -91,7 +91,7 @@
 #include "engines/nancy/action/puzzle/riddlepuzzle.h"
 #include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
 #include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
-//#include "engines/nancy/action/puzzle/rowmatchpuzzle.h"
+#include "engines/nancy/action/puzzle/rowmatchpuzzle.h"
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/scalepuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
@@ -695,7 +695,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 189:
 		return new QuizPuzzle();		// Moved from 231
 	case 192:
-		return nullptr; // return new RowMatchPuzzle();	// TODO
+		return new RowMatchPuzzle();
 	case 193:
 		return nullptr; // return new FishingPuzzle();
 	case 194:

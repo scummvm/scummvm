@@ -72,6 +72,7 @@ MODULE_OBJS = \
   action/puzzle/riddlepuzzle.o \
   action/puzzle/rippedletterpuzzle.o \
   action/puzzle/rotatinglockpuzzle.o \
+  action/puzzle/rowmatchpuzzle.o \
   action/puzzle/safedialpuzzle.o \
   action/puzzle/scalepuzzle.o \
   action/puzzle/setplayerclock.o \
