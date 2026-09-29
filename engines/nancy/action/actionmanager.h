@@ -66,6 +66,10 @@ public:
 
 	void onPause(bool pause);
 
+	// Enhancement: stops the lines being spoken by sound records that don't lead to
+	// another scene, after a cinematic got skipped
+	void stopSpeechSounds();
+
 	void synchronize(Common::Serializer &serializer);
 
 	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);

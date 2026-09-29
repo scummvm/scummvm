@@ -2071,6 +2071,13 @@ void Scene::run() {
 
 	_actionManager.processActionRecords();
 
+	// The records a skipped cinematic set off have started by now; its dialogue
+	// shouldn't go on without it
+	if (_hasSkippedMovie) {
+		_hasSkippedMovie = false;
+		_actionManager.stopSpeechSounds();
+	}
+
 	if (_ndui) {
 		_uiPrepActions.processActionRecords();
 		_ndui->update();
@@ -2384,7 +2391,7 @@ void Scene::handleInput() {
 		if (_activeConversation) {
 			_activeConversation->skipLine();
 		} else if (_activeMovie) {
-			_activeMovie->skip();
+			_hasSkippedMovie = _activeMovie->skip();
 		} else if (!_ndui) {
 			// Nancy16 has no main menu state
 			g_nancy->setState(NancyState::kMainMenu);

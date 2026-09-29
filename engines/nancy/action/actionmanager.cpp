@@ -840,6 +840,33 @@ void ActionManager::onPause(bool pause) {
 	}
 }
 
+// A stopped sound lets its record finish on its own, the same way it would at the
+// end of the line
+void ActionManager::stopSpeechSounds() {
+	const Common::Array<byte> &speechChannels = g_nancy->getStaticData().soundChannelInfo.speechChannels;
+	bool stoppedCaptionedSound = false;
+
+	for (ActionRecord *record : _records) {
+		PlaySound *sound = dynamic_cast<PlaySound *>(record);
+		if (!sound || !sound->_isActive || sound->_isDone || sound->_state != ActionRecord::kRun ||
+				sound->_sceneChange.sceneID != kNoScene) {
+			continue;
+		}
+
+		for (byte channel : speechChannels) {
+			if (sound->_sound.channelID == channel) {
+				g_nancy->_sound->stopSound(sound->_sound);
+				stoppedCaptionedSound |= !sound->_ccText.empty();
+				break;
+			}
+		}
+	}
+
+	if (stoppedCaptionedSound) {
+		NancySceneState.getTextbox().clear();
+	}
+}
+
 void ActionManager::synchronize(Common::Serializer &ser) {
 	// When loading, the records should already have been initialized by scene
 	for (auto &rec : _records) {

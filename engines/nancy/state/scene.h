@@ -477,6 +477,9 @@ private:
 	// Whether esc was already down last frame, so a held key only skips once
 	bool _escHeld = false;
 
+	// Set when esc skipped a cinematic this frame
+	bool _hasSkippedMovie = false;
+
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;
 
