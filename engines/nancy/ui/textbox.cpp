@@ -32,6 +32,7 @@
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/scrollbar.h"
 #include "engines/nancy/ui/scrolltextbox.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
 namespace UI {
@@ -213,6 +214,12 @@ void Textbox::drawTextbox() {
 }
 
 void Textbox::clear() {
+	// Nancy16 shows its captions in the UI instead
+	if (NDUI::Manager *ndui = NancySceneState.getNDUI()) {
+		ndui->setCaption(Common::String());
+		return;
+	}
+
 	if (_scrollTextBox) {
 		_scrollTextBox->clear();
 		return;
@@ -245,6 +252,11 @@ void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 	Common::String debugString = Common::String::format("%d *** ", NancySceneState.getSceneInfo().sceneID);
 	if (text.contains(debugString))
 		return;
+
+	if (NDUI::Manager *ndui = NancySceneState.getNDUI()) {
+		ndui->setCaption(text);
+		return;
+	}
 
 	if (_scrollTextBox) {
 		_scrollTextBox->addTextLine(text, autoClearTime);

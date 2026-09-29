@@ -71,6 +71,10 @@ class TextboxOrnaments;
 class InventoryBoxOrnaments;
 class Clock;
 class Camera;
+
+namespace NDUI {
+class Manager;
+}
 }
 
 namespace State {
@@ -280,6 +284,7 @@ public:
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 	Misc::ViewportFader *getViewportFader() { return _viewportFader; }
+	UI::NDUI::Manager *getNDUI() { return _ndui; }
 
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
@@ -349,6 +354,8 @@ private:
 	void playPlayerCantSound(int16 itemID);
 
 	void initStaticData();
+	void initUI();
+	void loadUIPrepRecords(const Common::Path &name);
 
 	void clearSceneData(bool nextIsNoArt = false);
 	void clearPuzzleData();
@@ -450,11 +457,16 @@ private:
 
 	Misc::Lightning *_lightning;
 	Misc::ViewportFader *_viewportFader;
+	UI::NDUI::Manager *_ndui;
 	Common::Queue<Misc::SpecialEffect> _specialEffects;
 
 	Common::HashMap<uint32, PuzzleData *> _puzzleData;
 
 	Action::ActionManager _actionManager;
+
+	// Nancy16: the records that fill the journal and the task list, which wait for
+	// their conditions for the whole game
+	Action::ActionManager _uiPrepActions;
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 

@@ -48,6 +48,7 @@
 #include "engines/nancy/misc/lightning.h"
 #include "engines/nancy/misc/specialeffect.h"
 #include "engines/nancy/misc/viewportfader.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -140,6 +141,7 @@ Scene::Scene() :
 		_activeConversation(nullptr),
 		_lightning(nullptr),
 		_viewportFader(nullptr),
+		_ndui(nullptr),
 		_destroyOnExit(false),
 		_isRunningAd(false),
 		_hotspotDebug(50) {}
@@ -155,6 +157,7 @@ Scene::~Scene() {
 	delete _camera;
 	delete _lightning;
 	delete _viewportFader;
+	delete _ndui;
 
 	clearPuzzleData();
 }
@@ -434,6 +437,10 @@ void Scene::addItemToInventory(int16 id) {
 
 		g_nancy->_sound->playSound("BUOK");
 
+		if (_ndui) {
+			_ndui->showInventoryItem(id, true);
+		}
+
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
 			_inventoryBox.addItem(id);
 		} else {
@@ -484,6 +491,10 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 		} else if (getHeldItem() == id) {
 			setHeldItem(-1);
 			g_nancy->_sound->playSound("BUOK");
+		}
+
+		if (_ndui) {
+			_ndui->showInventoryItem(id, false);
 		}
 
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
@@ -1228,13 +1239,16 @@ void Scene::registerGraphics() {
 	_frame.registerGraphics();
 	_viewport.registerGraphics();
 
-	_textbox.registerGraphics();
-
 	// Pre-Nancy 10: inventory box is always-on-screen.
 	// Nancy 10+: a separate popup widget driven by UIIV (initially hidden).
-	if (g_nancy->getGameType() <= kGameTypeNancy9) {
+	// Nancy 16+: all of the UI is made of NDUI panels.
+	if (_ndui) {
+		_ndui->registerGraphics();
+	} else if (g_nancy->getGameType() <= kGameTypeNancy9) {
+		_textbox.registerGraphics();
 		_inventoryBox.registerGraphics();
 	} else {
+		_textbox.registerGraphics();
 		_inventoryPopup.registerGraphics();
 		_notebookPopup.registerGraphics();
 		_cellPhonePopup.registerGraphics();
@@ -1704,6 +1718,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 				applyPlayerCharacter(playerChar->characterIndex);
 			}
 		}
+
+		if (_ndui) {
+			initUI();
+		}
 	}
 
 	_isRunningAd = false;
@@ -1989,8 +2007,12 @@ void Scene::load(bool fromSaveFile) {
 		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 	}
 
+	if (_ndui) {
+		_ndui->onSceneChange(_sceneState.currentScene.sceneID);
+	}
+
 	// Re-evaluate taskbar notification states against the new scene.
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+	if (_taskbar) {
 		_taskbar->updateNotificationStates(_sceneState.currentScene.sceneID);
 	}
 
@@ -2031,6 +2053,11 @@ void Scene::run() {
 		if (g_nancy->getGameType() >= kGameTypeNancy16 && _timers.playerTime.getDays() != day) {
 			advanceDayValue();
 		}
+
+		if (_ndui) {
+			uint minutes = _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
+			_ndui->setPlayerTime(minutes, minutes >= bootSummary->dayStartMinutes && minutes <= bootSummary->dayEndMinutes);
+		}
 	}
 
 	updateEndOfDay();
@@ -2043,6 +2070,34 @@ void Scene::run() {
 	}
 
 	_actionManager.processActionRecords();
+
+	if (_ndui) {
+		_uiPrepActions.processActionRecords();
+		_ndui->update();
+
+		UI::NDUI::Manager::Request request = _ndui->takeRequest();
+		switch (request.type) {
+		case UI::NDUI::Manager::kRequestNewGame:
+			setDestroyOnExit();
+			g_nancy->setState(NancyState::kScene);
+			return;
+		case UI::NDUI::Manager::kRequestLoad:
+			if (request.slot != -1) {
+				g_nancy->loadGameState(request.slot);
+				return;
+			}
+
+			break;
+		case UI::NDUI::Manager::kRequestSave:
+			g_nancy->saveGameState(request.slot, request.name, false);
+			break;
+		case UI::NDUI::Manager::kRequestQuit:
+			g_nancy->quitGame();
+			return;
+		default:
+			break;
+		}
+	}
 
 	if (_lightning) {
 		_lightning->run();
@@ -2330,7 +2385,8 @@ void Scene::handleInput() {
 			_activeConversation->skipLine();
 		} else if (_activeMovie) {
 			_activeMovie->skip();
-		} else {
+		} else if (!_ndui) {
+			// Nancy16 has no main menu state
 			g_nancy->setState(NancyState::kMainMenu);
 			return;
 		}
@@ -2342,7 +2398,9 @@ void Scene::handleInput() {
 	// strip, so they get first crack at input — otherwise a click inside
 	// the popup that overlapped the textbox area could accidentally pick
 	// a conversation response.
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+	if (_ndui) {
+		_ndui->handleInput(input);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
 		// Confine the cursor to whichever popup is open so the player
 		// can't drag it into the underlying scene UI.
 		const Common::Rect confine = activePopupConfinement();
@@ -2359,7 +2417,10 @@ void Scene::handleInput() {
 		_cellPhonePopup.handleInput(input);
 	}
 
-	_textbox.handleInput(input);
+	if (!_ndui) {
+		_textbox.handleInput(input);
+	}
+
 	if (g_nancy->getGameType() <= kGameTypeNancy9) {
 		_inventoryBox.handleInput(input);
 	}
@@ -2526,6 +2587,25 @@ void Scene::handleInput() {
 }
 
 void Scene::initStaticData() {
+	// Nancy16 describes its whole UI with NDUI panels, which replace the frame,
+	// textbox, popups, taskbar and clock of the earlier games
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		_frame.initBlank();
+		_viewport.init();
+
+		initUI();
+
+		// The popups of the earlier games go unused, and must never count as open
+		_inventoryPopup.setVisible(false);
+		_notebookPopup.setVisible(false);
+		_cellPhonePopup.setVisible(false);
+		_conversationPopup.setVisible(false);
+
+		g_nancy->setMouseEnabled(true);
+		_state = kLoad;
+		return;
+	}
+
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
@@ -2616,6 +2696,48 @@ void Scene::initStaticData() {
 	}
 
 	_state = kLoad;
+}
+
+// The UI starts out empty, and gets filled with the player's items, journal and
+// task list; the records that fill the last two run again as their conditions allow
+void Scene::initUI() {
+	auto *pcui = GetEngineData(PCUI);
+	auto *puih = GetEngineData(PUIH);
+	assert(pcui && puih);
+
+	delete _ndui;
+	_ndui = new UI::NDUI::Manager();
+	_ndui->load(pcui->uiName.toString());
+
+	// The most recent items come first
+	const Common::Array<int16> &order = _inventoryBox.getOrder();
+	for (int i = (int)order.size() - 1; i >= 0; --i) {
+		if (order[i] != -1 && _flags.items[order[i]] == g_nancy->_true) {
+			_ndui->showInventoryItem(order[i], true);
+		}
+	}
+
+	_uiPrepActions.clearActionRecords();
+	loadUIPrepRecords(puih->journalPrepName);
+	loadUIPrepRecords(puih->tasklistPrepName);
+
+	_ndui->applyMatteColor();
+	_ndui->registerGraphics();
+}
+
+void Scene::loadUIPrepRecords(const Common::Path &name) {
+	IFF *iff = g_nancy->_resource->loadIFF(name);
+	if (!iff) {
+		error("Failed to load IFF %s", name.toString().c_str());
+	}
+
+	Common::SeekableReadStream *chunk = nullptr;
+	for (uint i = 0; chunk = iff->getChunkStream("ACT", i), chunk != nullptr; ++i) {
+		_uiPrepActions.addNewActionRecord(*chunk);
+		delete chunk;
+	}
+
+	delete iff;
 }
 
 void Scene::viewInventoryItem(int16 itemID) {
