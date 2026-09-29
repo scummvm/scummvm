@@ -6,6 +6,7 @@ MODULE_OBJS = \
   action/actionzone.o \
   action/arfactory.o \
   action/autotext.o \
+  action/autotextscroll.o \
   action/cameraaction.o \
   action/datarecords.o \
   action/inventoryrecords.o \

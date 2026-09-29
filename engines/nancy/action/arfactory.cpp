@@ -26,6 +26,7 @@
 #include "engines/nancy/action/miscrecords.h"
 
 #include "engines/nancy/action/autotext.h"
+#include "engines/nancy/action/autotextscroll.h"
 #include "engines/nancy/action/cameraaction.h"
 #include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/interactivevideo.h"
@@ -38,7 +39,6 @@
 #include "engines/nancy/action/puzzle/angletosspuzzle.h"
 #include "engines/nancy/action/puzzle/arcadepuzzle.h"
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
-//#include "engines/nancy/action/puzzle/autotextscroll.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
 #include "engines/nancy/action/puzzle/blockingpuzzle.h"
@@ -705,7 +705,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 196:
 		return nullptr; // return new AnalogClock();	// TODO
 	case 197:
-		return nullptr; // return new AutotextScroll();	// TODO
+		return new AutotextScroll();	// Used for the end credits
 	case 188:	// Empty in the original
 	case 190:	// MemoryPuzzle, moved from 238
 	case 191:	// BeadPuzzle, moved from 243
