@@ -29,9 +29,10 @@
 namespace Nancy {
 namespace Action {
 
-// Text-entry quiz with multiple text boxes. Three data formats: Nancy 8,
-// Nancy 9 - Nancy 14, and Nancy 15, which rewrote the record around
-// count-prefixed answer lists and RandomSoundBlocks.
+// Text-entry quiz with multiple text boxes. Four data formats: Nancy 8,
+// Nancy 9 - Nancy 14, Nancy 15, which rewrote the record around count-prefixed
+// answer lists and RandomSoundBlocks, and Nancy 16, which draws with a named
+// system font and an explicit text color.
 class QuizPuzzle : public PuzzleRecord {
 public:
 	QuizPuzzle() : PuzzleRecord(7) {}
@@ -83,6 +84,7 @@ private:
 	void readDataNancy8(Common::SeekableReadStream &stream);
 	void readDataNancy9(Common::SeekableReadStream &stream);
 	void readDataNancy15(Common::SeekableReadStream &stream);
+	void readDataNancy16(Common::SeekableReadStream &stream);
 
 	// Format-specific state machines
 	void executeNancy8();
@@ -90,6 +92,7 @@ private:
 
 	// Helpers
 	void drawText();
+	void drawTextNancy16();
 	void advanceToNextBox();
 	bool checkAllSolved() const;
 	// Scores the current box. A silent check only marks the box solved, as the
@@ -141,6 +144,12 @@ private:
 	Common::String _recordWrongText;
 	RandomSoundBlock _invalidKeySound;	// played when a character is not allowed
 	Common::Array<ExitHotspot> _hotspots;	// flag-setting regions around the boxes
+
+	// ---- Data (Nancy 16) ----
+	Common::String _fontName;			// replaces _fontID
+	uint32 _textColor = 0;				// ARGB
+	uint16 _maxTypedLength = 0;
+	uint16 _hotspotCursor = 0;			// over any of _hotspots
 
 	// ---- Runtime state ----
 	uint _currentBox = 0;		// which box currently receives keyboard input

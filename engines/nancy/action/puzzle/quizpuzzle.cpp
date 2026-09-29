@@ -23,6 +23,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/font.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
@@ -305,9 +306,77 @@ void QuizPuzzle::readDataNancy15(Common::SeekableReadStream &stream) {
 	}
 }
 
+// ---- Nancy 16 data format ----
+// The header grew to 109 bytes: the font is named, the typed text has its own
+// length limit, and the allowed characters moved out after it. The two captions
+// are gone, and the flag-setting hotspots share one cursor.
+void QuizPuzzle::readDataNancy16(Common::SeekableReadStream &stream) {
+	stream.skip(33);	// the record's name
+	_textColor = stream.readUint32BE();
+
+	readFilename(stream, _fontName);
+	_maxTypedLength = stream.readUint16LE();
+	_cursorBlinkInterval = stream.readUint16LE();
+	_cursorChar = stream.readByte();
+	_isDisplayOnly = (_cursorChar == 0);
+	_keepBoxOnWrongAnswer = (stream.readByte() != 0);
+	_autoCheck = (stream.readByte() == 0); // 0 = auto-check ON
+	_cycleSolvedBoxes = (stream.readByte() != 0);
+	stream.skip(66);
+	_hotspotCursor = stream.readUint16LE();
+
+	readFilename(stream, _allowedChars);
+	_invalidKeySound.readData(stream);
+
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+	_doneSoundBlock.readData(stream);
+
+	readRect(stream, _exitHotspot);
+	_exitCursorType = stream.readUint16LE();
+	_exitCursorFromData = true;
+	_exitScene._sceneChange.sceneID = stream.readUint16LE();
+	_exitScene._flag.label = stream.readSint16LE();
+	_exitScene._flag.flag = g_nancy->_true;
+
+	readExitHotspots(stream, _hotspots);
+
+	// The box count is stored doubled
+	uint16 numBoxes = stream.readUint16LE() / 2;
+
+	if (numBoxes > kMaxBoxes) {
+		warning("QuizPuzzle: numBoxes %d exceeds maximum %d, clamping", numBoxes, (int)kMaxBoxes);
+		numBoxes = kMaxBoxes;
+	}
+
+	_boxes.resize(numBoxes);
+
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		Box &box = _boxes[i];
+		readRect(stream, box.rect);
+
+		uint16 numAnswers = stream.readUint16LE();
+		box.answers.resize(numAnswers);
+		for (uint j = 0; j < numAnswers; ++j) {
+			readFilename(stream, box.answers[j]);
+			box.maxAnswerLength = MAX<uint16>(box.maxAnswerLength, box.answers[j].size());
+		}
+
+		box.correctFlag = stream.readSint16LE();
+		box.nonEmptyFlag = stream.readSint16LE();
+
+		box.correctSound.readData(stream);
+		box.wrongSound.readData(stream);
+	}
+}
+
 void QuizPuzzle::readData(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() == kGameTypeNancy8) {
 		readDataNancy8(stream);
+	} else if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readDataNancy16(stream);
 	} else if (g_nancy->getGameType() >= kGameTypeNancy15) {
 		readDataNancy15(stream);
 	} else {
@@ -320,6 +389,10 @@ char QuizPuzzle::getCursorChar() const {
 }
 
 uint QuizPuzzle::getMaxTypedLength() const {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		return _maxTypedLength;
+	}
+
 	return g_nancy->getGameType() >= kGameTypeNancy15 ? kMaxTypedLengthNancy15 : kMaxTypedLength;
 }
 
@@ -810,7 +883,9 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 				continue;
 			}
 
-			if (hotspot.cursorType != 0) {
+			if (g_nancy->getGameType() >= kGameTypeNancy16) {
+				setDataCursor(_hotspotCursor);
+			} else if (hotspot.cursorType != 0) {
 				g_nancy->_cursor->setCursorType((CursorManager::CursorType)hotspot.cursorType, true);
 			} else {
 				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
@@ -900,6 +975,11 @@ void QuizPuzzle::onPause(bool paused) {
 void QuizPuzzle::drawText() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		drawTextNancy16();
+		return;
+	}
+
 	const Graphics::Font *font = g_nancy->_graphics->getFont(_fontID);
 	if (!font) {
 		warning("QuizPuzzle: font %u is missing, no answer text will be drawn", _fontID);
@@ -920,6 +1000,32 @@ void QuizPuzzle::drawText() {
 
 		int y = bounds.bottom - font->getFontHeight();
 		font->drawString(&_drawSurface, text, bounds.left - 1, y, bounds.width() + extraWidth, 0);
+	}
+
+	_needsRedraw = true;
+}
+
+void QuizPuzzle::drawTextNancy16() {
+	const Font *font = g_nancy->_graphics->getFont(_fontName);
+	const Graphics::Font *systemFont = font ? font->getSystemFont() : nullptr;
+	if (!systemFont) {
+		warning("QuizPuzzle: font %s is missing, no answer text will be drawn", _fontName.c_str());
+		return;
+	}
+
+	uint32 color = argbToColor(_drawSurface.format, _textColor | 0xFF000000);
+
+	for (uint i = 0; i < _boxes.size(); ++i) {
+		const Common::String &text = _boxes[i].typedText;
+		if (text.empty())
+			continue;
+
+		Common::Rect bounds = _boxes[i].rect;
+		bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
+		bounds = convertToLocal(bounds);
+
+		int y = bounds.bottom - systemFont->getFontHeight();
+		systemFont->drawString(_drawSurface.surfacePtr(), text, bounds.left, y, bounds.width(), color);
 	}
 
 	_needsRedraw = true;
