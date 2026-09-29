@@ -72,6 +72,7 @@ protected:
 
 	void readDataNancy13(Common::SeekableReadStream &stream);
 	bool isSolved() const;
+	int getSolvedOrder() const;
 	void drawOverlay(bool advanceFrames);
 	uint numFacesOf(uint objectID) const;
 	uint framesPerTurnOf(uint objectID) const;
@@ -106,6 +107,7 @@ protected:
 	Common::Array<PieceType> _pieceTypes;
 	Common::Array<uint16> _pieceTypeIDs;					// per object
 	Common::Array<Common::Array<uint16>> _correctOrders;	// up to three alternative solutions
+	Common::Array<SceneChangeWithFlag> _solveScenes;		// Nancy16: one per alternative solution
 	uint16 _turnDelay = 0;			// header 0x21 - length of a whole turn, in ms
 	uint16 _hoverCursorType = 0;	// header 0x23 - raw Nancy13 cursor id (a turn cursor)
 	uint16 _hitInset = 0;			// header 0x25 - hotspots are the dest rect shrunk by this

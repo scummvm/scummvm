@@ -205,9 +205,21 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 	_hitInset = stream.readUint16LE();			// 0x25
 	_turnFlagLabel = stream.readSint16LE();		// 0x27
 	_turnFlagValue = stream.readByte();			// 0x29
-	_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x2a
-	_solveScene._flag.label = stream.readSint16LE();			// 0x2c
-	_solveScene._flag.flag = stream.readByte();					// 0x2e
+
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Each alternative solution leads to a scene of its own
+		uint16 numSolveScenes = stream.readUint16LE();
+		_solveScenes.resize(numSolveScenes);
+		for (SceneChangeWithFlag &solveScene : _solveScenes) {
+			solveScene._sceneChange.sceneID = stream.readUint16LE();
+			solveScene._flag.label = stream.readSint16LE();
+			solveScene._flag.flag = stream.readByte();
+		}
+	} else {
+		_solveScene._sceneChange.sceneID = stream.readUint16LE();	// 0x2a
+		_solveScene._flag.label = stream.readSint16LE();			// 0x2c
+		_solveScene._flag.flag = stream.readByte();					// 0x2e
+	}
 
 	// A count-prefixed array of 23-byte hotspot records (as in PegsPuzzle);
 	// the first one is the "give up" hotspot.
@@ -231,10 +243,6 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 	_pieceTypeIDs.resize(numObjects);
 	_startPositions.resize(numObjects);
 	_destRects.resize(numObjects);
-	_correctOrders.resize(3);
-	for (uint n = 0; n < 3; ++n) {
-		_correctOrders[n].resize(numObjects);
-	}
 
 	for (uint i = 0; i < numObjects; ++i) {
 		uint16 numLinks = stream.readUint16LE();
@@ -248,7 +256,14 @@ void TurningPuzzle::readDataNancy13(Common::SeekableReadStream &stream) {
 
 		_pieceTypeIDs[i] = stream.readUint16LE();
 		_startPositions[i] = stream.readUint16LE();
-		for (uint n = 0; n < 3; ++n) {
+
+		// Nancy16 stores as many solutions as there are solve scenes
+		uint16 numOrders = g_nancy->getGameType() >= kGameTypeNancy16 ? stream.readUint16LE() : 3;
+		if (numOrders > _correctOrders.size()) {
+			_correctOrders.resize(numOrders, Common::Array<uint16>(numObjects, 0xFFFF));
+		}
+
+		for (uint n = 0; n < numOrders; ++n) {
 			_correctOrders[n][i] = stream.readUint16LE();
 		}
 		readRect(stream, _destRects[i]);
@@ -307,8 +322,12 @@ bool TurningPuzzle::isSolved() const {
 		return _currentOrder == _correctOrder;
 	}
 
-	// Any one of the (up to three) alternative orders solves it. Unused solutions are
-	// filled with 0xffff, which no face can ever match.
+	return getSolvedOrder() != -1;
+}
+
+int TurningPuzzle::getSolvedOrder() const {
+	// Any one of the alternative orders solves it. Unused solutions are filled
+	// with 0xffff, which no face can ever match.
 	for (uint n = 0; n < _correctOrders.size(); ++n) {
 		bool match = true;
 		for (uint i = 0; i < _currentOrder.size(); ++i) {
@@ -319,11 +338,11 @@ bool TurningPuzzle::isSolved() const {
 		}
 
 		if (match) {
-			return true;
+			return n;
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 void TurningPuzzle::drawAllObjects() {
@@ -436,6 +455,14 @@ void TurningPuzzle::execute() {
 
 		if (isSolved()) {
 			_state = kActionTrigger;
+
+			if (!_solveScenes.empty()) {
+				uint order = getSolvedOrder();
+				if (order < _solveScenes.size()) {
+					_solveScene = _solveScenes[order];
+				}
+			}
+
 			if (g_nancy->getGameType() >= kGameTypeNancy13) {
 				_solveSound = playSoundBlock(_solveSoundBlock);
 				_solveState = kWaitForSound;
