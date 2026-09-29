@@ -30,6 +30,7 @@
 
 #include "engines/nancy/action/miscrecords.h"
 #include "engines/nancy/misc/viewportfader.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -911,6 +912,52 @@ void HideCursor::execute() {
 		_isHiding = true;
 		_state = kRun;
 	}
+}
+
+void UIControl::readData(Common::SeekableReadStream &stream) {
+	_actionType = stream.readSint32LE();
+	readFilename(stream, _target);
+	readFilename(stream, _textKey);
+	_value = stream.readDoubleLE();
+}
+
+void UIControl::execute() {
+	UI::NDUI::Action action;
+	action.eventType = UI::NDUI::kEventActionRecord;
+	action.type = _actionType;
+	action.target = _target;
+	action.hasValue = true;
+	action.value = _value;
+	action.sender = "ActionRecord";
+
+	if (!_textKey.empty()) {
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		assert(autotext);
+		action.text = autotext->texts.getValOrDefault(_textKey);
+	}
+
+	NancySceneState.getNDUI()->takeAction(action);
+	finishExecution();
+}
+
+void AddJournalEntry::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _pageName);
+	readFilename(stream, _textKey);
+}
+
+void AddJournalEntry::execute() {
+	NancySceneState.getNDUI()->addJournalEntry(_pageName, _textKey);
+	finishExecution();
+}
+
+void AddTasklistEntry::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _textKey);
+	_flag = stream.readSint16LE();
+}
+
+void AddTasklistEntry::execute() {
+	NancySceneState.getNDUI()->addTasklistEntry(_textKey, _flag);
+	finishExecution();
 }
 
 void LoseGame::readData(Common::SeekableReadStream &stream) {

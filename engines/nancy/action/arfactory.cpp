@@ -242,7 +242,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new ControlUIItems();
 		else
-			return nullptr;	//return new UIControl();	// TODO
+			return new UIControl();
 	case 30:	// Nancy11
 		return new StopPlayerScrolling();
 	case 31:	// Nancy11
@@ -354,12 +354,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new ModifyListEntry(ModifyListEntry::kAdd);
 		else
-			return nullptr;	//return new AddJournalEntry();	// TODO
+			return new AddJournalEntry();
 	case 72:
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new ModifyListEntry(ModifyListEntry::kDelete);
 		else
-			return nullptr;	//return new AddTasklistEntry();	// TODO
+			return new AddTasklistEntry();
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
 	case 74:	// Nancy10 only

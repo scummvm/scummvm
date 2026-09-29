@@ -446,6 +446,49 @@ protected:
 	bool _isHiding = false;
 };
 
+// Nancy16 record that sends an action to a panel or control of the UI, the same way
+// the UI's own controls do when they are clicked
+class UIControl : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "UIControl"; }
+
+	int32 _actionType = 0;
+	Common::String _target;
+	Common::String _textKey;	// AUTOTEXT key
+	double _value = 0;
+};
+
+// Nancy16 journal entry. The page names a panel of the journal, and its text is the
+// title of the page.
+class AddJournalEntry : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "AddJournalEntry"; }
+
+	Common::String _pageName;
+	Common::String _textKey;	// AUTOTEXT key
+};
+
+// Nancy16 task list entry, which can be checked off once its flag is set
+class AddTasklistEntry : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "AddTasklistEntry"; }
+
+	Common::String _textKey;	// AUTOTEXT key
+	int16 _flag = kEvNoEvent;
+};
+
 // Nancy16 fade of the viewport to a solid color and back, covering the next scene
 // change. The fade itself is owned by the scene; the record only arms it, waiting
 // for any previous fade to end first.
