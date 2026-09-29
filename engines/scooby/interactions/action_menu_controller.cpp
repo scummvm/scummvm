@@ -137,7 +137,7 @@ bool ActionMenuController::updateActionMenu() {
 	} else {
 		int16 adjustedCommand = command > 4 ? static_cast<int16>(command - 1) : command;
 		int menuIndex = _state.MenuPage * 4 + adjustedCommand;
-		int16 interaction = menuIndex > static_cast<int>(_state.InventoryObjectIndices.size()) || _state.InventoryObjectIndices.empty()
+		int16 interaction = menuIndex == 0 || menuIndex > static_cast<int>(_state.InventoryObjectIndices.size())
 								? static_cast<int16>(0)
 								: static_cast<int16>(_state.InventoryObjectIndices[static_cast<std::size_t>(
 														 menuIndex - 1)] +
