@@ -101,6 +101,13 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS)
 	},
 
+	{
+		"soltys", "Freeware v1.0",
+		AD_ENTRY2s("vol.cat", "35bf247a8a131de90da3b950e0f426f7", 50176,
+				   "vol.dat", "ca0c19995a46a7dca6faaf415b9b6b37", 8468313),
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
