@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 
+#include "common/debug.h"
 #include "password_alphabet.h"
 
 namespace Scooby {
@@ -156,6 +157,15 @@ Common::Array<Common::String> Build(int16 roomId, Span<const uint8> passwordStat
 		rows[static_cast<std::size_t>(rowIndex)] = characters;
 	}
 
+	for (int i =0; i < kRowCount; i++) {
+		debug("%s", rows[i].c_str());
+	}
+
+	Common::String debugStr;
+	for (int i = 0; i < 29; i++) {
+		debugStr += Common::String::format("%2x ", passwordStateBytes[i]);
+	}
+	debug("state bytes = %s", debugStr.c_str());
 	return rows;
 }
 } // namespace Scooby

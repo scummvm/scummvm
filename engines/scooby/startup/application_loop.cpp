@@ -67,12 +67,24 @@ Common::Error ApplicationLoop::syncGame(Common::Serializer &s) {
 		_state._saveGameData.shouldLoadGameData = true;
 		s.syncAsUint16LE(_loadGameData.episodeIdx);
 		s.syncAsUint16LE(_loadGameData.roomId);
-		s.syncBytes(_loadGameData.data.data(), 29);
+		s.syncArray(_loadGameData.data.data(), 29, Common::Serializer::Byte);
+
+		Common::String debugStr;
+		for (int i = 0; i < 29; i++) {
+			debugStr += Common::String::format("%2x ", _loadGameData.data[i]);
+		}
+		debug("load state bytes = %s", debugStr.c_str());
 	} else {
 		// save here.
 		s.syncAsUint16LE(_state.EpisodeIndex);
 		s.syncAsUint16LE(_state.RoomId);
-		s.syncBytes(_state.ProgressStateBytes.data(), 29);
+		s.syncArray(_state.ProgressStateBytes.data(), 29, Common::Serializer::Byte);
+
+		Common::String debugStr;
+		for (int i = 0; i < 29; i++) {
+			debugStr += Common::String::format("%2x ", _state.ProgressStateBytes[i]);
+		}
+		debug("save state bytes = %s", debugStr.c_str());
 	}
 	return Common::kNoError;
 }
