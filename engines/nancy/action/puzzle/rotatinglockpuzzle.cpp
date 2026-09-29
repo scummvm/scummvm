@@ -28,6 +28,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/action/soundrecords.h"
 #include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
@@ -45,6 +46,11 @@ void RotatingLockPuzzle::init() {
 }
 
 void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		readDataNancy16(stream);
+		return;
+	}
+
 	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
 
 	readFilename(stream, _imageName);
@@ -157,6 +163,56 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
+// Nancy16 dropped the fixed-size slots in favor of arrays sized by the icon and dial counts
+void RotatingLockPuzzle::readDataNancy16(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+
+	_iconsPerDial = stream.readUint16LE();
+	readRectArray(stream, _srcRects, _iconsPerDial);
+
+	uint16 numDials = stream.readUint16LE();
+	readRectArray(stream, _destRects, numDials);
+	readRectArray(stream, _upHotspots, numDials);
+	readRectArray(stream, _downHotspots, numDials);
+
+	for (uint i = 0; i < numDials; ++i) {
+		if (i == 0) {
+			_screenPosition = _destRects[i];
+		} else {
+			_screenPosition.extend(_destRects[i]);
+		}
+	}
+
+	_correctSequence.resize(numDials);
+	stream.read(_correctSequence.data(), numDials);
+	_startSequence.resize(numDials);
+	stream.read(_startSequence.data(), numDials);
+
+	int16 upType = stream.readSint16LE();
+	int16 downType = stream.readSint16LE();
+	if (upType != 0) {
+		_upCursorType = (CursorManager::CursorType)upType;
+	}
+
+	if (downType != 0) {
+		_downCursorType = (CursorManager::CursorType)downType;
+	}
+
+	Common::String caption;
+	readMultiNameSound(stream, _clickSound, caption);
+
+	_solveCondition.label = stream.readSint16LE();
+	_solveCondition.flag = stream.readByte();
+
+	_solveScene._sceneChange.sceneID = stream.readUint16LE();
+	_solveScene._sceneChange.frameID = stream.readUint16LE();
+	_solveScene._flag.label = stream.readSint16LE();
+	_solveScene._flag.flag = stream.readByte();
+	readMultiNameSound(stream, _solveSound, caption);
+
+	readExitHotspot(stream);
+}
+
 void RotatingLockPuzzle::execute() {
 	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
 
@@ -194,6 +250,10 @@ void RotatingLockPuzzle::execute() {
 				if (_currentSequence[i] != (int16)_correctSequence[i]) {
 					return;
 				}
+			}
+
+			if (g_nancy->getGameType() >= kGameTypeNancy16 && !NancySceneState.getEventFlag(_solveCondition)) {
+				return;
 			}
 
 			_solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;

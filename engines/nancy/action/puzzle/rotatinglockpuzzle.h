@@ -56,6 +56,8 @@ public:
 	CursorManager::CursorType _upCursorType = CursorManager::kMoveUp;
 	CursorManager::CursorType _downCursorType = CursorManager::kMoveDown;
 	SoundDescription _clickSound;
+	// Nancy16+: an event flag that also has to be set for the puzzle to count as solved
+	FlagDescription _solveCondition;
 
 	SolveState _solveState = kNotSolved;
 	Common::Array<byte> _currentSequence;
@@ -66,6 +68,7 @@ public:
 protected:
 	Common::String getRecordTypeName() const override { return "RotatingLockPuzzle"; }
 
+	void readDataNancy16(Common::SeekableReadStream &stream);
 	void drawDial(uint id);
 };
 
