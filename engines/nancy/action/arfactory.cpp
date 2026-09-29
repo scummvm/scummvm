@@ -71,7 +71,7 @@
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
 #include "engines/nancy/action/puzzle/meterpuzzle.h"
-//#include "engines/nancy/action/puzzle/minesweeperpuzzle.h"
+#include "engines/nancy/action/puzzle/minesweeperpuzzle.h"
 #include "engines/nancy/action/puzzle/mindpuzzle.h"
 #include "engines/nancy/action/puzzle/minigolfpuzzle.h"
 #include "engines/nancy/action/puzzle/mirrorlightpuzzle.h"
@@ -701,7 +701,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 194:
 		return nullptr; // return new CookingPuzzle();
 	case 195:
-		return nullptr; // return new MinesweeperPuzzle();	// TODO
+		return new MinesweeperPuzzle();
 	case 196:
 		return new AnalogClock();
 	case 197:
