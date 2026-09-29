@@ -25,20 +25,21 @@ namespace Igor {
 void IgorEngine::PART_04_EXEC_ACTION(int action) {
     debugC(9, kDebugGame, "PART_04_EXEC_ACTION %d", action);
     switch (action) {
-	case 101:
+	case 101: // church
 		_currentPart = 120;
 		break;
-	case 102:
+	case 102: // students room
 		_currentPart = 0;
 		break;
-	case 103:
+	case 103: // park
 		_currentPart = 350;
 		break;
-	case 104:
+	case 104: // decanato
 		_currentPart = 100;
 		break;
 	case 105:
 		if (_objectsState[111] == 0) {
+			// college entrance
 			_currentPart = 170;
 		} else {
 			_currentPart = 770;
@@ -56,6 +57,9 @@ void IgorEngine::PART_04_CLEAR_OBJECT_STATE_84(int num) {
 	_objectsState[84] = 0;
 }
 
+/**
+ * MAP
+ * */
 void IgorEngine::PART_04() {
 	if (_objectsState[106] == 1) {
 		_currentPart = 730;
@@ -75,6 +79,7 @@ void IgorEngine::PART_04() {
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_04_EXEC_ACTION);
 	PART_04_CLEAR_OBJECT_STATE_84(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
+
 	fadeIn(768);
 	_currentAction.verb = kVerbWalk;
 	if (_gameState.musicNum != 2) {
@@ -89,17 +94,17 @@ void IgorEngine::PART_04() {
 	enterPartLoop();
 	while (_currentPart == 40) {
 		handleRoomInput();
-		// if (compareGameTick(19, 32)) {
-		// handleRoomDialogue();
-		// }
-		// if (compareGameTick(4, 8)) {
-		// handleRoomInventoryScroll();
-		// }
+		if (compareGameTick(19, 32)) {
+			handleRoomDialogue();
+		}
+		if (compareGameTick(4, 8)) {
+			handleRoomInventoryScroll();
+		}
 		scrollPalette(200, 207);
 		setPaletteRange(200, 207);
-		// if (compareGameTick(1)) {
-		// handleRoomLight();
-		// }
+		if (compareGameTick(1)) {
+			handleRoomLight();
+		}
 		scrollPalette(184, 199);
 		setPaletteRange(184, 199);
 		waitForTimer();

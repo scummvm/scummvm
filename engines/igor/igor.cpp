@@ -128,15 +128,16 @@ void IgorEngine::restart() {
 
 	_talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
 	memset(_dialogueTextsTable, 0, sizeof(_dialogueTextsTable));
+	_dialogueTextsBuildCount = 0;
 	_dialogueTextsStart = 0;
 	_dialogueTextsCount = 0;
 	_dialogueDirtyRectY = 0;
 	_dialogueDirtyRectSize = 0;
-	// memset(_dialogueQuestions, 0, sizeof(_dialogueQuestions));
-	// memset(_dialogueReplies, 0, sizeof(_dialogueReplies));
-	// _dialogueEnded = false;
-	// _dialogueChoiceSelected = 0;
-	// memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
+	memset(_dialogueQuestions, 0, sizeof(_dialogueQuestions));
+	memset(_dialogueReplies, 0, sizeof(_dialogueReplies));
+	_dialogueEnded = false;
+	_dialogueChoiceSelected = 0;
+	memset(_dialogueInfo, 0, sizeof(_dialogueInfo));
 
 	memset(_objectsState, 0, sizeof(_objectsState));
 	_part07FirstVisitDone = false; // cseg197:0795-0845; original global s3:0xED2E
@@ -159,7 +160,7 @@ void IgorEngine::restart() {
 	_scrollInventory = false;
 	_roomCursorOn = true;
 	_currentCursor = 0;
-	// _dialogueCursorOn = true;
+	_dialogueCursorOn = true;
 	_updateDialogue = 0;
 	_updateRoomBackground = 0;
 
@@ -168,7 +169,7 @@ void IgorEngine::restart() {
 	_soundOffsetsCount = 0;
 	_soundOffsets = 0;
 
-	// _demoActionsCounter = 0;
+	_demoActionsCounter = 0;
 
 	_gameTicks = 0;
 }

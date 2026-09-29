@@ -160,6 +160,17 @@ void IgorEngine::PART_MAIN() {
 		case 122:
 			PART_12(); // outside church
 			break;
+		case 170:
+		case 171:
+			PART_17();
+			break;
+		case 340:
+			PART_34(); // Park, left panel; cseg101:1F85
+			break;
+		case 350:
+		case 351:
+			PART_35(); // Park, right panel; cseg100:1644
+			break;
 		case 850: // Intro cutscene
             // Clear the entire screen buffer before starting the intro cutscene
             memset(_screenVGA, 0, 64000);

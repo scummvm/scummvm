@@ -507,4 +507,12 @@
 // Hamburger pickup animation loaded over ANM+0xB400 in PART_10.
 #define ANM_DecanatoHamburger 932 // cseg134:21AF-21ED; IGOR.EXE:0x4EFCEE, 0x1386 bytes
 
+// Right park panel. The historical catalog only exposed cseg106's left panel;
+// these resources are cseg104's independently loaded room data.
+#define TXT_ParkRight 933 // cseg104:01AB-0244; IGOR.EXE:0x3DFFA2, 0x488 bytes
+#define IMG_ParkRight 934 // cseg104:006B-0095; IGOR.EXE:0x3E042A, 0xB400 bytes
+#define PAL_ParkRight 935 // cseg104:0010-0039; IGOR.EXE:0x3EB82A, 0x270 bytes
+#define MSK_ParkRight 936 // cseg104:00D7-01A8; IGOR.EXE:0x3EBA9A, 0xF84 bytes
+#define BOX_ParkRight 937 // cseg104:009A-00C3; IGOR.EXE:0x3ECA1E, 0x500 bytes
+
 #endif // IGOR_RESOURCE_IDS

@@ -364,6 +364,20 @@ const RoomDataOffsets IgorEngine::PART_33_ROOM_DATA_OFFSETS = {
 	{ -46, 9, 1533, 19, 60 }
 };
 
+const RoomDataOffsets IgorEngine::PART_34_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 }, // cseg101:1765-1775 calls the direct room walk builder cseg101:1006
+	{ 4, 15 }, // cseg101:1645-168B (walk points); cseg101:17DE-17F6 (facing)
+	{ 19, 211, 3087, 103, 179, 80 }, // cseg101:142D,14CB,1572,1486,14AF
+	{ 0, 0, 0, 0, 0 }
+};
+
+const RoomDataOffsets IgorEngine::PART_35_ROOM_DATA_OFFSETS = {
+	{ 0, 0, 0, 0 }, // cseg100:0E23-0E33 calls the direct room walk builder cseg100:06C4
+	{ 5, 18 }, // cseg100:0D03-0D49 (walk points); cseg100:0E9C-0EB4 (facing)
+	{ 23, 233, 3179, 127, 203, 82 }, // cseg100:0AEB,0B89,0C30,0B44,0B6D
+	{ 0, 0, 0, 0, 0 }
+};
+
 const RoomDataOffsets IgorEngine::PART_36_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 77, 90 },

@@ -80,7 +80,7 @@ const uint8 IgorEngine::_dialogueColor[] = {0x3F, 0x3F, 0x3F};
 const uint8 IgorEngine::_sentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
 
 /**
- * appends one DialogueText{num, count, sound} record into _dialogueTextsTable[] at index _dialogueTextsCount, then increments it.
+ * appends one DialogueText{num, count, sound} record to the batch being built.
  * MAX_DIALOGUE_TEXTS = 6
  * Game accumulates texts in _dialogeTextsTable, then displays them during dialogues.
  *
@@ -88,12 +88,12 @@ const uint8 IgorEngine::_sentenceColorIndex[] = {0xFD, 0xFB, 0xF1};
  * can have multiple lines.
  */
 void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
-	assert(_dialogueTextsCount < MAX_DIALOGUE_TEXTS);
-	DialogueText *dt = &_dialogueTextsTable[_dialogueTextsCount];
+	assert(_dialogueTextsBuildCount < MAX_DIALOGUE_TEXTS);
+	DialogueText *dt = &_dialogueTextsTable[_dialogueTextsBuildCount];
 	dt->num = num;
 	dt->count = count;
 	dt->sound = sound;
-	++_dialogueTextsCount;
+	++_dialogueTextsBuildCount;
 }
 
 /**
@@ -101,6 +101,9 @@ void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
  * start page of dialogues, count of dialogue screens
  */
 void IgorEngine::SET_DIALOGUE_TEXT(int start, int count) {
+	// The original writes each new batch directly from slot 0 before setting the
+	// independent playback range at 0x31D4/0x31D5. See cseg209:0x0EE0-0x0F09.
+	_dialogueTextsBuildCount = 0;
 	_dialogueTextsStart = start - 1;
 	_dialogueTextsCount = count;
 }

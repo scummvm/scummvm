@@ -339,6 +339,7 @@ private:
 	DetectedGameVersion _game;
 	int _currentCursor;
 	bool _roomCursorOn;
+	bool _dialogueCursorOn;
 
 	char _globalDialogueTexts[300][MAX_DIALOGUE_TEXT_LENGTH];
 	uint8 _walkXScaleRoom[320];
@@ -370,6 +371,7 @@ private:
 	int _talkSpeechCounter;
 	int _talkDelayCounter;
 	DialogueText _dialogueTextsTable[MAX_DIALOGUE_TEXTS];
+	int _dialogueTextsBuildCount;
 	int _dialogueTextsStart;
 	int _dialogueTextsCount;
 	int _dialogueDirtyRectY;
@@ -400,7 +402,7 @@ private:
 	RoomDataOffsets _roomDataOffsets;
 	UpdateDialogueProc _updateDialogue;
 	UpdateRoomBackgroundProc _updateRoomBackground;
-
+	int _demoActionsCounter;
 	int _gameTicks;
 	int _resourceEntriesCount;
 	int _soundOffsetsCount;
@@ -430,7 +432,7 @@ private:
 	void stopSound();
 	void loadIgorFrames();
 
-	void ADD_DIALOGUE_TEXT(int num, int count, int sound /*= kNoSpeechSound*/);
+	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 
@@ -525,6 +527,39 @@ private:
 	void PART_12_HELPER_9();
 	void PART_12_HELPER_10(int frame);
 	void PART_12();
+
+	// outside college
+	void PART_17_EXEC_ACTION(int action);
+	void PART_17_ACTION_101();
+	void PART_17_ACTION_103();
+	void PART_17_ACTION_105();
+	void PART_17_ACTION_106();
+	void PART_17_HANDLE_DIALOGUE_PHILIP();
+	void PART_17_UPDATE_DIALOGUE_PHILIP(int action);
+	void PART_17_UPDATE_DIALOGUE_PHILIP_JIMMY(int action);
+	void PART_17_UPDATE_ROOM_BACKGROUND();
+	void PART_17_HELPER_1(int num);
+	void PART_17_HELPER_2();
+	void PART_17_HELPER_3(int lum);
+	void PART_17_HELPER_4();
+	void PART_17_HELPER_5(int lum);
+	void PART_17_HELPER_6();
+	void PART_17_HELPER_8(int num);
+	void PART_17_HELPER_9(int num);
+	void PART_17_HELPER_10();
+	void PART_17_HELPER_11(int frame);
+	void PART_17();
+
+	// park
+	void PART_34();
+	void PART_34_EXEC_ACTION(int action);
+	void PART_34_ACTION_109_SCROLL_RIGHT();
+	void PART_34_APPLY_OBJECT_STATE(int num);
+	void PART_35();
+	void PART_35_EXEC_ACTION(int action);
+	void PART_35_ACTION_106_EXIT_TO_MAP();
+	void PART_35_ACTION_107_SCROLL_LEFT();
+	void PART_35_APPLY_OBJECT_STATE(int num);
 
 	void PART_85();
 	void PART_85_HELPER_1_PLAY_ANIM(int frameOffset2, int frameOffset1, int firstFrame, int lastFrame, int delay);
@@ -720,6 +755,8 @@ protected:
 	static const RoomDataOffsets PART_30_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_31_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_33_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_34_ROOM_DATA_OFFSETS;
+	static const RoomDataOffsets PART_35_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_36_ROOM_DATA_OFFSETS;
 	static const RoomDataOffsets PART_37_ROOM_DATA_OFFSETS;
 	static const uint8 INVENTORY_IMG_INIT[];
