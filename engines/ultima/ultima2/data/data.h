@@ -52,6 +52,14 @@ void setCGAPalette();
 
 constexpr int MAX_NAME_LENGTH = 12;
 
+// Ceilings for stats that round-trip through the original PLAYER file's
+// packed-BCD fields: items/weapons/armour/spells/torches/keys/thieves'
+// tools each use a single BCD byte (00-99), while food/gold/experience
+// use two (0000-9999). Gains are clamped at these rather than allowed to
+// overflow, unlike the original, which just rolls back around to 0
+constexpr int MAX_BCD_BYTE = 99;
+constexpr int MAX_BCD_WORD = 9999;
+
 enum Direction {
 	DIR_UP = 0, DIR_DOWN = 1, DIR_LEFT = 2, DIR_RIGHT = 3, DIR_UNSPECIFIED = 4
 };

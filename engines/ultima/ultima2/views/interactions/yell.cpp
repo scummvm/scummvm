@@ -48,9 +48,8 @@ bool Yell::msgKeypress(const KeypressMessage &msg) {
 				sg._mount == 0) {
 			writeString("The universe whisks you away.\n");
 
-			// A parting gift; items are stored as two BCD digits, so 99 is the highest they can go
-			if (sg._items[Data::ITEM_HELM] < 99)
-				++sg._items[Data::ITEM_HELM];
+			// A parting gift
+			sg._items[Data::ITEM_HELM] = MIN(sg._items[Data::ITEM_HELM] + 1, Data::MAX_BCD_BYTE);
 
 			// Show the ScummVM secret map
 			sg._overworldReturnX = sg._mapX;

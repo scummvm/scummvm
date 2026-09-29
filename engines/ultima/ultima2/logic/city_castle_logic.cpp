@@ -238,10 +238,12 @@ bool CityCastleLogic::steal(Data::Direction dir) {
 			noLuck();
 		} else if (sg._mapX >= 32) {
 			writeString("STEAL ARMOUR!\n");
-			++sg._armorOwned[1 + (randByte() & 3)];
+			int idx = 1 + (randByte() & 3);
+			sg._armorOwned[idx] = MIN(sg._armorOwned[idx] + 1, Data::MAX_BCD_BYTE);
 		} else {
 			writeString("STEAL WEAPONS!\n");
-			++sg._weaponOwned[1 + (randByte() & 7)];
+			int idx = 1 + (randByte() & 7);
+			sg._weaponOwned[idx] = MIN(sg._weaponOwned[idx] + 1, Data::MAX_BCD_BYTE);
 		}
 		break;
 	default: // Castle - never works
@@ -357,7 +359,7 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 			writeString("EARN THE RING!\n");
 		} else {
 			writeString("THE RING IS YOURS!\n");
-			++sg._items[Data::ITEM_RING];
+			sg._items[Data::ITEM_RING] = MIN(sg._items[Data::ITEM_RING] + 1, Data::MAX_BCD_BYTE);
 		}
 		break;
 

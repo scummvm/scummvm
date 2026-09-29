@@ -398,7 +398,7 @@ bool Logic::get() {
 		writeString(" WEAPON");
 		int r = randByte() & 7;
 		if (r != 0) {
-			++sg._weaponOwned[r];
+			sg._weaponOwned[r] = MIN(sg._weaponOwned[r] + 1, Data::MAX_BCD_BYTE);
 			writeString("\n");
 			return true;
 		}
@@ -406,7 +406,7 @@ bool Logic::get() {
 		writeString(" ARMOUR");
 		int r = randByte() & 3;
 		if (r != 0) {
-			++sg._armorOwned[r];
+			sg._armorOwned[r] = MIN(sg._armorOwned[r] + 1, Data::MAX_BCD_BYTE);
 			writeString("\n");
 			return true;
 		}

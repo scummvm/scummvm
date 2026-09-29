@@ -219,14 +219,14 @@ bool DungeonLogic::get() {
 	int level = sg._dungeonLevel;
 	if (level == MAX_LEVEL) {
 		writeString("TRI-LITHIUM!\n");
-		++sg._items[Data::ITEM_TRI_LITHIUM];
+		sg._items[Data::ITEM_TRI_LITHIUM] = MIN(sg._items[Data::ITEM_TRI_LITHIUM] + 1, Data::MAX_BCD_BYTE);
 		return true;
 	}
 
 	if (randByte() >= 0x40) {
 		writeString("GOLD!\n");
 		int amount = ((randByte() & 0x1F) + level * 2) & 0x77;
-		sg._gold = (sg._gold + Data::bcdValue(amount)) % 10000;
+		sg._gold = MIN(sg._gold + Data::bcdValue(amount), Data::MAX_BCD_WORD);
 		return true;
 	}
 
@@ -235,7 +235,7 @@ bool DungeonLogic::get() {
 		writeString("A  WEAPON");
 		int r = randByte() & 7;
 		if (r != 0) {
-			++sg._weaponOwned[r];
+			sg._weaponOwned[r] = MIN(sg._weaponOwned[r] + 1, Data::MAX_BCD_BYTE);
 			writeString("\n");
 			return true;
 		}
@@ -243,7 +243,7 @@ bool DungeonLogic::get() {
 		writeString(" ARMOUR");
 		int r = randByte() & 3;
 		if (r != 0) {
-			++sg._armorOwned[r];
+			sg._armorOwned[r] = MIN(sg._armorOwned[r] + 1, Data::MAX_BCD_BYTE);
 			writeString("\n");
 			return true;
 		}
@@ -264,11 +264,11 @@ void DungeonLogic::killMonster(int slot) {
 
 	int gold = Data::bcdValue((randByte() & 0x17) | 1);
 	writeString("\nKILLED--GOLD+%.2d", gold);
-	sg._gold = (sg._gold + gold) % 10000;
+	sg._gold = MIN(sg._gold + gold, Data::MAX_BCD_WORD);
 
 	int exp = randByte() & 7;
 	writeString("--EXP.+%.2d\n", exp);
-	sg._experience = (sg._experience + exp) % 10000;
+	sg._experience = MIN(sg._experience + exp, Data::MAX_BCD_WORD);
 }
 
 bool DungeonLogic::attack(Data::Direction dir) {

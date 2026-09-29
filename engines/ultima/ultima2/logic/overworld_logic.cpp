@@ -673,29 +673,29 @@ void OverworldLogic::killMonster(int slot) {
 
 	switch (monsterTile) {
 	case Data::TILE_GUARD:
-		sg._keys += 2;
+		sg._keys = MIN(sg._keys + 2, Data::MAX_BCD_BYTE);
 		break;
 
 	case Data::TILE_THIEF: {
 		if (randByte() < 0x40)
-			++sg._thievesTools;
+			sg._thievesTools = MIN(sg._thievesTools + 1, Data::MAX_BCD_BYTE);
 		int itemIdx = randByte() & 0xF;
 		if (itemIdx != 0)
-			++sg._items[itemIdx];
+			sg._items[itemIdx] = MIN(sg._items[itemIdx] + 1, Data::MAX_BCD_BYTE);
 		break;
 	}
 
 	case Data::TILE_FIGHTER:
 		if (randByte() < 0x40)
-			++sg._items[Data::ITEM_HELM];
-		sg._torches += (randByte() & 3) + 1;
+			sg._items[Data::ITEM_HELM] = MIN(sg._items[Data::ITEM_HELM] + 1, Data::MAX_BCD_BYTE);
+		sg._torches = MIN(sg._torches + (randByte() & 3) + 1, Data::MAX_BCD_BYTE);
 		break;
 
 	case Data::TILE_MAGE:
 		if ((randByte() & 1) == 0)
-			++sg._items[Data::ITEM_WAND];
+			sg._items[Data::ITEM_WAND] = MIN(sg._items[Data::ITEM_WAND] + 1, Data::MAX_BCD_BYTE);
 		else
-			++sg._items[Data::ITEM_STAFF];
+			sg._items[Data::ITEM_STAFF] = MIN(sg._items[Data::ITEM_STAFF] + 1, Data::MAX_BCD_BYTE);
 		break;
 
 	default:
@@ -705,8 +705,8 @@ void OverworldLogic::killMonster(int slot) {
 	// The original keeps and prints these as two BCD digits
 	int goldAmt = Data::bcdValue((randByte() & 0x17) | 1);
 	int expAmt = (randByte() & 3) + 1;
-	sg._gold += goldAmt;
-	sg._experience += expAmt;
+	sg._gold = MIN(sg._gold + goldAmt, Data::MAX_BCD_WORD);
+	sg._experience = MIN(sg._experience + expAmt, Data::MAX_BCD_WORD);
 	writeString("KILLED--GOLD+%.2d--EXP.+%.2d\n", goldAmt, expAmt);
 }
 

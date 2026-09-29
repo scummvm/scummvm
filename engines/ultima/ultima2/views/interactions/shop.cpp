@@ -129,9 +129,9 @@ void Shop::confirm(char key) {
 			writeString("OH, WELL.\n");
 		} else if (_G(logic)->trySpendGold(_price)) {
 			if (_kind == WEAPON)
-				++sg._weaponOwned[_item];
+				sg._weaponOwned[_item] = MIN(sg._weaponOwned[_item] + 1, Data::MAX_BCD_BYTE);
 			else
-				++sg._armorOwned[_item];
+				sg._armorOwned[_item] = MIN(sg._armorOwned[_item] + 1, Data::MAX_BCD_BYTE);
 			writeString("SOLD!\n");
 		}
 		break;
@@ -142,7 +142,7 @@ void Shop::confirm(char key) {
 		} else {
 			writeString("YES,\nI WILL TAKE 5!");
 			if (_G(logic)->trySpendGold(_price)) {
-				sg._spellCharges[_item] += 5;
+				sg._spellCharges[_item] = MIN(sg._spellCharges[_item] + 5, Data::MAX_BCD_BYTE);
 				writeString("\n");
 			}
 		}
@@ -154,7 +154,7 @@ void Shop::confirm(char key) {
 		} else {
 			writeString("YES\n");
 			if (_G(logic)->trySpendGold(_price)) {
-				sg._spellCharges[_item] += 5;
+				sg._spellCharges[_item] = MIN(sg._spellCharges[_item] + 5, Data::MAX_BCD_BYTE);
 				writeString("GULE GULE!\n");
 			}
 		}
