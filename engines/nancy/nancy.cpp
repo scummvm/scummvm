@@ -802,10 +802,6 @@ void NancyEngine::bootGameEngine() {
 	#undef LOAD_BOOT_L2
 	#undef LOAD_BOOT_L
 	#undef LOAD_BOOT
-
-	if (getGameType() >= kGameTypeNancy16) {
-		error("Game not supported; Use console to inspect game data");
-	}
 }
 
 State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
