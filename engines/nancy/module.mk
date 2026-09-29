@@ -21,6 +21,7 @@ MODULE_OBJS = \
   action/secondarymovie.o \
   action/secondaryvideo.o \
   action/puzzle/adjustpuzzle.o \
+  action/puzzle/analogclock.o \
   action/puzzle/angletosspuzzle.o \
   action/puzzle/arcadepuzzle.o \
   action/puzzle/assemblypuzzle.o \

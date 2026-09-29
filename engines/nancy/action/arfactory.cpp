@@ -35,7 +35,7 @@
 #include "engines/nancy/action/secondarymovie.h"
 
 #include "engines/nancy/action/puzzle/adjustpuzzle.h"
-//#include "engines/nancy/action/puzzle/analogclock.h"
+#include "engines/nancy/action/puzzle/analogclock.h"
 #include "engines/nancy/action/puzzle/angletosspuzzle.h"
 #include "engines/nancy/action/puzzle/arcadepuzzle.h"
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
@@ -703,7 +703,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 195:
 		return nullptr; // return new MinesweeperPuzzle();	// TODO
 	case 196:
-		return nullptr; // return new AnalogClock();	// TODO
+		return new AnalogClock();
 	case 197:
 		return new AutotextScroll();	// Used for the end credits
 	case 188:	// Empty in the original
