@@ -64,7 +64,7 @@
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
 #include "engines/nancy/action/puzzle/hangmanpuzzle.h"
-//#include "engines/nancy/action/puzzle/keypadphone.h"
+#include "engines/nancy/action/puzzle/keypadphone.h"
 #include "engines/nancy/action/puzzle/lettergridpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
@@ -443,7 +443,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		if (g_nancy->getGameType() <= kGameTypeNancy15)
 			return new Telephone(Telephone::kTelephone);
 		else
-			return nullptr;	//return new KeypadPhone();	// TODO
+			return new KeypadPhone();
 	case 117:
 		return new SliderPuzzle();
 	case 118:
