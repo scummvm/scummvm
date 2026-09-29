@@ -288,7 +288,11 @@ void PlaySecondaryMovie::readRandomMovieDataNancy14(Common::Serializer &ser, Com
 
 	ser.syncAsUint16LE(_videoFormat);
 	_videoFormat = kLargeVideoFormat;
-	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		ser.syncAsUint16LE(_z);
+	} else {
+		ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs
+	}
 	ser.syncAsUint16LE(_randomPlayerCursorAllowed);
 	ser.skip(2);	// Event flag gating the roll for a next sequence; -1 = always roll
 	// Talkable character: the cursor shown while the mouse is over it, and the
@@ -721,7 +725,12 @@ void PlaySecondaryMovie::readDataNancy14(Common::Serializer &ser, Common::Seekab
 	ser.syncAsUint16LE(_videoFormat);
 	_videoFormat = kLargeVideoFormat;
 
-	ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs instead
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		// Sorted together with the overlays, e.g. shadows under the characters
+		ser.syncAsUint16LE(_z);
+	} else {
+		ser.skip(2);	// Visibility frame ID; ScummVM drives visibility from the videoDescs instead
+	}
 	ser.syncAsUint16LE(_playerCursorAllowed);
 	ser.syncAsUint16LE(_hideOnFinish);
 
