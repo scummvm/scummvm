@@ -58,7 +58,7 @@
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 #include "engines/nancy/action/puzzle/escapegridpuzzle.h"
 //#include "engines/nancy/action/puzzle/fishingpuzzle.h"
-//#include "engines/nancy/action/puzzle/foxgeesepuzzle.h"
+#include "engines/nancy/action/puzzle/foxgeesepuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/magicboxpuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
@@ -691,7 +691,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 			return nullptr;
 	// -- Nancy16 new puzzles (types 186-199) --
 	case 186:
-		return nullptr;	//return new FoxGeesePuzzle();	// TODO
+		return new FoxGeesePuzzle();
 	case 189:
 		return new QuizPuzzle();		// Moved from 231
 	case 192:
