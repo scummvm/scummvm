@@ -283,7 +283,7 @@ void Manager::onGameWindowAction(const Action &action) {
 void Manager::applyMatteColor() {
 	uint32 color = 0xFF000000;
 	if (ConfMan.hasKey("matte_color")) {
-		color = g_nancy->_graphics->getFontColor(ConfMan.getInt("matte_color"), Graphics::PixelFormat::createFormatARGB32());
+		color = g_nancy->_graphics->getFontColor(ConfMan.getInt("matte_color"), kARGBFormat);
 	}
 
 	NancySceneState.getFrame().setBlankColor(color);

@@ -34,7 +34,7 @@
 namespace Nancy {
 
 // The ARGB colors in the game data are 32-bit ARGB pixels
-static const Graphics::PixelFormat kARGBFormat = Graphics::PixelFormat::createFormatARGB32();
+const Graphics::PixelFormat kARGBFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
 
 uint32 argbToColor(const Graphics::PixelFormat &format, uint32 argb) {
 	byte a, r, g, b;

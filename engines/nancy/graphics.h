@@ -33,6 +33,9 @@ namespace Nancy {
 class IFF;
 class RenderObject;
 
+// Packed 0xAARRGGBB colors, independent of the byte order in memory
+extern const Graphics::PixelFormat kARGBFormat;
+
 // An ARGB color, as a pixel of the given format
 uint32 argbToColor(const Graphics::PixelFormat &format, uint32 argb);
 
