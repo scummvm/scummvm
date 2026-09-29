@@ -57,7 +57,7 @@
 #include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/dropsortpuzzle.h"
 #include "engines/nancy/action/puzzle/escapegridpuzzle.h"
-//#include "engines/nancy/action/puzzle/fishingpuzzle.h"
+#include "engines/nancy/action/puzzle/fishingpuzzle.h"
 #include "engines/nancy/action/puzzle/foxgeesepuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/magicboxpuzzle.h"
@@ -697,7 +697,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 192:
 		return new RowMatchPuzzle();
 	case 193:
-		return nullptr; // return new FishingPuzzle();
+		return new FishingPuzzle();
 	case 194:
 		return nullptr; // return new CookingPuzzle();
 	case 195:
