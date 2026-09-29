@@ -34,6 +34,10 @@ public:
 
 	void init(const Common::Path &imageName);
 
+	// Covers the game area in black, for games that have no frame image
+	void initBlank();
+	void setBlankColor(uint32 argb);
+
 protected:
 	void init() override {}
 };

@@ -21,6 +21,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/graphics.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
 
@@ -36,6 +37,20 @@ void FullScreenImage::init(const Common::Path &imageName) {
 	_screenPosition = srcBounds;
 
 	RenderObject::init();
+}
+
+void FullScreenImage::initBlank() {
+	Common::Rect bounds = g_nancy->_graphics->getGameBounds();
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getScreenPixelFormat());
+	_drawSurface.clear(_drawSurface.format.ARGBToColor(255, 0, 0, 0));
+	_screenPosition = bounds;
+
+	RenderObject::init();
+}
+
+void FullScreenImage::setBlankColor(uint32 argb) {
+	_drawSurface.clear(argbToColor(_drawSurface.format, argb | 0xFF000000));
+	_needsRedraw = true;
 }
 
 } // End of namespace UI

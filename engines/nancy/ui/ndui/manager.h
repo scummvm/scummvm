@@ -105,6 +105,9 @@ public:
 	// Displays a value of the value table, until it gets unregistered
 	void registerValueDisplay(int16 index, const Common::String &display);
 
+	// The background color outside of the viewport, picked in the options
+	void applyMatteColor();
+
 private:
 	struct ValueDisplay {
 		int16 index = 0;
@@ -122,6 +125,18 @@ private:
 	void onTasklistAction(const Action &action);
 	void playTasklistSound(uint bank, bool play);
 
+	void onLoaderAction(const Action &action);
+	void onSaverAction(const Action &action);
+	void onSaveQueryAction(const Action &action);
+	void onGameWindowAction(const Action &action);
+	void onVolumeAction(const Action &action, const char *configKey);
+	void onFlagsAction(const Action &action);
+	void askToSaveFirst(const Action &action);
+	void runPendingAction();
+	uint fillSaveList(const Common::String &listName);
+	int findSaveSlot(const Common::String &name) const;
+	void setSaveScreenshot(const Graphics::ManagedSurface &image, const Common::Rect &src);
+
 	Panel *findPanel(const Common::String &name) const;
 	InvButton *findItemButton(int16 itemID) const;
 
@@ -138,6 +153,14 @@ private:
 
 	bool _isInConversation = false;
 	Common::Array<Common::String> _responseNames;
+
+	Common::String _selectedSave;	// in the load dialog
+	Common::String _typedSaveName;	// in the save dialog
+	Common::String _lastSaveName;
+
+	// What the player was about to do when asked whether to save first
+	bool _hasPendingAction = false;
+	Action _pendingAction;
 
 	Request _request;
 };

@@ -107,6 +107,7 @@ MODULE_OBJS = \
   ui/ndui/listbox.o \
   ui/ndui/manager.o \
   ui/ndui/panel.o \
+  ui/ndui/saveload.o \
   ui/ndui/scrollbar.o \
   ui/ndui/slider.o \
   ui/notebookpopup.o \

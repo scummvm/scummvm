@@ -83,6 +83,22 @@ void Manager::takeEngineAction(const Action &action) {
 		onJournalAction(action);
 	} else if (action.target.equalsIgnoreCase("Engine_Tasklist")) {
 		onTasklistAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_Loader")) {
+		onLoaderAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_Saver")) {
+		onSaverAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_SaveQuery")) {
+		onSaveQueryAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_GameWindow")) {
+		onGameWindowAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_VoiceVolume")) {
+		onVolumeAction(action, "speech_volume");
+	} else if (action.target.equalsIgnoreCase("Engine_FXVolume")) {
+		onVolumeAction(action, "sfx_volume");
+	} else if (action.target.equalsIgnoreCase("Engine_MusicVolume")) {
+		onVolumeAction(action, "music_volume");
+	} else if (action.target.equalsIgnoreCase("Engine_Flags")) {
+		onFlagsAction(action);
 	} else {
 		debugC(3, kDebugEngine, "Unhandled NDUI engine action %d on \"%s\" from \"%s\"", action.type, action.target.c_str(), action.sender.c_str());
 	}
