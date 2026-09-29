@@ -306,10 +306,11 @@ bool Console::cmdInventory(int argc, const char **argv) {
 	sg._hp = sg._food = sg._gold = 9999;
 	sg._foodTurnCtr = 0;
 
-	// Equip the best that the character's strength and agility allow
+	// Equip the best that the character's strength and agility allow -
+	// mirrors ReadyWeapon/WearArmor's own BCD-byte comparisons
 	sg._readiedWeapon = Data::WEAPON_HANDS;
 	for (int i = Data::WEAPON_COUNT - 1; i > 0; --i) {
-		if (i * 8 < sg._agility) {
+		if (i * 8 < Data::toBcd(sg._agility)) {
 			sg._readiedWeapon = (Data::WeaponType)i;
 			break;
 		}
@@ -317,7 +318,7 @@ bool Console::cmdInventory(int argc, const char **argv) {
 
 	sg._readiedArmor = Data::ARMOR_SKIN;
 	for (int i = Data::ARMOR_COUNT - 1; i > 0; --i) {
-		if (i * 8 < sg._strength) {
+		if (i * 8 < Data::toBcd(sg._strength)) {
 			sg._readiedArmor = (Data::ArmorType)i;
 			break;
 		}

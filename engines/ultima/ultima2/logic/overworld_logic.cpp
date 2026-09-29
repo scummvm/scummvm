@@ -483,7 +483,9 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	int ty = (sg._mapY + dy + Data::MAP_HEIGHT) % Data::MAP_HEIGHT;
 	int slot = findTargetMonster(tx, ty);
 
-	if (slot < 0 || (randByte() >> 1) >= sg._agility) {
+	// Both checks compare against the raw packed-BCD attribute bytes, not
+	// their decimal values, matching the original's own arithmetic
+	if (slot < 0 || (randByte() >> 1) >= Data::toBcd(sg._agility)) {
 		writeString("--MISS\n");
 		resumeTurn();
 		return false;
@@ -493,7 +495,7 @@ bool OverworldLogic::attack(Data::Direction dir) {
 	writeString("--HIT!!!\n");
 	alertTownGuards(slot);
 
-	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
+	int dmg = (sg._readiedWeapon * 8 + Data::toBcd(sg._strength)) >> 2;
 	Data::MapMonsters &monsters = _G(map)._monsters;
 	byte &hp = monsters._spellHP[slot];
 

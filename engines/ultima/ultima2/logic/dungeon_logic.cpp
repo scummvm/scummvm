@@ -292,14 +292,16 @@ bool DungeonLogic::attack(Data::Direction dir) {
 		}
 	}
 
-	if (slot < 0 || (randByte() >> 1) >= sg._agility) {
+	// Both checks compare against the raw packed-BCD attribute bytes, not
+	// their decimal values, matching the original's own arithmetic
+	if (slot < 0 || (randByte() >> 1) >= Data::toBcd(sg._agility)) {
 		writeString("MISS\n");
 		return true;
 	}
 
 	playFX(Data::SFX_HIT);
 	writeString("HIT!");
-	int dmg = (sg._readiedWeapon * 8 + sg._strength) >> 2;
+	int dmg = (sg._readiedWeapon * 8 + Data::toBcd(sg._strength)) >> 2;
 	byte &hp = monsters._spellHP[slot];
 
 	if (hp <= dmg) {

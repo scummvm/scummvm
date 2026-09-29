@@ -227,7 +227,9 @@ struct Savegame {
 	 * combined Intelligence+Charisma (a haggling mechanic)
 	 */
 	int computeItemPrice(int itemIndex) const {
-		int sum = _intelligence + _charisma;
+		// The original sums the raw packed-BCD Intelligence/Charisma bytes,
+		// not their decimal values, before counting bits below
+		int sum = toBcd(_intelligence) + toBcd(_charisma);
 		int bits = 0;
 		while (sum > 0) {
 			sum >>= 1;

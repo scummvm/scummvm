@@ -47,7 +47,10 @@ bool WearArmor::msgKeypress(const KeypressMessage &msg) {
 		writeString("%d\nNOT OWNED!\n", digit);
 	} else if (armorIdx != Data::ARMOR_SKIN && sg._armorOwned[armorIdx] == 0) {
 		writeString("%d\n%s NOT OWNED!\n", digit, Data::ARMOR_NAMES[armorIdx]);
-	} else if (armorIdx * 8 >= sg._strength) {
+	} else if (armorIdx * 8 >= Data::toBcd(sg._strength)) {
+		// The original compares against the raw packed-BCD strength byte,
+		// not its decimal value, so e.g. leather (index 2) needs strength
+		// 11+ (2*8=16 < BCD 0x11=17), not 17+
 		writeString("%d\n<-THOU ART NOT\nSTRONG ENOUGH TO WEAR!\n", digit);
 	} else {
 		sg._readiedArmor = (Data::ArmorType)armorIdx;

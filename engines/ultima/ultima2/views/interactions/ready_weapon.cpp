@@ -44,7 +44,9 @@ bool ReadyWeapon::msgKeypress(const KeypressMessage &msg) {
 
 	if (digit != Data::WEAPON_HANDS && sg._weaponOwned[digit] == 0) {
 		writeString("%d\n%s NOT OWNED!\n", digit, Data::WEAPON_NAMES[digit]);
-	} else if (digit * 8 >= sg._agility) {
+	} else if (digit * 8 >= Data::toBcd(sg._agility)) {
+		// The original compares against the raw packed-BCD agility byte,
+		// not its decimal value - see WearArmor's equivalent check
 		writeString("%d\n<-THOU ART NOT AGILE ENOUGH TO WIELD!\n", digit);
 	} else {
 		sg._readiedWeapon = (Data::WeaponType)digit;
