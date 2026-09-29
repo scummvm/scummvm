@@ -934,9 +934,9 @@ Macs2
 .. list-table::
    :widths: 35 65
 
-   * - Florian Mehm
-     -
    * - Martin Gerhardy
+     -
+   * - Florian Mehm
      -
 
 MacVenture
@@ -2719,6 +2719,8 @@ CGE
      - Soltys Spanish translation
    * - Alejandro Gómez de la Muñoza
      - Soltys Spanish translation
+   * - Alexander Klaus
+     - Soltys German translation
 
 CGE2
 ^^^^
@@ -2734,6 +2736,8 @@ CGE2
      - Sfinx English translation editor
    * - Ryan Clark
      - Sfinx English translation editor
+   * - Alexander Klaus
+     - Sfinx German translation
 
 Drascula
 ^^^^^^^^
