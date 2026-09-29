@@ -173,6 +173,16 @@ void JournalData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void TasklistData::synchronize(Common::Serializer &ser) {
+	uint32 numEntries = checkedEntries.size();
+	ser.syncAsUint32LE(numEntries);
+	checkedEntries.resize(numEntries);
+
+	for (Common::String &entry : checkedEntries) {
+		ser.syncString(entry);
+	}
+}
+
 void JournalData::syncOneJournal(Common::Serializer &ser, Common::HashMap<uint16, Common::Array<Entry>> &journal) {
 	uint16 numEntries = journal.size();
 	ser.syncAsUint16LE(numEntries);
@@ -804,6 +814,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new GridMapPuzzleData();
 	case JournalData::getTag():
 		return new JournalData();
+	case TasklistData::getTag():
+		return new TasklistData();
 	case TableData::getTag():
 		return new TableData();
 	case CellPhoneData::getTag():

@@ -2618,6 +2618,24 @@ void Scene::initStaticData() {
 	_state = kLoad;
 }
 
+void Scene::viewInventoryItem(int16 itemID) {
+	removeItemFromInventory(itemID, false);
+
+	if (_sceneState.pushedInvItemID == -1) {
+		pushScene();
+	} else {
+		addItemToInventory(_sceneState.pushedInvItemID);
+	}
+
+	_sceneState.pushedInvItemID = itemID;
+}
+
+void Scene::returnViewedInventoryItem() {
+	int16 itemID = _sceneState.pushedInvItemID;
+	_sceneState.pushedInvItemID = -1;
+	addItemToInventory(itemID);
+}
+
 void Scene::clearSceneData(bool nextIsNoArt) {
 	// Clear generic flags only
 	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {

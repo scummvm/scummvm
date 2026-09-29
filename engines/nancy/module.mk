@@ -103,6 +103,7 @@ MODULE_OBJS = \
   ui/ndui/control.o \
   ui/ndui/editbox.o \
   ui/ndui/element.o \
+  ui/ndui/enginehandlers.o \
   ui/ndui/listbox.o \
   ui/ndui/manager.o \
   ui/ndui/panel.o \

@@ -162,6 +162,10 @@ void Panel::addControl(Control *control) {
 	if (_kind == kObjectInvPanel) {
 		InvButton *button = (InvButton *)control;
 		control->_id = button->getItemID() + kInvButtonFirstID;
+
+		if (button->getKind() == InvButton::kItemOpenCountedScene) {
+			_manager->registerValueDisplay(button->getValueIndex(), button->getName());
+		}
 	} else {
 		control->_id = _nextID++;
 	}
@@ -388,6 +392,21 @@ EditBox *Panel::getKeyboardFocus() const {
 	for (EditBox *editBox : _editBoxes) {
 		if (editBox->isVisible() && editBox->isEnabled()) {
 			return editBox;
+		}
+	}
+
+	return nullptr;
+}
+
+InvButton *Panel::findItemButton(int16 itemID) const {
+	if (_kind != kObjectInvPanel) {
+		return nullptr;
+	}
+
+	for (Control *control : _controls) {
+		InvButton *button = (InvButton *)control;
+		if (button->getItemID() == itemID) {
+			return button;
 		}
 	}
 

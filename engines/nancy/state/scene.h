@@ -121,6 +121,11 @@ public:
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene(int16 itemID = -1);
+
+	// Nancy16: an item looked at in its own scene leaves the inventory until the
+	// scene is left; it is kept as the pushed inventory item until then
+	void viewInventoryItem(int16 itemID);
+	void returnViewedInventoryItem();
 	void popScene(bool inventory = false);
 	int16 getPushedInvItemID() const { return _sceneState.pushedInvItemID; }
 

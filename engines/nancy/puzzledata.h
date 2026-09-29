@@ -215,6 +215,17 @@ private:
 	static void syncOneJournal(Common::Serializer &ser, Common::HashMap<uint16, Common::Array<Entry>> &journal);
 };
 
+// Nancy16: the entries of the task list the player has checked off
+struct TasklistData : public PuzzleData {
+	TasklistData() {}
+	virtual ~TasklistData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('T', 'L', 'S', 'T'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::Array<Common::String> checkedEntries;
+};
+
 // Contains variables that can be read and modified through action records.
 // Mixes two separate things:
 // - the exhibit data table in nancy6

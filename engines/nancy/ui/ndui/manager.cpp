@@ -32,6 +32,7 @@
 #include "engines/nancy/ui/ndui/manager.h"
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
+#include "engines/nancy/ui/ndui/button.h"
 #include "engines/nancy/ui/ndui/editbox.h"
 
 namespace Nancy {
@@ -97,6 +98,11 @@ void Manager::registerGraphics() {
 }
 
 void Manager::takeAction(const Action &action) {
+	if (action.target.hasPrefixIgnoreCase("Engine_")) {
+		takeEngineAction(action);
+		return;
+	}
+
 	for (Panel *panel : _panels) {
 		if (panel->takeAction(action)) {
 			return;
@@ -159,6 +165,17 @@ Panel *Manager::findPanel(const Common::String &name) const {
 	for (Panel *panel : _panels) {
 		if (panel->getName().equalsIgnoreCase(name)) {
 			return panel;
+		}
+	}
+
+	return nullptr;
+}
+
+InvButton *Manager::findItemButton(int16 itemID) const {
+	for (Panel *panel : _panels) {
+		InvButton *button = panel->findItemButton(itemID);
+		if (button) {
+			return button;
 		}
 	}
 

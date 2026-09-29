@@ -39,6 +39,7 @@ namespace UI {
 namespace NDUI {
 
 class Panel;
+class InvButton;
 
 // The Nancy16 UI, owned by the scene. It creates the panels from the NDUI chunks of the
 // player character's UI IFF and the IFFs it includes, and stands between them and the
@@ -90,12 +91,53 @@ public:
 	void createObject(const Common::String &name, const Common::String &templateName, const Common::String &parentName);
 	void destroyObject(const Common::String &name);
 
+	// Engine state shown by the UI
+	void update();
+	void setCaption(const Common::String &text);
+	void setPlayerTime(uint32 minutesOfDay, bool isDaytime);
+	void showInventoryItem(int16 itemID, bool show);
+	void onSceneChange(uint16 sceneID);
+	void addJournalEntry(const Common::String &pageName, const Common::String &textKey);
+	void addTasklistEntry(const Common::String &textKey, int16 flag);
+	void startConversation(const Common::String &caption, const Common::Array<Common::String> &responses);
+	void endConversation();
+
+	// Displays a value of the value table, until it gets unregistered
+	void registerValueDisplay(int16 index, const Common::String &display);
+
 private:
+	struct ValueDisplay {
+		int16 index = 0;
+		Common::String name;
+		bool hasShownValue = false;
+		int16 shownValue = 0;
+	};
+
+	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> StringMap;
+	typedef Common::HashMap<Common::String, int16, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FlagMap;
+
+	void takeEngineAction(const Action &action);
+	void onInventoryClicked(int16 itemID);
+	void onJournalAction(const Action &action);
+	void onTasklistAction(const Action &action);
+	void playTasklistSound(uint bank, bool play);
+
 	Panel *findPanel(const Common::String &name) const;
+	InvButton *findItemButton(int16 itemID) const;
 
 	Common::Array<Panel *> _panels;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _textures;
 	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _templates;
+
+	Common::Array<Common::String> _clockDisplays;
+	Common::Array<ValueDisplay> _valueDisplays;
+
+	StringMap _journalPages;		// page title -> page panel
+	Common::String _shownJournalPage;
+	FlagMap _tasklistFlags;			// entry -> event flag that has to be set to check it off
+
+	bool _isInConversation = false;
+	Common::Array<Common::String> _responseNames;
 
 	Request _request;
 };

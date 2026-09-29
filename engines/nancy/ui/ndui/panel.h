@@ -38,6 +38,7 @@ class Control;
 class Static;
 class RadioButton;
 class EditBox;
+class InvButton;
 
 // A window of the UI, like the inventory, the journal or the bars around the viewport.
 // Each NDUI chunk describes one panel: its background, which is a Static that also gives
@@ -73,6 +74,7 @@ public:
 	// Reads a control of the given type and adds it
 	Control *addNewControl(int32 type, Common::SeekableReadStream &stream);
 	bool removeControl(const Common::String &name);
+	InvButton *findItemButton(int16 itemID) const;
 
 	// The edit box that gets typed into, when the panel is up
 	EditBox *getKeyboardFocus() const;
