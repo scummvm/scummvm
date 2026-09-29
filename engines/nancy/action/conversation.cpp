@@ -37,6 +37,7 @@
 #include "engines/nancy/action/secondarymovie.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/ui/ndui/manager.h"
 
 namespace Nancy {
 namespace Action {
@@ -355,7 +356,10 @@ void ConversationSound::execute() {
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
-			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			UI::NDUI::Manager *ndui = NancySceneState.getNDUI();
+			if (ndui) {
+				// The Nancy16 UI shows the line and the responses together, below
+			} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
 				NancySceneState.getConversationPopup().open();
 
 				if (ConfMan.getBool("subtitles")) {
@@ -424,17 +428,24 @@ void ConversationSound::execute() {
 				responsesToAdd.push_back(i);
 			}
 
-			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			if (!ndui && g_nancy->getGameType() >= kGameTypeNancy10) {
 				NancySceneState.getConversationPopup().setResponseStart();
 			}
 
+			Common::Array<Common::String> responseTexts;
 			for (uint i : responsesToAdd) {
-				if (g_nancy->getGameType() >= kGameTypeNancy10) {
+				if (ndui) {
+					responseTexts.push_back(_responses[i].text);
+				} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
 					NancySceneState.getConversationPopup().addTextLine(_responses[i].text);
 				} else {
 					NancySceneState.getTextbox().addTextLine(_responses[i].text);
 				}
 				_responses[i].isOnScreen = true;
+			}
+
+			if (ndui) {
+				ndui->startConversation(ConfMan.getBool("subtitles") ? _text : Common::String(), responseTexts);
 			}
 		}
 
@@ -545,7 +556,9 @@ void ConversationSound::execute() {
 				}
 			}
 
-			if (g_nancy->getGameType() >= kGameTypeNancy10) {
+			if (NancySceneState.getNDUI()) {
+				NancySceneState.getNDUI()->endConversation();
+			} else if (g_nancy->getGameType() >= kGameTypeNancy10) {
 				NancySceneState.getConversationPopup().close();
 			}
 			
