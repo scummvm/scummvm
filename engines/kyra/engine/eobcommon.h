@@ -269,7 +269,6 @@ friend class EoBInfProcessor;
 friend class DarkmoonSequenceHelper;
 friend class CharacterGenerator;
 friend class TransferPartyWiz;
-friend class Automap_EoB; // TODO: REMOVE
 public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	~EoBCoreEngine() override;

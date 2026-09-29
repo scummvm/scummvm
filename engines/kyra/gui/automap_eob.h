@@ -24,6 +24,7 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
+#include "common/array.h"
 #include "common/scummsys.h"
 
 namespace Common {
@@ -32,6 +33,7 @@ class SeekableReadStreamEndianWrapper;
 } // End of namespace Common
 
 namespace Graphics {
+class Font;
 struct Surface;
 } // End of namespace Graphics
 
@@ -44,13 +46,14 @@ class EoBCoreEngine; // TODO: REMOVE
 
 class Automap_EoB {
 public:
-	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, int gameID, int lang, bool featureEnabled);
+	Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, /* const uint8 *wllVmpMap,*/ int gameID, int lang, bool featureEnabled);
 	~Automap_EoB();
 
 	void markVisited(uint16 block);
 	void markSeen(uint16 block, int8 dir);
 
 	void draw(int level, uint16 partyBlock, int8 partyDirection);
+	void drawPartyIcon(uint16 partyBlock, int8 partyDirection);
 
 private:
 	// Geometry shared by drawing and click hit-testing.
@@ -64,16 +67,65 @@ private:
 		int footY;                      // top of the selected-note footer strip
 	};
 
+	enum {
+		kNumLegendStrings = 15,
+		kNumControlStrings = 6
+	};
+
 	struct TranslateableStrings {
-		const char *const legendStrings[15];
-		const char *const controlStrings[6];
+		const char *const legendStrings[kNumLegendStrings];
+		const char *const controlStrings[kNumControlStrings];
 		const char *const levelNames[2][16];
 	};
 
-	AutomapLayout createLayout() const;
-	void createColors();
-	void redrawBackground(const AutomapLayout &l, int width, int height);
-	void drawLegend(const AutomapLayout &l, uint flags);
+	enum IconID : int {
+		kIconNone			=	-1,
+		kIconPartyNorth		=	0,
+		kIconPartyEast		=	1,
+		kIconPartySouth		=	2,
+		kIconPartyWest		=	3,
+		kIconTeleporter		=	4,
+		kIconStairsUp		=	5,
+		kIconStairsDown		=	6,
+		kIconPit			=	7,
+		kIconPlate			=	8,
+		kIconIllusionWall	=	10,
+		kIconWallOfForce	=	12,
+		kIconBigObject		=	15,
+		kIconDoorButton		=	17,
+		kIconSmallObject	=	18,
+		kIconNicheNS		=	20,
+		kIconNicheEW		=	21,
+		kIconPortalNS		=	22,
+		kIconPortalEW		=	23,
+		kIconDoorNS			=	25,
+		kIconDoorEW			=	26,
+		kIconSpecial		=	30,
+		kIconIDMax			=	35
+	};
+
+	AutomapLayout createLayout(int width, int height) const;
+	void recalcScaling(int width, int height);
+	void createColorTable();
+	void createIcons(bool lowResSurface);
+	void releaseIcons();
+	void drawBackground(int width, int height);
+	void drawLegend(uint flags);
+
+	enum IconAlignment : int {
+		kAlignTopLeft = -1,
+		kAlignTopCenter = 0,
+		kAlignRightCenter,
+		kAlignBottomCenter,
+		kAlignLeftCenter,
+		kAlignCenter
+	};
+
+	template<typename T> void drawIconImpl(Graphics::Surface &surf, int iconSet, int iconID, int cellX, int cellY, int boxFitWidth, IconAlignment alignment, int extraX, int extraY, int overrideColor);
+	typedef void (Automap_EoB::*DrawIconFunc)(Graphics::Surface &surf, int iconSet, int iconID, int cellX, int cellY, int boxFitWidth, IconAlignment alignment, int extraX, int extraY, int overrideColor);
+	DrawIconFunc _drawIcon;
+
+	int fitString(const Graphics::Font *f, const Common::String &str, int maxW, int maxSc) const;
 	uint16 calcNewBlockPosition(uint16 block, int8 dir) const;
 	bool isVisited(uint16 block) const;
 	bool isSeen(uint16 block) const;
@@ -95,12 +147,19 @@ private:
 	const uint8 *const _wllWallFlags;
 	const uint8 *const _specialWallTypes;
 	const int8 *const _wllShapeMap;
-	const uint8 *_specialBlockIDs;
-	int _numSpecialBlockIDs;
+	//const uint8 *const _wllVmpMap;
 	const uint8 _wallOfForceID;
 	const uint8 *_portalParams;
 	int _portalParamsLen;
 	const bool _enabled;
+
+	struct SpecialWallType {
+		uint8 wall;
+		uint8 icon;
+		uint16 legendFlag;
+	};
+	const SpecialWallType *_specialBlockIDs;
+	int _numSpecialBlockIDs;
 
 	static const TranslateableStrings _stringTable[];
 	const char *const *_legendStrings;
@@ -108,9 +167,19 @@ private:
 	const char *const *_levelNames;
 	const int _numLevelNames;
 
+	AutomapLayout _l;
+	int _levelStrScl;
+	int _coordStrScl;
+	int _legendHeadScl;
+	int _legendBodyScl;
+	int _levelStrY;
+	int _coordStrY;
+
 	OSystem *_system;
-	Graphics::Surface *_automapBg;
-	Graphics::Surface *_automapFrame;
+	Graphics::Surface *_background;
+	Graphics::Surface *_frame;
+	Common::Array<Graphics::Surface*> _mapIcons;
+	Common::Array<Graphics::Surface*> _legendIcons;
 
 private:
 	// Colors
@@ -140,17 +209,28 @@ private:
 		kColorLever,
 		kColorInteractive,
 		kColorNiche,
-		kColorParty,
-		kColorPartyEdge,
 		kColorPlaqueBg,
 		kColorPlaqueEd,
 		kColorGold,
 		kColorGoldDim,
 		kColorPanelTxt,
+		kColorTransp,
+		kColorPartyFrame0,
+		kColorPartyFrame1,
+		kColorPartyFrame2,
+		kColorPartyFrame3,
+		kColorPartyFrame4,
+		kColorPartyFrame5,
+		kColorPartyFrame6,
+		kColorPartyFrame7,
+		kColorPartyFrame8,
+		kColorPartyFrame9,
 		kNumColors
 	};
 
 	const uint32 *_colors;
+	int _partyIconColor;
+	int _partyIconColorStep;
 };
 
 } // End of namespace Kyra

@@ -30,126 +30,6 @@
 
 namespace Kyra {
 
-static void automapDrawBigString(Graphics::Surface &dst, const Graphics::Font *font,
-								 const Common::String &text, int x, int y, int w, uint32 color, int scale,
-								 Graphics::TextAlign align = Graphics::kTextAlignCenter) {
-	if (!font || text.empty() || scale < 1)
-		return;
-	const int tw = font->getStringWidth(text);
-	const int th = font->getFontHeight();
-	if (tw <= 0 || th <= 0)
-		return;
-
-	if (scale == 1) {
-		font->drawString(&dst, text, x, y, w, color, align);
-		return;
-	}
-
-	const int bpp = dst.format.bytesPerPixel;
-	if (bpp != 2 && bpp != 4) {
-		font->drawString(&dst, text, x, y, w, color, align);
-		return;
-	}
-
-	Graphics::Surface tmp;
-	tmp.create(tw, th, dst.format);
-	tmp.fillRect(Common::Rect(0, 0, tw, th), 0);
-	font->drawString(&tmp, text, 0, 0, tw, color, Graphics::kTextAlignLeft);
-
-	const int dw = tw * scale;
-	int dx = x + (w - dw) / 2;
-	if (align == Graphics::kTextAlignLeft)
-		dx = x;
-	else if (align == Graphics::kTextAlignRight)
-		dx = x + w - dw;
-	if (dx < x)
-		dx = x;
-	for (int sy = 0; sy < th; ++sy) {
-		const byte *src = (const byte *)tmp.getBasePtr(0, sy);
-		for (int sx = 0; sx < tw; ++sx) {
-			const uint32 c = (bpp == 2) ? ((const uint16 *)src)[sx] : ((const uint32 *)src)[sx];
-			if (c == 0)
-				continue;
-			const int px = dx + sx * scale;
-			const int py = y + sy * scale;
-			dst.fillRect(Common::Rect(px, py, px + scale, py + scale), c);
-		}
-	}
-	tmp.free();
-}
-
-static void automapFillTri(Graphics::Surface &s, int ax, int ay, int bx, int by, int cx, int cy, uint32 color) {
-	if (ay > by) {
-		SWAP(ax, bx);
-		SWAP(ay, by);
-	}
-	if (ay > cy) {
-		SWAP(ax, cx);
-		SWAP(ay, cy);
-	}
-	if (by > cy) {
-		SWAP(bx, cx);
-		SWAP(by, cy);
-	}
-	if (cy == ay)
-		return;
-
-	for (int y = ay; y <= cy; ++y) {
-		int xLong = ax + (cx - ax) * (y - ay) / (cy - ay);
-		int xShort = (y < by)
-						 ? (by == ay ? ax : ax + (bx - ax) * (y - ay) / (by - ay))
-						 : (cy == by ? bx : bx + (cx - bx) * (y - by) / (cy - by));
-		int x0 = MIN(xLong, xShort);
-		int x1 = MAX(xLong, xShort);
-		s.hLine(x0, y, x1, color);
-	}
-}
-
-// Sparse two-tone speckle to fake stone/paper grain
-static void automapNoise(Graphics::Surface &s, int x0, int y0, int w, int h, uint32 cA, uint32 cB, uint32 seed) {
-	if (w <= 0 || h <= 0 || x0 < 0 || y0 < 0 || x0 + w > s.w || y0 + h > s.h)
-		return;
-	const int bpp = s.format.bytesPerPixel;
-	if (bpp != 2 && bpp != 4)
-		return;
-	uint32 st = seed | 1u;
-	for (int y = 0; y < h; ++y) {
-		byte *row = (byte *)s.getBasePtr(x0, y0 + y);
-		for (int x = 0; x < w; ++x) {
-			st = st * 1664525u + 1013904223u;
-			const uint32 v = st >> 24; // 0..255
-			if (v < 26) {
-				const uint32 c = (v & 1u) ? cA : cB;
-				if (bpp == 2)
-					((uint16 *)row)[x] = (uint16)c;
-				else
-					((uint32 *)row)[x] = c;
-			}
-		}
-	}
-}
-
-static void automapBevel(Graphics::Surface &s, const Common::Rect &r, uint32 hi, uint32 lo) {
-	s.hLine(r.left, r.top, r.right - 1, hi);
-	s.vLine(r.left, r.top, r.bottom - 1, hi);
-	s.hLine(r.left, r.bottom - 1, r.right - 1, lo);
-	s.vLine(r.right - 1, r.top, r.bottom - 1, lo);
-}
-
-static void automapRivet(Graphics::Surface &s, int x, int y, int sz, uint32 dark, uint32 mid, uint32 hi) {
-	s.fillRect(Common::Rect(x - sz, y - sz, x + sz + 1, y + sz + 1), dark);
-	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x + sz, y + sz), mid);
-	const int q = MAX(1, sz / 2);
-	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x - sz + 1 + q, y - sz + 1 + q), hi);
-}
-
-static int automapFit(const Graphics::Font *f, const Common::String &str, int maxW, int maxSc) {
-	int sc = MAX(1, maxSc);
-	while (sc > 1 && f && f->getStringWidth(str) * sc > maxW)
-		--sc;
-	return sc;
-}
-
 // Automap strings that should be translated to the game's language. Currently, only English is available.
 // TODO: Probably move to KYRA.DAT eventually.
 const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
@@ -241,11 +121,13 @@ const Automap_EoB::TranslateableStrings Automap_EoB::_stringTable[] = {
 	}
 };
 
-Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, int gameID, int lang, bool featureEnabled) : _system(system),
-	_blockData(*blockData), _wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _wllShapeMap(wllShapeMap), _enabled(featureEnabled), _visible(false), _automapBg(nullptr), _automapFrame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr),
-		_colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)), _wallOfForceID(gameID == GI_EOB1 ? 0xFF : 74), _portalParamsLen(0), _portalParams(nullptr){
-	_automapBg = new Graphics::Surface();
-	_automapFrame = new Graphics::Surface();
+Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const uint8 *wllFlags, const uint8 *specialWallTypes, const int8 *wllShapeMap, /* const uint8 *wllVmpMap,*/ int gameID, int lang, bool featureEnabled) :
+	_system(system), _blockData(*blockData), _wllWallFlags(wllFlags), _specialWallTypes(specialWallTypes), _wllShapeMap(wllShapeMap), /*_wllVmpMap(wllVmpMap),*/ _enabled(featureEnabled), _visible(false), _background(nullptr),
+		_frame(nullptr), _specialBlockIDs(nullptr), _levelNames(nullptr), _colors(nullptr), _legendStrings(nullptr), _controlStrings(nullptr), _numLevelNames(gameID == GI_EOB1 ? 12 : (gameID == GI_EOB2 ? 16 : 0)), _l(),
+			_wallOfForceID(gameID == GI_EOB1 ? 0xFF : 74), _portalParamsLen(0), _portalParams(nullptr), _drawIcon(nullptr), _legendHeadScl(1), _legendBodyScl(1), _levelStrScl(1), _coordStrScl(1), _levelStrY(0), _coordStrY(0),
+				_partyIconColor(kColorPartyFrame0), _partyIconColorStep(1) {
+	_background = new Graphics::Surface();
+	_frame = new Graphics::Surface();
 
 	uint langIndex = 0;
 	uint gameIndex = gameID - GI_EOB1;
@@ -268,30 +150,57 @@ Automap_EoB::Automap_EoB(OSystem *system, LevelBlockProperty **blockData, const 
 	const uint8 illusion1 = gameID == GI_EOB1 ? 67 : 46;
 	const uint8 illusion2 = gameID == GI_EOB1 ? 64 : 46;
 	const uint8 illusion3 = gameID == GI_EOB1 ? 66 : 46;
+	const uint8 illusion4 = gameID == GI_EOB1 ? 57 : 46;
 	const uint8 plate1 = gameID == GI_EOB1 ? 28 : 35;
 	const uint8 plate2 = gameID == GI_EOB1 ? 28 : 36;
 	const uint8 pit = gameID == GI_EOB1 ? 27 : 38;
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
-	const uint8 types[] = { teleporter, illusion1, illusion2, illusion3, stairsUp, stairsDown, pit, plate1, plate2 };
-	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 8, 45, 9, 43, 10, 39, 11, 37, 11, 36, 12, 37 };
+
+	const SpecialWallType types[] = {
+		{ teleporter, kIconTeleporter, 0x40 },
+		{ stairsUp, kIconStairsUp, 0x10 },
+		{ stairsDown, kIconStairsDown, 0x20 },
+		{ pit, kIconPit, 0x80 },
+		{ plate1, kIconPlate, 0x100 },
+		{ plate2, kIconPlate, 0x100 },
+		{ illusion1, kIconIllusionWall, 0x800 },
+		{ illusion2, kIconIllusionWall, 0x800 },
+		{ illusion3, kIconIllusionWall, 0x800 },
+		{ illusion4, kIconIllusionWall, 0x800 }
+	};
+
+	static const uint8 eob1PortalParams[] = { 2, 4, 46, 5, 43, 6, 45, 7, 40, 7, 41, 7, 43, 7, 44, 7, 46, 8, 45, 9, 43, 10, 38, 10, 39, 11, 37, 11, 36, 12, 37 };
 	static const uint8 eob2PortalParams[] = { 7, 3, 54, 6, 54, 14, 69 };
 
-	uint8 *specialBlockIDs = new uint8[ARRAYSIZE(types)]();
+	SpecialWallType *specialBlockIDs = new SpecialWallType[ARRAYSIZE(types)]();
 	memcpy(specialBlockIDs, types, sizeof(types));
 	_specialBlockIDs = specialBlockIDs;
 	_numSpecialBlockIDs = ARRAYSIZE(types);
 	_portalParams = gameID == GI_EOB1 ? eob1PortalParams : eob2PortalParams;
 	_portalParamsLen = (gameID == GI_EOB1 ? ARRAYSIZE(eob1PortalParams) : ARRAYSIZE(eob2PortalParams));
 
-	createColors();
+	createColorTable();
+
+	DrawIconFunc drawIconFuncs[] = {
+		&Automap_EoB::drawIconImpl<uint8>,
+		&Automap_EoB::drawIconImpl<uint16>,
+		&Automap_EoB::drawIconImpl<uint32>
+	};
+
+	Graphics::PixelFormat fmt = _system->getOverlayFormat();
+	int f = fmt.bpp() >> 4;
+	assert(f >= 0 && f < ARRAYSIZE(drawIconFuncs));
+	_drawIcon = drawIconFuncs[f];
+	assert(_drawIcon != nullptr);
 }
 
 Automap_EoB::~Automap_EoB() {
-	delete _automapBg;
-	delete _automapFrame;
+	delete _background;
+	delete _frame;
 	delete[] _specialBlockIDs;
 	delete[] _colors;
+	releaseIcons();
 }
 
 void Automap_EoB::markVisited(uint16 block) {
@@ -333,7 +242,7 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 			b = nb;
 			if (reveal)
 				_blockData[b].direction |= 1;
-			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere || wn == _wallOfForceID || wn == _specialBlockIDs[4] || wn == _specialBlockIDs[5])
+			if ((_wllWallFlags[wn] & 9) == 8 || breakableFromHere || wn == _wallOfForceID || wn == _specialBlockIDs[1].wall || wn == _specialBlockIDs[2].wall)
 				break;
 		}
 	}
@@ -343,29 +252,82 @@ void Automap_EoB::markSeen(uint16 block, int8 dir) {
 	// on the map, unless the player turns around and looks at it. This is a bit annoying and we avoid it like this...
 	LevelBlockProperty &bp = _blockData[calcNewBlockPosition(block, dir ^ 2)];
 	for (int i = 0; i < 4; ++i) {
-		if (bp.walls[i] == _specialBlockIDs[4] || bp.walls[i] == _specialBlockIDs[5])
+		if (bp.walls[i] == _specialBlockIDs[1].wall || bp.walls[i] == _specialBlockIDs[2].wall)
 			bp.direction |= 1;
 	}
+}
+
+void drawString(Graphics::Surface &dst, const Graphics::Font *font, const Common::String &text, int x, int y, int w, uint32 color, int scale, Graphics::TextAlign align = Graphics::kTextAlignCenter) {
+	if (!font || text.empty() || scale < 1)
+		return;
+	const int tw = font->getStringWidth(text);
+	const int th = font->getFontHeight();
+	if (tw <= 0 || th <= 0)
+		return;
+
+	if (scale == 1) {
+		font->drawString(&dst, text, x, y, w, color, align);
+		return;
+	}
+
+	const int bpp = dst.format.bytesPerPixel;
+	if (bpp != 2 && bpp != 4) {
+		font->drawString(&dst, text, x, y, w, color, align);
+		return;
+	}
+
+	Graphics::Surface tmp;
+	tmp.create(tw, th, dst.format);
+	tmp.fillRect(Common::Rect(0, 0, tw, th), 0);
+	font->drawString(&tmp, text, 0, 0, tw, color, Graphics::kTextAlignLeft);
+
+	const int dw = tw * scale;
+	int dx = x + (w - dw) / 2;
+	if (align == Graphics::kTextAlignLeft)
+		dx = x;
+	else if (align == Graphics::kTextAlignRight)
+		dx = x + w - dw;
+	if (dx < x)
+		dx = x;
+	for (int sy = 0; sy < th; ++sy) {
+		const byte *src = (const byte *)tmp.getBasePtr(0, sy);
+		for (int sx = 0; sx < tw; ++sx) {
+			const uint32 c = (bpp == 2) ? ((const uint16 *)src)[sx] : ((const uint32 *)src)[sx];
+			if (c == 0)
+				continue;
+			const int px = dx + sx * scale;
+			const int py = y + sy * scale;
+			dst.fillRect(Common::Rect(px, py, px + scale, py + scale), c);
+		}
+	}
+	tmp.free();
 }
 
 void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 	const int ow = _system->getOverlayWidth();
 	const int oh = _system->getOverlayHeight();
-	const AutomapLayout l = createLayout();
 
-	// Redraw the map background on an overlay resize.
-	if (_automapBg->w != ow || _automapBg->h != oh)
-		redrawBackground(l, ow, oh);
+	// After an overlay resize we have to recalc some parameters and recreate the background and icons.
+	if (_background->w != ow || _background->h != oh) {
+		_l = createLayout(ow, oh);
+		recalcScaling(ow, oh);
+		drawBackground(ow, oh);
+		// Normally, the icons will be made a bit smaller than the cell size, for better visuals.
+		// For low resolutions, this will just make them too tiny and ugly, so we drop that margin.
+		createIcons(_l.cell < 12);
+	}
 
-	Graphics::Surface &surf = *_automapFrame;
-	surf.copyRectToSurface(*_automapBg, 0, 0, Common::Rect(0, 0, ow, oh));
+	Graphics::Surface &surf = *_frame;
+	surf.copyRectToSurface(*_background, 0, 0, Common::Rect(0, 0, ow, oh));
 
-	const int cell = l.cell;
-	const int offX = l.offX;
-	const int offY = l.offY;
-	const int wt = MAX(2, cell / 5);
+	const int wt = MAX(2, _l.cell / 5);
 
-	uint legendFlags = (partyBlock != 0xFFFF) ? 1 : 0;
+	const int doorBtnWOffs = (MAX(2, wt + 1) >> 1) + (MAX(1, _l.cell / 5) >> 1);
+	const int doorBtnLOffs = MAX(1, _l.cell / 6);
+	const int doorBtnOffsX[] = { -doorBtnLOffs, doorBtnWOffs, doorBtnLOffs, -doorBtnWOffs };
+	const int doorBtnOffsY[] = { -doorBtnWOffs, -doorBtnLOffs, doorBtnWOffs, doorBtnLOffs };
+
+	uint legendFlags = 0;
 
 	for (int by = 0; by < 32; ++by) {
 		for (int bx = 0; bx < 32; ++bx) {
@@ -375,106 +337,61 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 			if (!visited && !seen)
 				continue;
 
-			const int sx = offX + bx * cell;
-			const int sy = offY + by * cell;
+			const int sx = _l.offX + bx * _l.cell;
+			const int sy = _l.offY + by * _l.cell;
 
 			bool wall[4];
 			for (int d = 0; d < 4; ++d) {
 				const uint16 nb = calcNewBlockPosition(block, d);
 				uint8 wn = _blockData[nb].walls[d ^ 2];
 				// Check for doors or breakable block objects (like the barrels in the EOB II catacombs) which shouldn't be drawn as walls.
-				wall[d] = (!(_wllWallFlags[wn] & 9) && wn != _wallOfForceID && checkForBreakableObjectType(nb) == kNoBreakableObject);
+				wall[d] = (!(_wllWallFlags[wn] & 9) && (wn != _wallOfForceID) && (checkForBreakableObjectType(nb) == kNoBreakableObject));
 			}
 
 			const LevelBlockProperty *bp = &_blockData[block];
-			bool doorNS = ((_wllWallFlags[bp->walls[0]] | _wllWallFlags[bp->walls[2]]) & 8);
-			bool doorEW = ((_wllWallFlags[bp->walls[1]] | _wllWallFlags[bp->walls[3]]) & 8);
-			bool wof = (bp->walls[0] == _wallOfForceID || bp->walls[1] == _wallOfForceID || bp->walls[2] == _wallOfForceID || bp->walls[3] == _wallOfForceID);
 			int br = checkForBreakableObjectType(block);
-			int bcolor = kColorDoor;
-
-			if (br == kBreakableBarrierNS) {
-				doorNS = true;
-				bcolor = kColorInteractive;
-			}
-
-			if (br == kBreakableBarrierEW) {
-				doorEW = true;
-				bcolor = kColorInteractive;
-			}
-
-			if (doorNS)
-				wall[0] = wall[2] = false;
-			if (doorEW)
-				wall[1] = wall[3] = false;
-
-			surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + cell), _colors[visited ? kColorFloor : kColorFloorSeen]);
+			bool doorNS = ((_wllWallFlags[bp->walls[0]] | _wllWallFlags[bp->walls[2]]) & 8) || (br == kBreakableBarrierNS);
+			bool doorEW = ((_wllWallFlags[bp->walls[1]] | _wllWallFlags[bp->walls[3]]) & 8) || (br == kBreakableBarrierEW);
+			bool wof = (bp->walls[0] == _wallOfForceID || bp->walls[1] == _wallOfForceID || bp->walls[2] == _wallOfForceID || bp->walls[3] == _wallOfForceID);
+	
+			surf.fillRect(Common::Rect(sx, sy, sx + _l.cell, sy + _l.cell), _colors[visited ? kColorFloor : kColorFloorSeen]);
 			if (visited) {
-				surf.hLine(sx, sy, sx + cell - 1, _colors[kColorGrid]);
-				surf.vLine(sx, sy, sy + cell - 1, _colors[kColorGrid]);
+				surf.hLine(sx, sy, sx + _l.cell - 1, _colors[kColorGrid]);
+				surf.vLine(sx, sy, sy + _l.cell - 1, _colors[kColorGrid]);
 			}
 			const uint32 wc = _colors[visited ? kColorWall : kColorWallSeen];
 			if (wall[0])
-				surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + wt), wc);
+				surf.fillRect(Common::Rect(sx, sy, sx + _l.cell, sy + wt), wc);
 			if (wall[1])
-				surf.fillRect(Common::Rect(sx + cell - wt, sy, sx + cell, sy + cell), wc);
+				surf.fillRect(Common::Rect(sx + _l.cell - wt, sy, sx + _l.cell, sy + _l.cell), wc);
 			if (wall[2])
-				surf.fillRect(Common::Rect(sx, sy + cell - wt, sx + cell, sy + cell), wc);
+				surf.fillRect(Common::Rect(sx, sy + _l.cell - wt, sx + _l.cell, sy + _l.cell), wc);
 			if (wall[3])
-				surf.fillRect(Common::Rect(sx, sy, sx + wt, sy + cell), wc);
+				surf.fillRect(Common::Rect(sx, sy, sx + wt, sy + _l.cell), wc);
 
-			auto drawButton = [&surf, &legendFlags, cell](int x, int y, int alignment, int len, int wdth, uint32 color, uint addFlag) {
-				switch (alignment) {
-				case 0:
-					x = x + cell / 2 - len / 2;
-					break;
-				case 1:
-					x = x + cell - wdth;
-					y = y + cell / 2 - len / 2;
-					SWAP(len, wdth);
-					break;
-				case 2:
-					x = x + cell / 2 - len / 2;
-					y = y + cell - wdth;
-					break;
-				default:
-					y = y + cell / 2 - len / 2;
-					SWAP(len, wdth);
-					break;
-				}
-				surf.fillRect(Common::Rect(x, y, x + len, y + wdth), color);
-				legendFlags |= addFlag;
-			};
-
-
+			// Draw doors and barriers.
 			if (doorNS || doorEW) {
-				// FIXME?: Doors on the map always look "closed", regardless of whether open oder close.
-				const int dt = MAX(2, wt + 1);
-				const int dm = MAX(1, cell / 5);
-				const int dcx = sx + cell / 2, dcy = sy + cell / 2;
+				int ovrColor = -1;
 
-				legendFlags |= (br != kNoBreakableObject ? 0x80 : 0x40);
+				if (br == kBreakableBarrierNS || br == kBreakableBarrierEW) {
+					legendFlags |= 0x400;
+					ovrColor = kColorInteractive;
+				} else {
+					legendFlags |= 0x200;
+					// Draw the door button if the door has one.
+					for (int i = 0; i < 4; ++i) {
+						if (_specialWallTypes[bp->walls[i]] == 1) {
+							legendFlags |= 0x2000;
+							(this->*_drawIcon)(surf, 0, kIconDoorButton, sx, sy, _l.cell, kAlignCenter, doorBtnOffsX[i], doorBtnOffsY[i], kColorLever);
+						}
+					}
+				}
 
-				// Draw the door and also the door button if the door has one.
-				if (doorNS) {
-					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), _colors[bcolor]);
-					if (_specialWallTypes[bp->walls[0]] == 1)
-						drawButton(sx - dm, sy + dt, 0, dm, dm, _colors[kColorLever], 0x400);	
-					if (_specialWallTypes[bp->walls[2]] == 1)
-						drawButton(sx + dm, sy - dt, 2, dm, dm, _colors[kColorLever], 0x400);
-					
-				}
-				if (doorEW) {
-					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), _colors[bcolor]);
-					if (_specialWallTypes[bp->walls[1]] == 1)
-						drawButton(sx - dt, sy - dm, 1, dm, dm, _colors[kColorLever], 0x400);
-					if (_specialWallTypes[bp->walls[3]] == 1)
-						drawButton(sx + dt, sy + dm, 3, dm, dm, _colors[kColorLever], 0x400);
-					
-				}
+				// Draw the door or barrier. FIXME?: Doors on the map always look "closed", even when they're open.
+				(this->*_drawIcon)(surf, 0, doorNS ? kIconDoorNS : kIconDoorEW, sx, sy, _l.cell, kAlignCenter, 0, 0, ovrColor);			
 			}
 
-			// Interactive/clickable walls (lever, niche, banner, etc.)
+			// Draw wall objects (lever, niche, banner, portal, etc.)
 			for (int d = 0; d < 4; ++d) {
 				uint16 nb = calcNewBlockPosition(block, d);
 				uint8 wn = _blockData[nb].walls[d ^ 2];
@@ -483,7 +400,9 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				if (st == 0 || st == 5 || st == 6 || st == 0xFF)
 					continue;
 
-				// Check if it is a stone portal.
+				// Check if it is a stone portal. This is completely hardcoded, since there is no logic there
+				// to determine whether a wall object is a portal (except analysis of the attached script, and
+				// even that wouldn't catch the "inactive"/exit-only portal in EOBI).
 				if (st == _portalParams[0]) {
 					for (int i = 1; i < _portalParamsLen && st != 20; i += 2) {
 						if (level == _portalParams[i] && wn == _portalParams[i + 1])
@@ -493,18 +412,19 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 
 				// For EOBI, there are cases where a wall has a clickable shape type, but there is no script
 				// function assigned to it or there isn't even a clickable shape. We don't want to draw these
-				// "fake" triggers.
+				// "fake" triggers (except for one "inactive"/exit-only stone portal, that's why we check for
+				// portals first).
 				if (st == 2 && (_blockData[nb].assignedObjects == 0 || _wllShapeMap[wn] == 0))
 					continue;
 
-				// If it is a door button on the door or on the door frame it has already been drawn
-				// together with the door. Skip it here...
+				// If it is a door button on the door or on the door frame it has already been drawn together
+				// with the door. Skip it here...
 				if (st == 1 && (_wllWallFlags[wn] & 8))
 					continue;
 
 				// Breakable objects are also "interactive" (you can click them and you get a text message),
-				// but it makes more sense to not to draw them here, but in the middle of the block if they're
-				// block objects (like the barrels in the EOB II catacombs). But if it is a wall object (like
+				// but it makes more sense not to draw them here, but in the middle of the block if they're
+				// block objects (like the barrels in the EOB II catacombs). But if we have a wall object (like
 				// the breakable windows on the temple ground floor in EOBII) we should draw it here.
 				if (checkForBreakableObjectType(nb) != kNoBreakableObject)
 					continue;
@@ -513,87 +433,52 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 				if (isCenteredSwitch(nb))
 					continue;
 
-				uint32 pcol = _colors[(st == 10) ? kColorNiche : (st == 1 || st == 3 || st == 4) ? kColorLever : (st == 20 ? kColorTele : kColorInteractive)];
-				uint flag = (st == 10) ? 0x1000 : (st == 1 || st == 3 || st == 4) ? 0x400 : (st == 20 ? 0x2000 : 0x800);
-				int plen = MAX(2, cell * 2 / (st < 10 ? 8 : st == 10 ? 6 : 3));
-				int pwdth = MAX(2, cell / 4);
+				int ovrColor = (st == 2 || (st >= 7 && st <= 9)) ? kColorInteractive : -1;
+				int icon = (st < 10 ? kIconSmallObject : st == 10 ? kIconNicheNS + (d & 1): kIconPortalNS + (d & 1));
+				legendFlags |= ((st == 10) ? 0x8000 : ((st == 1 || st == 3 || st == 4) ? 0x2000 : (st == 20 ? 0x10000 : 0x4000)));
 
-				drawButton(sx, sy, d, plen, pwdth, pcol, flag);				
+				(this->*_drawIcon)(surf, 0, icon, sx, sy, _l.cell, (IconAlignment)d, 0, 0, ovrColor);
 			}
 
-			// TODO: The icons could all be pregenerated instead of individually rendering them each time.
-			auto drawIcon = [&surf, &legendFlags, cell](int ix, int iy, uint8 icon, const uint32 *colTable, uint addFlag) {
-				const int cx = ix + cell / 2;
-				const int cy = iy + cell / 2;
-				const int r = MAX(2, cell / 3);
-				const int margin = r * 4 / 5;
-				const int step = (cell << 8) / 5;
-				const int step2 = ((cell - r) << 8) / 5;
-				switch (icon) {
-				case 0:
-					for (int i = 0; i < margin; ++i) {
-						surf.drawLine(cx - margin + i, cy - i, cx + margin - i, cy - i, colTable[kColorTele]);
-						surf.drawLine(cx - margin + i, cy + i, cx + margin - i , cy + i, colTable[kColorTele]);
-					}
-					break;
-				case 1:
-				case 2:
-				case 3:
-					for (int pos = 0, g = 0; g < 5; ++g, pos += step) {
-						surf.drawLine(ix + (pos >> 8), iy, ix + (pos >> 8), iy + cell, colTable[kColorWall]);
-						surf.drawLine(ix, iy + (pos >> 8), ix + cell, iy + (pos >> 8), colTable[kColorWall]);
-					}
-					break;
-				case 4:
-					automapFillTri(surf, cx - r, cy + r, cx + r, cy + r, cx, cy - r, colTable[kColorStair]);
-					break;
-				case 5:
-					automapFillTri(surf, cx - r, cy - r, cx + r, cy - r, cx, cy + r, colTable[kColorStair]);
-					break;
-				case 6:
-				case 7:
-				case 8:
-					surf.drawEllipse(cx - margin, cy - margin, cx + margin, cy + margin, colTable[icon == 6 ? kColorPit : kColorPlate], true);
-					break;
-				case 9:
-				case 11:
-					surf.fillRect(Common::Rect(cx - margin, cy - margin, cx + margin, cy + margin), colTable[icon == 9 ?kColorInteractive : kColorLever]);
-					break;
-				case 10:
-					for (int posX = 0, g = 0; g < 3; ++g, posX += (step2 * 2)) {
-						for (int posY = 0, gg = 0; gg < 3; ++gg, posY += (step2 * 2)) {
-							surf.fillRect(Common::Rect(cx - r + (posX >> 8), cy - r + (posY >> 8), cx - r + ((posX + step2) >> 8), cy - r + ((posY + step2) >> 8)), colTable[kColorWoF]);
-							if (g < 2 && gg < 2)
-								surf.fillRect(Common::Rect(cx - r + ((posX + step2) >> 8), cy - r + ((posY + step2) >> 8), cx - r + ((posX + step2 * 2) >> 8), cy - r + ((posY + step2 * 2) >> 8)), colTable[kColorWoF]);
-						}
-					}
-					break;
-				default:
-					break;
-				}
-				legendFlags |= addFlag;
-			};
-
-			if (br == kBreakableBlockObject) {
-				drawIcon(sx, sy, 9, _colors, 0x800);
-			} else if (wof) {
-				drawIcon(sx, sy, 10, _colors, 0x200);
+			// Draw centered block icons (pits, plates, teleporters, etc.)
+			if (wof) {
+				(this->*_drawIcon)(surf, 0, kIconWallOfForce, sx, sy, _l.cell, kAlignCenter, 0, 0, -1);
+				legendFlags |= 0x1000;
+			} else if (br == kBreakableBlockObject) {
+				(this->*_drawIcon)(surf, 0, kIconBigObject, sx, sy, _l.cell, kAlignCenter, 0, 0, kColorInteractive);
+				legendFlags |= 0x4000;
 			} else if (isCenteredSwitch(block)) {
-				drawIcon(sx, sy, 11, _colors, 0x400);
+				(this->*_drawIcon)(surf, 0, kIconBigObject, sx, sy, _l.cell, kAlignCenter, 0, 0, -1);
+				legendFlags |= 0x2000;
 			} else {
 				// Special blocks
-				const uint16 flags[] = { 0x08, 0x100, 0x100, 0x100, 0x02, 0x04, 0x10, 0x20, 0x20 };
+				
+
+				/* for (int ii = 0; ii < 4; ++ii) {
+					if (_wllVmpMap[bp->walls[ii]] != 1)
+						continue;
+					uint16 nbb = calcNewBlockPosition(block, ii);
+					if (_wllWallFlags[_blockData[nbb].walls[ii ^ 2]] & 1) {
+						drwIcon(sx, sy, 6, _colors, 0x100);
+						break;
+					}
+				}*/
+
 				for (int i = 0; i < _numSpecialBlockIDs; ++i) {
-					uint8 s = _specialBlockIDs[i]; // order: teleporter, illusion1, illusion2, illusion3, stairsUp, stairsDown, pit, plate1, plate2
-					// This is a bit tricky for EOBI. EOBII has the special wall type on all four walls, but not EOBI, so we can't require it.
-					// However, there is at least one glitchy wall with a stairs id that can never be seen from inside the game, but would get a
-					// stairs drawn on the map. To avoid that, we also check if the wall is passible from the other side.
+					uint8 s = _specialBlockIDs[i].wall;
+					// This is a bit tricky due to glitchy game data. EOBII puts the special wall type on all four walls of a block, but EOBI does not, so we can't
+					// rely on that. However, in EOBI there is at least one glitchy wall with a stairs id that can never be seen from inside the game, so the glitch
+					// is irrelevant there. But it would cause a stairs icon to be drawn on the map if we were satisfied with just checking any one of the four walls
+					// to have the special type. To avoid the issue, we also check if the wall is passable from the other side. But then there is a case of a breakable
+					// wall with a stairs behind it in EOBII which gets wrongly marked as non-passable, so the check would fail AND a wall would appear on the map.
+					// We use checkForBreakableObjectType() to detect that case and draw the stairs (we also use that above, to avoid drawing the wall).
 					for (int ii = 0; ii < 4; ++ii) {
 						if (bp->walls[ii] != s)
 							continue;
 						uint16 nbb = calcNewBlockPosition(block, ii);
-						if (_wllWallFlags[_blockData[nbb].walls[ii ^ 2]] & 1) {
-							drawIcon(sx, sy, i, _colors, flags[i]);
+						if ((_wllWallFlags[_blockData[nbb].walls[ii ^ 2]] & 1) || (checkForBreakableObjectType(nbb) == kBrokenBarrier)) {
+							(this->*_drawIcon)(surf, 0, _specialBlockIDs[i].icon, sx, sy, _l.cell, kAlignCenter, 0, 0, -1);
+							legendFlags |= _specialBlockIDs[i].legendFlag;
 							break;
 						}
 					}
@@ -602,109 +487,68 @@ void Automap_EoB::draw(int level, uint16 partyBlock, int8 partyDirection) {
 		}
 	}
 
-	drawLegend(l, legendFlags);
-
-	const int mx = offX + (partyBlock & 0x1F) * cell;
-	const int my = offY + (partyBlock >> 5) * cell;
-	const int cx = mx + cell / 2;
-	const int cyp = my + cell / 2;
-	const int r = MAX(2, cell / 2 - MAX(1, cell / 6));
-	const int b = MAX(2, r * 3 / 4);
-	int tipX, tipY, l1X, l1Y, l2X, l2Y;
-	switch (partyDirection) {
-	case 1:
-		tipX = cx + r;
-		tipY = cyp;
-		l1X = cx - b;
-		l1Y = cyp - b;
-		l2X = cx - b;
-		l2Y = cyp + b;
-		break;
-	case 2:
-		tipX = cx;
-		tipY = cyp + r;
-		l1X = cx - b;
-		l1Y = cyp - b;
-		l2X = cx + b;
-		l2Y = cyp - b;
-		break;
-	case 3:
-		tipX = cx - r;
-		tipY = cyp;
-		l1X = cx + b;
-		l1Y = cyp - b;
-		l2X = cx + b;
-		l2Y = cyp + b;
-		break;
-	default:
-		tipX = cx;
-		tipY = cyp - r;
-		l1X = cx - b;
-		l1Y = cyp + b;
-		l2X = cx + b;
-		l2Y = cyp + b;
-		break;
+	if (partyBlock != 0xFFFF) {
+		int mx = _l.offX + (partyBlock & 0x1F) * _l.cell;
+		int my = _l.offY + (partyBlock >> 5) * _l.cell;
+		_partyIconColor = kColorPartyFrame0;
+		_partyIconColorStep = 1;
+		(this->*_drawIcon)(*_frame, 0, partyDirection, mx, my, _l.cell, kAlignCenter, 0, 0, _partyIconColor);
+		legendFlags |= (1 << partyDirection);
 	}
-	automapFillTri(surf, tipX, tipY, l1X, l1Y, l2X, l2Y, _colors[kColorPartyEdge]);
-	const int gx = (tipX + l1X + l2X) / 3, gy = (tipY + l1Y + l2Y) / 3;
-	automapFillTri(surf,
-				   tipX + (gx - tipX) / 4, tipY + (gy - tipY) / 4,
-				   l1X + (gx - l1X) / 4, l1Y + (gy - l1Y) / 4,
-				   l2X + (gx - l2X) / 4, l2Y + (gy - l2Y) / 4, _colors[kColorParty]);
 
+	drawLegend(legendFlags);
 
 	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const int fh = bigFont ? bigFont->getFontHeight() : 8;
-	const int sc = CLIP<int>(ow / 320, 1, 3);
-	const int mpad = MAX(8, l.mapW / 40);
-
 	if (bigFont) {
-		const uint16 cb = (partyBlock != 0xFFFF) ? partyBlock : 0;
-		const Common::String lvl = _levelNames[level - 1];
-		const Common::String crd = Common::String::format("X %d   Y %d", cb & 0x1F, cb >> 5);
-		const int pm = MAX(3, sc * 2);
-		const int innerW = l.plW - 2 * pm;
-		const int innerH = l.plH - 2 * pm;
-		const int gap = MAX(2, innerH / 12);
-		const int lvlBand = (innerH - gap) * 6 / 10; 
-		const int crdBand = (innerH - gap) - lvlBand;
-		const int lvlSc = automapFit(bigFont, lvl, innerW, MAX(1, lvlBand / fh));
-		const int crdSc = automapFit(bigFont, crd, innerW, MAX(1, crdBand / fh));
-		const int lvlY = l.plY + pm + (lvlBand - fh * lvlSc) / 2;
-		const int crdY = l.plY + pm + lvlBand + gap + (crdBand - fh * crdSc) / 2;
-		automapDrawBigString(surf, bigFont, lvl, l.plX, lvlY, l.plW, _colors[kColorGold], lvlSc);
-		automapDrawBigString(surf, bigFont, crd, l.plX, crdY, l.plW, _colors[kColorPanelTxt], crdSc);
-	
+		Common::String lvl = _levelNames[level - 1];
+		drawString(surf, bigFont, lvl, _l.plX, _levelStrY, _l.plW, _colors[kColorGold], _levelStrScl);
+		if (partyBlock != 0xFFFF) {
+			Common::String crd = Common::String::format("X %d   Y %d", partyBlock & 0x1F, partyBlock >> 5);
+			drawString(surf, bigFont, crd, _l.plX, _coordStrY, _l.plW, _colors[kColorPanelTxt], _coordStrScl);
+		}
+
+		/*
 		// Footer: TODO? We could write something? Or just leave it blank?
 		Common::String foot;
 		if (!foot.empty()) {
-			const int footH = (l.mapY + l.mapH) - l.footY;
+			const int fh = bigFont ? bigFont->getFontHeight() : 8;
+			const int sc = CLIP<int>(ow / 320, 1, 3);
+			const int mpad = MAX(8, _l.mapW / 40);
+			const int footH = (_l.mapY + _l.mapH) - _l.footY;
 			const int fpad = MAX(2, footH / 6);
 			const int maxFsc = MAX(1, (footH - 2 * fpad) / fh);
-			const int fw = l.mapW - 2 * mpad;
-			const int fsc = MIN(automapFit(bigFont, foot, fw, sc), maxFsc);
-			const int fy = l.footY + (footH - fh * fsc) / 2;
-			automapDrawBigString(surf, bigFont, foot, l.mapX + mpad, fy, fw, _colors[kColorInk], fsc, Graphics::kTextAlignLeft);
-		}
+			const int fw = _l.mapW - 2 * mpad;
+			const int fsc = MIN(fitString(bigFont, foot, fw, sc), maxFsc);
+			const int fy = _l.footY + (footH - fh * fsc) / 2;
+			drawString(surf, bigFont, foot, _l.mapX + mpad, fy, fw, _colors[kColorInk], fsc, Graphics::kTextAlignLeft);
+		}*/
 	}
 
 	_system->copyRectToOverlay(surf.getPixels(), surf.pitch, 0, 0, ow, oh);
 	_system->updateScreen();
 }
 
-Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
-	const int ow = _system->getOverlayWidth();
-	const int oh = _system->getOverlayHeight();
+void Automap_EoB::drawPartyIcon(uint16 partyBlock, int8 partyDirection) {
+	_partyIconColor += _partyIconColorStep;
+	if (_partyIconColor == kColorPartyFrame9 || _partyIconColor == kColorPartyFrame0)
+		_partyIconColorStep *= -1;
+	int mx = _l.offX + (partyBlock & 0x1F) * _l.cell;
+	int my = _l.offY + (partyBlock >> 5) * _l.cell;
+	(this->*_drawIcon)(*_frame, 0, partyDirection, mx, my, _l.cell, kAlignCenter, 0, 0, _partyIconColor);
+	_system->copyRectToOverlay(_frame->getBasePtr(mx, my), _frame->pitch, mx, my, _l.cell, _l.cell);
+	_system->updateScreen();
+}
+
+Automap_EoB::AutomapLayout Automap_EoB::createLayout(int width, int height) const {
 	AutomapLayout l;
 
-	// Stone frame around the overlay, a side panel on the right,
-	// and a parchment map inset filling the rest
-	l.frame = CLIP<int>(oh / 36, 8, 28);
-	const int gap = MAX(4, l.frame / 2);
-	l.sideW = MAX(150, ow / 4);
+	// Stone frame around the overlay, a side panel on the right, and a parchment map inset filling the rest
+	l.frame = CLIP<int>(height / 36, 8, 28);
+	const int gap = MAX<int>(4, l.frame / 2);
+	l.sideW = MAX<int>(150, width / 4);
 
 	const int inX = l.frame, inY = l.frame;
-	const int inW = ow - 2 * l.frame, inH = oh - 2 * l.frame;
+	const int inW = width - 2 * l.frame, inH = height - 2 * l.frame;
 
 	l.mapX = inX;
 	l.mapY = inY;
@@ -715,7 +559,7 @@ Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
 	l.sideH = inH;
 
 	const int mpad = MAX(8, l.mapW / 40);
-	const int footStrip = MAX(18, oh / 22);
+	const int footStrip = MAX(18, height / 22);
 	const int availW = l.mapW - 2 * mpad;
 	const int availH = l.mapH - 2 * mpad - footStrip;
 	l.cell = MAX(2, MIN(availW / 32, availH / 32));
@@ -728,206 +572,542 @@ Automap_EoB::AutomapLayout Automap_EoB::createLayout() const {
 	l.plX = l.sideX + spad;
 	l.plY = l.sideY + spad;
 	l.plW = l.sideW - 2 * spad;
-	l.plH = MAX(30, oh / 8);
+	l.plH = MAX(30, height / 8);
 	return l;
 }
 
-void Automap_EoB::createColors() {
+void Automap_EoB::recalcScaling(int width, int height) {
+	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	int fh = bigFont ? bigFont->getFontHeight() : 8;
+
+	int scl = CLIP<int>(MIN<int>(width / 320, height / 200), 1, 12);
+	_legendHeadScl = fitString(bigFont, _legendStrings[0], _l.plW * 4 / 5, scl);
+
+	int isz = 2 * _l.cell + MAX(2, _legendHeadScl * 2);
+	int tw = _l.plW - isz;
+	_legendBodyScl = 12;
+	for (int i = 1; i < kNumLegendStrings; ++i)
+		_legendBodyScl = MIN<int>(_legendBodyScl, fitString(bigFont, _legendStrings[i], tw, _legendBodyScl));
+	for (int i = 2; i < kNumControlStrings; i += 2) {
+		Common::String str = Common::String::format("%s %s", _controlStrings[i], _controlStrings[i + 1]);
+		_legendBodyScl = MIN<int>(_legendBodyScl, fitString(bigFont, str, _l.plW, _legendBodyScl));
+	}
+
+	int pm = MAX<int>(3, scl * 2);
+	int innerW = _l.plW - 2 * pm;
+	int innerH = _l.plH - 2 * pm;
+	int gap = MAX<int>(2, innerH / 12);
+	int lvlBand = (innerH - gap) * 6 / 10;
+	_levelStrScl = MAX<int>(1, lvlBand / fh);
+	for (int i = 0; i < _numLevelNames; ++i)
+		_levelStrScl = MIN<int>(_levelStrScl, fitString(bigFont, _levelNames[i], innerW, _levelStrScl));
+
+	int crdBand = (innerH - gap) - lvlBand;
+	Common::String crd("X 00   Y 00");
+	_coordStrScl = fitString(bigFont, crd, innerW, MAX<int>(1, crdBand / fh));
+
+	_levelStrY = _l.plY + pm + (lvlBand - fh * _levelStrScl) / 2;
+	_coordStrY = _l.plY + pm + lvlBand + gap + (crdBand - fh * _coordStrScl) / 2;
+}
+
+void Automap_EoB::createColorTable() {
 	static const uint8 rgbTable[kNumColors][3] = {
-		{ 0x54, 0x56, 0x5e },  // stone
-		{ 0x3c, 0x3e, 0x45 },  // stone dark
-		{ 0x23, 0x25, 0x2a },  // stone edge
-		{ 0x6b, 0x6e, 0x78 },  // stone hi
-		{ 0xc2, 0xc5, 0xcd },  // rivet
-		{ 0xd6, 0xbf, 0x94 },  // paper
-		{ 0xe2, 0xcd, 0xa4 },  // paper hi
-		{ 0xc4, 0xab, 0x78 },  // paper lo
-		{ 0xa9, 0x8b, 0x56 },  // paper edge
-		{ 0x3a, 0x2a, 0x18 },  // ink
-		{ 0x7a, 0x60, 0x38 },  // ink soft
-		{ 0xbb, 0x9c, 0x5e },  // floor
-		{ 0xc7, 0xb1, 0x80 },  // floor seen
-		{ 0x8a, 0x70, 0x38 },  // grid
-		{ 0x2c, 0x1e, 0x10 },  // wall
-		{ 0x8a, 0x73, 0x4a },  // wall seen
-		{ 0x3f, 0x7a, 0x3a },  // wall of force
-		{ 0x7a, 0x4a, 0x1c },  // door
-		{ 0x3f, 0x7a, 0x3a },  // stair
-		{ 0x5f, 0x5f, 0xca },  // tele
-		{ 0x9b, 0x6c, 0x2e },  // plate
-		{ 0x6c, 0x6e, 0x80 },  // pit
-		{ 0x9a, 0x2d, 0x2d },  // lever
-		{ 0x9a, 0x4d, 0xad },  // interactive
-		{ 0x95, 0x65, 0x26 },  // niche
-		{ 0xa8, 0x28, 0x1c },  // party
-		{ 0x5a, 0x14, 0x0e },  // party edge
-		{ 0x1c, 0x1a, 0x16 },  // plaque bg
-		{ 0x0d, 0x0c, 0x0a },  // plaque ed
-		{ 0xf0, 0xc8, 0x50 },  // gold
-		{ 0xb8, 0x92, 0x3a },  // gold dim
-		{ 0xd8, 0xc8, 0xa8 }   // panel text
+		{ 0x54, 0x56, 0x5e },	// stone
+		{ 0x3c, 0x3e, 0x45 },	// stone dark
+		{ 0x23, 0x25, 0x2a },	// stone edge
+		{ 0x6b, 0x6e, 0x78 },	// stone hi
+		{ 0xc2, 0xc5, 0xcd },	// rivet
+		{ 0xd6, 0xbf, 0x94 },	// paper
+		{ 0xe2, 0xcd, 0xa4 },	// paper hi
+		{ 0xc4, 0xab, 0x78 },	// paper lo
+		{ 0xa9, 0x8b, 0x56 },	// paper edge
+		{ 0x3a, 0x2a, 0x18 },	// ink
+		{ 0x7a, 0x60, 0x38 },	// ink soft
+		{ 0xbb, 0x9c, 0x5e },	// floor
+		{ 0xc7, 0xb1, 0x80 },	// floor seen
+		{ 0x8a, 0x70, 0x38 },	// grid
+		{ 0x2c, 0x1e, 0x10 },	// wall
+		{ 0x8a, 0x73, 0x4a },	// wall seen
+		{ 0x3f, 0x7a, 0x3a },	// wall of force
+		{ 0x7a, 0x4a, 0x1c },	// door
+		{ 0x3f, 0x7a, 0x3a },	// stair
+		{ 0x5f, 0x5f, 0xca },	// tele
+		{ 0x9b, 0x6c, 0x2e },	// plate
+		{ 0x6c, 0x6e, 0x80 },	// pit
+		{ 0x9a, 0x2d, 0x2d },	// lever
+		{ 0x9a, 0x4d, 0xad },	// interactive
+		{ 0x95, 0x65, 0x26 },	// niche
+		{ 0x1c, 0x1a, 0x16 },	// plaque bg
+		{ 0x0d, 0x0c, 0x0a },	// plaque ed
+		{ 0xf0, 0xc8, 0x50 },	// gold
+		{ 0xb8, 0x92, 0x3a },	// gold dim
+		{ 0xd8, 0xc8, 0xa8 },	// panel text
+		{ 0xfe, 0x12, 0xfe },	// transparency key
+		{ 0xa8, 0x28, 0x1c },	// party frame 0
+		{ 0xff, 0xff, 0xff },	// party frame 1 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 2 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 3 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 4 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 5 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 6 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 7 (placeholder, correct values will be calculated)
+		{ 0xff, 0xff, 0xff },	// party frame 8 (placeholder, correct values will be calculated)
+		{ 0xff, 0xaa, 0xaa }	// party frame 9
 	};
 
 	Graphics::PixelFormat fmt = _system->getOverlayFormat();
 
 	uint32 *colors = new uint32[kNumColors]();
-	for (int i = 0; i < kNumColors; ++i)
+	for (int i = 0; i < kColorPartyFrame0; ++i)
 		colors[i] = fmt.RGBToColor(rgbTable[i][0], rgbTable[i][1], rgbTable[i][2]);
+
+	// Create color gradient for the party icon frames (we let it blink for better visibility).
+	float algoBase = 1.25f; // It looks much better with a non-linear gradient.
+	int div = 0;
+	for (int i = 0; i < 10; ++i)
+		div += powf(algoBase, i);
+
+	int stepR = (rgbTable[kColorPartyFrame9][0] - rgbTable[kColorPartyFrame0][0]) * 0x10000 / div;
+	int stepG = (rgbTable[kColorPartyFrame9][1] - rgbTable[kColorPartyFrame0][1]) * 0x10000 / div;
+	int stepB = (rgbTable[kColorPartyFrame9][2] - rgbTable[kColorPartyFrame0][2]) * 0x10000 / div;
+
+	uint32 curR = rgbTable[kColorPartyFrame0][0] * 0x10000;
+	uint32 curG = rgbTable[kColorPartyFrame0][1] * 0x10000;
+	uint32 curB = rgbTable[kColorPartyFrame0][2] * 0x10000;
+
+	for (int i = 0; i < 10; ++i) {
+		colors[kColorPartyFrame0 + i] = fmt.RGBToColor(curR >> 16, curG >> 16, curB >> 16);
+		curR += stepR * powf(algoBase, i);
+		curG += stepG * powf(algoBase, i);
+		curB += stepB * powf(algoBase, i);
+	}
+
 	_colors = colors;
 }
 
-void Automap_EoB::redrawBackground(const AutomapLayout &l, int width, int height) {
+void automapFillTri(Graphics::Surface &s, int ax, int ay, int bx, int by, int cx, int cy, uint32 color) {
+	if (ay > by) {
+		SWAP(ax, bx);
+		SWAP(ay, by);
+	}
+	if (ay > cy) {
+		SWAP(ax, cx);
+		SWAP(ay, cy);
+	}
+	if (by > cy) {
+		SWAP(bx, cx);
+		SWAP(by, cy);
+	}
+	if (cy == ay)
+		return;
+
+	for (int y = ay; y <= cy; ++y) {
+		int xLong = ax + (cx - ax) * (y - ay) / (cy - ay);
+		int xShort = (y < by)
+						 ? (by == ay ? ax : ax + (bx - ax) * (y - ay) / (by - ay))
+						 : (cy == by ? bx : bx + (cx - bx) * (y - by) / (cy - by));
+		int x0 = MIN(xLong, xShort);
+		int x1 = MAX(xLong, xShort);
+		s.hLine(x0, y, x1, color);
+	}
+}
+
+void Automap_EoB::createIcons(bool lowResTarget) {
+	const uint32 *colTable = _colors;
+	Graphics::PixelFormat fmt = _system->getOverlayFormat();
+	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	int lineH = (bigFont ? bigFont->getFontHeight() : 8) * _legendBodyScl;
+
+	auto renderIcon = [&fmt, colTable](Graphics::Surface &surf, int iconID, int boxFitWidth, bool fitWithMargin, bool fillBackground) {
+		auto prepSurface = [&fmt, &surf, colTable](int width, int height, int bkgColor) {
+			surf.create(width, height, fmt);
+			surf.fillRect(Common::Rect(surf.w, surf.h), colTable[bkgColor == -1 ? kColorTransp : bkgColor]);
+		};
+
+		int size1half = MAX(2, boxFitWidth / 3);
+		int size1full = size1half * 2;
+
+		// For better visuals, we reduce the icon size so there is a bit of a gap between the icon and the cell border.
+		// But not if we're in a low res environment where the icon would just get too small...
+		int size2half = fitWithMargin ? size1half * 4 / 5 : size1half;
+		int size2full = size2half * 2;
+
+		int step1 = MAX(256, (boxFitWidth << 8) / 5);
+		int step2 = MAX(256, ((boxFitWidth - size1half) << 8) / 5);
+		int step2a = step2 * 2;
+
+		int sButtonSize = MAX(1, boxFitWidth / 5);
+		int mButtonSize = MAX(2, boxFitWidth / 4);
+		int nicheWd = MAX(2, boxFitWidth * 2 / 5);
+		int portalWd = MAX(2, boxFitWidth * 2 / 3);
+		int doorLen = boxFitWidth - 2 * MAX(1, boxFitWidth / 5);
+		int doorWdth = MAX(2, boxFitWidth / 5) + 1;
+
+		switch (iconID) {
+		case kIconPartyNorth:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, 0, size2full - 1, size2full - 1, size2full - 1, size2half, 0, colTable[kColorPartyFrame0]);
+			break;
+		case kIconPartyEast:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, 0, 0, 0, size2full - 1, size2full - 1, size2half, colTable[kColorPartyFrame0]);
+			break;
+		case kIconPartySouth:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, 0, 0, size2full - 1, 0, size2half, size2full - 1, colTable[kColorPartyFrame0]);
+			break;
+		case kIconPartyWest:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, size2full - 1, 0, size2full - 1, size2full - 1, 0, size2half, colTable[kColorPartyFrame0]);
+			break;
+		case kIconTeleporter:
+			prepSurface(size2full, size2full, -1);
+			for (int i = 0; i < size2half; ++i) {
+				surf.drawLine(i, size2half - i, size2full - i - 1, size2half - i, colTable[kColorTele]);
+				surf.drawLine(i, size2half + i, size2full - i - 1, size2half + i, colTable[kColorTele]);
+			}
+			break;
+		case kIconStairsUp:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, 0, size2full - 1, size2full - 1, size2full - 1, size2half, 0, colTable[kColorStair]);
+			break;
+		case kIconStairsDown:
+			prepSurface(size2full, size2full, -1);
+			automapFillTri(surf, 0, 0, size2full - 1, 0, size2half, size2full - 1, colTable[kColorStair]);
+			break;
+		case kIconPit:
+		case kIconPlate:
+			prepSurface(size2full, size2full, -1);
+			surf.drawEllipse(0, 0, size2full - 1, size2full - 1, colTable[iconID == kIconPit ? kColorPit : kColorPlate], true);
+			break;
+		case kIconIllusionWall:
+			prepSurface(boxFitWidth, boxFitWidth, fillBackground ? kColorFloor : -1);
+			for (int pos = 0, g = 0; g < 5; ++g, pos += step1) {
+				surf.drawLine(pos >> 8, 0, pos >> 8, boxFitWidth - 1, colTable[kColorWall]);
+				surf.drawLine(0, pos >> 8, boxFitWidth - 1, pos >> 8, colTable[kColorWall]);
+			}
+			break;
+		case 11:
+			break;
+		case kIconWallOfForce:
+			prepSurface(size1full, size1full, -1);
+			for (int posX = 0, g = 0; g < 3; ++g, posX += step2a) {
+				for (int posY = 0, gg = 0; gg < 3; ++gg, posY += step2a) {
+					surf.fillRect(Common::Rect(posX >> 8, posY >> 8, ((posX + step2) >> 8) - 1, ((posY + step2) >> 8) - 1), colTable[kColorWoF]);
+					if (g < 2 && gg < 2)
+						surf.fillRect(Common::Rect((posX + step2) >> 8, (posY + step2) >> 8, ((posX + step2a) >> 8) - 1, ((posY + step2a) >> 8) - 1), colTable[kColorWoF]);
+				}
+			}
+			break;
+		case kIconBigObject:
+			prepSurface(size2full, size2full, -1);
+			surf.fillRect(Common::Rect(size2full, size2full), colTable[kColorLever]);
+			break;
+		case kIconDoorButton:
+			prepSurface(sButtonSize, sButtonSize, -1);
+			surf.fillRect(Common::Rect(sButtonSize, sButtonSize), colTable[kColorLever]);
+			break;
+		case kIconSmallObject:
+			prepSurface(mButtonSize, mButtonSize, -1);
+			surf.fillRect(Common::Rect(mButtonSize, mButtonSize), colTable[kColorLever]);
+			break;
+		case kIconNicheNS:
+			prepSurface(nicheWd, mButtonSize, -1);
+			surf.fillRect(Common::Rect(nicheWd, mButtonSize), colTable[kColorNiche]);
+			break;
+		case kIconNicheEW:
+			prepSurface(mButtonSize, nicheWd, -1);
+			surf.fillRect(Common::Rect(mButtonSize, nicheWd), colTable[kColorNiche]);
+			break;
+		case kIconPortalNS:
+			prepSurface(portalWd, mButtonSize, -1);
+			surf.fillRect(Common::Rect(portalWd, mButtonSize), colTable[kColorTele]);
+			break;
+		case kIconPortalEW:
+			prepSurface(mButtonSize, portalWd, -1);
+			surf.fillRect(Common::Rect(mButtonSize, portalWd), colTable[kColorTele]);
+			break;
+		case kIconDoorNS:
+			prepSurface(doorLen, doorWdth, -1);
+			surf.fillRect(Common::Rect(doorLen, doorWdth), colTable[kColorDoor]);
+			break;
+		case kIconDoorEW:
+			prepSurface(doorWdth, doorLen, -1);
+			surf.fillRect(Common::Rect(doorWdth, doorLen), colTable[kColorDoor]);
+			break;
+		case kIconSpecial:
+			break;
+		default:
+			break;
+		}
+	};
+
+	releaseIcons();
+
+	// We make two sets of icons, one for the map, and one for the legend, so that the map icon size matches the cell size and the
+	// legend icon size matches the text line height. And we also want to have a wall background color for the legend illusion wall icon
+	// since it would otherwise be hardly visible on the "stone" background.
+	for (int i = 0; i < kIconIDMax; ++i) {
+		Graphics::Surface *surf = new Graphics::Surface();
+		renderIcon(*surf, i, _l.cell, (lowResTarget == false), false);
+		if (surf->getPixels() == nullptr) {
+			delete surf;
+			surf = nullptr;
+		}
+		_mapIcons.push_back(surf);
+
+		surf = new Graphics::Surface();
+		renderIcon(*surf, i, lineH, false, true);
+		if (surf->getPixels() == nullptr) {
+			delete surf;
+			surf = nullptr;
+		}
+		_legendIcons.push_back(surf);
+	}
+}
+
+void Automap_EoB::releaseIcons() {
+	for (uint i = 0; i < _mapIcons.size(); ++i) {
+		if (_mapIcons[i] == nullptr)
+			continue;
+		_mapIcons[i]->free();
+		delete _mapIcons[i];
+	}
+	_mapIcons.clear();
+	for (uint i = 0; i < _legendIcons.size(); ++i) {
+		if (_legendIcons[i] == nullptr)
+			continue;
+		_legendIcons[i]->free();
+		delete _legendIcons[i];
+	}
+	_legendIcons.clear();
+}
+
+// Sparse two-tone speckle to fake stone/paper grain
+void automapNoise(Graphics::Surface &s, int x0, int y0, int w, int h, uint32 cA, uint32 cB, uint32 seed) {
+	if (w <= 0 || h <= 0 || x0 < 0 || y0 < 0 || x0 + w > s.w || y0 + h > s.h)
+		return;
+	const int bpp = s.format.bytesPerPixel;
+	if (bpp != 2 && bpp != 4)
+		return;
+	uint32 st = seed | 1u;
+	for (int y = 0; y < h; ++y) {
+		byte *row = (byte *)s.getBasePtr(x0, y0 + y);
+		for (int x = 0; x < w; ++x) {
+			st = st * 1664525u + 1013904223u;
+			const uint32 v = st >> 24;
+			if (v < 26) {
+				const uint32 c = (v & 1u) ? cA : cB;
+				if (bpp == 2)
+					((uint16 *)row)[x] = (uint16)c;
+				else
+					((uint32 *)row)[x] = c;
+			}
+		}
+	}
+}
+
+void automapBevel(Graphics::Surface &s, const Common::Rect &r, uint32 hi, uint32 lo) {
+	s.hLine(r.left, r.top, r.right - 1, hi);
+	s.vLine(r.left, r.top, r.bottom - 1, hi);
+	s.hLine(r.left, r.bottom - 1, r.right - 1, lo);
+	s.vLine(r.right - 1, r.top, r.bottom - 1, lo);
+}
+
+void automapRivet(Graphics::Surface &s, int x, int y, int sz, uint32 dark, uint32 mid, uint32 hi) {
+	s.fillRect(Common::Rect(x - sz, y - sz, x + sz + 1, y + sz + 1), dark);
+	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x + sz, y + sz), mid);
+	const int q = MAX(1, sz / 2);
+	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x - sz + 1 + q, y - sz + 1 + q), hi);
+}
+
+void Automap_EoB::drawBackground(int width, int height) {
 	const Graphics::PixelFormat fmt = _system->getOverlayFormat();
 	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const int fh = bigFont ? bigFont->getFontHeight() : 8;
-	const int sc = CLIP<int>(width / 320, 1, 3);
-	const int mpad = MAX(8, l.mapW / 40);
+	int fh = bigFont ? bigFont->getFontHeight() : 8;
+	int mpad = MAX(8, _l.mapW / 40);
 
-	_automapBg->free();
-	_automapBg->create(width, height, fmt);
-	_automapFrame->free();
-	_automapFrame->create(width, height, fmt);
-	Graphics::Surface &bg = *_automapBg;
+	_background->free();
+	_background->create(width, height, fmt);
+	_frame->free();
+	_frame->create(width, height, fmt);
+	Graphics::Surface &bg = *_background;
 
 	bg.fillRect(Common::Rect(0, 0, width, height), _colors[kColorStone]);
 	automapNoise(bg, 0, 0, width, height, _colors[kColorStoneHi], _colors[kColorStoneEdge], 0x9e3779b9u);
 	automapBevel(bg, Common::Rect(0, 0, width, height), _colors[kColorStoneHi], _colors[kColorStoneEdge]);
 	automapBevel(bg, Common::Rect(2, 2, width - 2, height - 2), _colors[kColorStone], _colors[kColorStoneEdge]);
-	const int rv = MAX(2, l.frame / 4);
-	const int ri = l.frame / 2;
+	const int rv = MAX(2, _l.frame / 4);
+	const int ri = _l.frame / 2;
 	automapRivet(bg, ri, ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
 	automapRivet(bg, width - ri, ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
 	automapRivet(bg, ri, height - ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
 	automapRivet(bg, width - ri, height - ri, rv, _colors[kColorStoneEdge], _colors[kColorStoneHi], _colors[kColorRivet]);
 
-	const Common::Rect mr(l.mapX, l.mapY, l.mapX + l.mapW, l.mapY + l.mapH);
+	const Common::Rect mr(_l.mapX, _l.mapY, _l.mapX + _l.mapW, _l.mapY + _l.mapH);
 	bg.fillRect(mr, _colors[kColorPaperEdge]);
 	bg.fillRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), _colors[kColorPaper]);
-	automapNoise(bg, mr.left + 2, mr.top + 2, l.mapW - 4, l.mapH - 4, _colors[kColorPaperHi], _colors[kColorPaperLo], 0x85ebca6bu);
+	automapNoise(bg, mr.left + 2, mr.top + 2, _l.mapW - 4, _l.mapH - 4, _colors[kColorPaperHi], _colors[kColorPaperLo], 0x85ebca6bu);
 	bg.frameRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), _colors[kColorInkSoft]);
 	bg.frameRect(Common::Rect(mr.left + 5, mr.top + 5, mr.right - 5, mr.bottom - 5), _colors[kColorInk]);
-	bg.hLine(l.mapX + mpad, l.footY, l.mapX + l.mapW - mpad, _colors[kColorInkSoft]);
+	bg.hLine(_l.mapX + mpad, _l.footY, _l.mapX + _l.mapW - mpad, _colors[kColorInkSoft]);
 
-	const Common::Rect sr(l.sideX, l.sideY, l.sideX + l.sideW, l.sideY + l.sideH);
+	const Common::Rect sr(_l.sideX, _l.sideY, _l.sideX + _l.sideW, _l.sideY + _l.sideH);
 	bg.fillRect(sr, _colors[kColorStoneDark]);
-	automapNoise(bg, sr.left, sr.top, l.sideW, l.sideH, _colors[kColorStoneHi], _colors[kColorStoneEdge], 0xc2b2ae35u);
+	automapNoise(bg, sr.left, sr.top, _l.sideW, _l.sideH, _colors[kColorStoneHi], _colors[kColorStoneEdge], 0xc2b2ae35u);
 	automapBevel(bg, sr, _colors[kColorStoneEdge], _colors[kColorStoneHi]);
 
-	bg.fillRect(Common::Rect(l.plX, l.plY, l.plX + l.plW, l.plY + l.plH), _colors[kColorPlaqueEd]);
-	bg.fillRect(Common::Rect(l.plX + 2, l.plY + 2, l.plX + l.plW - 2, l.plY + l.plH - 2), _colors[kColorPlaqueBg]);
+	bg.fillRect(Common::Rect(_l.plX, _l.plY, _l.plX + _l.plW, _l.plY + _l.plH), _colors[kColorPlaqueEd]);
+	bg.fillRect(Common::Rect(_l.plX + 2, _l.plY + 2, _l.plX + _l.plW - 2, _l.plY + _l.plH - 2), _colors[kColorPlaqueBg]);
 
-	int lx = l.plX, colW = l.plW;
-	int cyy = l.plY + l.plH + MAX(8, sc * 6);
+	int cyy = _l.plY + _l.plH + MAX<int>(8, _legendHeadScl * 6);
 
-	automapDrawBigString(bg, bigFont, _legendStrings[0], lx, cyy, colW, _colors[kColorGoldDim], sc);
-	cyy += fh * sc + MAX(4, sc * 3);
-	bg.hLine(lx, cyy, lx + colW - 1, _colors[kColorStoneHi]);
-	bg.hLine(lx, cyy + 1, lx + colW - 1, _colors[kColorStoneEdge]);
+	drawString(bg, bigFont, _legendStrings[0], _l.plX, cyy, _l.plW, _colors[kColorGoldDim], _legendHeadScl);
+	cyy += fh * _legendHeadScl + MAX<int>(4, _legendHeadScl * 3);
+	bg.hLine(_l.plX, cyy, _l.plX + _l.plW - 1, _colors[kColorStoneHi]);
+	bg.hLine(_l.plX, cyy + 1, _l.plX + _l.plW - 1, _colors[kColorStoneEdge]);
 }
 
-void Automap_EoB::drawLegend(const AutomapLayout &l, uint flags) {
-	Graphics::Surface &bg = *_automapFrame;
+void Automap_EoB::drawLegend(uint flags) {
+	Graphics::Surface &bg = *_frame;
 	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	int fh = bigFont ? bigFont->getFontHeight() : 8;
-	int sc = CLIP<int>(_automapBg->w / 320, 1, 3);
-	int isz = MAX(6, fh * sc);
-	int rowH = fh * sc + MAX(4, sc * 4);
-	int lx = l.plX;
-	int colW = l.plW;
-	int cyy = l.plY + l.plH + MAX(8, sc * 6) + fh * sc + MAX(4, sc * 3) + MAX(6, sc * 4);
 
-	for (int i = 0; i < ARRAYSIZE(_stringTable[0].legendStrings) - 1; ++i) {
+	const IconID legendIcons[][2] = {
+		{ kIconPartyNorth, kIconNone },
+		{ kIconPartyEast, kIconNone },
+		{ kIconPartySouth, kIconNone },
+		{ kIconPartyWest, kIconNone },
+		{ kIconStairsUp, kIconNone },
+		{ kIconStairsDown, kIconNone },
+		{ kIconTeleporter, kIconNone },
+		{ kIconPit, kIconNone },
+		{ kIconPlate, kIconNone },
+		{ kIconDoorNS, kIconNone },
+		{ kIconDoorNS, kIconNone },
+		{ kIconIllusionWall, kIconNone },
+		{ kIconWallOfForce, kIconNone },
+		{ kIconBigObject, kIconSmallObject },
+		{ kIconBigObject, kIconSmallObject },
+		{ kIconNicheNS, kIconNone },
+		{ kIconPortalNS, kIconNone }
+	};
+
+	assert(ARRAYSIZE(legendIcons) == kNumLegendStrings + 2); // ignore first string (title), but there is also only one string for the party (regardless of direction)
+
+	int lh = fh * _legendBodyScl;
+	int isz = 2 * lh + MAX(2, _legendHeadScl * 2);
+	int tw = _l.plW - isz;
+	int rowH = lh + MAX(4, _legendBodyScl * 4);
+
+	int cyy = _l.plY + _l.plH + MAX(8, _legendBodyScl * 6) + fh * _legendHeadScl + MAX(4, _legendHeadScl * 3) + (isz - lh) / 2;
+	int tx = _l.plX + isz;
+	int strIdx = 1;
+
+	for (int i = 0; i < ARRAYSIZE(legendIcons); ++i) {
+		if (i > 3) // same string for the party icon, regardless of direction
+			++strIdx;
+
 		if (!(flags & (1 << i)))
 			continue;
 
-		int ix = lx;
-		int iy = cyy;
+		int ovr = (i == 10 || i == 14) ? kColorInteractive : -1;
 
-		switch (i) {
-		case 0: // party (up)
-			automapFillTri(bg, ix + isz / 2, iy, ix + isz, iy + isz, ix, iy + isz, _colors[kColorParty]);
-			break;
-		case 1: // stairs up
-			automapFillTri(bg, ix, iy + isz, ix + isz, iy + isz, ix + isz / 2, iy, _colors[kColorStair]);
-			break;
-		case 2: // stairs down
-			automapFillTri(bg, ix, iy, ix + isz, iy, ix + isz / 2, iy + isz, _colors[kColorStair]);
-			break;
-		case 3: // teleporter
-			for (int ii = 0; ii < isz / 2 - sc; ++ii) {
-				bg.drawLine(ix + sc + ii, iy + isz / 2 - ii, ix + isz - sc - ii, iy + isz / 2 - ii, _colors[kColorTele]);
-				bg.drawLine(ix + sc + ii, iy + isz / 2 + ii, ix + isz - sc - ii, iy + isz / 2 + ii, _colors[kColorTele]);
-			}
-			break;
-		case 4: // pit
-			bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, _colors[kColorPit], true);
-			break;
-		case 5: // plate
-			bg.drawEllipse(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc, _colors[kColorPlate], true);
-			break;
-		case 6: // door
-			bg.fillRect(Common::Rect(ix, iy + isz / 3, ix + isz, iy + isz - isz / 3), _colors[kColorDoor]);
-			break;
-		case 7: // barrier
-			bg.fillRect(Common::Rect(ix, iy + isz / 3, ix + isz, iy + isz - isz / 3), _colors[kColorInteractive]);
-			break;
-		case 8: { // illusionary wall
-			bg.fillRect(Common::Rect(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc), _colors[kColorFloor]);
-			int step = ((isz - 2 * sc) << 8) / 5;
-			for (int g = 0; g < 5; ++g) {
-				bg.drawLine(ix + sc + (step * g >> 8), iy + sc, ix + sc + (step * g >> 8), iy + isz - sc, _colors[kColorWall]);
-				bg.drawLine(ix + sc, iy + sc + (step * g >> 8), ix + isz - sc, iy + sc + (step * g >> 8), _colors[kColorWall]);
-			}
-		} break;
-		case 9: // wall of force
-			bg.fillRect(Common::Rect(ix + sc, iy + sc, ix + isz - sc, iy + isz - sc), _colors[kColorWoF]);
-			break;
-		case 10:
-			bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorLever]);
-			break;
-		case 11:
-			bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorInteractive]);
-			break;
-		case 12: // niche
-			bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorNiche]);
-			break;
-		case 13: // stone portal
-			bg.fillRect(Common::Rect(ix + isz / 3, iy, ix + isz - isz / 3, iy + isz), _colors[kColorTele]);
-		default:
-			break;
-		}
-		const int tx = lx + isz + MAX(4, sc * 2);
-		const int tw = colW - isz - MAX(4, sc * 2);
-		const int lsc = automapFit(bigFont, _legendStrings[i + 1], tw, sc);
-		automapDrawBigString(bg, bigFont, _legendStrings[i + 1], tx, iy + (isz - fh * lsc) / 2, tw, _colors[kColorPanelTxt], lsc, Graphics::kTextAlignLeft);
+		(this->*_drawIcon)(bg, 1, legendIcons[i][0], _l.plX, cyy, lh, kAlignCenter, 0, 0, ovr);
+		if (legendIcons[i][1] != kIconNone)
+			(this->*_drawIcon)(bg, 1, legendIcons[i][1], _l.plX + lh, cyy, lh, kAlignCenter, 0, 0, ovr);
+
+		drawString(bg, bigFont, _legendStrings[strIdx], tx, cyy, tw, _colors[kColorPanelTxt], _legendBodyScl, Graphics::kTextAlignLeft);
 		cyy += rowH;
 	}
 
-	cyy += MAX(6, sc * 5);
-	automapDrawBigString(bg, bigFont, _controlStrings[0], lx, cyy, colW, _colors[kColorGoldDim], sc);
-	cyy += fh * sc + MAX(4, sc * 3);
-	bg.hLine(lx, cyy, lx + colW - 1, _colors[kColorStoneHi]);
-	bg.hLine(lx, cyy + 1, lx + colW - 1, _colors[kColorStoneEdge]);
-	cyy += MAX(6, sc * 4);
-	const int chipPad = MAX(2, sc * 2);
-	const int chipH = fh * sc + chipPad;
+	cyy += MAX(4, _legendHeadScl * 4);
+	drawString(bg, bigFont, _controlStrings[0], _l.plX, cyy, _l.plW, _colors[kColorGoldDim], _legendHeadScl);
+	cyy += fh * _legendHeadScl + MAX(4, _legendHeadScl * 3);
+	bg.hLine(_l.plX, cyy, _l.plX + _l.plW - 1, _colors[kColorStoneHi]);
+	bg.hLine(_l.plX, cyy + 1, _l.plX + _l.plW - 1, _colors[kColorStoneEdge]);
+	cyy += MAX(6, _legendBodyScl * 6);
+	const int chipPad = MAX(2, _legendBodyScl * 2);
+	const int chipH = lh + chipPad;
 
 	int maxW = 0;
-	for (int i = 2; i < ARRAYSIZE(_stringTable[0].controlStrings); i += 2)
-		maxW = MAX<int>(maxW, (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * sc : 6 * sc) + chipPad * 2);
+	for (int i = 2; i < kNumControlStrings; i += 2)
+		maxW = MAX<int>(maxW, (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * _legendBodyScl : 6 * _legendBodyScl) + chipPad * 2);
 
-	for (int i = 2; i < ARRAYSIZE(_stringTable[0].controlStrings); i += 2) {
-		int chipW = (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * sc : 6 * sc) + chipPad * 2;
-		bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), _colors[kColorPlaqueEd]);
-		bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
-		automapDrawBigString(bg, bigFont, _controlStrings[i], lx, cyy + chipPad / 2, chipW, _colors[kColorGold], sc);
-		automapDrawBigString(bg, bigFont, _controlStrings[i + 1], lx + maxW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2, colW - maxW - MAX(4, sc * 3), _colors[kColorPanelTxt], sc, Graphics::kTextAlignLeft);
-		cyy += fh * sc + MAX(4, sc * 3);
+	for (int i = 2; i < kNumControlStrings; i += 2) {
+		int chipW = (bigFont ? bigFont->getStringWidth(_controlStrings[i]) * _legendBodyScl : 6 * _legendBodyScl) + chipPad * 2;
+		bg.fillRect(Common::Rect(_l.plX, cyy, _l.plX + chipW, cyy + chipH), _colors[kColorPlaqueEd]);
+		bg.fillRect(Common::Rect(_l.plX + 1, cyy + 1, _l.plX + chipW - 1, cyy + chipH - 1), _colors[kColorPlaqueBg]);
+		drawString(bg, bigFont, _controlStrings[i], _l.plX, cyy + chipPad / 2, chipW, _colors[kColorGold], _legendBodyScl);
+		drawString(bg, bigFont, _controlStrings[i + 1], _l.plX + maxW + MAX(4, _legendBodyScl * 3), cyy + (chipH - lh) / 2, _l.plW - maxW - MAX(4, _legendBodyScl * 3), _colors[kColorPanelTxt], _legendBodyScl, Graphics::kTextAlignLeft);
+		cyy += lh + MAX(4, _legendBodyScl * 3);
 	}
 }
 
+template<typename T> void Automap_EoB::drawIconImpl(Graphics::Surface &surf, int iconSet, int iconID, int cellX, int cellY, int boxFitWidth, IconAlignment alignment, int extraX, int extraY, int overrideColor) {
+	assert(iconID >= 0 && ((iconSet == 0 && iconID < (int)_mapIcons.size()) || (iconSet == 1 && iconID < (int)_legendIcons.size())));
+	if ((iconSet == 0 && _mapIcons[iconID] == nullptr) || (iconSet == 1 && _legendIcons[iconID] == nullptr) || iconSet < 0 || iconSet > 1)
+		return;
+
+	int x = cellX, y = cellY;
+	Graphics::Surface &icn = (iconSet == 0) ? *_mapIcons[iconID] : *_legendIcons[iconID];
+
+	if (alignment >= kAlignTopCenter && alignment <= kAlignCenter) {
+		const uint8 alignFlags[] = { 1, 6, 9, 2, 3 };
+		if (alignFlags[alignment] & 1)
+			x += ((boxFitWidth >> 1) - (icn.w >> 1));
+		if (alignFlags[alignment] & 2)
+			y += ((boxFitWidth >> 1) - (icn.h >> 1));
+		if (alignFlags[alignment] & 4)
+			x += (boxFitWidth - icn.w);
+		if (alignFlags[alignment] & 8)
+			y += (boxFitWidth - icn.h);
+	}
+
+	x += extraX;
+	y += extraY;
+
+	const T *src = reinterpret_cast<const T*>(icn.getPixels());
+	T *dst = reinterpret_cast<T*>(surf.getBasePtr(x, y));
+	T kc = static_cast<T>(_colors[kColorTransp]);
+	int pitch = surf.pitch / sizeof(T);
+
+	if (overrideColor >= 0) {
+		uint32 col = _colors[overrideColor];
+		for (int h = icn.h; h > 0; --h) {
+			T *d = dst;
+			for (int w = icn.w; w > 0; --w) {
+				if (*src++ != kc)
+					*d = col;
+				++d;
+			}
+			dst += pitch;
+		}
+	} else {
+		for (int h = icn.h; h > 0; --h) {
+			T *d = dst;
+			for (int w = icn.w; w > 0; --w) {
+				T pixel = *src++;
+				if (pixel != kc)
+					*d = pixel;
+				++d;
+			}
+			dst += pitch;
+		}
+	}
+}
+
+template void Automap_EoB::drawIconImpl<uint8>(Graphics::Surface&, int, int, int, int, int, IconAlignment, int, int, int);
+template void Automap_EoB::drawIconImpl<uint16>(Graphics::Surface&, int, int, int, int, int, IconAlignment, int, int, int);
+template void Automap_EoB::drawIconImpl<uint32>(Graphics::Surface&, int, int, int, int, int, IconAlignment, int, int, int);
+
+int Automap_EoB::fitString(const Graphics::Font *f, const Common::String &str, int maxW, int maxSc) const {
+	int wdth = f ? f->getStringWidth(str) : 0;
+	return (wdth == 0) ? 1 : CLIP<int>(maxW / wdth, 1, maxSc);
+}
+
 uint16 Automap_EoB::calcNewBlockPosition(uint16 block, int8 dir) const {
-	static const int16 blockPosTable[] = {-32, 1, 32, -1};
+	const int16 blockPosTable[] = { -32, 1, 32, -1 };
 	return (block + blockPosTable[dir & 3]) & 0x3FF;
 }
 
@@ -1028,6 +1208,8 @@ int EoBCoreEngine::clickedAutomap(Button *button) {
 	int currentBlock = _currentBlock;
 	int currentDirection = _currentDirection;
 	int numLevels = (_flags.gameID == GI_EOB2) ? 16 : 12;
+	const uint8 partyIconBlinkSpeed = 100;
+	uint32 partyIconBlinkTimer = _system->getMillis() + partyIconBlinkSpeed;
 
 	int ow = _system->getOverlayWidth();
 	int oh = _system->getOverlayHeight();
@@ -1088,6 +1270,11 @@ int EoBCoreEngine::clickedAutomap(Button *button) {
 		if (update) {
 			_automap->draw(_currentLevel, _currentBlock, _currentDirection);
 			update = false;
+		} else if (_currentBlock != 0xFFFF) {
+			if (_system->getMillis() > partyIconBlinkTimer) {
+				_automap->drawPartyIcon(_currentBlock, _currentDirection);
+				partyIconBlinkTimer = _system->getMillis() + partyIconBlinkSpeed;
+			}
 		}
 
 		delayUntil(frameEnd, false, false, false); // TODO? allow GMM loading on the map screen, seen comment above
