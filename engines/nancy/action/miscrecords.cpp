@@ -965,6 +965,12 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void LoseGame::execute() {
+	if (g_nancy->getGameType() >= kGameTypeNancy16) {
+		NancySceneState.loadSecondChance();
+		_isDone = true;
+		return;
+	}
+
 	g_nancy->_sound->stopAndUnloadSceneSpecificSounds();
 	NancySceneState.setDestroyOnExit();
 

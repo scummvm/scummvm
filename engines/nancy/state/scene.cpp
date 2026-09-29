@@ -2078,6 +2078,15 @@ void Scene::run() {
 		_actionManager.stopSpeechSounds();
 	}
 
+	if (_isLoadingSecondChance) {
+		_isLoadingSecondChance = false;
+		if (g_nancy->loadGameState(g_nancy->getMetaEngine()->getMaximumSaveSlot()).getCode() == Common::kNoError) {
+			return;
+		}
+
+		warning("Scene: no second chance save to go back to");
+	}
+
 	if (_ndui) {
 		_uiPrepActions.processActionRecords();
 		_ndui->update();

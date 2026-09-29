@@ -121,6 +121,10 @@ public:
 	// Used when winning/losing game
 	void setDestroyOnExit() { _destroyOnExit = true; }
 
+	// Nancy16 has no main menu to go to on losing; the game goes back to the second
+	// chance save instead, once the current records have run
+	void loadSecondChance() { _isLoadingSecondChance = true; }
+
 	bool isRunningAd() const { return _isRunningAd; }
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
@@ -479,6 +483,8 @@ private:
 
 	// Set when esc skipped a cinematic this frame
 	bool _hasSkippedMovie = false;
+
+	bool _isLoadingSecondChance = false;
 
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;
