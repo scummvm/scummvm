@@ -141,9 +141,9 @@ void IgorEngine::PART_MAIN() {
 		case 61: // arrive from intro
 			PART_06(); // SpringRock
 			break;
-		case 70:
-		case 71:
-		case 72:
+		case 70: // enter from outside the administration corridor
+		case 71: // enter from deans door
+		case 72: // enter from secretary
 			PART_07(); // Administration corridor; cseg197:28D4
 			break;
 		case 100: // enter from map
