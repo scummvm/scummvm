@@ -3227,7 +3227,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_LIGHTHOUSE_MAC
 
 	// Larry 1 EGA Remake - English DOS (from spookypeanut)
-	// SCI interpreter version 0.000.510 (or 0.000.577?)
+	// Game version 2.0 from VERSION file
+	// SCI interpreter version 1.000.575
 	{"lsl1sci", "SCI/EGA", {
 		{"resource.map", 0, "abc0dc50c55de5b9723bb6de193f8756", 3282},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 451366},
@@ -3253,7 +3254,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
-	// Executable scanning reports "1.000.577", VERSION file reports "2.1"
+	// Game version 2.1 from VERSION file
+	// SCI interpreter version 1.000.577
 	{"lsl1sci", "SCI", {
 		{"resource.map", 0, "6d04d26466337a1a64b8c6c0eb65c9a9", 3222},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 922406},
@@ -3263,6 +3265,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Larry 1 VGA Remake - English DOS (from FRG)
+	// Game version 2.0 from VERSION file
 	// SCI interpreter version 1.000.510
 	{"lsl1sci", "SCI", {
 		{"resource.map", 0, "8606b083b011a0cc4a1fbfc2198a0a77", 3198},
