@@ -450,7 +450,8 @@ ft	Full Throttle
 	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
 mortimer	Mortimer and the Riddles of the Medallion
-	3450a722d29c150a4bdac5ba9b5f3b46	290304	en	Windows	-	Demo	Windows demo launcher	-
+	b6d609c97e1d089e27ef5eadd6bb3fc1	450048	en	Windows	-	-	Windows retail launcher	-
+	3450a722d29c150a4bdac5ba9b5f3b46	290304	en	Windows	Demo	Demo	Windows demo launcher	-
 
 rebel1	Star Wars: Rebel Assault
 	0ca9c07185b4969764eaf3ecd0de06e9	111530	en	DOS	Demo v0.67	Demo v0.67	Non-interactive demo	-
