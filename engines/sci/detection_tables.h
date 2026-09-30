@@ -1330,7 +1330,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Hoyle 2 - English DOS (supplied by ssburnout in bug report #5270)
-	// 1.000.011 1x3.5" (label:Int#6.21.90)
+	// Game version 1.000.011
+	// SCI interpreter version 0.000.572
 	{"hoyle2", "", {
 		{"resource.map", 0, "db0ba08b953e9904a4960ad99cd29c20", 1356},
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 216315},
@@ -1338,7 +1339,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Hoyle 2 - English DOS (supplied by m_kiewitz)
-	// SCI interpreter version 0.000.668, Ver 1.000.014, 2x5.25"
+	// Game version 1.000.014
+	// SCI interpreter version 0.000.668
 	{"hoyle2", "", {
 		{"resource.map", 0, "8cef06c93d17d96f44aacd5902d84b30", 2100},
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 98289},
@@ -1347,7 +1349,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Hoyle 2 - English DOS (supplied by misterhands in bug report #6598)
-	// Game v1.000.016, interpreter 0.000.668, INT #12.5.90
+	// Game version 1.000.016
+	// SCI interpreter version 0.000.668
 	{"hoyle2", "", {
 		{"resource.map", 0, "d8758a4eb6f34f6b3130bf25a496d123", 1356},
 		{"resource.001", 0, "8f2dd70abe01112eca464cda818b5eb6", 217880},
