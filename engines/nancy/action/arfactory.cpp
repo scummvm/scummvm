@@ -49,7 +49,7 @@
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/cardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
-//#include "engines/nancy/action/puzzle/cookingpuzzle.h"
+#include "engines/nancy/action/puzzle/cookingpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
 #include "engines/nancy/action/puzzle/decoderpuzzle.h"
@@ -699,7 +699,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 193:
 		return new FishingPuzzle();
 	case 194:
-		return nullptr; // return new CookingPuzzle();
+		return new CookingPuzzle();
 	case 195:
 		return new MinesweeperPuzzle();
 	case 196:
