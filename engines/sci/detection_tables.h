@@ -4594,21 +4594,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							GAMEOPTION_TTS,					\
 							GAMEOPTION_ENABLE_GMM_SAVE)
 
-	// Pepper's Adventure In Time 1.000 English
-	// Executable scanning reports "1.001.072", VERSION file reports "1.000"
+	// Pepper's Adventure In Time - English DOS
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.001.072
 	{"pepper", "", {
 		{"resource.map", 0, "72726dc81c1b4c1110c486be77369bc8", 5179},
 		{"resource.000", 0, "670d0c53622429f4b11275caf7f8d292", 5459574},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
+	// Pepper's Adventure In Time - English Windows
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.001.069
 	{"pepper", "", {
 		{"resource.map", 0, "72726dc81c1b4c1110c486be77369bc8", 5179},
 		{"resource.000", 0, "670d0c53622429f4b11275caf7f8d292", 5459574},
 		AD_LISTEND}, Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_PEPPER_WINDOWS },
 
 	// Pepper - English DOS Non-Interactive Demo
-	// Executable scanning reports "1.001.060", VERSION file reports "1.000"
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.001.060
 	{"pepper", "Demo", {
 		{"resource.map", 0, "379bb4fb896630b14f2d91ed21e36ba1", 984},
 		{"resource.000", 0, "118f6c31a93ec7fd9a231c61125229e3", 645494},
@@ -4616,7 +4621,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Pepper - English DOS/Windows Interactive Demo
-	// Executable scanning reports "1.001.069", VERSION file reports ".001"
+	// Game version ".001" from VERSION file
+	// SCI interpreter version 1.001.070 DOS, 1.001.069 Windows
 	{"pepper", "Demo", {
 		{"resource.map", 0, "975e8df76106a5c13d12ab674f906a02", 2514},
 		{"resource.000", 0, "e6a918a2dd7a4bcecd8fb389f43287c2", 1698164},
@@ -4624,7 +4630,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Pepper - English DOS Interactive Demo
-	// Executable scanning reports "1.001.072", VERSION file reports "1.000"
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.001.072
 	{"pepper", "Demo", {
 		{"resource.map", 0, "9c9b7b900651a370dd3fb38d478b1798", 2524},
 		{"resource.000", 0, "e6a918a2dd7a4bcecd8fb389f43287c2", 1713544},
