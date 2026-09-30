@@ -5987,6 +5987,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_PALETTEMODS	},
 
 	// Space Quest 3 - English DOS (provided by richiefs in bug report #4214)
+	// Game version 1.0U 1989-04-13 from about screen, "1.0 V" from QAFILE
 	// SCI interpreter version 0.000.453
 	{"sq3", "", {
 		{"resource.map", 0, "fee82d211c3918a90ce3b476d3dbb245", 5484},
@@ -5997,7 +5998,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
 
 	// Space Quest 3 - English DOS (from the Space Quest Collection)
-	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	// Game version 1.018 from VERSION file
+	// SCI interpreter version 0.000.685
 	{"sq3", "", {
 		{"resource.map", 0, "55e91aeef1705bce2a9b79172682f36d", 5730},
 		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 490247},
@@ -6006,8 +6008,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
-	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
-	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report #10677)
+	// Game version 1.018 from VERSION file
+	// SCI interpreter version 0.000.685
 	{"sq3", "", {
 		{"resource.map", 0, "590ed699f9a4789e9357c1e55ba4b1eb", 6078},
 		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 175038},
@@ -6018,7 +6021,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
 	// Space Quest 3 - English DOS (from telanus, bug report Trac#9626)
-	// Game version 1.0P 1989-03-22
+	// Game version 1.0P 1989-03-22 from about screen
 	// SCI interpreter version 0.000.453
 	{"sq3", "", {
 		{"resource.map", 0, "6dd8f59dd8a0c8131f34b159044e645e", 5598},
@@ -6032,7 +6035,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
 	// Space Quest 3 - English DOS (from darksoul42, bug report Trac#10245)
-	// Game version 1.0P 1989-03-22
+	// Game version 1.0P 1989-03-22 from about screen
 	// SCI interpreter version 0.000.453
 	{"sq3", "", {
 		{"resource.map", 0, "876445bb0085a62d5966f4153e2ddf52", 5484},
@@ -6043,6 +6046,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
 	// Space Quest 3 - English DOS (from abevi, bug report #4176)
+	// Game version 1.0U 1989-04-13 from about screen
+	// SCI interpreter version 0.000.453
 	{"sq3", "", {
 		{"resource.map", 0, "eca165515c6b62b05fa86b7d8f727660", 5598},
 		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 170494},
@@ -6055,7 +6060,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS	},
 
 	// Space Quest 3 - German DOS (from Tobis87, also includes english language)
-	// SCI interpreter version 0.000.453 (?)
+	// Game version 1.052 from VERSION file
+	// SCI interpreter version S.old.114
 	{"sq3", "", {
 		{"resource.map", 0, "4965c78b5eff50d5e4148ce114594ba8", 7584},
 		{"resource.001", 0, "9107c2aa5398e28b5c5406df13491f85", 117869},
@@ -6068,8 +6074,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16_PALETTEMODS },
 
-	// Space Quest 3 v1.052 - German DOS (supplied by markcoolio in bug report #4281, also includes english language)
-	// Executable scanning reports "S.old.114"
+	// Space Quest 3 - German DOS (supplied by markcoolio in bug report #4281, also includes english language)
+	// Game version 1.052 from VERSION file
+	// SCI interpreter version S.old.114
 	{"sq3", "", {
 		{"resource.map", 0, "f0dd735098c254f584878649c6f08dbc", 5154},
 		{"resource.001", 0, "9107c2aa5398e28b5c5406df13491f85", 567245},
@@ -6088,6 +6095,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS },
 
 	// Space Quest 3 v1.1 (game says 0.016) - English Mac (supplied by misterhands in bug report #6484)
+	// Game version 0.016 from VERSION file
 	// Executable scanning reports "0.024"
 	{"sq3", "", {
 		{"resource.map", 0, "d1574928fc6187f5958d431ac9d8022e", 5844},
