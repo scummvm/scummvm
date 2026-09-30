@@ -6186,15 +6186,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_PIRATED, GUIO_STD16	},
 
-	// Space Quest 4 - English DOS
-	// Executable scanning reports "1.000.753"
-	// SCI interpreter version 1.000.200 (just a guess)
-	{"sq4", "", {
-		{"resource.map", 0, "71ccf4f82ac4efb588731acfb7bf2603", 5646},
-		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 933928},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
-
 	// Space Quest 4 1.052 - English DOS Floppy (supplied by markcoolio in bug report #4283)
 	// Also matches floppies labeled "VER#1.1 INT#4.29.91" (tsoliman)
 	// Executable scanning reports "1.000.753"
@@ -6223,20 +6214,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Space Quest 4 1.000 - English DOS Floppy (from abevi, bug report #4176)
-	{"sq4", "", {
-		{"resource.map", 0, "8f08b97ca093f370c56d99715b015554", 6153},
-		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 206032},
-		{"resource.001", 0, "99a6df6d366b3f061271ff3450ac0d32", 1270577},
-		{"resource.002", 0, "a6a8d7a24dbb7a266a26b084e7275e89", 1242817},
-		{"resource.003", 0, "47ee647b5b12232d27e63cc627c25899", 1321146},
-		{"resource.004", 0, "c06350184a490c10eb4585fff0aa3192", 1254368},
-		{"resource.005", 0, "b8d6efbd3235329bfe844c794097b2c9", 1098717},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
-
 	// Space Quest 4 DOS 1.060 EGA (6 x 3.5" disks)
 	// Supplied by ssburnout in bug report #5255
+	// SCI interpreter version 1.000.744
 	{"sq4", "EGA", {
 		{"resource.map", 0, "4f59814d23a3721f251140fdcfebe35d", 5556},
 		{"resource.000", 0, "e1f46832cd2458796028e054a0466031", 385479},
@@ -6250,6 +6230,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 4 DOS 1.065 EGA (10 x 5.25" 360k disks)
 	// Supplied by ns394 in bug report #15572
+	// SCI interpreter version 1.000.744
 	{"sq4", "EGA", {
 		{"resource.map", 0, "b0d425ab4fce54ec238b64c19ba3851e", 5148},
 		{"resource.000", 0, "419bdd9ad892755a9e684fd763529d78", 197195},
