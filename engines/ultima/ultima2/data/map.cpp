@@ -79,6 +79,16 @@ void Map::loadTalk(int mapEra, int mapType) {
 	}
 }
 
+bool Map::canLoad(int mapEra, int mapType) const {
+	Common::File f;
+	if (!f.open(mapFilename(mapEra, mapType).c_str()))
+		return false;
+
+	// Towers/dungeons use a different on-disk layout than the fixed-size
+	// overworld/town/castle grid, so only their existence is checked here
+	return (mapType >= 4 && mapType != 9) || f.size() == MAP_WIDTH * MAP_HEIGHT;
+}
+
 void Map::load(int mapEra, int mapType) {
 	if (mapType >= 4 && mapType != 9) {
 		loadDungeon(mapEra, mapType);

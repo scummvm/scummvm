@@ -379,8 +379,12 @@ void CityCastleLogic::completeOffer(int goldHundreds) {
 				&sg._strength, &sg._agility, &sg._stamina,
 				&sg._charisma, &sg._wisdom, &sg._intelligence
 			};
-			// Attributes are two BCD digits, so a big boost wraps around
-			*attrs[stat] = (*attrs[stat] + 4 * goldHundreds) % 100;
+			// The original adds goldHundreds in 4 unclamped BCD steps, so a
+			// big enough boost wraps back down past 0. The 1989 "Ultima II
+			// Upgrade" patch clamps each of the 4 steps to 99 instead;
+			// since the same amount is added every step, clamping the
+			// combined total once here gives the same result
+			*attrs[stat] = (int16)MIN(*attrs[stat] + 4 * goldHundreds, Data::MAX_BCD_BYTE);
 			writeString("ALAKAZAM!\n");
 		}
 		break;

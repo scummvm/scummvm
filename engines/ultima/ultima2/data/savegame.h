@@ -227,9 +227,15 @@ struct Savegame {
 	 * combined Intelligence+Charisma (a haggling mechanic)
 	 */
 	int computeItemPrice(int itemIndex) const {
-		// The original sums the raw packed-BCD Intelligence/Charisma bytes,
-		// not their decimal values, before counting bits below
-		int sum = toBcd(_intelligence) + toBcd(_charisma);
+		// The original sums the raw packed-BCD Intelligence/Charisma bytes
+		// with no decimal adjustment, so a combined score of 100+ lands on
+		// an invalid byte and produces too small a discount. The 1989
+		// "Ultima II Upgrade" patch fixes this by decimal-adjusting the sum
+		// and clamping it to the highest valid BCD byte (0x99) instead;
+		// since a properly decimal-adjusted BCD byte's integer value is
+		// just its own toBcd() encoding, that's the same as clamping the
+		// true decimal sum to 99 before re-encoding it here
+		int sum = toBcd(MIN(_intelligence + _charisma, MAX_BCD_BYTE));
 		int bits = 0;
 		while (sum > 0) {
 			sum >>= 1;

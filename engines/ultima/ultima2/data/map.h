@@ -69,6 +69,17 @@ public:
 	void load(int mapEra, int mapType);
 
 	/**
+	 * Checks that a map's file exists and, for overworld/town/castle maps,
+	 * is the right size, without actually loading it. The original's
+	 * moongate travel reloads the target era unconditionally and can show
+	 * corrupted terrain if that era's data turns out to be missing or
+	 * truncated; callers doing an unprompted map switch (moongate travel,
+	 * not a player-chosen destination) can check this first and bail out
+	 * instead
+	 */
+	bool canLoad(int mapEra, int mapType) const;
+
+	/**
 	 * Saves or restores the current map's contents and monsters as they
 	 * are now, including changes made during play. Loading expects the
 	 * map to have been loaded first

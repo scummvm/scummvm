@@ -199,7 +199,6 @@ bool OverworldLogic::move(Data::Direction dir) {
 
 void OverworldLogic::enterMoongate(int x, int y) {
 	Data::Savegame &sg = _G(savegame);
-	_G(map)._tiles[y][x] = (Data::TileId)sg._patrolTerrain;
 
 	// Each waypoint leads to a different one of the other eras, arriving
 	// at that era's moongate for the same waypoint
@@ -208,6 +207,15 @@ void OverworldLogic::enterMoongate(int x, int y) {
 	if (era >= sg._mapEra)
 		++era;
 
+	// The original reloads the target era unconditionally here, which can
+	// show corrupted terrain if that era's map data turns out to be
+	// missing or truncated; bail out untouched rather than risk the same
+	if (!_G(map).canLoad(era, 0)) {
+		writeString("THE GATE FLICKERS AND FAILS!\n");
+		return;
+	}
+
+	_G(map)._tiles[y][x] = (Data::TileId)sg._patrolTerrain;
 	sg._mapEra = era;
 	_G(map).load(era, 0);
 
