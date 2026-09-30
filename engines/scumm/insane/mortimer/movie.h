@@ -48,19 +48,24 @@ struct MortimerSound {
 	Common::Array<byte> samples;
 };
 
-bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites);
+bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites, byte *palette = nullptr);
 bool loadMortimerSound(Common::SeekableReadStream &stream, MortimerSound &sound);
 
 // Mortimer's SMUSH movie reader. Gameplay supplies the IACT and SKIP rules.
 class MortimerMovie {
 public:
 	enum { kScreenWidth = 640, kScreenHeight = 480 };
+	struct Caption {
+		int16 x, y;
+		uint16 id;
+	};
 
 	MortimerMovie();
 	virtual ~MortimerMovie();
 	bool load(Common::SeekableReadStream &stream, bool doubled = true);
 	virtual void reset();
 	virtual bool advance();
+	void setBackground(const byte *pixels);
 
 	const byte *pixels() const { return _pixels.begin(); }
 	const byte *palette() const { return _palette; }
@@ -68,6 +73,7 @@ public:
 	uint frameCount() const { return _frames.size(); }
 	uint frameRate() const { return _frameRate; }
 	const Common::Array<MortimerSound> &sounds() const { return _sounds; }
+	const Common::Array<Caption> &captions() const { return _captions; }
 	const Common::String &errorMessage() const { return _error; }
 
 protected:
@@ -85,6 +91,7 @@ private:
 		uint16 skipA = 0xffff, skipB = 0;
 		int x = 0, y = 0, width = 0, height = 0, scale = 1;
 		byte codec = 0;
+		bool transparent = false;
 		byte remap[256] = {};
 		Common::Array<byte> pixels;
 	};
@@ -93,10 +100,11 @@ private:
 	void handlePalette(const byte *data, uint32 size);
 	bool decodeObject(Object &object);
 
-	Common::Array<byte> _data, _pixels, _previous, _scratch;
+	Common::Array<byte> _data, _pixels, _previous, _scratch, _background;
 	Common::Array<Frame> _frames;
 	Common::Array<Object> _objects;
 	Common::Array<MortimerSound> _sounds;
+	Common::Array<Caption> _captions;
 	Object _storedObject;
 	SmushDeltaBlocksDecoder *_decoder;
 	Common::String _error;

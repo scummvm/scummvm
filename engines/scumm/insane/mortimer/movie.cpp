@@ -92,10 +92,10 @@ bool validRows(const byte *src, uint32 size, int height, bool remap) {
 	return pos == size || (pos + 1 == size && src[pos] == 0);
 }
 
-// Codec37's existing decoder has no input-length argument. Validate the two
+// Codec37's existing decoder has no input-length argument. Validate the
 // encodings present in the demo movies before passing any data to it.
 bool validBackground(const byte *src, uint32 size, int width, int height) {
-	if (size < 16 || src[1] != 1 || (src[12] != 0 && src[12] != 4))
+	if (size < 16 || src[1] != 1 || (src[12] & ~6))
 		return false;
 	uint32 pos = 16;
 	if (src[0] == 2) {
@@ -113,11 +113,21 @@ bool validBackground(const byte *src, uint32 size, int width, int height) {
 			pos += count;
 			remaining -= run;
 		}
-	} else if (src[0] == 3) {
-		for (uint block = 0; block < uint(width * height) / 16; ++block) {
+	} else if (src[0] == 3 || src[0] == 4) {
+		const uint blocks = uint(width * height) / 16;
+		for (uint block = 0; block < blocks; ++block) {
 			if (pos == size)
 				return false;
 			const byte code = src[pos++];
+			if (src[0] == 4 && code == 0) {
+				if (pos == size)
+					return false;
+				const uint run = src[pos++] + 1;
+				if (run > blocks - block)
+					return false;
+				block += run - 1;
+				continue;
+			}
 			const uint count = code == 0xff ? 16 : (src[12] & 4) && code == 0xfe ? 4 : (src[12] & 4) && code == 0xfd ? 1 : 0;
 			if (count > size - pos)
 				return false;
@@ -197,7 +207,7 @@ bool decodeSound(const Common::Array<byte> &data, MortimerSound &sound) {
 
 } // End of anonymous namespace
 
-bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites) {
+bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites, byte *palette) {
 	Common::Array<byte> data;
 	sprites.clear();
 	if (!readData(stream, data) || !isContainer(data, MKTAG('A', 'N', 'I', 'M')))
@@ -207,6 +217,11 @@ bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<Morti
 		Chunk frame;
 		if (!nextChunk(data.begin(), data.size(), pos, frame))
 			return false;
+		if (palette && frame.tag == MKTAG('A', 'H', 'D', 'R')) {
+			if (frame.size < 774)
+				return false;
+			memcpy(palette, data.begin() + frame.offset + 6, 768);
+		}
 		if (frame.tag != MKTAG('F', 'R', 'M', 'E'))
 			continue;
 		uint32 subpos = frame.offset;
@@ -332,6 +347,9 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 				} else if (sub.tag == MKTAG('N', 'P', 'A', 'L')) {
 					if (sub.size != 768)
 						return fail("Invalid Mortimer palette");
+				} else if (sub.tag == MKTAG('T', 'R', 'E', 'S')) {
+					if (sub.size != 18)
+						return fail("Invalid Mortimer caption");
 				} else if (sub.tag == MKTAG('S', 'T', 'O', 'R') || sub.tag == MKTAG('F', 'T', 'C', 'H')) {
 					if (sub.size != (sub.tag == MKTAG('S', 'T', 'O', 'R') ? 4U : 6U))
 						return fail("Invalid Mortimer background command");
@@ -387,6 +405,8 @@ void MortimerMovie::reset() {
 	_storeNext = false;
 	_storedObject = Object();
 	_objects.clear();
+	_captions.clear();
+	_background.clear();
 	memcpy(_palette, _initialPalette, sizeof(_palette));
 	memset(_paletteDelta, 0, sizeof(_paletteDelta));
 	memset(_shiftedPalette, 0, sizeof(_shiftedPalette));
@@ -394,6 +414,11 @@ void MortimerMovie::reset() {
 	memset(_previous.begin(), 0, _previous.size());
 	for (uint i = 0; i < 256; ++i)
 		_remap[i] = i;
+}
+
+void MortimerMovie::setBackground(const byte *pixels) {
+	_background.resize(_pixels.size());
+	memcpy(_background.begin(), pixels, _background.size());
 }
 
 void MortimerMovie::handleAction(const byte *data, uint32 size) {
@@ -433,6 +458,8 @@ bool MortimerMovie::decodeObject(Object &object) {
 	object.width = READ_LE_UINT16(src + 6);
 	object.height = READ_LE_UINT16(src + 8);
 	object.scale = objectScale(object.codec);
+	object.transparent = object.codec == 1 || object.codec == 3 ||
+		(object.codec == 37 && object.scale == 1 && (src[26] & 2));
 	if (object.codec == 23) {
 		if (READ_LE_UINT16(src + 12) == 0x100)
 			memcpy(_remap, src + 14, sizeof(_remap));
@@ -463,6 +490,7 @@ bool MortimerMovie::advance() {
 		return false;
 	memcpy(_previous.begin(), _pixels.begin(), _pixels.size());
 	_objects.clear();
+	_captions.clear();
 	const Frame &current = _frames[_nextFrame++];
 	uint32 pos = current.offset;
 	uint16 skipA = 0xffff, skipB = 0;
@@ -482,6 +510,8 @@ bool MortimerMovie::advance() {
 			handlePalette(src, chunk.size);
 		} else if (chunk.tag == MKTAG('N', 'P', 'A', 'L')) {
 			memcpy(_palette, src, sizeof(_palette));
+		} else if (chunk.tag == MKTAG('T', 'R', 'E', 'S')) {
+			_captions.push_back({READ_LE_INT16(src), READ_LE_INT16(src + 2), READ_LE_UINT16(src + 16)});
 		} else if (chunk.tag == MKTAG('S', 'T', 'O', 'R')) {
 			_storeNext = true;
 		} else if (chunk.tag == MKTAG('F', 'T', 'C', 'H')) {
@@ -491,6 +521,8 @@ bool MortimerMovie::advance() {
 			object.x += READ_LE_INT16(src + 2);
 			object.y += READ_LE_INT16(src + 4);
 			object.scale = objectScale(object.codec);
+			if (object.codec == 37)
+				object.transparent = object.scale == 1 && (_data[object.offset + 26] & 2);
 			object.skipA = skipA;
 			object.skipB = skipB;
 			_objects.push_back(object);
@@ -516,7 +548,11 @@ bool MortimerMovie::advance() {
 }
 
 void MortimerMovie::render() {
-	memcpy(_pixels.begin(), _previous.begin(), _pixels.size());
+	// Transparent cutscenes compose over the scene beneath the movie, not
+	// over their own previous overlays (notably the rising interview panel).
+	// Frames containing only palette or audio commands retain the last image.
+	const byte *base = !_background.empty() && !_objects.empty() ? _background.begin() : _previous.begin();
+	memcpy(_pixels.begin(), base, _pixels.size());
 	for (uint i = 0; i < _objects.size(); ++i) {
 		const Object &object = _objects[i];
 		if (skipObject(object.skipA, object.skipB))
@@ -547,7 +583,7 @@ void MortimerMovie::render() {
 				const byte color = line[(col - x) / object.scale];
 				// SHELL 410160/401b20 preserve the destination for every
 				// zero pixel in both RLE codecs, including literal runs.
-				if ((object.codec != 1 && object.codec != 3) || color)
+				if (!object.transparent || color)
 					dest[col] = color;
 			}
 		}

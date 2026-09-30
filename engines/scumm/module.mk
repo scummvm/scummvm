@@ -148,6 +148,7 @@ MODULE_OBJS += \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
 	insane/mortimer/flight.o \
+	insane/mortimer/interview.o \
 	insane/mortimer/movie.o \
 	insane/mortimer/mortimer.o \
 	insane/rebel/rebel_audio.o \

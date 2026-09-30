@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "backends/keymapper/action.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -110,9 +111,9 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 
 MortimerEngine::MortimerEngine(OSystem *system) : Engine(system),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
-	_nextFrameTime(0), _pauseTime(0), _introIndex(-1), _segment(0), _completedRescues(0), _completedSpecies(0),
+	_nextFrameTime(0), _pauseTime(0), _introIndex(-1), _segment(0), _carriedStones(0), _completedSpecies(0),
 	_shellShocks(0), _uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0),
-	_pendingGlowStones(0), _finished(false), _controllerMode(false) {
+	_pendingGlowStones(0), _finished(false), _controllerMode(false), _interviewActive(false) {
 	memset(_steering, 0, sizeof(_steering));
 	memset(_iconFlash, 0, sizeof(_iconFlash));
 }
@@ -165,7 +166,9 @@ bool MortimerEngine::loadResources() {
 		{"RESOURCE/GENERAL/SFX/SLMGUN2.SAD", &_slimeSound},
 		{"RESOURCE/GENERAL/SFX/MUCKHIT1.SAD", &_slimeHitSound},
 		{"RESOURCE/GENERAL/SFX/GLOWIN1.SAD", &_glowSound},
-		{"RESOURCE/GENERAL/SFX/BURST1.SAD", &_balloonSound}
+		{"RESOURCE/GENERAL/SFX/BURST1.SAD", &_balloonSound},
+		{"RESOURCE/GENERAL/SFX/BUTTON7.SAD", &_buttonSound},
+		{"RESOURCE/GENERAL/SFX/PAYOUT.SAD", &_payoutSound}
 	};
 	for (uint i = 0; i < ARRAYSIZE(effects); ++i) {
 		if (!file.open(Common::Path(effects[i].name)) || !loadMortimerSound(file, *effects[i].sound)) {
@@ -174,15 +177,19 @@ bool MortimerEngine::loadResources() {
 		}
 		file.close();
 	}
+	if (!_interview.loadResources()) {
+		_loadError = _interview.errorMessage();
+		return false;
+	}
 	return true;
 }
 
 MortimerMovie &MortimerEngine::currentMovie() {
-	return _introIndex >= 0 ? _intro : _flight;
+	return _interviewActive || _introIndex >= 0 ? _intro : _flight;
 }
 
 const MortimerMovie &MortimerEngine::currentMovie() const {
-	return _introIndex >= 0 ? _intro : _flight;
+	return _interviewActive || _introIndex >= 0 ? _intro : _flight;
 }
 
 bool MortimerEngine::loadIntro(uint index) {
@@ -252,10 +259,12 @@ void MortimerEngine::stopSounds() {
 	_mixer->stopHandle(_glowHandle);
 }
 
-bool MortimerEngine::startMovie() {
+bool MortimerEngine::startMovie(bool preserveScreen) {
 	stopSounds();
 	MortimerMovie &movie = currentMovie();
 	movie.reset();
+	if (preserveScreen)
+		movie.setBackground((const byte *)_screen.getPixels());
 	if (!movie.advance()) {
 		_loadError = movie.errorMessage();
 		return false;
@@ -271,7 +280,7 @@ bool MortimerEngine::startFlight() {
 	_uiFrame = 0;
 	_shotFrame = 3;
 	_glowFrame = 10;
-	_glowStones = MIN(_completedRescues, 999U);
+	_glowStones = MIN(_carriedStones, 999U);
 	_pendingGlowStones = 0;
 	memset(_iconFlash, 0, sizeof(_iconFlash));
 	for (uint i = 0; i < ARRAYSIZE(_steeringHistory); ++i)
@@ -283,11 +292,15 @@ bool MortimerEngine::startFlight() {
 }
 
 bool MortimerEngine::restart(bool all) {
+	if (_interviewActive)
+		all = true;
 	if (_introIndex >= 0 && !all)
 		return startMovie();
 	_shellShocks = 0;
 	if (all) {
-		_completedRescues = _completedSpecies = 0;
+		_interviewActive = false;
+		_interview.resetRiddle();
+		_carriedStones = _completedSpecies = 0;
 		if (!loadFlight(0))
 			return false;
 	}
@@ -296,6 +309,10 @@ bool MortimerEngine::restart(bool all) {
 
 bool MortimerEngine::nextScene(bool skip) {
 	stopSounds();
+	if (_interviewActive) {
+		_interview.skip();
+		return processInterview();
+	}
 	if (_introIndex >= 0) {
 		if (uint(_introIndex + 1) < ARRAYSIZE(kDemoIntros))
 			return loadIntro(_introIndex + 1) && startMovie();
@@ -316,18 +333,104 @@ bool MortimerEngine::nextScene(bool skip) {
 		return true;
 	}
 	if (_segment + 1 == ARRAYSIZE(kDemoFlights)) {
-		_finished = true;
-		return true;
+		_carriedStones += _flight.rescuedCount();
+		_completedSpecies |= _flight.rescuedSpecies();
+		_glowStones = MIN(_carriedStones, 999U);
+		_pendingGlowStones = 0;
+		_glowFrame = 10;
+		_interviewActive = true;
+		_interview.start(_completedSpecies, _glowStones);
+		return processInterview();
 	}
-	// Only follow the demo's two flight branches, never an interview or a
-	// full-game resource named by another SAN file.
+	// The demo's flight movies must follow their expected SAN branches.
 	if (!skip && !_flight.nextFlight().equalsIgnoreCase(kDemoFlights[_segment + 1])) {
 		_loadError = Common::String::format("Unexpected flight transition in %s", kDemoFlights[_segment]);
 		return false;
 	}
-	_completedRescues += _flight.rescuedCount();
+	_carriedStones += _flight.rescuedCount();
 	_completedSpecies |= _flight.rescuedSpecies();
 	return loadFlight(_segment + 1) && startFlight();
+}
+
+bool MortimerEngine::processInterview() {
+	if (_interview.wantsFlight()) {
+		_carriedStones = _interview.stones();
+		_completedSpecies = _interview.species();
+		_interviewActive = false;
+		_shellShocks = 0;
+		return loadFlight(0) && startFlight();
+	}
+	if (_interview.finished()) {
+		stopSounds();
+		_finished = true;
+		return true;
+	}
+	if (_interview.needsMovie()) {
+		stopSounds();
+		_movieHandles.clear();
+		Common::File file;
+		if (!file.open(Common::Path(_interview.movieName()))) {
+			_loadError = Common::String::format("Missing %s", _interview.movieName().c_str());
+			return false;
+		}
+		if (!_intro.load(file, _interview.movieDoubled())) {
+			_loadError = Common::String::format("%s: %s", _interview.movieName().c_str(), _intro.errorMessage().c_str());
+			return false;
+		}
+		_movieHandles.resize(_intro.sounds().size());
+		_interview.movieLoaded();
+		if (!startMovie(_interview.fullScreen()))
+			return false;
+	}
+	const MortimerInterview::Effect effect = _interview.takeEffect();
+	if (effect != MortimerInterview::kNoEffect)
+		playSound(effect == MortimerInterview::kPayoutEffect ? _payoutSound :
+			(effect == MortimerInterview::kSwitchEffect ? _balloonSound : _buttonSound), _scopeHandle, Audio::Mixer::kSFXSoundType);
+	_glowStones = _interview.stones();
+	_system->getPaletteManager()->setPalette(_interview.palette(_intro), 0, 256);
+	return true;
+}
+
+bool MortimerEngine::updateScene() {
+	if (_interviewActive) {
+		if (_controllerMode) {
+			setMouse(Common::Point(_mouse.x + (_steering[1] - _steering[0]) * 18 / Common::JOYAXIS_MAX,
+				_mouse.y + (_steering[3] - _steering[2]) * 18 / Common::JOYAXIS_MAX));
+		}
+		updateInterface();
+		_interview.update();
+		const bool changed = _interview.needsMovie();
+		if (!processInterview())
+			return false;
+		if (changed || !_interview.playingMovie())
+			return true;
+	} else if (interactive()) {
+		updateSteering();
+		updateInterface();
+	}
+	MortimerMovie &movie = currentMovie();
+	if (!movie.advance()) {
+		if (!movie.errorMessage().empty()) {
+			_loadError = movie.errorMessage();
+			return false;
+		}
+		if (_interviewActive) {
+			stopSounds();
+			_interview.movieFinished();
+			return processInterview();
+		}
+		return nextScene();
+	}
+	playMovieSounds();
+	_system->getPaletteManager()->setPalette(_interviewActive ? _interview.palette(movie) : movie.palette(), 0, 256);
+	if (interactive() && _flight.hitsObstacle(moviePoint(_aim))) {
+		++_shellShocks;
+		playSound(_collisionSound, _collisionHandle, Audio::Mixer::kSFXSoundType);
+		// SHELL 40be36 resets the flight after eighteen shell shocks.
+		if (_shellShocks >= 18)
+			return restart();
+	}
+	return true;
 }
 
 void MortimerEngine::setMouse(const Common::Point &position) {
@@ -432,10 +535,24 @@ Common::Error MortimerEngine::run() {
 		return Common::Error(Common::kReadingFailed, _loadError);
 	initGraphics(640, 480);
 	_screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+	_screen.fillRect(Common::Rect(640, 480), 10);
 	syncSoundSettings();
 	const bool oldCursor = CursorMan.showMouse(false);
 	PauseToken pause;
-	bool exit = !(loadIntro(0) && startMovie());
+	bool exit;
+	// Use the original scene IDs for ScummVM's developer startup shortcut,
+	// with all animals rescued and enough glowstones to review the riddles.
+	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : 0;
+	if (boot == 4 || boot == 10 || boot == 18 || boot == 8 || boot == 25) {
+		stopSounds();
+		_introIndex = -1;
+		_interviewActive = true;
+		_interview.start(0x7f, 30, boot);
+		exit = !processInterview();
+		_nextFrameTime = _system->getMillis() + 1000 / currentMovie().frameRate();
+	} else {
+		exit = !(loadIntro(0) && startMovie());
+	}
 	while (!shouldQuit() && !exit) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
@@ -448,11 +565,23 @@ Common::Error MortimerEngine::run() {
 				_steering[event.joystick.axis] = CLIP<int>(event.joystick.position, 0, Common::JOYAXIS_MAX);
 				if (event.joystick.position && !isPaused())
 					_controllerMode = true;
+			} else if (_interviewActive && !isPaused() &&
+				(event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN)) {
+				_interview.scroll(event.type == Common::EVENT_WHEELUP ? -1 : 1);
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				switch (event.customType) {
 				case kActionFire:
-					if (!isPaused() && !_finished && interactive())
-						fire();
+					if (!isPaused() && !_finished) {
+						if (_interviewActive) {
+							const bool playing = _interview.playingMovie();
+							_interview.click(_mouse);
+							if (playing && !_interview.playingMovie())
+								stopSounds();
+							exit = !processInterview();
+						} else if (interactive()) {
+							fire();
+						}
+					}
 					break;
 				case kActionSkip:
 					if (pause.isActive())
@@ -492,30 +621,9 @@ Common::Error MortimerEngine::run() {
 		if (exit)
 			break;
 		if (!isPaused() && !_finished && int32(_system->getMillis() - _nextFrameTime) >= 0) {
-			MortimerMovie &movie = currentMovie();
-			_nextFrameTime += 1000 / movie.frameRate();
-			if (interactive()) {
-				updateSteering();
-				updateInterface();
-			}
-			if (!movie.advance()) {
-				if (!movie.errorMessage().empty()) {
-					_loadError = movie.errorMessage();
-					break;
-				}
-				if (!nextScene())
-					break;
-			} else {
-				playMovieSounds();
-				_system->getPaletteManager()->setPalette(movie.palette(), 0, 256);
-				if (interactive() && _flight.hitsObstacle(moviePoint(_aim))) {
-					++_shellShocks;
-					playSound(_collisionSound, _collisionHandle, Audio::Mixer::kSFXSoundType);
-					// SHELL 40be36 resets the flight after eighteen shell shocks.
-					if (_shellShocks >= 18 && !restart())
-						break;
-				}
-			}
+			_nextFrameTime += 1000 / currentMovie().frameRate();
+			if (!updateScene())
+				break;
 			// Avoid racing through queued frames following a slow backend call.
 			if (int32(_system->getMillis() - _nextFrameTime) > 250)
 				_nextFrameTime = _system->getMillis() + 1000 / currentMovie().frameRate();
@@ -619,9 +727,10 @@ void MortimerEngine::drawDashboard() {
 	const Common::Point iconOrigins[] = {{158, 364}, {203, 358}, {248, 358}, {293, 354}, {339, 355}, {383, 360}, {428, 361}};
 	const Common::Point flashOrigins[] = {{154, 345}, {198, 338}, {243, 334}, {288, 332}, {333, 334}, {378, 338}, {422, 345}};
 	for (uint species = 0; species < 7; ++species) {
-		if (_iconFlash[species] & 1)
+		if ((_iconFlash[species] & 1) || (_interviewActive && int(species) == _interview.highlightedAnimal()))
 			drawSprite(_dashboard[species], flashOrigins[species].x, flashOrigins[species].y);
-		const bool rescued = (_completedSpecies | _flight.rescuedSpecies()) & (1 << species);
+		const uint available = _interviewActive ? _interview.species() : (_completedSpecies | _flight.rescuedSpecies());
+		const bool rescued = available & (1 << species);
 		drawSprite(_icons[species * 2 + (rescued ? 0 : 1)], iconOrigins[species].x, iconOrigins[species].y);
 	}
 	const uint thresholds[] = {1, 2, 3, 4, 7, 20, 30, 40, 50};
@@ -641,7 +750,12 @@ void MortimerEngine::drawDashboard() {
 }
 
 void MortimerEngine::draw() {
-	if (interactive()) {
+	if (_interviewActive) {
+		_interview.draw(_screen, _intro);
+		if (_interview.showDashboard())
+			drawDashboard();
+		_interview.drawCursor(_screen, _mouse);
+	} else if (interactive()) {
 		_screen.fillRect(Common::Rect(640, 480), 10);
 		for (int y = _viewport.top; y < _viewport.bottom; ++y) {
 			const byte *src = _flight.pixels() + (_view.y + (y - _viewport.top) / 2) * MortimerMovie::kScreenWidth + _view.x;
