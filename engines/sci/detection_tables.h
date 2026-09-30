@@ -522,6 +522,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.005.001"
+	// Game version 1.000 from VERSION file
 	// SCI interpreter version 1.000.510
 	{"longbow", "", {
 		{"resource.map", 0, "6204f3d00c0f6c0f5f95a29a4190f2f9", 6048},
@@ -536,7 +537,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Conquests of the Longbow - English DOS
-	// SCI interpreter version 1.000.510
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.168
 	{"longbow", "", {
 		{"resource.map", 0, "36d3b81ff75b67dd4d27b7f5d3166503", 6261},
 		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 1096767},
@@ -549,22 +551,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Conquests of the Longbow - English DOS Floppy (from jvprat)
-	// Executable scanning reports "1.000.168", Floppy label reports "1.1, 1.13.92", VERSION file reports "1.1"
-	// SCI interpreter version 1.000.510
-	{"longbow", "", {
-		{"resource.map", 0, "247f955865572569342751de47e861ab", 6027},
-		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 1297120},
-		{"resource.001", 0, "1e6084a19f7a6c50af88d3a9b32c411e", 1366155},
-		{"resource.002", 0, "7f6ce331219d58d5087731e4475ab4f1", 1234743},
-		{"resource.003", 0, "1867136d01ece57b531032d466910522", 823686},
-		{"resource.004", 0, "9cfce07e204a329e94fda8b5657621da", 1261462},
-		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1284720},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
-
 	// Conquests of the Longbow - English DOS
-	// SCI interpreter version 1.000.510
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.168
 	{"longbow", "", {
 		{"resource.map", 0, "737c6f83a1ee601727ff026898f19fa1", 6045},
 		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 1296607},
@@ -576,8 +565,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
+	// Conquests of the Longbow - English DOS (from jvprat)
+	// Game version 1.1 from VERSION file
+	// SCI interpreter version 1.000.168
+	{"longbow", "", {
+		{"resource.map", 0, "247f955865572569342751de47e861ab", 6027},
+		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 1297120},
+		{"resource.001", 0, "1e6084a19f7a6c50af88d3a9b32c411e", 1366155},
+		{"resource.002", 0, "7f6ce331219d58d5087731e4475ab4f1", 1234743},
+		{"resource.003", 0, "1867136d01ece57b531032d466910522", 823686},
+		{"resource.004", 0, "9cfce07e204a329e94fda8b5657621da", 1261462},
+		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1284720},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
+
 	// Conquests of the Longbow EGA - English DOS
-	// SCI interpreter version 1.000.510
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.175
 	{"longbow", "EGA", {
 		{"resource.map", 0, "7676ec9f08967d7a9a7724f5170456e0", 6261},
 		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 718161},
@@ -590,8 +594,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
-	// Conquests of the Longbow DOS 1.0 EGA (4 x 5.25" disks)
+	// Conquests of the Longbow DOS EGA (4 x 5.25" disks)
 	// Provided by ssburnout in bug report #5257
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.175
 	{"longbow", "EGA", {
 		{"resource.map", 0, "0517ca368ec844df0cb21a05020fae01", 6021},
 		{"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 934643},
@@ -602,15 +608,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Conquests of the Longbow - English DOS Non-Interactive Demo
-	// SCI interpreter version 1.000.510
+	// SCI interpreter version 1.000.181
 	{"longbow", "Demo", {
 		{"resource.map", 0, "cbc5cb73341de1bff1b1e20a640af220", 588},
 		{"resource.001", 0, "f05a20cc07eee85da8e999d0ac0f596b", 869916},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
-	// Conquests of the Longbow - German DOS (suplied by markcoolio in bug report #4294, also includes english language)
-	// SCI interpreter version 1.000.510
+	// Conquests of the Longbow - German DOS
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.169
 	{"longbow", "", {
 		{"resource.map", 0, "7376b7a07f8bd3a8ab8d67595d3f5b51", 6285},
 		{"resource.000", 0, "ee39f92e006142424cf9209329e727c6", 977281},
@@ -624,7 +631,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
 	// Conquests of the Longbow - Russian translation, based on English DOS version
-	// SCI interpreter version 1.000.510
+	// SCI interpreter version 1.000.168
 	{"longbow", "", {
 		{"resource.map", 0, "78fb253c30797fac24bd52e9c9f43050", 6051},
 		{"resource.000", 0, "65d37f5fa8fa4d34178c9f6707d4dac0", 1306162},
