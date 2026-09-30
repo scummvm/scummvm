@@ -1,5 +1,7 @@
 engines/freescape/metaengine.cpp
 engines/freescape/movement.cpp
+engines/freescape/games/3dck/ui.cpp
+engines/freescape/games/3dck/zx.cpp
 engines/freescape/games/castle/castle.cpp
 engines/freescape/games/dark/dark.cpp
 engines/freescape/games/driller/driller.cpp
