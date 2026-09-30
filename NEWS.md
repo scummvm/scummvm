@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Mortadelo y Filemón: Mamelucos a la Romana.
    - Added support for Dracula: Resurrection.
    - Added support for Dracula 2: The Last Sanctuary.
+   - Added support for Amerzone: The Explorer's Legacy.
+   - Added support for The Cameron Files: The Secret at Loch Ness
+   - Added support for The Messenger / Louvre: The Final Curse
    - Added support for Nancy Drew: The Secret of Shadow Ranch.
    - Added support for Nancy Drew: Curse of Blackmoor Manor.
    - Added support for Nancy Drew: Secret of the Old Clock.
