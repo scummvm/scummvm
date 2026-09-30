@@ -4093,6 +4093,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_LSL7
 
 	// Mixed-Up Fairy Tales v1.000 - English DOS Non-Interactive Demo
+	// Executable scanning reports "FAIRY.003"
 	{"fairytales", "Demo", {
 		{"resource.map", 0, "c2cf672c3f4251e7472d4542af3bf764", 933},
 		{"resource.000", 0, "8be56a3a88c065ee00c02c0e29199f3a", 14643},
@@ -4101,6 +4102,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Mixed-Up Fairy Tales - English DOS Floppy EGA (from omer_mor, bug report #4991)
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.158
 	{"fairytales", "EGA", {
 		{"resource.map", 0, "daa94e9f327be6657eb97a51b490dbb1", 3219},
 		{"resource.000", 0, "6dc287611e510793b72e73110bbdd45d", 17819},
@@ -4112,7 +4115,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Mixed-Up Fairy Tales - English DOS Floppy EGA (from misterhands, bug report #6596)
-	// Version 1.0, interpreter 1.000.158, INT# 11.23.91
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.158
 	{"fairytales", "EGA", {
 		{"resource.map", 0, "de9e151517013af15e0baf7bd8cbfe0b", 3243},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 840595},
@@ -4122,8 +4126,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #4271)
-	// Executable scanning reports "1.000.145"
+	// Mixed-Up Fairy Tales - English DOS (supplied by markcoolio in bug report #4271)
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.145
 	{"fairytales", "", {
 		{"resource.map", 0, "9ae5aecc1cb797b11ea5cf0caeea272c", 3261},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 923685},
@@ -4135,7 +4140,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Mixed-Up Fairy Tales - English DOS Floppy (from jvprat)
-	// Executable scanning reports "1.000.145", Floppy label reports "1.0, 11.13.91", VERSION file reports "1.000"
+	// Game version 1.000 from VERSION file
+	// SCI interpreter version 1.000.145
 	{"fairytales", "", {
 		{"resource.map", 0, "66105c02fa8f1785a3fd28957e41cb48", 3249},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 984439},
