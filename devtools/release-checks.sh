@@ -166,7 +166,7 @@ git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/
 num_lines=`cat $TMP | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines entries. ${RED}They must be removed if the game/demo is supported for more than 2 releases:${NC}"
+  echo -e "$num_lines entries. ${RED}They must be removed if the flag for the game/demo is present for more than 2 releases:${NC}"
   cat $TMP
   echo
 
