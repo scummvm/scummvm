@@ -156,6 +156,7 @@ public:
 	void applyCursor();
 
 	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
+	const Common::Rect &getCurrentCursorBounds() { return _cursors[_curCursorID].bounds; }
 	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
 	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
 

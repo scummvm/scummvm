@@ -34,7 +34,7 @@ namespace Action {
 class MinesweeperPuzzle : public PuzzleRecord {
 public:
 	MinesweeperPuzzle() : PuzzleRecord(7) {}
-	virtual ~MinesweeperPuzzle();
+	virtual ~MinesweeperPuzzle() {}
 
 	void init() override;
 
@@ -73,7 +73,7 @@ protected:
 		Common::Rect idleSrc;
 		Common::Rect activeSrc;		// shown while the tool can be used where it points
 		uint16 cursor = 0;
-		Common::Point hotspot;			// where the held sprite goes, relative to the cursor's top left
+		Common::Point hotspot;			// moves the held tool away from the cursor's center
 		RandomSoundBlock pickUpSound;
 		RandomSoundBlock putDownSound;
 		bool isHeld = false;

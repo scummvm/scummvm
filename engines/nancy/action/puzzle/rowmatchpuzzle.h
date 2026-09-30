@@ -36,7 +36,7 @@ namespace Action {
 class RowMatchPuzzle : public PuzzleRecord {
 public:
 	RowMatchPuzzle() : PuzzleRecord(7) {}
-	virtual ~RowMatchPuzzle();
+	virtual ~RowMatchPuzzle() {}
 
 	void init() override;
 

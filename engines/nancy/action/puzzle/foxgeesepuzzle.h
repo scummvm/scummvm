@@ -34,7 +34,7 @@ namespace Action {
 class FoxGeesePuzzle : public PuzzleRecord {
 public:
 	FoxGeesePuzzle() : PuzzleRecord(7) {}
-	virtual ~FoxGeesePuzzle();
+	virtual ~FoxGeesePuzzle() {}
 
 	void init() override;
 
@@ -102,7 +102,7 @@ protected:
 	Piece _startPieces[kBoardSize][kBoardSize] = {};
 	Common::Rect _foxSrc;
 	Common::Rect _gooseSrc;
-	Common::Point _heldGooseHotspot;
+	Common::Point _heldGooseHotspot;		// moves the held goose away from the cursor's center
 
 	uint16 _foxTurnCursor = 0;
 	uint16 _heldGooseCursor = 0;

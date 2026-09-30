@@ -24,7 +24,6 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/cursor.h"
 #include "engines/nancy/font.h"
 #include "engines/nancy/util.h"
 
@@ -33,12 +32,6 @@
 
 namespace Nancy {
 namespace Action {
-
-MinesweeperPuzzle::~MinesweeperPuzzle() {
-	if (_shovel.isHeld || _cone.isHeld) {
-		g_nancy->_cursor->showCursor(true);
-	}
-}
 
 void MinesweeperPuzzle::readTool(Common::SeekableReadStream &stream, Tool &tool) {
 	readRect(stream, tool.idleSrc);
@@ -339,13 +332,11 @@ void MinesweeperPuzzle::handleConeResult(ConeResult result) {
 
 void MinesweeperPuzzle::pickUpTool(Tool &tool) {
 	tool.isHeld = true;
-	g_nancy->_cursor->showCursor(false);
 	playSoundBlock(tool.pickUpSound);
 }
 
 void MinesweeperPuzzle::putDownTool(Tool &tool) {
 	tool.isHeld = false;
-	g_nancy->_cursor->showCursor(true);
 	playSoundBlock(tool.putDownSound);
 }
 
@@ -426,9 +417,8 @@ void MinesweeperPuzzle::redraw() {
 			usable = !isRevealed(id) || (heldTool == &_cone && _cells[id].type == kThinIce);
 		}
 
-		// The tool hangs off the (blank) cursor's top left corner
-		_drawSurface.blitFrom(_toolImage, usable ? heldTool->activeSrc : heldTool->idleSrc,
-			_mousePos - g_nancy->_cursor->getCurrentCursorHotspot() + heldTool->hotspot);
+		const Common::Rect &src = usable ? heldTool->activeSrc : heldTool->idleSrc;
+		_drawSurface.blitFrom(_toolImage, src, getHeldPiecePos(_mousePos, src, heldTool->hotspot));
 	}
 
 	_needsRedraw = true;

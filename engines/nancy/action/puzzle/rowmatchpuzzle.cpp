@@ -23,19 +23,12 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/cursor.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/action/puzzle/rowmatchpuzzle.h"
 
 namespace Nancy {
 namespace Action {
-
-RowMatchPuzzle::~RowMatchPuzzle() {
-	if (_heldTile != kNoTile) {
-		g_nancy->_cursor->showCursor(true);
-	}
-}
 
 void RowMatchPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
@@ -118,12 +111,10 @@ bool RowMatchPuzzle::isSolved() const {
 
 void RowMatchPuzzle::holdTile(int tile) {
 	_heldTile = tile;
-	g_nancy->_cursor->showCursor(false);
 }
 
 void RowMatchPuzzle::releaseTile() {
 	_heldTile = kNoTile;
-	g_nancy->_cursor->showCursor(true);
 }
 
 void RowMatchPuzzle::setCursor(const Common::Point &pos) {
@@ -175,8 +166,9 @@ void RowMatchPuzzle::redraw() {
 
 	drawTile(_spareTile, _spareDest.origin());
 
-	// A held tile takes the place of the cursor
-	drawTile(_heldTile, _mousePos);
+	if (_heldTile != kNoTile) {
+		drawTile(_heldTile, getHeldPiecePos(_mousePos, _tileSrcs[_heldTile], Common::Point()));
+	}
 
 	_needsRedraw = true;
 }

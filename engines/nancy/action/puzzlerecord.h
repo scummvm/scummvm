@@ -51,6 +51,10 @@ protected:
 	// The ids in the AR data are raw cursor types, which is what the "set from script" path expects
 	void setDataCursor(uint16 cursorType, bool hotspotVariant = true) const;
 
+	// Nancy16 hangs a held piece off the current cursor: the piece is centered on the
+	// cursor's image, then moved back by the offset from the data
+	Common::Point getHeldPiecePos(const Common::Point &mousePos, const Common::Rect &src, const Common::Point &offset) const;
+
 	// Plays a random sound from the block and shows its caption, looked up by the sound's
 	// name, first in AUTOTEXT, then in CONVO. Returns the sound's description, which is
 	// left as "NO SOUND" when the block has nothing to play.

@@ -83,6 +83,13 @@ void PuzzleRecord::setDataCursor(uint16 cursorType, bool hotspotVariant) const {
 	g_nancy->_cursor->setCursorType((CursorManager::CursorType)cursorType, true, hotspotVariant);
 }
 
+Common::Point PuzzleRecord::getHeldPiecePos(const Common::Point &mousePos, const Common::Rect &src, const Common::Point &offset) const {
+	const Common::Rect &cursor = g_nancy->_cursor->getCurrentCursorBounds();
+	Common::Point cursorCenter = mousePos - g_nancy->_cursor->getCurrentCursorHotspot() +
+		Common::Point(cursor.width() / 2, cursor.height() / 2);
+	return cursorCenter - Common::Point(src.width() / 2, src.height() / 2) - offset;
+}
+
 SoundDescription PuzzleRecord::playSoundBlock(const RandomSoundBlock &block) {
 	SoundDescription desc;
 	if (block.names.empty()) {

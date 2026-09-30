@@ -25,7 +25,6 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
@@ -44,12 +43,6 @@ static const Common::Point kBoardCenter(3, 3);
 
 // The geese win once they're down to this many
 static const uint kMinGeese = 4;
-
-FoxGeesePuzzle::~FoxGeesePuzzle() {
-	if (_isGooseHeld) {
-		g_nancy->_cursor->showCursor(true);
-	}
-}
 
 // The board is a cross made of three rows and three columns of seven holes each
 bool FoxGeesePuzzle::isOnBoard(const Common::Point &pos) {
@@ -401,7 +394,6 @@ void FoxGeesePuzzle::finishFoxMove() {
 
 void FoxGeesePuzzle::placeGoose(const Common::Point &mousePos) {
 	_isGooseHeld = false;
-	g_nancy->_cursor->showCursor(true);
 
 	Common::Point pos;
 	if (cellAt(mousePos, pos)) {
@@ -486,9 +478,8 @@ void FoxGeesePuzzle::redraw() {
 		_drawSurface.blitFrom(_image, _foxSrc, foxPos);
 	}
 
-	// A held goose takes the place of the cursor
 	if (_isGooseHeld) {
-		_drawSurface.blitFrom(_image, _gooseSrc, _mousePos - _heldGooseHotspot);
+		_drawSurface.blitFrom(_image, _gooseSrc, getHeldPiecePos(_mousePos, _gooseSrc, _heldGooseHotspot));
 	}
 
 	_needsRedraw = true;
@@ -570,7 +561,6 @@ void FoxGeesePuzzle::handleInput(NancyInput &input) {
 			pieceAt(pos) = kEmpty;
 			_heldGooseFrom = pos;
 			_isGooseHeld = true;
-			g_nancy->_cursor->showCursor(false);
 		}
 	}
 
