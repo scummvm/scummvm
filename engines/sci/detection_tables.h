@@ -290,6 +290,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Codename: Iceman - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.031"
+	// Game version 1.036 from VERSION file
 	// SCI interpreter version 0.000.685
 	{"iceman", "", {
 		{"resource.map", 0, "035829b391709a4e542d7c7b224625f6", 6000},
@@ -303,7 +304,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Codename: Iceman - English Atari ST
-	// Game version 1.041
+	// Game version 1.041 from VERSION file
 	// Executable reports "1.002.041"
 	{ "iceman", "",{
 		{ "resource.map", 0, "066e89b685ad788e06bae0b76d0d37d3", 5718 },
@@ -316,7 +317,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER },
 
 	// Codename: Iceman - English DOS Non-Interactive Demo
-	// Executable scanning reports "0.000.685"
+	// SCI interpreter version 0.000.685
 	{"iceman", "Demo", {
 		{"resource.map", 0, "782974f29d8a824782d2d4aea39964e3", 1056},
 		{"resource.001", 0, "d4b75e280d1c3a97cfef1b0bebff387c", 573647},
@@ -324,7 +325,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
 
 	// Codename: Iceman - English DOS (from jvprat)
-	// Executable scanning reports "0.000.685", Floppy label reports "1.033, 6.8.90", VERSION file reports "1.033"
+	// Game version 1.033 from VERSION file
 	// SCI interpreter version 0.000.685
 	{"iceman", "", {
 		{"resource.map", 0, "a18f3cef4481a81d3415fb87a754343e", 5700},
@@ -337,7 +338,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Codename: Iceman - English DOS (360kb disks)
-	// Executable scanning reports "0.000.685", Floppy label reports "1.033, 6.8.90", VERSION file reports "1.033"
+	// Game version 1.033 from VERSION file
 	// SCI interpreter version 0.000.685
 	{"iceman", "", {
 		{"resource.map", 0, "d4f2ab06146656619836587059ac1fc2", 6282},
@@ -355,6 +356,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Codename: Iceman - English DOS (from FRG)
+	// Game version 1.023 from VERSION file
 	// SCI interpreter version 0.000.668
 	{"iceman", "", {
 		{"resource.map", 0, "554b44b79b0e9a7fc59f66dda0daac02", 5670},
@@ -366,7 +368,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Codename: Iceman - English DOS v1.022 (supplied by misterhands in bug report Trac #10678)
+	// Codename: Iceman - English DOS (supplied by misterhands in bug report #10678)
+	// Game version 1.022 from VERSION file
 	// SCI interpreter version 0.000.668
 	{"iceman", "", {
 		{"resource.map", 0, "7cca4017825bc21186aed5542912fbcd", 5670},
@@ -379,7 +382,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Codename: Iceman - English DOS (supplied by ssburnout in bug report #5270)
-	// 1.022 9x5.25" (label: Int#0.000.668)
+	// Game version 1.022 from VERSION file
+	// SCI interpreter version 0.000.668
 	{"iceman", "", {
 		{"resource.map", 0, "2948e06dab4930e4c8098c24ac874db8", 6252},
 		{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26974},
@@ -395,7 +399,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Codename: Iceman - English DOS 1.023 (from abevi, bug report #4176)
+	// Codename: Iceman - English DOS (from abevi, bug report #4176)
+	// Game version 1.023 from VERSION file
+	// SCI interpreter version 0.000.668
 	{"iceman", "", {
 		{"resource.map", 0, "da131654de1d6f640222c092313c6ca5", 6252},
 		{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26974},
@@ -417,6 +423,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// It contains some additional shortcuts to help the original
 	// developers debugging the game.
 	// More information: https://www.youtube.com/watch?v=Z-VBITW94zI
+	// Game version 1.009 from VERSION file
+	// SCI interpreter version 0.000.660
 	{"iceman", "Debug Build", {
 		{"resource.map", 0, "fe502e0aa91cc9b1a6c00a4d1fc40da4", 6480},
 		{"resource.000", 0, "6be3ab7d8caba5b1df9035bdfbe8cd71", 76934},
