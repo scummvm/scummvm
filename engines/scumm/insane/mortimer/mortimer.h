@@ -29,7 +29,7 @@
 namespace Scumm {
 
 // Registered by the SCUMM plugin, but deliberately independent of ScummEngine
-// and both Rebel Assault engines while the Mortimer flight POC is developed.
+// and both Rebel Assault engines.
 class MortimerEngine : public Engine {
 public:
 	explicit MortimerEngine(OSystem *system);
@@ -42,24 +42,27 @@ protected:
 
 private:
 	bool loadResources();
-	void restart();
+	bool loadFlight(uint segment);
+	bool startFlight();
+	bool nextFlight(bool skip = false);
+	bool restart(bool all = false);
 	void setMouse(const Common::Point &position);
 	void draw();
 	void drawSprite(const MortimerSprite &sprite, int x, int y);
 	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type);
-	void playSpeech();
+	void playFlightSounds();
 	void stopSounds();
 
 	MortimerFlight _flight;
 	Graphics::Surface _screen;
 	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons;
-	MortimerSound _scopeSound, _rescueSound, _collisionSound;
-	Common::Array<Audio::SoundHandle> _speechHandles;
+	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound;
+	Common::Array<Audio::SoundHandle> _flightHandles;
 	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle;
 	Common::String _loadError;
 	Common::Point _mouse, _view;
 	uint32 _nextFrameTime, _pauseTime;
-	int _health, _lastDamageFrame;
+	uint _segment, _completedRescues, _completedSpecies, _shellShocks;
 	bool _finished;
 };
 

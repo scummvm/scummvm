@@ -25,18 +25,26 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/util.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/paletteman.h"
+#include "gui/message.h"
 
 namespace Scumm {
 
+static const char *const kDemoFlights[] = {
+	"RESOURCE/DEMO/DEMO_S1.SAN",
+	"RESOURCE/DEMO/DEMO_PL.SAN",
+	"RESOURCE/DEMO/DEMO_BT.SAN"
+};
+
 MortimerEngine::MortimerEngine(OSystem *system) : Engine(system),
 	_mouse(320, 180), _view(32, 24), _nextFrameTime(0), _pauseTime(0),
-	_health(100), _lastDamageFrame(-10), _finished(false) {
+	_segment(0), _completedRescues(0), _completedSpecies(0), _shellShocks(0), _finished(false) {
 }
 
 MortimerEngine::~MortimerEngine() {
@@ -49,17 +57,7 @@ bool MortimerEngine::hasFeature(EngineFeature feature) const {
 }
 
 bool MortimerEngine::loadResources() {
-	const char *flightName = "RESOURCE/DEMO/DEMO_S1.SAN";
 	Common::File file;
-	if (!file.open(Common::Path(flightName))) {
-		_loadError = Common::String::format("Missing %s", flightName);
-		return false;
-	}
-	if (!_flight.load(file)) {
-		_loadError = _flight.errorMessage();
-		return false;
-	}
-	file.close();
 
 	struct SpriteBank {
 		const char *name;
@@ -69,7 +67,7 @@ bool MortimerEngine::loadResources() {
 	const SpriteBank banks[] = {
 		{"RESOURCE/GENERAL/COCKPT_H.NUT", &_cockpit, 3},
 		{"RESOURCE/GENERAL/DASH_H.NUT", &_dashboard, 36},
-		{"RESOURCE/GENERAL/RETICLEH.NUT", &_reticles, 1},
+		{"RESOURCE/GENERAL/RETICLEH.NUT", &_reticles, 2},
 		{"RESOURCE/SAVANNA/S_ICON_H.NUT", &_icons, 14}
 	};
 	for (uint i = 0; i < ARRAYSIZE(banks); ++i) {
@@ -86,7 +84,9 @@ bool MortimerEngine::loadResources() {
 	const Effect effects[] = {
 		{"RESOURCE/GENERAL/SFX/REVITAL2.SAD", &_scopeSound},
 		{"RESOURCE/GENERAL/SFX/SCOPHIT3.SAD", &_rescueSound},
-		{"RESOURCE/GENERAL/SFX/SHELHIT1.SAD", &_collisionSound}
+		{"RESOURCE/GENERAL/SFX/SHELHIT1.SAD", &_collisionSound},
+		{"RESOURCE/GENERAL/SFX/SLMGUN2.SAD", &_slimeSound},
+		{"RESOURCE/GENERAL/SFX/MUCKHIT1.SAD", &_slimeHitSound}
 	};
 	for (uint i = 0; i < ARRAYSIZE(effects); ++i) {
 		if (!file.open(Common::Path(effects[i].name)) || !loadMortimerSound(file, *effects[i].sound)) {
@@ -95,7 +95,24 @@ bool MortimerEngine::loadResources() {
 		}
 		file.close();
 	}
-	_speechHandles.resize(_flight.sounds().size());
+	return loadFlight(0);
+}
+
+bool MortimerEngine::loadFlight(uint segment) {
+	// The mixer borrows the samples owned by the flight being replaced.
+	stopSounds();
+	_flightHandles.clear();
+	Common::File file;
+	if (!file.open(Common::Path(kDemoFlights[segment]))) {
+		_loadError = Common::String::format("Missing %s", kDemoFlights[segment]);
+		return false;
+	}
+	if (!_flight.load(file)) {
+		_loadError = Common::String::format("%s: %s", kDemoFlights[segment], _flight.errorMessage().c_str());
+		return false;
+	}
+	_segment = segment;
+	_flightHandles.resize(_flight.sounds().size());
 	return true;
 }
 
@@ -107,31 +124,62 @@ void MortimerEngine::playSound(const MortimerSound &sound, Audio::SoundHandle &h
 	_mixer->playStream(type, &handle, stream, -1, sound.volume, sound.balance);
 }
 
-void MortimerEngine::playSpeech() {
+void MortimerEngine::playFlightSounds() {
 	for (uint i = 0; i < _flight.sounds().size(); ++i)
 		if (_flight.sounds()[i].frame == _flight.frame())
-			playSound(_flight.sounds()[i], _speechHandles[i], Audio::Mixer::kSpeechSoundType);
+			playSound(_flight.sounds()[i], _flightHandles[i],
+				_flight.sounds()[i].music ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSpeechSoundType);
 }
 
 void MortimerEngine::stopSounds() {
-	for (uint i = 0; i < _speechHandles.size(); ++i)
-		_mixer->stopHandle(_speechHandles[i]);
+	for (uint i = 0; i < _flightHandles.size(); ++i)
+		_mixer->stopHandle(_flightHandles[i]);
 	_mixer->stopHandle(_scopeHandle);
 	_mixer->stopHandle(_rescueHandle);
 	_mixer->stopHandle(_collisionHandle);
 }
 
-void MortimerEngine::restart() {
+bool MortimerEngine::startFlight() {
 	stopSounds();
 	_flight.reset();
-	_flight.advance();
-	_health = 100;
-	_lastDamageFrame = -int(_flight.frameRate());
+	if (!_flight.advance()) {
+		_loadError = _flight.errorMessage();
+		return false;
+	}
 	_finished = false;
 	setMouse(Common::Point(320, 180));
 	_system->warpMouse(_mouse.x, _mouse.y);
+	_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
 	_nextFrameTime = _system->getMillis() + 1000 / _flight.frameRate();
-	playSpeech();
+	playFlightSounds();
+	return true;
+}
+
+bool MortimerEngine::restart(bool all) {
+	_shellShocks = 0;
+	if (all) {
+		_completedRescues = _completedSpecies = 0;
+		if (!loadFlight(0))
+			return false;
+	}
+	return startFlight();
+}
+
+bool MortimerEngine::nextFlight(bool skip) {
+	stopSounds();
+	if (_segment + 1 == ARRAYSIZE(kDemoFlights)) {
+		_finished = true;
+		return true;
+	}
+	// Only follow the demo's two flight branches, never an interview or a
+	// full-game resource named by another SAN file.
+	if (!skip && !_flight.nextFlight().equalsIgnoreCase(kDemoFlights[_segment + 1])) {
+		_loadError = Common::String::format("Unexpected flight transition in %s", kDemoFlights[_segment]);
+		return false;
+	}
+	_completedRescues += _flight.rescuedCount();
+	_completedSpecies |= _flight.rescuedSpecies();
+	return loadFlight(_segment + 1) && startFlight();
 }
 
 void MortimerEngine::setMouse(const Common::Point &position) {
@@ -156,28 +204,37 @@ Common::Error MortimerEngine::run() {
 		return Common::Error(Common::kReadingFailed, _loadError);
 	initGraphics(640, 480);
 	_screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
-	_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
 	syncSoundSettings();
 	const bool oldCursor = CursorMan.showMouse(false);
-	restart();
 	PauseToken pause;
-	bool exit = false;
+	bool exit = !restart();
 	while (!shouldQuit() && !exit) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_MOUSEMOVE) {
 				if (!isPaused())
 					setMouse(event.mouse);
-			} else if (event.type == Common::EVENT_LBUTTONDOWN && !isPaused() && !_finished && _health > 0) {
+			} else if (event.type == Common::EVENT_LBUTTONDOWN && !isPaused() && !_finished) {
 				setMouse(event.mouse);
 				if (_mouse.x >= 54 && _mouse.x < 567 && _mouse.y >= 37 && _mouse.y < 320) {
-					playSound(_scopeSound, _scopeHandle, Audio::Mixer::kSFXSoundType);
-					if (_flight.rescue(Common::Point(_view.x + _mouse.x / 2, _view.y + _mouse.y / 2)))
+					playSound(_flight.weapon() == MortimerFlight::kSlimeGun ? _slimeSound : _scopeSound,
+						_scopeHandle, Audio::Mixer::kSFXSoundType);
+					const MortimerFlight::ShotResult result = _flight.shoot(Common::Point(_view.x + _mouse.x / 2, _view.y + _mouse.y / 2));
+					if (result == MortimerFlight::kAnimalRescued || result == MortimerFlight::kShellRestored)
 						playSound(_rescueSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
+					else if (result == MortimerFlight::kHornetHit)
+						playSound(_slimeHitSound, _rescueHandle, Audio::Mixer::kSFXSoundType);
+					if (result == MortimerFlight::kShellRestored)
+						_shellShocks = 0;
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat) {
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
+					if (pause.isActive())
+						pause.clear();
+					else
+						exit = !nextFlight(true);
+					break;
 				case Common::KEYCODE_q:
 					exit = true;
 					break;
@@ -190,7 +247,7 @@ Common::Error MortimerEngine::run() {
 				case Common::KEYCODE_r:
 					if (pause.isActive())
 						pause.clear();
-					restart();
+					exit = !restart();
 					break;
 				case Common::KEYCODE_F5:
 					openMainMenuDialog();
@@ -200,30 +257,43 @@ Common::Error MortimerEngine::run() {
 				}
 			}
 		}
-		if (!isPaused() && !_finished && _health > 0 && int32(_system->getMillis() - _nextFrameTime) >= 0) {
+		if (exit)
+			break;
+		if (!isPaused() && !_finished && int32(_system->getMillis() - _nextFrameTime) >= 0) {
+			_nextFrameTime += 1000 / _flight.frameRate();
 			if (!_flight.advance()) {
-				_finished = true;
-				stopSounds();
+				if (!_flight.errorMessage().empty()) {
+					_loadError = _flight.errorMessage();
+					break;
+				}
+				if (!nextFlight())
+					break;
 			} else {
-				playSpeech();
-				if (int(_flight.frame()) - _lastDamageFrame >= int(_flight.frameRate()) &&
-					_flight.hitsObstacle(Common::Point(_view.x + 160, _view.y + 120))) {
-					_health = MAX(0, _health - 10);
-					_lastDamageFrame = _flight.frame();
+				playFlightSounds();
+				_system->getPaletteManager()->setPalette(_flight.palette(), 0, 256);
+				if (_flight.hitsObstacle(Common::Point(_view.x + _mouse.x / 2, _view.y + _mouse.y / 2))) {
+					++_shellShocks;
 					playSound(_collisionSound, _collisionHandle, Audio::Mixer::kSFXSoundType);
+					// SHELL 40be36 resets the flight after eighteen shell shocks.
+					if (_shellShocks >= 18 && !restart())
+						break;
 				}
 			}
-			_nextFrameTime += 1000 / _flight.frameRate();
 			// Avoid racing through queued frames following a slow backend call.
 			if (int32(_system->getMillis() - _nextFrameTime) > 250)
 				_nextFrameTime = _system->getMillis() + 1000 / _flight.frameRate();
 		}
 		draw();
+		if (_finished) {
+			GUI::MessageDialog dialog(_("Play again?"), _("Restart"), _("Quit"));
+			if (dialog.runModal() != GUI::kMessageOK || !restart(true))
+				break;
+		}
 		_system->delayMillis(10);
 	}
 	stopSounds();
 	CursorMan.showMouse(oldCursor);
-	return Common::kNoError;
+	return _loadError.empty() ? Common::kNoError : Common::Error(Common::kReadingFailed, _loadError);
 }
 
 void MortimerEngine::drawSprite(const MortimerSprite &sprite, int x, int y) {
@@ -253,24 +323,23 @@ void MortimerEngine::draw() {
 	drawSprite(_dashboard[35], 0, 320);
 	const int iconCenterY[] = {384, 379, 377, 376, 378, 380, 384};
 	for (uint species = 0; species < 7; ++species) {
-		if (_flight.rescuedSpecies() & (1 << species)) {
+		if ((_completedSpecies | _flight.rescuedSpecies()) & (1 << species)) {
 			const MortimerSprite &icon = _icons[species * 2];
 			drawSprite(icon, 176 + species * 45 - icon.width / 2, iconCenterY[species] - icon.height / 2);
 		}
 	}
-	if (_mouse.y < 320)
-		drawSprite(_reticles[0], _mouse.x - _reticles[0].width / 2, _mouse.y - _reticles[0].height / 2);
+	if (_mouse.y < 320) {
+		const MortimerSprite &reticle = _reticles[_flight.weapon() == MortimerFlight::kSlimeGun ? 0 : 1];
+		drawSprite(reticle, _mouse.x - reticle.width / 2, _mouse.y - reticle.height / 2);
+	}
 
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	_screen.fillRect(Common::Rect(0, 449, 640, 480), 10);
-	font->drawString(&_screen, Common::String::format("Animals rescued: %u   Shell: %d%%   Flight: %u / %u",
-		_flight.rescuedCount(), _health, _flight.frame() + 1, _flight.frameCount()), 8, 451, 624, 20);
-	font->drawString(&_screen, "Mouse: steer/aim  Click: rescue  Space: pause  R: restart  Esc: exit", 8, 467, 624, 20);
-	if (_finished || !_health || isPaused()) {
+	_screen.fillRect(Common::Rect(0, 449, 640, 465), 10);
+	font->drawString(&_screen, Common::String::format("Animals rescued: %u   Shell shocks: %u / 18   Flight: %u / 3",
+		_completedRescues + _flight.rescuedCount(), _shellShocks, _segment + 1), 8, 451, 624, 20);
+	if (isPaused()) {
 		_screen.fillRect(Common::Rect(90, 142, 550, 182), 10);
-		const char *message = isPaused() ? "Paused - Space to continue" :
-			_finished ? "Flight complete - R to restart" : "Shell exhausted - R to restart";
-		font->drawString(&_screen, message, 90, 155, 460, 20, Graphics::kTextAlignCenter);
+		font->drawString(&_screen, "Paused - Space to continue", 90, 155, 460, 20, Graphics::kTextAlignCenter);
 	}
 	_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, 640, 480);
 	_system->updateScreen();

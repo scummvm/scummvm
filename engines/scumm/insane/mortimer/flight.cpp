@@ -93,7 +93,7 @@ bool validRows(const byte *src, uint32 size, int height, bool remap) {
 }
 
 // Codec37's existing decoder has no input-length argument. Validate the two
-// encodings actually present in DEMO_S1 before passing any data to it.
+// encodings present in the demo flights before passing any data to it.
 bool validBackground(const byte *src, uint32 size) {
 	if (size < 16 || src[1] != 1 || src[12] != 4)
 		return false;
@@ -143,7 +143,7 @@ bool validObject(const byte *data, uint32 size, bool sprite = false) {
 	if (codec == 37)
 		return width == MortimerFlight::kWidth && height == MortimerFlight::kHeight &&
 			READ_LE_UINT32(data + 2) == 0 && validBackground(data + 14, size - 14);
-	if (codec != 3 && codec != 23)
+	if (codec != 1 && codec != 3 && codec != 23)
 		return false;
 	uint32 offset = 14;
 	if (codec == 23) {
@@ -154,6 +154,22 @@ bool validObject(const byte *data, uint32 size, bool sprite = false) {
 			offset += 256;
 	}
 	return offset <= size && validRows(data + offset, size - offset, height, codec == 23);
+}
+
+bool validPalette(const byte *data, uint32 size) {
+	return (size == 2308 && READ_BE_UINT32(data) == 2) ||
+		(size == 6 && READ_BE_UINT32(data) == 1);
+}
+
+bool validTransition(const byte *data, uint32 size) {
+	// IACT 8/46 contains a length-prefixed filename followed by CR/LF/EOF.
+	if (size < 22 || READ_LE_UINT16(data + 14) != size - 18 ||
+		data[size - 3] != '\r' || data[size - 2] != '\n' || data[size - 1] != 0x1a)
+		return false;
+	for (uint i = 18; i < size - 3; ++i)
+		if (data[i] < 32 || data[i] > 126)
+			return false;
+	return true;
 }
 
 bool decodeSound(const Common::Array<byte> &data, MortimerSound &sound) {
@@ -229,7 +245,7 @@ bool loadMortimerSound(Common::SeekableReadStream &stream, MortimerSound &sound)
 MortimerFlight::MortimerFlight() : _decoder(nullptr), _nextFrame(0), _frameRate(10), _rescuedCount(0), _rescuedSpecies(0) {
 	_background.resize(kWidth * kHeight);
 	_pixels.resize(kWidth * kHeight);
-	memset(_palette, 0, sizeof(_palette));
+	memset(_initialPalette, 0, sizeof(_initialPalette));
 	reset();
 }
 
@@ -271,7 +287,8 @@ bool MortimerFlight::load(Common::SeekableReadStream &stream) {
 			_frameRate = READ_LE_UINT32(src + 774);
 			if (!expectedFrames || _frameRate != 10)
 				return fail("Unsupported Mortimer flight timing");
-			memcpy(_palette, src + 6, sizeof(_palette));
+			memcpy(_initialPalette, src + 6, sizeof(_initialPalette));
+			memcpy(_palette, _initialPalette, sizeof(_palette));
 		} else if (chunk.tag == MKTAG('F', 'R', 'M', 'E')) {
 			if (!expectedFrames)
 				return fail("Mortimer flight has no header");
@@ -300,6 +317,13 @@ bool MortimerFlight::load(Common::SeekableReadStream &stream) {
 					if ((code >= 2 && code <= 4 && (sub.size < (code == 4 ? 18U : 12U) || READ_LE_UINT16(body + 8) >= 256)) ||
 						(code == 5 && sub.size < 28))
 						return fail("Invalid Mortimer flight action");
+					if (code == 2 && READ_LE_UINT16(body + 4) == 3 && READ_LE_UINT16(body + 10) >= 256)
+						return fail("Invalid Mortimer conditional object");
+					if (code == 8 && READ_LE_UINT16(body + 2) == 46 && !validTransition(body, sub.size))
+						return fail("Invalid Mortimer flight transition");
+				} else if (sub.tag == MKTAG('X', 'P', 'A', 'L')) {
+					if (!validPalette(body, sub.size))
+						return fail("Invalid Mortimer palette change");
 				} else if (sub.tag == MKTAG('P', 'S', 'A', 'D')) {
 					if (sub.size < 10)
 						return fail("Truncated Mortimer speech block");
@@ -312,6 +336,7 @@ bool MortimerFlight::load(Common::SeekableReadStream &stream) {
 						track.id = id;
 						track.nextBlock = 0;
 						track.sound.frame = _frames.size();
+						track.sound.music = (READ_LE_UINT16(body + 6) & 64) != 0;
 						track.sound.volume = MIN(255, body[8] * 2);
 						track.sound.balance = body[9] == 128 ? 0 : (int(body[9]) - 64) * 2;
 						tracks.push_back(track);
@@ -324,8 +349,9 @@ bool MortimerFlight::load(Common::SeekableReadStream &stream) {
 					memcpy(bytes.begin() + oldSize, body + 10, sub.size - 10);
 				}
 			}
-			if (backgrounds != 1)
-				return fail("Mortimer flight frame needs one background");
+			// The final Big Tree frame contains an opaque RLE image only.
+			if (backgrounds > 1 || (_frames.empty() && backgrounds != 1))
+				return fail("Invalid Mortimer flight background");
 			_frames.push_back({chunk.offset, chunk.size});
 		}
 	}
@@ -343,6 +369,11 @@ void MortimerFlight::reset() {
 	delete _decoder;
 	_decoder = new SmushDeltaBlocksDecoder(kWidth, kHeight);
 	_nextFrame = _rescuedCount = _rescuedSpecies = 0;
+	_nextFlight.clear();
+	_weapon = kRevitascope;
+	memcpy(_palette, _initialPalette, sizeof(_palette));
+	memset(_paletteDelta, 0, sizeof(_paletteDelta));
+	memset(_shiftedPalette, 0, sizeof(_shiftedPalette));
 	_targets.clear();
 	_objects.clear();
 	_obstacles.clear();
@@ -377,7 +408,7 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 				target->remapToggle = toggle;
 			// Briefly show the rescued animal's silhouette before removing it
 			// from the scene. Flash duration is POC tuning.
-			_toggles[toggle] = !target || !target->rescued || frame() - target->rescuedAt >= 5;
+			_toggles[toggle] = !target || !target->hit || frame() - target->rescuedAt >= 5;
 			return;
 		}
 		Target *target = findTarget(id);
@@ -387,14 +418,20 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 			fresh.toggle = toggle;
 			fresh.remapToggle = 0xffff;
 			fresh.rescuedAt = 0;
-			fresh.active = fresh.rescued = false;
+			fresh.active = fresh.hit = false;
+			// Salt belongs to the hornet whose ID is 100 lower. Destroying a
+			// hornet also disables its subsequent salt objects (SHELL 407c5f).
+			if (id >= 800 && id < 900) {
+				const Target *hornet = findTarget(id - 100);
+				fresh.hit = hornet && hornet->hit;
+			}
 			_targets.push_back(fresh);
 			target = &_targets.back();
 		}
 		if (!target)
 			return;
 		target->toggle = toggle;
-		_toggles[toggle] = target->rescued;
+		_toggles[toggle] = target->hit;
 		if (code == 4) {
 			const int x = READ_LE_INT16(data + 10), y = READ_LE_INT16(data + 12);
 			const int w = READ_LE_INT16(data + 14), h = READ_LE_INT16(data + 16);
@@ -404,14 +441,37 @@ void MortimerFlight::handleAction(const byte *data, uint32 size) {
 		} else if (code == 3) {
 			target->active = false;
 		}
+	} else if (code == 2 && mode == 3) {
+		_toggles[READ_LE_UINT16(data + 8)] = !_toggles[READ_LE_UINT16(data + 10)];
 	} else if (code == 5 && flags == 14 && size >= 28) {
 		Obstacle obstacle;
 		for (uint i = 0; i < 4; ++i)
 			obstacle.corners[i] = Common::Point(READ_LE_INT16(data + 12 + i * 4), READ_LE_INT16(data + 14 + i * 4));
 		_obstacles.push_back(obstacle);
+	} else if (code == 6 && (flags == 9 || flags == 10)) {
+		// SHELL 407c5f calls 40b844/40b7ce at the scripted weapon changes.
+		_weapon = flags == 9 ? kSlimeGun : kRevitascope;
+	} else if (code == 8 && flags == 46) {
+		_nextFlight = Common::String((const char *)data + 18, size - 21);
+		for (uint i = 0; i < _nextFlight.size(); ++i)
+			if (_nextFlight[i] == '\\')
+				_nextFlight.setChar('/', i);
 	}
-	// Flight transitions (8/46), prefetches and shell/interface callbacks are
-	// deliberately outside this single-segment POC.
+}
+
+void MortimerFlight::handlePalette(const byte *data, uint32 size) {
+	if (size == 2308) {
+		for (uint i = 0; i < 768; ++i) {
+			_shiftedPalette[i] = _palette[i] << 7;
+			_paletteDelta[i] = READ_LE_INT16(data + 4 + i * 2);
+		}
+		memcpy(_palette, data + 1540, sizeof(_palette));
+	} else {
+		for (uint i = 0; i < 768; ++i) {
+			_shiftedPalette[i] += _paletteDelta[i];
+			_palette[i] = CLIP<int32>(_shiftedPalette[i] >> 7, 0, 255);
+		}
+	}
 }
 
 bool MortimerFlight::advance() {
@@ -436,6 +496,8 @@ bool MortimerFlight::advance() {
 		}
 		if (chunk.tag == MKTAG('I', 'A', 'C', 'T')) {
 			handleAction(src, chunk.size);
+		} else if (chunk.tag == MKTAG('X', 'P', 'A', 'L')) {
+			handlePalette(src, chunk.size);
 		} else if (chunk.tag == MKTAG('F', 'O', 'B', 'J')) {
 			if (src[0] == 37) {
 				_decoder->decode(_background.begin(), src + 14);
@@ -483,34 +545,50 @@ void MortimerFlight::render() {
 			byte *dest = _pixels.begin() + row * kWidth + clip.left;
 			for (int col = 0; col < clip.width(); ++col) {
 				// Mortimer treats zero as transparent in literal runs as well.
-				if (src[0] == 23 || line[col])
+				if (src[0] == 1 || src[0] == 23 || line[col])
 					dest[col] = line[col];
 			}
 		}
 	}
 }
 
-bool MortimerFlight::rescue(const Common::Point &point) {
+MortimerFlight::ShotResult MortimerFlight::shoot(const Common::Point &point) {
 	// Later objects are drawn on top of earlier ones.
 	for (int i = int(_targets.size()) - 1; i >= 0; --i) {
 		Target &target = _targets[i];
-		if (!target.active || target.rescued || !target.rect.contains(point))
+		if (!target.active || target.hit || !target.rect.contains(point))
 			continue;
-		target.rescued = true;
+		const uint species = target.id / 100;
+		if (!target.id || species > 9 || species == 8 ||
+			(species < 7 && _weapon != kRevitascope) || (species == 7 && _weapon != kSlimeGun))
+			continue;
+		target.hit = true;
 		target.rescuedAt = frame();
 		_toggles[target.toggle] = true;
 		if (target.remapToggle != 0xffff)
 			_toggles[target.remapToggle] = false;
-		++_rescuedCount;
-		if (target.id / 100 < 7)
-			_rescuedSpecies |= 1 << (target.id / 100);
+		if (species < 7) {
+			++_rescuedCount;
+			_rescuedSpecies |= 1 << species;
+		} else if (species == 7) {
+			Target *salt = findTarget(target.id + 100);
+			if (salt) {
+				salt->hit = true;
+				_toggles[salt->toggle] = true;
+			}
+		}
 		render();
-		return true;
+		return species == 9 ? kShellRestored : species == 7 ? kHornetHit : kAnimalRescued;
 	}
-	return false;
+	return kMiss;
 }
 
 bool MortimerFlight::hitsObstacle(const Common::Point &point) const {
+	for (uint i = 0; i < _targets.size(); ++i) {
+		const Target &target = _targets[i];
+		if (target.id >= 800 && target.id < 900 && target.active && !target.hit && target.rect.contains(point))
+			return true;
+	}
 	for (uint n = 0; n < _obstacles.size(); ++n) {
 		const Obstacle &obstacle = _obstacles[n];
 		bool inside = false;
