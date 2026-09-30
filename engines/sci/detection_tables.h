@@ -6448,8 +6448,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_SQ4_CD
 #undef GUIO_SQ4_CD_WINDOWS
 
-	// Space Quest 5 - English DOS (from the Space Quest Collection)
-	// Executable scanning reports "1.001.068", VERSION file reports "1.04"
+	// Space Quest 5 - English DOS
+	// Game version 1.03 or 1.04 from VERSION file
+	// SCI interpreter version 1.001.068
+	// 1.03 and 1.04 both match because they only differ by patch files
 	{"sq5", "", {
 		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
@@ -6459,6 +6461,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 5 - English DOS - THIS IS THE UNOFFICIAL BETA VERSION, WHICH IS OBVIOUSLY PIRATED AND CONTAINS MANY BUGS
 	//  refer to https://www.akril15.com/sr/sq5alt/sq5alt.html =DO NOT RE-ADD=
+	// Game version 0.028 from VERSION file
 	// SCI interpreter version 1.001.067
 	{"sq5", "", {
 		{"resource.map", 0, "8bde0a9adb9a3e9aaa861826874c9834", 6473},
@@ -6476,6 +6479,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Space Quest 5 v1.04 - French DOS (from Hkz, Included in Space Quest Collector's Edition, with chapters I-V)
+	// SCI interpreter version 1.001.068
 	{"sq5", "", {
 		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
 		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
@@ -6492,6 +6496,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Space Quest 5 - Spanish DOS Floppy (from mirir, bug report #5459)
+	// SCI interpreter version 1.001.068
 	{"sq5", "", {
 		{"resource.map", 0, "5714a899033bdebf2d61ad333c8c6637", 6492},
 		{"resource.000", 0, "73748852548faa42927f7537b165582d", 6049994},
