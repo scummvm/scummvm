@@ -130,17 +130,24 @@ void IgorEngine::loadDialogueData(int dlg) {
 	assert(dialogueDataSize <= 500);
 	memcpy(_gameState.dialogueData, p, dialogueDataSize);
 	assert(_roomDataOffsets.dlg.questionsSize <= MAX_DIALOGUE_QUESTIONS);
-	// The original keeps both 1-based speech tables at the end of the DLG
-	// resource. Part 12 loads 0x14C2 bytes and indexes its question table at
-	// DLG+5230+question*2. See cseg172:0D41-0D54 and cseg172:043B-0452.
-	const int questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 2) * 2;
+	// A zero speech layout retains the legacy packed-tail layout for dialogue
+	// rooms that have not yet had their original offsets added to RoomDataOffsets.
+	int questionSoundsOffset = _roomDataOffsets.dlg.questionSoundsOffset;
+	int replySoundsOffset = _roomDataOffsets.dlg.replySoundsOffset;
+	int replySoundsSize = _roomDataOffsets.dlg.replySoundsSize;
+	if (questionSoundsOffset == 0) {
+		questionSoundsOffset = dataSize - (_roomDataOffsets.dlg.questionsSize + _roomDataOffsets.dlg.repliesSize + 2) * 2;
+		replySoundsOffset = questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2;
+		replySoundsSize = _roomDataOffsets.dlg.repliesSize;
+	}
 	assert(questionSoundsOffset >= 0);
+	assert(questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2 <= dataSize);
 	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {
 		_dialogueQuestionSounds[i] = READ_LE_UINT16(p + questionSoundsOffset + (i + 1) * 2);
 	}
-	const int replySoundsOffset = questionSoundsOffset + (_roomDataOffsets.dlg.questionsSize + 1) * 2;
 	assert(_roomDataOffsets.dlg.repliesSize <= MAX_DIALOGUE_REPLIES);
-	for (int i = 0; i < _roomDataOffsets.dlg.repliesSize; ++i) {
+	assert(replySoundsOffset + (replySoundsSize + 1) * 2 <= dataSize);
+	for (int i = 0; i < replySoundsSize; ++i) {
 		_dialogueReplySounds[i] = READ_LE_UINT16(p + replySoundsOffset + (i + 1) * 2); // cseg172:0A59-0A82
 	}
 	for (int i = 0; i < _roomDataOffsets.dlg.questionsSize; ++i) {

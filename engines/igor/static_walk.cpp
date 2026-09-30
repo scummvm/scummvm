@@ -193,203 +193,215 @@ const RoomDataOffsets IgorEngine::PART_05_ROOM_DATA_OFFSETS = {
 	{ 125, 5, 20, 4 },
 	{ 253, 262 },
 	{ 265, 437, 3313, 329, 405, 80 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_06_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
-	{ 135, 30, 5158, 100, 60 }
+	{
+		135, 30, 5158, 100, 60,
+		240,   // cseg181:0F2F-0F41
+		15458, // cseg181:0771-0783
+		15518, // cseg181:0FCE-0FEF
+		35     // cseg181:11CB; (0x3CE6 - 15518) / 2 - 1
+	}
 };
 
 const RoomDataOffsets IgorEngine::PART_07_ROOM_DATA_OFFSETS = {
 	{ 80, 4, 12, 3 }, // cseg197:194E-199C; DAT+80, 4 records, 12-byte source, 3-byte destination
 	{ 151, 168 }, // cseg197:1F87-1FCF and cseg197:2124-213D
 	{ 175, 419, 3575, 319, 395, 88 }, // cseg197:2E4C-2F19 and cseg197:2F23-2F62
-	{ 0, 0, 0, 0, 0 } // cseg197 has no room-specific question/reply matrix
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } // cseg197 has no room-specific question/reply matrix
 };
 
 const RoomDataOffsets IgorEngine::PART_04_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 0, 0 },
 	{ 23, 231, 3247, 127, 203, 84 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_10_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },       // cseg175:17F9-1829: DAT+45, 3 records, 6-byte source, 2-byte destination
 	{ 77, 90 },            // cseg175:1E22-1E68 and cseg175:1FBB-1FD3
 	{ 95, 303, 3319, 199, 275, 84 }, // cseg175:1C41-1CA7, 1CE9-1D4F, 2C8B-2DEA
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_11_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 }, // cseg176 routes walks through the room mask; no area matrix
 	{ 35, 52 }, // cseg176:1EE5-1F15, 207C
 	{ 59, 309, 3255, 203, 279, 82 }, // cseg176:2CBC-2CE5 (action); +60 is its walk behavior at 1E7B,2026,2061
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_12_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
-	{ -85, 15, 2478, 25, 30 }
+	{
+		-85, 15, 2478, 25, 30,
+		60,   // cseg172:09C5-09D6
+		5230, // cseg172:043B-0452
+		5260, // cseg172:0A59-0A82
+		25    // cseg172:0A4A-0A92
+	}
 };
 
 const RoomDataOffsets IgorEngine::PART_13_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 31, 40 },
 	{ 43, 215, 3091, 107, 183, 80 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_14_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 32, 43 },
 	{ 47, 237, 3183, 131, 207, 82 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_15_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 3, 12 },
 	{ 15, 187, 3063, 79, 155, 80 },
-	{ 45, 22, 3756, 66, 60 }
+	{ 45, 22, 3756, 66, 60, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_16_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 29, 34 },
 	{ 35, 171, 2907, 59, 135, 76 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_17_ROOM_DATA_OFFSETS = {
 	{ 320, 8, 56, 7 },
 	{ 835, 844 },
 	{ 847, 1019, 3895, 911, 987, 80 },
-	{ -174, 5, 257, 1, 30 }
+	{ -174, 5, 257, 1, 30, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_18_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 34, 49 },
 	{ 55, 281, 3367, 179, 255, 86 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_19_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 33, 46 },
 	{ 51, 259, 3359, 155, 231, 84 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_21_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 5, 18 },
 	{ 23, 231, 3247, 127, 203, 84 },
-	{ -85, 10, 1658, 50, 30 }
+	{ -85, 10, 1658, 50, 30, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_22_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 1, 6 },
 	{ 7, 143, 2879, 31, 107, 76 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_23_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 4, 15 },
 	{ 19, 209, 3155, 103, 179, 82 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_24_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 5, 18 },
 	{ 23, 235, 3111, 127, 203, 80 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_25_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 31, 40 },
 	{ 43, 215, 3091, 107, 183, 80 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_26_ROOM_DATA_OFFSETS = {
 	{ 20, 2, 2, 1 },
 	{ 32, 43 },
 	{ 47, 237, 3183, 131, 207, 82 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_27_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 },
 	{ 6, 21 },
 	{ 27, 253, 3339, 151, 227, 86 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_28_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 78, 93 },
 	{ 99, 325, 3411, 223, 299, 86 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_30_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
-	{ -90, 9, 1489, 11, 30 }
+	{ -90, 9, 1489, 11, 30, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_31_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 79, 96 },
 	{ 103, 351, 3367, 247, 323, 84 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_33_ROOM_DATA_OFFSETS = {
 	{ 180, 6, 30, 5 },
 	{ 405, 426 },
 	{ 435, 715, 4011, 619, 695, 92 },
-	{ -46, 9, 1533, 19, 60 }
+	{ -46, 9, 1533, 19, 60, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_34_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 }, // cseg101:1765-1775 calls the direct room walk builder cseg101:1006
 	{ 4, 15 }, // cseg101:1645-168B (walk points); cseg101:17DE-17F6 (facing)
 	{ 19, 211, 3087, 103, 179, 80 }, // cseg101:142D,14CB,1572,1486,14AF
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_35_ROOM_DATA_OFFSETS = {
 	{ 0, 0, 0, 0 }, // cseg100:0E23-0E33 calls the direct room walk builder cseg100:06C4
 	{ 5, 18 }, // cseg100:0D03-0D49 (walk points); cseg100:0E9C-0EB4 (facing)
 	{ 23, 233, 3179, 127, 203, 82 }, // cseg100:0AEB,0B89,0C30,0B44,0B6D
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_36_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 77, 90 },
 	{ 95, 303, 3319, 199, 275, 84 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const RoomDataOffsets IgorEngine::PART_37_ROOM_DATA_OFFSETS = {
 	{ 45, 3, 6, 2 },
 	{ 75, 84 },
 	{ 87, 259, 3135, 151, 227, 80 },
-	{ 0, 0, 0, 0, 0 }
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 } // End of namespace Igor

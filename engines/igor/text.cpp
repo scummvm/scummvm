@@ -580,7 +580,10 @@ void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b, int 
 			return;
 		}
 	}
-	int offset = 30 + _roomDataOffsets.dlg.matSize + reply;
+	const int repliesDataOffset = _roomDataOffsets.dlg.replyDataOffset != 0
+		? _roomDataOffsets.dlg.replyDataOffset
+		: 30 + _roomDataOffsets.dlg.matSize;
+	int offset = repliesDataOffset + reply;
 	int count = _gameState.dialogueData[offset - 1];
 	int dialogueIndex = 250;
 	for (int i = 0; i < count; ++i) {

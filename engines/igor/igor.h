@@ -170,6 +170,18 @@ struct Action {
 	uint8 object2Type;
 };
 
+struct DialogueDataOffsets {
+	int questionsOffset;
+	int questionsSize;
+	int repliesOffset;
+	int repliesSize;
+	int matSize;
+	int replyDataOffset;
+	int questionSoundsOffset;
+	int replySoundsOffset;
+	int replySoundsSize;
+};
+
 struct RoomDataOffsets {
 	struct {
 		int box;
@@ -189,13 +201,7 @@ struct RoomDataOffsets {
 		int object1;
 		int objectSize;
 	} action;
-	struct {
-		int questionsOffset;
-		int questionsSize;
-		int repliesOffset;
-		int repliesSize;
-		int matSize;
-	} dlg;
+	DialogueDataOffsets dlg;
 };
 enum {
 	kUpdateDialogueAnimEndOfSentence = 1,
