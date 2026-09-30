@@ -103,7 +103,7 @@ void IgorEngine::PART_05_HELPER_3_drawCamera(int frame) {
 	}
 }
 
-void IgorEngine::PART_05_HELPER_6() {
+void IgorEngine::PART_05_HELPER_6_walkIgorToScene() {
 	_walkData[0].setPos(0, 141, 2, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
@@ -114,7 +114,6 @@ void IgorEngine::PART_05_HELPER_6() {
 	_gameState.igorMoving = true;
 	waitForIgorMove();
 }
-
 
 void IgorEngine::PART_05() {
 	_gameState.enableLight = 1;
@@ -138,6 +137,8 @@ void IgorEngine::PART_05() {
 		PART_05_HELPER_3_drawCamera(0);
 	}
 
+	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
+	// then it loads the actual current scene, SpringBridge
 	for (int i = 0; i <= 143; ++i) {
 		memcpy(_animFramesBuffer + i * 224, _screenLayer1 + i * 320 + 96, 224);
 	}
@@ -154,9 +155,14 @@ void IgorEngine::PART_05() {
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
 
+	// Part 50: Arriving from the map, Igor should walk in
+	// Part 51: Arriving from SpringRock through scroll
+	// Part 52: ?
 	if (_currentPart == 50) {
 		debug("Entering PART_05_HELPER_6");
-		PART_05_HELPER_6();
+		memcpy(_screenVGA, _screenLayer1, 46080);
+		fadeIn(768);
+		PART_05_HELPER_6_walkIgorToScene();
 	}
 
 	enterPartLoop();

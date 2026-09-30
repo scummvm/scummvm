@@ -473,19 +473,19 @@
 
 
 // Decanato panels
-#define PAL_DecanatoA 900
-#define IMG_DecanatoA 901
-#define MSK_DecanatoA 902
-#define BOX_DecanatoA 903
-#define PAL_DecanatoB 904
-#define IMG_DecanatoB 905
-#define MSK_DecanatoB 906
-#define BOX_DecanatoB 907
-#define TXT_DecanatoA 908
-#define TXT_DecanatoB 909
+#define PAL_DecanatoLeft 900
+#define IMG_DecanatoLeft 901
+#define MSK_DecanatoLeft 902
+#define BOX_DecanatoLeft 903
+#define TXT_DecanatoLeft 908
+#define PAL_DecanatoRight 904
+#define IMG_DecanatoRight 905
+#define MSK_DecanatoRight 906
+#define BOX_DecanatoRight 907
+#define TXT_DecanatoRight 909
 // Walk line used for scroll
-#define WLK_DecanatoA 910
-#define WLK_DecanatoB 911
+#define WLK_DecanatoLeft 910
+#define WLK_DecanatoRight 911
 #define DAT_DecanatoPart11 912 // cseg176:286F-2882; IGOR.EXE:0x68049B, size 0x1841
 
 // CD-only intro card shown by state 850. All three resources are contiguous in

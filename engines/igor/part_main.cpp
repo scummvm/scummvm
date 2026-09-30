@@ -117,13 +117,14 @@ void IgorEngine::PART_MAIN() {
 	_inventoryInfo[39] = 3;
 	_inventoryInfo[72] = 1; // first object
 	_inventoryInfo[73] = 3; // last object
-    // UPDATE_OBJECT_STATE(255);
+    UPDATE_OBJECT_STATE(255);
     if (_currentPart != kStartupPart) { // boot param
 		SET_PAL_208_96_1();
 		SET_PAL_240_48_1();
 		drawVerbsPanel();
 		drawInventory(1, 0);
 	}
+
     do {
         debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
@@ -131,14 +132,13 @@ void IgorEngine::PART_MAIN() {
         case 40:
             PART_04(); // Map
             break;
-        case 50:
-        case 51:
+        case 50: // arrive from map
+        case 51: // arrive from SpringRock through scroll
         case 52:
             PART_05(); // SpringBridge
             break;
-		case 60:
-		case 61:
-		case 62:
+		case 60: // arrive through scroll
+		case 61: // arrive from intro
 			PART_06(); // SpringRock
 			break;
 		case 70:
@@ -146,11 +146,10 @@ void IgorEngine::PART_MAIN() {
 		case 72:
 			PART_07(); // Administration corridor; cseg197:28D4
 			break;
-
-		case 100:
+		case 100: // enter from map
 		case 101:
 		case 102:
-			PART_10(); // OutsideAdministrationBuilding street
+			PART_10(); // OutsideAdministrationBuilding street, right panel
 			break;
 		case 110:
 			PART_11(); // OutsideAdministrationBuilding street, left panel

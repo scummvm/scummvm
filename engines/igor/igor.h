@@ -73,7 +73,7 @@ enum {
 	MAX_VERB_NAME_LENGTH = 12,
 	MAX_ROOM_OBJECT_AREAS = 256,
 	MAX_DIALOGUE_QUESTIONS = 30,
-	MAX_DIALOGUE_REPLIES = 70
+	MAX_DIALOGUE_REPLIES = 100 // cseg181:12B1-12C0
 };
 
 enum FacingPosition {
@@ -461,7 +461,7 @@ private:
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
 	void PART_05_HELPER_5_drawPaper(int frame);
 	void PART_05_HELPER_3_drawCamera(int frame);
-	void PART_05_HELPER_6();
+	void PART_05_HELPER_6_walkIgorToScene();
 	void PART_05_HELPER_1_drawPhotographer();
 	void PART_05_HELPER_2_drawTripod();
 	void PART_05();
@@ -474,17 +474,20 @@ private:
 	void PART_06();
 	void PART_06_UPDATE_ROOM_BACKGROUND();
 	void PART_06_EXEC_ACTION(int action);
-	void PART_06_ACTION_103();
+	void PART_06_ACTION_103_talkToPhotographer();
+	void PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
+	void PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER(int action);
+	void PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame);
 	void PART_06_ACTION_105();
 	void PART_06_ACTION_107();
 	void PART_06_ACTION_108();
-	void PART_06_ACTION_102();
-	void PART_06_HELPER_2();
+	void PART_06_ACTION_102_scrollLeft();
+	void PART_06_HELPER_2_drawPhotographer();
 	void PART_06_HELPER_3_drawTripod();
-	void PART_06_HELPER_6(int num);
+	void PART_06_HELPER_6_setPhotographerState(int num);
 	void PART_06_HELPER_8_animatePhotographer(int frame);
 	void PART_06_HELPER_12();
-	void PART_06_HELPER_13(int frame);
+	void PART_06_HELPER_13_drawCamera(int frame);
 	void PART_06_HELPER_14();
 	void PART_06_HELPER_15(int frame);
 	void PART_06_HELPER_1_drawPieceOfPaper(int frame);
@@ -511,6 +514,7 @@ private:
 	void PART_11_ACTION_108();
 	void PART_11_ACTION_112();
 	void PART_11_APPLY_OBJECT_STATE(int num);
+
 
 	// outside church
 	void PART_12_EXEC_ACTION(int action);

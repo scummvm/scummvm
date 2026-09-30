@@ -32,11 +32,14 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 
 	if (num == 2 || num == 255) {
 		if (_objectsState[67] == 1) {
+			// paint glass shards
 			for (int y = 0; y <= 7; ++y)
 				memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart11Frm4 + y * 37, 37);
+			// make area selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7;
 		} else {
+			// make area not selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 0;
 		}
@@ -83,7 +86,7 @@ void IgorEngine::PART_11_ACTION_107() {
 }
 
 void IgorEngine::PART_11_ACTION_108() {
-	uint8 *walkTable = loadData(WLK_DecanatoB);
+	uint8 *walkTable = loadData(WLK_DecanatoRight);
 	int xPos = 310;
 	int yPos = 0;
 	int i = 1;
@@ -218,9 +221,9 @@ void IgorEngine::PART_11_EXEC_ACTION(int action) {
 void IgorEngine::PART_11() {
 	_gameState.enableLight = 1;
 	loadActionData(DAT_DecanatoPart11);
-	loadRoomData(PAL_DecanatoB, IMG_DecanatoB, BOX_DecanatoB, MSK_DecanatoB, TXT_DecanatoB);
+	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
 	memcpy(_animFramesBuffer + kPart11PanelRight, _screenLayer1, 46080);
-	loadRoomData(PAL_DecanatoA, IMG_DecanatoA, BOX_DecanatoA, MSK_DecanatoA, TXT_DecanatoA);
+	loadRoomData(PAL_DecanatoLeft, IMG_DecanatoLeft, BOX_DecanatoLeft, MSK_DecanatoLeft, TXT_DecanatoLeft);
 
 	static const int frames1[] = { FRM_Decanato1, 0 };
 	static const int frames2[] = { FRM_Decanato2, 0 };

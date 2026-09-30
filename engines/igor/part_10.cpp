@@ -115,7 +115,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 }
 
 void IgorEngine::PART_10_ACTION_108() {
-	uint8 *walkTable = loadData(WLK_DecanatoA);
+	uint8 *walkTable = loadData(WLK_DecanatoLeft);
 	int xPos = 329;
 	int yPos = 0;
 	int i = 1;
@@ -157,7 +157,7 @@ void IgorEngine::PART_10() {
 	_gameState.enableLight = 1;
 
 	loadActionData(DAT_Decanato);
-	loadRoomData(PAL_DecanatoA, IMG_DecanatoA, BOX_DecanatoA, MSK_DecanatoA, TXT_DecanatoA);
+	loadRoomData(PAL_DecanatoLeft, IMG_DecanatoLeft, BOX_DecanatoLeft, MSK_DecanatoLeft, TXT_DecanatoLeft);
 	static const int frames1[] = { FRM_Decanato1, 0 };
 	static const int frames2[] = { FRM_Decanato2, 0 };
 	static const int frames3[] = { FRM_Decanato3, 0 };
@@ -168,6 +168,8 @@ void IgorEngine::PART_10() {
 	loadAnimData(frames3, kPart10Frm3);
 	loadAnimData(frames4, kPart10Frm4);
 	loadAnimData(frames5, kPart10Frm5);
+
+	// Paint glass shards
 	if (_objectsState[67] == 1) {
 		for (int y = 0; y <= 7; ++y)
 			memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart10Frm4 + y * 37, 37);
@@ -183,7 +185,9 @@ void IgorEngine::PART_10() {
 	// Preserve the complete left panel at ANM+0, then make the right panel
 	// active. The original load order is unconditional.
 	memcpy(_animFramesBuffer + kPart10PanelLeft, _screenLayer1, 46080);
-	loadRoomData(PAL_DecanatoB, IMG_DecanatoB, BOX_DecanatoB, MSK_DecanatoB, TXT_DecanatoB);
+
+
+	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
 	static const int hamburgerAnimation[] = { ANM_DecanatoHamburger, 0 };
 	loadAnimData(hamburgerAnimation, kPart10Frm1);
 

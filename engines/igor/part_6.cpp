@@ -65,7 +65,7 @@ void IgorEngine::PART_06_HELPER_1_drawPieceOfPaper(int frame) {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_2() {
+void IgorEngine::PART_06_HELPER_2_drawPhotographer() {
 	const int offset = 23521;
 	for (int i = 0; i <= 48; ++i) {
 		const uint8 *src = _screenLayer1 + i * 320 + offset;
@@ -101,10 +101,10 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		startIgorDialogue();
 		break;
 	case 102:
-		PART_06_ACTION_102();
+		PART_06_ACTION_102_scrollLeft();
 		break;
 	case 103:
-		PART_06_ACTION_103();
+		PART_06_ACTION_103_talkToPhotographer();
 		break;
 	case 104:
 		ADD_DIALOGUE_TEXT(203, 1, 481);
@@ -130,7 +130,7 @@ void IgorEngine::PART_06_EXEC_ACTION(int action) {
 		break;
 	}
 }
-void IgorEngine::PART_06_ACTION_103() {
+void IgorEngine::PART_06_ACTION_103_talkToPhotographer() {
 	ADD_DIALOGUE_TEXT(215, 1, 489);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
@@ -140,11 +140,38 @@ void IgorEngine::PART_06_ACTION_103() {
 	SET_DIALOGUE_TEXT(1, 1);
 	startCutsceneDialogue(170, 69, 55, 37, 63);
 	waitForEndOfCutsceneDialogue(170, 69, 55, 37, 63);
-	// PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
-	PART_06_HELPER_6(255);
+	PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER();
+	PART_06_HELPER_6_setPhotographerState(255);
 }
 
-void IgorEngine::PART_06_HELPER_6(int num) {
+void IgorEngine::PART_06_HANDLE_DIALOGUE_PHOTOGRAPHER() {
+	loadDialogueData(DLG_SpringPhotographer);
+	_updateDialogue = &IgorEngine::PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER;
+	handleDialogue(170, 69, 55, 37, 63);
+	_updateDialogue = 0;
+}
+
+
+void IgorEngine::PART_06_UPDATE_DIALOGUE_PHOTOGRAPHER(int action) {
+	switch (action) {
+	case kUpdateDialogueAnimEndOfSentence:
+		PART_06_HELPER_7_decodePhotographerTalkingFrame(1);
+		break;
+	case kUpdateDialogueAnimMiddleOfSentence:
+		PART_06_HELPER_7_decodePhotographerTalkingFrame(getRandomNumber(5) + 1);
+		break;
+	case kUpdateDialogueAnimStanding:
+		PART_06_HELPER_7_decodePhotographerTalkingFrame(1);
+		break;
+	}
+}
+
+void IgorEngine::PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame) {
+	const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + frame * 2) - 1;
+	decodeAnimFrame(src, _screenVGA, true);
+}
+
+void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[61] == 1) {
 			PART_06_HELPER_14();
@@ -167,9 +194,9 @@ void IgorEngine::PART_06_HELPER_6(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[62] == 1) {
-			PART_06_HELPER_13(0);
+			PART_06_HELPER_13_drawCamera(0);
 		} else {
-			PART_06_HELPER_13(1);
+			PART_06_HELPER_13_drawCamera(1);
 			_roomObjectAreasTable[3].object = 0;
 		}
 	}
@@ -190,7 +217,7 @@ void IgorEngine::PART_06_ACTION_105() {
 	}
 	addObjectToInventory(36, 71);
 	_objectsState[62] = 0;
-	PART_06_HELPER_6(255);
+	PART_06_HELPER_6_setPhotographerState(255);
 }
 
 void IgorEngine::PART_06_ACTION_107() {
@@ -233,14 +260,14 @@ void IgorEngine::PART_06_ACTION_108() {
 	} while (i != 28);
 	removeObjectFromInventory(61);
 	_objectsState[61] = 0;
-	PART_06_HELPER_6(255);
+	PART_06_HELPER_6_setPhotographerState(255);
 	_gameState.unkF = false;
 	ADD_DIALOGUE_TEXT(213, 2, 488);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
 }
 
-void IgorEngine::PART_06_ACTION_102() {
+void IgorEngine::PART_06_ACTION_102_scrollLeft() {
 	uint8 *walkTable1 = loadData(WLK_Bridge1);
 	uint8 *walkTable2 = loadData(WLK_Bridge2);
 	int xPos = 323;
@@ -299,7 +326,7 @@ void IgorEngine::PART_06_HELPER_12() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_13(int frame) {
+void IgorEngine::PART_06_HELPER_13_drawCamera(int frame) {
 	const int offset = 26756;
 	for (int i = 0; i <= 5; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
@@ -321,7 +348,9 @@ void IgorEngine::PART_06_HELPER_15(int frame) {
 }
 
 void IgorEngine::PART_06() {
+	debug("Entering PART_06");
 	_gameState.enableLight = 1;
+
 	loadRoomData(PAL_SpringBridge, IMG_SpringBridge, BOX_SpringBridge, MSK_SpringBridge, TXT_SpringBridge);
 	static const int anm1[] = {FRM_SpringBridge1, FRM_SpringBridge2, 0};
 	// loads from offset 32256
@@ -344,10 +373,10 @@ void IgorEngine::PART_06() {
 	static const int anm4[] = {FRM_SpringRock5, FRM_SpringRock6, 0};
 	loadAnimData(anm4, 0xA763);
 
-	PART_06_HELPER_2();
+	PART_06_HELPER_2_drawPhotographer();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
-	PART_06_HELPER_6(255);
+	PART_06_HELPER_6_setPhotographerState(255);
 
 	if (_objectsState[63] == 1) {
 		PART_06_HELPER_3_drawTripod();
@@ -359,6 +388,7 @@ void IgorEngine::PART_06() {
 		drawInventory(1, 0);
 		_currentAction.verb = kVerbWalk;
 		memcpy(_paletteBuffer, _currentPalette, 624);
+		// Part 61 is arriving from intro so it doesnt need to copy the screen buffer
 		fadeIn(768);
 	}
 	loadActionData(DAT_SpringBridge);
