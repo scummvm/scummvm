@@ -44,10 +44,15 @@ protected:
 
 private:
 	bool loadResources();
+	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
+	bool startMovie();
 	bool startFlight();
-	bool nextFlight(bool skip = false);
+	bool nextScene(bool skip = false);
 	bool restart(bool all = false);
+	MortimerMovie &currentMovie();
+	const MortimerMovie &currentMovie() const;
+	bool interactive() const { return _introIndex < 0 && _flight.interactive(); }
 	void setMouse(const Common::Point &position);
 	void updateSteering();
 	void updateInterface();
@@ -60,16 +65,17 @@ private:
 	void drawTargets();
 	void drawDashboard();
 	bool speechPlaying() const;
-	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type);
-	void playFlightSounds();
+	void playSound(const MortimerSound &sound, Audio::SoundHandle &handle, Audio::Mixer::SoundType type, uint offset = 0);
+	void playMovieSounds(bool seek = false);
 	void stopSounds();
 
+	MortimerMovie _intro;
 	MortimerFlight _flight;
 	Graphics::Surface _screen;
 	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons, _head;
 	Common::Array<MortimerSprite> _scopeHit, _slimeHit, _scopeBeam, _slimeBall, _numbers, _corners;
 	MortimerSound _scopeSound, _rescueSound, _collisionSound, _slimeSound, _slimeHitSound, _glowSound, _balloonSound;
-	Common::Array<Audio::SoundHandle> _flightHandles;
+	Common::Array<Audio::SoundHandle> _movieHandles;
 	Audio::SoundHandle _scopeHandle, _rescueHandle, _collisionHandle, _glowHandle;
 	Common::String _loadError;
 	Common::Rect _viewport;
@@ -78,6 +84,7 @@ private:
 	int _steering[4];
 	MortimerFlight::Weapon _shotWeapon;
 	uint32 _nextFrameTime, _pauseTime;
+	int _introIndex;
 	uint _segment, _completedRescues, _completedSpecies, _shellShocks;
 	uint _uiFrame, _shotFrame, _glowFrame, _glowStones, _pendingGlowStones;
 	uint _iconFlash[7];
