@@ -124,6 +124,7 @@ private:
 	void onJournalAction(const Action &action);
 	void onTasklistAction(const Action &action);
 	void playTasklistSound(uint bank, bool play);
+	void onSoundAction(const Action &action);
 
 	void onLoaderAction(const Action &action);
 	void onSaverAction(const Action &action);
@@ -153,6 +154,8 @@ private:
 
 	bool _isInConversation = false;
 	Common::Array<Common::String> _responseNames;
+
+	Common::Array<uint16> _pausedChannels;	// sound channels the UI paused, to resume later
 
 	Common::String _selectedSave;	// in the load dialog
 	Common::String _typedSaveName;	// in the save dialog

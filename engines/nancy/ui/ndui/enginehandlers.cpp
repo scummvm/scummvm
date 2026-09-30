@@ -99,6 +99,8 @@ void Manager::takeEngineAction(const Action &action) {
 		onVolumeAction(action, "music_volume");
 	} else if (action.target.equalsIgnoreCase("Engine_Flags")) {
 		onFlagsAction(action);
+	} else if (action.target.equalsIgnoreCase("Engine_Sound")) {
+		onSoundAction(action);
 	} else {
 		debugC(3, kDebugEngine, "Unhandled NDUI engine action %d on \"%s\" from \"%s\"", action.type, action.target.c_str(), action.sender.c_str());
 	}
@@ -259,6 +261,44 @@ void Manager::onTasklistAction(const Action &action) {
 	}
 
 	playTasklistSound(0, true);
+}
+
+// Pauses and resumes the sound on a channel, e.g. the Geiger counter's clicking. Showing
+// only resumes a channel the UI paused itself, and hiding only pauses one that is playing.
+void Manager::onSoundAction(const Action &action) {
+	uint16 channel = (uint16)action.value;
+	int index = -1;
+	for (uint i = 0; i < _pausedChannels.size(); ++i) {
+		if (_pausedChannels[i] == channel) {
+			index = i;
+			break;
+		}
+	}
+
+	bool pause;
+	switch (action.type) {
+	case kActionShow:
+		pause = false;
+		break;
+	case kActionHide:
+		pause = true;
+		break;
+	case kActionToggle:
+		pause = index == -1;
+		break;
+	default:
+		return;
+	}
+
+	if (pause) {
+		if (index == -1 && g_nancy->_sound->isSoundPlaying(channel)) {
+			g_nancy->_sound->pauseSound(channel, true);
+			_pausedChannels.push_back(channel);
+		}
+	} else if (index != -1) {
+		g_nancy->_sound->pauseSound(channel, false);
+		_pausedChannels.remove_at(index);
+	}
 }
 
 void Manager::playTasklistSound(uint bank, bool play) {
