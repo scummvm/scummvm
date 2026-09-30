@@ -11,20 +11,16 @@
  */
 
 #include "igor/igor.h"
+#include "igor/statics.h"
 
 namespace Igor {
 
 // Ground truth: code/176_2813.asm, cseg176:00F2-29E6 and cseg177:0002.
-namespace {
+// namespace {
 
 const uint32 kPart11PanelRight = 0x0000;
-const uint32 kPart11Frm1 = 0xB400;
-const uint32 kPart11Frm2 = 0xBC0A;
-const uint32 kPart11Frm3 = 0xC5E2;
-const uint32 kPart11Frm4 = 0xC786;
-const uint32 kPart11Frm5 = 0xC8AE;
 
-} // End of anonymous namespace
+
 
 void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 	PART_10_11_DRAW_OBJECT_STATE(num);
@@ -61,7 +57,7 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 void IgorEngine::PART_11_ACTION_105() {
 	for (int frame = 0; frame <= 1; ++frame) {
 		for (int y = 0; y <= 48; ++y)
-			memcpy(_screenVGA + 0x6167 + y * 320, _animFramesBuffer + kPart11Frm1 + frame * 0x405 + y * 21, 21);
+			memcpy(_screenVGA + 0x6167 + y * 320, _animFramesBuffer + kPart10_11_Frm1 + frame * 0x405 + y * 21, 21);
 		waitForTimer(127);
 	}
 	addObjectToInventory(18, 53);
@@ -72,7 +68,7 @@ void IgorEngine::PART_11_ACTION_105() {
 void IgorEngine::PART_11_ACTION_107() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart11Frm5 + frame * 0x348 + y * 30, 30);
+			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart10_11_Frm5 + frame * 0x348 + y * 30, 30);
 		waitForTimer(61);
 	}
 	removeObjectFromInventory(42);
@@ -122,7 +118,7 @@ void IgorEngine::PART_11_ACTION_108() {
 void IgorEngine::PART_11_ACTION_112() {
 	for (int frame = 0; frame <= 2; ++frame) {
 		for (int y = 0; y <= 27; ++y)
-			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart11Frm2 + frame * 0x348 + y * 30, 30);
+			memcpy(_screenVGA + 0x47E3 + y * 320, _animFramesBuffer + kPart10_11_Frm2 + frame * 0x348 + y * 30, 30);
 		waitForTimer(61);
 	}
 	addObjectToInventory(23, 58);
@@ -225,11 +221,11 @@ void IgorEngine::PART_11() {
 	static const int frames3[] = { FRM_Decanato3, 0 };
 	static const int frames4[] = { FRM_Decanato4, 0 };
 	static const int frames5[] = { FRM_Decanato5, 0 };
-	loadAnimData(frames1, kPart11Frm1);
-	loadAnimData(frames2, kPart11Frm2);
-	loadAnimData(frames3, kPart11Frm3);
-	loadAnimData(frames4, kPart11Frm4);
-	loadAnimData(frames5, kPart11Frm5);
+	loadAnimData(frames1, kPart10_11_Frm1);
+	loadAnimData(frames2, kPart10_11_Frm2);
+	loadAnimData(frames3, kPart10_11_Frm3);
+	loadAnimData(frames4, kPart10_11_Frm4);
+	loadAnimData(frames5, kPart10_11_Frm5);
 
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_11_EXEC_ACTION);
 	_roomDataOffsets = PART_11_ROOM_DATA_OFFSETS;

@@ -11,20 +11,16 @@
  */
 
 #include "igor/igor.h"
+#include "igor/statics.h"
 
 namespace Igor {
 
-// Ground truth: code/175_2767.asm, cseg175:0002-3595, cseg177:0002 and cseg134:21AF.
-namespace {
+// // Ground truth: code/175_2767.asm, cseg175:0002-3595, cseg177:0002 and cseg134:21AF.
+// namespace {
 
 const uint32 kPart10PanelLeft = 0x0000;
-const uint32 kPart10Frm1 = 0xB400;
-const uint32 kPart10Frm2 = 0xBC0A;
-const uint32 kPart10Frm3 = 0xC5E2;
-const uint32 kPart10Frm4 = 0xC786;
-const uint32 kPart10Frm5 = 0xC8AE;
 
-} // End of anonymous namespace
+
 
 void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
 	// These three original blitters are byte-for-byte duplicates in the two
@@ -126,7 +122,7 @@ void IgorEngine::PART_10_ACTION_104_pickHamburger() {
 	for (int frame = 0; frame < 4; ++frame) {
 		for (int y = 0; y < 49; ++y) {
 			memcpy(_screenVGA + 0x595F + y * 320,
-					_animFramesBuffer + kPart10Frm1 + frameSelectors[frame] * 0x682 + y * 34,
+					_animFramesBuffer + kPart10_11_Frm1 + frameSelectors[frame] * 0x682 + y * 34,
 					34);
 		}
 		waitForTimer(31);
@@ -185,11 +181,11 @@ void IgorEngine::PART_10() {
 	static const int frames3[] = { FRM_Decanato3, 0 };
 	static const int frames4[] = { FRM_Decanato4, 0 };
 	static const int frames5[] = { FRM_Decanato5, 0 };
-	loadAnimData(frames1, kPart10Frm1);
-	loadAnimData(frames2, kPart10Frm2);
-	loadAnimData(frames3, kPart10Frm3);
-	loadAnimData(frames4, kPart10Frm4);
-	loadAnimData(frames5, kPart10Frm5);
+	loadAnimData(frames1, kPart10_11_Frm1);
+	loadAnimData(frames2, kPart10_11_Frm2);
+	loadAnimData(frames3, kPart10_11_Frm3);
+	loadAnimData(frames4, kPart10_11_Frm4);
+	loadAnimData(frames5, kPart10_11_Frm5);
 
 	PART_10_11_DRAW_OBJECT_STATE(255);
 
@@ -200,7 +196,7 @@ void IgorEngine::PART_10() {
 
 	loadRoomData(PAL_DecanatoRight, IMG_DecanatoRight, BOX_DecanatoRight, MSK_DecanatoRight, TXT_DecanatoRight);
 	static const int hamburgerAnimation[] = { ANM_DecanatoHamburger, 0 };
-	loadAnimData(hamburgerAnimation, kPart10Frm1);
+	loadAnimData(hamburgerAnimation, kPart10_11_Frm1);
 
 	SET_PAL_240_48_1();
 	SET_PAL_208_96_1();

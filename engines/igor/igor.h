@@ -519,6 +519,8 @@ private:
 	void PART_11_APPLY_OBJECT_STATE(int num);
 
 
+
+
 	// outside church
 	void PART_12_EXEC_ACTION(int action);
 	void PART_12_ACTION_101();
