@@ -3513,7 +3513,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Larry 3 - English DOS (supplied by ssburnout in bug report #5270)
-	// 1.021 8x5.25" (label: Int#5.15.90)
+	// Game version 1.021
+	// SCI interpreter version 0.000.572
 	{"lsl3", "", {
 		{"resource.map", 0, "a39a20580362af3437352dbc717734f8", 7452},
 		{"resource.001", 0, "f18441027154292836b973c655fa3175", 141515},
@@ -3544,6 +3545,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Larry 3 - English DOS
+	// Game version 1.021
 	// SCI interpreter version 0.000.572
 	{"lsl3", "", {
 		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
@@ -3555,6 +3557,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Larry 3 - English DOS (supplied by kervala in bug report #6282)
+	// Game version 1.003
+	// SCI interpreter version 0.000.572
 	{"lsl3", "", {
 		{"resource.map", 0, "534d8946f10bc71a71b5bf89a84c31be", 5916},
 		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456265},
