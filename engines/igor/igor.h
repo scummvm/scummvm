@@ -465,11 +465,12 @@ private:
 
 	// spring bridge
 	void PART_05_HELPER_4_drawPaperOrNot(int num);
-	void PART_05_HELPER_5_drawPaper(int frame);
-	void PART_05_HELPER_3_drawCamera(int frame);
 	void PART_05_HELPER_6_walkIgorToScene();
-	void PART_05_HELPER_1_drawPhotographer();
-	void PART_05_HELPER_2_drawTripod();
+	void PART_05_06_DRAW_PAPER(int frame);
+	void PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
+	void PART_05_06_DRAW_PHOTOGRAPHER();
+	void PART_05_06_DRAW_CAMERA(int frame);
+	void PART_05_06_DRAW_TRIPOD(bool drawToScreen);
 	void PART_05();
 	void PART_05_EXEC_ACTION(int action);
 	void PART_05_ACTION_103_pickPaper();

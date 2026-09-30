@@ -59,11 +59,11 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 
 	if (_objectsState[60] == 0) {
 		// paper not taken, paint "frame 0"
-		PART_05_HELPER_5_drawPaper(0);
+		PART_05_06_DRAW_PAPER(0);
 		return;
 	}
 	// paper taken, paint "frame 1"
-	PART_05_HELPER_5_drawPaper(1);
+	PART_05_06_DRAW_PAPER(1);
 	// disable object
 	_roomObjectAreasTable[24].object = 0;
 	for (int i = 27; i <= 29; ++i) {
@@ -71,7 +71,8 @@ void IgorEngine::PART_05_HELPER_4_drawPaperOrNot(int num) {
 	}
 }
 
-void IgorEngine::PART_05_HELPER_5_drawPaper(int frame) {
+void IgorEngine::PART_05_06_DRAW_PAPER(int frame) {
+
 	const int offset = 41926;
 	for (int i = 0; i <= 2; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 12 + i * 4;
@@ -79,23 +80,33 @@ void IgorEngine::PART_05_HELPER_5_drawPaper(int frame) {
 	}
 }
 
-void IgorEngine::PART_05_HELPER_1_drawPhotographer() {
+void IgorEngine::PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND() {
 	const int offset = 23521;
 	for (int i = 0; i <= 48; ++i) {
 		memcpy(_animFramesBuffer + 0xDEA8 + i * 23 - 1, _screenLayer1 + i * 320 + offset, 23);
-		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x95C7 + i * 23, 23);
 	}
 }
 
-void IgorEngine::PART_05_HELPER_2_drawTripod() {
+void IgorEngine::PART_05_06_DRAW_PHOTOGRAPHER() {
+	const int offset = 23521;
+	for (int i = 0; i <= 48; ++i)
+		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x95C7 + i * 23, 23);
+}
+
+void IgorEngine::PART_05_06_DRAW_TRIPOD(bool drawToScreen) {
+	// Layer-1 blit: cseg182:047C-04CB; the active-pane copy is
+	// cseg180:03E9-0462.
 	const int offset = 28668;
 	for (int i = 0; i <= 32; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E54 + i * 23;
 		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
+		if (drawToScreen)
+			memcpy(_screenVGA + i * 320 + offset, src, 23);
 	}
 }
 
-void IgorEngine::PART_05_HELPER_3_drawCamera(int frame) {
+void IgorEngine::PART_05_06_DRAW_CAMERA(int frame) {
+	// cseg180:038B-03E6; duplicated at cseg182:041E-0479.
 	const int offset = 26756;
 	for (int i = 0; i <= 5; ++i) {
 		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
@@ -128,13 +139,14 @@ void IgorEngine::PART_05() {
 
 	// Draws photographer and objects before copying the screenLayer
 	if (_objectsState[61] != 0) {
-		PART_05_HELPER_1_drawPhotographer();
+		PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
+		PART_05_06_DRAW_PHOTOGRAPHER();
 	}
 	if (_objectsState[63] != 0) {
-		PART_05_HELPER_2_drawTripod();
+		PART_05_06_DRAW_TRIPOD(false);
 	}
 	if (_objectsState[62] != 0) {
-		PART_05_HELPER_3_drawCamera(0);
+		PART_05_06_DRAW_CAMERA(0);
 	}
 
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll

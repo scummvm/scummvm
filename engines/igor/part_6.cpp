@@ -57,31 +57,6 @@ void IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_1_drawPieceOfPaper(int frame) {
-	const int offset = 41926;
-	for (int i = 0; i <= 2; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 12 + i * 4;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 4);
-	}
-}
-
-void IgorEngine::PART_06_HELPER_2_drawPhotographer() {
-	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i) {
-		const uint8 *src = _screenLayer1 + i * 320 + offset;
-		memcpy(_animFramesBuffer + 0xDEA8 + i * 23 - 1, src, 23);
-	}
-}
-
-void IgorEngine::PART_06_HELPER_3_drawTripod() {
-	const int offset = 28668;
-	for (int i = 0; i <= 32; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E54 + i * 23;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
-		memcpy(_screenVGA + i * 320 + offset, src, 23);
-	}
-}
-
 void IgorEngine::PART_06_HELPER_8_animatePhotographer(int frame) {
 	const int offset = 23521;
 	for (int i = 0; i <= 48; ++i) {
@@ -174,7 +149,7 @@ void IgorEngine::PART_06_HELPER_7_decodePhotographerTalkingFrame(int frame) {
 void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	if (num == 2 || num == 255) {
 		if (_objectsState[61] == 1) {
-			PART_06_HELPER_14();
+			PART_05_06_DRAW_PHOTOGRAPHER();
 			_roomObjectAreasTable[3].object = 0;
 			_roomObjectAreasTable[13].area = 0;
 			_roomObjectAreasTable[15].area = 0;
@@ -194,9 +169,9 @@ void IgorEngine::PART_06_HELPER_6_setPhotographerState(int num) {
 	}
 	if (num == 3 || num == 255) {
 		if (_objectsState[62] == 1) {
-			PART_06_HELPER_13_drawCamera(0);
+			PART_05_06_DRAW_CAMERA(0);
 		} else {
-			PART_06_HELPER_13_drawCamera(1);
+			PART_05_06_DRAW_CAMERA(1);
 			_roomObjectAreasTable[3].object = 0;
 		}
 	}
@@ -326,22 +301,6 @@ void IgorEngine::PART_06_HELPER_12() {
 	}
 }
 
-void IgorEngine::PART_06_HELPER_13_drawCamera(int frame) {
-	const int offset = 26756;
-	for (int i = 0; i <= 5; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x7E00 + frame * 42 + i * 7;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 7);
-	}
-}
-
-void IgorEngine::PART_06_HELPER_14() {
-	const int offset = 23521;
-	for (int i = 0; i <= 48; ++i) {
-		const uint8 *src = _animFramesBuffer + 0x95C7 + i * 23;
-		memcpy(_screenLayer1 + i * 320 + offset, src, 23);
-	}
-}
-
 void IgorEngine::PART_06_HELPER_15(int frame) {
 	const uint8 *src = _animFramesBuffer + 0xA763 + READ_LE_UINT16(_animFramesBuffer + 0xDB95 + frame * 2) - 1;
 	decodeAnimFrame(src, _screenVGA, true);
@@ -356,7 +315,7 @@ void IgorEngine::PART_06() {
 	// loads from offset 32256
 	loadAnimData(anm1, 0x7E00);
 	if (_objectsState[60] == 0) {
-		PART_06_HELPER_1_drawPieceOfPaper(0);
+		PART_05_06_DRAW_PAPER(0);
 	}
 	// copying a patch of 224 pixels width and 144 height into the backup buffer for later scroll
 	// then it loads the actual current scene, SpringRock
@@ -373,13 +332,13 @@ void IgorEngine::PART_06() {
 	static const int anm4[] = {FRM_SpringRock5, FRM_SpringRock6, 0};
 	loadAnimData(anm4, 0xA763);
 
-	PART_06_HELPER_2_drawPhotographer();
+	PART_05_06_SAVE_PHOTOGRAPHER_BACKGROUND();
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_06_EXEC_ACTION);
 	_updateRoomBackground = &IgorEngine::PART_06_UPDATE_ROOM_BACKGROUND;
 	PART_06_HELPER_6_setPhotographerState(255);
 
 	if (_objectsState[63] == 1) {
-		PART_06_HELPER_3_drawTripod();
+		PART_05_06_DRAW_TRIPOD(true);
 	}
 
 	if (_currentPart == 61) {
