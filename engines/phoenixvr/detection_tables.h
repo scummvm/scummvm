@@ -152,7 +152,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "294efb30581661615359ce234e2e85fb", 1596),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)}
 	,
 
@@ -162,7 +162,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)}
 	,
 
@@ -172,7 +172,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -182,7 +182,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "f1d44e0b71736e5b0e2516dbfe9bf7e3", 1770),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -192,7 +192,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "b38570cda689d7994806635e0e34ed7f", 1825),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -202,7 +202,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "640d6d3f53986b73f97e1eaad700093a", 1732),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -212,7 +212,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "4474a0c84b6e7363e1d65cc67278b923", 1769),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -222,7 +222,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "5ea7264941b31b5961860c7016537641", 1776),
 		Common::PT_PRT,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -235,7 +235,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "d7af7fa917912626c9d13503a2a1178c", 82085),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -248,7 +248,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "01bccbbb33e901c9addfa0de51d1bea3", 81955),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -261,7 +261,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "ea95c1be10f24c4ad5ad4cb4ad130699", 82104),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -274,7 +274,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "3d0f268b184488f881a0836c1a800b4d", 82061),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -287,7 +287,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "6af5db2e4bb05bc6098648b62a83a096", 82062),
 		Common::PT_PRT,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -300,7 +300,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "d7af7fa917912626c9d13503a2a1178c", 82085),
 		Common::JA_JPN,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -313,7 +313,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "d7af7fa917912626c9d13503a2a1178c", 82085),
 		Common::ZH_TWN,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -326,7 +326,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "b7162c682cd1edf80271f05fd745ded1", 82066),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -339,7 +339,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script2.pak", "41de2c534143fa4a9772cb783e229ef7", 82060),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -608,7 +608,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -619,7 +619,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -630,7 +630,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -641,7 +641,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -652,7 +652,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -663,7 +663,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		ADGF_DROPPLATFORM | ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -674,7 +674,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		ADGF_DROPPLATFORM | ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -685,7 +685,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::SV_SWE,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
+		ADGF_DROPPLATFORM | ADGF_TESTING | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 	{"mysteryofmummy",
