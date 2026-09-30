@@ -4162,6 +4162,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16	},
 
 	// Mixed-Up Mother Goose - English DOS Floppy EGA (from omer_mor, bug report #4992)
+	// Game version 1.011 from VERSION file
+	// SCI interpreter version 0.000.685
 	{"mothergoose", "EGA", {
 		{"resource.map", 0, "3490f85dab47e504c41b7eb3312e285e", 2598},
 		{"resource.001", 0, "d893892d62b3f061357291d66775e360", 239906},
@@ -4170,7 +4172,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Mixed-Up Mother Goose - English DOS Floppy EGA (supplied by ssburnout in bug report #5270)
-	// 1.011 5x5.25" (label: Int#8.2.90)
+	// Game version 1.011 from VERSION file
+	// SCI interpreter version 0.000.685
 	{"mothergoose", "EGA", {
 		{"resource.map", 0, "7d308bfc6006d0e20985a7295c238efc", 2010},
 		{"resource.000", 0, "bb662eebeb5ffea2d705064801f6f70f", 140375},
@@ -4182,8 +4185,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #4272)
-	// Executable scanning reports "1.001.031"
+	// Mixed-Up Mother Goose - English DOS Floppy (supplied by markcoolio in bug report #4272)
+	// Game version 2.000 from VERSION file
+	// SCI interpreter version 1.001.031
 	{"mothergoose256", "", {
 		{"resource.map", 0, "52aae15e493cafd1da7e1c9b657a5bb9", 7026},
 		{"resource.000", 0, "b7ecd8ae9e254e80310b5a668b276e6e", 2948975},
