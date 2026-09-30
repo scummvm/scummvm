@@ -147,6 +147,8 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
+	insane/mortimer/flight.o \
+	insane/mortimer/mortimer.o \
 	insane/rebel/rebel_audio.o \
 	insane/rebel/rebel_gamepad.o \
 	insane/rebel/rebel_touch.o \

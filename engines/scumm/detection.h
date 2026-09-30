@@ -274,7 +274,8 @@ enum ScummGameId {
 	GID_BASKETBALL,
 	GID_MOONBASE,
 	GID_PJGAMES,
-	GID_HECUP		// CUP demos
+	GID_HECUP,		// CUP demos
+	GID_MORTIMER
 };
 
 struct RuScummPatcher {

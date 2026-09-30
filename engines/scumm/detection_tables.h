@@ -77,6 +77,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "ft", "Full Throttle" },
 	{ "rebel1", "Star Wars: Rebel Assault" },
 	{ "rebel2", "Star Wars: Rebel Assault II: The Hidden Empire" },
+	{ "mortimer", "Mortimer and the Riddles of the Medallion" },
 	{ "dig", "The Dig" },
 	{ "comi", "The Curse of Monkey Island" },
 
@@ -249,6 +250,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"rebel2", "Demo Special Edition", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
 	{"rebel2", "Demo v1.0", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO | GF_TESTING, Common::kPlatformMacintosh, GUIO6(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE, GAMEOPTION_REBEL2_RESTORED_CONTENT)},
 	{"rebel2", "PlayStation", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_UNSTABLE | GF_16BIT_COLOR, Common::kPlatformPSX, GUIO5(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_REBEL2_UNLOCK_ALL, GAMEOPTION_REBEL2_NO_DAMAGE, GAMEOPTION_REBEL2_YODA_MODE)},
+
+	{"mortimer", 0, "flight-poc", GID_MORTIMER, 7, 0, MDT_NONE, GF_DEMO | GF_UNSTABLE, Common::kPlatformWindows, GUIO4(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOSUBTITLES, GUIO_NOASPECT)},
 
 	{"dig",  "", 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
 	{"dig",  "Demo", 0, GID_DIG, 7, 0, MDT_NONE, GF_DEMO, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
@@ -517,6 +520,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 	{ "ft", "Vollgas Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
+
+	{ "mortimer", "MORTIMER.EXE", kGenUnchanged, Common::EN_ANY, Common::kPlatformWindows, 0 },
 
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo v1.51" },

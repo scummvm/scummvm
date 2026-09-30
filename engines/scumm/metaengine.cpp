@@ -48,6 +48,10 @@
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
 
+#ifdef ENABLE_SCUMM_7_8
+#include "scumm/insane/mortimer/mortimer.h"
+#endif
+
 #if defined(ENABLE_REBEL2_PSX) && !defined(ENABLE_SCUMM_7_8)
 #error "SCUMM v7 & v8 games must be enabled for Rebel Assault II PlayStation. Specify --enable-engine=scumm-7-8,rebel2-psx"
 #endif
@@ -467,6 +471,12 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
+#ifdef ENABLE_SCUMM_7_8
+	if (res.game.id == GID_MORTIMER) {
+		*engine = new MortimerEngine(syst);
+		return Common::kNoError;
+	}
+#endif
 	switch (res.game.version) {
 	case 0:
 		*engine = new ScummEngine_v0(syst, res);

@@ -449,6 +449,9 @@ ft	Full Throttle
 	9b7452b5cd6d3ffb2b2f5118010af84f	116463537	en	Mac	Demo	Demo	Mac bundle	Fingolfin, Joachim Eberhard
 	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
+mortimer	Mortimer and the Riddles of the Medallion
+	3450a722d29c150a4bdac5ba9b5f3b46	290304	en	Windows	-	Demo (flight POC)	Windows demo launcher; first Savanna flight only	-
+
 rebel1	Star Wars: Rebel Assault
 	0ca9c07185b4969764eaf3ecd0de06e9	111530	en	DOS	Demo v0.67	Demo v0.67	Non-interactive demo	-
 	a29730a42dfcff7bc2e10acfca1e76a2	212951	en	DOS	Demo v1.5	Demo v1.5	CD-ROM demo (chapters 2 and 10)	-
