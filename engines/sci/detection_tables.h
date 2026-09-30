@@ -456,39 +456,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// Conquests of Camelot - English DOS Non-Interactive Demo
-	// SCI interpreter version 0.000.668
-	{"camelot", "Demo", {
-		{"resource.map", 0, "f4cd75c15be75e04cdca3acda2c0b0ea", 468},
-		{"resource.001", 0, "4930708722f34bfbaa4945fb08f55f61", 232523},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
-
-	// Conquests of Camelot - Russian fan translation by https://github.com/deadman2000/RuSCI
-	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
-	// SCI interpreter version 0.000.685
-	{"camelot", "", {
-		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
-		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 596774},
-		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
-		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
-		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
-		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
-		AD_LISTEND},
-		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
-
-	// Conquests of Camelot - English DOS (from jvprat)
-	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
-	// SCI interpreter version 0.000.685
-	{"camelot", "", {
-		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
-		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 596774},
-		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
-		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
-		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
-
 	// Conquests of Camelot - English Atari ST
 	// Game version 1.019.000
 	// Floppy: INT#10.12.90
@@ -502,7 +469,28 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
+	// Conquests of Camelot - English DOS Non-Interactive Demo
+	// SCI interpreter version 0.000.668
+	{"camelot", "Demo", {
+		{"resource.map", 0, "f4cd75c15be75e04cdca3acda2c0b0ea", 468},
+		{"resource.001", 0, "4930708722f34bfbaa4945fb08f55f61", 232523},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
+
+	// Conquests of Camelot - English DOS (from jvprat)
+	// Game version 1.001.000 from VERSION file
+	// SCI interpreter version 0.000.685
+	{"camelot", "", {
+		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
+		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 596774},
+		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
+		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
+		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
+
 	// Conquests of Camelot - English DOS
+	// Game version 1.001.000 from VERSION file
 	// SCI interpreter version 0.000.685
 	{"camelot", "", {
 		{"resource.map", 0, "86bffb2a393b7a5d8de45e735091f037", 9504},
@@ -518,6 +506,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.010", 0, "8e1a3a8c588007404b532b8dfacc1460", 322781},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
+
+	// Conquests of Camelot - Russian fan translation by https://github.com/deadman2000/RuSCI
+	// Executable scanning reports "0.000.685", Floppy label reports "1.001, 0.000.685", VERSION file reports "1.001.000"
+	// SCI interpreter version 0.000.685
+	{"camelot", "", {
+		{"resource.map", 0, "95eca3991906dfd7ed26d193df07596f", 7278},
+		{"resource.001", 0, "8e1a3a8c588007404b532b8dfacc1460", 596774},
+		{"resource.002", 0, "8e1a3a8c588007404b532b8dfacc1460", 722250},
+		{"resource.003", 0, "8e1a3a8c588007404b532b8dfacc1460", 723712},
+		{"resource.004", 0, "8e1a3a8c588007404b532b8dfacc1460", 729143},
+		{"Translate.RU", 0, "3f730611f55257821b964f96eafea0ba", 171}, // Text file for detecting translation
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
 	// Conquests of the Longbow - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.005.001"
