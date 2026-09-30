@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-09-28 05:27+0000\n"
+"POT-Creation-Date: 2026-09-30 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,7 +130,9 @@ msgstr ""
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/colony/intro.cpp:196 engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:84
-#: engines/hypno/metaengine.cpp:282 engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/hypno/metaengine.cpp:282 engines/macs2/actionbar.cpp:893
+#: engines/mads/nebular/mac_menus.cpp:824
+#: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -3217,7 +3219,7 @@ msgstr ""
 #: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:246
 #: engines/drascula/metaengine.cpp:304 engines/hdb/metaengine.cpp:275
 #: engines/hypno/metaengine.cpp:308 engines/lab/metaengine.cpp:172
-#: engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/macs2/actionbar.cpp:893 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -6617,6 +6619,8 @@ msgid "Whether textures should be linearly filtered"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:98 engines/cine/metaengine.cpp:347
+#: engines/freescape/games/3dck/ui.cpp:34
+#: engines/freescape/games/3dck/zx.cpp:51
 #: engines/freescape/games/castle/castle.cpp:594
 msgid "Activate"
 msgstr ""
@@ -7563,7 +7567,7 @@ msgstr ""
 msgid "Strafe right"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:138
+#: engines/colony/metaengine.cpp:138 engines/freescape/games/3dck/zx.cpp:49
 #: engines/freescape/games/castle/castle.cpp:562
 #: engines/freescape/games/dark/dark.cpp:257
 #: engines/freescape/games/driller/driller.cpp:145
@@ -7571,7 +7575,7 @@ msgstr ""
 msgid "Rotate left"
 msgstr ""
 
-#: engines/colony/metaengine.cpp:143
+#: engines/colony/metaengine.cpp:143 engines/freescape/games/3dck/zx.cpp:50
 #: engines/freescape/games/castle/castle.cpp:567
 #: engines/freescape/games/dark/dark.cpp:262
 #: engines/freescape/games/driller/driller.cpp:150
@@ -8479,6 +8483,24 @@ msgstr ""
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:129
 msgid "Toggle red/blue 3D"
+msgstr ""
+
+#: engines/freescape/games/3dck/zx.cpp:41
+msgid "Center view"
+msgstr ""
+
+#: engines/freescape/games/3dck/zx.cpp:52
+msgid "Stand up"
+msgstr ""
+
+#. I18N: Action in In Cold Blood
+#: engines/freescape/games/3dck/zx.cpp:53 engines/hpl1/metaengine.cpp:84
+#: engines/icb/icb.cpp:119 engines/icb/icb.cpp:185
+msgid "Crouch"
+msgstr ""
+
+#: engines/freescape/games/3dck/zx.cpp:61
+msgid "Restart"
 msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:529
@@ -9451,12 +9473,6 @@ msgstr ""
 msgid "Lean right"
 msgstr ""
 
-#. I18N: Action in In Cold Blood
-#: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
-#: engines/icb/icb.cpp:185
-msgid "Crouch"
-msgstr ""
-
 #: engines/hpl1/metaengine.cpp:87
 msgid "Interact mode"
 msgstr ""
@@ -9792,6 +9808,14 @@ msgstr ""
 #: engines/illusions/metaengine.cpp:136 engines/twine/metaengine.cpp:422
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:490
 msgid "Abort"
+msgstr ""
+
+#: engines/kingdom/metaengine.cpp:42
+msgid "Mono music"
+msgstr ""
+
+#: engines/kingdom/metaengine.cpp:43
+msgid "Use monophonic music"
 msgstr ""
 
 #: engines/kyra/detection_tables.h:87
@@ -10276,6 +10300,10 @@ msgstr ""
 msgid "Select index"
 msgstr ""
 
+#: engines/macs2/actionbar.cpp:893
+msgid "Quit the game?"
+msgstr ""
+
 #: engines/macs2/dialogs.cpp:40
 msgid "Use TTS to read the dialogue (if TTS is available)"
 msgstr ""
@@ -10470,6 +10498,15 @@ msgstr ""
 
 #: engines/mads/metaengine.cpp:358
 msgid "Restart animation"
+msgstr ""
+
+#: engines/mads/nebular/mac_menus.cpp:822
+#, c-format
+msgid "A saved game named '%s' already exists. Replace it?"
+msgstr ""
+
+#: engines/mads/nebular/mac_menus.cpp:824
+msgid "Replace"
 msgstr ""
 
 #: engines/mm/metaengine.cpp:57
@@ -13169,6 +13206,58 @@ msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
 "\n"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/level2.cpp:886
+msgid "Could not open the PlayStation Level 2 resources"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/level2.cpp:892
+msgid "Could not read the PlayStation Level 2 resources"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/level2.cpp:897
+msgid "Could not play the PlayStation Level 2 videos"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:342
+msgid "Could not load the PlayStation menu resources"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:347
+msgid "Could not load the PlayStation movie fonts"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:352
+msgid "Could not play the PlayStation introduction"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:389
+msgid "Could not load the PlayStation Level 1 resources"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:396
+msgid "Could not play the PlayStation Level 1 introduction"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:408
+msgid "Could not play the PlayStation Level 1 ending"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:411
+msgid "Could not play the PlayStation Level 1 death video"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:414
+msgid "Could not play the PlayStation game-over video"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:417
+msgid "Could not run the PlayStation Level 1 gameplay"
+msgstr ""
+
+#: engines/scumm/insane/rebel2/psx/psx.cpp:421
+msgid "Rebel Assault II PlayStation support requires TinyGL"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:59
