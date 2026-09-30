@@ -112,7 +112,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SCUMM:
    - Cursor-Skalierung in frühen Windows HE-Spielen korrigiert.
    - In C64-Spielen kann jetzt das PAL-Timing für die SID-Emulation genutzt werden.
-     Dadurch wird die Musik langsamer abgespielt, was den Spiel-Erlebnis für viele nicht-US-Spieler entspricht.
+     Dadurch wird die Musik langsamer abgespielt, was dem Spiel-Erlebnis für viele nicht-US-Spieler entspricht.
 
  Sherlock:
    - Abweichung in der Darstellung der Bewegungen in Rose Tattoo korrigiert.
