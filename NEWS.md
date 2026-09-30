@@ -16,8 +16,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dracula: Resurrection.
    - Added support for Dracula 2: The Last Sanctuary.
    - Added support for Amerzone: The Explorer's Legacy.
-   - Added support for The Cameron Files: The Secret at Loch Ness
-   - Added support for The Messenger / Louvre: The Final Curse
+   - Added support for The Cameron Files: The Secret at Loch Ness.
+   - Added support for The Messenger / Louvre: The Final Curse.
    - Added support for Nancy Drew: The Secret of Shadow Ranch.
    - Added support for Nancy Drew: Curse of Blackmoor Manor.
    - Added support for Nancy Drew: Secret of the Old Clock.
@@ -88,7 +88,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Numerous Riddle of Master Lu fixes for crashes, missing functionality, and game bugs.
    - Fixed original game bug where conversations with Wolf could freeze the game.
    - Added original game cheat codes for bypassing the maze.
-   - Added translation of message log entries
+   - Added translation of message log entries.
 
  MM:
    - Fix multiple M&M1 classic combat crashes.
@@ -123,9 +123,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added detection for Shape-Shift Escape.
 
  TsAGE:
-   - Added General MIDI and MT-32 support to the games
-   - Improved Sound Blaster sample playback
-   - Sound is properly paused when the engine is paused
+   - Added General MIDI and MT-32 support to the games.
+   - Improved Sound Blaster sample playback.
+   - Sound is properly paused when the engine is paused.
 
  V-Cruise:
    - Fixed time-based puzzles sometimes getting stuck after restarting ScummVM.
@@ -135,6 +135,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Atari port:
    - Added integration with nFM library.
+
 
 #### 2026.3.0 "Carousels & Killer Whales" (2026-06-20)
 
@@ -214,6 +215,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  PS3 port:
    - Added support for running ScummVM engines as separate modules/executables.
      This saves about 90 MB of RAM. It is enabled only for release packages.
+
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)
 
@@ -377,6 +379,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Text-to-Speech.
    - Ported the CoreMIDI macOS feature to the iOS/tvOS ports, allowing the use
      of external MIDI devices for output.
+
 
 #### 2026.1.0 "Like a version" (2026-01-31)
 
@@ -695,6 +698,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  PS3 port:
    - Fixed crashes for games using a screen shaking effect.
 
+
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
  AGI:
@@ -842,6 +846,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Windows port:
    - Restored FLAC support in the Windows 9x port.
+
 
 #### 2.9.0 "Close Encounters of the 2.9th Kind" (2024-12-22)
 
