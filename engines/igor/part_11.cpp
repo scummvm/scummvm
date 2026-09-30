@@ -27,14 +27,13 @@ const uint32 kPart11Frm5 = 0xC8AE;
 } // End of anonymous namespace
 
 void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
+	PART_10_11_DRAW_OBJECT_STATE(num);
+
 	if (num == 1 || num == 255)
 		_roomObjectAreasTable[13].object = _objectsState[66] == 0 ? 4 : 3;
 
 	if (num == 2 || num == 255) {
 		if (_objectsState[67] == 1) {
-			// paint glass shards
-			for (int y = 0; y <= 7; ++y)
-				memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart11Frm4 + y * 37, 37);
 			// make area selectable
 			for (int area = 10; area <= 11; ++area)
 				_roomObjectAreasTable[area].object = 7;
@@ -50,13 +49,9 @@ void IgorEngine::PART_11_APPLY_OBJECT_STATE(int num) {
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 0;
 		} else if (_objectsState[68] == 1) {
-			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart11Frm3 + y * 14, 14);
 			for (int area = 7; area <= 8; ++area)
 				_roomObjectAreasTable[area].object = 6;
 		} else if (_objectsState[68] == 2) {
-			for (int y = 0; y <= 14; ++y)
-				memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart11Frm3 + 210 + y * 14, 14);
 			_roomObjectAreasTable[7].object = 6;
 			_roomObjectAreasTable[8].object = 8;
 		}

@@ -489,15 +489,10 @@ private:
 	void PART_06_ACTION_107();
 	void PART_06_ACTION_108();
 	void PART_06_ACTION_102_scrollLeft();
-	void PART_06_HELPER_2_drawPhotographer();
-	void PART_06_HELPER_3_drawTripod();
 	void PART_06_HELPER_6_setPhotographerState(int num);
 	void PART_06_HELPER_8_animatePhotographer(int frame);
 	void PART_06_HELPER_12();
-	void PART_06_HELPER_13_drawCamera(int frame);
-	void PART_06_HELPER_14();
 	void PART_06_HELPER_15(int frame);
-	void PART_06_HELPER_1_drawPieceOfPaper(int frame);
 
 	void PART_07();
 	void PART_07_EXEC_ACTION(int action);
@@ -512,6 +507,7 @@ private:
 	void PART_10_EXEC_ACTION(int action);
 	void PART_10_ACTION_104_pickHamburger();
 	void PART_10_ACTION_108();
+	void PART_10_11_DRAW_OBJECT_STATE(int num);
 
 	// Decanato left
 	void PART_11();

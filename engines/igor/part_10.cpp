@@ -26,6 +26,28 @@ const uint32 kPart10Frm5 = 0xC8AE;
 
 } // End of anonymous namespace
 
+void IgorEngine::PART_10_11_DRAW_OBJECT_STATE(int num) {
+	// These three original blitters are byte-for-byte duplicates in the two
+	// halves of the room: cseg175:0002-00F1 and cseg176:0002-00F1.
+	if ((num == 2 || num == 255) && _objectsState[67] == 1) {
+		for (int y = 0; y <= 7; ++y)
+			memcpy(_screenLayer1 + 0x7DA1 + y * 320,
+					_animFramesBuffer + 0xC786 + y * 37, 37); // cseg175/cseg176:0002-0051
+	}
+
+	if (num == 3 || num == 255) {
+		if (_objectsState[68] == 1) {
+			for (int y = 0; y <= 14; ++y)
+				memcpy(_screenLayer1 + 0x4E32 + y * 320,
+						_animFramesBuffer + 0xC5E2 + y * 14, 14); // cseg175/cseg176:0052-00A1
+		} else if (_objectsState[68] == 2) {
+			for (int y = 0; y <= 14; ++y)
+				memcpy(_screenLayer1 + 0x4E32 + y * 320,
+						_animFramesBuffer + 0xC6B4 + y * 14, 14); // cseg175/cseg176:00A2-00F1
+		}
+	}
+}
+
 void IgorEngine::PART_10_EXEC_ACTION(int action) {
 	// The action table order differs from the function listing order.
 	switch (action) {
@@ -169,18 +191,7 @@ void IgorEngine::PART_10() {
 	loadAnimData(frames4, kPart10Frm4);
 	loadAnimData(frames5, kPart10Frm5);
 
-	// Paint glass shards
-	if (_objectsState[67] == 1) {
-		for (int y = 0; y <= 7; ++y)
-			memcpy(_screenLayer1 + 0x7DA1 + y * 320, _animFramesBuffer + kPart10Frm4 + y * 37, 37);
-	}
-	if (_objectsState[68] == 1) {
-		for (int y = 0; y <= 14; ++y)
-			memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart10Frm3 + y * 14, 14);
-	} else if (_objectsState[68] == 2) {
-		for (int y = 0; y <= 14; ++y)
-			memcpy(_screenLayer1 + 0x4E32 + y * 320, _animFramesBuffer + kPart10Frm3 + 210 + y * 14, 14);
-	}
+	PART_10_11_DRAW_OBJECT_STATE(255);
 
 	// Preserve the complete left panel at ANM+0, then make the right panel
 	// active. The original load order is unconditional.
