@@ -22,27 +22,13 @@
 #define SCUMM_INSANE_MORTIMER_INTERVIEW_H
 
 #include "common/random.h"
-#include "graphics/font.h"
-#include "scumm/insane/mortimer/movie.h"
+#include "scumm/insane/mortimer/text.h"
 
 namespace Graphics {
 struct Surface;
 }
 
 namespace Scumm {
-
-class MortimerFont : public Graphics::Font {
-public:
-	bool load(const char *path);
-	int getFontHeight() const override { return _height; }
-	int getMaxCharWidth() const override { return _width; }
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *surface, uint32 chr, int x, int y, uint32 color) const override;
-
-private:
-	Common::Array<MortimerSprite> _glyphs;
-	int _height = 0, _width = 0;
-};
 
 // The native interview controller in SHELL 40a884, including its riddle
 // callbacks. Movie requests are consumed by the engine after stopping audio.

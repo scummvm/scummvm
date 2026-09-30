@@ -36,6 +36,8 @@ class SmushDeltaBlocksDecoder;
 struct MortimerSprite {
 	int x, y, width, height;
 	Common::Array<byte> pixels;
+	// Codec 44 uses skipped pixels for transparency and relative palette colors.
+	Common::Array<byte> mask;
 };
 
 struct MortimerSound {
@@ -115,6 +117,20 @@ private:
 	int _decoderWidth, _decoderHeight;
 	bool _doubled, _initialDoubled, _storeNext;
 	uint _nextFrame, _frameRate;
+};
+
+class MortimerCutscene : public MortimerMovie {
+public:
+	explicit MortimerCutscene(bool girl = false);
+	void reset() override;
+
+protected:
+	void handleAction(const byte *data, uint32 size) override;
+	bool skipObject(uint16 a, uint16 b) const override;
+
+private:
+	const bool _girl;
+	bool _toggles[256];
 };
 
 } // End of namespace Scumm

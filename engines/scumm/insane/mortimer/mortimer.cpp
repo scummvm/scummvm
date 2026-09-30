@@ -48,6 +48,16 @@ static const char *const kDemoIntros[] = {
 	"RESOURCE/BEGIN/INTRO5_H.SAN"
 };
 
+const char *const kRetailIntros[] = {
+	"RESOURCE/BEGIN/GOLDGUY.SAN",
+	"RESOURCE/BEGIN/INTRO1_H.SAN",
+	"RESOURCE/BEGIN/INTRO2_H.SAN",
+	"RESOURCE/BEGIN/INTRO3_H.SAN",
+	"RESOURCE/BEGIN/INTRO4_H.SAN",
+	"RESOURCE/BEGIN/INTRO5HB.SAN",
+	"RESOURCE/BEGIN/TITLE.SAN"
+};
+
 static const char *const kDemoFlights[] = {
 	"RESOURCE/DEMO/TITLE.SAN",
 	"RESOURCE/DEMO/DEMO_PL.SAN",
@@ -109,7 +119,7 @@ Common::KeymapArray MortimerEngine::initKeymaps() {
 	return keymaps;
 }
 
-MortimerEngine::MortimerEngine(OSystem *system) : Engine(system),
+MortimerEngine::MortimerEngine(OSystem *system, bool isDemo) : Engine(system), _isDemo(isDemo),
 	_viewport(24, 20, 616, 360), _mouse(320, 240), _view(44, 60), _aim(320, 190), _shotWeapon(MortimerFlight::kRevitascope),
 	_nextFrameTime(0), _pauseTime(0), _introIndex(-1), _segment(0), _carriedStones(0), _completedSpecies(0),
 	_shellShocks(0), _uiFrame(0), _shotFrame(3), _glowFrame(10), _glowStones(0),
@@ -185,24 +195,33 @@ bool MortimerEngine::loadResources() {
 }
 
 MortimerMovie &MortimerEngine::currentMovie() {
-	return _interviewActive || _introIndex >= 0 ? _intro : _flight;
+	if (_interviewActive || _introIndex >= 0)
+		return _intro;
+	return _flight;
 }
 
 const MortimerMovie &MortimerEngine::currentMovie() const {
-	return _interviewActive || _introIndex >= 0 ? _intro : _flight;
+	if (_interviewActive || _introIndex >= 0)
+		return _intro;
+	return _flight;
+}
+
+uint MortimerEngine::introCount() const {
+	return _isDemo ? ARRAYSIZE(kDemoIntros) : ARRAYSIZE(kRetailIntros);
 }
 
 bool MortimerEngine::loadIntro(uint index) {
 	stopSounds();
 	_movieHandles.clear();
+	const char *name = _isDemo ? kDemoIntros[index] : kRetailIntros[index];
 	Common::File file;
-	if (!file.open(Common::Path(kDemoIntros[index]))) {
-		_loadError = Common::String::format("Missing %s", kDemoIntros[index]);
+	if (!file.open(Common::Path(name))) {
+		_loadError = Common::String::format("Missing %s", name);
 		return false;
 	}
 	// The fifth introduction starts with native 640 x 480 animation.
-	if (!_intro.load(file, index != 4)) {
-		_loadError = Common::String::format("%s: %s", kDemoIntros[index], _intro.errorMessage().c_str());
+	if (!_intro.load(file, index != (_isDemo ? 4U : 5U))) {
+		_loadError = Common::String::format("%s: %s", name, _intro.errorMessage().c_str());
 		return false;
 	}
 	_introIndex = index;
@@ -292,6 +311,8 @@ bool MortimerEngine::startFlight() {
 }
 
 bool MortimerEngine::restart(bool all) {
+	if (!_isDemo)
+		return all ? loadIntro(0) && startMovie() : startMovie();
 	if (_interviewActive)
 		all = true;
 	if (_introIndex >= 0 && !all)
@@ -314,8 +335,11 @@ bool MortimerEngine::nextScene(bool skip) {
 		return processInterview();
 	}
 	if (_introIndex >= 0) {
-		if (uint(_introIndex + 1) < ARRAYSIZE(kDemoIntros))
+		if (uint(_introIndex + 1) < introCount())
 			return loadIntro(_introIndex + 1) && startMovie();
+		// Retail gameplay follows the title once its campaign is implemented.
+		if (!_isDemo)
+			return false;
 		return loadFlight(0) && startFlight();
 	}
 	if (skip && !_flight.interactive()) {
@@ -537,8 +561,10 @@ void MortimerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error MortimerEngine::run() {
-	if (!loadResources())
+	if (_isDemo && !loadResources())
 		return Common::Error(Common::kReadingFailed, _loadError);
+	if (!_isDemo && !_subtitles.load("RESOURCE/DATA/BEGIN.TRS", "RESOURCE/GENERAL/ESTRO20.NUT", "RESOURCE/GENERAL/MORTFNTH.NUT"))
+		return Common::Error(Common::kReadingFailed, "Missing or invalid Mortimer subtitle resources");
 	initGraphics(640, 480);
 	_screen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	_screen.fillRect(Common::Rect(640, 480), 10);
@@ -549,7 +575,9 @@ Common::Error MortimerEngine::run() {
 	// Use the original scene IDs for ScummVM's developer startup shortcut.
 	// Interview entry points supply rescued animals and glowstones.
 	const int boot = ConfMan.hasKey("boot_param") ? ConfMan.getInt("boot_param") : -1;
-	if (boot == 4 || boot == 10 || boot == 18 || boot == 8 || boot == 25) {
+	if (!_isDemo) {
+		exit = !(loadIntro(boot >= 24 && boot <= 30 ? boot - 24 : 0) && startMovie());
+	} else if (boot == 4 || boot == 10 || boot == 18 || boot == 8 || boot == 25) {
 		stopSounds();
 		_introIndex = -1;
 		_interviewActive = true;
@@ -781,6 +809,8 @@ void MortimerEngine::draw() {
 		drawProjectile();
 	} else {
 		_screen.copyRectToSurface(currentMovie().pixels(), MortimerMovie::kScreenWidth, 0, 0, 640, 480);
+		if (!_isDemo)
+			_subtitles.draw(_screen, currentMovie().captions(), ConfMan.getBool("subtitles"));
 	}
 	if (isPaused()) {
 		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);

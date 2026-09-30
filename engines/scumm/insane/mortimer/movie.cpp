@@ -150,7 +150,7 @@ bool validObject(const byte *data, uint32 size, bool sprite = false) {
 		return false;
 	const byte codec = data[0];
 	if (sprite)
-		return codec == 1 && validRows(data + 14, size - 14, height, false);
+		return codec == 44 || (codec == 1 && validRows(data + 14, size - 14, height, false));
 	if (codec == 37)
 		return !(width & 3) && !(height & 3) && validBackground(data + 14, size - 14, width, height);
 	if (codec != 1 && codec != 3 && codec != 23)
@@ -208,6 +208,43 @@ bool decodeSound(const Common::Array<byte> &data, MortimerSound &sound) {
 
 } // End of anonymous namespace
 
+bool decodeMortimerGlyph(const byte *src, uint32 size, MortimerSprite &sprite) {
+	sprite.mask.resize(sprite.pixels.size());
+	memset(sprite.mask.begin(), 0, sprite.mask.size());
+	uint32 pos = 0;
+	for (int y = 0; y < sprite.height; ++y) {
+		if (size - pos < 2)
+			return false;
+		const uint length = READ_LE_UINT16(src + pos);
+		pos += 2;
+		if (length > size - pos)
+			return false;
+		const uint32 end = pos + length;
+		uint x = 0;
+		while (x < uint(sprite.width)) {
+			if (end - pos < 2)
+				return false;
+			x += READ_LE_UINT16(src + pos);
+			pos += 2;
+			if (x >= uint(sprite.width))
+				break;
+			if (end - pos < 2)
+				return false;
+			const uint count = MIN<uint>(READ_LE_UINT16(src + pos) + 1, sprite.width - x);
+			pos += 2;
+			if (count > end - pos)
+				return false;
+			const uint offset = y * sprite.width + x;
+			memcpy(sprite.pixels.begin() + offset, src + pos, count);
+			memset(sprite.mask.begin() + offset, 1, count);
+			pos += count;
+			x += count;
+		}
+		pos = end;
+	}
+	return true;
+}
+
 bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<MortimerSprite> &sprites, byte *palette) {
 	Common::Array<byte> data;
 	sprites.clear();
@@ -243,7 +280,12 @@ bool loadMortimerSprites(Common::SeekableReadStream &stream, Common::Array<Morti
 			sprite.height = READ_LE_INT16(src + 8);
 			sprite.pixels.resize(sprite.width * sprite.height);
 			memset(sprite.pixels.begin(), 0, sprite.pixels.size());
-			smushDecodeRLEOpaque(sprite.pixels.begin(), src + 14, 0, 0, sprite.width, sprite.height, sprite.width, chunk.size - 14);
+			if (src[0] == 44) {
+				if (!decodeMortimerGlyph(src + 14, chunk.size - 14, sprite))
+					return false;
+			} else {
+				smushDecodeRLEOpaque(sprite.pixels.begin(), src + 14, 0, 0, sprite.width, sprite.height, sprite.width, chunk.size - 14);
+			}
 			sprites.push_back(sprite);
 		}
 		if (sprites.size() != before + 1)
@@ -361,10 +403,19 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 						return fail("Truncated Mortimer audio block");
 					const uint16 id = READ_LE_UINT16(body), block = READ_LE_UINT16(body + 2);
 					const uint16 flags = READ_LE_UINT16(body + 6) & 0xc0;
-					uint index = 0;
-					while (index < tracks.size() && (tracks[index].id != id || tracks[index].flags != flags))
-						++index;
-					if (index == tracks.size()) {
+					int index = -1;
+					// Block zero starts a new sound, even when its ID is reused.
+					if (block) {
+						for (int i = int(tracks.size()) - 1; i >= 0; --i) {
+							if (tracks[i].id == id && tracks[i].flags == flags) {
+								index = i;
+								break;
+							}
+						}
+						if (index < 0)
+							return fail("Missing Mortimer audio block");
+					}
+					if (index < 0) {
 						Track track;
 						track.id = id;
 						track.flags = flags;
@@ -374,6 +425,7 @@ bool MortimerMovie::load(Common::SeekableReadStream &stream, bool doubled) {
 						track.sound.speech = (flags & 128) != 0;
 						track.sound.volume = MIN(255, body[8] * 2);
 						track.sound.balance = body[9] == 128 ? 0 : (int(body[9]) - 64) * 2;
+						index = tracks.size();
 						tracks.push_back(track);
 					}
 					if (tracks[index].nextBlock++ != block)
@@ -605,6 +657,29 @@ void MortimerMovie::render() {
 			}
 		}
 	}
+}
+
+MortimerCutscene::MortimerCutscene(bool girl) : _girl(girl) {
+	reset();
+}
+
+void MortimerCutscene::reset() {
+	MortimerMovie::reset();
+	memset(_toggles, 0, sizeof(_toggles));
+}
+
+void MortimerCutscene::handleAction(const byte *data, uint32 size) {
+	MortimerMovie::handleAction(data, size);
+	if (READ_LE_UINT16(data) != 2 || READ_LE_UINT16(data + 4) != 1)
+		return;
+	const uint16 id = READ_LE_UINT16(data + 6), toggle = READ_LE_UINT16(data + 8);
+	// INTRO4_H contains both player characters under separate object toggles.
+	if (id == 3000 || id == 4000)
+		_toggles[toggle] = id == 3000 ? _girl : !_girl;
+}
+
+bool MortimerCutscene::skipObject(uint16 a, uint16 b) const {
+	return a != 0xffff && (b ? _toggles[a] != _toggles[b] : _toggles[a]);
 }
 
 } // End of namespace Scumm

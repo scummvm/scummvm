@@ -83,27 +83,6 @@ void blit(Graphics::Surface &screen, const MortimerSprite &sprite, int x, int y)
 
 } // End of anonymous namespace
 
-bool MortimerFont::load(const char *path) {
-	Common::File file;
-	if (!file.open(Common::Path(path)) || !loadMortimerSprites(file, _glyphs) || _glyphs.size() <= 126)
-		return false;
-	_width = _height = 0;
-	for (uint i = 0; i < _glyphs.size(); ++i) {
-		_width = MAX(_width, _glyphs[i].width);
-		_height = MAX(_height, _glyphs[i].height);
-	}
-	return true;
-}
-
-int MortimerFont::getCharWidth(uint32 chr) const {
-	return chr < _glyphs.size() ? _glyphs[chr].width : 0;
-}
-
-void MortimerFont::drawChar(Graphics::Surface *surface, uint32 chr, int x, int y, uint32 color) const {
-	if (chr < _glyphs.size())
-		blit(*surface, _glyphs[chr], x, y);
-}
-
 MortimerInterview::MortimerInterview() : _random("mortimer"), _stage(kIdle), _effect(kNoEffect),
 	_answer(-1), _selected(-1), _question(0), _guess(-1), _lastAction(46), _textScroll(0),
 	_species(0), _stones(0), _guesses(3), _frame(0), _switchFrame(6), _payment(0),

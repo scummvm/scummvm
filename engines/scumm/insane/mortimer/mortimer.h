@@ -34,7 +34,7 @@ namespace Scumm {
 // and both Rebel Assault engines.
 class MortimerEngine : public Engine {
 public:
-	explicit MortimerEngine(OSystem *system);
+	MortimerEngine(OSystem *system, bool isDemo);
 	~MortimerEngine() override;
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
@@ -45,6 +45,7 @@ protected:
 
 private:
 	bool loadResources();
+	uint introCount() const;
 	bool loadIntro(uint index);
 	bool loadFlight(uint segment);
 	bool startMovie(bool preserveScreen = false);
@@ -72,9 +73,11 @@ private:
 	void playMovieSounds(bool seek = false);
 	void stopSounds();
 
-	MortimerMovie _intro;
+	const bool _isDemo;
+	MortimerCutscene _intro;
 	MortimerFlight _flight;
 	MortimerInterview _interview;
+	MortimerSubtitles _subtitles;
 	Graphics::Surface _screen;
 	Common::Array<MortimerSprite> _cockpit, _dashboard, _reticles, _icons, _head;
 	Common::Array<MortimerSprite> _scopeHit, _slimeHit, _scopeBeam, _slimeBall, _numbers, _corners;

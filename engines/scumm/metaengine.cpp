@@ -473,7 +473,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	// instantiate the appropriate game engine. Hooray!
 #ifdef ENABLE_SCUMM_7_8
 	if (res.game.id == GID_MORTIMER) {
-		*engine = new MortimerEngine(syst);
+		*engine = new MortimerEngine(syst, (res.game.features & GF_DEMO) != 0);
 		return Common::kNoError;
 	}
 #endif
